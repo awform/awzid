@@ -1,0 +1,49 @@
+# Intégration continue AWFORM — AUCUN secret.
+# Build, typage, lint, tests unitaires et budget de poids, sur chaque envoi et chaque demande de fusion.
+# Les tests qui ont besoin du contenu des livres (~/awform-content, hors dépôt) ou de PostgreSQL
+# se désactivent seuls quand ce contenu est absent ; ils tournent sur la VM de développement.
+# Les tests de bout en bout (Playwright) ont besoin du contenu et d'une base : désactivés ici (voir JOURNAL_DEV).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifier:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: pnpm (corepack, version du package.json)
+        run: corepack enable && pnpm --version
+      - name: Installation (lockfile gelé)
+        run: pnpm install --frozen-lockfile
+      - name: Construction
+        run: pnpm build
+      - name: Typage
+        run: pnpm typecheck
+      - name: Lint et format
+        run: pnpm lint
+      - name: Tests unitaires
+        run: pnpm test
+      - name: Budget de poids de l'application
+        run: pnpm --filter @awform/web budget
+      - name: Aucune normalisation Unicode ni secret dans le dépôt
+        run: |
+          ! git grep -nE "\.normalize\(" -- '*.ts' '*.svelte' ':!**/node_modules/**'
+          ! git ls-files | grep -E '(^|/)\.env$'
