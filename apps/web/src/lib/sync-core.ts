@@ -14,7 +14,8 @@ export interface AttemptEvent {
   id: string;
   profileId: string;
   unitId: string;
-  eventType: 'reponse' | 'checklist';
+  /** « hifz » : événement du carnet de hifẓ (réponse = jour, part, résultat, source) */
+  eventType: 'reponse' | 'checklist' | 'hifz';
   exerciseId?: string;
   exerciseHash?: string;
   itemIndex?: number;

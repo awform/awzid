@@ -26,7 +26,12 @@ export default defineConfig({
   reporter: [['list']],
   // comptes de test créés une fois (adulte ; parent + deux enfants) après le démarrage des serveurs
   globalSetup: './e2e/global-setup.ts',
-  use: { baseURL: `http://127.0.0.1:${WEB_PORT}`, locale: 'fr-FR', timezoneId: 'Europe/Paris' },
+  use: {
+    baseURL: `http://127.0.0.1:${WEB_PORT}`,
+    locale: 'fr-FR',
+    timezoneId: 'Europe/Paris',
+    screenshot: 'only-on-failure',
+  },
   projects: [
     { name: 'mobile-chromium', use: { ...devices['Pixel 7'] } },
     { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'] } },

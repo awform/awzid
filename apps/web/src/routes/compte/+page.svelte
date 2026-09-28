@@ -7,6 +7,7 @@
   import { fmtDate, locale, LOCALES, t } from '$lib/i18n';
   import { kvGet, kvSet } from '$lib/idb';
   import { call, fetchMe, logout, type Me } from '$lib/session';
+  import { recordingAllowed, setRecordingAllowed } from '$lib/recordings';
 
   /**
    * Mon compte : langue, code parent, profils, consentements (retrait des facultatifs), export de mes
@@ -32,6 +33,11 @@
   let delChild: { id: string; password: string } | null = $state(null);
   let totp: { secret: string; uri: string } | null = $state(null);
   let totpCode = $state('');
+  /** hifẓ : classes de chaque profil, code saisi, consentement, enregistrement local autorisé */
+  let hifz: Record<
+    string,
+    { classes: Array<{ id: string; name: string }>; code: string; consent: boolean; rec: boolean }
+  > = $state({});
 
   const say = (m: string) => ((msg = m), (err = ''));
   const fail = (code: string | null) => ((err = t(`erreur.${code ?? 'reseau'}`)), (msg = ''));
@@ -41,6 +47,43 @@
     if (!me) return;
     const r = await call<{ consents: Consent[] }>('GET', '/account/consents');
     consents = r.data?.consents ?? [];
+    if (me.account.kind === 'parent' || me.account.kind === 'adulte') {
+      const next: typeof hifz = {};
+      for (const p of me.profiles) {
+        const h = await call<{ classes: Array<{ id: string; name: string }> }>(
+          'GET',
+          `/hifz/profiles/${p.id}`,
+        );
+        next[p.id] = {
+          classes: h.data?.classes ?? [],
+          code: '',
+          consent: false,
+          rec: await recordingAllowed(p.id),
+        };
+      }
+      hifz = next;
+    }
+  }
+  async function joinClass(e: SubmitEvent, profileId: string) {
+    e.preventDefault();
+    const h = hifz[profileId]!;
+    const r = await call<{ class: { name: string } }>('POST', `/profiles/${profileId}/classes`, {
+      code: h.code,
+      consent: h.consent,
+    });
+    if (!r.ok) return fail(r.code);
+    say(t('compte.classe_ok', { nom: r.data!.class.name }));
+    await reload();
+  }
+  async function leaveClass(profileId: string, classId: string) {
+    const r = await call('DELETE', `/profiles/${profileId}/classes/${classId}`);
+    if (!r.ok) return fail(r.code);
+    say(t('compte.classe_quittee'));
+    await reload();
+  }
+  async function toggleRec(profileId: string, v: boolean) {
+    await setRecordingAllowed(profileId, v);
+    hifz[profileId]!.rec = v;
   }
   onMount(async () => {
     drafts = (await kvGet<boolean>('draftLocales').catch(() => false)) ?? false;
@@ -159,6 +202,13 @@
     <p class="muted small">
       {t('compte.cree_le', { date: fmtDate(me.account.createdAt, { dateStyle: 'long' }) })}
     </p>
+    {#if me.account.kind === 'enseignant' || me.account.kind === 'admin'}
+      <p>
+        <a class="button primary" href={resolve('/enseignant')} data-testid="lien-enseignant"
+          >{t('ens.titre')}</a
+        >
+      </p>
+    {/if}
   </section>
 
   <section class="card">
@@ -217,7 +267,63 @@
         </form>
       {/if}
     </section>
+  {/if}
 
+  {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
+    <section class="card" data-testid="hifz-compte">
+      <h2>{t('compte.hifz_titre')}</h2>
+      <p class="muted small">{t('compte.hifz_aide')}</p>
+      {#each me.profiles as p (p.id)}
+        {@const h = hifz[p.id]}
+        {#if h}
+          <div class="hp">
+            <h3>{p.pseudonym}</h3>
+            {#each h.classes as c (c.id)}
+              <p>
+                {t('compte.classe_de', { nom: c.name })}
+                <button type="button" class="small" onclick={() => leaveClass(p.id, c.id)}
+                  >{t('compte.quitter_classe')}</button
+                >
+              </p>
+            {/each}
+            <form class="form" onsubmit={(e) => joinClass(e, p.id)}>
+              <label for="code-{p.id}">{t('compte.code_classe')}</label>
+              <input
+                id="code-{p.id}"
+                autocomplete="off"
+                maxlength="12"
+                bind:value={h.code}
+                data-testid="code-classe"
+              />
+              <label class="check"
+                ><input
+                  type="checkbox"
+                  bind:checked={h.consent}
+                  required
+                  data-testid="consent-partage"
+                />
+                <span>{t('compte.consent_partage')}</span></label
+              >
+              <button type="submit">{t('compte.rejoindre')}</button>
+            </form>
+            {#if p.kind !== 'adulte'}
+              <label class="check"
+                ><input
+                  type="checkbox"
+                  checked={h.rec}
+                  onchange={(e) => toggleRec(p.id, e.currentTarget.checked)}
+                  data-testid="enreg-autorise"
+                />
+                <span>{t('compte.enreg_autorise')}</span></label
+              >
+            {/if}
+          </div>
+        {/if}
+      {/each}
+    </section>
+  {/if}
+
+  {#if me.account.kind !== 'admin'}
     <section class="card">
       <h2>{t('compte.code_parent')}</h2>
       <p class="muted small">{me.account.hasPin ? t('compte.pin_defini') : t('compte.pin_aide')}</p>
@@ -362,7 +468,7 @@
     max-width: 460px;
     margin: 8px 0;
   }
-  .form input {
+  .form input:not([type='checkbox']) {
     font: inherit;
     min-height: 44px;
     padding: 6px 10px;
@@ -380,6 +486,10 @@
     gap: 10px;
     align-items: center;
     margin-top: 8px;
+  }
+  .hp {
+    border-top: 1px solid var(--line);
+    padding-top: 8px;
   }
   .consents li {
     margin: 6px 0;

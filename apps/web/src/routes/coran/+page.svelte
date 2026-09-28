@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
 </script>
 
@@ -8,8 +9,13 @@
 <p class="muted">{t('coran.intro')}</p>
 
 <section class="card">
-  <h2>{t('coran.hifz_titre')} <span class="soon">{t('lot.n', { n: 5 })}</span></h2>
+  <h2>{t('coran.hifz_titre')}</h2>
   <p>{t('coran.hifz_texte')}</p>
+  <p>
+    <a class="button primary" href={resolve('/hifz')} data-testid="ouvrir-hifz"
+      >{t('coran.ouvrir_carnet')}</a
+    >
+  </p>
 </section>
 
 <section class="card">

@@ -149,9 +149,20 @@ a:focus-visible {
   border-radius: 99px;
   padding: 1px 10px;
 }
-button.primary {
+button.primary,
+a.button.primary {
   background: var(--teal);
   border-color: var(--teal);
   color: #fff;
   font-weight: 700;
+}
+/* lien présenté comme un bouton (action principale d'une carte) */
+a.button {
+  display: inline-block;
+  min-height: 44px;
+  line-height: 44px;
+  padding: 0 16px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  text-decoration: none;
 }

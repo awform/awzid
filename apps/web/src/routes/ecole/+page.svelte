@@ -12,7 +12,7 @@
   import { t } from '$lib/i18n';
   import { kvGet, kvSet } from '$lib/idb';
   import { getSettings, saveSettings, type Settings } from '$lib/offline';
-  import { cachedMe } from '$lib/session';
+  import { cachedMe, call, fetchMe, type Me } from '$lib/session';
   import Sym from '$lib/Sym.svelte';
   import { hashCode, SYMBOLS } from '$lib/symbols';
 
@@ -31,11 +31,26 @@
   let setup: DevProfile | null = $state(null);
   let setupCode: string[] = $state([]);
   let info = $state('');
+  /** réglages protégés par le code de l'adulte (parent ou enseignant) : déverrouillés jusqu'à fermeture */
+  let me = $state<Me | null>(null);
+  let unlocked = $state(false);
+  let adultPin = $state('');
+  let pinError = $state('');
+  async function unlock(e: SubmitEvent) {
+    e.preventDefault();
+    const r = await call('POST', '/account/pin/verify', { pin: adultPin });
+    adultPin = '';
+    if (r.ok) {
+      unlocked = true;
+      pinError = '';
+    } else pinError = t(`erreur.${r.code ?? 'reseau'}`);
+  }
 
   onMount(async () => {
     settings = await getSettings();
     profiles = await accountProfiles();
-    connected = !!(await cachedMe());
+    me = (await cachedMe()) ?? (await fetchMe());
+    connected = !!me;
     codes = (await kvGet<Record<string, string>>('schoolCodes')) ?? {};
     await setActiveProfile(null);
   });
@@ -145,51 +160,79 @@
     </section>
   {/if}
 
-  <details class="card teacher">
+  <details
+    class="card teacher"
+    ontoggle={(e) => {
+      if (!e.currentTarget.open) unlocked = false;
+    }}
+  >
     <summary>{t('ecole.reglages')}</summary>
-    {#if info}<p role="status">{info}</p>{/if}
-    <h3>{t('ecole.codes')}</h3>
-    {#each profiles as p (p.id)}
-      <div class="row">
-        <span>{p.pseudonym}</span>
-        <button type="button" onclick={() => ((setup = p), (setupCode = []))} data-setup={p.id}
-          >{t('ecole.definir')}</button
-        >
-        <button type="button" onclick={() => forget(p)}>{t('ecole.effacer')}</button>
-      </div>
-    {/each}
-    {#if setup}
-      <div class="setup">
-        <p>{t('ecole.code_de', { nom: setup.pseudonym, n: setupCode.length })}</p>
-        <div class="keys">
-          {#each SYMBOLS as s (s.id)}
-            <button
-              type="button"
-              aria-label={t(`symbole.${s.id}`)}
-              data-setsym={s.id}
-              onclick={() => setupCode.length < 4 && (setupCode = [...setupCode, s.id])}
-              ><Sym id={s.id} size={36} /></button
-            >
-          {/each}
+    {#if !unlocked}
+      {#if me?.account.hasPin}
+        <form class="pin" onsubmit={unlock} data-testid="ecole-pin">
+          <label for="apin">{t('ecole.code_adulte')}</label>
+          <input
+            id="apin"
+            inputmode="numeric"
+            maxlength="4"
+            autocomplete="off"
+            bind:value={adultPin}
+          />
+          {#if pinError}<p class="retry" role="alert">{pinError}</p>{/if}
+          <button type="submit" class="primary">{t('commun.valider')}</button>
+        </form>
+      {:else}
+        <p data-testid="ecole-sans-code">
+          {t('ecole.definir_code_adulte')} <a href={resolve('/compte')}>{t('entete.compte')}</a>
+        </p>
+      {/if}
+    {:else}
+      {#if info}<p role="status">{info}</p>{/if}
+      <h3>{t('ecole.codes')}</h3>
+      {#each profiles as p (p.id)}
+        <div class="row">
+          <span>{p.pseudonym}</span>
+          <button type="button" onclick={() => ((setup = p), (setupCode = []))} data-setup={p.id}
+            >{t('ecole.definir')}</button
+          >
+          <button type="button" onclick={() => forget(p)}>{t('ecole.effacer')}</button>
         </div>
-        <button
-          type="button"
-          class="primary"
-          disabled={setupCode.length !== 4}
-          onclick={saveCode}
-          data-testid="enregistrer-code">{t('commun.enregistrer')}</button
-        >
-      </div>
-    {/if}
-    <h3>{t('ecole.retour_auto')}</h3>
-    <div class="row">
-      {#each [1, 5, 10, 20] as m (m)}
-        <button type="button" class:primary={settings?.idleMinutes === m} onclick={() => setIdle(m)}
-          >{t('ecole.minutes', { n: m })}</button
-        >
       {/each}
-    </div>
-    <p><button type="button" onclick={() => enable(false)}>{t('ecole.quitter')}</button></p>
+      {#if setup}
+        <div class="setup">
+          <p>{t('ecole.code_de', { nom: setup.pseudonym, n: setupCode.length })}</p>
+          <div class="keys">
+            {#each SYMBOLS as s (s.id)}
+              <button
+                type="button"
+                aria-label={t(`symbole.${s.id}`)}
+                data-setsym={s.id}
+                onclick={() => setupCode.length < 4 && (setupCode = [...setupCode, s.id])}
+                ><Sym id={s.id} size={36} /></button
+              >
+            {/each}
+          </div>
+          <button
+            type="button"
+            class="primary"
+            disabled={setupCode.length !== 4}
+            onclick={saveCode}
+            data-testid="enregistrer-code">{t('commun.enregistrer')}</button
+          >
+        </div>
+      {/if}
+      <h3>{t('ecole.retour_auto')}</h3>
+      <div class="row">
+        {#each [1, 5, 10, 20] as m (m)}
+          <button
+            type="button"
+            class:primary={settings?.idleMinutes === m}
+            onclick={() => setIdle(m)}>{t('ecole.minutes', { n: m })}</button
+          >
+        {/each}
+      </div>
+      <p><button type="button" onclick={() => enable(false)}>{t('ecole.quitter')}</button></p>
+    {/if}
   </details>
 {/if}
 

@@ -4,8 +4,9 @@
  * Tout ce qui est stocké ici est la projection ÉLÈVE (jamais le guide) ou des événements de l'élève.
  */
 export const DB_NAME = 'awform';
-export const DB_VERSION = 1;
-export type StoreName = 'packs' | 'units' | 'illus' | 'events' | 'kv';
+export const DB_VERSION = 2;
+/** « recordings » (v2) : enregistrements de récitation, gardés SUR L'APPAREIL seulement (jamais envoyés) */
+export type StoreName = 'packs' | 'units' | 'illus' | 'events' | 'kv' | 'recordings';
 
 let dbPromise: Promise<IDBDatabase> | null = null;
 
@@ -25,6 +26,10 @@ export function openDb(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains('events'))
         db.createObjectStore('events', { keyPath: 'id' });
       if (!db.objectStoreNames.contains('kv')) db.createObjectStore('kv');
+      if (!db.objectStoreNames.contains('recordings')) {
+        const r = db.createObjectStore('recordings', { keyPath: 'id' });
+        r.createIndex('profile', 'profileId');
+      }
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => {
@@ -100,6 +105,14 @@ export async function put(store: StoreName, value: unknown, key?: IDBValidKey): 
   const db = await openDb();
   const tx = db.transaction(store, 'readwrite');
   tx.objectStore(store).put(plainCopy(value), key);
+  await done(tx);
+}
+
+/** Écrit une valeur telle quelle (Blob d'un enregistrement : pas de copie JSON). */
+export async function putRaw(store: StoreName, value: unknown): Promise<void> {
+  const db = await openDb();
+  const tx = db.transaction(store, 'readwrite');
+  tx.objectStore(store).put(value);
   await done(tx);
 }
 

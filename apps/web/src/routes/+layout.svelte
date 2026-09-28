@@ -35,6 +35,7 @@
   const current = $derived.by(() => {
     const p = page.url.pathname;
     if (p === '/' || p.startsWith('/niveaux') || p.startsWith('/lecons')) return 'arabe';
+    if (p.startsWith('/hifz')) return 'coran';
     const x = TABS.find((y) => y.href !== '/' && p.startsWith(y.href));
     return x?.id ?? '';
   });

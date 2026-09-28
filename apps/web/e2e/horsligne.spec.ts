@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { expect, test } from './fixtures';
+import { expect, PARENT_PIN, test } from './fixtures';
 import { solveExercise, unitData } from './solve';
 
 /** Lot 3 : hors ligne complet, synchronisation différée, données économes, mode école, onglets. */
@@ -78,6 +78,8 @@ async function runEcole(page: Page) {
   await page.goto('/ecole');
   await page.getByTestId('activer-ecole').click();
   await page.getByText("Réglages de l'adulte").click();
+  await page.locator('#apin').fill(PARENT_PIN);
+  await page.getByTestId('ecole-pin').getByRole('button').click();
   const first = page.locator('[data-setup]').first();
   const pid = await first.getAttribute('data-setup');
   await first.click();

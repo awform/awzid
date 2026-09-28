@@ -1,4 +1,9 @@
+import { execFileSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
+import { writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { PARENT_PIN, totp } from './totp';
 
 /**
  * Comptes de TEST (base de test remise à zéro à chaque lancement) : un adulte autonome et un parent avec
@@ -45,6 +50,24 @@ export default async function globalSetup(): Promise<void> {
     locale: 'fr',
     consents: ['cgu'],
   });
+  // code parent (réglages du mode école, écoute du parent)
+  await post('/account/pin', { pin: PARENT_PIN, password }, parent.cookie);
+  // enseignant : créé par la ligne de commande (pas d'inscription publique), second facteur configuré ici
+  execFileSync(
+    process.execPath,
+    ['../api/dist/cli/staff.js', '--kind', 'enseignant', '--email', 'maitre@e2e.test', '--test'],
+    {
+      env: { ...process.env, AWFORM_STAFF_PASSWORD: password },
+      stdio: 'ignore',
+    },
+  );
+  const teacher = await post('/auth/login', { email: 'maitre@e2e.test', password });
+  const setup = (await post('/auth/totp/setup', {}, teacher.cookie)).json as { secret: string };
+  const counter = Math.floor(Date.now() / 30_000);
+  await post('/auth/totp/confirm', { code: totp(setup.secret, counter) }, teacher.cookie);
+  process.env.E2E_TOTP_SECRET = setup.secret;
+  process.env.E2E_TOTP_LAST = String(counter);
+  writeFileSync(join(tmpdir(), 'awform-e2e-totp-counter'), String(counter));
   for (const [pseudonym, avatar, age] of [
     ['Amina', 'etoile', 8],
     ['Yanis', 'soleil', 10],

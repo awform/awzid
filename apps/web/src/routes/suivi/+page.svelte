@@ -2,7 +2,9 @@
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { demoProfileFor, pendingCount, type DevProfile } from '$lib/attempts';
-  import { fmtDate, t } from '$lib/i18n';
+  import { hifzSummary, type HifzSummary } from '$lib/hifz';
+  import { fmtDate, fmtNumber, t } from '$lib/i18n';
+  import { cachedMe } from '$lib/session';
   import { localPacks } from '$lib/offline';
   import { lastSync } from '$lib/sync-core';
 
@@ -14,12 +16,18 @@
   let synced: string | undefined = $state(undefined);
   let offline = $state(false);
   let packs = $state(0);
+  /** suivi du hifẓ : le parent voit chacun de ses enfants ; l'adulte, son propre carnet */
+  let hifz: Array<{ id: string; name: string; s: HifzSummary | null }> = $state([]);
 
   onMount(async () => {
     pending = await pendingCount();
     synced = await lastSync();
     packs = (await localPacks()).length;
     profile = await demoProfileFor('');
+    const me = await cachedMe();
+    const list = me?.account.kind === 'parent' ? me.profiles : profile ? [profile] : [];
+    for (const p of list)
+      hifz = [...hifz, { id: p.id, name: p.pseudonym, s: await hifzSummary(p.id) }];
     if (!profile) return;
     for (const level of LEVELS) {
       try {
@@ -56,6 +64,27 @@
       {#if r.total === 0}<span class="muted">{t('suivi.rien')}</span>{/if}
     </p>
   {/each}
+</section>
+
+<section class="card" data-testid="suivi-hifz">
+  <h2>{t('suivi.hifz')}</h2>
+  {#each hifz as h (h.id)}
+    <p>
+      <strong>{h.name}</strong> —
+      {#if h.s}
+        {h.s.plan.mode === 'carnet'
+          ? t(`hifz.carnet_${h.s.plan.bookCode}`)
+          : t('hifz.rythme_actuel', { n: h.s.plan.rhythmYears ?? 7 })} ·
+        {t('hifz.acquis_carnet', { n: h.s.acquired, total: h.s.total })} ·
+        {t('suivi.a_reviser', { n: h.s.due })}
+        {#if h.s.stopRule}· <span class="warn">{t('hifz.regle_arret')}</span>{/if}
+        {#if h.s.lastNote}· {t('hifz.note', { n: fmtNumber(h.s.lastNote.total) })}{/if}
+      {:else}<span class="muted">{t('suivi.hifz_rien')}</span>{/if}
+    </p>
+  {:else}
+    <p class="muted">{t('suivi.hifz_rien')}</p>
+  {/each}
+  <p><a href={resolve('/hifz')}>{t('coran.ouvrir_carnet')}</a></p>
 </section>
 
 <section class="card">

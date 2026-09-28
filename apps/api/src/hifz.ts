@@ -193,7 +193,8 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
             suraOrder: { enum: ['rebours', 'juz30'] },
             startDate: { type: 'string', pattern: DAY },
             trial: { type: 'boolean' },
-            newFactor: { enum: [0.5, 1] },
+            // allègement accepté : 0,5 = nouveau réduit de moitié ; 0 = nouveau suspendu (carnet § 4.7)
+            newFactor: { enum: [0, 0.5, 1] },
             reliefUntil: { anyOf: [{ type: 'string', pattern: DAY }, { type: 'null' }] },
           },
         },

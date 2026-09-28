@@ -1,6 +1,6 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { expect, test } from './fixtures';
+import { expect, loginTeacher, newAdult, PARENT_PIN, test } from './fixtures';
 import { solveExercise, unitData } from './solve';
 
 /**
@@ -96,6 +96,8 @@ test.describe('compte parent', () => {
     await page.goto('/ecole');
     await page.getByTestId('activer-ecole').click();
     await page.getByText("Réglages de l'adulte").click();
+    await page.locator('#apin').fill(PARENT_PIN);
+    await page.getByTestId('ecole-pin').getByRole('button').click();
     const first = page.locator('[data-setup]').first();
     await first.click();
     for (const s of ['etoile', 'lune', 'soleil', 'goutte'])
@@ -138,5 +140,35 @@ test.describe('compte parent', () => {
     await page.goto('/');
     await expect(page.locator('main h1')).toHaveText('My Arabic books');
     await shot('24-interface-en-anglais');
+  });
+});
+
+test.describe('lot 5', () => {
+  test.use({ compte: null });
+  test('captures d’écran — lot 5 (hifẓ, enseignant)', async ({ page }, info) => {
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    const shot = async (name: string, full = false) => {
+      await page.locator('main h1').first().waitFor();
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: full });
+    };
+    await newAdult(page, 'captures');
+    await page.goto('/hifz');
+    await page.getByTestId('mode-rythme').check();
+    await shot('25-hifz-choix-rythme', true);
+    await page.getByTestId('mode-carnet').check();
+    await page.getByTestId('commencer-plan').click();
+    await page.getByTestId('plan-resume').waitFor();
+    await shot('26-hifz-carnet-semaine', true);
+    await page.getByTestId('masquer').check();
+    await page.getByTestId('piste-nouveau').scrollIntoViewIfNeeded();
+    await shot('27-hifz-reciter-de-memoire');
+    await loginTeacher(page);
+    await page.goto('/enseignant');
+    await page.locator('#cname').fill(`Hifẓ — groupe ${dev}`);
+    await page.getByRole('button', { name: 'Créer la classe' }).click();
+    await page.getByTestId('ens-message').waitFor();
+    await shot('28-espace-enseignant', true);
   });
 });
