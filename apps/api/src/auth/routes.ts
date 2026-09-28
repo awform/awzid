@@ -62,6 +62,8 @@ const COUNTRY = '^[A-Z]{2}$';
 const YEAR = { type: 'integer', minimum: 1900, maximum: 2100 } as const;
 /** consentements facultatifs (retirables) ; « partage_enseignant » : suivi du hifẓ par l'enseignant d'une classe */
 const OPTIONAL_CONSENTS: ReadonlySet<string> = new Set(['rappels', 'partage_enseignant']);
+/** inscriptions par heure et par adresse IP (réglable pour les tests de bout en bout) */
+const SIGNUPS_PER_HOUR = Number(process.env.AWFORM_SIGNUP_PER_HOUR ?? 20) || 20;
 const AVATARS = ['etoile', 'lune', 'soleil', 'feuille', 'goutte', 'livre'];
 
 export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
@@ -180,7 +182,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const b = req.body;
       const ipKey = `signup:${req.ip}`;
       if (await lockedUntil(db, ipKey)) return err(reply, 429, 'trop_de_demandes');
-      await recordFailure(db, ipKey, 20); // au plus 20 inscriptions par heure et par adresse, puis pause
+      await recordFailure(db, ipKey, SIGNUPS_PER_HOUR); // au plus 20 inscriptions par heure et par adresse, puis pause
       const email = b.email.trim().toLowerCase();
       const pb = checkPassword(b.password, email);
       if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
@@ -685,12 +687,16 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     const hifzPlans = [];
     const hifzEvents = [];
     const classes = [];
+    const practice = [];
     for (const pid of ids) {
       attempts.push(...(await db.select().from(t.attempt).where(eq(t.attempt.profileId, pid))));
       progress.push(...(await db.select().from(t.progress).where(eq(t.progress.profileId, pid))));
       hifzPlans.push(...(await db.select().from(t.hifzPlan).where(eq(t.hifzPlan.profileId, pid))));
       hifzEvents.push(
         ...(await db.select().from(t.hifzEvent).where(eq(t.hifzEvent.profileId, pid))),
+      );
+      practice.push(
+        ...(await db.select().from(t.practiceEvent).where(eq(t.practiceEvent.profileId, pid))),
       );
       classes.push(
         ...(await db.select().from(t.classMember).where(eq(t.classMember.profileId, pid))),
@@ -726,6 +732,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       progression: progress,
       reponses: attempts,
       hifz: { plans: hifzPlans, journal: hifzEvents, classes },
+      entrainement: practice,
       sessions,
     };
   });

@@ -21,7 +21,11 @@ import {
   ping,
   recordAttempts,
   recordHifzEvents,
+  recordPractice,
+  dashboard,
+  publicUnit,
   type AttemptInput,
+  type PracticeInput,
   type Db,
   type HifzEventInput,
 } from '@awform/db';
@@ -234,6 +238,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
       const owned = new Map<string, boolean>();
       const allowed: AttemptInput[] = [];
       const hifz: HifzEventInput[] = [];
+      const practice: PracticeInput[] = [];
       const refused: Array<{ id: string; reason: string }> = [];
       for (const e of req.body.events) {
         const pid = String(e?.profileId ?? '');
@@ -255,18 +260,34 @@ export function buildApp(opts: AppOptions): FastifyInstance {
             profileId: pid,
             deviceAt: e.deviceAt,
           } as HifzEventInput);
+        } else if ((e.eventType as string) === 'trace' || (e.eventType as string) === 'carte') {
+          // entraînement (tracé, cartes de mots) : journal séparé, jamais de note
+          const r = (e.response ?? {}) as Partial<PracticeInput>;
+          practice.push({
+            ...r,
+            id: e.id,
+            profileId: pid,
+            kind: e.eventType as 'trace' | 'carte',
+            deviceAt: e.deviceAt,
+          } as PracticeInput);
         } else allowed.push(e);
       }
       const r = await recordAttempts(db, ed.id, allowed);
       const h = hifz.length
         ? await recordHifzEvents(db, hifz, req.auth.accountId, false)
         : { accepted: [], duplicates: [], rejected: [] };
+      const pr = practice.length
+        ? await recordPractice(db, practice)
+        : { accepted: [], duplicates: [], rejected: [] };
       return {
         edition: ed.code,
         ...r,
-        accepted: [...r.accepted, ...h.accepted.map((id) => ({ id, correct: null }))],
-        duplicates: [...r.duplicates, ...h.duplicates],
-        rejected: [...r.rejected, ...h.rejected, ...refused],
+        accepted: [
+          ...r.accepted,
+          ...[...h.accepted, ...pr.accepted].map((id) => ({ id, correct: null })),
+        ],
+        duplicates: [...r.duplicates, ...h.duplicates, ...pr.duplicates],
+        rejected: [...r.rejected, ...h.rejected, ...pr.rejected, ...refused],
       };
     },
   );
@@ -298,6 +319,54 @@ export function buildApp(opts: AppOptions): FastifyInstance {
         units.map((u) => u.id),
       );
       return { profile: req.query.profile, level: req.query.level, progress: rows };
+    },
+  );
+  // ---------------------------------------------------------------- tableau de bord (parent, adulte)
+
+  app.get<{ Params: { id: string }; Querystring: { today?: string } }>(
+    '/api/v1/dashboard/:id',
+    {
+      schema: {
+        params: {
+          type: 'object',
+          properties: { id: { type: 'string', pattern: UUID } },
+          required: ['id'],
+        },
+        querystring: {
+          type: 'object',
+          properties: { today: { type: 'string', pattern: '^\\d{4}-\\d{2}-\\d{2}$' } },
+        },
+      },
+    },
+    async (req, reply) => {
+      if (!req.auth) return reply.code(401).send({ error: { code: 'non_connecte' } });
+      if (!(await ownsProfile(db, req.auth.accountId, req.params.id)))
+        return reply.code(404).send(notFound('profil introuvable'));
+      const today = req.query.today ?? new Date().toISOString().slice(0, 10);
+      return { profile: req.params.id, today, ...(await dashboard(db, req.params.id, today)) };
+    },
+  );
+
+  // ---------------------------------------------------------------- page publique du QR code (sans compte)
+
+  app.get<{ Params: { slug: string } }>(
+    '/api/v1/public/l/:slug',
+    {
+      schema: {
+        params: {
+          type: 'object',
+          properties: { slug: { type: 'string', pattern: '^[a-z]{2,3}[0-9]{1,2}-[0-9]{2}$' } },
+          required: ['slug'],
+        },
+      },
+    },
+    async (req, reply) => {
+      const ed = await edition();
+      if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
+      const u = await publicUnit(db, ed.id, req.params.slug);
+      if (!u) return reply.code(404).send(notFound(`leçon ${req.params.slug} introuvable`));
+      reply.header('Cache-Control', 'public, max-age=3600');
+      return { edition: ed.code, ...u };
     },
   );
   return app;

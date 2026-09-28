@@ -20,6 +20,12 @@
     </li>
   {/each}
 </ul>
+<p class="more">
+  <a class="button" href={resolve('/revisions')} data-testid="lien-revisions"
+    >{t('revisions.titre')}</a
+  >
+  <a class="button" href={resolve('/ecriture')}>{t('trace.titre')}</a>
+</p>
 <p class="edition">{t('arabe.edition', { edition: data.edition })}</p>
 
 <style>
@@ -43,5 +49,10 @@
   small,
   .edition {
     color: var(--ink2);
+  }
+  .more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 </style>

@@ -172,3 +172,30 @@ test.describe('lot 5', () => {
     await shot('28-espace-enseignant', true);
   });
 });
+
+test.describe('lot 6', () => {
+  test.use({ compte: null });
+  test('captures d’écran — lot 6 (tracé, cartes, tableau de bord, QR)', async ({ page }, info) => {
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    const shot = async (name: string, full = false) => {
+      await page.locator('main h1, h1').first().waitFor();
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: full });
+    };
+    await newAdult(page, 'captures6');
+    await page.goto('/ecriture?lettre=%D8%A8');
+    await page.locator('[data-etape="2"]').click();
+    await page.getByTestId('trace').scrollIntoViewIfNeeded();
+    await expect(page.getByTestId('trace')).not.toHaveAttribute('data-box', '');
+    await shot('29-trace-lettre');
+    await page.goto('/revisions');
+    await page.getByTestId('retourner').click();
+    await shot('30-carte-mot');
+    await page.goto('/suivi');
+    await page.getByTestId('activite').waitFor();
+    await shot('31-tableau-de-bord', true);
+    await page.goto('/l/en1-05');
+    await shot('32-page-qr', true);
+  });
+});

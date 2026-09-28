@@ -47,6 +47,8 @@ export default defineConfig({
         API_PORT: String(API_PORT),
         // http local : cookie sans attribut Secure (en production : Secure, derrière HTTPS)
         COOKIE_SECURE: '0',
+        // nombreux comptes de test créés depuis 127.0.0.1
+        AWFORM_SIGNUP_PER_HOUR: '200',
         // clé de chiffrement des seconds facteurs : tirée au hasard pour chaque lancement de test
         AWFORM_SECRET_KEY: E2E_KEY,
       },

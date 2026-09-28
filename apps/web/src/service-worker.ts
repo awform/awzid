@@ -13,6 +13,7 @@
  * Les réponses de l'API ne sont pas mises en cache ici (les paquets vivent dans IndexedDB).
  */
 import { build, files, version } from '$service-worker';
+import { get } from '$lib/idb';
 import { flushQueue } from '$lib/sync-core';
 
 const sw = self as unknown as ServiceWorkerGlobalScope;
@@ -40,6 +41,21 @@ sw.addEventListener('fetch', (event) => {
   if (url.origin !== sw.location.origin || url.pathname.startsWith('/api/')) return;
   if (ASSETS.includes(url.pathname)) {
     event.respondWith(caches.match(url.pathname).then((r) => r ?? fetch(req)));
+    return;
+  }
+  // QR code du livre (/l/en1-05) : si la leçon est déjà sur l'appareil, on l'ouvre dans l'application
+  const qr = /^\/l\/([a-z]{2,3}\d{1,2})-(\d{2})$/.exec(url.pathname);
+  if (req.mode === 'navigate' && qr) {
+    const unitId = `${qr[1]}.l${qr[2]}`;
+    event.respondWith(
+      get('units', unitId)
+        .catch(() => undefined)
+        .then(async (u) =>
+          u
+            ? Response.redirect(`/lecons/${unitId}`, 302)
+            : fetch(req).catch(async () => (await caches.match(SHELL)) ?? Response.error()),
+        ),
+    );
     return;
   }
   if (req.mode === 'navigate') {

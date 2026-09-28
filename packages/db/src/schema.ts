@@ -525,6 +525,36 @@ export const classMember = pgTable(
   ],
 );
 
+// ================================================================ entraînement (lot 6)
+
+/**
+ * Journal IMMUABLE de l'entraînement hors leçon : tracé guidé des lettres (« trace ») et révision des
+ * mots en cartes (« carte »). Jamais de note : ok = tracé accepté / mot su. Sert au tableau de bord.
+ */
+export const practiceEvent = pgTable(
+  'practice_event',
+  {
+    id: uuid('id').primaryKey(),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    kind: text('kind').notNull(),
+    /** tracé : lettre et forme (« ب:isolee ») ; carte : mot arabe tel qu'écrit dans le livre */
+    item: text('item').notNull(),
+    ok: boolean('ok').notNull(),
+    /** jour de l'élève (AAAA-MM-JJ) */
+    day: text('day').notNull(),
+    /** tracé : étape (1 à 3) et motif du refus ; carte : boîte */
+    details: jsonb('details'),
+    deviceAt: timestamp('device_at', { withTimezone: true }).notNull(),
+    serverAt: timestamp('server_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('practice_event_profile').on(t.profileId, t.day),
+    check('practice_event_kind', sql`${t.kind} IN ('trace', 'carte')`),
+  ],
+);
+
 // ================================================================ traçabilité
 
 export const auditLog = pgTable(

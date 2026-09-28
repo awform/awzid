@@ -415,11 +415,31 @@
       <p class="hint fr">
         {t('lecon.cahier_consigne')}
       </p>
+      {#if lettres.length}
+        <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu par resolve(), suivi d'un paramètre -->
+        <p class="links">
+          {#each lettres as x (x.l)}<a
+              class="button"
+              href={`${resolve('/ecriture')}?lettre=${encodeURIComponent(x.l)}`}
+              data-testid="tracer-lettre">{t('lecon.tracer_lettre', { l: x.l })}</a
+            >{/each}
+        </p>
+        <!-- eslint-enable svelte/no-navigation-without-resolve -->
+      {/if}
       {#if Array.isArray(E.mots) && E.mots.length}
         <h3>{t('lecon.ecris_mots')}</h3>
         <p class="trace" dir="rtl">
           {#each E.mots as m, i (i)}<span><Ar text={String(m)} {lettres} /></span>{/each}
         </p>
+        <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu par resolve(), suivi d'un paramètre -->
+        <p class="links">
+          {#each E.mots as m, i (i)}<a
+              class="button"
+              href={`${resolve('/ecriture')}?mot=${encodeURIComponent(String(m).replace(/[[\]]/g, ''))}`}
+              >{t('lecon.repasser_mot', { n: i + 1 })}</a
+            >{/each}
+        </p>
+        <!-- eslint-enable svelte/no-navigation-without-resolve -->
       {/if}
       {#if Array.isArray(E.lier) && E.lier.length}
         <h3>{t('lecon.relie_lettres')}</h3>
@@ -910,5 +930,10 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 6px;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 </style>
