@@ -1,0 +1,27 @@
+{
+  "name": "@awform/hifz",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Hifẓ AWFORM : rythmes 3 à 7 ans, plan de mémorisation, révision (trois pistes, plafond, parts fragiles), carnets E1/N1, barème du maître — partagé appareil + serveur",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.2"
+  }
+}

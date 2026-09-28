@@ -18,6 +18,7 @@
   "dependencies": {
     "@awform/content": "workspace:*",
     "@awform/grading": "workspace:*",
+    "@awform/hifz": "workspace:*",
     "intl-messageformat": "^12.1.2"
   },
   "devDependencies": {

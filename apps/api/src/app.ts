@@ -20,9 +20,12 @@ import {
   listUnits,
   ping,
   recordAttempts,
+  recordHifzEvents,
   type AttemptInput,
   type Db,
+  type HifzEventInput,
 } from '@awform/db';
+import { registerHifz } from './hifz.js';
 
 export interface AppOptions {
   db: Db;
@@ -92,6 +95,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   );
 
   const edition = async () => currentEdition(db, opts.editionCode);
+  registerHifz(app, db, edition);
 
   app.get('/api/v1/health', async () => {
     const dbOk = await ping(db).catch(() => false);
@@ -229,6 +233,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
       const owned = new Map<string, boolean>();
       const allowed: AttemptInput[] = [];
+      const hifz: HifzEventInput[] = [];
       const refused: Array<{ id: string; reason: string }> = [];
       for (const e of req.body.events) {
         const pid = String(e?.profileId ?? '');
@@ -237,11 +242,32 @@ export function buildApp(opts: AppOptions): FastifyInstance {
             pid,
             /^[0-9a-f-]{36}$/i.test(pid) && (await ownsProfile(db, req.auth.accountId, pid)),
           );
-        if (owned.get(pid)) allowed.push(e);
-        else refused.push({ id: String(e?.id ?? ''), reason: 'profil non autorisé' });
+        if (!owned.get(pid)) {
+          refused.push({ id: String(e?.id ?? ''), reason: 'profil non autorisé' });
+          continue;
+        }
+        // événements du hifẓ : même file hors ligne, journal séparé
+        if ((e.eventType as string) === 'hifz') {
+          const r = (e.response ?? {}) as Partial<HifzEventInput>;
+          hifz.push({
+            ...r,
+            id: e.id,
+            profileId: pid,
+            deviceAt: e.deviceAt,
+          } as HifzEventInput);
+        } else allowed.push(e);
       }
       const r = await recordAttempts(db, ed.id, allowed);
-      return { edition: ed.code, ...r, rejected: [...r.rejected, ...refused] };
+      const h = hifz.length
+        ? await recordHifzEvents(db, hifz, req.auth.accountId, false)
+        : { accepted: [], duplicates: [], rejected: [] };
+      return {
+        edition: ed.code,
+        ...r,
+        accepted: [...r.accepted, ...h.accepted.map((id) => ({ id, correct: null }))],
+        duplicates: [...r.duplicates, ...h.duplicates],
+        rejected: [...r.rejected, ...h.rejected, ...refused],
+      };
     },
   );
 

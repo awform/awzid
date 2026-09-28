@@ -417,6 +417,109 @@ export const progress = pgTable(
   (t) => [primaryKey({ columns: [t.profileId, t.unitId] })],
 );
 
+// ================================================================ hifẓ (lot 5)
+
+export const hifzMode = pgEnum('hifz_mode', ['carnet', 'rythme']);
+
+/**
+ * Plan de mémorisation d'un profil : carnet du niveau (E1, N1…) ou parcours complet à un rythme de 3 à
+ * 7 ans (mois d'essai d'abord). Un seul plan actif par profil ; changer de rythme ne perd rien.
+ */
+export const hifzPlan = pgTable(
+  'hifz_plan',
+  {
+    profileId: uuid('profile_id')
+      .primaryKey()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    mode: hifzMode('mode').notNull(),
+    /** carnet : code du niveau (en1, ad1) */
+    bookCode: text('book_code'),
+    /** rythme : 3 à 7 ans */
+    rhythmYears: smallint('rhythm_years'),
+    /** ordre des sourates (rythme) : rebours | juz30 */
+    suraOrder: text('sura_order').notNull().default('rebours'),
+    /** premier jour du plan (AAAA-MM-JJ, fuseau de l'élève) */
+    startDate: text('start_date').notNull(),
+    /** mois d'essai au rythme « 7 ans » avant la proposition de rythme */
+    trial: boolean('trial').notNull().default(false),
+    /** allègement accepté par l'enseignant ou l'adulte : nouveau × facteur jusqu'à la date */
+    newFactor: real('new_factor').notNull().default(1),
+    reliefUntil: text('relief_until'),
+    updatedBy: uuid('updated_by').references(() => account.id, { onDelete: 'set null' }),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    check('hifz_plan_rhythm', sql`${t.rhythmYears} IS NULL OR ${t.rhythmYears} BETWEEN 3 AND 7`),
+  ],
+);
+
+/**
+ * Journal IMMUABLE du hifẓ : portion apprise, révision (auto-évaluation, parent, enseignant), avec la
+ * source (le poids du résultat en dépend) ; les états (étapes, solidité, roue) sont recalculés.
+ */
+export const hifzEvent = pgTable(
+  'hifz_event',
+  {
+    id: uuid('id').primaryKey(),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    /** jour de l'élève (AAAA-MM-JJ) */
+    day: text('day').notNull(),
+    /** clé de la part : « 112:1-4 » (carnet) ou « q12 » (parcours complet) */
+    part: text('part').notNull(),
+    kind: text('kind').notNull(),
+    q: smallint('q'),
+    source: text('source').notNull(),
+    /** parcours complet : position atteinte dans la séquence */
+    pos: integer('pos'),
+    /** relevés du maître, note /20, mention ; versets de la portion */
+    details: jsonb('details'),
+    authorAccountId: uuid('author_account_id').references(() => account.id, {
+      onDelete: 'set null',
+    }),
+    deviceAt: timestamp('device_at', { withTimezone: true }).notNull(),
+    serverAt: timestamp('server_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('hifz_event_profile').on(t.profileId, t.day),
+    check('hifz_event_q', sql`${t.q} IS NULL OR ${t.q} BETWEEN 0 AND 3`),
+  ],
+);
+
+/** Classe d'un enseignant (lot 5 : suivi du hifẓ ; l'espace enseignant complet vient au lot S2). */
+export const classGroup = pgTable('class_group', {
+  id: uuid('id')
+    .primaryKey()
+    .default(sql`uuidv7()`),
+  teacherAccountId: uuid('teacher_account_id')
+    .notNull()
+    .references(() => account.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  /** code à donner aux familles (8 caractères) : le PARENT inscrit lui-même son enfant */
+  joinCode: text('join_code').notNull().unique(),
+  createdAt: createdAt(),
+});
+
+/** Élève d'une classe : ajouté par le parent (consentement « partage_enseignant »), retirable. */
+export const classMember = pgTable(
+  'class_member',
+  {
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    addedBy: uuid('added_by').references(() => account.id, { onDelete: 'set null' }),
+    joinedAt: timestamp('joined_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.classId, t.profileId] }),
+    index('class_member_profile').on(t.profileId),
+  ],
+);
+
 // ================================================================ traçabilité
 
 export const auditLog = pgTable(

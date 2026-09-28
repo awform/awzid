@@ -17,6 +17,8 @@ $items += , @("$aw\data\hifz", 'data/')
 $items += , @("$aw\ECARTS_VERSETS.md", '')
 $items += , @("$aw\illus", '')
 $items += , @("$W\coran\tanzil-uthmani.tsv", 'coran/')
+# tables de correspondance des identifiants d'exercices (gel des livres) : ancien identifiant → id explicite
+if (Test-Path "$W\application\ids") { $items += , @("$W\application\ids", '') }
 ssh $VmHost "rm -rf ~/$Dest.tmp && mkdir -p ~/$Dest.tmp/data ~/$Dest.tmp/registre ~/$Dest.tmp/coran"
 foreach ($it in $items) {
   if (-not (Test-Path $it[0])) { throw "Introuvable : $($it[0])" }

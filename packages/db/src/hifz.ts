@@ -1,0 +1,298 @@
+/**
+ * Hifẓ (lot 5) : texte coranique de référence (Tanzil, lecture seule), carnets, plans, journal immuable
+ * des événements, classes (l'enseignant ne voit que les élèves que le PARENT a inscrits).
+ */
+import { randomInt } from 'node:crypto';
+import { and, asc, eq, inArray } from 'drizzle-orm';
+import type { Db } from './client.js';
+import * as t from './schema.js';
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+const PART = /^(\d{1,3}:\d{1,3}(-\d{1,3})?|q\d{1,4})$/;
+const KINDS = new Set(['appris', 'revision']);
+/** sources qu'un appareil de la famille peut déclarer (le maître passe par sa propre route) */
+const FAMILY_SOURCES = new Set(['auto', 'parent']);
+
+/** Texte Tanzil complet (s:a → texte), tel qu'importé et contrôlé octet par octet. */
+export async function allVerses(db: Db): Promise<Map<string, string>> {
+  const rows = await db.select().from(t.quranVerse);
+  return new Map(rows.map((r) => [`${r.sura}:${r.aya}`, r.text]));
+}
+
+export async function versesOf(
+  db: Db,
+  sura: number,
+  from: number,
+  to: number,
+): Promise<Array<{ s: number; a: number; text: string }>> {
+  const rows = await db
+    .select()
+    .from(t.quranVerse)
+    .where(eq(t.quranVerse.sura, sura))
+    .orderBy(asc(t.quranVerse.aya));
+  return rows
+    .filter((r) => r.aya >= from && r.aya <= to)
+    .map((r) => ({ s: r.sura, a: r.aya, text: r.text }));
+}
+
+export async function getHifzBook(db: Db, editionId: string, code: string): Promise<unknown> {
+  const [b] = await db
+    .select({ content: t.hifzBook.content })
+    .from(t.hifzBook)
+    .where(and(eq(t.hifzBook.editionId, editionId), eq(t.hifzBook.code, code)));
+  return b?.content ?? null;
+}
+
+export async function listHifzBooks(db: Db, editionId: string): Promise<string[]> {
+  const rows = await db
+    .select({ code: t.hifzBook.code })
+    .from(t.hifzBook)
+    .where(eq(t.hifzBook.editionId, editionId));
+  return rows.map((r) => r.code).filter((c) => !c.startsWith('_'));
+}
+
+// ---------------------------------------------------------------- plans
+
+export type HifzPlanRow = typeof t.hifzPlan.$inferSelect;
+
+export async function getPlan(db: Db, profileId: string): Promise<HifzPlanRow | null> {
+  const [p] = await db.select().from(t.hifzPlan).where(eq(t.hifzPlan.profileId, profileId));
+  return p ?? null;
+}
+
+export interface PlanInput {
+  mode: 'carnet' | 'rythme';
+  bookCode?: string | null;
+  rhythmYears?: number | null;
+  suraOrder?: 'rebours' | 'juz30';
+  startDate: string;
+  trial?: boolean;
+  newFactor?: number;
+  reliefUntil?: string | null;
+}
+
+export async function savePlan(
+  db: Db,
+  profileId: string,
+  input: PlanInput,
+  accountId: string,
+): Promise<HifzPlanRow> {
+  const values = {
+    profileId,
+    mode: input.mode,
+    bookCode: input.mode === 'carnet' ? (input.bookCode ?? null) : null,
+    rhythmYears: input.mode === 'rythme' ? (input.rhythmYears ?? 7) : null,
+    suraOrder: input.suraOrder ?? 'rebours',
+    startDate: input.startDate,
+    trial: input.mode === 'rythme' ? (input.trial ?? false) : false,
+    newFactor: input.newFactor ?? 1,
+    reliefUntil: input.reliefUntil ?? null,
+    updatedBy: accountId,
+    updatedAt: new Date(),
+  };
+  const [row] = await db
+    .insert(t.hifzPlan)
+    .values(values)
+    .onConflictDoUpdate({ target: t.hifzPlan.profileId, set: values })
+    .returning();
+  return row!;
+}
+
+// ---------------------------------------------------------------- événements
+
+export interface HifzEventInput {
+  id: string;
+  profileId: string;
+  day: string;
+  part: string;
+  kind: 'appris' | 'revision';
+  q?: number;
+  source: string;
+  pos?: number;
+  details?: unknown;
+  deviceAt: string;
+}
+
+export interface HifzRecordResult {
+  accepted: string[];
+  duplicates: string[];
+  rejected: Array<{ id: string; reason: string }>;
+}
+
+/**
+ * Enregistre des événements (idempotent). `teacher` : événements du maître (source « enseignant »),
+ * sinon seules les sources de la famille sont acceptées.
+ */
+export async function recordHifzEvents(
+  db: Db,
+  events: readonly HifzEventInput[],
+  authorAccountId: string,
+  teacher = false,
+): Promise<HifzRecordResult> {
+  const res: HifzRecordResult = { accepted: [], duplicates: [], rejected: [] };
+  for (const e of events) {
+    const reject = (reason: string) => res.rejected.push({ id: String(e?.id ?? ''), reason });
+    if (!e || typeof e.id !== 'string' || !UUID.test(e.id)) {
+      reject('identifiant invalide');
+      continue;
+    }
+    if (!UUID.test(String(e.profileId))) {
+      reject('profil invalide');
+      continue;
+    }
+    if (!DAY.test(String(e.day)) || !PART.test(String(e.part)) || !KINDS.has(String(e.kind))) {
+      reject('événement invalide');
+      continue;
+    }
+    if (teacher ? e.source !== 'enseignant' : !FAMILY_SOURCES.has(String(e.source))) {
+      reject('source non autorisée');
+      continue;
+    }
+    const q = e.q === undefined || e.q === null ? null : Number(e.q);
+    if (e.kind === 'revision' && (q === null || !Number.isInteger(q) || q < 0 || q > 3)) {
+      reject('résultat invalide');
+      continue;
+    }
+    const deviceAt = new Date(e.deviceAt);
+    if (Number.isNaN(deviceAt.getTime())) {
+      reject('horodatage invalide');
+      continue;
+    }
+    const inserted = await db
+      .insert(t.hifzEvent)
+      .values({
+        id: e.id,
+        profileId: e.profileId,
+        day: e.day,
+        part: e.part,
+        kind: e.kind,
+        q,
+        source: e.source,
+        pos: Number.isInteger(e.pos) ? e.pos : null,
+        details: e.details ?? null,
+        authorAccountId,
+        deviceAt,
+      })
+      .onConflictDoNothing()
+      .returning({ id: t.hifzEvent.id });
+    if (inserted.length) res.accepted.push(e.id);
+    else res.duplicates.push(e.id);
+  }
+  return res;
+}
+
+export async function listHifzEvents(db: Db, profileId: string) {
+  return db
+    .select({
+      id: t.hifzEvent.id,
+      day: t.hifzEvent.day,
+      part: t.hifzEvent.part,
+      kind: t.hifzEvent.kind,
+      q: t.hifzEvent.q,
+      source: t.hifzEvent.source,
+      pos: t.hifzEvent.pos,
+      details: t.hifzEvent.details,
+    })
+    .from(t.hifzEvent)
+    .where(eq(t.hifzEvent.profileId, profileId))
+    .orderBy(asc(t.hifzEvent.day), asc(t.hifzEvent.id));
+}
+
+// ---------------------------------------------------------------- classes
+
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sans I, O, 0, 1 (confusions)
+
+export function newJoinCode(): string {
+  let s = '';
+  for (let i = 0; i < 8; i++) s += CODE_ALPHABET[randomInt(CODE_ALPHABET.length)];
+  return s;
+}
+
+export async function createClass(db: Db, teacherAccountId: string, name: string) {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const rows = await db
+      .insert(t.classGroup)
+      .values({ teacherAccountId, name, joinCode: newJoinCode() })
+      .onConflictDoNothing()
+      .returning();
+    if (rows[0]) return rows[0];
+  }
+  throw new Error('code de classe introuvable');
+}
+
+export async function listClasses(db: Db, teacherAccountId: string) {
+  return db
+    .select()
+    .from(t.classGroup)
+    .where(eq(t.classGroup.teacherAccountId, teacherAccountId))
+    .orderBy(asc(t.classGroup.createdAt));
+}
+
+export async function classByCode(db: Db, code: string) {
+  const [c] = await db
+    .select()
+    .from(t.classGroup)
+    .where(eq(t.classGroup.joinCode, code.trim().toUpperCase()));
+  return c ?? null;
+}
+
+export async function classMembers(db: Db, classId: string) {
+  return db
+    .select({
+      id: t.profile.id,
+      pseudonym: t.profile.pseudonym,
+      avatar: t.profile.avatar,
+      kind: t.profile.kind,
+      levelCode: t.profile.levelCode,
+      joinedAt: t.classMember.joinedAt,
+    })
+    .from(t.classMember)
+    .innerJoin(t.profile, eq(t.profile.id, t.classMember.profileId))
+    .where(eq(t.classMember.classId, classId))
+    .orderBy(asc(t.profile.pseudonym));
+}
+
+/** L'enseignant suit-il ce profil (dans une de ses classes) ? */
+export async function teacherHasProfile(
+  db: Db,
+  teacherAccountId: string,
+  profileId: string,
+): Promise<boolean> {
+  const classes = await listClasses(db, teacherAccountId);
+  if (!classes.length) return false;
+  const [m] = await db
+    .select({ p: t.classMember.profileId })
+    .from(t.classMember)
+    .where(
+      and(
+        eq(t.classMember.profileId, profileId),
+        inArray(
+          t.classMember.classId,
+          classes.map((c) => c.id),
+        ),
+      ),
+    );
+  return !!m;
+}
+
+export async function profileClasses(db: Db, profileId: string) {
+  return db
+    .select({ id: t.classGroup.id, name: t.classGroup.name, joinedAt: t.classMember.joinedAt })
+    .from(t.classMember)
+    .innerJoin(t.classGroup, eq(t.classGroup.id, t.classMember.classId))
+    .where(eq(t.classMember.profileId, profileId));
+}
+
+export async function joinClass(db: Db, classId: string, profileId: string, parentId: string) {
+  await db
+    .insert(t.classMember)
+    .values({ classId, profileId, addedBy: parentId })
+    .onConflictDoNothing();
+}
+
+export async function leaveClass(db: Db, classId: string, profileId: string) {
+  await db
+    .delete(t.classMember)
+    .where(and(eq(t.classMember.classId, classId), eq(t.classMember.profileId, profileId)));
+}

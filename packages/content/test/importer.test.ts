@@ -1,5 +1,9 @@
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { blockingIssues, canJoin, loadEdition } from '../src/importer.js';
+import { contentHash } from '../src/canonical.js';
+import { blockingIssues, canJoin, loadEdition, loadIdMaps } from '../src/importer.js';
 import { forbiddenPaths, studentProjection } from '../src/projection.js';
 import { CONTENT_DIR, HAS_CONTENT } from './helpers.js';
 
@@ -8,6 +12,22 @@ describe('canJoin (règle « ordre »)', () => {
     expect(canJoin('هٰذَا بَابٌ', ['بَابٌ', 'هٰذَا'], ' ')).toBe(true);
     expect(canJoin('ثَبَتَ', ['تَ', 'ثَ', 'بَ'], '')).toBe(true);
     expect(canJoin('هٰذَا بَيْتٌ', ['بَابٌ', 'هٰذَا'], ' ')).toBe(false);
+  });
+});
+
+describe('tables de correspondance des identifiants', () => {
+  it('lit les tables, signale une table illisible, ignore un dossier absent', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'ids-'));
+    writeFileSync(
+      join(dir, 'en1-ad1-correspondance.json'),
+      '\uFEFF' + JSON.stringify({ correspondance: { 'en1.l01.ex1': 'en1.l01.ex1' } }),
+    );
+    writeFileSync(join(dir, 'x-correspondance.json'), '{');
+    const issues: Parameters<typeof loadIdMaps>[1] = [];
+    const m = loadIdMaps(dir, issues);
+    expect(m?.get('en1.l01.ex1')).toBe('en1.l01.ex1');
+    expect(issues.map((i) => i.code)).toEqual(['ids_illisible']);
+    expect(loadIdMaps(join(dir, 'absent'), [])).toBeNull();
   });
 });
 
@@ -54,6 +74,18 @@ describe.skipIf(!HAS_CONTENT)('import réel en1 + ad1 (sans ressaisie)', () => {
   it('contrôle des versets', () => {
     expect(load.verseStats.total).toBeGreaterThan(100);
     expect(load.verseStats.erreurs).toBe(0);
+  });
+  it('livres gelés : identifiants explicites conformes à la table de correspondance', () => {
+    const ids = load.levels.flatMap((l) => l.units.flatMap((u) => u.exercises.map((e) => e.id)));
+    expect(ids).toHaveLength(257);
+    expect(load.issues.filter((i) => i.code.startsWith('id'))).toEqual([]);
+    const map = loadIdMaps(join(CONTENT_DIR, 'ids'), []);
+    if (map) for (const id of ids) expect([...map.values()]).toContain(id);
+    // l'empreinte ignore le champ « id » : ajouter l'identifiant ne périme aucune réponse
+    const ex = load.levels[0]!.units[0]!.exercises[0]!;
+    const { id: _i, ...body } = ex.content as { id?: string };
+    void _i;
+    expect(contentHash(body)).toBe(ex.hash);
   });
   it('identifiants d’exercices uniques et empreintes stables (deux imports identiques)', () => {
     const keys = load.levels.flatMap((l) => l.units.flatMap((u) => u.exercises.map((e) => e.key)));

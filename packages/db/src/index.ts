@@ -5,3 +5,4 @@ export * from './queries.js';
 export * from './env.js';
 export * from './attempts.js';
 export * from './purge.js';
+export * from './hifz.js';

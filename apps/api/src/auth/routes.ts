@@ -60,7 +60,8 @@ const err = (reply: FastifyReply, status: number, code: string, extra: object = 
 const EMAIL = '^[^\\s@]{1,64}@[^\\s@]{1,190}\\.[^\\s@]{2,24}$';
 const COUNTRY = '^[A-Z]{2}$';
 const YEAR = { type: 'integer', minimum: 1900, maximum: 2100 } as const;
-const OPTIONAL_CONSENTS: ReadonlySet<string> = new Set(['rappels']);
+/** consentements facultatifs (retirables) ; « partage_enseignant » : suivi du hifẓ par l'enseignant d'une classe */
+const OPTIONAL_CONSENTS: ReadonlySet<string> = new Set(['rappels', 'partage_enseignant']);
 const AVATARS = ['etoile', 'lune', 'soleil', 'feuille', 'goutte', 'livre'];
 
 export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
@@ -574,7 +575,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   app.post<{ Body: { pin: string; password: string } }>(
     '/api/v1/account/pin',
     {
-      preHandler: needParent,
+      // code parent (ou code de l'enseignant / de l'adulte) : protège les réglages d'un appareil partagé
+      preHandler: needAuth,
       schema: {
         body: {
           type: 'object',
@@ -602,7 +604,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   app.post<{ Body: { pin: string } }>(
     '/api/v1/account/pin/verify',
     {
-      preHandler: needParent,
+      preHandler: needAuth,
       schema: {
         body: {
           type: 'object',
@@ -664,6 +666,9 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       // un consentement nécessaire au service se retire en supprimant le profil ou le compte
       if (!OPTIONAL_CONSENTS.has(c.type)) return err(reply, 409, 'consentement_necessaire');
       await db.update(t.consent).set({ withdrawnAt: new Date() }).where(eq(t.consent.id, c.id));
+      // retrait du partage avec l'enseignant : le profil quitte ses classes
+      if (c.type === 'partage_enseignant' && c.profileId)
+        await db.delete(t.classMember).where(eq(t.classMember.profileId, c.profileId));
       await audit(db, req.auth!.accountId, 'consentement.retrait', c.id, { type: c.type });
       return { ok: true };
     },
@@ -677,9 +682,19 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     const ids = profiles.map((p) => p.id);
     const attempts = [];
     const progress = [];
+    const hifzPlans = [];
+    const hifzEvents = [];
+    const classes = [];
     for (const pid of ids) {
       attempts.push(...(await db.select().from(t.attempt).where(eq(t.attempt.profileId, pid))));
       progress.push(...(await db.select().from(t.progress).where(eq(t.progress.profileId, pid))));
+      hifzPlans.push(...(await db.select().from(t.hifzPlan).where(eq(t.hifzPlan.profileId, pid))));
+      hifzEvents.push(
+        ...(await db.select().from(t.hifzEvent).where(eq(t.hifzEvent.profileId, pid))),
+      );
+      classes.push(
+        ...(await db.select().from(t.classMember).where(eq(t.classMember.profileId, pid))),
+      );
     }
     const consents = await db.select().from(t.consent).where(eq(t.consent.accountId, id));
     const sessions = await db
@@ -710,6 +725,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       consentements: consents,
       progression: progress,
       reponses: attempts,
+      hifz: { plans: hifzPlans, journal: hifzEvents, classes },
       sessions,
     };
   });

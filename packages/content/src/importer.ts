@@ -163,6 +163,36 @@ function readText(path: string): string {
   return readFileSync(path, 'utf8');
 }
 
+/** Identifiant explicite d'exercice : `<niveau>.l<NN>.ex<k>` (ou un suffixe stable après le point). */
+export const EXERCISE_ID = /^[a-z]{2,3}\d{1,2}\.l\d{2}\.[a-z0-9_-]{1,40}$/;
+
+/**
+ * Tables `ids/*-correspondance.json` (champ `correspondance` : ancien identifiant → nouvel id). Absentes :
+ * null (les livres non gelés gardent l'identifiant de position).
+ */
+export function loadIdMaps(dir: string, issues: Issue[]): Map<string, string> | null {
+  if (!existsSync(dir)) return null;
+  const map = new Map<string, string>();
+  for (const f of readdirSync(dir)
+    .filter((n) => n.endsWith('-correspondance.json'))
+    .sort()) {
+    try {
+      const j = JSON.parse(readText(join(dir, f)).replace(/^\uFEFF/, '')) as {
+        correspondance?: Record<string, string>;
+      };
+      for (const [k, v] of Object.entries(j.correspondance ?? {})) map.set(k, v);
+    } catch (e) {
+      issues.push({
+        severity: 'erreur',
+        code: 'ids_illisible',
+        file: `ids/${f}`,
+        message: `table de correspondance illisible : ${(e as Error).message}`,
+      });
+    }
+  }
+  return map.size ? map : null;
+}
+
 export function loadEdition(opts: LoadOptions): EditionLoad {
   const { contentDir } = opts;
   const issues: Issue[] = [];
@@ -187,6 +217,10 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
     'data/index-lecons.js',
   );
   const lessonIndex = indexParsed.value as Record<string, LessonIndexEntry>;
+
+  // tables de correspondance des identifiants (gel des livres) : ancien identifiant de position → id
+  const idMap = loadIdMaps(join(contentDir, 'ids'), issues);
+  const seenIds = new Set<string>();
 
   const verseStats: VerseStats = { total: 0, identique: 0, extrait: 0, voulu: 0, erreurs: 0 };
   const verse = (
@@ -358,8 +392,54 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
       }
 
       const exercises: ImportedExercise[] = (L.exercices ?? []).map((ex, i) => {
-        const exId = `${id}.ex${i + 1}`;
-        const hash = contentHash(ex);
+        // identifiant : champ « id » explicite des livres gelés, sinon identifiant de position (ancien)
+        const positional = `${id}.ex${i + 1}`;
+        const explicit = (ex as { id?: unknown }).id;
+        let exId = positional;
+        if (explicit !== undefined) {
+          if (
+            typeof explicit !== 'string' ||
+            !EXERCISE_ID.test(explicit) ||
+            !explicit.startsWith(`${id}.`)
+          )
+            issues.push({
+              severity: 'erreur',
+              code: 'id_exercice',
+              file: rel,
+              unit: id,
+              message: `${positional} : identifiant explicite invalide (${String(explicit)})`,
+            });
+          else exId = explicit;
+          const mapped = idMap?.get(positional);
+          if (idMap && mapped !== exId)
+            issues.push({
+              severity: 'erreur',
+              code: 'id_correspondance',
+              file: rel,
+              unit: id,
+              message: `${positional} → ${mapped ?? '(absent de la table)'} ≠ id du livre ${String(explicit)}`,
+            });
+        } else if (idMap?.has(positional))
+          issues.push({
+            severity: 'avertissement',
+            code: 'id_absent',
+            file: rel,
+            unit: id,
+            message: `${positional} : livre gelé sans champ « id » (identifiant de position gardé)`,
+          });
+        if (seenIds.has(exId))
+          issues.push({
+            severity: 'erreur',
+            code: 'id_double',
+            file: rel,
+            unit: id,
+            message: `identifiant d'exercice en double : ${exId}`,
+          });
+        seenIds.add(exId);
+        // l'empreinte ne dépend pas du champ « id » : ajouter l'identifiant ne périme aucune réponse
+        const { id: _omit, ...body } = ex as typeof ex & { id?: unknown };
+        void _omit;
+        const hash = contentHash(body);
         if ((LANGUAGE_EXERCISE_TYPES as readonly string[]).includes(ex.type)) {
           for (const p of checkLanguageExercise(ex))
             issues.push({
