@@ -1,6 +1,7 @@
 /**
  * Rendu HTML de la page publique du QR code (sans JavaScript, < 100 Ko, jamais d'exercice ni de corrigé).
  */
+import { letterColorIndex, splitMarked } from '@awform/content/text';
 import { t } from './i18n';
 
 export interface PublicUnit {
@@ -24,6 +25,16 @@ const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, (c) => `&#${c.ch
 
 export function renderPublic(u: PublicUnit): string {
   const L = u.lesson;
+  const lettres = L?.lettres ?? [];
+  // lettres étudiées colorées comme dans le livre (balisage [..]), texte jamais transformé
+  const ar = (s: unknown) =>
+    splitMarked(String(s ?? ''))
+      .map((seg) =>
+        seg.marked
+          ? `<span class="c${letterColorIndex(seg.text, lettres)}">${esc(seg.text)}</span>`
+          : esc(seg.text),
+      )
+      .join('');
   const title = L?.titre_fr ?? u.titleFr ?? u.unitId;
   const symbols = Object.entries(u.illustrations)
     .map(([k, v]) => `<symbol id="i-${esc(k)}" viewBox="${esc(v.viewBox)}">${v.svg}</symbol>`)
@@ -31,13 +42,13 @@ export function renderPublic(u: PublicUnit): string {
   const words = (L?.mots ?? [])
     .map(
       (m) =>
-        `<li>${m.img && u.illustrations[m.img] ? `<svg class="pic" aria-hidden="true"><use href="#i-${esc(m.img)}"/></svg>` : ''}<span class="ar" lang="ar" dir="rtl">${esc(m.ar)}</span><span class="fr">${esc(m.fr)}</span></li>`,
+        `<li>${m.img && u.illustrations[m.img] ? `<svg class="pic" aria-hidden="true"><use href="#i-${esc(m.img)}"/></svg>` : ''}<span class="ar" lang="ar" dir="rtl">${ar(m.ar)}</span><span class="fr">${esc(m.fr)}</span></li>`,
     )
     .join('');
   const goals = (L?.objectifs ?? [])
     .map(
       (o) =>
-        `<li>${o.ar ? `<span class="ar" lang="ar" dir="rtl">${esc(o.ar)}</span> ` : ''}${esc(o.fr)}</li>`,
+        `<li>${o.ar ? `<span class="ar" lang="ar" dir="rtl">${ar(o.ar)}</span> ` : ''}${ar(o.fr)}</li>`,
     )
     .join('');
   const letters = (L?.lettres ?? [])
@@ -54,7 +65,7 @@ body{margin:0;font:16px/1.5 system-ui,sans-serif;background:#fffdf7;color:#1c1b1
 main{max-width:720px;margin:0 auto;padding:16px}
 header{background:#17344f;color:#fff;padding:12px 16px;font-weight:700;letter-spacing:.08em}
 .ar{font-family:'Noto Naskh Arabic','Geeza Pro','Traditional Arabic',serif;font-size:1.5em}
-.big{font-size:2.4em}
+.big{font-size:2.4em}.c0{color:#e5484d}.c1{color:#2f6fdb}.c2{color:#1f9d6b}.c3{color:#c98a0b}
 h1{margin:.2em 0}.muted{color:#5b5a55}
 ul.words{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 ul.words li{border:2px solid #e8dfcd;border-radius:14px;padding:8px;display:grid;justify-items:center;gap:2px;background:#fff}
@@ -64,7 +75,7 @@ a.go{display:inline-block;margin:16px 0;padding:12px 18px;border-radius:12px;bac
 <body><header>${esc(t('app.nom'))}</header><main>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${symbols}</defs></svg>
 <p class="muted">${esc(num)}</p>
-<h1><span class="ar" lang="ar" dir="rtl">${esc(L?.titre_ar ?? u.titleAr ?? '')}</span><br>${esc(title)}</h1>
+<h1><span class="ar" lang="ar" dir="rtl">${ar(L?.titre_ar ?? u.titleAr ?? '')}</span><br>${ar(title)}</h1>
 ${letters ? `<p>${letters}</p>` : ''}
 ${goals ? `<h2>${esc(t('qr.objectifs'))}</h2><ul>${goals}</ul>` : ''}
 ${words ? `<h2>${esc(t('qr.mots'))}</h2><ul class="words">${words}</ul>` : ''}

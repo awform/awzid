@@ -192,6 +192,13 @@ test.describe('lot 6', () => {
     await page.goto('/revisions');
     await page.getByTestId('retourner').click();
     await shot('30-carte-mot');
+    // un peu d'activité pour le tableau de bord
+    await page.getByTestId('je-savais').click();
+    for (let k = 0; k < 3; k++) {
+      await page.getByTestId('retourner').click();
+      await page.getByTestId(k % 2 ? 'a-revoir' : 'je-savais').click();
+    }
+    await expect(page.getByTestId('en-attente')).toHaveCount(0, { timeout: 15_000 });
     await page.goto('/suivi');
     await page.getByTestId('activite').waitFor();
     await shot('31-tableau-de-bord', true);
