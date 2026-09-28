@@ -5,7 +5,11 @@ loadRootEnv();
 const host = process.env.API_HOST ?? '127.0.0.1';
 const port = Number(process.env.API_PORT ?? 3000);
 const h = connect(process.env.DATABASE_URL);
-const app = buildApp({ db: h.db, logger: true, editionCode: process.env.AWFORM_EDITION_FORCE || undefined });
+const app = buildApp({
+  db: h.db,
+  logger: true,
+  editionCode: process.env.AWFORM_EDITION_FORCE || undefined,
+});
 
 const stop = async () => {
   await app.close();

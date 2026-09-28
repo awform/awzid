@@ -43,7 +43,11 @@ export function isLanguageExercise(ex: Exercise): ex is LanguageExercise {
 // ------------------------------------------------------------------ vérifications élémentaires
 
 /** premiere_lettre : `data-a = esc(it.reponse)`, `data-o = esc(option)` → égalité exacte (sans plain). */
-export function checkPremiereLettre(ex: PremiereLettreExercise, item: number, choice: string): boolean {
+export function checkPremiereLettre(
+  ex: PremiereLettreExercise,
+  item: number,
+  choice: string,
+): boolean {
   const it = ex.items[item];
   return !!it && choice === String(it.reponse);
 }
@@ -148,7 +152,13 @@ export interface GradeResult {
 
 function result(items: boolean[], wrongSelections = 0): GradeResult {
   const correct = items.filter(Boolean).length;
-  return { total: items.length, correct, score: items.length ? correct / items.length : 0, items, wrongSelections };
+  return {
+    total: items.length,
+    correct,
+    score: items.length ? correct / items.length : 0,
+    items,
+    wrongSelections,
+  };
 }
 
 export class ResponseTypeError extends Error {
@@ -163,26 +173,44 @@ export function gradeExercise(ex: LanguageExercise, response: ExerciseResponse):
   switch (ex.type) {
     case 'premiere_lettre': {
       const r = response as Extract<ExerciseResponse, { answers: ReadonlyArray<string | null> }>;
-      return result(ex.items.map((_, i) => r.answers[i] != null && checkPremiereLettre(ex, i, r.answers[i] as string)));
+      return result(
+        ex.items.map(
+          (_, i) => r.answers[i] != null && checkPremiereLettre(ex, i, r.answers[i] as string),
+        ),
+      );
     }
     case 'ecoute': {
       const r = response as Extract<ExerciseResponse, { answers: ReadonlyArray<string | null> }>;
-      return result(ex.items.map((_, i) => r.answers[i] != null && checkEcoute(ex, i, r.answers[i] as string)));
+      return result(
+        ex.items.map((_, i) => r.answers[i] != null && checkEcoute(ex, i, r.answers[i] as string)),
+      );
     }
     case 'complete': {
       const r = response as Extract<ExerciseResponse, { answers: ReadonlyArray<string | null> }>;
-      return result(ex.items.map((_, i) => r.answers[i] != null && checkComplete(ex, i, r.answers[i] as string)));
+      return result(
+        ex.items.map(
+          (_, i) => r.answers[i] != null && checkComplete(ex, i, r.answers[i] as string),
+        ),
+      );
     }
     case 'vrai_faux': {
       const r = response as Extract<ExerciseResponse, { type: 'vrai_faux' }>;
-      return result(ex.items.map((_, i) => r.answers[i] != null && checkVraiFaux(ex, i, r.answers[i] as boolean)));
+      return result(
+        ex.items.map(
+          (_, i) => r.answers[i] != null && checkVraiFaux(ex, i, r.answers[i] as boolean),
+        ),
+      );
     }
     case 'relier': {
       const r = response as Extract<ExerciseResponse, { type: 'relier' }>;
-      return result(ex.items.map((_, i) => r.pairs[i] != null && checkRelier(ex, i, r.pairs[i] as number)));
+      return result(
+        ex.items.map((_, i) => r.pairs[i] != null && checkRelier(ex, i, r.pairs[i] as number)),
+      );
     }
     case 'chasse': {
-      const sel = new Set((response as Extract<ExerciseResponse, { selected: readonly number[] }>).selected);
+      const sel = new Set(
+        (response as Extract<ExerciseResponse, { selected: readonly number[] }>).selected,
+      );
       const items: boolean[] = [];
       let wrong = 0;
       ex.grille.forEach((_, k) => {
@@ -192,7 +220,9 @@ export function gradeExercise(ex: LanguageExercise, response: ExerciseResponse):
       return result(items, wrong);
     }
     case 'contient': {
-      const sel = new Set((response as Extract<ExerciseResponse, { selected: readonly number[] }>).selected);
+      const sel = new Set(
+        (response as Extract<ExerciseResponse, { selected: readonly number[] }>).selected,
+      );
       const items: boolean[] = [];
       let wrong = 0;
       ex.mots.forEach((_, k) => {
@@ -203,7 +233,11 @@ export function gradeExercise(ex: LanguageExercise, response: ExerciseResponse):
     }
     case 'ordre': {
       const r = response as Extract<ExerciseResponse, { type: 'ordre' }>;
-      return result(ex.items.map((_, i) => r.sequences[i] != null && checkOrdre(ex, i, r.sequences[i] as number[])));
+      return result(
+        ex.items.map(
+          (_, i) => r.sequences[i] != null && checkOrdre(ex, i, r.sequences[i] as number[]),
+        ),
+      );
     }
   }
 }
@@ -245,19 +279,26 @@ export function correctResponse(ex: LanguageExercise): ExerciseResponse {
     case 'ecoute':
       return {
         type: ex.type,
-        answers: ex.items.map((it) => it.options.find((o) => plain(o) === ecouteExpected(it)) ?? ecouteExpected(it)),
+        answers: ex.items.map(
+          (it) => it.options.find((o) => plain(o) === ecouteExpected(it)) ?? ecouteExpected(it),
+        ),
       };
     case 'complete':
       return {
         type: ex.type,
-        answers: ex.items.map((it) => it.options.find((o) => plain(o) === plain(it.reponse)) ?? it.reponse),
+        answers: ex.items.map(
+          (it) => it.options.find((o) => plain(o) === plain(it.reponse)) ?? it.reponse,
+        ),
       };
     case 'vrai_faux':
       return { type: ex.type, answers: ex.items.map((it) => !!it.vrai) };
     case 'relier':
       return { type: ex.type, pairs: ex.items.map((_, i) => i) };
     case 'chasse':
-      return { type: ex.type, selected: ex.grille.flatMap((_, k) => (checkChasseCell(ex, k) ? [k] : [])) };
+      return {
+        type: ex.type,
+        selected: ex.grille.flatMap((_, k) => (checkChasseCell(ex, k) ? [k] : [])),
+      };
     case 'contient':
       return { type: ex.type, selected: ex.mots.flatMap((m, k) => (m.oui ? [k] : [])) };
     case 'ordre':

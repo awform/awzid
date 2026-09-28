@@ -60,12 +60,19 @@ describe('règles du moteur (cas limites)', () => {
     expect(checkOrdre(phrase, 0, [0, 1])).toBe(false);
     expect(checkOrdre(phrase, 0, [1])).toBe(false);
     expect(checkOrdre(phrase, 0, [1, 1])).toBe(false);
-    const syll: OrdreExercise = { type: 'ordre', items: [{ mots: ['تَ', 'ثَ', 'بَ'], phrase: 'ثَبَتَ' }] };
+    const syll: OrdreExercise = {
+      type: 'ordre',
+      items: [{ mots: ['تَ', 'ثَ', 'بَ'], phrase: 'ثَبَتَ' }],
+    };
     expect(ordreSolution(syll, 0)).toEqual([1, 2, 0]);
     expect(checkOrdre(syll, 0, [1, 2, 0])).toBe(true);
   });
   it('chasse : bare(case) = bare(cible) ; les erreurs sont comptées sans retirer de points', () => {
-    const ex: ChasseExercise = { type: 'chasse', cible: 'بَ', grille: ['ب', 'ت', 'بـ', 'ـب', 'ن', 'ث'] };
+    const ex: ChasseExercise = {
+      type: 'chasse',
+      cible: 'بَ',
+      grille: ['ب', 'ت', 'بـ', 'ـب', 'ن', 'ث'],
+    };
     expect(exerciseTotal(ex)).toBe(3);
     const r = gradeExercise(ex, { type: 'chasse', selected: [0, 1, 2] });
     expect(r).toMatchObject({ total: 3, correct: 2, wrongSelections: 1 });
@@ -80,7 +87,10 @@ describe('règles du moteur (cas limites)', () => {
       ],
     };
     expect(gradeExercise(c, correctResponse(c)).score).toBe(1);
-    const r: RelierExercise = { type: 'relier', items: [{ ar: 'بَابٌ' }, { ar: 'بَيْتٌ' }, { ar: 'تُوتٌ' }] };
+    const r: RelierExercise = {
+      type: 'relier',
+      items: [{ ar: 'بَابٌ' }, { ar: 'بَيْتٌ' }, { ar: 'تُوتٌ' }],
+    };
     expect(gradeExercise(r, { type: 'relier', pairs: [0, 2, 1] }).correct).toBe(1);
     const v: VraiFauxExercise = { type: 'vrai_faux', items: [{ ar: 'هٰذَا بَابٌ', vrai: false }] };
     expect(gradeExercise(v, { type: 'vrai_faux', answers: [true] }).correct).toBe(0);

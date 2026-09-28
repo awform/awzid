@@ -55,7 +55,8 @@ function assertWrongAnswersRefused(ex: LanguageExercise): number {
       ex.items.forEach((it, i) => {
         const bad = it.options.filter((o) => o !== String(it.reponse));
         expect(bad.length, `item ${i + 1} sans mauvaise option`).toBeGreaterThan(0);
-        for (const o of bad) expect(checkPremiereLettre(ex, i, o), `item ${i + 1} option ${o}`).toBe(false);
+        for (const o of bad)
+          expect(checkPremiereLettre(ex, i, o), `item ${i + 1} option ${o}`).toBe(false);
         wrong += bad.length;
       });
       break;
@@ -71,7 +72,8 @@ function assertWrongAnswersRefused(ex: LanguageExercise): number {
       ex.items.forEach((it, i) => {
         const bad = it.options.filter((o) => plain(o) !== plain(it.reponse));
         expect(bad.length, `item ${i + 1} sans mauvaise option`).toBeGreaterThan(0);
-        for (const o of bad) expect(checkComplete(ex, i, o), `item ${i + 1} option ${o}`).toBe(false);
+        for (const o of bad)
+          expect(checkComplete(ex, i, o), `item ${i + 1} option ${o}`).toBe(false);
         wrong += bad.length;
       });
       break;
@@ -118,7 +120,8 @@ function assertWrongAnswersRefused(ex: LanguageExercise): number {
         // ordre inverse (s'il donne une autre phrase), sinon ordre incomplet
         const reversed = [...sol].reverse();
         const labels = it.mots.map((m) => plain(m));
-        const differs = reversed.map((k) => labels[k]).join('|') !== sol.map((k) => labels[k]).join('|');
+        const differs =
+          reversed.map((k) => labels[k]).join('|') !== sol.map((k) => labels[k]).join('|');
         const bad = differs ? reversed : sol.slice(0, -1);
         expect(checkOrdre(ex, i, bad), `item ${i + 1}`).toBe(false);
         wrong++;
@@ -128,18 +131,21 @@ function assertWrongAnswersRefused(ex: LanguageExercise): number {
   return wrong;
 }
 
-describe.skipIf(!HAS_CONTENT)(`corpus réel ${LEVELS.join(' + ')} : corrigé accepté, mauvaises réponses refusées`, () => {
-  it('le corpus contient les 8 types « langue »', () => {
-    expect(new Set(cases.map((c) => c.ex.type)).size).toBe(8);
-    expect(cases.length).toBeGreaterThan(200);
-  });
+describe.skipIf(!HAS_CONTENT)(
+  `corpus réel ${LEVELS.join(' + ')} : corrigé accepté, mauvaises réponses refusées`,
+  () => {
+    it('le corpus contient les 8 types « langue »', () => {
+      expect(new Set(cases.map((c) => c.ex.type)).size).toBe(8);
+      expect(cases.length).toBeGreaterThan(200);
+    });
 
-  it.each(cases)('$key', ({ ex }) => {
-    const good = gradeExercise(ex, correctResponse(ex));
-    expect(good.total).toBe(exerciseTotal(ex));
-    expect(good.total).toBeGreaterThan(0);
-    expect(good.correct).toBe(good.total);
-    expect(good.score).toBe(1);
-    expect(assertWrongAnswersRefused(ex)).toBeGreaterThan(0);
-  });
-});
+    it.each(cases)('$key', ({ ex }) => {
+      const good = gradeExercise(ex, correctResponse(ex));
+      expect(good.total).toBe(exerciseTotal(ex));
+      expect(good.total).toBeGreaterThan(0);
+      expect(good.correct).toBe(good.total);
+      expect(good.score).toBe(1);
+      expect(assertWrongAnswersRefused(ex)).toBeGreaterThan(0);
+    });
+  },
+);

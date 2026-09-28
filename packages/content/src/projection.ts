@@ -27,15 +27,24 @@ function strip(value: unknown): unknown {
   return value;
 }
 
-/** Projection élève (entraînement) d'une leçon : copie profonde sans les champs réservés. */
+/**
+ * Projection élève (entraînement) d'une leçon : copie profonde sans les champs réservés.
+ * Bilan ou examen : la traduction des versets n'est jamais envoyée (CDC §3.1, moteur `lectureBilan`).
+ */
 export function studentProjection<T>(lesson: T): T {
-  return strip(lesson) as T;
+  const out = strip(lesson) as T;
+  const L = out as { type?: unknown; coran?: { versets?: Array<Record<string, unknown>> } };
+  if ((L.type === 'bilan' || L.type === 'examen') && Array.isArray(L.coran?.versets)) {
+    for (const v of L.coran.versets) delete v.fr;
+  }
+  return out;
 }
 
 /** Liste des chemins interdits encore présents (test de non-fuite). */
 export function forbiddenPaths(value: unknown, path = '$'): string[] {
   const found: string[] = [];
-  if (Array.isArray(value)) value.forEach((v, i) => found.push(...forbiddenPaths(v, `${path}[${i}]`)));
+  if (Array.isArray(value))
+    value.forEach((v, i) => found.push(...forbiddenPaths(v, `${path}[${i}]`)));
   else if (value && typeof value === 'object') {
     for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
       if (isDropped(k)) found.push(`${path}.${k}`);

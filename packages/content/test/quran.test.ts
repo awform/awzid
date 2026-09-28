@@ -1,13 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ayahCandidates, checkVerse, loadTanzil, parseEcartsVoulus, parseRefs } from '../src/quran.js';
+import {
+  ayahCandidates,
+  checkVerse,
+  loadTanzil,
+  parseEcartsVoulus,
+  parseRefs,
+} from '../src/quran.js';
 import { CONTENT_DIR, HAS_CONTENT } from './helpers.js';
 
 const BISM = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
 const FAKE = loadTanzil(
   [
-    `1:1\t﻿${BISM}\r`,
+    `1:1\t\uFEFF${BISM}\r`,
     '1:2\tٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ\r',
     `112:1\tبِّسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ هُوَ ٱللَّهُ أَحَدٌ\r`,
     '112:2\tٱللَّهُ ٱلصَّمَدُ\r',
@@ -34,13 +40,19 @@ describe('contrôle octet par octet', () => {
     expect(FAKE.get('1:2')?.endsWith('\r')).toBe(false);
   });
   it('accepte le verset identique, avec ou sans crochets de couleur', () => {
-    expect(checkVerse('ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ', '1:2', FAKE).status).toBe('identique');
-    expect(checkVerse('ٱلْ[حَ]مْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ', '1:2', FAKE).status).toBe('identique');
+    expect(checkVerse('ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ', '1:2', FAKE).status).toBe(
+      'identique',
+    );
+    expect(checkVerse('ٱلْ[حَ]مْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ', '1:2', FAKE).status).toBe(
+      'identique',
+    );
   });
   it('accepte le verset 1 sans basmala (basmala Tanzil avec chadda sur le bā)', () => {
     expect(ayahCandidates(FAKE, 112, 1)).toContain('قُلْ هُوَ ٱللَّهُ أَحَدٌ');
     expect(checkVerse('قُلْ هُوَ ٱللَّهُ أَحَدٌ', '112:1', FAKE).status).toBe('identique');
-    expect(checkVerse('قُلْ هُوَ ٱللَّهُ أَحَدٌ ۝ ٱللَّهُ ٱلصَّمَدُ', '112:1-2', FAKE).status).toBe('identique');
+    expect(checkVerse('قُلْ هُوَ ٱللَّهُ أَحَدٌ ۝ ٱللَّهُ ٱلصَّمَدُ', '112:1-2', FAKE).status).toBe(
+      'identique',
+    );
   });
   it('classe un extrait exact comme « extrait »', () => {
     expect(checkVerse('رَبِّ ٱلْعَٰلَمِينَ', '1:2 (fin)', FAKE).status).toBe('extrait');

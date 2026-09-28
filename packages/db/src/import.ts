@@ -48,19 +48,34 @@ export function qrSlug(unitId: string): string {
   return unitId.replace('.l', '-');
 }
 
-async function insertChunks<T>(rows: T[], size: number, fn: (chunk: T[]) => Promise<unknown>): Promise<void> {
+async function insertChunks<T>(
+  rows: T[],
+  size: number,
+  fn: (chunk: T[]) => Promise<unknown>,
+): Promise<void> {
   for (let i = 0; i < rows.length; i += size) await fn(rows.slice(i, i + size));
 }
 
-export async function importEdition(db: Db, load: EditionLoad, opts: ImportOptions): Promise<ImportResult> {
+export async function importEdition(
+  db: Db,
+  load: EditionLoad,
+  opts: ImportOptions,
+): Promise<ImportResult> {
   const blocking = blockingIssues(load);
   if (blocking.length)
     throw new ImportRefusedError(
-      `${blocking.length} erreur(s) bloquante(s) : ` + blocking.slice(0, 5).map((i) => `${i.unit ?? i.file ?? ''} ${i.message}`).join(' ; '),
+      `${blocking.length} erreur(s) bloquante(s) : ` +
+        blocking
+          .slice(0, 5)
+          .map((i) => `${i.unit ?? i.file ?? ''} ${i.message}`)
+          .join(' ; '),
     );
 
   const unitsCount = load.levels.reduce((s, l) => s + l.units.length, 0);
-  const exCount = load.levels.reduce((s, l) => s + l.units.reduce((s2, u) => s2 + u.exercises.length, 0), 0);
+  const exCount = load.levels.reduce(
+    (s, l) => s + l.units.reduce((s2, u) => s2 + u.exercises.length, 0),
+    0,
+  );
 
   return db.transaction(async (tx) => {
     const existing = await tx.select().from(t.edition).where(eq(t.edition.code, opts.code));
@@ -89,7 +104,10 @@ export async function importEdition(db: Db, load: EditionLoad, opts: ImportOptio
       await tx.delete(t.levelVersion).where(eq(t.levelVersion.editionId, ed.id));
       await tx.delete(t.hifzBook).where(eq(t.hifzBook.editionId, ed.id));
       await tx.delete(t.registryEntry).where(eq(t.registryEntry.editionId, ed.id));
-      await tx.update(t.edition).set({ sourceSha256: load.sourceSha256, report }).where(eq(t.edition.id, ed.id));
+      await tx
+        .update(t.edition)
+        .set({ sourceSha256: load.sourceSha256, report })
+        .where(eq(t.edition.id, ed.id));
       editionId = ed.id;
       status = 'remplace';
     } else {
@@ -102,7 +120,9 @@ export async function importEdition(db: Db, load: EditionLoad, opts: ImportOptio
     }
 
     // Coran de référence (lecture seule) : inséré une fois, puis vérifié octet par octet
-    const [{ n: quranCount } = { n: 0 }] = await tx.select({ n: sql<number>`count(*)::int` }).from(t.quranVerse);
+    const [{ n: quranCount } = { n: 0 }] = await tx
+      .select({ n: sql<number>`count(*)::int` })
+      .from(t.quranVerse);
     if (quranCount === 0) {
       const rows = [...load.tanzil.entries()].map(([k, text]) => {
         const [s, a] = k.split(':').map(Number);
@@ -113,7 +133,9 @@ export async function importEdition(db: Db, load: EditionLoad, opts: ImportOptio
       const stored = await tx.select().from(t.quranVerse);
       const diff = stored.filter((r) => load.tanzil.get(`${r.sura}:${r.aya}`) !== r.text);
       if (diff.length || stored.length !== load.tanzil.size)
-        throw new ImportRefusedError(`le texte coranique de référence en base diffère de Tanzil (${diff.length} versets)`);
+        throw new ImportRefusedError(
+          `le texte coranique de référence en base diffère de Tanzil (${diff.length} versets)`,
+        );
     }
 
     for (const lv of load.levels) {
@@ -141,11 +163,20 @@ export async function importEdition(db: Db, load: EditionLoad, opts: ImportOptio
           content: u.content,
           student: studentProjection(u.content),
         });
-        await tx.insert(t.qrRedirect).values({ slug: qrSlug(u.id), unitId: u.id }).onConflictDoNothing();
+        await tx
+          .insert(t.qrRedirect)
+          .values({ slug: qrSlug(u.id), unitId: u.id })
+          .onConflictDoNothing();
         for (const e of u.exercises) {
           await tx
             .insert(t.exercise)
-            .values({ id: e.id, unitId: u.id, position: e.position, type: e.type, graded: e.graded })
+            .values({
+              id: e.id,
+              unitId: u.id,
+              position: e.position,
+              type: e.type,
+              graded: e.graded,
+            })
             .onConflictDoUpdate({ target: t.exercise.id, set: { type: e.type, graded: e.graded } });
         }
         if (u.exercises.length)
@@ -162,7 +193,9 @@ export async function importEdition(db: Db, load: EditionLoad, opts: ImportOptio
     }
 
     if (load.hifz.length)
-      await tx.insert(t.hifzBook).values(load.hifz.map((h) => ({ editionId, code: h.code, content: h })));
+      await tx
+        .insert(t.hifzBook)
+        .values(load.hifz.map((h) => ({ editionId, code: h.code, content: h })));
     for (const [code, content] of Object.entries(load.hifzShared))
       await tx.insert(t.hifzBook).values({ editionId, code: `_${code}`, content });
 
@@ -197,5 +230,8 @@ async function publish(tx: Tx, editionId: string): Promise<void> {
     .update(t.edition)
     .set({ status: 'retiree' })
     .where(and(eq(t.edition.status, 'publiee'), ne(t.edition.id, editionId)));
-  await tx.update(t.edition).set({ status: 'publiee', publishedAt: new Date() }).where(eq(t.edition.id, editionId));
+  await tx
+    .update(t.edition)
+    .set({ status: 'publiee', publishedAt: new Date() })
+    .where(eq(t.edition.id, editionId));
 }

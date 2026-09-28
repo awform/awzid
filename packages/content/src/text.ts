@@ -40,7 +40,10 @@ export function splitMarked(s: string): MarkedSegment[] {
  * Indice de couleur d'un segment balisé (port de `lidx` d'awform.js) : lettre (ou digraphe) de la leçon
  * par laquelle le segment commence, préfixe le plus long ; ٱ compte comme ا, ءا comme آ ; sinon 3 (or).
  */
-export function letterColorIndex(segment: string, lettres: ReadonlyArray<{ l: string }> | undefined): number {
+export function letterColorIndex(
+  segment: string,
+  lettres: ReadonlyArray<{ l: string }> | undefined,
+): number {
   if (!lettres || lettres.length === 0) return 3;
   const b = bare(segment).replace(/ٱ/g, 'ا').replace(/^ءا/, 'آ');
   let best = -1;

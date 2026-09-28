@@ -140,7 +140,14 @@ export function canJoin(target: string, parts: readonly string[], sep: string): 
     if (tried.has(p)) continue;
     tried.add(p);
     const head = p + sep;
-    if (target.startsWith(head) && canJoin(target.slice(head.length), parts.filter((_, j) => j !== i), sep))
+    if (
+      target.startsWith(head) &&
+      canJoin(
+        target.slice(head.length),
+        parts.filter((_, j) => j !== i),
+        sep,
+      )
+    )
       return true;
   }
   return false;
@@ -158,29 +165,63 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
   // Tanzil + liste blanche des écarts voulus
   const tanzil = loadTanzil(readText(join(contentDir, 'coran', 'tanzil-uthmani.tsv')));
   if (tanzil.size !== 6236)
-    issues.push({ severity: 'erreur', code: 'tanzil_incomplet', message: `${tanzil.size} versets au lieu de 6 236` });
+    issues.push({
+      severity: 'erreur',
+      code: 'tanzil_incomplet',
+      message: `${tanzil.size} versets au lieu de 6 236`,
+    });
   const ecartsPath = join(contentDir, 'ECARTS_VERSETS.md');
-  const whitelist = existsSync(ecartsPath) ? parseEcartsVoulus(readText(ecartsPath)) : new Set<string>();
+  const whitelist = existsSync(ecartsPath)
+    ? parseEcartsVoulus(readText(ecartsPath))
+    : new Set<string>();
 
   // index des leçons
-  const indexParsed = parseDataFile(readText(join(dataDir, 'index-lecons.js')), 'data/index-lecons.js');
+  const indexParsed = parseDataFile(
+    readText(join(dataDir, 'index-lecons.js')),
+    'data/index-lecons.js',
+  );
   const lessonIndex = indexParsed.value as Record<string, LessonIndexEntry>;
 
   const verseStats: VerseStats = { total: 0, identique: 0, extrait: 0, voulu: 0, erreurs: 0 };
-  const verse = (level: string, unitFile: string, file: string, unitId: string, ar: string, ref: string | undefined) => {
+  const verse = (
+    level: string,
+    unitFile: string,
+    file: string,
+    unitId: string,
+    ar: string,
+    ref: string | undefined,
+  ) => {
     verseStats.total++;
     const r = checkVerse(ar, ref, tanzil);
     if (r.status === 'identique') verseStats.identique++;
     else if (r.status === 'extrait') {
       verseStats.extrait++;
       if (!/(début|fin|extrait|milieu|suite)/i.test(ref ?? ''))
-        issues.push({ severity: 'avertissement', code: 'coran_extrait_non_signale', file, unit: unitId, message: `${ref} : extrait exact de Tanzil, non marqué (début/fin/extrait) dans la référence` });
+        issues.push({
+          severity: 'avertissement',
+          code: 'coran_extrait_non_signale',
+          file,
+          unit: unitId,
+          message: `${ref} : extrait exact de Tanzil, non marqué (début/fin/extrait) dans la référence`,
+        });
     } else if (ref && whitelist.has(whitelistKey(level, unitFile, ref))) {
       verseStats.voulu++;
-      issues.push({ severity: 'avertissement', code: 'coran_ecart_voulu', file, unit: unitId, message: `${ref} : écart voulu (ECARTS_VERSETS.md) — ${r.detail ?? r.status}` });
+      issues.push({
+        severity: 'avertissement',
+        code: 'coran_ecart_voulu',
+        file,
+        unit: unitId,
+        message: `${ref} : écart voulu (ECARTS_VERSETS.md) — ${r.detail ?? r.status}`,
+      });
     } else {
       verseStats.erreurs++;
-      issues.push({ severity: 'erreur', code: `coran_${r.status}`, file, unit: unitId, message: `${ref ?? '(sans référence)'} : ${r.detail ?? r.status}` });
+      issues.push({
+        severity: 'erreur',
+        code: `coran_${r.status}`,
+        file,
+        unit: unitId,
+        message: `${ref ?? '(sans référence)'} : ${r.detail ?? r.status}`,
+      });
     }
   };
 
@@ -188,16 +229,27 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
   for (const code of opts.levels) {
     const dir = join(dataDir, code);
     if (!existsSync(dir)) {
-      issues.push({ severity: 'erreur', code: 'niveau_absent', message: `dossier data/${code} absent` });
+      issues.push({
+        severity: 'erreur',
+        code: 'niveau_absent',
+        message: `dossier data/${code} absent`,
+      });
       continue;
     }
     const bookParsed = parseDataFile(readText(join(dir, 'book.js')), `data/${code}/book.js`);
     const book = bookParsed.value as Book;
     if (book.code !== code)
-      issues.push({ severity: 'erreur', code: 'book_code', file: `data/${code}/book.js`, message: `code « ${book.code} » ≠ ${code}` });
+      issues.push({
+        severity: 'erreur',
+        code: 'book_code',
+        file: `data/${code}/book.js`,
+        message: `code « ${book.code} » ≠ ${code}`,
+      });
 
     const units: ImportedUnit[] = [];
-    for (const f of readdirSync(dir).filter((x) => UNIT_FILE.test(x)).sort()) {
+    for (const f of readdirSync(dir)
+      .filter((x) => UNIT_FILE.test(x))
+      .sort()) {
       const rel = `data/${code}/${f}`;
       const unitFile = basename(f, '.js');
       const id = `${code}.${unitFile}`;
@@ -205,31 +257,87 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
       try {
         parsed = parseDataFile(readText(join(dir, f)), rel);
       } catch (e) {
-        issues.push({ severity: 'erreur', code: 'lecture', file: rel, unit: id, message: (e as Error).message });
+        issues.push({
+          severity: 'erreur',
+          code: 'lecture',
+          file: rel,
+          unit: id,
+          message: (e as Error).message,
+        });
         continue;
       }
       if (parsed.callee !== 'AW.lesson')
-        issues.push({ severity: 'erreur', code: 'appel', file: rel, unit: id, message: `appel ${parsed.callee} au lieu de AW.lesson` });
+        issues.push({
+          severity: 'erreur',
+          code: 'appel',
+          file: rel,
+          unit: id,
+          message: `appel ${parsed.callee} au lieu de AW.lesson`,
+        });
       if (!parsed.strict)
-        issues.push({ severity: 'avertissement', code: 'json_non_strict', file: rel, unit: id, message: 'fichier en JavaScript non strict : lu dans le bac à sable (à convertir en JSON strict dans les livres)' });
+        issues.push({
+          severity: 'avertissement',
+          code: 'json_non_strict',
+          file: rel,
+          unit: id,
+          message:
+            'fichier en JavaScript non strict : lu dans le bac à sable (à convertir en JSON strict dans les livres)',
+        });
       const L = parsed.value as Lesson;
       for (const k of ['n', 'type', 'titre_ar', 'titre_fr'] as const) {
         if (L[k] === undefined || L[k] === '')
-          issues.push({ severity: 'erreur', code: 'champ_obligatoire', file: rel, unit: id, message: `champ « ${k} » absent` });
+          issues.push({
+            severity: 'erreur',
+            code: 'champ_obligatoire',
+            file: rel,
+            unit: id,
+            message: `champ « ${k} » absent`,
+          });
       }
       const kind = (KINDS.has(L.type) ? L.type : 'lecon') as UnitKind;
       if (!KINDS.has(L.type))
-        issues.push({ severity: 'erreur', code: 'type_unite', file: rel, unit: id, message: `type « ${String(L.type)} » inconnu` });
+        issues.push({
+          severity: 'erreur',
+          code: 'type_unite',
+          file: rel,
+          unit: id,
+          message: `type « ${String(L.type)} » inconnu`,
+        });
       if (L.n !== Number(unitFile.slice(1)))
-        issues.push({ severity: 'avertissement', code: 'rang', file: rel, unit: id, message: `n=${L.n} ≠ rang du fichier ${unitFile}` });
+        issues.push({
+          severity: 'avertissement',
+          code: 'rang',
+          file: rel,
+          unit: id,
+          message: `n=${L.n} ≠ rang du fichier ${unitFile}`,
+        });
       const idx = lessonIndex[id];
       let numBilan: number | null = null;
-      if (!idx) issues.push({ severity: 'avertissement', code: 'index_absent', file: rel, unit: id, message: 'unité absente de index-lecons.js' });
+      if (!idx)
+        issues.push({
+          severity: 'avertissement',
+          code: 'index_absent',
+          file: rel,
+          unit: id,
+          message: 'unité absente de index-lecons.js',
+        });
       else {
         if (idx.t !== kind)
-          issues.push({ severity: 'avertissement', code: 'index_type', file: rel, unit: id, message: `index : type ${idx.t} ≠ ${kind}` });
+          issues.push({
+            severity: 'avertissement',
+            code: 'index_type',
+            file: rel,
+            unit: id,
+            message: `index : type ${idx.t} ≠ ${kind}`,
+          });
         if (kind === 'lecon' && L.num_lecon !== undefined && idx.n !== L.num_lecon)
-          issues.push({ severity: 'avertissement', code: 'index_num', file: rel, unit: id, message: `index : n=${idx.n} ≠ num_lecon ${L.num_lecon}` });
+          issues.push({
+            severity: 'avertissement',
+            code: 'index_num',
+            file: rel,
+            unit: id,
+            message: `index : n=${idx.n} ≠ num_lecon ${L.num_lecon}`,
+          });
         if (kind === 'bilan') numBilan = idx.n;
       }
 
@@ -238,7 +346,13 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
         const hash = contentHash(ex);
         if ((LANGUAGE_EXERCISE_TYPES as readonly string[]).includes(ex.type)) {
           for (const p of checkLanguageExercise(ex))
-            issues.push({ severity: 'erreur', code: 'corrige', file: rel, unit: id, message: `${exId} (${ex.type}) : ${p}` });
+            issues.push({
+              severity: 'erreur',
+              code: 'corrige',
+              file: rel,
+              unit: id,
+              message: `${exId} (${ex.type}) : ${p}`,
+            });
         }
         return {
           id: exId,
@@ -286,15 +400,29 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
       const parsed = parseDataFile(readText(p), `data/hifz/${code}.js`);
       const H = parsed.value as HifzBook & { tajwid_ex?: Array<{ ar?: string; ref_fr?: string }> };
       if (!parsed.strict)
-        issues.push({ severity: 'avertissement', code: 'json_non_strict', file: `data/hifz/${code}.js`, message: 'carnet non strict' });
+        issues.push({
+          severity: 'avertissement',
+          code: 'json_non_strict',
+          file: `data/hifz/${code}.js`,
+          message: 'carnet non strict',
+        });
       for (const ex of H.tajwid_ex ?? []) {
-        if (ex.ar) verse(`hifz-${code}`, 'tajwid_ex', `data/hifz/${code}.js`, `hifz.${code}`, ex.ar, ex.ref_fr);
+        if (ex.ar)
+          verse(
+            `hifz-${code}`,
+            'tajwid_ex',
+            `data/hifz/${code}.js`,
+            `hifz.${code}`,
+            ex.ar,
+            ex.ref_fr,
+          );
       }
       hifz.push(H);
     }
     for (const name of ['commun', 'adab', 'tajwid']) {
       const p = join(hifzDir, `${name}.js`);
-      if (existsSync(p)) hifzShared[name] = parseDataFile(readText(p), `data/hifz/${name}.js`).value;
+      if (existsSync(p))
+        hifzShared[name] = parseDataFile(readText(p), `data/hifz/${name}.js`).value;
     }
   }
 
@@ -303,7 +431,12 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
   if (opts.withRegistry !== false) {
     const reg = (n: string) => {
       const p = join(contentDir, 'registre', `${n}.json`);
-      return existsSync(p) ? (JSON.parse(readText(p).replace(/^﻿/, '')) as Record<string, Record<string, unknown>>) : {};
+      return existsSync(p)
+        ? (JSON.parse(readText(p).replace(/^\uFEFF/, '')) as Record<
+            string,
+            Record<string, unknown>
+          >)
+        : {};
     };
     registry = { coran: reg('coran'), hadiths: reg('hadiths'), fiqh: reg('fiqh') };
     // le texte des versets du registre doit être celui de Tanzil
@@ -313,7 +446,12 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
       if (!texte) continue;
       const r = checkVerse(texte, ref, tanzil);
       if (r.status !== 'identique')
-        issues.push({ severity: 'erreur', code: 'registre_coran', unit: rid, message: `${ref} : ${r.detail ?? r.status}` });
+        issues.push({
+          severity: 'erreur',
+          code: 'registre_coran',
+          unit: rid,
+          message: `${ref} : ${r.detail ?? r.status}`,
+        });
     }
   }
 
@@ -322,7 +460,18 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
     ? sha256Hex(readText(manifest))
     : contentHash(levels.map((l) => l.units.map((u) => u.sha256)));
 
-  return { contentDir, sourceSha256, levels, lessonIndex, hifz, hifzShared, registry, tanzil, verseStats, issues };
+  return {
+    contentDir,
+    sourceSha256,
+    levels,
+    lessonIndex,
+    hifz,
+    hifzShared,
+    registry,
+    tanzil,
+    verseStats,
+    issues,
+  };
 }
 
 export function blockingIssues(load: Pick<EditionLoad, 'issues'>): Issue[] {

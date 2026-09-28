@@ -10,6 +10,7 @@ set -euo pipefail
 
 NODE_MAJOR=24                # Node.js LTS active en septembre 2026 (« Krypton ») ; 26 devient LTS fin octobre 2026
 PNPM_VERSION=10.34.5         # figé ici et dans package.json (packageManager)
+PLAYWRIGHT_VERSION=1.63.0   # même version que apps/web (tests de bout en bout)
 LAN_CIDR=192.168.50.0/24
 DEV_PORTS=(5173 4173 3000)   # vite dev, vite preview, API Fastify
 DB_ROLE=awform
@@ -86,6 +87,10 @@ sudo apt-get update -qq
 apt_install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo systemctl enable --now docker >/dev/null
 if ! id -nG "$USER" | grep -qw docker; then sudo usermod -aG docker "$USER"; fi
+
+log "6 bis. Dépendances système des navigateurs de test (Playwright, Chromium)"
+# (lancé hors du dépôt : dans un espace de travail pnpm, npx ne trouve pas le binaire téléchargé)
+(cd /tmp && sudo npx --yes --package="playwright@${PLAYWRIGHT_VERSION}" -- playwright install-deps chromium >/dev/null)
 
 log "7. Pare-feu ufw (SSH autorisé AVANT activation)"
 sudo ufw default deny incoming >/dev/null

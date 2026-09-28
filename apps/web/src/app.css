@@ -1,0 +1,126 @@
+/* Polices embarquées (SIL OFL), servies par l'application — jamais par un service tiers. */
+@font-face {
+  font-family: 'Amiri Quran';
+  font-style: normal;
+  font-weight: 400;
+  /* block : ne jamais afficher un verset dans une police de remplacement (CDC §3.2) */
+  font-display: block;
+  src: url('/fonts/amiri-quran-arabic-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Noto Naskh Arabic';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/noto-naskh-arabic-arabic-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Noto Naskh Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/noto-naskh-arabic-arabic-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/nunito-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/nunito-latin-700-normal.woff2') format('woff2');
+}
+
+:root {
+  --ink: #1b1b1b;
+  --ink2: #4a5566;
+  --paper: #fffdf8;
+  --card: #ffffff;
+  --line: #e6dcc8;
+  --teal: #1f7a8c;
+  --navy: #173b57;
+  --good: #1f9d6b;
+  --soft: #f6ddb5;
+  /* couleurs des lettres étudiées (moteur des livres) : rouge, bleu, vert, or */
+  --c0: #e5484d;
+  --c1: #2f6fdb;
+  --c2: #1f9d6b;
+  --c3: #c98a0b;
+  --ar-size: 26px;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+/* arabe courant : Noto Naskh Arabic, de droite à gauche, isolé du français */
+.ar {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: var(--ar-size);
+  line-height: 1.9;
+  unicode-bidi: isolate;
+}
+/* texte coranique : Amiri Quran uniquement */
+.quran-text {
+  font-family: 'Amiri Quran', serif;
+  font-size: calc(var(--ar-size) + 4px);
+  line-height: 2.3;
+  unicode-bidi: isolate;
+}
+.c0 {
+  color: var(--c0);
+  text-decoration: underline solid;
+}
+.c1 {
+  color: var(--c1);
+  text-decoration: underline dashed;
+}
+.c2 {
+  color: var(--c2);
+  text-decoration: underline dotted;
+}
+.c3 {
+  color: var(--c3);
+  text-decoration: underline double;
+}
+.c0,
+.c1,
+.c2,
+.c3 {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
+
+a {
+  color: var(--teal);
+}
+button {
+  font: inherit;
+  min-height: 48px;
+  min-width: 48px;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: var(--card);
+  cursor: pointer;
+  padding: 4px 14px;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 2px;
+}

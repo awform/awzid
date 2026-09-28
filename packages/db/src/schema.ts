@@ -33,7 +33,9 @@ export const editionStatus = pgEnum('edition_status', ['brouillon', 'publiee', '
 
 /** Photographie datée des fichiers des livres. */
 export const edition = pgTable('edition', {
-  id: uuid('id').primaryKey().default(sql`uuidv7()`),
+  id: uuid('id')
+    .primaryKey()
+    .default(sql`uuidv7()`),
   code: text('code').notNull().unique(),
   status: editionStatus('status').notNull().default('brouillon'),
   /** empreinte SHA-256 du manifeste de la copie source */
@@ -144,7 +146,10 @@ export const exerciseVersion = pgTable(
     itemCount: smallint('item_count').notNull(),
     content: jsonb('content').notNull(),
   },
-  (t) => [primaryKey({ columns: [t.editionId, t.exerciseId] }), index('exercise_version_hash').on(t.hash)],
+  (t) => [
+    primaryKey({ columns: [t.editionId, t.exerciseId] }),
+    index('exercise_version_hash').on(t.hash),
+  ],
 );
 
 /** Carnets de hifẓ (data/hifz/<code>.js) par édition. */
@@ -187,7 +192,10 @@ export const registryEntry = pgTable(
     validationHumaine: boolean('validation_humaine').notNull().default(false),
     data: jsonb('data').notNull(),
   },
-  (t) => [primaryKey({ columns: [t.editionId, t.kind, t.id] }), index('registry_statut').on(t.statut)],
+  (t) => [
+    primaryKey({ columns: [t.editionId, t.kind, t.id] }),
+    index('registry_statut').on(t.statut),
+  ],
 );
 
 /** URL courte et éternelle des QR codes : /l/en1-05 → en1.l05. */
@@ -207,7 +215,9 @@ export const accountKind = pgEnum('account_kind', ['parent', 'adulte', 'admin'])
 export const account = pgTable(
   'account',
   {
-    id: uuid('id').primaryKey().default(sql`uuidv7()`),
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
     kind: accountKind('kind').notNull(),
     /** e-mail en minuscules (V1 : ou téléphone) ; jamais d'autre donnée d'identité */
     email: text('email'),
@@ -230,7 +240,9 @@ export const profileKind = pgEnum('profile_kind', ['enfant', 'ado', 'adulte']);
 export const profile = pgTable(
   'profile',
   {
-    id: uuid('id').primaryKey().default(sql`uuidv7()`),
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
     ownerAccountId: uuid('owner_account_id')
       .notNull()
       .references(() => account.id, { onDelete: 'cascade' }),
@@ -245,7 +257,10 @@ export const profile = pgTable(
   },
   (t) => [
     index('profile_owner').on(t.ownerAccountId),
-    check('profile_birth_year', sql`${t.birthYear} IS NULL OR ${t.birthYear} BETWEEN 1900 AND 2100`),
+    check(
+      'profile_birth_year',
+      sql`${t.birthYear} IS NULL OR ${t.birthYear} BETWEEN 1900 AND 2100`,
+    ),
   ],
 );
 
@@ -266,7 +281,9 @@ export const guardianship = pgTable(
 
 /** Consentements (type, version du texte, date, retrait). */
 export const consent = pgTable('consent', {
-  id: uuid('id').primaryKey().default(sql`uuidv7()`),
+  id: uuid('id')
+    .primaryKey()
+    .default(sql`uuidv7()`),
   accountId: uuid('account_id')
     .notNull()
     .references(() => account.id, { onDelete: 'cascade' }),
@@ -333,7 +350,12 @@ export const attempt = pgTable(
   ],
 );
 
-export const progressStatus = pgEnum('progress_status', ['ouverte', 'commencee', 'terminee', 'maitrisee']);
+export const progressStatus = pgEnum('progress_status', [
+  'ouverte',
+  'commencee',
+  'terminee',
+  'maitrisee',
+]);
 
 /** État RECALCULÉ à partir des tentatives (profil × unité). */
 export const progress = pgTable(

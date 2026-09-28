@@ -78,7 +78,12 @@ export async function getUnitForStudent(db: Db, editionId: string, unitId: strin
   const unit = rows[0];
   if (!unit) return null;
   const exercises = await db
-    .select({ id: t.exercise.id, position: t.exercise.position, type: t.exercise.type, hash: t.exerciseVersion.hash })
+    .select({
+      id: t.exercise.id,
+      position: t.exercise.position,
+      type: t.exercise.type,
+      hash: t.exerciseVersion.hash,
+    })
     .from(t.exerciseVersion)
     .innerJoin(t.exercise, eq(t.exercise.id, t.exerciseVersion.exerciseId))
     .where(and(eq(t.exerciseVersion.editionId, editionId), eq(t.exercise.unitId, unitId)))

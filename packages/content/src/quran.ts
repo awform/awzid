@@ -17,8 +17,11 @@ export function loadTanzil(tsv: string): Map<string, string> {
     if (!line) continue;
     const tab = line.indexOf('\t');
     if (tab < 0) continue;
-    const key = line.slice(0, tab).replace(/^﻿/, '').trim();
-    const text = line.slice(tab + 1).replace(/^﻿/, '');
+    const key = line
+      .slice(0, tab)
+      .replace(/^\uFEFF/, '')
+      .trim();
+    const text = line.slice(tab + 1).replace(/^\uFEFF/, '');
     map.set(key, text);
   }
   return map;
@@ -69,11 +72,7 @@ export function ayahCandidates(tanzil: Tanzil, sura: number, aya: number): strin
 }
 
 export type VerseStatus =
-  | 'identique'
-  | 'extrait'
-  | 'ecart'
-  | 'reference_absente'
-  | 'reference_inconnue';
+  'identique' | 'extrait' | 'ecart' | 'reference_absente' | 'reference_inconnue';
 
 export interface VerseCheck {
   status: VerseStatus;
@@ -85,12 +84,14 @@ const SEPARATOR = '۝';
 /** Compare un verset de leçon (crochets retirés) au texte Tanzil des références données. */
 export function checkVerse(ar: string, ref: string | undefined, tanzil: Tanzil): VerseCheck {
   const ranges = parseRefs(ref ?? '');
-  if (ranges.length === 0) return { status: 'reference_absente', detail: `référence illisible : « ${ref ?? ''} »` };
+  if (ranges.length === 0)
+    return { status: 'reference_absente', detail: `référence illisible : « ${ref ?? ''} »` };
   const perAyah: string[][] = [];
   for (const r of ranges) {
     for (let a = r.from; a <= r.to; a++) {
       const c = ayahCandidates(tanzil, r.sura, a);
-      if (c.length === 0) return { status: 'reference_inconnue', detail: `${r.sura}:${a} absent de Tanzil` };
+      if (c.length === 0)
+        return { status: 'reference_inconnue', detail: `${r.sura}:${a} absent de Tanzil` };
       perAyah.push(c);
     }
   }

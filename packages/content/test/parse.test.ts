@@ -40,7 +40,7 @@ describe('lecture des fichiers AW.xxx(...)', () => {
     expect(p.strict).toBe(false);
     expect(p.value).toEqual({ code: 'en1', n: 1, liste: ['a', 'b'] });
   });
-  it("lit une affectation AW.lessonIndex = {...}", () => {
+  it('lit une affectation AW.lessonIndex = {...}', () => {
     const p = parseDataFile('AW.lessonIndex={"en1.l01":{"t":"lecon","n":1,"f":"x"}};');
     expect(p.strict).toBe(true);
     expect(p.value).toEqual({ 'en1.l01': { t: 'lecon', n: 1, f: 'x' } });
@@ -48,7 +48,9 @@ describe('lecture des fichiers AW.xxx(...)', () => {
   it("le bac à sable n'a accès ni à process, ni à require, ni aux constructeurs de l'hôte", () => {
     expect(() => evalSandboxed('AW.book(process.env)')).toThrow();
     expect(() => evalSandboxed('AW.book(require("fs"))')).toThrow();
-    expect(() => evalSandboxed('AW.book(this.constructor.constructor("return process")())')).toThrow();
+    expect(() =>
+      evalSandboxed('AW.book(this.constructor.constructor("return process")())'),
+    ).toThrow();
     expect(() => evalSandboxed('AW.book(Function("return 1")())')).toThrow();
   });
   it('le bac à sable coupe une boucle infinie', () => {
@@ -58,7 +60,9 @@ describe('lecture des fichiers AW.xxx(...)', () => {
 
 describe('empreintes', () => {
   it('JSON canonique : clés triées, texte arabe intact', () => {
-    expect(canonicalJson({ b: 1, a: ['بِسْمِ', { d: 2, c: 3 }] })).toBe('{"a":["بِسْمِ",{"c":3,"d":2}],"b":1}');
+    expect(canonicalJson({ b: 1, a: ['بِسْمِ', { d: 2, c: 3 }] })).toBe(
+      '{"a":["بِسْمِ",{"c":3,"d":2}],"b":1}',
+    );
     expect(contentHash({ a: 1, b: 2 })).toBe(contentHash({ b: 2, a: 1 }));
   });
   it("l'empreinte distingue deux graphies canoniquement équivalentes (aucune normalisation)", () => {

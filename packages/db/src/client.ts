@@ -31,5 +31,7 @@ export async function resetTestDatabase(pool: pg.Pool): Promise<void> {
   const { rows } = await pool.query<{ db: string }>('select current_database() as db');
   const name = rows[0]?.db ?? '';
   if (!name.endsWith('_test')) throw new Error(`refus : ${name} n'est pas une base de test`);
-  await pool.query('DROP SCHEMA IF EXISTS drizzle CASCADE; DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;');
+  await pool.query(
+    'DROP SCHEMA IF EXISTS drizzle CASCADE; DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;',
+  );
 }

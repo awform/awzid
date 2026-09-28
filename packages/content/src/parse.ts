@@ -28,7 +28,7 @@ export function extractCallPayload(src: string, file = '?'): string {
 
 /** Nom de l'appel (ex. `AW.lesson`) au début du fichier. */
 export function calleeName(src: string): string | null {
-  const m = /^\s*(?:﻿)?\s*(AW\.[A-Za-z_]\w*)\s*[(=]/.exec(src);
+  const m = /^\s*(?:\uFEFF)?\s*(AW\.[A-Za-z_]\w*)\s*[(=]/.exec(src);
   return m?.[1] ?? null;
 }
 
@@ -78,9 +78,13 @@ export function evalSandboxed(src: string, file = '?', timeoutMs = 1000): Record
       breakOnSigint: true,
     });
   } catch (e) {
-    throw new ContentParseError(`évaluation impossible dans le bac à sable (${(e as Error).message})`, file);
+    throw new ContentParseError(
+      `évaluation impossible dans le bac à sable (${(e as Error).message})`,
+      file,
+    );
   }
-  if (typeof json !== 'string') throw new ContentParseError('résultat du bac à sable invalide', file);
+  if (typeof json !== 'string')
+    throw new ContentParseError('résultat du bac à sable invalide', file);
   // Les données repassent par JSON : on ne récupère que des valeurs pures (pas de fonction, pas d'objet hôte).
   return JSON.parse(json) as Record<string, unknown>;
 }
@@ -97,9 +101,10 @@ export interface ParsedCall {
  */
 export function parseDataFile(src: string, file = '?'): ParsedCall {
   const callee = calleeName(src);
-  if (!callee) throw new ContentParseError('le fichier ne commence pas par AW.xxx(...) ou AW.xxx=', file);
+  if (!callee)
+    throw new ContentParseError('le fichier ne commence pas par AW.xxx(...) ou AW.xxx=', file);
   const key = callee.slice(3);
-  if (/^\s*(?:﻿)?\s*AW\.\w+\s*\(/.test(src)) {
+  if (/^\s*(?:\uFEFF)?\s*AW\.\w+\s*\(/.test(src)) {
     try {
       return { callee, value: parseStrictCall(src, file), strict: true };
     } catch {

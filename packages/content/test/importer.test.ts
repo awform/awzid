@@ -27,6 +27,14 @@ describe('projection élève', () => {
     expect(p.mots[0]).toEqual({ ar: 'بَابٌ', fr: 'porte' });
     expect(forbiddenPaths(L).length).toBe(7);
   });
+  it('bilan : pas de traduction des versets ; leçon : traduction gardée', () => {
+    const v = { ar: 'قُلْ', fr: 'Dis', ref_fr: '112:1' };
+    const bilan = studentProjection({ type: 'bilan', coran: { versets: [v] } });
+    expect(bilan.coran.versets[0]).toEqual({ ar: 'قُلْ', ref_fr: '112:1' });
+    const lecon = studentProjection({ type: 'lecon', coran: { versets: [v] } });
+    expect(lecon.coran.versets[0]?.fr).toBe('Dis');
+    expect(v.fr).toBe('Dis');
+  });
 });
 
 describe.skipIf(!HAS_CONTENT)('import réel en1 + ad1 (sans ressaisie)', () => {
@@ -47,14 +55,21 @@ describe.skipIf(!HAS_CONTENT)('import réel en1 + ad1 (sans ressaisie)', () => {
   it('identifiants d’exercices uniques et empreintes stables (deux imports identiques)', () => {
     const keys = load.levels.flatMap((l) => l.units.flatMap((u) => u.exercises.map((e) => e.key)));
     expect(new Set(keys).size).toBe(keys.length);
-    const again = loadEdition({ contentDir: CONTENT_DIR, levels: ['en1', 'ad1'], withRegistry: false });
-    const keys2 = again.levels.flatMap((l) => l.units.flatMap((u) => u.exercises.map((e) => e.key)));
+    const again = loadEdition({
+      contentDir: CONTENT_DIR,
+      levels: ['en1', 'ad1'],
+      withRegistry: false,
+    });
+    const keys2 = again.levels.flatMap((l) =>
+      l.units.flatMap((u) => u.exercises.map((e) => e.key)),
+    );
     expect(keys2).toEqual(keys);
     expect(again.sourceSha256).toBe(load.sourceSha256);
   });
   it('aucune fuite du guide ni de translittération dans la projection élève', () => {
     for (const l of load.levels)
-      for (const u of l.units) expect(forbiddenPaths(studentProjection(u.content)), u.id).toEqual([]);
+      for (const u of l.units)
+        expect(forbiddenPaths(studentProjection(u.content)), u.id).toEqual([]);
   });
   it('numérotation : leçons et bilans suivent index-lecons.js', () => {
     const en1 = load.levels.find((l) => l.code === 'en1');

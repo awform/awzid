@@ -36,7 +36,22 @@ describe.skipIf(!READY)('base de données (awform_test)', () => {
       "select table_name from information_schema.tables where table_schema='public' order by 1",
     );
     const names = r.rows.map((x) => x.table_name);
-    for (const n of ['edition', 'level', 'unit', 'unit_version', 'exercise', 'exercise_version', 'account', 'profile', 'guardianship', 'attempt', 'progress', 'quran_verse', 'registry_entry', 'audit_log'])
+    for (const n of [
+      'edition',
+      'level',
+      'unit',
+      'unit_version',
+      'exercise',
+      'exercise_version',
+      'account',
+      'profile',
+      'guardianship',
+      'attempt',
+      'progress',
+      'quran_verse',
+      'registry_entry',
+      'audit_log',
+    ])
       expect(names).toContain(n);
   });
 
@@ -57,7 +72,11 @@ describe.skipIf(!READY)('base de données (awform_test)', () => {
 
   it('réimporter la même source ne change rien (idempotence)', async () => {
     const count = async () =>
-      (await h.pool.query<{ n: number }>('select (select count(*) from unit_version)::int + (select count(*) from exercise_version)::int + (select count(*) from registry_entry)::int as n')).rows[0]?.n;
+      (
+        await h.pool.query<{ n: number }>(
+          'select (select count(*) from unit_version)::int + (select count(*) from exercise_version)::int + (select count(*) from registry_entry)::int as n',
+        )
+      ).rows[0]?.n;
     const before = await count();
     const r = await importEdition(h.db, load, { code: 'test.1', publish: true });
     expect(r.status).toBe('inchange');
@@ -66,7 +85,9 @@ describe.skipIf(!READY)('base de données (awform_test)', () => {
 
   it('refuse une autre source sous le même code d’édition publiée', async () => {
     const other = { ...load, sourceSha256: 'autre' };
-    await expect(importEdition(h.db, other, { code: 'test.1', replace: true })).rejects.toBeInstanceOf(ImportRefusedError);
+    await expect(
+      importEdition(h.db, other, { code: 'test.1', replace: true }),
+    ).rejects.toBeInstanceOf(ImportRefusedError);
   });
 
   it('aller-retour octet par octet : versets des leçons et Coran de référence', async () => {
@@ -99,7 +120,10 @@ describe.skipIf(!READY)('base de données (awform_test)', () => {
     const u = await getUnitForStudent(h.db, ed!.id, 'ad1.l10');
     expect(u?.exercises.length).toBeGreaterThan(0);
     expect(forbiddenPaths(u?.lesson)).toEqual([]);
-    const [full] = await h.db.select({ c: t.unitVersion.content }).from(t.unitVersion).where(eq(t.unitVersion.unitId, 'ad1.l10'));
+    const [full] = await h.db
+      .select({ c: t.unitVersion.content })
+      .from(t.unitVersion)
+      .where(eq(t.unitVersion.unitId, 'ad1.l10'));
     expect(forbiddenPaths(full?.c).length).toBeGreaterThan(0);
   });
 

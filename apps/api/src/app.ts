@@ -3,7 +3,14 @@
  * Les routes d'écriture, l'authentification, les politiques d'accès et l'OpenAPI arrivent aux lots 3-4.
  */
 import Fastify, { type FastifyInstance } from 'fastify';
-import { currentEdition, getUnitForStudent, listLevels, listUnits, ping, type Db } from '@awform/db';
+import {
+  currentEdition,
+  getUnitForStudent,
+  listLevels,
+  listUnits,
+  ping,
+  type Db,
+} from '@awform/db';
 
 export interface AppOptions {
   db: Db;
@@ -22,7 +29,9 @@ function notFound(message: string) {
 
 export function buildApp(opts: AppOptions): FastifyInstance {
   const app = Fastify({
-    logger: opts.logger ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] } : false,
+    logger: opts.logger
+      ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] }
+      : false,
     // l'API ne sert que du JSON ; limite prudente pour les futurs envois d'événements
     bodyLimit: 1_048_576,
   });
@@ -41,23 +50,26 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     void reply.code(404).send(notFound(`route inconnue : ${req.method} ${req.url}`));
   });
 
-  app.setErrorHandler((err: { statusCode?: number; validation?: unknown; message: string }, req, reply) => {
-    if (err.validation) return reply.code(400).send({ error: { code: 'requete_invalide', message: err.message } });
-    req.log.error(err);
-    return reply.code(500).send({ error: { code: 'erreur_interne', message: 'erreur interne' } });
-  });
+  app.setErrorHandler(
+    (err: { statusCode?: number; validation?: unknown; message: string }, req, reply) => {
+      if (err.validation)
+        return reply.code(400).send({ error: { code: 'requete_invalide', message: err.message } });
+      req.log.error(err);
+      return reply.code(500).send({ error: { code: 'erreur_interne', message: 'erreur interne' } });
+    },
+  );
 
   const edition = async () => currentEdition(db, opts.editionCode);
 
   app.get('/api/v1/health', async () => {
-    let dbOk = false;
-    try {
-      dbOk = await ping(db);
-    } catch {
-      dbOk = false;
-    }
+    const dbOk = await ping(db).catch(() => false);
     const ed = dbOk ? await edition() : null;
-    return { status: dbOk ? 'ok' : 'degrade', db: dbOk, edition: ed?.code ?? null, version: opts.version ?? '0.1.0' };
+    return {
+      status: dbOk ? 'ok' : 'degrade',
+      db: dbOk,
+      edition: ed?.code ?? null,
+      version: opts.version ?? '0.1.0',
+    };
   });
 
   app.get('/api/v1/levels', async (_req, reply) => {
@@ -68,19 +80,36 @@ export function buildApp(opts: AppOptions): FastifyInstance {
 
   app.get<{ Params: { code: string } }>(
     '/api/v1/levels/:code/units',
-    { schema: { params: { type: 'object', properties: { code: { type: 'string', pattern: LEVEL_CODE } }, required: ['code'] } } },
+    {
+      schema: {
+        params: {
+          type: 'object',
+          properties: { code: { type: 'string', pattern: LEVEL_CODE } },
+          required: ['code'],
+        },
+      },
+    },
     async (req, reply) => {
       const ed = await edition();
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
       const units = await listUnits(db, ed.id, req.params.code);
-      if (units.length === 0) return reply.code(404).send(notFound(`niveau ${req.params.code} absent de l'édition`));
+      if (units.length === 0)
+        return reply.code(404).send(notFound(`niveau ${req.params.code} absent de l'édition`));
       return { edition: ed.code, level: req.params.code, units };
     },
   );
 
   app.get<{ Params: { id: string } }>(
     '/api/v1/units/:id',
-    { schema: { params: { type: 'object', properties: { id: { type: 'string', pattern: UNIT_ID } }, required: ['id'] } } },
+    {
+      schema: {
+        params: {
+          type: 'object',
+          properties: { id: { type: 'string', pattern: UNIT_ID } },
+          required: ['id'],
+        },
+      },
+    },
     async (req, reply) => {
       const ed = await edition();
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));

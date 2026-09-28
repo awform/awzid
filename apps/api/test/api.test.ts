@@ -2,7 +2,14 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { forbiddenPaths, loadEdition, type Lesson } from '@awform/content';
-import { connect, contentDir, importEdition, resetTestDatabase, runMigrations, type DbHandle } from '@awform/db';
+import {
+  connect,
+  contentDir,
+  importEdition,
+  resetTestDatabase,
+  runMigrations,
+  type DbHandle,
+} from '@awform/db';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/app.js';
 
@@ -55,18 +62,27 @@ describe.skipIf(!READY)('API v1', () => {
   it('GET /api/v1/units/:id : projection élève, texte coranique intact', async () => {
     const r = await app.inject({ method: 'GET', url: '/api/v1/units/en1.l17' });
     expect(r.statusCode).toBe(200);
-    const unit = (r.json() as { unit: { lesson: Lesson; exercises: Array<{ id: string; hash: string }> } }).unit;
+    const unit = (
+      r.json() as { unit: { lesson: Lesson; exercises: Array<{ id: string; hash: string }> } }
+    ).unit;
     expect(forbiddenPaths(unit.lesson)).toEqual([]);
     expect(unit.exercises[0]?.id).toBe('en1.l17.ex1');
-    const src = loadEdition({ contentDir: contentDir(), levels: ['en1'], withRegistry: false })
-      .levels[0]?.units.find((u) => u.id === 'en1.l17');
+    const src = loadEdition({
+      contentDir: contentDir(),
+      levels: ['en1'],
+      withRegistry: false,
+    }).levels[0]?.units.find((u) => u.id === 'en1.l17');
     const expected = src?.content.coran?.versets?.map((v) => v.ar);
     expect(unit.lesson.coran?.versets?.map((v) => v.ar)).toEqual(expected);
   });
 
   it('404 et 400 normalisés', async () => {
-    expect((await app.inject({ method: 'GET', url: '/api/v1/units/en1.l99' })).statusCode).toBe(404);
-    expect((await app.inject({ method: 'GET', url: '/api/v1/levels/zz9/units' })).statusCode).toBe(404);
+    expect((await app.inject({ method: 'GET', url: '/api/v1/units/en1.l99' })).statusCode).toBe(
+      404,
+    );
+    expect((await app.inject({ method: 'GET', url: '/api/v1/levels/zz9/units' })).statusCode).toBe(
+      404,
+    );
     const bad = await app.inject({ method: 'GET', url: '/api/v1/units/..%2Fetc' });
     expect(bad.statusCode).toBe(400);
     expect(bad.json()).toMatchObject({ error: { code: 'requete_invalide' } });
