@@ -198,6 +198,21 @@ export const registryEntry = pgTable(
   ],
 );
 
+/** Illustrations (illus/*.js) par édition : SVG validé par liste blanche, personnages sans visage. */
+export const illustration = pgTable(
+  'illustration',
+  {
+    editionId: uuid('edition_id')
+      .notNull()
+      .references(() => edition.id, { onDelete: 'cascade' }),
+    key: text('key').notNull(),
+    viewBox: text('view_box').notNull(),
+    svg: text('svg').notNull(),
+    sourceFile: text('source_file').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.editionId, t.key] })],
+);
+
 /** URL courte et éternelle des QR codes : /l/en1-05 → en1.l05. */
 export const qrRedirect = pgTable('qr_redirect', {
   slug: text('slug').primaryKey(),

@@ -15,6 +15,7 @@ foreach ($l in $Levels) { $items += , @("$aw\data\$l", "data/") }
 $items += , @("$aw\data\index-lecons.js", 'data/')
 $items += , @("$aw\data\hifz", 'data/')
 $items += , @("$aw\ECARTS_VERSETS.md", '')
+$items += , @("$aw\illus", '')
 $items += , @("$W\coran\tanzil-uthmani.tsv", 'coran/')
 ssh $VmHost "rm -rf ~/$Dest.tmp && mkdir -p ~/$Dest.tmp/data ~/$Dest.tmp/registre ~/$Dest.tmp/coran"
 foreach ($it in $items) {

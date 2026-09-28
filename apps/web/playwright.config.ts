@@ -18,6 +18,8 @@ export default defineConfig({
   testDir: 'e2e',
   timeout: 60_000,
   retries: 0,
+  // une seule base de test et un seul profil de démonstration : tests en série
+  workers: 1,
   reporter: [['list']],
   use: { baseURL: `http://127.0.0.1:${WEB_PORT}`, locale: 'fr-FR', timezoneId: 'Europe/Paris' },
   projects: [
@@ -26,9 +28,15 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: `node ../../packages/db/dist/cli/import.js --test --edition e2e --publish && node ../api/dist/server.js`,
+      // base de TEST remise à zéro, édition « e2e » importée, profils fictifs de démonstration
+      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish --demo && node ../api/dist/server.js`,
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
-      env: { DATABASE_URL: TEST_DB, API_HOST: '127.0.0.1', API_PORT: String(API_PORT) },
+      env: {
+        DATABASE_URL: TEST_DB,
+        API_HOST: '127.0.0.1',
+        API_PORT: String(API_PORT),
+        AWFORM_DEV_ATTEMPTS: '1',
+      },
       reuseExistingServer: false,
       timeout: 120_000,
     },

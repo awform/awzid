@@ -15,5 +15,7 @@ AWFORM_EDITION=dev
 API_HOST=127.0.0.1
 API_PORT=3000
 API_URL=http://127.0.0.1:3000
+# routes de tentatives + profils fictifs de démonstration (développement uniquement, avant le lot 4)
+AWFORM_DEV_ATTEMPTS=1
 EOF
 echo ".env écrit ($ROOT/.env, droits 600)"

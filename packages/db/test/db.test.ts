@@ -105,7 +105,8 @@ describe.skipIf(!READY)('base de données (awform_test)', () => {
         expect(fromDb.length).toBe(src.length);
         src.forEach((v, i) => {
           expect(fromDb[i]?.ar === v.ar).toBe(true);
-          expect(fromStudent[i]?.ar === v.ar).toBe(true);
+          // projection élève : identique quand le verset est montré (leçons ; pas les bilans Enfants ni le non préparé)
+          if (u.kind === 'lecon' && !v.non_prepare) expect(fromStudent[i]?.ar === v.ar).toBe(true);
           compared++;
         });
       }

@@ -305,3 +305,6 @@ export function correctResponse(ex: LanguageExercise): ExerciseResponse {
       return { type: ex.type, sequences: ex.items.map((_, i) => ordreSolution(ex, i)) };
   }
 }
+
+export * from './items.js';
+export * from './progress.js';

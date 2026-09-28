@@ -9,6 +9,7 @@ const app = buildApp({
   db: h.db,
   logger: true,
   editionCode: process.env.AWFORM_EDITION_FORCE || undefined,
+  devAttempts: process.env.AWFORM_DEV_ATTEMPTS === '1',
 });
 
 const stop = async () => {

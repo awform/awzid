@@ -60,18 +60,18 @@ describe.skipIf(!READY)('API v1', () => {
   });
 
   it('GET /api/v1/units/:id : projection élève, texte coranique intact', async () => {
-    const r = await app.inject({ method: 'GET', url: '/api/v1/units/en1.l17' });
+    const r = await app.inject({ method: 'GET', url: '/api/v1/units/en1.l16' });
     expect(r.statusCode).toBe(200);
     const unit = (
       r.json() as { unit: { lesson: Lesson; exercises: Array<{ id: string; hash: string }> } }
     ).unit;
     expect(forbiddenPaths(unit.lesson)).toEqual([]);
-    expect(unit.exercises[0]?.id).toBe('en1.l17.ex1');
+    expect(unit.exercises[0]?.id).toBe('en1.l16.ex1');
     const src = loadEdition({
       contentDir: contentDir(),
       levels: ['en1'],
       withRegistry: false,
-    }).levels[0]?.units.find((u) => u.id === 'en1.l17');
+    }).levels[0]?.units.find((u) => u.id === 'en1.l16');
     const expected = src?.content.coran?.versets?.map((v) => v.ar);
     expect(unit.lesson.coran?.versets?.map((v) => v.ar)).toEqual(expected);
   });

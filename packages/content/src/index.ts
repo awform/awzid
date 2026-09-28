@@ -4,4 +4,8 @@ export * from './canonical.js';
 export * from './parse.js';
 export * from './quran.js';
 export * from './projection.js';
+export * from './illus.js';
+export * from './checks.js';
+export * from './scene.js';
 export * from './importer.js';
+export * from './report.js';

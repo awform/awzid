@@ -8,20 +8,24 @@ import { writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { blockingIssues, loadEdition } from './importer.js';
+import { importReportMarkdown } from './report.js';
 
 const args = process.argv.slice(2);
 let dir = process.env.AWFORM_CONTENT_DIR ?? join(homedir(), 'awform-content');
 let jsonOut: string | null = null;
+let mdOut: string | null = null;
 const levels: string[] = [];
 for (let i = 0; i < args.length; i++) {
   const a = args[i] ?? '';
   if (a === '--dir') dir = args[++i] ?? dir;
   else if (a === '--json') jsonOut = args[++i] ?? null;
+  else if (a === '--rapport') mdOut = args[++i] ?? null;
   else levels.push(a);
 }
 if (levels.length === 0) levels.push('en1', 'ad1');
 
 const load = loadEdition({ contentDir: dir, levels });
+if (mdOut) writeFileSync(mdOut, importReportMarkdown(load));
 const errors = blockingIssues(load);
 const warnings = load.issues.filter((i) => i.severity === 'avertissement');
 

@@ -16,8 +16,8 @@ test('liste des leçons d’en1 puis leçon avec l’arabe correctement rendu', 
   await expect(units.first()).toContainText('Leçon 1');
   await expect(page.getByText('Bilan 1', { exact: true })).toBeVisible();
 
-  await page.locator('a[href="/lecons/en1.l17"]').click();
-  await expect(page).toHaveURL(/\/lecons\/en1\.l17$/);
+  await page.locator('a[href="/lecons/en1.l16"]').click();
+  await expect(page).toHaveURL(/\/lecons\/en1\.l16$/);
 
   // titre arabe : lang="ar", dir="rtl", Noto Naskh Arabic
   const h1 = page.locator('h1');
@@ -36,7 +36,7 @@ test('liste des leçons d’en1 puis leçon avec l’arabe correctement rendu', 
     true,
   );
 
-  const api = await (await request.get('/api/v1/units/en1.l17')).json();
+  const api = await (await request.get('/api/v1/units/en1.l16')).json();
   const expected: string[] = api.unit.lesson.coran.versets.map((v: { ar: string }) => plain(v.ar));
   const shown = await ayat.allTextContents();
   expect(shown).toEqual(expected);
@@ -45,21 +45,18 @@ test('liste des leçons d’en1 puis leçon avec l’arabe correctement rendu', 
   expect(JSON.stringify(api.unit.lesson)).not.toMatch(/"(tr|guide|guide_fr|parents_fr)"\s*:/);
 });
 
-test('un exercice à choix est corrigé par la bibliothèque partagée', async ({ page }) => {
-  await page.goto('/lecons/en1.l02');
-  const ex = page
-    .locator('section.ex[data-type="premiere_lettre"], section.ex[data-type="complete"]')
-    .first();
-  await expect(ex).toBeVisible();
-  const item = ex.locator('li[data-item="0"]');
-  const buttons = item.locator('.opts button');
-  const n = await buttons.count();
-  expect(n).toBeGreaterThan(1);
-  // on essaie les options une à une jusqu'à la bonne (nouvel essai permis, comme dans le livre)
-  for (let k = 0; k < n; k++) {
-    await buttons.nth(k).click();
-    if (await item.getByText('Bravo !').isVisible()) break;
-  }
-  await expect(item.getByText('Bravo !')).toBeVisible();
-  await expect(ex.locator('.score')).toContainText('★ 1 /');
+test('scène composée avec personnages sans visage et illustrations des mots', async ({ page }) => {
+  await page.goto('/lecons/en1.l01');
+  const scene = page.locator('.scene svg').first();
+  await expect(scene).toBeVisible();
+  expect(await scene.locator('use').count()).toBeGreaterThan(3);
+  // chaque <use> pointe vers un symbole fourni par la page (SVG validé)
+  const missing = await page.evaluate(() =>
+    [...document.querySelectorAll('.scene use')]
+      .map((u) => u.getAttribute('href') ?? '')
+      .filter((h) => !document.getElementById(h.slice(1))),
+  );
+  expect(missing).toEqual([]);
+  await expect(page.locator('.words .wc svg.pic').first()).toBeVisible();
+  expect(await page.locator('script', { hasText: 'alert' }).count()).toBe(0);
 });

@@ -1,129 +1,282 @@
 <script lang="ts">
   import type { Exercise, LanguageExercise, Lettre } from '@awform/content/types';
   import {
-    checkComplete,
-    checkEcoute,
-    checkPremiereLettre,
-    checkVraiFaux,
+    checkItem,
     exerciseTotal,
     isLanguageExercise,
+    ordreSeparator,
+    plain,
+    type ItemResponse,
   } from '@awform/grading';
   import Ar from './Ar.svelte';
+  import Illus from './Illus.svelte';
 
   /**
-   * Squelette du lecteur d'exercices (lot 1) : les types à choix (première lettre, écoute, complète,
-   * vrai/faux) sont déjà interactifs et corrigés par la bibliothèque PARTAGÉE @awform/grading ;
-   * les 4 autres types sont affichés et deviendront interactifs au lot 2.
-   * Règle du moteur : un nouvel essai est permis ; l'item compte quand il est trouvé.
+   * Lecteur d'exercices : les 8 types « langue », corrigés par la bibliothèque PARTAGÉE @awform/grading
+   * (même code que le serveur). Règle du livre : un nouvel essai est permis, l'item compte quand il est
+   * trouvé ; message doux (« Essaie encore »), jamais de sanction.
    */
-  let { ex, id, lettres = [] }: { ex: Exercise; id: string; lettres?: Lettre[] } = $props();
+  let {
+    ex,
+    id,
+    lettres = [],
+    onanswer,
+  }: {
+    ex: Exercise;
+    id: string;
+    lettres?: Lettre[];
+    onanswer?: (itemIndex: number, response: ItemResponse, correct: boolean) => void;
+  } = $props();
 
-  const TITLES: Record<string, string> = {
-    premiere_lettre: 'Par quelle lettre commence le mot ?',
-    chasse: 'Je trouve toutes les lettres',
-    relier: "Je relie le mot à l'image",
-    ecoute: "J'écoute et je choisis",
-    vrai_faux: 'Vrai ou faux ?',
-    complete: 'Je complète',
-    contient: 'Quels mots contiennent la lettre ?',
-    ordre: "Je remets les mots dans l'ordre",
+  const TITLES: Record<string, [string, string]> = {
+    premiere_lettre: [
+      'بِأَيِّ حَرْفٍ تَبْدَأُ الْكَلِمَةُ؟',
+      'Par quelle lettre commence le mot ?',
+    ],
+    chasse: ['أَبْحَثُ عَنِ الْحَرْفِ', 'Je trouve toutes les lettres'],
+    relier: ['أَصِلُ الْكَلِمَةَ بِالصُّورَةِ', "Je relie le mot à l'image"],
+    ecoute: ['أَسْمَعُ وَأَخْتَارُ', "J'écoute et je choisis"],
+    vrai_faux: ['صَحِيحٌ أَمْ خَطَأٌ؟', 'Vrai ou faux ?'],
+    complete: ['أُكْمِلُ', 'Je complète'],
+    contient: ['أَيُّ كَلِمَةٍ فِيهَا الْحَرْفُ؟', 'Quels mots contiennent la lettre ?'],
+    ordre: ['أُرَتِّبُ الْكَلِمَاتِ', "Je remets les mots dans l'ordre"],
   };
 
   const lang: LanguageExercise | null = $derived(isLanguageExercise(ex) ? ex : null);
   const total = $derived(lang ? exerciseTotal(lang) : 0);
-  /** état par item : 'ok' trouvé, 'retry' essayer encore */
-  let state: Record<number, 'ok' | 'retry'> = $state({});
-  const found = $derived(Object.values(state).filter((s) => s === 'ok').length);
+  const titleAr = $derived(ex.titre_ar ?? TITLES[ex.type]?.[0] ?? '');
+  const titleFr = $derived(
+    (ex.titre_fr ?? TITLES[ex.type]?.[1] ?? 'Exercice') +
+      (!ex.titre_fr && lang?.type === 'chasse' ? ` ${lang.cible}` : '') +
+      (!ex.titre_fr && lang?.type === 'contient' ? ` ${lang.cible} ?` : ''),
+  );
 
-  function answer(item: number, ok: boolean) {
-    if (state[item] === 'ok') return;
-    state[item] = ok ? 'ok' : 'retry';
+  /** état par index d'item : trouvé, ou à retenter */
+  let found: Record<number, boolean> = $state({});
+  let retry: Record<number, boolean> = $state({});
+  const score = $derived(Object.values(found).filter(Boolean).length);
+
+  function answer(item: number, r: ItemResponse): boolean {
+    if (!lang || found[item]) return !!found[item];
+    const ok = checkItem(lang, item, r);
+    onanswer?.(item, r, ok);
+    if (ok) {
+      found[item] = true;
+      retry[item] = false;
+    } else retry[item] = true;
+    return ok;
   }
-  function choose(item: number, option: string) {
-    if (!lang) return;
-    if (lang.type === 'premiere_lettre') answer(item, checkPremiereLettre(lang, item, option));
-    else if (lang.type === 'ecoute') answer(item, checkEcoute(lang, item, option));
-    else if (lang.type === 'complete') answer(item, checkComplete(lang, item, option));
+
+  // relier : colonne de droite décalée (rotation de n/2, comme le moteur)
+  const right = $derived.by(() => {
+    if (lang?.type !== 'relier') return [] as number[];
+    const n = lang.items.length;
+    const idx = [...Array(n).keys()];
+    const k = Math.max(1, Math.floor(n / 2)) % n;
+    return idx.slice(k).concat(idx.slice(0, k));
+  });
+  let selLeft: number | null = $state(null);
+  let selRight: number | null = $state(null);
+  function pick(side: 'a' | 'b', k: number) {
+    if (found[k]) return;
+    if (side === 'a') selLeft = k;
+    else selRight = k;
+    if (selLeft !== null && selRight !== null) {
+      answer(selLeft, { right: selRight });
+      selLeft = null;
+      selRight = null;
+    }
+  }
+
+  // ordre : étiquettes touchées par item
+  let seq: Record<number, number[]> = $state({});
+  function tapChip(item: number, k: number) {
+    if (lang?.type !== 'ordre' || found[item]) return;
+    const cur = seq[item] ?? [];
+    if (cur.includes(k)) return;
+    const next = [...cur, k];
+    seq[item] = next;
+    if (next.length === (lang.items[item]?.mots.length ?? 0)) {
+      if (!answer(item, { sequence: next })) setTimeout(() => (seq[item] = []), 900);
+    }
+  }
+  function ordreText(item: number): string {
+    if (lang?.type !== 'ordre') return '';
+    const it = lang.items[item];
+    if (!it) return '';
+    return (seq[item] ?? []).map((k) => plain(it.mots[k])).join(ordreSeparator(it.phrase));
   }
 </script>
 
 <section class="ex" data-exercise={id} data-type={ex.type}>
   <header>
-    <h3>{ex.titre_fr ?? TITLES[ex.type] ?? 'Exercice'}</h3>
-    {#if ex.titre_ar}<Ar text={ex.titre_ar} />{/if}
+    <h3><Ar text={titleAr} /> <span class="fr">{titleFr}</span></h3>
     {#if ex.consigne_fr}<p class="consigne">{ex.consigne_fr}</p>{/if}
-    {#if lang}<p class="score" aria-live="polite">★ {found} / {total}</p>{/if}
+    {#if lang}<p class="score" aria-live="polite">
+        ★ {score} / {total}{score === total && total ? ' — bravo !' : ''}
+      </p>{/if}
   </header>
 
-  {#if lang?.type === 'premiere_lettre' || lang?.type === 'ecoute' || lang?.type === 'complete'}
-    <ol class="items">
+  {#if lang?.type === 'premiere_lettre'}
+    <div class="quiz">
       {#each lang.items as it, i (i)}
-        <li class:ok={state[i] === 'ok'} data-item={i}>
-          {#if lang.type === 'premiere_lettre' && 'suite' in it}
-            <span class="ar blank" dir="rtl" lang="ar"><u>?</u>{String(it.suite)}</span>
-          {:else if lang.type === 'complete' && 'avant' in it}
-            <span class="ar" dir="rtl" lang="ar"
-              ><Ar text={String(it.avant ?? '')} {lettres} /> <u>…</u>
-              <Ar text={String(it.apres ?? '')} {lettres} /></span
-            >
-          {:else if lang.type === 'ecoute' && 'dit' in it}
-            <details class="adulte">
-              <summary>Pour l'adulte : texte à lire à voix haute</summary>
-              <Ar text={String(it.dit)} />
-            </details>
-          {/if}
+        <div class="q" class:ok={found[i]} data-item={i}>
+          <Illus k={it.img} label={it.fr ?? ''} />
+          <div class="blank ar" dir="rtl" lang="ar">
+            <u>{found[i] ? it.reponse : '?'}</u>{it.suite}
+          </div>
           <div class="opts" dir="rtl">
             {#each it.options as o, k (k)}
-              <button type="button" onclick={() => choose(i, o)} lang="ar"
+              <button type="button" class="ar" lang="ar" onclick={() => answer(i, { choice: o })}
+                >{o}</button
+              >
+            {/each}
+          </div>
+          {#if retry[i] && !found[i]}<p class="retry">Essaie encore !</p>{/if}
+        </div>
+      {/each}
+    </div>
+  {:else if lang?.type === 'chasse'}
+    <div class="hunt" dir="rtl">
+      {#each lang.grille as x, k (k)}
+        <button
+          type="button"
+          class="cell ar"
+          class:found={found[k]}
+          class:miss={retry[k]}
+          lang="ar"
+          data-item={k}
+          onclick={() => answer(k, { touched: true })}>{x}</button
+        >
+      {/each}
+    </div>
+  {:else if lang?.type === 'relier'}
+    <div class="relier">
+      {#each lang.items as it, i (i)}
+        {@const j = right[i] ?? i}
+        {@const rj = lang.items[j]}
+        <button
+          type="button"
+          class="it"
+          class:sel={selLeft === i}
+          class:done={found[i]}
+          data-side="a"
+          data-k={i}
+          onclick={() => pick('a', i)}
+          ><span class="tag">{i + 1}</span><Ar text={it.ar} {lettres} /></button
+        >
+        <button
+          type="button"
+          class:sel={selRight === j}
+          class:done={found[j]}
+          data-side="b"
+          data-k={j}
+          onclick={() => pick('b', j)}
+          >{#if rj?.img}<Illus k={rj.img} label={rj.fr ?? ''} />{:else}<span class="fr"
+              >{rj?.fr}</span
+            >{/if}</button
+        >
+      {/each}
+    </div>
+    {#if Object.values(retry).some(Boolean) && score < total}<p class="retry">
+        Essaie encore !
+      </p>{/if}
+  {:else if lang?.type === 'ecoute'}
+    <ol class="items">
+      {#each lang.items as it, i (i)}
+        <li class:ok={found[i]} data-item={i}>
+          <details class="adulte">
+            <summary>Pour l'adulte : texte à lire à voix haute</summary>
+            <Ar text={it.dit} />
+          </details>
+          <div class="opts" dir="rtl">
+            {#each it.options as o, k (k)}
+              <button type="button" onclick={() => answer(i, { choice: o })}
                 ><Ar text={o} {lettres} /></button
               >
             {/each}
           </div>
-          {#if lang.type === 'complete' && 'fr' in it && it.fr}<p class="fr">{it.fr}</p>{/if}
-          {#if state[i] === 'retry'}<p class="retry">Essaie encore !</p>{/if}
-          {#if state[i] === 'ok'}<p class="bravo">Bravo !</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">Essaie encore !</p>{/if}
         </li>
       {/each}
     </ol>
   {:else if lang?.type === 'vrai_faux'}
-    <ol class="items">
+    <div class="vfl">
       {#each lang.items as it, i (i)}
-        <li class:ok={state[i] === 'ok'} data-item={i}>
+        <div class="vfi" class:ok={found[i]} data-item={i}>
+          {#if it.img}<Illus k={it.img} />{/if}
           {#if it.ar}<Ar text={it.ar} {lettres} />{/if}
           {#if it.fr}<p class="fr">{it.fr}</p>{/if}
           <div class="opts">
-            <button type="button" onclick={() => answer(i, checkVraiFaux(lang, i, true))}
+            <button type="button" data-v="1" onclick={() => answer(i, { value: true })}
               ><span class="ar" lang="ar">صَحِيحٌ</span> ✓</button
             >
-            <button type="button" onclick={() => answer(i, checkVraiFaux(lang, i, false))}
+            <button type="button" data-v="0" onclick={() => answer(i, { value: false })}
               ><span class="ar" lang="ar">خَطَأٌ</span> ✗</button
             >
           </div>
-          {#if state[i] === 'retry'}<p class="retry">Essaie encore !</p>{/if}
-          {#if state[i] === 'ok'}<p class="bravo">Bravo !</p>{/if}
+          {#if found[i] && !it.vrai && it.correction_ar}<p class="corr">
+              <Ar text={it.correction_ar} {lettres} />
+            </p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">Essaie encore !</p>{/if}
+        </div>
+      {/each}
+    </div>
+  {:else if lang?.type === 'complete'}
+    <ol class="items">
+      {#each lang.items as it, i (i)}
+        <li class:ok={found[i]} data-item={i}>
+          <p class="s" dir="rtl">
+            <Ar text={it.avant ?? ''} {lettres} />
+            <u
+              >{#if found[i]}<Ar text={it.reponse} {lettres} />{:else}…{/if}</u
+            >
+            <Ar text={it.apres ?? ''} {lettres} />
+          </p>
+          <div class="opts" dir="rtl">
+            {#each it.options as o, k (k)}
+              <button type="button" onclick={() => answer(i, { choice: o })}
+                ><Ar text={o} {lettres} /></button
+              >
+            {/each}
+          </div>
+          {#if it.fr}<p class="fr">{it.fr}</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">Essaie encore !</p>{/if}
         </li>
       {/each}
     </ol>
-  {:else if lang?.type === 'chasse'}
-    <div class="grid" dir="rtl">
-      {#each lang.grille as x, k (k)}<span class="cell"><Ar text={x} /></span>{/each}
-    </div>
   {:else if lang?.type === 'contient'}
-    <div class="grid" dir="rtl">
-      {#each lang.mots as m, k (k)}<span class="cell"><Ar text={m.ar} {lettres} /></span>{/each}
+    <div class="contient" dir="rtl">
+      {#each lang.mots as m, k (k)}
+        <button
+          type="button"
+          class:found={found[k]}
+          class:miss={retry[k]}
+          data-item={k}
+          onclick={() => answer(k, { touched: true })}><Ar text={m.ar} {lettres} /></button
+        >
+      {/each}
     </div>
-  {:else if lang?.type === 'relier'}
-    <ol class="items">
-      {#each lang.items as it, i (i)}<li><Ar text={it.ar} {lettres} /></li>{/each}
-    </ol>
   {:else if lang?.type === 'ordre'}
     <ol class="items">
       {#each lang.items as it, i (i)}
-        <li>
-          <div class="opts" dir="rtl">
-            {#each it.mots as w, k (k)}<span class="chip"><Ar text={w} {lettres} /></span>{/each}
+        <li class:ok={found[i]} data-item={i}>
+          <div class="chips" dir="rtl">
+            {#each it.mots as w, k (k)}
+              <button
+                type="button"
+                disabled={found[i] || (seq[i] ?? []).includes(k)}
+                data-w={k}
+                onclick={() => tapChip(i, k)}><Ar text={w} {lettres} /></button
+              >
+            {/each}
           </div>
+          <p class="out ar" dir="rtl" lang="ar" class:good={found[i]}>{ordreText(i)}</p>
+          {#if !found[i]}<button type="button" class="reset" onclick={() => (seq[i] = [])}
+              >↺ Recommencer</button
+            >{/if}
           {#if it.fr}<p class="fr">{it.fr}</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">Essaie encore !</p>{/if}
         </li>
       {/each}
     </ol>
@@ -136,57 +289,165 @@
   .ex {
     background: var(--card);
     border: 2px solid var(--line);
-    border-radius: 16px;
+    border-radius: 18px;
     padding: 12px 16px;
     margin: 16px 0;
   }
   h3 {
     margin: 0;
     font-size: 1.05rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    align-items: baseline;
   }
   .score {
     font-weight: 700;
     color: var(--teal);
     margin: 4px 0;
   }
+  .quiz {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .q,
+  .vfi {
+    border: 2px solid var(--line);
+    border-radius: 16px;
+    padding: 8px;
+    text-align: center;
+  }
+  .q :global(.pic),
+  .vfi :global(.pic),
+  .relier :global(.pic) {
+    width: 72px;
+    height: 72px;
+  }
+  .blank {
+    font-size: calc(var(--ar-size) + 4px);
+  }
+  .blank u {
+    color: var(--c0);
+    text-decoration: none;
+    border-bottom: 3px dashed var(--c0);
+    padding: 0 6px;
+  }
+  .ok {
+    background: #eaf7f1;
+    border-color: var(--good) !important;
+    border-radius: 14px;
+  }
+  .opts,
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 6px 0;
+  }
+  .hunt {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+  }
+  .contient {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
+  }
+  .cell {
+    font-size: calc(var(--ar-size) + 2px);
+    padding: 0;
+  }
+  .found {
+    background: #eaf7f1;
+    border-color: var(--good);
+  }
+  .miss:not(.found) {
+    animation: shake 0.3s;
+    border-color: var(--c3);
+  }
+  @keyframes shake {
+    25% {
+      transform: translateX(-3px);
+    }
+    75% {
+      transform: translateX(3px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .miss:not(.found) {
+      animation: none;
+    }
+  }
+  .relier {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+  }
+  .relier button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .sel {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px #1f7a8c33;
+  }
+  .done {
+    background: #eaf7f1;
+    border-color: var(--good);
+  }
+  .tag {
+    font-size: 0.8rem;
+    border-radius: 99px;
+    padding: 0 7px;
+    color: #fff;
+    background: var(--teal);
+  }
+  .vfl {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
   .items {
     padding-inline-start: 1.2em;
   }
   .items li {
     margin: 12px 0;
+    padding: 6px;
   }
-  .items li.ok {
-    background: #eaf7f1;
-    border-radius: 12px;
+  .s {
+    text-align: right;
   }
-  .opts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+  .s u {
+    text-decoration: none;
+    border-bottom: 2px dashed var(--ink2);
+    padding: 0 10px;
   }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
-    gap: 8px;
+  .out {
+    min-height: 2.4em;
+    border-bottom: 2px solid var(--line);
+    text-align: right;
   }
-  .cell,
-  .chip {
-    border: 2px dashed var(--line);
-    border-radius: 12px;
-    padding: 2px 10px;
-    text-align: center;
+  .good {
+    color: var(--good);
+  }
+  .reset {
+    font-size: 0.9rem;
   }
   .fr {
     color: var(--ink2);
     margin: 4px 0;
   }
   .retry {
-    color: var(--c3);
+    color: #9a6700;
     margin: 4px 0;
-  }
-  .bravo {
-    color: var(--good);
     font-weight: 700;
+  }
+  .corr {
     margin: 4px 0;
   }
   .adulte summary {

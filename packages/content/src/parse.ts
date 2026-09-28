@@ -50,7 +50,9 @@ function __cap(name) { return function (a, b, c) { __out[name] = arguments.lengt
 AW.book = __cap('book'); AW.lesson = __cap('lesson'); AW.hifz = __cap('hifz');
 AW.hifzCommun = __cap('hifzCommun'); AW.hifzAdab = __cap('hifzAdab'); AW.hifzTajwid = __cap('hifzTajwid');
 AW.lecture = __cap('lecture'); AW.lectCatalogue = __cap('lectCatalogue'); AW.referentiel = __cap('referentiel');
-AW.positionnement = __cap('positionnement'); AW.livret = __cap('livret'); AW.illus = __cap('illus');
+AW.positionnement = __cap('positionnement'); AW.livret = __cap('livret');
+var __ill = {}; __out.illus = __ill;
+AW.illus = function (k, vb, svg) { __ill[String(k)] = { vb: String(vb), svg: String(svg) }; };
 `;
 
 /**

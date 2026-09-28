@@ -1,5 +1,5 @@
 /** Lectures du contenu utilisées par l'API (projection élève uniquement). */
-import { and, asc, eq, sql } from 'drizzle-orm';
+import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -94,4 +94,14 @@ export async function getUnitForStudent(db: Db, editionId: string, unitId: strin
 export async function ping(db: Db): Promise<boolean> {
   const r = await db.execute(sql`select 1 as ok`);
   return r.rows.length === 1;
+}
+
+/** Illustrations (SVG validé) pour un ensemble de clés. */
+export async function illustrationsFor(db: Db, editionId: string, keys: string[]) {
+  if (keys.length === 0) return {} as Record<string, { viewBox: string; svg: string }>;
+  const rows = await db
+    .select({ key: t.illustration.key, viewBox: t.illustration.viewBox, svg: t.illustration.svg })
+    .from(t.illustration)
+    .where(and(eq(t.illustration.editionId, editionId), inArray(t.illustration.key, keys)));
+  return Object.fromEntries(rows.map((r) => [r.key, { viewBox: r.viewBox, svg: r.svg }]));
 }

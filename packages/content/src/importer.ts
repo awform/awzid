@@ -10,6 +10,8 @@ import { contentHash, sha256Hex } from './canonical.js';
 import { parseDataFile } from './parse.js';
 import { checkVerse, loadTanzil, parseEcartsVoulus, whitelistKey, type Tanzil } from './quran.js';
 import { plain } from './text.js';
+import { checkUnit, translitWords } from './checks.js';
+import { loadIllustrations, type Illustration } from './illus.js';
 import {
   LANGUAGE_EXERCISE_TYPES,
   NOSCORE_TYPES,
@@ -48,6 +50,8 @@ export interface EditionLoad {
   hifz: HifzBook[];
   hifzShared: Record<string, unknown>;
   registry: RegistryData | null;
+  /** illustrations retenues (clé → SVG validé) ; null si non chargées */
+  illustrations: Map<string, Illustration> | null;
   tanzil: Tanzil;
   verseStats: VerseStats;
   issues: Issue[];
@@ -58,6 +62,8 @@ export interface LoadOptions {
   levels: string[];
   /** charger aussi le registre (coran, hadiths, fiqh) — par défaut oui */
   withRegistry?: boolean;
+  /** charger et contrôler les illustrations (dossier illus/) — par défaut oui */
+  withIllustrations?: boolean;
 }
 
 const UNIT_FILE = /^l\d\d\.js$/;
@@ -225,6 +231,15 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
     }
   };
 
+  // illustrations (ordre des pages des livres, zz-sansvisage.js en dernier), SVG validé
+  let illustrations: Map<string, Illustration> | null = null;
+  const illusDir = join(contentDir, 'illus');
+  if (opts.withIllustrations !== false && existsSync(illusDir)) {
+    const il = loadIllustrations(illusDir);
+    illustrations = il.illustrations;
+    issues.push(...il.issues);
+  }
+
   const levels: ImportedLevel[] = [];
   for (const code of opts.levels) {
     const dir = join(dataDir, code);
@@ -247,6 +262,7 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
       });
 
     const units: ImportedUnit[] = [];
+    const translit = new Map<string, number>();
     for (const f of readdirSync(dir)
       .filter((x) => UNIT_FILE.test(x))
       .sort()) {
@@ -369,6 +385,8 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
       for (const v of L.coran?.versets ?? []) {
         if (v && typeof v.ar === 'string') verse(code, unitFile, rel, id, v.ar, v.ref_fr);
       }
+      issues.push(...checkUnit(id, code, L, illustrations, rel));
+      for (const w of translitWords(L, code)) translit.set(w, (translit.get(w) ?? 0) + 1);
 
       units.push({
         id,
@@ -386,6 +404,18 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
         exercises,
       });
     }
+    if (translit.size)
+      issues.push({
+        severity: 'avertissement',
+        code: 'translitteration',
+        file: `data/${code}`,
+        message: `${translit.size} mot(s) avec signes de translittération dans des champs élève (noms de signes à franciser, REGLES §4) : ${[
+          ...translit,
+        ]
+          .sort((a, b) => b[1] - a[1])
+          .map(([w, n]) => `${w} ×${n}`)
+          .join(', ')}`,
+      });
     levels.push({ code, book, units });
   }
 
@@ -468,6 +498,7 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
     hifz,
     hifzShared,
     registry,
+    illustrations,
     tanzil,
     verseStats,
     issues,

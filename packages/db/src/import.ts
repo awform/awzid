@@ -104,6 +104,7 @@ export async function importEdition(
       await tx.delete(t.levelVersion).where(eq(t.levelVersion.editionId, ed.id));
       await tx.delete(t.hifzBook).where(eq(t.hifzBook.editionId, ed.id));
       await tx.delete(t.registryEntry).where(eq(t.registryEntry.editionId, ed.id));
+      await tx.delete(t.illustration).where(eq(t.illustration.editionId, ed.id));
       await tx
         .update(t.edition)
         .set({ sourceSha256: load.sourceSha256, report })
@@ -161,7 +162,7 @@ export async function importEdition(
           sha256: u.sha256,
           strictJson: u.strict,
           content: u.content,
-          student: studentProjection(u.content),
+          student: studentProjection(u.content, lv.code),
         });
         await tx
           .insert(t.qrRedirect)
@@ -190,6 +191,17 @@ export async function importEdition(
             })),
           );
       }
+    }
+
+    if (load.illustrations?.size) {
+      const rows = [...load.illustrations.values()].map((i) => ({
+        editionId,
+        key: i.key,
+        viewBox: i.viewBox,
+        svg: i.svg,
+        sourceFile: i.file,
+      }));
+      await insertChunks(rows, 500, (c) => tx.insert(t.illustration).values(c));
     }
 
     if (load.hifz.length)

@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@awform/content": "workspace:*",
+    "@awform/grading": "workspace:*",
     "drizzle-orm": "^0.45.3",
     "pg": "^8.23.0"
   },
