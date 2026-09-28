@@ -110,3 +110,15 @@ test('visiteur : les leçons restent consultables, lien de connexion affiché', 
   await expect(page.getByTestId('lien-connexion')).toBeVisible();
   await expect(page.getByTestId('progression')).toHaveCount(0);
 });
+
+test.describe('compte parent déjà connecté', () => {
+  test.use({ compte: 'parent' });
+  test('premier chargement : l’en-tête montre le compte, pas « Se connecter »', async ({
+    page,
+  }) => {
+    await page.goto('/profils');
+    await expect(page.locator('[data-profile]')).toHaveCount(2);
+    await expect(page.getByTestId('lien-compte')).toBeVisible();
+    await expect(page.getByTestId('lien-connexion')).toHaveCount(0);
+  });
+});
