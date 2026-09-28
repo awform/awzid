@@ -4,9 +4,12 @@
   let { data } = $props();
 </script>
 
-<svelte:head><title>AWFORM — niveaux</title></svelte:head>
+<svelte:head><title>AWFORM — Arabe</title></svelte:head>
 
-<h1>Mes livres</h1>
+<h1>Mes livres d'arabe</h1>
+{#if data.offline}<p class="card">
+    Sans réseau : voici les niveaux téléchargés sur l'appareil.
+  </p>{/if}
 <ul class="levels">
   {#each data.levels as l (l.code)}
     <li>

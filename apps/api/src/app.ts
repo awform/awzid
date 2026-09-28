@@ -5,13 +5,11 @@
  * profils fictifs de démonstration.
  */
 import Fastify, { type FastifyInstance } from 'fastify';
-import {
-  illustrationKeys,
-  PERSONNAGES,
-  sceneKeys,
-  type Lesson,
-  type SceneSpec,
-} from '@awform/content';
+import type { Lesson } from '@awform/content';
+import { neededIllustrations } from './needed.js';
+import { getPack } from './packs.js';
+
+export { neededIllustrations };
 import {
   currentEdition,
   DEMO,
@@ -44,18 +42,6 @@ function notFound(message: string) {
   return { error: { code: 'introuvable', message } };
 }
 
-/** Clés d'illustration nécessaires au rendu d'une leçon (données + décors de scène + personnages). */
-export function neededIllustrations(lesson: Lesson): string[] {
-  const keys = new Set(illustrationKeys(lesson));
-  if (lesson.scene) for (const k of sceneKeys(lesson.scene as SceneSpec)) keys.add(k);
-  const D = lesson.dialogue as { lieu?: string; props?: string[] } | undefined;
-  if (D) {
-    for (const k of sceneKeys({ lieu: D.lieu, props: D.props })) keys.add(k);
-    for (const k of PERSONNAGES) keys.add(k);
-  }
-  return [...keys].sort();
-}
-
 export function buildApp(opts: AppOptions): FastifyInstance {
   const app = Fastify({
     logger: opts.logger
@@ -70,7 +56,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     reply.header('X-Content-Type-Options', 'nosniff');
     reply.header('Referrer-Policy', 'no-referrer');
     reply.header('Cross-Origin-Resource-Policy', 'same-origin');
-    reply.header('Cache-Control', 'no-store');
+    if (!reply.hasHeader('Cache-Control')) reply.header('Cache-Control', 'no-store');
     return payload;
   });
 
@@ -153,6 +139,60 @@ export function buildApp(opts: AppOptions): FastifyInstance {
         neededIllustrations(unit.lesson as Lesson),
       );
       return { edition: ed.code, unit, illustrations };
+    },
+  );
+
+  // ---------------------------------------------------------------- paquets de niveau (hors ligne)
+
+  /** Manifeste : pour chaque niveau, empreinte du paquet, poids compressé, empreinte de chaque leçon. */
+  app.get('/api/v1/packs', async (_req, reply) => {
+    const ed = await edition();
+    if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
+    const levels = await listLevels(db, ed.id);
+    const packs = [];
+    for (const l of levels) {
+      const p = await getPack(db, ed.id, ed.code, l.code);
+      if (!p) continue;
+      packs.push({
+        level: l.code,
+        titleFr: l.titleFr,
+        codeFr: l.codeFr,
+        hash: p.pack.hash,
+        units: p.perUnit,
+        illustrations: Object.keys(p.pack.illustrations).length,
+        rawBytes: p.rawBytes,
+        bytes: p.brotliBytes,
+      });
+    }
+    return { edition: ed.code, packs };
+  });
+
+  /** Paquet complet d'un niveau (ETag = empreinte ; 304 si l'appareil l'a déjà). */
+  app.get<{ Params: { code: string } }>(
+    '/api/v1/packs/:code',
+    {
+      schema: {
+        params: {
+          type: 'object',
+          properties: { code: { type: 'string', pattern: LEVEL_CODE } },
+          required: ['code'],
+        },
+      },
+    },
+    async (req, reply) => {
+      const ed = await edition();
+      if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
+      const p = await getPack(db, ed.id, ed.code, req.params.code);
+      if (!p)
+        return reply.code(404).send(notFound(`niveau ${req.params.code} absent de l'édition`));
+      const etag = `"${p.pack.hash}"`;
+      reply.header('ETag', etag).header('Cache-Control', 'no-cache');
+      if (req.headers['if-none-match'] === etag) return reply.code(304).send();
+      reply.type('application/json; charset=utf-8').header('Vary', 'Accept-Encoding');
+      // paquet déjà compressé en Brotli (qualité 11) une fois pour toutes
+      if (/\bbr\b/.test(String(req.headers['accept-encoding'] ?? '')))
+        return reply.header('Content-Encoding', 'br').send(p.brotli);
+      return reply.send(p.json);
     },
   );
 

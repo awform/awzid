@@ -6,6 +6,8 @@ const config = {
   preprocess: vitePreprocess(),
   kit: {
     adapter: adapter(),
+    // chemins absolus : la coquille mise en cache (« / ») doit fonctionner sous n'importe quelle URL hors ligne
+    paths: { relative: false },
     serviceWorker: { register: true },
     // politique de sécurité du contenu : aucune ressource tierce (polices servies par nos soins)
     csp: {

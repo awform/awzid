@@ -71,3 +71,34 @@ test('captures d’écran', async ({ page }, info) => {
   await page.goto('/lecons/en1.l01');
   await shot('14-lecon-entiere', true);
 });
+
+test('captures d’écran — lot 3 (hors ligne, onglets, mode école)', async ({ page }, info) => {
+  const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+  mkdirSync(DIR, { recursive: true });
+  const shot = async (name: string) => {
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({ path: join(DIR, `${dev}-${name}.png`) });
+  };
+  await page.goto('/hors-ligne');
+  await page.locator('tr[data-level="en1"]').getByRole('button', { name: 'Télécharger' }).click();
+  await page
+    .locator('tr[data-level="en1"] [data-testid="etat"]')
+    .filter({ hasText: "sur l'appareil" })
+    .waitFor();
+  await shot('15-telechargements');
+  await page.goto('/coran');
+  await shot('16-onglet-coran');
+  await page.goto('/ecole');
+  await page.getByTestId('activer-ecole').click();
+  await page.getByText("Réglages de l'enseignant").click();
+  const first = page.locator('[data-setup]').first();
+  await first.click();
+  for (const s of ['etoile', 'lune', 'soleil', 'goutte'])
+    await page.locator(`[data-setsym="${s}"]`).click();
+  await page.getByTestId('enregistrer-code').click();
+  await page.getByText("Réglages de l'enseignant").click();
+  await shot('17-mode-ecole-grille');
+  await page.locator('[data-profile]').first().click();
+  await page.locator('[data-sym="etoile"]').click();
+  await shot('18-mode-ecole-code-image');
+});

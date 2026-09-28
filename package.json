@@ -14,7 +14,7 @@
     "test": "pnpm -r --workspace-concurrency=1 test",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "check": "pnpm build && pnpm typecheck && pnpm lint && pnpm test",
+    "check": "pnpm build && pnpm typecheck && pnpm lint && pnpm test && pnpm --filter @awform/web budget",
     "db:migrate": "pnpm --filter @awform/db migrate",
     "content:check": "pnpm --filter @awform/content check-content",
     "content:import": "pnpm --filter @awform/db import-content",

@@ -11,6 +11,8 @@
     "preview": "vite preview",
     "start": "node build/index.js",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
+    "test": "vitest run",
+    "budget": "node scripts/budget.mjs",
     "e2e": "playwright test"
   },
   "dependencies": {
@@ -26,9 +28,11 @@
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@types/node": "^24.19.0",
+    "fake-indexeddb": "^6.2.5",
     "svelte": "^5.57.1",
     "svelte-check": "^4.7.6",
     "typescript": "~6.0.3",
-    "vite": "^8.3.1"
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
   }
 }

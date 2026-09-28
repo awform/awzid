@@ -124,3 +124,34 @@ a:focus-visible {
   outline: 3px solid var(--teal);
   outline-offset: 2px;
 }
+
+/* cartes et boutons communs */
+.card {
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin: 12px 0;
+}
+.card h2,
+.card h3 {
+  margin: 0 0 6px;
+}
+.muted {
+  color: var(--ink2);
+}
+.soon {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #9a6700;
+  background: #fff8e1;
+  border-radius: 99px;
+  padding: 1px 10px;
+}
+button.primary {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+  font-weight: 700;
+}

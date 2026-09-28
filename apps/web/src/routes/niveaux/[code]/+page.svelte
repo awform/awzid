@@ -4,6 +4,7 @@
   import Ar from '$lib/Ar.svelte';
   import { arabicSize, unitLabel } from '$lib/api';
   import { demoProfileFor, type DevProfile } from '$lib/attempts';
+  import { downloadPack, getSettings } from '$lib/offline';
   let { data } = $props();
 
   const LABEL: Record<string, string> = {
@@ -13,7 +14,19 @@
   };
   let profile: DevProfile | null = $state(null);
   let status: Record<string, string> = $state({});
+  /** hors ligne d'abord : sans « données économes », le niveau ouvert est téléchargé en arrière-plan */
+  let offlineState: 'local' | 'en_cours' | 'fait' | 'econome' | 'erreur' = $state('local');
   onMount(async () => {
+    if (!data.local) {
+      const s = await getSettings();
+      if (s.econome) offlineState = 'econome';
+      else {
+        offlineState = 'en_cours';
+        downloadPack(data.level)
+          .then(() => (offlineState = 'fait'))
+          .catch(() => (offlineState = 'erreur'));
+      }
+    }
     profile = await demoProfileFor(data.level);
     if (!profile) return;
     try {
@@ -33,6 +46,14 @@
 <p><a href={resolve('/')}>← Mes livres</a></p>
 <h1>Leçons — {data.level}</h1>
 {#if profile}<p class="profil">{profile.pseudonym}</p>{/if}
+<p class="offline" data-testid="etat-hors-ligne">
+  {#if offlineState === 'local' || offlineState === 'fait'}✓ Disponible sans réseau
+  {:else if offlineState === 'en_cours'}Téléchargement pour le hors ligne…
+  {:else if offlineState === 'econome'}Données économes : <a href={resolve('/hors-ligne')}
+      >télécharger ce niveau</a
+    > pour l'utiliser sans réseau
+  {:else}Téléchargement impossible pour l'instant{/if}
+</p>
 <ol class="units" style="--ar-size: {arabicSize(data.level)}px">
   {#each data.units as u (u.id)}
     <li class={u.kind}>
@@ -90,6 +111,11 @@
   .st.maitrisee {
     background: #eaf7f1;
     color: var(--good);
+  }
+  .offline {
+    font-size: 0.85rem;
+    color: var(--good);
+    margin: 4px 0;
   }
   .profil {
     color: var(--ink2);
