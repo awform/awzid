@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "@awform/content": "workspace:*",
-    "@awform/grading": "workspace:*"
+    "@awform/grading": "workspace:*",
+    "intl-messageformat": "^12.1.2"
   },
   "devDependencies": {
     "@fontsource/amiri-quran": "^5.3.0",

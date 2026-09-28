@@ -1,4 +1,5 @@
-import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { solveExercise, unitData } from './solve';
 
 /** Lot 3 : hors ligne complet, synchronisation différée, données économes, mode école, onglets. */
@@ -63,13 +64,20 @@ test('données économes : pas de téléchargement automatique, poids affiché a
   await expect(page.getByTestId('donnees-mois')).not.toHaveText('0 o');
 });
 
-test('mode école : code image, élève actif, retour à la grille après inactivité', async ({
-  page,
-}) => {
+test.describe('compte parent', () => {
+  test.use({ compte: 'parent' });
+  test('mode école : code image, élève actif, retour à la grille après inactivité', async ({
+    page,
+  }) => {
+    await runEcole(page);
+  });
+});
+
+async function runEcole(page: Page) {
   await page.clock.install();
   await page.goto('/ecole');
   await page.getByTestId('activer-ecole').click();
-  await page.getByText("Réglages de l'enseignant").click();
+  await page.getByText("Réglages de l'adulte").click();
   const first = page.locator('[data-setup]').first();
   const pid = await first.getAttribute('data-setup');
   await first.click();
@@ -77,7 +85,7 @@ test('mode école : code image, élève actif, retour à la grille après inacti
     await page.locator(`[data-setsym="${s}"]`).click();
   await page.getByTestId('enregistrer-code').click();
   await page.getByRole('button', { name: '1 min' }).click();
-  await page.getByText("Réglages de l'enseignant").click();
+  await page.getByText("Réglages de l'adulte").click();
 
   await page.locator(`[data-profile="${pid}"]`).click();
   for (const s of ['lune', 'lune', 'lune', 'lune']) await page.locator(`[data-sym="${s}"]`).click();
@@ -91,7 +99,7 @@ test('mode école : code image, élève actif, retour à la grille après inacti
   await expect(page).toHaveURL(/\/ecole$/, { timeout: 10_000 });
   await expect(page.getByTestId('grille')).toBeVisible();
   await expect(page.getByTestId('eleve-actif')).toHaveCount(0);
-});
+}
 
 test('navigation par matière : six onglets, onglet actif, barre en bas sur téléphone', async ({
   page,

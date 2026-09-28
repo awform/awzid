@@ -7,6 +7,7 @@
   import Scene from '$lib/Scene.svelte';
   import Sprite from '$lib/Sprite.svelte';
   import { arabicSize, unitLabel } from '$lib/api';
+  import { fmtNumber, t } from '$lib/i18n';
   import { demoProfileFor, enqueue, flush, onProgress } from '$lib/attempts';
   import type { ItemResponse } from '@awform/grading';
   import { personaKey, type SceneSpec } from '@awform/content/scene';
@@ -57,7 +58,7 @@
     return m;
   });
 
-  // tentatives : profil fictif de démonstration (avant les comptes du lot 4)
+  // tentatives : profil actif du compte connecté (sans profil, les réponses ne sont pas enregistrées)
   let profileId: string | null = $state(null);
   let progress: { status: string; score: number | null; bestScore: number | null } | null =
     $state(null);
@@ -95,15 +96,9 @@
         response: { checked: checked.filter(Boolean).length, total: checkItems.length },
       });
   }
-  const STATUS: Record<string, string> = {
-    ouverte: 'ouverte',
-    commencee: 'commencée',
-    terminee: 'terminée',
-    maitrisee: 'maîtrisée',
-  };
 </script>
 
-<svelte:head><title>AWFORM — {unitLabel(u)} · {u.titleFr}</title></svelte:head>
+<svelte:head><title>{t('app.nom')} — {unitLabel(u)} · {u.titleFr}</title></svelte:head>
 
 <Sprite illustrations={data.illustrations} />
 
@@ -114,7 +109,9 @@
   data-unit={u.id}
 >
   <p class="nav">
-    <a href={resolve('/niveaux/[code]', { code: u.levelCode })}>← Leçons {u.levelCode}</a>
+    <a href={resolve('/niveaux/[code]', { code: u.levelCode })}
+      >{t('lecon.retour', { level: u.levelCode })}</a
+    >
   </p>
   <header class="ltitle">
     <p class="num">{unitLabel(u)} · {u.titleFr}</p>
@@ -125,8 +122,9 @@
         >{/if}
     </h1>
     {#if progress}<p class="prog" data-testid="progression">
-        Progression : {STATUS[progress.status] ?? progress.status}{progress.bestScore != null
-          ? ` · ${Math.round(progress.bestScore * 100)} %`
+        {t('lecon.progression', { statut: t(`statut.${progress.status}`) })}{progress.bestScore !=
+        null
+          ? ` · ${fmtNumber(progress.bestScore, { style: 'percent' })}`
           : ''}
       </p>{/if}
   </header>
@@ -156,14 +154,16 @@
       >
       <div>
         <Ar text={'هَدَفِي: ' + L.objectifs[0]!.ar} {lettres} />
-        <p class="fr">Mon objectif : {L.objectifs[0]!.fr}</p>
+        <p class="fr">{t('lecon.objectif', { texte: L.objectifs[0]!.fr })}</p>
       </div>
     </div>
   {/if}
 
   {#if !isEval && lettres.some((x) => x.nom_ar)}
     <section class="blk">
-      <h2><Ar text="أَكْتَشِفُ" /> <span>{(L.decouvre_fr as string) ?? 'Je découvre'}</span></h2>
+      <h2>
+        <Ar text="أَكْتَشِفُ" /> <span>{(L.decouvre_fr as string) ?? t('lecon.je_decouvre')}</span>
+      </h2>
       {#if L.decouvre_ar}<Ar tag="p" text={L.decouvre_ar as string} />{/if}
       <div class="letters">
         {#each lettres as x, i (i)}
@@ -181,15 +181,21 @@
 
   {#if !isEval && lettres.some((x) => x.formes)}
     <section class="blk">
-      <h2><Ar text="أَشْكَالُ الْحَرْفِ" /> <span>Les formes de la lettre</span></h2>
+      <h2><Ar text="أَشْكَالُ الْحَرْفِ" /> <span>{t('lecon.formes')}</span></h2>
       <div class="tw">
         <table class="forms" dir="rtl">
           <thead
             ><tr
-              ><th></th><th><Ar text="مُنْفَصِلٌ" /><br /><span class="fr">isolée</span></th><th
-                ><Ar text="فِي الْأَوَّلِ" /><br /><span class="fr">début</span></th
-              ><th><Ar text="فِي الْوَسَطِ" /><br /><span class="fr">milieu</span></th><th
-                ><Ar text="فِي الْآخِرِ" /><br /><span class="fr">fin</span></th
+              ><th></th><th
+                ><Ar text="مُنْفَصِلٌ" /><br /><span class="fr">{t('lecon.forme_isolee')}</span></th
+              ><th
+                ><Ar text="فِي الْأَوَّلِ" /><br /><span class="fr">{t('lecon.forme_debut')}</span
+                ></th
+              ><th
+                ><Ar text="فِي الْوَسَطِ" /><br /><span class="fr">{t('lecon.forme_milieu')}</span
+                ></th
+              ><th
+                ><Ar text="فِي الْآخِرِ" /><br /><span class="fr">{t('lecon.forme_fin')}</span></th
               ></tr
             ></thead
           >
@@ -218,14 +224,18 @@
           texte_ar?: string;
           texte_fr?: string;
         }}
-        <h2><Ar text={N.titre_ar ?? 'أَقْرَأُ'} /> <span>{N.titre_fr ?? 'Je lis'}</span></h2>
+        <h2>
+          <Ar text={N.titre_ar ?? 'أَقْرَأُ'} /> <span>{N.titre_fr ?? t('lecon.je_lis')}</span>
+        </h2>
         <div class="notion">
           {#if N.signe}<span class="mk ar" lang="ar">{N.signe}</span>{/if}
           {#if N.texte_ar}<Ar text={N.texte_ar} {lettres} />{/if}
           {#if N.texte_fr}<p class="fr">{N.texte_fr}</p>{/if}
         </div>
       {:else}
-        <h2><Ar text="أَقْرَأُ" /> <span>{isEval ? 'Je relis' : 'Je lis'}</span></h2>
+        <h2>
+          <Ar text="أَقْرَأُ" /> <span>{isEval ? t('lecon.je_relis') : t('lecon.je_lis')}</span>
+        </h2>
       {/if}
       {#if R.syllabes?.length}
         <div class="syl" dir="rtl">
@@ -235,9 +245,7 @@
       {/if}
       {#if R.ligne?.length}
         <p class="hint fr">
-          Je lis de droite à gauche ←{R.vedette && !R.non_prepare
-            ? ', puis le mot encadré en or :'
-            : ''}
+          {R.vedette && !R.non_prepare ? t('lecon.ligne_vedette') : t('lecon.ligne')}
         </p>
         <p class="readline" dir="rtl">
           {#each R.ligne as w, i (i)}<span><Ar text={w} {lettres} /></span>{/each}
@@ -248,7 +256,7 @@
       {/if}
       {#if R.non_prepare}
         <div class="np-box" data-testid="non-prepare">
-          <b class="fr">Texte remis par l'enseignant le jour de l'épreuve</b>
+          <b class="fr">{t('lecon.non_prepare')}</b>
           <Ar text="نَصٌّ يُوَزِّعُهُ الْمُعَلِّمُ يَوْمَ الِاخْتِبَارِ" />
         </div>
       {:else}
@@ -271,9 +279,9 @@
 
   {#if L.mots?.length}
     <section class="blk">
-      <h2><Ar text="أَسْمَعُ وَأُرَدِّدُ" /> <span>J'écoute et je répète</span></h2>
+      <h2><Ar text="أَسْمَعُ وَأُرَدِّدُ" /> <span>{t('lecon.ecoute_repete')}</span></h2>
       <p class="hint fr">
-        {(L.mots_fr as string) ?? "J'écoute chaque mot, je le répète, je le montre du doigt."}
+        {(L.mots_fr as string) ?? t('lecon.mots_consigne')}
       </p>
       <div class="words">
         {#each L.mots as w, i (i)}
@@ -301,7 +309,7 @@
     <section class="blk">
       <h2>
         <Ar text={isEval ? 'حَصِيلَةٌ' : 'أَتَدَرَّبُ'} />
-        <span>{isEval ? 'Mes exercices' : "Je m'entraîne"}</span>
+        <span>{isEval ? t('lecon.mes_exercices') : t('lecon.entraine')}</span>
       </h2>
       {#each livreEx as { ex, i } (i)}
         <Exercise
@@ -320,7 +328,7 @@
 
   {#if lexique.length}
     <section class="blk">
-      <h2><Ar text="مُعْجَمُ الدَّرْسِ" /> <span>Lexique de la leçon</span></h2>
+      <h2><Ar text="مُعْجَمُ الدَّرْسِ" /> <span>{t('lecon.lexique')}</span></h2>
       <div class="lex">
         {#each lexique as x, i (i)}<div>
             <Ar text={x.ar} /> <span class="fr">{x.fr ?? ''}</span>
@@ -338,21 +346,21 @@
 
   {#if oral.length}
     <section class="blk">
-      <h2><Ar text="الِاخْتِبَارُ الشَّفَهِيُّ" /> <span>Épreuves orales</span></h2>
+      <h2><Ar text="الِاخْتِبَارُ الشَّفَهِيُّ" /> <span>{t('lecon.oral')}</span></h2>
       <ol>
         {#each oral as o, i (i)}<li>
             <span class="fr">{o.fr}</span>{#if o.points != null}
-              <b>{o.points} pt{o.points > 1 ? 's' : ''}</b>{/if}
+              <b>{t('lecon.points', { n: o.points })}</b>{/if}
           </li>{/each}
       </ol>
     </section>
   {/if}
 
   <section class="blk recap">
-    <h2><Ar text="حَصِيلَتِي" /> <span>Mon bilan</span></h2>
+    <h2><Ar text="حَصِيلَتِي" /> <span>{t('lecon.mon_bilan')}</span></h2>
     {#if lettres.some((x) => x.points_ar)}
       <div class="memo">
-        <h3><Ar text="أَتَذَكَّرُ" /> <span>Je retiens</span></h3>
+        <h3><Ar text="أَتَذَكَّرُ" /> <span>{t('lecon.je_retiens')}</span></h3>
         {#each lettres as x, i (i)}
           <div class="row">
             <span class="l c{i % 4}" lang="ar">{x.l}</span>{#if x.points_ar}<Ar
@@ -363,22 +371,28 @@
       </div>
     {:else if L.retiens?.length}
       <div class="memo">
-        <h3><Ar text="أَتَذَكَّرُ" /> <span>Je retiens</span></h3>
+        <h3><Ar text="أَتَذَكَّرُ" /> <span>{t('lecon.je_retiens')}</span></h3>
         {#each L.retiens as r, i (i)}<div class="row">
             <Ar text={r.ar} /> <span class="fr">{r.fr}</span>
           </div>{/each}
       </div>
     {/if}
     <div class="bravo">
-      <div class="stars" aria-label="{nChecked} étoile(s) sur {checkItems.length}">
+      <div
+        class="stars"
+        aria-label={t('lecon.etoiles_aria', { n: nChecked, total: checkItems.length })}
+      >
         {#each checkItems as _c, i (i)}<span class="star" class:lit={i < nChecked}>★</span>{/each}
       </div>
       <p class="fr" aria-live="polite">
-        {#if nChecked === checkItems.length && checkItems.length}Bravo ! Leçon terminée. <span
-            class="ar"
-            lang="ar">تَبَارَكَ اللَّهُ</span
-          >{:else if nChecked}{nChecked} / {checkItems.length} ★ — continue !{:else}Coche ce que tu
-          sais faire pour gagner tes étoiles.{/if}
+        {#if nChecked === checkItems.length && checkItems.length}{t('lecon.bravo_termine')}
+          <span class="ar" lang="ar">تَبَارَكَ اللَّهُ</span>{:else if nChecked}{t(
+            'lecon.continue',
+            {
+              n: nChecked,
+              total: checkItems.length,
+            },
+          )}{:else}{t('lecon.coche')}{/if}
       </p>
     </div>
     <div class="check">
@@ -397,18 +411,18 @@
 
   {#if !isEval && (E.mots || E.lier || E.copie || E.production || cahierEx.length)}
     <section class="blk cahier">
-      <h2><Ar text="أَكْتُبُ" /> <span>Mon cahier d'écriture</span></h2>
+      <h2><Ar text="أَكْتُبُ" /> <span>{t('lecon.cahier')}</span></h2>
       <p class="hint fr">
-        Je trace sur mon cahier (le tracé guidé au doigt arrive dans une prochaine version).
+        {t('lecon.cahier_consigne')}
       </p>
       {#if Array.isArray(E.mots) && E.mots.length}
-        <h3>J'écris des mots</h3>
+        <h3>{t('lecon.ecris_mots')}</h3>
         <p class="trace" dir="rtl">
           {#each E.mots as m, i (i)}<span><Ar text={String(m)} {lettres} /></span>{/each}
         </p>
       {/if}
       {#if Array.isArray(E.lier) && E.lier.length}
-        <h3>Je relie les lettres pour écrire le mot</h3>
+        <h3>{t('lecon.relie_lettres')}</h3>
         <ul class="lier">
           {#each E.lier as x, i (i)}
             {@const lk = x as { lettres?: string[] }}
@@ -417,7 +431,7 @@
         </ul>
       {/if}
       {#if Array.isArray(E.copie) && E.copie.length}
-        <h3>Je recopie</h3>
+        <h3>{t('lecon.recopie')}</h3>
         {#each E.copie as c, i (i)}<Ar tag="p" text={String(c)} {lettres} />{/each}
       {/if}
       {#if E.production}
@@ -427,14 +441,13 @@
           modele_ar?: string;
           ar?: string;
         }}
-        <h3>J'écris moi-même</h3>
+        <h3>{t('lecon.ecris_moi')}</h3>
         <p class="fr">{P.consigne_fr ?? P.fr ?? ''}</p>
         {#if P.modele_ar ?? P.ar}<Ar tag="p" text={P.modele_ar ?? P.ar ?? ''} />{/if}
       {/if}
-      <h3>Dictée</h3>
+      <h3>{t('lecon.dictee')}</h3>
       <p class="fr">
-        Mon enseignant ou mes parents me dictent (texte dans l'espace de l'adulte) ; j'écris sur mon
-        cahier.
+        {t('lecon.dictee_consigne')}
       </p>
       {#each cahierEx as { ex, i } (i)}
         <Exercise
@@ -452,10 +465,10 @@
   <section class="blk">
     <h2>
       <Ar text={dialogue?.titre_ar ?? 'أَتَكَلَّمُ'} />
-      <span>{dialogue?.titre_fr ?? 'Je parle'}</span>
+      <span>{dialogue?.titre_fr ?? t('lecon.je_parle')}</span>
     </h2>
     <p class="hint fr">
-      {(dialogue?.consigne_fr as string) ?? "J'écoute, puis je joue la scène avec un camarade."}
+      {(dialogue?.consigne_fr as string) ?? t('lecon.dialogue_consigne')}
     </p>
     {#if dialogue?.lieu}
       <Scene
@@ -487,7 +500,7 @@
     </div>
     {#if dialogue?.note_ar || dialogue?.note_fr}
       <div class="note">
-        <b>Je retiens :</b>
+        <b>{t('lecon.je_retiens_deux_points')}</b>
         {#if dialogue.note_ar}<Ar text={dialogue.note_ar as string} />{/if}
         <span class="fr">{dialogue.note_fr ?? ''}</span>
       </div>
@@ -498,12 +511,12 @@
 {#snippet coran()}
   <section class="blk quran">
     <h2>
-      <Ar text={Q?.titre_ar ?? 'مِنَ الْقُرْآنِ'} /> <span>{Q?.titre_fr ?? 'Dans le Coran'}</span>
+      <Ar text={Q?.titre_ar ?? 'مِنَ الْقُرْآنِ'} /> <span>{Q?.titre_fr ?? t('lecon.coran')}</span>
     </h2>
     {#each Q?.versets ?? [] as v, i (i)}
       {#if v.non_prepare}
         <div class="np-box" data-testid="non-prepare">
-          <b class="fr">Texte remis par l'enseignant le jour de l'épreuve</b>
+          <b class="fr">{t('lecon.non_prepare')}</b>
           <Ar text="نَصٌّ يُوَزِّعُهُ الْمُعَلِّمُ يَوْمَ الِاخْتِبَارِ" />
         </div>
       {:else}
@@ -526,7 +539,7 @@
     {/if}
     {#if Q?.tajwid}
       <div class="tajwid">
-        <b>{Q.tajwid.titre_fr ?? 'Tajwid'} :</b>
+        <b>{t('lecon.tajwid_titre', { titre: Q.tajwid.titre_fr ?? t('lecon.tajwid') })}</b>
         <span class="fr">{Q.tajwid.texte_fr ?? ''}</span>
         {#if Q.tajwid.exemple_ar}<Ar quran text={Q.tajwid.exemple_ar} {lettres} />{/if}
       </div>
@@ -538,7 +551,7 @@
   <section class="blk fiqh">
     <h2>
       <Ar text={fiqh?.titre_ar ?? 'آدَابِي'} />
-      <span>{fiqh?.titre_fr ?? 'Mes bonnes manières'}</span>
+      <span>{fiqh?.titre_fr ?? t('lecon.adab')}</span>
     </h2>
     <ul>
       {#each fiqh?.points ?? [] as p, i (i)}<li>

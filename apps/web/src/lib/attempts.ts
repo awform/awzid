@@ -1,10 +1,11 @@
 /**
  * Tentatives côté page : mise en file (IndexedDB) puis envoi immédiat si le réseau est là ; sinon envoi
  * au retour du réseau (événement « online ») ou par le service worker (Background Sync quand le navigateur
- * le permet). Profil actif : celui du mode école s'il est ouvert, sinon le profil FICTIF de démonstration
- * adapté au niveau (en attendant les comptes du lot 4).
+ * le permet). Profil actif : celui choisi sur l'appareil (« Qui apprend ? », mode école) ; les réponses ne
+ * sont acceptées par le serveur que pour les profils du compte connecté (lot 4).
  */
 import { kvGet, kvSet } from './idb';
+import { cachedMe, fetchMe, type ProfileInfo } from './session';
 import { flushQueue, pendingCount, queueEvent, type AttemptEvent } from './sync-core';
 
 export { pendingCount, uuidv7 } from './sync-core';
@@ -75,46 +76,35 @@ export function startSync(): void {
   navigator.serviceWorker?.addEventListener?.('message', (e: MessageEvent) => {
     if ((e.data as { type?: string })?.type === 'awform-synced') void notifyQueue();
   });
-  // garde les profils en cache pour pouvoir répondre hors ligne dès la première coupure
-  void devProfiles();
+  // garde le compte en cache pour pouvoir répondre hors ligne dès la première coupure
+  void fetchMe();
   void flush();
 }
 
 // ------------------------------------------------------------------ profils
 
-export interface DevProfile {
-  id: string;
-  kind: 'enfant' | 'adulte';
-  pseudonym: string;
-}
+export type DevProfile = ProfileInfo;
 
-/** Profil actif choisi sur cet appareil (mode école), s'il y en a un. */
-export async function activeProfile(): Promise<DevProfile | null> {
-  return (await kvGet<DevProfile | null>('activeProfile').catch(() => undefined)) ?? null;
+/** Profil actif choisi sur cet appareil (« Qui apprend ? » ou mode école), s'il y en a un. */
+export async function activeProfile(): Promise<ProfileInfo | null> {
+  return (await kvGet<ProfileInfo | null>('activeProfile').catch(() => undefined)) ?? null;
 }
-export async function setActiveProfile(p: DevProfile | null): Promise<void> {
+export async function setActiveProfile(p: ProfileInfo | null): Promise<void> {
   await kvSet('activeProfile', p);
 }
 
-/** Profils fictifs de démonstration (API de développement), mis en cache pour le hors ligne. */
-export async function devProfiles(): Promise<DevProfile[]> {
-  try {
-    const r = await fetch('/api/v1/dev/profiles');
-    if (r.ok) {
-      const { profiles } = (await r.json()) as { profiles: DevProfile[] };
-      await kvSet('devProfiles', profiles);
-      return profiles;
-    }
-  } catch {
-    /* hors ligne : cache */
-  }
-  return (await kvGet<DevProfile[]>('devProfiles').catch(() => undefined)) ?? [];
+/** Profils du compte connecté (gardés pour le hors ligne). */
+export async function accountProfiles(): Promise<ProfileInfo[]> {
+  return (await fetchMe())?.profiles ?? [];
 }
 
-/** Profil à utiliser pour ce niveau : profil actif (mode école), sinon profil de démonstration adapté. */
-export async function demoProfileFor(level: string): Promise<DevProfile | null> {
+/**
+ * Profil qui répond : le profil actif ; à défaut, le seul profil du compte (adulte autonome).
+ * Sans profil, les réponses ne sont pas enregistrées (la leçon reste utilisable).
+ */
+export async function demoProfileFor(_level: string): Promise<ProfileInfo | null> {
   const active = await activeProfile();
   if (active) return active;
-  const profiles = await devProfiles();
-  return profiles.find((p) => p.kind === (level.startsWith('en') ? 'enfant' : 'adulte')) ?? null;
+  const me = (await cachedMe()) ?? (await fetchMe());
+  return me && me.profiles.length === 1 ? (me.profiles[0] ?? null) : null;
 }

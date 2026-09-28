@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 /** Règles d'affichage des bilans (moteur `lectureBilan`, conventions du 28/09). */
 

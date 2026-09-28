@@ -12,52 +12,40 @@
     startSync,
     type DevProfile,
   } from '$lib/attempts';
+  import { t } from '$lib/i18n';
   import { getSettings, type Settings } from '$lib/offline';
+  import { cachedMe, type Me } from '$lib/session';
 
   let { children } = $props();
 
   /** Navigation par MATIÈRE (demande du client, 28/09) : barre d'onglets sur tous les écrans élève. */
   const TABS = [
-    {
-      id: 'coran',
-      href: '/coran',
-      label: 'Coran',
-      icon: 'M12 3c-4 3-7 5-7 9a7 7 0 0 0 14 0c0-4-3-6-7-9Zm0 4v10',
-    },
-    { id: 'arabe', href: '/', label: 'Arabe', icon: 'M4 17c3 0 5-2 6-5 1 3 3 5 6 5M14 7h6M17 4v6' },
-    {
-      id: 'sciences',
-      href: '/sciences',
-      label: 'Sciences islamiques',
-      icon: 'M4 6h7v13H4zM13 6h7v13h-7zM11 8h2',
-    },
-    {
-      id: 'ecriture',
-      href: '/ecriture',
-      label: 'Écriture',
-      icon: 'M5 19l3-1 10-10-2-2L6 16l-1 3ZM14 6l2 2',
-    },
+    { id: 'coran', href: '/coran', icon: 'M12 3c-4 3-7 5-7 9a7 7 0 0 0 14 0c0-4-3-6-7-9Zm0 4v10' },
+    { id: 'arabe', href: '/', icon: 'M4 17c3 0 5-2 6-5 1 3 3 5 6 5M14 7h6M17 4v6' },
+    { id: 'sciences', href: '/sciences', icon: 'M4 6h7v13H4zM13 6h7v13h-7zM11 8h2' },
+    { id: 'ecriture', href: '/ecriture', icon: 'M5 19l3-1 10-10-2-2L6 16l-1 3ZM14 6l2 2' },
     {
       id: 'lectures',
       href: '/lectures',
-      label: 'Lectures',
       icon: 'M5 5h5a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H5zM19 5h-5a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h5z',
     },
-    { id: 'suivi', href: '/suivi', label: 'Mon suivi', icon: 'M5 19V11M10 19V7M15 19v-5M20 19V4' },
+    { id: 'suivi', href: '/suivi', icon: 'M5 19V11M10 19V7M15 19v-5M20 19V4' },
   ] as const;
 
   const current = $derived.by(() => {
     const p = page.url.pathname;
     if (p === '/' || p.startsWith('/niveaux') || p.startsWith('/lecons')) return 'arabe';
-    const t = TABS.find((x) => x.href !== '/' && p.startsWith(x.href));
-    return t?.id ?? '';
+    const x = TABS.find((y) => y.href !== '/' && p.startsWith(y.href));
+    return x?.id ?? '';
   });
-  const showTabs = $derived(!page.url.pathname.startsWith('/ecole'));
+  const NO_TABS = ['/ecole', '/connexion', '/inscription', '/profils'];
+  const showTabs = $derived(!NO_TABS.some((p) => page.url.pathname.startsWith(p)));
 
   let online = $state(true);
   let pending = $state(0);
   let settings: Settings | null = $state(null);
   let profile: DevProfile | null = $state(null);
+  let me: Me | null = $state(null);
   let lastActivity = Date.now();
 
   onMount(() => {
@@ -94,9 +82,10 @@
   async function refresh() {
     settings = await getSettings().catch(() => null);
     profile = await activeProfile().catch(() => null);
+    me = await cachedMe();
     lastActivity = Date.now();
   }
-  // à chaque navigation : relire réglages et profil (le mode école a pu changer)
+  // à chaque navigation : relire réglages, compte et profil (ils ont pu changer)
   $effect(() => {
     void page.url.pathname;
     void refresh();
@@ -105,41 +94,59 @@
   async function changeStudent() {
     await setActiveProfile(null);
     profile = null;
-    await goto(resolve('/ecole'));
+    await goto(resolve(settings?.ecole ? '/ecole' : '/profils'));
   }
 </script>
 
 <div class="app" data-sveltekit-preload-data={settings?.econome ? 'off' : 'hover'}>
   <header class="top">
-    <a href={resolve('/')} class="brand">AWFORM</a>
-    {#if !online}<span class="badge off" data-testid="hors-ligne">hors ligne</span>{/if}
-    {#if pending > 0}<span
-        class="badge"
-        data-testid="en-attente"
-        title="Réponses gardées sur l'appareil, envoyées au retour du réseau"
-        >{pending} réponse{pending > 1 ? 's' : ''} en attente</span
+    <a href={resolve('/')} class="brand">{t('app.nom')}</a>
+    {#if !online}<span class="badge off" data-testid="hors-ligne">{t('entete.hors_ligne')}</span
+      >{/if}
+    {#if pending > 0}<span class="badge" data-testid="en-attente" title={t('entete.attente_titre')}
+        >{t('entete.attente', { n: pending })}</span
       >{/if}
     <span class="spacer"></span>
-    {#if settings?.ecole && profile}
+    {#if profile}
       <span class="who" data-testid="eleve-actif">{profile.pseudonym}</span>
-      <button type="button" class="small" onclick={changeStudent}>Changer d'élève</button>
+      {#if me?.profiles && me.profiles.length > 1}
+        <button type="button" class="small" onclick={changeStudent}
+          >{t('entete.changer_eleve')}</button
+        >
+      {/if}
     {/if}
-    <a class="dl" href={resolve('/hors-ligne')} aria-label="Téléchargements et hors ligne">
+    {#if me}
+      <a
+        class="dl"
+        href={resolve('/compte')}
+        aria-label={t('entete.compte')}
+        data-testid="lien-compte"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"
+          ><path d="M4 20c1-4 4-6 8-6s7 2 8 6M12 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8" /></svg
+        >
+      </a>
+    {:else}
+      <a class="login" href={resolve('/connexion')} data-testid="lien-connexion"
+        >{t('entete.connexion')}</a
+      >
+    {/if}
+    <a class="dl" href={resolve('/hors-ligne')} aria-label={t('entete.telechargements')}>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" /></svg>
     </a>
   </header>
 
   {#if showTabs}
-    <nav class="tabs" aria-label="Matières">
-      {#each TABS as t (t.id)}
+    <nav class="tabs" aria-label={t('onglets.aria')}>
+      {#each TABS as x (x.id)}
         <a
-          href={resolve(t.href)}
-          class:active={current === t.id}
-          aria-current={current === t.id ? 'page' : undefined}
-          data-tab={t.id}
+          href={resolve(x.href)}
+          class:active={current === x.id}
+          aria-current={current === x.id ? 'page' : undefined}
+          data-tab={x.id}
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={t.icon} /></svg>
-          <span>{t.label}</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={x.icon} /></svg>
+          <span>{t(`onglets.${x.id}`)}</span>
         </a>
       {/each}
     </nav>
@@ -199,6 +206,11 @@
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+  .login {
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
   }
   .dl {
     min-width: 44px;

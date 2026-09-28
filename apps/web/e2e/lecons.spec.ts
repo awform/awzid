@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 /** Texte sans les crochets de couleur (le navigateur affiche les lettres colorées dans des <span>). */
 const plain = (s: string) => s.replace(/[[\]]/g, '');

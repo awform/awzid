@@ -1,27 +1,26 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
+  import { t } from '$lib/i18n';
   let { data } = $props();
 </script>
 
-<svelte:head><title>AWFORM — Arabe</title></svelte:head>
+<svelte:head><title>{t('app.nom')} — {t('onglets.arabe')}</title></svelte:head>
 
-<h1>Mes livres d'arabe</h1>
-{#if data.offline}<p class="card">
-    Sans réseau : voici les niveaux téléchargés sur l'appareil.
-  </p>{/if}
+<h1>{t('arabe.titre')}</h1>
+{#if data.offline}<p class="card">{t('arabe.hors_ligne')}</p>{/if}
 <ul class="levels">
   {#each data.levels as l (l.code)}
     <li>
       <a href={resolve('/niveaux/[code]', { code: l.code })} data-testid="level">
         <strong>{l.codeFr ?? l.code}</strong> — {l.titleFr}
         {#if l.titreAr}<Ar text={l.titreAr} />{/if}
-        <small>{l.units} unités</small>
+        <small>{t('arabe.unites', { n: l.units })}</small>
       </a>
     </li>
   {/each}
 </ul>
-<p class="edition">Édition du contenu : {data.edition}</p>
+<p class="edition">{t('arabe.edition', { edition: data.edition })}</p>
 
 <style>
   .levels {

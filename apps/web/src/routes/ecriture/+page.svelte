@@ -1,15 +1,12 @@
-<svelte:head><title>AWFORM — Écriture</title></svelte:head>
+<script lang="ts">
+  import { t } from '$lib/i18n';
+</script>
 
-<h1>Écriture</h1>
+<svelte:head><title>{t('app.nom')} — {t('onglets.ecriture')}</title></svelte:head>
+
+<h1>{t('onglets.ecriture')}</h1>
 <section class="card">
-  <h2>Tracé guidé des lettres <span class="soon">lot 6</span></h2>
-  <p>
-    Au doigt ou au stylet : je repasse les pointillés, je trace sur la lettre claire, puis j'écris
-    seul. L'application vérifie le sens (de droite à gauche), le couloir et les points, sans jamais
-    noter.
-  </p>
+  <h2>{t('ecriture.trace_titre')} <span class="soon">{t('lot.n', { n: 6 })}</span></h2>
+  <p>{t('ecriture.trace_texte')}</p>
 </section>
-<p class="muted">
-  En attendant, chaque leçon garde sa partie « Mon cahier d'écriture » : on écrit sur le cahier
-  papier.
-</p>
+<p class="muted">{t('ecriture.en_attendant')}</p>

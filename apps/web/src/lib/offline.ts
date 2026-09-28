@@ -9,6 +9,7 @@
  */
 import type { UnitDetail } from './api';
 import { delMany, get, getAll, getAllByIndex, kvGet, kvSet, put, putMany } from './idb';
+import { t } from './i18n';
 
 export type Illustrations = Record<string, { viewBox: string; svg: string }>;
 
@@ -105,7 +106,7 @@ export async function saveSettings(patch: Partial<Settings>): Promise<Settings> 
 
 export async function fetchManifest(fetchFn: typeof fetch = fetch): Promise<PackManifestEntry[]> {
   const r = await fetchFn('/api/v1/packs', { headers: { accept: 'application/json' } });
-  if (!r.ok) throw new Error(`manifeste indisponible (${r.status})`);
+  if (!r.ok) throw new Error(t('horsligne.err_manifeste', { status: r.status }));
   const text = await r.text();
   await addBytes(transferred(r, text.length));
   return (JSON.parse(text) as { packs: PackManifestEntry[] }).packs;
@@ -127,7 +128,7 @@ export async function downloadPack(
   const r = await fetchFn(`/api/v1/packs/${encodeURIComponent(level)}`, {
     headers: { accept: 'application/json' },
   });
-  if (!r.ok) throw new Error(`paquet ${level} indisponible (${r.status})`);
+  if (!r.ok) throw new Error(t('horsligne.err_paquet', { level, status: r.status }));
   const text = await r.text();
   await addBytes(transferred(r, knownBytes || text.length));
   const pack = JSON.parse(text) as {
@@ -188,7 +189,7 @@ export async function updatePack(
   const local = await localPack(level);
   const manifest = await fetchManifest(fetchFn);
   const remote = manifest.find((m) => m.level === level);
-  if (!remote) throw new Error(`niveau ${level} absent du manifeste`);
+  if (!remote) throw new Error(t('horsligne.err_niveau', { level }));
   if (!local) {
     await downloadPack(level, fetchFn, remote.bytes);
     return { mode: 'complet', changed: remote.units.map((u) => u.id) };
@@ -208,7 +209,7 @@ export async function updatePack(
     const r = await fetchFn(`/api/v1/units/${encodeURIComponent(id)}`, {
       headers: { accept: 'application/json' },
     });
-    if (!r.ok) throw new Error(`leçon ${id} indisponible (${r.status})`);
+    if (!r.ok) throw new Error(t('horsligne.err_lecon', { id, status: r.status }));
     const text = await r.text();
     await addBytes(transferred(r, text.length));
     const body = JSON.parse(text) as { unit: UnitDetail; illustrations: Illustrations };
@@ -292,8 +293,5 @@ export async function requestPersistence(): Promise<boolean> {
   return (await globalThis.navigator?.storage?.persist?.().catch(() => false)) ?? false;
 }
 
-export function formatBytes(n: number): string {
-  if (n < 1024) return `${n} o`;
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(n < 10 * 1024 ? 1 : 0).replace('.', ',')} Ko`;
-  return `${(n / 1024 / 1024).toFixed(1).replace('.', ',')} Mo`;
-}
+/** Poids lisible selon la langue de l'interface. */
+export { fmtBytes as formatBytes } from './i18n';

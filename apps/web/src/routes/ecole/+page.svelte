@@ -3,25 +3,27 @@
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import {
-    devProfiles,
+    accountProfiles,
     flush,
     pendingCount,
     setActiveProfile,
     type DevProfile,
   } from '$lib/attempts';
+  import { t } from '$lib/i18n';
   import { kvGet, kvSet } from '$lib/idb';
   import { getSettings, saveSettings, type Settings } from '$lib/offline';
+  import { cachedMe } from '$lib/session';
   import Sym from '$lib/Sym.svelte';
   import { hashCode, SYMBOLS } from '$lib/symbols';
 
   /**
-   * Mode école (ARCHITECTURE_V2 §3.4) : une tablette, plusieurs élèves. Grille des profils (avatars sans
-   * visage), entrée par CODE IMAGE de 4 symboles, retour automatique à la grille après inactivité, aucune
-   * donnée sensible visible sans code. Les codes sont gardés sous forme d'empreinte, jamais en clair.
-   * Avant les comptes (lot 4), les profils sont les profils FICTIFS de démonstration.
+   * Mode école / appareil familial partagé (ARCHITECTURE_V2 §3.4) : grille des profils du compte
+   * (avatars sans visage), entrée par CODE IMAGE de 4 symboles, retour automatique à la grille après
+   * inactivité, aucune donnée sensible visible sans code. Les codes sont gardés sous forme d'empreinte.
    */
   let settings: Settings | null = $state(null);
   let profiles: DevProfile[] = $state([]);
+  let connected = $state(true);
   let codes: Record<string, string> = $state({});
   let chosen: DevProfile | null = $state(null);
   let entry: string[] = $state([]);
@@ -30,11 +32,10 @@
   let setupCode: string[] = $state([]);
   let info = $state('');
 
-  const AVATARS = ['etoile', 'lune', 'soleil', 'feuille', 'goutte', 'livre'];
-
   onMount(async () => {
     settings = await getSettings();
-    profiles = await devProfiles();
+    profiles = await accountProfiles();
+    connected = !!(await cachedMe());
     codes = (await kvGet<Record<string, string>>('schoolCodes')) ?? {};
     await setActiveProfile(null);
   });
@@ -60,7 +61,7 @@
       await setActiveProfile(chosen);
       await goto(resolve('/'));
     } else {
-      error = 'Ce n’est pas le bon code. Essaie encore.';
+      error = t('ecole.mauvais_code');
       entry = [];
     }
   }
@@ -69,7 +70,7 @@
     if (!setup || setupCode.length !== 4) return;
     codes = { ...codes, [setup.id]: await hashCode(setup.id, setupCode) };
     await kvSet('schoolCodes', codes);
-    info = `Code image enregistré pour ${setup.pseudonym}.`;
+    info = t('ecole.code_enregistre', { nom: setup.pseudonym });
     setup = null;
     setupCode = [];
   }
@@ -78,37 +79,37 @@
   async function forget(p: DevProfile) {
     await flush();
     if ((await pendingCount()) > 0) {
-      info = 'Des réponses attendent encore le réseau : on les envoie avant d’effacer.';
+      info = t('ecole.attente_reseau');
       return;
     }
     const next = { ...codes };
     delete next[p.id];
     codes = next;
     await kvSet('schoolCodes', codes);
-    info = `Données de ${p.pseudonym} effacées de cette tablette.`;
+    info = t('ecole.efface', { nom: p.pseudonym });
   }
 </script>
 
-<svelte:head><title>AWFORM — Mode école</title></svelte:head>
+<svelte:head><title>{t('app.nom')} — {t('ecole.titre')}</title></svelte:head>
 
-<h1>Mode école</h1>
+<h1>{t('ecole.titre')}</h1>
 
-{#if !settings?.ecole}
+{#if !connected}
+  <p class="card">
+    {t('ecole.connexion_requise')} <a href={resolve('/connexion')}>{t('entete.connexion')}</a>
+  </p>
+{:else if !settings?.ecole}
   <section class="card">
-    <p>
-      Une tablette pour toute la classe : chaque élève touche son avatar et entre son code image.
-      Après
-      {settings?.idleMinutes ?? 10} minutes sans activité, la tablette revient à la grille.
-    </p>
+    <p>{t('ecole.intro', { minutes: settings?.idleMinutes ?? 10 })}</p>
     <button type="button" class="primary" onclick={() => enable(true)} data-testid="activer-ecole"
-      >Activer le mode école sur cette tablette</button
+      >{t('ecole.activer')}</button
     >
   </section>
 {:else}
   {#if !chosen}
-    <p class="muted">Touche ton image.</p>
+    <p class="muted">{t('ecole.touche_image')}</p>
     <div class="grid" data-testid="grille">
-      {#each profiles as p, i (p.id)}
+      {#each profiles as p (p.id)}
         <button
           type="button"
           class="kid"
@@ -116,52 +117,55 @@
           data-profile={p.id}
           disabled={!codes[p.id]}
         >
-          <Sym id={AVATARS[i % AVATARS.length] ?? 'etoile'} size={56} />
+          <Sym id={p.avatar ?? 'etoile'} size={56} />
           <span>{p.pseudonym}</span>
-          {#if !codes[p.id]}<small class="muted">code à définir</small>{/if}
+          {#if !codes[p.id]}<small class="muted">{t('ecole.code_a_definir')}</small>{/if}
         </button>
       {/each}
     </div>
   {:else}
     <section class="card code">
       <h2>{chosen.pseudonym}</h2>
-      <p>Mon code image :</p>
+      <p>{t('ecole.mon_code')}</p>
       <div class="dots" aria-live="polite">
         {#each [0, 1, 2, 3] as k (k)}<span class:on={entry.length > k}></span>{/each}
       </div>
       <div class="keys">
         {#each SYMBOLS as s (s.id)}
-          <button type="button" aria-label={s.label} data-sym={s.id} onclick={() => press(s.id)}
-            ><Sym id={s.id} size={44} /></button
+          <button
+            type="button"
+            aria-label={t(`symbole.${s.id}`)}
+            data-sym={s.id}
+            onclick={() => press(s.id)}><Sym id={s.id} size={44} /></button
           >
         {/each}
       </div>
       {#if error}<p class="retry" role="alert">{error}</p>{/if}
-      <button type="button" onclick={() => (chosen = null)}>Retour</button>
+      <button type="button" onclick={() => (chosen = null)}>{t('commun.retour')}</button>
     </section>
   {/if}
 
   <details class="card teacher">
-    <summary>Réglages de l'enseignant</summary>
+    <summary>{t('ecole.reglages')}</summary>
     {#if info}<p role="status">{info}</p>{/if}
-    <h3>Codes image</h3>
+    <h3>{t('ecole.codes')}</h3>
     {#each profiles as p (p.id)}
       <div class="row">
         <span>{p.pseudonym}</span>
         <button type="button" onclick={() => ((setup = p), (setupCode = []))} data-setup={p.id}
-          >Définir le code</button
+          >{t('ecole.definir')}</button
         >
-        <button type="button" onclick={() => forget(p)}>Effacer ses données de la tablette</button>
+        <button type="button" onclick={() => forget(p)}>{t('ecole.effacer')}</button>
       </div>
     {/each}
     {#if setup}
       <div class="setup">
-        <p>Code de {setup.pseudonym} : {setupCode.length} / 4</p>
+        <p>{t('ecole.code_de', { nom: setup.pseudonym, n: setupCode.length })}</p>
         <div class="keys">
           {#each SYMBOLS as s (s.id)}
             <button
               type="button"
-              aria-label={s.label}
+              aria-label={t(`symbole.${s.id}`)}
               data-setsym={s.id}
               onclick={() => setupCode.length < 4 && (setupCode = [...setupCode, s.id])}
               ><Sym id={s.id} size={36} /></button
@@ -173,19 +177,19 @@
           class="primary"
           disabled={setupCode.length !== 4}
           onclick={saveCode}
-          data-testid="enregistrer-code">Enregistrer</button
+          data-testid="enregistrer-code">{t('commun.enregistrer')}</button
         >
       </div>
     {/if}
-    <h3>Retour automatique à la grille</h3>
+    <h3>{t('ecole.retour_auto')}</h3>
     <div class="row">
       {#each [1, 5, 10, 20] as m (m)}
         <button type="button" class:primary={settings?.idleMinutes === m} onclick={() => setIdle(m)}
-          >{m} min</button
+          >{t('ecole.minutes', { n: m })}</button
         >
       {/each}
     </div>
-    <p><button type="button" onclick={() => enable(false)}>Quitter le mode école</button></p>
+    <p><button type="button" onclick={() => enable(false)}>{t('ecole.quitter')}</button></p>
   </details>
 {/if}
 

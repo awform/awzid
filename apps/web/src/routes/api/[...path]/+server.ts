@@ -1,43 +1,57 @@
 /**
- * Relais de développement vers l'API Fastify (même origine pour le navigateur et pour le rendu serveur).
- * En production, Caddy route /api directement vers l'API ; ce relais ne sert alors plus.
- * GET sur /api/v1/* ; POST uniquement sur /api/v1/attempts (JSON, 1 Mo au plus).
+ * Relais de développement vers l'API Fastify (même origine : le cookie de session HttpOnly reste celui
+ * de l'application). En production, Caddy route /api directement vers l'API ; ce relais ne sert plus.
+ * Chemins /api/v1/* seulement ; corps JSON d'au plus 1 Mo ; en-têtes relayés : cookie, anti-CSRF,
+ * cache (ETag) ; en retour : Set-Cookie, ETag, Content-Disposition.
  */
 import { error } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import type { RequestHandler } from './$types';
 
 const base = () => env.API_URL ?? 'http://127.0.0.1:3000';
+const FORWARD = [
+  'cookie',
+  'x-awform',
+  'content-type',
+  'accept',
+  'if-none-match',
+  'x-forwarded-for',
+];
+const BACK = ['content-type', 'set-cookie', 'etag', 'content-disposition', 'cache-control'];
 
-function relay(r: Response): Response {
-  return new Response(r.body, {
-    status: r.status,
-    headers: {
-      'content-type': r.headers.get('content-type') ?? 'application/json',
-      'cache-control': 'no-store',
-    },
-  });
-}
-
-export const GET: RequestHandler = async ({ params, url, fetch }) => {
+const handler: RequestHandler = async ({ params, url, request, fetch, getClientAddress }) => {
   if (!/^v1\/[A-Za-z0-9._/-]+$/.test(params.path) || params.path.includes('..'))
     error(404, 'introuvable');
+  const headers = new Headers();
+  for (const h of FORWARD) {
+    const v = request.headers.get(h);
+    if (v) headers.set(h, v);
+  }
+  headers.set('x-forwarded-for', getClientAddress());
+  let body: string | undefined;
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    body = await request.text();
+    if (body.length > 1_048_576) error(413, 'trop volumineux');
+  }
   const r = await fetch(`${base()}/api/${params.path}${url.search}`, {
-    headers: { accept: 'application/json' },
+    method: request.method,
+    headers,
+    body,
+    redirect: 'manual',
   });
-  return relay(r);
+  const out = new Headers();
+  for (const h of BACK) {
+    if (h === 'set-cookie') for (const c of r.headers.getSetCookie()) out.append('set-cookie', c);
+    else {
+      const v = r.headers.get(h);
+      if (v) out.set(h, v);
+    }
+  }
+  if (!out.has('cache-control')) out.set('cache-control', 'no-store');
+  return new Response(r.status === 304 ? null : r.body, { status: r.status, headers: out });
 };
 
-export const POST: RequestHandler = async ({ params, request, fetch }) => {
-  if (params.path !== 'v1/attempts') error(404, 'introuvable');
-  if (!request.headers.get('content-type')?.startsWith('application/json'))
-    error(415, 'JSON attendu');
-  const body = await request.text();
-  if (body.length > 1_048_576) error(413, 'trop volumineux');
-  const r = await fetch(`${base()}/api/v1/attempts`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', accept: 'application/json' },
-    body,
-  });
-  return relay(r);
-};
+export const GET = handler;
+export const POST = handler;
+export const PATCH = handler;
+export const DELETE = handler;

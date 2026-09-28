@@ -10,6 +10,7 @@
   } from '@awform/grading';
   import Ar from './Ar.svelte';
   import Illus from './Illus.svelte';
+  import { t } from './i18n';
 
   /**
    * Lecteur d'exercices : les 8 types « langue », corrigés par la bibliothèque PARTAGÉE @awform/grading
@@ -28,25 +29,23 @@
     onanswer?: (itemIndex: number, response: ItemResponse, correct: boolean) => void;
   } = $props();
 
-  const TITLES: Record<string, [string, string]> = {
-    premiere_lettre: [
-      'بِأَيِّ حَرْفٍ تَبْدَأُ الْكَلِمَةُ؟',
-      'Par quelle lettre commence le mot ?',
-    ],
-    chasse: ['أَبْحَثُ عَنِ الْحَرْفِ', 'Je trouve toutes les lettres'],
-    relier: ['أَصِلُ الْكَلِمَةَ بِالصُّورَةِ', "Je relie le mot à l'image"],
-    ecoute: ['أَسْمَعُ وَأَخْتَارُ', "J'écoute et je choisis"],
-    vrai_faux: ['صَحِيحٌ أَمْ خَطَأٌ؟', 'Vrai ou faux ?'],
-    complete: ['أُكْمِلُ', 'Je complète'],
-    contient: ['أَيُّ كَلِمَةٍ فِيهَا الْحَرْفُ؟', 'Quels mots contiennent la lettre ?'],
-    ordre: ['أُرَتِّبُ الْكَلِمَاتِ', "Je remets les mots dans l'ordre"],
+  /** consignes arabes du livre (objet d'étude, non traduites) ; le libellé français vient des messages */
+  const TITLES: Record<string, string> = {
+    premiere_lettre: 'بِأَيِّ حَرْفٍ تَبْدَأُ الْكَلِمَةُ؟',
+    chasse: 'أَبْحَثُ عَنِ الْحَرْفِ',
+    relier: 'أَصِلُ الْكَلِمَةَ بِالصُّورَةِ',
+    ecoute: 'أَسْمَعُ وَأَخْتَارُ',
+    vrai_faux: 'صَحِيحٌ أَمْ خَطَأٌ؟',
+    complete: 'أُكْمِلُ',
+    contient: 'أَيُّ كَلِمَةٍ فِيهَا الْحَرْفُ؟',
+    ordre: 'أُرَتِّبُ الْكَلِمَاتِ',
   };
 
   const lang: LanguageExercise | null = $derived(isLanguageExercise(ex) ? ex : null);
   const total = $derived(lang ? exerciseTotal(lang) : 0);
-  const titleAr = $derived(ex.titre_ar ?? TITLES[ex.type]?.[0] ?? '');
+  const titleAr = $derived(ex.titre_ar ?? TITLES[ex.type] ?? '');
   const titleFr = $derived(
-    (ex.titre_fr ?? TITLES[ex.type]?.[1] ?? 'Exercice') +
+    (ex.titre_fr ?? (TITLES[ex.type] ? t(`exo.titre.${ex.type}`) : t('exo.exercice'))) +
       (!ex.titre_fr && lang?.type === 'chasse' ? ` ${lang.cible}` : '') +
       (!ex.titre_fr && lang?.type === 'contient' ? ` ${lang.cible} ?` : ''),
   );
@@ -113,7 +112,7 @@
     <h3><Ar text={titleAr} /> <span class="fr">{titleFr}</span></h3>
     {#if ex.consigne_fr}<p class="consigne">{ex.consigne_fr}</p>{/if}
     {#if lang}<p class="score" aria-live="polite">
-        ★ {score} / {total}{score === total && total ? ' — bravo !' : ''}
+        ★ {score} / {total}{score === total && total ? t('exo.bravo_suffixe') : ''}
       </p>{/if}
   </header>
 
@@ -132,7 +131,7 @@
               >
             {/each}
           </div>
-          {#if retry[i] && !found[i]}<p class="retry">Essaie encore !</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
         </div>
       {/each}
     </div>
@@ -179,14 +178,14 @@
       {/each}
     </div>
     {#if Object.values(retry).some(Boolean) && score < total}<p class="retry">
-        Essaie encore !
+        {t('exo.essaie_encore')}
       </p>{/if}
   {:else if lang?.type === 'ecoute'}
     <ol class="items">
       {#each lang.items as it, i (i)}
         <li class:ok={found[i]} data-item={i}>
           <details class="adulte">
-            <summary>Pour l'adulte : texte à lire à voix haute</summary>
+            <summary>{t('exo.pour_adulte')}</summary>
             <Ar text={it.dit} />
           </details>
           <div class="opts" dir="rtl">
@@ -196,7 +195,7 @@
               >
             {/each}
           </div>
-          {#if retry[i] && !found[i]}<p class="retry">Essaie encore !</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
         </li>
       {/each}
     </ol>
@@ -218,7 +217,7 @@
           {#if found[i] && !it.vrai && it.correction_ar}<p class="corr">
               <Ar text={it.correction_ar} {lettres} />
             </p>{/if}
-          {#if retry[i] && !found[i]}<p class="retry">Essaie encore !</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
         </div>
       {/each}
     </div>
@@ -241,7 +240,7 @@
             {/each}
           </div>
           {#if it.fr}<p class="fr">{it.fr}</p>{/if}
-          {#if retry[i] && !found[i]}<p class="retry">Essaie encore !</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
         </li>
       {/each}
     </ol>
@@ -273,15 +272,15 @@
           </div>
           <p class="out ar" dir="rtl" lang="ar" class:good={found[i]}>{ordreText(i)}</p>
           {#if !found[i]}<button type="button" class="reset" onclick={() => (seq[i] = [])}
-              >↺ Recommencer</button
+              >{t('exo.recommencer')}</button
             >{/if}
           {#if it.fr}<p class="fr">{it.fr}</p>{/if}
-          {#if retry[i] && !found[i]}<p class="retry">Essaie encore !</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
         </li>
       {/each}
     </ol>
   {:else}
-    <p class="later">Exercice « {ex.type} » : prévu dans un lot suivant.</p>
+    <p class="later">{t('exo.plus_tard', { type: ex.type })}</p>
   {/if}
 </section>
 

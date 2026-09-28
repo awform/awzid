@@ -2,10 +2,10 @@
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { flush, onQueue, pendingCount } from '$lib/attempts';
+  import { fmtBytes, t } from '$lib/i18n';
   import {
     downloadPack,
     fetchManifest,
-    formatBytes,
     getSettings,
     LARGE_DOWNLOAD,
     localPacks,
@@ -81,9 +81,9 @@
     try {
       await requestPersistence();
       await downloadPack(m.level, fetch, m.bytes);
-      message = `${m.codeFr ?? m.level} est disponible sans réseau.`;
+      message = t('horsligne.disponible', { niveau: m.codeFr ?? m.level });
     } catch (e) {
-      message = `Téléchargement impossible : ${(e as Error).message}`;
+      message = t('horsligne.echec', { raison: (e as Error).message });
     }
     busy = null;
     await reload();
@@ -94,12 +94,12 @@
       const r = await updatePack(level);
       message =
         r.mode === 'a_jour'
-          ? 'Déjà à jour.'
+          ? t('horsligne.deja_a_jour')
           : r.mode === 'partiel'
-            ? `${r.changed.length} leçon(s) mise(s) à jour.`
-            : 'Niveau retéléchargé.';
+            ? t('horsligne.maj_partielle', { n: r.changed.length })
+            : t('horsligne.maj_complete');
     } catch (e) {
-      message = `Mise à jour impossible : ${(e as Error).message}`;
+      message = t('horsligne.maj_impossible', { raison: (e as Error).message });
     }
     busy = null;
     await reload();
@@ -107,13 +107,13 @@
   async function remove(level: string) {
     busy = level;
     await removePack(level);
-    message = 'Place libérée. Les progrès sont gardés.';
+    message = t('horsligne.place_liberee');
     busy = null;
     await reload();
   }
   async function toggleEconome(v: boolean) {
     settings = await saveSettings({ econome: v });
-    message = v ? 'Données économes activées.' : 'Données économes désactivées.';
+    message = v ? t('horsligne.econome_on') : t('horsligne.econome_off');
   }
   async function sendNow() {
     await flush();
@@ -121,37 +121,41 @@
   }
 </script>
 
-<svelte:head><title>AWFORM — Téléchargements</title></svelte:head>
+<svelte:head><title>{t('app.nom')} — {t('horsligne.titre')}</title></svelte:head>
 
-<h1>Mes téléchargements</h1>
-<p class="muted">
-  Un niveau téléchargé fonctionne sans réseau : leçons, images et exercices. Les réponses sont
-  gardées sur le téléphone et envoyées au retour du réseau.
-</p>
+<h1>{t('horsligne.titre')}</h1>
+<p class="muted">{t('horsligne.intro')}</p>
 
-{#if offline}<p class="card warn">Pas de réseau : voici ce qui est déjà sur l'appareil.</p>{/if}
+{#if offline}<p class="card warn">{t('horsligne.pas_de_reseau')}</p>{/if}
 {#if message}<p class="card ok" role="status">{message}</p>{/if}
 
 <section class="card">
-  <h2>Niveaux</h2>
+  <h2>{t('horsligne.niveaux')}</h2>
   <table class="levels">
-    <thead><tr><th>Niveau</th><th>Poids</th><th>État</th><th></th></tr></thead>
+    <thead
+      ><tr
+        ><th>{t('horsligne.col_niveau')}</th><th>{t('horsligne.col_poids')}</th><th
+          >{t('horsligne.col_etat')}</th
+        ><th></th></tr
+      ></thead
+    >
     <tbody>
       {#each rows as r (r.level)}
         <tr data-level={r.level}>
           <td
             ><strong>{r.m?.codeFr ?? r.l?.codeFr ?? r.level}</strong><br /><span class="muted"
-              >{r.m?.units.length ?? r.l?.units.length} leçons</span
+              >{t('horsligne.lecons', { n: r.m?.units.length ?? r.l?.units.length ?? 0 })}</span
             ></td
           >
-          <td data-testid="poids">{formatBytes(r.m?.bytes ?? r.l?.bytes ?? 0)}</td>
+          <td data-testid="poids">{fmtBytes(r.m?.bytes ?? r.l?.bytes ?? 0)}</td>
           <td data-testid="etat">
-            {#if r.state === 'absent'}non téléchargé
-            {:else if r.state === 'a_jour'}✓ sur l'appareil
-            {:else if r.state === 'maj'}mise à jour : {r.changed} leçon(s), {formatBytes(
-                r.updateBytes,
-              )}
-            {:else}sur l'appareil{/if}
+            {#if r.state === 'absent'}{t('horsligne.etat_absent')}
+            {:else if r.state === 'a_jour'}{t('horsligne.etat_a_jour')}
+            {:else if r.state === 'maj'}{t('horsligne.etat_maj', {
+                n: r.changed,
+                poids: fmtBytes(r.updateBytes),
+              })}
+            {:else}{t('horsligne.etat_local')}{/if}
           </td>
           <td class="act">
             {#if r.state === 'absent' && r.m}
@@ -159,7 +163,7 @@
                 type="button"
                 class="primary"
                 disabled={busy !== null}
-                onclick={() => r.m && download(r.m)}>Télécharger</button
+                onclick={() => r.m && download(r.m)}>{t('horsligne.telecharger')}</button
               >
             {/if}
             {#if r.state === 'maj'}
@@ -167,12 +171,12 @@
                 type="button"
                 class="primary"
                 disabled={busy !== null}
-                onclick={() => update(r.level)}>Mettre à jour</button
+                onclick={() => update(r.level)}>{t('horsligne.mettre_a_jour')}</button
               >
             {/if}
             {#if r.l}
               <button type="button" disabled={busy !== null} onclick={() => remove(r.level)}
-                >Libérer la place</button
+                >{t('horsligne.liberer')}</button
               >
             {/if}
             {#if busy === r.level}<span class="muted">…</span>{/if}
@@ -182,32 +186,30 @@
     </tbody>
   </table>
   {#if confirmLevel}
-    <div class="confirm" role="alertdialog" aria-label="Confirmer le téléchargement">
-      <p>
-        Données économes : ce téléchargement pèse <strong>{formatBytes(confirmLevel.bytes)}</strong
-        >. Continuer ?
-      </p>
+    <div class="confirm" role="alertdialog" aria-label={t('horsligne.confirmer_aria')}>
+      <p>{t('horsligne.confirmer', { poids: fmtBytes(confirmLevel.bytes) })}</p>
       <button
         type="button"
         class="primary"
-        onclick={() => confirmLevel && download(confirmLevel, true)}>Oui, télécharger</button
+        onclick={() => confirmLevel && download(confirmLevel, true)}>{t('horsligne.oui')}</button
       >
-      <button type="button" onclick={() => (confirmLevel = null)}>Plus tard</button>
+      <button type="button" onclick={() => (confirmLevel = null)}>{t('horsligne.plus_tard')}</button
+      >
     </div>
   {/if}
 </section>
 
 <section class="card">
-  <h2>Données et stockage</h2>
-  <p>Téléchargé ce mois-ci : <strong data-testid="donnees-mois">{formatBytes(month)}</strong></p>
+  <h2>{t('horsligne.donnees_titre')}</h2>
+  <p>{t('horsligne.mois')} <strong data-testid="donnees-mois">{fmtBytes(month)}</strong></p>
   <p>
-    Place utilisée sur l'appareil : {formatBytes(storage.usage)}{storage.persisted
-      ? ' (protégée)'
+    {t('horsligne.place', { poids: fmtBytes(storage.usage) })}{storage.persisted
+      ? t('horsligne.protegee')
       : ''}
   </p>
   <p>
-    Réponses en attente d'envoi : <strong data-testid="attente">{pending}</strong>
-    {#if pending > 0}<button type="button" onclick={sendNow}>Envoyer maintenant</button>{/if}
+    {t('horsligne.attente')} <strong data-testid="attente">{pending}</strong>
+    {#if pending > 0}<button type="button" onclick={sendNow}>{t('horsligne.envoyer')}</button>{/if}
   </p>
   <label class="switch">
     <input
@@ -217,14 +219,11 @@
       onchange={(e) => toggleEconome(e.currentTarget.checked)}
       data-testid="econome"
     />
-    <span
-      ><strong>Données économes</strong> — aucun téléchargement sans mon accord, demande de confirmation
-      au-delà de 200 Ko, pas de préchargement des pages.</span
-    >
+    <span><strong>{t('horsligne.econome')}</strong> — {t('horsligne.econome_explication')}</span>
   </label>
 </section>
 
-<p><a href={resolve('/ecole')}>Mode école (tablette partagée)</a></p>
+<p><a href={resolve('/ecole')}>{t('horsligne.lien_ecole')}</a></p>
 
 <style>
   .levels {

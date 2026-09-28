@@ -1,26 +1,18 @@
-<svelte:head><title>AWFORM — Sciences islamiques</title></svelte:head>
+<script lang="ts">
+  import { t } from '$lib/i18n';
+</script>
 
-<h1>Sciences islamiques</h1>
-<p class="muted">
-  Croyance, fiqh (école mālikite), vie du Prophète ﷺ, hadith et adab — les livres de la collection
-  Religion.
-</p>
+<svelte:head><title>{t('app.nom')} — {t('onglets.sciences')}</title></svelte:head>
+
+<h1>{t('onglets.sciences')}</h1>
+<p class="muted">{t('sciences.intro')}</p>
 
 <section class="card">
-  <h2>Religion Enfants <span class="soon">V1</span></h2>
-  <p>
-    Niveaux re1 à re5 : rubriques croyance, sīra, prophètes, fiqh, adab, invocations, hadith ;
-    carnet de pratique signé par un parent (jamais noté).
-  </p>
+  <h2>{t('sciences.re_titre')} <span class="soon">V1</span></h2>
+  <p>{t('sciences.re_texte')}</p>
 </section>
 <section class="card">
-  <h2>Religion Ados et Adultes <span class="soon">V1</span></h2>
-  <p>
-    Niveau ra1 (ra2 à ra4 à venir) : textes de l'école mālikite, hadiths avec leur référence, cas
-    pratiques.
-  </p>
+  <h2>{t('sciences.ra_titre')} <span class="soon">V1</span></h2>
+  <p>{t('sciences.ra_texte')}</p>
 </section>
-<p class="muted">
-  Tout ce qui s'affiche vient des livres, tel qu'ils l'écrivent : l'application n'ajoute aucun
-  contenu religieux.
-</p>
+<p class="muted">{t('sciences.fidelite')}</p>

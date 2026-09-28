@@ -5,13 +5,9 @@
   import { arabicSize, unitLabel } from '$lib/api';
   import { demoProfileFor, type DevProfile } from '$lib/attempts';
   import { downloadPack, getSettings } from '$lib/offline';
+  import { t } from '$lib/i18n';
   let { data } = $props();
 
-  const LABEL: Record<string, string> = {
-    commencee: 'commencée',
-    terminee: 'terminée',
-    maitrisee: 'maîtrisée ★',
-  };
   let profile: DevProfile | null = $state(null);
   let status: Record<string, string> = $state({});
   /** hors ligne d'abord : sans « données économes », le niveau ouvert est téléchargé en arrière-plan */
@@ -41,18 +37,17 @@
   });
 </script>
 
-<svelte:head><title>AWFORM — {data.level}</title></svelte:head>
+<svelte:head><title>{t('app.nom')} — {data.level}</title></svelte:head>
 
-<p><a href={resolve('/')}>← Mes livres</a></p>
-<h1>Leçons — {data.level}</h1>
+<p><a href={resolve('/')}>{t('niveau.retour')}</a></p>
+<h1>{t('niveau.titre', { level: data.level })}</h1>
 {#if profile}<p class="profil">{profile.pseudonym}</p>{/if}
 <p class="offline" data-testid="etat-hors-ligne">
-  {#if offlineState === 'local' || offlineState === 'fait'}✓ Disponible sans réseau
-  {:else if offlineState === 'en_cours'}Téléchargement pour le hors ligne…
-  {:else if offlineState === 'econome'}Données économes : <a href={resolve('/hors-ligne')}
-      >télécharger ce niveau</a
-    > pour l'utiliser sans réseau
-  {:else}Téléchargement impossible pour l'instant{/if}
+  {#if offlineState === 'local' || offlineState === 'fait'}{t('niveau.disponible')}
+  {:else if offlineState === 'en_cours'}{t('niveau.en_cours')}
+  {:else if offlineState === 'econome'}{t('niveau.econome')}
+    <a href={resolve('/hors-ligne')}>{t('niveau.econome_lien')}</a>
+  {:else}{t('niveau.erreur')}{/if}
 </p>
 <ol class="units" style="--ar-size: {arabicSize(data.level)}px">
   {#each data.units as u (u.id)}
@@ -62,7 +57,7 @@
         <span class="fr">{u.titleFr}</span>
         {#if status[u.id] && status[u.id] !== 'ouverte'}<span
             class="st {status[u.id]}"
-            data-testid="statut">{LABEL[status[u.id] ?? ''] ?? status[u.id]}</span
+            data-testid="statut">{t(`statut.${status[u.id]}`)}</span
           >{/if}
         <Ar text={u.titleAr} />
       </a>

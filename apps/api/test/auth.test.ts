@@ -311,14 +311,12 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
   });
 
   it('enseignant : second facteur obligatoire (TOTP), code à usage unique', async () => {
-    await h.db
-      .insert(t.account)
-      .values({
-        kind: 'enseignant',
-        email: 'prof@ecole.example',
-        passwordHash: await hashSecret(PW),
-        country: 'FR',
-      });
+    await h.db.insert(t.account).values({
+      kind: 'enseignant',
+      email: 'prof@ecole.example',
+      passwordHash: await hashSecret(PW),
+      country: 'FR',
+    });
     const c = cookieOf(
       await post('/api/v1/auth/login', { email: 'prof@ecole.example', password: PW }),
     );

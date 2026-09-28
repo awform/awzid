@@ -28,6 +28,8 @@ export interface FlushResult {
   remaining: number;
   progress: Record<string, { status: string; score: number | null; bestScore: number | null }>;
   offline: boolean;
+  /** le serveur demande une connexion : la file reste sur l'appareil */
+  unauthenticated?: boolean;
 }
 
 export const BATCH = 100;
@@ -75,13 +77,16 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
         try {
           r = await fetchFn(`${base}/api/v1/attempts`, {
             method: 'POST',
-            headers: { 'content-type': 'application/json' },
+            // en-tête anti-CSRF exigé par l'API pour toute écriture ; cookie de session de même origine
+            headers: { 'content-type': 'application/json', 'x-awform': '1' },
+            credentials: 'same-origin',
             body: JSON.stringify({ events: batch }),
           });
         } catch {
           res.offline = true;
           break;
         }
+        if (r.status === 401) res.unauthenticated = true; // reconnexion nécessaire : la file est gardée
         if (!r.ok) break;
         const body = (await r.json()) as {
           accepted: Array<{ id: string }>;

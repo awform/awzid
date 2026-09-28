@@ -1,4 +1,5 @@
 import { error } from '@sveltejs/kit';
+import { t } from './i18n';
 import type { Lesson, UnitKind } from '@awform/content/types';
 
 export interface LevelSummary {
@@ -33,7 +34,7 @@ export interface UnitDetail extends UnitSummary {
 export async function api<T>(fetchFn: typeof fetch, path: string): Promise<T> {
   const r = await fetchFn(`/api/v1${path}`, { headers: { accept: 'application/json' } });
   if (!r.ok) {
-    let msg = `erreur ${r.status}`;
+    let msg = t('erreur.http', { status: r.status });
     try {
       msg = ((await r.json()) as { error?: { message?: string } }).error?.message ?? msg;
     } catch {
@@ -46,9 +47,9 @@ export async function api<T>(fetchFn: typeof fetch, path: string): Promise<T> {
 
 /** Libellé affiché d'une unité : « Leçon N », « Bilan k », « Examen de fin de niveau ». */
 export function unitLabel(u: Pick<UnitSummary, 'kind' | 'numLecon' | 'numBilan' | 'n'>): string {
-  if (u.kind === 'bilan') return `Bilan ${u.numBilan ?? ''}`.trim();
-  if (u.kind === 'examen') return 'Examen de fin de niveau';
-  return `Leçon ${u.numLecon ?? u.n}`;
+  if (u.kind === 'bilan') return t('unite.bilan', { n: u.numBilan ?? '' }).trim();
+  if (u.kind === 'examen') return t('unite.examen');
+  return t('unite.lecon', { n: u.numLecon ?? u.n });
 }
 
 /** Taille du corps arabe selon le niveau (CDC §1.4) : 30 px en E1-E2, 26 px en E3-N1, 22 px au-delà. */

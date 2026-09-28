@@ -129,18 +129,16 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     evidence: unknown = null,
   ) => {
     if (types.length)
-      await db
-        .insert(t.consent)
-        .values(
-          types.map((type) => ({
-            accountId,
-            profileId,
-            type,
-            textVersion: TEXT_VERSION,
-            country,
-            evidence,
-          })),
-        );
+      await db.insert(t.consent).values(
+        types.map((type) => ({
+          accountId,
+          profileId,
+          type,
+          textVersion: TEXT_VERSION,
+          country,
+          evidence,
+        })),
+      );
   };
 
   // ---------------------------------------------------------------- inscription

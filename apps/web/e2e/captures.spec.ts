@@ -1,6 +1,6 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { solveExercise, unitData } from './solve';
 
 /**
@@ -73,34 +73,70 @@ test('captures d’écran', async ({ page }, info) => {
   await shot('14-lecon-entiere', true);
 });
 
-test('captures d’écran — lot 3 (hors ligne, onglets, mode école)', async ({ page }, info) => {
-  const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
-  mkdirSync(DIR, { recursive: true });
-  const shot = async (name: string) => {
-    await page.locator('main h1').first().waitFor(); // rendu sur l'appareil : attendre les données
-    await page.evaluate(() => document.fonts.ready);
-    await page.screenshot({ path: join(DIR, `${dev}-${name}.png`) });
-  };
-  await page.goto('/hors-ligne');
-  await page.locator('tr[data-level="en1"]').getByRole('button', { name: 'Télécharger' }).click();
-  await page
-    .locator('tr[data-level="en1"] [data-testid="etat"]')
-    .filter({ hasText: "sur l'appareil" })
-    .waitFor();
-  await shot('15-telechargements');
-  await page.goto('/coran');
-  await shot('16-onglet-coran');
-  await page.goto('/ecole');
-  await page.getByTestId('activer-ecole').click();
-  await page.getByText("Réglages de l'enseignant").click();
-  const first = page.locator('[data-setup]').first();
-  await first.click();
-  for (const s of ['etoile', 'lune', 'soleil', 'goutte'])
-    await page.locator(`[data-setsym="${s}"]`).click();
-  await page.getByTestId('enregistrer-code').click();
-  await page.getByText("Réglages de l'enseignant").click();
-  await shot('17-mode-ecole-grille');
-  await page.locator('[data-profile]').first().click();
-  await page.locator('[data-sym="etoile"]').click();
-  await shot('18-mode-ecole-code-image');
+test.describe('compte parent', () => {
+  test.use({ compte: 'parent' });
+
+  test('captures d’écran — lot 3 (hors ligne, onglets, mode école)', async ({ page }, info) => {
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    const shot = async (name: string) => {
+      await page.locator('main h1').first().waitFor(); // rendu sur l'appareil : attendre les données
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({ path: join(DIR, `${dev}-${name}.png`) });
+    };
+    await page.goto('/hors-ligne');
+    await page.locator('tr[data-level="en1"]').getByRole('button', { name: 'Télécharger' }).click();
+    await page
+      .locator('tr[data-level="en1"] [data-testid="etat"]')
+      .filter({ hasText: "sur l'appareil" })
+      .waitFor();
+    await shot('15-telechargements');
+    await page.goto('/coran');
+    await shot('16-onglet-coran');
+    await page.goto('/ecole');
+    await page.getByTestId('activer-ecole').click();
+    await page.getByText("Réglages de l'adulte").click();
+    const first = page.locator('[data-setup]').first();
+    await first.click();
+    for (const s of ['etoile', 'lune', 'soleil', 'goutte'])
+      await page.locator(`[data-setsym="${s}"]`).click();
+    await page.getByTestId('enregistrer-code').click();
+    await page.getByText("Réglages de l'adulte").click();
+    await shot('17-mode-ecole-grille');
+    await page.locator('[data-profile]').first().click();
+    await page.locator('[data-sym="etoile"]').click();
+    await shot('18-mode-ecole-code-image');
+  });
+
+  test('captures d’écran — lot 4 (comptes, profils, consentements, langue)', async ({
+    page,
+  }, info) => {
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    const shot = async (name: string, full = false) => {
+      await page.locator('main h1').first().waitFor();
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: full });
+    };
+    await page.goto('/profils');
+    await page.locator('[data-profile]').first().waitFor();
+    await shot('19-qui-apprend');
+    await page.getByTestId('ajouter-enfant').click();
+    await shot('20-ajout-enfant-consentement', true);
+    await page.goto('/compte');
+    await page.getByTestId('consentements').locator('li').first().waitFor();
+    await shot('21-mon-compte', true);
+    await page.goto('/connexion');
+    await shot('22-connexion');
+    await page.goto('/inscription');
+    await page.locator('#country').selectOption('SN');
+    await shot('23-inscription-senegal', true);
+    await page.goto('/compte');
+    await page.getByTestId('langues-preparation').check();
+    await page.locator('button[data-locale="en"]').click();
+    await expect(page.locator('main h1')).toHaveText('My account');
+    await page.goto('/');
+    await expect(page.locator('main h1')).toHaveText('My Arabic books');
+    await shot('24-interface-en-anglais');
+  });
 });
