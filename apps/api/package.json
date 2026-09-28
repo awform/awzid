@@ -1,0 +1,26 @@
+{
+  "name": "@awform/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "API REST AWFORM (Fastify)",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@awform/db": "workspace:*",
+    "fastify": "^5.12.5"
+  },
+  "devDependencies": {
+    "@awform/content": "workspace:*",
+    "@types/node": "^24.19.0",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.2"
+  }
+}
