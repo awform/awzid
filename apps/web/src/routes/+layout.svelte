@@ -259,6 +259,8 @@
       border-bottom: 0;
     }
     .tabs a {
+      min-width: 0;
+      padding: 6px 2px;
       border-bottom: 0;
       border-top: 3px solid transparent;
       font-size: 0.68rem;

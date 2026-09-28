@@ -13,6 +13,7 @@ test('captures d’écran', async ({ page }, info) => {
   const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
   mkdirSync(DIR, { recursive: true });
   const shot = async (name: string, full = false) => {
+    await page.locator('main h1').first().waitFor(); // rendu sur l'appareil : attendre les données
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: full });
   };
@@ -76,6 +77,7 @@ test('captures d’écran — lot 3 (hors ligne, onglets, mode école)', async (
   const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
   mkdirSync(DIR, { recursive: true });
   const shot = async (name: string) => {
+    await page.locator('main h1').first().waitFor(); // rendu sur l'appareil : attendre les données
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({ path: join(DIR, `${dev}-${name}.png`) });
   };
