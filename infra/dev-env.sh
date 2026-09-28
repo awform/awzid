@@ -15,7 +15,9 @@ AWFORM_EDITION=dev
 API_HOST=127.0.0.1
 API_PORT=3000
 API_URL=http://127.0.0.1:3000
-# routes de tentatives + profils fictifs de démonstration (développement uniquement, avant le lot 4)
-AWFORM_DEV_ATTEMPTS=1
+# cookie de session « Secure » (les navigateurs l'acceptent aussi sur localhost/127.0.0.1)
+COOKIE_SECURE=1
+# clé de chiffrement des secrets de second facteur (générée sur la VM, jamais versionnée)
+AWFORM_SECRET_KEY=${AWFORM_SECRET_KEY}
 EOF
 echo ".env écrit ($ROOT/.env, droits 600)"

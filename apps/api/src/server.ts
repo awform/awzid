@@ -1,16 +1,23 @@
 import { connect, loadRootEnv } from '@awform/db';
 import { buildApp } from './app.js';
+import { secretKeyFromEnv } from './auth/key.js';
 
 loadRootEnv();
 const host = process.env.API_HOST ?? '127.0.0.1';
 const port = Number(process.env.API_PORT ?? 3000);
 const h = connect(process.env.DATABASE_URL);
+const secretKey = secretKeyFromEnv();
 const app = buildApp({
   db: h.db,
   logger: true,
   editionCode: process.env.AWFORM_EDITION_FORCE || undefined,
-  devAttempts: process.env.AWFORM_DEV_ATTEMPTS === '1',
+  cookieSecure: process.env.COOKIE_SECURE !== '0',
+  secretKey,
 });
+if (!secretKey)
+  app.log.warn(
+    'AWFORM_SECRET_KEY absente : second facteur (enseignants, administrateurs) indisponible',
+  );
 
 const stop = async () => {
   await app.close();

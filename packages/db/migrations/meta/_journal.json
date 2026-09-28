@@ -15,6 +15,13 @@
       "when": 1790623149556,
       "tag": "0001_illustrations",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790627590880,
+      "tag": "0002_comptes",
+      "breakpoints": true
     }
   ]
 }

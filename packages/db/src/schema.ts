@@ -224,7 +224,7 @@ export const qrRedirect = pgTable('qr_redirect', {
 
 // ================================================================ personnes (minimisation RGPD)
 
-export const accountKind = pgEnum('account_kind', ['parent', 'adulte', 'admin']);
+export const accountKind = pgEnum('account_kind', ['parent', 'adulte', 'admin', 'enseignant']);
 
 /** Compte titulaire (parent/tuteur, adulte autonome, administrateur). */
 export const account = pgTable(
@@ -241,7 +241,16 @@ export const account = pgTable(
     /** code pays ISO 3166-1 (prix, numéros d'aide, monnaie) */
     country: text('country'),
     locale: text('locale').notNull().default('fr'),
+    /** secret TOTP chiffré (AES-256-GCM, clé serveur hors dépôt) */
     totpSecretEnc: text('totp_secret_enc'),
+    totpEnabled: boolean('totp_enabled').notNull().default(false),
+    /** dernier pas de temps TOTP accepté (un code ne sert qu'une fois) */
+    totpLastCounter: integer('totp_last_counter'),
+    /** année de naissance du titulaire d'un compte adulte (âge du consentement numérique) */
+    birthYear: smallint('birth_year'),
+    /** code parent à 4 chiffres (Argon2id) : retour à l'espace parent sur un appareil partagé */
+    parentPinHash: text('parent_pin_hash'),
+    passwordChangedAt: timestamp('password_changed_at', { withTimezone: true }),
     createdAt: createdAt(),
     /** suppression demandée : effacement définitif sous 30 jours */
     deletedAt: timestamp('deleted_at', { withTimezone: true }),
@@ -302,6 +311,12 @@ export const consent = pgTable('consent', {
   accountId: uuid('account_id')
     .notNull()
     .references(() => account.id, { onDelete: 'cascade' }),
+  /** consentement donné POUR un profil d'enfant (sinon : pour le compte) */
+  profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'cascade' }),
+  /** pays du compte au moment du consentement (règles : RGPD, COPPA, loi sénégalaise 2008-12) */
+  country: text('country'),
+  /** comment le consentement parental a été vérifié (ex. ré-authentification + déclaration) */
+  evidence: jsonb('evidence'),
   type: text('type').notNull(),
   textVersion: text('text_version').notNull(),
   givenAt: timestamp('given_at', { withTimezone: true }).notNull().defaultNow(),
@@ -319,9 +334,20 @@ export const session = pgTable(
     createdAt: createdAt(),
     expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
     revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+    /** second facteur vérifié pour cette session (enseignant, administrateur) */
+    mfaVerified: boolean('mfa_verified').notNull().default(false),
   },
   (t) => [index('session_account').on(t.accountId)],
 );
+
+/** Limitation des essais (connexion, code parent) : verrouillage progressif, partagé entre instances. */
+export const authThrottle = pgTable('auth_throttle', {
+  key: text('key').primaryKey(),
+  failures: integer('failures').notNull().default(0),
+  lockedUntil: timestamp('locked_until', { withTimezone: true }),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
 
 // ================================================================ apprentissage
 

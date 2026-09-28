@@ -57,6 +57,8 @@ if [ ! -f "$SECRETS_FILE" ]; then
   ( umask 077; printf 'AWFORM_DB_PASSWORD=%s\nAWFORM_SESSION_SECRET=%s\n' \
       "$(openssl rand -hex 24)" "$(openssl rand -hex 32)" > "$SECRETS_FILE" )
 fi
+# clé de chiffrement des seconds facteurs (ajoutée au lot 4 si absente)
+grep -q '^AWFORM_SECRET_KEY=' "$SECRETS_FILE" || (umask 077; printf 'AWFORM_SECRET_KEY=%s\n' "$(openssl rand -hex 32)" >> "$SECRETS_FILE")
 # shellcheck disable=SC1090
 source "$SECRETS_FILE"
 if ! sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='${DB_ROLE}'" | grep -q 1; then
