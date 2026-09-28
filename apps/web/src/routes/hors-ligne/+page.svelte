@@ -113,6 +113,7 @@
   }
   async function toggleEconome(v: boolean) {
     settings = await saveSettings({ econome: v });
+    message = v ? 'Données économes activées.' : 'Données économes désactivées.';
   }
   async function sendNow() {
     await flush();
@@ -212,6 +213,7 @@
     <input
       type="checkbox"
       checked={settings?.econome ?? false}
+      disabled={!settings}
       onchange={(e) => toggleEconome(e.currentTarget.checked)}
       data-testid="econome"
     />

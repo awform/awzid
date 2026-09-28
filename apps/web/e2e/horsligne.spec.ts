@@ -35,7 +35,11 @@ test('données économes : pas de téléchargement automatique, poids affiché a
   page,
 }) => {
   await page.goto('/hors-ligne');
+  await expect(page.getByTestId('donnees-mois')).toBeVisible();
   await page.getByTestId('econome').check();
+  await expect(page.getByRole('status')).toContainText('Données économes activées');
+  await page.reload();
+  await expect(page.getByTestId('econome')).toBeChecked();
   const packRequests: string[] = [];
   page.on('request', (r) => {
     if (r.url().includes('/api/v1/packs/ad1')) packRequests.push(r.url());
@@ -46,7 +50,11 @@ test('données économes : pas de téléchargement automatique, poids affiché a
   expect(packRequests).toEqual([]);
   // sans données économes, le niveau ouvert est téléchargé en arrière-plan
   await page.goto('/hors-ligne');
+  await expect(page.getByTestId('econome')).toBeChecked(); // réglage relu depuis l'appareil
   await page.getByTestId('econome').uncheck();
+  await expect(page.getByRole('status')).toContainText('Données économes désactivées');
+  await page.reload();
+  await expect(page.getByTestId('econome')).not.toBeChecked();
   await page.goto('/niveaux/ad1');
   await expect(page.getByTestId('etat-hors-ligne')).toContainText('Disponible sans réseau', {
     timeout: 15_000,

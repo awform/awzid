@@ -63,7 +63,15 @@ let started = false;
 export function startSync(): void {
   if (started || typeof window === 'undefined') return;
   started = true;
-  window.addEventListener('online', () => void flush());
+  // au retour du réseau (petit délai : la connexion n'est pas toujours prête à l'instant de l'événement)
+  window.addEventListener('online', () => setTimeout(() => void flush(), 300));
+  // filet de sécurité : tant que des réponses attendent et que le réseau semble là, on réessaie
+  setInterval(() => {
+    if (!navigator.onLine) return;
+    void pendingCount()
+      .then((n) => (n > 0 ? flush() : undefined))
+      .catch(() => {});
+  }, 5000);
   navigator.serviceWorker?.addEventListener?.('message', (e: MessageEvent) => {
     if ((e.data as { type?: string })?.type === 'awform-synced') void notifyQueue();
   });
