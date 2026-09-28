@@ -170,6 +170,7 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
       mode: 'carnet' | 'rythme';
       bookCode?: string;
       rhythmYears?: number;
+      cycleDays?: number | null;
       suraOrder?: 'rebours' | 'juz30';
       startDate: string;
       trial?: boolean;
@@ -190,6 +191,8 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
             mode: { enum: ['carnet', 'rythme'] },
             bookCode: { type: 'string', pattern: '^[a-z]{2,3}[0-9]{1,2}$' },
             rhythmYears: { type: 'integer', minimum: 3, maximum: 7 },
+            // cycle de la roue réglable par l'enseignant (décision du pilote)
+            cycleDays: { anyOf: [{ enum: [30, 45, 60] }, { type: 'null' }] },
             suraOrder: { enum: ['rebours', 'juz30'] },
             startDate: { type: 'string', pattern: DAY },
             trial: { type: 'boolean' },

@@ -14,9 +14,10 @@ import {
   nextPortion,
   partsOverlapping,
   replay,
-  requiredMinutes,
+  acquiredPages,
+  defaultCycle,
   rhythm,
-  dailyMinutes,
+  sessionLoad,
   suggestRhythm,
   trialStats,
   weekOf,
@@ -47,6 +48,8 @@ export interface PlanRow {
   mode: 'carnet' | 'rythme';
   bookCode: string | null;
   rhythmYears: number | null;
+  /** cycle de la roue (30, 45 ou 60 jours) ; null : défaut du rythme */
+  cycleDays: number | null;
   suraOrder: 'rebours' | 'juz30';
   startDate: string;
   trial: boolean;
@@ -144,7 +147,14 @@ export async function savePlan(
   profileId: string,
   plan: Omit<
     PlanRow,
-    'profileId' | 'bookCode' | 'rhythmYears' | 'suraOrder' | 'trial' | 'newFactor' | 'reliefUntil'
+    | 'profileId'
+    | 'bookCode'
+    | 'rhythmYears'
+    | 'cycleDays'
+    | 'suraOrder'
+    | 'trial'
+    | 'newFactor'
+    | 'reliefUntil'
   > &
     Partial<PlanRow>,
 ): Promise<{ ok: boolean; code: string | null }> {
@@ -152,6 +162,7 @@ export async function savePlan(
   if (plan.mode === 'carnet') body.bookCode = plan.bookCode;
   else {
     body.rhythmYears = plan.rhythmYears ?? 7;
+    if (plan.cycleDays !== undefined) body.cycleDays = plan.cycleDays;
     body.suraOrder = plan.suraOrder ?? 'rebours';
     body.trial = plan.trial ?? false;
   }
@@ -202,6 +213,9 @@ export interface TodayView {
   learnedToday: boolean;
   cfg: EngineConfig;
   requiredMinutes: number;
+  /** rythme : cycle de la roue et temps de séance aujourd'hui / en fin de parcours (fourchette) */
+  cycle: number | null;
+  load: { now: number; start: number; end: number } | null;
   trial: { day: number; done: boolean; suggestion: number | null } | null;
   progress: { acquiredParts: number; totalParts: number; pos: number; total: number };
   events: ServerEvent[];
@@ -255,6 +269,8 @@ export function computeToday(
       learnedToday: false,
       cfg,
       requiredMinutes: cfg.dailyMinutes,
+      cycle: null,
+      load: null,
       trial: null,
       progress: {
         acquiredParts: [...state.parts.values()].filter((p) => p.learnedDay !== null).length,
@@ -269,13 +285,16 @@ export function computeToday(
   const years = (plan.trial ? 7 : (plan.rhythmYears ?? 7)) as 3 | 4 | 5 | 6 | 7;
   const r = rhythm(years);
   const relief = plan.reliefUntil && todayIso <= plan.reliefUntil ? plan.newFactor : 1;
-  const cfg: EngineConfig = {
-    dailyMinutes: dailyMinutes(r),
-    newMinutes: r.pagesPerDay * relief * 15,
+  const cycle = plan.cycleDays ?? defaultCycle(years);
+  // temps de séance selon la QUANTITÉ ACQUISE et le cycle choisi (décision du pilote)
+  const cfgFor = (st: HifzState): EngineConfig => {
+    const l = sessionLoad(r, acquiredPages(st), cycle, relief);
+    return { dailyMinutes: l.total, newMinutes: l.nouveau, maxCycle: cycle };
   };
   const seq: VerseRef[] = learningSequence(meta, plan.suraOrder);
   const parts: Part[] = buildParts(meta, seq);
-  const { state, plan: dp } = replay(parts, eng, today, cfg, Math.min(start, today));
+  const { state, plan: dp } = replay(parts, eng, today, cfgFor, Math.min(start, today));
+  const cfg = cfgFor(state);
   const learnedToday = eng.some((e) => e.kind === 'appris' && e.day === today);
   // la portion du jour part de la position AVANT les portions apprises aujourd'hui
   const posBefore = Math.max(
@@ -314,7 +333,13 @@ export function computeToday(
     portion: p ? { ...p, refs: p.segments.map((s) => ({ s: s.s, from: s.from, to: s.to })) } : null,
     learnedToday,
     cfg,
-    requiredMinutes: requiredMinutes(state, cfg),
+    requiredMinutes: cfg.dailyMinutes,
+    cycle,
+    load: {
+      now: Math.round(cfg.dailyMinutes),
+      start: Math.round(sessionLoad(r, 0, cycle).total),
+      end: Math.round(sessionLoad(r, 604, cycle).total),
+    },
     trial,
     progress: {
       acquiredParts: [...state.parts.values()].filter((x) => x.learnedDay !== null).length,

@@ -206,6 +206,16 @@ describe.skipIf(!READY)('hifẓ (awform_test)', () => {
     });
   });
 
+  it('cycle de la roue réglable (30, 45 ou 60 jours)', async () => {
+    const put = (body: object) => req('PUT', `/api/v1/hifz/profiles/${child}/plan`, parent, body);
+    const r = await put({ mode: 'rythme', rhythmYears: 5, cycleDays: 60, startDate: TODAY });
+    expect(r.json().plan).toMatchObject({ rhythmYears: 5, cycleDays: 60 });
+    expect(
+      (await put({ mode: 'rythme', rhythmYears: 5, cycleDays: 50, startDate: TODAY })).statusCode,
+    ).toBe(400);
+    const back = await put({ mode: 'carnet', bookCode: 'en1', startDate: TODAY });
+    expect(back.json().plan.cycleDays).toBeNull();
+  });
   it('journal par la file hors ligne : idempotent, sources de la famille seulement', async () => {
     const ev = (response: object) => ({
       id: randomUUID(),

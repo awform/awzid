@@ -1,7 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
-  import { forecast, MANZIL, RHYTHMS, STEPS, suraName, type Quality } from '@awform/hifz';
+  import {
+    CYCLES,
+    defaultCycle,
+    forecast,
+    MANZIL,
+    RHYTHMS,
+    STEPS,
+    suraName,
+    type Quality,
+  } from '@awform/hifz';
   import { demoProfileFor, onQueue, type DevProfile } from '$lib/attempts';
   import {
     computeToday,
@@ -55,6 +64,8 @@
     mode: 'carnet' as 'carnet' | 'rythme',
     book: 'en1',
     years: 7,
+    /** cycle de la roue (jours) ; 0 = défaut du rythme */
+    cycle: 0,
     order: 'rebours' as 'rebours' | 'juz30',
     trial: true,
   });
@@ -214,6 +225,7 @@
       startDate: today,
       bookCode: setup.book,
       rhythmYears: setup.years,
+      cycleDays: setup.cycle || null,
       suraOrder: setup.order,
       trial: setup.trial,
     });
@@ -235,6 +247,12 @@
     const p = data.plan;
     await savePlan(profile.id, { ...p, newFactor: factor, reliefUntil: plusDays(7) });
     msg = t('hifz.allegement_ok');
+    await refresh();
+  }
+  async function changeCycle(cy: number) {
+    if (!profile || !data?.plan) return;
+    await savePlan(profile.id, { ...data.plan, cycleDays: cy || null });
+    msg = t('hifz.cycle_ok');
     await refresh();
   }
   async function acceptRhythm(years: number) {
@@ -322,13 +340,13 @@
             <thead
               ><tr
                 ><th></th><th>{t('hifz.col_portion')}</th><th>{t('hifz.col_an')}</th><th
-                  >{t('hifz.col_temps')}</th
-                ><th>{t('hifz.col_fin')}</th></tr
+                  >{t('hifz.col_seance')}</th
+                ></tr
               ></thead
             >
             <tbody>
               {#each RHYTHMS as r (r.years)}
-                {@const f = forecast(r.years)}
+                {@const f = forecast(r, setup.cycle || defaultCycle(r.years))}
                 <tr class:sel={setup.years === r.years}>
                   <td
                     ><label
@@ -338,17 +356,23 @@
                   >
                   <td>{t('hifz.lignes', { n: fmtNumber(r.linesPerDay) })}</td>
                   <td>{t('hifz.juz_an', { n: fmtNumber(r.juzPerYear) })}</td>
-                  <td
-                    >{t('hifz.minutes_plage', { a: r.minutes[0], b: r.minutes[1] })}{r.estimated
-                      ? ' *'
-                      : ''}</td
+                  <td data-testid="seance-{r.years}"
+                    >{t('hifz.seance_plage', {
+                      a: f.startMinutes,
+                      b: f.endMinutes,
+                      c: f.cycle,
+                    })}</td
                   >
-                  <td>{t('hifz.minutes', { n: f.finalSessionMinutes })}</td>
                 </tr>
               {/each}
             </tbody>
           </table>
         </div>
+        <label for="cycle">{t('hifz.cycle')}</label>
+        <select id="cycle" bind:value={setup.cycle} data-testid="cycle">
+          <option value={0}>{t('hifz.cycle_defaut', { n: defaultCycle(setup.years) })}</option>
+          {#each CYCLES as cy (cy)}<option value={cy}>{t('hifz.cycle_n', { n: cy })}</option>{/each}
+        </select>
         <p class="muted small">{t('hifz.rythmes_note')}</p>
         <label for="order">{t('hifz.ordre')}</label>
         <select id="order" bind:value={setup.order}>
@@ -394,8 +418,31 @@
         ancien: Math.round(view.plan.minutes.manzil),
       })}
     </p>
-    {#if view.mode === 'rythme' && view.requiredMinutes > view.cfg.dailyMinutes + 1}
-      <p class="warn small">{t('hifz.temps_honnete', { n: Math.round(view.requiredMinutes) })}</p>
+    {#if view.mode === 'rythme' && view.load}
+      <p class="small" data-testid="charge">
+        {t('hifz.charge', {
+          n: view.load.now,
+          a: view.load.start,
+          b: view.load.end,
+          c: view.cycle ?? 45,
+        })}
+      </p>
+      {#if canManage}
+        <label class="small"
+          >{t('hifz.cycle')}
+          <select
+            value={plan.cycleDays ?? 0}
+            onchange={(e) => changeCycle(Number(e.currentTarget.value))}
+            data-testid="cycle-plan"
+          >
+            <option value={0}
+              >{t('hifz.cycle_defaut', { n: defaultCycle(plan.rhythmYears ?? 7) })}</option
+            >
+            {#each CYCLES as cy (cy)}<option value={cy}>{t('hifz.cycle_n', { n: cy })}</option
+              >{/each}
+          </select></label
+        >
+      {/if}
     {/if}
     <div
       class="bar"

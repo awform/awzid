@@ -4,8 +4,7 @@
  * l'enseignant (ou l'adulte autodidacte) décide. Seuils [ESTIMATION, à régler au pilote].
  */
 import type { HifzEvent } from './engine.js';
-import { RHYTHMS, type Rhythm } from './rhythms.js';
-import { TOTAL_PAGES } from './quran.js';
+import type { Rhythm } from './rhythms.js';
 
 export interface TrialStats {
   /** part des révisions « J+7 » réussies sans aide (0 à 1), null si aucune */
@@ -49,28 +48,4 @@ export function suggestRhythm(s: TrialStats): Rhythm['years'] {
   if (s.retention >= 0.9 && s.regularity >= 0.9 && s.helpsPerReview < 0.1) return 5;
   if (s.retention >= 0.75 && s.regularity >= 0.8) return 6;
   return 7;
-}
-
-export interface Forecast {
-  years: number;
-  /** jours de travail pour tout le Coran */
-  workDays: number;
-  /** temps quotidien annoncé (minutes) */
-  minutes: readonly [number, number];
-  /** charge de la révision ancienne en fin de parcours (minutes par jour, 3 min par page, tour ≤ 30 j) */
-  finalRevisionMinutes: number;
-  /** même charge ramenée aux seuls jours travaillés (≈ 220 par an) : la séance réelle en fin de parcours */
-  finalSessionMinutes: number;
-}
-
-export function forecast(years: Rhythm['years'], minutesPerPage = 3): Forecast {
-  const r = RHYTHMS.find((x) => x.years === years)!;
-  const perDay = (TOTAL_PAGES / 30) * minutesPerPage;
-  return {
-    years,
-    workDays: Math.ceil(TOTAL_PAGES / r.pagesPerDay),
-    minutes: r.minutes,
-    finalRevisionMinutes: Math.round(perDay),
-    finalSessionMinutes: Math.round(perDay / (220 / 365)),
-  };
 }

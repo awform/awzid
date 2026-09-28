@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
-  import { entryKey, note, suraName, type Counters } from '@awform/hifz';
+  import { CYCLES, defaultCycle, entryKey, note, suraName, type Counters } from '@awform/hifz';
   import { loadBook, localIso } from '$lib/hifz';
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
   import Sym from '$lib/Sym.svelte';
@@ -29,6 +29,9 @@
       mode: string;
       bookCode: string | null;
       rhythmYears: number | null;
+      cycleDays: number | null;
+      suraOrder: string;
+      startDate: string;
       trial: boolean;
     } | null;
     events: Array<{
@@ -141,6 +144,21 @@
     });
     await openClass(current!.class.id);
   }
+  /** cycle de la roue réglé par l'enseignant : la charge quotidienne de l'élève est recalculée */
+  async function setCycle(m: Member, cy: number) {
+    if (!m.plan || m.plan.mode !== 'rythme') return;
+    const r = await call('PUT', `/hifz/profiles/${m.id}/plan`, {
+      mode: 'rythme',
+      rhythmYears: m.plan.rhythmYears ?? 7,
+      suraOrder: m.plan.suraOrder,
+      trial: m.plan.trial,
+      startDate: m.plan.startDate,
+      cycleDays: cy || null,
+    });
+    if (!r.ok) return (error = t(`erreur.${r.code ?? 'reseau'}`));
+    msg = t('hifz.cycle_ok');
+    await openClass(current!.class.id);
+  }
   const lastNote = (m: Member) =>
     [...m.events].reverse().find((e) => e.source === 'enseignant')?.details?.note;
 </script>
@@ -210,6 +228,22 @@
               onclick={() => choose(m)}
               data-testid="valider-{m.pseudonym}">{t('ens.ecouter')}</button
             >
+            {#if m.plan?.mode === 'rythme'}
+              <label class="small"
+                >{t('hifz.cycle')}
+                <select
+                  value={m.plan.cycleDays ?? 0}
+                  onchange={(e) => setCycle(m, Number(e.currentTarget.value))}
+                  data-testid="cycle-{m.pseudonym}"
+                >
+                  <option value={0}
+                    >{t('hifz.cycle_defaut', { n: defaultCycle(m.plan.rhythmYears ?? 7) })}</option
+                  >
+                  {#each CYCLES as cy (cy)}<option value={cy}>{t('hifz.cycle_n', { n: cy })}</option
+                    >{/each}
+                </select></label
+              >
+            {/if}
           </li>
         {:else}
           <li class="muted">{t('ens.aucun_eleve')}</li>

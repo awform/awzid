@@ -113,9 +113,20 @@ test('Coran entier à mon rythme : tableau honnête, mois d’essai, portion du 
   await page.goto('/hifz');
   await page.getByTestId('mode-rythme').check();
   await expect(page.locator('table.rhythms tbody tr')).toHaveCount(5);
+  // temps en fourchette début → fin ; un tour de roue plus long allège la fin de parcours
+  const seance7 = page.getByTestId('seance-7');
+  await expect(seance7).toContainText('→');
+  const before = await seance7.textContent();
+  await page.getByTestId('cycle').selectOption('60');
+  await expect(seance7).not.toHaveText(before ?? '');
+  await expect(seance7).toContainText('tour de 60');
+  await page.getByTestId('cycle').selectOption('0');
   await page.locator('#order').selectOption('juz30');
   await page.getByTestId('commencer-plan').click();
   await expect(page.getByTestId('plan-resume')).toContainText("Mois d'essai : jour 1 sur 28");
+  await expect(page.getByTestId('charge')).toContainText('tour de 45 jours');
+  await page.getByTestId('cycle-plan').selectOption('60');
+  await expect(page.getByTestId('charge')).toContainText('tour de 60 jours');
   // portion du jour : Al-Fātiḥa puis les dernières sourates (texte Tanzil, basmala sur sa ligne)
   expect(await shown(page, '1:1')).toBe(await tanzil(page, 1, 1));
   expect(Buffer.from(await shown(page, '114:1'))).toEqual(Buffer.from(await tanzil(page, 114, 1)));

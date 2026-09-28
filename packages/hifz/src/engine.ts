@@ -72,6 +72,11 @@ export interface EngineConfig {
   minutesPerPage?: number;
   /** cycle de la roue (jours) ; sinon calculé selon l'acquis */
   cycle?: number;
+  /**
+   * longueur du cycle de la roue pour tout l'acquis (30, 45 ou 60 jours ; réglée par l'enseignant) :
+   * aucune part n'attend plus longtemps tant que le temps le permet (défaut 30)
+   */
+  maxCycle?: number;
 }
 
 export interface HifzState {
@@ -108,16 +113,25 @@ export function acquiredPages(st: HifzState): number {
   return p;
 }
 
+/** Cycles proposés à l'enseignant pour le Coran entier (décision du pilote, 28/09). */
+export const CYCLES = [30, 45, 60] as const;
+
+/** Cycle par défaut : 30 jours pour les rythmes intensifs (3 et 4 ans), 45 pour 5 à 7 ans. */
+export function defaultCycle(years: number): number {
+  return years <= 4 ? 30 : 45;
+}
+
 /**
  * Cycle de la roue (jours pour faire le tour de l'acquis), d'après la table des carnets : petit acquis →
- * tour en 3 jours ; partie 30 en cours → 7 ; partie 30 → 12 ; au-delà, ≈ 13 pages par jour au plus,
- * JAMAIS plus de 30 jours [ESTIMATION au-delà de 20 pages, à régler au pilote].
+ * tour en 3 jours ; partie 30 en cours → 7 ; partie 30 → 12 ; au-delà, ≈ 10 pages par jour jusqu'à
+ * atteindre le cycle choisi par l'enseignant (30, 45 ou 60 jours), qui n'est jamais dépassé
+ * [ESTIMATION au-delà de 20 pages, à régler au pilote]. La charge dépend donc de la QUANTITÉ ACQUISE.
  */
-export function cycleFor(pages: number): number {
+export function cycleFor(pages: number, maxCycle: number = MAX_GAP): number {
   if (pages <= 2) return 3;
   if (pages <= 10) return 7;
-  if (pages <= 20) return 12;
-  return Math.min(MAX_GAP, Math.max(12, Math.ceil(pages / 13.4)));
+  if (pages <= 20) return Math.min(12, maxCycle);
+  return Math.min(maxCycle, Math.max(12, Math.ceil(pages / 10)));
 }
 
 /** Part des jours travaillés (≈ 220 jours par an). */
@@ -130,7 +144,7 @@ export const WORK_RATIO = 220 / 365;
  */
 export function requiredMinutes(st: HifzState, cfg: EngineConfig): number {
   const acq = acquiredPages(st);
-  const c = cfg.cycle ?? cycleFor(acq);
+  const c = cfg.cycle ?? cycleFor(acq, cfg.maxCycle);
   return Math.max(
     cfg.dailyMinutes,
     ((acq / c) * (cfg.minutesPerPage ?? 3)) / WORK_RATIO + cfg.newMinutes + 5,
@@ -144,8 +158,9 @@ function factor(S: number): number {
 }
 
 function manzilDue(st: HifzState, p: PartState, day: number, cfg: EngineConfig): number {
-  const c = cfg.cycle ?? cycleFor(acquiredPages(st));
-  return day + Math.max(1, Math.min(MAX_GAP, Math.round(c * factor(p.S))));
+  const max = cfg.maxCycle ?? MAX_GAP;
+  const c = cfg.cycle ?? cycleFor(acquiredPages(st), max);
+  return day + Math.max(1, Math.min(Math.max(max, c), Math.round(c * factor(p.S))));
 }
 
 /** Applique un événement (ordre du journal). Les événements sur une part inconnue sont ignorés. */
@@ -286,21 +301,23 @@ export function replay(
   parts: readonly PartInfo[],
   events: readonly HifzEvent[],
   today: number,
-  cfg: EngineConfig,
+  config: EngineConfig | ((st: HifzState) => EngineConfig),
   startDay?: number,
 ): { state: HifzState; plan: DayPlan } {
   const st = newState(parts);
+  // configuration fixe, ou recalculée chaque jour (temps de séance selon la quantité acquise)
+  const cfgOf = () => (typeof config === 'function' ? config(st) : config);
   const sorted = [...events].sort(
     (a, b) => a.day - b.day || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
   );
   let d = startDay ?? sorted[0]?.day ?? today;
   let i = 0;
   for (; d < today; d++) {
-    while (i < sorted.length && sorted[i]!.day <= d) apply(st, sorted[i++]!, cfg);
-    closeDay(st, planDay(st, d, cfg));
+    while (i < sorted.length && sorted[i]!.day <= d) apply(st, sorted[i++]!, cfgOf());
+    closeDay(st, planDay(st, d, cfgOf()));
   }
-  while (i < sorted.length && sorted[i]!.day <= today) apply(st, sorted[i++]!, cfg);
-  return { state: st, plan: planDay(st, today, cfg) };
+  while (i < sorted.length && sorted[i]!.day <= today) apply(st, sorted[i++]!, cfgOf());
+  return { state: st, plan: planDay(st, today, cfgOf()) };
 }
 
 /** Jour entier (fuseau local) d'une date. */

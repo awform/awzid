@@ -3,6 +3,7 @@ import {
   apply,
   cycleFor,
   forecast,
+  rhythm,
   suggestRhythm,
   trialStats,
   MANZIL,
@@ -141,9 +142,12 @@ describe('mois d’essai et prévisions', () => {
     expect(suggestRhythm(trialStats(weak, 0, 28))).toBe(7);
   });
   it('prévision honnête : la révision de fin de parcours dépasse le temps du rythme « 7 ans »', () => {
-    const f = forecast(7);
+    const f = forecast(rhythm(7), 30);
     expect(f.workDays).toBe(1510);
-    expect(f.finalRevisionMinutes).toBe(60);
-    expect(f.finalSessionMinutes).toBeGreaterThan(f.minutes[1]);
+    // tout le Coran en 30 jours : ≈ 20 pages par jour calendaire, ≈ 33 par jour travaillé
+    expect(f.endPagesPerDay).toBeCloseTo(33.4, 0);
+    expect(f.endMinutes).toBeGreaterThan(f.startMinutes * 4);
+    expect(cycleFor(604, 45)).toBe(45);
+    expect(cycleFor(100, 45)).toBe(12);
   });
 });

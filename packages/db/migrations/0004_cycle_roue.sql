@@ -1,0 +1,1 @@
+ALTER TABLE "hifz_plan" ADD COLUMN "cycle_days" smallint;

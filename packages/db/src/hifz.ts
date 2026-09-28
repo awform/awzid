@@ -65,6 +65,7 @@ export interface PlanInput {
   mode: 'carnet' | 'rythme';
   bookCode?: string | null;
   rhythmYears?: number | null;
+  cycleDays?: number | null;
   suraOrder?: 'rebours' | 'juz30';
   startDate: string;
   trial?: boolean;
@@ -83,6 +84,7 @@ export async function savePlan(
     mode: input.mode,
     bookCode: input.mode === 'carnet' ? (input.bookCode ?? null) : null,
     rhythmYears: input.mode === 'rythme' ? (input.rhythmYears ?? 7) : null,
+    cycleDays: input.mode === 'rythme' ? (input.cycleDays ?? null) : null,
     suraOrder: input.suraOrder ?? 'rebours',
     startDate: input.startDate,
     trial: input.mode === 'rythme' ? (input.trial ?? false) : false,

@@ -436,6 +436,11 @@ export const hifzPlan = pgTable(
     bookCode: text('book_code'),
     /** rythme : 3 à 7 ans */
     rhythmYears: smallint('rhythm_years'),
+    /**
+     * cycle de la roue pour tout l'acquis (30, 45 ou 60 jours), réglé par l'enseignant ; null : défaut
+     * (30 pour 3 et 4 ans, 45 pour 5 à 7 ans)
+     */
+    cycleDays: smallint('cycle_days'),
     /** ordre des sourates (rythme) : rebours | juz30 */
     suraOrder: text('sura_order').notNull().default('rebours'),
     /** premier jour du plan (AAAA-MM-JJ, fuseau de l'élève) */
