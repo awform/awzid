@@ -119,7 +119,10 @@ describe('projections', () => {
 });
 
 describe.skipIf(!HAS_CONTENT)('import complet réel (illustrations, contrôles, projections)', () => {
-  const load = loadEdition({ contentDir: CONTENT_DIR, levels: ['en1', 'ad1'] });
+  // contenu absent (CI) : le bloc est ignoré, rien n'est chargé
+  const load = !HAS_CONTENT
+    ? (undefined as never)
+    : loadEdition({ contentDir: CONTENT_DIR, levels: ['en1', 'ad1'] });
 
   it('illustrations : toutes valides, 12 personnages sans visage (zz-sansvisage.js en dernier)', () => {
     const il = loadIllustrations(join(CONTENT_DIR, 'illus'));

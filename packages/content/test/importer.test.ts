@@ -38,7 +38,10 @@ describe('projection élève', () => {
 });
 
 describe.skipIf(!HAS_CONTENT)('import réel en1 + ad1 (sans ressaisie)', () => {
-  const load = loadEdition({ contentDir: CONTENT_DIR, levels: ['en1', 'ad1'] });
+  // contenu absent (CI) : le bloc est ignoré, rien n'est chargé
+  const load = !HAS_CONTENT
+    ? (undefined as never)
+    : loadEdition({ contentDir: CONTENT_DIR, levels: ['en1', 'ad1'] });
 
   it("n'a aucune erreur bloquante (versets = Tanzil, corrigés cohérents)", () => {
     expect(blockingIssues(load)).toEqual([]);
