@@ -1,0 +1,22 @@
+node_modules/
+dist/
+build/
+.svelte-kit/
+coverage/
+test-results/
+playwright-report/
+*.tsbuildinfo
+.DS_Store
+
+# secrets et configuration locale : jamais dans le dépôt
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# polices copiées depuis node_modules au build
+apps/web/static/fonts/
+
+# rapports générés
+reports/

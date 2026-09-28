@@ -1,0 +1,39 @@
+{
+  "name": "awform-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AWFORM — application d'apprentissage (PWA SvelteKit, API Fastify, PostgreSQL)",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r --workspace-concurrency=1 test",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "check": "pnpm build && pnpm typecheck && pnpm lint && pnpm test",
+    "db:migrate": "pnpm --filter @awform/db migrate",
+    "content:check": "pnpm --filter @awform/content check-content",
+    "content:import": "pnpm --filter @awform/db import-content",
+    "dev:api": "pnpm --filter @awform/api dev",
+    "dev:web": "pnpm --filter @awform/web dev",
+    "e2e": "pnpm --filter @awform/web e2e"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.0",
+    "eslint": "^10.11.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-svelte": "^3.23.0",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.9",
+    "prettier-plugin-svelte": "^4.1.1",
+    "svelte": "^5.57.1",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.2"
+  }
+}

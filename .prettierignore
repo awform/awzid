@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+.svelte-kit/
+coverage/
+test-results/
+playwright-report/
+pnpm-lock.yaml
+packages/db/migrations/meta/
+apps/web/static/fonts/
+reports/
+*.md
