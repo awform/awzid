@@ -198,7 +198,13 @@ describe.skipIf(!URL_)('lot 17 (awform_test)', () => {
     expect(r.json()).toMatchObject({ law: 'sn_2008_12', authority: 'cdp_sn' });
     expect((await req('GET', '/api/v1/pays/SEN/regles')).statusCode).toBe(400);
     // Sénégal : sans l'accord exprès au transfert, pas de compte
-    const base = { kind: 'parent', email: 'sn17@exemple.org', password: PW, country: 'SN' };
+    const base = {
+      kind: 'parent',
+      birthYear: 1985,
+      email: 'sn17@exemple.org',
+      password: PW,
+      country: 'SN',
+    };
     const no = await req('POST', '/api/v1/auth/signup', {}, { ...base, consents: ['cgu'] });
     expect(no.statusCode).toBe(400);
     expect(no.json().error).toMatchObject({
@@ -214,7 +220,8 @@ describe.skipIf(!URL_)('lot 17 (awform_test)', () => {
     expect(ok.statusCode, ok.body).toBe(201);
     const rows = await h.db.select().from(t.consent).where(eq(t.consent.country, 'SN'));
     expect(rows.map((c) => c.type).sort()).toEqual(['cgu', 'transfert_hors_pays']);
-    for (const c of rows) expect(c.evidence).toEqual({ loi: 'sn_2008_12', autorite: 'cdp_sn' });
+    for (const c of rows)
+      expect(c.evidence).toEqual({ loi: 'sn_2008_12', autorite: 'cdp_sn', majoriteDeclaree: true });
   });
 
   it('récitation relayée deux fois (accusé perdu) : enregistrée une seule fois', async () => {
@@ -224,6 +231,7 @@ describe.skipIf(!URL_)('lot 17 (awform_test)', () => {
       {},
       {
         kind: 'parent',
+        birthYear: 1985,
         email: 'p17@exemple.org',
         password: PW,
         country: 'FR',

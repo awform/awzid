@@ -55,7 +55,8 @@
       country,
       locale: locale(),
       consents,
-      ...(kind === 'adulte' ? { birthYear, ...(pseudonym ? { pseudonym } : {}) } : {}),
+      birthYear,
+      ...(kind === 'adulte' && pseudonym ? { pseudonym } : {}),
     });
     busy = false;
     if (!r.ok) {
@@ -115,10 +116,11 @@
     </p>
   {/if}
 
+  <!-- audit MIN-3 : année de naissance demandée à tout titulaire (un parent doit être majeur) -->
+  <label for="birthYear">{t('champ.annee_naissance')}</label>
+  <input id="birthYear" type="number" min="1900" max="2100" required bind:value={birthYear} />
+  <p class="muted small">{t('inscription.annee_aide')}</p>
   {#if kind === 'adulte'}
-    <label for="birthYear">{t('champ.annee_naissance')}</label>
-    <input id="birthYear" type="number" min="1900" max="2100" required bind:value={birthYear} />
-    <p class="muted small">{t('inscription.annee_aide')}</p>
     <label for="pseudonym">{t('champ.pseudonyme')}</label>
     <input id="pseudonym" maxlength="40" bind:value={pseudonym} />
   {/if}

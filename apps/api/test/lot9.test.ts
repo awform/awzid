@@ -83,6 +83,7 @@ describe.skipIf(!READY)('lot 9 — tuteur (awform_test)', () => {
     parent = cookieOf(
       await req(app, 'POST', '/api/v1/auth/signup', '', {
         kind: 'parent',
+        birthYear: 1985,
         email: 'parent.tuteur@exemple.org',
         password: PW,
         country: 'SN',

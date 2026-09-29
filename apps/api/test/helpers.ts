@@ -157,7 +157,7 @@ export async function parent(c: Ctx, email: string) {
     'POST',
     '/api/v1/auth/signup',
     {},
-    { kind: 'parent', email, password: PW, country: 'FR', consents: ['cgu'] },
+    { kind: 'parent', birthYear: 1985, email, password: PW, country: 'FR', consents: ['cgu'] },
   );
   if (su.statusCode !== 201) throw new Error(su.body);
   const P = { cookie: cookieOf(su) };

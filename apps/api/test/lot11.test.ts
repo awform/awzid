@@ -56,6 +56,7 @@ describe.skipIf(!READY)('lot 11 (awform_test)', () => {
     parent = cookieOf(
       await req('POST', '/api/v1/auth/signup', '', {
         kind: 'parent',
+        birthYear: 1985,
         email: 'p11@exemple.org',
         password: PW,
         country: 'FR',
@@ -144,6 +145,7 @@ describe.skipIf(!READY)('lot 11 (awform_test)', () => {
     const other = cookieOf(
       await req('POST', '/api/v1/auth/signup', '', {
         kind: 'parent',
+        birthYear: 1985,
         email: 'autre11@exemple.org',
         password: PW,
         country: 'FR',

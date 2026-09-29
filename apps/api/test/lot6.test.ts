@@ -147,7 +147,14 @@ describe.skipIf(!READY)('lot 6 (awform_test)', () => {
         method: 'POST',
         url: '/api/v1/auth/signup',
         headers: { 'x-awform': '1', 'x-forwarded-proto': proto },
-        payload: { kind: 'parent', email, password: PW, country: 'FR', consents: ['cgu'] },
+        payload: {
+          kind: 'parent',
+          birthYear: 1985,
+          email,
+          password: PW,
+          country: 'FR',
+          consents: ['cgu'],
+        },
       });
     expect(String((await signup('https.lot7@exemple.org', 'https')).headers['set-cookie'])).toMatch(
       /; Secure/,

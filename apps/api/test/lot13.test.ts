@@ -72,6 +72,7 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
     cookieOf(
       await req('POST', '/api/v1/auth/signup', '', {
         kind: 'parent',
+        birthYear: 1985,
         email,
         password: PW,
         country: 'FR',

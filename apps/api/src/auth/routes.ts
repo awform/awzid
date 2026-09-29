@@ -202,12 +202,12 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const email = b.email.trim().toLowerCase();
       const pb = checkPassword(b.password, email);
       if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
-      if (b.kind === 'adulte') {
-        if (!b.birthYear) return err(reply, 400, 'annee_naissance_requise');
-        const age = ageFromYear(b.birthYear);
-        if (age < consentAge(b.country))
-          return err(reply, 403, 'age_parent_requis', { age: consentAge(b.country) });
-      }
+      // audit MIN-3 : année de naissance obligatoire pour TOUT titulaire ; un parent doit être majeur
+      if (!b.birthYear) return err(reply, 400, 'annee_naissance_requise');
+      const age = ageFromYear(b.birthYear);
+      if (b.kind === 'parent' && age < 18) return err(reply, 403, 'majorite_requise');
+      if (b.kind === 'adulte' && age < consentAge(b.country))
+        return err(reply, 403, 'age_parent_requis', { age: consentAge(b.country) });
       const missing = requiredAccountConsents(b.country).filter((c) => !b.consents.includes(c));
       if (missing.length) return err(reply, 400, 'consentement_requis', { missing });
       const exists = await db
@@ -237,6 +237,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       await insertConsents(a.id, accepted, b.country, null, {
         loi: rules.law,
         autorite: rules.authority,
+        // audit MIN-3 : le parent déclare être majeur (année de naissance contrôlée)
+        ...(b.kind === 'parent' ? { majoriteDeclaree: true } : {}),
       });
       if (b.kind === 'adulte')
         await db.insert(t.profile).values({

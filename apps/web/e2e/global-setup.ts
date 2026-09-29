@@ -44,6 +44,7 @@ export default async function globalSetup(): Promise<void> {
   });
   const parent = await post('/auth/signup', {
     kind: 'parent',
+    birthYear: 1985,
     email: 'parent@e2e.test',
     password,
     country: 'FR',

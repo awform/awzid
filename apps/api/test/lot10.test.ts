@@ -56,7 +56,8 @@ describe.skipIf(!URL)('lot 10 — paiements (awform_test)', () => {
         password: PW,
         country,
         consents: country === 'SN' ? ['cgu', 'transfert_hors_pays'] : ['cgu'],
-        ...(kind === 'adulte' ? { birthYear: 1985, pseudonym: 'Moi' } : {}),
+        birthYear: 1985,
+        ...(kind === 'adulte' ? { pseudonym: 'Moi' } : {}),
       }),
     );
 

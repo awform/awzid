@@ -25,7 +25,10 @@ async function signup(
   await page.locator('#email').fill(email);
   await page.locator('#password').fill(password());
   if (opts.country) await page.locator('#country').selectOption(opts.country);
-  if (kind === 'adulte') await page.locator('#birthYear').fill(String(opts.birthYear ?? 1990));
+  // audit MIN-3 : année de naissance demandée à tout titulaire
+  await page
+    .locator('#birthYear')
+    .fill(String(opts.birthYear ?? (kind === 'parent' ? 1985 : 1990)));
   await page.getByTestId('consent-cgu').check();
   if (opts.country === 'SN') await page.getByTestId('consent-transfert').check();
   await page.getByRole('button', { name: 'Créer mon compte' }).click();

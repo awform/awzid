@@ -56,6 +56,7 @@
   "erreur.consentement_requis": "Tick the required agreements to continue.",
   "erreur.age_parent_requis": "Under {age}, a parent creates the account and your profile.",
   "erreur.annee_naissance_requise": "Enter your year of birth.",
+  "erreur.majorite_requise": "A parent account is for adults only (18 and over).",
   "erreur.annee_naissance_invalide": "This year of birth is not possible for a child.",
   "erreur.adulte_compte_personnel": "From 18, everyone has their own adult account.",
   "erreur.niveau_inconnu": "Unknown level.",

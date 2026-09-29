@@ -86,6 +86,7 @@ try {
     const parent = cookieOf(
       await call('POST', '/api/v1/auth/signup', '', {
         kind: 'parent',
+        birthYear: 1985,
         email: E.parent,
         password: PW,
         country: 'FR',

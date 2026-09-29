@@ -81,4 +81,30 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
     expect(r.json().audience).toBe('enfant');
     expect(r.json().ia).toBe(false);
   });
+
+  it('MIN-3 : compte parent — année de naissance obligatoire et majorité exigée (Sénégal compris)', async () => {
+    const base = {
+      kind: 'parent',
+      email: 'min3@exemple.org',
+      password: PW,
+      country: 'SN',
+      consents: ['cgu', 'transfert_hors_pays'],
+    };
+    const sans = await c.req('POST', '/api/v1/auth/signup', {}, base);
+    expect(sans.json().error?.code).toBe('annee_naissance_requise');
+    const jeune = await c.req('POST', '/api/v1/auth/signup', {}, { ...base, birthYear: YEAR - 15 });
+    expect(jeune.statusCode).toBe(403);
+    expect(jeune.json().error.code).toBe('majorite_requise');
+    const ok = await c.req('POST', '/api/v1/auth/signup', {}, { ...base, birthYear: YEAR - 35 });
+    expect(ok.statusCode, ok.body).toBe(201);
+    // la preuve des accords garde la déclaration de majorité
+    const cs = (await c.req('GET', '/api/v1/account/consents', { cookie: cookieOf(ok) })).json();
+    expect(cs.consents.length).toBeGreaterThan(0);
+    const [row] = await c.h.pool
+      .query(
+        "select evidence from consent where type = 'cgu' and country = 'SN' order by given_at desc limit 1",
+      )
+      .then((r) => r.rows);
+    expect(row.evidence).toMatchObject({ majoriteDeclaree: true });
+  });
 });

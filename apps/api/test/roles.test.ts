@@ -105,6 +105,7 @@ describe.skipIf(!URL_)('comptes PostgreSQL séparés (awform_test)', () => {
       headers: { 'x-awform': '1' },
       payload: {
         kind: 'parent',
+        birthYear: 1985,
         email: 'roles14@exemple.org',
         password: PW,
         country: 'FR',

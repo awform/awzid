@@ -61,6 +61,7 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
   const signup = (email: string, over: object = {}) =>
     post('/api/v1/auth/signup', {
       kind: 'parent',
+      birthYear: 1985,
       email,
       password: PW,
       country: 'FR',
