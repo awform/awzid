@@ -59,15 +59,17 @@
 
   async function buy(p: PlanView) {
     error = '';
-    if (me?.account.hasPin && pending !== p.code) {
-      pending = p.code; // demande du code parent d'abord
+    // barrière parentale : code parent, ou mot de passe du compte s'il n'y a pas de code (audit PAY-6) ;
+    // l'essai gratuit n'est pas un achat
+    if (p.kind !== 'essai' && pending !== p.code) {
+      pending = p.code;
       return;
     }
     const r = await checkout({
       plan: p.code,
       ...(chosen[p.code] ? { prestataire: chosen[p.code] } : {}),
       ...(p.parPlace ? { places: seats[p.code] ?? 10 } : {}),
-      ...(me?.account.hasPin ? { pin } : {}),
+      ...(p.kind === 'essai' ? {} : me?.account.hasPin ? { pin } : { motDePasse: pin }),
     });
     if (!r.ok || !r.data) {
       error = t(`paie.err_${r.code ?? 'inconnue'}`);
@@ -172,15 +174,27 @@
               void buy(p);
             }}
           >
-            <label for="pin-{p.code}">{t('offre.code_parent')}</label>
-            <input
-              id="pin-{p.code}"
-              inputmode="numeric"
-              maxlength="4"
-              autocomplete="off"
-              bind:value={pin}
-              data-testid="pin-achat"
-            />
+            {#if me?.account.hasPin}
+              <label for="pin-{p.code}">{t('offre.code_parent')}</label>
+              <input
+                id="pin-{p.code}"
+                inputmode="numeric"
+                maxlength="4"
+                autocomplete="off"
+                bind:value={pin}
+                data-testid="pin-achat"
+              />
+            {:else}
+              <label for="pin-{p.code}">{t('offre.mot_de_passe')}</label>
+              <input
+                id="pin-{p.code}"
+                type="password"
+                maxlength="512"
+                autocomplete="current-password"
+                bind:value={pin}
+                data-testid="mdp-achat"
+              />
+            {/if}
             <button type="submit" class="primary">{t('offre.confirmer')}</button>
           </form>
         {:else if p.kind === 'essai'}

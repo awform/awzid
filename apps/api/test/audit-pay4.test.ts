@@ -4,7 +4,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { setupBilling } from '@awform/billing';
-import { adult, setup, teacher, type Ctx } from './helpers.js';
+import { adult, PW, setup, teacher, type Ctx } from './helpers.js';
 
 const URL_ = process.env.TEST_DATABASE_URL;
 const UNITS = [
@@ -59,7 +59,10 @@ describe.skipIf(!URL_)('audit PAY-4 — droits appliqués', () => {
     expect(o.statusCode).toBe(200);
     // abonnement payé : tout s'ouvre
     const co = (
-      await on.req('POST', '/api/v1/billing/checkout', A, { plan: 'adulte_mensuel' })
+      await on.req('POST', '/api/v1/billing/checkout', A, {
+        plan: 'adulte_mensuel',
+        motDePasse: PW,
+      })
     ).json();
     await on.req('POST', `/api/v1/billing/simulate/${co.checkoutId}`, A, { resultat: 'succes' });
     expect((await on.req('GET', '/api/v1/units/en1.l07', A)).statusCode).toBe(200);

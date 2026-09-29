@@ -1,4 +1,4 @@
-import { expect, newAdult, PARENT_PIN, test } from './fixtures';
+import { expect, newAdult, PARENT_PIN, password, test } from './fixtures';
 
 /** Lot 10 : offres et abonnement, paiement SIMULÉ (aucune donnée de carte, aucun argent). */
 
@@ -17,6 +17,10 @@ test.describe('adulte', () => {
 
     await page.getByTestId('voir-offres').click();
     await page.getByTestId('choisir-adulte_mensuel').click();
+    // audit PAY-6 : sans code parent, le mot de passe du compte est demandé pour un achat
+    const adulte = page.locator('[data-plan="adulte_mensuel"]');
+    await adulte.getByTestId('mdp-achat').fill(password());
+    await adulte.getByRole('button', { name: 'Confirmer' }).click();
     await expect(page).toHaveURL(/\/abonnement\/paiement-simule\//);
     await expect(page.getByTestId('paiement-simule')).toContainText('Aucun argent');
     await expect(page.getByTestId('montant')).toContainText('4,99');

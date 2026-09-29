@@ -242,7 +242,15 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
   });
 
   // ---------------------------------------------------------------- souscription
-  app.post<{ Body: { plan: string; prestataire?: ProviderId; places?: number; pin?: string } }>(
+  app.post<{
+    Body: {
+      plan: string;
+      prestataire?: ProviderId;
+      places?: number;
+      pin?: string;
+      motDePasse?: string;
+    };
+  }>(
     '/api/v1/billing/checkout',
     {
       schema: {
@@ -258,6 +266,7 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
             },
             places: { type: 'integer', minimum: 1, maximum: 2000 },
             pin: { type: 'string', maxLength: 8 },
+            motDePasse: { type: 'string', maxLength: 512 },
           },
         },
       },
@@ -283,6 +292,17 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
         if (!(await verifySecret(req.body.pin, a.parentPinHash))) {
           await failAttempt(db, key);
           return err(reply, 403, 'code_parent_requis');
+        }
+        await clearFailures(db, key);
+      } else if (plan.kind !== 'essai') {
+        // audit PAY-6 : sans code parent, un ACHAT exige le mot de passe du compte (un enfant sur la session
+        // d'un parent ne peut pas acheter seul)
+        const key = `mdp:${a.id}`;
+        if (!req.body.motDePasse) return err(reply, 403, 'mot_de_passe_requis');
+        if (!(await reserveAttempt(db, key, 10))) return err(reply, 429, 'verrouille');
+        if (!(await verifySecret(req.body.motDePasse, a.passwordHash))) {
+          await failAttempt(db, key, 10);
+          return err(reply, 403, 'mot_de_passe_requis');
         }
         await clearFailures(db, key);
       }

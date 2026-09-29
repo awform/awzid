@@ -3,7 +3,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { setupBilling } from '@awform/billing';
-import { adult, setupEdition, type Ctx } from './helpers.js';
+import { adult, PW, setupEdition, type Ctx } from './helpers.js';
 
 const URL_ = process.env.TEST_DATABASE_URL;
 const SECRET = 'secret-de-test-pay';
@@ -33,7 +33,7 @@ describe.skipIf(!URL_)('audit — paiements', () => {
   it('PAY-1 : un paiement, un seul abonnement — même avec 8 validations simultanées', async () => {
     const { A } = await adult(c, 'pay1@exemple.org');
     const co = (
-      await c.req('POST', '/api/v1/billing/checkout', A, { plan: 'adulte_mensuel' })
+      await c.req('POST', '/api/v1/billing/checkout', A, { plan: 'adulte_mensuel', motDePasse: PW })
     ).json();
     expect(co.checkoutId).toBeTruthy();
     const rs = await Promise.all([
@@ -76,7 +76,7 @@ describe.skipIf(!URL_)('audit — paiements', () => {
     expect(me.droits.plan).toBe('gratuit');
     // abonnement impayé : l'annulation est refusée, il reste impayé
     const co = (
-      await c.req('POST', '/api/v1/billing/checkout', A, { plan: 'adulte_mensuel' })
+      await c.req('POST', '/api/v1/billing/checkout', A, { plan: 'adulte_mensuel', motDePasse: PW })
     ).json();
     await c.req('POST', `/api/v1/billing/simulate/${co.checkoutId}`, A, { resultat: 'succes' });
     me = (await c.req('GET', '/api/v1/billing/me', A)).json();
@@ -101,5 +101,26 @@ describe.skipIf(!URL_)('audit — paiements', () => {
       expect(r.json().error.code).toBe('essai_deja_utilise');
     const me = (await c.req('GET', '/api/v1/billing/me', A)).json();
     expect(me.abonnements.filter((s: { plan: string }) => s.plan === 'decouverte')).toHaveLength(1);
+  });
+
+  it('PAY-6 : sans code parent, un achat exige le mot de passe du compte', async () => {
+    const { A } = await adult(c, 'pay6@exemple.org');
+    const sans = await c.req('POST', '/api/v1/billing/checkout', A, { plan: 'adulte_mensuel' });
+    expect(sans.statusCode).toBe(403);
+    expect(sans.json().error.code).toBe('mot_de_passe_requis');
+    const faux = await c.req('POST', '/api/v1/billing/checkout', A, {
+      plan: 'adulte_mensuel',
+      motDePasse: 'pas le bon',
+    });
+    expect(faux.json().error.code).toBe('mot_de_passe_requis');
+    const ok = await c.req('POST', '/api/v1/billing/checkout', A, {
+      plan: 'adulte_mensuel',
+      motDePasse: PW,
+    });
+    expect(ok.statusCode, ok.body).toBe(200);
+    // l'essai gratuit n'est pas un achat : pas de mot de passe
+    expect(
+      (await c.req('POST', '/api/v1/billing/checkout', A, { plan: 'decouverte' })).statusCode,
+    ).toBe(200);
   });
 });

@@ -63,6 +63,8 @@ export const checkout = (body: {
   prestataire?: string;
   places?: number;
   pin?: string;
+  /** audit PAY-6 : mot de passe du compte quand aucun code parent n'est défini */
+  motDePasse?: string;
 }) =>
   call<{ checkoutId?: string; url: string; essai?: boolean; simule?: boolean }>(
     'POST',

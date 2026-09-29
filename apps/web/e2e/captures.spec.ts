@@ -1,6 +1,6 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { expect, loginTeacher, newAdult, PARENT_PIN, test } from './fixtures';
+import { expect, loginTeacher, newAdult, PARENT_PIN, password, test } from './fixtures';
 import { solveExercise, unitData } from './solve';
 
 /**
@@ -324,6 +324,10 @@ test.describe('lot 10', () => {
     await page.getByTestId('offres').waitFor();
     await shot('42-offres', true);
     await page.getByTestId('choisir-adulte_annuel').click();
+    // audit PAY-6 : mot de passe du compte pour un achat sans code parent
+    const annuel = page.locator('[data-plan="adulte_annuel"]');
+    await annuel.getByTestId('mdp-achat').fill(password());
+    await annuel.getByRole('button', { name: 'Confirmer' }).click();
     await page.getByTestId('montant').waitFor();
     await shot('43-paiement-simule');
     await page.getByTestId('payer').click();

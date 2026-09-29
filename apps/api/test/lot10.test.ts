@@ -200,6 +200,7 @@ describe.skipIf(!URL)('lot 10 — paiements (awform_test)', () => {
       await req(app, 'POST', '/api/v1/billing/checkout', adult, {
         plan: 'adulte_annuel',
         prestataire: 'paypal',
+        motDePasse: PW, // audit PAY-6 : sans code parent, le mot de passe du compte
       })
     ).json();
     await req(app, 'POST', `/api/v1/billing/simulate/${f.checkoutId}`, adult, {
@@ -214,7 +215,10 @@ describe.skipIf(!URL)('lot 10 — paiements (awform_test)', () => {
 
   it('webhook : signature vérifiée, idempotent, sans en-tête CSRF', async () => {
     const c = (
-      await req(app, 'POST', '/api/v1/billing/checkout', adult, { plan: 'adulte_mensuel' })
+      await req(app, 'POST', '/api/v1/billing/checkout', adult, {
+        plan: 'adulte_mensuel',
+        motDePasse: PW,
+      })
     ).json();
     const e = billing.simulated.event(c.checkoutId, 'paiement_reussi');
     const send = (headers: Record<string, string>, body: string) =>
@@ -265,6 +269,7 @@ describe.skipIf(!URL)('lot 10 — paiements (awform_test)', () => {
       await req(app, 'POST', '/api/v1/billing/checkout', teacher, {
         plan: 'licence_ecole',
         places: 25,
+        motDePasse: PW,
       })
     ).json();
     const d = (await req(app, 'GET', `/api/v1/billing/checkout/${c.checkoutId}`, teacher)).json();
