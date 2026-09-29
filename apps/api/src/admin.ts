@@ -10,11 +10,15 @@ import { schema as t, type Db } from '@awform/db';
 const err = (reply: FastifyReply, status: number, code: string) =>
   reply.code(status).send({ error: { code } });
 
-/** « parent-abc@demo.awform.test » → « p…c@demo.awform.test » (minimisation) */
+/**
+ * « parent-abc@demo.awform.test » → « p…c@demo.awform.test » (minimisation) ; une partie locale de moins de
+ * 5 caractères est entièrement masquée (audit MIN-12 : « ab@… » ne se devine plus).
+ */
 export function maskEmail(e: string | null): string | null {
   if (!e) return null;
   const [user = '', domain = ''] = e.split('@');
-  return `${user.slice(0, 1)}…${user.length > 1 ? user.slice(-1) : ''}@${domain}`;
+  if (user.length < 5) return `…@${domain}`;
+  return `${user.slice(0, 1)}…${user.slice(-1)}@${domain}`;
 }
 
 export function registerAdmin(app: FastifyInstance, db: Db): void {
@@ -46,6 +50,8 @@ export function registerAdmin(app: FastifyInstance, db: Db): void {
         totp: t.account.totpEnabled,
       })
       .from(t.account)
+      // audit MIN-12 : un compte en cours d'effacement n'est plus montré
+      .where(isNull(t.account.deletedAt))
       .orderBy(desc(t.account.createdAt))
       .limit(30);
     const editions = await db
@@ -64,11 +70,12 @@ export function registerAdmin(app: FastifyInstance, db: Db): void {
       .from(t.unit)
       .groupBy(t.unit.levelCode)
       .orderBy(t.unit.levelCode);
+    // audit MIN-12 : motif, état et date seulement — jamais le texte libre d'un enfant ni son pseudonyme
+    // (le texte est lu par l'enseignant de sa classe, pas par l'administrateur)
     const questions = await db
       .select({
         id: t.tutorQuestion.id,
-        pseudonym: t.profile.pseudonym,
-        text: t.tutorQuestion.text,
+        kind: t.profile.kind,
         motif: t.tutorQuestion.motif,
         status: t.tutorQuestion.status,
         createdAt: t.tutorQuestion.createdAt,

@@ -1,6 +1,7 @@
 /** Espace administrateur minimal : lecture seule, second facteur obligatoire, e-mails masqués. */
 import { randomBytes } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { eq } from 'drizzle-orm';
 import { connect, resetTestDatabase, runMigrations, schema as t, type DbHandle } from '@awform/db';
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import { buildApp } from '../src/app.js';
@@ -14,13 +15,16 @@ const cookieOf = (r: LightMyRequestResponse) =>
 
 it('masquage des e-mails', () => {
   expect(maskEmail('parent-abc@demo.awform.test')).toBe('p…c@demo.awform.test');
-  expect(maskEmail('a@b.c')).toBe('a…@b.c');
+  // audit MIN-12 : adresse courte entièrement masquée
+  expect(maskEmail('a@b.c')).toBe('…@b.c');
+  expect(maskEmail('ab@x.y')).toBe('…@x.y');
   expect(maskEmail(null)).toBeNull();
 });
 
 describe.skipIf(!URL)('administration (awform_test)', () => {
   let h: DbHandle;
   let app: FastifyInstance;
+  let adminCookie = '';
   const req = (method: 'GET' | 'POST', url: string, cookie = '', payload?: object) =>
     app.inject({
       method,
@@ -72,11 +76,35 @@ describe.skipIf(!URL)('administration (awform_test)', () => {
     await req('POST', '/api/v1/auth/totp/confirm', admin, {
       code: totpAt(s.secret, Math.floor(Date.now() / 30_000)),
     });
+    adminCookie = admin;
     const o = (await req('GET', '/api/v1/admin/overview', admin)).json();
     expect(o.comptes.find((c: { kind: string }) => c.kind === 'adulte').n).toBe(1);
     expect(JSON.stringify(o)).not.toContain('adulte.adm@exemple.org');
     expect(o.derniersComptes.some((a: { email: string }) => a.email === 'a…m@exemple.org')).toBe(
       true,
     );
+  });
+
+  it('audit MIN-12 : ni texte libre d’un enfant, ni pseudonyme, ni compte en cours d’effacement', async () => {
+    const [acc] = await h.db
+      .insert(t.account)
+      .values({ kind: 'parent', email: 'efface.adm@exemple.org', passwordHash: 'x', country: 'SN' })
+      .returning({ id: t.account.id });
+    const [p] = await h.db
+      .insert(t.profile)
+      .values({ ownerAccountId: acc!.id, kind: 'enfant', pseudonym: 'Awa-min12' })
+      .returning({ id: t.profile.id });
+    await h.db.insert(t.tutorQuestion).values({
+      profileId: p!.id,
+      text: 'Je m’appelle Awa Diallo, j’habite rue 12 à Thiès',
+      motif: 'avis_religieux',
+    });
+    await h.db.update(t.account).set({ deletedAt: new Date() }).where(eq(t.account.id, acc!.id));
+    const o = await req('GET', '/api/v1/admin/overview', adminCookie);
+    expect(o.statusCode).toBe(200);
+    expect(o.body).not.toContain('Thiès');
+    expect(o.body).not.toContain('Awa-min12');
+    expect(o.body).not.toContain('e…e@exemple.org');
+    expect(o.json().questions[0]).toMatchObject({ motif: 'avis_religieux' });
   });
 });

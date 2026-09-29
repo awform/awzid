@@ -31,8 +31,8 @@
     niveaux: Array<{ level: string; n: number }>;
     questions: Array<{
       id: string;
-      pseudonym: string;
-      text: string;
+      /** audit MIN-12 : ni texte ni pseudonyme de l'enfant pour l'administrateur */
+      kind: string;
       motif: string;
       status: string;
       createdAt: string;
@@ -124,9 +124,7 @@
     <ul class="list">
       {#each data.questions as q (q.id)}
         <li>
-          {fmtDate(q.createdAt)} · {q.pseudonym} · {t(`ensq.motif_${q.motif}`)} · {t(
-            `admin.q_${q.status}`,
-          )} — « {q.text} »
+          {fmtDate(q.createdAt)} · {t(`ensq.motif_${q.motif}`)} · {t(`admin.q_${q.status}`)}
         </li>
       {:else}
         <li class="muted">{t('admin.aucun')}</li>
