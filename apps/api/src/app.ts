@@ -36,6 +36,7 @@ import { registerLibrary } from './library.js';
 import { registerTutor } from './tutor.js';
 import { registerBilling } from './billing.js';
 import { registerAdmin } from './admin.js';
+import { registerToday } from './today.js';
 
 export interface AppOptions {
   db: Db;
@@ -116,6 +117,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerTutor(app, db, edition, opts.tutor);
   registerBilling(app, db, opts.billing);
   registerAdmin(app, db);
+  registerToday(app, db, edition);
 
   app.get('/api/v1/health', async () => {
     const dbOk = await ping(db).catch(() => false);

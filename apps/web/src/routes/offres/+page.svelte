@@ -202,7 +202,9 @@
     </li>
   {/each}
 </ul>
-<p class="muted small">{t('offre.prix_a_valider')}</p>
+<p class="muted small">
+  {t('offre.prix_a_valider')} <a href={resolve('/garanties')}>{t('gar.titre')}</a>
+</p>
 
 <style>
   .plans {

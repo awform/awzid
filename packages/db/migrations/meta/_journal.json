@@ -64,6 +64,13 @@
       "when": 1790659223700,
       "tag": "0008_paiements",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790661457913,
+      "tag": "0009_regularite",
+      "breakpoints": true
     }
   ]
 }

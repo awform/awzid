@@ -746,3 +746,23 @@ export const billingEvent = pgTable(
   },
   (t) => [primaryKey({ columns: [t.provider, t.eventId] })],
 );
+
+// ================================================================ séance du jour et régularité (lot 11)
+
+/**
+ * Régularité SANS PUNITION (ados et adultes seulement ; rien pour les enfants) : objectif de jours de
+ * travail par semaine (3 à 6) et jours de repos choisis (1 = lundi … 7 = dimanche). Aucune série, aucune
+ * perte, aucune notification de rattrapage.
+ */
+export const profileRhythm = pgTable(
+  'profile_rhythm',
+  {
+    profileId: uuid('profile_id')
+      .primaryKey()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    weeklyGoal: smallint('weekly_goal').notNull().default(4),
+    restDays: jsonb('rest_days').notNull().default([]),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [check('profile_rhythm_goal', sql`${t.weeklyGoal} BETWEEN 3 AND 6`)],
+);

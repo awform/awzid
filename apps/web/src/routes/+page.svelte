@@ -8,6 +8,9 @@
 
 <svelte:head><title>{t('app.nom')} — {t('onglets.arabe')}</title></svelte:head>
 
+<p class="card today">
+  <a href={resolve('/aujourdhui')} data-testid="lien-aujourdhui">{t('auj.lien')}</a>
+</p>
 <h1>{t('arabe.titre')}</h1>
 {#if data.offline}<p class="card">{t('arabe.hors_ligne')}</p>{/if}
 <ul class="levels">

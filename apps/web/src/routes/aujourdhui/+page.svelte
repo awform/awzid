@@ -1,0 +1,283 @@
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import { resolve } from '$app/paths';
+  import { suraName } from '@awform/hifz';
+  import { demoProfileFor } from '$lib/attempts';
+  import { dueWords, loadBoxes, loadDeck } from '$lib/cards';
+  import { hifzToday, loadMeta, localIso, type HifzToday } from '$lib/hifz';
+  import { fmtNumber, t } from '$lib/i18n';
+  import { completeJuz, completeSuras } from '$lib/milestones';
+  import { call, type ProfileInfo } from '$lib/session';
+
+  /**
+   * « Aujourd'hui » (lot 11, étude des plateformes, rec. 1) : la séance du jour enchaîne la portion de hifẓ
+   * (trois pistes), la leçon en cours et 5 minutes de mots, avec une durée annoncée. Régularité SANS
+   * punition pour les ados et adultes (rien pour les enfants) ; jalons de maîtrise, jamais de points.
+   */
+  interface Today {
+    profil: { id: string; kind: string; enfant: boolean; levelCode: string | null };
+    today: string;
+    dimanche: boolean;
+    lecon: { id: string; titleFr: string | null; levelCode: string; n: number } | null;
+    regularite: {
+      objectif: number;
+      repos: number[];
+      joursActifs: number;
+      semaine: Array<{ day: string; weekday: number; actif: boolean; repos: boolean }>;
+    } | null;
+    jalons: { lettres: string[]; leconsTerminees: number; leconsMaitrisees: number };
+  }
+  const LESSON_MIN = 15;
+  const WORDS_MIN = 5;
+
+  let profile = $state<ProfileInfo | null>(null);
+  let data = $state<Today | null>(null);
+  let hifz = $state<HifzToday | null>(null);
+  let due = $state(0);
+  let suras = $state<number[]>([]);
+  let juz = $state<number[]>([]);
+  let loaded = $state(false);
+  let goal = $state(4);
+  let rest = $state<number[]>([]);
+  let saved = $state(false);
+
+  const minutes = $derived(
+    (hifz?.minutes ?? 0) + (data?.lecon ? LESSON_MIN : 0) + (due > 0 ? WORDS_MIN : 0),
+  );
+
+  onMount(async () => {
+    profile = await demoProfileFor('');
+    if (profile) {
+      const r = await call<Today>('GET', `/today/${profile.id}?today=${localIso()}`);
+      data = r.ok ? r.data : null;
+      goal = data?.regularite?.objectif ?? 4;
+      rest = [...(data?.regularite?.repos ?? [])];
+      hifz = await hifzToday(profile.id).catch(() => null);
+      if (hifz) {
+        const meta = await loadMeta();
+        const counts = (meta?.weights ?? []).map((w) => w.length);
+        suras = completeSuras(hifz.acquis, counts);
+        juz = completeJuz(hifz.acquis, counts);
+      }
+      try {
+        const deck = await loadDeck(profile);
+        due = dueWords(deck.words, await loadBoxes(profile.id), localIso()).length;
+      } catch {
+        due = 0;
+      }
+    }
+    loaded = true;
+  });
+
+  async function saveRhythm(e: SubmitEvent) {
+    e.preventDefault();
+    if (!profile) return;
+    const r = await call<{ objectif: number; repos: number[] }>(
+      'PUT',
+      `/profiles/${profile.id}/regularite`,
+      {
+        objectif: goal,
+        repos: rest,
+      },
+    );
+    if (r.ok && data?.regularite && r.data) {
+      data.regularite.objectif = r.data.objectif;
+      data.regularite.repos = r.data.repos;
+      data.regularite.semaine = data.regularite.semaine.map((d) => ({
+        ...d,
+        repos: r.data!.repos.includes(d.weekday),
+      }));
+      saved = true;
+    }
+  }
+  function toggleRest(d: number, on: boolean) {
+    rest = on ? [...rest, d] : rest.filter((x) => x !== d);
+  }
+</script>
+
+<svelte:head><title>{t('app.nom')} — {t('auj.titre')}</title></svelte:head>
+
+<h1>{t('auj.titre')}</h1>
+
+{#if loaded && !profile}
+  <p class="card">
+    {t('auj.sans_profil')} <a href={resolve('/profils')}>{t('auj.choisir_profil')}</a>
+  </p>
+{:else if data}
+  <section class="card seance" data-testid="seance">
+    <h2>
+      {t('auj.seance')}
+      <span class="duree" data-testid="duree">{t('auj.duree', { n: minutes })}</span>
+    </h2>
+    <ol class="steps">
+      {#if hifz}
+        <li data-step="hifz">
+          <strong>{t('auj.hifz')}</strong> · {t('auj.minutes', { n: hifz.minutes })}
+          <p class="muted small">
+            {#if hifz.nouveau}{t('auj.hifz_nouveau', { portion: hifz.nouveau })} ·{/if}
+            {t('auj.hifz_revisions', { recent: hifz.recent, ancien: hifz.ancien })}
+          </p>
+          <a class="button" href={resolve('/hifz')}>{t('auj.commencer')}</a>
+        </li>
+      {/if}
+      {#if data.lecon}
+        <li data-step="lecon">
+          <strong>{t('auj.lecon')}</strong> · {t('auj.minutes', { n: LESSON_MIN })}
+          <p class="muted small">{data.lecon.titleFr}</p>
+          <a
+            class="button primary"
+            href={resolve('/lecons/[id]', { id: data.lecon.id })}
+            data-testid="aller-lecon">{t('auj.commencer')}</a
+          >
+        </li>
+      {/if}
+      {#if due > 0}
+        <li data-step="mots">
+          <strong>{t('auj.mots')}</strong> · {t('auj.minutes', { n: WORDS_MIN })}
+          <p class="muted small">{t('auj.mots_dus', { n: due })}</p>
+          <a class="button" href={resolve('/revisions')}>{t('auj.commencer')}</a>
+        </li>
+      {/if}
+      {#if !hifz && !data.lecon && due === 0}<li class="muted">{t('auj.rien')}</li>{/if}
+    </ol>
+    <p class="muted small">{t('auj.onglets')}</p>
+  </section>
+
+  {#if data.regularite}
+    {@const r = data.regularite}
+    <section class="card" data-testid="regularite">
+      <h2>{t('auj.semaine')}</h2>
+      <p data-testid="jours-travail">
+        {t('auj.jours_travail', { n: r.joursActifs, objectif: r.objectif })}
+      </p>
+      <ol class="week">
+        {#each r.semaine as d (d.day)}
+          <li class:actif={d.actif} class:repos={d.repos} data-day={d.day} data-actif={d.actif}>
+            <span>{t(`auj.j${d.weekday}`)}</span>
+            <small>{d.actif ? '✓' : d.repos ? t('auj.repos') : ''}</small>
+          </li>
+        {/each}
+      </ol>
+      <p class="muted small">{t('auj.sans_punition')}</p>
+      <details>
+        <summary>{t('auj.regler')}</summary>
+        <form class="rhythm" onsubmit={saveRhythm}>
+          <label
+            >{t('auj.objectif')}
+            <select bind:value={goal} data-testid="objectif">
+              {#each [3, 4, 5, 6] as n (n)}<option value={n}>{t('auj.jours', { n })}</option>{/each}
+            </select></label
+          >
+          <fieldset>
+            <legend>{t('auj.jours_repos')}</legend>
+            {#each [1, 2, 3, 4, 5, 6, 7] as d (d)}
+              <label class="day"
+                ><input
+                  type="checkbox"
+                  checked={rest.includes(d)}
+                  onchange={(e) => toggleRest(d, e.currentTarget.checked)}
+                  data-repos={d}
+                />
+                {t(`auj.j${d}`)}</label
+              >
+            {/each}
+          </fieldset>
+          <button type="submit" data-testid="enregistrer-regularite">{t('auj.enregistrer')}</button>
+          {#if saved}<span role="status">{t('auj.enregistre')}</span>{/if}
+        </form>
+      </details>
+    </section>
+  {/if}
+
+  <section class="card" data-testid="jalons">
+    <h2>{t('auj.jalons')}</h2>
+    <ul class="milestones">
+      <li data-jalon="lettres">
+        {t('auj.j_lettres', { n: data.jalons.lettres.length })}
+        {#if data.jalons.lettres.length}<span class="ar" lang="ar" dir="rtl"
+            >{data.jalons.lettres.join(' ')}</span
+          >{/if}
+      </li>
+      <li data-jalon="lecons">
+        {t('auj.j_lecons', { n: data.jalons.leconsTerminees, m: data.jalons.leconsMaitrisees })}
+      </li>
+      {#if hifz}
+        <li data-jalon="sourates">
+          {t('auj.j_sourates', { n: suras.length })}{#if suras.length}
+            : {suras
+              .slice(-6)
+              .map((s) => suraName(s))
+              .join(', ')}{/if}
+        </li>
+        <li data-jalon="juz">
+          {t('auj.j_juz', { n: juz.length })}{#if juz.length}
+            : {juz.map((j) => fmtNumber(j)).join(', ')}{/if}
+        </li>
+        <li class="muted small">{t('auj.j_hizb_bientot')}</li>
+      {/if}
+    </ul>
+    <p class="muted small">{t('auj.jalons_regle')}</p>
+  </section>
+
+  {#if !data.profil.enfant || data.dimanche}
+    <p><a href={resolve('/suivi/rapport')} data-testid="lien-rapport">{t('auj.rapport')}</a></p>
+  {/if}
+{/if}
+
+<style>
+  .duree {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--teal);
+    margin-inline-start: 8px;
+  }
+  .steps {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .steps li {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 8px 10px;
+  }
+  .week {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .week li {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    padding: 4px 0;
+    display: grid;
+  }
+  .week li.actif {
+    background: var(--ok-bg);
+    color: var(--ok-ink);
+    font-weight: 700;
+  }
+  .week li.repos {
+    background: var(--sand);
+  }
+  .rhythm {
+    display: grid;
+    gap: 8px;
+  }
+  .day {
+    display: inline-flex;
+    gap: 4px;
+    margin-inline-end: 8px;
+  }
+  .milestones {
+    display: grid;
+    gap: 4px;
+  }
+  .small {
+    font-size: 0.9rem;
+  }
+</style>

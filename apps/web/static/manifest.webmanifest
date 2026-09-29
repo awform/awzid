@@ -3,7 +3,7 @@
   "short_name": "AWFORM",
   "lang": "fr",
   "dir": "ltr",
-  "start_url": "/",
+  "start_url": "/aujourdhui",
   "scope": "/",
   "display": "standalone",
   "background_color": "#FFFDF8",

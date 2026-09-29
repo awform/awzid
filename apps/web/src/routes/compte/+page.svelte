@@ -348,6 +348,12 @@
       <p>
         <a href={resolve('/compte/tuteur')} data-testid="lien-tuteur">{t('compte.tuteur_lien')}</a>
       </p>
+      {#if me.account.kind === 'parent'}<p>
+          <a href={resolve('/compte/protections')} data-testid="lien-protections"
+            >{t('prot.titre')}</a
+          >
+        </p>{/if}
+      <p><a href={resolve('/garanties')}>{t('gar.titre')}</a></p>
     </section>
   {/if}
 

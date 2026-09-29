@@ -66,6 +66,7 @@
   <button type="submit" class="primary" disabled={busy}>{t('connexion.bouton')}</button>
 </form>
 <p>{t('connexion.pas_de_compte')} <a href={resolve('/inscription')}>{t('inscription.titre')}</a></p>
+<p><a href={resolve('/garanties')} data-testid="lien-garanties">{t('gar.titre')}</a></p>
 <p class="muted small">{t('connexion.oubli')}</p>
 
 <style>

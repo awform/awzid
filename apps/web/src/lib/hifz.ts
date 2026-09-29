@@ -395,3 +395,48 @@ export async function hifzSummary(profileId: string): Promise<HifzSummary | null
 }
 
 export { forecast };
+
+/** Séance du jour (écran « Aujourd'hui ») : temps annoncé et contenu des trois pistes, et versets acquis. */
+export interface HifzToday {
+  minutes: number;
+  nouveau: string | null;
+  recent: number;
+  ancien: number;
+  /** versets acquis (sourate:verset) — jalons sourate / juzʾ */
+  acquis: Set<string>;
+}
+
+export async function hifzToday(profileId: string): Promise<HifzToday | null> {
+  const data = await loadProfileHifz(profileId);
+  if (!data?.plan) return null;
+  const meta = await loadMeta();
+  const pack =
+    data.plan.mode === 'carnet' && data.plan.bookCode ? await loadBook(data.plan.bookCode) : null;
+  const pending = await pendingHifz(profileId);
+  const known = new Set(data.events.map((e) => e.id));
+  const v = computeToday(
+    data.plan,
+    [...data.events, ...pending.filter((e) => !known.has(e.id))],
+    meta,
+    pack,
+  );
+  if (!v) return null;
+  const acquis = new Set<string>();
+  for (const [key, st] of v.state.parts) {
+    if (st.learnedDay === null) continue;
+    for (const r of v.parts.get(key)?.ref ?? [])
+      for (let a = r.from; a <= r.to; a++) acquis.add(`${r.s}:${a}`);
+  }
+  const nouveau = v.portion
+    ? v.portion.refs.map((r) => `${r.s}:${r.from}-${r.to}`).join(', ')
+    : (v.weekTasks.find(
+        (w) => w.kind === 'nouveau' && (v.state.parts.get(w.part)?.learnedDay ?? null) === null,
+      )?.label ?? null);
+  return {
+    minutes: Math.round(v.load?.now ?? v.requiredMinutes),
+    nouveau: v.learnedToday ? null : nouveau,
+    recent: v.plan.recent.length,
+    ancien: v.plan.manzil.length,
+    acquis,
+  };
+}

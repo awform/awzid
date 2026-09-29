@@ -108,7 +108,7 @@
 
 <div class="app" data-sveltekit-preload-data={settings?.econome ? 'off' : 'hover'}>
   <header class="top">
-    <a href={resolve('/')} class="brand">{t('app.nom')}</a>
+    <a href={resolve('/aujourdhui')} class="brand" data-testid="accueil">{t('app.nom')}</a>
     {#if !online}<span class="badge off" data-testid="hors-ligne">{t('entete.hors_ligne')}</span
       >{/if}
     {#if pending > 0}<span class="badge" data-testid="en-attente" title={t('entete.attente_titre')}
