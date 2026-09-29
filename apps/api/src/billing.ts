@@ -290,14 +290,20 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
       if (plan.kind === 'essai') {
         if (!trialAvailable(subs.map(like))) return err(reply, 409, 'essai_deja_utilise');
         const now = new Date();
-        await db.insert(t.subscription).values({
-          accountId: a.id,
-          planCode: plan.code,
-          status: 'essai',
-          provider: 'aucun',
-          currentPeriodStart: now,
-          currentPeriodEnd: addPeriod(now, plan.periode),
-        });
+        // audit PAY-5 : l'index unique partiel garantit un seul essai, même en parallèle
+        const ins = await db
+          .insert(t.subscription)
+          .values({
+            accountId: a.id,
+            planCode: plan.code,
+            status: 'essai',
+            provider: 'aucun',
+            currentPeriodStart: now,
+            currentPeriodEnd: addPeriod(now, plan.periode),
+          })
+          .onConflictDoNothing()
+          .returning({ id: t.subscription.id });
+        if (!ins.length) return err(reply, 409, 'essai_deja_utilise');
         return { essai: true, url: '/abonnement' };
       }
       const zone = zoneOf(a.country);

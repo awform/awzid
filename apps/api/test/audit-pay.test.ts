@@ -88,4 +88,18 @@ describe.skipIf(!URL_)('audit — paiements', () => {
     expect(me.abonnements.find((s: { id: string }) => s.id === sub.id).status).toBe('impayee');
     expect(me.droits.plan).toBe('gratuit');
   });
+
+  it('PAY-5 : essai « découverte » — un seul, même avec 6 demandes simultanées', async () => {
+    const { A } = await adult(c, 'pay5@exemple.org');
+    const rs = await Promise.all(
+      Array.from({ length: 6 }, () =>
+        c.req('POST', '/api/v1/billing/checkout', A, { plan: 'decouverte' }),
+      ),
+    );
+    expect(rs.filter((r) => r.statusCode === 200)).toHaveLength(1);
+    for (const r of rs.filter((x) => x.statusCode !== 200))
+      expect(r.json().error.code).toBe('essai_deja_utilise');
+    const me = (await c.req('GET', '/api/v1/billing/me', A)).json();
+    expect(me.abonnements.filter((s: { plan: string }) => s.plan === 'decouverte')).toHaveLength(1);
+  });
 });
