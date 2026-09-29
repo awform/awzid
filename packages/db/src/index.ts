@@ -16,3 +16,4 @@ export * from './notify.js';
 export * from './relais.js';
 export * from './corrections.js';
 export * from './epreuves.js';
+export * from './rgpd.js';

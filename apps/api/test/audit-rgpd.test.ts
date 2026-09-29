@@ -2,6 +2,8 @@
  * Audit — RGPD : MIN-5, MIN-6, MIN-7, MIN-8 (un bloc par constat). Chaque bloc échouait avant sa correction.
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { getTableName, is, Table } from 'drizzle-orm';
+import { getTableConfig, type PgTable } from 'drizzle-orm/pg-core';
 import { schema as t } from '@awform/db';
 import { child, join, newClass, parent, PW, setupEdition, teacher, type Ctx } from './helpers.js';
 
@@ -51,5 +53,47 @@ describe.skipIf(!URL_)('audit — RGPD', () => {
     expect(audio.statusCode).toBe(404);
     const csv = await c.req('GET', `/api/v1/ecole/classes/${cls.id}/export.csv`, T);
     expect(csv.body).not.toContain('Maryam-min5');
+  });
+
+  it('MIN-6 : l’export contient toute table liée à un compte, un profil ou un élève, sans secret', async () => {
+    const T = await teacher(c, 'prof-min6@exemple.org');
+    const cls = await newClass(c, T, 'Classe MIN-6');
+    const { P } = await parent(c, 'parent-min6@exemple.org');
+    const kid = await child(c, P, 'Yusuf-min6');
+    await join(c, P, kid, cls);
+    await c.h.db.insert(t.profileRhythm).values({ profileId: kid, weeklyGoal: 3 });
+    await c.h.db
+      .insert(t.tutorQuestion)
+      .values({ profileId: kid, unitId: 'x', text: 'question marquée min6', motif: 'test' });
+    const ex = await c.req('GET', '/api/v1/account/export', P);
+    expect(ex.statusCode, ex.body).toBe(200);
+    const e = ex.json();
+    // toutes les tables qui portent une clé étrangère vers account, profile ou class_pupil
+    const liees = (Object.values(t) as unknown[])
+      .filter((v): v is PgTable => is(v, Table))
+      .filter((tb) =>
+        getTableConfig(tb).foreignKeys.some((f) =>
+          ['account', 'profile', 'class_pupil'].includes(getTableName(f.reference().foreignTable)),
+        ),
+      )
+      .map((tb) => getTableName(tb));
+    expect(liees.length).toBeGreaterThan(20);
+    const manquantes = liees.filter((n) => !Array.isArray(e.donnees?.[n]));
+    expect(manquantes).toEqual([]);
+    expect(e.donnees.profile_rhythm.map((r: { profileId: string }) => r.profileId)).toContain(kid);
+    expect(JSON.stringify(e.donnees.tutor_question)).toContain('question marquée min6');
+    expect(e.donnees.class_pupil.map((r: { profileId: string }) => r.profileId)).toContain(kid);
+    expect(e.donnees.audit_log.length).toBeGreaterThan(0);
+    // aucun secret : ni empreinte de mot de passe, ni TOTP, ni jeton de session, ni audio chiffré
+    const txt = ex.body;
+    for (const k of [
+      'passwordHash',
+      'totpSecretEnc',
+      'totpPendingEnc',
+      'parentPinHash',
+      'tokenHash',
+      'ciphertext',
+    ])
+      expect(txt).not.toContain(`"${k}"`);
   });
 });

@@ -16,6 +16,7 @@ import {
   deleteProfileRecitations,
   profileFreeAnswers,
   profileRecitations,
+  exportPersonalData,
   schema as t,
   withdrawAccount,
   type Db,
@@ -836,6 +837,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         .from(t.notificationPref)
         .where(eq(t.notificationPref.accountId, id)),
       sessions,
+      // audit MIN-6 : toutes les tables rattachées à la personne, découvertes depuis le schéma
+      donnees: await exportPersonalData(db, id),
     };
   });
 

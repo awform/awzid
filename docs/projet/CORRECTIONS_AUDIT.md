@@ -20,8 +20,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-2 | majeur | Deux calculs d'âge : un profil « enfant » reçoit le tuteur « ado » (texte libre, la nuit) | corrigé | 47b9224 | audit-mineurs.test.ts « MIN-2 » |
 | MIN-3 | majeur | Compte « parent » sans contrôle d'âge : un enfant consent pour lui-même (Sénégal compris) | corrigé | 12480c2 | audit-mineurs.test.ts « MIN-3 » |
 | MIN-4 | majeur | Accord `tuteur_ia` : ni code parent, ni preuve, ni pays ; impossible à retirer depuis « mes consentements » | corrigé | 85f2baf | audit-mineurs.test.ts « MIN-4 » |
-| MIN-5 | majeur | Compte supprimé : l'enseignant garde l'accès à l'enfant pendant 30 jours (liste, audio, CSV) | corrigé | voir « MIN-5 » dans git log | audit-rgpd.test.ts |
-| MIN-6 | majeur | Export RGPD incomplet (art. 15 et 20) | à faire | | |
+| MIN-5 | majeur | Compte supprimé : l'enseignant garde l'accès à l'enfant pendant 30 jours (liste, audio, CSV) | corrigé | e6b6483 | audit-rgpd.test.ts |
+| MIN-6 | majeur | Export RGPD incomplet (art. 15 et 20) | corrigé | voir « MIN-6 » dans git log | audit-rgpd.test.ts |
 | MIN-7 | majeur | Après l'effacement définitif, il reste des données personnelles (e-mail en clair, âge, pays) | à faire | | |
 | MIN-8 | majeur | Durées de conservation non appliquées (questions libres des enfants gardées sans limite) | à faire | | |
 | MIN-9 | mineur | Consentement `rappels` décoratif : son retrait n'arrête pas les notifications | à faire | | |
