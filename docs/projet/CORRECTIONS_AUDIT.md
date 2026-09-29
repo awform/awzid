@@ -72,9 +72,9 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | INF-4 | mineur | Dépendances : 2 vulnérabilités connues (outillage) | à faire | | |
 | INF-5 | mineur | Gradle téléchargé sans empreinte | à faire | | |
 | INF-6 | majeur | `X-Forwarded-For` falsifiable : limites par adresse IP (inscription, connexion) contournées | corrigé | e91c3fa | audit-inf6.test.ts |
-| INF-7 | majeur | `backup.sh` : un `pg_dump` en échec laisse une « sauvegarde » partielle, non journalisée, prise pour bonne | corrigé | voir « INF-7 » dans git log | audit-infra.test.ts |
-| INF-8 | majeur | Ni copie hors site, ni test de restauration automatique | corrigé en partie : copie hors site prête et journalisée, état des sauvegardes et alerte à 35 jours, seuils de restauration ; stockage et restauration automatique = décision D10 | voir « INF-8 » dans git log | audit-infra.test.ts |
-| INF-9 | majeur | Un déploiement `--demo` laisse le paiement SIMULÉ et le tuteur simulé actifs pour toujours | à faire | | |
+| INF-7 | majeur | `backup.sh` : un `pg_dump` en échec laisse une « sauvegarde » partielle, non journalisée, prise pour bonne | corrigé | d155d45 | audit-infra.test.ts |
+| INF-8 | majeur | Ni copie hors site, ni test de restauration automatique | corrigé en partie : copie hors site prête et journalisée, état des sauvegardes et alerte à 35 jours, seuils de restauration ; stockage et restauration automatique = décision D10 | d155d45 | audit-infra.test.ts |
+| INF-9 | majeur | Un déploiement `--demo` laisse le paiement SIMULÉ et le tuteur simulé actifs pour toujours | corrigé | voir « INF-9 » dans git log | audit-infra.test.ts |
 | INF-10 | mineur | Migrations sans retour arrière, appliquées avant la bascule | à faire | | |
 | INF-11 | mineur | Images Docker non épinglées par empreinte ; scripts : avertissements shellcheck | à faire | | |
 | PERF-1 | majeur | Budget JavaScript dépassé : 204,3 Ko Brotli (budget 150 Ko), et non « ≈ 59 Ko » | à faire | | |

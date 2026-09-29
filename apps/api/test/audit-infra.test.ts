@@ -93,3 +93,27 @@ describe.skipIf(process.platform === 'win32' || !hasGpg)(
     });
   },
 );
+
+describe.skipIf(process.platform === 'win32')('audit INF-9 — démonstration puis production', () => {
+  it('sans --demo, les réglages simulés sont retirés ; un réglage réel reste', () => {
+    const d = mkdtempSync(join(tmpdir(), 'demo-env-'));
+    dirs.push(d);
+    const f = join(d, 'prod.env');
+    writeFileSync(f, 'SITE=x\n');
+    const env = { PATH: process.env.PATH };
+    expect(run('demo-env.sh', env, f, '1').status).toBe(0);
+    expect(readFileSync(f, 'utf8')).toMatch(/^AWFORM_PAIEMENT=simule$/m);
+    expect(readFileSync(f, 'utf8')).toMatch(/^AWFORM_TUTEUR=simule$/m);
+    expect(run('demo-env.sh', env, f, '0').status).toBe(0);
+    const after = readFileSync(f, 'utf8');
+    expect(after).not.toMatch(/simule|AWFORM_LANGUES_PREPARATION/);
+    expect(after).toMatch(/^SITE=x$/m);
+    writeFileSync(f, 'AWFORM_PAIEMENT=stripe\n');
+    run('demo-env.sh', env, f, '0');
+    expect(readFileSync(f, 'utf8')).toBe('AWFORM_PAIEMENT=stripe\n');
+    // deploy.sh passe bien par ce script, et n'ajoute plus lui-même de réglage simulé
+    const deploy = readFileSync(join(PROD, 'deploy.sh'), 'utf8');
+    expect(deploy).toContain('"$PROD/demo-env.sh" "$ENVF" "$DEMO"');
+    expect(deploy).not.toMatch(/=simule/);
+  });
+});

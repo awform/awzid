@@ -56,8 +56,6 @@ if [ -n "$RELAIS_DOMAINE" ]; then
   sed -i '/^RELAIS_DOMAINE=/d' "$ENVF"
   echo "RELAIS_DOMAINE=$RELAIS_DOMAINE" >> "$ENVF"
 fi
-# tuteur : désactivé par défaut ; la démonstration utilise le fournisseur SIMULÉ (jamais un vrai modèle)
-if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_TUTEUR=' "$ENVF"; then echo "AWFORM_TUTEUR=simule" >> "$ENVF"; fi
 # comptes PostgreSQL séparés (lot 14) : mots de passe générés une fois, URL de chaque service recalculées
 for k in AWFORM_DB_API_PASSWORD AWFORM_DB_WORKER_PASSWORD; do
   grep -q "^$k=" "$ENVF" || echo "$k=$(rnd 24)" >> "$ENVF"
@@ -83,10 +81,10 @@ if ! grep -q '^AWFORM_VAPID_PRIVATE=' "$ENVF"; then
 fi
 sed -i '/^AWFORM_VAPID_SUBJECT=/d' "$ENVF"
 echo "AWFORM_VAPID_SUBJECT=https://$SITE" >> "$ENVF"
-# langues en préparation (traductions non relues) : montrables en démonstration seulement
-if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_LANGUES_PREPARATION=' "$ENVF"; then echo "AWFORM_LANGUES_PREPARATION=on" >> "$ENVF"; fi
-# paiements : désactivés par défaut ; la démonstration utilise le prestataire SIMULÉ (aucune clé, aucune carte)
-if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_PAIEMENT=' "$ENVF"; then echo "AWFORM_PAIEMENT=simule" >> "$ENVF"; fi
+# tuteur et paiements : désactivés par défaut ; la démonstration utilise les fournisseurs SIMULÉS (jamais un
+# vrai modèle, aucune clé, aucune carte) et montre les langues en préparation ; sans --demo, ces réglages de
+# démonstration sont RETIRÉS (audit INF-9)
+"$PROD/demo-env.sh" "$ENVF" "$DEMO"
 # moindre privilège : un fichier par service (env-scopes.conf) ; prod.env n'est monté dans aucun conteneur
 export AWFORM_ENV_DIR="$CONF"
 "$PROD/env-split.sh" "$ENVF" "$CONF"
