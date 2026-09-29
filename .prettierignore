@@ -14,3 +14,4 @@ reports/
 infra/ci/contenu/
 # projet Android généré par Capacitor (Gradle)
 apps/android/android/
+infra/ci/contenu-synthetique

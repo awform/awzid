@@ -2,14 +2,11 @@
  * Lot 4 — comptes, profils, consentements, RGPD, second facteur, politique d'accès (OWASP ASVS 5.0 N2).
  */
 import { randomBytes, randomUUID } from 'node:crypto';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { eq } from 'drizzle-orm';
 import { loadEdition } from '@awform/content';
 import {
   connect,
-  contentDir,
   importEdition,
   purgeDeletedAccounts,
   resetTestDatabase,
@@ -21,9 +18,10 @@ import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import { buildApp } from '../src/app.js';
 import { hashSecret, totpAt } from '../src/auth/crypto.js';
 import { checkPassword } from '../src/auth/passwords.js';
+import { TEST_CONTENT_DIR } from './content.js';
 
 const URL = process.env.TEST_DATABASE_URL;
-const READY = !!URL && existsSync(join(contentDir(), 'data', 'index-lecons.js'));
+const READY = !!URL;
 const PW = 'une longue phrase de passe 2026';
 const YEAR = new Date().getUTCFullYear();
 
@@ -76,7 +74,7 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
     await runMigrations(h.db);
     await importEdition(
       h.db,
-      loadEdition({ contentDir: contentDir(), levels: ['en1', 'ad1'], withRegistry: false }),
+      loadEdition({ contentDir: TEST_CONTENT_DIR, levels: ['en1', 'ad1'], withRegistry: false }),
       {
         code: 'auth',
         publish: true,

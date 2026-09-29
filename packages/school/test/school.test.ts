@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import {
   certNumber,
   chooseGender,
@@ -252,11 +252,12 @@ const CONTENT = process.env.AWFORM_CONTENT_DIR ?? join(process.env.HOME ?? '', '
 const CERTS = join(CONTENT, 'data', 'eval', 'certificats.js');
 
 describe.skipIf(!existsSync(CERTS))('modèles des livres (certificats.js)', () => {
-  // lu seulement si le fichier existe : le corps d'un describe sauté est quand même exécuté
-  const src = existsSync(CERTS) ? readFileSync(CERTS, 'utf8') : '()';
-  const j = (
-    existsSync(CERTS) ? JSON.parse(src.slice(src.indexOf('(') + 1, src.lastIndexOf(')'))) : {}
-  ) as CertModels;
+  // lu dans un beforeAll : le corps d'un describe sauté est quand même exécuté à la collecte
+  let j = {} as CertModels;
+  beforeAll(() => {
+    const src = readFileSync(CERTS, 'utf8');
+    j = JSON.parse(src.slice(src.indexOf('(') + 1, src.lastIndexOf(')'))) as CertModels;
+  });
   it('les modèles de niveau existent pour chaque filière', () => {
     for (const t of ['enfants', 'adultes', 'ados', 'religion'])
       expect(j.modeles[levelModelKey(t)!]?.fr.length).toBeGreaterThan(0);

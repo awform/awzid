@@ -2,13 +2,10 @@
  * Lot 6 — tracé et cartes (journal d'entraînement), tableau de bord parent / adulte, page publique du QR.
  */
 import { randomBytes, randomUUID } from 'node:crypto';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { answerPaths, forbiddenPaths, loadEdition } from '@awform/content';
 import {
   connect,
-  contentDir,
   importEdition,
   resetTestDatabase,
   runMigrations,
@@ -16,9 +13,10 @@ import {
 } from '@awform/db';
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import { buildApp } from '../src/app.js';
+import { TEST_CONTENT_DIR } from './content.js';
 
 const URL = process.env.TEST_DATABASE_URL;
-const READY = !!URL && existsSync(join(contentDir(), 'data', 'index-lecons.js'));
+const READY = !!URL;
 const PW = 'une longue phrase de passe 2026';
 const TODAY = new Date().toISOString().slice(0, 10);
 
@@ -49,7 +47,7 @@ describe.skipIf(!READY)('lot 6 (awform_test)', () => {
     await runMigrations(h.db);
     await importEdition(
       h.db,
-      loadEdition({ contentDir: contentDir(), levels: ['en1', 'ad1'], withRegistry: false }),
+      loadEdition({ contentDir: TEST_CONTENT_DIR, levels: ['en1', 'ad1'], withRegistry: false }),
       { code: 'lot6', publish: true },
     );
     app = buildApp({ db: h.db, secretKey: randomBytes(32) });

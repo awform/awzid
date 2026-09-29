@@ -8,6 +8,16 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 29/09/2026 — Corrections d'audit INF-1 et INF-2 : CI verte sans les livres (branche `lot18-wip`, avant le lot 19)
+
+Demandé par le chef de projet d'après `docs/projet/AUDIT_GENERAL_2026-09-29.md` (branche `audit-dossier`).
+
+- **INF-1 (CI rouge depuis le lot 9)** : (1) `packages/school/test/school.test.ts` lit `certificats.js` dans un `beforeAll` (le corps d'un `describe.skipIf` est exécuté à la collecte : `ENOENT` faisait planter le fichier) ; (2) la CI et `pnpm test` lancent `pnpm -r --no-bail --workspace-concurrency=1 test` : un paquet en échec n'empêche plus les suivants (base, tuteur) de tourner ; (3) `apps/android/android/gradlew` versionné avec le bit exécutable (`100755`).
+- **INF-2 (tests d'API sautés en CI)** : **contenu synthétique versionné** `infra/ci/contenu-synthetique/` produit par `infra/ci/synthetique/generer.mjs` (2 niveaux en1 et ad1, 8 unités dont bilans et examens, les 8 types « langue » avec corrigés, un exercice ouvert, guide et translittération à retirer, carnets de hifẓ **réduits à leur structure** — numéros de sourates et de versets, aucun texte ; le Coran de référence est le Tanzil de `infra/ci/contenu/coran` par lien symbolique) ; **aucun texte religieux** (test `synthetique.test.ts` : importable sans erreur bloquante, aucun bloc Coran/hadith/fiqh/rubriques, aucun caractère arabe dans les carnets, générateur à jour). `apps/api/test/content.ts` et `packages/db/test/content.ts` : vrais livres s'ils sont là, sinon contenu synthétique ; `READY` ne dépend plus que de la base. Les vérifications propres aux **vrais livres** (26 unités d'en1, versets, religion, registre, illustrations, 4 bilans et modèles de certificats d'en1) sont marquées `REAL_BOOKS` et restent à part.
+- **Résultat, conditions exactes de la CI, sans les livres** : job `verifier` (sans base) **225 verts, 132 sautés** ; job `base-et-tuteur` (PostgreSQL 18, `AWFORM_CONTENT_DIR=infra/ci/contenu`) **320 verts, 37 sautés** (avant : 45 tests d'API exécutés, désormais 100 : authentification, cloisonnement, hifẓ, tuteur, école, paquets hors ligne) ; batterie adverse du tuteur (fournisseur simulé) : exécutée. Build, typage, lint et format verts. **Reste rouge, comme prévu** : l'étape « budget de poids » (lot 24, décision D4). `android-debug` : non vérifiable ici (pas de SDK Android) ; la cause connue (bit exécutable) est corrigée.
+- Les 37 tests encore sautés en `base-et-tuteur` demandent les vrais livres (import réel en1/ad1/re1/ra1/ad2, registre, illustrations, modèles de certificats) : ils tournent sur la VM.
+
+---
 ## 29/09/2026 — Lot 18 (V1-a) : correction par l'enseignant des réponses libres, mode projection (branche `lot18-wip`, partie de `lot17-wip`, session cloud)
 
 **Avant le lot** : `docs/projet/ECARTS.md` (chaque ligne V1 du §2.1 et chaque lot V1 du §6.2 : fait / partiel / manquant, avec la preuve) et `docs/projet/DECISIONS_EN_ATTENTE.md` (D1-D3 en attente ; D4 : budget de 150 Ko gardé, allègement au lot 24 ; D5 : dictée photographiée écartée).

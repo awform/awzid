@@ -4,14 +4,11 @@
  * détresse → alerte, journal visible du parent, hors périmètre (religion), plafond.
  */
 import { randomBytes } from 'node:crypto';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { eq } from 'drizzle-orm';
 import { loadEdition } from '@awform/content';
 import {
   connect,
-  contentDir,
   importEdition,
   resetTestDatabase,
   runMigrations,
@@ -22,9 +19,10 @@ import { setupTutor } from '@awform/tutor';
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import { buildApp } from '../src/app.js';
 import { hashSecret, totpAt } from '../src/auth/crypto.js';
+import { REAL_BOOKS, TEST_CONTENT_DIR } from './content.js';
 
 const URL = process.env.TEST_DATABASE_URL;
-const READY = !!URL && existsSync(join(contentDir(), 'data', 'index-lecons.js'));
+const READY = !!URL;
 const PW = 'une longue phrase de passe 2026';
 const YEAR = new Date().getUTCFullYear();
 
@@ -69,10 +67,14 @@ describe.skipIf(!READY)('lot 9 — tuteur (awform_test)', () => {
     h = connect(URL, 4);
     await resetTestDatabase(h.pool);
     await runMigrations(h.db);
-    await importEdition(h.db, loadEdition({ contentDir: contentDir(), levels: ['en1', 're1'] }), {
-      code: 'tuteur',
-      publish: true,
-    });
+    await importEdition(
+      h.db,
+      loadEdition({ contentDir: TEST_CONTENT_DIR, levels: REAL_BOOKS ? ['en1', 're1'] : ['en1'] }),
+      {
+        code: 'tuteur',
+        publish: true,
+      },
+    );
     const key = randomBytes(32);
     app = buildApp({ db: h.db, secretKey: key, tutor: setupTutor({ AWFORM_TUTEUR: 'simule' }) });
     off = buildApp({ db: h.db, secretKey: key, tutor: setupTutor({}) });
@@ -185,7 +187,8 @@ describe.skipIf(!READY)('lot 9 — tuteur (awform_test)', () => {
     expect(after.route).toBe('modele');
   });
 
-  it('hors périmètre : jamais sur une leçon de religion', async () => {
+  // religion : seulement avec les vrais livres (le contenu synthétique n'a aucun texte religieux)
+  it.skipIf(!REAL_BOOKS)('hors périmètre : jamais sur une leçon de religion', async () => {
     expect(
       (
         await req(app, 'POST', `/api/v1/tutor/${adultProfile}/ask`, adult, {

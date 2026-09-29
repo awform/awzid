@@ -4,14 +4,11 @@
  * (registre numéroté, jamais une ijāza), export CSV, et SURTOUT : accès limité à l'enseignant de la classe.
  */
 import { randomBytes } from 'node:crypto';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { eq } from 'drizzle-orm';
 import { loadEdition } from '@awform/content';
 import {
   connect,
-  contentDir,
   importEdition,
   purgeCertificateDocuments,
   resetTestDatabase,
@@ -22,12 +19,10 @@ import {
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import { buildApp } from '../src/app.js';
 import { hashSecret, totpAt } from '../src/auth/crypto.js';
+import { REAL_BOOKS, TEST_CONTENT_DIR } from './content.js';
 
 const URL = process.env.TEST_DATABASE_URL;
-const READY =
-  !!URL &&
-  existsSync(join(contentDir(), 'data', 'index-lecons.js')) &&
-  existsSync(join(contentDir(), 'data', 'eval', 'certificats.js'));
+const READY = !!URL;
 const PW = 'une longue phrase de passe 2026';
 const YEAR = new Date().getUTCFullYear();
 const cookieOf = (r: LightMyRequestResponse) =>
@@ -90,7 +85,7 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
     await runMigrations(h.db);
     await importEdition(
       h.db,
-      loadEdition({ contentDir: contentDir(), levels: ['en1'], withRegistry: false }),
+      loadEdition({ contentDir: TEST_CONTENT_DIR, levels: ['en1'], withRegistry: false }),
       { code: 'l13', publish: true },
     );
     app = buildApp({ db: h.db, secretKey: randomBytes(32) });
@@ -272,209 +267,228 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
     );
   });
 
-  it('classe papier : bilans et examen → note finale, décision, certificat de niveau numéroté', async () => {
-    const tb = (await req('GET', `/api/v1/ecole/classes/${classId}/tableau`, teacher)).json();
-    expect(tb.bilans.length).toBeGreaterThanOrEqual(4);
-    expect(tb.examen).not.toBeNull();
-    // incomplet : pas de certificat
-    const early = await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
-      kind: 'niveau',
-    });
-    expect(early.statusCode).toBe(409);
-    expect(early.json().error.raison).toMatch(/incomplets/);
-    const items = [
-      ...tb.bilans.map((b: { id: string }) => ({ item: `bilan:${b.id}`, score: 18, max: 20 })),
-      { item: 'examen', score: 17, max: 20 },
-    ];
-    expect(
-      (
-        await req('PUT', `/api/v1/ecole/pupils/${paperId}/resultats`, teacher, {
-          levelCode: 'en1',
-          items: [{ item: 'examen', score: 25, max: 20 }],
-        })
-      ).json().error.code,
-    ).toBe('note_invalide');
-    expect(
-      (
-        await req('PUT', `/api/v1/ecole/pupils/${paperId}/resultats`, teacher, {
-          levelCode: 'ad1',
-          items,
-        })
-      ).json().error.code,
-    ).toBe('niveau_de_la_classe');
-    expect(
-      (
-        await req('PUT', `/api/v1/ecole/pupils/${paperId}/resultats`, teacher, {
-          levelCode: 'en1',
-          items,
-        })
-      ).statusCode,
-    ).toBe(200);
-    const tb2 = (await req('GET', `/api/v1/ecole/classes/${classId}/tableau`, teacher)).json();
-    const r = tb2.rows.find((x: { pupil: { id: string } }) => x.pupil.id === paperId).result;
-    expect(r).toMatchObject({ status: 'complet', nf: 87, certificat: true, ccPartiel: true });
-    expect(r.decision.code).toBe('TB');
-
-    const ap = (
-      await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
+  // vrais livres : 4 bilans du livre en1 et modèles de certificats (data/eval)
+  it.skipIf(!REAL_BOOKS)(
+    'classe papier : bilans et examen → note finale, décision, certificat de niveau numéroté',
+    async () => {
+      const tb = (await req('GET', `/api/v1/ecole/classes/${classId}/tableau`, teacher)).json();
+      expect(tb.bilans.length).toBeGreaterThanOrEqual(4);
+      expect(tb.examen).not.toBeNull();
+      // incomplet : pas de certificat
+      const early = await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
         kind: 'niveau',
-        apercu: true,
-      })
-    ).json();
-    expect(ap.eligible.ok).toBe(true);
-    expect(ap.document.model).toBe('niveau_enfants');
-    const txt = [...ap.document.fr, ...ap.document.ar]
-      .map((l: Array<{ t: string }>) => l.map((x) => x.t).join(''))
-      .join('\n');
-    expect(txt).toContain('Awa D.');
-    expect(txt).toContain('Très bien');
-    expect(txt).toContain('مُمْتَازٌ');
-    expect(txt).toContain('École pilote AWFORM');
-    // genre féminin appliqué : plus aucune variante « mot (mot) » dans le texte arabe du modèle
-    expect(/[\u0600-\u06FF]+ \([\u0600-\u06FF]+\)/.test(txt)).toBe(false);
-    expect(ap.document.ar.length).toBeGreaterThan(2);
+      });
+      expect(early.statusCode).toBe(409);
+      expect(early.json().error.raison).toMatch(/incomplets/);
+      const items = [
+        ...tb.bilans.map((b: { id: string }) => ({ item: `bilan:${b.id}`, score: 18, max: 20 })),
+        { item: 'examen', score: 17, max: 20 },
+      ];
+      expect(
+        (
+          await req('PUT', `/api/v1/ecole/pupils/${paperId}/resultats`, teacher, {
+            levelCode: 'en1',
+            items: [{ item: 'examen', score: 25, max: 20 }],
+          })
+        ).json().error.code,
+      ).toBe('note_invalide');
+      expect(
+        (
+          await req('PUT', `/api/v1/ecole/pupils/${paperId}/resultats`, teacher, {
+            levelCode: 'ad1',
+            items,
+          })
+        ).json().error.code,
+      ).toBe('niveau_de_la_classe');
+      expect(
+        (
+          await req('PUT', `/api/v1/ecole/pupils/${paperId}/resultats`, teacher, {
+            levelCode: 'en1',
+            items,
+          })
+        ).statusCode,
+      ).toBe(200);
+      const tb2 = (await req('GET', `/api/v1/ecole/classes/${classId}/tableau`, teacher)).json();
+      const r = tb2.rows.find((x: { pupil: { id: string } }) => x.pupil.id === paperId).result;
+      expect(r).toMatchObject({ status: 'complet', nf: 87, certificat: true, ccPartiel: true });
+      expect(r.decision.code).toBe('TB');
 
-    const c1 = await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
-      kind: 'niveau',
-      fields: { prenom_nom: 'Awa Diop' },
-    });
-    expect(c1.statusCode).toBe(201);
-    expect(c1.json().certificate.number).toBe(`AWF-EN1-${YEAR}-0001`);
-    const c2 = await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
-      kind: 'niveau',
-      fields: { prenom_nom: 'Awa Diop' },
-    });
-    expect(c2.json().certificate.number).toBe(`AWF-EN1-${YEAR}-0002`);
-    const got = (
-      await req('GET', `/api/v1/ecole/certificats/${c1.json().certificate.id}`, teacher)
-    ).json().certificate;
-    expect(got.document.number).toBe(`AWF-EN1-${YEAR}-0001`);
-    expect(JSON.stringify(got.document)).toContain('Awa Diop');
-    expect(
-      (await req('GET', `/api/v1/ecole/certificats/${c1.json().certificate.id}`, teacher2))
-        .statusCode,
-    ).toBe(404);
-  });
+      const ap = (
+        await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
+          kind: 'niveau',
+          apercu: true,
+        })
+      ).json();
+      expect(ap.eligible.ok).toBe(true);
+      expect(ap.document.model).toBe('niveau_enfants');
+      const txt = [...ap.document.fr, ...ap.document.ar]
+        .map((l: Array<{ t: string }>) => l.map((x) => x.t).join(''))
+        .join('\n');
+      expect(txt).toContain('Awa D.');
+      expect(txt).toContain('Très bien');
+      expect(txt).toContain('مُمْتَازٌ');
+      expect(txt).toContain('École pilote AWFORM');
+      // genre féminin appliqué : plus aucune variante « mot (mot) » dans le texte arabe du modèle
+      expect(/[\u0600-\u06FF]+ \([\u0600-\u06FF]+\)/.test(txt)).toBe(false);
+      expect(ap.document.ar.length).toBeGreaterThan(2);
 
-  it('hifẓ (classe papier) : récitation validée → attestation, jamais une ijāza', async () => {
-    const counters = {
-      aides: 0,
-      hesitations: 1,
-      sauts: 0,
-      oublis: 0,
-      claires: 0,
-      discretes: 1,
-      fluidite: 4,
-    };
-    const v = (
-      await req('POST', `/api/v1/ecole/pupils/${paper2Id}/hifz`, teacher, {
-        part: '112:1-4',
-        day: '2026-10-12',
-        counters,
-      })
-    ).json();
-    expect(v.note.total).toBe(19);
-    // élève de l'application : route habituelle (journal de son profil)
-    expect(
-      (
-        await req('POST', `/api/v1/ecole/pupils/${childPupilId}/hifz`, teacher, {
+      const c1 = await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
+        kind: 'niveau',
+        fields: { prenom_nom: 'Awa Diop' },
+      });
+      expect(c1.statusCode).toBe(201);
+      expect(c1.json().certificate.number).toBe(`AWF-EN1-${YEAR}-0001`);
+      const c2 = await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
+        kind: 'niveau',
+        fields: { prenom_nom: 'Awa Diop' },
+      });
+      expect(c2.json().certificate.number).toBe(`AWF-EN1-${YEAR}-0002`);
+      const got = (
+        await req('GET', `/api/v1/ecole/certificats/${c1.json().certificate.id}`, teacher)
+      ).json().certificate;
+      expect(got.document.number).toBe(`AWF-EN1-${YEAR}-0001`);
+      expect(JSON.stringify(got.document)).toContain('Awa Diop');
+      expect(
+        (await req('GET', `/api/v1/ecole/certificats/${c1.json().certificate.id}`, teacher2))
+          .statusCode,
+      ).toBe(404);
+    },
+  );
+
+  // vrais livres : 4 bilans du livre en1 et modèles de certificats (data/eval)
+  it.skipIf(!REAL_BOOKS)(
+    'hifẓ (classe papier) : récitation validée → attestation, jamais une ijāza',
+    async () => {
+      const counters = {
+        aides: 0,
+        hesitations: 1,
+        sauts: 0,
+        oublis: 0,
+        claires: 0,
+        discretes: 1,
+        fluidite: 4,
+      };
+      const v = (
+        await req('POST', `/api/v1/ecole/pupils/${paper2Id}/hifz`, teacher, {
           part: '112:1-4',
           day: '2026-10-12',
           counters,
         })
-      ).json().error.code,
-    ).toBe('eleve_application');
-    expect(
-      (
-        await req('POST', `/api/v1/ecole/pupils/${paper2Id}/certificats`, teacher, {
-          kind: 'hifz',
-          part: '113:1-5',
-        })
-      ).json().error.code,
-    ).toBe('non_eligible');
-    const c = await req('POST', `/api/v1/ecole/pupils/${paper2Id}/certificats`, teacher, {
-      kind: 'hifz',
-      part: '112:1-4',
-    });
-    expect(c.statusCode).toBe(201);
-    const cert = c.json().certificate;
-    expect(cert.number).toBe(`AWF-HZ-${YEAR}-0001`);
-    const txt = cert.document.fr
-      .map((l: Array<{ t: string }>) => l.map((x) => x.t).join(''))
-      .join('\n');
-    expect(txt).toContain('Al-Ikhlāṣ');
-    expect(txt).toContain('19/20');
-    expect(txt).toContain("n'est pas une ijāza");
-    expect(txt).not.toMatch(/ijāza de|accorde une ijāza|إِجَازَة/);
-  });
+      ).json();
+      expect(v.note.total).toBe(19);
+      // élève de l'application : route habituelle (journal de son profil)
+      expect(
+        (
+          await req('POST', `/api/v1/ecole/pupils/${childPupilId}/hifz`, teacher, {
+            part: '112:1-4',
+            day: '2026-10-12',
+            counters,
+          })
+        ).json().error.code,
+      ).toBe('eleve_application');
+      expect(
+        (
+          await req('POST', `/api/v1/ecole/pupils/${paper2Id}/certificats`, teacher, {
+            kind: 'hifz',
+            part: '113:1-5',
+          })
+        ).json().error.code,
+      ).toBe('non_eligible');
+      const c = await req('POST', `/api/v1/ecole/pupils/${paper2Id}/certificats`, teacher, {
+        kind: 'hifz',
+        part: '112:1-4',
+      });
+      expect(c.statusCode).toBe(201);
+      const cert = c.json().certificate;
+      expect(cert.number).toBe(`AWF-HZ-${YEAR}-0001`);
+      const txt = cert.document.fr
+        .map((l: Array<{ t: string }>) => l.map((x) => x.t).join(''))
+        .join('\n');
+      expect(txt).toContain('Al-Ikhlāṣ');
+      expect(txt).toContain('19/20');
+      expect(txt).toContain("n'est pas une ijāza");
+      expect(txt).not.toMatch(/ijāza de|accorde une ijāza|إِجَازَة/);
+    },
+  );
 
-  it('export CSV (tableur, « ; », BOM) et journal d’audit de chaque export', async () => {
-    const r = await req('GET', `/api/v1/ecole/classes/${classId}/export.csv`, teacher);
-    expect(r.statusCode).toBe(200);
-    expect(r.headers['content-type']).toMatch(/text\/csv/);
-    expect(r.headers['content-disposition']).toMatch(
-      /attachment; filename="awform-CE1-Dakar-tableau-/,
-    );
-    expect(r.body.charCodeAt(0)).toBe(0xfeff);
-    const lines = r.body.slice(1).trim().split('\r\n');
-    expect(lines[0]).toMatch(/^Élève;Groupe;Inscription;Leçons terminées;Bilan 1 \(%\)/);
-    expect(lines.find((l) => l.startsWith('Awa D.'))).toMatch(
-      /;papier;;90;90;90;90;85;90;87;Validé, mention Très bien;/,
-    );
-    const certs = await req(
-      'GET',
-      `/api/v1/ecole/classes/${classId}/export.csv?quoi=certificats`,
-      teacher,
-    );
-    expect(certs.body).toContain(`AWF-EN1-${YEAR}-0001;niveau;Awa Diop;en1;Très bien;`);
-    const devoirs = await req(
-      'GET',
-      `/api/v1/ecole/classes/${classId}/export.csv?quoi=devoirs`,
-      teacher,
-    );
-    expect(devoirs.body).toContain('Al-Ikhlāṣ (112:1-4)');
-    const log = await h.db.select().from(t.auditLog).where(eq(t.auditLog.action, 'ecole.export'));
-    expect(log.length).toBe(3);
-  });
+  // vrais livres : 4 bilans du livre en1 et modèles de certificats (data/eval)
+  it.skipIf(!REAL_BOOKS)(
+    'export CSV (tableur, « ; », BOM) et journal d’audit de chaque export',
+    async () => {
+      const r = await req('GET', `/api/v1/ecole/classes/${classId}/export.csv`, teacher);
+      expect(r.statusCode).toBe(200);
+      expect(r.headers['content-type']).toMatch(/text\/csv/);
+      expect(r.headers['content-disposition']).toMatch(
+        /attachment; filename="awform-CE1-Dakar-tableau-/,
+      );
+      expect(r.body.charCodeAt(0)).toBe(0xfeff);
+      const lines = r.body.slice(1).trim().split('\r\n');
+      expect(lines[0]).toMatch(/^Élève;Groupe;Inscription;Leçons terminées;Bilan 1 \(%\)/);
+      expect(lines.find((l) => l.startsWith('Awa D.'))).toMatch(
+        /;papier;;90;90;90;90;85;90;87;Validé, mention Très bien;/,
+      );
+      const certs = await req(
+        'GET',
+        `/api/v1/ecole/classes/${classId}/export.csv?quoi=certificats`,
+        teacher,
+      );
+      expect(certs.body).toContain(`AWF-EN1-${YEAR}-0001;niveau;Awa Diop;en1;Très bien;`);
+      const devoirs = await req(
+        'GET',
+        `/api/v1/ecole/classes/${classId}/export.csv?quoi=devoirs`,
+        teacher,
+      );
+      expect(devoirs.body).toContain('Al-Ikhlāṣ (112:1-4)');
+      const log = await h.db.select().from(t.auditLog).where(eq(t.auditLog.action, 'ecole.export'));
+      expect(log.length).toBe(3);
+    },
+  );
 
-  it('retrait : l’enfant quitte la classe → plus visible de l’enseignant ; le registre garde le certificat', async () => {
-    await req('DELETE', `/api/v1/profiles/${child}/classes/${classId}`, parent);
-    const d = (await req('GET', `/api/v1/ecole/classes/${classId}`, teacher)).json();
-    expect(d.pupils.map((p: { displayName: string }) => p.displayName)).toEqual([
-      'Awa D.',
-      'Moussa S.',
-    ]);
-    expect((await req('DELETE', `/api/v1/ecole/pupils/${paperId}`, teacher)).statusCode).toBe(200);
-    const certs = (await req('GET', `/api/v1/ecole/classes/${classId}/certificats`, teacher)).json()
-      .certificates;
-    expect(certs.length).toBe(3);
-    expect(
-      certs.find((c: { number: string }) => c.number === `AWF-EN1-${YEAR}-0001`).pupilId,
-    ).toBeNull();
-    // registre durable (décision du pilote, à confirmer par le juriste) : 30 jours après le départ de
-    // l'élève, le document est réduit au numéro, nom affiché, niveau, date et mention
-    expect(await purgeCertificateDocuments(h.db, 30, new Date())).toBe(0);
-    const later = new Date(Date.now() + 31 * 86400_000);
-    expect(await purgeCertificateDocuments(h.db, 30, later)).toBe(2);
-    const [row] = await h.db
-      .select()
-      .from(t.certificate)
-      .where(eq(t.certificate.number, `AWF-EN1-${YEAR}-0001`));
-    expect(row!.document).toEqual({
-      reduit: true,
-      number: `AWF-EN1-${YEAR}-0001`,
-      kind: 'niveau',
-      subject: 'en1',
-      holderName: 'Awa Diop',
-      mention: 'Très bien',
-      issuedOn: row!.issuedAt.toISOString().slice(0, 10),
-    });
-    // Moussa est encore dans la classe : son attestation de hifẓ reste complète
-    const [hz] = await h.db
-      .select()
-      .from(t.certificate)
-      .where(eq(t.certificate.number, `AWF-HZ-${YEAR}-0001`));
-    expect((hz!.document as { reduit?: boolean }).reduit).toBeUndefined();
-    expect(hz!.detachedAt).toBeNull();
-  });
+  // vrais livres : 4 bilans du livre en1 et modèles de certificats (data/eval)
+  it.skipIf(!REAL_BOOKS)(
+    'retrait : l’enfant quitte la classe → plus visible de l’enseignant ; le registre garde le certificat',
+    async () => {
+      await req('DELETE', `/api/v1/profiles/${child}/classes/${classId}`, parent);
+      const d = (await req('GET', `/api/v1/ecole/classes/${classId}`, teacher)).json();
+      expect(d.pupils.map((p: { displayName: string }) => p.displayName)).toEqual([
+        'Awa D.',
+        'Moussa S.',
+      ]);
+      expect((await req('DELETE', `/api/v1/ecole/pupils/${paperId}`, teacher)).statusCode).toBe(
+        200,
+      );
+      const certs = (
+        await req('GET', `/api/v1/ecole/classes/${classId}/certificats`, teacher)
+      ).json().certificates;
+      expect(certs.length).toBe(3);
+      expect(
+        certs.find((c: { number: string }) => c.number === `AWF-EN1-${YEAR}-0001`).pupilId,
+      ).toBeNull();
+      // registre durable (décision du pilote, à confirmer par le juriste) : 30 jours après le départ de
+      // l'élève, le document est réduit au numéro, nom affiché, niveau, date et mention
+      expect(await purgeCertificateDocuments(h.db, 30, new Date())).toBe(0);
+      const later = new Date(Date.now() + 31 * 86400_000);
+      expect(await purgeCertificateDocuments(h.db, 30, later)).toBe(2);
+      const [row] = await h.db
+        .select()
+        .from(t.certificate)
+        .where(eq(t.certificate.number, `AWF-EN1-${YEAR}-0001`));
+      expect(row!.document).toEqual({
+        reduit: true,
+        number: `AWF-EN1-${YEAR}-0001`,
+        kind: 'niveau',
+        subject: 'en1',
+        holderName: 'Awa Diop',
+        mention: 'Très bien',
+        issuedOn: row!.issuedAt.toISOString().slice(0, 10),
+      });
+      // Moussa est encore dans la classe : son attestation de hifẓ reste complète
+      const [hz] = await h.db
+        .select()
+        .from(t.certificate)
+        .where(eq(t.certificate.number, `AWF-HZ-${YEAR}-0001`));
+      expect((hz!.document as { reduit?: boolean }).reduit).toBeUndefined();
+      expect(hz!.detachedAt).toBeNull();
+    },
+  );
 });

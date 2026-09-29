@@ -5,7 +5,6 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { loadEdition } from '@awform/content';
 import {
   connect,
-  contentDir,
   importEdition,
   resetTestDatabase,
   runMigrations,
@@ -13,12 +12,10 @@ import {
 } from '@awform/db';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/app.js';
+import { TEST_CONTENT_DIR } from './content.js';
 
 const URL = process.env.TEST_DATABASE_URL;
-const READY =
-  !!URL &&
-  existsSync(join(contentDir(), 'data', 'index-lecons.js')) &&
-  existsSync(join(contentDir(), 'coran', 'tanzil-quran-data.js'));
+const READY = !!URL && existsSync(join(TEST_CONTENT_DIR, 'coran', 'tanzil-quran-data.js'));
 
 describe.skipIf(!READY)('lot 12 — métadonnées Tanzil (awform_test)', () => {
   let h: DbHandle;
@@ -27,13 +24,17 @@ describe.skipIf(!READY)('lot 12 — métadonnées Tanzil (awform_test)', () => {
     h = connect(URL, 2);
     await resetTestDatabase(h.pool);
     await runMigrations(h.db);
-    const load = loadEdition({ contentDir: contentDir(), levels: ['en1'], withRegistry: false });
+    const load = loadEdition({
+      contentDir: TEST_CONTENT_DIR,
+      levels: ['en1'],
+      withRegistry: false,
+    });
     expect(load.quranData?.pages).toHaveLength(604);
     await importEdition(h.db, load, { code: 'l12', publish: true });
     // réimport : les divisions ne changent pas
     await importEdition(
       h.db,
-      loadEdition({ contentDir: contentDir(), levels: ['en1'], withRegistry: false }),
+      loadEdition({ contentDir: TEST_CONTENT_DIR, levels: ['en1'], withRegistry: false }),
       {
         code: 'l12b',
         publish: true,

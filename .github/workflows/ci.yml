@@ -39,8 +39,8 @@ jobs:
         run: pnpm typecheck
       - name: Lint et format
         run: pnpm lint
-      - name: Tests unitaires
-        run: pnpm test
+      - name: Tests unitaires (tous les paquets, même après un échec)
+        run: pnpm -r --no-bail --workspace-concurrency=1 test
       - name: Budget de poids de l'application
         run: pnpm --filter @awform/web budget
       - name: Aucune normalisation Unicode ni secret dans le dépôt
@@ -111,7 +111,7 @@ jobs:
       - name: Empreintes du texte et des métadonnées Tanzil
         run: sha256sum infra/ci/contenu/coran/*
       - name: Tests (dont base PostgreSQL et batterie du tuteur)
-        run: pnpm test
+        run: pnpm -r --no-bail --workspace-concurrency=1 test
       - name: Rapport de la batterie adverse (fournisseur simulé)
         run: node packages/tutor/dist/cli/eval.js --fournisseur simule --sortie tuteur-batterie.json
       - uses: actions/upload-artifact@v4

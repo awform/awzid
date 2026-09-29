@@ -3,14 +3,13 @@
  * validation par l'enseignant (note /20), droits d'accès.
  */
 import { randomBytes, randomUUID } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { eq } from 'drizzle-orm';
 import { loadEdition } from '@awform/content';
 import {
   connect,
-  contentDir,
   importEdition,
   resetTestDatabase,
   runMigrations,
@@ -20,9 +19,10 @@ import {
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import { buildApp } from '../src/app.js';
 import { hashSecret, totpAt } from '../src/auth/crypto.js';
+import { TEST_CONTENT_DIR } from './content.js';
 
 const URL = process.env.TEST_DATABASE_URL;
-const READY = !!URL && existsSync(join(contentDir(), 'data', 'index-lecons.js'));
+const READY = !!URL;
 const PW = 'une longue phrase de passe 2026';
 const YEAR = new Date().getUTCFullYear();
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -35,7 +35,7 @@ function cookieOf(r: LightMyRequestResponse): string {
 
 function tanzilTsv(): Map<string, string> {
   const m = new Map<string, string>();
-  const src = readFileSync(join(contentDir(), 'coran', 'tanzil-uthmani.tsv'), 'utf8');
+  const src = readFileSync(join(TEST_CONTENT_DIR, 'coran', 'tanzil-uthmani.tsv'), 'utf8');
   for (const raw of src.split('\n')) {
     const line = raw.replace(/\r$/, '');
     const tab = line.indexOf('\t');
@@ -73,7 +73,7 @@ describe.skipIf(!READY)('hifẓ (awform_test)', () => {
     await runMigrations(h.db);
     await importEdition(
       h.db,
-      loadEdition({ contentDir: contentDir(), levels: ['en1', 'ad1'], withRegistry: false }),
+      loadEdition({ contentDir: TEST_CONTENT_DIR, levels: ['en1', 'ad1'], withRegistry: false }),
       { code: 'hifz', publish: true },
     );
     app = buildApp({ db: h.db, secretKey: key });

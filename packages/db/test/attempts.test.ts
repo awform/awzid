@@ -1,18 +1,16 @@
 import { randomUUID } from 'node:crypto';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { loadEdition, type EditionLoad } from '@awform/content';
 import type { LanguageExercise } from '@awform/content/types';
-import { correctResponse } from '@awform/grading';
+import { correctResponse, isLanguageExercise } from '@awform/grading';
 import { DEMO, recordAttempts, seedDemo, type AttemptInput } from '../src/attempts.js';
 import { connect, resetTestDatabase, runMigrations, type DbHandle } from '../src/client.js';
-import { contentDir } from '../src/env.js';
+import { REAL_BOOKS, TEST_CONTENT_DIR } from './content.js';
 import { importEdition } from '../src/import.js';
 import { illustrationsFor } from '../src/queries.js';
 
 const URL = process.env.TEST_DATABASE_URL;
-const READY = !!URL && existsSync(join(contentDir(), 'data', 'index-lecons.js'));
+const READY = !!URL;
 
 describe.skipIf(!READY)('tentatives et progression (awform_test)', () => {
   let h: DbHandle;
@@ -23,7 +21,7 @@ describe.skipIf(!READY)('tentatives et progression (awform_test)', () => {
     h = connect(URL, 4);
     await resetTestDatabase(h.pool);
     await runMigrations(h.db);
-    load = loadEdition({ contentDir: contentDir(), levels: ['en1', 'ad1'] });
+    load = loadEdition({ contentDir: TEST_CONTENT_DIR, levels: ['en1', 'ad1'] });
     editionId = (await importEdition(h.db, load, { code: 'att.1', publish: true })).editionId;
     await seedDemo(h.db);
     await seedDemo(h.db); // idempotent
@@ -43,7 +41,8 @@ describe.skipIf(!READY)('tentatives et progression (awform_test)', () => {
     ...over,
   });
 
-  it('illustrations importées et servies par clé', async () => {
+  // illustrations des livres : seulement avec les vrais livres
+  it.skipIf(!REAL_BOOKS)('illustrations importées et servies par clé', async () => {
     const ill = await illustrationsFor(h.db, editionId, ['youssouf', 'door', 'inexistante']);
     expect(Object.keys(ill).sort()).toEqual(['door', 'youssouf']);
     expect(ill.youssouf?.viewBox).toBe('0 0 100 130');
@@ -91,10 +90,13 @@ describe.skipIf(!READY)('tentatives et progression (awform_test)', () => {
   });
 
   it('leçon entière réussie + auto-évaluation → terminée / maîtrisée (profil adulte)', async () => {
-    const u = load.levels.find((l) => l.code === 'ad1')!.units.find((x) => x.id === 'ad1.l03')!;
+    const u = load.levels
+      .find((l) => l.code === 'ad1')!
+      .units.find((x) => x.id === (REAL_BOOKS ? 'ad1.l03' : 'ad1.l01'))!;
     const events: AttemptInput[] = [];
     for (const e of u.exercises) {
       const ex = e.content as LanguageExercise;
+      if (!isLanguageExercise(ex)) continue; // exercices non notés (question, carnet…)
       const r = correctResponse(ex);
       const push = (i: number, response: unknown) =>
         events.push({
