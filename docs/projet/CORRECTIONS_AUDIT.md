@@ -55,14 +55,14 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MET-1 | bloquant | Un bilan ou un examen fait dans l'application compte toujours 100 % : certificat « Très bien » assuré | corrigé | e723584 | audit-met1.test.ts |
 | MET-2 | mineur | Certificat délivrable avec un contrôle continu partiel ; examen à 49,995 % arrondi à 50 | corrigé | e45008a | school.test.ts « audit MET-2 » ; lot13.test.ts (livres réels) mis à jour |
 | MET-3 | mineur | Hifẓ : un jour invalide arrête le rejeu du journal ; mois d'essai surestimé ; barème avec `Infinity` | corrigé | dce4947 | packages/hifz/test/met3.test.ts (+ dates vérifiées à l'API : OFF-5) |
-| MET-4 | mineur | Jalons : un mot tracé est compté comme la lettre « mot » ; migration Leitner fragile | corrigé | voir « MET-4 » dans git log | audit-off.test.ts, fsrs.test.ts |
+| MET-4 | mineur | Jalons : un mot tracé est compté comme la lettre « mot » ; migration Leitner fragile | corrigé | 3a67a8c | audit-off.test.ts, fsrs.test.ts |
 | PAY-1 | majeur | Course sur la validation d'un paiement : un paiement, plusieurs abonnements | corrigé | 93ebe96 | audit-pay.test.ts |
 | PAY-2 | majeur | Un abonnement impayé (ou un essai terminé) redevient actif si l'on clique « annuler » | corrigé | 93ebe96 | audit-pay.test.ts |
 | PAY-3 | majeur | Stripe : un paiement non encaissé (SEPA, asynchrone) ouvre l'abonnement ; la 1re facture offre un 2e mois | corrigé | 9c413c7 | packages/billing/test/billing.test.ts |
 | PAY-4 | majeur | Les droits d'accès ne sont appliqués nulle part, même avec `AWFORM_DROITS=on` | corrigé (leçons et paquet hors ligne ; bibliothèque et écran « réservé aux abonnés » à faire avec l'offre gratuite) | 8ab8562 | audit-pay4.test.ts |
 | PAY-5 | mineur | Essai « découverte » : course et unicité par compte seulement | à faire | | |
 | PAY-6 | mineur | Barrière parentale à l'achat facultative | à faire | | |
-| PAY-7 | mineur | Rotation du secret Stripe : plusieurs `v1=` mal gérés | à faire | | |
+| PAY-7 | mineur | Rotation du secret Stripe : plusieurs `v1=` mal gérés | corrigé | voir « PAY-7 » dans git log | billing.test.ts |
 | QUA-1 | majeur | Le garde-fou CI « aucune normalisation Unicode » ne peut jamais échouer | corrigé | b9cd9dc | audit-qua1.test.ts |
 | QUA-2 | majeur | Tests qui ne prouvent pas ce qu'ils annoncent | corrigé en partie : batterie au nombre exact (1 081, par famille), travailleur testé (planification, purge de nuit), test de concurrence de l'API ; CON-1 prouvé par l'API (audit-con1) ; school.test corrigé (lot 21). Reportés : couverture mesurée (dépendance à ajouter), a11y « moderate » (e2e à relancer avec les livres), tableau SIM_TABLE (documentation, pas un test) | 9d71681 | battery.test.ts, apps/worker/test/tasks.test.ts, audit-qua2.test.ts |
 | QUA-3 | mineur | Fonctions très longues | à faire | | |

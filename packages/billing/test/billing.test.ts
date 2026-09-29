@@ -226,4 +226,15 @@ describe('prestataires', () => {
       }),
     ).toMatchObject({ type: 'renouvellement', reference: 'sub_2' });
   });
+
+  it('audit PAY-7 : rotation du secret — l’un des v1= suffit, quel que soit son rang', () => {
+    const secret = 'whsec_pay7';
+    const body = '{"id":"evt_7"}';
+    const t = 1_790_000_000;
+    const good = createHmac('sha256', secret).update(`${t}.${body}`).digest('hex');
+    const old = createHmac('sha256', 'ancien').update(`${t}.${body}`).digest('hex');
+    expect(StripeProvider.verify(`t=${t},v1=${good},v1=${old}`, body, secret, t + 5)).toBe(true);
+    expect(StripeProvider.verify(`t=${t},v1=${old},v1=${good}`, body, secret, t + 5)).toBe(true);
+    expect(StripeProvider.verify(`t=${t},v1=${old}`, body, secret, t + 5)).toBe(false);
+  });
 });

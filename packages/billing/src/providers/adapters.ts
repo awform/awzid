@@ -103,17 +103,25 @@ export class StripeProvider extends Skeleton {
     secret: string,
     nowSec = Math.floor(Date.now() / 1000),
   ): boolean {
-    const parts = Object.fromEntries(
-      sigHeader.split(',').map((kv) => {
-        const i = kv.indexOf('=');
-        return [kv.slice(0, i), kv.slice(i + 1)];
-      }),
-    ) as Record<string, string>;
-    const t = Number(parts.t);
+    // audit PAY-7 : pendant une rotation du secret, Stripe envoie PLUSIEURS « v1= » — l'un doit correspondre
+    let t = 0;
+    const v1: string[] = [];
+    for (const kv of sigHeader.split(',')) {
+      const i = kv.indexOf('=');
+      const k = kv.slice(0, i).trim();
+      const v = kv.slice(i + 1).trim();
+      if (k === 't') t = Number(v);
+      else if (k === 'v1') v1.push(v);
+    }
     if (!t || Math.abs(nowSec - t) > StripeProvider.TOLERANCE) return false;
     const want = Buffer.from(createHmac('sha256', secret).update(`${t}.${rawBody}`).digest('hex'));
-    const got = Buffer.from(parts.v1 ?? '');
-    return got.length === want.length && timingSafeEqual(got, want);
+    let ok = false;
+    for (const sig of v1) {
+      const got = Buffer.from(sig);
+      // temps constant pour chaque signature (aucune sortie anticipée qui révélerait laquelle correspond)
+      if (got.length === want.length && timingSafeEqual(got, want)) ok = true;
+    }
+    return ok;
   }
 
   override async parseWebhook(
