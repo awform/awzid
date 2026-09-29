@@ -9,9 +9,8 @@
 	# adresse IP : les navigateurs n'envoient pas de nom (SNI) ; certificat choisi par défaut
 	# (SITE_LAN : IP du PC sur le Wi-Fi, redirection de port ; voir application/TEST_APPAREILS.md)
 	default_sni {$DEFAULT_SNI:localhost}
-	servers {
-		trusted_proxies static private_ranges
-	}
+	# audit INF-6 : Caddy est en BORDURE — aucun mandataire amont de confiance ; l'en-tête X-Forwarded-For
+	# reçu d'un client est remplacé par sa vraie adresse (l'API ne fait confiance qu'à un saut : Caddy)
 	# relais d'école (lot 17) : certificat « à la demande » pour un sous-domaine de relais, seulement si
 	# l'API confirme qu'il s'agit d'un relais enregistré et actif
 	on_demand_tls {

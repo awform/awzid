@@ -12,7 +12,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | SEC-2 | majeur | Course sur le compteur d'échecs : 20 mots de passe, 30 codes parent testés d'un coup | corrigé | 4d6f007 | audit-2fa.test.ts « SEC-2 » |
 | SEC-3 | majeur | Consentements « parentaux » accordés sans le code parent (tuteur IA, partage enseignant) | corrigé | df1dbe7 | audit-mineurs.test.ts « SEC-3 » |
 | SEC-4 | majeur | Second facteur non exigé sur les notifications et les paiements des enseignants | corrigé | 6c5a72f | audit-2fa.test.ts « SEC-4 » |
-| SEC-5 | mineur | Rejeu d'un code TOTP par connexions parallèles | corrigé | voir « SEC-5 » dans git log | audit-2fa.test.ts « SEC-5 » (connexions parallèles) |
+| SEC-5 | mineur | Rejeu d'un code TOTP par connexions parallèles | corrigé | 4b9dae9 | audit-2fa.test.ts « SEC-5 » |
 | SEC-6 | mineur | Ressaisies du mot de passe sans limite d'essais | à faire | | |
 | SEC-7 | mineur | HTTP clair servi en production ; cookie sans `Secure` sur HTTP | à faire | | |
 | SEC-8 | mineur | Entrées de la file hors ligne sans schéma (1 Mo de JSON libre par événement) | à faire | | |
@@ -71,7 +71,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | INF-3 | mineur | Actions GitHub non épinglées par empreinte | à faire | | |
 | INF-4 | mineur | Dépendances : 2 vulnérabilités connues (outillage) | à faire | | |
 | INF-5 | mineur | Gradle téléchargé sans empreinte | à faire | | |
-| INF-6 | majeur | `X-Forwarded-For` falsifiable : limites par adresse IP (inscription, connexion) contournées | à faire | | |
+| INF-6 | majeur | `X-Forwarded-For` falsifiable : limites par adresse IP (inscription, connexion) contournées | corrigé | voir « INF-6 » dans git log | audit-inf6.test.ts |
 | INF-7 | majeur | `backup.sh` : un `pg_dump` en échec laisse une « sauvegarde » partielle, non journalisée, prise pour bonne | à faire | | |
 | INF-8 | majeur | Ni copie hors site, ni test de restauration automatique | à faire | | |
 | INF-9 | majeur | Un déploiement `--demo` laisse le paiement SIMULÉ et le tuteur simulé actifs pour toujours | à faire | | |

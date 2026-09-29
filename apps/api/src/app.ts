@@ -79,12 +79,17 @@ function notFound(message: string) {
 }
 
 export function buildApp(opts: AppOptions): FastifyInstance {
+  const hops = /^[1-9]$/.test(process.env.TRUST_PROXY ?? '') ? Number(process.env.TRUST_PROXY) : 0;
+  // fonction de confiance : seuls les `hops` sauts les plus proches (Caddy) sont crus
+  const proxyOpts = hops ? { trustProxy: (_addr: string, hop: number) => hop < hops } : {};
   const app = Fastify({
     logger: opts.logger
       ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] }
       : false,
     bodyLimit: 1_048_576,
-    trustProxy: process.env.TRUST_PROXY === '1',
+    // audit INF-6 : UN seul mandataire de confiance (Caddy) — l'adresse du client est la dernière qu'il
+    // ajoute ; jamais `true` (Fastify prendrait l'adresse la plus à gauche, forgée par le client)
+    ...proxyOpts,
   });
   const { db } = opts;
 
