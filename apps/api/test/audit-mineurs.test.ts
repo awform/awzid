@@ -4,7 +4,8 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { setupBilling } from '@awform/billing';
-import { cookieOf, PW, setupEdition, YEAR, type Ctx } from './helpers.js';
+import { setupTutor } from '@awform/tutor';
+import { child, cookieOf, parent, PW, setupEdition, YEAR, type Ctx } from './helpers.js';
 
 const URL_ = process.env.TEST_DATABASE_URL;
 
@@ -13,6 +14,7 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
   beforeAll(async () => {
     c = await setupEdition(URL_!, {
       billing: setupBilling({ AWFORM_PAIEMENT: 'simule', AWFORM_PAIEMENT_SIM_SECRET: 'x' }),
+      tutor: setupTutor({ AWFORM_TUTEUR: 'simule' }),
     });
   });
   afterAll(async () => {
@@ -61,5 +63,22 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
     );
     const me2 = (await c.req('GET', '/api/v1/auth/me', { cookie: cookieOf(ad) })).json();
     expect(me2.profiles[0].kind).toBe('adulte');
+  });
+
+  it('MIN-2 : une seule source pour l’âge — un profil « enfant » reste « enfant » pour le tuteur', async () => {
+    const fam = await parent(c, 'min2@exemple.org');
+    const kid = await child(c, fam.P, 'Awa', 13); // né en Y−13 : rangé « enfant » (12 ans au plus bas)
+    const me = (await c.req('GET', '/api/v1/auth/me', fam.P)).json();
+    expect(me.profiles.find((p: { id: string }) => p.id === kid).kind).toBe('enfant');
+    await c.req('PUT', `/api/v1/profiles/${kid}/tuteur`, fam.pin, { actif: true });
+    const r = await c.req('POST', `/api/v1/tutor/${kid}/ask`, fam.P, {
+      unitId: 'en1.l01',
+      action: 'question',
+      text: 'bonjour',
+      hour: 23,
+    });
+    expect(r.statusCode, r.body).toBe(200);
+    expect(r.json().audience).toBe('enfant');
+    expect(r.json().ia).toBe(false);
   });
 });

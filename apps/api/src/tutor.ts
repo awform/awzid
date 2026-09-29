@@ -103,13 +103,10 @@ export function registerTutor(
       .innerJoin(t.account, eq(t.account.id, t.profile.ownerAccountId))
       .where(eq(t.profile.id, profileId));
     if (!p) return { audience: 'enfant', consent: false, country: null };
-    const age = p.birthYear ? new Date().getUTCFullYear() - p.birthYear : null;
+    // audit MIN-2 : UNE seule source pour l'âge, le genre du profil (fixé à la création : moins de 13 ans
+    // « enfant », moins de 18 ans « ado ») ; un profil adulte hors d'un compte adulte est traité en ado
     const audience: Audience =
-      p.kind === 'adulte' && p.accountKind === 'adulte'
-        ? 'adulte'
-        : age !== null && age >= 13
-          ? 'ado'
-          : 'enfant';
+      p.kind === 'adulte' ? (p.accountKind === 'adulte' ? 'adulte' : 'ado') : p.kind;
     if (audience === 'adulte') return { audience, consent: true, country: p.country };
     const [c] = await db
       .select({ id: t.consent.id })

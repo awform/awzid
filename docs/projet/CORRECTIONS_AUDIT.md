@@ -16,8 +16,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | SEC-6 | mineur | Ressaisies du mot de passe sans limite d'essais | à faire | | |
 | SEC-7 | mineur | HTTP clair servi en production ; cookie sans `Secure` sur HTTP | à faire | | |
 | SEC-8 | mineur | Entrées de la file hors ligne sans schéma (1 Mo de JSON libre par événement) | à faire | | |
-| MIN-1 | majeur | Un mineur ayant l'âge du « consentement numérique » obtient un profil **adulte**, sans aucune protection | corrigé | voir « MIN-1 » dans git log | audit-mineurs.test.ts « MIN-1 » |
-| MIN-2 | majeur | Deux calculs d'âge : un profil « enfant » reçoit le tuteur « ado » (texte libre, la nuit) | à faire | | |
+| MIN-1 | majeur | Un mineur ayant l'âge du « consentement numérique » obtient un profil **adulte**, sans aucune protection | corrigé | c33fbcd | audit-mineurs.test.ts « MIN-1 » |
+| MIN-2 | majeur | Deux calculs d'âge : un profil « enfant » reçoit le tuteur « ado » (texte libre, la nuit) | corrigé | voir « MIN-2 » dans git log | audit-mineurs.test.ts « MIN-2 » |
 | MIN-3 | majeur | Compte « parent » sans contrôle d'âge : un enfant consent pour lui-même (Sénégal compris) | à faire | | |
 | MIN-4 | majeur | Accord `tuteur_ia` : ni code parent, ni preuve, ni pays ; impossible à retirer depuis « mes consentements » | à faire | | |
 | MIN-5 | majeur | Compte supprimé : l'enseignant garde l'accès à l'enfant pendant 30 jours (liste, audio, CSV) | à faire | | |

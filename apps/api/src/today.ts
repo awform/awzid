@@ -35,9 +35,8 @@ export function registerToday(app: FastifyInstance, db: Db, edition: Edition): v
   async function profileOf(id: string) {
     const [p] = await db.select().from(t.profile).where(eq(t.profile.id, id));
     if (!p) return null;
-    const age = p.birthYear ? new Date().getUTCFullYear() - p.birthYear : null;
-    const enfant = p.kind === 'enfant' || (p.kind !== 'adulte' && (age === null || age < 13));
-    return { ...p, enfant, mineur: p.kind !== 'adulte' };
+    // audit MIN-2 : même source que le tuteur — le genre du profil
+    return { ...p, enfant: p.kind === 'enfant', mineur: p.kind !== 'adulte' };
   }
 
   async function milestones(profileId: string) {
