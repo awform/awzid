@@ -1,0 +1,17 @@
+# Mises à jour proposées automatiquement (audit INF-3, INF-11) : actions GitHub épinglées par empreinte,
+# dépendances npm et images Docker. Chaque proposition passe par la CI et la relecture du chef de projet.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+  - package-ecosystem: docker
+    directory: /infra/prod
+    schedule:
+      interval: weekly
