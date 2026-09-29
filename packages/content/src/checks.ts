@@ -3,7 +3,13 @@
  * translittération dans les champs élève, réponses visibles dans un bilan (heuristique d'AUDIT_BILANS).
  */
 import { PERSONNAGES } from './illus.js';
-import { illustrationKeys, studentProjection } from './projection.js';
+import {
+  illustrationKeys,
+  parentProjection,
+  patternDroppedPaths,
+  studentLeaks,
+  studentProjection,
+} from './projection.js';
 import { bare, plain } from './text.js';
 import { personaKey } from './scene.js';
 
@@ -123,6 +129,14 @@ export function checkUnit(
     if (missing.length)
       push('avertissement', 'illus_absente', `illustration(s) à dessiner : ${missing.join(', ')}`);
   }
+
+  // audit CON-2 : champs retirés de la projection élève PAR MOTIF (signalés : à vérifier sur les vrais livres) ;
+  // un champ interdit qui resterait dans la projection bloque l'import
+  for (const p of patternDroppedPaths(L))
+    push('avertissement', 'champ_retire_eleve', `champ « ${p} » retiré de la projection élève`);
+  for (const P of [studentProjection(L, level), parentProjection(L, level)])
+    for (const p of studentLeaks(P))
+      push('erreur', 'fuite_projection_eleve', `champ « ${p} » présent dans la projection élève`);
 
   // bilans : aucun champ visible ne doit donner la réponse d'un exercice (heuristique)
   if (L.type === 'bilan' || L.type === 'examen') {

@@ -29,18 +29,65 @@ function isDropped(key: string): boolean {
   return STUDENT_DROP_KEYS.has(key) || key === 'guide_fr' || key.endsWith('_guide_fr');
 }
 
+/**
+ * Audit CON-2 : retrait par MOTIF, pour que tout champ futur passe au tamis sans qu'on y pense.
+ * - jamais pour l'élève : translittération, phonétique, prononciation, guide, enseignant, notes ;
+ * - corrigés : seules les clés de corrigé CONNUES (`ANSWER_KEYS`), et seulement dans `exercices` (correction
+ *   hors ligne de l'entraînement) ; toute autre clé « corrigé / réponse / solution » est retirée.
+ */
+const NEVER_STUDENT = /translit|phon|pronon|guide|enseignant|^tr_|_tr$|^notes(_|$)/i;
+const ANSWERISH = /corrig|repons|solution/i;
+
+function patternDropped(key: string, inExercise: boolean): boolean {
+  if (NEVER_STUDENT.test(key)) return true;
+  return ANSWERISH.test(key) && !(inExercise && ANSWER_KEYS.has(key));
+}
+
 type Obj = Record<string, unknown>;
 
-function strip(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(strip);
+function strip(value: unknown, inExercise = false): unknown {
+  if (Array.isArray(value)) return value.map((v) => strip(v, inExercise));
   if (value && typeof value === 'object') {
     const out: Obj = {};
     for (const [k, v] of Object.entries(value as Obj)) {
-      if (!isDropped(k)) out[k] = strip(v);
+      if (isDropped(k) || patternDropped(k, inExercise)) continue;
+      out[k] = strip(v, inExercise || k === 'exercices');
     }
     return out;
   }
   return value;
+}
+
+/** Chemins des champs retirés PAR MOTIF (rapport d'import : à vérifier sur les vrais livres). */
+export function patternDroppedPaths(value: unknown, path = '', inExercise = false): string[] {
+  const out: string[] = [];
+  if (Array.isArray(value))
+    value.forEach((v, i) => out.push(...patternDroppedPaths(v, `${path}[${i}]`, inExercise)));
+  else if (value && typeof value === 'object')
+    for (const [k, v] of Object.entries(value as Obj)) {
+      const p = path ? `${path}.${k}` : k;
+      if (isDropped(k)) continue;
+      if (patternDropped(k, inExercise)) out.push(p);
+      else out.push(...patternDroppedPaths(v, p, inExercise || k === 'exercices'));
+    }
+  return out;
+}
+
+/**
+ * Champs interdits encore présents dans une projection élève ou parent (contrôle bloquant de l'import) :
+ * motifs ci-dessus, et clés réservées hors espace parent (`parents_fr`, `travail_perso_fr` sont permis).
+ */
+export function studentLeaks(projected: unknown, path = '', inExercise = false): string[] {
+  if (Array.isArray(projected))
+    return projected.flatMap((v, i) => studentLeaks(v, `${path}[${i}]`, inExercise));
+  if (!projected || typeof projected !== 'object') return [];
+  const reserved = (k: string) => isDropped(k) && k !== 'parents_fr' && k !== 'travail_perso_fr';
+  return Object.entries(projected as Obj).flatMap(([k, v]) => {
+    const p = path ? `${path}.${k}` : k;
+    return reserved(k) || patternDropped(k, inExercise)
+      ? [p]
+      : studentLeaks(v, p, inExercise || k === 'exercices');
+  });
 }
 
 const isObj = (v: unknown): v is Obj => !!v && typeof v === 'object' && !Array.isArray(v);
