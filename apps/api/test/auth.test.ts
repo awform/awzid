@@ -256,7 +256,7 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
     expect((await post('/api/v1/attempts', { events: [ev] })).statusCode).toBe(401);
     const stolen = await post('/api/v1/attempts', { events: [{ ...ev, id: randomUUID() }] }, other);
     expect(stolen.json().rejected).toEqual([
-      { id: expect.any(String), reason: 'profil non autorisé' },
+      { id: expect.any(String), reason: 'profil non autorisé', code: 'autre_compte' },
     ]);
     const ok = await post('/api/v1/attempts', { events: [ev] }, c);
     expect(ok.json().accepted).toEqual([{ id: ev.id, correct: true }]);
