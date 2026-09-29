@@ -42,8 +42,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | CON-7 | majeur | Plafond de coût mensuel du tuteur dépassé par des appels parallèles | corrigé (plafond global par compte et par jour : non fait, tuteur réel non activé) | 2e355a2 | audit-tuteur.test.ts |
 | CON-8 | majeur | La batterie adverse est circulaire (et vide avec le fournisseur simulé) | corrigé (relecture humaine d'un échantillon avec le vrai modèle : à faire à l'activation) | 7e57646 | battery.test.ts, tutor.test.ts |
 | CON-9 | mineur | Mise en service de Claude avec un rapport de batterie écrit à la main | à faire | | |
-| CON-10 | mineur | Balise de fin du message élève reconstructible (injection) | corrigé | voir « CON-10 » dans git log | tutor.test.ts |
-| CON-11 | mineur | Texte libre d'un enfant de moins de 13 ans stocké sans être lu ni classé | à faire | | |
+| CON-10 | mineur | Balise de fin du message élève reconstructible (injection) | corrigé | 57c979a | tutor.test.ts |
+| CON-11 | mineur | Texte libre d'un enfant de moins de 13 ans stocké sans être lu ni classé | corrigé | voir « CON-11 » dans git log | audit-mineurs.test.ts |
 | CON-12 | mineur | Classifieur local : contournements simples et faux positifs | à faire | | |
 | OFF-1 | bloquant | Relais d'école (lot 17) : des réponses confirmées « acceptées » à la tablette sont effacées si la session de l'élève a expiré | corrigé | 44fa0b6 (commun avec OFF-6) | relay.test.ts « audit OFF-1 » |
 | OFF-2 | majeur | Un seul événement hors bornes : 500 sur tout le lot et file de l'appareil bloquée à vie | corrigé | fd53ac2 | audit-off.test.ts, apps/web/src/lib/offline.test.ts |

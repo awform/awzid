@@ -27,6 +27,7 @@ import {
 } from '@awform/db';
 import {
   buildBank,
+  classify,
   Orchestrator,
   QuranIndex,
   setupTutor,
@@ -209,7 +210,13 @@ export function registerTutor(
           provider: r.provider,
           model: r.model,
           action: b.action,
-          question: b.text ? b.text.slice(0, 600) : (b.word ?? null),
+          // audit CON-11 : le texte libre d'un ENFANT n'est jamais stocké (il n'est lu par personne)
+          question:
+            who.audience === 'enfant'
+              ? (b.word ?? null)
+              : b.text
+                ? b.text.slice(0, 600)
+                : (b.word ?? null),
           decision: r.decision,
           route: r.route,
           filter: r.filter,
@@ -225,6 +232,13 @@ export function registerTutor(
             motif: r.transmit.motif,
           });
         if (r.alert) await createTutorAlert(db, { profileId, logId, motif: r.alert.motif });
+        // audit CON-11 : texte libre d'un enfant (refusé au modèle) quand même CLASSÉ pour sa protection :
+        // détresse ou rencontre → alerte (motif seul, sans le texte)
+        else if (who.audience === 'enfant' && b.text) {
+          const cat = classify(b.text);
+          if (cat === 'detresse' || cat === 'rencontre')
+            await createTutorAlert(db, { profileId, logId, motif: cat });
+        }
         return { who, r, logId };
       });
       if (!out) return err(reply, 429, 'tuteur_occupe');

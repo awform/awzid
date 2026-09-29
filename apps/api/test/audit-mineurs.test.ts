@@ -203,4 +203,25 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
     expect((await c.req('GET', '/api/v1/pays/ZZ/regles')).statusCode).toBe(400);
     expect((await c.req('GET', '/api/v1/pays/SN/regles')).statusCode).toBe(200);
   });
+
+  it('CON-11 : texte libre d’un enfant jamais stocké, mais classé : détresse → alerte (sans le texte)', async () => {
+    const fam = await parent(c, 'con11@exemple.org');
+    const kid = await child(c, fam.P, 'Petit', 9);
+    await c.req('PUT', `/api/v1/profiles/${kid}/tuteur`, fam.pin, { actif: true });
+    const r = await c.req('POST', `/api/v1/tutor/${kid}/ask`, fam.P, {
+      unitId: 'en1.l01',
+      action: 'question',
+      text: 'SECRET enfant : papa me frappe',
+      hour: 10,
+    });
+    expect(r.statusCode, r.body).toBe(200);
+    const logs = await c.h.pool.query('select question from tutor_log where profile_id = $1', [
+      kid,
+    ]);
+    expect(JSON.stringify(logs.rows)).not.toContain('SECRET');
+    const alerts = await c.h.pool.query('select motif from tutor_alert where profile_id = $1', [
+      kid,
+    ]);
+    expect(alerts.rows.map((a) => a.motif)).toEqual(['detresse']);
+  });
 });
