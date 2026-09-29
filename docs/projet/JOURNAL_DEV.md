@@ -8,6 +8,16 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 29/09/2026 — Décisions D6, D7 et CI sur les branches de travail (branche `lot21-wip`)
+
+- **D7** : la projection ÉLÈVE des bilans et examens ne contient plus **aucun corrigé** (`studentProjection` applique la projection d'épreuve ; « relier » en colonnes gauche/droite décalées) ; l'entraînement sur un bilan recueille les réponses sans correction sur l'appareil (`ExamExercise`) et le serveur corrige item par item (`POST /api/v1/units/:id/corriger`, `gradeTraining` : juste/faux, jamais la bonne réponse) ; les réponses passent aussi par la file habituelle (progression) ; **l'examen** ne se passe qu'en épreuve notée. Prend effet au prochain import (l'empreinte d'édition inclut la version de l'application).
+- **CDC §2.8** : pendant une session d'épreuve ouverte, le **texte non préparé est révélé à l'élève** (option `revealUnprepared`, sans traduction pour un examen) ; jamais hors session (corrige le lot 19, qui le réservait à l'enseignant).
+- **D6** : grille des parties « enseignant » lue dans `guide.bareme` (`bookGrid`, format tolérant), une note par partie, maximum = total de la grille ; saisie libre sinon. Format réel à confirmer sur les vrais livres.
+- **CI** : déclencheur `push` aussi sur `lot*-wip` et `corrections-audit`.
+- **Environnement cloud** : après un redémarrage du conteneur, le shell reprenait Node 22 (argon2 de `node:crypto` absent → erreurs 500 dans les tests) ; Node 24 fixé dans les profils du shell.
+- **Tests** : `d7.test.ts` 3, `exam.test.ts` +1, `lot19.test.ts` +1 et mis à jour (texte révélé en session, aucun corrigé hors épreuve, grille du livre). Conditions de la CI : **346 verts, 37 sautés**.
+
+---
 ## 29/09/2026 — Lot 20 (V1-e) : certificats signés et vérifiables par QR (branche `lot20-wip`, partie de `lot19-wip`)
 
 - **Signature** (`apps/api/src/certsign.ts`) : Ed25519 ; la graine privée `AWFORM_CERT_SIGN_KEY` (« v1:<64 hex> », générée une fois par `deploy.sh`) n'existe que dans le **périmètre de l'API** (`env-scopes.conf`) ; clé publique et identifiant de clé publiés (`GET /api/v1/public/certificats/cle`) pour une vérification hors ligne. La signature porte sur les **champs du registre durable** (numéro, type, niveau ou passage, nom affiché, mention, date) : elle reste valide après la réduction du document à 30 jours.

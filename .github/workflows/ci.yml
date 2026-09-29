@@ -7,7 +7,8 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    # chaque lot et les corrections d'audit sont vérifiés par GitHub (décision du chef de projet)
+    branches: [main, 'lot*-wip', 'corrections-audit']
   pull_request:
     branches: [main]
 

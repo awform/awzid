@@ -93,3 +93,28 @@ export const REMEDIATION_SUR_20 = 8;
 export function needsRemediation(score: number | null, bareme: number): boolean {
   return score !== null && (score / bareme) * 20 < REMEDIATION_SUR_20;
 }
+
+/**
+ * Entraînement sur un BILAN (décision D7) : l'appareil n'a plus le corrigé ; le serveur dit, item par item,
+ * ce qui est juste (sans jamais renvoyer la bonne réponse). « chasse » / « contient » : seules les cases
+ * touchées sont jugées. Mêmes réponses que l'entraînement ordinaire (« relier » : indice d'origine).
+ */
+export function gradeTraining(
+  exercises: ReadonlyArray<{ id: string; content: unknown }>,
+  answers: ExamAnswers,
+): ExamGrade & { items: Record<string, Record<string, boolean>> } {
+  const items: Record<string, Record<string, boolean>> = {};
+  for (const { id, content } of exercises) {
+    const ex = content as LanguageExercise;
+    if (!content || typeof content !== 'object' || !isLanguageExercise(ex)) continue;
+    const given = answers[id] ?? {};
+    const out: Record<string, boolean> = {};
+    for (const [k, r] of Object.entries(given)) {
+      const i = Number(k);
+      if (!Number.isInteger(i) || i < 0 || i >= itemSlots(ex)) continue;
+      out[k] = isValidItemResponse(ex, r) && checkItem(ex, i, r);
+    }
+    items[id] = out;
+  }
+  return { ...gradeExam(exercises, answers), items };
+}

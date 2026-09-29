@@ -49,10 +49,22 @@ function isEval(L: Obj): boolean {
   return L.type === 'bilan' || L.type === 'examen';
 }
 
-/** Projection élève (entraînement). `level` = code du niveau (règle des bilans Enfants). */
-export function studentProjection<T>(lesson: T, level = ''): T {
+export interface ProjectionOptions {
+  /**
+   * Session d'épreuve ouverte par l'enseignant (CDC §2.8) : le texte « non préparé » est révélé (sans
+   * traduction pour un examen ou `sans_traduction`) ; jamais hors session.
+   */
+  revealUnprepared?: boolean;
+}
+
+/**
+ * Projection élève (entraînement). `level` = code du niveau (règle des bilans Enfants).
+ * Bilans et examens (décision D7) : AUCUN corrigé — l'entraînement sur un bilan est corrigé par le serveur.
+ */
+export function studentProjection<T>(lesson: T, level = '', opts: ProjectionOptions = {}): T {
   const L = strip(lesson) as Obj;
   const evaluation = isEval(L);
+  const reveal = !!opts.revealUnprepared;
 
   // écriture : les scripts de dictée sont lus par l'adulte (espace parent / enseignant)
   if (isObj(L.ecriture)) delete L.ecriture.dictee;
@@ -61,7 +73,7 @@ export function studentProjection<T>(lesson: T, level = ''): T {
   if (isObj(L.lecture)) {
     const R = L.lecture;
     delete R.phrases_masquees;
-    if (R.non_prepare) {
+    if (R.non_prepare && !reveal) {
       delete R.vedette;
       delete R.phrases;
       delete R.paragraphes;
@@ -76,7 +88,9 @@ export function studentProjection<T>(lesson: T, level = ''): T {
   // Coran : versets non préparés absents ; pas de traduction dans un bilan / examen
   if (isObj(L.coran)) {
     const Q = L.coran;
-    if (Q.non_prepare) {
+    if (reveal) {
+      // session ouverte : versets du livre tels quels (contrôlés contre Tanzil à l'import)
+    } else if (Q.non_prepare) {
       Q.versets = [{ non_prepare: true }];
       delete Q.mots;
     } else if (Array.isArray(Q.versets)) {
@@ -96,9 +110,16 @@ export function studentProjection<T>(lesson: T, level = ''): T {
     for (const k of ['dialogue', 'coran', 'fiqh_adab', 'rubriques', 'mots', 'scene']) delete L[k];
     if (isObj(L.lecture)) {
       const R = L.lecture;
-      for (const k of Object.keys(R)) if (k !== 'ligne' && k !== 'non_prepare') delete R[k];
+      // session ouverte : le texte non préparé de la lecture reste (révélé par l'enseignant)
+      const keep = new Set(['ligne', 'non_prepare']);
+      if (reveal && R.non_prepare)
+        for (const k of ['vedette', 'phrases', 'paragraphes']) keep.add(k);
+      for (const k of Object.keys(R)) if (!keep.has(k)) delete R[k];
     }
   }
+  // D7 : bilans et examens sans aucun corrigé (colonne des « relier » en ordre décalé, fixe)
+  if (evaluation && Array.isArray(L.exercices))
+    L.exercices = (L.exercices as Obj[]).map(examExercise);
   return L as T;
 }
 
@@ -143,6 +164,15 @@ export const ANSWER_KEYS: ReadonlySet<string> = new Set([
   'analyse_fr',
 ]);
 
+/**
+ * « relier » d'une épreuve d'entraînement : position AFFICHÉE dans la colonne de droite → indice de l'élément
+ * d'origine (même décalage que la projection : rotation de n/2).
+ */
+export function relierOriginal(n: number, shown: number): number {
+  if (n <= 0) return shown;
+  return (shown + (Math.max(1, Math.floor(n / 2)) % n)) % n;
+}
+
 /** Décalage de la colonne de droite d'un `relier` (même règle que le moteur : rotation de n/2). */
 function rotate<T>(a: T[], n: number): T[] {
   if (a.length === 0) return a;
@@ -174,8 +204,8 @@ function examExercise(ex: Obj): Obj {
 }
 
 /** Projection épreuve (bilan ou examen noté) : AUCUNE réponse. */
-export function examProjection<T>(lesson: T, level = ''): T {
-  const L = studentProjection(lesson, level) as Obj;
+export function examProjection<T>(lesson: T, level = '', opts: ProjectionOptions = {}): T {
+  const L = studentProjection(lesson, level, opts) as Obj;
   if (Array.isArray(L.exercices)) L.exercices = (L.exercices as Obj[]).map(examExercise);
   return L as T;
 }

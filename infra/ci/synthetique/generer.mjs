@@ -114,6 +114,12 @@ function unit(level, n, type, numLecon) {
     parents_fr: 'Mot aux parents (synthétique).',
     guide: { deroule_fr: 'Guide de l’enseignant (synthétique) : jamais montré à l’élève.' },
   };
+  // grille des parties « enseignant » des épreuves (format tolérant lu par bookGrid, décision D6)
+  if (type !== 'lecon')
+    base.guide.bareme = [
+      { partie: 'Lecture à voix haute', points: 4 },
+      { partie: 'Dictée', points: 4 },
+    ];
   if (type !== 'lecon')
     base.lecture = {
       ligne: ['بَ', 'تَ'],

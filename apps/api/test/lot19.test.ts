@@ -99,8 +99,12 @@ describe.skipIf(!URL_)('lot 19 — épreuves notées (awform_test)', () => {
     const { lesson } = r.json();
     expect(answerPaths(lesson)).toEqual([]);
     expect(JSON.stringify(lesson)).not.toContain('seed');
-    // texte non préparé : jamais envoyé à l'élève
-    expect(JSON.stringify(lesson)).not.toContain('بَابُ الْبَيْتِ');
+    // texte non préparé : révélé pendant la session ouverte (CDC §2.8), jamais hors session
+    expect(JSON.stringify(lesson)).toContain('بَابُ الْبَيْتِ');
+    const hors = (await c.req('GET', '/api/v1/units/en1.l03')).json();
+    expect(JSON.stringify(hors)).not.toContain('بَابُ الْبَيْتِ');
+    // D7 : la leçon ordinaire d'un bilan ne contient plus aucun corrigé
+    expect(answerPaths(hors.unit.lesson)).toEqual([]);
     const autre = await parent(c, 'autre19@exemple.org');
     expect(
       (await c.req('GET', `/api/v1/profiles/${awa}/epreuves/${sid}`, autre.P)).statusCode,
@@ -147,7 +151,16 @@ describe.skipIf(!URL_)('lot 19 — épreuves notées (awform_test)', () => {
       c.req('PUT', `/api/v1/ecole/epreuves/${sid}/copies/${m.id}`, T, body);
     expect((await put({ points: 5, max: 4 })).statusCode).toBe(400);
     expect((await put({ points: 3, max: null })).statusCode).toBe(400);
-    // lecture à voix haute notée 4/4 : (0 + 4) / (16 + 4) × 20 = 4 → toujours en remédiation
+    // D6 : grille du livre (guide.bareme) : lecture /4, dictée /4
+    expect(b.grille).toEqual([
+      { label: 'Lecture à voix haute', points: 4 },
+      { label: 'Dictée', points: 4 },
+    ]);
+    expect((await put({ parties: [5, 0] })).statusCode).toBe(400);
+    expect((await put({ parties: [4] })).statusCode).toBe(400);
+    // lecture 4/4, dictée 0/4 : (0 + 4) / (16 + 8) × 20 = 3,33 → 3,5 → toujours en remédiation
+    expect((await put({ parties: [4, 0] })).json()).toEqual({ score: 3.5, remediation: true });
+    // saisie libre toujours possible : (0 + 4) / (16 + 4) × 20 = 4
     expect((await put({ points: 4, max: 4 })).json()).toEqual({ score: 4, remediation: true });
     expect(
       (
@@ -177,6 +190,30 @@ describe.skipIf(!URL_)('lot 19 — épreuves notées (awform_test)', () => {
     expect((await c.req('GET', `/api/v1/profiles/${awa}/epreuves/${sid}`, fam.P)).statusCode).toBe(
       404,
     );
+  });
+
+  it('D7 : entraînement sur un bilan corrigé par le serveur, item par item ; examen refusé', async () => {
+    const view = (await c.req('GET', '/api/v1/units/en1.l03')).json();
+    const first = view.unit.exercises[0].id;
+    const r = await c.req(
+      'POST',
+      '/api/v1/units/en1.l03/corriger',
+      {},
+      {
+        answers: { [first]: { 0: { choice: 'ب' }, 1: { choice: 'ب' } } },
+      },
+    );
+    expect(r.statusCode, r.body).toBe(200);
+    expect(r.json().items[first]).toEqual({ 0: true, 1: false });
+    expect(r.body).not.toContain('reponse');
+    expect(
+      (await c.req('POST', '/api/v1/units/en1.l05/corriger', {}, { answers: {} })).json().error
+        .code,
+    ).toBe('examen_note_seulement');
+    expect(
+      (await c.req('POST', '/api/v1/units/en1.l01/corriger', {}, { answers: {} })).json().error
+        .code,
+    ).toBe('correction_sur_appareil');
   });
 
   it('tableau de suivi : la note officielle entre dans les bilans (%)', async () => {

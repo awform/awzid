@@ -4,7 +4,7 @@
  * note sur le barème arrondie au demi-point, seuil de remédiation 8/20.
  */
 import { describe, expect, it } from 'vitest';
-import { examScore, gradeExam, needsRemediation } from '../src/index.js';
+import { examScore, gradeExam, gradeTraining, needsRemediation } from '../src/index.js';
 
 // exercices SYNTHÉTIQUES (lettres seules, aucun contenu des livres)
 const EX = [
@@ -80,5 +80,19 @@ describe('barème et remédiation', () => {
     expect(needsRemediation(39, 100)).toBe(true);
     expect(needsRemediation(40, 100)).toBe(false);
     expect(needsRemediation(null, 20)).toBe(false);
+  });
+});
+
+describe('gradeTraining (D7 : entraînement sur bilan corrigé par le serveur)', () => {
+  it('juste / faux item par item, sans renvoyer la réponse', () => {
+    const r = gradeTraining(EX, {
+      'b.ex1': { 0: { choice: 'ب' }, 1: { choice: 'ب' } },
+      'b.ex2': { 1: { touched: true } },
+      'b.ex3': { 9: { value: true } },
+    });
+    expect(r.items['b.ex1']).toEqual({ 0: true, 1: false });
+    expect(r.items['b.ex2']).toEqual({ 1: false });
+    expect(r.items['b.ex3']).toEqual({});
+    expect(JSON.stringify(r)).not.toContain('reponse');
   });
 });

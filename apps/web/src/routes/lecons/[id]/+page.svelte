@@ -3,6 +3,9 @@
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
   import Exercise from '$lib/Exercise.svelte';
+  import ExamExercise from '$lib/ExamExercise.svelte';
+  import { call } from '$lib/session';
+  import { relierOriginal } from '@awform/content/projection';
   import ReligionLesson from '$lib/religion/ReligionLesson.svelte';
   import TutorPanel from '$lib/TutorPanel.svelte';
   import Illus from '$lib/Illus.svelte';
@@ -96,6 +99,51 @@
       itemIndex,
       response,
     });
+  }
+  // bilan (D7) : réponses recueillies sans corrigé, puis corrigées par le serveur
+  let evalAnswers = $state<Record<string, Record<string, unknown>>>({});
+  let evalResult = $state<{
+    points: number;
+    max: number;
+    items: Record<string, Record<string, boolean>>;
+  } | null>(null);
+  let evalError = $state('');
+  /** « relier » : position affichée → élément d'origine (même décalage que la projection) */
+  function originalAnswers() {
+    const out: Record<string, Record<string, unknown>> = {};
+    for (const [eid, items] of Object.entries(evalAnswers)) {
+      const ex = (L.exercices ?? [])[u.exercises.findIndex((e) => e.id === eid)] as
+        { type?: string; gauche?: unknown[] } | undefined;
+      if (ex?.type !== 'relier') {
+        out[eid] = items;
+        continue;
+      }
+      const n = ex.gauche?.length ?? 0;
+      out[eid] = Object.fromEntries(
+        Object.entries(items).map(([k, v]) => [
+          k,
+          { right: relierOriginal(n, (v as { right: number }).right) },
+        ]),
+      );
+    }
+    return out;
+  }
+  async function corrigerBilan() {
+    evalError = '';
+    const answers = originalAnswers();
+    const r = await call<NonNullable<typeof evalResult>>('POST', `/units/${u.id}/corriger`, {
+      answers,
+    });
+    if (!r.ok) {
+      evalError = t(`erreur.${r.code ?? 'reseau'}`);
+      return;
+    }
+    evalResult = r.data;
+    // progression : les réponses passent par la file habituelle (le serveur recalcule tout)
+    for (const [eid, items] of Object.entries(answers)) {
+      const i = u.exercises.findIndex((e) => e.id === eid);
+      for (const [k, v] of Object.entries(items)) record(i, Number(k), v as ItemResponse);
+    }
   }
   function toggleReligion(done: number, total: number) {
     if (profileId)
@@ -346,14 +394,43 @@
           <Ar text={isEval ? 'حَصِيلَةٌ' : 'أَتَدَرَّبُ'} />
           <span>{isEval ? t('lecon.mes_exercices') : t('lecon.entraine')}</span>
         </h2>
-        {#each livreEx as { ex, i } (i)}
-          <Exercise
-            {ex}
-            id={u.exercises[i]?.id ?? `${u.id}.ex${i + 1}`}
-            {lettres}
-            onanswer={(k, r) => record(i, k, r)}
-          />
-        {/each}
+        {#if u.kind === 'examen'}
+          <p class="card" data-testid="examen-note">{t('lecon.examen_note_seulement')}</p>
+        {:else if isEval}
+          <!-- D7 : bilan sans corrigé sur l'appareil ; le serveur corrige, item par item -->
+          {#each livreEx as { ex, i } (i)}
+            {@const eid = u.exercises[i]?.id ?? `${u.id}.ex${i + 1}`}
+            <ExamExercise
+              ex={ex as unknown as Record<string, unknown>}
+              n={i + 1}
+              bind:value={
+                () => evalAnswers[eid] ?? {}, (v) => (evalAnswers = { ...evalAnswers, [eid]: v })
+              }
+            />
+            {#if evalResult?.items[eid]}
+              {@const r = Object.values(evalResult.items[eid]!)}
+              <p class="muted" data-testid="resultat-exercice">
+                {t('lecon.bilan_resultat', { ok: r.filter(Boolean).length, n: r.length })}
+              </p>
+            {/if}
+          {/each}
+          <button type="button" class="primary" onclick={corrigerBilan} data-testid="corriger-bilan"
+            >{t('lecon.bilan_corriger')}</button
+          >
+          {#if evalResult}<p class="card" role="status">
+              {t('lecon.bilan_total', { points: evalResult.points, max: evalResult.max })}
+            </p>{/if}
+          {#if evalError}<p class="retry" role="alert">{evalError}</p>{/if}
+        {:else}
+          {#each livreEx as { ex, i } (i)}
+            <Exercise
+              {ex}
+              id={u.exercises[i]?.id ?? `${u.id}.ex${i + 1}`}
+              {lettres}
+              onanswer={(k, r) => record(i, k, r)}
+            />
+          {/each}
+        {/if}
       </section>
     {/if}
 

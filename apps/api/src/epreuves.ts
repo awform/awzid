@@ -32,7 +32,13 @@ import {
   type Db,
   type EditionRow,
 } from '@awform/db';
-import { examScore, gradeExam, needsRemediation, type ExamAnswers } from '@awform/grading';
+import {
+  examScore,
+  gradeExam,
+  gradeTraining,
+  needsRemediation,
+  type ExamAnswers,
+} from '@awform/grading';
 import { audit } from './auth/service.js';
 import { err, familyProfile, needTeacher, parentGate, UUID } from './guards.js';
 import { neededIllustrations } from './needed.js';
@@ -73,6 +79,34 @@ export function unpreparedTexts(content: unknown) {
     versets: Q?.non_prepare ? versets : versets.filter((v) => v.non_prepare),
     dictee: E && Array.isArray(E.dictee) ? E.dictee : [],
   };
+}
+
+/**
+ * Grille des parties « enseignant » du livre (`guide.bareme`, décision D6) : lue de façon tolérante —
+ * liste d'objets {partie|label|nom|titre_fr : points|pts|sur|max} ou objet {intitulé : points} ; null si
+ * absente (on retombe alors sur la saisie libre points / maximum).
+ */
+export function bookGrid(content: unknown): Array<{ label: string; points: number }> | null {
+  const g = isObj(content) && isObj(content.guide) ? content.guide.bareme : undefined;
+  const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null);
+  const out: Array<{ label: string; points: number }> = [];
+  if (Array.isArray(g))
+    for (const x of g) {
+      if (!isObj(x)) continue;
+      const label = [x.partie, x.label, x.nom, x.titre_fr, x.intitule].find(
+        (v) => typeof v === 'string',
+      );
+      const pts = [x.points, x.pts, x.sur, x.max].map(num).find((v) => v !== null);
+      if (label && pts) out.push({ label: String(label), points: pts });
+    }
+  else if (isObj(g))
+    for (const [label, v] of Object.entries(g)) {
+      const pts =
+        num(v) ??
+        (isObj(v) ? [v.points, v.pts, v.sur, v.max].map(num).find((x) => x !== null) : null);
+      if (pts) out.push({ label, points: pts });
+    }
+  return out.length ? out : null;
 }
 
 export function registerEpreuves(
@@ -190,6 +224,8 @@ export function registerEpreuves(
       return {
         epreuve: { ...pub, titleFr: u?.titleFr ?? null, kind: u?.kind ?? null },
         textesNonPrepares: u ? unpreparedTexts(u.content) : null,
+        // barème du livre pour la partie hors application (D6) ; null : saisie libre
+        grille: u ? bookGrid(u.content) : null,
         // « écoute » : ce que l'adulte prononce (retiré de la copie de l'élève), dans l'ordre des items
         aDire: (u?.exercises ?? [])
           .filter((e) => e.type === 'ecoute')
@@ -222,7 +258,7 @@ export function registerEpreuves(
 
   app.put<{
     Params: { sid: string; cid: string };
-    Body: { points: number | null; max: number | null };
+    Body: { points?: number | null; max?: number | null; parties?: number[] };
   }>(
     '/api/v1/ecole/epreuves/:sid/copies/:cid',
     {
@@ -231,11 +267,16 @@ export function registerEpreuves(
         params: { type: 'object', required: ['sid', 'cid'], properties: { sid: UUID, cid: UUID } },
         body: {
           type: 'object',
-          required: ['points', 'max'],
           additionalProperties: false,
           properties: {
             points: { type: ['number', 'null'], minimum: 0, maximum: 1000 },
             max: { type: ['number', 'null'], exclusiveMinimum: 0, maximum: 1000 },
+            // une note par partie de la grille du livre (D6), dans son ordre
+            parties: {
+              type: 'array',
+              maxItems: 30,
+              items: { type: 'number', minimum: 0, maximum: 1000 },
+            },
           },
         },
       },
@@ -246,7 +287,19 @@ export function registerEpreuves(
       if (!m || !c || c.sessionId !== m.s.id) return err(reply, 404, 'introuvable');
       const still = await profileClasses(db, c.profileId);
       if (!still.some((x) => x.id === m.cls.id)) return err(reply, 404, 'introuvable');
-      const { points, max } = req.body;
+      let points = req.body.points ?? null;
+      let max = req.body.max ?? null;
+      if (req.body.parties) {
+        // grille du livre : chaque partie bornée par ses points, maximum = total de la grille
+        const ed = await edition();
+        const u = ed ? await unitFull(db, ed.id, m.s.unitId) : null;
+        const grid = u ? bookGrid(u.content) : null;
+        const parts = req.body.parties;
+        if (!grid || parts.length !== grid.length || parts.some((x, i) => x > grid[i]!.points))
+          return err(reply, 400, 'points_invalides');
+        points = parts.reduce((a, b) => a + b, 0);
+        max = grid.reduce((a, b) => a + b.points, 0);
+      }
       if ((points === null) !== (max === null) || (points !== null && max !== null && points > max))
         return err(reply, 400, 'points_invalides');
       const part = points !== null && max !== null ? { points, max } : null;
@@ -254,6 +307,47 @@ export function registerEpreuves(
       await setTeacherPart(db, c.id, part, score);
       await audit(db, req.auth!.accountId, 'epreuve.note', c.id, { points, max });
       return { score, remediation: needsRemediation(score, m.s.bareme) };
+    },
+  );
+
+  // ---------------------------------------------------------------- entraînement sur un bilan (D7)
+
+  /**
+   * L'appareil n'a plus le corrigé des bilans : il envoie les réponses, le serveur dit ce qui est juste item
+   * par item (jamais la bonne réponse). L'examen se passe seulement en épreuve notée.
+   */
+  app.post<{ Params: { unit: string }; Body: { answers: ExamAnswers } }>(
+    '/api/v1/units/:unit/corriger',
+    {
+      bodyLimit: 64 * 1024,
+      schema: {
+        params: {
+          type: 'object',
+          required: ['unit'],
+          properties: { unit: { type: 'string', pattern: '^[a-z]{2,3}\\d{1,2}\\.l\\d{2}$' } },
+        },
+        body: {
+          type: 'object',
+          required: ['answers'],
+          additionalProperties: false,
+          properties: {
+            answers: {
+              type: 'object',
+              maxProperties: 80,
+              additionalProperties: { type: 'object', maxProperties: 120 },
+            },
+          },
+        },
+      },
+    },
+    async (req, reply) => {
+      const ed = await edition();
+      const u = ed ? await unitFull(db, ed.id, req.params.unit) : null;
+      if (!u) return err(reply, 404, 'introuvable');
+      if (u.kind === 'examen') return err(reply, 409, 'examen_note_seulement');
+      if (u.kind !== 'bilan') return err(reply, 400, 'correction_sur_appareil');
+      const g = gradeTraining(u.exercises, req.body.answers);
+      return { points: g.points, max: g.max, items: g.items };
     },
   );
 
@@ -326,7 +420,8 @@ export function registerEpreuves(
       const u = ed ? await unitFull(db, ed.id, s.unitId) : null;
       if (!u || !ed) return err(reply, 404, 'introuvable');
       // projection d'ÉPREUVE : aucune réponse ; « relier » : colonne de droite propre à l'élève
-      const lesson = examProjection(u.content, u.levelCode) as Obj;
+      // session ouverte : le texte non préparé est révélé (CDC §2.8), toujours sans aucune réponse
+      const lesson = examProjection(u.content, u.levelCode, { revealUnprepared: true }) as Obj;
       const exs = Array.isArray(lesson.exercices) ? (lesson.exercices as Obj[]) : [];
       const full =
         isObj(u.content) && Array.isArray(u.content.exercices)

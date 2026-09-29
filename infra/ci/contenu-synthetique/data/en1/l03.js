@@ -204,6 +204,16 @@ AW.lesson({
  ],
  "parents_fr": "Mot aux parents (synthétique).",
  "guide": {
-  "deroule_fr": "Guide de l’enseignant (synthétique) : jamais montré à l’élève."
+  "deroule_fr": "Guide de l’enseignant (synthétique) : jamais montré à l’élève.",
+  "bareme": [
+   {
+    "partie": "Lecture à voix haute",
+    "points": 4
+   },
+   {
+    "partie": "Dictée",
+    "points": 4
+   }
+  ]
  }
 });
