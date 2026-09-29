@@ -38,7 +38,7 @@ import {
 import { bookVerseRefs, buildMeta, note, qualityOf, type HifzBookData } from '@awform/hifz';
 import { ownsProfile } from './auth/routes.js';
 import { audit, clearFailures, lockedUntil, recordFailure } from './auth/service.js';
-import { TEXT_VERSION } from './auth/policy.js';
+import { lawEvidence, TEXT_VERSION } from './auth/policy.js';
 
 const err = (reply: FastifyReply, status: number, code: string, extra: object = {}) =>
   reply.code(status).send({ error: { code, ...extra } });
@@ -416,6 +416,7 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
         country: req.auth!.country,
         evidence: {
           methode: prof?.kind === 'adulte' ? 'declaration_du_titulaire' : 'code_parent',
+          ...lawEvidence(req.auth!.country),
           classe: c.id,
           date: new Date().toISOString(),
         },

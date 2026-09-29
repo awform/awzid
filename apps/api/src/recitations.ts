@@ -30,7 +30,7 @@ import { ownsProfile } from './auth/routes.js';
 import { minorHolder } from './guards.js';
 import { verifySecret } from './auth/crypto.js';
 import { audit, clearFailures, lockedUntil, recordFailure } from './auth/service.js';
-import { TEXT_VERSION } from './auth/policy.js';
+import { lawEvidence, TEXT_VERSION } from './auth/policy.js';
 
 const err = (reply: FastifyReply, status: number, code: string, extra: object = {}) =>
   reply.code(status).send({ error: { code, ...extra } });
@@ -121,6 +121,7 @@ export function registerRecitations(app: FastifyInstance, db: Db, key: Recitatio
           evidence: {
             methode: p.kind === 'enfant' ? 'code_parent' : 'titulaire',
             date: new Date().toISOString(),
+            ...lawEvidence(req.auth!.country),
           },
         });
         await audit(db, req.auth!.accountId, 'recitation.accord', p.id);

@@ -36,7 +36,7 @@ import {
   type TutorSetup,
 } from '@awform/tutor';
 import { ownsProfile } from './auth/routes.js';
-import { TEXT_VERSION } from './auth/policy.js';
+import { lawEvidence, TEXT_VERSION } from './auth/policy.js';
 
 type Edition = () => Promise<{ id: string; code: string } | null>;
 const err = (reply: FastifyReply, status: number, code: string) =>
@@ -317,7 +317,11 @@ export function registerTutor(
             textVersion: TEXT_VERSION,
             // audit MIN-4 : pays et preuve de l'accord
             country: req.auth.country,
-            evidence: { methode: 'code_parent', date: new Date().toISOString() },
+            evidence: {
+              methode: 'code_parent',
+              date: new Date().toISOString(),
+              ...lawEvidence(req.auth.country),
+            },
           });
       } else await db.update(t.consent).set({ withdrawnAt: new Date() }).where(where);
       return { actif: req.body.actif };

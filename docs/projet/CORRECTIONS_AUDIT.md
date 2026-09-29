@@ -10,7 +10,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 |---|---|---|---|---|---|
 | SEC-1 | majeur | Second facteur : `totp/setup` désactive le 2FA avant confirmation ; `totp/confirm` sans limite ni anti-rejeu | à faire | | |
 | SEC-2 | majeur | Course sur le compteur d'échecs : 20 mots de passe, 30 codes parent testés d'un coup | à faire | | |
-| SEC-3 | majeur | Consentements « parentaux » accordés sans le code parent (tuteur IA, partage enseignant) | corrigé | voir « SEC-3 » dans git log | audit-mineurs.test.ts « SEC-3 » |
+| SEC-3 | majeur | Consentements « parentaux » accordés sans le code parent (tuteur IA, partage enseignant) | corrigé | df1dbe7 | audit-mineurs.test.ts « SEC-3 » |
 | SEC-4 | majeur | Second facteur non exigé sur les notifications et les paiements des enseignants | à faire | | |
 | SEC-5 | mineur | Rejeu d'un code TOTP par connexions parallèles | à faire | | |
 | SEC-6 | mineur | Ressaisies du mot de passe sans limite d'essais | à faire | | |
@@ -32,7 +32,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-14 | mineur | Réinscription impossible 30 jours et révélation de l'existence du compte | à faire | | |
 | MIN-15 | mineur | Pays déclaratif, codes inexistants acceptés | à faire | | |
 | MIN-16 | mineur | Enregistrements vocaux locaux : la limite de 7 jours n'est appliquée qu'à l'ouverture de l'écran | à faire | | |
-| MIN-17 | mineur | Branche `lot17-wip` : consentement par pays cohérent mais non appliqué aux profils | à faire | | |
+| MIN-17 | mineur | Branche `lot17-wip` : consentement par pays cohérent mais non appliqué aux profils | corrigé | voir « MIN-17 » dans git log | audit-mineurs.test.ts « MIN-17 » |
 | CON-1 | bloquant | Les corrigés des examens et bilans sont envoyés à l'élève (API et paquet hors ligne) et comptent pour le certificat | corrigé | 1b24221 (D7) + 68ac8d0 | audit-con1.test.ts (échoue sans la correction) |
 | CON-2 | majeur | Projection élève en **liste noire** : translittération, corrigés et notes d'enseignant passent | à faire | | |
 | CON-3 | majeur | Masquage des numéros de hadith non vérifiés : contournable, et absent sans registre | à faire | | |

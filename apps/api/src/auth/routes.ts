@@ -26,6 +26,7 @@ import {
   consentAge,
   countryRules,
   COUNTRY_CODE,
+  lawEvidence,
   requiredAccountConsents,
   requiredChildConsents,
   requiresMfa,
@@ -503,6 +504,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         methode: 'reauthentification_mot_de_passe+declaration',
         date: new Date().toISOString(),
         age_declare: age,
+        // audit MIN-17 : règles du pays appliquées aux profils
+        ...lawEvidence(country),
       };
       await insertConsents(
         accountId,

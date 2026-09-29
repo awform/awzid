@@ -202,3 +202,12 @@ export function sessionTtlMs(kind: string): number {
 export function requiresMfa(kind: string): boolean {
   return kind === 'enseignant' || kind === 'admin';
 }
+
+/** Audit MIN-17 : loi et autorité du pays, jointes à la preuve de TOUT accord (compte ou profil). */
+export function lawEvidence(country: string | null | undefined): {
+  loi: LawCode;
+  autorite: AuthorityCode;
+} {
+  const r = countryRules(country ?? '');
+  return { loi: r.law, autorite: r.authority };
+}

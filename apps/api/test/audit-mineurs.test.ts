@@ -157,4 +157,30 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
       .then((r) => r.rows);
     expect(row.evidence).toMatchObject({ methode: 'code_parent' });
   });
+
+  it('MIN-17 : règles du pays appliquées aux profils — la preuve des accords d’un enfant garde loi et autorité', async () => {
+    const su = await c.req(
+      'POST',
+      '/api/v1/auth/signup',
+      {},
+      {
+        kind: 'parent',
+        birthYear: 1980,
+        email: 'min17@exemple.org',
+        password: PW,
+        country: 'SN',
+        consents: ['cgu', 'transfert_hors_pays'],
+      },
+    );
+    const P = { cookie: cookieOf(su) };
+    const kid = await child(c, P, 'Aminata', 8);
+    const tuteurPin = { ...P }; // pas de code parent défini : accord direct
+    await c.req('PUT', `/api/v1/profiles/${kid}/tuteur`, tuteurPin, { actif: true });
+    const rows = await c.h.pool
+      .query('select type, evidence from consent where profile_id = $1', [kid])
+      .then((r) => r.rows as Array<{ type: string; evidence: Record<string, unknown> }>);
+    expect(rows.map((r) => r.type).sort()).toEqual(['compte_suivi', 'tuteur_ia']);
+    for (const r of rows)
+      expect(r.evidence, r.type).toMatchObject({ loi: 'sn_2008_12', autorite: 'cdp_sn' });
+  });
 });
