@@ -57,17 +57,23 @@ jobs:
         with:
           persist-credentials: false
       - name: Scripts d'exploitation (syntaxe)
-        run: for f in infra/prod/*.sh infra/*.sh infra/android/*.sh infra/git-hooks/*; do bash -n "$f"; done
+        run: for f in infra/prod/*.sh infra/*.sh infra/android/*.sh infra/relais/*.sh infra/git-hooks/*; do bash -n "$f"; done
       - name: Docker Compose (configuration)
         run: |
           mkdir -p /tmp/awform-env && touch /tmp/awform-env/{api,worker,outils,db,caddy}.env
           AWFORM_ENV_DIR=/tmp/awform-env docker compose -f infra/prod/compose.yml config -q
+          # relais d'école (lot 17)
+          mkdir -p /tmp/awform-relais && touch /tmp/awform-relais/{relais,caddy}.env
+          AWFORM_RELAIS_CONF=/tmp/awform-relais docker compose -f infra/relais/compose.yml config -q
       - name: Caddyfile (validation)
-        run: docker run --rm -e SITE=192.0.2.10 -v "$PWD/infra/prod/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2 caddy validate --config /etc/caddy/Caddyfile
+        run: |
+          docker run --rm -e SITE=192.0.2.10 -e RELAIS_DOMAINE=relais.example.org -v "$PWD/infra/prod/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2 caddy validate --config /etc/caddy/Caddyfile
+          docker run --rm -e RELAIS_HOST=ecole-1.relais.example.org -v "$PWD/infra/relais/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2 caddy adapt --config /etc/caddy/Caddyfile
       - name: Images api, worker, web
         run: |
           mkdir -p /tmp/awform-env && touch /tmp/awform-env/{api,worker,outils,db,caddy}.env
           AWFORM_ENV_DIR=/tmp/awform-env docker compose -f infra/prod/compose.yml build api worker web
+          docker build -f infra/prod/Dockerfile --target relay -t awform/relay:ci .
 
   base-et-tuteur:
     # tests sur PostgreSQL 18 (service conteneur, base jetable) et batterie adverse du tuteur (fournisseur

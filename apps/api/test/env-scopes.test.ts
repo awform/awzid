@@ -59,6 +59,8 @@ const FIXED = new Set([
   'AWFORM_CONTENT_DIR',
   'TEST_DATABASE_URL',
   'NODE_ENV',
+  // relais d'école : dossier des certificats copiés, fixé par compose.yml (lot 17)
+  'AWFORM_RELAIS_CERTS',
 ]);
 const isSecret = (v: string) => /SECRET|KEY|PASSWORD|TOKEN|DATABASE_URL/.test(v);
 const pkg = (n: string) => join(ROOT, 'packages', n, 'src');
@@ -119,6 +121,7 @@ describe('secrets : un périmètre par service (env-scopes.conf)', () => {
       import: 'outils',
       roles: 'outils',
       demo: 'outils',
+      relais: 'outils',
       api: 'api',
       worker: 'worker',
       caddy: 'caddy',
@@ -134,6 +137,8 @@ describe('secrets : un périmètre par service (env-scopes.conf)', () => {
     }
     for (const [svc, file] of Object.entries(want)) expect(seen[svc], svc).toBe(file);
     expect(seen.web, 'web ne reçoit aucun fichier').toBeNull();
+    // relais d'école : la copie des certificats ne reçoit que les adresses
+    expect(seen.certsrelais).toBe('caddy');
   });
 
   it.skipIf(process.platform === 'win32')(

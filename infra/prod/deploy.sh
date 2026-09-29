@@ -15,6 +15,7 @@ ENVF="$CONF/prod.env"
 DEMO=0
 SITE="192.168.50.10"
 SITE_LAN=""
+RELAIS_DOMAINE=""
 LAN="192.168.50.0/24"
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -22,6 +23,8 @@ while [ $# -gt 0 ]; do
     --site) SITE="$2"; shift ;;
     --lan) LAN="$2"; shift ;;
     --lan-ip) SITE_LAN="$2"; shift ;;
+    # relais d'école (lot 17) : domaine des sous-domaines des écoles, ex. relais.awzid.org
+    --relais-domaine) RELAIS_DOMAINE="$2"; shift ;;
     *) echo "option inconnue : $1"; exit 2 ;;
   esac
   shift
@@ -48,6 +51,11 @@ grep -q '^SITE=' "$ENVF" && sed -i "s/^SITE=.*/SITE=$SITE/" "$ENVF"
 # accès depuis les appareils du Wi-Fi par le PC (redirection de port) : certificat aussi pour cette IP
 sed -i '/^SITE_LAN=/d;/^DEFAULT_SNI=/d' "$ENVF"
 if [ -n "$SITE_LAN" ]; then echo "SITE_LAN=$SITE_LAN" >> "$ENVF"; echo "DEFAULT_SNI=$SITE_LAN" >> "$ENVF"; else echo "DEFAULT_SNI=$SITE" >> "$ENVF"; fi
+if [ -n "$RELAIS_DOMAINE" ]; then
+  case "$RELAIS_DOMAINE" in *[!a-z0-9.-]* | .* | *.) echo "domaine des relais invalide : $RELAIS_DOMAINE"; exit 2 ;; esac
+  sed -i '/^RELAIS_DOMAINE=/d' "$ENVF"
+  echo "RELAIS_DOMAINE=$RELAIS_DOMAINE" >> "$ENVF"
+fi
 # tuteur : désactivé par défaut ; la démonstration utilise le fournisseur SIMULÉ (jamais un vrai modèle)
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_TUTEUR=' "$ENVF"; then echo "AWFORM_TUTEUR=simule" >> "$ENVF"; fi
 # comptes PostgreSQL séparés (lot 14) : mots de passe générés une fois, URL de chaque service recalculées

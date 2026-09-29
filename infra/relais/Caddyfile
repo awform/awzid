@@ -1,0 +1,50 @@
+# Relais d'école AWFORM (lot 17) — HTTPS sur le Wi-Fi de l'école, sans Internet.
+# Le nom de l'école (RELAIS_HOST, ex. ecole-dakar-01.relais.awzid.org) est dirigé vers ce relais par le DNS
+# du Wi-Fi (box ou dnsmasq du relais) ; ailleurs, il pointe vers le serveur central. Le certificat est celui
+# obtenu par le serveur central et récupéré par le relais (/certs/ecole.crt) : rien à installer sur les
+# tablettes. Avant le premier certificat : certificat provisoire (install.sh), le navigateur avertit.
+{
+	# aucune demande de certificat depuis l'école : il arrive du serveur central
+	auto_https disable_certs
+	# administration locale seulement (rechargement du certificat : caddy reload)
+	admin localhost:2019
+}
+
+(ecole) {
+	encode zstd gzip
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		Permissions-Policy "camera=(), geolocation=(), payment=(), microphone=(self)"
+		Cross-Origin-Opener-Policy same-origin
+		-Server
+	}
+	@relais path /api/* /relais/*
+	handle @relais {
+		reverse_proxy relay:3000
+	}
+	handle {
+		reverse_proxy web:3000
+	}
+	log {
+		output stdout
+		format json
+	}
+}
+
+https://{$RELAIS_HOST} {
+	tls /certs/ecole.crt /certs/ecole.key
+	header Strict-Transport-Security "max-age=31536000"
+	import ecole
+}
+
+# par l'adresse IP (http://192.168.x.y) : la page d'état pour le directeur ; tout le reste va vers le nom
+# de l'école en HTTPS (l'application a besoin d'HTTPS pour le hors ligne et le micro)
+http:// {
+	handle /relais/* {
+		reverse_proxy relay:3000
+	}
+	handle {
+		redir https://{$RELAIS_HOST}{uri}
+	}
+}

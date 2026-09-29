@@ -1,0 +1,51 @@
+# AWFORM — relais d'école (lot 17) : mini-PC ou Raspberry Pi posé à l'école, branché sur le Wi-Fi.
+# Services : relay (file des envois chiffrée, copie des contenus), web (l'application), caddy (HTTPS local).
+# Fichiers de la machine (écrits par install.sh, droits 600, hors dépôt) :
+#   /etc/awform-relais/relais.env  serveur central, jeton du relais, clé de chiffrement locale
+#   /etc/awform-relais/caddy.env   nom de l'école (RELAIS_HOST) — aucun secret
+# Données : /var/lib/awform-relais/donnees (file et copie), /var/lib/awform-relais/certs (certificat de l'école).
+name: awform-relais
+
+x-logs: &logs
+  driver: json-file
+  options: { max-size: '5m', max-file: '3' }
+
+services:
+  relay:
+    image: awform/relay:${AWFORM_VERSION:-local}
+    build: { context: ../.., dockerfile: infra/prod/Dockerfile, target: relay }
+    restart: unless-stopped
+    # le jeton et la clé du relais : ce service seulement
+    env_file: '${AWFORM_RELAIS_CONF:-/etc/awform-relais}/relais.env'
+    environment: { AWFORM_RELAIS_CERTS: /certs }
+    volumes:
+      - '${AWFORM_RELAIS_VAR:-/var/lib/awform-relais}/donnees:/data'
+      - '${AWFORM_RELAIS_VAR:-/var/lib/awform-relais}/certs:/certs'
+    logging: *logs
+
+  web:
+    image: awform/web:${AWFORM_VERSION:-local}
+    build: { context: ../.., dockerfile: infra/prod/Dockerfile, target: web }
+    restart: unless-stopped
+    # l'application passe par le relais pour tout ce qui vient de l'API (aucun secret)
+    environment: { API_URL: 'http://relay:3000' }
+    depends_on: [relay]
+    logging: *logs
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    # le nom de l'école seulement ; le certificat en lecture seule
+    env_file: '${AWFORM_RELAIS_CONF:-/etc/awform-relais}/caddy.env'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - '${AWFORM_RELAIS_VAR:-/var/lib/awform-relais}/certs:/certs:ro'
+      - caddy_config:/config
+    depends_on: [web, relay]
+    logging: *logs
+
+volumes:
+  caddy_config:

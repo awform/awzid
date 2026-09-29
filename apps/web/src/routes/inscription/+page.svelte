@@ -21,7 +21,23 @@
   let rappels = $state(false);
   let error = $state('');
   let busy = $state(false);
-  const transferNeeded = $derived(needsTransferConsent(country));
+  /** règles du pays (loi, autorité, âge, accords) données par le serveur ; à défaut, calcul local */
+  type Rules = {
+    country: string;
+    consentAge: number;
+    transferConsent: boolean;
+    law: string;
+    authority: string;
+  };
+  let rules = $state<Rules | null>(null);
+  $effect(() => {
+    const c = country;
+    void call<Rules>('GET', `/pays/${c}/regles`).then((r) => {
+      if (country === c) rules = r.ok ? r.data : null;
+    });
+  });
+  const current = $derived(rules?.country === country ? rules : null);
+  const transferNeeded = $derived(current?.transferConsent ?? needsTransferConsent(country));
 
   async function submit(e: SubmitEvent) {
     e.preventDefault();
@@ -87,6 +103,17 @@
   <select id="country" bind:value={country}>
     {#each COUNTRIES as c (c)}<option value={c}>{countryName(c)}</option>{/each}
   </select>
+
+  {#if current}
+    <p class="muted small" data-testid="loi-pays">
+      {t('inscription.loi_pays', {
+        pays: countryName(country),
+        loi: t(`pays.loi.${current.law}`),
+        autorite: t(`pays.autorite.${current.authority}`),
+      })}
+      {t('inscription.loi_mineurs', { age: current.consentAge })}
+    </p>
+  {/if}
 
   {#if kind === 'adulte'}
     <label for="birthYear">{t('champ.annee_naissance')}</label>

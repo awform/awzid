@@ -24,6 +24,49 @@ import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import { buildApp } from '../src/app.js';
 import { hashSecret, totpAt } from '../src/auth/crypto.js';
 import { findCaddyCert } from '../src/relais.js';
+import { COUNTRY_CODE, countryRules, DIGITAL_CONSENT_AGE, EU_EEA } from '../src/auth/policy.js';
+
+describe('consentement par pays (sans base)', () => {
+  it('Sénégal : loi 2008-12, CDP, accord exprès au transfert, mineurs par un parent', () => {
+    expect(countryRules('sn')).toMatchObject({
+      country: 'SN',
+      law: 'sn_2008_12',
+      authority: 'cdp_sn',
+      consentAge: 18,
+      transferConsent: true,
+      accountConsents: ['cgu', 'transfert_hors_pays'],
+      aValider: true,
+    });
+  });
+  it('France : RGPD, CNIL, 15 ans, pas de transfert ; États-Unis : COPPA sous 13 ans', () => {
+    expect(countryRules('FR')).toMatchObject({
+      law: 'rgpd',
+      authority: 'cnil',
+      consentAge: 15,
+      transferConsent: false,
+      accountConsents: ['cgu'],
+    });
+    const us = countryRules('US');
+    expect(us).toMatchObject({ law: 'coppa', authority: 'ftc_us', transferConsent: true });
+    expect(us.childConsents.moins13).toContain('coppa_parent');
+    expect(us.childConsents.plus13).not.toContain('coppa_parent');
+  });
+  it('pays sans entrée : RGPD dans l’UE, mention générique ailleurs ; jamais d’autorité inventée', () => {
+    expect(countryRules('DE')).toMatchObject({ law: 'rgpd', authority: 'autorite_ue' });
+    expect(countryRules('GN')).toMatchObject({
+      law: 'generique',
+      authority: 'autorite_locale',
+      transferConsent: true,
+    });
+    for (const c of [...Object.keys(DIGITAL_CONSENT_AGE), ...EU_EEA]) {
+      const r = countryRules(c);
+      // hors UE/EEE, Suisse et Royaume-Uni : accord exprès au transfert, toujours
+      expect(r.transferConsent).toBe(!EU_EEA.has(c) && c !== 'CH' && c !== 'GB');
+    }
+    expect(COUNTRY_CODE.test('SN')).toBe(true);
+    expect(COUNTRY_CODE.test('S1')).toBe(false);
+  });
+});
 
 const URL_ = process.env.TEST_DATABASE_URL;
 const PW = 'une longue phrase de passe 2026';
@@ -147,6 +190,31 @@ describe.skipIf(!URL_)('lot 17 (awform_test)', () => {
       (await req('POST', '/api/v1/relais/battement', { 'x-relais-jeton': token }, {})).statusCode,
     ).toBe(401);
     expect((await req('GET', `/api/v1/relais/tls-autorise?domain=${HOST}`)).statusCode).toBe(404);
+  });
+
+  it('règles du pays (public) ; la preuve de l’accord garde la loi et l’autorité', async () => {
+    const r = await req('GET', '/api/v1/pays/SN/regles');
+    expect(r.statusCode).toBe(200);
+    expect(r.json()).toMatchObject({ law: 'sn_2008_12', authority: 'cdp_sn' });
+    expect((await req('GET', '/api/v1/pays/SEN/regles')).statusCode).toBe(400);
+    // Sénégal : sans l'accord exprès au transfert, pas de compte
+    const base = { kind: 'parent', email: 'sn17@exemple.org', password: PW, country: 'SN' };
+    const no = await req('POST', '/api/v1/auth/signup', {}, { ...base, consents: ['cgu'] });
+    expect(no.statusCode).toBe(400);
+    expect(no.json().error).toMatchObject({
+      code: 'consentement_requis',
+      missing: ['transfert_hors_pays'],
+    });
+    const ok = await req(
+      'POST',
+      '/api/v1/auth/signup',
+      {},
+      { ...base, consents: ['cgu', 'transfert_hors_pays'] },
+    );
+    expect(ok.statusCode, ok.body).toBe(201);
+    const rows = await h.db.select().from(t.consent).where(eq(t.consent.country, 'SN'));
+    expect(rows.map((c) => c.type).sort()).toEqual(['cgu', 'transfert_hors_pays']);
+    for (const c of rows) expect(c.evidence).toEqual({ loi: 'sn_2008_12', autorite: 'cdp_sn' });
   });
 
   it('récitation relayée deux fois (accusé perdu) : enregistrée une seule fois', async () => {

@@ -126,7 +126,7 @@ export function buildRelay(o: RelayOptions): Relay {
   function queuedReply(reply: FastifyReply, path: string, body: Buffer) {
     reply.header('x-awform-relais', 'en-attente');
     if (path === '/api/v1/attempts') {
-      let events: Array<{ id?: string }> = [];
+      let events: Array<{ id?: string }>;
       try {
         events =
           (JSON.parse(body.toString('utf8')) as { events?: Array<{ id?: string }> }).events ?? [];

@@ -12,6 +12,11 @@
 	servers {
 		trusted_proxies static private_ranges
 	}
+	# relais d'école (lot 17) : certificat « à la demande » pour un sous-domaine de relais, seulement si
+	# l'API confirme qu'il s'agit d'un relais enregistré et actif
+	on_demand_tls {
+		ask http://api:3000/api/v1/relais/tls-autorise
+	}
 }
 
 (awform) {
@@ -59,6 +64,18 @@ http://{$SITE}, http://{$SITE_LAN:127.0.0.2}, http://localhost, http://127.0.0.1
 
 https://{$SITE}, https://{$SITE_LAN:127.0.0.2} {
 	tls internal
+	header Strict-Transport-Security "max-age=31536000"
+	import awform
+}
+
+# Relais d'école (lot 17) : le sous-domaine d'une école (ex. ecole-dakar-01.relais.awzid.org) pointe
+# publiquement vers ce serveur ; hors de l'école, il sert donc l'application comme le site principal. Le
+# certificat obtenu ici est remis au relais (volume relais_certs, relais-certs.sh), qui le sert sur le Wi-Fi.
+# RELAIS_DOMAINE absent : domaine réservé « .invalid », aucun certificat demandé.
+https://*.{$RELAIS_DOMAINE:relais.invalid} {
+	tls {
+		on_demand
+	}
 	header Strict-Transport-Security "max-age=31536000"
 	import awform
 }

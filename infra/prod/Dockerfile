@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-# Images de production AWFORM (une construction, trois cibles) : api, worker, web.
+# Images de production AWFORM (une construction, quatre cibles) : api, worker, web, relay (relais d'école).
 # Construction :  docker compose -f infra/prod/compose.yml build
 # Aucun secret dans les images : tout vient du fichier d'environnement de l'hôte au démarrage.
 
@@ -16,6 +16,7 @@ RUN pnpm -r build
 RUN pnpm --filter @awform/api deploy --prod --legacy /out/api \
  && pnpm --filter @awform/worker deploy --prod --legacy /out/worker \
  && pnpm --filter @awform/web deploy --prod --legacy /out/web \
+ && pnpm --filter @awform/relay deploy --prod --legacy /out/relay \
  && rm -rf /out/web/src /out/web/e2e /out/web/.svelte-kit
 
 FROM node:24-bookworm-slim AS runtime
@@ -43,3 +44,12 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 CMD ["node", "build/index.js"]
+
+# relais d'école (lot 17) : mini-PC ou Raspberry Pi (amd64 ou arm64), données dans /data (volume)
+FROM runtime AS relay
+COPY --from=build --chown=node:node /out/relay /app
+ENV HOST=0.0.0.0 PORT=3000 AWFORM_RELAIS_DONNEES=/data
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD node -e "fetch('http://127.0.0.1:3000/relais/etat.json').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+CMD ["node", "dist/server.js"]

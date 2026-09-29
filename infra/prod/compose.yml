@@ -71,13 +71,26 @@ services:
     profiles: [outils]
     logging: *logs
 
+  relais:
+    # relais d'école (lot 17) : creer <nom> <sous-domaine> | revoquer <sous-domaine> | liste
+    # (compte propriétaire : l'API n'a que lecture et mise à jour du battement sur la table relay)
+    image: awform/api:${AWFORM_VERSION:-local}
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/outils.env'
+    entrypoint: ['node', 'dist/cli/relais.js']
+    depends_on: { db: { condition: service_healthy } }
+    restart: 'no'
+    profiles: [outils]
+    logging: *logs
+
   api:
     image: awform/api:${AWFORM_VERSION:-local}
     build: { context: ../.., dockerfile: infra/prod/Dockerfile, target: api }
     restart: unless-stopped
     # base, clé de session, tuteur, paiements ; jamais POSTGRES_PASSWORD seul
     env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/api.env'
-    environment: { TRUST_PROXY: '1' }
+    environment: { TRUST_PROXY: '1', AWFORM_RELAIS_CERTS: /relais-certs }
+    # certificats des SEULS relais d'école (copiés par certsrelais), jamais le stockage de Caddy
+    volumes: ['relais_certs:/relais-certs:ro']
     depends_on: { db: { condition: service_healthy } }
     logging: *logs
 
@@ -114,7 +127,22 @@ services:
     depends_on: [web, api]
     logging: *logs
 
+  certsrelais:
+    # relais d'école (lot 17) : copie les certificats des sous-domaines de relais (*.RELAIS_DOMAINE) pour
+    # l'API ; lit le stockage de Caddy en lecture seule ; reçoit seulement les adresses (caddy.env)
+    image: alpine:3
+    restart: unless-stopped
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/caddy.env'
+    volumes:
+      - caddy_data:/data:ro
+      - relais_certs:/out
+      - ./relais-certs.sh:/relais-certs.sh:ro
+    entrypoint: ['sh', '/relais-certs.sh']
+    depends_on: [caddy]
+    logging: *logs
+
 volumes:
   db:
   caddy_data:
   caddy_config:
+  relais_certs:

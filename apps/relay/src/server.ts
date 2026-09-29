@@ -7,7 +7,7 @@
  *   AWFORM_RELAIS_DONNEES  dossier des données (défaut /data)
  *   AWFORM_RELAIS_CERTS    dossier où déposer le certificat de l'école pour Caddy (facultatif)
  */
-import { existsSync, mkdirSync, readFileSync, utimesSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { buildRelay } from './relay.js';
 import { RelayStore } from './store.js';
@@ -31,12 +31,16 @@ const relay = buildRelay({
         mkdirSync(certDir, { recursive: true });
         const crt = join(certDir, 'ecole.crt');
         if (existsSync(crt) && readFileSync(crt, 'utf8') === cert) return;
-        writeFileSync(join(certDir, 'ecole.key'), k, { mode: 0o600 });
-        writeFileSync(crt, cert);
-        // Caddy surveille ce fichier (--watch) : nouveau certificat pris en compte sans intervention
-        const marker = join(certDir, 'recharger');
-        writeFileSync(marker, new Date().toISOString());
-        utimesSync(marker, new Date(), new Date());
+        // écriture atomique (fichier temporaire puis renommage) : Caddy ne lit jamais un fichier à moitié écrit ;
+        // la clé d'abord, le certificat ensuite : le changement du certificat déclenche le rechargement de Caddy
+        // (awform-relais-certificat.path, installé par install.sh)
+        const put = (name: string, data: string) => {
+          const tmp = join(certDir, `.${name}.tmp`);
+          writeFileSync(tmp, data, { mode: 0o600 });
+          renameSync(tmp, join(certDir, name));
+        };
+        put('ecole.key', k);
+        put('ecole.crt', cert);
         console.log(
           JSON.stringify({ relais: 'certificat_mis_a_jour', at: new Date().toISOString() }),
         );

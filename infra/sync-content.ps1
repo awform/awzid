@@ -2,13 +2,21 @@
 # Lancer depuis le PC :  .\sync-content.ps1 -W "<dossier W>" [-Levels en1,ad1] [-VmHost awform-dev]
 # Ne modifie RIEN côté PC : lecture seule, copie par scp vers ~/awform-content (hors dépôt git).
 # Ne copie jamais le dossier awform\audio (clé Azure).
+# Lot 17 : refuse de remplacer une copie modifiée sur la VM depuis la dernière copie (infra/verifier-copie.sh,
+# contrôle du MANIFEST.sha256) ; -Force abandonne ces modifications en connaissance de cause.
 param(
   [Parameter(Mandatory = $true)][string]$W,
   [string[]]$Levels = @('en1', 'ad1', 'en2', 'ad2', 'en3', 'ad3', 'ad4', 're1', 're2', 'ado1', 'ado2', 'ra1', 'ra2', 'ra3'),
   [string]$VmHost = 'awform-dev',
-  [string]$Dest = 'awform-content'
+  [string]$Dest = 'awform-content',
+  [string]$Repo = 'awform-app',
+  [switch]$Force
 )
 $ErrorActionPreference = 'Stop'
+if (-not $Force) {
+  ssh $VmHost "bash ~/$Repo/infra/verifier-copie.sh ~/$Dest"
+  if ($LASTEXITCODE -ne 0) { throw "Copie de la VM modifiée depuis la dernière synchronisation : rien n'est remplacé (voir ci-dessus, ou -Force)." }
+}
 $aw = Join-Path $W 'awform'
 $items = @()
 foreach ($l in $Levels) { $items += , @("$aw\data\$l", "data/") }

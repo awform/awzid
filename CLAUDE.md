@@ -22,12 +22,14 @@ Référence : `docs/projet/CAHIER_DES_CHARGES.md` (§2.1 carte des fonctionnalit
   (apt), sinon le dire clairement dans le journal, sans prétendre que les tests sont passés.
 
 ## Travail en cours
-Lot 17 (branche `lot17-wip`, commit « Lot 17 (en cours) ») :
+Lot 17 (branche `lot17-wip`) : TERMINÉ (voir JOURNAL_DEV) —
 1. consentement par pays, dont le Sénégal (CDP, loi 2008-12) ;
 2. relais d'école hors Internet : `apps/relay`, `apps/api/src/relais.ts`, migration `0014_relais.sql`
    (mini-PC ou Raspberry Pi, synchronisation chiffrée, HTTPS local, mode d'emploi en français
    pour le directeur d'école, en langage simple) ;
-3. synchronisation sûre : git seule source, refus d'écraser une modification plus récente.
+3. synchronisation sûre : git seule source, refus d'écraser une modification plus récente
+   (`infra/synchro.sh`, `infra/pc/synchro.ps1`, `infra/verifier-copie.sh`).
+État des lignes V1 : `docs/projet/ECARTS.md` ; décisions du client : `docs/projet/DECISIONS_EN_ATTENTE.md`.
 
 Ensuite : lots suivants d'après §2.1 / §6.2 du cahier des charges, en choisissant ce qui n'est pas
 encore fait (voir JOURNAL_DEV). Plus tard seulement, sur décision du client : audio Azure, tuteur IA réel.

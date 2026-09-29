@@ -18,6 +18,8 @@ import { checkPassword, MAX_LENGTH } from './passwords.js';
 import {
   ageFromYear,
   consentAge,
+  countryRules,
+  COUNTRY_CODE,
   requiredAccountConsents,
   requiredChildConsents,
   requiresMfa,
@@ -224,7 +226,12 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         (c) =>
           requiredAccountConsents(b.country).includes(c as ConsentType) || OPTIONAL_CONSENTS.has(c),
       );
-      await insertConsents(a.id, accepted, b.country);
+      // preuve : la règle du pays sous laquelle l'accord a été donné (loi et autorité, lot 17)
+      const rules = countryRules(b.country);
+      await insertConsents(a.id, accepted, b.country, null, {
+        loi: rules.law,
+        autorite: rules.authority,
+      });
       if (b.kind === 'adulte')
         await db.insert(t.profile).values({
           ownerAccountId: a.id,
@@ -638,6 +645,13 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   );
 
   // ---------------------------------------------------------------- droits RGPD
+
+  // règles du pays (public) : âge, accords obligatoires, loi applicable et autorité de contrôle (lot 17)
+  app.get<{ Params: { code: string } }>('/api/v1/pays/:code/regles', async (req, reply) => {
+    if (!COUNTRY_CODE.test(req.params.code)) return err(reply, 400, 'pays_invalide');
+    reply.header('Cache-Control', 'public, max-age=3600');
+    return countryRules(req.params.code);
+  });
 
   app.get('/api/v1/account/consents', { preHandler: needAuth }, async (req) => {
     const rows = await db
