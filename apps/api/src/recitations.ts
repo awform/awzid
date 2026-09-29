@@ -27,6 +27,7 @@ import {
 } from '@awform/db';
 import { note, qualityOf, type Counters } from '@awform/hifz';
 import { ownsProfile } from './auth/routes.js';
+import { minorHolder } from './guards.js';
 import { verifySecret } from './auth/crypto.js';
 import { audit, clearFailures, lockedUntil, recordFailure } from './auth/service.js';
 import { TEXT_VERSION } from './auth/policy.js';
@@ -105,6 +106,8 @@ export function registerRecitations(app: FastifyInstance, db: Db, key: Recitatio
       // une réponse déjà envoyée (refus) arrête ici : une réponse Fastify est « thenable »
       if (reply.sent) return reply;
       const p = (await profileOf(req.params.id))!;
+      // audit MIN-1 : un mineur inscrit seul ne peut pas donner cet accord (il faut un parent)
+      if (await minorHolder(db, req.auth!.accountId)) return err(reply, 403, 'parent_requis');
       await parentGate(req, reply, p.kind);
       // une réponse déjà envoyée (refus) arrête ici : une réponse Fastify est « thenable »
       if (reply.sent) return reply;

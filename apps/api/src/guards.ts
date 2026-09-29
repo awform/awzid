@@ -79,3 +79,20 @@ export async function needTeacher(req: FastifyRequest, reply: FastifyReply) {
   if (!req.auth.mfaVerified)
     return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
 }
+
+/**
+ * Audit MIN-1 : titulaire MINEUR (compte « adulte » dont le profil est « ado ») — les fonctions qui exigent
+ * un parent (achat, envoi de la voix, accords parentaux) lui sont refusées.
+ */
+export async function minorHolder(db: Db, accountId: string): Promise<boolean> {
+  const [a] = await db
+    .select({ kind: t.account.kind })
+    .from(t.account)
+    .where(eq(t.account.id, accountId));
+  if (a?.kind !== 'adulte') return false;
+  const ps = await db
+    .select({ kind: t.profile.kind })
+    .from(t.profile)
+    .where(eq(t.profile.ownerAccountId, accountId));
+  return ps.some((p) => p.kind !== 'adulte');
+}

@@ -16,7 +16,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | SEC-6 | mineur | Ressaisies du mot de passe sans limite d'essais | à faire | | |
 | SEC-7 | mineur | HTTP clair servi en production ; cookie sans `Secure` sur HTTP | à faire | | |
 | SEC-8 | mineur | Entrées de la file hors ligne sans schéma (1 Mo de JSON libre par événement) | à faire | | |
-| MIN-1 | majeur | Un mineur ayant l'âge du « consentement numérique » obtient un profil **adulte**, sans aucune protection | à faire | | |
+| MIN-1 | majeur | Un mineur ayant l'âge du « consentement numérique » obtient un profil **adulte**, sans aucune protection | corrigé | voir « MIN-1 » dans git log | audit-mineurs.test.ts « MIN-1 » |
 | MIN-2 | majeur | Deux calculs d'âge : un profil « enfant » reçoit le tuteur « ado » (texte libre, la nuit) | à faire | | |
 | MIN-3 | majeur | Compte « parent » sans contrôle d'âge : un enfant consent pour lui-même (Sénégal compris) | à faire | | |
 | MIN-4 | majeur | Accord `tuteur_ia` : ni code parent, ni preuve, ni pays ; impossible à retirer depuis « mes consentements » | à faire | | |
@@ -45,12 +45,12 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | CON-10 | mineur | Balise de fin du message élève reconstructible (injection) | à faire | | |
 | CON-11 | mineur | Texte libre d'un enfant de moins de 13 ans stocké sans être lu ni classé | à faire | | |
 | CON-12 | mineur | Classifieur local : contournements simples et faux positifs | à faire | | |
-| OFF-1 | bloquant | Relais d'école (lot 17) : des réponses confirmées « acceptées » à la tablette sont effacées si la session de l'élève a expiré | corrigé | commit commun « OFF-1, OFF-6 » | relay.test.ts « audit OFF-1 » (+ tests du relais mis à jour) |
+| OFF-1 | bloquant | Relais d'école (lot 17) : des réponses confirmées « acceptées » à la tablette sont effacées si la session de l'élève a expiré | corrigé | 44fa0b6 (commun avec OFF-6) | relay.test.ts « audit OFF-1 » |
 | OFF-2 | majeur | Un seul événement hors bornes : 500 sur tout le lot et file de l'appareil bloquée à vie | à faire | | |
 | OFF-3 | majeur | Appareil partagé : à la déconnexion, la file et les voix de A restent ; la connexion de B détruit la file de A | à faire | | |
 | OFF-4 | mineur | File de l'appareil : 4xx renvoyés à l'infini, portail captif et quota plein non gérés | à faire | | |
 | OFF-5 | mineur | Réponse antidatée par `deviceAt` : la leçon passe « maîtrisée » ; dates impossibles acceptées | à faire | | |
-| OFF-6 | majeur | Relais (lot 17) : saturation du disque par n'importe quel appareil du Wi-Fi ; exception non rattrapée | corrigé | commit commun « OFF-1, OFF-6 » (mêmes fonctions) | relay.test.ts « audit OFF-6 » |
+| OFF-6 | majeur | Relais (lot 17) : saturation du disque par n'importe quel appareil du Wi-Fi ; exception non rattrapée | corrigé | 44fa0b6 (commun avec OFF-1) | relay.test.ts « audit OFF-6 » |
 | OFF-7 | mineur | Collision volontaire d'identifiant : un autre compte fait disparaître un événement | à faire | | |
 | MET-1 | bloquant | Un bilan ou un examen fait dans l'application compte toujours 100 % : certificat « Très bien » assuré | corrigé | e723584 | audit-met1.test.ts |
 | MET-2 | mineur | Certificat délivrable avec un contrôle continu partiel ; examen à 49,995 % arrondi à 50 | corrigé | e45008a | school.test.ts « audit MET-2 » ; lot13.test.ts (livres réels) mis à jour |

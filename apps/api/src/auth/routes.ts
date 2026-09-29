@@ -241,7 +241,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       if (b.kind === 'adulte')
         await db.insert(t.profile).values({
           ownerAccountId: a.id,
-          kind: 'adulte',
+          // audit MIN-1 : un titulaire de moins de 18 ans a un profil « ado » (protections des mineurs)
+          kind: ageFromYear(b.birthYear!) < 18 ? 'ado' : 'adulte',
           pseudonym: b.pseudonym ?? 'Moi',
           birthYear: b.birthYear ?? null,
           avatar: 'lune',

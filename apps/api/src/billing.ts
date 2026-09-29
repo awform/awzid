@@ -5,6 +5,7 @@
  * droits (table subscription). Achat depuis l'espace adulte seulement : code parent exigé s'il existe.
  * AWFORM_PAIEMENT=off (défaut) : offres affichées, aucune vente.
  */
+import { minorHolder } from './guards.js';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { schema as t, type Db } from '@awform/db';
@@ -258,6 +259,8 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
       if (billing.mode === 'off') return err(reply, 404, 'paiement_desactive');
       const a = await account(req.auth.accountId);
       if (!a) return err(reply, 401, 'non_connecte');
+      // audit MIN-1 : un mineur inscrit seul n'achète pas (un parent le fait depuis son compte)
+      if (await minorHolder(db, a.id)) return err(reply, 403, 'parent_requis');
       const plan = planByCode(req.body.plan);
       if (!plan || plan.kind === 'gratuit') return err(reply, 400, 'formule_inconnue');
       if (!plan.pour.includes(a.kind as 'parent' | 'adulte' | 'enseignant'))
