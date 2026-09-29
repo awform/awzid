@@ -424,3 +424,217 @@ source ; `tanwinDisplay` réversible sur les 6 236 versets (3 611 touchés) et j
 coranique robuste aux variantes simples ; segments `{{coran:…}}` rendus par l'application depuis Tanzil
 (`coranIsExact`) ; page QR en liste blanche (titre, objectifs, mots) ; aucun texte libre d'enfant < 13 ans vers le
 modèle ; tuteur `off` par défaut ; détresse et rencontre en `question` → ligne `tutor_alert`.
+
+---
+
+## Domaine 2 — Protection des mineurs et RGPD
+
+Banc : tests temporaires `apps/api/audit/rgpd-mineurs.test.ts`, `rgpd-cycle.test.ts`, `rgpd-extra.test.ts`
+(édition factice avec la leçon `en1.l05`, tuteur `simule`, paiement `simule`, clé de récitation). Année courante
+notée Y. Toutes les sorties « >> » ci-dessous ont été rejouées par l'auditeur principal.
+
+### MIN-1 — Un mineur ayant l'âge du « consentement numérique » obtient un profil **adulte**, sans aucune protection — **MAJEUR**
+
+- **Fichiers** : `apps/api/src/auth/routes.ts:197-202` et `:228-235` (profil créé `kind: 'adulte'` quel que soit
+  l'âge) ; `apps/api/src/tutor.ts:107-113` (audience adulte, consentement réputé acquis) ; `apps/api/src/today.ts:40`
+  (`mineur: p.kind !== 'adulte'`) ; `packages/db/src/notify.ts:107`.
+- **Scénario** : un collégien de 13 ans aux États-Unis (idem 13 ans en BE/GB/SE/DK/PT, 15 ans en FR) s'inscrit seul
+  comme « adulte ».
+- **Preuve** :
+  ```
+  >> signup 201 profil [{"kind":"adulte","birthYear":2012,…}]
+  >> protections {"mineur":false,"enfant":false,"tuteurIA":false,"texteLibreTuteur":true,…,"compteurRegularite":true,…}
+  >> tuteur texte libre 23h 200 {"audience":"adulte","ia":true,"route":"modele","fournisseur":"simule"}
+  >> paiement sans code parent 200 {"checkoutId":"…","simule":true}
+  >> accord envoi recitation (sans parent) 200
+  >> notifications dues pour ado (dimanche 18h30) ["rapport"]
+  ```
+  La page « protections » affiche en plus `tuteurIA:false` alors que l'IA répond.
+- **Correction** : `kind = age < 18 ? 'ado' : 'adulte'` pour un titulaire ; dériver `mineur` et l'audience du tuteur
+  de l'âge (ou du `kind`, mais d'**une seule** source) ; exiger l'accord parental pour les fonctions sensibles.
+
+### MIN-2 — Deux calculs d'âge : un profil « enfant » reçoit le tuteur « ado » (texte libre, la nuit) — **MAJEUR**
+
+- **Fichiers** : `apps/api/src/auth/policy.ts:42-45` (`année − naissance − 1`, utilisé pour ranger le profil,
+  `routes.ts:473`) ; `apps/api/src/tutor.ts:106-112` (`année − naissance`, sans −1, et ignore `profile.kind`) ;
+  `apps/api/src/today.ts:38-39` et `:300-303` (protections affichées « enfant »).
+- **Scénario** : profil né en Y−13 → rangé `enfant` (âge calculé 12) ; le parent active le tuteur ; le tuteur le
+  traite comme un ado de 13 ans.
+- **Preuve** :
+  ```
+  >> ageFromYear(Y-13)= 12 …
+  >> kind enfant
+  >> protections {"enfant":true,"texteLibreTuteur":false,"horaireNuit":"aucun tuteur entre 21 h et 7 h","tuteurIA":true}
+  >> tuteur question libre à 23 h 200 {"audience":"ado","ia":true,"route":"modele"}
+  ```
+  Un enfant de 12 ans envoie donc du texte libre au modèle à 23 h, alors que l'écran promet le contraire
+  (règles « moins de 13 ans : boutons seulement » et « pas de tuteur entre 21 h et 7 h »).
+- **Correction** : l'audience du tuteur = `profile.kind` (ou une fonction d'âge unique) ; test « enfant né en Y−13 ».
+
+### MIN-3 — Compte « parent » sans contrôle d'âge : un enfant consent pour lui-même (Sénégal compris) — **MAJEUR**
+
+- **Fichiers** : `apps/api/src/auth/routes.ts:197` (âge vérifié seulement si `kind === 'adulte'`) ; `:447-501`
+  (profil d'enfant créé sur simple ressaisie du mot de passe).
+- **Preuve** (pays SN, âge requis 18 ans) :
+  `>> signup parent sans annee 201` → `>> profil 201` → `>> auto-consentement tuteur_ia 200 {"actif":true}`.
+- **Correction** : année de naissance obligatoire pour un « parent », refus sous 18 ans, déclaration de majorité
+  dans la preuve du consentement. (Limite inhérente au déclaratif, mais aujourd'hui **aucune** barrière.)
+
+### MIN-4 — Accord `tuteur_ia` : ni code parent, ni preuve, ni pays ; impossible à retirer depuis « mes consentements » — **MAJEUR**
+
+- **Fichiers** : `apps/api/src/tutor.ts:297-316` ; `apps/api/src/auth/routes.ts:65-70` (`OPTIONAL_CONSENTS` sans
+  `tuteur_ia`) et `:677` (409).
+- **Preuve** :
+  ```
+  >> PUT tuteur sans code parent (code défini) 200
+  >> consentement tuteur_ia listé {…"type":"tuteur_ia",…,"optional":false}
+  >> retrait générique tuteur_ia 409 {"error":{"code":"consentement_necessaire"}}
+  >> preuve du consentement tuteur_ia {"country":null,"evidence":null}
+  ```
+  Sur l'appareil partagé, l'enfant active lui-même l'IA malgré le code parent.
+- **Correction** : exiger `x-parent-pin` (ou le mot de passe) ; enregistrer pays et preuve ; ajouter `tuteur_ia` aux
+  consentements retirables (ou rendre le retrait possible depuis la page RGPD).
+
+### MIN-5 — Compte supprimé : l'enseignant garde l'accès à l'enfant pendant 30 jours (liste, audio, CSV) — **MAJEUR**
+
+- **Fichiers** : `apps/api/src/auth/routes.ts:779-781` (seul `deletedAt` est posé) ; `packages/db/src/hifz.ts:242-256`
+  (`classMembers`), `packages/db/src/recitations.ts:103`, `apps/api/src/recitations.ts:234-244` (aucun filtre
+  `account.deletedAt`).
+- **Preuve** :
+  ```
+  >> suppression 200 {"ok":true,"effacementDefinitif":"2026-10-29…"}
+  >> J+0 enseignant voit encore le profil true
+  >> J+0 récitation listée true
+  >> J+0 audio écoutable 200
+  >> J+0 export CSV contient l'élève true
+  ```
+- **Correction** : à la demande de suppression, effacer immédiatement `class_member`, le lien `class_pupil` et
+  `recitation_upload` ; filtrer `deletedAt IS NULL` dans toutes les requêtes enseignant.
+
+### MIN-6 — Export RGPD incomplet (art. 15 et 20) — **MAJEUR**
+
+- **Fichier** : `apps/api/src/auth/routes.ts:694-760`.
+- **Preuve** (une donnée marquée créée dans chaque table, puis `GET /api/v1/account/export`) :
+  ```
+  >> présence dans l'export {"tutor_log":false,"tutor_question":false,"tutor_alert":false,"subscription":false,
+     "billing_checkout":false,"profile_rhythm":false,"push_subscription":false,"assignment_mark_devoir":false,
+     "paper_result":false,"certificate":false,"certificate_titulaire":false,"class_pupil_id":false,"audit_log":false,
+     "guardianship":false,"consent_given":true}
+  ```
+  Le brief (question 13) cite précisément `tutor_log`, `tutor_question`, `subscription`, `profile_rhythm` : **aucun**
+  n'est exporté. (Bien : ni hash du mot de passe ni secret TOTP dans l'export.)
+- **Correction** : ajouter ces tables ; test qui parcourt **toutes** les tables ayant une clé étrangère vers
+  `account` ou `profile` et échoue si l'une manque à l'export.
+
+### MIN-7 — Après l'effacement définitif, il reste des données personnelles (e-mail en clair, âge, pays) — **MAJEUR**
+
+- **Fichiers** : `apps/api/src/auth/routes.ts:262`, `:272-273` (clé `login:<email>` créée même pour un e-mail
+  inconnu) ; `apps/api/src/auth/service.ts:131-147` (effacée seulement après une connexion réussie) ;
+  `packages/db/src/purge.ts` (seul `account` est effacé, par cascade) ; journal : `routes.ts:236`, `:500`,
+  `apps/api/src/recitations.ts:182-186`.
+- **Preuve** (purge à J+31) :
+  ```
+  >> purge J+29 0 J+31 1
+  >> reste après purge {"audit_target_profil":[{"action":"compte.creation","after":{"kind":"parent","country":"FR"}},
+     {"action":"profil.creation","after":{"age":13,"country":"FR"}},…],"auth_throttle":[{"key":"login:supprime@exemple.org"}],…}
+  ```
+- **Correction** : clé `login:sha256(email)` et purge d'`auth_throttle` au-delà de 24 h ; la purge pseudonymise
+  `target`/`after` des lignes `audit_log` qui visent les identifiants effacés.
+
+### MIN-8 — Durées de conservation non appliquées (questions libres des enfants gardées sans limite) — **MAJEUR**
+
+- **Fichiers** : `apps/worker/src/index.ts:68-76` (4 purges seulement) ; `packages/db/src/tutor.ts:151-158` (seul
+  `tutor_log` est purgé, 12 mois).
+- **Preuve** (toutes les dates vieillies à 2020, puis les 4 purges du travailleur) :
+  ```
+  >> purges {"comptes":0,"tuteur":2,"certs":0,"recs":2}
+  >> restants {"tutor_log":{"n":0},"tutor_question":{"n":2},"tutor_alert":{"n":2},"audit_log":{"n":31},
+     "auth_throttle":{"n":3,"k":["login:supprime@exemple.org","login-ip:127.0.0.1","signup:127.0.0.1"]},
+     "sessions_expirees":{"n":1},"billing_checkout":{"n":3},…}
+  ```
+- **Correction** : purges de `tutor_question` et `tutor_alert` traitées (12 mois), `audit_log` (durée à fixer),
+  `auth_throttle` (> 24 h, contient des IP), sessions expirées/révoquées (> 30 j), checkouts abandonnés.
+
+### MIN-9 — Consentement `rappels` décoratif : son retrait n'arrête pas les notifications — **MINEUR**
+
+- **Fichiers** : `apps/api/src/auth/routes.ts:66` ; `packages/db/src/notify.ts:83-107` (le consentement n'est jamais
+  lu) ; `apps/api/src/today.ts:302` (lu au niveau du profil alors qu'il est enregistré au niveau du compte).
+- **Preuve** : `>> protections.rappels alors que rappels accepté false` ; `>> retrait rappels 200` ;
+  `>> notifications encore dues après retrait ["rapport"]`.
+- **Correction** : au retrait, désactiver `notification_pref` et effacer `push_subscription`.
+
+### MIN-10 — Code parent contournable pour l'envoi de récitations — **MINEUR**
+
+- **Fichier** : `apps/api/src/recitations.ts:71-77` (contrôle seulement si `kind === 'enfant'` **et** code défini).
+- **Preuve** : `>> parent sans code : accord enfant 200` ; `>> parent sans code : envoi enfant 201` ;
+  `>> ado envoi sans code 201` (avec code défini pour un enfant : `401`, correct). `RecitationEnvoi.svelte` promet
+  pourtant « enfant : code parent à chaque envoi ».
+- **Correction** : pour un enfant, exiger qu'un code parent soit défini (409 `code_parent_a_definir`).
+
+### MIN-11 — Une récitation réapparaît chez l'enseignant après retrait puis nouvelle inscription — **MINEUR**
+
+- **Fichier** : `apps/api/src/auth/routes.ts:680-684` (retrait de `partage_enseignant` sans effacer
+  `recitation_upload`).
+- **Preuve** : `>> envoi 201` → `>> après retrait 0` → `>> après ré-inscription (nouvel accord partage seulement) 1`.
+- **Correction** : effacer les récitations envoyées aux classes quittées.
+
+### MIN-12 — Administrateur : textes libres des enfants de toutes les classes, comptes supprimés, masquage faible — **MINEUR**
+
+- **Fichier** : `apps/api/src/admin.ts:13-18` (masquage), `:39-50` (pas de filtre `deletedAt`), `:67-79` (texte).
+- **Preuve** : `>> admin questions (texte enfant, hors école) [["Enf","Je m'appelle Awa Diallo, j'habite rue 12 à
+  Thiès"],…]` ; compte supprimé listé ; `maskEmail("ab@…") → "a…b@…"` (adresse de 2 caractères révélée). (Bien :
+  `>> admin accès école 403 404`.)
+- **Correction** : motif et date sans texte (ou texte expurgé) ; filtrer `deletedAt` ; masquer tout le local-part
+  des adresses courtes.
+
+### MIN-13 — Journaux Fastify : URL complète (identifiants, paramètres) et adresse IP — **MINEUR**
+
+- **Fichier** : `apps/api/src/app.ts:74-75` (seuls `authorization` et `cookie` masqués).
+- **Preuve** : `{"level":30,…,"req":{"method":"GET","url":"/api/v1/tutor/01a0…/journal?email=x@y.z",…,
+  "remoteAddress":"127.0.0.1"},"msg":"incoming request"}`.
+- **Correction** : sérialiseur `req` sans chaîne de requête, UUID remplacés, IP tronquée ; rétention des journaux
+  Docker documentée (`max-size`, `max-file`).
+
+### MIN-14 — Réinscription impossible 30 jours et révélation de l'existence du compte — **MINEUR**
+
+- **Fichier** : `apps/api/src/auth/routes.ts:205-209`.
+- **Preuve** : après suppression, `>> réinscription même e-mail 409 {"code":"email_indisponible"}` et
+  `>> connexion 401`. L'inscription révèle plus généralement si une adresse a un compte (énumération).
+- **Correction** : « annuler la suppression » à la connexion pendant 30 jours, ou libérer l'e-mail ; réponse neutre
+  à l'inscription (message envoyé par e-mail).
+
+### MIN-15 — Pays déclaratif, codes inexistants acceptés — **MINEUR**
+
+- **Fichier** : `apps/api/src/auth/routes.ts:62`, `:180` (motif `^[A-Z]{2}$` seulement).
+- **Preuve** : `>> adulte 15 ans « FR » sans accord de transfert 201 adulte` ; `>> même âge « SN » 403
+  {"code":"age_parent_requis","age":18}` ; `>> pays inexistant ZZ 201`.
+- **Correction** : liste ISO 3166 ; pour l'école pilote, imposer SN aux familles d'une classe sénégalaise.
+
+### MIN-16 — Enregistrements vocaux locaux : la limite de 7 jours n'est appliquée qu'à l'ouverture de l'écran — **MINEUR**
+
+- **Fichier** : `apps/web/src/lib/recordings.ts:22-30`.
+- **Preuve** : `grep -rn "listRecordings" apps/web/src` → seulement `Recorder.svelte:24` et
+  `RecitationEnvoi.svelte:42` ; aucun minuteur, ni `+layout`, ni service worker ne purge.
+- **Correction** : purge au démarrage de l'application et à l'activation du service worker.
+
+### MIN-17 — Branche `lot17-wip` : consentement par pays cohérent mais non appliqué aux profils — **MINEUR**
+
+- **Fichiers** (branche `lot17-wip`) : `apps/api/src/auth/policy.ts:113`, `:177` (« tout mineur passe par un parent »
+  écrit, appliqué aux seuls comptes « adulte ») ; `routes.ts:491-505` (consentements de profil sans loi ni
+  autorité) ; `apps/api/test/lot17.test.ts` (ni adulte SN de 17 ans, ni profil d'enfant sénégalais testés).
+- **Preuve** : `diff -u` main ↔ lot17 de `policy.ts` et `routes.ts` : seuls ajouts `countryRules`, la route
+  `/pays/:code/regles` et `evidence` sur les consentements du **compte** ; MIN-1 et MIN-3 restent vrais.
+- **Correction** : appliquer `countryRules` aux profils et aux consentements facultatifs ; tests.
+
+**Soupçons** : neutralisation CSV (`packages/school/src/csv.ts:11`) incomplète pour une cellule commençant par une
+espace, une espace insécable ou « ＝ » pleine chasse (sorties `" =1+1"`, `"＝1+1"` non préfixées ; évaluation réelle
+par un tableur non vérifiée) ; `billing_checkout`/`subscription` effacés en cascade avec le compte (obligation
+comptable de conservation des pièces à trancher) ; certificat (nom complet) conservé après effacement : conforme au
+« registre durable » décidé, **à valider par le juriste**.
+
+**Vérifié solide** : le retrait de `partage_enseignant` coupe **immédiatement** l'accès (profil, hifẓ 404,
+récitations et questions 0) ; retrait d'`envoi_recitation` = effacement ; la purge respecte 30 jours (J+29 : 0 ;
+J+31 : 1) et la cascade efface profil, récitations, liste de classe, journal et questions du tuteur ; un compte
+supprimé ne peut plus se connecter ; admin sans accès à l'espace école ; CSV : `=`, `+`, `-`, `@`, tabulation, retour
+chariot neutralisés ; un « adulte » SN de 15 ans est refusé ; profil d'enfant sans e-mail (pseudonyme, année,
+avatar, niveau).
