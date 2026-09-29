@@ -9,6 +9,7 @@ import {
   bareWords,
   hasArabic,
   PRESENTATION_FORMS,
+  transliterationPatterns,
   transliterationRuns,
   type QuranIndex,
 } from './arabic.js';
@@ -123,7 +124,17 @@ export const CITATION = new RegExp(
   'i',
 );
 export const COLLECTION_NUMBER =
-  /(bukh[a]?ri|boukhari|muslim|mouslim|tirmid|abu da|abou da|nasa.?i|ibn maj|ahmad|malik|muwatta|البخاري|مسلم|الترمذي)[^.\n]{0,25}\d+/i;
+  /(bukh[a]?ri|boukhari|muslim|mouslim|tirmid|abu da|abou da|nasa.?i|ibn maj|ahmad|malik|muwatta|bayhaq|daraqutn|hakim|tabaran|darimi|البخاري|مسلم|الترمذي|أبو داود|ابن ماجه|النسائي|أحمد|مالك|الموطأ|البيهقي|الطبراني)[^.\n]{0,25}[0-9\u0660-\u0669\u06F0-\u06F9]+/i;
+/**
+ * Audit CON-5 : mots de jugement religieux, jamais utiles au tuteur de langue — bloqués PARTOUT (le tuteur se
+ * rabat alors sur une explication validée). « péché » est cherché avec son accent (« pêche » reste permis).
+ */
+export const VERDICT_WORDS =
+  /\b(haram|halal|makruh|makrouh|mustahab|moustahab|wajib|fardh?|interdite?s?|obligations?|obligatoires?|forbidden|sinful|sins?|obligatory)\b|pas le droit|en islam|in islam|حرام|حلال|مكروه|واجب|مستحب|فرض|محرم|يجوز/i;
+const SIN_FR = /\bpéchés?\b|\bpécher\b/i;
+/** contexte d'un hadith : alors AUCUN nombre (latin ou arabe) dans le texte libre (numéros inventés) */
+const HADITH_CONTEXT = /hadith|prophete|sunna|rapporte|narrat|حديث|رواه|النبي/i;
+const ANY_NUMBER = /[0-9\u0660-\u0669\u06F0-\u06F9]/;
 export const VERDICT =
   /\b(c.est|c.est bien|est|sont|serait|reste|devient)\s+(tout a fait\s+)?(haram|halal|licite|illicite|interdit|permis|obligatoire|recommande|deconseille|makruh|mustahab|wajib|fard|un peche|pas un peche|autorise)\b|\btu (dois|peux|ne dois pas|ne peux pas) (prier|jeuner|payer|epouser|manger|boire|ecouter|porter)|\b(it is|it's) (haram|halal|forbidden|allowed)\b|حرام|حلال|يجوز|لا يجوز/i;
 export const PERSONAL =
@@ -229,10 +240,14 @@ export function filterDraft(raw: unknown, d: FilterDeps): FilterOutcome {
     }
   }
   check('citation_sans_registre', CITATION.test(folded) && !hasRegistry);
-  check('numero_de_hadith', COLLECTION_NUMBER.test(folded));
-  const verdict = VERDICT.test(folded);
+  check(
+    'numero_de_hadith',
+    COLLECTION_NUMBER.test(folded) ||
+      ((hasRegistry || HADITH_CONTEXT.test(folded)) && ANY_NUMBER.test(free)),
+  );
+  const verdict = VERDICT.test(folded) || VERDICT_WORDS.test(folded) || SIN_FR.test(free);
   check('avis_religieux', verdict);
-  const tr = transliterationRuns(free);
+  const tr = [...transliterationRuns(free), ...transliterationPatterns(free)];
   check('phonetique_latine', tr.length > 0, tr[0]);
   check('donnees_personnelles', PERSONAL.test(folded));
   check('polemique', POLEMIC_OUT.test(folded));

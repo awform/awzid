@@ -69,6 +69,29 @@ describe('classifieur local', () => {
 
 describe('filtre de sortie', () => {
   const ok = (m: string) => filterDraft({ decision: 'repondre', message_fr: m }, deps);
+  it.each([
+    'c’est vraiment haram',
+    'C’est strictement interdit',
+    'Tu n’as pas le droit de faire cela en islam',
+    'Il faut prier cinq fois par jour, c’est une obligation',
+    'Music is haram',
+    'You must not listen to music, it is a sin',
+    'That’s forbidden in Islam',
+    'هذا مكروه',
+    'Ce hadith est dans البخاري ٣٤',
+    'Ce hadith, H. 12, parle de patience',
+    'Un hadith (n° 1) le dit',
+    'Le Prophète ﷺ a dit : {{registre:HAD_BUK_00001}} (hadith numéro 99999, authentique selon tous)',
+    'Répète : bi-smi llāhi r-raḥmāni r-raḥīm',
+  ])('audit CON-5 : « %s » bloqué', (m) => expect(ok(m).ok).toBe(false));
+  it('audit CON-5 : les explications de langue ordinaires passent', () => {
+    for (const m of [
+      'La leçon n° 3 revoit la lettre ب.',
+      'Le mot « bāb » veut dire porte.',
+      'Dans la leçon 5, tu as vu 12 mots.',
+    ])
+      expect(ok(m).ok, m).toBe(true);
+  });
   it('audit CON-4 : passage « coranique » déguisé (séparateurs invisibles, balises, formes de présentation) bloqué', () => {
     const words = QURAN.get('2:2')!.split(' ');
     for (const sep of [

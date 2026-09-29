@@ -178,3 +178,23 @@ export function transliterationRuns(text: string): string[] {
   if (cur.length >= 3) runs.push(cur.join(' '));
   return runs;
 }
+
+/**
+ * Translittération reconnue à sa FORME (audit CON-5), hors lexique : dans une fenêtre de 4 mots, au moins deux
+ * mots « translittérés » dont un porte une marque savante (ā ī ū ḥ ṣ ḍ ṭ ẓ ʿ ʾ) ; mot translittéré = marque
+ * savante, article ou préposition collé par un tiret (al-, ar-, bi-, wa-…) ou assimilation (r-r, s-s…).
+ */
+const SCHOLARLY = /[āīūḥṣḍṭẓʿʾĀĪŪḤṢḌṬẒ]/;
+const ARABIC_PREFIX = /^(al|ar|as|at|ad|an|ash|az|ath|adh|bi|li|wa|fi)-\p{L}|^(\p{L})-\2/iu;
+export function transliterationPatterns(text: string): string[] {
+  const words = text.split(/[\s,.;:!?«»"()]+/).filter(Boolean);
+  const strong = words.map((w) => SCHOLARLY.test(w));
+  const marked = words.map((w, i) => strong[i] || ARABIC_PREFIX.test(w));
+  const out: string[] = [];
+  for (let i = 0; i < words.length; i++) {
+    const win = [i, i + 1, i + 2, i + 3].filter((j) => j < words.length);
+    if (win.filter((j) => marked[j]).length >= 2 && win.some((j) => strong[j]))
+      out.push(win.map((j) => words[j]).join(' '));
+  }
+  return out;
+}
