@@ -11,8 +11,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | SEC-1 | majeur | Second facteur : `totp/setup` désactive le 2FA avant confirmation ; `totp/confirm` sans limite ni anti-rejeu | corrigé | 51a32f8 | audit-2fa.test.ts « SEC-1 A/B » |
 | SEC-2 | majeur | Course sur le compteur d'échecs : 20 mots de passe, 30 codes parent testés d'un coup | corrigé | 4d6f007 | audit-2fa.test.ts « SEC-2 » |
 | SEC-3 | majeur | Consentements « parentaux » accordés sans le code parent (tuteur IA, partage enseignant) | corrigé | df1dbe7 | audit-mineurs.test.ts « SEC-3 » |
-| SEC-4 | majeur | Second facteur non exigé sur les notifications et les paiements des enseignants | corrigé | voir « SEC-4 » dans git log | audit-2fa.test.ts « SEC-4 » |
-| SEC-5 | mineur | Rejeu d'un code TOTP par connexions parallèles | à faire | | |
+| SEC-4 | majeur | Second facteur non exigé sur les notifications et les paiements des enseignants | corrigé | 6c5a72f | audit-2fa.test.ts « SEC-4 » |
+| SEC-5 | mineur | Rejeu d'un code TOTP par connexions parallèles | corrigé | voir « SEC-5 » dans git log | audit-2fa.test.ts « SEC-5 » (connexions parallèles) |
 | SEC-6 | mineur | Ressaisies du mot de passe sans limite d'essais | à faire | | |
 | SEC-7 | mineur | HTTP clair servi en production ; cookie sans `Secure` sur HTTP | à faire | | |
 | SEC-8 | mineur | Entrées de la file hors ligne sans schéma (1 Mo de JSON libre par événement) | à faire | | |

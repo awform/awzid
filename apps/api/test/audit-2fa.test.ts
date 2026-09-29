@@ -7,7 +7,15 @@ import { eq } from 'drizzle-orm';
 import { setupBilling } from '@awform/billing';
 import { schema as t } from '@awform/db';
 import { hashSecret, totpAt } from '../src/auth/crypto.js';
-import { cookieOf, parent, PW, setupEdition, teacher, type Ctx } from './helpers.js';
+import {
+  cookieOf,
+  parent,
+  PW,
+  setupEdition,
+  teacher,
+  teacherWithSecret,
+  type Ctx,
+} from './helpers.js';
 
 const URL_ = process.env.TEST_DATABASE_URL;
 const now = () => Math.floor(Date.now() / 30_000);
@@ -140,5 +148,22 @@ describe.skipIf(!URL_)('audit — second facteur', () => {
     expect((await c.req('GET', '/api/v1/auth/me', S)).statusCode).toBe(200);
     expect((await c.req('POST', '/api/v1/auth/totp/setup', S, {})).statusCode).toBe(200);
     expect((await c.req('GET', '/api/v1/levels', S)).statusCode).toBe(200);
+  });
+
+  it('SEC-5 : un code TOTP ne sert qu’une fois, même par connexions parallèles', async () => {
+    const { secret } = await teacherWithSecret(c, 'sec5@ecole.example');
+    // code du pas SUIVANT (la configuration a consommé le pas courant ; tolérance ±1 pas)
+    const code = totpAt(secret, now() + 1);
+    const rs = await Promise.all(
+      Array.from({ length: 3 }, () =>
+        c.req(
+          'POST',
+          '/api/v1/auth/login',
+          {},
+          { email: 'sec5@ecole.example', password: PW, totp: code },
+        ),
+      ),
+    );
+    expect(rs.filter((r) => r.statusCode === 200)).toHaveLength(1);
   });
 });

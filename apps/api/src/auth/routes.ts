@@ -11,7 +11,7 @@
  * à la connexion.
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { and, asc, eq, isNull } from 'drizzle-orm';
+import { and, asc, eq, isNull, sql } from 'drizzle-orm';
 import {
   deleteProfileRecitations,
   profileFreeAnswers,
@@ -323,7 +323,21 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
           await failAttempt(db, accKey);
           return err(reply, 401, 'totp_incorrect');
         }
-        await db.update(t.account).set({ totpLastCounter: counter }).where(eq(t.account.id, a.id));
+        // audit SEC-5 : consommation ATOMIQUE du pas de temps (connexions parallèles : une seule gagne)
+        const won = await db
+          .update(t.account)
+          .set({ totpLastCounter: counter })
+          .where(
+            and(
+              eq(t.account.id, a.id),
+              sql`(${t.account.totpLastCounter} IS NULL OR ${t.account.totpLastCounter} < ${counter})`,
+            ),
+          )
+          .returning({ id: t.account.id });
+        if (!won.length) {
+          await failAttempt(db, accKey);
+          return err(reply, 401, 'totp_incorrect');
+        }
         mfa = true;
       }
       await clearFailures(db, accKey);

@@ -200,6 +200,11 @@ export async function adult(c: Ctx, email: string) {
 
 /** Enseignant créé en base (comme la CLI), second facteur configuré et vérifié. */
 export async function teacher(c: Ctx, email: string) {
+  return (await teacherWithSecret(c, email)).T;
+}
+
+/** Idem, avec le secret TOTP (tests du second facteur). */
+export async function teacherWithSecret(c: Ctx, email: string) {
   await c.h.db.insert(t.account).values({
     kind: 'enseignant',
     email,
@@ -214,7 +219,7 @@ export async function teacher(c: Ctx, email: string) {
     code: totpAt(s.secret, Math.floor(Date.now() / 30_000)),
   });
   if (ok.statusCode !== 200) throw new Error(ok.body);
-  return T;
+  return { T, secret: s.secret as string };
 }
 
 export async function newClass(c: Ctx, T: Record<string, string>, name: string) {
