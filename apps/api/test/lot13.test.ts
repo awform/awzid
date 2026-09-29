@@ -310,13 +310,28 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
       ).toBe(200);
       const tb2 = (await req('GET', `/api/v1/ecole/classes/${classId}/tableau`, teacher)).json();
       const r = tb2.rows.find((x: { pupil: { id: string } }) => x.pupil.id === paperId).result;
-      expect(r).toMatchObject({ status: 'complet', nf: 87, certificat: true, ccPartiel: true });
+      // audit MET-2 : contrôle continu partiel → certificat à confirmer par l'enseignant
+      expect(r).toMatchObject({
+        status: 'complet',
+        nf: 87,
+        certificat: false,
+        ccPartiel: true,
+        aConfirmer: 'cc_partiel',
+      });
       expect(r.decision.code).toBe('TB');
 
+      const sans = (
+        await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
+          kind: 'niveau',
+          apercu: true,
+        })
+      ).json();
+      expect(sans.eligible).toMatchObject({ ok: false, aConfirmer: 'cc_partiel' });
       const ap = (
         await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
           kind: 'niveau',
           apercu: true,
+          confirmerCcPartiel: true,
         })
       ).json();
       expect(ap.eligible.ok).toBe(true);
@@ -335,12 +350,14 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
       const c1 = await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
         kind: 'niveau',
         fields: { prenom_nom: 'Awa Diop' },
+        confirmerCcPartiel: true,
       });
       expect(c1.statusCode).toBe(201);
       expect(c1.json().certificate.number).toBe(`AWF-EN1-${YEAR}-0001`);
       const c2 = await req('POST', `/api/v1/ecole/pupils/${paperId}/certificats`, teacher, {
         kind: 'niveau',
         fields: { prenom_nom: 'Awa Diop' },
+        confirmerCcPartiel: true,
       });
       expect(c2.json().certificate.number).toBe(`AWF-EN1-${YEAR}-0002`);
       const got = (

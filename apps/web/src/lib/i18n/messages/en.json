@@ -975,6 +975,7 @@
   "classe.onglet_devoirs": "Homework",
   "classe.onglet_tableau": "Tracking and paper class",
   "classe.onglet_certificats": "Certificates",
+  "classe.confirmer_cc_partiel": "I confirm issuing it: recitations or written work were not entered (partial continuous assessment).",
   "classe.reglages": "Class settings",
   "classe.niveau": "Book used by the class",
   "classe.niveau_aucun": "None (to choose)",

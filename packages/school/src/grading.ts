@@ -116,6 +116,11 @@ export interface LevelResult {
   conditionManquante: string | null;
   /** certificat de niveau délivrable */
   certificat: boolean;
+  /**
+   * audit MET-2 : décision « certificat » mais contrôle continu PARTIEL (récitations ou productions non
+   * saisies) → certificat bloqué tant que l'enseignant ne l'a pas confirmé explicitement
+   */
+  aConfirmer: 'cc_partiel' | null;
   mention: { fr: string; ar: string } | null;
 }
 
@@ -123,7 +128,11 @@ const pct = (s: Score) => (s.max > 0 ? Math.max(0, Math.min(100, (100 * s.score)
 const round = (x: number, step: number) => (step > 0 ? Math.round(x / step) * step : x);
 const r2 = (x: number) => Math.round(x * 100) / 100;
 
-export function levelResult(input: LevelInput, rules: EvalRules = DEFAULT_RULES): LevelResult {
+export function levelResult(
+  input: LevelInput,
+  rules: EvalRules = DEFAULT_RULES,
+  opts: { ccPartielConfirme?: boolean } = {},
+): LevelResult {
   const missing: string[] = [];
   input.bilans.forEach((b, i) => {
     if (!b) missing.push(`bilan ${i + 1}`);
@@ -150,7 +159,9 @@ export function levelResult(input: LevelInput, rules: EvalRules = DEFAULT_RULES)
     }
     cc = r2(sum / w);
   }
-  const examenPct = input.examen ? r2(pct(input.examen)) : null;
+  // audit MET-2 : la condition « examen ≥ plancher » se juge sur le pourcentage EXACT (49,995 % < 50)
+  const examenExact = input.examen ? pct(input.examen) : null;
+  const examenPct = examenExact !== null ? r2(examenExact) : null;
   const status = missing.length ? 'incomplet' : 'complet';
   if (status === 'incomplet' || cc === null || examenPct === null)
     return {
@@ -164,6 +175,7 @@ export function levelResult(input: LevelInput, rules: EvalRules = DEFAULT_RULES)
       decision: null,
       conditionManquante: null,
       certificat: false,
+      aConfirmer: null,
       mention: null,
     };
   const nf = round(rules.nf.examen * examenPct + rules.nf.cc * cc, rules.nf.arrondi);
@@ -173,11 +185,14 @@ export function levelResult(input: LevelInput, rules: EvalRules = DEFAULT_RULES)
       input.track === 'enfants' || input.track === 'religion' ? 'enfants' : 'adultes'
     ]?.examen_min ?? 50;
   let conditionManquante: string | null = null;
-  if (examenPct < plancher && d.document === 'certificat') {
+  if (examenExact! < plancher && d.document === 'certificat') {
     conditionManquante = `examen < ${plancher}/100`;
     d = rules.decisions.find((x) => x.code === 'VC') ?? d;
   }
-  const certificat = d.document === 'certificat';
+  const decisionCertificat = d.document === 'certificat';
+  const aConfirmer =
+    decisionCertificat && ccPartiel && !opts.ccPartielConfirme ? 'cc_partiel' : null;
+  const certificat = decisionCertificat && !aConfirmer;
   return {
     status,
     missing,
@@ -189,6 +204,7 @@ export function levelResult(input: LevelInput, rules: EvalRules = DEFAULT_RULES)
     decision: { code: d.code, fr: d.fr, document: d.document },
     conditionManquante,
     certificat,
-    mention: certificat ? (MENTIONS[d.code] ?? null) : null,
+    aConfirmer,
+    mention: decisionCertificat ? (MENTIONS[d.code] ?? null) : null,
   };
 }

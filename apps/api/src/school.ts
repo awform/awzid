@@ -806,6 +806,8 @@ export function registerSchool(
       gender?: Gender;
       fields?: Record<string, string>;
       apercu?: boolean;
+      /** audit MET-2 : l'enseignant confirme la délivrance malgré un contrôle continu partiel */
+      confirmerCcPartiel?: boolean;
     };
   }>(
     '/api/v1/ecole/pupils/:pid/certificats',
@@ -827,6 +829,7 @@ export function registerSchool(
               additionalProperties: { type: 'string', maxLength: 200 },
             },
             apercu: { type: 'boolean' },
+            confirmerCcPartiel: { type: 'boolean' },
           },
         },
       },
@@ -854,7 +857,7 @@ export function registerSchool(
       let mention: string | null;
       let subject: string;
       let prefix: string;
-      let eligible: { ok: boolean; raison?: string };
+      let eligible: { ok: boolean; raison?: string; aConfirmer?: 'cc_partiel' };
       if (req.body.kind === 'niveau') {
         if (!cls.levelCode) return err(reply, 400, 'niveau_de_la_classe');
         const tb = await tableau(cls);
@@ -868,15 +871,26 @@ export function registerSchool(
             (n) => n.code === cls.levelCode,
           ) ?? null;
         const result = row.result!;
-        eligible = result.certificat
-          ? { ok: true }
-          : {
-              ok: false,
-              raison:
-                result.status === 'incomplet'
-                  ? `résultats incomplets : ${result.missing.join(', ')}`
-                  : `décision : ${result.decision?.fr ?? '—'}`,
-            };
+        // audit MET-2 : contrôle continu partiel → délivrance seulement sur confirmation explicite
+        const confirmed =
+          result.aConfirmer === 'cc_partiel' && req.body.confirmerCcPartiel === true;
+        eligible =
+          result.certificat || confirmed
+            ? { ok: true }
+            : result.aConfirmer === 'cc_partiel'
+              ? {
+                  ok: false,
+                  aConfirmer: 'cc_partiel',
+                  raison:
+                    'contrôle continu partiel (récitations ou productions non saisies) : confirmation de l’enseignant requise',
+                }
+              : {
+                  ok: false,
+                  raison:
+                    result.status === 'incomplet'
+                      ? `résultats incomplets : ${result.missing.join(', ')}`
+                      : `décision : ${result.decision?.fr ?? '—'}`,
+                };
         const fields = levelCertFields(
           {
             school,

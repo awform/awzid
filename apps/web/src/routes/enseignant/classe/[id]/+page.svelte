@@ -149,7 +149,7 @@
   let cert = $state({ pupilId: '', kind: 'niveau', part: '', gender: '' });
   let extra = $state<Record<string, string>>({});
   let preview = $state<{
-    eligible: { ok: boolean; raison?: string };
+    eligible: { ok: boolean; raison?: string; aConfirmer?: string };
     document: RenderedDoc;
   } | null>(null);
 
@@ -424,13 +424,16 @@
       ...(cert.gender ? { gender: cert.gender } : {}),
       fields: Object.fromEntries(Object.entries(extra).filter(([, v]) => v.trim())),
       apercu,
+      ...(confirmerCc ? { confirmerCcPartiel: true } : {}),
     };
     return call<{
-      eligible: { ok: boolean; raison?: string };
+      eligible: { ok: boolean; raison?: string; aConfirmer?: string };
       document: RenderedDoc;
       certificate: Cert;
     }>('POST', `/ecole/pupils/${cert.pupilId}/certificats`, body);
   }
+  /** audit MET-2 : délivrance malgré un contrôle continu partiel, sur confirmation explicite */
+  let confirmerCc = $state(false);
   async function doPreview(e?: SubmitEvent) {
     e?.preventDefault();
     const r = await certCall(true);
@@ -1099,6 +1102,12 @@
           <p class="warnbox" data-testid="cert-non-eligible">
             {t('classe.non_eligible', { raison: preview.eligible.raison ?? '' })}
           </p>
+          {#if preview.eligible.aConfirmer === 'cc_partiel'}
+            <label class="check" data-testid="confirmer-cc"
+              ><input type="checkbox" bind:checked={confirmerCc} onchange={() => doPreview()} />
+              {t('classe.confirmer_cc_partiel')}</label
+            >
+          {/if}
         {/if}
         {#if preview.document.missing.length}
           <p class="warnbox small">

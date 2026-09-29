@@ -269,3 +269,27 @@ describe.skipIf(!existsSync(CERTS))('modèles des livres (certificats.js)', () =
     expect(d.fr.map((l) => l.map((x) => x.t).join('')).join(' ')).toMatch(/ni une ijāza/);
   });
 });
+
+describe('audit MET-2 — certificat', () => {
+  const full = { bilans: [{ score: 18, max: 20 }], track: 'adultes' };
+  it('examen à 49,995 % : sous le plancher de 50, pas de certificat', () => {
+    const r = levelResult({ ...full, examen: { score: 9.999, max: 20 } });
+    expect(r.conditionManquante).toMatch(/examen/);
+    expect(r.certificat).toBe(false);
+  });
+  it('contrôle continu partiel : certificat bloqué jusqu’à la confirmation de l’enseignant', () => {
+    const r = levelResult({ ...full, examen: { score: 18, max: 20 } });
+    expect(r).toMatchObject({ ccPartiel: true, certificat: false, aConfirmer: 'cc_partiel' });
+    const ok = levelResult({ ...full, examen: { score: 18, max: 20 } }, undefined, {
+      ccPartielConfirme: true,
+    });
+    expect(ok).toMatchObject({ certificat: true, aConfirmer: null });
+    const complet = levelResult({
+      ...full,
+      examen: { score: 18, max: 20 },
+      recitations: { score: 18, max: 20 },
+      productions: { score: 18, max: 20 },
+    });
+    expect(complet).toMatchObject({ ccPartiel: false, certificat: true });
+  });
+});
