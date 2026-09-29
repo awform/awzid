@@ -5,7 +5,7 @@
  *  - effacé automatiquement au bout de 7 jours ; l'élève peut l'effacer tout de suite ;
  *  - profil d'enfant : seulement si le parent l'a autorisé sur cet appareil.
  */
-import { delMany, getAllByIndex, kvGet, kvSet, putRaw } from './idb';
+import { delMany, getAll, getAllByIndex, kvGet, kvSet, putRaw } from './idb';
 import { uuidv7 } from './sync-core';
 
 export const KEEP_DAYS = 7;
@@ -28,6 +28,21 @@ export async function listRecordings(profileId: string, now = Date.now()): Promi
       old.map((r) => r.id),
     ).catch(() => {});
   return all.filter((r) => !old.includes(r)).sort((a, b) => (a.id < b.id ? 1 : -1));
+}
+
+/**
+ * Efface les enregistrements de plus de 7 jours de TOUS les profils de l'appareil (audit MIN-16) : appelée au
+ * démarrage de l'application et à l'activation du service worker, pas seulement à l'ouverture de l'écran.
+ */
+export async function purgeOldRecordings(now = Date.now()): Promise<number> {
+  const all = await getAll<Recording>('recordings').catch(() => []);
+  const old = all.filter((r) => now - Date.parse(r.createdAt) > KEEP_DAYS * 86_400_000);
+  if (old.length)
+    await delMany(
+      'recordings',
+      old.map((r) => r.id),
+    ).catch(() => {});
+  return old.length;
 }
 
 export async function saveRecording(

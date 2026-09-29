@@ -15,6 +15,7 @@
 import { build, files, version } from '$service-worker';
 import { get } from '$lib/idb';
 import { flushQueue } from '$lib/sync-core';
+import { purgeOldRecordings } from '$lib/recordings';
 
 const sw = self as unknown as ServiceWorkerGlobalScope;
 const CACHE = `awform-shell-${version}`;
@@ -30,6 +31,8 @@ sw.addEventListener('activate', (event) => {
     caches
       .keys()
       .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      // enregistrements locaux de plus de 7 jours : effacés même si l'écran n'est jamais rouvert (MIN-16)
+      .then(() => purgeOldRecordings().catch(() => 0))
       .then(() => sw.clients.claim()),
   );
 });

@@ -14,6 +14,7 @@
   } from '$lib/attempts';
   import { t } from '$lib/i18n';
   import { getSettings, type Settings } from '$lib/offline';
+  import { purgeOldRecordings } from '$lib/recordings';
   import { cachedMe, fetchMe, type Me } from '$lib/session';
 
   let { children } = $props();
@@ -65,6 +66,8 @@
       .then((n) => (pending = n))
       .catch(() => {});
     startSync();
+    // enregistrements locaux de plus de 7 jours : effacés dès le démarrage (audit MIN-16)
+    void purgeOldRecordings().catch(() => {});
     // premier chargement : le compte vient du réseau (la copie locale peut être absente ou ancienne)
     void fetchMe().then((m) => (me = m));
     // mode école : retour à la grille des élèves après une période d'inactivité

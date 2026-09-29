@@ -23,7 +23,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-5 | majeur | Compte supprimé : l'enseignant garde l'accès à l'enfant pendant 30 jours (liste, audio, CSV) | corrigé | e6b6483 | audit-rgpd.test.ts |
 | MIN-6 | majeur | Export RGPD incomplet (art. 15 et 20) | corrigé | 25da93d | audit-rgpd.test.ts |
 | MIN-7 | majeur | Après l'effacement définitif, il reste des données personnelles (e-mail en clair, âge, pays) | corrigé | 3e1e41c | audit-rgpd.test.ts, roles.test.ts |
-| MIN-8 | majeur | Durées de conservation non appliquées (questions libres des enfants gardées sans limite) | corrigé | voir « MIN-8 » dans git log | audit-rgpd.test.ts, roles.test.ts |
+| MIN-8 | majeur | Durées de conservation non appliquées (questions libres des enfants gardées sans limite) | corrigé | 6a01db4 | audit-rgpd.test.ts, roles.test.ts |
 | MIN-9 | mineur | Consentement `rappels` décoratif : son retrait n'arrête pas les notifications | à faire | | |
 | MIN-10 | mineur | Code parent contournable pour l'envoi de récitations | à faire | | |
 | MIN-11 | mineur | Une récitation réapparaît chez l'enseignant après retrait puis nouvelle inscription | à faire | | |
@@ -31,7 +31,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-13 | mineur | Journaux Fastify : URL complète (identifiants, paramètres) et adresse IP | à faire | | |
 | MIN-14 | mineur | Réinscription impossible 30 jours et révélation de l'existence du compte | à faire | | |
 | MIN-15 | mineur | Pays déclaratif, codes inexistants acceptés | à faire | | |
-| MIN-16 | mineur | Enregistrements vocaux locaux : la limite de 7 jours n'est appliquée qu'à l'ouverture de l'écran | à faire | | |
+| MIN-16 | mineur | Enregistrements vocaux locaux : la limite de 7 jours n'est appliquée qu'à l'ouverture de l'écran | corrigé | voir « MIN-16 » dans git log | apps/web/src/lib/recordings.test.ts |
 | MIN-17 | mineur | Branche `lot17-wip` : consentement par pays cohérent mais non appliqué aux profils | corrigé | b42308f | audit-mineurs.test.ts « MIN-17 » |
 | CON-1 | bloquant | Les corrigés des examens et bilans sont envoyés à l'élève (API et paquet hors ligne) et comptent pour le certificat | corrigé | 1b24221 (D7) + 68ac8d0 | audit-con1.test.ts (échoue sans la correction) |
 | CON-2 | majeur | Projection élève en **liste noire** : translittération, corrigés et notes d'enseignant passent | à faire | | |
