@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Vérification BLOQUANTE avant chaque commit (activée par : git config core.hooksPath infra/git-hooks)
+#  1. pnpm-lock.yaml doit correspondre exactement aux package.json (install --frozen-lockfile) ;
+#  2. l'installation ne doit pas modifier le lockfile ;
+#  3. les fichiers indexés doivent être au format Prettier.
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+if ! pnpm install --frozen-lockfile --prefer-offline >/tmp/awform-precommit.log 2>&1; then
+  echo "COMMIT REFUSÉ : pnpm-lock.yaml ne correspond pas aux package.json (voir /tmp/awform-precommit.log)." >&2
+  echo "Lancer « pnpm install » sur la VM, puis rapatrier le lockfile." >&2
+  exit 1
+fi
+if ! git diff --quiet -- pnpm-lock.yaml; then
+  echo "COMMIT REFUSÉ : l'installation a modifié pnpm-lock.yaml (lockfile incomplet)." >&2
+  exit 1
+fi
+mapfile -t files < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(ts|js|mjs|svelte|json|md|ya?ml|css|html)$' || true)
+if [ "${#files[@]}" -gt 0 ] && ! pnpm exec prettier --check "${files[@]}" >/dev/null 2>&1; then
+  echo "COMMIT REFUSÉ : format Prettier (pnpm exec prettier --write …)." >&2
+  pnpm exec prettier --check "${files[@]}" >&2 || true
+  exit 1
+fi
