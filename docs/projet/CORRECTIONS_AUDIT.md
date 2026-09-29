@@ -65,7 +65,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | PAY-7 | mineur | Rotation du secret Stripe : plusieurs `v1=` mal gérés | corrigé | c7e5723 | billing.test.ts |
 | QUA-1 | majeur | Le garde-fou CI « aucune normalisation Unicode » ne peut jamais échouer | corrigé | b9cd9dc | audit-qua1.test.ts |
 | QUA-2 | majeur | Tests qui ne prouvent pas ce qu'ils annoncent | corrigé en partie : batterie au nombre exact (1 081, par famille), travailleur testé (planification, purge de nuit), test de concurrence de l'API ; CON-1 prouvé par l'API (audit-con1) ; school.test corrigé (lot 21). Reportés : couverture mesurée (dépendance à ajouter), a11y « moderate » (e2e à relancer avec les livres), tableau SIM_TABLE (documentation, pas un test) | 9d71681 | battery.test.ts, apps/worker/test/tasks.test.ts, audit-qua2.test.ts |
-| QUA-3 | mineur | Fonctions très longues | à faire | | |
+| QUA-3 | mineur | Fonctions très longues | reporté : découpage des gros modules (school.ts, auth/routes.ts, importer.ts) sans changement de comportement, à faire dans un lot dédié pour ne pas le mêler aux corrections | | |
 | INF-1 | bloquant | La CI est rouge sur `main` depuis le lot 9 (24 exécutions sur 24) | déjà corrigé | 8e8784f | CI locale : school.test.ts, pnpm -r --no-bail |
 | INF-2 | majeur | En CI, les tests d'API sur base sont presque tous sautés (57 sur 87), même une fois INF-1 corrigé | déjà corrigé | 8e8784f | synthetique.test.ts ; 100 tests d'API sans les livres |
 | INF-3 | mineur | Actions GitHub non épinglées par empreinte | corrigé | 0c5c0b0 | empreintes lues dans les journaux de la CI ; Dependabot (actions, npm, Docker) |
@@ -78,6 +78,6 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | INF-10 | mineur | Migrations sans retour arrière, appliquées avant la bascule | corrigé | 8c043af | audit-infra.test.ts |
 | INF-11 | mineur | Images Docker non épinglées par empreinte ; scripts : avertissements shellcheck | corrigé en partie : avertissements shellcheck corrigés et bloquants en CI, EXPLOITATION.md à jour ; images par empreinte (`@sha256`) à fixer depuis une machine qui atteint le registre (Dependabot Docker prêt) | 4c28833 | shellcheck (CI) |
 | PERF-1 | majeur | Budget JavaScript dépassé : 204,3 Ko Brotli (budget 150 Ko), et non « ≈ 59 Ko » | corrigé | 1dff35a | budget CI (pnpm --filter @awform/web budget), i18n.test.ts |
-| A11Y-1 | mineur | Cibles tactiles sous la règle de 48 px du projet | corrigé | voir « A11Y-1 » dans git log | a11y-cibles.test.ts |
-| CDC-1 | majeur | Affirmations du brief et du journal démenties par le code ou par GitHub | à faire | | |
-| CDC-2 | mineur | Fonctionnalités et exigences de test du CDC absentes ou partielles (lots 0-16) | à faire | | |
+| A11Y-1 | mineur | Cibles tactiles sous la règle de 48 px du projet | corrigé | c63d1a5 | a11y-cibles.test.ts |
+| CDC-1 | majeur | Affirmations du brief et du journal démenties par le code ou par GitHub | corrigé pour le journal (rectificatifs vérifiables en tête de JOURNAL_DEV) ; brief (branche audit-dossier) à corriger par le chef de projet | voir « CDC-1 » dans git log | commandes citées |
+| CDC-2 | mineur | Fonctionnalités et exigences de test du CDC absentes ou partielles (lots 0-16) | en partie : écarts tenus à jour dans ECARTS.md ; pnpm audit en CI (INF-4), couverture des corrections par des tests dédiés ; restent WebKit dans Playwright, k6, ZAP, seuil de couverture, correction générée sur tous les livres (VM) | | |

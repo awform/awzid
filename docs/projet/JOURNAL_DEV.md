@@ -8,6 +8,52 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 29/09/2026 — Corrections d'audit : fin des majeurs (tuteur) et constats mineurs (branche `corrections-audit`)
+
+- **Tuteur IA** (avant toute activation réelle) : CON-4 (Coran déguisé : séparateurs invisibles, ۝, balises,
+  formes de présentation), CON-5 (avis, numéros de hadith, phonétique reconnue à sa forme), CON-6 (texte libre
+  seulement avec « question »), CON-7 (une demande à la fois par profil : plafond tenu), CON-8 (oracle indépendant
+  du filtre, contournements injectés par le fournisseur hostile : **1 147 cas, 0 violation**), CON-9 (mise en
+  service seulement avec un rapport **signé**, complet, récent, même filtre), CON-10 (chevrons échappés), CON-11
+  (texte d'un enfant jamais stocké, classé pour sa protection), CON-12 (classifieur : forme compacte, faux
+  positifs corrigés ; wolof à compléter avec un référent).
+- **Sécurité** : SEC-6 (ressaisie du mot de passe limitée), SEC-7 (`deploy.sh --production` : HTTPS obligatoire,
+  cookie Secure), SEC-8 (événements bornés, schémas fermés).
+- **Mineurs, RGPD** : MIN-9 (retrait des rappels effectif), MIN-10 (voix d'un enfant : code parent obligatoire),
+  MIN-11 (retrait du partage = départ complet, récitations comprises), MIN-12 (administrateur sans texte ni
+  pseudonyme d'enfant), MIN-13 (journaux sans identifiants ni IP complète), MIN-14 (adresse libérée dès la
+  suppression), MIN-15 (pays ISO 3166-1).
+- **Hors ligne, métier** : OFF-4 (403/404 : la file attend ; portail captif ; stockage plein signalé), OFF-7
+  (conflit d'identifiant : renvoi sous un nouvel identifiant), MET-3 (rejeu, mois d'essai, barème), MET-4 (jalons,
+  migration Leitner).
+- **Paiements** : PAY-5 (un essai par compte, index unique, migration `0021`), PAY-6 (mot de passe exigé à
+  l'achat sans code parent), PAY-7 (rotation du secret Stripe).
+- **Infrastructure** : INF-3 (actions épinglées par empreinte, Dependabot), INF-4 (0 vulnérabilité, `pnpm audit`
+  en CI), INF-10 (sauvegarde avant migration, retour automatique à la version précédente), INF-11 (shellcheck
+  bloquant) ; A11Y-1 (cibles de 44 px au moins).
+- **Reportés** (raisons dans `CORRECTIONS_AUDIT.md`) : INF-5 (empreinte Gradle : site bloqué ici), QUA-3
+  (découpage des gros modules, lot dédié), CDC-2 en partie (WebKit, k6, ZAP, couverture).
+
+### Rectificatifs (audit CDC-1) — chaque chiffre suivi de la commande qui le produit
+
+| Affirmation antérieure | État vérifié le 29/09/2026 (branche `corrections-audit`) | Commande |
+|---|---|---|
+| « application ≈ 59 Ko de JavaScript » (lot 3) | faux depuis le lot 9 ; aujourd'hui **JavaScript initial de la page la plus lourde 103,2 Ko** (≤ 150), total de toutes les pages ≈ 232 Ko | `pnpm --filter @awform/web build && pnpm --filter @awform/web budget` |
+| « aucune normalisation (interdite par la CI) » | le contrôle ne pouvait pas échouer ; il échoue maintenant (QUA-1) | `bash infra/ci/garde-fous.sh` |
+| « la CI exécute la base et la batterie » | vrai depuis les corrections INF-1/INF-2 ; CI **entièrement verte** sur `corrections-audit` | GitHub Actions, branche `corrections-audit` |
+| « droits activés par `AWFORM_DROITS=on` » | vrai depuis PAY-4 (leçons et paquet hors ligne) | `apps/api/test/audit-pay4.test.ts` |
+| « réponses d'épreuve jamais sur l'appareil » | vrai depuis CON-1 / D7 | `apps/api/test/audit-con1.test.ts` |
+| « enregistrements effacés à 7 jours » | vrai depuis MIN-16 (démarrage, service worker) et OFF-3 (déconnexion) | `apps/web/src/lib/recordings.test.ts` |
+| « export complet » | vrai depuis MIN-6 (toutes les tables liées, découvertes depuis le schéma) | `apps/api/test/audit-rgpd.test.ts` |
+| « batterie : critères bloquants verts » | la batterie était circulaire ; depuis CON-8 : **1 147 cas**, oracle indépendant, 0 violation | `node packages/tutor/dist/cli/eval.js --fournisseur simule` |
+| « migrations 0000 → 0009 » | **0000 → 0021** (22 fichiers) | `ls packages/db/migrations/*.sql` |
+| « 1 110 messages anglais » | **1 303** clés, identiques en français | clés de `apps/web/src/lib/i18n/messages/en.json` |
+| « 832 tests automatiques » | invérifiable sans les livres ; sans les livres (conditions de la CI) : **488 verts, 37 sautés** | `pnpm -r --no-bail --workspace-concurrency=1 test` (avec `TEST_DATABASE_URL`) |
+
+Le brief d'audit (branche `audit-dossier`, non modifiée ici) reprend certaines de ces affirmations : **à corriger
+par le chef de projet** avant toute diffusion, avec ce tableau.
+
+---
 ## 29/09/2026 — Corrections d'audit, blocs 1 à 10 (branche `corrections-audit`, partie de `lot21-wip`)
 
 Nouvelles fonctionnalités arrêtées ; chaque constat a son test (rouge avant, vert après) et son commit (identifiant en

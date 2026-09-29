@@ -33,7 +33,8 @@ Lot 18 (branche `lot18-wip`, V1-a) : TERMINÉ — réponses libres corrigées pa
 Lot 19 (branche `lot19-wip`, V1-b) : TERMINÉ — épreuves notées, textes non préparés, remédiation.
 Lot 20 (branche `lot20-wip`, V1-e) : TERMINÉ — certificats signés (Ed25519) et vérifiables par QR.
 Lot 21 (branche `lot21-wip`, V1-f) : PARTIEL (schéma seulement) — arrêté pour les corrections d'audit.
-Corrections d'audit : branche `corrections-audit`, suivi `docs/projet/CORRECTIONS_AUDIT.md`.
+Corrections d'audit : branche `corrections-audit` — les 73 constats traités (corrigés, ou reportés avec leur
+raison), suivi `docs/projet/CORRECTIONS_AUDIT.md`, bilan `docs/projet/RAPPORT_CLOUD.md` ; CI entièrement verte.
 Tests : `apps/api/test/content.ts` (vrais livres, sinon contenu synthétique `infra/ci/contenu-synthetique`,
 généré par `infra/ci/synthetique/generer.mjs`, sans texte religieux) ; `helpers.ts` pour les nouveaux lots.
 État des lignes V1 : `docs/projet/ECARTS.md` ; décisions du client : `docs/projet/DECISIONS_EN_ATTENTE.md`.
