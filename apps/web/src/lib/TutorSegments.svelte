@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tanwinDisplay } from '@awform/content/text';
   import Ar from '$lib/Ar.svelte';
   import { t } from '$lib/i18n';
   import type { Segment } from '$lib/tutor';
@@ -12,7 +13,7 @@
     <p>{s.v.trim()}</p>
   {:else if s.t === 'coran'}
     <blockquote class="coran" lang="ar" dir="rtl">
-      <span class="quran-text" data-ref={s.ref}>{s.text}</span>
+      <span class="quran-text" data-ref={s.ref}>{tanwinDisplay(s.text)}</span>
       <footer class="src">{t('tuteur.source_coran', { ref: s.ref })}</footer>
     </blockquote>
   {:else if s.t === 'registre'}

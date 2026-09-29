@@ -1,3 +1,4 @@
+import { tanwinUndo } from '@awform/content/text';
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 
@@ -11,7 +12,8 @@ async function tanzil(page: Page, s: number, a: number): Promise<string> {
 async function shown(page: Page, ref: string): Promise<string> {
   const rest = await page.locator(`[data-verse="${ref}"]`).first().textContent();
   const b = page.locator(`[data-basmala="${ref}"]`);
-  return (await b.count()) ? `${await b.first().textContent()} ${rest}` : (rest ?? '');
+  // affichage : tanwins du Muṣḥaf de Médine → on compare au Tanzil APRÈS inversion de la transformation
+  return tanwinUndo((await b.count()) ? `${await b.first().textContent()} ${rest}` : (rest ?? ''));
 }
 
 test('Sciences islamiques : livres re, ra en aperçu, leçon de religion avec QCM corrigé', async ({

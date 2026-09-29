@@ -1,3 +1,4 @@
+import { tanwinUndo } from '@awform/content/text';
 import type { Page } from '@playwright/test';
 import { expect, loginTeacher, newAdult, PARENT_PIN, test } from './fixtures';
 
@@ -19,7 +20,8 @@ async function tanzil(page: Page, s: number, a: number): Promise<string> {
 async function shown(page: Page, ref: string): Promise<string> {
   const rest = await page.locator(`[data-verse="${ref}"]`).first().textContent();
   const b = page.locator(`[data-basmala="${ref}"]`);
-  return (await b.count()) ? `${await b.first().textContent()} ${rest}` : (rest ?? '');
+  // affichage : tanwins du Muṣḥaf de Médine → on compare au Tanzil APRÈS inversion de la transformation
+  return tanwinUndo((await b.count()) ? `${await b.first().textContent()} ${rest}` : (rest ?? ''));
 }
 
 test('carnet N1 : texte Tanzil exact, portion apprise, journal envoyé', async ({ page }) => {
@@ -131,9 +133,9 @@ test('Coran entier à mon rythme : tableau honnête, mois d’essai, portion du 
   await expect(page.getByTestId('charge')).toContainText('tour de 45 jours');
   await page.getByTestId('cycle-plan').selectOption('60');
   await expect(page.getByTestId('charge')).toContainText('tour de 60 jours');
-  // portion du jour : Al-Fātiḥa puis les dernières sourates (texte Tanzil, basmala sur sa ligne)
+  // portion du jour (pages RÉELLES du Muṣḥaf de Médine : Al-Fātiḥa occupe à elle seule la page 1) : 1:1-4
   expect(await shown(page, '1:1')).toBe(await tanzil(page, 1, 1));
-  expect(Buffer.from(await shown(page, '114:1'))).toEqual(Buffer.from(await tanzil(page, 114, 1)));
+  expect(Buffer.from(await shown(page, '1:4'))).toEqual(Buffer.from(await tanzil(page, 1, 4)));
   await page.getByTestId('je-l-ai-appris').click();
   await expect(page.getByTestId('appris')).toBeVisible();
 });

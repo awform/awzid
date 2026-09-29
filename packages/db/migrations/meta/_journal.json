@@ -71,6 +71,13 @@
       "when": 1790661457913,
       "tag": "0009_regularite",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790662966178,
+      "tag": "0010_divisions_coran",
+      "breakpoints": true
     }
   ]
 }

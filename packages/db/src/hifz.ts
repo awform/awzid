@@ -298,3 +298,19 @@ export async function leaveClass(db: Db, classId: string, profileId: string) {
     .delete(t.classMember)
     .where(and(eq(t.classMember.classId, classId), eq(t.classMember.profileId, profileId)));
 }
+
+/** Divisions officielles (null si les métadonnées Tanzil n'ont pas été importées). */
+export async function quranDivisions(db: Db): Promise<{
+  juz: Array<[number, number]>;
+  quarters: Array<[number, number]>;
+  pages: Array<[number, number]>;
+} | null> {
+  const rows = await db
+    .select()
+    .from(t.quranDivision)
+    .orderBy(t.quranDivision.kind, t.quranDivision.n);
+  if (!rows.length) return null;
+  const of = (k: string) =>
+    rows.filter((r) => r.kind === k).map((r) => [r.sura, r.aya] as [number, number]);
+  return { juz: of('juz'), quarters: of('quart'), pages: of('page') };
+}

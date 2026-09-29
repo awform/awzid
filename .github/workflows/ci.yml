@@ -57,10 +57,55 @@ jobs:
         with:
           persist-credentials: false
       - name: Scripts d'exploitation (syntaxe)
-        run: for f in infra/prod/*.sh infra/*.sh; do bash -n "$f"; done
+        run: for f in infra/prod/*.sh infra/*.sh infra/git-hooks/*; do bash -n "$f"; done
       - name: Docker Compose (configuration)
-        run: AWFORM_ENV_FILE=/dev/null docker compose -f infra/prod/compose.yml config -q
+        run: AWFORM_ENV_FILE=/dev/null AWFORM_DB_ENV_FILE=/dev/null AWFORM_CADDY_ENV_FILE=/dev/null docker compose -f infra/prod/compose.yml config -q
       - name: Caddyfile (validation)
         run: docker run --rm -e SITE=192.0.2.10 -v "$PWD/infra/prod/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2 caddy validate --config /etc/caddy/Caddyfile
       - name: Images api, worker, web
-        run: AWFORM_ENV_FILE=/dev/null docker compose -f infra/prod/compose.yml build api worker web
+        run: AWFORM_ENV_FILE=/dev/null AWFORM_DB_ENV_FILE=/dev/null AWFORM_CADDY_ENV_FILE=/dev/null docker compose -f infra/prod/compose.yml build api worker web
+
+  base-et-tuteur:
+    # tests sur PostgreSQL 18 (service conteneur, base jetable) et batterie adverse du tuteur (fournisseur
+    # SIMULÉ, aucune clé) ; contenu : uniquement le texte et les métadonnées Tanzil (infra/ci/contenu),
+    # jamais les livres — les tests qui en ont besoin se désactivent seuls
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: awform
+          POSTGRES_PASSWORD: awform-ci-jetable
+          POSTGRES_DB: awform_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U awform -d awform_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgres://awform:awform-ci-jetable@localhost:5432/awform_test
+      AWFORM_CONTENT_DIR: ${{ github.workspace }}/infra/ci/contenu
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: pnpm (corepack)
+        run: corepack enable && pnpm --version
+      - name: Installation (lockfile gelé)
+        run: pnpm install --frozen-lockfile
+      - name: Construction
+        run: pnpm build
+      - name: Empreintes du texte et des métadonnées Tanzil
+        run: sha256sum infra/ci/contenu/coran/*
+      - name: Tests (dont base PostgreSQL et batterie du tuteur)
+        run: pnpm test
+      - name: Rapport de la batterie adverse (fournisseur simulé)
+        run: node packages/tutor/dist/cli/eval.js --fournisseur simule --sortie tuteur-batterie.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: batterie-tuteur
+          path: tuteur-batterie.*

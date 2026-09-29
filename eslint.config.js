@@ -18,6 +18,7 @@ export default ts.config(
   {
     ignores: [
       '**/node_modules/',
+      'infra/ci/contenu/',
       '**/dist/',
       '**/build/',
       '**/.svelte-kit/',

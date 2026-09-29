@@ -6,7 +6,7 @@
   import { dueWords, loadBoxes, loadDeck } from '$lib/cards';
   import { hifzToday, loadMeta, localIso, type HifzToday } from '$lib/hifz';
   import { fmtNumber, t } from '$lib/i18n';
-  import { completeJuz, completeSuras } from '$lib/milestones';
+  import { completeHizb, completeJuz, completeQuarters, completeSuras } from '$lib/milestones';
   import { call, type ProfileInfo } from '$lib/session';
 
   /**
@@ -36,6 +36,8 @@
   let due = $state(0);
   let suras = $state<number[]>([]);
   let juz = $state<number[]>([]);
+  let hizb = $state<number[] | null>(null);
+  let quarts = $state<number[] | null>(null);
   let loaded = $state(false);
   let goal = $state(4);
   let rest = $state<number[]>([]);
@@ -57,7 +59,12 @@
         const meta = await loadMeta();
         const counts = (meta?.weights ?? []).map((w) => w.length);
         suras = completeSuras(hifz.acquis, counts);
-        juz = completeJuz(hifz.acquis, counts);
+        const d = meta?.divisions;
+        juz = completeJuz(hifz.acquis, counts, d?.juz);
+        if (d) {
+          hizb = completeHizb(hifz.acquis, counts, d.quarters);
+          quarts = completeQuarters(hifz.acquis, counts, d.quarters);
+        }
       }
       try {
         const deck = await loadDeck(profile);
@@ -213,7 +220,10 @@
           {t('auj.j_juz', { n: juz.length })}{#if juz.length}
             : {juz.map((j) => fmtNumber(j)).join(', ')}{/if}
         </li>
-        <li class="muted small">{t('auj.j_hizb_bientot')}</li>
+        {#if hizb && quarts}
+          <li data-jalon="hizb">{t('auj.j_hizb', { n: hizb.length })}</li>
+          <li data-jalon="quarts">{t('auj.j_quarts', { n: quarts.length })}</li>
+        {:else}<li class="muted small">{t('auj.j_hizb_bientot')}</li>{/if}
       {/if}
     </ul>
     <p class="muted small">{t('auj.jalons_regle')}</p>

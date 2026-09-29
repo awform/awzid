@@ -156,6 +156,27 @@ export async function importEdition(
         );
     }
 
+    // divisions officielles (juzʾ, quarts de ḥizb, pages de Médine, manzil) : remplacées si différentes
+    if (load.quranData) {
+      const d = load.quranData;
+      const rows = [
+        ...d.juz.map(([s, a], i) => ({ kind: 'juz', n: i + 1, sura: s, aya: a })),
+        ...d.quarters.map(([s, a], i) => ({ kind: 'quart', n: i + 1, sura: s, aya: a })),
+        ...d.pages.map(([s, a], i) => ({ kind: 'page', n: i + 1, sura: s, aya: a })),
+        ...d.manzil.map(([s, a], i) => ({ kind: 'manzil', n: i + 1, sura: s, aya: a })),
+      ];
+      const stored = await tx.select().from(t.quranDivision);
+      const key = (r: { kind: string; n: number; sura: number; aya: number }) =>
+        `${r.kind}.${r.n}=${r.sura}:${r.aya}`;
+      const same =
+        stored.length === rows.length &&
+        new Set(stored.map(key)).size === rows.length &&
+        rows.every((r) => stored.some((x) => key(x) === key(r)));
+      if (!same) {
+        await tx.delete(t.quranDivision);
+        await insertChunks(rows, 500, (c) => tx.insert(t.quranDivision).values(c));
+      }
+    }
     for (const lv of load.levels) {
       const rank = Number(/\d+$/.exec(lv.code)?.[0] ?? 0);
       await tx

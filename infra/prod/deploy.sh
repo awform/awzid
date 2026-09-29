@@ -53,9 +53,18 @@ if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_TUTEUR=' "$ENVF"; then echo "AWFORM_TUT
 # paiements : désactivés par défaut ; la démonstration utilise le prestataire SIMULÉ (aucune clé, aucune carte)
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_PAIEMENT=' "$ENVF"; then echo "AWFORM_PAIEMENT=simule" >> "$ENVF"; fi
 export AWFORM_ENV_FILE="$ENVF"
+# moindre privilège : la base et Caddy ne reçoivent que ce dont ils ont besoin
+export AWFORM_DB_ENV_FILE="$CONF/db.env" AWFORM_CADDY_ENV_FILE="$CONF/caddy.env"
+grep -E '^POSTGRES_PASSWORD=' "$ENVF" > "$AWFORM_DB_ENV_FILE"
+grep -E '^(SITE|SITE_LAN|DEFAULT_SNI)=' "$ENVF" > "$AWFORM_CADDY_ENV_FILE"
+chmod 600 "$AWFORM_DB_ENV_FILE" "$AWFORM_CADDY_ENV_FILE"
 export AWFORM_CONTENT_DIR="${AWFORM_CONTENT_DIR:-$HOME/awform-content}"
 export AWFORM_VERSION="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo local)"
 DC=(docker compose -f "$PROD/compose.yml")
+
+# clés des sauvegardes : publique sur le serveur, PRIVÉE à emporter hors de la machine (infra/pc/recuperer-cle-sauvegarde.ps1)
+"$PROD/backup-keygen.sh"
+[ -e "$CONF/A-EMPORTER-backup-private.asc" ] && echo "ATTENTION : clé privée des sauvegardes à emporter hors du serveur (infra/pc/recuperer-cle-sauvegarde.ps1)"
 
 # ---------------------------------------------------------------- 2. images, base, contenu
 "${DC[@]}" build --pull
@@ -91,6 +100,8 @@ Type=oneshot
 RemainAfterExit=yes
 User=$USER
 Environment=AWFORM_ENV_FILE=$ENVF
+Environment=AWFORM_DB_ENV_FILE=$AWFORM_DB_ENV_FILE
+Environment=AWFORM_CADDY_ENV_FILE=$AWFORM_CADDY_ENV_FILE
 Environment=AWFORM_VERSION=$AWFORM_VERSION
 WorkingDirectory=$PROD
 ExecStart=/usr/bin/docker compose -f $PROD/compose.yml up -d db api worker web caddy
@@ -108,6 +119,8 @@ After=awform.service
 Type=oneshot
 User=$USER
 Environment=AWFORM_ENV_FILE=$ENVF
+Environment=AWFORM_DB_ENV_FILE=$AWFORM_DB_ENV_FILE
+Environment=AWFORM_CADDY_ENV_FILE=$AWFORM_CADDY_ENV_FILE
 ExecStart=$PROD/backup.sh
 EOF
 sudo tee /etc/systemd/system/awform-backup.timer >/dev/null <<EOF

@@ -927,5 +927,8 @@
   "prot.monnaieVirtuelle": "Virtual currency or shop",
   "prot.lectureAutomatique": "Autoplay of content",
   "prot.publicite": "Advertising",
-  "prot.enregistrementsEnvoyes": "Voice recordings sent to the server"
+  "prot.enregistrementsEnvoyes": "Voice recordings sent to the server",
+  "auj.j_hizb": "{n, plural, =0 {No complete ḥizb} one {# complete ḥizb} other {# complete aḥzāb}}",
+  "auj.j_quarts": "{n, plural, =0 {No complete quarter-ḥizb} one {# complete quarter-ḥizb} other {# complete quarter-aḥzāb}}",
+  "lecteur.credit": "Text: Tanzil (riwāya Ḥafṣ). Metadata (pages, ajzāʾ, aḥzāb): Tanzil.info, CC BY 3.0 licence."
 }

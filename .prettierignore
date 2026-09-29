@@ -10,3 +10,5 @@ packages/db/migrations/meta/
 apps/web/static/fonts/
 reports/
 *.md
+# texte et métadonnées Tanzil (CI) : copies VERBATIM, jamais reformatées
+infra/ci/contenu/

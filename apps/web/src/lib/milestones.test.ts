@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { completeJuz, completeSuras } from './milestones';
+import { completeHizb, completeJuz, completeQuarters, completeSuras } from './milestones';
 
 /** Nombres de versets des 114 sourates (Ḥafṣ), pour le test uniquement. */
 const COUNTS = [
@@ -11,6 +11,17 @@ const COUNTS = [
 ];
 const range = (s: number, from: number, to: number) =>
   Array.from({ length: to - from + 1 }, (_, i) => `${s}:${from + i}`);
+/** Les 8 derniers quarts de ḥizb (juzʾ 30), tels que dans les métadonnées Tanzil. */
+const LAST_QUARTERS: Array<readonly [number, number]> = [
+  [78, 1],
+  [80, 1],
+  [82, 1],
+  [84, 1],
+  [87, 1],
+  [90, 1],
+  [94, 1],
+  [100, 9],
+];
 
 describe('jalons de maîtrise', () => {
   it('sourate complète seulement si tous ses versets sont acquis', () => {
@@ -23,6 +34,15 @@ describe('jalons de maîtrise', () => {
     expect(completeJuz(acquis, COUNTS)).toEqual([30]);
     acquis.delete('114:6');
     expect(completeJuz(acquis, COUNTS)).toEqual([]);
+  });
+  it('ḥizb et quarts de ḥizb sur les bornes officielles', () => {
+    const acquis = new Set<string>();
+    for (let s = 94; s <= 114; s++) for (const k of range(s, 1, COUNTS[s - 1]!)) acquis.add(k);
+    // du quart 7 (94:1) à la fin : deux quarts complets (7 et 8), aucun ḥizb (le 2e commence en 87:1)
+    expect(completeQuarters(acquis, COUNTS, LAST_QUARTERS)).toEqual([7, 8]);
+    expect(completeHizb(acquis, COUNTS, LAST_QUARTERS)).toEqual([]);
+    for (let s = 87; s <= 93; s++) for (const k of range(s, 1, COUNTS[s - 1]!)) acquis.add(k);
+    expect(completeHizb(acquis, COUNTS, LAST_QUARTERS)).toEqual([2]);
   });
   it('le total des versets est 6 236', () => {
     expect(COUNTS.reduce((a, b) => a + b, 0)).toBe(6236);

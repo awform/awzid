@@ -1,6 +1,7 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import type { SceneSpec } from '@awform/content/scene';
+  import { tanwinDisplay } from '@awform/content/text';
   import Ar from '$lib/Ar.svelte';
   import Illus from '$lib/Illus.svelte';
   import Scene from '$lib/Scene.svelte';
@@ -191,7 +192,7 @@
         <figure class="extrait">
           {#if str(x.ar)}<Ar text={str(x.ar)} tag="p" />{/if}
           {#each arr(x.vers) as v, k (k)}<p class="vers" lang="ar" dir="rtl">
-              {#each arr(v as unknown) as h, j (j)}<span>{String(h)}</span>{/each}
+              {#each arr(v as unknown) as h, j (j)}<span>{tanwinDisplay(String(h))}</span>{/each}
             </p>{/each}
           <p>{str(x.fr)}</p>
           {#if str(x.explication_fr)}<p class="expl">{str(x.explication_fr)}</p>{/if}

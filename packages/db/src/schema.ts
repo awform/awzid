@@ -196,6 +196,23 @@ export const quranVerse = pgTable(
   (t) => [primaryKey({ columns: [t.sura, t.aya] })],
 );
 
+/**
+ * Divisions officielles du Coran (métadonnées Tanzil, CC BY 3.0) : début de chaque juzʾ, quart de ḥizb,
+ * page du Muṣḥaf de Médine et manzil. Table de référence en lecture seule, comme quran_verse.
+ */
+export const quranDivision = pgTable(
+  'quran_division',
+  {
+    kind: text('kind').notNull(),
+    n: smallint('n').notNull(),
+    sura: smallint('sura').notNull(),
+    aya: smallint('aya').notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.kind, t.n] }),
+    check('quran_division_kind', sql`${t.kind} IN ('juz', 'quart', 'page', 'manzil')`),
+  ],
+);
 export const registryKind = pgEnum('registry_kind', ['coran', 'hadith', 'fiqh', 'invocation']);
 
 /** Registre canonique (registre/*.json) importé par édition ; statuts visibles de l'administration seulement. */

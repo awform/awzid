@@ -3,6 +3,7 @@
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
+  import { tanwinDisplay } from '@awform/content/text';
   import { splitBasmala, suraName } from '@awform/hifz';
   import { loadMeta, loadVerses } from '$lib/hifz';
   import { fmtNumber, t } from '$lib/i18n';
@@ -171,6 +172,7 @@
       >{/if}
   </div>
   <p class="muted small">{t('lecteur.page_mushaf')}</p>
+  <p class="muted small">{t('lecteur.credit')}</p>
 </section>
 
 <section class="card mushaf" data-testid="sourate-texte" lang="ar" dir="rtl">
@@ -178,7 +180,8 @@
   {#each verses as v (v.a)}
     {@const parts = words(v)}
     {#if parts.basmala}<p class="basmala">
-        <span class="quran-text" data-basmala={`${v.s}:${v.a}`}>{parts.basmala}</span>
+        <span class="quran-text" data-basmala={`${v.s}:${v.a}`}>{tanwinDisplay(parts.basmala)}</span
+        >
       </p>{/if}
     <div
       class="aya"
@@ -192,7 +195,7 @@
         >{#each parts.rest.split(' ') as w, i (i)}{sep(i)}<span
             class="w"
             class:on={cur?.a === v.a && cur?.w === i}
-            data-w={i}>{w}</span
+            data-w={i}>{tanwinDisplay(w)}</span
           >{/each}</span
       >
       <span class="n" aria-hidden="true">{fmtNumber(v.a, { useGrouping: false })}</span>

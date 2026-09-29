@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tanwinDisplay } from '@awform/content/text';
   import type { Exercise, LanguageExercise, Lettre } from '@awform/content/types';
   import {
     checkItem,
@@ -270,7 +271,9 @@
               >
             {/each}
           </div>
-          <p class="out ar" dir="rtl" lang="ar" class:good={found[i]}>{ordreText(i)}</p>
+          <p class="out ar" dir="rtl" lang="ar" class:good={found[i]}>
+            {tanwinDisplay(ordreText(i))}
+          </p>
           {#if !found[i]}<button type="button" class="reset" onclick={() => (seq[i] = [])}
               >{t('exo.recommencer')}</button
             >{/if}

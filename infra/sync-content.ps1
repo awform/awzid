@@ -19,6 +19,8 @@ if (Test-Path "$aw\data\lect") { $items += , @("$aw\data\lect", 'data/') }
 $items += , @("$aw\ECARTS_VERSETS.md", '')
 $items += , @("$aw\illus", '')
 $items += , @("$W\coran\tanzil-uthmani.tsv", 'coran/')
+# métadonnées officielles Tanzil (ajzāʾ, quarts de ḥizb, pages de Médine ; CC BY 3.0) : empreinte contrôlée à l'import
+if (Test-Path "$W\coran\tanzil-quran-data.js") { $items += , @("$W\coran\tanzil-quran-data.js", 'coran/') }
 # tables de correspondance des identifiants d'exercices (gel des livres) : ancien identifiant → id explicite
 if (Test-Path "$W\application\ids") { $items += , @("$W\application\ids", '') }
 ssh $VmHost "rm -rf ~/$Dest.tmp && mkdir -p ~/$Dest.tmp/data ~/$Dest.tmp/registre ~/$Dest.tmp/coran"

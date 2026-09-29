@@ -9,6 +9,7 @@ import { join, basename } from 'node:path';
 import { contentHash, sha256Hex } from './canonical.js';
 import { parseDataFile } from './parse.js';
 import { checkVerse, loadTanzil, parseEcartsVoulus, whitelistKey, type Tanzil } from './quran.js';
+import { checkQuranData, parseQuranData, type QuranDivisions } from './qurandata.js';
 import { plain } from './text.js';
 import { checkUnit, translitWords } from './checks.js';
 import { loadIllustrations, type Illustration } from './illus.js';
@@ -56,6 +57,8 @@ export interface EditionLoad {
   /** illustrations retenues (clé → SVG validé) ; null si non chargées */
   illustrations: Map<string, Illustration> | null;
   tanzil: Tanzil;
+  /** métadonnées officielles Tanzil (ajzāʾ, quarts de ḥizb, pages de Médine) ; null si absentes */
+  quranData: QuranDivisions | null;
   verseStats: VerseStats;
   issues: Issue[];
 }
@@ -217,6 +220,25 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
       code: 'tanzil_incomplet',
       message: `${tanzil.size} versets au lieu de 6 236`,
     });
+  // métadonnées officielles (facultatives) : empreinte et invariants contrôlés, sinon erreur bloquante
+  let quranData: QuranDivisions | null = null;
+  const qdPath = join(contentDir, 'coran', 'tanzil-quran-data.js');
+  if (existsSync(qdPath)) {
+    const src = readText(qdPath);
+    try {
+      const d = parseQuranData(src);
+      const chk = checkQuranData(src, d);
+      if (chk.ok) quranData = d;
+      else
+        issues.push({
+          severity: 'erreur',
+          code: 'metadonnees_coran',
+          message: chk.errors.join(' ; '),
+        });
+    } catch (e) {
+      issues.push({ severity: 'erreur', code: 'metadonnees_coran', message: String(e) });
+    }
+  }
   const ecartsPath = join(contentDir, 'ECARTS_VERSETS.md');
   const whitelist = existsSync(ecartsPath)
     ? parseEcartsVoulus(readText(ecartsPath))
@@ -634,6 +656,7 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
     booklets,
     catalogue,
     tanzil,
+    quranData,
     verseStats,
     issues,
   };

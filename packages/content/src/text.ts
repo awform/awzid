@@ -61,3 +61,46 @@ export function letterColorIndex(
   }
   return best < 0 ? 3 : best % 4;
 }
+
+/**
+ * TANWINS du Muṣḥaf de Médine — AFFICHAGE SEULEMENT (même transformation que le moteur des livres,
+ * awform.js `tanwinAff`, décision du 29/09/2026 : SCHEMA.md « Tanwins », ERREURS_SYSTEMIQUES.md).
+ * Tanzil marque la règle du tanwin par une petite mīm après le tanwin : du même côté (ًۢ ٌۢ ٍۭ) =
+ * conversion (iqlāb), du côté opposé (ًۭ ٌۭ ٍۢ) = fusion ou dissimulation. La police Amiri Quran dessine
+ * cette mīm partout ; on affiche donc l'écriture Unicode du Muṣḥaf : tanwin décalé U+08F0 à U+08F2, et pour
+ * la conversion une seule voyelle suivie de la petite mīm. Le texte STOCKÉ et COMPARÉ reste Tanzil.
+ * Un crochet de couleur ([ ou ]) entre le tanwin et la mīm est conservé à sa place.
+ */
+const TANWIN_MAP: Record<string, string> = {
+  '\u064B\u06ED': '\u08F0',
+  '\u064C\u06ED': '\u08F1',
+  '\u064D\u06E2': '\u08F2',
+  '\u064B\u06E2': '\u064E\u06E2',
+  '\u064C\u06E2': '\u064F\u06E2',
+  '\u064D\u06ED': '\u0650\u06ED',
+};
+const TANWIN_RE = /([\u064B-\u064D])([[\]]?)([\u06E2\u06ED])/g;
+
+export function tanwinDisplay(s: string): string {
+  return s.replace(TANWIN_RE, (_m, t: string, br: string, mim: string) => {
+    const r = TANWIN_MAP[t + mim]!;
+    return r.length === 1 ? r + br : r[0] + br + r[1];
+  });
+}
+
+const UNDO: Record<string, string> = {
+  '\u08F0': '\u064B\u06ED',
+  '\u08F1': '\u064C\u06ED',
+  '\u08F2': '\u064D\u06E2',
+  '\u064E\u06E2': '\u064B\u06E2',
+  '\u064F\u06E2': '\u064C\u06E2',
+  '\u0650\u06ED': '\u064D\u06ED',
+};
+
+/**
+ * Inverse exacte de `tanwinDisplay` pour le texte coranique (Tanzil ne contient ni U+08F0-08F2 ni les
+ * suites voyelle simple + petite mīm : vérifié sur les 6 236 versets) — sert aux contrôles « affiché = Tanzil ».
+ */
+export function tanwinUndo(s: string): string {
+  return s.replace(/[\u08F0-\u08F2]|[\u064E\u064F][\u06E2]|\u0650\u06ED/g, (m) => UNDO[m] ?? m);
+}

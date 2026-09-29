@@ -96,9 +96,10 @@ async function cached<T>(key: string, fetcher: () => Promise<T | null>): Promise
 }
 
 export async function loadMeta(): Promise<(QuranMeta & { basmala: string }) | null> {
-  const local = await kvGet<QuranMeta & { basmala: string }>('quranMeta').catch(() => undefined);
-  if (local) return local; // texte de référence figé : une copie suffit
-  return cached('quranMeta', async () => {
+  // v2 : pages du Muṣḥaf de Médine (métadonnées Tanzil) ; une copie aux pages réelles suffit (texte figé)
+  const local = await kvGet<QuranMeta & { basmala: string }>('quranMeta.v2').catch(() => undefined);
+  if (local?.realPages) return local;
+  return cached('quranMeta.v2', async () => {
     const r = await call<QuranMeta & { basmala: string }>('GET', '/quran/meta');
     return r.ok ? r.data : null;
   });

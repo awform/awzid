@@ -1,7 +1,7 @@
 /**
  * Rendu HTML de la page publique du QR code (sans JavaScript, < 100 Ko, jamais d'exercice ni de corrigé).
  */
-import { letterColorIndex, splitMarked } from '@awform/content/text';
+import { letterColorIndex, splitMarked, tanwinDisplay } from '@awform/content/text';
 import { t } from './i18n';
 
 export interface PublicUnit {
@@ -28,7 +28,8 @@ export function renderPublic(u: PublicUnit): string {
   const lettres = L?.lettres ?? [];
   // lettres étudiées colorées comme dans le livre (balisage [..]), texte jamais transformé
   const ar = (s: unknown) =>
-    splitMarked(String(s ?? ''))
+    // tanwins du Muṣḥaf de Médine : transformation d'AFFICHAGE seulement (même règle que le moteur des livres)
+    splitMarked(tanwinDisplay(String(s ?? '')))
       .map((seg) =>
         seg.marked
           ? `<span class="c${letterColorIndex(seg.text, lettres)}">${esc(seg.text)}</span>`

@@ -1,3 +1,4 @@
+import { tanwinUndo } from '@awform/content/text';
 import { expect, loginTeacher, newAdult, test } from './fixtures';
 
 /**
@@ -35,7 +36,8 @@ test.describe('adulte et enseignant', () => {
     const expected = verses
       .map((v) => (v.a === 1 ? v.text.slice(basmala.length + 1) : v.text))
       .join(' ');
-    expect(await q.textContent()).toBe(expected);
+    // affichage des tanwins du Muṣḥaf de Médine : comparaison après inversion
+    expect(tanwinUndo((await q.textContent()) ?? '')).toBe(expected);
 
     // question de langue → réponse du modèle (simulé) filtrée, signalable
     await page.getByTestId('tuteur-texte').fill('Quelle est la différence entre ر et ز ?');

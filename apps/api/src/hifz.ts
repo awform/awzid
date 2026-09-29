@@ -14,6 +14,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, eq, isNull } from 'drizzle-orm';
 import {
   allVerses,
+  quranDivisions,
   classByCode,
   classMembers,
   createClass,
@@ -74,7 +75,8 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
     if (!metaCache) {
       const tanzil = await allVerses(db);
       if (tanzil.size !== 6236) return err(reply, 503, 'coran_absent');
-      const meta = buildMeta(tanzil);
+      // pages du Muṣḥaf de Médine (métadonnées Tanzil) si importées ; sinon pages estimées
+      const meta = buildMeta(tanzil, await quranDivisions(db));
       const body = JSON.stringify({ basmala: tanzil.get('1:1'), ...meta });
       metaCache = {
         etag: `"${createHash('sha256').update(body).digest('hex').slice(0, 32)}"`,

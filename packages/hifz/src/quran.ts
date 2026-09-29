@@ -181,10 +181,23 @@ export function juzOf(s: number, a: number): number {
  * Métadonnées calculées depuis Tanzil : pour chaque sourate, le poids (nombre de lettres arabes de base)
  * de chaque verset. La basmala en tête du verset 1 (hors sourates 1 et 9) n'est pas comptée.
  */
+/** Débuts officiels (sourate, verset) : métadonnées Tanzil (juzʾ, quarts de ḥizb, pages de Médine). */
+export interface QuranDivisionStarts {
+  juz: ReadonlyArray<readonly [number, number]>;
+  quarters: ReadonlyArray<readonly [number, number]>;
+  pages: ReadonlyArray<readonly [number, number]>;
+}
+
 export interface QuranMeta {
-  /** weights[s-1][a-1] = nombre de lettres du verset */
+  /**
+   * weights[s-1][a-1] = poids du verset : avec les pages officielles, FRACTION DE PAGE du Muṣḥaf de Médine
+   * (lettres du verset / lettres de sa page) ; sans elles, nombre de lettres (pages estimées)
+   */
   weights: number[][];
   totalWeight: number;
+  /** vrai si les pages sont celles du Muṣḥaf de Médine (métadonnées Tanzil) */
+  realPages?: boolean;
+  divisions?: QuranDivisionStarts;
 }
 
 /** Lettres arabes de base (hamza à yāʾ, alif waṣla) — pas les voyelles ni les signes. */
@@ -198,7 +211,10 @@ export function letterCount(text: string): number {
 }
 
 /** Construit les métadonnées à partir du texte Tanzil (`s:a` → texte). */
-export function buildMeta(tanzil: ReadonlyMap<string, string>): QuranMeta {
+export function buildMeta(
+  tanzil: ReadonlyMap<string, string>,
+  divisions?: QuranDivisionStarts | null,
+): QuranMeta {
   const bism = tanzil.get('1:1') ?? '';
   const weights: number[][] = [];
   let total = 0;
@@ -213,7 +229,22 @@ export function buildMeta(tanzil: ReadonlyMap<string, string>): QuranMeta {
     }
     weights.push(row);
   }
-  return { weights, totalWeight: total };
+  if (!divisions || divisions.pages.length !== TOTAL_PAGES) return { weights, totalWeight: total };
+  // pages RÉELLES : chaque verset pèse sa part de la page où il commence (somme d'une page = 1)
+  const pageOf: number[][] = weights.map((r) => r.map(() => 0));
+  const starts = divisions.pages;
+  let p = 0;
+  for (let s = 1; s <= weights.length; s++)
+    for (let a = 1; a <= (weights[s - 1]?.length ?? 0); a++) {
+      const next = starts[p + 1];
+      if (next && (s > next[0] || (s === next[0] && a >= next[1]))) p++;
+      pageOf[s - 1]![a - 1] = p;
+    }
+  const letters = new Array<number>(TOTAL_PAGES).fill(0);
+  weights.forEach((r, i) => r.forEach((w, j) => (letters[pageOf[i]![j]!]! += w)));
+  const real = weights.map((r, i) => r.map((w, j) => w / (letters[pageOf[i]![j]!] || 1)));
+  const sum = real.reduce((acc, r) => acc + r.reduce((x, y) => x + y, 0), 0);
+  return { weights: real, totalWeight: sum, realPages: true, divisions };
 }
 
 /** Pages estimées d'un poids. */

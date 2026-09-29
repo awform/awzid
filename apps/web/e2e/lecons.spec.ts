@@ -1,3 +1,4 @@
+import { tanwinUndo } from '@awform/content/text';
 import { expect, test } from './fixtures';
 
 /** Texte sans les crochets de couleur (le navigateur affiche les lettres colorées dans des <span>). */
@@ -38,7 +39,8 @@ test('liste des leçons d’en1 puis leçon avec l’arabe correctement rendu', 
 
   const api = await (await request.get('/api/v1/units/en1.l16')).json();
   const expected: string[] = api.unit.lesson.coran.versets.map((v: { ar: string }) => plain(v.ar));
-  const shown = await ayat.allTextContents();
+  // affichage des tanwins du Muṣḥaf de Médine : on compare au texte des livres après inversion
+  const shown = (await ayat.allTextContents()).map(tanwinUndo);
   expect(shown).toEqual(expected);
 
   // aucune translittération ni guide envoyés à l'élève

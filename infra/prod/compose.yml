@@ -12,7 +12,8 @@ services:
   db:
     image: postgres:18
     restart: unless-stopped
-    env_file: '${AWFORM_ENV_FILE:?AWFORM_ENV_FILE absent}'
+    # moindre privilège : la base ne reçoit QUE son mot de passe (db.env, écrit par deploy.sh)
+    env_file: '${AWFORM_DB_ENV_FILE:?AWFORM_DB_ENV_FILE absent}'
     environment:
       POSTGRES_USER: awform
       POSTGRES_DB: awform
@@ -29,7 +30,7 @@ services:
   migrate:
     image: awform/api:${AWFORM_VERSION:-local}
     build: { context: ../.., dockerfile: infra/prod/Dockerfile, target: api }
-    env_file: '${AWFORM_ENV_FILE}'
+    env_file: '${AWFORM_ENV_FILE:?AWFORM_ENV_FILE absent}'
     command: ['node', 'node_modules/@awform/db/dist/cli/migrate.js']
     depends_on: { db: { condition: service_healthy } }
     restart: 'no'
@@ -79,7 +80,8 @@ services:
     ports:
       - '80:80'
       - '443:443'
-    env_file: '${AWFORM_ENV_FILE}'
+    # moindre privilège : Caddy ne reçoit QUE les adresses du site (caddy.env, aucun secret)
+    env_file: '${AWFORM_CADDY_ENV_FILE:?AWFORM_CADDY_ENV_FILE absent}'
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

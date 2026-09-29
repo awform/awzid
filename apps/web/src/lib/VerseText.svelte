@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tanwinDisplay } from '@awform/content/text';
   import { splitBasmala } from '@awform/hifz';
   import { fmtNumber } from '$lib/i18n';
 
@@ -30,7 +31,8 @@
   {#each verses as v (`${v.s}:${v.a}`)}
     {@const parts = splitBasmala(v.s, v.a, v.text, basmala)}
     {#if parts.basmala}<p class="basmala">
-        <span class="quran-text" data-basmala={`${v.s}:${v.a}`}>{parts.basmala}</span>
+        <span class="quran-text" data-basmala={`${v.s}:${v.a}`}>{tanwinDisplay(parts.basmala)}</span
+        >
       </p>{/if}
     <button
       type="button"
@@ -38,7 +40,7 @@
       class:blur={masked && !shown[`${v.s}:${v.a}`]}
       onclick={() => (shown[`${v.s}:${v.a}`] = !shown[`${v.s}:${v.a}`])}
       disabled={!masked}
-      ><span class="quran-text" data-verse={`${v.s}:${v.a}`}>{parts.rest}</span>
+      ><span class="quran-text" data-verse={`${v.s}:${v.a}`}>{tanwinDisplay(parts.rest)}</span>
       <span class="n" aria-hidden="true">{num(v.a)}</span></button
     >
   {/each}
