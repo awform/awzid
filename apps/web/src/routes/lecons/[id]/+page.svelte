@@ -125,7 +125,13 @@
 <Sprite illustrations={data.illustrations} />
 
 {#if religion}
-  <ReligionLesson unit={u} {profileId} {progress} onChecklist={toggleReligion} />
+  <ReligionLesson
+    unit={u}
+    {profileId}
+    profileKind={profileInfo?.kind ?? null}
+    {progress}
+    onChecklist={toggleReligion}
+  />
 {:else}
   <article
     class="lesson"

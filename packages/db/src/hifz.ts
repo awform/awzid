@@ -312,6 +312,10 @@ export async function leaveClass(db: Db, classId: string, profileId: string) {
       .update(t.certificate)
       .set({ detachedAt: new Date() })
       .where(and(eq(t.certificate.pupilId, p.id), isNull(t.certificate.detachedAt)));
+  // réponses libres envoyées à cette classe : effacées au départ de l'élève (lot 18)
+  await db
+    .delete(t.freeAnswer)
+    .where(and(eq(t.freeAnswer.classId, classId), eq(t.freeAnswer.profileId, profileId)));
   await db
     .delete(t.classMember)
     .where(and(eq(t.classMember.classId, classId), eq(t.classMember.profileId, profileId)));

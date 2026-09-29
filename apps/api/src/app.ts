@@ -42,6 +42,7 @@ import { registerActivities } from './activities.js';
 import { recitationKeyFromEnv, registerRecitations } from './recitations.js';
 import { registerPush } from './push.js';
 import { registerRelais } from './relais.js';
+import { registerCorrections } from './corrections.js';
 import type { RecitationKey } from '@awform/db';
 
 export interface AppOptions {
@@ -136,6 +137,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     opts.recitationKey === undefined ? recitationKeyFromEnv() : opts.recitationKey,
   );
   registerPush(app, db);
+  registerCorrections(app, db, edition);
   registerRelais(
     app,
     db,

@@ -1066,3 +1066,49 @@ export const relay = pgTable('relay', {
   lastReport: jsonb('last_report'),
   revokedAt: timestamp('revoked_at', { withTimezone: true }),
 });
+
+// ================================================================ correction par l'enseignant (lot 18)
+
+/**
+ * Réponse libre (exercices « question » et « ouverte » des livres, sans corrigé automatique) envoyée par la
+ * famille à l'enseignant de la classe, qui la corrige : appréciation (acquis / en cours / à reprendre) et
+ * commentaire court. Une réponse par élève, classe, exercice et item (un nouvel envoi remplace le texte et
+ * remet la correction à zéro). Effacée avec le profil ou quand l'élève quitte la classe.
+ */
+export const freeAnswer = pgTable(
+  'free_answer',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    unitId: text('unit_id')
+      .notNull()
+      .references(() => unit.id),
+    exerciseId: text('exercise_id')
+      .notNull()
+      .references(() => exercise.id),
+    itemIndex: smallint('item_index').notNull(),
+    answer: text('answer').notNull(),
+    sentAt: timestamp('sent_at', { withTimezone: true }).notNull().defaultNow(),
+    appreciation: text('appreciation'),
+    comment: text('comment'),
+    correctedBy: uuid('corrected_by').references(() => account.id, { onDelete: 'set null' }),
+    correctedAt: timestamp('corrected_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('free_answer_one').on(t.profileId, t.classId, t.exerciseId, t.itemIndex),
+    index('free_answer_class').on(t.classId, t.correctedAt),
+    check('free_answer_len', sql`char_length(${t.answer}) BETWEEN 1 AND 2000`),
+    check(
+      'free_answer_appreciation',
+      sql`${t.appreciation} IS NULL OR ${t.appreciation} IN ('acquis', 'en_cours', 'a_reprendre')`,
+    ),
+    check('free_answer_comment', sql`${t.comment} IS NULL OR char_length(${t.comment}) <= 600`),
+  ],
+);

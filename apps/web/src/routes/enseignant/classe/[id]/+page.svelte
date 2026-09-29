@@ -7,6 +7,7 @@
   import { localIso } from '$lib/hifz';
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
   import { call, fetchMe, type Me } from '$lib/session';
+  import CorrectionsClasse from '$lib/CorrectionsClasse.svelte';
 
   /**
    * Espace ÉCOLE d'une classe (lot 13) : élèves et groupes, devoirs avec échéance, tableau de suivi,
@@ -81,7 +82,7 @@
     issuedAt: string;
   }
 
-  const TABS = ['eleves', 'devoirs', 'tableau', 'ecoute', 'certificats'] as const;
+  const TABS = ['eleves', 'devoirs', 'corrections', 'tableau', 'ecoute', 'certificats'] as const;
   let tab = $state<(typeof TABS)[number]>('eleves');
   let me = $state<Me | null>(null);
   let loaded = $state(false);
@@ -237,6 +238,7 @@
   }
 
   // ---------------------------------------------------------------- devoirs
+  let projUnit = $state('');
   const lessonUnits = $derived(units.filter((u) => u.kind === 'lecon'));
   function assignmentLabel(a: Pick<Assignment, 'kind' | 'target'>): string {
     if (a.kind === 'lecon') {
@@ -786,6 +788,27 @@
       </ul>
       <p class="muted small">{t('classe.devoirs_aide')}</p>
     </section>
+    {#if units.length}
+      <section class="card" data-testid="projeter">
+        <h2>{t('projection.titre')}</h2>
+        <p class="muted small">{t('projection.aide')}</p>
+        <label
+          >{t('projection.choisir')}
+          <select bind:value={projUnit}>
+            {#each units as u (u.id)}<option value={u.id}>{u.numLecon ?? '·'} — {u.titleFr}</option
+              >{/each}
+          </select></label
+        >
+        {#if projUnit}
+          <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- chemin résolu avec son paramètre -->
+          <a class="button" href={resolve('/enseignant/projection/[unit]', { unit: projUnit })}
+            >{t('projection.ouvrir')}</a
+          >
+        {/if}
+      </section>
+    {/if}
+  {:else if tab === 'corrections'}
+    <CorrectionsClasse classId={id} />
   {:else if tab === 'tableau'}
     <section class="card">
       <h2>{t('classe.suivi')}</h2>

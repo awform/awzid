@@ -12,7 +12,13 @@
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, asc, eq, isNull } from 'drizzle-orm';
-import { deleteProfileRecitations, profileRecitations, schema as t, type Db } from '@awform/db';
+import {
+  deleteProfileRecitations,
+  profileFreeAnswers,
+  profileRecitations,
+  schema as t,
+  type Db,
+} from '@awform/db';
 import { decrypt, encrypt, hashSecret, newTotpSecret, verifySecret, verifyTotp } from './crypto.js';
 import { checkPassword, MAX_LENGTH } from './passwords.js';
 import {
@@ -717,9 +723,11 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     const classes = [];
     const practice = [];
     const recitations = [];
+    const freeAnswers = [];
     for (const pid of ids) {
       // récitations envoyées : métadonnées et note (l'audio chiffré se télécharge depuis l'application)
       recitations.push(...(await profileRecitations(db, pid)));
+      freeAnswers.push(...(await profileFreeAnswers(db, pid)));
       attempts.push(...(await db.select().from(t.attempt).where(eq(t.attempt.profileId, pid))));
       progress.push(...(await db.select().from(t.progress).where(eq(t.progress.profileId, pid))));
       hifzPlans.push(...(await db.select().from(t.hifzPlan).where(eq(t.hifzPlan.profileId, pid))));
@@ -765,6 +773,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       hifz: { plans: hifzPlans, journal: hifzEvents, classes },
       entrainement: practice,
       recitationsEnvoyees: recitations,
+      reponsesLibres: freeAnswers,
       notifications: await db
         .select()
         .from(t.notificationPref)

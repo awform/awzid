@@ -19,16 +19,21 @@
   type Obj = Record<string, unknown>;
   let {
     unit,
+    profileId,
+    profileKind = null,
     progress,
     onChecklist,
   }: {
     unit: UnitDetail;
     profileId: string | null;
+    profileKind?: string | null;
     progress: { status: string; bestScore: number | null } | null;
     onChecklist: (done: number, total: number) => void;
   } = $props();
 
   const L = $derived(unit.lesson as unknown as Obj);
+  const profile = $derived(profileId && profileKind ? { id: profileId, kind: profileKind } : null);
+  const exId = (i: number) => unit.exercises.find((e) => e.position === i)?.id ?? '';
   const str = (v: unknown) => (typeof v === 'string' ? v : '');
   const arr = (v: unknown) => (Array.isArray(v) ? (v as Obj[]) : []);
   const rubriques = $derived(arr(L.rubriques));
@@ -358,13 +363,23 @@
   {#if livre.length}
     <section class="card">
       <h2>{t('rel.exercices')}</h2>
-      {#each livre as x, k (x.i)}<ReligionExercise ex={x.ex} n={k + 1} />{/each}
+      {#each livre as x, k (x.i)}<ReligionExercise
+          ex={x.ex}
+          n={k + 1}
+          {profile}
+          exerciseId={exId(x.i)}
+        />{/each}
     </section>
   {/if}
   {#if cahier.length}
     <section class="card">
       <h2>{t('rel.cahier')}</h2>
-      {#each cahier as x, k (x.i)}<ReligionExercise ex={x.ex} n={k + 1} />{/each}
+      {#each cahier as x, k (x.i)}<ReligionExercise
+          ex={x.ex}
+          n={k + 1}
+          {profile}
+          exerciseId={exId(x.i)}
+        />{/each}
     </section>
   {/if}
 

@@ -8,6 +8,23 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 29/09/2026 — Lot 18 (V1-a) : correction par l'enseignant des réponses libres, mode projection (branche `lot18-wip`, partie de `lot17-wip`, session cloud)
+
+**Avant le lot** : `docs/projet/ECARTS.md` (chaque ligne V1 du §2.1 et chaque lot V1 du §6.2 : fait / partiel / manquant, avec la preuve) et `docs/projet/DECISIONS_EN_ATTENTE.md` (D1-D3 en attente ; D4 : budget de 150 Ko gardé, allègement au lot 24 ; D5 : dictée photographiée écartée).
+
+**(1) Réponses libres corrigées par l'enseignant** (CDC §2.1, ligne « Leçon interactive » V1) — exercices des livres sans corrigé automatique (`question`, `ouverte`) :
+- base : table `free_answer` (migration `0015_reponses_libres`) : une réponse par élève, classe, exercice et item (2 000 caractères), appréciation fermée `acquis | en_cours | a_reprendre` (aucune note chiffrée inventée), commentaire ≤ 600 caractères ; droits de l'API seulement (`roles.ts`) ; **effacée quand l'élève quitte la classe** (`leaveClass`) et avec le profil ; incluse dans l'**export RGPD** (`reponsesLibres`) ;
+- API (`apps/api/src/corrections.ts`) : famille — envoi (profil du compte, **code parent pour un enfant**, classe de l'élève, exercice ouvert de l'édition servie, item existant ; un nouvel envoi remplace le texte et remet la correction à zéro), lecture, suppression ; enseignant de la classe (second facteur) — liste « à corriger / corrigées » des élèves encore inscrits avec la **consigne telle que dans le livre**, correction journalisée ; un autre enseignant, un parent ou un élève parti : refusés ;
+- web : « Envoyer à mon enseignant » sous chaque exercice ouvert d'une leçon (si l'élève a une classe ; champ code parent pour un enfant ; correction affichée), onglet **« Corrections »** de l'espace école (`CorrectionsClasse.svelte`) ;
+- `apps/api/src/guards.ts` : contrôles communs (profil de la famille, code parent, enseignant 2FA) qui renvoient un booléen — l'appelant s'arrête explicitement (leçon du lot 16) ; `apps/api/test/helpers.ts` : base de test avec contenu **synthétique** (aucun texte religieux), comptes, enseignant 2FA, classe — pour les lots suivants.
+
+**(2) Mode projection** (`/enseignant/projection/[unit]`, lien « Projeter » dans l'onglet Devoirs) : la leçon en grand au tableau, une partie à la fois (titre et famille de lettres, lettres, « je lis », mots illustrés, dialogue, Coran), flèches du clavier et plein écran ; **projection élève** du livre (ni guide, ni corrigé, ni texte non préparé), depuis l'appareil si le niveau est téléchargé ; aucune donnée d'élève. Versets affichés par le même composant que la leçon (texte du livre contrôlé à l'import, tanwins d'affichage seulement).
+
+**Reste de V1-a** : compte « direction d'école » voyant plusieurs classes (non demandé en priorité).
+
+**Tests** : API lot 18 : **6** (envoi et ses refus, cloisonnement enseignant/parent, correction, remplacement sans doublon, adulte et export RGPD, suppression et départ de la classe). Total session cloud : **263 verts, 90 sautés** (livres absents). Build, typage, lint verts. E2e non exécutables ici (import des livres obligatoire). Budget web : 210,5 Ko (décision D4 : traité au lot 24).
+
+---
 ## 29/09/2026 — Lot 17 : consentement par pays, relais d'école hors Internet, synchronisation sûre (branche `lot17-wip`, session cloud, commits `f43e290` → fin de lot)
 
 Repris du commit « Lot 17 (en cours) » (relais `apps/relay`, routes `apps/api/src/relais.ts`, migration `0014_relais.sql`, idempotence des récitations) et terminé dans une session cloud (conteneur jetable, sans les livres).

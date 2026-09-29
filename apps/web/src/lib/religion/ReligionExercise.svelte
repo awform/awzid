@@ -3,6 +3,7 @@
   import Ar from '$lib/Ar.svelte';
   import Illus from '$lib/Illus.svelte';
   import { t } from '$lib/i18n';
+  import FreeAnswerSend from '$lib/FreeAnswerSend.svelte';
   import { calculOk, holes, orderOk, qcmOk, shuffle } from './check';
 
   /**
@@ -11,7 +12,18 @@
    * (coloriage, dessin, carnet) ou à l'outil de l'application (tracer, mémoriser). Jamais de note.
    */
   type Obj = Record<string, unknown>;
-  let { ex, n }: { ex: Obj; n: number } = $props();
+  let {
+    ex,
+    n,
+    profile = null,
+    exerciseId = '',
+  }: {
+    ex: Obj;
+    n: number;
+    /** profil actif : réponse libre envoyable à l'enseignant de sa classe (lot 18) */
+    profile?: { id: string; kind: string } | null;
+    exerciseId?: string;
+  } = $props();
 
   const items = $derived((Array.isArray(ex.items) ? ex.items : []) as Obj[]);
   const type = $derived(String(ex.type));
@@ -296,6 +308,9 @@
           rows={Number(it.lignes ?? 3)}
           bind:value={text[i]}
           aria-label={t('rel.ma_reponse')}></textarea>
+        {#if profile && exerciseId}
+          <FreeAnswerSend {profile} {exerciseId} itemIndex={i} text={text[i] ?? ''} />
+        {/if}
         {#if str(it.reponse_fr)}
           <button type="button" onclick={() => (shown[i] = !shown[i])}
             >{t('rel.reponse_possible')}</button
@@ -309,6 +324,10 @@
       <div class="item" data-item={i}>
         {#if str(it.ar)}<Ar text={str(it.ar)} tag="p" />{/if}
         <p class="muted small">{str(it.fr)}</p>
+        {#if profile && exerciseId}
+          <textarea rows="3" bind:value={text[i]} aria-label={t('rel.ma_reponse')}></textarea>
+          <FreeAnswerSend {profile} {exerciseId} itemIndex={i} text={text[i] ?? ''} />
+        {/if}
         <button type="button" onclick={() => (shown[i] = !shown[i])}
           >{t('rel.reponse_possible')}</button
         >

@@ -29,6 +29,7 @@ Lot 17 (branche `lot17-wip`) : TERMINÉ (voir JOURNAL_DEV) —
    pour le directeur d'école, en langage simple) ;
 3. synchronisation sûre : git seule source, refus d'écraser une modification plus récente
    (`infra/synchro.sh`, `infra/pc/synchro.ps1`, `infra/verifier-copie.sh`).
+Lot 18 (branche `lot18-wip`, V1-a) : TERMINÉ — réponses libres corrigées par l'enseignant, mode projection.
 État des lignes V1 : `docs/projet/ECARTS.md` ; décisions du client : `docs/projet/DECISIONS_EN_ATTENTE.md`.
 
 Ensuite : lots suivants d'après §2.1 / §6.2 du cahier des charges, en choisissant ce qui n'est pas

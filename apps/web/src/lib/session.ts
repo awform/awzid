@@ -38,13 +38,19 @@ export interface ApiResult<T> {
   error: Record<string, unknown> | null;
 }
 
-export async function call<T>(method: string, path: string, body?: unknown): Promise<ApiResult<T>> {
+export async function call<T>(
+  method: string,
+  path: string,
+  body?: unknown,
+  extraHeaders?: Record<string, string>,
+): Promise<ApiResult<T>> {
   try {
     const r = await fetch(`/api/v1${path}`, {
       method,
       headers: {
         accept: 'application/json',
         ...(method !== 'GET' ? { 'content-type': 'application/json', 'x-awform': '1' } : {}),
+        ...(extraHeaders ?? {}),
       },
       body: method !== 'GET' ? JSON.stringify(body ?? {}) : undefined,
       credentials: 'same-origin',

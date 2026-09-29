@@ -71,6 +71,8 @@ export const API_GRANTS: Record<string, Right[]> = {
   notification_pref: ALL,
   // lot 17 : relais d'école (l'API authentifie les relais et met à jour leur dernier battement)
   relay: ['SELECT', 'UPDATE'],
+  // lot 18 : réponses libres corrigées par l'enseignant
+  free_answer: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */
