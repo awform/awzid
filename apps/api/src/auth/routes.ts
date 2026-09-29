@@ -131,6 +131,30 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     reply.header('Set-Cookie', sessionCookie(s.token, s.ttl, secureFor(reply.request)));
   };
 
+  /**
+   * Ressaisie du mot de passe (changement, code parent, profil d'enfant, suppression — audit SEC-6) : essais
+   * RÉSERVÉS par compte, verrou après 10 échecs ; la réponse d'erreur est envoyée ici (renvoie false).
+   */
+  const passwordOk = async (
+    reply: FastifyReply,
+    a: { id: string; passwordHash: string | null },
+    given: string,
+  ): Promise<boolean> => {
+    const key = `mdp:${a.id}`;
+    if (!(await reserveAttempt(db, key, 10))) {
+      // une réponse Fastify est « thenable » : ne jamais l'attendre ici
+      void err(reply, 429, 'verrouille');
+      return false;
+    }
+    if (!(await verifySecret(given, a.passwordHash))) {
+      await failAttempt(db, key, 10);
+      void err(reply, 401, 'mot_de_passe_incorrect');
+      return false;
+    }
+    await clearFailures(db, key);
+    return true;
+  };
+
   const me = async (accountId: string, mfaVerified: boolean) => {
     const [a] = await db.select().from(t.account).where(eq(t.account.id, accountId));
     if (!a) return null;
@@ -389,8 +413,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     },
     async (req, reply) => {
       const [a] = await db.select().from(t.account).where(eq(t.account.id, req.auth!.accountId));
-      if (!a || !(await verifySecret(req.body.current, a.passwordHash)))
-        return err(reply, 401, 'mot_de_passe_incorrect');
+      if (!a) return err(reply, 401, 'mot_de_passe_incorrect');
+      if (!(await passwordOk(reply, a, req.body.current))) return reply;
       const pb = checkPassword(req.body.next, a.email ?? '');
       if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
       await db
@@ -520,10 +544,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const accountId = req.auth!.accountId;
       const [a] = await db.select().from(t.account).where(eq(t.account.id, accountId));
       // vérification du parent : il ressaisit son mot de passe (preuve jointe au consentement)
-      if (!a || !(await verifySecret(b.password, a.passwordHash))) {
-        await recordFailure(db, `profil:${accountId}`);
-        return err(reply, 401, 'mot_de_passe_incorrect');
-      }
+      if (!a) return err(reply, 401, 'mot_de_passe_incorrect');
+      if (!(await passwordOk(reply, a, b.password))) return reply;
       const age = ageFromYear(b.birthYear);
       if (age < 3) return err(reply, 400, 'annee_naissance_invalide');
       if (age >= 18) return err(reply, 400, 'adulte_compte_personnel');
@@ -641,8 +663,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     },
     async (req, reply) => {
       const [a] = await db.select().from(t.account).where(eq(t.account.id, req.auth!.accountId));
-      if (!a || !(await verifySecret(req.body.password, a.passwordHash)))
-        return err(reply, 401, 'mot_de_passe_incorrect');
+      if (!a) return err(reply, 401, 'mot_de_passe_incorrect');
+      if (!(await passwordOk(reply, a, req.body.password))) return reply;
       const p = await ownProfile(a.id, req.params.id);
       if (!p) return err(reply, 404, 'introuvable');
       await db.delete(t.attempt).where(eq(t.attempt.profileId, p.id));
@@ -673,8 +695,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     },
     async (req, reply) => {
       const [a] = await db.select().from(t.account).where(eq(t.account.id, req.auth!.accountId));
-      if (!a || !(await verifySecret(req.body.password, a.passwordHash)))
-        return err(reply, 401, 'mot_de_passe_incorrect');
+      if (!a) return err(reply, 401, 'mot_de_passe_incorrect');
+      if (!(await passwordOk(reply, a, req.body.password))) return reply;
       await db
         .update(t.account)
         .set({ parentPinHash: await hashSecret(req.body.pin) })
@@ -861,8 +883,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     },
     async (req, reply) => {
       const [a] = await db.select().from(t.account).where(eq(t.account.id, req.auth!.accountId));
-      if (!a || !(await verifySecret(req.body.password, a.passwordHash)))
-        return err(reply, 401, 'mot_de_passe_incorrect');
+      if (!a) return err(reply, 401, 'mot_de_passe_incorrect');
+      if (!(await passwordOk(reply, a, req.body.password))) return reply;
       await db.update(t.account).set({ deletedAt: new Date() }).where(eq(t.account.id, a.id));
       await withdrawAccount(db, a.id);
       await revokeAll(db, a.id);

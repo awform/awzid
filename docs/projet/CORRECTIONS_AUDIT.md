@@ -13,7 +13,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | SEC-3 | majeur | Consentements « parentaux » accordés sans le code parent (tuteur IA, partage enseignant) | corrigé | df1dbe7 | audit-mineurs.test.ts « SEC-3 » |
 | SEC-4 | majeur | Second facteur non exigé sur les notifications et les paiements des enseignants | corrigé | 6c5a72f | audit-2fa.test.ts « SEC-4 » |
 | SEC-5 | mineur | Rejeu d'un code TOTP par connexions parallèles | corrigé | 4b9dae9 | audit-2fa.test.ts « SEC-5 » |
-| SEC-6 | mineur | Ressaisies du mot de passe sans limite d'essais | à faire | | |
+| SEC-6 | mineur | Ressaisies du mot de passe sans limite d'essais | corrigé | voir « SEC-6 » dans git log | audit-sec.test.ts |
 | SEC-7 | mineur | HTTP clair servi en production ; cookie sans `Secure` sur HTTP | à faire | | |
 | SEC-8 | mineur | Entrées de la file hors ligne sans schéma (1 Mo de JSON libre par événement) | à faire | | |
 | MIN-1 | majeur | Un mineur ayant l'âge du « consentement numérique » obtient un profil **adulte**, sans aucune protection | corrigé | c33fbcd | audit-mineurs.test.ts « MIN-1 » |
@@ -40,7 +40,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | CON-5 | majeur | Filtre du tuteur : avis religieux, numéros de hadith et phonétique latine non détectés | corrigé | 4ddc097 | packages/tutor/test/tutor.test.ts |
 | CON-6 | majeur | Bouton « explique » : le texte libre contourne le classifieur (pas d'alerte de détresse) et part au modèle | corrigé | 4bd6b13 | packages/tutor/test/tutor.test.ts |
 | CON-7 | majeur | Plafond de coût mensuel du tuteur dépassé par des appels parallèles | corrigé (plafond global par compte et par jour : non fait, tuteur réel non activé) | 2e355a2 | audit-tuteur.test.ts |
-| CON-8 | majeur | La batterie adverse est circulaire (et vide avec le fournisseur simulé) | corrigé (relecture humaine d'un échantillon avec le vrai modèle : à faire à l'activation) | voir « CON-8 » dans git log | battery.test.ts, tutor.test.ts |
+| CON-8 | majeur | La batterie adverse est circulaire (et vide avec le fournisseur simulé) | corrigé (relecture humaine d'un échantillon avec le vrai modèle : à faire à l'activation) | 7e57646 | battery.test.ts, tutor.test.ts |
 | CON-9 | mineur | Mise en service de Claude avec un rapport de batterie écrit à la main | à faire | | |
 | CON-10 | mineur | Balise de fin du message élève reconstructible (injection) | à faire | | |
 | CON-11 | mineur | Texte libre d'un enfant de moins de 13 ans stocké sans être lu ni classé | à faire | | |
