@@ -96,6 +96,20 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     req.auth = await lookupSession(db, readCookie(req.headers.cookie));
   });
 
+  // audit SEC-4 : UN seul contrôle pour toutes les routes — un compte qui exige le second facteur
+  // (enseignant, administrateur) sans l'avoir vérifié n'a accès qu'à l'authentification et aux contenus
+  // publics en lecture (au lieu d'une garde recopiée route par route, oubliée sur certaines)
+  const MFA_FREE_READ =
+    /^\/api\/v1\/(health|config|levels|units|packs|quran|booklets|hifz\/books|pays|public)(\/|\?|$)/;
+  app.addHook('preHandler', async (req, reply) => {
+    const a = req.auth;
+    if (!a || !requiresMfa(a.kind) || a.mfaVerified) return;
+    const path = req.url;
+    if (path.startsWith('/api/v1/auth/')) return;
+    if ((req.method === 'GET' || req.method === 'HEAD') && MFA_FREE_READ.test(path)) return;
+    return err(reply, 403, a.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
+  });
+
   const needAuth = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
     if (requiresMfa(req.auth.kind) && !req.auth.mfaVerified)

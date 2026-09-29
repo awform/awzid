@@ -4,6 +4,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { eq } from 'drizzle-orm';
+import { setupBilling } from '@awform/billing';
 import { schema as t } from '@awform/db';
 import { hashSecret, totpAt } from '../src/auth/crypto.js';
 import { cookieOf, parent, PW, setupEdition, teacher, type Ctx } from './helpers.js';
@@ -14,7 +15,9 @@ const now = () => Math.floor(Date.now() / 30_000);
 describe.skipIf(!URL_)('audit — second facteur', () => {
   let c: Ctx;
   beforeAll(async () => {
-    c = await setupEdition(URL_!);
+    c = await setupEdition(URL_!, {
+      billing: setupBilling({ AWFORM_PAIEMENT: 'simule', AWFORM_PAIEMENT_SIM_SECRET: 'x' }),
+    });
   });
   afterAll(async () => {
     await c?.app.close();
@@ -107,5 +110,35 @@ describe.skipIf(!URL_)('audit — second facteur', () => {
       ),
     );
     expect(pins.filter((r) => r.statusCode === 401).length).toBeLessThanOrEqual(5);
+  });
+
+  it('SEC-4 : enseignant sans second facteur vérifié — tout est refusé hors authentification et contenus publics', async () => {
+    await c.h.db.insert(t.account).values({
+      kind: 'enseignant',
+      email: 'sec4@ecole.example',
+      passwordHash: await hashSecret(PW),
+      country: 'SN',
+    });
+    const S = {
+      cookie: cookieOf(
+        await c.req(
+          'POST',
+          '/api/v1/auth/login',
+          {},
+          { email: 'sec4@ecole.example', password: PW },
+        ),
+      ),
+    };
+    expect((await c.req('GET', '/api/v1/notifications', S)).statusCode).toBe(403);
+    expect((await c.req('GET', '/api/v1/billing/me', S)).statusCode).toBe(403);
+    const buy = await c.req('POST', '/api/v1/billing/checkout', S, {
+      plan: 'licence_ecole',
+      places: 300,
+    });
+    expect(buy.statusCode).toBe(403);
+    // toujours possibles : la configuration du second facteur et la lecture des contenus publics
+    expect((await c.req('GET', '/api/v1/auth/me', S)).statusCode).toBe(200);
+    expect((await c.req('POST', '/api/v1/auth/totp/setup', S, {})).statusCode).toBe(200);
+    expect((await c.req('GET', '/api/v1/levels', S)).statusCode).toBe(200);
   });
 });
