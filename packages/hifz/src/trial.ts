@@ -27,13 +27,13 @@ export function trialStats(
   j7?: ReadonlySet<string>,
 ): TrialStats {
   const days = Math.max(1, today - startDay);
-  const rev = events.filter((e) => e.kind === 'revision' && e.day >= startDay && e.day < today);
+  // audit MET-3 : le mois d'essai se juge sur ses 28 PREMIERS jours (au-delà, rien ne compte)
+  const end = Math.min(today, startDay + 28);
+  const rev = events.filter((e) => e.kind === 'revision' && e.day >= startDay && e.day < end);
   const ref = j7 ? rev.filter((e) => j7.has(e.id)) : rev;
   const retention = ref.length ? ref.filter((e) => e.q === 3).length / ref.length : null;
   const helps = rev.filter((e) => (e.q ?? 0) <= 1).length;
-  const worked = new Set(
-    events.filter((e) => e.day >= startDay && e.day < today).map((e) => e.day),
-  );
+  const worked = new Set(events.filter((e) => e.day >= startDay && e.day < end).map((e) => e.day));
   return {
     retention,
     helpsPerReview: rev.length ? helps / rev.length : 0,

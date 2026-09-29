@@ -307,10 +307,12 @@ export function replay(
   const st = newState(parts);
   // configuration fixe, ou recalculée chaque jour (temps de séance selon la quantité acquise)
   const cfgOf = () => (typeof config === 'function' ? config(st) : config);
-  const sorted = [...events].sort(
-    (a, b) => a.day - b.day || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
-  );
-  let d = startDay ?? sorted[0]?.day ?? today;
+  // audit MET-3 : un jour invalide (NaN, infini) est ignoré au lieu d'arrêter tout le rejeu
+  const sorted = events
+    .filter((e) => Number.isFinite(e.day))
+    .sort((a, b) => a.day - b.day || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  let d =
+    startDay !== undefined && Number.isFinite(startDay) ? startDay : (sorted[0]?.day ?? today);
   let i = 0;
   for (; d < today; d++) {
     while (i < sorted.length && sorted[i]!.day <= d) apply(st, sorted[i++]!, cfgOf());

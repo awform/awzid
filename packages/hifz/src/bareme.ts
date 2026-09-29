@@ -34,7 +34,12 @@ export interface Note {
   validation: 'oui' | 'provisoire' | 'non';
 }
 
-const nonNeg = (n: number) => (Number.isFinite(n) && n > 0 ? n : 0);
+/** compteur absent : 0 ; négatif : 0 ; infini ou non numérique : ERREUR (audit MET-3 : jamais une note parfaite) */
+const nonNeg = (n: number | undefined | null) => {
+  if (n === undefined || n === null) return 0;
+  if (typeof n !== 'number' || !Number.isFinite(n)) throw new RangeError('compteur_invalide');
+  return n > 0 ? n : 0;
+};
 
 export function note(c: Counters): Note {
   const memorisation = Math.max(
