@@ -127,6 +127,13 @@
       "when": 1790691113128,
       "tag": "0017_certificats_verifiables",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1790693274599,
+      "tag": "0018_messagerie_visio",
+      "breakpoints": true
     }
   ]
 }

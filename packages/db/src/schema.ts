@@ -1186,3 +1186,159 @@ export const examSubmission = pgTable(
     ),
   ],
 );
+
+// ================================================================ messagerie encadrée et visio (lot 21)
+
+/**
+ * Fil PRIVÉ enseignant ↔ famille (CDC §2.12) : toujours à propos d'un élève inscrit dans la classe de
+ * l'enseignant ; le titulaire du compte famille (parent, ou adulte pour lui-même) est l'interlocuteur.
+ * Aucun fil entre élèves ni entre un adulte et un mineur.
+ */
+export const messageThread = pgTable(
+  'message_thread',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    teacherAccountId: uuid('teacher_account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    familyAccountId: uuid('family_account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    createdAt: createdAt(),
+    lastAt: timestamp('last_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('message_thread_one').on(t.classId, t.profileId)],
+);
+
+/**
+ * Message : privé (dans un fil) ou ANNONCE de classe (enseignant → familles, sans réponse collective).
+ * Corps CHIFFRÉ (AES-256-GCM, clé AWFORM_MESSAGE_KEY hors base, version de clé) ; pièce jointe de
+ * l'enseignant seulement (PNG, JPEG ou PDF vérifiés par leur signature, 2 Mo), chiffrée aussi.
+ */
+export const message = pgTable(
+  'message',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    threadId: uuid('thread_id').references(() => messageThread.id, { onDelete: 'cascade' }),
+    kind: text('kind').notNull(),
+    authorAccountId: uuid('author_account_id').references(() => account.id, {
+      onDelete: 'set null',
+    }),
+    keyVersion: smallint('key_version').notNull(),
+    iv: bytea('iv').notNull(),
+    body: bytea('body').notNull(),
+    attachmentName: text('attachment_name'),
+    attachmentMime: text('attachment_mime'),
+    attachmentIv: bytea('attachment_iv'),
+    attachment: bytea('attachment'),
+    createdAt: createdAt(),
+    /** retiré par la modération (le texte est effacé, la trace reste) */
+    removedAt: timestamp('removed_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('message_by_thread').on(t.threadId, t.createdAt),
+    index('message_by_class').on(t.classId, t.createdAt),
+    index('message_created').on(t.createdAt),
+    check('message_kind', sql`${t.kind} IN ('prive', 'annonce')`),
+    check('message_thread_kind', sql`(${t.kind} = 'prive') = (${t.threadId} IS NOT NULL)`),
+  ],
+);
+
+/** Lecture d'un message par un compte (non lus). */
+export const messageRead = pgTable(
+  'message_read',
+  {
+    messageId: uuid('message_id')
+      .notNull()
+      .references(() => message.id, { onDelete: 'cascade' }),
+    accountId: uuid('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    readAt: timestamp('read_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.messageId, t.accountId] })],
+);
+
+/** Signalement d'un message → file de modération de l'administrateur. */
+export const messageReport = pgTable(
+  'message_report',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    messageId: uuid('message_id')
+      .notNull()
+      .references(() => message.id, { onDelete: 'cascade' }),
+    reporterAccountId: uuid('reporter_account_id').references(() => account.id, {
+      onDelete: 'set null',
+    }),
+    reason: text('reason').notNull(),
+    createdAt: createdAt(),
+    handledAt: timestamp('handled_at', { withTimezone: true }),
+    handledBy: uuid('handled_by').references(() => account.id, { onDelete: 'set null' }),
+    decision: text('decision'),
+  },
+  (t) => [
+    uniqueIndex('message_report_one').on(t.messageId, t.reporterAccountId),
+    check(
+      'message_report_decision',
+      sql`${t.decision} IS NULL OR ${t.decision} IN ('classe', 'retire')`,
+    ),
+  ],
+);
+
+/**
+ * Séance de visio planifiée (CDC §2.11) : la visio passe par un service EXTERNE (lien https) ; l'application
+ * gère le planning, le lien réservé aux membres de la classe et la présence.
+ */
+export const videoSession = pgTable(
+  'video_session',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
+    durationMin: smallint('duration_min').notNull(),
+    url: text('url').notNull(),
+    provider: text('provider').notNull(),
+    createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    canceledAt: timestamp('canceled_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('video_session_class').on(t.classId, t.startsAt),
+    check('video_session_duration', sql`${t.durationMin} BETWEEN 10 AND 240`),
+  ],
+);
+
+/** Présence notée par l'enseignant (élèves de la liste de classe, papier compris). */
+export const videoPresence = pgTable(
+  'video_presence',
+  {
+    sessionId: uuid('session_id')
+      .notNull()
+      .references(() => videoSession.id, { onDelete: 'cascade' }),
+    pupilId: uuid('pupil_id')
+      .notNull()
+      .references(() => classPupil.id, { onDelete: 'cascade' }),
+    present: boolean('present').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.sessionId, t.pupilId] })],
+);

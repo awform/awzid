@@ -8,6 +8,11 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 29/09/2026 — Lot 21 (V1-f) : PARTIEL — schéma de la messagerie encadrée et de la visio (branche `lot21-wip`)
+
+Arrêté sur décision du chef de projet (audit général : 9/20, 73 constats → corrections d'abord). Livré : migration `0018_messagerie_visio` — `message_thread` (fil privé enseignant ↔ famille, toujours à propos d'un élève inscrit), `message` (privé ou annonce, corps et pièce jointe prévus CHIFFRÉS AES-256-GCM, retrait par la modération), `message_read`, `message_report` (file de modération), `video_session` (lien externe, durée 10-240 min), `video_presence` ; droits de l'API dans `roles.ts` (le test « chaque table a des droits décidés » reste vert). **Non faits** : routes, chiffrement, pièces jointes, modération, conservation 12 mois, écrans, tests fonctionnels. `ECARTS.md` : V1-f « partiel ». Tests (conditions de la CI) : inchangés, verts.
+
+---
 ## 29/09/2026 — Décisions D6, D7 et CI sur les branches de travail (branche `lot21-wip`)
 
 - **D7** : la projection ÉLÈVE des bilans et examens ne contient plus **aucun corrigé** (`studentProjection` applique la projection d'épreuve ; « relier » en colonnes gauche/droite décalées) ; l'entraînement sur un bilan recueille les réponses sans correction sur l'appareil (`ExamExercise`) et le serveur corrige item par item (`POST /api/v1/units/:id/corriger`, `gradeTraining` : juste/faux, jamais la bonne réponse) ; les réponses passent aussi par la file habituelle (progression) ; **l'examen** ne se passe qu'en épreuve notée. Prend effet au prochain import (l'empreinte d'édition inclut la version de l'application).

@@ -76,6 +76,13 @@ export const API_GRANTS: Record<string, Right[]> = {
   // lot 19 : épreuves notées
   exam_session: ALL,
   exam_submission: ALL,
+  // lot 21 (partiel : schéma seulement, routes à venir) : messagerie encadrée et visio
+  message_thread: ALL,
+  message: ALL,
+  message_read: ALL,
+  message_report: ALL,
+  video_session: ALL,
+  video_presence: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */
