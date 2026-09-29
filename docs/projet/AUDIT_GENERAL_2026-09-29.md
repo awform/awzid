@@ -638,3 +638,137 @@ J+31 : 1) et la cascade efface profil, récitations, liste de classe, journal et
 supprimé ne peut plus se connecter ; admin sans accès à l'espace école ; CSV : `=`, `+`, `-`, `@`, tabulation, retour
 chariot neutralisés ; un « adulte » SN de 15 ans est refusé ; profil d'enfant sans e-mail (pseudonyme, année,
 avatar, niveau).
+
+---
+
+## Domaine 7 — Qualité du code et des tests
+
+### QUA-1 — Le garde-fou CI « aucune normalisation Unicode » ne peut jamais échouer — **MAJEUR**
+
+- **Fichier** : `.github/workflows/ci.yml:46-49`.
+- **Constat** : sous `bash -e`, une commande niée par `!` n'interrompt jamais le script (POSIX : `errexit` ignoré) ;
+  seul le statut de la **dernière** ligne (`.env`) compte. Un `.normalize(` ajouté au code passe donc la CI. La règle
+  ESLint ne voit que la forme `s.normalize(…)` : `s['normalize']('NFC')`, `String.prototype.normalize.call(s,'NFC')`
+  et `s[k]('NFC')` passent aussi (1 erreur ESLint sur 4 formes). C'est la règle « non négociable » du projet.
+- **Preuve** (rejouée par l'auditeur principal) :
+  ```
+  $ echo 'x.normalize("NFC")' > a.ts && git add a.ts
+  $ bash -e -c '! git grep -nE "\.normalize\(" -- "*.ts"
+  ! git ls-files | grep -E "(^|/)\.env$"'; echo "statut de l'étape = $?"
+  a.ts:1:x.normalize("NFC")
+  statut de l'étape = 0
+  ```
+- **Correction** : `if git grep -nE … ; then exit 1; fi` pour chaque contrôle ; règle ESLint
+  `no-restricted-syntax` sur toute `MemberExpression` dont la propriété vaut `normalize` (calculée ou non).
+
+### QUA-2 — Tests qui ne prouvent pas ce qu'ils annoncent — **MAJEUR**
+
+- `packages/content/test/lot2.test.ts:143` vérifie que `examProjection` retire les réponses, mais la production ne
+  l'appelle jamais (CON-1) : test vert, défaut réel.
+- `packages/tutor/test/battery.test.ts:29` : `expect(r.cas).toBeGreaterThanOrEqual(600)` pour une batterie de 1 081
+  cas (une perte de 480 cas passerait) ; la batterie elle-même est circulaire (CON-8).
+- `packages/school/test/school.test.ts:255` : lecture de fichier dans le corps d'un `describe.skipIf` (INF-1).
+- `packages/hifz/test/simulator.test.ts:62` : `skipIf(process.env.SIM_TABLE !== '1')`, sauté partout.
+- `apps/web/e2e/a11y.spec.ts` : seules les violations « serious »/« critical » font échouer.
+- `apps/worker` : aucun script `test` (les purges RGPD sont testées via `packages/db`, mais pas la planification).
+- Aucune couverture mesurée (`grep -rn coverage */vitest.config.ts` → rien) ; aucun test de concurrence (PAY-1,
+  PAY-5, CON-7 et les autres courses n'étaient donc pas détectables).
+- **Preuve** : lecture des lignes citées ; chiffres globaux : 31 `skipIf`, 1 479 `expect(`, aucun `.only`.
+- **Correction** : un test par garde-fou **sur le chemin de production** (appel de l'API, pas de la fonction isolée) ;
+  seuil exact du nombre de cas ; tests de concurrence (`Promise.all`) pour chaque opération « lire puis écrire ».
+
+### QUA-3 — Fonctions très longues — **MINEUR**
+
+- **Preuve** : 23 fonctions de plus de 100 lignes, dont `registerSchool` (910 lignes, `apps/api/src/school.ts`),
+  `registerAuth` (723, `apps/api/src/auth/routes.ts`), `loadEdition` (490, `packages/content/src/importer.ts`).
+- **Correction** : découper par ressource (un fichier par groupe de routes, gardes partagées).
+
+**Vérifié solide** : 281 fichiers, 43 928 lignes ; 1 seul TODO/FIXME ; 0 `any` ; 0 `@ts-ignore` ; 9 `as unknown as` ;
+10 `eslint-disable` tous justifiés ; duplication ≈ 1 % (jscpd : 35 clones, 461 lignes) ; knip : 20 exports et 5
+types inutilisés seulement ; typage strict et lint/format verts (`pnpm typecheck`, `pnpm lint` : 0 erreur) ; aucun
+`vi.mock` (les tests passent par les vraies fonctions et une vraie base).
+
+---
+
+## Domaine 9 — Accessibilité et performance (téléphone d'entrée de gamme, connexion lente)
+
+### PERF-1 — Budget JavaScript dépassé : 204,3 Ko Brotli (budget 150 Ko), et non « ≈ 59 Ko » — **MAJEUR**
+
+- **Fichiers** : `apps/web/scripts/budget.mjs` ; `apps/web/src/lib/i18n/index.ts:14-15` (import **statique** de
+  `fr.json` et `en.json`) ; `apps/web/src/app.html:9-15` (préchargement d'Amiri Quran sur toutes les pages).
+- **Constat** : le brief (§ 6) annonce « application ≈ 59 Ko de JavaScript » (chiffre du lot 3). Le script de budget du
+  projet échoue lui-même. Le plus gros morceau (167 Ko brut, 42,6 Ko Brotli) contient le catalogue **anglais**, masqué
+  en production (18,5 Ko Brotli inutiles pour tous). Mesure réelle (Playwright/CDP, profil Pixel 7, premier chargement
+  de `/connexion`) : script 88 439 o, polices 78 980 o dont Amiri Quran 45 932 o préchargée même sans Coran.
+- **Preuve** (rejouée) :
+  ```
+  $ pnpm --filter @awform/web budget
+  | JavaScript (toutes les pages, Brotli) | 204.3 Ko | ≤ 150.0 Ko |
+  | Polices WOFF2 (une seule fois, déjà compressées) | 222.6 Ko | ≤ 600.0 Ko |
+  Budget dépassé   → ERR_PNPM … budget: exit 1
+  ```
+  (L'étape « budget » de la CI est `skipped` depuis le lot 9 à cause d'INF-1 : le dépassement n'a jamais été vu.)
+- **Correction** : `import()` du catalogue de la langue choisie ; précharger Amiri Quran seulement sur les écrans
+  coraniques ; budget par page d'entrée et total ; mesure sur un vrai Tecno/Itel (reconnu non fait par le brief).
+
+### A11Y-1 — Cibles tactiles sous la règle de 48 px du projet — **MINEUR**
+
+- **Fichiers** : `apps/web/src/routes/+layout.svelte:228` (`.small { min-height: 36px }`, en-tête),
+  `routes/abonnement/+page.svelte:127` (36 px), `routes/lecons/[id]/+page.svelte:951` (case de 28 px).
+- **Preuve** : `grep -rn "min-height: *36px\|height: *28px" apps/web/src`. Conforme à WCAG 2.2 AA (24 px), mais pas
+  à la règle de 48 px fixée par le projet pour les enfants.
+- **Correction** : 44 à 48 px.
+
+**Soupçon** : 46 couleurs codées en dur dans les `.svelte` (22 distinctes) échappent au test de contraste des jetons.
+
+**Vérifié solide** : axe-core 4.13 (WCAG 2.0/2.1/2.2 AA + bonnes pratiques, **toutes gravités**) sur `/connexion`,
+`/inscription`, `/garanties`, `/aide`, `/legal/confidentialite` → **0 violation** ; zoom non bloqué
+(`app.html:5`) ; 0 image sans `alt` ; 0 `svelte-ignore a11y` ; focus visible (`app.css:111`) ; `lang="ar"` posé
+(37 occurrences) ; précache du service worker **0,95 Mo** (120 fichiers, ≈ 1 % d'un forfait de 100 Mo) ; polices en
+sous-ensembles, fichiers précompressés br/gz. Le test de lecteur d'écran réel et la mesure sur appareil restent à
+faire (reconnu par le brief).
+
+---
+
+## Domaine 10 — Conformité au cahier des charges et fidélité du journal
+
+### CDC-1 — Affirmations du brief et du journal démenties par le code ou par GitHub — **MAJEUR**
+
+| Affirmation (brief / journal) | Réalité constatée | Preuve |
+|---|---|---|
+| « La CI exécute aussi les tests sur base PostgreSQL 18 et la batterie du tuteur » | CI rouge depuis le lot 9 ; ni la base ni la batterie n'ont tourné ; 57/87 tests API sautés même corrigée | INF-1, INF-2 |
+| « Aucune normalisation (interdite par la CI) » | le contrôle CI ne peut pas échouer | QUA-1 |
+| « Application ≈ 59 Ko de JavaScript » | 204,3 Ko, budget dépassé | PERF-1 |
+| « Droits prêts, activés par `AWFORM_DROITS=on` » | aucun effet : non branchés | PAY-4 |
+| « Réponses d'épreuve jamais sur l'appareil » (CDC § 4.8, § 5.4) | corrigés des examens envoyés | CON-1 |
+| « Enregistrements effacés à 7 jours sur l'appareil » | seulement à la réouverture de l'écran ; rien à la déconnexion | MIN-16 |
+| « Export complet (y compris `tutor_log`, `tutor_question`, `subscription`, `profile_rhythm`) » | aucun des quatre | MIN-6 |
+| « Batterie : 15 critères bloquants tous verts » | oracle identique au filtre | CON-8 |
+| « Migrations 0000 → 0009 » | 0000 → 0013 sur `main` (+ 0014 sur `lot17-wip`) | `ls packages/db/migrations` |
+| « Contraste : 18 paires, 1 écart connu » | 19 paires, `KNOWN_CONTRAST_GAPS = []` (`tokens.ts:96`) | lecture |
+| « 1 110 messages anglais » | 1 162 (fr = en) | décompte des clés |
+| « 832 tests automatiques » | invérifiable sans les livres ; sans livres : 215 exécutés, 88 sautés (+ `school` qui plante) ; 525 cas de correction générés depuis les livres | `pnpm -r --no-bail test` |
+
+- **Correction** : corriger le brief avant diffusion ; chaque chiffre du journal doit provenir d'une commande rejouable
+  (et la CI doit être la source de vérité).
+
+### CDC-2 — Fonctionnalités et exigences de test du CDC absentes ou partielles (lots 0-16) — **MINEUR**
+
+- Absents de l'API (`git grep -hoE "'/api/v1/[^']+'" apps/api/src`) : messagerie, visio, codes d'activation,
+  vérification publique des certificats — reconnus honnêtement dans `docs/projet/ECARTS.md` sur `lot17-wip`.
+- Plan de tests du CDC § 6.4 : pas de projet WebKit dans `playwright.config.ts` (Chromium seulement) ; pas de seuil de
+  couverture ; pas de k6, de ZAP, de `pnpm audit` ni de Dependabot ; la correction générée ne couvre que en1/ad1
+  (525 cas), pas « les 4 316 exercices » ; « la CI refuse toute fusion si un test échoue » : non (INF-1).
+
+### CDC-3 — Branche `lot17-wip` (travail en cours) — constat d'étape
+
+- `docs/projet/ECARTS.md` y est **fidèle au code** : tests relais (13) et lot 17 (10) présents et exécutés sans les
+  livres ; le journal du lot 17 (« 257 verts, 90 sautés ») est **reproduit exactement**. La branche corrige la cause
+  n° 1 d'INF-1 (`existsSync` avant lecture dans `school.test.ts`). Elle ne traite pas INF-2, QUA-1, PAY-4, MIN-16, ni
+  MIN-1/MIN-3 (voir MIN-17). Le relais d'école est examiné au domaine 4.
+
+**Vérifié solide** : les 28 empreintes de commit citées dans le journal existent (`git cat-file -e`) ; paramètres
+conformes au journal : Argon2id m = 19 456 KiB, t = 2, p = 1 (`crypto.ts:25`) ; sessions 12 h / 30 j
+(`policy.ts:107`) ; 20 inscriptions/h ; âges FR 15, US 13, SN 18, défaut 16 ; récitations 3 Mo, 1-30 j (14 par
+défaut) ; heures calmes ≥ 8 h contrôlées par l'API (`push.ts:86-87`) ; purge des comptes à 30 j (3 h 15) ; journal du
+tuteur 365 j ; tuteur `off` par défaut (`gate.ts:50`) ; page QR sans JavaScript avec CSP `default-src 'none'`.
