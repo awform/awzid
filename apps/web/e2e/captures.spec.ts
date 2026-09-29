@@ -306,3 +306,28 @@ test.describe('lot 9', () => {
     await shot(page, '41-journal-tuteur', true);
   });
 });
+
+test.describe('lot 10', () => {
+  test.use({ compte: null });
+  test('captures d’écran — lot 10 (offres, paiement simulé, abonnement)', async ({
+    page,
+  }, info) => {
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    const shot = async (name: string, full = false) => {
+      await page.locator('main h1, h1').first().waitFor();
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: full });
+    };
+    await newAdult(page, 'captures10');
+    await page.goto('/offres');
+    await page.getByTestId('offres').waitFor();
+    await shot('42-offres', true);
+    await page.getByTestId('choisir-adulte_annuel').click();
+    await page.getByTestId('montant').waitFor();
+    await shot('43-paiement-simule');
+    await page.getByTestId('payer').click();
+    await page.getByTestId('paiement-ok').waitFor();
+    await shot('44-mon-abonnement', true);
+  });
+});
