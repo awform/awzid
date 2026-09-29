@@ -470,3 +470,72 @@ test.describe('lot 15', () => {
     await page.screenshot({ path: join(DIR, `${dev}-53-anglais.png`) });
   });
 });
+
+test.describe('lot 16', () => {
+  test.use({ compte: 'parent' });
+  test('captures d’écran — lot 16 (notifications, écoute des récitations)', async ({
+    page,
+    browser,
+  }, info) => {
+    test.setTimeout(120_000);
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    await page.goto('/compte');
+    await page.getByTestId('notifications').scrollIntoViewIfNeeded();
+    await page.evaluate(() => document.fonts.ready);
+    await page
+      .getByTestId('notifications')
+      .screenshot({ path: join(DIR, `${dev}-54-notifications.png`) });
+    // enseignant : une récitation reçue
+    const tctx = await browser.newContext();
+    const tp = await tctx.newPage();
+    await loginTeacher(tp);
+    const cls = (
+      await (
+        await tp.request.post('/api/v1/teacher/classes', {
+          headers: { 'x-awform': '1' },
+          data: { name: `Écoute ${dev}` },
+        })
+      ).json()
+    ).class;
+    const me = await (await page.request.get('/api/v1/auth/me')).json();
+    const kid = me.profiles.find((p: { kind: string }) => p.kind === 'enfant');
+    await page.request.post(`/api/v1/profiles/${kid.id}/classes`, {
+      headers: { 'x-awform': '1' },
+      data: { code: cls.joinCode, consent: true },
+    });
+    const H = { 'x-awform': '1', 'x-parent-pin': PARENT_PIN };
+    await page.request.post(`/api/v1/profiles/${kid.id}/recitations/accord`, {
+      headers: H,
+      data: {},
+    });
+    await page.request.post(
+      `/api/v1/profiles/${kid.id}/recitations?classe=${cls.id}&passage=112:1-4`,
+      {
+        headers: { ...H, 'content-type': 'audio/ogg' },
+        data: Buffer.concat([Buffer.from('OggS'), Buffer.alloc(1500)]),
+      },
+    );
+    await tp.goto(`/enseignant/classe/${cls.id}`);
+    await tp.getByTestId('onglet-ecoute').click();
+    await tp.getByTestId('ecoute-noter').first().click();
+    await tp.evaluate(() => document.fonts.ready);
+    await tp.screenshot({ path: join(DIR, `${dev}-55-ecoute.png`), fullPage: true });
+    // nettoyage : accord retiré (efface l'envoi), l'enfant quitte la classe
+    const consents = (await (await page.request.get('/api/v1/account/consents')).json())
+      .consents as Array<{
+      id: string;
+      type: string;
+      withdrawnAt: string | null;
+    }>;
+    for (const c of consents.filter((x) => x.type === 'envoi_recitation' && !x.withdrawnAt))
+      await page.request.post(`/api/v1/account/consents/${c.id}/withdraw`, {
+        headers: { 'x-awform': '1' },
+        data: {},
+      });
+    await page.request.delete(`/api/v1/profiles/${kid.id}/classes/${cls.id}`, {
+      headers: { 'x-awform': '1' },
+    });
+    await tctx.close();
+  });
+});
