@@ -65,9 +65,12 @@ for k in AWFORM_DB_API_PASSWORD AWFORM_DB_WORKER_PASSWORD; do
   grep -q "^$k=" "$ENVF" || echo "$k=$(rnd 24)" >> "$ENVF"
 done
 sed -i '/^DATABASE_URL_API=/d;/^DATABASE_URL_WORKER=/d' "$ENVF"
+# (mots de passe lus AVANT d'écrire dans le même fichier)
+PW_API="$(grep '^AWFORM_DB_API_PASSWORD=' "$ENVF" | cut -d= -f2-)"
+PW_WORKER="$(grep '^AWFORM_DB_WORKER_PASSWORD=' "$ENVF" | cut -d= -f2-)"
 {
-  echo "DATABASE_URL_API=postgres://awform_api:$(grep '^AWFORM_DB_API_PASSWORD=' "$ENVF" | cut -d= -f2-)@db:5432/awform"
-  echo "DATABASE_URL_WORKER=postgres://awform_worker:$(grep '^AWFORM_DB_WORKER_PASSWORD=' "$ENVF" | cut -d= -f2-)@db:5432/awform"
+  echo "DATABASE_URL_API=postgres://awform_api:$PW_API@db:5432/awform"
+  echo "DATABASE_URL_WORKER=postgres://awform_worker:$PW_WORKER@db:5432/awform"
 } >> "$ENVF"
 # lot 16 : clé de chiffrement des récitations envoyées (API seulement) et clés VAPID des notifications
 # (publique : API et travailleur ; PRIVÉE : travailleur seulement) — générées une fois, jamais versionnées
@@ -95,7 +98,8 @@ echo "AWFORM_VAPID_SUBJECT=https://$SITE" >> "$ENVF"
 export AWFORM_ENV_DIR="$CONF"
 "$PROD/env-split.sh" "$ENVF" "$CONF"
 export AWFORM_CONTENT_DIR="${AWFORM_CONTENT_DIR:-$HOME/awform-content}"
-export AWFORM_VERSION="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo local)"
+AWFORM_VERSION="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo local)"
+export AWFORM_VERSION
 DC=(docker compose -f "$PROD/compose.yml")
 
 # clés des sauvegardes : publique sur le serveur, PRIVÉE à emporter hors de la machine (infra/pc/recuperer-cle-sauvegarde.ps1)
@@ -211,7 +215,11 @@ AWFORM_DEMO_TAG=$(rnd 3)
 AWFORM_DEMO_PIN=$(shuf -i 1000-9999 -n 1)
 EOF
   fi
-  set -a; . "$DEMOF"; set +a
+  # fichier de la machine (identifiants de démonstration), hors dépôt
+  set -a
+  # shellcheck source=/dev/null
+  . "$DEMOF"
+  set +a
   OUT="$("${DC[@]}" --profile outils run --rm -T -e AWFORM_DEMO=1 -e AWFORM_DEMO_PASSWORD -e AWFORM_DEMO_TAG -e AWFORM_DEMO_PIN demo | tail -1)"
   if echo "$OUT" | grep -q '"demo":"creee"'; then
     echo "$OUT" > "$CONF/demo-acces.json"

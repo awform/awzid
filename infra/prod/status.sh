@@ -34,7 +34,7 @@ echo "== secrets (périmètre par service)"
 "$PROD/env-check.sh" "$CONF/prod.env" | tail -1 || warn "un secret sort de son périmètre (env-check.sh)"
 
 echo "== travailleur (pg-boss)"
-"${DC[@]}" logs --since 15m worker 2>/dev/null | grep -q battement && echo "battement : ok" || warn "pas de battement depuis 15 min"
+if "${DC[@]}" logs --since 15m worker 2>/dev/null | grep -q battement; then echo "battement : ok"; else warn "pas de battement depuis 15 min"; fi
 
 echo "== disque"
 df -h / | tail -1

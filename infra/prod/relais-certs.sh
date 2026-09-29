@@ -23,7 +23,7 @@ passe() {
     case "$host" in *[!a-z0-9.-]*) continue ;; esac
     label="${host%."$dom"}"
     case "$label" in '' | *.*) continue ;; esac
-    [ -f "$d/$host.crt" ] && [ -f "$d/$host.key" ] || continue
+    if [ ! -f "$d/$host.crt" ] || [ ! -f "$d/$host.key" ]; then continue; fi
     dst="$OUT/certificates/$issuer/$host"
     mkdir -p "$dst"
     for f in "$host.crt" "$host.key"; do

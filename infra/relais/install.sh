@@ -32,7 +32,7 @@ ICI="$(cd "$(dirname "$0")" && pwd)"
 HOTE_RE='^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$'
 
 # valeurs déjà enregistrées (relance) : gardées si l'option n'est pas redonnée
-lire() { [ -f "$1" ] && grep -E "^$2=" "$1" | tail -1 | cut -d= -f2- || true; }
+lire() { if [ -f "$1" ]; then grep -E "^$2=" "$1" | tail -1 | cut -d= -f2- || true; fi; }
 [ -n "$HOTE" ] || HOTE="$(lire "$CONF/caddy.env" RELAIS_HOST)"
 [ -n "$AMONT" ] || AMONT="$(lire "$CONF/relais.env" AWFORM_RELAIS_AMONT)"
 [[ "$HOTE" =~ $HOTE_RE ]] || { echo "nom de l'école invalide ou absent (--hote)" >&2; exit 2; }

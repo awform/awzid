@@ -25,4 +25,4 @@ for svc in db api worker web caddy; do
   done
   echo "$svc : $(grep -cxF -f <(tr ' ' '\n' <<< "$secrets" | sed '/^$/d') <<< "$names" || true) secret(s) reçu(s)"
 done
-[ "$bad" = 0 ] && echo "périmètres des secrets : conformes" || { echo "périmètres des secrets : NON CONFORMES"; exit 1; }
+if [ "$bad" = 0 ]; then echo "périmètres des secrets : conformes"; else echo "périmètres des secrets : NON CONFORMES"; exit 1; fi

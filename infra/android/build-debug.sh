@@ -14,7 +14,8 @@ cd apps/android
 npx cap sync android
 cd android
 # horodatage figé : deux constructions du même commit donnent le même contenu
-export SOURCE_DATE_EPOCH="$(git -C "$ROOT" log -1 --format=%ct)"
+SOURCE_DATE_EPOCH="$(git -C "$ROOT" log -1 --format=%ct)"
+export SOURCE_DATE_EPOCH
 ./gradlew --no-daemon --offline assembleDebug || ./gradlew --no-daemon assembleDebug
 APK="app/build/outputs/apk/debug/app-debug.apk"
 sha256sum "$APK"
