@@ -3,7 +3,8 @@
  * fermés). Chaque bloc échouait avant sa correction.
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { child, parent, PW, setupEdition, type Ctx } from './helpers.js';
+import { randomUUID } from 'node:crypto';
+import { adult, child, parent, PW, setupEdition, type Ctx } from './helpers.js';
 
 const URL_ = process.env.TEST_DATABASE_URL;
 
@@ -39,5 +40,41 @@ describe.skipIf(!URL_)('audit — sécurité', () => {
     // le bon mot de passe reste refusé tant que le verrou tient
     const ok = await c.req(method, u, P, body(PW));
     expect(ok.statusCode).toBe(429);
+  });
+
+  it('SEC-8 : un événement volumineux (1 Mo de JSON libre) est refusé seul ; les détails sont bornés', async () => {
+    const { A, profileId } = await adult(c, 'sec8@exemple.org');
+    const day = new Date().toISOString().slice(0, 10);
+    const deviceAt = new Date().toISOString();
+    const gros = {
+      id: randomUUID(),
+      profileId,
+      unitId: 'en1.l01',
+      eventType: 'checklist',
+      response: { checked: 1, total: 2, bourrage: 'x'.repeat(200_000) },
+      deviceAt,
+    };
+    const details = {
+      id: randomUUID(),
+      profileId,
+      unitId: 'x',
+      eventType: 'trace',
+      response: { item: 'ب', ok: true, day, details: { note: 'y'.repeat(3000) } },
+      deviceAt,
+    };
+    const bon = {
+      id: randomUUID(),
+      profileId,
+      unitId: 'x',
+      eventType: 'trace',
+      response: { item: 'ب', ok: true, day, details: { note: 'court' } },
+      deviceAt,
+    };
+    const r = await c.req('POST', '/api/v1/attempts', A, { events: [gros, details, bon] });
+    expect(r.statusCode, r.body.slice(0, 200)).toBe(200);
+    const ko = r.json().rejected.map((x: { id: string }) => x.id);
+    expect(ko).toContain(gros.id);
+    expect(ko).toContain(details.id);
+    expect(r.json().accepted.map((x: { id: string }) => x.id)).toEqual([bon.id]);
   });
 });

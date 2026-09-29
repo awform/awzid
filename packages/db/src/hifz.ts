@@ -173,7 +173,7 @@ export async function recordHifzEvents(
       reject('position invalide');
       continue;
     }
-    if (hasNul(e.details) || JSON.stringify(e.details ?? null).length > 4000) {
+    if (hasNul(e.details) || JSON.stringify(e.details ?? null).length > 2000) {
       reject('détails invalides');
       continue;
     }

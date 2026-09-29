@@ -465,6 +465,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       schema: {
         body: {
           type: 'object',
+          additionalProperties: false,
           required: ['code'],
           properties: { code: { type: 'string', maxLength: 8 } },
         },
@@ -656,6 +657,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         },
         body: {
           type: 'object',
+          additionalProperties: false,
           required: ['password'],
           properties: { password: { type: 'string', maxLength: 512 } },
         },
@@ -685,6 +687,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       schema: {
         body: {
           type: 'object',
+          additionalProperties: false,
           required: ['pin', 'password'],
           properties: {
             pin: { type: 'string', pattern: '^[0-9]{4}$' },
@@ -713,6 +716,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       schema: {
         body: {
           type: 'object',
+          additionalProperties: false,
           required: ['pin'],
           properties: { pin: { type: 'string', maxLength: 8 } },
         },
@@ -876,6 +880,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       schema: {
         body: {
           type: 'object',
+          additionalProperties: false,
           required: ['password'],
           properties: { password: { type: 'string', maxLength: 512 } },
         },

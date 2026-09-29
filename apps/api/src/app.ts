@@ -293,7 +293,30 @@ export function buildApp(opts: AppOptions): FastifyInstance {
         body: {
           type: 'object',
           required: ['events'],
-          properties: { events: { type: 'array', maxItems: 500, items: { type: 'object' } } },
+          properties: {
+            events: {
+              type: 'array',
+              maxItems: 500,
+              // audit SEC-8 : champs connus seulement (les autres sont retirés), longueurs bornées ; les
+              // valeurs sont vérifiées ensuite événement par événement (un fautif est refusé SEUL, OFF-2)
+              items: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  id: { type: 'string', maxLength: 40 },
+                  profileId: { type: 'string', maxLength: 40 },
+                  unitId: { type: 'string', maxLength: 40 },
+                  eventType: { type: 'string', maxLength: 20 },
+                  exerciseId: { type: 'string', maxLength: 80 },
+                  exerciseHash: { type: 'string', maxLength: 128 },
+                  itemIndex: {},
+                  response: {},
+                  deviceAt: { type: 'string', maxLength: 40 },
+                  deviceId: { type: 'string', maxLength: 64 },
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -307,6 +330,11 @@ export function buildApp(opts: AppOptions): FastifyInstance {
       const practice: PracticeInput[] = [];
       const refused: Array<{ id: string; reason: string; code?: string }> = [];
       for (const e of req.body.events) {
+        // audit SEC-8 : un événement ne dépasse jamais 8 Ko de JSON (réponse, détails compris)
+        if (JSON.stringify(e ?? null).length > 8000) {
+          refused.push({ id: String(e?.id ?? ''), reason: 'événement trop volumineux' });
+          continue;
+        }
         const pid = String(e?.profileId ?? '');
         if (!owned.has(pid))
           owned.set(

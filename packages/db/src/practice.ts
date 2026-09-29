@@ -49,7 +49,7 @@ export async function recordPractice(
       !deviceTime(e.deviceAt) ||
       hasNul(e.item) ||
       hasNul(e.details) ||
-      JSON.stringify(e.details ?? null).length > 4000
+      JSON.stringify(e.details ?? null).length > 2000
     ) {
       res.rejected.push({ id: e.id, reason: 'événement invalide' });
       continue;

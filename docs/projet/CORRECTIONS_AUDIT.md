@@ -14,8 +14,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | SEC-4 | majeur | Second facteur non exigé sur les notifications et les paiements des enseignants | corrigé | 6c5a72f | audit-2fa.test.ts « SEC-4 » |
 | SEC-5 | mineur | Rejeu d'un code TOTP par connexions parallèles | corrigé | 4b9dae9 | audit-2fa.test.ts « SEC-5 » |
 | SEC-6 | mineur | Ressaisies du mot de passe sans limite d'essais | corrigé | 5c0cc4d | audit-sec.test.ts |
-| SEC-7 | mineur | HTTP clair servi en production ; cookie sans `Secure` sur HTTP | corrigé | voir « SEC-7 » dans git log | audit-infra.test.ts, validation Caddy en CI |
-| SEC-8 | mineur | Entrées de la file hors ligne sans schéma (1 Mo de JSON libre par événement) | à faire | | |
+| SEC-7 | mineur | HTTP clair servi en production ; cookie sans `Secure` sur HTTP | corrigé | 3c90aaa | audit-infra.test.ts, validation Caddy en CI |
+| SEC-8 | mineur | Entrées de la file hors ligne sans schéma (1 Mo de JSON libre par événement) | corrigé | voir « SEC-8 » dans git log | audit-sec.test.ts |
 | MIN-1 | majeur | Un mineur ayant l'âge du « consentement numérique » obtient un profil **adulte**, sans aucune protection | corrigé | c33fbcd | audit-mineurs.test.ts « MIN-1 » |
 | MIN-2 | majeur | Deux calculs d'âge : un profil « enfant » reçoit le tuteur « ado » (texte libre, la nuit) | corrigé | 47b9224 | audit-mineurs.test.ts « MIN-2 » |
 | MIN-3 | majeur | Compte « parent » sans contrôle d'âge : un enfant consent pour lui-même (Sénégal compris) | corrigé | 12480c2 | audit-mineurs.test.ts « MIN-3 » |

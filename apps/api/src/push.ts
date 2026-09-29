@@ -129,6 +129,7 @@ export function registerPush(app: FastifyInstance, db: Db): void {
       schema: {
         body: {
           type: 'object',
+          additionalProperties: false,
           required: ['endpoint', 'keys'],
           properties: {
             endpoint: { type: 'string', maxLength: 1000, pattern: '^https://' },
