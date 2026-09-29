@@ -240,19 +240,23 @@ export async function classByCode(db: Db, code: string) {
 }
 
 export async function classMembers(db: Db, classId: string) {
-  return db
-    .select({
-      id: t.profile.id,
-      pseudonym: t.profile.pseudonym,
-      avatar: t.profile.avatar,
-      kind: t.profile.kind,
-      levelCode: t.profile.levelCode,
-      joinedAt: t.classMember.joinedAt,
-    })
-    .from(t.classMember)
-    .innerJoin(t.profile, eq(t.profile.id, t.classMember.profileId))
-    .where(eq(t.classMember.classId, classId))
-    .orderBy(asc(t.profile.pseudonym));
+  return (
+    db
+      .select({
+        id: t.profile.id,
+        pseudonym: t.profile.pseudonym,
+        avatar: t.profile.avatar,
+        kind: t.profile.kind,
+        levelCode: t.profile.levelCode,
+        joinedAt: t.classMember.joinedAt,
+      })
+      .from(t.classMember)
+      .innerJoin(t.profile, eq(t.profile.id, t.classMember.profileId))
+      // audit MIN-5 : jamais un profil dont le compte est en cours d'effacement
+      .innerJoin(t.account, eq(t.account.id, t.profile.ownerAccountId))
+      .where(and(eq(t.classMember.classId, classId), isNull(t.account.deletedAt)))
+      .orderBy(asc(t.profile.pseudonym))
+  );
 }
 
 /** L'enseignant suit-il ce profil (dans une de ses classes) ? */

@@ -17,6 +17,7 @@ import {
   profileFreeAnswers,
   profileRecitations,
   schema as t,
+  withdrawAccount,
   type Db,
 } from '@awform/db';
 import { decrypt, encrypt, hashSecret, newTotpSecret, verifySecret, verifyTotp } from './crypto.js';
@@ -856,6 +857,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       if (!a || !(await verifySecret(req.body.password, a.passwordHash)))
         return err(reply, 401, 'mot_de_passe_incorrect');
       await db.update(t.account).set({ deletedAt: new Date() }).where(eq(t.account.id, a.id));
+      await withdrawAccount(db, a.id);
       await revokeAll(db, a.id);
       await audit(db, a.id, 'compte.suppression_demandee');
       reply.header('Set-Cookie', clearCookie(secureFor(req)));

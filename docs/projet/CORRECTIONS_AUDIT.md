@@ -20,7 +20,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-2 | majeur | Deux calculs d'âge : un profil « enfant » reçoit le tuteur « ado » (texte libre, la nuit) | corrigé | 47b9224 | audit-mineurs.test.ts « MIN-2 » |
 | MIN-3 | majeur | Compte « parent » sans contrôle d'âge : un enfant consent pour lui-même (Sénégal compris) | corrigé | 12480c2 | audit-mineurs.test.ts « MIN-3 » |
 | MIN-4 | majeur | Accord `tuteur_ia` : ni code parent, ni preuve, ni pays ; impossible à retirer depuis « mes consentements » | corrigé | 85f2baf | audit-mineurs.test.ts « MIN-4 » |
-| MIN-5 | majeur | Compte supprimé : l'enseignant garde l'accès à l'enfant pendant 30 jours (liste, audio, CSV) | à faire | | |
+| MIN-5 | majeur | Compte supprimé : l'enseignant garde l'accès à l'enfant pendant 30 jours (liste, audio, CSV) | corrigé | voir « MIN-5 » dans git log | audit-rgpd.test.ts |
 | MIN-6 | majeur | Export RGPD incomplet (art. 15 et 20) | à faire | | |
 | MIN-7 | majeur | Après l'effacement définitif, il reste des données personnelles (e-mail en clair, âge, pays) | à faire | | |
 | MIN-8 | majeur | Durées de conservation non appliquées (questions libres des enfants gardées sans limite) | à faire | | |
@@ -71,7 +71,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | INF-3 | mineur | Actions GitHub non épinglées par empreinte | à faire | | |
 | INF-4 | mineur | Dépendances : 2 vulnérabilités connues (outillage) | à faire | | |
 | INF-5 | mineur | Gradle téléchargé sans empreinte | à faire | | |
-| INF-6 | majeur | `X-Forwarded-For` falsifiable : limites par adresse IP (inscription, connexion) contournées | corrigé | voir « INF-6 » dans git log | audit-inf6.test.ts |
+| INF-6 | majeur | `X-Forwarded-For` falsifiable : limites par adresse IP (inscription, connexion) contournées | corrigé | e91c3fa | audit-inf6.test.ts |
 | INF-7 | majeur | `backup.sh` : un `pg_dump` en échec laisse une « sauvegarde » partielle, non journalisée, prise pour bonne | à faire | | |
 | INF-8 | majeur | Ni copie hors site, ni test de restauration automatique | à faire | | |
 | INF-9 | majeur | Un déploiement `--demo` laisse le paiement SIMULÉ et le tuteur simulé actifs pour toujours | à faire | | |
