@@ -54,8 +54,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | OFF-7 | mineur | Collision volontaire d'identifiant : un autre compte fait disparaître un événement | corrigé (appareil ; par le relais, l'événement en conflit reste signalé mais n'est pas renvoyé) | 951ac6b | audit-off.test.ts, offline.test.ts |
 | MET-1 | bloquant | Un bilan ou un examen fait dans l'application compte toujours 100 % : certificat « Très bien » assuré | corrigé | e723584 | audit-met1.test.ts |
 | MET-2 | mineur | Certificat délivrable avec un contrôle continu partiel ; examen à 49,995 % arrondi à 50 | corrigé | e45008a | school.test.ts « audit MET-2 » ; lot13.test.ts (livres réels) mis à jour |
-| MET-3 | mineur | Hifẓ : un jour invalide arrête le rejeu du journal ; mois d'essai surestimé ; barème avec `Infinity` | corrigé | voir « MET-3 » dans git log | packages/hifz/test/met3.test.ts (+ dates vérifiées à l'API : OFF-5) |
-| MET-4 | mineur | Jalons : un mot tracé est compté comme la lettre « mot » ; migration Leitner fragile | à faire | | |
+| MET-3 | mineur | Hifẓ : un jour invalide arrête le rejeu du journal ; mois d'essai surestimé ; barème avec `Infinity` | corrigé | dce4947 | packages/hifz/test/met3.test.ts (+ dates vérifiées à l'API : OFF-5) |
+| MET-4 | mineur | Jalons : un mot tracé est compté comme la lettre « mot » ; migration Leitner fragile | corrigé | voir « MET-4 » dans git log | audit-off.test.ts, fsrs.test.ts |
 | PAY-1 | majeur | Course sur la validation d'un paiement : un paiement, plusieurs abonnements | corrigé | 93ebe96 | audit-pay.test.ts |
 | PAY-2 | majeur | Un abonnement impayé (ou un essai terminé) redevient actif si l'on clique « annuler » | corrigé | 93ebe96 | audit-pay.test.ts |
 | PAY-3 | majeur | Stripe : un paiement non encaissé (SEPA, asynchrone) ouvre l'abonnement ; la 1re facture offre un 2e mois | corrigé | 9c413c7 | packages/billing/test/billing.test.ts |

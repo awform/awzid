@@ -64,4 +64,12 @@ describe('FSRS-5', () => {
     expect(m).toMatchObject({ s: 16, due: '2026-10-20', last: '2026-10-04', lapses: 0 });
     expect(fromLeitner({ box: 9, due: '2026-10-20' }).s).toBe(16);
   });
+
+  it('audit MET-4 : migration Leitner robuste — boîte non entière, date invalide, sans exception', () => {
+    expect(fromLeitner({ box: 2.5, due: '2026-10-20' }).s).toBe(4);
+    expect(fromLeitner({ box: Number.NaN, due: '2026-10-20' }).s).toBe(1);
+    const bad = fromLeitner({ box: 3, due: 'pas une date' });
+    expect(bad.due).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(bad.last).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
 });

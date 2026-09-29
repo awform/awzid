@@ -128,13 +128,20 @@ const LEITNER = [1, 2, 4, 8, 16];
  * conservée (aucune carte n'avance ni ne recule), dernière révision déduite.
  */
 export function fromLeitner(l: LeitnerState): CardState {
-  const i = LEITNER[Math.min(LEITNER.length, Math.max(1, l.box)) - 1]!;
+  // audit MET-4 : boîte arrondie et bornée (1 à 5), échéance invalide → aujourd'hui ; jamais d'exception
+  const box = Number.isFinite(l.box) ? Math.min(LEITNER.length, Math.max(1, Math.round(l.box))) : 1;
+  const i = LEITNER[box - 1]!;
+  const valid =
+    typeof l.due === 'string' &&
+    /^\d{4}-\d{2}-\d{2}$/.test(l.due) &&
+    !Number.isNaN(Date.parse(l.due));
+  const due = valid ? l.due : new Date().toISOString().slice(0, 10);
   return {
     s: i,
     d: initDifficulty(3),
-    last: addDays(l.due, -i),
-    due: l.due,
-    reps: Math.max(1, l.box),
+    last: addDays(due, -i),
+    due,
+    reps: box,
     lapses: 0,
   };
 }

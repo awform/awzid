@@ -55,6 +55,8 @@ export function registerToday(app: FastifyInstance, db: Db, edition: Edition): v
       ...new Set(
         traces
           .filter((x) => (x.details as { etape?: number } | null)?.etape === 3)
+          // audit MET-4 : un MOT tracé (« mot:… ») n'est pas une lettre
+          .filter((x) => !x.item.startsWith('mot:'))
           .map((x) => x.item.split(':')[0] ?? ''),
       ),
     ].filter(Boolean);

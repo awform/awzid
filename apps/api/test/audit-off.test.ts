@@ -138,4 +138,19 @@ describe.skipIf(!URL_)('audit — hors ligne', () => {
       ).toEqual([theirs.id]);
     }
   });
+
+  it('MET-4 : un mot tracé n’est pas compté comme une lettre sue', async () => {
+    const { A, profileId } = await adult(c, 'jalons-met4@exemple.org');
+    const trace = (item: string) => ({
+      id: randomUUID(),
+      profileId,
+      unitId: 'x',
+      eventType: 'trace',
+      response: { item, ok: true, day: TODAY, details: { etape: 3 } },
+      deviceAt: new Date().toISOString(),
+    });
+    await c.req('POST', '/api/v1/attempts', A, { events: [trace('mot:بَابٌ'), trace('ب:isolee')] });
+    const j = (await c.req('GET', `/api/v1/today/${profileId}?today=${TODAY}`, A)).json().jalons;
+    expect(j.lettres).toEqual(['ب']);
+  });
 });
