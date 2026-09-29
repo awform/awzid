@@ -331,3 +331,27 @@ test.describe('lot 10', () => {
     await shot('44-mon-abonnement', true);
   });
 });
+
+test.describe('lot 11', () => {
+  test.use({ compte: null });
+  test('captures d’écran — lot 11 (aujourd’hui, garanties)', async ({ page }, info) => {
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    const shot = async (name: string, full = false) => {
+      await page.locator('main h1, h1').first().waitFor();
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: full });
+    };
+    await newAdult(page, 'captures11');
+    const { unit } = await unitData(page, 'ad1.l03');
+    await page.goto('/lecons/ad1.l03');
+    await solveExercise(page, unit.exercises[0]!.id, unit.lesson.exercices[0]!);
+    await expect(page.getByTestId('en-attente')).toHaveCount(0, { timeout: 15_000 });
+    await page.goto('/aujourdhui');
+    await page.getByTestId('jalons').waitFor();
+    await shot('45-aujourdhui', true);
+    await page.goto('/garanties');
+    await page.getByTestId('garanties').waitFor();
+    await shot('46-garanties', true);
+  });
+});
