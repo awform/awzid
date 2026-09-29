@@ -117,3 +117,33 @@ describe.skipIf(process.platform === 'win32')('audit INF-9 — démonstration pu
     expect(deploy).not.toMatch(/=simule/);
   });
 });
+
+describe.skipIf(process.platform === 'win32')(
+  'audit SEC-7 — production : HTTPS obligatoire',
+  () => {
+    it('--production : HTTP redirigé (308) et cookie toujours Secure ; réseau local : HTTP servi', () => {
+      const d = mkdtempSync(join(tmpdir(), 'mode-env-'));
+      dirs.push(d);
+      const f = join(d, 'prod.env');
+      writeFileSync(f, 'SITE=x\nCOOKIE_SECURE=auto\n');
+      const env = { PATH: process.env.PATH };
+      expect(run('mode-env.sh', env, f, '1').status).toBe(0);
+      let e = readFileSync(f, 'utf8');
+      expect(e).toMatch(/^COOKIE_SECURE=1$/m);
+      expect(e).toMatch(/^AWFORM_HTTP=rediriger$/m);
+      expect(e.match(/COOKIE_SECURE/g)).toHaveLength(1);
+      expect(run('mode-env.sh', env, f, '0').status).toBe(0);
+      e = readFileSync(f, 'utf8');
+      expect(e).toMatch(/^COOKIE_SECURE=auto$/m);
+      expect(e).toMatch(/^AWFORM_HTTP=servir$/m);
+      const caddy = readFileSync(join(PROD, 'Caddyfile'), 'utf8');
+      expect(caddy).toMatch(/\(rediriger\) \{\s*redir https:\/\/\{host\}\{uri\} 308/);
+      expect(caddy).toContain(
+        'http://{$SITE}, http://{$SITE_LAN:127.0.0.2} {\n\timport {$AWFORM_HTTP:servir}\n}',
+      );
+      const deploy = readFileSync(join(PROD, 'deploy.sh'), 'utf8');
+      expect(deploy).toContain('"$PROD/mode-env.sh" "$ENVF" "$PRODUCTION"');
+      expect(readFileSync(join(PROD, 'env-scopes.conf'), 'utf8')).toMatch(/^caddy:.*AWFORM_HTTP/m);
+    });
+  },
+);

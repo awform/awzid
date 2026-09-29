@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Déploiement AWFORM (idempotent : peut être relancé à volonté).
-#   infra/prod/deploy.sh [--demo] [--site 192.168.50.10] [--lan-ip 192.168.1.106]
+#   infra/prod/deploy.sh [--demo | --production] [--site 192.168.50.10] [--lan-ip 192.168.1.106]
+# --production (domaine public) : HTTP redirigé vers HTTPS, cookie toujours « Secure » (audit SEC-7) ;
+# sans lui : réseau local (HTTP servi sur l'adresse IP).
 # 1. secrets générés sur la machine (une seule fois) dans ~/.config/awform/prod.env (droits 600, hors dépôt) ;
 # 2. images construites, base migrée, édition de contenu importée et publiée (inchangée si déjà là) ;
 # 3. services démarrés, attente de l'état « ok », vérifications de fumée ;
@@ -13,6 +15,7 @@ PROD="$ROOT/infra/prod"
 CONF="$HOME/.config/awform"
 ENVF="$CONF/prod.env"
 DEMO=0
+PRODUCTION=0
 SITE="192.168.50.10"
 SITE_LAN=""
 RELAIS_DOMAINE=""
@@ -20,6 +23,7 @@ LAN="192.168.50.0/24"
 while [ $# -gt 0 ]; do
   case "$1" in
     --demo) DEMO=1 ;;
+    --production) PRODUCTION=1 ;;
     --site) SITE="$2"; shift ;;
     --lan) LAN="$2"; shift ;;
     --lan-ip) SITE_LAN="$2"; shift ;;
@@ -29,6 +33,7 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+[ "$DEMO$PRODUCTION" = 11 ] && { echo "--demo et --production sont incompatibles"; exit 2; }
 umask 077
 mkdir -p "$CONF"
 rnd() { openssl rand -hex "$1"; }
@@ -41,7 +46,6 @@ if [ ! -f "$ENVF" ]; then
 POSTGRES_PASSWORD=$PGPW
 DATABASE_URL=postgres://awform:$PGPW@db:5432/awform
 AWFORM_SECRET_KEY=$(rnd 32)
-COOKIE_SECURE=auto
 SITE=$SITE
 TZ=Europe/Paris
 EOF
@@ -85,6 +89,8 @@ echo "AWFORM_VAPID_SUBJECT=https://$SITE" >> "$ENVF"
 # vrai modèle, aucune clé, aucune carte) et montre les langues en préparation ; sans --demo, ces réglages de
 # démonstration sont RETIRÉS (audit INF-9)
 "$PROD/demo-env.sh" "$ENVF" "$DEMO"
+# exposition : production (redirection HTTPS, cookie Secure) ou réseau local (audit SEC-7)
+"$PROD/mode-env.sh" "$ENVF" "$PRODUCTION"
 # moindre privilège : un fichier par service (env-scopes.conf) ; prod.env n'est monté dans aucun conteneur
 export AWFORM_ENV_DIR="$CONF"
 "$PROD/env-split.sh" "$ENVF" "$CONF"

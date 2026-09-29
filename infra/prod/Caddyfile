@@ -57,7 +57,20 @@
 	}
 }
 
-http://{$SITE}, http://{$SITE_LAN:127.0.0.2}, http://localhost, http://127.0.0.1 {
+# HTTP sur l'adresse du site (audit SEC-7) : servi en réseau local (AWFORM_HTTP=servir, défaut), redirigé vers
+# HTTPS en production (AWFORM_HTTP=rediriger, deploy.sh --production)
+(servir) {
+	import awform
+}
+(rediriger) {
+	redir https://{host}{uri} 308
+}
+http://{$SITE}, http://{$SITE_LAN:127.0.0.2} {
+	import {$AWFORM_HTTP:servir}
+}
+
+# tunnel ssh depuis le PC : toujours servi (contexte sécurisé pour le navigateur)
+http://localhost, http://127.0.0.1 {
 	import awform
 }
 
