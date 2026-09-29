@@ -147,7 +147,10 @@ export class Orchestrator {
       return done('politique', 'recadrer', [], { refused: 'texte_libre_interdit' });
     if (req.audience === 'enfant' && req.hour !== undefined && (req.hour >= 21 || req.hour < 7))
       return done('politique', 'recadrer', [], { refused: 'horaire' });
-    const question = (req.text ?? '').slice(0, Math.max(role.maxChars, 0));
+    // audit CON-6 : seul « question » porte du texte libre (classé ci-dessous) ; pour les autres actions, un
+    // texte envoyé est IGNORÉ, jamais transmis au modèle sans classement
+    const question =
+      req.action === 'question' ? (req.text ?? '').slice(0, Math.max(role.maxChars, 0)) : '';
     if (req.action === 'question' && !question.trim())
       return done('politique', 'recadrer', [], { refused: 'question_vide' });
 

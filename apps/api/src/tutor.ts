@@ -160,6 +160,9 @@ export function registerTutor(
       if (!(await owner(req, profileId))) return err(reply, 403, 'profil_interdit');
       const b = req.body;
       if (!ARABIC_UNIT.test(b.unitId)) return err(reply, 400, 'hors_perimetre');
+      // audit CON-6 : le texte libre n'accompagne que « question » (classé avant tout appel au modèle)
+      if (b.text !== undefined && b.action !== 'question')
+        return err(reply, 400, 'texte_hors_question');
       const ed = await edition();
       if (!ed) return err(reply, 404, 'aucune_edition');
       const ctx = await context(ed.id, b.unitId);
