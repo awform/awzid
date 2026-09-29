@@ -89,9 +89,15 @@ export const API_GRANTS: Record<string, Right[]> = {
 export const WORKER_GRANTS: Record<string, Right[]> = {
   account: ['SELECT', 'DELETE'],
   tutor_log: ['SELECT', 'DELETE'],
-  audit_log: ['INSERT'],
+  // ajout ; effacement au-delà de la durée de conservation seulement (audit MIN-8)
+  audit_log: ['INSERT', 'DELETE'],
   // audit MIN-7 : verrous anti-essais effacés après 24 h (colonnes lues : voir WORKER_COLUMN_GRANTS)
   auth_throttle: ['DELETE'],
+  // audit MIN-8 : durées de conservation (lecture des seules colonnes de date et d'état, voir plus bas)
+  tutor_question: ['DELETE'],
+  tutor_alert: ['DELETE'],
+  session: ['DELETE'],
+  billing_checkout: ['DELETE'],
   certificate: ['SELECT', 'UPDATE'],
   // lot 16 : effacement des récitations échues, envoi des notifications
   recitation_upload: ['SELECT', 'DELETE'],
@@ -106,7 +112,11 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
 export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
   profile: ['id', 'owner_account_id', 'kind'],
   auth_throttle: ['key', 'updated_at', 'locked_until'],
-  audit_log: ['target'],
+  audit_log: ['target', 'at'],
+  tutor_question: ['status', 'created_at'],
+  tutor_alert: ['handled_at', 'created_at'],
+  session: ['expires_at', 'revoked_at'],
+  billing_checkout: ['status', 'created_at'],
 };
 
 /**

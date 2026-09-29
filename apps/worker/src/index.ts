@@ -15,6 +15,7 @@ import {
   markSent,
   purgeAuthThrottle,
   purgeExpiredRecitations,
+  purgeRetention,
   purgeCertificateDocuments,
   purgeDeletedAccounts,
   purgeTutorLog,
@@ -77,6 +78,8 @@ await boss.work('purge-comptes', async () => {
   const rec = await purgeExpiredRecitations(h.db, new Date());
   // verrous anti-essais : 24 h (ils contiennent des adresses IP ; audit MIN-7)
   const v = await purgeAuthThrottle(h.db, new Date());
+  // durées de conservation : tuteur, journal, sessions, paiements abandonnés (audit MIN-8)
+  const conservation = await purgeRetention(h.db, new Date());
   console.log(
     JSON.stringify({
       tache: 'purge-comptes',
@@ -85,6 +88,7 @@ await boss.work('purge-comptes', async () => {
       certificatsReduits: c,
       recitationsEffacees: rec,
       verrous: v,
+      conservation,
       at: new Date().toISOString(),
     }),
   );

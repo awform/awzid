@@ -2,9 +2,9 @@
  * Audit — RGPD : MIN-5, MIN-6, MIN-7, MIN-8 (un bloc par constat). Chaque bloc échouait avant sa correction.
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { getTableName, is, Table } from 'drizzle-orm';
+import { eq, getTableName, is, Table } from 'drizzle-orm';
 import { getTableConfig, type PgTable } from 'drizzle-orm/pg-core';
-import { purgeAuthThrottle, purgeDeletedAccounts, schema as t } from '@awform/db';
+import { purgeAuthThrottle, purgeDeletedAccounts, purgeRetention, schema as t } from '@awform/db';
 import {
   adult,
   child,
@@ -141,5 +141,55 @@ describe.skipIf(!URL_)('audit — RGPD', () => {
     // verrous : effacés au-delà de 24 h (ils contiennent des adresses IP)
     await purgeAuthThrottle(c.h.db, new Date(Date.now() + 25 * 3600_000));
     expect(await c.h.db.select().from(t.authThrottle)).toEqual([]);
+  });
+
+  it('MIN-8 : durées de conservation — questions et alertes du tuteur, journal, sessions, paiements abandonnés', async () => {
+    const { A, profileId } = await adult(c, 'conservation-min8@exemple.org');
+    const me = (await c.req('GET', '/api/v1/auth/me', A)).json();
+    const accountId = me.account.id as string;
+    const vieux = new Date('2020-01-01T00:00:00Z');
+    await c.h.db.insert(t.tutorQuestion).values([
+      { profileId, text: 'traitée min8', motif: 'avis', status: 'repondue', createdAt: vieux },
+      { profileId, text: 'récente min8', motif: 'avis' },
+    ]);
+    await c.h.db
+      .insert(t.tutorAlert)
+      .values({ profileId, motif: 'min8', createdAt: vieux, handledAt: vieux });
+    await c.h.db.insert(t.auditLog).values({ action: 'test.min8', at: vieux });
+    await c.h.db
+      .update(t.session)
+      .set({ expiresAt: vieux })
+      .where(eq(t.session.accountId, accountId));
+    await c.h.db.insert(t.billingCheckout).values({
+      accountId,
+      planCode: 'adulte_mensuel',
+      zone: 'eu',
+      currency: 'EUR',
+      amount: 500,
+      provider: 'simule',
+      createdAt: vieux,
+    });
+    const n = await purgeRetention(c.h.db, new Date());
+    expect(n.questionsTuteur).toBeGreaterThanOrEqual(1);
+    const qs = await c.h.db
+      .select()
+      .from(t.tutorQuestion)
+      .where(eq(t.tutorQuestion.profileId, profileId));
+    expect(qs.map((q) => q.text)).toEqual(['récente min8']);
+    expect(
+      await c.h.db.select().from(t.tutorAlert).where(eq(t.tutorAlert.profileId, profileId)),
+    ).toEqual([]);
+    expect(
+      await c.h.db.select().from(t.auditLog).where(eq(t.auditLog.action, 'test.min8')),
+    ).toEqual([]);
+    expect(await c.h.db.select().from(t.session).where(eq(t.session.accountId, accountId))).toEqual(
+      [],
+    );
+    expect(
+      await c.h.db
+        .select()
+        .from(t.billingCheckout)
+        .where(eq(t.billingCheckout.accountId, accountId)),
+    ).toEqual([]);
   });
 });

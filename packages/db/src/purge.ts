@@ -82,3 +82,63 @@ export async function purgeAuthThrottle(db: Db, now = new Date(), hours = 24): P
     .returning({ k: t.authThrottle.key });
   return gone.length;
 }
+
+const DAY = 86400_000;
+
+/**
+ * Durées de conservation (audit MIN-8), appliquées chaque nuit par le travailleur :
+ * - questions et alertes du tuteur : 12 mois une fois traitées, 24 mois au plus sinon ;
+ * - journal d'audit : 12 mois (durée provisoire, décision D9) ;
+ * - sessions expirées ou révoquées depuis plus de 30 jours ;
+ * - paiements abandonnés (non payés) de plus de 30 jours ; les paiements réussis restent (comptabilité).
+ */
+export async function purgeRetention(
+  db: Db,
+  now = new Date(),
+): Promise<{
+  questionsTuteur: number;
+  alertesTuteur: number;
+  journal: number;
+  sessions: number;
+  paiements: number;
+}> {
+  const ago = (days: number) => new Date(now.getTime() - days * DAY);
+  const count = (r: { rowCount: number | null }) => r.rowCount ?? 0;
+  const questionsTuteur = count(
+    await db
+      .delete(t.tutorQuestion)
+      .where(
+        or(
+          and(eq(t.tutorQuestion.status, 'repondue'), lt(t.tutorQuestion.createdAt, ago(365))),
+          lt(t.tutorQuestion.createdAt, ago(730)),
+        ),
+      ),
+  );
+  const alertesTuteur = count(
+    await db
+      .delete(t.tutorAlert)
+      .where(
+        or(
+          and(isNotNull(t.tutorAlert.handledAt), lt(t.tutorAlert.createdAt, ago(365))),
+          lt(t.tutorAlert.createdAt, ago(730)),
+        ),
+      ),
+  );
+  const journal = count(await db.delete(t.auditLog).where(lt(t.auditLog.at, ago(365))));
+  const sessions = count(
+    await db
+      .delete(t.session)
+      .where(or(lt(t.session.expiresAt, ago(30)), lt(t.session.revokedAt, ago(30)))),
+  );
+  const paiements = count(
+    await db
+      .delete(t.billingCheckout)
+      .where(
+        and(
+          inArray(t.billingCheckout.status, ['ouverte', 'echouee', 'expiree']),
+          lt(t.billingCheckout.createdAt, ago(30)),
+        ),
+      ),
+  );
+  return { questionsTuteur, alertesTuteur, journal, sessions, paiements };
+}

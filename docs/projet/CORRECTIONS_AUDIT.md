@@ -22,8 +22,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-4 | majeur | Accord `tuteur_ia` : ni code parent, ni preuve, ni pays ; impossible à retirer depuis « mes consentements » | corrigé | 85f2baf | audit-mineurs.test.ts « MIN-4 » |
 | MIN-5 | majeur | Compte supprimé : l'enseignant garde l'accès à l'enfant pendant 30 jours (liste, audio, CSV) | corrigé | e6b6483 | audit-rgpd.test.ts |
 | MIN-6 | majeur | Export RGPD incomplet (art. 15 et 20) | corrigé | 25da93d | audit-rgpd.test.ts |
-| MIN-7 | majeur | Après l'effacement définitif, il reste des données personnelles (e-mail en clair, âge, pays) | corrigé | voir « MIN-7 » dans git log | audit-rgpd.test.ts, roles.test.ts |
-| MIN-8 | majeur | Durées de conservation non appliquées (questions libres des enfants gardées sans limite) | à faire | | |
+| MIN-7 | majeur | Après l'effacement définitif, il reste des données personnelles (e-mail en clair, âge, pays) | corrigé | 3e1e41c | audit-rgpd.test.ts, roles.test.ts |
+| MIN-8 | majeur | Durées de conservation non appliquées (questions libres des enfants gardées sans limite) | corrigé | voir « MIN-8 » dans git log | audit-rgpd.test.ts, roles.test.ts |
 | MIN-9 | mineur | Consentement `rappels` décoratif : son retrait n'arrête pas les notifications | à faire | | |
 | MIN-10 | mineur | Code parent contournable pour l'envoi de récitations | à faire | | |
 | MIN-11 | mineur | Une récitation réapparaît chez l'enseignant après retrait puis nouvelle inscription | à faire | | |
