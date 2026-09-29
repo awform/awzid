@@ -11,4 +11,7 @@ if (-not $Cle) {
   $Cle = (Get-ChildItem $dir -Filter 'awform-sauvegardes-cle-privee-*.asc' | Sort-Object Name | Select-Object -Last 1).FullName
 }
 if (-not $Cle -or -not (Test-Path $Cle)) { throw 'clé privée introuvable' }
-Get-Content -Raw $Cle | ssh $VmHost '~/awform-app/infra/prod/restore-test.sh'
+# redirection par cmd.exe : octets transmis tels quels (le tuyau de PowerShell 5.1 réencode le texte)
+$ErrorActionPreference = 'Continue'  # les avis de PostgreSQL arrivent sur la sortie d'erreur
+cmd /c "ssh $VmHost ~/awform-app/infra/prod/restore-test.sh < `"$Cle`""
+if ($LASTEXITCODE -ne 0) { throw "test de restauration en échec ($LASTEXITCODE)" }

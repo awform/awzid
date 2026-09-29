@@ -21,7 +21,7 @@ sha256sum -c "$FILE.sha256" >/dev/null || { echo "ÉCHEC : empreinte de la sauve
 # trousseau temporaire en mémoire (tmpfs) : la clé ne touche jamais le disque du serveur
 BASE=/dev/shm
 [ -d "$BASE" ] || BASE="${TMPDIR:-/tmp}"
-GH="$(mktemp -d "$BASE/awform-gpg.XXXXXX")"
+GH="$(mktemp -d "$BASE/rst.XXXXXX")"
 TMP=awform_restore_test
 psql() { "${DC[@]}" exec -T db psql -U awform -v ON_ERROR_STOP=1 -qtA "$@"; }
 cleanup() {
@@ -36,9 +36,11 @@ else
   gpg --homedir "$GH" --batch --quiet --import
   DECRYPT=(gpg --homedir "$GH" --batch --quiet --pinentry-mode loopback --passphrase '' --decrypt)
 fi
+# déchiffrement IMMÉDIAT, en mémoire (tmpfs), avant toute autre commande
+"${DECRYPT[@]}" -o "$GH/dump" "$FILE"
 psql -d awform -c "DROP DATABASE IF EXISTS $TMP" >/dev/null
 psql -d awform -c "CREATE DATABASE $TMP" >/dev/null
-"${DECRYPT[@]}" "$FILE" | "${DC[@]}" exec -T db pg_restore -U awform -d "$TMP" --no-owner
+"${DC[@]}" exec -T db pg_restore -U awform -d "$TMP" --no-owner < "$GH/dump"
 STATUS=0
 for tbl in account profile consent attempt hifz_event practice_event quran_verse unit_version edition; do
   live="$(psql -d awform -c "select count(*) from $tbl")"
