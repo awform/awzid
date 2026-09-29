@@ -8,8 +8,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 
 | Constat | Gravité | Sujet | État | Commit | Test |
 |---|---|---|---|---|---|
-| SEC-1 | majeur | Second facteur : `totp/setup` désactive le 2FA avant confirmation ; `totp/confirm` sans limite ni anti-rejeu | corrigé | voir « SEC-1 » dans git log | audit-2fa.test.ts « SEC-1 A/B » |
-| SEC-2 | majeur | Course sur le compteur d'échecs : 20 mots de passe, 30 codes parent testés d'un coup | à faire | | |
+| SEC-1 | majeur | Second facteur : `totp/setup` désactive le 2FA avant confirmation ; `totp/confirm` sans limite ni anti-rejeu | corrigé | 51a32f8 | audit-2fa.test.ts « SEC-1 A/B » |
+| SEC-2 | majeur | Course sur le compteur d'échecs : 20 mots de passe, 30 codes parent testés d'un coup | corrigé | voir « SEC-2 » dans git log | audit-2fa.test.ts « SEC-2 » (salves parallèles) |
 | SEC-3 | majeur | Consentements « parentaux » accordés sans le code parent (tuteur IA, partage enseignant) | corrigé | df1dbe7 | audit-mineurs.test.ts « SEC-3 » |
 | SEC-4 | majeur | Second facteur non exigé sur les notifications et les paiements des enseignants | à faire | | |
 | SEC-5 | mineur | Rejeu d'un code TOTP par connexions parallèles | à faire | | |

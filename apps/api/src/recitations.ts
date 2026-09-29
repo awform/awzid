@@ -27,9 +27,8 @@ import {
 } from '@awform/db';
 import { note, qualityOf, type Counters } from '@awform/hifz';
 import { ownsProfile } from './auth/routes.js';
-import { minorHolder } from './guards.js';
-import { verifySecret } from './auth/crypto.js';
-import { audit, clearFailures, lockedUntil, recordFailure } from './auth/service.js';
+import { minorHolder, parentGate as guardParent } from './guards.js';
+import { audit } from './auth/service.js';
 import { lawEvidence, TEXT_VERSION } from './auth/policy.js';
 
 const err = (reply: FastifyReply, status: number, code: string, extra: object = {}) =>
@@ -68,23 +67,9 @@ export function registerRecitations(app: FastifyInstance, db: Db, key: Recitatio
       );
     return !!c;
   };
-  /** pour un enfant : le code parent (s'il existe) est exigé */
+  /** pour un enfant : le code parent (s'il existe) est exigé — garde partagée (audit SEC-2) */
   const parentGate = async (req: FastifyRequest, reply: FastifyReply, kind: string) => {
-    if (kind !== 'enfant') return null;
-    const [a] = await db
-      .select({ h: t.account.parentPinHash })
-      .from(t.account)
-      .where(eq(t.account.id, req.auth!.accountId));
-    if (!a?.h) return null;
-    const pin = String(req.headers['x-parent-pin'] ?? '');
-    const lk = `pin:${req.auth!.accountId}`;
-    if (await lockedUntil(db, lk)) return err(reply, 429, 'verrouille');
-    if (!pin || !(await verifySecret(pin, a.h))) {
-      await recordFailure(db, lk);
-      return err(reply, 401, 'code_parent_incorrect');
-    }
-    await clearFailures(db, lk);
-    return null;
+    await guardParent(db, req, reply, kind);
   };
   const owned = async (req: FastifyRequest, reply: FastifyReply, profileId: string) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');

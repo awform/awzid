@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { eq } from 'drizzle-orm';
 import { schema as t } from '@awform/db';
 import { hashSecret, totpAt } from '../src/auth/crypto.js';
-import { cookieOf, PW, setupEdition, teacher, type Ctx } from './helpers.js';
+import { cookieOf, parent, PW, setupEdition, teacher, type Ctx } from './helpers.js';
 
 const URL_ = process.env.TEST_DATABASE_URL;
 const now = () => Math.floor(Date.now() / 30_000);
@@ -83,5 +83,29 @@ describe.skipIf(!URL_)('audit — second facteur', () => {
       },
     );
     expect(again.json().error?.code).toBe('totp_incorrect');
+  });
+
+  it('SEC-2 : salves parallèles — au plus 5 mots de passe et 5 codes parent réellement vérifiés', async () => {
+    await parent(c, 'sec2@exemple.org');
+    const logins = await Promise.all(
+      Array.from({ length: 20 }, () =>
+        c.req(
+          'POST',
+          '/api/v1/auth/login',
+          {},
+          { email: 'sec2@exemple.org', password: 'mauvais mot de passe' },
+        ),
+      ),
+    );
+    const l401 = logins.filter((r) => r.statusCode === 401).length;
+    expect(l401).toBeLessThanOrEqual(5);
+    expect(logins.filter((r) => r.statusCode === 429).length).toBeGreaterThan(0);
+    const fam = await parent(c, 'sec2b@exemple.org');
+    const pins = await Promise.all(
+      Array.from({ length: 30 }, (_, i) =>
+        c.req('POST', '/api/v1/account/pin/verify', fam.P, { pin: String(1000 + i) }),
+      ),
+    );
+    expect(pins.filter((r) => r.statusCode === 401).length).toBeLessThanOrEqual(5);
   });
 });

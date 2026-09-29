@@ -11,7 +11,7 @@ import { eq } from 'drizzle-orm';
 import { schema as t, type Db } from '@awform/db';
 import { ownsProfile } from './auth/routes.js';
 import { verifySecret } from './auth/crypto.js';
-import { clearFailures, lockedUntil, recordFailure } from './auth/service.js';
+import { clearFailures, failAttempt, lockedUntil, reserveAttempt } from './auth/service.js';
 
 export const err = (reply: FastifyReply, status: number, code: string, extra: object = {}) =>
   reply.code(status).send({ error: { code, ...extra } });
@@ -63,8 +63,17 @@ export async function parentGate(
     err(reply, 429, 'verrouille');
     return false;
   }
-  if (!pin || !(await verifySecret(pin, a.h))) {
-    await recordFailure(db, lk);
+  if (!pin) {
+    err(reply, 401, 'code_parent_incorrect');
+    return false;
+  }
+  // audit SEC-2 : essai réservé atomiquement avant la vérification (pas de salve)
+  if (!(await reserveAttempt(db, lk))) {
+    err(reply, 429, 'verrouille');
+    return false;
+  }
+  if (!(await verifySecret(pin, a.h))) {
+    await failAttempt(db, lk);
     err(reply, 401, 'code_parent_incorrect');
     return false;
   }

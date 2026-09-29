@@ -38,6 +38,8 @@ import {
   clearCookie,
   clearFailures,
   COOKIE,
+  failAttempt,
+  reserveAttempt,
   createSession,
   lockedUntil,
   lookupSession,
@@ -278,17 +280,20 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     },
     async (req, reply) => {
       const email = req.body.email.trim().toLowerCase();
-      const accKey = `login:${email}`;
+      // audit SEC-2 : verrou par couple compte + adresse (personne ne peut verrouiller le compte d'autrui
+      // depuis une autre adresse) ; l'essai est RÉSERVÉ atomiquement avant la vérification
+      const accKey = `login:${email}|${req.ip}`;
       const ipKey = `login-ip:${req.ip}`;
       const locked = (await lockedUntil(db, accKey)) ?? (await lockedUntil(db, ipKey));
       if (locked) return err(reply, 429, 'verrouille', { jusqua: locked.toISOString() });
+      if (!(await reserveAttempt(db, accKey))) return err(reply, 429, 'verrouille');
       const [a] = await db
         .select()
         .from(t.account)
         .where(and(eq(t.account.email, email), isNull(t.account.deletedAt)));
       const ok = await verifySecret(req.body.password, a?.passwordHash);
       if (!a || !ok) {
-        await recordFailure(db, accKey);
+        await failAttempt(db, accKey);
         await recordFailure(db, ipKey, 30);
         await audit(db, a?.id ?? null, 'connexion.echec', null, {
           email: a ? undefined : 'inconnu',
@@ -301,7 +306,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         if (!opts.secretKey) return err(reply, 503, 'deux_facteurs_indisponible');
         const counter = verifyTotp(decrypt(a.totpSecretEnc ?? '', opts.secretKey), req.body.totp);
         if (counter === null || (a.totpLastCounter !== null && counter <= a.totpLastCounter)) {
-          await recordFailure(db, accKey);
+          await failAttempt(db, accKey);
           return err(reply, 401, 'totp_incorrect');
         }
         await db.update(t.account).set({ totpLastCounter: counter }).where(eq(t.account.id, a.id));
@@ -413,9 +418,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       if (!a?.totpPendingEnc) return err(reply, 400, 'totp_non_prepare');
       const key = `totp:${a.id}`;
       if (await lockedUntil(db, key)) return err(reply, 429, 'verrouille');
+      if (!(await reserveAttempt(db, key))) return err(reply, 429, 'verrouille');
       const counter = verifyTotp(decrypt(a.totpPendingEnc, opts.secretKey), req.body.code);
       if (counter === null) {
-        await recordFailure(db, key);
+        await failAttempt(db, key);
         return err(reply, 400, 'totp_incorrect');
       }
       await clearFailures(db, key);
@@ -661,8 +667,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       if (await lockedUntil(db, key)) return err(reply, 429, 'verrouille');
       const [a] = await db.select().from(t.account).where(eq(t.account.id, req.auth!.accountId));
       if (!a?.parentPinHash) return err(reply, 400, 'code_parent_absent');
+      // audit SEC-2 : essai réservé atomiquement avant la vérification (pas de salve)
+      if (!(await reserveAttempt(db, key))) return err(reply, 429, 'verrouille');
       if (!(await verifySecret(req.body.pin, a.parentPinHash))) {
-        await recordFailure(db, key);
+        await failAttempt(db, key);
         return err(reply, 401, 'code_parent_incorrect');
       }
       await clearFailures(db, key);

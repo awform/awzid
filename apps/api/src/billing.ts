@@ -24,7 +24,7 @@ import {
   type ProviderId,
   type SubStatus,
 } from '@awform/billing';
-import { clearFailures, lockedUntil, recordFailure } from './auth/service.js';
+import { clearFailures, failAttempt, lockedUntil, reserveAttempt } from './auth/service.js';
 import { verifySecret } from './auth/crypto.js';
 
 const err = (reply: FastifyReply, status: number, code: string, extra: object = {}) =>
@@ -269,8 +269,11 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
       if (a.parentPinHash) {
         const key = `pin:${a.id}`;
         if (await lockedUntil(db, key)) return err(reply, 429, 'verrouille');
-        if (!req.body.pin || !(await verifySecret(req.body.pin, a.parentPinHash))) {
-          if (req.body.pin) await recordFailure(db, key);
+        if (!req.body.pin) return err(reply, 403, 'code_parent_requis');
+        // audit SEC-2 : essai réservé atomiquement avant la vérification (pas de salve)
+        if (!(await reserveAttempt(db, key))) return err(reply, 429, 'verrouille');
+        if (!(await verifySecret(req.body.pin, a.parentPinHash))) {
+          await failAttempt(db, key);
           return err(reply, 403, 'code_parent_requis');
         }
         await clearFailures(db, key);

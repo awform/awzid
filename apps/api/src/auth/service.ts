@@ -146,6 +146,42 @@ export async function recordFailure(db: Db, key: string, max = MAX_FAILURES): Pr
     });
 }
 
+/**
+ * Audit SEC-2 : RÉSERVE un essai AVANT la vérification, par un incrément atomique (plus de course entre la
+ * lecture et l'écriture). Renvoie false si la clé est verrouillée ou si le seuil est déjà atteint : l'essai
+ * n'est alors pas vérifié. Après un échec : `failAttempt` ; après un succès : `clearFailures`.
+ */
+export async function reserveAttempt(db: Db, key: string, max = MAX_FAILURES): Promise<boolean> {
+  const r = await db.execute<{ failures: number; locked: boolean }>(sql`
+    INSERT INTO auth_throttle (key, failures, locked_until, updated_at)
+    VALUES (${key}, 1, NULL, now())
+    ON CONFLICT (key) DO UPDATE SET
+      failures = CASE
+        WHEN (auth_throttle.locked_until IS NULL OR auth_throttle.locked_until <= now())
+          AND auth_throttle.updated_at < now() - interval '1 hour' THEN 1
+        ELSE auth_throttle.failures + 1 END,
+      updated_at = now()
+    RETURNING failures, (locked_until IS NOT NULL AND locked_until > now()) AS locked`);
+  const row = r.rows[0]!;
+  if (row.locked) return false;
+  if (row.failures > max) {
+    await lockKey(db, key, row.failures, max);
+    return false;
+  }
+  return true;
+}
+
+/** Échec d'un essai réservé : verrouillage à partir du seuil (1, 2, 4… minutes, 60 au plus). */
+export async function failAttempt(db: Db, key: string, max = MAX_FAILURES): Promise<void> {
+  const [r] = await db.select().from(t.authThrottle).where(eq(t.authThrottle.key, key));
+  if (r && r.failures >= max) await lockKey(db, key, r.failures, max);
+}
+
+async function lockKey(db: Db, key: string, failures: number, max: number) {
+  const until = new Date(Date.now() + Math.min(60, 2 ** Math.max(0, failures - max)) * 60_000);
+  await db.update(t.authThrottle).set({ lockedUntil: until }).where(eq(t.authThrottle.key, key));
+}
+
 export async function clearFailures(db: Db, key: string): Promise<void> {
   await db.delete(t.authThrottle).where(eq(t.authThrottle.key, key));
 }
