@@ -1020,6 +1020,8 @@
     color: var(--gold);
   }
   .check label {
+    /* audit A11Y-1 : toute la ligne est la cible tactile (48 px), la case suit */
+    min-height: 48px;
     display: flex;
     gap: 10px;
     align-items: center;

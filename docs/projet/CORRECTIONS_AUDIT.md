@@ -76,8 +76,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | INF-8 | majeur | Ni copie hors site, ni test de restauration automatique | corrigé en partie : copie hors site prête et journalisée, état des sauvegardes et alerte à 35 jours, seuils de restauration ; stockage et restauration automatique = décision D10 | d155d45 | audit-infra.test.ts |
 | INF-9 | majeur | Un déploiement `--demo` laisse le paiement SIMULÉ et le tuteur simulé actifs pour toujours | corrigé | a1640a5 | audit-infra.test.ts |
 | INF-10 | mineur | Migrations sans retour arrière, appliquées avant la bascule | corrigé | 8c043af | audit-infra.test.ts |
-| INF-11 | mineur | Images Docker non épinglées par empreinte ; scripts : avertissements shellcheck | corrigé en partie : avertissements shellcheck corrigés et bloquants en CI, EXPLOITATION.md à jour ; images par empreinte (`@sha256`) à fixer depuis une machine qui atteint le registre (Dependabot Docker prêt) | voir « INF-11 » dans git log | shellcheck (CI) |
+| INF-11 | mineur | Images Docker non épinglées par empreinte ; scripts : avertissements shellcheck | corrigé en partie : avertissements shellcheck corrigés et bloquants en CI, EXPLOITATION.md à jour ; images par empreinte (`@sha256`) à fixer depuis une machine qui atteint le registre (Dependabot Docker prêt) | 4c28833 | shellcheck (CI) |
 | PERF-1 | majeur | Budget JavaScript dépassé : 204,3 Ko Brotli (budget 150 Ko), et non « ≈ 59 Ko » | corrigé | 1dff35a | budget CI (pnpm --filter @awform/web budget), i18n.test.ts |
-| A11Y-1 | mineur | Cibles tactiles sous la règle de 48 px du projet | à faire | | |
+| A11Y-1 | mineur | Cibles tactiles sous la règle de 48 px du projet | corrigé | voir « A11Y-1 » dans git log | a11y-cibles.test.ts |
 | CDC-1 | majeur | Affirmations du brief et du journal démenties par le code ou par GitHub | à faire | | |
 | CDC-2 | mineur | Fonctionnalités et exigences de test du CDC absentes ou partielles (lots 0-16) | à faire | | |

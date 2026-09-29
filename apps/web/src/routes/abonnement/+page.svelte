@@ -124,6 +124,7 @@
   }
   .small {
     font-size: 0.9rem;
-    min-height: 36px;
+    /* audit A11Y-1 : 44 px au moins */
+    min-height: 44px;
   }
 </style>

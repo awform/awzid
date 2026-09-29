@@ -570,7 +570,7 @@
     font-size: 0.88rem;
   }
   button.small {
-    min-height: 36px;
+    min-height: 44px; /* audit A11Y-1 */
     padding: 2px 10px;
   }
   button.danger {

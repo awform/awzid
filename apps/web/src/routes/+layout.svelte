@@ -235,7 +235,8 @@
     font-size: 0.9rem;
   }
   .small {
-    min-height: 36px;
+    /* audit A11Y-1 : 44 px au moins (règle du projet pour les enfants : 44 à 48 px) */
+    min-height: 44px;
     font-size: 0.85rem;
     padding: 2px 10px;
   }
