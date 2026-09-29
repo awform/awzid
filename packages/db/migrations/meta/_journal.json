@@ -134,6 +134,13 @@
       "when": 1790693274599,
       "tag": "0018_messagerie_visio",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1790694852629,
+      "tag": "0019_totp_en_attente",
+      "breakpoints": true
     }
   ]
 }

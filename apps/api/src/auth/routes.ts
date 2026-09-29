@@ -375,6 +375,9 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     if (!req.auth) return err(reply, 401, 'non_connecte');
   };
 
+  // audit SEC-1 : le nouveau secret reste EN ATTENTE ; il ne remplace l'actuel (et le second facteur reste
+  // actif) qu'après confirmation par un code ; confirmation limitée en essais, anti-rejeu, autres sessions
+  // révoquées à l'activation
   app.post('/api/v1/auth/totp/setup', { preHandler: needSession }, async (req, reply) => {
     if (!opts.secretKey) return err(reply, 503, 'deux_facteurs_indisponible');
     const [a] = await db.select().from(t.account).where(eq(t.account.id, req.auth!.accountId));
@@ -383,11 +386,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     const secret = newTotpSecret();
     await db
       .update(t.account)
-      .set({
-        totpSecretEnc: encrypt(secret, opts.secretKey),
-        totpEnabled: false,
-        totpLastCounter: null,
-      })
+      .set({ totpPendingEnc: encrypt(secret, opts.secretKey) })
       .where(eq(t.account.id, a.id));
     const label = encodeURIComponent(`AWFORM:${a.email ?? a.id}`);
     return {
@@ -411,13 +410,26 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     async (req, reply) => {
       if (!opts.secretKey) return err(reply, 503, 'deux_facteurs_indisponible');
       const [a] = await db.select().from(t.account).where(eq(t.account.id, req.auth!.accountId));
-      if (!a?.totpSecretEnc) return err(reply, 400, 'totp_non_prepare');
-      const counter = verifyTotp(decrypt(a.totpSecretEnc, opts.secretKey), req.body.code);
-      if (counter === null) return err(reply, 400, 'totp_incorrect');
+      if (!a?.totpPendingEnc) return err(reply, 400, 'totp_non_prepare');
+      const key = `totp:${a.id}`;
+      if (await lockedUntil(db, key)) return err(reply, 429, 'verrouille');
+      const counter = verifyTotp(decrypt(a.totpPendingEnc, opts.secretKey), req.body.code);
+      if (counter === null) {
+        await recordFailure(db, key);
+        return err(reply, 400, 'totp_incorrect');
+      }
+      await clearFailures(db, key);
       await db
         .update(t.account)
-        .set({ totpEnabled: true, totpLastCounter: counter })
+        .set({
+          totpSecretEnc: a.totpPendingEnc,
+          totpPendingEnc: null,
+          totpEnabled: true,
+          totpLastCounter: counter,
+        })
         .where(eq(t.account.id, a.id));
+      // les sessions ouvertes ailleurs (avant l'activation) sont révoquées ; celle-ci devient vérifiée
+      await revokeAll(db, a.id, req.auth!.tokenHash);
       await db
         .update(t.session)
         .set({ mfaVerified: true })

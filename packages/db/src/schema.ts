@@ -285,6 +285,8 @@ export const account = pgTable(
     /** secret TOTP chiffré (AES-256-GCM, clé serveur hors dépôt) */
     totpSecretEnc: text('totp_secret_enc'),
     totpEnabled: boolean('totp_enabled').notNull().default(false),
+    /** audit SEC-1 : nouveau secret EN ATTENTE ; il ne remplace l'actuel qu'à la confirmation */
+    totpPendingEnc: text('totp_pending_enc'),
     /** dernier pas de temps TOTP accepté (un code ne sert qu'une fois) */
     totpLastCounter: integer('totp_last_counter'),
     /** année de naissance du titulaire d'un compte adulte (âge du consentement numérique) */
