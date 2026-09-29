@@ -97,4 +97,73 @@ sur la branche `audit-dossier`. Rapport rédigé et poussé domaine par domaine 
   **aucune** ligne `distributionSha256Sum` ; `build-debug.sh:18` retombe sur le téléchargement si `--offline` échoue.
 - **Correction** : ajouter `distributionSha256Sum=` (valeur publiée par Gradle) ; action `gradle/actions/wrapper-validation`.
 
-*(Constats d'exploitation — déploiement, sauvegardes, Caddy, images — : voir la suite de ce domaine, en cours.)*
+### INF-6 — `X-Forwarded-For` falsifiable : limites par adresse IP (inscription, connexion) contournées — **MAJEUR**
+
+- **Fichiers** : `infra/prod/Caddyfile:13` (`trusted_proxies static private_ranges`), `infra/prod/compose.yml:80`
+  (`TRUST_PROXY: '1'`), `apps/api/src/app.ts:78` (`trustProxy: true` → Fastify fait confiance à **tous** les sauts et
+  prend l'adresse la plus à gauche), `apps/api/src/auth/routes.ts:191` (`signup:${req.ip}`) et `:263` (`login-ip:`).
+- **Scénario** : le client passe par la passerelle Docker ou le réseau local (adresses privées, donc « de
+  confiance » pour Caddy) : l'en-tête forgé est conservé ; l'API prend cette valeur comme adresse du client. Il suffit
+  de changer l'en-tête à chaque requête pour ignorer « 20 inscriptions par heure et par IP » et le verrouillage par IP.
+- **Preuve 1** (Caddyfile réel du dépôt dans `caddy:2`, écho en amont) :
+  `curl -H 'X-Forwarded-For: 203.0.113.88' http://127.0.0.1:18080/api/v1/x` → en amont
+  `xff=203.0.113.88, 172.18.0.1`.
+- **Preuve 2** (banc, `TRUST_PROXY=1`, test `audit/infra-xff.test.ts`) : même en-tête → `201 ×20 puis 429 429` ;
+  en-tête changé à chaque appel → `201 ×22`, `comptes créés : 42`.
+- **Correction** : Caddy en bordure : `trusted_proxies` vide (ou `header_up X-Forwarded-For {remote_host}`) ;
+  API : `trustProxy: 1` (un seul saut) ou l'adresse du réseau Docker, jamais `true`.
+
+### INF-7 — `backup.sh` : un `pg_dump` en échec laisse une « sauvegarde » partielle, non journalisée, prise pour bonne — **MAJEUR**
+
+- **Fichier** : `infra/prod/backup.sh:26-31`, `infra/prod/status.sh:26-30`.
+- **Constat** : `pg_dump … | gpg … -o "$FILE"` : gpg crée le fichier avant l'échec ; `set -euo pipefail` fait sortir
+  avant la ligne de journal ; aucun `trap` ne supprime le fichier ; `status.sh` ne regarde que l'**âge** du dernier
+  fichier ; la rotation (`KEEP=14`) compte ces fichiers partiels et peut évincer les bonnes sauvegardes.
+- **Preuve** : faux `docker` dans le `PATH` (écrit 50 octets puis `exit 1`), `HOME` temporaire,
+  `backup-keygen.sh` puis `backup.sh` → `code backup.sh=1` ; fichier `awform-20260929-134804.dump.gpg` de 183 octets
+  **conservé** ; `backup.log` : `(pas de journal)`.
+- **Correction** : écrire dans `$FILE.part`, renommer seulement en cas de succès ; `trap` d'échec qui supprime et
+  journalise « ÉCHEC » ; `status.sh` lit la dernière ligne `ok` du journal ; alerte si échec.
+
+### INF-8 — Ni copie hors site, ni test de restauration automatique — **MAJEUR**
+
+- **Fichiers** : `infra/prod/backup.sh:8`, `infra/prod/EXPLOITATION.md:73` (« Copie hors site : À BRANCHER »),
+  `infra/prod/restore-test.sh:51`, `infra/prod/status.sh:32`.
+- **Constat** : les sauvegardes restent sur le **même serveur** que la base (perte du disque = perte de tout) ;
+  `restore-test.sh` est manuel (depuis le PC, clé privée) ; `status.sh` affiche la dernière restauration sans alerter
+  si elle est ancienne ; `restore-test.sh` n'exige des lignes que dans `quran_verse` (une base vide « réussit »).
+- **Preuve** : `grep -n "hors site" infra/prod/EXPLOITATION.md` → `73: … À BRANCHER` ; lecture des lignes citées.
+- **Correction** : copie chiffrée hors site (stockage objet) ; restauration automatique mensuelle sur machine
+  jetable avec seuils minimaux par table ; alerte si > 35 jours.
+
+### INF-9 — Un déploiement `--demo` laisse le paiement SIMULÉ et le tuteur simulé actifs pour toujours — **MAJEUR**
+
+- **Fichier** : `infra/prod/deploy.sh:76-78` (et `:52`).
+- **Constat** : `AWFORM_PAIEMENT=simule`, `AWFORM_TUTEUR=simule`, `AWFORM_LANGUES_PREPARATION=on` sont **ajoutés** à
+  `prod.env` avec `--demo` et **jamais retirés** par un déploiement ultérieur sans `--demo`. En mode simulé, tout
+  utilisateur s'accorde un abonnement par `POST /api/v1/billing/simulate/:id` (voir PAY-1).
+- **Preuve** : `grep -n "AWFORM_PAIEMENT" infra/prod/deploy.sh` → une seule occurrence, ligne 78 :
+  `if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_PAIEMENT=' "$ENVF"; then echo "AWFORM_PAIEMENT=simule" >> "$ENVF"; fi`.
+- **Correction** : sans `--demo`, supprimer ces clés ou **refuser** de déployer si elles sont présentes.
+
+### INF-10 — Migrations sans retour arrière, appliquées avant la bascule — **MINEUR**
+
+- **Fichier** : `infra/prod/deploy.sh:93` (migration) puis `:106` (bascule), `:109` (`exit 1` si la santé échoue).
+- **Constat** : aucune migration descendante (`ls packages/db/migrations`), pas de retour automatique à l'image
+  précédente, pas de sauvegarde juste avant migration.
+- **Correction** : sauvegarde avant migration ; règle « expand / contract » écrite ; retour à l'image précédente
+  si la santé échoue.
+
+### INF-11 — Images Docker non épinglées par empreinte ; scripts : avertissements shellcheck — **MINEUR**
+
+- **Preuve** : `infra/prod/Dockerfile:6,21` (`node:24-bookworm-slim`), `compose.yml:14,102` (`postgres:18`,
+  `caddy:2`) ; `shellcheck 0.9.0` sur les 13 scripts : **aucune erreur**, avertissements SC2155
+  (`android/build-debug.sh:17`, `deploy.sh:83`), SC2094 (`deploy.sh:59-61`), SC2015 (`env-check.sh:28`,
+  `status.sh:42`), SC2012 (`backup.sh:30`, `restore-test.sh:17`, `status.sh:26`). `bash -n` : tous corrects.
+  Divers : `EXPLOITATION.md:24` décrit encore l'ancienne `backup.key` symétrique.
+- **Correction** : `image@sha256:…` + Dependabot ; traiter les avertissements.
+
+**Soupçon (non prouvé ici)** : `deploy.sh:164-165` restreint 80/443 au réseau local par **ufw**, mais les ports
+publiés par Docker (`compose.yml:105-106`, `'80:80'` sur 0.0.0.0) passent **avant** ufw (chaîne DOCKER) ; sur une
+machine dotée d'une interface publique, le site serait exposé. À vérifier sur la machine ; corriger par
+`127.0.0.1:`/IP LAN dans `ports:` ou des règles `DOCKER-USER`.
