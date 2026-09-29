@@ -15,7 +15,7 @@ import {
   isValidItemResponse,
   type UnitProgress,
 } from '@awform/grading';
-import { deviceTime, hasNul, isolated, isSmallInt, REFUSED } from './bounds.js';
+import { CONFLICT, deviceTime, hasNul, isolated, isSmallInt, REFUSED } from './bounds.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -36,7 +36,7 @@ export interface AttemptInput {
 export interface AttemptResult {
   accepted: Array<{ id: string; correct: boolean | null }>;
   duplicates: string[];
-  rejected: Array<{ id: string; reason: string }>;
+  rejected: Array<{ id: string; reason: string; code?: string }>;
   progress: Record<string, UnitProgress>;
 }
 
@@ -177,8 +177,16 @@ export async function recordAttempts(
         .returning({ id: t.attempt.id }),
     );
     if (inserted === REFUSED) reject('données invalides');
-    else if (inserted.length === 0) res.duplicates.push(ev.id);
-    else {
+    else if (inserted.length === 0) {
+      // audit OFF-7 : un identifiant déjà pris par un AUTRE profil est un conflit, pas un doublon
+      const [x] = await db
+        .select({ p: t.attempt.profileId })
+        .from(t.attempt)
+        .where(eq(t.attempt.id, ev.id));
+      if (x && x.p !== ev.profileId)
+        res.rejected.push({ id: ev.id, reason: 'identifiant déjà utilisé', code: CONFLICT });
+      else res.duplicates.push(ev.id);
+    } else {
       res.accepted.push({ id: ev.id, correct });
       touched.add(`${ev.profileId}|${ev.unitId}`);
     }

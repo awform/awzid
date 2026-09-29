@@ -3,7 +3,7 @@
  */
 import { and, asc, eq, gte, inArray, sql } from 'drizzle-orm';
 import { maskTree, publicProjection } from '@awform/content';
-import { deviceTime, hasNul, isolated, REFUSED, validDay } from './bounds.js';
+import { CONFLICT, deviceTime, hasNul, isolated, REFUSED, validDay } from './bounds.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -27,12 +27,12 @@ export async function recordPractice(
 ): Promise<{
   accepted: string[];
   duplicates: string[];
-  rejected: Array<{ id: string; reason: string }>;
+  rejected: Array<{ id: string; reason: string; code?: string }>;
 }> {
   const res = {
     accepted: [] as string[],
     duplicates: [] as string[],
-    rejected: [] as Array<{ id: string; reason: string }>,
+    rejected: [] as Array<{ id: string; reason: string; code?: string }>,
   };
   for (const e of events) {
     if (!e || !UUID.test(String(e.id)) || !UUID.test(String(e.profileId))) {
@@ -71,7 +71,17 @@ export async function recordPractice(
         .returning({ id: t.practiceEvent.id }),
     );
     if (rows === REFUSED) res.rejected.push({ id: e.id, reason: 'données invalides' });
-    else (rows.length ? res.accepted : res.duplicates).push(e.id);
+    else if (rows.length) res.accepted.push(e.id);
+    else {
+      // audit OFF-7 : identifiant déjà pris par un autre profil → conflit
+      const [x] = await db
+        .select({ p: t.practiceEvent.profileId })
+        .from(t.practiceEvent)
+        .where(eq(t.practiceEvent.id, e.id));
+      if (x && x.p !== e.profileId)
+        res.rejected.push({ id: e.id, reason: 'identifiant déjà utilisé', code: CONFLICT });
+      else res.duplicates.push(e.id);
+    }
   }
   return res;
 }

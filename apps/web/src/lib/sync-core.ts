@@ -154,7 +154,23 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
         // réponses d'un AUTRE compte de l'appareil (audit OFF-3) : gardées pour lui, jamais effacées
         const foreign = body.rejected.filter((x) => x.code === 'autre_compte');
         for (const x of foreign) skip.add(x.id);
-        const rejected = body.rejected.filter((x) => x.code !== 'autre_compte');
+        // identifiant déjà pris ailleurs (audit OFF-7) : l'événement repart sous un NOUVEL identifiant
+        const clash = body.rejected.filter((x) => x.code === 'conflit_identifiant');
+        if (clash.length) {
+          const byId = new Map(batch.map((e) => [e.id, e]));
+          const fresh = clash
+            .map((x) => byId.get(x.id))
+            .filter((e): e is AttemptEvent => !!e)
+            .map((e) => ({ ...e, id: uuidv7() }));
+          await putMany('events', fresh);
+          await delMany(
+            'events',
+            clash.map((x) => x.id),
+          );
+        }
+        const rejected = body.rejected.filter(
+          (x) => x.code !== 'autre_compte' && x.code !== 'conflit_identifiant',
+        );
         const done = [
           ...body.accepted.map((a) => a.id),
           ...body.duplicates,
@@ -164,7 +180,7 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
         res.rejected += rejected.length;
         Object.assign(res.progress, body.progress ?? {});
         if (done.length === 0) {
-          if (foreign.length) continue;
+          if (foreign.length || clash.length) continue;
           break;
         }
         await delMany('events', done);

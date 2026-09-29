@@ -243,4 +243,32 @@ describe('synchronisation différée sans conflit', () => {
     expect(await pendingCount()).toBe(1);
     expect(await quarantined()).toEqual([]);
   });
+
+  it('audit OFF-7 : identifiant en conflit — l’événement repart sous un nouvel identifiant, rien n’est perdu', async () => {
+    const e = await queueEvent(ev);
+    const seen: string[] = [];
+    const fetchFn = (async (_u: RequestInfo | URL, init?: RequestInit) => {
+      const { events } = JSON.parse(String(init?.body)) as { events: Array<{ id: string }> };
+      seen.push(...events.map((x) => x.id));
+      return new Response(
+        JSON.stringify(
+          events[0]!.id === e.id
+            ? {
+                accepted: [],
+                duplicates: [],
+                rejected: [{ id: e.id, reason: 'x', code: 'conflit_identifiant' }],
+              }
+            : {
+                accepted: events.map((x) => ({ id: x.id, correct: true })),
+                duplicates: [],
+                rejected: [],
+              },
+        ),
+      );
+    }) as typeof fetch;
+    const r = await flushQueue(fetchFn);
+    expect(r).toMatchObject({ sent: 1, rejected: 0, remaining: 0 });
+    expect(seen).toHaveLength(2);
+    expect(seen[1]).not.toBe(e.id);
+  });
 });

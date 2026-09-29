@@ -104,4 +104,38 @@ describe.skipIf(!URL_)('audit — hors ligne', () => {
     const [row] = await c.h.db.select().from(t.attempt).where(eq(t.attempt.id, old.id));
     expect(Date.now() - row!.deviceAt.getTime()).toBeLessThan(60_000);
   });
+
+  it('OFF-7 : identifiant déjà pris par un AUTRE profil → conflit (code stable), jamais « doublon »', async () => {
+    const a = await adult(c, 'collision-a-off7@exemple.org');
+    const b = await adult(c, 'collision-b-off7@exemple.org');
+    const id = randomUUID();
+    const ev = (profileId: string, eventType: string, response: object) => ({
+      id,
+      profileId,
+      unitId: eventType === 'checklist' ? 'en1.l01' : 'hifz',
+      eventType,
+      response,
+      deviceAt: new Date().toISOString(),
+    });
+    for (const [type, resp] of [
+      ['hifz', { day: TODAY, part: '112:1-4', kind: 'appris', source: 'auto' }],
+      ['checklist', { checked: 1, total: 2 }],
+      ['trace', { item: 'ب', ok: true, day: TODAY }],
+    ] as const) {
+      const theirs = { ...ev(b.profileId, type, resp), id: randomUUID() };
+      expect(
+        (await c.req('POST', '/api/v1/attempts', b.A, { events: [theirs] })).json().accepted,
+      ).toHaveLength(1);
+      const mine = { ...ev(a.profileId, type, resp), id: theirs.id };
+      const r = (await c.req('POST', '/api/v1/attempts', a.A, { events: [mine] })).json();
+      expect(r.duplicates, type).toEqual([]);
+      expect(r.rejected, type).toEqual([
+        expect.objectContaining({ id: theirs.id, code: 'conflit_identifiant' }),
+      ]);
+      // le même événement renvoyé par son propre profil reste un doublon ordinaire
+      expect(
+        (await c.req('POST', '/api/v1/attempts', b.A, { events: [theirs] })).json().duplicates,
+      ).toEqual([theirs.id]);
+    }
+  });
 });

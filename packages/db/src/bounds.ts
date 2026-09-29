@@ -73,3 +73,7 @@ export async function isolated<T>(write: () => Promise<T>): Promise<T | typeof R
   }
 }
 export const REFUSED: unique symbol = Symbol('refuse');
+
+/** Code stable d'un identifiant d'événement déjà pris par un autre profil (audit OFF-7) : l'appareil renvoie
+ * l'événement sous un nouvel identifiant. */
+export const CONFLICT = 'conflit_identifiant';

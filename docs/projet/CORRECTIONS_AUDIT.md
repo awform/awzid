@@ -41,7 +41,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | CON-6 | majeur | Bouton « explique » : le texte libre contourne le classifieur (pas d'alerte de détresse) et part au modèle | corrigé | 4bd6b13 | packages/tutor/test/tutor.test.ts |
 | CON-7 | majeur | Plafond de coût mensuel du tuteur dépassé par des appels parallèles | corrigé (plafond global par compte et par jour : non fait, tuteur réel non activé) | 2e355a2 | audit-tuteur.test.ts |
 | CON-8 | majeur | La batterie adverse est circulaire (et vide avec le fournisseur simulé) | corrigé (relecture humaine d'un échantillon avec le vrai modèle : à faire à l'activation) | 7e57646 | battery.test.ts, tutor.test.ts |
-| CON-9 | mineur | Mise en service de Claude avec un rapport de batterie écrit à la main | corrigé | voir « CON-9 » dans git log | tutor.test.ts |
+| CON-9 | mineur | Mise en service de Claude avec un rapport de batterie écrit à la main | corrigé | 86d5650 | tutor.test.ts |
 | CON-10 | mineur | Balise de fin du message élève reconstructible (injection) | corrigé | 57c979a | tutor.test.ts |
 | CON-11 | mineur | Texte libre d'un enfant de moins de 13 ans stocké sans être lu ni classé | corrigé | c7a2938 | audit-mineurs.test.ts |
 | CON-12 | mineur | Classifieur local : contournements simples et faux positifs | corrigé (wolof : à compléter avec un locuteur référent) | 0ca5ce4 | tutor.test.ts |
@@ -51,7 +51,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | OFF-4 | mineur | File de l'appareil : 4xx renvoyés à l'infini, portail captif et quota plein non gérés | à faire | | |
 | OFF-5 | mineur | Réponse antidatée par `deviceAt` : la leçon passe « maîtrisée » ; dates impossibles acceptées | corrigé | fc727cd | audit-off.test.ts |
 | OFF-6 | majeur | Relais (lot 17) : saturation du disque par n'importe quel appareil du Wi-Fi ; exception non rattrapée | corrigé | 44fa0b6 (commun avec OFF-1) | relay.test.ts « audit OFF-6 » |
-| OFF-7 | mineur | Collision volontaire d'identifiant : un autre compte fait disparaître un événement | à faire | | |
+| OFF-7 | mineur | Collision volontaire d'identifiant : un autre compte fait disparaître un événement | corrigé (appareil ; par le relais, l'événement en conflit reste signalé mais n'est pas renvoyé) | voir « OFF-7 » dans git log | audit-off.test.ts, offline.test.ts |
 | MET-1 | bloquant | Un bilan ou un examen fait dans l'application compte toujours 100 % : certificat « Très bien » assuré | corrigé | e723584 | audit-met1.test.ts |
 | MET-2 | mineur | Certificat délivrable avec un contrôle continu partiel ; examen à 49,995 % arrondi à 50 | corrigé | e45008a | school.test.ts « audit MET-2 » ; lot13.test.ts (livres réels) mis à jour |
 | MET-3 | mineur | Hifẓ : un jour invalide arrête le rejeu du journal ; mois d'essai surestimé ; barème avec `Infinity` | à faire | | |

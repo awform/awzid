@@ -4,7 +4,16 @@
  */
 import { randomInt } from 'node:crypto';
 import { and, asc, eq, inArray, isNull, sql } from 'drizzle-orm';
-import { deviceTime, hasNul, isInt32, isolated, REFUSED, validDay, validPart } from './bounds.js';
+import {
+  CONFLICT,
+  deviceTime,
+  hasNul,
+  isInt32,
+  isolated,
+  REFUSED,
+  validDay,
+  validPart,
+} from './bounds.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -118,7 +127,7 @@ export interface HifzEventInput {
 export interface HifzRecordResult {
   accepted: string[];
   duplicates: string[];
-  rejected: Array<{ id: string; reason: string }>;
+  rejected: Array<{ id: string; reason: string; code?: string }>;
 }
 
 /** Nombre de versets par sourate d'après le texte importé (vide si le Coran n'est pas importé). */
@@ -203,7 +212,16 @@ export async function recordHifzEvents(
     );
     if (inserted === REFUSED) reject('données invalides');
     else if (inserted.length) res.accepted.push(e.id);
-    else res.duplicates.push(e.id);
+    else {
+      // audit OFF-7 : identifiant déjà pris par un autre profil → conflit
+      const [x] = await db
+        .select({ p: t.hifzEvent.profileId })
+        .from(t.hifzEvent)
+        .where(eq(t.hifzEvent.id, e.id));
+      if (x && x.p !== e.profileId)
+        res.rejected.push({ id: e.id, reason: 'identifiant déjà utilisé', code: CONFLICT });
+      else res.duplicates.push(e.id);
+    }
   }
   return res;
 }
