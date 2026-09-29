@@ -74,6 +74,28 @@ const LEVEL_CODE = '^[a-z]{2,3}[0-9]{1,2}$';
 const UNIT_ID = '^[a-z]{2,3}[0-9]{1,2}\\.l[0-9]{2}$';
 const UUID = '^[0-9a-fA-F-]{36}$';
 
+/**
+ * Journaux (audit MIN-13) : chemin sans chaîne de requête, identifiants remplacés par « :id », adresse IP
+ * tronquée (IPv4 : dernier octet à 0 ; IPv6 : trois premiers groupes). Aucun e-mail, aucun identifiant d'élève.
+ */
+const UUID_ANY = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+export function logSafeUrl(url: string): string {
+  return (url.split('?')[0] ?? '').replace(UUID_ANY, ':id');
+}
+export function truncIp(ip: string | undefined): string {
+  if (!ip) return '';
+  const v4 = /^(?:::ffff:)?(\d+)\.(\d+)\.(\d+)\.\d+$/.exec(ip);
+  if (v4) return `${v4[1]}.${v4[2]}.${v4[3]}.0`;
+  return `${ip.split(':').slice(0, 3).join(':')}::`;
+}
+export const logSerializers = {
+  req: (req: { method?: string; url?: string; ip?: string }) => ({
+    method: req.method,
+    url: logSafeUrl(req.url ?? ''),
+    remoteAddress: truncIp(req.ip),
+  }),
+};
+
 function notFound(message: string) {
   return { error: { code: 'introuvable', message } };
 }
@@ -84,7 +106,11 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   const proxyOpts = hops ? { trustProxy: (_addr: string, hop: number) => hop < hops } : {};
   const app = Fastify({
     logger: opts.logger
-      ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] }
+      ? {
+          level: 'info',
+          redact: ['req.headers.authorization', 'req.headers.cookie'],
+          serializers: logSerializers,
+        }
       : false,
     bodyLimit: 1_048_576,
     // audit INF-6 : UN seul mandataire de confiance (Caddy) — l'adresse du client est la dernière qu'il
