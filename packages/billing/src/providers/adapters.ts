@@ -137,6 +137,7 @@ export class StripeProvider extends Skeleton {
     const o = e.data.object;
     const map: Record<string, BillingEvent['type']> = {
       'checkout.session.completed': 'paiement_reussi',
+      'checkout.session.async_payment_succeeded': 'paiement_reussi',
       'checkout.session.async_payment_failed': 'paiement_echoue',
       'invoice.paid': 'renouvellement',
       'invoice.payment_failed': 'impaye',
@@ -144,6 +145,11 @@ export class StripeProvider extends Skeleton {
     };
     const type = map[e.type];
     if (!type) return null;
+    // audit PAY-3 : droits seulement pour un paiement ENCAISSÉ (SEPA et autres moyens asynchrones : la session
+    // se termine avant l'encaissement, qui arrive par « async_payment_succeeded »)
+    if (type === 'paiement_reussi' && o.payment_status !== 'paid') return null;
+    // la première facture de l'abonnement est déjà couverte par le paiement initial : pas de mois offert
+    if (e.type === 'invoice.paid' && o.billing_reason === 'subscription_create') return null;
     return {
       provider: 'stripe',
       eventId: e.id,

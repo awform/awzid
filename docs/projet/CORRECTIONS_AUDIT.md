@@ -56,9 +56,9 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MET-2 | mineur | Certificat délivrable avec un contrôle continu partiel ; examen à 49,995 % arrondi à 50 | corrigé | e45008a | school.test.ts « audit MET-2 » ; lot13.test.ts (livres réels) mis à jour |
 | MET-3 | mineur | Hifẓ : un jour invalide arrête le rejeu du journal ; mois d'essai surestimé ; barème avec `Infinity` | à faire | | |
 | MET-4 | mineur | Jalons : un mot tracé est compté comme la lettre « mot » ; migration Leitner fragile | à faire | | |
-| PAY-1 | majeur | Course sur la validation d'un paiement : un paiement, plusieurs abonnements | corrigé | voir « PAY-1 » dans git log | audit-pay.test.ts |
-| PAY-2 | majeur | Un abonnement impayé (ou un essai terminé) redevient actif si l'on clique « annuler » | corrigé | voir « PAY-2 » dans git log | audit-pay.test.ts |
-| PAY-3 | majeur | Stripe : un paiement non encaissé (SEPA, asynchrone) ouvre l'abonnement ; la 1re facture offre un 2e mois | à faire | | |
+| PAY-1 | majeur | Course sur la validation d'un paiement : un paiement, plusieurs abonnements | corrigé | 93ebe96 | audit-pay.test.ts |
+| PAY-2 | majeur | Un abonnement impayé (ou un essai terminé) redevient actif si l'on clique « annuler » | corrigé | 93ebe96 | audit-pay.test.ts |
+| PAY-3 | majeur | Stripe : un paiement non encaissé (SEPA, asynchrone) ouvre l'abonnement ; la 1re facture offre un 2e mois | corrigé | voir « PAY-3 » dans git log | packages/billing/test/billing.test.ts |
 | PAY-4 | majeur | Les droits d'accès ne sont appliqués nulle part, même avec `AWFORM_DROITS=on` | à faire | | |
 | PAY-5 | mineur | Essai « découverte » : course et unicité par compte seulement | à faire | | |
 | PAY-6 | mineur | Barrière parentale à l'achat facultative | à faire | | |

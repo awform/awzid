@@ -162,7 +162,14 @@ describe('prestataires', () => {
     const body = JSON.stringify({
       id: 'evt_1',
       type: 'checkout.session.completed',
-      data: { object: { id: 'cs_1', client_reference_id: 'chk9', subscription: 'sub_1' } },
+      data: {
+        object: {
+          id: 'cs_1',
+          client_reference_id: 'chk9',
+          subscription: 'sub_1',
+          payment_status: 'paid',
+        },
+      },
     });
     const t = 1_790_000_000;
     const v1 = createHmac('sha256', secret).update(`${t}.${body}`).digest('hex');
@@ -179,5 +186,44 @@ describe('prestataires', () => {
       checkoutId: 'chk9',
       reference: 'sub_1',
     });
+  });
+
+  it('audit PAY-3 : Stripe — droits seulement pour un paiement ENCAISSÉ ; la 1re facture n’ajoute pas de mois', async () => {
+    const secret = 'whsec_pay3';
+    const p = new StripeProvider({ STRIPE_SECRET_KEY: 'sk', STRIPE_WEBHOOK_SECRET: secret });
+    const send = (type: string, object: Record<string, unknown>) => {
+      const body = JSON.stringify({ id: `evt_${type}`, type, data: { object } });
+      const now = Math.floor(Date.now() / 1000);
+      const sig = createHmac('sha256', secret).update(`${now}.${body}`).digest('hex');
+      return p.parseWebhook({ 'stripe-signature': `t=${now},v1=${sig}` }, body);
+    };
+    const session = { id: 'cs_2', client_reference_id: 'chk2', subscription: 'sub_2' };
+    // SEPA (asynchrone) : session terminée mais pas encore payée → rien
+    expect(
+      await send('checkout.session.completed', { ...session, payment_status: 'unpaid' }),
+    ).toBeNull();
+    // l'encaissement arrive plus tard
+    expect(
+      await send('checkout.session.async_payment_succeeded', {
+        ...session,
+        payment_status: 'paid',
+      }),
+    ).toMatchObject({ type: 'paiement_reussi', checkoutId: 'chk2', reference: 'sub_2' });
+    // première facture de l'abonnement : déjà couverte par le paiement initial
+    expect(
+      await send('invoice.paid', {
+        id: 'in_1',
+        subscription: 'sub_2',
+        billing_reason: 'subscription_create',
+      }),
+    ).toBeNull();
+    // les suivantes renouvellent
+    expect(
+      await send('invoice.paid', {
+        id: 'in_2',
+        subscription: 'sub_2',
+        billing_reason: 'subscription_cycle',
+      }),
+    ).toMatchObject({ type: 'renouvellement', reference: 'sub_2' });
   });
 });
