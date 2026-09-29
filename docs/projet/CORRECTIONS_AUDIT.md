@@ -24,13 +24,13 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-6 | majeur | Export RGPD incomplet (art. 15 et 20) | corrigé | 25da93d | audit-rgpd.test.ts |
 | MIN-7 | majeur | Après l'effacement définitif, il reste des données personnelles (e-mail en clair, âge, pays) | corrigé | 3e1e41c | audit-rgpd.test.ts, roles.test.ts |
 | MIN-8 | majeur | Durées de conservation non appliquées (questions libres des enfants gardées sans limite) | corrigé | 6a01db4 | audit-rgpd.test.ts, roles.test.ts |
-| MIN-9 | mineur | Consentement `rappels` décoratif : son retrait n'arrête pas les notifications | corrigé | voir « MIN-9 » dans git log | audit-rgpd.test.ts |
-| MIN-10 | mineur | Code parent contournable pour l'envoi de récitations | corrigé | voir « MIN-10 » dans git log | audit-rgpd.test.ts |
-| MIN-11 | mineur | Une récitation réapparaît chez l'enseignant après retrait puis nouvelle inscription | corrigé | voir « MIN-11 » dans git log | audit-rgpd.test.ts |
-| MIN-12 | mineur | Administrateur : textes libres des enfants de toutes les classes, comptes supprimés, masquage faible | corrigé | voir « MIN-12 » dans git log | admin.test.ts |
-| MIN-13 | mineur | Journaux Fastify : URL complète (identifiants, paramètres) et adresse IP | corrigé | voir « MIN-13 » dans git log | audit-journaux.test.ts |
-| MIN-14 | mineur | Réinscription impossible 30 jours et révélation de l'existence du compte | corrigé en partie : adresse libérée dès la demande de suppression ; réponse neutre à l'inscription impossible sans service d'e-mail (décision du client) | voir « MIN-14 » dans git log | audit-rgpd.test.ts |
-| MIN-15 | mineur | Pays déclaratif, codes inexistants acceptés | à faire | | |
+| MIN-9 | mineur | Consentement `rappels` décoratif : son retrait n'arrête pas les notifications | corrigé | 3d5463c | audit-rgpd.test.ts |
+| MIN-10 | mineur | Code parent contournable pour l'envoi de récitations | corrigé | 3d5463c | audit-rgpd.test.ts |
+| MIN-11 | mineur | Une récitation réapparaît chez l'enseignant après retrait puis nouvelle inscription | corrigé | 3d5463c | audit-rgpd.test.ts |
+| MIN-12 | mineur | Administrateur : textes libres des enfants de toutes les classes, comptes supprimés, masquage faible | corrigé | fbb9065 | admin.test.ts |
+| MIN-13 | mineur | Journaux Fastify : URL complète (identifiants, paramètres) et adresse IP | corrigé | 806e170 | audit-journaux.test.ts |
+| MIN-14 | mineur | Réinscription impossible 30 jours et révélation de l'existence du compte | corrigé en partie : adresse libérée dès la demande de suppression ; réponse neutre à l'inscription impossible sans service d'e-mail (décision du client) | 3dd77e4 | audit-rgpd.test.ts |
+| MIN-15 | mineur | Pays déclaratif, codes inexistants acceptés | corrigé en partie : codes ISO 3166-1 seulement ; pays des familles d'une classe sénégalaise non imposé (à décider avec l'école pilote) | voir « MIN-15 » dans git log | audit-mineurs.test.ts |
 | MIN-16 | mineur | Enregistrements vocaux locaux : la limite de 7 jours n'est appliquée qu'à l'ouverture de l'écran | corrigé | a319a48 | apps/web/src/lib/recordings.test.ts |
 | MIN-17 | mineur | Branche `lot17-wip` : consentement par pays cohérent mais non appliqué aux profils | corrigé | b42308f | audit-mineurs.test.ts « MIN-17 » |
 | CON-1 | bloquant | Les corrigés des examens et bilans sont envoyés à l'élève (API et paquet hors ligne) et comptent pour le certificat | corrigé | 1b24221 (D7) + 68ac8d0 | audit-con1.test.ts (échoue sans la correction) |

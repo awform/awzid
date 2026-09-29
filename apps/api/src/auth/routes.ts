@@ -30,6 +30,7 @@ import {
   consentAge,
   countryRules,
   COUNTRY_CODE,
+  isCountry,
   lawEvidence,
   requiredAccountConsents,
   requiredChildConsents,
@@ -245,6 +246,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     },
     async (req, reply) => {
       const b = req.body;
+      // audit MIN-15 : pays existant (ISO 3166-1) seulement
+      if (!isCountry(b.country)) return err(reply, 400, 'pays_inconnu');
       const ipKey = `signup:${req.ip}`;
       if (await lockedUntil(db, ipKey)) return err(reply, 429, 'trop_de_demandes');
       await recordFailure(db, ipKey, SIGNUPS_PER_HOUR); // au plus 20 inscriptions par heure et par adresse, puis pause
@@ -743,7 +746,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
 
   // règles du pays (public) : âge, accords obligatoires, loi applicable et autorité de contrôle (lot 17)
   app.get<{ Params: { code: string } }>('/api/v1/pays/:code/regles', async (req, reply) => {
-    if (!COUNTRY_CODE.test(req.params.code)) return err(reply, 400, 'pays_invalide');
+    if (!COUNTRY_CODE.test(req.params.code) || !isCountry(req.params.code))
+      return err(reply, 400, 'pays_invalide');
     reply.header('Cache-Control', 'public, max-age=3600');
     return countryRules(req.params.code);
   });

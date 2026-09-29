@@ -183,4 +183,24 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
     for (const r of rows)
       expect(r.evidence, r.type).toMatchObject({ loi: 'sn_2008_12', autorite: 'cdp_sn' });
   });
+
+  it('MIN-15 : pays inexistant refusé à l’inscription et dans les règles par pays', async () => {
+    const r = await c.req(
+      'POST',
+      '/api/v1/auth/signup',
+      {},
+      {
+        kind: 'adulte',
+        email: 'zz-min15@exemple.org',
+        password: PW,
+        country: 'ZZ',
+        consents: ['cgu'],
+        birthYear: 1990,
+      },
+    );
+    expect(r.statusCode).toBe(400);
+    expect(r.json().error.code).toBe('pays_inconnu');
+    expect((await c.req('GET', '/api/v1/pays/ZZ/regles')).statusCode).toBe(400);
+    expect((await c.req('GET', '/api/v1/pays/SN/regles')).statusCode).toBe(200);
+  });
 });
