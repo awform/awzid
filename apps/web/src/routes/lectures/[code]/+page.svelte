@@ -167,9 +167,14 @@
     align-items: center;
     gap: 8px;
     position: sticky;
-    bottom: 72px;
+    bottom: 0;
     background: var(--bg, #fffdf7);
     padding: 6px 0;
+  }
+  @media (max-width: 700px) {
+    .pager {
+      bottom: 72px; /* au-dessus de la barre d'onglets du téléphone */
+    }
   }
   .gloss {
     list-style: none;
