@@ -45,15 +45,15 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | CON-10 | mineur | Balise de fin du message élève reconstructible (injection) | à faire | | |
 | CON-11 | mineur | Texte libre d'un enfant de moins de 13 ans stocké sans être lu ni classé | à faire | | |
 | CON-12 | mineur | Classifieur local : contournements simples et faux positifs | à faire | | |
-| OFF-1 | bloquant | Relais d'école (lot 17) : des réponses confirmées « acceptées » à la tablette sont effacées si la session de l'élève a expiré | à faire | | |
+| OFF-1 | bloquant | Relais d'école (lot 17) : des réponses confirmées « acceptées » à la tablette sont effacées si la session de l'élève a expiré | corrigé | commit commun « OFF-1, OFF-6 » | relay.test.ts « audit OFF-1 » (+ tests du relais mis à jour) |
 | OFF-2 | majeur | Un seul événement hors bornes : 500 sur tout le lot et file de l'appareil bloquée à vie | à faire | | |
 | OFF-3 | majeur | Appareil partagé : à la déconnexion, la file et les voix de A restent ; la connexion de B détruit la file de A | à faire | | |
 | OFF-4 | mineur | File de l'appareil : 4xx renvoyés à l'infini, portail captif et quota plein non gérés | à faire | | |
 | OFF-5 | mineur | Réponse antidatée par `deviceAt` : la leçon passe « maîtrisée » ; dates impossibles acceptées | à faire | | |
-| OFF-6 | majeur | Relais (lot 17) : saturation du disque par n'importe quel appareil du Wi-Fi ; exception non rattrapée | à faire | | |
+| OFF-6 | majeur | Relais (lot 17) : saturation du disque par n'importe quel appareil du Wi-Fi ; exception non rattrapée | corrigé | commit commun « OFF-1, OFF-6 » (mêmes fonctions) | relay.test.ts « audit OFF-6 » |
 | OFF-7 | mineur | Collision volontaire d'identifiant : un autre compte fait disparaître un événement | à faire | | |
 | MET-1 | bloquant | Un bilan ou un examen fait dans l'application compte toujours 100 % : certificat « Très bien » assuré | corrigé | e723584 | audit-met1.test.ts |
-| MET-2 | mineur | Certificat délivrable avec un contrôle continu partiel ; examen à 49,995 % arrondi à 50 | corrigé | voir « MET-2 » dans git log | school.test.ts « audit MET-2 » ; lot13.test.ts (livres réels) mis à jour |
+| MET-2 | mineur | Certificat délivrable avec un contrôle continu partiel ; examen à 49,995 % arrondi à 50 | corrigé | e45008a | school.test.ts « audit MET-2 » ; lot13.test.ts (livres réels) mis à jour |
 | MET-3 | mineur | Hifẓ : un jour invalide arrête le rejeu du journal ; mois d'essai surestimé ; barème avec `Infinity` | à faire | | |
 | MET-4 | mineur | Jalons : un mot tracé est compté comme la lettre « mot » ; migration Leitner fragile | à faire | | |
 | PAY-1 | majeur | Course sur la validation d'un paiement : un paiement, plusieurs abonnements | à faire | | |

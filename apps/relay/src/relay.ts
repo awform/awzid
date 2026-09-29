@@ -16,7 +16,15 @@ import type { RelayStore } from './store.js';
 
 /** Contenus publics mis en copie (jamais de données personnelles). */
 export const CACHEABLE =
-  /^\/api\/v1\/(health|config|levels(\/[a-z0-9]+\/units)?|units\/[a-z0-9.]+|packs(\/[a-z0-9]+)?|quran\/(meta|verses)|hifz\/books(\/[a-z0-9_]+)?|booklets(\/[a-z0-9-]+)?|activites\/racines|billing\/plans|public\/l\/[a-z0-9-]+)$/;
+  /^\/api\/v1\/(config|levels(\/[a-z0-9]+\/units)?|units\/[a-z0-9.]+|packs(\/[a-z0-9]+)?|quran\/(meta|verses)|hifz\/books(\/[a-z0-9_]+)?|booklets(\/[a-z0-9-]+)?|activites\/racines|billing\/plans|public\/l\/[a-z0-9-]+)$/;
+
+/** Chaîne de requête des contenus mis en copie : bornée (audit OFF-6, copie non saturable). */
+const MAX_QUERY = 120;
+/** Taille maximale d'un envoi mis en file (réponses : 256 Ko ; récitation : 3 Mo, comme le central). */
+const MAX_ATTEMPTS_BYTES = 256 * 1024;
+const MAX_RECITATION_BYTES = 3 * 1024 * 1024;
+/** Envois mis en file par adresse et par heure (audit OFF-6). */
+const MAX_PER_IP_HOUR = 600;
 
 /** Envois gardés en file quand le central est injoignable. */
 const QUEUEABLE = [/^\/api\/v1\/attempts$/, /^\/api\/v1\/profiles\/[0-9a-f-]{36}\/recitations$/];
@@ -122,27 +130,33 @@ export function buildRelay(o: RelayOptions): Relay {
       .header('x-awform-relais', 'hors-ligne')
       .send({ error: { code: 'hors_ligne_relais' } });
 
-  /** réponse immédiate à un envoi mis en file (l'appareil peut vider sa propre file) */
-  function queuedReply(reply: FastifyReply, path: string, body: Buffer) {
+  /**
+   * Réponse à un envoi mis en file. Audit OFF-1 : JAMAIS « accepté » avant la confirmation du central — la
+   * tablette garde sa copie (liste `accepted` vide) et la renverra ; le relais relaie la sienne dès qu'il
+   * le peut, sans doublon (identifiants d'événements, empreinte des envois).
+   */
+  function queuedReply(reply: FastifyReply, path: string) {
     reply.header('x-awform-relais', 'en-attente');
-    if (path === '/api/v1/attempts') {
-      let events: Array<{ id?: string }>;
-      try {
-        events =
-          (JSON.parse(body.toString('utf8')) as { events?: Array<{ id?: string }> }).events ?? [];
-      } catch {
-        events = [];
-      }
-      return reply.code(200).send({
-        accepted: events.filter((e) => e.id).map((e) => ({ id: e.id, correct: null })),
-        duplicates: [],
-        rejected: [],
-        relais: 'en_attente',
-      });
-    }
+    if (path === '/api/v1/attempts')
+      return reply
+        .code(202)
+        .send({ accepted: [], duplicates: [], rejected: [], relais: 'en_attente' });
     return reply
       .code(202)
       .send({ recitation: { id: null, enAttente: true }, relais: 'en_attente' });
+  }
+
+  /** envois mis en file par adresse (fenêtre d'une heure) */
+  const perIp = new Map<string, { n: number; since: number }>();
+  function ipAllowed(ip: string): boolean {
+    const now = Date.now();
+    const e = perIp.get(ip);
+    if (!e || now - e.since > 3_600_000) {
+      perIp.set(ip, { n: 1, since: now });
+      return true;
+    }
+    e.n++;
+    return e.n <= MAX_PER_IP_HOUR;
   }
 
   const app = Fastify({ logger: false, bodyLimit: 4 * 1024 * 1024 });
@@ -161,7 +175,7 @@ export function buildRelay(o: RelayOptions): Relay {
       if (Date.now() - lastCheck > 10_000) await checkOnline();
 
       if (req.method === 'GET' || req.method === 'HEAD') {
-        const cacheable = CACHEABLE.test(bare);
+        const cacheable = CACHEABLE.test(bare) && path.length - bare.length <= MAX_QUERY;
         if (online) {
           try {
             // copie des contenus : sans ETag conditionnel, pour garder un corps complet
@@ -204,8 +218,16 @@ export function buildRelay(o: RelayOptions): Relay {
         }
       }
       if (!queueable) return offlineReply(reply);
+      // audit OFF-6 : seulement un élève connecté (cookie de session), taille, place et débit bornés
+      if (!/(^|;\s*)awform_session=/.test(headers.cookie ?? ''))
+        return reply.code(401).send({ error: { code: 'non_connecte' } });
+      const limit = bare === '/api/v1/attempts' ? MAX_ATTEMPTS_BYTES : MAX_RECITATION_BYTES;
+      if (body.length > limit) return reply.code(413).send({ error: { code: 'trop_volumineux' } });
+      if (!ipAllowed(req.ip)) return reply.code(429).send({ error: { code: 'trop_de_demandes' } });
+      if (!store.hasRoom(body.length))
+        return reply.code(507).send({ error: { code: 'relais_plein' } });
       store.enqueue(req.method, path, headers, body);
-      return queuedReply(reply, bare, body);
+      return queuedReply(reply, bare);
     },
   });
 
@@ -234,6 +256,7 @@ export function buildRelay(o: RelayOptions): Relay {
 <li>Envois des élèves en attente d'Internet : <strong>${c.enAttente}</strong></li>
 <li>Envois déjà transmis : ${envoyes}</li>
 <li>Envois refusés par le serveur (à signaler) : ${c.refuses}</li>
+<li>Envois gardés en attendant que l'élève se reconnecte : ${c.sessionExpiree}</li>
 <li>Contenus gardés pour l'école : ${store.cacheCount()}</li>
 <li>Dernière connexion à Internet : ${derniere ? new Date(derniere).toLocaleString('fr-FR') : 'jamais'}</li>
 </ul>
@@ -244,6 +267,16 @@ export function buildRelay(o: RelayOptions): Relay {
   });
 
   // ------------------------------------------------------------ relais de la file
+
+  /** 401 « non connecté » du central (session expirée) — à distinguer d'un refus (code parent faux…) */
+  async function sessionExpired(r: Response): Promise<boolean> {
+    try {
+      const b = (await r.clone().json()) as { error?: { code?: string } };
+      return b.error?.code === 'non_connecte' || b.error?.code === 'session_expiree';
+    } catch {
+      return false;
+    }
+  }
 
   let running = false;
   async function syncOnce() {
@@ -274,6 +307,9 @@ export function buildRelay(o: RelayOptions): Relay {
           store.done(q.id);
           store.setMeta('dernier_envoi', new Date().toISOString());
           envoyes++;
+        } else if (r.status === 401 && (await sessionExpired(r))) {
+          // audit OFF-1 : session de l'élève expirée — l'envoi est gardé, jamais effacé
+          store.holdSession(q.id, r.status);
         } else if (r.status >= 400 && r.status < 500 && r.status !== 408 && r.status !== 429) {
           store.refused(q.id, r.status, (await r.text().catch(() => '')).slice(0, 200));
           refuses++;

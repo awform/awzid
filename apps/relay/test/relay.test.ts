@@ -22,6 +22,8 @@ interface Central {
   attempts: Map<string, number>;
   recitations: Map<string, number>;
   cookies: string[];
+  /** le central répond « non connecté » (session de l'élève expirée) */
+  expired?: boolean;
 }
 
 async function fakeCentral(): Promise<Central> {
@@ -55,6 +57,7 @@ async function fakeCentral(): Promise<Central> {
   );
   c.app.get('/api/v1/auth/me', async () => ({ account: { id: 'a' } }));
   c.app.post('/api/v1/attempts', async (req, reply) => {
+    if (c.expired) return reply.code(401).send({ error: { code: 'non_connecte' } });
     if (req.headers['x-awform'] !== '1') return reply.code(403).send({ error: { code: 'csrf' } });
     c.cookies.push(String(req.headers.cookie ?? ''));
     const b = JSON.parse((req.body as Buffer).toString()) as { events: Array<{ id: string }> };
@@ -134,7 +137,7 @@ describe('relais d’école : coupures d’Internet simulées', () => {
     expect(central.attempts.size).toBe(2);
   });
 
-  it('coupure : contenus depuis la copie, envois ACCEPTÉS et gardés chiffrés, le reste « hors ligne »', async () => {
+  it('coupure : contenus depuis la copie, envois gardés chiffrés SANS être déclarés acceptés (OFF-1), le reste « hors ligne »', async () => {
     central.down = true;
     await relay.checkOnline();
     expect(relay.isOnline()).toBe(false);
@@ -151,8 +154,11 @@ describe('relais d’école : coupures d’Internet simulées', () => {
       headers: H,
       payload: e,
     });
-    expect(p.statusCode).toBe(200);
-    expect(p.json().accepted.map((x: { id: string }) => x.id)).toEqual(e.events.map((x) => x.id));
+    // audit OFF-1 : jamais « accepté » avant le central — la tablette garde sa copie
+    expect(p.statusCode).toBe(202);
+    expect(p.json()).toMatchObject({ accepted: [], duplicates: [], relais: 'en_attente' });
+    // la tablette renvoie le même lot : pas de doublon dans la file du relais
+    await relay.app.inject({ method: 'POST', url: '/api/v1/attempts', headers: H, payload: e });
     const audio = Buffer.concat([Buffer.from('OggS-AUDIO-ELEVE'), randomBytes(500)]);
     const rec = await relay.app.inject({
       method: 'POST',
@@ -238,10 +244,54 @@ describe('relais d’école : coupures d’Internet simulées', () => {
     central.down = false;
     const r = await relay.syncOnce();
     expect(r.refuses).toBe(1);
-    expect(store.counts()).toEqual({ enAttente: 0, refuses: 1 });
+    expect(store.counts()).toMatchObject({ enAttente: 0, refuses: 1 });
     const row = store.db.prepare("SELECT payload FROM queue WHERE state = 'refuse'").get() as {
       payload: unknown;
     };
     expect(row.payload).toBeNull();
+  });
+
+  it('audit OFF-1 : session expirée au rejeu — l’envoi est GARDÉ (jamais effacé), plus rejoué, purgé à 7 jours', async () => {
+    central.down = true;
+    await relay.checkOnline();
+    const e = events(2);
+    await relay.app.inject({ method: 'POST', url: '/api/v1/attempts', headers: H, payload: e });
+    central.down = false;
+    central.expired = true;
+    const r = await relay.syncOnce();
+    expect(r).toMatchObject({ envoyes: 0, refuses: 0, restants: 0 });
+    expect(store.counts().sessionExpiree).toBe(1);
+    const row = store.db.prepare("SELECT payload FROM queue WHERE state = 'session'").get() as {
+      payload: unknown;
+    };
+    expect(row.payload).not.toBeNull();
+    central.expired = false;
+    store.purgeRefused(Date.now() + 8 * 86_400_000);
+    expect(store.counts().sessionExpiree).toBe(0);
+  });
+
+  it('audit OFF-6 : cookie exigé, taille et place bornées, copie des contenus bornée, ligne illisible en quarantaine', async () => {
+    central.down = true;
+    await relay.checkOnline();
+    const post = (headers: Record<string, string>, payload: object | Buffer) =>
+      relay.app.inject({ method: 'POST', url: '/api/v1/attempts', headers, payload });
+    const { cookie: _c, ...sans } = H;
+    void _c;
+    expect((await post(sans, events(1))).statusCode).toBe(401);
+    const big = {
+      events: [{ id: randomUUID(), profileId: profile, response: { x: 'a'.repeat(300_000) } }],
+    };
+    expect((await post(H, big)).statusCode).toBe(413);
+    // santé et chaînes de requête longues : jamais mises en copie
+    const before = store.cacheCount();
+    await relay.app.inject({ url: '/api/v1/health' });
+    await relay.app.inject({ url: `/api/v1/quran/verses?s=1&x=${'y'.repeat(200)}` });
+    expect(store.cacheCount()).toBe(before);
+    // clé changée : la ligne devient illisible → quarantaine, la synchronisation continue sans exception
+    await post(H, events(1));
+    const other = new RelayStore(dir, randomBytes(32));
+    expect(other.nextDue()).toBeNull();
+    expect(other.counts().illisibles).toBeGreaterThanOrEqual(1);
+    other.close();
   });
 });

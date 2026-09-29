@@ -52,13 +52,23 @@ await relay.app.listen({ host: env.HOST ?? '0.0.0.0', port: Number(env.PORT ?? 3
 console.log(JSON.stringify({ relais: 'demarre', amont: upstream, at: new Date().toISOString() }));
 
 // relais de la file toutes les 15 s ; battement et certificat toutes les 10 min
+// audit OFF-6 : une erreur de la boucle est journalisée, jamais laissée non rattrapée (arrêt du processus)
+const fail = (what: string) => (e: unknown) =>
+  console.error(JSON.stringify({ relais: what, erreur: String((e as Error)?.message ?? e) }));
 setInterval(() => {
-  void relay.syncOnce().then((r) => {
-    if (r.envoyes || r.refuses)
-      console.log(JSON.stringify({ relais: 'envois', ...r, at: new Date().toISOString() }));
-  });
+  relay
+    .syncOnce()
+    .then((r) => {
+      if (r.envoyes || r.refuses)
+        console.log(JSON.stringify({ relais: 'envois', ...r, at: new Date().toISOString() }));
+    })
+    .catch(fail('erreur_envois'));
 }, 15_000);
-const beat = () => void relay.checkOnline().then(() => relay.heartbeat());
+const beat = () =>
+  void relay
+    .checkOnline()
+    .then(() => relay.heartbeat())
+    .catch(fail('erreur_battement'));
 beat();
 setInterval(beat, 600_000);
 

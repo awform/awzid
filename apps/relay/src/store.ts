@@ -5,7 +5,7 @@
  *    (AES-256-GCM, clé propre au relais) : en-têtes (cookie de session compris) et corps ne sont jamais
  *    écrits en clair ; effacés dès que le central a répondu.
  */
-import { createCipheriv, createDecipheriv, randomBytes, randomUUID } from 'node:crypto';
+import { createCipheriv, createDecipheriv, createHmac, randomBytes, randomUUID } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
@@ -27,7 +27,18 @@ export interface QueuedRequest {
   attempts: number;
 }
 
-export type QueueState = 'en_attente' | 'refuse';
+/**
+ * en_attente : à relayer ; refuse : refus définitif du central (données effacées) ; session : le central a
+ * répondu « non connecté » (session de l'élève expirée) — audit OFF-1 : les données sont GARDÉES (la tablette
+ * garde aussi sa copie et la renverra), purgées après 7 jours ; illisible : ligne indéchiffrable (clé changée),
+ * mise en quarantaine sans bloquer la file (audit OFF-6).
+ */
+export type QueueState = 'en_attente' | 'refuse' | 'session' | 'illisible';
+
+/** Quotas de la file (audit OFF-6) : le disque du relais ne peut pas être saturé depuis le Wi-Fi. */
+export const QUEUE_MAX_ROWS = 20_000;
+export const QUEUE_MAX_BYTES = 500 * 1024 * 1024;
+export const CACHE_MAX_ROWS = 20_000;
 
 export class RelayStore {
   readonly db: DatabaseSync;
@@ -50,6 +61,10 @@ export class RelayStore {
         state TEXT NOT NULL DEFAULT 'en_attente', last_status INTEGER, last_error TEXT);
       CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT NOT NULL);
     `);
+    // audit OFF-1 : empreinte (HMAC, clé du relais) pour ne pas mettre deux fois le même envoi en file
+    const cols = this.db.prepare('PRAGMA table_info(queue)').all() as Array<{ name: string }>;
+    if (!cols.some((c) => c.name === 'digest'))
+      this.db.exec('ALTER TABLE queue ADD COLUMN digest TEXT');
   }
 
   close() {
@@ -59,6 +74,11 @@ export class RelayStore {
   // ------------------------------------------------------------ cache des contenus
 
   putCache(k: string, r: Omit<CachedResponse, 'fetchedAt'>) {
+    // audit OFF-6 : copie bornée (les plus anciennes entrées partent)
+    if (this.cacheCount() >= CACHE_MAX_ROWS)
+      this.db
+        .prepare('DELETE FROM cache WHERE k IN (SELECT k FROM cache ORDER BY fetched_at LIMIT 100)')
+        .run();
     this.db
       .prepare(
         'INSERT OR REPLACE INTO cache (k, status, headers, body, fetched_at) VALUES (?, ?, ?, ?, ?)',
@@ -100,14 +120,38 @@ export class RelayStore {
     return JSON.parse(plain.toString('utf8')) as { headers: Record<string, string>; body: string };
   }
 
+  /** Empreinte d'un envoi (aucun contenu en clair : HMAC avec la clé du relais). */
+  private digest(method: string, path: string, headers: Record<string, string>, body: Buffer) {
+    return createHmac('sha256', this.key)
+      .update(`${method}\n${path}\n${headers.cookie ?? ''}\n`)
+      .update(body)
+      .digest('hex');
+  }
+
+  /** Place disponible (nombre de lignes et octets) : audit OFF-6. */
+  hasRoom(bytes: number): boolean {
+    const r = this.db
+      .prepare(
+        "SELECT count(*) AS n, coalesce(sum(length(payload)), 0) AS b FROM queue WHERE state != 'refuse'",
+      )
+      .get() as { n: number; b: number };
+    return r.n < QUEUE_MAX_ROWS && r.b + bytes < QUEUE_MAX_BYTES;
+  }
+
+  /** Met un envoi en file ; le même envoi déjà en attente n'est pas dupliqué (la tablette le renvoie). */
   enqueue(method: string, path: string, headers: Record<string, string>, body: Buffer): string {
+    const digest = this.digest(method, path, headers, body);
+    const dup = this.db
+      .prepare("SELECT id FROM queue WHERE digest = ? AND state IN ('en_attente', 'session')")
+      .get(digest) as { id: string } | undefined;
+    if (dup) return dup.id;
     const id = randomUUID();
     const { iv, enc } = this.seal({ headers, body: body.toString('base64') });
     this.db
       .prepare(
-        'INSERT INTO queue (id, created_at, method, path, iv, payload, next_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO queue (id, created_at, method, path, iv, payload, next_at, digest) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       )
-      .run(id, Date.now(), method, path, iv, enc, 0);
+      .run(id, Date.now(), method, path, iv, enc, 0, digest);
     return id;
   }
 
@@ -129,7 +173,18 @@ export class RelayStore {
         }
       | undefined;
     if (!row) return null;
-    const p = this.open(row.iv, row.payload);
+    let p: { headers: Record<string, string>; body: string };
+    try {
+      p = this.open(row.iv, row.payload);
+    } catch {
+      // audit OFF-6 : ligne indéchiffrable (clé changée, disque abîmé) → quarantaine, la file continue
+      this.db
+        .prepare(
+          "UPDATE queue SET state = 'illisible', iv = NULL, payload = NULL, last_error = 'indéchiffrable' WHERE id = ?",
+        )
+        .run(row.id);
+      return this.nextDue(now);
+    }
     return {
       id: row.id,
       method: row.method,
@@ -156,6 +211,19 @@ export class RelayStore {
       .run(status, error.slice(0, 200), id);
   }
 
+  /**
+   * Audit OFF-1 : le central répond « non connecté » (session de l'élève expirée) — l'envoi est GARDÉ (état
+   * « session »), jamais effacé ; il n'est plus rejoué (la tablette renverra sa propre copie avec une session
+   * valide) et sera purgé après 7 jours.
+   */
+  holdSession(id: string, status: number) {
+    this.db
+      .prepare(
+        "UPDATE queue SET state = 'session', last_status = ?, last_error = 'session' WHERE id = ?",
+      )
+      .run(status, id);
+  }
+
   /** Échec passager (réseau, 5xx) : nouvel essai plus tard (attente croissante, 5 min au plus). */
   retryLater(id: string, error: string, now = Date.now()) {
     const row = this.db.prepare('SELECT attempts FROM queue WHERE id = ?').get(id) as
@@ -172,17 +240,24 @@ export class RelayStore {
     this.db.prepare("UPDATE queue SET next_at = 0 WHERE state = 'en_attente'").run();
   }
 
-  counts(): { enAttente: number; refuses: number } {
+  counts(): { enAttente: number; refuses: number; sessionExpiree: number; illisibles: number } {
     const n = (s: QueueState) =>
       (this.db.prepare('SELECT count(*) AS n FROM queue WHERE state = ?').get(s) as { n: number })
         .n;
-    return { enAttente: n('en_attente'), refuses: n('refuse') };
+    return {
+      enAttente: n('en_attente'),
+      refuses: n('refuse'),
+      sessionExpiree: n('session'),
+      illisibles: n('illisible'),
+    };
   }
 
-  /** Traces des refus gardées 7 jours. */
+  /** Traces des refus, envois « session expirée » et lignes illisibles : gardés 7 jours. */
   purgeRefused(now = Date.now()) {
     this.db
-      .prepare("DELETE FROM queue WHERE state = 'refuse' AND created_at < ?")
+      .prepare(
+        "DELETE FROM queue WHERE state IN ('refuse', 'session', 'illisible') AND created_at < ?",
+      )
       .run(now - 7 * 86_400_000);
   }
 
