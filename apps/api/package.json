@@ -13,6 +13,7 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
+    "@awform/billing": "workspace:*",
     "@awform/content": "workspace:*",
     "@awform/db": "workspace:*",
     "@awform/hifz": "workspace:*",

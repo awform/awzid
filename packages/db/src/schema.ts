@@ -666,3 +666,83 @@ export const tutorAlert = pgTable('tutor_alert', {
   handledAt: timestamp('handled_at', { withTimezone: true }),
   createdAt: createdAt(),
 });
+
+// ================================================================ paiements (lot 10)
+
+/**
+ * Session de paiement (NOTRE référence) : formule, zone, montant, prestataire ; jamais de donnée de carte.
+ * Le paiement se fait sur la page hébergée du prestataire (ou la page simulée) ; le résultat arrive par un
+ * événement signé.
+ */
+export const billingCheckout = pgTable(
+  'billing_checkout',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    accountId: uuid('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    planCode: text('plan_code').notNull(),
+    zone: text('zone').notNull(),
+    currency: text('currency').notNull(),
+    /** unité mineure (centimes ; franc CFA sans décimales) ; licence : montant total */
+    amount: integer('amount').notNull(),
+    seats: integer('seats'),
+    provider: text('provider').notNull(),
+    providerRef: text('provider_ref'),
+    status: text('status').notNull().default('ouverte'),
+    createdAt: createdAt(),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('billing_checkout_account').on(t.accountId),
+    check(
+      'billing_checkout_status',
+      sql`${t.status} IN ('ouverte', 'payee', 'echouee', 'expiree')`,
+    ),
+  ],
+);
+
+/** Abonnement / pass / essai / licence : la SEULE source des droits d'accès (indépendante du moyen de paiement). */
+export const subscription = pgTable(
+  'subscription',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    accountId: uuid('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    planCode: text('plan_code').notNull(),
+    status: text('status').notNull(),
+    provider: text('provider').notNull(),
+    providerRef: text('provider_ref'),
+    seats: integer('seats'),
+    currentPeriodStart: timestamp('current_period_start', { withTimezone: true }).notNull(),
+    currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
+    cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull().default(false),
+    createdAt: createdAt(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('subscription_account').on(t.accountId),
+    check(
+      'subscription_status',
+      sql`${t.status} IN ('essai', 'active', 'annulee', 'expiree', 'impayee')`,
+    ),
+  ],
+);
+
+/** Événements des prestataires déjà traités (idempotence des webhooks). */
+export const billingEvent = pgTable(
+  'billing_event',
+  {
+    provider: text('provider').notNull(),
+    eventId: text('event_id').notNull(),
+    type: text('type').notNull(),
+    checkoutId: uuid('checkout_id'),
+    receivedAt: timestamp('received_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.provider, t.eventId] })],
+);

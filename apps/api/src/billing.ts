@@ -1,0 +1,453 @@
+/**
+ * Paiements (lot 10) — couche abstraite multi-prestataires (@awform/billing). Aucune clé réelle, aucune
+ * donnée de carte : le paiement se fait sur la page du prestataire (ou la page SIMULÉE en démonstration),
+ * le résultat arrive par un événement signé, traité de façon IDEMPOTENTE ; l'application ne lit que les
+ * droits (table subscription). Achat depuis l'espace adulte seulement : code parent exigé s'il existe.
+ * AWFORM_PAIEMENT=off (défaut) : offres affichées, aucune vente.
+ */
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { and, desc, eq, inArray } from 'drizzle-orm';
+import { schema as t, type Db } from '@awform/db';
+import {
+  addPeriod,
+  entitlementOf,
+  planByCode,
+  PLANS,
+  providersFor,
+  setupBilling,
+  trialAvailable,
+  zoneOf,
+  NotConfiguredError,
+  type BillingEvent,
+  type BillingSetup,
+  type ProviderId,
+  type SubStatus,
+} from '@awform/billing';
+import { clearFailures, lockedUntil, recordFailure } from './auth/service.js';
+import { verifySecret } from './auth/crypto.js';
+
+const err = (reply: FastifyReply, status: number, code: string, extra: object = {}) =>
+  reply.code(status).send({ error: { code, ...extra } });
+const UUID = { type: 'string', format: 'uuid' } as const;
+
+export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSetup): void {
+  const billing = setup ?? setupBilling(process.env);
+
+  const account = async (id: string) =>
+    (await db.select().from(t.account).where(eq(t.account.id, id)))[0];
+  const subsOf = (accountId: string) =>
+    db
+      .select()
+      .from(t.subscription)
+      .where(eq(t.subscription.accountId, accountId))
+      .orderBy(desc(t.subscription.createdAt));
+  const like = (s: typeof t.subscription.$inferSelect) => ({
+    planCode: s.planCode,
+    status: s.status as SubStatus,
+    currentPeriodEnd: s.currentPeriodEnd,
+  });
+
+  /** licence d'école couvrant un profil : licence active d'un enseignant d'une de ses classes, places suffisantes */
+  async function schoolLicenceFor(profileId: string) {
+    const rows = await db
+      .select({ teacher: t.classGroup.teacherAccountId })
+      .from(t.classMember)
+      .innerJoin(t.classGroup, eq(t.classGroup.id, t.classMember.classId))
+      .where(eq(t.classMember.profileId, profileId));
+    for (const { teacher } of rows) {
+      const lic = (await subsOf(teacher)).find(
+        (s) => s.planCode === 'licence_ecole' && entitlementOf([like(s)]).plan === 'licence_ecole',
+      );
+      if (!lic) continue;
+      const classes = await db
+        .select({ id: t.classGroup.id })
+        .from(t.classGroup)
+        .where(eq(t.classGroup.teacherAccountId, teacher));
+      const members = classes.length
+        ? new Set(
+            (
+              await db
+                .select({ p: t.classMember.profileId })
+                .from(t.classMember)
+                .where(
+                  inArray(
+                    t.classMember.classId,
+                    classes.map((c) => c.id),
+                  ),
+                )
+            ).map((m) => m.p),
+          ).size
+        : 0;
+      if (members <= (lic.seats ?? 0)) return { until: lic.currentPeriodEnd };
+    }
+    return null;
+  }
+
+  /** Traitement UNIQUE des événements (webhook réel ou simulé) — idempotent. */
+  async function applyEvent(ev: BillingEvent): Promise<'traite' | 'doublon' | 'ignore'> {
+    return db.transaction(async (tx) => {
+      const ins = await tx
+        .insert(t.billingEvent)
+        .values({
+          provider: ev.provider,
+          eventId: ev.eventId,
+          type: ev.type,
+          checkoutId: ev.checkoutId,
+        })
+        .onConflictDoNothing()
+        .returning({ id: t.billingEvent.eventId });
+      if (!ins.length) return 'doublon';
+      const now = new Date();
+      if (ev.type === 'paiement_reussi' || ev.type === 'paiement_echoue') {
+        if (!ev.checkoutId) return 'ignore';
+        const [c] = await tx
+          .select()
+          .from(t.billingCheckout)
+          .where(eq(t.billingCheckout.id, ev.checkoutId));
+        if (!c || c.status !== 'ouverte') return 'ignore';
+        if (ev.type === 'paiement_echoue') {
+          await tx
+            .update(t.billingCheckout)
+            .set({ status: 'echouee', completedAt: now })
+            .where(eq(t.billingCheckout.id, c.id));
+          return 'traite';
+        }
+        const plan = planByCode(c.planCode)!;
+        await tx
+          .update(t.billingCheckout)
+          .set({ status: 'payee', completedAt: now, providerRef: ev.reference })
+          .where(eq(t.billingCheckout.id, c.id));
+        await tx.insert(t.subscription).values({
+          accountId: c.accountId,
+          planCode: c.planCode,
+          status: 'active',
+          provider: c.provider,
+          providerRef: ev.reference,
+          seats: c.seats,
+          currentPeriodStart: now,
+          currentPeriodEnd: addPeriod(now, plan.periode),
+        });
+        return 'traite';
+      }
+      if (!ev.reference) return 'ignore';
+      const [s] = await tx
+        .select()
+        .from(t.subscription)
+        .where(eq(t.subscription.providerRef, ev.reference));
+      if (!s) return 'ignore';
+      const plan = planByCode(s.planCode)!;
+      const set =
+        ev.type === 'renouvellement'
+          ? {
+              status: 'active',
+              currentPeriodStart: s.currentPeriodEnd ?? now,
+              currentPeriodEnd: addPeriod(s.currentPeriodEnd ?? now, plan.periode),
+            }
+          : ev.type === 'annulation'
+            ? { status: 'annulee', cancelAtPeriodEnd: true }
+            : { status: 'impayee' };
+      await tx
+        .update(t.subscription)
+        .set({ ...set, updatedAt: now })
+        .where(eq(t.subscription.id, s.id));
+      return 'traite';
+    });
+  }
+
+  // ---------------------------------------------------------------- offres
+  app.get<{ Querystring: { pays?: string } }>('/api/v1/billing/plans', async (req) => {
+    const a = req.auth ? await account(req.auth.accountId) : null;
+    const zone = zoneOf(req.query.pays ?? a?.country ?? null);
+    return {
+      mode: billing.mode,
+      droitsAppliques: billing.droitsAppliques,
+      zone,
+      plans: PLANS.map((p) => ({
+        code: p.code,
+        kind: p.kind,
+        pour: p.pour,
+        periode: p.periode,
+        renouvelable: p.renouvelable,
+        parPlace: !!p.parPlace,
+        droits: {
+          ...p.droits,
+          leconsOuvertes: Number.isFinite(p.droits.leconsOuvertes) ? p.droits.leconsOuvertes : null,
+        },
+        prix: p.prix[zone] ?? null,
+        prestataires: billing.available(providersFor(zone, p)),
+      })).filter((p) => p.kind === 'gratuit' || p.kind === 'essai' || p.prix),
+    };
+  });
+
+  // ---------------------------------------------------------------- mon abonnement
+  app.get('/api/v1/billing/me', async (req, reply) => {
+    if (!req.auth) return err(reply, 401, 'non_connecte');
+    const subs = await subsOf(req.auth.accountId);
+    const e = entitlementOf(subs.map(like));
+    const profiles = await db
+      .select({ id: t.profile.id, pseudonym: t.profile.pseudonym })
+      .from(t.profile)
+      .where(eq(t.profile.ownerAccountId, req.auth.accountId));
+    const perProfile = [];
+    for (const p of profiles) {
+      const lic = await schoolLicenceFor(p.id);
+      perProfile.push({ ...p, plan: entitlementOf(subs.map(like), { schoolLicence: lic }).plan });
+    }
+    const checkouts = await db
+      .select()
+      .from(t.billingCheckout)
+      .where(eq(t.billingCheckout.accountId, req.auth.accountId))
+      .orderBy(desc(t.billingCheckout.createdAt))
+      .limit(10);
+    return {
+      mode: billing.mode,
+      droits: {
+        ...e,
+        droits: {
+          ...e.droits,
+          leconsOuvertes: Number.isFinite(e.droits.leconsOuvertes) ? e.droits.leconsOuvertes : null,
+        },
+      },
+      essaiDisponible: trialAvailable(subs.map(like)),
+      abonnements: subs.map((s) => ({
+        id: s.id,
+        plan: s.planCode,
+        status: s.status,
+        provider: s.provider,
+        seats: s.seats,
+        debut: s.currentPeriodStart,
+        fin: s.currentPeriodEnd,
+        annulationFinPeriode: s.cancelAtPeriodEnd,
+      })),
+      profils: perProfile,
+      paiements: checkouts.map((c) => ({
+        id: c.id,
+        plan: c.planCode,
+        montant: c.amount,
+        devise: c.currency,
+        prestataire: c.provider,
+        status: c.status,
+        date: c.createdAt,
+      })),
+    };
+  });
+
+  // ---------------------------------------------------------------- souscription
+  app.post<{ Body: { plan: string; prestataire?: ProviderId; places?: number; pin?: string } }>(
+    '/api/v1/billing/checkout',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['plan'],
+          additionalProperties: false,
+          properties: {
+            plan: { type: 'string', maxLength: 30 },
+            prestataire: {
+              type: 'string',
+              enum: ['simule', 'stripe', 'paypal', 'mobile_money', 'apple', 'google'],
+            },
+            places: { type: 'integer', minimum: 1, maximum: 2000 },
+            pin: { type: 'string', maxLength: 8 },
+          },
+        },
+      },
+    },
+    async (req, reply) => {
+      if (!req.auth) return err(reply, 401, 'non_connecte');
+      if (billing.mode === 'off') return err(reply, 404, 'paiement_desactive');
+      const a = await account(req.auth.accountId);
+      if (!a) return err(reply, 401, 'non_connecte');
+      const plan = planByCode(req.body.plan);
+      if (!plan || plan.kind === 'gratuit') return err(reply, 400, 'formule_inconnue');
+      if (!plan.pour.includes(a.kind as 'parent' | 'adulte' | 'enseignant'))
+        return err(reply, 403, 'formule_non_disponible');
+      // barrière parentale : l'achat se fait depuis l'espace adulte (code parent s'il est défini)
+      if (a.parentPinHash) {
+        const key = `pin:${a.id}`;
+        if (await lockedUntil(db, key)) return err(reply, 429, 'verrouille');
+        if (!req.body.pin || !(await verifySecret(req.body.pin, a.parentPinHash))) {
+          if (req.body.pin) await recordFailure(db, key);
+          return err(reply, 403, 'code_parent_requis');
+        }
+        await clearFailures(db, key);
+      }
+      const subs = await subsOf(a.id);
+      if (plan.kind === 'essai') {
+        if (!trialAvailable(subs.map(like))) return err(reply, 409, 'essai_deja_utilise');
+        const now = new Date();
+        await db.insert(t.subscription).values({
+          accountId: a.id,
+          planCode: plan.code,
+          status: 'essai',
+          provider: 'aucun',
+          currentPeriodStart: now,
+          currentPeriodEnd: addPeriod(now, plan.periode),
+        });
+        return { essai: true, url: '/abonnement' };
+      }
+      const zone = zoneOf(a.country);
+      const price = plan.prix[zone];
+      if (!price) return err(reply, 400, 'formule_non_vendue_dans_la_zone');
+      const allowed = billing.available(providersFor(zone, plan));
+      const pid = req.body.prestataire ?? allowed[0];
+      if (!pid || !allowed.includes(pid)) return err(reply, 400, 'prestataire_indisponible');
+      const provider = billing.provider(pid)!;
+      const seats = plan.parPlace ? (req.body.places ?? 1) : null;
+      const amount = price.montant * (seats ?? 1);
+      const [c] = await db
+        .insert(t.billingCheckout)
+        .values({
+          accountId: a.id,
+          planCode: plan.code,
+          zone,
+          currency: price.devise,
+          amount,
+          seats,
+          provider: pid,
+        })
+        .returning({ id: t.billingCheckout.id });
+      try {
+        const start = await provider.createCheckout({
+          checkoutId: c!.id,
+          plan: plan.code,
+          montant: price.montant,
+          devise: price.devise,
+          renouvelable: plan.renouvelable,
+          periodeMois: plan.periode?.mois ?? 1,
+          retour: { succes: '/abonnement?paiement=ok', abandon: '/offres?paiement=abandon' },
+          ...(seats ? { places: seats } : {}),
+        });
+        await db
+          .update(t.billingCheckout)
+          .set({ providerRef: start.reference })
+          .where(eq(t.billingCheckout.id, c!.id));
+        return { checkoutId: c!.id, url: start.url, simule: billing.mode === 'simule' };
+      } catch (e) {
+        await db
+          .update(t.billingCheckout)
+          .set({ status: 'expiree' })
+          .where(eq(t.billingCheckout.id, c!.id));
+        if (e instanceof NotConfiguredError) return err(reply, 503, 'prestataire_non_configure');
+        throw e;
+      }
+    },
+  );
+
+  /** Page de paiement SIMULÉE : ce que l'utilisateur va « payer » (démonstration). */
+  app.get<{ Params: { id: string } }>(
+    '/api/v1/billing/checkout/:id',
+    { schema: { params: { type: 'object', properties: { id: UUID }, required: ['id'] } } },
+    async (req, reply) => {
+      if (!req.auth) return err(reply, 401, 'non_connecte');
+      const [c] = await db
+        .select()
+        .from(t.billingCheckout)
+        .where(
+          and(
+            eq(t.billingCheckout.id, req.params.id),
+            eq(t.billingCheckout.accountId, req.auth.accountId),
+          ),
+        );
+      if (!c) return err(reply, 404, 'introuvable');
+      return {
+        id: c.id,
+        plan: c.planCode,
+        montant: c.amount,
+        devise: c.currency,
+        places: c.seats,
+        prestataire: c.provider,
+        status: c.status,
+      };
+    },
+  );
+
+  /** Résultat du paiement SIMULÉ : produit un événement signé, traité comme un vrai webhook. */
+  app.post<{ Params: { id: string }; Body: { resultat: 'succes' | 'echec' } }>(
+    '/api/v1/billing/simulate/:id',
+    {
+      schema: {
+        params: { type: 'object', properties: { id: UUID }, required: ['id'] },
+        body: {
+          type: 'object',
+          required: ['resultat'],
+          additionalProperties: false,
+          properties: { resultat: { type: 'string', enum: ['succes', 'echec'] } },
+        },
+      },
+    },
+    async (req, reply) => {
+      if (!req.auth) return err(reply, 401, 'non_connecte');
+      if (billing.mode !== 'simule') return err(reply, 404, 'simulation_indisponible');
+      const [c] = await db
+        .select()
+        .from(t.billingCheckout)
+        .where(
+          and(
+            eq(t.billingCheckout.id, req.params.id),
+            eq(t.billingCheckout.accountId, req.auth.accountId),
+          ),
+        );
+      if (!c) return err(reply, 404, 'introuvable');
+      const e = billing.simulated.event(
+        c.id,
+        req.body.resultat === 'succes' ? 'paiement_reussi' : 'paiement_echoue',
+      );
+      const ev = await billing.simulated.parseWebhook(e.headers, e.body);
+      return { resultat: await applyEvent(ev!) };
+    },
+  );
+
+  /** Webhooks signés des prestataires (corps BRUT pour vérifier la signature ; sans en-tête CSRF). */
+  app.register(async (w) => {
+    w.addContentTypeParser('application/json', { parseAs: 'string' }, (_req, body, done) =>
+      done(null, body),
+    );
+    w.post<{ Params: { provider: ProviderId } }>(
+      '/api/v1/billing/webhook/:provider',
+      async (req: FastifyRequest<{ Params: { provider: ProviderId } }>, reply) => {
+        const p = billing.provider(req.params.provider);
+        if (!p || (billing.mode === 'simule' && req.params.provider !== 'simule'))
+          return err(reply, 404, 'prestataire_inconnu');
+        let ev: BillingEvent | null;
+        try {
+          ev = await p.parseWebhook(req.headers, String(req.body ?? ''));
+        } catch {
+          return err(reply, 400, 'signature_invalide');
+        }
+        if (!ev) return { resultat: 'ignore' };
+        return { resultat: await applyEvent(ev) };
+      },
+    );
+  });
+
+  /** Annuler le renouvellement : les droits restent jusqu'à la fin de la période payée. */
+  app.post<{ Params: { id: string } }>(
+    '/api/v1/billing/subscriptions/:id/cancel',
+    { schema: { params: { type: 'object', properties: { id: UUID }, required: ['id'] } } },
+    async (req, reply) => {
+      if (!req.auth) return err(reply, 401, 'non_connecte');
+      const [s] = await db
+        .select()
+        .from(t.subscription)
+        .where(
+          and(
+            eq(t.subscription.id, req.params.id),
+            eq(t.subscription.accountId, req.auth.accountId),
+          ),
+        );
+      if (!s) return err(reply, 404, 'introuvable');
+      const p = s.provider === 'aucun' ? null : billing.provider(s.provider as ProviderId);
+      if (p && s.providerRef) await p.cancel(s.providerRef);
+      await db
+        .update(t.subscription)
+        .set({
+          status: s.status === 'essai' ? 'expiree' : 'annulee',
+          cancelAtPeriodEnd: true,
+          updatedAt: new Date(),
+        })
+        .where(eq(t.subscription.id, s.id));
+      return { ok: true };
+    },
+  );
+}

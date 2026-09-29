@@ -53,6 +53,8 @@ export default defineConfig({
         AWFORM_SECRET_KEY: E2E_KEY,
         // tuteur : fournisseur SIMULÉ (aucun appel à un vrai modèle en test)
         AWFORM_TUTEUR: 'simule',
+        // paiements : prestataire SIMULÉ (aucune clé, aucune donnée de carte)
+        AWFORM_PAIEMENT: 'simule',
       },
       reuseExistingServer: false,
       timeout: 120_000,

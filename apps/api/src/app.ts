@@ -7,6 +7,7 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import type { Lesson } from '@awform/content';
 import type { TutorSetup } from '@awform/tutor';
+import type { BillingSetup } from '@awform/billing';
 import { neededIllustrations } from './needed.js';
 import { getPack } from './packs.js';
 import { ownsProfile, registerAuth } from './auth/routes.js';
@@ -33,6 +34,7 @@ import {
 import { registerHifz } from './hifz.js';
 import { registerLibrary } from './library.js';
 import { registerTutor } from './tutor.js';
+import { registerBilling } from './billing.js';
 
 export interface AppOptions {
   db: Db;
@@ -46,6 +48,8 @@ export interface AppOptions {
   secretKey?: Buffer | null;
   /** tuteur (tests) ; sinon AWFORM_TUTEUR */
   tutor?: TutorSetup;
+  /** paiements (tests) ; sinon AWFORM_PAIEMENT */
+  billing?: BillingSetup;
 }
 
 const LEVEL_CODE = '^[a-z]{2,3}[0-9]{1,2}$';
@@ -68,6 +72,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
 
   // CSRF : en-tête obligatoire sur toute requête qui modifie
   app.addHook('onRequest', async (req, reply) => {
+    // exception : webhooks signés des prestataires de paiement (signature vérifiée, aucun cookie)
+    if (req.url.startsWith('/api/v1/billing/webhook/')) return;
     if (req.method !== 'GET' && req.method !== 'HEAD' && req.headers['x-awform'] !== '1')
       return reply.code(403).send({ error: { code: 'csrf' } });
   });
@@ -107,6 +113,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerHifz(app, db, edition);
   registerLibrary(app, db, edition);
   registerTutor(app, db, edition, opts.tutor);
+  registerBilling(app, db, opts.billing);
 
   app.get('/api/v1/health', async () => {
     const dbOk = await ping(db).catch(() => false);

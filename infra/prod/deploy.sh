@@ -45,6 +45,8 @@ fi
 grep -q '^SITE=' "$ENVF" && sed -i "s/^SITE=.*/SITE=$SITE/" "$ENVF"
 # tuteur : désactivé par défaut ; la démonstration utilise le fournisseur SIMULÉ (jamais un vrai modèle)
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_TUTEUR=' "$ENVF"; then echo "AWFORM_TUTEUR=simule" >> "$ENVF"; fi
+# paiements : désactivés par défaut ; la démonstration utilise le prestataire SIMULÉ (aucune clé, aucune carte)
+if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_PAIEMENT=' "$ENVF"; then echo "AWFORM_PAIEMENT=simule" >> "$ENVF"; fi
 export AWFORM_ENV_FILE="$ENVF"
 export AWFORM_CONTENT_DIR="${AWFORM_CONTENT_DIR:-$HOME/awform-content}"
 export AWFORM_VERSION="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo local)"
