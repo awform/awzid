@@ -16,6 +16,7 @@
   "entete.hors_ligne": "offline",
   "entete.attente": "{n, plural, one {# answer waiting} other {# answers waiting}}",
   "entete.attente_titre": "Answers kept on this device and sent when the network is back",
+  "entete.stockage_plein": "Device storage is full: your latest answers could not be saved. Free some space (photos, videos, downloaded levels), then continue.",
   "entete.changer_eleve": "Switch learner",
   "entete.compte": "My account",
   "entete.connexion": "Sign in",

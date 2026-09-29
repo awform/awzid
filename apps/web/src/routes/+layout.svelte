@@ -7,6 +7,7 @@
   import {
     activeProfile,
     onQueue,
+    onStorageFull,
     pendingCount,
     setActiveProfile,
     startSync,
@@ -46,6 +47,7 @@
 
   let online = $state(true);
   let pending = $state(0);
+  let storageFull = $state(false);
   let settings: Settings | null = $state(null);
   let profile: DevProfile | null = $state(null);
   let me: Me | null = $state(null);
@@ -62,6 +64,7 @@
     window.addEventListener('online', on);
     window.addEventListener('offline', off);
     const stopQ = onQueue((n) => (pending = n));
+    const stopS = onStorageFull(() => (storageFull = true));
     void pendingCount()
       .then((n) => (pending = n))
       .catch(() => {});
@@ -86,6 +89,7 @@
       window.removeEventListener('online', on);
       window.removeEventListener('offline', off);
       stopQ();
+      stopS();
       clearInterval(timer);
     };
   });
@@ -146,6 +150,9 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" /></svg>
     </a>
   </header>
+  {#if storageFull}<p class="card bad" role="alert" data-testid="stockage-plein">
+      {t('entete.stockage_plein')}
+    </p>{/if}
 
   {#if showTabs}
     <nav class="tabs" aria-label={t('onglets.aria')}>

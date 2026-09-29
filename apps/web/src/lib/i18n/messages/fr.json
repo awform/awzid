@@ -16,6 +16,7 @@
   "entete.hors_ligne": "hors ligne",
   "entete.attente": "{n, plural, one {# réponse en attente} other {# réponses en attente}}",
   "entete.attente_titre": "Réponses gardées sur l'appareil, envoyées au retour du réseau",
+  "entete.stockage_plein": "Stockage de l’appareil plein : tes dernières réponses n’ont pas pu être gardées. Libère de la place (photos, vidéos, niveaux téléchargés), puis continue.",
   "entete.changer_eleve": "Changer d'élève",
   "entete.compte": "Mon compte",
   "entete.connexion": "Se connecter",

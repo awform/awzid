@@ -44,6 +44,11 @@ export const QUARANTINE_AFTER = 3;
 const FAILS = 'syncFailures';
 const QUARANTINE = 'syncQuarantine';
 const UNAVAILABLE = new Set([429, 502, 503, 504]);
+/**
+ * Refus qui ne tiennent pas aux événements (audit OFF-4) : droits (403, second facteur…), service absent
+ * (404, aucune édition publiée) — la file ATTEND, rien n'est mis en quarantaine.
+ */
+const NOT_THE_EVENTS = new Set([403, 404]);
 
 /** Événements écartés de la file après des échecs répétés (diagnostic, envoi manuel plus tard). */
 export async function quarantined(): Promise<AttemptEvent[]> {
@@ -133,7 +138,7 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
           break;
         }
         if (!r.ok) {
-          if (UNAVAILABLE.has(r.status)) break; // serveur indisponible : tout est gardé pour plus tard
+          if (UNAVAILABLE.has(r.status) || NOT_THE_EVENTS.has(r.status)) break; // tout est gardé
           // lot refusé en bloc : on le coupe en deux jusqu'à isoler l'événement fautif (audit OFF-2)
           if (batch.length > 1) {
             size = Math.ceil(batch.length / 2);
@@ -145,12 +150,24 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
           continue;
         }
         size = Math.min(BATCH, size * 2);
-        const body = (await r.json()) as {
+        // portail captif (Wi-Fi à page de connexion) : une page HTML au lieu de la réponse attendue —
+        // traité comme « hors ligne » (audit OFF-4), jamais comme une réponse
+        if ((r.headers.get('content-type') ?? '').includes('text/html')) {
+          res.offline = true;
+          break;
+        }
+        let body: {
           accepted: Array<{ id: string }>;
           duplicates: string[];
           rejected: Array<{ id: string; code?: string }>;
           progress?: FlushResult['progress'];
         };
+        try {
+          body = (await r.json()) as typeof body;
+        } catch {
+          res.offline = true;
+          break;
+        }
         // réponses d'un AUTRE compte de l'appareil (audit OFF-3) : gardées pour lui, jamais effacées
         const foreign = body.rejected.filter((x) => x.code === 'autre_compte');
         for (const x of foreign) skip.add(x.id);

@@ -32,8 +32,24 @@ async function notifyQueue() {
   queueListeners.forEach((fn) => fn(n));
 }
 
-export async function enqueue(ev: Omit<AttemptEvent, 'id' | 'deviceAt'>): Promise<AttemptEvent> {
-  const full = await queueEvent(ev);
+const storageListeners = new Set<() => void>();
+/** Stockage de l'appareil plein (ou indisponible) : la réponse n'a pas pu être gardée (audit OFF-4). */
+export function onStorageFull(fn: () => void): () => void {
+  storageListeners.add(fn);
+  return () => storageListeners.delete(fn);
+}
+
+/** Met une réponse en file ; null si l'appareil n'a pas pu la garder (stockage plein) — jamais d'exception. */
+export async function enqueue(
+  ev: Omit<AttemptEvent, 'id' | 'deviceAt'>,
+): Promise<AttemptEvent | null> {
+  let full: AttemptEvent;
+  try {
+    full = await queueEvent(ev);
+  } catch {
+    storageListeners.forEach((fn) => fn());
+    return null;
+  }
   void notifyQueue();
   void flush();
   return full;

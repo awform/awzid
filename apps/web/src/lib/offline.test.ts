@@ -271,4 +271,42 @@ describe('synchronisation différée sans conflit', () => {
     expect(seen).toHaveLength(2);
     expect(seen[1]).not.toBe(e.id);
   });
+
+  it.each([403, 404])(
+    'audit OFF-4 : %i pour tout le lot — rien n’est mis en quarantaine, la file attend',
+    async (status) => {
+      await queueEvent(ev);
+      await queueEvent(ev);
+      const f = (async () => new Response('{}', { status })) as typeof fetch;
+      for (let i = 0; i < 4; i++) await flushQueue(f);
+      expect(await pendingCount()).toBe(2);
+      expect(await quarantined()).toEqual([]);
+    },
+  );
+
+  it('audit OFF-4 : portail captif (page HTML en 200) — traité comme hors ligne, sans exception', async () => {
+    await queueEvent(ev);
+    const portail = (async () =>
+      new Response('<html>Connectez-vous au Wi-Fi</html>', {
+        status: 200,
+        headers: { 'content-type': 'text/html' },
+      })) as typeof fetch;
+    const r = await flushQueue(portail);
+    expect(r).toMatchObject({ offline: true, remaining: 1 });
+  });
+
+  it('audit OFF-4 : stockage plein — la réponse n’est pas perdue en silence, l’interface est prévenue', async () => {
+    const { enqueue, onStorageFull } = await import('./attempts');
+    let told = 0;
+    const stop = onStorageFull(() => told++);
+    globalThis.indexedDB = {
+      open() {
+        throw new DOMException('plein', 'QuotaExceededError');
+      },
+    } as unknown as IDBFactory;
+    _resetDbForTests();
+    await expect(enqueue(ev)).resolves.toBeNull();
+    expect(told).toBe(1);
+    stop();
+  });
 });
