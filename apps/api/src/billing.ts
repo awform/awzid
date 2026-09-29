@@ -11,6 +11,7 @@ import { and, desc, eq, inArray } from 'drizzle-orm';
 import { schema as t, type Db } from '@awform/db';
 import {
   addPeriod,
+  canOpenUnit,
   entitlementOf,
   planByCode,
   PLANS,
@@ -21,6 +22,7 @@ import {
   NotConfiguredError,
   type BillingEvent,
   type BillingSetup,
+  type Entitlement,
   type ProviderId,
   type SubStatus,
 } from '@awform/billing';
@@ -31,7 +33,14 @@ const err = (reply: FastifyReply, status: number, code: string, extra: object = 
   reply.code(status).send({ error: { code, ...extra } });
 const UUID = { type: 'string', format: 'uuid' } as const;
 
-export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSetup): void {
+/** Contrôle des droits sur le contenu (audit PAY-4) ; `null` : droits non appliqués (AWFORM_DROITS=off). */
+export interface ContentRights {
+  /** droit du compte (abonnements, licence d'école d'une classe d'un de ses profils) ; anonyme : gratuit */
+  of(auth: { accountId: string; kind: string } | undefined | null): Promise<Entitlement | null>;
+  canOpen(e: Entitlement | null, unit: { n: number }): boolean;
+}
+
+export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSetup): ContentRights {
   const billing = setup ?? setupBilling(process.env);
 
   const account = async (id: string) =>
@@ -461,4 +470,27 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
       return { ok: true };
     },
   );
+
+  return {
+    async of(auth) {
+      if (!billing.droitsAppliques) return null;
+      // enseignants et administrateurs : tout le contenu (préparation des cours, contrôle éditorial)
+      if (auth && (auth.kind === 'enseignant' || auth.kind === 'admin'))
+        return entitlementOf([
+          { planCode: 'licence_ecole', status: 'active', currentPeriodEnd: null },
+        ]);
+      if (!auth) return entitlementOf([]);
+      const subs = (await subsOf(auth.accountId)).map(like);
+      const profiles = await db
+        .select({ id: t.profile.id })
+        .from(t.profile)
+        .where(eq(t.profile.ownerAccountId, auth.accountId));
+      let schoolLicence: { until: Date | null } | null = null;
+      for (const p of profiles) schoolLicence ??= await schoolLicenceFor(p.id);
+      return entitlementOf(subs, { schoolLicence });
+    },
+    canOpen(e, unit) {
+      return !e || canOpenUnit(e.droits, unit);
+    },
+  };
 }

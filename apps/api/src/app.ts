@@ -137,7 +137,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerHifz(app, db, edition);
   registerLibrary(app, db, edition);
   registerTutor(app, db, edition, opts.tutor);
-  registerBilling(app, db, opts.billing);
+  const rights = registerBilling(app, db, opts.billing);
   registerAdmin(app, db);
   registerToday(app, db, edition);
   registerSchool(app, db, edition, signer);
@@ -213,6 +213,10 @@ export function buildApp(opts: AppOptions): FastifyInstance {
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
       const unit = await getUnitForStudent(db, ed.id, req.params.id);
       if (!unit) return reply.code(404).send(notFound(`leçon ${req.params.id} introuvable`));
+      // audit PAY-4 : droits appliqués au contenu quand AWFORM_DROITS=on (leçons ouvertes de la formule)
+      const e = await rights.of(req.auth);
+      if (!rights.canOpen(e, unit))
+        return reply.code(403).send({ error: { code: 'droits_insuffisants', plan: e?.plan } });
       const illustrations = await illustrationsFor(
         db,
         ed.id,
@@ -262,6 +266,10 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     async (req, reply) => {
       const ed = await edition();
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
+      // audit PAY-4 : le paquet hors ligne (niveau entier) est réservé aux formules qui l'incluent
+      const e = await rights.of(req.auth);
+      if (e && !e.droits.horsLigne)
+        return reply.code(403).send({ error: { code: 'hors_ligne_reserve', plan: e.plan } });
       const p = await getPack(db, ed.id, ed.code, req.params.code);
       if (!p)
         return reply.code(404).send(notFound(`niveau ${req.params.code} absent de l'édition`));
