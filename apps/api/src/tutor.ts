@@ -7,7 +7,7 @@
  */
 import { consentGate } from './guards.js';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 import {
   allVerses,
   answerTutorQuestion,
@@ -171,51 +171,64 @@ export function registerTutor(
         const verses = await allVerses(db);
         quran = { index: new QuranIndex(verses), basmala: verses.get('1:1') ?? '' };
       }
-      const who = await audienceOf(profileId);
-      const orch = new Orchestrator({
-        index: quran.index,
-        basmala: quran.basmala,
-        // sans consentement parental (enfant, ado) : tuteur local seul
-        provider: who.consent ? tutor.provider : null,
-        monthSpentMicros: await monthSpent(db, profileId),
-        modelFor: tutor.modelFor,
-      });
-      const r = await orch.ask(
-        {
-          audience: who.audience,
-          action: b.action,
-          ...(b.text !== undefined ? { text: b.text } : {}),
-          ...(b.word ? { word: b.word } : {}),
-          ...(b.hour !== undefined ? { hour: b.hour } : {}),
-          country: who.country,
-          turn: await tutorTurns(db, profileId, b.unitId),
-        },
-        ctx,
-      );
-      const logId = await logTutor(db, {
-        profileId,
-        unitId: b.unitId,
-        roleId: r.roleId,
-        roleVersion: r.roleVersion,
-        provider: r.provider,
-        model: r.model,
-        action: b.action,
-        question: b.text ? b.text.slice(0, 600) : (b.word ?? null),
-        decision: r.decision,
-        route: r.route,
-        filter: r.filter,
-        segments: r.segments,
-        refused: r.refused ?? null,
-        costMicros: r.costMicros,
-      });
-      if (r.transmit)
-        await createTutorQuestion(db, {
+      const q = quran;
+      // audit CON-7 : UNE demande à la fois par profil (verrou consultatif tenu pendant toute la demande) :
+      // la dépense du mois est lue, l'appel fait et journalisé avant qu'une autre demande puisse la lire ; une
+      // demande parallèle reçoit 429 aussitôt (aucune connexion ne reste en attente)
+      const out = await db.transaction(async (tx) => {
+        const lock = await tx.execute(
+          sql`select pg_try_advisory_xact_lock(hashtextextended(${`tuteur:${profileId}`}, 0)) as ok`,
+        );
+        if (!(lock.rows[0] as { ok: boolean } | undefined)?.ok) return null;
+        const who = await audienceOf(profileId);
+        const orch = new Orchestrator({
+          index: q.index,
+          basmala: q.basmala,
+          // sans consentement parental (enfant, ado) : tuteur local seul
+          provider: who.consent ? tutor.provider : null,
+          monthSpentMicros: await monthSpent(db, profileId),
+          modelFor: tutor.modelFor,
+        });
+        const r = await orch.ask(
+          {
+            audience: who.audience,
+            action: b.action,
+            ...(b.text !== undefined ? { text: b.text } : {}),
+            ...(b.word ? { word: b.word } : {}),
+            ...(b.hour !== undefined ? { hour: b.hour } : {}),
+            country: who.country,
+            turn: await tutorTurns(db, profileId, b.unitId),
+          },
+          ctx,
+        );
+        const logId = await logTutor(db, {
           profileId,
           unitId: b.unitId,
-          text: r.transmit.text,
-          motif: r.transmit.motif,
+          roleId: r.roleId,
+          roleVersion: r.roleVersion,
+          provider: r.provider,
+          model: r.model,
+          action: b.action,
+          question: b.text ? b.text.slice(0, 600) : (b.word ?? null),
+          decision: r.decision,
+          route: r.route,
+          filter: r.filter,
+          segments: r.segments,
+          refused: r.refused ?? null,
+          costMicros: r.costMicros,
         });
-      if (r.alert) await createTutorAlert(db, { profileId, logId, motif: r.alert.motif });
+        if (r.transmit)
+          await createTutorQuestion(db, {
+            profileId,
+            unitId: b.unitId,
+            text: r.transmit.text,
+            motif: r.transmit.motif,
+          });
+        if (r.alert) await createTutorAlert(db, { profileId, logId, motif: r.alert.motif });
+        return { who, r, logId };
+      });
+      if (!out) return err(reply, 429, 'tuteur_occupe');
+      const { who, r, logId } = out;
       return {
         logId,
         audience: who.audience,
