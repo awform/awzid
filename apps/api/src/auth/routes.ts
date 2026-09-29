@@ -917,7 +917,12 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const [a] = await db.select().from(t.account).where(eq(t.account.id, req.auth!.accountId));
       if (!a) return err(reply, 401, 'mot_de_passe_incorrect');
       if (!(await passwordOk(reply, a, req.body.password))) return reply;
-      await db.update(t.account).set({ deletedAt: new Date() }).where(eq(t.account.id, a.id));
+      // audit MIN-14 : l'adresse e-mail est effacée AUSSITÔT (réinscription possible, rien à deviner pendant
+      // les 30 jours qui précèdent l'effacement définitif)
+      await db
+        .update(t.account)
+        .set({ deletedAt: new Date(), email: null })
+        .where(eq(t.account.id, a.id));
       await withdrawAccount(db, a.id);
       await revokeAll(db, a.id);
       await audit(db, a.id, 'compte.suppression_demandee');

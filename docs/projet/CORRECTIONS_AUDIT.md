@@ -29,7 +29,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-11 | mineur | Une récitation réapparaît chez l'enseignant après retrait puis nouvelle inscription | corrigé | voir « MIN-11 » dans git log | audit-rgpd.test.ts |
 | MIN-12 | mineur | Administrateur : textes libres des enfants de toutes les classes, comptes supprimés, masquage faible | corrigé | voir « MIN-12 » dans git log | admin.test.ts |
 | MIN-13 | mineur | Journaux Fastify : URL complète (identifiants, paramètres) et adresse IP | corrigé | voir « MIN-13 » dans git log | audit-journaux.test.ts |
-| MIN-14 | mineur | Réinscription impossible 30 jours et révélation de l'existence du compte | à faire | | |
+| MIN-14 | mineur | Réinscription impossible 30 jours et révélation de l'existence du compte | corrigé en partie : adresse libérée dès la demande de suppression ; réponse neutre à l'inscription impossible sans service d'e-mail (décision du client) | voir « MIN-14 » dans git log | audit-rgpd.test.ts |
 | MIN-15 | mineur | Pays déclaratif, codes inexistants acceptés | à faire | | |
 | MIN-16 | mineur | Enregistrements vocaux locaux : la limite de 7 jours n'est appliquée qu'à l'ouverture de l'écran | corrigé | a319a48 | apps/web/src/lib/recordings.test.ts |
 | MIN-17 | mineur | Branche `lot17-wip` : consentement par pays cohérent mais non appliqué aux profils | corrigé | b42308f | audit-mineurs.test.ts « MIN-17 » |

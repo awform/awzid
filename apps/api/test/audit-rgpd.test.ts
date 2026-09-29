@@ -297,4 +297,15 @@ describe.skipIf(!URL_)('audit — RGPD', () => {
       await c.h.db.select().from(t.recitationUpload).where(eq(t.recitationUpload.profileId, kid)),
     ).toEqual([]);
   });
+
+  it('MIN-14 : après une demande de suppression, l’adresse est libérée — réinscription possible aussitôt', async () => {
+    const { A } = await adult(c, 'revient-min14@exemple.org');
+    expect((await c.req('POST', '/api/v1/account/delete', A, { password: PW })).statusCode).toBe(
+      200,
+    );
+    const rows = await c.h.db.select({ e: t.account.email }).from(t.account);
+    expect(rows.map((r) => r.e)).not.toContain('revient-min14@exemple.org');
+    const again = await adult(c, 'revient-min14@exemple.org');
+    expect(again.profileId).toBeTruthy();
+  });
 });
