@@ -5,14 +5,17 @@ import prettier from 'eslint-config-prettier';
 import globals from 'globals';
 
 /**
- * Règle de contenu (cahier des charges §3.1) : AUCUNE normalisation Unicode du texte arabe,
- * nulle part dans le code. Tout appel à `.normalize(` est refusé.
+ * Règle de contenu (cahier des charges §3.1) : AUCUNE normalisation Unicode du texte arabe, nulle part dans le
+ * code. Toute forme est refusée (audit QUA-1) : appel direct, propriété calculée ou littérale, accès par le
+ * prototype, et tout appel qui reçoit une forme de normalisation (« NFC », « NFKD »…).
  */
-const noUnicodeNormalize = {
-  selector: "CallExpression[callee.property.name='normalize']",
-  message:
-    'Interdit : aucune normalisation Unicode (NFC/NFD/NFKC) du contenu — le texte coranique doit rester octet pour octet (CDC §3.1).',
-};
+const NORMALIZE_MESSAGE =
+  'Interdit : aucune normalisation Unicode (NFC/NFD/NFKC) du contenu — le texte coranique doit rester octet pour octet (CDC §3.1).';
+const noUnicodeNormalize = [
+  "MemberExpression[property.name='normalize']",
+  "MemberExpression[property.value='normalize']",
+  'CallExpression > Literal[value=/^NFK?[CD]$/]',
+].map((selector) => ({ selector, message: NORMALIZE_MESSAGE }));
 
 export default ts.config(
   {
@@ -39,7 +42,7 @@ export default ts.config(
   {
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
     rules: {
-      'no-restricted-syntax': ['error', noUnicodeNormalize],
+      'no-restricted-syntax': ['error', ...noUnicodeNormalize],
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },

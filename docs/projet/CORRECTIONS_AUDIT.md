@@ -35,7 +35,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-17 | mineur | Branche `lot17-wip` : consentement par pays cohérent mais non appliqué aux profils | corrigé | b42308f | audit-mineurs.test.ts « MIN-17 » |
 | CON-1 | bloquant | Les corrigés des examens et bilans sont envoyés à l'élève (API et paquet hors ligne) et comptent pour le certificat | corrigé | 1b24221 (D7) + 68ac8d0 | audit-con1.test.ts (échoue sans la correction) |
 | CON-2 | majeur | Projection élève en **liste noire** : translittération, corrigés et notes d'enseignant passent | corrigé | 9654f04 | packages/content/test/con2.test.ts |
-| CON-3 | majeur | Masquage des numéros de hadith non vérifiés : contournable, et absent sans registre | corrigé (sans registre : tous les numéros retirés, au lieu d'un refus d'import) | voir « CON-3 » dans git log | con3.test.ts, audit-con.test.ts |
+| CON-3 | majeur | Masquage des numéros de hadith non vérifiés : contournable, et absent sans registre | corrigé (sans registre : tous les numéros retirés, au lieu d'un refus d'import) | 03d23fd | con3.test.ts, audit-con.test.ts |
 | CON-4 | majeur | Filtre du tuteur : Coran hors référence non détecté (formes de présentation, séparateurs invisibles) | à faire | | |
 | CON-5 | majeur | Filtre du tuteur : avis religieux, numéros de hadith et phonétique latine non détectés | à faire | | |
 | CON-6 | majeur | Bouton « explique » : le texte libre contourne le classifieur (pas d'alerte de détresse) et part au modèle | à faire | | |
@@ -63,7 +63,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | PAY-5 | mineur | Essai « découverte » : course et unicité par compte seulement | à faire | | |
 | PAY-6 | mineur | Barrière parentale à l'achat facultative | à faire | | |
 | PAY-7 | mineur | Rotation du secret Stripe : plusieurs `v1=` mal gérés | à faire | | |
-| QUA-1 | majeur | Le garde-fou CI « aucune normalisation Unicode » ne peut jamais échouer | à faire | | |
+| QUA-1 | majeur | Le garde-fou CI « aucune normalisation Unicode » ne peut jamais échouer | corrigé | voir « QUA-1 » dans git log | audit-qua1.test.ts |
 | QUA-2 | majeur | Tests qui ne prouvent pas ce qu'ils annoncent | à faire | | |
 | QUA-3 | mineur | Fonctions très longues | à faire | | |
 | INF-1 | bloquant | La CI est rouge sur `main` depuis le lot 9 (24 exécutions sur 24) | déjà corrigé | 8e8784f | CI locale : school.test.ts, pnpm -r --no-bail |

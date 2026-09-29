@@ -45,9 +45,9 @@ jobs:
       - name: Budget de poids de l'application
         run: pnpm --filter @awform/web budget
       - name: Aucune normalisation Unicode ni secret dans le dépôt
-        run: |
-          ! git grep -nE "\.normalize\(" -- '*.ts' '*.svelte' ':!**/node_modules/**'
-          ! git ls-files | grep -E '(^|/)\.env$'
+        # audit QUA-1 : échec explicite, et lancé même si une étape précédente (budget de poids) a échoué
+        if: ${{ !cancelled() }}
+        run: bash infra/ci/garde-fous.sh
 
   images:
     # images de production construites (jamais publiées) et fichiers d'exploitation vérifiés
