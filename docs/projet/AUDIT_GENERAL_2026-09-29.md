@@ -14,6 +14,307 @@ sur la branche `audit-dossier`. Rapport rédigé et poussé domaine par domaine 
 > justesse métier, paiements, qualité, accessibilité et performance, conformité au cahier des charges, soupçons,
 > points forts, 10 priorités.
 
+## Domaine 1 — Sécurité applicative (OWASP ASVS niveau 2)
+
+Banc : tests temporaires `apps/api/audit/secu-idor.test.ts`, `secu-auth.test.ts`, `secu-pin.test.ts`,
+`secu-cookie.test.ts`, `secu-input.test.ts`, `packages/content/audit/secu-svg.test.ts` (19 cas, rejoués).
+Enseignants de test créés directement en base avec TOTP actif (`harness.ts`, `staff()`).
+
+### SEC-1 — Second facteur : `totp/setup` désactive le 2FA avant confirmation ; `totp/confirm` sans limite ni anti-rejeu — **MAJEUR**
+
+- **Fichiers** : `apps/api/src/auth/routes.ts:359-372` (l. 369 : `totpEnabled: false` posé dès `setup`) ;
+  `:380-409` (`confirm` gardé par `needSession`, sans `recordFailure`, sans comparaison à `totpLastCounter`, et les
+  autres sessions ne sont pas révoquées à l'activation).
+- **Scénario A (prise de compte)** : le titulaire lance « changer d'appareil » puis abandonne ; le 2FA est désormais
+  **désactivé** : un attaquant qui connaît le mot de passe se connecte sans code, enregistre **son** secret et
+  verrouille le titulaire dehors.
+- **Scénario B** : une session ouverte avant l'activation du 2FA (mot de passe volé) n'est pas révoquée ; elle essaie
+  des codes sans limite ou rejoue le code vu à l'écran, et devient une session vérifiée.
+- **Preuve** :
+  ```
+  SETUP-RESET login sans code : 200 ; setup attaquant : true ; confirm : 200 ; classes : 200 ; ancien appareil du titulaire : 401
+  TOTP-CONFIRM 300 essais faux, statuts : [ 400 ]        ← jamais de 429
+  TOTP-CONFIRM rejeu : 200 → /teacher/classes avec la session U : 200
+  ```
+- **Correction** : nouveau secret stocké « en attente », qui ne remplace l'ancien qu'après `confirm` ; `setup` exige
+  un code courant (ou le mot de passe) ; `confirm` : verrou `recordFailure('totp:'+id)`, refus si
+  `counter <= totpLastCounter` ; à l'activation, `revokeAll(db, id, tokenHash)`.
+
+### SEC-2 — Course sur le compteur d'échecs : 20 mots de passe, 30 codes parent testés d'un coup — **MAJEUR**
+
+- **Fichiers** : `apps/api/src/auth/service.ts:131-147` (lecture puis écriture, mises à jour perdues) ;
+  `apps/api/src/auth/routes.ts:264-273` (verrou lu **avant** Argon2) ; `:627-634` (`pin/verify`, même motif).
+- **Preuve** :
+  ```
+  COURSE 401 = 20 429 = 0 compteur en base = 15          (seuil annoncé : 5)
+  PIN-COURSE 401 = 29 429 = 0 bon code → 200              (30 codes parent sur 10 000 en une salve)
+  COURSE bon mot de passe juste après : 429               (n'importe qui verrouille un compte, y compris un enseignant)
+  ```
+  Le code parent (4 chiffres) protège l'appareil partagé, le paiement, les notifications et les récitations : il se
+  devine en quelques centaines de salves.
+- **Correction** : incrément atomique (`INSERT … ON CONFLICT DO UPDATE SET failures = auth_throttle.failures + 1
+  RETURNING failures`) **avant** la vérification ; verrouillage par couple compte + IP pour limiter le déni de service.
+
+### SEC-3 — Consentements « parentaux » accordés sans le code parent (tuteur IA, partage enseignant) — **MAJEUR**
+
+- **Fichiers** : `apps/api/src/tutor.ts:284-318` (`PUT /profiles/:id/tuteur`) ; `apps/api/src/hifz.ts:372-419`
+  (rejoindre une classe = consentement `partage_enseignant`) ; côté web, la barrière n'existe que sur
+  `apps/web/src/routes/profils/+page.svelte:46-60` : `/compte` et `/compte/tuteur` s'ouvrent par leur URL.
+- **Preuve** (code parent défini) :
+  `SANS-PIN tuteur IA : 200 {"actif":true} ; partage enseignant : 201 ; (contrôle) accord récitation : 401 ;
+  (contrôle) notifications enfants : 401`.
+- **Correction** : exiger `x-parent-pin` côté serveur (même `parentGate`, même compteur) sur toute route qui donne ou
+  retire un consentement ; barrière sur tout l'espace parent. (Voir aussi MIN-4.)
+
+### SEC-4 — Second facteur non exigé sur les notifications et les paiements des enseignants — **MAJEUR**
+
+- **Fichiers** : `apps/api/src/push.ts:31-33` (`needAccount` ne teste que `req.auth`) ; `apps/api/src/billing.ts:184`,
+  `:257`, `:342`, `:380`, `:429` (`if (!req.auth)` seulement).
+- **Preuve** (session d'enseignant obtenue par mot de passe seul, sans code) :
+  ```
+  403 GET /api/v1/teacher/classes        (contrôle)
+  200 GET  /api/v1/notifications   200 PUT /api/v1/notifications
+  200 GET  /api/v1/billing/me      200 POST /api/v1/billing/checkout   (licence_ecole, 300 places)
+  ```
+- **Correction** : un seul crochet `onRequest` global refusant toute route hors `/auth/*` quand
+  `requiresMfa(kind) && !mfaVerified`, au lieu d'une garde recopiée par fichier.
+
+### SEC-5 — Rejeu d'un code TOTP par connexions parallèles — **MINEUR**
+
+- **Fichier** : `apps/api/src/auth/routes.ts:283-288`.
+- **Preuve** : séquentiel `LOGIN rejeu : 401 totp_incorrect` (bien) ; parallèle `LOGIN course rejeu : statuts
+  [ 200, 200, 200 ]`.
+- **Correction** : `UPDATE account SET totp_last_counter=$c WHERE id=$id AND (totp_last_counter IS NULL OR
+  totp_last_counter < $c) RETURNING id` ; refus si aucune ligne.
+
+### SEC-6 — Ressaisies du mot de passe sans limite d'essais — **MINEUR**
+
+- **Fichier** : `apps/api/src/auth/routes.ts:334-335` (`/auth/password`), `:571-572` (`DELETE /profiles/:id`),
+  `:603-604` (`/account/pin`), `:777-778` (`/account/delete`).
+- **Preuve** : 12 essais faux sur chaque route → uniquement `401`, aucune ligne de verrou créée (`[]`). Seule
+  `POST /profiles` (l. 453) compte les échecs.
+- **Correction** : `lockedUntil` + `recordFailure('login:'+email)` sur ces quatre routes.
+
+### SEC-7 — HTTP clair servi en production ; cookie sans `Secure` sur HTTP — **MINEUR** (majeur si ouverture publique en l'état)
+
+- **Fichiers** : `infra/prod/Caddyfile:56` (`http://{$SITE}` sert l'application, sans redirection ; HSTS seulement sur
+  le bloc HTTPS, l. 62) ; `infra/prod/deploy.sh:41` (`COOKIE_SECURE=auto`).
+- **Preuve** : `COOKIE-AUTO http → awform_session=…; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000` (sans
+  `Secure`) ; `COOKIE-AUTO https → …; Secure`.
+- **Correction** : en production, `redir https://{host}{uri} 308` et `COOKIE_SECURE=1` ; `auto` réservé au réseau local.
+
+### SEC-8 — Entrées de la file hors ligne sans schéma (1 Mo de JSON libre par événement) — **MINEUR**
+
+- **Fichiers** : `apps/api/src/app.ts:263` (`items: { type: 'object' }`), `packages/db/src/hifz.ts:175`
+  (`details` stocké tel quel, renvoyé à l'enseignant par `hifz.ts:359-365`) ; `additionalProperties: false` absent
+  sur `account/pin`, `pin/verify`, `DELETE /profiles/:id`, `account/delete`, `totp/confirm`, `push.ts:131`.
+- **Preuve** : `INPUT statut 200 acceptés 1 … texte 1000011` (1 Mo stocké, sans quota). Voir aussi OFF-2 (valeurs
+  hors bornes → 500).
+- **Correction** : schéma JSON par type d'événement, `details` borné (≈ 2 Ko), `additionalProperties: false` partout.
+
+**Énumération de comptes** : `POST /auth/signup` → `409 email_indisponible` pour une adresse existante, `201` sinon
+(voir MIN-14) ; combinée à INF-6, la limite de 20 inscriptions/h par IP ne freine pas un balayage.
+
+**Soupçons** : `service-worker.ts:104` ouvre l'URL reçue par notification si elle commence par `/` : `//evil.example`
+passe (exploitable seulement avec la clé VAPID privée) ; coquille `/` mise en cache avec un nonce CSP figé (sans effet
+tant qu'il n'y a pas de point d'injection) ; deux formes acceptées par `validateSvg` (`</g onload=…>` sur une balise
+fermante, entités nommées dans une valeur) a priori inoffensives selon la norme HTML, non vérifiées faute d'analyseur
+DOM ; sessions familiales de 30 jours glissants, longues pour un appareil partagé (conformes au CDC).
+
+**Vérifié solide** :
+- **Cloisonnement** : **26 routes famille** testées avec le profil de A depuis le compte B (progress, dashboard,
+  today, régularité, rapport hebdo, protections, PATCH/DELETE profil, plan et journal de hifẓ, classes, tuteur
+  ask/questions/journal/signaler/consentement, récitations, devoirs, retrait de consentement, checkout/simulate/cancel)
+  → toutes 403/404 ; `/attempts` avec le profil de A → `profil non autorisé` ×3 ; validation `source: 'enseignant'`
+  impossible à forger ; **23 routes enseignant** testées par T2 sur la classe de T1 (élèves, devoirs, notes, tableau,
+  CSV, certificats, audio, réponses, validations) → toutes 404, contrôle positif 200. **Aucun IDOR trouvé.**
+- Correctif du lot 16 (« `await guard()` sans `reply.sent` ») : **aucune occurrence restante** ; tous les
+  `preHandler` sont `async` et retournent `reply`.
+- Enseignant sans TOTP : `403 mfa_a_configurer` partout sauf SEC-4.
+- Sessions : jeton 256 bits, seul le SHA-256 en base ; `HttpOnly; SameSite=Lax; Secure` par défaut ; révocation au
+  `logout`, au changement de mot de passe (les autres appareils), à la suppression ; pas de fixation.
+- Temps de connexion : pas d'écart exploitable (médianes 50,2 ms inconnu / 44,4 ms connu : Argon2 calculé même sans
+  compte).
+- CSRF : `x-awform` exigé ; chemins `/billing/webhook/../..` (clair ou `%2e%2e`) → 403/404.
+- SQL : tout par Drizzle, paramètres liés ; ni `sql.raw` ni interpolation ; `roles.ts` utilise `ident()`/`literal()`.
+- CSP SvelteKit : `script-src 'self' 'nonce-…'`, `object-src 'none'`, `frame-ancestors 'none'`, `base-uri 'self'`
+  (seul `style-src 'unsafe-inline'`, risque connu 4) ; Caddy : nosniff, Referrer-Policy, Permissions-Policy, COOP.
+- SVG : `validateSvg` refuse 20 charges hostiles (`<script>`, `on*`, `url()`, `&#`, `style`, `use`/`xlink:href`
+  externe, `javascript:`, CDATA, `foreignObject`, `animate`, `set`…) ; seul `{@html}` : `Scene.svelte`, échappé.
+- Service worker : ne met **jamais** `/api/*` en cache (`service-worker.ts:41`).
+- Historique git (53 commits, toutes branches) : **aucun vrai secret** (pas de `sk_live`, `sk-ant`, `AKIA`, `ghp_`,
+  `whsec_`, ni `.env`/`.pem`/`.key` versionnés ; une seule clé « FAUX » de test ; mots de passe jetables de dev/CI).
+
+---
+
+## Domaine 4 — Hors ligne et synchronisation (dont le relais de la branche `lot17-wip`)
+
+Banc : `apps/api/audit/sync-serveur.test.ts` (édition synthétique `zz1`), `apps/web/audit/sync-file.test.ts`
+(`sync-core` avec IndexedDB simulée), `apps/relay/audit/sync-relais.test.ts` (branche `lot17-wip`, relais réel contre
+un faux central). Tout rejoué.
+
+### OFF-1 — Relais d'école (lot 17) : des réponses confirmées « acceptées » à la tablette sont effacées si la session de l'élève a expiré — **BLOQUANT** (pour la mise en service du relais)
+
+- **Fichiers** (branche `lot17-wip`) : `apps/relay/src/relay.ts:126-141` (`queuedReply` répond `accepted`),
+  `:277-279` (un 401 au rejeu = refus définitif), `apps/relay/src/store.ts:151-157` (contenu effacé).
+- **Scénario** : Internet coupé, l'élève répond ; le relais répond `accepted`, la tablette vide sa file ; en fin de
+  séance l'élève se déconnecte (cas normal à l'école) ou la session expire ; au retour d'Internet le central répond
+  401, le relais classe l'envoi `refuse` et **efface** le contenu. Plus aucune copie nulle part.
+- **Preuve** :
+  ```
+  RELAIS réponse à la tablette 200 {"accepted":[{"id":"f0e7…","correct":null}],…,"relais":"en_attente"}
+  RELAIS rejeu {"envoyes":0,"refuses":1,"restants":0} | file [{"state":"refuse","last_status":401,"vide":1}] | enregistrés au central 0
+  ```
+- **Correction** : ne jamais traiter 401/403 comme définitif ; authentifier les envois par le **relais** (jeton de
+  relais + identité de l'élève signée) ; à défaut, ne pas répondre `accepted` avant confirmation du central.
+
+### OFF-2 — Un seul événement hors bornes : 500 sur tout le lot et file de l'appareil bloquée à vie — **MAJEUR**
+
+- **Fichiers** : `apps/api/src/app.ts:256-265` (événement = `type: object`) ; `packages/db/src/hifz.ts:154` (`q`
+  vérifié seulement pour `revision`, colonne smallint), `:174` (`pos`), `:175` et `packages/db/src/practice.ts:63`
+  (`details` avec `\u0000` refusé par jsonb), `packages/db/src/attempts.ts:63` (`deviceAt`), `:124-128`
+  (`itemIndex` smallint) ; `apps/web/src/lib/sync-core.ts:91` (`if (!r.ok) break;`).
+- **Preuve** :
+  ```
+  POISON hifz appris q=99999 (smallint) -> 500      POISON hifz pos=3e9 (integer) -> 500
+  POISON hifz details avec \u0000 -> 500            POISON deviceAt an -10000 -> 500
+  POISON reponse itemIndex=40000 (smallint) -> 500
+  POISON trace details avec \u0000 -> 500 | bon événement du même lot déjà écrit en base : true   (ni tout, ni rien)
+  # côté appareil, file de 151 événements dont un empoisonné, trois cycles :
+  POISON essai 1 {"sent":0,"remaining":151,"offline":false}   (idem essais 2 et 3)
+  ```
+  Un bogue du client (ou une donnée corrompue) arrête **toute** la synchronisation de l'élève, sans message.
+- **Correction** : valider chaque champ ; rejeter l'événement fautif (pas le lot), un point de sauvegarde par
+  événement ; côté client, sur échec persistant, découper le lot et mettre l'événement fautif en quarantaine.
+
+### OFF-3 — Appareil partagé : à la déconnexion, la file et les voix de A restent ; la connexion de B détruit la file de A — **MAJEUR**
+
+- **Fichiers** : `apps/web/src/lib/session.ts:85-89` (`logout()` n'efface que `me` et `activeProfile`) ;
+  `apps/web/src/lib/sync-core.ts:98-107` (événements `rejected` supprimés).
+- **Preuve** :
+  ```
+  APRES LOGOUT reste dans IndexedDB {"events":5,"recordings":1,"cards":true,"me":null,"active":null}
+  SESSION B {"sent":0,"rejected":5,"remaining":0}      ← les 5 réponses non envoyées de A sont perdues
+  ```
+  (Risque connu 3 du brief, confirmé et aggravé : perte de données **et** voix d'enfant laissée sur l'appareil.)
+- **Correction** : tenter l'envoi avant déconnexion (avertir si la file n'est pas vide) ; file rangée par compte ;
+  effacer `recordings`, `cards:*`, `recLocal:*` du compte à la déconnexion.
+
+### OFF-4 — File de l'appareil : 4xx renvoyés à l'infini, portail captif et quota plein non gérés — **MINEUR**
+
+- **Fichier** : `apps/web/src/lib/sync-core.ts:79-108` ; `apps/web/src/routes/lecons/[id]/+page.svelte:90`.
+- **Preuve** : `HTTP 400/404/413/403 {"sent":0,…,"remaining":3}` (renvoyés sans fin) ; `CAPTIF exception SyntaxError`
+  (Wi-Fi à portail qui répond 200 en HTML : exception non rattrapée) ; `QUOTA exception QuotaExceededError file 0`
+  (réponse perdue, `enqueue` ni attendu ni rattrapé).
+- **Correction** : contrôle du `content-type`, recul progressif et quarantaine des 4xx, alerte « stockage plein ».
+
+### OFF-5 — Réponse antidatée par `deviceAt` : la leçon passe « maîtrisée » ; dates impossibles acceptées — **MINEUR**
+
+- **Fichier** : `packages/db/src/attempts.ts:63` (aucune borne), `:203` (tri par `deviceAt`) ; `packages/db/src/hifz.ts:11`.
+- **Preuve** : `ANTIDATE avant [{"status":"commencee","score":0}] | après [{"status":"maitrisee","score":1,
+  "bestScore":1}]` ; acceptés : jour de hifẓ `2026-99-99`, `2099-12-31`, `0001-01-01`, part `999:999-999`.
+- **Correction** : borner `deviceAt` (serveur − N jours … serveur + 1 jour, sinon `serverAt`) ; valider dates, sourates
+  et versets.
+
+### OFF-6 — Relais (lot 17) : saturation du disque par n'importe quel appareil du Wi-Fi ; exception non rattrapée — **MAJEUR**
+
+- **Fichiers** (branche `lot17-wip`) : `apps/relay/src/relay.ts:193-208` (hors ligne, POST `/attempts` mis en file
+  **sans cookie**, sans limite de nombre, 4 Mo par corps ; cache indexé par l'URL complète) ;
+  `apps/relay/src/store.ts:132` et `apps/relay/src/server.ts:56` (`void relay.syncOnce().then(…)` sans `catch`).
+- **Preuve** :
+  ```
+  RELAIS flood 5 envois de 3,9 Mo acceptés sans cookie ; file 5 lignes, 26 Mo
+  RELAIS cache entrées après 200 GET /health?x=i : 200
+  RELAIS clé changée -> exception Unsupported state or unable to authenticate data   (à chaque synchronisation)
+  ```
+  (L'arrêt du processus par rejet non rattrapé est déduit du comportement standard de Node 24, non exécuté.)
+- **Correction** : cookie exigé ; quotas (nombre, octets, par IP) ; `health` hors cache, chaînes de requête bornées ;
+  ligne illisible mise en quarantaine, `catch` sur la boucle.
+
+### OFF-7 — Collision volontaire d'identifiant : un autre compte fait disparaître un événement — **MINEUR**
+
+- **Fichiers** : `packages/db/src/hifz.ts:179-182`, `attempts.ts:163-165`, `practice.ts:66-68` (doublon signalé sans
+  vérifier le profil).
+- **Preuve** : `COLLISION B [{"id":"445d…"}] | A reçoit {"accepted":[],"duplicates":["445d…"]} | événements hifz de A
+  en base 0` (il faut connaître l'UUIDv7 à l'avance ; aucune ligne n'est écrasée).
+- **Correction** : identifiant existant sur un autre profil → conflit, pas doublon ; comparer le contenu.
+
+**Soupçons** : `refreshProgress` lit puis écrit hors transaction (`attempts.ts:180-241`, course non reproduite en 15
+essais) ; réponses hors ligne sur un paquet périmé rejetées et supprimées sans message (conforme au CDC, à confirmer) ;
+double appui hors ligne via le relais → deux récitations (pas d'`Idempotency-Key` côté web) ; clé AES du relais sur le
+même disque que la base SQLite qui contient les cookies des élèves (vol de la carte SD).
+
+**Vérifié solide** : idempotence par UUIDv7 (rejeu d'un lot, même id avec contenu différent ou depuis un autre compte
+→ doublon, jamais d'écrasement) ; événements pour le profil d'un autre compte refusés un par un ; la correction est
+**recalculée par le serveur** (le champ `correct` du client est ignoré) ; relais : 13/13 tests verts, file chiffrée
+AES-256-GCM authentifiée, 5xx et coupures → nouvel essai avec attente croissante, dédoublonnage par le central, jeton
+du relais haché et révocable ; `pnpm install --frozen-lockfile` et `pnpm -r build` de la branche passent.
+
+---
+
+## Domaine 5 — Justesse métier (correction, hifẓ, barèmes, FSRS)
+
+Banc : `packages/grading/audit/metier-grading.test.ts`, `packages/school/audit/metier-school.test.ts`,
+`packages/hifz/audit/metier-hifz.test.ts`, `apps/web/audit/metier-fsrs.test.ts`.
+
+### MET-1 — Un bilan ou un examen fait dans l'application compte toujours 100 % : certificat « Très bien » assuré — **BLOQUANT** (pour les certificats)
+
+- **Fichiers** : `apps/api/src/school.ts:438-442` (note reprise = `bestScore * 100` si `terminee`) ;
+  `packages/grading/src/progress.ts:73-76` (« terminée » exige tous les points trouvés, avec essais multiples :
+  `bestScore` vaut donc toujours 1).
+- **Preuve** :
+  ```
+  PROGRESS {"status":"terminee","score":0,"bestScore":1}          ← élève à 0 % au premier essai
+  SCHOOL app : examen = bestScore 100, bilans 100 (élève ayant 0 % au 1er essai)
+    {"cc":100,"ccPartiel":true,"ex":100,"nf":100,"d":"TB","cert":true}
+  ```
+  Combiné à CON-1 (corrigés envoyés à l'appareil), le certificat de niveau délivré par l'application n'atteste rien.
+- **Correction** : note du **premier** essai (`score`) pour bilans et examen, ou mode examen à un seul essai ; tant que
+  ce n'est pas fait, n'accepter pour le certificat que les notes saisies par l'enseignant (classe papier).
+
+### MET-2 — Certificat délivrable avec un contrôle continu partiel ; examen à 49,995 % arrondi à 50 — **MINEUR**
+
+- **Fichiers** : `packages/school/src/grading.ts:141-151` (poids renormalisés, composantes manquantes non signalées) ;
+  `apps/api/src/school.ts:848-849` ; `grading.ts:153` (`r2` appliqué **avant** la comparaison `< 50`).
+- **Preuve** : `SCHOOL CC partiel (sans récitations ni productions) -> certificat ? {"cc":90,"ccPartiel":true,…,
+  "d":"TB","cert":true}` ; `SCHOOL examen 9.999/20 (49,995 %) {"ex":50,"d":"B","cert":true}` (alors que
+  `examen 49.99` → `cert:false`).
+- **Correction** : bloquer (ou faire confirmer) le certificat si `ccPartiel` ; comparer le pourcentage non arrondi.
+
+### MET-3 — Hifẓ : un jour invalide arrête le rejeu du journal ; mois d'essai surestimé ; barème avec `Infinity` — **MINEUR**
+
+- **Fichiers** : `packages/hifz/src/engine.ts:313-319` (`NaN <= d` faux : boucle arrêtée) et `packages/db/src/hifz.ts:11`
+  (regex de date sans validation du calendrier) ; `packages/hifz/src/trial.ts:40` et `apps/web/src/lib/hifz.ts:314-318`
+  (jours comptés sur toute la période mais divisés par 28 au plus) ; `packages/hifz/src/bareme.ts:37`
+  (`nonNeg(Infinity)` = 0).
+- **Preuve** : `REPLAY sans NaN a:20715,b:20720 | avec NaN a:20715,b:null` ; `TRIAL {"retention":1,…,"regularity":1,
+  "days":56} suggest 5` (28 jours travaillés sur 56 = « 100 % ») ; `BAREME oublisInfinity {"total":20,
+  "mention":"excellent"}` (l'API borne les compteurs à 0-50 : pas exploitable par l'API aujourd'hui).
+- **Correction** : valider les dates côté serveur et ignorer les jours invalides au rejeu ; fenêtre des 28 premiers
+  jours ; `Infinity`/`NaN` = erreur.
+
+### MET-4 — Jalons : un mot tracé est compté comme la lettre « mot » ; migration Leitner fragile — **MINEUR**
+
+- **Fichiers** : `apps/web/src/routes/ecriture/+page.svelte:44,51` et `apps/api/src/today.ts:58-59` ;
+  `apps/web/src/lib/fsrs.ts:131`.
+- **Preuve** : `JALONS 200 {"lettres":["mot","ب"],…}` ; `LEITNER 2.5 EXCEPTION Invalid time value` (une boîte non
+  entière ou une date invalide casse `loadBoxes` et donc toutes les cartes).
+- **Correction** : exclure `mot:` des lettres ; arrondir et borner `box`, `try` autour de la migration.
+
+**Soupçons** : changer `suraOrder` en cours de route réattribue les parts (`packages/hifz/src/plan.ts:148-168`, ordres
+« rebours » et « juz30 » divergents après la sourate 67) ; `checkPremiereLettre`/`checkEcoute`/`checkComplete`
+comparent les chaînes exactement (shadda+fatha ≠ fatha+shadda) — sans effet tant que rien ne retape le texte ; un
+double espace dans un exercice « ordre » rend la bonne réponse impossible (à vérifier dans les livres) ; rythmes
+« 6 ans » = 6,10 ans et « 7 ans » = 6,86 ans (libellés « ≈ », question de présentation) ; auto-évaluation
+`{checked,total}` fournie par le client.
+
+**Vérifié solide** : **FSRS-5 conforme aux formules publiées** (paramètres `w` par défaut identiques ; FACTOR = 19/81 ;
+R(S,S) = 0,900000 ; intervalle = S à 90 %, plafonné à 365 ; D0, difficulté suivante, stabilités après succès, oubli et
+jour même identiques au calcul manuel ; migration Leitner correcte pour les boîtes 1 à 5) ; **note finale** : recherche
+exhaustive au centième, 0 erreur d'arrondi au demi-point, seuils 80/70/60/40 et plancher d'examen corrects, bornes
+(score > max, négatif, max nul, NaN) bien gérées ; **barème /20** : bornes, mentions 18/16/14/12, « deux oublis → à
+reprendre », règle d'arrêt (q = 0 à J+3 ou J+7), roue plafonnée à 30/45/60 j ; correction recalculée côté serveur.
+
 ---
 
 ## Domaine 8 — Infrastructure, CI, dépendances
