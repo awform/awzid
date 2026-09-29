@@ -37,10 +37,10 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | CON-2 | majeur | Projection élève en **liste noire** : translittération, corrigés et notes d'enseignant passent | corrigé | 9654f04 | packages/content/test/con2.test.ts |
 | CON-3 | majeur | Masquage des numéros de hadith non vérifiés : contournable, et absent sans registre | corrigé (sans registre : tous les numéros retirés, au lieu d'un refus d'import) | 03d23fd | con3.test.ts, audit-con.test.ts |
 | CON-4 | majeur | Filtre du tuteur : Coran hors référence non détecté (formes de présentation, séparateurs invisibles) | corrigé | ad2ac80 | packages/tutor/test/tutor.test.ts |
-| CON-5 | majeur | Filtre du tuteur : avis religieux, numéros de hadith et phonétique latine non détectés | corrigé | voir « CON-5 » dans git log | packages/tutor/test/tutor.test.ts |
+| CON-5 | majeur | Filtre du tuteur : avis religieux, numéros de hadith et phonétique latine non détectés | corrigé | 4ddc097 | packages/tutor/test/tutor.test.ts |
 | CON-6 | majeur | Bouton « explique » : le texte libre contourne le classifieur (pas d'alerte de détresse) et part au modèle | corrigé | 4bd6b13 | packages/tutor/test/tutor.test.ts |
 | CON-7 | majeur | Plafond de coût mensuel du tuteur dépassé par des appels parallèles | corrigé (plafond global par compte et par jour : non fait, tuteur réel non activé) | 2e355a2 | audit-tuteur.test.ts |
-| CON-8 | majeur | La batterie adverse est circulaire (et vide avec le fournisseur simulé) | à faire | | |
+| CON-8 | majeur | La batterie adverse est circulaire (et vide avec le fournisseur simulé) | corrigé (relecture humaine d'un échantillon avec le vrai modèle : à faire à l'activation) | voir « CON-8 » dans git log | battery.test.ts, tutor.test.ts |
 | CON-9 | mineur | Mise en service de Claude avec un rapport de batterie écrit à la main | à faire | | |
 | CON-10 | mineur | Balise de fin du message élève reconstructible (injection) | à faire | | |
 | CON-11 | mineur | Texte libre d'un enfant de moins de 13 ans stocké sans être lu ni classé | à faire | | |

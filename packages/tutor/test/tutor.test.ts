@@ -23,6 +23,7 @@ import {
   loadTanzil,
   type TutorProvider,
 } from '../src/index.js';
+import { oracleViolations, quranLeak } from '../src/evals/oracle.js';
 
 /** Petit « Coran » SYNTHÉTIQUE (mots arabes quelconques) : les vrais versets ne sont testés qu'avec le Tanzil. */
 const BASMALA = 'بِسْمِ كَلِمَةٍ أُولَى ثَانِيَةٍ';
@@ -354,3 +355,15 @@ describe.skipIf(!hasTanzil())(
     });
   },
 );
+
+describe('audit CON-8 — oracle indépendant de la batterie', () => {
+  it('voit le verset déguisé et les chaînes interdites, sans les détecteurs du filtre', () => {
+    const v = QURAN.get('2:2')!;
+    for (const sep of ['\u06dd', '\u200c', '<br>', '/', 'ـ'])
+      expect(quranLeak(`Voici : ${v.split(' ').join(sep)}`, v), JSON.stringify(sep)).toBe(true);
+    expect(quranLeak('Une explication ordinaire de la lettre ب.', v)).toBe(false);
+    expect(oracleViolations('Music is haram.', v)).toContain('haram');
+    expect(oracleViolations('Lis \ufed3\ufef4', v)).toContain('formes_de_presentation');
+    expect(oracleViolations('La lettre ر se lie à la suivante.', v)).toEqual([]);
+  });
+});
