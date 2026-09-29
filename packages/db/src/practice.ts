@@ -3,12 +3,11 @@
  */
 import { and, asc, eq, gte, inArray, sql } from 'drizzle-orm';
 import { publicProjection } from '@awform/content';
-import { deviceTime, hasNul, isolated, REFUSED } from './bounds.js';
+import { deviceTime, hasNul, isolated, REFUSED, validDay } from './bounds.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const KINDS = new Set(['trace', 'carte']);
 
 export interface PracticeInput {
@@ -46,7 +45,7 @@ export async function recordPractice(
       e.item.length === 0 ||
       e.item.length > 80 ||
       typeof e.ok !== 'boolean' ||
-      !DAY.test(String(e.day)) ||
+      !validDay(e.day) ||
       !deviceTime(e.deviceAt) ||
       hasNul(e.item) ||
       hasNul(e.details) ||
@@ -66,7 +65,7 @@ export async function recordPractice(
           ok: e.ok,
           day: e.day,
           details: e.details ?? null,
-          deviceAt: new Date(e.deviceAt),
+          deviceAt: deviceTime(e.deviceAt)!,
         })
         .onConflictDoNothing()
         .returning({ id: t.practiceEvent.id }),

@@ -19,12 +19,46 @@ export const hasNul = (v: unknown): boolean => {
   }
 };
 
-/** horodatage de l'appareil lisible et dans une plage plausible (années 2000 à 2100) */
-export function deviceTime(s: unknown): Date | null {
+/** jours de retard admis pour un appareil resté hors ligne (relais d'école, carnet rempli plus tard) */
+export const OFFLINE_DAYS = 90;
+
+/**
+ * Horodatage de l'appareil (audit OFF-5) : illisible → null (refus) ; hors de la fenêtre
+ * [serveur − 90 jours, serveur + 1 jour] (horloge fausse, antidatage) → heure du serveur.
+ */
+export function deviceTime(s: unknown, now = new Date()): Date | null {
   if (typeof s !== 'string' || s.length > 40) return null;
   const d = new Date(s);
-  const y = d.getUTCFullYear();
-  return Number.isNaN(d.getTime()) || y < 2000 || y > 2100 ? null : d;
+  if (Number.isNaN(d.getTime())) return null;
+  const t = d.getTime();
+  const n = now.getTime();
+  return t < n - OFFLINE_DAYS * 86_400_000 || t > n + 86_400_000 ? new Date(n) : d;
+}
+
+/** Jour AAAA-MM-JJ réel (pas de 30 février), entre deux ans en arrière et demain (audit OFF-5). */
+export function validDay(s: unknown, now = new Date()): boolean {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(`${s}T00:00:00Z`);
+  if (Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== s) return false;
+  const n = now.getTime();
+  return d.getTime() >= n - 731 * 86_400_000 && d.getTime() <= n + 86_400_000;
+}
+
+/**
+ * Passage du hifẓ (audit OFF-5) : « s:a » ou « s:a-b » avec 1 ≤ s ≤ 114, 1 ≤ a ≤ b ≤ nombre de versets de la
+ * sourate (métadonnées Tanzil importées ; sans elles, 286 au plus), ou part de révision « qN » (1 ≤ N ≤ 1000).
+ */
+export function validPart(part: unknown, ayas?: ReadonlyMap<number, number>): boolean {
+  if (typeof part !== 'string') return false;
+  const q = /^q(\d{1,4})$/.exec(part);
+  if (q) return Number(q[1]) >= 1 && Number(q[1]) <= 1000;
+  const m = /^(\d{1,3}):(\d{1,3})(?:-(\d{1,3}))?$/.exec(part);
+  if (!m) return false;
+  const s = Number(m[1]);
+  const a = Number(m[2]);
+  const b = m[3] === undefined ? a : Number(m[3]);
+  const max = ayas?.get(s) ?? 286;
+  return s >= 1 && s <= 114 && a >= 1 && a <= b && b <= max;
 }
 
 /**

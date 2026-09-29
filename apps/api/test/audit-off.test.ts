@@ -3,6 +3,8 @@
  */
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { eq } from 'drizzle-orm';
+import { schema as t } from '@awform/db';
 import { adult, setupEdition, type Ctx } from './helpers.js';
 
 const URL_ = process.env.TEST_DATABASE_URL;
@@ -33,9 +35,14 @@ describe.skipIf(!URL_)('audit — hors ligne', () => {
     const hifz = (r: object) =>
       ev('hifz', { day: TODAY, part: '112:1-4', kind: 'appris', source: 'auto', ...r });
     const trace = (r: object) => ev('trace', { item: 'ب', ok: true, day: TODAY, ...r });
-    const bons = [ev('checklist', { checked: 1, total: 2 }), trace({}), hifz({})];
-    const poisons = [
+    const bons = [
+      ev('checklist', { checked: 1, total: 2 }),
+      trace({}),
+      hifz({}),
+      // horloge absurde : l'heure du serveur est prise à la place (OFF-5), plus d'erreur 500
       ev('checklist', { checked: 1, total: 2 }, { deviceAt: '-010000-01-01T00:00:00.000Z' }),
+    ];
+    const poisons = [
       hifz({ q: 99999 }),
       hifz({ pos: 3e9 }),
       hifz({ details: { note: 'a\u0000b' } }),
@@ -49,5 +56,52 @@ describe.skipIf(!URL_)('audit — hors ligne', () => {
     for (const e of bons) expect(ok.has(e.id), JSON.stringify(e)).toBe(true);
     const ko = new Set(b.rejected.map((x: { id: string }) => x.id));
     for (const e of poisons) expect(ko.has(e.id), JSON.stringify(e)).toBe(true);
+  });
+
+  it('OFF-5 : horodatage antidaté remplacé par l’heure du serveur ; jours et passages impossibles refusés', async () => {
+    const { A, profileId } = await adult(c, 'antidate-off5@exemple.org');
+    const base = { profileId, deviceAt: new Date().toISOString() };
+    const old = {
+      ...base,
+      id: randomUUID(),
+      unitId: 'en1.l01',
+      eventType: 'checklist',
+      response: { checked: 1, total: 2 },
+      deviceAt: '2021-01-01T00:00:00.000Z',
+    };
+    const hifz = (r: object) => ({
+      ...base,
+      id: randomUUID(),
+      unitId: 'hifz',
+      eventType: 'hifz',
+      response: { day: TODAY, part: '112:1-4', kind: 'appris', source: 'auto', ...r },
+    });
+    const trace = (day: string) => ({
+      ...base,
+      id: randomUUID(),
+      unitId: 'x',
+      eventType: 'trace',
+      response: { item: 'ب', ok: true, day },
+    });
+    const bon = hifz({});
+    const faux = [
+      hifz({ day: '2026-99-99' }),
+      hifz({ day: '2099-12-31' }),
+      hifz({ day: '0001-01-01' }),
+      hifz({ part: '999:999-999' }),
+      hifz({ part: '115:1' }),
+      hifz({ part: '112:4-1' }),
+      hifz({ part: '112:0' }),
+      trace('2026-02-30'),
+    ];
+    const r = await c.req('POST', '/api/v1/attempts', A, { events: [old, bon, ...faux] });
+    expect(r.statusCode, r.body).toBe(200);
+    const b = r.json();
+    const ok = new Set(b.accepted.map((x: { id: string }) => x.id));
+    expect(ok.has(old.id) && ok.has(bon.id)).toBe(true);
+    const ko = new Set(b.rejected.map((x: { id: string }) => x.id));
+    for (const e of faux) expect(ko.has(e.id), JSON.stringify(e.response)).toBe(true);
+    const [row] = await c.h.db.select().from(t.attempt).where(eq(t.attempt.id, old.id));
+    expect(Date.now() - row!.deviceAt.getTime()).toBeLessThan(60_000);
   });
 });

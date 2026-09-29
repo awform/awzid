@@ -47,9 +47,9 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | CON-12 | mineur | Classifieur local : contournements simples et faux positifs | à faire | | |
 | OFF-1 | bloquant | Relais d'école (lot 17) : des réponses confirmées « acceptées » à la tablette sont effacées si la session de l'élève a expiré | corrigé | 44fa0b6 (commun avec OFF-6) | relay.test.ts « audit OFF-1 » |
 | OFF-2 | majeur | Un seul événement hors bornes : 500 sur tout le lot et file de l'appareil bloquée à vie | corrigé | fd53ac2 | audit-off.test.ts, apps/web/src/lib/offline.test.ts |
-| OFF-3 | majeur | Appareil partagé : à la déconnexion, la file et les voix de A restent ; la connexion de B détruit la file de A | corrigé | voir « OFF-3 » dans git log | apps/web/src/lib/session.test.ts |
+| OFF-3 | majeur | Appareil partagé : à la déconnexion, la file et les voix de A restent ; la connexion de B détruit la file de A | corrigé | e143f63, e9714b0 | apps/web/src/lib/session.test.ts |
 | OFF-4 | mineur | File de l'appareil : 4xx renvoyés à l'infini, portail captif et quota plein non gérés | à faire | | |
-| OFF-5 | mineur | Réponse antidatée par `deviceAt` : la leçon passe « maîtrisée » ; dates impossibles acceptées | à faire | | |
+| OFF-5 | mineur | Réponse antidatée par `deviceAt` : la leçon passe « maîtrisée » ; dates impossibles acceptées | corrigé | voir « OFF-5 » dans git log | audit-off.test.ts |
 | OFF-6 | majeur | Relais (lot 17) : saturation du disque par n'importe quel appareil du Wi-Fi ; exception non rattrapée | corrigé | 44fa0b6 (commun avec OFF-1) | relay.test.ts « audit OFF-6 » |
 | OFF-7 | mineur | Collision volontaire d'identifiant : un autre compte fait disparaître un événement | à faire | | |
 | MET-1 | bloquant | Un bilan ou un examen fait dans l'application compte toujours 100 % : certificat « Très bien » assuré | corrigé | e723584 | audit-met1.test.ts |

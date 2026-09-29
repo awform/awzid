@@ -3,14 +3,12 @@
  * des événements, classes (l'enseignant ne voit que les élèves que le PARENT a inscrits).
  */
 import { randomInt } from 'node:crypto';
-import { and, asc, eq, inArray, isNull } from 'drizzle-orm';
-import { deviceTime, hasNul, isInt32, isolated, REFUSED } from './bounds.js';
+import { and, asc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { deviceTime, hasNul, isInt32, isolated, REFUSED, validDay, validPart } from './bounds.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const DAY = /^\d{4}-\d{2}-\d{2}$/;
-const PART = /^(\d{1,3}:\d{1,3}(-\d{1,3})?|q\d{1,4})$/;
 const KINDS = new Set(['appris', 'revision']);
 /** sources qu'un appareil de la famille peut déclarer (le maître passe par sa propre route) */
 const FAMILY_SOURCES = new Set(['auto', 'parent']);
@@ -123,6 +121,15 @@ export interface HifzRecordResult {
   rejected: Array<{ id: string; reason: string }>;
 }
 
+/** Nombre de versets par sourate d'après le texte importé (vide si le Coran n'est pas importé). */
+async function ayaCounts(db: Db): Promise<Map<number, number> | undefined> {
+  const rows = await db
+    .select({ s: t.quranVerse.sura, n: sql<number>`max(${t.quranVerse.aya})::int` })
+    .from(t.quranVerse)
+    .groupBy(t.quranVerse.sura);
+  return rows.length === 114 ? new Map(rows.map((r) => [r.s, r.n])) : undefined;
+}
+
 /**
  * Enregistre des événements (idempotent). `teacher` : événements du maître (source « enseignant »),
  * sinon seules les sources de la famille sont acceptées.
@@ -134,6 +141,7 @@ export async function recordHifzEvents(
   teacher = false,
 ): Promise<HifzRecordResult> {
   const res: HifzRecordResult = { accepted: [], duplicates: [], rejected: [] };
+  const ayas = events.length ? await ayaCounts(db) : undefined;
   for (const e of events) {
     const reject = (reason: string) => res.rejected.push({ id: String(e?.id ?? ''), reason });
     if (!e || typeof e.id !== 'string' || !UUID.test(e.id)) {
@@ -144,7 +152,7 @@ export async function recordHifzEvents(
       reject('profil invalide');
       continue;
     }
-    if (!DAY.test(String(e.day)) || !PART.test(String(e.part)) || !KINDS.has(String(e.kind))) {
+    if (!validDay(e.day) || !validPart(e.part, ayas) || !KINDS.has(String(e.kind))) {
       reject('événement invalide');
       continue;
     }
