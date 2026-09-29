@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { carnetLabel, levelLabel } from '$lib/levels';
   import { resolve } from '$app/paths';
   import ActivityBars from '$lib/ActivityBars.svelte';
   import { demoProfileFor, pendingCount, type DevProfile } from '$lib/attempts';
@@ -80,7 +81,7 @@
       {#each Object.entries(r.dash.levels) as [level, c] (level)}
         {@const total = totals[level] ?? 0}
         <div class="lv" data-level={level}>
-          <strong>{t(`niveau.${level}`)}</strong>
+          <strong>{levelLabel(level)}</strong>
           <div
             class="progress"
             role="img"
@@ -109,7 +110,7 @@
     <p class="small" data-testid="suivi-hifz">
       {#if r.hifz}
         {r.hifz.plan.mode === 'carnet'
-          ? t(`hifz.carnet_${r.hifz.plan.bookCode}`)
+          ? carnetLabel(r.hifz.plan.bookCode ?? '')
           : t('hifz.rythme_actuel', { n: r.hifz.plan.rhythmYears ?? 7 })} ·
         {t('hifz.acquis_carnet', { n: r.hifz.acquired, total: r.hifz.total })} ·
         {t('suivi.a_reviser', { n: r.hifz.due })}

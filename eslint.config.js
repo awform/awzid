@@ -19,6 +19,7 @@ export default ts.config(
     ignores: [
       '**/node_modules/',
       'infra/ci/contenu/',
+      'apps/android/android/',
       '**/dist/',
       '**/build/',
       '**/.svelte-kit/',

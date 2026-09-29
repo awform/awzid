@@ -9,6 +9,7 @@
 import { sql } from 'drizzle-orm';
 import {
   bigserial,
+  customType,
   boolean,
   check,
   index,
@@ -24,6 +25,9 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
+
+/** octets bruts (audio chiffré) */
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => 'bytea' });
 
 const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
 
@@ -547,6 +551,8 @@ export const classGroup = pgTable('class_group', {
   place: text('place'),
   placeAr: text('place_ar'),
   schoolYear: text('school_year'),
+  /** récitations envoyées : durée de conservation (jours, 1 à 30), réglée par l'enseignant (lot 16) */
+  recitationDays: smallint('recitation_days').notNull().default(14),
   createdAt: createdAt(),
 });
 
@@ -944,4 +950,94 @@ export const evalDoc = pgTable(
     content: jsonb('content').notNull(),
   },
   (t) => [primaryKey({ columns: [t.editionId, t.key] })],
+);
+
+// ================================================================ écoute des récitations, notifications (lot 16)
+
+/**
+ * Récitation ENVOYÉE à l'enseignant de la classe (choix de la famille, accord « envoi_recitation ») :
+ * audio CHIFFRÉ (AES-256-GCM, clé hors de la base), effacé à `expiresAt` (durée courte réglée par la classe),
+ * supprimable par la famille à tout moment, lisible par l'enseignant de la classe SEULEMENT, jamais utilisé
+ * pour entraîner une IA.
+ */
+export const recitationUpload = pgTable(
+  'recitation_upload',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    /** passage récité (« 112:1-4 ») */
+    part: text('part').notNull(),
+    mime: text('mime').notNull(),
+    durationS: smallint('duration_s'),
+    size: integer('size').notNull(),
+    keyVersion: smallint('key_version').notNull(),
+    iv: bytea('iv').notNull(),
+    /** texte chiffré + étiquette GCM */
+    ciphertext: bytea('ciphertext').notNull(),
+    sentBy: uuid('sent_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    listenedAt: timestamp('listened_at', { withTimezone: true }),
+    /** relevés et note /20 (grille commune des carnets) */
+    grade: jsonb('grade'),
+    gradedBy: uuid('graded_by').references(() => account.id, { onDelete: 'set null' }),
+    gradedAt: timestamp('graded_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('recitation_upload_class').on(t.classId, t.createdAt),
+    index('recitation_upload_profile').on(t.profileId),
+    index('recitation_upload_expires').on(t.expiresAt),
+  ],
+);
+
+/** Abonnement « web push » d'un appareil (le contenu des notifications est chiffré de bout en bout). */
+export const pushSubscription = pgTable('push_subscription', {
+  id: uuid('id')
+    .primaryKey()
+    .default(sql`uuidv7()`),
+  accountId: uuid('account_id')
+    .notNull()
+    .references(() => account.id, { onDelete: 'cascade' }),
+  endpoint: text('endpoint').notNull().unique(),
+  p256dh: text('p256dh').notNull(),
+  auth: text('auth').notNull(),
+  createdAt: createdAt(),
+  failures: smallint('failures').notNull().default(0),
+});
+
+/**
+ * Préférences de notifications d'un compte : TOUT est désactivé par défaut ; les notifications qui
+ * concernent un ENFANT demandent un accord explicite du parent (`enfants`) ; heures calmes (jamais de
+ * notification entre `quietStart` et `quietEnd`, heure locale).
+ */
+export const notificationPref = pgTable(
+  'notification_pref',
+  {
+    accountId: uuid('account_id')
+      .primaryKey()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    devoirs: boolean('devoirs').notNull().default(false),
+    rapport: boolean('rapport').notNull().default(false),
+    enfants: boolean('enfants').notNull().default(false),
+    quietStart: smallint('quiet_start').notNull().default(20),
+    quietEnd: smallint('quiet_end').notNull().default(8),
+    tz: text('tz').notNull().default('Africa/Dakar'),
+    locale: text('locale').notNull().default('fr'),
+    lastDevoirs: text('last_devoirs'),
+    lastRapport: text('last_rapport'),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    check(
+      'notification_pref_hours',
+      sql`${t.quietStart} BETWEEN 0 AND 23 AND ${t.quietEnd} BETWEEN 0 AND 23`,
+    ),
+  ],
 );

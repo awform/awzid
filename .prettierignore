@@ -12,3 +12,5 @@ reports/
 *.md
 # texte et métadonnées Tanzil (CI) : copies VERBATIM, jamais reformatées
 infra/ci/contenu/
+# projet Android généré par Capacitor (Gradle)
+apps/android/android/

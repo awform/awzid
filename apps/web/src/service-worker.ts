@@ -80,3 +80,34 @@ sw.addEventListener('sync', ((event: SyncEvent) => {
     }),
   );
 }) as EventListener);
+
+// ---------------------------------------------------------------- notifications (lot 16)
+// Contenu chiffré de bout en bout par le serveur ; affichage discret, jamais de son forcé ni de vibration
+// insistante ; un clic ouvre l'écran concerné.
+interface PushEventLike extends ExtendableEvent {
+  data: { json(): unknown } | null;
+}
+interface NotificationClickLike extends ExtendableEvent {
+  notification: Notification;
+}
+sw.addEventListener('push', ((event: PushEventLike) => {
+  let p: { title?: string; body?: string; url?: string; tag?: string } = {};
+  try {
+    p = (event.data?.json() as typeof p) ?? {};
+  } catch {
+    p = {};
+  }
+  event.waitUntil(
+    sw.registration.showNotification(p.title ?? 'AWFORM', {
+      body: p.body ?? '',
+      tag: p.tag ?? 'awform',
+      data: { url: p.url && p.url.startsWith('/') ? p.url : '/aujourdhui' },
+      silent: true,
+    }),
+  );
+}) as EventListener);
+sw.addEventListener('notificationclick', ((event: NotificationClickLike) => {
+  event.notification.close();
+  const url = (event.notification.data as { url?: string } | null)?.url ?? '/aujourdhui';
+  event.waitUntil(sw.clients.openWindow(url));
+}) as EventListener);

@@ -50,7 +50,7 @@ export default defineConfig({
     {
       // base de TEST remise à zéro, édition « e2e » importée ; comptes créés par globalSetup
       // puis comptes PostgreSQL séparés ; l'API tourne sous le compte « api » (droits minimaux)
-      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --apercu ra1 --publish && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
+      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
       env: {
         DATABASE_URL: API_DB,
@@ -71,6 +71,9 @@ export default defineConfig({
         AWFORM_PAIEMENT: 'simule',
         // langues en préparation (traductions non relues) montrables, comme en démonstration
         AWFORM_LANGUES_PREPARATION: 'on',
+        // lot 16 : clé de chiffrement des récitations envoyées (tirée au hasard) ; clé publique VAPID factice
+        AWFORM_RECITATION_KEY: `v1:${randomBytes(32).toString('hex')}`,
+        AWFORM_VAPID_PUBLIC: `B${'A'.repeat(86)}`,
       },
       reuseExistingServer: false,
       timeout: 120_000,

@@ -20,7 +20,10 @@ const opt = (name: string, def: string) => {
 };
 const code = opt('--edition', process.env.AWFORM_EDITION ?? 'dev');
 // livres GELÉS (ETAT.md) ; « --apercu » : livres pas encore gelés, marqués « aperçu » (démonstration seulement)
-const levels = opt('--levels', process.env.AWFORM_LEVELS ?? 'en1,ad1,en2,ad2,re1,re2')
+const levels = opt(
+  '--levels',
+  process.env.AWFORM_LEVELS ?? 'en1,ad1,en2,ad2,en3,ad3,ad4,re1,re2,ado1,ado2,ra1,ra2,ra3',
+)
   .split(',')
   .filter(Boolean);
 const apercu = opt('--apercu', process.env.AWFORM_APERCU ?? '')

@@ -59,7 +59,19 @@ sed -i '/^DATABASE_URL_API=/d;/^DATABASE_URL_WORKER=/d' "$ENVF"
   echo "DATABASE_URL_API=postgres://awform_api:$(grep '^AWFORM_DB_API_PASSWORD=' "$ENVF" | cut -d= -f2-)@db:5432/awform"
   echo "DATABASE_URL_WORKER=postgres://awform_worker:$(grep '^AWFORM_DB_WORKER_PASSWORD=' "$ENVF" | cut -d= -f2-)@db:5432/awform"
 } >> "$ENVF"
-# langues en préparation (traductions non relues) : montrables en démonstration seulement
+# lot 16 : clé de chiffrement des récitations envoyées (API seulement) et clés VAPID des notifications
+# (publique : API et travailleur ; PRIVÉE : travailleur seulement) — générées une fois, jamais versionnées
+grep -q '^AWFORM_RECITATION_KEY=' "$ENVF" || echo "AWFORM_RECITATION_KEY=v1:$(rnd 32)" >> "$ENVF"
+if ! grep -q '^AWFORM_VAPID_PRIVATE=' "$ENVF"; then
+  VK="$(mktemp)"
+  openssl ecparam -name prime256v1 -genkey -noout -out "$VK"
+  b64u() { base64 -w0 | tr '+/' '-_' | tr -d '='; }
+  echo "AWFORM_VAPID_PRIVATE=$(openssl ec -in "$VK" -outform DER 2>/dev/null | tail -c +8 | head -c 32 | b64u)" >> "$ENVF"
+  echo "AWFORM_VAPID_PUBLIC=$(openssl ec -in "$VK" -pubout -outform DER 2>/dev/null | tail -c 65 | b64u)" >> "$ENVF"
+  shred -u "$VK"
+fi
+sed -i '/^AWFORM_VAPID_SUBJECT=/d' "$ENVF"
+echo "AWFORM_VAPID_SUBJECT=https://$SITE" >> "$ENVF"# langues en préparation (traductions non relues) : montrables en démonstration seulement
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_LANGUES_PREPARATION=' "$ENVF"; then echo "AWFORM_LANGUES_PREPARATION=on" >> "$ENVF"; fi
 # paiements : désactivés par défaut ; la démonstration utilise le prestataire SIMULÉ (aucune clé, aucune carte)
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_PAIEMENT=' "$ENVF"; then echo "AWFORM_PAIEMENT=simule" >> "$ENVF"; fi
@@ -81,9 +93,9 @@ DC=(docker compose -f "$PROD/compose.yml")
 # comptes de l'API et du travailleur (idempotent : droits recalculés à chaque déploiement)
 "${DC[@]}" --profile outils run --rm roles
 # livres GELÉS publiés (AWFORM_LEVELS) ; démonstration : livres en relecture en « aperçu » (AWFORM_APERCU)
-LEVELS="${AWFORM_LEVELS:-en1,ad1,en2,ad2,re1,re2}"
+LEVELS="${AWFORM_LEVELS:-en1,ad1,en2,ad2,en3,ad3,ad4,re1,re2,ado1,ado2,ra1,ra2,ra3}"
 APERCU="${AWFORM_APERCU:-}"
-[ "$DEMO" = 1 ] && [ -z "${AWFORM_APERCU+x}" ] && APERCU="ra1,ra2"
+# (lot 16 : ra1 et ra2 sont gelés, publiés normalement ; plus d'aperçu par défaut)
 EDITION="prod-$( (cat "$AWFORM_CONTENT_DIR/MANIFEST.sha256"; echo "$LEVELS|$APERCU|$AWFORM_VERSION") | sha256sum | cut -c1-10)"
 IMPORT_ARGS=(--edition "$EDITION" --levels "$LEVELS" --publish)
 [ -n "$APERCU" ] && IMPORT_ARGS+=(--apercu "$APERCU")

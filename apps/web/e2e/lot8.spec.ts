@@ -27,8 +27,10 @@ test('Sciences islamiques : livres re, ra en aperçu, leçon de religion avec QC
   await page.locator('nav.tabs a[data-tab="sciences"]').click();
   await expect(page.locator('[data-testid="niveau-religion"][data-level="re1"]')).toBeVisible();
   await expect(page.locator('[data-testid="niveau-religion"][data-level="re2"]')).toBeVisible();
+  // lot 16 : ra1 et ra2 sont GELÉS, publiés sans la mention « aperçu »
   const ra1 = page.locator('[data-testid="niveau-religion"][data-level="ra1"]');
-  await expect(ra1.getByTestId('apercu')).toBeVisible();
+  await expect(ra1).toBeVisible();
+  await expect(ra1.getByTestId('apercu')).toHaveCount(0);
 
   await page.locator('[data-testid="niveau-religion"][data-level="re1"]').click();
   await expect(page.locator('nav.tabs a[data-tab="sciences"]')).toHaveAttribute(
@@ -56,7 +58,7 @@ test('Sciences islamiques : livres re, ra en aperçu, leçon de religion avec QC
   expect(sawRetry || n === 1 || ok).toBe(true);
 });
 
-test('ra1 (aperçu) : leçon ados/adultes, numéros de hadiths non vérifiés masqués', async ({
+test('ra1 (gelé) : leçon ados/adultes, numéros de hadiths non vérifiés masqués', async ({
   page,
 }) => {
   await page.goto('/niveaux/ra1');

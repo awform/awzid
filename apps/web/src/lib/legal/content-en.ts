@@ -101,7 +101,7 @@ export const LEGAL_EN: Record<LegalKey, LegalPage> = {
           'Account: the adult’s email address and password (protected, never readable); country; language.',
           'Child profile: nickname, year of birth (never the full date), level, avatar — no real name, no photo, no address.',
           'Learning: exercise answers, progress, hifẓ, letter tracings, word cards, work days for teens and adults.',
-          'Voice recordings: they stay on the device, are never sent to the server and are erased after 7 days.',
+          'Voice recordings: they stay on the device and are erased after 7 days; a family can choose to send one to the class teacher (revocable agreement, parent code for a child): encrypted, listened to by the teacher only, never used to train an artificial intelligence.',
           'School space: first name and initial of paper-class pupils, marks, recitations, homework; the full name is entered only when a certificate is issued.',
           'Payment: plan, status and provider reference; never a card number.',
         ],
@@ -124,14 +124,14 @@ export const LEGAL_EN: Record<LegalKey, LegalPage> = {
       {
         titre: 'Recipients and processors',
         paras: [
-          'European hosting provider [to be appointed]; email service [to be appointed]; payment providers (Stripe, PayPal, mobile-money aggregator) only if you pay; artificial-intelligence provider (Anthropic) only if the tutor is turned on, with no name or address, under a pseudonym. No other transfer.',
+          'European hosting provider [to be appointed]; email service [to be appointed]; payment providers (Stripe, PayPal, mobile-money aggregator) only if you pay; artificial-intelligence provider (Anthropic) only if the tutor is turned on, with no name or address, under a pseudonym; the browser’s notification service (Google, Mozilla, Apple…) only if you turn notifications on — their content is encrypted and contains no names. No other transfer.',
         ],
       },
       {
         titre: 'Retention periods',
         paras: [
           'Deleted account: permanently erased within 30 days (encrypted backups: rolling 14 days).',
-          'Tutor log: 12 months at most. Voice recordings: 7 days, on the device only.',
+          'Tutor log: 12 months at most. Voice recordings: 7 days on the device; a recitation sent to the teacher: erased after the period set by the class (14 days by default, 30 at most), or as soon as the family deletes it.',
           'School certificate register: number, displayed name, level, date and grade kept permanently (proof of a diploma); the pupil’s other data follows the periods above and the full document is reduced 30 days after the pupil leaves. [To be confirmed by the lawyer.]',
         ],
       },

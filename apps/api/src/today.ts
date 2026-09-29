@@ -101,8 +101,9 @@ export function registerToday(app: FastifyInstance, db: Db, edition: Edition): v
       },
     },
     async (req, reply) => {
-      const g = await guard(req, reply, req.params.id);
-      if (g) return g;
+      await guard(req, reply, req.params.id);
+      // une réponse déjà envoyée (refus) arrête ici : une réponse Fastify est « thenable »
+      if (reply.sent) return reply;
       const p = await profileOf(req.params.id);
       if (!p) return err(reply, 404, 'profil_introuvable');
       const today = req.query.today ?? iso(Date.now());
@@ -173,8 +174,9 @@ export function registerToday(app: FastifyInstance, db: Db, edition: Edition): v
       },
     },
     async (req, reply) => {
-      const g = await guard(req, reply, req.params.id);
-      if (g) return g;
+      await guard(req, reply, req.params.id);
+      // une réponse déjà envoyée (refus) arrête ici : une réponse Fastify est « thenable »
+      if (reply.sent) return reply;
       const p = await profileOf(req.params.id);
       if (!p || p.enfant) return err(reply, 400, 'pas_pour_les_enfants');
       if (req.body.objectif + req.body.repos.length > 7)
@@ -208,8 +210,9 @@ export function registerToday(app: FastifyInstance, db: Db, edition: Edition): v
       },
     },
     async (req, reply) => {
-      const g = await guard(req, reply, req.params.id);
-      if (g) return g;
+      await guard(req, reply, req.params.id);
+      // une réponse déjà envoyée (refus) arrête ici : une réponse Fastify est « thenable »
+      if (reply.sent) return reply;
       const p = await profileOf(req.params.id);
       if (!p) return err(reply, 404, 'profil_introuvable');
       const ref = req.query.dimanche ?? iso(Date.now());
@@ -279,8 +282,9 @@ export function registerToday(app: FastifyInstance, db: Db, edition: Edition): v
     '/api/v1/profiles/:id/protections',
     { schema: { params: { type: 'object', properties: { id: UUID }, required: ['id'] } } },
     async (req, reply) => {
-      const g = await guard(req, reply, req.params.id);
-      if (g) return g;
+      await guard(req, reply, req.params.id);
+      // une réponse déjà envoyée (refus) arrête ici : une réponse Fastify est « thenable »
+      if (reply.sent) return reply;
       const p = await profileOf(req.params.id);
       if (!p) return err(reply, 404, 'profil_introuvable');
       const consents = await db
@@ -302,7 +306,8 @@ export function registerToday(app: FastifyInstance, db: Db, edition: Edition): v
         monnaieVirtuelle: false,
         lectureAutomatique: false,
         publicite: false,
-        enregistrementsEnvoyes: false,
+        // lot 16 : seulement si la famille l'a choisi (accord « envoi_recitation »), vers l'enseignant de la classe
+        enregistrementsEnvoyes: has('envoi_recitation'),
       };
     },
   );

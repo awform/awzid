@@ -44,7 +44,14 @@ export async function updateClassSettings(
   s: Partial<
     Pick<
       ClassRow,
-      'name' | 'levelCode' | 'schoolName' | 'schoolNameAr' | 'place' | 'placeAr' | 'schoolYear'
+      | 'name'
+      | 'levelCode'
+      | 'schoolName'
+      | 'schoolNameAr'
+      | 'place'
+      | 'placeAr'
+      | 'schoolYear'
+      | 'recitationDays'
     >
   >,
 ) {

@@ -58,8 +58,8 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
       return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   };
   const needTeacher = async (req: FastifyRequest, reply: FastifyReply) => {
-    const r = await needAuth(req, reply);
-    if (r) return r;
+    await needAuth(req, reply);
+    if (reply.sent) return;
     if (!isTeacher(req)) return err(reply, 403, 'reserve_aux_enseignants');
   };
   /** accès au hifẓ d'un profil : son titulaire, ou l'enseignant d'une de ses classes */

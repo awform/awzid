@@ -92,6 +92,13 @@
       "when": 1790668796570,
       "tag": "0012_registre_roles",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1790678268174,
+      "tag": "0013_recitations_notifications",
+      "breakpoints": true
     }
   ]
 }

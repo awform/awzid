@@ -7,6 +7,7 @@
  */
 import type { FastifyInstance } from 'fastify';
 import { evalDocs, type Db } from '@awform/db';
+import { vapidPublicKey } from './push.js';
 
 type Edition = () => Promise<{ id: string; code: string } | null>;
 
@@ -17,7 +18,11 @@ export function languesEnPreparation(): boolean {
 export function registerActivities(app: FastifyInstance, db: Db, edition: Edition): void {
   app.get('/api/v1/config', async (_req, reply) => {
     reply.header('Cache-Control', 'no-cache');
-    return { languesEnPreparation: languesEnPreparation() };
+    return {
+      languesEnPreparation: languesEnPreparation(),
+      // clé PUBLIQUE des notifications (null : notifications non configurées sur ce serveur)
+      vapidPublicKey: vapidPublicKey(),
+    };
   });
 
   app.get('/api/v1/activites/racines', async (_req, reply) => {

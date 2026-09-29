@@ -1,7 +1,7 @@
 /**
  * Relais de développement vers l'API Fastify (même origine : le cookie de session HttpOnly reste celui
  * de l'application). En production, Caddy route /api directement vers l'API ; ce relais ne sert plus.
- * Chemins /api/v1/* seulement ; corps JSON d'au plus 1 Mo ; en-têtes relayés : cookie, anti-CSRF,
+ * Chemins /api/v1/* seulement ; corps JSON d'au plus 1 Mo (audio : 3 Mo) ; en-têtes relayés : cookie, anti-CSRF, code parent,
  * cache (ETag) ; en retour : Set-Cookie, ETag, Content-Disposition.
  */
 import { error } from '@sveltejs/kit';
@@ -16,6 +16,8 @@ const FORWARD = [
   'accept',
   'if-none-match',
   'x-forwarded-for',
+  // code parent (envoi d'une récitation, notifications des enfants : lot 16)
+  'x-parent-pin',
 ];
 const BACK = ['content-type', 'set-cookie', 'etag', 'content-disposition', 'cache-control'];
 
@@ -28,10 +30,14 @@ const handler: RequestHandler = async ({ params, url, request, fetch, getClientA
     if (v) headers.set(h, v);
   }
   headers.set('x-forwarded-for', getClientAddress());
-  let body: string | undefined;
+  // corps BINAIRE (audio d'une récitation : 3 Mo au plus) ou JSON (1 Mo au plus)
+  let body: ArrayBuffer | undefined;
   if (request.method !== 'GET' && request.method !== 'HEAD') {
-    body = await request.text();
-    if (body.length > 1_048_576) error(413, 'trop volumineux');
+    body = await request.arrayBuffer();
+    const max = (request.headers.get('content-type') ?? '').startsWith('audio/')
+      ? 3 * 1_048_576
+      : 1_048_576;
+    if (body.byteLength > max) error(413, 'trop volumineux');
   }
   const r = await fetch(`${base()}/api/${params.path}${url.search}`, {
     method: request.method,

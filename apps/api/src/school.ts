@@ -131,7 +131,7 @@ export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): 
     },
   );
 
-  app.patch<{ Params: { id: string }; Body: Partial<Record<string, string | null>> }>(
+  app.patch<{ Params: { id: string }; Body: Partial<Record<string, string | number | null>> }>(
     '/api/v1/ecole/classes/:id',
     {
       ...pre,
@@ -148,6 +148,7 @@ export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): 
             place: TXT(80),
             placeAr: TXT(80),
             schoolYear: TXT(20),
+            recitationDays: { type: 'integer', minimum: 1, maximum: 30 },
           },
         },
       },

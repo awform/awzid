@@ -39,6 +39,9 @@ import { registerAdmin } from './admin.js';
 import { registerToday } from './today.js';
 import { registerSchool } from './school.js';
 import { registerActivities } from './activities.js';
+import { recitationKeyFromEnv, registerRecitations } from './recitations.js';
+import { registerPush } from './push.js';
+import type { RecitationKey } from '@awform/db';
 
 export interface AppOptions {
   db: Db;
@@ -52,6 +55,8 @@ export interface AppOptions {
   secretKey?: Buffer | null;
   /** tuteur (tests) ; sinon AWFORM_TUTEUR */
   tutor?: TutorSetup;
+  /** clé de chiffrement des récitations envoyées (tests) ; sinon AWFORM_RECITATION_KEY ; null : envoi fermé */
+  recitationKey?: RecitationKey | null;
   /** paiements (tests) ; sinon AWFORM_PAIEMENT */
   billing?: BillingSetup;
 }
@@ -122,6 +127,12 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerToday(app, db, edition);
   registerSchool(app, db, edition);
   registerActivities(app, db, edition);
+  registerRecitations(
+    app,
+    db,
+    opts.recitationKey === undefined ? recitationKeyFromEnv() : opts.recitationKey,
+  );
+  registerPush(app, db);
 
   app.get('/api/v1/health', async () => {
     const dbOk = await ping(db).catch(() => false);

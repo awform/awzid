@@ -24,6 +24,7 @@
     place: string | null;
     placeAr: string | null;
     schoolYear: string | null;
+    recitationDays?: number;
   }
   interface Group {
     id: string;
@@ -80,7 +81,7 @@
     issuedAt: string;
   }
 
-  const TABS = ['eleves', 'devoirs', 'tableau', 'certificats'] as const;
+  const TABS = ['eleves', 'devoirs', 'tableau', 'ecoute', 'certificats'] as const;
   let tab = $state<(typeof TABS)[number]>('eleves');
   let me = $state<Me | null>(null);
   let loaded = $state(false);
@@ -108,6 +109,7 @@
     place: '',
     placeAr: '',
     schoolYear: '',
+    recitationDays: 14,
   });
   let newGroup = $state('');
   let newPupil = $state({ displayName: '', gender: '', groupId: '' });
@@ -165,12 +167,14 @@
       place: cls.place ?? '',
       placeAr: cls.placeAr ?? '',
       schoolYear: cls.schoolYear ?? '',
+      recitationDays: cls.recitationDays ?? 14,
     };
     if (cls.levelCode) {
       const u = await call<{ units: typeof units }>('GET', `/levels/${cls.levelCode}/units`);
       units = u.data?.units ?? [];
     } else units = [];
     await loadTableau();
+    await loadRecs();
     const c = await call<{ certificates: Cert[] }>('GET', `/ecole/classes/${id}/certificats`);
     certs = c.data?.certificates ?? [];
   }
@@ -349,6 +353,56 @@
   const pct = (x: number | null | undefined) =>
     x === null || x === undefined ? '—' : fmtNumber(x);
 
+  // ---------------------------------------------------------------- écoute des récitations (lot 16)
+  interface Rec {
+    id: string;
+    pseudonym: string;
+    part: string;
+    createdAt: string;
+    grade: { note: { total: number } } | null;
+  }
+  let recs = $state<Rec[]>([]);
+  let ecouteJours = $state(14);
+  let audioUrl = $state<Record<string, string>>({});
+  let noteFor = $state<string | null>(null);
+  async function loadRecs() {
+    const r = await call<{ jours: number; recitations: Rec[] }>(
+      'GET',
+      `/ecole/classes/${id}/recitations`,
+    );
+    recs = r.data?.recitations ?? [];
+    ecouteJours = r.data?.jours ?? 14;
+  }
+  /** l'audio est déchiffré par le serveur pour l'enseignant de la classe seulement, jamais mis en cache */
+  async function ecouter(rid: string) {
+    const r = await fetch(`/api/v1/ecole/recitations/${rid}/audio`, { credentials: 'same-origin' });
+    if (!r.ok) return done(false, 'introuvable', '');
+    audioUrl = { ...audioUrl, [rid]: URL.createObjectURL(await r.blob()) };
+  }
+  function ouvrirNote(rid: string) {
+    noteFor = rid;
+    counters = {
+      aides: 0,
+      hesitations: 0,
+      sauts: 0,
+      oublis: 0,
+      claires: 0,
+      discretes: 0,
+      fluidite: 4,
+    };
+  }
+  async function noter(e: SubmitEvent, rid: string) {
+    e.preventDefault();
+    const r = await call<{ note: { total: number; mention: string } }>(
+      'POST',
+      `/ecole/recitations/${rid}/note`,
+      { counters },
+    );
+    if (done(r.ok, r.code, t('ecoute.note_ok', { note: fmtNumber(r.data?.note.total ?? 0) }))) {
+      noteFor = null;
+      await loadRecs();
+    }
+  }
   // ---------------------------------------------------------------- certificats
   const certPupil = $derived(pupils.find((p) => p.id === cert.pupilId) ?? null);
   async function certCall(apercu: boolean) {
@@ -478,6 +532,16 @@
         <input bind:value={settings.placeAr} maxlength="80" dir="rtl" lang="ar" /></label
       >
       <label>{t('classe.annee')} <input bind:value={settings.schoolYear} maxlength="20" /></label>
+      <label
+        >{t('ecoute.jours')}
+        <input
+          type="number"
+          min="1"
+          max="30"
+          bind:value={settings.recitationDays}
+          data-testid="jours-recitations"
+        /></label
+      >
       <button type="submit" class="primary" data-testid="enregistrer-reglages"
         >{t('commun.enregistrer')}</button
       >
@@ -886,6 +950,67 @@
         </div>
       </form>
     {/if}
+  {:else if tab === 'ecoute'}
+    <section class="card" data-testid="ecoute">
+      <h2>{t('ecoute.titre')}</h2>
+      <p class="muted small">{t('ecoute.aide', { n: ecouteJours })}</p>
+      <ul class="plain">
+        {#each recs as r (r.id)}
+          <li class="devoir" data-recitation={r.id}>
+            <div>
+              <strong>{r.pseudonym}</strong> · {r.part} ·
+              <span class="muted small">{fmtDate(r.createdAt, { dateStyle: 'medium' })}</span>
+              {#if r.grade}· {t('envoi.note', { n: r.grade.note.total })}{/if}
+            </div>
+            {#if audioUrl[r.id]}
+              <audio controls src={audioUrl[r.id]} data-testid="ecoute-audio"></audio>
+            {:else}
+              <button
+                type="button"
+                class="small"
+                onclick={() => ecouter(r.id)}
+                data-testid="ecoute-ecouter">{t('ecoute.ecouter')}</button
+              >
+            {/if}
+            {#if noteFor === r.id}
+              <form class="form" onsubmit={(e) => noter(e, r.id)} data-testid="ecoute-note">
+                {#each FIELDS as f (f)}
+                  <label class="count"
+                    ><span>{t(`ens.c_${f}`)}</span>
+                    <input type="number" min="0" max="50" bind:value={counters[f]} /></label
+                  >
+                {/each}
+                <label class="count"
+                  ><span>{t('ens.c_fluidite')}</span>
+                  <input type="number" min="0" max="4" bind:value={counters.fluidite} /></label
+                >
+                <p class="live">
+                  {t('ens.note_calculee', {
+                    memo: fmtNumber(live.memorisation),
+                    tajwid: fmtNumber(live.tajwid),
+                    fluidite: fmtNumber(live.fluidite),
+                    total: fmtNumber(live.total),
+                    mention: t(`hifz.mention_${live.mention}`),
+                  })}
+                </p>
+                <button type="submit" class="primary" data-testid="ecoute-enregistrer"
+                  >{t('ens.enregistrer')}</button
+                >
+              </form>
+            {:else}
+              <button
+                type="button"
+                class="small"
+                onclick={() => ouvrirNote(r.id)}
+                data-testid="ecoute-noter">{t('ecoute.noter')}</button
+              >
+            {/if}
+          </li>
+        {:else}
+          <li class="muted">{t('ecoute.aucune')}</li>
+        {/each}
+      </ul>
+    </section>
   {:else}
     <form class="card form" onsubmit={doPreview} data-testid="certificat-form">
       <h2>{t('classe.delivrer')}</h2>

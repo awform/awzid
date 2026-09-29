@@ -65,6 +65,10 @@ export const API_GRANTS: Record<string, Right[]> = {
   assignment_mark: ALL,
   paper_result: ALL,
   certificate: RIU,
+  // lot 16 : récitations envoyées (chiffrées), notifications
+  recitation_upload: ALL,
+  push_subscription: ALL,
+  notification_pref: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */
@@ -73,6 +77,18 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
   tutor_log: ['SELECT', 'DELETE'],
   audit_log: ['INSERT'],
   certificate: ['SELECT', 'UPDATE'],
+  // lot 16 : effacement des récitations échues, envoi des notifications
+  recitation_upload: ['SELECT', 'DELETE'],
+  push_subscription: ['SELECT', 'UPDATE', 'DELETE'],
+  notification_pref: ['SELECT', 'UPDATE'],
+  class_assignment: ['SELECT'],
+  class_pupil: ['SELECT'],
+  assignment_mark: ['SELECT'],
+};
+
+/** Droits par COLONNE du travailleur (ni pseudonyme ni année de naissance : seulement le lien au compte). */
+export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
+  profile: ['id', 'owner_account_id', 'kind'],
 };
 
 export const SEQUENCES = ['audit_log_id_seq'];
@@ -124,6 +140,10 @@ export function rolesSql(
   ] as const)
     for (const [table, rights] of Object.entries(grants))
       out.push(`GRANT ${rights.join(', ')} ON TABLE public.${ident(table)} TO ${ident(names_)}`);
+  for (const [table, cols] of Object.entries(WORKER_COLUMN_GRANTS))
+    out.push(
+      `GRANT SELECT (${cols.map(ident).join(', ')}) ON TABLE public.${ident(table)} TO ${ident(names.worker)}`,
+    );
   for (const s of SEQUENCES)
     for (const role of [names.api, names.worker])
       out.push(`GRANT USAGE, SELECT ON SEQUENCE public.${ident(s)} TO ${ident(role)}`);

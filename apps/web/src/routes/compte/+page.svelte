@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import NotificationsReglages from '$lib/NotificationsReglages.svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { setActiveProfile } from '$lib/attempts';
@@ -213,6 +214,10 @@
       </p>
     {/if}
   </section>
+
+  {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
+    <NotificationsReglages parent={me.account.kind === 'parent'} />
+  {/if}
 
   <section class="card">
     <h2>{t('compte.langue')}</h2>

@@ -40,7 +40,7 @@ describe.skipIf(!READY)('lot 15 (awform_test)', () => {
   it('langues en préparation : masquées par défaut (production), montrables seulement avec le drapeau', async () => {
     const before = process.env.AWFORM_LANGUES_PREPARATION;
     delete process.env.AWFORM_LANGUES_PREPARATION;
-    expect((await app.inject({ url: '/api/v1/config' })).json()).toEqual({
+    expect((await app.inject({ url: '/api/v1/config' })).json()).toMatchObject({
       languesEnPreparation: false,
     });
     process.env.AWFORM_LANGUES_PREPARATION = 'on';

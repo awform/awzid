@@ -57,7 +57,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Scripts d'exploitation (syntaxe)
-        run: for f in infra/prod/*.sh infra/*.sh infra/git-hooks/*; do bash -n "$f"; done
+        run: for f in infra/prod/*.sh infra/*.sh infra/android/*.sh infra/git-hooks/*; do bash -n "$f"; done
       - name: Docker Compose (configuration)
         run: |
           mkdir -p /tmp/awform-env && touch /tmp/awform-env/{api,worker,outils,db,caddy}.env
@@ -113,3 +113,32 @@ jobs:
         with:
           name: batterie-tuteur
           path: tuteur-batterie.*
+
+  android-debug:
+    # APK de DÉBOGAGE (emballage Capacitor de la PWA) : SDK Android de l'image GitHub (licences déjà acceptées
+    # par l'image), JDK 21, aucune clé ni compte Google ; l'APK est publié en artefact de la CI
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: pnpm (corepack)
+        run: corepack enable && pnpm --version
+      - name: Plateforme et outils Android épinglés
+        run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: APK de débogage (reproductible)
+        run: infra/android/build-debug.sh
+        env:
+          AWFORM_ANDROID_URL: https://demo.awform.invalid
+      - uses: actions/upload-artifact@v4
+        with:
+          name: awform-debug-apk
+          path: apps/android/android/app/build/outputs/apk/debug/app-debug.apk

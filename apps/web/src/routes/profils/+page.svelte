@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { levelFitsProfile, levelLabel } from '$lib/levels';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { activeProfile, setActiveProfile, type DevProfile } from '$lib/attempts';
@@ -34,7 +35,11 @@
   const age = $derived(YEAR - 1 - Number(form.birthYear));
   const needCoppa = $derived(me?.account.country === 'US' && age < 13);
 
+  /** livres publiés de l'édition (hors aperçus) */
+  let levels = $state<string[]>(['en1']);
   onMount(async () => {
+    const lv = await call<{ levels: Array<{ code: string; apercu: boolean }> }>('GET', '/levels');
+    if (lv.ok) levels = lv.data!.levels.filter((l) => !l.apercu).map((l) => l.code);
     me = await fetchMe();
     loaded = true;
     const active = await activeProfile();
@@ -148,8 +153,9 @@
         />
         <label for="level">{t('profils.niveau')}</label>
         <select id="level" bind:value={form.levelCode}>
-          <option value="en1">{t('niveau.en1')}</option>
-          <option value="ad1">{t('niveau.ad1')}</option>
+          {#each levels.filter((c) => levelFitsProfile(c, 'enfant')) as c (c)}<option value={c}
+              >{levelLabel(c)}</option
+            >{/each}
         </select>
         <fieldset>
           <legend>{t('profils.avatar')}</legend>

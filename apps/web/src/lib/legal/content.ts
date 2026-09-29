@@ -113,7 +113,7 @@ export const LEGAL: Record<LegalKey, LegalPage> = {
           "Compte : adresse électronique et mot de passe (protégé, jamais lisible) de l'adulte ; pays ; langue.",
           "Profil d'enfant : pseudonyme, année de naissance (jamais la date complète), niveau, avatar — aucun nom réel, aucune photo, aucune adresse.",
           'Apprentissage : réponses aux exercices, progression, hifẓ, tracés des lettres, cartes de mots, jours de travail des ados et adultes.',
-          "Enregistrements de la voix : ils restent sur l'appareil, ne sont jamais envoyés au serveur et s'effacent après 7 jours.",
+          "Enregistrements de la voix : ils restent sur l'appareil et s'effacent après 7 jours ; une famille peut choisir d'en envoyer un à l'enseignant de la classe (accord retirable, code parent pour un enfant) : chiffré, écouté par lui seul, jamais utilisé pour entraîner une intelligence artificielle.",
           "Espace école : prénom et initiale des élèves de classe papier, notes des bilans, récitations, devoirs ; nom complet saisi seulement au moment d'un certificat.",
           'Paiement : formule, statut et référence chez le prestataire ; jamais de numéro de carte.',
         ],
@@ -136,14 +136,14 @@ export const LEGAL: Record<LegalKey, LegalPage> = {
       {
         titre: 'Destinataires et sous-traitants',
         paras: [
-          "Hébergeur européen [à désigner] ; service d'envoi d'e-mails [à désigner] ; prestataires de paiement (Stripe, PayPal, agrégateur de mobile money) seulement si vous payez ; fournisseur d'intelligence artificielle (Anthropic) seulement si le tuteur est activé, sans nom ni adresse, avec un pseudonyme. Aucune autre transmission.",
+          "Hébergeur européen [à désigner] ; service d'envoi d'e-mails [à désigner] ; prestataires de paiement (Stripe, PayPal, agrégateur de mobile money) seulement si vous payez ; fournisseur d'intelligence artificielle (Anthropic) seulement si le tuteur est activé, sans nom ni adresse, avec un pseudonyme ; service de notification du navigateur (Google, Mozilla, Apple…) seulement si vous activez les notifications — leur contenu est chiffré et ne contient aucun nom. Aucune autre transmission.",
         ],
       },
       {
         titre: 'Durées de conservation',
         paras: [
           'Compte supprimé : effacement définitif sous 30 jours (sauvegardes chiffrées : 14 jours glissants).',
-          'Journal du tuteur : 12 mois au plus. Enregistrements vocaux : 7 jours, sur l’appareil seulement.',
+          'Journal du tuteur : 12 mois au plus. Enregistrements vocaux : 7 jours sur l’appareil ; récitation envoyée à l’enseignant : effacée après la durée réglée par la classe (14 jours par défaut, 30 au plus), ou dès que la famille la supprime.',
           "Registre des certificats de l'école : numéro, nom affiché, niveau, date et mention conservés durablement (preuve d'un diplôme) ; les autres données de l'élève suivent les durées ci-dessus et le document complet est réduit 30 jours après le départ de l'élève. [À confirmer par le juriste.]",
         ],
       },

@@ -12,10 +12,12 @@
   },
   "dependencies": {
     "@awform/db": "workspace:*",
-    "pg-boss": "^12.35.0"
+    "pg-boss": "^12.35.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@types/node": "^24.19.0",
+    "@types/web-push": "^3.6.4",
     "typescript": "~6.0.3"
   }
 }

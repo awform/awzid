@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { carnetLabel } from '$lib/levels';
   import { resolve } from '$app/paths';
   import {
     CYCLES,
@@ -33,6 +34,7 @@
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
   import { recordingAllowed } from '$lib/recordings';
   import Recorder from '$lib/Recorder.svelte';
+  import RecitationEnvoi from '$lib/RecitationEnvoi.svelte';
   import { call, fetchMe, type Me } from '$lib/session';
   import VerseText from '$lib/VerseText.svelte';
 
@@ -70,6 +72,8 @@
     trial: true,
   });
 
+  /** carnets de l'édition (livres gelés : E1, N1, E2, N2, E3, N3…) */
+  let books = $state<string[]>(['en1', 'ad1']);
   const isChild = $derived(!!profile && profile.kind !== 'adulte');
   const canManage = $derived(!isChild || parentMode);
   const today = localIso();
@@ -79,7 +83,14 @@
       me = await fetchMe();
       profile = await demoProfileFor('');
       if (profile) {
-        setup.book = profile.levelCode === 'ad1' || profile.kind === 'adulte' ? 'ad1' : 'en1';
+        const bl = await call<{ books: string[] }>('GET', '/hifz/books').catch(() => null);
+        if (bl?.ok && bl.data?.books.length) books = bl.data.books;
+        // carnet du livre suivi s'il existe, sinon le premier de la filière
+        setup.book = books.includes(profile.levelCode ?? '')
+          ? profile.levelCode!
+          : profile.kind === 'adulte'
+            ? 'ad1'
+            : 'en1';
         recAllowed = profile.kind === 'adulte' || (await recordingAllowed(profile.id));
         await refresh();
       }
@@ -320,8 +331,7 @@
       >
       {#if setup.mode === 'carnet'}
         <select bind:value={setup.book} aria-label={t('hifz.carnet')}>
-          <option value="en1">{t('hifz.carnet_en1')}</option>
-          <option value="ad1">{t('hifz.carnet_ad1')}</option>
+          {#each books as b (b)}<option value={b}>{carnetLabel(b)}</option>{/each}
         </select>
       {/if}
       <label class="radio"
@@ -400,7 +410,7 @@
   <section class="card head">
     <p data-testid="plan-resume">
       {#if plan.mode === 'carnet'}
-        {t(`hifz.carnet_${plan.bookCode}`)} — {t('hifz.semaine', {
+        {carnetLabel(plan.bookCode ?? '')} — {t('hifz.semaine', {
           n: view.week ?? 1,
           total: pack?.book.semaines ?? 30,
         })}
@@ -648,6 +658,7 @@
         profileId={profile!.id}
         part={view.plan.recent[0]?.key ?? view.weekTasks[0]?.part ?? 'libre'}
       />
+      <RecitationEnvoi profileId={profile!.id} kind={profile!.kind} />
     </section>
   {/if}
 

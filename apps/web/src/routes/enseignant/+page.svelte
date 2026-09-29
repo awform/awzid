@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { carnetLabel } from '$lib/levels';
   import { resolve } from '$app/paths';
   import { CYCLES, defaultCycle, entryKey, note, suraName, type Counters } from '@awform/hifz';
   import { loadBook, localIso } from '$lib/hifz';
@@ -223,7 +224,7 @@
             <strong>{m.pseudonym}</strong>
             <span class="muted small">
               {#if m.plan}{m.plan.mode === 'carnet'
-                  ? t(`hifz.carnet_${m.plan.bookCode}`)
+                  ? carnetLabel(m.plan.bookCode ?? '')
                   : t('hifz.rythme_actuel', { n: m.plan.rhythmYears ?? 7 })}{:else}{t(
                   'ens.sans_plan',
                 )}{/if}

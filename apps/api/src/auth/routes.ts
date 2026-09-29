@@ -12,7 +12,7 @@
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, asc, eq, isNull } from 'drizzle-orm';
-import { schema as t, type Db } from '@awform/db';
+import { deleteProfileRecitations, profileRecitations, schema as t, type Db } from '@awform/db';
 import { decrypt, encrypt, hashSecret, newTotpSecret, verifySecret, verifyTotp } from './crypto.js';
 import { checkPassword, MAX_LENGTH } from './passwords.js';
 import {
@@ -62,7 +62,12 @@ const EMAIL = '^[^\\s@]{1,64}@[^\\s@]{1,190}\\.[^\\s@]{2,24}$';
 const COUNTRY = '^[A-Z]{2}$';
 const YEAR = { type: 'integer', minimum: 1900, maximum: 2100 } as const;
 /** consentements facultatifs (retirables) ; « partage_enseignant » : suivi du hifẓ par l'enseignant d'une classe */
-const OPTIONAL_CONSENTS: ReadonlySet<string> = new Set(['rappels', 'partage_enseignant']);
+const OPTIONAL_CONSENTS: ReadonlySet<string> = new Set([
+  'rappels',
+  'partage_enseignant',
+  // lot 16 : envoi d'une récitation à l'enseignant de la classe (choix de la famille)
+  'envoi_recitation',
+]);
 /** inscriptions par heure et par adresse IP (réglable pour les tests de bout en bout) */
 const SIGNUPS_PER_HOUR = Number(process.env.AWFORM_SIGNUP_PER_HOUR ?? 20) || 20;
 const AVATARS = ['etoile', 'lune', 'soleil', 'feuille', 'goutte', 'livre'];
@@ -84,8 +89,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   };
   const needParent = async (req: FastifyRequest, reply: FastifyReply) => {
-    const r = await needAuth(req, reply);
-    if (r) return r;
+    await needAuth(req, reply);
+    if (reply.sent) return;
     if (req.auth?.kind !== 'parent') return err(reply, 403, 'reserve_aux_parents');
   };
 
@@ -672,8 +677,14 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       if (!OPTIONAL_CONSENTS.has(c.type)) return err(reply, 409, 'consentement_necessaire');
       await db.update(t.consent).set({ withdrawnAt: new Date() }).where(eq(t.consent.id, c.id));
       // retrait du partage avec l'enseignant : le profil quitte ses classes
-      if (c.type === 'partage_enseignant' && c.profileId)
+      if (c.type === 'partage_enseignant' && c.profileId) {
         await db.delete(t.classMember).where(eq(t.classMember.profileId, c.profileId));
+        // liste de classe de l'espace école aussi (le registre garde les certificats déjà délivrés)
+        await db.delete(t.classPupil).where(eq(t.classPupil.profileId, c.profileId));
+      }
+      // retrait de l'accord d'envoi : les récitations déjà envoyées sont effacées
+      if (c.type === 'envoi_recitation' && c.profileId)
+        await deleteProfileRecitations(db, c.profileId);
       await audit(db, req.auth!.accountId, 'consentement.retrait', c.id, { type: c.type });
       return { ok: true };
     },
@@ -691,7 +702,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     const hifzEvents = [];
     const classes = [];
     const practice = [];
+    const recitations = [];
     for (const pid of ids) {
+      // récitations envoyées : métadonnées et note (l'audio chiffré se télécharge depuis l'application)
+      recitations.push(...(await profileRecitations(db, pid)));
       attempts.push(...(await db.select().from(t.attempt).where(eq(t.attempt.profileId, pid))));
       progress.push(...(await db.select().from(t.progress).where(eq(t.progress.profileId, pid))));
       hifzPlans.push(...(await db.select().from(t.hifzPlan).where(eq(t.hifzPlan.profileId, pid))));
@@ -736,6 +750,11 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       reponses: attempts,
       hifz: { plans: hifzPlans, journal: hifzEvents, classes },
       entrainement: practice,
+      recitationsEnvoyees: recitations,
+      notifications: await db
+        .select()
+        .from(t.notificationPref)
+        .where(eq(t.notificationPref.accountId, id)),
       sessions,
     };
   });

@@ -4,7 +4,7 @@
 # Ne copie jamais le dossier awform\audio (clé Azure).
 param(
   [Parameter(Mandatory = $true)][string]$W,
-  [string[]]$Levels = @('en1', 'ad1', 'en2', 'ad2', 're1', 're2', 'ra1', 'ra2'),
+  [string[]]$Levels = @('en1', 'ad1', 'en2', 'ad2', 'en3', 'ad3', 'ad4', 're1', 're2', 'ado1', 'ado2', 'ra1', 'ra2', 'ra3'),
   [string]$VmHost = 'awform-dev',
   [string]$Dest = 'awform-content'
 )
