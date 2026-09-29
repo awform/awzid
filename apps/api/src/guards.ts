@@ -96,3 +96,16 @@ export async function minorHolder(db: Db, accountId: string): Promise<boolean> {
     .where(eq(t.profile.ownerAccountId, accountId));
   return ps.some((p) => p.kind !== 'adulte');
 }
+
+/**
+ * Audit SEC-3 / MIN-4 : tout accord donné ou retiré POUR UN MINEUR (enfant ou ado d'un compte parent) exige le
+ * code parent (s'il est défini), avec le même compteur d'essais que `parentGate`.
+ */
+export async function consentGate(
+  db: Db,
+  req: FastifyRequest,
+  reply: FastifyReply,
+  profileKind: string,
+): Promise<boolean> {
+  return parentGate(db, req, reply, profileKind === 'adulte' ? 'adulte' : 'enfant');
+}

@@ -73,6 +73,8 @@ const YEAR = { type: 'integer', minimum: 1900, maximum: 2100 } as const;
 const OPTIONAL_CONSENTS: ReadonlySet<string> = new Set([
   'rappels',
   'partage_enseignant',
+  // audit MIN-4 : l'accord au tuteur IA se retire aussi depuis « mes accords »
+  'tuteur_ia',
   // lot 16 : envoi d'une récitation à l'enseignant de la classe (choix de la famille)
   'envoi_recitation',
 ]);

@@ -1,5 +1,5 @@
 import { tanwinUndo } from '@awform/content/text';
-import { expect, loginTeacher, newAdult, test } from './fixtures';
+import { expect, loginTeacher, newAdult, PARENT_PIN, test } from './fixtures';
 
 /**
  * Lot 9 : tuteur (fournisseur SIMULÉ en test). Adulte : texte encadré, Coran par référence (Tanzil exact),
@@ -97,6 +97,8 @@ test.describe('parent et enfant', () => {
     const amina = page.locator('[data-tuteur-profil]').filter({ hasText: 'Amina' });
     await expect(amina).toBeVisible();
     await expect(amina.getByTestId('journal-tuteur')).toBeVisible();
+    // audit MIN-4 / SEC-3 : le code parent est exigé pour donner l'accord
+    await page.getByTestId('pin-tuteur').fill(PARENT_PIN);
     const box = amina.getByTestId('accord-tuteur');
     // l'autre projet (mobile/bureau) peut avoir déjà donné l'accord : on vérifie l'état final
     await box.check();

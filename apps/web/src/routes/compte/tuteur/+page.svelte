@@ -24,12 +24,16 @@
     const r = await journal(id);
     if (r.ok && r.data) data[id] = r.data;
   }
+  /** code parent : exigé par le serveur pour donner ou retirer l'accord (audit MIN-4 / SEC-3) */
+  let pin = $state('');
+  let error = $state('');
   async function toggle(id: string, actif: boolean) {
-    const r = await setConsent(id, actif);
+    error = '';
+    const r = await setConsent(id, actif, pin);
     if (r.ok) {
       msg = actif ? t('ctut.accord_donne') : t('ctut.accord_retire');
-      await load(id);
-    }
+    } else error = t(`erreur.${r.code ?? 'reseau'}`);
+    await load(id);
   }
   async function signal(pid: string, id: string) {
     const r = await report(pid, id);
@@ -43,6 +47,21 @@
 <h1>{t('ctut.titre')}</h1>
 <p class="muted">{t('ctut.intro')}</p>
 {#if msg}<p class="card ok" role="status">{msg}</p>{/if}
+{#if error}<p class="card error" role="alert">{error}</p>{/if}
+{#if me?.account.kind === 'parent'}
+  <label class="check"
+    >{t('libre.code_parent')}
+    <input
+      id="pin-tuteur"
+      type="password"
+      inputmode="numeric"
+      autocomplete="off"
+      maxlength="8"
+      bind:value={pin}
+      data-testid="pin-tuteur"
+    /></label
+  >
+{/if}
 
 {#each me?.profiles ?? [] as p (p.id)}
   {@const d = data[p.id]}

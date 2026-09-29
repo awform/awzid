@@ -5,6 +5,7 @@
  * n'est utilisé qu'avec le consentement « tuteur_ia » du parent (sinon : tuteur local seul).
  * Chaque réponse est journalisée (visible du parent) ; questions transmises et alertes enregistrées.
  */
+import { consentGate } from './guards.js';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, eq, isNull } from 'drizzle-orm';
 import {
@@ -295,6 +296,12 @@ export function registerTutor(
       if (!req.auth) return err(reply, 401, 'non_connecte');
       if (!(await owner(req, req.params.profileId))) return err(reply, 403, 'profil_interdit');
       if (req.auth.kind !== 'parent') return err(reply, 403, 'reserve_au_parent');
+      // audit MIN-4 / SEC-3 : code parent exigé (appareil partagé : l'enfant ne s'active pas l'IA lui-même)
+      const [prof] = await db
+        .select({ kind: t.profile.kind })
+        .from(t.profile)
+        .where(eq(t.profile.id, req.params.profileId));
+      if (!(await consentGate(db, req, reply, prof?.kind ?? 'enfant'))) return reply;
       const where = and(
         eq(t.consent.profileId, req.params.profileId),
         eq(t.consent.type, 'tuteur_ia'),
@@ -308,6 +315,9 @@ export function registerTutor(
             profileId: req.params.profileId,
             type: 'tuteur_ia',
             textVersion: TEXT_VERSION,
+            // audit MIN-4 : pays et preuve de l'accord
+            country: req.auth.country,
+            evidence: { methode: 'code_parent', date: new Date().toISOString() },
           });
       } else await db.update(t.consent).set({ withdrawnAt: new Date() }).where(where);
       return { actif: req.body.actif };

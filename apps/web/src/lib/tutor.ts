@@ -89,8 +89,14 @@ export const journal = (profileId: string) =>
 export const report = (profileId: string, logId: string) =>
   call<{ ok: boolean }>('POST', `/tutor/${profileId}/journal/${logId}/signaler`, {});
 
-export const setConsent = (profileId: string, actif: boolean) =>
-  call<{ actif: boolean }>('PUT', `/profiles/${profileId}/tuteur`, { actif });
+/** accord au tuteur IA : code parent exigé par le serveur (audit MIN-4 / SEC-3) */
+export const setConsent = (profileId: string, actif: boolean, pin = '') =>
+  call<{ actif: boolean }>(
+    'PUT',
+    `/profiles/${profileId}/tuteur`,
+    { actif },
+    pin ? { 'x-parent-pin': pin } : undefined,
+  );
 
 export const teacherQuestions = () =>
   call<{

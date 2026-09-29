@@ -107,4 +107,26 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
       .then((r) => r.rows);
     expect(row.evidence).toMatchObject({ majoriteDeclaree: true });
   });
+
+  it('MIN-4 : accord « tuteur IA » — code parent exigé, preuve et pays gardés, retirable depuis « mes accords »', async () => {
+    const fam = await parent(c, 'min4@exemple.org');
+    const kid = await child(c, fam.P, 'Moussa', 11);
+    const url = `/api/v1/profiles/${kid}/tuteur`;
+    expect((await c.req('PUT', url, fam.P, { actif: true })).statusCode).toBe(401);
+    expect((await c.req('PUT', url, fam.pin, { actif: true })).statusCode).toBe(200);
+    const cs = (await c.req('GET', '/api/v1/account/consents', fam.P)).json().consents as Array<{
+      id: string;
+      type: string;
+      optional: boolean;
+    }>;
+    const tu = cs.find((x) => x.type === 'tuteur_ia')!;
+    expect(tu.optional).toBe(true);
+    const [row] = await c.h.pool
+      .query('select country, evidence from consent where id = $1', [tu.id])
+      .then((r) => r.rows);
+    expect(row.country).toBe('FR');
+    expect(row.evidence).toMatchObject({ methode: 'code_parent' });
+    const w = await c.req('POST', `/api/v1/account/consents/${tu.id}/withdraw`, fam.P, {});
+    expect(w.statusCode, w.body).toBe(200);
+  });
 });

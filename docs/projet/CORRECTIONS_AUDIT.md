@@ -18,8 +18,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | SEC-8 | mineur | Entrées de la file hors ligne sans schéma (1 Mo de JSON libre par événement) | à faire | | |
 | MIN-1 | majeur | Un mineur ayant l'âge du « consentement numérique » obtient un profil **adulte**, sans aucune protection | corrigé | c33fbcd | audit-mineurs.test.ts « MIN-1 » |
 | MIN-2 | majeur | Deux calculs d'âge : un profil « enfant » reçoit le tuteur « ado » (texte libre, la nuit) | corrigé | 47b9224 | audit-mineurs.test.ts « MIN-2 » |
-| MIN-3 | majeur | Compte « parent » sans contrôle d'âge : un enfant consent pour lui-même (Sénégal compris) | corrigé | voir « MIN-3 » dans git log | audit-mineurs.test.ts « MIN-3 » (+ inscriptions de parent des tests et de l'e2e complétées) |
-| MIN-4 | majeur | Accord `tuteur_ia` : ni code parent, ni preuve, ni pays ; impossible à retirer depuis « mes consentements » | à faire | | |
+| MIN-3 | majeur | Compte « parent » sans contrôle d'âge : un enfant consent pour lui-même (Sénégal compris) | corrigé | 12480c2 | audit-mineurs.test.ts « MIN-3 » |
+| MIN-4 | majeur | Accord `tuteur_ia` : ni code parent, ni preuve, ni pays ; impossible à retirer depuis « mes consentements » | corrigé | voir « MIN-4 » dans git log | audit-mineurs.test.ts « MIN-4 » |
 | MIN-5 | majeur | Compte supprimé : l'enseignant garde l'accès à l'enfant pendant 30 jours (liste, audio, CSV) | à faire | | |
 | MIN-6 | majeur | Export RGPD incomplet (art. 15 et 20) | à faire | | |
 | MIN-7 | majeur | Après l'effacement définitif, il reste des données personnelles (e-mail en clair, âge, pays) | à faire | | |
