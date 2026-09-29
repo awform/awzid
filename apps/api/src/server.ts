@@ -11,7 +11,8 @@ const app = buildApp({
   db: h.db,
   logger: true,
   editionCode: process.env.AWFORM_EDITION_FORCE || undefined,
-  cookieSecure: process.env.COOKIE_SECURE !== '0',
+  // 1 (défaut) : Secure ; 0 : jamais (tests http) ; auto : selon HTTPS derrière le proxy (démonstration)
+  cookieSecure: process.env.COOKIE_SECURE === 'auto' ? 'auto' : process.env.COOKIE_SECURE !== '0',
   secretKey,
 });
 if (!secretKey)

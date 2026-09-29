@@ -139,4 +139,25 @@ describe.skipIf(!READY)('lot 6 (awform_test)', () => {
     const e = (await req('GET', '/api/v1/account/export', adult)).json();
     expect(e.entrainement).toHaveLength(3);
   });
+
+  it('mise en service : cookie « Secure » selon HTTPS derrière le proxy (COOKIE_SECURE=auto)', async () => {
+    process.env.TRUST_PROXY = '1';
+    const auto = buildApp({ db: h.db, secretKey: randomBytes(32), cookieSecure: 'auto' });
+    await auto.ready();
+    const signup = (email: string, proto: string) =>
+      auto.inject({
+        method: 'POST',
+        url: '/api/v1/auth/signup',
+        headers: { 'x-awform': '1', 'x-forwarded-proto': proto },
+        payload: { kind: 'parent', email, password: PW, country: 'FR', consents: ['cgu'] },
+      });
+    expect(String((await signup('https.lot7@exemple.org', 'https')).headers['set-cookie'])).toMatch(
+      /; Secure/,
+    );
+    expect(
+      String((await signup('http.lot7@exemple.org', 'http')).headers['set-cookie']),
+    ).not.toMatch(/Secure/);
+    await auto.close();
+    delete process.env.TRUST_PROXY;
+  });
 });

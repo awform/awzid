@@ -38,7 +38,7 @@ export interface AppOptions {
   logger?: boolean;
   version?: string;
   /** cookie de session « Secure » (défaut : vrai) */
-  cookieSecure?: boolean;
+  cookieSecure?: boolean | 'auto';
   /** clé de chiffrement des secrets de second facteur (32 octets) ; absente → 2FA indisponible */
   secretKey?: Buffer | null;
 }

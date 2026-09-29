@@ -1,0 +1,46 @@
+# Entrée AWFORM.
+#  - DÉMONSTRATION (réseau local) : http://<IP> et https://<IP> avec l'autorité de certification INTERNE de
+#    Caddy (le navigateur avertit tant que son certificat racine n'est pas installé) ; http://localhost pour
+#    le tunnel ssh (contexte sécurisé : hors ligne et micro fonctionnent).
+#  - PRODUCTION : remplacer SITE par le domaine (ex. app.awzid.org) et retirer `tls internal` : Caddy
+#    obtient alors un certificat Let's Encrypt (le domaine doit pointer vers le serveur).
+{
+	admin off
+	# adresse IP : les navigateurs n'envoient pas de nom (SNI) ; certificat choisi par défaut
+	default_sni {$SITE}
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+(awform) {
+	encode zstd gzip
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		Permissions-Policy "camera=(), geolocation=(), payment=(), microphone=(self)"
+		Cross-Origin-Opener-Policy same-origin
+		-Server
+	}
+	@api path /api/*
+	handle @api {
+		reverse_proxy api:3000
+	}
+	handle {
+		reverse_proxy web:3000
+	}
+	log {
+		output stdout
+		format json
+	}
+}
+
+http://{$SITE}, http://localhost, http://127.0.0.1 {
+	import awform
+}
+
+https://{$SITE} {
+	tls internal
+	header Strict-Transport-Security "max-age=31536000"
+	import awform
+}

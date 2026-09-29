@@ -49,7 +49,8 @@ declare module 'fastify' {
 export interface AuthOptions {
   db: Db;
   /** cookie « Secure » (vrai en production ; les navigateurs l'acceptent aussi sur localhost) */
-  cookieSecure: boolean;
+  /** « auto » : Secure quand la requête arrive en HTTPS (derrière Caddy) — démonstration sur le réseau local */
+  cookieSecure: boolean | 'auto';
   /** clé de chiffrement des secrets TOTP (32 octets) ; absente → 2FA indisponible (signalé) */
   secretKey: Buffer | null;
 }
@@ -68,6 +69,8 @@ const AVATARS = ['etoile', 'lune', 'soleil', 'feuille', 'goutte', 'livre'];
 
 export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   const { db } = opts;
+  const secureFor = (req: FastifyRequest) =>
+    opts.cookieSecure === 'auto' ? req.protocol === 'https' : opts.cookieSecure;
   app.decorateRequest('auth', null);
 
   // session lue sur chaque requête API
@@ -88,7 +91,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
 
   const setSession = async (reply: FastifyReply, accountId: string, kind: string, mfa: boolean) => {
     const s = await createSession(db, accountId, kind, mfa);
-    reply.header('Set-Cookie', sessionCookie(s.token, s.ttl, opts.cookieSecure));
+    reply.header('Set-Cookie', sessionCookie(s.token, s.ttl, secureFor(reply.request)));
   };
 
   const me = async (accountId: string, mfaVerified: boolean) => {
@@ -289,14 +292,14 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
 
   app.post('/api/v1/auth/logout', async (req, reply) => {
     if (req.auth) await revokeSession(db, req.auth.tokenHash);
-    reply.header('Set-Cookie', clearCookie(opts.cookieSecure));
+    reply.header('Set-Cookie', clearCookie(secureFor(req)));
     return { ok: true };
   });
 
   app.post('/api/v1/auth/logout-all', { preHandler: needAuth }, async (req, reply) => {
     await revokeAll(db, req.auth!.accountId);
     await audit(db, req.auth!.accountId, 'sessions.revocation');
-    reply.header('Set-Cookie', clearCookie(opts.cookieSecure));
+    reply.header('Set-Cookie', clearCookie(secureFor(req)));
     return { ok: true };
   });
 
@@ -757,7 +760,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       await db.update(t.account).set({ deletedAt: new Date() }).where(eq(t.account.id, a.id));
       await revokeAll(db, a.id);
       await audit(db, a.id, 'compte.suppression_demandee');
-      reply.header('Set-Cookie', clearCookie(opts.cookieSecure));
+      reply.header('Set-Cookie', clearCookie(secureFor(req)));
       return { ok: true, effacementDefinitif: new Date(Date.now() + 30 * 86400_000).toISOString() };
     },
   );

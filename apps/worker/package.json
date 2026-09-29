@@ -1,0 +1,21 @@
+{
+  "name": "@awform/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tâches planifiées AWFORM (pg-boss) : purge des comptes supprimés, battement de cœur",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@awform/db": "workspace:*",
+    "pg-boss": "^12.35.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.0",
+    "typescript": "~6.0.3"
+  }
+}
