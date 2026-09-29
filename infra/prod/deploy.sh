@@ -50,6 +50,15 @@ sed -i '/^SITE_LAN=/d;/^DEFAULT_SNI=/d' "$ENVF"
 if [ -n "$SITE_LAN" ]; then echo "SITE_LAN=$SITE_LAN" >> "$ENVF"; echo "DEFAULT_SNI=$SITE_LAN" >> "$ENVF"; else echo "DEFAULT_SNI=$SITE" >> "$ENVF"; fi
 # tuteur : désactivé par défaut ; la démonstration utilise le fournisseur SIMULÉ (jamais un vrai modèle)
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_TUTEUR=' "$ENVF"; then echo "AWFORM_TUTEUR=simule" >> "$ENVF"; fi
+# comptes PostgreSQL séparés (lot 14) : mots de passe générés une fois, URL de chaque service recalculées
+for k in AWFORM_DB_API_PASSWORD AWFORM_DB_WORKER_PASSWORD; do
+  grep -q "^$k=" "$ENVF" || echo "$k=$(rnd 24)" >> "$ENVF"
+done
+sed -i '/^DATABASE_URL_API=/d;/^DATABASE_URL_WORKER=/d' "$ENVF"
+{
+  echo "DATABASE_URL_API=postgres://awform_api:$(grep '^AWFORM_DB_API_PASSWORD=' "$ENVF" | cut -d= -f2-)@db:5432/awform"
+  echo "DATABASE_URL_WORKER=postgres://awform_worker:$(grep '^AWFORM_DB_WORKER_PASSWORD=' "$ENVF" | cut -d= -f2-)@db:5432/awform"
+} >> "$ENVF"
 # paiements : désactivés par défaut ; la démonstration utilise le prestataire SIMULÉ (aucune clé, aucune carte)
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_PAIEMENT=' "$ENVF"; then echo "AWFORM_PAIEMENT=simule" >> "$ENVF"; fi
 # moindre privilège : un fichier par service (env-scopes.conf) ; prod.env n'est monté dans aucun conteneur
@@ -67,6 +76,8 @@ DC=(docker compose -f "$PROD/compose.yml")
 "${DC[@]}" build --pull
 "${DC[@]}" up -d db
 "${DC[@]}" --profile outils run --rm migrate
+# comptes de l'API et du travailleur (idempotent : droits recalculés à chaque déploiement)
+"${DC[@]}" --profile outils run --rm roles
 # livres GELÉS publiés (AWFORM_LEVELS) ; démonstration : livres en relecture en « aperçu » (AWFORM_APERCU)
 LEVELS="${AWFORM_LEVELS:-en1,ad1,en2,ad2,re1,re2}"
 APERCU="${AWFORM_APERCU:-}"
@@ -149,7 +160,7 @@ AWFORM_DEMO_PIN=$(shuf -i 1000-9999 -n 1)
 EOF
   fi
   set -a; . "$DEMOF"; set +a
-  OUT="$("${DC[@]}" run --rm -T -e AWFORM_DEMO=1 -e AWFORM_DEMO_PASSWORD -e AWFORM_DEMO_TAG -e AWFORM_DEMO_PIN api node dist/cli/demo.js | tail -1)"
+  OUT="$("${DC[@]}" --profile outils run --rm -T -e AWFORM_DEMO=1 -e AWFORM_DEMO_PASSWORD -e AWFORM_DEMO_TAG -e AWFORM_DEMO_PIN demo | tail -1)"
   if echo "$OUT" | grep -q '"demo":"creee"'; then
     echo "$OUT" > "$CONF/demo-acces.json"
     echo "démonstration créée (identifiants : $CONF/demo-acces.json)"

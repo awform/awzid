@@ -917,7 +917,14 @@ export const certificate = pgTable(
     issuedBy: uuid('issued_by').references(() => account.id, { onDelete: 'set null' }),
     /** niveau (en1…) ou passage (112:1-4) */
     subject: text('subject').notNull(),
+    /** REGISTRE DURABLE (preuve du diplôme ; décision du pilote, à confirmer par le juriste) : numéro,
+     *  nom affiché, niveau ou passage (subject), date (issuedAt), mention */
+    holderName: text('holder_name'),
+    mention: text('mention'),
+    /** document complet : suit les durées normales (réduit au registre 30 jours après le départ de l'élève) */
     document: jsonb('document').notNull(),
+    /** l'élève a quitté la classe (ou la classe a disparu) : point de départ de la réduction du document */
+    detachedAt: timestamp('detached_at', { withTimezone: true }),
     issuedAt: timestamp('issued_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [

@@ -34,4 +34,18 @@ export async function resetTestDatabase(pool: pg.Pool): Promise<void> {
   await pool.query(
     'DROP SCHEMA IF EXISTS drizzle CASCADE; DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;',
   );
+  // file pg-boss : son schéma appartient au compte « worker » de test (lot 14) → effacé en devenant ce compte
+  const client = await pool.connect();
+  try {
+    const { rows: o } = await client.query<{ owner: string }>(
+      "select pg_get_userbyid(nspowner) as owner from pg_namespace where nspname = 'pgboss'",
+    );
+    if (o[0]) {
+      await client.query(`SET ROLE "${o[0].owner.replace(/"/g, '""')}"`);
+      await client.query('DROP SCHEMA pgboss CASCADE');
+      await client.query('RESET ROLE');
+    }
+  } finally {
+    client.release();
+  }
 }

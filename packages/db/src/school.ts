@@ -4,7 +4,7 @@
  * TOUTES les fonctions qui lisent des données d'élèves prennent l'identifiant de l'ENSEIGNANT et ne
  * renvoient rien si la classe n'est pas la sienne (protection des données des mineurs).
  */
-import { and, asc, desc, eq, inArray, like, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, isNull, like, lt, sql } from 'drizzle-orm';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -145,6 +145,10 @@ export async function updatePupil(
 /** Retire l'élève de la classe (un profil de l'application quitte aussi la classe). */
 export async function removePupil(db: Db, pupil: PupilRow) {
   await db.transaction(async (tx) => {
+    await tx
+      .update(t.certificate)
+      .set({ detachedAt: new Date() })
+      .where(and(eq(t.certificate.pupilId, pupil.id), isNull(t.certificate.detachedAt)));
     if (pupil.profileId)
       await tx
         .delete(t.classMember)
@@ -340,6 +344,8 @@ export async function issueCertificate(
     pupilId: string;
     issuedBy: string;
     subject: string;
+    holderName: string;
+    mention: string | null;
     document: (number: string) => object;
   },
 ): Promise<CertificateRow> {
@@ -364,6 +370,8 @@ export async function issueCertificate(
             pupilId: c.pupilId,
             issuedBy: c.issuedBy,
             subject: c.subject,
+            holderName: c.holderName,
+            mention: c.mention,
             document: c.document(number),
           })
           .returning();
@@ -388,6 +396,8 @@ export async function classCertificates(db: Db, classId: string) {
       kind: t.certificate.kind,
       pupilId: t.certificate.pupilId,
       subject: t.certificate.subject,
+      holderName: t.certificate.holderName,
+      mention: t.certificate.mention,
       issuedAt: t.certificate.issuedAt,
     })
     .from(t.certificate)
@@ -427,4 +437,56 @@ export async function levelInfo(db: Db, editionId: string, code: string) {
     .innerJoin(t.level, eq(t.level.code, t.levelVersion.levelCode))
     .where(and(eq(t.levelVersion.editionId, editionId), eq(t.level.code, code)));
   return r ?? null;
+}
+
+/**
+ * Registre des certificats (décision du pilote du 29/09/2026, À CONFIRMER PAR LE JURISTE) : numéro, nom affiché,
+ * niveau ou passage, date et mention sont conservés durablement (preuve d'un diplôme) ; le document complet
+ * (autres données de l'élève : nom arabe, date de naissance saisie…) est réduit au registre 30 jours après
+ * le départ de l'élève de la classe (ou la disparition de la classe).
+ */
+export async function purgeCertificateDocuments(
+  db: Db,
+  days = 30,
+  now = new Date(),
+): Promise<number> {
+  // départ non daté (classe supprimée avec le compte de l'enseignant) : daté maintenant
+  await db
+    .update(t.certificate)
+    .set({ detachedAt: now })
+    .where(and(isNull(t.certificate.pupilId), isNull(t.certificate.detachedAt)));
+  const limit = new Date(now.getTime() - days * 86400_000);
+  const due = await db
+    .select({
+      id: t.certificate.id,
+      number: t.certificate.number,
+      kind: t.certificate.kind,
+      subject: t.certificate.subject,
+      holderName: t.certificate.holderName,
+      mention: t.certificate.mention,
+      issuedAt: t.certificate.issuedAt,
+      document: t.certificate.document,
+    })
+    .from(t.certificate)
+    .where(lt(t.certificate.detachedAt, limit));
+  let n = 0;
+  for (const c of due) {
+    if ((c.document as { reduit?: boolean }).reduit) continue;
+    await db
+      .update(t.certificate)
+      .set({
+        document: {
+          reduit: true,
+          number: c.number,
+          kind: c.kind,
+          subject: c.subject,
+          holderName: c.holderName,
+          mention: c.mention,
+          issuedOn: c.issuedAt.toISOString().slice(0, 10),
+        },
+      })
+      .where(eq(t.certificate.id, c.id));
+    n++;
+  }
+  return n;
 }

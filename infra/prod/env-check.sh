@@ -9,7 +9,7 @@ CONF="$HOME/.config/awform"
 ENVF="${1:-$CONF/prod.env}"
 export AWFORM_ENV_DIR="${AWFORM_ENV_DIR:-$CONF}"
 DC=(docker compose -f "$PROD/compose.yml")
-scope() { awk -v s="$1:" '$1 == s { $1 = ""; print }' "$PROD/env-scopes.conf"; }
+scope() { awk -v s="$1:" '$1 == s { $1 = ""; print }' "$PROD/env-scopes.conf" | tr ' ' '\n' | sed 's/=.*//' | tr '\n' ' '; }
 secrets="$(grep -oE '^[A-Z_][A-Z0-9_]*' "$ENVF" | grep -E 'SECRET|KEY|PASSWORD|TOKEN|DATABASE_URL' || true)"
 bad=0
 for svc in db api worker web caddy; do

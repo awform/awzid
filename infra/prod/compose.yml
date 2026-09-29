@@ -51,6 +51,26 @@ services:
     profiles: [outils]
     logging: *logs
 
+  roles:
+    # comptes PostgreSQL de l'API et du travailleur, droits minimaux table par table (lot 14)
+    image: awform/api:${AWFORM_VERSION:-local}
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/outils.env'
+    entrypoint: ['node', 'node_modules/@awform/db/dist/cli/roles.js']
+    depends_on: { db: { condition: service_healthy } }
+    restart: 'no'
+    profiles: [outils]
+    logging: *logs
+
+  demo:
+    # données FICTIVES de démonstration (deploy.sh --demo) : compte propriétaire, jamais l'API
+    image: awform/api:${AWFORM_VERSION:-local}
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/outils.env'
+    entrypoint: ['node', 'dist/cli/demo.js']
+    depends_on: { db: { condition: service_healthy } }
+    restart: 'no'
+    profiles: [outils]
+    logging: *logs
+
   api:
     image: awform/api:${AWFORM_VERSION:-local}
     build: { context: ../.., dockerfile: infra/prod/Dockerfile, target: api }

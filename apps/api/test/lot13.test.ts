@@ -13,6 +13,7 @@ import {
   connect,
   contentDir,
   importEdition,
+  purgeCertificateDocuments,
   resetTestDatabase,
   runMigrations,
   schema as t,
@@ -425,7 +426,7 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
       `/api/v1/ecole/classes/${classId}/export.csv?quoi=certificats`,
       teacher,
     );
-    expect(certs.body).toContain(`AWF-EN1-${YEAR}-0001;niveau;Awa D.;en1;`);
+    expect(certs.body).toContain(`AWF-EN1-${YEAR}-0001;niveau;Awa Diop;en1;Très bien;`);
     const devoirs = await req(
       'GET',
       `/api/v1/ecole/classes/${classId}/export.csv?quoi=devoirs`,
@@ -450,5 +451,30 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
     expect(
       certs.find((c: { number: string }) => c.number === `AWF-EN1-${YEAR}-0001`).pupilId,
     ).toBeNull();
+    // registre durable (décision du pilote, à confirmer par le juriste) : 30 jours après le départ de
+    // l'élève, le document est réduit au numéro, nom affiché, niveau, date et mention
+    expect(await purgeCertificateDocuments(h.db, 30, new Date())).toBe(0);
+    const later = new Date(Date.now() + 31 * 86400_000);
+    expect(await purgeCertificateDocuments(h.db, 30, later)).toBe(2);
+    const [row] = await h.db
+      .select()
+      .from(t.certificate)
+      .where(eq(t.certificate.number, `AWF-EN1-${YEAR}-0001`));
+    expect(row!.document).toEqual({
+      reduit: true,
+      number: `AWF-EN1-${YEAR}-0001`,
+      kind: 'niveau',
+      subject: 'en1',
+      holderName: 'Awa Diop',
+      mention: 'Très bien',
+      issuedOn: row!.issuedAt.toISOString().slice(0, 10),
+    });
+    // Moussa est encore dans la classe : son attestation de hifẓ reste complète
+    const [hz] = await h.db
+      .select()
+      .from(t.certificate)
+      .where(eq(t.certificate.number, `AWF-HZ-${YEAR}-0001`));
+    expect((hz!.document as { reduit?: boolean }).reduit).toBeUndefined();
+    expect(hz!.detachedAt).toBeNull();
   });
 });

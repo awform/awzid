@@ -14,13 +14,16 @@ import { describe, expect, it } from 'vitest';
 const ROOT = join(import.meta.dirname, '..', '..', '..');
 const PROD = join(ROOT, 'infra', 'prod');
 
+const scopeSources: Record<string, string[]> = {};
 function scopes(): Record<string, string[]> {
   const out: Record<string, string[]> = {};
   for (const line of readFileSync(join(PROD, 'env-scopes.conf'), 'utf8').split('\n')) {
     const l = line.trim();
     if (!l || l.startsWith('#')) continue;
     const [svc, ...vars] = l.split(/\s+/);
-    out[svc!.replace(/:$/, '')] = vars;
+    // « VAR=SOURCE » : le service voit VAR (valeur de SOURCE)
+    out[svc!.replace(/:$/, '')] = vars.map((v) => v.split('=')[0]!);
+    scopeSources[svc!.replace(/:$/, '')] = vars.map((v) => v.split('=').at(-1)!);
   }
   return out;
 }
@@ -90,7 +93,17 @@ describe('secrets : un périmètre par service (env-scopes.conf)', () => {
 
   it('aucun secret hors de son besoin', () => {
     expect(s.worker!.filter(isSecret)).toEqual(['DATABASE_URL']);
-    expect(s.outils!.filter(isSecret)).toEqual(['DATABASE_URL']);
+    expect(s.outils!.filter(isSecret)).toEqual([
+      'DATABASE_URL',
+      'AWFORM_DB_API_PASSWORD',
+      'AWFORM_DB_WORKER_PASSWORD',
+    ]);
+    // chaque service a SON compte PostgreSQL (lot 14) : l'API et le travailleur ne reçoivent jamais celui du
+    // propriétaire (migrations, import)
+    expect(scopeSources.api).toContain('DATABASE_URL_API');
+    expect(scopeSources.worker).toContain('DATABASE_URL_WORKER');
+    expect(scopeSources.api).not.toContain('DATABASE_URL');
+    expect(scopeSources.worker).not.toContain('DATABASE_URL');
     expect(s.db).toEqual(['POSTGRES_PASSWORD']);
     expect(s.caddy!.filter(isSecret)).toEqual([]);
     // l'API n'a pas besoin du mot de passe PostgreSQL seul (il est dans DATABASE_URL)
@@ -104,6 +117,8 @@ describe('secrets : un périmètre par service (env-scopes.conf)', () => {
       db: 'db',
       migrate: 'outils',
       import: 'outils',
+      roles: 'outils',
+      demo: 'outils',
       api: 'api',
       worker: 'worker',
       caddy: 'caddy',
@@ -131,6 +146,10 @@ describe('secrets : un périmètre par service (env-scopes.conf)', () => {
         [
           'POSTGRES_PASSWORD=pg-factice',
           'DATABASE_URL=postgres://awform:pg-factice@db:5432/awform',
+          'DATABASE_URL_API=postgres://awform_api:api-factice@db:5432/awform',
+          'DATABASE_URL_WORKER=postgres://awform_worker:worker-factice@db:5432/awform',
+          'AWFORM_DB_API_PASSWORD=api-factice',
+          'AWFORM_DB_WORKER_PASSWORD=worker-factice',
           'AWFORM_SECRET_KEY=cle-factice',
           'ANTHROPIC_API_KEY=cle-factice',
           'STRIPE_SECRET_KEY=cle-factice',
@@ -150,7 +169,23 @@ describe('secrets : un périmètre par service (env-scopes.conf)', () => {
           .filter(Boolean)
           .map((l) => l.split('=')[0]);
       expect(keys('worker.env').sort()).toEqual(['DATABASE_URL', 'TZ']);
-      expect(keys('outils.env').sort()).toEqual(['DATABASE_URL', 'TZ']);
+      expect(keys('outils.env').sort()).toEqual([
+        'AWFORM_DB_API_PASSWORD',
+        'AWFORM_DB_WORKER_PASSWORD',
+        'DATABASE_URL',
+        'TZ',
+      ]);
+      // valeurs : chaque service a son compte
+      const val = (f: string, k: string) =>
+        readFileSync(join(dir, f), 'utf8')
+          .split('\n')
+          .find((l) => l.startsWith(`${k}=`))
+          ?.slice(k.length + 1);
+      expect(val('api.env', 'DATABASE_URL')).toContain('awform_api:');
+      expect(val('worker.env', 'DATABASE_URL')).toContain('awform_worker:');
+      expect(val('outils.env', 'DATABASE_URL')).toContain('awform:pg-factice');
+      expect(readFileSync(join(dir, 'api.env'), 'utf8')).not.toContain('pg-factice');
+      expect(readFileSync(join(dir, 'worker.env'), 'utf8')).not.toContain('api-factice');
       expect(keys('db.env')).toEqual(['POSTGRES_PASSWORD']);
       expect(keys('caddy.env').sort()).toEqual(['DEFAULT_SNI', 'SITE']);
       expect(keys('api.env').sort()).toEqual([

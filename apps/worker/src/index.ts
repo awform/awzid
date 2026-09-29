@@ -7,7 +7,12 @@
  * doivent survivre à la perte des conteneurs.
  */
 import { PgBoss } from 'pg-boss';
-import { connect, purgeDeletedAccounts, purgeTutorLog } from '@awform/db';
+import {
+  connect,
+  purgeCertificateDocuments,
+  purgeDeletedAccounts,
+  purgeTutorLog,
+} from '@awform/db';
 
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error('DATABASE_URL absente');
@@ -25,11 +30,15 @@ await boss.work('purge-comptes', async () => {
   const n = await purgeDeletedAccounts(h.db, 30, new Date());
   // journal du tuteur : 12 mois au plus (ARCHITECTURE_V2 § 1.6)
   const j = await purgeTutorLog(h.db, new Date());
+  // registre des certificats : document réduit 30 jours après le départ de l'élève (numéro, nom, niveau,
+  // date et mention conservés)
+  const c = await purgeCertificateDocuments(h.db, 30, new Date());
   console.log(
     JSON.stringify({
       tache: 'purge-comptes',
       comptes: n,
       journalTuteur: j,
+      certificatsReduits: c,
       at: new Date().toISOString(),
     }),
   );

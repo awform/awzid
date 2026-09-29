@@ -16,6 +16,8 @@ export interface CertModel {
   ar?: string[];
   signatures_fr?: string[];
   a_valider?: boolean;
+  /** « VALIDATION_HUMAINE_REQUISE » : texte rédigé par l'application, à valider avant usage officiel */
+  validation?: string;
   source_fr?: string;
 }
 
@@ -44,6 +46,7 @@ export interface RenderedDoc {
   /** champs attendus par le modèle et non fournis */
   missing: string[];
   aValider: boolean;
+  validation: string | null;
 }
 
 /**
@@ -57,10 +60,32 @@ export const HIFZ_MODEL: CertModel = {
     "Cette attestation constate une récitation validée en classe ; elle n'est pas une ijāza.",
     'Fait à {lieu}, le {date}.',
   ],
+  // version arabe vocalisée, formules sobres (reprises des modèles des livres quand elles existent) ;
+  // aucune formule d'ijāza — VALIDATION HUMAINE REQUISE avant tout usage officiel
+  titre_ar: 'شَهَادَةُ تَسْمِيعٍ',
+  ar: [
+    'تَشْهَدُ إِدَارَةُ {etablissement_ar} أَنَّ التِّلْمِيذَ (التِّلْمِيذَةَ): **{nom_ar}**',
+    'قَدْ سَمَّعَ (سَمَّعَتْ) فِي الْفَصْلِ {partie_ar}، وَقُبِلَ تَسْمِيعُهُ (تَسْمِيعُهَا) بِتَارِيخِ {date_validation_ar} بِدَرَجَةِ **{note_ar}** مِنْ ٢٠.',
+    'وَلَيْسَتْ هٰذِهِ الشَّهَادَةُ إِجَازَةً فِي الْقِرَاءَةِ وَلَا فِي الرِّوَايَةِ.',
+    'حُرِّرَ فِي {lieu_ar} بِتَارِيخِ {date_ar}.',
+  ],
   signatures_fr: ["L'enseignant(e)", 'Le (la) responsable'],
   a_valider: true,
-  source_fr: "modèle de l'application (lot 13) — à valider ; version arabe à rédiger par le comité",
+  validation: 'VALIDATION_HUMAINE_REQUISE',
+  source_fr:
+    "modèle de l'application (lots 13-14) — texte français et arabe à valider par le comité (VALIDATION_HUMAINE_REQUISE)",
 };
+
+/** Passage en arabe, sans nom de sourate improvisé : « الْآيَاتِ مِنْ ١ إِلَى ٤ مِنَ السُّورَةِ رَقْمِ ١١٢ ». */
+export function partieAr(key: string): string | null {
+  const m = /^(\d{1,3}):(\d{1,3})(?:-(\d{1,3}))?$/.exec(key);
+  if (!m) return null;
+  const [s, a, b] = [m[1]!, m[2]!, m[3]];
+  const sura = `مِنَ السُّورَةِ رَقْمِ ${arabicDigits(s)}`;
+  return b && b !== a
+    ? `الْآيَاتِ مِنْ ${arabicDigits(a)} إِلَى ${arabicDigits(b)} ${sura}`
+    : `الْآيَةَ ${arabicDigits(a)} ${sura}`;
+}
 
 /** Modèle du livre pour un certificat de niveau, selon la filière. */
 export function levelModelKey(track: string): string | null {
@@ -169,6 +194,7 @@ export function renderDoc(
     signatures: model.signatures_fr ?? [],
     missing: [...missing].sort(),
     aValider: !!model.a_valider,
+    validation: model.validation ?? null,
   };
 }
 

@@ -4,7 +4,7 @@
  * mot (sauf les champs calculés : note finale, mention, numéro, dates).
  */
 import { MENTIONS, type LevelResult } from './grading.js';
-import { arabicDigits, dateAr, dateFr, type CertModels } from './render.js';
+import { arabicDigits, dateAr, dateFr, partieAr, type CertModels } from './render.js';
 
 export interface SchoolInfo {
   schoolName: string | null;
@@ -98,27 +98,42 @@ export function levelCertFields(
 export interface HifzCertInput {
   school: SchoolInfo;
   pupilName: string;
-  /** libellé du passage (« Al-Ikhlāṣ (112:1-4) ») */
+  pupilNameAr?: string | null;
+  /** clé du passage (« 112:1-4 ») et libellé (« Al-Ikhlāṣ (112:1-4) ») */
+  part?: string;
   partie: string;
   validationDay: string;
   note: number;
   mention: string;
   day: string;
   extra: Record<string, string>;
+  /** mois arabes de la charte (certificats.js) */
+  moisAr?: readonly string[];
 }
 
 export function hifzCertFields(input: HifzCertInput): Record<string, string> {
   const out: Record<string, string> = {};
-  if (input.school.schoolName) out.etablissement = input.school.schoolName;
-  if (input.school.place) out.lieu = input.school.place;
+  const s = input.school;
+  if (s.schoolName) out.etablissement = s.schoolName;
+  if (s.schoolNameAr ?? s.schoolName) out.etablissement_ar = (s.schoolNameAr ?? s.schoolName)!;
+  if (s.place) out.lieu = s.place;
+  if (s.placeAr ?? s.place) out.lieu_ar = (s.placeAr ?? s.place)!;
   out.prenom_nom = input.pupilName;
-  for (const k of ['etablissement', 'lieu', 'prenom_nom'])
+  for (const k of ['etablissement', 'lieu', 'prenom_nom', 'nom_ar'])
     if (input.extra[k]?.trim()) out[k] = input.extra[k]!.trim().slice(0, 200);
+  out.nom_ar = out.nom_ar ?? input.pupilNameAr ?? out.prenom_nom;
   out.partie = input.partie;
+  const pa = input.part ? partieAr(input.part) : null;
+  if (pa) out.partie_ar = pa;
   out.date_validation = dateFr(input.validationDay);
   out.note = String(input.note).replace('.', ',');
+  out.note_ar = arabicDigits(String(input.note).replace('.', '٫'));
   out.mention = input.mention;
   out.date = dateFr(input.day);
+  const dv = dateAr(input.validationDay, input.moisAr);
+  const da = dateAr(input.day, input.moisAr);
+  if (dv) out.date_validation_ar = dv;
+  if (da) out.date_ar = da;
   return out;
 }
 

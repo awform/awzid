@@ -3,7 +3,7 @@
  * des événements, classes (l'enseignant ne voit que les élèves que le PARENT a inscrits).
  */
 import { randomInt } from 'node:crypto';
-import { and, asc, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull } from 'drizzle-orm';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -303,6 +303,15 @@ export async function joinClass(db: Db, classId: string, profileId: string, pare
 }
 
 export async function leaveClass(db: Db, classId: string, profileId: string) {
+  const [p] = await db
+    .select({ id: t.classPupil.id })
+    .from(t.classPupil)
+    .where(and(eq(t.classPupil.classId, classId), eq(t.classPupil.profileId, profileId)));
+  if (p)
+    await db
+      .update(t.certificate)
+      .set({ detachedAt: new Date() })
+      .where(and(eq(t.certificate.pupilId, p.id), isNull(t.certificate.detachedAt)));
   await db
     .delete(t.classMember)
     .where(and(eq(t.classMember.classId, classId), eq(t.classMember.profileId, profileId)));

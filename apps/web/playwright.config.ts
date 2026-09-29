@@ -12,6 +12,16 @@ const API_PORT = 3100;
 const WEB_PORT = 4180;
 process.env.E2E_KEY ??= randomBytes(32).toString('hex');
 const E2E_KEY = process.env.E2E_KEY;
+// lot 14 : l'API de test tourne sous son compte PostgreSQL à droits minimaux (comme en production)
+process.env.E2E_DB_API_PW ??= randomBytes(24).toString('hex');
+process.env.E2E_DB_WORKER_PW ??= randomBytes(24).toString('hex');
+const API_DB = (() => {
+  if (!TEST_DB) return '';
+  const u = new URL(TEST_DB);
+  u.username = 'awform_e2e_api';
+  u.password = process.env.E2E_DB_API_PW!;
+  return u.toString();
+})();
 
 /**
  * Bout en bout minimal : API (base de TEST, édition « e2e » importée depuis ~/awform-content)
@@ -39,10 +49,14 @@ export default defineConfig({
   webServer: [
     {
       // base de TEST remise à zéro, édition « e2e » importée ; comptes créés par globalSetup
-      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --apercu ra1 --publish && node ../api/dist/server.js`,
+      // puis comptes PostgreSQL séparés ; l'API tourne sous le compte « api » (droits minimaux)
+      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --apercu ra1 --publish && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
       env: {
-        DATABASE_URL: TEST_DB,
+        DATABASE_URL: API_DB,
+        AWFORM_DB_ROLE_PREFIX: 'awform_e2e',
+        AWFORM_DB_API_PASSWORD: process.env.E2E_DB_API_PW!,
+        AWFORM_DB_WORKER_PASSWORD: process.env.E2E_DB_WORKER_PW!,
         API_HOST: '127.0.0.1',
         API_PORT: String(API_PORT),
         // http local : cookie sans attribut Secure (en production : Secure, derrière HTTPS)

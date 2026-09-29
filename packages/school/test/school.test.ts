@@ -12,6 +12,7 @@ import {
   levelCertFields,
   levelResult,
   levelModelKey,
+  partieAr,
   renderDoc,
   rulesFrom,
   toCsv,
@@ -30,7 +31,9 @@ describe('note finale et décision (règles des livres)', () => {
       examen: s(73, 100),
     });
     expect(r.status).toBe('complet');
-    expect(r.bilansPct).toBe(72.5);
+    // moyenne des bilans arrondie AVANT le contrôle continu (règles des livres : 72,5 → 73, CC 73,6)
+    expect(r.bilansPct).toBe(73);
+    expect(r.cc).toBe(73.6);
     expect(r.nf).toBe(73);
     expect(r.decision?.code).toBe('B');
     expect(r.certificat).toBe(true);
@@ -44,7 +47,7 @@ describe('note finale et décision (règles des livres)', () => {
       examen: s(17),
     });
     expect(r.ccPartiel).toBe(true);
-    expect(r.cc).toBe(87.5);
+    expect(r.cc).toBe(88);
     expect(r.examenPct).toBe(85);
     expect(r.nf).toBe(86);
     expect(r.decision?.code).toBe('TB');
@@ -194,6 +197,9 @@ describe('certificats', () => {
       hifzCertFields({
         school: { schoolName: 'École pilote', schoolNameAr: null, place: 'Dakar', placeAr: null },
         pupilName: 'Awa D.',
+        pupilNameAr: 'عَوَا',
+        part: '112:1-4',
+        moisAr: models.mois_ar,
         partie: 'Al-Ikhlāṣ (112:1-4)',
         validationDay: '2026-11-02',
         note: 17.5,
@@ -208,6 +214,19 @@ describe('certificats', () => {
     expect(txt).toContain("elle n'est pas une ijāza");
     expect(txt).toContain('17,5/20');
     expect(d.aValider).toBe(true);
+    // version arabe vocalisée : accordée au féminin, passage en chiffres (aucun nom improvisé), jamais une ijāza
+    const ar = d.ar.map((l) => l.map((x) => x.t).join('')).join('\n');
+    expect(d.validation).toBe('VALIDATION_HUMAINE_REQUISE');
+    expect(ar).toContain(
+      'قَدْ سَمَّعَتْ فِي الْفَصْلِ الْآيَاتِ مِنْ ١ إِلَى ٤ مِنَ السُّورَةِ رَقْمِ ١١٢',
+    );
+    expect(ar).toContain('تَسْمِيعُهَا بِتَارِيخِ ٢ نُوفَمْبَرُ ٢٠٢٦ بِدَرَجَةِ ١٧٫٥ مِنْ ٢٠');
+    expect(ar).toContain('وَلَيْسَتْ هٰذِهِ الشَّهَادَةُ إِجَازَةً');
+    expect(ar.match(/إِجَازَة/g)).toHaveLength(1);
+  });
+  it('passage en arabe : une ou plusieurs ayāt', () => {
+    expect(partieAr('2:255')).toBe('الْآيَةَ ٢٥٥ مِنَ السُّورَةِ رَقْمِ ٢');
+    expect(partieAr('x')).toBeNull();
   });
 });
 

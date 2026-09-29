@@ -130,7 +130,11 @@ export function levelResult(input: LevelInput, rules: EvalRules = DEFAULT_RULES)
   });
   if (!input.examen) missing.push('examen');
   const done = input.bilans.filter((b): b is Score => !!b);
-  const bilansPct = done.length ? r2(done.reduce((a, b) => a + pct(b), 0) / done.length) : null;
+  // moyenne des bilans ARRONDIE à l'unité avant le contrôle continu, comme l'exemple des règles des livres
+  // (« moyenne 14,5/20 → 72,5/100 », puis « 0,7 × 73 » : décision du pilote du 29/09/2026)
+  const bilansPct = done.length
+    ? Math.round(done.reduce((a, b) => a + pct(b), 0) / done.length)
+    : null;
   // CC : composantes saisies seulement (poids renormalisés), signalé si partiel
   let cc: number | null = null;
   let ccPartiel = false;

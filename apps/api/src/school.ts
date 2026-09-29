@@ -720,13 +720,13 @@ export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): 
       } else if (quoi === 'certificats') {
         const certs = await classCertificates(db, cls.id);
         csv = toCsv(
-          ['Numéro', 'Type', 'Élève', 'Objet', 'Délivré le'],
+          ['Numéro', 'Type', 'Nom affiché', 'Objet', 'Mention', 'Délivré le'],
           certs.map((c) => [
             c.number,
             c.kind,
-            tb.rows.find((r) => r.pupil.id === c.pupilId)?.pupil.displayName ??
-              '(retiré de la classe)',
+            c.holderName ?? '',
             c.kind === 'hifz' ? partLabel(c.subject) : c.subject,
+            c.mention ?? '',
             c.issuedAt.toISOString().slice(0, 10),
           ]),
         );
@@ -827,6 +827,8 @@ export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): 
       const day = today();
       let key: string;
       let doc: RenderedDoc;
+      let holder: string;
+      let mention: string | null;
       let subject: string;
       let prefix: string;
       let eligible: { ok: boolean; raison?: string };
@@ -868,6 +870,8 @@ export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): 
           models!,
         );
         doc = renderDoc(key, model, fields, gender);
+        holder = fields.prenom_nom ?? pupil.displayName;
+        mention = result.mention?.fr ?? null;
         subject = cls.levelCode;
         prefix = cls.levelCode;
       } else {
@@ -901,8 +905,13 @@ export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): 
           mention: HIFZ_MENTIONS[best?.n.mention ?? ''] ?? '',
           day,
           extra,
+          part,
+          pupilNameAr: pupil.nameAr,
+          moisAr: models?.mois_ar,
         });
         doc = renderDoc(key, HIFZ_MODEL, fields, gender);
+        holder = fields.prenom_nom ?? pupil.displayName;
+        mention = HIFZ_MENTIONS[best?.n.mention ?? ''] ?? null;
         subject = part;
         prefix = 'HZ';
       }
@@ -917,6 +926,8 @@ export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): 
         pupilId: pupil.id,
         issuedBy: me(req),
         subject,
+        holderName: holder,
+        mention,
         document: (number) => ({ ...doc, number, issuedOn: day }),
       });
       await audit(db, me(req), 'ecole.certificat', cert.id, {
