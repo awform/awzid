@@ -50,11 +50,20 @@ export interface EditionLoad {
   hifz: HifzBook[];
   hifzShared: Record<string, unknown>;
   registry: RegistryData | null;
+  /** livrets gradués (bibliothèque) et leur catalogue */
+  booklets: Booklet[];
+  catalogue: Array<Record<string, unknown>>;
   /** illustrations retenues (clé → SVG validé) ; null si non chargées */
   illustrations: Map<string, Illustration> | null;
   tanzil: Tanzil;
   verseStats: VerseStats;
   issues: Issue[];
+}
+
+export interface Booklet {
+  code: string;
+  level: string;
+  content: Record<string, unknown>;
 }
 
 export interface LoadOptions {
@@ -64,6 +73,8 @@ export interface LoadOptions {
   withRegistry?: boolean;
   /** charger et contrôler les illustrations (dossier illus/) — par défaut oui */
   withIllustrations?: boolean;
+  /** charger la bibliothèque des livrets (data/lect) — par défaut oui */
+  withBooklets?: boolean;
 }
 
 const UNIT_FILE = /^l\d\d\.js$/;
@@ -565,9 +576,50 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
     }
   }
 
+  // bibliothèque des livrets gradués (data/lect : catalogue.js + un fichier par livret)
+  const booklets: Booklet[] = [];
+  let catalogue: Array<Record<string, unknown>> = [];
+  const lectDir = join(dataDir, 'lect');
+  if (opts.withBooklets !== false && existsSync(lectDir)) {
+    const cat = join(lectDir, 'catalogue.js');
+    if (existsSync(cat))
+      catalogue = parseDataFile(readText(cat), 'data/lect/catalogue.js').value as typeof catalogue;
+    for (const f of readdirSync(lectDir)
+      .filter((n) => /^[a-z]{2,3}\d{1,2}-\d{2}\.js$/.test(n))
+      .sort()) {
+      const rel = `data/lect/${f}`;
+      try {
+        const parsed = parseDataFile(readText(join(lectDir, f)), rel);
+        const B = parsed.value as Record<string, unknown>;
+        if (!parsed.strict)
+          issues.push({
+            severity: 'avertissement',
+            code: 'json_non_strict',
+            file: rel,
+            message: 'livret non strict',
+          });
+        booklets.push({
+          code: String(B.code ?? basename(f, '.js')),
+          level: String(B.niveau ?? ''),
+          content: B,
+        });
+      } catch (e) {
+        issues.push({
+          severity: 'erreur',
+          code: 'livret_illisible',
+          file: rel,
+          message: (e as Error).message,
+        });
+      }
+    }
+  }
+
+  // l'empreinte de la source dépend aussi des niveaux choisis : ajouter un niveau crée une nouvelle édition
   const manifest = join(contentDir, 'MANIFEST.sha256');
   const sourceSha256 = existsSync(manifest)
-    ? sha256Hex(readText(manifest))
+    ? sha256Hex(
+        `${readText(manifest)}\nniveaux:${opts.levels.join(',')}\nlivrets:${booklets.length}`,
+      )
     : contentHash(levels.map((l) => l.units.map((u) => u.sha256)));
 
   return {
@@ -579,6 +631,8 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
     hifzShared,
     registry,
     illustrations,
+    booklets,
+    catalogue,
     tanzil,
     verseStats,
     issues,

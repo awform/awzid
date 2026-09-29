@@ -109,7 +109,13 @@ export function checkUnit(
         push('erreur', 'personnage_interdit', `personnage « ${p} » hors charte`);
   for (const r of L.dialogue?.repliques ?? [])
     if (r.qui && !PERSO_SET.has(personaKey(r.qui)))
-      push('erreur', 'personnage_interdit', `réplique de « ${r.qui} » : personnage hors charte`);
+      // un interlocuteur NON DESSINÉ (ex. Sami, voisin de re2.l24, gel du 29/09) n'enfreint pas la charte
+      // des dessins : l'application lui donne un avatar neutre sans visage ; signalé pour la relecture
+      push(
+        'avertissement',
+        'interlocuteur_hors_charte',
+        `réplique de « ${r.qui} » : interlocuteur non dessiné (avatar neutre)`,
+      );
 
   // illustrations référencées
   if (illustrations) {

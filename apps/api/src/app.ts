@@ -30,6 +30,7 @@ import {
   type HifzEventInput,
 } from '@awform/db';
 import { registerHifz } from './hifz.js';
+import { registerLibrary } from './library.js';
 
 export interface AppOptions {
   db: Db;
@@ -100,6 +101,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
 
   const edition = async () => currentEdition(db, opts.editionCode);
   registerHifz(app, db, edition);
+  registerLibrary(app, db, edition);
 
   app.get('/api/v1/health', async () => {
     const dbOk = await ping(db).catch(() => false);

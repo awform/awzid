@@ -52,8 +52,14 @@ DC=(docker compose -f "$PROD/compose.yml")
 "${DC[@]}" build --pull
 "${DC[@]}" up -d db
 "${DC[@]}" --profile outils run --rm migrate
-EDITION="prod-$(sha256sum "$AWFORM_CONTENT_DIR/MANIFEST.sha256" | cut -c1-10)"
-"${DC[@]}" --profile outils run --rm import --edition "$EDITION" --publish
+# livres GELÉS publiés (AWFORM_LEVELS) ; démonstration : livres en relecture en « aperçu » (AWFORM_APERCU)
+LEVELS="${AWFORM_LEVELS:-en1,ad1,en2,ad2,re1,re2}"
+APERCU="${AWFORM_APERCU:-}"
+[ "$DEMO" = 1 ] && [ -z "${AWFORM_APERCU+x}" ] && APERCU="ra1,ra2"
+EDITION="prod-$( (cat "$AWFORM_CONTENT_DIR/MANIFEST.sha256"; echo "$LEVELS|$APERCU|$AWFORM_VERSION") | sha256sum | cut -c1-10)"
+IMPORT_ARGS=(--edition "$EDITION" --levels "$LEVELS" --publish)
+[ -n "$APERCU" ] && IMPORT_ARGS+=(--apercu "$APERCU")
+"${DC[@]}" --profile outils run --rm import "${IMPORT_ARGS[@]}"
 
 # ---------------------------------------------------------------- 3. services
 "${DC[@]}" up -d --remove-orphans api worker web caddy

@@ -3,6 +3,7 @@
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
   import Exercise from '$lib/Exercise.svelte';
+  import ReligionLesson from '$lib/religion/ReligionLesson.svelte';
   import Illus from '$lib/Illus.svelte';
   import Scene from '$lib/Scene.svelte';
   import Sprite from '$lib/Sprite.svelte';
@@ -21,6 +22,8 @@
   setContext('illustrations', () => data.illustrations);
 
   const u = $derived(data.unit);
+  /** leçons des sciences islamiques (Religion Enfants re, Ados/Adultes ra) : lecteur dédié */
+  const religion = $derived(/^r[ea]\d/.test(u.levelCode));
   const L = $derived(data.unit.lesson);
   const lettres = $derived(L.lettres ?? []);
   const isEval = $derived(u.kind !== 'lecon');
@@ -84,6 +87,15 @@
       response,
     });
   }
+  function toggleReligion(done: number, total: number) {
+    if (profileId)
+      enqueue({
+        profileId,
+        unitId: u.id,
+        eventType: 'checklist',
+        response: { checked: done, total },
+      });
+  }
   let checked: boolean[] = $state([]);
   const nChecked = $derived(checked.filter(Boolean).length);
   function toggle(i: number, v: boolean) {
@@ -102,384 +114,392 @@
 
 <Sprite illustrations={data.illustrations} />
 
-<article
-  class="lesson"
-  class:eval={isEval}
-  style="--ar-size: {arabicSize(u.levelCode)}px"
-  data-unit={u.id}
->
-  <p class="nav">
-    <a href={resolve('/niveaux/[code]', { code: u.levelCode })}
-      >{t('lecon.retour', { level: u.levelCode })}</a
-    >
-  </p>
-  <header class="ltitle">
-    <p class="num">{unitLabel(u)} · {u.titleFr}</p>
-    <h1 class="ar" lang="ar" dir="rtl">
-      <Ar text={L.titre_ar} {lettres} />
-      {#if lettres.length && !isEval}<span class="fam"
-          >{#each lettres as x, i (i)}<span class="c{i % 4}">{x.l}</span>{/each}</span
-        >{/if}
-    </h1>
-    {#if progress}<p class="prog" data-testid="progression">
-        {t('lecon.progression', { statut: t(`statut.${progress.status}`) })}{progress.bestScore !=
-        null
-          ? ` · ${fmtNumber(progress.bestScore, { style: 'percent' })}`
-          : ''}
-      </p>{/if}
-  </header>
-
-  {#if isEval && lettres.length}
-    <p class="readline big" dir="rtl">
-      {#each lettres as x, i (i)}<span class="c{i % 4}">{x.l}</span>{/each}
-    </p>
-  {/if}
-
-  {#if L.scene}
-    <Scene spec={L.scene as SceneSpec} {lettres} />
-    {#if (L.scene as SceneSpec).bulle_fr}<p class="bulle fr">
-        « {(L.scene as SceneSpec).bulle_fr} »
-      </p>{/if}
-  {/if}
-
-  {#if L.objectifs?.length && !isEval}
-    <div class="goal">
-      <svg viewBox="0 0 40 40" aria-hidden="true"
-        ><circle cx="20" cy="20" r="18" fill="#E5484D" /><circle
-          cx="20"
-          cy="20"
-          r="12"
-          fill="#fff"
-        /><circle cx="20" cy="20" r="6" fill="#E5484D" /></svg
+{#if religion}
+  <ReligionLesson unit={u} {profileId} {progress} onChecklist={toggleReligion} />
+{:else}
+  <article
+    class="lesson"
+    class:eval={isEval}
+    style="--ar-size: {arabicSize(u.levelCode)}px"
+    data-unit={u.id}
+  >
+    <p class="nav">
+      <a href={resolve('/niveaux/[code]', { code: u.levelCode })}
+        >{t('lecon.retour', { level: u.levelCode })}</a
       >
-      <div>
-        <Ar text={'هَدَفِي: ' + L.objectifs[0]!.ar} {lettres} />
-        <p class="fr">{t('lecon.objectif', { texte: L.objectifs[0]!.fr })}</p>
-      </div>
-    </div>
-  {/if}
+    </p>
+    <header class="ltitle">
+      <p class="num">{unitLabel(u)} · {u.titleFr}</p>
+      <h1 class="ar" lang="ar" dir="rtl">
+        <Ar text={L.titre_ar} {lettres} />
+        {#if lettres.length && !isEval}<span class="fam"
+            >{#each lettres as x, i (i)}<span class="c{i % 4}">{x.l}</span>{/each}</span
+          >{/if}
+      </h1>
+      {#if progress}<p class="prog" data-testid="progression">
+          {t('lecon.progression', { statut: t(`statut.${progress.status}`) })}{progress.bestScore !=
+          null
+            ? ` · ${fmtNumber(progress.bestScore, { style: 'percent' })}`
+            : ''}
+        </p>{/if}
+    </header>
 
-  {#if !isEval && lettres.some((x) => x.nom_ar)}
-    <section class="blk">
-      <h2>
-        <Ar text="أَكْتَشِفُ" /> <span>{(L.decouvre_fr as string) ?? t('lecon.je_decouvre')}</span>
-      </h2>
-      {#if L.decouvre_ar}<Ar tag="p" text={L.decouvre_ar as string} />{/if}
-      <div class="letters">
-        {#each lettres as x, i (i)}
-          <div class="fcard b{i % 4}">
-            <span class="pos">{i + 1}</span>
-            <span class="big c{i % 4}" lang="ar">{x.l}</span>
-            {#if x.nom_ar}<span class="ar c{i % 4}" lang="ar">{x.nom_ar}</span>{/if}
-            {#if x.points_ar}<span class="ar dots" lang="ar">{x.points_ar}</span>{/if}
-            <span class="fr">{x.nom_fr ?? ''}{x.points_fr ? ` · ${x.points_fr}` : ''}</span>
-          </div>
-        {/each}
-      </div>
-    </section>
-  {/if}
-
-  {#if !isEval && lettres.some((x) => x.formes)}
-    <section class="blk">
-      <h2><Ar text="أَشْكَالُ الْحَرْفِ" /> <span>{t('lecon.formes')}</span></h2>
-      <div class="tw">
-        <table class="forms" dir="rtl">
-          <thead
-            ><tr
-              ><th></th><th
-                ><Ar text="مُنْفَصِلٌ" /><br /><span class="fr">{t('lecon.forme_isolee')}</span></th
-              ><th
-                ><Ar text="فِي الْأَوَّلِ" /><br /><span class="fr">{t('lecon.forme_debut')}</span
-                ></th
-              ><th
-                ><Ar text="فِي الْوَسَطِ" /><br /><span class="fr">{t('lecon.forme_milieu')}</span
-                ></th
-              ><th
-                ><Ar text="فِي الْآخِرِ" /><br /><span class="fr">{t('lecon.forme_fin')}</span></th
-              ></tr
-            ></thead
-          >
-          <tbody>
-            {#each lettres.filter((x) => x.formes) as x, i (i)}
-              <tr>
-                <td class="ar c{lettres.indexOf(x) % 4}" lang="ar">{x.l}</td>
-                {#each x.formes ?? [] as f, k (k)}<td class="ar c{lettres.indexOf(x) % 4}" lang="ar"
-                    >{f}</td
-                  >{/each}
-              </tr>
-            {/each}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  {/if}
-
-  {#if L.notion || R.syllabes || R.ligne || phrases.length || R.vedette || R.non_prepare}
-    <section class="blk">
-      {#if L.notion}
-        {@const N = L.notion as {
-          titre_ar?: string;
-          titre_fr?: string;
-          signe?: string;
-          texte_ar?: string;
-          texte_fr?: string;
-        }}
-        <h2>
-          <Ar text={N.titre_ar ?? 'أَقْرَأُ'} /> <span>{N.titre_fr ?? t('lecon.je_lis')}</span>
-        </h2>
-        <div class="notion">
-          {#if N.signe}<span class="mk ar" lang="ar">{N.signe}</span>{/if}
-          {#if N.texte_ar}<Ar text={N.texte_ar} {lettres} />{/if}
-          {#if N.texte_fr}<p class="fr">{N.texte_fr}</p>{/if}
-        </div>
-      {:else}
-        <h2>
-          <Ar text="أَقْرَأُ" /> <span>{isEval ? t('lecon.je_relis') : t('lecon.je_lis')}</span>
-        </h2>
-      {/if}
-      {#if R.syllabes?.length}
-        <div class="syl" dir="rtl">
-          {#each R.syllabes as s, i (i)}<span class="sylc"><Ar text={s.ar} {lettres} /></span
-            >{/each}
-        </div>
-      {/if}
-      {#if R.ligne?.length}
-        <p class="hint fr">
-          {R.vedette && !R.non_prepare ? t('lecon.ligne_vedette') : t('lecon.ligne')}
-        </p>
-        <p class="readline" dir="rtl">
-          {#each R.ligne as w, i (i)}<span><Ar text={w} {lettres} /></span>{/each}
-          {#if R.vedette && !R.non_prepare}<span class="star-word"
-              ><Ar text={R.vedette.ar} {lettres} /></span
-            >{/if}
-        </p>
-      {/if}
-      {#if R.non_prepare}
-        <div class="np-box" data-testid="non-prepare">
-          <b class="fr">{t('lecon.non_prepare')}</b>
-          <Ar text="نَصٌّ يُوَزِّعُهُ الْمُعَلِّمُ يَوْمَ الِاخْتِبَارِ" />
-        </div>
-      {:else}
-        {#if R.vedette}
-          <div class="note">
-            <Ar text={R.vedette.ar} {lettres} />
-            {#if R.vedette.fr}<span class="fr"> — « {R.vedette.fr} »</span>{/if}
-            {#if R.vedette.note_fr}<span class="fr"> {R.vedette.note_fr}</span>{/if}
-          </div>
-        {/if}
-        {#each phrases as p, i (i)}
-          <div class="phrase">
-            <Ar tag="p" text={p.ar} {lettres} />
-            {#if p.fr}<p class="fr">{p.fr}</p>{/if}
-          </div>
-        {/each}
-      {/if}
-    </section>
-  {/if}
-
-  {#if L.mots?.length}
-    <section class="blk">
-      <h2><Ar text="أَسْمَعُ وَأُرَدِّدُ" /> <span>{t('lecon.ecoute_repete')}</span></h2>
-      <p class="hint fr">
-        {(L.mots_fr as string) ?? t('lecon.mots_consigne')}
+    {#if isEval && lettres.length}
+      <p class="readline big" dir="rtl">
+        {#each lettres as x, i (i)}<span class="c{i % 4}">{x.l}</span>{/each}
       </p>
-      <div class="words">
-        {#each L.mots as w, i (i)}
-          <div class="wc">
-            <Illus k={w.img} label={w.fr} />
-            <Ar text={w.ar} {lettres} />
-            <span class="fr">{w.fr}</span>
-          </div>
-        {/each}
-      </div>
-    </section>
-  {/if}
+    {/if}
 
-  {#if isEval && dialogue?.repliques?.length}
-    {@render dlg()}
-  {/if}
-  {#if isEval && Q}
-    {@render coran()}
-  {/if}
-  {#if isEval && fiqh?.points?.length}
-    {@render fiqhBlock()}
-  {/if}
+    {#if L.scene}
+      <Scene spec={L.scene as SceneSpec} {lettres} />
+      {#if (L.scene as SceneSpec).bulle_fr}<p class="bulle fr">
+          « {(L.scene as SceneSpec).bulle_fr} »
+        </p>{/if}
+    {/if}
 
-  {#if livreEx.length}
-    <section class="blk">
-      <h2>
-        <Ar text={isEval ? 'حَصِيلَةٌ' : 'أَتَدَرَّبُ'} />
-        <span>{isEval ? t('lecon.mes_exercices') : t('lecon.entraine')}</span>
-      </h2>
-      {#each livreEx as { ex, i } (i)}
-        <Exercise
-          {ex}
-          id={u.exercises[i]?.id ?? `${u.id}.ex${i + 1}`}
-          {lettres}
-          onanswer={(k, r) => record(i, k, r)}
-        />
-      {/each}
-    </section>
-  {/if}
-
-  {#if !isEval && dialogue?.repliques?.length}
-    {@render dlg()}
-  {/if}
-
-  {#if lexique.length}
-    <section class="blk">
-      <h2><Ar text="مُعْجَمُ الدَّرْسِ" /> <span>{t('lecon.lexique')}</span></h2>
-      <div class="lex">
-        {#each lexique as x, i (i)}<div>
-            <Ar text={x.ar} /> <span class="fr">{x.fr ?? ''}</span>
-          </div>{/each}
-      </div>
-    </section>
-  {/if}
-
-  {#if !isEval && Q}
-    {@render coran()}
-  {/if}
-  {#if !isEval && fiqh?.points?.length}
-    {@render fiqhBlock()}
-  {/if}
-
-  {#if oral.length}
-    <section class="blk">
-      <h2><Ar text="الِاخْتِبَارُ الشَّفَهِيُّ" /> <span>{t('lecon.oral')}</span></h2>
-      <ol>
-        {#each oral as o, i (i)}<li>
-            <span class="fr">{o.fr}</span>{#if o.points != null}
-              <b>{t('lecon.points', { n: o.points })}</b>{/if}
-          </li>{/each}
-      </ol>
-    </section>
-  {/if}
-
-  <section class="blk recap">
-    <h2><Ar text="حَصِيلَتِي" /> <span>{t('lecon.mon_bilan')}</span></h2>
-    {#if lettres.some((x) => x.points_ar)}
-      <div class="memo">
-        <h3><Ar text="أَتَذَكَّرُ" /> <span>{t('lecon.je_retiens')}</span></h3>
-        {#each lettres as x, i (i)}
-          <div class="row">
-            <span class="l c{i % 4}" lang="ar">{x.l}</span>{#if x.points_ar}<Ar
-                text={x.points_ar}
-              />{/if} <span class="fr">{x.points_fr ?? ''}</span>
-          </div>
-        {/each}
-      </div>
-    {:else if L.retiens?.length}
-      <div class="memo">
-        <h3><Ar text="أَتَذَكَّرُ" /> <span>{t('lecon.je_retiens')}</span></h3>
-        {#each L.retiens as r, i (i)}<div class="row">
-            <Ar text={r.ar} /> <span class="fr">{r.fr}</span>
-          </div>{/each}
+    {#if L.objectifs?.length && !isEval}
+      <div class="goal">
+        <svg viewBox="0 0 40 40" aria-hidden="true"
+          ><circle cx="20" cy="20" r="18" fill="#E5484D" /><circle
+            cx="20"
+            cy="20"
+            r="12"
+            fill="#fff"
+          /><circle cx="20" cy="20" r="6" fill="#E5484D" /></svg
+        >
+        <div>
+          <Ar text={'هَدَفِي: ' + L.objectifs[0]!.ar} {lettres} />
+          <p class="fr">{t('lecon.objectif', { texte: L.objectifs[0]!.fr })}</p>
+        </div>
       </div>
     {/if}
-    <div class="bravo">
-      <div
-        class="stars"
-        aria-label={t('lecon.etoiles_aria', { n: nChecked, total: checkItems.length })}
-      >
-        {#each checkItems as _c, i (i)}<span class="star" class:lit={i < nChecked}>★</span>{/each}
-      </div>
-      <p class="fr" aria-live="polite">
-        {#if nChecked === checkItems.length && checkItems.length}{t('lecon.bravo_termine')}
-          <span class="ar" lang="ar">تَبَارَكَ اللَّهُ</span>{:else if nChecked}{t(
-            'lecon.continue',
-            {
-              n: nChecked,
-              total: checkItems.length,
-            },
-          )}{:else}{t('lecon.coche')}{/if}
-      </p>
-    </div>
-    <div class="check">
-      {#each checkItems as c, i (i)}
-        <label>
-          <input
-            type="checkbox"
-            checked={checked[i] ?? false}
-            onchange={(e) => toggle(i, e.currentTarget.checked)}
-          />
-          <span><Ar text={'أَنَا أَسْتَطِيعُ: ' + c.ar} /> <span class="fr">{c.fr}</span></span>
-        </label>
-      {/each}
-    </div>
-  </section>
 
-  {#if !isEval && (E.mots || E.lier || E.copie || E.production || cahierEx.length)}
-    <section class="blk cahier">
-      <h2><Ar text="أَكْتُبُ" /> <span>{t('lecon.cahier')}</span></h2>
-      <p class="hint fr">
-        {t('lecon.cahier_consigne')}
-      </p>
-      {#if lettres.length}
-        <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu par resolve(), suivi d'un paramètre -->
-        <p class="links">
-          {#each lettres as x (x.l)}<a
-              class="button"
-              href={`${resolve('/ecriture')}?lettre=${encodeURIComponent(x.l)}`}
-              data-testid="tracer-lettre">{t('lecon.tracer_lettre', { l: x.l })}</a
-            >{/each}
-        </p>
-        <!-- eslint-enable svelte/no-navigation-without-resolve -->
-      {/if}
-      {#if Array.isArray(E.mots) && E.mots.length}
-        <h3>{t('lecon.ecris_mots')}</h3>
-        <p class="trace" dir="rtl">
-          {#each E.mots as m, i (i)}<span><Ar text={String(m)} {lettres} /></span>{/each}
-        </p>
-        <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu par resolve(), suivi d'un paramètre -->
-        <p class="links">
-          {#each E.mots as m, i (i)}<a
-              class="button"
-              href={`${resolve('/ecriture')}?mot=${encodeURIComponent(String(m).replace(/[[\]]/g, ''))}`}
-              >{t('lecon.repasser_mot', { n: i + 1 })}</a
-            >{/each}
-        </p>
-        <!-- eslint-enable svelte/no-navigation-without-resolve -->
-      {/if}
-      {#if Array.isArray(E.lier) && E.lier.length}
-        <h3>{t('lecon.relie_lettres')}</h3>
-        <ul class="lier">
-          {#each E.lier as x, i (i)}
-            {@const lk = x as { lettres?: string[] }}
-            <li dir="rtl"><span class="ar" lang="ar">{(lk.lettres ?? []).join(' + ')}</span></li>
+    {#if !isEval && lettres.some((x) => x.nom_ar)}
+      <section class="blk">
+        <h2>
+          <Ar text="أَكْتَشِفُ" />
+          <span>{(L.decouvre_fr as string) ?? t('lecon.je_decouvre')}</span>
+        </h2>
+        {#if L.decouvre_ar}<Ar tag="p" text={L.decouvre_ar as string} />{/if}
+        <div class="letters">
+          {#each lettres as x, i (i)}
+            <div class="fcard b{i % 4}">
+              <span class="pos">{i + 1}</span>
+              <span class="big c{i % 4}" lang="ar">{x.l}</span>
+              {#if x.nom_ar}<span class="ar c{i % 4}" lang="ar">{x.nom_ar}</span>{/if}
+              {#if x.points_ar}<span class="ar dots" lang="ar">{x.points_ar}</span>{/if}
+              <span class="fr">{x.nom_fr ?? ''}{x.points_fr ? ` · ${x.points_fr}` : ''}</span>
+            </div>
           {/each}
-        </ul>
+        </div>
+      </section>
+    {/if}
+
+    {#if !isEval && lettres.some((x) => x.formes)}
+      <section class="blk">
+        <h2><Ar text="أَشْكَالُ الْحَرْفِ" /> <span>{t('lecon.formes')}</span></h2>
+        <div class="tw">
+          <table class="forms" dir="rtl">
+            <thead
+              ><tr
+                ><th></th><th
+                  ><Ar text="مُنْفَصِلٌ" /><br /><span class="fr">{t('lecon.forme_isolee')}</span
+                  ></th
+                ><th
+                  ><Ar text="فِي الْأَوَّلِ" /><br /><span class="fr">{t('lecon.forme_debut')}</span
+                  ></th
+                ><th
+                  ><Ar text="فِي الْوَسَطِ" /><br /><span class="fr">{t('lecon.forme_milieu')}</span
+                  ></th
+                ><th
+                  ><Ar text="فِي الْآخِرِ" /><br /><span class="fr">{t('lecon.forme_fin')}</span
+                  ></th
+                ></tr
+              ></thead
+            >
+            <tbody>
+              {#each lettres.filter((x) => x.formes) as x, i (i)}
+                <tr>
+                  <td class="ar c{lettres.indexOf(x) % 4}" lang="ar">{x.l}</td>
+                  {#each x.formes ?? [] as f, k (k)}<td
+                      class="ar c{lettres.indexOf(x) % 4}"
+                      lang="ar">{f}</td
+                    >{/each}
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    {/if}
+
+    {#if L.notion || R.syllabes || R.ligne || phrases.length || R.vedette || R.non_prepare}
+      <section class="blk">
+        {#if L.notion}
+          {@const N = L.notion as {
+            titre_ar?: string;
+            titre_fr?: string;
+            signe?: string;
+            texte_ar?: string;
+            texte_fr?: string;
+          }}
+          <h2>
+            <Ar text={N.titre_ar ?? 'أَقْرَأُ'} /> <span>{N.titre_fr ?? t('lecon.je_lis')}</span>
+          </h2>
+          <div class="notion">
+            {#if N.signe}<span class="mk ar" lang="ar">{N.signe}</span>{/if}
+            {#if N.texte_ar}<Ar text={N.texte_ar} {lettres} />{/if}
+            {#if N.texte_fr}<p class="fr">{N.texte_fr}</p>{/if}
+          </div>
+        {:else}
+          <h2>
+            <Ar text="أَقْرَأُ" /> <span>{isEval ? t('lecon.je_relis') : t('lecon.je_lis')}</span>
+          </h2>
+        {/if}
+        {#if R.syllabes?.length}
+          <div class="syl" dir="rtl">
+            {#each R.syllabes as s, i (i)}<span class="sylc"><Ar text={s.ar} {lettres} /></span
+              >{/each}
+          </div>
+        {/if}
+        {#if R.ligne?.length}
+          <p class="hint fr">
+            {R.vedette && !R.non_prepare ? t('lecon.ligne_vedette') : t('lecon.ligne')}
+          </p>
+          <p class="readline" dir="rtl">
+            {#each R.ligne as w, i (i)}<span><Ar text={w} {lettres} /></span>{/each}
+            {#if R.vedette && !R.non_prepare}<span class="star-word"
+                ><Ar text={R.vedette.ar} {lettres} /></span
+              >{/if}
+          </p>
+        {/if}
+        {#if R.non_prepare}
+          <div class="np-box" data-testid="non-prepare">
+            <b class="fr">{t('lecon.non_prepare')}</b>
+            <Ar text="نَصٌّ يُوَزِّعُهُ الْمُعَلِّمُ يَوْمَ الِاخْتِبَارِ" />
+          </div>
+        {:else}
+          {#if R.vedette}
+            <div class="note">
+              <Ar text={R.vedette.ar} {lettres} />
+              {#if R.vedette.fr}<span class="fr"> — « {R.vedette.fr} »</span>{/if}
+              {#if R.vedette.note_fr}<span class="fr"> {R.vedette.note_fr}</span>{/if}
+            </div>
+          {/if}
+          {#each phrases as p, i (i)}
+            <div class="phrase">
+              <Ar tag="p" text={p.ar} {lettres} />
+              {#if p.fr}<p class="fr">{p.fr}</p>{/if}
+            </div>
+          {/each}
+        {/if}
+      </section>
+    {/if}
+
+    {#if L.mots?.length}
+      <section class="blk">
+        <h2><Ar text="أَسْمَعُ وَأُرَدِّدُ" /> <span>{t('lecon.ecoute_repete')}</span></h2>
+        <p class="hint fr">
+          {(L.mots_fr as string) ?? t('lecon.mots_consigne')}
+        </p>
+        <div class="words">
+          {#each L.mots as w, i (i)}
+            <div class="wc">
+              <Illus k={w.img} label={w.fr} />
+              <Ar text={w.ar} {lettres} />
+              <span class="fr">{w.fr}</span>
+            </div>
+          {/each}
+        </div>
+      </section>
+    {/if}
+
+    {#if isEval && dialogue?.repliques?.length}
+      {@render dlg()}
+    {/if}
+    {#if isEval && Q}
+      {@render coran()}
+    {/if}
+    {#if isEval && fiqh?.points?.length}
+      {@render fiqhBlock()}
+    {/if}
+
+    {#if livreEx.length}
+      <section class="blk">
+        <h2>
+          <Ar text={isEval ? 'حَصِيلَةٌ' : 'أَتَدَرَّبُ'} />
+          <span>{isEval ? t('lecon.mes_exercices') : t('lecon.entraine')}</span>
+        </h2>
+        {#each livreEx as { ex, i } (i)}
+          <Exercise
+            {ex}
+            id={u.exercises[i]?.id ?? `${u.id}.ex${i + 1}`}
+            {lettres}
+            onanswer={(k, r) => record(i, k, r)}
+          />
+        {/each}
+      </section>
+    {/if}
+
+    {#if !isEval && dialogue?.repliques?.length}
+      {@render dlg()}
+    {/if}
+
+    {#if lexique.length}
+      <section class="blk">
+        <h2><Ar text="مُعْجَمُ الدَّرْسِ" /> <span>{t('lecon.lexique')}</span></h2>
+        <div class="lex">
+          {#each lexique as x, i (i)}<div>
+              <Ar text={x.ar} /> <span class="fr">{x.fr ?? ''}</span>
+            </div>{/each}
+        </div>
+      </section>
+    {/if}
+
+    {#if !isEval && Q}
+      {@render coran()}
+    {/if}
+    {#if !isEval && fiqh?.points?.length}
+      {@render fiqhBlock()}
+    {/if}
+
+    {#if oral.length}
+      <section class="blk">
+        <h2><Ar text="الِاخْتِبَارُ الشَّفَهِيُّ" /> <span>{t('lecon.oral')}</span></h2>
+        <ol>
+          {#each oral as o, i (i)}<li>
+              <span class="fr">{o.fr}</span>{#if o.points != null}
+                <b>{t('lecon.points', { n: o.points })}</b>{/if}
+            </li>{/each}
+        </ol>
+      </section>
+    {/if}
+
+    <section class="blk recap">
+      <h2><Ar text="حَصِيلَتِي" /> <span>{t('lecon.mon_bilan')}</span></h2>
+      {#if lettres.some((x) => x.points_ar)}
+        <div class="memo">
+          <h3><Ar text="أَتَذَكَّرُ" /> <span>{t('lecon.je_retiens')}</span></h3>
+          {#each lettres as x, i (i)}
+            <div class="row">
+              <span class="l c{i % 4}" lang="ar">{x.l}</span>{#if x.points_ar}<Ar
+                  text={x.points_ar}
+                />{/if} <span class="fr">{x.points_fr ?? ''}</span>
+            </div>
+          {/each}
+        </div>
+      {:else if L.retiens?.length}
+        <div class="memo">
+          <h3><Ar text="أَتَذَكَّرُ" /> <span>{t('lecon.je_retiens')}</span></h3>
+          {#each L.retiens as r, i (i)}<div class="row">
+              <Ar text={r.ar} /> <span class="fr">{r.fr}</span>
+            </div>{/each}
+        </div>
       {/if}
-      {#if Array.isArray(E.copie) && E.copie.length}
-        <h3>{t('lecon.recopie')}</h3>
-        {#each E.copie as c, i (i)}<Ar tag="p" text={String(c)} {lettres} />{/each}
-      {/if}
-      {#if E.production}
-        {@const P = E.production as {
-          consigne_fr?: string;
-          fr?: string;
-          modele_ar?: string;
-          ar?: string;
-        }}
-        <h3>{t('lecon.ecris_moi')}</h3>
-        <p class="fr">{P.consigne_fr ?? P.fr ?? ''}</p>
-        {#if P.modele_ar ?? P.ar}<Ar tag="p" text={P.modele_ar ?? P.ar ?? ''} />{/if}
-      {/if}
-      <h3>{t('lecon.dictee')}</h3>
-      <p class="fr">
-        {t('lecon.dictee_consigne')}
-      </p>
-      {#each cahierEx as { ex, i } (i)}
-        <Exercise
-          {ex}
-          id={u.exercises[i]?.id ?? `${u.id}.ex${i + 1}`}
-          {lettres}
-          onanswer={(k, r) => record(i, k, r)}
-        />
-      {/each}
+      <div class="bravo">
+        <div
+          class="stars"
+          aria-label={t('lecon.etoiles_aria', { n: nChecked, total: checkItems.length })}
+        >
+          {#each checkItems as _c, i (i)}<span class="star" class:lit={i < nChecked}>★</span>{/each}
+        </div>
+        <p class="fr" aria-live="polite">
+          {#if nChecked === checkItems.length && checkItems.length}{t('lecon.bravo_termine')}
+            <span class="ar" lang="ar">تَبَارَكَ اللَّهُ</span>{:else if nChecked}{t(
+              'lecon.continue',
+              {
+                n: nChecked,
+                total: checkItems.length,
+              },
+            )}{:else}{t('lecon.coche')}{/if}
+        </p>
+      </div>
+      <div class="check">
+        {#each checkItems as c, i (i)}
+          <label>
+            <input
+              type="checkbox"
+              checked={checked[i] ?? false}
+              onchange={(e) => toggle(i, e.currentTarget.checked)}
+            />
+            <span><Ar text={'أَنَا أَسْتَطِيعُ: ' + c.ar} /> <span class="fr">{c.fr}</span></span>
+          </label>
+        {/each}
+      </div>
     </section>
-  {/if}
-</article>
+
+    {#if !isEval && (E.mots || E.lier || E.copie || E.production || cahierEx.length)}
+      <section class="blk cahier">
+        <h2><Ar text="أَكْتُبُ" /> <span>{t('lecon.cahier')}</span></h2>
+        <p class="hint fr">
+          {t('lecon.cahier_consigne')}
+        </p>
+        {#if lettres.length}
+          <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu par resolve(), suivi d'un paramètre -->
+          <p class="links">
+            {#each lettres as x (x.l)}<a
+                class="button"
+                href={`${resolve('/ecriture')}?lettre=${encodeURIComponent(x.l)}`}
+                data-testid="tracer-lettre">{t('lecon.tracer_lettre', { l: x.l })}</a
+              >{/each}
+          </p>
+          <!-- eslint-enable svelte/no-navigation-without-resolve -->
+        {/if}
+        {#if Array.isArray(E.mots) && E.mots.length}
+          <h3>{t('lecon.ecris_mots')}</h3>
+          <p class="trace" dir="rtl">
+            {#each E.mots as m, i (i)}<span><Ar text={String(m)} {lettres} /></span>{/each}
+          </p>
+          <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu par resolve(), suivi d'un paramètre -->
+          <p class="links">
+            {#each E.mots as m, i (i)}<a
+                class="button"
+                href={`${resolve('/ecriture')}?mot=${encodeURIComponent(String(m).replace(/[[\]]/g, ''))}`}
+                >{t('lecon.repasser_mot', { n: i + 1 })}</a
+              >{/each}
+          </p>
+          <!-- eslint-enable svelte/no-navigation-without-resolve -->
+        {/if}
+        {#if Array.isArray(E.lier) && E.lier.length}
+          <h3>{t('lecon.relie_lettres')}</h3>
+          <ul class="lier">
+            {#each E.lier as x, i (i)}
+              {@const lk = x as { lettres?: string[] }}
+              <li dir="rtl"><span class="ar" lang="ar">{(lk.lettres ?? []).join(' + ')}</span></li>
+            {/each}
+          </ul>
+        {/if}
+        {#if Array.isArray(E.copie) && E.copie.length}
+          <h3>{t('lecon.recopie')}</h3>
+          {#each E.copie as c, i (i)}<Ar tag="p" text={String(c)} {lettres} />{/each}
+        {/if}
+        {#if E.production}
+          {@const P = E.production as {
+            consigne_fr?: string;
+            fr?: string;
+            modele_ar?: string;
+            ar?: string;
+          }}
+          <h3>{t('lecon.ecris_moi')}</h3>
+          <p class="fr">{P.consigne_fr ?? P.fr ?? ''}</p>
+          {#if P.modele_ar ?? P.ar}<Ar tag="p" text={P.modele_ar ?? P.ar ?? ''} />{/if}
+        {/if}
+        <h3>{t('lecon.dictee')}</h3>
+        <p class="fr">
+          {t('lecon.dictee_consigne')}
+        </p>
+        {#each cahierEx as { ex, i } (i)}
+          <Exercise
+            {ex}
+            id={u.exercises[i]?.id ?? `${u.id}.ex${i + 1}`}
+            {lettres}
+            onanswer={(k, r) => record(i, k, r)}
+          />
+        {/each}
+      </section>
+    {/if}
+  </article>
+{/if}
 
 {#snippet dlg()}
   <section class="blk">

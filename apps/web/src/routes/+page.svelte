@@ -1,6 +1,7 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
+  import { isReligionLevel } from '$lib/api';
   import { t } from '$lib/i18n';
   let { data } = $props();
 </script>
@@ -10,7 +11,7 @@
 <h1>{t('arabe.titre')}</h1>
 {#if data.offline}<p class="card">{t('arabe.hors_ligne')}</p>{/if}
 <ul class="levels">
-  {#each data.levels as l (l.code)}
+  {#each data.levels.filter((x) => !isReligionLevel(x.code)) as l (l.code)}
     <li>
       <a href={resolve('/niveaux/[code]', { code: l.code })} data-testid="level">
         <strong>{l.codeFr ?? l.code}</strong> — {l.titleFr}

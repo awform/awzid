@@ -1,10 +1,10 @@
-# AWFORM — copie du contenu des livres (PC Windows, lecture seule) vers la VM de développement.
+﻿# AWFORM — copie du contenu des livres (PC Windows, lecture seule) vers la VM de développement.
 # Lancer depuis le PC :  .\sync-content.ps1 -W "<dossier W>" [-Levels en1,ad1] [-VmHost awform-dev]
 # Ne modifie RIEN côté PC : lecture seule, copie par scp vers ~/awform-content (hors dépôt git).
 # Ne copie jamais le dossier awform\audio (clé Azure).
 param(
   [Parameter(Mandatory = $true)][string]$W,
-  [string[]]$Levels = @('en1', 'ad1'),
+  [string[]]$Levels = @('en1', 'ad1', 'en2', 'ad2', 're1', 're2', 'ra1', 'ra2'),
   [string]$VmHost = 'awform-dev',
   [string]$Dest = 'awform-content'
 )
@@ -14,6 +14,8 @@ $items = @()
 foreach ($l in $Levels) { $items += , @("$aw\data\$l", "data/") }
 $items += , @("$aw\data\index-lecons.js", 'data/')
 $items += , @("$aw\data\hifz", 'data/')
+# bibliothèque des livrets gradués (catalogue.js + livrets)
+if (Test-Path "$aw\data\lect") { $items += , @("$aw\data\lect", 'data/') }
 $items += , @("$aw\ECARTS_VERSETS.md", '')
 $items += , @("$aw\illus", '')
 $items += , @("$W\coran\tanzil-uthmani.tsv", 'coran/')

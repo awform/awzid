@@ -19,7 +19,12 @@
 </section>
 
 <section class="card">
-  <h2>{t('coran.lecteur_titre')} <span class="soon">{t('etat.preparation')}</span></h2>
+  <h2>{t('coran.lecteur_titre')}</h2>
+  <p>
+    <a class="button primary" href={resolve('/coran/lecteur')} data-testid="ouvrir-lecteur"
+      >{t('coran.ouvrir_lecteur')}</a
+    >
+  </p>
   <ul>
     <li>{t('coran.lecteur_1')}</li>
     <li>{t('coran.lecteur_2')}</li>

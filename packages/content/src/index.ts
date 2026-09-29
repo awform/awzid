@@ -9,3 +9,4 @@ export * from './checks.js';
 export * from './scene.js';
 export * from './importer.js';
 export * from './report.js';
+export * from './hadith.js';

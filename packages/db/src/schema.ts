@@ -165,6 +165,26 @@ export const hifzBook = pgTable(
   (t) => [primaryKey({ columns: [t.editionId, t.code] })],
 );
 
+/** Livrets de lecture graduée (data/lect) par édition : projection élève + fiche du catalogue. */
+export const booklet = pgTable(
+  'booklet',
+  {
+    editionId: uuid('edition_id')
+      .notNull()
+      .references(() => edition.id, { onDelete: 'cascade' }),
+    code: text('code').notNull(),
+    levelCode: text('level_code').notNull(),
+    /** rang dans le catalogue (ordre de la bibliothèque) */
+    rank: smallint('rank').notNull(),
+    catalogue: jsonb('catalogue').notNull(),
+    content: jsonb('content').notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.editionId, t.code] }),
+    index('booklet_level').on(t.editionId, t.levelCode),
+  ],
+);
+
 /** Texte coranique de référence : Tanzil quran-uthmani complet (6 236 versets), en lecture seule. */
 export const quranVerse = pgTable(
   'quran_verse',

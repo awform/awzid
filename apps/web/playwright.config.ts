@@ -39,7 +39,7 @@ export default defineConfig({
   webServer: [
     {
       // base de TEST remise à zéro, édition « e2e » importée ; comptes créés par globalSetup
-      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node ../api/dist/server.js`,
+      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --apercu ra1 --publish && node ../api/dist/server.js`,
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
       env: {
         DATABASE_URL: TEST_DB,

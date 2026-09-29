@@ -13,7 +13,17 @@
  * Aucune transformation du texte : on retire des champs, on ne réécrit jamais une chaîne.
  */
 
-const STUDENT_DROP_KEYS = new Set(['tr', 'guide', 'sources_fr', 'parents_fr', 'travail_perso_fr']);
+/** réservé : translittération, guide, sources, espace parent, travail personnel ; « vh » (points à valider par un
+ * humain) et « controle » (contrôles éditoriaux des livrets) ne sont pas pour l'élève */
+const STUDENT_DROP_KEYS = new Set([
+  'tr',
+  'guide',
+  'sources_fr',
+  'parents_fr',
+  'travail_perso_fr',
+  'vh',
+  'controle',
+]);
 
 function isDropped(key: string): boolean {
   return STUDENT_DROP_KEYS.has(key) || key === 'guide_fr' || key.endsWith('_guide_fr');

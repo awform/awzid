@@ -11,6 +11,13 @@ export interface LevelSummary {
   niveauFr: string | null;
   titreAr: string | null;
   units: number;
+  /** livre pas encore gelé, montré en aperçu (démonstration) */
+  apercu?: boolean;
+}
+
+/** Sciences islamiques : Religion Enfants (re) et Ados/Adultes (ra). */
+export function isReligionLevel(code: string): boolean {
+  return /^r[ea]\d/.test(code);
 }
 
 export interface UnitSummary {

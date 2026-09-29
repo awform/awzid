@@ -19,11 +19,19 @@ const opt = (name: string, def: string) => {
   return i >= 0 ? (args[i + 1] ?? def) : def;
 };
 const code = opt('--edition', process.env.AWFORM_EDITION ?? 'dev');
-const levels = opt('--levels', 'en1,ad1').split(',').filter(Boolean);
+// livres GELÉS (ETAT.md) ; « --apercu » : livres pas encore gelés, marqués « aperçu » (démonstration seulement)
+const levels = opt('--levels', process.env.AWFORM_LEVELS ?? 'en1,ad1,en2,ad2,re1,re2')
+  .split(',')
+  .filter(Boolean);
+const apercu = opt('--apercu', process.env.AWFORM_APERCU ?? '')
+  .split(',')
+  .filter(Boolean);
 const rapport = opt('--rapport', '');
 const url = args.includes('--test') ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL;
 
-const load = loadEdition({ contentDir: contentDir(), levels });
+const load = loadEdition({ contentDir: contentDir(), levels: [...levels, ...apercu] });
+for (const lv of load.levels)
+  if (apercu.includes(lv.code)) lv.book = { ...lv.book, apercu: true } as typeof lv.book;
 if (rapport) writeFileSync(rapport, importReportMarkdown(load, code));
 const h = connect(url, 2);
 try {

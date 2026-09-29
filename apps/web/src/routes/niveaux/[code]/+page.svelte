@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
-  import { arabicSize, unitLabel } from '$lib/api';
+  import { arabicSize, isReligionLevel, unitLabel } from '$lib/api';
   import { demoProfileFor, type DevProfile } from '$lib/attempts';
   import { downloadPack, getSettings } from '$lib/offline';
   import { t } from '$lib/i18n';
@@ -39,7 +39,10 @@
 
 <svelte:head><title>{t('app.nom')} — {data.level}</title></svelte:head>
 
-<p><a href={resolve('/')}>{t('niveau.retour')}</a></p>
+<p>
+  {#if isReligionLevel(data.level)}<a href={resolve('/sciences')}>{t('niveau.retour_sciences')}</a>
+  {:else}<a href={resolve('/')}>{t('niveau.retour')}</a>{/if}
+</p>
 <h1>{t('niveau.titre', { level: data.level })}</h1>
 {#if profile}<p class="profil">{profile.pseudonym}</p>{/if}
 <p class="offline" data-testid="etat-hors-ligne">

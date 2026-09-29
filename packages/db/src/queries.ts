@@ -29,6 +29,8 @@ export async function listLevels(db: Db, editionId: string) {
       codeFr: sql<string | null>`${t.levelVersion.book}->>'code_fr'`,
       niveauFr: sql<string | null>`${t.levelVersion.book}->>'niveau_fr'`,
       titreAr: sql<string | null>`${t.levelVersion.book}->>'titre_ar'`,
+      /** livre pas encore gelé, importé en aperçu (démonstration) */
+      apercu: sql<boolean>`coalesce((${t.levelVersion.book}->>'apercu')::boolean, false)`,
       units: sql<number>`(select count(*)::int from ${t.unitVersion} uv join ${t.unit} u on u.id = uv.unit_id
                where uv.edition_id = ${t.levelVersion.editionId} and u.level_code = ${t.level.code})`,
     })

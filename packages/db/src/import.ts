@@ -3,7 +3,13 @@
  * refusé s'il existe une erreur bloquante (verset ≠ Tanzil, corrigé impossible, fichier illisible).
  */
 import { and, eq, ne, sql } from 'drizzle-orm';
-import { blockingIssues, studentProjection, type EditionLoad } from '@awform/content';
+import {
+  blockingIssues,
+  maskTree,
+  studentProjection,
+  verifiedHadiths,
+  type EditionLoad,
+} from '@awform/content';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -77,6 +83,16 @@ export async function importEdition(
     0,
   );
 
+  // numéros de hadiths : visibles seulement s'ils sont VERIFIE au registre (lot 8)
+  const verified = load.registry ? verifiedHadiths(load.registry.hadiths) : null;
+  let masked = 0;
+  const forStudent = <T>(v: T): T => {
+    if (!verified) return v;
+    const r = maskTree(v, verified);
+    masked += r.masked;
+    return r.value;
+  };
+
   return db.transaction(async (tx) => {
     const existing = await tx.select().from(t.edition).where(eq(t.edition.code, opts.code));
     let editionId: string;
@@ -105,6 +121,7 @@ export async function importEdition(
       await tx.delete(t.hifzBook).where(eq(t.hifzBook.editionId, ed.id));
       await tx.delete(t.registryEntry).where(eq(t.registryEntry.editionId, ed.id));
       await tx.delete(t.illustration).where(eq(t.illustration.editionId, ed.id));
+      await tx.delete(t.booklet).where(eq(t.booklet.editionId, ed.id));
       await tx
         .update(t.edition)
         .set({ sourceSha256: load.sourceSha256, report })
@@ -162,7 +179,7 @@ export async function importEdition(
           sha256: u.sha256,
           strictJson: u.strict,
           content: u.content,
-          student: studentProjection(u.content, lv.code),
+          student: forStudent(studentProjection(u.content, lv.code)),
         });
         await tx
           .insert(t.qrRedirect)
@@ -204,6 +221,19 @@ export async function importEdition(
       await insertChunks(rows, 500, (c) => tx.insert(t.illustration).values(c));
     }
 
+    if (load.booklets?.length) {
+      const rankOf = new Map((load.catalogue ?? []).map((c, i) => [String(c.code), i]));
+      const rows = load.booklets.map((b) => ({
+        editionId,
+        code: b.code,
+        levelCode: b.level,
+        rank: rankOf.get(b.code) ?? 999,
+        catalogue: (load.catalogue ?? []).find((c) => c.code === b.code) ?? {},
+        content: forStudent(studentProjection(b.content)),
+      }));
+      await insertChunks(rows, 50, (c) => tx.insert(t.booklet).values(c));
+    }
+
     if (load.hifz.length)
       await tx
         .insert(t.hifzBook)
@@ -230,6 +260,11 @@ export async function importEdition(
       }
     }
 
+    if (verified)
+      await tx
+        .update(t.edition)
+        .set({ report: { ...report, numerosHadithsMasques: masked } })
+        .where(eq(t.edition.id, editionId));
     if (opts.publish) await publish(tx, editionId);
     return { editionId, status, units: unitsCount, exercises: exCount };
   });
