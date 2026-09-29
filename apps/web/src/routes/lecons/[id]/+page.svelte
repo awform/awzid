@@ -636,7 +636,7 @@
   }
   .prog {
     display: inline-block;
-    background: #eaf7f1;
+    background: var(--ok-bg);
     color: var(--good);
     border-radius: 99px;
     padding: 2px 12px;
@@ -775,10 +775,10 @@
     font-size: 44px;
   }
   .star-word {
-    border: 3px solid #f2b233;
+    border: 3px solid var(--gold);
     border-radius: 10px;
     padding: 0 8px;
-    background: #fff8e1;
+    background: var(--warn-bg);
   }
   .note,
   .notion {
@@ -804,7 +804,7 @@
   }
   .np-box {
     border: 3px dashed var(--c3);
-    background: #fff8e1;
+    background: var(--warn-bg);
     border-radius: 14px;
     padding: 12px;
     text-align: center;
@@ -934,7 +934,7 @@
     color: #e3dccd;
   }
   .star.lit {
-    color: #f2b233;
+    color: var(--gold);
   }
   .check label {
     display: flex;

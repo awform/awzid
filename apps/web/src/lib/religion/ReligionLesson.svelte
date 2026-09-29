@@ -454,11 +454,11 @@
     align-items: center;
   }
   .situations .bien {
-    border-inline-start: 4px solid #1b7f4b;
+    border-inline-start: 4px solid var(--ok-ink);
     padding-inline-start: 6px;
   }
   .situations .mal {
-    border-inline-start: 4px solid #b3261e;
+    border-inline-start: 4px solid var(--bad-ink);
     padding-inline-start: 6px;
   }
   .pourquoi {
@@ -470,7 +470,7 @@
   .dua {
     margin: 8px 0;
     padding: 8px 12px;
-    background: #f6f2e8;
+    background: var(--sand);
     border-radius: 10px;
   }
   .vers {
@@ -488,7 +488,7 @@
     padding: 8px 10px;
   }
   .cas .situation {
-    background: #fff8e1;
+    background: var(--warn-bg);
     border-radius: 8px;
     padding: 6px 8px;
   }
@@ -496,7 +496,7 @@
     font-weight: 700;
   }
   .retiens {
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
   .tw {
     overflow-x: auto;

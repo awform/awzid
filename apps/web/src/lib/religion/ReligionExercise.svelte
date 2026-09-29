@@ -394,23 +394,23 @@
   }
   button.good,
   select.good {
-    border-color: #1b7f4b;
-    background: #eaf7f1;
+    border-color: var(--ok-ink);
+    background: var(--ok-bg);
   }
   button.bad,
   select.bad {
-    border-color: #b3261e;
-    background: #fdecea;
+    border-color: var(--bad-ink);
+    background: var(--bad-bg);
   }
   .fb {
     font-weight: 700;
-    color: #8a5a00;
+    color: var(--warn-ink);
   }
   .fb.ok {
-    color: #1b7f4b;
+    color: var(--ok-ink);
   }
   .just {
-    background: #f6f2e8;
+    background: var(--sand);
     border-radius: 8px;
     padding: 6px 8px;
   }
@@ -419,7 +419,7 @@
     color: var(--ink2);
   }
   .situation {
-    background: #fff8e1;
+    background: var(--warn-bg);
     border-radius: 8px;
     padding: 6px 8px;
   }
@@ -454,7 +454,7 @@
     margin: 0 4px;
     padding: 1px 8px;
     border-radius: 99px;
-    background: #eaf7f1;
+    background: var(--ok-bg);
     font-size: 0.85rem;
   }
   .links {

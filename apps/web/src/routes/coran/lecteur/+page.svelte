@@ -235,7 +235,7 @@
     border-radius: 8px;
   }
   .aya.range {
-    background: #f6f2e8;
+    background: var(--sand);
   }
   .w.on {
     background: #ffe38a;
@@ -253,7 +253,7 @@
   }
   .aToi {
     font-weight: 800;
-    color: #1b7f4b;
+    color: var(--ok-ink);
   }
   .small {
     font-size: 0.9rem;

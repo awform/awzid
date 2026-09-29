@@ -42,7 +42,7 @@
   .coran {
     margin: 6px 0;
     padding: 8px 10px;
-    background: #f6f2e8;
+    background: var(--sand);
     border-radius: 8px;
     font-size: 1.5rem;
     line-height: 2.1;
@@ -51,7 +51,7 @@
   .expl {
     margin: 6px 0;
     padding: 8px 10px;
-    border-inline-start: 4px solid var(--teal, #1f7a8c);
+    border-inline-start: 4px solid var(--teal, var(--teal));
     background: #f3f8f9;
     border-radius: 6px;
   }

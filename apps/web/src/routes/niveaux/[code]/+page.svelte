@@ -95,19 +95,19 @@
     color: var(--teal);
   }
   .bilan .label {
-    color: #9a6700;
+    color: var(--soon-ink);
   }
   .st {
     font-size: 0.8rem;
     border-radius: 99px;
     padding: 1px 10px;
-    background: #fff8e1;
-    color: #9a6700;
+    background: var(--warn-bg);
+    color: var(--soon-ink);
     font-weight: 700;
   }
   .st.terminee,
   .st.maitrisee {
-    background: #eaf7f1;
+    background: var(--ok-bg);
     color: var(--good);
   }
   .offline {

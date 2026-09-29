@@ -740,7 +740,7 @@
     text-align: start;
   }
   .rhythms tr.sel {
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
   .row {
     display: flex;
@@ -769,8 +769,8 @@
     margin-inline-start: 4px;
   }
   .tag.fragile {
-    border-color: #b3261e;
-    color: #b3261e;
+    border-color: var(--bad-ink);
+    color: var(--bad-ink);
   }
   .rate {
     display: flex;
@@ -781,20 +781,20 @@
     min-height: 44px;
   }
   .done {
-    color: #1b7f4b;
+    color: var(--ok-ink);
     font-weight: 700;
   }
   .warn {
-    color: #8a5a00;
+    color: var(--warn-ink);
   }
   .warnbox {
-    background: #fff8e1;
+    background: var(--warn-bg);
   }
   .ok {
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
   .error {
-    color: #b3261e;
+    color: var(--bad-ink);
   }
   .bar {
     height: 10px;
@@ -852,7 +852,7 @@
     color: #8a8f98;
   }
   .star.verte {
-    color: #1b7f4b;
+    color: var(--ok-ink);
   }
   .parent {
     color: var(--teal);

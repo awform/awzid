@@ -283,11 +283,11 @@
     flex-wrap: wrap;
   }
   .error {
-    color: #b3261e;
+    color: var(--bad-ink);
     font-weight: 700;
   }
   .ok {
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
   .small {
     font-size: 0.9rem;

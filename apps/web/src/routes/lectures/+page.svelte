@@ -131,7 +131,7 @@
     margin: 0;
   }
   .lu {
-    color: #1b7f4b;
+    color: var(--ok-ink);
     font-weight: 700;
   }
   .kept {
@@ -141,6 +141,6 @@
     font-size: 0.9rem;
   }
   .ok {
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
 </style>

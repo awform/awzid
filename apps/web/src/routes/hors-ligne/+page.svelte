@@ -243,15 +243,15 @@
     gap: 6px;
   }
   .warn {
-    background: #fff8e1;
+    background: var(--warn-bg);
   }
   .ok {
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
   .confirm {
     margin-top: 10px;
     padding: 10px;
-    border: 2px dashed #f2b233;
+    border: 2px dashed var(--gold);
     border-radius: 12px;
     display: flex;
     flex-wrap: wrap;

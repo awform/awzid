@@ -168,7 +168,7 @@
     margin: 0 4px;
     padding: 1px 10px;
     border-radius: 99px;
-    background: #eaf7f1;
+    background: var(--ok-bg);
     color: var(--good);
     font-weight: 700;
     font-size: 0.85rem;
@@ -177,7 +177,7 @@
     font-size: 0.92rem;
   }
   .warn {
-    color: #8a5a00;
+    color: var(--warn-ink);
   }
   .links {
     display: flex;

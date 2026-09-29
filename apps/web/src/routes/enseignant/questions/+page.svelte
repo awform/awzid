@@ -93,6 +93,6 @@
     font-size: 0.9rem;
   }
   .ok {
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
 </style>

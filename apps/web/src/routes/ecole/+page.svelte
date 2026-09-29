@@ -279,7 +279,7 @@
     min-height: 64px;
   }
   .retry {
-    color: #9a6700;
+    color: var(--soon-ink);
     font-weight: 700;
   }
   .row {

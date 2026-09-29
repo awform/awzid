@@ -1,3 +1,6 @@
+/* Jetons de thème (couleurs, polices, rayons, ombres, motifs) : src/lib/theme/tokens.ts → tokens.css */
+@import './lib/theme/tokens.css';
+
 /* Polices embarquées (SIL OFL), servies par l'application — jamais par un service tiers. */
 @font-face {
   font-family: 'Amiri Quran';
@@ -37,21 +40,6 @@
 }
 
 :root {
-  --ink: #1b1b1b;
-  --ink2: #4a5566;
-  --paper: #fffdf8;
-  --card: #ffffff;
-  --line: #e6dcc8;
-  --teal: #1f7a8c;
-  --navy: #173b57;
-  --good: #1f9d6b;
-  --soft: #f6ddb5;
-  /* couleurs des lettres étudiées (moteur des livres) : rouge, bleu, vert, or */
-  --c0: #e5484d;
-  --c1: #2f6fdb;
-  --c2: #1f9d6b;
-  --c3: #c98a0b;
-  --ar-size: 26px;
   color-scheme: light;
 }
 
@@ -62,22 +50,23 @@ html,
 body {
   margin: 0;
   background: var(--paper);
+  background-image: var(--pattern-bg);
   color: var(--ink);
-  font-family: 'Nunito', system-ui, sans-serif;
-  font-size: 17px;
-  line-height: 1.5;
+  font-family: var(--font-ui);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
 }
 
 /* arabe courant : Noto Naskh Arabic, de droite à gauche, isolé du français */
 .ar {
-  font-family: 'Noto Naskh Arabic', serif;
+  font-family: var(--font-ar);
   font-size: var(--ar-size);
   line-height: 1.9;
   unicode-bidi: isolate;
 }
 /* texte coranique : Amiri Quran uniquement */
 .quran-text {
-  font-family: 'Amiri Quran', serif;
+  font-family: var(--font-quran);
   font-size: calc(var(--ar-size) + 4px);
   line-height: 2.3;
   unicode-bidi: isolate;
@@ -113,7 +102,7 @@ button {
   font: inherit;
   min-height: 48px;
   min-width: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 2px solid var(--line);
   background: var(--card);
   cursor: pointer;
@@ -128,8 +117,10 @@ a:focus-visible {
 /* cartes et boutons communs */
 .card {
   background: var(--card);
+  background-image: var(--pattern-card);
   border: 2px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
   padding: 12px 16px;
   margin: 12px 0;
 }
@@ -144,16 +135,16 @@ a:focus-visible {
   display: inline-block;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #9a6700;
-  background: #fff8e1;
-  border-radius: 99px;
+  color: var(--soon-ink);
+  background: var(--warn-bg);
+  border-radius: var(--radius-pill);
   padding: 1px 10px;
 }
 button.primary,
 a.button.primary {
   background: var(--teal);
   border-color: var(--teal);
-  color: #fff;
+  color: var(--on-primary);
   font-weight: 700;
 }
 /* lien présenté comme un bouton (action principale d'une carte) */
@@ -163,6 +154,6 @@ a.button {
   line-height: 44px;
   padding: 0 16px;
   border: 2px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   text-decoration: none;
 }

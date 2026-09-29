@@ -363,17 +363,17 @@
     font-weight: 700;
   }
   .warn {
-    color: #8a5a00;
+    color: var(--warn-ink);
   }
   .ok {
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
   .bad {
-    background: #fdecea;
-    color: #b3261e;
+    background: var(--bad-bg);
+    color: var(--bad-ink);
   }
   .warnbox {
-    background: #fff8e1;
+    background: var(--warn-bg);
   }
   .small {
     font-size: 0.9rem;

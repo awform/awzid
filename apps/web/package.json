@@ -13,6 +13,7 @@
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
     "test": "vitest run",
     "budget": "node scripts/budget.mjs",
+    "theme": "node scripts/theme.mjs",
     "e2e": "playwright test"
   },
   "dependencies": {

@@ -244,9 +244,9 @@
   .msg {
     text-align: center;
     font-weight: 700;
-    color: #8a5a00;
+    color: var(--warn-ink);
   }
   .msg.good {
-    color: #1b7f4b;
+    color: var(--ok-ink);
   }
 </style>

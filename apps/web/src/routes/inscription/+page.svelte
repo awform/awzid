@@ -158,7 +158,7 @@
     flex: none;
   }
   .error {
-    color: #b3261e;
+    color: var(--bad-ink);
     font-weight: 700;
   }
   .small {

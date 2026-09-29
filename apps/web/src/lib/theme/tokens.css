@@ -1,0 +1,56 @@
+/* FICHIER GÉNÉRÉ par `pnpm --filter @awform/web theme` depuis src/lib/theme/tokens.ts — ne pas modifier à la main. */
+:root,
+[data-theme='adultes'] {
+  --ink: #1b1b1b;
+  --ink2: #4a5566;
+  --paper: #fffdf8;
+  --card: #ffffff;
+  --line: #e6dcc8;
+  --teal: #1f7a8c;
+  --navy: #173b57;
+  --good: #1f9d6b;
+  --soft: #f6ddb5;
+  --c0: #e5484d;
+  --c1: #2f6fdb;
+  --c2: #1f9d6b;
+  --c3: #c98a0b;
+  --primary: #1f7a8c;
+  --on-primary: #ffffff;
+  --ok-bg: #eaf7f1;
+  --ok-ink: #1b7f4b;
+  --bad-ink: #b3261e;
+  --bad-bg: #fdecea;
+  --warn-bg: #fff8e1;
+  --warn-ink: #8a5a00;
+  --soon-ink: #9a6700;
+  --sand: #f6f2e8;
+  --gold: #f2b233;
+  --info: #1f4e79;
+  --font-ui: 'Nunito', system-ui, sans-serif;
+  --font-ar: 'Noto Naskh Arabic', serif;
+  --font-quran: 'Amiri Quran', serif;
+  --font-size: 17px;
+  --ar-size: 26px;
+  --line-height: 1.5;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 99px;
+  --shadow-card: none;
+  --shadow-float: 0 4px 16px rgba(23, 59, 87, 0.12);
+  --pattern-bg: none;
+  --pattern-card: none;
+}
+
+/* [data-theme='enfants'] : identique au thème adultes pour l'instant */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

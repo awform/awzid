@@ -119,7 +119,7 @@
   }
   .lt.sel {
     border-color: var(--teal);
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
   .row {
     display: flex;

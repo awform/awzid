@@ -239,13 +239,13 @@
   }
   .word.sel {
     border-color: var(--teal);
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
   .pic.bad {
-    border-color: #b3261e;
+    border-color: var(--bad-ink);
   }
   .ok {
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
   .small {
     font-size: 0.9rem;

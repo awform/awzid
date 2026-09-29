@@ -157,7 +157,7 @@
     margin: 0;
   }
   .fr {
-    background: #f6f2e8;
+    background: var(--sand);
     border-radius: 8px;
     padding: 6px 8px;
   }
@@ -185,8 +185,8 @@
   }
   .tampon {
     display: inline-block;
-    border: 3px solid #1b7f4b;
-    color: #1b7f4b;
+    border: 3px solid var(--ok-ink);
+    color: var(--ok-ink);
     border-radius: 12px;
     padding: 6px 12px;
     font-weight: 800;

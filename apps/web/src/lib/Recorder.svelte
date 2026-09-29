@@ -100,14 +100,14 @@
     max-width: 100%;
   }
   .stop {
-    background: #b3261e;
+    background: var(--bad-ink);
     color: #fff;
-    border-color: #b3261e;
+    border-color: var(--bad-ink);
   }
   .small {
     font-size: 0.9rem;
   }
   .error {
-    color: #b3261e;
+    color: var(--bad-ink);
   }
 </style>

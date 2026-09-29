@@ -512,21 +512,21 @@
     padding: 2px 10px;
   }
   button.danger {
-    background: #b3261e;
-    border-color: #b3261e;
+    background: var(--bad-ink);
+    border-color: var(--bad-ink);
     color: #fff;
     font-weight: 700;
   }
   .ok {
-    background: #eaf7f1;
+    background: var(--ok-bg);
   }
   .bad {
-    background: #fdecea;
-    color: #b3261e;
+    background: var(--bad-bg);
+    color: var(--bad-ink);
     font-weight: 700;
   }
   .warnbox {
-    background: #fff8e1;
+    background: var(--warn-bg);
   }
   .secret code {
     font-size: 1.1rem;

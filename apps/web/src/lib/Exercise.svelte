@@ -333,7 +333,7 @@
     padding: 0 6px;
   }
   .ok {
-    background: #eaf7f1;
+    background: var(--ok-bg);
     border-color: var(--good) !important;
     border-radius: 14px;
   }
@@ -360,7 +360,7 @@
     padding: 0;
   }
   .found {
-    background: #eaf7f1;
+    background: var(--ok-bg);
     border-color: var(--good);
   }
   .miss:not(.found) {
@@ -396,7 +396,7 @@
     box-shadow: 0 0 0 3px #1f7a8c33;
   }
   .done {
-    background: #eaf7f1;
+    background: var(--ok-bg);
     border-color: var(--good);
   }
   .tag {
@@ -442,7 +442,7 @@
     margin: 4px 0;
   }
   .retry {
-    color: #9a6700;
+    color: var(--soon-ink);
     margin: 4px 0;
     font-weight: 700;
   }

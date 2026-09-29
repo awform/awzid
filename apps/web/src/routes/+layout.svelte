@@ -49,6 +49,10 @@
   let profile: DevProfile | null = $state(null);
   let me: Me | null = $state(null);
   let lastActivity = Date.now();
+  // thème par public (jetons : src/lib/theme/tokens.ts) : « enfants » pour un profil d'enfant actif
+  $effect(() => {
+    document.documentElement.dataset.theme = profile?.kind === 'enfant' ? 'enfants' : 'adultes';
+  });
 
   onMount(() => {
     online = navigator.onLine;
@@ -189,7 +193,7 @@
     padding: 2px 10px;
   }
   .badge.off {
-    background: #f2b233;
+    background: var(--gold);
     color: #1b1b1b;
     font-weight: 700;
   }
