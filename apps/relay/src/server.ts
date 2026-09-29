@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+/**
+ * Démarrage du relais d'école (lot 17). Variables (fichier relais.env écrit par l'installation) :
+ *   AWFORM_RELAIS_AMONT    serveur central (https://…)
+ *   AWFORM_RELAIS_JETON    jeton du relais (donné par l'équipe AWFORM)
+ *   AWFORM_RELAIS_CLE      clé de chiffrement locale (64 caractères hexadécimaux, générée à l'installation)
+ *   AWFORM_RELAIS_DONNEES  dossier des données (défaut /data)
+ *   AWFORM_RELAIS_CERTS    dossier où déposer le certificat de l'école pour Caddy (facultatif)
+ */
+import { existsSync, mkdirSync, readFileSync, utimesSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { buildRelay } from './relay.js';
+import { RelayStore } from './store.js';
+
+const env = process.env;
+const upstream = (env.AWFORM_RELAIS_AMONT ?? '').replace(/\/$/, '');
+const key = env.AWFORM_RELAIS_CLE ?? '';
+if (!/^https?:\/\//.test(upstream)) throw new Error('AWFORM_RELAIS_AMONT absent ou invalide');
+if (!/^[0-9a-f]{64}$/i.test(key))
+  throw new Error('AWFORM_RELAIS_CLE absente (64 caractères hexadécimaux)');
+const store = new RelayStore(env.AWFORM_RELAIS_DONNEES ?? '/data', Buffer.from(key, 'hex'));
+const certDir = env.AWFORM_RELAIS_CERTS ?? null;
+
+const relay = buildRelay({
+  upstream,
+  token: env.AWFORM_RELAIS_JETON || null,
+  store,
+  version: env.AWFORM_VERSION ?? 'dev',
+  onCertificate: certDir
+    ? ({ cert, key: k }) => {
+        mkdirSync(certDir, { recursive: true });
+        const crt = join(certDir, 'ecole.crt');
+        if (existsSync(crt) && readFileSync(crt, 'utf8') === cert) return;
+        writeFileSync(join(certDir, 'ecole.key'), k, { mode: 0o600 });
+        writeFileSync(crt, cert);
+        // Caddy surveille ce fichier (--watch) : nouveau certificat pris en compte sans intervention
+        const marker = join(certDir, 'recharger');
+        writeFileSync(marker, new Date().toISOString());
+        utimesSync(marker, new Date(), new Date());
+        console.log(
+          JSON.stringify({ relais: 'certificat_mis_a_jour', at: new Date().toISOString() }),
+        );
+      }
+    : undefined,
+});
+
+await relay.app.listen({ host: env.HOST ?? '0.0.0.0', port: Number(env.PORT ?? 3000) });
+console.log(JSON.stringify({ relais: 'demarre', amont: upstream, at: new Date().toISOString() }));
+
+// relais de la file toutes les 15 s ; battement et certificat toutes les 10 min
+setInterval(() => {
+  void relay.syncOnce().then((r) => {
+    if (r.envoyes || r.refuses)
+      console.log(JSON.stringify({ relais: 'envois', ...r, at: new Date().toISOString() }));
+  });
+}, 15_000);
+const beat = () => void relay.checkOnline().then(() => relay.heartbeat());
+beat();
+setInterval(beat, 600_000);
+
+const stop = async () => {
+  await relay.app.close();
+  store.close();
+  process.exit(0);
+};
+process.on('SIGINT', stop);
+process.on('SIGTERM', stop);

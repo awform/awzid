@@ -989,11 +989,15 @@ export const recitationUpload = pgTable(
     grade: jsonb('grade'),
     gradedBy: uuid('graded_by').references(() => account.id, { onDelete: 'set null' }),
     gradedAt: timestamp('graded_at', { withTimezone: true }),
+    /** clé d'idempotence (relais d'école : un envoi rejoué après une coupure n'est enregistré qu'une fois) */
+    idempotencyKey: text('idempotency_key'),
   },
   (t) => [
     index('recitation_upload_class').on(t.classId, t.createdAt),
     index('recitation_upload_profile').on(t.profileId),
     index('recitation_upload_expires').on(t.expiresAt),
+    // clé propre à chaque profil : une clé d'un autre profil ne révèle ni ne bloque rien
+    uniqueIndex('recitation_upload_idem').on(t.profileId, t.idempotencyKey),
   ],
 );
 
@@ -1041,3 +1045,24 @@ export const notificationPref = pgTable(
     ),
   ],
 );
+
+// ================================================================ relais d'école (lot 17)
+
+/**
+ * Relais d'école (mini-PC ou Raspberry Pi sans Internet permanent) : sert l'application sur le Wi-Fi de
+ * l'école et relaie les envois quand Internet revient. Jeton propre au relais (haché), révocable ; sous-domaine
+ * propre à l'école (certificat délivré par le serveur central).
+ */
+export const relay = pgTable('relay', {
+  id: uuid('id')
+    .primaryKey()
+    .default(sql`uuidv7()`),
+  name: text('name').notNull(),
+  /** sous-domaine de l'école (ex. ecole-dakar-01.relais.awzid.org) */
+  host: text('host').notNull().unique(),
+  tokenHash: text('token_hash').notNull().unique(),
+  createdAt: createdAt(),
+  lastSeenAt: timestamp('last_seen_at', { withTimezone: true }),
+  lastReport: jsonb('last_report'),
+  revokedAt: timestamp('revoked_at', { withTimezone: true }),
+});

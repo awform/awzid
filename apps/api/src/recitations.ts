@@ -178,7 +178,12 @@ export function registerRecitations(app: FastifyInstance, db: Db, key: Recitatio
         audio: req.body,
         sentBy: req.auth!.accountId,
         days: Math.min(30, Math.max(1, cls?.days ?? 14)),
+        // relais d'école : un envoi rejoué après une coupure n'est enregistré qu'une fois
+        idempotencyKey: /^[A-Za-z0-9_-]{8,80}$/.test(String(req.headers['idempotency-key'] ?? ''))
+          ? String(req.headers['idempotency-key'])
+          : null,
       });
+      if (r.duplicate) return reply.code(200).send({ recitation: r, doublon: true });
       await audit(db, req.auth!.accountId, 'recitation.envoi', r.id, {
         profil: p.id,
         classe: req.query.classe,

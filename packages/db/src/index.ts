@@ -13,3 +13,4 @@ export * from './school.js';
 export * from './roles.js';
 export * from './recitations.js';
 export * from './notify.js';
+export * from './relais.js';

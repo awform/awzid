@@ -41,6 +41,7 @@ import { registerSchool } from './school.js';
 import { registerActivities } from './activities.js';
 import { recitationKeyFromEnv, registerRecitations } from './recitations.js';
 import { registerPush } from './push.js';
+import { registerRelais } from './relais.js';
 import type { RecitationKey } from '@awform/db';
 
 export interface AppOptions {
@@ -57,6 +58,8 @@ export interface AppOptions {
   tutor?: TutorSetup;
   /** clé de chiffrement des récitations envoyées (tests) ; sinon AWFORM_RECITATION_KEY ; null : envoi fermé */
   recitationKey?: RecitationKey | null;
+  /** stockage des certificats de Caddy, en lecture (relais d'école) ; sinon AWFORM_RELAIS_CERTS */
+  relaisCertsDir?: string | null;
   /** paiements (tests) ; sinon AWFORM_PAIEMENT */
   billing?: BillingSetup;
 }
@@ -133,6 +136,13 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     opts.recitationKey === undefined ? recitationKeyFromEnv() : opts.recitationKey,
   );
   registerPush(app, db);
+  registerRelais(
+    app,
+    db,
+    opts.relaisCertsDir === undefined
+      ? (process.env.AWFORM_RELAIS_CERTS ?? null)
+      : opts.relaisCertsDir,
+  );
 
   app.get('/api/v1/health', async () => {
     const dbOk = await ping(db).catch(() => false);

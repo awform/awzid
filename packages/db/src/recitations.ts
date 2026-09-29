@@ -47,8 +47,26 @@ export async function storeRecitation(
     sentBy: string;
     days: number;
     now?: Date;
+    /** envoi rejoué par un relais : même clé = même enregistrement */
+    idempotencyKey?: string | null;
   },
 ) {
+  if (r.idempotencyKey) {
+    const [dup] = await db
+      .select({
+        id: t.recitationUpload.id,
+        createdAt: t.recitationUpload.createdAt,
+        expiresAt: t.recitationUpload.expiresAt,
+      })
+      .from(t.recitationUpload)
+      .where(
+        and(
+          eq(t.recitationUpload.profileId, r.profileId),
+          eq(t.recitationUpload.idempotencyKey, r.idempotencyKey),
+        ),
+      );
+    if (dup) return { ...dup, duplicate: true };
+  }
   const { iv, ciphertext } = encryptAudio(k, r.audio);
   const now = r.now ?? new Date();
   const [row] = await db
@@ -66,13 +84,14 @@ export async function storeRecitation(
       sentBy: r.sentBy,
       createdAt: now,
       expiresAt: new Date(now.getTime() + r.days * 86_400_000),
+      idempotencyKey: r.idempotencyKey ?? null,
     })
     .returning({
       id: t.recitationUpload.id,
       createdAt: t.recitationUpload.createdAt,
       expiresAt: t.recitationUpload.expiresAt,
     });
-  return row!;
+  return { ...row!, duplicate: false };
 }
 
 /** Métadonnées (jamais l'audio). */
