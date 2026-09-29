@@ -13,6 +13,7 @@ import { hasTanzil, loadTanzil, tanzilFile } from '../load.js';
 import { ClaudeProvider } from '../providers/claude.js';
 import { SimulatedProvider } from '../providers/simule.js';
 import { batteryMarkdown, runBattery } from '../evals/run.js';
+import { signReport } from '../gate.js';
 
 const arg = (k: string) => {
   const i = process.argv.indexOf(k);
@@ -50,7 +51,9 @@ const res = await runBattery({
   models: effectiveModels(process.env),
   modelFor: modelFor(process.env),
 });
-writeFileSync(out, JSON.stringify(res, null, 2));
+// audit CON-9 : rapport signé avec la clé d'exploitation (seul un rapport signé met Claude en service)
+const cle = process.env.AWFORM_TUTEUR_BATTERIE_CLE ?? '';
+writeFileSync(out, JSON.stringify(cle.length >= 32 ? signReport(res, cle) : res, null, 2));
 writeFileSync(out.replace(/\.json$/, '.md'), batteryMarkdown(res));
 console.log(batteryMarkdown(res));
 process.exit(res.reussi ? 0 : 1);

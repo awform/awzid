@@ -23,6 +23,9 @@ import {
   loadTanzil,
   type TutorProvider,
   userMessage,
+  BATTERY_MIN_CASES,
+  filterFingerprint,
+  signReport,
 } from '../src/index.js';
 import { oracleViolations, quranLeak } from '../src/evals/oracle.js';
 
@@ -269,36 +272,45 @@ describe('mise en service', () => {
     );
     const dir = mkdtempSync(join(tmpdir(), 'tuteur-'));
     const f = join(dir, 'rapport.json');
+    const CLE = 'cle-d-exploitation-de-test-assez-longue-2026';
+    const env = { AWFORM_TUTEUR: 'claude', ANTHROPIC_API_KEY: 'x', AWFORM_TUTEUR_BATTERIE: f };
     const base = {
       fournisseur: 'claude',
       reussi: true,
       roles: rolesFingerprint(),
       modeles: effectiveModels({}),
-      date: '',
-      cas: 700,
+      date: new Date().toISOString(),
+      cas: BATTERY_MIN_CASES,
+      filtre: filterFingerprint(),
     };
-    writeFileSync(f, JSON.stringify({ ...base, fournisseur: 'simule' }));
-    expect(
-      setupTutor({ AWFORM_TUTEUR: 'claude', ANTHROPIC_API_KEY: 'x', AWFORM_TUTEUR_BATTERIE: f })
-        .blocked,
-    ).toBe('claude_bloque_batterie_non_conforme');
-    writeFileSync(f, JSON.stringify(base));
-    const ok = setupTutor({
-      AWFORM_TUTEUR: 'claude',
-      ANTHROPIC_API_KEY: 'x',
-      AWFORM_TUTEUR_BATTERIE: f,
-    });
+    // audit CON-9 : sans clé d'exploitation, aucun rapport n'est cru
+    writeFileSync(f, JSON.stringify(signReport(base, CLE)));
+    expect(setupTutor(env).blocked).toBe('claude_bloque_cle_batterie_absente');
+    const envK = { ...env, AWFORM_TUTEUR_BATTERIE_CLE: CLE };
+    writeFileSync(f, JSON.stringify(signReport({ ...base, fournisseur: 'simule' }, CLE)));
+    expect(setupTutor(envK).blocked).toBe('claude_bloque_batterie_non_conforme');
+    writeFileSync(f, JSON.stringify(signReport(base, CLE)));
+    const ok = setupTutor(envK);
     expect(ok.mode).toBe('claude');
     expect(ok.provider?.name).toBe('claude');
     // un autre modèle que celui de la batterie → refusé
-    expect(
-      setupTutor({
-        AWFORM_TUTEUR: 'claude',
-        ANTHROPIC_API_KEY: 'x',
-        AWFORM_TUTEUR_BATTERIE: f,
-        AWFORM_TUTEUR_MODELE_ADULTE: 'claude-opus-5',
-      }).blocked,
-    ).toBe('claude_bloque_batterie_non_conforme');
+    expect(setupTutor({ ...envK, AWFORM_TUTEUR_MODELE_ADULTE: 'claude-opus-5' }).blocked).toBe(
+      'claude_bloque_batterie_non_conforme',
+    );
+    // audit CON-9 : rapports forgés ou insuffisants refusés
+    for (const forge of [
+      base, // non signé
+      { ...signReport(base, CLE), cas: 0 }, // modifié après signature
+      signReport(base, 'une-autre-cle-de-meme-longueur-000000000'),
+      signReport({ ...base, cas: 10 }, CLE), // batterie incomplète
+      signReport({ ...base, date: '2020-01-01T00:00:00Z' }, CLE), // trop ancien
+      signReport({ ...base, filtre: 'autre' }, CLE), // autre filtre de sortie
+    ]) {
+      writeFileSync(f, JSON.stringify(forge));
+      expect(setupTutor(envK).blocked, JSON.stringify(forge).slice(0, 80)).toBe(
+        'claude_bloque_batterie_non_conforme',
+      );
+    }
   });
   it('coût d’un appel en micro-dollars (tarifs publics)', () => {
     expect(

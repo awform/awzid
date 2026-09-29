@@ -5,10 +5,15 @@
  *   AWFORM_TUTEUR=simule   fournisseur simulé déterministe (tests, démonstration) ;
  *   AWFORM_TUTEUR=claude   Claude — SEULEMENT si ANTHROPIC_API_KEY est fourni par l'environnement ET si
  *                          AWFORM_TUTEUR_BATTERIE désigne un rapport de la batterie adverse RÉUSSI avec le
- *                          fournisseur « claude », les mêmes rôles (empreinte) et les mêmes modèles.
+ *                          fournisseur « claude », les mêmes rôles (empreinte) et les mêmes modèles ;
+ *                          audit CON-9 : rapport SIGNÉ (HMAC-SHA256, clé d'exploitation
+ *                          AWFORM_TUTEUR_BATTERIE_CLE), au moins BATTERY_MIN_CASES cas, daté de moins de
+ *                          90 jours, même empreinte du filtre de sortie.
  *                          Sinon : repli sur « local » et état « claude_bloque_* » visible.
  */
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
+import { filterFingerprint } from './filter.js';
 import { ClaudeProvider } from './providers/claude.js';
 import { SimulatedProvider } from './providers/simule.js';
 import type { TutorProvider } from './providers/types.js';
@@ -44,6 +49,39 @@ export interface BatteryReport {
   modeles: Record<string, string>;
   date: string;
   cas: number;
+  /** empreinte du filtre de sortie au moment de la batterie */
+  filtre?: string;
+  /** HMAC-SHA256 du rapport (sans ce champ), clé d'exploitation */
+  signature?: string;
+}
+
+/** nombre minimal de cas d'un rapport de mise en service (batterie complète) */
+export const BATTERY_MIN_CASES = 1147;
+const BATTERY_MAX_AGE_MS = 90 * 86_400_000;
+
+/** JSON canonique (clés triées) : la signature ne dépend pas de l'ordre d'écriture */
+function canonical(v: unknown): string {
+  if (Array.isArray(v)) return `[${v.map(canonical).join(',')}]`;
+  if (v && typeof v === 'object')
+    return `{${Object.keys(v)
+      .sort()
+      .map((k) => `${JSON.stringify(k)}:${canonical((v as Record<string, unknown>)[k])}`)
+      .join(',')}}`;
+  return JSON.stringify(v);
+}
+
+export function signReport<T extends object>(rep: T, key: string): T & { signature: string } {
+  const { signature: _drop, ...rest } = rep as T & { signature?: string };
+  void _drop;
+  const sig = createHmac('sha256', key).update(canonical(rest)).digest('hex');
+  return { ...(rest as T), signature: sig };
+}
+
+function signatureOk(rep: BatteryReport, key: string): boolean {
+  if (!rep.signature) return false;
+  const want = Buffer.from(signReport(rep, key).signature);
+  const got = Buffer.from(rep.signature);
+  return got.length === want.length && timingSafeEqual(got, want);
 }
 
 export function setupTutor(env: NodeJS.ProcessEnv = process.env): TutorSetup {
@@ -62,15 +100,28 @@ export function setupTutor(env: NodeJS.ProcessEnv = process.env): TutorSetup {
       blocked: 'claude_bloque_batterie_absente',
       modelFor: mf,
     };
+  const key = env.AWFORM_TUTEUR_BATTERIE_CLE ?? '';
+  if (key.length < 32)
+    return {
+      mode: 'local',
+      provider: null,
+      blocked: 'claude_bloque_cle_batterie_absente',
+      modelFor: mf,
+    };
   try {
     const rep = JSON.parse(readFileSync(path, 'utf8')) as BatteryReport;
     const models = effectiveModels(env);
     const sameModels = Object.entries(models).every(([k, v]) => rep.modeles?.[k] === v);
+    const age = Date.now() - Date.parse(rep.date);
     if (
       rep.fournisseur !== 'claude' ||
       !rep.reussi ||
       rep.roles !== rolesFingerprint() ||
-      !sameModels
+      !sameModels ||
+      !signatureOk(rep, key) ||
+      !(rep.cas >= BATTERY_MIN_CASES) ||
+      !(age >= 0 && age <= BATTERY_MAX_AGE_MS) ||
+      rep.filtre !== filterFingerprint()
     )
       return {
         mode: 'local',

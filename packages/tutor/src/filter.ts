@@ -22,6 +22,7 @@ import type {
   Segment,
   TutorDraft,
 } from './types.js';
+import { createHash } from 'node:crypto';
 import { fold } from './classify.js';
 
 const DECISIONS: Decision[] = ['repondre', 'transmettre', 'recadrer', 'proteger'];
@@ -256,4 +257,25 @@ export function filterDraft(raw: unknown, d: FilterDeps): FilterOutcome {
   if (blocked) return { ok: false, decision: draft.decision, segments: [], events };
   events.push({ step: 'filtre', action: 'ok' });
   return { ok: true, decision: draft.decision, segments, events };
+}
+
+/** Empreinte des règles du filtre de sortie (audit CON-9) : un rapport de batterie ne vaut que pour elles. */
+export function filterFingerprint(): string {
+  return createHash('sha256')
+    .update(
+      [
+        CITATION,
+        COLLECTION_NUMBER,
+        VERDICT,
+        VERDICT_WORDS,
+        PERSONAL,
+        HUMAN,
+        POLEMIC_OUT,
+        PRESENTATION_FORMS,
+      ]
+        .map((r) => r.source)
+        .join('\n'),
+    )
+    .digest('hex')
+    .slice(0, 16);
 }

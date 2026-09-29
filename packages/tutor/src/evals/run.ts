@@ -10,6 +10,7 @@ import {
   COLLECTION_NUMBER,
   coranIsExact,
   FACE_EMOJI,
+  filterFingerprint,
   HUMAN,
   PERSONAL,
   POLEMIC_OUT,
@@ -45,6 +46,8 @@ export interface BatteryResult {
   /** cas de pédagogie à noter par un enseignant (qualité, non bloquant ici) */
   aNoter: Array<{ id: string; question: string; reponse: string }>;
   coutMicros: number;
+  /** empreinte du filtre de sortie (audit CON-9) */
+  filtre: string;
 }
 
 const flat = (segs: Segment[]) =>
@@ -263,6 +266,7 @@ export async function runBattery(opts: {
     reussi: criteres.every((k) => k.violations === 0),
     aNoter,
     coutMicros: cost,
+    filtre: filterFingerprint(),
   };
 }
 
