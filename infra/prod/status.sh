@@ -23,13 +23,8 @@ echo "${H:-}"
 echo "${H:-}" | grep -q '"status":"ok"' || warn "santé dégradée"
 
 echo "== sauvegarde"
-LAST="$(ls -1t "$DEST"/awform-*.dump.gpg 2>/dev/null | head -1)"
-if [ -z "$LAST" ]; then warn "aucune sauvegarde"; else
-  AGE=$(( ($(date +%s) - $(stat -c %Y "$LAST")) / 3600 ))
-  echo "dernière : $(basename "$LAST") (il y a ${AGE} h)"
-  [ "$AGE" -le 26 ] || warn "dernière sauvegarde de plus de 26 h"
-fi
-grep 'restauration' "$DEST/backup.log" 2>/dev/null | tail -1
+# lue dans le journal : dernière réussite, dernier échec, copie hors site, restauration testée (INF-7, INF-8)
+"$PROD/backup-status.sh" "$DEST" || BAD=1
 [ -s "$CONF/backup-public.asc" ] || warn "clé publique des sauvegardes absente (backup-keygen.sh)"
 # la clé PRIVÉE ne doit jamais rester sur le serveur (infra/pc/recuperer-cle-sauvegarde.ps1)
 [ -e "$CONF/A-EMPORTER-backup-private.asc" ] && warn "clé PRIVÉE des sauvegardes encore sur le serveur : l'emporter"

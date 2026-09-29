@@ -153,6 +153,8 @@ After=awform.service
 Type=oneshot
 User=$USER
 Environment=AWFORM_ENV_DIR=$AWFORM_ENV_DIR
+# copie hors site (audit INF-8) : AWFORM_BACKUP_HORS_SITE=… dans ce fichier facultatif (aucun secret)
+EnvironmentFile=-$AWFORM_ENV_DIR/backup.env
 ExecStart=$PROD/backup.sh
 EOF
 sudo tee /etc/systemd/system/awform-backup.timer >/dev/null <<EOF

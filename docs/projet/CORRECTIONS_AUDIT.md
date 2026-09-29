@@ -64,7 +64,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | PAY-6 | mineur | Barrière parentale à l'achat facultative | à faire | | |
 | PAY-7 | mineur | Rotation du secret Stripe : plusieurs `v1=` mal gérés | à faire | | |
 | QUA-1 | majeur | Le garde-fou CI « aucune normalisation Unicode » ne peut jamais échouer | corrigé | b9cd9dc | audit-qua1.test.ts |
-| QUA-2 | majeur | Tests qui ne prouvent pas ce qu'ils annoncent | corrigé en partie : batterie au nombre exact (1 081, par famille), travailleur testé (planification, purge de nuit), test de concurrence de l'API ; CON-1 prouvé par l'API (audit-con1) ; school.test corrigé (lot 21). Reportés : couverture mesurée (dépendance à ajouter), a11y « moderate » (e2e à relancer avec les livres), tableau SIM_TABLE (documentation, pas un test) | voir « QUA-2 » dans git log | battery.test.ts, apps/worker/test/tasks.test.ts, audit-qua2.test.ts |
+| QUA-2 | majeur | Tests qui ne prouvent pas ce qu'ils annoncent | corrigé en partie : batterie au nombre exact (1 081, par famille), travailleur testé (planification, purge de nuit), test de concurrence de l'API ; CON-1 prouvé par l'API (audit-con1) ; school.test corrigé (lot 21). Reportés : couverture mesurée (dépendance à ajouter), a11y « moderate » (e2e à relancer avec les livres), tableau SIM_TABLE (documentation, pas un test) | 9d71681 | battery.test.ts, apps/worker/test/tasks.test.ts, audit-qua2.test.ts |
 | QUA-3 | mineur | Fonctions très longues | à faire | | |
 | INF-1 | bloquant | La CI est rouge sur `main` depuis le lot 9 (24 exécutions sur 24) | déjà corrigé | 8e8784f | CI locale : school.test.ts, pnpm -r --no-bail |
 | INF-2 | majeur | En CI, les tests d'API sur base sont presque tous sautés (57 sur 87), même une fois INF-1 corrigé | déjà corrigé | 8e8784f | synthetique.test.ts ; 100 tests d'API sans les livres |
@@ -72,8 +72,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | INF-4 | mineur | Dépendances : 2 vulnérabilités connues (outillage) | à faire | | |
 | INF-5 | mineur | Gradle téléchargé sans empreinte | à faire | | |
 | INF-6 | majeur | `X-Forwarded-For` falsifiable : limites par adresse IP (inscription, connexion) contournées | corrigé | e91c3fa | audit-inf6.test.ts |
-| INF-7 | majeur | `backup.sh` : un `pg_dump` en échec laisse une « sauvegarde » partielle, non journalisée, prise pour bonne | à faire | | |
-| INF-8 | majeur | Ni copie hors site, ni test de restauration automatique | à faire | | |
+| INF-7 | majeur | `backup.sh` : un `pg_dump` en échec laisse une « sauvegarde » partielle, non journalisée, prise pour bonne | corrigé | voir « INF-7 » dans git log | audit-infra.test.ts |
+| INF-8 | majeur | Ni copie hors site, ni test de restauration automatique | corrigé en partie : copie hors site prête et journalisée, état des sauvegardes et alerte à 35 jours, seuils de restauration ; stockage et restauration automatique = décision D10 | voir « INF-8 » dans git log | audit-infra.test.ts |
 | INF-9 | majeur | Un déploiement `--demo` laisse le paiement SIMULÉ et le tuteur simulé actifs pour toujours | à faire | | |
 | INF-10 | mineur | Migrations sans retour arrière, appliquées avant la bascule | à faire | | |
 | INF-11 | mineur | Images Docker non épinglées par empreinte ; scripts : avertissements shellcheck | à faire | | |
