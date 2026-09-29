@@ -71,7 +71,8 @@ if ! grep -q '^AWFORM_VAPID_PRIVATE=' "$ENVF"; then
   shred -u "$VK"
 fi
 sed -i '/^AWFORM_VAPID_SUBJECT=/d' "$ENVF"
-echo "AWFORM_VAPID_SUBJECT=https://$SITE" >> "$ENVF"# langues en préparation (traductions non relues) : montrables en démonstration seulement
+echo "AWFORM_VAPID_SUBJECT=https://$SITE" >> "$ENVF"
+# langues en préparation (traductions non relues) : montrables en démonstration seulement
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_LANGUES_PREPARATION=' "$ENVF"; then echo "AWFORM_LANGUES_PREPARATION=on" >> "$ENVF"; fi
 # paiements : désactivés par défaut ; la démonstration utilise le prestataire SIMULÉ (aucune clé, aucune carte)
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_PAIEMENT=' "$ENVF"; then echo "AWFORM_PAIEMENT=simule" >> "$ENVF"; fi
