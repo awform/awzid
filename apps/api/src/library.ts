@@ -3,7 +3,7 @@
  * Contenu éditorial public comme les leçons ; mis en cache par l'appareil pour la lecture hors ligne.
  */
 import type { FastifyInstance } from 'fastify';
-import { illustrationKeys } from '@awform/content';
+import { illustrationKeys, sceneKeys } from '@awform/content';
 import { getBooklet, illustrationsFor, listBooklets, type Db } from '@awform/db';
 
 type Edition = () => Promise<{ id: string; code: string } | null>;
@@ -32,7 +32,9 @@ export function registerLibrary(app: FastifyInstance, db: Db, edition: Edition):
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
       const b = await getBooklet(db, ed.id, req.params.code);
       if (!b) return reply.code(404).send(notFound(`livret ${req.params.code} introuvable`));
-      const illustrations = await illustrationsFor(db, ed.id, illustrationKeys(b.content));
+      // clés citées par le livret + décor et personnages par défaut des scènes (étal, palmier, soleil…)
+      const keys = new Set([...illustrationKeys(b.content), ...sceneKeys(undefined)]);
+      const illustrations = await illustrationsFor(db, ed.id, [...keys]);
       return {
         edition: ed.code,
         code: b.code,

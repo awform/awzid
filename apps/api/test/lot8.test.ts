@@ -108,6 +108,9 @@ describe.skipIf(!READY)('lot 8 (awform_test)', () => {
     expect(b.booklet.controle).toBeUndefined();
     expect(JSON.stringify(b.booklet)).not.toMatch(/"tr":/);
     expect(Object.keys(b.illustrations).length).toBeGreaterThan(0);
+    // décor des scènes (marché : étal, palmier) livré avec le livret, sinon cadres « manquant »
+    const m = (await get('/api/v1/booklets/ad1-01')).json();
+    expect(Object.keys(m.illustrations)).toEqual(expect.arrayContaining(['stall', 'palm']));
     expect((await get('/api/v1/booklets/en1-99')).statusCode).toBe(404);
   });
 });

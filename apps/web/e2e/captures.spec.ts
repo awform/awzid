@@ -206,3 +206,41 @@ test.describe('lot 6', () => {
     await shot('32-page-qr', true);
   });
 });
+
+test.describe('lot 8', () => {
+  test('captures d’écran — lot 8 (sciences islamiques, bibliothèque, lecteur coranique)', async ({
+    page,
+  }, info) => {
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    const shot = async (name: string, full = false) => {
+      await page.locator('main h1, h1').first().waitFor();
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: full });
+    };
+    await page.goto('/sciences');
+    await page.locator('[data-testid="niveau-religion"]').first().waitFor();
+    await shot('33-sciences-islamiques');
+    await page.goto('/lecons/re1.l03');
+    await page.getByTestId('lecon-religion').waitFor();
+    await shot('34-lecon-religion-enfants');
+    await page.goto('/lecons/ra1.l01');
+    await page.getByTestId('lecon-religion').waitFor();
+    await page.locator('.rub').first().scrollIntoViewIfNeeded();
+    await shot('35-lecon-religion-adultes');
+    await page.goto('/lectures');
+    await page.locator('[data-testid="livrets"][data-ready="true"]').waitFor();
+    await shot('36-bibliotheque');
+    const code = await page.locator('[data-livret]').first().getAttribute('data-livret');
+    await page.goto(`/lectures/${code}`);
+    await page.getByTestId('suivant').click();
+    await page.getByTestId('traduction').click();
+    await shot('37-livret-page');
+    await page.clock.install();
+    await page.goto('/coran/lecteur?s=112');
+    await page.locator('[data-verse="112:1"]').waitFor();
+    await page.getByTestId('lire').click();
+    await page.locator('.w.on').waitFor();
+    await shot('38-lecteur-coranique');
+  });
+});
