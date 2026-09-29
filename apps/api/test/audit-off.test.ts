@@ -1,0 +1,53 @@
+/**
+ * Audit — hors ligne : OFF-2, OFF-5 (un bloc par constat). Chaque bloc échouait avant sa correction.
+ */
+import { randomUUID } from 'node:crypto';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { adult, setupEdition, type Ctx } from './helpers.js';
+
+const URL_ = process.env.TEST_DATABASE_URL;
+const TODAY = new Date().toISOString().slice(0, 10);
+
+describe.skipIf(!URL_)('audit — hors ligne', () => {
+  let c: Ctx;
+  beforeAll(async () => {
+    c = await setupEdition(URL_!);
+  });
+  afterAll(async () => {
+    await c?.app.close();
+    await c?.h.close();
+  });
+
+  it('OFF-2 : un événement hors bornes est refusé seul, le reste du lot passe (plus de 500)', async () => {
+    const { A, profileId } = await adult(c, 'poison-off2@exemple.org');
+    const now = new Date().toISOString();
+    const ev = (eventType: string, response: object, extra: object = {}) => ({
+      id: randomUUID(),
+      profileId,
+      unitId: eventType === 'checklist' ? 'en1.l01' : 'hifz',
+      eventType,
+      response,
+      deviceAt: now,
+      ...extra,
+    });
+    const hifz = (r: object) =>
+      ev('hifz', { day: TODAY, part: '112:1-4', kind: 'appris', source: 'auto', ...r });
+    const trace = (r: object) => ev('trace', { item: 'ب', ok: true, day: TODAY, ...r });
+    const bons = [ev('checklist', { checked: 1, total: 2 }), trace({}), hifz({})];
+    const poisons = [
+      ev('checklist', { checked: 1, total: 2 }, { deviceAt: '-010000-01-01T00:00:00.000Z' }),
+      hifz({ q: 99999 }),
+      hifz({ pos: 3e9 }),
+      hifz({ details: { note: 'a\u0000b' } }),
+      trace({ details: { x: '\u0000' } }),
+      ev('checklist', { checked: 40000, total: 40000 }),
+    ];
+    const r = await c.req('POST', '/api/v1/attempts', A, { events: [...poisons, ...bons] });
+    expect(r.statusCode, r.body).toBe(200);
+    const b = r.json();
+    const ok = new Set(b.accepted.map((x: { id: string }) => x.id));
+    for (const e of bons) expect(ok.has(e.id), JSON.stringify(e)).toBe(true);
+    const ko = new Set(b.rejected.map((x: { id: string }) => x.id));
+    for (const e of poisons) expect(ko.has(e.id), JSON.stringify(e)).toBe(true);
+  });
+});

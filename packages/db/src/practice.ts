@@ -3,6 +3,7 @@
  */
 import { and, asc, eq, gte, inArray, sql } from 'drizzle-orm';
 import { publicProjection } from '@awform/content';
+import { deviceTime, hasNul, isolated, REFUSED } from './bounds.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -46,26 +47,32 @@ export async function recordPractice(
       e.item.length > 80 ||
       typeof e.ok !== 'boolean' ||
       !DAY.test(String(e.day)) ||
-      Number.isNaN(new Date(e.deviceAt).getTime())
+      !deviceTime(e.deviceAt) ||
+      hasNul(e.item) ||
+      hasNul(e.details) ||
+      JSON.stringify(e.details ?? null).length > 4000
     ) {
       res.rejected.push({ id: e.id, reason: 'événement invalide' });
       continue;
     }
-    const rows = await db
-      .insert(t.practiceEvent)
-      .values({
-        id: e.id,
-        profileId: e.profileId,
-        kind: e.kind,
-        item: e.item,
-        ok: e.ok,
-        day: e.day,
-        details: e.details ?? null,
-        deviceAt: new Date(e.deviceAt),
-      })
-      .onConflictDoNothing()
-      .returning({ id: t.practiceEvent.id });
-    (rows.length ? res.accepted : res.duplicates).push(e.id);
+    const rows = await isolated(() =>
+      db
+        .insert(t.practiceEvent)
+        .values({
+          id: e.id,
+          profileId: e.profileId,
+          kind: e.kind,
+          item: e.item,
+          ok: e.ok,
+          day: e.day,
+          details: e.details ?? null,
+          deviceAt: new Date(e.deviceAt),
+        })
+        .onConflictDoNothing()
+        .returning({ id: t.practiceEvent.id }),
+    );
+    if (rows === REFUSED) res.rejected.push({ id: e.id, reason: 'données invalides' });
+    else (rows.length ? res.accepted : res.duplicates).push(e.id);
   }
   return res;
 }

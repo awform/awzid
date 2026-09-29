@@ -31,7 +31,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-13 | mineur | Journaux Fastify : URL complète (identifiants, paramètres) et adresse IP | à faire | | |
 | MIN-14 | mineur | Réinscription impossible 30 jours et révélation de l'existence du compte | à faire | | |
 | MIN-15 | mineur | Pays déclaratif, codes inexistants acceptés | à faire | | |
-| MIN-16 | mineur | Enregistrements vocaux locaux : la limite de 7 jours n'est appliquée qu'à l'ouverture de l'écran | corrigé | voir « MIN-16 » dans git log | apps/web/src/lib/recordings.test.ts |
+| MIN-16 | mineur | Enregistrements vocaux locaux : la limite de 7 jours n'est appliquée qu'à l'ouverture de l'écran | corrigé | a319a48 | apps/web/src/lib/recordings.test.ts |
 | MIN-17 | mineur | Branche `lot17-wip` : consentement par pays cohérent mais non appliqué aux profils | corrigé | b42308f | audit-mineurs.test.ts « MIN-17 » |
 | CON-1 | bloquant | Les corrigés des examens et bilans sont envoyés à l'élève (API et paquet hors ligne) et comptent pour le certificat | corrigé | 1b24221 (D7) + 68ac8d0 | audit-con1.test.ts (échoue sans la correction) |
 | CON-2 | majeur | Projection élève en **liste noire** : translittération, corrigés et notes d'enseignant passent | à faire | | |
@@ -46,7 +46,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | CON-11 | mineur | Texte libre d'un enfant de moins de 13 ans stocké sans être lu ni classé | à faire | | |
 | CON-12 | mineur | Classifieur local : contournements simples et faux positifs | à faire | | |
 | OFF-1 | bloquant | Relais d'école (lot 17) : des réponses confirmées « acceptées » à la tablette sont effacées si la session de l'élève a expiré | corrigé | 44fa0b6 (commun avec OFF-6) | relay.test.ts « audit OFF-1 » |
-| OFF-2 | majeur | Un seul événement hors bornes : 500 sur tout le lot et file de l'appareil bloquée à vie | à faire | | |
+| OFF-2 | majeur | Un seul événement hors bornes : 500 sur tout le lot et file de l'appareil bloquée à vie | corrigé | voir « OFF-2 » dans git log | audit-off.test.ts, apps/web/src/lib/offline.test.ts |
 | OFF-3 | majeur | Appareil partagé : à la déconnexion, la file et les voix de A restent ; la connexion de B détruit la file de A | à faire | | |
 | OFF-4 | mineur | File de l'appareil : 4xx renvoyés à l'infini, portail captif et quota plein non gérés | à faire | | |
 | OFF-5 | mineur | Réponse antidatée par `deviceAt` : la leçon passe « maîtrisée » ; dates impossibles acceptées | à faire | | |

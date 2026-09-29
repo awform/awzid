@@ -17,3 +17,4 @@ export * from './relais.js';
 export * from './corrections.js';
 export * from './epreuves.js';
 export * from './rgpd.js';
+export * from './bounds.js';

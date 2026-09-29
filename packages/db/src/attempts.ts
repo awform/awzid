@@ -15,6 +15,7 @@ import {
   isValidItemResponse,
   type UnitProgress,
 } from '@awform/grading';
+import { deviceTime, hasNul, isolated, isSmallInt, REFUSED } from './bounds.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -60,9 +61,13 @@ export async function recordAttempts(
       reject('profil invalide');
       continue;
     }
-    const deviceAt = new Date(ev.deviceAt);
-    if (Number.isNaN(deviceAt.getTime())) {
+    const deviceAt = deviceTime(ev.deviceAt);
+    if (!deviceAt) {
       reject('horodatage invalide');
+      continue;
+    }
+    if (hasNul(ev.response) || typeof ev.unitId !== 'string' || ev.unitId.length > 40) {
+      reject('données invalides');
       continue;
     }
     if (!profiles.has(ev.profileId)) {
@@ -121,7 +126,7 @@ export async function recordAttempts(
         reject('type d’exercice non corrigé automatiquement');
         continue;
       }
-      if (!Number.isInteger(ev.itemIndex) || !isValidItemResponse(ex, ev.response)) {
+      if (!isSmallInt(ev.itemIndex) || ev.itemIndex < 0 || !isValidItemResponse(ex, ev.response)) {
         reject('réponse invalide');
         continue;
       }
@@ -132,7 +137,14 @@ export async function recordAttempts(
       response = ev.response;
     } else if (ev.eventType === 'checklist') {
       const r = ev.response as { checked?: unknown; total?: unknown } | null;
-      if (!r || !Number.isInteger(r.checked) || !Number.isInteger(r.total)) {
+      if (
+        !r ||
+        !Number.isInteger(r.checked) ||
+        !Number.isInteger(r.total) ||
+        (r.checked as number) < 0 ||
+        (r.checked as number) > (r.total as number) ||
+        (r.total as number) > 1000
+      ) {
         reject('auto-évaluation invalide');
         continue;
       }
@@ -142,27 +154,30 @@ export async function recordAttempts(
       continue;
     }
 
-    const inserted = await db
-      .insert(t.attempt)
-      .values({
-        id: ev.id,
-        profileId: ev.profileId,
-        editionId,
-        unitId: ev.unitId,
-        exerciseId,
-        exerciseHash,
-        itemIndex,
-        eventType: ev.eventType,
-        response,
-        correct: correct === null ? null : correct ? 1 : 0,
-        total: correct === null ? null : 1,
-        score: correct === null ? null : correct ? 1 : 0,
-        deviceAt,
-        deviceId: typeof ev.deviceId === 'string' ? ev.deviceId.slice(0, 64) : null,
-      })
-      .onConflictDoNothing({ target: t.attempt.id })
-      .returning({ id: t.attempt.id });
-    if (inserted.length === 0) res.duplicates.push(ev.id);
+    const inserted = await isolated(() =>
+      db
+        .insert(t.attempt)
+        .values({
+          id: ev.id,
+          profileId: ev.profileId,
+          editionId,
+          unitId: ev.unitId,
+          exerciseId,
+          exerciseHash,
+          itemIndex,
+          eventType: ev.eventType,
+          response,
+          correct: correct === null ? null : correct ? 1 : 0,
+          total: correct === null ? null : 1,
+          score: correct === null ? null : correct ? 1 : 0,
+          deviceAt,
+          deviceId: typeof ev.deviceId === 'string' ? ev.deviceId.slice(0, 64) : null,
+        })
+        .onConflictDoNothing({ target: t.attempt.id })
+        .returning({ id: t.attempt.id }),
+    );
+    if (inserted === REFUSED) reject('données invalides');
+    else if (inserted.length === 0) res.duplicates.push(ev.id);
     else {
       res.accepted.push({ id: ev.id, correct });
       touched.add(`${ev.profileId}|${ev.unitId}`);

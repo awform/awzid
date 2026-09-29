@@ -4,6 +4,7 @@
  */
 import { randomInt } from 'node:crypto';
 import { and, asc, eq, inArray, isNull } from 'drizzle-orm';
+import { deviceTime, hasNul, isInt32, isolated, REFUSED } from './bounds.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -156,29 +157,44 @@ export async function recordHifzEvents(
       reject('résultat invalide');
       continue;
     }
-    const deviceAt = new Date(e.deviceAt);
-    if (Number.isNaN(deviceAt.getTime())) {
+    if (q !== null && (!Number.isInteger(q) || q < 0 || q > 3)) {
+      reject('résultat invalide');
+      continue;
+    }
+    if (e.pos !== undefined && e.pos !== null && (!isInt32(e.pos) || e.pos < 0)) {
+      reject('position invalide');
+      continue;
+    }
+    if (hasNul(e.details) || JSON.stringify(e.details ?? null).length > 4000) {
+      reject('détails invalides');
+      continue;
+    }
+    const deviceAt = deviceTime(e.deviceAt);
+    if (!deviceAt) {
       reject('horodatage invalide');
       continue;
     }
-    const inserted = await db
-      .insert(t.hifzEvent)
-      .values({
-        id: e.id,
-        profileId: e.profileId,
-        day: e.day,
-        part: e.part,
-        kind: e.kind,
-        q,
-        source: e.source,
-        pos: Number.isInteger(e.pos) ? e.pos : null,
-        details: e.details ?? null,
-        authorAccountId,
-        deviceAt,
-      })
-      .onConflictDoNothing()
-      .returning({ id: t.hifzEvent.id });
-    if (inserted.length) res.accepted.push(e.id);
+    const inserted = await isolated(() =>
+      db
+        .insert(t.hifzEvent)
+        .values({
+          id: e.id,
+          profileId: e.profileId,
+          day: e.day,
+          part: e.part,
+          kind: e.kind,
+          q,
+          source: e.source,
+          pos: Number.isInteger(e.pos) ? e.pos : null,
+          details: e.details ?? null,
+          authorAccountId,
+          deviceAt,
+        })
+        .onConflictDoNothing()
+        .returning({ id: t.hifzEvent.id }),
+    );
+    if (inserted === REFUSED) reject('données invalides');
+    else if (inserted.length) res.accepted.push(e.id);
     else res.duplicates.push(e.id);
   }
   return res;

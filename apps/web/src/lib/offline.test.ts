@@ -11,7 +11,7 @@ import {
   removePack,
   updatePack,
 } from './offline';
-import { flushQueue, pendingCount, queueEvent, uuidv7, BATCH } from './sync-core';
+import { flushQueue, pendingCount, quarantined, queueEvent, uuidv7, BATCH } from './sync-core';
 
 function unit(id: string, n: number, sha: string) {
   return {
@@ -209,5 +209,38 @@ describe('synchronisation différée sans conflit', () => {
     await queueEvent(ev);
     const r = await flushQueue((async () => new Response('x', { status: 503 })) as typeof fetch);
     expect(r.remaining).toBe(1);
+  });
+
+  it('audit OFF-2 : un événement empoisonné (500 sur tout lot qui le contient) ne bloque plus la file', async () => {
+    for (let i = 0; i < 150; i++) await queueEvent(ev);
+    const poison = await queueEvent({ ...ev, response: { value: 'poison' } });
+    for (let i = 0; i < 20; i++) await queueEvent(ev);
+    const fetchFn = (async (_u: RequestInfo | URL, init?: RequestInit) => {
+      const { events } = JSON.parse(String(init?.body)) as { events: Array<{ id: string }> };
+      if (events.some((e) => e.id === poison.id)) return new Response('x', { status: 500 });
+      return new Response(
+        JSON.stringify({
+          accepted: events.map((e) => ({ id: e.id, correct: true })),
+          duplicates: [],
+          rejected: [],
+        }),
+      );
+    }) as typeof fetch;
+    // premier cycle : tout part sauf l'événement fautif, gardé pour un nouvel essai
+    const r1 = await flushQueue(fetchFn);
+    expect(r1).toMatchObject({ sent: 170, remaining: 1 });
+    // après trois cycles en échec, il est mis en quarantaine : la file est vide, rien n'est perdu
+    await flushQueue(fetchFn);
+    const r3 = await flushQueue(fetchFn);
+    expect(r3).toMatchObject({ remaining: 0, quarantined: 1 });
+    expect((await quarantined()).map((e) => e.id)).toEqual([poison.id]);
+  });
+
+  it('audit OFF-2 : serveur indisponible (503) : rien n’est mis en quarantaine', async () => {
+    await queueEvent(ev);
+    const down = (async () => new Response('x', { status: 503 })) as typeof fetch;
+    for (let i = 0; i < 4; i++) await flushQueue(down);
+    expect(await pendingCount()).toBe(1);
+    expect(await quarantined()).toEqual([]);
   });
 });

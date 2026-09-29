@@ -5,7 +5,10 @@
  *  - l'envoi se fait par petits lots, dans l'ordre, dès que le réseau revient (page ou service worker) ;
  *  - le serveur ignore un doublon et RECALCULE les états : il n'y a jamais de conflit à résoudre à la main ;
  *  - un événement refusé définitivement (empreinte périmée, profil inconnu) est retiré de la file et
- *    compté, pour ne pas bloquer les suivants.
+ *    compté, pour ne pas bloquer les suivants ;
+ *  - un lot refusé en bloc (erreur du serveur, audit OFF-2) est coupé en deux jusqu'à isoler l'événement
+ *    fautif : les autres partent, lui est réessayé, puis mis en QUARANTAINE (gardé à part, jamais perdu)
+ *    après 3 cycles en échec. Serveur indisponible (429, 502-504) : on attend, sans rien écarter.
  * Ce module n'utilise que fetch + IndexedDB : il tourne dans la page ET dans le service worker.
  */
 import { count, delMany, getAll, kvGet, kvSet, putMany } from './idb';
@@ -31,9 +34,37 @@ export interface FlushResult {
   offline: boolean;
   /** le serveur demande une connexion : la file reste sur l'appareil */
   unauthenticated?: boolean;
+  /** événements mis en quarantaine pendant cet envoi (audit OFF-2) */
+  quarantined: number;
 }
 
 export const BATCH = 100;
+/** échecs isolés d'un même événement avant sa mise en quarantaine */
+export const QUARANTINE_AFTER = 3;
+const FAILS = 'syncFailures';
+const QUARANTINE = 'syncQuarantine';
+const UNAVAILABLE = new Set([429, 502, 503, 504]);
+
+/** Événements écartés de la file après des échecs répétés (diagnostic, envoi manuel plus tard). */
+export async function quarantined(): Promise<AttemptEvent[]> {
+  return (await kvGet<AttemptEvent[]>(QUARANTINE).catch(() => undefined)) ?? [];
+}
+
+/** Échec d'un événement seul : réessayé au prochain cycle, en quarantaine au 3e. Vrai si écarté. */
+async function failedAlone(e: AttemptEvent): Promise<boolean> {
+  const fails = (await kvGet<Record<string, number>>(FAILS)) ?? {};
+  const n = (fails[e.id] ?? 0) + 1;
+  if (n < QUARANTINE_AFTER) {
+    fails[e.id] = n;
+    await kvSet(FAILS, fails);
+    return false;
+  }
+  delete fails[e.id];
+  await kvSet(FAILS, fails);
+  await kvSet(QUARANTINE, [...(await quarantined()), e].slice(-200));
+  await delMany('events', [e.id]);
+  return true;
+}
 
 /** UUID version 7 (horodatage en millisecondes + aléa cryptographique), RFC 9562. */
 export function uuidv7(now = Date.now()): string {
@@ -66,14 +97,24 @@ let running: Promise<FlushResult> | null = null;
 export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<FlushResult> {
   if (running) return running;
   running = (async () => {
-    const res: FlushResult = { sent: 0, rejected: 0, remaining: 0, progress: {}, offline: false };
+    const res: FlushResult = {
+      sent: 0,
+      rejected: 0,
+      remaining: 0,
+      progress: {},
+      offline: false,
+      quarantined: 0,
+    };
+    // événements fautifs isolés pendant ce cycle : laissés dans la file, pas renvoyés tout de suite
+    const skip = new Set<string>();
+    let size = BATCH;
     try {
       for (;;) {
-        const all = (await getAll<AttemptEvent>('events')).sort((a, b) =>
-          a.id < b.id ? -1 : a.id > b.id ? 1 : 0,
-        );
+        const all = (await getAll<AttemptEvent>('events'))
+          .filter((e) => !skip.has(e.id))
+          .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
         if (all.length === 0) break;
-        const batch = all.slice(0, BATCH);
+        const batch = all.slice(0, size);
         let r: Response;
         try {
           r = await fetchFn(`${base}/api/v1/attempts`, {
@@ -87,8 +128,23 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
           res.offline = true;
           break;
         }
-        if (r.status === 401) res.unauthenticated = true; // reconnexion nécessaire : la file est gardée
-        if (!r.ok) break;
+        if (r.status === 401) {
+          res.unauthenticated = true; // reconnexion nécessaire : la file est gardée
+          break;
+        }
+        if (!r.ok) {
+          if (UNAVAILABLE.has(r.status)) break; // serveur indisponible : tout est gardé pour plus tard
+          // lot refusé en bloc : on le coupe en deux jusqu'à isoler l'événement fautif (audit OFF-2)
+          if (batch.length > 1) {
+            size = Math.ceil(batch.length / 2);
+            continue;
+          }
+          const lone = batch[0]!;
+          if (await failedAlone(lone)) res.quarantined++;
+          else skip.add(lone.id);
+          continue;
+        }
+        size = Math.min(BATCH, size * 2);
         const body = (await r.json()) as {
           accepted: Array<{ id: string }>;
           duplicates: string[];
