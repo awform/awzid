@@ -16,6 +16,7 @@
     "@awform/content": "workspace:*",
     "@awform/db": "workspace:*",
     "@awform/hifz": "workspace:*",
+    "@awform/tutor": "workspace:*",
     "drizzle-orm": "^0.45.3",
     "fastify": "^5.12.5"
   },

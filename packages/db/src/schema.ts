@@ -590,3 +590,79 @@ export const auditLog = pgTable(
   },
   (t) => [index('audit_log_at').on(t.at)],
 );
+
+// ================================================================ tuteurs IA (lot 9)
+
+/**
+ * Journal des réponses du tuteur (ARCHITECTURE_V2 § 1.6 étape 7) : question (tronquée), décision, route,
+ * événements du filtre, réponse rendue, rôle et modèle, coût. Pseudonymisé ; visible du parent pour son
+ * enfant ; conservé 12 mois (purge du worker).
+ */
+export const tutorLog = pgTable(
+  'tutor_log',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    unitId: text('unit_id'),
+    roleId: text('role_id').notNull(),
+    roleVersion: text('role_version').notNull(),
+    provider: text('provider').notNull(),
+    model: text('model'),
+    action: text('action').notNull(),
+    question: text('question'),
+    decision: text('decision').notNull(),
+    route: text('route').notNull(),
+    filter: jsonb('filter'),
+    segments: jsonb('segments'),
+    refused: text('refused'),
+    /** signalement de la réponse par l'élève ou le parent (file de modération) */
+    reportedAt: timestamp('reported_at', { withTimezone: true }),
+    costMicros: integer('cost_micros').notNull().default(0),
+    createdAt: createdAt(),
+  },
+  (t) => [index('tutor_log_profile').on(t.profileId, t.createdAt)],
+);
+
+/** Question transmise par le tuteur à l'enseignant (avis religieux, refus du modèle) ; l'humain répond. */
+export const tutorQuestion = pgTable(
+  'tutor_question',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    unitId: text('unit_id'),
+    text: text('text').notNull(),
+    motif: text('motif').notNull(),
+    status: text('status').notNull().default('en_attente'),
+    answer: text('answer'),
+    answeredBy: uuid('answered_by').references(() => account.id, { onDelete: 'set null' }),
+    answeredAt: timestamp('answered_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('tutor_question_profile').on(t.profileId),
+    index('tutor_question_status').on(t.status),
+    check('tutor_question_status', sql`${t.status} IN ('en_attente', 'repondue')`),
+  ],
+);
+
+/** Alerte de protection (détresse, demande de rencontre) pour la modération humaine ; jamais d'enquête par l'IA. */
+export const tutorAlert = pgTable('tutor_alert', {
+  id: uuid('id')
+    .primaryKey()
+    .default(sql`uuidv7()`),
+  profileId: uuid('profile_id')
+    .notNull()
+    .references(() => profile.id, { onDelete: 'cascade' }),
+  logId: uuid('log_id').references(() => tutorLog.id, { onDelete: 'set null' }),
+  motif: text('motif').notNull(),
+  handledAt: timestamp('handled_at', { withTimezone: true }),
+  createdAt: createdAt(),
+});

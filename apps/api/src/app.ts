@@ -6,6 +6,7 @@
  */
 import Fastify, { type FastifyInstance } from 'fastify';
 import type { Lesson } from '@awform/content';
+import type { TutorSetup } from '@awform/tutor';
 import { neededIllustrations } from './needed.js';
 import { getPack } from './packs.js';
 import { ownsProfile, registerAuth } from './auth/routes.js';
@@ -31,6 +32,7 @@ import {
 } from '@awform/db';
 import { registerHifz } from './hifz.js';
 import { registerLibrary } from './library.js';
+import { registerTutor } from './tutor.js';
 
 export interface AppOptions {
   db: Db;
@@ -42,6 +44,8 @@ export interface AppOptions {
   cookieSecure?: boolean | 'auto';
   /** clé de chiffrement des secrets de second facteur (32 octets) ; absente → 2FA indisponible */
   secretKey?: Buffer | null;
+  /** tuteur (tests) ; sinon AWFORM_TUTEUR */
+  tutor?: TutorSetup;
 }
 
 const LEVEL_CODE = '^[a-z]{2,3}[0-9]{1,2}$';
@@ -102,6 +106,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   const edition = async () => currentEdition(db, opts.editionCode);
   registerHifz(app, db, edition);
   registerLibrary(app, db, edition);
+  registerTutor(app, db, edition, opts.tutor);
 
   app.get('/api/v1/health', async () => {
     const dbOk = await ping(db).catch(() => false);

@@ -166,6 +166,9 @@
 <svelte:head><title>{t('app.nom')} — {t('ens.titre')}</title></svelte:head>
 
 <h1>{t('ens.titre')}</h1>
+<p>
+  <a href={resolve('/enseignant/questions')} data-testid="lien-questions">{t('ens.questions')}</a>
+</p>
 {#if msg}<p class="card ok" role="status" data-testid="ens-message">{msg}</p>{/if}
 {#if error}<p class="card bad" role="alert">{error}</p>{/if}
 

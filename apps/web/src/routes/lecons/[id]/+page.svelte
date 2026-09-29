@@ -4,6 +4,7 @@
   import Ar from '$lib/Ar.svelte';
   import Exercise from '$lib/Exercise.svelte';
   import ReligionLesson from '$lib/religion/ReligionLesson.svelte';
+  import TutorPanel from '$lib/TutorPanel.svelte';
   import Illus from '$lib/Illus.svelte';
   import Scene from '$lib/Scene.svelte';
   import Sprite from '$lib/Sprite.svelte';
@@ -63,11 +64,20 @@
 
   // tentatives : profil actif du compte connecté (sans profil, les réponses ne sont pas enregistrées)
   let profileId: string | null = $state(null);
+  let profileInfo: { id: string; kind: string; birthYear: number | null } | null = $state(null);
+  /** mots de la leçon (bouton « Je ne comprends pas le mot… » du tuteur) */
+  const lessonWords = $derived(
+    ((L as unknown as { mots?: Array<{ ar?: string }> }).mots ?? [])
+      .map((m) => (m.ar ?? '').replace(/[[\]]/g, ''))
+      .filter(Boolean)
+      .slice(0, 40),
+  );
   let progress: { status: string; score: number | null; bestScore: number | null } | null =
     $state(null);
   onMount(() => {
     void demoProfileFor(u.levelCode).then((p) => {
       profileId = p?.id ?? null;
+      profileInfo = p ? { id: p.id, kind: p.kind, birthYear: p.birthYear } : null;
       void flush();
     });
     return onProgress((unitId, p) => {
@@ -499,6 +509,7 @@
       </section>
     {/if}
   </article>
+  <TutorPanel unitId={u.id} profile={profileInfo} words={lessonWords} />
 {/if}
 
 {#snippet dlg()}

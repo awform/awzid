@@ -323,6 +323,16 @@
     </section>
   {/if}
 
+  {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
+    <section class="card">
+      <h2>{t('compte.tuteur_titre')}</h2>
+      <p class="muted small">{t('compte.tuteur_aide')}</p>
+      <p>
+        <a href={resolve('/compte/tuteur')} data-testid="lien-tuteur">{t('compte.tuteur_lien')}</a>
+      </p>
+    </section>
+  {/if}
+
   {#if me.account.kind !== 'admin'}
     <section class="card">
       <h2>{t('compte.code_parent')}</h2>

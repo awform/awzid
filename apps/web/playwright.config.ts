@@ -51,6 +51,8 @@ export default defineConfig({
         AWFORM_SIGNUP_PER_HOUR: '200',
         // clé de chiffrement des seconds facteurs : tirée au hasard pour chaque lancement de test
         AWFORM_SECRET_KEY: E2E_KEY,
+        // tuteur : fournisseur SIMULÉ (aucun appel à un vrai modèle en test)
+        AWFORM_TUTEUR: 'simule',
       },
       reuseExistingServer: false,
       timeout: 120_000,

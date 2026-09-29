@@ -50,6 +50,13 @@
       "when": 1790649754254,
       "tag": "0006_livrets",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790653665834,
+      "tag": "0007_tuteur",
+      "breakpoints": true
     }
   ]
 }

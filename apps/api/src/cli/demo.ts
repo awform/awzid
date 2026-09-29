@@ -12,6 +12,7 @@ import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { connect, loadRootEnv, runMigrations, schema as t } from '@awform/db';
 import type { LightMyRequestResponse } from 'fastify';
+import { setupTutor } from '@awform/tutor';
 import { buildApp } from '../app.js';
 import { hashSecret, totpAt } from '../auth/crypto.js';
 import { secretKeyFromEnv } from '../auth/key.js';
@@ -35,7 +36,13 @@ const E = {
 
 const h = connect(process.env.DATABASE_URL, 2);
 await runMigrations(h.db);
-const app = buildApp({ db: h.db, secretKey: secretKeyFromEnv(), cookieSecure: false });
+const app = buildApp({
+  db: h.db,
+  secretKey: secretKeyFromEnv(),
+  cookieSecure: false,
+  // tuteur SIMULÉ pour remplir la démonstration (jamais un vrai modèle)
+  tutor: setupTutor({ AWFORM_TUTEUR: 'simule' }),
+});
 await app.ready();
 
 const cookieOf = (r: LightMyRequestResponse) =>
@@ -211,6 +218,59 @@ try {
         enseignantTotp: { secret: setup.secret, uri: setup.uri },
       }),
     );
+  }
+  // ---- complément lot 9 (idempotent) : tuteur — accord du parent pour Lina, une question transmise à
+  // l'enseignant par l'adulte (membre de la classe de démonstration), quelques réponses au journal
+  const [qExists] = await h.db
+    .select({ id: t.tutorQuestion.id })
+    .from(t.tutorQuestion)
+    .innerJoin(t.profile, eq(t.profile.id, t.tutorQuestion.profileId))
+    .innerJoin(t.account, eq(t.account.id, t.profile.ownerAccountId))
+    .where(eq(t.account.email, E.adulte));
+  if (!qExists) {
+    const login = async (email: string) =>
+      cookieOf(await call('POST', '/api/v1/auth/login', '', { email, password: PW }));
+    const parentC = await login(E.parent);
+    const adultC = await login(E.adulte);
+    const pme = (await call('GET', '/api/v1/auth/me', parentC)).json() as {
+      profiles: Array<{ id: string; pseudonym: string }>;
+    };
+    const lina = pme.profiles.find((p) => p.pseudonym === 'Lina');
+    const ame = (await call('GET', '/api/v1/auth/me', adultC)).json() as {
+      profiles: Array<{ id: string }>;
+    };
+    const adultId = ame.profiles[0]!.id;
+    const [cls] = await h.db
+      .select({ code: t.classGroup.joinCode, id: t.classGroup.id })
+      .from(t.classGroup)
+      .innerJoin(t.account, eq(t.account.id, t.classGroup.teacherAccountId))
+      .where(eq(t.account.email, E.enseignant));
+    if (lina) {
+      await call('PUT', `/api/v1/profiles/${lina.id}/tuteur`, parentC, { actif: true });
+      for (const action of ['indice', 'lecon'])
+        await call('POST', `/api/v1/tutor/${lina.id}/ask`, parentC, {
+          unitId: 'en1.l03',
+          action,
+          hour: 10,
+        });
+    }
+    if (cls) {
+      const [member] = await h.db
+        .select({ p: t.classMember.profileId })
+        .from(t.classMember)
+        .where(eq(t.classMember.profileId, adultId));
+      if (!member)
+        await call('POST', `/api/v1/profiles/${adultId}/classes`, adultC, {
+          code: cls.code,
+          consent: true,
+        });
+      await call('POST', `/api/v1/tutor/${adultId}/ask`, adultC, {
+        unitId: 'ad1.l05',
+        action: 'question',
+        text: 'Est-ce que je peux faire mes ablutions avec des chaussettes ?',
+      });
+    }
+    console.error(JSON.stringify({ tuteur: 'demo_completee' }));
   }
 } finally {
   await app.close();

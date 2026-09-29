@@ -1,0 +1,35 @@
+{
+  "name": "@awform/tutor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tuteurs IA AWFORM : orchestrateur, filtre de sortie (Coran par référence, hadiths VERIFIE, aucun avis religieux), fournisseurs (simulé, Claude), batterie de tests adverses",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "awform-tuteur-eval": "./dist/cli/eval.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "eval": "node dist/cli/eval.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.129.0",
+    "@awform/hifz": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.2"
+  }
+}
