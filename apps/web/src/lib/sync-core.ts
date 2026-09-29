@@ -148,18 +148,25 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
         const body = (await r.json()) as {
           accepted: Array<{ id: string }>;
           duplicates: string[];
-          rejected: Array<{ id: string }>;
+          rejected: Array<{ id: string; code?: string }>;
           progress?: FlushResult['progress'];
         };
+        // réponses d'un AUTRE compte de l'appareil (audit OFF-3) : gardées pour lui, jamais effacées
+        const foreign = body.rejected.filter((x) => x.code === 'autre_compte');
+        for (const x of foreign) skip.add(x.id);
+        const rejected = body.rejected.filter((x) => x.code !== 'autre_compte');
         const done = [
           ...body.accepted.map((a) => a.id),
           ...body.duplicates,
-          ...body.rejected.map((x) => x.id),
+          ...rejected.map((x) => x.id),
         ];
         res.sent += body.accepted.length + body.duplicates.length;
-        res.rejected += body.rejected.length;
+        res.rejected += rejected.length;
         Object.assign(res.progress, body.progress ?? {});
-        if (done.length === 0) break;
+        if (done.length === 0) {
+          if (foreign.length) continue;
+          break;
+        }
         await delMany('events', done);
         await kvSet('lastSync', new Date().toISOString());
       }

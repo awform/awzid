@@ -2,7 +2,8 @@
  * Compte connecté côté appareil : appels à l'API (cookie de session HttpOnly, en-tête anti-CSRF),
  * informations du compte gardées pour le hors ligne (sans aucun secret), profil actif.
  */
-import { kvGet, kvSet } from './idb';
+import { clearStore, delMany, kvGet, kvKeys, kvSet } from './idb';
+import { flushQueue, pendingCount } from './sync-core';
 
 export interface ProfileInfo {
   id: string;
@@ -88,8 +89,26 @@ export async function cachedMe(): Promise<Me | null> {
   return (await kvGet<Me | null>('me').catch(() => null)) ?? null;
 }
 
-export async function logout(): Promise<void> {
+/** Données PERSONNELLES laissées sur l'appareil par le compte : effacées à la déconnexion (audit OFF-3). */
+const PERSONAL_KV = /^(cards|recLocal):/;
+
+/** Réponses pas encore envoyées (à dire avant de se déconnecter). */
+export async function unsentCount(): Promise<number> {
+  return pendingCount().catch(() => 0);
+}
+
+/**
+ * Déconnexion (audit OFF-3, appareil partagé) : envoi de la file tenté D'ABORD ; puis voix enregistrées,
+ * cartes de mots et réglages par profil effacés. Les réponses encore non envoyées restent (elles partiront à
+ * la prochaine connexion du même compte ; un autre compte ne les efface plus) : leur nombre est renvoyé.
+ */
+export async function logout(): Promise<{ pending: number }> {
+  const f = await flushQueue().catch(() => null);
   await call('POST', '/auth/logout');
   await kvSet('me', null).catch(() => {});
   await kvSet('activeProfile', null).catch(() => {});
+  await clearStore('recordings').catch(() => {});
+  const keys = (await kvKeys().catch(() => [] as string[])).filter((k) => PERSONAL_KV.test(k));
+  if (keys.length) await delMany('kv', keys).catch(() => {});
+  return { pending: f?.remaining ?? (await unsentCount()) };
 }

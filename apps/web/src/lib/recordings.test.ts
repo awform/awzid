@@ -3,6 +3,7 @@
  * n'est jamais rouvert (démarrage de l'application, activation du service worker).
  */
 import 'fake-indexeddb/auto';
+import { IDBFactory } from 'fake-indexeddb';
 import { readFileSync } from 'node:fs';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { _resetDbForTests, getAll, putRaw } from './idb';
@@ -19,7 +20,8 @@ const rec = (id: string, profileId: string, days: number, now: number) => ({
 
 describe('audit MIN-16 — enregistrements locaux', () => {
   beforeEach(() => {
-    indexedDB.deleteDatabase('awform');
+    // base IndexedDB neuve à chaque test
+    globalThis.indexedDB = new IDBFactory();
     _resetDbForTests();
   });
 

@@ -374,6 +374,7 @@
   "compte.totp_ok": "Second facteur activé.",
   "compte.deconnexion": "Se déconnecter",
   "compte.deconnexion_partout": "Se déconnecter de tous les appareils",
+  "compte.deconnexion_file": "{n, plural, one {# réponse n’est pas encore envoyée : elle restera sur cet appareil et partira à votre prochaine connexion.} other {# réponses ne sont pas encore envoyées : elles resteront sur cet appareil et partiront à votre prochaine connexion.}} Les enregistrements de voix et les cartes de mots seront effacés de cet appareil. Se déconnecter quand même ?",
   "compte.supprimer_titre": "Supprimer mon compte",
   "compte.supprimer_aide": "L'accès est coupé tout de suite ; toutes les données sont effacées définitivement sous 30 jours.",
   "compte.supprimer_bouton": "Supprimer mon compte",

@@ -9,6 +9,7 @@
   import { kvGet, kvSet } from '$lib/idb';
   import { call, fetchMe, logout, type Me } from '$lib/session';
   import { recordingAllowed, setRecordingAllowed } from '$lib/recordings';
+  import { flushQueue } from '$lib/sync-core';
 
   /**
    * Mon compte : langue, code parent, profils, consentements (retrait des facultatifs), export de mes
@@ -182,6 +183,10 @@
     } else fail(r.code);
   }
   async function out(all = false) {
+    // appareil partagé (audit OFF-3) : envoi tenté d'abord, puis avertissement s'il reste des réponses
+    const f = await flushQueue().catch(() => null);
+    const n = f?.remaining ?? 0;
+    if (n > 0 && !confirm(t('compte.deconnexion_file', { n }))) return;
     if (all) await call('POST', '/auth/logout-all');
     await logout();
     await goto(resolve('/connexion'));

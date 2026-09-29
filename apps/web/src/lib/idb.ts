@@ -131,3 +131,17 @@ export async function kvGet<T>(key: string): Promise<T | undefined> {
 export async function kvSet(key: string, value: unknown): Promise<void> {
   return put('kv', value, key);
 }
+
+/** Clés du magasin « kv » (effacement à la déconnexion, audit OFF-3). */
+export async function kvKeys(): Promise<string[]> {
+  const db = await openDb();
+  return (await wrap(db.transaction('kv').objectStore('kv').getAllKeys())).map(String);
+}
+
+/** Vide un magasin entier. */
+export async function clearStore(store: StoreName): Promise<void> {
+  const db = await openDb();
+  const tx = db.transaction(store, 'readwrite');
+  tx.objectStore(store).clear();
+  await done(tx);
+}

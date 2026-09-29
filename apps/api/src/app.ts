@@ -297,7 +297,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
       const allowed: AttemptInput[] = [];
       const hifz: HifzEventInput[] = [];
       const practice: PracticeInput[] = [];
-      const refused: Array<{ id: string; reason: string }> = [];
+      const refused: Array<{ id: string; reason: string; code?: string }> = [];
       for (const e of req.body.events) {
         const pid = String(e?.profileId ?? '');
         if (!owned.has(pid))
@@ -306,7 +306,12 @@ export function buildApp(opts: AppOptions): FastifyInstance {
             /^[0-9a-f-]{36}$/i.test(pid) && (await ownsProfile(db, req.auth.accountId, pid)),
           );
         if (!owned.get(pid)) {
-          refused.push({ id: String(e?.id ?? ''), reason: 'profil non autorisé' });
+          // code stable : l'appareil GARDE ces réponses (autre compte sur un appareil partagé, audit OFF-3)
+          refused.push({
+            id: String(e?.id ?? ''),
+            reason: 'profil non autorisé',
+            code: 'autre_compte',
+          });
           continue;
         }
         // événements du hifẓ : même file hors ligne, journal séparé

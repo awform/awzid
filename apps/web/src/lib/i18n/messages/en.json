@@ -374,6 +374,7 @@
   "compte.totp_ok": "Two-factor authentication turned on.",
   "compte.deconnexion": "Sign out",
   "compte.deconnexion_partout": "Sign out of all devices",
+  "compte.deconnexion_file": "{n, plural, one {# answer has not been sent yet: it will stay on this device and be sent at your next sign-in.} other {# answers have not been sent yet: they will stay on this device and be sent at your next sign-in.}} Voice recordings and word cards will be erased from this device. Sign out anyway?",
   "compte.supprimer_titre": "Delete my account",
   "compte.supprimer_aide": "Access stops immediately; all data is permanently erased within 30 days.",
   "compte.supprimer_bouton": "Delete my account",
