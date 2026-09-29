@@ -10,6 +10,7 @@
  * Aucun audio n'est servi (aucune récitation sans licence écrite).
  */
 import { createHash } from 'node:crypto';
+import { consentGate } from './guards.js';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, eq, isNull } from 'drizzle-orm';
 import {
@@ -391,6 +392,12 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
       if (isTeacher(req) || !(await ownsProfile(db, accountId, req.params.id)))
         return err(reply, 404, 'introuvable');
       if (req.body.consent !== true) return err(reply, 400, 'consentement_requis');
+      // audit SEC-3 : accord donné pour un mineur → code parent exigé (appareil partagé)
+      const [prof] = await db
+        .select({ kind: t.profile.kind })
+        .from(t.profile)
+        .where(eq(t.profile.id, req.params.id));
+      if (!(await consentGate(db, req, reply, prof?.kind ?? 'enfant'))) return reply;
       // essais de codes limités (un code de classe ne se devine pas)
       const key = `classe:${accountId}`;
       if (await lockedUntil(db, key)) return err(reply, 429, 'verrouille');
@@ -408,7 +415,7 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
         textVersion: TEXT_VERSION,
         country: req.auth!.country,
         evidence: {
-          methode: 'declaration_du_titulaire',
+          methode: prof?.kind === 'adulte' ? 'declaration_du_titulaire' : 'code_parent',
           classe: c.id,
           date: new Date().toISOString(),
         },

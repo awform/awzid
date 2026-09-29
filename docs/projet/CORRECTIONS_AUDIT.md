@@ -10,7 +10,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 |---|---|---|---|---|---|
 | SEC-1 | majeur | Second facteur : `totp/setup` désactive le 2FA avant confirmation ; `totp/confirm` sans limite ni anti-rejeu | à faire | | |
 | SEC-2 | majeur | Course sur le compteur d'échecs : 20 mots de passe, 30 codes parent testés d'un coup | à faire | | |
-| SEC-3 | majeur | Consentements « parentaux » accordés sans le code parent (tuteur IA, partage enseignant) | à faire | | |
+| SEC-3 | majeur | Consentements « parentaux » accordés sans le code parent (tuteur IA, partage enseignant) | corrigé | voir « SEC-3 » dans git log | audit-mineurs.test.ts « SEC-3 » |
 | SEC-4 | majeur | Second facteur non exigé sur les notifications et les paiements des enseignants | à faire | | |
 | SEC-5 | mineur | Rejeu d'un code TOTP par connexions parallèles | à faire | | |
 | SEC-6 | mineur | Ressaisies du mot de passe sans limite d'essais | à faire | | |
@@ -19,7 +19,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-1 | majeur | Un mineur ayant l'âge du « consentement numérique » obtient un profil **adulte**, sans aucune protection | corrigé | c33fbcd | audit-mineurs.test.ts « MIN-1 » |
 | MIN-2 | majeur | Deux calculs d'âge : un profil « enfant » reçoit le tuteur « ado » (texte libre, la nuit) | corrigé | 47b9224 | audit-mineurs.test.ts « MIN-2 » |
 | MIN-3 | majeur | Compte « parent » sans contrôle d'âge : un enfant consent pour lui-même (Sénégal compris) | corrigé | 12480c2 | audit-mineurs.test.ts « MIN-3 » |
-| MIN-4 | majeur | Accord `tuteur_ia` : ni code parent, ni preuve, ni pays ; impossible à retirer depuis « mes consentements » | corrigé | voir « MIN-4 » dans git log | audit-mineurs.test.ts « MIN-4 » |
+| MIN-4 | majeur | Accord `tuteur_ia` : ni code parent, ni preuve, ni pays ; impossible à retirer depuis « mes consentements » | corrigé | 85f2baf | audit-mineurs.test.ts « MIN-4 » |
 | MIN-5 | majeur | Compte supprimé : l'enseignant garde l'accès à l'enfant pendant 30 jours (liste, audio, CSV) | à faire | | |
 | MIN-6 | majeur | Export RGPD incomplet (art. 15 et 20) | à faire | | |
 | MIN-7 | majeur | Après l'effacement définitif, il reste des données personnelles (e-mail en clair, âge, pays) | à faire | | |

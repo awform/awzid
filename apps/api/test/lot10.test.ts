@@ -254,9 +254,12 @@ describe.skipIf(!URL)('lot 10 — paiements (awform_test)', () => {
   it('licence d’école : les élèves des classes de l’enseignant sont couverts (places suffisantes)', async () => {
     const cls = (await req(app, 'POST', '/api/v1/teacher/classes', teacher, { name: 'CE1' })).json()
       .class;
-    await req(app, 'POST', `/api/v1/profiles/${child}/classes`, parent, {
-      code: cls.joinCode,
-      consent: true,
+    // audit SEC-3 : l'inscription d'un enfant dans une classe exige le code parent
+    await app.inject({
+      method: 'POST',
+      url: `/api/v1/profiles/${child}/classes`,
+      payload: { code: cls.joinCode, consent: true },
+      headers: { 'x-awform': '1', cookie: parent, 'x-parent-pin': '2468' },
     });
     const c = (
       await req(app, 'POST', '/api/v1/billing/checkout', teacher, {

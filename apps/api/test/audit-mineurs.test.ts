@@ -5,7 +5,17 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { setupBilling } from '@awform/billing';
 import { setupTutor } from '@awform/tutor';
-import { child, cookieOf, parent, PW, setupEdition, YEAR, type Ctx } from './helpers.js';
+import {
+  child,
+  cookieOf,
+  newClass,
+  parent,
+  PW,
+  setupEdition,
+  teacher,
+  YEAR,
+  type Ctx,
+} from './helpers.js';
 
 const URL_ = process.env.TEST_DATABASE_URL;
 
@@ -128,5 +138,23 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
     expect(row.evidence).toMatchObject({ methode: 'code_parent' });
     const w = await c.req('POST', `/api/v1/account/consents/${tu.id}/withdraw`, fam.P, {});
     expect(w.statusCode, w.body).toBe(200);
+  });
+
+  it('SEC-3 : partage avec l’enseignant (inscription dans une classe) — code parent exigé, preuve gardée', async () => {
+    const fam = await parent(c, 'sec3@exemple.org');
+    const kid = await child(c, fam.P, 'Fatou', 9);
+    const T = await teacher(c, 'sec3@ecole.example');
+    const cls = await newClass(c, T, 'Classe SEC-3');
+    const url = `/api/v1/profiles/${kid}/classes`;
+    const body = { code: cls.joinCode, consent: true };
+    expect((await c.req('POST', url, fam.P, body)).statusCode).toBe(401);
+    const ok = await c.req('POST', url, fam.pin, body);
+    expect(ok.statusCode, ok.body).toBe(201);
+    const [row] = await c.h.pool
+      .query("select evidence from consent where type = 'partage_enseignant' and profile_id = $1", [
+        kid,
+      ])
+      .then((r) => r.rows);
+    expect(row.evidence).toMatchObject({ methode: 'code_parent' });
   });
 });

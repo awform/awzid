@@ -301,10 +301,15 @@ describe.skipIf(!URL_)('lot 17 (awform_test)', () => {
         consents: ['compte_suivi'],
       })
     ).json().id;
-    await req('POST', `/api/v1/profiles/${frere}/classes`, P, {
-      code: cls.joinCode,
-      consent: true,
-    });
+    await req(
+      'POST',
+      `/api/v1/profiles/${frere}/classes`,
+      { ...P, 'x-parent-pin': '4821' },
+      {
+        code: cls.joinCode,
+        consent: true,
+      },
+    );
     await req('POST', `/api/v1/profiles/${frere}/recitations/accord`, pin, {});
     const c2 = await req('POST', url.replace(child, frere), H, AUDIO);
     expect(c2.statusCode, c2.body).toBe(201);

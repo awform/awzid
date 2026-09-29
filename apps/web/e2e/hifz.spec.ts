@@ -173,6 +173,8 @@ test.describe('enseignant et parent', () => {
     const block = pp.getByTestId('hifz-compte').locator('.hp').filter({ hasText: 'Amina' });
     await block.getByTestId('code-classe').fill(code);
     await block.getByTestId('consent-partage').check();
+    // audit SEC-3 : code parent exigé pour inscrire un enfant
+    await block.getByTestId('pin-classe').fill(PARENT_PIN);
     await block.getByRole('button', { name: 'Rejoindre la classe' }).click();
     await expect(pp.getByRole('status')).toContainText(name);
 

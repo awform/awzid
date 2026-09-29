@@ -39,7 +39,13 @@
   /** hifẓ : classes de chaque profil, code saisi, consentement, enregistrement local autorisé */
   let hifz: Record<
     string,
-    { classes: Array<{ id: string; name: string }>; code: string; consent: boolean; rec: boolean }
+    {
+      classes: Array<{ id: string; name: string }>;
+      code: string;
+      pin: string;
+      consent: boolean;
+      rec: boolean;
+    }
   > = $state({});
 
   const say = (m: string) => ((msg = m), (err = ''));
@@ -60,6 +66,7 @@
         next[p.id] = {
           classes: h.data?.classes ?? [],
           code: '',
+          pin: '',
           consent: false,
           rec: await recordingAllowed(p.id),
         };
@@ -70,10 +77,13 @@
   async function joinClass(e: SubmitEvent, profileId: string) {
     e.preventDefault();
     const h = hifz[profileId]!;
-    const r = await call<{ class: { name: string } }>('POST', `/profiles/${profileId}/classes`, {
-      code: h.code,
-      consent: h.consent,
-    });
+    // audit SEC-3 : accord donné pour un mineur → code parent exigé par le serveur
+    const r = await call<{ class: { name: string } }>(
+      'POST',
+      `/profiles/${profileId}/classes`,
+      { code: h.code, consent: h.consent },
+      h.pin ? { 'x-parent-pin': h.pin } : undefined,
+    );
     if (!r.ok) return fail(r.code);
     say(t('compte.classe_ok', { nom: r.data!.class.name }));
     await reload();
@@ -314,6 +324,19 @@
                 />
                 <span>{t('compte.consent_partage')}</span></label
               >
+              {#if p.kind !== 'adulte'}
+                <label
+                  >{t('libre.code_parent')}
+                  <input
+                    type="password"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    maxlength="8"
+                    bind:value={h.pin}
+                    data-testid="pin-classe"
+                  /></label
+                >
+              {/if}
               <button type="submit">{t('compte.rejoindre')}</button>
             </form>
             {#if p.kind !== 'adulte'}

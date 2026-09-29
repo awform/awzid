@@ -229,9 +229,15 @@ export async function join(
   profileId: string,
   cls: { joinCode: string },
 ) {
-  const r = await c.req('POST', `/api/v1/profiles/${profileId}/classes`, P, {
-    code: cls.joinCode,
-    consent: true,
-  });
+  // code parent des familles de test (exigé pour un mineur, audit SEC-3 ; ignoré pour un adulte)
+  const r = await c.req(
+    'POST',
+    `/api/v1/profiles/${profileId}/classes`,
+    { ...P, 'x-parent-pin': '4821' },
+    {
+      code: cls.joinCode,
+      consent: true,
+    },
+  );
   if (r.statusCode >= 300) throw new Error(r.body);
 }

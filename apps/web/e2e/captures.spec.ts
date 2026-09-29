@@ -501,7 +501,7 @@ test.describe('lot 16', () => {
     const me = await (await page.request.get('/api/v1/auth/me')).json();
     const kid = me.profiles.find((p: { kind: string }) => p.kind === 'enfant');
     await page.request.post(`/api/v1/profiles/${kid.id}/classes`, {
-      headers: { 'x-awform': '1' },
+      headers: { 'x-awform': '1', 'x-parent-pin': PARENT_PIN },
       data: { code: cls.joinCode, consent: true },
     });
     const H = { 'x-awform': '1', 'x-parent-pin': PARENT_PIN };
