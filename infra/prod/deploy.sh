@@ -52,12 +52,9 @@ if [ -n "$SITE_LAN" ]; then echo "SITE_LAN=$SITE_LAN" >> "$ENVF"; echo "DEFAULT_
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_TUTEUR=' "$ENVF"; then echo "AWFORM_TUTEUR=simule" >> "$ENVF"; fi
 # paiements : désactivés par défaut ; la démonstration utilise le prestataire SIMULÉ (aucune clé, aucune carte)
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_PAIEMENT=' "$ENVF"; then echo "AWFORM_PAIEMENT=simule" >> "$ENVF"; fi
-export AWFORM_ENV_FILE="$ENVF"
-# moindre privilège : la base et Caddy ne reçoivent que ce dont ils ont besoin
-export AWFORM_DB_ENV_FILE="$CONF/db.env" AWFORM_CADDY_ENV_FILE="$CONF/caddy.env"
-grep -E '^POSTGRES_PASSWORD=' "$ENVF" > "$AWFORM_DB_ENV_FILE"
-grep -E '^(SITE|SITE_LAN|DEFAULT_SNI)=' "$ENVF" > "$AWFORM_CADDY_ENV_FILE"
-chmod 600 "$AWFORM_DB_ENV_FILE" "$AWFORM_CADDY_ENV_FILE"
+# moindre privilège : un fichier par service (env-scopes.conf) ; prod.env n'est monté dans aucun conteneur
+export AWFORM_ENV_DIR="$CONF"
+"$PROD/env-split.sh" "$ENVF" "$CONF"
 export AWFORM_CONTENT_DIR="${AWFORM_CONTENT_DIR:-$HOME/awform-content}"
 export AWFORM_VERSION="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo local)"
 DC=(docker compose -f "$PROD/compose.yml")
@@ -87,6 +84,8 @@ for i in $(seq 1 60); do
   sleep 2
 done
 echo "santé : ok ($(curl -fsS http://127.0.0.1/api/v1/health))"
+# aucun secret hors de son périmètre dans les conteneurs démarrés (noms des variables seulement)
+"$PROD/env-check.sh" "$ENVF"
 
 # ---------------------------------------------------------------- 4. démarrage automatique et sauvegarde nocturne
 sudo tee /etc/systemd/system/awform.service >/dev/null <<EOF
@@ -99,9 +98,7 @@ After=docker.service network-online.target
 Type=oneshot
 RemainAfterExit=yes
 User=$USER
-Environment=AWFORM_ENV_FILE=$ENVF
-Environment=AWFORM_DB_ENV_FILE=$AWFORM_DB_ENV_FILE
-Environment=AWFORM_CADDY_ENV_FILE=$AWFORM_CADDY_ENV_FILE
+Environment=AWFORM_ENV_DIR=$AWFORM_ENV_DIR
 Environment=AWFORM_VERSION=$AWFORM_VERSION
 WorkingDirectory=$PROD
 ExecStart=/usr/bin/docker compose -f $PROD/compose.yml up -d db api worker web caddy
@@ -118,9 +115,7 @@ After=awform.service
 [Service]
 Type=oneshot
 User=$USER
-Environment=AWFORM_ENV_FILE=$ENVF
-Environment=AWFORM_DB_ENV_FILE=$AWFORM_DB_ENV_FILE
-Environment=AWFORM_CADDY_ENV_FILE=$AWFORM_CADDY_ENV_FILE
+Environment=AWFORM_ENV_DIR=$AWFORM_ENV_DIR
 ExecStart=$PROD/backup.sh
 EOF
 sudo tee /etc/systemd/system/awform-backup.timer >/dev/null <<EOF

@@ -12,7 +12,7 @@ CONF="$HOME/.config/awform"
 DEST="${AWFORM_BACKUP_DIR:-$HOME/awform-backups}"
 PUB="$CONF/backup-public.asc"
 KEEP="${AWFORM_BACKUP_KEEP:-14}"
-export AWFORM_ENV_FILE="${AWFORM_ENV_FILE:-$CONF/prod.env}" AWFORM_DB_ENV_FILE="${AWFORM_DB_ENV_FILE:-$CONF/db.env}" AWFORM_CADDY_ENV_FILE="${AWFORM_CADDY_ENV_FILE:-$CONF/caddy.env}"
+export AWFORM_ENV_DIR="${AWFORM_ENV_DIR:-$CONF}"
 umask 077
 mkdir -p "$DEST"
 [ -s "$PUB" ] || { echo "$(date -Iseconds) ÉCHEC : clé publique absente ($PUB) — lancer backup-keygen.sh" | tee -a "$DEST/backup.log"; exit 1; }

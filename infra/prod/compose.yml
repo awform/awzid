@@ -1,7 +1,8 @@
 # AWFORM — production et démonstration (Docker Compose).
 # Services : Caddy (entrée HTTP/HTTPS), web (SvelteKit), api (Fastify), worker (pg-boss), db (PostgreSQL 18).
-# Secrets : UNIQUEMENT dans le fichier d'environnement de l'hôte (AWFORM_ENV_FILE, droits 600, hors dépôt),
-# écrit par infra/prod/deploy.sh. Redémarrage automatique (Docker est lancé au démarrage de la machine).
+# Secrets : UNIQUEMENT dans ~/.config/awform/prod.env (droits 600, hors dépôt), écrit par deploy.sh, et JAMAIS
+# monté tel quel : chaque service reçoit son fichier <service>.env (AWFORM_ENV_DIR), découpé par env-split.sh
+# selon env-scopes.conf (moindre privilège, vérifié par un test et par env-check.sh). Redémarrage automatique (Docker est lancé au démarrage de la machine).
 name: awform
 
 x-logs: &logs
@@ -12,8 +13,8 @@ services:
   db:
     image: postgres:18
     restart: unless-stopped
-    # moindre privilège : la base ne reçoit QUE son mot de passe (db.env, écrit par deploy.sh)
-    env_file: '${AWFORM_DB_ENV_FILE:?AWFORM_DB_ENV_FILE absent}'
+    # moindre privilège : la base ne reçoit QUE son mot de passe
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/db.env'
     environment:
       POSTGRES_USER: awform
       POSTGRES_DB: awform
@@ -30,7 +31,8 @@ services:
   migrate:
     image: awform/api:${AWFORM_VERSION:-local}
     build: { context: ../.., dockerfile: infra/prod/Dockerfile, target: api }
-    env_file: '${AWFORM_ENV_FILE:?AWFORM_ENV_FILE absent}'
+    # outils (migration, import) : la base seulement
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/outils.env'
     command: ['node', 'node_modules/@awform/db/dist/cli/migrate.js']
     depends_on: { db: { condition: service_healthy } }
     restart: 'no'
@@ -40,7 +42,7 @@ services:
   import:
     # import d'une édition de contenu (copie des livres en lecture seule) : `--edition <code> --publish`
     image: awform/api:${AWFORM_VERSION:-local}
-    env_file: '${AWFORM_ENV_FILE}'
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/outils.env'
     environment: { AWFORM_CONTENT_DIR: /content }
     volumes: ['${AWFORM_CONTENT_DIR:-~/awform-content}:/content:ro']
     entrypoint: ['node', 'node_modules/@awform/db/dist/cli/import.js']
@@ -53,7 +55,8 @@ services:
     image: awform/api:${AWFORM_VERSION:-local}
     build: { context: ../.., dockerfile: infra/prod/Dockerfile, target: api }
     restart: unless-stopped
-    env_file: '${AWFORM_ENV_FILE}'
+    # base, clé de session, tuteur, paiements ; jamais POSTGRES_PASSWORD seul
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/api.env'
     environment: { TRUST_PROXY: '1' }
     depends_on: { db: { condition: service_healthy } }
     logging: *logs
@@ -62,7 +65,8 @@ services:
     image: awform/worker:${AWFORM_VERSION:-local}
     build: { context: ../.., dockerfile: infra/prod/Dockerfile, target: worker }
     restart: unless-stopped
-    env_file: '${AWFORM_ENV_FILE}'
+    # la base seulement (ni clé de session, ni clés du tuteur ou des paiements)
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/worker.env'
     depends_on: { db: { condition: service_healthy } }
     logging: *logs
 
@@ -80,8 +84,8 @@ services:
     ports:
       - '80:80'
       - '443:443'
-    # moindre privilège : Caddy ne reçoit QUE les adresses du site (caddy.env, aucun secret)
-    env_file: '${AWFORM_CADDY_ENV_FILE:?AWFORM_CADDY_ENV_FILE absent}'
+    # moindre privilège : Caddy ne reçoit QUE les adresses du site (aucun secret)
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/caddy.env'
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

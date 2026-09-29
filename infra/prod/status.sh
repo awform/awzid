@@ -5,7 +5,7 @@ set -uo pipefail
 PROD="$(cd "$(dirname "$0")" && pwd)"
 CONF="$HOME/.config/awform"
 DEST="${AWFORM_BACKUP_DIR:-$HOME/awform-backups}"
-export AWFORM_ENV_FILE="${AWFORM_ENV_FILE:-$CONF/prod.env}" AWFORM_DB_ENV_FILE="${AWFORM_DB_ENV_FILE:-$CONF/db.env}" AWFORM_CADDY_ENV_FILE="${AWFORM_CADDY_ENV_FILE:-$CONF/caddy.env}"
+export AWFORM_ENV_DIR="${AWFORM_ENV_DIR:-$CONF}"
 DC=(docker compose -f "$PROD/compose.yml")
 BAD=0
 warn() { echo "ALERTE : $*"; BAD=1; }
@@ -34,6 +34,9 @@ grep 'restauration' "$DEST/backup.log" 2>/dev/null | tail -1
 # la clé PRIVÉE ne doit jamais rester sur le serveur (infra/pc/recuperer-cle-sauvegarde.ps1)
 [ -e "$CONF/A-EMPORTER-backup-private.asc" ] && warn "clé PRIVÉE des sauvegardes encore sur le serveur : l'emporter"
 [ -e "$CONF/backup.key" ] && warn "ancienne clé symétrique encore sur le serveur : l'emporter"
+
+echo "== secrets (périmètre par service)"
+"$PROD/env-check.sh" "$CONF/prod.env" | tail -1 || warn "un secret sort de son périmètre (env-check.sh)"
 
 echo "== travailleur (pg-boss)"
 "${DC[@]}" logs --since 15m worker 2>/dev/null | grep -q battement && echo "battement : ok" || warn "pas de battement depuis 15 min"

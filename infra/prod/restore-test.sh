@@ -12,7 +12,7 @@ set -euo pipefail
 PROD="$(cd "$(dirname "$0")" && pwd)"
 CONF="$HOME/.config/awform"
 DEST="${AWFORM_BACKUP_DIR:-$HOME/awform-backups}"
-export AWFORM_ENV_FILE="${AWFORM_ENV_FILE:-$CONF/prod.env}" AWFORM_DB_ENV_FILE="${AWFORM_DB_ENV_FILE:-$CONF/db.env}" AWFORM_CADDY_ENV_FILE="${AWFORM_CADDY_ENV_FILE:-$CONF/caddy.env}"
+export AWFORM_ENV_DIR="${AWFORM_ENV_DIR:-$CONF}"
 DC=(docker compose -f "$PROD/compose.yml")
 FILE="${1:-$(ls -1t "$DEST"/awform-*.dump.gpg | head -1)}"
 [ -f "$FILE" ] || { echo "aucune sauvegarde"; exit 1; }
