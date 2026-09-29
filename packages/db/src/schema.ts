@@ -932,9 +932,18 @@ export const certificate = pgTable(
     /** l'élève a quitté la classe (ou la classe a disparu) : point de départ de la réduction du document */
     detachedAt: timestamp('detached_at', { withTimezone: true }),
     issuedAt: timestamp('issued_at', { withTimezone: true }).notNull().defaultNow(),
+    /** lot 20 : code de vérification imprimé dans le QR (aléatoire ; sans lui, rien n'est montré) */
+    verifCode: text('verif_code'),
+    /** signature Ed25519 (base64url) des champs du REGISTRE, et identifiant de la clé */
+    signature: text('signature'),
+    keyId: text('key_id'),
+    /** annulation par l'enseignant (erreur, fraude) : la vérification publique l'affiche */
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    revokeReason: text('revoke_reason'),
   },
   (t) => [
     index('certificate_class').on(t.classId),
+    uniqueIndex('certificate_verif').on(t.verifCode),
     check('certificate_kind', sql`${t.kind} IN ('niveau', 'hifz')`),
   ],
 );

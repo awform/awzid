@@ -120,6 +120,13 @@
       "when": 1790689637019,
       "tag": "0016_epreuves",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1790691113128,
+      "tag": "0017_certificats_verifiables",
+      "breakpoints": true
     }
   ]
 }

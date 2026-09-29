@@ -70,6 +70,9 @@ sed -i '/^DATABASE_URL_API=/d;/^DATABASE_URL_WORKER=/d' "$ENVF"
 # lot 16 : clé de chiffrement des récitations envoyées (API seulement) et clés VAPID des notifications
 # (publique : API et travailleur ; PRIVÉE : travailleur seulement) — générées une fois, jamais versionnées
 grep -q '^AWFORM_RECITATION_KEY=' "$ENVF" || echo "AWFORM_RECITATION_KEY=v1:$(rnd 32)" >> "$ENVF"
+# signature des certificats (lot 20) : graine Ed25519, jamais hors du périmètre de l'API ; la changer rend
+# « invalide » la signature des certificats déjà délivrés (garder l'ancienne dans le coffre du client)
+grep -q '^AWFORM_CERT_SIGN_KEY=' "$ENVF" || echo "AWFORM_CERT_SIGN_KEY=v1:$(rnd 32)" >> "$ENVF"
 if ! grep -q '^AWFORM_VAPID_PRIVATE=' "$ENVF"; then
   VK="$(mktemp)"
   openssl ecparam -name prime256v1 -genkey -noout -out "$VK"

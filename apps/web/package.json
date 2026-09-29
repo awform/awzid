@@ -21,7 +21,8 @@
     "@awform/grading": "workspace:*",
     "@awform/hifz": "workspace:*",
     "@awform/school": "workspace:*",
-    "intl-messageformat": "^12.1.2"
+    "intl-messageformat": "^12.1.2",
+    "qrcode-generator": "^2.0.4"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

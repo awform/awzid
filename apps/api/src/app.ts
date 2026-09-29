@@ -44,6 +44,8 @@ import { registerPush } from './push.js';
 import { registerRelais } from './relais.js';
 import { registerCorrections } from './corrections.js';
 import { registerEpreuves } from './epreuves.js';
+import { registerVerification } from './verification.js';
+import { certSignerFromEnv, type CertSigner } from './certsign.js';
 import type { RecitationKey } from '@awform/db';
 
 export interface AppOptions {
@@ -62,6 +64,8 @@ export interface AppOptions {
   recitationKey?: RecitationKey | null;
   /** stockage des certificats de Caddy, en lecture (relais d'école) ; sinon AWFORM_RELAIS_CERTS */
   relaisCertsDir?: string | null;
+  /** clé de signature des certificats (tests) ; sinon AWFORM_CERT_SIGN_KEY ; null : certificats non signés */
+  certSigner?: CertSigner | null;
   /** paiements (tests) ; sinon AWFORM_PAIEMENT */
   billing?: BillingSetup;
 }
@@ -124,13 +128,14 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   );
 
   const edition = async () => currentEdition(db, opts.editionCode);
+  const signer = opts.certSigner === undefined ? certSignerFromEnv() : opts.certSigner;
   registerHifz(app, db, edition);
   registerLibrary(app, db, edition);
   registerTutor(app, db, edition, opts.tutor);
   registerBilling(app, db, opts.billing);
   registerAdmin(app, db);
   registerToday(app, db, edition);
-  registerSchool(app, db, edition);
+  registerSchool(app, db, edition, signer);
   registerActivities(app, db, edition);
   registerRecitations(
     app,
@@ -140,6 +145,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerPush(app, db);
   registerCorrections(app, db, edition);
   registerEpreuves(app, db, edition);
+  registerVerification(app, db, signer);
   registerRelais(
     app,
     db,

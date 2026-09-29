@@ -497,3 +497,37 @@ export async function purgeCertificateDocuments(
   }
   return n;
 }
+
+// ---------------------------------------------------------------- certificats vérifiables (lot 20)
+
+/** Pose le code de vérification et la signature d'un certificat (une seule fois). */
+export async function sealCertificate(
+  db: Db,
+  id: string,
+  s: { verifCode: string; signature: string | null; keyId: string | null },
+) {
+  const [r] = await db
+    .update(t.certificate)
+    .set(s)
+    .where(and(eq(t.certificate.id, id), isNull(t.certificate.verifCode)))
+    .returning();
+  return r ?? null;
+}
+
+/** Certificat par numéro ET code de vérification (vérification publique), sinon null. */
+export async function certificateByNumberAndCode(db: Db, number: string, code: string) {
+  const [r] = await db
+    .select()
+    .from(t.certificate)
+    .where(and(eq(t.certificate.number, number), eq(t.certificate.verifCode, code)));
+  return r ?? null;
+}
+
+export async function revokeCertificate(db: Db, id: string, reason: string) {
+  const [r] = await db
+    .update(t.certificate)
+    .set({ revokedAt: new Date(), revokeReason: reason })
+    .where(and(eq(t.certificate.id, id), isNull(t.certificate.revokedAt)))
+    .returning({ id: t.certificate.id });
+  return !!r;
+}

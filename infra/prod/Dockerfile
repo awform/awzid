@@ -39,7 +39,7 @@ CMD ["node", "dist/index.js"]
 
 FROM runtime AS web
 COPY --from=build --chown=node:node /out/web /app
-ENV HOST=0.0.0.0 PORT=3000 PROTOCOL_HEADER=x-forwarded-proto HOST_HEADER=x-forwarded-host
+ENV HOST=0.0.0.0 PORT=3000 PROTOCOL_HEADER=x-forwarded-proto HOST_HEADER=x-forwarded-host ADDRESS_HEADER=x-forwarded-for XFF_DEPTH=1
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"

@@ -5,6 +5,7 @@
   import type { RenderedDoc } from '@awform/school';
   import { t } from '$lib/i18n';
   import { call } from '$lib/session';
+  import { qrPath, verifyUrl } from '$lib/qrsvg';
 
   /**
    * Certificat ou attestation délivré, IMPRIMABLE (A4 paysage, texte français à gauche, arabe à droite,
@@ -17,10 +18,30 @@
     kind: string;
     classId: string | null;
     document: RenderedDoc & { number: string; issuedOn: string };
+    verifCode: string | null;
+    signature: string | null;
+    revokedAt: string | null;
+    revokeReason: string | null;
   }
   let cert = $state<Cert | null>(null);
   let error = $state('');
   const id = $derived(page.params.id ?? '');
+  /** QR de vérification publique (lot 20) : numéro + code aléatoire, adresse du site */
+  const qr = $derived(
+    cert?.verifCode ? qrPath(verifyUrl(location.origin, cert.number, cert.verifCode)) : null,
+  );
+  let motif = $state('');
+  async function annuler(e: SubmitEvent) {
+    e.preventDefault();
+    if (!cert || !confirm(t('verif.annuler_confirmer'))) return;
+    const r = await call('POST', `/ecole/certificats/${cert.id}/annuler`, { motif });
+    if (!r.ok) {
+      error = t(`erreur.${r.code ?? 'reseau'}`);
+      return;
+    }
+    const again = await call<{ certificate: Cert }>('GET', `/ecole/certificats/${id}`);
+    if (again.ok) cert = again.data!.certificate;
+  }
 
   onMount(async () => {
     const r = await call<{ certificate: Cert }>('GET', `/ecole/certificats/${id}`);
@@ -40,6 +61,15 @@
   >
 </div>
 {#if error}<p class="card" role="alert">{error}</p>{/if}
+{#if cert && !cert.revokedAt}
+  <form class="noprint annuler" onsubmit={annuler}>
+    <label
+      >{t('verif.annuler_motif')}
+      <input bind:value={motif} minlength="3" maxlength="200" required /></label
+    >
+    <button type="submit">{t('verif.annuler')}</button>
+  </form>
+{/if}
 {#if cert}
   {@const d = cert.document}
   <article class="certificat" data-testid="certificat">
@@ -66,12 +96,52 @@
     <div class="signs">
       {#each d.signatures as s, i (i)}<div class="sign">{s}</div>{/each}
     </div>
-    <p class="numero" data-testid="numero">{t('classe.numero', { numero: cert.number })}</p>
+    <div class="foot">
+      <p class="numero" data-testid="numero">{t('classe.numero', { numero: cert.number })}</p>
+      {#if qr && cert.verifCode}
+        <figure class="qr" data-testid="qr-verification">
+          <svg viewBox="0 0 {qr.size} {qr.size}" role="img" aria-label={t('verif.qr_aria')}
+            ><rect width={qr.size} height={qr.size} fill="#fff" /><path d={qr.d} fill="#000" /></svg
+          >
+          <figcaption>{t('verif.qr_legende', { code: cert.verifCode })}</figcaption>
+        </figure>
+      {/if}
+    </div>
+    {#if cert.revokedAt}<p class="annule" role="status">
+        {t('verif.annule_court', { motif: cert.revokeReason ?? '' })}
+      </p>{/if}
     {#if d.aValider}<p class="small noprint">{t('classe.modele_a_valider')}</p>{/if}
   </article>
 {/if}
 
 <style>
+  .foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 12px;
+  }
+  .qr {
+    margin: 0;
+    width: 28mm;
+    text-align: center;
+    font-size: 8pt;
+  }
+  .qr svg {
+    width: 28mm;
+    height: 28mm;
+  }
+  .annule {
+    color: var(--bad-ink);
+    font-weight: 700;
+  }
+  .annuler {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: end;
+    margin: 12px 0;
+  }
   @page {
     size: A4 landscape;
     margin: 10mm;

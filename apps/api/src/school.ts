@@ -13,6 +13,9 @@
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import {
+  revokeCertificate,
+  sealCertificate,
+  type CertificateRow,
   classOfficialScores,
   addPaperPupil,
   assignmentById,
@@ -48,6 +51,7 @@ import {
   type Db,
   type PupilView,
 } from '@awform/db';
+import { newVerifCode, signCert, type CertSigner } from './certsign.js';
 import { note, suraName, type Counters, type Note } from '@awform/hifz';
 import {
   HIFZ_MENTIONS,
@@ -89,7 +93,24 @@ const partLabel = (key: string) => {
   return m ? `${suraName(Number(m[1]))} (${key})` : key;
 };
 
-export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): void {
+export function registerSchool(
+  app: FastifyInstance,
+  db: Db,
+  edition: Edition,
+  signer: CertSigner | null = null,
+): void {
+  /** code de vérification et signature (lot 20) : posés une fois, à la délivrance ou à la première lecture */
+  const seal = async (c: CertificateRow): Promise<CertificateRow> => {
+    if (c.verifCode) return c;
+    const signature = signer ? signCert(signer, c) : null;
+    return (
+      (await sealCertificate(db, c.id, {
+        verifCode: newVerifCode(),
+        signature,
+        keyId: signer?.keyId ?? null,
+      })) ?? c
+    );
+  };
   /** enseignant (pas l'administrateur), second facteur vérifié */
   const needSchoolTeacher = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
@@ -937,11 +958,12 @@ export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): 
         mention,
         document: (number) => ({ ...doc, number, issuedOn: day }),
       });
+      const sealed = await seal(cert);
       await audit(db, me(req), 'ecole.certificat', cert.id, {
         numero: cert.number,
         kind: cert.kind,
       });
-      return reply.code(201).send({ certificate: cert });
+      return reply.code(201).send({ certificate: sealed });
     },
   );
 
@@ -961,7 +983,33 @@ export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): 
     async (req, reply) => {
       const c = await teacherCertificate(db, me(req), req.params.cid);
       if (!c) return err(reply, 404, 'introuvable');
-      return { certificate: c };
+      return { certificate: await seal(c) };
+    },
+  );
+
+  // annulation (erreur de saisie, fraude) : le registre garde le certificat, la vérification publique
+  // affiche « annulé » avec le motif (lot 20)
+  app.post<{ Params: { cid: string }; Body: { motif: string } }>(
+    '/api/v1/ecole/certificats/:cid/annuler',
+    {
+      ...pre,
+      schema: {
+        ...idParams('cid'),
+        body: {
+          type: 'object',
+          required: ['motif'],
+          additionalProperties: false,
+          properties: { motif: { type: 'string', minLength: 3, maxLength: 200 } },
+        },
+      },
+    },
+    async (req, reply) => {
+      const c = await teacherCertificate(db, me(req), req.params.cid);
+      if (!c) return err(reply, 404, 'introuvable');
+      if (!(await revokeCertificate(db, c.id, req.body.motif.trim())))
+        return err(reply, 409, 'deja_annule');
+      await audit(db, me(req), 'ecole.certificat.annulation', c.id, { numero: c.number });
+      return { ok: true };
     },
   );
 

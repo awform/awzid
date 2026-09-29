@@ -8,6 +8,16 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 29/09/2026 — Lot 20 (V1-e) : certificats signés et vérifiables par QR (branche `lot20-wip`, partie de `lot19-wip`)
+
+- **Signature** (`apps/api/src/certsign.ts`) : Ed25519 ; la graine privée `AWFORM_CERT_SIGN_KEY` (« v1:<64 hex> », générée une fois par `deploy.sh`) n'existe que dans le **périmètre de l'API** (`env-scopes.conf`) ; clé publique et identifiant de clé publiés (`GET /api/v1/public/certificats/cle`) pour une vérification hors ligne. La signature porte sur les **champs du registre durable** (numéro, type, niveau ou passage, nom affiché, mention, date) : elle reste valide après la réduction du document à 30 jours.
+- **Base** (migration `0017_certificats_verifiables`) : `verif_code` (12 caractères aléatoires sans ambiguïté, unique), `signature`, `key_id`, `revoked_at`, `revoke_reason`. Code et signature posés **une seule fois** : à la délivrance, ou à la première lecture par l'enseignant pour les certificats délivrés avant ce lot.
+- **Vérification publique** : `GET /api/v1/public/certificats/:numero?c=<code>` — registre seulement (jamais le document complet), état valide / **annulé** (date, motif), signature valide / invalide / absente ; un numéro inconnu et un mauvais code reçoivent **la même réponse** (pas d'énumération du registre) ; **20 essais faux par heure et par adresse** puis 429. Page `/verifier/[numero]` rendue sur le serveur, **sans JavaScript**, CSP stricte, `no-store`, `noindex` ; l'adresse du visiteur est transmise à l'API (`ADDRESS_HEADER`/`XFF_DEPTH` de l'image web) pour que la limite ne touche pas tout le monde.
+- **Enseignant** : QR (bibliothèque `qrcode-generator`, MIT, sans dépendance) et code imprimés en bas du certificat A4 ; **annulation** avec motif (enseignant qui l'a délivré ou de la classe), journalisée.
+- **Décision D8** (juriste, domaine définitif, rotation de clé) ajoutée.
+- **Tests** : `lot20.test.ts` **6** (Ed25519 : champ changé ou autre clé → invalide ; codes ; pose unique ; vérification ; même réponse inconnu/mauvais code ; registre modifié en base → signature invalide ; annulation et motif ; clé publique ; limite d'essais) ; web : QR (1) et page publique (2 : échappement, aucun script, bandeaux). Conditions de la CI : **341 verts, 37 sautés**. Build, typage, lint verts.
+
+---
 ## 29/09/2026 — Lot 19 (V1-b) : épreuves notées — bilans /20, examens /100, textes non préparés, remédiation (branche `lot19-wip`, partie de `lot18-wip`)
 
 - **Notation serveur** (`packages/grading/src/exam.ts`, fonction pure) : la copie est corrigée avec les mêmes vérifications d'items que l'entraînement (`checkItem`), une réponse par item ; « chasse » / « contient » : +1 par case juste, −1 par case touchée à tort, plancher 0 (sinon tout toucher donnerait le maximum) ; réponses mal formées ignorées ; note sur le barème arrondie au demi-point ; **remédiation sous 8/20** ramené au barème. Règles provisoires : décision **D6**.
