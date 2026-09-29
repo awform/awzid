@@ -291,12 +291,24 @@ export async function joinClass(db: Db, classId: string, profileId: string, pare
     .insert(t.classMember)
     .values({ classId, profileId, addedBy: parentId })
     .onConflictDoNothing();
+  // liste de classe de l'espace école : le pseudonyme du profil (jamais le nom réel)
+  const [p] = await db
+    .select({ pseudonym: t.profile.pseudonym })
+    .from(t.profile)
+    .where(eq(t.profile.id, profileId));
+  await db
+    .insert(t.classPupil)
+    .values({ classId, profileId, displayName: p?.pseudonym ?? '?' })
+    .onConflictDoNothing();
 }
 
 export async function leaveClass(db: Db, classId: string, profileId: string) {
   await db
     .delete(t.classMember)
     .where(and(eq(t.classMember.classId, classId), eq(t.classMember.profileId, profileId)));
+  await db
+    .delete(t.classPupil)
+    .where(and(eq(t.classPupil.classId, classId), eq(t.classPupil.profileId, profileId)));
 }
 
 /** Divisions officielles (null si les métadonnées Tanzil n'ont pas été importées). */

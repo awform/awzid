@@ -35,6 +35,17 @@ describe('catalogues de messages', () => {
     }
   });
 
+  it('aucune clé en double dans les fichiers (une clé répétée écraserait silencieusement la première)', () => {
+    for (const l of LOCALES) {
+      const raw = readFileSync(join(SRC, 'lib', 'i18n', 'messages', `${l.code}.json`), 'utf8');
+      const keys = [...raw.matchAll(/^\s*"([^"]+)":/gm)].map((m) => m[1]!);
+      expect(
+        keys.filter((k, i) => keys.indexOf(k) !== i),
+        l.code,
+      ).toEqual([]);
+    }
+  });
+
   it('tous les messages sont du MessageFormat ICU valide', () => {
     for (const l of LOCALES)
       for (const [k, m] of Object.entries(_catalogForTests[l.code]!))

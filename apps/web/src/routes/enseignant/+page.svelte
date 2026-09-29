@@ -185,6 +185,11 @@
       {#each classes as c (c.id)}
         <li>
           <button type="button" onclick={() => openClass(c.id)}>{c.name}</button>
+          <a
+            class="button small"
+            href={resolve('/enseignant/classe/[id]', { id: c.id })}
+            data-testid="espace-ecole-{c.name}">{t('classe.espace')}</a
+          >
           <span class="muted small"
             >{t('ens.code', { code: c.joinCode })} · {t('ens.eleves', { n: c.members ?? 0 })}</span
           >

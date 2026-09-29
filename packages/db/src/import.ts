@@ -122,6 +122,7 @@ export async function importEdition(
       await tx.delete(t.registryEntry).where(eq(t.registryEntry.editionId, ed.id));
       await tx.delete(t.illustration).where(eq(t.illustration.editionId, ed.id));
       await tx.delete(t.booklet).where(eq(t.booklet.editionId, ed.id));
+      await tx.delete(t.evalDoc).where(eq(t.evalDoc.editionId, ed.id));
       await tx
         .update(t.edition)
         .set({ sourceSha256: load.sourceSha256, report })
@@ -176,6 +177,27 @@ export async function importEdition(
         await tx.delete(t.quranDivision);
         await insertChunks(rows, 500, (c) => tx.insert(t.quranDivision).values(c));
       }
+    }
+    // documents d'évaluation des livres (espace école) : modèles de certificats, règles, niveaux du référentiel
+    for (const [key, raw] of Object.entries(load.evalDocs ?? {})) {
+      let content = raw;
+      if (key === 'referentiel') {
+        const niveaux = ((raw as { niveaux?: Array<Record<string, unknown>> }).niveaux ?? []).map(
+          (n) => ({
+            code: n.code,
+            filiere: n.filiere,
+            n: n.n,
+            titre_fr: n.titre_fr,
+            titre_ar: n.titre_ar,
+            cecrl: n.cecrl,
+            heures: n.heures,
+            mots_coran: n.mots_coran,
+            sourates: n.sourates,
+          }),
+        );
+        content = { niveaux };
+      }
+      await tx.insert(t.evalDoc).values({ editionId, key, content: content as object });
     }
     for (const lv of load.levels) {
       const rank = Number(/\d+$/.exec(lv.code)?.[0] ?? 0);

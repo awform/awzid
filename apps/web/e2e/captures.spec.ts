@@ -370,3 +370,67 @@ test.describe('lot 12', () => {
     await page.screenshot({ path: join(DIR, `${dev}-47-lecteur-tanwins.png`) });
   });
 });
+
+test.describe('lot 13', () => {
+  test.use({ compte: null });
+  test('captures d’écran — lot 13 (espace école, certificat)', async ({ page }, info) => {
+    test.setTimeout(120_000);
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    await loginTeacher(page);
+    const H = { 'x-awform': '1' };
+    const api = async (method: 'post' | 'patch' | 'put', url: string, data: object) => {
+      const r = await page.request[method](`/api/v1${url}`, { headers: H, data });
+      expect(r.ok(), await r.text()).toBe(true);
+      return r.json();
+    };
+    const cls = (await api('post', '/teacher/classes', { name: `CE1 A — ${dev}` })).class;
+    await api('patch', `/ecole/classes/${cls.id}`, {
+      levelCode: 'en1',
+      schoolName: 'École pilote AWFORM',
+      place: 'Dakar',
+      placeAr: 'دَاكَار',
+      schoolYear: '2026-2027',
+    });
+    const tb0 = await (await page.request.get(`/api/v1/ecole/classes/${cls.id}/tableau`)).json();
+    const notes: Array<[string, 'm' | 'f', number[], number]> = [
+      ['Awa D.', 'f', [18, 17, 19, 18], 17],
+      ['Moussa S.', 'm', [14, 15, 13, 16], 14],
+      ['Fatou N.', 'f', [16, 12], 0],
+    ];
+    let first = '';
+    for (const [name, gender, bilans, exam] of notes) {
+      const p = (
+        await api('post', `/ecole/classes/${cls.id}/pupils`, { displayName: name, gender })
+      ).pupil;
+      first ||= p.id;
+      const items = bilans.map((s, i) => ({
+        item: `bilan:${tb0.bilans[i].id}`,
+        score: s,
+        max: 20,
+      }));
+      if (exam) items.push({ item: 'examen', score: exam, max: 20 });
+      await api('put', `/ecole/pupils/${p.id}/resultats`, { levelCode: 'en1', items });
+    }
+    await api('post', `/ecole/classes/${cls.id}/assignments`, {
+      kind: 'hifz',
+      target: '112:1-4',
+      dueDay: '2026-10-12',
+    });
+    const cert = (
+      await api('post', `/ecole/pupils/${first}/certificats`, {
+        kind: 'niveau',
+        fields: { prenom_nom: 'Awa Diop' },
+      })
+    ).certificate;
+    await page.goto(`/enseignant/classe/${cls.id}`);
+    await page.getByTestId('onglet-tableau').click();
+    await page.getByTestId('tableau').waitFor();
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({ path: join(DIR, `${dev}-48-ecole-tableau.png`), fullPage: true });
+    await page.goto(`/enseignant/certificat/${cert.id}`);
+    await page.getByTestId('certificat').waitFor();
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({ path: join(DIR, `${dev}-49-certificat.png`), fullPage: true });
+  });
+});

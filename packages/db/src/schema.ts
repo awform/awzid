@@ -540,6 +540,13 @@ export const classGroup = pgTable('class_group', {
   name: text('name').notNull(),
   /** code à donner aux familles (8 caractères) : le PARENT inscrit lui-même son enfant */
   joinCode: text('join_code').notNull().unique(),
+  /** espace école (lot 13) : niveau suivi, établissement et lieu (certificats), année scolaire */
+  levelCode: text('level_code'),
+  schoolName: text('school_name'),
+  schoolNameAr: text('school_name_ar'),
+  place: text('place'),
+  placeAr: text('place_ar'),
+  schoolYear: text('school_year'),
   createdAt: createdAt(),
 });
 
@@ -782,4 +789,152 @@ export const profileRhythm = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [check('profile_rhythm_goal', sql`${t.weeklyGoal} BETWEEN 3 AND 6`)],
+);
+
+// ================================================================ espace école (lot 13)
+
+/** Groupe à l'intérieur d'une classe (demi-groupes, niveaux de lecture…). */
+export const classSubgroup = pgTable('class_subgroup', {
+  id: uuid('id')
+    .primaryKey()
+    .default(sql`uuidv7()`),
+  classId: uuid('class_id')
+    .notNull()
+    .references(() => classGroup.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  createdAt: createdAt(),
+});
+
+/**
+ * Élève de la liste de classe (registre de l'école) : soit un profil de l'application inscrit par son
+ * parent (profileId), soit un élève « papier » saisi par l'enseignant (prénom + initiale recommandés ;
+ * aucune date de naissance, aucune coordonnée). Visible de l'enseignant de la classe SEULEMENT.
+ */
+export const classPupil = pgTable(
+  'class_pupil',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'cascade' }),
+    displayName: text('display_name').notNull(),
+    nameAr: text('name_ar'),
+    /** pour les variantes féminines des documents en arabe et en français ; facultatif */
+    gender: text('gender'),
+    groupId: uuid('group_id').references(() => classSubgroup.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex('class_pupil_profile').on(t.classId, t.profileId),
+    index('class_pupil_class').on(t.classId),
+    check('class_pupil_gender', sql`${t.gender} IS NULL OR ${t.gender} IN ('m', 'f')`),
+  ],
+);
+
+/** Devoir : leçon, passage de hifẓ ou petit livre à lire, pour la classe ou un groupe, avec échéance. */
+export const classAssignment = pgTable(
+  'class_assignment',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    groupId: uuid('group_id').references(() => classSubgroup.id, { onDelete: 'cascade' }),
+    kind: text('kind').notNull(),
+    /** leçon « en1.l05 », passage « 112:1-4 », livret « en1-03 » */
+    target: text('target').notNull(),
+    dueDay: text('due_day').notNull(),
+    note: text('note'),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('class_assignment_class').on(t.classId, t.dueDay),
+    check('class_assignment_kind', sql`${t.kind} IN ('lecon', 'hifz', 'lecture')`),
+  ],
+);
+
+/** Coche de l'enseignant (fait / pas fait) : prime sur le suivi automatique. */
+export const assignmentMark = pgTable(
+  'assignment_mark',
+  {
+    assignmentId: uuid('assignment_id')
+      .notNull()
+      .references(() => classAssignment.id, { onDelete: 'cascade' }),
+    pupilId: uuid('pupil_id')
+      .notNull()
+      .references(() => classPupil.id, { onDelete: 'cascade' }),
+    done: boolean('done').notNull(),
+    markedAt: timestamp('marked_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.assignmentId, t.pupilId] })],
+);
+
+/**
+ * « Classe papier » : résultats saisis par l'enseignant (bilans et examen des livres papier, récitations,
+ * productions ; récitations de hifẓ avec les relevés du barème). item : « bilan:en1.l06 », « examen »,
+ * « recitations », « productions », « hifz:112:1-4 ».
+ */
+export const paperResult = pgTable(
+  'paper_result',
+  {
+    pupilId: uuid('pupil_id')
+      .notNull()
+      .references(() => classPupil.id, { onDelete: 'cascade' }),
+    levelCode: text('level_code').notNull(),
+    item: text('item').notNull(),
+    score: real('score').notNull(),
+    max: real('max').notNull(),
+    day: text('day').notNull(),
+    details: jsonb('details'),
+    enteredBy: uuid('entered_by').references(() => account.id, { onDelete: 'set null' }),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.pupilId, t.levelCode, t.item] }),
+    check('paper_result_score', sql`${t.max} > 0 AND ${t.score} >= 0 AND ${t.score} <= ${t.max}`),
+  ],
+);
+
+/**
+ * Registre des certificats et attestations délivrés (numéro unique, document figé au moment de la
+ * délivrance). Conservé par l'établissement ; jamais une ijāza.
+ */
+export const certificate = pgTable(
+  'certificate',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    number: text('number').notNull().unique(),
+    kind: text('kind').notNull(),
+    classId: uuid('class_id').references(() => classGroup.id, { onDelete: 'set null' }),
+    pupilId: uuid('pupil_id').references(() => classPupil.id, { onDelete: 'set null' }),
+    issuedBy: uuid('issued_by').references(() => account.id, { onDelete: 'set null' }),
+    /** niveau (en1…) ou passage (112:1-4) */
+    subject: text('subject').notNull(),
+    document: jsonb('document').notNull(),
+    issuedAt: timestamp('issued_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('certificate_class').on(t.classId),
+    check('certificate_kind', sql`${t.kind} IN ('niveau', 'hifz')`),
+  ],
+);
+
+/** Documents d'évaluation des livres (certificats, référentiel, règles), par édition. */
+export const evalDoc = pgTable(
+  'eval_doc',
+  {
+    editionId: uuid('edition_id')
+      .notNull()
+      .references(() => edition.id, { onDelete: 'cascade' }),
+    key: text('key').notNull(),
+    content: jsonb('content').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.editionId, t.key] })],
 );

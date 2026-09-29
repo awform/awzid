@@ -59,6 +59,8 @@ export interface EditionLoad {
   tanzil: Tanzil;
   /** métadonnées officielles Tanzil (ajzāʾ, quarts de ḥizb, pages de Médine) ; null si absentes */
   quranData: QuranDivisions | null;
+  /** documents d'évaluation des livres (data/eval : certificats, référentiel, règles) ; clés absentes si non copiés */
+  evalDocs: Record<string, unknown>;
   verseStats: VerseStats;
   issues: Issue[];
 }
@@ -644,6 +646,23 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
       )
     : contentHash(levels.map((l) => l.units.map((u) => u.sha256)));
 
+  // documents d'évaluation (espace école : décision de fin de niveau, certificats) — lus, jamais modifiés
+  const evalDocs: Record<string, unknown> = {};
+  for (const k of ['certificats', 'referentiel', 'regles']) {
+    const f = join(dataDir, 'eval', `${k}.js`);
+    if (!existsSync(f)) continue;
+    try {
+      evalDocs[k] = parseDataFile(readText(f), `data/eval/${k}.js`).value;
+    } catch (e) {
+      issues.push({
+        severity: 'erreur',
+        code: 'evaluation_illisible',
+        file: `data/eval/${k}.js`,
+        message: String(e),
+      });
+    }
+  }
+
   return {
     contentDir,
     sourceSha256,
@@ -657,6 +676,7 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
     catalogue,
     tanzil,
     quranData,
+    evalDocs,
     verseStats,
     issues,
   };

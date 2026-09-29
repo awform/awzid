@@ -5,7 +5,7 @@
   import { demoProfileFor } from '$lib/attempts';
   import { dueWords, loadBoxes, loadDeck } from '$lib/cards';
   import { hifzToday, loadMeta, localIso, type HifzToday } from '$lib/hifz';
-  import { fmtNumber, t } from '$lib/i18n';
+  import { fmtDate, fmtNumber, t } from '$lib/i18n';
   import { completeHizb, completeJuz, completeQuarters, completeSuras } from '$lib/milestones';
   import { call, type ProfileInfo } from '$lib/session';
 
@@ -42,6 +42,19 @@
   let goal = $state(4);
   let rest = $state<number[]>([]);
   let saved = $state(false);
+  /** devoirs donnés par l'enseignant de la classe (espace école) ; jamais de « retard » affiché à l'élève */
+  let devoirs = $state<
+    Array<{
+      id: string;
+      classe: string;
+      kind: string;
+      target: string;
+      label: string;
+      dueDay: string;
+      note: string | null;
+      done: boolean;
+    }>
+  >([]);
 
   const minutes = $derived(
     (hifz?.minutes ?? 0) + (data?.lecon ? LESSON_MIN : 0) + (due > 0 ? WORDS_MIN : 0),
@@ -54,6 +67,8 @@
       data = r.ok ? r.data : null;
       goal = data?.regularite?.objectif ?? 4;
       rest = [...(data?.regularite?.repos ?? [])];
+      const dv = await call<{ devoirs: typeof devoirs }>('GET', `/profiles/${profile.id}/devoirs`);
+      devoirs = dv.ok ? (dv.data?.devoirs ?? []).filter((d) => !d.done) : [];
       hifz = await hifzToday(profile.id).catch(() => null);
       if (hifz) {
         const meta = await loadMeta();
@@ -149,6 +164,29 @@
     </ol>
     <p class="muted small">{t('auj.onglets')}</p>
   </section>
+
+  {#if devoirs.length}
+    <section class="card" data-testid="devoirs">
+      <h2>{t('auj.devoirs')}</h2>
+      <ul class="devoirs">
+        {#each devoirs as d (d.id)}
+          <li data-devoir={d.target}>
+            {#if d.kind === 'lecon'}<a href={resolve('/lecons/[id]', { id: d.target })}
+                >{t('auj.devoir_lecon', { id: d.target })}</a
+              >{:else if d.kind === 'lecture'}<a
+                href={resolve('/lectures/[code]', { code: d.target })}
+                >{t('auj.devoir_lecture', { code: d.target })}</a
+              >{:else}<a href={resolve('/hifz')}>{t('auj.devoir_hifz', { passage: d.label })}</a
+              >{/if}
+            <span class="muted small"
+              >· {t('auj.pour_le', { date: fmtDate(d.dueDay, { dateStyle: 'medium' }) })} · {d.classe}</span
+            >
+            {#if d.note}<p class="small">{d.note}</p>{/if}
+          </li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
 
   {#if data.regularite}
     {@const r = data.regularite}

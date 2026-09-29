@@ -21,9 +21,13 @@ $items += , @("$aw\illus", '')
 $items += , @("$W\coran\tanzil-uthmani.tsv", 'coran/')
 # métadonnées officielles Tanzil (ajzāʾ, quarts de ḥizb, pages de Médine ; CC BY 3.0) : empreinte contrôlée à l'import
 if (Test-Path "$W\coran\tanzil-quran-data.js") { $items += , @("$W\coran\tanzil-quran-data.js", 'coran/') }
+# règles d'évaluation, référentiel des niveaux et modèles de certificats (espace école, lot 13)
+foreach ($f in 'certificats.js', 'referentiel.js', 'regles.js') {
+  if (Test-Path "$aw\data\eval\$f") { $items += , @("$aw\data\eval\$f", 'data/eval/') }
+}
 # tables de correspondance des identifiants d'exercices (gel des livres) : ancien identifiant → id explicite
 if (Test-Path "$W\application\ids") { $items += , @("$W\application\ids", '') }
-ssh $VmHost "rm -rf ~/$Dest.tmp && mkdir -p ~/$Dest.tmp/data ~/$Dest.tmp/registre ~/$Dest.tmp/coran"
+ssh $VmHost "rm -rf ~/$Dest.tmp && mkdir -p ~/$Dest.tmp/data/eval ~/$Dest.tmp/registre ~/$Dest.tmp/coran"
 foreach ($it in $items) {
   if (-not (Test-Path $it[0])) { throw "Introuvable : $($it[0])" }
   scp -q -r $it[0] "${VmHost}:$Dest.tmp/$($it[1])"

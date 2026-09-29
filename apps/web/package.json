@@ -20,6 +20,7 @@
     "@awform/content": "workspace:*",
     "@awform/grading": "workspace:*",
     "@awform/hifz": "workspace:*",
+    "@awform/school": "workspace:*",
     "intl-messageformat": "^12.1.2"
   },
   "devDependencies": {

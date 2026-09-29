@@ -10,7 +10,18 @@
  */
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
-import { connect, loadRootEnv, runMigrations, schema as t } from '@awform/db';
+import {
+  addPaperPupil,
+  connect,
+  createAssignment,
+  currentEdition,
+  listUnits,
+  loadRootEnv,
+  runMigrations,
+  savePaperResult,
+  schema as t,
+  updateClassSettings,
+} from '@awform/db';
 import type { LightMyRequestResponse } from 'fastify';
 import { setupTutor } from '@awform/tutor';
 import { buildApp } from '../app.js';
@@ -315,6 +326,63 @@ try {
       consents: ['compte_suivi'],
     });
     result = { ...result, ado: 'Yanis (15 ans)' };
+  }
+  // ---- complément (idempotent) : espace école (lot 13) — classe de l'enseignant réglée pour Enfants N1,
+  // trois élèves FICTIFS de « classe papier » avec leurs notes, deux devoirs
+  const [schoolCls] = await h.db
+    .select({ id: t.classGroup.id, levelCode: t.classGroup.levelCode })
+    .from(t.classGroup)
+    .innerJoin(t.account, eq(t.account.id, t.classGroup.teacherAccountId))
+    .where(eq(t.account.email, E.enseignant));
+  const ed = await currentEdition(h.db);
+  if (schoolCls && !schoolCls.levelCode && ed) {
+    const [teacher] = await h.db
+      .select({ id: t.account.id })
+      .from(t.account)
+      .where(eq(t.account.email, E.enseignant));
+    await updateClassSettings(h.db, schoolCls.id, {
+      levelCode: 'en1',
+      schoolName: 'École de démonstration AWFORM',
+      place: 'Dakar',
+      placeAr: 'دَاكَار',
+      schoolYear: '2026-2027',
+    });
+    const bilans = (await listUnits(h.db, ed.id, 'en1')).filter((u) => u.kind === 'bilan');
+    const pupils: Array<[string, 'm' | 'f', number[], number | null]> = [
+      ['Awa D.', 'f', [18, 17, 19, 18], 17],
+      ['Moussa S.', 'm', [14, 15, 13, 16], 14],
+      ['Fatou N.', 'f', [16, 12], null],
+    ];
+    for (const [name, gender, notes, exam] of pupils) {
+      const p = await addPaperPupil(h.db, schoolCls.id, { displayName: name, gender });
+      const rows = notes.map((s, i) => ({ item: `bilan:${bilans[i]?.id ?? ''}`, score: s }));
+      if (exam !== null) rows.push({ item: 'examen', score: exam });
+      for (const r of rows.filter((x) => !x.item.endsWith(':')))
+        await savePaperResult(h.db, {
+          pupilId: p.id,
+          levelCode: 'en1',
+          item: r.item,
+          score: r.score,
+          max: 20,
+          day: day(3),
+          enteredBy: teacher!.id,
+        });
+    }
+    const soon = new Date(Date.now() + 7 * 86_400_000).toISOString().slice(0, 10);
+    await createAssignment(h.db, {
+      classId: schoolCls.id,
+      kind: 'lecon',
+      target: 'en1.l03',
+      dueDay: soon,
+    });
+    await createAssignment(h.db, {
+      classId: schoolCls.id,
+      kind: 'hifz',
+      target: '112:1-4',
+      dueDay: soon,
+      note: 'Réciter en classe',
+    });
+    result = { ...result, ecole: 'classe papier de démonstration (3 élèves fictifs)' };
   }
   console.log(JSON.stringify(result));
 } finally {
