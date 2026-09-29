@@ -451,3 +451,22 @@ test.describe('lot 14', () => {
     }
   });
 });
+
+test.describe('lot 15', () => {
+  test('captures d’écran — lot 15 (racines, interface anglaise)', async ({ page }, info) => {
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    await page.goto('/activites/racines');
+    await page.getByTestId('racine').waitFor();
+    await page.locator('[data-option="كُتُبٌ"]').click();
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({ path: join(DIR, `${dev}-52-racines.png`) });
+    await page.goto('/compte');
+    await page.getByTestId('langues-preparation').check();
+    await Promise.all([page.waitForEvent('load'), page.locator('[data-locale="en"]').click()]);
+    await page.goto('/aujourdhui');
+    await page.getByTestId('seance').waitFor();
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({ path: join(DIR, `${dev}-53-anglais.png`) });
+  });
+});
