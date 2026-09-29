@@ -94,11 +94,11 @@ test.describe('parent et enfant', () => {
     await page.goto('/compte/tuteur');
     const amina = page.locator('[data-tuteur-profil]').filter({ hasText: 'Amina' });
     await expect(amina).toBeVisible();
+    await expect(amina.getByTestId('journal-tuteur')).toBeVisible();
     const box = amina.getByTestId('accord-tuteur');
-    if (!(await box.isChecked())) {
-      await box.check();
-      await expect(page.getByRole('status')).toContainText('Accord enregistré');
-    }
+    // l'autre projet (mobile/bureau) peut avoir déjà donné l'accord : on vérifie l'état final
+    await box.check();
+    await expect(box).toBeChecked();
 
     await page.goto('/profils');
     await page.locator('[data-profile]').filter({ hasText: 'Amina' }).click();
@@ -108,7 +108,7 @@ test.describe('parent et enfant', () => {
     await expect(page.getByTestId('tuteur-texte')).toHaveCount(0);
     await page.locator('[data-action="lecon"]').click();
     await expect(page.getByTestId('tuteur-reponses').locator('li.answer').first()).toBeVisible();
-    await page.getByTestId('tuteur-mot-choix').selectOption({ index: 0 });
+    await page.getByTestId('tuteur-mot-choix').selectOption({ index: 1 });
     await page.locator('[data-action="mot"]').click();
     await expect(page.getByTestId('tuteur-reponses').locator('li.answer')).toHaveCount(2);
 

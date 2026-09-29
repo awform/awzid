@@ -244,3 +244,65 @@ test.describe('lot 8', () => {
     await shot('38-lecteur-coranique');
   });
 });
+
+test.describe('lot 9', () => {
+  test.use({ compte: null });
+  test('captures d’écran — lot 9 (tuteur, questions en attente)', async ({
+    page,
+    browser,
+  }, info) => {
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    const shot = async (p: typeof page, name: string, full = false) => {
+      await p.locator('main h1, h1').first().waitFor();
+      await p.evaluate(() => document.fonts.ready);
+      await p.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: full });
+    };
+    await newAdult(page, 'captures9');
+    await page.goto('/lecons/ad1.l05');
+    await page.getByTestId('tuteur-ouvrir').click();
+    const list = page.getByTestId('tuteur-reponses').locator('li.answer');
+    const send = async (q: string, n: number) => {
+      await page.getByTestId('tuteur-texte').fill(q);
+      await page.getByTestId('tuteur-envoyer').click();
+      await expect(list).toHaveCount(n);
+    };
+    const question = `Est-ce que je peux prier assis ? (${dev})`;
+    await send(question, 1);
+    await send('Écris-moi la sourate Al-Ikhlāṣ', 2);
+    await send('Quelle est la différence entre ر et ز ?', 3);
+    await page.getByTestId('tuteur-reponses').scrollIntoViewIfNeeded();
+    await shot(page, '39-tuteur-adulte');
+
+    const tctx = await browser.newContext(
+      dev === 'mobile' ? { viewport: { width: 412, height: 915 } } : {},
+    );
+    const tp = await tctx.newPage();
+    await loginTeacher(tp);
+    await tp.goto('/enseignant');
+    await tp.locator('#cname').fill(`Adultes ${dev}`);
+    await tp.getByRole('button', { name: 'Créer la classe' }).click();
+    const code = /([A-HJ-NP-Z2-9]{8})/.exec(
+      (await tp.getByTestId('ens-message').textContent()) ?? '',
+    )![1]!;
+    await page.goto('/compte');
+    const block = page.getByTestId('hifz-compte').locator('.hp').first();
+    await block.getByTestId('code-classe').fill(code);
+    await block.getByTestId('consent-partage').check();
+    await block.getByRole('button', { name: 'Rejoindre la classe' }).click();
+    await page.getByRole('status').waitFor();
+    await tp.goto('/enseignant/questions');
+    const item = tp.locator('[data-question]').filter({ hasText: question });
+    await item.waitFor();
+    await item
+      .getByTestId('ensq-reponse')
+      .fill('Oui, si tu ne peux pas te tenir debout : viens m’en parler après le cours.');
+    await tp.evaluate(() => window.scrollTo(0, 0));
+    await shot(tp, '40-questions-en-attente');
+    await tctx.close();
+
+    await page.goto('/compte/tuteur');
+    await page.getByTestId('journal-tuteur').first().waitFor();
+    await shot(page, '41-journal-tuteur', true);
+  });
+});

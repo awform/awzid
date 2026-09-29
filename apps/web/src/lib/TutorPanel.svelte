@@ -107,7 +107,7 @@
         <div class="row">
           <label for="mot-{unitId}">{t('tuteur.mot')}</label>
           <select id="mot-{unitId}" bind:value={word} data-testid="tuteur-mot-choix">
-            {#each words as w (w)}<option value={w}>{w}</option>{/each}
+            <option value="">{t('tuteur.choisir_mot')}</option>{#each words as w (w)}<option value={w}>{w}</option>{/each}
           </select>
           <button type="button" disabled={busy || !word} onclick={() => go('mot')} data-action="mot"
             >{t('tuteur.voir_mot')}</button

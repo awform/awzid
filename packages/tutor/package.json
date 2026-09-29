@@ -10,9 +10,6 @@
       "default": "./dist/index.js"
     }
   },
-  "bin": {
-    "awform-tuteur-eval": "./dist/cli/eval.js"
-  },
   "files": [
     "dist"
   ],
