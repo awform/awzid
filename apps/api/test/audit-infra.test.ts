@@ -147,3 +147,16 @@ describe.skipIf(process.platform === 'win32')(
     });
   },
 );
+
+describe('audit INF-10 — déploiement', () => {
+  it('sauvegarde avant migration, retour à la version précédente si la santé échoue', () => {
+    const d = readFileSync(join(PROD, 'deploy.sh'), 'utf8');
+    const backup = d.indexOf('"$PROD/backup.sh"');
+    const migrate = d.indexOf('run --rm migrate');
+    expect(backup).toBeGreaterThan(0);
+    expect(backup).toBeLessThan(migrate);
+    expect(d).toContain('AWFORM_VERSION="$PREV" "${DC[@]}" up -d');
+    expect(d).toContain('echo "$AWFORM_VERSION" > "$CONF/version-en-service"');
+    expect(spawnSync('bash', ['-n', join(PROD, 'deploy.sh')]).status).toBe(0);
+  });
+});

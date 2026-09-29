@@ -68,14 +68,14 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | QUA-3 | mineur | Fonctions très longues | à faire | | |
 | INF-1 | bloquant | La CI est rouge sur `main` depuis le lot 9 (24 exécutions sur 24) | déjà corrigé | 8e8784f | CI locale : school.test.ts, pnpm -r --no-bail |
 | INF-2 | majeur | En CI, les tests d'API sur base sont presque tous sautés (57 sur 87), même une fois INF-1 corrigé | déjà corrigé | 8e8784f | synthetique.test.ts ; 100 tests d'API sans les livres |
-| INF-3 | mineur | Actions GitHub non épinglées par empreinte | corrigé | voir « INF-3 » dans git log | empreintes lues dans les journaux de la CI ; Dependabot (actions, npm, Docker) |
+| INF-3 | mineur | Actions GitHub non épinglées par empreinte | corrigé | 0c5c0b0 | empreintes lues dans les journaux de la CI ; Dependabot (actions, npm, Docker) |
 | INF-4 | mineur | Dépendances : 2 vulnérabilités connues (outillage) | corrigé | 249be4b | pnpm audit (CI, niveau high bloquant) : 0 vulnérabilité |
 | INF-5 | mineur | Gradle téléchargé sans empreinte | reporté : empreinte publiée par Gradle non vérifiable depuis cet environnement (services.gradle.org bloqué par le proxy) — à ajouter depuis la VM | | |
 | INF-6 | majeur | `X-Forwarded-For` falsifiable : limites par adresse IP (inscription, connexion) contournées | corrigé | e91c3fa | audit-inf6.test.ts |
 | INF-7 | majeur | `backup.sh` : un `pg_dump` en échec laisse une « sauvegarde » partielle, non journalisée, prise pour bonne | corrigé | d155d45 | audit-infra.test.ts |
 | INF-8 | majeur | Ni copie hors site, ni test de restauration automatique | corrigé en partie : copie hors site prête et journalisée, état des sauvegardes et alerte à 35 jours, seuils de restauration ; stockage et restauration automatique = décision D10 | d155d45 | audit-infra.test.ts |
 | INF-9 | majeur | Un déploiement `--demo` laisse le paiement SIMULÉ et le tuteur simulé actifs pour toujours | corrigé | a1640a5 | audit-infra.test.ts |
-| INF-10 | mineur | Migrations sans retour arrière, appliquées avant la bascule | à faire | | |
+| INF-10 | mineur | Migrations sans retour arrière, appliquées avant la bascule | corrigé | voir « INF-10 » dans git log | audit-infra.test.ts |
 | INF-11 | mineur | Images Docker non épinglées par empreinte ; scripts : avertissements shellcheck | à faire | | |
 | PERF-1 | majeur | Budget JavaScript dépassé : 204,3 Ko Brotli (budget 150 Ko), et non « ≈ 59 Ko » | corrigé | 1dff35a | budget CI (pnpm --filter @awform/web budget), i18n.test.ts |
 | A11Y-1 | mineur | Cibles tactiles sous la règle de 48 px du projet | à faire | | |

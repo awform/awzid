@@ -105,6 +105,13 @@ DC=(docker compose -f "$PROD/compose.yml")
 # ---------------------------------------------------------------- 2. images, base, contenu
 "${DC[@]}" build --pull
 "${DC[@]}" up -d db
+# audit INF-10 : SAUVEGARDE juste avant toute migration (les migrations n'ont pas de retour arrière)
+for i in $(seq 1 30); do
+  "${DC[@]}" exec -T db pg_isready -U awform -d awform >/dev/null 2>&1 && break
+  [ "$i" = 30 ] && { echo "ÉCHEC : la base ne répond pas"; exit 1; }
+  sleep 2
+done
+"$PROD/backup.sh" >/dev/null || { echo "ÉCHEC : sauvegarde avant migration — déploiement arrêté"; exit 1; }
 "${DC[@]}" --profile outils run --rm migrate
 # comptes de l'API et du travailleur (idempotent : droits recalculés à chaque déploiement)
 "${DC[@]}" --profile outils run --rm roles
@@ -121,10 +128,23 @@ IMPORT_ARGS=(--edition "$EDITION" --levels "$LEVELS" --publish)
 "${DC[@]}" up -d --remove-orphans api worker web caddy
 for i in $(seq 1 60); do
   if curl -fsS "http://127.0.0.1/api/v1/health" 2>/dev/null | grep -q '"status":"ok"'; then break; fi
-  [ "$i" = 60 ] && { echo "ÉCHEC : l'API ne répond pas"; "${DC[@]}" ps; exit 1; }
+  if [ "$i" = 60 ]; then
+    echo "ÉCHEC : l'API ne répond pas"
+    "${DC[@]}" ps
+    # audit INF-10 : retour aux images de la version précédente (la base migrée reste : les migrations
+    # suivent la règle « expand / contract », compatibles avec la version précédente — EXPLOITATION.md)
+    PREV="$(cat "$CONF/version-en-service" 2>/dev/null || true)"
+    if [ -n "$PREV" ] && [ "$PREV" != "$AWFORM_VERSION" ]; then
+      echo "retour à la version précédente : $PREV"
+      AWFORM_VERSION="$PREV" "${DC[@]}" up -d --remove-orphans api worker web caddy
+    fi
+    exit 1
+  fi
   sleep 2
 done
 echo "santé : ok ($(curl -fsS http://127.0.0.1/api/v1/health))"
+# version en service (retour possible au prochain déploiement en échec)
+echo "$AWFORM_VERSION" > "$CONF/version-en-service"
 # aucun secret hors de son périmètre dans les conteneurs démarrés (noms des variables seulement)
 "$PROD/env-check.sh" "$ENVF"
 
