@@ -7,6 +7,7 @@ import { getTableConfig, type PgTable } from 'drizzle-orm/pg-core';
 import { purgeAuthThrottle, purgeDeletedAccounts, purgeRetention, schema as t } from '@awform/db';
 import {
   adult,
+  cookieOf,
   child,
   join,
   newClass,
@@ -190,6 +191,110 @@ describe.skipIf(!URL_)('audit — RGPD', () => {
         .select()
         .from(t.billingCheckout)
         .where(eq(t.billingCheckout.accountId, accountId)),
+    ).toEqual([]);
+  });
+
+  it('MIN-9 : retrait de l’accord « rappels » — préférences coupées, abonnements push effacés, plus rien de dû', async () => {
+    const su = await c.req(
+      'POST',
+      '/api/v1/auth/signup',
+      {},
+      {
+        kind: 'adulte',
+        email: 'rappels-min9@exemple.org',
+        password: PW,
+        country: 'FR',
+        consents: ['cgu', 'rappels'],
+        birthYear: 1990,
+      },
+    );
+    expect(su.statusCode, su.body).toBe(201);
+    const A = { cookie: cookieOf(su) };
+    const me = (await c.req('GET', '/api/v1/auth/me', A)).json();
+    const accountId = me.account.id as string;
+    await c.req('PUT', '/api/v1/notifications', A, {
+      devoirs: true,
+      rapport: true,
+      enfants: false,
+      quietStart: 22,
+      quietEnd: 6,
+      tz: 'Africa/Dakar',
+    });
+    await c.h.db.insert(t.pushSubscription).values({
+      accountId,
+      endpoint: 'https://push.example.invalid/x',
+      p256dh: 'p',
+      auth: 'a',
+    });
+    const cs = (await c.req('GET', '/api/v1/account/consents', A)).json().consents;
+    const rap = cs.find((x: { type: string }) => x.type === 'rappels');
+    expect(
+      (await c.req('POST', `/api/v1/account/consents/${rap.id}/withdraw`, A, {})).statusCode,
+    ).toBe(200);
+    const [pref] = await c.h.db
+      .select()
+      .from(t.notificationPref)
+      .where(eq(t.notificationPref.accountId, accountId));
+    expect([pref?.devoirs, pref?.rapport, pref?.enfants]).toEqual([false, false, false]);
+    expect(
+      await c.h.db
+        .select()
+        .from(t.pushSubscription)
+        .where(eq(t.pushSubscription.accountId, accountId)),
+    ).toEqual([]);
+  });
+
+  it('MIN-10 : envoi de la voix d’un enfant — un code parent doit exister (409 sinon)', async () => {
+    const su = await c.req(
+      'POST',
+      '/api/v1/auth/signup',
+      {},
+      {
+        kind: 'parent',
+        birthYear: 1985,
+        email: 'sanscode-min10@exemple.org',
+        password: PW,
+        country: 'FR',
+        consents: ['cgu'],
+      },
+    );
+    const P = { cookie: cookieOf(su) };
+    const kid = await child(c, P, 'Sans-code');
+    const r = await c.req('POST', `/api/v1/profiles/${kid}/recitations/accord`, P, {});
+    expect(r.statusCode).toBe(409);
+    expect(r.json().error.code).toBe('code_parent_a_definir');
+  });
+
+  it('MIN-11 : retrait du partage enseignant — les récitations envoyées ne reviennent pas après réinscription', async () => {
+    const T = await teacher(c, 'prof-min11@exemple.org');
+    const cls = await newClass(c, T, 'Classe MIN-11');
+    const { P } = await parent(c, 'parent-min11@exemple.org');
+    const kid = await child(c, P, 'Retour-min11');
+    await join(c, P, kid, cls);
+    await c.h.db.insert(t.recitationUpload).values({
+      profileId: kid,
+      classId: cls.id,
+      part: '112:1-4',
+      mime: 'audio/ogg',
+      size: 3,
+      keyVersion: 1,
+      iv: Buffer.alloc(12),
+      ciphertext: Buffer.from('abc'),
+      expiresAt: new Date(Date.now() + 7 * 86400_000),
+    });
+    const cs = (await c.req('GET', '/api/v1/account/consents', P)).json().consents;
+    const share = cs.find(
+      (x: { type: string; profileId: string }) =>
+        x.type === 'partage_enseignant' && x.profileId === kid,
+    );
+    expect(
+      (await c.req('POST', `/api/v1/account/consents/${share.id}/withdraw`, P, {})).statusCode,
+    ).toBe(200);
+    await join(c, P, kid, cls);
+    const recs = (await c.req('GET', `/api/v1/ecole/classes/${cls.id}/recitations`, T)).json();
+    expect(recs.recitations).toHaveLength(0);
+    expect(
+      await c.h.db.select().from(t.recitationUpload).where(eq(t.recitationUpload.profileId, kid)),
     ).toEqual([]);
   });
 });

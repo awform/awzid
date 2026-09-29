@@ -15,7 +15,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | SEC-5 | mineur | Rejeu d'un code TOTP par connexions parallèles | corrigé | 4b9dae9 | audit-2fa.test.ts « SEC-5 » |
 | SEC-6 | mineur | Ressaisies du mot de passe sans limite d'essais | corrigé | 5c0cc4d | audit-sec.test.ts |
 | SEC-7 | mineur | HTTP clair servi en production ; cookie sans `Secure` sur HTTP | corrigé | 3c90aaa | audit-infra.test.ts, validation Caddy en CI |
-| SEC-8 | mineur | Entrées de la file hors ligne sans schéma (1 Mo de JSON libre par événement) | corrigé | voir « SEC-8 » dans git log | audit-sec.test.ts |
+| SEC-8 | mineur | Entrées de la file hors ligne sans schéma (1 Mo de JSON libre par événement) | corrigé | d9f0363 | audit-sec.test.ts |
 | MIN-1 | majeur | Un mineur ayant l'âge du « consentement numérique » obtient un profil **adulte**, sans aucune protection | corrigé | c33fbcd | audit-mineurs.test.ts « MIN-1 » |
 | MIN-2 | majeur | Deux calculs d'âge : un profil « enfant » reçoit le tuteur « ado » (texte libre, la nuit) | corrigé | 47b9224 | audit-mineurs.test.ts « MIN-2 » |
 | MIN-3 | majeur | Compte « parent » sans contrôle d'âge : un enfant consent pour lui-même (Sénégal compris) | corrigé | 12480c2 | audit-mineurs.test.ts « MIN-3 » |
@@ -24,11 +24,11 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-6 | majeur | Export RGPD incomplet (art. 15 et 20) | corrigé | 25da93d | audit-rgpd.test.ts |
 | MIN-7 | majeur | Après l'effacement définitif, il reste des données personnelles (e-mail en clair, âge, pays) | corrigé | 3e1e41c | audit-rgpd.test.ts, roles.test.ts |
 | MIN-8 | majeur | Durées de conservation non appliquées (questions libres des enfants gardées sans limite) | corrigé | 6a01db4 | audit-rgpd.test.ts, roles.test.ts |
-| MIN-9 | mineur | Consentement `rappels` décoratif : son retrait n'arrête pas les notifications | à faire | | |
-| MIN-10 | mineur | Code parent contournable pour l'envoi de récitations | à faire | | |
-| MIN-11 | mineur | Une récitation réapparaît chez l'enseignant après retrait puis nouvelle inscription | à faire | | |
-| MIN-12 | mineur | Administrateur : textes libres des enfants de toutes les classes, comptes supprimés, masquage faible | à faire | | |
-| MIN-13 | mineur | Journaux Fastify : URL complète (identifiants, paramètres) et adresse IP | à faire | | |
+| MIN-9 | mineur | Consentement `rappels` décoratif : son retrait n'arrête pas les notifications | corrigé | voir « MIN-9 » dans git log | audit-rgpd.test.ts |
+| MIN-10 | mineur | Code parent contournable pour l'envoi de récitations | corrigé | voir « MIN-10 » dans git log | audit-rgpd.test.ts |
+| MIN-11 | mineur | Une récitation réapparaît chez l'enseignant après retrait puis nouvelle inscription | corrigé | voir « MIN-11 » dans git log | audit-rgpd.test.ts |
+| MIN-12 | mineur | Administrateur : textes libres des enfants de toutes les classes, comptes supprimés, masquage faible | corrigé | voir « MIN-12 » dans git log | admin.test.ts |
+| MIN-13 | mineur | Journaux Fastify : URL complète (identifiants, paramètres) et adresse IP | corrigé | voir « MIN-13 » dans git log | audit-journaux.test.ts |
 | MIN-14 | mineur | Réinscription impossible 30 jours et révélation de l'existence du compte | à faire | | |
 | MIN-15 | mineur | Pays déclaratif, codes inexistants acceptés | à faire | | |
 | MIN-16 | mineur | Enregistrements vocaux locaux : la limite de 7 jours n'est appliquée qu'à l'ouverture de l'écran | corrigé | a319a48 | apps/web/src/lib/recordings.test.ts |

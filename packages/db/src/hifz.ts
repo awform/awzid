@@ -356,6 +356,12 @@ export async function leaveClass(db: Db, classId: string, profileId: string) {
         ),
       ),
     );
+  // récitations envoyées à cette classe : effacées au départ de l'élève (audit MIN-11)
+  await db
+    .delete(t.recitationUpload)
+    .where(
+      and(eq(t.recitationUpload.classId, classId), eq(t.recitationUpload.profileId, profileId)),
+    );
   // réponses libres envoyées à cette classe : effacées au départ de l'élève (lot 18)
   await db
     .delete(t.freeAnswer)

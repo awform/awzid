@@ -69,6 +69,14 @@ export function registerRecitations(app: FastifyInstance, db: Db, key: Recitatio
   };
   /** pour un enfant : le code parent (s'il existe) est exigé — garde partagée (audit SEC-2) */
   const parentGate = async (req: FastifyRequest, reply: FastifyReply, kind: string) => {
+    // audit MIN-10 : la voix d'un ENFANT ne part jamais sans code parent — il doit exister
+    if (kind === 'enfant') {
+      const [a] = await db
+        .select({ h: t.account.parentPinHash })
+        .from(t.account)
+        .where(eq(t.account.id, req.auth!.accountId));
+      if (!a?.h) return err(reply, 409, 'code_parent_a_definir');
+    }
     await guardParent(db, req, reply, kind);
   };
   const owned = async (req: FastifyRequest, reply: FastifyReply, profileId: string) => {
@@ -141,10 +149,10 @@ export function registerRecitations(app: FastifyInstance, db: Db, key: Recitatio
       if (reply.sent) return reply;
       if (!key) return err(reply, 503, 'envoi_indisponible');
       const p = (await profileOf(req.params.id))!;
+      if (!(await activeConsent(p.id))) return err(reply, 409, 'accord_requis');
       await parentGate(req, reply, p.kind);
       // une réponse déjà envoyée (refus) arrête ici : une réponse Fastify est « thenable »
       if (reply.sent) return reply;
-      if (!(await activeConsent(p.id))) return err(reply, 409, 'accord_requis');
       const mime = String(req.headers['content-type'] ?? '')
         .split(';')[0]!
         .trim();

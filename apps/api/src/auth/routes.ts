@@ -18,6 +18,7 @@ import {
   profileFreeAnswers,
   profileRecitations,
   exportPersonalData,
+  leaveClass,
   schema as t,
   withdrawAccount,
   type Db,
@@ -786,9 +787,35 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       await db.update(t.consent).set({ withdrawnAt: new Date() }).where(eq(t.consent.id, c.id));
       // retrait du partage avec l'enseignant : le profil quitte ses classes
       if (c.type === 'partage_enseignant' && c.profileId) {
-        await db.delete(t.classMember).where(eq(t.classMember.profileId, c.profileId));
-        // liste de classe de l'espace école aussi (le registre garde les certificats déjà délivrés)
-        await db.delete(t.classPupil).where(eq(t.classPupil.profileId, c.profileId));
+        // départ de TOUTES les classes (liste, registre, réponses, copies, récitations envoyées — audit
+        // MIN-11 : rien ne réapparaît chez l'enseignant après une nouvelle inscription)
+        const pid = c.profileId;
+        const classes = new Set([
+          ...(
+            await db
+              .select({ c: t.classMember.classId })
+              .from(t.classMember)
+              .where(eq(t.classMember.profileId, pid))
+          ).map((x) => x.c),
+          ...(
+            await db
+              .select({ c: t.classPupil.classId })
+              .from(t.classPupil)
+              .where(eq(t.classPupil.profileId, pid))
+          ).map((x) => x.c),
+        ]);
+        for (const cl of classes) await leaveClass(db, cl, pid);
+        await deleteProfileRecitations(db, pid);
+      }
+      // audit MIN-9 : retrait des rappels — préférences coupées, abonnements de l'appareil effacés
+      if (c.type === 'rappels') {
+        await db
+          .update(t.notificationPref)
+          .set({ devoirs: false, rapport: false, enfants: false, updatedAt: new Date() })
+          .where(eq(t.notificationPref.accountId, req.auth!.accountId));
+        await db
+          .delete(t.pushSubscription)
+          .where(eq(t.pushSubscription.accountId, req.auth!.accountId));
       }
       // retrait de l'accord d'envoi : les récitations déjà envoyées sont effacées
       if (c.type === 'envoi_recitation' && c.profileId)
