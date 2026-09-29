@@ -32,6 +32,7 @@ const E = {
   parent: `parent-${TAG}@${DOMAIN}`,
   adulte: `adulte-${TAG}@${DOMAIN}`,
   enseignant: `enseignant-${TAG}@${DOMAIN}`,
+  admin: `admin-${TAG}@${DOMAIN}`,
 };
 
 const h = connect(process.env.DATABASE_URL, 2);
@@ -59,13 +60,15 @@ const call = async (method: 'GET' | 'POST' | 'PUT', url: string, cookie = '', pa
 };
 const day = (n: number) => new Date(Date.now() - n * 86_400_000).toISOString().slice(0, 10);
 
+/** dernière ligne de la sortie standard (lue par deploy.sh) */
+let result: Record<string, unknown> = { demo: 'deja_presente' };
 try {
   const [exists] = await h.db
     .select({ id: t.account.id })
     .from(t.account)
     .where(eq(t.account.email, E.parent));
   if (exists) {
-    console.log(JSON.stringify({ demo: 'deja_presente' }));
+    // déjà présente : rien n'est recréé (compléments idempotents plus bas)
   } else {
     const year = new Date().getFullYear();
     // parent et deux enfants (pseudonymes fictifs, année de naissance seulement)
@@ -209,15 +212,13 @@ try {
         fluidite: 4,
       },
     });
-    console.log(
-      JSON.stringify({
-        demo: 'creee',
-        comptes: E,
-        codeParent: PIN,
-        classe: { nom: 'Hifẓ — groupe de démonstration', code: cls.joinCode },
-        enseignantTotp: { secret: setup.secret, uri: setup.uri },
-      }),
-    );
+    result = {
+      demo: 'creee',
+      comptes: E,
+      codeParent: PIN,
+      classe: { nom: 'Hifẓ — groupe de démonstration', code: cls.joinCode },
+      enseignantTotp: { secret: setup.secret, uri: setup.uri },
+    };
   }
   // ---- complément lot 9 (idempotent) : tuteur — accord du parent pour Lina, une question transmise à
   // l'enseignant par l'adulte (membre de la classe de démonstration), quelques réponses au journal
@@ -272,6 +273,50 @@ try {
     }
     console.error(JSON.stringify({ tuteur: 'demo_completee' }));
   }
+  // ---- complément (idempotent) : compte ADMINISTRATEUR (second facteur) et profil ADO (15 ans)
+  const [adminExists] = await h.db
+    .select({ id: t.account.id })
+    .from(t.account)
+    .where(eq(t.account.email, E.admin));
+  if (!adminExists) {
+    await h.db
+      .insert(t.account)
+      .values({ kind: 'admin', email: E.admin, passwordHash: await hashSecret(PW), country: 'FR' });
+    const adminC = cookieOf(
+      await call('POST', '/api/v1/auth/login', '', { email: E.admin, password: PW }),
+    );
+    const s = (await call('POST', '/api/v1/auth/totp/setup', adminC, {})).json() as {
+      secret: string;
+      uri: string;
+    };
+    // pas de temps suivant : jamais le même code que celui de l'enseignant créé juste avant
+    await call('POST', '/api/v1/auth/totp/confirm', adminC, {
+      code: totpAt(s.secret, Math.floor(Date.now() / 30_000)),
+    });
+    result = {
+      ...result,
+      demo: result.demo === 'creee' ? 'creee' : 'complement',
+      admin: { email: E.admin, totp: s },
+    };
+  }
+  const parentC2 = cookieOf(
+    await call('POST', '/api/v1/auth/login', '', { email: E.parent, password: PW }),
+  );
+  const pme2 = (await call('GET', '/api/v1/auth/me', parentC2)).json() as {
+    profiles: Array<{ pseudonym: string }>;
+  };
+  if (!pme2.profiles.some((p) => p.pseudonym === 'Yanis')) {
+    await call('POST', '/api/v1/profiles', parentC2, {
+      pseudonym: 'Yanis',
+      birthYear: new Date().getFullYear() - 15,
+      levelCode: 'ad1',
+      avatar: 'lune',
+      password: PW,
+      consents: ['compte_suivi'],
+    });
+    result = { ...result, ado: 'Yanis (15 ans)' };
+  }
+  console.log(JSON.stringify(result));
 } finally {
   await app.close();
   await h.close();

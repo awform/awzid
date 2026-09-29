@@ -323,6 +323,13 @@
     </section>
   {/if}
 
+  {#if me.account.kind === 'admin'}
+    <section class="card">
+      <h2>{t('admin.titre')}</h2>
+      <p><a href={resolve('/admin')} data-testid="lien-admin">{t('admin.ouvrir')}</a></p>
+    </section>
+  {/if}
+
   {#if me.account.kind !== 'admin'}
     <section class="card" data-testid="abonnement-compte">
       <h2>{t('compte.abo_titre')}</h2>

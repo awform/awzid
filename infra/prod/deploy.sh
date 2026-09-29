@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Déploiement AWFORM (idempotent : peut être relancé à volonté).
-#   infra/prod/deploy.sh [--demo] [--site 192.168.50.10]
+#   infra/prod/deploy.sh [--demo] [--site 192.168.50.10] [--lan-ip 192.168.1.106]
 # 1. secrets générés sur la machine (une seule fois) dans ~/.config/awform/prod.env (droits 600, hors dépôt) ;
 # 2. images construites, base migrée, édition de contenu importée et publiée (inchangée si déjà là) ;
 # 3. services démarrés, attente de l'état « ok », vérifications de fumée ;
@@ -14,12 +14,14 @@ CONF="$HOME/.config/awform"
 ENVF="$CONF/prod.env"
 DEMO=0
 SITE="192.168.50.10"
+SITE_LAN=""
 LAN="192.168.50.0/24"
 while [ $# -gt 0 ]; do
   case "$1" in
     --demo) DEMO=1 ;;
     --site) SITE="$2"; shift ;;
     --lan) LAN="$2"; shift ;;
+    --lan-ip) SITE_LAN="$2"; shift ;;
     *) echo "option inconnue : $1"; exit 2 ;;
   esac
   shift
@@ -43,6 +45,9 @@ EOF
   echo "secrets générés : $ENVF"
 fi
 grep -q '^SITE=' "$ENVF" && sed -i "s/^SITE=.*/SITE=$SITE/" "$ENVF"
+# accès depuis les appareils du Wi-Fi par le PC (redirection de port) : certificat aussi pour cette IP
+sed -i '/^SITE_LAN=/d;/^DEFAULT_SNI=/d' "$ENVF"
+if [ -n "$SITE_LAN" ]; then echo "SITE_LAN=$SITE_LAN" >> "$ENVF"; echo "DEFAULT_SNI=$SITE_LAN" >> "$ENVF"; else echo "DEFAULT_SNI=$SITE" >> "$ENVF"; fi
 # tuteur : désactivé par défaut ; la démonstration utilise le fournisseur SIMULÉ (jamais un vrai modèle)
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_TUTEUR=' "$ENVF"; then echo "AWFORM_TUTEUR=simule" >> "$ENVF"; fi
 # paiements : désactivés par défaut ; la démonstration utilise le prestataire SIMULÉ (aucune clé, aucune carte)
@@ -140,6 +145,9 @@ EOF
   if echo "$OUT" | grep -q '"demo":"creee"'; then
     echo "$OUT" > "$CONF/demo-acces.json"
     echo "démonstration créée (identifiants : $CONF/demo-acces.json)"
+  elif echo "$OUT" | grep -q '"demo":"complement"'; then
+    echo "$OUT" > "$CONF/demo-acces-complement-$(date +%Y%m%d%H%M%S).json"
+    echo "démonstration complétée (identifiants ajoutés : $CONF/demo-acces-complement-*.json)"
   else
     echo "démonstration déjà présente"
   fi

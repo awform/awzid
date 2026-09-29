@@ -7,7 +7,8 @@
 {
 	admin off
 	# adresse IP : les navigateurs n'envoient pas de nom (SNI) ; certificat choisi par défaut
-	default_sni {$SITE}
+	# (SITE_LAN : IP du PC sur le Wi-Fi, redirection de port ; voir application/TEST_APPAREILS.md)
+	default_sni {$DEFAULT_SNI:localhost}
 	servers {
 		trusted_proxies static private_ranges
 	}
@@ -35,11 +36,11 @@
 	}
 }
 
-http://{$SITE}, http://localhost, http://127.0.0.1 {
+http://{$SITE}, http://{$SITE_LAN:127.0.0.2}, http://localhost, http://127.0.0.1 {
 	import awform
 }
 
-https://{$SITE} {
+https://{$SITE}, https://{$SITE_LAN:127.0.0.2} {
 	tls internal
 	header Strict-Transport-Security "max-age=31536000"
 	import awform
