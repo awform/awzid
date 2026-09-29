@@ -8,6 +8,7 @@
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
   import { call, fetchMe, type Me } from '$lib/session';
   import CorrectionsClasse from '$lib/CorrectionsClasse.svelte';
+  import EpreuvesClasse from '$lib/EpreuvesClasse.svelte';
 
   /**
    * Espace ÉCOLE d'une classe (lot 13) : élèves et groupes, devoirs avec échéance, tableau de suivi,
@@ -82,7 +83,15 @@
     issuedAt: string;
   }
 
-  const TABS = ['eleves', 'devoirs', 'corrections', 'tableau', 'ecoute', 'certificats'] as const;
+  const TABS = [
+    'eleves',
+    'devoirs',
+    'corrections',
+    'epreuves',
+    'tableau',
+    'ecoute',
+    'certificats',
+  ] as const;
   let tab = $state<(typeof TABS)[number]>('eleves');
   let me = $state<Me | null>(null);
   let loaded = $state(false);
@@ -809,6 +818,8 @@
     {/if}
   {:else if tab === 'corrections'}
     <CorrectionsClasse classId={id} />
+  {:else if tab === 'epreuves'}
+    <EpreuvesClasse classId={id} {units} />
   {:else if tab === 'tableau'}
     <section class="card">
       <h2>{t('classe.suivi')}</h2>

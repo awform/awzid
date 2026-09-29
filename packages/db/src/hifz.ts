@@ -312,6 +312,22 @@ export async function leaveClass(db: Db, classId: string, profileId: string) {
       .update(t.certificate)
       .set({ detachedAt: new Date() })
       .where(and(eq(t.certificate.pupilId, p.id), isNull(t.certificate.detachedAt)));
+  // copies des épreuves de cette classe : effacées au départ de l'élève (lot 19 ; la note reste au registre
+  // des certificats si un certificat a été délivré)
+  await db
+    .delete(t.examSubmission)
+    .where(
+      and(
+        eq(t.examSubmission.profileId, profileId),
+        inArray(
+          t.examSubmission.sessionId,
+          db
+            .select({ id: t.examSession.id })
+            .from(t.examSession)
+            .where(eq(t.examSession.classId, classId)),
+        ),
+      ),
+    );
   // réponses libres envoyées à cette classe : effacées au départ de l'élève (lot 18)
   await db
     .delete(t.freeAnswer)

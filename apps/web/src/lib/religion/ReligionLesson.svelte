@@ -33,7 +33,8 @@
 
   const L = $derived(unit.lesson as unknown as Obj);
   const profile = $derived(profileId && profileKind ? { id: profileId, kind: profileKind } : null);
-  const exId = (i: number) => unit.exercises.find((e) => e.position === i)?.id ?? '';
+  /** identifiant de l'exercice d'indice i (l'importeur numérote les positions à partir de 1) */
+  const exId = (i: number) => unit.exercises.find((e) => e.position === i + 1)?.id ?? '';
   const str = (v: unknown) => (typeof v === 'string' ? v : '');
   const arr = (v: unknown) => (Array.isArray(v) ? (v as Obj[]) : []);
   const rubriques = $derived(arr(L.rubriques));

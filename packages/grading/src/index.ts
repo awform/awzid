@@ -308,3 +308,4 @@ export function correctResponse(ex: LanguageExercise): ExerciseResponse {
 
 export * from './items.js';
 export * from './progress.js';
+export * from './exam.js';

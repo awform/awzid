@@ -8,6 +8,7 @@
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
   import { completeHizb, completeJuz, completeQuarters, completeSuras } from '$lib/milestones';
   import { call, type ProfileInfo } from '$lib/session';
+  import EpreuvesCarte from '$lib/EpreuvesCarte.svelte';
 
   /**
    * « Aujourd'hui » (lot 11, étude des plateformes, rec. 1) : la séance du jour enchaîne la portion de hifẓ
@@ -187,6 +188,8 @@
       </ul>
     </section>
   {/if}
+
+  {#if profile}<EpreuvesCarte profileId={profile.id} />{/if}
 
   {#if data.regularite}
     {@const r = data.regularite}

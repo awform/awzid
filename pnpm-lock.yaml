@@ -72,6 +72,9 @@ importers:
       '@awform/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@awform/grading':
+        specifier: workspace:*
+        version: link:../../packages/grading
       '@awform/hifz':
         specifier: workspace:*
         version: link:../../packages/hifz

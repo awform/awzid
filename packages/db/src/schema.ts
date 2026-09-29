@@ -1112,3 +1112,68 @@ export const freeAnswer = pgTable(
     check('free_answer_comment', sql`${t.comment} IS NULL OR char_length(${t.comment}) <= 600`),
   ],
 );
+
+// ================================================================ épreuves notées (lot 19)
+
+/**
+ * Session d'épreuve ouverte par l'enseignant pour sa classe : un bilan (barème /20) ou l'examen (/100) du
+ * niveau de la classe, entre deux dates. `seed` (jamais transmis) mélange la colonne de droite des « relier »
+ * pour chaque élève, afin que la réponse ne se déduise pas de l'ordre affiché.
+ */
+export const examSession = pgTable(
+  'exam_session',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    unitId: text('unit_id')
+      .notNull()
+      .references(() => unit.id),
+    bareme: smallint('bareme').notNull(),
+    opensAt: timestamp('opens_at', { withTimezone: true }).notNull(),
+    closesAt: timestamp('closes_at', { withTimezone: true }).notNull(),
+    seed: text('seed').notNull(),
+    createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('exam_session_class').on(t.classId, t.opensAt),
+    check('exam_session_bareme', sql`${t.bareme} IN (20, 100)`),
+    check('exam_session_dates', sql`${t.closesAt} > ${t.opensAt}`),
+  ],
+);
+
+/** Copie d'un élève (une seule par session) : réponses, points automatiques, partie notée par l'enseignant. */
+export const examSubmission = pgTable(
+  'exam_submission',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    sessionId: uuid('session_id')
+      .notNull()
+      .references(() => examSession.id, { onDelete: 'cascade' }),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    answers: jsonb('answers').notNull(),
+    autoPoints: smallint('auto_points').notNull(),
+    autoMax: smallint('auto_max').notNull(),
+    detail: jsonb('detail').notNull(),
+    teacherPoints: real('teacher_points'),
+    teacherMax: real('teacher_max'),
+    score: real('score'),
+    submittedAt: timestamp('submitted_at', { withTimezone: true }).notNull().defaultNow(),
+    gradedAt: timestamp('graded_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('exam_submission_one').on(t.sessionId, t.profileId),
+    check(
+      'exam_submission_teacher',
+      sql`(${t.teacherPoints} IS NULL AND ${t.teacherMax} IS NULL) OR (${t.teacherMax} > 0 AND ${t.teacherPoints} BETWEEN 0 AND ${t.teacherMax})`,
+    ),
+  ],
+);

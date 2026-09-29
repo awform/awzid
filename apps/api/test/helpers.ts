@@ -5,8 +5,10 @@
  */
 import { randomBytes } from 'node:crypto';
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
+import { loadEdition } from '@awform/content';
 import {
   connect,
+  importEdition,
   parseRecitationKey,
   resetTestDatabase,
   runMigrations,
@@ -15,6 +17,7 @@ import {
 } from '@awform/db';
 import { buildApp, type AppOptions } from '../src/app.js';
 import { hashSecret, totpAt } from '../src/auth/crypto.js';
+import { SYNTH_DIR } from './content.js';
 
 export const PW = 'une longue phrase de passe 2026';
 export const YEAR = new Date().getUTCFullYear();
@@ -26,7 +29,7 @@ export interface Ctx {
   app: FastifyInstance;
   editionId: string;
   req: (
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     url: string,
     headers?: Record<string, string>,
     payload?: object | Buffer,
@@ -86,7 +89,7 @@ export async function setup(
       await h.db.insert(t.exercise).values({
         id: e.id,
         unitId: u.id,
-        position: pos++,
+        position: ++pos, // comme l’importeur : à partir de 1
         type: e.type,
         graded: e.graded ?? false,
       });
@@ -115,6 +118,37 @@ export async function setup(
       headers: { ...(method !== 'GET' ? { 'x-awform': '1' } : {}), ...headers },
     });
   return { h, app, editionId: ed!.id, req };
+}
+
+/**
+ * Base remise à zéro et édition SYNTHÉTIQUE (infra/ci/contenu-synthetique) importée par le vrai importeur :
+ * en1 (l01, l02 leçons, l03 bilan, l04 leçon, l05 examen) et ad1 ; toujours la même, livres réels ou non.
+ */
+export async function setupEdition(url: string, opts: Partial<AppOptions> = {}): Promise<Ctx> {
+  const h = connect(url, 3);
+  await resetTestDatabase(h.pool);
+  await runMigrations(h.db);
+  const r = await importEdition(
+    h.db,
+    loadEdition({ contentDir: SYNTH_DIR, levels: ['en1', 'ad1'], withRegistry: false }),
+    { code: 'synth', publish: true },
+  );
+  const app = buildApp({
+    db: h.db,
+    secretKey: randomBytes(32),
+    recitationKey: parseRecitationKey(`v1:${randomBytes(32).toString('hex')}`),
+    relaisCertsDir: null,
+    ...opts,
+  });
+  await app.ready();
+  const req: Ctx['req'] = (method, u, headers = {}, payload) =>
+    app.inject({
+      method,
+      url: u,
+      ...(payload ? { payload } : {}),
+      headers: { ...(method !== 'GET' ? { 'x-awform': '1' } : {}), ...headers },
+    });
+  return { h, app, editionId: r.editionId, req };
 }
 
 /** Parent (FR) avec code parent 4821 ; renvoie ses en-têtes (cookie) et ceux avec le code. */

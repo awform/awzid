@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, setContext } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
   import Illus from '$lib/Illus.svelte';
+  import Sprite from '$lib/Sprite.svelte';
   import { unitLabel } from '$lib/api';
   import { t } from '$lib/i18n';
   import type { PageData } from './$types';
@@ -14,6 +15,7 @@
    * Flèches du clavier ou boutons pour avancer ; plein écran.
    */
   let { data }: { data: PageData } = $props();
+  setContext('illustrations', () => data.illustrations);
   const u = $derived(data.unit);
   const L = $derived(u.lesson);
   const lettres = $derived(L.lettres ?? []);
@@ -56,6 +58,8 @@
 </script>
 
 <svelte:head><title>{t('app.nom')} — {t('projection.titre')}</title></svelte:head>
+
+<Sprite illustrations={data.illustrations} />
 
 <div class="bar">
   <a href={resolve('/enseignant')}>{t('projection.retour')}</a>

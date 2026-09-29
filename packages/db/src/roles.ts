@@ -73,6 +73,9 @@ export const API_GRANTS: Record<string, Right[]> = {
   relay: ['SELECT', 'UPDATE'],
   // lot 18 : réponses libres corrigées par l'enseignant
   free_answer: ALL,
+  // lot 19 : épreuves notées
+  exam_session: ALL,
+  exam_submission: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */

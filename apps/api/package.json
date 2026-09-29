@@ -16,6 +16,7 @@
     "@awform/billing": "workspace:*",
     "@awform/content": "workspace:*",
     "@awform/db": "workspace:*",
+    "@awform/grading": "workspace:*",
     "@awform/hifz": "workspace:*",
     "@awform/school": "workspace:*",
     "@awform/tutor": "workspace:*",

@@ -13,6 +13,7 @@
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import {
+  classOfficialScores,
   addPaperPupil,
   assignmentById,
   classCertificates,
@@ -419,6 +420,8 @@ export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): 
       pupils.map((p) => p.id),
     );
     const events = await hifzEventsOf(db, profileIds);
+    // notes des épreuves passées dans l'application (lot 19)
+    const official = await classOfficialScores(db, cls.id);
     const marks = await marksOf(
       db,
       assignments.map((a) => a.id),
@@ -441,9 +444,12 @@ export function registerSchool(app: FastifyInstance, db: Db, edition: Edition): 
           ? { score: Math.round(r.bestScore * 1000) / 10, max: 100 }
           : null;
       };
-      // la saisie de l'enseignant (livre papier) prime sur le résultat dans l'application
-      const b = bilans.map((u) => paperOf(`bilan:${u.id}`) ?? appOf(u.id));
-      const examen = paperOf('examen') ?? (exam ? appOf(exam.id) : null);
+      /** note d'une épreuve passée dans l'application (session ouverte par l'enseignant, lot 19) */
+      const officialOf = (unitId: string): Score | null =>
+        (p.profileId && official.get(`${p.profileId}|${unitId}`)) || null;
+      // la saisie de l'enseignant (livre papier) prime, puis l'épreuve notée, puis l'entraînement
+      const b = bilans.map((u) => paperOf(`bilan:${u.id}`) ?? officialOf(u.id) ?? appOf(u.id));
+      const examen = paperOf('examen') ?? (exam ? (officialOf(exam.id) ?? appOf(exam.id)) : null);
       const result = cls.levelCode
         ? levelResult(
             {
