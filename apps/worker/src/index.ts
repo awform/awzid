@@ -8,18 +8,8 @@
  */
 import { PgBoss } from 'pg-boss';
 import webpush from 'web-push';
-import {
-  connect,
-  dropSubscription,
-  dueNotifications,
-  markSent,
-  purgeAuthThrottle,
-  purgeExpiredRecitations,
-  purgeRetention,
-  purgeCertificateDocuments,
-  purgeDeletedAccounts,
-  purgeTutorLog,
-} from '@awform/db';
+import { connect, dropSubscription, dueNotifications, markSent } from '@awform/db';
+import { nightlyPurge, SCHEDULES } from './tasks.js';
 
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error('DATABASE_URL absente');
@@ -29,12 +19,15 @@ const boss = new PgBoss({ connectionString: url, schema: 'pgboss' });
 boss.on('error', (e: unknown) => console.error('[pg-boss]', e));
 
 await boss.start();
-for (const q of ['purge-comptes', 'battement', 'notifications']) await boss.createQueue(q);
-await boss.schedule('purge-comptes', '15 3 * * *', {}, { tz: process.env.TZ ?? 'Europe/Paris' });
-await boss.schedule('battement', '*/5 * * * *');
-// notifications (lot 16) : toutes les 15 minutes ; chaque compte n'en reçoit qu'au bon moment (heure locale,
-// heures calmes, une fois par jour au plus) ; rien si les clés VAPID ne sont pas configurées
-await boss.schedule('notifications', '*/15 * * * *');
+for (const s of SCHEDULES) {
+  await boss.createQueue(s.queue);
+  await boss.schedule(
+    s.queue,
+    s.cron,
+    {},
+    s.nightly ? { tz: process.env.TZ ?? 'Europe/Paris' } : undefined,
+  );
+}
 const VAPID_PUBLIC = process.env.AWFORM_VAPID_PUBLIC;
 const VAPID_PRIVATE = process.env.AWFORM_VAPID_PRIVATE;
 if (VAPID_PUBLIC && VAPID_PRIVATE)
@@ -68,30 +61,8 @@ await boss.work('notifications', async () => {
 });
 
 await boss.work('purge-comptes', async () => {
-  const n = await purgeDeletedAccounts(h.db, 30, new Date());
-  // journal du tuteur : 12 mois au plus (ARCHITECTURE_V2 § 1.6)
-  const j = await purgeTutorLog(h.db, new Date());
-  // registre des certificats : document réduit 30 jours après le départ de l'élève (numéro, nom, niveau,
-  // date et mention conservés)
-  const c = await purgeCertificateDocuments(h.db, 30, new Date());
-  // récitations envoyées : effacées à l'échéance réglée par la classe (lot 16)
-  const rec = await purgeExpiredRecitations(h.db, new Date());
-  // verrous anti-essais : 24 h (ils contiennent des adresses IP ; audit MIN-7)
-  const v = await purgeAuthThrottle(h.db, new Date());
-  // durées de conservation : tuteur, journal, sessions, paiements abandonnés (audit MIN-8)
-  const conservation = await purgeRetention(h.db, new Date());
-  console.log(
-    JSON.stringify({
-      tache: 'purge-comptes',
-      comptes: n,
-      journalTuteur: j,
-      certificatsReduits: c,
-      recitationsEffacees: rec,
-      verrous: v,
-      conservation,
-      at: new Date().toISOString(),
-    }),
-  );
+  const n = await nightlyPurge(h.db, new Date());
+  console.log(JSON.stringify({ tache: 'purge-comptes', ...n, at: new Date().toISOString() }));
 });
 await boss.work('battement', async () => {
   console.log(JSON.stringify({ tache: 'battement', at: new Date().toISOString() }));

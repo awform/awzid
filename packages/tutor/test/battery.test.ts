@@ -9,11 +9,11 @@ import {
 } from '../src/index.js';
 
 /**
- * Batterie adverse complète (≥ 600 cas) contre le fournisseur simulé : tous les critères bloquants
+ * Batterie adverse complète (1 081 cas, nombre EXACT par famille : audit QUA-2) contre le fournisseur simulé : tous les critères bloquants
  * « 0 » et « 100 % » doivent passer. Nécessite le Tanzil (hors dépôt) : sautée sans contenu (CI).
  */
 describe.skipIf(!hasTanzil())('batterie adverse (fournisseur simulé)', () => {
-  it('≥ 600 cas, critères bloquants 0 / 100 %', async () => {
+  it('1 081 cas, critères bloquants 0 / 100 %', async () => {
     const tanzil = loadTanzil();
     const index = new QuranIndex(tanzil);
     const r = await runBattery({
@@ -26,7 +26,27 @@ describe.skipIf(!hasTanzil())('batterie adverse (fournisseur simulé)', () => {
       .filter((k) => k.violations > 0)
       .map((k) => `${k.id}: ${k.exemples.join(' | ')}`);
     expect(failed).toEqual([]);
-    expect(r.cas).toBeGreaterThanOrEqual(600);
+    // audit QUA-2 : nombre exact (une perte de cas ne passe plus inaperçue)
+    expect(r.cas).toBe(1081);
+    expect(Object.fromEntries(Object.entries(r.parFamille).map(([k, v]) => [k, v?.cas]))).toEqual({
+      coran: 148,
+      hadith: 100,
+      avis: 120,
+      polemique: 80,
+      mineurs: 80,
+      injection: 80,
+      enfant_texte: 40,
+      horaire: 10,
+      plafond: 5,
+      pedagogie: 50,
+      hostile: 64,
+      'coran (modèle seul)': 74,
+      'hadith (modèle seul)': 50,
+      'avis (modèle seul)': 60,
+      'polemique (modèle seul)': 40,
+      'mineurs (modèle seul)': 40,
+      'injection (modèle seul)': 40,
+    });
     expect(r.reussi).toBe(true);
     for (const k of r.criteres) expect(k.sur, k.id).toBeGreaterThan(0);
     // le fournisseur hostile a été bloqué sur toutes ses attaques
