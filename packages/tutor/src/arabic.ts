@@ -33,12 +33,33 @@ export function bare(word: string): string {
   return out.replace(/ء/g, '');
 }
 
+/**
+ * Caractères d'un MOT arabe : lettres, voyelles et signes, tatwīl. Tout le reste sépare les mots (audit CON-4) :
+ * ponctuation, balises, barres, fin de verset ۝ (U+06DD), ۞ (U+06DE), ۩ (U+06E9), séparateurs invisibles…
+ */
+const NOT_WORD =
+  // eslint-disable-next-line no-misleading-character-class -- classe de lettres et de signes combinants voulue
+  /[^\u0621-\u064A\u064B-\u065F\u0670-\u06D3\u06D5-\u06DC\u06DF-\u06E8\u06EA-\u06ED\u0640\u08D3-\u08FF\u200B-\u200F\u2060-\u2064\uFEFF\u00AD\u034F]+/;
+/** caractères invisibles de mise en forme : ignorés (mot collé) OU séparateurs, selon la variante */
+// eslint-disable-next-line no-misleading-character-class -- caractères invisibles isolés, voulus
+const INVISIBLE = /[\u200B-\u200F\u2060-\u2064\uFEFF\u00AD\u034F]/g;
+
 /** Mots arabes (forme nue) d'un texte, dans l'ordre ; les mots vides sont écartés. */
 export function bareWords(text: string): string[] {
   return text
-    .split(/[\s،؛؟۔.,;:!?«»"'()[\]{}\-–—…]+/)
+    .replace(INVISIBLE, '')
+    .split(NOT_WORD)
     .map(bare)
     .filter((w) => w.length > 0);
+}
+
+/**
+ * Découpages possibles d'un texte (détection seulement) : invisibles et tatwīl collés au mot, ou pris pour
+ * des séparateurs (« كلمة‌كلمة », « كلمةـكلمة » : deux mots) ; un passage est coranique si l'un des deux l'est.
+ */
+function wordVariants(text: string): string[][] {
+  const split = text.replace(INVISIBLE, ' ').replace(/\u0640/g, ' ');
+  return [bareWords(text), bareWords(split)];
 }
 
 export class QuranIndex {
@@ -71,13 +92,13 @@ export class QuranIndex {
 
   /** Trigrammes coraniques trouvés dans un texte (vide : pas de Coran). */
   matches(text: string): string[] {
-    const w = bareWords(text);
-    const out: string[] = [];
-    for (let i = 0; i + 2 < w.length; i++) {
-      const k = `${w[i]} ${w[i + 1]} ${w[i + 2]}`;
-      if (this.tri.has(k)) out.push(k);
-    }
-    return out;
+    const out = new Set<string>();
+    for (const w of wordVariants(text))
+      for (let i = 0; i + 2 < w.length; i++) {
+        const k = `${w[i]} ${w[i + 1]} ${w[i + 2]}`;
+        if (this.tri.has(k)) out.add(k);
+      }
+    return [...out];
   }
 
   /** Verset le plus probable d'un passage (pour répondre par une RÉFÉRENCE). */
@@ -102,8 +123,15 @@ export class QuranIndex {
   }
 }
 
-/** Arabe présent dans un texte (au moins une lettre arabe). */
-export const hasArabic = (s: string) => ARABIC_LETTER.test(s);
+/** Arabe présent dans un texte (au moins une lettre arabe, y compris en formes de présentation). */
+export const hasArabic = (s: string) => ARABIC_LETTER.test(s) || PRESENTATION_FORMS.test(s);
+
+/**
+ * Formes de présentation arabes (U+FB50–FDFF, U+FE70–FEFF) : jamais utiles à un tuteur de langue, elles
+ * servent à déguiser un texte (audit CON-4) ; tout texte libre qui en contient est refusé. Seules les formules
+ * d'eulogie ﷺ et ﷻ (U+FDFA, U+FDFB), d'usage courant après un nom, restent permises.
+ */
+export const PRESENTATION_FORMS = /[\uFB50-\uFDF9\uFDFC-\uFDFF\uFE70-\uFEFE]/;
 
 /**
  * Translittération latine d'une phrase arabe (REGLES §4 : jamais de phonétique pour faire prononcer

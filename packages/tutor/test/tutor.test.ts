@@ -19,6 +19,8 @@ import {
   transliterationRuns,
   validateDraft,
   effectiveModels,
+  hasTanzil,
+  loadTanzil,
   type TutorProvider,
 } from '../src/index.js';
 
@@ -67,6 +69,31 @@ describe('classifieur local', () => {
 
 describe('filtre de sortie', () => {
   const ok = (m: string) => filterDraft({ decision: 'repondre', message_fr: m }, deps);
+  it('audit CON-4 : passage « coranique » déguisé (séparateurs invisibles, balises, formes de présentation) bloqué', () => {
+    const words = QURAN.get('2:2')!.split(' ');
+    for (const sep of [
+      '\u200c',
+      '\u200b',
+      '\u2060',
+      '<br>',
+      '</span><span>',
+      '/',
+      '\u06dd',
+      'ـ',
+      '\u00ad',
+    ])
+      expect(ok(`Voici : ${words.join(sep)}`).ok, JSON.stringify(sep)).toBe(false);
+    // formes de présentation (U+FB50–FDFF, U+FE70–FEFF) : jamais dans un texte libre, adulte comme enfant
+    expect(ok('Voici : \ufed3\ufef4 \ufe8e\ufedf\ufed4\ufebb\ufede').ok).toBe(false);
+    expect(
+      filterDraft(
+        { decision: 'repondre', message_fr: 'Lis \ufed3\ufef4' },
+        { ...deps, audience: 'enfant' },
+      ).ok,
+    ).toBe(false);
+    // un texte normal passe toujours
+    expect(ok('La lettre ب se lie à la suivante.').ok).toBe(true);
+  });
   it('schéma strict', () => {
     expect(validateDraft({ decision: 'repondre', message_fr: 'x', autre: 1 })).toBeNull();
     expect(validateDraft({ decision: 'fatwa', message_fr: 'x' })).toBeNull();
@@ -279,3 +306,28 @@ describe('banque d’explications', () => {
     expect(JSON.stringify(bank)).not.toContain('نص');
   });
 });
+
+describe.skipIf(!hasTanzil())(
+  'audit CON-4 — sur le texte Tanzil (lu dans le fichier, jamais retapé)',
+  () => {
+    it('un verset aux mots séparés par ۝, ZWNJ, balise ou barre est bloqué', () => {
+      const tanzil = loadTanzil();
+      const idx = new QuranIndex(tanzil);
+      const verse = tanzil.get('2:255')!;
+      const d = {
+        index: idx,
+        basmala: tanzil.get('1:1') ?? '',
+        context: FIXTURE,
+        audience: 'adulte' as const,
+      };
+      for (const sep of ['\u06dd', '\u200c', '\u200b', '<br>', '/'])
+        expect(
+          filterDraft(
+            { decision: 'repondre', message_fr: `Voici : ${verse.split(' ').join(sep)}` },
+            d,
+          ).ok,
+          JSON.stringify(sep),
+        ).toBe(false);
+    });
+  },
+);

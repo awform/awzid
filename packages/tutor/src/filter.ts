@@ -5,7 +5,13 @@
  * numéros de hadith ; 5. avis religieux formulé ; 6. phonétique latine, émoji visage, données personnelles,
  * identité humaine, arabe généré pour un enfant. Toute violation bloquante → réponse de repli locale.
  */
-import { bareWords, hasArabic, transliterationRuns, type QuranIndex } from './arabic.js';
+import {
+  bareWords,
+  hasArabic,
+  PRESENTATION_FORMS,
+  transliterationRuns,
+  type QuranIndex,
+} from './arabic.js';
 import type {
   Audience,
   ContextPack,
@@ -211,6 +217,7 @@ export function filterDraft(raw: unknown, d: FilterDeps): FilterOutcome {
       blocked = true;
     }
   };
+  check('formes_de_presentation', PRESENTATION_FORMS.test(free));
   if (hasArabic(free)) {
     const hits = d.index.matches(free);
     check('coran_hors_reference', hits.length > 0, hits[0]);
