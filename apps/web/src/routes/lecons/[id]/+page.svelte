@@ -637,7 +637,7 @@
   .prog {
     display: inline-block;
     background: var(--ok-bg);
-    color: var(--good);
+    color: var(--ok-ink);
     border-radius: 99px;
     padding: 2px 12px;
     font-weight: 700;

@@ -169,7 +169,7 @@
     padding: 1px 10px;
     border-radius: 99px;
     background: var(--ok-bg);
-    color: var(--good);
+    color: var(--ok-ink);
     font-weight: 700;
     font-size: 0.85rem;
   }

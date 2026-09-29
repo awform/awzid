@@ -162,10 +162,33 @@
 
   <main>
     {@render children()}
+    <footer class="pied" data-testid="pied">
+      <a href={resolve('/aide')}>{t('aide.titre')}</a>
+      <a href={resolve('/garanties')}>{t('pied.garanties')}</a>
+      <a href={resolve('/legal/[page]', { page: 'mentions' })}>{t('pied.mentions')}</a>
+      <a href={resolve('/legal/[page]', { page: 'cgu' })}>{t('pied.cgu')}</a>
+      <a href={resolve('/legal/[page]', { page: 'confidentialite' })}>{t('pied.confidentialite')}</a
+      >
+      <a href={resolve('/legal/[page]', { page: 'cookies' })}>{t('pied.cookies')}</a>
+    </footer>
   </main>
 </div>
 
 <style>
+  .pied {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin: 32px 0 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 0.9rem;
+  }
+  @media print {
+    .pied {
+      display: none;
+    }
+  }
   .top {
     display: flex;
     align-items: center;

@@ -34,7 +34,8 @@ const BASE: Theme = {
     c0: '#e5484d',
     c1: '#2f6fdb',
     c2: '#1f9d6b',
-    c3: '#c98a0b',
+    // or des livres (#c98a0b) assombri au lot 14 : contraste 4,7:1 sur blanc (WCAG AA, audit axe-core)
+    c3: '#9a6a00',
     // sémantiques (valeurs reprises des composants, sans changement visible)
     primary: '#1f7a8c',
     'on-primary': '#ffffff',
@@ -89,11 +90,10 @@ export const CONTRAST_PAIRS: Array<{ fg: string; bg: string; grand?: boolean; us
 ];
 
 /**
- * Écarts connus, à corriger à la passe de direction artistique (aucun écart NOUVEAU n'est accepté) :
- * l'or des lettres (#c98a0b) est hérité des livres imprimés ; il reste distinguable par le soulignement
- * double, mais son contraste sur blanc est inférieur à 3:1.
+ * Écarts connus (aucun écart NOUVEAU n'est accepté). Lot 14 : l'or des lettres (#c98a0b, hérité des livres,
+ * contraste < 3:1) a été assombri en #9a6a00 ; plus aucun écart. À revoir avec la direction artistique.
  */
-export const KNOWN_CONTRAST_GAPS = ['c3/card'];
+export const KNOWN_CONTRAST_GAPS: string[] = [];
 
 function varsOf(t: Theme): Array<[string, string]> {
   return [

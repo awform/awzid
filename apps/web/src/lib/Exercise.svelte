@@ -435,7 +435,7 @@
     text-align: right;
   }
   .good {
-    color: var(--good);
+    color: var(--ok-ink);
   }
   .reset {
     font-size: 0.9rem;

@@ -30,6 +30,23 @@
 	handle {
 		reverse_proxy web:3000
 	}
+	# page « service momentanément indisponible » (maintenance, redémarrage) : l'API répond en JSON
+	handle_errors 502 503 504 {
+		header Retry-After 120
+		header Cache-Control no-store
+		@apierr path /api/*
+		handle @apierr {
+			header Content-Type application/json
+			respond `{"error":{"code":"service_indisponible"}}` 503
+		}
+		handle {
+			root * /srv/maintenance
+			rewrite * /index.html
+			file_server {
+				status 503
+			}
+		}
+	}
 	log {
 		output stdout
 		format json

@@ -66,7 +66,7 @@ body{margin:0;font:16px/1.5 system-ui,sans-serif;background:#fffdf7;color:#1c1b1
 main{max-width:720px;margin:0 auto;padding:16px}
 header{background:#17344f;color:#fff;padding:12px 16px;font-weight:700;letter-spacing:.08em}
 .ar{font-family:'Noto Naskh Arabic','Geeza Pro','Traditional Arabic',serif;font-size:1.5em}
-.big{font-size:2.4em}.c0{color:#e5484d}.c1{color:#2f6fdb}.c2{color:#1f9d6b}.c3{color:#c98a0b}
+.big{font-size:2.4em}.c0{color:#e5484d}.c1{color:#2f6fdb}.c2{color:#1f9d6b}.c3{color:#9a6a00}
 h1{margin:.2em 0}.muted{color:#5b5a55}
 ul.words{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 ul.words li{border:2px solid #e8dfcd;border-radius:14px;padding:8px;display:grid;justify-items:center;gap:2px;background:#fff}

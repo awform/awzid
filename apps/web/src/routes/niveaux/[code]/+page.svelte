@@ -108,11 +108,11 @@
   .st.terminee,
   .st.maitrisee {
     background: var(--ok-bg);
-    color: var(--good);
+    color: var(--ok-ink);
   }
   .offline {
     font-size: 0.85rem;
-    color: var(--good);
+    color: var(--ok-ink);
     margin: 4px 0;
   }
   .profil {

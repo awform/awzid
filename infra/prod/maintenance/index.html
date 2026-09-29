@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>AWFORM — service momentanément indisponible</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #fbf8f1;
+        --ink: #1b2a3a;
+        --card: #ffffff;
+        --line: #e6dcc6;
+        --accent: #1d6f7c;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #111a22;
+          --ink: #eef2f5;
+          --card: #1b2733;
+          --line: #2c3b49;
+          --accent: #7cc6d2;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          17px/1.55 system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+      }
+      main {
+        max-width: 560px;
+        margin: 12vh auto;
+        padding: 24px;
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 16px;
+      }
+      h1 {
+        font-size: 1.4rem;
+        margin-top: 0;
+      }
+      .brand {
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: var(--accent);
+      }
+      a {
+        color: var(--accent);
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="brand">AWFORM</p>
+      <h1>Service momentanément indisponible</h1>
+      <p>
+        L'application est en cours de maintenance ou redémarre. Réessayez dans quelques minutes.
+      </p>
+      <p>
+        Les leçons déjà téléchargées restent utilisables sans réseau, et vos réponses seront
+        envoyées automatiquement au retour du service : rien n'est perdu.
+      </p>
+      <p><a href="/">Réessayer</a></p>
+      <hr />
+      <div lang="en">
+        <h1>Service temporarily unavailable</h1>
+        <p>
+          The app is being updated or is restarting. Please try again in a few minutes. Downloaded
+          lessons keep working offline; your answers will be sent automatically.
+        </p>
+      </div>
+    </main>
+  </body>
+</html>

@@ -108,6 +108,7 @@ services:
     env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/caddy.env'
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./maintenance:/srv/maintenance:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on: [web, api]
