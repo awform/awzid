@@ -90,7 +90,9 @@ test('révision récente faite sans réseau, envoyée au retour du réseau', asy
   await expect(recent.locator('[data-part="1:1-7"]')).toBeVisible();
   await expect(recent).toContainText('J+1');
   // le service worker doit contrôler la page avant la coupure (sinon le rechargement échoue)
-  await page.waitForFunction(async () => (await navigator.serviceWorker.ready) && !!navigator.serviceWorker.controller);
+  await page.waitForFunction(
+    async () => (await navigator.serviceWorker.ready) && !!navigator.serviceWorker.controller,
+  );
   await context.setOffline(true);
   await page.reload();
   await expect(recent.locator('[data-part="1:1-7"]')).toBeVisible();

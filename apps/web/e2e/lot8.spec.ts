@@ -109,7 +109,8 @@ test('lecteur coranique : texte Tanzil octet par octet, lecture guidée mot à m
   await expect(page.locator('[data-verse="1:1"]')).toBeVisible();
   await page.getByTestId('sourate').selectOption('112');
   await expect(page).toHaveURL(/s=112/);
-  for (const a of [1, 2, 3, 4]) expect(await shown(page, `112:${a}`)).toBe(await tanzil(page, 112, a));
+  for (const a of [1, 2, 3, 4])
+    expect(await shown(page, `112:${a}`)).toBe(await tanzil(page, 112, a));
 
   await page.getByTestId('de').fill('2');
   await page.getByTestId('a').fill('2');
