@@ -2,7 +2,9 @@
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
-  import { LEGAL, LEGAL_PAGES, type LegalKey } from '$lib/legal/content';
+  import { LEGAL_PAGES, type LegalKey } from '$lib/legal/content';
+  import { legalLang, legalPages } from '$lib/legal/pages';
+  const LEGAL = legalPages();
 
   /** Pages légales (lot 14) : BROUILLONS à valider par un juriste ; textes dans $lib/legal/content.ts. */
   const key = $derived(page.params.page as LegalKey);
@@ -21,7 +23,7 @@
 </nav>
 
 {#if doc}
-  <article class="card" data-testid="page-legale" lang="fr">
+  <article class="card" data-testid="page-legale" lang={legalLang()}>
     <p class="brouillon" role="note">{t('legal.brouillon')}</p>
     <h1>{doc.titre}</h1>
     <p class="muted small">{t('legal.maj', { date: doc.maj })}</p>

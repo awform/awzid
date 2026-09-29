@@ -1,12 +1,13 @@
 /**
  * Révision des mots des leçons en cartes (cahier § 2.5, MVP) : recto le mot arabe vocalisé (et son image),
- * verso le sens français ; JAMAIS de translittération. Boîtes de Leitner sur l'appareil (1, 2, 4, 8, 16
- * jours), hors ligne ; chaque réponse part dans la file commune (tableau de bord). FSRS viendra en V1.
+ * verso le sens français ; JAMAIS de translittération. Planification FSRS-5 sur l'appareil (lot 15, remplace les
+ * boîtes de Leitner, migrées sans perte), hors ligne ; chaque réponse part dans la file commune (tableau de bord).
  * Enfants E1-E2 : pas de cartes seules, un mini-jeu « relier » avec l'adulte, 5 minutes au plus.
  */
 import { api, type UnitDetail } from './api';
 import { enqueue } from './attempts';
 import { localIso } from './hifz';
+import { fromLeitner, isLeitner, review, type CardState } from './fsrs';
 import { kvGet, kvSet } from './idb';
 import { localUnit, localUnits } from './offline';
 import type { ProfileInfo } from './session';
@@ -23,8 +24,6 @@ export interface Deck {
   words: Word[];
   illustrations: Record<string, { viewBox: string; svg: string }>;
 }
-
-export const INTERVALS = [1, 2, 4, 8, 16] as const;
 
 export function levelOf(p: ProfileInfo): string {
   return p.levelCode ?? (p.kind === 'adulte' ? 'ad1' : 'en1');
@@ -79,25 +78,40 @@ export async function loadDeck(p: ProfileInfo): Promise<Deck> {
   return { level, words, illustrations };
 }
 
-export type Boxes = Record<string, { box: number; due: string }>;
+/** État FSRS de chaque carte (clé : le mot arabe tel qu'écrit dans le livre). */
+export type Boxes = Record<string, CardState>;
 
+/** Lit les états ; un ancien état Leitner ({ box, due }) est converti en FSRS et réenregistré. */
 export async function loadBoxes(profileId: string): Promise<Boxes> {
-  return ((await kvGet<Boxes>(`cards:${profileId}`).catch(() => undefined)) ?? {}) as Boxes;
+  const raw = ((await kvGet<Record<string, unknown>>(`cards:${profileId}`).catch(
+    () => undefined,
+  )) ?? {}) as Record<string, unknown>;
+  const { boxes, migrated } = migrateBoxes(raw);
+  if (migrated) await kvSet(`cards:${profileId}`, boxes).catch(() => {});
+  return boxes;
 }
 
-export function addDays(iso: string, n: number): string {
-  return new Date(Date.parse(`${iso}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+export function migrateBoxes(raw: Record<string, unknown>): { boxes: Boxes; migrated: number } {
+  const boxes: Boxes = {};
+  let migrated = 0;
+  for (const [k, v] of Object.entries(raw))
+    if (isLeitner(v)) {
+      boxes[k] = fromLeitner(v);
+      migrated++;
+    } else if (v && typeof v === 'object' && 's' in v) boxes[k] = v as CardState;
+  return { boxes, migrated };
 }
 
-/** Cartes à revoir aujourd'hui (jamais vues ou échues), au plus `max`. */
+export { addDays } from './fsrs';
+
+/** Cartes à revoir aujourd'hui (jamais vues ou échues, les plus en retard d'abord), au plus `max`. */
 export function dueWords(words: readonly Word[], boxes: Boxes, today: string, max = 12): Word[] {
-  return words.filter((w) => !boxes[w.ar] || boxes[w.ar]!.due <= today).slice(0, max);
-}
-
-/** Nouvelle boîte après une réponse (su : boîte suivante ; à revoir : boîte 1, demain). */
-export function nextBox(prev: { box: number } | undefined, ok: boolean, today: string) {
-  const box = ok ? Math.min(INTERVALS.length, (prev?.box ?? 0) + 1) : 1;
-  return { box, due: addDays(today, ok ? INTERVALS[box - 1]! : 1) };
+  const due = words.filter((w) => !boxes[w.ar] || boxes[w.ar]!.due <= today);
+  return due
+    .map((w, i) => ({ w, i, k: boxes[w.ar]?.due ?? '9999' }))
+    .sort((a, b) => (a.k === b.k ? a.i - b.i : a.k < b.k ? -1 : 1))
+    .map((x) => x.w)
+    .slice(0, max);
 }
 
 export async function answer(
@@ -107,13 +121,23 @@ export async function answer(
   ok: boolean,
 ): Promise<Boxes> {
   const today = localIso();
-  const next = { ...boxes, [w.ar]: nextBox(boxes[w.ar], ok, today) };
+  const st = review(boxes[w.ar], ok ? 3 : 1, today);
+  const next = { ...boxes, [w.ar]: st };
   await kvSet(`cards:${profileId}`, next).catch(() => {});
   await enqueue({
     profileId,
     unitId: 'entrainement',
     eventType: 'carte',
-    response: { item: w.ar, ok, day: today, details: { boite: next[w.ar]!.box, lecon: w.unit } },
+    response: {
+      item: w.ar,
+      ok,
+      day: today,
+      details: {
+        fsrs: { stabilite: Math.round(st.s * 100) / 100, difficulte: Math.round(st.d * 100) / 100 },
+        echeance: st.due,
+        lecon: w.unit,
+      },
+    },
   });
   return next;
 }

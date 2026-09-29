@@ -10,6 +10,7 @@ import { contentHash, sha256Hex } from './canonical.js';
 import { parseDataFile } from './parse.js';
 import { checkVerse, loadTanzil, parseEcartsVoulus, whitelistKey, type Tanzil } from './quran.js';
 import { checkQuranData, parseQuranData, type QuranDivisions } from './qurandata.js';
+import { ROOT_ITEMS, verifyRootItems } from './roots.js';
 import { plain } from './text.js';
 import { checkUnit, translitWords } from './checks.js';
 import { loadIllustrations, type Illustration } from './illus.js';
@@ -661,6 +662,24 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
         message: String(e),
       });
     }
+  }
+
+  // activité « racines » (lot 15) : éléments vérifiés mot pour mot dans les leçons gelées de l'édition
+  const rootSources = new Map<string, string>();
+  for (const it of ROOT_ITEMS) {
+    const [lv, lesson] = it.source.split('.');
+    const f = join(dataDir, lv!, `${lesson}.js`);
+    if (opts.levels.includes(lv!) && existsSync(f)) rootSources.set(it.source, readText(f));
+  }
+  if (rootSources.size) {
+    const r = verifyRootItems(rootSources);
+    evalDocs.racines = r.ok;
+    for (const x of r.rejected)
+      issues.push({
+        severity: 'avertissement',
+        code: 'racine_ecartee',
+        message: `activité racines : ${x.id} écarté (${x.reason})`,
+      });
   }
 
   return {

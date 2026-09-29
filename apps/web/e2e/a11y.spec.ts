@@ -66,6 +66,8 @@ test.describe('adulte', () => {
       ['/suivi', undefined],
       ['/compte', undefined],
       ['/offres', '[data-testid="offres"]'],
+      ['/activites/racines', '[data-testid="racine"]'],
+      ['/revisions', undefined],
     ] as Array<[string, string | undefined]>)
       await audit(page, u, ready);
   });

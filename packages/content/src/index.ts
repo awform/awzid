@@ -11,3 +11,4 @@ export * from './importer.js';
 export * from './report.js';
 export * from './hadith.js';
 export * from './qurandata.js';
+export * from './roots.js';

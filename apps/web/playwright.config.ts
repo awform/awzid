@@ -69,6 +69,8 @@ export default defineConfig({
         AWFORM_TUTEUR: 'simule',
         // paiements : prestataire SIMULÉ (aucune clé, aucune donnée de carte)
         AWFORM_PAIEMENT: 'simule',
+        // langues en préparation (traductions non relues) montrables, comme en démonstration
+        AWFORM_LANGUES_PREPARATION: 'on',
       },
       reuseExistingServer: false,
       timeout: 120_000,

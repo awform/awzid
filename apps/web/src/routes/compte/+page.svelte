@@ -27,6 +27,8 @@
   let msg = $state('');
   let err = $state('');
   let drafts = $state(false);
+  /** le serveur autorise-t-il les langues en préparation (non relues) ? jamais en production */
+  let allowDrafts = $state(false);
   let pinForm = $state({ pin: '', password: '' });
   let pwForm = $state({ current: '', next: '' });
   let delPassword = $state('');
@@ -86,7 +88,8 @@
     hifz[profileId]!.rec = v;
   }
   onMount(async () => {
-    drafts = (await kvGet<boolean>('draftLocales').catch(() => false)) ?? false;
+    allowDrafts = ((await kvGet<boolean>('draftsAllowed').catch(() => false)) ?? false) === true;
+    drafts = allowDrafts && ((await kvGet<boolean>('draftLocales').catch(() => false)) ?? false);
     await reload();
   });
 
@@ -227,15 +230,17 @@
         >
       {/each}
     </div>
-    <label class="check"
-      ><input
-        type="checkbox"
-        checked={drafts}
-        onchange={(e) => toggleDrafts(e.currentTarget.checked)}
-        data-testid="langues-preparation"
-      />
-      <span>{t('compte.langues_preparation')}</span></label
-    >
+    {#if allowDrafts}
+      <label class="check"
+        ><input
+          type="checkbox"
+          checked={drafts}
+          onchange={(e) => toggleDrafts(e.currentTarget.checked)}
+          data-testid="langues-preparation"
+        />
+        <span>{t('compte.langues_preparation')}</span></label
+      >
+    {/if}
   </section>
 
   {#if me.account.kind === 'parent'}

@@ -11,6 +11,7 @@
   } from '@awform/grading';
   import Ar from './Ar.svelte';
   import Illus from './Illus.svelte';
+  import { contentText } from './i18n/content-text';
   import { t } from './i18n';
 
   /**
@@ -45,8 +46,11 @@
   const lang: LanguageExercise | null = $derived(isLanguageExercise(ex) ? ex : null);
   const total = $derived(lang ? exerciseTotal(lang) : 0);
   const titleAr = $derived(ex.titre_ar ?? TITLES[ex.type] ?? '');
+  /** consigne du livre (français ; traduction du contenu si elle existe un jour : mécanisme du lot 15) */
+  const consigne = $derived(contentText(ex, 'consigne'));
   const titleFr = $derived(
-    (ex.titre_fr ?? (TITLES[ex.type] ? t(`exo.titre.${ex.type}`) : t('exo.exercice'))) +
+    (contentText(ex, 'titre')?.text ??
+      (TITLES[ex.type] ? t(`exo.titre.${ex.type}`) : t('exo.exercice'))) +
       (!ex.titre_fr && lang?.type === 'chasse' ? ` ${lang.cible}` : '') +
       (!ex.titre_fr && lang?.type === 'contient' ? ` ${lang.cible} ?` : ''),
   );
@@ -111,7 +115,7 @@
 <section class="ex" data-exercise={id} data-type={ex.type}>
   <header>
     <h3><Ar text={titleAr} /> <span class="fr">{titleFr}</span></h3>
-    {#if ex.consigne_fr}<p class="consigne">{ex.consigne_fr}</p>{/if}
+    {#if consigne}<p class="consigne" lang={consigne.lang}>{consigne.text}</p>{/if}
     {#if lang}<p class="score" aria-live="polite">
         ★ {score} / {total}{score === total && total ? t('exo.bravo_suffixe') : ''}
       </p>{/if}

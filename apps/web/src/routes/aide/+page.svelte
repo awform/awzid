@@ -1,7 +1,10 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
-  import { FAQ, LEGAL, LEGAL_PAGES } from '$lib/legal/content';
+  import { LEGAL_PAGES } from '$lib/legal/content';
+  import { faq, legalLang, legalPages } from '$lib/legal/pages';
+  const LEGAL = legalPages();
+  const FAQ = faq();
 
   /** Aide (lot 14) : questions fréquentes ; textes dans $lib/legal/content.ts (français). */
 </script>
@@ -12,7 +15,7 @@
 <p>{t('aide.intro')}</p>
 
 {#each FAQ as bloc (bloc.titre)}
-  <section class="card" lang="fr">
+  <section class="card" lang={legalLang()}>
     <h2>{bloc.titre}</h2>
     {#each bloc.items as it (it.q)}
       <details data-testid="faq">

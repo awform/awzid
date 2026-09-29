@@ -234,6 +234,20 @@
     </section>
   {/if}
 
+  {#if (profile?.kind === 'enfant' && data.jalons.lettres.length) || /^ad([2-9]|10)$/.test(profile?.levelCode ?? '')}
+    <section class="card" data-testid="activites">
+      <h2>{t('act.titre')}</h2>
+      <ul>
+        {#if profile?.kind === 'enfant' && data.jalons.lettres.length}
+          <li><a href={resolve('/activites/enseigner')}>{t('act.enseigner')}</a></li>
+        {/if}
+        {#if /^ad([2-9]|10)$/.test(profile?.levelCode ?? '')}
+          <li><a href={resolve('/activites/racines')}>{t('act.racines')}</a></li>
+        {/if}
+      </ul>
+    </section>
+  {/if}
+
   <section class="card" data-testid="jalons">
     <h2>{t('auj.jalons')}</h2>
     <ul class="milestones">

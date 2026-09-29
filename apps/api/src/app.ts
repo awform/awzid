@@ -38,6 +38,7 @@ import { registerBilling } from './billing.js';
 import { registerAdmin } from './admin.js';
 import { registerToday } from './today.js';
 import { registerSchool } from './school.js';
+import { registerActivities } from './activities.js';
 
 export interface AppOptions {
   db: Db;
@@ -120,6 +121,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerAdmin(app, db);
   registerToday(app, db, edition);
   registerSchool(app, db, edition);
+  registerActivities(app, db, edition);
 
   app.get('/api/v1/health', async () => {
     const dbOk = await ping(db).catch(() => false);

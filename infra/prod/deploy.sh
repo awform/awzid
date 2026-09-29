@@ -59,6 +59,8 @@ sed -i '/^DATABASE_URL_API=/d;/^DATABASE_URL_WORKER=/d' "$ENVF"
   echo "DATABASE_URL_API=postgres://awform_api:$(grep '^AWFORM_DB_API_PASSWORD=' "$ENVF" | cut -d= -f2-)@db:5432/awform"
   echo "DATABASE_URL_WORKER=postgres://awform_worker:$(grep '^AWFORM_DB_WORKER_PASSWORD=' "$ENVF" | cut -d= -f2-)@db:5432/awform"
 } >> "$ENVF"
+# langues en préparation (traductions non relues) : montrables en démonstration seulement
+if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_LANGUES_PREPARATION=' "$ENVF"; then echo "AWFORM_LANGUES_PREPARATION=on" >> "$ENVF"; fi
 # paiements : désactivés par défaut ; la démonstration utilise le prestataire SIMULÉ (aucune clé, aucune carte)
 if [ "$DEMO" = 1 ] && ! grep -q '^AWFORM_PAIEMENT=' "$ENVF"; then echo "AWFORM_PAIEMENT=simule" >> "$ENVF"; fi
 # moindre privilège : un fichier par service (env-scopes.conf) ; prod.env n'est monté dans aucun conteneur
