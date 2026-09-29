@@ -101,23 +101,22 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
       const now = new Date();
       if (ev.type === 'paiement_reussi' || ev.type === 'paiement_echoue') {
         if (!ev.checkoutId) return 'ignore';
+        // audit PAY-1 : transition ATOMIQUE « ouverte » → payée / échouée ; un seul événement gagne, les
+        // suivants (même paiement, autre identifiant d'événement) ne créent rien
         const [c] = await tx
-          .select()
-          .from(t.billingCheckout)
-          .where(eq(t.billingCheckout.id, ev.checkoutId));
-        if (!c || c.status !== 'ouverte') return 'ignore';
-        if (ev.type === 'paiement_echoue') {
-          await tx
-            .update(t.billingCheckout)
-            .set({ status: 'echouee', completedAt: now })
-            .where(eq(t.billingCheckout.id, c.id));
-          return 'traite';
-        }
-        const plan = planByCode(c.planCode)!;
-        await tx
           .update(t.billingCheckout)
-          .set({ status: 'payee', completedAt: now, providerRef: ev.reference })
-          .where(eq(t.billingCheckout.id, c.id));
+          .set(
+            ev.type === 'paiement_echoue'
+              ? { status: 'echouee', completedAt: now }
+              : { status: 'payee', completedAt: now, providerRef: ev.reference },
+          )
+          .where(
+            and(eq(t.billingCheckout.id, ev.checkoutId), eq(t.billingCheckout.status, 'ouverte')),
+          )
+          .returning();
+        if (!c) return 'ignore';
+        if (ev.type === 'paiement_echoue') return 'traite';
+        const plan = planByCode(c.planCode)!;
         await tx.insert(t.subscription).values({
           accountId: c.accountId,
           planCode: c.planCode,
@@ -443,16 +442,22 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
           ),
         );
       if (!s) return err(reply, 404, 'introuvable');
+      // audit PAY-2 : seul un abonnement en cours (actif ou essai) s'annule ; un impayé, un essai terminé ou
+      // un abonnement déjà annulé ne retrouve jamais de droits
+      if (s.status !== 'active' && s.status !== 'essai')
+        return err(reply, 409, 'abonnement_inactif');
       const p = s.provider === 'aucun' ? null : billing.provider(s.provider as ProviderId);
       if (p && s.providerRef) await p.cancel(s.providerRef);
-      await db
+      const done = await db
         .update(t.subscription)
         .set({
           status: s.status === 'essai' ? 'expiree' : 'annulee',
           cancelAtPeriodEnd: true,
           updatedAt: new Date(),
         })
-        .where(eq(t.subscription.id, s.id));
+        .where(and(eq(t.subscription.id, s.id), eq(t.subscription.status, s.status)))
+        .returning({ id: t.subscription.id });
+      if (!done.length) return err(reply, 409, 'abonnement_inactif');
       return { ok: true };
     },
   );

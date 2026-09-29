@@ -56,8 +56,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MET-2 | mineur | Certificat délivrable avec un contrôle continu partiel ; examen à 49,995 % arrondi à 50 | corrigé | e45008a | school.test.ts « audit MET-2 » ; lot13.test.ts (livres réels) mis à jour |
 | MET-3 | mineur | Hifẓ : un jour invalide arrête le rejeu du journal ; mois d'essai surestimé ; barème avec `Infinity` | à faire | | |
 | MET-4 | mineur | Jalons : un mot tracé est compté comme la lettre « mot » ; migration Leitner fragile | à faire | | |
-| PAY-1 | majeur | Course sur la validation d'un paiement : un paiement, plusieurs abonnements | à faire | | |
-| PAY-2 | majeur | Un abonnement impayé (ou un essai terminé) redevient actif si l'on clique « annuler » | à faire | | |
+| PAY-1 | majeur | Course sur la validation d'un paiement : un paiement, plusieurs abonnements | corrigé | voir « PAY-1 » dans git log | audit-pay.test.ts |
+| PAY-2 | majeur | Un abonnement impayé (ou un essai terminé) redevient actif si l'on clique « annuler » | corrigé | voir « PAY-2 » dans git log | audit-pay.test.ts |
 | PAY-3 | majeur | Stripe : un paiement non encaissé (SEPA, asynchrone) ouvre l'abonnement ; la 1re facture offre un 2e mois | à faire | | |
 | PAY-4 | majeur | Les droits d'accès ne sont appliqués nulle part, même avec `AWFORM_DROITS=on` | à faire | | |
 | PAY-5 | mineur | Essai « découverte » : course et unicité par compte seulement | à faire | | |
@@ -77,7 +77,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | INF-9 | majeur | Un déploiement `--demo` laisse le paiement SIMULÉ et le tuteur simulé actifs pour toujours | corrigé | a1640a5 | audit-infra.test.ts |
 | INF-10 | mineur | Migrations sans retour arrière, appliquées avant la bascule | à faire | | |
 | INF-11 | mineur | Images Docker non épinglées par empreinte ; scripts : avertissements shellcheck | à faire | | |
-| PERF-1 | majeur | Budget JavaScript dépassé : 204,3 Ko Brotli (budget 150 Ko), et non « ≈ 59 Ko » | corrigé | voir « PERF-1 » dans git log | budget CI (pnpm --filter @awform/web budget), i18n.test.ts |
+| PERF-1 | majeur | Budget JavaScript dépassé : 204,3 Ko Brotli (budget 150 Ko), et non « ≈ 59 Ko » | corrigé | 1dff35a | budget CI (pnpm --filter @awform/web budget), i18n.test.ts |
 | A11Y-1 | mineur | Cibles tactiles sous la règle de 48 px du projet | à faire | | |
 | CDC-1 | majeur | Affirmations du brief et du journal démenties par le code ou par GitHub | à faire | | |
 | CDC-2 | mineur | Fonctionnalités et exigences de test du CDC absentes ou partielles (lots 0-16) | à faire | | |

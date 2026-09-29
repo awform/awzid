@@ -759,6 +759,8 @@ export const subscription = pgTable(
   },
   (t) => [
     index('subscription_account').on(t.accountId),
+    // audit PAY-1 : un paiement (référence du prestataire) ne crée jamais deux abonnements
+    uniqueIndex('subscription_provider_ref').on(t.provider, t.providerRef),
     check(
       'subscription_status',
       sql`${t.status} IN ('essai', 'active', 'annulee', 'expiree', 'impayee')`,

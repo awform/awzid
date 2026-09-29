@@ -141,6 +141,13 @@
       "when": 1790694852629,
       "tag": "0019_totp_en_attente",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1790698798816,
+      "tag": "0020_paiement_unique",
+      "breakpoints": true
     }
   ]
 }
