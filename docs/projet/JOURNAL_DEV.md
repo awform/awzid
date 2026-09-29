@@ -8,6 +8,41 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 29/09/2026 — Corrections d'audit, blocs 1 à 10 (branche `corrections-audit`, partie de `lot21-wip`)
+
+Nouvelles fonctionnalités arrêtées ; chaque constat a son test (rouge avant, vert après) et son commit (identifiant en
+tête du message) ; état détaillé : `docs/projet/CORRECTIONS_AUDIT.md`.
+
+- **Examens et certificats** : CON-1 (projection d'épreuve sur le chemin de production), MET-1 (note du premier
+  essai), MET-2 (certificat bloqué si le contrôle continu est partiel, sauf confirmation), D6, D7.
+- **Hors ligne et relais** : OFF-1 (aucun envoi confirmé perdu), OFF-6 (quotas, cookie exigé, quarantaine), OFF-2
+  (un événement hors bornes refusé seul ; l'appareil coupe le lot et met l'événement fautif en quarantaine après
+  3 cycles), OFF-3 (déconnexion : envoi tenté, voix et cartes effacées, réponses d'un autre compte gardées),
+  OFF-5 (horodatage borné à 90 jours, jours, sourates et versets vérifiés).
+- **Mineurs** : MIN-1, MIN-2, MIN-3, MIN-4, SEC-3, MIN-17.
+- **Sécurité** : SEC-1 (secret TOTP « en attente »), SEC-2 (essais réservés atomiquement), SEC-4 (contrôle global du
+  second facteur), SEC-5 (code TOTP consommé une fois), INF-6 (`X-Forwarded-For` non falsifiable).
+- **RGPD** : MIN-5 (suppression : l'élève quitte aussitôt ses classes), MIN-6 (export de toutes les tables liées,
+  découvertes depuis le schéma), MIN-7 (e-mail haché dans les verrous, journal pseudonymisé à l'effacement), MIN-8
+  (durées de conservation, D9), MIN-16 (voix locales de plus de 7 jours effacées au démarrage).
+- **Contenu religieux** : CON-2 (projection élève par motif, champs retirés signalés à l'import, fuite = import
+  refusé), CON-3 (numéros de hadith masqués quelle que soit la graphie ; sans registre, aucun numéro ; versets jamais
+  touchés). **À vérifier sur les vrais livres (VM)** : liste des champs retirés (avertissements
+  `champ_retire_eleve`) et graphies des références.
+- **Qualité** : QUA-1 (garde-fou « aucune normalisation » qui échoue vraiment, ESLint sur toutes les formes), QUA-2
+  (batterie au nombre exact de 1 081 cas, travailleur testé, test de concurrence).
+- **Exploitation** : INF-7 (sauvegarde partielle jamais gardée), INF-8 (copie hors site prête, D10 ; état et
+  alerte de restauration à 35 jours), INF-9 (réglages de démonstration retirés sans `--demo`).
+- **Performance** : PERF-1 — budget tenu : JavaScript initial de la page la plus lourde **102,9 Ko** (≤ 150),
+  total 231,7 Ko (≤ 300, provisoire) ; anglais chargé à la demande ; police du Coran préchargée seulement avec des
+  versets. **La CI est entièrement verte** (le budget ne bloque plus).
+- **Paiements** : PAY-1 (validation atomique, index unique, migration `0020`), PAY-2 (seul un abonnement en cours
+  s'annule), PAY-3 (Stripe : droits sur paiement encaissé, pas de mois offert), PAY-4 (droits appliqués aux leçons
+  et au paquet hors ligne avec `AWFORM_DROITS=on`).
+- **Tests** (conditions de la CI : PostgreSQL 18, contenu synthétique, sans les livres) : **418 verts, 37 sautés**
+  (tests « livres réels » et Playwright, qui demandent `~/awform-content`). Build, typage, lint, garde-fous verts.
+
+---
 ## 29/09/2026 — Lot 21 (V1-f) : PARTIEL — schéma de la messagerie encadrée et de la visio (branche `lot21-wip`)
 
 Arrêté sur décision du chef de projet (audit général : 9/20, 73 constats → corrections d'abord). Livré : migration `0018_messagerie_visio` — `message_thread` (fil privé enseignant ↔ famille, toujours à propos d'un élève inscrit), `message` (privé ou annonce, corps et pièce jointe prévus CHIFFRÉS AES-256-GCM, retrait par la modération), `message_read`, `message_report` (file de modération), `video_session` (lien externe, durée 10-240 min), `video_presence` ; droits de l'API dans `roles.ts` (le test « chaque table a des droits décidés » reste vert). **Non faits** : routes, chiffrement, pièces jointes, modération, conservation 12 mois, écrans, tests fonctionnels. `ECARTS.md` : V1-f « partiel ». Tests (conditions de la CI) : inchangés, verts.

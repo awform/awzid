@@ -23,7 +23,7 @@ client, voir `DECISIONS_EN_ATTENTE.md`). Les tests marqués « livres » sont sa
 | Messagerie | messages enseignant ↔ parent et annonces de classe | **partiel** (lot 21) | schéma seulement : `message_thread`, `message` (corps chiffré), `message_read`, `message_report` (migration 0018) ; routes, chiffrement, modération et écrans : **non faits**. | après l'audit |
 | Certificats | niveau et hifẓ **vérifiables par QR** | **fait** (lot 20) | registre (lot 13) + signature Ed25519 des champs du registre, code aléatoire, QR imprimé, page publique `/verifier/[numero]`, annulation : `apps/api/src/certsign.ts`, `verification.ts`, `lot20.test.ts` (6). Réserve : D8. | — |
 | Papier ↔ application | codes d'activation imprimés dans les livres | **manquant** | aucun code d'activation (`packages/billing` : formules seulement). | V1-g |
-| Paiement | abonnement en euros (prestataire) | **fait (mode simulé)** | `packages/billing`, `apps/api/src/billing.ts`, `lot10.test.ts` (7 tests, sans livres). Stripe : code prêt, **compte réel = décision** du client. | — |
+| Paiement | abonnement en euros (prestataire) | **fait (mode simulé)** | `packages/billing`, `apps/api/src/billing.ts`, `lot10.test.ts` (7 tests, sans livres) ; corrections d'audit PAY-1 à PAY-4 (validation atomique, annulation, Stripe asynchrone, droits appliqués avec `AWFORM_DROITS=on` : `audit-pay*.test.ts`). Stripe : code prêt, **compte réel = décision** du client. | — |
 | Audio | selon la décision du client | **décision** | architecture prête, boutons masqués ; audio Azure interdit ici. | — |
 
 ## B. Cahier des charges § 6.2 — lots V1
@@ -37,7 +37,7 @@ client, voir `DECISIONS_EN_ATTENTE.md`). Les tests marqués « livres » sont sa
 | V1-e FSRS, certificats | vocabulaire et mots coraniques ; certificats signés et vérifiables | **fait, sauf mots coraniques** | FSRS (lot 15) ; certificats signés et vérifiables (lot 20). Mots coraniques : aucune liste validée dans les livres (contenu). | contenu |
 | V1-f Messagerie encadrée, visio (liens) | | **partiel** (lot 21) | schéma de la messagerie et de la visio (migration 0018, droits `roles.ts`) ; routes, écrans et tests fonctionnels à faire après les corrections d'audit. | après l'audit |
 | V1-g Paiement €, codes d'activation, Google Play (TWA) | | **partiel** | paiement simulé (lot 10), APK de débogage Capacitor (lot 16, `apps/android`). Manque : codes d'activation. Publication Play : **interdite ici** (compte du client). | lot 23 |
-| V1-h Stabilisation | audit Codex, RGAA, charge | **partiel** | axe-core dans les e2e (lot 14, 0 violation grave) ; performance 3G mesurée (`e2e/perf.spec.ts`). Manque : grille RGAA manuelle, **test de charge** (k6, p95 < 500 ms), budget de poids tenu (dépassé : 204 Ko pour 150, voir JOURNAL lot 17). | lot 24 |
+| V1-h Stabilisation | audit Codex, RGAA, charge | **partiel** | axe-core dans les e2e (lot 14, 0 violation grave) ; performance 3G mesurée (`e2e/perf.spec.ts`). Manque : grille RGAA manuelle, **test de charge** (k6, p95 < 500 ms), budget de poids : **tenu** depuis l'audit PERF-1 (JavaScript initial de la page la plus lourde 102,9 Ko ≤ 150) ; mesure sur un vrai téléphone d'entrée de gamme à faire. | lot 24 |
 
 ## C. Hors V1 demandé par le client
 
