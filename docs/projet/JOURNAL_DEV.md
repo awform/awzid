@@ -1,0 +1,401 @@
+# Journal de développement — application AWFORM
+
+Dépôt : `~/awform-app` sur la VM `awform-dev` (Ubuntu 26.04.1 LTS, 192.168.50.10), git local, branche `main`.
+Contenu importé : `~/awform-content` (copie en lecture seule depuis `W\awform`, hors dépôt).
+Checkpoint : `awform\checkpoints\app-lot01.json`.
+
+Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) — `git push origin main` à la fin de chaque étape, en plus de `backup-repo.ps1`.
+
+---
+
+## 29/09/2026 — Lot 16 : livres gelés, écoute des récitations, notifications, préparation Android (checkpoint `app-lot16`, commits `61a3362` → `d4be704`)
+
+**(1) Livres gelés** (ETAT.md) : en3, ad3, ado1, ado2, ra1, ra2, puis **ad4 et ra3 gelés pendant le lot** — synchronisés (`sync-content.ps1`), importés et publiés (355 unités, 2 619 exercices, 1 405 versets contrôlés, 0 erreur ; carnets de hifẓ E3/N3/N4 avec leurs livres) ; **plus aucun « aperçu »** (défauts de `import.js`, `deploy.sh`, e2e). Interface indépendante de la liste des livres : libellés « Enfants — niveau 3 », « Carnet Adultes N3 »… (`lib/levels.ts`), niveaux proposés à la création d'un profil et carnets du hifẓ lus dans l'édition.
+
+**(2) Écoute des récitations par l'enseignant** : la famille choisit d'envoyer UN enregistrement (déjà fait sur l'appareil) à l'enseignant de la classe — accord « envoi_recitation » (code parent pour un enfant, exigé à chaque envoi), audio **chiffré AES-256-GCM** (clé `AWFORM_RECITATION_KEY` hors base, API seulement, version de clé), **3 Mo** au plus, conservé **1 à 30 jours** selon la classe (14 par défaut) puis effacé par le travailleur, **supprimable par la famille**, retrait de l'accord = effacement de tous les envois ; l'enseignant de la classe seulement (second facteur, élève encore inscrit) écoute (audio déchiffré à la volée, `no-store`, journalisé) et **note sur la grille /20 commune** — la note entre dans le journal de hifẓ ; **jamais utilisé pour entraîner une IA** (aucun autre chemin ne lit l'audio). Protections, garanties, pages légales (FR/EN) et export RGPD mis à jour. Tests : API (accord, code parent, audio, classe, chiffrement vérifié dans la base, accès refusé à un autre enseignant / au parent / à l'administrateur, note, suppression, échéance, retrait) et e2e (famille → enseignant → note → suppression).
+
+**(3) Notifications web push** : abonnement par appareil, préférences **toutes désactivées par défaut** ; profils mineurs seulement si le parent l'accepte (code parent) ; **heures calmes** (≥ 8 h, 20 h → 8 h par défaut, heure locale), au plus une notification « devoirs » par jour (la veille de l'échéance, après 17 h) et le rapport le dimanche ; textes neutres sans nom ni culpabilisation (« Un devoir est prévu pour demain. Bonne séance ! ») ; envoi par le travailleur (`web-push`, clé VAPID **privée dans son seul périmètre**, publique dans l'API) ; abonnements refusés (404/410) supprimés. Clés générées par `deploy.sh` (openssl) ; validées dans le conteneur du travailleur. Le service de notification du navigateur est mentionné dans la politique de confidentialité.
+
+**(4) Android** : emballage **Capacitor 7** de la PWA (`apps/android`, projet Gradle généré et versionné) qui ouvre le site AWFORM ; scripts `infra/android/setup-sdk.sh` (JDK 21, outils en ligne de commande, plateforme 35 / build-tools 35.0.0 épinglés, empreinte à vérifier) et `build-debug.sh` (lockfile gelé, horodatage du commit, APK + empreinte) ; job CI `android-debug` (SDK de l'image GitHub) qui publie l'APK en artefact ; procédure de publication future (`infra/android/ANDROID.md` : compte Play du client, identifiant définitif, clé de signature dans le coffre, AAB, fiche, « Sécurité des données », programme Familles). **Non fait par moi** : télécharger le SDK et **accepter la licence du SDK Android** (acte à faire par une personne) — l'APK n'a donc pas été construit sur la VM ; il le sera par la CI ou après `setup-sdk.sh`.
+
+**Correctif de sécurité trouvé pendant le lot** : un refus renvoyé par une fonction de contrôle appelée avec `await` ne stoppait pas le traitement (une réponse Fastify est « thenable » : `await` la résout en `undefined`). Conséquence réelle depuis le lot 11 : `PUT /profiles/:id/regularite` d'un profil **ado/adulte** d'un autre compte recevait 404 mais écrivait quand même. Corrigé partout (`if (reply.sent) return`), relais de développement du web corrigé aussi (en-tête code parent, corps binaire), test de régression. Signalé dans AUDIT_BRIEF.
+
+**Incident** : une synchronisation PC ← VM a de nouveau écrasé une modification non envoyée (liste des livres de `sync-content.ps1`) ; refaite et vérifiée.
+
+**Tests** : **832** automatiques + **141 e2e** (1 sauté) verts ; lint, format, typage. Démo redéployée (`prod-58b5fcc4f4`, 14 livres publiés, clés générées, notifications et envoi ouverts).
+
+---
+## 29/09/2026 — Lot 15 : interface anglaise, FSRS, activités « racines » et « j'enseigne à mon parent » (checkpoint `app-lot15`, commits `1c27150` → `57e071a`)
+
+**(1) Anglais** : les 1 110 messages de l'interface existent en anglais (relus pour la cohérence : « hifẓ », « surah », « booklet », « progress check » pour les bilans — « review » était réservé aux révisions —, apostrophes et pluriels ICU) ; **pages légales en brouillon et aide traduites** (`lib/legal/content-en.ts`, test de parité : mêmes pages, sections, paragraphes, questions et mêmes « [à compléter] »). Langue marquée « à relire par un locuteur natif ». **Drapeau** : `GET /api/v1/config` → `AWFORM_LANGUES_PREPARATION` (« on » posé par `deploy.sh --demo` seulement, dans le périmètre de l'API) ; sans lui, l'option « langues en préparation » disparaît et une langue non relue déjà choisie retombe sur le français (`routes/+layout.ts`) — donc **jamais en production** tant que la traduction n'est pas relue. **Consignes des livres** : mécanisme seulement (`lib/i18n/content-text.ts`) — un champ `consigne_en` / `titre_en` livré plus tard dans le contenu sera choisi selon la langue, sinon le français est gardé et annoncé (`lang="fr"`) ; branché sur les exercices ; l'arabe étudié et le Coran ne passent jamais par ce mécanisme.
+
+**(2) FSRS-5** pour les cartes de mots (`lib/fsrs.ts`) : difficulté, stabilité, rappel R(t) = (1 + 19/81·t/S)^−0,5, paramètres publiés par défaut, rétention visée 90 %, intervalle 1 à 365 jours ; deux réponses seulement (« je savais » = Good, « à revoir » = Again). **Migration** des états Leitner à la lecture (boîte → stabilité = intervalle de la boîte, échéance inchangée, réenregistrée). Les cartes échues passent d'abord par ordre d'échéance. Tests : formules, première réponse (3 jours / lendemain), intervalles croissants, oubli, retard, migration.
+
+**(3) Activités** (inspirées de l'étude comparative) :
+- **« Construire un mot à partir de sa racine »** (`/activites/racines`) : racine + schème du pluriel → quel mot ? Éléments **extraits** du livre gelé Adultes N2, leçon 12 (« les trois consonnes de la racine (ك ت ب، ب ي ت، ق ل م) », « Huit schèmes fréquents… », « ك ت ب + فُعُلٌ = كُتُبٌ ») : 4 éléments (كُتُبٌ، مَكَاتِبُ، بُيُوتٌ، أَقْلَامٌ), distracteurs pris dans la même liste du livre. **À l'import, chaque chaîne doit figurer mot pour mot dans la leçon source**, sinon l'élément est écarté et signalé (le test l'a prouvé : un distracteur mal saisi a été rejeté) ; racines de contexte coranique (ر ح م، ع ب د، ص ب ر) **exclues** car le registre ne vérifie pas les racines. Pas de hasard ni de note.
+- **« J'enseigne une lettre à mon parent »** (`/activites/enseigner`) : l'enfant choisit une lettre qu'il sait écrire seul (jalon existant), la montre, la nomme, la trace en l'air et dit un mot ; le parent coche ; **rien n'est enregistré ni envoyé** (vérifié en e2e : aucune requête d'écriture).
+- Liens sur « Aujourd'hui » (enfant ayant une lettre ; profils Adultes N2 et plus).
+
+**(4) AUDIT_BRIEF** : point 19 ajouté. Accessibilité : 27 écrans audités (racines et révisions ajoutés), 0 violation grave.
+
+**Incident** : une synchronisation PC ← VM a écrasé des modifications locales non encore envoyées (mise en page, compte, exercices, pages légales) ; refaites aussitôt. Règle appliquée désormais : toujours envoyer avant de rapatrier.
+
+**Tests** : **820** automatiques + **133 e2e** (1 sauté) verts ; lint, format, typage. Démo redéployée (`prod-a6539078f3`, anglais autorisé).
+
+---
+## 29/09/2026 — Décisions du pilote et Lot 14 : comptes PostgreSQL séparés, préparation de l'audit et de la mise en production (checkpoint `app-lot14`, commits `fd77d34` → `7219aa7`)
+
+**Décisions du pilote appliquées** : (1) titre du certificat = titre du livre (déjà le cas) ; (2) **moyenne des bilans arrondie à l'unité avant le contrôle continu**, exactement comme l'exemple de `data/eval/regles.js` (72,5 → 73, CC 73,6, NF 73) — test ajouté ; (3) **registre des certificats** : numéro, nom affiché, niveau, date et mention conservés durablement (colonnes `holder_name`, `mention`, migration 0012) ; le document complet est réduit à ces champs **30 jours après le départ de l'élève** (tâche nocturne du travailleur, `purgeCertificateDocuments`) — marqué « à confirmer par le juriste » (code, page de confidentialité, AUDIT_BRIEF) ; (4) **attestation de hifẓ en arabe vocalisé** : formules reprises des modèles des livres quand elles existent (« تَشْهَدُ إِدَارَةُ… », « وَلَيْسَتْ هٰذِهِ الشَّهَادَةُ إِجَازَةً… »), passage en chiffres (« الْآيَاتِ مِنْ ١ إِلَى ٤ مِنَ السُّورَةِ رَقْمِ ١١٢ », aucun nom de sourate improvisé), aucun titre d'ijāza ; modèle marqué **VALIDATION_HUMAINE_REQUISE** (affiché à l'enseignant).
+
+**Comptes PostgreSQL séparés** : `awform_api` (lecture seule du contenu et du Coran, journaux en ajout seul — réponses : ajout et effacement avec le profil —, écriture des données des comptes et de l'école, aucune DDL), `awform_worker` (suppression des comptes échus, journal du tuteur, réduction du registre, schéma pgboss qui lui appartient), propriétaire `awform` réservé aux outils (migrations, import, rôles, démonstration). `packages/db/src/roles.ts` (une ligne par table ; un test échoue si une table n'est pas classée), CLI `roles.js` rejouée à chaque déploiement ; `env-scopes.conf` accepte `VAR=SOURCE` : chaque service reçoit SON `DATABASE_URL`. Tests : `roles.test.ts` (matrice des droits, API et travailleur sous leur compte : DDL, retouche du Coran, modification du journal refusées ; tourne aussi en CI) ; **toute la suite e2e tourne désormais sous le compte api**. Démo : `awform_api` et `awform_worker` connectés, travailleur (pg-boss) démarré sous son compte. Deux pièges PostgreSQL 16+ réglés : un compte CREATEROLE non superutilisateur ne peut pas poser NOREPLICATION/NOBYPASSRLS sur un rôle existant, et doit « pouvoir devenir » le travailleur pour lui donner le schéma pgboss.
+
+**Préparation de l'audit et de la mise en production** :
+- **Pages légales en brouillon** (`/legal/mentions`, `/cgu`, `/confidentialite`, `/cookies`), rédigées d'après le fonctionnement réel du code : données minimisées, bases légales, enfants (RGPD art. 8, COPPA, loi sénégalaise n° 2008-12, CDP), sous-traitants prévus, durées, droits, sécurité ; informations du client entre crochets « [à compléter] » ; bandeau BROUILLON — à valider par un juriste. Français seulement (l'anglais l'indique).
+- **Pas de bannière de consentement** : un seul cookie (`awform_session`, HttpOnly, SameSite=Lax), stockage local nécessaire au hors ligne, aucun cookie tiers ni ressource externe → exemption (article 82 ; à confirmer par le juriste). Test e2e : aucune requête vers un autre site, un seul cookie.
+- **Aide / FAQ** (`/aide`), **pied de page** (aide, garanties, pages légales) sur tous les écrans.
+- **Erreurs** : page d'erreur de l'application (`+error.svelte`, sans détail technique, retour à « Aujourd'hui ») ; **page « service momentanément indisponible »** servie par Caddy (503, `Retry-After`) quand l'application ou l'API ne répond pas, JSON `service_indisponible` pour l'API — vérifié sur la démo (services arrêtés → 503 et page, redémarrés → 200).
+- **Accessibilité** : audit axe-core (WCAG 2.1 A/AA) dans les e2e sur 25 écrans (visiteur, adulte, parent, enseignant et espace école), téléphone et ordinateur : **0 violation grave ou critique**. Corrections : or des lettres (#c98a0b, hérité des livres, 2,9:1) assombri en **#9a6a00** (4,7:1), l'écart connu du thème est supprimé ; textes verts passés sur le jeton `ok-ink`. À revoir avec la direction artistique.
+
+**Tests** : **804** automatiques + **123 e2e** (1 sauté) verts ; lint, format, typage. Démo redéployée (édition `prod-bc8cb1c19c`).
+
+---
+## 29/09/2026 — Lot 13 : secrets par service, espace école pour la rentrée de l'école pilote (checkpoint `app-lot13`, commits `e4690fc` → `dffc1b6`)
+
+**(1) Secrets de l'API et du travailleur séparés** : `prod.env` reste la source unique (600) mais n'est plus monté dans aucun conteneur ; `infra/prod/env-split.sh` le découpe selon `env-scopes.conf` (un fichier par service, écriture atomique, 600) — API : base, clé de session, tuteur, paiements ; travailleur et outils (migration, import) : la base seulement ; base : son mot de passe ; Caddy : adresses ; web : rien. `compose.yml` n'utilise plus qu'`AWFORM_ENV_DIR`. **Test** `apps/api/test/env-scopes.test.ts` (6 cas, tourne en CI) : les variables lues par le code de l'API et du travailleur sont dans leur périmètre, aucun secret hors besoin, chaque service de `compose.yml` reçoit son fichier, `env-split.sh` ne transmet rien d'autre. **Sur la machine** : `env-check.sh` (noms des variables de chaque conteneur, jamais les valeurs) appelé par `deploy.sh` et `status.sh` → « périmètres des secrets : conformes » (API 2 secrets, travailleur 1, base 1, web 0, Caddy 0). `AUDIT_BRIEF.md` mis à jour (risque 1 clos, risque 17 ajouté, question 14).
+
+**(2) Espace école** (`/enseignant/classe/[id]`, bouton « Espace école » de chaque classe ; API `apps/api/src/school.ts` ; paquet `@awform/school`, sans dépendance, partagé API/navigateur ; migration 0011) :
+- **Classes et groupes** : réglages (livre suivi, établissement et ville — aussi en arabe —, année scolaire), groupes ; liste de classe = profils inscrits par leur parent (pseudonyme de la famille, non modifiable par l'école) + élèves **« classe papier »** saisis par l'enseignant (prénom + initiale, genre facultatif pour les textes, nom arabe facultatif ; aucune date de naissance).
+- **Devoirs** (leçon, passage de hifẓ, petit livre) avec **échéance**, pour la classe ou un groupe ; suivi automatique pour les élèves de l'application (leçon terminée, passage appris ou validé après la date du devoir), coches de l'enseignant pour tous (elles priment) ; côté famille : carte « Devoirs de la classe » sur « Aujourd'hui », **jamais de « retard » affiché à l'élève**.
+- **Tableau de suivi** : leçons terminées, bilans (%), examen, contrôle continu, **note finale et décision selon `data/eval/regles.js`** (NF = 60 % examen + 40 % CC arrondie au demi-point ; 80/70/60/40 ; examen ≥ 50 sinon validation conditionnelle), dernière récitation, devoirs faits / en retard. **Classe papier** : saisie des notes des bilans et de l'examen du livre papier (sur 20 ou 25 ; elles priment sur l'application), récitations et productions ; récitation de hifẓ d'un élève papier avec les relevés du barème (/20).
+- **Certificats de niveau** : modèles `niveau_enfants / adultes / ados / religion` de `data/eval/certificats.js` **lus tels quels** (importés par édition, table `eval_doc`, avec le référentiel des niveaux et les règles) ; variantes féminines arabes et françaises choisies selon le genre, chiffres arabes orientaux et mois de la charte, champs manquants signalés ; délivrables seulement si la décision le permet. **Attestation de hifẓ** pour une récitation validée « oui » : modèle de l'application, français seulement, **« elle n'est pas une ijāza »**, marqué *à valider* (version arabe à rédiger par le comité). **Registre** : numéro unique `AWF-EN1-2026-0001` / `AWF-HZ-…`, document figé à la délivrance.
+- **Export** : CSV (tableau, devoirs, registre ; « ; », BOM, virgule décimale, formules neutralisées) ; **PDF** par les pages imprimables (tableau A4 paysage, certificat A4 paysage français/arabe) et « Enregistrer au format PDF » du navigateur — vérifié en e2e par le moteur PDF de Chromium.
+- **Mineurs** : tout est réservé à l'enseignant propriétaire de la classe avec second facteur ; ni autre enseignant, ni administrateur, ni parent (test API sur chaque route) ; exports, saisies et certificats journalisés ; retirer un élève efface ses résultats, le registre garde le certificat (document figé).
+- Apparence : jetons du thème uniquement (aucune couleur en dur), pas de refonte. Démo : classe de l'enseignant réglée pour en1, trois élèves **fictifs** notés, deux devoirs.
+
+**Incidents** : collision de clés i18n (`ecole.titre`, `ecole.reglages` existaient pour le mode école du lot 3 : un doublon JSON écrase sans bruit) → clés du lot 13 en `classe.*` et **nouveau test** « aucune clé en double ». Débordement horizontal sur téléphone (la grille de mise en page prend la largeur minimale d'un tableau large) → largeurs bornées en `vw`. Migration 0011 : journal Drizzle écrasé par une synchronisation PC → entrée remise.
+
+**Questions au client** : (a) titres des certificats : le livre en1 s'intitule « Je lis et j'écris l'arabe », le référentiel « Je découvre les lettres » — le certificat prend le titre **du livre** ; (b) l'exemple AD4 des règles arrondit la moyenne des bilans (72,5 → 73) avant le CC ; le calcul de l'application ne l'arrondit pas (même note finale, 73) ; (c) texte de l'attestation de hifẓ à valider et à traduire ; (d) durée de conservation du registre des certificats.
+
+**Tests** : **799** automatiques (dont `@awform/school` 15, API lot 13 : 7, périmètres des secrets : 6) + **109 e2e** (1 sauté) verts ; lint, format, typage. Démo redéployée (édition `prod-96f8ba57a7`).
+
+---
+## 29/09/2026 — Lot 12 : métadonnées officielles du Coran, tanwins du Muṣḥaf de Médine, corrections avant audit (checkpoint `app-lot12`, commits `7828efe` → fin de lot)
+
+**(1) Métadonnées Tanzil** (`W\coran\tanzil-quran-data.js`, Quran Metadata 1.0, CC BY 3.0, attribution affichée dans le lecteur) : synchronisées vers la VM (`sync-content.ps1`), lues **sans exécution** (`parseQuranData`, paires numériques seulement), contrôlées (`checkQuranData` : SHA-256 épinglé `9e9930c5…4ca4`, 114 sourates, 6 236 versets, 30 ajzāʾ, 240 quarts, 604 pages, 7 manāzil, ordre croissant, chaque juzʾ au quart i×8) ; erreur bloquante à l'import. Table `quran_division` (migration 0010), remplacée seulement si elle change. **Pages réelles du Muṣḥaf de Médine** pour le hifẓ (`buildMeta(tanzil, divisions)` : chaque page pèse 1, total 604 ; cache web `quranMeta.v2`) — effet visible : la première portion du rythme devient 1:1-4 (au lieu de l'estimation précédente), test e2e ajusté. **Jalons ḥizb et quarts de ḥizb** sur « Aujourd'hui ». Tests : 30 / 240 / 604 (contenu), API (Fātiḥa = 1 page, 2:1-5 = 1 page), jalons sur les 8 derniers quarts.
+
+**Tanwins (affichage seulement)**, portage du correctif d'`awform.js` : `tanwinDisplay` (Tanzil ً/ٌ/ٍ + ۭ/ۢ → U+08F0-08F2 pour idghām/ikhfāʾ ; iqlāb → voyelle simple + petite mīm ; crochet de couleur éventuel conservé) appliqué dans le lecteur (mot à mot), le hifẓ, les leçons, le tuteur, les exercices « ordre », la religion et la page QR. Stocké et comparé : Tanzil. `tanwinUndo` exact sur les 6 236 versets (test) ; les e2e comparent après inversion ; nouveau `e2e/lot12.spec.ts`.
+
+**(2) Corrections avant audit** : **moindre privilège** — Caddy ne reçoit que `caddy.env` (adresses), la base que `db.env` (son mot de passe), vérifié par `docker inspect` ; **sauvegardes à clé publique** (`backup-keygen.sh`, ed25519/cv25519) : le serveur ne garde que la clé publique ; clé privée et ancienne clé symétrique récupérées sur le PC (`infra/pc/recuperer-cle-sauvegarde.ps1`, empreinte contrôlée, `shred` côté serveur, ACL) dans `Documents\khadija\AWFORM-production\cles-sauvegarde\` ; test de restauration depuis le PC réussi (`infra/pc/test-restauration.ps1`, clé en `/dev/shm`, 9 tables identiques) ; `status.sh` alerte si une clé secrète revient sur le serveur. Bizarrerie : gpg répondait « Bad secret key » avec un répertoire temporaire nommé `awform-gpg.*` — nommé `rst.*`, tout fonctionne (cause non élucidée, sans effet). **CI** : job `base-et-tuteur` (PostgreSQL 18 en service, texte + métadonnées Tanzil versionnés dans `infra/ci/contenu`, `pnpm test`, batterie du tuteur avec fournisseur simulé, rapport en artefact) — rejoué à l'identique sur la VM ; l'exécution sur GitHub Actions n'est pas visible de mon côté (à confirmer par le client). `AUDIT_BRIEF.md` mis à jour (risques 1, 2 et 14 corrigés, nouveaux points 15-16).
+
+**Tests** : 770 automatiques + **103 e2e** verts (1 sauté). Démo redéployée (`DEMO_ACCES.md` : commande de remise à zéro avec `db.env`/`caddy.env`). Rapport client : lot 12, capture du lecteur (tanwins), deuxième copie hors ligne de la clé demandée.
+
+---
+## 29/09/2026 — Lot 11 : recommandations « à adopter tout de suite » de l'étude des plateformes, dossier d'audit (checkpoint `app-lot11`, commits `c871b8a` → `4ac5b95`)
+
+Apparence inchangée (jetons de thème ; direction artistique en attente du fondateur). Seules les recommandations qui ne dépendent ni du style ni d'une décision du client :
+- **(a) « Aujourd'hui »** (`/aujourdhui`, écran de démarrage de la PWA et lien du logo ; lien en tête de l'onglet Arabe) : séance du jour = portion de hifẓ (trois pistes, temps du moteur), leçon en cours (première leçon non terminée du niveau, API `GET /api/v1/today/:id`), 5 min de mots si des cartes sont dues ; **durée annoncée**. Les onglets restent.
+- **(b) Jalons de maîtrise** : lettres écrites seules (tracé réussi à l'étape 3), leçons terminées / maîtrisées, sourates complètes, ajzāʾ complets (bornes `JUZ_STARTS`) — jamais de points ni de classement. **Ḥizb et quarts de ḥizb : non calculés**, la table officielle des aḥzāb (métadonnées Tanzil) n'est pas dans la copie des livres ; aucune borne inventée — à ajouter côté contenu (`W\awform\coran`).
+- **(c) Régularité sans punition** : ados et adultes seulement — « N jours de travail cette semaine (objectif) », semaine du lundi au dimanche, objectif 3 à 6 jours et jours de repos choisis (table `profile_rhythm`, migration 0009) ; aucune série, aucune perte, aucune notification ; **rien pour les enfants** (API refuse le réglage, écran sans compteur).
+- **(d) « Nos garanties »** (`/garanties`, publique) : 11 engagements, chacun avec sa vérification (Tanzil, hadiths VERIFIE, IA, voix des enfants, traceurs, enfants, récompenses, paiement, résiliation, données, hors ligne) ; liens depuis Connexion, Offres, Mon compte.
+- **(e) Rapport hebdomadaire** (`/suivi/rapport`, API `GET /api/v1/rapport-hebdo/:id`) : semaine du lundi au dimanche (dernier dimanche par défaut, semaines précédentes consultables) : réponses, hifẓ, mots, tracés, leçons terminées, récitations validées, réponses de l'enseignant, jalons ; **aucun compteur de jours pour un enfant**, aucune comparaison. Rédaction par le conseiller IA : plus tard (V1).
+- **(f) Budget de démarrage** mesuré en e2e (`e2e/perf.spec.ts`, profil téléphone, CPU ×4, 3G 150 ms 1,6 Mbit/s) : premier lancement **2,0 s** (budget 6 s), relance de l'application installée **0,5 s** (budget 3 s). À confirmer sur un vrai Tecno/Itel (grille de `TEST_APPAREILS.md`).
+- **(g) Réglages protecteurs des mineurs** : état lisible par le parent (`/compte/protections`, API `GET /api/v1/profiles/:id/protections`) : tuteur IA, texte libre, partage enseignant, rappels désactivés par défaut ; pas de compteur pour l'enfant ; pas de personnalisation comportementale, de monnaie virtuelle, de lecture automatique, de publicité, d'envoi d'enregistrements (n'existent pas dans le code).
+
+**Dossier d'audit** : `application/AUDIT_BRIEF.md` (architecture, choix et raisons, 14 risques connus dont Caddy qui reçoit tout `prod.env` et la clé de sauvegarde sur la même machine, résultats des tests, périmètre, 30 questions : sécurité, données des mineurs, IA, paiements, hors ligne, CI).
+
+**Tests** : 762 automatiques + **99 e2e** verts (+ mesure de performance). Démo redéployée.
+
+---
+
+## 29/09/2026 — Garde-fou du lockfile, thème par jetons, démo multi-rôles, Lot 10 : paiements (checkpoint `app-lot10`, commits `d463df2` → `aad2555`)
+
+**Garde-fou `pnpm-lock.yaml` (définitif)** — cause des trois incidents : mon script d'envoi PC → VM recopiait un lockfile local ancien. Corrections : (1) `awapp-push.ps1` n'envoie PLUS jamais `pnpm-lock.yaml` (la VM en est la seule source ; retour au PC par `awapp-pull.ps1`) ; (2) crochet **pre-commit bloquant** versionné `infra/git-hooks/pre-commit` (activé sur la VM par `git config core.hooksPath infra/git-hooks`) : `pnpm install --frozen-lockfile` doit réussir sans modifier le lockfile, et les fichiers indexés doivent être au format Prettier — testé : un `package.json` modifié sans lockfile → « COMMIT REFUSÉ » ; il a aussi refusé un commit mal formaté pendant ce lot. La CI garde son `--frozen-lockfile`. Sur un nouveau clone : `git config core.hooksPath infra/git-hooks`.
+
+**Thème par jetons (préparation de la direction artistique, apparence inchangée)** : `apps/web/src/lib/theme/tokens.ts` = source unique (couleurs sémantiques, polices, tailles, rayons, ombres, motifs), thèmes « adultes » / « enfants » (identiques pour l'instant ; `data-theme` posé selon le profil actif), `pnpm --filter @awform/web theme` génère `tokens.css` ; `app.css` et 25 composants lisent les jetons (83 couleurs en dur remplacées) ; `prefers-reduced-motion` respecté ; test : CSS synchronisé, plus aucune couleur de jeton en dur, **contraste WCAG AA** des 18 paires d'usage. Écart connu, documenté : l'or des lettres (#c98a0b, hérité des livres) a un contraste < 3:1 sur blanc — à corriger avec la direction choisie. Contrôle : captures **identiques au pixel** avant/après.
+
+**Démonstration multi-rôles (demande du fondateur)** : compte **administrateur** (second facteur) et **tableau de bord admin en lecture seule** (`/admin` : utilisateurs avec e-mails masqués, éditions, niveaux, questions du tuteur, alertes, abonnements, journal d'audit ; API `GET /api/v1/admin/overview`, réservée aux admins avec 2FA) ; profil **ado** Yanis (15 ans) ; les cinq rôles vérifiés par connexion réelle sur la démo (parent + 3 profils, adulte, enseignant 2FA, admin 2FA). Accès depuis le Wi-Fi : `deploy.sh --lan-ip` (certificat aussi pour l'IP Wi-Fi du PC, 192.168.1.106, vérifié avec l'autorité locale) ; redirection de port et pare-feu Windows à faire par le fondateur (commandes administrateur non exécutées) : guide `application/TEST_APPAREILS.md` (+ grille de 15 tests pour le téléphone d'entrée de gamme, et tout retirer). Identifiants dans `DEMO_ACCES.md` seulement.
+
+**Lot 10 — paiements** (`packages/billing`, ARCHITECTURE_V2 § 8 ter.3) :
+- **Formules** : gratuit (5 premières leçons par livre), découverte (14 jours, une fois, sans moyen de paiement), famille / adulte mensuel et annuel, **pass 3 mois** (mobile money, sans renouvellement), **licence école** (par élève et par an) ; **prix par zone et par devise** (F CFA, €, $) en un seul fichier, **à valider par le client**.
+- **Droits d'accès** indépendants du moyen de paiement (`entitlementOf`, `canOpenUnit`) ; licence d'école → élèves des classes de l'enseignant si places suffisantes. **Non appliqués au contenu** tant que le client n'a pas fixé l'offre gratuite (`AWFORM_DROITS=on`).
+- **Prestataires** (interface `PaymentProvider`) : **simulé** (page de paiement de l'application, événement signé HMAC), **Stripe** (Checkout hébergé ; vérification de signature des webhooks implémentée et testée ; création de session à valider avec le compte de test du client), **PayPal**, **mobile money par agrégateur** (Wave / Orange Money / Free Money via PayDunya, CinetPay ou PayTech), **Apple / Google** (squelettes) ; sans clé → non proposés. Routage : mobile money d'abord en Afrique de l'Ouest, carte et PayPal ailleurs.
+- **Base** : migration 0008 (`billing_checkout`, `subscription`, `billing_event`). **API** : offres, mon abonnement, souscription (barrière parentale : code parent exigé s'il existe), page de paiement simulé, webhook signé **idempotent** (sans en-tête CSRF, corps brut), annulation (droits jusqu'à la fin de la période). `AWFORM_PAIEMENT=off` par défaut ; démo : `simule`.
+- **Web** : « Offres » (formules de la zone, droits, moyens), page de paiement simulé (« aucun argent n'est prélevé »), « Mon abonnement » (formule, droits, profils couverts, paiements, arrêt du renouvellement) ; liens dans Mon compte.
+
+**Tests** : ≈ 750 automatiques (billing 13, API +9) + **90 e2e** verts. Démo à jour (paiement et tuteur simulés).
+
+---
+
+## 29/09/2026 — Lot 9 : socle des tuteurs IA, sans clé réelle (checkpoint `app-lot09`, commits `d4dfd5b` → `f89f7e7`)
+
+**Paquet `@awform/tutor`** (ARCHITECTURE_V2 § 1) :
+- **Orchestrateur** : politique (moins de 13 ans : boutons seulement ; pas de tuteur enfant entre 21 h et 7 h ; 300 caractères ; plafond de coût par élève et par mois : 1 $ enfant, 3 $ ado/adulte → tuteur local), **classifieur local** avant tout modèle (détresse, rencontre, injection, avis religieux, polémique, données personnelles, Coran, hadith, identité) → réponses types ; **local d'abord** (indice, « que dit ma leçon », mots : banque d'explications validées tirée de la projection élève des livres gelés, jamais le bloc Coran) ; appel au fournisseur (contexte en lecture seule) ; **filtre de sortie** ; rendu.
+- **Filtre de sortie** : schéma JSON strict ; `{{coran:s:a-b}}` → Tanzil octet par octet (basmala d'en-tête retirée, 20 versets au plus) ; détecteur de Coran hors référence (index des trigrammes « nus » du Tanzil, 3 mots) ; citation sans `{{registre:HAD_…}}` VERIFIE, numéro de hadith → bloqué ; avis religieux formulé, polémique, phonétique latine, données personnelles, identité humaine, émoji visage → bloqué ; enfant : aucun arabe hors leçon. Violation → réponse de repli locale.
+- **Rôles versionnés** (empreinte) : enfant Claude Haiku 4.5, ado/adulte Claude Sonnet 5 (décision de l'architecture ; surchargeables par variables d'environnement).
+- **Fournisseurs** : interface abstraite ; `simule` (déterministe) ; `simule-hostile` (enfreint toutes les règles, pour prouver le filtre) ; **adaptateur Claude** (SDK officiel `@anthropic-ai/sdk` 0.129, sortie structurée `output_config.format` json_schema, invite système en cache, effort bas sauf Haiku, `refusal` → transmis à l'humain, erreurs typées → repli). Clé : `ANTHROPIC_API_KEY` de l'environnement uniquement.
+- **Mise en service** (`gate.ts`) : `AWFORM_TUTEUR` = off (défaut) | local | simule | claude ; `claude` refusé sans clé ET sans rapport de batterie RÉUSSI avec `claude`, même empreinte de rôles et mêmes modèles (`AWFORM_TUTEUR_BATTERIE`).
+- **Batterie adverse** : **1 081 cas** (777 + 304 « modèle seul » sans classifieur, défense en profondeur) : texte coranique (versets tirés du Tanzil à l'exécution), hadiths inventés, avis religieux, polémiques, protection des mineurs, injection, texte libre d'un enfant, horaires, plafond, pédagogie, fournisseur hostile ; 15 critères bloquants « 0 » / « 100 % » : **tous verts** avec le simulé. CLI `node packages/tutor/dist/cli/eval.js --fournisseur claude --confirmer` pour le vrai modèle (≈ 350 appels, ≈ 3-5 $). La batterie a trouvé et fait corriger 9 défauts du classifieur (sourates « Yā-Sīn », « Al-Wāqiʿa », « sin » anglais, « Boko Haram » pris pour un avis, etc.).
+
+**Base** : migration 0007 (`tutor_log` journal 12 mois, purge par le worker ; `tutor_question` ; `tutor_alert`). **API** : `/tutor/status`, `/tutor/:id/ask` (leçons d'ARABE seulement, jamais la religion ; accord `tuteur_ia` du parent requis pour le modèle chez un enfant/ado), questions, journal, signalement, `PUT /profiles/:id/tuteur`, `/teacher/questions` (+ réponse). **Web** : « Demander au tuteur » dans chaque leçon d'arabe (boutons ; texte encadré ados/adultes ; « je suis un programme » ; signaler ; réponses de l'enseignant), « Questions en attente » (enseignant), « Tuteur » dans Mon compte (accord, journal). Démonstration : tuteur SIMULÉ (`deploy.sh --demo` pose `AWFORM_TUTEUR=simule`), une question en attente pour l'enseignant de démonstration.
+
+**Anomalie (évitée)** : mon script d'envoi a de nouveau écrasé `pnpm-lock.yaml` (dépendances du tuteur absentes) — détecté avant le commit, lockfile régénéré, `--frozen-lockfile` vérifié.
+
+**Tests** : ≈ 727 automatiques (dont batterie) + 86 e2e verts. GitHub Actions : toujours non consultable (consigne au client).
+
+---
+
+## 29/09/2026 — Lot 8 : livres gelés, Sciences islamiques, bibliothèque des livrets, lecteur coranique C1 (checkpoint `app-lot08`, commits `a96189b` → `61d26eb`)
+
+**Livres importés (ids explicites, `application/ids`)** : GELÉS en1, ad1, en2, ad2, re1, re2 + carnets de hifẓ E1/N1/E2/N2 (défaut de `cli/import.js`, variable `AWFORM_LEVELS`). Livres en relecture (ra1, ra2) : option `--apercu` / `AWFORM_APERCU` → marqués « aperçu », **démonstration seulement** (`deploy.sh --demo` : `ra1,ra2` par défaut ; production : rien). Édition `prod-<empreinte>` = contenu + niveaux + aperçu + version. Contrôle en1…ra2 : 0 erreur bloquante, 15 avertissements.
+- **Écart signalé** : interlocuteur de dialogue hors charte (Sami, re2 l24) passé d'erreur bloquante à avertissement `interlocuteur_hors_charte` (personnage non dessiné : affiché sans portrait). À trancher côté livres.
+- **Hadiths** : `maskHadithNumbers` retire des projections élève tout numéro de hadith absent du registre en statut VERIFIE (1 numéro masqué dans l'édition de démonstration) ; clés `vh`/`controle` jamais envoyées.
+
+**Sciences islamiques** : onglet dédié (re Enfants / ra Ados-Adultes ; l'onglet Arabe ne montre plus la religion). Lecteur de leçon `ReligionLesson` : accroche, objectifs, scène, rubriques (texte, points, noms, bulles, situations, hadiths avec rāwī et grade, duʿāʾ, extraits d'ouvrages, tableau, divergences par école, carte, « le saviez-vous », cas, versets), Coran (lien vers le lecteur), mots, dialogue, exercices livre/cahier, « je retiens », carnet de pratique (jamais noté). `ReligionExercise` : QCM/cas/écoute, vrai-faux, classer, trous, tableau, relier, étapes/frise, qui suis-je, calcul, question, réponse ouverte ; sans corrigé → renvoi au cahier.
+
+**Lectures** : table `booklet` (migration 0006, 97 livrets de `data/lect` + `catalogue.js`), `GET /api/v1/booklets[/:code]` (projection élève, illustrations + décor des scènes). Bibliothèque par niveau, livret gardé sur l'appareil (un ou tout le niveau, IndexedDB) → lecture sans réseau ; pages, traduction repliable, « Je comprends », « Mes mots », tampon « J'ai lu ce livre ».
+
+**Lecteur coranique C1 (sans audio)** : `/coran/lecteur` — sourate (1-114), texte Tanzil découpé aux seules espaces (concaténation = Tanzil octet par octet, testé), plage de versets, répétition N fois, pause « À toi », vitesse, lecture guidée mot à mot (surlignage prêt pour l'audio), récitant et page du Muṣḥaf « bientôt ». Lien depuis les leçons de religion (`?s=`).
+
+**Correctifs** : course entre deux sourates choisies vite (jeton de requête) ; test hifẓ hors ligne rendu déterministe (attente du service worker) ; retour « ← Sciences islamiques » depuis un niveau de religion.
+
+**GitHub Actions** : pas d'accès (aucun compte) → consigne ajoutée au rapport client.
+
+**Tests** : ≈ 681 automatiques + 78 e2e verts (+ captures). Démonstration redéployée : http://192.168.50.10 (guide de visite, étape 6, dans `DEMO_ACCES.md`).
+
+---
+
+## 29/09/2026 — Lot 7 : mise en service, instance de démonstration permanente (checkpoint `app-lot07`, commit `905f8bb`)
+
+**Décisions du pilote enregistrées** : (1) QR code en bas de la page d'ouverture de chaque leçon du livre de l'élève, 2 cm, mention « Écouter et réviser » (mise en page au passage en B5 ; ARCHITECTURE_V2 § 8 bis ter) ; (2) points de départ du tracé ajoutés à la liste de relecture humaine `application/A_RELIRE_ENSEIGNANT.md` (propositions gardées) ; (3) tableau rythme × tour à valider par l'école pilote, défauts gardés.
+
+**Production (sans compte externe)** — `infra/prod/` :
+- `Dockerfile` multi-cibles (api, worker, web ; `pnpm deploy --prod`), `compose.yml` (Caddy, web, api, worker, PostgreSQL 18 ; base non exposée ; journaux tournants ; `restart: unless-stopped`), `Caddyfile` (HTTP local, HTTPS par autorité interne avec `default_sni` pour l'adresse IP, en-têtes de sécurité ; CSP à nonce fournie par SvelteKit) ;
+- `apps/worker` : pg-boss 12 (purge RGPD à 3 h 15, battement toutes les 5 min) ;
+- `deploy.sh` idempotent (secrets générés sur la machine, migration, import `prod-<empreinte>` inchangé si même contenu, attente de santé, systemd au démarrage, sauvegarde nocturne, pare-feu 80/443 réseau local seulement, fumée) — relancé : « inchangé », « démonstration déjà présente » ;
+- `backup.sh` (pg_dump chiffré GnuPG AES-256, empreinte, 14 gardées), `restore-test.sh` (restauration dans une base temporaire, comparaison de 9 tables : **ok**), `status.sh` (conteneurs, santé, âge de la sauvegarde, battement, disque, erreurs) ;
+- `EXPLOITATION.md` : exploitation, restauration réelle, retour arrière, **liste des comptes à créer par le client** (§ 7).
+- API : `COOKIE_SECURE=auto` (Secure quand la requête arrive en HTTPS derrière Caddy) ; `cli/demo.js` (données fictives par les vraies routes : consentements, second facteur, classe, activité) ; identifiants générés sur la VM et recopiés uniquement dans `application/DEMO_ACCES.md`.
+- Web : SHA-256 de secours pour les codes image (sans `crypto.subtle` en HTTP simple).
+- **Vérifié** : accès depuis le PC (http 200, https 200 après `default_sni`), connexion du parent démo, tableau de bord et carnet de hifẓ remplis, sauvegarde + restauration testée, `status.sh` sans alerte, **redémarrage de la VM → service de retour sans intervention**.
+
+**Anomalie corrigée** : `pnpm-lock.yaml` versionné ne contenait pas les paquets `hifz` (lot 5) ni `worker` : mon script d'envoi recopiait un lockfile local ancien sur la VM. Conséquence probable : l'intégration continue GitHub (installation gelée) en échec depuis le lot 5 — je ne peux pas consulter GitHub Actions sans compte. Lockfile resynchronisé et recopié localement ; `pnpm install --frozen-lockfile` vérifié sur la VM. Nouveau job CI « images » (syntaxe des scripts, `compose config`, `caddy validate`, construction des images).
+
+**Tests** : 671 automatiques + 70 e2e verts ; fumée de production ok.
+
+**Adresse de démonstration** : http://192.168.50.10 (https://192.168.50.10 ; hors ligne complet par `ssh -N -L 8080:127.0.0.1:80 awform-dev` → http://localhost:8080).
+
+---
+
+## 29/09/2026 — Lot 6 terminé : tracé, cartes de mots, tableau de bord, QR (checkpoint `app-lot06`, commits `daf70fb`, `d4982f7`)
+
+**Tracé guidé** (`/ecriture`, cahier § 2.4) : zone de dessin (Pointer Events : doigt, stylet, souris ; pas de défilement pendant le tracé), lignes du cahier, trois étapes (repasser les pointillés, tracer sur la lettre claire, écrire seul), 28 lettres + lām-alif, quatre formes (liaisons par joint sans chasse). **Modèle = la lettre dessinée par la police du cahier** (Noto Naskh Arabic) : corps et signes séparés par composantes connexes ; vérifications : couloir (tolérance), couverture du corps, départ (à droite ; en haut pour ا ل ك لا), chaque point touché (dessus / dessous), points après le corps. Messages doux, **jamais de note**. Mots de la leçon à repasser (`?mot=`, couloir et couverture seulement). Liens depuis « Mon cahier d'écriture » de chaque leçon.
+**Cartes de mots** (`/revisions`, § 2.5) : mots des leçons commencées (sinon des trois premières), recto arabe + image, verso sens ; **aucune translittération** ; boîtes de Leitner (1, 2, 4, 8, 16 jours) hors ligne. Enfants E1-E2 : mini-jeu « relier le mot et l'image » avec l'adulte, 5 manches ou 5 minutes au plus.
+**Tableau de bord** (`/suivi`) : le parent voit chaque enfant, l'adulte son parcours : leçons par état et part finie, activité des 14 derniers jours (barres + tableau), tracés réussis, mots sus, hifẓ ; aucun classement. API `GET /dashboard/:id` (titulaire seulement).
+**QR** (`/l/<niveau>-<NN>`, § 2.14) : page publique rendue sur le serveur, **sans JavaScript**, < 100 Ko, CSP stricte, lettres colorées comme le livre, mots illustrés, « continuer dans l'application » ; **ni exercice ni corrigé** (projection publique). Le service worker ouvre directement `/lecons/<id>` quand la leçon est sur l'appareil.
+**Données** : migration `0005_entrainement` (`practice_event`, journal immuable, file hors ligne, export RGPD, suppression en cascade) ; appliquée à `awform_dev`. Limite d'inscriptions par IP réglable (`AWFORM_SIGNUP_PER_HOUR`, 200 en e2e).
+**Tests** : 669 automatiques (content 46, grading 525, hifz 30, db 10, api 32, web 26) + **70 e2e** (tracé alif : départ à l'envers refusé puis « Bravo », gribouillis hors lettre ; cartes ; mini-jeu E1 ; QR léger ; ouverture directe hors ligne ; captures 29 à 32).
+**Écarts** : le cahier prévoyait des modèles de traits ordonnés (points de passage, ≈ 3-4 jours) ; remplacés par la lettre de la police + départ par lettre (même vérifications, sans animation du geste) — l'animation SVG du tracé et l'ordre fin des traits restent à produire (V1) ; départs à relire par un enseignant. FSRS remplacé par Leitner au MVP (FSRS en V1, comme prévu). Emplacement du QR dans la mise en page des livres : à décider.
+
+---
+
+## 29/09/2026 — Hifẓ : charge selon l'acquis, tour de la roue réglable (commit `ba28fd6`)
+
+**Décision du pilote** : la charge de fin de parcours dépend de la quantité mémorisée, pas du rythme. Réalisé : (1) temps affichés partout en fourchette « début → fin » (tableau des rythmes, plan du jour, ARCHITECTURE_V2 § 2.2, note `application/NOTE_CARNETS_HIFZ_TEMPS.md` pour les carnets papier) ; (2) tour de la roue réglable par l'enseignant (30, 45, 60 jours ; défaut 30 pour 3-4 ans, 45 pour 5-7 ans), charge recalculée et affichée (`/hifz`, `/enseignant`), migration `0004` (`hifz_plan.cycle_days`) ; (3) simulateur relancé pour chaque rythme × tour (`simulate()` dans `@awform/hifz`, texte Tanzil réel). Tableau À VALIDER par l'école pilote :
+
+| Rythme | Tour | Prévu début → fin | Simulé (régulier) début → fin | Durée régulier / irrégulier | Allègements (régulier) | Attente max (absences comprises) |
+|---|---|---|---|---|---|---|
+| 3 ans | 30 j (défaut) | 30 → 130 min | 27 → 122 min | 3,1 / 4,7 ans | 2 | 48 j |
+| 3 ans | 45 j | 30 → 97 min | 27 → 84 min | 3,1 / 4,8 ans | 5 | 64 j |
+| 3 ans | 60 j | 30 → 80 min | 27 → 76 min | 3,1 / 5,1 ans | 0 | 76 j |
+| 4 ans | 30 j (défaut) | 23 → 123 min | 25 → 110 min | 3,8 / 6,3 ans | 2 | 44 j |
+| 4 ans | 45 j | 23 → 90 min | 25 → 79 min | 3,8 / 6,6 ans | 3 | 61 j |
+| 4 ans | 60 j | 23 → 73 min | 25 → 66 min | 3,7 / 6,7 ans | 0 | 71 j |
+| 5 ans | 30 j | 18 → 118 min | 20 → 104 min | 5,0 / 7,9 ans | 0 | 41 j |
+| 5 ans | 45 j (défaut) | 18 → 85 min | 20 → 78 min | 5,1 / 8,2 ans | 17 | 66 j |
+| 5 ans | 60 j | 18 → 68 min | 20 → 63 min | 5,1 / 7,6 ans | 13 | 81 j |
+| 6 ans | 30 j | 15 → 115 min | 16 → 105 min | 6,0 / 10,0 ans | 6 | 45 j |
+| 6 ans | 45 j (défaut) | 15 → 82 min | 16 → 73 min | 6,1 / 10,1 ans | 15 | 63 j |
+| 6 ans | 60 j | 15 → 65 min | 16 → 61 min | 6,0 / 9,5 ans | 6 | 77 j |
+| 7 ans | 30 j | 13 → 113 min | 15 → 105 min | 6,8 / 11,1 ans | 9 | 49 j |
+| 7 ans | 45 j (défaut) | 13 → 80 min | 15 → 71 min | 6,9 / 11,3 ans | 18 | 64 j |
+| 7 ans | 60 j | 13 → 63 min | 15 → 59 min | 6,6 / 11,1 ans | 2 | 74 j |
+
+Tests : simulateur 3 rythmes × 3 tours × 3 profils (budget tenu, aucune attente au-delà du tour sans alerte, fin de parcours atteinte) ; API (tour 30/45/60, refus de 50) ; e2e (fourchette affichée, changement de tour → charge recalculée). 653 tests + 58 e2e verts.
+
+---
+
+## 28/09/2026 (nuit, fin) — Lot 5 terminé : carnets de hifẓ (checkpoint `app-lot05`, commits `f399109`, `9fffd04`)
+
+**Moteur** (`packages/hifz`, partagé appareil + serveur, sans dépendance) : cinq rythmes (3 à 7 ans), ordre des sourates « rebours » ou « partie 30 d'abord », séquence de versets, portion du jour (sourates courtes entières, coupe au verset le plus proche, jamais au milieu d'une autre sourate), parts de la roue ≈ 1 page, révision récente J+1, J+2, J+3, J+7, J+14, J+30 puis roue (cycle selon l'acquis, jamais plus de 30 jours), solidité S pondérée par la source (maître 1, voix 0,6, parent 0,5, auto 0,3), roue plafonnée au budget avec les parts fragiles d'abord, dette signalée et allègement PROPOSÉ après 7 jours (réduire de moitié, suspendre une semaine, changer de rythme), règle d'arrêt des carnets, mois d'essai avec rythme proposé, barème /20 des carnets. Carnets E1/N1 lus tels quels (semaines, portions « n »/« r », parcours renforcé, versets jumeaux, roue de 3 ou 4 parts).
+**Simulateur** (élèves virtuels, 10 ans max, rythmes 3/5/7, profils régulier / oublieux / irrégulier) : révision toujours dans le budget, aucune part > 30 jours sans alerte, règle d'arrêt respectée, Coran parcouru. **Constat** : à 45-60 min, le rythme « 7 ans » accumule une dette de révision en fin de parcours (≈ 100 min par séance nécessaires) → affiché honnêtement (ARCHITECTURE_V2 § 2.3, angle mort A46).
+**Texte coranique** : uniquement la table Tanzil importée (contrôle octet par octet à l'import) ; routes `/quran/meta`, `/quran/verses` ; affichage tel quel, basmala d'en-tête posée sur sa ligne (sous-chaînes exactes, basmala chaddée reconnue sans modification) ; tests API et e2e comparant les octets affichés au TSV. Pages ESTIMÉES à partir du nombre de lettres (licence QUL non vérifiée). Aucun audio.
+**Données** : migration `0003_hifz` (`hifz_plan`, `hifz_event` journal immuable, `class_group`, `class_member`) appliquée à `awform_dev` ; nouvelle édition dev `2026-09-28-lot5` publiée. Événements hifẓ dans la MÊME file hors ligne que les réponses (serveur : sources « auto »/« parent » seulement ; le maître passe par sa route). Export RGPD complété.
+**Enseignant** : `/enseignant` (2FA), classes avec code de 8 caractères ; c'est le PARENT qui inscrit l'enfant (consentement « partage_enseignant », retirable → sortie de la classe) ; validation officielle (relevés → note /20 calculée, « à reprendre » si verset oublié deux fois) ; l'enseignant peut décider du rythme après le mois d'essai.
+**Famille** : `/hifz` (carnet ou rythme, trois pistes, réciter de mémoire, auto-évaluation, écoute du parent derrière le code parent, frise, validations : étoile + phrase positive pour E1-E2, note /20 sinon), suivi parent dans `/suivi`, enregistrement de récitation **local seulement** (IndexedDB v2, jamais envoyé, effacé après 7 jours, autorisation du parent pour un enfant). **Mode école** : réglages et sortie protégés par le code de l'adulte (parent ou enseignant ; le code est ouvert à tous les comptes).
+**Identifiants d'exercices** : en1/ad1 gelés avec `id` explicite ; l'import vérifie chaque `id` contre `ids/en1-ad1-correspondance.json` (copié par `sync-content.ps1`), refuse doublons et `id` invalides ; l'empreinte ignore le champ `id` (aucune réponse périmée). Correspondance identique aux identifiants de position : aucune migration des réponses nécessaire.
+**Tests** : 652 automatiques (content 46, grading 525, hifz 30, db 10, api 27, web 14) + **58 e2e** (mobile + bureau). Corrigé en route : relais `/api` sans PUT, formulaire de rythme débordant sur téléphone.
+**Écarts / à décider** : temps des rythmes 4-6 ans estimés et charge de fin de parcours (pilote) ; licence de mise en page du Muṣḥaf (lignes/pages) ; noms des sourates à relire par le référent ; écoute des enregistrements par l'enseignant et reconnaissance vocale reportées (S4, consentement + chiffrement) ; attestations de partie et classe papier (S2).
+
+---
+
+## 28/09/2026 (nuit, suite) — Intégration continue + Lot 4 terminé : comptes, consentements, internationalisation (checkpoint `app-lot04`, commits `1d8f489` → `15aadaf`)
+
+**Intégration continue** (`.github/workflows/ci.yml`, sans aucun secret, `permissions: contents: read`) : installation figée, build, typecheck, lint, tests unitaires, budget de poids, interdiction de `.normalize(` et de tout `.env` suivi. Les tests qui demandent le contenu des livres ou PostgreSQL sont ignorés en CI (contenu hors dépôt) ; le bout en bout reste sur la VM.
+
+**Comptes (API, OWASP ASVS niveau 2 pour l'authentification)**
+- Types : **parent** (profils enfants **sans e-mail** : pseudonyme, **année** de naissance, avatar sans visage), **adulte** autonome (profil créé avec le compte), **enseignant** et **admin** (créés en ligne de commande : `node apps/api/dist/cli/staff.js`, mot de passe lu dans `AWFORM_STAFF_PASSWORD`, jamais en argument).
+- Mots de passe : argon2id (`node:crypto`, m = 19 MiB, t = 2, p = 1), 12 à 128 caractères, liste des mots de passe courants, aucune règle de composition, aucune normalisation ; message générique en cas d'échec ; verrouillage progressif (5 échecs → 1, 2, 4… ≤ 60 min) par compte et par adresse IP ; 20 inscriptions/h par IP.
+- Sessions : jeton aléatoire 256 bits, **empreinte SHA-256** seule en base, cookie `HttpOnly; SameSite=Lax; Secure`, 30 jours glissants (famille) / 12 h (enseignant, admin), révocation (déconnexion, partout, changement de mot de passe). Anti-CSRF : en-tête `x-awform: 1` exigé sur toute écriture.
+- **Second facteur TOTP obligatoire** pour enseignant et admin (RFC 6238, secret chiffré AES-256-GCM avec `AWFORM_SECRET_KEY`, anti-rejeu).
+- Réinitialisation du mot de passe : **désactivée** (503) tant qu'aucun service d'e-mail n'est choisi par le client.
+
+**Consentements et conformité** : consentements séparés, jamais cochés d'avance, datés, version du texte (`2026-09-28`), pays et preuve (`ré-authentification du parent + déclaration`) ; âge du consentement numérique par pays (FR 15, US 13, SN 18, défaut 16) ; **transfert hors pays** exigé hors UE/EEE/CH/GB (dont le Sénégal, loi 2008-12) ; **COPPA** (US < 13 ans) ; retrait des consentements facultatifs ; **export JSON** de toutes les données (RGPD art. 15/20) ; **suppression** immédiate de l'accès et purge définitive à 30 jours (`node packages/db/dist/cli/purge.js`) ; journal d'audit. Migration `0002_comptes.sql` (appliquée à `awform_dev`).
+
+**Tentatives** : le mode développement (`AWFORM_DEV_ATTEMPTS`, profils fictifs `--demo`) est **supprimé** ; les réponses et la progression exigent une session et un profil **du compte connecté** (sinon 401/403 ; la file hors ligne est gardée jusqu'à reconnexion).
+
+**Interface** : `/inscription`, `/connexion`, `/profils` (« Qui apprend ? », ajout d'un enfant avec consentement et mot de passe du parent, **code parent** pour revenir à l'espace parent), `/compte` (langue, profils, code parent, consentements, export, mot de passe, 2FA, déconnexion partout, suppression) ; mode école sur les profils du compte.
+
+**Internationalisation** (priorité client) : `intl-messageformat` 12.1 (ICU : pluriels, sélections), catalogues `fr.json` (**complet, relu**) et `en.json` (**préparé**, non relu, caché sauf « langues en préparation ») ; repli FR ; dates et nombres par `Intl` ; `lang`/`dir` sur `<html>`. Test : parité des clés et des arguments, messages ICU valides, toutes les clés utilisées existent, **aucun texte en dur** dans le balisage. Plan international (vagues de langues, COPPA, paiements multi-prestataires, magasins, CDN) : ARCHITECTURE_V2 § 8 ter.
+
+**Tests** : API 20, unitaires web 14, contenu 525, grading 44, db 10 ; **bout en bout 48/48** (mobile + bureau) avec comptes de test créés au lancement (mot de passe et clé tirés au hasard, adresses `.test`).
+
+**Écarts / à décider**
+| Sujet | État | Qui |
+|---|---|---|
+| Réinitialisation du mot de passe, vérification d'adresse | désactivées : il faut un fournisseur d'e-mail (clé à créer) | client |
+| COPPA « vérifiable » | méthode actuelle faible ; méthode FTC (paiement 0 €, tiers) avant ouverture US | lot P1 + juriste |
+| Déclaration CDP (Sénégal) | modèle à fournir, dépôt par le client | client |
+| Consignes et titres de livres en anglais | l'interface est traduite, pas encore le contenu pédagogique | vagues I1+ |
+| Bout en bout en CI | nécessite le contenu (hors dépôt) et PostgreSQL | plus tard (contenu de test synthétique) |
+
+---
+
+## 28/09/2026 (nuit) — Lot 3 terminé : hors ligne complet (checkpoint `app-lot03`, commits `304688c` → `a9007b9`)
+
+Référence : cahier §2.15, §4.3 et **ARCHITECTURE_V2 §3.2 à §3.4** (désormais référence avec le cahier).
+
+**Réalisé**
+1. **Paquets par niveau** (`GET /api/v1/packs`, `GET /api/v1/packs/:niveau`) : leçons en projection élève + identifiants/empreintes d'exercices + illustrations utilisées ; compressés une fois en **Brotli** (qualité 11), **ETag** (304 si l'appareil est à jour) ; le manifeste donne le poids compressé et l'empreinte de chaque leçon → **mise à jour différentielle** (seules les leçons modifiées sont retéléchargées ; paquet complet si plus de la moitié a changé).
+2. **Appareil** : IndexedDB (paquets, leçons, illustrations, file d'événements, réglages) ; application monopage (rendu sur l'appareil) ; les leçons se lisent d'abord sur l'appareil, sinon sur le réseau ; **service worker** : coquille en cache, navigation sans réseau servie par la coquille, nouvelle version appliquée au **prochain démarrage** (jamais au milieu d'une leçon), **Background Sync**.
+3. **Synchronisation différée sans conflit** : chaque réponse est rangée tout de suite dans IndexedDB (UUIDv7), envoyée par lots de 100 dans l'ordre, dès le retour du réseau (événement « online », réessai toutes les 5 s tant qu'il reste des réponses, ou service worker) ; doublons ignorés et états recalculés par le serveur ; refus définitifs retirés de la file ; badge « n réponses en attente ».
+4. **Budget de données mesuré** (rapports `reports/budget-donnees.md`, `reports/budget-web.md`, contrôlés par les tests) : **en1 = 76,6 Ko, ad1 = 121,8 Ko** pour le niveau entier (leçon moyenne 3,4 à 6 Ko, max 8,2 Ko ; budget ≤ 40 Ko/leçon, ≤ 1 Mo/niveau) ; JavaScript de toute l'application **58,9 Ko** (budget 150 Ko), CSS 4 Ko, polices **222,6 Ko une seule fois**.
+5. **Mode « données économes »** (par défaut si le navigateur signale un réseau lent ou l'économiseur de données) : aucun téléchargement automatique, confirmation au-delà de 200 Ko, pas de préchargement des pages ; sinon le niveau ouvert est téléchargé en arrière-plan. Page « Mes téléchargements » : poids avant téléchargement, mise à jour, « libérer de la place » (les progrès sont gardés), données du mois, stockage persistant, réponses en attente.
+6. **Mode école** (tablette partagée) : grille des élèves (images sans visage), **code image** de 4 symboles (empreinte SHA-256, jamais en clair), retour automatique à la grille après 1/5/10/20 min d'inactivité, « effacer ses données de la tablette » (après envoi des réponses en attente). Profils fictifs tant que les comptes (lot 4) n'existent pas.
+7. **Navigation par matière** (demande du client) : barre de 6 onglets — Coran, Arabe, Sciences islamiques, Écriture, Lectures, Mon suivi — en haut sur ordinateur, en bas sur téléphone ; écrans Coran / Sciences / Écriture / Lectures annoncent leur lot ; « Mon suivi » (état des leçons, réponses en attente, dernier envoi).
+8. **Maquette** (agent d'aide, contrôlé) : barre d'onglets sur tous les écrans élève + nouvel écran `sciences.html` (niveaux re1-re5, ra1 ; leçon type ra1.l14 avec extrait mālikite d'al-Akhḍarī et hadith référencé, tout l'arabe tiré des données) ; `_src/build.ps1` relancé par moi : **7 blocs coraniques identiques au Tanzil, 0 erreur**.
+9. **ARCHITECTURE_V2.md** : section « 7 bis. Angles morts — tableau de suivi » (A1-A36 + R1-R16 du cahier, lot et statut ; A19, A20, R7 passés à « traité », A21 « en partie » après ce lot) ; **§ 8.2 bis Lecteur coranique « Awzid » inspiré d'Ayat** (lot C1, ≈ 7 jours, non codé) : choix du récitant sous licence, verset par verset, surlignage mot à mot (minutage sous licence), répétition N fois avec pause, vitesse, page du Muṣḥaf (mise en page sous licence), hors ligne par sourate ; **aucun audio sans licence** ; l'onglet Coran l'annonce.
+10. **Rapport visuel pour le client** : `W\application\rapport\index.html` (page autonome, non publiée) + `rapport\img\` (16 captures WebP, 12 à 32 Ko chacune).
+
+**Tests** : content 44, grading 525, db 10, api 12 (+ paquets, budget, ETag, Brotli), web 8 (IndexedDB simulée : paquets, mise à jour différentielle, libérer de la place, file hors ligne, lots, refus) → **599 verts** ; **34 e2e verts** (Chromium mobile + bureau), dont : niveau téléchargé puis **leçon ouverte et faite en mode avion** (rechargement complet sans réseau), réponses envoyées au retour du réseau et progression recalculée ; données économes (aucune requête de paquet) ; mode école (mauvais code refusé, bon code accepté, retour à la grille après inactivité, horloge simulée) ; 6 onglets et barre en bas sur téléphone. Stabilité vérifiée par 4 exécutions successives.
+
+**Écarts** : les pages publiques en rendu serveur (QR) ne sont pas encore faites (lot 6) : l'application est désormais une application monopage (rendu sur l'appareil) ; Background Sync n'existe pas sur Safari/Firefox → repli par la page (retour du réseau + réessai) ; alerte « mémoire presque pleine » prévue (A20) ; mise à jour différentielle des illustrations seulement par leçon.
+
+**Prochain lot (4)** : comptes parent/adulte, profils enfants, consentements, sessions, suppression/export, 2FA administrateur ; les routes de tentatives quitteront le mode « développement ». Tuteurs IA (V1 IA) : aucune génération de contenu religieux, citation du seul corpus validé (arbitrage du pilote).
+
+---
+
+## 28/09/2026 (soir) — Lot 2 terminé : lecteur de leçon (checkpoint `app-lot02`, commit `1dd7742`)
+
+**Décisions du pilote intégrées** : Q5 = un champ `id` explicite sera ajouté aux exercices des livres après leur gel (l'identifiant calculé reste le repli ; table ancien → nouveau à générer à ce moment) ; tuteurs IA : aucune génération de contenu religieux, citation du seul corpus validé (à respecter au lot 3+, cf. ARCHITECTURE_V2.md).
+
+**Sauvegarde du dépôt (en attendant un dépôt distant)** : `application\backup-repo.ps1` → `git bundle --all` sur la VM, `git bundle verify`, copie contrôlée par SHA-256 dans `application\backups\` et `Documents\khadija\AWFORM-production\app-backups\`, rotation des 14 derniers ; restauration testée (`git clone` du bundle). Appel ajouté à la fin de `W\sauvegarde.ps1` (dans un try/catch : une VM éteinte ne fait pas échouer la sauvegarde des livres) ; script testé de bout en bout. À lancer à la fin de chaque lot.
+
+**Réalisé**
+1. **Import complet** : illustrations `illus\*.js` (1 096 retenues, ordre des pages des livres, `zz-sansvisage.js` en dernier) évaluées dans le bac à sable ; SVG **validé par liste blanche** (g, path, rect, circle, ellipse, polygon… ; aucun script, lien, texte, `url()`) ; les 12 personnages viennent obligatoirement de `zz-sansvisage.js` (sinon erreur bloquante). Contrôles par unité : personnages hors charte (scène, dialogue) = erreur ; illustration absente, translittération dans un champ élève, réponse visible dans un bilan = avertissement. Rapport d'import Markdown (`--rapport`). Table `illustration` (migration `0001`).
+2. **Projections** (une seule fonction chacune, testée sur les 51 unités) : élève (sans guide/`tr`/parents/dictées ; textes `non_prepare` et `phrases_masquees` ABSENTS ; bilans/examens sans traduction des versets ; examen/`sans_traduction` sans traduction de la lecture ; bilans Enfants réduits à lettres + « Je relis » + exercices, comme `lectureBilan`), parent, enseignant, **épreuve (aucune clé de corrigé ; `relier` en deux colonnes décalées)**, publique (QR).
+3. **Correction item par item** (`checkItem`, identique appareil/serveur) + **progression recalculée** (`computeUnitProgress` : score = 1er essai, meilleur score = points trouvés ; terminée = tous les points + auto-évaluation ; maîtrisée ≥ 80 %).
+4. **Rendu fidèle** (ordre et règles d'`awform.js`) : scènes composées (portage de `scene()`), objectif, cartes des lettres, tableau des formes, notion, syllabes (sans translittération), ligne de lecture + mot vedette, phrases, mots illustrés, dialogue (avatars sans visage), lexique, Coran (Amiri Quran, mots coraniques, tajwid), adab, oral, « Mon bilan » (je retiens + auto-évaluation à étoiles), cahier d'écriture (le tracé guidé viendra au lot 6), encadré « Texte remis par l'enseignant le jour de l'épreuve ».
+5. **8 types interactifs** (premiere_lettre, chasse, relier, ecoute avec « Pour l'adulte : texte à lire », vrai_faux, complete, contient, ordre) : nouvel essai permis, « Essaie encore ! », score ★.
+6. **Tentatives** : `POST /api/v1/attempts` (lot d'événements, UUIDv7 de l'appareil, idempotent, empreinte de l'exercice contrôlée, correction RECALCULÉE par le serveur, progression renvoyée) ; `GET /api/v1/progress`. Côté appareil : file d'attente locale renvoyée jusqu'à accusé. **Actif seulement en développement** (`AWFORM_DEV_ATTEMPTS=1`) et pour 2 profils **fictifs** de démonstration (aucune donnée personnelle) tant que les comptes (lot 4) n'existent pas.
+7. **Captures** : 28 captures (mobile + bureau) dans `W\application\captures\` (accueil, liste en1, ouverture de leçon avec scène, lettres, mots, exercices, dialogue, Coran, texte non préparé, bilan à étoiles, leçon entière).
+
+**Tests** : content 44, grading 525 (dont 257 exercices × corrigé global et 257 × item par item), db 10, api 9 → **588 verts** ; **24 e2e verts** (Chromium mobile + bureau : 8 types résolus par l'interface sur en1.l03/l04/l15 et ad1.l04, message doux et nouvel essai, leçon réussie + auto-évaluation → « maîtrisée » et état dans la liste, bilans Enfants/Adultes, texte non préparé absent des données, scène et illustrations). Build, typecheck (0 avertissement), lint : OK.
+
+**Rapport d'import (en1 + ad1)** : 0 erreur, 5 avertissements à transmettre aux livres : `en1/l01.js` non strict ; **réponse visible dans un bilan** : en1.l26 (يَكْتُبُ يُوسُفُ وَتَقْرَأُ مَرْيَمُ) et ad1.l11 (أَنَا مِنْ لِيُونَ / أَسْكُنُ فِي بَارِيسَ) — heuristique, à vérifier ; **translittération dans des champs élève** : noms de signes non francisés (fatḥa, ḍamma, tanwīn…) et quelques noms (ʿAbdullāh, Al-Māʾida…), REGLES §4.
+
+**Écarts** : pas encore d'authentification (lot 4) → tentatives limitées aux profils fictifs en développement ; `ecoute.dit` présent dans la projection d'entraînement (nécessaire à la correction hors ligne, affiché seulement dans « Pour l'adulte ») ; tafsir non affiché à l'élève (comme le moteur).
+
+**Prochain lot (3, hors ligne)** : paquets de niveau (projection élève + illustrations), IndexedDB, service worker complet, file d'événements synchronisée en arrière-plan, mode avion en e2e.
+
+---
+
+## 28/09/2026 — Lots 0 et 1 terminés
+
+### Lot 0 — socle de la VM (`infra/provision.sh`, idempotent, relancé 4 fois sans erreur)
+
+| Élément | Version / réglage |
+|---|---|
+| Système | Ubuntu 26.04.1 LTS, noyau 7.0, 8 vCPU, 28 Go, 98 Go disque ; mises à jour appliquées |
+| Outils | git, build-essential, curl, jq, unzip, rsync |
+| Node.js | **24.21.0** (LTS « Krypton », dépôt officiel NodeSource `node_24.x`) |
+| pnpm | **10.34.5** via corepack (figé dans `package.json` → `packageManager`) |
+| PostgreSQL | **18.6** (dépôts Ubuntu), écoute **127.0.0.1 seulement** ; rôle `awform` (sans superutilisateur) ; bases `awform_dev`, `awform_test` |
+| Docker | Engine **29.8.1** + compose **5.5.1** (dépôt officiel Docker `resolute`) ; `awzid` dans le groupe docker ; aucun conteneur |
+| Pare-feu ufw | actif ; entrant refusé par défaut ; **22/tcp** ouvert ; **5173, 4173, 3000** depuis **192.168.50.0/24 seulement** ; SSH vérifié après activation |
+| Fuseau / langue | Europe/Paris ; locale fr_FR.UTF-8 générée |
+| Tests navigateur | dépendances système Playwright (Chromium) |
+| Secrets de dev | générés localement dans `~/.config/awform/dev.env` (droits 600, hors dépôt) → `.env` (ignoré par git) par `infra/dev-env.sh` |
+
+### Lot 1 — fondations du code
+
+1. **Monorepo pnpm** : `apps/web` (SvelteKit 2.70 / Svelte 5.57 / Vite 8, adapter-node, service worker, manifeste PWA), `apps/api` (Fastify 5.12), `packages/content`, `packages/grading`, `packages/db` (Drizzle 0.45 + pg) ; TypeScript 6.0 strict (`noUncheckedIndexedAccess`), ESLint 10 + typescript-eslint + eslint-plugin-svelte, Prettier 3, Vitest 5, Playwright 1.63 ; README, ADR `docs/adr/0001-socle-technique.md`. Règle ESLint : tout appel `.normalize(` est interdit.
+2. **Import du contenu (sans ressaisie, sans toucher aux livres)** : `infra/sync-content.ps1` copie en1, ad1, `index-lecons.js`, `hifz/*.js`, `registre/*.json`, `ECARTS_VERSETS.md`, `coran/tanzil-uthmani.tsv` (+ manifeste SHA-256). Parseur : `AW.xxx(<JSON strict>)` entre la 1re `(` et la dernière `)` ; fichiers non stricts (`book.js`, `index-lecons.js`, `en1/l01.js`) évalués dans un bac à sable `node:vm` (contexte sans prototype hôte, génération de code interdite, 1 s max ; tests d'évasion inclus). Identifiants : unité `en1.l05`, exercice `en1.l05.ex2` + empreinte SHA-256 du JSON canonique (clé `en1.l05.ex2#<12 hex>`), stables d'un import à l'autre. **Contrôle Coran** : chaque verset (crochets de couleur retirés) comparé octet par octet à Tanzil (basmala du verset 1, séparateur ۝, extraits exacts, liste blanche des écarts VOULUS lue dans ECARTS_VERSETS.md) ; écart non voulu = erreur bloquante.
+   - Résultat : **51 unités (en1 26, ad1 25), 257 exercices, 2 carnets de hifẓ (E1, N1) + commun/adab/tajwid ; 154 versets contrôlés : 154 identiques, 0 erreur** ; registre : 1 188 versets (tous = Tanzil), 1 361 hadiths, 358 règles de fiqh. **0 erreur bloquante, 1 avertissement** : `en1/l01.js` n'est pas en JSON strict (à convertir côté livres).
+3. **`@awform/grading`** : portage fidèle d'`awform.js` (attributs de `exercise()`, gestionnaire de clic, `exTotal`, `plain`, `bare`) pour premiere_lettre, chasse, relier, ecoute, vrai_faux, complete, contient, ordre ; nouvel essai permis, erreurs comptées sans retrait de points. **257 tests générés** (un par exercice réel d'en1 et d'ad1) : corrigé = 100 % ; chaque mauvaise option / valeur / case / appariement / ordre refusé.
+4. **Schéma PostgreSQL** (migration `0000_initial.sql`, 19 tables) : édition, niveau (+ version), unité (+ version : contenu JSONB, projection élève, empreinte), exercice (+ version, empreinte), carnets de hifẓ, Coran de référence (6 236 versets, lecture seule), registre (statuts, `validation_humaine`), redirections QR `/l/en1-05`, comptes (parent / adulte / admin), profils (pseudonyme, année de naissance seulement, avatar sans visage), tutelle + consentements, sessions (haché du jeton), tentatives (journal immuable, id UUIDv7 de l'appareil), progression, journal d'audit. Aucune donnée personnelle. Import atomique et idempotent (réimport = « inchangé ») ; édition `dev` publiée dans `awform_dev`.
+5. **API** : `GET /api/v1/health`, `/levels`, `/levels/:code/units`, `/units/:id` (projection élève : sans `tr`, `guide`, `*guide_fr`, `sources_fr`, `parents_fr`, `travail_perso_fr` ; traduction des versets retirée des bilans/examens) ; validation des paramètres, erreurs normalisées, en-têtes de sécurité. **Web** : liste des niveaux, liste des leçons (« Leçon N » / « Bilan k »), leçon (lettres colorées `[..]` selon la règle du moteur, `lang="ar" dir="rtl"`, Noto Naskh Arabic, versets en **Amiri Quran** `font-display: block`, Nunito, tailles 30/26/22 px, boutons 48 px) ; exercices à choix déjà interactifs via `@awform/grading` ; polices embarquées (OFL), CSP sans ressource tierce ; JS client ≈ 41 Ko gzip.
+
+### Résultats des vérifications (`pnpm check` + `pnpm e2e`)
+
+| Commande | Résultat |
+|---|---|
+| `pnpm -r build` | OK (5 paquets) |
+| `pnpm typecheck` (tsc + svelte-check) | 0 erreur, 0 avertissement |
+| `pnpm lint` (ESLint + Prettier) | OK |
+| tests `content` | 30/30 |
+| tests `grading` | 265/265 (dont 257 générés depuis en1 + ad1) |
+| tests `db` (PostgreSQL réel, aller-retour octet par octet fichiers → base → lecture) | 7/7 |
+| tests `api` | 5/5 |
+| e2e Playwright (Chromium mobile + bureau) | 4/4 : liste d'en1 (26 unités), leçon en1.l17 (RTL, Amiri Quran chargée, versets affichés = API = livres), exercice corrigé |
+
+Aucun secret dans le dépôt ni dans l'historique (vérifié par recherche du mot de passe de dev) ; `.env` non suivi.
+
+### Commandes
+
+```bash
+ssh awform-dev
+cd ~/awform-app
+bash infra/provision.sh && bash infra/dev-env.sh && pnpm install
+pnpm check                                   # build + typecheck + lint + tests
+pnpm e2e                                     # bout en bout
+node packages/content/dist/cli.js en1 ad1    # rapport d'import sans base
+node packages/db/dist/cli/import.js --edition dev --publish
+pnpm dev:api    # 127.0.0.1:3000
+pnpm dev:web    # http://192.168.50.10:5173 depuis le PC
+```
+Mise à jour du contenu depuis le PC : `.\infra\sync-content.ps1 -W "<W>"` (copie locale du script dans le dépôt).
+
+### Écarts avec le cahier des charges (et pourquoi)
+
+| Cahier | Fait | Raison |
+|---|---|---|
+| Node.js 22 LTS | Node **24** LTS | LTS active en septembre 2026 ; 22 en maintenance |
+| PostgreSQL 16 | **18** | version des dépôts Ubuntu 26.04 ; `uuidv7()` natif |
+| `packages/content-schema`, `importer`, `correction`, `render` | `content` (types + import), `grading`, `db` | découpage plus simple pour le lot 1 ; `render` viendra au lot 2 |
+| Validation zod + OpenAPI | schémas JSON natifs de Fastify | suffisant pour 3 routes en lecture ; zod/OpenAPI avec les routes d'écriture (lots 3-4) |
+| @vite-pwa | service worker natif de SvelteKit | plus léger ; hors ligne complet au lot 3 |
+| TypeScript « récent » | 6.0 (pas 7.0) | typescript-eslint et SvelteKit ne supportent pas encore TS 7 |
+| Icônes PNG de la PWA | icône SVG seule | à produire avec la charte (installabilité Android à vérifier au lot 3) |
+| Tests générés sur les 4 316 exercices | 257 (en1 + ad1, périmètre MVP) | les autres niveaux entreront avec leurs lots |
+| `en1/l01.js` JSON strict | lu en bac à sable + avertissement | fichier historique non strict ; conversion à faire côté livres (non modifié) — **fait côté livres le 28/09** (awform\AUDIT_MVP_EN1.md, reprise 2) : relancer sync-content, l'avertissement doit disparaître |
+
+Remarque : le registre coran.json porte parfois une **étape** (`TEXTE_ARABE_VERIFIE`) dans le champ `statut` ; importé tel quel.
+
+### Questions au client (cahier §8.2) devenues utiles / bloquantes
+- **Q5 (identifiants d'exercices)** : non bloquant aujourd'hui (position + empreinte), mais à trancher **avant** que les élèves pilotes ne répondent (lot 3), sinon tout réordonnancement dans les livres rompra le lien réponses ↔ exercices.
+- **Q1 (nom, domaine)** : « Awzid » envisagé (ETAT 28/09) ; non bloquant pour le code (libellés centralisables), bloquant pour la recette R0 (serveur de recette, TLS).
+- **Q7 (hébergeur)** et compte de **dépôt de code distant** (§7.2, « avant L0 ») : le dépôt n'existe qu'en local sur la VM — **risque de perte** ; à créer par le client (je ne crée aucun compte).
+- Q4 (bêta sans audio) : conditionne le mode « l'adulte lit » (déjà prévu, non bloquant pour le lot 2).
+
+### Prochain lot (lot 2 — lecteur de leçon, cahier L1/L2)
+Import complet de l'édition (illustrations `illus\*.js` assainies, `zz-sansvisage.js` en dernier, contrôles translittération / personnages / corrigés d'AUDIT_BILANS), projections enseignant / parent / épreuve, rapport d'import lisible ; rendu fidèle de tous les blocs (scènes sans visage, lecture, mots avec images, dialogue, Coran/tajwid, adab, bilans `lectureBilan`, textes non préparés) ; les 8 types interactifs (relier, chasse, contient, ordre en plus) ; enregistrement des tentatives ; tests visuels des signes coraniques rares.

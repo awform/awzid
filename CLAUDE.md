@@ -1,0 +1,37 @@
+# Awzid — consignes pour toute session Claude (locale ou cloud)
+
+Toujours répondre et écrire en **français** (code et identifiants en anglais, comme l'existant).
+
+## Le projet
+Awzid (ex-AWFORM) : application mondiale d'apprentissage de l'arabe, du Coran (hifẓ, lecture de Ḥafṣ),
+des sciences islamiques (école mālikite) et de l'écriture ; école pilote au Sénégal.
+Référence : `docs/projet/CAHIER_DES_CHARGES.md` (§2.1 carte des fonctionnalités par lot, §6.2 lots),
+`docs/projet/ARCHITECTURE_V2.md` (§8.2 lots), `docs/projet/JOURNAL_DEV.md` (historique des lots 0 à 16).
+
+## Règles absolues
+- Ne jamais toucher le dépôt `awform/awform` (ancienne application abandonnée).
+- Aucun contenu religieux généré : versets, hadiths, règles de fiqh viennent seulement des livres gelés
+  (`packages/content`). Texte coranique Tanzil octet par octet, jamais retapé ni normalisé (NFC interdit).
+- Aucun visage dans les illustrations. Aucune phonétique latine côté élève.
+- Aucun secret dans le dépôt. Ne jamais créer de compte ni saisir de mot de passe réel ou de carte.
+- `pnpm-lock.yaml` : ne jamais l'écraser à la main (crochet pre-commit).
+- Tous les tests restent verts (unitaires et e2e). Chaque lot ajoute ses tests.
+- Travailler sur une branche (`lot17-wip`, puis `lot18-wip`…), jamais de fusion dans `main` :
+  le chef de projet (session locale) relit et fusionne.
+- Si PostgreSQL ou Docker manquent dans l'environnement cloud, les installer si possible
+  (apt), sinon le dire clairement dans le journal, sans prétendre que les tests sont passés.
+
+## Travail en cours
+Lot 17 (branche `lot17-wip`, commit « Lot 17 (en cours) ») :
+1. consentement par pays, dont le Sénégal (CDP, loi 2008-12) ;
+2. relais d'école hors Internet : `apps/relay`, `apps/api/src/relais.ts`, migration `0014_relais.sql`
+   (mini-PC ou Raspberry Pi, synchronisation chiffrée, HTTPS local, mode d'emploi en français
+   pour le directeur d'école, en langage simple) ;
+3. synchronisation sûre : git seule source, refus d'écraser une modification plus récente.
+
+Ensuite : lots suivants d'après §2.1 / §6.2 du cahier des charges, en choisissant ce qui n'est pas
+encore fait (voir JOURNAL_DEV). Plus tard seulement, sur décision du client : audio Azure, tuteur IA réel.
+
+## À la fin de chaque lot
+Ajouter une entrée en tête de `docs/projet/JOURNAL_DEV.md` (date, contenu, commits, nombre de tests),
+committer, pousser la branche.
