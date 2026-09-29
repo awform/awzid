@@ -30,7 +30,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-12 | mineur | Administrateur : textes libres des enfants de toutes les classes, comptes supprimés, masquage faible | corrigé | fbb9065 | admin.test.ts |
 | MIN-13 | mineur | Journaux Fastify : URL complète (identifiants, paramètres) et adresse IP | corrigé | 806e170 | audit-journaux.test.ts |
 | MIN-14 | mineur | Réinscription impossible 30 jours et révélation de l'existence du compte | corrigé en partie : adresse libérée dès la demande de suppression ; réponse neutre à l'inscription impossible sans service d'e-mail (décision du client) | 3dd77e4 | audit-rgpd.test.ts |
-| MIN-15 | mineur | Pays déclaratif, codes inexistants acceptés | corrigé en partie : codes ISO 3166-1 seulement ; pays des familles d'une classe sénégalaise non imposé (à décider avec l'école pilote) | voir « MIN-15 » dans git log | audit-mineurs.test.ts |
+| MIN-15 | mineur | Pays déclaratif, codes inexistants acceptés | corrigé en partie : codes ISO 3166-1 seulement ; pays des familles d'une classe sénégalaise non imposé (à décider avec l'école pilote) | 97393e1 | audit-mineurs.test.ts |
 | MIN-16 | mineur | Enregistrements vocaux locaux : la limite de 7 jours n'est appliquée qu'à l'ouverture de l'écran | corrigé | a319a48 | apps/web/src/lib/recordings.test.ts |
 | MIN-17 | mineur | Branche `lot17-wip` : consentement par pays cohérent mais non appliqué aux profils | corrigé | b42308f | audit-mineurs.test.ts « MIN-17 » |
 | CON-1 | bloquant | Les corrigés des examens et bilans sont envoyés à l'élève (API et paquet hors ligne) et comptent pour le certificat | corrigé | 1b24221 (D7) + 68ac8d0 | audit-con1.test.ts (échoue sans la correction) |
@@ -42,7 +42,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | CON-7 | majeur | Plafond de coût mensuel du tuteur dépassé par des appels parallèles | corrigé (plafond global par compte et par jour : non fait, tuteur réel non activé) | 2e355a2 | audit-tuteur.test.ts |
 | CON-8 | majeur | La batterie adverse est circulaire (et vide avec le fournisseur simulé) | corrigé (relecture humaine d'un échantillon avec le vrai modèle : à faire à l'activation) | 7e57646 | battery.test.ts, tutor.test.ts |
 | CON-9 | mineur | Mise en service de Claude avec un rapport de batterie écrit à la main | à faire | | |
-| CON-10 | mineur | Balise de fin du message élève reconstructible (injection) | à faire | | |
+| CON-10 | mineur | Balise de fin du message élève reconstructible (injection) | corrigé | voir « CON-10 » dans git log | tutor.test.ts |
 | CON-11 | mineur | Texte libre d'un enfant de moins de 13 ans stocké sans être lu ni classé | à faire | | |
 | CON-12 | mineur | Classifieur local : contournements simples et faux positifs | à faire | | |
 | OFF-1 | bloquant | Relais d'école (lot 17) : des réponses confirmées « acceptées » à la tablette sont effacées si la session de l'élève a expiré | corrigé | 44fa0b6 (commun avec OFF-6) | relay.test.ts « audit OFF-1 » |
