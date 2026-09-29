@@ -355,3 +355,18 @@ test.describe('lot 11', () => {
     await shot('46-garanties', true);
   });
 });
+
+test.describe('lot 12', () => {
+  test.use({ compte: null });
+  test('captures d’écran — lot 12 (tanwins du Muṣḥaf de Médine, jalons ḥizb)', async ({
+    page,
+  }, info) => {
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    await page.goto('/coran/lecteur?s=2&from=1&to=7');
+    await page.locator('[data-verse="2:5"]').first().waitFor();
+    await page.evaluate(() => document.fonts.ready);
+    await page.locator('[data-verse="2:2"]').first().scrollIntoViewIfNeeded();
+    await page.screenshot({ path: join(DIR, `${dev}-47-lecteur-tanwins.png`) });
+  });
+});
