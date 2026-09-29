@@ -34,6 +34,8 @@ jobs:
         run: corepack enable && pnpm --version
       - name: Installation (lockfile gelé)
         run: pnpm install --frozen-lockfile
+      - name: Dépendances sans vulnérabilité connue (niveau « high » bloquant, audit INF-4)
+        run: pnpm audit --audit-level high
       - name: Construction
         run: pnpm build
       - name: Typage

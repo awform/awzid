@@ -61,7 +61,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | PAY-3 | majeur | Stripe : un paiement non encaissé (SEPA, asynchrone) ouvre l'abonnement ; la 1re facture offre un 2e mois | corrigé | 9c413c7 | packages/billing/test/billing.test.ts |
 | PAY-4 | majeur | Les droits d'accès ne sont appliqués nulle part, même avec `AWFORM_DROITS=on` | corrigé (leçons et paquet hors ligne ; bibliothèque et écran « réservé aux abonnés » à faire avec l'offre gratuite) | 8ab8562 | audit-pay4.test.ts |
 | PAY-5 | mineur | Essai « découverte » : course et unicité par compte seulement | corrigé (un essai par compte ; plusieurs comptes = limite des inscriptions, INF-6) | f27daf7 | audit-pay.test.ts |
-| PAY-6 | mineur | Barrière parentale à l'achat facultative | corrigé | voir « PAY-6 » dans git log | audit-pay.test.ts (+ e2e lot10 mis à jour) |
+| PAY-6 | mineur | Barrière parentale à l'achat facultative | corrigé | 82470c6 | audit-pay.test.ts (+ e2e lot10 mis à jour) |
 | PAY-7 | mineur | Rotation du secret Stripe : plusieurs `v1=` mal gérés | corrigé | c7e5723 | billing.test.ts |
 | QUA-1 | majeur | Le garde-fou CI « aucune normalisation Unicode » ne peut jamais échouer | corrigé | b9cd9dc | audit-qua1.test.ts |
 | QUA-2 | majeur | Tests qui ne prouvent pas ce qu'ils annoncent | corrigé en partie : batterie au nombre exact (1 081, par famille), travailleur testé (planification, purge de nuit), test de concurrence de l'API ; CON-1 prouvé par l'API (audit-con1) ; school.test corrigé (lot 21). Reportés : couverture mesurée (dépendance à ajouter), a11y « moderate » (e2e à relancer avec les livres), tableau SIM_TABLE (documentation, pas un test) | 9d71681 | battery.test.ts, apps/worker/test/tasks.test.ts, audit-qua2.test.ts |
@@ -69,7 +69,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | INF-1 | bloquant | La CI est rouge sur `main` depuis le lot 9 (24 exécutions sur 24) | déjà corrigé | 8e8784f | CI locale : school.test.ts, pnpm -r --no-bail |
 | INF-2 | majeur | En CI, les tests d'API sur base sont presque tous sautés (57 sur 87), même une fois INF-1 corrigé | déjà corrigé | 8e8784f | synthetique.test.ts ; 100 tests d'API sans les livres |
 | INF-3 | mineur | Actions GitHub non épinglées par empreinte | à faire | | |
-| INF-4 | mineur | Dépendances : 2 vulnérabilités connues (outillage) | à faire | | |
+| INF-4 | mineur | Dépendances : 2 vulnérabilités connues (outillage) | corrigé | voir « INF-4 » dans git log | pnpm audit (CI, niveau high bloquant) : 0 vulnérabilité |
 | INF-5 | mineur | Gradle téléchargé sans empreinte | à faire | | |
 | INF-6 | majeur | `X-Forwarded-For` falsifiable : limites par adresse IP (inscription, connexion) contournées | corrigé | e91c3fa | audit-inf6.test.ts |
 | INF-7 | majeur | `backup.sh` : un `pg_dump` en échec laisse une « sauvegarde » partielle, non journalisée, prise pour bonne | corrigé | d155d45 | audit-infra.test.ts |
