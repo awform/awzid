@@ -1,5 +1,9 @@
-// Budget de poids de la coquille (CDC §4.3, ARCHITECTURE_V2 §3.3) : mesure après `vite build`.
-// JavaScript + CSS de l'application compressés (Brotli) ≤ 150 Ko ; polices une seule fois ≤ 600 Ko.
+// Budget de poids (CDC § 4.3 « JavaScript initial ≤ 150 Ko compressé », ARCHITECTURE_V2 § 3.3 ; décision D4,
+// audit PERF-1) : mesure après `vite build`, compression Brotli.
+//  - JavaScript + CSS INITIAUX de chaque page d'entrée (point d'entrée, application, mises en page et page,
+//    avec leurs imports statiques, d'après le manifeste de Vite) ≤ 150 Ko : la pire page est retenue ;
+//  - TOTAL de toutes les pages (tout ce que le service worker garde pour le hors ligne) ≤ 300 Ko ;
+//  - polices une seule fois ≤ 600 Ko.
 // Écrit reports/budget-web.md à la racine du dépôt ; code de sortie 1 si un budget est dépassé.
 import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -29,22 +33,86 @@ const r = {
   fonts: sum(fonts, (p) => statSync(p).size),
 };
 const ko = (n) => `${(n / 1024).toFixed(1)} Ko`;
-const BUDGET_JS = 150 * 1024;
+const BUDGET_INITIAL = 150 * 1024;
+const BUDGET_TOTAL = 300 * 1024;
 const BUDGET_FONTS = 600 * 1024;
+
+// JavaScript initial par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises en
+// page de la route et sa page (les imports dynamiques, chargés à la demande, ne comptent pas)
+const manifest = JSON.parse(readFileSync(join(client, '.vite', 'manifest.json'), 'utf8'));
+const brCache = new Map();
+const brOf = (file) => {
+  if (!brCache.has(file)) brCache.set(file, br(join(client, file)));
+  return brCache.get(file);
+};
+function closure(keys) {
+  const seen = new Set();
+  const out = new Set();
+  const visit = (k) => {
+    if (seen.has(k) || !manifest[k]) return;
+    seen.add(k);
+    const e = manifest[k];
+    out.add(e.file);
+    for (const c of e.css ?? []) out.add(c);
+    for (const i of e.imports ?? []) visit(i);
+  };
+  keys.forEach(visit);
+  return [...out];
+}
+const keyOf = (suffix) => Object.keys(manifest).find((k) => k.endsWith(suffix));
+const base = [
+  keyOf('/@sveltejs/kit/src/runtime/client/entry.js'),
+  keyOf('client-optimized/app.js'),
+];
+const app = readFileSync(
+  join(root, '.svelte-kit', 'generated', 'client-optimized', 'app.js'),
+  'utf8',
+);
+const dict = app.slice(app.indexOf('export const dictionary'));
+const routes = [...dict.matchAll(/"([^"]+)":\s*\[\s*~?(\d+)(?:\s*,\s*\[([^\]]*)\])?/g)].map(
+  (m) => ({
+    route: m[1],
+    nodes: [
+      0,
+      ...(m[3] ? m[3].split(',').map((x) => Number(x.replace('~', '').trim())) : []),
+      Number(m[2]),
+    ],
+  }),
+);
+if (!routes.length || base.some((k) => !k))
+  throw new Error('manifeste ou dictionnaire des routes illisible');
+const initial = routes
+  .map(({ route, nodes }) => ({
+    route,
+    br: closure([...base, ...nodes.map((n) => keyOf(`client-optimized/nodes/${n}.js`))]).reduce(
+      (s, f) => s + brOf(f),
+      0,
+    ),
+  }))
+  .sort((a, b) => b.br - a.br);
+const worst = initial[0];
+
 const lines = [
   '# Budget de poids de la coquille (mesuré après construction)',
   '',
   '| Élément | Poids transféré | Budget |',
   '|---|---|---|',
-  `| JavaScript (toutes les pages, Brotli) | ${ko(r.jsBr)} | ≤ ${ko(BUDGET_JS)} |`,
+  `| JavaScript + CSS initiaux, page la plus lourde (\`${worst.route}\`, Brotli) | ${ko(worst.br)} | ≤ ${ko(BUDGET_INITIAL)} |`,
+  `| JavaScript de toutes les pages (Brotli) | ${ko(r.jsBr)} | ≤ ${ko(BUDGET_TOTAL)} |`,
   `| CSS (Brotli) | ${ko(r.cssBr)} | — |`,
   `| Service worker (Brotli) | ${ko(r.swBr)} | — |`,
   `| Polices WOFF2 (une seule fois, déjà compressées) | ${ko(r.fonts)} | ≤ ${ko(BUDGET_FONTS)} |`,
+  '',
+  '## Pages les plus lourdes au premier chargement',
+  '',
+  '| Page | JavaScript + CSS initiaux (Brotli) |',
+  '|---|---|',
+  ...initial.slice(0, 8).map((x) => `| \`${x.route}\` | ${ko(x.br)} |`),
 ];
 mkdirSync(join(root, '..', '..', 'reports'), { recursive: true });
 writeFileSync(join(root, '..', '..', 'reports', 'budget-web.md'), lines.join('\n') + '\n');
 console.log(lines.join('\n'));
-if (r.jsBr + r.cssBr > BUDGET_JS || r.fonts > BUDGET_FONTS) {
+if (worst.br > BUDGET_INITIAL || r.jsBr + r.cssBr > BUDGET_TOTAL || r.fonts > BUDGET_FONTS) {
   console.error('Budget dépassé');
   process.exit(1);
 }

@@ -2,8 +2,16 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import IntlMessageFormat from 'intl-messageformat';
-import { afterEach, describe, expect, it } from 'vitest';
-import { _catalogForTests, detectLocale, fmtBytes, LOCALES, setLocale, t } from './index';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import {
+  _catalogForTests,
+  detectLocale,
+  fmtBytes,
+  loadLocale,
+  LOCALES,
+  setLocale,
+  t,
+} from './index';
 
 const SRC = fileURLToPath(new URL('../..', import.meta.url));
 
@@ -23,6 +31,9 @@ function args(msg: string): string[] {
 
 const fr = _catalogForTests.fr!;
 
+beforeAll(async () => {
+  for (const l of LOCALES) await loadLocale(l.code);
+});
 afterEach(() => setLocale('fr'));
 
 describe('catalogues de messages', () => {
@@ -102,5 +113,17 @@ describe('fonctions', () => {
     expect(detectLocale(['en-US'])).toBe('fr');
     expect(detectLocale(['en-US'], true)).toBe('en');
     expect(detectLocale(['de'])).toBe('fr');
+  });
+
+  it('audit PERF-1 : seul le français est dans la coquille, les autres langues sont chargées à la demande', () => {
+    const src = readFileSync(join(SRC, 'lib', 'i18n', 'index.ts'), 'utf8');
+    const statics = [...src.matchAll(/^import .* from '\.\/messages\/(\w+)\.json';$/gm)].map(
+      (m) => m[1],
+    );
+    expect(statics).toEqual(['fr']);
+    for (const l of LOCALES.filter((x) => x.code !== 'fr'))
+      expect(src, l.code).toContain(`import('./messages/${l.code}.json')`);
+    // police du Coran : plus de préchargement sur toutes les pages
+    expect(readFileSync(join(SRC, 'app.html'), 'utf8')).not.toContain('amiri-quran');
   });
 });

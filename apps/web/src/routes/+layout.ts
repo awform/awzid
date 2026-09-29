@@ -1,7 +1,7 @@
 // Application monopage (hors ligne d'abord) : le rendu se fait sur l'appareil, à partir des paquets de
 // niveau stockés (IndexedDB) ou du réseau. Le service worker sert la coquille sans réseau.
 // Les pages publiques en rendu serveur (QR) viendront avec leur lot, dans un groupe de routes séparé.
-import { detectLocale, localeInfo, setLocale } from '$lib/i18n';
+import { detectLocale, loadLocale, localeInfo, setLocale } from '$lib/i18n';
 import { kvGet, kvSet } from '$lib/idb';
 import type { LayoutLoad } from './$types';
 
@@ -35,6 +35,9 @@ export const load: LayoutLoad = async () => {
   const drafts =
     allowed && ((await kvGet<boolean>('draftLocales').catch(() => undefined)) ?? false);
   const usable = saved && (localeInfo(saved).status === 'relue' || drafts) ? saved : undefined;
-  setLocale(usable ?? detectLocale(navigator.languages ?? [], drafts));
+  const code = usable ?? detectLocale(navigator.languages ?? [], drafts);
+  // catalogue chargé à la demande (hors ligne : fichier gardé par le service worker ; sinon français)
+  await loadLocale(code).catch(() => {});
+  setLocale(code);
   return { draftsAllowed: allowed };
 };

@@ -27,6 +27,18 @@
   const num = (a: number) => fmtNumber(a, { useGrouping: false });
 </script>
 
+<!-- police du Coran préchargée seulement sur les écrans qui affichent des versets (audit PERF-1) ; ailleurs,
+     elle n'est jamais téléchargée (font-display: block garde l'affichage exact) -->
+<svelte:head>
+  <link
+    rel="preload"
+    href="/fonts/amiri-quran-arabic-400-normal.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+</svelte:head>
+
 <div class="verses" lang="ar" dir="rtl">
   {#each verses as v (`${v.s}:${v.a}`)}
     {@const parts = splitBasmala(v.s, v.a, v.text, basmala)}

@@ -12,7 +12,6 @@
  */
 import IntlMessageFormat from 'intl-messageformat';
 import fr from './messages/fr.json';
-import en from './messages/en.json';
 
 export type Messages = Record<string, string>;
 
@@ -31,8 +30,22 @@ export const LOCALES: readonly LocaleInfo[] = [
   { code: 'en', label: 'English', dir: 'ltr', status: 'preparation' },
 ];
 
-const CATALOG: Record<string, Messages> = { fr, en };
+/**
+ * Le français (langue de repli) est dans la coquille ; les autres catalogues sont chargés À LA DEMANDE
+ * (décision D4, audit PERF-1) : fichier séparé, téléchargé seulement si la langue est choisie (et gardé par
+ * le service worker pour le hors ligne).
+ */
+const CATALOG: Record<string, Messages> = { fr };
+const LOADERS: Record<string, () => Promise<{ default: Messages }>> = {
+  en: () => import('./messages/en.json'),
+};
 export const FALLBACK = 'fr';
+
+/** Charge le catalogue d'une langue (sans effet s'il est déjà là ou si la langue est inconnue). */
+export async function loadLocale(code: string): Promise<void> {
+  if (CATALOG[code] || !LOADERS[code]) return;
+  CATALOG[code] = (await LOADERS[code]()).default;
+}
 
 let current = FALLBACK;
 const cache = new Map<string, IntlMessageFormat>();

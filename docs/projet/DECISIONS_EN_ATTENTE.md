@@ -17,7 +17,7 @@ de développement ; le plus récent en haut.
 
 | # | Date | Sujet | Décision du chef de projet | Suite |
 |---|---|---|---|---|
-| D4 | 29/09/2026 | Budget de poids web (≈ 205 Ko pour 150 Ko) | On **garde 150 Ko** et on allège la coquille : langues chargées à la demande, découpage par page. | Lot 24 (V1-h). |
+| D4 | 29/09/2026 | Budget de poids web (≈ 205 Ko pour 150 Ko) | On **garde 150 Ko** et on allège la coquille : langues chargées à la demande, découpage par page. | Fait (audit PERF-1) : anglais chargé à la demande, police du Coran préchargée seulement avec des versets ; mesure du JavaScript **initial** de chaque page d'entrée (CDC § 4.3) : pire page `/lecons/[id]` 102,9 Ko ≤ 150 ; total de toutes les pages 231,7 Ko, borné à 300 Ko (seuil provisoire, à confirmer). Mesure sur un vrai téléphone d'entrée de gamme : à faire (lot 24). |
 | D5 | 29/09/2026 | Dictée photographiée (V1, option) | **Écartée pour l'instant.** | Rien à faire. |
 | D6 | 29/09/2026 | Barème des épreuves | Utiliser en priorité le barème `guide.bareme` du livre quand il existe, les règles provisoires sinon. | Fait (lot 21) : grille lue de façon tolérante (`bookGrid`), une note par partie ; format réel à vérifier sur les vrais livres (VM). |
 | D7 | 29/09/2026 | Corrigés des bilans en entraînement | Masquer les corrigés des bilans et examens dans la projection élève ; entraînement sur bilan corrigé par le serveur. | Fait (lot 21) : `studentProjection`, route `POST /units/:id/corriger`, examen en épreuve notée seulement ; tests `d7.test.ts`, `lot19.test.ts`. |
