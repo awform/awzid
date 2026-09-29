@@ -434,3 +434,20 @@ test.describe('lot 13', () => {
     await page.screenshot({ path: join(DIR, `${dev}-49-certificat.png`), fullPage: true });
   });
 });
+
+test.describe('lot 14', () => {
+  test.use({ compte: null });
+  test('captures d’écran — lot 14 (confidentialité, aide)', async ({ page }, info) => {
+    const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+    mkdirSync(DIR, { recursive: true });
+    for (const [url, name] of [
+      ['/legal/confidentialite', '50-confidentialite'],
+      ['/aide', '51-aide'],
+    ]) {
+      await page.goto(url);
+      await page.locator('main h1').first().waitFor();
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({ path: join(DIR, `${dev}-${name}.png`) });
+    }
+  });
+});
