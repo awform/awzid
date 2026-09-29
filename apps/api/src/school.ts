@@ -459,18 +459,13 @@ export function registerSchool(
         const r = paper.find((x) => x.levelCode === cls.levelCode && x.item === item);
         return r ? { score: r.score, max: r.max } : null;
       };
-      const appOf = (unitId: string): Score | null => {
-        const r = prog.find((x) => x.unitId === unitId);
-        return r && r.bestScore !== null && (r.status === 'terminee' || r.status === 'maitrisee')
-          ? { score: Math.round(r.bestScore * 1000) / 10, max: 100 }
-          : null;
-      };
       /** note d'une épreuve passée dans l'application (session ouverte par l'enseignant, lot 19) */
       const officialOf = (unitId: string): Score | null =>
         (p.profileId && official.get(`${p.profileId}|${unitId}`)) || null;
-      // la saisie de l'enseignant (livre papier) prime, puis l'épreuve notée, puis l'entraînement
-      const b = bilans.map((u) => paperOf(`bilan:${u.id}`) ?? officialOf(u.id) ?? appOf(u.id));
-      const examen = paperOf('examen') ?? (exam ? (officialOf(exam.id) ?? appOf(exam.id)) : null);
+      // audit MET-1 : seules comptent la saisie de l'enseignant (classe papier, prioritaire) et l'épreuve
+      // notée ; l'ENTRAÎNEMENT (essais multiples, meilleur essai) ne compte jamais pour la décision
+      const b = bilans.map((u) => paperOf(`bilan:${u.id}`) ?? officialOf(u.id));
+      const examen = paperOf('examen') ?? (exam ? officialOf(exam.id) : null);
       const result = cls.levelCode
         ? levelResult(
             {

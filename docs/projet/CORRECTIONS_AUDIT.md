@@ -33,7 +33,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | MIN-15 | mineur | Pays déclaratif, codes inexistants acceptés | à faire | | |
 | MIN-16 | mineur | Enregistrements vocaux locaux : la limite de 7 jours n'est appliquée qu'à l'ouverture de l'écran | à faire | | |
 | MIN-17 | mineur | Branche `lot17-wip` : consentement par pays cohérent mais non appliqué aux profils | à faire | | |
-| CON-1 | bloquant | Les corrigés des examens et bilans sont envoyés à l'élève (API et paquet hors ligne) et comptent pour le certificat | corrigé | 1b24221 (D7) + a1b2b87 | audit-con1.test.ts (échoue sans la correction) |
+| CON-1 | bloquant | Les corrigés des examens et bilans sont envoyés à l'élève (API et paquet hors ligne) et comptent pour le certificat | corrigé | 1b24221 (D7) + 68ac8d0 | audit-con1.test.ts (échoue sans la correction) |
 | CON-2 | majeur | Projection élève en **liste noire** : translittération, corrigés et notes d'enseignant passent | à faire | | |
 | CON-3 | majeur | Masquage des numéros de hadith non vérifiés : contournable, et absent sans registre | à faire | | |
 | CON-4 | majeur | Filtre du tuteur : Coran hors référence non détecté (formes de présentation, séparateurs invisibles) | à faire | | |
@@ -52,7 +52,7 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | OFF-5 | mineur | Réponse antidatée par `deviceAt` : la leçon passe « maîtrisée » ; dates impossibles acceptées | à faire | | |
 | OFF-6 | majeur | Relais (lot 17) : saturation du disque par n'importe quel appareil du Wi-Fi ; exception non rattrapée | à faire | | |
 | OFF-7 | mineur | Collision volontaire d'identifiant : un autre compte fait disparaître un événement | à faire | | |
-| MET-1 | bloquant | Un bilan ou un examen fait dans l'application compte toujours 100 % : certificat « Très bien » assuré | à faire | | |
+| MET-1 | bloquant | Un bilan ou un examen fait dans l'application compte toujours 100 % : certificat « Très bien » assuré | corrigé | voir « MET-1 » dans git log | audit-met1.test.ts |
 | MET-2 | mineur | Certificat délivrable avec un contrôle continu partiel ; examen à 49,995 % arrondi à 50 | à faire | | |
 | MET-3 | mineur | Hifẓ : un jour invalide arrête le rejeu du journal ; mois d'essai surestimé ; barème avec `Infinity` | à faire | | |
 | MET-4 | mineur | Jalons : un mot tracé est compté comme la lettre « mot » ; migration Leitner fragile | à faire | | |
