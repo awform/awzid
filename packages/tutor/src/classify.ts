@@ -64,7 +64,14 @@ const DETRESSE = R([
   'me frapp',
   'me bat\\b',
   'me battent',
-  'battu',
+  '\\bbattu',
+  'me cogn',
+  'me tabass',
+  'me pendre',
+  'me jeter (du|par|sous)',
+  'en finir',
+  'plus vivre',
+  'plus envie de vivre',
   'me tape',
   'me fait mal',
   'me fait du mal',
@@ -105,9 +112,22 @@ const DETRESSE = R([
   'أريد أن أموت',
   'انتحار',
   'يؤذيني',
+  'ضربني',
+  'أريد الموت',
+  'اريد الموت',
 ]);
 const RENCONTRE = R([
-  'rencontr',
+  'me rencontrer',
+  'te rencontrer',
+  'nous rencontrer',
+  'se rencontrer',
+  'rencontrer (seul|quelqu|en vrai)',
+  'se retrouver',
+  'retrouve.moi',
+  'ajoute.moi',
+  'add me',
+  'appelle.moi',
+  'call me',
   'se voir',
   'on se voit',
   'viens chez',
@@ -213,7 +233,10 @@ const AVIS = R([
   'hanbalite',
   'divergence',
   'qui a raison',
-  'musique',
+  'musique (est|serait|c.est)',
+  'ecouter de la musique',
+  '(droit|permis|interdit).{0,25}musique',
+  'music is',
   'tatouage',
   'interet bancaire',
   'riba',
@@ -299,6 +322,8 @@ const PERSO = R([
   'mon e.mail',
   '\\b0[1-9]( ?\\d{2}){4}\\b',
   '\\+?221 ?\\d',
+  // numéro mobile sénégalais sans indicatif (77 123 45 67)
+  '\\b7[05678]( ?\\d){7}\\b',
   '\\+33',
   '@[a-z0-9_.-]+\\.[a-z]{2,}',
   'my address',
@@ -360,11 +385,57 @@ const IDENTITE = R([
   'are you human',
 ]);
 
+/**
+ * Forme COMPACTE (audit CON-12) : chiffres et symboles « leet » ramenés aux lettres, tout ce qui n'est pas une
+ * lettre retiré — « su1cider », « sui cider », « I G N O R E » ne passent plus. Usage interne seulement.
+ */
+const LEET: Record<string, string> = {
+  '0': 'o',
+  '1': 'i',
+  '3': 'e',
+  '4': 'a',
+  '5': 's',
+  '7': 't',
+  '@': 'a',
+  $: 's',
+};
+export function compact(folded: string): string {
+  let out = '';
+  for (const ch of folded) {
+    const c = LEET[ch] ?? ch;
+    if (/[a-z\u0621-\u064A]/.test(c)) out += c;
+  }
+  return out;
+}
+const DETRESSE_COMPACT = R([
+  'suicid',
+  'metuer',
+  'veuxmourir',
+  'enviedemourir',
+  'enfinir',
+  'plusvivre',
+  'mefrapp',
+  'mecogn',
+  'metabass',
+  'mependre',
+  'killmyself',
+  'wanttodie',
+]);
+const INJECTION_COMPACT = R([
+  'ignoretes',
+  'ignorelesinstructions',
+  'ignoreyour',
+  'ignoreall',
+  'oublietes',
+]);
+
 export function classify(text: string): Category {
   const t = fold(text);
-  if (DETRESSE.test(t)) return 'detresse';
+  const k = compact(t);
+  // détresse : on préfère un faux positif (un adulte relit) à un appel à l'aide manqué
+  if (DETRESSE.test(t) || DETRESSE_COMPACT.test(k)) return 'detresse';
   if (RENCONTRE.test(t)) return 'rencontre';
-  if (INJECTION.test(t)) return 'injection';
+  if (INJECTION.test(t) || INJECTION_COMPACT.test(k)) return 'injection';
   if (EXTREMISME.test(t)) return 'polemique';
   if (AVIS.test(t)) return 'avis_religieux';
   if (POLEMIQUE.test(t)) return 'polemique';

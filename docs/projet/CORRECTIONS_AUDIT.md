@@ -43,8 +43,8 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | CON-8 | majeur | La batterie adverse est circulaire (et vide avec le fournisseur simulé) | corrigé (relecture humaine d'un échantillon avec le vrai modèle : à faire à l'activation) | 7e57646 | battery.test.ts, tutor.test.ts |
 | CON-9 | mineur | Mise en service de Claude avec un rapport de batterie écrit à la main | à faire | | |
 | CON-10 | mineur | Balise de fin du message élève reconstructible (injection) | corrigé | 57c979a | tutor.test.ts |
-| CON-11 | mineur | Texte libre d'un enfant de moins de 13 ans stocké sans être lu ni classé | corrigé | voir « CON-11 » dans git log | audit-mineurs.test.ts |
-| CON-12 | mineur | Classifieur local : contournements simples et faux positifs | à faire | | |
+| CON-11 | mineur | Texte libre d'un enfant de moins de 13 ans stocké sans être lu ni classé | corrigé | c7a2938 | audit-mineurs.test.ts |
+| CON-12 | mineur | Classifieur local : contournements simples et faux positifs | corrigé (wolof : à compléter avec un locuteur référent) | voir « CON-12 » dans git log | tutor.test.ts |
 | OFF-1 | bloquant | Relais d'école (lot 17) : des réponses confirmées « acceptées » à la tablette sont effacées si la session de l'élève a expiré | corrigé | 44fa0b6 (commun avec OFF-6) | relay.test.ts « audit OFF-1 » |
 | OFF-2 | majeur | Un seul événement hors bornes : 500 sur tout le lot et file de l'appareil bloquée à vie | corrigé | fd53ac2 | audit-off.test.ts, apps/web/src/lib/offline.test.ts |
 | OFF-3 | majeur | Appareil partagé : à la déconnexion, la file et les voix de A restent ; la connexion de B détruit la file de A | corrigé | e143f63, e9714b0 | apps/web/src/lib/session.test.ts |
