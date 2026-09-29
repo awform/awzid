@@ -6,6 +6,7 @@ import { and, eq, ne, sql } from 'drizzle-orm';
 import {
   blockingIssues,
   maskTree,
+  unmaskedHadithRefs,
   studentProjection,
   verifiedHadiths,
   type EditionLoad,
@@ -83,13 +84,18 @@ export async function importEdition(
     0,
   );
 
-  // numéros de hadiths : visibles seulement s'ils sont VERIFIE au registre (lot 8)
-  const verified = load.registry ? verifiedHadiths(load.registry.hadiths) : null;
+  // numéros de hadiths : visibles seulement s'ils sont VERIFIE au registre (lot 8) ; sans registre, AUCUN
+  // numéro n'est montré (audit CON-3) ; une référence restée visible bloque l'import
+  const verified = load.registry ? verifiedHadiths(load.registry.hadiths) : new Set<string>();
   let masked = 0;
   const forStudent = <T>(v: T): T => {
-    if (!verified) return v;
     const r = maskTree(v, verified);
     masked += r.masked;
+    const left = unmaskedHadithRefs(r.value, verified);
+    if (left.length)
+      throw new ImportRefusedError(
+        `référence(s) de hadith non vérifiée(s) visibles de l'élève : ${left.slice(0, 5).join(' ; ')}`,
+      );
     return r.value;
   };
 

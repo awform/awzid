@@ -2,7 +2,7 @@
  * Lot 6 : entraînement (tracé, cartes de mots), tableau de bord parent / adulte, page publique du QR code.
  */
 import { and, asc, eq, gte, inArray, sql } from 'drizzle-orm';
-import { publicProjection } from '@awform/content';
+import { maskTree, publicProjection } from '@awform/content';
 import { deviceTime, hasNul, isolated, REFUSED, validDay } from './bounds.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
@@ -183,7 +183,10 @@ export async function publicUnit(db: Db, editionId: string, slug: string) {
     .innerJoin(t.unit, eq(t.unit.id, t.unitVersion.unitId))
     .where(and(eq(t.unitVersion.editionId, editionId), eq(t.unitVersion.unitId, r.unitId)));
   if (!u) return { unitId: r.unitId, levelCode: null, lesson: null, illustrations: {} };
-  const lesson = publicProjection(u.content) as { mots: Array<{ img?: string }> };
+  // audit CON-3 : page publique (sans compte) : AUCUN numéro de hadith, vérifié ou non
+  const lesson = maskTree(publicProjection(u.content), new Set<string>()).value as {
+    mots: Array<{ img?: string }>;
+  };
   const keys = [...new Set(lesson.mots.map((m) => m.img).filter((k): k is string => !!k))];
   const ill = keys.length
     ? await db

@@ -124,13 +124,17 @@ export async function setup(
  * Base remise à zéro et édition SYNTHÉTIQUE (infra/ci/contenu-synthetique) importée par le vrai importeur :
  * en1 (l01, l02 leçons, l03 bilan, l04 leçon, l05 examen) et ad1 ; toujours la même, livres réels ou non.
  */
-export async function setupEdition(url: string, opts: Partial<AppOptions> = {}): Promise<Ctx> {
+export async function setupEdition(
+  url: string,
+  opts: Partial<AppOptions> = {},
+  contentDir = SYNTH_DIR,
+): Promise<Ctx> {
   const h = connect(url, 3);
   await resetTestDatabase(h.pool);
   await runMigrations(h.db);
   const r = await importEdition(
     h.db,
-    loadEdition({ contentDir: SYNTH_DIR, levels: ['en1', 'ad1'], withRegistry: false }),
+    loadEdition({ contentDir, levels: ['en1', 'ad1'], withRegistry: false }),
     { code: 'synth', publish: true },
   );
   const app = buildApp({
