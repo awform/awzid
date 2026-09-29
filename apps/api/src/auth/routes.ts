@@ -10,6 +10,7 @@
  * Messages d'erreur : codes stables (traduits par l'interface), jamais d'indication sur l'existence d'un compte
  * à la connexion.
  */
+import { createHash } from 'node:crypto';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, asc, eq, isNull, sql } from 'drizzle-orm';
 import {
@@ -74,6 +75,8 @@ const err = (reply: FastifyReply, status: number, code: string, extra: object = 
 const EMAIL = '^[^\\s@]{1,64}@[^\\s@]{1,190}\\.[^\\s@]{2,24}$';
 const COUNTRY = '^[A-Z]{2}$';
 const YEAR = { type: 'integer', minimum: 1900, maximum: 2100 } as const;
+/** empreinte de l'adresse e-mail pour les clés de verrou (audit MIN-7) */
+const emailKey = (email: string) => createHash('sha256').update(email).digest('hex').slice(0, 32);
 /** consentements facultatifs (retirables) ; « partage_enseignant » : suivi du hifẓ par l'enseignant d'une classe */
 const OPTIONAL_CONSENTS: ReadonlySet<string> = new Set([
   'rappels',
@@ -298,7 +301,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const email = req.body.email.trim().toLowerCase();
       // audit SEC-2 : verrou par couple compte + adresse (personne ne peut verrouiller le compte d'autrui
       // depuis une autre adresse) ; l'essai est RÉSERVÉ atomiquement avant la vérification
-      const accKey = `login:${email}|${req.ip}`;
+      // audit MIN-7 : jamais l'adresse e-mail en clair dans la table des verrous
+      const accKey = `login:${emailKey(email)}|${req.ip}`;
       const ipKey = `login-ip:${req.ip}`;
       const locked = (await lockedUntil(db, accKey)) ?? (await lockedUntil(db, ipKey));
       if (locked) return err(reply, 429, 'verrouille', { jusqua: locked.toISOString() });
@@ -517,7 +521,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const [a] = await db.select().from(t.account).where(eq(t.account.id, accountId));
       // vérification du parent : il ressaisit son mot de passe (preuve jointe au consentement)
       if (!a || !(await verifySecret(b.password, a.passwordHash))) {
-        await recordFailure(db, `login:${a?.email ?? accountId}`);
+        await recordFailure(db, `profil:${accountId}`);
         return err(reply, 401, 'mot_de_passe_incorrect');
       }
       const age = ageFromYear(b.birthYear);

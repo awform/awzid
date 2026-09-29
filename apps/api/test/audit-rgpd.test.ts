@@ -4,8 +4,18 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { getTableName, is, Table } from 'drizzle-orm';
 import { getTableConfig, type PgTable } from 'drizzle-orm/pg-core';
-import { schema as t } from '@awform/db';
-import { child, join, newClass, parent, PW, setupEdition, teacher, type Ctx } from './helpers.js';
+import { purgeAuthThrottle, purgeDeletedAccounts, schema as t } from '@awform/db';
+import {
+  adult,
+  child,
+  join,
+  newClass,
+  parent,
+  PW,
+  setupEdition,
+  teacher,
+  type Ctx,
+} from './helpers.js';
 
 const URL_ = process.env.TEST_DATABASE_URL;
 
@@ -95,5 +105,41 @@ describe.skipIf(!URL_)('audit — RGPD', () => {
       'ciphertext',
     ])
       expect(txt).not.toContain(`"${k}"`);
+  });
+
+  it('MIN-7 : après l’effacement définitif, ni e-mail en clair, ni âge, ni pays ne restent (verrous, journal)', async () => {
+    const { A, profileId } = await adult(c, 'efface-min7@exemple.org');
+    const me = (await c.req('GET', '/api/v1/auth/me', A)).json();
+    const accountId = me.account.id as string;
+    // échecs de connexion : sur ce compte et sur une adresse inconnue
+    await c.req(
+      'POST',
+      '/api/v1/auth/login',
+      {},
+      { email: 'efface-min7@exemple.org', password: 'faux' },
+    );
+    await c.req(
+      'POST',
+      '/api/v1/auth/login',
+      {},
+      { email: 'inconnu-min7@exemple.org', password: 'x' },
+    );
+    const keys = (await c.h.db.select({ k: t.authThrottle.key }).from(t.authThrottle)).map(
+      (r) => r.k,
+    );
+    expect(keys.filter((k) => k.includes('@'))).toEqual([]);
+    expect((await c.req('POST', '/api/v1/account/delete', A, { password: PW })).statusCode).toBe(
+      200,
+    );
+    expect(
+      await purgeDeletedAccounts(c.h.db, 30, new Date(Date.now() + 31 * 86400_000)),
+    ).toBeGreaterThanOrEqual(1);
+    const reste = await c.h.db.select().from(t.auditLog);
+    const cibles = reste.filter((r) => r.target === accountId || r.target === profileId);
+    expect(cibles).toEqual([]);
+    expect(JSON.stringify(reste)).not.toContain('efface-min7');
+    // verrous : effacés au-delà de 24 h (ils contiennent des adresses IP)
+    await purgeAuthThrottle(c.h.db, new Date(Date.now() + 25 * 3600_000));
+    expect(await c.h.db.select().from(t.authThrottle)).toEqual([]);
   });
 });

@@ -90,6 +90,8 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
   account: ['SELECT', 'DELETE'],
   tutor_log: ['SELECT', 'DELETE'],
   audit_log: ['INSERT'],
+  // audit MIN-7 : verrous anti-essais effacés après 24 h (colonnes lues : voir WORKER_COLUMN_GRANTS)
+  auth_throttle: ['DELETE'],
   certificate: ['SELECT', 'UPDATE'],
   // lot 16 : effacement des récitations échues, envoi des notifications
   recitation_upload: ['SELECT', 'DELETE'],
@@ -103,6 +105,16 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
 /** Droits par COLONNE du travailleur (ni pseudonyme ni année de naissance : seulement le lien au compte). */
 export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
   profile: ['id', 'owner_account_id', 'kind'],
+  auth_throttle: ['key', 'updated_at', 'locked_until'],
+  audit_log: ['target'],
+};
+
+/**
+ * Droits de MODIFICATION par colonne du travailleur. Audit MIN-7 : à l'effacement définitif, il pseudonymise
+ * les lignes du journal qui visaient la personne (cible, avant, après) ; l'action et la date restent intactes.
+ */
+export const WORKER_COLUMN_UPDATES: Record<string, string[]> = {
+  audit_log: ['target', 'before', 'after'],
 };
 
 export const SEQUENCES = ['audit_log_id_seq'];
@@ -157,6 +169,10 @@ export function rolesSql(
   for (const [table, cols] of Object.entries(WORKER_COLUMN_GRANTS))
     out.push(
       `GRANT SELECT (${cols.map(ident).join(', ')}) ON TABLE public.${ident(table)} TO ${ident(names.worker)}`,
+    );
+  for (const [table, cols] of Object.entries(WORKER_COLUMN_UPDATES))
+    out.push(
+      `GRANT UPDATE (${cols.map(ident).join(', ')}) ON TABLE public.${ident(table)} TO ${ident(names.worker)}`,
     );
   for (const s of SEQUENCES)
     for (const role of [names.api, names.worker])

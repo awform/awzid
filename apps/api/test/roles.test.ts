@@ -14,6 +14,7 @@ import {
   resetTestDatabase,
   roleNames,
   runMigrations,
+  purgeAuthThrottle,
   WORKER_GRANTS,
   type DbHandle,
 } from '@awform/db';
@@ -144,6 +145,13 @@ describe.skipIf(!URL_)('comptes PostgreSQL séparés (awform_test)', () => {
     await expect(purgeDeletedAccounts(worker.db, 30, now)).resolves.toBe(0);
     await expect(purgeTutorLog(worker.db, now)).resolves.toBeGreaterThanOrEqual(0);
     await expect(purgeCertificateDocuments(worker.db, 30, now)).resolves.toBe(0);
+    await expect(purgeAuthThrottle(worker.db, now)).resolves.toBeGreaterThanOrEqual(0);
+    await expect(worker.pool.query('select * from auth_throttle')).rejects.toThrow(
+      /permission denied/,
+    );
+    await expect(worker.pool.query('update audit_log set action = action')).rejects.toThrow(
+      /permission denied/,
+    );
     await expect(worker.pool.query('select * from profile')).rejects.toThrow(/permission denied/);
     await expect(worker.pool.query('select * from session')).rejects.toThrow(/permission denied/);
   });
