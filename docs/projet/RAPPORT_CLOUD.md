@@ -157,3 +157,15 @@ Décisions prises pendant la session : D4 (budget 150 Ko gardé — tenu), D5 (d
 (barème du livre en priorité), D7 (corrigés masqués des bilans et examens), CI sur les branches de travail.
 Toujours hors périmètre ici : audio Azure, tuteur IA réel, vrais paiements, création de comptes, publication
 sur les stores.
+
+## Série suite-v1-d (30/09/2026) — arrêtée avant de commencer
+
+Demande : (1) test de positionnement en ligne (V2) d'après `pos-en.js` et `pos-ad.js`, sans inventer de
+questions, testé sur du contenu synthétique ; (2) « classe papier » : feuilles de notes et listes d'élèves en
+PDF ; (3) tableau de bord administrateur : statistiques pédagogiques anonymisées par exercice.
+
+**Fait** : rien. Le chef de projet a écrit « terminé » avant le début du travail (crédits de session presque
+épuisés). La branche ne contient que cette note ; le code est identique à `suite-v1-b` (d2f3f6e).
+
+**Reste à faire** : les trois points ci-dessus, dans une prochaine session, sur cette branche. Premier travail :
+retrouver `pos-en.js` et `pos-ad.js` (emplacement inconnu dans ce conteneur, à confirmer).
