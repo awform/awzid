@@ -1464,5 +1464,19 @@
   "erreur.recital_annule": "Cette séance est annulée.",
   "erreur.notes_manquantes": "Chaque élève tiré au sort doit avoir sa note avant la publication.",
   "erreur.aucune_note": "Aucune note à publier.",
-  "erreur.eleve_introuvable": "Cet élève n'est pas dans la classe."
+  "erreur.eleve_introuvable": "Cet élève n'est pas dans la classe.",
+  "eco.titre": "Tableau de bord de mes classes",
+  "eco.lien": "Vue d'ensemble de mes classes",
+  "eco.aide": "Des chiffres seulement, pour vos classes : aucun élève n'est comparé aux autres. Élèves actifs : au moins une réponse envoyée ces 7 derniers jours.",
+  "eco.tableau": "Synthèse par classe",
+  "eco.classe": "Classe",
+  "eco.eleves": "Élèves (application / papier)",
+  "eco.actifs": "Actifs sur 7 jours",
+  "eco.devoirs": "Devoirs en cours",
+  "eco.copies": "Copies à corriger",
+  "eco.certificats": "Certificats délivrés",
+  "eco.recitals": "Récitals publiés",
+  "eco.total": "Total ({n, plural, one {# classe} other {# classes}})",
+  "eco.taux": "{n} %",
+  "eco.aucune": "Aucune classe pour l'instant."
 }

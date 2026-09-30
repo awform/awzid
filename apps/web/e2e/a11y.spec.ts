@@ -126,6 +126,9 @@ test.describe('enseignant', () => {
       ).toEqual([]);
     }
     await audit(page, `/enseignant/classe/${id}/imprimer`, '[data-testid="feuille"]');
+    // suite V1-b : tableau de bord « école » (synthèse des classes)
+    await audit(page, '/enseignant/ecole', '[data-testid="synthese"]');
+    await expect(page.getByTestId('synthese-total')).toBeVisible();
   });
 });
 

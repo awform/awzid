@@ -1464,5 +1464,19 @@
   "erreur.recital_annule": "This session is cancelled.",
   "erreur.notes_manquantes": "Every drawn pupil must have a mark before publishing.",
   "erreur.aucune_note": "No mark to publish.",
-  "erreur.eleve_introuvable": "This pupil is not in the class."
+  "erreur.eleve_introuvable": "This pupil is not in the class.",
+  "eco.titre": "Dashboard of my classes",
+  "eco.lien": "Overview of my classes",
+  "eco.aide": "Figures only, for your classes: no pupil is compared with others. Active pupils: at least one answer sent in the last 7 days.",
+  "eco.tableau": "Summary by class",
+  "eco.classe": "Class",
+  "eco.eleves": "Pupils (app / paper)",
+  "eco.actifs": "Active over 7 days",
+  "eco.devoirs": "Current homework",
+  "eco.copies": "Answers to mark",
+  "eco.certificats": "Certificates issued",
+  "eco.recitals": "Recitals published",
+  "eco.total": "Total ({n, plural, one {# class} other {# classes}})",
+  "eco.taux": "{n}%",
+  "eco.aucune": "No class yet."
 }

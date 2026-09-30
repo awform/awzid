@@ -8,6 +8,24 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Tableau de bord « école » et revue adverse (branche `suite-v1-b`)
+
+- **Synthèse de mes classes** (CDC §2.9, ligne « École ») : `GET /api/v1/ecole/synthese`
+  (`apps/api/src/ecole-synthese.ts`), page `/enseignant/ecole` (lien depuis l'espace enseignant) — par classe :
+  effectifs (application / papier), élèves actifs sur 7 jours et taux d'activité, devoirs en cours, copies à
+  corriger, certificats délivrés (non annulés), récitals publiés ; ligne de total. **Des comptes seulement** :
+  aucun nom d'élève, aucun élève comparé aux autres ; chaque enseignant ne voit que SES classes. **Pas de rôle
+  « direction »** : décision du client (D15). 14 textes dans les cinq langues.
+- **Revue adverse du diff** (sécurité, mineurs, RGPD) : routes du récital et de la synthèse derrière le second
+  facteur de l'enseignant et la propriété de la classe, famille limitée à ses profils, aucun texte coranique,
+  aucune ijāza ni classement ; nouvelles tables dans l'export RGPD et effacées avec le profil (test). Un défaut
+  trouvé et corrigé : le lanceur de charge pouvait créer des comptes sur une adresse distante → refus hors
+  `127.0.0.1` / `localhost` sauf `AWFORM_CHARGE_INSTANCE_DE_TEST=1` (test `allowedTarget`).
+- Tests : API +5 (synthèse 4, garde-fou 1), web +1 ; a11y enseignant (dont `/enseignant/ecole`) vert. Total
+  unitaires **574 verts** ; budget 112,6 Ko (≤ 150), toutes les pages 229,1 Ko (≤ 300).
+
+---
+
 ## 30/09/2026 — QUA-3 : découpage des gros modules, sans changement de comportement (branche `suite-v1-b`)
 
 - Un commit par fichier : `app.ts` 513 → 192 lignes (`contenu.ts` : niveaux, leçons, paquets, page publique du

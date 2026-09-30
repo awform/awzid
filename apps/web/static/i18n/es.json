@@ -1442,5 +1442,19 @@
   "erreur.recital_annule": "Esta sesión está anulada.",
   "erreur.notes_manquantes": "Cada alumno sorteado debe tener su nota antes de publicar.",
   "erreur.aucune_note": "No hay notas que publicar.",
-  "erreur.eleve_introuvable": "Este alumno no está en la clase."
+  "erreur.eleve_introuvable": "Este alumno no está en la clase.",
+  "eco.titre": "Panel de mis clases",
+  "eco.lien": "Vista general de mis clases",
+  "eco.aide": "Solo cifras, para sus clases: ningún alumno se compara con los demás. Alumnos activos: al menos una respuesta enviada en los últimos 7 días.",
+  "eco.tableau": "Resumen por clase",
+  "eco.classe": "Clase",
+  "eco.eleves": "Alumnos (aplicación / papel)",
+  "eco.actifs": "Activos en 7 días",
+  "eco.devoirs": "Deberes en curso",
+  "eco.copies": "Respuestas por corregir",
+  "eco.certificats": "Certificados emitidos",
+  "eco.recitals": "Recitaciones publicadas",
+  "eco.total": "Total ({n, plural, one {# clase} other {# clases}})",
+  "eco.taux": "{n} %",
+  "eco.aucune": "Todavía no hay clases."
 }

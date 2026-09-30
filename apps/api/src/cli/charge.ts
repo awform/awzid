@@ -92,6 +92,20 @@ export function table(rows: Summary[], goal: number): string {
   ].join('\n');
 }
 
+/**
+ * Garde-fou : le lanceur crée des comptes jetables ; il ne vise qu'une API locale, sauf déclaration explicite
+ * d'une instance de TEST (AWFORM_CHARGE_INSTANCE_DE_TEST=1). Jamais la production.
+ */
+export function allowedTarget(url: string, declaredTest = false): boolean {
+  let host: string;
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    return false;
+  }
+  return declaredTest || ['127.0.0.1', 'localhost', '::1', '[::1]'].includes(host);
+}
+
 // ---------------------------------------------------------------------------------------------- lancement
 
 async function main(): Promise<void> {
@@ -112,6 +126,10 @@ async function main(): Promise<void> {
       },
     });
 
+  if (!allowedTarget(BASE, process.env.AWFORM_CHARGE_INSTANCE_DE_TEST === '1'))
+    throw new Error(
+      `refusé : ${BASE} n'est pas locale (AWFORM_CHARGE_INSTANCE_DE_TEST=1 pour une instance de TEST)`,
+    );
   const health = await api('/health').catch(() => null);
   if (!health?.ok) throw new Error(`API injoignable : ${BASE}/api/v1/health`);
 

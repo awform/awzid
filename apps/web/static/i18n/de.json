@@ -1442,5 +1442,19 @@
   "erreur.recital_annule": "Diese Sitzung ist abgesagt.",
   "erreur.notes_manquantes": "Jedes ausgeloste Kind braucht vor der Veröffentlichung eine Note.",
   "erreur.aucune_note": "Keine Note zu veröffentlichen.",
-  "erreur.eleve_introuvable": "Dieses Kind ist nicht in der Klasse."
+  "erreur.eleve_introuvable": "Dieses Kind ist nicht in der Klasse.",
+  "eco.titre": "Übersicht meiner Klassen",
+  "eco.lien": "Überblick über meine Klassen",
+  "eco.aide": "Nur Zahlen, für Ihre Klassen: Kein Kind wird mit anderen verglichen. Aktive Kinder: mindestens eine Antwort in den letzten 7 Tagen gesendet.",
+  "eco.tableau": "Zusammenfassung nach Klasse",
+  "eco.classe": "Klasse",
+  "eco.eleves": "Kinder (App / Papier)",
+  "eco.actifs": "Aktiv in 7 Tagen",
+  "eco.devoirs": "Laufende Aufgaben",
+  "eco.copies": "Zu korrigierende Antworten",
+  "eco.certificats": "Ausgestellte Zertifikate",
+  "eco.recitals": "Veröffentlichte Rezitationen",
+  "eco.total": "Summe ({n, plural, one {# Klasse} other {# Klassen}})",
+  "eco.taux": "{n} %",
+  "eco.aucune": "Noch keine Klasse."
 }

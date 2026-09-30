@@ -4,7 +4,7 @@
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { describe, expect, it } from 'vitest';
-import { percentile, run, summarize, table } from '../src/cli/charge.js';
+import { allowedTarget, percentile, run, summarize, table } from '../src/cli/charge.js';
 
 describe('lot 24 — lanceur de charge', () => {
   it('percentile : rang le plus proche, bornes, liste vide', () => {
@@ -59,5 +59,13 @@ describe('lot 24 — lanceur de charge', () => {
     expect(lines).toHaveLength(4);
     expect(lines[2]).toMatch(/\| a \|.*\| oui \|$/);
     expect(lines[3]).toMatch(/\| b \|.*\| NON \|$/);
+  });
+
+  it('allowedTarget : API locale seulement, sauf instance de test déclarée', () => {
+    expect(allowedTarget('http://127.0.0.1:3100')).toBe(true);
+    expect(allowedTarget('http://localhost:3100')).toBe(true);
+    expect(allowedTarget('https://app.awzid.org')).toBe(false);
+    expect(allowedTarget('https://test.awzid.org', true)).toBe(true);
+    expect(allowedTarget('pas une adresse')).toBe(false);
   });
 });

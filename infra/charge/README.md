@@ -12,7 +12,8 @@ AWFORM_CHARGE_URL=http://127.0.0.1:3100 AWFORM_CHARGE_VU=20 AWFORM_CHARGE_SECOND
   node apps/api/dist/cli/charge.js
 ```
 
-Variables : `AWFORM_CHARGE_VU` (utilisateurs virtuels, un compte adulte chacun), `AWFORM_CHARGE_SECONDES`
+Garde-fou : API locale seulement (127.0.0.1, localhost), sauf `AWFORM_CHARGE_INSTANCE_DE_TEST=1` pour une
+instance de TEST distante. Variables : `AWFORM_CHARGE_VU` (utilisateurs virtuels, un compte adulte chacun), `AWFORM_CHARGE_SECONDES`
 (durée par route), `AWFORM_CHARGE_P95_MS` (objectif, 500), `AWFORM_CHARGE_UNITE` (leçon, `en1.l01`). Sortie :
 tableau Markdown p50 / p95 / max par route ; code de sortie 1 si une route dépasse l'objectif ou renvoie une
 erreur. Code : `apps/api/src/cli/charge.ts` (testé par `apps/api/test/charge.test.ts`).

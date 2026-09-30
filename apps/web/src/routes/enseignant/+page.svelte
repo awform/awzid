@@ -169,6 +169,7 @@
 <h1>{t('ens.titre')}</h1>
 <p>
   <a href={resolve('/enseignant/questions')} data-testid="lien-questions">{t('ens.questions')}</a>
+  · <a href={resolve('/enseignant/ecole')} data-testid="lien-synthese">{t('eco.lien')}</a>
 </p>
 {#if msg}<p class="card ok" role="status" data-testid="ens-message">{msg}</p>{/if}
 {#if error}<p class="card bad" role="alert">{error}</p>{/if}
