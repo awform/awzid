@@ -9,6 +9,8 @@
 # 4. démarrage automatique (systemd) et sauvegarde chiffrée chaque nuit ;
 # 5. --demo : données fictives et identifiants de démonstration (fichier ~/.config/awform/demo-acces.json).
 # N'expose rien sur Internet : le pare-feu n'ouvre 80/443 qu'au réseau local (LAN).
+# Essais (instance jetable, CI, conteneur cloud) : AWFORM_DEPLOY_BUILD=0 réutilise les images déjà construites
+# (awform/*:<version>) ; AWFORM_DEPLOY_SYSTEME=0 ne touche ni à systemd ni au pare-feu. Défaut : 1 et 1.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 PROD="$ROOT/infra/prod"
@@ -109,7 +111,7 @@ DC=(docker compose -f "$PROD/compose.yml")
 [ -e "$CONF/A-EMPORTER-backup-private.asc" ] && echo "ATTENTION : clé privée des sauvegardes à emporter hors du serveur (infra/pc/recuperer-cle-sauvegarde.ps1)"
 
 # ---------------------------------------------------------------- 2. images, base, contenu
-"${DC[@]}" build --pull
+[ "${AWFORM_DEPLOY_BUILD:-1}" = 0 ] || "${DC[@]}" build --pull
 "${DC[@]}" up -d db
 # audit INF-10 : SAUVEGARDE juste avant toute migration (les migrations n'ont pas de retour arrière)
 for i in $(seq 1 30); do
@@ -155,6 +157,7 @@ echo "$AWFORM_VERSION" > "$CONF/version-en-service"
 "$PROD/env-check.sh" "$ENVF"
 
 # ---------------------------------------------------------------- 4. démarrage automatique et sauvegarde nocturne
+if [ "${AWFORM_DEPLOY_SYSTEME:-1}" = 1 ]; then
 sudo tee /etc/systemd/system/awform.service >/dev/null <<EOF
 [Unit]
 Description=AWFORM (Docker Compose)
@@ -206,6 +209,7 @@ sudo systemctl start awform-backup.timer
 # pare-feu : 80 et 443 depuis le réseau local seulement (SSH déjà autorisé)
 sudo ufw allow from "$LAN" to any port 80 proto tcp >/dev/null
 sudo ufw allow from "$LAN" to any port 443 proto tcp >/dev/null
+fi
 
 # ---------------------------------------------------------------- 5. démonstration
 if [ "$DEMO" = 1 ]; then
@@ -222,7 +226,12 @@ EOF
   # shellcheck source=/dev/null
   . "$DEMOF"
   set +a
-  OUT="$("${DC[@]}" --profile outils run --rm -T -e AWFORM_DEMO=1 -e AWFORM_DEMO_PASSWORD -e AWFORM_DEMO_TAG -e AWFORM_DEMO_PIN demo | tail -1)"
+  # l'enseignant de démonstration a un second facteur : son secret est chiffré avec la clé de l'API, donnée
+  # à CETTE seule exécution (le périmètre « outils » ne la reçoit pas : moindre privilège)
+  AWFORM_SECRET_KEY="$(grep '^AWFORM_SECRET_KEY=' "$ENVF" | cut -d= -f2-)"
+  export AWFORM_SECRET_KEY
+  OUT="$("${DC[@]}" --profile outils run --rm -T -e AWFORM_DEMO=1 -e AWFORM_DEMO_PASSWORD -e AWFORM_DEMO_TAG -e AWFORM_DEMO_PIN -e AWFORM_SECRET_KEY demo | tail -1)"
+  unset AWFORM_SECRET_KEY
   if echo "$OUT" | grep -q '"demo":"creee"'; then
     echo "$OUT" > "$CONF/demo-acces.json"
     echo "démonstration créée (identifiants : $CONF/demo-acces.json)"

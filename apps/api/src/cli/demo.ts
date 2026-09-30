@@ -64,7 +64,9 @@ const call = async (method: 'GET' | 'POST' | 'PUT', url: string, cookie = '', pa
     method,
     url,
     ...(payload ? { payload } : {}),
-    headers: { 'x-awform': '1', ...(cookie ? { cookie } : {}) },
+    // code parent de démonstration toujours joint : exigé pour les accords donnés pour un enfant (audits
+    // SEC-3, MIN-4), ignoré ailleurs
+    headers: { 'x-awform': '1', 'x-parent-pin': PIN, ...(cookie ? { cookie } : {}) },
   });
   if (r.statusCode >= 400) throw new Error(`${method} ${url} → ${r.statusCode} ${r.body}`);
   return r;
@@ -277,8 +279,14 @@ try {
           code: cls.code,
           consent: true,
         });
+      // leçon ad1.l05 des livres ; à défaut (contenu réduit), la dernière leçon d'ad1 de l'édition
+      const edNow = await currentEdition(h.db);
+      const ad1 = edNow
+        ? (await listUnits(h.db, edNow.id, 'ad1')).filter((u) => u.kind === 'lecon')
+        : [];
+      const adLesson = ad1.find((u) => u.id === 'ad1.l05')?.id ?? ad1.at(-1)?.id ?? 'ad1.l05';
       await call('POST', `/api/v1/tutor/${adultId}/ask`, adultC, {
-        unitId: 'ad1.l05',
+        unitId: adLesson,
         action: 'question',
         text: 'Est-ce que je peux faire mes ablutions avec des chaussettes ?',
       });
