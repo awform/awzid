@@ -31,6 +31,16 @@ Migrations ajoutées : `0022_carnet.sql`, `0023_codes_activation.sql` (droits `r
 
 Chaque branche part de la précédente ; détails dans `JOURNAL_DEV.md`, état V1 dans `ECARTS.md`.
 
+### Suite V1-b (branche `suite-v1-b`, créée depuis `suite-v1` au commit `d0efd2f`, laissée intacte)
+
+| Étape | Commits | Contenu | Tests ajoutés |
+|---|---|---|---|
+| A — e2e dans le conteneur | `2217cad` | Chromium local par `E2E_CHROMIUM` (sans effet sur la VM) ; `suite-v1.spec.ts` **3/3 verts** (défauts des scénarios corrigés : fuseau horaire de la visio, code « mal saisi » dont le contrôle était juste) ; `lot16.spec.ts` mis à jour (code parent exigé depuis SEC-3) ; liste des e2e qui passent sans les livres et de ceux qui en dépendent (journal) ; e2e du carnet : impossible sans leçon de religion (non inventée) | — |
+| B — Lot 24 (V1-h) | `2cd71ba` | charge : scénario k6 + lanceur Node sans dépendance, **p95 < 500 ms** sur toutes les routes chaudes à 20 et 100 utilisateurs, sauf la connexion à 100 connexions simultanées (805 ms, argon2id) ; **grille RGAA 4.1** (`RGAA.md`) ; corrigés : lien d'évitement, focus visible, titres des tableaux | `charge.test.ts`, `rgaa.test.ts`, `a11y.spec.ts` étendu (arabe, messagerie, sourates, activation, onglets) |
+| C — Récital de hifẓ (V1-e) | `f431b19` | séance planifiée, **tirage au sort par le serveur** dans le carnet, barème existant → /20, mention, **note Coran /15** ; publication = résultat officiel qui ouvre l'attestation de hifẓ ; vue famille (étoile pour l'enfant) ; migration `0024` ; D15, D16 | hifz 4, API 10, web 9, e2e `recital.spec.ts` |
+| D — QUA-3 | `e2c2a71`, `974a090`, `65d77ea`, `03dec20`, `30caf97`, `026b97d` | découpage sans changement de comportement : `app.ts`, `auth/routes.ts`, `school.ts`, page de la classe, lecteur de leçon ; mêmes 150 routes avant et après | e2e `qua3.spec.ts` |
+| E — Tableau « école » et revue | `5444f9d` | synthèse de toutes les classes de l'enseignant (comptes seulement, pas de rôle direction : D15) ; revue adverse : garde-fou du lanceur de charge | API 5, web 1 |
+
 ### Corrections d'audit (branche `corrections-audit`, partie de `lot21-wip`)
 
 Les **73 constats** de l'audit sont traités, dans l'ordre demandé, **un commit par constat** (identifiant en tête
@@ -61,10 +71,11 @@ atomiques et droits appliqués (`AWFORM_DROITS=on`).
 | `lot20-wip` | `f53df9b` |
 | `lot21-wip` | `70a9e6b` |
 | `corrections-audit` | `844cd95` (inchangée depuis, en attente de vérification) |
-| `suite-v1` | voir `git log -1 origin/suite-v1` (lots 21, 22, 23, 25 au-dessus de `corrections-audit`) |
+| `suite-v1` | `d0efd2f` (lots 21, 22, 23, 25 au-dessus de `corrections-audit`) |
+| `suite-v1-b` | voir `git log -1 origin/suite-v1-b` (au-dessus de `suite-v1`) |
 
 Ordre de fusion conseillé : `lot17-wip` → … → `lot21-wip` → `corrections-audit` → `suite-v1` (chacune contient la
-précédente ; fusionner `suite-v1` suffit à tout prendre).
+précédente ; fusionner `suite-v1-b` suffit à tout prendre).
 
 ## 3. Tests
 
