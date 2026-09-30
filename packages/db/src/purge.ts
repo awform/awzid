@@ -101,6 +101,7 @@ export async function purgeRetention(
   journal: number;
   sessions: number;
   paiements: number;
+  messages: number;
 }> {
   const ago = (days: number) => new Date(now.getTime() - days * DAY);
   const count = (r: { rowCount: number | null }) => r.rowCount ?? 0;
@@ -140,5 +141,9 @@ export async function purgeRetention(
         ),
       ),
   );
-  return { questionsTuteur, alertesTuteur, journal, sessions, paiements };
+  // messagerie (lot 21, §2.12.7) : 12 mois après la fin de l'année scolaire (31 juillet) — décision D11
+  const y = now.getUTCFullYear();
+  const cutoff = new Date(Date.UTC(now.getTime() >= Date.UTC(y, 7, 1) ? y - 1 : y - 2, 7, 1));
+  const messages = count(await db.delete(t.message).where(lt(t.message.createdAt, cutoff)));
+  return { questionsTuteur, alertesTuteur, journal, sessions, paiements, messages };
 }

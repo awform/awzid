@@ -78,6 +78,8 @@ grep -q '^AWFORM_RECITATION_KEY=' "$ENVF" || echo "AWFORM_RECITATION_KEY=v1:$(rn
 # signature des certificats (lot 20) : graine Ed25519, jamais hors du périmètre de l'API ; la changer rend
 # « invalide » la signature des certificats déjà délivrés (garder l'ancienne dans le coffre du client)
 grep -q '^AWFORM_CERT_SIGN_KEY=' "$ENVF" || echo "AWFORM_CERT_SIGN_KEY=v1:$(rnd 32)" >> "$ENVF"
+# messagerie encadrée (lot 21) : clé de chiffrement des messages et pièces jointes (API seulement)
+grep -q '^AWFORM_MESSAGE_KEY=' "$ENVF" || echo "AWFORM_MESSAGE_KEY=v1:$(rnd 32)" >> "$ENVF"
 if ! grep -q '^AWFORM_VAPID_PRIVATE=' "$ENVF"; then
   VK="$(mktemp)"
   openssl ecparam -name prime256v1 -genkey -noout -out "$VK"

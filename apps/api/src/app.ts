@@ -40,6 +40,7 @@ import { registerToday } from './today.js';
 import { registerSchool } from './school.js';
 import { registerActivities } from './activities.js';
 import { recitationKeyFromEnv, registerRecitations } from './recitations.js';
+import { messageKeyFromEnv, registerMessagerie } from './messagerie.js';
 import { registerPush } from './push.js';
 import { registerRelais } from './relais.js';
 import { registerCorrections } from './corrections.js';
@@ -62,6 +63,8 @@ export interface AppOptions {
   tutor?: TutorSetup;
   /** clé de chiffrement des récitations envoyées (tests) ; sinon AWFORM_RECITATION_KEY ; null : envoi fermé */
   recitationKey?: RecitationKey | null;
+  /** clé de chiffrement des messages (tests) ; sinon AWFORM_MESSAGE_KEY ; null : messagerie fermée */
+  messageKey?: RecitationKey | null;
   /** stockage des certificats de Caddy, en lecture (relais d'école) ; sinon AWFORM_RELAIS_CERTS */
   relaisCertsDir?: string | null;
   /** clé de signature des certificats (tests) ; sinon AWFORM_CERT_SIGN_KEY ; null : certificats non signés */
@@ -163,6 +166,11 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerHifz(app, db, edition);
   registerLibrary(app, db, edition);
   registerTutor(app, db, edition, opts.tutor);
+  registerMessagerie(
+    app,
+    db,
+    opts.messageKey === undefined ? messageKeyFromEnv() : opts.messageKey,
+  );
   const rights = registerBilling(app, db, opts.billing);
   registerAdmin(app, db);
   registerToday(app, db, edition);

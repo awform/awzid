@@ -98,6 +98,8 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
   tutor_alert: ['DELETE'],
   session: ['DELETE'],
   billing_checkout: ['DELETE'],
+  // lot 21 : conservation des messages (12 mois après l'année scolaire)
+  message: ['DELETE'],
   certificate: ['SELECT', 'UPDATE'],
   // lot 16 : effacement des récitations échues, envoi des notifications
   recitation_upload: ['SELECT', 'DELETE'],
@@ -117,6 +119,7 @@ export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
   tutor_alert: ['handled_at', 'created_at'],
   session: ['expires_at', 'revoked_at'],
   billing_checkout: ['status', 'created_at'],
+  message: ['created_at'],
 };
 
 /**

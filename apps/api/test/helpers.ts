@@ -106,6 +106,7 @@ export async function setup(
     db: h.db,
     secretKey: randomBytes(32),
     recitationKey: parseRecitationKey(`v1:${randomBytes(32).toString('hex')}`),
+    messageKey: parseRecitationKey(`v1:${randomBytes(32).toString('hex')}`),
     relaisCertsDir: null,
     ...opts,
   });
@@ -141,6 +142,7 @@ export async function setupEdition(
     db: h.db,
     secretKey: randomBytes(32),
     recitationKey: parseRecitationKey(`v1:${randomBytes(32).toString('hex')}`),
+    messageKey: parseRecitationKey(`v1:${randomBytes(32).toString('hex')}`),
     relaisCertsDir: null,
     ...opts,
   });
