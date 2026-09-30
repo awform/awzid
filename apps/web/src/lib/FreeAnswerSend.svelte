@@ -111,7 +111,7 @@
     flex-basis: 100%;
     margin: 0;
     padding: 6px 10px;
-    border-left: 4px solid var(--ok-ink);
+    border-inline-start: 4px solid var(--ok-ink);
     background: var(--ok-bg);
   }
   .error {

@@ -57,6 +57,11 @@ body {
   line-height: var(--line-height);
 }
 
+/* lot 25 : interface en arabe (page entière de droite à gauche) : police arabe pour les textes d'interface */
+:root[lang='ar'] body {
+  font-family: var(--font-ar), var(--font-ui);
+}
+
 /* arabe courant : Noto Naskh Arabic, de droite à gauche, isolé du français */
 .ar {
   font-family: var(--font-ar);

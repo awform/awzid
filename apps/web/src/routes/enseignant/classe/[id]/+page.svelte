@@ -1222,7 +1222,7 @@
     padding-bottom: 8px;
   }
   .marks {
-    padding-left: 12px;
+    padding-inline-start: 12px;
   }
   input,
   select {
@@ -1264,11 +1264,11 @@
   td {
     border-bottom: 1px solid var(--line);
     padding: 6px;
-    text-align: left;
+    text-align: start;
     vertical-align: top;
   }
   td.num {
-    text-align: right;
+    text-align: end;
     font-variant-numeric: tabular-nums;
   }
   .actions {

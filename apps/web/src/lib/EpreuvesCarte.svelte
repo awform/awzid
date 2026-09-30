@@ -59,13 +59,13 @@
   ul {
     display: grid;
     gap: 8px;
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
   }
   .small {
     font-size: 0.9rem;
     margin: 4px 0;
   }
   .revoir {
-    padding-left: 1.2em;
+    padding-inline-start: 1.2em;
   }
 </style>

@@ -129,7 +129,7 @@
     margin: 0;
     padding: 8px 12px;
     background: var(--sand);
-    border-left: 4px solid var(--teal);
+    border-inline-start: 4px solid var(--teal);
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }

@@ -234,7 +234,7 @@
   .levels th {
     padding: 8px 6px;
     border-bottom: 1px solid var(--line);
-    text-align: left;
+    text-align: start;
     vertical-align: middle;
   }
   .act {

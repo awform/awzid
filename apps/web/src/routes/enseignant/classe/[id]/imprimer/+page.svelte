@@ -135,10 +135,10 @@
   td {
     border: 1px solid var(--line);
     padding: 4px 6px;
-    text-align: left;
+    text-align: start;
   }
   td.num {
-    text-align: right;
+    text-align: end;
     font-variant-numeric: tabular-nums;
   }
   .small {

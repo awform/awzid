@@ -803,7 +803,7 @@
   .pos {
     position: absolute;
     top: 4px;
-    left: 8px;
+    inset-inline-start: 8px;
     font-size: 0.8rem;
     color: var(--ink2);
   }
