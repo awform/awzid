@@ -3,13 +3,14 @@
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
   import { note, suraName, type Counters } from '@awform/hifz';
-  import type { RenderedDoc } from '@awform/school';
   import { localIso } from '$lib/hifz';
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
   import { call, fetchMe, type Me } from '$lib/session';
   import CorrectionsClasse from '$lib/CorrectionsClasse.svelte';
   import EpreuvesClasse from '$lib/EpreuvesClasse.svelte';
   import MessagerieClasse from '$lib/MessagerieClasse.svelte';
+  import CertificatsClasse from '$lib/CertificatsClasse.svelte';
+  import EcouteClasse from '$lib/EcouteClasse.svelte';
   import RecitalClasse from '$lib/RecitalClasse.svelte';
   import SouratesClasse from '$lib/SouratesClasse.svelte';
 
@@ -77,14 +78,6 @@
     assignments: Assignment[];
     rows: Row[];
   }
-  interface Cert {
-    id: string;
-    number: string;
-    kind: string;
-    pupilId: string | null;
-    subject: string;
-    issuedAt: string;
-  }
 
   const TABS = [
     'eleves',
@@ -109,7 +102,6 @@
     [],
   );
   let tb = $state<Tableau | null>(null);
-  let certs = $state<Cert[]>([]);
   let msg = $state('');
   let error = $state('');
   const id = $derived(page.params.id ?? '');
@@ -151,13 +143,6 @@
   });
   const live = $derived(note(counters));
   const FIELDS = ['aides', 'hesitations', 'sauts', 'oublis', 'claires', 'discretes'] as const;
-  // certificats
-  let cert = $state({ pupilId: '', kind: 'niveau', part: '', gender: '' });
-  let extra = $state<Record<string, string>>({});
-  let preview = $state<{
-    eligible: { ok: boolean; raison?: string; aConfirmer?: string };
-    document: RenderedDoc;
-  } | null>(null);
 
   onMount(async () => {
     me = await fetchMe();
@@ -190,9 +175,6 @@
       units = u.data?.units ?? [];
     } else units = [];
     await loadTableau();
-    await loadRecs();
-    const c = await call<{ certificates: Cert[] }>('GET', `/ecole/classes/${id}/certificats`);
-    certs = c.data?.certificates ?? [];
   }
   async function loadTableau() {
     const r = await call<Tableau>('GET', `/ecole/classes/${id}/tableau`);
@@ -370,105 +352,6 @@
   const pct = (x: number | null | undefined) =>
     x === null || x === undefined ? '—' : fmtNumber(x);
 
-  // ---------------------------------------------------------------- écoute des récitations (lot 16)
-  interface Rec {
-    id: string;
-    pseudonym: string;
-    part: string;
-    createdAt: string;
-    grade: { note: { total: number } } | null;
-  }
-  let recs = $state<Rec[]>([]);
-  let ecouteJours = $state(14);
-  let audioUrl = $state<Record<string, string>>({});
-  let noteFor = $state<string | null>(null);
-  async function loadRecs() {
-    const r = await call<{ jours: number; recitations: Rec[] }>(
-      'GET',
-      `/ecole/classes/${id}/recitations`,
-    );
-    recs = r.data?.recitations ?? [];
-    ecouteJours = r.data?.jours ?? 14;
-  }
-  /** l'audio est déchiffré par le serveur pour l'enseignant de la classe seulement, jamais mis en cache */
-  async function ecouter(rid: string) {
-    const r = await fetch(`/api/v1/ecole/recitations/${rid}/audio`, { credentials: 'same-origin' });
-    if (!r.ok) return done(false, 'introuvable', '');
-    audioUrl = { ...audioUrl, [rid]: URL.createObjectURL(await r.blob()) };
-  }
-  function ouvrirNote(rid: string) {
-    noteFor = rid;
-    counters = {
-      aides: 0,
-      hesitations: 0,
-      sauts: 0,
-      oublis: 0,
-      claires: 0,
-      discretes: 0,
-      fluidite: 4,
-    };
-  }
-  async function noter(e: SubmitEvent, rid: string) {
-    e.preventDefault();
-    const r = await call<{ note: { total: number; mention: string } }>(
-      'POST',
-      `/ecole/recitations/${rid}/note`,
-      { counters },
-    );
-    if (done(r.ok, r.code, t('ecoute.note_ok', { note: fmtNumber(r.data?.note.total ?? 0) }))) {
-      noteFor = null;
-      await loadRecs();
-    }
-  }
-  // ---------------------------------------------------------------- certificats
-  const certPupil = $derived(pupils.find((p) => p.id === cert.pupilId) ?? null);
-  async function certCall(apercu: boolean) {
-    if (!cert.pupilId) return;
-    const body = {
-      kind: cert.kind,
-      ...(cert.kind === 'hifz' ? { part: cert.part.trim() } : {}),
-      ...(cert.gender ? { gender: cert.gender } : {}),
-      fields: Object.fromEntries(Object.entries(extra).filter(([, v]) => v.trim())),
-      apercu,
-      ...(confirmerCc ? { confirmerCcPartiel: true } : {}),
-    };
-    return call<{
-      eligible: { ok: boolean; raison?: string; aConfirmer?: string };
-      document: RenderedDoc;
-      certificate: Cert;
-    }>('POST', `/ecole/pupils/${cert.pupilId}/certificats`, body);
-  }
-  /** audit MET-2 : délivrance malgré un contrôle continu partiel, sur confirmation explicite */
-  let confirmerCc = $state(false);
-  async function doPreview(e?: SubmitEvent) {
-    e?.preventDefault();
-    const r = await certCall(true);
-    if (!r) return;
-    if (!r.ok) return done(false, r.code, '');
-    preview = { eligible: r.data!.eligible, document: r.data!.document };
-    for (const k of preview.document.missing) if (!(k in extra)) extra[k] = '';
-    error = '';
-  }
-  async function issue() {
-    const r = await certCall(false);
-    if (!r) return;
-    if (
-      done(r.ok, r.code, t('classe.certificat_ok', { numero: r.data?.certificate.number ?? '' }))
-    ) {
-      preview = null;
-      extra = {};
-      const c = await call<{ certificates: Cert[] }>('GET', `/ecole/classes/${id}/certificats`);
-      certs = c.data?.certificates ?? [];
-    }
-  }
-  const pupilName = (pid: string | null) =>
-    pupils.find((p) => p.id === pid)?.displayName ?? t('classe.retire_de_la_classe');
-  /** libellé d'un champ de modèle (clé brute si le libellé n'existe pas encore) */
-  const champ = (k: string) => {
-    const s = t(`classe.champ_${k}`);
-    return s.startsWith('⟦') ? k : s;
-  };
-  const segText = (l: Array<{ t: string }>) => l.map((s) => s.t).join('');
   /** export CSV (tableur) : téléchargé par l'application (cookie de session, aucun lien public) */
   async function download(quoi: string) {
     const r = await fetch(`/api/v1/ecole/classes/${id}/export.csv?quoi=${quoi}`, {
@@ -1000,178 +883,9 @@
       </form>
     {/if}
   {:else if tab === 'ecoute'}
-    <section class="card" data-testid="ecoute">
-      <h2>{t('ecoute.titre')}</h2>
-      <p class="muted small">{t('ecoute.aide', { n: ecouteJours })}</p>
-      <ul class="plain">
-        {#each recs as r (r.id)}
-          <li class="devoir" data-recitation={r.id}>
-            <div>
-              <strong>{r.pseudonym}</strong> · {r.part} ·
-              <span class="muted small">{fmtDate(r.createdAt, { dateStyle: 'medium' })}</span>
-              {#if r.grade}· {t('envoi.note', { n: r.grade.note.total })}{/if}
-            </div>
-            {#if audioUrl[r.id]}
-              <audio controls src={audioUrl[r.id]} data-testid="ecoute-audio"></audio>
-            {:else}
-              <button
-                type="button"
-                class="small"
-                onclick={() => ecouter(r.id)}
-                data-testid="ecoute-ecouter">{t('ecoute.ecouter')}</button
-              >
-            {/if}
-            {#if noteFor === r.id}
-              <form class="form" onsubmit={(e) => noter(e, r.id)} data-testid="ecoute-note">
-                {#each FIELDS as f (f)}
-                  <label class="count"
-                    ><span>{t(`ens.c_${f}`)}</span>
-                    <input type="number" min="0" max="50" bind:value={counters[f]} /></label
-                  >
-                {/each}
-                <label class="count"
-                  ><span>{t('ens.c_fluidite')}</span>
-                  <input type="number" min="0" max="4" bind:value={counters.fluidite} /></label
-                >
-                <p class="live">
-                  {t('ens.note_calculee', {
-                    memo: fmtNumber(live.memorisation),
-                    tajwid: fmtNumber(live.tajwid),
-                    fluidite: fmtNumber(live.fluidite),
-                    total: fmtNumber(live.total),
-                    mention: t(`hifz.mention_${live.mention}`),
-                  })}
-                </p>
-                <button type="submit" class="primary" data-testid="ecoute-enregistrer"
-                  >{t('ens.enregistrer')}</button
-                >
-              </form>
-            {:else}
-              <button
-                type="button"
-                class="small"
-                onclick={() => ouvrirNote(r.id)}
-                data-testid="ecoute-noter">{t('ecoute.noter')}</button
-              >
-            {/if}
-          </li>
-        {:else}
-          <li class="muted">{t('ecoute.aucune')}</li>
-        {/each}
-      </ul>
-    </section>
+    <EcouteClasse classId={id} {done} />
   {:else}
-    <form class="card form" onsubmit={doPreview} data-testid="certificat-form">
-      <h2>{t('classe.delivrer')}</h2>
-      <p class="muted small">{t('classe.certificat_aide')}</p>
-      <label
-        >{t('classe.eleve')}
-        <select
-          bind:value={cert.pupilId}
-          required
-          data-testid="cert-eleve"
-          onchange={() => (preview = null)}
-        >
-          <option value="" disabled>—</option>
-          {#each pupils as p (p.id)}<option value={p.id}>{p.displayName}</option>{/each}
-        </select></label
-      >
-      <label
-        >{t('classe.type')}
-        <select bind:value={cert.kind} data-testid="cert-type" onchange={() => (preview = null)}>
-          <option value="niveau">{t('classe.cert_niveau')}</option>
-          <option value="hifz">{t('classe.cert_hifz')}</option>
-        </select></label
-      >
-      {#if cert.kind === 'hifz'}
-        <label
-          >{t('classe.passage_aide')}
-          <input bind:value={cert.part} required data-testid="cert-passage" /></label
-        >
-      {/if}
-      <label
-        >{t('classe.genre')}
-        <select bind:value={cert.gender}>
-          <option value="">{certPupil?.gender ? t(`classe.genre_${certPupil.gender}`) : '—'}</option
-          >
-          <option value="f">{t('classe.genre_f')}</option>
-          <option value="m">{t('classe.genre_m')}</option>
-        </select></label
-      >
-      <label
-        >{t('classe.nom_complet')}
-        <input bind:value={extra.prenom_nom} maxlength="120" data-testid="cert-nom" /></label
-      >
-      {#each Object.keys(extra).filter((k) => k !== 'prenom_nom') as k (k)}
-        <label>{champ(k)} <input bind:value={extra[k]} maxlength="200" data-champ={k} /></label>
-      {/each}
-      <button type="submit" data-testid="cert-apercu">{t('classe.apercu')}</button>
-    </form>
-
-    {#if preview}
-      <section class="card" data-testid="cert-preview">
-        {#if !preview.eligible.ok}
-          <p class="warnbox" data-testid="cert-non-eligible">
-            {t('classe.non_eligible', { raison: preview.eligible.raison ?? '' })}
-          </p>
-          {#if preview.eligible.aConfirmer === 'cc_partiel'}
-            <label class="check" data-testid="confirmer-cc"
-              ><input type="checkbox" bind:checked={confirmerCc} onchange={() => doPreview()} />
-              {t('classe.confirmer_cc_partiel')}</label
-            >
-          {/if}
-        {/if}
-        {#if preview.document.missing.length}
-          <p class="warnbox small">
-            {t('classe.champs_manquants', { champs: preview.document.missing.join(', ') })}
-          </p>
-        {/if}
-        {#if preview.document.aValider}<p class="muted small">
-            {t('classe.modele_a_valider')}
-          </p>{/if}
-        <div class="doc">
-          <div>
-            <h3>{preview.document.titleFr}</h3>
-            {#each preview.document.fr as l, i (i)}<p>{segText(l)}</p>{/each}
-          </div>
-          {#if preview.document.titleAr}
-            <div dir="rtl" lang="ar" class="ar">
-              <h3>{preview.document.titleAr}</h3>
-              {#each preview.document.ar as l, i (i)}<p>{segText(l)}</p>{/each}
-            </div>
-          {/if}
-        </div>
-        <button
-          type="button"
-          class="primary"
-          disabled={!preview.eligible.ok || preview.document.missing.length > 0}
-          onclick={issue}
-          data-testid="cert-delivrer">{t('classe.delivrer_numero')}</button
-        >
-      </section>
-    {/if}
-
-    <section class="card">
-      <h2>{t('classe.registre')}</h2>
-      <ul class="plain" data-testid="registre">
-        {#each certs as c (c.id)}
-          <li>
-            <strong>{c.number}</strong> · {pupilName(c.pupilId)} · {c.kind === 'hifz'
-              ? c.subject
-              : c.subject.toUpperCase()} · {fmtDate(c.issuedAt, { dateStyle: 'medium' })}
-            <a
-              href={resolve('/enseignant/certificat/[id]', { id: c.id })}
-              data-testid="imprimer-{c.number}">{t('classe.imprimer')}</a
-            >
-          </li>
-        {:else}
-          <li class="muted">{t('classe.aucun_certificat')}</li>
-        {/each}
-      </ul>
-      <button type="button" onclick={() => download('certificats')} data-testid="export-registre"
-        >{t('classe.export_registre')}</button
-      >
-    </section>
+    <CertificatsClasse classId={id} {pupils} {done} {download} clearError={() => (error = '')} />
   {/if}
 {/if}
 
@@ -1299,20 +1013,6 @@
   }
   .live {
     font-weight: 700;
-  }
-  .doc {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 16px;
-    border: 2px solid var(--gold);
-    border-radius: var(--radius-md);
-    padding: 12px;
-    margin: 8px 0;
-  }
-  .ar {
-    font-family: var(--font-ar);
-    font-size: 1.15rem;
-    line-height: 2;
   }
   .warn {
     color: var(--warn-ink);
