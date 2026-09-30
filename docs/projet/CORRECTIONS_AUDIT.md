@@ -81,3 +81,12 @@ Corrections sur la branche `corrections-audit` (partie de `lot21-wip`), dans l'o
 | A11Y-1 | mineur | Cibles tactiles sous la règle de 48 px du projet | corrigé | c63d1a5 | a11y-cibles.test.ts |
 | CDC-1 | majeur | Affirmations du brief et du journal démenties par le code ou par GitHub | corrigé pour le journal (rectificatifs vérifiables en tête de JOURNAL_DEV) ; brief (branche audit-dossier) à corriger par le chef de projet | voir « CDC-1 » dans git log | commandes citées |
 | CDC-2 | mineur | Fonctionnalités et exigences de test du CDC absentes ou partielles (lots 0-16) | en partie : écarts tenus à jour dans ECARTS.md ; pnpm audit en CI (INF-4), couverture des corrections par des tests dédiés ; restent WebKit dans Playwright, k6, ZAP, seuil de couverture, correction générée sur tous les livres (VM) | | |
+
+## Suivi sur la branche `suite-v1` (30/09/2026)
+
+Aucun nouveau constat. Les garanties issues de l'audit sont conservées et étendues aux lots 21 à 25 :
+PERF-1 (budget : page la plus lourde 111,1 Ko ≤ 150, toutes les pages 222,2 Ko ≤ 300 ; catalogues de langues hors
+du JavaScript), MIN-1 (titulaire mineur : parent requis pour la messagerie et les codes d'activation), SEC-2
+(essais réservés atomiquement : code parent de la signature du carnet, codes d'activation), MIN-8 (durée de
+conservation des messages, D11), RGPD (export complété : carnet, sourates, accès par code), PAY-4 (droits appliqués
+aussi aux niveaux ouverts par code).
