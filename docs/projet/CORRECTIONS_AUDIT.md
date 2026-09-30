@@ -111,3 +111,6 @@ aussi aux niveaux ouverts par code).
 - **Moindre privilège des secrets** (env-scopes) : conservé ; la clé du second facteur n'est donnée qu'à
   l'exécution de démonstration, pas au périmètre « outils ».
 - **CSP** : resserrée (plus de `style-src 'unsafe-inline'`), scan ZAP baseline sans échec (`docs/projet/ZAP.md`).
+- **PAY-1** (course sur un paiement) : garantie étendue au mobile money simulé — même transition atomique ;
+  testée avec Wave, Orange Money et la page simulée en parallèle (un seul traitement), plus l'idempotence d'une
+  notification renvoyée et le contrôle du montant notifié (`apps/api/test/mobile-money.test.ts`).

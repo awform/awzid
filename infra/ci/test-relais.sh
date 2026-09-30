@@ -30,7 +30,13 @@ cleanup() {
   rm -rf "$WORK"
 }
 trap cleanup EXIT
-fail() { echo "ÉCHEC : $*"; exit 1; }
+fail() {
+  echo "ÉCHEC : $*"
+  # diagnostic : état et journaux du relais et de l'entrée du central
+  "${RC[@]}" logs --tail 30 relay 2>/dev/null || true
+  "${DC[@]}" logs --tail 15 caddy 2>/dev/null || true
+  exit 1
+}
 json() { node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const v=process.argv[1].split(".").reduce((o,k)=>o?.[k],JSON.parse(s));console.log(typeof v==="object"?JSON.stringify(v):v)})' "$1"; }
 psql() { "${DC[@]}" exec -T db psql -U awform -d awform -v ON_ERROR_STOP=1 -qtA "$@"; }
 etat() { curl -fsS "$R/relais/etat.json" | json "$1"; }
@@ -55,13 +61,21 @@ JETON="$("${DC[@]}" --profile outils run --rm -T relais creer "École de test" e
 [[ "$JETON" == rel_* ]] || fail "enregistrement du relais"
 AWFORM_RELAIS_SANS_SYSTEME=1 AWFORM_RELAIS_JETON="$JETON" \
   "$ROOT/infra/relais/install.sh" --hote ecole-test.relais.test --amont https://central.test >/dev/null
+# le relais joint le central par le réseau Docker du central, où Caddy répond au nom « central.test »
+# (plus sûr que la passerelle de l'hôte, filtrée sur certaines machines)
+CADDY="$("${DC[@]}" ps -q caddy)"
+NET="$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$k}} {{end}}' "$CADDY" | awk '{print $1}')"
+docker network disconnect "$NET" "$CADDY"
+docker network connect --alias central.test "$NET" "$CADDY"
 cat > "$WORK/relais-test.yml" <<EOF
 services:
   relay:
-    extra_hosts: ['central.test:host-gateway']
+    networks: [default, central]
     environment: { NODE_EXTRA_CA_CERTS: /ca/root.crt }
     volumes: ['$WORK/ca:/ca:ro']
     ports: ['127.0.0.1:3300:3000']
+networks:
+  central: { external: true, name: $NET }
 EOF
 "${RC[@]}" up -d relay >/dev/null 2>&1
 attendre 60 sh -c "curl -fsS $R/relais/etat.json | grep -q '\"enLigne\":true'" || fail "le relais ne joint pas le central"
