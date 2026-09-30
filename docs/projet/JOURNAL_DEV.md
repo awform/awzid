@@ -8,6 +8,26 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Complément D : exploitation et ADR (branche `suite-v1-b`)
+
+- `docs/projet/EXPLOITATION.md` : surveillance (seuils), procédure d'incident (constater, contenir, violation de
+  données : CNIL 72 h / CDP, rétablir, compte rendu), rotation de chaque secret (procédure et conséquence),
+  restauration (contrôle mensuel, restauration complète, serveur perdu), mise à jour, liste de contrôle avant la
+  production. **Chaque commande marquée [testée], [testée CI] ou [non testée]** — testées ici sur une instance
+  jetable : `status.sh`, `smoke.sh`, `backup.sh`, `restore-test.sh`, `restore.sh`, rotation du mot de passe
+  PostgreSQL de l'API (ancien refusé, nouveau accepté), révocation de toutes les sessions, `relais.js creer`,
+  `zap.sh`, `charge.js`.
+- Limite relevée et documentée : **une seule version active** par clé de chiffrement (messages, récitations,
+  signature des certificats) — une rotation rendrait illisibles les données existantes ; trousseau à plusieurs
+  versions à développer avant la première rotation (ADR 0004).
+- `infra/prod/restore-test.sh` : une sauvegarde vide ou incomplète donne un « ÉCHEC » lisible (au lieu d'une
+  erreur SQL brute qui arrêtait le script).
+- **ADR** (`docs/adr/`) : 0002 relais d'école, 0003 signature des certificats, 0004 messagerie chiffrée, 0005
+  codes d'activation, 0006 catalogues de langues à la demande — contexte, décision, conséquences, options
+  écartées, preuves.
+
+---
+
 ## 30/09/2026 — Complément C : documents pour le juriste, brouillons (branche `suite-v1-b`)
 
 - `docs/juridique/` — chacun marqué **« BROUILLON — à valider par un juriste »**, rédigé à partir du code :

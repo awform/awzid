@@ -44,13 +44,14 @@ psql -d awform -c "CREATE DATABASE $TMP" >/dev/null
 STATUS=0
 for tbl in account profile consent attempt hifz_event practice_event quran_verse unit_version edition; do
   live="$(psql -d awform -c "select count(*) from $tbl")"
-  rest="$(psql -d "$TMP" -c "select count(*) from $tbl")"
   flag="ok"
+  # table absente de la sauvegarde (base vide ou incomplète) : échec lisible, pas d'erreur SQL brute
+  rest="$(psql -d "$TMP" -c "select count(*) from $tbl" 2>/dev/null)" || { rest=absente; flag="ÉCHEC"; STATUS=1; }
   # la base en service peut avoir avancé depuis la sauvegarde : jamais PLUS dans la restauration
   if [ "$tbl" = quran_verse ] && [ "$rest" != 6236 ]; then flag="ÉCHEC"; STATUS=1; fi
   # seuils minimaux (audit INF-8) : une base vide ou sans contenu publié ne « réussit » pas
-  case "$tbl" in edition | unit_version) [ "$rest" -ge 1 ] || { flag="ÉCHEC"; STATUS=1; } ;; esac
-  if [ "$rest" -gt "$live" ]; then flag="ÉCHEC"; STATUS=1; fi
+  case "$tbl" in edition | unit_version) [ "$rest" != absente ] && [ "$rest" -ge 1 ] || { flag="ÉCHEC"; STATUS=1; } ;; esac
+  if [ "$rest" = absente ] || [ "$rest" -gt "$live" ]; then flag="ÉCHEC"; STATUS=1; fi
   printf '%-16s en service %8s   restaurée %8s   %s\n' "$tbl" "$live" "$rest" "$flag"
 done
 LOG="$DEST/backup.log"
