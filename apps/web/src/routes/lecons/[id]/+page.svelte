@@ -9,6 +9,7 @@
   import ReligionLesson from '$lib/religion/ReligionLesson.svelte';
   import TutorPanel from '$lib/TutorPanel.svelte';
   import Illus from '$lib/Illus.svelte';
+  import LettresLecon from '$lib/LettresLecon.svelte';
   import Scene from '$lib/Scene.svelte';
   import Sprite from '$lib/Sprite.svelte';
   import { arabicSize, unitLabel } from '$lib/api';
@@ -238,65 +239,12 @@
       </div>
     {/if}
 
-    {#if !isEval && lettres.some((x) => x.nom_ar)}
-      <section class="blk">
-        <h2>
-          <Ar text="أَكْتَشِفُ" />
-          <span>{(L.decouvre_fr as string) ?? t('lecon.je_decouvre')}</span>
-        </h2>
-        {#if L.decouvre_ar}<Ar tag="p" text={L.decouvre_ar as string} />{/if}
-        <div class="letters">
-          {#each lettres as x, i (i)}
-            <div class="fcard b{i % 4}">
-              <span class="pos">{i + 1}</span>
-              <span class="big c{i % 4}" lang="ar">{x.l}</span>
-              {#if x.nom_ar}<span class="ar c{i % 4}" lang="ar">{x.nom_ar}</span>{/if}
-              {#if x.points_ar}<span class="ar dots" lang="ar">{x.points_ar}</span>{/if}
-              <span class="fr">{x.nom_fr ?? ''}{x.points_fr ? ` · ${x.points_fr}` : ''}</span>
-            </div>
-          {/each}
-        </div>
-      </section>
-    {/if}
-
-    {#if !isEval && lettres.some((x) => x.formes)}
-      <section class="blk">
-        <h2 id="titre-formes">
-          <Ar text="أَشْكَالُ الْحَرْفِ" /> <span>{t('lecon.formes')}</span>
-        </h2>
-        <div class="tw">
-          <table class="forms" dir="rtl" aria-labelledby="titre-formes">
-            <thead
-              ><tr
-                ><th></th><th
-                  ><Ar text="مُنْفَصِلٌ" /><br /><span class="fr">{t('lecon.forme_isolee')}</span
-                  ></th
-                ><th
-                  ><Ar text="فِي الْأَوَّلِ" /><br /><span class="fr">{t('lecon.forme_debut')}</span
-                  ></th
-                ><th
-                  ><Ar text="فِي الْوَسَطِ" /><br /><span class="fr">{t('lecon.forme_milieu')}</span
-                  ></th
-                ><th
-                  ><Ar text="فِي الْآخِرِ" /><br /><span class="fr">{t('lecon.forme_fin')}</span
-                  ></th
-                ></tr
-              ></thead
-            >
-            <tbody>
-              {#each lettres.filter((x) => x.formes) as x, i (i)}
-                <tr>
-                  <td class="ar c{lettres.indexOf(x) % 4}" lang="ar">{x.l}</td>
-                  {#each x.formes ?? [] as f, k (k)}<td
-                      class="ar c{lettres.indexOf(x) % 4}"
-                      lang="ar">{f}</td
-                    >{/each}
-                </tr>
-              {/each}
-            </tbody>
-          </table>
-        </div>
-      </section>
+    {#if !isEval}
+      <LettresLecon
+        {lettres}
+        decouvreAr={L.decouvre_ar as string | undefined}
+        decouvreFr={L.decouvre_fr as string | undefined}
+      />
     {/if}
 
     {#if L.notion || R.syllabes || R.ligne || phrases.length || R.vedette || R.non_prepare}
@@ -824,16 +772,6 @@
   .forms {
     border-collapse: collapse;
     width: 100%;
-  }
-  .forms td,
-  .forms th {
-    border: 1px solid var(--line);
-    padding: 4px 8px;
-    text-align: center;
-  }
-  .forms td {
-    font-size: calc(var(--ar-size) + 6px);
-    text-decoration: none;
   }
   .syl {
     display: flex;
