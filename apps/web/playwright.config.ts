@@ -73,6 +73,8 @@ export default defineConfig({
         AWFORM_LANGUES_PREPARATION: 'on',
         // lot 16 : clé de chiffrement des récitations envoyées (tirée au hasard) ; clé publique VAPID factice
         AWFORM_RECITATION_KEY: `v1:${randomBytes(32).toString('hex')}`,
+        // lot 21 : clé de chiffrement des messages école ↔ famille (tirée au hasard)
+        AWFORM_MESSAGE_KEY: `v1:${randomBytes(32).toString('hex')}`,
         AWFORM_VAPID_PUBLIC: `B${'A'.repeat(86)}`,
       },
       reuseExistingServer: false,
