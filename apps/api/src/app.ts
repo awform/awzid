@@ -5,32 +5,13 @@
  * tiers ne peut pas l'envoyer sans autorisation CORS, que l'API ne donne jamais) ; cookie SameSite=Lax.
  */
 import Fastify, { type FastifyInstance } from 'fastify';
-import type { Lesson } from '@awform/content';
 import type { TutorSetup } from '@awform/tutor';
 import type { BillingSetup } from '@awform/billing';
 import { neededIllustrations } from './needed.js';
-import { getPack } from './packs.js';
-import { ownsProfile, registerAuth } from './auth/routes.js';
+import { registerAuth } from './auth/routes.js';
 
 export { neededIllustrations };
-import {
-  currentEdition,
-  getUnitForStudent,
-  illustrationsFor,
-  levelProgress,
-  listLevels,
-  listUnits,
-  ping,
-  recordAttempts,
-  recordHifzEvents,
-  recordPractice,
-  dashboard,
-  publicUnit,
-  type AttemptInput,
-  type PracticeInput,
-  type Db,
-  type HifzEventInput,
-} from '@awform/db';
+import { currentEdition, ping, type Db } from '@awform/db';
 import { registerHifz } from './hifz.js';
 import { registerLibrary } from './library.js';
 import { registerTutor } from './tutor.js';
@@ -47,6 +28,9 @@ import { registerCorrections } from './corrections.js';
 import { registerActivation } from './activation.js';
 import { registerCarnet } from './carnet.js';
 import { registerRecital } from './recital.js';
+import { registerContent } from './contenu.js';
+import { notFound } from './routes-common.js';
+import { registerProgress } from './progression.js';
 import { registerEpreuves } from './epreuves.js';
 import { registerVerification } from './verification.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
@@ -76,10 +60,6 @@ export interface AppOptions {
   billing?: BillingSetup;
 }
 
-const LEVEL_CODE = '^[a-z]{2,3}[0-9]{1,2}$';
-const UNIT_ID = '^[a-z]{2,3}[0-9]{1,2}\\.l[0-9]{2}$';
-const UUID = '^[0-9a-fA-F-]{36}$';
-
 /**
  * Journaux (audit MIN-13) : chemin sans chaîne de requête, identifiants remplacés par « :id », adresse IP
  * tronquée (IPv4 : dernier octet à 0 ; IPv6 : trois premiers groupes). Aucun e-mail, aucun identifiant d'élève.
@@ -101,10 +81,6 @@ export const logSerializers = {
     remoteAddress: truncIp(req.ip),
   }),
 };
-
-function notFound(message: string) {
-  return { error: { code: 'introuvable', message } };
-}
 
 export function buildApp(opts: AppOptions): FastifyInstance {
   const hops = /^[1-9]$/.test(process.env.TRUST_PROXY ?? '') ? Number(process.env.TRUST_PROXY) : 0;
@@ -210,304 +186,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     };
   });
 
-  app.get('/api/v1/levels', async (_req, reply) => {
-    const ed = await edition();
-    if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
-    return { edition: ed.code, levels: await listLevels(db, ed.id) };
-  });
-
-  app.get<{ Params: { code: string } }>(
-    '/api/v1/levels/:code/units',
-    {
-      schema: {
-        params: {
-          type: 'object',
-          properties: { code: { type: 'string', pattern: LEVEL_CODE } },
-          required: ['code'],
-        },
-      },
-    },
-    async (req, reply) => {
-      const ed = await edition();
-      if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
-      const units = await listUnits(db, ed.id, req.params.code);
-      if (units.length === 0)
-        return reply.code(404).send(notFound(`niveau ${req.params.code} absent de l'édition`));
-      return { edition: ed.code, level: req.params.code, units };
-    },
-  );
-
-  app.get<{ Params: { id: string } }>(
-    '/api/v1/units/:id',
-    {
-      schema: {
-        params: {
-          type: 'object',
-          properties: { id: { type: 'string', pattern: UNIT_ID } },
-          required: ['id'],
-        },
-      },
-    },
-    async (req, reply) => {
-      const ed = await edition();
-      if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
-      const unit = await getUnitForStudent(db, ed.id, req.params.id);
-      if (!unit) return reply.code(404).send(notFound(`leçon ${req.params.id} introuvable`));
-      // audit PAY-4 : droits appliqués au contenu quand AWFORM_DROITS=on (leçons ouvertes de la formule)
-      const e = await rights.of(req.auth);
-      if (!rights.canOpen(e, unit))
-        return reply.code(403).send({ error: { code: 'droits_insuffisants', plan: e?.plan } });
-      const illustrations = await illustrationsFor(
-        db,
-        ed.id,
-        neededIllustrations(unit.lesson as Lesson),
-      );
-      return { edition: ed.code, unit, illustrations };
-    },
-  );
-
-  // ---------------------------------------------------------------- paquets de niveau (hors ligne)
-
-  /** Manifeste : pour chaque niveau, empreinte du paquet, poids compressé, empreinte de chaque leçon. */
-  app.get('/api/v1/packs', async (_req, reply) => {
-    const ed = await edition();
-    if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
-    const levels = await listLevels(db, ed.id);
-    const packs = [];
-    for (const l of levels) {
-      const p = await getPack(db, ed.id, ed.code, l.code);
-      if (!p) continue;
-      packs.push({
-        level: l.code,
-        titleFr: l.titleFr,
-        codeFr: l.codeFr,
-        hash: p.pack.hash,
-        units: p.perUnit,
-        illustrations: Object.keys(p.pack.illustrations).length,
-        rawBytes: p.rawBytes,
-        bytes: p.brotliBytes,
-      });
-    }
-    return { edition: ed.code, packs };
-  });
-
-  /** Paquet complet d'un niveau (ETag = empreinte ; 304 si l'appareil l'a déjà). */
-  app.get<{ Params: { code: string } }>(
-    '/api/v1/packs/:code',
-    {
-      schema: {
-        params: {
-          type: 'object',
-          properties: { code: { type: 'string', pattern: LEVEL_CODE } },
-          required: ['code'],
-        },
-      },
-    },
-    async (req, reply) => {
-      const ed = await edition();
-      if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
-      // audit PAY-4 : le paquet hors ligne (niveau entier) est réservé aux formules qui l'incluent
-      const e = await rights.of(req.auth);
-      // lot 23 : un code d'activation ouvre aussi le paquet hors ligne de SON niveau (livre acheté)
-      if (e && !e.droits.horsLigne && !e.packs?.includes(req.params.code))
-        return reply.code(403).send({ error: { code: 'hors_ligne_reserve', plan: e.plan } });
-      const p = await getPack(db, ed.id, ed.code, req.params.code);
-      if (!p)
-        return reply.code(404).send(notFound(`niveau ${req.params.code} absent de l'édition`));
-      const etag = `"${p.pack.hash}"`;
-      reply.header('ETag', etag).header('Cache-Control', 'no-cache');
-      if (req.headers['if-none-match'] === etag) return reply.code(304).send();
-      reply.type('application/json; charset=utf-8').header('Vary', 'Accept-Encoding');
-      // paquet déjà compressé en Brotli (qualité 11) une fois pour toutes
-      if (/\bbr\b/.test(String(req.headers['accept-encoding'] ?? '')))
-        return reply.header('Content-Encoding', 'br').send(p.brotli);
-      return reply.send(p.json);
-    },
-  );
-
-  // ---------------------------------------------------------------- tentatives et progression (connecté)
-
-  app.post<{ Body: { events: AttemptInput[] } }>(
-    '/api/v1/attempts',
-    {
-      schema: {
-        body: {
-          type: 'object',
-          required: ['events'],
-          properties: {
-            events: {
-              type: 'array',
-              maxItems: 500,
-              // audit SEC-8 : champs connus seulement (les autres sont retirés), longueurs bornées ; les
-              // valeurs sont vérifiées ensuite événement par événement (un fautif est refusé SEUL, OFF-2)
-              items: {
-                type: 'object',
-                additionalProperties: false,
-                properties: {
-                  id: { type: 'string', maxLength: 40 },
-                  profileId: { type: 'string', maxLength: 40 },
-                  unitId: { type: 'string', maxLength: 40 },
-                  eventType: { type: 'string', maxLength: 20 },
-                  exerciseId: { type: 'string', maxLength: 80 },
-                  exerciseHash: { type: 'string', maxLength: 128 },
-                  itemIndex: {},
-                  response: {},
-                  deviceAt: { type: 'string', maxLength: 40 },
-                  deviceId: { type: 'string', maxLength: 64 },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    async (req, reply) => {
-      if (!req.auth) return reply.code(401).send({ error: { code: 'non_connecte' } });
-      const ed = await edition();
-      if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
-      const owned = new Map<string, boolean>();
-      const allowed: AttemptInput[] = [];
-      const hifz: HifzEventInput[] = [];
-      const practice: PracticeInput[] = [];
-      const refused: Array<{ id: string; reason: string; code?: string }> = [];
-      for (const e of req.body.events) {
-        // audit SEC-8 : un événement ne dépasse jamais 8 Ko de JSON (réponse, détails compris)
-        if (JSON.stringify(e ?? null).length > 8000) {
-          refused.push({ id: String(e?.id ?? ''), reason: 'événement trop volumineux' });
-          continue;
-        }
-        const pid = String(e?.profileId ?? '');
-        if (!owned.has(pid))
-          owned.set(
-            pid,
-            /^[0-9a-f-]{36}$/i.test(pid) && (await ownsProfile(db, req.auth.accountId, pid)),
-          );
-        if (!owned.get(pid)) {
-          // code stable : l'appareil GARDE ces réponses (autre compte sur un appareil partagé, audit OFF-3)
-          refused.push({
-            id: String(e?.id ?? ''),
-            reason: 'profil non autorisé',
-            code: 'autre_compte',
-          });
-          continue;
-        }
-        // événements du hifẓ : même file hors ligne, journal séparé
-        if ((e.eventType as string) === 'hifz') {
-          const r = (e.response ?? {}) as Partial<HifzEventInput>;
-          hifz.push({
-            ...r,
-            id: e.id,
-            profileId: pid,
-            deviceAt: e.deviceAt,
-          } as HifzEventInput);
-        } else if ((e.eventType as string) === 'trace' || (e.eventType as string) === 'carte') {
-          // entraînement (tracé, cartes de mots) : journal séparé, jamais de note
-          const r = (e.response ?? {}) as Partial<PracticeInput>;
-          practice.push({
-            ...r,
-            id: e.id,
-            profileId: pid,
-            kind: e.eventType as 'trace' | 'carte',
-            deviceAt: e.deviceAt,
-          } as PracticeInput);
-        } else allowed.push(e);
-      }
-      const r = await recordAttempts(db, ed.id, allowed);
-      const h = hifz.length
-        ? await recordHifzEvents(db, hifz, req.auth.accountId, false)
-        : { accepted: [], duplicates: [], rejected: [] };
-      const pr = practice.length
-        ? await recordPractice(db, practice)
-        : { accepted: [], duplicates: [], rejected: [] };
-      return {
-        edition: ed.code,
-        ...r,
-        accepted: [
-          ...r.accepted,
-          ...[...h.accepted, ...pr.accepted].map((id) => ({ id, correct: null })),
-        ],
-        duplicates: [...r.duplicates, ...h.duplicates, ...pr.duplicates],
-        rejected: [...r.rejected, ...h.rejected, ...pr.rejected, ...refused],
-      };
-    },
-  );
-
-  app.get<{ Querystring: { profile: string; level: string } }>(
-    '/api/v1/progress',
-    {
-      schema: {
-        querystring: {
-          type: 'object',
-          required: ['profile', 'level'],
-          properties: {
-            profile: { type: 'string', pattern: UUID },
-            level: { type: 'string', pattern: LEVEL_CODE },
-          },
-        },
-      },
-    },
-    async (req, reply) => {
-      if (!req.auth) return reply.code(401).send({ error: { code: 'non_connecte' } });
-      if (!(await ownsProfile(db, req.auth.accountId, req.query.profile)))
-        return reply.code(404).send(notFound('profil introuvable'));
-      const ed = await edition();
-      if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
-      const units = await listUnits(db, ed.id, req.query.level);
-      const rows = await levelProgress(
-        db,
-        req.query.profile,
-        units.map((u) => u.id),
-      );
-      return { profile: req.query.profile, level: req.query.level, progress: rows };
-    },
-  );
-  // ---------------------------------------------------------------- tableau de bord (parent, adulte)
-
-  app.get<{ Params: { id: string }; Querystring: { today?: string } }>(
-    '/api/v1/dashboard/:id',
-    {
-      schema: {
-        params: {
-          type: 'object',
-          properties: { id: { type: 'string', pattern: UUID } },
-          required: ['id'],
-        },
-        querystring: {
-          type: 'object',
-          properties: { today: { type: 'string', pattern: '^\\d{4}-\\d{2}-\\d{2}$' } },
-        },
-      },
-    },
-    async (req, reply) => {
-      if (!req.auth) return reply.code(401).send({ error: { code: 'non_connecte' } });
-      if (!(await ownsProfile(db, req.auth.accountId, req.params.id)))
-        return reply.code(404).send(notFound('profil introuvable'));
-      const today = req.query.today ?? new Date().toISOString().slice(0, 10);
-      return { profile: req.params.id, today, ...(await dashboard(db, req.params.id, today)) };
-    },
-  );
-
-  // ---------------------------------------------------------------- page publique du QR code (sans compte)
-
-  app.get<{ Params: { slug: string } }>(
-    '/api/v1/public/l/:slug',
-    {
-      schema: {
-        params: {
-          type: 'object',
-          properties: { slug: { type: 'string', pattern: '^[a-z]{2,3}[0-9]{1,2}-[0-9]{2}$' } },
-          required: ['slug'],
-        },
-      },
-    },
-    async (req, reply) => {
-      const ed = await edition();
-      if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
-      const u = await publicUnit(db, ed.id, req.params.slug);
-      if (!u) return reply.code(404).send(notFound(`leçon ${req.params.slug} introuvable`));
-      reply.header('Cache-Control', 'public, max-age=3600');
-      return { edition: ed.code, ...u };
-    },
-  );
+  registerContent(app, db, edition, rights);
+  registerProgress(app, db, edition);
   return app;
 }
