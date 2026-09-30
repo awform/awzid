@@ -8,6 +8,25 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — QUA-3 : découpage des gros modules, sans changement de comportement (branche `suite-v1-b`)
+
+- Un commit par fichier : `app.ts` 513 → 192 lignes (`contenu.ts` : niveaux, leçons, paquets, page publique du
+  QR ; `progression.ts` : tentatives, progression, tableau de bord ; `routes-common.ts`) — e2c2a71 ;
+  `auth/routes.ts` 1 000 → 513 (`auth/profils.ts` : profils et code parent ; `auth/donnees.ts` : droits RGPD,
+  export, suppression ; `auth/common.ts` : constantes et `AuthKit`, gardes transmises telles quelles) —
+  974a090 ; `school.ts` 1 063 → 823 (`school-certificats.ts`, `school-common.ts`) — 65d77ea ; page de la classe
+  1 345 → 1 045 (`CertificatsClasse.svelte`, `EcouteClasse.svelte`) — 03dec20 ; lecteur de leçon 1 057 → 995
+  (`LettresLecon.svelte`) — 30caf97.
+- Preuves : liste des 150 routes (méthode + chemin, extraite des sources) identique avant et après chaque
+  découpage de l'API ; 568 tests unitaires verts à chaque étape ; e2e des écrans touchés (écoute lot 16, a11y
+  enseignant avec tous les onglets, récital, messagerie, validation de hifẓ) et nouveau `qua3.spec.ts` (cartes
+  des lettres conformes aux données) : verts ; budget 112,4 Ko (≤ 150), toutes les pages 227,3 Ko (≤ 300).
+- Seule différence observable : sur la page de la classe, la liste des certificats et celle des récitations
+  sont chargées à l'ouverture de leur onglet (et non plus au chargement de la page) — même contenu affiché.
+- Reste : `packages/content/src/importer.ts` (706 lignes), à découper dans un lot suivant.
+
+---
+
 ## 30/09/2026 — Récital de hifẓ (V1-e) : écran de séance (branche `suite-v1-b`)
 
 - **Principe** (CDC §2.6-6) : séance planifiée par l'enseignant pour sa classe (carnet de hifẓ du niveau de la
