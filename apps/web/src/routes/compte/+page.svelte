@@ -386,6 +386,7 @@
       <p>
         <a href={resolve('/compte/tuteur')} data-testid="lien-tuteur">{t('compte.tuteur_lien')}</a>
       </p>
+      <p><a href={resolve('/messages')} data-testid="lien-messages">{t('msg.titre')}</a></p>
       {#if me.account.kind === 'parent'}<p>
           <a href={resolve('/compte/protections')} data-testid="lien-protections"
             >{t('prot.titre')}</a

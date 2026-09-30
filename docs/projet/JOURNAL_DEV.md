@@ -8,6 +8,29 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Lot 21 terminé (V1-f) : messagerie encadrée, annonces, visio (branche `suite-v1`)
+
+Branche `suite-v1` créée depuis `corrections-audit` (laissée intacte, en attente de vérification).
+
+- **API** (`apps/api/src/messagerie.ts`) : annonces de classe (sans réponse collective) ; un fil privé par enfant
+  et par classe entre l'enseignant et le parent ou l'adulte ; corps chiffrés AES-256-GCM (`AWFORM_MESSAGE_KEY`,
+  créée par `deploy.sh`) ; pièces jointes de l'enseignant seulement (PNG, JPEG, PDF reconnus à leurs octets, 2 Mo) ;
+  liens raccourcis refusés ; lecture seulement tant que l'enfant est dans la classe ; signalement avec le numéro
+  d'aide du pays ; modération par l'administrateur (TOTP, consultation journalisée, retrait qui efface le texte).
+- **Protection des mineurs (§2.12)** : aucun compte adolescent dans la messagerie (`parent_requis`), l'enseignant
+  écrit au parent (`famille_mineure`) ; aucune messagerie entre élèves ; aucune notification (donc rien entre
+  21 h et 7 h). Fil enseignant ↔ adolescent visible du parent : V2.
+- **Visio** : séances planifiées (https, service reconnu), lien donné 15 min avant le début et jusqu'à la fin,
+  annulation, présence.
+- **Écrans** : onglet « Messages et visio » de la classe (`MessagerieClasse.svelte`), page `/messages` des familles
+  (lien depuis le compte). Textes fr/en.
+- **Conservation** : messages purgés chaque nuit après l'année scolaire suivante (D11, à valider).
+- CI : `suite-v1` ajoutée aux branches vérifiées.
+- Tests : API 179 verts (12 sautés, livres réels), dont `lot21.test.ts` (8) ; web 84 verts, dont
+  `messagerie.test.ts` (11) ; budget 103,8 Ko ≤ 150.
+
+---
+
 ## 29/09/2026 — Corrections d'audit : fin des majeurs (tuteur) et constats mineurs (branche `corrections-audit`)
 
 - **Tuteur IA** (avant toute activation réelle) : CON-4 (Coran déguisé : séparateurs invisibles, ۝, balises,
