@@ -104,3 +104,10 @@ aussi aux niveaux ouverts par code).
 - **RGPD** : export complété (`recitalsDeHifz`), effacement en cascade avec le profil (test) ; tables classées
   dans `roles.ts` (API seulement ; le travailleur n'y touche pas).
 - **PERF-1** : budget tenu (voir JOURNAL_DEV).
+- **INF-7 / INF-8** (sauvegardes) : restauration COMPLÈTE désormais scriptée (`infra/prod/restore.sh`) et
+  testée automatiquement dans la CI (`infra/ci/test-restauration.sh` : lignes identiques table par table).
+- **Lot 14** (comptes PostgreSQL séparés) : défaut trouvé en montant l'instance — le travailleur ne démarrait pas
+  sous son compte (pg-boss et `CREATE SCHEMA`) ; corrigé et testé sous le vrai compte.
+- **Moindre privilège des secrets** (env-scopes) : conservé ; la clé du second facteur n'est donnée qu'à
+  l'exécution de démonstration, pas au périmètre « outils ».
+- **CSP** : resserrée (plus de `style-src 'unsafe-inline'`), scan ZAP baseline sans échec (`docs/projet/ZAP.md`).

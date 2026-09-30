@@ -8,6 +8,33 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Complément A (sécurité) : ZAP, CSP stricte, restauration testée (branche `suite-v1-b`)
+
+- **Instance complète dans le conteneur cloud** : démon Docker démarré, images construites (Docker Hub limité
+  → images de base prises sur `mirror.gcr.io` ; copie locale du Dockerfile, hors dépôt, pour passer apt et npm
+  par le mandataire du conteneur), instance montée par le **vrai** `deploy.sh --demo` (nouveaux réglages
+  `AWFORM_DEPLOY_BUILD=0`, `AWFORM_DEPLOY_SYSTEME=0`, `AWFORM_VERSION` respecté).
+- **Défauts réels trouvés et corrigés** : (1) le **travailleur ne démarrait pas** sous son compte à droits
+  minimaux (pg-boss créait son schéma) → `createSchema: false`, test sous le vrai compte avec témoin
+  (6e4aa0a) ; (2) `deploy.sh --demo` échouait (clé du second facteur absente du périmètre « outils ») → clé
+  donnée à la seule exécution de démonstration ; (3) le script de démonstration n'envoyait pas le code parent
+  (SEC-3, MIN-4) → corrigé, et test qui exécute la démonstration de bout en bout, deux fois (13c89c1).
+- **ZAP baseline** (`docs/projet/ZAP.md`, `infra/securite/zap.sh`, règles `zap-regles.tsv`) : HTTP, HTTP avec
+  araignée AJAX, HTTPS → **0 échec** ; 5 alertes faibles ou d'information, analysées (faux positifs ; injection
+  vérifiée à la main sur le lecteur coranique) ; avec les règles : 0 avertissement.
+- **CSP stricte** : `style-src 'self'` (plus de `unsafe-inline` ; attributs `style` seuls permis par
+  `style-src-attr`), `script-src 'self'` + nonce/empreinte du seul script de démarrage, `media-src blob:`
+  (l'audio des récitations en `blob:` était bloqué), `form-action`, `worker-src`, `manifest-src` ; tests
+  `csp.test.ts` (3) et e2e `securite.spec.ts` (en-têtes de l'API et des pages ; aucune violation sur 12
+  écrans de la famille et l'espace enseignant, avec témoin) — verts sur téléphone et ordinateur (00eff17).
+- **Restauration testée** : `infra/prod/restore.sh` (restauration complète, confirmation explicite, clé privée
+  par l'entrée standard) et `infra/ci/test-restauration.sh` (instance jetable → comptes de toutes les tables →
+  `backup.sh` → base supprimée et vérifiée vide → `restore.sh` → comparaison table par table → fumée), ajouté à
+  la CI. Mesuré : **64 tables, 7 395 lignes identiques** (5c8ac84).
+- Tests : worker +3, API +2 (démonstration), web +3 (CSP) ; e2e +3.
+
+---
+
 ## 30/09/2026 — Tableau de bord « école » et revue adverse (branche `suite-v1-b`)
 
 - **Synthèse de mes classes** (CDC §2.9, ligne « École ») : `GET /api/v1/ecole/synthese`
