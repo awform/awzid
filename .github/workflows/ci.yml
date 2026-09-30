@@ -60,9 +60,9 @@ jobs:
         with:
           persist-credentials: false
       - name: Scripts d'exploitation (syntaxe)
-        run: for f in infra/prod/*.sh infra/*.sh infra/android/*.sh infra/relais/*.sh infra/git-hooks/*; do bash -n "$f"; done
+        run: for f in infra/prod/*.sh infra/*.sh infra/android/*.sh infra/relais/*.sh infra/securite/*.sh infra/git-hooks/*; do bash -n "$f"; done
       - name: Scripts d'exploitation (shellcheck, avertissements bloquants — audit INF-11)
-        run: shellcheck --severity=warning infra/prod/*.sh infra/*.sh infra/android/*.sh infra/relais/*.sh infra/ci/*.sh infra/git-hooks/*
+        run: shellcheck --severity=warning infra/prod/*.sh infra/*.sh infra/android/*.sh infra/relais/*.sh infra/ci/*.sh infra/securite/*.sh infra/git-hooks/*
       - name: Docker Compose (configuration)
         run: |
           mkdir -p /tmp/awform-env && touch /tmp/awform-env/{api,worker,outils,db,caddy}.env

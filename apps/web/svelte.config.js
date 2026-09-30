@@ -9,18 +9,27 @@ const config = {
     // chemins absolus : la coquille mise en cache (« / ») doit fonctionner sous n'importe quelle URL hors ligne
     paths: { relative: false },
     serviceWorker: { register: true },
-    // politique de sécurité du contenu : aucune ressource tierce (polices servies par nos soins)
+    // politique de sécurité du contenu : aucune ressource tierce (polices servies par nos soins). Scripts :
+    // fichiers du site + empreinte ou nonce du seul script de démarrage (mode auto). Feuilles de style :
+    // fichiers du site seulement, AUCUN <style> injecté ; seuls les attributs style (variables CSS
+    // calculées, ex. taille de l'arabe) restent permis (style-src-attr). Audio des récitations : blob:.
+    // Contrôlé par src/lib/csp.test.ts et e2e/securite.spec.ts.
     csp: {
       mode: 'auto',
       directives: {
         'default-src': ['self'],
         'script-src': ['self'],
-        'style-src': ['self', 'unsafe-inline'],
+        'style-src': ['self'],
+        'style-src-attr': ['unsafe-inline'],
         'font-src': ['self'],
         'img-src': ['self', 'data:'],
+        'media-src': ['self', 'blob:'],
         'connect-src': ['self'],
+        'worker-src': ['self'],
+        'manifest-src': ['self'],
         'object-src': ['none'],
         'base-uri': ['self'],
+        'form-action': ['self'],
         'frame-ancestors': ['none'],
       },
     },
