@@ -1,4 +1,4 @@
-# Rapport de la session cloud — lots 17 à 25 et corrections d'audit
+# Rapport de la session cloud — lots 17 à 25, corrections d'audit, suite V1 et suite V1-b
 
 Sessions du 29 et du 30/09/2026. Aucune fusion dans `main` : le chef de projet relit et fusionne. Le dépôt `awform/awform`
 n'a pas été touché, ni la branche `audit-dossier`.
@@ -41,6 +41,16 @@ Chaque branche part de la précédente ; détails dans `JOURNAL_DEV.md`, état V
 | D — QUA-3 | `e2c2a71`, `974a090`, `65d77ea`, `03dec20`, `30caf97`, `026b97d` | découpage sans changement de comportement : `app.ts`, `auth/routes.ts`, `school.ts`, page de la classe, lecteur de leçon ; mêmes 150 routes avant et après | e2e `qua3.spec.ts` |
 | E — Tableau « école » et revue | `5444f9d` | synthèse de toutes les classes de l'enseignant (comptes seulement, pas de rôle direction : D15) ; revue adverse : garde-fou du lanceur de charge | API 5, web 1 |
 
+Travail complémentaire demandé par le chef de projet (même branche), dans l'ordre :
+
+| Bloc | Commits | Contenu | Tests ajoutés |
+|---|---|---|---|
+| A — Sécurité | `6e4aa0a`, `13c89c1`, `00eff17`, `5c8ac84`, `ca1eea0` | instance Docker Compose complète montée par le vrai `deploy.sh --demo` ; **scan OWASP ZAP baseline** HTTP, AJAX, HTTPS : **0 échec** (`ZAP.md`) ; **CSP stricte** (plus de `style-src 'unsafe-inline'`, `media-src blob:`) ; **restauration testée automatiquement** (sauvegarde, base supprimée, `restore.sh`, 64 tables et 7 395 lignes identiques, dans la CI). Défauts réels trouvés et corrigés : **le travailleur ne démarrait pas** sous son compte à droits minimaux (pg-boss), `deploy.sh --demo` et le script de démonstration cassés depuis l'audit | worker 3, API 2, web 3, e2e `securite.spec.ts` (3), `test-restauration.sh` |
+| B — Relais | `dfb656a`, `70530c6`, `a741ab9` | **e2e du relais** avec Docker Compose (coupure du réseau, coupure de courant, retour : 8 événements au central, aucun doublon), dans la CI ; `RELAIS_MATERIEL.md` (mini-PC N100 conseillé en 2026, prix datés « à vérifier », consommation ≈ 23 W) | `test-relais.sh` |
+| C — Juriste | `ddf62a3` | brouillons `docs/juridique/` : registre art. 30, AIPD, CDP Sénégal, confidentialité et CGU (parents, ados) ; point relevé : **donnée religieuse** (D18) | — |
+| D — Exploitation | `f186099` | `EXPLOITATION.md` (incident, rotation, restauration, mise à jour, surveillance, mise en production ; commandes marquées testées / non testées) ; ADR 0002 à 0006 ; limite relevée : **une seule version par clé de chiffrement** | — |
+| E — Mobile money | `85c0861` | Wave et Orange Money **simulés** : passes 1, 3, 12 mois en FCFA (prix : D19), notifications HMAC horodatées, montant contrôlé, idempotence, courses (`MOBILE_MONEY.md`) | billing 5, API 6, web 1, e2e `mobile-money.spec.ts` |
+
 ### Corrections d'audit (branche `corrections-audit`, partie de `lot21-wip`)
 
 Les **73 constats** de l'audit sont traités, dans l'ordre demandé, **un commit par constat** (identifiant en tête
@@ -79,6 +89,18 @@ précédente ; fusionner `suite-v1-b` suffit à tout prendre).
 
 ## 3. Tests
 
+**Branche `suite-v1-b` (30/09/2026)** : **594 tests unitaires verts** (API 218, plus 12 sautés sans les livres ;
+web 122, billing 26, db, worker, hifz, relais…), lint, typage, svelte-check, garde-fous ; budget : page la plus
+lourde **112,8 Ko** (≤ 150), toutes les pages **229,6 Ko** (≤ 300). CI GitHub : verte à chaque étape, sauf
+trois envois (106 à 108) rouges à cause du premier essai du test du relais (passerelle de l'hôte filtrée sur le
+runner), corrigé par `a741ab9`. Dans le conteneur cloud : **PostgreSQL 18.4** (paquet npm
+`@embedded-postgres`), **Node 24**, **Docker** démarré (images de base par `mirror.gcr.io`, Docker Hub
+limité), **Chromium 1194** par `E2E_CHROMIUM`. e2e verts ici : `suite-v1`, `a11y` (hors écrans des livres),
+`recital`, `securite`, `qua3`, `mobile-money`, `lot10`, `lot16` (écoute), `hifz` 144 ; liste complète de ce qui
+dépend des livres : `JOURNAL_DEV.md` (étape A).
+
+Avant `suite-v1-b` :
+
 Conditions de la CI (PostgreSQL 18, contenu synthétique sans texte religieux, sans les livres réels) : à la fin
 de `corrections-audit`, **488 verts, 37 sautés** ; sur `suite-v1`, API **191 verts** (12 sautés), web **101**,
 billing **21**, db et travailleur verts ; CI GitHub verte à chaque étape.
@@ -94,15 +116,21 @@ billing **21**, db et travailleur verts ; CI GitHub verte à chaque étape.
 
 ## 4. À faire ensuite
 
-1. **Sur la VM, avec les vrais livres** : tests « livres réels » et e2e ; vérifier les avertissements d'import
-   `champ_retire_eleve` (CON-2 : aucun contenu légitime retiré) et les graphies des références de hadith (CON-3) ;
-   vérifier le format de `guide.bareme` (D6).
-2. **Brief d'audit** (`audit-dossier`) : le corriger avec le tableau des rectificatifs en tête de `JOURNAL_DEV.md`.
-3. Reportés : QUA-3 (lot dédié), INF-5 (empreinte Gradle depuis la VM), images Docker par empreinte, WebKit/k6/ZAP.
-4. Sur la VM : vérifier le format réel de `sourates` et des exercices `carnet` dans les livres de Religion ;
-   relancer les e2e (nouveaux écrans : `/messages`, `/sourates`, `/activation`, onglets de classe).
-5. Relecture des langues par des locuteurs natifs (D14) ; décisions D11 à D13.
-6. Suite : V1-h (RGAA, charge, lot 24), QUA-3 ; paiement réel et publication Play seulement sur décision du client.
+1. **Sur la VM, avec les vrais livres** : tous les e2e (`apps/web/e2e`, dont ceux qui dépendent des livres :
+   leçons, bilans, lecteur complet, niveaux re/ra/ado, modèles de certificats, carnets N1) ; e2e du **carnet de
+   pratique** (leçon de religion re1) ; formats réels de `sourates`, `carnet`, `guide.bareme` (D6).
+2. **Mesures sur la VM et le serveur** : charge (`charge.js`), scan ZAP sur le domaine public, **téléphone
+   d'entrée de gamme** (Android, réseau 3G), restauration mensuelle depuis le PC (`test-restauration.ps1`).
+3. **Accessibilité** : audit manuel au lecteur d'écran (NVDA, TalkBack), second système de navigation
+   (RGAA 12.1), tracé des lettres au clavier (7.3).
+4. **Clés de chiffrement** : trousseau à plusieurs versions (messages, récitations, signature des certificats)
+   avant toute rotation en production (ADR 0004, `EXPLOITATION.md` § 3).
+5. **Juridique** : faire valider `docs/juridique/` (D1, D8, D9, D11, D18), formalités CDP, puis remplacer les
+   pages légales de l'application.
+6. **Relais** : image ARM (Raspberry Pi), chiffrement du disque, achat du matériel (D17).
+7. QUA-3 restant : `packages/content/src/importer.ts` (706 lignes).
+8. Sur décision du client seulement : paiement réel (mobile money D19, carte), tuteur IA réel, audio Azure,
+   rôle « direction » (D15), publication sur les stores.
 
 ## 5. Décisions en attente du client (`DECISIONS_EN_ATTENTE.md`)
 
@@ -118,6 +146,11 @@ billing **21**, db et travailleur verts ; CI GitHub verte à chaque étape.
 | D12 | Signature du carnet de pratique | code parent obligatoire |
 | D13 | Codes d'activation : prix, durée, circuit de l'imprimeur, CGV | 12 mois, toute la famille, aucun lot créé |
 | D14 | Relecture de l'espagnol, de l'allemand, de l'arabe (et de l'anglais) | « en préparation », jamais proposées par défaut |
+| D15 | Rôle « école / direction » distinct de l'enseignant | aucun rôle créé ; synthèse de ses propres classes pour l'enseignant |
+| D16 | Récital : report de la note /15 dans la décision de fin de niveau ; récital « à consolider » | note /15 affichée seulement ; seuls les récitals « oui » valident les passages |
+| D17 | Matériel du relais d'école (achat, fournisseur, budget) | liste conseillée, prix « à vérifier » ; rien d'acheté |
+| D18 | Donnée révélant une conviction religieuse (RGPD art. 9, loi 2008-12) | aucun consentement explicite dans le code ; signalé au juriste |
+| D19 | Mobile money : prix des passes, prestataire, passes seulement ou aussi les formules renouvelables | simulé ; 1 500 / 3 500 / 12 000 F CFA provisoires |
 
 Décisions prises pendant la session : D4 (budget 150 Ko gardé — tenu), D5 (dictée photographiée écartée), D6
 (barème du livre en priorité), D7 (corrigés masqués des bilans et examens), CI sur les branches de travail.
