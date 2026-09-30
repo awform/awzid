@@ -112,6 +112,7 @@ test.describe('enseignant', () => {
       'certificats',
       'messages',
       'sourates',
+      'recital',
     ]) {
       await page.getByTestId(`onglet-${tab}`).click();
       const r = await new AxeBuilder({ page })

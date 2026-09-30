@@ -845,6 +845,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     const sourates = [];
     const recitations = [];
     const freeAnswers = [];
+    const recitals = [];
     for (const pid of ids) {
       // récitations envoyées : métadonnées et note (l'audio chiffré se télécharge depuis l'application)
       recitations.push(...(await profileRecitations(db, pid)));
@@ -871,6 +872,24 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       );
       sourates.push(
         ...(await db.select().from(t.suraProgress).where(eq(t.suraProgress.profileId, pid))),
+      );
+      // suite V1-b : passages au récital de hifẓ (tirage, compteurs, note)
+      recitals.push(
+        ...(await db
+          .select({
+            titre: t.hifzRecital.title,
+            jour: t.hifzRecital.day,
+            publie: t.hifzRecital.publishedAt,
+            parcours: t.hifzRecitalEntry.parcours,
+            tires: t.hifzRecitalEntry.drawn,
+            choix: t.hifzRecitalEntry.choice,
+            compteurs: t.hifzRecitalEntry.counters,
+            note: t.hifzRecitalEntry.note,
+          })
+          .from(t.hifzRecitalEntry)
+          .innerJoin(t.hifzRecital, eq(t.hifzRecital.id, t.hifzRecitalEntry.recitalId))
+          .innerJoin(t.classPupil, eq(t.classPupil.id, t.hifzRecitalEntry.pupilId))
+          .where(eq(t.classPupil.profileId, pid))),
       );
     }
     const consents = await db.select().from(t.consent).where(eq(t.consent.accountId, id));
@@ -906,6 +925,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       entrainement: practice,
       carnetDePratique: carnets,
       suiviDesSourates: sourates,
+      recitalsDeHifz: recitals,
       accesParCode: await db
         .select({
           niveau: t.levelPass.levelCode,

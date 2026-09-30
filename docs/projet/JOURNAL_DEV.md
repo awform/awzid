@@ -8,6 +8,31 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Récital de hifẓ (V1-e) : écran de séance (branche `suite-v1-b`)
+
+- **Principe** (CDC §2.6-6) : séance planifiée par l'enseignant pour sa classe (carnet de hifẓ du niveau de la
+  classe) ; pour chaque élève, le **serveur tire au sort** (crypto) 3 passages du socle, + 1 du renforcé au
+  parcours renforcé ; tirage gardé, jamais refait ; l'élève ajoute un passage **au choix, pris dans le carnet**.
+  L'enseignant saisit les compteurs du barème (aides, hésitations, sauts, oublis, fautes claires et discrètes,
+  fluidité, second récitant présent) → note /20 et mention par le **code existant** (`note`, @awform/hifz),
+  note Coran /15 = récital × 0,75 (`coranNote15`, au quart de point).
+- **Publication** : résultat officiel figé (publication atomique) ; chaque passage d'un récital validé « oui »
+  devient une validation de l'enseignant (journal de hifẓ du profil, ou résultat papier sans jamais écraser une
+  validation acquise) et **ouvre l'attestation de hifẓ** existante (lot 13, signée et vérifiable, lot 20).
+- **Famille** (`/recital`, lien depuis « Mon compte ») : ses passages tirés, résultat après publication ; profil
+  enfant : l'étoile et une phrase positive, la note repliée « pour le parent » (CDC §2.6-5). Jamais les autres
+  élèves, aucun classement (liste par nom), jamais d'ijāza, aucun texte coranique (nom de sourate + numéros).
+- Code : `packages/hifz/src/recital.ts`, `apps/api/src/recital.ts`, migration `0024_recital_hifz.sql` (tables
+  classées dans `roles.ts`), export RGPD `recitalsDeHifz`, effacement en cascade ; web `lib/recital.ts`,
+  `RecitalClasse.svelte` (onglet « Récital »), `routes/recital` ; 40 textes dans les cinq langues (es/de/ar à
+  relire, D14). Décisions : **D16** (report de la note /15 dans la décision de fin de niveau, récital « à
+  consolider »), **D15** (rôle école/direction, pour l'étape suivante).
+- Tests : hifz +4, API +10 (`recital.test.ts`), web +9 ; e2e `recital.spec.ts` et onglet « Récital » dans
+  `a11y.spec.ts` : verts (téléphone et ordinateur). Total unitaires : **568 verts** ; budget 112,2 Ko (≤ 150),
+  toutes les pages 227,0 Ko (≤ 300).
+
+---
+
 ## 30/09/2026 — Lot 24 (V1-h, stabilisation) : charge et accessibilité (branche `suite-v1-b`)
 
 - **Test de charge** : scénario k6 `infra/charge/k6.js` (seuils p95 < 500 ms par route, < 1 % d'erreurs) et,

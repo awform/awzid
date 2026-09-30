@@ -169,6 +169,13 @@
       "when": 1790734712459,
       "tag": "0023_codes_activation",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1790741776880,
+      "tag": "0024_recital_hifz",
+      "breakpoints": true
     }
   ]
 }

@@ -90,3 +90,17 @@ du JavaScript), MIN-1 (titulaire mineur : parent requis pour la messagerie et le
 (essais réservés atomiquement : code parent de la signature du carnet, codes d'activation), MIN-8 (durée de
 conservation des messages, D11), RGPD (export complété : carnet, sourates, accès par code), PAY-4 (droits appliqués
 aussi aux niveaux ouverts par code).
+
+### Branche `suite-v1-b` (30/09/2026)
+
+- **SEC-3** : le scénario e2e `lot16.spec.ts` inscrivait un enfant à une classe sans code parent ; c'est le
+  scénario qui a été corrigé (en-tête `x-parent-pin`), la règle reste stricte.
+- **MET-3** (compteurs du barème) : le récital de hifẓ réutilise `note()` (compteur infini ou non numérique →
+  erreur) et un schéma JSON borné (0 à 50, fluidité 0 à 4).
+- **MET-1** (seules les saisies de l'enseignant comptent) : le récital n'alimente l'attestation qu'après
+  publication par l'enseignant, et ne remplace jamais une validation déjà acquise d'un élève papier.
+- **SEC-2** (course) : publication atomique (`published_at IS NULL` dans la mise à jour), tirage unique par élève
+  (index unique, `ON CONFLICT DO NOTHING`).
+- **RGPD** : export complété (`recitalsDeHifz`), effacement en cascade avec le profil (test) ; tables classées
+  dans `roles.ts` (API seulement ; le travailleur n'y touche pas).
+- **PERF-1** : budget tenu (voir JOURNAL_DEV).

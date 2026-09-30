@@ -7,3 +7,4 @@ export * from './bareme.js';
 export { trialStats, suggestRhythm, type TrialStats } from './trial.js';
 export * from './load.js';
 export * from './simulate.js';
+export * from './recital.js';

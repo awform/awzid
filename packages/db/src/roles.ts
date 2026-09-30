@@ -91,6 +91,9 @@ export const API_GRANTS: Record<string, Right[]> = {
   activation_batch: ALL,
   activation_code: ALL,
   level_pass: ALL,
+  // suite V1-b : récital de hifẓ
+  hifz_recital: ALL,
+  hifz_recital_entry: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */

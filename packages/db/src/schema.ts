@@ -1494,3 +1494,67 @@ export const levelPass = pgTable(
     index('level_pass_account').on(t.accountId, t.levelCode),
   ],
 );
+
+// ---------------------------------------------------------------- suite V1-b : récital de hifẓ (CDC §2.6)
+
+/**
+ * Récital de fin de niveau (séance devant l'enseignant, CDC §2.6-6) : passages TIRÉS AU SORT par le serveur
+ * dans le carnet de hifẓ (3 du socle, + 1 du renforcé si parcours renforcé) + un passage au choix de l'élève ;
+ * compteurs du barème du carnet → note /20 et mention (calcul existant), note Coran /15 = récital × 0,75.
+ * Jamais d'ijāza ni de classement ; aucun texte coranique stocké (numéros de sourate et de versets seulement).
+ */
+export const hifzRecital = pgTable(
+  'hifz_recital',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    /** carnet de hifẓ du livre (en1, ad1…) dont les passages sont tirés */
+    bookCode: text('book_code').notNull(),
+    title: text('title').notNull(),
+    day: date('day').notNull(),
+    createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    /** résultat officiel publié : les notes sont figées et visibles par les familles */
+    publishedAt: timestamp('published_at', { withTimezone: true }),
+    canceledAt: timestamp('canceled_at', { withTimezone: true }),
+  },
+  (t) => [index('hifz_recital_class').on(t.classId, t.day)],
+);
+
+/** Passage d'un élève au récital : tirage, compteurs, note. */
+export const hifzRecitalEntry = pgTable(
+  'hifz_recital_entry',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    recitalId: uuid('recital_id')
+      .notNull()
+      .references(() => hifzRecital.id, { onDelete: 'cascade' }),
+    pupilId: uuid('pupil_id')
+      .notNull()
+      .references(() => classPupil.id, { onDelete: 'cascade' }),
+    parcours: text('parcours').notNull(),
+    /** passages tirés au sort (« 112:1-4 »…), dans l'ordre du tirage */
+    drawn: jsonb('drawn').notNull(),
+    /** passage choisi par l'élève (dans le carnet) */
+    choice: text('choice'),
+    counters: jsonb('counters'),
+    /** note calculée par le barème (mémorisation, tajwid, fluidité, total, mention, validation) */
+    note: jsonb('note'),
+    /** jury (facultatif) : second récitant présent */
+    secondJury: boolean('second_jury').notNull().default(false),
+    drawnAt: timestamp('drawn_at', { withTimezone: true }).notNull().defaultNow(),
+    scoredAt: timestamp('scored_at', { withTimezone: true }),
+    scoredBy: uuid('scored_by').references(() => account.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    uniqueIndex('hifz_recital_entry_pupil').on(t.recitalId, t.pupilId),
+    index('hifz_recital_entry_pupil_idx').on(t.pupilId),
+    check('hifz_recital_entry_parcours', sql`${t.parcours} IN ('socle', 'renforce')`),
+  ],
+);

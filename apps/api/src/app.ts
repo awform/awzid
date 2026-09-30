@@ -46,6 +46,7 @@ import { registerRelais } from './relais.js';
 import { registerCorrections } from './corrections.js';
 import { registerActivation } from './activation.js';
 import { registerCarnet } from './carnet.js';
+import { registerRecital } from './recital.js';
 import { registerEpreuves } from './epreuves.js';
 import { registerVerification } from './verification.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
@@ -187,6 +188,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerCorrections(app, db, edition);
   registerEpreuves(app, db, edition);
   registerCarnet(app, db, edition);
+  registerRecital(app, db, edition);
   registerActivation(app, db);
   registerVerification(app, db, signer);
   registerRelais(
