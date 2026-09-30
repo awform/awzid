@@ -1423,5 +1423,6 @@
   "mod.classer": "Dismiss (no action)",
   "mod.retirer": "Remove the message",
   "mod.retirer_confirmer": "Remove this message? Its text will be erased permanently.",
-  "mod.vide": "No pending report."
+  "mod.vide": "No pending report.",
+  "app.aller_contenu": "Skip to content"
 }

@@ -346,7 +346,7 @@
       >
       {#if setup.mode === 'rythme'}
         <div class="tw">
-          <table class="rhythms">
+          <table class="rhythms" aria-label={t('hifz.mode_rythme')}>
             <thead
               ><tr
                 ><th></th><th>{t('hifz.col_portion')}</th><th>{t('hifz.col_an')}</th><th

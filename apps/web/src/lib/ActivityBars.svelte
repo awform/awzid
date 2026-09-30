@@ -47,7 +47,7 @@
   </div>
   <details>
     <summary>{t('tableau.voir_tableau')}</summary>
-    <table>
+    <table aria-label={t('tableau.voir_tableau')}>
       <thead>
         <tr
           ><th>{t('tableau.jour')}</th><th>{t('tableau.reponses')}</th><th>{t('tableau.traces')}</th

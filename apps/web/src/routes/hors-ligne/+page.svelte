@@ -130,8 +130,8 @@
 {#if message}<p class="card ok" role="status">{message}</p>{/if}
 
 <section class="card">
-  <h2>{t('horsligne.niveaux')}</h2>
-  <table class="levels">
+  <h2 id="titre-niveaux">{t('horsligne.niveaux')}</h2>
+  <table class="levels" aria-labelledby="titre-niveaux">
     <thead
       ><tr
         ><th>{t('horsligne.col_niveau')}</th><th>{t('horsligne.col_poids')}</th><th

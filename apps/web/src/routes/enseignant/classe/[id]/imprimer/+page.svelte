@@ -56,14 +56,14 @@
 {#if error}<p class="card" role="alert">{error}</p>{/if}
 {#if tb}
   <section class="sheet" data-testid="feuille">
-    <h1>{tb.class.name}</h1>
+    <h1 id="titre-feuille">{tb.class.name}</h1>
     <p class="small">
       {tb.class.schoolName ?? ''}
       {#if tb.class.schoolYear}· {tb.class.schoolYear}{/if}
       {#if tb.class.levelCode}· {tb.class.levelCode.toUpperCase()}{/if}
       · {fmtDate(new Date(), { dateStyle: 'long' })}
     </p>
-    <table>
+    <table aria-labelledby="titre-feuille">
       <thead>
         <tr>
           <th>{t('classe.eleve')}</th>

@@ -1401,5 +1401,6 @@
   "mod.classer": "Archivar (sin acción)",
   "mod.retirer": "Retirar el mensaje",
   "mod.retirer_confirmer": "¿Retirar este mensaje? Su texto se borrará definitivamente.",
-  "mod.vide": "Ninguna denuncia pendiente."
+  "mod.vide": "Ninguna denuncia pendiente.",
+  "app.aller_contenu": "Ir al contenido"
 }

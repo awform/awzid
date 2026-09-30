@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { expect, loginTeacher, test } from './fixtures';
+import { expect, loginTeacher, newAdult, test } from './fixtures';
 
 /**
  * Lot 14 — accessibilité : audit axe-core (WCAG 2.1 A et AA) des écrans principaux, sur téléphone et sur
@@ -102,7 +102,17 @@ test.describe('enseignant', () => {
     });
     await audit(page, '/enseignant');
     await audit(page, `/enseignant/classe/${id}`, '[data-testid="liste-eleves"]');
-    for (const tab of ['devoirs', 'tableau', 'certificats']) {
+    // lot 24 : tous les onglets de la classe (messagerie et sourates compris)
+    for (const tab of [
+      'devoirs',
+      'corrections',
+      'epreuves',
+      'tableau',
+      'ecoute',
+      'certificats',
+      'messages',
+      'sourates',
+    ]) {
       await page.getByTestId(`onglet-${tab}`).click();
       const r = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -115,5 +125,37 @@ test.describe('enseignant', () => {
       ).toEqual([]);
     }
     await audit(page, `/enseignant/classe/${id}/imprimer`, '[data-testid="feuille"]');
+  });
+});
+
+test.describe('suite V1 (lot 24)', () => {
+  test.use({ compte: null });
+  test('messages, sourates, activation ; interface en arabe', async ({ page }) => {
+    test.setTimeout(120_000);
+    await newAdult(page, 'a11y24');
+    await audit(page, '/messages');
+    await audit(page, '/sourates');
+    await audit(page, '/activation');
+    // interface en arabe (droite à gauche) : mêmes exigences
+    await page.goto('/compte');
+    await page.getByTestId('langues-preparation').check();
+    await Promise.all([page.waitForEvent('load'), page.locator('[data-locale="ar"]').click()]);
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    for (const u of ['/compte', '/messages', '/sourates', '/activation', '/aide'])
+      await audit(page, u);
+  });
+
+  test('RGAA 12.7 : le lien d’évitement est le premier arrêt du clavier et mène au contenu', async ({
+    page,
+  }, info) => {
+    test.skip(info.project.name.startsWith('mobile'), 'clavier : sur ordinateur');
+    await page.goto('/connexion');
+    await page.locator('main h1').first().waitFor();
+    await page.keyboard.press('Tab');
+    const skip = page.getByTestId('aller-contenu');
+    await expect(skip).toBeFocused();
+    await expect(skip).toBeInViewport();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('main#contenu')).toBeFocused();
   });
 });

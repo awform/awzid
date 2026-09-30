@@ -114,6 +114,7 @@
 </script>
 
 <div class="app" data-sveltekit-preload-data={settings?.econome ? 'off' : 'hover'}>
+  <a class="aller-contenu" href="#contenu" data-testid="aller-contenu">{t('app.aller_contenu')}</a>
   <header class="top">
     <a href={resolve('/aujourdhui')} class="brand" data-testid="accueil">{t('app.nom')}</a>
     {#if !online}<span class="badge off" data-testid="hors-ligne">{t('entete.hors_ligne')}</span
@@ -170,7 +171,7 @@
     </nav>
   {/if}
 
-  <main>
+  <main id="contenu" tabindex="-1">
     {@render children()}
     <footer class="pied" data-testid="pied">
       <a href={resolve('/aide')}>{t('aide.titre')}</a>

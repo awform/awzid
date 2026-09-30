@@ -161,8 +161,8 @@
         </p>
       {/each}
     {/if}
-    <h3>{t('epreuve.copies_titre')}</h3>
-    <table>
+    <h3 id="titre-copies">{t('epreuve.copies_titre')}</h3>
+    <table aria-labelledby="titre-copies">
       <thead
         ><tr
           ><th>{t('classe.eleve')}</th><th>{t('epreuve.auto')}</th><th>{t('epreuve.hors_app')}</th

@@ -593,10 +593,10 @@
     </section>
 
     <section class="card">
-      <h2>{t('classe.eleves')}</h2>
+      <h2 id="titre-eleves">{t('classe.eleves')}</h2>
       <p class="muted small">{t('classe.code_familles', { code: cls.joinCode })}</p>
       <div class="tw">
-        <table data-testid="liste-eleves">
+        <table data-testid="liste-eleves" aria-labelledby="titre-eleves">
           <thead>
             <tr>
               <th>{t('classe.eleve')}</th>
@@ -833,10 +833,10 @@
     <SouratesClasse classId={id} />
   {:else if tab === 'tableau'}
     <section class="card">
-      <h2>{t('classe.suivi')}</h2>
+      <h2 id="titre-suivi">{t('classe.suivi')}</h2>
       {#if !cls.levelCode}<p class="warnbox small">{t('classe.niveau_requis')}</p>{/if}
       <div class="tw">
-        <table data-testid="tableau">
+        <table data-testid="tableau" aria-labelledby="titre-suivi">
           <thead>
             <tr>
               <th>{t('classe.eleve')}</th>

@@ -1423,5 +1423,6 @@
   "mod.classer": "Classer (rien à faire)",
   "mod.retirer": "Retirer le message",
   "mod.retirer_confirmer": "Retirer ce message ? Son texte sera effacé définitivement.",
-  "mod.vide": "Aucun signalement en attente."
+  "mod.vide": "Aucun signalement en attente.",
+  "app.aller_contenu": "Aller au contenu"
 }

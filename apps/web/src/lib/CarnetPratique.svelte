@@ -60,7 +60,7 @@
         >{t('carnet.suivante')}</button
       >
     </p>
-    <table>
+    <table aria-label={t('carnet.semaine', { date: fmtDate(week) })}>
       <thead
         ><tr
           ><th></th>{#each Array.from({ length: carnet.jours }, (_, d) => d) as d (d)}<th

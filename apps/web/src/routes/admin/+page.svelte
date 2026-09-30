@@ -69,8 +69,8 @@
 {:else if data}
   <div class="grid" data-testid="admin">
     <section class="card">
-      <h2>{t('admin.utilisateurs')}</h2>
-      <table>
+      <h2 id="t-utilisateurs">{t('admin.utilisateurs')}</h2>
+      <table aria-labelledby="t-utilisateurs">
         <tbody>
           {#each data.comptes as c (c.kind)}<tr
               ><th>{t(`admin.compte_${c.kind}`)}</th><td>{c.n}</td></tr
@@ -82,8 +82,8 @@
       </table>
     </section>
     <section class="card">
-      <h2>{t('admin.abonnements')}</h2>
-      <table>
+      <h2 id="t-abonnements">{t('admin.abonnements')}</h2>
+      <table aria-labelledby="t-abonnements">
         <tbody>
           {#each data.abonnements as s (s.plan + s.status)}<tr
               ><th>{t(`offre.nom_${s.plan}`)} · {t(`abo.statut_${s.status}`)}</th><td>{s.n}</td></tr
@@ -97,9 +97,9 @@
   <ActivationAdmin />
 
   <section class="card">
-    <h2>{t('admin.editions')}</h2>
+    <h2 id="t-editions">{t('admin.editions')}</h2>
     <div class="scroll">
-      <table data-testid="admin-editions">
+      <table aria-labelledby="t-editions" data-testid="admin-editions">
         <thead
           ><tr
             ><th>{t('admin.code')}</th><th>{t('admin.statut')}</th><th>{t('admin.creee')}</th><th
@@ -138,9 +138,9 @@
   </section>
 
   <section class="card">
-    <h2>{t('admin.derniers_comptes')}</h2>
+    <h2 id="t-comptes">{t('admin.derniers_comptes')}</h2>
     <div class="scroll">
-      <table>
+      <table aria-labelledby="t-comptes">
         <tbody>
           {#each data.derniersComptes as a (a.id)}
             <tr

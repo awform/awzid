@@ -261,9 +261,11 @@
 
     {#if !isEval && lettres.some((x) => x.formes)}
       <section class="blk">
-        <h2><Ar text="أَشْكَالُ الْحَرْفِ" /> <span>{t('lecon.formes')}</span></h2>
+        <h2 id="titre-formes">
+          <Ar text="أَشْكَالُ الْحَرْفِ" /> <span>{t('lecon.formes')}</span>
+        </h2>
         <div class="tw">
-          <table class="forms" dir="rtl">
+          <table class="forms" dir="rtl" aria-labelledby="titre-formes">
             <thead
               ><tr
                 ><th></th><th

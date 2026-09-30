@@ -1401,5 +1401,6 @@
   "mod.classer": "Ablegen (nichts zu tun)",
   "mod.retirer": "Nachricht entfernen",
   "mod.retirer_confirmer": "Diese Nachricht entfernen? Ihr Text wird endgültig gelöscht.",
-  "mod.vide": "Keine offenen Meldungen."
+  "mod.vide": "Keine offenen Meldungen.",
+  "app.aller_contenu": "Zum Inhalt springen"
 }

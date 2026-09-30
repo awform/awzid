@@ -8,6 +8,39 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Lot 24 (V1-h, stabilisation) : charge et accessibilité (branche `suite-v1-b`)
+
+- **Test de charge** : scénario k6 `infra/charge/k6.js` (seuils p95 < 500 ms par route, < 1 % d'erreurs) et,
+  k6 n'étant pas installable ici, **lanceur Node sans dépendance** `apps/api/src/cli/charge.ts` (fetch en
+  parallèle, p50/p95/max, code de sortie 1 au-delà de l'objectif ; mode d'emploi `infra/charge/README.md`).
+- **Mesures** (conteneur cloud : 4 vCPU Intel Xeon 2,1 GHz, 15 Go, PostgreSQL 18.4 local, Node 24, API seule sur
+  la même machine que le générateur de charge, journal des requêtes actif, contenu synthétique ; 15 s par route) :
+
+  | route | 20 utilisateurs : p50 / p95 (ms) | 100 utilisateurs : p50 / p95 (ms) |
+  |---|---|---|
+  | GET /health | 4,6 / 9,3 | 24 / 37,3 |
+  | GET /units/:id | 21,7 / 29,5 | 113,2 / 143,1 |
+  | GET /today/:id | 39,5 / 50 | 203,4 / 251,7 |
+  | POST /attempts (5 événements) | 29,2 / 45,8 | 152,4 / 184,8 |
+  | GET /famille/messages | 17,8 / 29,6 | 90,2 / 133,3 |
+  | POST /auth/login | 152,3 / 186,4 | 749 / **805,1** |
+
+  Aucune erreur. Objectif tenu partout, sauf la connexion à 100 connexions SIMULTANÉES (argon2id, 19 Mio et
+  2 passes, volontairement coûteux : ≈ 130 connexions/s sur 4 cœurs). Situation peu réaliste pour une école ;
+  à refaire sur le serveur de production (même commande).
+- **RGAA** : grille `docs/projet/RGAA.md` (13 thématiques, état et preuve par critère ; « à vérifier » là où
+  seul un audit manuel peut conclure). Défauts corrigés : **lien d'évitement** « Aller au contenu » (12.7,
+  cinq langues), **focus visible** étendu aux champs, listes, `summary`, `[tabindex]` (10.7), **titre des
+  tableaux** (5.4, `aria-labelledby` / `aria-label`). Non conforme restant : 12.1 (un seul système de
+  navigation).
+- **Tests automatiques** : `rgaa.test.ts` (5 contrôles statiques) ; `a11y.spec.ts` étendu (`/messages`,
+  `/sourates`, `/activation`, tous les onglets de la classe, interface en **arabe**, lien d'évitement au
+  clavier) : **vert** sur téléphone et ordinateur (0 violation grave) ; `charge.test.ts` (4).
+- Tests : **545 verts** (API 195, web 108, …), lint, typage, garde-fous ; budget : page la plus lourde 111,5 Ko
+  (≤ 150), toutes les pages 223,0 Ko (≤ 300).
+
+---
+
 ## 30/09/2026 — Suite V1-b, étape A : e2e Playwright exécutés dans le conteneur cloud (branche `suite-v1-b`)
 
 - **Environnement** : PostgreSQL 18.4 (binaire du paquet npm `@embedded-postgres/linux-x64`, `/opt/pg18` ; le

@@ -114,7 +114,12 @@ button {
   padding: 4px 14px;
 }
 button:focus-visible,
-a:focus-visible {
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
   outline: 3px solid var(--teal);
   outline-offset: 2px;
 }
@@ -161,4 +166,22 @@ a.button {
   border: 2px solid var(--line);
   border-radius: var(--radius-md);
   text-decoration: none;
+}
+
+/* RGAA 12.7 : lien d'évitement, visible seulement quand il reçoit le focus clavier */
+.aller-contenu {
+  position: absolute;
+  inset-inline-start: 8px;
+  top: -100px;
+  z-index: 100;
+  padding: 8px 14px;
+  background: var(--card);
+  border-radius: var(--radius-md);
+}
+.aller-contenu:focus {
+  top: 8px;
+}
+/* cible du lien d'évitement : focus reçu par programme, sans cadre autour de toute la page */
+main[tabindex='-1']:focus {
+  outline: none;
 }
