@@ -4,6 +4,7 @@
   import Illus from '$lib/Illus.svelte';
   import { t } from '$lib/i18n';
   import FreeAnswerSend from '$lib/FreeAnswerSend.svelte';
+  import CarnetPratique from '$lib/CarnetPratique.svelte';
   import { calculOk, holes, orderOk, qcmOk, shuffle } from './check';
 
   /**
@@ -356,6 +357,8 @@
           >{t('rel.seance', { n: k + 1, v: String(v) })}</span
         >{/each}
     </p>
+  {:else if type === 'carnet' && profile && exerciseId}
+    <CarnetPratique {profile} {exerciseId} />
   {:else if type === 'carnet'}
     <ul class="carnet">
       {#each arr(ex.lignes) as l, k (k)}<li>

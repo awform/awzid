@@ -8,6 +8,24 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Lot 22 (V1-c) : carnet de pratique signé par le parent, suivi des sourates (branche `suite-v1`)
+
+- **Carnet de pratique** (`apps/api/src/carnet.ts`, migration `0022_carnet.sql`) : lignes et jours repris de
+  l'exercice `carnet` du livre (édition servie, rien de saisi) ; l'enfant coche ses cases de la semaine ; le
+  parent **signe avec son code parent, vérifié par le serveur** (compte parent, code défini — D12) ; la semaine
+  signée est close ; signature journalisée. Jamais de note ; rappel « le carnet sert à encourager ».
+- **Suivi des sourates** : liste tirée des livres (`book.js` → `sourates`, lecture tolérante, 1-114) ; la famille
+  coche « j'écoute », « je répète », « je récite seul » ; seul l'enseignant de la classe valide (onglet
+  « Sourates ») ; rappel quand la sourate est entièrement acquise dans le carnet de hifẓ ; le texte n'est jamais
+  reproduit (renvoi au lecteur, noms Tanzil).
+- **Écrans** : carnet interactif dans la leçon de Religion (`CarnetPratique.svelte`), page `/sourates`, onglet
+  de classe `SouratesClasse.svelte`. Export RGPD complété (cases, signatures, suivi).
+- Tests : API 186 verts (12 sautés), dont `lot22.test.ts` (7) ; web 93 verts, dont `carnet.test.ts` (9) ;
+  budget : page la plus lourde 110,7 Ko ≤ 150 (le carnet s'ajoute à la leçon).
+- À vérifier sur la VM : format réel de `sourates` dans les `book.js` de Religion, exercices `carnet` réels.
+
+---
+
 ## 30/09/2026 — Lot 21 terminé (V1-f) : messagerie encadrée, annonces, visio (branche `suite-v1`)
 
 Branche `suite-v1` créée depuis `corrections-audit` (laissée intacte, en attente de vérification).

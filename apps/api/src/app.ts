@@ -44,6 +44,7 @@ import { messageKeyFromEnv, registerMessagerie } from './messagerie.js';
 import { registerPush } from './push.js';
 import { registerRelais } from './relais.js';
 import { registerCorrections } from './corrections.js';
+import { registerCarnet } from './carnet.js';
 import { registerEpreuves } from './epreuves.js';
 import { registerVerification } from './verification.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
@@ -184,6 +185,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerPush(app, db);
   registerCorrections(app, db, edition);
   registerEpreuves(app, db, edition);
+  registerCarnet(app, db, edition);
   registerVerification(app, db, signer);
   registerRelais(
     app,

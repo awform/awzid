@@ -12,6 +12,7 @@ import {
   customType,
   boolean,
   check,
+  date,
   index,
   integer,
   jsonb,
@@ -1349,4 +1350,72 @@ export const videoPresence = pgTable(
     present: boolean('present').notNull(),
   },
   (t) => [primaryKey({ columns: [t.sessionId, t.pupilId] })],
+);
+
+// ================================================================ carnet de pratique et suivi des sourates (lot 22)
+
+/**
+ * Case cochée par l'enfant dans le carnet de pratique d'une leçon de Religion (exercice `carnet` du livre) :
+ * semaine (lundi), ligne du livre, jour (0 = lundi). Jamais notée (le carnet encourage, ne sanctionne pas).
+ */
+export const practiceCheck = pgTable(
+  'practice_check',
+  {
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    exerciseId: text('exercise_id')
+      .notNull()
+      .references(() => exercise.id),
+    week: date('week').notNull(),
+    line: smallint('line').notNull(),
+    day: smallint('day').notNull(),
+    checkedAt: timestamp('checked_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.profileId, t.exerciseId, t.week, t.line, t.day] }),
+    check('practice_check_day', sql`${t.day} BETWEEN 0 AND 6`),
+    check('practice_check_line', sql`${t.line} BETWEEN 0 AND 49`),
+  ],
+);
+
+/** Signature du parent pour une semaine du carnet : code parent vérifié par le serveur ; la semaine est ensuite close. */
+export const practiceSignature = pgTable(
+  'practice_signature',
+  {
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    exerciseId: text('exercise_id')
+      .notNull()
+      .references(() => exercise.id),
+    week: date('week').notNull(),
+    signedBy: uuid('signed_by')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    signedAt: timestamp('signed_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.profileId, t.exerciseId, t.week] })],
+);
+
+/**
+ * Suivi d'une sourate du livre (`book.js` → `sourates`) : 1 j'écoute, 2 je répète, 3 je récite seul (famille),
+ * 4 validé par l'enseignant (seul l'enseignant de la classe le pose).
+ */
+export const suraProgress = pgTable(
+  'sura_progress',
+  {
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    sura: smallint('sura').notNull(),
+    step: smallint('step').notNull(),
+    validatedBy: uuid('validated_by').references(() => account.id, { onDelete: 'set null' }),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.profileId, t.sura] }),
+    check('sura_progress_sura', sql`${t.sura} BETWEEN 1 AND 114`),
+    check('sura_progress_step', sql`${t.step} BETWEEN 1 AND 4`),
+  ],
 );

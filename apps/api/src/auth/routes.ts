@@ -841,6 +841,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     const hifzEvents = [];
     const classes = [];
     const practice = [];
+    const carnets = [];
+    const sourates = [];
     const recitations = [];
     const freeAnswers = [];
     for (const pid of ids) {
@@ -858,6 +860,17 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       );
       classes.push(
         ...(await db.select().from(t.classMember).where(eq(t.classMember.profileId, pid))),
+      );
+      // lot 22 : carnet de pratique (cases et signatures) et suivi des sourates
+      carnets.push(
+        ...(await db.select().from(t.practiceCheck).where(eq(t.practiceCheck.profileId, pid))),
+        ...(await db
+          .select()
+          .from(t.practiceSignature)
+          .where(eq(t.practiceSignature.profileId, pid))),
+      );
+      sourates.push(
+        ...(await db.select().from(t.suraProgress).where(eq(t.suraProgress.profileId, pid))),
       );
     }
     const consents = await db.select().from(t.consent).where(eq(t.consent.accountId, id));
@@ -891,6 +904,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       reponses: attempts,
       hifz: { plans: hifzPlans, journal: hifzEvents, classes },
       entrainement: practice,
+      carnetDePratique: carnets,
+      suiviDesSourates: sourates,
       recitationsEnvoyees: recitations,
       reponsesLibres: freeAnswers,
       notifications: await db

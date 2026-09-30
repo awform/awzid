@@ -10,6 +10,7 @@
   import CorrectionsClasse from '$lib/CorrectionsClasse.svelte';
   import EpreuvesClasse from '$lib/EpreuvesClasse.svelte';
   import MessagerieClasse from '$lib/MessagerieClasse.svelte';
+  import SouratesClasse from '$lib/SouratesClasse.svelte';
 
   /**
    * Espace ÉCOLE d'une classe (lot 13) : élèves et groupes, devoirs avec échéance, tableau de suivi,
@@ -93,6 +94,7 @@
     'ecoute',
     'certificats',
     'messages',
+    'sourates',
   ] as const;
   let tab = $state<(typeof TABS)[number]>('eleves');
   let me = $state<Me | null>(null);
@@ -827,6 +829,8 @@
     <EpreuvesClasse classId={id} {units} />
   {:else if tab === 'messages'}
     <MessagerieClasse classId={id} {pupils} />
+  {:else if tab === 'sourates'}
+    <SouratesClasse classId={id} />
   {:else if tab === 'tableau'}
     <section class="card">
       <h2>{t('classe.suivi')}</h2>
