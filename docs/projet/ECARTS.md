@@ -43,5 +43,5 @@ client, voir `DECISIONS_EN_ATTENTE.md`). Les tests marqués « livres » sont sa
 
 | Sujet | État | Lot prévu |
 |---|---|---|
-| Interface en espagnol, allemand, arabe (RTL), « à relire par un locuteur natif » | **manquant** (FR relu, EN préparé) | lot 25 |
+| Interface en espagnol, allemand, arabe (RTL), « à relire par un locuteur natif » | **fait, à relire** (lot 25) : 1 393 textes d'interface par langue, statut « en préparation » (jamais proposés par défaut), signalés dans `apps/web/src/lib/i18n/A_RELIRE.md` ; arabe : page entière de droite à gauche, police arabe, propriétés CSS logiques ; catalogues hors du JavaScript, téléchargés seulement pour la langue choisie. Relecture par des locuteurs natifs : à faire (client). | client |
 | Relais d'école (R1) | **fait** (lot 17) | — |

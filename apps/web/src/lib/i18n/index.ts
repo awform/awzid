@@ -28,23 +28,33 @@ export interface LocaleInfo {
 export const LOCALES: readonly LocaleInfo[] = [
   { code: 'fr', label: 'Français', dir: 'ltr', status: 'relue' },
   { code: 'en', label: 'English', dir: 'ltr', status: 'preparation' },
+  // lot 25 : traductions de l'INTERFACE seulement, à relire par un locuteur natif avant toute publication
+  { code: 'es', label: 'Español', dir: 'ltr', status: 'preparation' },
+  { code: 'de', label: 'Deutsch', dir: 'ltr', status: 'preparation' },
+  { code: 'ar', label: 'العربية', dir: 'rtl', status: 'preparation' },
 ];
 
 /**
  * Le français (langue de repli) est dans la coquille ; les autres catalogues sont chargés À LA DEMANDE
- * (décision D4, audit PERF-1) : fichier séparé, téléchargé seulement si la langue est choisie (et gardé par
- * le service worker pour le hors ligne).
+ * (décision D4, audit PERF-1 ; lot 25) : fichiers statiques `static/i18n/<langue>.json`, téléchargés seulement
+ * si la langue est choisie ; le service worker ne garde que ceux déjà utilisés (pas de préchargement).
  */
 const CATALOG: Record<string, Messages> = { fr };
-const LOADERS: Record<string, () => Promise<{ default: Messages }>> = {
-  en: () => import('./messages/en.json'),
+export type CatalogFetcher = (code: string) => Promise<Messages>;
+const fetchCatalog: CatalogFetcher = async (code) => {
+  const r = await fetch(`/i18n/${code}.json`);
+  if (!r.ok) throw new Error(`catalogue ${code} : ${r.status}`);
+  return (await r.json()) as Messages;
 };
 export const FALLBACK = 'fr';
 
 /** Charge le catalogue d'une langue (sans effet s'il est déjà là ou si la langue est inconnue). */
-export async function loadLocale(code: string): Promise<void> {
-  if (CATALOG[code] || !LOADERS[code]) return;
-  CATALOG[code] = (await LOADERS[code]()).default;
+export async function loadLocale(
+  code: string,
+  fetcher: CatalogFetcher = fetchCatalog,
+): Promise<void> {
+  if (CATALOG[code] || !LOCALES.some((l) => l.code === code)) return;
+  CATALOG[code] = await fetcher(code);
 }
 
 let current = FALLBACK;

@@ -2,12 +2,13 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import IntlMessageFormat from 'intl-messageformat';
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   _catalogForTests,
   detectLocale,
   fmtBytes,
   loadLocale,
+  localeInfo,
   LOCALES,
   setLocale,
   t,
@@ -31,8 +32,13 @@ function args(msg: string): string[] {
 
 const fr = _catalogForTests.fr!;
 
+/** catalogues statiques (lot 25) lus sur le disque, comme le navigateur les télécharge */
+const STATIC = fileURLToPath(new URL('../../../static/i18n', import.meta.url));
+const fromDisk = async (code: string) =>
+  JSON.parse(readFileSync(join(STATIC, `${code}.json`), 'utf8')) as Record<string, string>;
+
 beforeAll(async () => {
-  for (const l of LOCALES) await loadLocale(l.code);
+  for (const l of LOCALES) await loadLocale(l.code, fromDisk);
 });
 afterEach(() => setLocale('fr'));
 
@@ -48,7 +54,12 @@ describe('catalogues de messages', () => {
 
   it('aucune clé en double dans les fichiers (une clé répétée écraserait silencieusement la première)', () => {
     for (const l of LOCALES) {
-      const raw = readFileSync(join(SRC, 'lib', 'i18n', 'messages', `${l.code}.json`), 'utf8');
+      const raw = readFileSync(
+        l.code === 'fr'
+          ? join(SRC, 'lib', 'i18n', 'messages', 'fr.json')
+          : join(STATIC, `${l.code}.json`),
+        'utf8',
+      );
       const keys = [...raw.matchAll(/^\s*"([^"]+)":/gm)].map((m) => m[1]!);
       expect(
         keys.filter((k, i) => keys.indexOf(k) !== i),
@@ -113,6 +124,48 @@ describe('fonctions', () => {
     expect(detectLocale(['en-US'])).toBe('fr');
     expect(detectLocale(['en-US'], true)).toBe('en');
     expect(detectLocale(['de'])).toBe('fr');
+    // lot 25 : espagnol, allemand, arabe en préparation (à relire par un locuteur natif)
+    for (const c of ['es', 'de', 'ar']) {
+      expect(LOCALES.find((l) => l.code === c)?.status, c).toBe('preparation');
+      expect(detectLocale([c])).toBe('fr');
+      expect(detectLocale([c], true)).toBe(c);
+    }
+  });
+
+  it('lot 25 : interface en arabe de droite à gauche, espagnol et allemand de gauche à droite', () => {
+    const root = { lang: '', dir: '' };
+    vi.stubGlobal('document', { documentElement: root });
+    const frText = t('entete.attente', { n: 2 });
+    setLocale('ar');
+    expect(root).toEqual({ lang: 'ar', dir: 'rtl' });
+    expect(localeInfo('ar').dir).toBe('rtl');
+    expect(t('entete.attente', { n: 3 })).toMatch(/3/);
+    expect(t('entete.attente', { n: 3 })).toMatch(/[\u0600-\u06FF]/);
+    for (const c of ['es', 'de']) {
+      setLocale(c);
+      expect(root).toEqual({ lang: c, dir: 'ltr' });
+      expect(t('entete.attente', { n: 2 })).not.toBe(frText);
+    }
+    setLocale('fr');
+    expect(root.dir).toBe('ltr');
+    vi.unstubAllGlobals();
+  });
+
+  it('lot 25 : les traductions en préparation sont signalées « à relire par un locuteur natif »', () => {
+    const note = readFileSync(join(SRC, 'lib', 'i18n', 'A_RELIRE.md'), 'utf8');
+    for (const l of LOCALES.filter((x) => x.status === 'preparation'))
+      expect(
+        note
+          .split('\n')
+          .some(
+            (line) =>
+              line.includes(`/${l.code}.json\``) && line.includes('à relire par un locuteur natif'),
+          ),
+        l.code,
+      ).toBe(true);
+    expect(_catalogForTests.fr!['compte.langue_preparation']).toContain(
+      'à relire par un locuteur natif',
+    );
   });
 
   it('audit PERF-1 : seul le français est dans la coquille, les autres langues sont chargées à la demande', () => {
@@ -121,8 +174,12 @@ describe('fonctions', () => {
       (m) => m[1],
     );
     expect(statics).toEqual(['fr']);
+    // lot 25 : catalogues hors du paquet JavaScript (fichiers statiques), jamais préchargés par le service worker
+    expect(src).toContain('fetch(`/i18n/${code}.json`)');
     for (const l of LOCALES.filter((x) => x.code !== 'fr'))
-      expect(src, l.code).toContain(`import('./messages/${l.code}.json')`);
+      expect(statSync(join(STATIC, `${l.code}.json`)).isFile(), l.code).toBe(true);
+    const sw = readFileSync(join(SRC, 'service-worker.ts'), 'utf8');
+    expect(sw).toContain('!isCatalog(f)');
     // police du Coran : plus de préchargement sur toutes les pages
     expect(readFileSync(join(SRC, 'app.html'), 'utf8')).not.toContain('amiri-quran');
   });

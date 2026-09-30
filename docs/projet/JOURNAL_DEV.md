@@ -8,6 +8,22 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Lot 25 : interface en espagnol, allemand et arabe (RTL), à relire (branche `suite-v1`)
+
+- **Traductions** des 1 393 textes d'interface en espagnol, allemand et arabe (interface seulement : ni le
+  contenu des livres, ni l'arabe étudié, ni le Coran), statut « en préparation », **à relire par un locuteur
+  natif** (`apps/web/src/lib/i18n/A_RELIRE.md`, D14). Contrôle automatique : mêmes clés et mêmes arguments ICU
+  que le français, MessageFormat valide (`scripts/verifier-traduction.mjs`, test i18n).
+- **Arabe de droite à gauche** : `dir="rtl"` sur toute la page, police arabe pour l'interface, marges, bordures
+  et alignements en propriétés logiques (`inline-start` / `end`).
+- **Poids** : les catalogues (anglais compris) sortent du JavaScript et deviennent des fichiers statiques
+  `static/i18n/<langue>.json`, téléchargés seulement si la langue est choisie ; le service worker ne les
+  précharge plus (gardés au premier usage). JavaScript de toutes les pages : 243,6 → 222,2 Ko (≤ 300) ; page la
+  plus lourde 111,1 Ko (≤ 150).
+- Tests : web 101 verts (i18n : langues en préparation, RTL, signalement « à relire »).
+
+---
+
 ## 30/09/2026 — Lot 23 (V1-g) : codes d'activation imprimés dans les livres (branche `suite-v1`)
 
 - **Codes** (`packages/billing/src/activation.ts`) : `AWZ-XXXX-XXXX-XXXXC`, alphabet de Crockford (sans I, L, O,

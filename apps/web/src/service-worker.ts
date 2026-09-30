@@ -20,7 +20,9 @@ import { purgeOldRecordings } from '$lib/recordings';
 const sw = self as unknown as ServiceWorkerGlobalScope;
 const CACHE = `awform-shell-${version}`;
 const SHELL = '/';
-const ASSETS = [...build, ...files.filter((f) => !f.endsWith('.txt'))];
+// lot 25 : les catalogues de langues (/i18n/*.json) ne sont pas préchargés : seul celui qui sert est gardé
+const isCatalog = (p: string) => p.startsWith('/i18n/');
+const ASSETS = [...build, ...files.filter((f) => !f.endsWith('.txt') && !isCatalog(f))];
 
 sw.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll([...ASSETS, SHELL])));
@@ -42,6 +44,19 @@ sw.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== sw.location.origin || url.pathname.startsWith('/api/')) return;
+  if (isCatalog(url.pathname)) {
+    // cache d'abord, puis réseau (gardé dans le cache de cette version pour le hors ligne)
+    event.respondWith(
+      caches.open(CACHE).then(async (c) => {
+        const hit = await c.match(url.pathname);
+        if (hit) return hit;
+        const r = await fetch(req);
+        if (r.ok) await c.put(url.pathname, r.clone());
+        return r;
+      }),
+    );
+    return;
+  }
   if (ASSETS.includes(url.pathname)) {
     event.respondWith(caches.match(url.pathname).then((r) => r ?? fetch(req)));
     return;
