@@ -1391,5 +1391,15 @@
   "act.revoquer": "Revocar los códigos no usados",
   "act.revoquer_confirmer": "¿Revocar todos los códigos no usados de este lote? Los accesos ya abiertos se mantienen.",
   "erreur.code_mal_saisi": "Este código está mal introducido: compruebe cada carácter.",
-  "erreur.code_inconnu_ou_utilise": "Código desconocido, ya usado o caducado."
+  "erreur.code_inconnu_ou_utilise": "Código desconocido, ya usado o caducado.",
+  "mod.titre": "Moderación de la mensajería",
+  "mod.aide": "Mensajes denunciados. Cada apertura de esta lista queda registrada. «Retirar» borra el texto y el archivo adjunto; el registro permanece.",
+  "mod.kind_prive": "mensaje privado",
+  "mod.kind_annonce": "anuncio de clase",
+  "mod.motif": "motivo: {motif}",
+  "mod.illisible": "(texto no disponible)",
+  "mod.classer": "Archivar (sin acción)",
+  "mod.retirer": "Retirar el mensaje",
+  "mod.retirer_confirmer": "¿Retirar este mensaje? Su texto se borrará definitivamente.",
+  "mod.vide": "Ninguna denuncia pendiente."
 }

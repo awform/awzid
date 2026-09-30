@@ -68,3 +68,15 @@ export const planVisio = (
   v: { titre: string; debut: string; dureeMin: number; url: string },
 ) => call('POST', `/ecole/classes/${classId}/visios`, v);
 export const cancelVisio = (id: string) => call('POST', `/ecole/visios/${id}/annuler`, {});
+
+/** Modération (administrateur avec second facteur) : chaque consultation est journalisée par le serveur. */
+export interface Signalement {
+  id: string;
+  motif: string;
+  le: string;
+  message: { id: string; kind: 'prive' | 'annonce'; texte: string | null };
+}
+export const moderationQueue = () =>
+  call<{ signalements: Signalement[] }>('GET', '/admin/moderation');
+export const moderate = (id: string, decision: 'classe' | 'retire') =>
+  call<{ ok: boolean }>('POST', `/admin/moderation/${id}`, { decision });

@@ -1413,5 +1413,15 @@
   "act.revoquer": "Revoke unused codes",
   "act.revoquer_confirmer": "Revoke all unused codes of this batch? Access already opened stays.",
   "erreur.code_mal_saisi": "This code is mistyped: check each character.",
-  "erreur.code_inconnu_ou_utilise": "Unknown, already used or expired code."
+  "erreur.code_inconnu_ou_utilise": "Unknown, already used or expired code.",
+  "mod.titre": "Messaging moderation",
+  "mod.aide": "Reported messages. Each opening of this list is logged. “Remove” erases the text and attachment; the record remains.",
+  "mod.kind_prive": "private message",
+  "mod.kind_annonce": "class announcement",
+  "mod.motif": "reason: {motif}",
+  "mod.illisible": "(text unavailable)",
+  "mod.classer": "Dismiss (no action)",
+  "mod.retirer": "Remove the message",
+  "mod.retirer_confirmer": "Remove this message? Its text will be erased permanently.",
+  "mod.vide": "No pending report."
 }

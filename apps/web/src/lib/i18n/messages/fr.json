@@ -1413,5 +1413,15 @@
   "act.revoquer": "Révoquer les codes non utilisés",
   "act.revoquer_confirmer": "Révoquer tous les codes non utilisés de ce lot ? Les accès déjà ouverts restent.",
   "erreur.code_mal_saisi": "Ce code est mal saisi : vérifiez chaque caractère.",
-  "erreur.code_inconnu_ou_utilise": "Code inconnu, déjà utilisé ou expiré."
+  "erreur.code_inconnu_ou_utilise": "Code inconnu, déjà utilisé ou expiré.",
+  "mod.titre": "Modération de la messagerie",
+  "mod.aide": "Messages signalés. Chaque ouverture de cette liste est inscrite au journal. « Retirer » efface le texte et la pièce jointe ; la trace reste.",
+  "mod.kind_prive": "message privé",
+  "mod.kind_annonce": "annonce de classe",
+  "mod.motif": "motif : {motif}",
+  "mod.illisible": "(texte indisponible)",
+  "mod.classer": "Classer (rien à faire)",
+  "mod.retirer": "Retirer le message",
+  "mod.retirer_confirmer": "Retirer ce message ? Son texte sera effacé définitivement.",
+  "mod.vide": "Aucun signalement en attente."
 }

@@ -8,6 +8,16 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Lot 21, complément : écran de modération (branche `suite-v1`)
+
+- Page d'administration : file des messages signalés (`ModerationAdmin.svelte`), « classer » ou « retirer »
+  (texte et pièce jointe effacés, trace gardée) ; chaque ouverture de la file est journalisée par le serveur.
+  Textes dans les cinq langues (es, de, ar à relire).
+- Tests : web 103 verts (`messagerie.test.ts` : appels de modération) ; l'API était déjà couverte par
+  `lot21.test.ts`.
+
+---
+
 ## 30/09/2026 — Lot 25 : interface en espagnol, allemand et arabe (RTL), à relire (branche `suite-v1`)
 
 - **Traductions** des 1 393 textes d'interface en espagnol, allemand et arabe (interface seulement : ni le

@@ -55,6 +55,14 @@ describe('lot 21 — appels de la messagerie', () => {
       `/api/v1/ecole/classes/${U}/visios`,
       { titre: 't', debut: '2026-10-01T10:00:00Z', dureeMin: 45, url: 'https://meet.jit.si/x' },
     ],
+    ['moderationQueue', () => m.moderationQueue(), 'GET', '/api/v1/admin/moderation', undefined],
+    [
+      'moderate',
+      () => m.moderate(U, 'retire'),
+      'POST',
+      `/api/v1/admin/moderation/${U}`,
+      { decision: 'retire' },
+    ],
     ['cancelVisio', () => m.cancelVisio(U), 'POST', `/api/v1/ecole/visios/${U}/annuler`, {}],
   ];
 

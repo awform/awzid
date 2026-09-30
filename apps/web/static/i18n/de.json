@@ -1391,5 +1391,15 @@
   "act.revoquer": "Nicht genutzte Codes widerrufen",
   "act.revoquer_confirmer": "Alle nicht genutzten Codes dieser Charge widerrufen? Bereits geöffnete Zugänge bleiben bestehen.",
   "erreur.code_mal_saisi": "Dieser Code ist falsch eingegeben: Prüfen Sie jedes Zeichen.",
-  "erreur.code_inconnu_ou_utilise": "Code unbekannt, bereits genutzt oder abgelaufen."
+  "erreur.code_inconnu_ou_utilise": "Code unbekannt, bereits genutzt oder abgelaufen.",
+  "mod.titre": "Moderation der Nachrichten",
+  "mod.aide": "Gemeldete Nachrichten. Jedes Öffnen dieser Liste wird protokolliert. „Entfernen“ löscht Text und Anhang; der Eintrag bleibt.",
+  "mod.kind_prive": "private Nachricht",
+  "mod.kind_annonce": "Klassenmitteilung",
+  "mod.motif": "Grund: {motif}",
+  "mod.illisible": "(Text nicht verfügbar)",
+  "mod.classer": "Ablegen (nichts zu tun)",
+  "mod.retirer": "Nachricht entfernen",
+  "mod.retirer_confirmer": "Diese Nachricht entfernen? Ihr Text wird endgültig gelöscht.",
+  "mod.vide": "Keine offenen Meldungen."
 }
