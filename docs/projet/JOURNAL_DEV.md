@@ -8,6 +8,24 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Complément C : documents pour le juriste, brouillons (branche `suite-v1-b`)
+
+- `docs/juridique/` — chacun marqué **« BROUILLON — à valider par un juriste »**, rédigé à partir du code :
+  `REGISTRE_TRAITEMENTS.md` (article 30 : 13 traitements, finalité, base légale **proposée**, données, durées
+  réelles de `purge.ts` et décisions D9/D11, destinataires, transferts), `AIPD_BROUILLON.md` (mineurs, voix,
+  tuteur IA, relais, messagerie : risques, mesures en place avec leurs fichiers de preuve, reste à faire),
+  `CDP_SENEGAL.md` (formalités probables auprès de la CDP, pièces à préparer, ce que l'application fait déjà ;
+  articles de la loi 2008-12 à vérifier), et en **langage simple** : `CONFIDENTIALITE_PARENTS.md`,
+  `CONFIDENTIALITE_ADOS.md`, `CGU_PARENTS.md`, `CGU_ADOS.md` (fidèles au code : surnom et année de naissance,
+  voix 7 jours, récitation envoyée 1 à 30 jours, tuteur simulé et désactivé par défaut, aucun échange entre
+  élèves, aucun classement, jamais d'ijāza, paiement simulé).
+- Point relevé pour le juriste : l'usage du Coran peut révéler une **conviction religieuse** (donnée sensible) ;
+  aucun consentement explicite à ce titre dans le code → **D18**.
+- Les pages légales de l'application (`apps/web/src/lib/legal/content.ts`, lot 14) ne sont pas modifiées : à
+  remplacer par les textes validés.
+
+---
+
 ## 30/09/2026 — Complément B (relais d'école) : e2e Docker Compose et matériel (branche `suite-v1-b`)
 
 - **Test de bout en bout** `infra/ci/test-relais.sh` (ajouté à la CI, job « images ») : central monté par le
