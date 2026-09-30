@@ -92,8 +92,9 @@ précédente ; fusionner `suite-v1-b` suffit à tout prendre).
 **Branche `suite-v1-b` (30/09/2026)** : **594 tests unitaires verts** (API 218, plus 12 sautés sans les livres ;
 web 122, billing 26, db, worker, hifz, relais…), lint, typage, svelte-check, garde-fous ; budget : page la plus
 lourde **112,8 Ko** (≤ 150), toutes les pages **229,6 Ko** (≤ 300). CI GitHub : verte à chaque étape, sauf
-trois envois (106 à 108) rouges à cause du premier essai du test du relais (passerelle de l'hôte filtrée sur le
-runner), corrigé par `a741ab9`. Dans le conteneur cloud : **PostgreSQL 18.4** (paquet npm
+quatre passages (n° 106 à 108 et 110) rouges à cause du nouveau test du relais sur le runner (passerelle de
+l'hôte filtrée, puis droits du dossier de données sans root), corrigés par `a741ab9` et `5908816` ; **verte sur
+le dernier commit** (restauration et relais de bout en bout compris). Dans le conteneur cloud : **PostgreSQL 18.4** (paquet npm
 `@embedded-postgres`), **Node 24**, **Docker** démarré (images de base par `mirror.gcr.io`, Docker Hub
 limité), **Chromium 1194** par `E2E_CHROMIUM`. e2e verts ici : `suite-v1`, `a11y` (hors écrans des livres),
 `recital`, `securite`, `qua3`, `mobile-money`, `lot10`, `lot16` (écoute), `hifz` 144 ; liste complète de ce qui
