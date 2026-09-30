@@ -3,7 +3,7 @@
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
-  import { checkoutDetail, price, simulate } from '$lib/billing';
+  import { checkoutDetail, OPERATEURS, price, simulate, type Operateur } from '$lib/billing';
   import { t } from '$lib/i18n';
 
   /**
@@ -14,6 +14,8 @@
   let d: D | null = $state(null);
   let error = $state('');
   let busy = $state(false);
+  // mobile money simulé : l'opérateur choisi signe la notification (Wave par défaut)
+  let operateur = $state<Operateur>('wave');
 
   onMount(async () => {
     const r = await checkoutDetail(page.params.id ?? '');
@@ -24,7 +26,11 @@
   async function go(resultat: 'succes' | 'echec') {
     if (!d) return;
     busy = true;
-    const r = await simulate(d.id, resultat);
+    const r = await simulate(
+      d.id,
+      resultat,
+      d.prestataire === 'mobile_money' ? operateur : undefined,
+    );
     busy = false;
     if (!r.ok) {
       error = t('paie.err_inconnue');
@@ -50,6 +56,18 @@
         · {t('abo.places', { n: d.places })}{/if}
     </p>
     <p class="total" data-testid="montant">{price(d.montant, d.devise)}</p>
+    {#if d.status === 'ouverte' && d.prestataire === 'mobile_money'}
+      <fieldset class="ops" data-testid="operateurs">
+        <legend>{t('paie.operateur')}</legend>
+        {#each OPERATEURS as o (o)}
+          <label
+            ><input type="radio" name="operateur" value={o} bind:group={operateur} />
+            {t(`paie.op_${o}`)}</label
+          >
+        {/each}
+      </fieldset>
+      <p class="muted small">{t('paie.mobile_aide')}</p>
+    {/if}
     {#if d.status === 'ouverte'}
       <div class="row">
         <button
@@ -70,6 +88,13 @@
 {/if}
 
 <style>
+  .ops {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    border: 2px solid var(--line);
+    border-radius: var(--radius-md);
+  }
   .warn {
     background: var(--warn-bg);
   }

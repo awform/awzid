@@ -20,8 +20,10 @@ import {
   trialAvailable,
   zoneOf,
   NotConfiguredError,
+  MOBILE_OPERATORS,
   type BillingEvent,
   type BillingSetup,
+  type MobileOperator,
   type Entitlement,
   type ProviderId,
   type SubStatus,
@@ -94,7 +96,9 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
   }
 
   /** Traitement UNIQUE des événements (webhook réel ou simulé) — idempotent. */
-  async function applyEvent(ev: BillingEvent): Promise<'traite' | 'doublon' | 'ignore'> {
+  async function applyEvent(
+    ev: BillingEvent,
+  ): Promise<'traite' | 'doublon' | 'ignore' | 'montant_incorrect'> {
     return db.transaction(async (tx) => {
       const ins = await tx
         .insert(t.billingEvent)
@@ -110,6 +114,19 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
       const now = new Date();
       if (ev.type === 'paiement_reussi' || ev.type === 'paiement_echoue') {
         if (!ev.checkoutId) return 'ignore';
+        // mobile money (complément E) : le montant et la devise NOTIFIÉS doivent être ceux de la commande
+        // (sinon : notification falsifiée ou erreur de l'opérateur — rien n'est accordé, la commande reste ouverte)
+        if (
+          ev.type === 'paiement_reussi' &&
+          (ev.montant !== undefined || ev.devise !== undefined)
+        ) {
+          const [o] = await tx
+            .select({ amount: t.billingCheckout.amount, currency: t.billingCheckout.currency })
+            .from(t.billingCheckout)
+            .where(eq(t.billingCheckout.id, ev.checkoutId));
+          if (o && (o.amount !== ev.montant || o.currency !== ev.devise))
+            return 'montant_incorrect';
+        }
         // audit PAY-1 : transition ATOMIQUE « ouverte » → payée / échouée ; un seul événement gagne, les
         // suivants (même paiement, autre identifiant d'événement) ne créent rien
         const [c] = await tx
@@ -403,7 +420,10 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
   );
 
   /** Résultat du paiement SIMULÉ : produit un événement signé, traité comme un vrai webhook. */
-  app.post<{ Params: { id: string }; Body: { resultat: 'succes' | 'echec' } }>(
+  app.post<{
+    Params: { id: string };
+    Body: { resultat: 'succes' | 'echec'; operateur?: MobileOperator };
+  }>(
     '/api/v1/billing/simulate/:id',
     {
       schema: {
@@ -412,7 +432,11 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
           type: 'object',
           required: ['resultat'],
           additionalProperties: false,
-          properties: { resultat: { type: 'string', enum: ['succes', 'echec'] } },
+          properties: {
+            resultat: { type: 'string', enum: ['succes', 'echec'] },
+            // mobile money simulé : opérateur choisi sur la page de paiement
+            operateur: { type: 'string', enum: [...MOBILE_OPERATORS] },
+          },
         },
       },
     },
@@ -429,11 +453,21 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
           ),
         );
       if (!c) return err(reply, 404, 'introuvable');
-      const e = billing.simulated.event(
-        c.id,
-        req.body.resultat === 'succes' ? 'paiement_reussi' : 'paiement_echoue',
+      const type = req.body.resultat === 'succes' ? 'paiement_reussi' : 'paiement_echoue';
+      // mobile money : notification signée et horodatée de l'opérateur, avec le montant de la commande
+      const mm = c.provider === 'mobile_money';
+      const e = mm
+        ? billing.simulatedMobile.notification(c.id, {
+            type,
+            operateur: req.body.operateur ?? 'wave',
+            montant: c.amount,
+            devise: c.currency as 'XOF',
+          })
+        : billing.simulated.event(c.id, type);
+      const ev = await (mm ? billing.simulatedMobile : billing.simulated).parseWebhook(
+        e.headers,
+        e.body,
       );
-      const ev = await billing.simulated.parseWebhook(e.headers, e.body);
       return { resultat: await applyEvent(ev!) };
     },
   );
@@ -447,7 +481,13 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
       '/api/v1/billing/webhook/:provider',
       async (req: FastifyRequest<{ Params: { provider: ProviderId } }>, reply) => {
         const p = billing.provider(req.params.provider);
-        if (!p || (billing.mode === 'simule' && req.params.provider !== 'simule'))
+        // simulation : le prestataire simulé général et le mobile money simulé seulement
+        if (
+          !p ||
+          (billing.mode === 'simule' &&
+            req.params.provider !== 'simule' &&
+            req.params.provider !== 'mobile_money')
+        )
           return err(reply, 404, 'prestataire_inconnu');
         let ev: BillingEvent | null;
         try {

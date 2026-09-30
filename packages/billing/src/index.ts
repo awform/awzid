@@ -2,6 +2,7 @@ export * from './plans.js';
 export * from './rights.js';
 export * from './providers/types.js';
 export { SimulatedPaymentProvider } from './providers/simule.js';
+export * from './providers/mobile-simule.js';
 export {
   StripeProvider,
   PayPalProvider,

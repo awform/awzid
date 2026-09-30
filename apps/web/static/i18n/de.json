@@ -1456,5 +1456,14 @@
   "eco.recitals": "Veröffentlichte Rezitationen",
   "eco.total": "Summe ({n, plural, one {# Klasse} other {# Klassen}})",
   "eco.taux": "{n} %",
-  "eco.aucune": "Noch keine Klasse."
+  "eco.aucune": "Noch keine Klasse.",
+  "offre.nom_pass_1_mois": "1-Monats-Pass",
+  "offre.desc_pass_1_mois": "Im Voraus per Mobile Money bezahlt, ohne automatische Verlängerung.",
+  "offre.nom_pass_12_mois": "12-Monats-Pass",
+  "offre.desc_pass_12_mois": "Im Voraus per Mobile Money bezahlt, ohne automatische Verlängerung.",
+  "paie.operateur": "Anbieter",
+  "paie.op_wave": "Wave",
+  "paie.op_orange_money": "Orange Money",
+  "paie.mobile_aide": "In Wirklichkeit würden Sie die Zahlung auf Ihrem Telefon bestätigen; hier wird nichts verlangt oder abgebucht.",
+  "erreur.montant_incorrect": "Der gezahlte Betrag entspricht nicht der Bestellung: Es wurde nichts freigeschaltet."
 }

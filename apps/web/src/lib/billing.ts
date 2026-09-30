@@ -81,8 +81,14 @@ export const checkoutDetail = (id: string) =>
     prestataire: string;
     status: string;
   }>('GET', `/billing/checkout/${id}`);
-export const simulate = (id: string, resultat: 'succes' | 'echec') =>
-  call<{ resultat: string }>('POST', `/billing/simulate/${id}`, { resultat });
+/** opérateurs du mobile money simulé (Sénégal) */
+export const OPERATEURS = ['wave', 'orange_money'] as const;
+export type Operateur = (typeof OPERATEURS)[number];
+export const simulate = (id: string, resultat: 'succes' | 'echec', operateur?: Operateur) =>
+  call<{ resultat: string }>('POST', `/billing/simulate/${id}`, {
+    resultat,
+    ...(operateur ? { operateur } : {}),
+  });
 export const cancel = (id: string) =>
   call<{ ok: boolean }>('POST', `/billing/subscriptions/${id}/cancel`, {});
 

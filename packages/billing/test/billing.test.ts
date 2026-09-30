@@ -120,7 +120,10 @@ describe('prestataires', () => {
     expect(setupBilling({}).mode).toBe('off');
     expect(setupBilling({}).provider('stripe')).toBeNull();
     const sim = setupBilling({ AWFORM_PAIEMENT: 'simule' });
-    expect(sim.provider('mobile_money')?.id).toBe('simule');
+    // mobile money : simulateur propre (notifications signées et horodatées des opérateurs)
+    expect(sim.provider('mobile_money')?.id).toBe('mobile_money');
+    expect(sim.provider('mobile_money')).toBe(sim.simulatedMobile);
+    expect(sim.provider('stripe')?.id).toBe('simule');
     const reel = setupBilling({ AWFORM_PAIEMENT: 'reel' });
     expect(reel.available(['stripe', 'paypal', 'mobile_money'])).toEqual([]);
     const withStripe = setupBilling({

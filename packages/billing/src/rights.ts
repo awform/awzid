@@ -17,7 +17,9 @@ export interface SubscriptionLike {
 const RANK: Record<PlanCode, number> = {
   gratuit: 0,
   decouverte: 1,
+  pass_1_mois: 2,
   pass_3_mois: 2,
+  pass_12_mois: 2,
   adulte_mensuel: 3,
   adulte_annuel: 3,
   famille_mensuel: 4,

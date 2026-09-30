@@ -31,6 +31,7 @@ export async function login(page: Page, compte: keyof typeof EMAILS): Promise<vo
 export async function newAdult(
   page: Page,
   label: string,
+  country = 'FR',
 ): Promise<{ email: string; profileId: string }> {
   const email = `${label}-${Date.now()}-${Math.floor(Math.random() * 1e6)}@e2e.test`;
   const r = await page.request.post('/api/v1/auth/signup', {
@@ -39,11 +40,12 @@ export async function newAdult(
       kind: 'adulte',
       email,
       password: password(),
-      country: 'FR',
+      country,
       locale: 'fr',
       birthYear: 1988,
       pseudonym: 'Hafiz',
-      consents: ['cgu'],
+      // hors de l'Union européenne (Sénégal…) : accord exprès à l'hébergement hors du pays
+      consents: country === 'FR' ? ['cgu'] : ['cgu', 'transfert_hors_pays'],
     },
   });
   expect(r.status(), await r.text()).toBe(201);

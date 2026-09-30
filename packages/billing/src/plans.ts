@@ -15,7 +15,9 @@ export type PlanCode =
   | 'famille_annuel'
   | 'adulte_mensuel'
   | 'adulte_annuel'
+  | 'pass_1_mois'
   | 'pass_3_mois'
+  | 'pass_12_mois'
   | 'licence_ecole';
 
 export type PlanKind = 'gratuit' | 'essai' | 'abonnement' | 'pass' | 'licence';
@@ -142,7 +144,17 @@ export const PLANS: readonly Plan[] = [
     },
   },
   {
-    // pass prépayé (mobile money, sans renouvellement automatique) : la forme courante au Sénégal
+    // passes prépayés (mobile money : Wave, Orange Money ; sans renouvellement automatique) : la forme
+    // courante au Sénégal. PRIX : DÉCISION DU CLIENT (D19) — propositions provisoires en francs CFA.
+    code: 'pass_1_mois',
+    kind: 'pass',
+    pour: ['parent', 'adulte'],
+    periode: { mois: 1 },
+    renouvelable: false,
+    droits: FULL(6),
+    prix: { afrique_ouest: { devise: 'XOF', montant: 1500 } },
+  },
+  {
     code: 'pass_3_mois',
     kind: 'pass',
     pour: ['parent', 'adulte'],
@@ -150,6 +162,15 @@ export const PLANS: readonly Plan[] = [
     renouvelable: false,
     droits: FULL(6),
     prix: { afrique_ouest: { devise: 'XOF', montant: 3500 } },
+  },
+  {
+    code: 'pass_12_mois',
+    kind: 'pass',
+    pour: ['parent', 'adulte'],
+    periode: { mois: 12 },
+    renouvelable: false,
+    droits: FULL(6),
+    prix: { afrique_ouest: { devise: 'XOF', montant: 12000 } },
   },
   {
     code: 'licence_ecole',

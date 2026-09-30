@@ -8,6 +8,28 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Complément E : paiement mobile au Sénégal, SIMULÉ (branche `suite-v1-b`)
+
+- **Simulateur Wave / Orange Money** (`packages/billing/src/providers/mobile-simule.ts`) derrière l'interface
+  `PaymentProvider` : francs CFA entiers seulement ; notification de l'opérateur signée HMAC-SHA256 sur
+  « horodatage.corps » (`x-mobile-signature: t=…,v1=…`), **rejeu refusé au-delà de 5 minutes**, identifiant
+  d'événement « opérateur:transaction » ; en mode simulé, le moyen `mobile_money` l'utilise (secret dérivé de
+  celui du simulateur : aucune nouvelle variable).
+- **API** : montant et devise notifiés **comparés à la commande** (`montant_incorrect` : rien n'est accordé,
+  la commande reste ouverte) ; webhook `mobile_money` accepté en simulation ; simulation par opérateur.
+- **Passes** `pass_1_mois` (1 500 F CFA), `pass_3_mois` (3 500), `pass_12_mois` (12 000) — **prix provisoires,
+  décision du client (D19)** ; textes dans les cinq langues ; page de paiement simulé avec le choix de
+  l'opérateur.
+- **Tests** : billing `mobile.test.ts` (5 : signature, corps modifié, autre secret, rejeu tardif, francs CFA,
+  opérateur inconnu) ; API `mobile-money.test.ts` (6 : offres, parcours, **même notification ×6 en parallèle →
+  1 pass**, **course Wave ×4 + Orange Money ×4 + page → 1 traitement**, montant falsifié / signature fausse /
+  notification rejouée → rien, échec notifié) ; web `billing.test.ts` ; e2e `mobile-money.spec.ts` (Orange
+  Money simulé) et `lot10.spec.ts` : verts. Architecture et passage au réel : `docs/projet/MOBILE_MONEY.md`.
+- Total unitaires : **594 verts** ; budget 112,8 Ko (≤ 150), toutes les pages 229,6 Ko (≤ 300). Aucun compte,
+  aucune clé, aucun argent.
+
+---
+
 ## 30/09/2026 — Complément D : exploitation et ADR (branche `suite-v1-b`)
 
 - `docs/projet/EXPLOITATION.md` : surveillance (seuils), procédure d'incident (constater, contenir, violation de

@@ -1456,5 +1456,14 @@
   "eco.recitals": "جلسات التسميع المنشورة",
   "eco.total": "المجموع ({n, plural, one {قسم واحد} other {# أقسام}})",
   "eco.taux": "{n}٪",
-  "eco.aucune": "لا يوجد قسم حاليًا."
+  "eco.aucune": "لا يوجد قسم حاليًا.",
+  "offre.nom_pass_1_mois": "باقة شهر واحد",
+  "offre.desc_pass_1_mois": "مدفوع مسبقا عبر المال المحمول، دون تجديد تلقائي.",
+  "offre.nom_pass_12_mois": "باقة 12 شهرا",
+  "offre.desc_pass_12_mois": "مدفوع مسبقا عبر المال المحمول، دون تجديد تلقائي.",
+  "paie.operateur": "المشغّل",
+  "paie.op_wave": "Wave",
+  "paie.op_orange_money": "Orange Money",
+  "paie.mobile_aide": "في الواقع تؤكدون الدفع على هاتفكم؛ هنا لا يُطلب شيء ولا يُقتطع شيء.",
+  "erreur.montant_incorrect": "المبلغ المدفوع لا يطابق الطلب: لم يُمنح أي شيء."
 }

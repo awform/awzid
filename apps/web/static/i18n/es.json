@@ -1456,5 +1456,14 @@
   "eco.recitals": "Recitaciones publicadas",
   "eco.total": "Total ({n, plural, one {# clase} other {# clases}})",
   "eco.taux": "{n} %",
-  "eco.aucune": "Todavía no hay clases."
+  "eco.aucune": "Todavía no hay clases.",
+  "offre.nom_pass_1_mois": "Pase de 1 mes",
+  "offre.desc_pass_1_mois": "Prepago por mobile money, sin renovación automática.",
+  "offre.nom_pass_12_mois": "Pase de 12 meses",
+  "offre.desc_pass_12_mois": "Prepago por mobile money, sin renovación automática.",
+  "paie.operateur": "Operador",
+  "paie.op_wave": "Wave",
+  "paie.op_orange_money": "Orange Money",
+  "paie.mobile_aide": "En realidad confirmaría el pago en su teléfono; aquí no se pide ni se cobra nada.",
+  "erreur.montant_incorrect": "El importe pagado no coincide con el pedido: no se ha concedido nada."
 }

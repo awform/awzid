@@ -34,6 +34,9 @@ export interface BillingEvent {
   type: 'paiement_reussi' | 'paiement_echoue' | 'renouvellement' | 'annulation' | 'impaye';
   checkoutId: string | null;
   reference: string | null;
+  /** mobile money : montant et devise NOTIFIÉS, comparés à la commande (unité mineure) */
+  montant?: number;
+  devise?: Currency;
 }
 
 export class NotConfiguredError extends Error {
