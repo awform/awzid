@@ -8,6 +8,36 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Suite V1-b, étape A : e2e Playwright exécutés dans le conteneur cloud (branche `suite-v1-b`)
+
+- **Environnement** : PostgreSQL 18.4 (binaire du paquet npm `@embedded-postgres/linux-x64`, `/opt/pg18` ; le
+  PostgreSQL 16 d'Ubuntu n'a pas `uuidv7()`), Node 24 (le hachage `crypto.argon2` n'existe pas en Node 22),
+  Chromium 1194 déjà présent (Playwright attend 1243, aucun téléchargement) : nouvelle variable **`E2E_CHROMIUM`**
+  dans `playwright.config.ts` (chemin de l'exécutable) ; sans elle, rien ne change sur la VM.
+- **`suite-v1.spec.ts` : 3/3 verts** (ordinateur et téléphone). Deux défauts du SCÉNARIO corrigés, pas du code :
+  heure de la visio calculée dans le fuseau de Node (UTC) au lieu de celui du navigateur (Europe/Paris) → séance
+  2 h dans le passé, donc invisible (l'API ne montre que les séances non terminées) : heure maintenant calculée
+  dans la page ; « AWZ-0000-0000-00000 » a un caractère de contrôle JUSTE (somme nulle) → « code inconnu » au lieu
+  de « mal saisi » : remplacé par « AWZ-0000-0000-00001 » (contrôle faux).
+- **`lot16.spec.ts` (récitation)** : le scénario inscrivait l'enfant à la classe sans code parent, exigé depuis
+  l'audit SEC-3 → en-tête `x-parent-pin` ajouté ; vert.
+- **Autres e2e sur le contenu synthétique** (téléphone, avant arrêt volontaire du lancement complet) :
+  passent sans les livres : a11y (visiteur, parent, enseignant), captures lots 3-6, 10, 12, 14, 16, comptes
+  (sauf 37), exercices 25 et 38, hifz 115 et 144, hors-ligne 35, 69, 106, lot10, lot11 38 et 51, lot12, lot14,
+  lot15 10 et 66, lot16 106, lot6 23, 77, 115, 135, lot8 106, lot9 94. **Dépendent des vrais livres**
+  (exercices, leçons, niveaux re/ra/ado, modèles de certificats, carnets N1) : a11y 55, bilans, captures 12, 211,
+  250, 341, 380, 460, comptes 37, exercices 11, hifz 27 et 58, hors-ligne 7, leçons, lot11 11, lot13, lot15 35,
+  lot16 118, lot6 97, lot8 19, 61, 72, lot9 12 → **à lancer sur la VM**.
+- **Carnet de pratique en e2e : non ajouté**. Le carnet ne s'affiche que dans une leçon de sciences religieuses
+  (`ReligionLesson`, niveaux `re*`/`ra*`) ; le contenu synthétique n'en a pas, et en créer un demanderait
+  d'inventer une leçon religieuse (interdit). Couverture : API `lot22.test.ts` (5), web `carnet.test.ts` ; e2e à
+  écrire sur la VM avec les vrais livres (re1).
+- Commande : dans `apps/web`, `E2E_CHROMIUM=/opt/pw-browsers/chromium TEST_DATABASE_URL=… AWFORM_CONTENT_DIR=
+  <racine>/infra/ci/contenu-synthetique AWFORM_LEVELS=en1,ad1 npx playwright test e2e/suite-v1.spec.ts`.
+- CI : `suite-v1-b` ajoutée aux branches vérifiées. Tests unitaires : 536 verts (inchangés).
+
+---
+
 ## 30/09/2026 — Lot 21, complément : écran de modération (branche `suite-v1`)
 
 - Page d'administration : file des messages signalés (`ModerationAdmin.svelte`), « classer » ou « retirer »

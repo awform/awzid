@@ -41,14 +41,18 @@ test('messagerie : annonce, message privé, réponse, signalement, visio', async
   await expect(page.getByTestId('msg-fil')).toHaveCount(1);
 
   // visio dans 5 minutes : le lien est donné à la famille (15 minutes avant le début)
-  const start = new Date(Date.now() + 5 * 60_000);
-  const local = new Date(start.getTime() - start.getTimezoneOffset() * 60_000)
-    .toISOString()
-    .slice(0, 16);
+  // heure locale calculée DANS le navigateur (son fuseau peut différer de celui du lanceur de tests)
+  const local = await page.evaluate(() => {
+    const start = new Date(Date.now() + 5 * 60_000);
+    return new Date(start.getTime() - start.getTimezoneOffset() * 60_000)
+      .toISOString()
+      .slice(0, 16);
+  });
   await page.locator('#vt').fill('Révision');
   await page.locator('#vd').fill(local);
   await page.locator('#vu').fill('https://meet.jit.si/awzid-e2e');
   await page.getByTestId('visio-planifier').click();
+  await expect(page.getByText('Révision', { exact: false })).toBeVisible();
 
   // famille : annonce, fil privé (réponse), visio, signalement avec numéro d'aide
   await fam.goto('/messages');
@@ -73,7 +77,9 @@ test('suivi des sourates et code d’activation mal saisi', async ({ page }) => 
   await page.goto('/sourates');
   await expect(page.locator('main h1')).toHaveText('Suivi des sourates');
   await page.goto('/activation');
-  await page.getByTestId('code-activation').fill('AWZ-0000-0000-00000');
+  // dernier caractère (contrôle) faux : refusé sans consulter la base
+  // (« AWZ-0000-0000-00000 » a, lui, un contrôle juste et serait simplement « inconnu »)
+  await page.getByTestId('code-activation').fill('AWZ-0000-0000-00001');
   await page.getByTestId('activer').click();
   await expect(page.getByRole('alert')).toContainText('mal saisi');
 });

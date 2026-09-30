@@ -41,6 +41,11 @@ export default defineConfig({
     locale: 'fr-FR',
     timezoneId: 'Europe/Paris',
     screenshot: 'only-on-failure',
+    // environnement cloud : Chromium déjà présent mais d'une autre version que celle attendue
+    // (aucun téléchargement) ; sans E2E_CHROMIUM, le navigateur de Playwright est utilisé (VM)
+    ...(process.env.E2E_CHROMIUM
+      ? { launchOptions: { executablePath: process.env.E2E_CHROMIUM } }
+      : {}),
   },
   projects: [
     { name: 'mobile-chromium', use: { ...devices['Pixel 7'] } },

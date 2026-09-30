@@ -40,7 +40,8 @@ test('récitation : la famille envoie, l’enseignant écoute et note, la famill
   expect(
     (
       await fam.request.post(`/api/v1/profiles/${kid.id}/classes`, {
-        headers: { 'x-awform': '1' },
+        // audit SEC-3 : accord donné pour un mineur → code parent exigé
+        headers: { 'x-awform': '1', 'x-parent-pin': PARENT_PIN },
         data: { code: cls.joinCode, consent: true },
       })
     ).status(),
