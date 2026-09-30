@@ -102,7 +102,7 @@ echo "AWFORM_VAPID_SUBJECT=https://$SITE" >> "$ENVF"
 export AWFORM_ENV_DIR="$CONF"
 "$PROD/env-split.sh" "$ENVF" "$CONF"
 export AWFORM_CONTENT_DIR="${AWFORM_CONTENT_DIR:-$HOME/awform-content}"
-AWFORM_VERSION="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo local)"
+AWFORM_VERSION="${AWFORM_VERSION:-$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo local)}"
 export AWFORM_VERSION
 DC=(docker compose -f "$PROD/compose.yml")
 

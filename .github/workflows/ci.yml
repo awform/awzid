@@ -80,6 +80,8 @@ jobs:
           mkdir -p /tmp/awform-env && touch /tmp/awform-env/{api,worker,outils,db,caddy}.env
           AWFORM_ENV_DIR=/tmp/awform-env docker compose -f infra/prod/compose.yml build api worker web
           docker build -f infra/prod/Dockerfile --target relay -t awform/relay:ci .
+      - name: Sauvegarde puis restauration complète (instance jetable, mêmes lignes table par table)
+        run: bash infra/ci/test-restauration.sh
 
   base-et-tuteur:
     # tests sur PostgreSQL 18 (service conteneur, base jetable) et batterie adverse du tuteur (fournisseur
