@@ -27,7 +27,7 @@ cleanup() {
   [ "${GARDER:-0}" = 1 ] && { echo "instances gardées : $WORK"; return; }
   "${RC[@]}" down -v >/dev/null 2>&1 || true
   "${DC[@]}" down -v >/dev/null 2>&1 || true
-  rm -rf "$WORK"
+  rm -rf "$WORK" 2>/dev/null || sudo -n rm -rf "$WORK" || true
 }
 trap cleanup EXIT
 fail() {
@@ -61,6 +61,11 @@ JETON="$("${DC[@]}" --profile outils run --rm -T relais creer "École de test" e
 [[ "$JETON" == rel_* ]] || fail "enregistrement du relais"
 AWFORM_RELAIS_SANS_SYSTEME=1 AWFORM_RELAIS_JETON="$JETON" \
   "$ROOT/infra/relais/install.sh" --hote ecole-test.relais.test --amont https://central.test >/dev/null
+# en vraie installation (sudo), install.sh donne les données au compte du conteneur (1000) ; ici, sans root
+# (runner de la CI), on le fait de même
+if [ "$(id -u)" != 0 ]; then
+  sudo -n chown -R 1000:1000 "$AWFORM_RELAIS_VAR/donnees" "$AWFORM_RELAIS_VAR/certs" || fail "droits des données du relais (sudo)"
+fi
 # le relais joint le central par le réseau Docker du central, où Caddy répond au nom « central.test »
 # (plus sûr que la passerelle de l'hôte, filtrée sur certaines machines)
 CADDY="$("${DC[@]}" ps -q caddy)"
