@@ -9,13 +9,13 @@
 import { PgBoss } from 'pg-boss';
 import webpush from 'web-push';
 import { connect, dropSubscription, dueNotifications, markSent } from '@awform/db';
-import { nightlyPurge, SCHEDULES } from './tasks.js';
+import { bossOptions, nightlyPurge, SCHEDULES } from './tasks.js';
 
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error('DATABASE_URL absente');
 
 const h = connect(url, 2);
-const boss = new PgBoss({ connectionString: url, schema: 'pgboss' });
+const boss = new PgBoss(bossOptions(url));
 boss.on('error', (e: unknown) => console.error('[pg-boss]', e));
 
 await boss.start();

@@ -11,6 +11,17 @@ import {
   type Db,
 } from '@awform/db';
 
+/**
+ * Options de pg-boss. Le schéma « pgboss » est créé et donné au travailleur par l'outil des rôles
+ * (packages/db/src/roles.ts) : le travailleur, à droits minimaux, n'a PAS le droit CREATE sur la base ; sans
+ * `createSchema: false`, pg-boss lance « CREATE SCHEMA IF NOT EXISTS » et le démarrage échoue.
+ */
+export const bossOptions = (connectionString: string) => ({
+  connectionString,
+  schema: 'pgboss',
+  createSchema: false,
+});
+
 /** Planification : nom de la file, expression cron, fuseau (heure locale du serveur pour la nuit). */
 export const SCHEDULES: ReadonlyArray<{ queue: string; cron: string; nightly?: boolean }> = [
   { queue: 'purge-comptes', cron: '15 3 * * *', nightly: true },
