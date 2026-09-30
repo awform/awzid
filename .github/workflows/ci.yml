@@ -54,7 +54,7 @@ jobs:
   images:
     # images de production construites (jamais publiées) et fichiers d'exploitation vérifiés
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -79,9 +79,11 @@ jobs:
         run: |
           mkdir -p /tmp/awform-env && touch /tmp/awform-env/{api,worker,outils,db,caddy}.env
           AWFORM_ENV_DIR=/tmp/awform-env docker compose -f infra/prod/compose.yml build api worker web
-          docker build -f infra/prod/Dockerfile --target relay -t awform/relay:ci .
+          docker build -f infra/prod/Dockerfile --target relay -t awform/relay:ci -t awform/relay:local .
       - name: Sauvegarde puis restauration complète (instance jetable, mêmes lignes table par table)
         run: bash infra/ci/test-restauration.sh
+      - name: Relais d'école de bout en bout (coupure du réseau et du courant, ni perte ni doublon)
+        run: bash infra/ci/test-relais.sh
 
   base-et-tuteur:
     # tests sur PostgreSQL 18 (service conteneur, base jetable) et batterie adverse du tuteur (fournisseur
