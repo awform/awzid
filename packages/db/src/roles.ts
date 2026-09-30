@@ -87,6 +87,10 @@ export const API_GRANTS: Record<string, Right[]> = {
   practice_check: ALL,
   practice_signature: ALL,
   sura_progress: ALL,
+  // lot 23 : codes d'activation imprimés dans les livres
+  activation_batch: ALL,
+  activation_code: ALL,
+  level_pass: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */

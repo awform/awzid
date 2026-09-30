@@ -906,6 +906,14 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       entrainement: practice,
       carnetDePratique: carnets,
       suiviDesSourates: sourates,
+      accesParCode: await db
+        .select({
+          niveau: t.levelPass.levelCode,
+          debut: t.levelPass.startsAt,
+          fin: t.levelPass.endsAt,
+        })
+        .from(t.levelPass)
+        .where(eq(t.levelPass.accountId, id)),
       recitationsEnvoyees: recitations,
       reponsesLibres: freeAnswers,
       notifications: await db

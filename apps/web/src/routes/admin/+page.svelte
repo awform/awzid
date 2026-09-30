@@ -3,6 +3,7 @@
   import { resolve } from '$app/paths';
   import { fmtDate, t } from '$lib/i18n';
   import { call } from '$lib/session';
+  import ActivationAdmin from '$lib/ActivationAdmin.svelte';
 
   /**
    * Tableau de bord ADMINISTRATEUR minimal, en lecture seule : utilisateurs (e-mails masqués), éditions et
@@ -90,6 +91,8 @@
       </table>
     </section>
   </div>
+
+  <ActivationAdmin />
 
   <section class="card">
     <h2>{t('admin.editions')}</h2>

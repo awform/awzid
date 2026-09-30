@@ -9,3 +9,4 @@ export {
   StoreProvider,
 } from './providers/adapters.js';
 export * from './setup.js';
+export * from './activation.js';

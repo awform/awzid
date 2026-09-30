@@ -58,6 +58,9 @@
       <a class="button primary" href={resolve('/offres')} data-testid="voir-offres"
         >{t('abo.voir_offres')}</a
       >
+      <a class="button" href={resolve('/activation')} data-testid="lien-activation"
+        >{t('act.lien')}</a
+      >
     </p>
   </section>
 

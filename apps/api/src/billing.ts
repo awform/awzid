@@ -7,11 +7,11 @@
  */
 import { minorHolder } from './guards.js';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { and, desc, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray } from 'drizzle-orm';
 import { schema as t, type Db } from '@awform/db';
 import {
   addPeriod,
-  canOpenUnit,
+  canOpenWithPacks,
   entitlementOf,
   planByCode,
   PLANS,
@@ -37,7 +37,7 @@ const UUID = { type: 'string', format: 'uuid' } as const;
 export interface ContentRights {
   /** droit du compte (abonnements, licence d'école d'une classe d'un de ses profils) ; anonyme : gratuit */
   of(auth: { accountId: string; kind: string } | undefined | null): Promise<Entitlement | null>;
-  canOpen(e: Entitlement | null, unit: { n: number }): boolean;
+  canOpen(e: Entitlement | null, unit: { n: number; levelCode?: string }): boolean;
 }
 
 export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSetup): ContentRights {
@@ -513,10 +513,15 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
         .where(eq(t.profile.ownerAccountId, auth.accountId));
       let schoolLicence: { until: Date | null } | null = null;
       for (const p of profiles) schoolLicence ??= await schoolLicenceFor(p.id);
-      return entitlementOf(subs, { schoolLicence });
+      // lot 23 : niveaux ouverts par un code d'activation encore valable
+      const packs = await db
+        .selectDistinct({ level: t.levelPass.levelCode })
+        .from(t.levelPass)
+        .where(and(eq(t.levelPass.accountId, auth.accountId), gt(t.levelPass.endsAt, new Date())));
+      return { ...entitlementOf(subs, { schoolLicence }), packs: packs.map((p) => p.level) };
     },
     canOpen(e, unit) {
-      return !e || canOpenUnit(e.droits, unit);
+      return !e || canOpenWithPacks(e, unit);
     },
   };
 }

@@ -1419,3 +1419,78 @@ export const suraProgress = pgTable(
     check('sura_progress_step', sql`${t.step} BETWEEN 1 AND 4`),
   ],
 );
+
+// ================================================================ codes d'activation imprimés (lot 23)
+
+/** Lot de codes imprimés pour un niveau (généré par l'administrateur ; codes montrés une seule fois). */
+export const activationBatch = pgTable(
+  'activation_batch',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    levelCode: text('level_code')
+      .notNull()
+      .references(() => level.code),
+    label: text('label').notNull(),
+    months: smallint('months').notNull(),
+    quantity: integer('quantity').notNull(),
+    /** après cette date, un code non utilisé n'ouvre plus rien (null : sans limite) */
+    redeemBy: timestamp('redeem_by', { withTimezone: true }),
+    createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    check('activation_batch_months', sql`${t.months} BETWEEN 1 AND 24`),
+    check('activation_batch_quantity', sql`${t.quantity} BETWEEN 1 AND 5000`),
+  ],
+);
+
+/** Code à usage unique : seule son empreinte est gardée (le code en clair n'existe que sur le papier). */
+export const activationCode = pgTable(
+  'activation_code',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    batchId: uuid('batch_id')
+      .notNull()
+      .references(() => activationBatch.id, { onDelete: 'cascade' }),
+    codeHash: text('code_hash').notNull(),
+    /** 4 derniers caractères, pour l'assistance */
+    last4: text('last4').notNull(),
+    redeemedBy: uuid('redeemed_by').references(() => account.id, { onDelete: 'set null' }),
+    redeemedAt: timestamp('redeemed_at', { withTimezone: true }),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('activation_code_hash').on(t.codeHash),
+    index('activation_code_batch').on(t.batchId),
+  ],
+);
+
+/** Accès à un niveau ouvert par un code (12 mois en général) ; indépendant des abonnements. */
+export const levelPass = pgTable(
+  'level_pass',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    accountId: uuid('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    levelCode: text('level_code')
+      .notNull()
+      .references(() => level.code),
+    codeId: uuid('code_id')
+      .notNull()
+      .references(() => activationCode.id),
+    startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
+    endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex('level_pass_code').on(t.codeId),
+    index('level_pass_account').on(t.accountId, t.levelCode),
+  ],
+);

@@ -44,6 +44,7 @@ import { messageKeyFromEnv, registerMessagerie } from './messagerie.js';
 import { registerPush } from './push.js';
 import { registerRelais } from './relais.js';
 import { registerCorrections } from './corrections.js';
+import { registerActivation } from './activation.js';
 import { registerCarnet } from './carnet.js';
 import { registerEpreuves } from './epreuves.js';
 import { registerVerification } from './verification.js';
@@ -186,6 +187,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerCorrections(app, db, edition);
   registerEpreuves(app, db, edition);
   registerCarnet(app, db, edition);
+  registerActivation(app, db);
   registerVerification(app, db, signer);
   registerRelais(
     app,
@@ -304,7 +306,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
       // audit PAY-4 : le paquet hors ligne (niveau entier) est réservé aux formules qui l'incluent
       const e = await rights.of(req.auth);
-      if (e && !e.droits.horsLigne)
+      // lot 23 : un code d'activation ouvre aussi le paquet hors ligne de SON niveau (livre acheté)
+      if (e && !e.droits.horsLigne && !e.packs?.includes(req.params.code))
         return reply.code(403).send({ error: { code: 'hors_ligne_reserve', plan: e.plan } });
       const p = await getPack(db, ed.id, ed.code, req.params.code);
       if (!p)

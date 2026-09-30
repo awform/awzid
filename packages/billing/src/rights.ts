@@ -37,6 +37,8 @@ export interface Entitlement {
   jusquAu: Date | null;
   /** source : abonnement du compte, ou licence de l'école (classe) */
   source: 'compte' | 'ecole' | 'gratuit';
+  /** niveaux ouverts en entier par un code d'activation encore valable (lot 23) */
+  packs?: string[];
 }
 
 export function entitlementOf(
@@ -74,6 +76,11 @@ export function entitlementOf(
 /** Une leçon est-elle ouverte ? (n : rang de l'unité dans le livre, 1 = première) */
 export function canOpenUnit(r: Rights, unit: { n: number }): boolean {
   return r.niveaux === 'tous' || unit.n <= r.leconsOuvertes;
+}
+
+/** Accès par niveau (code d'activation, lot 23) : la leçon est ouverte si son niveau a un accès en cours. */
+export function canOpenWithPacks(e: Entitlement, unit: { n: number; levelCode?: string }): boolean {
+  return canOpenUnit(e.droits, unit) || (!!unit.levelCode && !!e.packs?.includes(unit.levelCode));
 }
 
 /** L'essai « découverte » ne s'offre qu'une fois par compte. */

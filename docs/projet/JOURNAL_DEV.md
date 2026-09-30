@@ -8,6 +8,24 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Lot 23 (V1-g) : codes d'activation imprimés dans les livres (branche `suite-v1`)
+
+- **Codes** (`packages/billing/src/activation.ts`) : `AWZ-XXXX-XXXX-XXXXC`, alphabet de Crockford (sans I, L, O,
+  U), caractère de contrôle (faute de frappe refusée sans compter d'essai), saisie tolérante (minuscules, espaces,
+  O→0), empreinte SHA-256 seule en base.
+- **Administration** (`apps/api/src/activation.ts`, migration `0023_codes_activation.sql`) : lot par niveau
+  (1 à 5 000 codes, 1 à 24 mois, date limite facultative), administrateur avec second facteur, codes en clair
+  renvoyés une seule fois (fichier CSV pour l'imprimeur), suivi utilisés / révoqués, révocation d'un lot perdu.
+- **Saisie** (page `/activation`, lien depuis l'abonnement) : compte parent ou adulte (titulaire mineur : parent
+  requis), usage unique atomique, anti-essais (5 codes inconnus → verrou), l'accès s'ajoute à la fin de l'accès
+  en cours ; le niveau entier s'ouvre (leçons et paquet hors ligne) quand les droits sont appliqués
+  (`AWFORM_DROITS=on`). Export RGPD complété.
+- Aucun paiement réel : le paiement reste simulé (D13 pour les prix et le circuit de l'imprimeur).
+- Tests : API 191 verts (12 sautés), dont `lot23.test.ts` (5) ; billing 21 (dont `activation.test.ts`, 6) ; web
+  99 (dont `activation.test.ts`, 6).
+
+---
+
 ## 30/09/2026 — Lot 22 (V1-c) : carnet de pratique signé par le parent, suivi des sourates (branche `suite-v1`)
 
 - **Carnet de pratique** (`apps/api/src/carnet.ts`, migration `0022_carnet.sql`) : lignes et jours repris de
