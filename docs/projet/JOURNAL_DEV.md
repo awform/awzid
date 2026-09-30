@@ -8,6 +8,23 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 30/09/2026 — Complément B (relais d'école) : e2e Docker Compose et matériel (branche `suite-v1-b`)
+
+- **Test de bout en bout** `infra/ci/test-relais.sh` (ajouté à la CI, job « images ») : central monté par le
+  vrai `deploy.sh` (site `central.test`, HTTPS par l'autorité locale de Caddy), relais enregistré (`relais.js
+  creer`), installé par le vrai `infra/relais/install.sh` (fichiers seulement) et lancé par
+  `infra/relais/compose.yml`. Scénario : inscription et envois en ligne → **coupure du réseau** (entrée du
+  central arrêtée) : leçon servie depuis la copie du relais, envois mis en file (réponse 202), lot répété par la
+  tablette **fusionné** par le relais, lot qui en chevauche un autre → **coupure de courant** du relais
+  (redémarrage : file chiffrée gardée) → **retour du réseau** : la file part seule, **8 événements au central,
+  chacun une fois** (aucune perte, aucun doublon), aucun envoi refusé, envoi normal ensuite. Vert ici.
+- **Matériel** `docs/projet/RELAIS_MATERIEL.md` : mini-PC N100 conseillé en 2026 (le Raspberry Pi 5 8 Go coûte
+  ≈ 200 $ la carte seule après la pénurie de mémoire), SSD plutôt que carte SD, onduleur 700 VA, routeur
+  Wi-Fi 6 ; prix datés et sourcés, tous « à vérifier » ; consommation ≈ 23 W (≈ 200 kWh par an jour et nuit).
+  Décision du client : **D17**.
+
+---
+
 ## 30/09/2026 — Complément A (sécurité) : ZAP, CSP stricte, restauration testée (branche `suite-v1-b`)
 
 - **Instance complète dans le conteneur cloud** : démon Docker démarré, images construites (Docker Hub limité
