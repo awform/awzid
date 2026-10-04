@@ -85,4 +85,12 @@ export default async function globalSetup(): Promise<void> {
       },
       parent.cookie,
     );
+  // Paquets hors ligne préparés AVANT les tests : le manifeste construit et compresse (Brotli 11) les
+  // paquets de tous les niveaux au premier appel, ≈ 50 s avec les 31 livres. Sans ce préchauffage, le
+  // premier test qui ouvre « Téléchargements » (captures du lot 3, sur téléphone) payait ces 50 s dans son
+  // délai de 60 s : cause de son échec intermittent.
+  const t0 = Date.now();
+  const r = await fetch(`${API}/packs`);
+  if (!r.ok) throw new Error(`/packs → ${r.status}`);
+  console.log(`paquets hors ligne préparés en ${Math.round((Date.now() - t0) / 1000)} s`);
 }
