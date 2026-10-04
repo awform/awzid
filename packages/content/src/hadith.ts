@@ -51,6 +51,15 @@ const REF = new RegExp(
   `(?<![\\p{L}\\p{M}])(${NAMES})(${SEP})(${DIGIT}{1,5})(?!${DIGIT}|[,.:]${DIGIT})`,
   'giu',
 );
+/**
+ * Forme inversée (vérification sur les vrais livres, 04/10/2026) : le numéro AVANT le recueil —
+ * « hadith 6410 d'al-Bukhārī », « ḥadīth n° 54 de Muslim », « hadith 30 chez Abū Dāwūd ».
+ */
+const INV = new RegExp(
+  `(?<![\\p{L}\\p{M}])(ḥadīth|hadith|hadîth|${ar('حديث')})\\s*(?:n[°º]\\.?|no\\.?|n\\.)?\\s*(${DIGIT}{1,5})(?!${DIGIT}|[,.:]${DIGIT})` +
+    `(\\s+(?:d['’]|de\\s+|du\\s+|chez\\s+|dans\\s+)?(?:(?:al|an|at|ad|as|aṭ|aḍ|aṣ|el)-)?)(${NAMES})(?![\\p{L}\\p{M}])`,
+  'giu',
+);
 
 /** chiffres arabes (٠-٩, ۰-۹) → chiffres latins, pour chercher au registre */
 const latinDigits = (n: string) =>
@@ -84,8 +93,14 @@ export function maskHadithNumbers(
     // « Muslim (54) » → « Muslim » ; « Muslim (1907, avec…) » → « Muslim (avec… » ; « al-Bukhārī 1894 » → « al-Bukhārī »
     return sep.includes('(') ? `${name} (` : name;
   });
+  // forme inversée : « hadith 6410 d'al-Bukhārī » → « hadith d'al-Bukhārī »
+  const out2 = out.replace(INV, (all, word: string, num: string, link: string, name: string) => {
+    if (verified.has(`${canonicalCollection(name)}#${latinDigits(num)}`)) return all;
+    masked++;
+    return `${word}${link}${name}`;
+  });
   if (!masked) return { text, masked };
-  return { text: out.replace(/\s*\(\s*\)/g, '').replace(/\(\s*[,;]\s*/g, '('), masked };
+  return { text: out2.replace(/\s*\(\s*\)/g, '').replace(/\(\s*[,;]\s*/g, '('), masked };
 }
 
 /** Applique le masquage à toutes les chaînes d'une leçon (copie) ; compte les retraits. */
@@ -118,6 +133,9 @@ export function unmaskedHadithRefs(value: unknown, verified: VerifiedSet): strin
     if (typeof v === 'string') {
       for (const m of v.matchAll(REF))
         if (!verified.has(`${canonicalCollection(m[1]!)}#${latinDigits(m[3]!)}`))
+          out.push(m[0].trim());
+      for (const m of v.matchAll(INV))
+        if (!verified.has(`${canonicalCollection(m[4]!)}#${latinDigits(m[2]!)}`))
           out.push(m[0].trim());
     } else if (Array.isArray(v)) v.forEach(walk);
     else if (v && typeof v === 'object')

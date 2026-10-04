@@ -54,4 +54,27 @@ describe('audit CON-3 — numéros de hadith', () => {
   it('contrôle : repère une référence non masquée', () => {
     expect(unmaskedHadithRefs({ a: 'Muslim 54', b: 'Bukhari 1' }, V)).toEqual(['Muslim 54']);
   });
+
+  // forme inversée, vue dans les vrais livres (ra1.l05, ra3.l16 : « commentaire du hadith 6410 d'al-Bukhārī »)
+  it.each([
+    ["commentaire du hadith 6410 d'al-Bukhārī", "commentaire du hadith d'al-Bukhārī"],
+    [
+      'commentaire du hadith 6410 d’al-Bukhārī (livre)',
+      'commentaire du hadith d’al-Bukhārī (livre)',
+    ],
+    ['le ḥadīth n° 54 de Muslim', 'le ḥadīth de Muslim'],
+    ['hadith 30 chez Abū Dāwūd', 'hadith chez Abū Dāwūd'],
+    ['hadith 2645 at-Tirmidhī', 'hadith at-Tirmidhī'],
+  ])('forme inversée « %s » → « %s »', (src, out) => {
+    expect(maskHadithNumbers(src, V).text).toBe(out);
+    expect(unmaskedHadithRefs({ a: src }, V)).toHaveLength(1);
+    expect(unmaskedHadithRefs({ a: out }, V)).toEqual([]);
+  });
+
+  it('forme inversée : un numéro vérifié reste ; un hadith numéroté dans la leçon n’est pas touché', () => {
+    expect(maskHadithNumbers("hadith 1 d'al-Bukhārī", V).text).toBe("hadith 1 d'al-Bukhārī");
+    expect(unmaskedHadithRefs({ a: "hadith 1 d'al-Bukhārī" }, V)).toEqual([]);
+    for (const s of ['Le hadith 2 corrige les deux.', '(39:53, hadith 37) → ne pas désespérer'])
+      expect(maskHadithNumbers(s, NONE).masked).toBe(0);
+  });
 });
