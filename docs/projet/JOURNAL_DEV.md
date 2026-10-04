@@ -52,7 +52,7 @@ seulement ; pour l'enfant, une version simplifiée avec le vert.
   plus lourde `/lecons/[id]` **123,6 Ko** ≤ 150 (lot 27 : 122,5 ; 123,7 après fusion), `/coran/lecteur` 99,1 Ko, `/coran/ecouter`
   106,5 Ko, toutes les pages **262,4 Ko** ≤ 300 (257,8). `pnpm -r --no-bail test` (vrais livres) : **1 255 verts,
   1 sauté, 0 échec** (143 s ; +17 : content 10, web 7) ; le nouveau test échoue sans le module (vérifié) ;
-  e2e `lot29.spec.ts` : **14/14** (2 appareils) ; e2e complets (après fusion de `main` 5da52d6, code fusionné) : **210 verts, 12 sautés, 0 échec** (11,4 min) ; unitaires sur le code fusionné : **1 260 verts, 1 sauté** (127 s, +5 tests de la démo simplifiée de `main`) ; budget après fusion : 123,7 Ko.
+  e2e `lot29.spec.ts` : **14/14** (2 appareils) ; e2e complets après fusion de `main` 5da52d6 : 210 verts, 12 sautés, 0 échec ; puis le **lot 28 a été intégré dans `main` (3796443)** : nouvelle fusion (conflits seulement en fin des 5 catalogues de langues : version de `main` reprise, clés `tj.*` réajoutées, aucune clé perdue — 1 720 par catalogue) et TOUT relancé sur le code fusionné : unitaires **1 272 verts, 1 sauté, 0 échec** (135 s) ; e2e **218 verts, 12 sautés, 0 échec** (11,9 min) ; budget : page la plus lourde `/lecons/[id]` **130,0 Ko** ≤ 150 (hausse due au lot 28), toutes les pages **269,4 Ko** ≤ 300.
 - e2e lancés sur une infrastructure ISOLÉE (ports 3290/4290, base `awform_l29_test`, rôles `awform_e29_*`,
   dossier temporaire privé) : un autre agent lançait ses e2e en même temps sur la base et les ports communs
   (premier passage perturbé : serveurs arrêtés en cours, ECONNREFUSED).
