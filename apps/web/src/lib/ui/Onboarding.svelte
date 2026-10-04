@@ -28,8 +28,10 @@
     show = !(await kvGet<boolean>(key).catch(() => true));
   });
   async function done() {
-    show = false;
+    // enregistré AVANT de masquer : un rechargement immédiat ne remontre pas l'accueil
+    // (cause d'un e2e intermittent du lot 26 : rechargement avant la fin de l'écriture IndexedDB)
     await kvSet(key, true).catch(() => {});
+    show = false;
   }
 </script>
 

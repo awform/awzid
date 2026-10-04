@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { expect, test } from './fixtures';
+import { pickProfile } from './profil';
 
 /**
  * Lot 15 — interface anglaise (langue « en préparation », montrée seulement si le serveur l'autorise),
@@ -85,8 +86,7 @@ test.describe('parent', () => {
       },
     });
     expect(r.ok()).toBe(true);
-    await page.goto('/profils');
-    await page.locator('[data-profile]').filter({ hasText: 'Amina' }).click();
+    await pickProfile(page, 'Amina');
     await page.goto('/aujourdhui');
     await page.getByTestId('activites').getByRole('link').first().click();
     await page.locator('[data-lettre="ب"]').click();

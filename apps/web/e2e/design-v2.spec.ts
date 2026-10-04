@@ -2,6 +2,7 @@ import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Page } from '@playwright/test';
 import { expect, loginTeacher, password, test } from './fixtures';
+import { pickProfile } from './profil';
 
 /**
  * Lot 26 — captures « avant / après » de la refonte graphique, pour chaque public (enfant, ado, adulte,
@@ -29,25 +30,6 @@ function shooter(page: Page, dev: string) {
   };
 }
 const devOf = (n: string) => (n.startsWith('mobile') ? 'mobile' : 'bureau');
-
-async function pickProfile(page: Page, name: string) {
-  await page.goto('/profils');
-  const pin = page.locator('#pin');
-  const prof = page.locator('[data-profile]').filter({ hasText: name }).first();
-  await expect(pin.or(prof).first()).toBeVisible();
-  if (await pin.isVisible()) {
-    // un enfant est actif : en sortir par « Changer d'élève » (en-tête), depuis une autre page
-    await page.goto('/aide');
-    await page
-      .getByTestId('changer-eleve')
-      .or(page.getByRole('button', { name: "Changer d'élève" }))
-      .first()
-      .click();
-    await page.waitForURL(/\/profils/);
-  }
-  await prof.click();
-  await page.waitForURL((u) => !u.pathname.startsWith('/profils'));
-}
 
 test.describe('visiteur', () => {
   test.use({ compte: null });

@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 import { expect, PARENT_PIN, test } from './fixtures';
+import { pickProfile } from './profil';
 
 /**
  * Lot 27 — espace Coran : Lire, Écouter, Mémoriser, Mes récitateurs. Les récitateurs « Essai » n'ont que
@@ -156,8 +157,7 @@ test.describe('parent', () => {
     await box.locator('#pin-coran').fill(PARENT_PIN);
     await box.getByTestId('enregistrer-permis').click();
     await expect(box.getByRole('status')).toContainText('enregistrée');
-    await page.goto('/profils');
-    await page.locator('[data-profile]').filter({ hasText: 'Yanis' }).click();
+    await pickProfile(page, 'Yanis');
     await page.goto('/coran/ecouter');
     const pick = page.getByTestId('choix-recitateur');
     await expect(pick.locator('option')).toHaveCount(1);

@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
+import { pickProfile } from './profil';
 
 /**
  * Lot 26 — design v2 : thème par public, navigation de 3 à 5 entrées, premier lancement, hors ligne
@@ -101,7 +102,7 @@ test.describe('famille', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'clair');
     await expect(page.locator('nav.tabs a')).toHaveCount(4);
     await expect(page.getByTestId('bienvenue')).toHaveAttribute('data-public', 'parent');
-    await page.locator('[data-profile]').filter({ hasText: 'Yanis' }).click();
+    await pickProfile(page, 'Yanis');
     await page.goto('/aujourdhui');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'jardin');
     await expect(page.locator('nav.tabs a')).toHaveCount(5);

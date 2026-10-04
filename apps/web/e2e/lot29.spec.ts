@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 import { expect, password, test } from './fixtures';
+import { pickProfile } from './profil';
 
 /**
  * Lot 29 — tajwid en couleurs (Ḥafṣ) dans Lire, Mémoriser (et Écouter avec un récitateur en Ḥafṣ) :
@@ -36,24 +37,6 @@ const colorOf = (page: Page, sel: string, token: string) =>
       probe.remove();
       return { got: getComputedStyle(el).color, want };
     }, token);
-
-async function pickProfile(page: Page, name: string) {
-  await page.goto('/profils');
-  const pin = page.locator('#pin');
-  const prof = page.locator('[data-profile]').filter({ hasText: name }).first();
-  await expect(pin.or(prof).first()).toBeVisible();
-  if (await pin.isVisible()) {
-    await page.goto('/aide');
-    await page
-      .getByTestId('changer-eleve')
-      .or(page.getByRole('button', { name: "Changer d'élève" }))
-      .first()
-      .click();
-    await page.waitForURL(/\/profils/);
-  }
-  await prof.click();
-  await page.waitForURL((u) => !u.pathname.startsWith('/profils'));
-}
 
 test('lire : désactivé par défaut, couleurs à la demande, texte identique, légende, soulignés, sombre', async ({
   page,
