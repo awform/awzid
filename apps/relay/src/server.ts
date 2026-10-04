@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from '
 import { join } from 'node:path';
 import { buildRelay } from './relay.js';
 import { RelayStore } from './store.js';
+import { AudioCache } from './audio.js';
 
 const env = process.env;
 const upstream = (env.AWFORM_RELAIS_AMONT ?? '').replace(/\/$/, '');
@@ -18,7 +19,10 @@ const key = env.AWFORM_RELAIS_CLE ?? '';
 if (!/^https?:\/\//.test(upstream)) throw new Error('AWFORM_RELAIS_AMONT absent ou invalide');
 if (!/^[0-9a-f]{64}$/i.test(key))
   throw new Error('AWFORM_RELAIS_CLE absente (64 caractères hexadécimaux)');
-const store = new RelayStore(env.AWFORM_RELAIS_DONNEES ?? '/data', Buffer.from(key, 'hex'));
+const dataDir = env.AWFORM_RELAIS_DONNEES ?? '/data';
+const store = new RelayStore(dataDir, Buffer.from(key, 'hex'));
+// audio du Coran (lot 27) : récitateurs choisis par l'école, préchargés
+const audio = new AudioCache(join(dataDir, 'audio'));
 const certDir = env.AWFORM_RELAIS_CERTS ?? null;
 
 const relay = buildRelay({
@@ -26,6 +30,7 @@ const relay = buildRelay({
   token: env.AWFORM_RELAIS_JETON || null,
   store,
   version: env.AWFORM_VERSION ?? 'dev',
+  audio,
   onCertificate: certDir
     ? ({ cert, key: k }) => {
         mkdirSync(certDir, { recursive: true });
@@ -71,6 +76,20 @@ const beat = () =>
     .catch(fail('erreur_battement'));
 beat();
 setInterval(beat, 600_000);
+
+// audio du Coran : alignement sur le choix de l'école au démarrage puis toutes les heures (téléchargement
+// des fichiers manquants, effacement des récitateurs retirés)
+const audioSync = () =>
+  void relay
+    .checkOnline()
+    .then(() => relay.syncAudio())
+    .then((r) => {
+      if (r && (r.telecharges || r.effaces || r.erreurs))
+        console.log(JSON.stringify({ relais: 'audio', ...r, at: new Date().toISOString() }));
+    })
+    .catch(fail('erreur_audio'));
+setTimeout(audioSync, 30_000);
+setInterval(audioSync, 3_600_000);
 
 const stop = async () => {
   await relay.app.close();

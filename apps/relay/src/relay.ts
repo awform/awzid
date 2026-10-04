@@ -13,10 +13,11 @@
 import { randomUUID } from 'node:crypto';
 import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest } from 'fastify';
 import type { RelayStore } from './store.js';
+import { serveAudio, type AudioCache, type AudioSyncResult } from './audio.js';
 
 /** Contenus publics mis en copie (jamais de données personnelles). */
 export const CACHEABLE =
-  /^\/api\/v1\/(config|levels(\/[a-z0-9]+\/units)?|units\/[a-z0-9.]+|packs(\/[a-z0-9]+)?|quran\/(meta|verses)|hifz\/books(\/[a-z0-9_]+)?|booklets(\/[a-z0-9-]+)?|activites\/racines|billing\/plans|public\/l\/[a-z0-9-]+)$/;
+  /^\/api\/v1\/(config|levels(\/[a-z0-9]+\/units)?|units\/[a-z0-9.]+|packs(\/[a-z0-9]+)?|quran\/(meta|verses)|quran\/audio\/reciters(\/[a-z0-9-]+\/(suras|packs)\/[0-9]{1,3}|\/[a-z0-9-]+\/packs)?|hifz\/books(\/[a-z0-9_]+)?|booklets(\/[a-z0-9-]+)?|activites\/racines|billing\/plans|public\/l\/[a-z0-9-]+)$/;
 
 /** Chaîne de requête des contenus mis en copie : bornée (audit OFF-6, copie non saturable). */
 const MAX_QUERY = 120;
@@ -37,8 +38,18 @@ const FORWARD = [
   'if-none-match',
   'x-parent-pin',
   'idempotency-key',
+  'range',
+  'if-range',
 ];
-const BACK = ['content-type', 'set-cookie', 'etag', 'cache-control', 'content-disposition'];
+const BACK = [
+  'content-type',
+  'set-cookie',
+  'etag',
+  'cache-control',
+  'content-disposition',
+  'content-range',
+  'accept-ranges',
+];
 
 export interface RelayOptions {
   /** serveur central, ex. https://app.awzid.org */
@@ -51,6 +62,8 @@ export interface RelayOptions {
   timeoutMs?: number;
   /** certificat reçu : écrit pour Caddy (null : mode « autorité locale ») */
   onCertificate?: (c: { host: string; cert: string; key: string }) => void | Promise<void>;
+  /** copie locale de l'audio du Coran (lot 27) ; absente : fichiers relayés seulement */
+  audio?: AudioCache | null;
 }
 
 export interface Relay {
@@ -59,6 +72,8 @@ export interface Relay {
   checkOnline(): Promise<boolean>;
   syncOnce(): Promise<{ envoyes: number; refuses: number; restants: number }>;
   heartbeat(): Promise<boolean>;
+  /** aligne la copie audio sur le choix de l'école (null : pas de copie, de jeton ou d'Internet) */
+  syncAudio(): Promise<AudioSyncResult | null>;
 }
 
 class Offline extends Error {}
@@ -164,6 +179,23 @@ export function buildRelay(o: RelayOptions): Relay {
   app.removeAllContentTypeParsers();
   app.addContentTypeParser('*', { parseAs: 'buffer' }, (_req, body, done) => done(null, body));
 
+  // audio du Coran (lot 27) : servi depuis la copie de l'école quand il y est, sinon relayé
+  app.get<{ Params: { id: string; file: string } }>(
+    '/api/v1/quran/audio/file/:id/:file',
+    async (req, reply) => {
+      const f = o.audio?.file(`${req.params.id}/${req.params.file}`) ?? null;
+      if (f) return serveAudio(req, reply, f);
+      if (Date.now() - lastCheck > 10_000) await checkOnline();
+      if (!online) return offlineReply(reply);
+      try {
+        return await send(reply, await upstream('GET', req.url, pick(req)));
+      } catch (e) {
+        if (!(e instanceof Offline)) throw e;
+        return offlineReply(reply);
+      }
+    },
+  );
+
   app.route({
     method: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     url: '/api/*',
@@ -238,6 +270,7 @@ export function buildRelay(o: RelayOptions): Relay {
     ...store.counts(),
     envoyes: Number(store.getMeta('envoyes') ?? 0),
     contenus: store.cacheCount(),
+    audio: o.audio ? o.audio.stats() : null,
     derniereConnexion: store.getMeta('derniere_connexion'),
     dernierEnvoi: store.getMeta('dernier_envoi'),
     version: o.version ?? 'dev',
@@ -349,5 +382,10 @@ export function buildRelay(o: RelayOptions): Relay {
     }
   }
 
-  return { app, isOnline: () => online, checkOnline, syncOnce, heartbeat };
+  async function syncAudio(): Promise<AudioSyncResult | null> {
+    if (!o.audio || !o.token || !online) return null;
+    return o.audio.sync(o.upstream, o.token);
+  }
+
+  return { app, isOnline: () => online, checkOnline, syncOnce, heartbeat, syncAudio };
 }
