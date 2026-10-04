@@ -30,6 +30,7 @@ import { registerCarnet } from './carnet.js';
 import { registerPratiqueAdulte } from './pratique-adulte.js';
 import { registerRecital } from './recital.js';
 import { registerEcoleSynthese } from './ecole-synthese.js';
+import { registerCoranAudio } from './coran-audio.js';
 import { registerContent } from './contenu.js';
 import { notFound } from './routes-common.js';
 import { registerProgress } from './progression.js';
@@ -60,6 +61,8 @@ export interface AppOptions {
   certSigner?: CertSigner | null;
   /** paiements (tests) ; sinon AWFORM_PAIEMENT */
   billing?: BillingSetup;
+  /** stockage des fichiers audio du Coran (tests) ; sinon AWFORM_AUDIO_DIR ; null : fichiers non servis */
+  audioDir?: string | null;
 }
 
 /**
@@ -170,6 +173,11 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerRecital(app, db, edition);
   registerEcoleSynthese(app, db);
   registerActivation(app, db);
+  registerCoranAudio(
+    app,
+    db,
+    opts.audioDir === undefined ? (process.env.AWFORM_AUDIO_DIR ?? null) : opts.audioDir,
+  );
   registerVerification(app, db, signer);
   registerRelais(
     app,
