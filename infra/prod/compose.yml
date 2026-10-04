@@ -82,15 +82,31 @@ services:
     profiles: [outils]
     logging: *logs
 
+  coran-audio:
+    # audio du Coran (lot 27) : catalogue | verifier | importer | activer | retirer | etat
+    # compte propriétaire ; fichiers reçus du Complexe (zip « ayat » décompressé) en lecture seule dans
+    # /source ; stockage servi par l'API dans le volume « audio » ; ffmpeg pour le contrôle des silences
+    image: awform/outils-audio:${AWFORM_VERSION:-local}
+    build: { context: ../.., dockerfile: infra/prod/Dockerfile, target: outils-audio }
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/outils.env'
+    environment: { AWFORM_AUDIO_DIR: /audio }
+    volumes: ['audio:/audio', '${AWFORM_AUDIO_SOURCE:-~/coran-audio-source}:/source:ro']
+    entrypoint: ['node', 'node_modules/@awform/db/dist/cli/coran-audio.js']
+    depends_on: { db: { condition: service_healthy } }
+    restart: 'no'
+    profiles: [outils]
+    logging: *logs
+
   api:
     image: awform/api:${AWFORM_VERSION:-local}
     build: { context: ../.., dockerfile: infra/prod/Dockerfile, target: api }
     restart: unless-stopped
     # base, clé de session, tuteur, paiements ; jamais POSTGRES_PASSWORD seul
     env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/api.env'
-    environment: { TRUST_PROXY: '1', AWFORM_RELAIS_CERTS: /relais-certs }
-    # certificats des SEULS relais d'école (copiés par certsrelais), jamais le stockage de Caddy
-    volumes: ['relais_certs:/relais-certs:ro']
+    environment: { TRUST_PROXY: '1', AWFORM_RELAIS_CERTS: /relais-certs, AWFORM_AUDIO_DIR: /audio }
+    # certificats des SEULS relais d'école (copiés par certsrelais), jamais le stockage de Caddy ;
+    # audio du Coran (lot 27) en lecture seule
+    volumes: ['relais_certs:/relais-certs:ro', 'audio:/audio:ro']
     depends_on: { db: { condition: service_healthy } }
     logging: *logs
 
@@ -146,3 +162,4 @@ volumes:
   caddy_data:
   caddy_config:
   relais_certs:
+  audio:

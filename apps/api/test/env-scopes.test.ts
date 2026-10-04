@@ -61,6 +61,9 @@ const FIXED = new Set([
   'NODE_ENV',
   // relais d'école : dossier des certificats copiés, fixé par compose.yml (lot 17)
   'AWFORM_RELAIS_CERTS',
+  // audio du Coran (lot 27) : stockage fixé par compose.yml ; chemin de ffmpeg (outil d'import, facultatif)
+  'AWFORM_AUDIO_DIR',
+  'AWFORM_FFMPEG',
 ]);
 const isSecret = (v: string) => /SECRET|KEY|PASSWORD|TOKEN|DATABASE_URL/.test(v);
 const pkg = (n: string) => join(ROOT, 'packages', n, 'src');

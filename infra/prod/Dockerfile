@@ -33,6 +33,13 @@ HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:3000/api/v1/health').then(r=>r.json()).then(j=>process.exit(j.status==='ok'?0:1)).catch(()=>process.exit(1))"
 CMD ["node", "dist/server.js"]
 
+# audio du Coran (lot 27) : outil d'import avec ffmpeg (silences des MP3) ; service « outils » seulement,
+# l'API servie en production n'a pas ffmpeg
+FROM api AS outils-audio
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
+USER node
+
 FROM runtime AS worker
 COPY --from=build --chown=node:node /out/worker /app
 CMD ["node", "dist/index.js"]

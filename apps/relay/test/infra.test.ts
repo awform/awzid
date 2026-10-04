@@ -165,7 +165,8 @@ describe('compose.yml et Caddyfile du relais', () => {
     expect(c).toContain('ask http://api:3000/api/v1/relais/tls-autorise');
     expect(c).toContain('https://*.{$RELAIS_DOMAINE:relais.invalid}');
     const p = readFileSync(join(PROD, 'compose.yml'), 'utf8');
-    expect(p).toContain("volumes: ['relais_certs:/relais-certs:ro']");
+    // lecture seule (lot 27 : le volume audio est monté à côté)
+    expect(p).toContain("'relais_certs:/relais-certs:ro'");
     expect(p).toContain('- caddy_data:/data:ro');
   });
 });
