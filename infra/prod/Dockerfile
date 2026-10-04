@@ -3,7 +3,7 @@
 # Construction :  docker compose -f infra/prod/compose.yml build
 # Aucun secret dans les images : tout vient du fichier d'environnement de l'hôte au démarrage.
 
-FROM node:24-bookworm-slim AS base
+FROM node:26-bookworm-slim AS base
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH CI=1
 RUN corepack enable
 WORKDIR /src
@@ -19,7 +19,7 @@ RUN pnpm --filter @awform/api deploy --prod --legacy /out/api \
  && pnpm --filter @awform/relay deploy --prod --legacy /out/relay \
  && rm -rf /out/web/src /out/web/e2e /out/web/.svelte-kit
 
-FROM node:24-bookworm-slim AS runtime
+FROM node:26-bookworm-slim AS runtime
 ENV NODE_ENV=production TZ=Europe/Paris
 RUN apt-get update && apt-get install -y --no-install-recommends tzdata && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
