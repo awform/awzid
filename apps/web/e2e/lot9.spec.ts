@@ -1,5 +1,6 @@
 import { tanwinUndo } from '@awform/content/text';
-import { expect, loginTeacher, newAdult, PARENT_PIN, test } from './fixtures';
+import { expect, newAdult, PARENT_PIN, test } from './fixtures';
+import { loginTeacher } from './enseignant';
 
 /**
  * Lot 9 : tuteur (fournisseur SIMULÉ en test). Adulte : texte encadré, Coran par référence (Tanzil exact),

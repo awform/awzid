@@ -1,6 +1,7 @@
 import { tanwinUndo } from '@awform/content/text';
 import type { Page } from '@playwright/test';
-import { expect, loginTeacher, newAdult, PARENT_PIN, test } from './fixtures';
+import { expect, newAdult, PARENT_PIN, test } from './fixtures';
+import { loginTeacher } from './enseignant';
 
 /**
  * Lot 5 : carnets de hifẓ. Texte Tanzil affiché octet par octet, trois pistes, révision hors ligne,

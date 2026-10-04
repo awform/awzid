@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
-import { expect, loginTeacher, newAdult, test } from './fixtures';
+import { expect, newAdult, test } from './fixtures';
+import { loginTeacher } from './enseignant';
 
 /**
  * Complément A — en-têtes de sécurité et politique de sécurité du contenu (CSP) stricte : aucun script ni

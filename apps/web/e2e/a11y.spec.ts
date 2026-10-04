@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { expect, loginTeacher, newAdult, test } from './fixtures';
+import { expect, newAdult, test } from './fixtures';
+import { loginTeacher } from './enseignant';
 
 /**
  * Lot 14 — accessibilité : audit axe-core (WCAG 2.1 A et AA) des écrans principaux, sur téléphone et sur

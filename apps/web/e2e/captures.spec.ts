@@ -1,6 +1,7 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { expect, loginTeacher, newAdult, PARENT_PIN, password, test } from './fixtures';
+import { expect, newAdult, PARENT_PIN, password, test } from './fixtures';
+import { loginTeacher } from './enseignant';
 import { solveExercise, unitData } from './solve';
 
 /**

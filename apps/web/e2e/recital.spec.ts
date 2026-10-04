@@ -1,4 +1,5 @@
-import { expect, loginTeacher, newAdult, test } from './fixtures';
+import { expect, newAdult, test } from './fixtures';
+import { loginTeacher } from './enseignant';
 
 /**
  * Suite V1-b — récital de hifẓ : l'enseignant planifie, le serveur tire au sort les passages du carnet (en1

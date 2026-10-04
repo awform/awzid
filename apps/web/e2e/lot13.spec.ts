@@ -1,4 +1,5 @@
-import { expect, loginTeacher, newAdult, test } from './fixtures';
+import { expect, newAdult, test } from './fixtures';
+import { loginTeacher } from './enseignant';
 
 /**
  * Lot 13 — espace école : réglages de la classe, élève « papier », devoir, saisie des bilans du livre papier

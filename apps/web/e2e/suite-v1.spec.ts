@@ -1,4 +1,5 @@
-import { expect, loginTeacher, newAdult, test } from './fixtures';
+import { expect, newAdult, test } from './fixtures';
+import { loginTeacher } from './enseignant';
 
 /**
  * Suite V1 (lots 21 à 25) : messagerie encadrée et visio (enseignant ↔ famille, signalement), suivi des

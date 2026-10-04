@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
-import { expect, loginTeacher, PARENT_PIN, password, test } from './fixtures';
+import { expect, PARENT_PIN, password, test } from './fixtures';
+import { loginTeacher } from './enseignant';
 
 /**
  * Lot 16 — livres gelés proposés, récitation ENVOYÉE par la famille (accord + code parent) puis écoutée et

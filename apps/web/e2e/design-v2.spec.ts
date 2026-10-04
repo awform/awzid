@@ -1,7 +1,8 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Page } from '@playwright/test';
-import { expect, loginTeacher, password, test } from './fixtures';
+import { expect, password, test } from './fixtures';
+import { loginTeacher } from './enseignant';
 import { pickProfile } from './profil';
 
 /**
