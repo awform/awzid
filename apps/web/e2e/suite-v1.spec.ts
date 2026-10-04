@@ -73,9 +73,38 @@ test('messagerie : annonce, message privé, réponse, signalement, visio', async
   await expect(fam.getByTestId('annonce')).toContainText('Sortie scolaire vendredi.');
   await fam.getByTestId('msg-fil').click();
   await expect(fam.getByTestId('msg-fil-ouvert')).toContainText('Bravo pour cette semaine.');
+  // réponse : la suite tapée pendant l'envoi n'est pas effacée (famille, puis enseignant)
+  const REP = '**/api/v1/fils/*/messages';
+  const retenir = async (p: typeof page) => {
+    let lacher!: () => void;
+    const attente = new Promise<void>((ok) => (lacher = ok));
+    await p.route(REP, async (route) => {
+      if (route.request().method() !== 'POST') return route.fallback();
+      const res = await route.fetch();
+      await attente;
+      await route.fulfill({ response: res });
+    });
+    return lacher;
+  };
+  const lacherFam = await retenir(fam);
   await fam.locator('#rep').fill('Merci !');
   await fam.getByRole('button', { name: 'Envoyer' }).click();
+  await fam.locator('#rep').fill('À vendredi.');
+  lacherFam();
   await expect(fam.getByTestId('msg-fil-ouvert')).toContainText('Merci !');
+  await expect(fam.locator('#rep')).toHaveValue('À vendredi.');
+  await fam.unroute(REP);
+
+  await page.getByTestId('msg-fil').click();
+  await expect(page.getByTestId('msg-fil-ouvert')).toContainText('Merci !');
+  const lacherEns = await retenir(page);
+  await page.locator('#rep').fill('Très bien.');
+  await page.locator('#rep').locator('xpath=..').getByRole('button').click();
+  await page.locator('#rep').fill('Bonne semaine.');
+  lacherEns();
+  await expect(page.getByTestId('msg-fil-ouvert')).toContainText('Très bien.');
+  await expect(page.locator('#rep')).toHaveValue('Bonne semaine.');
+  await page.unroute(REP);
   await expect(fam.getByTestId('visio').first()).toContainText('Révision');
   await expect(fam.getByTestId('visio').first().getByRole('link')).toHaveAttribute(
     'href',

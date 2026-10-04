@@ -51,12 +51,14 @@
   async function reply(e: SubmitEvent) {
     e.preventDefault();
     if (!open) return;
-    const r = await replyThread(open.id, reponse);
+    // seul le texte envoyé est effacé (une suite tapée pendant l'envoi est gardée)
+    const envoye = reponse;
+    const r = await replyThread(open.id, envoye);
     if (!r.ok) {
       error = t(`erreur.${r.code ?? 'reseau'}`);
       return;
     }
-    reponse = '';
+    if (reponse === envoye) reponse = '';
     await show(open.id);
   }
   async function signal(id: string) {
