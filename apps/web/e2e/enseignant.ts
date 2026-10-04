@@ -14,7 +14,7 @@ import { totp } from './totp';
  * jamais en avance de plus d'un pas sur l'horloge (sinon on attend le pas suivant), et un refus est retenté
  * avec le pas d'après.
  */
-const FILE = join(tmpdir(), 'awform-e2e-totp-counter');
+const FILE = process.env.E2E_TOTP_FILE ?? join(tmpdir(), 'awform-e2e-totp-counter');
 const STEP = 30_000;
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const lastUsed = (): number => {

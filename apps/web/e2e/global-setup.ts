@@ -68,7 +68,10 @@ export default async function globalSetup(): Promise<void> {
   await post('/auth/totp/confirm', { code: totp(setup.secret, counter) }, teacher.cookie);
   process.env.E2E_TOTP_SECRET = setup.secret;
   process.env.E2E_TOTP_LAST = String(counter);
-  writeFileSync(join(tmpdir(), 'awform-e2e-totp-counter'), String(counter));
+  writeFileSync(
+    process.env.E2E_TOTP_FILE ?? join(tmpdir(), 'awform-e2e-totp-counter'),
+    String(counter),
+  );
   for (const [pseudonym, avatar, age] of [
     ['Amina', 'etoile', 8],
     ['Yanis', 'soleil', 10],

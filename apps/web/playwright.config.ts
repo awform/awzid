@@ -1,6 +1,8 @@
-import { randomBytes } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { createHash, randomBytes } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
 
 try {
@@ -9,20 +11,51 @@ try {
   /* pas de .env */
 }
 
-const TEST_DB = process.env.TEST_DATABASE_URL ?? '';
+/**
+ * Base, rôles PostgreSQL et fichiers de test PROPRES à ce dossier de travail. Plusieurs dossiers (worktrees,
+ * sessions parallèles) lancent leurs e2e sur la même VM : avec une base commune (awform_test), le
+ * « --reset » d'une suite vidait la base d'une autre en pleine exécution (vu le 04/10/2026 : 84 échecs
+ * « relation … does not exist »), et les mots de passe des rôles awform_e2e_* étaient changés par l’autre suite.
+ * En CI (machine dédiée), rien ne change.
+ */
+const ISOLE = !process.env.CI && !!process.env.TEST_DATABASE_URL;
+const SUFFIX = createHash('sha256')
+  .update(fileURLToPath(new URL('.', import.meta.url)))
+  .digest('hex')
+  .slice(0, 8);
+const ROLE_PREFIX = ISOLE ? `awform_e2e_${SUFFIX}` : 'awform_e2e';
+const TEST_DB = (() => {
+  const base = process.env.TEST_DATABASE_URL ?? '';
+  if (!ISOLE) return base;
+  const u = new URL(base);
+  const name = `awform_e2e_${SUFFIX}_test`; // suffixe _test exigé par la remise à zéro
+  // créée une fois (le rôle de développement a le droit CREATEDB) ; remise à zéro à chaque lancement
+  const q = (sql: string) =>
+    execFileSync('psql', [base, '-Atqc', sql], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'inherit'],
+    });
+  if (!q(`SELECT 1 FROM pg_database WHERE datname = '${name}'`).trim())
+    q(`CREATE DATABASE ${name}`);
+  u.pathname = `/${name}`;
+  // lu par l'import (--test --reset) et la création des rôles, lancés par le serveur web de test
+  process.env.TEST_DATABASE_URL = u.toString();
+  return u.toString();
+})();
+process.env.E2E_TOTP_FILE ??= join(tmpdir(), `awform-e2e-totp-counter${ISOLE ? `-${SUFFIX}` : ''}`);
 const API_PORT = 3100;
 const WEB_PORT = 4180;
 process.env.E2E_KEY ??= randomBytes(32).toString('hex');
 const E2E_KEY = process.env.E2E_KEY;
 // lot 27 : stockage de l'audio d'ESSAI (bips non coraniques) servi par l'API de test
-const AUDIO_DIR = join(tmpdir(), 'awform-e2e-audio');
+const AUDIO_DIR = join(tmpdir(), `awform-e2e-audio${ISOLE ? `-${SUFFIX}` : ''}`);
 // lot 14 : l'API de test tourne sous son compte PostgreSQL à droits minimaux (comme en production)
 process.env.E2E_DB_API_PW ??= randomBytes(24).toString('hex');
 process.env.E2E_DB_WORKER_PW ??= randomBytes(24).toString('hex');
 const API_DB = (() => {
   if (!TEST_DB) return '';
   const u = new URL(TEST_DB);
-  u.username = 'awform_e2e_api';
+  u.username = `${ROLE_PREFIX}_api`;
   u.password = process.env.E2E_DB_API_PW!;
   return u.toString();
 })();
@@ -63,7 +96,7 @@ export default defineConfig({
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
       env: {
         DATABASE_URL: API_DB,
-        AWFORM_DB_ROLE_PREFIX: 'awform_e2e',
+        AWFORM_DB_ROLE_PREFIX: ROLE_PREFIX,
         AWFORM_DB_API_PASSWORD: process.env.E2E_DB_API_PW!,
         AWFORM_DB_WORKER_PASSWORD: process.env.E2E_DB_WORKER_PW!,
         API_HOST: '127.0.0.1',
