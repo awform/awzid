@@ -1,4 +1,5 @@
-/* Jetons de thème (couleurs, polices, rayons, ombres, motifs) : src/lib/theme/tokens.ts → tokens.css */
+/* Jetons de thème (couleurs, polices, espacements, rayons, ombres, motifs, mouvement) :
+   src/lib/theme/tokens.ts → tokens.css. Lot 26 : quatre thèmes par public + mode sombre. */
 @import './lib/theme/tokens.css';
 
 /* Polices embarquées (SIL OFL), servies par l'application — jamais par un service tiers. */
@@ -39,27 +40,78 @@
   src: url('/fonts/nunito-latin-700-normal.woff2') format('woff2');
 }
 
-:root {
-  color-scheme: light;
-}
-
-* {
+/* ------------------------------------------------------------------ base */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+html {
+  /* grande police système : tout est en rem, rien ne déborde (mots longs coupés) */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--paper);
 }
 html,
 body {
   margin: 0;
-  background: var(--paper);
-  background-image: var(--pattern-bg);
   color: var(--ink);
   font-family: var(--font-ui);
   font-size: var(--font-size);
   line-height: var(--line-height);
 }
+body {
+  min-height: 100vh;
+  background-color: var(--paper);
+  background-image: var(--pattern-bg);
+  background-attachment: fixed;
+  overflow-wrap: break-word;
+}
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
 
 /* lot 25 : interface en arabe (page entière de droite à gauche) : police arabe pour les textes d'interface */
 :root[lang='ar'] body {
   font-family: var(--font-ar), var(--font-ui);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-title);
+  line-height: 1.25;
+  color: var(--ink);
+  text-wrap: balance;
+}
+h1 {
+  font-size: var(--title-size);
+  margin: var(--space-m) 0 var(--space-m);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.3rem;
+}
+h3 {
+  font-size: 1.1rem;
+}
+/* adultes (« manuscrit ») : filet doré géométrique sous le titre de page */
+[data-theme='manuscrit'] main > h1::after {
+  content: '';
+  display: block;
+  width: 72px;
+  height: 8px;
+  margin-top: 10px;
+  background:
+    linear-gradient(var(--accent), var(--accent)) center / 100% 1px no-repeat,
+    radial-gradient(circle, var(--accent) 3px, transparent 3.5px) center / 8px 8px no-repeat;
+}
+/* enfants (« jardin ») : titres ronds et chaleureux */
+[data-theme='jardin'] h1 {
+  color: var(--navy);
 }
 
 /* arabe courant : Noto Naskh Arabic, de droite à gauche, isolé du français */
@@ -102,17 +154,86 @@ body {
 
 a {
   color: var(--teal);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
-button {
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* ------------------------------------------------------------------ boutons */
+button,
+a.button {
   font: inherit;
-  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--target);
   min-width: 48px;
+  padding: 6px 18px;
   border-radius: var(--radius-md);
   border: 2px solid var(--line);
   background: var(--card);
+  color: var(--ink);
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
   cursor: pointer;
-  padding: 4px 14px;
+  transition:
+    background var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    transform var(--motion-fast) ease;
 }
+button:hover,
+a.button:hover {
+  border-color: var(--primary);
+}
+button:active,
+a.button:active {
+  transform: translateY(1px);
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+button.primary,
+a.button.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--on-primary);
+  box-shadow: var(--shadow-card);
+}
+button.primary:hover,
+a.button.primary:hover {
+  background: color-mix(in srgb, var(--primary) 88%, var(--ink));
+}
+button.danger,
+a.button.danger {
+  background: var(--bad-ink);
+  border-color: var(--bad-ink);
+  color: var(--bad-bg);
+}
+a.button:not(.primary, .danger) {
+  color: var(--primary);
+}
+button.ghost {
+  border-color: transparent;
+  background: transparent;
+}
+/* enfants : boutons plus grands et plus ronds (le jeton --target vaut 56 px) */
+[data-theme='jardin'] button.primary,
+[data-theme='jardin'] a.button.primary {
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 70%, var(--ink));
+}
+[data-theme='jardin'] button.primary:active,
+[data-theme='jardin'] a.button.primary:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--primary) 70%, var(--ink));
+}
+
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
@@ -120,23 +241,88 @@ select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 3px solid var(--teal);
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
 
-/* cartes et boutons communs */
-.card {
+/* ------------------------------------------------------------------ formulaires */
+input:not([type='checkbox'], [type='radio'], [type='range'], [type='file']),
+select,
+textarea {
+  font: inherit;
+  color: var(--ink);
   background: var(--card);
-  background-image: var(--pattern-card);
   border: 2px solid var(--line);
+  border-radius: var(--radius-md);
+  min-height: 48px;
+  padding: 8px 12px;
+  max-width: 100%;
+}
+input:not([type='checkbox'], [type='radio'], [type='range'], [type='file']):hover,
+select:hover,
+textarea:hover {
+  border-color: var(--ink2);
+}
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--primary);
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+}
+label {
+  cursor: pointer;
+}
+fieldset {
+  border: 2px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-s) var(--space-m);
+}
+summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: list-item;
+  padding: 10px 0;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ cartes */
+.card {
+  background-color: var(--card);
+  background-image: var(--pattern-card);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-  padding: 12px 16px;
-  margin: 12px 0;
+  padding: var(--space-m) var(--space-m);
+  margin: var(--space-m) 0;
+}
+[data-theme='jardin'] .card {
+  border-width: 2px;
 }
 .card h2,
 .card h3 {
-  margin: 0 0 6px;
+  margin: 0 0 var(--space-s);
+}
+.card.bad,
+p.bad {
+  background: var(--bad-bg);
+  color: var(--bad-ink);
+  border-color: transparent;
+}
+.card.ok {
+  background: var(--ok-bg);
+  border-color: transparent;
+}
+.warnbox {
+  background: var(--warn-bg);
+  color: var(--ink);
+  border-radius: var(--radius-md);
+  padding: var(--space-s) var(--space-m);
+}
+.error,
+p[role='alert'].error {
+  color: var(--bad-ink);
+  font-weight: 600;
 }
 .muted {
   color: var(--ink2);
@@ -149,24 +335,113 @@ summary:focus-visible,
   background: var(--warn-bg);
   border-radius: var(--radius-pill);
   padding: 1px 10px;
+  vertical-align: middle;
 }
-button.primary,
-a.button.primary {
-  background: var(--teal);
-  border-color: var(--teal);
-  color: var(--on-primary);
+/* pastille d'état (ex. riwāya, « nouveau ») */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
   font-weight: 700;
+  border-radius: var(--radius-pill);
+  padding: 2px 10px;
+  background: var(--primary-soft);
+  color: var(--primary);
 }
-/* lien présenté comme un bouton (action principale d'une carte) */
-a.button {
-  display: inline-block;
-  min-height: 44px;
-  line-height: 44px;
-  padding: 0 16px;
-  border: 2px solid var(--line);
-  border-radius: var(--radius-md);
+
+/* ------------------------------------------------------------------ tableaux (enseignant, parent) */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.95rem;
+}
+th,
+td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: start;
+  vertical-align: top;
+}
+thead th {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink2);
+  border-bottom-width: 2px;
+}
+tbody tr:hover {
+  background: var(--surface);
+}
+/* tableau trop large pour l'écran : il défile seul, la page non */
+.table-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* ------------------------------------------------------------------ mise en page */
+.stack {
+  display: grid;
+  gap: var(--space-m);
+}
+/* grandes tuiles d'accès (accueil, « Plus ») */
+.tiles {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-m) 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
+  gap: var(--space-s);
+}
+.tile {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  min-height: 112px;
+  padding: var(--space-m);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+  color: var(--ink);
   text-decoration: none;
+  transition:
+    transform var(--motion-fast) ease,
+    border-color var(--motion-fast) ease;
 }
+.tile:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+.tile .tile-ic {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.tile strong {
+  font-size: 1.02rem;
+}
+.tile small {
+  color: var(--ink2);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+[data-theme='jardin'] .tile {
+  border-width: 2px;
+  text-align: center;
+  justify-items: center;
+}
+[data-theme='jardin'] .tile .tile-ic {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+
+/* lien présenté comme un bouton : déjà stylé avec button ci-dessus */
 
 /* RGAA 12.7 : lien d'évitement, visible seulement quand il reçoit le focus clavier */
 .aller-contenu {
@@ -184,4 +459,28 @@ a.button {
 /* cible du lien d'évitement : focus reçu par programme, sans cadre autour de toute la page */
 main[tabindex='-1']:focus {
   outline: none;
+}
+/* texte pour les lecteurs d'écran seulement */
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* très petit écran (320 px) : marges réduites, rien ne déborde */
+@media (max-width: 360px) {
+  .card {
+    padding: var(--space-s) 12px;
+  }
+  h1 {
+    font-size: calc(var(--title-size) * 0.85);
+  }
+}
+@media print {
+  body {
+    background: none;
+  }
 }

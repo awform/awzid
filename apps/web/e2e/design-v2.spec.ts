@@ -1,7 +1,7 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Page } from '@playwright/test';
-import { expect, loginTeacher, PARENT_PIN, password, test } from './fixtures';
+import { expect, loginTeacher, password, test } from './fixtures';
 
 /**
  * Lot 26 — captures « avant / après » de la refonte graphique, pour chaque public (enfant, ado, adulte,

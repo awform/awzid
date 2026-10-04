@@ -17,47 +17,53 @@
   import { getSettings, type Settings } from '$lib/offline';
   import { purgeOldRecordings } from '$lib/recordings';
   import { cachedMe, fetchMe, type Me } from '$lib/session';
+  import { activeNav, audienceOf, navFor, themeOf } from '$lib/ui/audience';
+  import Brand from '$lib/ui/Brand.svelte';
+  import Icon from '$lib/ui/Icon.svelte';
+  import { applyMode, nextMode, readMode, writeMode, type Mode } from '$lib/ui/mode';
 
   let { children } = $props();
-
-  /** Navigation par MATIÈRE (demande du client, 28/09) : barre d'onglets sur tous les écrans élève. */
-  const TABS = [
-    { id: 'coran', href: '/coran', icon: 'M12 3c-4 3-7 5-7 9a7 7 0 0 0 14 0c0-4-3-6-7-9Zm0 4v10' },
-    { id: 'arabe', href: '/', icon: 'M4 17c3 0 5-2 6-5 1 3 3 5 6 5M14 7h6M17 4v6' },
-    { id: 'sciences', href: '/sciences', icon: 'M4 6h7v13H4zM13 6h7v13h-7zM11 8h2' },
-    { id: 'ecriture', href: '/ecriture', icon: 'M5 19l3-1 10-10-2-2L6 16l-1 3ZM14 6l2 2' },
-    {
-      id: 'lectures',
-      href: '/lectures',
-      icon: 'M5 5h5a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H5zM19 5h-5a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h5z',
-    },
-    { id: 'suivi', href: '/suivi', icon: 'M5 19V11M10 19V7M15 19v-5M20 19V4' },
-  ] as const;
-
-  const current = $derived.by(() => {
-    const p = page.url.pathname;
-    if (/^\/(niveaux|lecons)\/r[ea]\d/.test(p)) return 'sciences';
-    if (p === '/' || p.startsWith('/niveaux') || p.startsWith('/lecons')) return 'arabe';
-    if (p.startsWith('/hifz') || p.startsWith('/coran')) return 'coran';
-    const x = TABS.find((y) => y.href !== '/' && p.startsWith(y.href));
-    return x?.id ?? '';
-  });
-  const NO_TABS = ['/ecole', '/connexion', '/inscription', '/profils'];
-  const showTabs = $derived(!NO_TABS.some((p) => page.url.pathname.startsWith(p)));
 
   let online = $state(true);
   let pending = $state(0);
   let storageFull = $state(false);
-  let settings: Settings | null = $state(null);
-  let profile: DevProfile | null = $state(null);
-  let me: Me | null = $state(null);
+  let settings = $state<Settings | null>(null);
+  let profile = $state<DevProfile | null>(null);
+  let me = $state<Me | null>(null);
+  let mode = $state<Mode>('auto');
   let lastActivity = Date.now();
-  // thème par public (jetons : src/lib/theme/tokens.ts) : « enfants » pour un profil d'enfant actif
+
+  /**
+   * Lot 26 — public de l'écran : thème (jardin, nuit, manuscrit, clair) et navigation de 3 à 5 entrées.
+   * Le parent qui gère la famille, l'enseignant et l'administration ont le thème « clair et minimal ».
+   */
+  const audience = $derived(
+    audienceOf({
+      profileKind: profile?.kind ?? null,
+      accountKind: me?.account.kind ?? null,
+      profileKinds: (me?.profiles ?? []).map((p) => p.kind),
+      path: page.url.pathname,
+    }),
+  );
+  const nav = $derived(navFor(audience));
+  const current = $derived(activeNav(nav, page.url.pathname));
+  const NO_TABS = ['/ecole', '/connexion', '/inscription'];
+  const showTabs = $derived(!NO_TABS.some((p) => page.url.pathname.startsWith(p)));
+
   $effect(() => {
-    document.documentElement.dataset.theme = profile?.kind === 'enfant' ? 'enfants' : 'adultes';
+    document.documentElement.dataset.theme = themeOf(audience);
+    document.documentElement.dataset.public = audience;
   });
 
+  function cycleMode() {
+    mode = nextMode(mode);
+    writeMode(mode);
+    applyMode(mode);
+  }
+
   onMount(() => {
+    mode = readMode();
+    applyMode(mode);
     online = navigator.onLine;
     const on = () => (online = true);
     const off = () => (online = false);
@@ -111,65 +117,92 @@
     profile = null;
     await goto(resolve(settings?.ecole ? '/ecole' : '/profils'));
   }
+  const modeIcon = $derived(mode === 'sombre' ? 'lune' : mode === 'clair' ? 'soleil' : 'auto');
 </script>
 
-<div class="app" data-sveltekit-preload-data={settings?.econome ? 'off' : 'hover'}>
+<div
+  class="app"
+  class:with-tabs={showTabs}
+  data-sveltekit-preload-data={settings?.econome ? 'off' : 'hover'}
+>
   <a class="aller-contenu" href="#contenu" data-testid="aller-contenu">{t('app.aller_contenu')}</a>
   <header class="top">
-    <a href={resolve('/aujourdhui')} class="brand" data-testid="accueil">{t('app.nom')}</a>
-    {#if !online}<span class="badge off" data-testid="hors-ligne">{t('entete.hors_ligne')}</span
-      >{/if}
-    {#if pending > 0}<span class="badge" data-testid="en-attente" title={t('entete.attente_titre')}
+    <a
+      href={resolve(audience === 'visiteur' ? '/' : '/aujourdhui')}
+      class="brand"
+      data-testid="accueil"
+      aria-label={t('app.nom')}><Brand /></a
+    >
+    {#if showTabs}
+      <nav class="tabs" aria-label={t('onglets.aria')} data-public={audience}>
+        {#each nav as x (x.id)}
+          <a
+            href={resolve(x.href as '/')}
+            class:active={current === x.id}
+            aria-current={current === x.id ? 'page' : undefined}
+            data-tab={x.id}
+          >
+            <span class="ti"><Icon name={x.icon} size={audience === 'enfant' ? 28 : 24} /></span>
+            <span class="tl">{t(`nav.${x.id}`)}</span>
+          </a>
+        {/each}
+      </nav>
+    {/if}
+    <span class="spacer"></span>
+    {#if pending > 0}<span class="chip" data-testid="en-attente" title={t('entete.attente_titre')}
         >{t('entete.attente', { n: pending })}</span
       >{/if}
-    <span class="spacer"></span>
     {#if profile}
       <span class="who" data-testid="eleve-actif">{profile.pseudonym}</span>
       {#if me?.profiles && me.profiles.length > 1}
-        <button type="button" class="small" onclick={changeStudent}
-          >{t('entete.changer_eleve')}</button
+        <button
+          type="button"
+          class="icon-btn"
+          onclick={changeStudent}
+          aria-label={t('entete.changer_eleve')}
+          title={t('entete.changer_eleve')}
+          data-testid="changer-eleve"><Icon name="famille" /></button
         >
       {/if}
     {/if}
+    <button
+      type="button"
+      class="icon-btn"
+      onclick={cycleMode}
+      aria-label={t(`mode.${mode}`)}
+      title={t(`mode.${mode}`)}
+      data-testid="mode-affichage"
+      data-mode={mode}><Icon name={modeIcon} /></button
+    >
+    <a
+      class="icon-btn"
+      href={resolve('/hors-ligne')}
+      aria-label={t('entete.telechargements')}
+      title={t('entete.telechargements')}><Icon name="telecharger" /></a
+    >
     {#if me}
       <a
-        class="dl"
+        class="icon-btn"
         href={resolve('/compte')}
         aria-label={t('entete.compte')}
-        data-testid="lien-compte"
+        title={t('entete.compte')}
+        data-testid="lien-compte"><Icon name="personne" /></a
       >
-        <svg viewBox="0 0 24 24" aria-hidden="true"
-          ><path d="M4 20c1-4 4-6 8-6s7 2 8 6M12 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8" /></svg
-        >
-      </a>
     {:else}
       <a class="login" href={resolve('/connexion')} data-testid="lien-connexion"
         >{t('entete.connexion')}</a
       >
     {/if}
-    <a class="dl" href={resolve('/hors-ligne')} aria-label={t('entete.telechargements')}>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" /></svg>
-    </a>
   </header>
+  {#if !online}
+    <p class="offline-bar" role="status" data-testid="hors-ligne">
+      <Icon name="horsligne" size={20} />
+      <span><strong>{t('entete.hors_ligne')}</strong> — {t('etat.bandeau_hors_ligne')}</span>
+    </p>
+  {/if}
   {#if storageFull}<p class="card bad" role="alert" data-testid="stockage-plein">
       {t('entete.stockage_plein')}
     </p>{/if}
-
-  {#if showTabs}
-    <nav class="tabs" aria-label={t('onglets.aria')}>
-      {#each TABS as x (x.id)}
-        <a
-          href={resolve(x.href)}
-          class:active={current === x.id}
-          aria-current={current === x.id ? 'page' : undefined}
-          data-tab={x.id}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={x.icon} /></svg>
-          <span>{t(`onglets.${x.id}`)}</span>
-        </a>
-      {/each}
-    </nav>
-  {/if}
 
   <main id="contenu" tabindex="-1">
     {@render children()}
@@ -186,142 +219,190 @@
 </div>
 
 <style>
+  .top {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: 6px max(12px, env(safe-area-inset-left));
+    min-height: 60px;
+    background: var(--header);
+    color: var(--on-header);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .brand {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding-inline-end: 8px;
+  }
+  .spacer {
+    flex: 1;
+  }
+  .chip {
+    font-size: 0.8rem;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-pill);
+    padding: 2px 10px;
+    white-space: nowrap;
+  }
+  .who {
+    font-weight: 700;
+    font-size: 0.95rem;
+    max-width: 9em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .icon-btn {
+    display: inline-grid;
+    place-items: center;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: inherit;
+  }
+  .icon-btn:hover {
+    background: color-mix(in srgb, currentColor 10%, transparent);
+  }
+  .login {
+    color: inherit;
+    font-weight: 700;
+    font-size: 0.95rem;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .offline-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+    padding: 8px 16px;
+    background: var(--warn-bg);
+    color: var(--warn-ink);
+    font-size: 0.95rem;
+    text-align: center;
+  }
+
+  /* navigation : dans l'en-tête sur grand écran, barre du bas sur téléphone et tablette */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-inline-start: var(--space-m);
+  }
+  .tabs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 14px;
+    border-radius: var(--radius-pill);
+    color: inherit;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background var(--motion-fast) ease;
+  }
+  .tabs a:hover {
+    background: color-mix(in srgb, currentColor 10%, transparent);
+  }
+  .tabs a.active {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: var(--space-m) var(--space-m) 48px;
+  }
+
   .pied {
     display: flex;
     flex-wrap: wrap;
     gap: 6px 16px;
-    margin: 32px 0 8px;
+    margin: 40px 0 8px;
     padding-top: 12px;
     border-top: 1px solid var(--line);
     font-size: 0.9rem;
   }
   @media print {
-    .pied {
+    .pied,
+    .top,
+    .tabs {
       display: none;
     }
   }
-  .top {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 16px;
-    background: var(--navy);
-    color: #fff;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  .brand {
-    color: #fff;
-    font-weight: 700;
-    text-decoration: none;
-    letter-spacing: 0.08em;
-  }
-  .spacer {
-    flex: 1;
-  }
-  .badge {
-    font-size: 0.78rem;
-    background: #ffffff22;
-    border-radius: 99px;
-    padding: 2px 10px;
-  }
-  .badge.off {
-    background: var(--gold);
-    color: #1b1b1b;
-    font-weight: 700;
-  }
-  .who {
-    font-weight: 700;
-    font-size: 0.9rem;
-  }
-  .small {
-    /* audit A11Y-1 : 44 px au moins (règle du projet pour les enfants : 44 à 48 px) */
-    min-height: 44px;
-    font-size: 0.85rem;
-    padding: 2px 10px;
-  }
-  .dl svg {
-    width: 26px;
-    height: 26px;
-    fill: none;
-    stroke: #fff;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  .login {
-    color: #fff;
-    font-weight: 700;
-    font-size: 0.9rem;
-  }
-  .dl {
-    min-width: 44px;
-    min-height: 44px;
-    display: grid;
-    place-items: center;
-  }
-  .tabs {
-    display: flex;
-    background: #fff;
-    border-bottom: 2px solid var(--line);
-    overflow-x: auto;
-  }
-  .tabs a {
-    flex: 1;
-    min-width: 72px;
-    min-height: 56px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    padding: 6px 4px;
-    color: var(--ink2);
-    text-decoration: none;
-    font-size: 0.78rem;
-    text-align: center;
-    border-bottom: 3px solid transparent;
-  }
-  .tabs a.active {
-    color: var(--navy);
-    font-weight: 700;
-    border-bottom-color: var(--teal);
-  }
-  .tabs svg {
-    width: 24px;
-    height: 24px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  main {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 16px 16px 96px;
-  }
-  /* téléphone : barre d'onglets en bas de l'écran */
-  @media (max-width: 700px) {
+
+  @media (max-width: 899px) {
     .tabs {
       position: fixed;
+      inset-inline: 0;
       bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 10;
-      border-top: 2px solid var(--line);
-      border-bottom: 0;
+      z-index: 20;
+      margin: 0;
+      gap: 0;
+      padding: 6px 6px max(6px, env(safe-area-inset-bottom));
+      background: var(--card);
+      color: var(--ink2);
+      border-top: 1px solid var(--line);
+      box-shadow: 0 -6px 20px -14px rgba(0, 0, 0, 0.35);
     }
     .tabs a {
+      flex: 1 1 0;
       min-width: 0;
-      padding: 6px 2px;
-      border-bottom: 0;
-      border-top: 3px solid transparent;
-      font-size: 0.68rem;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      padding: 4px 2px;
+      min-height: 56px;
+      border-radius: var(--radius-md);
+      font-size: 0.72rem;
+      text-align: center;
+    }
+    .tabs a:hover {
+      background: transparent;
     }
     .tabs a.active {
-      border-top-color: var(--teal);
+      background: transparent;
+      color: var(--primary);
+      font-weight: 800;
+    }
+    .tabs a.active .ti {
+      background: var(--primary-soft);
+    }
+    .ti {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 30px;
+      border-radius: var(--radius-pill);
+      transition: background var(--motion-fast) ease;
+    }
+    .tl {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .with-tabs main {
+      padding-bottom: 112px;
+    }
+    /* enfants : barre plus haute, icônes plus grandes */
+    .tabs[data-public='enfant'] a {
+      min-height: 64px;
+    }
+  }
+  @media (max-width: 479px) {
+    .who {
+      display: none;
     }
   }
 </style>

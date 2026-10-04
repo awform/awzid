@@ -103,12 +103,13 @@ async function runEcole(page: Page) {
   await expect(page.getByTestId('eleve-actif')).toHaveCount(0);
 }
 
-test('navigation par matière : six onglets, onglet actif, barre en bas sur téléphone', async ({
+// lot 26 : cinq entrées au plus (adulte : Accueil, Arabe, Coran, Sciences, Plus), le reste sous « Plus »
+test('navigation : cinq entrées, entrée active, « Plus », barre en bas sur téléphone', async ({
   page,
 }, info) => {
   await page.goto('/');
   const tabs = page.locator('nav.tabs a');
-  await expect(tabs).toHaveCount(6);
+  await expect(tabs).toHaveCount(5);
   await expect(page.locator('nav.tabs a[data-tab="arabe"]')).toHaveAttribute(
     'aria-current',
     'page',
@@ -119,13 +120,28 @@ test('navigation par matière : six onglets, onglet actif, barre en bas sur tél
     'aria-current',
     'page',
   );
-  for (const t of ['sciences', 'ecriture', 'lectures', 'suivi']) {
+  for (const t of ['sciences', 'aujourdhui', 'plus']) {
     await page.locator(`nav.tabs a[data-tab="${t}"]`).click();
     await expect(page.locator(`nav.tabs a[data-tab="${t}"]`)).toHaveAttribute(
       'aria-current',
       'page',
     );
   }
+  // « Plus » reste l'entrée active dans l'écriture, les lectures et le suivi
+  for (const href of ['/ecriture', '/lectures', '/suivi']) {
+    await page.locator(`[data-plus="${href}"]`).click();
+    await expect(page.locator('nav.tabs a[data-tab="plus"]')).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    await page.locator('nav.tabs a[data-tab="plus"]').click();
+  }
+  // thème « manuscrit » (adulte) posé sur la page, mode sombre au choix de l'appareil
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'manuscrit');
+  await page.getByTestId('mode-affichage').click();
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'sombre');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'sombre');
   if (info.project.name.startsWith('mobile')) {
     const box = await page.locator('nav.tabs').boundingBox();
     const vh = page.viewportSize()?.height ?? 0;

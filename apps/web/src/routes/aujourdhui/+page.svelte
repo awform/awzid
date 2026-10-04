@@ -9,6 +9,11 @@
   import { completeHizb, completeJuz, completeQuarters, completeSuras } from '$lib/milestones';
   import { call, type ProfileInfo } from '$lib/session';
   import EpreuvesCarte from '$lib/EpreuvesCarte.svelte';
+  import EmptyState from '$lib/ui/EmptyState.svelte';
+  import Icon from '$lib/ui/Icon.svelte';
+  import Loading from '$lib/ui/Loading.svelte';
+  import Onboarding from '$lib/ui/Onboarding.svelte';
+  import StatusMessage from '$lib/ui/StatusMessage.svelte';
 
   /**
    * « Aujourd'hui » (lot 11, étude des plateformes, rec. 1) : la séance du jour enchaîne la portion de hifẓ
@@ -61,11 +66,23 @@
     (hifz?.minutes ?? 0) + (data?.lecon ? LESSON_MIN : 0) + (due > 0 ? WORDS_MIN : 0),
   );
 
-  onMount(async () => {
+  /** lot 26 : échec explicite (réseau absent ou serveur en panne), avec « Réessayer » */
+  let failed = $state<'erreur' | 'hors_ligne' | null>(null);
+
+  onMount(load);
+
+  async function load() {
+    failed = null;
+    loaded = false;
     profile = await demoProfileFor('');
     if (profile) {
       const r = await call<Today>('GET', `/today/${profile.id}?today=${localIso()}`);
       data = r.ok ? r.data : null;
+      if (!r.ok) {
+        failed = navigator.onLine ? 'erreur' : 'hors_ligne';
+        loaded = true;
+        return;
+      }
       goal = data?.regularite?.objectif ?? 4;
       rest = [...(data?.regularite?.repos ?? [])];
       const dv = await call<{ devoirs: typeof devoirs }>('GET', `/profiles/${profile.id}/devoirs`);
@@ -90,7 +107,7 @@
       }
     }
     loaded = true;
-  });
+  }
 
   async function saveRhythm(e: SubmitEvent) {
     e.preventDefault();
@@ -120,9 +137,20 @@
 
 <svelte:head><title>{t('app.nom')} — {t('auj.titre')}</title></svelte:head>
 
-<h1>{t('auj.titre')}</h1>
+<header class="hello">
+  <h1>{t('auj.titre')}</h1>
+  {#if profile}<p class="muted" data-testid="bonjour">
+      {t('auj.bonjour', { nom: profile.pseudonym })}
+    </p>{/if}
+</header>
 
-{#if loaded && !profile}
+{#if profile}<Onboarding audience={profile.kind} />{/if}
+
+{#if !loaded}
+  <Loading lines={4} />
+{:else if failed}
+  <StatusMessage kind={failed} onretry={load} />
+{:else if !profile}
   <p class="card">
     {t('auj.sans_profil')} <a href={resolve('/profils')}>{t('auj.choisir_profil')}</a>
   </p>
@@ -135,18 +163,24 @@
     <ol class="steps">
       {#if hifz}
         <li data-step="hifz">
-          <strong>{t('auj.hifz')}</strong> · {t('auj.minutes', { n: hifz.minutes })}
-          <p class="muted small">
-            {#if hifz.nouveau}{t('auj.hifz_nouveau', { portion: hifz.nouveau })} ·{/if}
-            {t('auj.hifz_revisions', { recent: hifz.recent, ancien: hifz.ancien })}
-          </p>
+          <span class="step-ic"><Icon name="mushaf" /></span>
+          <div class="step-body">
+            <strong>{t('auj.hifz')}</strong> · {t('auj.minutes', { n: hifz.minutes })}
+            <p class="muted small">
+              {#if hifz.nouveau}{t('auj.hifz_nouveau', { portion: hifz.nouveau })} ·{/if}
+              {t('auj.hifz_revisions', { recent: hifz.recent, ancien: hifz.ancien })}
+            </p>
+          </div>
           <a class="button" href={resolve('/hifz')}>{t('auj.commencer')}</a>
         </li>
       {/if}
       {#if data.lecon}
         <li data-step="lecon">
-          <strong>{t('auj.lecon')}</strong> · {t('auj.minutes', { n: LESSON_MIN })}
-          <p class="muted small">{data.lecon.titleFr}</p>
+          <span class="step-ic"><Icon name="alif" /></span>
+          <div class="step-body">
+            <strong>{t('auj.lecon')}</strong> · {t('auj.minutes', { n: LESSON_MIN })}
+            <p class="muted small">{data.lecon.titleFr}</p>
+          </div>
           <a
             class="button primary"
             href={resolve('/lecons/[id]', { id: data.lecon.id })}
@@ -156,15 +190,51 @@
       {/if}
       {#if due > 0}
         <li data-step="mots">
-          <strong>{t('auj.mots')}</strong> · {t('auj.minutes', { n: WORDS_MIN })}
-          <p class="muted small">{t('auj.mots_dus', { n: due })}</p>
+          <span class="step-ic"><Icon name="revisions" /></span>
+          <div class="step-body">
+            <strong>{t('auj.mots')}</strong> · {t('auj.minutes', { n: WORDS_MIN })}
+            <p class="muted small">{t('auj.mots_dus', { n: due })}</p>
+          </div>
           <a class="button" href={resolve('/revisions')}>{t('auj.commencer')}</a>
         </li>
       {/if}
-      {#if !hifz && !data.lecon && due === 0}<li class="muted">{t('auj.rien')}</li>{/if}
     </ol>
-    <p class="muted small">{t('auj.onglets')}</p>
+    {#if !hifz && !data.lecon && due === 0}
+      <EmptyState icon="coche" title={t('auj.vide_titre')} text={t('auj.vide_texte')}>
+        <a class="button" href={resolve('/lectures')}>{t('onglets.lectures')}</a>
+      </EmptyState>
+      <p class="sr">{t('auj.rien')}</p>
+    {/if}
   </section>
+
+  {#if profile.kind === 'enfant'}
+    <section aria-labelledby="espaces">
+      <h2 id="espaces">{t('auj.espaces')}</h2>
+      <ul class="tiles">
+        <li>
+          <a class="tile" href={resolve('/lectures')}
+            ><span class="tile-ic"><Icon name="lire" size={32} /></span><strong
+              >{t('onglets.lectures')}</strong
+            ></a
+          >
+        </li>
+        <li>
+          <a class="tile" href={resolve('/revisions')}
+            ><span class="tile-ic"><Icon name="revisions" size={32} /></span><strong
+              >{t('revisions.titre')}</strong
+            ></a
+          >
+        </li>
+        <li>
+          <a class="tile" href={resolve('/suivi')}
+            ><span class="tile-ic"><Icon name="etoile" size={32} /></span><strong
+              >{t('onglets.suivi')}</strong
+            ></a
+          >
+        </li>
+      </ul>
+    </section>
+  {/if}
 
   {#if devoirs.length}
     <section class="card" data-testid="devoirs">
@@ -302,10 +372,46 @@
     display: grid;
     gap: 10px;
   }
+  .hello h1 {
+    margin-bottom: 0;
+  }
+  .hello p {
+    margin: 4px 0 0;
+    font-size: 1.05rem;
+  }
   .steps li {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-s) var(--space-m);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    padding: 8px 10px;
+    padding: var(--space-s) var(--space-m);
+    background: var(--card);
+  }
+  .step-ic {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+  .step-body p {
+    margin: 2px 0 0;
+  }
+  /* petit écran : le bouton passe sous le texte */
+  @media (max-width: 520px) {
+    .steps li {
+      grid-template-columns: auto 1fr;
+    }
+    .steps li > :global(a) {
+      grid-column: 1 / -1;
+    }
+  }
+  .seance {
+    border-inline-start: 4px solid var(--primary);
   }
   .week {
     list-style: none;
