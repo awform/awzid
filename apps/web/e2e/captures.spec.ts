@@ -425,6 +425,8 @@ test.describe('lot 13', () => {
       await api('post', `/ecole/pupils/${first}/certificats`, {
         kind: 'niveau',
         fields: { prenom_nom: 'Awa Diop' },
+        // audit MET-2 : contrôle continu partiel (récitations, productions non saisies) → confirmation
+        confirmerCcPartiel: true,
       })
     ).certificate;
     await page.goto(`/enseignant/classe/${cls.id}`);

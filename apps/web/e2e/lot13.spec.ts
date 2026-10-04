@@ -82,6 +82,11 @@ test('espace école : de la classe papier au certificat imprimé', async ({
   await expect(prev).toContainText('Awa Diop');
   await expect(prev).toContainText('Très bien');
   await expect(prev.locator('[lang="ar"]')).toContainText('مُمْتَازٌ');
+  // audit MET-2 : récitations et productions non saisies (contrôle continu partiel) → délivrance bloquée
+  // tant que l'enseignant ne confirme pas explicitement
+  await expect(page.getByTestId('cert-delivrer')).toBeDisabled();
+  await page.getByTestId('confirmer-cc').locator('input').check();
+  await expect(page.getByTestId('cert-delivrer')).toBeEnabled();
   await page.getByTestId('cert-delivrer').click();
   await expect(page.getByTestId('ecole-message')).toContainText('AWF-EN1-');
   const num = /AWF-EN1-\d{4}-\d{4}/.exec(
