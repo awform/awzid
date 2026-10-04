@@ -82,4 +82,24 @@ test.describe('parent', () => {
     await expect(page.getByTestId('regularite')).toHaveCount(0);
     await expect(page.getByTestId('jalons')).toBeVisible();
   });
+
+  test('rapport : la même partie validée deux fois le même jour ne casse pas la page', async ({
+    page,
+  }) => {
+    // vu sur la VM : deux validations « 112:1-4 » le même jour (enseignant) → clé d'itération en double,
+    // plus aucun rapport affiché ; la réponse réelle de l'API est reprise, avec deux validations identiques
+    await page.route('**/api/v1/rapport-hebdo/**', async (route) => {
+      const res = await route.fetch();
+      const body = await res.json();
+      if (body?.profil?.pseudonym === 'Amina') {
+        const v = { day: body.semaine.lundi, part: '112:1-4', mention: 'Très bien' };
+        body.validations = [v, { ...v }];
+      }
+      await route.fulfill({ response: res, json: body });
+    });
+    await page.goto('/suivi/rapport');
+    const r = page.locator('[data-rapport]').filter({ hasText: 'Amina' });
+    await expect(r).toBeVisible();
+    await expect(r.locator('li').filter({ hasText: '112:1-4' })).toHaveCount(2);
+  });
 });

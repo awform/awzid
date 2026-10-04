@@ -79,7 +79,8 @@
       <li>{t('rap.hifz', { n: r.totaux.hifz })}</li>
       <li>{t('rap.mots', { n: r.totaux.cartes })} · {t('rap.traces', { n: r.totaux.traces })}</li>
       <li>{t('rap.lecons', { n: r.lecons.length })}</li>
-      {#each r.validations as v (v.day + v.part)}
+      <!-- la même partie peut être validée deux fois le même jour : clé = position (jamais jour + partie) -->
+      {#each r.validations as v, i (i)}
         <li>
           {t('rap.validation', { part: v.part, date: fmtDate(v.day) })}{#if v.mention}
             — {v.mention}{/if}
