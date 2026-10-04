@@ -202,6 +202,8 @@ describe('secrets : un périmètre par service (env-scopes.conf)', () => {
         'AWFORM_TUTEUR',
         'COOKIE_SECURE',
         'DATABASE_URL',
+        // adresse servie : garde-fou de la démonstration (apps/api/src/demo-mode.ts), sans secret
+        'SITE',
         'STRIPE_SECRET_KEY',
         'TZ',
       ]);

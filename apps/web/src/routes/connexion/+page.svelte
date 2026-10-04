@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { setActiveProfile } from '$lib/attempts';
@@ -11,12 +12,18 @@
   let needTotp = $state(false);
   let error = $state('');
   let busy = $state(false);
+  // démonstration (réseau local) : identifiants courts (« parent », « enfant »…) au lieu d'une adresse
+  let demo = $state(false);
+  onMount(async () => {
+    const c = await call<{ demo?: boolean }>('GET', '/config');
+    demo = !!(c.ok && c.data?.demo);
+  });
 
   async function submit(e: SubmitEvent) {
     e.preventDefault();
     busy = true;
     error = '';
-    const r = await call<Me>('POST', '/auth/login', {
+    const r = await call<Me & { profilDemo?: string | null }>('POST', '/auth/login', {
       email,
       password,
       ...(needTotp ? { totp } : {}),
@@ -29,6 +36,12 @@
     }
     const me = await fetchMe();
     if (me?.mfaRequired && !me.mfaVerified) return goto(resolve('/compte'));
+    // démonstration : « enfant » et « ado » ouvrent directement leur profil (sans « Qui apprend ? »)
+    const demoProfile = me?.profiles.find((p) => p.id === r.data?.profilDemo);
+    if (demoProfile) {
+      await setActiveProfile(demoProfile);
+      return goto(resolve('/'));
+    }
     if (me && me.profiles.length === 1) {
       await setActiveProfile(me.profiles[0] ?? null);
       return goto(resolve('/'));
@@ -42,7 +55,14 @@
 <h1>{t('connexion.titre')}</h1>
 <form class="card form" onsubmit={submit}>
   <label for="email">{t('champ.email')}</label>
-  <input id="email" type="email" autocomplete="username" required bind:value={email} />
+  <input
+    id="email"
+    type={demo ? 'text' : 'email'}
+    autocomplete="username"
+    autocapitalize="none"
+    required
+    bind:value={email}
+  />
   <label for="password">{t('champ.mot_de_passe')}</label>
   <input
     id="password"

@@ -8,6 +8,34 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 04/10/2026 — Démonstration : connexion simplifiée (branche `demo-simple`)
+
+Demande du client (démonstration sur son réseau local, utilisée par lui seul) : identifiants faciles à taper
+sur téléphone.
+
+- **Identifiants courts** `parent`, `enfant`, `ado`, `adulte`, `enseignant`, `admin`, mot de passe commun
+  court, **sans code à 6 chiffres** pour l'enseignant et l'administrateur (`apps/api/src/demo-mode.ts`,
+  branche dédiée dans `POST /auth/login`). Ils ne visent que les comptes FICTIFS de `cli/demo.ts`
+  (`<rôle>-<tag>@demo.awform.test`) : aucune donnée de démonstration recréée ni modifiée.
+  `enfant` → compte parent avec **Lina** ouverte d'emblée (pas de « Qui apprend ? ») ; `ado` → **Yanis** ;
+  `parent` → les trois profils. Le **code parent reste demandé** comme avant (changer d'apprenant depuis un
+  profil enfant/ado, accords, espace parent). Connexion par e-mail + mot de passe long + second facteur : inchangée.
+- **Mode démo seulement** : `AWFORM_DEMO=1` posé par `deploy.sh --demo` (`demo-env.sh`, retiré sans `--demo`
+  comme les autres réglages de démonstration, audit INF-9) ; passé à l'API (`env-scopes.conf` : `AWFORM_DEMO`,
+  `SITE`, `SITE_LAN`, `RELAIS_DOMAINE`, sans secret). Sans lui, l'option n'existe pas (`buildApp` :
+  `demoLogin` absent).
+- **Garde-fou au démarrage** (`demoGuard`, `server.ts`) : avec `AWFORM_DEMO=1`, l'API **refuse de démarrer**
+  si `SITE` est absent, si `SITE`/`SITE_LAN` n'est pas une adresse locale (IP privée, localhost, .test, .local,
+  .lan, .home.arpa), si un domaine de relais public est configuré, ou en mode production (`COOKIE_SECURE=1`).
+  L'API n'a aucun port publié (compose.yml, vérifié par le test) : seule la Caddy de la démonstration la joint.
+- Page de connexion : champ en texte libre (`autocapitalize=none`) quand `/api/v1/config` indique `demo`.
+- Tests : `apps/api/test/demo-simple.test.ts` (échoue avant : module absent) — garde-fou ; **en production**
+  les 6 identifiants courts → 401, mot de passe court → 401 et refusé à l'inscription (400), enseignant sans
+  code → `totp_requis` ; **en démo** les 6 identifiants → 200 et bons profils. `env-scopes.test.ts` mis à jour
+  (l'API reçoit `SITE`). Suite API : 251 tests verts.
+
+---
+
 ## 04/10/2026 — Lot 27 : interface de l'espace Coran (branche `lot27-wip` = `lot27-api-wip` + `lot26-wip`)
 
 Partie serveur : entrée suivante (autre agent). Ici, l'interface seulement (aucun paquet serveur de l'audio touché).
