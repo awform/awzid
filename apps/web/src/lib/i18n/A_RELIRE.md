@@ -3,10 +3,10 @@
 | Fichier               | Langue                               | État                                                                                                                   |
 | --------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
 | `messages/fr.json`    | français                             | langue de référence (relue)                                                                                            |
-| `static/i18n/en.json` | anglais                              | en préparation — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire**           |
-| `static/i18n/es.json` | espagnol                             | en préparation (lot 25) — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** |
-| `static/i18n/de.json` | allemand                             | en préparation (lot 25) — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** |
-| `static/i18n/ar.json` | arabe (interface de droite à gauche) | en préparation (lot 25) — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** |
+| `static/i18n/en.json` | anglais                              | en préparation — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** (à relire par un locuteur natif)           |
+| `static/i18n/es.json` | espagnol                             | en préparation (lot 25) — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** (à relire par un locuteur natif) |
+| `static/i18n/de.json` | allemand                             | en préparation (lot 25) — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** (à relire par un locuteur natif) |
+| `static/i18n/ar.json` | arabe (interface de droite à gauche) | en préparation (lot 25) — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** (à relire par un locuteur natif) |
 
 Ces fichiers ne contiennent que les textes de l'**interface** : ni le contenu des livres, ni l'arabe étudié, ni le
 Coran. Une langue « en préparation » n'est jamais proposée par défaut (`status: 'preparation'` dans
