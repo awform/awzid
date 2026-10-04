@@ -36,6 +36,10 @@ export const TAJWID_RULES = [
 ] as const;
 export type TajwidRule = (typeof TAJWID_RULES)[number];
 
+/** Empreinte SHA-256 du fichier Tanzil (`coran/tanzil-uthmani.tsv`) sur lequel les fichiers livrés sont calés. */
+export const TAJWID_TANZIL_SHA256 =
+  '4d6d41e0b84cbdf9978ed44cc76a2ea74414c749a8ce2e41058e10148d439fe5';
+
 /** Crédit de la source (affiché dans l'application et écrit dans chaque fichier de sourate). */
 export const TAJWID_SOURCE =
   'quran-tajweed (Collin Fair, github.com/cpfair/quran-tajweed, commit 496f71c), licence CC BY 4.0';

@@ -1,4 +1,5 @@
-import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { readSources, suraJson } from '../src/cli-tajwid.js';
@@ -8,12 +9,13 @@ import {
   buildTajwid,
   runsOf,
   TAJWID_RULES,
+  TAJWID_TANZIL_SHA256,
   textHash,
   wordRuns,
   type TajwidSura,
 } from '../src/tajwid.js';
 import { tanwinDisplay, tanwinUndo } from '../src/text.js';
-import { CONTENT_DIR, HAS_CONTENT } from './helpers.js';
+import { CONTENT_DIR } from './helpers.js';
 
 /**
  * Lot 29 — tajwid en couleurs : le texte Tanzil n'est JAMAIS modifié ; les couleurs sont des enveloppes posées
@@ -87,8 +89,16 @@ const SHIPPED = join(import.meta.dirname, '..', '..', '..', 'apps', 'web', 'stat
 const shipped = (s: number) =>
   readFileSync(join(SHIPPED, `${String(s).padStart(3, '0')}.json`), 'utf8');
 
-describe.skipIf(!HAS_CONTENT)('tajwid des 6 236 versets (livres)', () => {
-  const tanzil = loadTanzil(readFileSync(join(CONTENT_DIR, 'coran', 'tanzil-uthmani.tsv'), 'utf8'));
+// le texte Tanzil seul suffit (présent aussi en CI : infra/ci/contenu) ; les livres ne sont pas nécessaires
+const TSV = join(CONTENT_DIR, 'coran', 'tanzil-uthmani.tsv');
+
+describe.skipIf(!existsSync(TSV))('tajwid des 6 236 versets (texte Tanzil)', () => {
+  const raw = readFileSync(TSV);
+  const tanzil = loadTanzil(raw.toString('utf8'));
+
+  it('les annotations ont été calées sur CE texte Tanzil (sinon : régénérer)', () => {
+    expect(createHash('sha256').update(raw).digest('hex')).toBe(TAJWID_TANZIL_SHA256);
+  });
 
   it('les fichiers livrés sont exactement ceux que donne la source (rien d’ajouté à la main)', () => {
     const { source, ref } = readSources();
