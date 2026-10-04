@@ -8,6 +8,34 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 04/10/2026 — Muṣḥaf page par page en VERT, plus clair et plus intuitif (branche `mushaf-design-wip`, depuis `main` eba4b6d)
+
+Demande du client : « en vert, plus joli, plus moderne, plus clair, plus intuitif, plus agréable ».
+
+- **Palette verte** (jetons `--mp-*` de `tokens.ts`, communs aux quatre thèmes) : verts profonds (cadre,
+  cartouches de sourate), menthe douce (fonds, barre), or discret (filets, rosaces), papier clair légèrement
+  chaud ; variante **vert nuit** en mode sombre. 10 paires de contraste ajoutées + tajwid sur le papier (4,5:1)
+  et sur le verset choisi (3:1) : **AA vérifié dans les huit palettes** (tokens.test.ts).
+- **Cadre modernisé** (`MushafPage.svelte`, SVG léger) : treillis clairsemé d'étoiles à huit pointes dans la
+  marge, double filet vert et or, rosaces géométriques aux coins (aucune figuration), cartouche de sourate vert
+  profond à pointes arrondies avec médaillons dorés, basmala mise en valeur, **numéros de verset dans des rosettes
+  vertes** (étoile à huit pointes en masque CSS, chiffres arabes ; le signe ۝ n'est plus utilisé — ornement hors
+  du texte coranique), folio entre deux filets dorés, apparition douce des pages.
+- **Barre simplifiée** (`/coran/mushaf`) : sourate et page toujours visibles + quatre actions à icône et
+  libellé (**Écouter**, **Tajwid** bascule, **Traduction** bascule, **Plus**) ; « Plus » garde muṣḥaf (Warsh
+  toujours désactivé), langue de la traduction, verset, juzʾ, recherche, mémorisation, lecture seule, vue une
+  page. Panneau d'écoute ouvert au geste. **Grandes flèches de page** de part et d'autre du livre (sous le livre
+  sur téléphone) + « Page n / 604 » ; balayage et flèches du clavier inchangés. Panneau de traduction
+  **repliable**, verset choisi surligné en menthe (page et traduction). Transitions courtes (mouvement réduit
+  respecté par les jetons). Cibles ≥ 48 px. Nouvelles icônes (tajwid, traduction, points, chevron) ; deux clés
+  (`mp.traduction_court`, `mp.page_sur`) dans les cinq langues.
+- **Intact** : texte coranique (e2e : texte identique à l'onglet Lire, tajwid sans changer le texte), tajwid,
+  aucune figuration. **Poids** : page la plus lourde 132,7 Ko (≤ 150), `/coran/mushaf` 112,9 Ko initiaux
+  (+2,1 Ko de CSS), total 285,4 Ko (≤ 315 ; +0,8 Ko).
+- **Tests** : e2e mushaf réécrits pour la nouvelle barre (10/10, accessibilité axe sans écart grave), suite
+  complète, captures avant/après dans `reports/mushaf-design/` (`avant/` = captures du 04/10 avant refonte ;
+  `apres/` : ordinateur, téléphone, 320 px, sombre, tajwid, traduction).
+
 ## 04/10/2026 — Muṣḥaf page par page, style Ayat (branche `mushaf-pages-wip`, depuis `main` dfead00)
 
 Demande du client : un espace Coran dans l'ergonomie de l'application Ayat (KSU) — affichage PAR PAGE du Muṣḥaf

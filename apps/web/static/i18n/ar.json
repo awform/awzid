@@ -1771,5 +1771,7 @@
   "mp.credit_traduction": "الترجمة: {titre}، الإصدار {version}، منشورة في موسوعة القرآن الكريم QuranEnc.com، دون تعديل.",
   "mp.lien_source": "المصدر: QuranEnc.com",
   "mp.mise_en_page_fluide": "صفحات مصحف المدينة (الآيات نفسها في كل صفحة)؛ الأسطر تتبع عرض الشاشة، وسيأتي التخطيط المطابق سطرًا سطرًا مع البيانات الرسمية.",
-  "mp.commandes_resume": "الأدوات — صفحة {page}، {sourate}"
+  "mp.commandes_resume": "الأدوات — صفحة {page}، {sourate}",
+  "mp.traduction_court": "الترجمة",
+  "mp.page_sur": "الصفحة {n} / {total}"
 }

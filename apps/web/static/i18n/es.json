@@ -1771,5 +1771,7 @@
   "mp.credit_traduction": "Traducción: {titre}, versión {version}, publicada por QuranEnc.com, reproducida sin modificación.",
   "mp.lien_source": "Fuente: QuranEnc.com",
   "mp.mise_en_page_fluide": "Páginas del Muṣḥaf de Medina (mismos versículos por página); las líneas siguen el ancho de la pantalla.",
-  "mp.commandes_resume": "Controles — página {page}, {sourate}"
+  "mp.commandes_resume": "Controles — página {page}, {sourate}",
+  "mp.traduction_court": "Traducción",
+  "mp.page_sur": "Página {n} / {total}"
 }

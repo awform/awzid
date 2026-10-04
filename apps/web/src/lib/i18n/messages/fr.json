@@ -1793,5 +1793,7 @@
   "mp.credit_traduction": "Traduction : {titre}, version {version}, publiée par QuranEnc.com (Encyclopédie des traductions du sens du Noble Coran), reproduite sans modification.",
   "mp.lien_source": "Source : QuranEnc.com",
   "mp.mise_en_page_fluide": "Pages du Muṣḥaf de Médine (mêmes versets par page) ; les lignes suivent la largeur de l’écran — la mise en page exacte ligne par ligne viendra avec les données officielles.",
-  "mp.commandes_resume": "Commandes — page {page}, {sourate}"
+  "mp.commandes_resume": "Commandes — page {page}, {sourate}",
+  "mp.traduction_court": "Traduction",
+  "mp.page_sur": "Page {n} / {total}"
 }

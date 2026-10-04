@@ -11,9 +11,11 @@
 
   /**
    * Muṣḥaf par page — UNE page du Muṣḥaf de Médine (versets de la page d'après les métadonnées Tanzil) dans un
-   * cadre orné dessiné par nous (SVG géométrique et floral, sans figuration). Texte Tanzil tel quel, découpé en
-   * mots aux espaces seulement ; couleurs du tajwid = enveloppes ; masquage = voile à l'affichage. Mise en page
-   * FLUIDE (lignes non exactes : docs/projet/SOURCES_MUSHAF.md § 1).
+   * cadre orné dessiné par nous (SVG géométrique épuré : treillis d'étoiles à huit pointes, rosaces aux coins,
+   * cartouche des sourates ; aucune figuration). Palette VERTE du Muṣḥaf (jetons --mp-*, 04/10/2026). Texte
+   * Tanzil tel quel, découpé en mots aux espaces seulement ; couleurs du tajwid = enveloppes ; masquage = voile à
+   * l'affichage ; numéros de verset dans des rosettes (ornement hors du texte). Mise en page FLUIDE (lignes non
+   * exactes : docs/projet/SOURCES_MUSHAF.md § 1).
    */
   let {
     p,
@@ -45,14 +47,21 @@
   } = $props();
 
   const sep = (i: number) => (i > 0 ? ' ' : '');
-  const uid = $derived(`mp-band-${p}`);
+  const uid = $derived(`mp-lattice-${p}`);
   const firstSura = $derived(segments[0]?.s ?? 1);
+  /** chiffres arabes seuls : la rosette remplace le signe ۝ (ornement, jamais dans le texte coranique) */
+  const num = (a: number) => ayaNumberAr(a).slice(1);
   const complete = $derived(
     segments.every((g) => {
       for (let a = g.from; a <= g.to; a++) if (text(g.s, a) === undefined) return false;
       return true;
     }),
   );
+  /** étoile à huit pointes (deux carrés tournés), centrée en 0,0 */
+  const star = (r: number) => {
+    const q = r * 0.7071;
+    return `M0 ${-r}L${q} ${-q}L${r} 0L${q} ${q}L0 ${r}L${-q} ${q}L${-r} 0L${-q} ${-q}Z`;
+  };
 </script>
 
 <article
@@ -65,46 +74,24 @@
 >
   <svg class="frame" aria-hidden="true" focusable="false">
     <defs>
-      <pattern id={uid} width="22" height="22" patternUnits="userSpaceOnUse">
-        <rect
-          x="5"
-          y="5"
-          width="12"
-          height="12"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1"
-        />
-        <rect
-          x="5"
-          y="5"
-          width="12"
-          height="12"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1"
-          transform="rotate(45 11 11)"
-        />
-        <circle cx="11" cy="11" r="1.8" fill="currentColor" />
-        <circle cx="0" cy="0" r="1.2" fill="currentColor" />
-        <circle cx="22" cy="0" r="1.2" fill="currentColor" />
-        <circle cx="0" cy="22" r="1.2" fill="currentColor" />
-        <circle cx="22" cy="22" r="1.2" fill="currentColor" />
+      <pattern id={uid} width="28" height="28" patternUnits="userSpaceOnUse">
+        <g class="lat" transform="translate(14 14)">
+          <rect x="-5" y="-5" width="10" height="10" />
+          <rect x="-5" y="-5" width="10" height="10" transform="rotate(45)" />
+        </g>
+        <circle class="lat-dot" cx="0" cy="0" r="1.1" />
+        <circle class="lat-dot" cx="28" cy="0" r="1.1" />
+        <circle class="lat-dot" cx="0" cy="28" r="1.1" />
+        <circle class="lat-dot" cx="28" cy="28" r="1.1" />
       </pattern>
     </defs>
     <rect x="0" y="0" width="100%" height="100%" fill={`url(#${uid})`} />
   </svg>
   {#each ['tr', 'tl', 'br', 'bl'] as c (c)}
     <svg class="rosette {c}" viewBox="-20 -20 40 40" aria-hidden="true" focusable="false">
-      {#each [0, 45, 90, 135, 180, 225, 270, 315] as r (r)}<ellipse
-          rx="5"
-          ry="13"
-          cy="-7"
-          transform={`rotate(${r})`}
-          class="petal"
-        />{/each}
-      <circle r="6" class="heart" />
-      <circle r="2.4" class="dot" />
+      <path d={star(17)} class="r-out" />
+      <path d={star(11)} class="r-in" transform="rotate(22.5)" />
+      <circle r="4.2" class="r-heart" />
     </svg>
   {/each}
 
@@ -115,7 +102,7 @@
     </header>
 
     <div class="body" lang="ar" dir="rtl">
-      {#if !complete}<p class="muted small" lang={localeInfo().code} dir={localeInfo().dir}>
+      {#if !complete}<p class="loading small" lang={localeInfo().code} dir={localeInfo().dir}>
           {t('mp.chargement')}
         </p>{/if}
       {#each segments as g (g.s)}
@@ -123,22 +110,28 @@
           <div class="band" data-sura-start={g.s}>
             <svg
               class="cartouche"
-              viewBox="0 0 400 44"
+              viewBox="0 0 400 48"
               preserveAspectRatio="none"
               aria-hidden="true"
             >
               <path
-                d="M22 4 H378 L396 22 L378 40 H22 L4 22 Z"
+                d="M30 3 H370 Q384 3 397 24 Q384 45 370 45 H30 Q16 45 3 24 Q16 3 30 3 Z"
                 class="cart-out"
                 vector-effect="non-scaling-stroke"
               />
               <path
-                d="M30 9 H370 L383 22 L370 35 H30 L17 22 Z"
+                d="M34 8 H366 Q377 8 387 24 Q377 40 366 40 H34 Q23 40 13 24 Q23 8 34 8 Z"
                 class="cart-in"
                 vector-effect="non-scaling-stroke"
               />
             </svg>
+            <svg class="medal s" viewBox="-12 -12 24 24" aria-hidden="true" focusable="false"
+              ><path d={star(10)} /><circle r="3" /></svg
+            >
             <span class="band-title"><Bidi text={suraTitleAr(g.s)} base="ar" /></span>
+            <svg class="medal e" viewBox="-12 -12 24 24" aria-hidden="true" focusable="false"
+              ><path d={star(10)} /><circle r="3" /></svg
+            >
           </div>
         {/if}
         <p class="flow">
@@ -172,8 +165,7 @@
                           w,
                         )}{/if}</span
                     >{/each}</span
-                ><span class="n" aria-hidden="true"><Bidi text={ayaNumberAr(a)} base="ar" /></span
-                ></span
+                ><span class="n" aria-hidden="true"><Bidi text={num(a)} base="ar" /></span></span
               >
             {/if}
           {/each}
@@ -190,102 +182,138 @@
 <style>
   .page {
     position: relative;
-    color: var(--accent);
-    background: var(--sand);
-    border-radius: var(--radius-sm);
-    padding: 22px;
-    box-shadow: var(--shadow-card);
-    min-height: 100%;
     display: flex;
+    min-height: 100%;
+    padding: 20px;
+    color: var(--mp-green);
+    background: var(--mp-mint);
+    border: 1px solid var(--mp-green);
+    border-radius: var(--radius-md);
+    /* double filet : menthe puis or, à l'intérieur du filet vert */
+    box-shadow:
+      inset 0 0 0 4px var(--mp-mint),
+      inset 0 0 0 5px var(--mp-gold),
+      var(--shadow-card);
+    animation: mp-in var(--motion) ease-out;
+  }
+  @keyframes mp-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
   }
   .frame {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.55;
-    border-radius: inherit;
+    inset: 6px;
+    width: calc(100% - 12px);
+    height: calc(100% - 12px);
+    opacity: 0.32;
+  }
+  .lat {
+    fill: none;
+    stroke: var(--mp-green);
+    stroke-width: 0.8;
+  }
+  .lat-dot {
+    fill: var(--mp-gold);
   }
   .rosette {
     position: absolute;
-    width: 40px;
-    height: 40px;
+    z-index: 1;
+    width: 34px;
+    height: 34px;
   }
   .rosette.tr {
-    top: 1px;
-    right: 1px;
+    top: 3px;
+    right: 3px;
   }
   .rosette.tl {
-    top: 1px;
-    left: 1px;
+    top: 3px;
+    left: 3px;
   }
   .rosette.br {
-    bottom: 1px;
-    right: 1px;
+    bottom: 3px;
+    right: 3px;
   }
   .rosette.bl {
-    bottom: 1px;
-    left: 1px;
+    bottom: 3px;
+    left: 3px;
   }
-  .petal {
-    fill: var(--card);
-    stroke: var(--accent);
-    stroke-width: 1.2;
+  .r-out {
+    fill: var(--mp-paper);
+    stroke: var(--mp-green);
+    stroke-width: 1.4;
+    stroke-linejoin: round;
   }
-  .heart {
-    fill: var(--teal);
+  .r-in {
+    fill: var(--mp-mint2);
+    stroke: var(--mp-gold);
+    stroke-width: 1;
   }
-  .dot {
-    fill: var(--card);
+  .r-heart {
+    fill: var(--mp-green);
   }
   .inner {
     position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: var(--card);
-    color: var(--ink);
-    border: 2px solid var(--accent);
-    outline: 1px solid var(--teal);
-    outline-offset: -6px;
-    padding: 10px 16px 8px;
     min-width: 0;
+    padding: 12px 20px 10px;
+    color: var(--mp-ink);
+    background: var(--mp-paper);
+    border: 1px solid var(--mp-green);
+    border-radius: 3px;
+    box-shadow:
+      0 0 0 3px var(--mp-paper),
+      0 0 0 4px var(--mp-gold);
   }
   .running {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
     gap: 8px;
-    font-size: 0.85rem;
-    color: var(--ink2);
+    padding: 0 10px 6px;
     font-family: var(--font-ui);
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--mp-ink2);
+    border-bottom: 1px solid color-mix(in srgb, var(--mp-gold) 55%, transparent);
   }
   .sura-ar {
     font-family: var(--font-quran);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--mp-green);
   }
   .body {
     flex: 1;
-    padding-top: 6px;
+    padding-top: 8px;
+  }
+  .loading {
+    color: var(--mp-ink2);
   }
   .flow {
     margin: 0;
     text-align: justify;
     text-align-last: center;
     font-family: var(--font-quran);
-    font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.75rem);
-    line-height: 2.25;
+    font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.8rem);
+    line-height: 2.3;
   }
   .compact .flow {
-    font-size: clamp(1.1rem, 0.55rem + 0.85vw, 1.5rem);
-    line-height: 2.1;
+    font-size: clamp(1.1rem, 0.55rem + 0.85vw, 1.55rem);
+    line-height: 2.15;
   }
   .band {
     position: relative;
-    display: grid;
-    place-items: center;
-    height: 2.6rem;
-    margin: 8px 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 2.9rem;
+    margin: 12px 0 6px;
   }
   .cartouche {
     position: absolute;
@@ -294,28 +322,50 @@
     height: 100%;
   }
   .cart-out {
-    fill: var(--sand);
-    stroke: var(--accent);
-    stroke-width: 2;
+    fill: var(--mp-band);
+    stroke: var(--mp-green);
+    stroke-width: 1;
   }
   .cart-in {
     fill: none;
-    stroke: var(--teal);
+    stroke: var(--mp-gold);
     stroke-width: 1;
+  }
+  .medal {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    flex: none;
+  }
+  .medal path {
+    fill: none;
+    stroke: var(--mp-gold);
+    stroke-width: 1.4;
+  }
+  .medal circle {
+    fill: var(--mp-gold);
   }
   .band-title {
     position: relative;
     font-family: var(--font-quran);
-    font-size: 1.35rem;
-    color: var(--ink);
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--mp-on-band);
   }
   .basmala {
     display: block;
+    margin: 2px 0 4px;
     text-align: center;
+    font-size: 1.06em;
   }
   .aya {
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    transition:
+      background-color var(--motion) ease,
+      box-shadow var(--motion) ease;
   }
   /* espace entre deux versets (point de coupure et justification), hors du texte coranique */
   .aya::after {
@@ -324,50 +374,89 @@
   .readonly .aya {
     cursor: default;
   }
-  .aya.on {
-    background: var(--mark);
+  @media (hover: hover) {
+    .page:not(.readonly) .aya:hover {
+      background: color-mix(in srgb, var(--mp-mark) 55%, transparent);
+    }
+  }
+  .aya.on,
+  .page:not(.readonly) .aya.on:hover {
+    background: var(--mp-mark);
+    box-shadow: 0 0 0 3px var(--mp-mark);
   }
   .aya:focus-visible {
-    outline: 2px solid var(--focus);
+    outline: 2px solid var(--mp-green);
+    outline-offset: 2px;
   }
+  /* numéro de verset dans une rosette verte (étoile à huit pointes) */
   .n {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 2.1em;
+    height: 2.1em;
+    margin-inline: 3px;
+    vertical-align: -0.1em;
     font-family: var(--font-quran);
-    color: var(--teal);
-    margin-inline: 2px;
+    font-size: 0.68em;
+    line-height: 1;
+    color: var(--mp-green);
     white-space: nowrap;
+  }
+  .n::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--mp-green);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-20 -20 40 40'%3E%3Cg fill='none' stroke='%23000' stroke-linejoin='round'%3E%3Cpath stroke-width='2.4' d='M0-18L5.3-12.7H12.7V-5.3L18 0 12.7 5.3V12.7H5.3L0 18-5.3 12.7H-12.7V5.3L-18 0-12.7-5.3V-12.7H-5.3Z'/%3E%3C/g%3E%3C/svg%3E")
+      center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-20 -20 40 40'%3E%3Cg fill='none' stroke='%23000' stroke-linejoin='round'%3E%3Cpath stroke-width='2.4' d='M0-18L5.3-12.7H12.7V-5.3L18 0 12.7 5.3V12.7H5.3L0 18-5.3 12.7H-12.7V5.3L-18 0-12.7-5.3V-12.7H-5.3Z'/%3E%3C/g%3E%3C/svg%3E")
+      center / contain no-repeat;
   }
   .w.voile {
     color: transparent;
-    background: var(--surface);
+    background: var(--mp-mint2);
     border-radius: 4px;
   }
   .folio {
     display: flex;
-    justify-content: center;
-    margin-top: 6px;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .folio::before,
+  .folio::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: color-mix(in srgb, var(--mp-gold) 55%, transparent);
   }
   .folio-n {
-    min-width: 2.4em;
-    padding: 0 8px;
+    min-width: 2.6em;
+    padding: 1px 10px;
     text-align: center;
-    border: 1px solid var(--accent);
-    border-radius: var(--radius-pill);
     font-size: 0.85rem;
-    color: var(--ink2);
+    font-weight: 700;
+    color: var(--mp-green);
+    border: 1px solid var(--mp-green);
+    border-radius: var(--radius-pill);
   }
   .small {
     font-size: 0.9rem;
   }
   @media (max-width: 520px) {
     .page {
-      padding: 14px;
+      padding: 12px;
     }
     .rosette {
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
     }
     .inner {
-      padding: 8px 10px 6px;
+      padding: 10px 10px 8px;
+    }
+    .running {
+      padding-inline: 4px;
     }
   }
 </style>

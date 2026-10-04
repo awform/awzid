@@ -1793,5 +1793,7 @@
   "mp.credit_traduction": "Translation: {titre}, version {version}, published by QuranEnc.com (Encyclopedia of the Translations of the Meanings of the Noble Quran), reproduced without modification.",
   "mp.lien_source": "Source: QuranEnc.com",
   "mp.mise_en_page_fluide": "Pages of the Madinah Muṣḥaf (same verses per page); lines follow the screen width — the exact line-by-line layout will come with the official data.",
-  "mp.commandes_resume": "Controls — page {page}, {sourate}"
+  "mp.commandes_resume": "Controls — page {page}, {sourate}",
+  "mp.traduction_court": "Translation",
+  "mp.page_sur": "Page {n} / {total}"
 }

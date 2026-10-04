@@ -85,6 +85,37 @@ const TAJWID_SOMBRE = {
 /** clés des couleurs du tajwid (contrôle de contraste) */
 export const TAJWID_TOKENS = Object.keys(TAJWID_CLAIR);
 
+/**
+ * Muṣḥaf page par page — PALETTE VERTE (demande du client, 04/10/2026 : « en vert, plus joli, plus clair ») :
+ * verts profonds pour le cadre et les cartouches de sourate, menthe douce pour les fonds, or discret pour les
+ * ornements, papier clair légèrement chaud pour la page ; variante « vert nuit » en mode sombre. Commune aux
+ * quatre thèmes (le Muṣḥaf garde son identité quel que soit le public). Contrastes contrôlés (CONTRAST_PAIRS).
+ */
+const MUSHAF_CLAIR = {
+  'mp-paper': '#fffdf5',
+  'mp-mint': '#ebf6ef',
+  'mp-mint2': '#d4ecdd',
+  'mp-green': '#16653f',
+  'mp-band': '#14563a',
+  'mp-on-band': '#f7fbf3',
+  'mp-gold': '#b8892c',
+  'mp-mark': '#d9f0e1',
+  'mp-ink': '#132319',
+  'mp-ink2': '#46604f',
+};
+const MUSHAF_SOMBRE = {
+  'mp-paper': '#10201a',
+  'mp-mint': '#0b1712',
+  'mp-mint2': '#1b3a2b',
+  'mp-green': '#82d9a7',
+  'mp-band': '#1c5139',
+  'mp-on-band': '#eef8f1',
+  'mp-gold': '#d8b45c',
+  'mp-mark': '#23493a',
+  'mp-ink': '#e8f2ec',
+  'mp-ink2': '#a9c5b5',
+};
+
 // « ﷺ » et l'arabe cité dans une phrase française : glyphes pris dans Noto Naskh Arabic (pas de repli illisible)
 const SANS = "'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif";
 /** titres « manuscrit » : serif du système (aucun téléchargement de police supplémentaire) */
@@ -122,6 +153,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       soft: '#e3edf5',
       ...LETTRES_CLAIR,
       ...TAJWID_CLAIR,
+      ...MUSHAF_CLAIR,
       primary: '#1b6a85',
       'on-primary': '#ffffff',
       'primary-soft': '#e2f0f5',
@@ -156,6 +188,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       soft: '#22303d',
       ...LETTRES_SOMBRE,
       ...TAJWID_SOMBRE,
+      ...MUSHAF_SOMBRE,
       primary: '#72c6e0',
       'on-primary': '#07141b',
       'primary-soft': '#1b3340',
@@ -204,6 +237,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       soft: '#ffe3b8',
       ...LETTRES_CLAIR,
       ...TAJWID_CLAIR,
+      ...MUSHAF_CLAIR,
       primary: '#1f7a52',
       'on-primary': '#ffffff',
       'primary-soft': '#ddf3e6',
@@ -238,6 +272,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       soft: '#2b3a32',
       ...LETTRES_SOMBRE,
       ...TAJWID_SOMBRE,
+      ...MUSHAF_SOMBRE,
       primary: '#7fd6a6',
       'on-primary': '#0b1f15',
       'primary-soft': '#1d3a2c',
@@ -289,6 +324,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       soft: '#232f52',
       ...LETTRES_SOMBRE,
       ...TAJWID_SOMBRE,
+      ...MUSHAF_SOMBRE,
       primary: '#8fd0ff',
       'on-primary': '#081325',
       'primary-soft': '#1c2d4f',
@@ -324,6 +360,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       soft: '#e3e8f8',
       ...LETTRES_CLAIR,
       ...TAJWID_CLAIR,
+      ...MUSHAF_CLAIR,
       primary: '#3346a8',
       'on-primary': '#ffffff',
       'primary-soft': '#e6eafb',
@@ -375,6 +412,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       soft: '#f3dfb6',
       ...LETTRES_CLAIR,
       ...TAJWID_CLAIR,
+      ...MUSHAF_CLAIR,
       primary: '#1d5f57',
       'on-primary': '#ffffff',
       'primary-soft': '#e3efe9',
@@ -409,6 +447,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       soft: '#33291c',
       ...LETTRES_SOMBRE,
       ...TAJWID_SOMBRE,
+      ...MUSHAF_SOMBRE,
       primary: '#8fd1bd',
       'on-primary': '#0f241e',
       'primary-soft': '#1d332c',
@@ -479,6 +518,21 @@ export const CONTRAST_PAIRS: Array<{ fg: string; bg: string; grand?: boolean; us
     { fg, bg: 'card', usage: `tajwid ${fg} sur la carte` },
     { fg, bg: 'sand', grand: true, usage: `tajwid ${fg} dans la plage choisie` },
     { fg, bg: 'mark', grand: true, usage: `tajwid ${fg} sur le verset entendu` },
+  ]),
+  // Muṣḥaf vert (04/10/2026) : texte coranique et interface sur le papier, la menthe et le surlignage doux
+  { fg: 'mp-ink', bg: 'mp-paper', usage: 'texte coranique sur la page du Muṣḥaf' },
+  { fg: 'mp-ink', bg: 'mp-mark', usage: 'verset choisi (surlignage doux)' },
+  { fg: 'mp-ink', bg: 'mp-mint', usage: 'barre de commandes du Muṣḥaf' },
+  { fg: 'mp-ink', bg: 'mp-mint2', usage: 'bouton actif de la barre' },
+  { fg: 'mp-ink2', bg: 'mp-paper', usage: 'en-tête courant, folio' },
+  { fg: 'mp-ink2', bg: 'mp-mint', usage: 'texte secondaire de la barre' },
+  { fg: 'mp-green', bg: 'mp-paper', usage: 'numéros de verset, titres verts' },
+  { fg: 'mp-green', bg: 'mp-mint', usage: 'libellés verts de la barre' },
+  { fg: 'mp-green', bg: 'mp-mint2', usage: 'bouton actif (vert sur menthe)' },
+  { fg: 'mp-on-band', bg: 'mp-band', usage: 'titre de sourate dans le cartouche' },
+  ...TAJWID_TOKENS.flatMap((fg) => [
+    { fg, bg: 'mp-paper', usage: `tajwid ${fg} sur la page du Muṣḥaf` },
+    { fg, bg: 'mp-mark', grand: true, usage: `tajwid ${fg} sur le verset choisi` },
   ]),
 ];
 

@@ -14,6 +14,7 @@ const CAP = process.env.MUSHAF_CAPTURES;
 async function shot(page: Page, name: string, project: string) {
   if (!CAP) return;
   mkdirSync(CAP, { recursive: true });
+  await page.waitForTimeout(400); // fin des transitions légères (apparition des pages)
   await page.screenshot({ path: join(CAP, `${project}-${name}.png`), fullPage: true });
 }
 const serious = async (page: Page) =>
@@ -31,13 +32,17 @@ const verseTexts = (page: Page, root = 'mushaf-livre') =>
       ),
     );
 const isMobile = (name: string) => name.startsWith('mobile');
-/** Sur téléphone, la barre de commandes est repliée (le Muṣḥaf d'abord) : on l'ouvre. */
-async function openBar(page: Page) {
-  const d = page.getByTestId('mp-barre');
-  await expect(d).toBeVisible();
+/** Barre simplifiée (04/10/2026) : sourate et page toujours visibles ; le reste dans le menu « Plus ». */
+async function openPlus(page: Page) {
+  const d = page.getByTestId('mp-options');
   if (!(await d.evaluate((x) => (x as HTMLDetailsElement).open)))
     await d.locator('summary').first().click();
-  await expect(page.getByTestId('mp-page')).toBeVisible();
+  await expect(d.locator('.pop')).toBeVisible();
+}
+async function closePlus(page: Page) {
+  const d = page.getByTestId('mp-options');
+  if (await d.evaluate((x) => (x as HTMLDetailsElement).open))
+    await d.locator('summary').first().click();
 }
 
 test('pages du Muṣḥaf : double page (ordinateur) ou une page, cadre, versets exacts, navigation', async ({
@@ -65,13 +70,28 @@ test('pages du Muṣḥaf : double page (ordinateur) ou une page, cadre, versets
   await expect(page.locator('[data-page="1"] [data-verse]')).toHaveCount(7);
   await shot(page, '01-page1', info.project.name);
 
+  // barre simplifiée : actions principales visibles, cibles tactiles ≥ 48 px
+  for (const id of [
+    'mp-sourate',
+    'mp-page',
+    'mp-ecouter',
+    'mp-tajwid',
+    'mp-trad',
+    'mp-suiv',
+    'mp-prec',
+  ]) {
+    const b = await page.getByTestId(id).boundingBox();
+    expect(b!.height, id).toBeGreaterThanOrEqual(44);
+  }
+  await expect(page.getByTestId('mp-options').locator('summary')).toBeVisible();
   // aller à une page, à un juzʾ, page suivante
-  await openBar(page);
   await page.getByTestId('mp-page').fill('50');
   await page.getByTestId('mp-page').press('Enter');
   await expect(page.locator('[data-page="50"]')).toBeVisible();
+  await openPlus(page);
   await page.getByTestId('mp-juz').selectOption('30');
   await expect(page.locator('[data-page="582"]')).toBeVisible();
+  await closePlus(page);
   await page.getByTestId('mp-suiv').click();
   await expect(
     page.locator(isMobile(info.project.name) ? '[data-page="583"]' : '[data-page="584"]'),
@@ -98,17 +118,29 @@ test('texte Tanzil identique à l’onglet Lire ; tajwid en couleurs sans change
   await expect(page.locator('[data-page="42"]')).toBeVisible();
   await expect(page.locator('[data-aya="2:255"]')).toHaveClass(/\bon\b/);
 
-  await openBar(page);
+  await openPlus(page);
   const warsh = page.getByTestId('mp-mushaf').locator('option[value="warsh"]');
   expect(await warsh.evaluate((o) => (o as HTMLOptionElement).disabled)).toBe(true);
   await expect(warsh).toContainText('Warsh');
+  await closePlus(page);
   const before = await verseTexts(page);
-  await page.getByTestId('mp-mushaf').selectOption('hafs-tajwid');
+  // bouton « Tajwid » de la barre (bascule) : couleurs sans changer le texte
+  await page.getByTestId('mp-tajwid').click();
+  await expect(page.getByTestId('mp-tajwid')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('[data-testid="mushaf-livre"] .tj').first()).toBeVisible();
   expect(await verseTexts(page)).toEqual(before);
   await shot(page, '03-tajwid-p42', info.project.name);
-  await page.getByTestId('mp-mushaf').selectOption('hafs');
+  if (CAP) {
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await shot(page, '09-sombre-tajwid', info.project.name);
+    await page.emulateMedia({ colorScheme: 'light' });
+  }
+  await page.getByTestId('mp-tajwid').click();
   await expect(page.locator('[data-testid="mushaf-livre"] .tj')).toHaveCount(0);
+  await openPlus(page);
+  await page.getByTestId('mp-mushaf').selectOption('hafs-tajwid');
+  await expect(page.getByTestId('mp-tajwid')).toHaveAttribute('aria-pressed', 'true');
+  await page.getByTestId('mp-mushaf').selectOption('hafs');
 });
 
 test('traduction du sens à côté : source recopiée, verset en cours surligné, anglais, crédit', async ({
@@ -132,11 +164,23 @@ test('traduction du sens à côté : source recopiée, verset en cours surligné
   await expect(panel.locator('[data-trad="2:256"]')).toHaveClass(/\bon\b/);
   await expect(panel.locator('[data-trad="2:255"]')).not.toHaveClass(/\bon\b/);
   await shot(page, '04-traduction-fr', info.project.name);
-  await openBar(page);
+  // panneau repliable
+  await page.getByTestId('mp-replier-traduction').click();
+  await expect(page.getByTestId('mp-replier-traduction')).toHaveAttribute('aria-expanded', 'false');
+  await expect(panel.locator('[data-trad]')).toHaveCount(0);
+  await page.getByTestId('mp-replier-traduction').click();
+  await expect(panel.locator('[data-trad="2:256"]')).toHaveClass(/\bon\b/);
+  await openPlus(page);
   await page.getByTestId('mp-traduction').selectOption('english_rwwad');
   await expect(panel.locator('[data-trad="2:256"] .ttext')).toContainText('compulsion');
   await expect(panel).toHaveAttribute('lang', 'en');
   await page.getByTestId('mp-traduction').selectOption('');
+  await expect(panel).toHaveCount(0);
+  await closePlus(page);
+  // bouton « Traduction » : remet la dernière traduction choisie
+  await page.getByTestId('mp-trad').click();
+  await expect(panel).toHaveAttribute('lang', 'en');
+  await page.getByTestId('mp-trad').click();
   await expect(panel).toHaveCount(0);
 });
 
@@ -145,7 +189,6 @@ test('options : test de mémorisation, lecture seule, vue mobile ; recherche', a
 }, info) => {
   await page.goto('/coran/mushaf?page=1');
   await expect(page.locator('[data-verse="1:7"]')).toBeVisible();
-  await openBar(page);
   const opts = page.getByTestId('mp-options');
   await opts.locator('summary').click();
   await page.getByTestId('mp-memo').selectOption('3');
@@ -170,12 +213,12 @@ test('options : test de mémorisation, lecture seule, vue mobile ; recherche', a
     await page.getByTestId('mp-vue-mobile').uncheck();
     await expect(page.getByTestId('mushaf-page')).toHaveCount(2);
   }
-  await opts.locator('summary').click();
-  // recherche : référence puis mots arabes dans les sourates ouvertes
+  // recherche : référence puis mots arabes dans les sourates ouvertes (menu « Plus » encore ouvert)
   await page.getByTestId('mp-recherche').fill('112:1');
   await page.getByTestId('mp-recherche').press('Enter');
   await expect(page.locator('[data-page="604"]')).toBeVisible();
   await expect(page.locator('[data-aya="112:1"]')).toHaveClass(/\bon\b/);
+  await openPlus(page);
   await page.getByTestId('mp-recherche').fill('الفلق');
   await page.getByTestId('mp-recherche').press('Enter');
   await expect(page.getByTestId('mp-resultats')).toContainText('Al-Falaq');
@@ -211,17 +254,35 @@ test('téléphone : une page, balayage pour tourner, 320 px sans défilement hor
     );
     expect(over).toBeLessThanOrEqual(0);
     await shot(page, '07-320px', info.project.name);
-    // barre ouverte à 320 px : rien ne déborde non plus
-    await openBar(page);
+    // menu « Plus » ouvert à 320 px : rien ne déborde non plus
+    await openPlus(page);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       ),
     ).toBeLessThanOrEqual(0);
     await shot(page, '08-320px-commandes', info.project.name);
+    await closePlus(page);
+    if (CAP) {
+      await page.emulateMedia({ colorScheme: 'dark' });
+      await shot(page, '10-sombre-320px', info.project.name);
+      await page.emulateMedia({ colorScheme: 'light' });
+    }
   } else {
     await page.keyboard.press('ArrowLeft'); // livre arabe : la flèche gauche avance
     await expect(page.locator('[data-page="5"]')).toBeVisible();
+    await expect(
+      page.getByTestId('mushaf-livre').locator('xpath=..').locator('.pos'),
+    ).toContainText('5–6');
+    if (CAP) {
+      await page.emulateMedia({ colorScheme: 'dark' });
+      await shot(page, '09-sombre', info.project.name);
+      await page.emulateMedia({ colorScheme: 'light' });
+    }
   }
+  // « Écouter » : le panneau d'écoute s'ouvre au geste (récitateur, répétition)
+  await page.getByTestId('mp-ecouter').click();
+  await expect(page.getByTestId('mp-audio')).toBeVisible();
+  await expect(page.getByTestId('mp-recitateur')).toBeVisible();
   expect(await serious(page)).toEqual([]);
 });
