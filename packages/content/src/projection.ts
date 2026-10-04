@@ -152,6 +152,19 @@ export function studentProjection<T>(lesson: T, level = '', opts: ProjectionOpti
     if (evaluation && Array.isArray(Q.versets)) for (const v of Q.versets as Obj[]) delete v.fr;
   }
 
+  // Lecture du Coran (qc, lot 28) : extrait du Muṣḥaf « non préparé » absent hors session (une seule
+  // marque à sa place) ; pas de sens (traduction) dans un bilan / examen
+  if (Array.isArray(L.mushaf)) {
+    let np = false;
+    L.mushaf = (L.mushaf as unknown[]).flatMap((m) => {
+      if (!isObj(m) || !m.non_prepare || reveal) return [m];
+      if (np) return [];
+      np = true;
+      return [{ non_prepare: true }];
+    });
+    if (evaluation) for (const m of L.mushaf as unknown[]) if (isObj(m)) delete m.sens_fr;
+  }
+
   // bilans Enfants : le livre n'affiche que lettres, ligne « Je relis » et exercices
   if (evaluation && /^en\d/.test(level)) {
     for (const k of ['dialogue', 'coran', 'fiqh_adab', 'rubriques', 'mots', 'scene']) delete L[k];

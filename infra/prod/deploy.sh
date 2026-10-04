@@ -124,11 +124,14 @@ done
 # comptes de l'API et du travailleur (idempotent : droits recalculés à chaque déploiement)
 "${DC[@]}" --profile outils run --rm roles
 # livres GELÉS publiés (AWFORM_LEVELS) ; démonstration : livres en relecture en « aperçu » (AWFORM_APERCU)
-LEVELS="${AWFORM_LEVELS:-en1,ad1,en2,ad2,en3,ad3,ad4,re1,re2,ado1,ado2,ra1,ra2,ra3}"
+LEVELS="${AWFORM_LEVELS:-en1,en2,en3,en4,en5,ad1,ad2,ad3,ad4,ad5,ad6,ad7,ad8,ad9,ad10,ado1,ado2,ado3,ado4,re1,re2,re3,re4,re5,ra1,ra2,ra3,ra4,qc1,qc2,qc3}"
 APERCU="${AWFORM_APERCU:-}"
+# carnets de hifẓ gelés (audités) : E1-E5, N1-N5 (lot 28)
+CARNETS="${AWFORM_CARNETS:-en1,en2,en3,en4,en5,ad1,ad2,ad3,ad4,ad5}"
 # (lot 16 : ra1 et ra2 sont gelés, publiés normalement ; plus d'aperçu par défaut)
-EDITION="prod-$( (cat "$AWFORM_CONTENT_DIR/MANIFEST.sha256"; echo "$LEVELS|$APERCU|$AWFORM_VERSION") | sha256sum | cut -c1-10)"
-IMPORT_ARGS=(--edition "$EDITION" --levels "$LEVELS" --publish)
+# (lot 28 : 31 livres gelés ; Guide des parents « gp » et Manuel du formateur « mf » ne sont pas des livres d'élève)
+EDITION="prod-$( (cat "$AWFORM_CONTENT_DIR/MANIFEST.sha256"; echo "$LEVELS|$CARNETS|$APERCU|$AWFORM_VERSION") | sha256sum | cut -c1-10)"
+IMPORT_ARGS=(--edition "$EDITION" --levels "$LEVELS" --carnets "$CARNETS" --publish)
 [ -n "$APERCU" ] && IMPORT_ARGS+=(--apercu "$APERCU")
 "${DC[@]}" --profile outils run --rm import "${IMPORT_ARGS[@]}"
 

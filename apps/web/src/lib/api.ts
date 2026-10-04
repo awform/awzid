@@ -16,6 +16,11 @@ export interface LevelSummary {
 }
 
 /** Sciences islamiques : Religion Enfants (re) et Ados/Adultes (ra). */
+/** Livrets « Lecture du Coran » (qc1 à qc3, lot 28) : espace Coran, pas l'onglet Arabe. */
+export function isQuranReadingLevel(code: string): boolean {
+  return /^qc\d/.test(code);
+}
+
 export function isReligionLevel(code: string): boolean {
   return /^r[ea]\d/.test(code);
 }

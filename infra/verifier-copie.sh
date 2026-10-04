@@ -5,6 +5,8 @@
 #   infra/verifier-copie.sh <dossier>
 # 0 : copie intacte (ou absente) — remplaçable ; 3 : fichiers modifiés, ajoutés ou supprimés (liste sur stderr).
 set -euo pipefail
+# lot 28 : tri et comparaison dans le même ordre quelle que soit la langue de la session ssh
+export LC_ALL=C
 DIR="${1:?dossier}"
 [ -d "$DIR" ] || exit 0
 cd "$DIR"

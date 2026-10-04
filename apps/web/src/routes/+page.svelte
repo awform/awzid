@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
-  import { isReligionLevel } from '$lib/api';
+  import { isQuranReadingLevel, isReligionLevel } from '$lib/api';
   import { demoProfileFor } from '$lib/attempts';
   import { t } from '$lib/i18n';
   import { levelFitsProfile, levelParts } from '$lib/levels';
@@ -19,7 +19,9 @@
   onMount(async () => {
     profile = await demoProfileFor('').catch(() => null);
   });
-  const arabic = $derived(data.levels.filter((x) => !isReligionLevel(x.code)));
+  const arabic = $derived(
+    data.levels.filter((x) => !isReligionLevel(x.code) && !isQuranReadingLevel(x.code)),
+  );
   const mine = $derived(
     profile
       ? arabic

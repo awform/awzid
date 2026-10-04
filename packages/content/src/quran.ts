@@ -141,3 +141,79 @@ export function parseEcartsVoulus(markdown: string): Set<string> {
   }
   return set;
 }
+
+/*
+ * Lecture du Coran (série « qc », lot 28) : chaque objet du livret porte `src` = « Q:s:v[-v2][:w[-w2]][|…] »
+ * (verset, plage de versets ou mots w..w2 du verset ; après « | » : consignes d'affichage du moteur) et `ar`,
+ * le texte affiché avec ses crochets de couleur (`[..]`, `[g:..]`, `[m4:..]`…). Règle de awform/qc-check.ps1
+ * (E2) : `ar` sans crochets = extrait de Tanzil, OCTET PAR OCTET (versets d'une plage séparés par « ۝ »,
+ * basmala retirée d'un verset 1 hors sourates 1 et 9).
+ */
+const QC_SRC = /^Q:(\d{1,3}):(\d{1,3})(?:-(\d{1,3}))?(?::(\d{1,3})(?:-(\d{1,3}))?)?(?:\||$)/;
+
+/** Texte Tanzil désigné par un `src` de la série qc (null : forme illisible ou hors du texte). */
+export function qcSourceText(src: string, tanzil: Tanzil): string | null {
+  const m = QC_SRC.exec(src);
+  if (!m) return null;
+  const sura = Number(m[1]);
+  const aya = Number(m[2]);
+  if (m[4]) {
+    if (m[3]) return null;
+    const text = tanzil.get(`${sura}:${aya}`);
+    if (text === undefined) return null;
+    const words = text.split(' ');
+    const a = Number(m[4]);
+    const b = m[5] ? Number(m[5]) : a;
+    if (a < 1 || b < a || b > words.length) return null;
+    return words.slice(a - 1, b).join(' ');
+  }
+  const to = m[3] ? Number(m[3]) : aya;
+  if (to < aya) return null;
+  const out: string[] = [];
+  for (let k = aya; k <= to; k++) {
+    const c = ayahCandidates(tanzil, sura, k);
+    if (c.length === 0) return null;
+    out.push(c[c.length - 1]!);
+  }
+  return out.join(` ${SEPARATOR} `);
+}
+
+/** Retire les crochets de couleur des livrets qc (`[`, `[g:`, `[m4:`… et `]`) ; rien d'autre n'est touché. */
+export function stripQcMarks(ar: string): string {
+  return ar.replace(/\[(?:[gmqtxw]\d?:)?/g, '').replace(/\]/g, '');
+}
+
+/** Contrôle d'un extrait de livret qc : « identique » (verset entier), « extrait » (mots w..w2) ou écart. */
+export function checkQcSource(ar: string, src: string, tanzil: Tanzil): VerseCheck {
+  const expected = qcSourceText(src, tanzil);
+  if (expected === null)
+    return {
+      status: 'reference_inconnue',
+      detail: `source « ${src} » illisible ou absente de Tanzil`,
+    };
+  const text = stripQcMarks(ar);
+  if (text !== expected)
+    return {
+      status: 'ecart',
+      detail: `texte ≠ Tanzil (« ${text.slice(0, 40)}… » au lieu de « ${expected.slice(0, 40)}… »)`,
+    };
+  return { status: /^Q:\d+:\d+:\d/.test(src) ? 'extrait' : 'identique' };
+}
+
+/** Objets `{ src: "Q:…", ar }` d'une unité (chemin JSON compris), où qu'ils soient. */
+export function qcQuranSources(
+  value: unknown,
+  path = '',
+): Array<{ path: string; src: string; ar: unknown }> {
+  const out: Array<{ path: string; src: string; ar: unknown }> = [];
+  if (Array.isArray(value))
+    value.forEach((v, i) => out.push(...qcQuranSources(v, `${path}[${i}]`)));
+  else if (value && typeof value === 'object') {
+    const o = value as Record<string, unknown>;
+    if (typeof o.src === 'string' && o.src.startsWith('Q:'))
+      out.push({ path: path || '$', src: o.src, ar: o.ar });
+    for (const [k, v] of Object.entries(o))
+      if (v && typeof v === 'object') out.push(...qcQuranSources(v, path ? `${path}.${k}` : k));
+  }
+  return out;
+}
