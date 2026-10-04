@@ -55,6 +55,7 @@ import {
 } from './common.js';
 import { registerPrivacy } from './donnees.js';
 import { registerProfiles } from './profils.js';
+import { demoLogin } from '../demo-mode.js';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -69,6 +70,8 @@ export interface AuthOptions {
   cookieSecure: boolean | 'auto';
   /** clé de chiffrement des secrets TOTP (32 octets) ; absente → 2FA indisponible (signalé) */
   secretKey: Buffer | null;
+  /** DÉMONSTRATION seulement (AWFORM_DEMO=1, garde-fou de démarrage) : identifiants courts (demo-mode.ts) */
+  demoLogin?: boolean;
 }
 
 export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
@@ -314,6 +317,15 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const locked = (await lockedUntil(db, accKey)) ?? (await lockedUntil(db, ipKey));
       if (locked) return err(reply, 429, 'verrouille', { jusqua: locked.toISOString() });
       if (!(await reserveAttempt(db, accKey))) return err(reply, 429, 'verrouille');
+      // démonstration seulement : `parent`, `enfant`… + mot de passe court, sans second facteur ; jamais en
+      // production (option absente : l'identifiant court ne correspond à aucune adresse et échoue plus bas)
+      const demo = opts.demoLogin ? await demoLogin(db, email, req.body.password) : null;
+      if (demo) {
+        await clearFailures(db, accKey);
+        await audit(db, demo.accountId, 'connexion.demo', demo.accountId);
+        await setSession(reply, demo.accountId, demo.kind, true);
+        return { ...(await me(demo.accountId, true)), profilDemo: demo.profileId };
+      }
       const [a] = await db
         .select()
         .from(t.account)
