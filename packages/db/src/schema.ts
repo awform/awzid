@@ -1420,6 +1420,26 @@ export const suraProgress = pgTable(
   ],
 );
 
+/**
+ * Cas pratique non résolu des livres ra* (décision du 04/10/2026) : réponse écrite par un ADULTE qui apprend
+ * seul ; condition pour voir la réponse proposée par le livre (`cas` = « r<rubrique>c<cas> »). Jamais notée.
+ */
+export const casTentative = pgTable(
+  'cas_tentative',
+  {
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    unitId: text('unit_id')
+      .notNull()
+      .references(() => unit.id),
+    cas: text('cas').notNull(),
+    texte: text('texte').notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.profileId, t.unitId, t.cas] })],
+);
+
 // ================================================================ codes d'activation imprimés (lot 23)
 
 /** Lot de codes imprimés pour un niveau (généré par l'administrateur ; codes montrés une seule fois). */

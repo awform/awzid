@@ -27,6 +27,7 @@ import { registerRelais } from './relais.js';
 import { registerCorrections } from './corrections.js';
 import { registerActivation } from './activation.js';
 import { registerCarnet } from './carnet.js';
+import { registerPratiqueAdulte } from './pratique-adulte.js';
 import { registerRecital } from './recital.js';
 import { registerEcoleSynthese } from './ecole-synthese.js';
 import { registerContent } from './contenu.js';
@@ -165,6 +166,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerCorrections(app, db, edition);
   registerEpreuves(app, db, edition);
   registerCarnet(app, db, edition);
+  registerPratiqueAdulte(app, db, edition);
   registerRecital(app, db, edition);
   registerEcoleSynthese(app, db);
   registerActivation(app, db);

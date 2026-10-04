@@ -129,15 +129,15 @@ export async function setupEdition(
   url: string,
   opts: Partial<AppOptions> = {},
   contentDir = SYNTH_DIR,
+  levels = ['en1', 'ad1'],
 ): Promise<Ctx> {
   const h = connect(url, 3);
   await resetTestDatabase(h.pool);
   await runMigrations(h.db);
-  const r = await importEdition(
-    h.db,
-    loadEdition({ contentDir, levels: ['en1', 'ad1'], withRegistry: false }),
-    { code: 'synth', publish: true },
-  );
+  const r = await importEdition(h.db, loadEdition({ contentDir, levels, withRegistry: false }), {
+    code: 'synth',
+    publish: true,
+  });
   const app = buildApp({
     db: h.db,
     secretKey: randomBytes(32),

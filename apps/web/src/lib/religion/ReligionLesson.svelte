@@ -8,6 +8,8 @@
   import { unitLabel, type UnitDetail } from '$lib/api';
   import { fmtNumber, t } from '$lib/i18n';
   import ReligionExercise from './ReligionExercise.svelte';
+  import CasReponse from '$lib/CasReponse.svelte';
+  import { casRef } from '$lib/pratique';
 
   /**
    * Lecteur des leçons des sciences islamiques (Religion Enfants « re », Ados/Adultes « ra ») : blocs du
@@ -274,6 +276,10 @@
                 {#each arr(cs.etapes_fr) as e, k (k)}<li>{String(e)}</li>{/each}
               </ol>
             </details>
+          {/if}
+          {#if cs.resolu === false && profile?.kind === 'adulte' && unit.id.startsWith('ra')}
+            <!-- adulte autonome : réponse proposée après sa propre réponse (règle vérifiée par le serveur) -->
+            <CasReponse profileId={profile.id} unitId={unit.id} casRef={casRef(ri, i)} />
           {/if}
         </div>
       {/each}

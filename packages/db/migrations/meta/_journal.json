@@ -176,6 +176,13 @@
       "when": 1790741776880,
       "tag": "0024_recital_hifz",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1791084286078,
+      "tag": "0025_cas_tentative",
+      "breakpoints": true
     }
   ]
 }
