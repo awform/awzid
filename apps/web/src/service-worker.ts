@@ -32,7 +32,14 @@ sw.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then((keys) =>
+        Promise.all(
+          keys
+            // lot 27 : les sourates gardées par l'utilisateur survivent aux mises à jour
+            .filter((k) => k !== CACHE && !k.startsWith('awzid-coran-audio'))
+            .map((k) => caches.delete(k)),
+        ),
+      )
       // enregistrements locaux de plus de 7 jours : effacés même si l'écran n'est jamais rouvert (MIN-16)
       .then(() => purgeOldRecordings().catch(() => 0))
       .then(() => sw.clients.claim()),
