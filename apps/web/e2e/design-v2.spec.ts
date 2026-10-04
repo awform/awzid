@@ -88,6 +88,40 @@ test('captures — adulte (Manuscrit moderne)', async ({ page }, info) => {
   await page.context().setOffline(false);
 });
 
+// lot 27 : espace Coran (récitateurs d'ESSAI : bips non coraniques)
+test('captures — espace Coran (lot 27)', async ({ page }, info) => {
+  const dev = devOf(info.project.name);
+  const shot = shooter(page, dev);
+  await shot('coran-01-accueil', '/coran');
+  await shot('coran-02-lire-page', '/coran/lecteur?page=604');
+  await page.goto('/coran/ecouter?r=essai-hafs&s=112');
+  await page.locator('[data-verse="112:4"]').waitFor();
+  await page
+    .getByTestId('jouer')
+    .click()
+    .catch(() => {});
+  await shot('coran-03-ecouter', null, true);
+  await page
+    .getByTestId('arreter-audio')
+    .click()
+    .catch(() => {});
+  await shot('coran-04-autre-riwaya', '/coran/ecouter?r=essai-qalun&s=1');
+  await page.goto('/coran/memoriser');
+  await page
+    .getByTestId('sourate')
+    .selectOption('113')
+    .catch(() => {});
+  await page
+    .locator('[data-mask="2"]')
+    .check({ force: true })
+    .catch(() => {});
+  await shot('coran-05-memoriser', null, true);
+  await shot('coran-06-recitateurs', '/coran/recitateurs', true);
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await shot('coran-07-sombre-ecouter', '/coran/ecouter?r=essai-hafs&s=114');
+  await page.emulateMedia({ colorScheme: 'light' });
+});
+
 test.describe('famille', () => {
   test.use({ compte: 'parent' });
   test('captures — parent (Clair), enfant (Jardin), ado (Nuit étoilée)', async ({ page }, info) => {

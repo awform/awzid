@@ -1,4 +1,6 @@
 import { randomBytes } from 'node:crypto';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 
 try {
@@ -12,6 +14,8 @@ const API_PORT = 3100;
 const WEB_PORT = 4180;
 process.env.E2E_KEY ??= randomBytes(32).toString('hex');
 const E2E_KEY = process.env.E2E_KEY;
+// lot 27 : stockage de l'audio d'ESSAI (bips non coraniques) servi par l'API de test
+const AUDIO_DIR = join(tmpdir(), 'awform-e2e-audio');
 // lot 14 : l'API de test tourne sous son compte PostgreSQL à droits minimaux (comme en production)
 process.env.E2E_DB_API_PW ??= randomBytes(24).toString('hex');
 process.env.E2E_DB_WORKER_PW ??= randomBytes(24).toString('hex');
@@ -55,7 +59,7 @@ export default defineConfig({
     {
       // base de TEST remise à zéro, édition « e2e » importée ; comptes créés par globalSetup
       // puis comptes PostgreSQL séparés ; l'API tourne sous le compte « api » (droits minimaux)
-      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
+      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node e2e/audio-essai.mjs ${AUDIO_DIR} && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
       env: {
         DATABASE_URL: API_DB,
@@ -80,6 +84,8 @@ export default defineConfig({
         AWFORM_RECITATION_KEY: `v1:${randomBytes(32).toString('hex')}`,
         // lot 21 : clé de chiffrement des messages école ↔ famille (tirée au hasard)
         AWFORM_MESSAGE_KEY: `v1:${randomBytes(32).toString('hex')}`,
+        // lot 27 : fichiers audio d'essai (bips), jamais une récitation
+        AWFORM_AUDIO_DIR: AUDIO_DIR,
         AWFORM_VAPID_PUBLIC: `B${'A'.repeat(86)}`,
       },
       reuseExistingServer: false,
