@@ -101,7 +101,7 @@
   }
   .stop {
     background: var(--bad-ink);
-    color: #fff;
+    color: var(--bad-bg);
     border-color: var(--bad-ink);
   }
   .small {

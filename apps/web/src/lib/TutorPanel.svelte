@@ -229,6 +229,6 @@
     margin: 0 0 6px;
   }
   .bad {
-    color: #a33;
+    color: var(--bad-ink);
   }
 </style>

@@ -111,16 +111,16 @@
     min-width: 130px;
   }
   .b0 {
-    border-color: #f7c9ca;
+    border-color: color-mix(in srgb, var(--c0) 35%, var(--card));
   }
   .b1 {
-    border-color: #c9daf7;
+    border-color: color-mix(in srgb, var(--c1) 35%, var(--card));
   }
   .b2 {
-    border-color: #bfe8d5;
+    border-color: color-mix(in srgb, var(--c2) 35%, var(--card));
   }
   .b3 {
-    border-color: #f7e1a8;
+    border-color: color-mix(in srgb, var(--c3) 35%, var(--card));
   }
   .pos {
     position: absolute;

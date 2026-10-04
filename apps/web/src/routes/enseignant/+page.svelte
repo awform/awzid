@@ -8,6 +8,7 @@
   import Sym from '$lib/Sym.svelte';
   import { uuidv7 } from '$lib/sync-core';
   import { call, fetchMe, type Me } from '$lib/session';
+  import Onboarding from '$lib/ui/Onboarding.svelte';
 
   /**
    * Espace enseignant (lot 5 : suivi du hifẓ) : classes avec un code à donner aux familles (le parent inscrit
@@ -167,6 +168,7 @@
 <svelte:head><title>{t('app.nom')} — {t('ens.titre')}</title></svelte:head>
 
 <h1>{t('ens.titre')}</h1>
+<Onboarding audience="enseignant" />
 <p>
   <a href={resolve('/enseignant/questions')} data-testid="lien-questions">{t('ens.questions')}</a>
   · <a href={resolve('/enseignant/ecole')} data-testid="lien-synthese">{t('eco.lien')}</a>

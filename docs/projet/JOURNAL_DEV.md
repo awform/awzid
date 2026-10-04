@@ -8,6 +8,55 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 04/10/2026 — Lot 26 : design v2 « par public » (branche `lot26-wip`, depuis `main` caced1c)
+
+Direction du chef de projet : un système hybride par public sur une base commune de jetons.
+
+- **Jetons** (`apps/web/src/lib/theme/tokens.ts` → `tokens.css`) : quatre thèmes — **Jardin** (enfants : crème,
+  vert et soleil, rayons 12-26 px, cibles **56 px**, arabe 30 px), **Nuit étoilée** (ados : bleu nuit, accents
+  ciel et or, ciel d'étoiles en dégradés CSS), **Manuscrit moderne** (adultes : papier chaud, titres serif du
+  système, filet doré sous les titres, motif géométrique d'étoile à huit branches en SVG de 0,4 Ko, sans
+  figuration), **Clair** (parents, enseignants, administration : neutre, tableaux lisibles). Chacun a sa
+  **variante sombre** (la Nuit a une variante claire « aube ») ; couleurs, deux polices (UI et titres),
+  espacements, rayons, ombres, cible tactile, durées de mouvement ; `prefers-reduced-motion` neutralise toute
+  transition. **Contraste WCAG AA testé sur les 8 palettes** (29 paires d'usage, dont lettres colorées des livres
+  sur fond sombre et dans les encadrés, focus 3:1).
+- **Public de l'écran** (`lib/ui/audience.ts`, testé) : profil actif enfant → Jardin, ado → Nuit, adulte →
+  Manuscrit ; parent (espaces famille, compte, messages, abonnement — même avec un enfant actif), enseignant,
+  administration, visiteur → Clair. **Navigation de 3 à 5 entrées** par public (enfant : Accueil, Arabe, Coran,
+  Sciences, Écriture ; ado/adulte : Accueil, Arabe, Coran, Sciences, **Plus** ; parent : Famille, Suivi,
+  Messages, Compte ; enseignant : Classes, École, Questions, Compte ; admin : 3 ; visiteur : 3) ; barre du bas
+  sur téléphone et tablette (< 900 px), dans l'en-tête sur ordinateur. Nouvelle page **« Plus »**.
+- **Composants communs** (`lib/ui/`) : icônes au trait (aucune figuration), état vide, erreur / hors ligne avec
+  « Réessayer », chargement (silhouettes, annoncé aux lecteurs d'écran), barre de progression accessible,
+  emblème, **premier lancement par public** (3 consignes, montré une fois, dans la page ; enfant : grandes
+  icônes + ligne « Pour l'adulte : lisez ces consignes »), bouton **clair / sombre / auto** (réglage de
+  l'appareil, `lib/ui/mode.ts`, testé). Styles globaux refaits (boutons, champs, cartes, tableaux, tuiles).
+- **Écrans** : accueil du jour (bonjour, étapes avec icônes, état vide « tout est fait », erreur réseau
+  explicite, tuiles « Mes espaces » de l'enfant), livres d'arabe (livres **du profil d'abord**, cartes à dos
+  coloré par filière), téléchargements (chargement visible), activité vide expliquée, bandeau hors ligne
+  explicite, en-tête compact sur téléphone. Couleurs en dur des composants remplacées par les jetons
+  (32 remplacements ; test : plus aucun blanc/noir en dur hors dessins).
+- **Angles morts corrigés** : (1) `pattern="[0-9]{4}"` lu par Svelte comme une expression → attribut
+  « [0-9]4 » : **le navigateur refusait tout code parent et tout code du second facteur** (profils, compte,
+  connexion) ; corrigé + test statique ; (2) « ﷺ » illisible dans le texte français (repli de police) → Noto
+  Naskh Arabic dans la pile UI ; (3) liste « relie les lettres » qui débordait à 320 px ; (4) un enfant voyait
+  les livres adultes en premier ; (5) graphique d'activité blanc quand il n'y a rien.
+- **Tests** : web 140 (dont nouveaux : `audience.test.ts` 5, `mode.test.ts` 3, `pattern-attr.test.ts` 1,
+  tokens 15 au lieu de 6), e2e `lot26.spec.ts` (6 × 2 appareils : thème et navigation par public, premier
+  lancement montré une fois, **mode sombre sans violation grave axe-core**, **aucun défilement horizontal à
+  320 px** sur 7 pages, hors ligne, mouvement réduit, cibles 56 px de l'enfant) ; `horsligne.spec.ts` mis à
+  jour (5 entrées au lieu de 6, « Plus », réglage sombre gardé après rechargement).
+
+**Mesures** (VM `awform-dev`, 04/10/2026, branche `lot26-wip`) : `pnpm -r --no-bail test` (vrais livres) :
+**1 185 verts, 1 sauté, 0 échec** (122 s) ; e2e Playwright complets : **180 verts, 10 sautés** (captures du lot
+26 sans variable), 11,8 min ; budget (`reports/budget-web.md`) : page la plus lourde `/lecons/[id]` **120,3 Ko**
+≤ 150 (avant : 112,8), toutes les pages 239,6 Ko ≤ 300, CSS 20,4 Ko, polices 222,6 Ko (aucune ajoutée).
+**Captures** : `reports/design-v2/avant/` et `reports/design-v2/apres/` (39 écrans × téléphone et ordinateur :
+visiteur, adulte, parent, enfant, ado, enseignant ; sombre ; 320 px ; hors ligne), par
+`DESIGN_CAPTURES=<dossier> npx playwright test design-v2`.
+Décisions : D25 (Nuit toujours sombre), D26 (comparaison avec la planche de référence, police de titre), D27
+(nom affiché et emblème).
 ## 04/10/2026 — Lot 27 : audio du Coran, partie SERVEUR (branche `lot27-api-wip`, depuis `main` caced1c)
 
 Décision du client : récitations du **Complexe du Roi Fahd**, hébergées chez nous (licence archivée le 30/07/2025 :

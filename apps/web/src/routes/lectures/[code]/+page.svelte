@@ -168,7 +168,7 @@
     gap: 8px;
     position: sticky;
     bottom: 0;
-    background: var(--bg, #fffdf7);
+    background: var(--card);
     padding: 6px 0;
   }
   @media (max-width: 700px) {

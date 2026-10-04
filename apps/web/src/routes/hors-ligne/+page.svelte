@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import Loading from '$lib/ui/Loading.svelte';
   import { resolve } from '$app/paths';
   import { flush, onQueue, pendingCount } from '$lib/attempts';
   import { fmtBytes, t } from '$lib/i18n';
@@ -33,6 +34,8 @@
   let busy: string | null = $state(null);
   let message = $state('');
   let offline = $state(false);
+  /** lot 26 : liste encore en chargement (le serveur prépare les paquets) */
+  let ready = $state(false);
   let confirmLevel: PackManifestEntry | null = $state(null);
 
   async function reload() {
@@ -48,6 +51,7 @@
     } catch {
       offline = true;
     }
+    ready = true;
   }
 
   onMount(() => {
@@ -131,6 +135,7 @@
 
 <section class="card">
   <h2 id="titre-niveaux">{t('horsligne.niveaux')}</h2>
+  {#if !ready}<Loading lines={3} />{/if}
   <table class="levels" aria-labelledby="titre-niveaux">
     <thead
       ><tr
