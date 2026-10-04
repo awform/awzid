@@ -69,7 +69,9 @@ test.describe('adulte et enseignant', () => {
     await block.getByTestId('code-classe').fill(code);
     await block.getByTestId('consent-partage').check();
     await block.getByRole('button', { name: 'Rejoindre la classe' }).click();
-    await expect(page.getByRole('status')).toContainText(`Tuteur ${tag}`);
+    await expect(
+      page.getByRole('status').and(page.locator(':not([data-testid="chargement"])')),
+    ).toContainText(`Tuteur ${tag}`);
 
     await tp.getByTestId('lien-questions').click();
     const item = tp.locator('[data-question]').filter({ hasText: question });

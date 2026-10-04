@@ -46,7 +46,9 @@ test('parent : inscription, profil enfant avec consentement, réponses enregistr
   await page.getByTestId('consent-suivi').check();
   await page.locator('#password').fill(password());
   await page.getByTestId('creer-profil').click();
-  await expect(page.getByRole('status')).toContainText('Profil de Lina créé.');
+  await expect(
+    page.getByRole('status').and(page.locator(':not([data-testid="chargement"])')),
+  ).toContainText('Profil de Lina créé.');
   await page.locator('[data-profile]').first().click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByTestId('eleve-actif')).toHaveText('Lina');

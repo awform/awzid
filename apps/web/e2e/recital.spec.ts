@@ -50,7 +50,9 @@ test('récital : planifié, tiré au sort, noté, publié ; la famille voit son 
   await expect(page.getByTestId('recital-note')).toContainText('19');
   page.once('dialog', (d) => void d.accept());
   await page.getByTestId('recital-publier').click();
-  await expect(page.getByRole('status')).toContainText('3 passages validés');
+  await expect(
+    page.getByRole('status').and(page.locator(':not([data-testid="chargement"])')),
+  ).toContainText('3 passages validés');
 
   await fam.goto('/recital');
   await expect(fam.getByTestId('recital-famille')).toContainText('Récital de fin d’année');

@@ -38,7 +38,9 @@ test('données économes : pas de téléchargement automatique, poids affiché a
   await page.goto('/hors-ligne');
   await expect(page.getByTestId('donnees-mois')).toBeVisible();
   await page.getByTestId('econome').check();
-  await expect(page.getByRole('status')).toContainText('Données économes activées');
+  await expect(
+    page.getByRole('status').and(page.locator(':not([data-testid="chargement"])')),
+  ).toContainText('Données économes activées');
   await page.reload();
   await expect(page.getByTestId('econome')).toBeChecked();
   const packRequests: string[] = [];
@@ -53,7 +55,9 @@ test('données économes : pas de téléchargement automatique, poids affiché a
   await page.goto('/hors-ligne');
   await expect(page.getByTestId('econome')).toBeChecked(); // réglage relu depuis l'appareil
   await page.getByTestId('econome').uncheck();
-  await expect(page.getByRole('status')).toContainText('Données économes désactivées');
+  await expect(
+    page.getByRole('status').and(page.locator(':not([data-testid="chargement"])')),
+  ).toContainText('Données économes désactivées');
   await page.reload();
   await expect(page.getByTestId('econome')).not.toBeChecked();
   await page.goto('/niveaux/ad1');

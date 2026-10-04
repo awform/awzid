@@ -177,7 +177,9 @@ test.describe('enseignant et parent', () => {
     // audit SEC-3 : code parent exigé pour inscrire un enfant
     await block.getByTestId('pin-classe').fill(PARENT_PIN);
     await block.getByRole('button', { name: 'Rejoindre la classe' }).click();
-    await expect(pp.getByRole('status')).toContainText(name);
+    await expect(
+      pp.getByRole('status').and(pp.locator(':not([data-testid="chargement"])')),
+    ).toContainText(name);
 
     await page.reload();
     await page.getByRole('button', { name }).click();
