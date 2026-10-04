@@ -8,6 +8,59 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 04/10/2026 — Finitions : arabe isolé dans l'espace Coran, e2e stables, traductions relues (3 branches)
+
+Mesures sur la VM `awform-dev`, dossiers `~/awform-finitions` (étapes 1 et 2) et `~/awform-trad` (étape 3 et
+vérification finale sur le code de `main` 66d08a5 + les trois étapes).
+
+1. **Arabe et français dans l'espace Coran** (`finitions-bidi-wip`, dfead00, déjà dans `main`) : 50 textes de
+   `lib/quran/` et `routes/coran/` passent par `<Bidi>` (conversion automatique de `bidi/gabarits.ts`) ; la légende
+   du tajwīd utilise `<Bidi>` au lieu d'un découpage maison (`bidiParts` retiré) ; le français écrit en dur
+   (`lang="fr" dir="ltr"`) dans le Muṣḥaf et la légende suit la langue de l'interface. Le texte coranique n'est
+   jamais découpé : seuls `VerseText` et `TajwidRuns` restent exemptés, et une nouvelle règle de `gabarits.test.ts`
+   refuse tout `<Bidi>`/`<Ar>` à l'intérieur d'un élément `quran-text`, dans tous les gabarits ; le test vérifie
+   aussi que l'espace Coran est couvert. e2e `bidi.spec.ts` : légende du tajwīd et « Mes récitateurs » sans
+   mélange d'écritures, aucun `bdi` dans le texte du Muṣḥaf.
+2. **e2e intermittents** (`finitions-stabilite-wip`) — causes trouvées et corrigées :
+   - **attente** (lots 15, 26, 27) : clic sur un profil suivi aussitôt d'un `page.goto`, qui coupait
+     l'enregistrement de l'élève choisi → fonction commune `e2e/profil.ts` (`pickProfile` attend la navigation
+     et le nom de l'élève) ; lot 26 : l'accueil de premier lancement était masqué AVANT son enregistrement
+     IndexedDB (un rechargement immédiat le remontrait) → correction dans `Onboarding.svelte` ;
+   - **attente** (lot 3) : le premier appel du manifeste hors ligne construit et compresse les paquets des
+     31 niveaux (≈ 47 s mesurées) dans le délai de 60 s du test → paquets préparés dans `global-setup.ts`
+     (le test passe de 50 s à 1,5 s) ;
+   - **ordre** (lot 13, captures du lot 5) : le serveur n'accepte qu'un code TOTP par pas de 30 s, toujours plus
+     récent → connexion enseignant commune `e2e/enseignant.ts` (pas jamais réutilisé, attente du pas suivant sans
+     consommer le délai du test, nouvel essai) ;
+   - **données partagées** : une autre suite e2e lancée sur la VM (autre dossier de travail) remettait à zéro la
+     même base `awform_test` en pleine exécution (84 échecs « relation … does not exist ») et changeait les mots
+     de passe des rôles `awform_e2e_*` → base `awform_e2e_<empreinte du dossier>_test`, rôles et fichiers
+     temporaires propres à chaque dossier (`playwright.config.ts`, inchangé en CI) ;
+   - sélecteur ambigu (hors ligne, données économes) : `getByRole('status')` trouvait aussi l'indicateur de
+     chargement → messages visés sans lui.
+   Preuve : **3 suites e2e complètes consécutives vertes** sur fe79a1a : 214 réussis, 20 ignorés, 0 échec
+   (11,9 / 12,0 / 12,0 min).
+3. **Traductions** (`finitions-traductions-wip`) : Claude relecteur natif PROVISOIRE (décision du client). Les
+   1 773 textes en, es, de, ar relus en regard du français (y compris les 53 textes du Muṣḥaf page par page
+   arrivés dans `main` pendant la relecture) : **252 corrigés** (anglais 62, espagnol 58, allemand 47, arabe 85) —
+   un terme par notion et par langue, termes religieux selon `GLOSSAIRE_TERMES.md` (tajwid, fiqh sans signe ;
+   « rebond » = bounce / rebote / Abprall), arabe : flèches de retour/suite (11), unités ك.ب / م.ب, accords par
+   ICU, vouvoiement là où les registres se mêlaient. `A_RELIRE.md` : « relu par Claude, relecteur provisoire, le
+   04/10/2026 ; relecture humaine courte à faire » et la liste des points laissés au relecteur humain. Les langues
+   restent **en préparation** (jamais proposées par défaut en production, contrôlé par `i18n.test.ts`) et
+   activables sur la démonstration (`AWFORM_LANGUES_PREPARATION=on`).
+
+**Vérification finale** (`~/awform-trad`, code de `main` + les 3 étapes) : build, typecheck (0 erreur), lint OK ;
+`pnpm -r --no-bail test` avec les livres : **1 305 réussis, 1 ignoré, 0 échec** (131 s) ; e2e complets :
+**224 réussis, 20 ignorés, 0 échec** (12,1 min) ; budget : page la plus lourde `/lecons/[id]` **132,8 Ko**
+≤ 150, toutes les pages **285,4 Ko** ≤ 315.
+
+À noter : une suite e2e d'une autre branche (`playwright.mp.config.ts`) utilise encore la base commune
+`awform_test` ; elle sera isolée dès qu'elle reprendra `main`. Piste produit (non faite) : préparer les paquets
+hors ligne au démarrage de l'API, pour que le premier visiteur après un redémarrage n'attende pas ≈ 45 s.
+
+---
+
 ## 04/10/2026 — Muṣḥaf page par page en VERT, plus clair et plus intuitif (branche `mushaf-design-wip`, depuis `main` eba4b6d)
 
 Demande du client : « en vert, plus joli, plus moderne, plus clair, plus intuitif, plus agréable ».
