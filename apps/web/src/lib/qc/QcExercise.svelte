@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import { orderOk, shuffle } from '$lib/religion/check';
   import QcText from './QcText.svelte';
@@ -98,11 +99,11 @@
   data-testid="qc-exercice"
 >
   <h3>
-    <span class="n">{n}</span>
+    <span class="n"><Bidi text={n} /></span>
     {#if str(ex.titre_ar)}<QcText text={str(ex.titre_ar)} {lettres} />{/if}
-    <span>{str(ex.titre_fr)}</span>
+    <span><Bidi text={str(ex.titre_fr)} /></span>
   </h3>
-  {#if str(ex.consigne_fr)}<p class="consigne">{str(ex.consigne_fr)}</p>{/if}
+  {#if str(ex.consigne_fr)}<p class="consigne"><Bidi text={str(ex.consigne_fr)} /></p>{/if}
   {#if evaluation}<p class="muted small" data-testid="qc-correction-adulte">
       {t('qc.correction_adulte')}
     </p>{/if}
@@ -124,7 +125,7 @@
       {/each}
     </div>
     {#if !evaluation}<p class="score" data-testid="qc-score">
-        {t('qc.trouve', { n: chasseFound, total: chasseGoal.length })}
+        <Bidi text={t('qc.trouve', { n: chasseFound, total: chasseGoal.length })} />
       </p>{/if}
   {:else if type === 'contient'}
     <div class="mots">
@@ -144,11 +145,11 @@
     </div>
   {:else if type === 'arret'}
     <p class="extrait"><QcText text={str(ex.ar)} quran {lettres} /></p>
-    {#if str(ex.ref_fr)}<p class="ref">{str(ex.ref_fr)}</p>{/if}
+    {#if str(ex.ref_fr)}<p class="ref"><Bidi text={str(ex.ref_fr)} /></p>{/if}
     <ol class="items">
       {#each arr(ex.emplacements) as p, i (i)}
         <li>
-          <span>{t('qc.apres_mot', { n: Number(p.apres) })}</span>
+          <span><Bidi text={t('qc.apres_mot', { n: Number(p.apres) })} /></span>
           <QcText text={arretWords[Number(p.apres) - 1] ?? ''} quran />
           <span class="choix">
             {#each options as o (o.v)}
@@ -156,16 +157,16 @@
                 type="button"
                 class:sel={picked[`a${i}`] === o.v}
                 data-testid="qc-choix"
-                onclick={() => (picked[`a${i}`] = o.v)}>{o.fr}</button
+                onclick={() => (picked[`a${i}`] = o.v)}><Bidi text={o.fr} /></button
               >
             {/each}
           </span>
           {#if picked[`a${i}`] !== undefined && !evaluation}
             {@const ok = choiceOk(p, picked[`a${i}`] as string)}
             <span class="verdict" class:ok class:ko={!ok} data-testid="qc-verdict"
-              >{verdict(ok)}</span
+              ><Bidi text={verdict(ok)} /></span
             >
-            {#if ok && str(p.fr)}<span class="expl">{str(p.fr)}</span>{/if}
+            {#if ok && str(p.fr)}<span class="expl"><Bidi text={str(p.fr)} /></span>{/if}
           {/if}
         </li>
       {/each}
@@ -199,7 +200,7 @@
                 if (relierLeft === r) relierPairs[r] = r;
                 else picked.relierKo = r;
                 relierLeft = null;
-              }}>{str(items[r]?.fr)}</button
+              }}><Bidi text={str(items[r]?.fr)} /></button
             >
           </li>
         {/each}
@@ -208,9 +209,11 @@
     {#if Object.keys(relierPairs).length > 0 || picked.relierKo !== undefined}
       {@const ok = Object.keys(relierPairs).length === items.length}
       <p class="verdict" class:ok data-testid="qc-verdict">
-        {ok
-          ? verdict(true)
-          : t('qc.trouve', { n: Object.keys(relierPairs).length, total: items.length })}
+        <Bidi
+          text={ok
+            ? verdict(true)
+            : t('qc.trouve', { n: Object.keys(relierPairs).length, total: items.length })}
+        />
       </p>
     {/if}
   {:else if type === 'relier'}
@@ -222,18 +225,18 @@
           </li>{/each}
       </ul>
       <ul>
-        {#each arr(ex.droite) as d, i (i)}<li>{str(d.fr)}</li>{/each}
+        {#each arr(ex.droite) as d, i (i)}<li><Bidi text={str(d.fr)} /></li>{/each}
       </ul>
     </div>
   {:else if type === 'chrono'}
     <p class="muted">{t('qc.chrono')}</p>
     <ol class="items">
       {#each Array.from({ length: Number(ex.essais ?? 3) }, (_, i) => i) as i (i)}<li>
-          {t('qc.essai', { n: i + 1 })}
+          <Bidi text={t('qc.essai', { n: i + 1 })} />
         </li>{/each}
     </ol>
   {:else if type === 'lecture_notee'}
-    {#if str(ex.passage_fr)}<p><strong>{str(ex.passage_fr)}</strong></p>{/if}
+    {#if str(ex.passage_fr)}<p><strong><Bidi text={str(ex.passage_fr)} /></strong></p>{/if}
     <p class="muted">{t('qc.lecture_notee')}</p>
   {:else if type === 'etapes'}
     {@const seq = sequences[0] ?? []}
@@ -245,16 +248,18 @@
           data-testid="qc-etape"
           onclick={() => seqAdd(0, k)}
           >{#if str(items[k]?.ar)}<QcText text={str(items[k]?.ar)} />{/if}
-          {str(items[k]?.fr)}</button
+          <Bidi text={str(items[k]?.fr)} /></button
         >
       {/each}
     </div>
     <ol class="seq">
-      {#each seq as k (k)}<li>{str(items[k]?.fr)}</li>{/each}
+      {#each seq as k (k)}<li><Bidi text={str(items[k]?.fr)} /></li>{/each}
     </ol>
     {#if seq.length === items.length && items.length > 0}
       {@const ok = orderOk(items as Array<{ rang?: number }>, seq)}
-      <p class="verdict" class:ok class:ko={!ok} data-testid="qc-verdict">{verdict(ok)}</p>
+      <p class="verdict" class:ok class:ko={!ok} data-testid="qc-verdict">
+        <Bidi text={verdict(ok)} />
+      </p>
       {#if !ok}<button type="button" onclick={() => (sequences[0] = [])}
           >{t('qc.recommencer')}</button
         >{/if}
@@ -269,22 +274,22 @@
               {#if str(it.dit)}
                 {#if picked[`v${i}`]}<QcText text={str(it.dit)} {lettres} />{/if}
                 <button type="button" onclick={() => (picked[`v${i}`] = !picked[`v${i}`])}
-                  >{picked[`v${i}`] ? t('qc.cacher') : t('qc.montrer')}</button
+                  ><Bidi text={picked[`v${i}`] ? t('qc.cacher') : t('qc.montrer')} /></button
                 >
               {/if}
             </span>
           {:else if type === 'qcm'}
-            <span>{str(it.q_fr)}</span>
+            <span><Bidi text={str(it.q_fr)} /></span>
           {:else if type === 'complete'}
             <span class="frise" dir="rtl"
               ><QcText text={str(it.avant)} /> <span class="trou">…</span>
               <QcText text={str(it.apres)} /></span
             >
           {:else if type === 'ordre'}
-            {#if str(it.fr)}<span>{str(it.fr)}</span>{/if}
+            {#if str(it.fr)}<span><Bidi text={str(it.fr)} /></span>{/if}
           {:else if str(it.ar)}
             <span class="extrait"><QcText text={str(it.ar)} quran={isQuran(it)} {lettres} /></span>
-            {#if str(it.ref_fr)}<span class="ref">{str(it.ref_fr)}</span>{/if}
+            {#if str(it.ref_fr)}<span class="ref"><Bidi text={str(it.ref_fr)} /></span>{/if}
           {/if}
 
           {#if type === 'paire' || type === 'regle' || type === 'duree'}
@@ -296,7 +301,7 @@
                   data-testid="qc-choix"
                   onclick={() => (picked[i] = o.v)}
                   >{#if o.ar}<QcText text={o.ar} {lettres} />{/if}
-                  {o.fr}</button
+                  <Bidi text={o.fr} /></button
                 >
               {/each}
             </span>
@@ -313,7 +318,7 @@
               {/each}
             </span>
           {:else if type === 'vrai_faux'}
-            <span class="enonce">{str(it.fr)}</span>
+            <span class="enonce"><Bidi text={str(it.fr)} /></span>
             <span class="choix">
               <button
                 type="button"
@@ -337,7 +342,7 @@
                   data-testid="qc-choix"
                   onclick={() => (picked[i] = k)}
                   >{#if str(c.ar)}<QcText text={str(c.ar)} />{/if}
-                  {str(c.fr)}</button
+                  <Bidi text={str(c.fr)} /></button
                 >
               {/each}
             </span>
@@ -390,12 +395,12 @@
                 .map((x) => Number(x.split('.')[1]))}
               {@const ok = sameSet(touchedK, repererExpected(it as { ar?: string }, str(ex.cible)))}
               <span class="verdict" class:ok class:ko={!ok} data-testid="qc-verdict"
-                >{verdict(ok)}</span
+                ><Bidi text={verdict(ok)} /></span
               >
             {:else if type === 'ordre' && (sequences[i]?.length ?? 0) === strs(it.mots).length && strs(it.mots).length}
               {@const ok = ordreOk(it as { mots?: string[]; phrase?: string }, sequences[i] ?? [])}
               <span class="verdict" class:ok class:ko={!ok} data-testid="qc-verdict"
-                >{verdict(ok)}</span
+                ><Bidi text={verdict(ok)} /></span
               >
             {:else if picked[i] !== undefined && type !== 'reperer' && type !== 'ordre'}
               {@const ok =
@@ -405,9 +410,10 @@
                     ? it.col === picked[i]
                     : choiceOk(it, picked[i] as number | string)}
               <span class="verdict" class:ok class:ko={!ok} data-testid="qc-verdict"
-                >{verdict(ok)}</span
+                ><Bidi text={verdict(ok)} /></span
               >
-              {#if ok && str(it.fr) && type !== 'vrai_faux'}<span class="expl">{str(it.fr)}</span
+              {#if ok && str(it.fr) && type !== 'vrai_faux'}<span class="expl"
+                  ><Bidi text={str(it.fr)} /></span
                 >{/if}
             {/if}
           {/if}

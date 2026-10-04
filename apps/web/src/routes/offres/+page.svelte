@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
@@ -93,10 +94,10 @@
 {#if data?.mode === 'simule'}<p class="card warn" data-testid="demo-paiement">
     {t('offre.demo')}
   </p>{/if}
-{#if error}<p class="card bad" role="alert">{error}</p>{/if}
+{#if error}<p class="card bad" role="alert"><Bidi text={error} /></p>{/if}
 {#if mine}
   <p class="muted">
-    {t('offre.actuelle', { plan: t(`offre.nom_${mine.droits.plan}`) })}
+    <Bidi text={t('offre.actuelle', { plan: t(`offre.nom_${mine.droits.plan}`) })} />
     <a href={resolve('/abonnement')}>{t('offre.voir_abonnement')}</a>
   </p>
 {/if}
@@ -104,32 +105,45 @@
 <ul class="plans" data-testid="offres">
   {#each shown as p (p.code)}
     <li class="card plan" data-plan={p.code} class:current={mine?.droits.plan === p.code}>
-      <h2>{t(`offre.nom_${p.code}`)}</h2>
+      <h2><Bidi text={t(`offre.nom_${p.code}`)} /></h2>
       <p class="price">
-        {#if p.prix}<strong>{price(p.prix.montant, p.prix.devise)}</strong>
+        {#if p.prix}<strong><Bidi text={price(p.prix.montant, p.prix.devise)} /></strong>
           {#if p.parPlace}{t('offre.par_eleve')}{/if}
-          {periodLabel(p)}
-        {:else if p.kind === 'essai'}<strong>{t('offre.gratuit')}</strong> {periodLabel(p)}
+          <Bidi text={periodLabel(p)} />
+        {:else if p.kind === 'essai'}<strong>{t('offre.gratuit')}</strong>
+          <Bidi text={periodLabel(p)} />
         {:else}<strong>{t('offre.gratuit')}</strong>{/if}
       </p>
-      <p class="muted small">{t(`offre.desc_${p.code}`)}</p>
+      <p class="muted small"><Bidi text={t(`offre.desc_${p.code}`)} /></p>
       <ul class="rights">
         <li>
-          {p.droits.niveaux === 'tous'
-            ? t('offre.d_tous')
-            : t('offre.d_decouverte', { n: p.droits.leconsOuvertes ?? 0 })}
-        </li>
-        <li>{p.droits.horsLigne ? t('offre.d_hors_ligne') : t('offre.d_en_ligne')}</li>
-        <li>
-          {p.droits.hifz === 'complet' ? t('offre.d_hifz_complet') : t('offre.d_hifz_carnet')}
+          <Bidi
+            text={p.droits.niveaux === 'tous'
+              ? t('offre.d_tous')
+              : t('offre.d_decouverte', { n: p.droits.leconsOuvertes ?? 0 })}
+          />
         </li>
         <li>
-          {p.droits.bibliotheque === 'complete'
-            ? t('offre.d_biblio_complete')
-            : t('offre.d_biblio_partielle')}
+          <Bidi text={p.droits.horsLigne ? t('offre.d_hors_ligne') : t('offre.d_en_ligne')} />
+        </li>
+        <li>
+          <Bidi
+            text={p.droits.hifz === 'complet'
+              ? t('offre.d_hifz_complet')
+              : t('offre.d_hifz_carnet')}
+          />
+        </li>
+        <li>
+          <Bidi
+            text={p.droits.bibliotheque === 'complete'
+              ? t('offre.d_biblio_complete')
+              : t('offre.d_biblio_partielle')}
+          />
         </li>
         {#if p.droits.tuteurIA}<li>{t('offre.d_tuteur')}</li>{/if}
-        {#if p.kind !== 'licence'}<li>{t('offre.d_profils', { n: p.droits.profilsMax })}</li>{/if}
+        {#if p.kind !== 'licence'}<li>
+            <Bidi text={t('offre.d_profils', { n: p.droits.profilsMax })} />
+          </li>{/if}
       </ul>
       {#if p.kind === 'gratuit'}
         {#if mine?.droits.plan === 'gratuit'}<p class="tag">{t('offre.formule_actuelle')}</p>{/if}
@@ -146,12 +160,14 @@
                   checked={(chosen[p.code] ?? p.prestataires[0]) === m}
                   onchange={() => (chosen[p.code] = m)}
                 />
-                {t(`paie.moyen_${m}`)}</label
+                <Bidi text={t(`paie.moyen_${m}`)} /></label
               >
             {/each}
           </fieldset>
         {:else if p.prestataires.length === 1}
-          <p class="small">{t('offre.moyen')} : {t(`paie.moyen_${p.prestataires[0]}`)}</p>
+          <p class="small">
+            {t('offre.moyen')} : <Bidi text={t(`paie.moyen_${p.prestataires[0]}`)} />
+          </p>
         {/if}
         {#if p.parPlace}
           <label class="small"
@@ -217,7 +233,7 @@
   {/each}
 </ul>
 <p class="muted small">
-  {t('offre.prix_a_valider')} <a href={resolve('/garanties')}>{t('gar.titre')}</a>
+  <Bidi text={t('offre.prix_a_valider')} /> <a href={resolve('/garanties')}>{t('gar.titre')}</a>
 </p>
 
 <style>

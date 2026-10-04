@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
@@ -29,8 +30,8 @@
     <li>
       <a class="tile" href={resolve(x.href)} data-plus={x.href}>
         <span class="tile-ic"><Icon name={x.icon} /></span>
-        <strong>{t(x.titre)}</strong>
-        <small>{t(x.desc)}</small>
+        <strong><Bidi text={t(x.titre)} /></strong>
+        <small><Bidi text={t(x.desc)} /></small>
       </a>
     </li>
   {/each}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { fmtDate, t } from '$lib/i18n';
   import { moderate, moderationQueue, type Signalement } from '$lib/messagerie';
@@ -30,16 +31,18 @@
 <section class="card" data-testid="moderation">
   <h2>{t('mod.titre')}</h2>
   <p class="muted small">{t('mod.aide')}</p>
-  {#if error}<p class="bad" role="alert">{error}</p>{/if}
+  {#if error}<p class="bad" role="alert"><Bidi text={error} /></p>{/if}
   <ul class="list">
     {#each items ?? [] as s (s.id)}
       <li data-testid="signalement">
         <p>
-          <strong>{fmtDate(s.le)}</strong> — {t(`mod.kind_${s.message.kind}`)} — {t('mod.motif', {
-            motif: s.motif,
-          })}
+          <strong>{fmtDate(s.le)}</strong> — <Bidi text={t(`mod.kind_${s.message.kind}`)} /> — <Bidi
+            text={t('mod.motif', {
+              motif: s.motif,
+            })}
+          />
         </p>
-        <blockquote>{s.message.texte ?? t('mod.illisible')}</blockquote>
+        <blockquote><Bidi text={s.message.texte ?? t('mod.illisible')} /></blockquote>
         <p class="row">
           <button type="button" onclick={() => decide(s.id, 'classe')}>{t('mod.classer')}</button>
           <button type="button" class="danger" onclick={() => decide(s.id, 'retire')}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { fmtDate, t } from '$lib/i18n';
@@ -75,16 +76,20 @@
     {t('profils.connexion_requise')} <a href={resolve('/connexion')}>{t('entete.connexion')}</a>
   </p>
 {:else}
-  {#if error}<p class="card bad" role="alert" data-testid="msg-erreur">{error}</p>{/if}
-  {#if info}<p class="card" role="status" data-testid="msg-info">{info}</p>{/if}
-  <p class="muted small">{t('msg.cadre', { aide: aide || '—' })}</p>
+  {#if error}<p class="card bad" role="alert" data-testid="msg-erreur">
+      <Bidi text={error} />
+    </p>{/if}
+  {#if info}<p class="card" role="status" data-testid="msg-info"><Bidi text={info} /></p>{/if}
+  <p class="muted small"><Bidi text={t('msg.cadre', { aide: aide || '—' })} /></p>
 
   <section class="card">
     <h2>{t('visio.titre')}</h2>
     <ul class="list">
       {#each visios as v (v.id)}
         <li data-testid="visio">
-          {fmtDate(v.debut)} — {v.classe} : {v.titre} ({t('visio.minutes', { n: v.dureeMin })})
+          {fmtDate(v.debut)} — <Bidi text={v.classe} /> : <Bidi text={v.titre} /> (<Bidi
+            text={t('visio.minutes', { n: v.dureeMin })}
+          />)
           {#if v.url}<a href={v.url} target="_blank" rel="noopener noreferrer external"
               >{t('visio.rejoindre')}</a
             >
@@ -99,7 +104,7 @@
     <ul class="list">
       {#each annonces as a (a.id)}
         <li data-testid="annonce">
-          {fmtDate(a.le)} — {a.retire ? t('msg.retire') : a.texte}
+          {fmtDate(a.le)} — <Bidi text={a.retire ? t('msg.retire') : a.texte} />
           {#if !a.retire}<button type="button" class="small" onclick={() => signal(a.id)}
               >{t('msg.signaler')}</button
             >{/if}
@@ -114,8 +119,8 @@
       {#each fils as f (f.id)}
         <li>
           <button type="button" onclick={() => show(f.id)} data-testid="msg-fil">
-            {f.pseudonym} — {f.classe}{#if f.nonLus}<span class="badge"
-                >{t('msg.non_lus', { n: f.nonLus })}</span
+            <Bidi text={f.pseudonym} /> — <Bidi text={f.classe} />{#if f.nonLus}<span class="badge"
+                ><Bidi text={t('msg.non_lus', { n: f.nonLus })} /></span
               >{/if}
           </button>
         </li>
@@ -125,10 +130,11 @@
       <ul class="list" data-testid="msg-fil-ouvert">
         {#each open.messages as m (m.id)}
           <li class:mine={m.deMoi}>
-            {fmtDate(m.le)} — {m.retire ? t('msg.retire') : m.texte}
+            {fmtDate(m.le)} — <Bidi text={m.retire ? t('msg.retire') : m.texte} />
             {#if m.piece && !m.retire}
               <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- fichier servi par l'API, pas une page -->
-              <a href={`/api/v1/messages/${m.id}/piece`} download={m.piece.nom}>{m.piece.nom}</a
+              <a href={`/api/v1/messages/${m.id}/piece`} download={m.piece.nom}
+                ><Bidi text={m.piece.nom} /></a
               >{/if}
             {#if !m.deMoi && !m.retire}<button
                 type="button"

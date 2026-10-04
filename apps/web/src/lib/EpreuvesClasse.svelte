@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import Ar from '$lib/Ar.svelte';
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
@@ -121,11 +122,15 @@
   <ul>
     {#each sessions as s (s.id)}
       <li>
-        <button type="button" class="link" onclick={() => voir(s.id)}>{title(s.unitId)}</button>
+        <button type="button" class="link" onclick={() => voir(s.id)}
+          ><Bidi text={title(s.unitId)} /></button
+        >
         <span class="muted small"
-          >/{s.bareme} · {fmtDate(s.opensAt)} → {fmtDate(s.closesAt)} · {t('epreuve.copies', {
-            n: s.copies,
-          })}</span
+          >/<Bidi text={s.bareme} /> · {fmtDate(s.opensAt)} → {fmtDate(s.closesAt)} · <Bidi
+            text={t('epreuve.copies', {
+              n: s.copies,
+            })}
+          /></span
         >
       </li>
     {/each}
@@ -135,12 +140,12 @@
 {#if detail}
   {@const tn = detail.textesNonPrepares}
   <section class="card" data-testid="epreuve-detail">
-    <h2>{detail.epreuve.titleFr} (/{detail.epreuve.bareme})</h2>
+    <h2><Bidi text={detail.epreuve.titleFr} /> (/<Bidi text={detail.epreuve.bareme} />)</h2>
     {#if new Date(detail.epreuve.closesAt) > new Date()}
       <button type="button" onclick={fermer}>{t('epreuve.fermer')}</button>
     {:else}
       <p class="muted small">
-        {t('epreuve.fermee_le', { date: fmtDate(detail.epreuve.closesAt) })}
+        <Bidi text={t('epreuve.fermee_le', { date: fmtDate(detail.epreuve.closesAt) })} />
       </p>
     {/if}
     {#if tn && (tn.lecture || tn.versets.length || tn.dictee.length)}
@@ -149,13 +154,17 @@
       {#if tn.lecture?.vedette}<Ar tag="p" text={str(tn.lecture.vedette.ar)} />{/if}
       {#each tn.lecture?.phrases ?? [] as ph, k (k)}<Ar tag="p" text={str(ph.ar)} />{/each}
       {#each tn.versets as v, k (k)}<Ar tag="p" text={str(v.ar)} quran />{/each}
-      {#each tn.dictee as d, k (k)}<p>{typeof d === 'string' ? d : JSON.stringify(d)}</p>{/each}
+      {#each tn.dictee as d, k (k)}<p>
+          <Bidi text={typeof d === 'string' ? d : JSON.stringify(d)} />
+        </p>{/each}
     {/if}
     {#if detail.aDire.length}
       <h3>{t('epreuve.a_dire')}</h3>
       {#each detail.aDire as a, k (a.exerciseId)}
         <p>
-          {k + 1}. {#each a.mots as m, j (j)}<Ar text={m} />{#if j < a.mots.length - 1}
+          <Bidi text={k + 1} />. {#each a.mots as m, j (j)}<Ar
+              text={m}
+            />{#if j < a.mots.length - 1}
               ·
             {/if}{/each}
         </p>
@@ -172,8 +181,8 @@
       <tbody>
         {#each detail.copies as c (c.id)}
           <tr class:remed={c.remediation}>
-            <td>{c.pseudonym ?? '?'}</td>
-            <td>{c.autoPoints}/{c.autoMax}</td>
+            <td><Bidi text={c.pseudonym ?? '?'} /></td>
+            <td><Bidi text={c.autoPoints} />/<Bidi text={c.autoMax} /></td>
             <td class="part">
               <input
                 aria-label={t('epreuve.points')}
@@ -189,7 +198,9 @@
               <button type="button" onclick={() => noter(c)}>{t('epreuve.enregistrer')}</button>
             </td>
             <td
-              >{c.score === null ? '—' : `${fmtNumber(c.score)}/${detail.epreuve.bareme}`}
+              ><Bidi
+                text={c.score === null ? '—' : `${fmtNumber(c.score)}/${detail.epreuve.bareme}`}
+              />
               {#if c.remediation}<strong> · {t('epreuve.remediation')}</strong>{/if}</td
             >
           </tr>
@@ -198,7 +209,7 @@
     </table>
   </section>
 {/if}
-{#if error}<p class="error" role="alert">{error}</p>{/if}
+{#if error}<p class="error" role="alert"><Bidi text={error} /></p>{/if}
 
 <style>
   .row {

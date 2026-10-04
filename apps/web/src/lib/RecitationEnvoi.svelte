@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { fmtDate, t } from '$lib/i18n';
   import { listRecordings, type Recording } from '$lib/recordings';
@@ -133,20 +134,24 @@
     {:else}
       <p class="muted small">{t('envoi.aucun_local')}</p>
     {/if}
-    {#if msg}<p role="status" class="ok">{msg}</p>{/if}
-    {#if error}<p role="alert" class="bad">{error}</p>{/if}
+    {#if msg}<p role="status" class="ok"><Bidi text={msg} /></p>{/if}
+    {#if error}<p role="alert" class="bad"><Bidi text={error} /></p>{/if}
     {#if info.recitations.length}
       <h4>{t('envoi.envoyes')}</h4>
       <ul class="plain" data-testid="envoi-liste">
         {#each info.recitations as s (s.id)}
           <li>
-            {s.part} · {fmtDate(s.createdAt, { dateStyle: 'medium' })} ·
-            {#if s.grade}{t('envoi.note', { n: s.grade.note.total })}{:else if s.listenedAt}{t(
-                'envoi.ecoutee',
-              )}{:else}{t('envoi.en_attente')}{/if}
+            <Bidi text={s.part} /> · {fmtDate(s.createdAt, { dateStyle: 'medium' })} ·
+            {#if s.grade}<Bidi
+                text={t('envoi.note', { n: s.grade.note.total })}
+              />{:else if s.listenedAt}<Bidi text={t('envoi.ecoutee')} />{:else}{t(
+                'envoi.en_attente',
+              )}{/if}
             ·
             <span class="muted small"
-              >{t('envoi.efface_le', { date: fmtDate(s.expiresAt, { dateStyle: 'medium' }) })}</span
+              ><Bidi
+                text={t('envoi.efface_le', { date: fmtDate(s.expiresAt, { dateStyle: 'medium' }) })}
+              /></span
             >
             <button
               type="button"

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { fmtDate, t } from '$lib/i18n';
   import { createLot, listLots, printerCsv, revokeLot, type Lot } from '$lib/activation';
@@ -55,16 +56,20 @@
     <input id="al" bind:value={f.libelle} maxlength="120" required />
     <button type="submit" class="primary" data-testid="lot-creer">{t('act.generer')}</button>
   </form>
-  {#if lastFile}<p class="ok" role="status">{t('act.fichier', { nom: lastFile })}</p>{/if}
-  {#if error}<p class="bad" role="alert">{error}</p>{/if}
+  {#if lastFile}<p class="ok" role="status">
+      <Bidi text={t('act.fichier', { nom: lastFile })} />
+    </p>{/if}
+  {#if error}<p class="bad" role="alert"><Bidi text={error} /></p>{/if}
   <ul class="list">
     {#each lots as l (l.id)}
       <li>
-        {fmtDate(l.creeLe)} — {l.libelle} ({l.niveau}) : {t('act.stats', {
-          n: l.quantite,
-          u: l.utilises,
-          r: l.revoques,
-        })}
+        {fmtDate(l.creeLe)} — <Bidi text={l.libelle} /> (<Bidi text={l.niveau} />) : <Bidi
+          text={t('act.stats', {
+            n: l.quantite,
+            u: l.utilises,
+            r: l.revoques,
+          })}
+        />
         {#if l.utilises + l.revoques < l.quantite}
           <button type="button" onclick={() => revoke(l.id)}>{t('act.revoquer')}</button>
         {/if}

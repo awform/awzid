@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { fmtDate, t } from '$lib/i18n';
@@ -73,10 +74,10 @@
       <table aria-labelledby="t-utilisateurs">
         <tbody>
           {#each data.comptes as c (c.kind)}<tr
-              ><th>{t(`admin.compte_${c.kind}`)}</th><td>{c.n}</td></tr
+              ><th><Bidi text={t(`admin.compte_${c.kind}`)} /></th><td><Bidi text={c.n} /></td></tr
             >{/each}
           {#each data.profils as p (p.kind)}<tr
-              ><th>{t(`admin.profil_${p.kind}`)}</th><td>{p.n}</td></tr
+              ><th><Bidi text={t(`admin.profil_${p.kind}`)} /></th><td><Bidi text={p.n} /></td></tr
             >{/each}
         </tbody>
       </table>
@@ -86,7 +87,11 @@
       <table aria-labelledby="t-abonnements">
         <tbody>
           {#each data.abonnements as s (s.plan + s.status)}<tr
-              ><th>{t(`offre.nom_${s.plan}`)} · {t(`abo.statut_${s.status}`)}</th><td>{s.n}</td></tr
+              ><th
+                ><Bidi text={t(`offre.nom_${s.plan}`)} /> · <Bidi
+                  text={t(`abo.statut_${s.status}`)}
+                /></th
+              ><td><Bidi text={s.n} /></td></tr
             >{:else}<tr><td class="muted">{t('admin.aucun')}</td></tr>{/each}
         </tbody>
       </table>
@@ -110,9 +115,10 @@
         <tbody>
           {#each data.editions as e (e.code)}
             <tr
-              ><td>{e.code}</td><td>{e.statut}</td><td>{fmtDate(e.creee)}</td><td
-                >{e.unites ?? ''}</td
-              ><td>{e.hadithsMasques ?? ''}</td></tr
+              ><td><Bidi text={e.code} /></td><td><Bidi text={e.statut} /></td><td
+                >{fmtDate(e.creee)}</td
+              ><td><Bidi text={e.unites ?? ''} /></td><td><Bidi text={e.hadithsMasques ?? ''} /></td
+              ></tr
             >
           {/each}
         </tbody>
@@ -120,16 +126,18 @@
     </div>
     <p class="small">
       {#each data.niveaux as l, i (l.level)}{#if i > 0},
-        {/if}{l.level} ({l.n}){/each}
+        {/if}<Bidi text={l.level} /> (<Bidi text={l.n} />){/each}
     </p>
   </section>
 
   <section class="card">
-    <h2>{t('admin.questions')} · {t('admin.alertes', { n: data.alertes.length })}</h2>
+    <h2>{t('admin.questions')} · <Bidi text={t('admin.alertes', { n: data.alertes.length })} /></h2>
     <ul class="list">
       {#each data.questions as q (q.id)}
         <li>
-          {fmtDate(q.createdAt)} · {t(`ensq.motif_${q.motif}`)} · {t(`admin.q_${q.status}`)}
+          {fmtDate(q.createdAt)} · <Bidi text={t(`ensq.motif_${q.motif}`)} /> · <Bidi
+            text={t(`admin.q_${q.status}`)}
+          />
         </li>
       {:else}
         <li class="muted">{t('admin.aucun')}</li>
@@ -144,9 +152,11 @@
         <tbody>
           {#each data.derniersComptes as a (a.id)}
             <tr
-              ><td>{t(`admin.compte_${a.kind}`)}</td><td>{a.email ?? ''}</td><td
-                >{a.country ?? ''}</td
-              ><td>{a.totp ? t('admin.deux_facteurs') : ''}</td><td>{fmtDate(a.createdAt)}</td></tr
+              ><td><Bidi text={t(`admin.compte_${a.kind}`)} /></td><td
+                ><Bidi text={a.email ?? ''} /></td
+              ><td><Bidi text={a.country ?? ''} /></td><td
+                ><Bidi text={a.totp ? t('admin.deux_facteurs') : ''} /></td
+              ><td>{fmtDate(a.createdAt)}</td></tr
             >
           {/each}
         </tbody>
@@ -158,7 +168,7 @@
     <h2>{t('admin.audit')}</h2>
     <ul class="list small" data-testid="admin-audit">
       {#each data.audit as a, i (i)}<li>
-          {fmtDate(a.at)} · {a.actorKind ?? ''} · {a.action}
+          {fmtDate(a.at)} · <Bidi text={a.actorKind ?? ''} /> · <Bidi text={a.action} />
         </li>{/each}
     </ul>
   </section>

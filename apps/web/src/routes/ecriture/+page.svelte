@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { page } from '$app/state';
   import { demoProfileFor, enqueue, type DevProfile } from '$lib/attempts';
@@ -69,7 +70,7 @@
           class:sel={x.l === letter}
           onclick={() => pick(x.l)}
           aria-pressed={x.l === letter}
-          data-lettre={x.l}>{x.l}</button
+          data-lettre={x.l}><Bidi text={x.l} base="ar" /></button
         >
       {/each}
     </div>
@@ -80,7 +81,7 @@
           class:primary={form === f}
           disabled={!model.forms.includes(f)}
           onclick={() => (form = f)}
-          data-forme={f}>{t(`lecon.forme_${f}`)}</button
+          data-forme={f}><Bidi text={t(`lecon.forme_${f}`)} /></button
         >
       {/each}
     </div>
@@ -96,12 +97,14 @@
         type="button"
         class:primary={step === s}
         onclick={() => (step = s as 1 | 2 | 3)}
-        data-etape={s}>{t(`trace.etape_${s}`)}</button
+        data-etape={s}><Bidi text={t(`trace.etape_${s}`)} /></button
       >
     {/each}
   </div>
   <TraceCanvas {text} start={word ? null : model.start} strict={!word} {step} ondone={record} />
-  {#if done}<p class="muted small" data-testid="reussis">{t('trace.reussis', { n: done })}</p>{/if}
+  {#if done}<p class="muted small" data-testid="reussis">
+      <Bidi text={t('trace.reussis', { n: done })} />
+    </p>{/if}
   {#if !profile}<p class="muted small">{t('trace.sans_profil')}</p>{/if}
 </section>
 <p class="muted">{t('ecriture.en_attendant')}</p>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import Ar from '$lib/Ar.svelte';
   import { fmtDate, t } from '$lib/i18n';
@@ -68,7 +69,7 @@
         onclick={() => {
           filter = f;
           void refresh();
-        }}>{t(`libre.filtre.${f}`)}</button
+        }}><Bidi text={t(`libre.filtre.${f}`)} /></button
       >
     {/each}
   </div>
@@ -79,12 +80,12 @@
     {@const p = prompt(x)}
     <article class="item" data-testid="reponse-a-corriger">
       <p class="muted small">
-        {x.pseudonym ?? '?'} · {x.exerciseId} · {fmtDate(x.sentAt)}
+        <Bidi text={x.pseudonym ?? '?'} /> · <Bidi text={x.exerciseId} /> · {fmtDate(x.sentAt)}
       </p>
-      {#if p.consigne}<p class="consigne">{p.consigne}</p>{/if}
+      {#if p.consigne}<p class="consigne"><Bidi text={p.consigne} /></p>{/if}
       {#if p.ar}<Ar text={p.ar} tag="p" />{/if}
-      {#if p.q}<p>{p.q}</p>{/if}
-      <blockquote>{x.answer}</blockquote>
+      {#if p.q}<p><Bidi text={p.q} /></p>{/if}
+      <blockquote><Bidi text={x.answer} /></blockquote>
       <label
         >{t('libre.commentaire')}
         <textarea rows="2" maxlength="600" bind:value={comments[x.id]}></textarea></label
@@ -95,13 +96,13 @@
             type="button"
             class:active={x.appreciation === a}
             onclick={() => correct(x, a)}
-            data-testid="appreciation-{a}">{t(`libre.appreciation.${a}`)}</button
+            data-testid="appreciation-{a}"><Bidi text={t(`libre.appreciation.${a}`)} /></button
           >
         {/each}
       </div>
     </article>
   {/each}
-  {#if error}<p class="error" role="alert">{error}</p>{/if}
+  {#if error}<p class="error" role="alert"><Bidi text={error} /></p>{/if}
 </section>
 
 <style>

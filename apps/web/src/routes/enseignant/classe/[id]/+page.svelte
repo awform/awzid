@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
@@ -374,10 +375,12 @@
 
 <p><a href={resolve('/enseignant')}>{t('classe.retour')}</a></p>
 <h1>
-  {t('classe.titre')}{#if cls}{` — ${cls.name}`}{/if}
+  {t('classe.titre')}{#if cls}<Bidi text={` — ${cls.name}`} />{/if}
 </h1>
-{#if msg}<p class="card ok" role="status" data-testid="ecole-message">{msg}</p>{/if}
-{#if error}<p class="card bad" role="alert" data-testid="ecole-erreur">{error}</p>{/if}
+{#if msg}<p class="card ok" role="status" data-testid="ecole-message"><Bidi text={msg} /></p>{/if}
+{#if error}<p class="card bad" role="alert" data-testid="ecole-erreur">
+    <Bidi text={error} />
+  </p>{/if}
 
 {#if loaded && !isTeacher}
   <p class="card">{t('classe.reserve')}</p>
@@ -395,7 +398,7 @@
         aria-selected={tab === k}
         class:active={tab === k}
         onclick={() => (tab = k)}
-        data-testid="onglet-{k}">{t(`classe.onglet_${k}`)}</button
+        data-testid="onglet-{k}"><Bidi text={t(`classe.onglet_${k}`)} /></button
       >
     {/each}
   </div>
@@ -456,7 +459,7 @@
       <ul class="plain">
         {#each groups as g (g.id)}
           <li>
-            {g.name}
+            <Bidi text={g.name} />
             <button type="button" class="small" onclick={() => delGroup(g)}
               >{t('commun.supprimer')}</button
             >
@@ -480,7 +483,7 @@
 
     <section class="card">
       <h2 id="titre-eleves">{t('classe.eleves')}</h2>
-      <p class="muted small">{t('classe.code_familles', { code: cls.joinCode })}</p>
+      <p class="muted small"><Bidi text={t('classe.code_familles', { code: cls.joinCode })} /></p>
       <div class="tw">
         <table data-testid="liste-eleves" aria-labelledby="titre-eleves">
           <thead>
@@ -496,8 +499,12 @@
           <tbody>
             {#each pupils as p (p.id)}
               <tr data-eleve={p.displayName}>
-                <td>{p.displayName}</td>
-                <td>{p.profileId ? t('classe.inscrit_appli') : t('classe.inscrit_papier')}</td>
+                <td><Bidi text={p.displayName} /></td>
+                <td
+                  ><Bidi
+                    text={p.profileId ? t('classe.inscrit_appli') : t('classe.inscrit_papier')}
+                  /></td
+                >
                 <td>
                   <select
                     value={p.groupId ?? ''}
@@ -604,11 +611,11 @@
           /></label
         >
         {#if /^\d+:/.test(asg.target)}<span class="muted small"
-            >{suraName(Number(asg.target.split(':')[0]))}</span
+            ><Bidi text={suraName(Number(asg.target.split(':')[0]))} /></span
           >{/if}
       {:else}
         <label
-          >{t('classe.livret_aide')}
+          ><Bidi text={t('classe.livret_aide')} />
           <input
             bind:value={asg.target}
             required
@@ -640,15 +647,19 @@
         {#each tb?.assignments ?? [] as a (a.id)}
           <li class="devoir" data-devoir={a.target}>
             <div>
-              <strong>{assignmentLabel(a)}</strong>
+              <strong><Bidi text={assignmentLabel(a)} /></strong>
               <span class="muted small">
-                · {t('classe.pour_le', { date: fmtDate(a.dueDay, { dateStyle: 'medium' }) })}
-                · {a.groupId
-                  ? groups.find((g) => g.id === a.groupId)?.name
-                  : t('classe.toute_la_classe')}
-                · {t('classe.faits', { n: doneCount(a), total: concerned(a) })}
+                · <Bidi
+                  text={t('classe.pour_le', { date: fmtDate(a.dueDay, { dateStyle: 'medium' }) })}
+                />
+                · <Bidi
+                  text={a.groupId
+                    ? groups.find((g) => g.id === a.groupId)?.name
+                    : t('classe.toute_la_classe')}
+                />
+                · <Bidi text={t('classe.faits', { n: doneCount(a), total: concerned(a) })} />
               </span>
-              {#if a.note}<p class="small">{a.note}</p>{/if}
+              {#if a.note}<p class="small"><Bidi text={a.note} /></p>{/if}
             </div>
             <div class="row">
               <button
@@ -673,7 +684,7 @@
                         onchange={(e) => mark(a, r.pupil, e.currentTarget.checked)}
                         data-testid="coche-{r.pupil.displayName}"
                       />
-                      {r.pupil.displayName}</label
+                      <Bidi text={r.pupil.displayName} /></label
                     >
                     {#if s.late}<span class="warn small">{t('classe.en_retard')}</span>{/if}
                     {#if !s.manual && s.done}<span class="muted small"
@@ -731,7 +742,7 @@
               <th>{t('classe.eleve')}</th>
               <th>{t('classe.lecons')}</th>
               {#each tb?.bilans ?? [] as b, i (b.id)}<th
-                  >{t('classe.bilan_n', { n: b.n ?? i + 1 })}</th
+                  ><Bidi text={t('classe.bilan_n', { n: b.n ?? i + 1 })} /></th
                 >{/each}
               <th>{t('classe.examen')}</th>
               <th>{t('classe.cc')}</th>
@@ -745,7 +756,7 @@
             {#each tb?.rows ?? [] as r (r.pupil.id)}
               <tr data-eleve={r.pupil.displayName}>
                 <td>
-                  {r.pupil.displayName}
+                  <Bidi text={r.pupil.displayName} />
                   <div class="actions">
                     {#if cls.levelCode}<button
                         type="button"
@@ -762,35 +773,49 @@
                       >{/if}
                   </div>
                 </td>
-                <td>{r.lessonsDone === null ? '—' : `${r.lessonsDone}/${tb?.lessons ?? 0}`}</td>
-                {#each r.bilans as b, i (i)}<td class="num">{pct(b)}</td>{/each}
-                <td class="num">{pct(r.result?.examenPct)}</td>
-                <td class="num"
-                  >{pct(r.result?.cc)}{#if r.result?.ccPartiel && r.result.cc !== null}*{/if}</td
+                <td
+                  ><Bidi
+                    text={r.lessonsDone === null ? '—' : `${r.lessonsDone}/${tb?.lessons ?? 0}`}
+                  /></td
                 >
-                <td class="num" data-testid="nf-{r.pupil.displayName}">{pct(r.result?.nf)}</td>
+                {#each r.bilans as b, i (i)}<td class="num"><Bidi text={pct(b)} /></td>{/each}
+                <td class="num"><Bidi text={pct(r.result?.examenPct)} /></td>
+                <td class="num"
+                  ><Bidi
+                    text={pct(r.result?.cc)}
+                  />{#if r.result?.ccPartiel && r.result.cc !== null}*{/if}</td
+                >
+                <td class="num" data-testid="nf-{r.pupil.displayName}"
+                  ><Bidi text={pct(r.result?.nf)} /></td
+                >
                 <td data-testid="decision-{r.pupil.displayName}"
-                  >{r.result?.decision
-                    ? t(`classe.decision_${r.result.decision.code}`)
-                    : r.result
-                      ? t('classe.incomplet')
-                      : '—'}{#if r.result?.conditionManquante}<br /><span class="warn small"
+                  ><Bidi
+                    text={r.result?.decision
+                      ? t(`classe.decision_${r.result.decision.code}`)
+                      : r.result
+                        ? t('classe.incomplet')
+                        : '—'}
+                  />{#if r.result?.conditionManquante}<br /><span class="warn small"
                       >{t('classe.examen_plancher')}</span
                     >{/if}</td
                 >
                 <td
-                  >{#if r.lastHifz}{r.lastHifz.part} · {fmtNumber(
+                  >{#if r.lastHifz}<Bidi text={r.lastHifz.part} /> · {fmtNumber(
                       r.lastHifz.total,
                     )}{:else}—{/if}</td
                 >
                 <td
-                  >{t('classe.faits', {
-                    n: r.assignments.filter((a) => a.done).length,
-                    total: r.assignments.length,
-                  })}{#if r.assignments.some((a) => a.late)}<br /><span class="warn small"
-                      >{t('classe.retards', {
-                        n: r.assignments.filter((a) => a.late).length,
-                      })}</span
+                  ><Bidi
+                    text={t('classe.faits', {
+                      n: r.assignments.filter((a) => a.done).length,
+                      total: r.assignments.length,
+                    })}
+                  />{#if r.assignments.some((a) => a.late)}<br /><span class="warn small"
+                      ><Bidi
+                        text={t('classe.retards', {
+                          n: r.assignments.filter((a) => a.late).length,
+                        })}
+                      /></span
                     >{/if}</td
                 >
               </tr>
@@ -801,26 +826,27 @@
       <p class="muted small">{t('classe.tableau_aide')}</p>
       <p class="row">
         <button type="button" onclick={() => download('tableau')} data-testid="export-tableau"
-          >{t('classe.export_tableau')}</button
+          ><Bidi text={t('classe.export_tableau')} /></button
         >
         <button type="button" onclick={() => download('devoirs')} data-testid="export-devoirs"
-          >{t('classe.export_devoirs')}</button
+          ><Bidi text={t('classe.export_devoirs')} /></button
         >
         <a
           class="button"
           href={resolve('/enseignant/classe/[id]/imprimer', { id })}
-          data-testid="imprimer-tableau">{t('classe.imprimer_tableau')}</a
+          data-testid="imprimer-tableau"><Bidi text={t('classe.imprimer_tableau')} /></a
         >
       </p>
     </section>
 
     {#if entry}
       <form class="card form" onsubmit={saveEntry} data-testid="saisie">
-        <h2>{t('classe.saisie_de', { nom: entry.displayName })}</h2>
+        <h2><Bidi text={t('classe.saisie_de', { nom: entry.displayName })} /></h2>
         <p class="muted small">{t('classe.saisie_aide')}</p>
         {#each scores as s, i (s.item)}
           <label class="count"
-            ><span>{s.label} <small class="muted">{s.hint}</small></span>
+            ><span><Bidi text={s.label} /> <small class="muted"><Bidi text={s.hint} /></small></span
+            >
             <span class="pair"
               ><input
                 type="number"
@@ -844,7 +870,7 @@
 
     {#if recit}
       <form class="card form" onsubmit={saveRecit} data-testid="recitation">
-        <h2>{t('ens.validation_de', { nom: recit.displayName })}</h2>
+        <h2><Bidi text={t('ens.validation_de', { nom: recit.displayName })} /></h2>
         <label
           >{t('classe.passage_aide')}
           <input
@@ -858,7 +884,7 @@
           <legend>{t('ens.releves')}</legend>
           {#each FIELDS as f (f)}
             <label class="count"
-              ><span>{t(`ens.c_${f}`)}</span>
+              ><span><Bidi text={t(`ens.c_${f}`)} /></span>
               <input type="number" min="0" max="50" bind:value={counters[f]} /></label
             >
           {/each}
@@ -868,13 +894,15 @@
           >
         </fieldset>
         <p class="live">
-          {t('ens.note_calculee', {
-            memo: fmtNumber(live.memorisation),
-            tajwid: fmtNumber(live.tajwid),
-            fluidite: fmtNumber(live.fluidite),
-            total: fmtNumber(live.total),
-            mention: t(`hifz.mention_${live.mention}`),
-          })}
+          <Bidi
+            text={t('ens.note_calculee', {
+              memo: fmtNumber(live.memorisation),
+              tajwid: fmtNumber(live.tajwid),
+              fluidite: fmtNumber(live.fluidite),
+              total: fmtNumber(live.total),
+              mention: t(`hifz.mention_${live.mention}`),
+            })}
+          />
         </p>
         <div class="row">
           <button type="submit" class="primary" data-testid="enregistrer-recitation"

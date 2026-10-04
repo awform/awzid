@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { letterColorIndex, tanwinDisplay } from '@awform/content/text';
   import { markColor, qcSegments } from './check';
 
@@ -18,9 +19,13 @@
 </script>
 
 <span class={quran ? 'quran-text' : 'ar courant'} lang="ar" dir="rtl"
-  >{#each segments as s, i (i)}{#if s.mark === null}{s.text}{:else if s.mark === ''}<span
-        class="c{letterColorIndex(s.text, lettres)}">{s.text}</span
-      >{:else}<span class="c{markColor(s.mark)} regle" data-regle={s.mark}>{s.text}</span
+  >{#each segments as s, i (i)}{#if s.mark === null}<Bidi
+        text={s.text}
+        base="ar"
+      />{:else if s.mark === ''}<span class="c{letterColorIndex(s.text, lettres)}"
+        ><Bidi text={s.text} base="ar" /></span
+      >{:else}<span class="c{markColor(s.mark)} regle" data-regle={s.mark}
+        ><Bidi text={s.text} base="ar" /></span
       >{/if}{/each}</span
 >
 

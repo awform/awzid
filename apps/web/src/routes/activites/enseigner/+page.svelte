@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { demoProfileFor } from '$lib/attempts';
@@ -64,17 +65,17 @@
           dir="rtl"
           lang="ar"
           onclick={() => choisir(l)}
-          data-lettre={l}>{l}</button
+          data-lettre={l}><Bidi text={l} base="ar" /></button
         >
       {/each}
     </div>
   </section>
   {#if lettre}
     <section class="card" data-testid="enseigner">
-      <p class="grande" dir="rtl" lang="ar">{lettre}</p>
+      <p class="grande" dir="rtl" lang="ar"><Bidi text={lettre} base="ar" /></p>
       <h2>{t('ensl.enfant_titre')}</h2>
       <ol>
-        {#each ETAPES as e (e)}<li>{t(`ensl.enfant_${e}`)}</li>{/each}
+        {#each ETAPES as e (e)}<li><Bidi text={t(`ensl.enfant_${e}`)} /></li>{/each}
       </ol>
       <h2>{t('ensl.parent_titre')}</h2>
       <fieldset>
@@ -82,7 +83,7 @@
         {#each ETAPES as e (e)}
           <label class="check"
             ><input type="checkbox" bind:checked={coches[e]} data-coche={e} />
-            {t(`ensl.parent_${e}`)}</label
+            <Bidi text={t(`ensl.parent_${e}`)} /></label
           >
         {/each}
       </fieldset>
@@ -94,7 +95,7 @@
         data-testid="enseigner-fini">{t('ensl.terminer')}</button
       >
       {#if fini}<p class="okmsg" role="status" data-testid="enseigner-bravo">
-          {t('ensl.bravo', { nom: profile?.pseudonym ?? '' })}
+          <Bidi text={t('ensl.bravo', { nom: profile?.pseudonym ?? '' })} />
         </p>{/if}
       <p class="muted small">{t('ensl.rien_garde')}</p>
     </section>

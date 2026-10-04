@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
@@ -31,5 +32,5 @@
     >
     · <a href={resolve('/carnet')} data-testid="lien-carnet-perso">{t('carnetp.lien')}</a>
   </p>
-  {#if error}<p class="bad" role="alert">{error}</p>{/if}
+  {#if error}<p class="bad" role="alert"><Bidi text={error} /></p>{/if}
 {/if}

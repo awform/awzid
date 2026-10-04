@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { fmtDate, t } from '$lib/i18n';
@@ -46,8 +47,8 @@
 <p><a href={resolve('/compte')}>{t('ctut.retour')}</a></p>
 <h1>{t('ctut.titre')}</h1>
 <p class="muted">{t('ctut.intro')}</p>
-{#if msg}<p class="card ok" role="status">{msg}</p>{/if}
-{#if error}<p class="card error" role="alert">{error}</p>{/if}
+{#if msg}<p class="card ok" role="status"><Bidi text={msg} /></p>{/if}
+{#if error}<p class="card error" role="alert"><Bidi text={error} /></p>{/if}
 {#if me?.account.kind === 'parent'}
   <label class="check"
     >{t('libre.code_parent')}
@@ -66,7 +67,7 @@
 {#each me?.profiles ?? [] as p (p.id)}
   {@const d = data[p.id]}
   <section class="card" data-tuteur-profil={p.id}>
-    <h2>{p.pseudonym}</h2>
+    <h2><Bidi text={p.pseudonym} /></h2>
     {#if me?.account.kind === 'parent' && p.kind !== 'adulte'}
       <label class="check"
         ><input
@@ -82,14 +83,14 @@
       {#each d?.journal ?? [] as j (j.id)}
         <li>
           <p class="muted small">
-            {fmtDate(j.createdAt)} · {j.unitId ?? ''} · {t(
-              `ctut.action_${j.action}`,
-            )}{#if j.question}
-              · « {j.question} »{/if}
+            {fmtDate(j.createdAt)} · <Bidi text={j.unitId ?? ''} /> · <Bidi
+              text={t(`ctut.action_${j.action}`)}
+            />{#if j.question}
+              · « <Bidi text={j.question} /> »{/if}
           </p>
-          {#if j.refused}<p>{t(`tuteur.refus_${j.refused}`)}</p>{:else if j.segments}<TutorSegments
-              segments={j.segments}
-            />{/if}
+          {#if j.refused}<p>
+              <Bidi text={t(`tuteur.refus_${j.refused}`)} />
+            </p>{:else if j.segments}<TutorSegments segments={j.segments} />{/if}
           {#if j.reportedAt}<p class="small">{t('tuteur.signale')}</p>{:else}<button
               type="button"
               class="small"

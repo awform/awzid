@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
@@ -16,7 +17,7 @@
 <nav class="legalnav" aria-label={t('legal.titre')}>
   {#each LEGAL_PAGES as k (k)}
     <a href={resolve('/legal/[page]', { page: k })} aria-current={k === key ? 'page' : undefined}
-      >{LEGAL[k].titre}</a
+      ><Bidi text={LEGAL[k].titre} /></a
     >
   {/each}
   <a href={resolve('/aide')}>{t('aide.titre')}</a>
@@ -25,12 +26,12 @@
 {#if doc}
   <article class="card" data-testid="page-legale" lang={legalLang()}>
     <p class="brouillon" role="note">{t('legal.brouillon')}</p>
-    <h1>{doc.titre}</h1>
-    <p class="muted small">{t('legal.maj', { date: doc.maj })}</p>
+    <h1><Bidi text={doc.titre} /></h1>
+    <p class="muted small"><Bidi text={t('legal.maj', { date: doc.maj })} /></p>
     {#each doc.sections as s (s.titre)}
       <section>
-        <h2>{s.titre}</h2>
-        {#each s.paras as p, i (i)}<p>{p}</p>{/each}
+        <h2><Bidi text={s.titre} /></h2>
+        {#each s.paras as p, i (i)}<p><Bidi text={p} /></p>{/each}
       </section>
     {/each}
   </article>

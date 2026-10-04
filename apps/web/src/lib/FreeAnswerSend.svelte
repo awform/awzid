@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { fmtDate, t } from '$lib/i18n';
   import { loadFreeAnswers, sendFreeAnswer, type FreeAnswerState } from '$lib/freeAnswers';
@@ -82,17 +83,17 @@
       >{t('libre.envoyer')}</button
     >
     {#if sent}
-      <p class="muted small">{t('libre.envoyee', { date: fmtDate(sent.sentAt) })}</p>
+      <p class="muted small"><Bidi text={t('libre.envoyee', { date: fmtDate(sent.sentAt) })} /></p>
       {#if sent.appreciation}
         <p class="correction" data-testid="correction">
-          <strong>{t(`libre.appreciation.${sent.appreciation}`)}</strong>
-          {#if sent.comment}— {sent.comment}{/if}
+          <strong><Bidi text={t(`libre.appreciation.${sent.appreciation}`)} /></strong>
+          {#if sent.comment}— <Bidi text={sent.comment} />{/if}
         </p>
       {:else}
         <p class="muted small">{t('libre.en_attente')}</p>
       {/if}
     {/if}
-    {#if error}<p class="error" role="alert">{error}</p>{/if}
+    {#if error}<p class="error" role="alert"><Bidi text={error} /></p>{/if}
   </div>
 {/if}
 

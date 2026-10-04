@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
@@ -63,12 +64,12 @@
 <h1>{t('lectures.titre')}</h1>
 <p class="muted">{t('lectures.texte')}</p>
 {#if offline}<p class="card">{t('bib.hors_ligne')}</p>{/if}
-{#if msg}<p class="card ok" role="status">{msg}</p>{/if}
+{#if msg}<p class="card ok" role="status"><Bidi text={msg} /></p>{/if}
 
 <div class="row" role="group" aria-label={t('bib.niveau')}>
   {#each levels as l (l)}
     <button type="button" class:primary={level === l} onclick={() => (level = l)} data-niveau={l}
-      >{t('bib.niveau_n', { code: l })}</button
+      ><Bidi text={t('bib.niveau_n', { code: l })} /></button
     >
   {/each}
 </div>
@@ -85,12 +86,12 @@
     <li class="card book" data-livret={b.code}>
       <a href={resolve('/lectures/[code]', { code: b.code })}>
         <Ar text={b.titreAr ?? ''} tag="p" />
-        <strong>{b.titreFr}</strong>
+        <strong><Bidi text={b.titreFr} /></strong>
       </a>
-      <p class="muted small">{b.resumeFr}</p>
+      <p class="muted small"><Bidi text={b.resumeFr} /></p>
       <p class="small">
-        {t('bib.pages', { n: b.pages ?? 0 })}{#if b.placeFr}
-          · {b.placeFr}{/if}
+        <Bidi text={t('bib.pages', { n: b.pages ?? 0 })} />{#if b.placeFr}
+          · <Bidi text={b.placeFr} />{/if}
         {#if read.includes(b.code)}
           · <span class="lu">{t('bib.lu')}</span>{/if}
         {#if kept.includes(b.code)}
@@ -98,7 +99,7 @@
       </p>
       {#if !offline}
         <button type="button" class="small" disabled={!!busy} onclick={() => toggleKeep(b.code)}
-          >{kept.includes(b.code) ? t('bib.retirer') : t('bib.garder')}</button
+          ><Bidi text={kept.includes(b.code) ? t('bib.retirer') : t('bib.garder')} /></button
         >
       {/if}
     </li>

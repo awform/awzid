@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import Ar from '$lib/Ar.svelte';
   import { fmtDate, t } from '$lib/i18n';
@@ -55,7 +56,7 @@
       <button type="button" disabled={back >= 4} onclick={() => go(back + 1)}
         >{t('carnet.precedente')}</button
       >
-      <strong>{t('carnet.semaine', { date: fmtDate(week) })}</strong>
+      <strong><Bidi text={t('carnet.semaine', { date: fmtDate(week) })} /></strong>
       <button type="button" disabled={back === 0} onclick={() => go(back - 1)}
         >{t('carnet.suivante')}</button
       >
@@ -64,7 +65,7 @@
       <thead
         ><tr
           ><th></th>{#each Array.from({ length: carnet.jours }, (_, d) => d) as d (d)}<th
-              >{t('carnet.jour', { n: d + 1 })}</th
+              ><Bidi text={t('carnet.jour', { n: d + 1 })} /></th
             >{/each}</tr
         ></thead
       >
@@ -73,7 +74,7 @@
           <tr>
             <th scope="row"
               >{#if l.ar}<Ar text={l.ar} /> —
-              {/if}{l.fr}</th
+              {/if}<Bidi text={l.fr} /></th
             >
             {#each Array.from({ length: carnet.jours }, (_, d) => d) as d (d)}
               <td
@@ -92,7 +93,7 @@
     </table>
     {#if carnet.signe}
       <p class="ok" data-testid="carnet-signe">
-        {t('carnet.signe', { date: fmtDate(carnet.signe) })}
+        <Bidi text={t('carnet.signe', { date: fmtDate(carnet.signe) })} />
       </p>
     {:else if profile.kind !== 'adulte'}
       <p class="sign">
@@ -112,7 +113,7 @@
       </p>
     {/if}
     <p class="muted small">{t('carnet.encourage')}</p>
-    {#if error}<p class="bad" role="alert">{error}</p>{/if}
+    {#if error}<p class="bad" role="alert"><Bidi text={error} /></p>{/if}
   </div>
 {/if}
 

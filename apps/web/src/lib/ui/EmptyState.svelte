@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import type { Snippet } from 'svelte';
   import Icon from './Icon.svelte';
 
@@ -13,8 +14,8 @@
 
 <section class="empty" data-testid="etat-vide">
   <span class="pastille"><Icon name={icon} size={32} /></span>
-  <h2>{title}</h2>
-  {#if text}<p class="muted">{text}</p>{/if}
+  <h2><Bidi text={title} /></h2>
+  {#if text}<p class="muted"><Bidi {text} /></p>{/if}
   {#if children}<div class="actions">{@render children()}</div>{/if}
 </section>
 

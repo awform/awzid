@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
@@ -23,28 +24,31 @@
     <ul>
       {#each list as e (e.id)}
         <li data-etat={e.etat}>
-          <strong>{e.titleFr ?? e.unitId}</strong>
+          <strong><Bidi text={e.titleFr ?? e.unitId} /></strong>
           {#if e.etat === 'ouverte'}
-            <span class="muted small">· {t('epreuve.jusqu_au', { date: fmtDate(e.closesAt) })}</span
+            <span class="muted small"
+              >· <Bidi text={t('epreuve.jusqu_au', { date: fmtDate(e.closesAt) })} /></span
             >
             <a class="button" href={resolve('/epreuves/[sid]', { sid: e.id })}
               >{t('epreuve.passer')}</a
             >
           {:else if e.etat === 'a_venir'}
             <span class="muted small"
-              >· {t('epreuve.a_partir_du', { date: fmtDate(e.opensAt) })}</span
+              >· <Bidi text={t('epreuve.a_partir_du', { date: fmtDate(e.opensAt) })} /></span
             >
           {:else if e.etat === 'envoyee'}
             <span class="muted small">· {t('epreuve.envoyee')}</span>
           {:else if e.etat === 'notee' && e.score !== null}
             <span data-testid="note"
-              >· {t('epreuve.note', { note: fmtNumber(e.score), bareme: e.bareme })}</span
+              >· <Bidi
+                text={t('epreuve.note', { note: fmtNumber(e.score), bareme: e.bareme })}
+              /></span
             >
             {#if e.remediation}
               <p class="small">{t('epreuve.a_revoir')}</p>
               <ul class="revoir">
                 {#each e.aRevoir as l (l.id)}<li>
-                    <a href={resolve('/lecons/[id]', { id: l.id })}>{l.titleFr}</a>
+                    <a href={resolve('/lecons/[id]', { id: l.id })}><Bidi text={l.titleFr} /></a>
                   </li>{/each}
               </ul>
             {/if}

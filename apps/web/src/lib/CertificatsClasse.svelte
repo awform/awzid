@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import type { RenderedDoc } from '@awform/school';
@@ -141,7 +142,10 @@
     <input bind:value={extra.prenom_nom} maxlength="120" data-testid="cert-nom" /></label
   >
   {#each Object.keys(extra).filter((k) => k !== 'prenom_nom') as k (k)}
-    <label>{champ(k)} <input bind:value={extra[k]} maxlength="200" data-champ={k} /></label>
+    <label
+      ><Bidi text={champ(k)} />
+      <input bind:value={extra[k]} maxlength="200" data-champ={k} /></label
+    >
   {/each}
   <button type="submit" data-testid="cert-apercu">{t('classe.apercu')}</button>
 </form>
@@ -150,7 +154,7 @@
   <section class="card" data-testid="cert-preview">
     {#if !preview.eligible.ok}
       <p class="warnbox" data-testid="cert-non-eligible">
-        {t('classe.non_eligible', { raison: preview.eligible.raison ?? '' })}
+        <Bidi text={t('classe.non_eligible', { raison: preview.eligible.raison ?? '' })} />
       </p>
       {#if preview.eligible.aConfirmer === 'cc_partiel'}
         <label class="check" data-testid="confirmer-cc"
@@ -161,7 +165,9 @@
     {/if}
     {#if preview.document.missing.length}
       <p class="warnbox small">
-        {t('classe.champs_manquants', { champs: preview.document.missing.join(', ') })}
+        <Bidi
+          text={t('classe.champs_manquants', { champs: preview.document.missing.join(', ') })}
+        />
       </p>
     {/if}
     {#if preview.document.aValider}<p class="muted small">
@@ -169,13 +175,13 @@
       </p>{/if}
     <div class="doc">
       <div>
-        <h3>{preview.document.titleFr}</h3>
-        {#each preview.document.fr as l, i (i)}<p>{segText(l)}</p>{/each}
+        <h3><Bidi text={preview.document.titleFr} /></h3>
+        {#each preview.document.fr as l, i (i)}<p><Bidi text={segText(l)} /></p>{/each}
       </div>
       {#if preview.document.titleAr}
         <div dir="rtl" lang="ar" class="ar">
-          <h3>{preview.document.titleAr}</h3>
-          {#each preview.document.ar as l, i (i)}<p>{segText(l)}</p>{/each}
+          <h3><Bidi text={preview.document.titleAr} base="ar" /></h3>
+          {#each preview.document.ar as l, i (i)}<p><Bidi text={segText(l)} base="ar" /></p>{/each}
         </div>
       {/if}
     </div>
@@ -194,9 +200,9 @@
   <ul class="plain" data-testid="registre">
     {#each certs as c (c.id)}
       <li>
-        <strong>{c.number}</strong> · {pupilName(c.pupilId)} · {c.kind === 'hifz'
-          ? c.subject
-          : c.subject.toUpperCase()} · {fmtDate(c.issuedAt, { dateStyle: 'medium' })}
+        <strong><Bidi text={c.number} /></strong> · <Bidi text={pupilName(c.pupilId)} /> · <Bidi
+          text={c.kind === 'hifz' ? c.subject : c.subject.toUpperCase()}
+        /> · {fmtDate(c.issuedAt, { dateStyle: 'medium' })}
         <a
           href={resolve('/enseignant/certificat/[id]', { id: c.id })}
           data-testid="imprimer-{c.number}">{t('classe.imprimer')}</a
@@ -207,7 +213,7 @@
     {/each}
   </ul>
   <button type="button" onclick={() => download('certificats')} data-testid="export-registre"
-    >{t('classe.export_registre')}</button
+    ><Bidi text={t('classe.export_registre')} /></button
   >
 </section>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
@@ -47,16 +48,16 @@
   {/if}
   <p class="muted small">{t('rec.famille_aide')}</p>
   <p class="muted small">{t('rec.lecteur')}</p>
-  {#if error}<p class="card bad" role="alert">{error}</p>{/if}
+  {#if error}<p class="card bad" role="alert"><Bidi text={error} /></p>{/if}
   <ul class="list">
     {#each recitals as r (r.id)}
       <li class="card" data-testid="recital-famille">
-        <h2>{r.titre} — {fmtDate(`${r.jour}T12:00:00`, { dateStyle: 'long' })}</h2>
-        <p class="muted small">{r.classe}</p>
+        <h2><Bidi text={r.titre} /> — {fmtDate(`${r.jour}T12:00:00`, { dateStyle: 'long' })}</h2>
+        <p class="muted small"><Bidi text={r.classe} /></p>
         {#if r.passages.length}
           <p class="small">{t('rec.tires')} :</p>
           <ol>
-            {#each r.passages as p (p.passage)}<li>{p.libelle}</li>{/each}
+            {#each r.passages as p (p.passage)}<li><Bidi text={p.libelle} /></li>{/each}
           </ol>
         {/if}
         {#if r.resultat}
@@ -68,20 +69,24 @@
             <details>
               <summary>{t('rec.pour_parent')}</summary>
               <p>
-                {t('rec.note', {
-                  total: fmtNumber(r.resultat.total),
-                  mention: t(`hifz.mention_${r.resultat.mention}`),
-                  coran: fmtNumber(r.resultat.coran15),
-                })}
+                <Bidi
+                  text={t('rec.note', {
+                    total: fmtNumber(r.resultat.total),
+                    mention: t(`hifz.mention_${r.resultat.mention}`),
+                    coran: fmtNumber(r.resultat.coran15),
+                  })}
+                />
               </p>
             </details>
           {:else}
             <p data-testid="recital-resultat">
-              {t('rec.note', {
-                total: fmtNumber(r.resultat.total),
-                mention: t(`hifz.mention_${r.resultat.mention}`),
-                coran: fmtNumber(r.resultat.coran15),
-              })}
+              <Bidi
+                text={t('rec.note', {
+                  total: fmtNumber(r.resultat.total),
+                  mention: t(`hifz.mention_${r.resultat.mention}`),
+                  coran: fmtNumber(r.resultat.coran15),
+                })}
+              />
             </p>
           {/if}
         {:else}

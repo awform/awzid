@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { fmtDate, t } from '$lib/i18n';
@@ -45,7 +46,7 @@
   <section class="card">
     <p>{t('act.aide')}</p>
     <form onsubmit={send}>
-      <label for="code">{t('act.code')}</label>
+      <label for="code"><Bidi text={t('act.code')} /></label>
       <input
         id="code"
         bind:value={code}
@@ -58,14 +59,14 @@
       />
       <button type="submit" class="primary" data-testid="activer">{t('act.activer')}</button>
     </form>
-    {#if info}<p class="ok" role="status" data-testid="activation-ok">{info}</p>{/if}
-    {#if error}<p class="bad" role="alert">{error}</p>{/if}
+    {#if info}<p class="ok" role="status" data-testid="activation-ok"><Bidi text={info} /></p>{/if}
+    {#if error}<p class="bad" role="alert"><Bidi text={error} /></p>{/if}
   </section>
   <section class="card">
     <h2>{t('act.mes_acces')}</h2>
     <ul class="list">
       {#each acces as a (a.niveau + a.fin)}
-        <li>{t('act.acces', { niveau: a.niveau, date: fmtDate(a.fin) })}</li>
+        <li><Bidi text={t('act.acces', { niveau: a.niveau, date: fmtDate(a.fin) })} /></li>
       {:else}<li class="muted">{t('act.aucun')}</li>{/each}
     </ul>
   </section>

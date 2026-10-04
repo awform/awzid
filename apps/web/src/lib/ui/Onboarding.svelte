@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { kvGet, kvSet } from '$lib/idb';
   import { t } from '$lib/i18n';
@@ -39,12 +40,12 @@
     data-public={audience}
     aria-labelledby="bienvenue-titre"
   >
-    <h2 id="bienvenue-titre">{t(`bienvenue.${audience}.titre`)}</h2>
+    <h2 id="bienvenue-titre"><Bidi text={t(`bienvenue.${audience}.titre`)} /></h2>
     <ol>
       {#each steps as icon, i (icon)}
         <li>
           <span class="ic"><Icon name={icon} size={audience === 'enfant' ? 36 : 26} /></span>
-          <span>{t(`bienvenue.${audience}.${i + 1}`)}</span>
+          <span><Bidi text={t(`bienvenue.${audience}.${i + 1}`)} /></span>
         </li>
       {/each}
     </ol>

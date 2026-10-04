@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { carnetLabel } from '$lib/levels';
   import { resolve } from '$app/paths';
@@ -302,7 +303,7 @@
 <svelte:head><title>{t('app.nom')} — {t('hifz.titre')}</title></svelte:head>
 
 <h1>{t('hifz.titre')}</h1>
-{#if msg}<p class="card ok" role="status">{msg}</p>{/if}
+{#if msg}<p class="card ok" role="status"><Bidi text={msg} /></p>{/if}
 
 {#if loaded && !profile}
   <p class="card">
@@ -361,17 +362,19 @@
                   <td
                     ><label
                       ><input type="radio" name="years" value={r.years} bind:group={setup.years} />
-                      {t('hifz.rythme_n', { n: r.years })}</label
+                      <Bidi text={t('hifz.rythme_n', { n: r.years })} /></label
                     ></td
                   >
-                  <td>{t('hifz.lignes', { n: fmtNumber(r.linesPerDay) })}</td>
-                  <td>{t('hifz.juz_an', { n: fmtNumber(r.juzPerYear) })}</td>
+                  <td><Bidi text={t('hifz.lignes', { n: fmtNumber(r.linesPerDay) })} /></td>
+                  <td><Bidi text={t('hifz.juz_an', { n: fmtNumber(r.juzPerYear) })} /></td>
                   <td data-testid="seance-{r.years}"
-                    >{t('hifz.seance_plage', {
-                      a: f.startMinutes,
-                      b: f.endMinutes,
-                      c: f.cycle,
-                    })}</td
+                    ><Bidi
+                      text={t('hifz.seance_plage', {
+                        a: f.startMinutes,
+                        b: f.endMinutes,
+                        c: f.cycle,
+                      })}
+                    /></td
                   >
                 </tr>
               {/each}
@@ -391,10 +394,10 @@
         </select>
         <label class="check"
           ><input type="checkbox" bind:checked={setup.trial} />
-          <span>{t('hifz.essai', { n: 28 })}</span></label
+          <span><Bidi text={t('hifz.essai', { n: 28 })} /></span></label
         >
       {/if}
-      <p class="muted small">{t('hifz.sans_audio')}</p>
+      <p class="muted small"><Bidi text={t('hifz.sans_audio')} /></p>
       <div class="row">
         <button type="submit" class="primary" data-testid="commencer-plan"
           >{t('hifz.commencer')}</button
@@ -410,32 +413,38 @@
   <section class="card head">
     <p data-testid="plan-resume">
       {#if plan.mode === 'carnet'}
-        {carnetLabel(plan.bookCode ?? '')} — {t('hifz.semaine', {
-          n: view.week ?? 1,
-          total: pack?.book.semaines ?? 30,
-        })}
+        <Bidi text={carnetLabel(plan.bookCode ?? '')} /> — <Bidi
+          text={t('hifz.semaine', {
+            n: view.week ?? 1,
+            total: pack?.book.semaines ?? 30,
+          })}
+        />
       {:else if view.trial && !view.trial.done}
-        {t('hifz.essai_jour', { n: view.trial.day, total: 28 })}
+        <Bidi text={t('hifz.essai_jour', { n: view.trial.day, total: 28 })} />
       {:else}
-        {t('hifz.rythme_actuel', { n: plan.rhythmYears ?? 7 })}
+        <Bidi text={t('hifz.rythme_actuel', { n: plan.rhythmYears ?? 7 })} />
       {/if}
     </p>
     <p class="muted small">
-      {t('hifz.temps_jour', {
-        n: Math.round(minutesToday),
-        nouveau: Math.round(view.plan.minutes.nouveau),
-        recent: Math.round(view.plan.minutes.recent),
-        ancien: Math.round(view.plan.minutes.manzil),
-      })}
+      <Bidi
+        text={t('hifz.temps_jour', {
+          n: Math.round(minutesToday),
+          nouveau: Math.round(view.plan.minutes.nouveau),
+          recent: Math.round(view.plan.minutes.recent),
+          ancien: Math.round(view.plan.minutes.manzil),
+        })}
+      />
     </p>
     {#if view.mode === 'rythme' && view.load}
       <p class="small" data-testid="charge">
-        {t('hifz.charge', {
-          n: view.load.now,
-          a: view.load.start,
-          b: view.load.end,
-          c: view.cycle ?? 45,
-        })}
+        <Bidi
+          text={t('hifz.charge', {
+            n: view.load.now,
+            a: view.load.start,
+            b: view.load.end,
+            c: view.cycle ?? 45,
+          })}
+        />
       </p>
       {#if canManage}
         <label class="small"
@@ -466,12 +475,14 @@
       ></span>
     </div>
     <p class="small">
-      {plan.mode === 'carnet'
-        ? t('hifz.acquis_carnet', {
-            n: view.progress.acquiredParts,
-            total: view.progress.totalParts,
-          })
-        : t('hifz.progression', { n: fmtNumber(acquiredPages, { maximumFractionDigits: 1 }) })}
+      <Bidi
+        text={plan.mode === 'carnet'
+          ? t('hifz.acquis_carnet', {
+              n: view.progress.acquiredParts,
+              total: view.progress.totalParts,
+            })
+          : t('hifz.progression', { n: fmtNumber(acquiredPages, { maximumFractionDigits: 1 }) })}
+      />
     </p>
     <label class="check"
       ><input type="checkbox" bind:checked={masked} data-testid="masquer" />
@@ -498,7 +509,7 @@
     <form class="card pin" onsubmit={checkPin}>
       <label for="pin">{t('profils.code_parent')}</label>
       <input id="pin" inputmode="numeric" maxlength="4" autocomplete="off" bind:value={pin} />
-      {#if pinError}<p class="error" role="alert">{pinError}</p>{/if}
+      {#if pinError}<p class="error" role="alert"><Bidi text={pinError} /></p>{/if}
       <button type="submit" class="primary">{t('commun.valider')}</button>
     </form>
   {/if}
@@ -506,10 +517,10 @@
   {#if view.trial?.done && view.trial.suggestion && canManage}
     <section class="card warnbox" data-testid="fin-essai">
       <h2>{t('hifz.fin_essai')}</h2>
-      <p>{t('hifz.proposition', { n: view.trial.suggestion })}</p>
+      <p><Bidi text={t('hifz.proposition', { n: view.trial.suggestion })} /></p>
       <div class="row">
         <button type="button" class="primary" onclick={() => acceptRhythm(view!.trial!.suggestion!)}
-          >{t('hifz.accepter', { n: view.trial.suggestion })}</button
+          ><Bidi text={t('hifz.accepter', { n: view.trial.suggestion })} /></button
         >
         <button type="button" onclick={() => (editing = true)}>{t('hifz.autre_rythme')}</button>
       </div>
@@ -526,13 +537,15 @@
       {#each view.weekTasks as task (`${task.part}:${task.from}:${task.kind}`)}
         <article class="task">
           <h3>
-            {refLabel({ s: task.sura, from: task.from, to: task.to })}
+            <Bidi text={refLabel({ s: task.sura, from: task.from, to: task.to })} />
             <span class="tag"
-              >{task.kind === 'nouveau' ? t('hifz.a_apprendre') : t('hifz.a_reciter')}</span
+              ><Bidi
+                text={task.kind === 'nouveau' ? t('hifz.a_apprendre') : t('hifz.a_reciter')}
+              /></span
             >
             {#if task.track === 'renforce'}<span class="tag">{t('hifz.renforce')}</span>{/if}
           </h3>
-          {#if task.label}<p class="muted small">{task.label}</p>{/if}
+          {#if task.label}<p class="muted small"><Bidi text={task.label} /></p>{/if}
           <VerseText verses={texts[`w:${task.part}:${task.from}`] ?? []} {basmala} {masked} />
           {#if task.kind === 'nouveau'}
             {#if learned(task.part, task.from)}
@@ -549,7 +562,7 @@
           {:else}
             <div class="rate" role="group" aria-label={t('hifz.comment')}>
               {#each Q as q (q)}<button type="button" onclick={() => rate(task.part, q)} data-q={q}
-                  >{t(`hifz.q${q}`)}</button
+                  ><Bidi text={t(`hifz.q${q}`)} /></button
                 >{/each}
             </div>
           {/if}
@@ -559,7 +572,7 @@
       {/each}
     {:else if view.portion}
       <article class="task">
-        <h3>{view.portion.refs.map(refLabel).join(' ; ')}</h3>
+        <h3><Bidi text={view.portion.refs.map(refLabel).join(' ; ')} /></h3>
         <VerseText verses={texts.portion ?? []} {basmala} {masked} />
         {#if view.learnedToday}
           <p class="done" data-testid="appris">✓ {t('hifz.deja_appris')}</p>
@@ -579,7 +592,7 @@
     <details class="gestes">
       <summary>{t('hifz.gestes')}</summary>
       <ol>
-        {#each [1, 2, 3, 4, 5] as g (g)}<li>{t(`hifz.geste${g}`)}</li>{/each}
+        {#each [1, 2, 3, 4, 5] as g (g)}<li><Bidi text={t(`hifz.geste${g}`)} /></li>{/each}
       </ol>
     </details>
   </section>
@@ -589,14 +602,17 @@
     <h2><span class="num">②</span> {t('hifz.recent')}</h2>
     {#each view.plan.recent as it (it.key)}
       <article class="task" data-part={it.key}>
-        <h3>{label(it.key)} <span class="tag">{t('hifz.jplus', { n: it.step ?? 0 })}</span></h3>
+        <h3>
+          <Bidi text={label(it.key)} />
+          <span class="tag"><Bidi text={t('hifz.jplus', { n: it.step ?? 0 })} /></span>
+        </h3>
         <details bind:open={open[it.key]}>
           <summary>{t('hifz.voir_texte')}</summary>
           <VerseText verses={texts[it.key] ?? []} {basmala} {masked} />
         </details>
         <div class="rate" role="group" aria-label={t('hifz.comment')}>
           {#each Q as q (q)}<button type="button" onclick={() => rate(it.key, q)} data-q={q}
-              >{t(parentMode ? `hifz.p${q}` : `hifz.q${q}`)}</button
+              ><Bidi text={t(parentMode ? `hifz.p${q}` : `hifz.q${q}`)} /></button
             >{/each}
         </div>
       </article>
@@ -611,7 +627,7 @@
     {#each view.plan.manzil as it (it.key)}
       <article class="task" data-part={it.key}>
         <h3>
-          {label(it.key)}
+          <Bidi text={label(it.key)} />
           {#if it.fragile}<span class="tag fragile">{t('hifz.fragile')}</span>{/if}
         </h3>
         <details bind:open={open[it.key]}>
@@ -620,7 +636,7 @@
         </details>
         <div class="rate" role="group" aria-label={t('hifz.comment')}>
           {#each Q as q (q)}<button type="button" onclick={() => rate(it.key, q)} data-q={q}
-              >{t(parentMode ? `hifz.p${q}` : `hifz.q${q}`)}</button
+              ><Bidi text={t(parentMode ? `hifz.p${q}` : `hifz.q${q}`)} /></button
             >{/each}
         </div>
       </article>
@@ -629,10 +645,12 @@
     {/each}
     {#if view.plan.overdue.length}
       <p class="warn small" data-testid="dette">
-        {t('hifz.dette', {
-          n: view.plan.overdue.length,
-          minutes: Math.round(view.plan.debtMinutes),
-        })}
+        <Bidi
+          text={t('hifz.dette', {
+            n: view.plan.overdue.length,
+            minutes: Math.round(view.plan.debtMinutes),
+          })}
+        />
       </p>
     {/if}
     {#if view.plan.proposeRelief}
@@ -667,10 +685,10 @@
     <ul class="frise">
       {#each [...view.state.parts.values()].filter((p) => p.learnedDay !== null) as p (p.key)}
         <li>
-          <span class="lbl">{label(p.key)}</span>
+          <span class="lbl"><Bidi text={label(p.key)} /></span>
           <span class="steps">
             {#each [0, ...STEPS] as s, i (s)}<span class="st" class:ok={i === 0 || p.stage >= i}
-                >{i === 0 ? 'J0' : `J+${s}`}</span
+                ><Bidi text={i === 0 ? 'J0' : `J+${s}`} /></span
               >{/each}<span class="st" class:ok={p.stage >= MANZIL}>{t('hifz.roue')}</span>
           </span>
         </li>
@@ -685,19 +703,21 @@
     {#each teacherNotes as e (e.id)}
       {@const n = (e.details as { note?: { total: number; mention: string } } | null)?.note}
       <p>
-        <strong>{label(e.part)}</strong> — {fmtDate(e.day, { dateStyle: 'medium' })} —
+        <strong><Bidi text={label(e.part)} /></strong> — {fmtDate(e.day, { dateStyle: 'medium' })} —
         {#if isChild && profile && (profile.levelCode === 'en1' || profile.levelCode === 'en2')}
           <span class="star {STAR[n?.mention ?? 'bien']}">★</span>
-          {t(`hifz.bravo_${STAR[n?.mention ?? 'bien']}`)}
+          <Bidi text={t(`hifz.bravo_${STAR[n?.mention ?? 'bien']}`)} />
         {:else if n}
-          {t('hifz.note', { n: fmtNumber(n.total) })} · {t(`hifz.mention_${n.mention}`)}
+          <Bidi text={t('hifz.note', { n: fmtNumber(n.total) })} /> · <Bidi
+            text={t(`hifz.mention_${n.mention}`)}
+          />
         {/if}
       </p>
     {:else}
       <p class="muted">{t('hifz.pas_de_validation')}</p>
     {/each}
     {#if data.classes.length}<p class="muted small">
-        {t('hifz.classes', { noms: data.classes.map((c) => c.name).join(', ') })}
+        <Bidi text={t('hifz.classes', { noms: data.classes.map((c) => c.name).join(', ') })} />
       </p>{/if}
     <p class="muted small">{t('hifz.maitre_seul_juge')}</p>
   </section>

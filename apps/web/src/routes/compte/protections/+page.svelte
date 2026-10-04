@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
@@ -58,12 +59,14 @@
   {@const r = rows[p.id]}
   {#if r?.mineur}
     <section class="card" data-protections={p.id}>
-      <h2>{p.pseudonym}</h2>
+      <h2><Bidi text={p.pseudonym} /></h2>
       <ul class="list">
         {#each KEYS as k (k)}
           <li data-protection={k} data-actif={r[k]}>
-            <span class="state" class:on={r[k]}>{r[k] ? t('prot.oui') : t('prot.non')}</span>
-            {t(`prot.${k}`)}
+            <span class="state" class:on={r[k]}
+              ><Bidi text={r[k] ? t('prot.oui') : t('prot.non')} /></span
+            >
+            <Bidi text={t(`prot.${k}`)} />
           </li>
         {/each}
         {#if r.horaireNuit}<li>{t('prot.horaire')}</li>{/if}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { setActiveProfile } from '$lib/attempts';
@@ -107,12 +108,14 @@
 
   {#if current}
     <p class="muted small" data-testid="loi-pays">
-      {t('inscription.loi_pays', {
-        pays: countryName(country),
-        loi: t(`pays.loi.${current.law}`),
-        autorite: t(`pays.autorite.${current.authority}`),
-      })}
-      {t('inscription.loi_mineurs', { age: current.consentAge })}
+      <Bidi
+        text={t('inscription.loi_pays', {
+          pays: countryName(country),
+          loi: t(`pays.loi.${current.law}`),
+          autorite: t(`pays.autorite.${current.authority}`),
+        })}
+      />
+      <Bidi text={t('inscription.loi_mineurs', { age: current.consentAge })} />
     </p>
   {/if}
 
@@ -140,7 +143,8 @@
           required
           data-testid="consent-transfert"
         />
-        <span>{t('consent.transfert_hors_pays', { pays: countryName(country) })}</span></label
+        <span><Bidi text={t('consent.transfert_hors_pays', { pays: countryName(country) })} /></span
+        ></label
       >
     {/if}
     <label class="check"
@@ -149,7 +153,7 @@
     >
   </fieldset>
 
-  {#if error}<p class="error" role="alert" data-testid="erreur">{error}</p>{/if}
+  {#if error}<p class="error" role="alert" data-testid="erreur"><Bidi text={error} /></p>{/if}
   <button type="submit" class="primary" disabled={busy}>{t('inscription.bouton')}</button>
 </form>
 <p>{t('inscription.deja')} <a href={resolve('/connexion')}>{t('connexion.titre')}</a></p>

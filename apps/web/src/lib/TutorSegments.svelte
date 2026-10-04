@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { tanwinDisplay } from '@awform/content/text';
   import Ar from '$lib/Ar.svelte';
   import { t } from '$lib/i18n';
@@ -10,28 +11,32 @@
 
 {#each segments as s, i (i)}
   {#if s.t === 'texte'}
-    <p>{s.v.trim()}</p>
+    <p><Bidi text={s.v.trim()} /></p>
   {:else if s.t === 'coran'}
     <blockquote class="coran" lang="ar" dir="rtl">
       <span class="quran-text" data-ref={s.ref}>{tanwinDisplay(s.text)}</span>
-      <footer class="src">{t('tuteur.source_coran', { ref: s.ref })}</footer>
+      <footer class="src">
+        <Bidi text={t('tuteur.source_coran', { ref: s.ref })} base="ar" />
+      </footer>
     </blockquote>
   {:else if s.t === 'registre'}
     <blockquote class="reg" data-registre={s.id}>
       {#if s.texteAr}<Ar text={s.texteAr} tag="p" />{/if}
       <footer class="src">
-        {t('tuteur.source_hadith', {
-          recueil: s.recueil ?? '',
-          numero: s.numero ?? '',
-        })}{#if s.degre}
-          — {s.degre}{/if}
+        <Bidi
+          text={t('tuteur.source_hadith', {
+            recueil: s.recueil ?? '',
+            numero: s.numero ?? '',
+          })}
+        />{#if s.degre}
+          — <Bidi text={s.degre} />{/if}
       </footer>
     </blockquote>
   {:else}
     <div class="expl" data-explication={s.id}>
       {#if s.ar}<Ar text={s.ar} tag="p" />{/if}
-      <p>{s.texteFr}</p>
-      <p class="src">{t('tuteur.source_lecon', { source: s.source })}</p>
+      <p><Bidi text={s.texteFr} /></p>
+      <p class="src"><Bidi text={t('tuteur.source_lecon', { source: s.source })} /></p>
     </div>
   {/if}
 {/each}

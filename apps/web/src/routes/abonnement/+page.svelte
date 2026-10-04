@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
@@ -31,26 +32,36 @@
 
 <h1>{t('abo.titre')}</h1>
 {#if paid}<p class="card ok" role="status" data-testid="paiement-ok">{t('abo.paiement_ok')}</p>{/if}
-{#if msg}<p class="card ok" role="status">{msg}</p>{/if}
+{#if msg}<p class="card ok" role="status"><Bidi text={msg} /></p>{/if}
 {#if data?.mode === 'simule'}<p class="card warn">{t('offre.demo')}</p>{/if}
 
 {#if loaded && !data}
   <p class="card">{t('abo.connexion')}</p>
 {:else if data}
   <section class="card" data-testid="formule-actuelle" data-plan={data.droits.plan}>
-    <h2>{t(`offre.nom_${data.droits.plan}`)}</h2>
-    {#if data.droits.jusquAu}<p>{t('abo.jusqu_au', { date: fmtDate(data.droits.jusquAu) })}</p>{/if}
+    <h2><Bidi text={t(`offre.nom_${data.droits.plan}`)} /></h2>
+    {#if data.droits.jusquAu}<p>
+        <Bidi text={t('abo.jusqu_au', { date: fmtDate(data.droits.jusquAu) })} />
+      </p>{/if}
     <ul>
       <li>
-        {data.droits.droits.niveaux === 'tous'
-          ? t('offre.d_tous')
-          : t('offre.d_decouverte', { n: data.droits.droits.leconsOuvertes ?? 0 })}
+        <Bidi
+          text={data.droits.droits.niveaux === 'tous'
+            ? t('offre.d_tous')
+            : t('offre.d_decouverte', { n: data.droits.droits.leconsOuvertes ?? 0 })}
+        />
       </li>
-      <li>{data.droits.droits.horsLigne ? t('offre.d_hors_ligne') : t('offre.d_en_ligne')}</li>
       <li>
-        {data.droits.droits.hifz === 'complet'
-          ? t('offre.d_hifz_complet')
-          : t('offre.d_hifz_carnet')}
+        <Bidi
+          text={data.droits.droits.horsLigne ? t('offre.d_hors_ligne') : t('offre.d_en_ligne')}
+        />
+      </li>
+      <li>
+        <Bidi
+          text={data.droits.droits.hifz === 'complet'
+            ? t('offre.d_hifz_complet')
+            : t('offre.d_hifz_carnet')}
+        />
       </li>
       {#if data.droits.droits.tuteurIA}<li>{t('offre.d_tuteur')}</li>{/if}
     </ul>
@@ -69,7 +80,7 @@
       <h2>{t('abo.profils')}</h2>
       <ul>
         {#each data.profils as p (p.id)}<li data-profil-plan={p.plan}>
-            {p.pseudonym} : {t(`offre.nom_${p.plan}`)}
+            <Bidi text={p.pseudonym} /> : <Bidi text={t(`offre.nom_${p.plan}`)} />
           </li>{/each}
       </ul>
     </section>
@@ -80,12 +91,16 @@
     <ul class="list" data-testid="abonnements">
       {#each data.abonnements as s (s.id)}
         <li data-abonnement={s.plan} data-status={s.status}>
-          <strong>{t(`offre.nom_${s.plan}`)}</strong> · {t(`abo.statut_${s.status}`)}
-          {#if s.seats}· {t('abo.places', { n: s.seats })}{/if}
-          {#if s.fin}· {t('abo.fin', { date: fmtDate(s.fin) })}{/if}
+          <strong><Bidi text={t(`offre.nom_${s.plan}`)} /></strong> · <Bidi
+            text={t(`abo.statut_${s.status}`)}
+          />
+          {#if s.seats}· <Bidi text={t('abo.places', { n: s.seats })} />{/if}
+          {#if s.fin}· <Bidi text={t('abo.fin', { date: fmtDate(s.fin) })} />{/if}
           {#if (s.status === 'active' || s.status === 'essai') && !s.annulationFinPeriode}
             <button type="button" class="small" onclick={() => stop(s.id)} data-testid="annuler"
-              >{s.status === 'essai' ? t('abo.arreter_essai') : t('abo.annuler')}</button
+              ><Bidi
+                text={s.status === 'essai' ? t('abo.arreter_essai') : t('abo.annuler')}
+              /></button
             >
           {/if}
         </li>
@@ -101,10 +116,10 @@
       <ul class="list">
         {#each data.paiements as p (p.id)}
           <li>
-            {fmtDate(p.date)} · {t(`offre.nom_${p.plan}`)} · {price(p.montant, p.devise)} · {t(
-              `paie.moyen_${p.prestataire}`,
-            )}
-            · {t(`abo.paiement_${p.status}`)}
+            {fmtDate(p.date)} · <Bidi text={t(`offre.nom_${p.plan}`)} /> · <Bidi
+              text={price(p.montant, p.devise)}
+            /> · <Bidi text={t(`paie.moyen_${p.prestataire}`)} />
+            · <Bidi text={t(`abo.paiement_${p.status}`)} />
           </li>
         {/each}
       </ul>

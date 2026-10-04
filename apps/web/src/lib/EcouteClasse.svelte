@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { note, type Counters } from '@awform/hifz';
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
@@ -84,14 +85,14 @@
 
 <section class="card" data-testid="ecoute">
   <h2>{t('ecoute.titre')}</h2>
-  <p class="muted small">{t('ecoute.aide', { n: ecouteJours })}</p>
+  <p class="muted small"><Bidi text={t('ecoute.aide', { n: ecouteJours })} /></p>
   <ul class="plain">
     {#each recs as r (r.id)}
       <li class="devoir" data-recitation={r.id}>
         <div>
-          <strong>{r.pseudonym}</strong> · {r.part} ·
+          <strong><Bidi text={r.pseudonym} /></strong> · <Bidi text={r.part} /> ·
           <span class="muted small">{fmtDate(r.createdAt, { dateStyle: 'medium' })}</span>
-          {#if r.grade}· {t('envoi.note', { n: r.grade.note.total })}{/if}
+          {#if r.grade}· <Bidi text={t('envoi.note', { n: r.grade.note.total })} />{/if}
         </div>
         {#if audioUrl[r.id]}
           <audio controls src={audioUrl[r.id]} data-testid="ecoute-audio"></audio>
@@ -107,7 +108,7 @@
           <form class="form" onsubmit={(e) => noter(e, r.id)} data-testid="ecoute-note">
             {#each FIELDS as f (f)}
               <label class="count"
-                ><span>{t(`ens.c_${f}`)}</span>
+                ><span><Bidi text={t(`ens.c_${f}`)} /></span>
                 <input type="number" min="0" max="50" bind:value={counters[f]} /></label
               >
             {/each}
@@ -116,13 +117,15 @@
               <input type="number" min="0" max="4" bind:value={counters.fluidite} /></label
             >
             <p class="live">
-              {t('ens.note_calculee', {
-                memo: fmtNumber(live.memorisation),
-                tajwid: fmtNumber(live.tajwid),
-                fluidite: fmtNumber(live.fluidite),
-                total: fmtNumber(live.total),
-                mention: t(`hifz.mention_${live.mention}`),
-              })}
+              <Bidi
+                text={t('ens.note_calculee', {
+                  memo: fmtNumber(live.memorisation),
+                  tajwid: fmtNumber(live.tajwid),
+                  fluidite: fmtNumber(live.fluidite),
+                  total: fmtNumber(live.total),
+                  mention: t(`hifz.mention_${live.mention}`),
+                })}
+              />
             </p>
             <button type="submit" class="primary" data-testid="ecoute-enregistrer"
               >{t('ens.enregistrer')}</button

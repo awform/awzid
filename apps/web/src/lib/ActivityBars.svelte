@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { fmtDate, t } from '$lib/i18n';
 
   /**
@@ -42,14 +43,20 @@
   >
     {#each days as d, i (d.day)}
       <div class="col" title={label(d)}>
-        {#if i === best && total(d) > 0}<span class="val">{total(d)}</span>{/if}
+        {#if i === best && total(d) > 0}<span class="val"><Bidi text={total(d)} /></span>{/if}
         <span class="bar" style:height={`${(total(d) / max) * 100}%`}></span>
       </div>
     {/each}
   </div>
   <div class="axis">
-    <span>{days[0] ? fmtDate(days[0].day, { day: 'numeric', month: 'short' }) : ''}</span>
-    <span>{days.at(-1) ? fmtDate(days.at(-1)!.day, { day: 'numeric', month: 'short' }) : ''}</span>
+    <span
+      ><Bidi text={days[0] ? fmtDate(days[0].day, { day: 'numeric', month: 'short' }) : ''} /></span
+    >
+    <span
+      ><Bidi
+        text={days.at(-1) ? fmtDate(days.at(-1)!.day, { day: 'numeric', month: 'short' }) : ''}
+      /></span
+    >
   </div>
   <details>
     <summary>{t('tableau.voir_tableau')}</summary>
@@ -63,9 +70,9 @@
       <tbody>
         {#each days as d (d.day)}
           <tr
-            ><td>{fmtDate(d.day, { dateStyle: 'short' })}</td><td>{d.reponses}</td><td
-              >{d.traces}</td
-            ><td>{d.cartes}</td><td>{d.hifz}</td></tr
+            ><td>{fmtDate(d.day, { dateStyle: 'short' })}</td><td><Bidi text={d.reponses} /></td><td
+              ><Bidi text={d.traces} /></td
+            ><td><Bidi text={d.cartes} /></td><td><Bidi text={d.hifz} /></td></tr
           >
         {/each}
       </tbody>

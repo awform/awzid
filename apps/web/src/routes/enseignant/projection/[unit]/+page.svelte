@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount, setContext } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
@@ -64,7 +65,9 @@
 <div class="bar">
   <a href={resolve('/enseignant')}>{t('projection.retour')}</a>
   <span class="muted"
-    >{unitLabel(u)} · {t(`projection.partie.${cur}`)} ({i + 1}/{slides.length})</span
+    ><Bidi text={unitLabel(u)} /> · <Bidi text={t(`projection.partie.${cur}`)} /> (<Bidi
+      text={i + 1}
+    />/<Bidi text={slides.length} />)</span
   >
   <span class="nav">
     <button
@@ -86,15 +89,16 @@
 <main class="slide" data-testid="projection" data-partie={cur} aria-live="polite">
   {#if cur === 'titre'}
     <Ar tag="h1" text={L.titre_ar} {lettres} />
-    <p class="fr">{L.titre_fr}</p>
+    <p class="fr"><Bidi text={L.titre_fr} /></p>
     {#if lettres.length}<p class="fam" lang="ar" dir="rtl">
-        {#each lettres as x, k (k)}<span class="c{k % 4}">{x.l}</span>{/each}
+        {#each lettres as x, k (k)}<span class="c{k % 4}"><Bidi text={x.l} base="ar" /></span
+          >{/each}
       </p>{/if}
   {:else if cur === 'lettres'}
     <div class="grid">
       {#each lettres as x, k (k)}
         <div class="letter">
-          <span class="big c{k % 4}" lang="ar">{x.l}</span>
+          <span class="big c{k % 4}" lang="ar"><Bidi text={x.l} base="ar" /></span>
           {#if x.nom_ar}<Ar text={x.nom_ar} />{/if}
         </div>
       {/each}

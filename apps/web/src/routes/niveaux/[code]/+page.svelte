@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
@@ -46,8 +47,8 @@
     >
   {:else}<a href={resolve('/')}>{t('niveau.retour')}</a>{/if}
 </p>
-<h1>{t('niveau.titre', { level: data.level })}</h1>
-{#if profile}<p class="profil">{profile.pseudonym}</p>{/if}
+<h1><Bidi text={t('niveau.titre', { level: data.level })} /></h1>
+{#if profile}<p class="profil"><Bidi text={profile.pseudonym} /></p>{/if}
 <p class="offline" data-testid="etat-hors-ligne">
   {#if offlineState === 'local' || offlineState === 'fait'}{t('niveau.disponible')}
   {:else if offlineState === 'en_cours'}{t('niveau.en_cours')}
@@ -59,11 +60,11 @@
   {#each data.units as u (u.id)}
     <li class={u.kind}>
       <a href={resolve('/lecons/[id]', { id: u.id })} data-testid="unit">
-        <span class="label">{unitLabel(u)}</span>
-        <span class="fr">{u.titleFr}</span>
+        <span class="label"><Bidi text={unitLabel(u)} /></span>
+        <span class="fr"><Bidi text={u.titleFr} /></span>
         {#if status[u.id] && status[u.id] !== 'ouverte'}<span
             class="st {status[u.id]}"
-            data-testid="statut">{t(`statut.${status[u.id]}`)}</span
+            data-testid="statut"><Bidi text={t(`statut.${status[u.id]}`)} /></span
           >{/if}
         <Ar text={u.titleAr} />
       </a>

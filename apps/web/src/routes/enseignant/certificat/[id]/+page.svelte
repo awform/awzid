@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
@@ -57,10 +58,10 @@
       >{t('classe.retour_classe')}</a
     >{/if}
   <button type="button" class="primary" onclick={() => window.print()} data-testid="imprimer"
-    >{t('classe.imprimer_pdf')}</button
+    ><Bidi text={t('classe.imprimer_pdf')} /></button
   >
 </div>
-{#if error}<p class="card" role="alert">{error}</p>{/if}
+{#if error}<p class="card" role="alert"><Bidi text={error} /></p>{/if}
 {#if cert && !cert.revokedAt}
   <form class="noprint annuler" onsubmit={annuler}>
     <label
@@ -75,40 +76,45 @@
   <article class="certificat" data-testid="certificat">
     <div class="cols" class:single={!d.titleAr}>
       <section lang="fr">
-        <h1>{d.titleFr}</h1>
+        <h1><Bidi text={d.titleFr} /></h1>
         {#each d.fr as line, i (i)}
           <p>
-            {#each line as s, j (j)}{#if s.b}<strong>{s.t}</strong>{:else}{s.t}{/if}{/each}
+            {#each line as s, j (j)}{#if s.b}<strong><Bidi text={s.t} /></strong>{:else}<Bidi
+                  text={s.t}
+                />{/if}{/each}
           </p>
         {/each}
       </section>
       {#if d.titleAr}
         <section dir="rtl" lang="ar" class="ar">
-          <h1>{d.titleAr}</h1>
+          <h1><Bidi text={d.titleAr} base="ar" /></h1>
           {#each d.ar as line, i (i)}
             <p>
-              {#each line as s, j (j)}{#if s.b}<strong>{s.t}</strong>{:else}{s.t}{/if}{/each}
+              {#each line as s, j (j)}{#if s.b}<strong><Bidi text={s.t} base="ar" /></strong
+                  >{:else}<Bidi text={s.t} base="ar" />{/if}{/each}
             </p>
           {/each}
         </section>
       {/if}
     </div>
     <div class="signs">
-      {#each d.signatures as s, i (i)}<div class="sign">{s}</div>{/each}
+      {#each d.signatures as s, i (i)}<div class="sign"><Bidi text={s} /></div>{/each}
     </div>
     <div class="foot">
-      <p class="numero" data-testid="numero">{t('classe.numero', { numero: cert.number })}</p>
+      <p class="numero" data-testid="numero">
+        <Bidi text={t('classe.numero', { numero: cert.number })} />
+      </p>
       {#if qr && cert.verifCode}
         <figure class="qr" data-testid="qr-verification">
           <svg viewBox="0 0 {qr.size} {qr.size}" role="img" aria-label={t('verif.qr_aria')}
             ><rect width={qr.size} height={qr.size} fill="#fff" /><path d={qr.d} fill="#000" /></svg
           >
-          <figcaption>{t('verif.qr_legende', { code: cert.verifCode })}</figcaption>
+          <figcaption><Bidi text={t('verif.qr_legende', { code: cert.verifCode })} /></figcaption>
         </figure>
       {/if}
     </div>
     {#if cert.revokedAt}<p class="annule" role="status">
-        {t('verif.annule_court', { motif: cert.revokeReason ?? '' })}
+        <Bidi text={t('verif.annule_court', { motif: cert.revokeReason ?? '' })} />
       </p>{/if}
     {#if d.aValider}<p class="small noprint">{t('classe.modele_a_valider')}</p>{/if}
   </article>

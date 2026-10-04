@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
   import { isReligionLevel } from '$lib/api';
@@ -27,13 +28,13 @@
 <svelte:head><title>{t('app.nom')} — {t('onglets.sciences')}</title></svelte:head>
 
 <h1>{t('onglets.sciences')}</h1>
-<p class="muted">{t('sciences.intro')}</p>
+<p class="muted"><Bidi text={t('sciences.intro')} /></p>
 {#if data.offline}<p class="card">{t('arabe.hors_ligne')}</p>{/if}
 
 {#each groups as g (g.titre)}
   <section class="card">
-    <h2>{t(g.titre)}</h2>
-    <p class="muted small">{t(g.texte)}</p>
+    <h2><Bidi text={t(g.titre)} /></h2>
+    <p class="muted small"><Bidi text={t(g.texte)} /></p>
     <ul class="levels">
       {#each g.list as l (l.code)}
         <li>
@@ -42,9 +43,9 @@
             data-testid="niveau-religion"
             data-level={l.code}
           >
-            <strong>{l.codeFr ?? l.code}</strong> — {l.titleFr}
+            <strong><Bidi text={l.codeFr ?? l.code} /></strong> — <Bidi text={l.titleFr} />
             {#if l.titreAr}<Ar text={l.titreAr} />{/if}
-            <small>{t('arabe.unites', { n: l.units })}</small>
+            <small><Bidi text={t('arabe.unites', { n: l.units })} /></small>
             {#if l.apercu}<span class="soon" data-testid="apercu">{t('sciences.apercu')}</span>{/if}
           </a>
         </li>

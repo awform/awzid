@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
@@ -115,7 +116,7 @@
   </p>
 {:else if !settings?.ecole}
   <section class="card">
-    <p>{t('ecole.intro', { minutes: settings?.idleMinutes ?? 10 })}</p>
+    <p><Bidi text={t('ecole.intro', { minutes: settings?.idleMinutes ?? 10 })} /></p>
     <button type="button" class="primary" onclick={() => enable(true)} data-testid="activer-ecole"
       >{t('ecole.activer')}</button
     >
@@ -133,14 +134,14 @@
           disabled={!codes[p.id]}
         >
           <Sym id={p.avatar ?? 'etoile'} size={56} />
-          <span>{p.pseudonym}</span>
+          <span><Bidi text={p.pseudonym} /></span>
           {#if !codes[p.id]}<small class="muted">{t('ecole.code_a_definir')}</small>{/if}
         </button>
       {/each}
     </div>
   {:else}
     <section class="card code">
-      <h2>{chosen.pseudonym}</h2>
+      <h2><Bidi text={chosen.pseudonym} /></h2>
       <p>{t('ecole.mon_code')}</p>
       <div class="dots" aria-live="polite">
         {#each [0, 1, 2, 3] as k (k)}<span class:on={entry.length > k}></span>{/each}
@@ -155,7 +156,7 @@
           >
         {/each}
       </div>
-      {#if error}<p class="retry" role="alert">{error}</p>{/if}
+      {#if error}<p class="retry" role="alert"><Bidi text={error} /></p>{/if}
       <button type="button" onclick={() => (chosen = null)}>{t('commun.retour')}</button>
     </section>
   {/if}
@@ -178,7 +179,7 @@
             autocomplete="off"
             bind:value={adultPin}
           />
-          {#if pinError}<p class="retry" role="alert">{pinError}</p>{/if}
+          {#if pinError}<p class="retry" role="alert"><Bidi text={pinError} /></p>{/if}
           <button type="submit" class="primary">{t('commun.valider')}</button>
         </form>
       {:else}
@@ -187,11 +188,11 @@
         </p>
       {/if}
     {:else}
-      {#if info}<p role="status">{info}</p>{/if}
+      {#if info}<p role="status"><Bidi text={info} /></p>{/if}
       <h3>{t('ecole.codes')}</h3>
       {#each profiles as p (p.id)}
         <div class="row">
-          <span>{p.pseudonym}</span>
+          <span><Bidi text={p.pseudonym} /></span>
           <button type="button" onclick={() => ((setup = p), (setupCode = []))} data-setup={p.id}
             >{t('ecole.definir')}</button
           >
@@ -200,7 +201,7 @@
       {/each}
       {#if setup}
         <div class="setup">
-          <p>{t('ecole.code_de', { nom: setup.pseudonym, n: setupCode.length })}</p>
+          <p><Bidi text={t('ecole.code_de', { nom: setup.pseudonym, n: setupCode.length })} /></p>
           <div class="keys">
             {#each SYMBOLS as s (s.id)}
               <button
@@ -227,7 +228,7 @@
           <button
             type="button"
             class:primary={settings?.idleMinutes === m}
-            onclick={() => setIdle(m)}>{t('ecole.minutes', { n: m })}</button
+            onclick={() => setIdle(m)}><Bidi text={t('ecole.minutes', { n: m })} /></button
           >
         {/each}
       </div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import Ar from './Ar.svelte';
   import Illus from './Illus.svelte';
   import { t } from './i18n';
@@ -37,8 +38,8 @@
 </script>
 
 <section class="ex" data-type={type}>
-  <h3>{t('epreuve.exercice', { n })}</h3>
-  {#if str(ex.consigne_fr)}<p class="consigne">{str(ex.consigne_fr)}</p>{/if}
+  <h3><Bidi text={t('epreuve.exercice', { n })} /></h3>
+  {#if str(ex.consigne_fr)}<p class="consigne"><Bidi text={str(ex.consigne_fr)} /></p>{/if}
   {#if type === 'premiere_lettre' || type === 'ecoute' || type === 'complete'}
     {#each arr(ex.items) as it, k (k)}
       <div class="item">
@@ -67,7 +68,7 @@
       <div class="item">
         {#if it.img}<Illus k={str(it.img)} cls="mini" />{/if}
         {#if str(it.ar)}<Ar text={str(it.ar)} />{/if}
-        {#if str(it.fr)}<span>{str(it.fr)}</span>{/if}
+        {#if str(it.fr)}<span><Bidi text={str(it.fr)} /></span>{/if}
         <div class="opts">
           <button
             type="button"
@@ -126,9 +127,12 @@
           {/each}
         </div>
         <p class="ar-big" dir="rtl">
-          {seq(k)
-            .map((j) => mots[j])
-            .join(' ')}
+          <Bidi
+            text={seq(k)
+              .map((j) => mots[j])
+              .join(' ')}
+            base="ar"
+          />
         </p>
         <button type="button" onclick={() => set(k, { sequence: [] })}
           >{t('epreuve.effacer')}</button

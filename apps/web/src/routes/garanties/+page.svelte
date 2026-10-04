@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
 
@@ -28,13 +29,13 @@
 <ol class="garanties" data-testid="garanties">
   {#each ITEMS as k (k)}
     <li class="card" data-garantie={k}>
-      <h2>{t(`gar.${k}_titre`)}</h2>
-      <p>{t(`gar.${k}`)}</p>
-      <p class="muted small">{t(`gar.${k}_preuve`)}</p>
+      <h2><Bidi text={t(`gar.${k}_titre`)} /></h2>
+      <p><Bidi text={t(`gar.${k}`)} /></p>
+      <p class="muted small"><Bidi text={t(`gar.${k}_preuve`)} /></p>
     </li>
   {/each}
 </ol>
-<p class="muted small">{t('gar.contact')}</p>
+<p class="muted small"><Bidi text={t('gar.contact')} /></p>
 <p><a href={resolve('/')}>{t('gar.retour')}</a></p>
 
 <style>

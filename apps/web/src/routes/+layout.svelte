@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import '../app.css';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
@@ -143,18 +144,19 @@
             data-tab={x.id}
           >
             <span class="ti"><Icon name={x.icon} size={audience === 'enfant' ? 28 : 24} /></span>
-            <span class="tl">{t(`nav.${x.id}`)}</span>
+            <span class="tl"><Bidi text={t(`nav.${x.id}`)} /></span>
           </a>
         {/each}
       </nav>
     {/if}
     <span class="spacer"></span>
     {#if pending > 0}<span class="chip" data-testid="en-attente" title={t('entete.attente_titre')}
-        ><Icon name="rafraichir" size={16} /><span class="chip-n" aria-hidden="true">{pending}</span
-        ><span class="chip-t">{t('entete.attente', { n: pending })}</span></span
+        ><Icon name="rafraichir" size={16} /><span class="chip-n" aria-hidden="true"
+          ><Bidi text={pending} /></span
+        ><span class="chip-t"><Bidi text={t('entete.attente', { n: pending })} /></span></span
       >{/if}
     {#if profile}
-      <span class="who" data-testid="eleve-actif">{profile.pseudonym}</span>
+      <span class="who" data-testid="eleve-actif"><Bidi text={profile.pseudonym} /></span>
       {#if me?.profiles && me.profiles.length > 1}
         <button
           type="button"

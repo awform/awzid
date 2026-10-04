@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { tanwinDisplay } from '@awform/content/text';
   import type { Exercise, LanguageExercise, Lettre } from '@awform/content/types';
   import {
@@ -114,10 +115,12 @@
 
 <section class="ex" data-exercise={id} data-type={ex.type}>
   <header>
-    <h3><Ar text={titleAr} /> <span class="fr">{titleFr}</span></h3>
-    {#if consigne}<p class="consigne" lang={consigne.lang}>{consigne.text}</p>{/if}
+    <h3><Ar text={titleAr} /> <span class="fr"><Bidi text={titleFr} /></span></h3>
+    {#if consigne}<p class="consigne" lang={consigne.lang}><Bidi text={consigne.text} /></p>{/if}
     {#if lang}<p class="score" aria-live="polite">
-        ★ {score} / {total}{score === total && total ? t('exo.bravo_suffixe') : ''}
+        ★ <Bidi text={score} /> / <Bidi text={total} /><Bidi
+          text={score === total && total ? t('exo.bravo_suffixe') : ''}
+        />
       </p>{/if}
   </header>
 
@@ -127,12 +130,15 @@
         <div class="q" class:ok={found[i]} data-item={i}>
           <Illus k={it.img} label={it.fr ?? ''} />
           <div class="blank ar" dir="rtl" lang="ar">
-            <u>{found[i] ? it.reponse : '?'}</u>{it.suite}
+            <u><Bidi text={found[i] ? it.reponse : '?'} base="ar" /></u><Bidi
+              text={it.suite}
+              base="ar"
+            />
           </div>
           <div class="opts" dir="rtl">
             {#each it.options as o, k (k)}
               <button type="button" class="ar" lang="ar" onclick={() => answer(i, { choice: o })}
-                >{o}</button
+                ><Bidi text={o} base="ar" /></button
               >
             {/each}
           </div>
@@ -150,7 +156,7 @@
           class:miss={retry[k]}
           lang="ar"
           data-item={k}
-          onclick={() => answer(k, { touched: true })}>{x}</button
+          onclick={() => answer(k, { touched: true })}><Bidi text={x} base="ar" /></button
         >
       {/each}
     </div>
@@ -167,7 +173,7 @@
           data-side="a"
           data-k={i}
           onclick={() => pick('a', i)}
-          ><span class="tag">{i + 1}</span><Ar text={it.ar} {lettres} /></button
+          ><span class="tag"><Bidi text={i + 1} /></span><Ar text={it.ar} {lettres} /></button
         >
         <button
           type="button"
@@ -177,7 +183,7 @@
           data-k={j}
           onclick={() => pick('b', j)}
           >{#if rj?.img}<Illus k={rj.img} label={rj.fr ?? ''} />{:else}<span class="fr"
-              >{rj?.fr}</span
+              ><Bidi text={rj?.fr} /></span
             >{/if}</button
         >
       {/each}
@@ -210,7 +216,7 @@
         <div class="vfi" class:ok={found[i]} data-item={i}>
           {#if it.img}<Illus k={it.img} />{/if}
           {#if it.ar}<Ar text={it.ar} {lettres} />{/if}
-          {#if it.fr}<p class="fr">{it.fr}</p>{/if}
+          {#if it.fr}<p class="fr"><Bidi text={it.fr} /></p>{/if}
           <div class="opts">
             <button type="button" data-v="1" onclick={() => answer(i, { value: true })}
               ><span class="ar" lang="ar">صَحِيحٌ</span> ✓</button
@@ -244,7 +250,7 @@
               >
             {/each}
           </div>
-          {#if it.fr}<p class="fr">{it.fr}</p>{/if}
+          {#if it.fr}<p class="fr"><Bidi text={it.fr} /></p>{/if}
           {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
         </li>
       {/each}
@@ -276,18 +282,18 @@
             {/each}
           </div>
           <p class="out ar" dir="rtl" lang="ar" class:good={found[i]}>
-            {tanwinDisplay(ordreText(i))}
+            <Bidi text={tanwinDisplay(ordreText(i))} base="ar" />
           </p>
           {#if !found[i]}<button type="button" class="reset" onclick={() => (seq[i] = [])}
               >{t('exo.recommencer')}</button
             >{/if}
-          {#if it.fr}<p class="fr">{it.fr}</p>{/if}
+          {#if it.fr}<p class="fr"><Bidi text={it.fr} /></p>{/if}
           {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
         </li>
       {/each}
     </ol>
   {:else}
-    <p class="later">{t('exo.plus_tard', { type: ex.type })}</p>
+    <p class="later"><Bidi text={t('exo.plus_tard', { type: ex.type })} /></p>
   {/if}
 </section>
 

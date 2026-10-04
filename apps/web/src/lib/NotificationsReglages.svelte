@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { locale, t } from '$lib/i18n';
   import { call } from '$lib/session';
@@ -160,8 +161,8 @@
       >
     </form>
   {/if}
-  {#if msg}<p role="status" class="ok">{msg}</p>{/if}
-  {#if error}<p role="alert" class="bad">{error}</p>{/if}
+  {#if msg}<p role="status" class="ok"><Bidi text={msg} /></p>{/if}
+  {#if error}<p role="alert" class="bad"><Bidi text={error} /></p>{/if}
 </section>
 
 <style>

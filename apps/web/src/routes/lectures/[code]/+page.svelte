@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount, setContext } from 'svelte';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
@@ -54,12 +55,12 @@
   <article class="livret" data-testid="livret" data-code={pack.code}>
     <header>
       <h1><Ar text={str(B.titre_ar)} /></h1>
-      <p class="sub">{str(B.titre_fr)}</p>
+      <p class="sub"><Bidi text={str(B.titre_fr)} /></p>
     </header>
 
     {#if p === 0 && B.couverture}
       <Scene spec={B.couverture as SceneSpec} lettres={[]} />
-      <p class="muted">{str(B.resume_fr)}</p>
+      <p class="muted"><Bidi text={str(B.resume_fr)} /></p>
     {/if}
 
     {#if p >= 1 && p <= pages.length}
@@ -74,9 +75,9 @@
           class="small"
           onclick={() => (showFr = !showFr)}
           data-testid="traduction"
-          >{showFr ? t('bib.cacher_traduction') : t('bib.voir_traduction')}</button
+          ><Bidi text={showFr ? t('bib.cacher_traduction') : t('bib.voir_traduction')} /></button
         >
-        {#if showFr}<p class="fr" data-testid="texte-fr">{str(pg.fr)}</p>{/if}
+        {#if showFr}<p class="fr" data-testid="texte-fr"><Bidi text={str(pg.fr)} /></p>{/if}
       </section>
     {/if}
 
@@ -96,7 +97,7 @@
           <h2>{t('bib.mes_mots')}</h2>
           <ul class="gloss">
             {#each glossaire as g, i (i)}<li>
-                <Ar text={str(g.ar)} /> <span>{str(g.fr)}</span>
+                <Ar text={str(g.ar)} /> <span><Bidi text={str(g.fr)} /></span>
               </li>{/each}
           </ul>
         </section>
@@ -119,11 +120,13 @@
         data-testid="precedent">{t('bib.precedent')}</button
       >
       <span data-testid="numero"
-        >{p === 0
-          ? t('bib.couverture')
-          : p > pages.length
-            ? t('bib.fin')
-            : t('bib.page', { n: p, total: pages.length })}</span
+        ><Bidi
+          text={p === 0
+            ? t('bib.couverture')
+            : p > pages.length
+              ? t('bib.fin')
+              : t('bib.page', { n: p, total: pages.length })}
+        /></span
       >
       <button
         type="button"

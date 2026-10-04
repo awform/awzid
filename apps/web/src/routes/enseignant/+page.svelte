@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { carnetLabel } from '$lib/levels';
   import { resolve } from '$app/paths';
@@ -173,8 +174,8 @@
   <a href={resolve('/enseignant/questions')} data-testid="lien-questions">{t('ens.questions')}</a>
   · <a href={resolve('/enseignant/ecole')} data-testid="lien-synthese">{t('eco.lien')}</a>
 </p>
-{#if msg}<p class="card ok" role="status" data-testid="ens-message">{msg}</p>{/if}
-{#if error}<p class="card bad" role="alert">{error}</p>{/if}
+{#if msg}<p class="card ok" role="status" data-testid="ens-message"><Bidi text={msg} /></p>{/if}
+{#if error}<p class="card bad" role="alert"><Bidi text={error} /></p>{/if}
 
 {#if loaded && !isTeacher}
   <p class="card">{t('ens.reserve')}</p>
@@ -188,14 +189,16 @@
     <ul class="classes">
       {#each classes as c (c.id)}
         <li>
-          <button type="button" onclick={() => openClass(c.id)}>{c.name}</button>
+          <button type="button" onclick={() => openClass(c.id)}><Bidi text={c.name} /></button>
           <a
             class="button small"
             href={resolve('/enseignant/classe/[id]', { id: c.id })}
             data-testid="espace-ecole-{c.name}">{t('classe.espace')}</a
           >
           <span class="muted small"
-            >{t('ens.code', { code: c.joinCode })} · {t('ens.eleves', { n: c.members ?? 0 })}</span
+            ><Bidi text={t('ens.code', { code: c.joinCode })} /> · <Bidi
+              text={t('ens.eleves', { n: c.members ?? 0 })}
+            /></span
           >
         </li>
       {:else}
@@ -218,21 +221,21 @@
 
   {#if current}
     <section class="card" data-testid="classe">
-      <h2>{current.class.name}</h2>
+      <h2><Bidi text={current.class.name} /></h2>
       <ul class="members">
         {#each current.members as m (m.id)}
           {@const n = lastNote(m)}
           <li>
             <Sym id={m.avatar ?? 'etoile'} size={32} />
-            <strong>{m.pseudonym}</strong>
+            <strong><Bidi text={m.pseudonym} /></strong>
             <span class="muted small">
-              {#if m.plan}{m.plan.mode === 'carnet'
-                  ? carnetLabel(m.plan.bookCode ?? '')
-                  : t('hifz.rythme_actuel', { n: m.plan.rhythmYears ?? 7 })}{:else}{t(
-                  'ens.sans_plan',
-                )}{/if}
-              · {t('ens.parts', { n: partsOf(m).length })}
-              {#if n}· {t('hifz.note', { n: fmtNumber(n.total) })}{/if}
+              {#if m.plan}<Bidi
+                  text={m.plan.mode === 'carnet'
+                    ? carnetLabel(m.plan.bookCode ?? '')
+                    : t('hifz.rythme_actuel', { n: m.plan.rhythmYears ?? 7 })}
+                />{:else}<Bidi text={t('ens.sans_plan')} />{/if}
+              · <Bidi text={t('ens.parts', { n: partsOf(m).length })} />
+              {#if n}· <Bidi text={t('hifz.note', { n: fmtNumber(n.total) })} />{/if}
             </span>
             <button
               type="button"
@@ -266,7 +269,7 @@
 
   {#if target}
     <form class="card form" onsubmit={validate} data-testid="validation">
-      <h2>{t('ens.validation_de', { nom: target.pseudonym })}</h2>
+      <h2><Bidi text={t('ens.validation_de', { nom: target.pseudonym })} /></h2>
       <label for="part">{t('ens.passage')}</label>
       <select id="part" bind:value={part} required>
         {#each partsOf(target) as p (p)}<option value={p}>{partLabel(p)}</option>{/each}
@@ -275,7 +278,7 @@
         <legend>{t('ens.releves')}</legend>
         {#each FIELDS as f (f)}
           <label class="count"
-            ><span>{t(`ens.c_${f}`)}</span>
+            ><span><Bidi text={t(`ens.c_${f}`)} /></span>
             <input
               type="number"
               min="0"
@@ -297,13 +300,15 @@
         >
       </fieldset>
       <p class="live" data-testid="note-calculee">
-        {t('ens.note_calculee', {
-          memo: fmtNumber(live.memorisation),
-          tajwid: fmtNumber(live.tajwid),
-          fluidite: fmtNumber(live.fluidite),
-          total: fmtNumber(live.total),
-          mention: t(`hifz.mention_${live.mention}`),
-        })}
+        <Bidi
+          text={t('ens.note_calculee', {
+            memo: fmtNumber(live.memorisation),
+            tajwid: fmtNumber(live.tajwid),
+            fluidite: fmtNumber(live.fluidite),
+            total: fmtNumber(live.total),
+            mention: t(`hifz.mention_${live.mention}`),
+          })}
+        />
       </p>
       {#if counters.oublis >= 2}<p class="warn small">{t('ens.regle_oubli')}</p>{/if}
       <div class="row">

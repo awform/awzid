@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { suraName } from '@awform/hifz';
@@ -62,12 +63,13 @@
     >
   {/if}
   <p class="muted small">{t('sour.aide')}</p>
-  {#if error}<p class="card bad" role="alert">{error}</p>{/if}
+  {#if error}<p class="card bad" role="alert"><Bidi text={error} /></p>{/if}
   <ul class="list">
     {#each rows as s (s.sura)}
       <li class="card" data-testid="sourate-suivi">
         <h2>
-          {fmtNumber(s.sura)}. <span lang="ar" dir="rtl">{suraName(s.sura)}</span>
+          {fmtNumber(s.sura)}.
+          <span lang="ar" dir="rtl"><Bidi text={suraName(s.sura)} base="ar" /></span>
           {#if hifzDone.includes(s.sura)}<span class="chip">{t('sour.hifz')}</span>{/if}
         </h2>
         {#if s.etape === 'valide'}
@@ -79,7 +81,7 @@
                 type="button"
                 class:primary={s.etape === e}
                 aria-pressed={s.etape === e}
-                onclick={() => step(s.sura, e)}>{t(`sour.${e}`)}</button
+                onclick={() => step(s.sura, e)}><Bidi text={t(`sour.${e}`)} /></button
               >
             {/each}
           </p>

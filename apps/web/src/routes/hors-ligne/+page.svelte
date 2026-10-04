@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import { resolve } from '$app/paths';
@@ -131,7 +132,7 @@
 <p class="muted">{t('horsligne.intro')}</p>
 
 {#if offline}<p class="card warn">{t('horsligne.pas_de_reseau')}</p>{/if}
-{#if message}<p class="card ok" role="status">{message}</p>{/if}
+{#if message}<p class="card ok" role="status"><Bidi text={message} /></p>{/if}
 
 <section class="card">
   <h2 id="titre-niveaux">{t('horsligne.niveaux')}</h2>
@@ -148,18 +149,23 @@
       {#each rows as r (r.level)}
         <tr data-level={r.level}>
           <td
-            ><strong>{r.m?.codeFr ?? r.l?.codeFr ?? r.level}</strong><br /><span class="muted"
-              >{t('horsligne.lecons', { n: r.m?.units.length ?? r.l?.units.length ?? 0 })}</span
+            ><strong><Bidi text={r.m?.codeFr ?? r.l?.codeFr ?? r.level} /></strong><br /><span
+              class="muted"
+              ><Bidi
+                text={t('horsligne.lecons', { n: r.m?.units.length ?? r.l?.units.length ?? 0 })}
+              /></span
             ></td
           >
           <td data-testid="poids">{fmtBytes(r.m?.bytes ?? r.l?.bytes ?? 0)}</td>
           <td data-testid="etat">
             {#if r.state === 'absent'}{t('horsligne.etat_absent')}
             {:else if r.state === 'a_jour'}{t('horsligne.etat_a_jour')}
-            {:else if r.state === 'maj'}{t('horsligne.etat_maj', {
-                n: r.changed,
-                poids: fmtBytes(r.updateBytes),
-              })}
+            {:else if r.state === 'maj'}<Bidi
+                text={t('horsligne.etat_maj', {
+                  n: r.changed,
+                  poids: fmtBytes(r.updateBytes),
+                })}
+              />
             {:else}{t('horsligne.etat_local')}{/if}
           </td>
           <td class="act">
@@ -192,7 +198,7 @@
   </table>
   {#if confirmLevel}
     <div class="confirm" role="alertdialog" aria-label={t('horsligne.confirmer_aria')}>
-      <p>{t('horsligne.confirmer', { poids: fmtBytes(confirmLevel.bytes) })}</p>
+      <p><Bidi text={t('horsligne.confirmer', { poids: fmtBytes(confirmLevel.bytes) })} /></p>
       <button
         type="button"
         class="primary"
@@ -208,12 +214,12 @@
   <h2>{t('horsligne.donnees_titre')}</h2>
   <p>{t('horsligne.mois')} <strong data-testid="donnees-mois">{fmtBytes(month)}</strong></p>
   <p>
-    {t('horsligne.place', { poids: fmtBytes(storage.usage) })}{storage.persisted
-      ? t('horsligne.protegee')
-      : ''}
+    <Bidi text={t('horsligne.place', { poids: fmtBytes(storage.usage) })} /><Bidi
+      text={storage.persisted ? t('horsligne.protegee') : ''}
+    />
   </p>
   <p>
-    {t('horsligne.attente')} <strong data-testid="attente">{pending}</strong>
+    {t('horsligne.attente')} <strong data-testid="attente"><Bidi text={pending} /></strong>
     {#if pending > 0}<button type="button" onclick={sendNow}>{t('horsligne.envoyer')}</button>{/if}
   </p>
   <label class="switch">
@@ -224,7 +230,11 @@
       onchange={(e) => toggleEconome(e.currentTarget.checked)}
       data-testid="econome"
     />
-    <span><strong>{t('horsligne.econome')}</strong> — {t('horsligne.econome_explication')}</span>
+    <span
+      ><strong>{t('horsligne.econome')}</strong> — <Bidi
+        text={t('horsligne.econome_explication')}
+      /></span
+    >
   </label>
 </section>
 

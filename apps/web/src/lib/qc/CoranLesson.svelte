@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { resolve } from '$app/paths';
   import { unitLabel, type UnitDetail } from '$lib/api';
   import { fmtNumber, t } from '$lib/i18n';
@@ -45,25 +46,31 @@
 <article class="qc" data-unit={unit.id} data-testid="lecon-coran">
   <p class="nav">
     <a href={resolve('/niveaux/[code]', { code: unit.levelCode })}
-      >{t('lecon.retour', { level: unit.levelCode })}</a
+      ><Bidi text={t('lecon.retour', { level: unit.levelCode })} /></a
     >
   </p>
   <header>
-    <p class="num">{unitLabel(unit)} · {unit.titleFr}</p>
+    <p class="num"><Bidi text={unitLabel(unit)} /> · <Bidi text={unit.titleFr} /></p>
     <h1><QcText text={str(L.titre_ar)} {lettres} /></h1>
-    <p class="sub">{str(L.titre_fr)}</p>
+    <p class="sub"><Bidi text={str(L.titre_fr)} /></p>
     {#if progress}<p class="prog" data-testid="progression">
-        {t('lecon.progression', { statut: t(`statut.${progress.status}`) })}{progress.bestScore !=
-        null
-          ? ` · ${fmtNumber(progress.bestScore, { style: 'percent' })}`
-          : ''}
+        <Bidi text={t('lecon.progression', { statut: t(`statut.${progress.status}`) })} /><Bidi
+          text={progress.bestScore != null
+            ? ` · ${fmtNumber(progress.bestScore, { style: 'percent' })}`
+            : ''}
+        />
       </p>{/if}
   </header>
 
-  {#if str(L.consigne_fr)}<p class="card">{str(L.consigne_fr)}</p>{/if}
+  {#if str(L.consigne_fr)}<p class="card"><Bidi text={str(L.consigne_fr)} /></p>{/if}
   {#if notes}
     <p class="muted" data-testid="qc-bareme">
-      {t('qc.notes', { lecture: Number(notes.lecture ?? 0), ecrit: Number(notes.ecrit ?? 0) })}
+      <Bidi
+        text={t('qc.notes', {
+          lecture: Number(notes.lecture ?? 0),
+          ecrit: Number(notes.ecrit ?? 0),
+        })}
+      />
     </p>
   {/if}
 
@@ -73,7 +80,7 @@
       <ul>
         {#each arr(L.objectifs) as o, i (i)}<li>
             {#if str(o.ar)}<QcText text={str(o.ar)} {lettres} /> —
-            {/if}{str(o.fr)}
+            {/if}<Bidi text={str(o.fr)} />
           </li>{/each}
       </ul>
     </section>
@@ -83,10 +90,10 @@
     <section class="card" data-testid="qc-observe">
       <h2>{t('qc.observe')}</h2>
       {#if observe}
-        <p>{str(observe.texte_fr)}</p>
+        <p><Bidi text={str(observe.texte_fr)} /></p>
         {#if arr(observe.points).length}
           <ul>
-            {#each arr(observe.points) as p, i (i)}<li>{str(p.fr)}</li>{/each}
+            {#each arr(observe.points) as p, i (i)}<li><Bidi text={str(p.fr)} /></li>{/each}
           </ul>
         {/if}
       {/if}
@@ -96,7 +103,7 @@
             <li>
               <span class="grande"><QcText text={`[${x.l}]`} {lettres} /></span>
               {#if str(x.nom_ar)}<QcText text={str(x.nom_ar)} />{/if}
-              <small>{str(x.points_fr)}</small>
+              <small><Bidi text={str(x.points_fr)} /></small>
               {#if Array.isArray(x.formes)}<span class="formes" dir="rtl"
                   >{#each x.formes as f, k (k)}<QcText text={String(f)} />{/each}</span
                 >{/if}
@@ -111,7 +118,7 @@
             <li>
               <span class="grande"><QcText text={str(s.sg)} /></span>
               {#if str(s.nom_ar)}<QcText text={str(s.nom_ar)} />{/if}
-              <span>{str(s.fr)}</span>
+              <span><Bidi text={str(s.fr)} /></span>
             </li>
           {/each}
         </ul>
@@ -119,13 +126,13 @@
       {#if notion}
         <p class="notion">
           {#if str(notion.texte_ar)}<QcText text={str(notion.texte_ar)} {lettres} /> —
-          {/if}{str(notion.texte_fr)}
+          {/if}<Bidi text={str(notion.texte_fr)} />
         </p>
       {/if}
       {#if geste}
         <p class="geste">
           {#if str(geste.ar)}<QcText text={str(geste.ar)} /> —
-          {/if}{str(geste.fr)}
+          {/if}<Bidi text={str(geste.fr)} />
         </p>
       {/if}
     </section>
@@ -134,14 +141,14 @@
   {#if echelle.length}
     <section class="card" data-testid="qc-echelle">
       <h2>{t('qc.echelle')}</h2>
-      {#if str(L.echelle_fr)}<p class="muted">{str(L.echelle_fr)}</p>{/if}
+      {#if str(L.echelle_fr)}<p class="muted"><Bidi text={str(L.echelle_fr)} /></p>{/if}
       <ol class="echelle">
         {#each echelle as r (Number(r.n))}
           <li data-barreau={Number(r.n)}>
-            <span class="barreau">{t('qc.barreau', { n: Number(r.n) })}</span>
+            <span class="barreau"><Bidi text={t('qc.barreau', { n: Number(r.n) })} /></span>
             {#if str(r.titre_fr)}<span class="muted"
                 >{#if str(r.titre_ar)}<QcText text={str(r.titre_ar)} /> —
-                {/if}{str(r.titre_fr)}</span
+                {/if}<Bidi text={str(r.titre_fr)} /></span
               >{/if}
             <span class="ligne" dir="rtl">
               {#each Array.isArray(r.items) ? (r.items as unknown[]) : [] as it, k (k)}
@@ -150,7 +157,9 @@
                   {@const o = it as Obj}
                   <span class="mot-coran"
                     ><QcText text={str(o.ar)} quran={str(o.src).startsWith('Q:')} {lettres} />
-                    {#if str(o.ref_fr)}<small dir="ltr">{str(o.ref_fr)}</small>{/if}</span
+                    {#if str(o.ref_fr)}<small dir="ltr"
+                        ><Bidi text={str(o.ref_fr)} base="ar" /></small
+                      >{/if}</span
                   >
                 {/if}
               {/each}
@@ -173,16 +182,19 @@
   {#if arr(L.mushaf).length}
     <section class="card mushaf" data-testid="qc-mushaf">
       <h2>{t('qc.mushaf')}</h2>
-      {#if str(L.mushaf_fr)}<p class="muted">{str(L.mushaf_fr)}</p>{/if}
+      {#if str(L.mushaf_fr)}<p class="muted"><Bidi text={str(L.mushaf_fr)} /></p>{/if}
       {#each arr(L.mushaf) as m, i (i)}
         <div class="verset">
           {#if m.non_prepare && !str(m.ar)}
             <p class="muted" data-testid="qc-non-prepare">{t('qc.non_prepare')}</p>
           {:else}
-            {#if str(m.consigne_fr)}<p class="consigne">{str(m.consigne_fr)}</p>{/if}
+            {#if str(m.consigne_fr)}<p class="consigne"><Bidi text={str(m.consigne_fr)} /></p>{/if}
             <p class="texte"><QcText text={str(m.ar)} quran {lettres} /></p>
-            <p class="ref">{str(m.ref_fr)}</p>
-            {#if str(m.sens_fr)}<p class="sens">{t('qc.sens')} {str(m.sens_fr)}</p>{/if}
+            <p class="ref"><Bidi text={str(m.ref_fr)} /></p>
+            {#if str(m.sens_fr)}<p class="sens">
+                {t('qc.sens')}
+                <Bidi text={str(m.sens_fr)} />
+              </p>{/if}
           {/if}
         </div>
       {/each}
@@ -194,8 +206,9 @@
       <h2>{t('qc.oral')}</h2>
       <ul>
         {#each arr(L.oral) as o, i (i)}<li>
-            {str(o.fr)}
-            {#if o.points}<small>{t('qc.oral_points', { n: Number(o.points) })}</small>{/if}
+            <Bidi text={str(o.fr)} />
+            {#if o.points}<small><Bidi text={t('qc.oral_points', { n: Number(o.points) })} /></small
+              >{/if}
           </li>{/each}
       </ul>
     </section>
@@ -213,7 +226,7 @@
           />
           <span
             >{#if str(c.ar)}<QcText text={str(c.ar)} {lettres} /> —
-            {/if}{str(c.fr)}</span
+            {/if}<Bidi text={str(c.fr)} /></span
           ></label
         >
       {/each}
@@ -223,19 +236,19 @@
   {#if str(L.avec_adulte)}
     <section class="card">
       <h2>{t('qc.avec_adulte')}</h2>
-      <p>{str(L.avec_adulte)}</p>
+      <p><Bidi text={str(L.avec_adulte)} /></p>
     </section>
   {/if}
   {#if str(L.plus_loin)}
     <section class="card">
       <h2>{t('qc.plus_loin')}</h2>
-      <p>{str(L.plus_loin)}</p>
+      <p><Bidi text={str(L.plus_loin)} /></p>
     </section>
   {/if}
   {#if str(L.carnet_fr)}
-    <p class="card"><strong>{t('qc.carnet')}</strong> {str(L.carnet_fr)}</p>
+    <p class="card"><strong>{t('qc.carnet')}</strong> <Bidi text={str(L.carnet_fr)} /></p>
   {/if}
-  <p class="muted small">{t('qc.fidelite')}</p>
+  <p class="muted small"><Bidi text={t('qc.fidelite')} /></p>
 </article>
 
 <style>

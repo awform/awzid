@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount, setContext } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import { resolve } from '$app/paths';
@@ -165,7 +166,7 @@
       >
         {#if w.img}<Illus k={w.img} cls="img" />{/if}
         <Ar text={w.ar} tag="p" />
-        {#if flipped}<p class="fr" data-testid="sens">{w.fr}</p>{/if}
+        {#if flipped}<p class="fr" data-testid="sens"><Bidi text={w.fr} /></p>{/if}
       </button>
       {#if flipped}
         <div class="row">
@@ -179,15 +180,17 @@
       {:else}
         <p class="muted small">{t('revisions.touche')}</p>
       {/if}
-      <p class="muted small">{t('revisions.reste', { n: queue.length })}</p>
+      <p class="muted small"><Bidi text={t('revisions.reste', { n: queue.length })} /></p>
     </section>
   {:else}
     <p class="card ok" role="status" data-testid="fini">
-      {seen ? t('revisions.bilan', { n: seen, sus: known }) : t('revisions.rien_aujourdhui')}
+      <Bidi
+        text={seen ? t('revisions.bilan', { n: seen, sus: known }) : t('revisions.rien_aujourdhui')}
+      />
     </p>
   {/if}
 {/if}
-<p class="muted small">{t('revisions.note')}</p>
+<p class="muted small"><Bidi text={t('revisions.note')} /></p>
 
 <style>
   .cardbox {

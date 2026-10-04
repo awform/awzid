@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import TutorSegments from '$lib/TutorSegments.svelte';
@@ -132,18 +133,18 @@
             bind:value={text}
             placeholder={t('tuteur.placeholder')}
             data-testid="tuteur-texte"></textarea>
-          <p class="muted small">{t('tuteur.cadre')} · {text.length}/300</p>
+          <p class="muted small">{t('tuteur.cadre')} · <Bidi text={text.length} />/300</p>
           <button type="submit" disabled={busy || !text.trim()} data-testid="tuteur-envoyer"
             >{t('tuteur.envoyer')}</button
           >
         </form>
       {/if}
-      {#if error}<p class="bad" role="alert">{error}</p>{/if}
+      {#if error}<p class="bad" role="alert"><Bidi text={error} /></p>{/if}
       <ol class="answers" data-testid="tuteur-reponses">
         {#each answers as a (a.logId)}
           <li class="answer" data-decision={a.decision} data-route={a.route}>
             {#if a.refus}
-              <p>{t(`tuteur.refus_${a.refus}`)}</p>
+              <p><Bidi text={t(`tuteur.refus_${a.refus}`)} /></p>
             {:else}
               <TutorSegments segments={a.segments} />
               {#if a.transmise}<p class="muted small" data-testid="tuteur-transmise">
@@ -152,7 +153,7 @@
             {/if}
             <p class="meta">
               <span class="muted small"
-                >{a.ia ? t('tuteur.reponse_ia') : t('tuteur.reponse_locale')}</span
+                ><Bidi text={a.ia ? t('tuteur.reponse_ia') : t('tuteur.reponse_locale')} /></span
               >
               {#if reported.includes(a.logId)}<span class="small" data-testid="tuteur-signale"
                   >{t('tuteur.signale')}</span
@@ -167,8 +168,8 @@
         <section class="ens" data-testid="tuteur-reponses-enseignant">
           <h3>{t('tuteur.reponses_enseignant')}</h3>
           {#each questions as q (q.id)}
-            <p class="q">« {q.text} »</p>
-            <p class="a">{q.answer}</p>
+            <p class="q">« <Bidi text={q.text} /> »</p>
+            <p class="a"><Bidi text={q.answer} /></p>
           {/each}
         </section>
       {/if}

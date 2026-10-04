@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
@@ -50,17 +51,17 @@
 <div class="noprint row">
   <a href={resolve('/enseignant/classe/[id]', { id })}>{t('classe.retour_classe')}</a>
   <button type="button" class="primary" onclick={() => window.print()} data-testid="imprimer"
-    >{t('classe.imprimer_pdf')}</button
+    ><Bidi text={t('classe.imprimer_pdf')} /></button
   >
 </div>
-{#if error}<p class="card" role="alert">{error}</p>{/if}
+{#if error}<p class="card" role="alert"><Bidi text={error} /></p>{/if}
 {#if tb}
   <section class="sheet" data-testid="feuille">
-    <h1 id="titre-feuille">{tb.class.name}</h1>
+    <h1 id="titre-feuille"><Bidi text={tb.class.name} /></h1>
     <p class="small">
-      {tb.class.schoolName ?? ''}
-      {#if tb.class.schoolYear}· {tb.class.schoolYear}{/if}
-      {#if tb.class.levelCode}· {tb.class.levelCode.toUpperCase()}{/if}
+      <Bidi text={tb.class.schoolName ?? ''} />
+      {#if tb.class.schoolYear}· <Bidi text={tb.class.schoolYear} />{/if}
+      {#if tb.class.levelCode}· <Bidi text={tb.class.levelCode.toUpperCase()} />{/if}
       · {fmtDate(new Date(), { dateStyle: 'long' })}
     </p>
     <table aria-labelledby="titre-feuille">
@@ -68,7 +69,9 @@
         <tr>
           <th>{t('classe.eleve')}</th>
           <th>{t('classe.lecons')}</th>
-          {#each tb.bilans as b, i (b.id)}<th>{t('classe.bilan_n', { n: b.n ?? i + 1 })}</th>{/each}
+          {#each tb.bilans as b, i (b.id)}<th
+              ><Bidi text={t('classe.bilan_n', { n: b.n ?? i + 1 })} /></th
+            >{/each}
           <th>{t('classe.examen')}</th>
           <th>{t('classe.cc')}</th>
           <th>{t('classe.nf')}</th>
@@ -80,27 +83,33 @@
       <tbody>
         {#each tb.rows as r (r.pupil.id)}
           <tr>
-            <td>{r.pupil.displayName}</td>
-            <td>{r.lessonsDone === null ? '—' : `${r.lessonsDone}/${tb.lessons}`}</td>
-            {#each r.bilans as b, i (i)}<td class="num">{n(b)}</td>{/each}
-            <td class="num">{n(r.result?.examenPct)}</td>
-            <td class="num">{n(r.result?.cc)}</td>
-            <td class="num">{n(r.result?.nf)}</td>
+            <td><Bidi text={r.pupil.displayName} /></td>
+            <td><Bidi text={r.lessonsDone === null ? '—' : `${r.lessonsDone}/${tb.lessons}`} /></td>
+            {#each r.bilans as b, i (i)}<td class="num"><Bidi text={n(b)} /></td>{/each}
+            <td class="num"><Bidi text={n(r.result?.examenPct)} /></td>
+            <td class="num"><Bidi text={n(r.result?.cc)} /></td>
+            <td class="num"><Bidi text={n(r.result?.nf)} /></td>
             <td
-              >{r.result?.decision
-                ? t(`classe.decision_${r.result.decision.code}`)
-                : r.result
-                  ? t('classe.incomplet')
-                  : '—'}</td
+              ><Bidi
+                text={r.result?.decision
+                  ? t(`classe.decision_${r.result.decision.code}`)
+                  : r.result
+                    ? t('classe.incomplet')
+                    : '—'}
+              /></td
             >
             <td
-              >{#if r.lastHifz}{r.lastHifz.part} · {fmtNumber(r.lastHifz.total)}{:else}—{/if}</td
+              >{#if r.lastHifz}<Bidi text={r.lastHifz.part} /> · {fmtNumber(
+                  r.lastHifz.total,
+                )}{:else}—{/if}</td
             >
             <td
-              >{t('classe.faits', {
-                n: r.assignments.filter((a) => a.done).length,
-                total: r.assignments.length,
-              })}</td
+              ><Bidi
+                text={t('classe.faits', {
+                  n: r.assignments.filter((a) => a.done).length,
+                  total: r.assignments.length,
+                })}
+              /></td
             >
           </tr>
         {/each}

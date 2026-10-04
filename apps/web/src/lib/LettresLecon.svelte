@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import Ar from '$lib/Ar.svelte';
   import { t } from '$lib/i18n';
 
@@ -25,17 +26,24 @@
   <section class="blk">
     <h2>
       <Ar text="أَكْتَشِفُ" />
-      <span>{decouvreFr ?? t('lecon.je_decouvre')}</span>
+      <span><Bidi text={decouvreFr ?? t('lecon.je_decouvre')} /></span>
     </h2>
     {#if decouvreAr}<Ar tag="p" text={decouvreAr} />{/if}
     <div class="letters">
       {#each lettres as x, i (i)}
         <div class="fcard b{i % 4}">
-          <span class="pos">{i + 1}</span>
-          <span class="big c{i % 4}" lang="ar">{x.l}</span>
-          {#if x.nom_ar}<span class="ar c{i % 4}" lang="ar">{x.nom_ar}</span>{/if}
-          {#if x.points_ar}<span class="ar dots" lang="ar">{x.points_ar}</span>{/if}
-          <span class="fr">{x.nom_fr ?? ''}{x.points_fr ? ` · ${x.points_fr}` : ''}</span>
+          <span class="pos"><Bidi text={i + 1} /></span>
+          <span class="big c{i % 4}" lang="ar"><Bidi text={x.l} base="ar" /></span>
+          {#if x.nom_ar}<span class="ar c{i % 4}" lang="ar"><Bidi text={x.nom_ar} base="ar" /></span
+            >{/if}
+          {#if x.points_ar}<span class="ar dots" lang="ar"
+              ><Bidi text={x.points_ar} base="ar" /></span
+            >{/if}
+          <span class="fr"
+            ><Bidi text={x.nom_fr ?? ''} /><Bidi
+              text={x.points_fr ? ` · ${x.points_fr}` : ''}
+            /></span
+          >
         </div>
       {/each}
     </div>
@@ -66,9 +74,9 @@
         <tbody>
           {#each lettres.filter((x) => x.formes) as x, i (i)}
             <tr>
-              <td class="ar c{lettres.indexOf(x) % 4}" lang="ar">{x.l}</td>
+              <td class="ar c{lettres.indexOf(x) % 4}" lang="ar"><Bidi text={x.l} base="ar" /></td>
               {#each x.formes ?? [] as f, k (k)}<td class="ar c{lettres.indexOf(x) % 4}" lang="ar"
-                  >{f}</td
+                  ><Bidi text={f} base="ar" /></td
                 >{/each}
             </tr>
           {/each}

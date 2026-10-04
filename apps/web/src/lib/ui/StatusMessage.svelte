@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import Icon from './Icon.svelte';
 
@@ -17,8 +18,8 @@
 <div class="status" class:off role="alert" data-testid="etat-erreur" data-kind={kind}>
   <Icon name={off ? 'horsligne' : 'alerte'} size={28} />
   <div>
-    <strong>{off ? t('etat.hors_ligne_titre') : t('etat.erreur_titre')}</strong>
-    <p>{message || (off ? t('etat.hors_ligne_texte') : t('etat.erreur_texte'))}</p>
+    <strong><Bidi text={off ? t('etat.hors_ligne_titre') : t('etat.erreur_titre')} /></strong>
+    <p><Bidi text={message || (off ? t('etat.hors_ligne_texte') : t('etat.erreur_texte'))} /></p>
     {#if onretry}
       <button type="button" class="button" onclick={onretry} data-testid="reessayer">
         <Icon name="rafraichir" size={20} />{t('etat.reessayer')}

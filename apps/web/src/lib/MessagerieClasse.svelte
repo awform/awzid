@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { fmtDate, t } from '$lib/i18n';
   import {
@@ -80,7 +81,7 @@
   }
 </script>
 
-{#if error}<p class="card bad" role="alert">{error}</p>{/if}
+{#if error}<p class="card bad" role="alert"><Bidi text={error} /></p>{/if}
 <section class="card">
   <h2>{t('msg.ecrire')}</h2>
   <form onsubmit={send}>
@@ -101,7 +102,9 @@
 <section class="card">
   <h2>{t('msg.annonces')}</h2>
   <ul class="list">
-    {#each annonces as a (a.id)}<li>{fmtDate(a.le)} — {a.retire ? t('msg.retire') : a.texte}</li>
+    {#each annonces as a (a.id)}<li>
+        {fmtDate(a.le)} — <Bidi text={a.retire ? t('msg.retire') : a.texte} />
+      </li>
     {:else}<li class="muted">{t('msg.aucun')}</li>{/each}
   </ul>
   <h2>{t('msg.fils')}</h2>
@@ -109,8 +112,8 @@
     {#each fils as f (f.id)}
       <li>
         <button type="button" onclick={() => show(f.id)} data-testid="msg-fil">
-          {t('msg.famille_de', { nom: f.pseudonym })}{#if f.nonLus}<span class="badge"
-              >{t('msg.non_lus', { n: f.nonLus })}</span
+          <Bidi text={t('msg.famille_de', { nom: f.pseudonym })} />{#if f.nonLus}<span class="badge"
+              ><Bidi text={t('msg.non_lus', { n: f.nonLus })} /></span
             >{/if}
         </button>
       </li>
@@ -119,7 +122,9 @@
   {#if open}
     <ul class="list" data-testid="msg-fil-ouvert">
       {#each open.messages as m (m.id)}
-        <li class:mine={m.deMoi}>{fmtDate(m.le)} — {m.retire ? t('msg.retire') : m.texte}</li>
+        <li class:mine={m.deMoi}>
+          {fmtDate(m.le)} — <Bidi text={m.retire ? t('msg.retire') : m.texte} />
+        </li>
       {/each}
     </ul>
     <form onsubmit={reply}>
@@ -139,7 +144,7 @@
     <input id="vd" type="datetime-local" bind:value={v.debut} required />
     <label for="vm">{t('visio.duree')}</label>
     <input id="vm" type="number" min="10" max="240" bind:value={v.dureeMin} />
-    <label for="vu">{t('visio.lien')}</label>
+    <label for="vu"><Bidi text={t('visio.lien')} /></label>
     <input id="vu" type="url" bind:value={v.url} required />
     <button type="submit" class="primary" data-testid="visio-planifier"
       >{t('visio.planifier')}</button
@@ -148,7 +153,9 @@
   <ul class="list">
     {#each visios as x (x.id)}
       <li>
-        {fmtDate(x.startsAt)} — {x.title} ({t('visio.minutes', { n: x.durationMin })})
+        {fmtDate(x.startsAt)} — <Bidi text={x.title} /> (<Bidi
+          text={t('visio.minutes', { n: x.durationMin })}
+        />)
         {#if x.canceledAt}<span class="muted">{t('visio.annulee')}</span>
         {:else}<button type="button" onclick={() => cancelVisio(x.id).then(refresh)}
             >{t('visio.annuler')}</button

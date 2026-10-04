@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { levelFitsProfile, levelLabel } from '$lib/levels';
   import { goto } from '$app/navigation';
@@ -111,18 +112,18 @@
       autocomplete="off"
       bind:value={pin}
     />
-    {#if pinError}<p class="error" role="alert">{pinError}</p>{/if}
+    {#if pinError}<p class="error" role="alert"><Bidi text={pinError} /></p>{/if}
     <button type="submit" class="primary">{t('commun.valider')}</button>
   </form>
 {:else if me}
   <h1>{t('profils.titre')}</h1>
   {#if me?.account.kind === 'parent'}<Onboarding audience="parent" />{/if}
-  {#if info}<p class="card ok" role="status">{info}</p>{/if}
+  {#if info}<p class="card ok" role="status"><Bidi text={info} /></p>{/if}
   <div class="grid" data-testid="profils">
     {#each me.profiles as p (p.id)}
       <button type="button" class="kid" onclick={() => choose(p)} data-profile={p.id}>
         <Sym id={p.avatar ?? 'etoile'} size={56} />
-        <span>{p.pseudonym}</span>
+        <span><Bidi text={p.pseudonym} /></span>
       </button>
     {/each}
   </div>
@@ -165,7 +166,9 @@
             {#each SYMBOLS as s (s.id)}
               <label class="av" class:sel={form.avatar === s.id}>
                 <input type="radio" name="avatar" value={s.id} bind:group={form.avatar} />
-                <Sym id={s.id} size={36} /><span class="sr">{t(`symbole.${s.id}`)}</span>
+                <Sym id={s.id} size={36} /><span class="sr"
+                  ><Bidi text={t(`symbole.${s.id}`)} /></span
+                >
               </label>
             {/each}
           </div>
@@ -191,7 +194,7 @@
                 bind:checked={form.coppa}
                 data-testid="consent-coppa"
               />
-              <span>{t('consent.coppa_parent')}</span></label
+              <span><Bidi text={t('consent.coppa_parent')} /></span></label
             >
           {/if}
         </fieldset>
@@ -203,7 +206,7 @@
           required
           bind:value={form.password}
         />
-        {#if error}<p class="error" role="alert" data-testid="erreur">{error}</p>{/if}
+        {#if error}<p class="error" role="alert" data-testid="erreur"><Bidi text={error} /></p>{/if}
         <div class="row">
           <button type="submit" class="primary" data-testid="creer-profil"
             >{t('profils.creer')}</button

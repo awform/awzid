@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import NotificationsReglages from '$lib/NotificationsReglages.svelte';
   import { goto } from '$app/navigation';
@@ -196,8 +197,8 @@
 <svelte:head><title>{t('app.nom')} — {t('entete.compte')}</title></svelte:head>
 
 <h1>{t('entete.compte')}</h1>
-{#if msg}<p class="card ok" role="status">{msg}</p>{/if}
-{#if err}<p class="card bad" role="alert">{err}</p>{/if}
+{#if msg}<p class="card ok" role="status"><Bidi text={msg} /></p>{/if}
+{#if err}<p class="card bad" role="alert"><Bidi text={err} /></p>{/if}
 
 {#if !me}
   <p class="card">
@@ -214,12 +215,14 @@
   <section class="card">
     <h2>{t('compte.mon_compte')}</h2>
     <p>
-      {t(`compte.type.${me.account.kind}`)} — {me.account.email} — {countryName(
-        me.account.country ?? 'FR',
-      )}
+      <Bidi text={t(`compte.type.${me.account.kind}`)} /> — <Bidi text={me.account.email} /> — <Bidi
+        text={countryName(me.account.country ?? 'FR')}
+      />
     </p>
     <p class="muted small">
-      {t('compte.cree_le', { date: fmtDate(me.account.createdAt, { dateStyle: 'long' }) })}
+      <Bidi
+        text={t('compte.cree_le', { date: fmtDate(me.account.createdAt, { dateStyle: 'long' }) })}
+      />
     </p>
     {#if me.account.kind === 'enseignant' || me.account.kind === 'admin'}
       <p>
@@ -244,9 +247,9 @@
           lang={l.code}
           onclick={() => setLang(l.code)}
           data-locale={l.code}
-          >{l.label}{l.status === 'preparation'
-            ? ` (${t('compte.langue_preparation')})`
-            : ''}</button
+          ><Bidi text={l.label} /><Bidi
+            text={l.status === 'preparation' ? ` (${t('compte.langue_preparation')})` : ''}
+          /></button
         >
       {/each}
     </div>
@@ -269,7 +272,7 @@
       <ul>
         {#each me.profiles as p (p.id)}
           <li>
-            {p.pseudonym} ({p.birthYear})
+            <Bidi text={p.pseudonym} /> (<Bidi text={p.birthYear} />)
             <button
               type="button"
               class="small"
@@ -302,10 +305,10 @@
         {@const h = hifz[p.id]}
         {#if h}
           <div class="hp">
-            <h3>{p.pseudonym}</h3>
+            <h3><Bidi text={p.pseudonym} /></h3>
             {#each h.classes as c (c.id)}
               <p>
-                {t('compte.classe_de', { nom: c.name })}
+                <Bidi text={t('compte.classe_de', { nom: c.name })} />
                 <button type="button" class="small" onclick={() => leaveClass(p.id, c.id)}
                   >{t('compte.quitter_classe')}</button
                 >
@@ -404,7 +407,9 @@
   {#if me.account.kind !== 'admin'}
     <section class="card">
       <h2>{t('compte.code_parent')}</h2>
-      <p class="muted small">{me.account.hasPin ? t('compte.pin_defini') : t('compte.pin_aide')}</p>
+      <p class="muted small">
+        <Bidi text={me.account.hasPin ? t('compte.pin_defini') : t('compte.pin_aide')} />
+      </p>
       <form class="form" onsubmit={savePin}>
         <label for="pin">{t('compte.nouveau_code')}</label>
         <input
@@ -433,15 +438,19 @@
     <ul class="consents" data-testid="consentements">
       {#each consents as c (c.id)}
         <li>
-          <strong>{t(`consent.nom.${c.type}`)}</strong>
+          <strong><Bidi text={t(`consent.nom.${c.type}`)} /></strong>
           <span class="muted small">
-            — {t('compte.donne_le', {
-              date: fmtDate(c.givenAt, { dateStyle: 'medium' }),
-              version: c.textVersion,
-            })}
-            {#if c.withdrawnAt}— {t('compte.retire_le', {
-                date: fmtDate(c.withdrawnAt, { dateStyle: 'medium' }),
-              })}{/if}
+            — <Bidi
+              text={t('compte.donne_le', {
+                date: fmtDate(c.givenAt, { dateStyle: 'medium' }),
+                version: c.textVersion,
+              })}
+            />
+            {#if c.withdrawnAt}— <Bidi
+                text={t('compte.retire_le', {
+                  date: fmtDate(c.withdrawnAt, { dateStyle: 'medium' }),
+                })}
+              />{/if}
           </span>
           {#if c.optional && !c.withdrawnAt}<button
               type="button"
@@ -496,8 +505,8 @@
         >
       {:else}
         <p>{t('compte.totp_instructions')}</p>
-        <p class="secret"><code data-testid="totp-secret">{totp.secret}</code></p>
-        <p class="muted small break">{totp.uri}</p>
+        <p class="secret"><code data-testid="totp-secret"><Bidi text={totp.secret} /></code></p>
+        <p class="muted small break"><Bidi text={totp.uri} /></p>
         <form class="form" onsubmit={totpConfirm}>
           <label for="code">{t('champ.code_totp')}</label>
           <input

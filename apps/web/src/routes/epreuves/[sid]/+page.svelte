@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount, setContext } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
@@ -71,9 +72,14 @@
   <p class="card" role="status" data-testid="copie-envoyee">{t('epreuve.copie_envoyee')}</p>
   <button type="button" onclick={() => goto(resolve('/aujourdhui'))}>{t('epreuve.retour')}</button>
 {:else if view}
-  <h1>{view.epreuve.titleFr}</h1>
+  <h1><Bidi text={view.epreuve.titleFr} /></h1>
   <p class="muted">
-    {t('epreuve.consignes', { bareme: view.epreuve.bareme, date: fmtDate(view.epreuve.closesAt) })}
+    <Bidi
+      text={t('epreuve.consignes', {
+        bareme: view.epreuve.bareme,
+        date: fmtDate(view.epreuve.closesAt),
+      })}
+    />
   </p>
   {#each exs as ex, i (i)}
     {@const id = idOf(i)}
@@ -105,7 +111,7 @@
     data-testid="envoyer-copie">{t('epreuve.envoyer')}</button
   >
 {/if}
-{#if error}<p class="error" role="alert">{error}</p>{/if}
+{#if error}<p class="error" role="alert"><Bidi text={error} /></p>{/if}
 
 <style>
   .error {

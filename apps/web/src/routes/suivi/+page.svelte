@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { carnetLabel, levelLabel } from '$lib/levels';
   import { resolve } from '$app/paths';
@@ -75,13 +76,13 @@
 
 {#each rows as r (r.p.id)}
   <section class="card who" data-testid="tableau-{r.p.pseudonym}">
-    <h2><Sym id={r.p.avatar ?? 'etoile'} size={32} /> {r.p.pseudonym}</h2>
+    <h2><Sym id={r.p.avatar ?? 'etoile'} size={32} /> <Bidi text={r.p.pseudonym} /></h2>
     {#if r.dash}
       <h3>{t('suivi.mes_lecons')}</h3>
       {#each Object.entries(r.dash.levels) as [level, c] (level)}
         {@const total = totals[level] ?? 0}
         <div class="lv" data-level={level}>
-          <strong>{levelLabel(level)}</strong>
+          <strong><Bidi text={levelLabel(level)} /></strong>
           <div
             class="progress"
             role="img"
@@ -90,9 +91,9 @@
             <span style:width={`${total ? (done(c) / total) * 100 : 0}%`}></span>
           </div>
           <p class="small">
-            {t('tableau.lecons_finies', { n: done(c), total })}
+            <Bidi text={t('tableau.lecons_finies', { n: done(c), total })} />
             {#each STATUSES.filter((s) => c[s]) as s (s)}<span class="chip"
-                >{t('suivi.compte', { n: c[s] ?? 0, statut: t(`statut.${s}`) })}</span
+                ><Bidi text={t('suivi.compte', { n: c[s] ?? 0, statut: t(`statut.${s}`) })} /></span
               >{/each}
           </p>
         </div>
@@ -102,20 +103,31 @@
       <h3>{t('tableau.activite')}</h3>
       <ActivityBars days={r.dash.activity} />
       <p class="small" data-testid="entrainement">
-        {t('tableau.traces_resume', { n: r.dash.traces.reussis, total: r.dash.traces.total })} ·
-        {t('tableau.cartes_resume', { n: r.dash.cartes.sus, total: r.dash.cartes.total })}
+        <Bidi
+          text={t('tableau.traces_resume', {
+            n: r.dash.traces.reussis,
+            total: r.dash.traces.total,
+          })}
+        /> ·
+        <Bidi
+          text={t('tableau.cartes_resume', { n: r.dash.cartes.sus, total: r.dash.cartes.total })}
+        />
       </p>
     {/if}
     <h3>{t('suivi.hifz')}</h3>
     <p class="small" data-testid="suivi-hifz">
       {#if r.hifz}
-        {r.hifz.plan.mode === 'carnet'
-          ? carnetLabel(r.hifz.plan.bookCode ?? '')
-          : t('hifz.rythme_actuel', { n: r.hifz.plan.rhythmYears ?? 7 })} ·
-        {t('hifz.acquis_carnet', { n: r.hifz.acquired, total: r.hifz.total })} ·
-        {t('suivi.a_reviser', { n: r.hifz.due })}
+        <Bidi
+          text={r.hifz.plan.mode === 'carnet'
+            ? carnetLabel(r.hifz.plan.bookCode ?? '')
+            : t('hifz.rythme_actuel', { n: r.hifz.plan.rhythmYears ?? 7 })}
+        /> ·
+        <Bidi text={t('hifz.acquis_carnet', { n: r.hifz.acquired, total: r.hifz.total })} /> ·
+        <Bidi text={t('suivi.a_reviser', { n: r.hifz.due })} />
         {#if r.hifz.stopRule}· <span class="warn">{t('hifz.regle_arret')}</span>{/if}
-        {#if r.hifz.lastNote}· {t('hifz.note', { n: fmtNumber(r.hifz.lastNote.total) })}{/if}
+        {#if r.hifz.lastNote}· <Bidi
+            text={t('hifz.note', { n: fmtNumber(r.hifz.lastNote.total) })}
+          />{/if}
       {:else}<span class="muted">{t('suivi.hifz_rien')}</span>{/if}
     </p>
   </section>
@@ -133,11 +145,12 @@
 <section class="card">
   <h2>{t('suivi.appareil')}</h2>
   <p>
-    {t('suivi.niveaux', { n: packs })} — <a href={resolve('/hors-ligne')}>{t('horsligne.titre')}</a>
+    <Bidi text={t('suivi.niveaux', { n: packs })} /> —
+    <a href={resolve('/hors-ligne')}>{t('horsligne.titre')}</a>
   </p>
-  <p>{t('suivi.attente', { n: pending })}</p>
+  <p><Bidi text={t('suivi.attente', { n: pending })} /></p>
   <p class="muted">
-    {synced ? t('suivi.dernier_envoi', { date: fmtDate(synced) }) : t('suivi.jamais')}
+    <Bidi text={synced ? t('suivi.dernier_envoi', { date: fmtDate(synced) }) : t('suivi.jamais')} />
   </p>
   <p><a href={resolve('/ecole')}>{t('horsligne.lien_ecole')}</a></p>
 </section>

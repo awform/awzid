@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import { loadCas, sendCas, type CasVu } from '$lib/pratique';
@@ -33,8 +34,8 @@
 
 {#if vu}
   <div class="cas-vu" data-testid="cas-reponse">
-    <p><b>{t('cas.ma_reponse')}</b> {vu.texte}</p>
-    <p><b>{t('cas.proposee')}</b> {vu.reponse}</p>
+    <p><b>{t('cas.ma_reponse')}</b> <Bidi text={vu.texte} /></p>
+    <p><b>{t('cas.proposee')}</b> <Bidi text={vu.reponse} /></p>
   </div>
 {:else if ferme}
   <p class="muted small" data-testid="cas-enseignant">{t('cas.par_enseignant')}</p>
@@ -50,7 +51,7 @@
       data-testid="cas-voir">{t('cas.voir')}</button
     >
     <p class="muted small">{t('cas.ecrire_dabord')}</p>
-    {#if error}<p class="bad" role="alert">{error}</p>{/if}
+    {#if error}<p class="bad" role="alert"><Bidi text={error} /></p>{/if}
   </form>
 {/if}
 

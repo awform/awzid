@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
   import {
@@ -97,15 +98,15 @@
     <button type="submit" class="primary">{t('rec.planifier')}</button>
   </form>
 </section>
-{#if error}<p class="card bad" role="alert">{error}</p>{/if}
-{#if info}<p class="card ok" role="status">{info}</p>{/if}
+{#if error}<p class="card bad" role="alert"><Bidi text={error} /></p>{/if}
+{#if info}<p class="card ok" role="status"><Bidi text={info} /></p>{/if}
 
 {#each recitals as rc (rc.id)}
   {@const ouvert = !rc.publie && !rc.annule}
   <section class="card" data-testid="recital">
     <h3>
-      {rc.titre} — {fmtDate(`${rc.jour}T12:00:00`, { dateStyle: 'long' })}
-      <span class="muted small">{t('rec.carnet', { code: rc.carnet })}</span>
+      <Bidi text={rc.titre} /> — {fmtDate(`${rc.jour}T12:00:00`, { dateStyle: 'long' })}
+      <span class="muted small"><Bidi text={t('rec.carnet', { code: rc.carnet })} /></span>
     </h3>
     {#if rc.annule}<p class="muted">{t('rec.annule')}</p>{/if}
     {#if rc.publie}<p class="ok">{t('rec.publie')}</p>{/if}
@@ -114,7 +115,7 @@
         {#each eleves as el (el.id)}
           {@const e = rc.passages.find((x) => x.pupilId === el.id)}
           <li data-testid="recital-eleve">
-            <strong>{el.nom}</strong>
+            <strong><Bidi text={el.nom} /></strong>
             {#if !e}
               {#if ouvert}
                 <label
@@ -131,15 +132,17 @@
             {:else}
               <p class="small">{t('rec.tires')} :</p>
               <ol data-testid="recital-tires">
-                {#each e.tires as p (p.passage)}<li>{p.libelle}</li>{/each}
+                {#each e.tires as p (p.passage)}<li><Bidi text={p.libelle} /></li>{/each}
               </ol>
               {#if e.note}
                 <p data-testid="recital-note">
-                  {t('rec.note', {
-                    total: fmtNumber(e.note.total),
-                    mention: t(`hifz.mention_${e.note.mention}`),
-                    coran: fmtNumber(e.note.coran15),
-                  })}
+                  <Bidi
+                    text={t('rec.note', {
+                      total: fmtNumber(e.note.total),
+                      mention: t(`hifz.mention_${e.note.mention}`),
+                      coran: fmtNumber(e.note.coran15),
+                    })}
+                  />
                 </p>
               {/if}
               {#if ouvert && saisie[e.id]}
@@ -155,7 +158,7 @@
                   >
                   {#each COMPTEURS as k (k)}
                     <label
-                      >{t(`ens.c_${k}`)}
+                      ><Bidi text={t(`ens.c_${k}`)} />
                       <input
                         type="number"
                         min="0"

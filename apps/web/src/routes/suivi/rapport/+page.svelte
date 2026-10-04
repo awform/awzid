@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { localIso } from '$lib/hifz';
@@ -56,10 +57,12 @@
 <h1>{t('rap.titre')}</h1>
 {#if reports[0]}
   <p class="muted" data-testid="semaine">
-    {t('rap.semaine', {
-      lundi: fmtDate(reports[0].semaine.lundi),
-      dimanche: fmtDate(reports[0].semaine.dimanche),
-    })}
+    <Bidi
+      text={t('rap.semaine', {
+        lundi: fmtDate(reports[0].semaine.lundi),
+        dimanche: fmtDate(reports[0].semaine.dimanche),
+      })}
+    />
   </p>
 {/if}
 <p class="row">
@@ -72,28 +75,34 @@
 {#if loaded && !reports.length}<p class="card">{t('rap.aucun')}</p>{/if}
 {#each reports as r (r.profil.id)}
   <section class="card" data-rapport={r.profil.id}>
-    <h2>{r.profil.pseudonym}</h2>
+    <h2><Bidi text={r.profil.pseudonym} /></h2>
     <ul>
-      {#if r.joursActifs !== null}<li>{t('rap.jours', { n: r.joursActifs })}</li>{/if}
-      <li>{t('rap.reponses', { n: r.totaux.reponses })}</li>
-      <li>{t('rap.hifz', { n: r.totaux.hifz })}</li>
-      <li>{t('rap.mots', { n: r.totaux.cartes })} · {t('rap.traces', { n: r.totaux.traces })}</li>
-      <li>{t('rap.lecons', { n: r.lecons.length })}</li>
+      {#if r.joursActifs !== null}<li><Bidi text={t('rap.jours', { n: r.joursActifs })} /></li>{/if}
+      <li><Bidi text={t('rap.reponses', { n: r.totaux.reponses })} /></li>
+      <li><Bidi text={t('rap.hifz', { n: r.totaux.hifz })} /></li>
+      <li>
+        <Bidi text={t('rap.mots', { n: r.totaux.cartes })} /> · <Bidi
+          text={t('rap.traces', { n: r.totaux.traces })}
+        />
+      </li>
+      <li><Bidi text={t('rap.lecons', { n: r.lecons.length })} /></li>
       <!-- la même partie peut être validée deux fois le même jour : clé = position (jamais jour + partie) -->
       {#each r.validations as v, i (i)}
         <li>
-          {t('rap.validation', { part: v.part, date: fmtDate(v.day) })}{#if v.mention}
-            — {v.mention}{/if}
+          <Bidi text={t('rap.validation', { part: v.part, date: fmtDate(v.day) })} />{#if v.mention}
+            — <Bidi text={v.mention} />{/if}
         </li>
       {/each}
       {#each r.reponsesEnseignant as a, i (i)}<li>
-          {t('rap.reponse_enseignant')} « {a.answer} »
+          {t('rap.reponse_enseignant')} « <Bidi text={a.answer} /> »
         </li>{/each}
       <li>
-        {t('auj.j_lettres', { n: r.jalons.lettres.length })} · {t('auj.j_lecons', {
-          n: r.jalons.leconsTerminees,
-          m: r.jalons.leconsMaitrisees,
-        })}
+        <Bidi text={t('auj.j_lettres', { n: r.jalons.lettres.length })} /> · <Bidi
+          text={t('auj.j_lecons', {
+            n: r.jalons.leconsTerminees,
+            m: r.jalons.leconsMaitrisees,
+          })}
+        />
       </li>
     </ul>
   </section>

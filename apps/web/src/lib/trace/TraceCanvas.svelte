@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import {
@@ -212,7 +213,7 @@
   <button type="button" onclick={clear} data-testid="effacer">{t('trace.effacer')}</button>
 </div>
 {#if message}<p class="msg" class:good={verdict?.ok} role="status" data-testid="trace-message">
-    {message}
+    <Bidi text={message} />
   </p>{/if}
 
 <style>

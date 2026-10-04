@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { fmtDate, t } from '$lib/i18n';
   import {
@@ -61,7 +62,7 @@
 </script>
 
 <div class="rec" data-testid="enregistreur">
-  <p class="muted small">{t('hifz.enreg_local', { jours: KEEP_DAYS })}</p>
+  <p class="muted small"><Bidi text={t('hifz.enreg_local', { jours: KEEP_DAYS })} /></p>
   {#if !supported}
     <p class="muted">{t('hifz.enreg_indisponible')}</p>
   {:else if recording}
@@ -73,7 +74,7 @@
       >{t('hifz.enreg_commencer')}</button
     >
   {/if}
-  {#if error}<p class="error" role="alert">{error}</p>{/if}
+  {#if error}<p class="error" role="alert"><Bidi text={error} /></p>{/if}
   {#each recs as r (r.id)}
     <div class="item">
       <audio controls src={r.url}></audio>

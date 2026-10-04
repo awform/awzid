@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { suraName } from '@awform/hifz';
@@ -140,7 +141,7 @@
 <header class="hello">
   <h1>{t('auj.titre')}</h1>
   {#if profile}<p class="muted" data-testid="bonjour">
-      {t('auj.bonjour', { nom: profile.pseudonym })}
+      <Bidi text={t('auj.bonjour', { nom: profile.pseudonym })} />
     </p>{/if}
 </header>
 
@@ -158,17 +159,17 @@
   <section class="card seance" data-testid="seance">
     <h2>
       {t('auj.seance')}
-      <span class="duree" data-testid="duree">{t('auj.duree', { n: minutes })}</span>
+      <span class="duree" data-testid="duree"><Bidi text={t('auj.duree', { n: minutes })} /></span>
     </h2>
     <ol class="steps">
       {#if hifz}
         <li data-step="hifz">
           <span class="step-ic"><Icon name="mushaf" /></span>
           <div class="step-body">
-            <strong>{t('auj.hifz')}</strong> · {t('auj.minutes', { n: hifz.minutes })}
+            <strong>{t('auj.hifz')}</strong> · <Bidi text={t('auj.minutes', { n: hifz.minutes })} />
             <p class="muted small">
-              {#if hifz.nouveau}{t('auj.hifz_nouveau', { portion: hifz.nouveau })} ·{/if}
-              {t('auj.hifz_revisions', { recent: hifz.recent, ancien: hifz.ancien })}
+              {#if hifz.nouveau}<Bidi text={t('auj.hifz_nouveau', { portion: hifz.nouveau })} /> ·{/if}
+              <Bidi text={t('auj.hifz_revisions', { recent: hifz.recent, ancien: hifz.ancien })} />
             </p>
           </div>
           <a class="button" href={resolve('/hifz')}>{t('auj.commencer')}</a>
@@ -178,8 +179,8 @@
         <li data-step="lecon">
           <span class="step-ic"><Icon name="alif" /></span>
           <div class="step-body">
-            <strong>{t('auj.lecon')}</strong> · {t('auj.minutes', { n: LESSON_MIN })}
-            <p class="muted small">{data.lecon.titleFr}</p>
+            <strong>{t('auj.lecon')}</strong> · <Bidi text={t('auj.minutes', { n: LESSON_MIN })} />
+            <p class="muted small"><Bidi text={data.lecon.titleFr} /></p>
           </div>
           <a
             class="button primary"
@@ -192,8 +193,8 @@
         <li data-step="mots">
           <span class="step-ic"><Icon name="revisions" /></span>
           <div class="step-body">
-            <strong>{t('auj.mots')}</strong> · {t('auj.minutes', { n: WORDS_MIN })}
-            <p class="muted small">{t('auj.mots_dus', { n: due })}</p>
+            <strong>{t('auj.mots')}</strong> · <Bidi text={t('auj.minutes', { n: WORDS_MIN })} />
+            <p class="muted small"><Bidi text={t('auj.mots_dus', { n: due })} /></p>
           </div>
           <a class="button" href={resolve('/revisions')}>{t('auj.commencer')}</a>
         </li>
@@ -243,16 +244,19 @@
         {#each devoirs as d (d.id)}
           <li data-devoir={d.target}>
             {#if d.kind === 'lecon'}<a href={resolve('/lecons/[id]', { id: d.target })}
-                >{t('auj.devoir_lecon', { id: d.target })}</a
+                ><Bidi text={t('auj.devoir_lecon', { id: d.target })} /></a
               >{:else if d.kind === 'lecture'}<a
                 href={resolve('/lectures/[code]', { code: d.target })}
-                >{t('auj.devoir_lecture', { code: d.target })}</a
-              >{:else}<a href={resolve('/hifz')}>{t('auj.devoir_hifz', { passage: d.label })}</a
+                ><Bidi text={t('auj.devoir_lecture', { code: d.target })} /></a
+              >{:else}<a href={resolve('/hifz')}
+                ><Bidi text={t('auj.devoir_hifz', { passage: d.label })} /></a
               >{/if}
             <span class="muted small"
-              >· {t('auj.pour_le', { date: fmtDate(d.dueDay, { dateStyle: 'medium' }) })} · {d.classe}</span
+              >· <Bidi
+                text={t('auj.pour_le', { date: fmtDate(d.dueDay, { dateStyle: 'medium' }) })}
+              /> · <Bidi text={d.classe} /></span
             >
-            {#if d.note}<p class="small">{d.note}</p>{/if}
+            {#if d.note}<p class="small"><Bidi text={d.note} /></p>{/if}
           </li>
         {/each}
       </ul>
@@ -266,13 +270,13 @@
     <section class="card" data-testid="regularite">
       <h2>{t('auj.semaine')}</h2>
       <p data-testid="jours-travail">
-        {t('auj.jours_travail', { n: r.joursActifs, objectif: r.objectif })}
+        <Bidi text={t('auj.jours_travail', { n: r.joursActifs, objectif: r.objectif })} />
       </p>
       <ol class="week">
         {#each r.semaine as d (d.day)}
           <li class:actif={d.actif} class:repos={d.repos} data-day={d.day} data-actif={d.actif}>
-            <span>{t(`auj.j${d.weekday}`)}</span>
-            <small>{d.actif ? '✓' : d.repos ? t('auj.repos') : ''}</small>
+            <span><Bidi text={t(`auj.j${d.weekday}`)} /></span>
+            <small><Bidi text={d.actif ? '✓' : d.repos ? t('auj.repos') : ''} /></small>
           </li>
         {/each}
       </ol>
@@ -296,7 +300,7 @@
                   onchange={(e) => toggleRest(d, e.currentTarget.checked)}
                   data-repos={d}
                 />
-                {t(`auj.j${d}`)}</label
+                <Bidi text={t(`auj.j${d}`)} /></label
               >
             {/each}
           </fieldset>
@@ -325,29 +329,36 @@
     <h2>{t('auj.jalons')}</h2>
     <ul class="milestones">
       <li data-jalon="lettres">
-        {t('auj.j_lettres', { n: data.jalons.lettres.length })}
+        <Bidi text={t('auj.j_lettres', { n: data.jalons.lettres.length })} />
         {#if data.jalons.lettres.length}<span class="ar" lang="ar" dir="rtl"
-            >{data.jalons.lettres.join(' ')}</span
+            ><Bidi text={data.jalons.lettres.join(' ')} base="ar" /></span
           >{/if}
       </li>
       <li data-jalon="lecons">
-        {t('auj.j_lecons', { n: data.jalons.leconsTerminees, m: data.jalons.leconsMaitrisees })}
+        <Bidi
+          text={t('auj.j_lecons', {
+            n: data.jalons.leconsTerminees,
+            m: data.jalons.leconsMaitrisees,
+          })}
+        />
       </li>
       {#if hifz}
         <li data-jalon="sourates">
-          {t('auj.j_sourates', { n: suras.length })}{#if suras.length}
-            : {suras
-              .slice(-6)
-              .map((s) => suraName(s))
-              .join(', ')}{/if}
+          <Bidi text={t('auj.j_sourates', { n: suras.length })} />{#if suras.length}
+            : <Bidi
+              text={suras
+                .slice(-6)
+                .map((s) => suraName(s))
+                .join(', ')}
+            />{/if}
         </li>
         <li data-jalon="juz">
-          {t('auj.j_juz', { n: juz.length })}{#if juz.length}
-            : {juz.map((j) => fmtNumber(j)).join(', ')}{/if}
+          <Bidi text={t('auj.j_juz', { n: juz.length })} />{#if juz.length}
+            : <Bidi text={juz.map((j) => fmtNumber(j)).join(', ')} />{/if}
         </li>
         {#if hizb && quarts}
-          <li data-jalon="hizb">{t('auj.j_hizb', { n: hizb.length })}</li>
-          <li data-jalon="quarts">{t('auj.j_quarts', { n: quarts.length })}</li>
+          <li data-jalon="hizb"><Bidi text={t('auj.j_hizb', { n: hizb.length })} /></li>
+          <li data-jalon="quarts"><Bidi text={t('auj.j_quarts', { n: quarts.length })} /></li>
         {:else}<li class="muted small">{t('auj.j_hizb_bientot')}</li>{/if}
       {/if}
     </ul>

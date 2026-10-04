@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { t } from '$lib/i18n';
 
@@ -52,25 +53,29 @@
 <svelte:head><title>{t('app.nom')} — {t('rac.titre')}</title></svelte:head>
 
 <h1>{t('rac.titre')}</h1>
-<p>{t('rac.intro')}</p>
+<p><Bidi text={t('rac.intro')} /></p>
 
 {#if loaded && !items.length}
-  <p class="card">{t('rac.aucun')}</p>
+  <p class="card"><Bidi text={t('rac.aucun')} /></p>
 {:else if item}
   <section class="card jeu" data-testid="racine" data-item={item.id}>
-    <p class="muted small">{t('rac.progression', { n: i + 1, total: items.length })}</p>
+    <p class="muted small">
+      <Bidi text={t('rac.progression', { n: i + 1, total: items.length })} />
+    </p>
     <div class="grid">
       <div>
         <p class="lbl">{t('rac.racine')}</p>
-        <p class="root" dir="rtl" lang="ar" data-testid="racine-lettres">{item.root}</p>
+        <p class="root" dir="rtl" lang="ar" data-testid="racine-lettres">
+          <Bidi text={item.root} base="ar" />
+        </p>
       </div>
       <div>
         <p class="lbl">{t('rac.scheme')}</p>
-        <p class="ar big" dir="rtl" lang="ar">{item.scheme}</p>
+        <p class="ar big" dir="rtl" lang="ar"><Bidi text={item.scheme} base="ar" /></p>
       </div>
       <div>
         <p class="lbl">{t('rac.singulier')}</p>
-        <p class="ar big" dir="rtl" lang="ar">{item.singular}</p>
+        <p class="ar big" dir="rtl" lang="ar"><Bidi text={item.singular} base="ar" /></p>
       </div>
     </div>
     <p><strong>{t('rac.question')}</strong></p>
@@ -85,22 +90,24 @@
           lang="ar"
           disabled={ok}
           onclick={() => (chosen = o)}
-          data-option={o}>{o}</button
+          data-option={o}><Bidi text={o} base="ar" /></button
         >
       {/each}
     </div>
     {#if chosen}
       <p role="status" class:okmsg={ok} data-testid="racine-retour">
-        {ok ? t('rac.bravo', { racine: item.root }) : t('rac.essaie')}
+        <Bidi text={ok ? t('rac.bravo', { racine: item.root }) : t('rac.essaie')} />
       </p>
     {/if}
     {#if ok}<button type="button" class="primary" onclick={next} data-testid="racine-suivant"
         >{t('rac.suivant')}</button
       >{/if}
-    <p class="muted small">{src(item.source)}</p>
+    <p class="muted small"><Bidi text={src(item.source)} /></p>
   </section>
 {:else if loaded}
-  <p class="card okmsg" role="status" data-testid="racine-fin">{t('rac.fini', { n: done })}</p>
+  <p class="card okmsg" role="status" data-testid="racine-fin">
+    <Bidi text={t('rac.fini', { n: done })} />
+  </p>
 {/if}
 
 <style>

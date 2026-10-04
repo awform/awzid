@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { fmtDate, t } from '$lib/i18n';
@@ -40,7 +41,7 @@
 <p><a href={resolve('/enseignant')}>{t('ensq.retour')}</a></p>
 <h1>{t('ensq.titre')}</h1>
 <p class="muted">{t('ensq.intro')}</p>
-{#if msg}<p class="card ok" role="status" data-testid="ensq-message">{msg}</p>{/if}
+{#if msg}<p class="card ok" role="status" data-testid="ensq-message"><Bidi text={msg} /></p>{/if}
 
 {#if loaded && code === 'reserve_aux_enseignants'}
   <p class="card">{t('ens.reserve')}</p>
@@ -53,11 +54,10 @@
     {#each list as q (q.id)}
       <li class="card" data-question={q.id}>
         <p class="muted small">
-          {q.pseudonym} · {q.className} · {q.unitId ?? ''} · {fmtDate(q.createdAt)} · {t(
-            `ensq.motif_${q.motif}`,
-          )}
+          <Bidi text={q.pseudonym} /> · <Bidi text={q.className} /> · <Bidi text={q.unitId ?? ''} /> ·
+          {fmtDate(q.createdAt)} · <Bidi text={t(`ensq.motif_${q.motif}`)} />
         </p>
-        <p class="texte">« {q.text} »</p>
+        <p class="texte">« <Bidi text={q.text} /> »</p>
         <label for="rep-{q.id}">{t('ensq.ta_reponse')}</label>
         <textarea
           id="rep-{q.id}"

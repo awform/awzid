@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
@@ -52,10 +53,10 @@
       href={resolve('/niveaux/[code]', { code: l.code })}
       data-testid="level"
     >
-      <span class="code">{l.codeFr ?? l.code}</span>
+      <span class="code"><Bidi text={l.codeFr ?? l.code} /></span>
       {#if l.titreAr}<span class="titre-ar"><Ar text={l.titreAr} /></span>{/if}
-      <span class="titre">{l.titleFr}</span>
-      <small>{t('arabe.unites', { n: l.units })}</small>
+      <span class="titre"><Bidi text={l.titleFr} /></span>
+      <small><Bidi text={t('arabe.unites', { n: l.units })} /></small>
     </a>
   </li>
 {/snippet}
@@ -81,7 +82,7 @@
   <a class="button" href={resolve('/ecriture')}><Icon name="plume" size={20} />{t('trace.titre')}</a
   >
 </p>
-<p class="edition">{t('arabe.edition', { edition: data.edition })}</p>
+<p class="edition"><Bidi text={t('arabe.edition', { edition: data.edition })} /></p>
 
 <style>
   .today {

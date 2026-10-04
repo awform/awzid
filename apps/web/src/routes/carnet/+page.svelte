@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
@@ -45,10 +46,10 @@
   <p class="card">{t('carnetp.adulte')}</p>
 {:else}
   <p class="muted">{t('carnetp.intro')}</p>
-  {#if error}<p class="card bad" role="alert">{error}</p>{/if}
+  {#if error}<p class="card bad" role="alert"><Bidi text={error} /></p>{/if}
   {#each niveaux as n (n)}
     <section class="card" data-niveau={n}>
-      <h2>{n.toUpperCase()}</h2>
+      <h2><Bidi text={n.toUpperCase()} /></h2>
       <ul class="list">
         {#each lignes.filter((l) => l.niveau === n) as l (l.unitId)}
           <li data-carnet-perso={l.unitId}>
@@ -58,9 +59,9 @@
                 checked={l.coche}
                 onchange={(e) => toggle(l, (e.currentTarget as HTMLInputElement).checked)}
               />
-              <a href={resolve('/lecons/[id]', { id: l.unitId })}>{l.unitId}</a> —
+              <a href={resolve('/lecons/[id]', { id: l.unitId })}><Bidi text={l.unitId} /></a> —
               {#if l.ar}<Ar text={l.ar} /> —
-              {/if}{l.fr}</label
+              {/if}<Bidi text={l.fr} /></label
             >
           </li>
         {/each}

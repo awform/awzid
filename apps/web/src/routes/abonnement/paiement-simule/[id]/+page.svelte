@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
@@ -47,22 +48,24 @@
 <p><a href={resolve('/offres')}>{t('paie.retour')}</a></p>
 <h1>{t('paie.titre')}</h1>
 <p class="card warn" data-testid="paiement-simule">{t('paie.avertissement')}</p>
-{#if error}<p class="card bad" role="alert" data-testid="paiement-erreur">{error}</p>{/if}
+{#if error}<p class="card bad" role="alert" data-testid="paiement-erreur">
+    <Bidi text={error} />
+  </p>{/if}
 {#if d}
   <section class="card">
-    <p>{t('paie.moyen')} : <strong>{t(`paie.moyen_${d.prestataire}`)}</strong></p>
+    <p>{t('paie.moyen')} : <strong><Bidi text={t(`paie.moyen_${d.prestataire}`)} /></strong></p>
     <p>
-      {t(`offre.nom_${d.plan}`)}{#if d.places}
-        · {t('abo.places', { n: d.places })}{/if}
+      <Bidi text={t(`offre.nom_${d.plan}`)} />{#if d.places}
+        · <Bidi text={t('abo.places', { n: d.places })} />{/if}
     </p>
-    <p class="total" data-testid="montant">{price(d.montant, d.devise)}</p>
+    <p class="total" data-testid="montant"><Bidi text={price(d.montant, d.devise)} /></p>
     {#if d.status === 'ouverte' && d.prestataire === 'mobile_money'}
       <fieldset class="ops" data-testid="operateurs">
         <legend>{t('paie.operateur')}</legend>
         {#each OPERATEURS as o (o)}
           <label
             ><input type="radio" name="operateur" value={o} bind:group={operateur} />
-            {t(`paie.op_${o}`)}</label
+            <Bidi text={t(`paie.op_${o}`)} /></label
           >
         {/each}
       </fieldset>
@@ -82,7 +85,7 @@
         >
       </div>
     {:else}
-      <p class="muted">{t(`abo.paiement_${d.status}`)}</p>
+      <p class="muted"><Bidi text={t(`abo.paiement_${d.status}`)} /></p>
     {/if}
   </section>
 {/if}

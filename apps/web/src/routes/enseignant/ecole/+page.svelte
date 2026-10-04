@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { fmtNumber, t } from '$lib/i18n';
@@ -33,7 +34,7 @@
 <svelte:head><title>{t('app.nom')} — {t('eco.titre')}</title></svelte:head>
 
 <h1>{t('eco.titre')}</h1>
-{#if error}<p class="card bad" role="alert">{error}</p>{/if}
+{#if error}<p class="card bad" role="alert"><Bidi text={error} /></p>{/if}
 {#if loaded && !isTeacher}
   <p class="card">{t('ens.reserve')}</p>
 {:else if blocked}
@@ -60,15 +61,17 @@
           {#each rows as r (r.id)}
             <tr>
               <th scope="row"
-                ><a href={resolve('/enseignant/classe/[id]', { id: r.id })}>{r.nom}</a>
-                {#if r.niveau}<span class="muted small">{r.niveau.toUpperCase()}</span>{/if}</th
+                ><a href={resolve('/enseignant/classe/[id]', { id: r.id })}><Bidi text={r.nom} /></a
+                >
+                {#if r.niveau}<span class="muted small"><Bidi text={r.niveau.toUpperCase()} /></span
+                  >{/if}</th
               >
               <td class="num"
                 >{fmtNumber(r.eleves)} ({fmtNumber(r.elevesApplication)} / {fmtNumber(
                   r.elevesPapier,
                 )})</td
               >
-              <td class="num">{fmtNumber(r.actifs7j)} · {taux(r.tauxActivite)}</td>
+              <td class="num">{fmtNumber(r.actifs7j)} · <Bidi text={taux(r.tauxActivite)} /></td>
               <td class="num">{fmtNumber(r.devoirsEnCours)}</td>
               <td class="num">{fmtNumber(r.copiesACorriger)}</td>
               <td class="num">{fmtNumber(r.certificats)}</td>
@@ -79,7 +82,7 @@
         {#if tot}
           <tfoot>
             <tr data-testid="synthese-total">
-              <th scope="row">{t('eco.total', { n: tot.classes })}</th>
+              <th scope="row"><Bidi text={t('eco.total', { n: tot.classes })} /></th>
               <td class="num"
                 >{fmtNumber(tot.eleves)} ({fmtNumber(tot.elevesApplication)} / {fmtNumber(
                   tot.elevesPapier,

@@ -8,6 +8,40 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 04/10/2026 — Arabe et français sur la même ligne : isolement bidirectionnel (branche `bidi-wip`)
+
+Signalement du client : quand l'arabe et le français sont sur la même ligne, parenthèses, ponctuation et mots
+se mélangent (le français va de gauche à droite, l'arabe de droite à gauche).
+
+- **Inventaire** (31 livres, 929 fichiers) : sur 125 400 champs français (`*_fr`), **30 766** contiennent de
+  l'arabe (consignes, notions, guide, objectifs, erreurs, tajwīd, dialogues, références de hadith…) ; environ
+  4 800 segments arabes de 5 mots ou plus. Côté arabe : des fragments latins dans la lecture
+  (« نَعْبُدُ : نَـ = nous »). Interface : 274 messages mêlent les deux écritures dans au moins une langue
+  (surtout l'arabe). 11 cas réels capturés avant/après à 360 et 320 px (`reports/bidi/avant`, `reports/bidi/apres`).
+- **Correction générale** : `apps/web/src/lib/bidi/segments.ts` découpe un texte en segments d'une seule
+  écriture SANS LE MODIFIER (la concaténation redonne la chaîne octet pour octet). Base française : chaque
+  segment arabe est isolé ; ponctuation latine, parenthèses et guillemets qui l'entourent restent dans le
+  français (donc du bon côté) ; la ponctuation arabe (، ؛ ؟), les tirets, le tatwīl et les parenthèses
+  équilibrées restent dans l'arabe ; « … » collé à l'arabe lui appartient. Base arabe : chaque segment latin
+  est isolé. Composant commun **`<Bidi text={…}>`** (`lib/Bidi.svelte`) : `<bdi dir="rtl" lang="ar">` avec
+  la police arabe ; `<Ar>` isole les fragments latins (jamais pour le texte coranique, rendu tel quel).
+- **Mise en page** : un terme court reste dans la ligne ; une phrase arabe de 5 mots ou plus passe sur sa
+  propre ligne, alignée à droite, la traduction en dessous — sauf entre parenthèses ou guillemets (liste,
+  citation dans la phrase) et dans les boutons, liens et titres (reste dans la ligne).
+- **Partout** : conversion automatique de 780 interpolations dans 77 gabarits (`{x}` → `<Bidi text={x} />`).
+  Restent en texte brut : messages d'interface à clé fixe sans mélange d'écritures, dates et nombres mis en forme.
+  Exclus (texte coranique, et fichiers en cours du lot 29) : `lib/quran/`, `routes/coran/`, `VerseText`.
+  À convertir après la fusion du lot 29.
+- **Garde-fous** : `segments.test.ts` (cas réels des livres, texte inchangé) ; `gabarits.test.ts` = règle de
+  lint : tout texte affiché sans `<Bidi>`/`<Ar>`, ou tout arabe écrit en dur hors `lang="ar"`, fait échouer
+  les tests ; `e2e/bidi.spec.ts` : chaque nœud de texte est d'une seule écriture et dans la bonne direction
+  (11 cas réels) — **11/11 en échec sur `main`, 11/11 vert après**.
+- **Chiffres** : tests unitaires 1 272 (dont 17 nouveaux), e2e 198 réussis + 13 ignorés (3 intermittents —
+  captures lot 3, accueil lot 26, récitateurs lot 27 — verts à la relance, 52/52) ; budget : page la plus
+  lourde 128,9 → 130,7 Ko (≤ 150), toutes pages 264,3 → 269,2 Ko (≤ 300). Démonstration non redéployée.
+
+---
+
 ## 04/10/2026 — Démonstration : connexion simplifiée (branche `demo-simple`)
 
 Demande du client (démonstration sur son réseau local, utilisée par lui seul) : identifiants faciles à taper

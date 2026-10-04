@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount, setContext } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
@@ -195,35 +196,38 @@
   >
     <p class="nav">
       <a href={resolve('/niveaux/[code]', { code: u.levelCode })}
-        >{t('lecon.retour', { level: u.levelCode })}</a
+        ><Bidi text={t('lecon.retour', { level: u.levelCode })} /></a
       >
     </p>
     <header class="ltitle">
-      <p class="num">{unitLabel(u)} · {u.titleFr}</p>
+      <p class="num"><Bidi text={unitLabel(u)} /> · <Bidi text={u.titleFr} /></p>
       <h1 class="ar" lang="ar" dir="rtl">
         <Ar text={L.titre_ar} {lettres} />
         {#if lettres.length && !isEval}<span class="fam"
-            >{#each lettres as x, i (i)}<span class="c{i % 4}">{x.l}</span>{/each}</span
+            >{#each lettres as x, i (i)}<span class="c{i % 4}"><Bidi text={x.l} base="ar" /></span
+              >{/each}</span
           >{/if}
       </h1>
       {#if progress}<p class="prog" data-testid="progression">
-          {t('lecon.progression', { statut: t(`statut.${progress.status}`) })}{progress.bestScore !=
-          null
-            ? ` · ${fmtNumber(progress.bestScore, { style: 'percent' })}`
-            : ''}
+          <Bidi text={t('lecon.progression', { statut: t(`statut.${progress.status}`) })} /><Bidi
+            text={progress.bestScore != null
+              ? ` · ${fmtNumber(progress.bestScore, { style: 'percent' })}`
+              : ''}
+          />
         </p>{/if}
     </header>
 
     {#if isEval && lettres.length}
       <p class="readline big" dir="rtl">
-        {#each lettres as x, i (i)}<span class="c{i % 4}">{x.l}</span>{/each}
+        {#each lettres as x, i (i)}<span class="c{i % 4}"><Bidi text={x.l} base="ar" /></span
+          >{/each}
       </p>
     {/if}
 
     {#if L.scene}
       <Scene spec={L.scene as SceneSpec} {lettres} />
       {#if (L.scene as SceneSpec).bulle_fr}<p class="bulle fr">
-          « {(L.scene as SceneSpec).bulle_fr} »
+          « <Bidi text={(L.scene as SceneSpec).bulle_fr} /> »
         </p>{/if}
     {/if}
 
@@ -239,7 +243,7 @@
         >
         <div>
           <Ar text={'هَدَفِي: ' + L.objectifs[0]!.ar} {lettres} />
-          <p class="fr">{t('lecon.objectif', { texte: L.objectifs[0]!.fr })}</p>
+          <p class="fr"><Bidi text={t('lecon.objectif', { texte: L.objectifs[0]!.fr })} /></p>
         </div>
       </div>
     {/if}
@@ -263,16 +267,18 @@
             texte_fr?: string;
           }}
           <h2>
-            <Ar text={N.titre_ar ?? 'أَقْرَأُ'} /> <span>{N.titre_fr ?? t('lecon.je_lis')}</span>
+            <Ar text={N.titre_ar ?? 'أَقْرَأُ'} />
+            <span><Bidi text={N.titre_fr ?? t('lecon.je_lis')} /></span>
           </h2>
           <div class="notion">
-            {#if N.signe}<span class="mk ar" lang="ar">{N.signe}</span>{/if}
+            {#if N.signe}<span class="mk ar" lang="ar"><Bidi text={N.signe} base="ar" /></span>{/if}
             {#if N.texte_ar}<Ar text={N.texte_ar} {lettres} />{/if}
-            {#if N.texte_fr}<p class="fr">{N.texte_fr}</p>{/if}
+            {#if N.texte_fr}<p class="fr"><Bidi text={N.texte_fr} /></p>{/if}
           </div>
         {:else}
           <h2>
-            <Ar text="أَقْرَأُ" /> <span>{isEval ? t('lecon.je_relis') : t('lecon.je_lis')}</span>
+            <Ar text="أَقْرَأُ" />
+            <span><Bidi text={isEval ? t('lecon.je_relis') : t('lecon.je_lis')} /></span>
           </h2>
         {/if}
         {#if R.syllabes?.length}
@@ -283,7 +289,9 @@
         {/if}
         {#if R.ligne?.length}
           <p class="hint fr">
-            {R.vedette && !R.non_prepare ? t('lecon.ligne_vedette') : t('lecon.ligne')}
+            <Bidi
+              text={R.vedette && !R.non_prepare ? t('lecon.ligne_vedette') : t('lecon.ligne')}
+            />
           </p>
           <p class="readline" dir="rtl">
             {#each R.ligne as w, i (i)}<span><Ar text={w} {lettres} /></span>{/each}
@@ -301,14 +309,14 @@
           {#if R.vedette}
             <div class="note">
               <Ar text={R.vedette.ar} {lettres} />
-              {#if R.vedette.fr}<span class="fr"> — « {R.vedette.fr} »</span>{/if}
-              {#if R.vedette.note_fr}<span class="fr"> {R.vedette.note_fr}</span>{/if}
+              {#if R.vedette.fr}<span class="fr"> — « <Bidi text={R.vedette.fr} /> »</span>{/if}
+              {#if R.vedette.note_fr}<span class="fr"> <Bidi text={R.vedette.note_fr} /></span>{/if}
             </div>
           {/if}
           {#each phrases as p, i (i)}
             <div class="phrase">
               <Ar tag="p" text={p.ar} {lettres} />
-              {#if p.fr}<p class="fr">{p.fr}</p>{/if}
+              {#if p.fr}<p class="fr"><Bidi text={p.fr} /></p>{/if}
             </div>
           {/each}
         {/if}
@@ -319,14 +327,14 @@
       <section class="blk">
         <h2><Ar text="أَسْمَعُ وَأُرَدِّدُ" /> <span>{t('lecon.ecoute_repete')}</span></h2>
         <p class="hint fr">
-          {(L.mots_fr as string) ?? t('lecon.mots_consigne')}
+          <Bidi text={(L.mots_fr as string) ?? t('lecon.mots_consigne')} />
         </p>
         <div class="words">
           {#each L.mots as w, i (i)}
             <div class="wc">
               <Illus k={w.img} label={w.fr} />
               <Ar text={w.ar} {lettres} />
-              <span class="fr">{w.fr}</span>
+              <span class="fr"><Bidi text={w.fr} /></span>
             </div>
           {/each}
         </div>
@@ -347,7 +355,7 @@
       <section class="blk">
         <h2>
           <Ar text={isEval ? 'حَصِيلَةٌ' : 'أَتَدَرَّبُ'} />
-          <span>{isEval ? t('lecon.mes_exercices') : t('lecon.entraine')}</span>
+          <span><Bidi text={isEval ? t('lecon.mes_exercices') : t('lecon.entraine')} /></span>
         </h2>
         {#if u.kind === 'examen'}
           <p class="card" data-testid="examen-note">{t('lecon.examen_note_seulement')}</p>
@@ -365,7 +373,9 @@
             {#if evalResult?.items[eid]}
               {@const r = Object.values(evalResult.items[eid]!)}
               <p class="muted" data-testid="resultat-exercice">
-                {t('lecon.bilan_resultat', { ok: r.filter(Boolean).length, n: r.length })}
+                <Bidi
+                  text={t('lecon.bilan_resultat', { ok: r.filter(Boolean).length, n: r.length })}
+                />
               </p>
             {/if}
           {/each}
@@ -373,9 +383,11 @@
             >{t('lecon.bilan_corriger')}</button
           >
           {#if evalResult}<p class="card" role="status">
-              {t('lecon.bilan_total', { points: evalResult.points, max: evalResult.max })}
+              <Bidi
+                text={t('lecon.bilan_total', { points: evalResult.points, max: evalResult.max })}
+              />
             </p>{/if}
-          {#if evalError}<p class="retry" role="alert">{evalError}</p>{/if}
+          {#if evalError}<p class="retry" role="alert"><Bidi text={evalError} /></p>{/if}
         {:else}
           {#each livreEx as { ex, i } (i)}
             <Exercise
@@ -398,7 +410,7 @@
         <h2><Ar text="مُعْجَمُ الدَّرْسِ" /> <span>{t('lecon.lexique')}</span></h2>
         <div class="lex">
           {#each lexique as x, i (i)}<div>
-              <Ar text={x.ar} /> <span class="fr">{x.fr ?? ''}</span>
+              <Ar text={x.ar} /> <span class="fr"><Bidi text={x.fr ?? ''} /></span>
             </div>{/each}
         </div>
       </section>
@@ -416,8 +428,8 @@
         <h2><Ar text="الِاخْتِبَارُ الشَّفَهِيُّ" /> <span>{t('lecon.oral')}</span></h2>
         <ol>
           {#each oral as o, i (i)}<li>
-              <span class="fr">{o.fr}</span>{#if o.points != null}
-                <b>{t('lecon.points', { n: o.points })}</b>{/if}
+              <span class="fr"><Bidi text={o.fr} /></span>{#if o.points != null}
+                <b><Bidi text={t('lecon.points', { n: o.points })} /></b>{/if}
             </li>{/each}
         </ol>
       </section>
@@ -430,9 +442,9 @@
           <h3><Ar text="أَتَذَكَّرُ" /> <span>{t('lecon.je_retiens')}</span></h3>
           {#each lettres as x, i (i)}
             <div class="row">
-              <span class="l c{i % 4}" lang="ar">{x.l}</span>{#if x.points_ar}<Ar
-                  text={x.points_ar}
-                />{/if} <span class="fr">{x.points_fr ?? ''}</span>
+              <span class="l c{i % 4}" lang="ar"><Bidi text={x.l} base="ar" /></span
+              >{#if x.points_ar}<Ar text={x.points_ar} />{/if}
+              <span class="fr"><Bidi text={x.points_fr ?? ''} /></span>
             </div>
           {/each}
         </div>
@@ -440,7 +452,7 @@
         <div class="memo">
           <h3><Ar text="أَتَذَكَّرُ" /> <span>{t('lecon.je_retiens')}</span></h3>
           {#each L.retiens as r, i (i)}<div class="row">
-              <Ar text={r.ar} /> <span class="fr">{r.fr}</span>
+              <Ar text={r.ar} /> <span class="fr"><Bidi text={r.fr} /></span>
             </div>{/each}
         </div>
       {/if}
@@ -453,13 +465,12 @@
         </div>
         <p class="fr" aria-live="polite">
           {#if nChecked === checkItems.length && checkItems.length}{t('lecon.bravo_termine')}
-            <span class="ar" lang="ar">تَبَارَكَ اللَّهُ</span>{:else if nChecked}{t(
-              'lecon.continue',
-              {
+            <span class="ar" lang="ar">تَبَارَكَ اللَّهُ</span>{:else if nChecked}<Bidi
+              text={t('lecon.continue', {
                 n: nChecked,
                 total: checkItems.length,
-              },
-            )}{:else}{t('lecon.coche')}{/if}
+              })}
+            />{:else}{t('lecon.coche')}{/if}
         </p>
       </div>
       <div class="check">
@@ -470,7 +481,10 @@
               checked={checked[i] ?? false}
               onchange={(e) => toggle(i, e.currentTarget.checked)}
             />
-            <span><Ar text={'أَنَا أَسْتَطِيعُ: ' + c.ar} /> <span class="fr">{c.fr}</span></span>
+            <span
+              ><Ar text={'أَنَا أَسْتَطِيعُ: ' + c.ar} />
+              <span class="fr"><Bidi text={c.fr} /></span></span
+            >
           </label>
         {/each}
       </div>
@@ -488,7 +502,7 @@
             {#each lettres as x (x.l)}<a
                 class="button"
                 href={`${resolve('/ecriture')}?lettre=${encodeURIComponent(x.l)}`}
-                data-testid="tracer-lettre">{t('lecon.tracer_lettre', { l: x.l })}</a
+                data-testid="tracer-lettre"><Bidi text={t('lecon.tracer_lettre', { l: x.l })} /></a
               >{/each}
           </p>
           <!-- eslint-enable svelte/no-navigation-without-resolve -->
@@ -503,7 +517,7 @@
             {#each E.mots as m, i (i)}<a
                 class="button"
                 href={`${resolve('/ecriture')}?mot=${encodeURIComponent(String(m).replace(/[[\]]/g, ''))}`}
-                >{t('lecon.repasser_mot', { n: i + 1 })}</a
+                ><Bidi text={t('lecon.repasser_mot', { n: i + 1 })} /></a
               >{/each}
           </p>
           <!-- eslint-enable svelte/no-navigation-without-resolve -->
@@ -513,7 +527,11 @@
           <ul class="lier">
             {#each E.lier as x, i (i)}
               {@const lk = x as { lettres?: string[] }}
-              <li dir="rtl"><span class="ar" lang="ar">{(lk.lettres ?? []).join(' + ')}</span></li>
+              <li dir="rtl">
+                <span class="ar" lang="ar"
+                  ><Bidi text={(lk.lettres ?? []).join(' + ')} base="ar" /></span
+                >
+              </li>
             {/each}
           </ul>
         {/if}
@@ -529,7 +547,7 @@
             ar?: string;
           }}
           <h3>{t('lecon.ecris_moi')}</h3>
-          <p class="fr">{P.consigne_fr ?? P.fr ?? ''}</p>
+          <p class="fr"><Bidi text={P.consigne_fr ?? P.fr ?? ''} /></p>
           {#if P.modele_ar ?? P.ar}<Ar tag="p" text={P.modele_ar ?? P.ar ?? ''} />{/if}
         {/if}
         <h3>{t('lecon.dictee')}</h3>
@@ -554,10 +572,10 @@
   <section class="blk">
     <h2>
       <Ar text={dialogue?.titre_ar ?? 'أَتَكَلَّمُ'} />
-      <span>{dialogue?.titre_fr ?? t('lecon.je_parle')}</span>
+      <span><Bidi text={dialogue?.titre_fr ?? t('lecon.je_parle')} /></span>
     </h2>
     <p class="hint fr">
-      {(dialogue?.consigne_fr as string) ?? t('lecon.dialogue_consigne')}
+      <Bidi text={(dialogue?.consigne_fr as string) ?? t('lecon.dialogue_consigne')} />
     </p>
     {#if dialogue?.lieu}
       <Scene
@@ -578,11 +596,11 @@
           <div class="av"><Illus k={personaKey(r.qui ?? '')} cls="avatar" /></div>
           <div class="bub">
             <div class="who">
-              {#if r.qui_ar}<span class="ar" lang="ar">{r.qui_ar}</span> ·
-              {/if}{r.qui}
+              {#if r.qui_ar}<span class="ar" lang="ar"><Bidi text={r.qui_ar} base="ar" /></span> ·
+              {/if}<Bidi text={r.qui} />
             </div>
             <Ar text={r.ar} {lettres} />
-            {#if r.fr}<p class="fr">{r.fr}</p>{/if}
+            {#if r.fr}<p class="fr"><Bidi text={r.fr} /></p>{/if}
           </div>
         </div>
       {/each}
@@ -591,7 +609,7 @@
       <div class="note">
         <b>{t('lecon.je_retiens_deux_points')}</b>
         {#if dialogue.note_ar}<Ar text={dialogue.note_ar as string} />{/if}
-        <span class="fr">{dialogue.note_fr ?? ''}</span>
+        <span class="fr"><Bidi text={dialogue.note_fr ?? ''} /></span>
       </div>
     {/if}
   </section>
@@ -600,7 +618,8 @@
 {#snippet coran()}
   <section class="blk quran">
     <h2>
-      <Ar text={Q?.titre_ar ?? 'مِنَ الْقُرْآنِ'} /> <span>{Q?.titre_fr ?? t('lecon.coran')}</span>
+      <Ar text={Q?.titre_ar ?? 'مِنَ الْقُرْآنِ'} />
+      <span><Bidi text={Q?.titre_fr ?? t('lecon.coran')} /></span>
     </h2>
     {#each Q?.versets ?? [] as v, i (i)}
       {#if v.non_prepare}
@@ -611,10 +630,10 @@
       {:else}
         <div class="ayah" data-ref={v.ref_fr}>
           <Ar tag="p" quran text={v.ar} {lettres} />
-          {#if v.fr}<p class="fr sens">{v.fr}</p>{/if}
+          {#if v.fr}<p class="fr sens"><Bidi text={v.fr} /></p>{/if}
           <div class="cap">
-            <span class="ref">{v.ref_fr ?? ''}</span>
-            {#if v.consigne_fr}<span class="fr">— {v.consigne_fr}</span>{/if}
+            <span class="ref"><Bidi text={v.ref_fr ?? ''} /></span>
+            {#if v.consigne_fr}<span class="fr">— <Bidi text={v.consigne_fr} /></span>{/if}
           </div>
         </div>
       {/if}
@@ -622,14 +641,21 @@
     {#if Q?.mots?.length}
       <div class="qwords">
         {#each Q.mots as m, i (i)}<div>
-            <Ar text={m.ar} /> <span class="fr">« {m.fr} »{m.ref ? ` (${m.ref})` : ''}</span>
+            <Ar text={m.ar} />
+            <span class="fr"
+              >« <Bidi text={m.fr} /> »<Bidi text={m.ref ? ` (${m.ref})` : ''} /></span
+            >
           </div>{/each}
       </div>
     {/if}
     {#if Q?.tajwid}
       <div class="tajwid">
-        <b>{t('lecon.tajwid_titre', { titre: Q.tajwid.titre_fr ?? t('lecon.tajwid') })}</b>
-        <span class="fr">{Q.tajwid.texte_fr ?? ''}</span>
+        <b
+          ><Bidi
+            text={t('lecon.tajwid_titre', { titre: Q.tajwid.titre_fr ?? t('lecon.tajwid') })}
+          /></b
+        >
+        <span class="fr"><Bidi text={Q.tajwid.texte_fr ?? ''} /></span>
         {#if Q.tajwid.exemple_ar}<Ar quran text={Q.tajwid.exemple_ar} {lettres} />{/if}
       </div>
     {/if}
@@ -640,12 +666,12 @@
   <section class="blk fiqh">
     <h2>
       <Ar text={fiqh?.titre_ar ?? 'آدَابِي'} />
-      <span>{fiqh?.titre_fr ?? t('lecon.adab')}</span>
+      <span><Bidi text={fiqh?.titre_fr ?? t('lecon.adab')} /></span>
     </h2>
     <ul>
       {#each fiqh?.points ?? [] as p, i (i)}<li>
           {#if p.ar}<Ar text={p.ar} /> —
-          {/if}<span class="fr">{p.fr ?? ''}</span>
+          {/if}<span class="fr"><Bidi text={p.fr ?? ''} /></span>
         </li>{/each}
     </ul>
   </section>
