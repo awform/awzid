@@ -20,3 +20,6 @@ apps/web/src/lib/theme/tokens.css
 
 # lot 29 : annotations du tajwid générées (pnpm --filter @awform/content tajwid), contrôlées par test
 apps/web/static/tajwid/
+
+# Muṣḥaf par page : traductions QuranEnc générées (pnpm --filter @awform/content traductions), recopiées à l’identique, contrôlées par test
+apps/web/static/traductions/

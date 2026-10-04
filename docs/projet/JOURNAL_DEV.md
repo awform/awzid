@@ -8,6 +8,86 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 04/10/2026 — Muṣḥaf page par page en VERT, plus clair et plus intuitif (branche `mushaf-design-wip`, depuis `main` eba4b6d)
+
+Demande du client : « en vert, plus joli, plus moderne, plus clair, plus intuitif, plus agréable ».
+
+- **Palette verte** (jetons `--mp-*` de `tokens.ts`, communs aux quatre thèmes) : verts profonds (cadre,
+  cartouches de sourate), menthe douce (fonds, barre), or discret (filets, rosaces), papier clair légèrement
+  chaud ; variante **vert nuit** en mode sombre. 10 paires de contraste ajoutées + tajwid sur le papier (4,5:1)
+  et sur le verset choisi (3:1) : **AA vérifié dans les huit palettes** (tokens.test.ts).
+- **Cadre modernisé** (`MushafPage.svelte`, SVG léger) : treillis clairsemé d'étoiles à huit pointes dans la
+  marge, double filet vert et or, rosaces géométriques aux coins (aucune figuration), cartouche de sourate vert
+  profond à pointes arrondies avec médaillons dorés, basmala mise en valeur, **numéros de verset dans des rosettes
+  vertes** (étoile à huit pointes en masque CSS, chiffres arabes ; le signe ۝ n'est plus utilisé — ornement hors
+  du texte coranique), folio entre deux filets dorés, apparition douce des pages.
+- **Barre simplifiée** (`/coran/mushaf`) : sourate et page toujours visibles + quatre actions à icône et
+  libellé (**Écouter**, **Tajwid** bascule, **Traduction** bascule, **Plus**) ; « Plus » garde muṣḥaf (Warsh
+  toujours désactivé), langue de la traduction, verset, juzʾ, recherche, mémorisation, lecture seule, vue une
+  page. Panneau d'écoute ouvert au geste. **Grandes flèches de page** de part et d'autre du livre (sous le livre
+  sur téléphone) + « Page n / 604 » ; balayage et flèches du clavier inchangés. Panneau de traduction
+  **repliable**, verset choisi surligné en menthe (page et traduction). Transitions courtes (mouvement réduit
+  respecté par les jetons). Cibles ≥ 48 px. Nouvelles icônes (tajwid, traduction, points, chevron) ; deux clés
+  (`mp.traduction_court`, `mp.page_sur`) dans les cinq langues.
+- **Intact** : texte coranique (e2e : texte identique à l'onglet Lire, tajwid sans changer le texte), tajwid,
+  aucune figuration. **Poids** : page la plus lourde 132,7 Ko (≤ 150), `/coran/mushaf` 112,9 Ko initiaux
+  (+2,1 Ko de CSS), total 285,4 Ko (≤ 315 ; +0,8 Ko).
+- **Tests** : e2e mushaf réécrits pour la nouvelle barre (10/10, accessibilité axe sans écart grave), suite
+  complète, captures avant/après dans `reports/mushaf-design/` (`avant/` = captures du 04/10 avant refonte ;
+  `apres/` : ordinateur, téléphone, 320 px, sombre, tajwid, traduction).
+
+## 04/10/2026 — Muṣḥaf page par page, style Ayat (branche `mushaf-pages-wip`, depuis `main` dfead00)
+
+Demande du client : un espace Coran dans l'ergonomie de l'application Ayat (KSU) — affichage PAR PAGE du Muṣḥaf
+de Médine, choix Ḥafṣ / Ḥafṣ tajwid / Warsh, traduction du sens à côté, barre de commandes. Règle absolue :
+**rien n'est extrait d'Ayat** (images, polices, audio, traductions) ; seulement des sources sous licence vérifiée.
+
+- **Recherche de sources** (`docs/projet/SOURCES_MUSHAF.md`, `LICENCES.md` § 4-5, décision **D30**) :
+  polices « par page » du Complexe (QCF V1 1405 et V2 1421) retrouvées **à leurs adresses officielles** dans la
+  Wayback Machine (site du Complexe injoignable) ; leurs conditions (page « Copyright », capture du 19/08/2019)
+  permettent l'usage dans les sites et logiciels, sans modification. Mais **aucune donnée de lignes officielle**
+  (les fichiers du paquet sont un index de recherche ; les largeurs de glyphes ne donnent pas les lignes) ; QUL et
+  Quran Foundation exigent un compte → **mise en page exacte reportée** (D30). Tajwid : annotations cpfair
+  (CC BY 4.0, lot 29) réutilisées. Warsh : texte officiel non accessible ni contrôlable → **affiché « bientôt »,
+  désactivé**. Traductions : Tanzil (non commercial), Hamidullah, Sahih International écartés ; **QuranEnc**
+  retenu (republication permise, sans modification, version et source citées) : **français Rachid Maach 1.0.3**,
+  **anglais Rowwad 1.0.19** ; fichiers SQLite d'origine gardés (`packages/content/traduction-source/`, SHA-256),
+  générateur `cli-traductions.ts` → `static/traductions/<clé>/NNN.json` (texte et notes recopiés tels quels).
+- **Onglet « Muṣḥaf »** (`/coran/mushaf`, premier onglet de l'espace Coran) : les **604 pages** du Muṣḥaf de
+  Médine (débuts de page Tanzil ; test : 6 236 versets, chacun une fois, dans l'ordre), **double page « livre »**
+  sur ordinateur (impaire à droite), **une page avec balayage** sur téléphone (vers la droite = page suivante,
+  comme un livre arabe ; flèches du clavier), **cadre orné** dessiné par nous (SVG : entrelacs à huit pointes,
+  rosaces florales aux coins, cartouche des sourates ; aucune figuration ; couleurs des jetons), en-tête (juzʾ,
+  sourate en arabe d'après les métadonnées Tanzil), numéro de page, numéros de verset ۝ en chiffres arabes
+  (ornements hors du texte). **Lignes fluides** (mise en page exacte : D30).
+- **Barre de commandes** inspirée d'Ayat : récitateur + répétition (chaque verset N fois, la plage M fois) +
+  lecteur audio existant (récitateurs licenciés du Complexe seulement ; aucune lecture avant un geste ; surlignage
+  du verset entendu en Ḥafṣ) ; muṣḥaf ; traduction ; options (**lecture seule**, **test de mémorisation** à 4
+  niveaux avec « toucher pour voir », **vue mobile**) ; sourate / verset / page (précédente, suivante) / juzʾ ;
+  **recherche** (références « 2:255 », « page 50 », « juz 3 », numéro de sourate, ou mots arabes dans les sourates
+  déjà ouvertes — comparaison sur une forme sans signes, jamais affichée). Sur téléphone, barre repliée (le
+  Muṣḥaf d'abord). Réglages gardés sur l'appareil.
+- **Traduction à côté** (sous la page sur téléphone) : verset par verset, **verset en cours surligné** et amené
+  à l'écran, notes du traducteur dépliables, crédit (titre, version, QuranEnc, « reproduite sans modification »).
+  Chargée à la demande par sourate, gardée dans IndexedDB, non préchargée par le service worker.
+- **Intégrité** : texte Tanzil tel quel (mêmes mots et même affichage que « Lire » : e2e sur 2:255), couleurs du
+  tajwid = enveloppes (texte identique avec et sans), masquage = voile d'affichage ; traductions = source à
+  l'identique (test bloquant). Noms arabes des sourates recopiés de Tanzil (test).
+- Autres fichiers : `lib/quran/mushaf.ts` (logique pure), `MushafPage.svelte`, `translation.ts`,
+  `sura-names-ar.ts`, onglet ajouté dans `CoranTabs.svelte` (5 onglets, défilants sous 420 px), service worker,
+  50 clés `mp.*` + `ca.onglet_mushaf` dans les 5 catalogues (es, de, ar : à relire).
+
+**Mesures** (VM `awform-dev`, 04/10/2026, worktree `~/awform-mushaf`, base et ports isolés `awform_mp_test`,
+3390/4390, rôles `awform_emp_*` — un autre agent travaille en parallèle) : unitaires `pnpm -r --no-bail test`
+(vrais livres) : **1 298 verts, 8 sautés** (140 s) ; la suite `lot13` de l’API (7 tests) a échoué une fois dans la suite complète (« relation edition does not exist » : base remise à zéro par un autre fichier en parallèle, instabilité connue, traitée par l’agent des finitions) et passe relancée seule (7/7) ; nouveaux : content +4 (`traductions.test.ts`), web +10 (`mushaf.test.ts`) ; e2e
+`mushaf.spec.ts` **10/10** (2 appareils) ; e2e complets : **224 verts, 20 sautés, 0 échec** (13,8 min). Budget : page la plus lourde `/lecons/[id]`
+**132,5 Ko** ≤ 150, `/coran/mushaf` 110,8 Ko ; total **284,6 + 26,0 Ko** : dépassait 300 Ko (`main` était déjà
+à 298,7) → budget total porté à **315 Ko**, à valider (D30). Traductions : 2,9 Mo bruts pour les deux (228
+fichiers, chargés sourate par sourate). Captures : `reports/mushaf-pages/` (ordinateur et téléphone : page 1,
+page 604, tajwid p. 42, traduction, mémorisation, balayage, 320 px).
+
+---
+
 ## 04/10/2026 — Arabe et français sur la même ligne : isolement bidirectionnel (branche `bidi-wip`)
 
 Signalement du client : quand l'arabe et le français sont sur la même ligne, parenthèses, ponctuation et mots

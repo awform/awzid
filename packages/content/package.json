@@ -41,7 +41,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "check-content": "node dist/cli.js",
-    "tajwid": "node dist/cli-tajwid.js"
+    "tajwid": "node dist/cli-tajwid.js",
+    "traductions": "node --no-warnings dist/cli-traductions.js"
   },
   "devDependencies": {
     "@types/node": "^24.19.0",

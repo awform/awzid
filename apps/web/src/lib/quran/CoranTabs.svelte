@@ -4,9 +4,11 @@
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
 
-  /** Lot 27 — onglets de l'espace Coran : Lire, Écouter, Mémoriser, Mes récitateurs. */
-  let { current }: { current: 'lire' | 'ecouter' | 'memoriser' | 'recitateurs' } = $props();
+  /** Lot 27 — onglets de l'espace Coran : Muṣḥaf (page par page), Lire, Écouter, Mémoriser, Mes récitateurs. */
+  let { current }: { current: 'mushaf' | 'lire' | 'ecouter' | 'memoriser' | 'recitateurs' } =
+    $props();
   const TABS = [
+    { id: 'mushaf', href: '/coran/mushaf', icon: 'mushaf' },
     { id: 'lire', href: '/coran/lecteur', icon: 'lire' },
     { id: 'ecouter', href: '/coran/ecouter', icon: 'casque' },
     { id: 'memoriser', href: '/coran/memoriser', icon: 'repeter' },
@@ -29,7 +31,7 @@
 <style>
   .seg {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 4px;
     padding: 4px;
     margin: var(--space-s) 0 var(--space-m);
@@ -60,5 +62,12 @@
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  /* cinq onglets : sur les très petits écrans, ils défilent dans la barre (jamais la page) */
+  @media (max-width: 420px) {
+    .seg {
+      grid-template-columns: repeat(5, minmax(68px, 1fr));
+      overflow-x: auto;
+    }
   }
 </style>

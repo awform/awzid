@@ -25,9 +25,11 @@ const isCatalog = (p: string) => p.startsWith('/i18n/');
 // lot 29 : les annotations du tajwid (une par sourate) ne sont pas préchargées : chargées à la demande et
 // gardées dans IndexedDB par l'application (hors ligne ensuite)
 const isTajwid = (p: string) => p.startsWith('/tajwid/');
+// Muṣḥaf par page : traductions du sens (une par sourate) chargées à la demande, gardées dans IndexedDB
+const isTraduction = (p: string) => p.startsWith('/traductions/');
 const ASSETS = [
   ...build,
-  ...files.filter((f) => !f.endsWith('.txt') && !isCatalog(f) && !isTajwid(f)),
+  ...files.filter((f) => !f.endsWith('.txt') && !isCatalog(f) && !isTajwid(f) && !isTraduction(f)),
 ];
 
 sw.addEventListener('install', (event) => {

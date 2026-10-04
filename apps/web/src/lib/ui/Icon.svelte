@@ -31,6 +31,12 @@
       'M3 3l18 18M8.5 8.6A6 6 0 0 0 6 13a4 4 0 0 0 1 7.9h10.5M12 6a6 6 0 0 1 6 6 3.5 3.5 0 0 1 2.7 5',
     rafraichir: 'M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7',
     fleche: 'M5 12h14m-6-6 6 6-6 6',
+    // Muṣḥaf vert (04/10/2026) : tajwid (goutte d'encre), traduction (deux écritures), menu « Plus », chevron
+    tajwid: 'M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11ZM9.5 14.5a2.5 2.5 0 0 0 2.5 2.5',
+    traduction:
+      'M3 5h9M7.5 3v2M5 5c.5 3.5 2.6 6 6 7.5M10 5c-.8 3.7-3 6.4-6.5 8M13 21l4-9 4 9M14.4 18h5.2',
+    points: 'M5 12h.01M12 12h.01M19 12h.01',
+    chevron: 'm9 6 6 6-6 6',
     casque: 'M4 15v-3a8 8 0 0 1 16 0v3M4 15h3v5H4zM17 15h3v5h-3z',
     coche: 'M5 12l5 5 9-10',
     lecture: 'M8 5v14l11-7z',
