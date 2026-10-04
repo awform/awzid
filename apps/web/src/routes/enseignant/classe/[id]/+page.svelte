@@ -13,6 +13,7 @@
   import EcouteClasse from '$lib/EcouteClasse.svelte';
   import RecitalClasse from '$lib/RecitalClasse.svelte';
   import SouratesClasse from '$lib/SouratesClasse.svelte';
+  import RecitateursClasse from '$lib/quran/RecitateursClasse.svelte';
 
   /**
    * Espace ÉCOLE d'une classe (lot 13) : élèves et groupes, devoirs avec échéance, tableau de suivi,
@@ -718,6 +719,7 @@
     <RecitalClasse classId={id} />
   {:else if tab === 'sourates'}
     <SouratesClasse classId={id} />
+    <RecitateursClasse classId={id} />
   {:else if tab === 'tableau'}
     <section class="card">
       <h2 id="titre-suivi">{t('classe.suivi')}</h2>

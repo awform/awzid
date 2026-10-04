@@ -4,7 +4,8 @@
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import { tanwinDisplay } from '@awform/content/text';
-  import { splitBasmala, suraName } from '@awform/hifz';
+  import { splitBasmala, suraName, type QuranMeta } from '@awform/hifz';
+  import CoranTabs from '$lib/quran/CoranTabs.svelte';
   import { loadMeta, loadVerses } from '$lib/hifz';
   import { fmtNumber, t } from '$lib/i18n';
 
@@ -13,10 +14,13 @@
    * sous licence écrite : navigation sourate / verset, texte Tanzil tel quel (octet par octet, découpé en
    * mots aux espaces seulement), lecture guidée mot à mot (le surlignage est prêt pour l'audio), répétition
    * d'un verset ou d'une plage N fois avec une pause « à toi », vitesse réglable, sourate gardée sur
-   * l'appareil. Choix du récitant et page du Muṣḥaf : « bientôt ».
+   * l'appareil. Lot 27 : onglet « Lire » de l'espace Coran — aller à une sourate, un juzʾ, un ḥizb ou une
+   * page du Muṣḥaf de Médine (repères de page dans le texte) ; l'écoute d'un récitateur est dans « Écouter ».
    */
   type Verse = { s: number; a: number; text: string };
-  let meta = $state<{ weights: number[][]; basmala: string } | null>(null);
+  let meta = $state<(QuranMeta & { basmala: string }) | null>(null);
+  let goKind = $state<'juz' | 'hizb' | 'page'>('page');
+  let goN = $state(1);
   let sura = $state(1);
   let verses: Verse[] = $state([]);
   let from = $state(1);
@@ -31,6 +35,33 @@
   let timer: ReturnType<typeof setTimeout> | null = null;
 
   const count = $derived(meta?.weights[sura - 1]?.length ?? 0);
+  /** début de chaque page du Muṣḥaf dans la sourate ouverte : verset → numéro de page */
+  const pageStarts = $derived(
+    new Map(
+      (meta?.divisions?.pages ?? [])
+        .map((p, i) => [p, i + 1] as const)
+        .filter(([p]) => p[0] === sura)
+        .map(([p, n]) => [p[1], n]),
+    ),
+  );
+  const goMax = $derived(goKind === 'juz' ? 30 : goKind === 'hizb' ? 60 : 604);
+  /** Début d'un juzʾ, d'un ḥizb (4 quarts) ou d'une page : [sourate, verset]. */
+  function startOf(kind: 'juz' | 'hizb' | 'page', n: number): readonly [number, number] | null {
+    const d = meta?.divisions;
+    if (!d) return null;
+    if (kind === 'juz') return d.juz[n - 1] ?? null;
+    if (kind === 'hizb') return d.quarters[(n - 1) * 4] ?? null;
+    return d.pages[n - 1] ?? null;
+  }
+  async function goTo(e?: SubmitEvent) {
+    e?.preventDefault();
+    const st = startOf(goKind, Math.max(1, Math.min(goMax, Math.round(goN))));
+    if (!st) return;
+    if (st[0] !== sura) await openSura(st[0]);
+    from = st[1];
+    to = st[1];
+    document.querySelector(`[data-verse="${st[0]}:${st[1]}"]`)?.scrollIntoView({ block: 'center' });
+  }
   /** Séparateur entre deux mots : l'espace du texte Tanzil, rien d'autre. */
   const sep = (i: number) => (i > 0 ? ' ' : '');
   const words = (v: Verse) => splitBasmala(v.s, v.a, v.text, meta?.basmala ?? '');
@@ -39,6 +70,12 @@
     meta = await loadMeta();
     const s = Number(page.url.searchParams.get('s'));
     await openSura(s >= 1 && s <= 114 ? s : 1);
+    const p = Number(page.url.searchParams.get('page'));
+    if (p >= 1 && p <= 604) {
+      goKind = 'page';
+      goN = p;
+      await goTo();
+    }
   });
   onDestroy(stop);
 
@@ -107,8 +144,8 @@
 
 <svelte:head><title>{t('app.nom')} — {t('lecteur.titre')}</title></svelte:head>
 
-<p><a href={resolve('/coran')}>{t('lecteur.retour')}</a></p>
 <h1>{t('lecteur.titre')}</h1>
+<CoranTabs current="lire" />
 
 <section class="card controls">
   <label
@@ -123,10 +160,29 @@
         >{/each}
     </select></label
   >
-  <label
-    >{t('lecteur.recitant')}
-    <select disabled data-testid="recitant"><option>{t('lecteur.bientot')}</option></select></label
+  <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- chemin résolu, suivi d'un paramètre -->
+  <a class="button" href={`${resolve('/coran/ecouter')}?s=${sura}`} data-testid="recitant"
+    >{t('ca.ecouter_sourate')}</a
   >
+  <form class="row aller" onsubmit={goTo} data-testid="aller-a">
+    <label
+      >{t('ca.aller_a')}
+      <select bind:value={goKind} data-testid="aller-type">
+        <option value="juz">{t('ca.juz')}</option>
+        <option value="hizb">{t('ca.hizb')}</option>
+        <option value="page">{t('ca.page')}</option>
+      </select></label
+    >
+    <input
+      type="number"
+      min="1"
+      max={goMax}
+      bind:value={goN}
+      aria-label={t('ca.numero')}
+      data-testid="aller-n"
+    />
+    <button type="submit">{t('ca.aller')}</button>
+  </form>
   <p class="muted small">{t('lecteur.sans_audio')}</p>
   <div class="row">
     <label
@@ -179,6 +235,14 @@
   <h2 class="titre">{suraName(sura)}</h2>
   {#each verses as v (v.a)}
     {@const parts = words(v)}
+    {#if pageStarts.has(v.a)}<p
+        class="page-mark"
+        data-page={pageStarts.get(v.a)}
+        lang="fr"
+        dir="ltr"
+      >
+        {t('ca.page_n', { n: pageStarts.get(v.a) ?? 0 })}
+      </p>{/if}
     {#if parts.basmala}<p class="basmala">
         <span class="quran-text" data-basmala={`${v.s}:${v.a}`}>{tanwinDisplay(parts.basmala)}</span
         >
@@ -229,6 +293,21 @@
   }
   .basmala {
     text-align: center;
+  }
+  .page-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0 2px;
+    font-size: 0.8rem;
+    color: var(--ink2);
+    font-family: var(--font-ui);
+  }
+  .page-mark::before,
+  .page-mark::after {
+    content: '';
+    flex: 1;
+    border-top: 1px solid var(--line);
   }
   .aya {
     font-size: 1.7rem;

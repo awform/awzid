@@ -109,7 +109,7 @@ test('lecteur coranique : texte Tanzil octet par octet, lecture guidée mot à m
   await page.clock.install();
   await page.goto('/coran');
   await page.getByTestId('ouvrir-lecteur').click();
-  await expect(page.getByTestId('recitant')).toBeDisabled();
+  await expect(page.getByTestId('recitant')).toHaveAttribute('href', '/coran/ecouter?s=1');
   await expect(page.locator('[data-verse="1:1"]')).toBeVisible();
   await page.getByTestId('sourate').selectOption('112');
   await expect(page).toHaveURL(/s=112/);
