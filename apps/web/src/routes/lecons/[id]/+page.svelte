@@ -706,8 +706,8 @@
     display: flex;
     gap: 12px;
     align-items: center;
-    background: #fff5f5;
-    border: 2px solid #f7c9ca;
+    background: color-mix(in srgb, var(--c0) 6%, var(--card));
+    border: 2px solid color-mix(in srgb, var(--c0) 35%, var(--card));
     border-radius: 16px;
     padding: 8px 14px;
     margin: 12px 0;
@@ -739,16 +739,16 @@
     min-width: 130px;
   }
   .b0 {
-    border-color: #f7c9ca;
+    border-color: color-mix(in srgb, var(--c0) 35%, var(--card));
   }
   .b1 {
-    border-color: #c9daf7;
+    border-color: color-mix(in srgb, var(--c1) 35%, var(--card));
   }
   .b2 {
-    border-color: #bfe8d5;
+    border-color: color-mix(in srgb, var(--c2) 35%, var(--card));
   }
   .b3 {
-    border-color: #f7e1a8;
+    border-color: color-mix(in srgb, var(--c3) 35%, var(--card));
   }
   .pos {
     position: absolute;
@@ -805,7 +805,7 @@
   }
   .note,
   .notion {
-    background: #f4f8fb;
+    background: var(--surface);
     border-radius: 12px;
     padding: 8px 12px;
     margin: 8px 0;
@@ -891,14 +891,14 @@
     text-align: left;
   }
   .quran {
-    background: linear-gradient(#f4f8fb, #fff);
+    background: linear-gradient(var(--surface), var(--card));
     border-radius: 18px;
     padding: 4px 12px 12px;
   }
   .ayah {
     margin: 12px 0;
     padding: 10px 16px;
-    background: #fff;
+    background: var(--card);
     border-inline-start: 4px solid var(--navy);
     border-radius: 12px;
     text-align: right;
@@ -926,8 +926,8 @@
     gap: 6px;
   }
   .tajwid {
-    background: #fff;
-    border: 2px dashed #c9daf7;
+    background: var(--card);
+    border: 2px dashed color-mix(in srgb, var(--c1) 35%, var(--card));
     border-radius: 12px;
     padding: 8px 12px;
     margin-top: 8px;
@@ -954,7 +954,7 @@
     letter-spacing: 6px;
   }
   .star {
-    color: #e3dccd;
+    color: var(--line);
   }
   .star.lit {
     color: var(--gold);

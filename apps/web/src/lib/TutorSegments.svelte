@@ -53,7 +53,7 @@
     margin: 6px 0;
     padding: 8px 10px;
     border-inline-start: 4px solid var(--teal, var(--teal));
-    background: #f3f8f9;
+    background: var(--surface);
     border-radius: 6px;
   }
   .src {

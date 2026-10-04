@@ -15,3 +15,5 @@ infra/ci/contenu/
 # projet Android généré par Capacitor (Gradle)
 apps/android/android/
 infra/ci/contenu-synthetique
+# fichier généré (pnpm --filter @awform/web theme)
+apps/web/src/lib/theme/tokens.css

@@ -99,7 +99,7 @@
     font-weight: 600;
   }
   .star span {
-    color: var(--gold, #b8860b);
+    color: var(--accent);
     font-size: 1.4rem;
   }
 </style>

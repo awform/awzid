@@ -511,7 +511,7 @@
     font-style: italic;
   }
   .saviez {
-    background: #eef5ff;
+    background: var(--info-bg);
     border-radius: 10px;
     padding: 8px 10px;
   }

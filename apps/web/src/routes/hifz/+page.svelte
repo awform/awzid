@@ -846,21 +846,21 @@
     padding: 1px 5px;
     border-radius: 6px;
     border: 1px solid var(--line);
-    color: var(--muted, #666);
+    color: var(--ink2);
   }
   .st.ok {
     background: var(--teal);
     border-color: var(--teal);
-    color: #fff;
+    color: var(--on-primary);
   }
   .star {
     font-size: 1.3rem;
   }
   .star.or {
-    color: #d4a017;
+    color: var(--accent);
   }
   .star.argent {
-    color: #8a8f98;
+    color: var(--ink2);
   }
   .star.verte {
     color: var(--ok-ink);

@@ -388,7 +388,7 @@
   }
   .n {
     background: var(--teal);
-    color: #fff;
+    color: var(--on-primary);
     border-radius: 999px;
     padding: 0 8px;
     font-size: 0.85rem;

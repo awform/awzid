@@ -241,7 +241,7 @@
     background: var(--sand);
   }
   .w.on {
-    background: #ffe38a;
+    background: var(--mark);
     border-radius: 6px;
   }
   .n {

@@ -400,7 +400,7 @@
   }
   .sel {
     border-color: var(--teal);
-    box-shadow: 0 0 0 3px #1f7a8c33;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 30%, transparent);
   }
   .done {
     background: var(--ok-bg);
@@ -410,7 +410,7 @@
     font-size: 0.8rem;
     border-radius: 99px;
     padding: 0 7px;
-    color: #fff;
+    color: var(--on-primary);
     background: var(--teal);
   }
   .vfl {

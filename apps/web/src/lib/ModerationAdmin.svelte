@@ -63,7 +63,7 @@
   button.danger {
     background: var(--bad-ink);
     border-color: var(--bad-ink);
-    color: #fff;
+    color: var(--bad-bg);
     font-weight: 700;
   }
   .row {
