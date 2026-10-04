@@ -15,13 +15,20 @@ export function languesEnPreparation(): boolean {
   return process.env.AWFORM_LANGUES_PREPARATION === 'on';
 }
 
-export function registerActivities(app: FastifyInstance, db: Db, edition: Edition): void {
+export function registerActivities(
+  app: FastifyInstance,
+  db: Db,
+  edition: Edition,
+  demo = false,
+): void {
   app.get('/api/v1/config', async (_req, reply) => {
     reply.header('Cache-Control', 'no-cache');
     return {
       languesEnPreparation: languesEnPreparation(),
       // clé PUBLIQUE des notifications (null : notifications non configurées sur ce serveur)
       vapidPublicKey: vapidPublicKey(),
+      // démonstration (connexion simplifiée) : champ d'identifiant en texte libre
+      demo,
     };
   });
 

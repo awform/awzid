@@ -63,6 +63,8 @@ export interface AppOptions {
   billing?: BillingSetup;
   /** stockage des fichiers audio du Coran (tests) ; sinon AWFORM_AUDIO_DIR ; null : fichiers non servis */
   audioDir?: string | null;
+  /** DÉMONSTRATION seulement (server.ts : AWFORM_DEMO=1 et garde-fou) : connexion simplifiée */
+  demoLogin?: boolean;
 }
 
 /**
@@ -117,6 +119,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     db,
     cookieSecure: opts.cookieSecure ?? true,
     secretKey: opts.secretKey ?? null,
+    demoLogin: opts.demoLogin === true,
   });
 
   // en-têtes de sécurité de base (la CSP stricte est posée par SvelteKit / Caddy)
@@ -159,7 +162,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerAdmin(app, db);
   registerToday(app, db, edition);
   registerSchool(app, db, edition, signer);
-  registerActivities(app, db, edition);
+  registerActivities(app, db, edition, opts.demoLogin === true);
   registerRecitations(
     app,
     db,
