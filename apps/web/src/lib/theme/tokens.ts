@@ -39,9 +39,11 @@ export interface Theme {
 const LETTRES_CLAIR = { c0: '#e5484d', c1: '#2f6fdb', c2: '#1f9d6b', c3: '#9a6a00' };
 const LETTRES_SOMBRE = { c0: '#ff8a8e', c1: '#86aefc', c2: '#4fd39a', c3: '#e9b949' };
 
-const SANS = "'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif";
+// « ﷺ » et l'arabe cité dans une phrase française : glyphes pris dans Noto Naskh Arabic (pas de repli illisible)
+const SANS = "'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif";
 /** titres « manuscrit » : serif du système (aucun téléchargement de police supplémentaire) */
-const SERIF = "'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif";
+const SERIF =
+  "'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, 'Noto Naskh Arabic', serif";
 const POLICES = {
   ui: SANS,
   titre: SANS,
@@ -331,7 +333,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       'warn-bg': '#fbf0d6',
       'warn-ink': '#77500a',
       'soon-ink': '#7f560a',
-      sand: '#f1e8d3',
+      sand: '#f8f3e6',
       gold: '#d9a94e',
       info: '#2b4a6b',
       'info-bg': '#e9eef3',
@@ -412,6 +414,10 @@ export const CONTRAST_PAIRS: Array<{ fg: string; bg: string; grand?: boolean; us
   { fg: 'c1', bg: 'card', grand: true, usage: 'lettre étudiée (bleu), arabe ≥ 26 px' },
   { fg: 'c2', bg: 'card', grand: true, usage: 'lettre étudiée (vert), arabe ≥ 26 px' },
   { fg: 'c3', bg: 'card', grand: true, usage: 'lettre étudiée (or), arabe ≥ 26 px' },
+  { fg: 'c0', bg: 'sand', grand: true, usage: 'lettre étudiée dans un encadré (rouge)' },
+  { fg: 'c1', bg: 'sand', grand: true, usage: 'lettre étudiée dans un encadré (bleu)' },
+  { fg: 'c2', bg: 'sand', grand: true, usage: 'lettre étudiée dans un encadré (vert)' },
+  { fg: 'c3', bg: 'sand', grand: true, usage: 'lettre étudiée dans un encadré (or)' },
   { fg: 'focus', bg: 'paper', grand: true, usage: 'contour de focus (3:1, WCAG 1.4.11)' },
 ];
 

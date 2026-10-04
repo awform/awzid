@@ -1565,5 +1565,7 @@
   "auj.espaces": "My spaces",
   "auj.bonjour": "Hello {nom}",
   "auj.vide_titre": "All done for today",
-  "auj.vide_texte": "Nothing else is planned. You can reread a lesson or open a little book."
+  "auj.vide_texte": "Nothing else is planned. You can reread a lesson or open a little book.",
+  "arabe.autres": "Other books",
+  "tableau.aucune_activite": "No activity in these 14 days yet: it will appear here after the first lesson."
 }

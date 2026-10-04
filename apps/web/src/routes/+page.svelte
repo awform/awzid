@@ -1,58 +1,174 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
   import { isReligionLevel } from '$lib/api';
+  import { demoProfileFor } from '$lib/attempts';
   import { t } from '$lib/i18n';
+  import { levelFitsProfile, levelParts } from '$lib/levels';
+  import type { ProfileInfo } from '$lib/session';
+  import EmptyState from '$lib/ui/EmptyState.svelte';
+  import Icon from '$lib/ui/Icon.svelte';
   let { data } = $props();
+
+  /**
+   * Onglet « Arabe » (lot 26) : les livres du profil d'abord (« Pour toi »), les autres ensuite ; chaque
+   * livre est une carte avec son titre arabe, sa filière en couleur et son nombre d'unités.
+   */
+  let profile = $state<ProfileInfo | null>(null);
+  onMount(async () => {
+    profile = await demoProfileFor('').catch(() => null);
+  });
+  const arabic = $derived(data.levels.filter((x) => !isReligionLevel(x.code)));
+  const mine = $derived(
+    profile
+      ? arabic
+          .filter((l) => levelFitsProfile(l.code, profile!.kind))
+          .sort(
+            (a, b) => Number(b.code === profile!.levelCode) - Number(a.code === profile!.levelCode),
+          )
+      : [],
+  );
+  const others = $derived(arabic.filter((l) => !mine.includes(l)));
 </script>
 
 <svelte:head><title>{t('app.nom')} — {t('onglets.arabe')}</title></svelte:head>
 
-<p class="card today">
-  <a href={resolve('/aujourdhui')} data-testid="lien-aujourdhui">{t('auj.lien')}</a>
-</p>
+<a class="today card" href={resolve('/aujourdhui')} data-testid="lien-aujourdhui">
+  <span class="today-ic"><Icon name="maison" /></span>
+  <span>{t('auj.lien')}</span>
+</a>
 <h1>{t('arabe.titre')}</h1>
-{#if data.offline}<p class="card">{t('arabe.hors_ligne')}</p>{/if}
-<ul class="levels">
-  {#each data.levels.filter((x) => !isReligionLevel(x.code)) as l (l.code)}
-    <li>
-      <a href={resolve('/niveaux/[code]', { code: l.code })} data-testid="level">
-        <strong>{l.codeFr ?? l.code}</strong> — {l.titleFr}
-        {#if l.titreAr}<Ar text={l.titreAr} />{/if}
-        <small>{t('arabe.unites', { n: l.units })}</small>
-      </a>
-    </li>
-  {/each}
+{#if data.offline}<p class="card warnbox">{t('arabe.hors_ligne')}</p>{/if}
+
+{#snippet book(l: (typeof arabic)[number], current: boolean)}
+  <li>
+    <a
+      class="book"
+      class:current
+      data-track={levelParts(l.code)?.track ?? ''}
+      href={resolve('/niveaux/[code]', { code: l.code })}
+      data-testid="level"
+    >
+      <span class="code">{l.codeFr ?? l.code}</span>
+      {#if l.titreAr}<span class="titre-ar"><Ar text={l.titreAr} /></span>{/if}
+      <span class="titre">{l.titleFr}</span>
+      <small>{t('arabe.unites', { n: l.units })}</small>
+    </a>
+  </li>
+{/snippet}
+
+{#if arabic.length === 0}
+  <EmptyState icon="telecharger" title={t('arabe.titre')} text={t('arabe.hors_ligne')}>
+    <a class="button" href={resolve('/hors-ligne')}>{t('entete.telechargements')}</a>
+  </EmptyState>
+{/if}
+{#if mine.length}
+  <ul class="books" data-testid="mes-livres">
+    {#each mine as l (l.code)}{@render book(l, l.code === profile?.levelCode)}{/each}
+  </ul>
+  {#if others.length}<h2 class="autres">{t('arabe.autres')}</h2>{/if}
+{/if}
+<ul class="books">
+  {#each others as l (l.code)}{@render book(l, false)}{/each}
 </ul>
 <p class="more">
   <a class="button" href={resolve('/revisions')} data-testid="lien-revisions"
-    >{t('revisions.titre')}</a
+    ><Icon name="revisions" size={20} />{t('revisions.titre')}</a
   >
-  <a class="button" href={resolve('/ecriture')}>{t('trace.titre')}</a>
+  <a class="button" href={resolve('/ecriture')}><Icon name="plume" size={20} />{t('trace.titre')}</a
+  >
 </p>
 <p class="edition">{t('arabe.edition', { edition: data.edition })}</p>
 
 <style>
-  .levels {
+  .today {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    text-decoration: none;
+    font-weight: 700;
+    color: var(--primary);
+    min-height: var(--target);
+  }
+  .today-ic {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+  }
+  .books {
     list-style: none;
     padding: 0;
+    margin: var(--space-m) 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: var(--space-m);
   }
-  .levels a {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 8px 12px;
-    padding: 14px 16px;
-    margin: 10px 0;
+  .book {
+    --spine: var(--primary);
+    position: relative;
+    display: grid;
+    gap: 4px;
+    height: 100%;
+    padding: var(--space-m) var(--space-m) var(--space-m) calc(var(--space-m) + 10px);
     background: var(--card);
-    border: 2px solid var(--line);
-    border-radius: 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
     text-decoration: none;
     color: var(--ink);
+    overflow: hidden;
+    transition:
+      transform var(--motion-fast) ease,
+      border-color var(--motion-fast) ease;
+  }
+  /* dos du livre : couleur de la filière */
+  .book::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 8px;
+    background: var(--spine);
+  }
+  .book[data-track='enfants'] {
+    --spine: var(--c2);
+  }
+  .book[data-track='ados'] {
+    --spine: var(--c1);
+  }
+  .book[data-track='adultes'] {
+    --spine: var(--accent);
+  }
+  .book:hover {
+    transform: translateY(-2px);
+    border-color: var(--spine);
+  }
+  .book.current {
+    border: 2px solid var(--spine);
+  }
+  .code {
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink2);
+  }
+  .titre-ar {
+    font-size: 1.15em;
+  }
+  .titre {
+    font-weight: 600;
   }
   small,
   .edition {
     color: var(--ink2);
+  }
+  .autres {
+    margin-top: var(--space-l);
   }
   .more {
     display: flex;

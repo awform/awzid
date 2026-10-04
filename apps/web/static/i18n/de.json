@@ -1543,5 +1543,7 @@
   "auj.espaces": "Meine Bereiche",
   "auj.bonjour": "Hallo {nom}",
   "auj.vide_titre": "Für heute ist alles erledigt",
-  "auj.vide_texte": "Sonst ist nichts geplant. Du kannst eine Lektion wiederholen oder ein kleines Buch öffnen."
+  "auj.vide_texte": "Sonst ist nichts geplant. Du kannst eine Lektion wiederholen oder ein kleines Buch öffnen.",
+  "arabe.autres": "Weitere Bücher",
+  "tableau.aucune_activite": "Noch keine Aktivität in diesen 14 Tagen: Sie erscheint hier nach der ersten Lektion."
 }

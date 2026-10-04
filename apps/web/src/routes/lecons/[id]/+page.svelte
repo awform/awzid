@@ -805,7 +805,7 @@
   }
   .note,
   .notion {
-    background: var(--surface);
+    background: var(--sand);
     border-radius: 12px;
     padding: 8px 12px;
     margin: 8px 0;

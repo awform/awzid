@@ -1543,5 +1543,7 @@
   "auj.espaces": "Mis espacios",
   "auj.bonjour": "Hola {nom}",
   "auj.vide_titre": "Todo hecho por hoy",
-  "auj.vide_texte": "No hay nada más previsto. Puedes releer una lección o abrir un librillo."
+  "auj.vide_texte": "No hay nada más previsto. Puedes releer una lección o abrir un librillo.",
+  "arabe.autres": "Otros libros",
+  "tableau.aucune_activite": "Aún no hay actividad en estos 14 días: aparecerá aquí tras la primera lección."
 }

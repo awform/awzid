@@ -66,6 +66,8 @@ body {
   background-image: var(--pattern-bg);
   background-attachment: fixed;
   overflow-wrap: break-word;
+  /* filet de sécurité : jamais de défilement horizontal de la page entière */
+  overflow-x: clip;
 }
 img,
 svg,
@@ -181,10 +183,8 @@ a.button {
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition:
-    background var(--motion-fast) ease,
-    border-color var(--motion-fast) ease,
-    transform var(--motion-fast) ease;
+  /* pas de transition de couleur : un état intermédiaire peu contrasté serait lu par les outils d'audit */
+  transition: transform var(--motion-fast) ease;
 }
 button:hover,
 a.button:hover {
@@ -468,6 +468,15 @@ main[tabindex='-1']:focus {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* cahier de la leçon : lettres à relier, en pastilles qui passent à la ligne (320 px) */
+ul.lier {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
 }
 
 /* très petit écran (320 px) : marges réduites, rien ne déborde */

@@ -1565,5 +1565,7 @@
   "auj.espaces": "Mes espaces",
   "auj.bonjour": "Bonjour {nom}",
   "auj.vide_titre": "Tout est fait pour aujourd'hui",
-  "auj.vide_texte": "Rien d'autre n'est prévu. Tu peux relire une leçon ou ouvrir un petit livre."
+  "auj.vide_texte": "Rien d'autre n'est prévu. Tu peux relire une leçon ou ouvrir un petit livre.",
+  "arabe.autres": "Autres livres",
+  "tableau.aucune_activite": "Pas encore d'activité sur ces 14 jours : elle apparaîtra ici dès la première leçon."
 }

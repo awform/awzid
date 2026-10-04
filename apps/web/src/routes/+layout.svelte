@@ -126,7 +126,7 @@
   data-sveltekit-preload-data={settings?.econome ? 'off' : 'hover'}
 >
   <a class="aller-contenu" href="#contenu" data-testid="aller-contenu">{t('app.aller_contenu')}</a>
-  <header class="top">
+  <header class="top" class:has-who={!!profile}>
     <a
       href={resolve(audience === 'visiteur' ? '/' : '/aujourdhui')}
       class="brand"
@@ -150,7 +150,8 @@
     {/if}
     <span class="spacer"></span>
     {#if pending > 0}<span class="chip" data-testid="en-attente" title={t('entete.attente_titre')}
-        >{t('entete.attente', { n: pending })}</span
+        ><Icon name="rafraichir" size={16} /><span class="chip-n" aria-hidden="true">{pending}</span
+        ><span class="chip-t">{t('entete.attente', { n: pending })}</span></span
       >{/if}
     {#if profile}
       <span class="who" data-testid="eleve-actif">{profile.pseudonym}</span>
@@ -350,6 +351,8 @@
       margin: 0;
       gap: 0;
       padding: 6px 6px max(6px, env(safe-area-inset-bottom));
+      max-width: 100vw;
+      overflow: hidden;
       background: var(--card);
       color: var(--ink2);
       border-top: 1px solid var(--line);
@@ -381,7 +384,7 @@
     .ti {
       display: grid;
       place-items: center;
-      width: 52px;
+      width: min(52px, 100%);
       height: 30px;
       border-radius: var(--radius-pill);
       transition: background var(--motion-fast) ease;
@@ -400,8 +403,35 @@
       min-height: 64px;
     }
   }
-  @media (max-width: 479px) {
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .chip-n {
+    display: none;
+    font-weight: 700;
+  }
+  /* téléphone : l'en-tête ne déborde jamais (marque réduite, compteur au lieu de la phrase) */
+  .top > :global(*) {
+    min-width: 0;
+  }
+  @media (max-width: 599px) {
+    .chip-n {
+      display: inline;
+    }
+    .chip-t {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
     .who {
+      max-width: 6em;
+    }
+    .has-who .brand :global(.word) {
       display: none;
     }
   }

@@ -14,6 +14,7 @@
   }
   let { days }: { days: Day[] } = $props();
   const total = (d: Day) => d.reponses + d.traces + d.cartes + d.hifz;
+  const empty = $derived(days.every((d) => total(d) === 0));
   const max = $derived(Math.max(1, ...days.map(total)));
   const best = $derived(days.reduce((b, d, i) => (total(d) > total(days[b]!) ? i : b), 0));
   const label = (d: Day) =>
@@ -29,7 +30,12 @@
 </script>
 
 <figure class="chart" data-testid="activite">
+  {#if empty}
+    <!-- lot 26 : état vide explicite plutôt qu'un graphique blanc -->
+    <p class="vide muted" data-testid="activite-vide">{t('tableau.aucune_activite')}</p>
+  {/if}
   <div
+    class:none={empty}
     class="bars"
     role="img"
     aria-label={t('tableau.activite_aria', { n: days.reduce((s, d) => s + total(d), 0) })}
@@ -78,6 +84,15 @@
     height: 96px;
     align-items: end;
     border-bottom: 1px solid var(--line);
+  }
+  .bars.none {
+    height: 24px;
+  }
+  .vide {
+    margin: 0 0 4px;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    background: var(--surface);
   }
   .col {
     position: relative;
