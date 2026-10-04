@@ -24,6 +24,9 @@
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import StatusMessage from '$lib/ui/StatusMessage.svelte';
+  import { HAFS } from '$lib/quran/player';
+  import { readTajwidPrefs, tajwidAllowed, type TajwidSura } from '$lib/quran/tajwid';
+  import TajwidBar from '$lib/quran/TajwidBar.svelte';
 
   /**
    * Lot 27 — Écouter : choix du récitateur (riwāya toujours affichée), sourate et plage, répétition du verset
@@ -48,6 +51,9 @@
   let meta = $state<{ weights: number[][]; basmala: string } | null>(null);
   let sura = $state(1);
   let verses = $state<Verse[]>([]);
+  // lot 29 : tajwid en couleurs — seulement si le récitateur choisi lit en Ḥafṣ (sinon : bouton absent)
+  let tjPrefs = $state(readTajwidPrefs());
+  let tjData = $state<TajwidSura | null>(null);
   let from = $state(1);
   let to = $state(1);
   let repeatVerse = $state(1);
@@ -289,6 +295,14 @@
     </p>
   {/if}
 
+  <TajwidBar
+    riwaya={reciter?.riwaya ?? HAFS}
+    {sura}
+    {verses}
+    basmala={meta?.basmala ?? ''}
+    bind:prefs={tjPrefs}
+    bind:data={tjData}
+  />
   <QuranText
     {sura}
     {verses}
@@ -296,6 +310,8 @@
     {current}
     {from}
     {to}
+    tajwid={tjPrefs.on && tajwidAllowed(reciter?.riwaya ?? HAFS) ? tjData : null}
+    motifs={tjPrefs.motifs}
     onpick={(a) => {
       if (a < from || from !== to) {
         from = a;

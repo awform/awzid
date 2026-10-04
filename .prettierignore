@@ -17,3 +17,6 @@ apps/android/android/
 infra/ci/contenu-synthetique
 # fichier généré (pnpm --filter @awform/web theme)
 apps/web/src/lib/theme/tokens.css
+
+# lot 29 : annotations du tajwid générées (pnpm --filter @awform/content tajwid), contrôlées par test
+apps/web/static/tajwid/

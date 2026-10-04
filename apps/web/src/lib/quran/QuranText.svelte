@@ -3,6 +3,8 @@
   import { splitBasmala, suraName } from '@awform/hifz';
   import { fmtNumber, t } from '$lib/i18n';
   import { visibleWords } from './player';
+  import { verseRuns, type TajwidSura } from './tajwid';
+  import TajwidRuns from './TajwidRuns.svelte';
 
   /**
    * Lot 27 — texte du Muṣḥaf (Tanzil, octet par octet, découpé aux espaces seulement) avec, au choix :
@@ -20,6 +22,8 @@
     mask = 0,
     maskFrom = 1,
     onpick,
+    tajwid = null,
+    motifs = false,
   }: {
     sura: number;
     verses: Verse[];
@@ -31,6 +35,10 @@
     /** masquage appliqué à partir de ce verset (versets déjà appris : 1) */
     maskFrom?: number;
     onpick?: (aya: number) => void;
+    /** lot 29 : annotations du tajwid de la sourate (null : texte sans couleur) */
+    tajwid?: TajwidSura | null;
+    /** soulignés en plus des couleurs (daltonisme) */
+    motifs?: boolean;
   } = $props();
 
   let hidden = $state<Record<string, boolean>>({});
@@ -42,14 +50,26 @@
   });
 </script>
 
-<section class="mushaf card" lang="ar" dir="rtl" data-testid="texte-coran">
+<section
+  class="mushaf card"
+  class:tajwid={!!tajwid}
+  class:motifs={!!tajwid && motifs}
+  lang="ar"
+  dir="rtl"
+  data-testid="texte-coran"
+>
   <h2 class="titre">{suraName(sura)}</h2>
   {#each verses as v (v.a)}
     {@const parts = splitBasmala(v.s, v.a, v.text, basmala)}
     {@const ws = parts.rest.split(' ')}
     {@const vis = visibleWords(ws.length, v.a >= maskFrom ? mask : 0)}
+    {@const tv = tajwid ? verseRuns(v, basmala, tajwid) : null}
     {#if parts.basmala}<p class="basmala">
-        <span class="quran-text">{tanwinDisplay(parts.basmala)}</span>
+        <span class="quran-text"
+          >{#if tv?.basmala}{#each tv.basmala as bw, i (i)}{i > 0 ? ' ' : ''}<TajwidRuns
+                runs={bw}
+              />{/each}{:else}{tanwinDisplay(parts.basmala)}{/if}</span
+        >
       </p>{/if}
     <!-- svelte-ignore a11y_no_noninteractive_tabindex (rôle « button » posé seulement quand le verset est choisissable) -->
     <div
@@ -67,7 +87,9 @@
         >{#each ws as w, i (i)}{i > 0 ? ' ' : ''}<span
             class="w"
             class:voile={!vis[i] && !hidden[`${v.a}:${i}`]}
-            ><span class="t">{tanwinDisplay(w)}</span></span
+            ><span class="t"
+              >{#if tv}<TajwidRuns runs={tv.words[i] ?? []} />{:else}{tanwinDisplay(w)}{/if}</span
+            ></span
           >{/each}</span
       >
       <span class="n" aria-label={t('ca.verset_n', { n: v.a })}

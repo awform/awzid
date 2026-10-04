@@ -130,6 +130,108 @@ h3 {
   line-height: 2.3;
   unicode-bidi: isolate;
 }
+/* lot 29 : tajwid en couleurs (Ḥafṣ). Les morceaux .tj enveloppent des caractères Tanzil ; seule la couleur
+   (et, au choix, un souligné par famille pour le daltonisme) change — jamais la police ni l'espacement, pour
+   que les lettres restent liées. Adultes et ados : douze couleurs ; enfant (thème Jardin) : quatre familles. */
+.tajwid .tj[data-tj='tj-ghunna'] {
+  color: var(--tj-ghunna);
+}
+.tajwid .tj[data-tj='tj-idgham'] {
+  color: var(--tj-idgham);
+}
+.tajwid .tj[data-tj='tj-ikhfa'] {
+  color: var(--tj-ikhfa);
+}
+.tajwid .tj[data-tj='tj-iqlab'] {
+  color: var(--tj-iqlab);
+}
+.tajwid .tj[data-tj='tj-madd2'] {
+  color: var(--tj-madd2);
+}
+.tajwid .tj[data-tj='tj-madd246'] {
+  color: var(--tj-madd246);
+}
+.tajwid .tj[data-tj='tj-munfasil'] {
+  color: var(--tj-munfasil);
+}
+.tajwid .tj[data-tj='tj-muttasil'] {
+  color: var(--tj-muttasil);
+}
+.tajwid .tj[data-tj='tj-madd6'] {
+  color: var(--tj-madd6);
+}
+.tajwid .tj[data-tj='tj-qalqala'] {
+  color: var(--tj-qalqala);
+}
+.tajwid .tj[data-tj='tj-assim'] {
+  color: var(--tj-assim);
+}
+.tajwid .tj[data-tj='tj-muet'] {
+  color: var(--tj-muet);
+}
+.tajwid.motifs .tj {
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.5em;
+  text-decoration-skip-ink: none;
+}
+.tajwid.motifs .tj[data-tjf='nasal'] {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+}
+.tajwid.motifs .tj[data-tjf='long'] {
+  text-decoration-line: underline;
+  text-decoration-style: double;
+}
+.tajwid.motifs .tj[data-tjf='rebond'] {
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+}
+.tajwid.motifs .tj[data-tjf='muet'] {
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+}
+:root[data-public='enfant'] .tajwid .tj {
+  color: inherit;
+  text-decoration-line: none;
+}
+:root[data-public='enfant'] .tajwid .tj[data-tjk='tjk-nez'] {
+  color: var(--tjk-nez);
+}
+:root[data-public='enfant'] .tajwid .tj[data-tjk='tjk-long'] {
+  color: var(--tjk-long);
+}
+:root[data-public='enfant'] .tajwid .tj[data-tjk='tjk-rebond'] {
+  color: var(--tjk-rebond);
+}
+:root[data-public='enfant'] .tajwid .tj[data-tjk='tjk-muet'] {
+  color: var(--tjk-muet);
+}
+:root[data-public='enfant'] .tajwid.motifs .tj[data-tjkf='nasal'] {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+}
+:root[data-public='enfant'] .tajwid.motifs .tj[data-tjkf='long'] {
+  text-decoration-line: underline;
+  text-decoration-style: double;
+}
+:root[data-public='enfant'] .tajwid.motifs .tj[data-tjkf='rebond'] {
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+}
+:root[data-public='enfant'] .tajwid.motifs .tj[data-tjkf='muet'] {
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+}
+/* enfant : texte plus grand en tajwid */
+:root[data-public='enfant'] .mushaf.tajwid .aya {
+  font-size: 2.1rem;
+  line-height: 2.5;
+}
+@media (max-width: 400px) {
+  :root[data-public='enfant'] .mushaf.tajwid .aya {
+    font-size: 1.8rem;
+  }
+}
 .c0 {
   color: var(--c0);
   text-decoration: underline solid;

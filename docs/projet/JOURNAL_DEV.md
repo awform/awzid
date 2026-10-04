@@ -36,9 +36,65 @@ se mélangent (le français va de gauche à droite, l'arabe de droite à gauche)
   lint : tout texte affiché sans `<Bidi>`/`<Ar>`, ou tout arabe écrit en dur hors `lang="ar"`, fait échouer
   les tests ; `e2e/bidi.spec.ts` : chaque nœud de texte est d'une seule écriture et dans la bonne direction
   (11 cas réels) — **11/11 en échec sur `main`, 11/11 vert après**.
-- **Chiffres** : tests unitaires 1 272 (dont 17 nouveaux), e2e 198 réussis + 13 ignorés (3 intermittents —
-  captures lot 3, accueil lot 26, récitateurs lot 27 — verts à la relance, 52/52) ; budget : page la plus
-  lourde 128,9 → 130,7 Ko (≤ 150), toutes pages 264,3 → 269,2 Ko (≤ 300). Démonstration non redéployée.
+- **Chiffres** (code fusionné avec `main` = lot 29 compris) : tests unitaires 1 289 réussis (dont 17 nouveaux)
+  + 1 ignoré ; e2e 212 réussis + 19 ignorés, 1 intermittent (lot 15, parent, vert à la relance 6/6 ; au
+  passage précédent, 3 autres intermittents — captures lot 3, accueil lot 26, récitateurs lot 27 — verts à la
+  relance 52/52) ; budget : page la plus lourde 130,0 → 131,9 Ko (≤ 150), toutes pages 269,4 → 274,3 Ko
+  (≤ 300). Intégré dans `main` (étiquette `avant-bidi` sur l'état précédent). Démonstration NON redéployée
+  (en attente de l'accord du client).
+
+---
+
+## 04/10/2026 — Lot 29 : tajwid en couleurs (Ḥafṣ) dans l'espace Coran (branche `lot29-wip`, depuis `main` 42270d5)
+
+Demande du client : garder le muṣḥaf actuel et AJOUTER une version « tajwid » en couleurs (comme Ayat), Ḥafṣ
+seulement ; pour l'enfant, une version simplifiée avec le vert.
+
+- **Source des règles (aucune saisie à la main)** : jeu « quran-tajweed » de Collin Fair (CC BY 4.0, vérifiée le
+  04/10/2026 ; `docs/projet/LICENCES.md`), 60 057 annotations, 18 règles, positions dans le texte Tanzil Uthmani
+  1.0.2 de 2017. Notre Tanzil (plus récent) ne diffère de cette copie que par des **insertions** (4 307 versets :
+  petites mīm après tanwin, signes de pause, ۞) : **calage automatique** (`packages/content/src/tajwid.ts`,
+  `alignVerse`), qui refuse tout autre écart, vérifie que les caractères recouverts sont les mêmes, rattache la
+  petite mīm à son tanwin et laisse les signes de pause HORS couleur. Résultat : **6 236 versets calés, 0 écart**,
+  60 797 plages (annotations coupées autour des pauses). Sources gelées dans le dépôt
+  (`packages/content/tajwid-source/*.gz`, empreintes SHA-256 dans LICENCES.md) ; générateur
+  `pnpm --filter @awform/content tajwid` → `apps/web/static/tajwid/NNN.json`.
+- **Intégrité du texte** : les couleurs sont des enveloppes (`<span class="tj">`) posées sur des plages de
+  caractères Tanzil, jamais une modification. Chaque verset porte l'empreinte du texte qui a servi au calage :
+  empreinte différente, position invalide ou concaténation ≠ texte ⇒ verset affiché **sans couleur**. Tests
+  bloquants (`packages/content/test/tajwid.test.ts`, texte Tanzil seul, donc aussi en CI) : fichiers livrés =
+  régénération depuis la source, octet pour octet ; pour les 6 236 versets, morceaux = texte exact, mots = texte
+  exact, affichage du tanwin réversible ; vraisemblance des lettres par règle (rebond sur ق ط ب ج د, son nasal
+  sur ن/م avec chadda, hamza de liaison = ٱ…). e2e : texte affiché identique avant / après activation.
+- **Affichage** : bouton « Tajwid en couleurs » (orthographe du GLOSSAIRE), **désactivé par défaut**, réglage
+  gardé sur l'appareil, dans **Lire**, **Mémoriser** (masquage progressif compatible) et **Écouter** (seulement
+  avec un récitateur en Ḥafṣ : **bouton absent** pour une autre riwāya). Légende : couleur + nom de la règle
+  (termes du GLOSSAIRE : ados/adultes « le son nasal », « l'allongement … 2 / 4 ou 5 / 6 temps », « le rebond »,
+  règles du ن/م) + **exemple tiré de la sourate ouverte** (« absent de cette sourate » sinon) ; dépliée sur
+  ordinateur, repliée sur téléphone, et **bouton flottant « Légende des couleurs »** toujours présent ; crédit
+  avec liens vers la source et la licence. La basmala en tête des sourates reste sans couleur : la source ne
+  l'annote pas (aucune règle affichée sans source).
+- **Enfant** (thème Jardin) : 4 familles — **le chant du nez (الْغُنَّةُ) en vert**, le son long, le rebond, les
+  lettres qu'on ne prononce pas ; couleurs douces ; texte agrandi (2,1 rem). Ados et adultes : palette complète
+  (12 couleurs, inspirée des Muṣḥaf de tajwid / Ayat : verts du nasal, ocre → rouge sombre selon la durée,
+  bleu du rebond, gris des lettres non prononcées).
+- **Angles morts** : daltonisme (option « Soulignés en plus des couleurs » : ondulé = nasal, double = long, plein =
+  rebond, pointillé = non prononcé) ; mode sombre (palette propre) ; **contrastes testés** dans les 8 palettes
+  (16 couleurs × carte ≥ 4,5:1, sable et surlignage ≥ 3:1, `tokens.test.ts`) ; 320 px sans défilement
+  horizontal ; termes arabes isolés (`<bdi>`) dans les libellés ; hors ligne : annotations chargées **à la
+  demande par sourate**, gardées dans IndexedDB (et avec « Garder cette sourate »), non préchargées par le
+  service worker ; réseau absent et sourate jamais vue ⇒ texte sans couleur + message.
+- **Mesures** (VM `awform-dev`, 04/10/2026, worktree `~/awform-lot29`) : annotations **554 Ko bruts, 194 Ko en
+  Brotli pour les 114 sourates** (al-Baqara 43 Ko / 13 Ko Brotli, petites sourates ≈ 0,25 Ko) ; budget : page la
+  plus lourde `/lecons/[id]` **123,6 Ko** ≤ 150 (lot 27 : 122,5 ; 123,7 après fusion), `/coran/lecteur` 99,1 Ko, `/coran/ecouter`
+  106,5 Ko, toutes les pages **262,4 Ko** ≤ 300 (257,8). `pnpm -r --no-bail test` (vrais livres) : **1 255 verts,
+  1 sauté, 0 échec** (143 s ; +17 : content 10, web 7) ; le nouveau test échoue sans le module (vérifié) ;
+  e2e `lot29.spec.ts` : **14/14** (2 appareils) ; e2e complets après fusion de `main` 5da52d6 : 210 verts, 12 sautés, 0 échec ; puis le **lot 28 a été intégré dans `main` (3796443)** : nouvelle fusion (conflits seulement en fin des 5 catalogues de langues : version de `main` reprise, clés `tj.*` réajoutées, aucune clé perdue — 1 720 par catalogue) et TOUT relancé sur le code fusionné : unitaires **1 272 verts, 1 sauté, 0 échec** (135 s) ; e2e **218 verts, 12 sautés, 0 échec** (11,9 min) ; budget : page la plus lourde `/lecons/[id]` **130,0 Ko** ≤ 150 (hausse due au lot 28), toutes les pages **269,4 Ko** ≤ 300.
+- e2e lancés sur une infrastructure ISOLÉE (ports 3290/4290, base `awform_l29_test`, rôles `awform_e29_*`,
+  dossier temporaire privé) : un autre agent lançait ses e2e en même temps sur la base et les ports communs
+  (premier passage perturbé : serveurs arrêtés en cours, ECONNREFUSED).
+- Captures : `reports/lot29/` (enfant, ado, ado sombre, adulte, adulte sombre, soulignés, al-Baqara, 320 px ;
+  téléphone et ordinateur). Décision : **D29** (relecture de la source par le référent, termes hors glossaire).
 
 ---
 
