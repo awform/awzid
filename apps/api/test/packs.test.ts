@@ -1,4 +1,5 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
+import { monitorEventLoopDelay } from 'node:perf_hooks';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { forbiddenPaths, loadEdition } from '@awform/content';
 import {
@@ -43,6 +44,21 @@ describe.skipIf(!READY)('paquets de niveau (hors ligne)', () => {
   afterAll(async () => {
     await app?.close();
     await h?.close();
+  });
+
+  it('lot 28 : la construction des paquets ne bloque pas le serveur (compression hors du fil principal)', async () => {
+    clearPackCache();
+    const h2 = monitorEventLoopDelay({ resolution: 10 });
+    h2.enable();
+    const [r, health] = await Promise.all([
+      app.inject({ method: 'GET', url: '/api/v1/packs' }),
+      app.inject({ method: 'GET', url: '/api/v1/packs' }),
+    ]);
+    h2.disable();
+    expect(r.statusCode).toBe(200);
+    expect(health.json()).toEqual(r.json());
+    // en Brotli 11 synchrone : plus d'une seconde de blocage pour deux livres
+    expect(h2.max / 1e6).toBeLessThan(400);
   });
 
   it('manifeste : un paquet par niveau, empreintes des leçons, poids compressé, budget respecté', async () => {

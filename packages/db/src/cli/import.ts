@@ -22,7 +22,15 @@ const code = opt('--edition', process.env.AWFORM_EDITION ?? 'dev');
 // livres GELÉS (ETAT.md) ; « --apercu » : livres pas encore gelés, marqués « aperçu » (démonstration seulement)
 const levels = opt(
   '--levels',
-  process.env.AWFORM_LEVELS ?? 'en1,ad1,en2,ad2,en3,ad3,ad4,re1,re2,ado1,ado2,ra1,ra2,ra3',
+  process.env.AWFORM_LEVELS ??
+    'en1,en2,en3,en4,en5,ad1,ad2,ad3,ad4,ad5,ad6,ad7,ad8,ad9,ad10,ado1,ado2,ado3,ado4,re1,re2,re3,re4,re5,ra1,ra2,ra3,ra4,qc1,qc2,qc3',
+)
+  .split(',')
+  .filter(Boolean);
+// carnets de hifẓ GELÉS (audités) : E1-E5 et N1-N5 ; N6-N10 attendent leur audit (lot 28)
+const carnets = opt(
+  '--carnets',
+  process.env.AWFORM_CARNETS ?? 'en1,en2,en3,en4,en5,ad1,ad2,ad3,ad4,ad5',
 )
   .split(',')
   .filter(Boolean);
@@ -32,7 +40,11 @@ const apercu = opt('--apercu', process.env.AWFORM_APERCU ?? '')
 const rapport = opt('--rapport', '');
 const url = args.includes('--test') ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL;
 
-const load = loadEdition({ contentDir: contentDir(), levels: [...levels, ...apercu] });
+const load = loadEdition({
+  contentDir: contentDir(),
+  levels: [...levels, ...apercu],
+  hifzLevels: carnets,
+});
 for (const lv of load.levels)
   if (apercu.includes(lv.code)) lv.book = { ...lv.book, apercu: true } as typeof lv.book;
 if (rapport) writeFileSync(rapport, importReportMarkdown(load, code));

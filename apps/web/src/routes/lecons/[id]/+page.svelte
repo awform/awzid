@@ -7,12 +7,13 @@
   import { call } from '$lib/session';
   import { relierOriginal } from '@awform/content/projection';
   import ReligionLesson from '$lib/religion/ReligionLesson.svelte';
+  import CoranLesson from '$lib/qc/CoranLesson.svelte';
   import TutorPanel from '$lib/TutorPanel.svelte';
   import Illus from '$lib/Illus.svelte';
   import LettresLecon from '$lib/LettresLecon.svelte';
   import Scene from '$lib/Scene.svelte';
   import Sprite from '$lib/Sprite.svelte';
-  import { arabicSize, unitLabel } from '$lib/api';
+  import { arabicSize, isQuranReadingLevel, unitLabel } from '$lib/api';
   import { fmtNumber, t } from '$lib/i18n';
   import { demoProfileFor, enqueue, flush, onProgress } from '$lib/attempts';
   import type { ItemResponse } from '@awform/grading';
@@ -29,6 +30,8 @@
   const u = $derived(data.unit);
   /** leçons des sciences islamiques (Religion Enfants re, Ados/Adultes ra) : lecteur dédié */
   const religion = $derived(/^r[ea]\d/.test(u.levelCode));
+  /** livrets « Lecture du Coran » (qc1 à qc3, lot 28) : lecteur dédié */
+  const lectureCoran = $derived(isQuranReadingLevel(u.levelCode));
   const L = $derived(data.unit.lesson);
   const lettres = $derived(L.lettres ?? []);
   const isEval = $derived(u.kind !== 'lecon');
@@ -173,7 +176,9 @@
 
 <Sprite illustrations={data.illustrations} />
 
-{#if religion}
+{#if lectureCoran}
+  <CoranLesson unit={u} {progress} onChecklist={toggleReligion} />
+{:else if religion}
   <ReligionLesson
     unit={u}
     {profileId}

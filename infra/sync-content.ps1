@@ -6,7 +6,7 @@
 # contrôle du MANIFEST.sha256) ; -Force abandonne ces modifications en connaissance de cause.
 param(
   [Parameter(Mandatory = $true)][string]$W,
-  [string[]]$Levels = @('en1', 'ad1', 'en2', 'ad2', 'en3', 'ad3', 'ad4', 're1', 're2', 'ado1', 'ado2', 'ra1', 'ra2', 'ra3'),
+  [string[]]$Levels = @('en1', 'en2', 'en3', 'en4', 'en5', 'ad1', 'ad2', 'ad3', 'ad4', 'ad5', 'ad6', 'ad7', 'ad8', 'ad9', 'ad10', 'ado1', 'ado2', 'ado3', 'ado4', 're1', 're2', 're3', 're4', 're5', 'ra1', 'ra2', 'ra3', 'ra4', 'qc1', 'qc2', 'qc3'),
   [string]$VmHost = 'awform-dev',
   [string]$Dest = 'awform-content',
   [string]$Repo = 'awform-app',

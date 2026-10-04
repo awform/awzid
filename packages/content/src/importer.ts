@@ -8,7 +8,15 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { contentHash, sha256Hex } from './canonical.js';
 import { parseDataFile } from './parse.js';
-import { checkVerse, loadTanzil, parseEcartsVoulus, whitelistKey, type Tanzil } from './quran.js';
+import {
+  checkQcSource,
+  checkVerse,
+  loadTanzil,
+  parseEcartsVoulus,
+  qcQuranSources,
+  whitelistKey,
+  type Tanzil,
+} from './quran.js';
 import { checkQuranData, parseQuranData, type QuranDivisions } from './qurandata.js';
 import { ROOT_ITEMS, verifyRootItems } from './roots.js';
 import { plain } from './text.js';
@@ -81,6 +89,11 @@ export interface LoadOptions {
   withIllustrations?: boolean;
   /** charger la bibliothèque des livrets (data/lect) — par défaut oui */
   withBooklets?: boolean;
+  /**
+   * carnets de hifẓ publiés (codes de niveaux, lot 28) : seuls les carnets audités et gelés ; un carnet n'est
+   * chargé qu'avec son livre. Par défaut : le carnet de chaque niveau chargé.
+   */
+  hifzLevels?: string[];
 }
 
 const UNIT_FILE = /^l\d\d\.js$/;
@@ -301,6 +314,28 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
     }
   };
 
+  // Lecture du Coran (qc, lot 28) : extraits « src: Q:… » comparés octet par octet à Tanzil (règle E2 de
+  // qc-check.ps1) ; aucune liste blanche : tout écart est bloquant
+  const qcVerse = (file: string, unitId: string, path: string, src: string, ar: unknown) => {
+    verseStats.total++;
+    const r =
+      typeof ar === 'string'
+        ? checkQcSource(ar, src, tanzil)
+        : { status: 'sans_texte', detail: 'extrait sans texte « ar »' };
+    if (r.status === 'identique') verseStats.identique++;
+    else if (r.status === 'extrait') verseStats.extrait++;
+    else {
+      verseStats.erreurs++;
+      issues.push({
+        severity: 'erreur',
+        code: `coran_${r.status}`,
+        file,
+        unit: unitId,
+        message: `${path} ${src} : ${r.detail ?? r.status}`,
+      });
+    }
+  };
+
   // illustrations (ordre des pages des livres, zz-sansvisage.js en dernier), SVG validé
   let illustrations: Map<string, Illustration> | null = null;
   const illusDir = join(contentDir, 'illus');
@@ -501,6 +536,8 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
       for (const v of L.coran?.versets ?? []) {
         if (v && typeof v.ar === 'string') verse(code, unitFile, rel, id, v.ar, v.ref_fr);
       }
+      if (/^qc\d/.test(code))
+        for (const s of qcQuranSources(L)) qcVerse(rel, id, s.path, s.src, s.ar);
       issues.push(...checkUnit(id, code, L, illustrations, rel));
       for (const w of translitWords(L, code)) translit.set(w, (translit.get(w) ?? 0) + 1);
 
@@ -540,7 +577,8 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
   const hifzShared: Record<string, unknown> = {};
   const hifzDir = join(dataDir, 'hifz');
   if (existsSync(hifzDir)) {
-    for (const code of opts.levels) {
+    const carnets = opts.levels.filter((c) => !opts.hifzLevels || opts.hifzLevels.includes(c));
+    for (const code of carnets) {
       const p = join(hifzDir, `${code}.js`);
       if (!existsSync(p)) continue;
       const parsed = parseDataFile(readText(p), `data/hifz/${code}.js`);

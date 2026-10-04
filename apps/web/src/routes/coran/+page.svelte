@@ -1,5 +1,7 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
+  import Ar from '$lib/Ar.svelte';
+  import { isQuranReadingLevel } from '$lib/api';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
 
@@ -15,6 +17,9 @@
       testid: 'ouvrir-recitateurs',
     },
   ] as const;
+  let { data } = $props();
+  /** lot 28 : livrets « Lecture du Coran » publiés (qc1 à qc3) */
+  const livrets = $derived(data.levels.filter((l) => isQuranReadingLevel(l.code)));
 </script>
 
 <svelte:head><title>{t('app.nom')} — {t('onglets.coran')}</title></svelte:head>
@@ -54,9 +59,27 @@
   <p class="muted small">{t('coran.lecteur_licence')}</p>
 </section>
 
-<section class="card">
-  <h2>{t('coran.qaida_titre')} <span class="soon">{t('etat.a_venir')}</span></h2>
+<section class="card" data-testid="lecture-coran">
+  <h2>{t('coran.qaida_titre')}</h2>
   <p>{t('coran.qaida_texte')}</p>
+  {#if data.offline}<p class="muted">{t('arabe.hors_ligne')}</p>{/if}
+  <ul class="livrets">
+    {#each livrets as l (l.code)}
+      <li>
+        <a
+          href={resolve('/niveaux/[code]', { code: l.code })}
+          data-testid="niveau-qc"
+          data-level={l.code}
+        >
+          <strong>{l.codeFr ?? l.code}</strong> — {l.titleFr}
+          {#if l.titreAr}<Ar text={l.titreAr} />{/if}
+          <small>{t('arabe.unites', { n: l.units })}</small>
+        </a>
+      </li>
+    {:else}
+      <li class="muted">{t('sciences.bientot')}</li>
+    {/each}
+  </ul>
 </section>
 
 <style>
@@ -72,5 +95,24 @@
   }
   .small {
     font-size: 0.9rem;
+  }
+  .livrets {
+    list-style: none;
+    padding: 0;
+  }
+  .livrets a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 12px;
+    padding: 12px 14px;
+    margin: 8px 0;
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .livrets small {
+    color: var(--ink2);
   }
 </style>

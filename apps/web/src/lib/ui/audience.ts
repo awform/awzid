@@ -117,6 +117,7 @@ export function activeNav(items: NavItem[], path: string): NavId | '' {
   const ids = new Set(items.map((i) => i.id));
   const has = (id: NavId) => (ids.has(id) ? id : '');
   if (/^\/(niveaux|lecons)\/r[ea]\d/.test(path)) return has('sciences');
+  if (/^\/(niveaux|lecons)\/qc\d/.test(path)) return has('coran');
   if (path === '/' || path.startsWith('/niveaux') || path.startsWith('/lecons'))
     return has('arabe') || has('livres');
   if (path.startsWith('/hifz') || path.startsWith('/coran')) return has('coran');

@@ -89,6 +89,48 @@ sur téléphone.
 
 ---
 
+## 04/10/2026 — Lot 28 : les 31 livres gelés publiés, livrets « Lecture du Coran » (branche `lot28-wip`)
+
+Mesures prises sur la VM `awform-dev` (base de TEST pour l'import, Playwright local), contenu copié le 04/10.
+
+- **Copie PC → VM** (`infra/sync-content.ps1`, méthode des lots 8 et 16) : ancienne copie sauvegardée dans
+  `~/awform-content.avant-lot28` (28 Mo), nouvelle copie 50 Mo, `MANIFEST.sha256` refait (1 036 fichiers). Copiés :
+  en1-en5, ad1-ad10, ado1-ado4, re1-re5, ra1-ra4, qc1-qc3, `data/hifz`, `data/lect`, `index-lecons.js`, `eval`,
+  registre, illustrations, Tanzil, `ids` (29 tables). **Non copiés** : `audio` (clé Azure), `data/gp` et `data/mf`
+  (Guide des parents, Manuel du formateur : en relecture religieuse, pas des livres d'élève).
+  **Incident** : `verifier-copie.sh` refusait une copie intacte (`comm` : « not in sorted order » — tri dépendant de
+  la langue de la session ssh) ; contrôle refait à la main (empreintes et fichiers ajoutés : 0 écart) puis copie
+  avec `-Force` ; script corrigé (`LC_ALL=C`).
+- **Contrôle du contenu** (31 livres) : 778 unités, 5 703 exercices, **3 825 extraits coraniques contrôlés octet par
+  octet, 0 erreur** (2 986 identiques, 839 extraits exacts), 0 erreur bloquante, 329 avertissements (dont 114
+  champs `guide_fr__src` des livrets qc retirés de la projection élève, comme prévu).
+- **Livrets qc (Lecture du Coran) — manque trouvé et comblé** : l'importeur les lisait mais **ne contrôlait aucun
+  de leurs 957 extraits du Coran** (`src: "Q:s:v[:w-w]"`). Contrôle ajouté (`packages/content/src/quran.ts` :
+  `qcSourceText`, `checkQcSource`, règle E2 de `qc-check.ps1` : texte sans crochets = Tanzil, sans liste blanche,
+  tout écart bloquant). Projection élève : extrait du Muṣḥaf « non préparé » absent hors session, sens des
+  versets retiré en bilan/examen. Interface : livrets dans l'espace **Coran** (plus dans l'onglet Arabe), lecteur
+  dédié (`apps/web/src/lib/qc/` : lettres, signes, échelle de bas en haut, exercices, Muṣḥaf, « je sais »),
+  crochets de couleur par famille de règle (jetons c0-c3 existants), 16 types d'exercices corrigés sur l'appareil
+  en leçon (`check.ts`, testé) ; bilans et examens : aucun corrigé reçu (D7), l'adulte corrige avec le guide.
+- **Carnets de hifẓ** : seuls les carnets gelés E1-E5 et N1-N5 sont publiés (`--carnets` / `AWFORM_CARNETS`) ;
+  N6-N10 (présents sur le PC, non audités) restent hors de l'édition.
+- **Défaut de performance révélé par les 31 livres** : le premier manifeste hors ligne (`/api/v1/packs`)
+  compressait toutes les leçons en Brotli 11 dans le fil principal — l'API ne répondait plus (connexions en
+  erreur 500, puis comptes verrouillés dans les e2e). Compression déplacée hors du fil principal et constructions
+  simultanées fusionnées (`apps/api/src/packs.ts`) ; test : blocage mesuré **1 354 ms avant, < 400 ms exigé après**.
+- **Test instable corrigé** : `apps/relay/test/relay.test.ts` (« rejeu d'un envoi ») échouait 1 fois sur 5 (deux
+  envois de la même milliseconde sortaient dans un ordre au hasard) ; 12 exécutions vertes après correction.
+- **Import réel** (base de test, édition e2e) : « 778 unités, 5 703 exercices, 1 145 illustrations ; versets 3 825
+  contrôlés, 0 erreur ». Valeurs par défaut de l'import et de `deploy.sh` : les 31 livres, plus d'aperçu.
+- **Tests** (VM, après fusion de `main` 5da52d6) : suite complète avec les livres (`pnpm -r --no-bail test`)
+  **1 255 réussis, 1 sauté, 0 échec** (une exécution précédente avait 4 échecs `mobile-money` : un autre agent
+  utilisait la même base de test en même temps ; relancée seule : verte) ; e2e complets **200 réussis, 12 sautés,
+  0 échec** (dont `lot28.spec.ts` : 31 livres dans leur onglet, leçon 1 de chaque livre ouverte dans son lecteur,
+  exercices qc corrigés, Muṣḥaf = Tanzil, examen sans corrigé, carnets E1-E5/N1-N5) ; lint, format, typage ;
+  budget : page la plus lourde `/lecons/[id]` 128,9 Ko (≤ 150), tout le JS 264,3 Ko (≤ 300).
+
+---
+
 ## 04/10/2026 — Lot 27 : interface de l'espace Coran (branche `lot27-wip` = `lot27-api-wip` + `lot26-wip`)
 
 Partie serveur : entrée suivante (autre agent). Ici, l'interface seulement (aucun paquet serveur de l'audio touché).

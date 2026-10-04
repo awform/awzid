@@ -4,7 +4,8 @@
  * illustrations utilisées (SVG validé). Un paquet est identifié par l'empreinte de son contenu ; le
  * manifeste donne, pour chaque leçon, son empreinte : l'appareil ne retélécharge que ce qui a changé.
  */
-import { brotliCompressSync, constants } from 'node:zlib';
+import { promisify } from 'node:util';
+import { brotliCompress, brotliCompressSync, constants } from 'node:zlib';
 import { contentHash, type Lesson } from '@awform/content';
 import { getUnitForStudent, illustrationsFor, listUnits, type Db } from '@awform/db';
 import { neededIllustrations } from './needed.js';
@@ -35,11 +36,22 @@ export interface PackEntry {
 }
 
 const cache = new Map<string, PackEntry>();
+/** paquets en cours de construction : deux demandes simultanées attendent la même construction (lot 28) */
+const building = new Map<string, Promise<PackEntry | null>>();
+const BROTLI_11 = { params: { [constants.BROTLI_PARAM_QUALITY]: 11 } };
+const brotliCompressAsync = promisify(brotliCompress);
 
 export function brotli(s: string): Buffer {
-  return brotliCompressSync(Buffer.from(s, 'utf8'), {
-    params: { [constants.BROTLI_PARAM_QUALITY]: 11 },
-  });
+  return brotliCompressSync(Buffer.from(s, 'utf8'), BROTLI_11);
+}
+
+/**
+ * Lot 28 : compression HORS du fil principal (réserve de fils de libuv). Avec 31 livres, le premier manifeste
+ * compressait ~800 leçons en Brotli 11 de façon synchrone : le serveur ne répondait plus (connexions en
+ * erreur) pendant de longues secondes.
+ */
+async function brotliAsync(s: string): Promise<Buffer> {
+  return brotliCompressAsync(Buffer.from(s, 'utf8'), BROTLI_11);
 }
 
 export function brotliSize(s: string): number {
@@ -55,6 +67,21 @@ export async function getPack(
   const key = `${editionId}|${level}`;
   const hit = cache.get(key);
   if (hit) return hit;
+  let pending = building.get(key);
+  if (!pending) {
+    pending = buildPack(db, editionId, editionCode, level, key).finally(() => building.delete(key));
+    building.set(key, pending);
+  }
+  return pending;
+}
+
+async function buildPack(
+  db: Db,
+  editionId: string,
+  editionCode: string,
+  level: string,
+  key: string,
+): Promise<PackEntry | null> {
   const list = await listUnits(db, editionId, level);
   if (list.length === 0) return null;
   const units = [];
@@ -72,17 +99,20 @@ export async function getPack(
   });
   const pack: Pack = { format: 1, edition: editionCode, level, hash, units, illustrations };
   const json = JSON.stringify(pack);
-  const compressed = brotli(json);
+  const compressed = await brotliAsync(json);
+  const unitBytes = await Promise.all(
+    units.map(async (u) => (await brotliAsync(JSON.stringify(u))).length),
+  );
   const entry: PackEntry = {
     pack,
     json,
     rawBytes: Buffer.byteLength(json, 'utf8'),
     brotliBytes: compressed.length,
     brotli: compressed,
-    perUnit: units.map((u) => ({
+    perUnit: units.map((u, i) => ({
       id: u.id,
       sha256: u.sha256,
-      brotliBytes: brotliSize(JSON.stringify(u)),
+      brotliBytes: unitBytes[i]!,
     })),
   };
   cache.set(key, entry);

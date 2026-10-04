@@ -210,6 +210,9 @@ describe('relais d’école : coupures d’Internet simulées', () => {
     await relay.checkOnline();
     const e = events(1);
     await relay.app.inject({ method: 'POST', url: '/api/v1/attempts', headers: H, payload: e });
+    // lot 28 : file triée par date de création puis identifiant aléatoire — deux envois dans la même
+    // milliseconde sortaient dans un ordre au hasard (test instable, 1 fois sur 5) ; la réponse d'abord
+    await new Promise((r) => setTimeout(r, 5));
     await relay.app.inject({
       method: 'POST',
       url: `/api/v1/profiles/${profile}/recitations?classe=${randomUUID()}&passage=1:1-7`,
