@@ -8,6 +8,68 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 04/10/2026 — Lot 27 : audio du Coran, partie SERVEUR (branche `lot27-api-wip`, depuis `main` caced1c)
+
+Décision du client : récitations du **Complexe du Roi Fahd**, hébergées chez nous (licence archivée le 30/07/2025 :
+usage général gratuit dans les applications, secteur privé compris). 9 muṣḥafs : Ḥafṣ (al-Ḥudhayfī, al-Muʿayqlī,
+Muḥammad Ayyūb, al-Muhannā, al-Akhḍar), Shuʿba et Qālūn (al-Ḥudhayfī), as-Sūsī (aṣ-Ṣiddīqī), ad-Dūrī
+(al-Juhanī). **Aucun fichier téléchargé** (serveur du Complexe injoignable depuis la France) : tout est prêt
+pour l'import ; les tests n'utilisent que des **fichiers d'essai non coraniques** (bips WAV générés, MP3
+synthétiques sans son, MP3 de bips encodés par ffmpeg) — aucune récitation inventée ni synthétisée.
+
+- **Schéma** (migration `0027_coran_audio.sql`) : `quran_reciter` (id, noms arabe et français, riwāya parmi les
+  20 des dix lectures, vitesse et style étiquetés, compte de versets, licence : source, URL, date d'archive,
+  texte, crédit ; statut `en_attente` / `actif` / `retire` avec date et motif obligatoires), `quran_track`
+  (récitateur, sourate, verset, chemin relatif, durée, taille, SHA-256, format ; contraintes : durée et taille
+  > 0, empreinte hexadécimale, chemin sans « .. »), `quran_audio_import` (état et rapport de chaque import,
+  même bloqué), `profile_reciter_pref`, `profile_reciter_rule` (liste du parent), `class_reciter_rule` (liste
+  de l'enseignant), `relay_reciter` (préchargement du relais). Droits de l'API : pistes et imports en lecture,
+  récitateur en lecture + retrait.
+- **Outil d'import** (`packages/db/src/audio/`, ligne de commande `coran-audio` : `catalogue`, `verifier`,
+  `importer`, `activer`, `retirer`, `etat`) depuis un dossier local (zip « ayat » décompressé) : nommage
+  configurable (`SSSVVV.mp3` par défaut), muṣḥaf complet ou partiel (`--sourates`) ; contrôles : manquants,
+  doublons de nom, hors muṣḥaf, compte (**Ḥafṣ : 6 236 imposé**, table des 114 sourates vérifiée contre le
+  fichier Tanzil des livres ; **autres riwāyāt : compte déclaré**, numérotation contiguë par sourate),
+  illisibles, durée nulle (durée MP3 par lecture des trames, sans dépendance), **silences** (WAV : calcul
+  interne ; MP3 : ffmpeg `silencedetect` ; silence ≥ 95 % = bloquant, silence intérieur ≥ 4 s = avertissement ;
+  sans ffmpeg : avertissement « silences non vérifiés »), contenus identiques, empreintes (liste SHA256SUMS
+  facultative). **Un contrôle bloquant : rien n'est copié ni activé**, rapport gardé. Fichiers copiés sous un
+  nom portant leur empreinte, pistes remplacées d'un bloc, activation en un ou deux temps (après écoute),
+  réactivation d'un récitateur retiré seulement avec `--reactiver`.
+- **API** (`apps/api/src/coran-audio.ts`) : récitateurs actifs (riwāya, crédit, licence, conseil débutant
+  Muḥammad Ayyūb en tête) ; pistes d'une sourate ; **fichiers servis avec Range** (206, suffixe, 416), ETag =
+  SHA-256, 304, cache public 1 jour ; **paquets hors ligne par sourate** (manifeste : fichiers, tailles, durée,
+  empreinte ; `wifiSeulement`) ; profil : liste autorisée du parent (code parent, mineurs) et de la classe
+  (enseignant), **intersection** ; préférence ; **règle de riwāya** : mode « mémoriser » = Ḥafṣ seulement
+  (409 `riwaya_differente_du_carnet`), pistes d'une autre riwāya marquées `sans_surlignage` ; **retrait
+  immédiat** par l'administrateur (second facteur, motif, journal d'audit) : hors des listes, des paquets, des
+  fichiers (410) et de la liste du relais.
+- **Relais d'école** : liste des fichiers des récitateurs choisis pour l'école (jeton du relais), téléchargement
+  vérifié (taille + SHA-256) au démarrage puis toutes les heures, **effacement** de ce qui n'est plus demandé
+  (coupure propagée), lecture sur le Wi-Fi sans Internet (Range), listes mises en copie.
+- **Déploiement** : volume `audio` (API en lecture seule, `AWFORM_AUDIO_DIR=/audio`), service `coran-audio`
+  (profil outils, compte propriétaire, `/source` en lecture seule) sur l'image `outils-audio` (= API + ffmpeg),
+  construite sur la VM (ffmpeg 5.1.9 présent, outil chargé) ; lancement contre la base de production non testé.
+- **Web** : client d'API **typé** seulement (`apps/web/src/lib/coran-audio.ts`, calcul du quota hors ligne) ;
+  l'interface de l'espace Coran est confiée à l'autre agent.
+- Exploitation : `docs/projet/EXPLOITATION.md` § 7 ; décisions D20 à D24.
+
+**Mesures** (VM `awform-dev`, 8 cœurs, 04/10/2026, fichiers d'essai) : contrôle d'un muṣḥaf d'essai complet de
+6 236 bips WAV (37,7 Mo) en 0,2 s ; import complet (contrôles, copie, base) en 0,64 s ; MP3 de 12 s avec
+ffmpeg : 50 ms par fichier, 15,5 ms à 4 en parallèle (≈ 1 min 40 s estimée pour 6 236 versets de cette durée) ;
+API (in-process, 20 appels) : liste des récitateurs 1,5 ms, index des paquets 3,8 ms (21,8 Ko), paquet
+d'al-Baqara 2,3 ms (65,5 Ko, 286 fichiers), 1 Ko en Range 1,7 ms, liste du relais pour un muṣḥaf complet
+13,8 ms (1,3 Mo non compressé).
+
+**Vérifications** (VM, worktree `~/awform-lot27`, base de test séparée `awform_l27_test`, vrais livres) :
+`pnpm -r build`, typage (0 erreur, svelte-check 0 avertissement), lint (ESLint + Prettier) : OK ;
+`pnpm -r --no-bail test` : **1 214 tests verts, 1 sauté, 0 échec**, dont 47 nouveaux (db 21, api 10,
+relais 4, web 12) ; budget : page la plus lourde 113,9 Ko ≤ 150, toutes les pages 232,0 Ko ≤ 300.
+Commits : `e67b811` (schéma), `8555977` (import), `0496d43` (API), `4671426` (relais), `e75e943`
+(déploiement, client typé), et ce journal.
+
+---
+
 ## 30/09/2026 — Complément E : paiement mobile au Sénégal, SIMULÉ (branche `suite-v1-b`)
 
 - **Simulateur Wave / Orange Money** (`packages/billing/src/providers/mobile-simule.ts`) derrière l'interface
