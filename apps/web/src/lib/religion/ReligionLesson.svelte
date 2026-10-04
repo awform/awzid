@@ -9,6 +9,7 @@
   import { fmtNumber, t } from '$lib/i18n';
   import ReligionExercise from './ReligionExercise.svelte';
   import CasReponse from '$lib/CasReponse.svelte';
+  import CarnetPersoCase from '$lib/CarnetPersoCase.svelte';
   import { casRef } from '$lib/pratique';
 
   /**
@@ -407,6 +408,10 @@
         {#if str(cn.ar)}<Ar text={str(cn.ar)} /> —
         {/if}{str(cn.fr)}
       </p>
+      {#if profile?.kind === 'adulte' && unit.id.startsWith('ra')}
+        <!-- adulte : liste personnelle à cocher, sans signature -->
+        <CarnetPersoCase profileId={profile.id} unitId={unit.id} />
+      {/if}
     </section>
   {/if}
 

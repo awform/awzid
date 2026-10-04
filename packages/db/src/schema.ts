@@ -1440,6 +1440,24 @@ export const casTentative = pgTable(
   (t) => [primaryKey({ columns: [t.profileId, t.unitId, t.cas] })],
 );
 
+/**
+ * Carnet personnel des livres ra* (décision du 04/10/2026) : la ligne `carnet` de chaque leçon, cochée par un
+ * ADULTE quand c'est fait (une ligne présente = cochée). Sans signature, jamais notée.
+ */
+export const carnetPerso = pgTable(
+  'carnet_perso',
+  {
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    unitId: text('unit_id')
+      .notNull()
+      .references(() => unit.id),
+    checkedAt: timestamp('checked_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.profileId, t.unitId] })],
+);
+
 // ================================================================ codes d'activation imprimés (lot 23)
 
 /** Lot de codes imprimés pour un niveau (généré par l'administrateur ; codes montrés une seule fois). */

@@ -89,6 +89,7 @@ export const API_GRANTS: Record<string, Right[]> = {
   sura_progress: ALL,
   // vérification sur les vrais livres (04/10/2026) : cas pratique ra* d'un adulte autonome
   cas_tentative: ALL,
+  carnet_perso: ALL,
   // lot 23 : codes d'activation imprimés dans les livres
   activation_batch: ALL,
   activation_code: ALL,

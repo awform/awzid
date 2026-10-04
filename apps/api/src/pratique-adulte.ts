@@ -6,9 +6,11 @@
  *    de la projection élève (CON-2, inchangée). Un ADULTE qui apprend SEUL (aucune classe) la voit seulement
  *    APRÈS avoir écrit sa propre réponse, par cette route dédiée ; l'élève d'une classe et l'ado la reçoivent
  *    de l'enseignant (refus `reponse_par_enseignant`). Numéros de hadith : même masquage que la leçon (CON-3).
+ *  - Carnet : la ligne `carnet` de chaque leçon ra* devient une liste personnelle à cocher dans le carnet de
+ *    pratique, pour un ADULTE, SANS signature (la signature du parent ne concerne que les enfants, lot 22).
  */
 import type { FastifyInstance } from 'fastify';
-import { and, eq } from 'drizzle-orm';
+import { and, asc, eq, like, sql } from 'drizzle-orm';
 import { maskTree, unmaskedHadithRefs, verifiedHadiths } from '@awform/content';
 import { schema as t, type Db } from '@awform/db';
 import { err, familyProfile, UUID } from './guards.js';
@@ -29,6 +31,15 @@ export function unresolvedCase(lesson: unknown, ref: string): { reponse: string 
   const cs = (rub?.cas as Obj[] | undefined)?.[Number(m[2])];
   if (!cs || cs.resolu !== false || typeof cs.reponse_fr !== 'string') return null;
   return { reponse: cs.reponse_fr };
+}
+
+/** Ligne de carnet d'une leçon (`carnet: {ar?, fr?}`), ou null. */
+export function carnetLine(carnet: unknown): { ar: string; fr: string } | null {
+  if (!carnet || typeof carnet !== 'object' || Array.isArray(carnet)) return null;
+  const c = carnet as Obj;
+  const ar = typeof c.ar === 'string' ? c.ar : '';
+  const fr = typeof c.fr === 'string' ? c.fr : '';
+  return ar || fr ? { ar, fr } : null;
 }
 
 export function registerPratiqueAdulte(app: FastifyInstance, db: Db, edition: Edition): void {
@@ -136,6 +147,96 @@ export function registerPratiqueAdulte(app: FastifyInstance, db: Db, edition: Ed
           set: { texte, updatedAt: new Date() },
         });
       return { texte, reponse: c.reponse };
+    },
+  );
+
+  // ---------------------------------------------------------------- carnet personnel (ra*, adulte)
+
+  /** lignes `carnet` des leçons ra* de l'édition servie, dans l'ordre des leçons */
+  const carnetLines = async () => {
+    const ed = await edition();
+    if (!ed) return null;
+    const rows = await db
+      .select({
+        unitId: t.unitVersion.unitId,
+        niveau: t.unit.levelCode,
+        carnet: sql<unknown>`${t.unitVersion.content} -> 'carnet'`,
+      })
+      .from(t.unitVersion)
+      .innerJoin(t.unit, eq(t.unit.id, t.unitVersion.unitId))
+      .where(and(eq(t.unitVersion.editionId, ed.id), like(t.unit.levelCode, 'ra%')))
+      .orderBy(asc(t.unit.levelCode), asc(t.unit.n));
+    return rows.flatMap((r) => {
+      const l = carnetLine(r.carnet);
+      return l ? [{ unitId: r.unitId, niveau: r.niveau, ...l }] : [];
+    });
+  };
+  const adultOf = async (
+    req: Parameters<typeof familyProfile>[1],
+    reply: Parameters<typeof familyProfile>[2],
+    id: string,
+  ) => {
+    const prof = await familyProfile(db, req, reply, id);
+    if (!prof) return null;
+    // enfants et ados : carnet de pratique du lot 22 (signé par le parent), pas cette liste
+    if (prof.kind !== 'adulte') return void err(reply, 403, 'reserve_adulte');
+    return prof;
+  };
+
+  app.get<{ Params: { id: string } }>(
+    '/api/v1/profiles/:id/carnet-perso',
+    { schema: { params: { type: 'object', required: ['id'], properties: { id: UUID } } } },
+    async (req, reply) => {
+      const prof = await adultOf(req, reply, req.params.id);
+      if (!prof) return reply;
+      const lines = await carnetLines();
+      if (!lines) return err(reply, 503, 'aucune_edition');
+      const done = new Set(
+        (
+          await db
+            .select({ u: t.carnetPerso.unitId })
+            .from(t.carnetPerso)
+            .where(eq(t.carnetPerso.profileId, prof.id))
+        ).map((x) => x.u),
+      );
+      return { lignes: lines.map((l) => ({ ...l, coche: done.has(l.unitId) })) };
+    },
+  );
+
+  app.put<{ Params: { id: string; unit: string }; Body: { coche: boolean } }>(
+    '/api/v1/profiles/:id/carnet-perso/:unit',
+    {
+      schema: {
+        params: {
+          type: 'object',
+          required: ['id', 'unit'],
+          properties: { id: UUID, unit: { type: 'string', pattern: RA_UNIT } },
+        },
+        body: {
+          type: 'object',
+          required: ['coche'],
+          additionalProperties: false,
+          properties: { coche: { type: 'boolean' } },
+        },
+      },
+    },
+    async (req, reply) => {
+      const prof = await adultOf(req, reply, req.params.id);
+      if (!prof) return reply;
+      const lines = await carnetLines();
+      if (!lines?.some((l) => l.unitId === req.params.unit)) return err(reply, 404, 'introuvable');
+      if (req.body.coche)
+        await db
+          .insert(t.carnetPerso)
+          .values({ profileId: prof.id, unitId: req.params.unit })
+          .onConflictDoNothing();
+      else
+        await db
+          .delete(t.carnetPerso)
+          .where(
+            and(eq(t.carnetPerso.profileId, prof.id), eq(t.carnetPerso.unitId, req.params.unit)),
+          );
+      return { unitId: req.params.unit, coche: req.body.coche };
     },
   );
 }

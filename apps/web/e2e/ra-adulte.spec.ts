@@ -26,3 +26,21 @@ test('cas pratique : réponse proposée après la réponse de l’adulte', async
     'Réponse proposée par le livre',
   );
 });
+
+test('carnet ra* : l’adulte coche la ligne de la leçon, retrouvée dans son carnet', async ({
+  page,
+}) => {
+  await newAdult(page, 'ra-carnet');
+  await page.goto('/lecons/ra1.l01');
+  const box = page.getByTestId('carnet-perso-case');
+  await expect(box).not.toBeChecked();
+  await box.check();
+  await expect(box).toBeChecked();
+  await page.getByTestId('lien-carnet-perso').click();
+  await expect(page.locator('main h1')).toHaveText('Mon carnet de pratique');
+  await expect(page.locator('[data-carnet-perso="ra1.l01"] input')).toBeChecked();
+  await expect(page.locator('[data-carnet-perso] input:checked')).toHaveCount(1);
+  expect(await page.locator('[data-carnet-perso]').count()).toBeGreaterThan(40);
+  // aucune signature pour un adulte
+  await expect(page.getByText('Signer la semaine')).toHaveCount(0);
+});

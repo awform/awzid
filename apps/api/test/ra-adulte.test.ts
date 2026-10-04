@@ -16,7 +16,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join as pjoin } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { unresolvedCase } from '../src/pratique-adulte.js';
+import { carnetLine, unresolvedCase } from '../src/pratique-adulte.js';
 import { SYNTH_DIR } from './content.js';
 import {
   adult,
@@ -147,5 +147,44 @@ describe.skipIf(!URL_)('ra* — cas pratique d’un adulte autonome', () => {
       expect(k.json().error.code, `âge ${age}`).toBe('reponse_par_enseignant');
     }
     expect((await c.req('GET', url(profileId), T)).statusCode).toBe(403);
+  });
+
+  it('carnet ra* : liste personnelle de l’adulte, à cocher, sans signature', async () => {
+    const { A, profileId } = await adult(c, 'ra-carnet@test.fr');
+    const base = `/api/v1/profiles/${profileId}/carnet-perso`;
+    const l0 = (await c.req('GET', base, A)).json();
+    expect(l0.lignes).toEqual([
+      {
+        unitId: 'ra1.l01',
+        niveau: 'ra1',
+        ar: '',
+        fr: 'Je relis la leçon chaque jour.',
+        coche: false,
+      },
+    ]);
+    expect((await c.req('PUT', `${base}/ra1.l01`, A, { coche: true })).json()).toEqual({
+      unitId: 'ra1.l01',
+      coche: true,
+    });
+    expect((await c.req('GET', base, A)).json().lignes[0].coche).toBe(true);
+    await c.req('PUT', `${base}/ra1.l01`, A, { coche: false });
+    expect((await c.req('GET', base, A)).json().lignes[0].coche).toBe(false);
+    // leçon sans ligne de carnet ; leçon hors ra* (en1/ad1 : carnet du lot 22)
+    expect((await c.req('PUT', `${base}/ra1.l02`, A, { coche: true })).statusCode).toBe(404);
+    expect((await c.req('PUT', `${base}/ad1.l01`, A, { coche: true })).statusCode).toBe(400);
+    // enfant : carnet signé du lot 22, pas cette liste ; autre compte : introuvable
+    const { P } = await parent(c, 'ra-carnet-parent@test.fr');
+    const kid = await child(c, P, 'Kid');
+    const k = await c.req('GET', `/api/v1/profiles/${kid}/carnet-perso`, P);
+    expect(k.json().error.code).toBe('reserve_adulte');
+    expect((await c.req('GET', base, P)).statusCode).toBe(404);
+  });
+});
+
+describe('ra* — ligne de carnet : fonction pure', () => {
+  it('objet {ar?, fr?} non vide seulement', () => {
+    expect(carnetLine({ fr: 'x' })).toEqual({ ar: '', fr: 'x' });
+    expect(carnetLine({ ar: 'ب', fr: 'y' })).toEqual({ ar: 'ب', fr: 'y' });
+    for (const v of [null, 'x', [], {}, { fr: 3 }]) expect(carnetLine(v)).toBeNull();
   });
 });
