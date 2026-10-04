@@ -33,6 +33,8 @@ Lot 18 (branche `lot18-wip`, V1-a) : TERMINÉ — réponses libres corrigées pa
 Lot 19 (branche `lot19-wip`, V1-b) : TERMINÉ — épreuves notées, textes non préparés, remédiation.
 Lot 20 (branche `lot20-wip`, V1-e) : TERMINÉ — certificats signés (Ed25519) et vérifiables par QR.
 Lot 21 (branche `lot21-wip`, V1-f) : PARTIEL (schéma seulement) — arrêté pour les corrections d'audit.
+Lot 29 : tajwid en couleurs (Ḥafṣ) TERMINÉ — source CC BY 4.0 recalée et contrôlée (`packages/content/src/tajwid.ts`,
+`docs/projet/LICENCES.md`), affichage `apps/web/src/lib/quran/Tajwid*.svelte` ; décision D29.
 Lot 27 : interface de l'espace Coran TERMINÉE (branche `lot27-wip` = `lot27-api-wip` + lot 26 + écrans ; `apps/web/src/lib/quran/`).
 Lot 26 (branche `lot26-wip`) : TERMINÉ — design v2 par public (jetons `apps/web/src/lib/theme/tokens.ts`, composants
 `apps/web/src/lib/ui/`) ; toute nouvelle couleur passe par les jetons.

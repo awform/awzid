@@ -186,9 +186,7 @@ test('riwāya : bouton absent pour une autre riwāya (Écouter), présent en Ḥ
 
 test.describe('famille', () => {
   test.use({ compte: 'parent' });
-  test('enfant : quatre familles, chant du nez en vert, grand texte ; ado : palette complète', async ({
-    page,
-  }) => {
+  test('enfant : quatre familles, chant du nez en vert, grand texte', async ({ page }) => {
     await pickProfile(page, 'Amina');
     await page.goto('/coran/lecteur?s=114');
     await expect(page.locator('html')).toHaveAttribute('data-public', 'enfant');
@@ -214,30 +212,53 @@ test.describe('famille', () => {
       .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
     expect(size).toBeGreaterThanOrEqual(28);
     expect(await serious(page)).toEqual([]);
+  });
+});
 
-    // adolescent : palette complète, « le son nasal »
-    const me = await (await page.request.get('/api/v1/auth/me')).json();
-    if (!(me.profiles as Array<{ pseudonym: string }>).some((p) => p.pseudonym === 'Sami')) {
-      const res = await page.request.post('/api/v1/profiles', {
-        headers: { 'x-awform': '1' },
-        data: {
-          pseudonym: 'Sami',
-          avatar: 'lune',
-          birthYear: new Date().getFullYear() - 16,
-          levelCode: 'ado1',
-          password: password(),
-          consents: ['compte_suivi'],
-        },
-      });
-      expect(res.status(), await res.text()).toBeLessThan(300);
-    }
-    await pickProfile(page, 'Sami');
+/**
+ * Compte parent NEUF avec un adolescent (« Sami ») : le compte parent commun aux autres e2e n'est pas modifié
+ * (comptes.spec attend ses deux enfants).
+ */
+async function parentWithTeen(page: Page) {
+  const signup = await page.request.post('/api/v1/auth/signup', {
+    headers: { 'x-awform': '1' },
+    data: {
+      kind: 'parent',
+      birthYear: 1985,
+      email: `parent29-${Date.now()}-${Math.floor(Math.random() * 1e6)}@e2e.test`,
+      password: password(),
+      country: 'FR',
+      locale: 'fr',
+      consents: ['cgu'],
+    },
+  });
+  expect(signup.status(), await signup.text()).toBeLessThan(300);
+  const res = await page.request.post('/api/v1/profiles', {
+    headers: { 'x-awform': '1' },
+    data: {
+      pseudonym: 'Sami',
+      avatar: 'lune',
+      birthYear: new Date().getFullYear() - 16,
+      levelCode: 'ado1',
+      password: password(),
+      consents: ['compte_suivi'],
+    },
+  });
+  expect(res.status(), await res.text()).toBeLessThan(300);
+  await pickProfile(page, 'Sami');
+}
+
+test.describe('adolescent', () => {
+  test.use({ compte: null });
+  test('ado : palette complète, « le son nasal »', async ({ page }) => {
+    await parentWithTeen(page);
     await page.goto('/coran/lecteur?s=114');
     await expect(page.locator('html')).toHaveAttribute('data-public', 'ado');
-    // réglage de l'appareil : resté activé depuis le passage de l'enfant
-    await expect(page.getByTestId('tajwid')).toHaveAttribute('aria-pressed', 'true');
+    await page.getByTestId('tajwid').click();
     await expect(page.getByTestId('tajwid-legende').locator('[data-legende]')).toHaveCount(12);
     await expect(page.getByTestId('tajwid-legende')).toContainText('le son nasal');
+    await expect(page.locator('[data-testid="sourate-texte"] .tj').first()).toBeVisible();
+    expect(await serious(page)).toEqual([]);
   });
 });
 
@@ -263,11 +284,27 @@ test.describe('captures', () => {
     await pickProfile(page, 'Amina');
     await on();
     await shot('tajwid-enfant', 114);
-    await pickProfile(page, 'Sami');
-    await shot('tajwid-ado', 114);
-    await page.emulateMedia({ colorScheme: 'dark' });
-    await shot('tajwid-ado-sombre', 114);
-    await page.emulateMedia({ colorScheme: 'light' });
+  });
+  test.describe('ado', () => {
+    test.use({ compte: null });
+    test('captures — ado, ado sombre', async ({ page }, info) => {
+      mkdirSync(DIR, { recursive: true });
+      const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
+      await parentWithTeen(page);
+      await page.evaluate(() => localStorage.setItem('awzid.tajwid', '{"on":true,"motifs":false}'));
+      for (const [name, scheme] of [
+        ['tajwid-ado', 'light'],
+        ['tajwid-ado-sombre', 'dark'],
+      ] as const) {
+        await page.emulateMedia({ colorScheme: scheme });
+        await page.goto('/coran/lecteur?s=114');
+        await page.locator(`[data-testid="sourate-texte"] .tj`).first().waitFor();
+        await page.evaluate(() => document.fonts.ready);
+        await page.waitForTimeout(500);
+        await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: true });
+      }
+      await page.emulateMedia({ colorScheme: 'light' });
+    });
   });
   test.describe('adulte', () => {
     test.use({ compte: 'adulte' });
