@@ -57,7 +57,7 @@ async function pickProfile(page: Page, name: string) {
 
 test('lire : désactivé par défaut, couleurs à la demande, texte identique, légende, soulignés, sombre', async ({
   page,
-}) => {
+}, info) => {
   const reqs: string[] = [];
   page.on('request', (r) => {
     if (r.url().includes('/tajwid/')) reqs.push(new URL(r.url()).pathname);
@@ -78,10 +78,18 @@ test('lire : désactivé par défaut, couleurs à la demande, texte identique, l
   expect(reqs).toEqual(['/tajwid/114.json']);
 
   const leg = page.getByTestId('tajwid-legende');
+  // repliée sur téléphone (le texte d'abord), dépliée sur ordinateur
+  const open = await leg.evaluate((d) => (d as HTMLDetailsElement).open);
+  expect(open).toBe(!info.project.name.startsWith('mobile'));
+  if (!open) await leg.locator('summary').click();
   await expect(leg.locator('[data-legende]')).toHaveCount(12);
+  // termes arabes isolés dans les libellés français (ordre d'affichage juste)
+  await expect(leg.locator('[data-legende="tj-ghunna"] bdi[lang="ar"]')).toHaveText('الْغُنَّةُ');
   await expect(leg).toContainText('le son nasal');
   await expect(leg).toContainText('allongement');
-  await expect(leg.locator('[data-legende="tj-ghunna"] .ex .quran-text .tj')).toBeVisible();
+  await expect(
+    leg.locator('[data-legende="tj-ghunna"] .ex .quran-text .tj[data-tj="tj-ghunna"]').first(),
+  ).toBeVisible();
   await expect(page.getByTestId('tajwid-credit').first()).toContainText('CC BY 4.0');
   const light = await colorOf(
     page,
@@ -226,7 +234,8 @@ test.describe('famille', () => {
     await pickProfile(page, 'Sami');
     await page.goto('/coran/lecteur?s=114');
     await expect(page.locator('html')).toHaveAttribute('data-public', 'ado');
-    await page.getByTestId('tajwid').click();
+    // réglage de l'appareil : resté activé depuis le passage de l'enfant
+    await expect(page.getByTestId('tajwid')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByTestId('tajwid-legende').locator('[data-legende]')).toHaveCount(12);
     await expect(page.getByTestId('tajwid-legende')).toContainText('le son nasal');
   });

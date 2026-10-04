@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { fmtNumber, t } from '$lib/i18n';
   import {
+    bidiParts,
     examples,
     legendFor,
     loadTajwid,
@@ -40,7 +41,10 @@
   let failed = $state(false);
   let dialog: HTMLDialogElement | undefined = $state();
 
+  /** légende dépliée d'emblée sur un grand écran ; sur téléphone, repliée (le texte d'abord, bouton flottant) */
+  let wide = $state(true);
   onMount(() => {
+    wide = window.matchMedia?.('(min-width: 900px)').matches ?? true;
     const read = () => (child = document.documentElement.dataset.public === 'enfant');
     read();
     const mo = new MutationObserver(read);
@@ -86,7 +90,10 @@
             aria-hidden="true">{' '.repeat(5)}</span
           ></span
         >
-        <span class="nom">{t(e.label)}</span>
+        <span class="nom"
+          >{#each bidiParts(t(e.label)) as p, i (i)}{#if p.ar}<bdi lang="ar">{p.t}</bdi
+              >{:else}{p.t}{/if}{/each}</span
+        >
         {#if x}<span class="ex"
             ><span class="quran-text tajwid" class:motifs={prefs.motifs} lang="ar" dir="rtl"
               ><TajwidRuns runs={x.word} /></span
@@ -136,7 +143,7 @@
       {#if failed}<p class="muted small" role="status" data-testid="tajwid-indisponible">
           {t('tj.indisponible')}
         </p>{/if}
-      <details open data-testid="tajwid-legende">
+      <details open={wide} data-testid="tajwid-legende">
         <summary>{t('tj.legende')}</summary>
         {@render legende()}
       </details>

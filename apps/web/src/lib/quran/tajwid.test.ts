@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { TAJWID_RULES, textHash } from '@awform/content/tajwid';
 import { describe, expect, it } from 'vitest';
 import {
+  bidiParts,
   entryOf,
   examples,
   LEGEND_CHILD,
@@ -83,6 +84,14 @@ describe('tajwid en couleurs (lot 29)', () => {
     expect(ex.get('tj-qalqala')?.aya).toBe(2);
     expect(ex.get('tj-ikhfa')?.aya).toBe(1);
     expect(ex.has('tj-madd6')).toBe(false);
+  });
+
+  it('libellés : termes arabes isolés, texte intact', () => {
+    const l = 'le son nasal (الْغُنَّةُ), 2 temps';
+    const p = bidiParts(l);
+    expect(p.map((x) => x.t).join('')).toBe(l);
+    expect(p.filter((x) => x.ar).map((x) => x.t)).toEqual(['الْغُنَّةُ']);
+    expect(bidiParts('le rebond')).toEqual([{ t: 'le rebond', ar: false }]);
   });
 
   it('désactivé par défaut ; réglage gardé sur l’appareil', () => {
