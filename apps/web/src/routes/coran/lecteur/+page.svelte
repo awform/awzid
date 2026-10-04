@@ -8,6 +8,10 @@
   import CoranTabs from '$lib/quran/CoranTabs.svelte';
   import { loadMeta, loadVerses } from '$lib/hifz';
   import { fmtNumber, t } from '$lib/i18n';
+  import { HAFS } from '$lib/quran/player';
+  import { readTajwidPrefs, verseRuns, type TajwidSura } from '$lib/quran/tajwid';
+  import TajwidBar from '$lib/quran/TajwidBar.svelte';
+  import TajwidRuns from '$lib/quran/TajwidRuns.svelte';
 
   /**
    * Lecteur coranique (ARCHITECTURE_V2 § 8.2 bis, lot C1) — SANS AUDIO tant qu'aucune récitation n'est
@@ -33,6 +37,10 @@
   let round = $state(0);
   let yourTurn = $state(false);
   let timer: ReturnType<typeof setTimeout> | null = null;
+  // lot 29 : tajwid en couleurs (le texte Tanzil du lecteur est celui de Ḥafṣ)
+  let tjPrefs = $state(readTajwidPrefs());
+  let tjData = $state<TajwidSura | null>(null);
+  const tajwid = $derived(tjPrefs.on && tjData?.s === sura ? tjData : null);
 
   const count = $derived(meta?.weights[sura - 1]?.length ?? 0);
   /** début de chaque page du Muṣḥaf dans la sourate ouverte : verset → numéro de page */
@@ -231,10 +239,27 @@
   <p class="muted small">{t('lecteur.credit')}</p>
 </section>
 
-<section class="card mushaf" data-testid="sourate-texte" lang="ar" dir="rtl">
+<TajwidBar
+  riwaya={HAFS}
+  {sura}
+  {verses}
+  basmala={meta?.basmala ?? ''}
+  bind:prefs={tjPrefs}
+  bind:data={tjData}
+/>
+
+<section
+  class="card mushaf"
+  class:tajwid={!!tajwid}
+  class:motifs={!!tajwid && tjPrefs.motifs}
+  data-testid="sourate-texte"
+  lang="ar"
+  dir="rtl"
+>
   <h2 class="titre">{suraName(sura)}</h2>
   {#each verses as v (v.a)}
     {@const parts = words(v)}
+    {@const tv = tajwid ? verseRuns(v, meta?.basmala ?? '', tajwid) : null}
     {#if pageStarts.has(v.a)}<p
         class="page-mark"
         data-page={pageStarts.get(v.a)}
@@ -244,7 +269,10 @@
         {t('ca.page_n', { n: pageStarts.get(v.a) ?? 0 })}
       </p>{/if}
     {#if parts.basmala}<p class="basmala">
-        <span class="quran-text" data-basmala={`${v.s}:${v.a}`}>{tanwinDisplay(parts.basmala)}</span
+        <span class="quran-text" data-basmala={`${v.s}:${v.a}`}
+          >{#if tv?.basmala}{#each tv.basmala as bw, i (i)}{sep(i)}<TajwidRuns
+                runs={bw}
+              />{/each}{:else}{tanwinDisplay(parts.basmala)}{/if}</span
         >
       </p>{/if}
     <div
@@ -259,7 +287,8 @@
         >{#each parts.rest.split(' ') as w, i (i)}{sep(i)}<span
             class="w"
             class:on={cur?.a === v.a && cur?.w === i}
-            data-w={i}>{tanwinDisplay(w)}</span
+            data-w={i}
+            >{#if tv}<TajwidRuns runs={tv.words[i] ?? []} />{:else}{tanwinDisplay(w)}{/if}</span
           >{/each}</span
       >
       <span class="n" aria-hidden="true">{fmtNumber(v.a, { useGrouping: false })}</span>

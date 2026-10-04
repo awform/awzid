@@ -22,7 +22,13 @@ const CACHE = `awform-shell-${version}`;
 const SHELL = '/';
 // lot 25 : les catalogues de langues (/i18n/*.json) ne sont pas préchargés : seul celui qui sert est gardé
 const isCatalog = (p: string) => p.startsWith('/i18n/');
-const ASSETS = [...build, ...files.filter((f) => !f.endsWith('.txt') && !isCatalog(f))];
+// lot 29 : les annotations du tajwid (une par sourate) ne sont pas préchargées : chargées à la demande et
+// gardées dans IndexedDB par l'application (hors ligne ensuite)
+const isTajwid = (p: string) => p.startsWith('/tajwid/');
+const ASSETS = [
+  ...build,
+  ...files.filter((f) => !f.endsWith('.txt') && !isCatalog(f) && !isTajwid(f)),
+];
 
 sw.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll([...ASSETS, SHELL])));

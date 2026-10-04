@@ -15,6 +15,9 @@
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
+  import { HAFS } from '$lib/quran/player';
+  import { readTajwidPrefs, type TajwidSura } from '$lib/quran/tajwid';
+  import TajwidBar from '$lib/quran/TajwidBar.svelte';
 
   /**
    * Lot 27 — Mémoriser, relié au carnet de hifẓ : la portion du jour est proposée ; méthode « écouter,
@@ -30,6 +33,9 @@
   let meta = $state<{ weights: number[][]; basmala: string } | null>(null);
   let sura = $state(1);
   let verses = $state<Verse[]>([]);
+  // lot 29 : tajwid en couleurs (Ḥafṣ : la mémorisation ne suit que des récitateurs en Ḥafṣ)
+  let tjPrefs = $state(readTajwidPrefs());
+  let tjData = $state<TajwidSura | null>(null);
   let from = $state(1);
   let to = $state(1);
   let repeatNew = $state(5);
@@ -191,6 +197,14 @@
     {/if}
   {/if}
 
+  <TajwidBar
+    riwaya={HAFS}
+    {sura}
+    {verses}
+    basmala={meta?.basmala ?? ''}
+    bind:prefs={tjPrefs}
+    bind:data={tjData}
+  />
   <QuranText
     {sura}
     {verses}
@@ -200,6 +214,8 @@
     {to}
     {mask}
     maskFrom={from}
+    tajwid={tjPrefs.on ? tjData : null}
+    motifs={tjPrefs.motifs}
   />
 {/if}
 

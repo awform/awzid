@@ -39,6 +39,52 @@ export interface Theme {
 const LETTRES_CLAIR = { c0: '#e5484d', c1: '#2f6fdb', c2: '#1f9d6b', c3: '#9a6a00' };
 const LETTRES_SOMBRE = { c0: '#ff8a8e', c1: '#86aefc', c2: '#4fd39a', c3: '#e9b949' };
 
+/**
+ * Lot 29 — TAJWID EN COULEURS (palette inspirée des Muṣḥaf de tajwid et de l'application Ayat : le nasal en
+ * verts, les allongements de l'ocre au rouge sombre selon la durée, le rebond en bleu, les lettres non
+ * prononcées en gris). `tj-*` : palette complète (ados, adultes) ; `tjk-*` : palette ENFANT à quatre familles
+ * (chant du nez en vert, son long, rebond, lettres non prononcées), couleurs plus douces du Jardin.
+ * Contrastes contrôlés dans les huit palettes (≥ 4,5:1 sur les cartes, ≥ 3:1 sur sable et surlignage).
+ */
+const TAJWID_CLAIR = {
+  'tj-ghunna': '#167a3a',
+  'tj-idgham': '#0b7066',
+  'tj-ikhfa': '#4f7a0c',
+  'tj-iqlab': '#0b6f8a',
+  'tj-madd2': '#94600a',
+  'tj-madd246': '#b54708',
+  'tj-munfasil': '#c42b2b',
+  'tj-muttasil': '#a3171f',
+  'tj-madd6': '#7a1238',
+  'tj-qalqala': '#1f56c9',
+  'tj-assim': '#6b3fc0',
+  'tj-muet': '#69707a',
+  'tjk-nez': '#24803a',
+  'tjk-long': '#b05600',
+  'tjk-rebond': '#2f6fdb',
+  'tjk-muet': '#6c737d',
+};
+const TAJWID_SOMBRE = {
+  'tj-ghunna': '#5fd38a',
+  'tj-idgham': '#45d1c0',
+  'tj-ikhfa': '#b5dd5a',
+  'tj-iqlab': '#5cc8e8',
+  'tj-madd2': '#e8be5a',
+  'tj-madd246': '#ff9a52',
+  'tj-munfasil': '#ff7b7b',
+  'tj-muttasil': '#ff6b81',
+  'tj-madd6': '#f59bd8',
+  'tj-qalqala': '#86aefc',
+  'tj-assim': '#b8a6ff',
+  'tj-muet': '#a3abb6',
+  'tjk-nez': '#6fdc8f',
+  'tjk-long': '#ffb066',
+  'tjk-rebond': '#8fb5ff',
+  'tjk-muet': '#aab1bb',
+};
+/** clés des couleurs du tajwid (contrôle de contraste) */
+export const TAJWID_TOKENS = Object.keys(TAJWID_CLAIR);
+
 // « ﷺ » et l'arabe cité dans une phrase française : glyphes pris dans Noto Naskh Arabic (pas de repli illisible)
 const SANS = "'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif";
 /** titres « manuscrit » : serif du système (aucun téléchargement de police supplémentaire) */
@@ -75,6 +121,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       good: '#1f9d6b',
       soft: '#e3edf5',
       ...LETTRES_CLAIR,
+      ...TAJWID_CLAIR,
       primary: '#1b6a85',
       'on-primary': '#ffffff',
       'primary-soft': '#e2f0f5',
@@ -108,6 +155,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       good: '#4fd39a',
       soft: '#22303d',
       ...LETTRES_SOMBRE,
+      ...TAJWID_SOMBRE,
       primary: '#72c6e0',
       'on-primary': '#07141b',
       'primary-soft': '#1b3340',
@@ -155,6 +203,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       good: '#1f9d6b',
       soft: '#ffe3b8',
       ...LETTRES_CLAIR,
+      ...TAJWID_CLAIR,
       primary: '#1f7a52',
       'on-primary': '#ffffff',
       'primary-soft': '#ddf3e6',
@@ -188,6 +237,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       good: '#4fd39a',
       soft: '#2b3a32',
       ...LETTRES_SOMBRE,
+      ...TAJWID_SOMBRE,
       primary: '#7fd6a6',
       'on-primary': '#0b1f15',
       'primary-soft': '#1d3a2c',
@@ -238,6 +288,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       good: '#4fd39a',
       soft: '#232f52',
       ...LETTRES_SOMBRE,
+      ...TAJWID_SOMBRE,
       primary: '#8fd0ff',
       'on-primary': '#081325',
       'primary-soft': '#1c2d4f',
@@ -272,6 +323,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       good: '#1f9d6b',
       soft: '#e3e8f8',
       ...LETTRES_CLAIR,
+      ...TAJWID_CLAIR,
       primary: '#3346a8',
       'on-primary': '#ffffff',
       'primary-soft': '#e6eafb',
@@ -322,6 +374,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       good: '#1f9d6b',
       soft: '#f3dfb6',
       ...LETTRES_CLAIR,
+      ...TAJWID_CLAIR,
       primary: '#1d5f57',
       'on-primary': '#ffffff',
       'primary-soft': '#e3efe9',
@@ -355,6 +408,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       good: '#4fd39a',
       soft: '#33291c',
       ...LETTRES_SOMBRE,
+      ...TAJWID_SOMBRE,
       primary: '#8fd1bd',
       'on-primary': '#0f241e',
       'primary-soft': '#1d332c',
@@ -419,6 +473,13 @@ export const CONTRAST_PAIRS: Array<{ fg: string; bg: string; grand?: boolean; us
   { fg: 'c2', bg: 'sand', grand: true, usage: 'lettre étudiée dans un encadré (vert)' },
   { fg: 'c3', bg: 'sand', grand: true, usage: 'lettre étudiée dans un encadré (or)' },
   { fg: 'focus', bg: 'paper', grand: true, usage: 'contour de focus (3:1, WCAG 1.4.11)' },
+  // lot 29 : tajwid en couleurs — texte coranique sur la carte (4,5:1 même à 320 px), sur le sable de la
+  // plage choisie et sur le surlignage du verset entendu (arabe ≥ 23 px : 3:1)
+  ...TAJWID_TOKENS.flatMap((fg) => [
+    { fg, bg: 'card', usage: `tajwid ${fg} sur la carte` },
+    { fg, bg: 'sand', grand: true, usage: `tajwid ${fg} dans la plage choisie` },
+    { fg, bg: 'mark', grand: true, usage: `tajwid ${fg} sur le verset entendu` },
+  ]),
 ];
 
 /** Écarts connus (aucun écart NOUVEAU n'est accepté). */

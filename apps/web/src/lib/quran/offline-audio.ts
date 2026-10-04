@@ -5,6 +5,7 @@
  */
 import type { SuraPack } from '$lib/coran-audio';
 import { kvGet, kvSet } from '$lib/idb';
+import { loadTajwid } from './tajwid';
 
 const CACHE = 'awzid-coran-audio-v1';
 const INDEX = 'coranAudio.index.v1';
@@ -104,6 +105,8 @@ export async function saveSura(
     savedAt: new Date().toISOString(),
   };
   await kvSet(INDEX, idx);
+  // lot 29 : les couleurs du tajwid de la sourate font partie de ce qui est gardé (≈ 1 Ko par sourate)
+  await loadTajwid(pack.sura).catch(() => null);
   return { ok: true };
 }
 

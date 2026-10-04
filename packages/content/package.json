@@ -24,6 +24,10 @@
     "./scene": {
       "types": "./dist/scene.d.ts",
       "default": "./dist/scene.js"
+    },
+    "./tajwid": {
+      "types": "./dist/tajwid.d.ts",
+      "default": "./dist/tajwid.js"
     }
   },
   "bin": {
@@ -36,7 +40,8 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "check-content": "node dist/cli.js"
+    "check-content": "node dist/cli.js",
+    "tajwid": "node dist/cli-tajwid.js"
   },
   "devDependencies": {
     "@types/node": "^24.19.0",
