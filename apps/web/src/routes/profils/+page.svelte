@@ -8,6 +8,7 @@
   import { call, fetchMe, type Me } from '$lib/session';
   import Sym from '$lib/Sym.svelte';
   import { SYMBOLS } from '$lib/symbols';
+  import Onboarding from '$lib/ui/Onboarding.svelte';
 
   /**
    * « Qui apprend ? » : choix du profil sur un appareil familial. Le parent ajoute ici le profil d'un
@@ -105,7 +106,7 @@
     <input
       id="pin"
       inputmode="numeric"
-      pattern="[0-9]{4}"
+      pattern={'[0-9]{4}'}
       maxlength="4"
       autocomplete="off"
       bind:value={pin}
@@ -115,6 +116,7 @@
   </form>
 {:else if me}
   <h1>{t('profils.titre')}</h1>
+  {#if me?.account.kind === 'parent'}<Onboarding audience="parent" />{/if}
   {#if info}<p class="card ok" role="status">{info}</p>{/if}
   <div class="grid" data-testid="profils">
     {#each me.profiles as p (p.id)}

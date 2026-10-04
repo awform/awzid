@@ -410,7 +410,7 @@
         <input
           id="pin"
           inputmode="numeric"
-          pattern="[0-9]{4}"
+          pattern={'[0-9]{4}'}
           maxlength="4"
           required
           bind:value={pinForm.pin}
@@ -503,7 +503,7 @@
           <input
             id="code"
             inputmode="numeric"
-            pattern="[0-9]{6}"
+            pattern={'[0-9]{6}'}
             maxlength="6"
             required
             bind:value={totpCode}
@@ -582,7 +582,7 @@
   button.danger {
     background: var(--bad-ink);
     border-color: var(--bad-ink);
-    color: #fff;
+    color: var(--bad-bg);
     font-weight: 700;
   }
   .ok {
