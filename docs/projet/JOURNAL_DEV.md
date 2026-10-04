@@ -8,6 +8,55 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 04/10/2026 — Lot 27 : interface de l'espace Coran (branche `lot27-wip` = `lot27-api-wip` + `lot26-wip`)
+
+Partie serveur : entrée suivante (autre agent). Ici, l'interface seulement (aucun paquet serveur de l'audio touché).
+
+- **Espace Coran** (`apps/web/src/routes/coran/`) : accueil à quatre tuiles + carnet de hifẓ + rappel d'adab ;
+  onglets communs **Lire / Écouter / Mémoriser / Récitateurs** (`lib/quran/CoranTabs.svelte`).
+- **Lire** (le lecteur existant, gardé) : aller à un **juzʾ, un ḥizb ou une page** du Muṣḥaf de Médine
+  (débuts tirés des métadonnées Tanzil des livres), **repères de page** dans le texte, `?page=N`, lien
+  « Écouter cette sourate ».
+- **Écouter** : récitateur (liste autorisée du profil, préférence, conseil débutant en tête), **riwāya
+  toujours affichée** (`RiwayaBadge` : badge marqué « autre riwāya » hors Ḥafṣ, avec explication), sourate et
+  plage, répétition du verset et de la plage (1 à 20), **vitesse 0,5 à 1,5 sans changer la hauteur**
+  (`preservesPitch`), **minuterie d'arrêt**, **arrière-plan et commandes du système** (Media Session :
+  lecture, pause, verset précédent / suivant), surlignage du verset entendu **seulement en Ḥafṣ** ; crédit du
+  récitateur et du Complexe ; **aucune lecture ni téléchargement avant un geste** de l'utilisateur, pas de
+  points, pas de musique.
+- **Hors ligne par sourate** (`lib/quran/offline-audio.ts`) : « Garder cette sourate » (taille et durée
+  annoncées), **Wi-Fi seulement** (refus sur réseau mobile quand le navigateur le dit, avertissement sinon),
+  **quota** de l'appareil, suppression, liste sur « Récitateurs », purge des récitateurs retirés ; lecture
+  depuis le cache. **Bug évité** : le service worker effaçait tous les caches autres que le sien à chaque mise
+  à jour — le cache audio est désormais gardé (test). En http (démo), le cache n'existe pas : message clair (D28).
+- **Mémoriser** (relié au carnet : portion du jour proposée) : **écouter, répéter, enchaîner** (chaque nouveau
+  verset N fois, puis la plage depuis le début M fois, étape affichée), **masquage progressif** (visible,
+  moitié, premier mot, caché, « Voir » par verset) — les mots sont voilés à l'affichage, le texte Tanzil n'est
+  jamais modifié ; **récitateurs en Ḥafṣ seulement** ; sans audio, le masquage reste utilisable.
+- **Mes récitateurs** : cartes (noms arabe et français, riwāya, style, vitesse, versets, crédit, licence et
+  date d'archive), choix gardé ; **parent** : récitateurs permis à chaque enfant (code parent, intersection
+  avec la classe expliquée, D24) ; **enseignant** : liste de la classe (onglet Sourates).
+- Logique pure testée (`lib/quran/player.ts`) : files d'écoute et de mémorisation, masquage, règles de riwāya,
+  vitesse, portion du carnet.
+- **Tests** : web +7 (`player.test.ts` 5, `offline-audio.test.ts` 1, + lot 26) ; e2e `lot27.spec.ts`
+  (6 × 2 appareils) avec deux récitateurs d'**ESSAI** importés par `e2e/audio-essai.mjs` dans la base de test
+  (**bips générés, jamais une récitation**) : pas de lecture automatique ni de requête audio avant le geste,
+  vitesse 1,5 avec hauteur conservée, Media Session renseignée, surlignage Ḥafṣ, autre riwāya sans surlignage et
+  absente de Mémoriser, enchaînement et masquage, sourate gardée puis lue depuis le cache (`blob:`) et
+  supprimée, choix du récitateur, aller à la page 604, liste du parent appliquée à l'enfant ; axe-core sans
+  violation grave sur Écouter, Mémoriser, Récitateurs. `lot8.spec.ts` : le sélecteur « récitant » désactivé
+  est devenu le lien d'écoute.
+
+**Mesures** (VM `awform-dev`, 04/10/2026, branche `lot27-wip`) : `pnpm -r --no-bail test` (vrais livres) :
+**1 238 verts, 1 sauté, 0 échec** (192 s) ; e2e complets : **191 verts, 12 sautés, 1 échec** corrigé ensuite
+(test lu avant que la source audio soit posée : attente ajoutée ; `lot27.spec.ts` repassé 2 fois de suite :
+24/24) ; budget : page la plus lourde `/lecons/[id]` **122,5 Ko** ≤ 150, toutes les pages **257,8 Ko** ≤ 300.
+Captures : `reports/design-v2/apres/*-coran-*.png` (accueil, page 604, écoute en cours, autre riwāya,
+mémorisation masquée, récitateurs, sombre). Décision : D28 (https pour l'écoute hors ligne ; démo sans
+récitation).
+
+---
+
 ## 04/10/2026 — Lot 26 : design v2 « par public » (branche `lot26-wip`, depuis `main` caced1c)
 
 Direction du chef de projet : un système hybride par public sur une base commune de jetons.

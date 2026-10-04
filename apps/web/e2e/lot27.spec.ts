@@ -112,7 +112,7 @@ test('hors ligne : sourate gardée sur l’appareil, listée, puis supprimée', 
   await page.goto('/coran/ecouter?r=essai-hafs&s=114');
   await expect(page.getByTestId('sur-appareil')).toBeVisible();
   await page.getByTestId('jouer').click();
-  expect((await audioState(page)).src).toMatch(/^blob:/);
+  await expect.poll(async () => (await audioState(page)).src).toMatch(/^blob:/);
   await page.getByTestId('arreter-audio').click();
   await page.getByTestId('supprimer-sourate').click();
   await expect(page.getByTestId('garder-sourate')).toBeVisible();
@@ -147,7 +147,11 @@ test.describe('parent', () => {
     await page.goto('/coran/recitateurs');
     const box = page.getByTestId('controle-parent');
     await box.locator('#enfant').selectOption({ label: 'Yanis' });
-    await box.getByTestId('tous-permis').uncheck();
+    await page.waitForLoadState('networkidle');
+    // déjà restreinte lors d'un passage précédent : on part de la liste affichée
+    const tous = box.getByTestId('tous-permis');
+    if (await tous.isChecked()) await tous.uncheck();
+    await box.locator('[data-permis="essai-hafs"]').check();
     await box.locator('[data-permis="essai-qalun"]').uncheck();
     await box.locator('#pin-coran').fill(PARENT_PIN);
     await box.getByTestId('enregistrer-permis').click();
