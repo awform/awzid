@@ -16,14 +16,14 @@ interface Node {
   [k: string]: unknown;
 }
 
-/** Fichiers exclus : texte coranique (rendu tel quel), composants de rendu eux-mêmes, et l'espace Coran
- * (routes/coran, lib/quran) en cours de modification sur la branche du lot 29 — à convertir après sa fusion. */
+/** Fichiers exclus : les composants de rendu eux-mêmes, et le rendu du texte coranique (Tanzil octet par
+ * octet, jamais découpé ni modifié : VerseText, morceaux colorés du tajwīd). Le reste de l'espace Coran
+ * (lib/quran, routes/coran) suit la règle commune depuis la fusion du lot 29. */
 export const EXEMPT_FILES = [
   /(^|\/)lib\/Ar\.svelte$/,
   /(^|\/)lib\/Bidi\.svelte$/,
   /(^|\/)lib\/VerseText\.svelte$/,
-  /(^|\/)lib\/quran\//,
-  /(^|\/)routes\/coran\//,
+  /(^|\/)lib\/quran\/TajwidRuns\.svelte$/,
 ];
 
 /** Éléments où un composant ne peut pas s'insérer (texte brut seulement) ou qui ne sont pas affichés. */
@@ -53,6 +53,8 @@ export interface Finding {
   raws: RawTag[];
   /** texte arabe écrit en dur hors d'un élément lang="ar" */
   literals: { start: number; text: string }[];
+  /** <Bidi>/<Ar> placé dans un texte coranique (classe quran-text) : interdit */
+  inQuran: { start: number; name: string }[];
 }
 
 function staticAttr(n: Node, name: string): string | null {
@@ -89,12 +91,15 @@ function plainSafe(expr: string, mixed: ReadonlySet<string>): boolean {
 
 export function analyse(src: string, mixed: ReadonlySet<string> = new Set()): Finding {
   const ast = parse(src, { modern: true }) as unknown as { fragment: Node };
-  const out: Finding = { raws: [], literals: [] };
-  const visit = (node: Node, ar: boolean, skip: boolean): void => {
+  const out: Finding = { raws: [], literals: [], inQuran: [] };
+  const visit = (node: Node, ar: boolean, skip: boolean, quran: boolean): void => {
     if (node.type === 'Fragment') {
-      for (const c of (node.nodes as Node[]) ?? []) visit(c, ar, skip);
+      for (const c of (node.nodes as Node[]) ?? []) visit(c, ar, skip, quran);
       return;
     }
+    // le texte coranique n'est jamais découpé : aucun composant de découpage à l'intérieur
+    if (quran && node.type === 'Component' && (node.name === 'Bidi' || node.name === 'Ar'))
+      out.inQuran.push({ start: node.start, name: node.name });
     if (node.type === 'ExpressionTag') {
       const expr = src.slice(node.start + 1, node.end - 1);
       if (!skip && !plainSafe(expr, mixed))
@@ -108,21 +113,23 @@ export function analyse(src: string, mixed: ReadonlySet<string> = new Set()): Fi
     }
     let a = ar;
     let s = skip;
+    let q = quran;
     if (node.name !== undefined) {
       const lang = staticAttr(node, 'lang');
       const dir = staticAttr(node, 'dir');
       const cls = staticAttr(node, 'class') ?? '';
       if (lang === 'ar' || dir === 'rtl') a = true;
       if (lang !== null && lang !== 'ar' && lang !== '') a = false;
+      if (RAW_ONLY.has(node.name)) s = true;
       // texte coranique (classe quran-text) : rendu tel quel, jamais découpé
-      if (RAW_ONLY.has(node.name) || /(^|\s)quran-text(\s|$)/.test(cls)) s = true;
+      if (/(^|\s)quran-text(\s|$)/.test(cls)) s = q = true;
     }
     for (const k of FRAGMENT_KEYS) {
       const f = node[k] as Node | undefined;
-      if (f && typeof f === 'object' && f.type === 'Fragment') visit(f, a, s);
+      if (f && typeof f === 'object' && f.type === 'Fragment') visit(f, a, s, q);
     }
   };
-  visit(ast.fragment, false, false);
+  visit(ast.fragment, false, false, false);
   return out;
 }
 

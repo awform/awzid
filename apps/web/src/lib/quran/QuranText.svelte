@@ -1,7 +1,8 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { tanwinDisplay } from '@awform/content/text';
   import { splitBasmala, suraName } from '@awform/hifz';
-  import { fmtNumber, t } from '$lib/i18n';
+  import { fmtNumber, localeInfo, t } from '$lib/i18n';
   import { visibleWords } from './player';
   import { verseRuns, type TajwidSura } from './tajwid';
   import TajwidRuns from './TajwidRuns.svelte';
@@ -58,7 +59,7 @@
   dir="rtl"
   data-testid="texte-coran"
 >
-  <h2 class="titre">{suraName(sura)}</h2>
+  <h2 class="titre"><Bidi text={suraName(sura)} base="ar" /></h2>
   {#each verses as v (v.a)}
     {@const parts = splitBasmala(v.s, v.a, v.text, basmala)}
     {@const ws = parts.rest.split(' ')}
@@ -103,8 +104,8 @@
             e.stopPropagation();
             for (let i = 0; i < ws.length; i++) hidden[`${v.a}:${i}`] = !hidden[`${v.a}:${i}`];
           }}
-          lang="fr"
-          dir="ltr">{t('ca.voir')}</button
+          lang={localeInfo().code}
+          dir={localeInfo().dir}>{t('ca.voir')}</button
         >
       {/if}
     </div>

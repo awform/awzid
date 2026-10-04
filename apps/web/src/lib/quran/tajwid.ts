@@ -161,23 +161,6 @@ export function runAttrs(r: TajwidRule | null) {
   };
 }
 
-/**
- * Libellé français contenant des termes arabes : morceaux à isoler (`<bdi>`) pour que l'ordre d'affichage
- * reste juste (« (الْغُنَّةُ), 2 temps » et non « ، 2 temps »).
- */
-export function bidiParts(label: string): Array<{ t: string; ar: boolean }> {
-  const out: Array<{ t: string; ar: boolean }> = [];
-  const re = /[؀-ۿࢠ-ࣿ](?:[؀-ۿࢠ-ࣿ\s]*[؀-ۿࢠ-ࣿ])?/g;
-  let last = 0;
-  for (const m of label.matchAll(re)) {
-    if (m.index > last) out.push({ t: label.slice(last, m.index), ar: false });
-    out.push({ t: m[0], ar: true });
-    last = m.index + m[0].length;
-  }
-  if (last < label.length) out.push({ t: label.slice(last), ar: false });
-  return out;
-}
-
 /** Fichier d'une sourate : sur l'appareil d'abord, sinon /tajwid/NNN.json (puis gardé pour le hors ligne). */
 export async function loadTajwid(s: number): Promise<TajwidSura | null> {
   const key = `tajwid:${s}`;

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
@@ -174,7 +175,7 @@
       </p>
       {#if !isHafs(reciter.riwaya)}
         <p class="warnbox" data-testid="autre-riwaya">
-          {t('ca.autre_riwaya_texte', { riwaya: reciter.riwayaFr })}
+          <Bidi text={t('ca.autre_riwaya_texte', { riwaya: reciter.riwayaFr })} />
         </p>
       {/if}
     {/if}
@@ -260,10 +261,12 @@
         <section class="card off" data-testid="hors-ligne-sourate">
           <h2>{t('ca.garder_titre')}</h2>
           <p class="muted">
-            {t('ca.garder_texte', {
-              taille: fmtBytes(pack.bytes),
-              duree: fmtDuration(pack.durationMs),
-            })}
+            <Bidi
+              text={t('ca.garder_texte', {
+                taille: fmtBytes(pack.bytes),
+                duree: fmtDuration(pack.durationMs),
+              })}
+            />
           </p>
           <label class="check"
             ><input
@@ -280,18 +283,22 @@
               >{t('ca.supprimer')}</button
             >
           {:else if progress}
-            <p role="status">{t('ca.telechargement', { n: progress.n, total: progress.total })}</p>
+            <p role="status">
+              <Bidi text={t('ca.telechargement', { n: progress.n, total: progress.total })} />
+            </p>
           {:else}
             <button type="button" onclick={keep} data-testid="garder-sourate"
               >{t('ca.garder')}</button
             >
           {/if}
-          {#if offMsg}<p class="muted" role="status">{offMsg}</p>{/if}
+          {#if offMsg}<p class="muted" role="status"><Bidi text={offMsg} /></p>{/if}
         </section>
       {/if}
     {/if}
     <p class="credit muted small" data-testid="credit">
-      {pack?.credit ?? reciter.credit}<br />{t('ca.licence', { source: reciter.license.source })}
+      <Bidi text={pack?.credit ?? reciter.credit} /><br /><Bidi
+        text={t('ca.licence', { source: reciter.license.source })}
+      />
     </p>
   {/if}
 

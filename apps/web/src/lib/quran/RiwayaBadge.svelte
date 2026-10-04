@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import { isHafs } from './player';
 
@@ -7,7 +8,7 @@
 </script>
 
 <span class="pill rw" class:autre={!isHafs(riwaya)} data-testid="badge-riwaya" data-riwaya={riwaya}
-  >{t('ca.riwaya', { nom: label })}{#if !isHafs(riwaya)}<strong>
+  ><Bidi text={t('ca.riwaya', { nom: label })} />{#if !isHafs(riwaya)}<strong>
       · {t('ca.autre_riwaya')}</strong
     >{/if}</span
 >

@@ -1,8 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { fmtNumber, t } from '$lib/i18n';
+  import { fmtNumber, localeInfo, t } from '$lib/i18n';
   import {
-    bidiParts,
     examples,
     legendFor,
     loadTajwid,
@@ -13,6 +12,7 @@
     type TajwidSura,
   } from './tajwid';
   import TajwidRuns from './TajwidRuns.svelte';
+  import Bidi from '$lib/Bidi.svelte';
 
   /**
    * Lot 29 — bouton « Tajwid en couleurs » (désactivé par défaut, réglage gardé sur l'appareil), soulignés en
@@ -76,7 +76,7 @@
 </script>
 
 {#snippet legende()}
-  <ul class="legende" lang="fr" dir="ltr">
+  <ul class="legende" lang={localeInfo().code} dir={localeInfo().dir}>
     {#each legend as e (e.token)}
       {@const x = ex.get(e.token)}
       <li data-legende={e.token}>
@@ -87,24 +87,26 @@
             data-tjf={child ? undefined : e.family}
             data-tjk={child ? e.token : undefined}
             data-tjkf={child ? e.family : undefined}
-            aria-hidden="true">{' '.repeat(5)}</span
+            aria-hidden="true"><Bidi text={' '.repeat(5)} /></span
           ></span
         >
-        <span class="nom"
-          >{#each bidiParts(t(e.label)) as p, i (i)}{#if p.ar}<bdi lang="ar">{p.t}</bdi
-              >{:else}{p.t}{/if}{/each}</span
-        >
+        <span class="nom"><Bidi text={t(e.label)} /></span>
         {#if x}<span class="ex"
             ><span class="quran-text tajwid" class:motifs={prefs.motifs} lang="ar" dir="rtl"
               ><TajwidRuns runs={x.word} /></span
             >
-            <span class="muted">{t('tj.verset', { n: fmtNumber(x.aya) })}</span></span
+            <span class="muted"><Bidi text={t('tj.verset', { n: fmtNumber(x.aya) })} /></span></span
           >{:else}<span class="ex muted">{t('tj.absent')}</span>{/if}
       </li>
     {/each}
   </ul>
-  <p class="muted small credit" data-testid="tajwid-credit" lang="fr" dir="ltr">
-    {t('tj.credit')}
+  <p
+    class="muted small credit"
+    data-testid="tajwid-credit"
+    lang={localeInfo().code}
+    dir={localeInfo().dir}
+  >
+    <Bidi text={t('tj.credit')} />
     <a href="https://github.com/cpfair/quran-tajweed" rel="noopener noreferrer" target="_blank"
       >{t('tj.source')}</a
     >

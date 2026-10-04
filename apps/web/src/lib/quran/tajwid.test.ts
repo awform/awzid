@@ -2,8 +2,8 @@ import 'fake-indexeddb/auto';
 import { readdirSync, readFileSync } from 'node:fs';
 import { TAJWID_RULES, textHash } from '@awform/content/tajwid';
 import { describe, expect, it } from 'vitest';
+import { bidiSegments } from '../bidi/segments';
 import {
-  bidiParts,
   entryOf,
   examples,
   LEGEND_CHILD,
@@ -88,10 +88,11 @@ describe('tajwid en couleurs (lot 29)', () => {
 
   it('libellés : termes arabes isolés, texte intact', () => {
     const l = 'le son nasal (الْغُنَّةُ), 2 temps';
-    const p = bidiParts(l);
-    expect(p.map((x) => x.t).join('')).toBe(l);
-    expect(p.filter((x) => x.ar).map((x) => x.t)).toEqual(['الْغُنَّةُ']);
-    expect(bidiParts('le rebond')).toEqual([{ t: 'le rebond', ar: false }]);
+    // composant commun <Bidi> (bidi/segments.ts) : découpe sans modifier
+    const p = bidiSegments(l, 'fr');
+    expect(p.map((x) => x.text).join('')).toBe(l);
+    expect(p.filter((x) => x.kind !== 'plain').map((x) => x.text)).toEqual(['الْغُنَّةُ']);
+    expect(bidiSegments('le rebond', 'fr').every((x) => x.kind === 'plain')).toBe(true);
   });
 
   it('désactivé par défaut ; réglage gardé sur l’appareil', () => {

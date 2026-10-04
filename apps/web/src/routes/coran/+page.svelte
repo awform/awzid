@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
   import { isQuranReadingLevel } from '$lib/api';
@@ -25,15 +26,15 @@
 <svelte:head><title>{t('app.nom')} — {t('onglets.coran')}</title></svelte:head>
 
 <h1>{t('onglets.coran')}</h1>
-<p class="muted">{t('coran.intro')}</p>
+<p class="muted"><Bidi text={t('coran.intro')} /></p>
 
 <ul class="tiles spaces">
   {#each SPACES as s (s.id)}
     <li>
       <a class="tile" href={resolve(s.href)} data-testid={s.testid}>
         <span class="tile-ic"><Icon name={s.icon} size={26} /></span>
-        <strong>{t(`ca.onglet_${s.id}`)}</strong>
-        <small>{t(`ca.hub_${s.id}`)}</small>
+        <strong><Bidi text={t(`ca.onglet_${s.id}`)} /></strong>
+        <small><Bidi text={t(`ca.hub_${s.id}`)} /></small>
       </a>
     </li>
   {/each}
@@ -41,7 +42,7 @@
 
 <section class="card hifz">
   <h2>{t('coran.hifz_titre')}</h2>
-  <p>{t('coran.hifz_texte')}</p>
+  <p><Bidi text={t('coran.hifz_texte')} /></p>
   <p>
     <a class="button primary" href={resolve('/hifz')} data-testid="ouvrir-hifz"
       >{t('coran.ouvrir_carnet')}</a
@@ -61,7 +62,7 @@
 
 <section class="card" data-testid="lecture-coran">
   <h2>{t('coran.qaida_titre')}</h2>
-  <p>{t('coran.qaida_texte')}</p>
+  <p><Bidi text={t('coran.qaida_texte')} /></p>
   {#if data.offline}<p class="muted">{t('arabe.hors_ligne')}</p>{/if}
   <ul class="livrets">
     {#each livrets as l (l.code)}
@@ -71,9 +72,9 @@
           data-testid="niveau-qc"
           data-level={l.code}
         >
-          <strong>{l.codeFr ?? l.code}</strong> — {l.titleFr}
+          <strong><Bidi text={l.codeFr ?? l.code} /></strong> — <Bidi text={l.titleFr} />
           {#if l.titreAr}<Ar text={l.titreAr} />{/if}
-          <small>{t('arabe.unites', { n: l.units })}</small>
+          <small><Bidi text={t('arabe.unites', { n: l.units })} /></small>
         </a>
       </li>
     {:else}

@@ -49,4 +49,29 @@ describe('gabarits : texte arabe toujours isolé (règle de lint)', () => {
     }
     expect(bad, bad.join('\n')).toEqual([]);
   });
+
+  it('l’espace Coran est couvert ; seul le rendu du texte coranique est exempté', () => {
+    const files = walk(SRC).map((f) => relative(SRC, f).replaceAll('\\', '/'));
+    const coran = files.filter((f) => /^(lib\/quran|routes\/coran)\//.test(f));
+    const exempt = coran.filter((f) => EXEMPT_FILES.some((re) => re.test(f)));
+    expect(coran.length).toBeGreaterThanOrEqual(10);
+    expect(exempt).toEqual(['lib/quran/TajwidRuns.svelte']);
+    expect(EXEMPT_FILES).toHaveLength(4);
+  });
+
+  it('jamais de <Bidi>/<Ar> dans un texte coranique (classe quran-text), dans aucun gabarit', () => {
+    const f = analyse(
+      '<span class="quran-text">{a}<Bidi text={b} /></span><p><Bidi text={c} /></p>',
+      MIXED,
+    );
+    expect(f.raws).toEqual([]);
+    expect(f.inQuran.map((x) => x.name)).toEqual(['Bidi']);
+    const bad: string[] = [];
+    for (const file of walk(SRC)) {
+      const rel = relative(SRC, file).replaceAll('\\', '/');
+      for (const x of analyse(readFileSync(file, 'utf8'), MIXED).inQuran)
+        bad.push(`${rel} : <${x.name}> dans quran-text`);
+    }
+    expect(bad, bad.join('\n')).toEqual([]);
+  });
 });

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { suraName } from '@awform/hifz';
@@ -160,7 +161,7 @@
           ><input type="radio" name="masque" value={m.n} bind:group={mask} data-mask={m.n} /><Icon
             name={m.icon}
             size={20}
-          />{t(`ca.masque_${m.n}`)}</label
+          /><Bidi text={t(`ca.masque_${m.n}`)} /></label
         >
       {/each}
     </fieldset>
@@ -190,9 +191,11 @@
     />
     {#if step}
       <p class="etape" role="status" data-testid="etape">
-        {step.kind === 'nouveau'
-          ? t('ca.etape_nouveau', { aya: fmtNumber(step.aya) })
-          : t('ca.etape_enchainer', { de: fmtNumber(from), a: fmtNumber(step.learning) })}
+        <Bidi
+          text={step.kind === 'nouveau'
+            ? t('ca.etape_nouveau', { aya: fmtNumber(step.aya) })
+            : t('ca.etape_enchainer', { de: fmtNumber(from), a: fmtNumber(step.learning) })}
+        />
       </p>
     {/if}
   {/if}

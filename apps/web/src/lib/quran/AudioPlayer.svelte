@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy } from 'svelte';
   import { suraName } from '@awform/hifz';
   import type { Reciter, SuraPack } from '$lib/coran-audio';
@@ -151,8 +152,8 @@
   <audio bind:this={audio} onended={ended} preload="none"></audio>
   <div class="now">
     <RiwayaBadge riwaya={reciter.riwaya} label={reciter.riwayaFr} />
-    <strong>{reciter.nameFr}</strong>
-    <span class="ar" lang="ar" dir="rtl">{reciter.nameAr}</span>
+    <strong><Bidi text={reciter.nameFr} /></strong>
+    <span class="ar" lang="ar" dir="rtl"><Bidi text={reciter.nameAr} base="ar" /></span>
   </div>
   <Progress
     value={started ? idx + 1 : 0}
@@ -160,11 +161,13 @@
     label={t('ca.progression')}
   />
   <p class="where muted" aria-live="polite" data-testid="position">
-    {#if started && aya}{t('ca.position', {
-        aya: fmtNumber(aya),
-        n: fmtNumber(idx + 1),
-        total: fmtNumber(queue.length),
-      })}{:else}{t('ca.pret', { total: fmtNumber(queue.length) })}{/if}
+    {#if started && aya}<Bidi
+        text={t('ca.position', {
+          aya: fmtNumber(aya),
+          n: fmtNumber(idx + 1),
+          total: fmtNumber(queue.length),
+        })}
+      />{:else}<Bidi text={t('ca.pret', { total: fmtNumber(queue.length) })} />{/if}
   </p>
   <div class="controls">
     <button
@@ -203,7 +206,7 @@
       data-testid="arreter-audio">{t('ca.arreter')}</button
     >
   </div>
-  {#if error}<p class="error" role="alert">{error}</p>{/if}
+  {#if error}<p class="error" role="alert"><Bidi text={error} /></p>{/if}
 </div>
 
 <style>

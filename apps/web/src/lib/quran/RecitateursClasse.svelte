@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { classAllowed, setClassAllowed, type Reciter } from '$lib/coran-audio';
   import { t } from '$lib/i18n';
@@ -37,13 +38,15 @@
           <legend>{t('ca.parent_liste')}</legend>
           {#each all as r (r.id)}
             <label class="check"
-              ><input type="checkbox" value={r.id} bind:group={allowed} />{r.nameFr} — {r.riwayaFr}</label
+              ><input type="checkbox" value={r.id} bind:group={allowed} /><Bidi text={r.nameFr} /> — <Bidi
+                text={r.riwayaFr}
+              /></label
             >
           {/each}
         </fieldset>
       {/if}
       <button type="submit" class="primary">{t('commun.enregistrer')}</button>
-      {#if msg}<p role="status">{msg}</p>{/if}
+      {#if msg}<p role="status"><Bidi text={msg} /></p>{/if}
     </form>
   </section>
 {/if}

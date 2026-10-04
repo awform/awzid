@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
@@ -19,7 +20,8 @@
       href={resolve(x.href)}
       class:on={current === x.id}
       aria-current={current === x.id ? 'page' : undefined}
-      data-coran-tab={x.id}><Icon name={x.icon} size={20} /><span>{t(`ca.onglet_${x.id}`)}</span></a
+      data-coran-tab={x.id}
+      ><Icon name={x.icon} size={20} /><span><Bidi text={t(`ca.onglet_${x.id}`)} /></span></a
     >
   {/each}
 </nav>

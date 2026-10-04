@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { suraName } from '@awform/hifz';
@@ -106,7 +107,7 @@
   <Loading lines={4} />
 {:else}
   {#if error}<StatusMessage kind={error} onretry={() => location.reload()} />{/if}
-  {#if info}<p class="card ok" role="status">{info}</p>{/if}
+  {#if info}<p class="card ok" role="status"><Bidi text={info} /></p>{/if}
   {#if restreint}<p class="warnbox" data-testid="liste-restreinte">
       {t('ca.restreint_texte')}
     </p>{/if}
@@ -124,8 +125,8 @@
       <li class="card rc" class:chosen={chosen === r.id} data-reciter={r.id}>
         <div class="head">
           <div>
-            <h2>{r.nameFr}</h2>
-            <p class="ar" lang="ar" dir="rtl">{r.nameAr}</p>
+            <h2><Bidi text={r.nameFr} /></h2>
+            <p class="ar" lang="ar" dir="rtl"><Bidi text={r.nameAr} base="ar" /></p>
           </div>
           {#if profile}
             {#if chosen === r.id}<span class="pill" data-testid="choisi">{t('ca.mon_choix')}</span
@@ -138,19 +139,21 @@
           <RiwayaBadge riwaya={r.riwaya} label={r.riwayaFr} />
           {#if r.id === conseil}<span class="pill" data-testid="conseil">{t('ca.conseil')}</span
             >{/if}
-          {#if r.style}<span class="pill">{t(`ca.style_${r.style}`)}</span>{/if}
-          {#if r.speed}<span class="pill">{t(`ca.vitesse_${r.speed}`)}</span>{/if}
-          <span class="pill">{t('ca.versets', { n: r.verses })}</span>
+          {#if r.style}<span class="pill"><Bidi text={t(`ca.style_${r.style}`)} /></span>{/if}
+          {#if r.speed}<span class="pill"><Bidi text={t(`ca.vitesse_${r.speed}`)} /></span>{/if}
+          <span class="pill"><Bidi text={t('ca.versets', { n: r.verses })} /></span>
         </p>
-        <p class="muted small credit">{r.credit}</p>
+        <p class="muted small credit"><Bidi text={r.credit} /></p>
         <details>
           <summary>{t('ca.licence_titre')}</summary>
-          <p class="small">{r.license.text}</p>
+          <p class="small"><Bidi text={r.license.text} /></p>
           <p class="small muted">
-            {t('ca.licence_archive', {
-              source: r.license.source,
-              date: fmtDate(r.license.archivedOn, { dateStyle: 'long' }),
-            })}
+            <Bidi
+              text={t('ca.licence_archive', {
+                source: r.license.source,
+                date: fmtDate(r.license.archivedOn, { dateStyle: 'long' }),
+              })}
+            />
             {#if r.license.url.startsWith('https://')}<a
                 href={r.license.url}
                 rel="noopener noreferrer external"
@@ -169,7 +172,11 @@
       <a class="button" href={resolve('/coran/ecouter')}>{t('ca.onglet_ecouter')}</a>
     {:else}
       <p class="muted">
-        {t('ca.appareil_total', { taille: fmtBytes(saved.reduce((s, x) => s + x.bytes, 0)) })}
+        <Bidi
+          text={t('ca.appareil_total', {
+            taille: fmtBytes(saved.reduce((s, x) => s + x.bytes, 0)),
+          })}
+        />
       </p>
       <div class="table-wrap">
         <table aria-label={t('ca.appareil_titre')}>
@@ -183,8 +190,8 @@
           <tbody>
             {#each saved as s (`${s.reciter}:${s.sura}`)}
               <tr data-saved={`${s.reciter}:${s.sura}`}>
-                <td>{nameOf(s.reciter)}</td>
-                <td>{fmtNumber(s.sura)}. {suraName(s.sura)}</td>
+                <td><Bidi text={nameOf(s.reciter)} /></td>
+                <td>{fmtNumber(s.sura)}. <Bidi text={suraName(s.sura)} /></td>
                 <td>{fmtBytes(s.bytes)}</td>
                 <td><button type="button" onclick={() => drop(s)}>{t('ca.supprimer')}</button></td>
               </tr>
@@ -216,12 +223,9 @@
             <legend>{t('ca.parent_liste')}</legend>
             {#each all as r (r.id)}
               <label class="check"
-                ><input
-                  type="checkbox"
-                  value={r.id}
-                  bind:group={allowed}
-                  data-permis={r.id}
-                />{r.nameFr} — {r.riwayaFr}</label
+                ><input type="checkbox" value={r.id} bind:group={allowed} data-permis={r.id} /><Bidi
+                  text={r.nameFr}
+                /> — <Bidi text={r.riwayaFr} /></label
               >
             {/each}
           </fieldset>
@@ -242,7 +246,7 @@
         <button type="submit" class="primary" data-testid="enregistrer-permis"
           >{t('commun.enregistrer')}</button
         >
-        {#if parentMsg}<p role="status">{parentMsg}</p>{/if}
+        {#if parentMsg}<p role="status"><Bidi text={parentMsg} /></p>{/if}
       </form>
     </section>
   {/if}
