@@ -8,6 +8,7 @@
  */
 import { sql } from 'drizzle-orm';
 import {
+  bigint,
   bigserial,
   customType,
   boolean,
@@ -1595,4 +1596,164 @@ export const hifzRecitalEntry = pgTable(
     index('hifz_recital_entry_pupil_idx').on(t.pupilId),
     check('hifz_recital_entry_parcours', sql`${t.parcours} IN ('socle', 'renforce')`),
   ],
+);
+
+// ================================================================ audio du Coran (lot 27)
+
+/**
+ * Récitateur (un MUṢḤAF enregistré : une voix dans une riwāya). Fichiers hébergés chez nous (Complexe du Roi
+ * Fahd, licence archivée). Statut : « en_attente » tant que l'import n'a pas passé tous ses contrôles,
+ * « actif » après activation, « retire » (coupure immédiate : réponses, paquets et fichiers) avec date et motif.
+ */
+export const quranReciter = pgTable(
+  'quran_reciter',
+  {
+    /** identifiant stable, ex. « ayyoub-hafs » */
+    id: text('id').primaryKey(),
+    nameAr: text('name_ar').notNull(),
+    nameFr: text('name_fr').notNull(),
+    /** hafs, shuba, qalun, warsh, susi, duri… (voir RIWAYAT dans coran-audio.ts) */
+    riwaya: text('riwaya').notNull(),
+    /** étiquettes d'écoute ; null = pas encore étiquetée */
+    speed: text('speed'),
+    style: text('style'),
+    /** nombre de versets du muṣḥaf complet (Ḥafṣ : 6 236, compte koufi ; autres riwāyāt : compte déclaré) */
+    expectedVerses: integer('expected_verses').notNull(),
+    licenseSource: text('license_source').notNull(),
+    licenseUrl: text('license_url').notNull(),
+    licenseArchivedOn: date('license_archived_on').notNull(),
+    licenseText: text('license_text').notNull(),
+    /** crédit à afficher partout où la récitation est proposée */
+    credit: text('credit').notNull(),
+    status: text('status').notNull().default('en_attente'),
+    activatedAt: timestamp('activated_at', { withTimezone: true }),
+    retiredAt: timestamp('retired_at', { withTimezone: true }),
+    retiredReason: text('retired_reason'),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    check('quran_reciter_id', sql`${t.id} ~ '^[a-z0-9]+(-[a-z0-9]+)*$'`),
+    check(
+      'quran_reciter_riwaya',
+      sql`${t.riwaya} IN ('hafs', 'shuba', 'warsh', 'qalun', 'bazzi', 'qunbul', 'duri', 'susi', 'hisham', 'ibn_dhakwan', 'khalaf', 'khallad', 'abu_al_harith', 'duri_kisai', 'ibn_wardan', 'ibn_jammaz', 'ruways', 'rawh', 'ishaq', 'idris')`,
+    ),
+    check(
+      'quran_reciter_speed',
+      sql`${t.speed} IS NULL OR ${t.speed} IN ('lente', 'moyenne', 'rapide')`,
+    ),
+    check(
+      'quran_reciter_style',
+      sql`${t.style} IS NULL OR ${t.style} IN ('murattal', 'mujawwad', 'muallim')`,
+    ),
+    check('quran_reciter_status', sql`${t.status} IN ('en_attente', 'actif', 'retire')`),
+    check(
+      'quran_reciter_retrait',
+      sql`${t.status} <> 'retire' OR (${t.retiredAt} IS NOT NULL AND length(${t.retiredReason}) > 0)`,
+    ),
+    check('quran_reciter_versets', sql`${t.expectedVerses} BETWEEN 1 AND 6300`),
+  ],
+);
+
+/** Import d'un dossier de fichiers (un par verset) : contrôles et rapport, même quand il est bloqué. */
+export const quranAudioImport = pgTable(
+  'quran_audio_import',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    reciterId: text('reciter_id')
+      .notNull()
+      .references(() => quranReciter.id, { onDelete: 'cascade' }),
+    sourceDir: text('source_dir').notNull(),
+    pattern: text('pattern').notNull(),
+    /** bloque : un contrôle a échoué, rien n'est changé ; importe : pistes en place ; active : et activé */
+    status: text('status').notNull(),
+    tracks: integer('tracks').notNull().default(0),
+    totalBytes: bigint('total_bytes', { mode: 'number' }).notNull().default(0),
+    totalMs: bigint('total_ms', { mode: 'number' }).notNull().default(0),
+    blocking: integer('blocking').notNull().default(0),
+    warnings: integer('warnings').notNull().default(0),
+    report: jsonb('report').notNull(),
+    startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
+    finishedAt: timestamp('finished_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('quran_audio_import_reciter').on(t.reciterId),
+    check('quran_audio_import_status', sql`${t.status} IN ('bloque', 'importe', 'active')`),
+  ],
+);
+
+/** Piste : un verset d'un récitateur (numérotation de SA riwāya). Fichier nommé par son empreinte. */
+export const quranTrack = pgTable(
+  'quran_track',
+  {
+    reciterId: text('reciter_id')
+      .notNull()
+      .references(() => quranReciter.id, { onDelete: 'cascade' }),
+    sura: smallint('sura').notNull(),
+    aya: smallint('aya').notNull(),
+    /** chemin relatif au stockage audio (AWFORM_AUDIO_DIR) */
+    path: text('path').notNull(),
+    durationMs: integer('duration_ms').notNull(),
+    bytes: integer('bytes').notNull(),
+    sha256: text('sha256').notNull(),
+    format: text('format').notNull(),
+    importId: uuid('import_id').references(() => quranAudioImport.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    primaryKey({ columns: [t.reciterId, t.sura, t.aya] }),
+    check('quran_track_sura', sql`${t.sura} BETWEEN 1 AND 114`),
+    check('quran_track_aya', sql`${t.aya} BETWEEN 0 AND 286`),
+    check('quran_track_duree', sql`${t.durationMs} > 0`),
+    check('quran_track_taille', sql`${t.bytes} > 0`),
+    check('quran_track_sha', sql`${t.sha256} ~ '^[0-9a-f]{64}$'`),
+    check('quran_track_format', sql`${t.format} IN ('mp3', 'wav', 'ogg', 'opus', 'm4a')`),
+    check('quran_track_chemin', sql`${t.path} !~ '(^/|\\.\\.)'`),
+  ],
+);
+
+/** Récitateur choisi par le profil (sinon : conseil débutant). */
+export const profileReciterPref = pgTable('profile_reciter_pref', {
+  profileId: uuid('profile_id')
+    .primaryKey()
+    .references(() => profile.id, { onDelete: 'cascade' }),
+  reciterId: text('reciter_id')
+    .notNull()
+    .references(() => quranReciter.id, { onDelete: 'cascade' }),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Liste AUTORISÉE par le parent pour un profil mineur (absente : pas de restriction du parent). */
+export const profileReciterRule = pgTable('profile_reciter_rule', {
+  profileId: uuid('profile_id')
+    .primaryKey()
+    .references(() => profile.id, { onDelete: 'cascade' }),
+  allowed: text('allowed').array().notNull(),
+  setBy: uuid('set_by').references(() => account.id, { onDelete: 'set null' }),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Liste AUTORISÉE par l'enseignant pour les élèves d'une classe (absente : pas de restriction). */
+export const classReciterRule = pgTable('class_reciter_rule', {
+  classId: uuid('class_id')
+    .primaryKey()
+    .references(() => classGroup.id, { onDelete: 'cascade' }),
+  allowed: text('allowed').array().notNull(),
+  setBy: uuid('set_by').references(() => account.id, { onDelete: 'set null' }),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Récitateurs préchargés par le relais d'une école (choix de l'école, enregistré par l'équipe). */
+export const relayReciter = pgTable(
+  'relay_reciter',
+  {
+    relayId: uuid('relay_id')
+      .notNull()
+      .references(() => relay.id, { onDelete: 'cascade' }),
+    reciterId: text('reciter_id')
+      .notNull()
+      .references(() => quranReciter.id, { onDelete: 'cascade' }),
+    addedAt: timestamp('added_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.relayId, t.reciterId] })],
 );

@@ -97,6 +97,15 @@ export const API_GRANTS: Record<string, Right[]> = {
   // suite V1-b : récital de hifẓ
   hifz_recital: ALL,
   hifz_recital_entry: ALL,
+  // lot 27 : audio du Coran — pistes et imports posés par l'outil d'import (propriétaire) : lecture seule ;
+  // récitateur : lecture et retrait immédiat par l'administrateur ; choix et listes des familles et écoles
+  quran_reciter: ['SELECT', 'UPDATE'],
+  quran_track: R,
+  quran_audio_import: R,
+  profile_reciter_pref: ALL,
+  profile_reciter_rule: ALL,
+  class_reciter_rule: ALL,
+  relay_reciter: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */
