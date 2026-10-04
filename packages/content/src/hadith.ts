@@ -60,6 +60,34 @@ const INV = new RegExp(
     `(\\s+(?:d['’]|de\\s+|du\\s+|chez\\s+|dans\\s+)?(?:(?:al|an|at|ad|as|aṭ|aḍ|aṣ|el)-)?)(${NAMES})(?![\\p{L}\\p{M}])`,
   'giu',
 );
+/**
+ * « hadith 7392 », « ḥadīth n° 12 » : un numéro de hadith sans recueil reconnu à côté. Un seul chiffre
+ * (« Hadith 1 » à « Hadith 5 » d'un bilan, « le hadith 2 » de la leçon) est une numérotation du livre : ignoré.
+ */
+const BARE = new RegExp(
+  `(?<![\\p{L}\\p{M}])(?:ḥadīth|hadith|hadîth|${ar('حديث')})\\s*(?:n[°º]\\.?|no\\.?|n\\.)?\\s*${DIGIT}{2,5}(?!${DIGIT}|[,.:]${DIGIT})`,
+  'giu',
+);
+
+/**
+ * Numéros de hadith SANS recueil nommé (décision du chef de projet, 04/10/2026) : ni masqués ni bloquants
+ * (on ne sait pas à quel recueil le registre les rapporterait), mais signalés à l'import pour relecture.
+ * Les références « recueil + numéro » (dans les deux sens) sont exclues : elles relèvent du masquage.
+ */
+export function hadithNumbersWithoutCollection(value: unknown): string[] {
+  const out: string[] = [];
+  const walk = (v: unknown): void => {
+    if (typeof v === 'string') {
+      const rest = v.replace(REF, ' ').replace(INV, ' ');
+      for (const m of rest.matchAll(BARE)) out.push(m[0].trim());
+    } else if (Array.isArray(v)) v.forEach(walk);
+    else if (v && typeof v === 'object')
+      for (const [k, x] of Object.entries(v as Record<string, unknown>))
+        if (k !== 'versets') walk(x);
+  };
+  walk(value);
+  return out;
+}
 
 /** chiffres arabes (٠-٩, ۰-۹) → chiffres latins, pour chercher au registre */
 const latinDigits = (n: string) =>

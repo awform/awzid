@@ -2,6 +2,7 @@
  * Contrôles de contenu par unité (CDC §5.3-3) : personnages autorisés, illustrations existantes,
  * translittération dans les champs élève, réponses visibles dans un bilan (heuristique d'AUDIT_BILANS).
  */
+import { hadithNumbersWithoutCollection } from './hadith.js';
 import { PERSONNAGES } from './illus.js';
 import {
   illustrationKeys,
@@ -137,6 +138,14 @@ export function checkUnit(
   for (const P of [studentProjection(L, level), parentProjection(L, level)])
     for (const p of studentLeaks(P))
       push('erreur', 'fuite_projection_eleve', `champ « ${p} » présent dans la projection élève`);
+
+  // numéro de hadith sans recueil nommé (« hadith 7392 ») : ni masqué ni bloquant, signalé pour relecture
+  for (const r of new Set(hadithNumbersWithoutCollection(studentProjection(L, level))))
+    push(
+      'avertissement',
+      'hadith_numero_sans_recueil',
+      `« ${r} » : numéro de hadith sans recueil nommé (non contrôlable au registre)`,
+    );
 
   // bilans : aucun champ visible ne doit donner la réponse d'un exercice (heuristique)
   if (L.type === 'bilan' || L.type === 'examen') {
