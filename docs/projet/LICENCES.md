@@ -47,3 +47,28 @@ source et lien vers la licence (clé `tj.credit`, composant `apps/web/src/lib/qu
   crédit : clé `lecteur.credit`, page « Garanties » (`gar.coran`).
 - Métadonnées (pages du Muṣḥaf de Médine, ajzāʾ, aḥzāb) : Tanzil.info, Quran Metadata 1.0, **CC BY 3.0**
   (`packages/content/src/qurandata.ts`) ; crédit : clé `lecteur.credit`.
+
+## 4. Traductions du sens — QuranEnc.com (Muṣḥaf par page)
+
+| Élément | Valeur |
+|---|---|
+| Œuvres | **Français — Rachid Maach** (`french_rashid`, version **1.0.3**) ; **Anglais — Rowwad Translation Center** (`english_rwwad`, version **1.0.19**, « Translated by the team of the Rowwad Translation Center, in cooperation with the Rabwah Dawah Association, the Islamic Content Service Association in Languages, and the IslamHouse.com website ») |
+| Éditeur / source | QuranEnc.com — Encyclopédie des traductions du sens du Noble Coran : https://quranenc.com/fr/browse/french_rashid , https://quranenc.com/en/browse/english_rwwad ; fichiers : https://quranenc.com/downloads/sqlite/french_rashid.sqlite , https://quranenc.com/downloads/sqlite/english_rwwad.sqlite |
+| Conditions (texte exact, page de chaque traduction, « Terms and Policies ») | « Contents of the translations can be downloaded and re-published, with the following terms and conditions: 1. No modification, addition, or deletion of the content. 2. Clearly referring to the publisher and the source (QuranEnc.com). 3. Mentioning the version number when re-publishing the translation. 4. Keeping the transcript information inside the document. 5. Notifying the source (QuranEnc.com) of any note on the translation. 6. Updating the translation according to the latest version issued from the source (QuranEnc.com). 7. Inappropriate advertisements must not be included when displaying translations of the meanings of the Noble Quran. » |
+| Usage commercial | non restreint par ces conditions (republication permise sans réserve commerciale) ; l'application n'affiche aucune publicité |
+| Vérifiée le | 04/10/2026 (page lue depuis la VM `awform-dev` ; liste des versions par l'API `https://quranenc.com/api/v1/translations/list/fr` et `/en`) |
+| Empreintes SHA-256 (fichiers SQLite d'origine) | `french_rashid` : `1c8d1f66f3ab8d708ba84db79b8c069dede23a3e40fff253d3ca14deafba87bf` ; `english_rwwad` : `77e2ede3d8e6d6b5c6e16ff78eda2d2b6cc0a6b7489c94a5dde4f7481f5fdee8` |
+| Copie dans le dépôt | `packages/content/traduction-source/quranenc-*.sqlite.gz` (gzip des fichiers d'origine, octet pour octet : les informations de la source y restent, condition 4) |
+| Méthode | générateur `packages/content/src/cli-traductions.ts` (`pnpm --filter @awform/content traductions`) → `apps/web/static/traductions/<clé>/NNN.json` : texte et notes **recopiés tels quels** (condition 1) ; le test `packages/content/test/traductions.test.ts` contrôle l'empreinte, les 6 236 versets et l'identité des fichiers livrés avec la source |
+| Mises à jour (condition 6) | à chaque nouvelle version publiée par QuranEnc : télécharger le fichier SQLite, le compresser dans `traduction-source/`, mettre à jour la version et l'empreinte (`cli-traductions.ts`, `lib/quran/translation.ts`, ce tableau), relancer le générateur |
+
+**Crédit affiché** : sous le panneau de traduction de l'onglet « Muṣḥaf » : titre, version, « publiée par
+QuranEnc.com (Encyclopédie des traductions du sens du Noble Coran), reproduite sans modification », lien vers la
+page de la traduction (clé `mp.credit_traduction`). Les notes du traducteur sont affichées (« Notes du traducteur »).
+
+## 5. Sources examinées et NON retenues (Muṣḥaf par page)
+
+Voir `docs/projet/SOURCES_MUSHAF.md` : polices « par page » du Complexe (licence compatible, mais aucune donnée
+de lignes officielle accessible), QUL et Quran Foundation (compte nécessaire), miroir `nuqayah/qpc-fonts`
+(non officiel), traductions Tanzil (non commerciales), Hamidullah / Sahih International (protégées), texte Warsh
+(non vérifiable). **Rien n'est extrait de l'application Ayat.**
