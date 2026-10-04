@@ -47,11 +47,13 @@
   async function send(e: SubmitEvent) {
     e.preventDefault();
     error = '';
+    // texte envoyé : ce qui a été saisi PENDANT l'envoi (message suivant) n'est jamais effacé
+    const envoye = texte;
     const r = destinataire
-      ? await writeToFamily(classId, destinataire, texte)
-      : await announce(classId, texte);
+      ? await writeToFamily(classId, destinataire, envoye)
+      : await announce(classId, envoye);
     if (!r.ok) return fail(r.code);
-    texte = '';
+    if (texte === envoye) texte = '';
     await refresh();
   }
   async function show(id: string) {

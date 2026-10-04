@@ -33,9 +33,23 @@ test('messagerie : annonce, message privé, réponse, signalement, visio', async
   // enseignant : annonce à la classe, puis message privé à la famille
   await page.goto(`/enseignant/classe/${cls.id}`);
   await page.getByTestId('onglet-messages').click();
+  // réponse de l'annonce retenue jusqu'à la saisie du message suivant (vu sur la VM : une réponse lente
+  // effaçait le message déjà tapé, envoyé ensuite vide puis bloqué par « required »)
+  let relacher!: () => void;
+  const retenue = new Promise<void>((ok) => (relacher = ok));
+  await page.route('**/api/v1/ecole/classes/*/annonces', async (route) => {
+    const res = await route.fetch();
+    await retenue;
+    await route.fulfill({ response: res });
+  });
   await page.getByTestId('msg-texte').fill('Sortie scolaire vendredi.');
   await page.getByTestId('msg-envoyer').click();
   await page.getByTestId('msg-destinataire').selectOption({ index: 1 });
+  await page.getByTestId('msg-texte').fill('Bravo pour cette semaine.');
+  relacher();
+  await expect(page.getByText('Sortie scolaire vendredi.')).toBeVisible();
+  await expect(page.getByTestId('msg-texte')).toHaveValue('Bravo pour cette semaine.');
+  await page.unroute('**/api/v1/ecole/classes/*/annonces');
   await page.getByTestId('msg-texte').fill('Bravo pour cette semaine.');
   await page.getByTestId('msg-envoyer').click();
   await expect(page.getByTestId('msg-fil')).toHaveCount(1);
