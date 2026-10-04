@@ -18,3 +18,6 @@ Pour le relecteur : garder à l'identique les arguments entre accolades (`{n}`, 
 Points à vérifier en priorité par le relecteur arabe : les flèches `←` / `→` des boutons (laissées comme en
 français, à inverser si le sens de lecture l'exige), les sigles d'autorités et de lois gardés en lettres latines
 (CNIL, RGPD…), le prénom d'exemple écrit en lettres arabes (`classe.prenom_initiale`).
+
+Lot 28 : 30 textes `qc.*` (livrets « Lecture du Coran ») et `coran.qaida_texte` ajoutés ou modifiés dans les
+quatre langues en préparation — à relire avec le reste.
