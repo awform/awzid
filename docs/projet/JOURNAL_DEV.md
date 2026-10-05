@@ -23,7 +23,10 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 - huthify-qalun : basmala d'al-Fātiḥa en annexe ; verifier 6 214 sans bloquant ; ASR 528/528 → activé.
 - Décision du référent : sourate 42 d'al-Muhannā servie par son fichier de sourate entière (`--repli-sourates 42`,
   Ḥafṣ compris, sur décision expresse seulement) → muhanna-hafs complet et activé.
-- Démo : 9 récitations actives. Activation hors démo : après écoute des
+- Démo : 9 récitations actives.
+- **Validées à l'écoute** (client + référent provisoire, 05/10/2026, après écoute d'al-Fātiḥa des 9) :
+  `VALIDATION_ECOUTE` et plan d'import `COMPLEXE_IMPORT` dans le catalogue ; `coran-audio importer-valides`
+  importe et active les 9 dans tout déploiement (démo, bêta, production). Exploitation §7 mise à jour. Activation hors démo : après écoute des
   échantillons par le client et le référent. Échantillon Qālūn refait (basmala + versets 1 à 7).
 
 ## 05/10/2026 — Chantier A1 : vraies récitations du Complexe (outil, contrôles, ASR, démo)
