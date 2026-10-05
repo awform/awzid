@@ -8,6 +8,22 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 05/10/2026 — Chantier A1 (suite) : décisions du chef de projet appliquées
+
+- Outil : `--sourate-du-dossier` (zip décompressé avec ses dossiers « NNN … » : sourate lue dans le nom du
+  dossier, rien renommé) ; al-Fātiḥa en n+1 fichiers pour une riwāya non koufie → fichier 1 = basmala
+  (annexe) ; `--fichiers-sourate` : pour une riwāya autre que Ḥafṣ, une sourate au découpage par verset non
+  conforme au texte officiel est servie par son fichier de sourate entière (piste 0, paquet `mode: "sourate"`,
+  Écouter et Muṣḥaf jouent la sourate entière, message « Cette sourate s'écoute en entier ») ; l'activation
+  compte les versets des sourates en repli. Tests : 3 nouveaux (db), e2e audio verts (24).
+- muhanna-hafs : réextraction depuis le zip conservé ; verifier 6 236/6 236 sans bloquant ; ASR 529/531 :
+  109 et 110 justes ; 42:1 et 42:2 (empreintes différentes, 19,08 s chacun) contiennent tous deux « حم عسق »
+  → sourate 42 non activée (import partiel activé, 6 183 versets), à écouter.
+- sediki-susi : al-Mulk en fichier de sourate entière ; verifier 6 218 sans bloquant ; ASR 526/526 → activé.
+- huthify-qalun : basmala d'al-Fātiḥa en annexe ; verifier 6 214 sans bloquant ; ASR 528/528 → activé.
+- Démo : 9 récitations actives (muhanna sans la sourate 42). Activation hors démo : après écoute des
+  échantillons par le client et le référent. Échantillon Qālūn refait (basmala + versets 1 à 7).
+
 ## 05/10/2026 — Chantier A1 : vraies récitations du Complexe (outil, contrôles, ASR, démo)
 
 Branche `a1-audio-wip` (depuis `main` 398cc4e), intégrée dans `main`, démo redéployée. Mesures sur la VM.
