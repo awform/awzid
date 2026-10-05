@@ -10,6 +10,7 @@
   import { completeHizb, completeJuz, completeQuarters, completeSuras } from '$lib/milestones';
   import { call, type ProfileInfo } from '$lib/session';
   import EpreuvesCarte from '$lib/EpreuvesCarte.svelte';
+  import AccueilEleve from '$lib/parcours/AccueilEleve.svelte';
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
@@ -156,6 +157,8 @@
     {t('auj.sans_profil')} <a href={resolve('/profils')}>{t('auj.choisir_profil')}</a>
   </p>
 {:else if data}
+  <!-- A27 : « Ma prochaine activité » selon le livre, puis Mon arabe, Mon Coran, Mes sciences… -->
+  {#if profile}<AccueilEleve {profile} {due} />{/if}
   <section class="card seance" data-testid="seance">
     <h2>
       {t('auj.seance')}

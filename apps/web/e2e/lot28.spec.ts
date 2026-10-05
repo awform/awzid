@@ -14,30 +14,39 @@ const ARABE = [
 const RELIGION = [...[1, 2, 3, 4, 5].map((n) => `re${n}`), ...[1, 2, 3, 4].map((n) => `ra${n}`)];
 const QC = ['qc1', 'qc2', 'qc3'];
 
-test('les 31 livres gelés sont publiés, chacun dans son onglet, sans aperçu', async ({ page }) => {
-  const r = await page.request.get('/api/v1/levels');
-  const levels = ((await r.json()) as { levels: Array<{ code: string; apercu?: boolean }> }).levels;
-  expect(levels.map((l) => l.code).sort()).toEqual([...ARABE, ...RELIGION, ...QC].sort());
-  expect(levels.filter((l) => l.apercu)).toEqual([]);
-  // carnets de hifẓ : seulement les carnets gelés E1-E5 et N1-N5
-  const hb = (await (await page.request.get('/api/v1/hifz/books')).json()) as { books: string[] };
-  expect([...hb.books].sort()).toEqual([...ARABE.slice(0, 5), ...ARABE.slice(5, 10)].sort());
+// A27 : le catalogue (tous les livres) est celui du visiteur ; un élève ne voit que son niveau
+test.describe('catalogue (visiteur)', () => {
+  test.use({ compte: null });
+  test('les 31 livres gelés sont publiés, chacun dans son onglet, sans aperçu', async ({
+    page,
+  }) => {
+    const r = await page.request.get('/api/v1/levels');
+    const levels = ((await r.json()) as { levels: Array<{ code: string; apercu?: boolean }> })
+      .levels;
+    expect(levels.map((l) => l.code).sort()).toEqual([...ARABE, ...RELIGION, ...QC].sort());
+    expect(levels.filter((l) => l.apercu)).toEqual([]);
+    // carnets de hifẓ : seulement les carnets gelés E1-E5 et N1-N5
+    const hb = (await (await page.request.get('/api/v1/hifz/books')).json()) as { books: string[] };
+    expect([...hb.books].sort()).toEqual([...ARABE.slice(0, 5), ...ARABE.slice(5, 10)].sort());
 
-  await page.goto('/');
-  for (const c of ARABE) await expect(page.locator(`a[href="/niveaux/${c}"]`)).toBeVisible();
-  for (const c of [...RELIGION, ...QC])
-    await expect(page.locator(`a[href="/niveaux/${c}"]`)).toHaveCount(0);
+    await page.goto('/');
+    for (const c of ARABE) await expect(page.locator(`a[href="/niveaux/${c}"]`)).toBeVisible();
+    for (const c of [...RELIGION, ...QC])
+      await expect(page.locator(`a[href="/niveaux/${c}"]`)).toHaveCount(0);
 
-  await page.goto('/sciences');
-  for (const c of RELIGION)
-    await expect(page.locator(`[data-testid="niveau-religion"][data-level="${c}"]`)).toBeVisible();
+    await page.goto('/sciences');
+    for (const c of RELIGION)
+      await expect(
+        page.locator(`[data-testid="niveau-religion"][data-level="${c}"]`),
+      ).toBeVisible();
 
-  await page.goto('/coran');
-  for (const c of QC) {
-    const a = page.locator(`[data-testid="niveau-qc"][data-level="${c}"]`);
-    await expect(a).toBeVisible();
-    await expect(a.getByTestId('apercu')).toHaveCount(0);
-  }
+    await page.goto('/coran');
+    for (const c of QC) {
+      const a = page.locator(`[data-testid="niveau-qc"][data-level="${c}"]`);
+      await expect(a).toBeVisible();
+      await expect(a.getByTestId('apercu')).toHaveCount(0);
+    }
+  });
 });
 
 test('la leçon 1 de chaque livre s’ouvre dans son lecteur', async ({ page }) => {

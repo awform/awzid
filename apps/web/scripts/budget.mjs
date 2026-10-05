@@ -2,13 +2,15 @@
 // audit PERF-1) : mesure après `vite build`, compression Brotli.
 //  - JavaScript + CSS INITIAUX de chaque page d'entrée (point d'entrée, application, mises en page et page,
 //    avec leurs imports statiques, d'après le manifeste de Vite) ≤ 150 Ko : la pire page est retenue ;
-//  - TOTAL de toutes les pages (tout ce que le service worker garde pour le hors ligne) ≤ 375 Ko (D30, A8, D31, A12, F1, A21) ;
+//  - TOTAL de toutes les pages ≤ 405 Ko (D30, A8, D31, A12, F1, A21, A27) ; APPAREIL D'UN ÉLÈVE (tout ce que le service
+//    worker précharge : toutes les pages sauf celles du personnel, D-F2 9) ≤ 355 Ko, objectif 325 Ko ;
 //  - polices une seule fois ≤ 600 Ko.
 // Écrit reports/budget-web.md à la racine du dépôt ; code de sortie 1 si un budget est dépassé.
 import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { brotliCompressSync, constants } from 'node:zlib';
+import { staffOnlyFiles } from './personnel.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const client = join(root, '.svelte-kit', 'output', 'client');
@@ -39,6 +41,15 @@ const r = {
   swBr: sum(sw, br),
   fonts: sum(fonts, (p) => statSync(p).size),
 };
+// A27 (décision D-F2 9) : ce que garde l'APPAREIL D'UN ÉLÈVE = tout, moins les fichiers propres aux pages du
+// personnel (enseignant, direction, admin), qui ne sont plus préchargés (`personnel.json`, service worker)
+const staffSet = new Set(staffOnlyFiles(root).map((f) => join(client, f)));
+const staffBr = sum(
+  [...js, ...css].filter((p) => staffSet.has(p)),
+  br,
+);
+const eleveBr = r.jsBr + r.cssBr - staffBr;
+const swStaff = /personnel\.json/.test(swSrc);
 const ko = (n) => `${(n / 1024).toFixed(1)} Ko`;
 const BUDGET_INITIAL = 150 * 1024;
 // Muṣḥaf par page (04/10/2026) : 300 → 315 Ko, à valider (décision D30) ; A8 (05/10/2026) : muṣḥafs des
@@ -53,8 +64,16 @@ const BUDGET_INITIAL = 150 * 1024;
 // A21 (05/10/2026) : leçons vivantes — générateurs et lecteur des animations chargés à la demande sur les
 // leçons vivantes seulement (≈ 9 Ko, gardés par le service worker pour le hors ligne), page de démonstration,
 // réglages et 47 textes français (+11,6 Ko au total ; page de leçon +1,3 Ko) → 375 Ko avec F1 (365 + 11,6), à valider (décision D-A21)
-const BUDGET_TOTAL = 375 * 1024;
+// A27 (05/10/2026) : parcours par niveau (espace du niveau, accueil, positionnement, épreuve de passage, écriture
+// et « J'écris le Coran », mots du Coran, fiche à imprimer, Ma classe ; 144 textes) : +26,1 Ko au total (373,7 →
+// 399,8 Ko) ; MAIS les pages du personnel (46,9 Ko) ne sont plus préchargées sur l'appareil d'un élève (D-F2 9) :
+// ce qu'il garde passe de 373,7 à 353,0 Ko. Budget « toutes pages » (le personnel les charge à l'usage) → 405 Ko,
+// à valider (décision D-A27) ; le budget qui compte pour l'élève est BUDGET_ELEVE ci-dessous.
+const BUDGET_TOTAL = 405 * 1024;
 const BUDGET_FONTS = 600 * 1024;
+// A27 (décision D-F2 9) : appareil d'un élève (sans les pages du personnel) — 353,0 Ko mesurés, borne 355 Ko pour
+// empêcher toute dérive ; objectif 325 Ko (piste : textes d'interface du personnel hors de la coquille de l'élève)
+const BUDGET_ELEVE = 355 * 1024;
 
 // JavaScript initial par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises en
 // page de la route et sa page (les imports dynamiques, chargés à la demande, ne comptent pas)
@@ -119,6 +138,9 @@ const lines = [
   `| JavaScript + CSS initiaux, page la plus lourde (\`${worst.route}\`, Brotli) | ${ko(worst.br)} | ≤ ${ko(BUDGET_INITIAL)} |`,
   `| JavaScript de toutes les pages (Brotli) | ${ko(r.jsBr)} | ≤ ${ko(BUDGET_TOTAL)} |`,
   `| CSS (Brotli) | ${ko(r.cssBr)} | — |`,
+  `| Total JS + CSS de toutes les pages (Brotli) | ${ko(r.jsBr + r.cssBr)} | ≤ ${ko(BUDGET_TOTAL)} |`,
+  `| dont pages du personnel, NON préchargées sur l'appareil d'un élève (${staffSet.size} fichiers${swStaff ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(staffBr)} | — |`,
+  `| **Appareil d'un élève** : tout ce que garde le service worker (JS + CSS, Brotli) | ${ko(eleveBr)} | ≤ ${ko(BUDGET_ELEVE)} (objectif 325 Ko) |`,
   `| Service worker (Brotli) | ${ko(r.swBr)} | — |`,
   `| Polices WOFF2 (une seule fois, déjà compressées) | ${ko(r.fonts)} | ≤ ${ko(BUDGET_FONTS)} |`,
   `| Police d'une riwāya, la plus lourde (${rwFonts.length} polices, à la demande, hors coquille${rwExcluded ? '' : ' — NON EXCLUE du service worker'}) | ${ko(rwWorst)} | ≤ ${ko(BUDGET_RIWAYA_FONT)} |`,
@@ -137,7 +159,9 @@ if (
   r.jsBr + r.cssBr > BUDGET_TOTAL ||
   r.fonts > BUDGET_FONTS ||
   rwWorst > BUDGET_RIWAYA_FONT ||
-  !rwExcluded
+  !rwExcluded ||
+  eleveBr > BUDGET_ELEVE ||
+  !swStaff
 ) {
   console.error('Budget dépassé');
   process.exit(1);

@@ -39,8 +39,29 @@ const ASSETS = [
   ),
 ];
 
+/**
+ * A27 (décision D-F2 9) : fichiers qui ne servent QU'AUX pages du personnel (enseignant, direction, admin),
+ * listés à la construction (`personnel.json`) : jamais préchargés sur l'appareil d'un élève ; gardés au premier
+ * usage (le personnel est en ligne pour son second facteur). Liste absente : tout est préchargé, comme avant.
+ */
+async function staffOnly(): Promise<Set<string>> {
+  try {
+    const r = await fetch('/personnel.json', { cache: 'no-store' });
+    if (!r.ok) return new Set();
+    const j = (await r.json()) as { fichiers?: unknown };
+    return new Set(Array.isArray(j.fichiers) ? j.fichiers.map(String) : []);
+  } catch {
+    return new Set();
+  }
+}
+
 sw.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((c) => c.addAll([...ASSETS, SHELL])));
+  event.waitUntil(
+    staffOnly().then(async (staff) => {
+      const c = await caches.open(CACHE);
+      await c.addAll([...ASSETS.filter((a) => !staff.has(a)), SHELL]);
+    }),
+  );
 });
 
 sw.addEventListener('activate', (event) => {
@@ -92,7 +113,17 @@ sw.addEventListener('fetch', (event) => {
     return;
   }
   if (ASSETS.includes(url.pathname)) {
-    event.respondWith(caches.match(url.pathname).then((r) => r ?? fetch(req)));
+    // fichier non préchargé (pages du personnel) : réseau, puis gardé dans le cache de cette version
+    event.respondWith(
+      caches.match(url.pathname).then(
+        (r) =>
+          r ??
+          fetch(req).then(async (res) => {
+            if (res.ok) await (await caches.open(CACHE)).put(url.pathname, res.clone());
+            return res;
+          }),
+      ),
+    );
     return;
   }
   // QR code du livre (/l/en1-05) : si la leçon est déjà sur l'appareil, on l'ouvre dans l'application

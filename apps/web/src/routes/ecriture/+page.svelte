@@ -8,6 +8,7 @@
   import type { Verdict } from '$lib/trace/evaluate';
   import { formText, LETTERS, type Form } from '$lib/trace/letters';
   import TraceCanvas from '$lib/trace/TraceCanvas.svelte';
+  import EcritureNiveau from '$lib/parcours/EcritureNiveau.svelte';
 
   /**
    * Écriture (cahier § 2.4) : tracé guidé des lettres et de leurs formes, en trois étapes, ou repasser un
@@ -57,6 +58,9 @@
 <svelte:head><title>{t('app.nom')} — {t('onglets.ecriture')}</title></svelte:head>
 
 <h1>{t('onglets.ecriture')}</h1>
+<!-- A27 : Mon cahier (écriture des leçons de mon niveau) et J'écris le Coran (à partir du premier verset) -->
+{#if profile && !word}<EcritureNiveau {profile} />{/if}
+<h2 class="trace-titre">{t('parc.tracer_lettres')}</h2>
 <p class="muted">{t('ecriture.trace_texte')}</p>
 
 {#if !word}

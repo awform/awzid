@@ -6,33 +6,26 @@
   import { isQuranReadingLevel, isReligionLevel } from '$lib/api';
   import { demoProfileFor } from '$lib/attempts';
   import { t } from '$lib/i18n';
-  import { levelFitsProfile, levelParts } from '$lib/levels';
+  import { levelParts } from '$lib/levels';
   import type { ProfileInfo } from '$lib/session';
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Icon from '$lib/ui/Icon.svelte';
+  import EspaceNiveau from '$lib/parcours/EspaceNiveau.svelte';
   let { data } = $props();
 
   /**
-   * Onglet « Arabe » (lot 26) : les livres du profil d'abord (« Pour toi »), les autres ensuite ; chaque
-   * livre est une carte avec son titre arabe, sa filière en couleur et son nombre d'unités.
+   * Onglet « Arabe ». A27 : un élève ne voit QUE son niveau (espace du niveau) ; sans profil d'élève, le
+   * catalogue des livres (lot 26 : titre arabe, filière en couleur, nombre d'unités).
    */
   let profile = $state<ProfileInfo | null>(null);
+  let ready = $state(false);
   onMount(async () => {
     profile = await demoProfileFor('').catch(() => null);
+    ready = true;
   });
   const arabic = $derived(
     data.levels.filter((x) => !isReligionLevel(x.code) && !isQuranReadingLevel(x.code)),
   );
-  const mine = $derived(
-    profile
-      ? arabic
-          .filter((l) => levelFitsProfile(l.code, profile!.kind))
-          .sort(
-            (a, b) => Number(b.code === profile!.levelCode) - Number(a.code === profile!.levelCode),
-          )
-      : [],
-  );
-  const others = $derived(arabic.filter((l) => !mine.includes(l)));
 </script>
 
 <svelte:head><title>{t('app.nom')} — {t('onglets.arabe')}</title></svelte:head>
@@ -41,48 +34,50 @@
   <span class="today-ic"><Icon name="maison" /></span>
   <span>{t('auj.lien')}</span>
 </a>
-<h1>{t('arabe.titre')}</h1>
-{#if data.offline}<p class="card warnbox">{t('arabe.hors_ligne')}</p>{/if}
+{#if profile}
+  <!-- A27 : l'élève ne voit QUE son niveau (onglets, anciens livres, aperçu du suivant) -->
+  <h1>{t('parc.mon_arabe')}</h1>
+  <EspaceNiveau {profile} matiere="arabe" />
+{:else if ready}
+  <h1>{t('arabe.titre')}</h1>
+  {#if data.offline}<p class="card warnbox">{t('arabe.hors_ligne')}</p>{/if}
 
-{#snippet book(l: (typeof arabic)[number], current: boolean)}
-  <li>
-    <a
-      class="book"
-      class:current
-      data-track={levelParts(l.code)?.track ?? ''}
-      href={resolve('/niveaux/[code]', { code: l.code })}
-      data-testid="level"
-    >
-      <span class="code"><Bidi text={l.codeFr ?? l.code} /></span>
-      {#if l.titreAr}<span class="titre-ar"><Ar text={l.titreAr} /></span>{/if}
-      <span class="titre"><Bidi text={l.titleFr} /></span>
-      <small><Bidi text={t('arabe.unites', { n: l.units })} /></small>
-    </a>
-  </li>
-{/snippet}
+  {#snippet book(l: (typeof arabic)[number], current: boolean)}
+    <li>
+      <a
+        class="book"
+        class:current
+        data-track={levelParts(l.code)?.track ?? ''}
+        href={resolve('/niveaux/[code]', { code: l.code })}
+        data-testid="level"
+      >
+        <span class="code"><Bidi text={l.codeFr ?? l.code} /></span>
+        {#if l.titreAr}<span class="titre-ar"><Ar text={l.titreAr} /></span>{/if}
+        <span class="titre"><Bidi text={l.titleFr} /></span>
+        <small><Bidi text={t('arabe.unites', { n: l.units })} /></small>
+      </a>
+    </li>
+  {/snippet}
 
-{#if arabic.length === 0}
-  <EmptyState icon="telecharger" title={t('arabe.titre')} text={t('arabe.hors_ligne')}>
-    <a class="button" href={resolve('/hors-ligne')}>{t('entete.telechargements')}</a>
-  </EmptyState>
-{/if}
-{#if mine.length}
-  <ul class="books" data-testid="mes-livres">
-    {#each mine as l (l.code)}{@render book(l, l.code === profile?.levelCode)}{/each}
+  {#if arabic.length === 0}
+    <EmptyState icon="telecharger" title={t('arabe.titre')} text={t('arabe.hors_ligne')}>
+      <a class="button" href={resolve('/hors-ligne')}>{t('entete.telechargements')}</a>
+    </EmptyState>
+  {/if}
+  <!-- sans profil d'élève (visiteur, famille, maître) : le catalogue des livres -->
+  <ul class="books">
+    {#each arabic as l (l.code)}{@render book(l, false)}{/each}
   </ul>
-  {#if others.length}<h2 class="autres">{t('arabe.autres')}</h2>{/if}
+  <p class="more">
+    <a class="button" href={resolve('/revisions')} data-testid="lien-revisions"
+      ><Icon name="revisions" size={20} />{t('revisions.titre')}</a
+    >
+    <a class="button" href={resolve('/ecriture')}
+      ><Icon name="plume" size={20} />{t('trace.titre')}</a
+    >
+  </p>
+  <p class="edition"><Bidi text={t('arabe.edition', { edition: data.edition })} /></p>
 {/if}
-<ul class="books">
-  {#each others as l (l.code)}{@render book(l, false)}{/each}
-</ul>
-<p class="more">
-  <a class="button" href={resolve('/revisions')} data-testid="lien-revisions"
-    ><Icon name="revisions" size={20} />{t('revisions.titre')}</a
-  >
-  <a class="button" href={resolve('/ecriture')}><Icon name="plume" size={20} />{t('trace.titre')}</a
-  >
-</p>
-<p class="edition"><Bidi text={t('arabe.edition', { edition: data.edition })} /></p>
 
 <style>
   .today {
@@ -169,9 +164,6 @@
   small,
   .edition {
     color: var(--ink2);
-  }
-  .autres {
-    margin-top: var(--space-l);
   }
   .more {
     display: flex;

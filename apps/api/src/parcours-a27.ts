@@ -380,8 +380,8 @@ export function registerParcoursA27(app: FastifyInstance, db: Db, edition: Editi
       if (!e) return reply;
       const v = await testView(e.id, req.params.niveau, 'positionnement');
       if (!v) return err(reply, 404, 'introuvable');
-      const { chosen: _c, ...out } = v;
-      return out;
+      // les exercices du livre (corrigé compris) ne quittent jamais le serveur
+      return { ...v, chosen: undefined };
     },
   );
 
@@ -467,8 +467,8 @@ export function registerParcoursA27(app: FastifyInstance, db: Db, edition: Editi
       if (!cur) return err(reply, 409, 'aucun_niveau');
       const v = await testView(e.id, cur.levelCode, 'epreuve');
       if (!v) return err(reply, 404, 'introuvable');
-      const { chosen: _c, ...out } = v;
-      return out;
+      // les exercices du livre (corrigé compris) ne quittent jamais le serveur
+      return { ...v, chosen: undefined };
     },
   );
 

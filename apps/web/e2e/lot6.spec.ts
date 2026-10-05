@@ -76,8 +76,9 @@ test('tracé guidé : alif de haut en bas → bravo ; hors de la lettre → mess
 
 test('cartes de mots : recto arabe, verso sens, « je savais » / « à revoir »', async ({ page }) => {
   await newAdult(page, 'cartes');
-  await page.goto('/');
-  await page.getByTestId('lien-revisions').click();
+  // A27 : « Révisions » est dans l'onglet Pratique de l'espace du niveau, et dans « Plus »
+  await page.goto('/plus');
+  await page.locator('[data-plus="/revisions"]').click();
   const card = page.getByTestId('carte');
   await expect(card).toBeVisible();
   const before = await card.textContent();

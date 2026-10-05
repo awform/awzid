@@ -14,6 +14,7 @@
   } from '$lib/booklets';
   import { fmtBytes, t } from '$lib/i18n';
   import { getSettings } from '$lib/offline';
+  import { accessFor, espace } from '$lib/parcours/parcours';
   import {
     audioSummary,
     downloadLevelAudio,
@@ -35,7 +36,13 @@
   let busy = $state('');
   let msg = $state('');
   let ready = $state(false);
-  const levels = $derived([...new Set(list.map((b) => b.level))]);
+  /** A27 : niveau courant d'arabe de l'élève — seuls ses livrets et ceux de ses anciens livres sont proposés */
+  let current = $state<string | null>(null);
+  const levels = $derived(
+    [...new Set(list.map((b) => b.level))].filter((l) =>
+      ['courant', 'revision', 'libre'].includes(accessFor(current, l)),
+    ),
+  );
   const shown = $derived(list.filter((b) => !level || b.level === level));
   /** audio des lectures (A3) : taille par livret, livrets gardés AVEC l'audio */
   let audioSum: AudioSummary[] = $state([]);
@@ -61,7 +68,11 @@
   onMount(async () => {
     const r = await listBooklets();
     const p = await demoProfileFor('');
-    const lv = p?.levelCode ?? (p?.kind === 'adulte' ? 'ad1' : 'en1');
+    if (p) {
+      const sp = await espace(p.id, 'arabe').catch(() => null);
+      current = sp?.ok ? (sp.data?.courant?.code ?? null) : null;
+    }
+    const lv = current ?? p?.levelCode ?? (p?.kind === 'adulte' ? 'ad1' : 'en1');
     const codes = r.list.map((b) => b.level);
     kept = [...(await keptBooklets(r.list))];
     read = [...(await readBooklets())];

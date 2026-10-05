@@ -4,12 +4,23 @@
   import Ar from '$lib/Ar.svelte';
   import { isReligionLevel } from '$lib/api';
   import { t } from '$lib/i18n';
+  import { onMount } from 'svelte';
+  import { demoProfileFor } from '$lib/attempts';
+  import EspaceNiveau from '$lib/parcours/EspaceNiveau.svelte';
+  import type { ProfileInfo } from '$lib/session';
 
   /**
    * Sciences islamiques : livres de Religion Enfants (re) et Ados/Adultes (ra). Les livres gelés sont
    * publiés ; un livre encore en relecture n'apparaît qu'en « aperçu » (instance de démonstration).
    */
   let { data } = $props();
+  // A27 : l'élève ne voit que son niveau de sciences (ou commence : niveau proposé, test de positionnement)
+  let profile = $state<ProfileInfo | null>(null);
+  let ready = $state(false);
+  onMount(async () => {
+    profile = await demoProfileFor('').catch(() => null);
+    ready = true;
+  });
   const levels = $derived(data.levels.filter((l) => isReligionLevel(l.code)));
   const groups = $derived([
     {
@@ -27,34 +38,39 @@
 
 <svelte:head><title>{t('app.nom')} — {t('onglets.sciences')}</title></svelte:head>
 
-<h1>{t('onglets.sciences')}</h1>
+<h1><Bidi text={profile ? t('parc.mes_sciences') : t('onglets.sciences')} /></h1>
 <p class="muted"><Bidi text={t('sciences.intro')} /></p>
-{#if data.offline}<p class="card">{t('arabe.hors_ligne')}</p>{/if}
+{#if profile}
+  <EspaceNiveau {profile} matiere="sciences" />
+{:else if ready}
+  {#if data.offline}<p class="card">{t('arabe.hors_ligne')}</p>{/if}
 
-{#each groups as g (g.titre)}
-  <section class="card">
-    <h2><Bidi text={t(g.titre)} /></h2>
-    <p class="muted small"><Bidi text={t(g.texte)} /></p>
-    <ul class="levels">
-      {#each g.list as l (l.code)}
-        <li>
-          <a
-            href={resolve('/niveaux/[code]', { code: l.code })}
-            data-testid="niveau-religion"
-            data-level={l.code}
-          >
-            <strong><Bidi text={l.codeFr ?? l.code} /></strong> — <Bidi text={l.titleFr} />
-            {#if l.titreAr}<Ar text={l.titreAr} />{/if}
-            <small><Bidi text={t('arabe.unites', { n: l.units })} /></small>
-            {#if l.apercu}<span class="soon" data-testid="apercu">{t('sciences.apercu')}</span>{/if}
-          </a>
-        </li>
-      {:else}
-        <li class="muted">{t('sciences.bientot')}</li>
-      {/each}
-    </ul>
-  </section>
-{/each}
+  {#each groups as g (g.titre)}
+    <section class="card">
+      <h2><Bidi text={t(g.titre)} /></h2>
+      <p class="muted small"><Bidi text={t(g.texte)} /></p>
+      <ul class="levels">
+        {#each g.list as l (l.code)}
+          <li>
+            <a
+              href={resolve('/niveaux/[code]', { code: l.code })}
+              data-testid="niveau-religion"
+              data-level={l.code}
+            >
+              <strong><Bidi text={l.codeFr ?? l.code} /></strong> — <Bidi text={l.titleFr} />
+              {#if l.titreAr}<Ar text={l.titreAr} />{/if}
+              <small><Bidi text={t('arabe.unites', { n: l.units })} /></small>
+              {#if l.apercu}<span class="soon" data-testid="apercu">{t('sciences.apercu')}</span
+                >{/if}
+            </a>
+          </li>
+        {:else}
+          <li class="muted">{t('sciences.bientot')}</li>
+        {/each}
+      </ul>
+    </section>
+  {/each}
+{/if}
 <p class="muted">{t('sciences.fidelite')}</p>
 
 <style>

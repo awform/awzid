@@ -24,7 +24,8 @@ test('démarrage < 3 s sur appareil d’entrée de gamme (CPU ×4, 3G)', async (
     downloadThroughput: (1.6 * 1024 * 1024) / 8,
     uploadThroughput: (750 * 1024) / 8,
   });
-  const heading = page.getByRole('heading', { name: 'Mes livres' });
+  // A27 : l'onglet Arabe d'un élève est son espace du niveau (« Mon arabe »)
+  const heading = page.getByRole('heading', { name: 'Mon arabe' });
 
   let t0 = Date.now();
   await page.goto('/');
