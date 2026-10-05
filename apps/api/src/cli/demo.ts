@@ -9,16 +9,18 @@
  * Refusé si AWFORM_DEMO n'est pas « 1 » (jamais sur une base de production).
  */
 import { randomUUID } from 'node:crypto';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import {
   addPaperPupil,
   connect,
   createAssignment,
+  currentLevels,
   currentEdition,
   listUnits,
   loadRootEnv,
   runMigrations,
   savePaperResult,
+  setProfileLevel,
   schema as t,
   updateClassSettings,
 } from '@awform/db';
@@ -329,12 +331,33 @@ try {
     await call('POST', '/api/v1/profiles', parentC2, {
       pseudonym: 'Yanis',
       birthYear: new Date().getFullYear() - 15,
-      levelCode: 'ad1',
+      // A27 : un ado suit les livres ADOS (ado1) et, en sciences, les livres Ados/Adultes (ra1)
+      // (contenu réduit sans livres ados : ad1, comme avant)
+      levelCode: (await h.db.select().from(t.level).where(eq(t.level.code, 'ado1'))).length
+        ? 'ado1'
+        : 'ad1',
       avatar: 'lune',
       password: PW,
       consents: ['compte_suivi'],
     });
     result = { ...result, ado: 'Yanis (15 ans)' };
+  }
+  // ---- complément (idempotent, A27) : Yanis (ado) placé dans les livres ADOS (ado1) et en sciences ra1 — une démo
+  // créée avant A27 l'avait mis en ad1 (livres adultes) ; un niveau choisi ensuite (test, épreuve, maître) est gardé
+  {
+    const [yanis] = await h.db
+      .select({ id: t.profile.id })
+      .from(t.profile)
+      .innerJoin(t.account, eq(t.account.id, t.profile.ownerAccountId))
+      .where(and(eq(t.account.email, E.parent), eq(t.profile.pseudonym, 'Yanis')));
+    if (yanis) {
+      const cur = await currentLevels(h.db, yanis.id);
+      const ar = cur.find((c) => c.subject === 'arabe');
+      if (!ar || (ar.levelCode === 'ad1' && ['reprise', 'inscription'].includes(ar.source)))
+        await setProfileLevel(h.db, yanis.id, 'ado1', 'parent');
+      if (!cur.some((c) => c.subject === 'sciences'))
+        await setProfileLevel(h.db, yanis.id, 'ra1', 'parent');
+    }
   }
   // ---- complément (idempotent) : espace école (lot 13) — classe de l'enseignant réglée pour Enfants N1,
   // trois élèves FICTIFS de « classe papier » avec leurs notes, deux devoirs
