@@ -21,6 +21,7 @@
   import { demoProfileFor, enqueue, flush, onProgress } from '$lib/attempts';
   import type { ItemResponse } from '@awform/grading';
   import { personaKey, type SceneSpec } from '@awform/content/scene';
+  import Signaler, { SIGNAL_CTX } from '$lib/Signaler.svelte';
   import VivanteLecon from '$lib/vivante/VivanteLecon.svelte';
 
   /**
@@ -41,6 +42,14 @@
   });
 
   const u = $derived(data.unit);
+  /** lot F1 : édition du contenu affiché (accompagne chaque réponse et chaque signalement) */
+  const edition = $derived(data.edition || u.edition || undefined);
+  setContext(SIGNAL_CTX, () => ({ unitId: u.id, edition }));
+  /** lot F1 (M1) : leçon ou blocs suspendus d'urgence (message neutre) */
+  const suspendu = $derived((u.lesson as { _suspendu?: unknown })._suspendu);
+  const masque = (x: unknown) => !!(x as { suspendu?: boolean } | null)?.suspendu;
+  /** lot F1 (E5) : exercices dont le corrigé a changé depuis les réponses de l'élève (à refaire) */
+  let revised: string[] = $state([]);
   /** leçons des sciences islamiques (Religion Enfants re, Ados/Adultes ra) : lecteur dédié */
   const religion = $derived(/^r[ea]\d/.test(u.levelCode));
   /** livrets « Lecture du Coran » (qc1 à qc3, lot 28) : lecteur dédié */
@@ -49,10 +58,14 @@
   const lettres = $derived(L.lettres ?? []);
   const isEval = $derived(u.kind !== 'lecon');
   const livreEx = $derived(
-    (L.exercices ?? []).map((ex, i) => ({ ex, i })).filter((x) => x.ex.livre !== 'ecriture'),
+    (L.exercices ?? [])
+      .map((ex, i) => ({ ex, i }))
+      .filter((x) => x.ex.livre !== 'ecriture' && !masque(x.ex)),
   );
   const cahierEx = $derived(
-    (L.exercices ?? []).map((ex, i) => ({ ex, i })).filter((x) => x.ex.livre === 'ecriture'),
+    (L.exercices ?? [])
+      .map((ex, i) => ({ ex, i }))
+      .filter((x) => x.ex.livre === 'ecriture' && !masque(x.ex)),
   );
   type Obj = Record<string, unknown>;
   const R = $derived((L.lecture ?? {}) as Obj & NonNullable<typeof L.lecture>);
@@ -95,13 +108,23 @@
   let progress: { status: string; score: number | null; bestScore: number | null } | null =
     $state(null);
   onMount(() => {
-    void demoProfileFor(u.levelCode).then((p) => {
+    void demoProfileFor(u.levelCode).then(async (p) => {
       profileId = p?.id ?? null;
       profileInfo = p ? { id: p.id, kind: p.kind, birthYear: p.birthYear } : null;
       void flush();
+      // lot F1 : exercices à refaire (corrigé changé dans une édition plus récente)
+      if (p) {
+        const r = await call<{ revised: string[] }>(
+          'GET',
+          `/progress/unit?profile=${p.id}&unit=${encodeURIComponent(u.id)}`,
+        );
+        if (r.ok && r.data) revised = r.data.revised;
+      }
     });
     return onProgress((unitId, p) => {
-      if (unitId === u.id) progress = p;
+      if (unitId !== u.id) return;
+      progress = p;
+      if (p.revised) revised = p.revised;
     });
   });
   function record(i: number, itemIndex: number, response: ItemResponse) {
@@ -115,6 +138,7 @@
       exerciseHash: meta.hash,
       itemIndex,
       response,
+      ...(edition ? { edition } : {}),
     });
   }
   // bilan (D7) : réponses recueillies sans corrigé, puis corrigées par le serveur
@@ -169,6 +193,7 @@
         unitId: u.id,
         eventType: 'checklist',
         response: { checked: done, total },
+        ...(edition ? { edition } : {}),
       });
   }
   let checked: boolean[] = $state([]);
@@ -181,6 +206,7 @@
         unitId: u.id,
         eventType: 'checklist',
         response: { checked: checked.filter(Boolean).length, total: checkItems.length },
+        ...(edition ? { edition } : {}),
       });
   }
 </script>
@@ -189,7 +215,24 @@
 
 <Sprite illustrations={data.illustrations} />
 
-{#if lectureCoran}
+{#if suspendu}<p class="card warnbox" role="status" data-testid="contenu-suspendu">
+    <Bidi text={t(suspendu === 'unite' ? 'signal.suspendu_lecon' : 'signal.suspendu_bloc')} />
+  </p>{/if}
+{#if revised.length}<p class="card warnbox" role="status" data-testid="corrige-change">
+    <Bidi
+      text={t('signal.corrige_change', {
+        n: revised.map((id) => u.exercises.findIndex((e) => e.id === id) + 1).join(', '),
+      })}
+    />
+  </p>{/if}
+
+{#if suspendu === 'unite'}
+  <p class="nav">
+    <a href={resolve('/niveaux/[code]', { code: u.levelCode })}
+      ><Bidi text={t('lecon.retour', { level: u.levelCode })} /></a
+    >
+  </p>
+{:else if lectureCoran}
   <CoranLesson unit={u} {progress} onChecklist={toggleReligion} />
 {:else if religion}
   <ReligionLesson
@@ -409,6 +452,11 @@
               {lettres}
               onanswer={(k, r) => record(i, k, r)}
             />
+            <Signaler
+              kind="exercice"
+              path={`ex:${u.exercises[i]?.id ?? ''}`}
+              excerpt={ex.consigne_fr ?? ''}
+            />
           {/each}
         {/if}
       </section>
@@ -582,6 +630,9 @@
   </article>
   <TutorPanel unitId={u.id} profile={profileInfo} words={lessonWords} />
 {/if}
+{#if suspendu !== 'unite'}<p class="sig-lecon" data-testid="signaler-lecon">
+    <Signaler kind="lecon" excerpt={u.titleFr} />
+  </p>{/if}
 {#if audio?.fichiers.size}
   <p class="audio-credit fr" data-testid="audio-credit">
     <Bidi text={[t('audio.mention'), ...audio.credits].join(' · ')} />
@@ -642,7 +693,9 @@
       <span><Bidi text={Q?.titre_fr ?? t('lecon.coran')} /></span>
     </h2>
     {#each Q?.versets ?? [] as v, i (i)}
-      {#if v.non_prepare}
+      {#if masque(v)}
+        <p class="muted">{t('signal.suspendu_bloc')}</p>
+      {:else if v.non_prepare}
         <div class="np-box" data-testid="non-prepare">
           <b class="fr">{t('lecon.non_prepare')}</b>
           <Ar text="نَصٌّ يُوَزِّعُهُ الْمُعَلِّمُ يَوْمَ الِاخْتِبَارِ" />
@@ -663,6 +716,13 @@
                 >{t('audio.recitation')}</a
               >{/if}
             <!-- eslint-enable svelte/no-navigation-without-resolve -->
+            <Signaler
+              kind="verset"
+              path={`coran.versets.${i}`}
+              block={v}
+              ref={v.ref_fr ?? ''}
+              excerpt={v.ar}
+            />
           </div>
         </div>
       {/if}
@@ -703,6 +763,11 @@
           {/if}<span class="fr"><Bidi text={p.fr ?? ''} /></span>
         </li>{/each}
     </ul>
+    <!-- lot F1 (G2) : école juridique, étiquette posée à l'import (le texte du livre est inchangé) -->
+    {#if u.madhhab?.fiqh_adab}<p class="muted" data-testid="madhhab">
+        <Bidi text={t(`madhhab.${u.madhhab.fiqh_adab}`)} />
+      </p>{/if}
+    <Signaler kind="fiqh" path="fiqh_adab" block={L.fiqh_adab} excerpt={fiqh?.titre_fr ?? ''} />
   </section>
 {/snippet}
 

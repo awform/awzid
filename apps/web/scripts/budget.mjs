@@ -2,7 +2,7 @@
 // audit PERF-1) : mesure après `vite build`, compression Brotli.
 //  - JavaScript + CSS INITIAUX de chaque page d'entrée (point d'entrée, application, mises en page et page,
 //    avec leurs imports statiques, d'après le manifeste de Vite) ≤ 150 Ko : la pire page est retenue ;
-//  - TOTAL de toutes les pages (tout ce que le service worker garde pour le hors ligne) ≤ 370 Ko (D30, A8, D31, A12, A21) ;
+//  - TOTAL de toutes les pages (tout ce que le service worker garde pour le hors ligne) ≤ 375 Ko (D30, A8, D31, A12, F1, A21) ;
 //  - polices une seule fois ≤ 600 Ko.
 // Écrit reports/budget-web.md à la racine du dépôt ; code de sortie 1 si un budget est dépassé.
 import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
@@ -47,10 +47,13 @@ const BUDGET_INITIAL = 150 * 1024;
 // des téléchargements, +3,6 Ko) → 325 Ko, à valider (décision D31) ; A12 (05/10/2026) : espace « Au quotidien »
 // (quatre pages : horaires, qibla, adhkār, verset en image ; adhan-js 4 Ko chargé à la demande ; 173 textes
 // d'interface en français dans la coquille, +4,4 Ko ; +33 Ko au total) → 360 Ko, à valider (décision D-A12) ;
+// lot F1 (05/10/2026) : « Signaler une erreur », file du référent, errata, suspension d'urgence (masque hors
+// ligne compris), réponses refusées mises de côté, mention de l'école, 60 textes français (+5,9 Ko ; 360,9 Ko
+// mesurés après fusion avec A12) → 365 Ko, à valider (décision D-F1) ;
 // A21 (05/10/2026) : leçons vivantes — générateurs et lecteur des animations chargés à la demande sur les
 // leçons vivantes seulement (≈ 9 Ko, gardés par le service worker pour le hors ligne), page de démonstration,
-// réglages et 47 textes français (+11,6 Ko au total ; page de leçon +1,3 Ko) → 370 Ko, à valider (décision D-A21)
-const BUDGET_TOTAL = 370 * 1024;
+// réglages et 47 textes français (+11,6 Ko au total ; page de leçon +1,3 Ko) → 375 Ko avec F1 (365 + 11,6), à valider (décision D-A21)
+const BUDGET_TOTAL = 375 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 
 // JavaScript initial par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises en

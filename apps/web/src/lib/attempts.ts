@@ -8,12 +8,12 @@ import { kvGet, kvSet } from './idb';
 import { cachedMe, fetchMe, type ProfileInfo } from './session';
 import { flushQueue, pendingCount, queueEvent, type AttemptEvent } from './sync-core';
 
-export { pendingCount, uuidv7 } from './sync-core';
-export type { AttemptEvent } from './sync-core';
+export { pendingCount, reportSetAside, retrySetAside, setAside, uuidv7 } from './sync-core';
+export type { AttemptEvent, SetAside } from './sync-core';
 
 export type ProgressListener = (
   unitId: string,
-  progress: { status: string; score: number | null; bestScore: number | null },
+  progress: { status: string; score: number | null; bestScore: number | null; revised?: string[] },
 ) => void;
 const listeners = new Set<ProgressListener>();
 const queueListeners = new Set<(n: number) => void>();
@@ -81,7 +81,13 @@ export function startSync(): void {
   if (started || typeof window === 'undefined') return;
   started = true;
   // au retour du réseau (petit délai : la connexion n'est pas toujours prête à l'instant de l'événement)
-  window.addEventListener('online', () => setTimeout(() => void flush(), 300));
+  window.addEventListener('online', () =>
+    setTimeout(() => {
+      void flush();
+      // lot F1 : signalements en attente envoyés, suspensions à jour
+      void import('./signaler').then((m) => m.refreshContentState());
+    }, 300),
+  );
   // filet de sécurité : tant que des réponses attendent et que le réseau semble là, on réessaie
   setInterval(() => {
     if (!navigator.onLine) return;
@@ -95,6 +101,8 @@ export function startSync(): void {
   // garde le compte en cache pour pouvoir répondre hors ligne dès la première coupure
   void fetchMe();
   void flush();
+  // lot F1 : suspensions d'urgence (masque des leçons gardées hors ligne) et signalements en attente
+  void import('./signaler').then((m) => m.refreshContentState());
 }
 
 // ------------------------------------------------------------------ profils

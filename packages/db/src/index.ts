@@ -20,3 +20,5 @@ export * from './rgpd.js';
 export * from './bounds.js';
 export * from './audio/index.js';
 export * from './lecons-audio.js';
+export * from './signalements.js';
+export * from './traductions.js';

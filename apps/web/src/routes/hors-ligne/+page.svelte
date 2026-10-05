@@ -3,7 +3,15 @@
   import { onMount } from 'svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import { resolve } from '$app/paths';
-  import { flush, onQueue, pendingCount } from '$lib/attempts';
+  import {
+    flush,
+    onQueue,
+    pendingCount,
+    reportSetAside,
+    retrySetAside,
+    setAside,
+    type SetAside,
+  } from '$lib/attempts';
   import { fmtBytes, t } from '$lib/i18n';
   import {
     downloadPack,
@@ -63,6 +71,7 @@
     month = await monthBytes();
     storage = await storageInfo();
     pending = await pendingCount();
+    aside = await setAside();
     try {
       manifest = await fetchManifest();
       month = await monthBytes();
@@ -171,6 +180,18 @@
   async function sendNow() {
     await flush();
     pending = await pendingCount();
+    aside = await setAside();
+  }
+  /** lot F1 : réponses refusées par le serveur, gardées sur l'appareil (jamais jetées) */
+  let aside: SetAside[] = $state([]);
+  async function retryAside() {
+    await retrySetAside(fetch, '', true);
+    aside = await setAside();
+    message = aside.length ? t('sync.toujours_refusees') : t('sync.envoyees');
+  }
+  async function reportAside() {
+    message = (await reportSetAside()) ? t('sync.signale') : t('erreur.reseau');
+    aside = await setAside();
   }
 </script>
 
@@ -305,6 +326,16 @@
     {t('horsligne.attente')} <strong data-testid="attente"><Bidi text={pending} /></strong>
     {#if pending > 0}<button type="button" onclick={sendNow}>{t('horsligne.envoyer')}</button>{/if}
   </p>
+  {#if aside.length}
+    <div class="card warn" data-testid="mises-de-cote">
+      <p><Bidi text={t('sync.de_cote', { n: aside.length })} /></p>
+      <p class="muted"><Bidi text={aside.at(-1)?.reason ?? ''} /></p>
+      <button type="button" onclick={retryAside}>{t('sync.reessayer')}</button>
+      {#if !aside.every((s) => s.reported)}<button type="button" onclick={reportAside}
+          >{t('sync.signaler')}</button
+        >{/if}
+    </div>
+  {/if}
   <label class="switch">
     <input
       type="checkbox"

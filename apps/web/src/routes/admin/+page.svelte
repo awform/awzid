@@ -6,6 +6,7 @@
   import { call } from '$lib/session';
   import ActivationAdmin from '$lib/ActivationAdmin.svelte';
   import ModerationAdmin from '$lib/ModerationAdmin.svelte';
+  import ContenuAdmin from '$lib/ContenuAdmin.svelte';
 
   /**
    * Tableau de bord ADMINISTRATEUR minimal, en lecture seule : utilisateurs (e-mails masqués), éditions et
@@ -63,6 +64,8 @@
 
 {#if loaded && code === 'reserve_admin'}
   <p class="card">{t('admin.reserve')}</p>
+  <!-- lot F1 : le référent religieux (rôle) traite ici la file des signalements du contenu -->
+  <ContenuAdmin />
 {:else if loaded && code}
   <p class="card warnbox">
     {t('compte.totp_obligatoire')} <a href={resolve('/compte')}>{t('entete.compte')}</a>
@@ -98,6 +101,7 @@
     </section>
   </div>
 
+  <ContenuAdmin />
   <ModerationAdmin />
   <ActivationAdmin />
 

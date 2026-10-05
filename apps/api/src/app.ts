@@ -37,6 +37,7 @@ import { registerQuotidien } from './quotidien.js';
 import { notFound } from './routes-common.js';
 import { registerProgress } from './progression.js';
 import { registerEpreuves } from './epreuves.js';
+import { registerSignalements } from './signalements.js';
 import { registerVerification } from './verification.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
 import type { RecitationKey } from '@awform/db';
@@ -215,5 +216,6 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   // A12 : adhkār des livres (espace « Au quotidien »), public et sans donnée de l'utilisateur
   registerQuotidien(app, db, edition);
   registerProgress(app, db, edition);
+  registerSignalements(app, db, edition);
   return app;
 }

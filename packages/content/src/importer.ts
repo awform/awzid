@@ -71,7 +71,23 @@ export interface EditionLoad {
   /** documents d'évaluation des livres (data/eval : certificats, référentiel, règles) ; clés absentes si non copiés */
   evalDocs: Record<string, unknown>;
   verseStats: VerseStats;
+  /**
+   * Lignée des exercices (lot F1, E5) : ancien identifiant → identifiant actuel. Contient les entrées des
+   * tables de gel où l'identifiant a changé (nature « gel ») et celles de `ids/lignee.json` (remplacement,
+   * fusion, scission, retrait), contrôlées contre les livres.
+   */
+  lineage: LineageEntry[];
   issues: Issue[];
+}
+
+export const LINEAGE_KINDS = ['gel', 'remplace', 'fusion', 'scission', 'retire'] as const;
+export type LineageKind = (typeof LINEAGE_KINDS)[number];
+export interface LineageEntry {
+  from: string;
+  /** null : exercice retiré (ses réponses ne comptent plus) */
+  to: string | null;
+  kind: LineageKind;
+  note: string | null;
 }
 
 export interface Booklet {
@@ -223,6 +239,61 @@ export function loadIdMaps(dir: string, issues: Issue[]): Map<string, string> | 
   return map.size ? map : null;
 }
 
+/** Niveaux GELÉS (présents dans une table de correspondance) : un exercice sans « id » y est refusé. */
+export function frozenLevels(map: Map<string, string> | null): Set<string> {
+  return new Set([...(map?.keys() ?? [])].map((k) => k.split('.')[0] ?? ''));
+}
+
+/**
+ * `ids/lignee.json` (facultatif, exporté par les livres quand un exercice gelé est remplacé, fusionné, scindé
+ * ou retiré) : `{ "lignee": [{ "de": "ad2.l03.ex4", "vers": "ad2.l03.ex9" | null, "nature": "remplace",
+ * "motif": "…" }] }`. Les réponses suivent la lignée ; elles ne comptent que si le CORRIGÉ est resté le même.
+ */
+export function loadLineage(dir: string, issues: Issue[]): LineageEntry[] {
+  const f = join(dir, 'lignee.json');
+  if (!existsSync(f)) return [];
+  try {
+    const j = JSON.parse(readText(f).replace(/^\uFEFF/, '')) as {
+      lignee?: Array<{ de?: unknown; vers?: unknown; nature?: unknown; motif?: unknown }>;
+    };
+    const out: LineageEntry[] = [];
+    for (const e of j.lignee ?? []) {
+      const kind = String(e.nature ?? '') as LineageKind;
+      const okTo = e.vers === null || (typeof e.vers === 'string' && EXERCISE_ID.test(e.vers));
+      if (
+        typeof e.de !== 'string' ||
+        !EXERCISE_ID.test(e.de) ||
+        !okTo ||
+        !LINEAGE_KINDS.includes(kind) ||
+        (kind === 'retire') !== (e.vers === null)
+      ) {
+        issues.push({
+          severity: 'erreur',
+          code: 'lignee_invalide',
+          file: 'ids/lignee.json',
+          message: `entrée de lignée invalide : ${JSON.stringify(e).slice(0, 160)}`,
+        });
+        continue;
+      }
+      out.push({
+        from: e.de,
+        to: (e.vers as string | null) ?? null,
+        kind,
+        note: typeof e.motif === 'string' ? e.motif.slice(0, 300) : null,
+      });
+    }
+    return out;
+  } catch (e) {
+    issues.push({
+      severity: 'erreur',
+      code: 'lignee_illisible',
+      file: 'ids/lignee.json',
+      message: `lignée illisible : ${(e as Error).message}`,
+    });
+    return [];
+  }
+}
+
 export function loadEdition(opts: LoadOptions): EditionLoad {
   const { contentDir } = opts;
   const issues: Issue[] = [];
@@ -269,6 +340,8 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
 
   // tables de correspondance des identifiants (gel des livres) : ancien identifiant de position → id
   const idMap = loadIdMaps(join(contentDir, 'ids'), issues);
+  const frozen = frozenLevels(idMap);
+  const declared = loadLineage(join(contentDir, 'ids'), issues);
   const seenIds = new Set<string>();
 
   const verseStats: VerseStats = { total: 0, identique: 0, extrait: 0, voulu: 0, erreurs: 0 };
@@ -481,22 +554,16 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
               message: `${positional} : identifiant explicite invalide (${String(explicit)})`,
             });
           else exId = explicit;
-          const mapped = idMap?.get(positional);
-          if (idMap && mapped !== exId)
-            issues.push({
-              severity: 'erreur',
-              code: 'id_correspondance',
-              file: rel,
-              unit: id,
-              message: `${positional} → ${mapped ?? '(absent de la table)'} ≠ id du livre ${String(explicit)}`,
-            });
-        } else if (idMap?.has(positional))
+          // lot F1 (E5) : plus AUCUNE comparaison à la position. La table de gel dit seulement quel
+          // identifiant a reçu l'ancienne clé de position au moment du gel ; un exercice inséré, déplacé ou
+          // retiré ensuite garde (ou libère) son id sans décaler les autres (contrôle global plus bas).
+        } else if (frozen.has(code))
           issues.push({
-            severity: 'avertissement',
+            severity: 'erreur',
             code: 'id_absent',
             file: rel,
             unit: id,
-            message: `${positional} : livre gelé sans champ « id » (identifiant de position gardé)`,
+            message: `${positional} : livre gelé sans champ « id » (un identifiant de position n'est plus accepté : lancer gel-ids)`,
           });
         if (seenIds.has(exId))
           issues.push({
@@ -570,6 +637,35 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
           .join(', ')}`,
       });
     levels.push({ code, book, units });
+  }
+
+  // lignée des exercices (lot F1, E5) : tables de gel (ancienne clé de position → id, seulement si différent)
+  // + lignée déclarée par les livres ; un id gelé disparu sans déclaration est signalé
+  const lineage: LineageEntry[] = [];
+  const imported = new Set(opts.levels);
+  const levelOf = (exId: string) => exId.split('.')[0] ?? '';
+  const retired = new Set(declared.filter((d) => d.kind !== 'gel').map((d) => d.from));
+  for (const [from, to] of idMap ?? []) {
+    if (!imported.has(levelOf(to))) continue;
+    if (from !== to) lineage.push({ from, to, kind: 'gel', note: null });
+    if (!seenIds.has(to) && !retired.has(to))
+      issues.push({
+        severity: 'avertissement',
+        code: 'id_disparu',
+        unit: to.split('.').slice(0, 2).join('.'),
+        message: `${to} : exercice gelé absent du livre (à déclarer dans ids/lignee.json : retiré, remplacé…)`,
+      });
+  }
+  for (const d of declared) {
+    if (!imported.has(levelOf(d.from))) continue;
+    if (d.to !== null && !seenIds.has(d.to))
+      issues.push({
+        severity: 'erreur',
+        code: 'lignee_cible',
+        file: 'ids/lignee.json',
+        message: `${d.from} → ${d.to} : exercice cible absent des livres`,
+      });
+    else lineage.push(d);
   }
 
   // carnets de hifẓ des niveaux importés + fichiers communs
@@ -735,6 +831,7 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
     quranData,
     evalDocs,
     verseStats,
+    lineage,
     issues,
   };
 }

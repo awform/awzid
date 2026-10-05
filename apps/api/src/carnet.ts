@@ -154,7 +154,7 @@ export function registerCarnet(app: FastifyInstance, db: Db, edition: Edition): 
             eq(t.exerciseVersion.editionId, ed.id),
           ),
         )
-        .orderBy(t.exercise.position);
+        .orderBy(t.exerciseVersion.position);
       return {
         semaine: req.query.week,
         carnets: await Promise.all(

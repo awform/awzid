@@ -4,6 +4,7 @@
  */
 import type { FastifyInstance } from 'fastify';
 import {
+  computeProgress,
   dashboard,
   levelProgress,
   listUnits,
@@ -16,7 +17,7 @@ import {
   type PracticeInput,
 } from '@awform/db';
 import { ownsProfile } from './auth/routes.js';
-import { LEVEL_CODE, notFound, UUID, type Edition } from './routes-common.js';
+import { LEVEL_CODE, notFound, UNIT_ID, UUID, type Edition } from './routes-common.js';
 
 export function registerProgress(app: FastifyInstance, db: Db, edition: Edition): void {
   // ---------------------------------------------------------------- tentatives et progression (connecté)
@@ -48,6 +49,9 @@ export function registerProgress(app: FastifyInstance, db: Db, edition: Edition)
                   response: {},
                   deviceAt: { type: 'string', maxLength: 40 },
                   deviceId: { type: 'string', maxLength: 64 },
+                  // lot F1 (E5, M3) : édition du contenu répondu et version du format de l'événement
+                  edition: { type: 'string', maxLength: 60 },
+                  v: { type: 'integer', minimum: 1, maximum: 99 },
                 },
               },
             },
@@ -153,6 +157,41 @@ export function registerProgress(app: FastifyInstance, db: Db, edition: Edition)
         units.map((u) => u.id),
       );
       return { profile: req.query.profile, level: req.query.level, progress: rows };
+    },
+  );
+
+  /**
+   * Lot F1 (E5) : progression d'UNE leçon et exercices « à refaire » parce que leur corrigé a changé dans une
+   * édition plus récente (les autres réponses restent comptées) — message affiché dans la leçon.
+   */
+  app.get<{ Querystring: { profile: string; unit: string } }>(
+    '/api/v1/progress/unit',
+    {
+      schema: {
+        querystring: {
+          type: 'object',
+          required: ['profile', 'unit'],
+          properties: {
+            profile: { type: 'string', pattern: UUID },
+            unit: { type: 'string', pattern: UNIT_ID },
+          },
+        },
+      },
+    },
+    async (req, reply) => {
+      if (!req.auth) return reply.code(401).send({ error: { code: 'non_connecte' } });
+      if (!(await ownsProfile(db, req.auth.accountId, req.query.profile)))
+        return reply.code(404).send(notFound('profil introuvable'));
+      const ed = await edition();
+      if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
+      const p = await computeProgress(db, ed.id, req.query.profile, req.query.unit);
+      return {
+        unit: req.query.unit,
+        status: p.status,
+        score: p.score,
+        bestScore: p.bestScore,
+        revised: p.revised,
+      };
     },
   );
   // ---------------------------------------------------------------- tableau de bord (parent, adulte)

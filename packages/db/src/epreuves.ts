@@ -25,7 +25,7 @@ export async function unitFull(db: Db, editionId: string, unitId: string) {
   const exercises = await db
     .select({
       id: t.exercise.id,
-      position: t.exercise.position,
+      position: t.exerciseVersion.position,
       type: t.exercise.type,
       content: t.exerciseVersion.content,
     })
@@ -38,7 +38,7 @@ export async function unitFull(db: Db, editionId: string, unitId: string) {
       ),
     )
     .where(eq(t.exercise.unitId, unitId))
-    .orderBy(asc(t.exercise.position));
+    .orderBy(asc(t.exerciseVersion.position));
   return { ...u, exercises };
 }
 
@@ -47,6 +47,8 @@ export async function createExamSession(
   s: {
     classId: string;
     unitId: string;
+    /** édition figée à l'ouverture (lot F1, M2) */
+    editionId: string;
     bareme: 20 | 100;
     opensAt: Date;
     closesAt: Date;

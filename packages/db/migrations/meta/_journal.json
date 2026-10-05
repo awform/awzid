@@ -204,6 +204,41 @@
       "when": 1791162462828,
       "tag": "0028_coran_audio_credit",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1791214023276,
+      "tag": "0029_lignee_exercices",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1791214049206,
+      "tag": "0030_epreuve_edition",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1791214076856,
+      "tag": "0031_madhhab",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1791214160092,
+      "tag": "0032_traductions_contenu",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1791214161049,
+      "tag": "0033_signalements",
+      "breakpoints": true
     }
   ]
 }

@@ -13,6 +13,7 @@
   import CasReponse from '$lib/CasReponse.svelte';
   import CarnetPersoCase from '$lib/CarnetPersoCase.svelte';
   import { casRef } from '$lib/pratique';
+  import Signaler from '$lib/Signaler.svelte';
 
   /**
    * Lecteur des leçons des sciences islamiques (Religion Enfants « re », Ados/Adultes « ra ») : blocs du
@@ -44,11 +45,13 @@
   const arr = (v: unknown) => (Array.isArray(v) ? (v as Obj[]) : []);
   const rubriques = $derived(arr(L.rubriques));
   const exercices = $derived(arr(L.exercices));
+  /** lot F1 (M1) : bloc suspendu d'urgence (remplacé par `{ suspendu: true }`) */
+  const masque = (x: Obj) => x.suspendu === true;
   const livre = $derived(
-    exercices.map((ex, i) => ({ ex, i })).filter((x) => x.ex.livre !== 'ecriture'),
+    exercices.map((ex, i) => ({ ex, i })).filter((x) => x.ex.livre !== 'ecriture' && !masque(x.ex)),
   );
   const cahier = $derived(
-    exercices.map((ex, i) => ({ ex, i })).filter((x) => x.ex.livre === 'ecriture'),
+    exercices.map((ex, i) => ({ ex, i })).filter((x) => x.ex.livre === 'ecriture' && !masque(x.ex)),
   );
   const coran = $derived((L.coran ?? null) as Obj | null);
   const dialogue = $derived((L.dialogue ?? null) as Obj | null);
@@ -109,221 +112,242 @@
   {/if}
 
   {#each rubriques as r, ri (ri)}
-    <section class="card rub" data-code={str(r.code)}>
-      <h2>
-        {#if str(r.titre_ar)}<Ar text={str(r.titre_ar)} />{/if}
-        <span><Bidi text={str(r.titre_fr)} /></span>
-      </h2>
-      {#if str(r.intro_fr)}<p class="intro"><Bidi text={str(r.intro_fr)} /></p>{/if}
-      {#if r.etape}{@const e = r.etape as Obj}
-        <p class="etape">
-          <Bidi text={str(e.periode_fr)} /> · <Bidi text={str(e.annee_fr)} /> · {#if str(e.lieu_ar)}<Ar
-              text={str(e.lieu_ar)}
-            />
-          {/if}<Bidi text={str(e.lieu_fr)} />
-        </p>{/if}
-      {#each arr(r.texte) as p, i (i)}
-        <div class="para">
-          {#if str(p.ar)}<Ar text={str(p.ar)} tag="p" />{/if}
-          <p><Bidi text={str(p.fr)} /></p>
-        </div>
-      {/each}
-      {#if arr(r.points).length}
-        <ul class="points">
-          {#each arr(r.points) as p, i (i)}<li>
-              {#if p.img}<Illus k={str(p.img)} cls="mini" />{/if}
-              {#if str(p.ar)}<Ar text={str(p.ar)} />{/if}
-              <span><Bidi text={str(p.fr)} /></span>
-            </li>{/each}
-        </ul>
-      {/if}
-      {#if arr(r.noms).length}
-        <dl class="noms">
-          {#each arr(r.noms) as nm, i (i)}
-            <dt><Ar text={str(nm.ar)} /> — <Bidi text={str(nm.fr)} /></dt>
-            <dd>
-              <Bidi text={str(nm.explication_fr)} />
-              <Bidi text={str(nm.exemple_fr)} />
-              <span class="ref"><Bidi text={str(nm.ref_fr)} /></span>
-            </dd>
-          {/each}
-        </dl>
-      {/if}
-      {#if r.bulles}{@const b = r.bulles as Obj}
-        <div class="bulles">
-          <p class="centre">
-            {#if str((b.centre as Obj)?.ar)}<Ar text={str((b.centre as Obj).ar)} />
-            {/if}<Bidi text={str((b.centre as Obj)?.fr)} />
-          </p>
-          <ul>
-            {#each arr(b.autour) as a, i (i)}<li>
-                {#if str(a.ar)}<Ar text={str(a.ar)} /> —
-                {/if}<Bidi text={str(a.fr)} />
+    {#if masque(r)}<p class="card muted">{t('signal.suspendu_bloc')}</p>{:else}
+      <section class="card rub" data-code={str(r.code)}>
+        <h2>
+          {#if str(r.titre_ar)}<Ar text={str(r.titre_ar)} />{/if}
+          <span><Bidi text={str(r.titre_fr)} /></span>
+        </h2>
+        <!-- lot F1 (G2) : école juridique de la rubrique (étiquette d'import ; texte inchangé) -->
+        {#if unit.madhhab?.[`rubriques.${ri}`]}<p class="muted small" data-testid="madhhab">
+            <Bidi text={t(`madhhab.${unit.madhhab[`rubriques.${ri}`]}`)} />
+          </p>{/if}
+        {#if str(r.intro_fr)}<p class="intro"><Bidi text={str(r.intro_fr)} /></p>{/if}
+        {#if r.etape}{@const e = r.etape as Obj}
+          <p class="etape">
+            <Bidi text={str(e.periode_fr)} /> · <Bidi text={str(e.annee_fr)} /> · {#if str(e.lieu_ar)}<Ar
+                text={str(e.lieu_ar)}
+              />
+            {/if}<Bidi text={str(e.lieu_fr)} />
+          </p>{/if}
+        {#each arr(r.texte) as p, i (i)}
+          <div class="para">
+            {#if str(p.ar)}<Ar text={str(p.ar)} tag="p" />{/if}
+            <p><Bidi text={str(p.fr)} /></p>
+          </div>
+        {/each}
+        {#if arr(r.points).length}
+          <ul class="points">
+            {#each arr(r.points) as p, i (i)}<li>
+                {#if p.img}<Illus k={str(p.img)} cls="mini" />{/if}
+                {#if str(p.ar)}<Ar text={str(p.ar)} />{/if}
+                <span><Bidi text={str(p.fr)} /></span>
               </li>{/each}
           </ul>
-        </div>
-      {/if}
-      {#if arr(r.situations).length}
-        <ul class="situations">
-          {#each arr(r.situations) as s, i (i)}<li
-              class:bien={s.bien === true}
-              class:mal={s.bien === false}
-            >
-              {#if s.img}<Illus k={str(s.img)} cls="mini" />{/if}
-              <span
-                >{#if str(s.ar)}<Ar text={str(s.ar)} /> —
-                {/if}<Bidi text={str(s.fr)} /></span
+        {/if}
+        {#if arr(r.noms).length}
+          <dl class="noms">
+            {#each arr(r.noms) as nm, i (i)}
+              <dt><Ar text={str(nm.ar)} /> — <Bidi text={str(nm.fr)} /></dt>
+              <dd>
+                <Bidi text={str(nm.explication_fr)} />
+                <Bidi text={str(nm.exemple_fr)} />
+                <span class="ref"><Bidi text={str(nm.ref_fr)} /></span>
+              </dd>
+            {/each}
+          </dl>
+        {/if}
+        {#if r.bulles}{@const b = r.bulles as Obj}
+          <div class="bulles">
+            <p class="centre">
+              {#if str((b.centre as Obj)?.ar)}<Ar text={str((b.centre as Obj).ar)} />
+              {/if}<Bidi text={str((b.centre as Obj)?.fr)} />
+            </p>
+            <ul>
+              {#each arr(b.autour) as a, i (i)}<li>
+                  {#if str(a.ar)}<Ar text={str(a.ar)} /> —
+                  {/if}<Bidi text={str(a.fr)} />
+                </li>{/each}
+            </ul>
+          </div>
+        {/if}
+        {#if arr(r.situations).length}
+          <ul class="situations">
+            {#each arr(r.situations) as s, i (i)}<li
+                class:bien={s.bien === true}
+                class:mal={s.bien === false}
               >
-              <span class="pourquoi"
-                ><Bidi text={s.bien ? t('rel.bien') : t('rel.pas_bien')} />
-                <Bidi text={str(s.pourquoi_fr)} /></span
-              >
-            </li>{/each}
-        </ul>
-      {/if}
-      {#each arr(r.hadiths) as h, i (i)}
-        <blockquote class="hadith">
-          {#if str(h.ar)}<Ar text={str(h.ar)} tag="p" /><Ecouter text={str(h.ar)} />{/if}
-          <p>« <Bidi text={str(h.fr)} /> »</p>
-          <p class="ref">
-            {#if str(h.rawi_fr)}<Bidi text={t('rel.rapporte_par', { rawi: str(h.rawi_fr) })} /> ·
-            {/if}<Bidi text={str(h.source_fr)} />
-            {#if str(h.grade) === 'sahih'}
-              · {t('rel.sahih')}{:else if str(h.grade) === 'hasan'}
-              · {t('rel.hasan')}{/if}
-          </p>
-          {#if str(h.lecon_fr)}<p class="lecon"><Bidi text={str(h.lecon_fr)} /></p>{/if}
-        </blockquote>
-      {/each}
-      {#each arr(r.duas) as d, i (i)}
-        <div class="dua">
-          <p class="moment">
-            {#if str(d.moment_ar)}<Ar text={str(d.moment_ar)} /> —
-            {/if}<Bidi text={str(d.moment_fr)} />
-          </p>
-          <Ar text={str(d.ar)} tag="p" /><Ecouter text={str(d.ar)} />
-          <p><Bidi text={str(d.fr)} /></p>
-          {#if str(d.source_fr)}<p class="ref"><Bidi text={str(d.source_fr)} /></p>{/if}
-        </div>
-      {/each}
-      {#each arr(r.extraits) as x, i (i)}
-        <figure class="extrait">
-          {#if str(x.ar)}<Ar text={str(x.ar)} tag="p" />{/if}
-          {#each arr(x.vers) as v, k (k)}<p class="vers" lang="ar" dir="rtl">
-              {#each arr(v as unknown) as h, j (j)}<span
-                  ><Bidi text={tanwinDisplay(String(h))} base="ar" /></span
-                >{/each}
-            </p>{/each}
-          <p><Bidi text={str(x.fr)} /></p>
-          {#if str(x.explication_fr)}<p class="expl"><Bidi text={str(x.explication_fr)} /></p>{/if}
-          <figcaption>
-            <Bidi text={str(x.ouvrage_fr)} /> — <Bidi
-              text={str(x.auteur_fr)}
-            />{#if str(x.localisation_fr)}, <Bidi text={str(x.localisation_fr)} />{/if}
-          </figcaption>
-        </figure>
-      {/each}
-      {#if r.tableau}{@const tb = r.tableau as Obj}
-        <div class="tw">
-          <table>
-            <thead
-              ><tr
-                >{#each arr(tb.colonnes) as c, k (k)}<th><Bidi text={str(c.fr)} /></th>{/each}</tr
-              ></thead
-            >
-            <tbody>
-              {#each arr(tb.lignes) as row, k (k)}<tr>
-                  {#each arr(row as unknown) as cell, j (j)}<td>
-                      {#if cell && typeof cell === 'object'}{#if str((cell as Obj).ar)}<Ar
-                            text={str((cell as Obj).ar)}
-                          /><br />{/if}<Bidi text={str((cell as Obj).fr)} />{:else}<Bidi
-                          text={String(cell ?? '')}
-                        />{/if}
-                    </td>{/each}
-                </tr>{/each}
-            </tbody>
-          </table>
-        </div>
-      {/if}
-      {#if arr(r.divergences).length}
-        <div class="tw">
-          <table class="div">
-            <thead
-              ><tr
-                ><th>{t('rel.sujet')}</th>{#each ECOLES as e (e)}<th
-                    ><Bidi text={t(`rel.ecole_${e}`)} /></th
-                  >{/each}</tr
-              ></thead
-            >
-            <tbody>
-              {#each arr(r.divergences) as d, k (k)}<tr>
-                  <td><Bidi text={str(d.sujet_fr)} /></td>{#each ECOLES as e (e)}<td
-                      ><Bidi text={str(d[`${e}_fr`])} /></td
-                    >{/each}
-                </tr>{/each}
-            </tbody>
-          </table>
-        </div>
-      {/if}
-      {#if r.carte}{@const c = r.carte as Obj}
-        <figure class="carte">
-          {#if c.img}<Illus k={str(c.img)} cls="map" />{/if}
-          <ul>
-            {#each arr(c.lieux) as l, k (k)}<li>
-                {#if str(l.ar)}<Ar text={str(l.ar)} /> —
-                {/if}<Bidi text={str(l.fr)} />
+                {#if s.img}<Illus k={str(s.img)} cls="mini" />{/if}
+                <span
+                  >{#if str(s.ar)}<Ar text={str(s.ar)} /> —
+                  {/if}<Bidi text={str(s.fr)} /></span
+                >
+                <span class="pourquoi"
+                  ><Bidi text={s.bien ? t('rel.bien') : t('rel.pas_bien')} />
+                  <Bidi text={str(s.pourquoi_fr)} /></span
+                >
               </li>{/each}
           </ul>
-          <figcaption><Bidi text={str(c.legende_fr)} /></figcaption>
-        </figure>
-      {/if}
-      {#each arr(r.saviez) as s, i (i)}
-        <aside class="saviez">
-          <b>{t('rel.saviez')}</b> <b><Bidi text={str(s.titre_fr)} /></b>
-          <Bidi text={str(s.fr)} />
-        </aside>
-      {/each}
-      {#each arr(r.cas) as cs, i (i)}
-        <div class="cas" data-cas={i}>
-          <h3><Bidi text={str(cs.titre_fr)} /></h3>
-          <p class="situation"><Bidi text={str(cs.situation_fr)} /></p>
-          <p class="q"><Bidi text={str(cs.question_fr)} /></p>
-          {#if arr(cs.etapes_fr).length}
-            <details>
-              <summary>{t('rel.raisonnement')}</summary>
-              <ol>
-                {#each arr(cs.etapes_fr) as e, k (k)}<li><Bidi text={String(e)} /></li>{/each}
-              </ol>
-            </details>
-          {/if}
-          {#if cs.resolu === false && profile?.kind === 'adulte' && unit.id.startsWith('ra')}
-            <!-- adulte autonome : réponse proposée après sa propre réponse (règle vérifiée par le serveur) -->
-            <CasReponse profileId={profile.id} unitId={unit.id} casRef={casRef(ri, i)} />
-          {/if}
-        </div>
-      {/each}
-      {#if arr(r.lecons).length}
-        <ul class="lecons">
-          {#each arr(r.lecons) as l, i (i)}<li><Bidi text={str(l.fr)} /></li>{/each}
-        </ul>
-      {/if}
-      {#if arr(r.versets_ref).length}
-        <ul class="versets-ref">
-          {#each arr(r.versets_ref) as v, i (i)}<li>
-              <span class="ref"><Bidi text={str(v.ref_fr)} /></span>
-              <Bidi text={str(v.sens_fr)} />
-            </li>{/each}
-        </ul>
-      {/if}
-      {#if arr(r.retiens).length}
-        <div class="retiens">
-          {#each arr(r.retiens) as x, i (i)}<p>
-              {#if str(x.ar)}<Ar text={str(x.ar)} /> —
-              {/if}<Bidi text={str(x.fr)} />
-            </p>{/each}
-        </div>
-      {/if}
-    </section>
+        {/if}
+        {#each arr(r.hadiths) as h, i (i)}
+          {#if !masque(h)}<blockquote class="hadith">
+              {#if str(h.ar)}<Ar text={str(h.ar)} tag="p" /><Ecouter text={str(h.ar)} />{/if}
+              <p>« <Bidi text={str(h.fr)} /> »</p>
+              <p class="ref">
+                {#if str(h.rawi_fr)}<Bidi text={t('rel.rapporte_par', { rawi: str(h.rawi_fr) })} /> ·
+                {/if}<Bidi text={str(h.source_fr)} />
+                {#if str(h.grade) === 'sahih'}
+                  · {t('rel.sahih')}{:else if str(h.grade) === 'hasan'}
+                  · {t('rel.hasan')}{/if}
+              </p>
+              {#if str(h.lecon_fr)}<p class="lecon"><Bidi text={str(h.lecon_fr)} /></p>{/if}
+              <Signaler
+                kind="hadith"
+                path={`rubriques.${ri}.hadiths.${i}`}
+                block={h}
+                ref={str(h.source_fr)}
+                excerpt={str(h.fr)}
+              />
+            </blockquote>{:else}<p class="muted">{t('signal.suspendu_bloc')}</p>{/if}
+        {/each}
+        {#each arr(r.duas) as d, i (i)}
+          <div class="dua">
+            <p class="moment">
+              {#if str(d.moment_ar)}<Ar text={str(d.moment_ar)} /> —
+              {/if}<Bidi text={str(d.moment_fr)} />
+            </p>
+            <Ar text={str(d.ar)} tag="p" /><Ecouter text={str(d.ar)} />
+            <p><Bidi text={str(d.fr)} /></p>
+            {#if str(d.source_fr)}<p class="ref"><Bidi text={str(d.source_fr)} /></p>{/if}
+          </div>
+        {/each}
+        {#each arr(r.extraits) as x, i (i)}
+          <figure class="extrait">
+            {#if str(x.ar)}<Ar text={str(x.ar)} tag="p" />{/if}
+            {#each arr(x.vers) as v, k (k)}<p class="vers" lang="ar" dir="rtl">
+                {#each arr(v as unknown) as h, j (j)}<span
+                    ><Bidi text={tanwinDisplay(String(h))} base="ar" /></span
+                  >{/each}
+              </p>{/each}
+            <p><Bidi text={str(x.fr)} /></p>
+            {#if str(x.explication_fr)}<p class="expl">
+                <Bidi text={str(x.explication_fr)} />
+              </p>{/if}
+            <figcaption>
+              <Bidi text={str(x.ouvrage_fr)} /> — <Bidi
+                text={str(x.auteur_fr)}
+              />{#if str(x.localisation_fr)}, <Bidi text={str(x.localisation_fr)} />{/if}
+            </figcaption>
+          </figure>
+        {/each}
+        {#if r.tableau}{@const tb = r.tableau as Obj}
+          <div class="tw">
+            <table>
+              <thead
+                ><tr
+                  >{#each arr(tb.colonnes) as c, k (k)}<th><Bidi text={str(c.fr)} /></th>{/each}</tr
+                ></thead
+              >
+              <tbody>
+                {#each arr(tb.lignes) as row, k (k)}<tr>
+                    {#each arr(row as unknown) as cell, j (j)}<td>
+                        {#if cell && typeof cell === 'object'}{#if str((cell as Obj).ar)}<Ar
+                              text={str((cell as Obj).ar)}
+                            /><br />{/if}<Bidi text={str((cell as Obj).fr)} />{:else}<Bidi
+                            text={String(cell ?? '')}
+                          />{/if}
+                      </td>{/each}
+                  </tr>{/each}
+              </tbody>
+            </table>
+          </div>
+        {/if}
+        {#if arr(r.divergences).length}
+          <div class="tw">
+            <table class="div">
+              <thead
+                ><tr
+                  ><th>{t('rel.sujet')}</th>{#each ECOLES as e (e)}<th
+                      ><Bidi text={t(`rel.ecole_${e}`)} /></th
+                    >{/each}</tr
+                ></thead
+              >
+              <tbody>
+                {#each arr(r.divergences) as d, k (k)}<tr>
+                    <td><Bidi text={str(d.sujet_fr)} /></td>{#each ECOLES as e (e)}<td
+                        ><Bidi text={str(d[`${e}_fr`])} /></td
+                      >{/each}
+                  </tr>{/each}
+              </tbody>
+            </table>
+          </div>
+        {/if}
+        {#if r.carte}{@const c = r.carte as Obj}
+          <figure class="carte">
+            {#if c.img}<Illus k={str(c.img)} cls="map" />{/if}
+            <ul>
+              {#each arr(c.lieux) as l, k (k)}<li>
+                  {#if str(l.ar)}<Ar text={str(l.ar)} /> —
+                  {/if}<Bidi text={str(l.fr)} />
+                </li>{/each}
+            </ul>
+            <figcaption><Bidi text={str(c.legende_fr)} /></figcaption>
+          </figure>
+        {/if}
+        {#each arr(r.saviez) as s, i (i)}
+          <aside class="saviez">
+            <b>{t('rel.saviez')}</b> <b><Bidi text={str(s.titre_fr)} /></b>
+            <Bidi text={str(s.fr)} />
+          </aside>
+        {/each}
+        {#each arr(r.cas) as cs, i (i)}
+          <div class="cas" data-cas={i}>
+            <h3><Bidi text={str(cs.titre_fr)} /></h3>
+            <p class="situation"><Bidi text={str(cs.situation_fr)} /></p>
+            <p class="q"><Bidi text={str(cs.question_fr)} /></p>
+            {#if arr(cs.etapes_fr).length}
+              <details>
+                <summary>{t('rel.raisonnement')}</summary>
+                <ol>
+                  {#each arr(cs.etapes_fr) as e, k (k)}<li><Bidi text={String(e)} /></li>{/each}
+                </ol>
+              </details>
+            {/if}
+            {#if cs.resolu === false && profile?.kind === 'adulte' && unit.id.startsWith('ra')}
+              <!-- adulte autonome : réponse proposée après sa propre réponse (règle vérifiée par le serveur) -->
+              <CasReponse profileId={profile.id} unitId={unit.id} casRef={casRef(ri, i)} />
+            {/if}
+          </div>
+        {/each}
+        {#if arr(r.lecons).length}
+          <ul class="lecons">
+            {#each arr(r.lecons) as l, i (i)}<li><Bidi text={str(l.fr)} /></li>{/each}
+          </ul>
+        {/if}
+        {#if arr(r.versets_ref).length}
+          <ul class="versets-ref">
+            {#each arr(r.versets_ref) as v, i (i)}<li>
+                <span class="ref"><Bidi text={str(v.ref_fr)} /></span>
+                <Bidi text={str(v.sens_fr)} />
+              </li>{/each}
+          </ul>
+        {/if}
+        {#if arr(r.retiens).length}
+          <div class="retiens">
+            {#each arr(r.retiens) as x, i (i)}<p>
+                {#if str(x.ar)}<Ar text={str(x.ar)} /> —
+                {/if}<Bidi text={str(x.fr)} />
+              </p>{/each}
+          </div>
+        {/if}
+        {#if unit.madhhab?.[`rubriques.${ri}`]}<Signaler
+            kind="fiqh"
+            path={`rubriques.${ri}`}
+            block={r}
+            excerpt={str(r.titre_fr)}
+          />{/if}
+      </section>
+    {/if}
   {/each}
 
   {#if coran}
@@ -333,11 +357,19 @@
         <span><Bidi text={str(coran.titre_fr)} /></span>
       </h2>
       {#each arr(coran.versets) as v, i (i)}
-        <div class="verset">
-          <Ar text={str(v.ar)} tag="p" quran />
-          <p><Bidi text={str(v.fr)} /> <span class="ref"><Bidi text={str(v.ref_fr)} /></span></p>
-          {#if str(v.consigne_fr)}<p class="consigne"><Bidi text={str(v.consigne_fr)} /></p>{/if}
-        </div>
+        {#if masque(v)}<p class="muted">{t('signal.suspendu_bloc')}</p>{:else}
+          <div class="verset">
+            <Ar text={str(v.ar)} tag="p" quran />
+            <p><Bidi text={str(v.fr)} /> <span class="ref"><Bidi text={str(v.ref_fr)} /></span></p>
+            {#if str(v.consigne_fr)}<p class="consigne"><Bidi text={str(v.consigne_fr)} /></p>{/if}
+            <Signaler
+              kind="verset"
+              path={`coran.versets.${i}`}
+              block={v}
+              ref={str(v.ref_fr)}
+              excerpt={str(v.ar)}
+            />
+          </div>{/if}
       {/each}
       {#if (coran.sourate as Obj)?.num}
         <p>

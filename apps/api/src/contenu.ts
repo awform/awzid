@@ -15,6 +15,7 @@ import {
 import type { ContentRights } from './billing.js';
 import { neededIllustrations } from './needed.js';
 import { getPack } from './packs.js';
+import { currentSuspensions, maskUnit } from './suspensions.js';
 import { LEVEL_CODE, notFound, UNIT_ID, type Edition } from './routes-common.js';
 
 export function registerContent(
@@ -64,8 +65,10 @@ export function registerContent(
     async (req, reply) => {
       const ed = await edition();
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
-      const unit = await getUnitForStudent(db, ed.id, req.params.id);
-      if (!unit) return reply.code(404).send(notFound(`leçon ${req.params.id} introuvable`));
+      const raw = await getUnitForStudent(db, ed.id, req.params.id);
+      if (!raw) return reply.code(404).send(notFound(`leçon ${req.params.id} introuvable`));
+      // lot F1 (M1) : suspensions d'urgence (bloc, exercice ou leçon entière masqués, message neutre)
+      const unit = maskUnit(raw, (await currentSuspensions(db)).list);
       // audit PAY-4 : droits appliqués au contenu quand AWFORM_DROITS=on (leçons ouvertes de la formule)
       const e = await rights.of(req.auth);
       if (!rights.canOpen(e, unit))
@@ -87,8 +90,9 @@ export function registerContent(
     if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
     const levels = await listLevels(db, ed.id);
     const packs = [];
+    const susp = await currentSuspensions(db);
     for (const l of levels) {
-      const p = await getPack(db, ed.id, ed.code, l.code);
+      const p = await getPack(db, ed.id, ed.code, l.code, susp);
       if (!p) continue;
       packs.push({
         level: l.code,
@@ -124,7 +128,7 @@ export function registerContent(
       // lot 23 : un code d'activation ouvre aussi le paquet hors ligne de SON niveau (livre acheté)
       if (e && !e.droits.horsLigne && !e.packs?.includes(req.params.code))
         return reply.code(403).send({ error: { code: 'hors_ligne_reserve', plan: e.plan } });
-      const p = await getPack(db, ed.id, ed.code, req.params.code);
+      const p = await getPack(db, ed.id, ed.code, req.params.code, await currentSuspensions(db));
       if (!p)
         return reply.code(404).send(notFound(`niveau ${req.params.code} absent de l'édition`));
       const etag = `"${p.pack.hash}"`;
@@ -156,6 +160,11 @@ export function registerContent(
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
       const u = await publicUnit(db, ed.id, req.params.slug);
       if (!u) return reply.code(404).send(notFound(`leçon ${req.params.slug} introuvable`));
+      // lot F1 (M1) : leçon suspendue → rien de son contenu, message neutre côté page
+      if ((await currentSuspensions(db)).list.some((s) => s.unitId === u.unitId && s.path === '')) {
+        reply.header('Cache-Control', 'no-store');
+        return { edition: ed.code, unitId: u.unitId, levelCode: u.levelCode, suspendu: true };
+      }
       reply.header('Cache-Control', 'public, max-age=3600');
       return { edition: ed.code, ...u };
     },

@@ -2,15 +2,19 @@
  * Import d'une édition en base (CDC §5.3, étapes 4-5) : idempotent, atomique (une transaction),
  * refusé s'il existe une erreur bloquante (verset ≠ Tanzil, corrigé impossible, fichier illisible).
  */
-import { and, eq, ne, sql } from 'drizzle-orm';
+import { and, eq, inArray, isNull, ne, sql } from 'drizzle-orm';
 import {
   blockingIssues,
+  blockMadhhabs,
+  levelMadhhab,
   maskTree,
+  registryMadhhab,
   unmaskedHadithRefs,
   studentProjection,
   verifiedHadiths,
   type EditionLoad,
 } from '@awform/content';
+import { answerHashOf, refreshProgress } from './attempts.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -113,6 +117,9 @@ export async function importEdition(
     if (existing[0]) {
       const ed = existing[0];
       if (ed.sourceSha256 === load.sourceSha256) {
+        // lot F1 : empreintes de corrigé, écoles et lignée posées aussi sur une édition déjà importée
+        await backfillContent(tx as unknown as Db);
+        await insertLineage(tx, load, ed.id);
         if (opts.publish && ed.status !== 'publiee') await publish(tx, ed.id);
         return { editionId: ed.id, status: 'inchange', units: unitsCount, exercises: exCount };
       }
@@ -129,6 +136,7 @@ export async function importEdition(
       await tx.delete(t.illustration).where(eq(t.illustration.editionId, ed.id));
       await tx.delete(t.booklet).where(eq(t.booklet.editionId, ed.id));
       await tx.delete(t.evalDoc).where(eq(t.evalDoc.editionId, ed.id));
+      await tx.delete(t.exerciseLineage).where(eq(t.exerciseLineage.editionId, ed.id));
       await tx
         .update(t.edition)
         .set({ sourceSha256: load.sourceSha256, report })
@@ -207,10 +215,20 @@ export async function importEdition(
     }
     for (const lv of load.levels) {
       const rank = Number(/\d+$/.exec(lv.code)?.[0] ?? 0);
+      const madhhab = levelMadhhab(lv.code, lv.book as unknown as Record<string, unknown>);
       await tx
         .insert(t.level)
-        .values({ code: lv.code, track: trackOf(lv.code), rank, titleFr: lv.book.titre_fr ?? null })
-        .onConflictDoUpdate({ target: t.level.code, set: { titleFr: lv.book.titre_fr ?? null } });
+        .values({
+          code: lv.code,
+          track: trackOf(lv.code),
+          rank,
+          titleFr: lv.book.titre_fr ?? null,
+          madhhab,
+        })
+        .onConflictDoUpdate({
+          target: t.level.code,
+          set: { titleFr: lv.book.titre_fr ?? null, madhhab },
+        });
       await tx.insert(t.levelVersion).values({ editionId, levelCode: lv.code, book: lv.book });
 
       for (const u of lv.units) {
@@ -229,6 +247,7 @@ export async function importEdition(
           strictJson: u.strict,
           content: u.content,
           student: forStudent(studentProjection(u.content, lv.code)),
+          madhhabBlocks: blockMadhhabs(u.content),
         });
         await tx
           .insert(t.qrRedirect)
@@ -244,7 +263,10 @@ export async function importEdition(
               type: e.type,
               graded: e.graded,
             })
-            .onConflictDoUpdate({ target: t.exercise.id, set: { type: e.type, graded: e.graded } });
+            .onConflictDoUpdate({
+              target: t.exercise.id,
+              set: { type: e.type, graded: e.graded, position: e.position },
+            });
         }
         if (u.exercises.length)
           await tx.insert(t.exerciseVersion).values(
@@ -252,6 +274,9 @@ export async function importEdition(
               editionId,
               exerciseId: e.id,
               hash: e.hash,
+              // lot F1 : empreinte du CORRIGÉ (seule sa modification invalide des réponses) et rang par édition
+              answerHash: answerHashOf(e.content),
+              position: e.position,
               itemCount: e.itemCount,
               content: e.content,
             })),
@@ -303,6 +328,7 @@ export async function importEdition(
           id,
           statut: typeof data.statut === 'string' ? data.statut : null,
           validationHumaine: data.validation_humaine === true,
+          madhhab: registryMadhhab(kind, id, data),
           data,
         }));
         await insertChunks(rows, 500, (c) => tx.insert(t.registryEntry).values(c));
@@ -312,8 +338,12 @@ export async function importEdition(
     if (verified)
       await tx
         .update(t.edition)
-        .set({ report: { ...report, numerosHadithsMasques: masked } })
+        .set({
+          report: { ...report, numerosHadithsMasques: masked, lignee: load.lineage.length },
+        })
         .where(eq(t.edition.id, editionId));
+    await insertLineage(tx, load, editionId);
+    await backfillContent(tx as unknown as Db);
     if (opts.publish) await publish(tx, editionId);
     return { editionId, status, units: unitsCount, exercises: exCount };
   });
@@ -321,7 +351,108 @@ export async function importEdition(
 
 type Tx = Parameters<Parameters<Db['transaction']>[0]>[0];
 
+/** Lignée déclarée par cette édition (idempotent : une même correspondance n'est gardée qu'une fois). */
+async function insertLineage(tx: Tx, load: EditionLoad, editionId: string): Promise<void> {
+  if (!load.lineage?.length) return;
+  await insertChunks(load.lineage, 500, (c) =>
+    tx
+      .insert(t.exerciseLineage)
+      .values(c.map((l) => ({ fromId: l.from, toId: l.to, kind: l.kind, note: l.note, editionId })))
+      .onConflictDoNothing(),
+  );
+}
+
+export interface BackfillResult {
+  exercices: number;
+  lecons: number;
+  reponses: number;
+}
+
+/**
+ * Lot F1 : complète ce que les migrations ne savent pas calculer en SQL — empreinte du CORRIGÉ des versions
+ * d'exercices (`answer_hash`), blocs de fiqh étiquetés (`madhhab_blocks`), puis empreinte du corrigé des
+ * réponses déjà enregistrées (retrouvée par l'empreinte du texte qu'elles portent). Idempotent ; lancé à
+ * chaque import (y compris « inchangé ») : un déploiement migre donc les données existantes sans perte.
+ */
+export async function backfillContent(db: Db): Promise<BackfillResult> {
+  const out: BackfillResult = { exercices: 0, lecons: 0, reponses: 0 };
+  // exercices : édition par édition (la démo garde des dizaines d'éditions, plus de 100 000 versions),
+  // par paquets de 500 (une requête par paquet)
+  const xeds = await db
+    .selectDistinct({ id: t.exerciseVersion.editionId })
+    .from(t.exerciseVersion)
+    .where(isNull(t.exerciseVersion.answerHash));
+  for (const ed of xeds) {
+    const xs = await db
+      .select({
+        editionId: t.exerciseVersion.editionId,
+        exerciseId: t.exerciseVersion.exerciseId,
+        content: t.exerciseVersion.content,
+      })
+      .from(t.exerciseVersion)
+      .where(and(eq(t.exerciseVersion.editionId, ed.id), isNull(t.exerciseVersion.answerHash)));
+    await insertChunks(xs, 500, async (c) => {
+      const values = sql.join(
+        c.map((x) => sql`(${x.editionId}::uuid, ${x.exerciseId}, ${answerHashOf(x.content)})`),
+        sql`, `,
+      );
+      await db.execute(sql`
+        UPDATE exercise_version xv SET answer_hash = v.h
+        FROM (VALUES ${values}) AS v(e, x, h)
+        WHERE xv.edition_id = v.e AND xv.exercise_id = v.x`);
+      out.exercices += c.length;
+    });
+  }
+  // leçons : édition par édition (le JSON complet des livres est lourd)
+  const eds = await db
+    .selectDistinct({ id: t.unitVersion.editionId })
+    .from(t.unitVersion)
+    .where(isNull(t.unitVersion.madhhabBlocks));
+  for (const ed of eds) {
+    const us = await db
+      .select({
+        editionId: t.unitVersion.editionId,
+        unitId: t.unitVersion.unitId,
+        content: t.unitVersion.content,
+      })
+      .from(t.unitVersion)
+      .where(and(eq(t.unitVersion.editionId, ed.id), isNull(t.unitVersion.madhhabBlocks)));
+    await insertChunks(us, 200, async (c) => {
+      const values = sql.join(
+        c.map(
+          (u) =>
+            sql`(${u.editionId}::uuid, ${u.unitId}, ${JSON.stringify(blockMadhhabs(u.content))}::jsonb)`,
+        ),
+        sql`, `,
+      );
+      await db.execute(sql`
+      UPDATE unit_version uv SET madhhab_blocks = v.m
+      FROM (VALUES ${values}) AS v(e, u, m)
+      WHERE uv.edition_id = v.e AND uv.unit_id = v.u`);
+      out.lecons += c.length;
+    });
+  }
+  const r = await db.execute(sql`
+    UPDATE attempt a SET answer_hash = v.answer_hash
+    FROM (SELECT DISTINCT ON (exercise_id, hash) exercise_id, hash, answer_hash
+          FROM exercise_version WHERE answer_hash IS NOT NULL) v
+    WHERE a.answer_hash IS NULL AND a.event_type = 'reponse'
+      AND a.exercise_id = v.exercise_id AND a.exercise_hash = v.hash`);
+  out.reponses = r.rowCount ?? 0;
+  return out;
+}
+
+/**
+ * Publication. Lot F1 : la progression des élèves est recalculée pour les leçons dont un CORRIGÉ a changé
+ * (ou dont un exercice noté a été ajouté ou retiré) par rapport à l'édition jusque-là publiée — et pour elles
+ * seulement : une édition qui ne corrige que des coquilles ne touche aucune progression.
+ */
 async function publish(tx: Tx, editionId: string): Promise<void> {
+  const [prev] = await tx
+    .select({ id: t.edition.id })
+    .from(t.edition)
+    .where(and(eq(t.edition.status, 'publiee'), ne(t.edition.id, editionId)))
+    .limit(1);
   await tx
     .update(t.edition)
     .set({ status: 'retiree' })
@@ -330,4 +461,41 @@ async function publish(tx: Tx, editionId: string): Promise<void> {
     .update(t.edition)
     .set({ status: 'publiee', publishedAt: new Date() })
     .where(eq(t.edition.id, editionId));
+  if (prev) await reconcileProgress(tx as unknown as Db, prev.id, editionId);
+}
+
+/** Leçons dont l'ensemble (exercice noté, corrigé) diffère entre deux éditions. */
+export async function unitsWithChangedKeys(
+  db: Db,
+  fromEdition: string,
+  toEdition: string,
+): Promise<string[]> {
+  const r = await db.execute<{ unit_id: string }>(sql`
+    WITH s AS (
+      SELECT xv.edition_id, e.unit_id,
+             string_agg(xv.exercise_id || ':' || coalesce(xv.answer_hash, ''), ',' ORDER BY xv.exercise_id) AS sig
+      FROM exercise_version xv JOIN exercise e ON e.id = xv.exercise_id
+      WHERE xv.edition_id IN (${fromEdition}, ${toEdition}) AND e.graded
+      GROUP BY xv.edition_id, e.unit_id)
+    SELECT coalesce(a.unit_id, b.unit_id) AS unit_id
+    FROM (SELECT * FROM s WHERE edition_id = ${fromEdition}) a
+    FULL JOIN (SELECT * FROM s WHERE edition_id = ${toEdition}) b ON a.unit_id = b.unit_id
+    WHERE a.sig IS DISTINCT FROM b.sig`);
+  return r.rows.map((x) => x.unit_id);
+}
+
+/** Recalcule la progression des élèves pour les leçons dont le corrigé a changé ; renvoie le nombre recalculé. */
+export async function reconcileProgress(
+  db: Db,
+  fromEdition: string,
+  toEdition: string,
+): Promise<number> {
+  const units = await unitsWithChangedKeys(db, fromEdition, toEdition);
+  if (!units.length) return 0;
+  const pairs = await db
+    .selectDistinct({ profileId: t.progress.profileId, unitId: t.progress.unitId })
+    .from(t.progress)
+    .where(inArray(t.progress.unitId, units));
+  for (const p of pairs) await refreshProgress(db, toEdition, p.profileId, p.unitId);
+  return pairs.length;
 }

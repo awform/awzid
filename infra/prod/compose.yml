@@ -71,6 +71,18 @@ services:
     profiles: [outils]
     logging: *logs
 
+  staff:
+    # comptes du personnel et rôles (lot F1) : `--kind enseignant|admin --email …` (mot de passe passé par
+    # `run -e AWFORM_STAFF_PASSWORD`, jamais en argument) ou `--role referent --email … [--retirer]`
+    # (référent religieux : file des signalements du contenu) ; compte propriétaire, jamais l'API
+    image: awform/api:${AWFORM_VERSION:-local}
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/outils.env'
+    entrypoint: ['node', 'dist/cli/staff.js']
+    depends_on: { db: { condition: service_healthy } }
+    restart: 'no'
+    profiles: [outils]
+    logging: *logs
+
   relais:
     # relais d'école (lot 17) : creer <nom> <sous-domaine> | revoquer <sous-domaine> | liste
     # (compte propriétaire : l'API n'a que lecture et mise à jour du battement sur la table relay)

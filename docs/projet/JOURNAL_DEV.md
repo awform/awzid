@@ -8,6 +8,74 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 05/10/2026 — Lot F1 : contenu robuste (revue d'architecture E5, M2, G2, G1, M1)
+
+Branche `f1-contenu-wip` (worktree `~/awform-f1`, depuis `main` a2a64ec, fusionnée avec A12 `dcad4f0`), intégrée
+dans `main`, démo redéployée. Base de tests unitaires propre au worktree (`awform_f1_test`).
+
+1. **Identifiants gelés (E5)** : les livres portent déjà **5 703 `id` explicites** (31 niveaux, tables
+   `ids/*-correspondance.json`, outil gel-ids) et l'importeur les lisait ; **tous identiques aux anciennes clés
+   de position** → aucune réponse à déplacer (vérifié). Ce qui change : l'import ne compare plus jamais un id à
+   la position (avant, un exercice inséré dans un livre gelé faisait REFUSER l'import) ; dans un livre gelé, un
+   exercice sans `id` est une erreur bloquante ; un id gelé disparu sans déclaration est signalé (`id_disparu`) ;
+   `ids/lignee.json` (facultatif) déclare remplacement, fusion, scission ou retrait → table `exercise_lineage`
+   (les réponses suivent la lignée). Rang par édition (`exercise_version.position`) ; l'unicité (unité, rang)
+   est retirée.
+2. **Corrigé distinct du texte** : `answerKey` (`@awform/grading`, mêmes règles que la correction : chaînes après
+   `plain`, cases et mots par indice, « relier » par squelette arabe + image, « ordre » par la suite attendue) ;
+   empreinte `answer_hash` sur `exercise_version` ET sur chaque réponse (`attempt`). Une réponse compte tant que
+   le corrigé de son exercice n'a pas changé : une coquille (consigne, traduction, voyelles d'une case) ne fait
+   rien perdre ; un corrigé modifié n'invalide que cet exercice (« Le corrigé de l'exercice N a été rectifié :
+   refais-le. Tes autres réponses sont gardées. », `GET /api/v1/progress/unit`). À la publication, seules les
+   leçons dont un corrigé a changé sont recalculées.
+3. **Événements** : `edition` + version du format `v: 2` dans chaque événement (leçons gardées hors ligne : édition
+   stockée avec la leçon). Le serveur accepte une réponse donnée sur une édition antérieure et la corrige avec
+   CE contenu (repli par l'empreinte du texte pour un appareil ancien) ; refus définitif = code stable
+   `version_inconnue`. Appareil : un refus n'est plus jeté — **mis de côté** (motif gardé), renvoyé au plus une
+   fois par heure (5 fois), visible dans « Mes téléchargements » (« Réessayer », « Signaler le problème » :
+   `POST /api/v1/sync/rejets`, nombre + motifs + édition, jamais le contenu ; journal `synchro.rejets`).
+4. **Épreuves figées (M2)** : `exam_session.edition_id` NOT NULL (sessions existantes : édition publiée) ;
+   énoncé, corrigé, grille et illustrations lus dans cette édition jusqu'à la fermeture.
+5. **École juridique (G2)** : `level.madhhab` (re, ra → `maliki` ; arabe, Coran, lectures → `commun`),
+   `registry_entry.madhhab` (fiqh → `maliki` d'après `FIQH_MAL_…` ; versets, hadiths → `commun`),
+   `unit_version.madhhab_blocks` (`fiqh_adab`, rubriques fiqh / muʿāmalāt / famille / extraits → `maliki`) ;
+   un champ `madhhab` des livres l'emportera. Mention « Selon l'école mālikite » sous ces blocs. Aucun texte
+   religieux modifié ; Tanzil intact (contrôle octet par octet de l'import inchangé et vert).
+6. **Traduction des contenus (G1), structure vide** : `content_translation` (texte source = champ français du
+   livre repéré par son empreinte, versions, statut brouillon / relue / validée / rejetée ; le religieux n'est
+   servi que validé), `edition.source_locale` = `fr`, `profile.explanation_locale` (défaut `fr`, modifiable par
+   `PATCH /profiles/:id`) ; `translatableFields`, `pickTranslation`, `servedTranslations`. **Aucune traduction
+   produite** ; l'interface reste entièrement traduisible (60 nouveaux textes en fr, en, es, de, ar).
+7. **« Signaler une erreur » (M1)** : bouton sous chaque verset, hadith, bloc de fiqh, exercice, et pour la
+   leçon (formulaire : motif + commentaire court, « n'écrivez aucune donnée personnelle » ; hors ligne : envoyé
+   au retour du réseau). Compte connecté exigé ; 10 signalements par 24 h, un par bloc et par jour ; ni
+   pseudonyme ni profil enregistrés, l'auteur n'est jamais montré. File dans l'espace administrateur pour
+   l'administrateur et le **référent** (rôle `account_role`, `staff --role referent`, second facteur) : reçu →
+   en examen → corrigé (erratum public, page `/errata`) ou rejeté (motif obligatoire), décisions journalisées.
+   **Suspension d'urgence** (administrateur) : leçon, exercice (par son id gelé) ou bloc (chemin + empreinte)
+   masqué partout — leçon servie, paquets hors ligne (empreinte de la leçon modifiée → mise à jour
+   différentielle), page du QR, contexte du tuteur, copies des appareils (`GET /api/v1/contenu/suspensions`
+   gardé hors ligne) — avec un message neutre ; levée journalisée. Service compose `staff` (EXPLOITATION §9).
+8. **Migrations** `0029_lignee_exercices`, `0030_epreuve_edition`, `0031_madhhab`, `0032_traductions_contenu`,
+   `0033_signalements` (en avant seulement, comme les précédentes ; retour arrière manuel écrit en tête de chaque
+   fichier). Ce que le SQL ne sait pas calculer (empreintes de corrigé, blocs de fiqh, empreinte des réponses
+   existantes) : `backfillContent`, lancé à chaque import (même « inchangé »), par édition. **Répétition sur une
+   copie de la base de démo** (35 éditions, 127 678 versions d'exercices, 17 362 leçons) : migrations 5,4 s,
+   complément 11,6 s (+352 Mo), 2e passage 0 ; 22 niveaux `commun`, 9 `maliki` ; registre : 663 fiqh `maliki`,
+   1 418 versets et 1 599 hadiths `commun` ; 594 leçons publiées avec blocs de fiqh étiquetés.
+9. **Ce que les livres doivent exporter** : rien de bloquant (ids déjà présents). Désormais : (a) un exercice
+   NOUVEAU reçoit un nouvel id (gel-ids), jamais celui d'un autre ; (b) `ids/lignee.json` quand un exercice gelé
+   est remplacé, fusionné, scindé ou retiré :
+   `{ "lignee": [{ "de": "ad2.l03.ex4", "vers": "ad2.l03.ex9", "nature": "remplace", "motif": "…" }] }`
+   (`nature` : remplace | fusion | scission | retire, `vers: null` pour un retrait) ; (c) plus tard, si des
+   variantes par école arrivent : champ `madhhab` (maliki | hanafi | shafii | hanbali | commun) sur le livre,
+   la leçon, le bloc ou l'entrée du registre. Les items restent repérés par leur rang : un item inséré change
+   le corrigé, l'exercice entier redevient « à refaire » (jamais de réponse attribuée au mauvais item).
+10. **Tests** : **1 413 réussis, 1 ignoré, 0 échec** (`pnpm -r --no-bail test`, vrais livres, base `awform_f1_test`, mesuré dans `~/awform-f1` après fusion avec A12) dont 34 nouveaux : grading +6 (corrigé ≠ texte), content +9 (lignée, école, suspension, traductions), db +8 (`f1-lignee.test.ts` : coquille sans perte de maîtrise, corrigé changé → seul cet exercice à refaire, insertion, réponse d'une édition antérieure, lignée déclarée, reprise des données d'avant la migration), api +6 (`f1.test.ts` : signalement → file → suspension partout → levée, limites, errata, épreuve figée pendant une publication), web +5 (`sync-f1.test.ts` : refus mis de côté, nouvel essai, signalement) ; e2e : `f1.spec.ts` (réponse hors ligne refusée gardée puis signalée ; signalement d'un exercice → file de l'administrateur → suspension → exercice masqué chez l'élève → levée), sur téléphone et ordinateur ; suite complète : **250 réussis, 22 ignorés, 0 échec** (12,3 min).
+11. **Budget** : page la plus lourde `/lecons/[id]` 143,9 Ko ≤ 150 ; toutes les pages 329,6 + CSS 31,3 = **360,9 Ko** (main après A12 : 354,9 ; F1 +5,9) → budget total porté de 360 à **365 Ko, à valider (D-F1)**.
+
+Décisions à prendre (D-F1) : budget total 365 Ko ; durée de conservation des signalements ; titulaire du rôle
+référent ; export `ids/lignee.json` côté livres ; formulation « Selon l'école mālikite ».
 ## 05/10/2026 — Chantier A12 (suite) : décisions du chef de projet (D-A12) appliquées
 
 - **Navigation : cinq entrées au plus** (règle du lot 26 maintenue). Ados et adultes : Accueil, Arabe, Coran,

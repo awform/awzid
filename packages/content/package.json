@@ -37,6 +37,10 @@
       "types": "./dist/riwayat.d.ts",
       "default": "./dist/riwayat.js"
     },
+    "./suspension": {
+      "types": "./dist/suspension.d.ts",
+      "default": "./dist/suspension.js"
+    },
     "./adhkar": {
       "types": "./dist/adhkar.d.ts",
       "default": "./dist/adhkar.js"

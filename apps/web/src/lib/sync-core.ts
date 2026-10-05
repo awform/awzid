@@ -4,8 +4,12 @@
  *    suite dans IndexedDB (rien ne se perd en cas de coupure de réseau ou d'électricité) ;
  *  - l'envoi se fait par petits lots, dans l'ordre, dès que le réseau revient (page ou service worker) ;
  *  - le serveur ignore un doublon et RECALCULE les états : il n'y a jamais de conflit à résoudre à la main ;
- *  - un événement refusé définitivement (empreinte périmée, profil inconnu) est retiré de la file et
- *    compté, pour ne pas bloquer les suivants ;
+ *  - lot F1 (revue E5) : un événement refusé par le serveur n'est plus jamais jeté. Il quitte la file (pour
+ *    ne pas bloquer les suivants) et est MIS DE CÔTÉ sur l'appareil avec le motif du refus ; il est renvoyé
+ *    automatiquement (au plus une fois par heure, 5 fois), puis reste visible dans « Mes téléchargements »
+ *    où l'on peut le renvoyer ou le signaler (résumé sans contenu). Chaque événement porte l'édition du
+ *    contenu affiché (`edition`) et la version de son format (`v`) : le serveur accepte une réponse donnée
+ *    sur une édition antérieure ;
  *  - un lot refusé en bloc (erreur du serveur, audit OFF-2) est coupé en deux jusqu'à isoler l'événement
  *    fautif : les autres partent, lui est réessayé, puis mis en QUARANTAINE (gardé à part, jamais perdu)
  *    après 3 cycles en échec. Serveur indisponible (429, 502-504) : on attend, sans rien écarter.
@@ -24,18 +28,42 @@ export interface AttemptEvent {
   itemIndex?: number;
   response: unknown;
   deviceAt: string;
+  /** code de l'édition du contenu affiché (lot F1) */
+  edition?: string;
+  /** version du format de l'événement (lot F1 : 2 ; absent = 1) */
+  v?: number;
+}
+
+/** Version du format des événements écrits par cette version de l'application. */
+export const EVENT_FORMAT = 2;
+
+/** Événement refusé par le serveur, gardé de côté sur l'appareil (lot F1). */
+export interface SetAside {
+  ev: AttemptEvent;
+  reason: string;
+  code?: string;
+  tries: number;
+  firstAt: string;
+  lastTry: string;
+  /** résumé envoyé au serveur (« Signaler ») */
+  reported?: boolean;
 }
 
 export interface FlushResult {
   sent: number;
   rejected: number;
   remaining: number;
-  progress: Record<string, { status: string; score: number | null; bestScore: number | null }>;
+  progress: Record<
+    string,
+    { status: string; score: number | null; bestScore: number | null; revised?: string[] }
+  >;
   offline: boolean;
   /** le serveur demande une connexion : la file reste sur l'appareil */
   unauthenticated?: boolean;
   /** événements mis en quarantaine pendant cet envoi (audit OFF-2) */
   quarantined: number;
+  /** événements refusés gardés de côté sur l'appareil (total après cet envoi, lot F1) */
+  setAside: number;
 }
 
 export const BATCH = 100;
@@ -43,16 +71,49 @@ export const BATCH = 100;
 export const QUARANTINE_AFTER = 3;
 const FAILS = 'syncFailures';
 const QUARANTINE = 'syncQuarantine';
+const ASIDE = 'syncSetAside';
+/** nouvel essai automatique d'un événement mis de côté : au plus une fois par heure, 5 fois */
+export const ASIDE_RETRY_MS = 3_600_000;
+export const ASIDE_MAX_TRIES = 5;
 const UNAVAILABLE = new Set([429, 502, 503, 504]);
 /**
  * Refus qui ne tiennent pas aux événements (audit OFF-4) : droits (403, second facteur…), service absent
  * (404, aucune édition publiée) — la file ATTEND, rien n'est mis en quarantaine.
  */
 const NOT_THE_EVENTS = new Set([403, 404]);
+const POST = { 'content-type': 'application/json', 'x-awform': '1' };
 
 /** Événements écartés de la file après des échecs répétés (diagnostic, envoi manuel plus tard). */
 export async function quarantined(): Promise<AttemptEvent[]> {
   return (await kvGet<AttemptEvent[]>(QUARANTINE).catch(() => undefined)) ?? [];
+}
+
+/** Événements refusés par le serveur et gardés sur l'appareil (lot F1). */
+export async function setAside(): Promise<SetAside[]> {
+  return (await kvGet<SetAside[]>(ASIDE).catch(() => undefined)) ?? [];
+}
+
+async function putAside(list: Array<{ ev: AttemptEvent; reason: string; code?: string }>) {
+  if (!list.length) return;
+  const now = new Date().toISOString();
+  const cur = await setAside();
+  for (const x of list) {
+    const old = cur.find((s) => s.ev.id === x.ev.id);
+    if (old)
+      Object.assign(old, { reason: x.reason, code: x.code, tries: old.tries + 1, lastTry: now });
+    else cur.push({ ...x, tries: 1, firstAt: now, lastTry: now });
+  }
+  // borne de sécurité (stockage de l'appareil) : les 1 000 plus récents
+  await kvSet(ASIDE, cur.slice(-1000));
+}
+
+async function dropAside(ids: readonly string[]) {
+  if (!ids.length) return;
+  const set = new Set(ids);
+  await kvSet(
+    ASIDE,
+    (await setAside()).filter((s) => !set.has(s.ev.id)),
+  );
 }
 
 /** Échec d'un événement seul : réessayé au prochain cycle, en quarantaine au 3e. Vrai si écarté. */
@@ -87,13 +148,96 @@ export function uuidv7(now = Date.now()): string {
 }
 
 export async function queueEvent(ev: Omit<AttemptEvent, 'id' | 'deviceAt'>): Promise<AttemptEvent> {
-  const full: AttemptEvent = { ...ev, id: uuidv7(), deviceAt: new Date().toISOString() };
+  const full: AttemptEvent = {
+    ...ev,
+    id: uuidv7(),
+    deviceAt: new Date().toISOString(),
+    v: EVENT_FORMAT,
+  };
   await putMany('events', [full]);
   return full;
 }
 
 export function pendingCount(): Promise<number> {
   return count('events');
+}
+
+/**
+ * Renvoie les événements mis de côté dont le délai est passé (tous si `force`) : acceptés ou doublons →
+ * retirés ; refusés de nouveau → gardés (essai compté). Renvoie le nombre encore de côté.
+ */
+export async function retrySetAside(
+  fetchFn: typeof fetch = fetch,
+  base = '',
+  force = false,
+): Promise<number> {
+  const now = Date.now();
+  const due = (await setAside()).filter(
+    (s) =>
+      force || (s.tries < ASIDE_MAX_TRIES && now - new Date(s.lastTry).getTime() >= ASIDE_RETRY_MS),
+  );
+  for (let i = 0; i < due.length; i += BATCH) {
+    const batch = due.slice(i, i + BATCH);
+    let body: {
+      accepted: Array<{ id: string }>;
+      duplicates: string[];
+      rejected: Array<{ id: string; reason?: string; code?: string }>;
+    };
+    try {
+      const r = await fetchFn(`${base}/api/v1/attempts`, {
+        method: 'POST',
+        headers: POST,
+        credentials: 'same-origin',
+        body: JSON.stringify({ events: batch.map((s) => s.ev) }),
+      });
+      if (!r.ok || (r.headers.get('content-type') ?? '').includes('text/html')) break;
+      body = (await r.json()) as typeof body;
+    } catch {
+      break;
+    }
+    await dropAside([...body.accepted.map((a) => a.id), ...body.duplicates]);
+    await putAside(
+      body.rejected.flatMap((x) => {
+        const s = batch.find((b) => b.ev.id === x.id);
+        return s ? [{ ev: s.ev, reason: x.reason ?? s.reason, code: x.code }] : [];
+      }),
+    );
+  }
+  return (await setAside()).length;
+}
+
+/**
+ * « Signaler » : résumé des refus (nombre, motifs, édition) envoyé au serveur — jamais le contenu des
+ * réponses ni le profil. Les événements restent sur l'appareil.
+ */
+export async function reportSetAside(fetchFn: typeof fetch = fetch, base = ''): Promise<boolean> {
+  const list = await setAside();
+  if (!list.length) return false;
+  const reasons: Record<string, number> = {};
+  for (const s of list) {
+    const k = s.reason.slice(0, 80);
+    reasons[k] = (reasons[k] ?? 0) + 1;
+  }
+  try {
+    const r = await fetchFn(`${base}/api/v1/sync/rejets`, {
+      method: 'POST',
+      headers: POST,
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        count: list.length,
+        reasons: Object.fromEntries(Object.entries(reasons).slice(0, 10)),
+        ...(list.at(-1)?.ev.edition ? { edition: list.at(-1)!.ev.edition } : {}),
+      }),
+    });
+    if (!r.ok) return false;
+  } catch {
+    return false;
+  }
+  await kvSet(
+    ASIDE,
+    list.map((s) => ({ ...s, reported: true })),
+  );
+  return true;
 }
 
 let running: Promise<FlushResult> | null = null;
@@ -109,6 +253,7 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
       progress: {},
       offline: false,
       quarantined: 0,
+      setAside: 0,
     };
     // événements fautifs isolés pendant ce cycle : laissés dans la file, pas renvoyés tout de suite
     const skip = new Set<string>();
@@ -125,7 +270,7 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
           r = await fetchFn(`${base}/api/v1/attempts`, {
             method: 'POST',
             // en-tête anti-CSRF exigé par l'API pour toute écriture ; cookie de session de même origine
-            headers: { 'content-type': 'application/json', 'x-awform': '1' },
+            headers: POST,
             credentials: 'same-origin',
             body: JSON.stringify({ events: batch }),
           });
@@ -159,7 +304,7 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
         let body: {
           accepted: Array<{ id: string }>;
           duplicates: string[];
-          rejected: Array<{ id: string; code?: string }>;
+          rejected: Array<{ id: string; reason?: string; code?: string }>;
           progress?: FlushResult['progress'];
         };
         try {
@@ -188,6 +333,14 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
         const rejected = body.rejected.filter(
           (x) => x.code !== 'autre_compte' && x.code !== 'conflit_identifiant',
         );
+        // lot F1 : refusés → mis de côté (jamais jetés), avec le motif du serveur
+        const byId = new Map(batch.map((e) => [e.id, e]));
+        await putAside(
+          rejected.flatMap((x) => {
+            const ev = byId.get(x.id);
+            return ev ? [{ ev, reason: x.reason ?? '', code: x.code }] : [];
+          }),
+        );
         const done = [
           ...body.accepted.map((a) => a.id),
           ...body.duplicates,
@@ -203,8 +356,11 @@ export function flushQueue(fetchFn: typeof fetch = fetch, base = ''): Promise<Fl
         await delMany('events', done);
         await kvSet('lastSync', new Date().toISOString());
       }
+      // nouvel essai des événements mis de côté dont le délai est passé (réseau présent)
+      if (!res.offline && !res.unauthenticated) await retrySetAside(fetchFn, base);
     } finally {
       res.remaining = await count('events');
+      res.setAside = (await setAside()).length;
       running = null;
     }
     return res;

@@ -24,6 +24,7 @@ import {
   smallint,
   text,
   timestamp,
+  unique,
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
@@ -32,6 +33,9 @@ import {
 const bytea = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => 'bytea' });
 
 const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
+
+/** Écoles juridiques admises (lot F1, G2 ; même liste que `MADHHABS` de @awform/content). */
+const MADHHAB_SQL = "'maliki', 'hanafi', 'shafii', 'hanbali', 'commun'";
 
 // ================================================================ contenu (par édition)
 
@@ -49,19 +53,32 @@ export const edition = pgTable('edition', {
   /** rapport d'import : statistiques, avertissements */
   report: jsonb('report').notNull().default({}),
   notes: text('notes'),
+  /** langue SOURCE des textes des livres (lot F1, G1) : français (décision du client) */
+  sourceLocale: text('source_locale').notNull().default('fr'),
   createdAt: createdAt(),
   publishedAt: timestamp('published_at', { withTimezone: true }),
 });
 
 /** Niveau : en1, ad1… (identifiant définitif). */
-export const level = pgTable('level', {
-  code: text('code').primaryKey(),
-  /** enfants | adultes | ados | religion… */
-  track: text('track').notNull(),
-  rank: smallint('rank').notNull(),
-  titleFr: text('title_fr'),
-  createdAt: createdAt(),
-});
+export const level = pgTable(
+  'level',
+  {
+    code: text('code').primaryKey(),
+    /** enfants | adultes | ados | religion… */
+    track: text('track').notNull(),
+    rank: smallint('rank').notNull(),
+    titleFr: text('title_fr'),
+    /**
+     * École juridique (lot F1, G2) : « maliki » pour les sciences islamiques, « commun » pour l'arabe et le Coran
+     * (null : non étiqueté). Étiquette seulement, aucun texte modifié.
+     */
+    madhhab: text('madhhab'),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    check('level_madhhab', sql`${t.madhhab} IS NULL OR ${t.madhhab} IN (${sql.raw(MADHHAB_SQL)})`),
+  ],
+);
 
 /** Métadonnées book.js d'un niveau, par édition. */
 export const levelVersion = pgTable(
@@ -118,11 +135,20 @@ export const unitVersion = pgTable(
     content: jsonb('content').notNull(),
     /** projection « élève — entraînement » (sans guide ni translittération) */
     student: jsonb('student').notNull(),
+    /**
+     * Blocs de fiqh → école (lot F1, G2) : `{ "fiqh_adab": "maliki", "rubriques.3": "maliki" }` ; `{}` sans bloc de
+     * fiqh ; null : pas encore calculé (rempli par `backfillContent`). Le texte du livre n'est pas touché.
+     */
+    madhhabBlocks: jsonb('madhhab_blocks'),
   },
   (t) => [primaryKey({ columns: [t.editionId, t.unitId] })],
 );
 
-/** Exercice : id de position `<unité>.ex<k>` (stable tant que l'ordre du livre ne change pas). */
+/**
+ * Exercice : identifiant GELÉ des livres (`id` explicite, ex. `ad2.l03.ex4` — jamais recalculé depuis la
+ * position, lot F1). `position` = rang dans la DERNIÈRE édition importée (le rang par édition est dans
+ * `exercise_version.position`) : un exercice inséré ne décale plus l'identité des autres.
+ */
 export const exercise = pgTable(
   'exercise',
   {
@@ -135,10 +161,14 @@ export const exercise = pgTable(
     graded: boolean('graded').notNull(),
     createdAt: createdAt(),
   },
-  (t) => [uniqueIndex('exercise_unit_position').on(t.unitId, t.position)],
+  (t) => [index('exercise_unit').on(t.unitId, t.position)],
 );
 
-/** Exercice × édition, avec l'empreinte de son contenu (les réponses sont rattachées à cette empreinte). */
+/**
+ * Exercice × édition. Deux empreintes (lot F1, E5) : `hash` = TEXTE complet (sert à reconnaître la version
+ * qu'un appareil avait téléchargée), `answer_hash` = CORRIGÉ seul (réponses attendues : seule sa modification
+ * invalide les réponses données). `position` : rang dans le livre de CETTE édition.
+ */
 export const exerciseVersion = pgTable(
   'exercise_version',
   {
@@ -149,12 +179,41 @@ export const exerciseVersion = pgTable(
       .notNull()
       .references(() => exercise.id),
     hash: text('hash').notNull(),
+    /** null : pas encore calculé (rempli par `backfillContent` après la migration) */
+    answerHash: text('answer_hash'),
+    position: smallint('position').notNull(),
     itemCount: smallint('item_count').notNull(),
     content: jsonb('content').notNull(),
   },
   (t) => [
     primaryKey({ columns: [t.editionId, t.exerciseId] }),
     index('exercise_version_hash').on(t.hash),
+  ],
+);
+
+/**
+ * Lignée des exercices (lot F1, E5 ; CDC §5.2) : ancien identifiant → identifiant actuel, remplie par l'import
+ * (tables de gel quand l'identifiant a changé, `ids/lignee.json` des livres). Les réponses données sous
+ * l'ancien identifiant suivent la lignée ; elles ne comptent que si le corrigé est resté le même.
+ */
+export const exerciseLineage = pgTable(
+  'exercise_lineage',
+  {
+    fromId: text('from_id').notNull(),
+    /** null : exercice retiré */
+    toId: text('to_id'),
+    kind: text('kind').notNull(),
+    note: text('note'),
+    /** édition dont l'import a déclaré cette lignée */
+    editionId: uuid('edition_id').references(() => edition.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    unique('exercise_lineage_from_to').on(t.fromId, t.toId).nullsNotDistinct(),
+    check(
+      'exercise_lineage_kind',
+      sql`${t.kind} IN ('gel', 'remplace', 'fusion', 'scission', 'retire') AND (${t.kind} = 'retire') = (${t.toId} IS NULL)`,
+    ),
   ],
 );
 
@@ -233,11 +292,83 @@ export const registryEntry = pgTable(
     statut: text('statut'),
     /** jamais vrai sans validation par le référent humain (REGLES §2) */
     validationHumaine: boolean('validation_humaine').notNull().default(false),
+    /** école (lot F1, G2) : « maliki » pour les règles de fiqh, « commun » pour versets et hadiths */
+    madhhab: text('madhhab'),
     data: jsonb('data').notNull(),
   },
   (t) => [
     primaryKey({ columns: [t.editionId, t.kind, t.id] }),
     index('registry_statut').on(t.statut),
+    check(
+      'registry_madhhab',
+      sql`${t.madhhab} IS NULL OR ${t.madhhab} IN (${sql.raw(MADHHAB_SQL)})`,
+    ),
+  ],
+);
+
+/**
+ * Traductions des CONTENUS (lot F1, revue G1) — structure prête, VIDE (les livres restent en français) :
+ * calque « texte source + traduction versionnée ». Le texte source est le champ français du livre
+ * (`object_kind` + `object_id` + `field_path`), repéré par son empreinte : une traduction faite sur un texte
+ * source qui a changé n'est plus servie. Une traduction RELIGIEUSE (sens d'un verset, hadith, invocation,
+ * fiqh, extraits de l'école) n'est servie que validée par le référent ; une autre, relue ou validée.
+ */
+export const contentTranslation = pgTable(
+  'content_translation',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    /** unite | exercice | registre | niveau | livret */
+    objectKind: text('object_kind').notNull(),
+    objectId: text('object_id').notNull(),
+    /** chemin du champ dans le JSON source, ex. `rubriques.2.texte.0.fr` */
+    fieldPath: text('field_path').notNull(),
+    locale: text('locale').notNull(),
+    version: smallint('version').notNull().default(1),
+    /** SHA-256 du texte source (français) traduit */
+    sourceSha256: text('source_sha256').notNull(),
+    sourceEditionId: uuid('source_edition_id').references(() => edition.id, {
+      onDelete: 'set null',
+    }),
+    text: text('text').notNull(),
+    religious: boolean('religious').notNull(),
+    status: text('status').notNull().default('brouillon'),
+    translatorAccountId: uuid('translator_account_id').references(() => account.id, {
+      onDelete: 'set null',
+    }),
+    reviewedBy: uuid('reviewed_by').references(() => account.id, { onDelete: 'set null' }),
+    reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
+    /** référent qui a validé (exigé pour le statut « validee ») */
+    validatedBy: uuid('validated_by').references(() => account.id, { onDelete: 'set null' }),
+    validatedAt: timestamp('validated_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex('content_translation_version').on(
+      t.objectKind,
+      t.objectId,
+      t.fieldPath,
+      t.locale,
+      t.version,
+    ),
+    check(
+      'content_translation_kind',
+      sql`${t.objectKind} IN ('unite', 'exercice', 'registre', 'niveau', 'livret')`,
+    ),
+    check(
+      'content_translation_status',
+      sql`${t.status} IN ('brouillon', 'relue', 'validee', 'rejetee')`,
+    ),
+    check(
+      'content_translation_locale',
+      sql`${t.locale} ~ '^[a-z]{2,3}(-[A-Z]{2})?$' AND ${t.locale} <> 'fr'`,
+    ),
+    check(
+      'content_translation_validee',
+      sql`${t.status} <> 'validee' OR ${t.validatedAt} IS NOT NULL`,
+    ),
+    check('content_translation_text', sql`char_length(${t.text}) <= 20000`),
   ],
 );
 
@@ -322,6 +453,11 @@ export const profile = pgTable(
     avatar: text('avatar'),
     /** niveau courant, ex. en1 */
     levelCode: text('level_code').references(() => level.code),
+    /**
+     * Langue des EXPLICATIONS du contenu (lot F1, G1), distincte de la langue de l'interface
+     * (`account.locale`) ; « fr » tant qu'aucune traduction validée n'existe (les livres restent en français).
+     */
+    explanationLocale: text('explanation_locale').notNull().default('fr'),
     createdAt: createdAt(),
   },
   (t) => [
@@ -330,6 +466,7 @@ export const profile = pgTable(
       'profile_birth_year',
       sql`${t.birthYear} IS NULL OR ${t.birthYear} BETWEEN 1900 AND 2100`,
     ),
+    check('profile_explanation_locale', sql`${t.explanationLocale} ~ '^[a-z]{2,3}(-[A-Z]{2})?$'`),
   ],
 );
 
@@ -415,7 +552,10 @@ export const attempt = pgTable(
       .notNull()
       .references(() => unit.id),
     exerciseId: text('exercise_id').references(() => exercise.id),
+    /** empreinte du TEXTE de l'exercice tel que l'appareil l'avait (édition de l'événement) */
     exerciseHash: text('exercise_hash'),
+    /** empreinte du CORRIGÉ au moment de la réponse (lot F1) : la réponse compte tant qu'il n'a pas changé */
+    answerHash: text('answer_hash'),
     /** item concerné (null = exercice entier) */
     itemIndex: smallint('item_index'),
     /** exercise_answer, checklist, dictee… */
@@ -1132,6 +1272,119 @@ export const freeAnswer = pgTable(
   ],
 );
 
+// ================================================================ signalements d'erreurs (lot F1, revue M1)
+
+/**
+ * Rôles portés par un compte EN PLUS de son type (lot F1 ; amorce de la revue E2) : « referent » = référent
+ * religieux (traite la file des signalements de contenu, valide les traductions religieuses). Attribué par
+ * l'outil `staff` (propriétaire de la base), jamais par l'API.
+ */
+export const accountRole = pgTable(
+  'account_role',
+  {
+    accountId: uuid('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    role: text('role').notNull(),
+    grantedAt: timestamp('granted_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.accountId, t.role] }),
+    check('account_role_role', sql`${t.role} IN ('referent')`),
+  ],
+);
+
+/**
+ * « Signaler une erreur » sur un verset, un hadith, une règle de fiqh, une leçon ou un exercice. Minimisation :
+ * aucun pseudonyme ni profil, le compte n'est gardé que pour limiter les abus (jamais montré au référent) ;
+ * commentaire court. File de traitement : reçu → en examen → corrigé (erratum public) ou rejeté (motif).
+ */
+export const contentReport = pgTable(
+  'content_report',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    accountId: uuid('account_id').references(() => account.id, { onDelete: 'set null' }),
+    editionId: uuid('edition_id').references(() => edition.id, { onDelete: 'set null' }),
+    targetKind: text('target_kind').notNull(),
+    unitId: text('unit_id').references(() => unit.id),
+    /** chemin du bloc dans la projection élève (`""` = la leçon, `ex:<id>` = un exercice) */
+    path: text('path').notNull().default(''),
+    /** référence affichée (ex. « 2:255 », source du hadith) */
+    ref: text('ref'),
+    /** extrait du texte signalé, tel qu'affiché */
+    excerpt: text('excerpt'),
+    /** empreinte du bloc signalé (suspension ciblée) */
+    fp: text('fp'),
+    reason: text('reason').notNull(),
+    comment: text('comment'),
+    status: text('status').notNull().default('recu'),
+    /** motif du rejet, ou note interne de correction */
+    decisionNote: text('decision_note'),
+    /** erratum PUBLIC (statut « corrige ») */
+    erratum: text('erratum'),
+    /** édition qui porte la correction */
+    fixedInEdition: text('fixed_in_edition'),
+    handledBy: uuid('handled_by').references(() => account.id, { onDelete: 'set null' }),
+    handledAt: timestamp('handled_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('content_report_status').on(t.status, t.createdAt),
+    index('content_report_account').on(t.accountId, t.createdAt),
+    check(
+      'content_report_kind',
+      sql`${t.targetKind} IN ('verset', 'hadith', 'fiqh', 'lecon', 'exercice')`,
+    ),
+    check(
+      'content_report_reason',
+      sql`${t.reason} IN ('texte_arabe', 'sens', 'reference', 'regle', 'corrige', 'orthographe', 'autre')`,
+    ),
+    check('content_report_status', sql`${t.status} IN ('recu', 'en_examen', 'corrige', 'rejete')`),
+    check(
+      'content_report_rejet',
+      sql`${t.status} <> 'rejete' OR char_length(coalesce(${t.decisionNote}, '')) > 0`,
+    ),
+    check(
+      'content_report_lengths',
+      sql`char_length(coalesce(${t.comment}, '')) <= 500 AND char_length(coalesce(${t.excerpt}, '')) <= 300 AND char_length(coalesce(${t.ref}, '')) <= 120 AND char_length(coalesce(${t.erratum}, '')) <= 600 AND char_length(coalesce(${t.decisionNote}, '')) <= 1000`,
+    ),
+  ],
+);
+
+/**
+ * Suspension d'urgence d'un contenu par l'administrateur (entre deux éditions) : la leçon, l'exercice ou le
+ * bloc est masqué PARTOUT (API, paquets hors ligne, page du QR code, appareils au prochain contact) avec un
+ * message neutre. Levée datée (la trace reste).
+ */
+export const contentSuspension = pgTable(
+  'content_suspension',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    unitId: text('unit_id')
+      .notNull()
+      .references(() => unit.id),
+    path: text('path').notNull().default(''),
+    fp: text('fp'),
+    reportId: uuid('report_id').references(() => contentReport.id, { onDelete: 'set null' }),
+    /** motif interne (jamais affiché aux élèves) */
+    reason: text('reason').notNull(),
+    createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    liftedAt: timestamp('lifted_at', { withTimezone: true }),
+    liftedBy: uuid('lifted_by').references(() => account.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    uniqueIndex('content_suspension_active')
+      .on(t.unitId, t.path)
+      .where(sql`${t.liftedAt} IS NULL`),
+    check('content_suspension_reason', sql`char_length(${t.reason}) BETWEEN 1 AND 500`),
+  ],
+);
+
 // ================================================================ épreuves notées (lot 19)
 
 /**
@@ -1151,6 +1404,13 @@ export const examSession = pgTable(
     unitId: text('unit_id')
       .notNull()
       .references(() => unit.id),
+    /**
+     * Édition FIGÉE à l'ouverture (lot F1, revue M2 ; CDC §5.8) : énoncé, corrigé et barème sont lus dans
+     * cette édition jusqu'à la fermeture, même si une nouvelle édition est publiée entre-temps.
+     */
+    editionId: uuid('edition_id')
+      .notNull()
+      .references(() => edition.id),
     bareme: smallint('bareme').notNull(),
     opensAt: timestamp('opens_at', { withTimezone: true }).notNull(),
     closesAt: timestamp('closes_at', { withTimezone: true }).notNull(),

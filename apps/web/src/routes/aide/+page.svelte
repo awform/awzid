@@ -34,6 +34,7 @@
       <li><a href={resolve('/legal/[page]', { page: k })}><Bidi text={LEGAL[k].titre} /></a></li>
     {/each}
     <li><a href={resolve('/garanties')}>{t('aide.garanties')}</a></li>
+    <li><a href={resolve('/errata')}>{t('errata.titre')}</a></li>
   </ul>
 </section>
 

@@ -53,3 +53,8 @@ arabe 85). Les arguments ICU sont restés identiques (vérifiés). Règles appli
 
 Lot 28 : 30 textes `qc.*` (livrets « Lecture du Coran ») et `coran.qaida_texte` ajoutés ou modifiés dans les
 quatre langues en préparation — relus avec le reste le 04/10/2026.
+
+Lot F1 (05/10/2026) : 60 textes `signal.*`, `contenu.*`, `errata.*`, `sync.*`, `madhhab.*` et 6 `erreur.*`
+(signaler une erreur, file du référent, errata, réponses mises de côté) traduits par Claude, relecteur
+provisoire, dans les quatre langues en préparation — à relire avec le reste ; « référent » rendu par
+« reviewer » / « referente » / « Prüfperson » / « المرجع ».
