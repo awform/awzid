@@ -69,6 +69,9 @@ Validé par le client après le pilote A21.
    démonstration, hors ligne avec le code gardé au téléchargement, captures 375 px clair/sombre dans
    `reports/a21b/`), `a21.spec.ts` mis à jour (actives partout, réglage par niveau, interrupteur).
    Textes : 9 ajoutés, 2 changés, 2 retirés (fr, en, es, de, ar ; A_RELIRE.md).
+   **Vérification complète après fusion de `main` (A27 et suite)** : `pnpm check` vert — unitaires **1 515 réussis,
+   1 ignoré** ; e2e complets **307 réussis, 25 ignorés, 0 échec** (37,7 min) ; budget : `/lecons/[id]` 141,8 Ko,
+   total 404,2 Ko ≤ 405, appareil d'un élève 344,7 Ko ≤ 355, leçons vivantes 12,6 Ko ≤ 20.
 
 Décisions à prendre (D-A21b) : religion (re/ra) sans animation ; code des leçons vivantes non préchargé ;
 modèle « tracé » en attente de données ; seuil de 14 mots.
