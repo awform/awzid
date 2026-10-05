@@ -1029,6 +1029,10 @@ export const quranLemma = pgTable(
     sourceSha256: text('source_sha256').notNull(),
     /** A27 : sens en français, racine, verset d'exemple (s:a) et catégorie, tels que donnés par les livres */
     meaningFr: text('meaning_fr'),
+    /** A27 : leçon du livre qui enseigne le mot, par filière (exportée par les livres ; vide sinon) */
+    unitEnfants: text('unit_enfants').references(() => unit.id),
+    unitAdultes: text('unit_adultes').references(() => unit.id),
+    unitAdos: text('unit_ados').references(() => unit.id),
     root: text('root'),
     exampleRef: text('example_ref'),
     category: text('category'),

@@ -19,8 +19,8 @@
 | `/lecons/[id]` | 141.6 Ko |
 | `/coran/mushaf` | 119.2 Ko |
 | `/enseignant/classe/[id]` | 116.9 Ko |
-| `/coran/ecouter` | 116.7 Ko |
-| `/lectures/[code]` | 116.0 Ko |
+| `/coran/ecouter` | 116.8 Ko |
+| `/lectures/[code]` | 116.1 Ko |
 | `/` | 113.0 Ko |
 | `/coran/memoriser` | 112.5 Ko |
 | `/sciences` | 111.7 Ko |

@@ -137,6 +137,16 @@ EDITION="prod-$( (cat "$AWFORM_CONTENT_DIR/MANIFEST.sha256"; echo "$LEVELS|$CARN
 IMPORT_ARGS=(--edition "$EDITION" --levels "$LEVELS" --carnets "$CARNETS" --publish)
 [ -n "$APERCU" ] && IMPORT_ARGS+=(--apercu "$APERCU")
 "${DC[@]}" --profile outils run --rm import "${IMPORT_ARGS[@]}"
+# A27 : mots du Coran ↔ niveaux et leçons des livres (ids/mots-coran-lecons.json, à défaut l'ancien fichier
+# mots_coran_1000.json) : import IDEMPOTENT à chaque déploiement, s'il est présent dans la copie des livres
+for MC in ids/mots-coran-lecons.json mots_coran_1000.json; do
+  if [ -f "$AWFORM_CONTENT_DIR/$MC" ]; then
+    "${DC[@]}" --profile outils run --rm -T --entrypoint node import \
+      node_modules/@awform/db/dist/cli/mots-coran.js --source "/content/$MC" \
+      || echo "ATTENTION : mots du Coran : import en échec (voir ci-dessus)"
+    break
+  fi
+done
 # audio des leçons (A3) : import IDEMPOTENT depuis AWFORM_LECONS_AUDIO_SOURCE (défaut ~/lecons-audio) s'il
 # existe (contrôle des fichiers, garde coranique sur le texte du Coran importé ci-dessus) ; l'API le lit seulement
 "${DC[@]}" --profile outils run --rm -T --user root --entrypoint chown lecons-audio node:node /lecons-audio

@@ -74,6 +74,19 @@ Décisions à prendre (D-A21b) : religion (re/ra) sans animation ; code des leç
 modèle « tracé » en attente de données ; seuil de 14 mots.
 
 ---
+## 05/10/2026 — Chantier A27 (suite) : décisions D-A27 appliquées
+
+- Positionnement **adaptatif de 4 exercices par niveau** (examens des livres ; ceux du livre de l'élève d'abord, puis
+  ceux du cahier d'écriture), arrêt au premier niveau manqué, réussite 70 %, notation serveur, jamais de descente.
+- Mots du Coran : l'import `mots-coran` lit désormais le rattachement ados (`niveau_ados` « D2 » ou « ado2 ») et le
+  lien mot ↔ leçon par filière (`lecon_enfants`/`lecon_adultes`/`lecon_ados`/`lecon`, même niveau que le mot ;
+  migration `0039`, colonnes `unit_*`) : il suffira de le relancer quand les livres l'exporteront ; un mot dont la
+  leçon est faite devient acquis. Budgets 405/355 Ko acceptés provisoirement (lot « performance » avant la bêta).
+- Fichier des livres `ids/mots-coran-lecons.json` (v2 : 1 689 rattachements, ados 390/390) importé sur la démo ;
+  `deploy.sh` relance l'import `mots-coran` à chaque déploiement s'il est présent (sinon `mots_coran_1000.json`).
+  L'onglet « Mots du Coran » apparaît pour les ados dès qu'un mot est rattaché à leur livre.
+- Tests : unitaires **1 488 réussis, 1 ignoré, 0 échec** (`pnpm check` vert ; api `a27.test.ts` +2 : 4 exercices par
+  niveau, import ados + lien leçon) ; **e2e complets 292 réussis, 24 ignorés, 0 échec** (17,9 min).
 
 ## 05/10/2026 — Chantier A27 : parcours par niveau et par classe (interface) + décisions D-F2
 
