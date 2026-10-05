@@ -48,7 +48,7 @@ const BUDGET_INITIAL = 150 * 1024;
 // (quatre pages : horaires, qibla, adhkār, verset en image ; adhan-js 4 Ko chargé à la demande ; 173 textes
 // d'interface en français dans la coquille, +4,4 Ko ; +33 Ko au total) → 360 Ko, à valider (décision D-A12) ;
 // lot F1 (05/10/2026) : « Signaler une erreur », file du référent, errata, suspension d'urgence (masque hors
-// ligne compris), réponses refusées mises de côté, mention de l'école, 60 textes français (+5,9 Ko ; 360,8 Ko
+// ligne compris), réponses refusées mises de côté, mention de l'école, 60 textes français (+5,9 Ko ; 360,9 Ko
 // mesurés après fusion avec A12) → 365 Ko, à valider (décision D-F1)
 const BUDGET_TOTAL = 365 * 1024;
 const BUDGET_FONTS = 600 * 1024;
