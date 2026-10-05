@@ -7,6 +7,7 @@
   import { localIso } from '$lib/hifz';
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
   import { call, fetchMe, isStaff, type Me } from '$lib/session';
+  import { levelLabel } from '$lib/levels';
   import CorrectionsClasse from '$lib/CorrectionsClasse.svelte';
   import EpreuvesClasse from '$lib/EpreuvesClasse.svelte';
   import MessagerieClasse from '$lib/MessagerieClasse.svelte';
@@ -229,6 +230,21 @@
   async function patchPupil(p: Pupil, body: Record<string, string | null>) {
     const r = await call('PATCH', `/ecole/pupils/${p.id}`, body);
     if (done(r.ok, r.code, t('classe.enregistre'))) await load();
+  }
+  /** A27 : niveau décidé par le maître (origine « enseignant », historisé ; l'élève voit ce seul niveau) */
+  async function decideLevel(p: Pupil, sel: HTMLSelectElement) {
+    const levelCode = sel.value;
+    if (!levelCode) return;
+    const r = await call('PUT', `/ecole/pupils/${p.id}/niveau`, {
+      levelCode,
+      source: 'enseignant',
+    });
+    sel.value = '';
+    done(
+      r.ok,
+      r.code,
+      t('parc.niveau_decide', { eleve: p.displayName, niveau: levelLabel(levelCode) }),
+    );
   }
   async function removePupil(p: Pupil) {
     const r = await call('DELETE', `/ecole/pupils/${p.id}`);
@@ -503,7 +519,21 @@
                 <td
                   ><Bidi
                     text={p.profileId ? t('classe.inscrit_appli') : t('classe.inscrit_papier')}
-                  /></td
+                  />
+                  {#if p.profileId}
+                    <!-- A27 : décision du maître (corrige le positionnement ou l'épreuve de passage) -->
+                    <select
+                      value=""
+                      onchange={(e) => decideLevel(p, e.currentTarget)}
+                      aria-label={t('parc.niveau_maitre')}
+                      data-testid="niveau-maitre"
+                    >
+                      <option value="">{t('parc.niveau_maitre')}</option>
+                      {#each levels as l (l.code)}<option value={l.code}
+                          >{levelLabel(l.code)}</option
+                        >{/each}
+                    </select>
+                  {/if}</td
                 >
                 <td>
                   <select

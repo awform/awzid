@@ -20,21 +20,18 @@ test('Sciences islamiques : livres re, ra en aperçu, leçon de religion avec QC
   page,
 }) => {
   await page.goto('/');
-  // l'onglet Arabe ne montre plus les livres de religion
-  await expect(page.locator('a[href="/niveaux/en1"]')).toBeVisible();
+  // l'onglet Arabe ne montre jamais les livres de religion (A27 : l'élève sans niveau choisit où commencer)
+  await expect(page.getByTestId('commencer')).toBeVisible();
   await expect(page.locator('a[href="/niveaux/re1"]')).toHaveCount(0);
 
-  // A12 : « Sciences » est sous « Plus » pour les adultes
+  // A12 : « Sciences » est sous « Plus » pour les adultes ; A27 : « Mes sciences » = son niveau seul (ou commencer)
   await page.locator('nav.tabs a[data-tab="plus"]').click();
   await page.locator('[data-plus="/sciences"]').click();
-  await expect(page.locator('[data-testid="niveau-religion"][data-level="re1"]')).toBeVisible();
-  await expect(page.locator('[data-testid="niveau-religion"][data-level="re2"]')).toBeVisible();
-  // lot 16 : ra1 et ra2 sont GELÉS, publiés sans la mention « aperçu »
-  const ra1 = page.locator('[data-testid="niveau-religion"][data-level="ra1"]');
-  await expect(ra1).toBeVisible();
-  await expect(ra1.getByTestId('apercu')).toHaveCount(0);
+  await expect(page.getByTestId('commencer')).toBeVisible();
+  await expect(page.getByTestId('niveau-religion')).toHaveCount(0);
 
-  await page.locator('[data-testid="niveau-religion"][data-level="re1"]').click();
+  // sans niveau de sciences, un livre s'ouvre encore par son adresse
+  await page.goto('/niveaux/re1');
   await expect(page.locator('nav.tabs a[data-tab="plus"]')).toHaveAttribute('aria-current', 'page');
   await page.getByTestId('unit').first().click();
   const lesson = page.getByTestId('lecon-religion');
@@ -55,6 +52,19 @@ test('Sciences islamiques : livres re, ra en aperçu, leçon de religion avec QC
   }
   expect(ok).toBe(true);
   expect(sawRetry || n === 1 || ok).toBe(true);
+});
+
+test.describe('visiteur', () => {
+  test.use({ compte: null });
+  test('catalogue des sciences islamiques (re, ra gelés sans « aperçu »)', async ({ page }) => {
+    await page.goto('/sciences');
+    await expect(page.locator('[data-testid="niveau-religion"][data-level="re1"]')).toBeVisible();
+    await expect(page.locator('[data-testid="niveau-religion"][data-level="re2"]')).toBeVisible();
+    // lot 16 : ra1 et ra2 sont GELÉS, publiés sans la mention « aperçu »
+    const ra1 = page.locator('[data-testid="niveau-religion"][data-level="ra1"]');
+    await expect(ra1).toBeVisible();
+    await expect(ra1.getByTestId('apercu')).toHaveCount(0);
+  });
 });
 
 test('ra1 (gelé) : leçon ados/adultes, numéros de hadiths non vérifiés masqués', async ({

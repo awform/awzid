@@ -8,6 +8,78 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 05/10/2026 — Chantier A27 : parcours par niveau et par classe (interface) + décisions D-F2
+
+Branche `a27-parcours-wip` (worktree `~/awform-a27`, depuis `main` 4c37aa3, fusionnée avec A21 `0095df4`), base de
+tests unitaires `awform_a27_test`, e2e isolés. Règle d'or : tout repose sur les LIVRES (aucune découpe propre).
+
+1. **Accueil de l'élève** (`/aujourdhui`, `lib/parcours/AccueilEleve.svelte`) : grand bouton « Ma prochaine
+   activité » choisi selon son livre (`nextActivity`, testé : leçon commencée → écriture de la leçon qui vient d'être
+   faite → révisions dues après la leçon du jour → leçon suivante → révisions → épreuve de fin de livre → lectures ;
+   sans niveau : commencer), puis Mon arabe (niveau, progression), Mon Coran (piste personnelle), Mes sciences, Au
+   quotidien, Ma classe (si inscrit). Barre principale inchangée et conforme (ados/adultes : Accueil · Arabe · Coran ·
+   Prières · Plus ; enfants : leur barre de 5). API `GET /profiles/:id/accueil`.
+2. **Espace du niveau** (`/` et `/sciences` pour un élève ; `EspaceNiveau.svelte`, API `GET /profiles/:id/espace/:matiere`,
+   `packages/db/src/parcours.ts`) : SEUL le niveau courant, onglets Leçons · Lectures (livrets du niveau, fermés avant
+   la leçon indiquée par le livre) · Écriture · Pratique · Mots du Coran, chacun seulement s'il a du contenu à ce
+   niveau (`tabsFor`) ; enfants : Leçons · Lectures · Écriture (leurs mots du Coran : jeu dans « Révisions »).
+   « Mes anciens livres » (révision) ; niveau suivant en APERÇU (titres seuls, jamais le contenu) avec « Passer
+   l'épreuve » et le test de positionnement. `/niveaux/[code]` applique l'accès (révision, aperçu sans liens, fermé
+   pour les autres livres) ; sans niveau dans la matière : « Par où commencer ? » (niveau proposé ou test). Le
+   catalogue complet reste celui du visiteur, de la famille et du personnel. `/lectures` ne propose que les livrets
+   du niveau et des anciens livres. Copie locale (hors ligne) du dernier état, effacée à la déconnexion.
+3. **Test de positionnement** (`/positionnement/[matiere]`, arabe et sciences) : DEUX exercices notables de
+   l'examen de fin de CHAQUE niveau du livre (aucun exercice écrit), du premier niveau au premier niveau manqué
+   (réussite 70 %), notés par le serveur (projection d'épreuve : aucun corrigé envoyé) ; fixe `profile_level`
+   (origine « positionnement », scores en détail), ne fait jamais redescendre. **Épreuve de passage**
+   (`/epreuve-passage/[matiere]`) : exercices notables de l'examen du niveau courant (70 %) → niveau suivant (origine
+   « épreuve ») ; manquée : nouvel essai après 20 h. Enfant : code parent ; tablette de classe : refusé (décision du
+   maître). Le maître corrige depuis la liste de sa classe (« Niveau (décision du maître) », origine « enseignant »).
+   Essais gardés (`placement_attempt`). QCM des livres de sciences rendus par `ExamExercise`.
+4. **Écriture** (`/ecriture`, onglet Écriture) : « Mon cahier » (leçons atteintes du niveau ayant une activité
+   d'écriture : ouvrir la leçon, **fiche à imprimer / PDF** `/ecriture/fiche`, « J'ai fait l'écriture » — journal
+   d'entraînement hors ligne) + tracé existant. **« J'écris le Coran »** (`/ecriture/coran`) visible SEULEMENT à
+   partir de la leçon où le livre fait recopier le premier verset — repéré dans les données (`ecriture.copie` égale
+   à un verset Tanzil au squelette près) : **en1 l25 et ad1 l19 vérifiés sur les vrais livres** (test). NB : ad1 l10
+   recopie déjà 112:3 en écriture courante ; le déclencheur retenu est le premier verset dans l'orthographe du Muṣḥaf
+   (D-A27). Étape 1 copie (modèle Tanzil tel quel), puis comparaison guidée mot par mot avec liste à cocher
+   (lettres, points, voyelles, chadda) ; étape 2 dictée par un récitateur du Complexe (après l'étape 1 du verset),
+   étape 3 de mémoire (qc1 terminé + moitié du Juzʾ ʿAmma mémorisée) : modèle caché jusqu'à « Corriger ». Explication
+   du rasm ʿuthmānī. Aucun verdict automatique, aucune IA.
+5. **Mots du Coran** (onglet ados/adultes) : mots du niveau du LIVRE (ordre, sens, racine en couleur, verset
+   d'exemple Tanzil chargé à la demande), acquis / à découvrir, petit jeu (sens parmi ceux du livre) qui valide un
+   mot, couverture « tu reconnais X % des mots du Coran » = somme des fréquences des mots acquis / 77 429 (donné par
+   les livres, `quran_lemma_meta`). Import étendu (sens, racine, référence, catégorie). Ados : aucun rattachement
+   dans les données → onglet absent.
+6. **Ma classe** (`/ma-classe`) : classes et cercles, devoirs, épreuves, mémorisation, messages (famille).
+7. **Décisions D-F2** : (1) registre d'un élève parti depuis 3 ans anonymisé chaque nuit (`anonymizeSchoolArchives`,
+   notes et copies gardées) — PROVISOIRE, juriste ; (2) le jeune demande son autonomie (`POST|DELETE
+   /profiles/:id/emancipation/demande`), le parent valide ou refuse (« Demandes à traiter »), de droit à 18 ans (code
+   donné aussitôt) ; (5) à la clôture d'année, proposition de réinscription aux familles (`reenrolment_offer`),
+   confirmée d'un geste ; (8) fils d'un enseignant parti gardés (`message_thread.teacher_account_id` SET NULL),
+   « ancien enseignant » ; (9) pages du personnel hors du cache de l'élève ; (3) (4) (6) (10) déjà en place (F2).
+8. **Correctif** `packages/db/src/epreuves.ts:76` : colonne écrite en entier (`"exam_session"."id"`) — le nombre de
+   copies n'est plus toujours 0 (test).
+9. **Migration** `0038_a27_parcours` (en avant seulement, retour arrière en tête du fichier).
+10. **Poids** (D-F2 9) : `scripts/personnel.mjs` liste à la construction les fichiers propres aux pages
+    `/enseignant/*` et `/admin` (`personnel.json`) ; le service worker ne les précharge plus (gardés au premier
+    usage). Avant A27 (main A21) : 373,7 Ko gardés par tout appareil. Après : toutes pages 400,0 Ko (+26,3 Ko A27),
+    **appareil d'un élève 353,1 Ko** (−20,6 Ko) ; page la plus lourde `/lecons/[id]` 141,6 Ko ≤ 150. Objectif 325 Ko non
+    atteint : piste dans TACHES_TECHNIQUES (textes du personnel hors de la coquille). Budgets : toutes pages 405 Ko,
+    appareil d'élève 355 Ko (D-A27).
+11. **Textes** : 144 `parc.*`, `fam.*`, `msg.*`, `erreur.*` en fr, en, es, de, ar (A_RELIRE.md).
+12. **Tests** : unitaires **1 487 réussis, 1 ignoré, 0 échec** (`pnpm check` vert : build, types, lint, tests,
+    budget) dont api `a27.test.ts` (12 : espace du niveau, aperçu sans contenu, écriture coranique après le premier
+    verset, positionnement, passage, commencer, mots du Coran et couverture, accueil, sélection/notation, D-F2 2, 5, 8,
+    1, correctif des copies) et `a27-livres.test.ts` (2, vrais livres : en1 l25 / ad1 l19, positionnement sans
+    corrigé), web `parcours.test.ts` (12). e2e `a27.spec.ts` (9 × 2 : accueil et prochaine activité, seul niveau
+    visible et onglets, enfant, positionnement, passage, « J'écris le Coran » après ad1 l18, mots du Coran, budget du
+    service worker, captures 375 px clair/sombre `reports/a27/`) ; e2e adaptés à l'espace du niveau : lecons, lot6,
+    lot8, lot28, perf, captures. **Suite e2e complète : 292 réussis, 24 ignorés, 0 échec** (17,6 min).
+
+Décisions à prendre (D-A27) : voir DECISIONS_EN_ATTENTE.
+---
+
 ## 05/10/2026 — Chantier A21 : « application vivante » (pilote sur trois leçons)
 
 Branche `a21-vivante-wip` (depuis `main` a6917f9, worktree `~/awform-a21`, base e2e isolée). Souhait du client :

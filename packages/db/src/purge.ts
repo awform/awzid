@@ -3,7 +3,7 @@
  * CDC §4.6 : sous 30 jours). Profils, tutelles, consentements, sessions, réponses et progression partent en
  * cascade ; le journal d'audit garde l'action sans lien vers la personne.
  */
-import { and, eq, inArray, isNotNull, isNull, lt, or } from 'drizzle-orm';
+import { and, eq, inArray, isNotNull, isNull, lt, ne, or } from 'drizzle-orm';
 import type { Db } from './client.js';
 import { releaseTeacher } from './ecole.js';
 import { leaveClass } from './hifz.js';
@@ -120,6 +120,7 @@ export async function purgeRetention(
   sessions: number;
   paiements: number;
   messages: number;
+  archives: number;
 }> {
   const ago = (days: number) => new Date(now.getTime() - days * DAY);
   const count = (r: { rowCount: number | null }) => r.rowCount ?? 0;
@@ -163,5 +164,35 @@ export async function purgeRetention(
   const y = now.getUTCFullYear();
   const cutoff = new Date(Date.UTC(now.getTime() >= Date.UTC(y, 7, 1) ? y - 1 : y - 2, 7, 1));
   const messages = count(await db.delete(t.message).where(lt(t.message.createdAt, cutoff)));
-  return { questionsTuteur, alertesTuteur, journal, sessions, paiements, messages };
+  const archives = await anonymizeSchoolArchives(db, now);
+  return { questionsTuteur, alertesTuteur, journal, sessions, paiements, messages, archives };
+}
+
+/** A27 (décision D-F2 1) : durée de conservation du registre d'un élève parti — PROVISOIRE (juriste). */
+export const ARCHIVE_YEARS = 3;
+export const ARCHIVE_NAME = 'Élève archivé';
+
+/**
+ * Archives scolaires (décision D-F2 1, PROVISOIRE, à confirmer par le juriste) : 3 ans après le départ d'un élève
+ * (`class_pupil.left_at`), la ligne du registre est ANONYMISÉE — nom, nom arabe, genre et lien au profil effacés ;
+ * notes, copies et réponses corrigées restent rattachées à la ligne anonyme (statistiques de l'école).
+ */
+export async function anonymizeSchoolArchives(db: Db, now = new Date()): Promise<number> {
+  const limit = new Date(now);
+  limit.setUTCFullYear(limit.getUTCFullYear() - ARCHIVE_YEARS);
+  const r = await db
+    .update(t.classPupil)
+    .set({ displayName: ARCHIVE_NAME, nameAr: null, gender: null, profileId: null })
+    .where(
+      and(
+        isNotNull(t.classPupil.leftAt),
+        lt(t.classPupil.leftAt, limit),
+        or(
+          ne(t.classPupil.displayName, ARCHIVE_NAME),
+          isNotNull(t.classPupil.profileId),
+          isNotNull(t.classPupil.nameAr),
+        ),
+      ),
+    );
+  return r.rowCount ?? 0;
 }

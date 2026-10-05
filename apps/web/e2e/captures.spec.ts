@@ -220,7 +220,12 @@ test.describe('lot 8', () => {
       await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: full });
     };
     await page.goto('/sciences');
-    await page.locator('[data-testid="niveau-religion"]').first().waitFor();
+    // A27 : un élève sans niveau de sciences voit « Par où commencer ? » (catalogue : visiteur)
+    await page
+      .getByTestId('commencer')
+      .or(page.locator('[data-testid="niveau-religion"]'))
+      .first()
+      .waitFor();
     await shot('33-sciences-islamiques');
     await page.goto('/lecons/re1.l03');
     await page.getByTestId('lecon-religion').waitFor();

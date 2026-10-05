@@ -7,7 +7,7 @@
   "scripts": {
     "fonts": "node scripts/copy-fonts.mjs",
     "dev": "node scripts/copy-fonts.mjs && vite dev",
-    "build": "node scripts/copy-fonts.mjs && svelte-kit sync && vite build",
+    "build": "node scripts/copy-fonts.mjs && svelte-kit sync && vite build && node scripts/personnel.mjs",
     "preview": "vite preview",
     "start": "node build/index.js",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",

@@ -128,6 +128,11 @@ export const API_GRANTS: Record<string, Right[]> = {
   subject: R,
   quran_lemma: R,
   profile_lemma: ALL,
+  // A27 : total des mots du Coran (posé par l'import) ; essais du positionnement et des épreuves de passage
+  // (ajout seul : ils fixent un niveau, ils ne se réécrivent pas) ; propositions de réinscription (D-F2 5)
+  quran_lemma_meta: R,
+  placement_attempt: RI,
+  reenrolment_offer: RIU,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */
@@ -176,6 +181,9 @@ export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
 export const WORKER_COLUMN_UPDATES: Record<string, string[]> = {
   audit_log: ['target', 'before', 'after'],
   class_group: ['teacher_account_id'],
+  // A27 (décision D-F2 1, PROVISOIRE, à confirmer par le juriste) : registre d'un élève parti depuis 3 ans
+  // anonymisé (nom, nom arabe, genre, lien au profil) ; notes et copies restent, anonymes
+  class_pupil: ['display_name', 'name_ar', 'gender', 'profile_id'],
 };
 
 export const SEQUENCES = ['audit_log_id_seq'];

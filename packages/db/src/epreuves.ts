@@ -73,7 +73,8 @@ export async function classExamSessions(db: Db, classId: string) {
       bareme: t.examSession.bareme,
       opensAt: t.examSession.opensAt,
       closesAt: t.examSession.closesAt,
-      copies: sql<number>`(SELECT count(*)::int FROM exam_submission s WHERE s.session_id = ${t.examSession.id})`,
+      // A27 : colonne écrite EN ENTIER — un « id » nu se résolvait dans la sous-requête (s.id) : toujours 0 copie
+      copies: sql<number>`(SELECT count(*)::int FROM exam_submission s WHERE s.session_id = "exam_session"."id")`,
     })
     .from(t.examSession)
     .where(eq(t.examSession.classId, classId))

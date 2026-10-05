@@ -19,6 +19,7 @@
   import { t } from '$lib/i18n';
   import Illus from '$lib/Illus.svelte';
   import Sprite from '$lib/Sprite.svelte';
+  import MotsCoran from '$lib/parcours/MotsCoran.svelte';
 
   /**
    * Révision des mots (cahier § 2.5) : cartes pour les grands (recto arabe et image, verso sens) ;
@@ -191,6 +192,12 @@
   {/if}
 {/if}
 <p class="muted small"><Bidi text={t('revisions.note')} /></p>
+
+<!-- A27 : enfants : les mots du Coran de leur livre, en jeu (pas d'onglet « Mots du Coran ») -->
+{#if loaded && profile?.kind === 'enfant'}
+  <h2 class="mc-titre">{t('parc.mots_coran_jeu')}</h2>
+  <MotsCoran {profile} jeu />
+{/if}
 
 <style>
   .cardbox {

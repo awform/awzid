@@ -118,6 +118,8 @@ export interface ClosureResult {
   parti: number;
   niveauxMontes: number;
   reinscrits: number;
+  /** A27 (D-F2 5) : propositions de réinscription envoyées aux familles */
+  propositions: number;
   nouvelleAnnee: { id: string; label: string };
 }
 
@@ -195,6 +197,7 @@ export async function closeSchoolYear(
     parti: 0,
     niveauxMontes: 0,
     reinscrits: 0,
+    propositions: 0,
     nouvelleAnnee: { id: '', label: '' },
   };
   await db.transaction(async (tx) => {
@@ -253,6 +256,22 @@ export async function closeSchoolYear(
               .insert(t.classMember)
               .values({ classId: dec.nextClassId, profileId: src!.profileId, addedBy: p.by })
               .onConflictDoNothing();
+          // A27 (décision D-F2 5) : élève inscrit par sa famille → proposition de réinscription, confirmée d'un
+          // geste par le parent (le partage avec le nouvel enseignant ne reprend qu'après son accord)
+          else
+            await tx
+              .insert(t.reenrolmentOffer)
+              .values({
+                profileId: src!.profileId,
+                classId: dec.nextClassId,
+                schoolYearId: nextClasses.find((c) => c.id === dec.nextClassId)?.yearId ?? null,
+                createdBy: p.by,
+              })
+              .onConflictDoUpdate({
+                target: [t.reenrolmentOffer.profileId, t.reenrolmentOffer.classId],
+                set: { status: 'proposee', decidedAt: null, decidedBy: null },
+              })
+              .then(() => res.propositions++);
           // l'élève quitte la classe de l'année close (partage avec l'ancien enseignant arrêté)
           await tx
             .delete(t.classMember)
@@ -514,7 +533,21 @@ export interface LemmaSource {
     niveau_enfants?: string;
     niveau_adultes?: string;
     niveau_ados?: string;
+    /** A27 : sens, racine, verset d'exemple (s:a), catégorie — tels que dans les livres */
+    sens_fr?: string;
+    racine?: string;
+    reference?: string;
+    categorie?: string;
   }>;
+}
+
+/** Référence d'un verset d'exemple (« 36:3 », « 2:255 ») ; tout autre format est ignoré (jamais deviné). */
+export function exampleRef(v?: string): string | null {
+  const m = /^\s*(\d{1,3}):(\d{1,3})\s*$/.exec(v ?? '');
+  if (!m) return null;
+  const s = Number(m[1]);
+  const a = Number(m[2]);
+  return s >= 1 && s <= 114 && a >= 1 ? `${s}:${a}` : null;
 }
 
 /**
@@ -547,12 +580,26 @@ export async function importQuranLemmas(db: Db, src: LemmaSource, sha256: string
         levelAdos: null,
         frequency: l.frequence ?? null,
         sourceSha256: sha256,
+        meaningFr: l.sens_fr?.trim() || null,
+        root: l.racine?.trim() || null,
+        exampleRef: exampleRef(l.reference),
+        category: l.categorie?.trim() || null,
       };
       await tx
         .insert(t.quranLemma)
         .values({ rank: l.n, ...row })
         .onConflictDoUpdate({ target: t.quranLemma.rank, set: row });
     }
+    // A27 : total des mots du Coran donné par les livres (couverture) ; absent → aucune couverture affichée
+    const total = Number(src.meta?.total_mots_coran);
+    if (Number.isInteger(total) && total > 0)
+      await tx
+        .insert(t.quranLemmaMeta)
+        .values({ id: 1, totalWords: total, sourceSha256: sha256 })
+        .onConflictDoUpdate({
+          target: t.quranLemmaMeta.id,
+          set: { totalWords: total, sourceSha256: sha256, importedAt: new Date() },
+        });
   });
   return { lemmes: src.lemmes.length, enfants, adultes, ignores };
 }

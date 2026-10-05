@@ -8,6 +8,8 @@ export interface MessageView {
   id: string;
   kind: 'prive' | 'annonce';
   deMoi: boolean;
+  /** A27 (D-F2 8) : message d'un enseignant qui a quitté l'application (gardé pour l'école) */
+  ancienEnseignant?: boolean;
   texte: string | null;
   retire: boolean;
   piece: { nom: string; type: string } | null;

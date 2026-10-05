@@ -7,9 +7,11 @@
   import { demoProfileFor, type DevProfile } from '$lib/attempts';
   import { downloadPack, getSettings } from '$lib/offline';
   import { t } from '$lib/i18n';
+  import { accessFor, espace, matiereOf, type Acces } from '$lib/parcours/parcours';
   let { data } = $props();
 
   let profile: DevProfile | null = $state(null);
+  let acces = $state<Acces>('libre');
   let status: Record<string, string> = $state({});
   /** hors ligne d'abord : sans « données économes », le niveau ouvert est téléchargé en arrière-plan */
   let offlineState: 'local' | 'en_cours' | 'fait' | 'econome' | 'erreur' = $state('local');
@@ -26,6 +28,9 @@
     }
     profile = await demoProfileFor(data.level);
     if (!profile) return;
+    // A27 : accès de l'élève à ce livre (son niveau, révision, aperçu, fermé)
+    const sp = await espace(profile.id, matiereOf(data.level)).catch(() => null);
+    acces = accessFor(sp?.ok ? (sp.data?.courant?.code ?? null) : null, data.level);
     try {
       const r = await fetch(`/api/v1/progress?profile=${profile.id}&level=${data.level}`);
       if (r.ok) {
@@ -56,26 +61,67 @@
     <a href={resolve('/hors-ligne')}>{t('niveau.econome_lien')}</a>
   {:else}{t('niveau.erreur')}{/if}
 </p>
-<ol class="units" style="--ar-size: {arabicSize(data.level)}px">
-  {#each data.units as u (u.id)}
-    <li class={u.kind}>
-      <a href={resolve('/lecons/[id]', { id: u.id })} data-testid="unit">
-        <span class="label"><Bidi text={unitLabel(u)} /></span>
-        <span class="fr"><Bidi text={u.titleFr} /></span>
-        {#if status[u.id] && status[u.id] !== 'ouverte'}<span
-            class="st {status[u.id]}"
-            data-testid="statut"><Bidi text={t(`statut.${status[u.id]}`)} /></span
-          >{/if}
-        <Ar text={u.titleAr} />
-      </a>
-    </li>
-  {/each}
-</ol>
+{#if acces === 'revision'}
+  <p class="card info" data-testid="acces-revision">{t('parc.acces_revision')}</p>
+{:else if acces === 'apercu'}
+  <section class="card info" data-testid="acces-apercu">
+    <p>{t('parc.acces_apercu')}</p>
+    {#if !isQuranReadingLevel(data.level)}
+      <a
+        class="button primary"
+        href={resolve('/epreuve-passage/[matiere]', { matiere: matiereOf(data.level) as 'arabe' })}
+        >{t('parc.passer_epreuve')}</a
+      >
+    {/if}
+  </section>
+{:else if acces === 'ferme'}
+  <section class="card info" data-testid="acces-ferme">
+    <p>{t('parc.acces_ferme')}</p>
+    <a class="button primary" href={resolve('/')}>{t('parc.vers_mon_niveau')}</a>
+  </section>
+{/if}
+{#if acces !== 'ferme'}
+  <ol class="units" style="--ar-size: {arabicSize(data.level)}px">
+    {#each data.units as u (u.id)}
+      <li class={u.kind}>
+        {#if acces === 'apercu'}
+          <span class="apercu" data-testid="unit-apercu">
+            <span class="label"><Bidi text={unitLabel(u)} /></span>
+            <span class="fr"><Bidi text={u.titleFr} /></span>
+          </span>
+        {:else}
+          <a href={resolve('/lecons/[id]', { id: u.id })} data-testid="unit">
+            <span class="label"><Bidi text={unitLabel(u)} /></span>
+            <span class="fr"><Bidi text={u.titleFr} /></span>
+            {#if status[u.id] && status[u.id] !== 'ouverte'}<span
+                class="st {status[u.id]}"
+                data-testid="statut"><Bidi text={t(`statut.${status[u.id]}`)} /></span
+              >{/if}
+            <Ar text={u.titleAr} />
+          </a>
+        {/if}
+      </li>
+    {/each}
+  </ol>
+{/if}
 
 <style>
   .units {
     list-style: none;
     padding: 0;
+  }
+  .info {
+    background: var(--info-bg);
+  }
+  .apercu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    border: 2px dashed var(--line);
+    border-radius: 14px;
+    color: var(--ink2);
   }
   .units a {
     display: grid;

@@ -40,10 +40,12 @@
 <section class="ex" data-type={type}>
   <h3><Bidi text={t('epreuve.exercice', { n })} /></h3>
   {#if str(ex.consigne_fr)}<p class="consigne"><Bidi text={str(ex.consigne_fr)} /></p>{/if}
-  {#if type === 'premiere_lettre' || type === 'ecoute' || type === 'complete'}
+  {#if type === 'premiere_lettre' || type === 'ecoute' || type === 'complete' || type === 'qcm'}
     {#each arr(ex.items) as it, k (k)}
       <div class="item">
         {#if it.img}<Illus k={str(it.img)} cls="mini" />{/if}
+        <!-- A27 : QCM des livres de sciences (test de positionnement, épreuve de passage) -->
+        {#if type === 'qcm'}<span class="q"><Bidi text={str(it.q_fr) || str(it.q_ar)} /></span>{/if}
         {#if type === 'premiere_lettre'}<span class="ar-big">…<Ar text={str(it.suite)} /></span
           >{/if}
         {#if type === 'ecoute'}<span class="muted small">{t('epreuve.ecoute_adulte')}</span>{/if}
@@ -56,7 +58,8 @@
               type="button"
               class:on={chosen(k) === o}
               aria-pressed={chosen(k) === o}
-              onclick={() => set(k, { choice: o })}><Ar text={o} /></button
+              onclick={() => set(k, { choice: o })}
+              >{#if type === 'qcm'}<Bidi text={o} />{:else}<Ar text={o} />{/if}</button
             >
           {/each}
         </div>
@@ -178,5 +181,9 @@
   }
   .consigne {
     font-weight: 700;
+  }
+  .q {
+    flex: 1 1 100%;
+    font-weight: 600;
   }
 </style>

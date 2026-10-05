@@ -104,7 +104,9 @@
     <ul class="list">
       {#each annonces as a (a.id)}
         <li data-testid="annonce">
-          {fmtDate(a.le)} — <Bidi text={a.retire ? t('msg.retire') : a.texte} />
+          {fmtDate(a.le)} —{#if a.ancienEnseignant}
+            <span class="muted">{t('msg.ancien_enseignant')} :</span>{/if}
+          <Bidi text={a.retire ? t('msg.retire') : a.texte} />
           {#if !a.retire}<button type="button" class="small" onclick={() => signal(a.id)}
               >{t('msg.signaler')}</button
             >{/if}
@@ -130,7 +132,11 @@
       <ul class="list" data-testid="msg-fil-ouvert">
         {#each open.messages as m (m.id)}
           <li class:mine={m.deMoi}>
-            {fmtDate(m.le)} — <Bidi text={m.retire ? t('msg.retire') : m.texte} />
+            {fmtDate(m.le)} —{#if m.ancienEnseignant}
+              <span class="muted" data-testid="ancien-enseignant"
+                >{t('msg.ancien_enseignant')} :</span
+              >{/if}
+            <Bidi text={m.retire ? t('msg.retire') : m.texte} />
             {#if m.piece && !m.retire}
               <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- fichier servi par l'API, pas une page -->
               <a href={`/api/v1/messages/${m.id}/piece`} download={m.piece.nom}

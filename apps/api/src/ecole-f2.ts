@@ -931,8 +931,69 @@ export function registerEcoleF2(
         createdBy: me(req),
         days: 30,
       });
+      // A27 (D-F2 2) : la demande du jeune, s'il y en avait une, est satisfaite
+      await db.update(t.profile).set({ emancipationRequestAt: null }).where(eq(t.profile.id, p.id));
       await audit(db, me(req), 'profil.emancipation.preparee', p.id);
       return reply.code(201).send({ code: inv.code, expire: inv.expiresAt });
+    },
+  );
+
+  /**
+   * A27 (décision D-F2 2) : le JEUNE demande à reprendre son profil, à partir de l'âge du consentement numérique
+   * du pays ; le parent valide (code ci-dessus) ou refuse. À 18 ans, c'est DE DROIT : le code est donné aussitôt.
+   */
+  app.post<{ Params: { id: string } }>(
+    '/api/v1/profiles/:id/emancipation/demande',
+    { schema: ids('id') },
+    async (req, reply) => {
+      if (!family(req, reply)) return reply;
+      if (!(await ownsProfile(db, req.auth, req.params.id))) return err(reply, 404, 'introuvable');
+      const [p] = await db.select().from(t.profile).where(eq(t.profile.id, req.params.id));
+      if (!p) return err(reply, 404, 'introuvable');
+      const [owner] = await db
+        .select({ kind: t.account.kind })
+        .from(t.account)
+        .where(eq(t.account.id, p.ownerAccountId));
+      // un profil déjà porté par son propre compte adulte n'a rien à demander
+      if (owner?.kind !== 'parent') return err(reply, 409, 'deja_autonome');
+      const age = p.birthYear ? ageFromYear(p.birthYear) : 0;
+      const min = consentAge(req.auth!.country);
+      if (age < min) return err(reply, 403, 'trop_jeune', { age: min });
+      if (age >= 18) {
+        const inv = await createInvite(db, {
+          profileId: p.id,
+          nature: 'emancipation',
+          createdBy: me(req),
+          days: 30,
+        });
+        await db
+          .update(t.profile)
+          .set({ emancipationRequestAt: null })
+          .where(eq(t.profile.id, p.id));
+        await audit(db, me(req), 'profil.emancipation.de_droit', p.id);
+        return reply.code(201).send({ deDroit: true, code: inv.code, expire: inv.expiresAt });
+      }
+      await db
+        .update(t.profile)
+        .set({ emancipationRequestAt: new Date() })
+        .where(eq(t.profile.id, p.id));
+      await audit(db, me(req), 'profil.emancipation.demandee', p.id);
+      return reply.code(201).send({ deDroit: false, demandee: true });
+    },
+  );
+
+  /** le parent titulaire refuse la demande (elle peut être refaite plus tard) */
+  app.delete<{ Params: { id: string } }>(
+    '/api/v1/profiles/:id/emancipation/demande',
+    { schema: ids('id') },
+    async (req, reply) => {
+      if (!family(req, reply)) return reply;
+      if (req.auth!.kind !== 'parent') return err(reply, 403, 'reserve_aux_parents');
+      const p = await ownedProfile(me(req), req.params.id);
+      if (!p) return err(reply, 404, 'introuvable');
+      await db.update(t.profile).set({ emancipationRequestAt: null }).where(eq(t.profile.id, p.id));
+      await audit(db, me(req), 'profil.emancipation.refusee', p.id);
+      return { ok: true };
     },
   );
 

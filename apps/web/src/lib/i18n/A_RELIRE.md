@@ -68,3 +68,11 @@ pour le titulaire ; espagnol « profesor », « dirección », « titular » ; a
 « Klassenlehrkraft », « Schüler » ; arabe « الإدارة », « المعلّم الرئيسي », « القسم », « الولي », « الحلقات »
 pour les cercles. À vérifier en priorité : la formule juridique du consentement papier (`etab.consentement_papier`)
 et l'explication de l'émancipation (`fam.emancipation_aide`), dans chaque langue.
+
+Chantier A27 (05/10/2026) : 144 textes `parc.*` (accueil « Ma prochaine activité », Mon arabe / Mon Coran / Mes
+sciences / Au quotidien / Ma classe, espace du niveau et ses onglets, anciens livres, aperçu du suivant, test de
+positionnement, épreuve de passage, Mon cahier, fiche à imprimer, « J'écris le Coran » et l'explication du rasm
+ʿuthmānī, mots du Coran et couverture), 10 `fam.*` (demande d'autonomie du jeune, proposition de réinscription),
+`msg.ancien_enseignant` et 7 `erreur.*`, traduits par Claude, relecteur provisoire — à relire avec le reste. Arabe
+sans voyelles comme le reste de l'interface ; « القسم » pour la classe ; espagnol « profesor », « aleya ». À vérifier
+en priorité : `parc.rasm_texte` (orthographe du Muṣḥaf) et `fam.demande_aide` (âge légal, « de droit à 18 ans »).

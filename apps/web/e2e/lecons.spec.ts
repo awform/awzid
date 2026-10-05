@@ -8,9 +8,9 @@ test('liste des leçons d’en1 puis leçon avec l’arabe correctement rendu', 
   page,
   request,
 }) => {
-  await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Mes livres' })).toBeVisible();
-  await page.locator('a[href="/niveaux/en1"]').click();
+  // A27 : le catalogue des livres n'est plus montré à un élève (il voit son niveau) ; un adulte sans niveau
+  // d'arabe ouvre encore un livre par son adresse (« libre »)
+  await page.goto('/niveaux/en1');
 
   const units = page.getByTestId('unit');
   await expect(units).toHaveCount(26);

@@ -39,21 +39,42 @@ const ASSETS = [
   ),
 ];
 
-// A21b : code des leçons vivantes (liste écrite à la construction, vite.config.ts) — pas dans la coquille ;
-// gardé dans le cache de cette version au premier usage ou au téléchargement d'un niveau d'arabe
-const VIVANTE = '/_app/vivante.json';
-const isImmutable = (p: string) => p.startsWith('/_app/immutable/');
+/**
+ * A27 (décision D-F2 9) : fichiers qui ne servent QU'AUX pages du personnel (enseignant, direction, admin),
+ * listés à la construction (`personnel.json`) : jamais préchargés sur l'appareil d'un élève ; gardés au premier
+ * usage (le personnel est en ligne pour son second facteur). Liste absente : tout est préchargé, comme avant.
+ */
+async function staffOnly(): Promise<Set<string>> {
+  try {
+    const r = await fetch('/personnel.json', { cache: 'no-store' });
+    if (!r.ok) return new Set();
+    const j = (await r.json()) as { fichiers?: unknown };
+    return new Set(Array.isArray(j.fichiers) ? j.fichiers.map(String) : []);
+  } catch {
+    return new Set();
+  }
+}
+
+/**
+ * A21b : code des leçons vivantes (générateurs, lecteur, modèles ; liste écrite à la construction par
+ * vite.config.ts) — pas dans la coquille ; gardé dans le cache de cette version au premier usage ou au
+ * téléchargement d'un niveau d'arabe (voir le traitement des fichiers non préchargés plus bas).
+ */
+async function vivante(): Promise<Set<string>> {
+  try {
+    const r = await fetch('/_app/vivante.json', { cache: 'no-store' });
+    return new Set(r.ok ? ((await r.json()) as string[]).map(String) : []);
+  } catch {
+    return new Set();
+  }
+}
 
 sw.addEventListener('install', (event) => {
   event.waitUntil(
-    fetch(VIVANTE)
-      .then((r) => (r.ok ? (r.json() as Promise<string[]>) : []))
-      .catch(() => [] as string[])
-      .then((skip) =>
-        caches
-          .open(CACHE)
-          .then((c) => c.addAll([...ASSETS.filter((f) => !skip.includes(f)), SHELL])),
-      ),
+    Promise.all([staffOnly(), vivante()]).then(async ([staff, viv]) => {
+      const c = await caches.open(CACHE);
+      await c.addAll([...ASSETS.filter((a) => !staff.has(a) && !viv.has(a)), SHELL]);
+    }),
   );
 });
 
@@ -106,15 +127,16 @@ sw.addEventListener('fetch', (event) => {
     return;
   }
   if (ASSETS.includes(url.pathname)) {
-    // fichier de la coquille ; ceux chargés à la demande (A21b) sont gardés au premier usage
+    // fichier non préchargé (pages du personnel, leçons vivantes) : réseau, puis gardé dans le cache de cette version
     event.respondWith(
-      caches.open(CACHE).then(async (c) => {
-        const hit = await c.match(url.pathname);
-        if (hit) return hit;
-        const r = await fetch(req);
-        if (r.ok && isImmutable(url.pathname)) await c.put(url.pathname, r.clone());
-        return r;
-      }),
+      caches.match(url.pathname).then(
+        (r) =>
+          r ??
+          fetch(req).then(async (res) => {
+            if (res.ok) await (await caches.open(CACHE)).put(url.pathname, res.clone());
+            return res;
+          }),
+      ),
     );
     return;
   }

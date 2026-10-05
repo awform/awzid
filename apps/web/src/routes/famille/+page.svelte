@@ -48,7 +48,42 @@
       if (r.ok && r.data) out[p.id] = r.data;
     }
     resp = out;
+    const d = await call<Demandes>('GET', '/famille/demandes');
+    demandes = d.ok ? d.data : null;
     loaded = true;
+  }
+
+  // A27 (décisions D-F2 2 et 5) : demande d'autonomie du jeune, proposition de réinscription
+  interface Demandes {
+    emancipations: Array<{ profileId: string; pseudonyme: string; le: string }>;
+    reinscriptions: Array<{ id: string; profileId: string; pseudonyme: string; className: string }>;
+  }
+  let demandes = $state<Demandes | null>(null);
+  async function ask(profileId: string) {
+    error = msg = '';
+    const r = await call<{ deDroit: boolean; code?: string; expire?: string }>(
+      'POST',
+      `/profiles/${profileId}/emancipation/demande`,
+      {},
+    );
+    if (!r.ok) return fail(r.code);
+    if (r.data?.deDroit && r.data.code)
+      shown = { profileId, code: r.data.code, expire: r.data.expire ?? '', kind: 'emancipation' };
+    else msg = t('fam.demande_envoyee');
+    await load();
+  }
+  async function refuse(profileId: string) {
+    error = msg = '';
+    const r = await call('DELETE', `/profiles/${profileId}/emancipation/demande`);
+    if (!r.ok) return fail(r.code);
+    await load();
+  }
+  async function reinscrire(id: string, accepter: boolean) {
+    error = msg = '';
+    const r = await call('POST', `/famille/reinscriptions/${id}`, { accepter });
+    if (!r.ok) return fail(r.code);
+    msg = t(accepter ? 'fam.reinscription_ok' : 'fam.reinscription_non');
+    await load();
   }
   onMount(load);
 
@@ -128,6 +163,44 @@
     </section>
   {/if}
 
+  {#if demandes && (demandes.emancipations.length || demandes.reinscriptions.length)}
+    <section class="card demandes" data-testid="fam-demandes">
+      <h2>{t('fam.demandes')}</h2>
+      <ul class="list">
+        {#each demandes.reinscriptions as o (o.id)}
+          <li data-reinscription={o.id}>
+            <Bidi text={t('fam.reinscription', { eleve: o.pseudonyme, classe: o.className })} />
+            <div class="row">
+              <button
+                type="button"
+                class="primary"
+                onclick={() => reinscrire(o.id, true)}
+                data-testid="fam-reinscrire">{t('fam.reinscription_oui')}</button
+              >
+              <button type="button" onclick={() => reinscrire(o.id, false)}
+                >{t('fam.reinscription_refus')}</button
+              >
+            </div>
+          </li>
+        {/each}
+        {#each demandes.emancipations as d (d.profileId)}
+          <li data-emancipation={d.profileId}>
+            <Bidi text={t('fam.demande_jeune', { eleve: d.pseudonyme })} />
+            <div class="row">
+              <button
+                type="button"
+                class="primary"
+                onclick={() => (acting = { profileId: d.profileId, kind: 'emancipation' })}
+                data-testid="fam-valider-demande">{t('fam.valider')}</button
+              >
+              <button type="button" onclick={() => refuse(d.profileId)}>{t('fam.refuser')}</button>
+            </div>
+          </li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
+
   {#if me.account.kind === 'parent'}
     <section class="card">
       <h2>{t('fam.rattacher')}</h2>
@@ -193,6 +266,13 @@
               >
             {/if}
           </div>
+        {/if}
+        {#if p.kind === 'ado' && me.account.kind === 'parent'}
+          <!-- A27 (D-F2 2) : le jeune demande lui-même (validation du parent ; de droit à 18 ans) -->
+          <p class="muted small">{t('fam.demande_aide')}</p>
+          <button type="button" onclick={() => ask(p.id)} data-testid="fam-demande-{p.pseudonym}"
+            >{t('fam.demander')}</button
+          >
         {/if}
         {#if acting?.profileId === p.id}
           <form class="form" onsubmit={act}>

@@ -39,6 +39,7 @@ import { registerProgress } from './progression.js';
 import { registerEpreuves } from './epreuves.js';
 import { registerSignalements } from './signalements.js';
 import { registerEcoleF2 } from './ecole-f2.js';
+import { registerParcoursA27 } from './parcours-a27.js';
 import { registerVerification } from './verification.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
 import type { RecitationKey } from '@awform/db';
@@ -223,5 +224,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerEcoleF2(app, db, edition, {
     secureFor: (req) => (cookieSecure === 'auto' ? req.protocol === 'https' : cookieSecure),
   });
+  // A27 : parcours par niveau (espace, accueil, écriture, mots du Coran, positionnement, passage)
+  registerParcoursA27(app, db, edition);
   return app;
 }

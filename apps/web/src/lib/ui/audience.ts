@@ -126,6 +126,8 @@ export const PLUS_PATHS = [
   '/sourates',
   '/recital',
   '/epreuves',
+  // A27
+  '/ma-classe',
 ];
 
 /** Entrée active de la navigation pour un chemin donné. */
@@ -133,6 +135,11 @@ export function activeNav(items: NavItem[], path: string): NavId | '' {
   const ids = new Set(items.map((i) => i.id));
   const has = (id: NavId) => (ids.has(id) ? id : '');
   if (/^\/(niveaux|lecons)\/r[ea]\d/.test(path)) return has('sciences') || has('plus');
+  // A27 : test de positionnement et épreuve de passage, dans la matière concernée ; « Ma classe » : accueil
+  if (/^\/(positionnement|epreuve-passage)\/sciences/.test(path))
+    return has('sciences') || has('plus');
+  if (/^\/(positionnement|epreuve-passage)\//.test(path)) return has('arabe') || has('livres');
+  if (path === '/ma-classe') return has('aujourdhui');
   if (/^\/(niveaux|lecons)\/qc\d/.test(path)) return has('coran');
   if (path === '/' || path.startsWith('/niveaux') || path.startsWith('/lecons'))
     return has('arabe') || has('livres');

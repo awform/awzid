@@ -37,6 +37,10 @@ Lot F2 (branche `f2-ecole-wip`, revue d'architecture E1-E4, E8) : TERMINÉ — �
 responsables d'un profil (`profile_custodian`), tablette de classe, émancipation, niveau par matière, années,
 passage de fin d'année, archives, API « mon parcours » (`packages/db/src/{ecole,responsables,niveaux}.ts`,
 `apps/api/src/ecole-f2.ts`) ; l'interface du parcours par niveau vient avec A27.
+Chantier A27 (branche `a27-parcours-wip`) : TERMINÉ — parcours par niveau (accueil « Ma prochaine activité », espace du
+niveau, positionnement, épreuve de passage, « J'écris le Coran », mots du Coran, « Ma classe ») et décisions D-F2
+(`packages/db/src/parcours.ts`, `apps/api/src/parcours-a27.ts`, `apps/web/src/lib/parcours/`) ; pages du personnel
+hors du cache de l'élève (`apps/web/scripts/personnel.mjs`).
 Lot 29 : tajwid en couleurs (Ḥafṣ) TERMINÉ — source CC BY 4.0 recalée et contrôlée (`packages/content/src/tajwid.ts`,
 `docs/projet/LICENCES.md`), affichage `apps/web/src/lib/quran/Tajwid*.svelte` ; décision D29.
 Lot 27 : interface de l'espace Coran TERMINÉE (branche `lot27-wip` = `lot27-api-wip` + lot 26 + écrans ; `apps/web/src/lib/quran/`).
