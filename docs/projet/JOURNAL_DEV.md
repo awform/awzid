@@ -55,9 +55,10 @@ Branche `a12-quotidien-wip` (depuis `main` a2a64ec, worktree `~/awform-a12`, bas
     budget total porté à **360 Ko (D-A12, à valider)** : +33 Ko pour 4 pages, adhan-js et les textes français de
     la coquille (+4,4 Ko sur chaque page).
 11. **Tests** : `pnpm check` vert (build, types, lint, budget) — unitaires **1 379 réussis, 1 ignoré** (content +4,
-    api +2, web +18 dont 5 villes de référence : Paris UOIF et Ligue, Dakar, Montréal ISNA, Médine Umm al-Qurā à
-    ±2 min d'aladhan) ; e2e complets : **245 réussis, 22 ignorés, 1 échec** (bidi, corrigé puis relancé vert :
-    bidi + lot27 + a1 16/16) ; e2e `a12.spec.ts` 7 réussis (parcours, hors ligne, position, 320 px).
+    api +2, web +18 dont 5 cas de référence : Paris UOIF et Ligue, Dakar, Montréal ISNA, Médine Umm al-Qurā à ±2 min
+    d'aladhan) ; e2e complets sur le commit final : **246 réussis, 22 ignorés, 0 échec** (12,5 min), dont
+    `a12.spec.ts` (parcours, hors ligne, position jamais envoyée, 320 px). Commits 69dc686 et ce journal ; fusion
+    dans `main` et démo redéployée.
 
 Décisions à prendre (D-A12) : 6 entrées de navigation ; angles de la Grande Mosquée de Paris ; Umm al-Qurā pour
 l'Arabie ; budget 360 Ko ; rappels application ouverte ; validation des 21 adhkār et des 17 à ajouter.
