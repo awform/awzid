@@ -27,6 +27,8 @@ const meta = (id, riwaya, nameFr) => ({
   licenseArchivedOn: '2025-07-30',
   licenseText: 'Fichiers d’essai non coraniques.',
   credit: `${nameFr} — fichiers d’essai non coraniques (bips).`,
+  creditAr: `${nameFr} — ملفات تجربة`,
+  usageNote: 'Essai : ne pas vendre l’audio.',
 });
 const h = connect(process.env.TEST_DATABASE_URL, 2);
 try {

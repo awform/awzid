@@ -299,6 +299,12 @@
       <Bidi text={pack?.credit ?? reciter.credit} /><br /><Bidi
         text={t('ca.licence', { source: reciter.license.source })}
       />
+      {#if reciter.creditAr}<br /><span lang="ar" dir="rtl" data-testid="credit-ar"
+          ><Bidi text={reciter.creditAr} /></span
+        >{/if}
+      {#if reciter.usageNote}<br /><span data-testid="usage-note"
+          ><Bidi text={reciter.usageNote} /></span
+        >{/if}
     </p>
   {/if}
 

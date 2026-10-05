@@ -57,6 +57,8 @@ function publicReciter(r: Reciter, verses: number) {
     speed: r.speed,
     style: r.style,
     credit: r.credit,
+    creditAr: r.creditAr,
+    usageNote: r.usageNote,
     license: {
       source: r.licenseSource,
       url: r.licenseUrl,

@@ -25,14 +25,17 @@ import {
   beepWav,
   COMPLEXE_CATALOGUE,
   compilePattern,
+  compilePatterns,
   findFfmpeg,
   HAFS_SURA_VERSES,
   HAFS_TOTAL_VERSES,
   importReciterAudio,
+  isAnnexName,
   parseSuraList,
   probeMp3,
   probeWav,
   retireReciter,
+  riwayaSuraVerses,
   scanAudioDir,
   syntheticMp3,
   upsertReciter,
@@ -176,14 +179,14 @@ describe('contrôles avant activation (dossier local)', () => {
     expect(codes(r, 'avertissement')).toEqual(['silence_long']);
   });
 
-  it('autre riwāya : numérotation propre et compte DÉCLARÉ accepté (pas 6 236)', async () => {
+  it('riwāya sans compte connu : numérotation propre et compte DÉCLARÉ accepté (pas 6 236)', async () => {
     const d = mk();
     // compte d'essai volontairement différent de Ḥafṣ : 6 versets en sourate 1
     writeTestMushaf(d, [1, 112], { counts: { 1: 6 } });
     const ok = await scanAudioDir({
       dir: d,
       pattern: 'SSSVVV.wav',
-      riwaya: 'qalun',
+      riwaya: 'bazzi',
       suras: [1, 112],
       declaredVerses: 10,
     });
@@ -191,18 +194,78 @@ describe('contrôles avant activation (dossier local)', () => {
     const none = await scanAudioDir({
       dir: d,
       pattern: 'SSSVVV.wav',
-      riwaya: 'qalun',
+      riwaya: 'bazzi',
       suras: [1, 112],
     });
     expect(codes(none)).toEqual(['compte_non_declare']);
     const bad = await scanAudioDir({
       dir: d,
       pattern: 'SSSVVV.wav',
-      riwaya: 'qalun',
+      riwaya: 'bazzi',
       suras: [1, 112],
       declaredVerses: 11,
     });
     expect(codes(bad)).toEqual(['compte_incorrect']);
+  });
+
+  it('plusieurs nommages et plusieurs dossiers (nommages réels du Complexe) : fichiers jamais renommés', async () => {
+    const src = mk();
+    writeTestMushaf(src, [112, 113]);
+    const a = mk();
+    const b = mk();
+    const n3 = (v: number) => String(v).padStart(3, '0');
+    // sourate 112 au nommage courant ; sourate 113 livrée à part sous un autre nommage, plus des annexes
+    for (let v = 1; v <= 4; v++)
+      copyFileSync(join(src, `112${n3(v)}.wav`), join(a, `10-112${n3(v)}-A01.wav`));
+    for (let v = 1; v <= 5; v++)
+      copyFileSync(join(src, `113${n3(v)}.wav`), join(b, `10-113${n3(v)}-001.wav`));
+    copyFileSync(join(src, '112001.wav'), join(a, '10-112C00-A01.wav'));
+    copyFileSync(join(src, '112002.wav'), join(b, '10-000B00-001.wav'));
+    const before = [...readdirSync(a), ...readdirSync(b)].sort();
+    const pattern = '10-SSSVVV-A01.wav,10-SSSVVV-001.wav';
+    const opts = { dir: a, extraDirs: [b], riwaya: 'hafs', suras: [112, 113] };
+    const r = await scanAudioDir({ ...opts, pattern });
+    expect(r.blocking).toBe(0);
+    expect(r.found).toBe(9);
+    expect(codes(r, 'avertissement')).toEqual(['annexes_ignorees']);
+    expect(r.tracks.find((x) => x.sura === 113 && x.aya === 5)?.source).toBe(
+      join(b, '10-113005-001.wav'),
+    );
+    expect([...readdirSync(a), ...readdirSync(b)].sort()).toEqual(before);
+    // un seul nommage : la sourate livrée à part manque
+    const one = await scanAudioDir({ ...opts, pattern: '10-SSSVVV-A01.wav' });
+    expect(codes(one)).toEqual(['compte_incorrect', 'manquant']);
+    // même verset sous deux nommages : doublon bloquant
+    copyFileSync(join(src, '113001.wav'), join(a, '10-113001-A01.wav'));
+    const dup = await scanAudioDir({ ...opts, pattern });
+    expect(codes(dup)).toEqual(['doublon_nom']);
+    // sourate sur deux chiffres et double extension (as-Sūsī)
+    const p = compilePatterns('06-SSSVVVA10.mp3.mp3,06-SSSVVVA10.wav.mp3,06-SSVVVA10.wav.mp3');
+    expect(p('06-002001A10.mp3.mp3')).toEqual({ sura: 2, aya: 1 });
+    expect(p('06-067030A10.wav.mp3')).toEqual({ sura: 67, aya: 30 });
+    expect(p('06-01007A10.wav.mp3')).toEqual({ sura: 1, aya: 7 });
+    expect(p('06-01C00A10.wav.mp3')).toBeNull();
+    expect(isAnnexName('06-SSVVVA10.wav.mp3', '06-01C00A10.wav.mp3')).toBe(true);
+  });
+
+  it('riwāya au compte officiel connu (as-Sūsī, Qālūn) : compte par sourate imposé', async () => {
+    const sum = (r: string) => riwayaSuraVerses(r)!.reduce((n, x) => n + x, 0);
+    expect([sum('susi'), sum('duri'), sum('qalun'), sum('shuba')]).toEqual([
+      6218, 6218, 6214, 6236,
+    ]);
+    expect(riwayaSuraVerses('bazzi')).toBeNull();
+    const d = mk();
+    // al-Mulk : 31 versets pour Abū ʿAmr ; un dossier qui s'arrête à 30 est bloqué (verset manquant)
+    writeTestMushaf(d, [67], { counts: { 67: 30 } });
+    const r = await scanAudioDir({
+      dir: d,
+      pattern: 'SSSVVV.wav',
+      riwaya: 'susi',
+      suras: [67],
+      silence: false,
+    });
+    expect(codes(r)).toEqual(['compte_incorrect', 'manquant']);
+    expect(r.issues.find((i) => i.code === 'manquant')).toMatchObject({ sura: 67, aya: 31 });
   });
 
   it.skipIf(!FFMPEG)(
@@ -355,7 +418,12 @@ describe.skipIf(!URL)('import en base : rien n’est activé si un contrôle blo
     for (const m of COMPLEXE_CATALOGUE) {
       if (m.riwaya === 'hafs' || m.riwaya === 'shuba') expect(m.expectedVerses).toBe(6236);
       else expect(m.expectedVerses).toBeLessThan(6236);
-      expect(m.credit).toContain('Complexe du Roi Fahd');
+      expect(m.credit).toBe(
+        `Récitation : ${m.nameFr} — Complexe du Roi Fahd pour l’impression du Noble Coran, Médine`,
+      );
+      expect(m.creditAr).toContain(m.nameAr);
+      expect(m.usageNote).toContain('ne pas vendre l’audio');
+      expect(m.licenseText).toContain('حقوق الاستخدام');
     }
   });
 });

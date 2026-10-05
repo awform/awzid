@@ -143,7 +143,13 @@
           {#if r.speed}<span class="pill"><Bidi text={t(`ca.vitesse_${r.speed}`)} /></span>{/if}
           <span class="pill"><Bidi text={t('ca.versets', { n: r.verses })} /></span>
         </p>
-        <p class="muted small credit"><Bidi text={r.credit} /></p>
+        <p class="muted small credit" data-testid="credit-recitateur"><Bidi text={r.credit} /></p>
+        {#if r.creditAr}<p class="muted small credit" lang="ar" dir="rtl">
+            <Bidi text={r.creditAr} />
+          </p>{/if}
+        {#if r.usageNote}<p class="muted small credit" data-testid="usage-note">
+            <Bidi text={r.usageNote} />
+          </p>{/if}
         <details>
           <summary>{t('ca.licence_titre')}</summary>
           <p class="small"><Bidi text={r.license.text} /></p>

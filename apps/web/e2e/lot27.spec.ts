@@ -39,6 +39,9 @@ test('écouter : riwāya affichée, pas de lecture automatique, répétition, vi
   await expect(page.locator('[data-verse="112:4"]')).toBeVisible();
   await expect(page.getByTestId('badge-riwaya').first()).toContainText('Ḥafṣ');
   await expect(page.getByTestId('credit')).toContainText('non coraniques');
+  // A1 : crédit en arabe et condition d'usage (ne pas vendre l'audio) affichés avec le crédit
+  await expect(page.getByTestId('credit-ar')).toHaveAttribute('lang', 'ar');
+  await expect(page.getByTestId('usage-note')).toContainText('ne pas vendre');
   // adab : rien ne joue ni ne se télécharge avant le geste de l'utilisateur
   await page.waitForTimeout(500);
   expect((await audioState(page)).paused).toBe(true);
@@ -129,6 +132,7 @@ test('mes récitateurs : choix gardé, crédits et licence ; lire : aller à une
   await page.reload();
   await expect(page.locator('[data-reciter="essai-qalun"]').getByTestId('choisi')).toBeVisible();
   await expect(card).toContainText('non coraniques');
+  await expect(card.getByTestId('usage-note')).toContainText('ne pas vendre');
   expect(await serious(page)).toEqual([]);
   await page.locator('[data-reciter="essai-hafs"]').getByTestId('choisir').click();
 

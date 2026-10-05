@@ -44,6 +44,127 @@ export type Riwaya = (typeof RIWAYAT)[number];
 export const SPEEDS = ['lente', 'moyenne', 'rapide'] as const;
 export const STYLES = ['murattal', 'mujawwad', 'muallim'] as const;
 
+/**
+ * Comptes RÉELS d'autres riwāyāt, relevés sur les textes officiels du Complexe du Roi Fahd (plateforme
+ * développeurs, fichiers JSON « kfgqpc_*_v30 », 04/10/2026) : seules les sourates dont le compte diffère de
+ * Ḥafṣ sont listées. Shuʿba : compte koufi, identique à Ḥafṣ (6 236). as-Sūsī : 6 218 (texte « susi_v30 ») ;
+ * ad-Dūrī ʿan Abī ʿAmr : même lecture d'Abū ʿAmr, même compte (6 218, conforme aux fichiers audio du
+ * Complexe ; le texte « UthmanicDouri v2 » compte al-Mulk en 30 versets, soit 6 217). Qālūn et Warsh :
+ * compte madanī II, 6 214 (« qalun_v30 », « warsh_v30 »).
+ */
+const ABU_AMR: Readonly<Record<number, number>> = {
+  2: 285,
+  4: 175,
+  5: 122,
+  6: 167,
+  8: 76,
+  9: 130,
+  11: 122,
+  13: 44,
+  14: 54,
+  17: 110,
+  18: 105,
+  20: 134,
+  21: 111,
+  22: 76,
+  23: 119,
+  24: 62,
+  27: 95,
+  31: 33,
+  36: 82,
+  38: 86,
+  39: 72,
+  40: 84,
+  41: 53,
+  42: 50,
+  44: 56,
+  45: 36,
+  46: 34,
+  47: 39,
+  52: 47,
+  53: 61,
+  55: 77,
+  56: 99,
+  57: 28,
+  67: 31,
+  71: 30,
+  75: 39,
+  79: 45,
+  86: 16,
+  89: 32,
+  91: 16,
+  96: 20,
+  101: 10,
+  106: 5,
+  107: 6,
+};
+const MADANI_II: Readonly<Record<number, number>> = {
+  2: 285,
+  4: 175,
+  5: 122,
+  6: 167,
+  8: 76,
+  9: 130,
+  11: 121,
+  13: 44,
+  14: 54,
+  17: 110,
+  18: 105,
+  19: 99,
+  20: 134,
+  21: 111,
+  22: 76,
+  23: 119,
+  24: 62,
+  26: 226,
+  27: 95,
+  30: 59,
+  31: 33,
+  35: 46,
+  36: 82,
+  38: 86,
+  39: 72,
+  40: 84,
+  41: 53,
+  42: 50,
+  44: 56,
+  45: 36,
+  46: 34,
+  47: 39,
+  52: 47,
+  53: 61,
+  55: 77,
+  56: 99,
+  57: 28,
+  58: 21,
+  67: 31,
+  71: 30,
+  73: 18,
+  74: 55,
+  75: 39,
+  79: 45,
+  89: 32,
+  96: 20,
+  99: 9,
+  101: 10,
+  106: 5,
+  107: 6,
+};
+const RIWAYA_DIFF: Readonly<Record<string, Readonly<Record<number, number>>>> = {
+  hafs: {},
+  shuba: {},
+  susi: ABU_AMR,
+  duri: ABU_AMR,
+  qalun: MADANI_II,
+  warsh: MADANI_II,
+};
+
+/** Versets de chaque sourate pour une riwāya dont le compte est connu ; null sinon (compte à déclarer). */
+export function riwayaSuraVerses(riwaya: string): readonly number[] | null {
+  const d = RIWAYA_DIFF[riwaya];
+  return d ? HAFS_SURA_VERSES.map((n, i) => d[i + 1] ?? n) : null;
+}
+
 /** Nombre de versets attendus pour un ensemble de sourates (Ḥafṣ). */
 export function hafsVersesFor(suras: readonly number[]): number {
   return suras.reduce((n, s) => n + (HAFS_SURA_VERSES[s - 1] ?? 0), 0);

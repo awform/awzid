@@ -9,7 +9,8 @@
  *   node dist/cli/coran-audio.js retirer  --recitateur ID --motif "…"
  *   node dist/cli/coran-audio.js etat
  *
- * Options : --nommage SSSVVV.mp3 (défaut) · --sourates 1,112-114 (muṣḥaf partiel) · --versets N (compte
+ * Options : --nommage SSSVVV.mp3 (défaut : nommage relevé du Complexe ; plusieurs, séparés par des virgules)
+ * · --dossier répété (dossiers supplémentaires) · --sourates 1,112-114 (muṣḥaf partiel) · --versets N (compte
  * déclaré, riwāyāt autres que Ḥafṣ) · --empreintes SHA256SUMS · --sans-silences · --silence-max 4000 (ms)
  * · --stockage DIR (défaut AWFORM_AUDIO_DIR) · --rapport fichier.json · --partiel · --reactiver · --test.
  * Code de sortie : 0 succès ; 2 import bloqué ou refus ; 1 erreur.
@@ -21,6 +22,7 @@ import { loadRootEnv } from '../env.js';
 import {
   activateReciter,
   COMPLEXE_CATALOGUE,
+  COMPLEXE_NOMMAGES,
   formatReport,
   importReciterAudio,
   parseSuraList,
@@ -35,12 +37,15 @@ import { eq } from 'drizzle-orm';
 loadRootEnv();
 const [cmd, ...rest] = process.argv.slice(2);
 const flags = new Map<string, string | true>();
+/** --dossier peut être répété : dossiers supplémentaires (fichiers lus tels quels) */
+const dossiers: string[] = [];
 for (let i = 0; i < rest.length; i++) {
   const a = rest[i]!;
   if (!a.startsWith('--')) continue;
   const next = rest[i + 1];
   if (next !== undefined && !next.startsWith('--')) {
-    flags.set(a.slice(2), next);
+    if (a === '--dossier') dossiers.push(next);
+    flags.set(a.slice(2), a === '--dossier' ? dossiers[0]! : next);
     i++;
   } else flags.set(a.slice(2), true);
 }
@@ -72,7 +77,8 @@ try {
     const id = need('recitateur');
     const common = {
       dir: need('dossier'),
-      pattern: str('nommage') ?? 'SSSVVV.mp3',
+      ...(dossiers.length > 1 ? { extraDirs: dossiers.slice(1) } : {}),
+      pattern: str('nommage') ?? COMPLEXE_NOMMAGES[id] ?? 'SSSVVV.mp3',
       ...(str('sourates') ? { suras: parseSuraList(str('sourates')!) } : {}),
       ...(str('versets') ? { declaredVerses: Number(str('versets')) } : {}),
       ...(str('empreintes') ? { checksums: readChecksums(str('empreintes')!) } : {}),

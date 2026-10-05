@@ -19,6 +19,8 @@ export interface Reciter {
   speed: 'lente' | 'moyenne' | 'rapide' | null;
   style: 'murattal' | 'mujawwad' | 'muallim' | null;
   credit: string;
+  creditAr: string;
+  usageNote: string;
   license: { source: string; url: string; archivedOn: string; text: string };
   verses: number;
   surlignage: Surlignage;

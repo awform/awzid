@@ -1625,6 +1625,10 @@ export const quranReciter = pgTable(
     licenseText: text('license_text').notNull(),
     /** crédit à afficher partout où la récitation est proposée */
     credit: text('credit').notNull(),
+    /** crédit en arabe (chantier A1) */
+    creditAr: text('credit_ar').notNull().default(''),
+    /** condition d'usage affichée avec le crédit (ex. « ne pas vendre l'audio ») */
+    usageNote: text('usage_note').notNull().default(''),
     status: text('status').notNull().default('en_attente'),
     activatedAt: timestamp('activated_at', { withTimezone: true }),
     retiredAt: timestamp('retired_at', { withTimezone: true }),

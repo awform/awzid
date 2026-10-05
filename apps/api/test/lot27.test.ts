@@ -61,13 +61,14 @@ describe.skipIf(!URL_)('lot 27 : audio du Coran (API)', () => {
       partialOk: true,
     });
     expect(a.status).toBe('active');
-    writeTestMushaf(join(src, 'q'), [1, 112], { counts: { 1: 6 }, ms: 350 });
+    // Qālūn : compte officiel connu (sourate 1 : 7 versets, 112 : 4) → 11 versets
+    writeTestMushaf(join(src, 'q'), [1, 112], { ms: 350 });
     const q = await importReciterAudio(c.h.db, {
       reciterId: 'huthify-qalun',
       dir: join(src, 'q'),
       pattern: 'SSSVVV.wav',
       suras: [1, 112],
-      declaredVerses: 10,
+      declaredVerses: 11,
       storageDir: store,
       activate: true,
       partialOk: true,
@@ -119,7 +120,10 @@ describe.skipIf(!URL_)('lot 27 : audio du Coran (API)', () => {
       surlignage: 'verset',
     });
     expect(ay.credit).toContain('Complexe du Roi Fahd');
-    expect(ay.license).toMatchObject({ archivedOn: '2025-07-30' });
+    expect(ay.license).toMatchObject({ archivedOn: '2026-10-04' });
+    // A1 : crédit en arabe et condition d'usage (ne pas vendre l'audio)
+    expect(ay.creditAr).toContain('محمد أيوب');
+    expect(ay.usageNote).toContain('ne pas vendre');
     expect(qa).toMatchObject({ riwaya: 'qalun', surlignage: 'sans_surlignage', verses: 10 });
   });
 
@@ -131,7 +135,7 @@ describe.skipIf(!URL_)('lot 27 : audio du Coran (API)', () => {
     );
     expect(b.surlignage).toBe('verset');
     const q = (await c.req('GET', '/api/v1/quran/audio/reciters/huthify-qalun/suras/1')).json();
-    expect(q.files).toHaveLength(6);
+    expect(q.files).toHaveLength(7);
     expect(q.files.every((f: { surlignage: string }) => f.surlignage === 'sans_surlignage')).toBe(
       true,
     );

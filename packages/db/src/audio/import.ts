@@ -22,7 +22,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import type { Db } from '../client.js';
 import * as t from '../schema.js';
 import type { ReciterMeta } from './catalogue.js';
-import { HAFS_SURA_VERSES, HAFS_TOTAL_VERSES } from './suras.js';
+import { HAFS_SURA_VERSES, HAFS_TOTAL_VERSES, riwayaSuraVerses } from './suras.js';
 import {
   ffmpegSilence,
   findFfmpeg,
@@ -45,6 +45,8 @@ export interface AudioIssue {
 
 export interface ScannedTrack {
   file: string;
+  /** chemin complet du fichier source (lu, jamais modifié ni renommé) */
+  source: string;
   sura: number;
   aya: number;
   format: AudioFormat;
@@ -56,7 +58,13 @@ export interface ScannedTrack {
 
 export interface ScanOptions {
   dir: string;
-  /** nommage : S = chiffre de sourate, V = chiffre de verset (« SSSVVV.mp3 » ; une seule lettre : sans zéros) */
+  /** dossiers supplémentaires lus avec le premier (ex. une sourate livrée à part) ; jamais modifiés */
+  extraDirs?: readonly string[];
+  /**
+   * nommage : S = chiffre de sourate, V = chiffre de verset (« SSSVVV.mp3 » ; une seule lettre : sans zéros).
+   * Plusieurs nommages acceptés, séparés par des virgules (« 10-SSSVVV-A01.mp3,10-SSSVVV-001.mp3 ») : les
+   * fichiers sont lus tels quels, jamais renommés.
+   */
   pattern: string;
   riwaya: string;
   /** périmètre (muṣḥaf partiel) ; absent : muṣḥaf complet */
@@ -119,6 +127,43 @@ export function compilePattern(
   };
 }
 
+/** Plusieurs nommages (séparés par des virgules) : le premier qui reconnaît le nom l'emporte. */
+export function compilePatterns(
+  patterns: string,
+): (name: string) => { sura: number; aya: number } | null {
+  const list = patterns
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map(compilePattern);
+  if (list.length === 0) throw new Error('nommage vide');
+  return (name) => {
+    for (const p of list) {
+      const v = p(name);
+      if (v) return v;
+    }
+    return null;
+  };
+}
+
+/**
+ * Fichier annexe du Complexe (basmala « SSSC00 », isti'ādha « 000B00 », basmala de la Fātiḥa « 001B01 ») :
+ * reconnu en remplaçant les chiffres du verset par B ou C suivi de chiffres ; ignoré (avertissement groupé).
+ */
+export function isAnnexName(patterns: string, name: string): boolean {
+  return patterns
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .some((p) => {
+      const re = p
+        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        .replace(/S+/g, (m) => (m.length === 1 ? '\\d{1,3}' : `\\d{${m.length}}`))
+        .replace(/V+/g, (m) => `[BC]\\d{${Math.max(1, m.length - 1)}}`);
+      return new RegExp(`^${re}$`, 'i').test(name);
+    });
+}
+
 /** Fichier SHA256SUMS (« empreinte  nom ») → table. */
 export function readChecksums(file: string): Map<string, string> {
   const out = new Map<string, string>();
@@ -147,50 +192,61 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
   const issues: AudioIssue[] = [];
   const add = (level: IssueLevel, code: string, x: Omit<AudioIssue, 'code' | 'level'> = {}) =>
     issues.push({ code, level, ...x });
-  const parse = compilePattern(o.pattern);
+  const parse = compilePatterns(o.pattern);
   const hafs = o.riwaya === 'hafs';
+  // compte par sourate : Ḥafṣ, ou riwāya dont le compte officiel est connu (suras.ts) ; sinon compte déclaré
+  const table = hafs ? HAFS_SURA_VERSES : riwayaSuraVerses(o.riwaya);
   const scope = o.suras ? new Set(o.suras) : null;
   const longSilence = o.longSilenceMs ?? 4000;
   const ffmpeg = o.silence === false ? null : o.ffmpeg === undefined ? findFfmpeg() : o.ffmpeg;
 
-  // 1. noms → versets (doublons, hors nommage, hors muṣḥaf, hors périmètre)
-  const byVerse = new Map<string, { file: string; sura: number; aya: number }>();
-  const names = existsSync(o.dir) ? readdirSync(o.dir).sort() : [];
-  if (!existsSync(o.dir)) add('bloquant', 'dossier_absent', { detail: o.dir });
-  for (const file of names) {
-    if (!statSync(join(o.dir, file)).isFile()) continue;
-    const v = parse(file);
-    if (!v) {
-      add('avertissement', 'nom_inattendu', { file });
-      continue;
-    }
-    const max = hafs ? (HAFS_SURA_VERSES[v.sura - 1] ?? 0) : 286;
-    if (v.sura < 1 || v.sura > 114 || v.aya > max) {
-      add('bloquant', 'hors_mushaf', { file, sura: v.sura, aya: v.aya });
-      continue;
-    }
-    if (scope && !scope.has(v.sura)) {
-      add('avertissement', 'hors_perimetre', { file, sura: v.sura, aya: v.aya });
-      continue;
-    }
+  // 1. noms → versets (doublons, hors nommage, hors muṣḥaf, hors périmètre), dans tous les dossiers
+  const byVerse = new Map<string, { file: string; source: string; sura: number; aya: number }>();
+  const addVerse = (file: string, source: string, v: { sura: number; aya: number }) => {
+    const max = table ? (table[v.sura - 1] ?? 0) : 286;
+    if (v.sura < 1 || v.sura > 114 || v.aya > max)
+      return add('bloquant', 'hors_mushaf', { file, sura: v.sura, aya: v.aya });
+    if (scope && !scope.has(v.sura))
+      return add('avertissement', 'hors_perimetre', { file, sura: v.sura, aya: v.aya });
     const key = `${v.sura}:${v.aya}`;
     const prev = byVerse.get(key);
-    if (prev) {
-      add('bloquant', 'doublon_nom', { file, sura: v.sura, aya: v.aya, detail: prev.file });
+    if (prev)
+      return add('bloquant', 'doublon_nom', { file, sura: v.sura, aya: v.aya, detail: prev.file });
+    byVerse.set(key, { file, source, ...v });
+  };
+  let annexes = 0;
+  for (const dir of [o.dir, ...(o.extraDirs ?? [])]) {
+    if (!existsSync(dir)) {
+      add('bloquant', 'dossier_absent', { detail: dir });
       continue;
     }
-    byVerse.set(key, { file, ...v });
+    for (const file of readdirSync(dir).sort()) {
+      const source = join(dir, file);
+      if (!statSync(source).isFile()) continue;
+      const v = parse(file);
+      if (v) addVerse(file, source, v);
+      else if (isAnnexName(o.pattern, file)) annexes++;
+      else add('avertissement', 'nom_inattendu', { file });
+    }
   }
+  if (annexes)
+    add('avertissement', 'annexes_ignorees', {
+      detail: `${annexes} fichier(s) basmala / isti'ādha (B/C) non importés`,
+    });
 
   // 2. versets attendus
   const suras = o.suras ? [...o.suras] : Array.from({ length: 114 }, (_, i) => i + 1);
   let expected: number;
-  if (hafs) {
-    expected = suras.reduce((n, s) => n + HAFS_SURA_VERSES[s - 1]!, 0);
-    if (!o.suras && expected !== HAFS_TOTAL_VERSES)
+  if (table) {
+    expected = suras.reduce((n, s) => n + table[s - 1]!, 0);
+    if (hafs && !o.suras && expected !== HAFS_TOTAL_VERSES)
       throw new Error('table des sourates incohérente');
+    if (!hafs && o.declaredVerses !== undefined && o.declaredVerses !== expected)
+      add('bloquant', 'compte_incorrect', {
+        detail: `compte déclaré ${o.declaredVerses}, compte officiel de la riwāya ${expected}`,
+      });
     for (const s of suras)
-      for (let a = 1; a <= HAFS_SURA_VERSES[s - 1]!; a++)
+      for (let a = 1; a <= table[s - 1]!; a++)
         if (!byVerse.has(`${s}:${a}`))
           add('bloquant', 'manquant', { sura: s, aya: a, detail: `${pad3(s)}${pad3(a)}` });
   } else {
@@ -226,7 +282,7 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
   let unchecked = 0;
   const methods = new Set<string>();
   const scanned = await pool(entries, o.concurrency ?? 4, async (e) => {
-    const path = join(o.dir, e.file);
+    const path = e.source;
     const buf = readFileSync(path);
     const sha256 = createHash('sha256').update(buf).digest('hex');
     const p = probeAudio(buf);
@@ -266,6 +322,7 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
     }
     const track: ScannedTrack = {
       file: e.file,
+      source: e.source,
       sura: e.sura,
       aya: e.aya,
       format: p.format,
@@ -326,6 +383,8 @@ export async function upsertReciter(db: Db, m: ReciterMeta): Promise<void> {
     licenseArchivedOn: m.licenseArchivedOn,
     licenseText: m.licenseText,
     credit: m.credit,
+    creditAr: m.creditAr,
+    usageNote: m.usageNote,
   };
   await db
     .insert(t.quranReciter)
@@ -385,7 +444,7 @@ export async function importReciterAudio(
 
   const base = {
     reciterId: rec.id,
-    sourceDir: o.dir,
+    sourceDir: [o.dir, ...(o.extraDirs ?? [])].join(' + '),
     pattern: o.pattern,
     tracks: report.tracks.length,
     totalBytes: report.totalBytes,
@@ -410,7 +469,7 @@ export async function importReciterAudio(
     const path = `${dirRel}/${pad3(tr.sura)}${pad3(tr.aya)}-${tr.sha256.slice(0, 16)}.${tr.format}`;
     const dest = join(o.storageDir, path);
     if (!existsSync(dest) || statSync(dest).size !== tr.bytes) {
-      copyFileSync(join(o.dir, tr.file), `${dest}.part`);
+      copyFileSync(tr.source, `${dest}.part`);
       renameSync(`${dest}.part`, dest);
     }
     return {

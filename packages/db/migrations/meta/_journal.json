@@ -197,6 +197,13 @@
       "when": 1791095630192,
       "tag": "0027_coran_audio",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1791162462828,
+      "tag": "0028_coran_audio_credit",
+      "breakpoints": true
     }
   ]
 }
