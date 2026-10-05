@@ -19,3 +19,4 @@ export * from './epreuves.js';
 export * from './rgpd.js';
 export * from './bounds.js';
 export * from './audio/index.js';
+export * from './lecons-audio.js';

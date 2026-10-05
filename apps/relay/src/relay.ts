@@ -1,3 +1,5 @@
+import { existsSync, mkdirSync, renameSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 /**
  * Relais d'école (lot 17) : serveur local placé entre les tablettes de l'école et le serveur central.
  *  - Internet présent : il transmet tout au central (et garde une copie des CONTENUS publics) ;
@@ -17,7 +19,7 @@ import { serveAudio, type AudioCache, type AudioSyncResult } from './audio.js';
 
 /** Contenus publics mis en copie (jamais de données personnelles). */
 export const CACHEABLE =
-  /^\/api\/v1\/(config|levels(\/[a-z0-9]+\/units)?|units\/[a-z0-9.]+|packs(\/[a-z0-9]+)?|quran\/(meta|verses)|quran\/audio\/reciters(\/[a-z0-9-]+\/(suras|packs)\/[0-9]{1,3}|\/[a-z0-9-]+\/packs)?|hifz\/books(\/[a-z0-9_]+)?|booklets(\/[a-z0-9-]+)?|activites\/racines|billing\/plans|public\/l\/[a-z0-9-]+)$/;
+  /^\/api\/v1\/(config|levels(\/[a-z0-9]+\/units)?|units\/[a-z0-9.]+|packs(\/[a-z0-9]+)?|quran\/(meta|verses)|quran\/audio\/reciters(\/[a-z0-9-]+\/(suras|packs)\/[0-9]{1,3}|\/[a-z0-9-]+\/packs)?|hifz\/books(\/[a-z0-9_]+)?|booklets(\/[a-z0-9-]+)?|activites\/racines|lecons-audio\/niveaux(\/[a-z0-9-]+)?|billing\/plans|public\/l\/[a-z0-9-]+)$/;
 
 /** Chaîne de requête des contenus mis en copie : bornée (audit OFF-6, copie non saturable). */
 const MAX_QUERY = 120;
@@ -64,6 +66,8 @@ export interface RelayOptions {
   onCertificate?: (c: { host: string; cert: string; key: string }) => void | Promise<void>;
   /** copie locale de l'audio du Coran (lot 27) ; absente : fichiers relayés seulement */
   audio?: AudioCache | null;
+  /** audio des leçons (A3) : dossier de la copie (fichiers gardés au premier passage) ; absent : relayés */
+  leconsAudioDir?: string | null;
 }
 
 export interface Relay {
@@ -189,6 +193,37 @@ export function buildRelay(o: RelayOptions): Relay {
       if (!online) return offlineReply(reply);
       try {
         return await send(reply, await upstream('GET', req.url, pick(req)));
+      } catch (e) {
+        if (!(e instanceof Offline)) throw e;
+        return offlineReply(reply);
+      }
+    },
+  );
+
+  // audio des leçons (A3) : copie de l'école remplie au premier passage (fichiers publics, nommés par
+  // l'empreinte du texte) ; ensuite servis sans Internet
+  app.get<{ Params: { file: string } }>(
+    '/api/v1/lecons-audio/fichiers/:file',
+    async (req, reply) => {
+      const ok = /^[0-9a-f]{40}\.mp3$/.test(req.params.file);
+      const local = ok && o.leconsAudioDir ? join(o.leconsAudioDir, req.params.file) : null;
+      if (local && existsSync(local)) return serveAudio(req, reply, local);
+      if (Date.now() - lastCheck > 10_000) await checkOnline();
+      if (!online) return offlineReply(reply);
+      try {
+        const r = await upstream(
+          'GET',
+          `/api/v1/lecons-audio/fichiers/${encodeURIComponent(req.params.file)}`,
+          {},
+        );
+        if (local && r.status === 200) {
+          const buf = Buffer.from(await r.arrayBuffer());
+          mkdirSync(o.leconsAudioDir!, { recursive: true });
+          writeFileSync(`${local}.part`, buf);
+          renameSync(`${local}.part`, local);
+          return serveAudio(req, reply, local);
+        }
+        return await send(reply, r);
       } catch (e) {
         if (!(e instanceof Offline)) throw e;
         return offlineReply(reply);

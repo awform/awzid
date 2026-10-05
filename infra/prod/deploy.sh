@@ -137,6 +137,11 @@ EDITION="prod-$( (cat "$AWFORM_CONTENT_DIR/MANIFEST.sha256"; echo "$LEVELS|$CARN
 IMPORT_ARGS=(--edition "$EDITION" --levels "$LEVELS" --carnets "$CARNETS" --publish)
 [ -n "$APERCU" ] && IMPORT_ARGS+=(--apercu "$APERCU")
 "${DC[@]}" --profile outils run --rm import "${IMPORT_ARGS[@]}"
+# audio des leçons (A3) : import IDEMPOTENT depuis AWFORM_LECONS_AUDIO_SOURCE (défaut ~/lecons-audio) s'il
+# existe (contrôle des fichiers, garde coranique sur le texte du Coran importé ci-dessus) ; l'API le lit seulement
+"${DC[@]}" --profile outils run --rm -T --user root --entrypoint chown lecons-audio node:node /lecons-audio
+"${DC[@]}" --profile outils run --rm lecons-audio importer --si-present \
+  || echo "ATTENTION : audio des leçons : fichiers refusés ou import en échec (voir ci-dessus)"
 
 # ---------------------------------------------------------------- 3. services
 "${DC[@]}" up -d --remove-orphans api worker web caddy

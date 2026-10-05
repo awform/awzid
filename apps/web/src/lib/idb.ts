@@ -4,9 +4,10 @@
  * Tout ce qui est stocké ici est la projection ÉLÈVE (jamais le guide) ou des événements de l'élève.
  */
 export const DB_NAME = 'awform';
-export const DB_VERSION = 2;
-/** « recordings » (v2) : enregistrements de récitation, gardés SUR L'APPAREIL seulement (jamais envoyés) */
-export type StoreName = 'packs' | 'units' | 'illus' | 'events' | 'kv' | 'recordings';
+export const DB_VERSION = 3;
+/** « recordings » (v2) : enregistrements de récitation, gardés SUR L'APPAREIL seulement (jamais envoyés) ;
+ *  « audio » (v3, A3) : fichiers audio des leçons des niveaux téléchargés « avec l'audio » ({ id, blob }) */
+export type StoreName = 'packs' | 'units' | 'illus' | 'events' | 'kv' | 'recordings' | 'audio';
 
 let dbPromise: Promise<IDBDatabase> | null = null;
 
@@ -30,6 +31,7 @@ export function openDb(): Promise<IDBDatabase> {
         const r = db.createObjectStore('recordings', { keyPath: 'id' });
         r.createIndex('profile', 'profileId');
       }
+      if (!db.objectStoreNames.contains('audio')) db.createObjectStore('audio', { keyPath: 'id' });
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => {

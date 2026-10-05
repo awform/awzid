@@ -4,6 +4,7 @@
   import type { SceneSpec } from '@awform/content/scene';
   import { tanwinDisplay } from '@awform/content/text';
   import Ar from '$lib/Ar.svelte';
+  import Ecouter from '$lib/Ecouter.svelte';
   import Illus from '$lib/Illus.svelte';
   import Scene from '$lib/Scene.svelte';
   import { unitLabel, type UnitDetail } from '$lib/api';
@@ -182,7 +183,7 @@
       {/if}
       {#each arr(r.hadiths) as h, i (i)}
         <blockquote class="hadith">
-          {#if str(h.ar)}<Ar text={str(h.ar)} tag="p" />{/if}
+          {#if str(h.ar)}<Ar text={str(h.ar)} tag="p" /><Ecouter text={str(h.ar)} />{/if}
           <p>« <Bidi text={str(h.fr)} /> »</p>
           <p class="ref">
             {#if str(h.rawi_fr)}<Bidi text={t('rel.rapporte_par', { rawi: str(h.rawi_fr) })} /> ·
@@ -200,7 +201,7 @@
             {#if str(d.moment_ar)}<Ar text={str(d.moment_ar)} /> —
             {/if}<Bidi text={str(d.moment_fr)} />
           </p>
-          <Ar text={str(d.ar)} tag="p" />
+          <Ar text={str(d.ar)} tag="p" /><Ecouter text={str(d.ar)} />
           <p><Bidi text={str(d.fr)} /></p>
           {#if str(d.source_fr)}<p class="ref"><Bidi text={str(d.source_fr)} /></p>{/if}
         </div>

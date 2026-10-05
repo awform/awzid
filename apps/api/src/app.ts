@@ -31,6 +31,7 @@ import { registerPratiqueAdulte } from './pratique-adulte.js';
 import { registerRecital } from './recital.js';
 import { registerEcoleSynthese } from './ecole-synthese.js';
 import { registerCoranAudio } from './coran-audio.js';
+import { registerLeconsAudio } from './lecons-audio.js';
 import { registerContent } from './contenu.js';
 import { notFound } from './routes-common.js';
 import { registerProgress } from './progression.js';
@@ -63,6 +64,8 @@ export interface AppOptions {
   billing?: BillingSetup;
   /** stockage des fichiers audio du Coran (tests) ; sinon AWFORM_AUDIO_DIR ; null : fichiers non servis */
   audioDir?: string | null;
+  /** audio des leçons (A3, tests) ; sinon AWFORM_LECONS_AUDIO_DIR ; null : non servi */
+  leconsAudioDir?: string | null;
   /** DÉMONSTRATION seulement (server.ts : AWFORM_DEMO=1 et garde-fou) : connexion simplifiée */
   demoLogin?: boolean;
 }
@@ -180,6 +183,12 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     app,
     db,
     opts.audioDir === undefined ? (process.env.AWFORM_AUDIO_DIR ?? null) : opts.audioDir,
+  );
+  registerLeconsAudio(
+    app,
+    opts.leconsAudioDir === undefined
+      ? (process.env.AWFORM_LECONS_AUDIO_DIR ?? null)
+      : opts.leconsAudioDir,
   );
   registerVerification(app, db, signer);
   registerRelais(

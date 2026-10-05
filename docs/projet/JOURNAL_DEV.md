@@ -8,6 +8,51 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 05/10/2026 — Chantier A3 : audio des leçons (voix de synthèse provisoire des livres)
+
+- **Clé** (`packages/content/src/audio-cle.ts`, export `@awform/content/audio-cle`) : `audioKey` = copie EXACTE de
+  `AW.audioKey`/`sayText` d'awform.js (✱ de tête, crochets, tatweel, signes U+06D6–U+06ED, alif waṣla, alif
+  suscrit, espaces, NFC), fichier = SHA-1 UTF-8 de la clé (SHA-1 sans dépendance, synchrone, navigateur compris).
+  Test : 200 textes de `liste.csv` (SHA-1 = nom du fichier) + 60 textes BRUTS des livres comparés à la fonction
+  recopiée d'awform.js (`test/fixtures/audio-cles.tsv`).
+- **Garde coranique** (import) : écarté si signes du Muṣḥaf, ou texte de ≥ 3 mots retrouvé dans un verset (ou deux
+  consécutifs), ou citation d'au moins 5 mots consécutifs du Coran (squelette sans voyelles, ʿuthmānī = courant).
+  Sur les 16 464 fichiers : **171 écartés** (al-Fātiḥa et al-Ikhlāṣ mot à mot, « إنا لله وإنا إليه راجعون »,
+  dialogues et tafsīr qui citent un verset, invocations coraniques). Côté affichage, `looksQuranic` en plus.
+- **Import** (`packages/db/src/lecons-audio.ts`, outil `lecons-audio importer|etat`, service compose
+  `lecons-audio`) : idempotent (rien recopié si identique ; retrait des fichiers sortis de l'index), contrôle
+  fichier présent + MP3 lisible + durée non nulle, manifeste écrit en dernier (atomique) ; voix et crédits lus
+  dans `AW.audioInfo` (« Voix : Google Cloud Text-to-Speech », Wavenet-A enfants, Wavenet-B ados/adultes) —
+  NB : la colonne `voix` de `liste.csv` dit encore Azure (écrite avant la génération Google) ; `index.js` fait foi.
+  Démo/VM : 16 293 importés, 0 absent, 0 illisible, 0 incohérent, ~860 Mo.
+- **Service** (`apps/api/src/lecons-audio.ts`) : volume `audio_lecons` en lecture seule (AWFORM_LECONS_AUDIO_DIR) ;
+  `GET /api/v1/lecons-audio/niveaux[/:level]` (fichiers du niveau, taille, mention, crédit) et
+  `/fichiers/<sha1>.mp3` (Range, ETag = SHA-256 du contenu, 304, 416 ; cache public une semaine).
+- **Interface** : `Ecouter.svelte` (gros bouton 48 px + « Lent » à 0,8, hauteur conservée, aucune lecture
+  automatique, un seul son à la fois) aux emplacements des boutons du moteur des livres : noms des lettres,
+  syllabes, vedette, phrases/paragraphes, notion, « أسمع وأردد », dialogue, question des exercices « écoute »,
+  consignes arabes des exercices, hadiths et invocations (religion). Pas de fichier → pas de bouton (jamais de
+  synthèse du navigateur). Versets : aucun bouton, lien « ▶ Écouter la récitation » (récitation du Complexe,
+  `/coran/ecouter?s=&a=`). Mention « Voix de synthèse (provisoire) · Voix : Google Cloud Text-to-Speech » en bas
+  de la leçon.
+- **Hors ligne** : option « avec l'audio (taille) » par niveau dans « Mes téléchargements », ajout/retrait après
+  coup, réglage « Audio en Wi-Fi seulement » (par défaut) ; fichiers dans IndexedDB (magasin `audio`, base v3),
+  partagés entre niveaux. **Relais d'école** : liste des niveaux mise en copie, fichiers gardés au premier passage
+  puis servis sans Internet.
+- **Couverture** (emplacements ci-dessus, 28 livres d'élève + 3 livrets qc sans bouton) : 18 508 textes distincts
+  par niveau, 14 882 avec fichier (80,4 % ; 81,2 % hors 190 textes coraniques écartés). Les textes sans fichier sont
+  surtout des consignes et noms de signes que le moteur des livres ne lit pas. Index des livres : 16 293/16 464
+  importés (99,0 %).
+- **Poids** (Mo) : en1 5,1 · en2 6,6 · en3 11,0 · en4 14,9 · en5 17,6 · ad1 10,1 · ad2 18,9 · ad3 24,7 · ad4 31,7 ·
+  ad5 36,2 · ad6 50,1 · ad7 49,0 · ad8 50,2 · ad9 55,4 · ad10 64,0 · ado1 17,1 · ado2 22,5 · ado3 29,3 · ado4 36,2 ·
+  re1–re5 4,1–8,6 · ra1–ra4 5,8–10,7 (lectures graduées : 234 Mo, servies mais pas encore de bouton).
+- **Budget** : JavaScript total 288,9 + CSS 27,6 Ko > 315 → porté à **320 Ko** (D31) ; page la plus lourde
+  `/lecons/[id]` 135,1 Ko ≤ 150.
+- Tests : content +7, db +4, api +2, relay +3, web +4 unitaires ; e2e `a3.spec.ts` (3, dont hors ligne) ; suites
+  unitaires complètes vertes ; e2e a3 + lecons + horsligne + exercices + a11y : 37 passés.
+
+---
+
 ## 05/10/2026 — Chantier A1 (suite) : décisions du chef de projet appliquées
 
 - Outil : `--sourate-du-dossier` (zip décompressé avec ses dossiers « NNN … » : sourate lue dans le nom du

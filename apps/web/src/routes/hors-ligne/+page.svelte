@@ -21,6 +21,14 @@
     type Settings,
     type StoredPack,
   } from '$lib/offline';
+  import {
+    audioSummary,
+    downloadLevelAudio,
+    hasLevelAudio,
+    onWifi,
+    removeLevelAudio,
+    type AudioSummary,
+  } from '$lib/lecons-audio-offline';
 
   /**
    * « Mes téléchargements » : niveaux disponibles sans réseau, poids affiché AVANT tout téléchargement,
@@ -38,9 +46,19 @@
   /** lot 26 : liste encore en chargement (le serveur prépare les paquets) */
   let ready = $state(false);
   let confirmLevel: PackManifestEntry | null = $state(null);
+  /** audio des leçons (A3) : taille par niveau, option « avec l'audio », niveaux qui l'ont sur l'appareil */
+  let audioSum: AudioSummary[] = $state([]);
+  let withAudio: Record<string, boolean> = $state({});
+  let audioLocal: Record<string, boolean> = $state({});
+  let audioProgress = $state('');
+  const audioOf = (level: string) => audioSum.find((a) => a.niveau === level && a.fichiers > 0);
 
   async function reload() {
     local = await localPacks();
+    audioLocal = Object.fromEntries(
+      await Promise.all(local.map(async (l) => [l.level, await hasLevelAudio(l.level)] as const)),
+    );
+    audioSum = await audioSummary();
     settings = await getSettings();
     month = await monthBytes();
     storage = await storageInfo();
@@ -87,11 +105,40 @@
       await requestPersistence();
       await downloadPack(m.level, fetch, m.bytes);
       message = t('horsligne.disponible', { niveau: m.codeFr ?? m.level });
+      if (withAudio[m.level]) await addAudio(m.level, false);
     } catch (e) {
       message = t('horsligne.echec', { raison: (e as Error).message });
     }
     busy = null;
     await reload();
+  }
+  async function addAudio(level: string, alone = true) {
+    if (settings?.audioWifi !== false && onWifi() === false) {
+      message = t('audio.pas_wifi');
+      return;
+    }
+    busy = level;
+    try {
+      const r = await downloadLevelAudio(level, (d, n) => (audioProgress = `${d}/${n}`));
+      message = t('audio.telecharge', { n: r.fichiers });
+    } catch (e) {
+      message = t('horsligne.echec', { raison: (e as Error).message });
+    }
+    audioProgress = '';
+    if (alone) {
+      busy = null;
+      await reload();
+    }
+  }
+  async function removeAudio(level: string) {
+    busy = level;
+    await removeLevelAudio(level);
+    message = t('horsligne.place_liberee');
+    busy = null;
+    await reload();
+  }
+  async function toggleAudioWifi(v: boolean) {
+    settings = await saveSettings({ audioWifi: v });
   }
   async function update(level: string) {
     busy = level;
@@ -112,6 +159,7 @@
   async function remove(level: string) {
     busy = level;
     await removePack(level);
+    await removeLevelAudio(level);
     message = t('horsligne.place_liberee');
     busy = null;
     await reload();
@@ -190,9 +238,44 @@
                 >{t('horsligne.liberer')}</button
               >
             {/if}
-            {#if busy === r.level}<span class="muted">…</span>{/if}
+            {#if busy === r.level}<span class="muted"><Bidi text={audioProgress || '…'} /></span
+              >{/if}
           </td>
         </tr>
+        {#if audioOf(r.level)}
+          <!-- A3 : audio des leçons en option, taille affichée avant tout téléchargement -->
+          <tr class="audio-row" data-audio-level={r.level}>
+            <td colspan="4">
+              {#if !r.l}<label class="audio-opt"
+                  ><input
+                    type="checkbox"
+                    data-testid="avec-audio"
+                    bind:checked={withAudio[r.level]}
+                  />
+                  <Bidi
+                    text={t('audio.avec', { poids: fmtBytes(audioOf(r.level)?.octets ?? 0) })}
+                  /></label
+                >
+              {:else if audioLocal[r.level]}<span class="audio-opt"
+                  ><span class="muted" data-testid="audio-inclus">{t('audio.inclus')}</span>
+                  <button
+                    type="button"
+                    disabled={busy !== null}
+                    onclick={() => removeAudio(r.level)}>{t('audio.retirer')}</button
+                  ></span
+                >
+              {:else}<button
+                  type="button"
+                  data-testid="ajouter-audio"
+                  disabled={busy !== null}
+                  onclick={() => addAudio(r.level)}
+                  ><Bidi
+                    text={t('audio.ajouter', { poids: fmtBytes(audioOf(r.level)?.octets ?? 0) })}
+                  /></button
+                >{/if}
+            </td>
+          </tr>
+        {/if}
       {/each}
     </tbody>
   </table>
@@ -236,6 +319,20 @@
       /></span
     >
   </label>
+  <label class="switch">
+    <input
+      type="checkbox"
+      checked={settings?.audioWifi ?? true}
+      disabled={!settings}
+      onchange={(e) => toggleAudioWifi(e.currentTarget.checked)}
+      data-testid="audio-wifi"
+    />
+    <span
+      ><strong><Bidi text={t('audio.wifi')} /></strong> —<Bidi
+        text={t('audio.wifi_explication')}
+      /></span
+    >
+  </label>
 </section>
 
 <p><a href={resolve('/ecole')}>{t('horsligne.lien_ecole')}</a></p>
@@ -276,6 +373,20 @@
   .confirm p {
     flex-basis: 100%;
     margin: 0;
+  }
+  .levels .audio-row td {
+    padding-top: 0;
+  }
+  .audio-opt {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+  }
+  .audio-opt input {
+    width: 24px;
+    height: 24px;
   }
   .switch {
     display: flex;

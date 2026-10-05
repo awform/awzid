@@ -21,7 +21,8 @@
     "generate": "drizzle-kit generate",
     "migrate": "node dist/cli/migrate.js",
     "import-content": "node dist/cli/import.js",
-    "coran-audio": "node dist/cli/coran-audio.js"
+    "coran-audio": "node dist/cli/coran-audio.js",
+    "lecons-audio": "node dist/cli/lecons-audio.js"
   },
   "dependencies": {
     "@awform/content": "workspace:*",

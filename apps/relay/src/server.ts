@@ -31,6 +31,8 @@ const relay = buildRelay({
   store,
   version: env.AWFORM_VERSION ?? 'dev',
   audio,
+  // audio des leçons (A3)
+  leconsAudioDir: join(dataDir, 'lecons-audio'),
   onCertificate: certDir
     ? ({ cert, key: k }) => {
         mkdirSync(certDir, { recursive: true });

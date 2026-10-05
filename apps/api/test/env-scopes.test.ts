@@ -64,6 +64,8 @@ const FIXED = new Set([
   // audio du Coran (lot 27) : stockage fixé par compose.yml ; chemin de ffmpeg (outil d'import, facultatif)
   'AWFORM_AUDIO_DIR',
   'AWFORM_FFMPEG',
+  // audio des leçons (A3) : stockage fixé par compose.yml
+  'AWFORM_LECONS_AUDIO_DIR',
 ]);
 const isSecret = (v: string) => /SECRET|KEY|PASSWORD|TOKEN|DATABASE_URL/.test(v);
 const pkg = (n: string) => join(ROOT, 'packages', n, 'src');

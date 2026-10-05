@@ -12,6 +12,8 @@
   import TutorPanel from '$lib/TutorPanel.svelte';
   import Illus from '$lib/Illus.svelte';
   import LettresLecon from '$lib/LettresLecon.svelte';
+  import Ecouter from '$lib/Ecouter.svelte';
+  import { AUDIO_CTX, levelAudio, recitationQuery, type LevelAudio } from '$lib/lecons-audio';
   import Scene from '$lib/Scene.svelte';
   import Sprite from '$lib/Sprite.svelte';
   import { arabicSize, isQuranReadingLevel, unitLabel } from '$lib/api';
@@ -27,6 +29,15 @@
    */
   let { data } = $props();
   setContext('illustrations', () => data.illustrations);
+  // audio des leçons (A3) : fichiers du niveau ; boutons « écouter » seulement là où un fichier existe
+  let audio: LevelAudio | null = $state(null);
+  setContext(AUDIO_CTX, () => audio);
+  $effect(() => {
+    const lv = data.unit.levelCode;
+    void levelAudio(lv).then((a) => {
+      if (data.unit.levelCode === lv) audio = a;
+    });
+  });
 
   const u = $derived(data.unit);
   /** leçons des sciences islamiques (Religion Enfants re, Ados/Adultes ra) : lecteur dédié */
@@ -272,7 +283,7 @@
           </h2>
           <div class="notion">
             {#if N.signe}<span class="mk ar" lang="ar"><Bidi text={N.signe} base="ar" /></span>{/if}
-            {#if N.texte_ar}<Ar text={N.texte_ar} {lettres} />{/if}
+            {#if N.texte_ar}<Ar text={N.texte_ar} {lettres} /><Ecouter text={N.texte_ar} />{/if}
             {#if N.texte_fr}<p class="fr"><Bidi text={N.texte_fr} /></p>{/if}
           </div>
         {:else}
@@ -283,7 +294,8 @@
         {/if}
         {#if R.syllabes?.length}
           <div class="syl" dir="rtl">
-            {#each R.syllabes as s, i (i)}<span class="sylc"><Ar text={s.ar} {lettres} /></span
+            {#each R.syllabes as s, i (i)}<span class="sylc"
+                ><Ar text={s.ar} {lettres} /><Ecouter text={s.ar} /></span
               >{/each}
           </div>
         {/if}
@@ -308,14 +320,14 @@
         {:else}
           {#if R.vedette}
             <div class="note">
-              <Ar text={R.vedette.ar} {lettres} />
+              <Ar text={R.vedette.ar} {lettres} /><Ecouter text={R.vedette.ar} />
               {#if R.vedette.fr}<span class="fr"> — « <Bidi text={R.vedette.fr} /> »</span>{/if}
               {#if R.vedette.note_fr}<span class="fr"> <Bidi text={R.vedette.note_fr} /></span>{/if}
             </div>
           {/if}
           {#each phrases as p, i (i)}
             <div class="phrase">
-              <Ar tag="p" text={p.ar} {lettres} />
+              <Ar tag="p" text={p.ar} {lettres} /><Ecouter text={p.ar} />
               {#if p.fr}<p class="fr"><Bidi text={p.fr} /></p>{/if}
             </div>
           {/each}
@@ -333,7 +345,7 @@
           {#each L.mots as w, i (i)}
             <div class="wc">
               <Illus k={w.img} label={w.fr} />
-              <Ar text={w.ar} {lettres} />
+              <Ar text={w.ar} {lettres} /><Ecouter text={w.ar} />
               <span class="fr"><Bidi text={w.fr} /></span>
             </div>
           {/each}
@@ -567,6 +579,11 @@
   </article>
   <TutorPanel unitId={u.id} profile={profileInfo} words={lessonWords} />
 {/if}
+{#if audio?.fichiers.size}
+  <p class="audio-credit fr" data-testid="audio-credit">
+    <Bidi text={[t('audio.mention'), ...audio.credits].join(' · ')} />
+  </p>
+{/if}
 
 {#snippet dlg()}
   <section class="blk">
@@ -599,7 +616,7 @@
               {#if r.qui_ar}<span class="ar" lang="ar"><Bidi text={r.qui_ar} base="ar" /></span> ·
               {/if}<Bidi text={r.qui} />
             </div>
-            <Ar text={r.ar} {lettres} />
+            <Ar text={r.ar} {lettres} /><Ecouter text={r.ar} />
             {#if r.fr}<p class="fr"><Bidi text={r.fr} /></p>{/if}
           </div>
         </div>
@@ -634,6 +651,15 @@
           <div class="cap">
             <span class="ref"><Bidi text={v.ref_fr ?? ''} /></span>
             {#if v.consigne_fr}<span class="fr">— <Bidi text={v.consigne_fr} /></span>{/if}
+            <!-- A3 : JAMAIS de synthèse sur un verset ; renvoi à la récitation du Complexe -->
+            <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu, suivi d'un paramètre -->
+            {#if recitationQuery(v.ref_fr)}<a
+                class="rec-link"
+                data-testid="ecouter-recitation"
+                href={`${resolve('/coran/ecouter')}${recitationQuery(v.ref_fr)}`}
+                >{t('audio.recitation')}</a
+              >{/if}
+            <!-- eslint-enable svelte/no-navigation-without-resolve -->
           </div>
         </div>
       {/if}
@@ -920,6 +946,16 @@
     color: var(--teal);
     font-weight: 700;
     text-align: left;
+  }
+  .audio-credit {
+    margin: 12px 16px;
+    font-size: 13px;
+    color: var(--ink2);
+    text-align: center;
+  }
+  .rec-link {
+    font-weight: 700;
+    color: var(--teal);
   }
   .quran {
     background: linear-gradient(var(--surface), var(--card));

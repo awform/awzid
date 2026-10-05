@@ -12,7 +12,6 @@
   "unit.octets": "{n} B",
   "unit.ko": "{n} kB",
   "unit.mo": "{n} MB",
-
   "entete.hors_ligne": "offline",
   "entete.attente": "{n, plural, one {# answer waiting} other {# answers waiting}}",
   "entete.attente_titre": "Answers kept on this device and sent when the network is back",
@@ -21,7 +20,6 @@
   "entete.compte": "My account",
   "entete.connexion": "Sign in",
   "entete.telechargements": "Downloads and offline use",
-
   "onglets.aria": "Subjects",
   "onglets.coran": "Quran",
   "onglets.arabe": "Arabic",
@@ -29,7 +27,6 @@
   "onglets.ecriture": "Writing",
   "onglets.lectures": "Reading",
   "onglets.suivi": "My progress",
-
   "unite.lecon": "Lesson {n}",
   "unite.bilan": "Progress check {n}",
   "unite.examen": "End-of-level exam",
@@ -37,7 +34,6 @@
   "statut.commencee": "started",
   "statut.terminee": "finished",
   "statut.maitrisee": "mastered",
-
   "erreur.http": "error {status}",
   "erreur.reseau": "No network right now. Please try again later.",
   "erreur.identifiants_incorrects": "Incorrect email or password.",
@@ -72,12 +68,10 @@
   "erreur.export": "The export could not be prepared. Try again.",
   "erreur.csrf": "Request refused for security reasons. Reload the page.",
   "erreur.erreur_interne": "Something went wrong. Try again.",
-
   "arabe.titre": "My Arabic books",
   "arabe.hors_ligne": "No network: here are the levels downloaded on this device.",
   "arabe.unites": "{n, plural, one {# unit} other {# units}}",
   "arabe.edition": "Content edition: {edition}",
-
   "niveau.retour_sciences": "← Islamic studies",
   "niveau.retour": "← My books",
   "niveau.titre": "Lessons — {level}",
@@ -88,8 +82,22 @@
   "niveau.erreur": "Download not possible right now",
   "niveau.en1": "Children — level 1",
   "niveau.ad1": "Adults — level 1",
-
   "lecon.retour": "← Lessons {level}",
+  "audio.ecouter": "Listen",
+  "audio.ecouter_lent": "Listen slowly",
+  "audio.lent": "Slow",
+  "audio.ecouter_question": "Listen to question {n}",
+  "audio.ecouter_lettre": "Listen to the letter {nom}",
+  "audio.mention": "Synthetic voice (provisional)",
+  "audio.recitation": "▶ Listen to the recitation",
+  "audio.avec": "with audio ({poids})",
+  "audio.inclus": "audio included",
+  "audio.ajouter": "Add audio ({poids})",
+  "audio.retirer": "Remove audio",
+  "audio.telecharge": "Audio downloaded: {n} files.",
+  "audio.pas_wifi": "Audio not downloaded: no Wi-Fi (setting “audio on Wi-Fi only”).",
+  "audio.wifi": "Audio on Wi-Fi only",
+  "audio.wifi_explication": "lesson audio, which is heavier, is not downloaded over mobile data.",
   "lecon.progression": "Progress: {statut}",
   "lecon.objectif": "My goal: {texte}",
   "lecon.je_decouvre": "I discover",
@@ -133,7 +141,6 @@
   "lecon.tajwid": "Tajwid",
   "lecon.tajwid_titre": "{titre}:",
   "lecon.adab": "My good manners",
-
   "exo.exercice": "Exercise",
   "exo.titre.premiere_lettre": "Which letter does the word start with?",
   "exo.titre.chasse": "I find all the letters",
@@ -148,7 +155,6 @@
   "exo.pour_adulte": "For the adult: text to read aloud",
   "exo.recommencer": "↺ Start again",
   "exo.plus_tard": "Exercise “{type}”: planned for a later phase.",
-
   "coran.intro": "Reading (qāʿida), memorisation (hifẓ) and Quran player. Riwāya Ḥafṣ ʿan ʿĀṣim, exact Tanzil text.",
   "coran.hifz_titre": "Hifẓ — my notebook",
   "coran.hifz_texte": "Notebooks E1 (children) and N1 (adults): yearly plan, three tracks every day (new, recent, old), reviews at D+1, D+2, D+3, D+7, D+14, D+30, practice validation by a parent. The teacher remains the only judge; no ijāza.",
@@ -161,21 +167,17 @@
   "coran.lecteur_licence": "No audio without a licence: the player will be ready and voices added once the rights are secured.",
   "coran.qaida_titre": "Reading the Quran (qāʿida)",
   "coran.qaida_texte": "Booklets qc1 to qc3: the letters and signs of the Medina Muṣḥaf, then the rules of recitation (tajwid), Ḥafṣ reading. The adult reads first, the learner repeats.",
-
   "sciences.intro": "Creed, fiqh (Mālikī school), life of the Prophet ﷺ, hadith and adab — the books of the Religion series.",
   "sciences.re_titre": "Religion for children",
   "sciences.re_texte": "Levels re1 to re5: creed, sīra, prophets, fiqh, adab, supplications, hadith; practice log signed by a parent (never graded).",
   "sciences.ra_titre": "Religion for teens and adults",
   "sciences.ra_texte": "Levels ra1 to ra4, each published once frozen (the demo shows ra1 and ra2 as a preview): excerpts from Mālikī works, hadiths with their verified reference, case studies, tables, calculations.",
   "sciences.fidelite": "Everything shown comes from the books, exactly as written: the app adds no religious content.",
-
   "ecriture.trace_titre": "Guided letter tracing",
   "ecriture.trace_texte": "With a finger or a stylus: I trace over the dots, trace on the light letter, then write alone. The app checks the direction (right to left), the lane and the dots, and never gives a grade.",
   "ecriture.en_attendant": "The paper exercise book remains the main way to write: the app guides the movement, and the parent ticks “done in the book” in the lesson.",
-
   "lectures.titre": "My library of little books",
   "lectures.texte": "Small graded books for each level: illustrated pages, foldable translation, “I understand”, “My words” and the “I read this book” stamp. Each booklet is offered after the lesson where the learner met its words; keep it on the device to read it without network.",
-
   "horsligne.titre": "My downloads",
   "horsligne.intro": "A downloaded level works without network: lessons, pictures and exercises. Answers are kept on the phone and sent when the network is back.",
   "horsligne.pas_de_reseau": "No network: here is what is already on this device.",
@@ -217,7 +219,6 @@
   "horsligne.err_paquet": "level {level} unavailable ({status})",
   "horsligne.err_niveau": "level {level} missing",
   "horsligne.err_lecon": "lesson {id} unavailable ({status})",
-
   "ecole.titre": "School mode",
   "ecole.connexion_requise": "School mode uses the account's profiles: sign in first.",
   "ecole.intro": "One tablet for the whole class or family: each learner taps their picture and enters their picture code. After {minutes} minutes without activity, the tablet goes back to the grid.",
@@ -237,14 +238,12 @@
   "ecole.retour_auto": "Automatic return to the grid",
   "ecole.minutes": "{n} min",
   "ecole.quitter": "Leave school mode",
-
   "symbole.etoile": "star",
   "symbole.lune": "moon",
   "symbole.soleil": "sun",
   "symbole.feuille": "leaf",
   "symbole.goutte": "drop",
   "symbole.livre": "book",
-
   "suivi.choisir_profil": "First choose who is learning:",
   "suivi.qui_apprend": "Who is learning?",
   "suivi.mes_lecons": "My lessons",
@@ -256,19 +255,16 @@
   "suivi.attente": "{n, plural, =0 {No answer waiting to be sent} one {# answer waiting to be sent} other {# answers waiting to be sent}}",
   "suivi.dernier_envoi": "Last sent: {date}",
   "suivi.jamais": "Nothing sent yet",
-
   "champ.email": "Email address",
   "champ.mot_de_passe": "Password",
   "champ.code_totp": "6-digit code",
   "champ.pays": "Country",
   "champ.annee_naissance": "Year of birth",
   "champ.pseudonyme": "First name or nickname",
-
   "connexion.titre": "Sign in",
   "connexion.bouton": "Sign in",
   "connexion.pas_de_compte": "No account yet?",
   "connexion.oubli": "Forgotten password: reset by email is coming soon. Meanwhile, write to your school or to AWFORM.",
-
   "inscription.titre": "Create an account",
   "inscription.qui": "Who is creating the account?",
   "inscription.parent": "A parent",
@@ -309,7 +305,6 @@
   "pays.autorite.apdp_ml": "the Personal Data Protection Authority (APDP)",
   "pays.autorite.autorite_ue": "your country's data protection authority",
   "pays.autorite.autorite_locale": "your country's data protection authority",
-
   "consent.cgu": "I accept the terms of use and have read the privacy policy.",
   "consent.transfert_hors_pays": "I agree that my data and my children's data are hosted in the European Union, outside this country ({pays}).",
   "consent.rappels": "I agree to receive reminders (at most one a day, never at night for a child).",
@@ -320,7 +315,6 @@
   "consent.nom.rappels": "Reminders",
   "consent.nom.compte_suivi": "Child profile and progress tracking",
   "consent.nom.coppa_parent": "Parental consent (COPPA)",
-
   "profils.titre": "Who is learning?",
   "profils.connexion_requise": "Sign in to continue.",
   "profils.espace_parent": "Parent space",
@@ -334,7 +328,6 @@
   "profils.mot_de_passe_parent": "Your password (to confirm you are the parent)",
   "profils.creer": "Create the profile",
   "profils.ajoute": "Profile of {nom} created.",
-
   "compte.type.parent": "Parent account",
   "compte.type.adulte": "Adult account",
   "compte.type.enseignant": "Teacher account",
@@ -1716,7 +1709,6 @@
   "qc.lecture_notee": "The adult or teacher marks the reading with the guide's grid.",
   "qc.correction_adulte": "Test: the adult or teacher marks it with the guide (no automatic marking).",
   "qc.fidelite": "The words and verses of the Quran are those of the Medina Muṣḥaf (Ḥafṣ reading), checked letter by letter against the Tanzil text.",
-
   "tj.bouton": "Tajwid in colour",
   "tj.source": "annotation source",
   "tj.licence": "CC BY 4.0",
@@ -1743,7 +1735,6 @@
   "tj.k_long": "the long sound (الْمَدُّ)",
   "tj.k_rebond": "the bounce (الْقَلْقَلَةُ)",
   "tj.k_muet": "letters we do not say",
-
   "ca.onglet_mushaf": "Muṣḥaf",
   "mp.titre": "Muṣḥaf page by page",
   "mp.page_aria": "Muṣḥaf page {n}",

@@ -74,6 +74,8 @@ export interface Settings {
   ecole: boolean;
   /** retour automatique à la grille des élèves après N minutes d'inactivité */
   idleMinutes: number;
+  /** audio des leçons (A3) : téléchargé en Wi-Fi seulement (par défaut) */
+  audioWifi: boolean;
 }
 
 export const LARGE_DOWNLOAD = 200 * 1024;
@@ -94,6 +96,7 @@ export async function getSettings(): Promise<Settings> {
     econome: s?.econome ?? defaultEconome(),
     ecole: s?.ecole ?? false,
     idleMinutes: s?.idleMinutes ?? 10,
+    audioWifi: s?.audioWifi ?? true,
   };
 }
 export async function saveSettings(patch: Partial<Settings>): Promise<Settings> {

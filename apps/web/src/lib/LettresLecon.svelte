@@ -1,6 +1,7 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
   import Ar from '$lib/Ar.svelte';
+  import Ecouter from '$lib/Ecouter.svelte';
   import { t } from '$lib/i18n';
 
   /**
@@ -35,7 +36,10 @@
           <span class="pos"><Bidi text={i + 1} /></span>
           <span class="big c{i % 4}" lang="ar"><Bidi text={x.l} base="ar" /></span>
           {#if x.nom_ar}<span class="ar c{i % 4}" lang="ar"><Bidi text={x.nom_ar} base="ar" /></span
-            >{/if}
+            ><Ecouter
+              text={x.nom_ar}
+              label={t('audio.ecouter_lettre', { nom: x.nom_fr ?? '' })}
+            />{/if}
           {#if x.points_ar}<span class="ar dots" lang="ar"
               ><Bidi text={x.points_ar} base="ar" /></span
             >{/if}

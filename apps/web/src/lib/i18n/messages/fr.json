@@ -12,7 +12,6 @@
   "unit.octets": "{n} o",
   "unit.ko": "{n} Ko",
   "unit.mo": "{n} Mo",
-
   "entete.hors_ligne": "hors ligne",
   "entete.attente": "{n, plural, one {# réponse en attente} other {# réponses en attente}}",
   "entete.attente_titre": "Réponses gardées sur l'appareil, envoyées au retour du réseau",
@@ -21,7 +20,6 @@
   "entete.compte": "Mon compte",
   "entete.connexion": "Se connecter",
   "entete.telechargements": "Téléchargements et hors ligne",
-
   "onglets.aria": "Matières",
   "onglets.coran": "Coran",
   "onglets.arabe": "Arabe",
@@ -29,7 +27,6 @@
   "onglets.ecriture": "Écriture",
   "onglets.lectures": "Lectures",
   "onglets.suivi": "Mon suivi",
-
   "unite.lecon": "Leçon {n}",
   "unite.bilan": "Bilan {n}",
   "unite.examen": "Examen de fin de niveau",
@@ -37,7 +34,6 @@
   "statut.commencee": "commencée",
   "statut.terminee": "terminée",
   "statut.maitrisee": "maîtrisée",
-
   "erreur.http": "erreur {status}",
   "erreur.reseau": "Pas de réseau pour l'instant. Réessaie plus tard.",
   "erreur.identifiants_incorrects": "Adresse ou mot de passe incorrect.",
@@ -72,12 +68,10 @@
   "erreur.export": "L'export n'a pas pu être préparé. Réessaie.",
   "erreur.csrf": "Demande refusée par sécurité. Recharge la page.",
   "erreur.erreur_interne": "Une erreur s'est produite. Réessaie.",
-
   "arabe.titre": "Mes livres d'arabe",
   "arabe.hors_ligne": "Sans réseau : voici les niveaux téléchargés sur l'appareil.",
   "arabe.unites": "{n, plural, one {# unité} other {# unités}}",
   "arabe.edition": "Édition du contenu : {edition}",
-
   "niveau.retour_sciences": "← Sciences islamiques",
   "niveau.retour": "← Mes livres",
   "niveau.titre": "Leçons — {level}",
@@ -88,8 +82,22 @@
   "niveau.erreur": "Téléchargement impossible pour l'instant",
   "niveau.en1": "Enfants — niveau 1",
   "niveau.ad1": "Adultes — niveau 1",
-
   "lecon.retour": "← Leçons {level}",
+  "audio.ecouter": "Écouter",
+  "audio.ecouter_lent": "Écouter lentement",
+  "audio.lent": "Lent",
+  "audio.ecouter_question": "Écouter la question {n}",
+  "audio.ecouter_lettre": "Écouter la lettre {nom}",
+  "audio.mention": "Voix de synthèse (provisoire)",
+  "audio.recitation": "▶ Écouter la récitation",
+  "audio.avec": "avec l’audio ({poids})",
+  "audio.inclus": "audio inclus",
+  "audio.ajouter": "Ajouter l’audio ({poids})",
+  "audio.retirer": "Retirer l’audio",
+  "audio.telecharge": "Audio téléchargé : {n} fichiers.",
+  "audio.pas_wifi": "Audio non téléchargé : pas de Wi-Fi (réglage « audio en Wi-Fi seulement »).",
+  "audio.wifi": "Audio en Wi-Fi seulement",
+  "audio.wifi_explication": "l’audio des leçons, plus lourd, ne se télécharge pas sur les données mobiles.",
   "lecon.progression": "Progression : {statut}",
   "lecon.objectif": "Mon objectif : {texte}",
   "lecon.je_decouvre": "Je découvre",
@@ -133,7 +141,6 @@
   "lecon.tajwid": "Tajwid",
   "lecon.tajwid_titre": "{titre} :",
   "lecon.adab": "Mes bonnes manières",
-
   "exo.exercice": "Exercice",
   "exo.titre.premiere_lettre": "Par quelle lettre commence le mot ?",
   "exo.titre.chasse": "Je trouve toutes les lettres",
@@ -148,7 +155,6 @@
   "exo.pour_adulte": "Pour l'adulte : texte à lire à voix haute",
   "exo.recommencer": "↺ Recommencer",
   "exo.plus_tard": "Exercice « {type} » : prévu dans un lot suivant.",
-
   "coran.intro": "Lecture (qāʿida), mémorisation (hifẓ) et lecteur coranique. Riwāya Ḥafṣ ʿan ʿĀṣim, texte Tanzil exact.",
   "coran.hifz_titre": "Hifẓ — mon carnet",
   "coran.hifz_texte": "Carnets E1 (Enfants) et N1 (Adultes) : plan de l'année, trois pistes chaque jour (nouveau, récent, ancien), révisions à J+1, J+2, J+3, J+7, J+14, J+30, validation d'entraînement par le parent. Le maître reste le seul juge ; aucune ijāza.",
@@ -161,21 +167,17 @@
   "coran.lecteur_licence": "Aucun audio sans licence : le lecteur sera prêt, les voix seront ajoutées quand les droits seront acquis.",
   "coran.qaida_titre": "Lecture du Coran (qāʿida)",
   "coran.qaida_texte": "Livrets qc1 à qc3 : les lettres et les signes du Muṣḥaf de Médine, puis les règles de lecture (tajwid), lecture de Ḥafṣ. L'adulte lit d'abord, l'élève répète.",
-
   "sciences.intro": "Croyance, fiqh (école mālikite), vie du Prophète ﷺ, hadith et adab — les livres de la collection Religion.",
   "sciences.re_titre": "Religion Enfants",
   "sciences.re_texte": "Niveaux re1 à re5 : rubriques croyance, sīra, prophètes, fiqh, adab, invocations, hadith ; carnet de pratique signé par un parent (jamais noté).",
   "sciences.ra_titre": "Religion Ados et Adultes",
   "sciences.ra_texte": "Niveaux ra1 à ra4, publiés chacun dès son gel (la démonstration montre ra1 et ra2 en aperçu) : extraits des ouvrages de l'école mālikite, hadiths avec leur référence vérifiée, cas pratiques, tableaux, calculs.",
   "sciences.fidelite": "Tout ce qui s'affiche vient des livres, tel qu'ils l'écrivent : l'application n'ajoute aucun contenu religieux.",
-
   "ecriture.trace_titre": "Tracé guidé des lettres",
   "ecriture.trace_texte": "Au doigt ou au stylet : je repasse les pointillés, je trace sur la lettre claire, puis j'écris seul. L'application vérifie le sens (de droite à gauche), le couloir et les points, sans jamais noter.",
   "ecriture.en_attendant": "Le cahier papier reste le mode principal : l'application guide le geste, le parent coche « fait sur le cahier » dans la leçon.",
-
   "lectures.titre": "Ma bibliothèque de petits livres",
   "lectures.texte": "Des petits livres gradués pour chaque niveau : pages illustrées, traduction repliable, « Je comprends », « Mes mots » et le tampon « J'ai lu ce livre ». Chaque livret est proposé après la leçon où l'élève a appris ses mots ; garde-le sur l'appareil pour le lire sans réseau.",
-
   "horsligne.titre": "Mes téléchargements",
   "horsligne.intro": "Un niveau téléchargé fonctionne sans réseau : leçons, images et exercices. Les réponses sont gardées sur le téléphone et envoyées au retour du réseau.",
   "horsligne.pas_de_reseau": "Pas de réseau : voici ce qui est déjà sur l'appareil.",
@@ -217,7 +219,6 @@
   "horsligne.err_paquet": "niveau {level} indisponible ({status})",
   "horsligne.err_niveau": "niveau {level} absent",
   "horsligne.err_lecon": "leçon {id} indisponible ({status})",
-
   "ecole.titre": "Mode école",
   "ecole.connexion_requise": "Le mode école utilise les profils du compte : connecte-toi d'abord.",
   "ecole.intro": "Une tablette pour toute la classe ou la famille : chaque élève touche son image et entre son code image. Après {minutes} minutes sans activité, la tablette revient à la grille.",
@@ -237,14 +238,12 @@
   "ecole.retour_auto": "Retour automatique à la grille",
   "ecole.minutes": "{n} min",
   "ecole.quitter": "Quitter le mode école",
-
   "symbole.etoile": "étoile",
   "symbole.lune": "lune",
   "symbole.soleil": "soleil",
   "symbole.feuille": "feuille",
   "symbole.goutte": "goutte",
   "symbole.livre": "livre",
-
   "suivi.choisir_profil": "Choisis d'abord qui apprend :",
   "suivi.qui_apprend": "Qui apprend ?",
   "suivi.mes_lecons": "Mes leçons",
@@ -256,19 +255,16 @@
   "suivi.attente": "{n, plural, =0 {Aucune réponse en attente d'envoi} one {# réponse en attente d'envoi} other {# réponses en attente d'envoi}}",
   "suivi.dernier_envoi": "Dernier envoi : {date}",
   "suivi.jamais": "Aucun envoi pour l'instant",
-
   "champ.email": "Adresse e-mail",
   "champ.mot_de_passe": "Mot de passe",
   "champ.code_totp": "Code à 6 chiffres",
   "champ.pays": "Pays",
   "champ.annee_naissance": "Année de naissance",
   "champ.pseudonyme": "Prénom ou pseudonyme",
-
   "connexion.titre": "Se connecter",
   "connexion.bouton": "Se connecter",
   "connexion.pas_de_compte": "Pas encore de compte ?",
   "connexion.oubli": "Mot de passe oublié : la réinitialisation par e-mail arrive bientôt. En attendant, écris à ton école ou à AWFORM.",
-
   "inscription.titre": "Créer un compte",
   "inscription.qui": "Qui crée le compte ?",
   "inscription.parent": "Un parent",
@@ -309,7 +305,6 @@
   "pays.autorite.apdp_ml": "l'Autorité de protection des données à caractère personnel (APDP)",
   "pays.autorite.autorite_ue": "l'autorité de protection des données de votre pays",
   "pays.autorite.autorite_locale": "l'autorité de protection des données de votre pays",
-
   "consent.cgu": "J'accepte les conditions d'utilisation et j'ai lu la politique de confidentialité.",
   "consent.transfert_hors_pays": "J'accepte que mes données et celles de mes enfants soient hébergées dans l'Union européenne, hors de ce pays ({pays}).",
   "consent.rappels": "J'accepte de recevoir des rappels (au plus un par jour, jamais la nuit pour un enfant).",
@@ -320,7 +315,6 @@
   "consent.nom.rappels": "Rappels",
   "consent.nom.compte_suivi": "Profil et suivi d'un enfant",
   "consent.nom.coppa_parent": "Consentement parental (COPPA)",
-
   "profils.titre": "Qui apprend ?",
   "profils.connexion_requise": "Connecte-toi pour continuer.",
   "profils.espace_parent": "Espace parent",
@@ -334,7 +328,6 @@
   "profils.mot_de_passe_parent": "Votre mot de passe (pour confirmer que vous êtes le parent)",
   "profils.creer": "Créer le profil",
   "profils.ajoute": "Profil de {nom} créé.",
-
   "compte.type.parent": "Compte parent",
   "compte.type.adulte": "Compte adulte",
   "compte.type.enseignant": "Compte enseignant",
@@ -1716,7 +1709,6 @@
   "qc.lecture_notee": "L'adulte ou l'enseignant note la lecture avec la grille du guide.",
   "qc.correction_adulte": "Épreuve : l'adulte ou l'enseignant corrige avec le guide (pas de correction automatique).",
   "qc.fidelite": "Les mots et les versets du Coran sont ceux du Muṣḥaf de Médine (lecture de Ḥafṣ), contrôlés lettre par lettre contre le texte Tanzil.",
-
   "tj.bouton": "Tajwid en couleurs",
   "tj.source": "source des annotations",
   "tj.licence": "CC BY 4.0",
@@ -1743,7 +1735,6 @@
   "tj.k_long": "le son long (الْمَدُّ)",
   "tj.k_rebond": "le rebond (الْقَلْقَلَةُ)",
   "tj.k_muet": "les lettres qu'on ne prononce pas",
-
   "ca.onglet_mushaf": "Muṣḥaf",
   "mp.titre": "Muṣḥaf page par page",
   "mp.page_aria": "Page {n} du Muṣḥaf",

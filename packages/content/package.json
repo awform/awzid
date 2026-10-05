@@ -28,6 +28,10 @@
     "./tajwid": {
       "types": "./dist/tajwid.d.ts",
       "default": "./dist/tajwid.js"
+    },
+    "./audio-cle": {
+      "types": "./dist/audio-cle.d.ts",
+      "default": "./dist/audio-cle.js"
     }
   },
   "bin": {

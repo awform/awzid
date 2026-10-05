@@ -35,7 +35,9 @@ const r = {
 const ko = (n) => `${(n / 1024).toFixed(1)} Ko`;
 const BUDGET_INITIAL = 150 * 1024;
 // Muṣḥaf par page (04/10/2026) : 300 → 315 Ko pour ce nouvel écran, à valider (décision D30)
-const BUDGET_TOTAL = 315 * 1024;
+// A3 audio des leçons (05/10/2026) : 315 → 320 Ko (bouton écouter, clé SHA-1 du moteur des livres,
+// option « avec l'audio » des téléchargements), décision D31
+const BUDGET_TOTAL = 320 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 
 // JavaScript initial par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises en

@@ -11,6 +11,7 @@
     type ItemResponse,
   } from '@awform/grading';
   import Ar from './Ar.svelte';
+  import Ecouter from './Ecouter.svelte';
   import Illus from './Illus.svelte';
   import { contentText } from './i18n/content-text';
   import { t } from './i18n';
@@ -115,7 +116,10 @@
 
 <section class="ex" data-exercise={id} data-type={ex.type}>
   <header>
-    <h3><Ar text={titleAr} /> <span class="fr"><Bidi text={titleFr} /></span></h3>
+    <h3>
+      <Ar text={titleAr} /><Ecouter text={titleAr} small />
+      <span class="fr"><Bidi text={titleFr} /></span>
+    </h3>
     {#if consigne}<p class="consigne" lang={consigne.lang}><Bidi text={consigne.text} /></p>{/if}
     {#if lang}<p class="score" aria-live="polite">
         ★ <Bidi text={score} /> / <Bidi text={total} /><Bidi
@@ -195,6 +199,8 @@
     <ol class="items">
       {#each lang.items as it, i (i)}
         <li class:ok={found[i]} data-item={i}>
+          <!-- A3 : la question se fait entendre (fichier du livre) ; sans fichier, l'adulte la lit -->
+          <Ecouter text={it.dit} label={t('audio.ecouter_question', { n: i + 1 })} />
           <details class="adulte">
             <summary>{t('exo.pour_adulte')}</summary>
             <Ar text={it.dit} />

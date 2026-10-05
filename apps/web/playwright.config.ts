@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { createHash, randomBytes } from 'node:crypto';
-import { tmpdir } from 'node:os';
+import { existsSync } from 'node:fs';
+import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
@@ -49,6 +50,10 @@ process.env.E2E_KEY ??= randomBytes(32).toString('hex');
 const E2E_KEY = process.env.E2E_KEY;
 // lot 27 : stockage de l'audio d'ESSAI (bips non coraniques) servi par l'API de test
 const AUDIO_DIR = join(tmpdir(), `awform-e2e-audio${ISOLE ? `-${SUFFIX}` : ''}`);
+// A3 : audio des leçons d'en1 (fichiers réels des livres) importé depuis ~/lecons-audio s'il est là
+const LECONS_SRC = process.env.AWFORM_LECONS_AUDIO_SOURCE ?? join(homedir(), 'lecons-audio');
+const LECONS_DIR = join(tmpdir(), `awform-e2e-lecons${ISOLE ? `-${SUFFIX}` : ''}`);
+if (existsSync(join(LECONS_SRC, 'index.js'))) process.env.E2E_LECONS_AUDIO = '1';
 // lot 14 : l'API de test tourne sous son compte PostgreSQL à droits minimaux (comme en production)
 process.env.E2E_DB_API_PW ??= randomBytes(24).toString('hex');
 process.env.E2E_DB_WORKER_PW ??= randomBytes(24).toString('hex');
@@ -92,7 +97,7 @@ export default defineConfig({
     {
       // base de TEST remise à zéro, édition « e2e » importée ; comptes créés par globalSetup
       // puis comptes PostgreSQL séparés ; l'API tourne sous le compte « api » (droits minimaux)
-      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node e2e/audio-essai.mjs ${AUDIO_DIR} && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
+      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node e2e/audio-essai.mjs ${AUDIO_DIR} && node ../../packages/db/dist/cli/lecons-audio.js importer --test --si-present --niveaux en1 --source ${LECONS_SRC} --stockage ${LECONS_DIR} && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
       env: {
         DATABASE_URL: API_DB,
@@ -119,6 +124,8 @@ export default defineConfig({
         AWFORM_MESSAGE_KEY: `v1:${randomBytes(32).toString('hex')}`,
         // lot 27 : fichiers audio d'essai (bips), jamais une récitation
         AWFORM_AUDIO_DIR: AUDIO_DIR,
+        // A3 : audio des leçons d'en1
+        AWFORM_LECONS_AUDIO_DIR: LECONS_DIR,
         AWFORM_VAPID_PUBLIC: `B${'A'.repeat(86)}`,
       },
       reuseExistingServer: false,
