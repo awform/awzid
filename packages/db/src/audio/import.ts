@@ -92,6 +92,8 @@ export interface ScanOptions {
   suraFilesDir?: string;
   /** nommage des fichiers de sourate : S = chiffres de la sourate (ex. « 06-SSSD00-10mp3.mp3 ») */
   suraFilesPattern?: string;
+  /** sourates servies par leur fichier entier sur DÉCISION du référent (toute riwāya, Ḥafṣ compris) */
+  forceSuraFallback?: readonly number[];
 }
 
 export interface ScanReport {
@@ -292,14 +294,19 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
   const suras = o.suras ? [...o.suras] : Array.from({ length: 114 }, (_, i) => i + 1);
   let expected: number;
   const fallback = new Set<number>();
-  if (table && !hafs) {
+  if (table) {
     const ofSura = (s: number) =>
       [...byVerse.values()].filter((x) => x.sura === s && x.aya > 0).sort((a, b) => a.aya - b.aya);
     // a) al-Fātiḥa : riwāyāt où la basmala n'est pas un verset (toutes sauf le compte koufi : Ḥafṣ, Shuʿba) ;
     //    n + 1 fichiers numérotés 1..n+1 → le fichier 1 est la basmala (annexe), les suivants les versets 1..n
     const n1 = table[0]!;
     const f1 = ofSura(1);
-    if (o.riwaya !== 'shuba' && f1.length === n1 + 1 && f1.every((x, i) => x.aya === i + 1)) {
+    if (
+      !hafs &&
+      o.riwaya !== 'shuba' &&
+      f1.length === n1 + 1 &&
+      f1.every((x, i) => x.aya === i + 1)
+    ) {
       for (const x of f1) byVerse.delete(`1:${x.aya}`);
       for (const x of f1.slice(1)) byVerse.set(`1:${x.aya - 1}`, { ...x, aya: x.aya - 1 });
       annexes++;
@@ -321,7 +328,10 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
     for (const s of suras) {
       const f = ofSura(s);
       const n = table[s - 1]!;
-      if (f.length === n && f.every((x, i) => x.aya === i + 1)) continue;
+      const forced = o.forceSuraFallback?.includes(s) ?? false;
+      // Ḥafṣ : découpage par verset exigé, repli seulement sur décision expresse (--repli-sourates)
+      if (hafs && !forced) continue;
+      if (!forced && f.length === n && f.every((x, i) => x.aya === i + 1)) continue;
       const whole = suraFiles.get(s);
       if (whole) {
         for (const x of f) byVerse.delete(`${s}:${x.aya}`);
@@ -330,7 +340,9 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
         add('avertissement', 'repli_sourate', {
           sura: s,
           file: whole.file,
-          detail: `${f.length} fichier(s) par verset pour ${n} versets dans le texte officiel : fichier de sourate entière`,
+          detail: forced
+            ? `décision du référent : fichier de sourate entière (${f.length} fichier(s) par verset écartés)`
+            : `${f.length} fichier(s) par verset pour ${n} versets dans le texte officiel : fichier de sourate entière`,
         });
       } else
         for (const x of f)

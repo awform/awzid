@@ -21,7 +21,9 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
   → sourate 42 non activée (import partiel activé, 6 183 versets), à écouter.
 - sediki-susi : al-Mulk en fichier de sourate entière ; verifier 6 218 sans bloquant ; ASR 526/526 → activé.
 - huthify-qalun : basmala d'al-Fātiḥa en annexe ; verifier 6 214 sans bloquant ; ASR 528/528 → activé.
-- Démo : 9 récitations actives (muhanna sans la sourate 42). Activation hors démo : après écoute des
+- Décision du référent : sourate 42 d'al-Muhannā servie par son fichier de sourate entière (`--repli-sourates 42`,
+  Ḥafṣ compris, sur décision expresse seulement) → muhanna-hafs complet et activé.
+- Démo : 9 récitations actives. Activation hors démo : après écoute des
   échantillons par le client et le référent. Échantillon Qālūn refait (basmala + versets 1 à 7).
 
 ## 05/10/2026 — Chantier A1 : vraies récitations du Complexe (outil, contrôles, ASR, démo)

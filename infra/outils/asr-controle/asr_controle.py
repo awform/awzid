@@ -36,7 +36,7 @@ RECITATIONS = {
 TEXTES = {'hafs': ('texte-hafs-v30', 'aya_text_emlaey'), 'shuba': ('texte-hafs-v30', 'aya_text_emlaey'),
           'susi': ('texte-susi-v30', 'aya_text_unicode'), 'duri': ('texte-susi-v30', 'aya_text_unicode'),
           'qalun': ('texte-qalun-v30', 'aya_text_unicode')}
-EXTRA = {'muhanna-hafs': [(109, 1), (109, 2), (109, 3), (110, 1)], 'sediki-susi': [(67, 29), (67, 30)],
+EXTRA = {'muhanna-hafs': [(109, 1), (109, 2), (109, 3), (110, 1), (110, 2), (110, 3), (42, 1), (42, 2)], 'sediki-susi': [(67, 29), (67, 30)],
          'juhani-duri': [(67, 30), (67, 31)]}
 
 

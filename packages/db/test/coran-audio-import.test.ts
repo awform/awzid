@@ -339,6 +339,17 @@ describe('contrôles avant activation (dossier local)', () => {
     });
     expect(h.suraFallback).toBeUndefined();
     expect(h.tracks.some((x) => x.aya === 0)).toBe(false);
+    // Ḥafṣ, sur décision du référent (al-Muhannā, sourate 42) : repli imposé même si le compte est juste
+    const f = await scanAudioDir({
+      ...base,
+      riwaya: 'hafs',
+      suraFilesDir: whole,
+      suraFilesPattern: '06-SSSD00-10.wav',
+      forceSuraFallback: [67],
+    });
+    expect(f.blocking).toBe(0);
+    expect(f.suraFallback).toEqual([67]);
+    expect(f.tracks.filter((x) => x.sura === 67).map((x) => x.aya)).toEqual([0]);
   });
 
   it('riwāya au compte officiel connu (as-Sūsī, Qālūn) : compte par sourate imposé', async () => {

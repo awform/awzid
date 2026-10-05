@@ -12,7 +12,8 @@
  * Options : --nommage SSSVVV.mp3 (défaut : nommage relevé du Complexe ; plusieurs, séparés par des virgules)
  * · --dossier répété (dossiers supplémentaires) · --sourate-du-dossier (sous-dossiers « NNN … » : sourate lue
  * dans le nom du dossier) · --fichiers-sourate DIR [--nommage-sourate 06-SSSD00-10mp3.mp3] (repli sur le
- * fichier de sourate entière d'une sourate au découpage non conforme, riwāyāt autres que Ḥafṣ) · --sourates 1,112-114 (muṣḥaf partiel) · --versets N (compte
+ * fichier de sourate entière d'une sourate au découpage non conforme, riwāyāt autres que Ḥafṣ) ·
+ * --repli-sourates 42 (repli imposé par le référent, Ḥafṣ compris ; exige --fichiers-sourate) · --sourates 1,112-114 (muṣḥaf partiel) · --versets N (compte
  * déclaré, riwāyāt autres que Ḥafṣ) · --empreintes SHA256SUMS · --sans-silences · --silence-max 4000 (ms)
  * · --stockage DIR (défaut AWFORM_AUDIO_DIR) · --rapport fichier.json · --partiel · --reactiver · --test.
  * Code de sortie : 0 succès ; 2 import bloqué ou refus ; 1 erreur.
@@ -83,6 +84,9 @@ try {
       ...(dossiers.length > 1 ? { extraDirs: dossiers.slice(1) } : {}),
       pattern: str('nommage') ?? COMPLEXE_NOMMAGES[id] ?? 'SSSVVV.mp3',
       ...(flags.has('sourate-du-dossier') ? { suraFromFolder: true } : {}),
+      ...(str('repli-sourates')
+        ? { forceSuraFallback: parseSuraList(str('repli-sourates')!) }
+        : {}),
       ...(str('fichiers-sourate')
         ? {
             suraFilesDir: str('fichiers-sourate')!,

@@ -120,6 +120,7 @@ export const COMPLEXE_NOMMAGES: Readonly<Record<string, string>> = {
 /** Nommage des fichiers de sourate entière (zip « sura ») utilisés en repli. */
 export const COMPLEXE_NOMMAGES_SOURATE: Readonly<Record<string, string>> = {
   'sediki-susi': '06-SSSD00-10mp3.mp3',
+  'muhanna-hafs': '10-SSSD00-A06.mp3',
   'huthify-qalun': '01-SSSD00-A01.mp3',
   'juhani-duri': '05-SSSD00-A09.mp3',
   'huthify-shuba': '09-SSSD00-A01.mp3',
