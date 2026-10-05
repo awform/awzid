@@ -5,7 +5,7 @@
  * renvoient rien si la classe n'est pas la sienne (protection des données des mineurs).
  */
 import { and, asc, desc, eq, inArray, isNotNull, isNull, like, lt, sql } from 'drizzle-orm';
-import { teachesClass, teachesClassId } from './acces.js';
+import { teachesClass } from './acces.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
@@ -498,16 +498,11 @@ export async function classCertificates(db: Db, classId: string) {
 
 /** Un certificat, pour l'enseignant qui l'a délivré ou un enseignant (ou la direction) de la classe. */
 export async function teacherCertificate(db: Db, teacherAccountId: string, id: string) {
-  const [r] = await db
-    .select({
-      c: t.certificate,
-      mine: sql<boolean>`${t.certificate.classId} IS NOT NULL AND ${teachesClassId(teacherAccountId, t.certificate.classId)}`,
-    })
-    .from(t.certificate)
-    .where(eq(t.certificate.id, id));
-  if (!r) return null;
-  if (r.c.issuedBy !== teacherAccountId && !r.mine) return null;
-  return r.c;
+  const [c] = await db.select().from(t.certificate).where(eq(t.certificate.id, id));
+  if (!c) return null;
+  if (c.issuedBy === teacherAccountId) return c;
+  // lot F2 : enseignant (titulaire, suppléant) ou direction de la classe du certificat
+  return c.classId && (await teacherClass(db, teacherAccountId, c.classId)) ? c : null;
 }
 
 // ---------------------------------------------------------------- documents d'évaluation, niveau

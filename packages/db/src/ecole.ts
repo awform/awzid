@@ -470,7 +470,8 @@ export async function schoolClasses(db: Db, schoolId: string) {
       status: t.classGroup.status,
       schoolYearId: t.classGroup.schoolYearId,
       teacherAccountId: t.classGroup.teacherAccountId,
-      pupils: sql<number>`(SELECT count(*)::int FROM "class_pupil" p WHERE p."class_id" = ${t.classGroup.id} AND p."left_at" IS NULL)`,
+      // colonne écrite en entier : dans la liste des champs, Drizzle ne préfixe pas le nom de la table
+      pupils: sql<number>`(SELECT count(*)::int FROM "class_pupil" p WHERE p."class_id" = "class_group"."id" AND p."left_at" IS NULL)`,
     })
     .from(t.classGroup)
     .where(eq(t.classGroup.schoolId, schoolId))

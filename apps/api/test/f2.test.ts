@@ -203,6 +203,21 @@ describe.skipIf(!URL)('lot F2 — école, rôles, responsables, niveaux (awform_
     return { cookie: `awform_session=${encodeURIComponent(s.token)}` };
   }
 
+  it('E1 : la direction d’une AUTRE école ne voit ni la classe, ni l’école, ni ses certificats', async () => {
+    const C = await teacher(c, 'autre-ecole@ecole.example');
+    await newClass(c, C, 'Classe de l’autre école'); // C devient direction de SON école personnelle
+    expect((await c.req('GET', `/api/v1/ecole/classes/${cls.id}`, C)).statusCode).toBe(404);
+    expect((await c.req('GET', `/api/v1/ecole/ecoles/${schoolId}`, C)).statusCode).toBe(404);
+    expect((await c.req('GET', `/api/v1/ecole/classes/${cls.id}/archives`, C)).statusCode).toBe(
+      404,
+    );
+    const mine = (await c.req('GET', '/api/v1/teacher/classes', C)).json().classes;
+    expect(mine.map((x: { id: string }) => x.id)).not.toContain(cls.id);
+    // effectif compté par la direction de l'école de la classe
+    const d = (await c.req('GET', `/api/v1/ecole/ecoles/${schoolId}`, T)).json();
+    expect(d.classes.find((x: { id: string }) => x.id === cls.id).pupils).toBeGreaterThan(0);
+  });
+
   it('E2 : un même e-mail parent ET enseignant (rôle donné par la direction), second facteur pour l’espace enseignant', async () => {
     const fam = await parent(c, 'parent-prof@exemple.org');
     const kid = await child(c, fam.P, 'Ilyas', 8);

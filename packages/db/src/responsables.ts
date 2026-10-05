@@ -71,7 +71,7 @@ export async function canActForProfile(
         eq(t.profile.id, profileId),
         or(
           eq(t.profile.ownerAccountId, accountId),
-          sql`EXISTS (SELECT 1 FROM "profile_custodian" pc WHERE pc."profile_id" = ${t.profile.id}
+          sql`EXISTS (SELECT 1 FROM "profile_custodian" pc WHERE pc."profile_id" = "profile"."id"
             AND pc."account_id" = ${accountId}::uuid AND pc."nature" = 'parent' AND pc."status" = 'actif')`,
         ),
       ),
@@ -139,7 +139,7 @@ export async function visibleProfiles(
       .where(
         or(
           eq(t.profile.ownerAccountId, accountId),
-          sql`EXISTS (SELECT 1 FROM "profile_custodian" pc WHERE pc."profile_id" = ${t.profile.id}
+          sql`EXISTS (SELECT 1 FROM "profile_custodian" pc WHERE pc."profile_id" = "profile"."id"
             AND pc."account_id" = ${accountId}::uuid AND pc."nature" = 'parent' AND pc."status" = 'actif')`,
         ),
       )
