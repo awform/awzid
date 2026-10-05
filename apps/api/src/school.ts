@@ -59,7 +59,7 @@ import {
   type Score,
 } from '@awform/school';
 import { ownsProfile } from './auth/routes.js';
-import { audit } from './auth/service.js';
+import { audit, isTeacher } from './auth/service.js';
 
 import {
   BOOKLET,
@@ -98,7 +98,8 @@ export function registerSchool(
   /** enseignant (pas l'administrateur), second facteur vérifié */
   const needSchoolTeacher = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    if (req.auth.kind !== 'enseignant') return err(reply, 403, 'reserve_aux_enseignants');
+    // lot F2 (revue E2) : rôle enseignant ou direction de l'école (un parent peut aussi enseigner)
+    if (!isTeacher(req.auth)) return err(reply, 403, 'reserve_aux_enseignants');
     if (!req.auth.mfaVerified)
       return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   };
@@ -789,8 +790,7 @@ export function registerSchool(
     { schema: idParams('id') },
     async (req, reply) => {
       if (!req.auth) return err(reply, 401, 'non_connecte');
-      if (!(await ownsProfile(db, req.auth.accountId, req.params.id)))
-        return err(reply, 404, 'introuvable');
+      if (!(await ownsProfile(db, req.auth, req.params.id))) return err(reply, 404, 'introuvable');
       const rows = await profileAssignments(db, req.params.id);
       const units = rows.filter((r) => r.a.kind === 'lecon').map((r) => r.a.target);
       const prog = await progressOf(db, [req.params.id], units);

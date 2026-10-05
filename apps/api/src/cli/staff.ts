@@ -8,6 +8,10 @@
  * Lot F1 : rôle « référent religieux » donné à un compte EXISTANT (file des signalements de contenu) :
  *   node dist/cli/staff.js --role referent --email referent@exemple.org [--retirer] [--test]
  * (second facteur exigé à l'usage ; aucun mot de passe demandé ici).
+ *
+ * Lot F2 (revue E2) : rôles de PLATEFORME portés en plus du type de compte — referent, moderateur, support,
+ * admin — sur un compte existant (un parent peut ainsi être aussi modérateur). Les rôles d'école (direction,
+ * enseignant, secrétariat) se donnent dans l'application, par la direction de l'école.
  */
 import { and, eq } from 'drizzle-orm';
 import { connect, grantRole, loadRootEnv, runMigrations, schema as t } from '@awform/db';
@@ -36,14 +40,15 @@ try {
     .from(t.account)
     .where(eq(t.account.email, email));
   if (role !== undefined) {
-    if (role !== 'referent') throw new Error('--role referent');
+    const PLATFORM = ['referent', 'moderateur', 'support', 'admin'];
+    if (!PLATFORM.includes(role)) throw new Error(`--role ${PLATFORM.join('|')}`);
     if (!acc) throw new Error('aucun compte avec cet e-mail');
     const retirer = args.includes('--retirer');
     if (retirer)
       await h.db
         .delete(t.accountRole)
         .where(and(eq(t.accountRole.accountId, acc.id), eq(t.accountRole.role, role)));
-    else await grantRole(h.db, acc.id, role);
+    else await grantRole(h.db, acc.id, role as 'referent' | 'moderateur' | 'support' | 'admin');
     await h.db.insert(t.auditLog).values({
       action: retirer ? 'compte.role_retire' : 'compte.role_attribue',
       target: acc.id,
@@ -51,8 +56,8 @@ try {
     });
     console.log(
       retirer
-        ? 'Rôle « référent » retiré.'
-        : 'Rôle « référent » attribué ; second facteur exigé pour la file des signalements.',
+        ? `Rôle « ${role} » retiré.`
+        : `Rôle « ${role} » attribué ; second facteur exigé pour les espaces de ce rôle.`,
     );
   } else {
     const password = process.env.AWFORM_STAFF_PASSWORD ?? '';

@@ -8,13 +8,20 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, desc, eq, gt, isNull, sql } from 'drizzle-orm';
 import { schema as t, type Db } from '@awform/db';
 import { generateCode, hashCode, normalizeCode, passEnd } from '@awform/billing';
-import { audit, clearFailures, failAttempt, lockedUntil, reserveAttempt } from './auth/service.js';
+import {
+  audit,
+  clearFailures,
+  failAttempt,
+  isAdmin,
+  lockedUntil,
+  reserveAttempt,
+} from './auth/service.js';
 import { err, minorHolder, UUID } from './guards.js';
 
 export function registerActivation(app: FastifyInstance, db: Db): void {
   const needAdmin = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    if (req.auth.kind !== 'admin') return err(reply, 403, 'reserve_admin');
+    if (!isAdmin(req.auth)) return err(reply, 403, 'reserve_admin');
     if (!req.auth.mfaVerified)
       return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   };
@@ -134,7 +141,7 @@ export function registerActivation(app: FastifyInstance, db: Db): void {
 
   const holder = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return void err(reply, 401, 'non_connecte');
-    if (req.auth.kind !== 'parent' && req.auth.kind !== 'adulte')
+    if ((req.auth.kind !== 'parent' && req.auth.kind !== 'adulte') || req.auth.tablet)
       return void err(reply, 403, 'reserve_aux_familles');
     // audit MIN-1 : un titulaire mineur passe par son parent
     if (await minorHolder(db, req.auth.accountId)) return void err(reply, 403, 'parent_requis');

@@ -58,3 +58,13 @@ Lot F1 (05/10/2026) : 60 textes `signal.*`, `contenu.*`, `errata.*`, `sync.*`, `
 (signaler une erreur, file du référent, errata, réponses mises de côté) traduits par Claude, relecteur
 provisoire, dans les quatre langues en préparation — à relire avec le reste ; « référent » rendu par
 « reviewer » / « referente » / « Prüfperson » / « المرجع ».
+
+Lot F2 (05/10/2026) : 100 textes `etab.*` (école : personnel, classes, transfert, années, passage de fin d'année,
+élève papier → profil, consentement papier, code pour le parent, tablette de classe, archives), `fam.*` (famille
+et responsables : rattachement, second parent, émancipation, reprise du profil), `compte.type.ecole` et 19
+`erreur.*` traduits par Claude, relecteur provisoire, dans les quatre langues en préparation — à relire avec le
+reste. Termes appliqués : anglais « learner » (jamais « pupil »), « head » pour la direction, « main teacher »
+pour le titulaire ; espagnol « profesor », « dirección », « titular » ; allemand « Schulleitung »,
+« Klassenlehrkraft », « Schüler » ; arabe « الإدارة », « المعلّم الرئيسي », « القسم », « الولي », « الحلقات »
+pour les cercles. À vérifier en priorité : la formule juridique du consentement papier (`etab.consentement_papier`)
+et l'explication de l'émancipation (`fam.emancipation_aide`), dans chaque langue.

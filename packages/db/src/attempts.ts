@@ -470,4 +470,15 @@ export async function seedDemo(db: Db): Promise<void> {
       consentAt: new Date('2026-09-28T00:00:00Z'),
     })
     .onConflictDoNothing();
+  // lot F2 : responsables lus dans profile_custodian
+  await db
+    .insert(t.profileCustodian)
+    .values({
+      profileId: DEMO.enfant,
+      nature: 'parent',
+      accountId: DEMO.account,
+      status: 'actif',
+      acceptedAt: new Date('2026-09-28T00:00:00Z'),
+    })
+    .onConflictDoNothing();
 }

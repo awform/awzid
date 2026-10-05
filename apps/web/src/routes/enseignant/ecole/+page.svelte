@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import { fmtNumber, t } from '$lib/i18n';
-  import { fetchMe, type Me } from '$lib/session';
+  import { fetchMe, isStaff, type Me } from '$lib/session';
   import { loadSynthese, type ClassSummary, type Totaux } from '$lib/ecole';
 
   /**
@@ -15,7 +15,7 @@
   let rows = $state<ClassSummary[]>([]);
   let tot = $state<Totaux | null>(null);
   let error = $state('');
-  const isTeacher = $derived(me?.account.kind === 'enseignant');
+  const isTeacher = $derived(isStaff(me));
   const blocked = $derived(!!me && me.mfaRequired && !me.mfaVerified);
 
   onMount(async () => {

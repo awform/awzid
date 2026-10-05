@@ -7,8 +7,8 @@
  */
 import { minorHolder } from './guards.js';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { and, desc, eq, gt, inArray } from 'drizzle-orm';
-import { schema as t, type Db } from '@awform/db';
+import { and, desc, eq, gt } from 'drizzle-orm';
+import { defaultSchoolFor, schema as t, schoolOfAccount, schoolsOf, type Db } from '@awform/db';
 import {
   addPeriod,
   canOpenWithPacks,
@@ -28,7 +28,13 @@ import {
   type ProviderId,
   type SubStatus,
 } from '@awform/billing';
-import { clearFailures, failAttempt, lockedUntil, reserveAttempt } from './auth/service.js';
+import {
+  clearFailures,
+  failAttempt,
+  isTeacher,
+  lockedUntil,
+  reserveAttempt,
+} from './auth/service.js';
 import { verifySecret } from './auth/crypto.js';
 
 const err = (reply: FastifyReply, status: number, code: string, extra: object = {}) =>
@@ -59,38 +65,79 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
     currentPeriodEnd: s.currentPeriodEnd,
   });
 
-  /** licence d'école couvrant un profil : licence active d'un enseignant d'une de ses classes, places suffisantes */
+  /** licence active PORTÉE PAR L'ÉCOLE (lot F2, revue E1) */
+  const schoolLicence = async (schoolId: string) =>
+    (
+      await db
+        .select()
+        .from(t.subscription)
+        .where(
+          and(eq(t.subscription.schoolId, schoolId), eq(t.subscription.planCode, 'licence_ecole')),
+        )
+        .orderBy(desc(t.subscription.createdAt))
+    ).find((s) => entitlementOf([like(s)]).plan === 'licence_ecole') ?? null;
+
+  /** élèves couverts par l'école : profils de ses classes actives et profils dont elle est responsable */
+  const schoolSeatsUsed = async (schoolId: string) =>
+    new Set(
+      [
+        ...(await db
+          .select({ p: t.classMember.profileId })
+          .from(t.classMember)
+          .innerJoin(t.classGroup, eq(t.classGroup.id, t.classMember.classId))
+          .where(and(eq(t.classGroup.schoolId, schoolId), eq(t.classGroup.status, 'active')))),
+        ...(await db
+          .select({ p: t.profileCustodian.profileId })
+          .from(t.profileCustodian)
+          .where(
+            and(
+              eq(t.profileCustodian.schoolId, schoolId),
+              eq(t.profileCustodian.nature, 'ecole'),
+              eq(t.profileCustodian.status, 'actif'),
+            ),
+          )),
+      ].map((r) => r.p),
+    ).size;
+
+  /** licence d'une école si ses places suffisent */
+  const coveredBy = async (schoolId: string) => {
+    const lic = await schoolLicence(schoolId);
+    if (lic && (await schoolSeatsUsed(schoolId)) <= (lic.seats ?? 0))
+      return { until: lic.currentPeriodEnd };
+    return null;
+  };
+
+  /**
+   * Licence d'école couvrant un profil (lot F2) : licence active d'une ÉCOLE dont le profil est élève (classe
+   * active) ou dont l'école est responsable, places suffisantes. Avant F2 : licence du compte de l'enseignant.
+   */
   async function schoolLicenceFor(profileId: string) {
-    const rows = await db
-      .select({ teacher: t.classGroup.teacherAccountId })
-      .from(t.classMember)
-      .innerJoin(t.classGroup, eq(t.classGroup.id, t.classMember.classId))
-      .where(eq(t.classMember.profileId, profileId));
-    for (const { teacher } of rows) {
-      const lic = (await subsOf(teacher)).find(
-        (s) => s.planCode === 'licence_ecole' && entitlementOf([like(s)]).plan === 'licence_ecole',
-      );
-      if (!lic) continue;
-      const classes = await db
-        .select({ id: t.classGroup.id })
-        .from(t.classGroup)
-        .where(eq(t.classGroup.teacherAccountId, teacher));
-      const members = classes.length
-        ? new Set(
-            (
-              await db
-                .select({ p: t.classMember.profileId })
-                .from(t.classMember)
-                .where(
-                  inArray(
-                    t.classMember.classId,
-                    classes.map((c) => c.id),
-                  ),
-                )
-            ).map((m) => m.p),
-          ).size
-        : 0;
-      if (members <= (lic.seats ?? 0)) return { until: lic.currentPeriodEnd };
+    const schools = new Set<string>([
+      ...(
+        await db
+          .select({ s: t.classGroup.schoolId })
+          .from(t.classMember)
+          .innerJoin(t.classGroup, eq(t.classGroup.id, t.classMember.classId))
+          .where(and(eq(t.classMember.profileId, profileId), eq(t.classGroup.status, 'active')))
+      ).map((r) => r.s),
+      ...(
+        await db
+          .select({ s: t.profileCustodian.schoolId })
+          .from(t.profileCustodian)
+          .where(
+            and(
+              eq(t.profileCustodian.profileId, profileId),
+              eq(t.profileCustodian.nature, 'ecole'),
+              eq(t.profileCustodian.status, 'actif'),
+            ),
+          )
+      )
+        .map((r) => r.s)
+        .filter((s): s is string => !!s),
+    ]);
+    for (const schoolId of schools) {
+      const c = await coveredBy(schoolId);
+      if (c) return c;
     }
     return null;
   }
@@ -145,6 +192,8 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
         const plan = planByCode(c.planCode)!;
         await tx.insert(t.subscription).values({
           accountId: c.accountId,
+          // lot F2 : licence d'école portée par l'école choisie à la commande
+          schoolId: c.schoolId,
           planCode: c.planCode,
           status: 'active',
           provider: c.provider,
@@ -266,6 +315,7 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
       places?: number;
       pin?: string;
       motDePasse?: string;
+      ecole?: string;
     };
   }>(
     '/api/v1/billing/checkout',
@@ -284,12 +334,16 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
             places: { type: 'integer', minimum: 1, maximum: 2000 },
             pin: { type: 'string', maxLength: 8 },
             motDePasse: { type: 'string', maxLength: 512 },
+            // lot F2 : école bénéficiaire d'une licence d'école
+            ecole: UUID,
           },
         },
       },
     },
     async (req, reply) => {
       if (!req.auth) return err(reply, 401, 'non_connecte');
+      if (req.auth.tablet || req.auth.kind === 'ecole')
+        return err(reply, 403, 'reserve_aux_familles');
       if (billing.mode === 'off') return err(reply, 404, 'paiement_desactive');
       const a = await account(req.auth.accountId);
       if (!a) return err(reply, 401, 'non_connecte');
@@ -297,8 +351,25 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
       if (await minorHolder(db, a.id)) return err(reply, 403, 'parent_requis');
       const plan = planByCode(req.body.plan);
       if (!plan || plan.kind === 'gratuit') return err(reply, 400, 'formule_inconnue');
-      if (!plan.pour.includes(a.kind as 'parent' | 'adulte' | 'enseignant'))
+      // lot F2 (revue E2) : la licence d'école s'achète au titre d'un RÔLE (direction ou enseignant d'une
+      // école), quel que soit le type du compte (un parent peut aussi diriger une école)
+      const forSchool = plan.pour.includes('enseignant') && isTeacher(req.auth);
+      if (!plan.pour.includes(a.kind as 'parent' | 'adulte' | 'enseignant') && !forSchool)
         return err(reply, 403, 'formule_non_disponible');
+      let schoolId: string | null = null;
+      if (plan.code === 'licence_ecole') {
+        const mine = (await schoolsOf(db, a.id)).filter(
+          (s) => s.roles.includes('direction') || s.roles.includes('enseignant'),
+        );
+        const pick = req.body.ecole
+          ? mine.find((s) => s.school.id === req.body.ecole)
+          : mine.length === 1
+            ? mine[0]
+            : undefined;
+        if (pick) schoolId = pick.school.id;
+        else if (mine.length || req.body.ecole) return err(reply, 400, 'ecole_requise');
+        else schoolId = await defaultSchoolFor(db, a.id);
+      }
       // barrière parentale : l'achat se fait depuis l'espace adulte (code parent s'il est défini)
       if (a.parentPinHash) {
         const key = `pin:${a.id}`;
@@ -361,6 +432,7 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
           currency: price.devise,
           amount,
           seats,
+          schoolId,
           provider: pid,
         })
         .returning({ id: t.billingCheckout.id });
@@ -546,6 +618,11 @@ export function registerBilling(app: FastifyInstance, db: Db, setup?: BillingSet
           { planCode: 'licence_ecole', status: 'active', currentPeriodEnd: null },
         ]);
       if (!auth) return entitlementOf([]);
+      // lot F2 : tablette de classe (compte de l'école) — la licence de l'école
+      if (auth.kind === 'ecole') {
+        const s = await schoolOfAccount(db, auth.accountId);
+        return entitlementOf([], { schoolLicence: s ? await coveredBy(s.id) : null });
+      }
       const subs = (await subsOf(auth.accountId)).map(like);
       const profiles = await db
         .select({ id: t.profile.id })

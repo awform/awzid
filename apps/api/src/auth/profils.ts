@@ -5,7 +5,8 @@
  */
 import type { FastifyInstance } from 'fastify';
 import { and, eq } from 'drizzle-orm';
-import { schema as t } from '@awform/db';
+import { addParentCustodian, canActForProfile, schema as t, setProfileLevel } from '@awform/db';
+import { profileKindFromYear } from '@awform/content';
 import { hashSecret, verifySecret } from './crypto.js';
 import { ageFromYear, lawEvidence, requiredChildConsents, type ConsentType } from './policy.js';
 import { audit, clearFailures, failAttempt, reserveAttempt, lockedUntil } from './service.js';
@@ -17,7 +18,7 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
   // ---------------------------------------------------------------- profils
 
   app.get('/api/v1/profiles', { preHandler: needAuth }, async (req) => {
-    const m = await me(req.auth!.accountId, req.auth!.mfaVerified);
+    const m = await me(req.auth!.accountId, req.auth!.mfaVerified, req.auth!.tablet);
     return { profiles: m?.profiles ?? [] };
   });
 
@@ -74,7 +75,7 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
         .insert(t.profile)
         .values({
           ownerAccountId: accountId,
-          kind: age < 13 ? 'enfant' : 'ado',
+          kind: profileKindFromYear(b.birthYear) === 'enfant' ? 'enfant' : 'ado',
           pseudonym: b.pseudonym.trim(),
           birthYear: b.birthYear,
           avatar: b.avatar ?? 'etoile',
@@ -82,9 +83,15 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
         })
         .returning({ id: t.profile.id });
       if (!p) throw new Error('création du profil impossible');
-      await db
-        .insert(t.guardianship)
-        .values({ parentAccountId: accountId, profileId: p.id, consentAt: new Date() });
+      // lot F2 (revue E3, E4) : le parent est responsable « actif » (profile_custodian, lu par les autorisations)
+      await addParentCustodian(
+        db,
+        p.id,
+        accountId,
+        { methode: 'reauthentification_mot_de_passe+declaration', date: new Date().toISOString() },
+        accountId,
+      );
+      if (b.levelCode) await setProfileLevel(db, p.id, b.levelCode, 'inscription', accountId);
       const evidence = {
         methode: 'reauthentification_mot_de_passe+declaration',
         date: new Date().toISOString(),
@@ -115,6 +122,12 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
       .where(and(eq(t.profile.id, profileId), eq(t.profile.ownerAccountId, accountId)));
     return p ?? null;
   };
+  /** lot F2 : titulaire OU parent responsable (second parent) — modification du profil */
+  const guardedProfile = async (accountId: string, profileId: string) => {
+    if (!(await canActForProfile(db, accountId, profileId))) return null;
+    const [p] = await db.select().from(t.profile).where(eq(t.profile.id, profileId));
+    return p ?? null;
+  };
 
   app.patch<{
     Params: { id: string };
@@ -143,8 +156,15 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
       },
     },
     async (req, reply) => {
-      const p = await ownProfile(req.auth!.accountId, req.params.id);
+      if (req.auth!.tablet || req.auth!.kind === 'ecole')
+        return err(reply, 403, 'reserve_aux_familles');
+      const p = await guardedProfile(req.auth!.accountId, req.params.id);
       if (!p) return err(reply, 404, 'introuvable');
+      // lot F2 (revue E8) : le niveau choisi par la famille est historisé (matière déduite du niveau)
+      if (req.body.levelCode && req.body.levelCode !== p.levelCode) {
+        if (!(await setProfileLevel(db, p.id, req.body.levelCode, 'parent', req.auth!.accountId)))
+          return err(reply, 400, 'niveau_inconnu');
+      }
       await db
         .update(t.profile)
         .set({

@@ -44,12 +44,11 @@ export function registerSignalements(app: FastifyInstance, db: Db, edition: Edit
       void err(reply, 401, 'non_connecte');
       return null;
     }
-    const role =
-      req.auth.kind === 'admin'
-        ? 'admin'
-        : (await hasRole(db, req.auth.accountId, 'referent'))
-          ? 'referent'
-          : null;
+    const role = req.auth.roles.includes('admin')
+      ? 'admin'
+      : (await hasRole(db, req.auth.accountId, 'referent'))
+        ? 'referent'
+        : null;
     if (!role) {
       void err(reply, 403, 'reserve_referent');
       return null;
@@ -207,7 +206,7 @@ export function registerSignalements(app: FastifyInstance, db: Db, edition: Edit
   const needAdmin = (req: FastifyRequest, reply: FastifyReply): boolean => {
     const code = !req.auth
       ? 'non_connecte'
-      : req.auth.kind !== 'admin'
+      : !req.auth.roles.includes('admin')
         ? 'reserve_admin'
         : !req.auth.mfaVerified
           ? req.auth.totpEnabled

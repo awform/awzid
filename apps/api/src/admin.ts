@@ -6,6 +6,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { desc, eq, isNull, sql } from 'drizzle-orm';
 import { schema as t, type Db } from '@awform/db';
+import { hasRole } from './auth/service.js';
 
 const err = (reply: FastifyReply, status: number, code: string) =>
   reply.code(status).send({ error: { code } });
@@ -24,7 +25,8 @@ export function maskEmail(e: string | null): string | null {
 export function registerAdmin(app: FastifyInstance, db: Db): void {
   const needAdmin = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    if (req.auth.kind !== 'admin') return err(reply, 403, 'reserve_admin');
+    // lot F2 (revue E2) : administrateur, ou support (lecture seule de la vue d'ensemble)
+    if (!hasRole(req.auth, 'admin', 'support')) return err(reply, 403, 'reserve_admin');
     if (!req.auth.mfaVerified)
       return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   };

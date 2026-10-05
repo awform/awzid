@@ -339,7 +339,11 @@ try {
   // ---- complément (idempotent) : espace école (lot 13) — classe de l'enseignant réglée pour Enfants N1,
   // trois élèves FICTIFS de « classe papier » avec leurs notes, deux devoirs
   const [schoolCls] = await h.db
-    .select({ id: t.classGroup.id, levelCode: t.classGroup.levelCode })
+    .select({
+      id: t.classGroup.id,
+      levelCode: t.classGroup.levelCode,
+      schoolId: t.classGroup.schoolId,
+    })
     .from(t.classGroup)
     .innerJoin(t.account, eq(t.account.id, t.classGroup.teacherAccountId))
     .where(eq(t.account.email, E.enseignant));
@@ -356,6 +360,11 @@ try {
       placeAr: 'دَاكَار',
       schoolYear: '2026-2027',
     });
+    // lot F2 : l'école (personnelle) de l'enseignant porte le nom de l'établissement de démonstration
+    await h.db
+      .update(t.school)
+      .set({ name: 'École de démonstration AWFORM', place: 'Dakar', placeAr: 'دَاكَار' })
+      .where(eq(t.school.id, schoolCls.schoolId));
     const bilans = (await listUnits(h.db, ed.id, 'en1')).filter((u) => u.kind === 'bilan');
     const pupils: Array<[string, 'm' | 'f', number[], number | null]> = [
       ['Awa D.', 'f', [18, 17, 19, 18], 17],

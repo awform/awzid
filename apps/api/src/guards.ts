@@ -11,7 +11,14 @@ import { eq } from 'drizzle-orm';
 import { schema as t, type Db } from '@awform/db';
 import { ownsProfile } from './auth/routes.js';
 import { verifySecret } from './auth/crypto.js';
-import { clearFailures, failAttempt, lockedUntil, reserveAttempt } from './auth/service.js';
+import {
+  clearFailures,
+  failAttempt,
+  isTeacher,
+  lockedUntil,
+  reserveAttempt,
+  staffOnly,
+} from './auth/service.js';
 
 export const err = (reply: FastifyReply, status: number, code: string, extra: object = {}) =>
   reply.code(status).send({ error: { code, ...extra } });
@@ -29,11 +36,12 @@ export async function familyProfile(
     err(reply, 401, 'non_connecte');
     return null;
   }
-  if (req.auth.kind === 'enseignant' || req.auth.kind === 'admin') {
+  // lot F2 : un compte de personnel SEUL n'est pas une famille ; un compte parent qui est aussi enseignant l'est
+  if (staffOnly(req.auth) || (req.auth.kind === 'ecole' && !req.auth.tablet)) {
     err(reply, 403, 'reserve_aux_familles');
     return null;
   }
-  if (!(await ownsProfile(db, req.auth.accountId, profileId))) {
+  if (!(await ownsProfile(db, req.auth, profileId))) {
     err(reply, 404, 'introuvable');
     return null;
   }
@@ -84,7 +92,8 @@ export async function parentGate(
 /** preHandler : enseignant avec second facteur. */
 export async function needTeacher(req: FastifyRequest, reply: FastifyReply) {
   if (!req.auth) return err(reply, 401, 'non_connecte');
-  if (req.auth.kind !== 'enseignant') return err(reply, 403, 'reserve_aux_enseignants');
+  // lot F2 (revue E2) : rôle enseignant ou direction (un parent peut aussi être enseignant)
+  if (!isTeacher(req.auth)) return err(reply, 403, 'reserve_aux_enseignants');
   if (!req.auth.mfaVerified)
     return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
 }

@@ -150,7 +150,9 @@ describe.skipIf(!URL_)('lot 18 — réponses libres corrigées par l’enseignan
     expect(ex.reponsesLibres.map((x: { answer: string }) => x.answer)).toEqual(['Réponse adulte']);
   });
 
-  it('la famille supprime ; quitter la classe efface les réponses envoyées à cette classe', async () => {
+  // lot F2 (revue E8) : au départ de la classe, les réponses sont ARCHIVÉES (registre de l'école), plus effacées ;
+  // elles sortent de la file de l'enseignant et ne sont plus corrigeables
+  it('la famille supprime ; quitter la classe archive les réponses envoyées à cette classe', async () => {
     const r2 = await send(fam.pin, { classId: cls.id, exerciseId: Q, itemIndex: 1, answer: 'B' });
     const id2 = r2.json().reponse.id;
     expect(
@@ -163,7 +165,9 @@ describe.skipIf(!URL_)('lot 18 — réponses libres corrigées par l’enseignan
       (await c.req('DELETE', `/api/v1/profiles/${awa}/classes/${cls.id}`, fam.P)).statusCode,
     ).toBe(200);
     const left = await c.h.db.select().from(t.freeAnswer);
-    expect(left.every((x) => x.profileId !== awa)).toBe(true);
+    expect(left.some((x) => x.profileId === awa)).toBe(true);
+    const file = (await c.req('GET', `/api/v1/ecole/classes/${cls.id}/reponses-libres`, T)).json();
+    expect(file.reponses.every((x: { profileId: string }) => x.profileId !== awa)).toBe(true);
     // l'ancienne réponse n'est plus corrigeable
     expect(
       (

@@ -41,6 +41,10 @@
       "types": "./dist/suspension.d.ts",
       "default": "./dist/suspension.js"
     },
+    "./niveaux": {
+      "types": "./dist/niveaux.d.ts",
+      "default": "./dist/niveaux.js"
+    },
     "./adhkar": {
       "types": "./dist/adhkar.d.ts",
       "default": "./dist/adhkar.js"

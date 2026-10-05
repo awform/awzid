@@ -11,6 +11,8 @@ import {
   registryMadhhab,
   unmaskedHadithRefs,
   studentProjection,
+  subjectOf,
+  trackOf,
   verifiedHadiths,
   type EditionLoad,
 } from '@awform/content';
@@ -41,18 +43,8 @@ export class ImportRefusedError extends Error {
   }
 }
 
-const TRACKS: Array<[RegExp, string]> = [
-  [/^ado\d+$/, 'ados'],
-  [/^ad\d+$/, 'adultes'],
-  [/^en\d+$/, 'enfants'],
-  [/^re\d+$/, 'religion'],
-  [/^ra\d+$/, 'religion-ra'],
-  [/^qc\d+$/, 'coran'],
-];
-
-export function trackOf(code: string): string {
-  return TRACKS.find(([re]) => re.test(code))?.[1] ?? 'autre';
-}
+// lot F2 (revue E8) : filière et matière d'un niveau lues dans UNE seule table (@awform/content/niveaux)
+export { trackOf };
 
 /** `en1.l05` → `en1-05` (URL courte des QR codes). */
 export function qrSlug(unitId: string): string {
@@ -224,10 +216,11 @@ export async function importEdition(
           rank,
           titleFr: lv.book.titre_fr ?? null,
           madhhab,
+          subjectCode: subjectOf(lv.code),
         })
         .onConflictDoUpdate({
           target: t.level.code,
-          set: { titleFr: lv.book.titre_fr ?? null, madhhab },
+          set: { titleFr: lv.book.titre_fr ?? null, madhhab, subjectCode: subjectOf(lv.code) },
         });
       await tx.insert(t.levelVersion).values({ editionId, levelCode: lv.code, book: lv.book });
 

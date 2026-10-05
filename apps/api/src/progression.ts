@@ -76,10 +76,7 @@ export function registerProgress(app: FastifyInstance, db: Db, edition: Edition)
         }
         const pid = String(e?.profileId ?? '');
         if (!owned.has(pid))
-          owned.set(
-            pid,
-            /^[0-9a-f-]{36}$/i.test(pid) && (await ownsProfile(db, req.auth.accountId, pid)),
-          );
+          owned.set(pid, /^[0-9a-f-]{36}$/i.test(pid) && (await ownsProfile(db, req.auth, pid)));
         if (!owned.get(pid)) {
           // code stable : l'appareil GARDE ces réponses (autre compte sur un appareil partagé, audit OFF-3)
           refused.push({
@@ -146,7 +143,7 @@ export function registerProgress(app: FastifyInstance, db: Db, edition: Edition)
     },
     async (req, reply) => {
       if (!req.auth) return reply.code(401).send({ error: { code: 'non_connecte' } });
-      if (!(await ownsProfile(db, req.auth.accountId, req.query.profile)))
+      if (!(await ownsProfile(db, req.auth, req.query.profile)))
         return reply.code(404).send(notFound('profil introuvable'));
       const ed = await edition();
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
@@ -180,7 +177,7 @@ export function registerProgress(app: FastifyInstance, db: Db, edition: Edition)
     },
     async (req, reply) => {
       if (!req.auth) return reply.code(401).send({ error: { code: 'non_connecte' } });
-      if (!(await ownsProfile(db, req.auth.accountId, req.query.profile)))
+      if (!(await ownsProfile(db, req.auth, req.query.profile)))
         return reply.code(404).send(notFound('profil introuvable'));
       const ed = await edition();
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
@@ -213,7 +210,7 @@ export function registerProgress(app: FastifyInstance, db: Db, edition: Edition)
     },
     async (req, reply) => {
       if (!req.auth) return reply.code(401).send({ error: { code: 'non_connecte' } });
-      if (!(await ownsProfile(db, req.auth.accountId, req.params.id)))
+      if (!(await ownsProfile(db, req.auth, req.params.id)))
         return reply.code(404).send(notFound('profil introuvable'));
       const today = req.query.today ?? new Date().toISOString().slice(0, 10);
       return { profile: req.params.id, today, ...(await dashboard(db, req.params.id, today)) };

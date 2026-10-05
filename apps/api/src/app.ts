@@ -38,6 +38,7 @@ import { notFound } from './routes-common.js';
 import { registerProgress } from './progression.js';
 import { registerEpreuves } from './epreuves.js';
 import { registerSignalements } from './signalements.js';
+import { registerEcoleF2 } from './ecole-f2.js';
 import { registerVerification } from './verification.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
 import type { RecitationKey } from '@awform/db';
@@ -217,5 +218,10 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerQuotidien(app, db, edition);
   registerProgress(app, db, edition);
   registerSignalements(app, db, edition);
+  // lot F2 : école, personnel, responsables, niveaux par matière, parcours
+  const cookieSecure = opts.cookieSecure ?? true;
+  registerEcoleF2(app, db, edition, {
+    secureFor: (req) => (cookieSecure === 'auto' ? req.protocol === 'https' : cookieSecure),
+  });
   return app;
 }

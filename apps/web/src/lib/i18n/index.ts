@@ -10,7 +10,8 @@
  * Ne sont PAS traduits ici : l'arabe étudié et le Coran (objets d'étude). Les consignes et explications
  * pédagogiques des leçons deviendront traduisibles plus tard par des fichiers de contenu séparés.
  */
-import IntlMessageFormat from 'intl-messageformat';
+// lot F2 : formateur ICU minimal à la place d'intl-messageformat (même résultat, contrôlé par icu.test.ts)
+import { formatIcu } from './icu';
 import fr from './messages/fr.json';
 
 export type Messages = Record<string, string>;
@@ -58,7 +59,6 @@ export async function loadLocale(
 }
 
 let current = FALLBACK;
-const cache = new Map<string, IntlMessageFormat>();
 
 export function locale(): string {
   return current;
@@ -90,13 +90,8 @@ export function detectLocale(preferred: readonly string[] = [], includeDrafts = 
 export function t(key: string, values?: Record<string, unknown>): string {
   const msg = CATALOG[current]?.[key] ?? CATALOG[FALLBACK]?.[key];
   if (msg === undefined) return `⟦${key}⟧`;
-  const id = `${current}|${key}`;
-  let f = cache.get(id);
-  if (!f) {
-    f = new IntlMessageFormat(msg, current);
-    cache.set(id, f);
-  }
-  return String(f.format(values as Record<string, string | number>));
+  // lot F2 : formateur ICU minimal (arguments, pluriels), identique à intl-messageformat sur nos catalogues
+  return formatIcu(msg, current, values ?? {});
 }
 
 export function fmtDate(

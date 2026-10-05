@@ -239,6 +239,34 @@
       "when": 1791214161049,
       "tag": "0033_signalements",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1791220811110,
+      "tag": "0034_f2_ecole",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1791220841171,
+      "tag": "0035_f2_reprise_ecoles",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1791220842683,
+      "tag": "0036_f2_niveaux",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1791220844591,
+      "tag": "0037_f2_responsables",
+      "breakpoints": true
     }
   ]
 }

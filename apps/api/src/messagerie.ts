@@ -27,7 +27,7 @@ import {
 } from '@awform/db';
 import { helpline } from '@awform/tutor';
 import { ownsProfile } from './auth/routes.js';
-import { audit } from './auth/service.js';
+import { audit, hasRole, isTeacher } from './auth/service.js';
 import { err, minorHolder, needTeacher, UUID } from './guards.js';
 
 export const messageKeyFromEnv = () => parseRecitationKey(process.env.AWFORM_MESSAGE_KEY);
@@ -160,7 +160,7 @@ export function registerMessagerie(app: FastifyInstance, db: Db, key: Recitation
   /** famille autorisée à écrire : compte parent ou adulte majeur (jamais un titulaire mineur, jamais un élève) */
   const familyWriter = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return void err(reply, 401, 'non_connecte');
-    if (req.auth.kind !== 'parent' && req.auth.kind !== 'adulte')
+    if ((req.auth.kind !== 'parent' && req.auth.kind !== 'adulte') || req.auth.tablet)
       return void err(reply, 403, 'reserve_aux_familles');
     if (await minorHolder(db, req.auth.accountId)) return void err(reply, 403, 'parent_requis');
     return req.auth.accountId;
@@ -363,7 +363,7 @@ export function registerMessagerie(app: FastifyInstance, db: Db, key: Recitation
       const me = await familyWriter(req, reply);
       if (!me) return reply;
       const { profileId, classId } = req.params;
-      if (!(await ownsProfile(db, me, profileId)) || !(await isMember(classId, profileId)))
+      if (!(await ownsProfile(db, req.auth, profileId)) || !(await isMember(classId, profileId)))
         return err(reply, 404, 'introuvable');
       const data = prepare(reply, req.body, false);
       if (!data) return reply;
@@ -371,7 +371,9 @@ export function registerMessagerie(app: FastifyInstance, db: Db, key: Recitation
         .select({ teacher: t.classGroup.teacherAccountId })
         .from(t.classGroup)
         .where(eq(t.classGroup.id, classId));
-      const th = (await threadFor(classId, cls!.teacher, profileId))!;
+      // lot F2 : classe momentanément sans titulaire (enseignant parti) → la direction en désigne un
+      if (!cls?.teacher) return err(reply, 409, 'classe_sans_titulaire');
+      const th = (await threadFor(classId, cls.teacher, profileId))!;
       const m = await post(classId, th.id, me, data);
       return reply.code(201).send({ fil: th.id, message: m });
     },
@@ -382,7 +384,8 @@ export function registerMessagerie(app: FastifyInstance, db: Db, key: Recitation
     const [th] = await db.select().from(t.messageThread).where(eq(t.messageThread.id, id));
     if (!th || !req.auth) return null;
     const me = req.auth.accountId;
-    if (th.teacherAccountId === me && req.auth.kind === 'enseignant' && req.auth.mfaVerified)
+    // lot F2 : tout enseignant de la classe (titulaire, suppléant) ou la direction, second facteur vérifié
+    if (isTeacher(req.auth) && req.auth.mfaVerified && (await teacherClass(db, me, th.classId)))
       return { th, role: 'enseignant' as const };
     // la famille : seulement tant que l'élève est dans la classe
     if (th.familyAccountId === me && (await isMember(th.classId, th.profileId)))
@@ -493,7 +496,8 @@ export function registerMessagerie(app: FastifyInstance, db: Db, key: Recitation
   // ---------------------------------------------------------------- modération (administrateur, 2FA)
   const needAdmin = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    if (req.auth.kind !== 'admin') return err(reply, 403, 'reserve_admin');
+    // lot F2 (revue E2) : administrateur ou modérateur
+    if (!hasRole(req.auth, 'admin', 'moderateur')) return err(reply, 403, 'reserve_admin');
     if (!req.auth.mfaVerified) return err(reply, 403, 'mfa_requis');
   };
 
@@ -713,8 +717,7 @@ export function registerMessagerie(app: FastifyInstance, db: Db, key: Recitation
     { schema: idParams('id') },
     async (req, reply) => {
       if (!req.auth) return err(reply, 401, 'non_connecte');
-      if (!(await ownsProfile(db, req.auth.accountId, req.params.id)))
-        return err(reply, 404, 'introuvable');
+      if (!(await ownsProfile(db, req.auth, req.params.id))) return err(reply, 404, 'introuvable');
       const classes = await profileClasses(db, req.params.id);
       if (!classes.length) return { visios: [] };
       const now = Date.now();

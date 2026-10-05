@@ -23,8 +23,10 @@ import {
   relayByToken,
   retireReciter,
   schema as t,
+  teachesClass,
   type Db,
 } from '@awform/db';
+import { isAdmin } from './auth/service.js';
 import { err, familyProfile, needTeacher, parentGate } from './guards.js';
 
 /** riwāya des carnets de hifẓ : texte Tanzil de Ḥafṣ ʿan ʿĀṣim */
@@ -236,7 +238,7 @@ export function sendAudioFile(
 export function registerCoranAudio(app: FastifyInstance, db: Db, audioDir: string | null): void {
   const needAdmin = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    if (req.auth.kind !== 'admin') return err(reply, 403, 'reserve_admin');
+    if (!isAdmin(req.auth)) return err(reply, 403, 'reserve_admin');
     if (!req.auth.mfaVerified)
       return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   };
@@ -525,9 +527,7 @@ export function registerCoranAudio(app: FastifyInstance, db: Db, audioDir: strin
     const [c] = await db
       .select({ id: t.classGroup.id })
       .from(t.classGroup)
-      .where(
-        and(eq(t.classGroup.id, classId), eq(t.classGroup.teacherAccountId, req.auth!.accountId)),
-      );
+      .where(and(eq(t.classGroup.id, classId), teachesClass(req.auth!.accountId)));
     return !!c;
   };
 

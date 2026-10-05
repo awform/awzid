@@ -4,14 +4,18 @@
  * TOUTES les fonctions qui lisent des données d'élèves prennent l'identifiant de l'ENSEIGNANT et ne
  * renvoient rien si la classe n'est pas la sienne (protection des données des mineurs).
  */
-import { and, asc, desc, eq, inArray, isNull, like, lt, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, isNotNull, isNull, like, lt, sql } from 'drizzle-orm';
+import { teachesClass, teachesClassId } from './acces.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
 export type ClassRow = typeof t.classGroup.$inferSelect;
 export type PupilRow = typeof t.classPupil.$inferSelect;
 
-/** La classe, si elle appartient à cet enseignant ; sinon null. */
+/**
+ * La classe, si ce compte en est enseignant (titulaire, suppléant) ou à la direction de son école (lot F2) ;
+ * sinon null.
+ */
 export async function teacherClass(
   db: Db,
   teacherAccountId: string,
@@ -20,11 +24,11 @@ export async function teacherClass(
   const [c] = await db
     .select()
     .from(t.classGroup)
-    .where(and(eq(t.classGroup.id, classId), eq(t.classGroup.teacherAccountId, teacherAccountId)));
+    .where(and(eq(t.classGroup.id, classId), teachesClass(teacherAccountId)));
   return c ?? null;
 }
 
-/** L'élève et sa classe, si la classe appartient à cet enseignant ; sinon null. */
+/** L'élève et sa classe, si la classe est accessible à ce compte (même règle) ; sinon null. */
 export async function teacherPupil(
   db: Db,
   teacherAccountId: string,
@@ -34,7 +38,7 @@ export async function teacherPupil(
     .select({ pupil: t.classPupil, cls: t.classGroup })
     .from(t.classPupil)
     .innerJoin(t.classGroup, eq(t.classGroup.id, t.classPupil.classId))
-    .where(and(eq(t.classPupil.id, pupilId), eq(t.classGroup.teacherAccountId, teacherAccountId)));
+    .where(and(eq(t.classPupil.id, pupilId), teachesClass(teacherAccountId)));
   return r ?? null;
 }
 
@@ -100,21 +104,72 @@ export interface PupilView {
 }
 
 export async function listPupils(db: Db, classId: string): Promise<PupilView[]> {
+  return (
+    db
+      .select({
+        id: t.classPupil.id,
+        displayName: t.classPupil.displayName,
+        nameAr: t.classPupil.nameAr,
+        gender: t.classPupil.gender,
+        groupId: t.classPupil.groupId,
+        profileId: t.classPupil.profileId,
+        avatar: t.profile.avatar,
+        kind: t.profile.kind,
+      })
+      .from(t.classPupil)
+      .leftJoin(t.profile, eq(t.profile.id, t.classPupil.profileId))
+      // lot F2 : les élèves partis restent au registre (archives), hors de la liste de classe
+      .where(and(eq(t.classPupil.classId, classId), isNull(t.classPupil.leftAt)))
+      .orderBy(asc(t.classPupil.displayName), asc(t.classPupil.id))
+  );
+}
+
+/** Élèves PARTIS de la classe (registre archivé : notes et copies conservées). */
+export async function archivedPupils(db: Db, classId: string) {
   return db
     .select({
       id: t.classPupil.id,
       displayName: t.classPupil.displayName,
-      nameAr: t.classPupil.nameAr,
-      gender: t.classPupil.gender,
-      groupId: t.classPupil.groupId,
+      leftAt: t.classPupil.leftAt,
       profileId: t.classPupil.profileId,
-      avatar: t.profile.avatar,
-      kind: t.profile.kind,
     })
     .from(t.classPupil)
-    .leftJoin(t.profile, eq(t.profile.id, t.classPupil.profileId))
-    .where(eq(t.classPupil.classId, classId))
-    .orderBy(asc(t.classPupil.displayName), asc(t.classPupil.id));
+    .where(and(eq(t.classPupil.classId, classId), isNotNull(t.classPupil.leftAt)))
+    .orderBy(asc(t.classPupil.displayName));
+}
+
+/** Inscription datée (lot F2) : ouverte à l'arrivée d'un élève dans une classe. */
+export async function openEnrolment(db: Db, classId: string, pupilId: string) {
+  const [c] = await db
+    .select({ year: t.classGroup.schoolYearId })
+    .from(t.classGroup)
+    .where(eq(t.classGroup.id, classId));
+  const [open] = await db
+    .select({ id: t.enrolment.id })
+    .from(t.enrolment)
+    .where(and(eq(t.enrolment.pupilId, pupilId), eq(t.enrolment.outcome, 'en_cours')));
+  if (open) return;
+  await db.insert(t.enrolment).values({
+    classId,
+    pupilId,
+    schoolYearId: c?.year ?? null,
+    fromDay: new Date().toISOString().slice(0, 10),
+  });
+}
+
+/** Départ d'un élève (lot F2, revue E8) : la ligne du registre, ses notes et ses copies sont ARCHIVÉES. */
+export async function archivePupil(
+  db: Db,
+  pupilId: string,
+  outcome: 'parti' | 'transfere' | 'admis' | 'redouble' = 'parti',
+  by: string | null = null,
+) {
+  const now = new Date();
+  await db.update(t.classPupil).set({ leftAt: now }).where(eq(t.classPupil.id, pupilId));
+  await db
+    .update(t.enrolment)
+    .set({ outcome, toDay: now.toISOString().slice(0, 10), decidedBy: by, decidedAt: now })
+    .where(and(eq(t.enrolment.pupilId, pupilId), eq(t.enrolment.outcome, 'en_cours')));
 }
 
 export async function addPaperPupil(
@@ -137,6 +192,7 @@ export async function addPaperPupil(
       groupId: p.groupId ?? null,
     })
     .returning();
+  await openEnrolment(db, classId, r!.id);
   return r!;
 }
 
@@ -149,9 +205,14 @@ export async function updatePupil(
   return r ?? null;
 }
 
-/** Retire l'élève de la classe (un profil de l'application quitte aussi la classe). */
-export async function removePupil(db: Db, pupil: PupilRow) {
+/**
+ * Retire l'élève de la classe (un profil de l'application quitte aussi la classe). Lot F2 (revue E8) : la ligne
+ * n'est plus effacée — elle est ARCHIVÉE avec ses notes, ses copies et son inscription (registre de l'école) ;
+ * seule une ligne saisie par erreur, SANS aucune note ni copie ni certificat, est effacée.
+ */
+export async function removePupil(db: Db, pupil: PupilRow, by: string | null = null) {
   await db.transaction(async (tx) => {
+    const d = tx as unknown as Db;
     await tx
       .update(t.certificate)
       .set({ detachedAt: new Date() })
@@ -165,7 +226,30 @@ export async function removePupil(db: Db, pupil: PupilRow) {
             eq(t.classMember.profileId, pupil.profileId),
           ),
         );
-    await tx.delete(t.classPupil).where(eq(t.classPupil.id, pupil.id));
+    const [notes] = await tx
+      .select({ n: sql<number>`count(*)::int` })
+      .from(t.paperResult)
+      .where(eq(t.paperResult.pupilId, pupil.id));
+    const [certs] = await tx
+      .select({ n: sql<number>`count(*)::int` })
+      .from(t.certificate)
+      .where(eq(t.certificate.pupilId, pupil.id));
+    const copies = pupil.profileId
+      ? await tx
+          .select({ id: t.examSubmission.id })
+          .from(t.examSubmission)
+          .innerJoin(t.examSession, eq(t.examSession.id, t.examSubmission.sessionId))
+          .where(
+            and(
+              eq(t.examSubmission.profileId, pupil.profileId),
+              eq(t.examSession.classId, pupil.classId),
+            ),
+          )
+          .limit(1)
+      : [];
+    if (!notes?.n && !certs?.n && !copies.length && !pupil.profileId)
+      await tx.delete(t.classPupil).where(eq(t.classPupil.id, pupil.id));
+    else await archivePupil(d, pupil.id, 'parti', by);
   });
 }
 
@@ -246,7 +330,7 @@ export async function profileAssignments(db: Db, profileId: string) {
     .from(t.classPupil)
     .innerJoin(t.classGroup, eq(t.classGroup.id, t.classPupil.classId))
     .innerJoin(t.classAssignment, eq(t.classAssignment.classId, t.classPupil.classId))
-    .where(eq(t.classPupil.profileId, profileId))
+    .where(and(eq(t.classPupil.profileId, profileId), isNull(t.classPupil.leftAt)))
     .orderBy(asc(t.classAssignment.dueDay));
   return rows.filter((r) => !r.a.groupId || r.a.groupId === r.pupilGroup);
 }
@@ -412,15 +496,17 @@ export async function classCertificates(db: Db, classId: string) {
     .orderBy(asc(t.certificate.number));
 }
 
-/** Un certificat, pour l'enseignant qui l'a délivré ou celui de la classe. */
+/** Un certificat, pour l'enseignant qui l'a délivré ou un enseignant (ou la direction) de la classe. */
 export async function teacherCertificate(db: Db, teacherAccountId: string, id: string) {
   const [r] = await db
-    .select({ c: t.certificate, owner: t.classGroup.teacherAccountId })
+    .select({
+      c: t.certificate,
+      mine: sql<boolean>`${t.certificate.classId} IS NOT NULL AND ${teachesClassId(teacherAccountId, t.certificate.classId)}`,
+    })
     .from(t.certificate)
-    .leftJoin(t.classGroup, eq(t.classGroup.id, t.certificate.classId))
     .where(eq(t.certificate.id, id));
   if (!r) return null;
-  if (r.c.issuedBy !== teacherAccountId && r.owner !== teacherAccountId) return null;
+  if (r.c.issuedBy !== teacherAccountId && !r.mine) return null;
   return r.c;
 }
 

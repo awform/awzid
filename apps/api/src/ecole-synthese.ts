@@ -6,7 +6,7 @@
  */
 import type { FastifyInstance } from 'fastify';
 import { and, count, countDistinct, eq, gte, inArray, isNotNull, isNull, sql } from 'drizzle-orm';
-import { schema as t, type Db } from '@awform/db';
+import { schema as t, teachesClass, type Db } from '@awform/db';
 import { needTeacher } from './guards.js';
 
 export interface ClassSummary {
@@ -69,7 +69,7 @@ export function registerEcoleSynthese(app: FastifyInstance, db: Db): void {
         ecole: t.classGroup.schoolName,
       })
       .from(t.classGroup)
-      .where(eq(t.classGroup.teacherAccountId, me))
+      .where(teachesClass(me))
       .orderBy(t.classGroup.name);
     const ids = classes.map((c) => c.id);
     if (!ids.length) return { classes: [], totaux: totals([]) };

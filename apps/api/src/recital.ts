@@ -24,6 +24,7 @@ import {
   savePaperResult,
   schema as t,
   teacherClass,
+  teachesClass,
   type Db,
   type HifzEventInput,
 } from '@awform/db';
@@ -84,7 +85,7 @@ export function registerRecital(app: FastifyInstance, db: Db, edition: Edition):
       .select({ recital: t.hifzRecital })
       .from(t.hifzRecital)
       .innerJoin(t.classGroup, eq(t.classGroup.id, t.hifzRecital.classId))
-      .where(and(eq(t.hifzRecital.id, recitalId), eq(t.classGroup.teacherAccountId, teacherId)));
+      .where(and(eq(t.hifzRecital.id, recitalId), teachesClass(teacherId)));
     return r?.recital ?? null;
   };
 
