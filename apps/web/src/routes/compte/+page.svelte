@@ -1,4 +1,5 @@
 <script lang="ts">
+  import VivanteReglages from '$lib/vivante/VivanteReglages.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import NotificationsReglages from '$lib/NotificationsReglages.svelte';
@@ -236,6 +237,8 @@
   {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
     <NotificationsReglages parent={me.account.kind === 'parent'} />
   {/if}
+
+  <VivanteReglages />
 
   <section class="card">
     <h2>{t('compte.langue')}</h2>

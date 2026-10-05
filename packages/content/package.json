@@ -48,6 +48,10 @@
     "./adhkar": {
       "types": "./dist/adhkar.d.ts",
       "default": "./dist/adhkar.js"
+    },
+    "./vivante": {
+      "types": "./dist/vivante.d.ts",
+      "default": "./dist/vivante.js"
     }
   },
   "bin": {

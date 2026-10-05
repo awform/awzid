@@ -8,6 +8,63 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 05/10/2026 — Chantier A21 : « application vivante » (pilote sur trois leçons)
+
+Branche `a21-vivante-wip` (depuis `main` a6917f9, worktree `~/awform-a21`, base e2e isolée). Souhait du client :
+du mouvement après chaque page, condensé, dans l'esprit des vidéos « Arabe facile », sans vidéo par page.
+
+1. **Génération automatique** (`packages/content/src/vivante.ts`, export `@awform/content/vivante`) : aucune
+   animation écrite à la main ; six modèles appliqués à la leçon reçue (projection élève) :
+   **lettre** (la lettre se dessine — contour puis remplissage —, nom, points, quatre formes), **mot + image
+   existante** (image d'objet du livre, mot écrit de droite à gauche, sens), **structure** (notion avec son signe
+   en relief, syllabes par trois, mot vedette, phrases mot à mot), **dialogue** (bulles avec formes géométriques,
+   puis **schéma de la structure** tiré de `note_ar` : « هٰذَا + [تَمْرٌ] », la case est remplie par le mot qui suit
+   dans une réplique), **règle** (« je retiens », ou points de chaque lettre), **récapitulatif** (condensé).
+   Chaque animation dure 10 à 20 s (temps gardés dans l'ordre tant que ≤ 20 s, allongés si < 10 s) ; le
+   condensé 1 à 2 min (deux temps de chaque animation, puis d'autres jusqu'à 1 min) + **3 questions éclair**
+   tirées des exercices de la leçon (« première lettre », « contient-il », « écoute » seulement si le fichier
+   audio existe), une par exercice à tour de rôle.
+2. **Règles** : le module ne contient aucun caractère arabe (codes seulement) ; toute chaîne arabe est une chaîne
+   du livre recopiée (ou, pour la case d'un schéma, un mot d'une réplique coupé à une espace) ; rien des parties
+   Coran et adab/fiqh (versets, hadiths, invocations : aucune animation) ; texte aux signes du Muṣḥaf écarté ;
+   aucune image de personnage (liste des personnages + `persos` de la scène + `qui` du dialogue) ; la voix n'est
+   que le fichier audio existant du texte (clé du moteur des livres, `audioIdFor`, garde coranique), jamais une
+   synthèse ; aucune musique. L'arabe est toujours du texte (police de l'application, `<Ar>`/`<Bidi>`).
+3. **Lecteur** (`apps/web/src/lib/vivante/Motion.svelte`, CSS et Web Animations du navigateur, aucune
+   bibliothèque) : placé juste après la partie de la page (lettres, je lis, mots, dialogue, lexique, je retiens) ;
+   départ **sans son** quand il arrive à l'écran ; barre de progression par temps ; boutons pause/lecture,
+   revoir, **Voix** (seulement s'il existe au moins un fichier ; aucun son sans cet appui, pour tous les âges),
+   **Passer** (replié en « Revoir en mouvement · 15 s ») ; condensé en fin de leçon, jamais lancé seul, score à
+   la fin. **Version calme** (`prefers-reduced-motion`) : aucun départ seul, simples fondus. Thèmes et mode sombre
+   par les jetons ; cibles ≥ 44 px ; 375 px sans défilement horizontal.
+4. **Chargement à la demande** : la page de leçon n'importe qu'un point d'accroche (`VivanteLecon.svelte`, une
+   ligne insérée avant `</article>`) ; générateurs + lecteur (7,0 Ko JS + 2,0 Ko CSS Brotli) chargés seulement
+   si la leçon est vivante, gardés par le service worker (hors ligne vérifié).
+5. **Réglage** (`reglage.ts`, appareil) : interrupteur général (activé), trois **pilotes** actifs d'office
+   (`en1.l01`, `ado1.l01`, `ad1.l01`), activation par niveau (enfants 1–5, ados 1–4, adultes 1–10) dans « Mon
+   compte » et sur **`/demo/vivante`** (les trois pilotes, ce qui est garanti, le réglage). 47 textes en fr, en,
+   es, de, ar (en préparation, à relire comme les autres).
+6. **Poids** : A21 seul (sur A12) : page de leçon 141,1 Ko (+1,2), total 366,4 Ko (+11,6, dont 9 Ko chargés
+   seulement sur les leçons vivantes, mais comptés car gardés pour le hors ligne). Après fusion de `main` (F1,
+   budget 365) : page la plus lourde `/lecons/[id]` **145,1 Ko ≤ 150** ; total JS 338,4 + CSS 34,0 =
+   **372,4 Ko** → budget porté à **375 Ko (D-A21, à valider)**. Piste pour redescendre : textes d'interface
+   chargés par route (TACHES_TECHNIQUES.md).
+7. **Tests** : unitaires content +21 (`vivante.test.ts` : règles sans livres ; sur les trois pilotes réels :
+   une animation après chaque partie, 10–20 s, six modèles, condensé 1–2 min et 3 questions des exercices,
+   chaque chaîne arabe = chaîne du livre, rien du Coran ni de l'adab, aucun extrait du Coran selon Tanzil),
+   web +3 (réglage) ; `pnpm check` vert après fusion de F1 — **1 437 réussis, 1 ignoré** ; e2e `a21.spec.ts` (7 × 2 appareils :
+   apparition après la partie, passer/revoir/pause, voix seulement au geste, version calme, condensé et
+   questions, hors ligne, démonstration et réglage par niveau, captures 375 px clair/sombre dans `reports/a21/`).
+   Correction d'accessibilité en passant (axe : contraste de l'animation en attente et de la réplique
+   précédente). **Après fusion de F1 puis F2** (`main` 4c37aa3) : `pnpm check` vert — unitaires **1 460 réussis,
+   1 ignoré** ; e2e complets **273 réussis, 23 ignorés, 0 échec** (17,1 min) ; budget : page la plus lourde
+   `/lecons/[id]` 139,0 Ko, total 339,2 + 34,5 = **373,7 Ko ≤ 375**.
+
+Décisions à prendre (D-A21) : budget 375 Ko ; activer au-delà des pilotes (par niveau ou partout) ; relief des
+ḥarakāt (le signe de la notion brille en couleur ; la couleur d'une ḥaraka seule dans une syllabe n'est pas
+fiable avec la police : la syllabe entière s'illumine) ; dialogue des enfants sans bulle de personnage.
+
+---
 ## 05/10/2026 — Lot F2 : école, rôles, niveaux (revue d'architecture E1, E2, E3, E4, E8)
 
 Branche `f2-ecole-wip` (worktree `~/awform-f2`, depuis `main` a29808a), base de tests unitaires propre

@@ -22,6 +22,7 @@
   import type { ItemResponse } from '@awform/grading';
   import { personaKey, type SceneSpec } from '@awform/content/scene';
   import Signaler, { SIGNAL_CTX } from '$lib/Signaler.svelte';
+  import VivanteLecon from '$lib/vivante/VivanteLecon.svelte';
 
   /**
    * Lecteur de leçon : ordre et règles d'affichage du moteur des livres (awform.js : lectureLesson,
@@ -624,6 +625,8 @@
         {/each}
       </section>
     {/if}
+    <!-- A21 : leçons vivantes (animations après chaque partie, condensé ; chargées à la demande) -->
+    <VivanteLecon unit={u} />
   </article>
   <TutorPanel unitId={u.id} profile={profileInfo} words={lessonWords} />
 {/if}
