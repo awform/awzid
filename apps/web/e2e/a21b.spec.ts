@@ -10,6 +10,19 @@ import { expect, test } from './fixtures';
  * captures 375 px de chaque nouveau modèle dans reports/a21b/.
  */
 const model = (page: Page, m: string) => page.locator(`[data-testid="vivante"][data-model="${m}"]`);
+/** arabe et français sur une même ligne dans le temps affiché (boîtes qui se chevauchent en hauteur) */
+const memeLigne = (root: Element) => {
+  const bad: string[] = [];
+  for (const fr of root.querySelectorAll('.fr'))
+    for (const ar of root.querySelectorAll('[lang="ar"]')) {
+      if (fr.contains(ar) || ar.contains(fr)) continue;
+      const a = fr.getBoundingClientRect();
+      const b = ar.getBoundingClientRect();
+      if (!a.height || !b.height) continue;
+      if (Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 4) bad.push(fr.textContent ?? '');
+    }
+  return bad;
+};
 const DIR = process.env.A21B_CAPTURES_DIR ?? join('..', '..', 'reports', 'a21b');
 
 test('A21b : une leçon par famille de niveau, hors pilotes — animations après les parties', async ({
@@ -27,6 +40,12 @@ test('A21b : une leçon par famille de niveau, hors pilotes — animations aprè
     await m.scrollIntoViewIfNeeded();
     await expect(m).toHaveAttribute('data-state', 'lecture');
     await expect(m.locator('[lang="ar"]').first()).toBeVisible(); // l'arabe est du texte
+    // règle du client : l'arabe et la traduction ne partagent jamais une ligne
+    for (const viv of await page.locator('[data-testid="vivante"]').all()) {
+      await viv.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(1600);
+      expect(await viv.evaluate(memeLigne), `${unit}`).toEqual([]);
+    }
     await expect(page.getByTestId('vivante-condense')).toHaveCount(1);
   }
 });

@@ -273,13 +273,39 @@ function withMs(b: BeatBody): VivBeat {
 }
 
 /**
+ * Règle du client : l'arabe (3 mots ou plus, ou une fin de phrase arabe) n'est JAMAIS sur la même ligne que le
+ * français — l'arabe a sa ligne, la traduction la sienne. Une traduction du livre qui contient un tel passage
+ * arabe n'est donc pas montrée dans l'animation (elle reste dans la page) ; quelques mots arabes isolés
+ * (un nom, une lettre) restent permis.
+ */
+export function frSeul(fr: string): boolean {
+  const t = fr.split(/\s+/).filter(Boolean);
+  let run = 0;
+  for (let i = 0; i <= t.length; i++) {
+    const ar = i < t.length && ARABIC.test(t[i]!);
+    if (ar) run++;
+    if (ar && run >= 3) return false;
+    // fin de phrase arabe : deux mots arabes ou plus suivis d'un point final, ou en fin de texte
+    if (ar && run >= 2 && (/[.!?\u061f]$/.test(t[i]!) || i === t.length - 1)) return false;
+    if (!ar) run = 0;
+  }
+  return true;
+}
+/** temps sans traduction mêlée d'arabe (voir `frSeul`) */
+const seul = (b: BeatBody): BeatBody => {
+  const o = { ...b } as BeatBody & { fr?: string; pointsFr?: string };
+  if (o.fr && !frSeul(o.fr)) delete o.fr;
+  if (o.pointsFr && !frSeul(o.pointsFr)) delete o.pointsFr;
+  return o;
+};
+/**
  * Durée entre 10 et 20 s : on garde les premiers temps tant que la somme reste ≤ 20 s ; si la somme est
  * < 10 s, chaque temps est allongé dans la même proportion. null si rien n'est animable.
  */
 function fit(id: string, slot: VivSlot, model: VivModel, raw: Array<BeatBody>) {
   const beats: VivBeat[] = [];
   let total = 0;
-  for (const b of raw.filter(safe).map(withMs)) {
+  for (const b of raw.filter(safe).map(seul).map(withMs)) {
     if (total + b.ms > MOTION_MAX_MS) continue;
     beats.push(b);
     total += b.ms;

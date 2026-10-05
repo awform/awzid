@@ -30,6 +30,9 @@ Validé par le client après le pilote A21.
    - **notes de dialogue** aux séparateurs variés (— · • ● | /) : schéma de 4 parties au plus, une case seulement
      quand « … » termine la partie, guillemets et ponctuation hors de la case ;
    - lettres et signes du Muṣḥaf (ٱ, ۥ ۦ) écartés ; nombres et dates dans les textes sans erreur.
+   - **règle du client « l'arabe a sa ligne »** : aucune traduction montrée si elle contient 3 mots arabes ou
+     plus, ou une fin de phrase arabe (`frSeul`) ; l'arabe et le français sont toujours sur des lignes séparées
+     dans tous les modèles (contrôlé par le test des 381 leçons et, à l'écran, par l'e2e qui mesure les lignes).
    Couverture : **381 / 381 leçons animées** (en1 21/21, en2–en5 20/20, ado1–ado4 20/20, ad1–ad10 20/20),
    1 769 animations. **Sans animation** : religion (re, ra) et lecture du Coran (qc) — voir « décisions » ; bilans
    et examens (inchangé) ; à l'intérieur des leçons, les parties dont tous les textes sont écartés (Coran, adab,

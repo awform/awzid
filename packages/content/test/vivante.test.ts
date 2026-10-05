@@ -9,6 +9,7 @@ import {
   arabicStrings,
   buildVivante,
   gardeKey,
+  frSeul,
   matchRoot,
   schemaParts,
   type VivBeat,
@@ -64,6 +65,11 @@ function fromBook(s: string, book: string[]): boolean {
     }
   return false;
 }
+/** 3 mots arabes à la suite (contrôle indépendant du générateur) */
+const AR_RUN3 = /[ء-ٰٱ][^\sA-Za-zÀ-ÿ]*(\s+[^\sA-Za-zÀ-ÿ]*[ء-ٰٱ][^\sA-Za-zÀ-ÿ]*){2}/;
+/** fin de phrase arabe : 2 mots arabes ou plus, puis un point final ou la fin du texte */
+const AR_FIN =
+  /[ء-ٰٱ]\S*\s+\S*[ء-ٰٱ][^\sA-Za-zÀ-ÿ]*([.!?؟]|$)\s*$|[ء-ٰٱ]\S*\s+\S*[ء-ٰٱ]\S*[.!?؟](\s|$)/;
 /** chaque temps a quelque chose à montrer */
 function shows(b: VivBeat): boolean {
   switch (b.k) {
@@ -198,6 +204,25 @@ describe('A21 — générateurs des leçons vivantes (règles, sans livres)', ()
     ]);
   });
 
+  it('A21b — règle du client : l’arabe (3 mots ou une fin de phrase) jamais dans une ligne en français', () => {
+    const w = String.fromCharCode(0x628, 0x64e);
+    expect(frSeul(`un mot ${w} seul`)).toBe(true);
+    expect(frSeul(`racine ${w} ${w} ${w}`)).toBe(false);
+    expect(frSeul(`il dit : ${w} ${w}.`)).toBe(false);
+    expect(frSeul(`il dit : ${w} ${w}`)).toBe(false);
+    expect(frSeul(`${w} ${w} (deux mots) puis du français`)).toBe(true);
+    // dans les animations : la traduction mêlée d'arabe n'est pas montrée, l'arabe garde sa ligne
+    const m = buildVivante(
+      {
+        mots: [
+          { ar: w, fr: `le mot ${w} ${w} ${w}` },
+          { ar: w, fr: 'sens' },
+        ],
+      },
+      { unitId: 'u' },
+    ).motions[0]!;
+    expect(m.beats.map((b) => (b.k === 'mot' ? (b.fr ?? null) : 0))).toEqual([null, 'sens']);
+  });
   it('A21b — conjugaison : un seul verbe, terminaison balisée par le livre, 3 lignes au moins', () => {
     const P = (...x: number[]) => c(...x);
     const ana = P(0x623, 0x64e, 0x646, 0x64e, 0x627);
@@ -466,6 +491,14 @@ describe.skipIf(!HAS_CONTENT)('A21b — toutes les leçons des livres d’arabe 
           ).toBe(m.ms);
           expect(m.beats.length, m.id).toBeGreaterThan(0);
           for (const b of m.beats) expect(shows(b), `${m.id} : temps vide (${b.k})`).toBe(true);
+          // règle du client : jamais 3 mots arabes (ni une fin de phrase arabe) dans une ligne en français
+          for (const b of m.beats)
+            for (const fr of [(b as { fr?: string }).fr, (b as { pointsFr?: string }).pointsFr])
+              if (fr)
+                expect(
+                  !AR_RUN3.test(fr) && !AR_FIN.test(fr),
+                  `${m.id} : arabe mêlé au français : ${fr}`,
+                ).toBe(true);
         }
         expect(r.condense!.ms, unit).toBeLessThanOrEqual(CONDENSE_MAX_MS);
         const available = r.motions.reduce((s, m) => s + m.ms, 0);
