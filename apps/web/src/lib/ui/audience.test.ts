@@ -38,7 +38,7 @@ describe('lot 26 — public, thème et navigation', () => {
     expect(audienceOf(ctx({ accountKind: 'adulte', profileKinds: ['ado'] }))).toBe('ado');
   });
 
-  it('3 à 5 entrées par public, toujours', () => {
+  it('3 à 5 entrées par public (6 pour les ados et adultes depuis A12 : « Au quotidien »)', () => {
     for (const a of [
       'enfant',
       'ado',
@@ -50,7 +50,7 @@ describe('lot 26 — public, thème et navigation', () => {
     ] as const) {
       const n = navFor(a).length;
       expect(n, a).toBeGreaterThanOrEqual(3);
-      expect(n, a).toBeLessThanOrEqual(5);
+      expect(n, a).toBeLessThanOrEqual(a === 'ado' || a === 'adulte' ? 6 : 5);
     }
   });
 
@@ -62,6 +62,12 @@ describe('lot 26 — public, thème et navigation', () => {
     expect(activeNav(adulte, '/hifz')).toBe('coran');
     expect(activeNav(adulte, '/coran/lecteur')).toBe('coran');
     expect(activeNav(adulte, '/aujourdhui')).toBe('aujourdhui');
+    expect(activeNav(adulte, '/quotidien/qibla')).toBe('quotidien');
+    for (const a of ['ado', 'adulte', 'parent', 'visiteur'] as const)
+      expect(
+        navFor(a).some((x) => x.id === 'quotidien'),
+        a,
+      ).toBe(true);
     for (const p of ['/ecriture', '/lectures/x', '/revisions', '/suivi', '/plus'])
       expect(activeNav(adulte, p), p).toBe('plus');
     const enfant = navFor('enfant');

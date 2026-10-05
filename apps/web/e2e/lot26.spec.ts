@@ -25,12 +25,12 @@ async function noHorizontalScroll(page: Page, url: string) {
   expect(sw, `${url} : la page défile horizontalement`).toBeLessThanOrEqual(cw);
 }
 
-test('adulte : thème « manuscrit », 5 entrées, accueil de premier lancement montré une seule fois', async ({
+test('adulte : thème « manuscrit », 6 entrées (A12), accueil de premier lancement montré une seule fois', async ({
   page,
 }) => {
   await page.goto('/aujourdhui');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'manuscrit');
-  await expect(page.locator('nav.tabs a')).toHaveCount(5);
+  await expect(page.locator('nav.tabs a')).toHaveCount(6);
   const hello = page.getByTestId('bienvenue');
   await expect(hello).toBeVisible();
   await page.getByTestId('bienvenue-ok').click();
@@ -95,12 +95,12 @@ test('mouvement réduit : transitions neutralisées', async ({ page }) => {
 
 test.describe('famille', () => {
   test.use({ compte: 'parent' });
-  test('parent « clair » (4 entrées), enfant « jardin » (5 grandes entrées, cibles ≥ 56 px)', async ({
+  test('parent « clair » (5 entrées, A12), enfant « jardin » (5 grandes entrées, cibles ≥ 56 px)', async ({
     page,
   }) => {
     await page.goto('/profils');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'clair');
-    await expect(page.locator('nav.tabs a')).toHaveCount(4);
+    await expect(page.locator('nav.tabs a')).toHaveCount(5);
     await expect(page.getByTestId('bienvenue')).toHaveAttribute('data-public', 'parent');
     await pickProfile(page, 'Yanis');
     await page.goto('/aujourdhui');

@@ -33,6 +33,7 @@ import { registerEcoleSynthese } from './ecole-synthese.js';
 import { registerCoranAudio } from './coran-audio.js';
 import { registerLeconsAudio } from './lecons-audio.js';
 import { registerContent } from './contenu.js';
+import { registerQuotidien } from './quotidien.js';
 import { notFound } from './routes-common.js';
 import { registerProgress } from './progression.js';
 import { registerEpreuves } from './epreuves.js';
@@ -212,6 +213,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   });
 
   registerContent(app, db, edition, rights);
+  // A12 : adhkār des livres (espace « Au quotidien »), public et sans donnée de l'utilisateur
+  registerQuotidien(app, db, edition);
   registerProgress(app, db, edition);
   registerSignalements(app, db, edition);
   return app;

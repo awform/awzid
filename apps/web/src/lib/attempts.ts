@@ -81,7 +81,13 @@ export function startSync(): void {
   if (started || typeof window === 'undefined') return;
   started = true;
   // au retour du réseau (petit délai : la connexion n'est pas toujours prête à l'instant de l'événement)
-  window.addEventListener('online', () => setTimeout(() => void flush(), 300));
+  window.addEventListener('online', () =>
+    setTimeout(() => {
+      void flush();
+      // lot F1 : signalements en attente envoyés, suspensions à jour
+      void import('./signaler').then((m) => m.refreshContentState());
+    }, 300),
+  );
   // filet de sécurité : tant que des réponses attendent et que le réseau semble là, on réessaie
   setInterval(() => {
     if (!navigator.onLine) return;

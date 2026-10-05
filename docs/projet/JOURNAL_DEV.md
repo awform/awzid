@@ -8,6 +8,134 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 05/10/2026 — Lot F1 : contenu robuste (revue d'architecture E5, M2, G2, G1, M1)
+
+Branche `f1-contenu-wip` (worktree `~/awform-f1`, depuis `main` a2a64ec, fusionnée avec A12 `dcad4f0`), intégrée
+dans `main`, démo redéployée. Base de tests unitaires propre au worktree (`awform_f1_test`).
+
+1. **Identifiants gelés (E5)** : les livres portent déjà **5 703 `id` explicites** (31 niveaux, tables
+   `ids/*-correspondance.json`, outil gel-ids) et l'importeur les lisait ; **tous identiques aux anciennes clés
+   de position** → aucune réponse à déplacer (vérifié). Ce qui change : l'import ne compare plus jamais un id à
+   la position (avant, un exercice inséré dans un livre gelé faisait REFUSER l'import) ; dans un livre gelé, un
+   exercice sans `id` est une erreur bloquante ; un id gelé disparu sans déclaration est signalé (`id_disparu`) ;
+   `ids/lignee.json` (facultatif) déclare remplacement, fusion, scission ou retrait → table `exercise_lineage`
+   (les réponses suivent la lignée). Rang par édition (`exercise_version.position`) ; l'unicité (unité, rang)
+   est retirée.
+2. **Corrigé distinct du texte** : `answerKey` (`@awform/grading`, mêmes règles que la correction : chaînes après
+   `plain`, cases et mots par indice, « relier » par squelette arabe + image, « ordre » par la suite attendue) ;
+   empreinte `answer_hash` sur `exercise_version` ET sur chaque réponse (`attempt`). Une réponse compte tant que
+   le corrigé de son exercice n'a pas changé : une coquille (consigne, traduction, voyelles d'une case) ne fait
+   rien perdre ; un corrigé modifié n'invalide que cet exercice (« Le corrigé de l'exercice N a été rectifié :
+   refais-le. Tes autres réponses sont gardées. », `GET /api/v1/progress/unit`). À la publication, seules les
+   leçons dont un corrigé a changé sont recalculées.
+3. **Événements** : `edition` + version du format `v: 2` dans chaque événement (leçons gardées hors ligne : édition
+   stockée avec la leçon). Le serveur accepte une réponse donnée sur une édition antérieure et la corrige avec
+   CE contenu (repli par l'empreinte du texte pour un appareil ancien) ; refus définitif = code stable
+   `version_inconnue`. Appareil : un refus n'est plus jeté — **mis de côté** (motif gardé), renvoyé au plus une
+   fois par heure (5 fois), visible dans « Mes téléchargements » (« Réessayer », « Signaler le problème » :
+   `POST /api/v1/sync/rejets`, nombre + motifs + édition, jamais le contenu ; journal `synchro.rejets`).
+4. **Épreuves figées (M2)** : `exam_session.edition_id` NOT NULL (sessions existantes : édition publiée) ;
+   énoncé, corrigé, grille et illustrations lus dans cette édition jusqu'à la fermeture.
+5. **École juridique (G2)** : `level.madhhab` (re, ra → `maliki` ; arabe, Coran, lectures → `commun`),
+   `registry_entry.madhhab` (fiqh → `maliki` d'après `FIQH_MAL_…` ; versets, hadiths → `commun`),
+   `unit_version.madhhab_blocks` (`fiqh_adab`, rubriques fiqh / muʿāmalāt / famille / extraits → `maliki`) ;
+   un champ `madhhab` des livres l'emportera. Mention « Selon l'école mālikite » sous ces blocs. Aucun texte
+   religieux modifié ; Tanzil intact (contrôle octet par octet de l'import inchangé et vert).
+6. **Traduction des contenus (G1), structure vide** : `content_translation` (texte source = champ français du
+   livre repéré par son empreinte, versions, statut brouillon / relue / validée / rejetée ; le religieux n'est
+   servi que validé), `edition.source_locale` = `fr`, `profile.explanation_locale` (défaut `fr`, modifiable par
+   `PATCH /profiles/:id`) ; `translatableFields`, `pickTranslation`, `servedTranslations`. **Aucune traduction
+   produite** ; l'interface reste entièrement traduisible (60 nouveaux textes en fr, en, es, de, ar).
+7. **« Signaler une erreur » (M1)** : bouton sous chaque verset, hadith, bloc de fiqh, exercice, et pour la
+   leçon (formulaire : motif + commentaire court, « n'écrivez aucune donnée personnelle » ; hors ligne : envoyé
+   au retour du réseau). Compte connecté exigé ; 10 signalements par 24 h, un par bloc et par jour ; ni
+   pseudonyme ni profil enregistrés, l'auteur n'est jamais montré. File dans l'espace administrateur pour
+   l'administrateur et le **référent** (rôle `account_role`, `staff --role referent`, second facteur) : reçu →
+   en examen → corrigé (erratum public, page `/errata`) ou rejeté (motif obligatoire), décisions journalisées.
+   **Suspension d'urgence** (administrateur) : leçon, exercice (par son id gelé) ou bloc (chemin + empreinte)
+   masqué partout — leçon servie, paquets hors ligne (empreinte de la leçon modifiée → mise à jour
+   différentielle), page du QR, contexte du tuteur, copies des appareils (`GET /api/v1/contenu/suspensions`
+   gardé hors ligne) — avec un message neutre ; levée journalisée. Service compose `staff` (EXPLOITATION §9).
+8. **Migrations** `0029_lignee_exercices`, `0030_epreuve_edition`, `0031_madhhab`, `0032_traductions_contenu`,
+   `0033_signalements` (en avant seulement, comme les précédentes ; retour arrière manuel écrit en tête de chaque
+   fichier). Ce que le SQL ne sait pas calculer (empreintes de corrigé, blocs de fiqh, empreinte des réponses
+   existantes) : `backfillContent`, lancé à chaque import (même « inchangé »), par édition. **Répétition sur une
+   copie de la base de démo** (35 éditions, 127 678 versions d'exercices, 17 362 leçons) : migrations 5,4 s,
+   complément 11,6 s (+352 Mo), 2e passage 0 ; 22 niveaux `commun`, 9 `maliki` ; registre : 663 fiqh `maliki`,
+   1 418 versets et 1 599 hadiths `commun` ; 594 leçons publiées avec blocs de fiqh étiquetés.
+9. **Ce que les livres doivent exporter** : rien de bloquant (ids déjà présents). Désormais : (a) un exercice
+   NOUVEAU reçoit un nouvel id (gel-ids), jamais celui d'un autre ; (b) `ids/lignee.json` quand un exercice gelé
+   est remplacé, fusionné, scindé ou retiré :
+   `{ "lignee": [{ "de": "ad2.l03.ex4", "vers": "ad2.l03.ex9", "nature": "remplace", "motif": "…" }] }`
+   (`nature` : remplace | fusion | scission | retire, `vers: null` pour un retrait) ; (c) plus tard, si des
+   variantes par école arrivent : champ `madhhab` (maliki | hanafi | shafii | hanbali | commun) sur le livre,
+   la leçon, le bloc ou l'entrée du registre. Les items restent repérés par leur rang : un item inséré change
+   le corrigé, l'exercice entier redevient « à refaire » (jamais de réponse attribuée au mauvais item).
+10. **Tests** : **1 413 réussis, 1 ignoré, 0 échec** (`pnpm -r --no-bail test`, vrais livres, base `awform_f1_test`, mesuré dans `~/awform-f1` après fusion avec A12) dont 34 nouveaux : grading +6 (corrigé ≠ texte), content +9 (lignée, école, suspension, traductions), db +8 (`f1-lignee.test.ts` : coquille sans perte de maîtrise, corrigé changé → seul cet exercice à refaire, insertion, réponse d'une édition antérieure, lignée déclarée, reprise des données d'avant la migration), api +6 (`f1.test.ts` : signalement → file → suspension partout → levée, limites, errata, épreuve figée pendant une publication), web +5 (`sync-f1.test.ts` : refus mis de côté, nouvel essai, signalement) ; e2e : `f1.spec.ts` (réponse hors ligne refusée gardée puis signalée ; signalement d'un exercice → file de l'administrateur → suspension → exercice masqué chez l'élève → levée), sur téléphone et ordinateur ; suite complète : **250 réussis, 22 ignorés, 0 échec** (12,3 min).
+11. **Budget** : page la plus lourde `/lecons/[id]` 143,8 Ko ≤ 150 ; toutes les pages 329,5 + CSS 31,3 = **360,8 Ko** (main après A12 : 354,9 ; F1 +5,9) → budget total porté de 360 à **365 Ko, à valider (D-F1)**.
+
+Décisions à prendre (D-F1) : budget total 365 Ko ; durée de conservation des signalements ; titulaire du rôle
+référent ; export `ids/lignee.json` côté livres ; formulation « Selon l'école mālikite ».
+
+---
+
+## 05/10/2026 — Chantier A12 : espace « Au quotidien » (horaires de prière, qibla, adhkār, verset en image)
+
+Branche `a12-quotidien-wip` (depuis `main` a2a64ec, worktree `~/awform-a12`, base e2e isolée). Mesures sur la VM.
+
+1. **Horaires de prière sur l'appareil, hors ligne** (`lib/quotidien/priere.ts`) : adhan-js 4.4.6 (**MIT**,
+   `pnpm add`, LICENCES.md § 7), chargée à la demande (4 Ko Brotli). Méthodes : Ligue islamique mondiale, UOIF 12°,
+   Grande Mosquée de Paris (18°/17°, à confirmer), ISNA, Égypte, Karachi, Umm al-Qurā, Moonsighting, Diyanet, Dubaï,
+   Koweït, Qatar, Singapour (angles contrôlés contre api.aladhan.com/v1/methods). Défaut par pays : France → choix
+   proposé à l'utilisateur (UOIF, Grande Mosquée de Paris, Ligue) ; Sénégal et autres → Ligue ; Arabie → Umm al-Qurā.
+   ʿAṣr : majorité (ombre ×1) par défaut, ḥanafite au choix ; ajustement ±30 min par horaire ; règle des hautes
+   latitudes (automatique, milieu, septième de la nuit, angle) ; cercle polaire : jour le plus proche. Prochaine
+   prière et temps restant ; mention « Horaires calculés ; suivez votre mosquée locale. »
+2. **Lieu** : 58 villes intégrées (France, Belgique, Suisse, Luxembourg, Canada, Sénégal, Maghreb, Afrique de l'Ouest,
+   La Mecque, Médine ; fuseau de la ville) ou position de l'appareil APRÈS accord explicite (bouton + texte « jamais
+   envoyée » + autorisation du navigateur), arrondie à 0,001° et gardée dans `localStorage` seulement. Test unitaire
+   (aucun `fetch`) et e2e (toutes les requêtes du parcours surveillées : aucune ne contient les coordonnées).
+3. **Qibla** : grand cercle vers (21.4225, 39.8262), contrôlé contre api.aladhan.com/v1/qibla : Paris 119,16°,
+   **Dakar 73,93°** (et non ≈ 66°), Montréal 58,69°, Bruxelles 123,48° ; boussole par l'orientation de l'appareil
+   (permission iOS demandée au geste ; `deviceorientationabsolute` sur Android), sinon rose fixe nord en haut ;
+   carte schématique SVG (grand cercle, sans fond de carte) ; avertissement métaux et aimants.
+4. **Calendrier hégirien** : `Intl` islamic-umalqura, décalage −2…+2 jours ; « l'observation locale de la lune fait
+   foi (Ramaḍān, ʿĪd) ». Contrôlé : 05/10/2026 = 24 Rabīʿ al-ākhir 1448, 17/02/2026 = 29 Shaʿbān 1447 (aladhan).
+5. **Adhkār** (matin, soir, après la prière, appel à la prière, coucher) : AUCUN texte écrit ; sélection de chemins
+   dans les livres gelés (`packages/content/src/adhkar.ts`), servie par `GET /api/v1/adhkar` depuis la projection
+   élève de l'édition publiée (public, ETag), gardée sur l'appareil. **21 entrées des livres** (17 invocations
+   `duas` avec source et degré, 4 récitations coraniques recommandées par les livres : āyat al-kursī, trois
+   sourates — versets = Tanzil via l'API du Coran, aucune voix de synthèse) ; 25 affichages. Test sur les vrais
+   livres : sélection présente, moment cohérent, texte coranique = Tanzil octet par octet, hadiths fondateurs
+   VERIFIE. **17 invocations à compléter** par le référent (références seulement) : `A12_ADHKAR_A_COMPLETER.md`.
+   Compteur de répétitions (objectif du livre : 3, 33, 100) et compteur libre, silencieux.
+6. **Rappels doux** : désactivés par défaut, notification silencieuse ; ne fonctionnent que l'application ouverte
+   (le web ne sait pas programmer une notification une fois fermé sans serveur, et un envoi serveur exigerait la
+   position : refusé) — dit à l'utilisateur.
+7. **Verset en image** (`/quotidien/verset?s=&a=`) : canvas 1080×1350, texte Tanzil tel quel (lignes coupées aux
+   espaces seulement ; test : jointure = texte), police Amiri Quran, référence, traduction QuranEnc (Rachid Maach /
+   Rowwad, source et version sur l'image), filets et étoiles à huit pointes, couleurs du Muṣḥaf ou du thème ;
+   partage système ou enregistrement.
+8. **Interface** : 4 onglets (Horaires, Qibla, Adhkār, Verset), thèmes et mode sombre par les jetons, 320 px sans
+   défilement horizontal (captures `reports/a12/`), cibles ≥ 44 px, `<Bidi>` partout ; 173 textes en fr, en, es,
+   de, ar (en préparation). **Navigation principale** : entrée « Prières » — ados et adultes 6 entrées (au lieu de 5),
+   parent 5, visiteur 4 ; enfants inchangés (décision D-A12 à valider). Nouvelles icônes géométriques.
+9. **Correction en passant** : `bidi.spec.ts` « Mes récitateurs » (échec connu depuis A1/A8) — crédit arabe affiché
+   avec `base="ar"` (les noms latins y sont isolés de gauche à droite).
+10. **Poids** : page la plus lourde `/lecons/[id]` 139,9 Ko ≤ 150 ; total JS 323,7 + CSS 31,2 = **354,9 Ko** > 325 →
+    budget total porté à **360 Ko (D-A12, à valider)** : +33 Ko pour 4 pages, adhan-js et les textes français de
+    la coquille (+4,4 Ko sur chaque page).
+11. **Tests** : `pnpm check` vert (build, types, lint, budget) — unitaires **1 379 réussis, 1 ignoré** (content +4,
+    api +2, web +18 dont 5 cas de référence : Paris UOIF et Ligue, Dakar, Montréal ISNA, Médine Umm al-Qurā à ±2 min
+    d'aladhan) ; e2e complets sur le commit final : **246 réussis, 22 ignorés, 0 échec** (12,5 min), dont
+    `a12.spec.ts` (parcours, hors ligne, position jamais envoyée, 320 px). Commits 69dc686 et ce journal ; fusion
+    dans `main` et démo redéployée.
+
+Décisions à prendre (D-A12) : 6 entrées de navigation ; angles de la Grande Mosquée de Paris ; Umm al-Qurā pour
+l'Arabie ; budget 360 Ko ; rappels application ouverte ; validation des 21 adhkār et des 17 à ajouter.
+
+---
+
 ## 05/10/2026 — Chantier A3 (suite) : audio des lectures graduées
 
 - Lecteur de livret (`/lectures/[code]`) : même composant `Ecouter.svelte`, mêmes règles (pas de fichier → pas de

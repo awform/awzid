@@ -90,3 +90,19 @@ de lignes officielle accessible), QUL et Quran Foundation (compte nécessaire), 
 **Crédit affiché** (Lire, Écouter, Muṣḥaf, clé `rw.credit`) : « Texte : Complexe du Roi Fahd pour l'impression du
 Noble Coran (Médine), riwāya …, version … (plateforme développeurs) ; police du Complexe (version …), livrée sans
 modification. »
+
+## 7. Horaires de prière — adhan-js (chantier A12)
+
+- **Bibliothèque** : `adhan` 4.4.6 (adhan-js, Batoul Apps, https://github.com/batoulapps/adhan-js), ajoutée par
+  `pnpm add` dans `apps/web` ; **licence MIT** (fichier `LICENSE` du paquet lu le 05/10/2026 : « The MIT License (MIT)
+  Copyright (c) 2016 Batoul Apps ») : usage, copie, modification et distribution libres, avis de copyright à conserver
+  (il l'est dans le paquet ; la bibliothèque est servie minifiée dans un morceau chargé à la demande).
+- **Usage** : calcul des horaires SUR L'APPAREIL (aucun service externe, aucune donnée envoyée). Méthodes et angles
+  contrôlés contre la liste publique d'aladhan.com (`api.aladhan.com/v1/methods`, 05/10/2026) ; horaires et qibla
+  des tests comparés à `api.aladhan.com/v1/timings` et `/v1/qibla` (moteur indépendant, relevés du 05/10/2026,
+  écrits dans `apps/web/src/lib/quotidien/quotidien.test.ts`). Aucune donnée d'aladhan n'est livrée ni appelée par
+  l'application.
+- **Qibla, calendrier hégirien** : calculs propres (grand cercle ; `Intl` « islamic-umalqura » du navigateur),
+  sans bibliothèque.
+- **Partage d'un verset en image** : texte Tanzil (§ 3) et traduction QuranEnc (§ 4, source et version écrites
+  sur l'image) ; police Amiri Quran déjà livrée (SIL OFL).
