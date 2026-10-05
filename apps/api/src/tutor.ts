@@ -38,6 +38,7 @@ import {
 } from '@awform/tutor';
 import { ownsProfile } from './auth/routes.js';
 import { lawEvidence, TEXT_VERSION } from './auth/policy.js';
+import { currentSuspensions, maskUnit } from './suspensions.js';
 
 type Edition = () => Promise<{ id: string; code: string } | null>;
 const err = (reply: FastifyReply, status: number, code: string) =>
@@ -68,11 +69,14 @@ export function registerTutor(
     !!req.auth && (await ownsProfile(db, req.auth.accountId, profileId));
 
   async function context(editionId: string, unitId: string): Promise<ContextPack | null> {
-    const key = `${editionId}|${unitId}`;
+    // lot F1 (M1) : un contenu suspendu n'entre jamais dans le contexte du tuteur
+    const susp = await currentSuspensions(db);
+    const key = `${editionId}|${unitId}|${susp.version}`;
     const hit = contexts.get(key);
     if (hit) return hit;
-    const unit = await getUnitForStudent(db, editionId, unitId);
-    if (!unit) return null;
+    const raw = await getUnitForStudent(db, editionId, unitId);
+    if (!raw) return null;
+    const unit = maskUnit(raw, susp.list);
     const json = JSON.stringify(unit.lesson);
     const ids = [...new Set(json.match(/HAD_[A-Z]{3}_\d{5}/g) ?? [])];
     const coranRefs = [...new Set(json.match(/\b\d{1,3}:\d{1,3}(?:-\d{1,3})?\b/g) ?? [])].slice(

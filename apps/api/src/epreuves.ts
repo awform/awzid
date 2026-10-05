@@ -170,6 +170,8 @@ export function registerEpreuves(
       const s = await createExamSession(db, {
         classId: cls.id,
         unitId: u.id,
+        // lot F1 (M2) : énoncé et corrigé FIGÉS sur l'édition ouverte maintenant
+        editionId: ed!.id,
         bareme: u.kind === 'bilan' ? 20 : 100,
         opensAt,
         closesAt,
@@ -215,8 +217,7 @@ export function registerEpreuves(
     async (req, reply) => {
       const m = await mine(req.auth!.accountId, req.params.sid);
       if (!m) return err(reply, 404, 'introuvable');
-      const ed = await edition();
-      const u = ed ? await unitFull(db, ed.id, m.s.unitId) : null;
+      const u = await unitFull(db, m.s.editionId, m.s.unitId);
       const copies = await sessionSubmissions(db, m.s.id, m.cls.id);
       await audit(db, req.auth!.accountId, 'epreuve.consultation', m.s.id);
       const { seed, ...pub } = m.s;
@@ -291,8 +292,7 @@ export function registerEpreuves(
       let max = req.body.max ?? null;
       if (req.body.parties) {
         // grille du livre : chaque partie bornée par ses points, maximum = total de la grille
-        const ed = await edition();
-        const u = ed ? await unitFull(db, ed.id, m.s.unitId) : null;
+        const u = await unitFull(db, m.s.editionId, m.s.unitId);
         const grid = u ? bookGrid(u.content) : null;
         const parts = req.body.parties;
         if (!grid || parts.length !== grid.length || parts.some((x, i) => x > grid[i]!.points))
@@ -363,7 +363,7 @@ export function registerEpreuves(
       const now = new Date();
       const out = [];
       for (const { session: s, submission: sub } of await profileExamSessions(db, p.id)) {
-        const u = ed ? await unitFull(db, ed.id, s.unitId) : null;
+        const u = await unitFull(db, s.editionId, s.unitId);
         const closed = s.closesAt <= now;
         // la note est montrée quand la session est fermée (mêmes conditions pour toute la classe)
         const score = closed && sub ? sub.score : null;
@@ -416,9 +416,9 @@ export function registerEpreuves(
       if (!p) return reply;
       const s = await openFor(p.id, req.params.sid);
       if (!s) return err(reply, 404, 'epreuve_fermee');
-      const ed = await edition();
-      const u = ed ? await unitFull(db, ed.id, s.unitId) : null;
-      if (!u || !ed) return err(reply, 404, 'introuvable');
+      // lot F1 (M2) : l'édition FIGÉE de la session, jamais l'édition publiée entre-temps
+      const u = await unitFull(db, s.editionId, s.unitId);
+      if (!u) return err(reply, 404, 'introuvable');
       // projection d'ÉPREUVE : aucune réponse ; « relier » : colonne de droite propre à l'élève
       // session ouverte : le texte non préparé est révélé (CDC §2.8), toujours sans aucune réponse
       const lesson = examProjection(u.content, u.levelCode, { revealUnprepared: true }) as Obj;
@@ -439,7 +439,7 @@ export function registerEpreuves(
       }
       const illustrations = await illustrationsFor(
         db,
-        ed.id,
+        s.editionId,
         neededIllustrations(lesson as unknown as Lesson),
       );
       return {
@@ -477,8 +477,7 @@ export function registerEpreuves(
       if (!(await parentGate(db, req, reply, p.kind))) return reply;
       const s = await openFor(p.id, req.params.sid);
       if (!s) return err(reply, 409, 'epreuve_fermee');
-      const ed = await edition();
-      const u = ed ? await unitFull(db, ed.id, s.unitId) : null;
+      const u = await unitFull(db, s.editionId, s.unitId);
       if (!u) return err(reply, 404, 'introuvable');
       // réponses « relier » : position affichée → élément d'origine
       const answers: ExamAnswers = {};

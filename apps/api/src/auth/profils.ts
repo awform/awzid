@@ -118,7 +118,7 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
 
   app.patch<{
     Params: { id: string };
-    Body: { pseudonym?: string; avatar?: string; levelCode?: string };
+    Body: { pseudonym?: string; avatar?: string; levelCode?: string; explanationLocale?: string };
   }>(
     '/api/v1/profiles/:id',
     {
@@ -136,6 +136,8 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
             pseudonym: { type: 'string', minLength: 1, maxLength: 40 },
             avatar: { enum: AVATARS },
             levelCode: { type: 'string', pattern: '^[a-z]{2,3}[0-9]{1,2}$' },
+            // lot F1 (G1) : langue des explications du contenu (« fr » tant qu'aucune traduction n'est validée)
+            explanationLocale: { type: 'string', pattern: '^[a-z]{2,3}(-[A-Z]{2})?$' },
           },
         },
       },
@@ -149,6 +151,7 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
           pseudonym: req.body.pseudonym ?? p.pseudonym,
           avatar: req.body.avatar ?? p.avatar,
           levelCode: req.body.levelCode ?? p.levelCode,
+          explanationLocale: req.body.explanationLocale ?? p.explanationLocale,
         })
         .where(eq(t.profile.id, p.id));
       return { ok: true };

@@ -96,6 +96,7 @@ export async function setup(
       await h.db.insert(t.exerciseVersion).values({
         editionId: ed!.id,
         exerciseId: e.id,
+        position: pos, // lot F1 : rang par édition
         hash: `h-${e.id}`,
         itemCount: e.items ?? 1,
         content: e.content ?? { type: e.type },

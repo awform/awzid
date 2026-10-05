@@ -89,7 +89,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   // (enseignant, administrateur) sans l'avoir vérifié n'a accès qu'à l'authentification et aux contenus
   // publics en lecture (au lieu d'une garde recopiée route par route, oubliée sur certaines)
   const MFA_FREE_READ =
-    /^\/api\/v1\/(health|config|levels|units|packs|quran|booklets|hifz\/books|pays|public)(\/|\?|$)/;
+    /^\/api\/v1\/(health|config|levels|units|packs|quran|booklets|hifz\/books|pays|public|contenu\/errata|contenu\/suspensions)(\/|\?|$)/;
   app.addHook('preHandler', async (req, reply) => {
     const a = req.auth;
     if (!a || !requiresMfa(a.kind) || a.mfaVerified) return;
@@ -155,7 +155,15 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       .where(eq(t.profile.ownerAccountId, accountId))
       .orderBy(asc(t.profile.createdAt));
     const [local = '', domain = ''] = (a.email ?? '').split('@');
+    // lot F1 : rôles portés en plus du type de compte (référent religieux)
+    const roles = (
+      await db
+        .select({ role: t.accountRole.role })
+        .from(t.accountRole)
+        .where(eq(t.accountRole.accountId, accountId))
+    ).map((r) => r.role);
     return {
+      roles,
       account: {
         id: a.id,
         kind: a.kind,

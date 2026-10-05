@@ -151,7 +151,8 @@ export async function downloadPack(
     id: u.id,
     level,
     sha256: u.sha256,
-    unit: u,
+    // lot F1 : édition du contenu gardée avec la leçon (accompagne chaque réponse donnée hors ligne)
+    unit: { ...u, edition: pack.edition },
     illusKeys: Object.keys(pack.illustrations),
   }));
   // remplace les leçons du niveau (une leçon supprimée d'une édition disparaît aussi)
@@ -215,7 +216,11 @@ export async function updatePack(
     if (!r.ok) throw new Error(t('horsligne.err_lecon', { id, status: r.status }));
     const text = await r.text();
     await addBytes(transferred(r, text.length));
-    const body = JSON.parse(text) as { unit: UnitDetail; illustrations: Illustrations };
+    const body = JSON.parse(text) as {
+      edition?: string;
+      unit: UnitDetail;
+      illustrations: Illustrations;
+    };
     await putMany(
       'illus',
       Object.entries(body.illustrations).map(([key, v]) => ({ key, ...v })),
@@ -226,7 +231,7 @@ export async function updatePack(
         id,
         level,
         sha256: body.unit.sha256,
-        unit: body.unit,
+        unit: { ...body.unit, edition: body.edition ?? local.edition },
         illusKeys: Object.keys(body.illustrations),
       },
     ]);

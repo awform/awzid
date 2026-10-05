@@ -72,6 +72,8 @@ export async function getUnitForStudent(db: Db, editionId: string, unitId: strin
       titleFr: t.unitVersion.titleFr,
       sha256: t.unitVersion.sha256,
       lesson: t.unitVersion.student,
+      /** blocs de fiqh → école (lot F1, G2) : mention « selon l'école mālikite » à l'affichage */
+      madhhab: t.unitVersion.madhhabBlocks,
     })
     .from(t.unitVersion)
     .innerJoin(t.unit, eq(t.unit.id, t.unitVersion.unitId))
@@ -82,15 +84,16 @@ export async function getUnitForStudent(db: Db, editionId: string, unitId: strin
   const exercises = await db
     .select({
       id: t.exercise.id,
-      position: t.exercise.position,
+      // rang dans le livre de CETTE édition (lot F1 : l'identifiant gelé ne dépend plus de la position)
+      position: t.exerciseVersion.position,
       type: t.exercise.type,
       hash: t.exerciseVersion.hash,
     })
     .from(t.exerciseVersion)
     .innerJoin(t.exercise, eq(t.exercise.id, t.exerciseVersion.exerciseId))
     .where(and(eq(t.exerciseVersion.editionId, editionId), eq(t.exercise.unitId, unitId)))
-    .orderBy(asc(t.exercise.position));
-  return { ...unit, exercises };
+    .orderBy(asc(t.exerciseVersion.position));
+  return { ...unit, madhhab: (unit.madhhab ?? {}) as Record<string, string>, exercises };
 }
 
 export async function ping(db: Db): Promise<boolean> {

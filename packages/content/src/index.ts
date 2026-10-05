@@ -12,3 +12,6 @@ export * from './report.js';
 export * from './hadith.js';
 export * from './qurandata.js';
 export * from './roots.js';
+export * from './madhhab.js';
+export * from './suspension.js';
+export * from './translation.js';

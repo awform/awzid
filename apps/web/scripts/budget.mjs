@@ -44,8 +44,10 @@ const BUDGET_INITIAL = 150 * 1024;
 // Muṣḥaf par page (04/10/2026) : 300 → 315 Ko, à valider (décision D30) ; A8 (05/10/2026) : muṣḥafs des
 // riwāyāt dans Lire, Écouter et Muṣḥaf (+4,5 Ko, main était à 313 Ko) → 320 Ko, à valider (décision D-A8) ;
 // A3 (05/10/2026) : audio des leçons (bouton écouter, clé SHA-1 du moteur des livres, option « avec l'audio »
-// des téléchargements, +3,6 Ko) → 325 Ko, à valider (décision D31)
-const BUDGET_TOTAL = 325 * 1024;
+// des téléchargements, +3,6 Ko) → 325 Ko, à valider (décision D31) ; lot F1 (05/10/2026) : « Signaler une
+// erreur », file du référent, errata, suspension d'urgence (masque hors ligne compris), réponses refusées mises
+// de côté, mention de l'école, 60 chaînes françaises (+6,0 Ko) → 330 Ko, à valider (décision D-F1)
+const BUDGET_TOTAL = 330 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 
 // JavaScript initial par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises en

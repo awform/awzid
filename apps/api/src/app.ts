@@ -36,6 +36,7 @@ import { registerContent } from './contenu.js';
 import { notFound } from './routes-common.js';
 import { registerProgress } from './progression.js';
 import { registerEpreuves } from './epreuves.js';
+import { registerSignalements } from './signalements.js';
 import { registerVerification } from './verification.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
 import type { RecitationKey } from '@awform/db';
@@ -212,5 +213,6 @@ export function buildApp(opts: AppOptions): FastifyInstance {
 
   registerContent(app, db, edition, rights);
   registerProgress(app, db, edition);
+  registerSignalements(app, db, edition);
   return app;
 }

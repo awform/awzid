@@ -174,7 +174,8 @@
     <section class="card" data-testid="qc-exercices">
       <h2>{t('qc.exercices')}</h2>
       {#each arr(L.exercices) as ex, i (i)}
-        <QcExercise {ex} n={i + 1} {lettres} {evaluation} />
+        <!-- lot F1 (M1) : exercice suspendu d'urgence → non affiché -->
+        {#if ex.suspendu !== true}<QcExercise {ex} n={i + 1} {lettres} {evaluation} />{/if}
       {/each}
     </section>
   {/if}

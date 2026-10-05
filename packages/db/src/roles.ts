@@ -106,6 +106,14 @@ export const API_GRANTS: Record<string, Right[]> = {
   profile_reciter_rule: ALL,
   class_reciter_rule: ALL,
   relay_reciter: ALL,
+  // lot F1 : lignée des exercices et traductions des contenus (posées par l'outil d'import) : lecture seule ;
+  // rôles (attribués par l'outil staff) : lecture ; signalements et suspensions : ajout et changement d'état,
+  // jamais d'effacement (la trace reste ; le compte de l'auteur est détaché à sa suppression)
+  exercise_lineage: R,
+  content_translation: R,
+  account_role: R,
+  content_report: RIU,
+  content_suspension: RIU,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */

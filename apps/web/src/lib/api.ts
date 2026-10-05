@@ -40,6 +40,10 @@ export interface UnitDetail extends UnitSummary {
   sha256: string;
   lesson: Lesson;
   exercises: Array<{ id: string; position: number; type: string; hash: string }>;
+  /** blocs de fiqh → école (lot F1) : `{ "fiqh_adab": "maliki", "rubriques.3": "maliki" }` */
+  madhhab?: Record<string, string>;
+  /** édition du contenu, gardée avec la leçon téléchargée (lot F1 : accompagne chaque réponse) */
+  edition?: string;
 }
 
 /** Appel de l'API (même origine : /api/v1/...). */

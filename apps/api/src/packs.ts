@@ -6,9 +6,10 @@
  */
 import { promisify } from 'node:util';
 import { brotliCompress, brotliCompressSync, constants } from 'node:zlib';
-import { contentHash, type Lesson } from '@awform/content';
+import { blockFingerprint, contentHash, type Lesson, type Suspension } from '@awform/content';
 import { getUnitForStudent, illustrationsFor, listUnits, type Db } from '@awform/db';
 import { neededIllustrations } from './needed.js';
+import { maskUnit } from './suspensions.js';
 
 export interface PackUnit {
   id: string;
@@ -58,18 +59,32 @@ export function brotliSize(s: string): number {
   return brotli(s).length;
 }
 
+/** Suspensions en vigueur (lot F1) : leur version entre dans la clé du cache des paquets. */
+export interface PackSuspensions {
+  list: Suspension[];
+  version: string;
+}
+const NONE: PackSuspensions = { list: [], version: '' };
+
 export async function getPack(
   db: Db,
   editionId: string,
   editionCode: string,
   level: string,
+  susp: PackSuspensions = NONE,
 ): Promise<PackEntry | null> {
-  const key = `${editionId}|${level}`;
+  // seules les suspensions de CE niveau entrent dans la clé : poser ou lever un masque ne fait reconstruire
+  // que le paquet du niveau concerné
+  const mine = susp.list.filter((s) => s.unitId.split('.')[0] === level);
+  const key = `${editionId}|${level}|${mine.length ? blockFingerprint(mine) : ''}`;
   const hit = cache.get(key);
   if (hit) return hit;
+  for (const k of cache.keys()) if (k.startsWith(`${editionId}|${level}|`)) cache.delete(k);
   let pending = building.get(key);
   if (!pending) {
-    pending = buildPack(db, editionId, editionCode, level, key).finally(() => building.delete(key));
+    pending = buildPack(db, editionId, editionCode, level, key, mine).finally(() =>
+      building.delete(key),
+    );
     building.set(key, pending);
   }
   return pending;
@@ -81,14 +96,16 @@ async function buildPack(
   editionCode: string,
   level: string,
   key: string,
+  suspensions: Suspension[],
 ): Promise<PackEntry | null> {
   const list = await listUnits(db, editionId, level);
   if (list.length === 0) return null;
   const units = [];
   const keys = new Set<string>();
   for (const u of list) {
-    const d = await getUnitForStudent(db, editionId, u.id);
-    if (!d) continue;
+    const raw = await getUnitForStudent(db, editionId, u.id);
+    if (!raw) continue;
+    const d = maskUnit(raw, suspensions);
     units.push(d);
     for (const k of neededIllustrations(d.lesson as Lesson)) keys.add(k);
   }

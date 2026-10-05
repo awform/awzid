@@ -2,13 +2,20 @@
  * Enregistrement des tentatives (journal IMMUABLE, CDC §2.15 et §5.6) :
  *  - idempotent : l'identifiant (UUID généré par l'appareil) est la clé ; un doublon est ignoré ;
  *  - le serveur RECALCULE la correction avec la même bibliothèque que l'appareil (@awform/grading) et
- *    ne fait jamais confiance au résultat envoyé ; l'événement est rattaché à l'édition et à l'empreinte
- *    de l'exercice ; une empreinte différente (contenu changé) est refusée ;
- *  - la progression (profil × leçon) est recalculée à partir de tous les événements.
+ *    ne fait jamais confiance au résultat envoyé ;
+ *  - lot F1 (revue E5) : l'événement porte l'ÉDITION du contenu que l'élève avait sous les yeux. Il est
+ *    accepté si l'exercice existe dans cette édition avec cette empreinte de texte (ou, pour un appareil
+ *    ancien, dans n'importe quelle édition connue) et corrigé avec CE contenu ; il garde l'empreinte du
+ *    corrigé (`answer_hash`). Une édition plus récente qui ne corrige qu'une coquille ne lui retire rien ;
+ *  - la progression (profil × leçon) est recalculée à partir de tous les événements : une réponse compte
+ *    tant que le CORRIGÉ de son exercice (suivi par la lignée des identifiants) n'a pas changé ; un exercice
+ *    dont le corrigé a changé est signalé « à refaire » (`revised`), les autres gardent leurs réponses.
  */
-import { and, asc, desc, eq, inArray } from 'drizzle-orm';
-import type { LanguageExercise } from '@awform/content/types';
+import { and, asc, desc, eq, inArray, ne } from 'drizzle-orm';
+import { contentHash } from '@awform/content';
+import type { Exercise, LanguageExercise } from '@awform/content/types';
 import {
+  answerKey,
   checkItem,
   computeUnitProgress,
   isLanguageExercise,
@@ -31,16 +38,41 @@ export interface AttemptInput {
   response: unknown;
   deviceAt: string;
   deviceId?: string;
+  /** code de l'édition du contenu affiché quand l'élève a répondu (lot F1 ; absent sur un appareil ancien) */
+  edition?: string;
+  /** version du format de l'événement (lot F1 : 2) */
+  v?: number;
 }
+
+/** Progression d'une leçon + exercices dont le corrigé a changé depuis les réponses de l'élève. */
+export type UnitProgressF1 = UnitProgress & { revised: string[] };
 
 export interface AttemptResult {
-  accepted: Array<{ id: string; correct: boolean | null }>;
+  accepted: Array<{ id: string; correct: boolean | null; stale?: boolean }>;
   duplicates: string[];
   rejected: Array<{ id: string; reason: string; code?: string }>;
-  progress: Record<string, UnitProgress>;
+  progress: Record<string, UnitProgressF1>;
 }
 
+/** Codes stables de refus définitifs (l'appareil MET DE CÔTÉ ces événements, il ne les jette plus). */
+export const REJECT_CODES = { perime: 'version_inconnue', invalide: 'invalide' } as const;
+
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Empreinte du CORRIGÉ d'un exercice (règle de @awform/grading `answerKey`). */
+export function answerHashOf(content: unknown): string {
+  return contentHash(answerKey(content as Exercise));
+}
+
+interface Version {
+  editionId: string;
+  hash: string;
+  answerHash: string | null;
+  content: unknown;
+  unitId: string;
+  /** empreinte du corrigé dans l'édition SERVIE (null : exercice absent de cette édition) */
+  currentKey: string | null;
+}
 
 export async function recordAttempts(
   db: Db,
@@ -50,9 +82,17 @@ export async function recordAttempts(
   const res: AttemptResult = { accepted: [], duplicates: [], rejected: [], progress: {} };
   const touched = new Set<string>();
   const profiles = new Set<string>();
+  const stale = new Set<string>();
+  // éditions connues (code → id) : publiées, retirées, et l'édition servie (même brouillon, développement)
+  const editions = new Map<string, string>();
+  for (const e of await db
+    .select({ id: t.edition.id, code: t.edition.code, status: t.edition.status })
+    .from(t.edition))
+    if (e.status !== 'brouillon' || e.id === editionId) editions.set(e.code, e.id);
 
   for (const ev of events) {
-    const reject = (reason: string) => res.rejected.push({ id: String(ev?.id ?? ''), reason });
+    const reject = (reason: string, code: string = REJECT_CODES.invalide) =>
+      res.rejected.push({ id: String(ev?.id ?? ''), reason, code });
     if (!ev || typeof ev.id !== 'string' || !UUID.test(ev.id)) {
       reject('identifiant invalide');
       continue;
@@ -81,47 +121,38 @@ export async function recordAttempts(
       }
       profiles.add(ev.profileId);
     }
-    const [uv] = await db
-      .select({ unitId: t.unitVersion.unitId })
-      .from(t.unitVersion)
-      .where(
-        and(eq(t.unitVersion.editionId, editionId), eq(t.unitVersion.unitId, String(ev.unitId))),
-      );
-    if (!uv) {
-      reject('leçon inconnue');
-      continue;
-    }
+    // édition annoncée par l'appareil (inconnue ou absente : on cherche par l'empreinte)
+    const evEdition =
+      typeof ev.edition === 'string' && ev.edition.length <= 60
+        ? editions.get(ev.edition)
+        : undefined;
 
     let correct: boolean | null = null;
     let exerciseId: string | null = null;
     let exerciseHash: string | null = null;
+    let answerHash: string | null = null;
     let itemIndex: number | null = null;
     let response: unknown;
+    let eventEditionId = evEdition ?? editionId;
 
     if (ev.eventType === 'reponse') {
-      const [xv] = await db
-        .select({
-          hash: t.exerciseVersion.hash,
-          content: t.exerciseVersion.content,
-          unitId: t.exercise.unitId,
-        })
-        .from(t.exerciseVersion)
-        .innerJoin(t.exercise, eq(t.exercise.id, t.exerciseVersion.exerciseId))
-        .where(
-          and(
-            eq(t.exerciseVersion.editionId, editionId),
-            eq(t.exerciseVersion.exerciseId, String(ev.exerciseId)),
-          ),
-        );
-      if (!xv || xv.unitId !== ev.unitId) {
+      const v = await findVersion(db, String(ev.exerciseId ?? ''), ev.exerciseHash, [
+        evEdition,
+        editionId,
+      ]);
+      if (v === 'inconnu' || (v && v.unitId !== ev.unitId)) {
         reject('exercice inconnu');
         continue;
       }
-      if (xv.hash !== ev.exerciseHash) {
-        reject('empreinte différente (contenu modifié depuis le téléchargement)');
+      if (!v) {
+        // aucune édition connue n'a ce texte : version jamais publiée (ou appareil corrompu)
+        reject(
+          'empreinte différente (contenu modifié depuis le téléchargement)',
+          REJECT_CODES.perime,
+        );
         continue;
       }
-      const ex = xv.content as LanguageExercise;
+      const ex = v.content as LanguageExercise;
       if (!isLanguageExercise(ex)) {
         reject('type d’exercice non corrigé automatiquement');
         continue;
@@ -131,10 +162,15 @@ export async function recordAttempts(
         continue;
       }
       itemIndex = ev.itemIndex as number;
+      // corrigé avec le contenu QUE L'ÉLÈVE AVAIT (édition de l'événement)
       correct = checkItem(ex, itemIndex, ev.response);
       exerciseId = String(ev.exerciseId);
-      exerciseHash = xv.hash;
+      exerciseHash = v.hash;
+      answerHash = v.answerHash ?? answerHashOf(v.content);
+      eventEditionId = v.editionId;
       response = ev.response;
+      // corrigé changé depuis (édition servie) : réponse gardée, mais elle ne compte plus
+      if (v.currentKey && v.currentKey !== answerHash) stale.add(ev.id);
     } else if (ev.eventType === 'checklist') {
       const r = ev.response as { checked?: unknown; total?: unknown } | null;
       if (
@@ -146,6 +182,20 @@ export async function recordAttempts(
         (r.total as number) > 1000
       ) {
         reject('auto-évaluation invalide');
+        continue;
+      }
+      const [uv] = await db
+        .select({ unitId: t.unitVersion.unitId })
+        .from(t.unitVersion)
+        .where(
+          and(
+            inArray(t.unitVersion.editionId, [...new Set([eventEditionId, editionId])]),
+            eq(t.unitVersion.unitId, ev.unitId),
+          ),
+        )
+        .limit(1);
+      if (!uv) {
+        reject('leçon inconnue');
         continue;
       }
       response = { checked: r.checked, total: r.total };
@@ -160,10 +210,11 @@ export async function recordAttempts(
         .values({
           id: ev.id,
           profileId: ev.profileId,
-          editionId,
+          editionId: eventEditionId,
           unitId: ev.unitId,
           exerciseId,
           exerciseHash,
+          answerHash,
           itemIndex,
           eventType: ev.eventType,
           response,
@@ -196,7 +247,144 @@ export async function recordAttempts(
     const [profileId = '', unitId = ''] = key.split('|');
     res.progress[unitId] = await refreshProgress(db, editionId, profileId, unitId);
   }
+  // réponse gardée mais qui ne compte plus (corrigé changé depuis) : l'appareil peut le dire à l'élève
+  for (const a of res.accepted) if (stale.has(a.id)) a.stale = true;
   return res;
+}
+
+/**
+ * Version de l'exercice que l'appareil avait : d'abord dans l'édition annoncée puis l'édition servie (même
+ * empreinte de texte), sinon dans toute édition connue ayant cette empreinte. `null` : empreinte inconnue ;
+ * `'inconnu'` : exercice absent de toutes les éditions.
+ */
+async function findVersion(
+  db: Db,
+  exerciseId: string,
+  hash: unknown,
+  preferred: Array<string | undefined>,
+): Promise<Version | null | 'inconnu'> {
+  if (!exerciseId || exerciseId.length > 80) return 'inconnu';
+  const rows = await db
+    .select({
+      editionId: t.exerciseVersion.editionId,
+      hash: t.exerciseVersion.hash,
+      answerHash: t.exerciseVersion.answerHash,
+      content: t.exerciseVersion.content,
+      unitId: t.exercise.unitId,
+      createdAt: t.edition.createdAt,
+      status: t.edition.status,
+    })
+    .from(t.exerciseVersion)
+    .innerJoin(t.exercise, eq(t.exercise.id, t.exerciseVersion.exerciseId))
+    .innerJoin(t.edition, eq(t.edition.id, t.exerciseVersion.editionId))
+    .where(eq(t.exerciseVersion.exerciseId, exerciseId))
+    .orderBy(desc(t.edition.createdAt));
+  if (!rows.length) return 'inconnu';
+  const served = rows.find((r) => r.editionId === preferred[1]);
+  const currentKey = served ? (served.answerHash ?? answerHashOf(served.content)) : null;
+  const same = rows.filter((r) => r.hash === hash);
+  for (const ed of preferred) {
+    const r = ed ? same.find((x) => x.editionId === ed) : undefined;
+    if (r) return { ...r, currentKey };
+  }
+  const any = same.find((r) => r.status !== 'brouillon');
+  return any ? { ...any, currentKey } : null;
+}
+
+/** Lignée (ancien identifiant → identifiant actuel) des exercices donnés, suivie jusqu'au bout. */
+async function lineageOf(db: Db, ids: string[]): Promise<Map<string, string>> {
+  const out = new Map<string, string>();
+  if (!ids.length) return out;
+  const rows = await db
+    .select({ from: t.exerciseLineage.fromId, to: t.exerciseLineage.toId })
+    .from(t.exerciseLineage)
+    .where(ne(t.exerciseLineage.kind, 'retire'));
+  const next = new Map(rows.filter((r) => r.to).map((r) => [r.from, r.to!]));
+  for (const id of ids) {
+    let cur = id;
+    for (let i = 0; i < 10 && next.has(cur); i++) cur = next.get(cur)!;
+    if (cur !== id) out.set(id, cur);
+  }
+  return out;
+}
+
+/** Progression d'un profil pour une leçon, calculée sans rien écrire. */
+export async function computeProgress(
+  db: Db,
+  editionId: string,
+  profileId: string,
+  unitId: string,
+): Promise<UnitProgressF1> {
+  const exs = await db
+    .select({
+      id: t.exerciseVersion.exerciseId,
+      content: t.exerciseVersion.content,
+      answerHash: t.exerciseVersion.answerHash,
+    })
+    .from(t.exerciseVersion)
+    .innerJoin(t.exercise, eq(t.exercise.id, t.exerciseVersion.exerciseId))
+    .where(and(eq(t.exerciseVersion.editionId, editionId), eq(t.exercise.unitId, unitId)))
+    .orderBy(asc(t.exerciseVersion.position));
+  const graded = exs.filter((e) => isLanguageExercise(e.content as LanguageExercise));
+  const currentKey = new Map(graded.map((e) => [e.id, e.answerHash ?? answerHashOf(e.content)]));
+
+  const rows = await db
+    .select()
+    .from(t.attempt)
+    .where(and(eq(t.attempt.profileId, profileId), eq(t.attempt.unitId, unitId)))
+    .orderBy(asc(t.attempt.deviceAt), asc(t.attempt.id));
+  const answered = rows.filter((r) => r.eventType === 'reponse' && r.exerciseId);
+  const exIds = [...new Set(answered.map((r) => r.exerciseId!))];
+  const lineage = await lineageOf(db, exIds);
+  // réponses anciennes sans empreinte de corrigé (avant la migration) : retrouvée par l'empreinte du texte
+  const missing = answered.filter((r) => !r.answerHash);
+  const keyByText = new Map<string, string>();
+  if (missing.length) {
+    const vs = await db
+      .select({
+        id: t.exerciseVersion.exerciseId,
+        hash: t.exerciseVersion.hash,
+        answerHash: t.exerciseVersion.answerHash,
+        content: t.exerciseVersion.content,
+      })
+      .from(t.exerciseVersion)
+      .where(
+        inArray(t.exerciseVersion.exerciseId, [...new Set(missing.map((r) => r.exerciseId!))]),
+      );
+    for (const v of vs) keyByText.set(`${v.id}|${v.hash}`, v.answerHash ?? answerHashOf(v.content));
+  }
+
+  const counted: Array<{ exerciseId: string; itemIndex: number; correct: boolean; order: number }> =
+    [];
+  const staleOn = new Set<string>();
+  const freshOn = new Set<string>();
+  for (const r of answered) {
+    const id = lineage.get(r.exerciseId!) ?? r.exerciseId!;
+    const key = r.answerHash ?? keyByText.get(`${r.exerciseId}|${r.exerciseHash}`);
+    const cur = currentKey.get(id);
+    if (cur === undefined) continue; // exercice retiré ou non noté
+    if (key !== cur) {
+      staleOn.add(id);
+      continue;
+    }
+    freshOn.add(id);
+    counted.push({
+      exerciseId: id,
+      itemIndex: r.itemIndex ?? 0,
+      correct: r.correct === 1,
+      order: counted.length,
+    });
+  }
+  const lastChecklist = [...rows].reverse().find((r) => r.eventType === 'checklist');
+  const ck = lastChecklist?.response as { checked?: number; total?: number } | undefined;
+  const checklistDone = !!ck && (ck.total ?? 0) > 0 && ck.checked === ck.total;
+
+  const p = computeUnitProgress(
+    graded.map((e) => ({ id: e.id, content: e.content as LanguageExercise })),
+    counted,
+    checklistDone,
+  );
+  return { ...p, revised: [...staleOn].filter((id) => !freshOn.has(id)) };
 }
 
 /** Recalcule et enregistre la progression d'un profil pour une leçon. */
@@ -205,48 +393,8 @@ export async function refreshProgress(
   editionId: string,
   profileId: string,
   unitId: string,
-): Promise<UnitProgress> {
-  const exs = await db
-    .select({ id: t.exercise.id, content: t.exerciseVersion.content })
-    .from(t.exerciseVersion)
-    .innerJoin(t.exercise, eq(t.exercise.id, t.exerciseVersion.exerciseId))
-    .where(and(eq(t.exerciseVersion.editionId, editionId), eq(t.exercise.unitId, unitId)))
-    .orderBy(asc(t.exercise.position));
-  const graded = exs.filter((e) => isLanguageExercise(e.content as LanguageExercise));
-  const hashes = await db
-    .select({ id: t.exerciseVersion.exerciseId, hash: t.exerciseVersion.hash })
-    .from(t.exerciseVersion)
-    .where(eq(t.exerciseVersion.editionId, editionId));
-  const currentHash = new Map(hashes.map((h) => [h.id, h.hash]));
-
-  const rows = await db
-    .select()
-    .from(t.attempt)
-    .where(and(eq(t.attempt.profileId, profileId), eq(t.attempt.unitId, unitId)))
-    .orderBy(asc(t.attempt.deviceAt), asc(t.attempt.id));
-  // seules comptent les réponses données sur le contenu ACTUEL de l'exercice (même empreinte)
-  const answers = rows
-    .filter(
-      (r) =>
-        r.eventType === 'reponse' &&
-        r.exerciseId &&
-        currentHash.get(r.exerciseId) === r.exerciseHash,
-    )
-    .map((r, i) => ({
-      exerciseId: r.exerciseId ?? '',
-      itemIndex: r.itemIndex ?? 0,
-      correct: r.correct === 1,
-      order: i,
-    }));
-  const lastChecklist = [...rows].reverse().find((r) => r.eventType === 'checklist');
-  const ck = lastChecklist?.response as { checked?: number; total?: number } | undefined;
-  const checklistDone = !!ck && (ck.total ?? 0) > 0 && ck.checked === ck.total;
-
-  const p = computeUnitProgress(
-    graded.map((e) => ({ id: e.id, content: e.content as LanguageExercise })),
-    answers,
-    checklistDone,
-  );
+): Promise<UnitProgressF1> {
+  const p = await computeProgress(db, editionId, profileId, unitId);
   await db
     .insert(t.progress)
     .values({

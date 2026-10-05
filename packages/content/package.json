@@ -36,6 +36,10 @@
     "./riwayat": {
       "types": "./dist/riwayat.d.ts",
       "default": "./dist/riwayat.js"
+    },
+    "./suspension": {
+      "types": "./dist/suspension.d.ts",
+      "default": "./dist/suspension.js"
     }
   },
   "bin": {
