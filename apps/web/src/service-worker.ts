@@ -27,9 +27,16 @@ const isCatalog = (p: string) => p.startsWith('/i18n/');
 const isTajwid = (p: string) => p.startsWith('/tajwid/');
 // Muṣḥaf par page : traductions du sens (une par sourate) chargées à la demande, gardées dans IndexedDB
 const isTraduction = (p: string) => p.startsWith('/traductions/');
+// A8 : muṣḥafs des riwāyāt (texte par sourate et police du Complexe) chargés à la demande seulement
+const isRiwaya = (p: string) => p.startsWith('/riwayat/');
+// … la police d'une riwāya, une fois chargée, est gardée (hors ligne ensuite) dans un cache à part, conservé
+// aux mises à jour (le nom du fichier change avec la version du Complexe)
+const RIWAYAT_CACHE = 'awzid-riwayat-polices';
 const ASSETS = [
   ...build,
-  ...files.filter((f) => !f.endsWith('.txt') && !isCatalog(f) && !isTajwid(f) && !isTraduction(f)),
+  ...files.filter(
+    (f) => !f.endsWith('.txt') && !isCatalog(f) && !isTajwid(f) && !isTraduction(f) && !isRiwaya(f),
+  ),
 ];
 
 sw.addEventListener('install', (event) => {
@@ -44,7 +51,7 @@ sw.addEventListener('activate', (event) => {
         Promise.all(
           keys
             // lot 27 : les sourates gardées par l'utilisateur survivent aux mises à jour
-            .filter((k) => k !== CACHE && !k.startsWith('awzid-coran-audio'))
+            .filter((k) => k !== CACHE && k !== RIWAYAT_CACHE && !k.startsWith('awzid-coran-audio'))
             .map((k) => caches.delete(k)),
         ),
       )
@@ -63,6 +70,18 @@ sw.addEventListener('fetch', (event) => {
     // cache d'abord, puis réseau (gardé dans le cache de cette version pour le hors ligne)
     event.respondWith(
       caches.open(CACHE).then(async (c) => {
+        const hit = await c.match(url.pathname);
+        if (hit) return hit;
+        const r = await fetch(req);
+        if (r.ok) await c.put(url.pathname, r.clone());
+        return r;
+      }),
+    );
+    return;
+  }
+  if (isRiwaya(url.pathname) && url.pathname.endsWith('.ttf')) {
+    event.respondWith(
+      caches.open(RIWAYAT_CACHE).then(async (c) => {
         const hit = await c.match(url.pathname);
         if (hit) return hit;
         const r = await fetch(req);

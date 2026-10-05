@@ -18,7 +18,22 @@
     setWifiOnly,
     wifiOnly,
   } from '$lib/quran/offline-audio';
-  import { canHighlight, fmtDuration, isHafs, listenQueue, SLEEP_CHOICES } from '$lib/quran/player';
+  import { fmtDuration, isHafs, listenQueue, SLEEP_CHOICES } from '$lib/quran/player';
+  import type { RiwayaIndex } from '@awform/content/riwayat';
+  import RiwayaPicker from '$lib/quran/RiwayaPicker.svelte';
+  import {
+    ensureRiwayaFont,
+    highlightOn,
+    isMushafRiwaya,
+    loadRiwayaIndex,
+    loadRiwayaSura,
+    mushafChoice,
+    readMushafRiwaya,
+    riwayaFamily,
+    riwayaText,
+    writeMushafRiwaya,
+    type MushafRiwaya,
+  } from '$lib/quran/riwayat';
   import QuranText from '$lib/quran/QuranText.svelte';
   import { loadReciters, loadTracks } from '$lib/quran/reciters';
   import RiwayaBadge from '$lib/quran/RiwayaBadge.svelte';
@@ -70,12 +85,20 @@
   let offMsg = $state('');
 
   const reciter = $derived(list.find((r) => r.id === reciterId) ?? null);
-  const count = $derived(meta?.weights[sura - 1]?.length ?? 0);
+  // A8 : muṣḥaf affiché (Ḥafṣ par défaut) ; surlignage seulement si la riwāya du récitateur est celle du texte
+  let rw = $state<MushafRiwaya>(readMushafRiwaya());
+  let rwIndex = $state<RiwayaIndex | null>(null);
+  let rwError = $state(false);
+  const isRw = $derived(rw !== HAFS);
+  const rwDef = $derived(riwayaText(rw));
+  const count = $derived(
+    isRw ? (rwIndex?.counts[sura - 1] ?? 0) : (meta?.weights[sura - 1]?.length ?? 0),
+  );
   // sourate servie en entier (découpage par verset non conforme au texte officiel) : un seul fichier
   const queue = $derived(
     pack?.mode === 'sourate' ? [0] : listenQueue({ from, to, repeatVerse, repeatRange }),
   );
-  const highlight = $derived(reciter ? canHighlight(reciter) : false);
+  const highlight = $derived(highlightOn(reciter, rw, pack, count));
 
   onMount(async () => {
     const p = await demoProfileFor('').catch(() => null);
@@ -88,17 +111,46 @@
     error = c.error;
     reciterId = page.url.searchParams.get('r') ?? c.initial;
     meta = await loadMeta();
+    const m = page.url.searchParams.get('m');
+    if (isMushafRiwaya(m)) rw = m;
+    await openRiwaya();
     const s = Number(page.url.searchParams.get('s'));
     await openSura(s >= 1 && s <= 114 ? s : 1);
     loaded = true;
   });
 
+  /** Index et police de la riwāya affichée ; retour à Ḥafṣ si indisponible (hors ligne). */
+  async function openRiwaya() {
+    rwError = false;
+    if (rw === HAFS) return;
+    void ensureRiwayaFont(rw);
+    rwIndex = await loadRiwayaIndex(rw);
+    if (!rwIndex) {
+      rwError = true;
+      rw = HAFS;
+    }
+  }
+  async function setRiwaya(m: MushafRiwaya) {
+    rw = m;
+    current = null;
+    await openRiwaya();
+    writeMushafRiwaya(rw);
+    await openSura(sura);
+  }
+
   let seq = 0;
   async function openSura(s: number) {
     sura = s;
-    const n = meta?.weights[s - 1]?.length ?? 1;
+    current = null;
+    const key = rw;
+    const n = key !== HAFS ? (rwIndex?.counts[s - 1] ?? 1) : (meta?.weights[s - 1]?.length ?? 1);
     const tok = ++seq;
-    const v = await loadVerses(s, 1, n).catch(() => []);
+    const v: Verse[] =
+      key !== HAFS
+        ? await loadRiwayaSura(key, s).then((d) =>
+            d ? [...d.verses.values()].map((x) => ({ s, a: x.a, text: x.text })) : [],
+          )
+        : await loadVerses(s, 1, n).catch(() => []);
     if (tok !== seq) return;
     verses = v;
     from = 1;
@@ -176,11 +228,27 @@
         {#if reciter.id === conseil}<span class="pill">{t('ca.conseil')}</span>{/if}
         {#if restreint}<span class="pill">{t('ca.liste_restreinte')}</span>{/if}
       </p>
-      {#if !isHafs(reciter.riwaya)}
-        <p class="warnbox" data-testid="autre-riwaya">
-          <Bidi text={t('ca.autre_riwaya_texte', { riwaya: reciter.riwayaFr })} />
-        </p>
-      {/if}
+    {/if}
+    <RiwayaPicker value={rw} onchange={setRiwaya} />
+    {#if rwError}<p class="muted small" role="status">{t('rw.indisponible')}</p>{/if}
+    {#if reciter && reciter.riwaya !== rw}
+      <p class="warnbox" data-testid="autre-riwaya">
+        {#if !isRw}<Bidi text={t('ca.autre_riwaya_texte', { riwaya: reciter.riwayaFr })} />
+        {:else}<Bidi
+            text={t('rw.autre_texte', { riwaya: reciter.riwayaFr, texte: mushafChoice(rw).fr })}
+          />{/if}
+        {#if isMushafRiwaya(reciter.riwaya)}<button
+            type="button"
+            class="link"
+            onclick={() => setRiwaya(reciter.riwaya as MushafRiwaya)}
+            data-testid="voir-riwaya"
+            ><Bidi text={t('rw.voir_texte', { riwaya: reciter.riwayaFr })} /></button
+          >{/if}
+      </p>
+    {:else if reciter && !isHafs(reciter.riwaya) && highlight}
+      <p class="muted small" data-testid="meme-riwaya">
+        <Bidi text={t('rw.meme_riwaya', { riwaya: reciter.riwayaFr })} />
+      </p>
     {/if}
     <div class="grid">
       <div class="field">
@@ -311,14 +379,16 @@
     </p>
   {/if}
 
-  <TajwidBar
-    riwaya={reciter?.riwaya ?? HAFS}
-    {sura}
-    {verses}
-    basmala={meta?.basmala ?? ''}
-    bind:prefs={tjPrefs}
-    bind:data={tjData}
-  />
+  {#if !isRw}
+    <TajwidBar
+      riwaya={reciter?.riwaya ?? HAFS}
+      {sura}
+      {verses}
+      basmala={meta?.basmala ?? ''}
+      bind:prefs={tjPrefs}
+      bind:data={tjData}
+    />
+  {/if}
   <QuranText
     {sura}
     {verses}
@@ -326,7 +396,8 @@
     {current}
     {from}
     {to}
-    tajwid={tjPrefs.on && tajwidAllowed(reciter?.riwaya ?? HAFS) ? tjData : null}
+    riwaya={isRw ? riwayaFamily(rw) : null}
+    tajwid={!isRw && tjPrefs.on && tajwidAllowed(reciter?.riwaya ?? HAFS) ? tjData : null}
     motifs={tjPrefs.motifs}
     onpick={(a) => {
       if (a < from || from !== to) {
@@ -341,6 +412,15 @@
   {#if reciter && !highlight}<p class="muted small" data-testid="sans-surlignage">
       {t('ca.sans_surlignage')}
     </p>{/if}
+  <p class="muted small" data-testid="credit-texte">
+    {#if rwDef}<Bidi
+        text={t('rw.credit', {
+          riwaya: rwDef.fr,
+          version: rwDef.version,
+          police: rwDef.fontVersion,
+        })}
+      />{:else}<Bidi text={t('lecteur.credit')} />{/if}
+  </p>
 {/if}
 
 <style>

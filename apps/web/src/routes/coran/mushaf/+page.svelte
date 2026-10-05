@@ -15,7 +15,6 @@
   import {
     clampPage,
     juzOfPage,
-    MUSHAF_KINDS,
     pageOf,
     pageOfJuz,
     pageSegments,
@@ -33,11 +32,27 @@
     type MushafPrefs,
     type Ref,
   } from '$lib/quran/mushaf';
-  import { canHighlight, isHafs } from '$lib/quran/player';
+  import { HAFS } from '$lib/quran/player';
   import Icon from '$lib/ui/Icon.svelte';
   import { loadReciters, loadTracks } from '$lib/quran/reciters';
   import RiwayaBadge from '$lib/quran/RiwayaBadge.svelte';
   import { loadTajwid, type TajwidSura } from '$lib/quran/tajwid';
+  import type { RiwayaIndex } from '@awform/content/riwayat';
+  import {
+    ensureRiwayaFont,
+    highlightOn,
+    isMushafRiwaya,
+    loadRiwayaIndex,
+    loadRiwayaSura,
+    mushafChoice,
+    MUSHAF_RIWAYAT,
+    readMushafRiwaya,
+    riwayaFamily,
+    riwayaText,
+    writeMushafRiwaya,
+    type MushafRiwaya,
+    type RiwayaSura,
+  } from '$lib/quran/riwayat';
   import {
     loadTranslation,
     noteLines,
@@ -84,14 +99,30 @@
   let pack = $state<SuraPack | null>(null);
   let trackCode = $state<string | null>(null);
 
-  const starts = $derived(meta ? pageStarts(meta) : null);
-  const lengths = $derived(meta ? suraLengths(meta) : []);
+  // A8 : muṣḥaf d'une autre riwāya (texte et police du Complexe) ; Ḥafṣ (Tanzil) par défaut
+  let rw = $state<MushafRiwaya>(readMushafRiwaya());
+  let rwIndex = $state<RiwayaIndex | null>(null);
+  let rwTexts = $state<Record<number, RiwayaSura | null>>({});
+  let rwFont = $state<'attente' | 'ok' | 'erreur'>('attente');
+  const isRw = $derived(rw !== HAFS);
+  const rwDef = $derived(riwayaText(rw));
+
+  const starts = $derived(isRw ? (rwIndex?.pages ?? null) : meta ? pageStarts(meta) : null);
+  const lengths = $derived(isRw ? (rwIndex?.counts ?? []) : meta ? suraLengths(meta) : []);
+  const juzOf = (n: number) =>
+    isRw ? (rwIndex?.pageJuz[n - 1] ?? 1) : meta ? juzOfPage(meta, n) : 1;
+  const pageOfJ = (j: number) =>
+    isRw
+      ? Math.max(1, (rwIndex?.pageJuz.findIndex((x) => x >= j) ?? 0) + 1)
+      : meta
+        ? pageOfJuz(meta, j)
+        : 1;
   const double = $derived(!narrow && !prefs.single);
   const shown = $derived(double ? [...spreadOf(p)] : [p]);
   const segs = (n: number) => (starts ? pageSegments(starts, lengths, n) : []);
   const shownVerses = $derived(starts ? shown.flatMap((n) => pageVerses(starts, lengths, n)) : []);
   const reciter = $derived(reciters.find((r) => r.id === reciterId) ?? null);
-  const tajwidOn = $derived(prefs.kind === 'hafs-tajwid');
+  const tajwidOn = $derived(!isRw && prefs.kind === 'hafs-tajwid');
   /** sourate « active » : celle du verset choisi, sinon la première de la page */
   const activeSura = $derived(cur?.s ?? segs(p)[0]?.s ?? 1);
   const activeRange = $derived.by(() => {
@@ -106,7 +137,10 @@
         ? repeatQueue(activeRange.from, activeRange.to, prefs.repeatVerse, prefs.repeatRange)
         : [],
   );
-  const trad = $derived(translationInfo(prefs.translation));
+  // traduction du sens : numérotation koufie, donc muṣḥaf Ḥafṣ seulement
+  const trad = $derived(isRw ? null : translationInfo(prefs.translation));
+  /** surlignage du verset entendu : jamais une riwāya sur le texte d'une autre */
+  const highlight = $derived(highlightOn(reciter, rw, pack, lengths[activeSura - 1] ?? 0));
   const lastPage = $derived(p >= 604 || (double && spreadOf(p)[1] >= 604));
   const position = $derived(
     t('mp.page_sur', {
@@ -119,7 +153,10 @@
     }),
   );
 
-  const text = (s: number, a: number) => texts[s]?.[a];
+  const text = (s: number, a: number) => (isRw ? rwTexts[s]?.verses.get(a)?.text : texts[s]?.[a]);
+  const rwPage = $derived(
+    isRw ? { family: riwayaFamily(rw), suraName: (s: number) => rwTexts[s]?.name } : null,
+  );
   const tajwidOf = (s: number) => tajwids[s] ?? null;
 
   $effect(() => writePrefs({ ...prefs, page: p }));
@@ -140,6 +177,9 @@
       return;
     }
     const q = page.url.searchParams;
+    const m = q.get('m');
+    if (isMushafRiwaya(m)) rw = m;
+    if (!(await openRiwaya())) rw = HAFS;
     const s = Number(q.get('s'));
     const a = Number(q.get('a')) || 1;
     if (s >= 1 && s <= 114) await goVerse(s, Math.min(a, lengths[s - 1] ?? 1));
@@ -164,6 +204,13 @@
       }
     await Promise.all(
       [...need].map(async ([s, [from, to]]) => {
+        if (isRw) {
+          const key = rw;
+          if (rwTexts[s]?.key === key) return;
+          const d = await loadRiwayaSura(key, s);
+          if (key === rw) rwTexts = { ...rwTexts, [s]: d };
+          return;
+        }
         const have = texts[s] ?? {};
         let missing = false;
         for (let a = from; a <= to; a++) if (have[a] === undefined) missing = true;
@@ -191,7 +238,7 @@
     revealed = new Set();
     results = null;
     // eslint-disable-next-line svelte/no-navigation-without-resolve -- chemin résolu, suivi d'un paramètre
-    void goto(`${resolve('/coran/mushaf')}?page=${p}`, {
+    void goto(`${resolve('/coran/mushaf')}?page=${p}${isRw ? `&m=${rw}` : ''}`, {
       replaceState: true,
       keepFocus: true,
       noScroll: true,
@@ -247,11 +294,15 @@
     if (ref?.kind === 'verse') return goVerse(ref.s, ref.a);
     if (ref?.kind === 'page') return goPage(ref.p);
     if (ref?.kind === 'sura') return goVerse(ref.s, 1);
-    if (ref?.kind === 'juz' && meta) return goPage(pageOfJuz(meta, ref.j));
-    // texte arabe : recherche dans les sourates déjà chargées sur l'appareil
-    const all: Verse[] = Object.entries(texts).flatMap(([s, m]) =>
-      Object.entries(m).map(([a, text]) => ({ s: Number(s), a: Number(a), text })),
-    );
+    if (ref?.kind === 'juz') return goPage(pageOfJ(ref.j));
+    // texte arabe : recherche dans les sourates déjà chargées sur l'appareil (muṣḥaf affiché)
+    const all: Verse[] = isRw
+      ? Object.values(rwTexts).flatMap((d) =>
+          d ? [...d.verses.values()].map((v) => ({ s: d.s, a: v.a, text: v.text })) : [],
+        )
+      : Object.entries(texts).flatMap(([s, m]) =>
+          Object.entries(m).map(([a, text]) => ({ s: Number(s), a: Number(a), text })),
+        );
     all.sort((x, y) => x.s - y.s || x.a - y.a);
     results = searchVerses(all, query);
     if (!results.length) searchMsg = t('mp.recherche_vide');
@@ -287,6 +338,38 @@
     // livre arabe : la flèche gauche avance
     if (e.key === 'ArrowLeft') turn(1);
     else if (e.key === 'ArrowRight') turn(-1);
+  }
+
+  let rwError = $state(false);
+  /** Prépare le muṣḥaf choisi (index et police de la riwāya, à la demande). Faux si indisponible. */
+  async function openRiwaya(): Promise<boolean> {
+    rwError = false;
+    rwTexts = {};
+    if (rw === HAFS) {
+      rwIndex = null;
+      return true;
+    }
+    const key = rw;
+    rwFont = 'attente';
+    void ensureRiwayaFont(key).then((ok) => {
+      if (key === rw) rwFont = ok ? 'ok' : 'erreur';
+    });
+    const idx = await loadRiwayaIndex(key);
+    if (key !== rw) return false;
+    rwIndex = idx;
+    if (!idx) rwError = true;
+    return !!idx;
+  }
+  async function setRiwaya(m: MushafRiwaya) {
+    rw = m;
+    cur = null;
+    heard = null;
+    revealed = new Set();
+    results = null;
+    if (!(await openRiwaya())) rw = HAFS;
+    writeMushafRiwaya(rw);
+    // même numéro de page dans l'autre muṣḥaf (les versets par page diffèrent selon la riwāya)
+    await goPage(p);
   }
 
   async function setKind(k: MushafPrefs['kind']) {
@@ -344,6 +427,18 @@
           data-testid="mp-page"
         /></label
       >
+      <label class="fld rwsel"
+        ><span class="lbl">{t('mp.mushaf')}</span>
+        <select
+          value={rw}
+          onchange={(e) => setRiwaya(e.currentTarget.value as MushafRiwaya)}
+          data-testid="mp-mushaf"
+        >
+          {#each MUSHAF_RIWAYAT as m (m.key)}<option value={m.key}
+              >{localeInfo().code === 'ar' ? m.ar : m.fr}</option
+            >{/each}
+        </select></label
+      >
       <div class="tools">
         <button
           type="button"
@@ -354,50 +449,47 @@
           data-testid="mp-ecouter"
           ><Icon name="casque" size={22} /><span>{t('ecoute.ecouter')}</span></button
         >
-        <button
-          type="button"
-          class="tool"
-          aria-pressed={tajwidOn}
-          onclick={() => setKind(tajwidOn ? 'hafs' : 'hafs-tajwid')}
-          data-testid="mp-tajwid"
-          ><Icon name="tajwid" size={22} /><span>{t('lecon.tajwid')}</span></button
-        >
-        <button
-          type="button"
-          class="tool"
-          aria-pressed={!!trad}
-          onclick={() => setTranslation(trad ? '' : lastTrad)}
-          data-testid="mp-trad"
-          ><Icon name="traduction" size={22} /><span>{t('mp.traduction_court')}</span></button
-        >
+        {#if !isRw}
+          <button
+            type="button"
+            class="tool"
+            aria-pressed={tajwidOn}
+            onclick={() => setKind(tajwidOn ? 'hafs' : 'hafs-tajwid')}
+            data-testid="mp-tajwid"
+            ><Icon name="tajwid" size={22} /><span>{t('lecon.tajwid')}</span></button
+          >
+          <button
+            type="button"
+            class="tool"
+            aria-pressed={!!trad}
+            onclick={() => setTranslation(trad ? '' : lastTrad)}
+            data-testid="mp-trad"
+            ><Icon name="traduction" size={22} /><span>{t('mp.traduction_court')}</span></button
+          >
+        {/if}
         <details class="menu" data-testid="mp-options">
           <summary class="tool"
             ><Icon name="points" size={22} /><span>{t('nav.plus')}</span></summary
           >
           <div class="pop">
-            <label class="row"
-              >{t('mp.mushaf')}
-              <select
-                value={prefs.kind}
-                onchange={(e) => setKind(e.currentTarget.value as MushafPrefs['kind'])}
-                data-testid="mp-mushaf"
+            {#if isRw}
+              <p class="hint" data-testid="mp-hafs-seulement">
+                <Bidi text={t('rw.hafs_seulement')} />
+              </p>
+            {:else}
+              <label class="row"
+                >{t('mp.traduction')}
+                <select
+                  value={prefs.translation}
+                  onchange={(e) => setTranslation(e.currentTarget.value)}
+                  data-testid="mp-traduction"
+                >
+                  <option value="">{t('mp.sans_traduction')}</option>
+                  {#each TRANSLATIONS as x (x.key)}<option value={x.key}>{t(x.label)}</option
+                    >{/each}
+                </select></label
               >
-                {#each MUSHAF_KINDS as k (k.id)}<option value={k.id} disabled={!k.available}
-                    >{t(`mp.mushaf_${k.id.replace('-', '_')}`)}</option
-                  >{/each}
-              </select></label
-            >
-            <label class="row"
-              >{t('mp.traduction')}
-              <select
-                value={prefs.translation}
-                onchange={(e) => setTranslation(e.currentTarget.value)}
-                data-testid="mp-traduction"
-              >
-                <option value="">{t('mp.sans_traduction')}</option>
-                {#each TRANSLATIONS as x (x.key)}<option value={x.key}>{t(x.label)}</option>{/each}
-              </select></label
-            >
+            {/if}
             <div class="pair">
               <label class="row"
                 >{t('mp.verset')}
@@ -421,8 +513,8 @@
               <label class="row"
                 >{t('mp.juz')}
                 <select
-                  value={meta ? juzOfPage(meta, p) : 1}
-                  onchange={(e) => meta && goPage(pageOfJuz(meta, Number(e.currentTarget.value)))}
+                  value={juzOf(p)}
+                  onchange={(e) => goPage(pageOfJ(Number(e.currentTarget.value)))}
                   data-testid="mp-juz"
                 >
                   {#each Array.from({ length: 30 }, (_, i) => i + 1) as j (j)}<option value={j}
@@ -441,12 +533,14 @@
               />
               <button type="submit">{t('mp.chercher')}</button>
             </form>
-            <label class="row"
-              >{t('mp.memorisation')}
-              <select bind:value={prefs.memo} data-testid="mp-memo">
-                {#each [0, 1, 2, 3] as l (l)}<option value={l}>{t(`mp.memo_${l}`)}</option>{/each}
-              </select></label
-            >
+            {#if !isRw}
+              <label class="row"
+                >{t('mp.memorisation')}
+                <select bind:value={prefs.memo} data-testid="mp-memo">
+                  {#each [0, 1, 2, 3] as l (l)}<option value={l}>{t(`mp.memo_${l}`)}</option>{/each}
+                </select></label
+              >
+            {/if}
             <label class="check"
               ><input
                 type="checkbox"
@@ -463,6 +557,13 @@
         </details>
       </div>
     </nav>
+    <p class="rwline" data-testid="mp-riwaya-affichee">
+      <RiwayaBadge riwaya={rw} label={mushafChoice(rw).fr} />
+      {#if isRw && rwFont === 'erreur'}<span class="hint" role="status"
+          >{t('rw.police_erreur')}</span
+        >{/if}
+      {#if rwError}<span class="hint" role="status">{t('rw.indisponible')}</span>{/if}
+    </p>
 
     {#if audioOpen}
       <section id="mp-audio" class="audio" aria-label={t('ecoute.ecouter')} data-testid="mp-audio">
@@ -508,11 +609,32 @@
               {pack}
               {queue}
               onaya={(a) => {
-                if (a && canHighlight(reciter) && isHafs(reciter.riwaya))
-                  heard = { s: activeSura, a };
+                if (a && highlight) heard = { s: activeSura, a };
               }}
             />
           </div>
+          {#if !highlight && pack.mode !== 'sourate'}<p
+              class="hint"
+              data-testid="mp-sans-surlignage"
+            >
+              <Bidi
+                text={reciter.riwaya === rw
+                  ? t('rw.surlignage_sourate')
+                  : t('rw.autre_texte', {
+                      riwaya: reciter.riwayaFr,
+                      texte: mushafChoice(rw).fr,
+                    })}
+              />
+              {#if reciter.riwaya !== rw && isMushafRiwaya(reciter.riwaya)}<button
+                  type="button"
+                  class="link"
+                  onclick={() => setRiwaya(reciter.riwaya as MushafRiwaya)}
+                  data-testid="mp-voir-riwaya"
+                  ><Bidi
+                    text={t('rw.voir_texte', { riwaya: mushafChoice(reciter.riwaya).fr })}
+                  /></button
+                >{/if}
+            </p>{/if}
         {:else if reciter && trackCode}
           <p class="hint">{t('mp.audio_indisponible')}</p>
         {:else if !reciters.length}
@@ -553,7 +675,8 @@
               segments={segs(n)}
               {text}
               basmala={meta?.basmala ?? ''}
-              juz={meta ? juzOfPage(meta, n) : 1}
+              juz={juzOf(n)}
+              riwaya={rwPage}
               tajwid={tajwidOn ? tajwidOf : null}
               current={heard ?? cur}
               memo={prefs.memo}
@@ -645,11 +768,22 @@
       {/if}
     </div>
   </div>
-  <p class="muted small credits">
-    <Bidi text={t('lecteur.credit')} />
+  <p class="muted small credits" data-testid="mp-credit">
+    {#if rwDef}<Bidi
+        text={t('rw.credit', {
+          riwaya: rwDef.fr,
+          version: rwDef.version,
+          police: rwDef.fontVersion,
+        })}
+      />{:else}<Bidi text={t('lecteur.credit')} />{/if}
     {#if tajwidOn}<Bidi text={t('tj.credit')} />{/if}
   </p>
-  <p class="muted small">{t('mp.mise_en_page_fluide')}</p>
+  {#if isRw}
+    <p class="muted small" data-testid="mp-trad-hafs">{t('rw.traduction_hafs')}</p>
+    <p class="muted small">{t('rw.mise_en_page')}</p>
+  {:else}
+    <p class="muted small">{t('mp.mise_en_page_fluide')}</p>
+  {/if}
 {/if}
 
 <style>
@@ -690,6 +824,17 @@
   }
   .fld.pg input {
     width: 5.2em;
+  }
+  .fld.rwsel {
+    flex: 0 1 220px;
+    max-width: 260px;
+  }
+  .rwline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin: 8px 0 0;
   }
   select,
   input {

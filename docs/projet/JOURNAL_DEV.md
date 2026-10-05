@@ -46,12 +46,58 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 - **Poids** (Mo) : en1 5,1 · en2 6,6 · en3 11,0 · en4 14,9 · en5 17,6 · ad1 10,1 · ad2 18,9 · ad3 24,7 · ad4 31,7 ·
   ad5 36,2 · ad6 50,1 · ad7 49,0 · ad8 50,2 · ad9 55,4 · ad10 64,0 · ado1 17,1 · ado2 22,5 · ado3 29,3 · ado4 36,2 ·
   re1–re5 4,1–8,6 · ra1–ra4 5,8–10,7 (lectures graduées : 234 Mo, servies mais pas encore de bouton).
-- **Budget** : JavaScript total 288,9 + CSS 27,6 Ko > 315 → porté à **320 Ko** (D31) ; page la plus lourde
+- **Budget** : JavaScript total 288,9 + CSS 27,6 Ko > 315 → porté à **325 Ko** (D31 ; A8 l’avait déjà porté à 320) ; page la plus lourde
   `/lecons/[id]` 135,1 Ko ≤ 150.
 - Tests : content +7, db +4, api +2, relay +3, web +4 unitaires ; e2e `a3.spec.ts` (3, dont hors ligne) ; suites
   unitaires complètes vertes ; e2e a3 + lecons + horsligne + exercices + a11y : 37 passés.
 
 ---
+## 05/10/2026 — Chantier A8 : muṣḥafs des riwāyāt (textes et polices officiels du Complexe)
+
+Branche `a8-wip` (depuis `main` 22fcdbf, worktree `~/awform-a8`, base e2e isolée). Ḥafṣ reste le texte Tanzil
+(inchangé, par défaut partout) ; six autres muṣḥafs : **Warsh ʿan Nāfiʿ, Qālūn ʿan Nāfiʿ, Shuʿba ʿan ʿĀṣim,
+as-Sūsī ʿan Abī ʿAmr, ad-Dūrī ʿan Abī ʿAmr, al-Bazzī ʿan Ibn Kathīr**.
+
+1. **Licence** : texte = plateforme développeurs (L-DEV, « pour le développement d'applications ») ; police =
+   contrat inclus dans chaque TTF (lu le 05/10) : usage, copie et distribution **gratuits**, ni vente ni
+   modification → polices servies **telles quelles** (TTF d'origine, pas de WOFF2 ni de sous-ensemble).
+   `LICENCES.md` § 6.
+2. **Importeur** `packages/content/src/riwayat.ts` (pur) + `cli-riwayat.ts` (`pnpm --filter @awform/content
+   riwayat [--from ~/complexe-ressources/textes-riwayat] [--check]`) : JSON du Complexe lu tel quel (aucune NFC,
+   rien de retapé), empreintes SHA-256 du JSON et de la police contrôlées, source gardée en
+   `riwayat-source/*.json.gz` (gzip du fichier d'origine), sortie `apps/web/static/riwayat/<riwāya>/NNN.json`
+   (verset, page, juzʾ, texte) + `index.json` (comptes, débuts des 604 pages, juzʾ par page) + police.
+   **Comptes relevés** : Warsh et Qālūn 6 214, Shuʿba 6 236, as-Sūsī 6 218, **ad-Dūrī 6 217** (le fichier
+   UthmanicDouri v2.0 numérote al-Mulk en 30 versets, l'audio d'al-Juhanī en 31), **al-Bazzī 6 220** (compte
+   makkī, basmala = 1:1). Test bloquant `test/riwayat.test.ts` (12 tests : empreintes, comptes par sourate,
+   ordre, pages, fichiers livrés = source à l'octet, lecture inverse). Ḥafṣ du Complexe non importé (Tanzil reste
+   la référence) ; « Hafs Smart » écarté (glyphes en zone privée).
+3. **Interface** (`lib/quran/riwayat.ts`, `RiwayaPicker.svelte`) : choix du muṣḥaf dans Lire, Écouter et
+   Muṣḥaf (réglage commun gardé sur l'appareil, paramètre `?m=`), riwāya toujours écrite en clair + badge
+   « autre riwāya » ; Muṣḥaf **page par page d'après les numéros de page du Complexe** (lignes fluides), noms de
+   sourate du Complexe, texte affiché tel quel avec son signe de fin de verset numéroté (aucune rosette, basmala
+   ni tanwīn ajoutés ; la basmala de tête de sourate n'est pas fournie comme texte → non affichée, c'est dit à
+   l'écran) ; tajwid, traduction du sens et test de mémorisation : **Ḥafṣ seulement** (boutons absents,
+   explication) ; Lire : pas de ḥizb hors Ḥafṣ (absent des données). Mémoriser et carnets : inchangés (Ḥafṣ).
+4. **Audio** : `highlightOn` — surlignage seulement si la riwāya du récitateur = celle du muṣḥaf affiché ET si
+   la sourate est découpée verset par verset avec exactement les versets 1…n du texte (sinon rien : sourate
+   entière en repli, al-Mulk d'ad-Dūrī 31/30) ; Ḥafṣ : règle du lot 27 inchangée ; lien « Afficher le muṣḥaf
+   <riwāya> » quand le récitateur lit une autre riwāya.
+5. **Poids** : polices chargées à la demande (FontFace), une seule à la fois, gardées ensuite dans un cache à
+   part du service worker ; textes par sourate dans IndexedDB ; `/riwayat/` jamais préchargé. Budget : police la
+   plus lourde 781,6 Ko (ad-Dūrī) ≤ 1 Mo (nouvelle ligne), page la plus lourde 133,1 Ko ; **total JS + CSS
+   317,5 Ko > 315** (main était déjà à 313) → budget total porté à **320 Ko, à valider (D-A8)**. Données livrées :
+   9,1 Mo de JSON + 2,1 Mo de polices (statiques, hors coquille).
+6. **Tests** : unitaires 1 333 réussis, 8 ignorés (`lot13` de l'API : échec connu en suite complète, base
+   partagée avec l'autre agent ; 7/7 relancé seul) ; web +11 (`riwayat.test.ts`), content +12 ; e2e `a8.spec.ts`
+   (Warsh page par page, Qālūn Lire/Écouter/Muṣḥaf avec et sans surlignage, 320 px) ; e2e complets : **230
+   réussis, 21 ignorés, 1 échec hors A8** : `bidi.spec.ts` « Mes récitateurs » (« Essai … (bips) — » hors
+   isolement ltr, page modifiée par A1, non touchée ici). Captures `reports/a8/` (Warsh p. 1 et 50 sombre,
+   Qālūn Écouter et Muṣḥaf surligné, 320 px clair et sombre, ordinateur et téléphone).
+
+Décisions à prendre : budget total 320 Ko (D-A8) ; numérotation d'al-Mulk d'ad-Dūrī (texte 30 / audio 31 : pas
+de surlignage pour cette sourate) ; affichage de la basmala de tête de sourate hors Ḥafṣ (aucun texte fourni) ;
+confirmation écrite du Complexe recommandée pour l'usage des polices dans une application à services payants.
 
 ## 05/10/2026 — Chantier A1 (suite) : décisions du chef de projet appliquées
 

@@ -7,13 +7,15 @@
 import type { QuranMeta } from '@awform/hifz';
 
 export type Ref = readonly [number, number];
-/** Muṣḥaf proposés : Ḥafṣ, Ḥafṣ avec tajwid en couleurs ; Warsh annoncé mais pas encore disponible. */
-export type MushafKind = 'hafs' | 'hafs-tajwid' | 'warsh';
+/**
+ * Affichage du muṣḥaf Ḥafṣ : sans ou avec tajwid en couleurs. Les autres riwāyāt (A8 : Warsh, Qālūn, Shuʿba,
+ * as-Sūsī, ad-Dūrī, al-Bazzī) se choisissent à part (`riwayat.ts`, réglage commun aux onglets) ; un ancien
+ * réglage « warsh » (désactivé avant A8) est relu comme « hafs ».
+ */
+export type MushafKind = 'hafs' | 'hafs-tajwid';
 export const MUSHAF_KINDS: readonly { id: MushafKind; available: boolean }[] = [
   { id: 'hafs', available: true },
   { id: 'hafs-tajwid', available: true },
-  // texte Warsh officiel du Complexe non encore reçu (docs/projet/SOURCES_MUSHAF.md § 3)
-  { id: 'warsh', available: false },
 ];
 export const PAGE_COUNT = 604;
 

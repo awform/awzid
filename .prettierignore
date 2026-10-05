@@ -23,3 +23,6 @@ apps/web/static/tajwid/
 
 # Muṣḥaf par page : traductions QuranEnc générées (pnpm --filter @awform/content traductions), recopiées à l’identique, contrôlées par test
 apps/web/static/traductions/
+
+# A8 : textes des riwayat du Complexe generes (pnpm --filter @awform/content riwayat), recopies tels quels, controles par test
+apps/web/static/riwayat/

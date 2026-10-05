@@ -91,13 +91,14 @@ describe('recherche', () => {
 });
 
 describe('réglages et répétition', () => {
-  it('réglages relus avec des bornes ; Warsh (indisponible) jamais retenu', () => {
+  it('réglages relus avec des bornes ; ancien réglage « warsh » (avant A8) relu comme Ḥafṣ', () => {
     const m = new Map<string, string>();
     const st = {
       getItem: (k: string) => m.get(k) ?? null,
       setItem: (k: string, v: string) => void m.set(k, v),
     };
-    writePrefs({ ...readPrefs(st), kind: 'warsh', memo: 9, page: 900, repeatVerse: 0 }, st);
+    writePrefs({ ...readPrefs(st), memo: 9, page: 900, repeatVerse: 0 }, st);
+    m.set('awzid.mushaf.v1', m.get('awzid.mushaf.v1')!.replace('"kind":"hafs"', '"kind":"warsh"'));
     const p = readPrefs(st);
     expect(p.kind).toBe('hafs');
     expect(p.memo).toBe(3);

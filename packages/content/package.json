@@ -32,6 +32,10 @@
     "./audio-cle": {
       "types": "./dist/audio-cle.d.ts",
       "default": "./dist/audio-cle.js"
+    },
+    "./riwayat": {
+      "types": "./dist/riwayat.d.ts",
+      "default": "./dist/riwayat.js"
     }
   },
   "bin": {
@@ -46,7 +50,8 @@
     "test": "vitest run",
     "check-content": "node dist/cli.js",
     "tajwid": "node dist/cli-tajwid.js",
-    "traductions": "node --no-warnings dist/cli-traductions.js"
+    "traductions": "node --no-warnings dist/cli-traductions.js",
+    "riwayat": "node --no-warnings dist/cli-riwayat.js"
   },
   "devDependencies": {
     "@types/node": "^24.19.0",
