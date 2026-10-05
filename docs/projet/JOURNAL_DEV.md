@@ -94,10 +94,10 @@ interface élève viendra avec A27.
    avant) ; total **330,1 + 31,9 = 362,0 Ko** ≤ 365 (360,9 avant F2, qui ajoute 2 pages et 100 textes). **Sous
    325 Ko : pas atteignable sans retirer des fonctions** ; piste réelle notée dans TACHES_TECHNIQUES (ne pas garder
    hors ligne les pages et textes du personnel sur l'appareil d'un élève).
-10. **Tests** : unitaires **1 435 réussis, 1 ignoré, 0 échec** (`pnpm test`, base `awform_f2_test`) dont api
-   `f2.test.ts` (10 : élève papier → profil → tablette → code → parent ; parent+enseignant même e-mail ; enseignant
+10. **Tests** : unitaires **1 436 réussis, 1 ignoré, 0 échec** (`pnpm test`, base `awform_f2_test`) dont api
+   `f2.test.ts` (11 : élève papier → profil → tablette → code → parent ; parent+enseignant même e-mail ; enseignant
    supprimé → classes gardées puis transférées, purge définitive possible ; deux parents ; type recalculé et
-   émancipation ; niveaux par matière ; passage de fin d'année ; archivage ; mon parcours), db
+   émancipation ; niveaux par matière ; passage de fin d'année ; archivage ; mon parcours ; la direction d'une autre école ne voit ni classe ni école), db
    `f2-reprise.test.ts` (6), web `icu.test.ts` (6) ; 4 tests adaptés à la nouvelle règle (lot13, lot18, lot19,
    récital : archivées au lieu d'effacées) et MIN-2 respecté (âge au plus bas). e2e `f2.spec.ts` (5 parcours ×
    téléphone et ordinateur : école → profil → parent, deux parents, parent+enseignant puis compte supprimé, émancipation,
