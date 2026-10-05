@@ -8,6 +8,37 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Chantier A34 : Muṣḥaf de Médine « à l'identique » (BROUILLON — en attente de la 1re synchronisation)
+
+Branche `a34-mushaf-exact-wip` (worktree `~/awform-a34`, depuis `main` 73ec68d). **Non fusionnée** : la fusion
+attend le vrai fichier de lignes, généré par le chef de projet avec le secret QF, et validé par le contrôle.
+
+- **Juridique** (`SOURCES_MUSHAF.md` § 7, `LICENCES.md` § 8, D30) : conditions QF du 04/10/2026 → garde hors ligne
+  seulement par Content Sync (≤ 7 jours entre deux synchronisations), **pas de paquet de construction** : aucune
+  donnée QF dans le dépôt ; copie sur le serveur, servie page par page aux comptes connectés.
+- **Compatibilité police/codes** vérifiée en dessinant les polices officielles du Complexe (`QCF_P002` : U+FB51 =
+  « الٓمٓ » = code_v1 de 2:1 mot 1) ; glyphes de `QCF_BSML` relevés (basmala, « سورة », 114 noms).
+- **Outil** `infra/outils/qf-lignes/` : `qf-lignes.mjs sync|verifier|inspecter` (jeton OAuth2 « client
+  credentials », amorçage puis synchronisation incrémentale, instantané, mutations ROW_*/RESOURCE_*, publication
+  d'un bloc seulement si le contrôle est vide), `installer-polices.sh` (empreinte de `Data.zip`, 605 TTF tels quels,
+  `SHA256SUMS`), lecteur `cmap` sans dépendance.
+- **Contrôle bloquant** (`mushaf-exact.ts`) : 604 pages, lignes 1-15 sans trou (texte + en-têtes + basmala, pages
+  1-2 à part), chaque verset = mots 1..n de Tanzil (signes de pause, ۞, ۩ et basmala de tête exclus) + un signe de
+  fin, ordre de lecture, débuts de page = métadonnées Tanzil, chaque glyphe présent dans la police de sa page.
+- **API** `/api/v1/quran/mushaf-exact` (état, retard > 7 jours), `…/pages/:p` (connecté), `…/polices/:file`
+  (TTF octet pour octet, ETag SHA-256) ; variables `AWFORM_QF_MUSHAF_DIR`, `AWFORM_QCF_DIR`.
+- **Rendu** `MushafPageExacte.svelte` (prototype, non branché) : 15 lignes justifiées (taille calculée pour que la
+  plus longue ligne remplisse la largeur et que 15 lignes tiennent dans le cadre), en-têtes et basmala en
+  `QCF_BSML`, cartouche et cadre SVG originaux (vert, or, papier crème clair), juzʾ et numéro de page, surlignage du
+  verset en cours, texte Tanzil caché pour les lecteurs d'écran, Ctrl+C = texte Tanzil ; chargement page par page
+  (`mushaf-exact-load.ts` : caches « awzid-mushaf-exact » gardés aux mises à jour par le service worker).
+  Vérifié à l'œil sur un banc d'essai LOCAL non commité (pages synthétiques, vraies polices), bureau et téléphone.
+- **Budget** : aucune hausse (composant non importé par une page ; 400,0 Ko / élève 353,1 Ko inchangés). Polices :
+  95,4 Mo au total sur le serveur, hors budget, chargées à la demande.
+- Tests : web `mushaf-exact.test.ts` (23), api `a34.test.ts` (3).
+- **À faire par le chef de projet** : lancer `sync` (commande dans le rapport A34), lire `rapport.txt`, puis
+  brancher l'écran Coran (après la refonte `coran-epure-wip`).
+
 ## 05/10/2026 — Chantier A27 (suite) : décisions D-A27 appliquées
 
 - Positionnement **adaptatif de 4 exercices par niveau** (examens des livres ; ceux du livre de l'élève d'abord, puis

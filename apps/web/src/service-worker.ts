@@ -72,7 +72,14 @@ sw.addEventListener('activate', (event) => {
         Promise.all(
           keys
             // lot 27 : les sourates gardées par l'utilisateur survivent aux mises à jour
-            .filter((k) => k !== CACHE && k !== RIWAYAT_CACHE && !k.startsWith('awzid-coran-audio'))
+            .filter(
+              (k) =>
+                k !== CACHE &&
+                k !== RIWAYAT_CACHE &&
+                !k.startsWith('awzid-coran-audio') &&
+                // A34 : pages et polices du Muṣḥaf exact consultées (gérées par l'application)
+                !k.startsWith('awzid-mushaf-exact'),
+            )
             .map((k) => caches.delete(k)),
         ),
       )
