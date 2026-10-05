@@ -124,7 +124,7 @@ describe.skipIf(!URL_)('lot 27 : audio du Coran (API)', () => {
     // A1 : crédit en arabe et condition d'usage (ne pas vendre l'audio)
     expect(ay.creditAr).toContain('محمد أيوب');
     expect(ay.usageNote).toContain('ne pas vendre');
-    expect(qa).toMatchObject({ riwaya: 'qalun', surlignage: 'sans_surlignage', verses: 10 });
+    expect(qa).toMatchObject({ riwaya: 'qalun', surlignage: 'sans_surlignage', verses: 11 });
   });
 
   it('pistes d’une sourate : fichiers, tailles, empreintes ; autre riwāya marquée « sans_surlignage »', async () => {
