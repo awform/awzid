@@ -60,6 +60,9 @@
   let prefs = $state<MushafPrefs>(readPrefs());
   let p = $state(1);
   let cur = $state<{ s: number; a: number } | null>(null);
+  /** verset entendu (surlignage pendant l'écoute) : distinct de `cur`, qui fixe le début de la plage —
+   *  sinon chaque verset entendu recalculait la file et coupait la lecture (A1, constaté avec les vraies récitations) */
+  let heard = $state<{ s: number; a: number } | null>(null);
   /** texte Tanzil par sourate : s → (a → texte) */
   let texts = $state<Record<number, Record<number, string>>>({});
   let tajwids = $state<Record<number, TajwidSura | null>>({});
@@ -197,8 +200,10 @@
   async function goVerse(s: number, a: number) {
     if (!starts) return;
     cur = { s, a };
+    heard = null;
     await goPage(pageOf(starts, s, a));
     cur = { s, a };
+    heard = null;
     document.querySelector(`[data-aya="${s}:${a}"]`)?.scrollIntoView({ block: 'center' });
     document
       .querySelector(`[data-trad="${s}:${a}"]`)
@@ -227,6 +232,7 @@
     }
     const sameSura = cur?.s === s;
     cur = { s, a };
+    heard = null;
     if (!sameSura) void openTracks();
     document.querySelector(`[data-trad="${s}:${a}"]`)?.scrollIntoView({ block: 'nearest' });
   }
@@ -501,7 +507,7 @@
               {queue}
               onaya={(a) => {
                 if (a && canHighlight(reciter) && isHafs(reciter.riwaya))
-                  cur = { s: activeSura, a };
+                  heard = { s: activeSura, a };
               }}
             />
           </div>
@@ -547,7 +553,7 @@
               basmala={meta?.basmala ?? ''}
               juz={meta ? juzOfPage(meta, n) : 1}
               tajwid={tajwidOn ? tajwidOf : null}
-              current={cur}
+              current={heard ?? cur}
               memo={prefs.memo}
               readOnly={prefs.readOnly}
               {revealed}
@@ -598,8 +604,10 @@
                 {@const tv = trads[r[0]]?.verses.get(r[1])}
                 <li
                   data-trad={ref(r)}
-                  class:on={cur?.s === r[0] && cur?.a === r[1]}
-                  aria-current={cur?.s === r[0] && cur?.a === r[1] ? 'true' : undefined}
+                  class:on={(heard ?? cur)?.s === r[0] && (heard ?? cur)?.a === r[1]}
+                  aria-current={(heard ?? cur)?.s === r[0] && (heard ?? cur)?.a === r[1]
+                    ? 'true'
+                    : undefined}
                 >
                   <button
                     type="button"
