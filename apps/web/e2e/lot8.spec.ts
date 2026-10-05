@@ -1,5 +1,6 @@
 import { tanwinUndo } from '@awform/content/text';
 import type { Page } from '@playwright/test';
+import { openDisplay } from './coran';
 import { expect, test } from './fixtures';
 
 /** Lot 8 : Sciences islamiques (re, ra en aperçu), bibliothèque des livrets, lecteur coranique sans audio. */
@@ -118,15 +119,15 @@ test('lecteur coranique : texte Tanzil octet par octet, lecture guidée mot à m
   await page.clock.install();
   await page.goto('/coran');
   await page.getByTestId('ouvrir-lecteur').click();
-  await expect(page.getByTestId('recitant')).toHaveAttribute('href', '/coran/ecouter?s=1');
-  await expect(page.locator('[data-verse="1:1"]')).toBeVisible();
-  await page.getByTestId('sourate').selectOption('112');
-  await expect(page).toHaveURL(/s=112/);
+  await expect(page).toHaveURL(/\/coran\/lecteur/);
+  // Coran épuré : écran unique, vue « versets » ; la lecture guidée sans son est dans « Affichage »
+  await page.goto('/coran/lecteur?s=112&a=2&vue=versets');
+  await expect(page.locator('[data-verse="112:4"]')).toBeVisible();
   for (const a of [1, 2, 3, 4])
     expect(await shown(page, `112:${a}`)).toBe(await tanzil(page, 112, a));
 
-  await page.getByTestId('de').fill('2');
-  await page.getByTestId('a').fill('2');
+  await openDisplay(page);
+  await page.locator('details.guide summary').click();
   await page.getByTestId('repeter').fill('2');
   await page.getByTestId('pause').fill('1');
   await page.getByTestId('lire').click();
@@ -134,10 +135,11 @@ test('lecteur coranique : texte Tanzil octet par octet, lecture guidée mot à m
   await expect(page.getByTestId('tour')).toContainText('1');
   await page.clock.runFor(700);
   await expect(page.locator('[data-verse="112:2"] .w.on[data-w="1"]')).toBeVisible();
-  await page.clock.runFor(1500);
+  // versets 2 à 4 (fin de la sourate), puis la pause « à toi »
+  await page.clock.runFor(6400);
   await expect(page.getByTestId('a-toi')).toBeVisible();
   await page.clock.runFor(1100);
   await expect(page.getByTestId('tour')).toContainText('2');
   await page.getByTestId('arreter').click();
-  await expect(page.getByTestId('lire')).toBeVisible();
+  await expect(page.getByTestId('guidage')).toHaveCount(0);
 });

@@ -50,8 +50,13 @@
     memo?: number;
     readOnly?: boolean;
     revealed?: Set<string>;
-    onpick?: (s: number, a: number) => void;
+    onpick?: (s: number, a: number, el: HTMLElement) => void;
   } = $props();
+  function key(e: KeyboardEvent, s: number, a: number) {
+    if (readOnly || (e.key !== 'Enter' && e.key !== ' ')) return;
+    e.preventDefault();
+    onpick?.(s, a, e.currentTarget as HTMLElement);
+  }
 
   const sep = (i: number) => (i > 0 ? ' ' : '');
   const uid = $derived(`mp-lattice-${p}`);
@@ -163,8 +168,9 @@
                 role="button"
                 tabindex={readOnly ? -1 : 0}
                 aria-disabled={readOnly ? 'true' : undefined}
-                onclick={() => !readOnly && onpick?.(g.s, a)}
-                onkeydown={(e) => !readOnly && e.key === 'Enter' && onpick?.(g.s, a)}
+                aria-haspopup={readOnly ? undefined : 'dialog'}
+                onclick={(e) => !readOnly && onpick?.(g.s, a, e.currentTarget)}
+                onkeydown={(e) => key(e, g.s, a)}
                 ><span class="quran-text rw-text" data-verse={`${g.s}:${a}`}>{raw}</span></span
               >
             {:else if raw !== undefined}
@@ -187,8 +193,9 @@
                 role="button"
                 tabindex={readOnly ? -1 : 0}
                 aria-disabled={readOnly ? 'true' : undefined}
-                onclick={() => !readOnly && onpick?.(g.s, a)}
-                onkeydown={(e) => !readOnly && e.key === 'Enter' && onpick?.(g.s, a)}
+                aria-haspopup={readOnly ? undefined : 'dialog'}
+                onclick={(e) => !readOnly && onpick?.(g.s, a, e.currentTarget)}
+                onkeydown={(e) => key(e, g.s, a)}
                 ><span class="quran-text" data-verse={`${g.s}:${a}`}
                   >{#each ws as w, i (i)}{sep(i)}<span class="w" class:voile={!vis[i]}
                       >{#if tv}<TajwidRuns runs={tv.words[i] ?? []} />{:else}{tanwinDisplay(

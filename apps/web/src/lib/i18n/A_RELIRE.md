@@ -1,9 +1,9 @@
 # Traductions à relire par un locuteur natif
 
-| Fichier               | Langue                               | État                                                                                                                   |
-| --------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `messages/fr.json`    | français                             | langue de référence (relue)                                                                                            |
-| `static/i18n/en.json` | anglais                              | en préparation — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** (à relire par un locuteur natif)           |
+| Fichier               | Langue                               | État                                                                                                                                                   |
+| --------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `messages/fr.json`    | français                             | langue de référence (relue)                                                                                                                            |
+| `static/i18n/en.json` | anglais                              | en préparation — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** (à relire par un locuteur natif)          |
 | `static/i18n/es.json` | espagnol                             | en préparation (lot 25) — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** (à relire par un locuteur natif) |
 | `static/i18n/de.json` | allemand                             | en préparation (lot 25) — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** (à relire par un locuteur natif) |
 | `static/i18n/ar.json` | arabe (interface de droite à gauche) | en préparation (lot 25) — relu par Claude, relecteur provisoire, le 04/10/2026 ; **relecture humaine courte à faire** (à relire par un locuteur natif) |
@@ -76,3 +76,9 @@ positionnement, épreuve de passage, Mon cahier, fiche à imprimer, « J'écris 
 `msg.ancien_enseignant` et 7 `erreur.*`, traduits par Claude, relecteur provisoire — à relire avec le reste. Arabe
 sans voyelles comme le reste de l'interface ; « القسم » pour la classe ; espagnol « profesor », « aleya ». À vérifier
 en priorité : `parc.rasm_texte` (orthographe du Muṣḥaf) et `fam.demande_aide` (âge légal, « de droit à 18 ans »).
+
+## Coran épuré (06/10/2026)
+
+59 textes `cl.*` (écran de lecture unique : puce, sélecteur, menu du verset, réglages d'écoute et préréglages,
+affichage, lecture guidée, accueil) écrits par Claude dans les quatre langues, **à relire** ; « juzʾ », « ḥizb »
+gardés tels qu'en français (allemand : « Dschuzʾ », comme ailleurs). Nom affiché : « Awzid » dans tous les textes.

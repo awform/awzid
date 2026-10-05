@@ -12,7 +12,6 @@
     type Reciter,
   } from '$lib/coran-audio';
   import { fmtBytes, fmtDate, fmtNumber, t } from '$lib/i18n';
-  import CoranTabs from '$lib/quran/CoranTabs.svelte';
   import { purgeReciters, removeSura, savedSuras, type SavedSura } from '$lib/quran/offline-audio';
   import { loadReciters } from '$lib/quran/reciters';
   import RiwayaBadge from '$lib/quran/RiwayaBadge.svelte';
@@ -100,8 +99,10 @@
 
 <svelte:head><title>{t('app.nom')} — {t('ca.recitateurs_titre')}</title></svelte:head>
 
+<p class="retour">
+  <a href={resolve('/coran/lecteur')} data-testid="retour-lecture">{t('cl.retour_lecture')}</a>
+</p>
 <h1>{t('ca.recitateurs_titre')}</h1>
-<CoranTabs current="recitateurs" />
 
 {#if !loaded}
   <Loading lines={4} />
@@ -175,7 +176,7 @@
     <h2>{t('ca.appareil_titre')}</h2>
     {#if saved.length === 0}
       <p class="muted">{t('ca.appareil_vide')}</p>
-      <a class="button" href={resolve('/coran/ecouter')}>{t('ca.onglet_ecouter')}</a>
+      <a class="button" href={resolve('/coran/lecteur')}>{t('ca.onglet_ecouter')}</a>
     {:else}
       <p class="muted">
         <Bidi

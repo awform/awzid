@@ -62,6 +62,8 @@
     lire: 'M4 6c3-1 5-1 8 1 3-2 5-2 8-1v12c-3-1-5-1-8 1-3-2-5-2-8-1z',
     oreille: 'M7 9a5 5 0 0 1 10 0c0 3-3 4-3 7a3 3 0 0 1-6 0M10 9a2 2 0 0 1 4 0',
     revisions: 'M4 7h12v12H4zM8 3h12v12',
+    // Coran épuré : recherche
+    loupe: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM20 20l-4-4',
   };
 </script>
 

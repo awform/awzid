@@ -181,7 +181,7 @@ sw.addEventListener('push', ((event: PushEventLike) => {
     p = {};
   }
   event.waitUntil(
-    sw.registration.showNotification(p.title ?? 'AWFORM', {
+    sw.registration.showNotification(p.title ?? 'Awzid', {
       body: p.body ?? '',
       tag: p.tag ?? 'awform',
       data: { url: p.url && p.url.startsWith('/') ? p.url : '/aujourdhui' },
