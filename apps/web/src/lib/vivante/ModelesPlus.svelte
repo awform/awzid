@@ -105,8 +105,9 @@
   /* racine : les trois lettres arrivent, glissent dans le schème, le mot se forme */
   .rac {
     display: flex;
-    gap: 14px;
-    font-size: calc(var(--ar-size) * 1.6);
+    gap: 12px;
+    margin-top: 12px;
+    font-size: calc(var(--ar-size) * 1.3);
   }
   /* racine en couleur : même couleur (or des livres) pour les lettres seules et dans le mot */
   .rl {
@@ -117,7 +118,7 @@
     font-weight: 700;
     animation:
       pop 380ms calc(var(--d) * 300ms) both,
-      drop 700ms 1700ms ease-in forwards;
+      drop 1600ms 1700ms ease-in-out;
   }
   .moule {
     font-size: calc(var(--ar-size) * 1.5);
@@ -231,10 +232,15 @@
       opacity: 0;
     }
   }
+  /* les lettres glissent dans le schème, puis reviennent en haut (racine visible jusqu'à la fin) */
   @keyframes drop {
-    to {
+    45% {
       opacity: 0;
       transform: translateY(46px) scale(0.7);
+    }
+    55% {
+      opacity: 0;
+      transform: none;
     }
   }
   @keyframes glow {

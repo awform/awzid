@@ -94,6 +94,7 @@
 <style>
   .choix {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 10px;
   }
   .choix label {
@@ -103,7 +104,8 @@
   }
   .choix select {
     min-height: 44px;
-    max-width: 100%;
+    width: 100%;
+    min-width: 0;
   }
   .choix a {
     text-align: center;
