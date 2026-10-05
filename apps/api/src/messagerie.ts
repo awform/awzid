@@ -128,6 +128,9 @@ export function registerMessagerie(app: FastifyInstance, db: Db, key: Recitation
     id: m.id,
     kind: m.kind,
     deMoi: m.authorAccountId === me,
+    // A27 (D-F2 8) : auteur parti (compte enseignant supprimé) — message gardé pour l'école, « ancien enseignant »
+    // (un compte famille supprimé emporte ses fils : un message sans auteur vient donc d'un enseignant)
+    ancienEnseignant: m.authorAccountId === null,
     texte: dec(m),
     retire: !!m.removedAt,
     piece:
@@ -178,7 +181,11 @@ export function registerMessagerie(app: FastifyInstance, db: Db, key: Recitation
       .values({ classId, teacherAccountId: teacherId, familyAccountId: p.owner, profileId })
       .onConflictDoUpdate({
         target: [t.messageThread.classId, t.messageThread.profileId],
-        set: { lastAt: sql`${t.messageThread.lastAt}` },
+        // A27 (D-F2 8) : fil gardé d'un enseignant parti → repris par l'enseignant qui écrit
+        set: {
+          lastAt: sql`${t.messageThread.lastAt}`,
+          teacherAccountId: sql`COALESCE("message_thread"."teacher_account_id", ${teacherId}::uuid)`,
+        },
       })
       .returning();
     return th!;

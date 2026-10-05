@@ -123,7 +123,10 @@
     <ul class="list" data-testid="msg-fil-ouvert">
       {#each open.messages as m (m.id)}
         <li class:mine={m.deMoi}>
-          {fmtDate(m.le)} — <Bidi text={m.retire ? t('msg.retire') : m.texte} />
+          {fmtDate(m.le)} —{#if m.ancienEnseignant}
+            <span class="muted" data-testid="ancien-enseignant">{t('msg.ancien_enseignant')} :</span
+            >{/if}
+          <Bidi text={m.retire ? t('msg.retire') : m.texte} />
         </li>
       {/each}
     </ul>

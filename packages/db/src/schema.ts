@@ -490,6 +490,11 @@ export const profile = pgTable(
      */
     explanationLocale: text('explanation_locale').notNull().default('fr'),
     createdAt: createdAt(),
+    /**
+     * A27 (décision D-F2 2) : le jeune a demandé à reprendre son profil (à l'âge du consentement numérique de
+     * son pays) ; le parent valide ou refuse. À 18 ans, la reprise est de droit (aucune validation).
+     */
+    emancipationRequestAt: timestamp('emancipation_request_at', { withTimezone: true }),
   },
   (t) => [
     index('profile_owner').on(t.ownerAccountId),
@@ -1022,8 +1027,84 @@ export const quranLemma = pgTable(
     unitId: text('unit_id').references(() => unit.id),
     frequency: integer('frequency'),
     sourceSha256: text('source_sha256').notNull(),
+    /** A27 : sens en français, racine, verset d'exemple (s:a) et catégorie, tels que donnés par les livres */
+    meaningFr: text('meaning_fr'),
+    root: text('root'),
+    exampleRef: text('example_ref'),
+    category: text('category'),
   },
   (t) => [uniqueIndex('quran_lemma_key').on(t.lemmaKey)],
+);
+
+/**
+ * A27 : nombre total de mots (unités graphiques) du Coran donné par les livres (`meta.total_mots_coran`) :
+ * base de la couverture « tu reconnais X % des mots du Coran » (somme des fréquences des mots acquis / total).
+ */
+export const quranLemmaMeta = pgTable('quran_lemma_meta', {
+  id: smallint('id').primaryKey().default(1),
+  totalWords: integer('total_words').notNull(),
+  sourceSha256: text('source_sha256').notNull(),
+  importedAt: timestamp('imported_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * A27 : test de positionnement et épreuve de passage, notés par le SERVEUR avec les exercices existants des
+ * épreuves de fin de niveau des livres (aucun exercice écrit pour l'application). Un essai par niveau testé.
+ */
+export const placementAttempt = pgTable(
+  'placement_attempt',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    subjectCode: text('subject_code')
+      .notNull()
+      .references(() => subject.code),
+    kind: text('kind').notNull(),
+    levelCode: text('level_code')
+      .notNull()
+      .references(() => level.code),
+    points: integer('points').notNull(),
+    max: integer('max').notNull(),
+    passed: boolean('passed').notNull(),
+    at: timestamp('at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('placement_attempt_profile').on(t.profileId, t.subjectCode, t.at),
+    check('placement_attempt_kind', sql`${t.kind} IN ('positionnement', 'epreuve')`),
+  ],
+);
+
+/**
+ * A27 (décision D-F2 5) : passage d'année — la famille d'un élève inscrit par elle reçoit une proposition de
+ * réinscription dans la classe de l'année suivante, confirmée d'un geste (le partage reprend alors).
+ */
+export const reenrolmentOffer = pgTable(
+  'reenrolment_offer',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    schoolYearId: uuid('school_year_id').references(() => schoolYear.id, { onDelete: 'set null' }),
+    status: text('status').notNull().default('proposee'),
+    createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    decidedBy: uuid('decided_by').references(() => account.id, { onDelete: 'set null' }),
+    decidedAt: timestamp('decided_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('reenrolment_offer_one').on(t.profileId, t.classId),
+    check('reenrolment_offer_status', sql`${t.status} IN ('proposee', 'acceptee', 'refusee')`),
+  ],
 );
 
 /** Mot du Coran ACQUIS par un élève (leçon de son livre terminée, niveau terminé, ou carte révisée). */
@@ -1858,9 +1939,13 @@ export const messageThread = pgTable(
     classId: uuid('class_id')
       .notNull()
       .references(() => classGroup.id, { onDelete: 'cascade' }),
-    teacherAccountId: uuid('teacher_account_id')
-      .notNull()
-      .references(() => account.id, { onDelete: 'cascade' }),
+    /**
+     * A27 (décision D-F2 8) : un enseignant qui supprime son compte n'efface plus ses fils — ils restent à
+     * l'école (sécurité des mineurs), détachés ; l'auteur est montré comme « ancien enseignant ».
+     */
+    teacherAccountId: uuid('teacher_account_id').references(() => account.id, {
+      onDelete: 'set null',
+    }),
     familyAccountId: uuid('family_account_id')
       .notNull()
       .references(() => account.id, { onDelete: 'cascade' }),
