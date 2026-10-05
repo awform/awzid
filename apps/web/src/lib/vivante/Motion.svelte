@@ -398,7 +398,7 @@
           text={condense ? t(`viv.m_${motion.model}`) : `${t(`viv.m_${motion.model}`)} · ${total}`}
         /></span
       >
-      {#if beat}{#key i}{@render show(beat, Math.max(i, 0))}{/key}{/if}
+      {#if beat && i >= 0}{#key i}{@render show(beat, i)}{/key}{/if}
       {#if i < 0}<button
           type="button"
           class="play"
@@ -673,9 +673,13 @@
   .bl.s1 {
     flex-direction: row-reverse;
   }
+  /* réplique précédente : plus petite, sur fond de surface (texte au contraste plein, WCAG AA) */
   .bl.prev {
-    opacity: 0.45;
     transform: scale(0.94);
+  }
+  .bl.prev .bub {
+    background: var(--surface);
+    box-shadow: none;
   }
   .bl.now {
     animation: slide 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -827,17 +831,6 @@
   .play svg {
     width: 34px;
     height: 34px;
-  }
-  .attente .b,
-  .attente .b * {
-    animation: none !important;
-  }
-  .attente .draw text {
-    stroke-dashoffset: 0;
-    fill-opacity: 1;
-  }
-  .attente .b {
-    opacity: 0.35;
   }
   .ctl {
     display: flex;

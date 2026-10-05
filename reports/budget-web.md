@@ -3,9 +3,9 @@
 | Élément | Poids transféré | Budget |
 |---|---|---|
 | JavaScript + CSS initiaux, page la plus lourde (`/lecons/[id]`, Brotli) | 145.1 Ko | ≤ 150.0 Ko |
-| JavaScript de toutes les pages (Brotli) | 338.4 Ko | ≤ 375.0 Ko |
+| JavaScript de toutes les pages (Brotli) | 338.2 Ko | ≤ 375.0 Ko |
 | CSS (Brotli) | 34.0 Ko | — |
-| Service worker (Brotli) | 5.8 Ko | — |
+| Service worker (Brotli) | 5.9 Ko | — |
 | Polices WOFF2 (une seule fois, déjà compressées) | 222.6 Ko | ≤ 600.0 Ko |
 | Police d'une riwāya, la plus lourde (6 polices, à la demande, hors coquille) | 781.6 Ko | ≤ 1024.0 Ko |
 
