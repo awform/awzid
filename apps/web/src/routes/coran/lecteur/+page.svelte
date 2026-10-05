@@ -13,6 +13,19 @@
   import { readTajwidPrefs, verseRuns, type TajwidSura } from '$lib/quran/tajwid';
   import TajwidBar from '$lib/quran/TajwidBar.svelte';
   import TajwidRuns from '$lib/quran/TajwidRuns.svelte';
+  import type { RiwayaIndex } from '@awform/content/riwayat';
+  import RiwayaPicker from '$lib/quran/RiwayaPicker.svelte';
+  import {
+    ensureRiwayaFont,
+    isMushafRiwaya,
+    loadRiwayaIndex,
+    loadRiwayaSura,
+    readMushafRiwaya,
+    riwayaFamily,
+    riwayaText,
+    writeMushafRiwaya,
+    type MushafRiwaya,
+  } from '$lib/quran/riwayat';
 
   /**
    * Lecteur coranique (ARCHITECTURE_V2 § 8.2 bis, lot C1) — SANS AUDIO tant qu'aucune récitation n'est
@@ -41,13 +54,22 @@
   // lot 29 : tajwid en couleurs (le texte Tanzil du lecteur est celui de Ḥafṣ)
   let tjPrefs = $state(readTajwidPrefs());
   let tjData = $state<TajwidSura | null>(null);
-  const tajwid = $derived(tjPrefs.on && tjData?.s === sura ? tjData : null);
 
-  const count = $derived(meta?.weights[sura - 1]?.length ?? 0);
+  // A8 : muṣḥaf affiché (Ḥafṣ par défaut ; autre riwāya = texte et police du Complexe, sans tajwid)
+  let rw = $state<MushafRiwaya>(readMushafRiwaya());
+  let rwIndex = $state<RiwayaIndex | null>(null);
+  let rwError = $state(false);
+  const isRw = $derived(rw !== HAFS);
+  const rwDef = $derived(riwayaText(rw));
+  // tajwid en couleurs : texte de Ḥafṣ seulement
+  const tajwid = $derived(!isRw && tjPrefs.on && tjData?.s === sura ? tjData : null);
+  const count = $derived(
+    isRw ? (rwIndex?.counts[sura - 1] ?? 0) : (meta?.weights[sura - 1]?.length ?? 0),
+  );
   /** début de chaque page du Muṣḥaf dans la sourate ouverte : verset → numéro de page */
   const pageStarts = $derived(
     new Map(
-      (meta?.divisions?.pages ?? [])
+      ((isRw ? rwIndex?.pages : meta?.divisions?.pages) ?? [])
         .map((p, i) => [p, i + 1] as const)
         .filter(([p]) => p[0] === sura)
         .map(([p, n]) => [p[1], n]),
@@ -56,6 +78,12 @@
   const goMax = $derived(goKind === 'juz' ? 30 : goKind === 'hizb' ? 60 : 604);
   /** Début d'un juzʾ, d'un ḥizb (4 quarts) ou d'une page : [sourate, verset]. */
   function startOf(kind: 'juz' | 'hizb' | 'page', n: number): readonly [number, number] | null {
+    if (isRw) {
+      // données du Complexe : pages et juzʾ (pas de ḥizb) ; un juzʾ = sa première page
+      if (!rwIndex || kind === 'hizb') return null;
+      const p = kind === 'page' ? n : rwIndex.pageJuz.findIndex((x) => x >= n) + 1;
+      return rwIndex.pages[p - 1] ?? null;
+    }
     const d = meta?.divisions;
     if (!d) return null;
     if (kind === 'juz') return d.juz[n - 1] ?? null;
@@ -73,9 +101,32 @@
   }
   /** Séparateur entre deux mots : l'espace du texte Tanzil, rien d'autre. */
   const sep = (i: number) => (i > 0 ? ' ' : '');
-  const words = (v: Verse) => splitBasmala(v.s, v.a, v.text, meta?.basmala ?? '');
+  const words = (v: Verse) =>
+    isRw ? { basmala: '', rest: v.text } : splitBasmala(v.s, v.a, v.text, meta?.basmala ?? '');
+
+  /** Index et police de la riwāya choisie ; retour à Ḥafṣ si indisponible (hors ligne). */
+  async function openRiwaya(): Promise<void> {
+    rwError = false;
+    if (rw === HAFS) return;
+    if (goKind === 'hizb') goKind = 'page';
+    void ensureRiwayaFont(rw);
+    rwIndex = await loadRiwayaIndex(rw);
+    if (!rwIndex) {
+      rwError = true;
+      rw = HAFS;
+    }
+  }
+  async function setRiwaya(m: MushafRiwaya) {
+    rw = m;
+    await openRiwaya();
+    writeMushafRiwaya(rw);
+    await openSura(sura);
+  }
 
   onMount(async () => {
+    const m = page.url.searchParams.get('m');
+    if (isMushafRiwaya(m)) rw = m;
+    await openRiwaya();
     meta = await loadMeta();
     const s = Number(page.url.searchParams.get('s'));
     await openSura(s >= 1 && s <= 114 ? s : 1);
@@ -93,13 +144,18 @@
     stop();
     sura = s;
     const tok = ++seq;
-    const got = await loadVerses(s, 1, meta?.weights[s - 1]?.length ?? 1);
+    const key = rw;
+    let got: Verse[];
+    if (key !== HAFS) {
+      const d = await loadRiwayaSura(key, s);
+      got = d ? [...d.verses.values()].map((v) => ({ s, a: v.a, text: v.text })) : [];
+    } else got = await loadVerses(s, 1, meta?.weights[s - 1]?.length ?? 1);
     if (tok !== seq) return; // une autre sourate a été choisie entre-temps
     verses = got;
     from = 1;
     to = Math.min(verses.length, 1);
     // eslint-disable-next-line svelte/no-navigation-without-resolve -- chemin résolu, suivi d'un paramètre
-    void goto(`${resolve('/coran/lecteur')}?s=${s}`, {
+    void goto(`${resolve('/coran/lecteur')}?s=${s}${key !== HAFS ? `&m=${key}` : ''}`, {
       replaceState: true,
       keepFocus: true,
       noScroll: true,
@@ -157,6 +213,8 @@
 <CoranTabs current="lire" />
 
 <section class="card controls">
+  <RiwayaPicker value={rw} onchange={setRiwaya} />
+  {#if rwError}<p class="muted small" role="status">{t('rw.indisponible')}</p>{/if}
   <label
     >{t('lecteur.sourate')}
     <select
@@ -178,7 +236,7 @@
       >{t('ca.aller_a')}
       <select bind:value={goKind} data-testid="aller-type">
         <option value="juz">{t('ca.juz')}</option>
-        <option value="hizb">{t('ca.hizb')}</option>
+        {#if !isRw}<option value="hizb">{t('ca.hizb')}</option>{/if}
         <option value="page">{t('ca.page')}</option>
       </select></label
     >
@@ -237,20 +295,33 @@
       >{/if}
   </div>
   <p class="muted small">{t('lecteur.page_mushaf')}</p>
-  <p class="muted small"><Bidi text={t('lecteur.credit')} /></p>
+  <p class="muted small" data-testid="credit-texte">
+    {#if rwDef}<Bidi
+        text={t('rw.credit', {
+          riwaya: rwDef.fr,
+          version: rwDef.version,
+          police: rwDef.fontVersion,
+        })}
+      />{:else}<Bidi text={t('lecteur.credit')} />{/if}
+  </p>
 </section>
 
-<TajwidBar
-  riwaya={HAFS}
-  {sura}
-  {verses}
-  basmala={meta?.basmala ?? ''}
-  bind:prefs={tjPrefs}
-  bind:data={tjData}
-/>
+{#if !isRw}
+  <TajwidBar
+    riwaya={HAFS}
+    {sura}
+    {verses}
+    basmala={meta?.basmala ?? ''}
+    bind:prefs={tjPrefs}
+    bind:data={tjData}
+  />
+{/if}
 
 <section
   class="card mushaf"
+  class:riwaya={isRw}
+  style:--rw-font={isRw ? riwayaFamily(rw) : undefined}
+  data-riwaya={rw}
   class:tajwid={!!tajwid}
   class:motifs={!!tajwid && tjPrefs.motifs}
   data-testid="sourate-texte"
@@ -289,10 +360,14 @@
             class="w"
             class:on={cur?.a === v.a && cur?.w === i}
             data-w={i}
-            >{#if tv}<TajwidRuns runs={tv.words[i] ?? []} />{:else}{tanwinDisplay(w)}{/if}</span
+            >{#if isRw}{w}{:else if tv}<TajwidRuns runs={tv.words[i] ?? []} />{:else}{tanwinDisplay(
+                w,
+              )}{/if}</span
           >{/each}</span
       >
-      <span class="n" aria-hidden="true">{fmtNumber(v.a, { useGrouping: false })}</span>
+      <!-- autre riwāya : le texte du Complexe porte déjà son signe de fin de verset numéroté -->
+      {#if !isRw}<span class="n" aria-hidden="true">{fmtNumber(v.a, { useGrouping: false })}</span
+        >{/if}
     </div>
   {/each}
 </section>
@@ -320,6 +395,10 @@
   }
   .titre {
     text-align: center;
+  }
+  /* A8 : police fournie par le Complexe pour la riwāya affichée */
+  .mushaf.riwaya .quran-text {
+    font-family: var(--rw-font), var(--font-quran);
   }
   .basmala {
     text-align: center;

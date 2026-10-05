@@ -6,7 +6,7 @@ import { expect, test } from './fixtures';
 
 /**
  * Muṣḥaf PAR PAGE (ergonomie d'Ayat, aucun contenu d'Ayat) : pages du Muṣḥaf de Médine, double page sur
- * ordinateur, une page avec balayage sur téléphone, cadre orné, choix du muṣḥaf (Warsh désactivé), traduction
+ * ordinateur, une page avec balayage sur téléphone, cadre orné, choix du muṣḥaf (Ḥafṣ par défaut ; autres riwāyāt : a8.spec.ts), traduction
  * du sens QuranEnc à côté (verset en cours surligné), barre de commandes, options. Texte Tanzil jamais modifié.
  * Captures seulement avec MUSHAF_CAPTURES=<dossier> (ex. reports/mushaf-pages).
  */
@@ -104,7 +104,7 @@ test('pages du Muṣḥaf : double page (ordinateur) ou une page, cadre, versets
   expect(audio).toEqual([]);
 });
 
-test('texte Tanzil identique à l’onglet Lire ; tajwid en couleurs sans changer le texte ; Warsh désactivé', async ({
+test('texte Tanzil identique à l’onglet Lire ; tajwid en couleurs sans changer le texte ; Ḥafṣ par défaut', async ({
   page,
 }, info) => {
   await page.goto('/coran/lecteur?s=2');
@@ -118,11 +118,11 @@ test('texte Tanzil identique à l’onglet Lire ; tajwid en couleurs sans change
   await expect(page.locator('[data-page="42"]')).toBeVisible();
   await expect(page.locator('[data-aya="2:255"]')).toHaveClass(/\bon\b/);
 
-  await openPlus(page);
+  // A8 : Warsh disponible (texte officiel du Complexe), Ḥafṣ choisi par défaut
   const warsh = page.getByTestId('mp-mushaf').locator('option[value="warsh"]');
-  expect(await warsh.evaluate((o) => (o as HTMLOptionElement).disabled)).toBe(true);
-  await expect(warsh).toContainText('Warsh');
-  await closePlus(page);
+  expect(await warsh.evaluate((o) => (o as HTMLOptionElement).disabled)).toBe(false);
+  await expect(warsh).toContainText('Warsh ʿan Nāfiʿ');
+  await expect(page.getByTestId('mp-mushaf')).toHaveValue('hafs');
   const before = await verseTexts(page);
   // bouton « Tajwid » de la barre (bascule) : couleurs sans changer le texte
   await page.getByTestId('mp-tajwid').click();
@@ -137,10 +137,7 @@ test('texte Tanzil identique à l’onglet Lire ; tajwid en couleurs sans change
   }
   await page.getByTestId('mp-tajwid').click();
   await expect(page.locator('[data-testid="mushaf-livre"] .tj')).toHaveCount(0);
-  await openPlus(page);
-  await page.getByTestId('mp-mushaf').selectOption('hafs-tajwid');
-  await expect(page.getByTestId('mp-tajwid')).toHaveAttribute('aria-pressed', 'true');
-  await page.getByTestId('mp-mushaf').selectOption('hafs');
+  await expect(page.getByTestId('mp-tajwid')).toHaveAttribute('aria-pressed', 'false');
 });
 
 test('traduction du sens à côté : source recopiée, verset en cours surligné, anglais, crédit', async ({

@@ -25,7 +25,13 @@
     onpick,
     tajwid = null,
     motifs = false,
+    riwaya = null,
   }: {
+    /**
+     * A8 — autre riwāya que Ḥafṣ : famille de la police du Complexe ; le texte du Complexe est affiché TEL QUEL
+     * (signe de fin de verset numéroté compris), sans basmala séparée, tanwīn, tajwid ni masquage.
+     */
+    riwaya?: string | null;
     sura: number;
     verses: Verse[];
     basmala: string;
@@ -55,61 +61,82 @@
   class="mushaf card"
   class:tajwid={!!tajwid}
   class:motifs={!!tajwid && motifs}
+  class:riwaya={!!riwaya}
+  style:--rw-font={riwaya ?? undefined}
   lang="ar"
   dir="rtl"
   data-testid="texte-coran"
 >
   <h2 class="titre"><Bidi text={suraName(sura)} base="ar" /></h2>
-  {#each verses as v (v.a)}
-    {@const parts = splitBasmala(v.s, v.a, v.text, basmala)}
-    {@const ws = parts.rest.split(' ')}
-    {@const vis = visibleWords(ws.length, v.a >= maskFrom ? mask : 0)}
-    {@const tv = tajwid ? verseRuns(v, basmala, tajwid) : null}
-    {#if parts.basmala}<p class="basmala">
-        <span class="quran-text"
-          >{#if tv?.basmala}{#each tv.basmala as bw, i (i)}{i > 0 ? ' ' : ''}<TajwidRuns
-                runs={bw}
-              />{/each}{:else}{tanwinDisplay(parts.basmala)}{/if}</span
-        >
-      </p>{/if}
-    <!-- svelte-ignore a11y_no_noninteractive_tabindex (rôle « button » posé seulement quand le verset est choisissable) -->
-    <div
-      class="aya"
-      class:range={v.a >= from && v.a <= to}
-      class:now={current === v.a}
-      data-aya={v.a}
-      aria-current={current === v.a ? 'true' : undefined}
-      role={onpick ? 'button' : undefined}
-      tabindex={onpick ? 0 : undefined}
-      onclick={() => onpick?.(v.a)}
-      onkeydown={(e) => e.key === 'Enter' && onpick?.(v.a)}
-    >
-      <span class="quran-text" data-verse={`${v.s}:${v.a}`}
-        >{#each ws as w, i (i)}{i > 0 ? ' ' : ''}<span
-            class="w"
-            class:voile={!vis[i] && !hidden[`${v.a}:${i}`]}
-            ><span class="t"
-              >{#if tv}<TajwidRuns runs={tv.words[i] ?? []} />{:else}{tanwinDisplay(w)}{/if}</span
-            ></span
-          >{/each}</span
+  {#if riwaya}
+    {#each verses as v (v.a)}
+      <!-- svelte-ignore a11y_no_noninteractive_tabindex (rôle « button » posé seulement quand le verset est choisissable) -->
+      <div
+        class="aya"
+        class:range={v.a >= from && v.a <= to}
+        class:now={current === v.a}
+        data-aya={v.a}
+        aria-current={current === v.a ? 'true' : undefined}
+        role={onpick ? 'button' : undefined}
+        tabindex={onpick ? 0 : undefined}
+        onclick={() => onpick?.(v.a)}
+        onkeydown={(e) => e.key === 'Enter' && onpick?.(v.a)}
       >
-      <span class="n" aria-label={t('ca.verset_n', { n: v.a })}
-        >{fmtNumber(v.a, { useGrouping: false })}</span
+        <span class="quran-text rw-text" data-verse={`${v.s}:${v.a}`}>{v.text}</span>
+      </div>
+    {/each}
+  {:else}
+    {#each verses as v (v.a)}
+      {@const parts = splitBasmala(v.s, v.a, v.text, basmala)}
+      {@const ws = parts.rest.split(' ')}
+      {@const vis = visibleWords(ws.length, v.a >= maskFrom ? mask : 0)}
+      {@const tv = tajwid ? verseRuns(v, basmala, tajwid) : null}
+      {#if parts.basmala}<p class="basmala">
+          <span class="quran-text"
+            >{#if tv?.basmala}{#each tv.basmala as bw, i (i)}{i > 0 ? ' ' : ''}<TajwidRuns
+                  runs={bw}
+                />{/each}{:else}{tanwinDisplay(parts.basmala)}{/if}</span
+          >
+        </p>{/if}
+      <!-- svelte-ignore a11y_no_noninteractive_tabindex (rôle « button » posé seulement quand le verset est choisissable) -->
+      <div
+        class="aya"
+        class:range={v.a >= from && v.a <= to}
+        class:now={current === v.a}
+        data-aya={v.a}
+        aria-current={current === v.a ? 'true' : undefined}
+        role={onpick ? 'button' : undefined}
+        tabindex={onpick ? 0 : undefined}
+        onclick={() => onpick?.(v.a)}
+        onkeydown={(e) => e.key === 'Enter' && onpick?.(v.a)}
       >
-      {#if mask > 0 && v.a >= maskFrom}
-        <button
-          type="button"
-          class="ghost peek"
-          onclick={(e) => {
-            e.stopPropagation();
-            for (let i = 0; i < ws.length; i++) hidden[`${v.a}:${i}`] = !hidden[`${v.a}:${i}`];
-          }}
-          lang={localeInfo().code}
-          dir={localeInfo().dir}>{t('ca.voir')}</button
+        <span class="quran-text" data-verse={`${v.s}:${v.a}`}
+          >{#each ws as w, i (i)}{i > 0 ? ' ' : ''}<span
+              class="w"
+              class:voile={!vis[i] && !hidden[`${v.a}:${i}`]}
+              ><span class="t"
+                >{#if tv}<TajwidRuns runs={tv.words[i] ?? []} />{:else}{tanwinDisplay(w)}{/if}</span
+              ></span
+            >{/each}</span
         >
-      {/if}
-    </div>
-  {/each}
+        <span class="n" aria-label={t('ca.verset_n', { n: v.a })}
+          >{fmtNumber(v.a, { useGrouping: false })}</span
+        >
+        {#if mask > 0 && v.a >= maskFrom}
+          <button
+            type="button"
+            class="ghost peek"
+            onclick={(e) => {
+              e.stopPropagation();
+              for (let i = 0; i < ws.length; i++) hidden[`${v.a}:${i}`] = !hidden[`${v.a}:${i}`];
+            }}
+            lang={localeInfo().code}
+            dir={localeInfo().dir}>{t('ca.voir')}</button
+          >
+        {/if}
+      </div>
+    {/each}
+  {/if}
 </section>
 
 <style>
@@ -122,6 +149,10 @@
   }
   .basmala {
     text-align: center;
+  }
+  /* A8 : police fournie par le Complexe pour la riwāya affichée */
+  .mushaf.riwaya .quran-text {
+    font-family: var(--rw-font), var(--font-quran);
   }
   .aya {
     font-size: 1.7rem;

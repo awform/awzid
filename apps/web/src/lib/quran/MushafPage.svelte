@@ -29,8 +29,15 @@
     readOnly = false,
     revealed = new Set<string>(),
     compact = false,
+    riwaya = null,
     onpick,
   }: {
+    /**
+     * A8 — muṣḥaf d'une autre riwāya que Ḥafṣ : texte du Complexe affiché TEL QUEL (avec son signe de fin de
+     * verset et son numéro, dessinés par la police du Complexe), noms de sourate du Complexe, aucune retouche
+     * (ni basmala séparée, ni tanwīn, ni tajwid, ni masquage, ni rosette ajoutée).
+     */
+    riwaya?: { family: string; suraName: (s: number) => string | undefined } | null;
     /** double page : texte un peu plus petit (page entière plus visible) */
     compact?: boolean;
     p: number;
@@ -98,10 +105,18 @@
   <div class="inner">
     <header class="running" lang={localeInfo().code} dir={localeInfo().dir}>
       <span data-testid="page-juz"><Bidi text={t('mp.juz_n', { n: juz })} /></span>
-      <span class="sura-ar"><Bidi text={suraTitleAr(firstSura)} base="ar" /></span>
+      {#if riwaya}<span class="sura-ar rw" style:font-family={riwaya.family}
+          ><Bidi text={riwaya.suraName(firstSura) ?? ''} base="ar" /></span
+        >{:else}<span class="sura-ar"><Bidi text={suraTitleAr(firstSura)} base="ar" /></span>{/if}
     </header>
 
-    <div class="body" lang="ar" dir="rtl">
+    <div
+      class="body"
+      class:riwaya={!!riwaya}
+      lang="ar"
+      dir="rtl"
+      style:--rw-font={riwaya ? `${riwaya.family}` : undefined}
+    >
       {#if !complete}<p class="loading small" lang={localeInfo().code} dir={localeInfo().dir}>
           {t('mp.chargement')}
         </p>{/if}
@@ -128,7 +143,10 @@
             <svg class="medal s" viewBox="-12 -12 24 24" aria-hidden="true" focusable="false"
               ><path d={star(10)} /><circle r="3" /></svg
             >
-            <span class="band-title"><Bidi text={suraTitleAr(g.s)} base="ar" /></span>
+            {#if riwaya}<span class="band-title rw"
+                ><Bidi text={riwaya.suraName(g.s) ?? ''} base="ar" /></span
+              >{:else}<span class="band-title"><Bidi text={suraTitleAr(g.s)} base="ar" /></span
+              >{/if}
             <svg class="medal e" viewBox="-12 -12 24 24" aria-hidden="true" focusable="false"
               ><path d={star(10)} /><circle r="3" /></svg
             >
@@ -137,7 +155,19 @@
         <p class="flow">
           {#each Array.from({ length: g.to - g.from + 1 }, (_, i) => g.from + i) as a (a)}
             {@const raw = text(g.s, a)}
-            {#if raw !== undefined}
+            {#if raw !== undefined && riwaya}
+              <span
+                class="aya"
+                class:on={current?.s === g.s && current?.a === a}
+                data-aya={`${g.s}:${a}`}
+                role="button"
+                tabindex={readOnly ? -1 : 0}
+                aria-disabled={readOnly ? 'true' : undefined}
+                onclick={() => !readOnly && onpick?.(g.s, a)}
+                onkeydown={(e) => !readOnly && e.key === 'Enter' && onpick?.(g.s, a)}
+                ><span class="quran-text rw-text" data-verse={`${g.s}:${a}`}>{raw}</span></span
+              >
+            {:else if raw !== undefined}
               {@const parts = splitBasmala(g.s, a, raw, basmala)}
               {@const tj = tajwid ? tajwid(g.s) : null}
               {@const tv = tj ? verseRuns({ s: g.s, a, text: raw }, basmala, tj) : null}
@@ -351,6 +381,15 @@
     font-size: 1.4rem;
     line-height: 1;
     color: var(--mp-on-band);
+  }
+  /* A8 : police fournie par le Complexe pour la riwāya (repli : police coranique de l'application) */
+  .body.riwaya .flow,
+  .body.riwaya .quran-text,
+  .body.riwaya .band-title {
+    font-family: var(--rw-font), var(--font-quran);
+  }
+  .body.riwaya .flow {
+    line-height: 2.5;
   }
   .basmala {
     display: block;

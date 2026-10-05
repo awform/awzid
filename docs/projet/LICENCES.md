@@ -71,4 +71,22 @@ page de la traduction (clé `mp.credit_traduction`). Les notes du traducteur son
 Voir `docs/projet/SOURCES_MUSHAF.md` : polices « par page » du Complexe (licence compatible, mais aucune donnée
 de lignes officielle accessible), QUL et Quran Foundation (compte nécessaire), miroir `nuqayah/qpc-fonts`
 (non officiel), traductions Tanzil (non commerciales), Hamidullah / Sahih International (protégées), texte Warsh
-(non vérifiable). **Rien n'est extrait de l'application Ayat.**
+(non vérifiable avant A8 — voir § 6). **Rien n'est extrait de l'application Ayat.**
+
+## 6. Muṣḥafs des riwāyāt — textes et polices du Complexe du Roi Fahd (chantier A8)
+
+| Élément | Détail |
+|---|---|
+| Source | Complexe du Roi Fahd pour l'impression du Noble Coran (Médine), plateforme développeurs `https://download.qurancomplex.gov.sa/resources_dev/` (relevé du 04/10/2026, `W\application\licences\INVENTAIRE_COMPLEXE.md`) |
+| Licence du texte (L-DEV) | « peut être utilisé dans le développement d'applications et de logiciels » (page de la plateforme) — mise à disposition déclarée pour les applications |
+| Licence des polices | contrat inclus dans chaque police (table `name`, champ 13, lu le 05/10/2026) : droit **gratuit** d'utiliser, copier et distribuer ; la police ne peut être **ni vendue, ni modifiée, altérée, traduite, désassemblée** ; fournie « en l'état ». **Couvre l'usage dans l'application** à condition de servir le fichier TTF **tel quel** (aucune conversion WOFF2, aucun sous-ensemble) et de ne jamais le vendre (il est livré gratuitement avec le texte, comme le reste de l'espace Coran). Fichiers de la plateforme développeurs seulement : les polices du site fonts.qurancomplex.gov.sa (« tous droits réservés ») ne sont pas utilisées |
+| Riwāyāt | Warsh, Qālūn (kfgqpc_*_v30, police 3.0), Shuʿba, as-Sūsī, al-Bazzī (v30, police 3.0), ad-Dūrī (UthmanicDouri v2.0, police 2.0). Ḥafṣ reste le texte **Tanzil** des livres (inchangé) |
+| Archives (SHA-256 relevés au téléchargement, conformes aux empreintes publiées) | warsh `d79b0e9d…bbda`, qalun `32552185…65d9`, shubah `e2ec0e48…6288`, susi `c202fee4…714e`, bazzi `54700100…172b`, UthmanicDouri `84e55697…c0b1` (MD5 publié `a60bdd18…35c8`) ; empreintes complètes des fichiers JSON et TTF : `packages/content/src/riwayat.ts` |
+| Copie dans le dépôt | `packages/content/riwayat-source/*.json.gz` (gzip du JSON d'origine, retrouvé octet pour octet) ; polices TTF d'origine dans `apps/web/static/riwayat/<riwāya>/` |
+| Méthode | `packages/content/src/cli-riwayat.ts` (`pnpm --filter @awform/content riwayat [--from <dossier du Complexe>] [--check]`) → `apps/web/static/riwayat/<riwāya>/NNN.json` + `index.json` : texte et nom de sourate **recopiés tels quels** (aucune NFC, rien de retapé) ; test bloquant `packages/content/test/riwayat.test.ts` (empreintes, comptes officiels par sourate, identité des fichiers livrés avec la source) |
+| Comptes relevés | Warsh et Qālūn 6 214, Shuʿba 6 236, as-Sūsī 6 218, **ad-Dūrī 6 217** (le fichier UthmanicDouri v2.0 numérote al-Mulk en 30 versets ; as-Sūsī : 31), al-Bazzī 6 220 (basmala = 1:1 d'al-Fātiḥa) |
+| Mises à jour | nouvelle version du Complexe : décompresser l'archive, mettre à jour version et empreintes dans `riwayat.ts`, relancer `riwayat --from` |
+
+**Crédit affiché** (Lire, Écouter, Muṣḥaf, clé `rw.credit`) : « Texte : Complexe du Roi Fahd pour l'impression du
+Noble Coran (Médine), riwāya …, version … (plateforme développeurs) ; police du Complexe (version …), livrée sans
+modification. »

@@ -2,7 +2,7 @@
 // audit PERF-1) : mesure après `vite build`, compression Brotli.
 //  - JavaScript + CSS INITIAUX de chaque page d'entrée (point d'entrée, application, mises en page et page,
 //    avec leurs imports statiques, d'après le manifeste de Vite) ≤ 150 Ko : la pire page est retenue ;
-//  - TOTAL de toutes les pages (tout ce que le service worker garde pour le hors ligne) ≤ 315 Ko (D30) ;
+//  - TOTAL de toutes les pages (tout ce que le service worker garde pour le hors ligne) ≤ 320 Ko (D30, A8) ;
 //  - polices une seule fois ≤ 600 Ko.
 // Écrit reports/budget-web.md à la racine du dépôt ; code de sortie 1 si un budget est dépassé.
 import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
@@ -25,6 +25,13 @@ const sum = (list, f) => list.reduce((s, p) => s + f(p), 0);
 const js = files.filter((p) => p.endsWith('.js') && !p.endsWith('service-worker.js'));
 const css = files.filter((p) => p.endsWith('.css'));
 const fonts = files.filter((p) => p.endsWith('.woff2'));
+// A8 : polices des riwāyāt (Complexe, TTF servis sans modification) — hors coquille, chargées à la demande
+// (une seule à la fois, au choix du muṣḥaf) : chacune ≤ 1 Mo, jamais préchargée par le service worker
+const BUDGET_RIWAYA_FONT = 1024 * 1024;
+const rwFonts = files.filter((p) => /[\\/]riwayat[\\/]/.test(p) && p.endsWith('.ttf'));
+const rwWorst = rwFonts.reduce((m, p) => Math.max(m, statSync(p).size), 0);
+const swSrc = readFileSync(join(root, 'src', 'service-worker.ts'), 'utf8');
+const rwExcluded = /startsWith\('\/riwayat\/'\)/.test(swSrc);
 const sw = files.filter((p) => p.endsWith('service-worker.js'));
 const r = {
   jsBr: sum(js, br),
@@ -34,8 +41,9 @@ const r = {
 };
 const ko = (n) => `${(n / 1024).toFixed(1)} Ko`;
 const BUDGET_INITIAL = 150 * 1024;
-// Muṣḥaf par page (04/10/2026) : 300 → 315 Ko pour ce nouvel écran, à valider (décision D30)
-const BUDGET_TOTAL = 315 * 1024;
+// Muṣḥaf par page (04/10/2026) : 300 → 315 Ko, à valider (décision D30) ; A8 (05/10/2026) : muṣḥafs des
+// riwāyāt dans Lire, Écouter et Muṣḥaf (+4,5 Ko, main était à 313 Ko) → 320 Ko, à valider (décision D-A8)
+const BUDGET_TOTAL = 320 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 
 // JavaScript initial par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises en
@@ -103,6 +111,7 @@ const lines = [
   `| CSS (Brotli) | ${ko(r.cssBr)} | — |`,
   `| Service worker (Brotli) | ${ko(r.swBr)} | — |`,
   `| Polices WOFF2 (une seule fois, déjà compressées) | ${ko(r.fonts)} | ≤ ${ko(BUDGET_FONTS)} |`,
+  `| Police d'une riwāya, la plus lourde (${rwFonts.length} polices, à la demande, hors coquille${rwExcluded ? '' : ' — NON EXCLUE du service worker'}) | ${ko(rwWorst)} | ≤ ${ko(BUDGET_RIWAYA_FONT)} |`,
   '',
   '## Pages les plus lourdes au premier chargement',
   '',
@@ -113,7 +122,13 @@ const lines = [
 mkdirSync(join(root, '..', '..', 'reports'), { recursive: true });
 writeFileSync(join(root, '..', '..', 'reports', 'budget-web.md'), lines.join('\n') + '\n');
 console.log(lines.join('\n'));
-if (worst.br > BUDGET_INITIAL || r.jsBr + r.cssBr > BUDGET_TOTAL || r.fonts > BUDGET_FONTS) {
+if (
+  worst.br > BUDGET_INITIAL ||
+  r.jsBr + r.cssBr > BUDGET_TOTAL ||
+  r.fonts > BUDGET_FONTS ||
+  rwWorst > BUDGET_RIWAYA_FONT ||
+  !rwExcluded
+) {
   console.error('Budget dépassé');
   process.exit(1);
 }
