@@ -203,11 +203,12 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
   // 1. noms → versets (doublons, hors nommage, hors muṣḥaf, hors périmètre), dans tous les dossiers
   const byVerse = new Map<string, { file: string; source: string; sura: number; aya: number }>();
   const addVerse = (file: string, source: string, v: { sura: number; aya: number }) => {
+    // hors périmètre d'abord : une sourate écartée d'un import partiel ne bloque pas les autres
+    if (scope && !scope.has(v.sura))
+      return add('avertissement', 'hors_perimetre', { file, sura: v.sura, aya: v.aya });
     const max = table ? (table[v.sura - 1] ?? 0) : 286;
     if (v.sura < 1 || v.sura > 114 || v.aya > max)
       return add('bloquant', 'hors_mushaf', { file, sura: v.sura, aya: v.aya });
-    if (scope && !scope.has(v.sura))
-      return add('avertissement', 'hors_perimetre', { file, sura: v.sura, aya: v.aya });
     const key = `${v.sura}:${v.aya}`;
     const prev = byVerse.get(key);
     if (prev)

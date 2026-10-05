@@ -266,6 +266,17 @@ describe('contrôles avant activation (dossier local)', () => {
     });
     expect(codes(r)).toEqual(['compte_incorrect', 'manquant']);
     expect(r.issues.find((i) => i.code === 'manquant')).toMatchObject({ sura: 67, aya: 31 });
+    // un verset hors muṣḥaf dans une sourate ÉCARTÉE d'un import partiel ne bloque pas (Qālūn : 1:8 reçu)
+    writeTestMushaf(d, [1], { counts: { 1: 8 } });
+    const part = await scanAudioDir({
+      dir: d,
+      pattern: 'SSSVVV.wav',
+      riwaya: 'qalun',
+      suras: [67],
+      silence: false,
+    });
+    expect(codes(part)).toEqual(['compte_incorrect', 'manquant']);
+    expect(codes(part, 'avertissement')).toContain('hors_perimetre');
   });
 
   it.skipIf(!FFMPEG)(
