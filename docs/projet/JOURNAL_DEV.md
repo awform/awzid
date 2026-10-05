@@ -55,9 +55,10 @@ du mouvement après chaque page, condensé, dans l'esprit des vidéos « Arabe f
    web +3 (réglage) ; `pnpm check` vert après fusion de F1 — **1 437 réussis, 1 ignoré** ; e2e `a21.spec.ts` (7 × 2 appareils :
    apparition après la partie, passer/revoir/pause, voix seulement au geste, version calme, condensé et
    questions, hors ligne, démonstration et réglage par niveau, captures 375 px clair/sombre dans `reports/a21/`).
-   **e2e complets** (après fusion de F1) : **262 réussis, 23 ignorés, 1 échec** non lié (a8 Qālūn, attente du
-   sélecteur de muṣḥaf), **réussi au second passage** (a8 seul : 5/5) ; correction d'accessibilité en passant
-   (axe : contraste de l'animation en attente et de la réplique précédente).
+   Correction d'accessibilité en passant (axe : contraste de l'animation en attente et de la réplique
+   précédente). **Après fusion de F1 puis F2** (`main` 4c37aa3) : `pnpm check` vert — unitaires **1 460 réussis,
+   1 ignoré** ; e2e complets **273 réussis, 23 ignorés, 0 échec** (17,1 min) ; budget : page la plus lourde
+   `/lecons/[id]` 139,0 Ko, total 339,2 + 34,5 = **373,7 Ko ≤ 375**.
 
 Décisions à prendre (D-A21) : budget 375 Ko ; activer au-delà des pilotes (par niveau ou partout) ; relief des
 ḥarakāt (le signe de la notion brille en couleur ; la couleur d'une ḥaraka seule dans une syllabe n'est pas
