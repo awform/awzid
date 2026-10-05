@@ -2,7 +2,7 @@
 // audit PERF-1) : mesure après `vite build`, compression Brotli.
 //  - JavaScript + CSS INITIAUX de chaque page d'entrée (point d'entrée, application, mises en page et page,
 //    avec leurs imports statiques, d'après le manifeste de Vite) ≤ 150 Ko : la pire page est retenue ;
-//  - TOTAL de toutes les pages (tout ce que le service worker garde pour le hors ligne) ≤ 360 Ko (D30, A8, D31, A12) ;
+//  - TOTAL de toutes les pages (tout ce que le service worker garde pour le hors ligne) ≤ 370 Ko (D30, A8, D31, A12, A21) ;
 //  - polices une seule fois ≤ 600 Ko.
 // Écrit reports/budget-web.md à la racine du dépôt ; code de sortie 1 si un budget est dépassé.
 import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
@@ -46,8 +46,11 @@ const BUDGET_INITIAL = 150 * 1024;
 // A3 (05/10/2026) : audio des leçons (bouton écouter, clé SHA-1 du moteur des livres, option « avec l'audio »
 // des téléchargements, +3,6 Ko) → 325 Ko, à valider (décision D31) ; A12 (05/10/2026) : espace « Au quotidien »
 // (quatre pages : horaires, qibla, adhkār, verset en image ; adhan-js 4 Ko chargé à la demande ; 173 textes
-// d'interface en français dans la coquille, +4,4 Ko ; +33 Ko au total) → 360 Ko, à valider (décision D-A12)
-const BUDGET_TOTAL = 360 * 1024;
+// d'interface en français dans la coquille, +4,4 Ko ; +33 Ko au total) → 360 Ko, à valider (décision D-A12) ;
+// A21 (05/10/2026) : leçons vivantes — générateurs et lecteur des animations chargés à la demande sur les
+// leçons vivantes seulement (≈ 9 Ko, gardés par le service worker pour le hors ligne), page de démonstration,
+// réglages et 47 textes français (+11,6 Ko au total ; page de leçon +1,3 Ko) → 370 Ko, à valider (décision D-A21)
+const BUDGET_TOTAL = 370 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 
 // JavaScript initial par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises en
