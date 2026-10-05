@@ -8,6 +8,60 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 05/10/2026 — Chantier A1 : vraies récitations du Complexe (outil, contrôles, ASR, démo)
+
+Branche `a1-audio-wip` (depuis `main` 398cc4e), intégrée dans `main`, démo redéployée. Mesures sur la VM.
+
+1. **Outil `coran-audio`** : plusieurs nommages par récitation (`--nommage a,b,c`) et plusieurs dossiers
+   (`--dossier` répété), fichiers jamais renommés ni modifiés ; nommages réels relevés (`COMPLEXE_NOMMAGES` :
+   `10-SSSVVV-A03.mp3`… ; al-Ḥudhayfī Ḥafṣ : sourate 2 à part en `10-002VVV-001.mp3` ; aṣ-Ṣiddīqī : double
+   extension `.mp3.mp3`/`.wav.mp3` et sourate 1 sur deux chiffres) ; annexes B/C (basmala, isti'ādha) reconnues ;
+   comptes OFFICIELS par sourate des riwāyāt (textes du Complexe : Shuʿba 6 236, as-Sūsī et ad-Dūrī 6 218,
+   Qālūn 6 214 ; `riwayaSuraVerses`) ; import partiel : une sourate écartée ne bloque plus. Catalogue : noms
+   arabes exacts, crédit FR/AR « Récitation : <nom> — Complexe du Roi Fahd pour l'impression du Noble Coran,
+   Médine », licence = texte arabe relevé en direct le 04/10/2026 (https://qurancomplex.gov.sa/quran-audios/)
+   + traduction de travail, « ne pas vendre l'audio » (migration 0028 : `credit_ar`, `usage_note`, affichés
+   dans Écouter et Mes récitateurs). `deploy.sh` : volume `audio` rendu au compte de l'outil (EACCES constaté).
+2. **Vérification** (`verifier`, base de la démo) et 3. **contrôle par ASR** (NVIDIA FastConformer arabe,
+   CC-BY-4.0, image `awzid/asr-nemo`, `infra/outils/asr-controle/` ; 528 versets environ par récitation :
+   premier et dernier de chaque sourate + 300 au hasard ; second passage « voisins » pour les lettres isolées) :
+
+   | Récitation | Versets | verifier | ASR (conformes) | Démo |
+   |---|---|---|---|---|
+   | ayyoub-hafs | 6 236 | OK | 528/528 | activé |
+   | muaiqly-hafs | 6 236 | OK (4 silences longs) | 528/528 | activé |
+   | huthify-hafs | 6 236 | OK (2 dossiers, 2 nommages) | 528/528 | activé |
+   | akhdar-hafs | 6 236 | OK | 528/528 | activé |
+   | huthify-shuba | 6 236 | OK | 528/528 | activé |
+   | juhani-duri | 6 218 | OK | 529/529 | activé |
+   | muhanna-hafs | 6 233 | BLOQUÉ (110 absente) | 523/527, 3 suspects | importé partiel (sans 42, 109, 110), non activé |
+   | sediki-susi | 6 217 | BLOQUÉ (67:31 absent) | 527/529, décalage 67:29-30 | importé partiel (sans 67), non activé |
+   | huthify-qalun | 6 214 + 1:8 | BLOQUÉ (1:8 hors muṣḥaf) | 525/528, décalage Fātiḥa | partiel à réimporter (sans 1), non activé |
+
+   Constats : al-Muhannā — dans le zip, le dossier « 110 An-Nasr » contient des fichiers nommés `10-109VVV` ;
+   la décompression à plat a remplacé 109:1-3 par an-Naṣr (l'ASR entend « إذا جاء نصر الله » dans 109:1) ;
+   42:1 et 42:2 ont la même durée (19,09 s, « حم » seul ≈ 8 s ailleurs) : à écouter. aṣ-Ṣiddīqī : al-Mulk
+   numérotée en 30 versets (le fichier 67:29 contient le verset 30 du texte du Complexe, 67:30 le 31) ; les
+   6 330 fichiers sont complets dans cette numérotation (rien ne manque, 6 331 annoncés = un dossier).
+   Qālūn : al-Fātiḥa en 8 fichiers (1 = basmala, 2-8 = versets 1-7).
+4. **Démo** : 6 récitations actives (6 236 ×5, 6 218) ; échantillons d'écoute (4 extraits par récitation,
+   al-Fātiḥa assemblée sans ré-encodage) et `RAPPORT_CONTROLES_A1.txt` copiés dans
+   `W\application\audio-coran-echantillons\`.
+5. **Interface** (démo, https et http) : Écouter (Ḥafṣ : surlignage du verset entendu ; ad-Dūrī : badge
+   « autre riwāya », pas de surlignage), crédit FR/AR et condition d'usage, sourate gardée hors ligne en https
+   puis jouée depuis l'appareil (`blob:`), paquets des relais servis (`/packs`, 1,73 Go pour ad-Dūrī).
+   **Défaut corrigé** : dans le Muṣḥaf page par page, le surlignage Ḥafṣ recalculait la file et coupait la
+   lecture dès le premier verset (invisible avec les bips d'essai) → verset entendu distinct du début de plage ;
+   e2e `a1.spec.ts`.
+6. Tests : `pnpm check` vert (unitaires 1 308 réussis, budget respecté), e2e 225 réussis, 20 ignorés.
+   Commits aaa075a, 1db77b9, fdcc18a (déploiement), e8034a1, ece3827 et ce journal.
+
+Décisions à prendre (client/référent) : muhanna-hafs (réextraction depuis le zip conservé, sourates 109/110
+par dossier) ; numérotation d'al-Mulk pour as-Sūsī (30 ou 31) ; al-Fātiḥa de Qālūn (basmala en fichier 1) ;
+écoute des échantillons par le référent avant toute activation hors démo.
+
+---
+
 ## 04/10/2026 — Finitions : arabe isolé dans l'espace Coran, e2e stables, traductions relues (3 branches)
 
 Mesures sur la VM `awform-dev`, dossiers `~/awform-finitions` (étapes 1 et 2) et `~/awform-trad` (étape 3 et
