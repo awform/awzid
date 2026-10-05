@@ -174,6 +174,8 @@ export async function downloadPack(
     illusKeys: Object.keys(pack.illustrations),
   };
   await put('packs', stored);
+  // A21b : niveau d'arabe gardé pour le hors ligne → le code des leçons vivantes aussi
+  void import('./vivante/reglage').then((m) => m.prechargerVivante(level)).catch(() => undefined);
   return stored;
 }
 

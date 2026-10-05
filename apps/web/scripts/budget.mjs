@@ -3,6 +3,7 @@
 //  - JavaScript + CSS INITIAUX de chaque page d'entrée (point d'entrée, application, mises en page et page,
 //    avec leurs imports statiques, d'après le manifeste de Vite) ≤ 150 Ko : la pire page est retenue ;
 //  - TOTAL de toutes les pages (tout ce que le service worker garde pour le hors ligne) ≤ 375 Ko (D30, A8, D31, A12, F1, A21) ;
+//  - A21b : code des leçons vivantes, chargé à la demande et gardé au premier usage (hors coquille) ≤ 20 Ko ;
 //  - polices une seule fois ≤ 600 Ko.
 // Écrit reports/budget-web.md à la racine du dépôt ; code de sortie 1 si un budget est dépassé.
 import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
@@ -22,8 +23,23 @@ const br = (p) =>
 
 const files = walk(client);
 const sum = (list, f) => list.reduce((s, p) => s + f(p), 0);
-const js = files.filter((p) => p.endsWith('.js') && !p.endsWith('service-worker.js'));
-const css = files.filter((p) => p.endsWith('.css'));
+// A21b : code des leçons vivantes chargé À LA DEMANDE, hors coquille (liste écrite par vite.config.ts, lue
+// par le service worker qui ne le précharge pas) : compté à part, pas dans le total de la coquille
+const vivList = (() => {
+  try {
+    return JSON.parse(readFileSync(join(client, '_app', 'vivante.json'), 'utf8'));
+  } catch {
+    return [];
+  }
+})();
+const isViv = (p) => vivList.includes(p.slice(client.length).replaceAll('\\', '/'));
+const vivExcluded = /vivante\.json/.test(
+  readFileSync(join(root, 'src', 'service-worker.ts'), 'utf8'),
+);
+const BUDGET_VIVANTE = 20 * 1024;
+const js = files.filter((p) => p.endsWith('.js') && !p.endsWith('service-worker.js') && !isViv(p));
+const css = files.filter((p) => p.endsWith('.css') && !isViv(p));
+const viv = files.filter(isViv);
 const fonts = files.filter((p) => p.endsWith('.woff2'));
 // A8 : polices des riwāyāt (Complexe, TTF servis sans modification) — hors coquille, chargées à la demande
 // (une seule à la fois, au choix du muṣḥaf) : chacune ≤ 1 Mo, jamais préchargée par le service worker
@@ -38,6 +54,7 @@ const r = {
   cssBr: sum(css, br),
   swBr: sum(sw, br),
   fonts: sum(fonts, (p) => statSync(p).size),
+  vivBr: sum(viv, br),
 };
 const ko = (n) => `${(n / 1024).toFixed(1)} Ko`;
 const BUDGET_INITIAL = 150 * 1024;
@@ -119,6 +136,7 @@ const lines = [
   `| JavaScript + CSS initiaux, page la plus lourde (\`${worst.route}\`, Brotli) | ${ko(worst.br)} | ≤ ${ko(BUDGET_INITIAL)} |`,
   `| JavaScript de toutes les pages (Brotli) | ${ko(r.jsBr)} | ≤ ${ko(BUDGET_TOTAL)} |`,
   `| CSS (Brotli) | ${ko(r.cssBr)} | — |`,
+  `| Leçons vivantes : générateurs, lecteur, modèles (${viv.length} fichiers, à la demande, hors coquille${vivExcluded ? '' : ' — NON EXCLUS du service worker'}) | ${ko(r.vivBr)} | ≤ ${ko(BUDGET_VIVANTE)} |`,
   `| Service worker (Brotli) | ${ko(r.swBr)} | — |`,
   `| Polices WOFF2 (une seule fois, déjà compressées) | ${ko(r.fonts)} | ≤ ${ko(BUDGET_FONTS)} |`,
   `| Police d'une riwāya, la plus lourde (${rwFonts.length} polices, à la demande, hors coquille${rwExcluded ? '' : ' — NON EXCLUE du service worker'}) | ${ko(rwWorst)} | ≤ ${ko(BUDGET_RIWAYA_FONT)} |`,
@@ -137,7 +155,10 @@ if (
   r.jsBr + r.cssBr > BUDGET_TOTAL ||
   r.fonts > BUDGET_FONTS ||
   rwWorst > BUDGET_RIWAYA_FONT ||
-  !rwExcluded
+  !rwExcluded ||
+  r.vivBr > BUDGET_VIVANTE ||
+  !vivList.length ||
+  !vivExcluded
 ) {
   console.error('Budget dépassé');
   process.exit(1);

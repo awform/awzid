@@ -4,9 +4,10 @@
   import { vivanteActive } from './reglage';
 
   /**
-   * Chantier A21 — point d'accroche des « leçons vivantes » dans la page de leçon. Quelques octets ici :
-   * générateurs et lecteur sont chargés à la demande, seulement si la leçon est vivante (pilote ou niveau
-   * activé dans les réglages, interrupteur général), puis gardés par le service worker (hors ligne).
+   * Chantiers A21 / A21b — point d'accroche des « leçons vivantes » dans la page de leçon. Quelques octets ici :
+   * générateurs et lecteur sont chargés à la demande, seulement si la leçon est vivante (toutes les leçons des
+   * livres d'arabe par défaut, sauf niveau désactivé ou interrupteur général), puis gardés par le service
+   * worker (hors ligne).
    */
   let { unit }: { unit: { id: string; levelCode: string; kind: string; lesson: unknown } } =
     $props();
@@ -19,7 +20,7 @@
   $effect(() => {
     const u = unit;
     const article = mark?.closest('article');
-    if (!article || u.kind !== 'lecon' || !vivanteActive(u.id, u.levelCode)) return;
+    if (!article || u.kind !== 'lecon' || !vivanteActive(u.levelCode)) return;
     let dead = false;
     let stop: (() => void) | undefined;
     void import('./installer')

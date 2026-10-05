@@ -39,8 +39,22 @@ const ASSETS = [
   ),
 ];
 
+// A21b : code des leçons vivantes (liste écrite à la construction, vite.config.ts) — pas dans la coquille ;
+// gardé dans le cache de cette version au premier usage ou au téléchargement d'un niveau d'arabe
+const VIVANTE = '/_app/vivante.json';
+const isImmutable = (p: string) => p.startsWith('/_app/immutable/');
+
 sw.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((c) => c.addAll([...ASSETS, SHELL])));
+  event.waitUntil(
+    fetch(VIVANTE)
+      .then((r) => (r.ok ? (r.json() as Promise<string[]>) : []))
+      .catch(() => [] as string[])
+      .then((skip) =>
+        caches
+          .open(CACHE)
+          .then((c) => c.addAll([...ASSETS.filter((f) => !skip.includes(f)), SHELL])),
+      ),
+  );
 });
 
 sw.addEventListener('activate', (event) => {
@@ -92,7 +106,16 @@ sw.addEventListener('fetch', (event) => {
     return;
   }
   if (ASSETS.includes(url.pathname)) {
-    event.respondWith(caches.match(url.pathname).then((r) => r ?? fetch(req)));
+    // fichier de la coquille ; ceux chargés à la demande (A21b) sont gardés au premier usage
+    event.respondWith(
+      caches.open(CACHE).then(async (c) => {
+        const hit = await c.match(url.pathname);
+        if (hit) return hit;
+        const r = await fetch(req);
+        if (r.ok && isImmutable(url.pathname)) await c.put(url.pathname, r.clone());
+        return r;
+      }),
+    );
     return;
   }
   // QR code du livre (/l/en1-05) : si la leçon est déjà sur l'appareil, on l'ouvre dans l'application

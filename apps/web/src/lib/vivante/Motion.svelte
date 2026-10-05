@@ -29,6 +29,9 @@
     condense?: boolean;
   } = $props();
 
+  let plusP: Promise<typeof import('./ModelesPlus.svelte').default> | undefined;
+  /** A21b : modèles racine, conjugaison, nombres, heure (morceau de code à part, chargé au premier besoin) */
+  const plus = () => (plusP ??= import('./ModelesPlus.svelte').then((m) => m.default));
   const beats = $derived(motion.beats);
   const nQ = $derived(beats.filter((b) => b.k === 'question').length);
   let root: HTMLElement | undefined = $state();
@@ -253,6 +256,9 @@
       {#if b.ar}<span class="ar rule"><Ar text={b.ar} {lettres} /></span>{/if}
       {#if b.fr}<span class="fr up late"><Bidi text={b.fr} /></span>{/if}
     </div>
+  {:else if b.k === 'racine' || b.k === 'conj' || b.k === 'nombre' || b.k === 'heure'}
+    <!-- A21b : racine et schème, conjugaison, nombres, heure — code chargé seulement s'il sert -->
+    {#await plus() then P}<P {b} {lettres} />{/await}
   {:else if b.k === 'question'}
     {@const a = answers[n]}
     <div class="b question" data-testid="question-eclair" data-kind={b.q.kind}>
@@ -936,7 +942,9 @@
   }
   /* version calme (appareil : moins d'animations) : simples fondus, aucun mouvement */
   .calme .b,
-  .calme .b :global(*) {
+  .calme .b :global(*),
+  .calme :global(.plus),
+  .calme :global(.plus *) {
     animation: fade 500ms ease both !important;
   }
   .calme .draw text {
