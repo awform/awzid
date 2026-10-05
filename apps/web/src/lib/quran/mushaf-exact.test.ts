@@ -29,8 +29,10 @@ import {
   applyMutation,
   apiUrl,
   buildExactFile,
+  applyCorrections,
   checkMushafRecord,
   diagnostic,
+  readCorrections,
   mushafRecord,
   publish,
   readPageStarts,
@@ -340,6 +342,23 @@ describe('A34 — outil de synchronisation (sans réseau)', () => {
     );
     const { file } = buildExactFile(rows, tanzil.lengths, null);
     expect(file.pages[0]).toEqual(synthPage().page);
+  });
+
+  it('corrections explicites : appliquée si « avant » correspond, obsolète si déjà corrigée, sinon bloquante', () => {
+    const list = readCorrections(join(REPO, 'infra/outils/qf-lignes/corrections.json'));
+    const c = list.find((x) => x.id === 'qf-2-181-fin')!;
+    expect(c).toMatchObject({ mushaf: 2, apres: { char_type_name: 'end' } });
+    const rec = { ...c.record, record_type: 'mushaf_word', line_number: 15, ...c.avant };
+    const rows = new Map<string, Row>([['word:x', rec]]);
+    const a = applyCorrections(rows, list, 2);
+    expect(a.applied).toEqual(['qf-2-181-fin']);
+    expect(a.rows.get('word:x')?.char_type_name).toBe('end');
+    expect(rows.get('word:x')?.char_type_name).toBe('word'); // la copie synchronisée n'est pas modifiée
+    expect(applyCorrections(a.rows, list, 2).obsolete).toEqual(['qf-2-181-fin']);
+    const changed = new Map<string, Row>([['word:x', { ...rec, text: 'Z' }]]);
+    expect(applyCorrections(changed, list, 2).errors[0]).toMatch(/a changé chez QF/);
+    expect(applyCorrections(new Map(), list, 2).errors[0]).toMatch(/absent/);
+    expect(applyCorrections(rows, list, 1).applied).toEqual([]);
   });
 
   it('synchronisation simulée : jeton, amorçage, instantané, pages suivantes ; secret jamais dans l’adresse', async () => {

@@ -54,6 +54,19 @@ export function diagnostic(o: {
   fetchImpl?: typeof fetch;
   out?: (line: string) => void;
 }): Promise<boolean>;
+export interface Correction {
+  id: string;
+  mushaf: number;
+  record: { id: number; word_id: number; verse_id: number };
+  avant: Row;
+  apres: Row;
+}
+export function applyCorrections(
+  rows: Map<string, Row>,
+  list: Correction[],
+  mushafId: number,
+): { rows: Map<string, Row>; applied: string[]; obsolete: string[]; errors: string[] };
+export function readCorrections(path: string): Correction[];
 export function syncBody(j: unknown): Record<string, unknown>;
 export function snapshotBody(j: unknown): { records?: unknown[] } & Record<string, unknown>;
 export function snapshotPath(mushafId: number): string;

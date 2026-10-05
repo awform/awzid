@@ -215,6 +215,48 @@ export function buildExactFile(rows, lengths, source) {
   return { file: out, unknown };
 }
 
+// ---------------------------------------------------------------------------------------- corrections
+/**
+ * Corrections EXPLICITES (corrections.json, validées par le référent) appliquées sur une COPIE des lignes : une
+ * correction ne s'applique que si l'enregistrement (même id, word_id, verse_id) porte exactement les valeurs
+ * « avant » ; s'il porte déjà « apres », elle est obsolète (corrigée chez QF, à retirer) ; sinon : écart bloquant.
+ */
+export function applyCorrections(rows, list, mushafId) {
+  const out = new Map(rows);
+  const applied = [];
+  const obsolete = [];
+  const errors = [];
+  for (const c of list ?? []) {
+    if (Number(c.mushaf) !== Number(mushafId)) continue;
+    const hits = [...out.entries()].filter(
+      ([, r]) =>
+        Number(r.id) === Number(c.record.id) &&
+        Number(r.word_id) === Number(c.record.word_id) &&
+        Number(r.verse_id) === Number(c.record.verse_id),
+    );
+    if (hits.length !== 1) {
+      errors.push(
+        `correction ${c.id} : enregistrement ${c.record.id} ${hits.length ? 'en double' : 'absent'}`,
+      );
+      continue;
+    }
+    const [key, r] = hits[0];
+    const same = (o) => Object.entries(o).every(([k, v]) => r[k] === v);
+    if (same(c.apres)) obsolete.push(c.id);
+    else if (same(c.avant)) {
+      out.set(key, { ...r, ...c.apres });
+      applied.push(c.id);
+    } else
+      errors.push(
+        `correction ${c.id} : l'enregistrement ${c.record.id} a changé chez QF — à revoir`,
+      );
+  }
+  return { rows: out, applied, obsolete, errors };
+}
+
+export const readCorrections = (path) =>
+  existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')).corrections ?? []) : [];
+
 // ------------------------------------------------------------------------------------------ contrôle
 export function fontChecker(dir) {
   const cache = new Map();
@@ -675,10 +717,19 @@ async function main() {
     mushafName: String(m.name ?? ''),
     syncedAt: st.lastSync ?? '',
   };
-  const { file, unknown } = buildExactFile(rows, tanzil.lengths, source);
+  const corr = applyCorrections(
+    rows,
+    readCorrections(String(o.corrections ?? join(HERE, 'corrections.json'))),
+    mushafId,
+  );
+  source.corrections = corr.applied;
+  const { file, unknown } = buildExactFile(corr.rows, tanzil.lengths, source);
   const fontsDir = o.polices ? resolve(String(o.polices)) : null;
-  const head = `Contrôle A34 — ${new Date().toISOString()} — ${file.pages.length} pages reçues, muṣḥaf « ${m.name} »`;
-  const pre = [];
+  const head = [
+    `Contrôle A34 — ${new Date().toISOString()} — ${file.pages.length} pages reçues, muṣḥaf « ${m.name} »`,
+    `corrections explicites appliquées : ${corr.applied.join(', ') || 'aucune'}${corr.obsolete.length ? ` ; OBSOLÈTES (corrigées chez QF, à retirer de corrections.json) : ${corr.obsolete.join(', ')}` : ''}`,
+  ].join('\n');
+  const pre = [...corr.errors];
   if (unknown.length) pre.push(`${unknown.length} mot(s) sans verset reconnu`);
   if (!fontsDir)
     pre.push('contrôle des glyphes non fait (--polices manquant) : publication refusée');

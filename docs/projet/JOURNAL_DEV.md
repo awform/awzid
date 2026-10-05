@@ -35,7 +35,7 @@ attend le vrai fichier de lignes, généré par le chef de projet avec le secret
   Vérifié à l'œil sur un banc d'essai LOCAL non commité (pages synthétiques, vraies polices), bureau et téléphone.
 - **Budget** : aucune hausse (composant non importé par une page ; 400,0 Ko / élève 353,1 Ko inchangés). Polices :
   95,4 Mo au total sur le serveur, hors budget, chargées à la demande.
-- Tests : web `mushaf-exact.test.ts` (27), api `a34.test.ts` (4).
+- Tests : web `mushaf-exact.test.ts` (28), api `a34.test.ts` (4).
 - **À faire par le chef de projet** : lancer `sync` (commande dans le rapport A34), lire `rapport.txt`, puis
   brancher l'écran Coran (après la refonte `coran-epure-wip`).
 

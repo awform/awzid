@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "description": "Corrections EXPLICITES des données de mise en page Quran Foundation (Content Sync, mushafs:2 « QCF V1 »). Chaque correction ne s'applique que si l'enregistrement reçu correspond EXACTEMENT à « avant » ; s'il porte déjà « apres », elle est signalée obsolète (corrigée chez QF) ; sinon le contrôle est bloquant. Aucune autre donnée n'est modifiée.",
+  "corrections": [
+    {
+      "id": "qf-2-181-fin",
+      "mushaf": 2,
+      "verset": "2:181",
+      "record": {
+        "record_type": "mushaf_word",
+        "id": 444875,
+        "word_id": 83903,
+        "verse_id": 188
+      },
+      "avant": {
+        "page_number": 27,
+        "line_number": 15,
+        "position_in_page": 130,
+        "position_in_verse": 14,
+        "text": "ﯾ",
+        "char_type_id": 1,
+        "char_type_name": "word"
+      },
+      "apres": { "char_type_id": 3, "char_type_name": "end" },
+      "correction": "Dernier glyphe de 2:181 (U+FBFE, page 27, ligne 15) = signe de fin de verset ١٨١, typé « word » par erreur dans les données reçues (13 mots dans Tanzil, 14 « word » et aucun « end » reçus). char_type_id 3 / « end » comme les autres fins de verset (ex. 2:180, enregistrement 444860).",
+      "preuve": "Rendu de la police officielle QCF_P027.ttf du Complexe (Data.zip SHA-256 7fe7a871…edb8) : U+FBEF…U+FBFD = les 13 mots de 2:181 dans l'ordre, U+FBFE = rosace « ١٨١ » (vérifié le 06/10/2026, chantier A34).",
+      "date": "2026-10-06",
+      "validation": "validé par le référent provisoire (06/10/2026)",
+      "signalement": "docs/projet/QF_SIGNALEMENT_2-181.md"
+    }
+  ]
+}
