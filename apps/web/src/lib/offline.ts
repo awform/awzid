@@ -174,8 +174,7 @@ export async function downloadPack(
     illusKeys: Object.keys(pack.illustrations),
   };
   await put('packs', stored);
-  // A21b : niveau d'arabe gardé pour le hors ligne → le code des leçons vivantes aussi
-  void import('./vivante/reglage').then((m) => m.prechargerVivante(level)).catch(() => undefined);
+  gardeVivante(level);
   return stored;
 }
 
@@ -305,3 +304,24 @@ export async function requestPersistence(): Promise<boolean> {
 
 /** Poids lisible selon la langue de l'interface. */
 export { fmtBytes as formatBytes } from './i18n';
+
+/**
+ * A21b — le code des leçons vivantes n'est pas préchargé avec la coquille : quand un niveau d'arabe est gardé
+ * pour le hors ligne (et que ses animations ne sont pas désactivées, réglage `awzid.vivante`), ses fichiers
+ * (liste `/_app/vivante.json`) sont demandés une fois pour que le service worker les garde.
+ */
+function gardeVivante(level: string): void {
+  try {
+    const r = JSON.parse(localStorage.getItem('awzid.vivante') ?? '{}') as {
+      on?: boolean;
+      off?: string[];
+    };
+    if (!/^(en|ado|ad)\d+$/.test(level) || r.on === false || r.off?.includes(level)) return;
+  } catch {
+    /* réglage illisible : par défaut, actives */
+  }
+  void fetch('/_app/vivante.json')
+    .then((r) => (r.ok ? (r.json() as Promise<string[]>) : []))
+    .then((l) => Promise.all(l.map((f) => fetch(f))))
+    .catch(() => undefined);
+}

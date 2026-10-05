@@ -53,13 +53,3 @@ export function writeVivante(r: VivReglage, store: Store | null = safeStorage())
 export function vivanteActive(level: string, r: VivReglage = readVivante()): boolean {
   return r.on && VIV_LEVEL.test(level) && !r.off.includes(level);
 }
-
-/**
- * A21b — le code des leçons vivantes n'est pas dans la coquille : quand un niveau d'arabe est gardé pour le
- * hors ligne (et que ses animations sont actives), on le charge une fois pour que le service worker le garde.
- */
-export function prechargerVivante(level: string): void {
-  if (typeof window === 'undefined' || !('serviceWorker' in navigator) || !vivanteActive(level))
-    return;
-  void Promise.all([import('./installer'), import('./ModelesPlus.svelte')]).catch(() => undefined);
-}

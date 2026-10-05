@@ -8,6 +8,70 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 05/10/2026 — Chantier A21b : « application vivante » partout (toutes les leçons, tous les niveaux)
+
+Branche `a21b-vivante-partout-wip` (depuis `main` 0095df4, worktree `~/awform-a21b`), `main` (A27) fusionné.
+Validé par le client après le pilote A21.
+
+1. **Robustesse sur toutes les leçons** : un test génère les animations des **381 leçons d'élève** des 19 livres
+   d'arabe (en1–en5, ado1–ado4, ad1–ad10 ; bilans et examens exclus comme avant) et vérifie pour chacune :
+   aucune erreur, au moins une animation, 10–20 s chacune, aucun temps vide, condensé ≤ 2 min (≥ 1 min dès que
+   la matière le permet), chaque chaîne arabe = chaîne du livre (ou morceau coupé entre deux mots, hors parties
+   Coran et adab/fiqh), voix seulement sur des textes entiers du livre, rien des parties Coran et adab/fiqh,
+   aucun extrait ni citation du Coran (texte Tanzil). Corrections du générateur pour les formats rencontrés :
+   - **textes sacrés recopiés ailleurs** (hadith dans « je retiens », invocation dans une réplique, formule dans
+     un schéma) : tout texte de 2 mots ou plus égal à un texte des parties Coran/adab-fiqh, contenu dedans ou le
+     contenant est écarté ; citations entre ﴿ ﴾ écartées ; garde appliquée à CHAQUE temps (toutes ses chaînes) ;
+   - **citations du Coran sans marque** (« أَحَدَ عَشَرَ كَوْكَبًا », sourates d'ad1 l24…) : liste
+     `packages/content/src/vivante-garde.ts` (21 empreintes de la clé audio des livres), **tenue à jour par un
+     test** qui compare toutes les animations au texte Tanzil (`VIVANTE_GARDE=ecrire` pour la régénérer) ;
+   - **textes longs** (notions et paragraphes des niveaux avancés, répliques longues) : au-delà de 14 mots, rien
+     n'est animé (le texte reste dans la page) ; un dialogue s'arrête à la première réplique écartée ;
+   - **notes de dialogue** aux séparateurs variés (— · • ● | /) : schéma de 4 parties au plus, une case seulement
+     quand « … » termine la partie, guillemets et ponctuation hors de la case ;
+   - lettres et signes du Muṣḥaf (ٱ, ۥ ۦ) écartés ; nombres et dates dans les textes sans erreur.
+   Couverture : **381 / 381 leçons animées** (en1 21/21, en2–en5 20/20, ado1–ado4 20/20, ad1–ad10 20/20),
+   1 769 animations. **Sans animation** : religion (re, ra) et lecture du Coran (qc) — voir « décisions » ; bilans
+   et examens (inchangé) ; à l'intérieur des leçons, les parties dont tous les textes sont écartés (Coran, adab,
+   textes longs, textes non préparés).
+2. **Activation partout par défaut** (`reglage.ts`) : interrupteur général gardé ; chaque niveau peut être
+   désactivé (« Animations dans ces niveaux ») ; l'ancien réglage du pilote ne restreint plus rien. Page
+   **`/demo/vivante`** : choix du livre puis de la leçon (liste des leçons du niveau), un exemple de chaque
+   modèle, garanties, réglage.
+3. **Nouveaux modèles**, seulement là où les données le permettent (`ModelesPlus.svelte`) :
+   - **racine et schème** (22 leçons : en5 l02, l03, l13, l14 ; ado2 l11, l12, l17 ; ado3 l06, l09, l11, l12 ; ad2
+     l12 ; ad3 l11, l14, l17 ; ad4 l06, l09, l11, l12 ; ad5 l01, l02 ; ad6 l18) : les trois lettres de la racine
+     écrite dans la leçon glissent dans le schème du livre (فَاعِلٌ، مَفْعُولٌ…), puis le mot du livre se forme,
+     racine en couleur ; une décomposition n'est montrée que si elle se **vérifie lettre à lettre** (racines
+     faibles écartées) ;
+   - **conjugaison** (14 leçons : en4 l02, l03, l06, l07 ; ado1 l23 ; ado2 l01–l04 ; ad2 l21 ; ad3 l01–l04) :
+     ligne par ligne, le pronom, le radical puis la terminaison **balisée par le livre** `[..]` (même verbe écrit
+     ailleurs dans la leçon avec sa terminaison balisée ; sans balisage, rien : on n'invente pas où elle commence) ;
+   - **nombres** (8 leçons : en2 l21, en4 l24, ado1 l22, ado2 l13, ad2 l14, ad3 l13, l14, l24) : paires
+     « chiffre ← mot » du livre, le chiffre, la quantité en points (≤ 20), puis le mot ;
+   - **heure** (1 leçon : en4 l12) : horloge réglée sur l'heure lue dans la traduction du livre (« 8 h 30 ») de
+     la phrase arabe, seulement dans une leçon sur l'heure ; les autres leçons sur l'heure ou les dates (ado1
+     l22, ad2 l16, ado2 l14…) n'ont pas de phrase traduite avec une heure : rien d'inventé ;
+   - **tracé : non fait** — les données du lot 6 (`lib/trace/letters.ts`) ne donnent que le côté de départ et
+     « les points à la fin » (marqués « à relire »), pas l'ordre des traits : rien d'inventé.
+4. **Poids** : le code des leçons vivantes (générateurs, lecteur, modèles : 2 fichiers, **12,5 Ko**) n'est plus
+   préchargé avec la coquille : liste écrite à la construction (`vite.config.ts` → `/_app/vivante.json`), le
+   service worker l'écarte du préchargement et le garde au premier usage ; au téléchargement d'un niveau d'arabe
+   (`offline.ts`), il est demandé une fois pour le hors ligne (sauf niveau désactivé). Après fusion d'A27 :
+   page la plus lourde `/lecons/[id]` 141,8 Ko ≤ 150 ; **total 404,0 Ko ≤ 405** (budget d'A27, non relevé) ;
+   **appareil d'un élève 344,6 Ko ≤ 355** (main : 353,1) ; leçons vivantes 12,5 Ko ≤ 20 (ligne nouvelle).
+5. **Tests** : content `vivante.test.ts` (règles, schéma, racine, conjugaison, nombres/heure, garde coranique à
+   jour, 19 livres × toutes leçons), web `reglage.test.ts` (5) ; e2e `a21b.spec.ts` (8 × 2 appareils : en3 l02,
+   ado3 l02, ad7 l02 hors pilotes, religion et Coran sans animation, racine, conjugaison, nombres et heure,
+   démonstration, hors ligne avec le code gardé au téléchargement, captures 375 px clair/sombre dans
+   `reports/a21b/`), `a21.spec.ts` mis à jour (actives partout, réglage par niveau, interrupteur).
+   Textes : 9 ajoutés, 2 changés, 2 retirés (fr, en, es, de, ar ; A_RELIRE.md).
+
+Décisions à prendre (D-A21b) : religion (re/ra) sans animation ; code des leçons vivantes non préchargé ;
+modèle « tracé » en attente de données ; seuil de 14 mots.
+
+---
+
 ## 05/10/2026 — Chantier A27 : parcours par niveau et par classe (interface) + décisions D-F2
 
 Branche `a27-parcours-wip` (worktree `~/awform-a27`, depuis `main` 4c37aa3, fusionnée avec A21 `0095df4`), base de

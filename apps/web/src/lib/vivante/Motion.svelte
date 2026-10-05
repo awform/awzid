@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import Ar from '$lib/Ar.svelte';
   import Bidi from '$lib/Bidi.svelte';
+  import ModelesPlus from './ModelesPlus.svelte';
   import { fmtNumber, t } from '$lib/i18n';
   import { audioIdFor, playLessonAudio, stopLessonAudio, type LevelAudio } from '$lib/lecons-audio';
   import type { VivBeat, VivMotion } from '@awform/content/vivante';
@@ -29,9 +30,6 @@
     condense?: boolean;
   } = $props();
 
-  let plusP: Promise<typeof import('./ModelesPlus.svelte').default> | undefined;
-  /** A21b : modèles racine, conjugaison, nombres, heure (morceau de code à part, chargé au premier besoin) */
-  const plus = () => (plusP ??= import('./ModelesPlus.svelte').then((m) => m.default));
   const beats = $derived(motion.beats);
   const nQ = $derived(beats.filter((b) => b.k === 'question').length);
   let root: HTMLElement | undefined = $state();
@@ -257,8 +255,8 @@
       {#if b.fr}<span class="fr up late"><Bidi text={b.fr} /></span>{/if}
     </div>
   {:else if b.k === 'racine' || b.k === 'conj' || b.k === 'nombre' || b.k === 'heure'}
-    <!-- A21b : racine et schème, conjugaison, nombres, heure — code chargé seulement s'il sert -->
-    {#await plus() then P}<P {b} {lettres} />{/await}
+    <!-- A21b : racine et schème, conjugaison, nombres, heure (même morceau à la demande que le lecteur) -->
+    <ModelesPlus {b} {lettres} />
   {:else if b.k === 'question'}
     {@const a = answers[n]}
     <div class="b question" data-testid="question-eclair" data-kind={b.q.kind}>

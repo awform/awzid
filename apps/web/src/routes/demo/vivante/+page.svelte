@@ -69,8 +69,8 @@
 
 <h2>{t('viv.demo_exemples')}</h2>
 <ul class="exemples" data-testid="vivante-exemples">
-  {#each EXEMPLES as [model, id], i (model)}
-    <li class="p{i % 4}">
+  {#each EXEMPLES as [model, id] (model)}
+    <li>
       <div>
         <strong><Bidi text={t(`viv.m_${model}`)} /></strong>
         <span class="muted"><Bidi text={levelLabel(id.split('.')[0]!)} /></span>
@@ -122,30 +122,14 @@
     gap: 10px;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 14px;
-    border-radius: 18px;
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--k) 16%, var(--card)),
-      color-mix(in srgb, var(--accent) 10%, var(--card))
-    );
-    border: 1px solid color-mix(in srgb, var(--k) 30%, var(--line));
+    padding: 10px 14px;
+    border-radius: 16px;
+    background: var(--card);
+    border: 1px solid var(--line);
   }
   .exemples div {
     display: flex;
     flex-direction: column;
-  }
-  .p0 {
-    --k: var(--c0);
-  }
-  .p1 {
-    --k: var(--c1);
-  }
-  .p2 {
-    --k: var(--c2);
-  }
-  .p3 {
-    --k: var(--c3);
   }
   .regles li {
     margin: 4px 0;
