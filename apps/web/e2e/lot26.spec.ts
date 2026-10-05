@@ -25,12 +25,12 @@ async function noHorizontalScroll(page: Page, url: string) {
   expect(sw, `${url} : la page défile horizontalement`).toBeLessThanOrEqual(cw);
 }
 
-test('adulte : thème « manuscrit », 6 entrées (A12), accueil de premier lancement montré une seule fois', async ({
+test('adulte : thème « manuscrit », 5 entrées, accueil de premier lancement montré une seule fois', async ({
   page,
 }) => {
   await page.goto('/aujourdhui');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'manuscrit');
-  await expect(page.locator('nav.tabs a')).toHaveCount(6);
+  await expect(page.locator('nav.tabs a')).toHaveCount(5);
   const hello = page.getByTestId('bienvenue');
   await expect(hello).toBeVisible();
   await page.getByTestId('bienvenue-ok').click();

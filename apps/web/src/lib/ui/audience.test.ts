@@ -38,7 +38,7 @@ describe('lot 26 — public, thème et navigation', () => {
     expect(audienceOf(ctx({ accountKind: 'adulte', profileKinds: ['ado'] }))).toBe('ado');
   });
 
-  it('3 à 5 entrées par public (6 pour les ados et adultes depuis A12 : « Au quotidien »)', () => {
+  it('3 à 5 entrées par public, toujours', () => {
     for (const a of [
       'enfant',
       'ado',
@@ -50,7 +50,7 @@ describe('lot 26 — public, thème et navigation', () => {
     ] as const) {
       const n = navFor(a).length;
       expect(n, a).toBeGreaterThanOrEqual(3);
-      expect(n, a).toBeLessThanOrEqual(a === 'ado' || a === 'adulte' ? 6 : 5);
+      expect(n, a).toBeLessThanOrEqual(5);
     }
   });
 
@@ -58,7 +58,10 @@ describe('lot 26 — public, thème et navigation', () => {
     const adulte = navFor('adulte');
     expect(activeNav(adulte, '/')).toBe('arabe');
     expect(activeNav(adulte, '/lecons/ad1.l03')).toBe('arabe');
-    expect(activeNav(adulte, '/lecons/re1.l03')).toBe('sciences');
+    // A12 : « Sciences » sous « Plus » pour les adultes (l'enfant garde son entrée)
+    expect(activeNav(adulte, '/lecons/re1.l03')).toBe('plus');
+    expect(activeNav(adulte, '/sciences')).toBe('plus');
+    expect(activeNav(navFor('enfant'), '/lecons/re1.l03')).toBe('sciences');
     expect(activeNav(adulte, '/hifz')).toBe('coran');
     expect(activeNav(adulte, '/coran/lecteur')).toBe('coran');
     expect(activeNav(adulte, '/aujourdhui')).toBe('aujourdhui');

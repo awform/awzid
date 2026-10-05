@@ -100,7 +100,8 @@ modification. »
 - **Usage** : calcul des horaires SUR L'APPAREIL (aucun service externe, aucune donnée envoyée). Méthodes et angles
   contrôlés contre la liste publique d'aladhan.com (`api.aladhan.com/v1/methods`, 05/10/2026) ; horaires et qibla
   des tests comparés à `api.aladhan.com/v1/timings` et `/v1/qibla` (moteur indépendant, relevés du 05/10/2026,
-  écrits dans `apps/web/src/lib/quotidien/quotidien.test.ts`). Aucune donnée d'aladhan n'est livrée ni appelée par
+  écrits dans `apps/web/src/lib/quotidien/quotidien.test.ts`). Méthode « Grande Mosquée de Paris » : 18° / 17° d'après les
+  sources consultées — **à confirmer auprès de la mosquée** (décision D-A12). Aucune donnée d'aladhan n'est livrée ni appelée par
   l'application.
 - **Qibla, calendrier hégirien** : calculs propres (grand cercle ; `Intl` « islamic-umalqura » du navigateur),
   sans bibliothèque.

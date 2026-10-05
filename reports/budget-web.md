@@ -3,7 +3,7 @@
 | Élément | Poids transféré | Budget |
 |---|---|---|
 | JavaScript + CSS initiaux, page la plus lourde (`/lecons/[id]`, Brotli) | 139.9 Ko | ≤ 150.0 Ko |
-| JavaScript de toutes les pages (Brotli) | 323.7 Ko | ≤ 360.0 Ko |
+| JavaScript de toutes les pages (Brotli) | 323.6 Ko | ≤ 360.0 Ko |
 | CSS (Brotli) | 31.2 Ko | — |
 | Service worker (Brotli) | 5.4 Ko | — |
 | Polices WOFF2 (une seule fois, déjà compressées) | 222.6 Ko | ≤ 600.0 Ko |
@@ -18,6 +18,6 @@
 | `/coran/ecouter` | 117.7 Ko |
 | `/enseignant/classe/[id]` | 117.7 Ko |
 | `/lectures/[code]` | 117.3 Ko |
-| `/coran/memoriser` | 113.4 Ko |
+| `/coran/memoriser` | 113.5 Ko |
 | `/coran/lecteur` | 109.9 Ko |
 | `/hifz` | 108.9 Ko |

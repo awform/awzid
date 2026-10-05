@@ -87,10 +87,10 @@ const ITEMS: Record<NavId, Omit<NavItem, 'id'>> = {
 const NAV: Record<Audience, NavId[]> = {
   // enfant : une matière = une icône ; « Plus » serait trop abstrait pour un non-lecteur
   enfant: ['aujourdhui', 'arabe', 'coran', 'sciences', 'ecriture'],
-  // A12 (décision du chef de projet, à valider par le client) : « Au quotidien » dans la navigation principale ;
-  // ados et adultes passent à six entrées (libellés courts) plutôt que de ranger « Sciences » sous « Plus »
-  ado: ['aujourdhui', 'arabe', 'coran', 'sciences', 'quotidien', 'plus'],
-  adulte: ['aujourdhui', 'arabe', 'coran', 'sciences', 'quotidien', 'plus'],
+  // A12 (décision du chef de projet, 05/10/2026) : cinq entrées au plus ; « Prières » (Au quotidien) entre dans la
+  // barre et « Sciences » passe sous « Plus », en attendant la refonte de l'accueil par niveau (A27)
+  ado: ['aujourdhui', 'arabe', 'coran', 'quotidien', 'plus'],
+  adulte: ['aujourdhui', 'arabe', 'coran', 'quotidien', 'plus'],
   parent: ['famille', 'suivi', 'messages', 'quotidien', 'compte'],
   enseignant: ['classes', 'ecole', 'questions', 'compte'],
   admin: ['admin', 'compte', 'aide'],
@@ -104,6 +104,8 @@ export function navFor(a: Audience): NavItem[] {
 /** Pages rangées sous « Plus » (ados et adultes). */
 export const PLUS_PATHS = [
   '/plus',
+  // A12 : « Sciences » sous « Plus » pour les ados et adultes
+  '/sciences',
   '/ecriture',
   '/lectures',
   '/revisions',
@@ -121,7 +123,7 @@ export const PLUS_PATHS = [
 export function activeNav(items: NavItem[], path: string): NavId | '' {
   const ids = new Set(items.map((i) => i.id));
   const has = (id: NavId) => (ids.has(id) ? id : '');
-  if (/^\/(niveaux|lecons)\/r[ea]\d/.test(path)) return has('sciences');
+  if (/^\/(niveaux|lecons)\/r[ea]\d/.test(path)) return has('sciences') || has('plus');
   if (/^\/(niveaux|lecons)\/qc\d/.test(path)) return has('coran');
   if (path === '/' || path.startsWith('/niveaux') || path.startsWith('/lecons'))
     return has('arabe') || has('livres');
