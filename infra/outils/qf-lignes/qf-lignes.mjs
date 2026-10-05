@@ -180,16 +180,17 @@ export function buildExactFile(rows, lengths, source) {
     const type = String(r.char_type_name ?? 'word');
     const pos =
       type === 'word' ? Number(r.position_in_verse) : type === 'end' ? POS_FIN : POS_SIGNE;
-    const order = Number(r.position_in_line ?? r.position_in_page ?? r.word_id ?? r.id);
+    // ordre de lecture = position_in_page (relevé sur la copie prélancement du 06/10/2026 : position_in_line
+    // n'est PAS fiable — ex. page 4 ligne 2, le mot de position 10 dans la page porte position_in_line 10 et
+    // vient après le 9e de la ligne ; les glyphes U+FB51… suivent position_in_page)
+    const order = Number(r.position_in_page ?? r.position_in_line ?? r.word_id ?? r.id);
     const p = Number(r.page_number);
     const n = Number(r.line_number);
     const code = String(r.code_v1 ?? r.text ?? '');
     if (!pages.has(p)) pages.set(p, new Map());
     const lines = pages.get(p);
     if (!lines.has(n)) lines.set(n, []);
-    lines
-      .get(n)
-      .push({ order, page: Number(r.position_in_page ?? 0), w: [v[0], v[1], pos, code, type] });
+    lines.get(n).push({ order, page: Number(r.word_id ?? 0), w: [v[0], v[1], pos, code, type] });
   }
   const out = {
     format: EXACT_FORMAT,
@@ -252,10 +253,37 @@ export function verify(file, { tanzil, pageStarts, fontsDir }) {
   );
 }
 
+/**
+ * Contrôle PAGE PAR PAGE (mode partiel, prélancement) : chaque page reçue est contrôlée seule (les pages du
+ * Muṣḥaf de Médine commencent et finissent sur des versets entiers : un verset coupé serait signalé), plus les
+ * glyphes de QCF_BSML. Renvoie les écarts globaux et ceux de chaque page.
+ */
+export function verifyPages(file, { tanzil, pageStarts, fontsDir }) {
+  const global = verify({ ...file, pages: [] }, { tanzil, pageStarts, fontsDir }).filter((e) =>
+    e.includes(BSML_FONT_FILE),
+  );
+  const fontHas = fontsDir ? fontChecker(fontsDir) : undefined;
+  const perPage = new Map();
+  for (const pg of file.pages)
+    perPage.set(
+      pg.p,
+      checkExactFile({
+        file: { ...file, pages: [pg] },
+        lengths: tanzil.lengths,
+        text: (s, a) => tanzil.map.get(`${s}:${a}`),
+        basmala: tanzil.basmala,
+        pageStarts,
+        fontHas,
+        partial: true,
+      }),
+    );
+  return { global, perPage };
+}
+
 const sha256 = (buf) => createHash('sha256').update(buf).digest('hex');
 
 /** Publication D'UN BLOC (dossier temporaire puis renommage) — seulement si le contrôle est sans écart. */
-export function publish(dir, file) {
+export function publish(dir, file, extra = {}) {
   const tmp = join(dir, 'publie.tmp');
   rmSync(tmp, { recursive: true, force: true });
   mkdirSync(join(tmp, 'pages'), { recursive: true });
@@ -278,6 +306,8 @@ export function publish(dir, file) {
     credit:
       'Données de mise en page : Quran Foundation (Content Sync) — polices : Complexe du Roi Fahd',
     terms: TERMS_URL,
+    partiel: false,
+    ...extra,
   };
   writeFileSync(join(tmp, 'manifeste.json'), JSON.stringify(manifest, null, 2));
   writeFileSync(join(tmp, 'lignes-v1.sha256'), `${manifest.sha256}  lignes-v1.json\n`);
@@ -367,9 +397,23 @@ export const snapshotPath = (mushafId) => `/resources/snapshots/mushafs/${mushaf
  * refusé (410 « resync_required », 422 « token_filter_mismatch ») relance l'amorçage depuis zéro. Si l'amorçage
  * n'apporte aucun instantané du muṣḥaf, l'instantané documenté (`/resources/snapshots/mushafs/<id>`) est lu.
  */
-export async function syncOnce({ env, mushafId, state, rows, fetchImpl = fetch, log = () => {} }) {
+export async function syncOnce({
+  env,
+  mushafId,
+  state,
+  rows,
+  fetchImpl = fetch,
+  log = () => {},
+  onSnapshot = null,
+}) {
   const tk = await token(env, fetchImpl);
   const get = client(env, fetchImpl, tk);
+  // instantané : corps lu, et (option --garder-brut) réponse brute remise à l'appelant
+  const snap = async (u) => {
+    const raw = await get(u);
+    if (onSnapshot) onSnapshot(raw, u);
+    return snapshotBody(raw);
+  };
   const resource = `mushafs:${mushafId}`;
   const actions = {};
   const run = async (tokenValue) => {
@@ -381,7 +425,7 @@ export async function syncOnce({ env, mushafId, state, rows, fetchImpl = fetch, 
         if (m.resource_group && m.resource_group !== 'mushafs') continue;
         if (m.resource_id !== undefined && Number(m.resource_id) !== mushafId) continue;
         if (m.unavailable_reason) log(`ressource indisponible : ${m.unavailable_reason}`);
-        const a = await applyMutation(rows, m, async (u) => snapshotBody(await get(u)));
+        const a = await applyMutation(rows, m, snap);
         actions[a] = (actions[a] ?? 0) + 1;
       }
       if (page.next_sync_token) syncToken = page.next_sync_token;
@@ -404,7 +448,7 @@ export async function syncOnce({ env, mushafId, state, rows, fetchImpl = fetch, 
     await applyMutation(
       rows,
       { type: 'RESOURCE_CREATE', snapshot_url: snapshotPath(mushafId) },
-      async (u) => snapshotBody(await get(u)),
+      snap,
     );
     actions.instantane_direct = 1;
   }
@@ -566,7 +610,27 @@ async function main() {
   }
 
   if (cmd === 'sync') {
-    const res = await syncOnce({ env, mushafId, state, rows, log: (m) => console.log(m) });
+    // --garder-brut : réponse brute de l'instantané gardée sur le SERVEUR (copie Content Sync), jamais dans le dépôt
+    const onSnapshot = o['garder-brut']
+      ? (raw) => {
+          mkdirSync(join(dir, 'brut'), { recursive: true });
+          const f = join(
+            dir,
+            'brut',
+            `mushafs-${mushafId}-${new Date().toISOString().replace(/[:.]/g, '-')}.json`,
+          );
+          writeFileSync(f, JSON.stringify(raw));
+          console.log(`instantané brut gardé : ${f}`);
+        }
+      : null;
+    const res = await syncOnce({
+      env,
+      mushafId,
+      state,
+      rows,
+      log: (m) => console.log(m),
+      onSnapshot,
+    });
     const words = [...rows.values()].filter((r) => rowKind(r) === 'word').length;
     if (!words && !res.actions.ressource_retiree) {
       // rien d'enregistré : ni copie vide, ni jeton (la prochaine passe refera l'amorçage)
@@ -613,22 +677,58 @@ async function main() {
   };
   const { file, unknown } = buildExactFile(rows, tanzil.lengths, source);
   const fontsDir = o.polices ? resolve(String(o.polices)) : null;
-  const errs = verify(file, { tanzil, pageStarts, fontsDir });
-  if (unknown.length) errs.unshift(`${unknown.length} mot(s) sans verset reconnu`);
+  const head = `Contrôle A34 — ${new Date().toISOString()} — ${file.pages.length} pages reçues, muṣḥaf « ${m.name} »`;
+  const pre = [];
+  if (unknown.length) pre.push(`${unknown.length} mot(s) sans verset reconnu`);
   if (!fontsDir)
-    errs.push('contrôle des glyphes non fait (--polices manquant) : publication refusée');
-  const report = [
-    `Contrôle A34 — ${new Date().toISOString()} — ${file.pages.length} pages, muṣḥaf « ${m.name} »`,
-    errs.length
-      ? `${errs.length} écart(s) :`
-      : 'CONFORME : 604 pages, 15 lignes, mots ↔ Tanzil 1:1, glyphes présents',
-    ...errs,
-  ].join('\n');
+    pre.push('contrôle des glyphes non fait (--polices manquant) : publication refusée');
+
+  // PRODUCTION : les 604 pages, contrôle complet obligatoire. PRÉLANCEMENT (ou --partiel hors production) :
+  // seules les pages reçues ET conformes sont publiées, manifeste marqué « partiel ».
+  const partial = env !== 'production' && (env === 'prelive' || Boolean(o.partiel));
+  if (!partial) {
+    const errs = [...pre, ...verify(file, { tanzil, pageStarts, fontsDir })];
+    const report = [
+      head,
+      errs.length
+        ? `${errs.length} écart(s) :`
+        : 'CONFORME : 604 pages, 15 lignes, mots ↔ Tanzil 1:1, glyphes présents',
+      ...errs,
+    ].join('\n');
+    writeFileSync(join(dir, 'rapport.txt'), `${report}\n`);
+    console.log(report);
+    if (errs.length) process.exit(1);
+    const man = publish(dir, file);
+    console.log(`publié : lignes-v1.json ${man.bytes.total} octets, SHA-256 ${man.sha256}`);
+    return;
+  }
+  const { global, perPage } = verifyPages(file, { tanzil, pageStarts, fontsDir });
+  const okPages = file.pages.filter((pg) => (perPage.get(pg.p) ?? []).length === 0);
+  const blocking = [...pre, ...global];
+  const lines = [
+    head,
+    `MODE PARTIEL (${env}) : ${okPages.length} page(s) conforme(s) sur ${file.pages.length} reçue(s) ; la production exigera les 604.`,
+    ...blocking,
+  ];
+  for (const [p, errs] of perPage)
+    if (errs.length)
+      lines.push(
+        `page ${p} REFUSÉE (${errs.length} écart(s)) :`,
+        ...errs.slice(0, 8).map((e) => `  ${e}`),
+      );
+  const report = lines.join('\n');
   writeFileSync(join(dir, 'rapport.txt'), `${report}\n`);
   console.log(report);
-  if (errs.length) process.exit(1);
-  const man = publish(dir, file);
-  console.log(`publié : lignes-v1.json ${man.bytes.total} octets, SHA-256 ${man.sha256}`);
+  if (blocking.length || okPages.length === 0) process.exit(1);
+  const man = publish(
+    dir,
+    { ...file, pages: okPages },
+    { partiel: true, pagesPubliees: okPages.map((pg) => pg.p), pagesRecues: file.pages.length },
+  );
+  console.log(
+    `publié (PARTIEL) : ${okPages.length} pages, lignes-v1.json ${man.bytes.total} octets, SHA-256 ${man.sha256}`,
+  );
+  if (okPages.length < file.pages.length) process.exit(4);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

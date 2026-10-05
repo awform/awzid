@@ -49,7 +49,13 @@ registerMushafExact(none, null, null);
 describe('A34 — API du Muṣḥaf « à l’identique »', () => {
   it('état : disponible, version, crédit ; retard au-delà de 7 jours', async () => {
     const r = (await app.inject('/api/v1/quran/mushaf-exact')).json();
-    expect(r).toMatchObject({ disponible: true, version: 'aaaaaaaaaaaaaaaa', enRetard: false });
+    expect(r).toMatchObject({
+      disponible: true,
+      partiel: false,
+      pages: null,
+      version: 'aaaaaaaaaaaaaaaa',
+      enRetard: false,
+    });
     expect(r.credit).toMatch(/Quran Foundation/);
     clock = Date.parse(synced) + 8 * 24 * 3600_000;
     expect((await app.inject('/api/v1/quran/mushaf-exact')).json().enRetard).toBe(true);
@@ -57,6 +63,32 @@ describe('A34 — API du Muṣḥaf « à l’identique »', () => {
       disponible: false,
       polices: false,
     });
+  });
+
+  it('publication PARTIELLE (prélancement) : disponible, liste des pages ; incomplète sans marque : indisponible', async () => {
+    const d2 = join(root, 'qf2');
+    mkdirSync(join(d2, 'publie', 'pages'), { recursive: true });
+    const man = {
+      format: 1,
+      version: 'b',
+      generatedAt: synced,
+      source: { syncedAt: synced },
+      credit: 'x',
+      terms: 'y',
+    };
+    writeFileSync(
+      join(d2, 'publie', 'manifeste.json'),
+      JSON.stringify({ ...man, pages: 2, partiel: true, pagesPubliees: [1, 2] }),
+    );
+    const a = Fastify();
+    registerMushafExact(a, d2, fonts, () => Date.parse(synced));
+    expect((await a.inject('/api/v1/quran/mushaf-exact')).json()).toMatchObject({
+      disponible: true,
+      partiel: true,
+      pages: [1, 2],
+    });
+    writeFileSync(join(d2, 'publie', 'manifeste.json'), JSON.stringify({ ...man, pages: 2 }));
+    expect((await a.inject('/api/v1/quran/mushaf-exact')).json().disponible).toBe(false);
   });
 
   it('page de lignes : connecté seulement, ETag, 304, 404 si absente ou non synchronisée', async () => {

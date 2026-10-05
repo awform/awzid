@@ -25,6 +25,8 @@ interface Manifest {
   source: { syncedAt?: string; env?: string; mushafName?: string } | null;
   credit: string;
   terms: string;
+  partiel?: boolean;
+  pagesPubliees?: number[];
 }
 
 export function registerMushafExact(
@@ -59,11 +61,15 @@ export function registerMushafExact(
   app.get('/api/v1/quran/mushaf-exact', async (_req, reply) => {
     const m = manifest();
     reply.header('Cache-Control', 'no-cache');
-    if (!m || m.pages !== 604) return { disponible: false, polices: Boolean(fontsDir) };
+    // complet (604 pages) ; ou PARTIEL (prélancement : seules les pages reçues et contrôlées sont servies)
+    if (!m || (m.pages !== 604 && !m.partiel))
+      return { disponible: false, polices: Boolean(fontsDir) };
     const synced = Date.parse(m.source?.syncedAt ?? m.generatedAt);
     return {
       disponible: Boolean(fontsDir),
       polices: Boolean(fontsDir),
+      partiel: Boolean(m.partiel),
+      pages: m.partiel ? (m.pagesPubliees ?? []) : null,
       version: m.version,
       synchroniseLe: m.source?.syncedAt ?? m.generatedAt,
       enRetard: !(now() - synced <= WEEK_MS),

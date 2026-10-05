@@ -325,6 +325,23 @@ describe('A34 — outil de synchronisation (sans réseau)', () => {
     expect(check(file, synthPage().codes)).toEqual([]);
   });
 
+  it('ordre de lecture = position_in_page (position_in_line non fiable, relevé sur la copie prélancement)', () => {
+    let k = 0;
+    const rows = new Map(
+      synthRows().map((r) => {
+        const x: Row = { ...r };
+        if (rowKind(r) === 'word') {
+          x.position_in_page = ++k;
+          // position_in_line FAUSSE (comme reçue pour certains mots) : ne doit pas changer l'ordre
+          x.position_in_line = k % 3 === 0 ? 99 : Number(r.position_in_line);
+        }
+        return [`${rowKind(r)}:${String(r.id)}`, x] as const;
+      }),
+    );
+    const { file } = buildExactFile(rows, tanzil.lengths, null);
+    expect(file.pages[0]).toEqual(synthPage().page);
+  });
+
   it('synchronisation simulée : jeton, amorçage, instantané, pages suivantes ; secret jamais dans l’adresse', async () => {
     process.env.QF_CLIENT_ID = 'id-test';
     process.env.QF_CLIENT_SECRET = 'secret-test';
