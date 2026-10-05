@@ -42,7 +42,8 @@
   const audience = $derived(
     audienceOf({
       profileKind: profile?.kind ?? null,
-      accountKind: me?.account.kind ?? null,
+      // lot F2 : tablette de classe (compte de l'école) = appareil partagé, comme celui d'une famille
+      accountKind: me?.account.kind === 'ecole' ? 'parent' : (me?.account.kind ?? null),
       profileKinds: (me?.profiles ?? []).map((p) => p.kind),
       path: page.url.pathname,
     }),

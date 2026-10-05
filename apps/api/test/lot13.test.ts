@@ -479,9 +479,15 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
         await req('GET', `/api/v1/ecole/classes/${classId}/certificats`, teacher)
       ).json().certificates;
       expect(certs.length).toBe(3);
-      expect(
-        certs.find((c: { number: string }) => c.number === `AWF-EN1-${YEAR}-0001`).pupilId,
-      ).toBeNull();
+      // lot F2 (revue E8) : l'élève parti reste au registre (ligne archivée) ; le certificat y reste rattaché
+      const archivedPupil = certs.find(
+        (c: { number: string }) => c.number === `AWF-EN1-${YEAR}-0001`,
+      ).pupilId;
+      const [left] = await h.db
+        .select()
+        .from(t.classPupil)
+        .where(eq(t.classPupil.id, archivedPupil));
+      expect(left?.leftAt).not.toBeNull();
       // registre durable (décision du pilote, à confirmer par le juriste) : 30 jours après le départ de
       // l'élève, le document est réduit au numéro, nom affiché, niveau, date et mention
       expect(await purgeCertificateDocuments(h.db, 30, new Date())).toBe(0);

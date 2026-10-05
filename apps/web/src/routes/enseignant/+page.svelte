@@ -8,7 +8,7 @@
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
   import Sym from '$lib/Sym.svelte';
   import { uuidv7 } from '$lib/sync-core';
-  import { call, fetchMe, type Me } from '$lib/session';
+  import { call, fetchMe, isStaff, type Me } from '$lib/session';
   import Onboarding from '$lib/ui/Onboarding.svelte';
 
   /**
@@ -68,7 +68,7 @@
   const live = $derived(note(counters));
   const FIELDS = ['aides', 'hesitations', 'sauts', 'oublis', 'claires', 'discretes'] as const;
 
-  const isTeacher = $derived(me?.account.kind === 'enseignant' || me?.account.kind === 'admin');
+  const isTeacher = $derived(isStaff(me));
   const blocked = $derived(!!me && me.mfaRequired && !me.mfaVerified);
 
   onMount(async () => {
@@ -173,6 +173,10 @@
 <p>
   <a href={resolve('/enseignant/questions')} data-testid="lien-questions">{t('ens.questions')}</a>
   · <a href={resolve('/enseignant/ecole')} data-testid="lien-synthese">{t('eco.lien')}</a>
+  ·
+  <a href={resolve('/enseignant/etablissement')} data-testid="lien-etablissement"
+    >{t('etab.lien')}</a
+  >
 </p>
 {#if msg}<p class="card ok" role="status" data-testid="ens-message"><Bidi text={msg} /></p>{/if}
 {#if error}<p class="card bad" role="alert"><Bidi text={error} /></p>{/if}

@@ -22,7 +22,8 @@
     "migrate": "node dist/cli/migrate.js",
     "import-content": "node dist/cli/import.js",
     "coran-audio": "node dist/cli/coran-audio.js",
-    "lecons-audio": "node dist/cli/lecons-audio.js"
+    "lecons-audio": "node dist/cli/lecons-audio.js",
+    "mots-coran": "node dist/cli/mots-coran.js"
   },
   "dependencies": {
     "@awform/content": "workspace:*",

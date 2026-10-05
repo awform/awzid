@@ -12,12 +12,19 @@ export interface ProfileInfo {
   birthYear: number | null;
   avatar: string | null;
   levelCode: string | null;
+  /** lot F2 : titulaire du profil, parent responsable (second parent), élève de la classe (tablette) */
+  lien?: 'titulaire' | 'parent' | 'classe';
 }
 
 export interface Me {
+  /** lot F2 (revue E2) : rôles du compte (plateforme et écoles), en plus du type du titulaire */
+  roles?: string[];
+  ecoles?: Array<{ id: string; name: string; personal: boolean; roles: string[] }>;
+  /** session de tablette de classe (compte de l'école) */
+  tablette?: { classId: string; className: string; school: string } | null;
   account: {
     id: string;
-    kind: 'parent' | 'adulte' | 'enseignant' | 'admin';
+    kind: 'parent' | 'adulte' | 'enseignant' | 'admin' | 'ecole';
     email: string | null;
     country: string | null;
     locale: string;
@@ -28,6 +35,18 @@ export interface Me {
   profiles: ProfileInfo[];
   mfaRequired: boolean;
   mfaVerified: boolean;
+}
+
+/**
+ * Lot F2 : espace enseignant ouvert par un RÔLE (enseignant, direction, secrétariat d'une école) ou par un
+ * compte de personnel (enseignant, admin) — un parent peut aussi être enseignant avec le même e-mail.
+ */
+export function isStaff(me: Me | null | undefined): boolean {
+  if (!me) return false;
+  if (me.account.kind === 'enseignant' || me.account.kind === 'admin') return true;
+  return (me.roles ?? []).some(
+    (r) => r === 'enseignant' || r === 'direction' || r === 'secretariat',
+  );
 }
 
 export interface ApiResult<T> {

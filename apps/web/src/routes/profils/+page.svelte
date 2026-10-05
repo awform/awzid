@@ -128,6 +128,9 @@
     {/each}
   </div>
   {#if me.profiles.length === 0}<p class="muted">{t('profils.aucun')}</p>{/if}
+  {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
+    <p><a href={resolve('/famille')} data-testid="lien-famille">{t('fam.lien')}</a></p>
+  {/if}
 
   {#if me.account.kind === 'parent'}
     {#if !adding}

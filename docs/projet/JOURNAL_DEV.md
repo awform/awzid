@@ -64,6 +64,103 @@ Décisions à prendre (D-A21) : budget 375 Ko ; activer au-delà des pilotes (pa
 fiable avec la police : la syllabe entière s'illumine) ; dialogue des enfants sans bulle de personnage.
 
 ---
+## 05/10/2026 — Lot F2 : école, rôles, niveaux (revue d'architecture E1, E2, E3, E4, E8)
+
+Branche `f2-ecole-wip` (worktree `~/awform-f2`, depuis `main` a29808a), base de tests unitaires propre
+(`awform_f2_test`), e2e isolés (base dérivée du dossier). Pose le MODÈLE et les API du parcours par niveau ; son
+interface élève viendra avec A27.
+
+1. **École (E1)** : tables `school` (nom, nom arabe, pays, lieu, fuseau, statut, école « personnelle »),
+   `school_member` (direction, enseignant, secrétariat), `class_teacher` (un titulaire au plus, des suppléants),
+   `class_group.school_id` (obligatoire), `school_year_id`, `subject_code`, `kind` (classe ou **cercle** de Coran,
+   `portion`), `status` (active / archivée). **Fin de la cascade destructrice** : `class_group.teacher_account_id`
+   devient le titulaire courant (copie), clé en **RESTRICT** ; à la demande de suppression d'un compte,
+   `releaseTeacher` le retire de ses classes (suppléant le plus ancien promu, sinon classe « sans titulaire »
+   confiée à la direction), la purge définitive détache un titulaire résiduel ; classes, listes, notes, épreuves,
+   récitals restent à l'école. Transfert d'une classe (`POST /ecole/classes/:id/transfert`), enseignants d'une
+   classe (`PUT|DELETE /ecole/classes/:id/enseignants/:compte`). Accès du personnel : UNE règle SQL
+   (`teachesClass` : enseignant de la classe ou direction de l'école) partout où l'on lisait
+   `teacher_account_id = moi` (école, hifẓ, épreuves, récitals, synthèse, tuteur, messagerie, audio).
+   **Licence portée par l'école** : `subscription.school_id` / `billing_checkout.school_id` ; places = élèves des
+   classes actives de l'école + profils dont elle est responsable ; achat par un rôle direction/enseignant (champ
+   `ecole`), quel que soit le type du compte. Écoles « personnelles » créées par la reprise.
+2. **Rôles multiples (E2)** : `account_role` (id, rôle, portée école/classe, `granted_by`) — parent, élève adulte,
+   enseignant, direction, secrétariat, référent (repris de F1), modérateur, support, admin ; rôles d'école lus dans
+   `school_member`. `account_kind` (énuméré) → texte contrôlé qui ne décrit plus que le TITULAIRE (+ « ecole »).
+   La session porte `roles` ; gardes fondées sur les rôles (`isTeacher`, `isAdmin`, `hasRole`, `staffOnly`) :
+   **un même e-mail parent ET enseignant** (la direction l'ajoute à l'école ; son second facteur ouvre l'espace
+   enseignant, la famille reste accessible sans lui). Modération : admin ou modérateur ; vue d'ensemble : admin ou
+   support. Outil `staff --role referent|moderateur|support|admin`.
+3. **Profils gérés par l'école (E3)** : `profile_custodian` (parent ou école, invitation par code haché à usage
+   unique, preuve du consentement) — **c'est désormais la table lue par toutes les autorisations** (`ownsProfile`
+   : titulaire OU parent actif) ; `guardianship` est reprise intégralement puis gardée en lecture seule (retour
+   arrière). Compte technique de l'école (type `ecole`, sans e-mail ni mot de passe) titulaire des profils qu'elle
+   inscrit. **Élève papier → profil** (`POST /ecole/pupils/:pid/profil` : année de naissance, date du formulaire
+   signé, signataire, référence — preuve `forme: papier`), **code pour le parent** (60 jours) → le parent rattache
+   l'enfant (`POST /profiles/rattacher`, mot de passe ressaisi) et en devient titulaire, l'école reste responsable
+   pour sa classe. **Mode tablette de classe** (`POST /ecole/classes/:id/tablette`, code de 4 chiffres) : session
+   du compte de l'école limitée aux élèves présents de CETTE classe (inscrits par l'école, ou par leur parent avec le
+   code de classe), aucun rôle, 10 h ; la session de l'enseignant est fermée sur cet appareil.
+4. **Cycle de vie du mineur (E4)** : type enfant / ado / adulte **recalculé depuis l'année** (âge au plus bas,
+   comme `ageFromYear`) à chaque lecture de `me` ; **second parent** (invitation, acceptation, retrait par le
+   titulaire ou par lui-même) ; **émancipation** (`POST /profiles/:id/emancipation` par le titulaire à partir de
+   l'âge du consentement numérique du pays — France 15, Sénégal 18 —, puis `POST /account/reprendre-profil` depuis
+   le compte adulte du jeune : tout l'historique suit, les parents cessent d'être responsables). Suppression du
+   compte du titulaire : le profil passe au second parent, sinon à l'école responsable (`handOverProfiles`).
+5. **Niveau / matière / année (E8)** : `subject` (arabe, sciences, coran, écriture), `level.subject_code` (une
+   seule table filière → matière, `@awform/content/niveaux`, à la place des deux expressions recopiées),
+   `profile_level` historisé par matière (courant + depuis + origine : positionnement, épreuve, maître, parent,
+   passage, inscription, reprise ; issue « terminé » ou « changé »), `school_year`, `enrolment` daté
+   (élève ↔ classe ↔ année, issue). **Passage de fin d'année** (`POST /ecole/annees/:id/cloture` : une décision par
+   élève — admis / redouble / part —, niveau suivant pour les admis, inscription dans la classe de l'année préparée,
+   classes archivées, année suivante ouverte). **Archivage** : quitter une classe n'efface plus ni la ligne du
+   registre ni les notes, copies d'épreuves et réponses corrigées (seules les récitations — la voix — restent
+   effacées ; une demande de suppression du compte efface toujours les copies) ; `class_pupil.profile_id` en
+   SET NULL ; registre archivé `GET /ecole/classes/:id/archives`. **« Mon parcours »** `GET /profiles/:id/parcours`
+   (niveau par matière, prochaine leçon, livrets du niveau, niveaux terminés en révision, suivant en aperçu, façons
+   de monter, plan de hifẓ et cercles, mots du Coran), niveaux `GET|PUT /profiles/:id/niveaux`, niveau décidé par
+   le maître `PUT /ecole/pupils/:pid/niveau`, `accessFor` (courant / révision / aperçu / fermé) pour A27.
+6. **Mots du Coran (décision du client)** : AUCUNE matière ni hiérarchie propre — `quran_lemma` rattache chaque
+   lemme au **niveau du livre** qui l'enseigne (`mots_coran_1000.json` des livres : E1-E5 → en1-en5, A1-A10 →
+   ad1-ad10), `profile_lemma` = mot acquis par l'élève ; outil `mots-coran --source`. Répété sur la copie de la base
+   de démo : 1 000 lemmes, 300 rattachés aux livres enfants (60 par niveau), 1 000 aux livres adultes
+   (50/70/80/90/100/110/100/150/150/100), 0 ignoré, second passage identique. **Absent des données** : le lien
+   lemme ↔ LEÇON (`unit_id`, vide) et le rattachement aux livres ados (`level_ados`, vide) — à exporter par les
+   livres. `GET /levels/:code/mots-coran`.
+7. **Interface minimale** : « Mon école » (`/enseignant/etablissement` : personnel, classes et titulaires,
+   transfert, années, clôture, conversion des élèves papier, code parent, tablette, archives) ; « Famille et
+   responsables » (`/famille` : rattacher un enfant, second parent, émancipation, reprise du profil) ; liens depuis
+   l'espace enseignant et « Profils ». 100 textes en fr, en, es, de, ar (A_RELIRE.md).
+8. **Migrations** `0034_f2_ecole` (structure), `0035_f2_reprise_ecoles`, `0036_f2_niveaux`,
+   `0037_f2_responsables` — en avant seulement, retour arrière manuel en tête de chaque fichier. **Répétition sur une
+   copie de la base de démo** (dump de `awform-db-1`, 1,8 Go) : 4 migrations en 1,0 s ; avant/après identiques
+   (comptes 4, profils 4, classes 1, élèves 5, membres 2, notes 12, hifẓ 5, tutelles 3, devoirs 2 ; empreintes MD5
+   des profils et des notes inchangées) ; créés : 1 école (« École de démonstration AWFORM », personnelle, la classe
+   y est), 2 membres (direction + enseignant), 1 titulaire, 1 année, 5 inscriptions, 3 niveaux par matière,
+   3 responsables, rôles admin / élève adulte / parent ; 0 classe sans école, 0 profil sans niveau repris, 0 tutelle
+   non reprise ; 2e passage : rien à faire. Test automatique de reprise (`packages/db/test/f2-reprise.test.ts` :
+   base migrée jusqu'à 0033, remplie « comme avant », puis migrée).
+9. **Poids (point 6 de la commande)** : mesuré. Charger les textes **par route** a été construit et mesuré
+   (plugin Vite, noyau + 25 espaces) : page la plus lourde 143,8 → 126,7 Ko, mais **total +7,1 Ko** (des morceaux
+   compressés séparément pèsent plus que le tout ; regroupés en 4 espaces : +3,8 Ko) — or le total compte tout ce
+   que le service worker garde pour le hors ligne, textes compris : **le découpage ne peut pas faire baisser le
+   total**, il a été retiré. Gain retenu : **formateur ICU minimal** (`lib/i18n/icu.ts`, arguments et pluriels,
+   identique à intl-messageformat sur les 10 670 messages des cinq langues — test) au lieu d'intl-messageformat
+   (≈ −9 Ko sur chaque page et sur le total). Résultat : page la plus lourde `/lecons/[id]` **137,7 Ko** (143,8
+   avant) ; total **330,1 + 31,9 = 362,0 Ko** ≤ 365 (360,9 avant F2, qui ajoute 2 pages et 100 textes). **Sous
+   325 Ko : pas atteignable sans retirer des fonctions** ; piste réelle notée dans TACHES_TECHNIQUES (ne pas garder
+   hors ligne les pages et textes du personnel sur l'appareil d'un élève).
+10. **Tests** : unitaires **1 436 réussis, 1 ignoré, 0 échec** (`pnpm test`, base `awform_f2_test`) dont api
+   `f2.test.ts` (11 : élève papier → profil → tablette → code → parent ; parent+enseignant même e-mail ; enseignant
+   supprimé → classes gardées puis transférées, purge définitive possible ; deux parents ; type recalculé et
+   émancipation ; niveaux par matière ; passage de fin d'année ; archivage ; mon parcours ; la direction d'une autre école ne voit ni classe ni école), db
+   `f2-reprise.test.ts` (6), web `icu.test.ts` (6) ; 4 tests adaptés à la nouvelle règle (lot13, lot18, lot19,
+   récital : archivées au lieu d'effacées) et MIN-2 respecté (âge au plus bas). e2e `f2.spec.ts` (5 parcours ×
+   téléphone et ordinateur : école → profil → parent, deux parents, parent+enseignant puis compte supprimé, émancipation,
+   niveaux + archives + parcours + clôture d'année dans une école propre au test) ; **suite e2e complète : 260 réussis,
+   22 ignorés, 0 échec** (15,6 min). Build, types, lint, budget verts.
+
+Décisions à prendre (D-F2) : voir DECISIONS_EN_ATTENTE.
 
 ## 05/10/2026 — Lot F1 : contenu robuste (revue d'architecture E5, M2, G2, G1, M1)
 

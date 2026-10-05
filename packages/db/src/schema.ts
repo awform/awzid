@@ -73,12 +73,26 @@ export const level = pgTable(
      * (null : non étiqueté). Étiquette seulement, aucun texte modifié.
      */
     madhhab: text('madhhab'),
+    /** matière (lot F2, revue E8) : arabe (en, ado, ad), sciences (re, ra), coran (qc) */
+    subjectCode: text('subject_code').references(() => subject.code),
     createdAt: createdAt(),
   },
   (t) => [
     check('level_madhhab', sql`${t.madhhab} IS NULL OR ${t.madhhab} IN (${sql.raw(MADHHAB_SQL)})`),
   ],
 );
+
+/**
+ * Matière (lot F2, revue E8) : l'élève a un niveau courant PAR matière (`profile_level`). « ecriture » n'a pas
+ * encore de niveaux (entraînement du tracé). Liste fermée, posée par la migration 0036.
+ */
+export const subject = pgTable('subject', {
+  code: text('code').primaryKey(),
+  titleFr: text('title_fr').notNull(),
+  rank: smallint('rank').notNull(),
+  /** la matière a des niveaux (livres) ; sinon parcours libre */
+  hasLevels: boolean('has_levels').notNull().default(true),
+});
 
 /** Métadonnées book.js d'un niveau, par édition. */
 export const levelVersion = pgTable(
@@ -398,16 +412,24 @@ export const qrRedirect = pgTable('qr_redirect', {
 
 // ================================================================ personnes (minimisation RGPD)
 
-export const accountKind = pgEnum('account_kind', ['parent', 'adulte', 'admin', 'enseignant']);
+/**
+ * Type de compte = ce que le TITULAIRE est (lot F2, revue E2) : famille (parent), adulte autonome, ÉCOLE (compte
+ * technique, sans e-mail ni mot de passe, titulaire des profils inscrits par l'école), ou compte de personnel
+ * seul (enseignant, admin : comptes existants). Les RÔLES (enseignant, direction, référent…) sont portés à part
+ * (`account_role`, `school_member`) : un même e-mail peut être parent ET enseignant.
+ * Texte contrôlé (ancien type énuméré `account_kind`, converti par la migration 0034).
+ */
+export const ACCOUNT_KINDS = ['parent', 'adulte', 'admin', 'enseignant', 'ecole'] as const;
+export type AccountKind = (typeof ACCOUNT_KINDS)[number];
 
-/** Compte titulaire (parent/tuteur, adulte autonome, administrateur). */
+/** Compte titulaire (parent/tuteur, adulte autonome, école, personnel). */
 export const account = pgTable(
   'account',
   {
     id: uuid('id')
       .primaryKey()
       .default(sql`uuidv7()`),
-    kind: accountKind('kind').notNull(),
+    kind: text('kind', { enum: ACCOUNT_KINDS }).notNull(),
     /** e-mail en minuscules (V1 : ou téléphone) ; jamais d'autre donnée d'identité */
     email: text('email'),
     /** Argon2id (lot 4) ; null tant que le compte n'est pas activé */
@@ -431,7 +453,13 @@ export const account = pgTable(
     /** suppression demandée : effacement définitif sous 30 jours */
     deletedAt: timestamp('deleted_at', { withTimezone: true }),
   },
-  (t) => [uniqueIndex('account_email').on(t.email)],
+  (t) => [
+    uniqueIndex('account_email').on(t.email),
+    check(
+      'account_kind_check',
+      sql`${t.kind} IN ('parent', 'adulte', 'admin', 'enseignant', 'ecole')`,
+    ),
+  ],
 );
 
 export const profileKind = pgEnum('profile_kind', ['enfant', 'ado', 'adulte']);
@@ -451,7 +479,10 @@ export const profile = pgTable(
     birthYear: smallint('birth_year'),
     /** clé d'un avatar SANS visage (bibliothèque de l'application) */
     avatar: text('avatar'),
-    /** niveau courant, ex. en1 */
+    /**
+     * niveau d'ARABE courant, ex. en1 — copie de compatibilité : la référence est `profile_level` (un niveau
+     * par matière, historisé ; lot F2). Tenue à jour par `setProfileLevel`.
+     */
     levelCode: text('level_code').references(() => level.code),
     /**
      * Langue des EXPLICATIONS du contenu (lot F1, G1), distincte de la langue de l'interface
@@ -470,7 +501,11 @@ export const profile = pgTable(
   ],
 );
 
-/** Lien parent ↔ profil enfant/ado, avec consentement daté. */
+/**
+ * Lien parent ↔ profil enfant/ado, avec consentement daté (lots 1-4). Lot F2 : REMPLACÉE par `profile_custodian`
+ * (toutes les lignes y sont reprises par la migration 0035) ; gardée telle quelle, en lecture seule, pour le
+ * retour arrière. Plus aucune écriture.
+ */
 export const guardianship = pgTable(
   'guardianship',
   {
@@ -483,6 +518,56 @@ export const guardianship = pgTable(
     consentAt: timestamp('consent_at', { withTimezone: true }).notNull(),
   },
   (t) => [primaryKey({ columns: [t.parentAccountId, t.profileId] })],
+);
+
+/**
+ * Responsables d'un profil (lot F2, revue E3/E4), LUS par toutes les autorisations (`ownsProfile`) :
+ *  - « parent » : un compte parent (premier, second parent ; invitation par code puis acceptation) ;
+ *  - « ecole » : l'école qui a inscrit l'élève, avec la PREUVE du consentement recueilli sur papier.
+ * Le titulaire (`profile.owner_account_id`) reste unique : parent, compte école, ou le jeune lui-même après
+ * l'émancipation. Une ligne « invite » porte le haché d'un code à usage unique (jamais le code).
+ */
+export const profileCustodian = pgTable(
+  'profile_custodian',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    nature: text('nature').notNull(),
+    accountId: uuid('account_id').references(() => account.id, { onDelete: 'cascade' }),
+    schoolId: uuid('school_id').references(() => school.id, { onDelete: 'cascade' }),
+    status: text('status').notNull().default('actif'),
+    /** invitation : SHA-256 du code (rattachement à un parent, second parent, émancipation) */
+    codeHash: text('code_hash'),
+    codeExpiresAt: timestamp('code_expires_at', { withTimezone: true }),
+    /** preuve du consentement (papier : date, signataire, référence du formulaire ; en ligne : méthode) */
+    evidence: jsonb('evidence'),
+    createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    acceptedAt: timestamp('accepted_at', { withTimezone: true }),
+    endedAt: timestamp('ended_at', { withTimezone: true }),
+    endReason: text('end_reason'),
+  },
+  (t) => [
+    index('profile_custodian_profile').on(t.profileId),
+    index('profile_custodian_account').on(t.accountId),
+    uniqueIndex('profile_custodian_code').on(t.codeHash),
+    uniqueIndex('profile_custodian_parent_actif')
+      .on(t.profileId, t.accountId)
+      .where(sql`${t.status} = 'actif' AND ${t.nature} = 'parent'`),
+    uniqueIndex('profile_custodian_ecole_actif')
+      .on(t.profileId, t.schoolId)
+      .where(sql`${t.status} = 'actif' AND ${t.nature} = 'ecole'`),
+    check('profile_custodian_nature', sql`${t.nature} IN ('parent', 'ecole', 'emancipation')`),
+    check('profile_custodian_status', sql`${t.status} IN ('invite', 'actif', 'termine')`),
+    check(
+      'profile_custodian_cible',
+      sql`(${t.nature} = 'ecole' AND ${t.schoolId} IS NOT NULL) OR (${t.nature} <> 'ecole' AND (${t.accountId} IS NOT NULL OR ${t.status} = 'invite' OR ${t.status} = 'termine'))`,
+    ),
+  ],
 );
 
 /** Consentements (type, version du texte, date, retrait). */
@@ -519,6 +604,16 @@ export const session = pgTable(
     lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
     /** second facteur vérifié pour cette session (enseignant, administrateur) */
     mfaVerified: boolean('mfa_verified').notNull().default(false),
+    /**
+     * Mode TABLETTE DE CLASSE (lot F2, revue E3) : session du compte de l'école, ouverte par un enseignant,
+     * limitée aux élèves de CETTE classe (profils de l'école ou inscrits par leur parent).
+     */
+    tabletClassId: uuid('tablet_class_id').references(() => classGroup.id, {
+      onDelete: 'cascade',
+    }),
+    tabletOpenedBy: uuid('tablet_opened_by').references(() => account.id, {
+      onDelete: 'set null',
+    }),
   },
   (t) => [index('session_account').on(t.accountId)],
 );
@@ -677,28 +772,278 @@ export const hifzEvent = pgTable(
   ],
 );
 
-/** Classe d'un enseignant (lot 5 : suivi du hifẓ ; l'espace enseignant complet vient au lot S2). */
-export const classGroup = pgTable('class_group', {
-  id: uuid('id')
-    .primaryKey()
-    .default(sql`uuidv7()`),
-  teacherAccountId: uuid('teacher_account_id')
-    .notNull()
-    .references(() => account.id, { onDelete: 'cascade' }),
-  name: text('name').notNull(),
-  /** code à donner aux familles (8 caractères) : le PARENT inscrit lui-même son enfant */
-  joinCode: text('join_code').notNull().unique(),
-  /** espace école (lot 13) : niveau suivi, établissement et lieu (certificats), année scolaire */
-  levelCode: text('level_code'),
-  schoolName: text('school_name'),
-  schoolNameAr: text('school_name_ar'),
-  place: text('place'),
-  placeAr: text('place_ar'),
-  schoolYear: text('school_year'),
-  /** récitations envoyées : durée de conservation (jours, 1 à 30), réglée par l'enseignant (lot 16) */
-  recitationDays: smallint('recitation_days').notNull().default(14),
-  createdAt: createdAt(),
-});
+/**
+ * Classe (lot 5) — lot F2 (revue E1) : la classe appartient à une ÉCOLE (`school_id`), ses enseignants sont dans
+ * `class_teacher` (titulaire, suppléants). `teacher_account_id` = titulaire actuel (copie tenue par
+ * `setClassTitular`), clé en RESTRICT : la suppression d'un compte d'enseignant passe d'abord par le transfert
+ * de ses classes (`releaseTeacher`) ; plus jamais d'effacement en cascade des classes, notes et épreuves.
+ */
+export const classGroup = pgTable(
+  'class_group',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    teacherAccountId: uuid('teacher_account_id').references(() => account.id, {
+      onDelete: 'restrict',
+    }),
+    schoolId: uuid('school_id')
+      .notNull()
+      .references(() => school.id, { onDelete: 'restrict' }),
+    schoolYearId: uuid('school_year_id').references(() => schoolYear.id, { onDelete: 'restrict' }),
+    /** matière suivie (arabe, sciences, coran…), déduite du niveau ; « coran » pour un cercle */
+    subjectCode: text('subject_code').references(() => subject.code),
+    /** classe (un niveau) ou cercle de Coran (ḥalaqa, par portion) */
+    kind: text('kind').notNull().default('classe'),
+    /** cercle : portion suivie (ex. « juz30 », « 67-77 ») */
+    portion: text('portion'),
+    /** active ; archivée à la clôture de l'année (lecture seule, registre conservé) */
+    status: text('status').notNull().default('active'),
+    archivedAt: timestamp('archived_at', { withTimezone: true }),
+    name: text('name').notNull(),
+    /** code à donner aux familles (8 caractères) : le PARENT inscrit lui-même son enfant */
+    joinCode: text('join_code').notNull().unique(),
+    /** espace école (lot 13) : niveau suivi, établissement et lieu (certificats), année scolaire */
+    levelCode: text('level_code'),
+    schoolName: text('school_name'),
+    schoolNameAr: text('school_name_ar'),
+    place: text('place'),
+    placeAr: text('place_ar'),
+    schoolYear: text('school_year'),
+    /** récitations envoyées : durée de conservation (jours, 1 à 30), réglée par l'enseignant (lot 16) */
+    recitationDays: smallint('recitation_days').notNull().default(14),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('class_group_school').on(t.schoolId, t.schoolYearId),
+    check('class_group_kind', sql`${t.kind} IN ('classe', 'cercle')`),
+    check('class_group_status', sql`${t.status} IN ('active', 'archivee')`),
+  ],
+);
+
+// ================================================================ école, rôles, niveaux (lot F2, revue E1/E2/E8)
+
+/**
+ * École (revue E1) : établissement physique, école en ligne, ou école « personnelle » créée automatiquement pour
+ * un enseignant indépendant (reprise des classes existantes). Porte la licence (`subscription.school_id`) et,
+ * une fois créé, le compte technique titulaire des profils qu'elle inscrit (`account_id`, type « ecole »).
+ */
+export const school = pgTable(
+  'school',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    name: text('name').notNull(),
+    nameAr: text('name_ar'),
+    country: text('country'),
+    place: text('place'),
+    placeAr: text('place_ar'),
+    tz: text('tz').notNull().default('Africa/Dakar'),
+    status: text('status').notNull().default('active'),
+    /** créée automatiquement pour un enseignant (migration, ou première classe d'un enseignant sans école) */
+    personal: boolean('personal').notNull().default(false),
+    accountId: uuid('account_id').references(() => account.id, { onDelete: 'restrict' }),
+    createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex('school_account').on(t.accountId),
+    check('school_status', sql`${t.status} IN ('active', 'suspendue', 'fermee')`),
+    check('school_name', sql`char_length(${t.name}) BETWEEN 1 AND 120`),
+  ],
+);
+
+/** Personnel d'une école : direction, enseignant, secrétariat (un compte peut avoir plusieurs rôles). */
+export const schoolMember = pgTable(
+  'school_member',
+  {
+    schoolId: uuid('school_id')
+      .notNull()
+      .references(() => school.id, { onDelete: 'cascade' }),
+    accountId: uuid('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    role: text('role').notNull(),
+    since: timestamp('since', { withTimezone: true }).notNull().defaultNow(),
+    addedBy: uuid('added_by').references(() => account.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    primaryKey({ columns: [t.schoolId, t.accountId, t.role] }),
+    index('school_member_account').on(t.accountId),
+    check('school_member_role', sql`${t.role} IN ('direction', 'enseignant', 'secretariat')`),
+  ],
+);
+
+/** Enseignants d'une classe : un titulaire (au plus), des suppléants / co-enseignants. */
+export const classTeacher = pgTable(
+  'class_teacher',
+  {
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    accountId: uuid('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    role: text('role').notNull(),
+    since: timestamp('since', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.classId, t.accountId] }),
+    index('class_teacher_account').on(t.accountId),
+    uniqueIndex('class_teacher_un_titulaire')
+      .on(t.classId)
+      .where(sql`${t.role} = 'titulaire'`),
+    check('class_teacher_role', sql`${t.role} IN ('titulaire', 'suppleant')`),
+  ],
+);
+
+/** Année scolaire d'une école (revue E8). */
+export const schoolYear = pgTable(
+  'school_year',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    schoolId: uuid('school_id')
+      .notNull()
+      .references(() => school.id, { onDelete: 'cascade' }),
+    /** « 2026-2027 » */
+    label: text('label').notNull(),
+    startsOn: date('starts_on', { mode: 'string' }).notNull(),
+    endsOn: date('ends_on', { mode: 'string' }).notNull(),
+    status: text('status').notNull().default('en_cours'),
+    closedAt: timestamp('closed_at', { withTimezone: true }),
+    closedBy: uuid('closed_by').references(() => account.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    uniqueIndex('school_year_label').on(t.schoolId, t.label),
+    check('school_year_status', sql`${t.status} IN ('preparation', 'en_cours', 'cloturee')`),
+    check('school_year_dates', sql`${t.endsOn} > ${t.startsOn}`),
+  ],
+);
+
+/**
+ * Inscription DATÉE d'un élève (ligne de la liste de classe) dans une classe pour une année (revue E8) ;
+ * issue décidée au passage de fin d'année. Jamais effacée au départ : c'est le registre de l'école.
+ */
+export const enrolment = pgTable(
+  'enrolment',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    pupilId: uuid('pupil_id')
+      .notNull()
+      .references(() => classPupil.id, { onDelete: 'cascade' }),
+    schoolYearId: uuid('school_year_id').references(() => schoolYear.id, { onDelete: 'set null' }),
+    fromDay: date('from_day', { mode: 'string' }).notNull(),
+    toDay: date('to_day', { mode: 'string' }),
+    outcome: text('outcome').notNull().default('en_cours'),
+    decidedBy: uuid('decided_by').references(() => account.id, { onDelete: 'set null' }),
+    decidedAt: timestamp('decided_at', { withTimezone: true }),
+    /** passage : classe de l'année suivante */
+    nextClassId: uuid('next_class_id').references(() => classGroup.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    index('enrolment_class').on(t.classId),
+    index('enrolment_pupil').on(t.pupilId),
+    check(
+      'enrolment_outcome',
+      sql`${t.outcome} IN ('en_cours', 'admis', 'redouble', 'parti', 'transfere')`,
+    ),
+  ],
+);
+
+/**
+ * Niveau d'un profil PAR MATIÈRE, historisé (revue E8) : une ligne ouverte (`until` nul) par matière = niveau
+ * courant ; origine : test de positionnement, épreuve de passage, décision du maître, choix du parent, passage
+ * de fin d'année, reprise des données (migration).
+ */
+export const profileLevel = pgTable(
+  'profile_level',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    subjectCode: text('subject_code')
+      .notNull()
+      .references(() => subject.code),
+    levelCode: text('level_code')
+      .notNull()
+      .references(() => level.code),
+    since: timestamp('since', { withTimezone: true }).notNull().defaultNow(),
+    until: timestamp('until', { withTimezone: true }),
+    source: text('source').notNull(),
+    /** issue à la fermeture : termine (niveau acquis) ou change (correction, réorientation) */
+    outcome: text('outcome'),
+    decidedBy: uuid('decided_by').references(() => account.id, { onDelete: 'set null' }),
+    /** score du test, épreuve, classe… */
+    details: jsonb('details'),
+  },
+  (t) => [
+    index('profile_level_profile').on(t.profileId, t.subjectCode),
+    uniqueIndex('profile_level_courant')
+      .on(t.profileId, t.subjectCode)
+      .where(sql`${t.until} IS NULL`),
+    check(
+      'profile_level_source',
+      sql`${t.source} IN ('positionnement', 'epreuve', 'enseignant', 'parent', 'passage', 'reprise', 'inscription')`,
+    ),
+    check(
+      'profile_level_outcome',
+      sql`${t.outcome} IS NULL OR ${t.outcome} IN ('termine', 'change')`,
+    ),
+  ],
+);
+
+/**
+ * Mots du Coran (décision du client, 05/10/2026) : lemme ↔ NIVEAU DE LIVRE qui l'enseigne, d'après les données
+ * des livres (`mots_coran_1000.json` : niveau_enfants E1-E5, niveau_adultes A1-A10). Aucune hiérarchie propre.
+ * Le lien ↔ LEÇON (`unit_id`) reste vide tant que les livres ne l'exportent pas ; ados : rattachement absent des
+ * données (à fournir par les livres).
+ */
+export const quranLemma = pgTable(
+  'quran_lemma',
+  {
+    rank: smallint('rank').primaryKey(),
+    /** clé Buckwalter du Quranic Arabic Corpus (sensible à la casse) : identifiant stable du lemme */
+    lemmaKey: text('lemma_key').notNull(),
+    arabic: text('arabic').notNull(),
+    levelEnfants: text('level_enfants').references(() => level.code),
+    levelAdultes: text('level_adultes').references(() => level.code),
+    levelAdos: text('level_ados').references(() => level.code),
+    unitId: text('unit_id').references(() => unit.id),
+    frequency: integer('frequency'),
+    sourceSha256: text('source_sha256').notNull(),
+  },
+  (t) => [uniqueIndex('quran_lemma_key').on(t.lemmaKey)],
+);
+
+/** Mot du Coran ACQUIS par un élève (leçon de son livre terminée, niveau terminé, ou carte révisée). */
+export const profileLemma = pgTable(
+  'profile_lemma',
+  {
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    rank: smallint('rank')
+      .notNull()
+      .references(() => quranLemma.rank, { onDelete: 'cascade' }),
+    source: text('source').notNull(),
+    at: timestamp('at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.profileId, t.rank] }),
+    check('profile_lemma_source', sql`${t.source} IN ('niveau', 'lecon', 'carte')`),
+  ],
+);
 
 /** Élève d'une classe : ajouté par le parent (consentement « partage_enseignant »), retirable. */
 export const classMember = pgTable(
@@ -863,6 +1208,8 @@ export const billingCheckout = pgTable(
     /** unité mineure (centimes ; franc CFA sans décimales) ; licence : montant total */
     amount: integer('amount').notNull(),
     seats: integer('seats'),
+    /** lot F2 (revue E1) : licence d'école achetée POUR cette école (places = élèves de l'école) */
+    schoolId: uuid('school_id').references(() => school.id, { onDelete: 'restrict' }),
     provider: text('provider').notNull(),
     providerRef: text('provider_ref'),
     status: text('status').notNull().default('ouverte'),
@@ -893,6 +1240,11 @@ export const subscription = pgTable(
     provider: text('provider').notNull(),
     providerRef: text('provider_ref'),
     seats: integer('seats'),
+    /**
+     * lot F2 (revue E1) : licence d'école PORTÉE PAR L'ÉCOLE (le compte reste celui qui a payé) ; les licences
+     * existantes sont rattachées à l'école personnelle de l'enseignant qui les avait achetées (migration 0034)
+     */
+    schoolId: uuid('school_id').references(() => school.id, { onDelete: 'restrict' }),
     currentPeriodStart: timestamp('current_period_start', { withTimezone: true }).notNull(),
     currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
     cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull().default(false),
@@ -975,13 +1327,19 @@ export const classPupil = pgTable(
     classId: uuid('class_id')
       .notNull()
       .references(() => classGroup.id, { onDelete: 'cascade' }),
-    profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'cascade' }),
+    /**
+     * profil de l'application (null : élève « papier »). Lot F2 : SET NULL (et non plus cascade) — si le profil
+     * disparaît (compte effacé), la ligne du registre de l'école et ses notes restent, détachées.
+     */
+    profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'set null' }),
     displayName: text('display_name').notNull(),
     nameAr: text('name_ar'),
     /** pour les variantes féminines des documents en arabe et en français ; facultatif */
     gender: text('gender'),
     groupId: uuid('group_id').references(() => classSubgroup.id, { onDelete: 'set null' }),
     createdAt: createdAt(),
+    /** lot F2 (revue E8) : départ de la classe — la ligne, ses notes et ses copies sont ARCHIVÉES, jamais effacées */
+    leftAt: timestamp('left_at', { withTimezone: true }),
   },
   (t) => [
     uniqueIndex('class_pupil_profile').on(t.classId, t.profileId),
@@ -1279,18 +1637,45 @@ export const freeAnswer = pgTable(
  * religieux (traite la file des signalements de contenu, valide les traductions religieuses). Attribué par
  * l'outil `staff` (propriétaire de la base), jamais par l'API.
  */
+export const ACCOUNT_ROLES = [
+  'parent',
+  'eleve_adulte',
+  'enseignant',
+  'direction',
+  'secretariat',
+  'referent',
+  'moderateur',
+  'support',
+  'admin',
+] as const;
+export type AccountRoleName = (typeof ACCOUNT_ROLES)[number];
+
+/**
+ * Lot F2 (revue E2) : rôles MULTIPLES d'un compte, avec une PORTÉE (école, classe ou toute la plateforme).
+ * Les rôles d'école (direction, enseignant, secrétariat) vivent dans `school_member` et sont ajoutés aux rôles
+ * de la session à la lecture ; ici : parent, élève adulte, référent, modérateur, support, administrateur…
+ */
 export const accountRole = pgTable(
   'account_role',
   {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
     accountId: uuid('account_id')
       .notNull()
       .references(() => account.id, { onDelete: 'cascade' }),
     role: text('role').notNull(),
+    schoolId: uuid('school_id').references(() => school.id, { onDelete: 'cascade' }),
+    classId: uuid('class_id').references(() => classGroup.id, { onDelete: 'cascade' }),
     grantedAt: timestamp('granted_at', { withTimezone: true }).notNull().defaultNow(),
+    grantedBy: uuid('granted_by').references(() => account.id, { onDelete: 'set null' }),
   },
   (t) => [
-    primaryKey({ columns: [t.accountId, t.role] }),
-    check('account_role_role', sql`${t.role} IN ('referent')`),
+    unique('account_role_unique').on(t.accountId, t.role, t.schoolId, t.classId).nullsNotDistinct(),
+    check(
+      'account_role_role',
+      sql`${t.role} IN ('parent', 'eleve_adulte', 'enseignant', 'direction', 'secretariat', 'referent', 'moderateur', 'support', 'admin')`,
+    ),
   ],
 );
 

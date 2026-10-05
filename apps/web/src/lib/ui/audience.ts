@@ -17,7 +17,16 @@ export interface Context {
 }
 
 /** Espaces des adultes responsables (parent qui gère la famille) : toujours « clair et minimal ». */
-const PARENT_PATHS = ['/profils', '/compte', '/abonnement', '/offres', '/messages', '/ecole'];
+const PARENT_PATHS = [
+  '/profils',
+  '/compte',
+  '/abonnement',
+  '/offres',
+  '/messages',
+  '/ecole',
+  // lot F2 : responsables d'un profil, second parent, rattachement, émancipation
+  '/famille',
+];
 const STAFF_PATHS = ['/enseignant', '/admin'];
 const under = (p: string, list: string[]) => list.some((x) => p === x || p.startsWith(`${x}/`));
 

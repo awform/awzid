@@ -30,6 +30,8 @@ import {
   recordHifzEvents,
   savePlan,
   schema as t,
+  memberRoles,
+  teacherClass,
   teacherHasProfile,
   versesOf,
   type Db,
@@ -37,7 +39,14 @@ import {
 } from '@awform/db';
 import { bookVerseRefs, buildMeta, note, qualityOf, type HifzBookData } from '@awform/hifz';
 import { ownsProfile } from './auth/routes.js';
-import { audit, clearFailures, lockedUntil, recordFailure } from './auth/service.js';
+import {
+  audit,
+  clearFailures,
+  isTeacher as isTeacherRole,
+  lockedUntil,
+  recordFailure,
+  staffOnly,
+} from './auth/service.js';
 import { lawEvidence, TEXT_VERSION } from './auth/policy.js';
 
 const err = (reply: FastifyReply, status: number, code: string, extra: object = {}) =>
@@ -50,24 +59,30 @@ const COUNT = { type: 'integer', minimum: 0, maximum: 50 } as const;
 type Edition = () => Promise<{ id: string; code: string } | null>;
 
 export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): void {
-  const isTeacher = (req: FastifyRequest) =>
-    !!req.auth && (req.auth.kind === 'enseignant' || req.auth.kind === 'admin');
+  // lot F2 (revue E2) : le rôle (enseignant, direction) ouvre l'espace enseignant ; un compte de personnel SEUL
+  // (type enseignant ou admin) n'est jamais une famille ; un parent qui enseigne garde ses profils
+  const isTeacher = (req: FastifyRequest) => isTeacherRole(req.auth) || req.auth?.kind === 'admin';
+  const staff = (req: FastifyRequest) => staffOnly(req.auth);
 
   const needAuth = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    if (isTeacher(req) && !req.auth.mfaVerified)
+    if (staff(req) && !req.auth.mfaVerified)
       return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   };
   const needTeacher = async (req: FastifyRequest, reply: FastifyReply) => {
     await needAuth(req, reply);
     if (reply.sent) return;
     if (!isTeacher(req)) return err(reply, 403, 'reserve_aux_enseignants');
+    if (!req.auth!.mfaVerified)
+      return err(reply, 403, req.auth!.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   };
-  /** accès au hifẓ d'un profil : son titulaire, ou l'enseignant d'une de ses classes */
+  /** accès au hifẓ d'un profil : son titulaire ou parent, ou un enseignant d'une de ses classes */
   const canSee = async (req: FastifyRequest, profileId: string) =>
     !!req.auth &&
-    ((await ownsProfile(db, req.auth.accountId, profileId)) ||
-      (isTeacher(req) && (await teacherHasProfile(db, req.auth.accountId, profileId))));
+    ((await ownsProfile(db, req.auth, profileId)) ||
+      (isTeacher(req) &&
+        req.auth.mfaVerified &&
+        (await teacherHasProfile(db, req.auth.accountId, profileId))));
 
   // ---------------------------------------------------------------- texte coranique (Tanzil)
 
@@ -320,7 +335,15 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
     return { classes: out };
   });
 
-  app.post<{ Body: { name: string } }>(
+  app.post<{
+    Body: {
+      name: string;
+      schoolId?: string;
+      yearId?: string;
+      kind?: 'classe' | 'cercle';
+      portion?: string | null;
+    };
+  }>(
     '/api/v1/teacher/classes',
     {
       preHandler: needTeacher,
@@ -329,12 +352,35 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
           type: 'object',
           required: ['name'],
           additionalProperties: false,
-          properties: { name: { type: 'string', minLength: 1, maxLength: 60 } },
+          properties: {
+            name: { type: 'string', minLength: 1, maxLength: 60 },
+            // lot F2 : école de la classe (sinon l'école de l'enseignant), classe ou cercle de Coran
+            schoolId: UUID_PARAM,
+            yearId: UUID_PARAM,
+            kind: { enum: ['classe', 'cercle'] },
+            portion: { type: ['string', 'null'], maxLength: 40 },
+          },
         },
       },
     },
     async (req, reply) => {
-      const c = await createClass(db, req.auth!.accountId, req.body.name.trim());
+      const me = req.auth!.accountId;
+      if (req.body.schoolId) {
+        const roles = await memberRoles(db, me, req.body.schoolId);
+        if (!roles.includes('enseignant') && !roles.includes('direction'))
+          return err(reply, 404, 'introuvable');
+      }
+      if (req.body.yearId && !req.body.schoolId) return err(reply, 400, 'ecole_requise');
+      const c = await createClass(db, me, req.body.name.trim(), {
+        ...(req.body.schoolId ? { schoolId: req.body.schoolId } : {}),
+        ...(req.body.yearId ? { yearId: req.body.yearId } : {}),
+        kind: req.body.kind ?? 'classe',
+        portion: req.body.portion?.trim() || null,
+      }).catch((e: Error) => {
+        if (e.message === 'annee_invalide') return null;
+        throw e;
+      });
+      if (!c) return err(reply, 400, 'annee_invalide');
       await audit(db, req.auth!.accountId, 'classe.creation', c.id);
       return reply.code(201).send({ class: c });
     },
@@ -347,15 +393,7 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
       schema: { params: { type: 'object', properties: { id: UUID_PARAM }, required: ['id'] } },
     },
     async (req, reply) => {
-      const [c] = await db
-        .select()
-        .from(t.classGroup)
-        .where(
-          and(
-            eq(t.classGroup.id, req.params.id),
-            eq(t.classGroup.teacherAccountId, req.auth!.accountId),
-          ),
-        );
+      const c = await teacherClass(db, req.auth!.accountId, req.params.id);
       if (!c) return err(reply, 404, 'introuvable');
       const members = [];
       for (const m of await classMembers(db, c.id))
@@ -389,7 +427,7 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
     },
     async (req, reply) => {
       const accountId = req.auth!.accountId;
-      if (isTeacher(req) || !(await ownsProfile(db, accountId, req.params.id)))
+      if (staff(req) || req.auth!.tablet || !(await ownsProfile(db, req.auth, req.params.id)))
         return err(reply, 404, 'introuvable');
       if (req.body.consent !== true) return err(reply, 400, 'consentement_requis');
       // audit SEC-3 : accord donné pour un mineur → code parent exigé (appareil partagé)
@@ -440,7 +478,7 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
     },
     async (req, reply) => {
       const accountId = req.auth!.accountId;
-      if (!(await ownsProfile(db, accountId, req.params.id))) return err(reply, 404, 'introuvable');
+      if (!(await ownsProfile(db, req.auth, req.params.id))) return err(reply, 404, 'introuvable');
       await leaveClass(db, req.params.classId, req.params.id);
       if ((await profileClasses(db, req.params.id)).length === 0)
         await db

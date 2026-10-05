@@ -5,7 +5,9 @@
  */
 import { and, eq, inArray, isNotNull, isNull, lt, or } from 'drizzle-orm';
 import type { Db } from './client.js';
+import { releaseTeacher } from './ecole.js';
 import { leaveClass } from './hifz.js';
+import { handOverProfiles } from './responsables.js';
 import * as t from './schema.js';
 
 /**
@@ -14,6 +16,16 @@ import * as t from './schema.js';
  * rien de l'élève pendant les 30 jours qui précèdent l'effacement définitif.
  */
 export async function withdrawAccount(db: Db, accountId: string): Promise<void> {
+  // lot F2 (revue E1, E4) : un enseignant quitte ses classes (transférées, jamais effacées) ; les profils qui
+  // ont un autre responsable (second parent, école) lui passent au lieu de disparaître
+  await releaseTeacher(db, accountId);
+  await handOverProfiles(db, accountId);
+  await db
+    .update(t.profileCustodian)
+    .set({ status: 'termine', endedAt: new Date(), endReason: 'compte_supprime' })
+    .where(
+      and(eq(t.profileCustodian.accountId, accountId), eq(t.profileCustodian.status, 'actif')),
+    );
   const profiles = await db
     .select({ id: t.profile.id })
     .from(t.profile)
@@ -28,7 +40,7 @@ export async function withdrawAccount(db: Db, accountId: string): Promise<void> 
       .from(t.classPupil)
       .where(eq(t.classPupil.profileId, p.id));
     for (const c of new Set([...classes.map((x) => x.c), ...pupils.map((x) => x.c)]))
-      await leaveClass(db, c, p.id);
+      await leaveClass(db, c, p.id, { erase: true });
     await db.delete(t.recitationUpload).where(eq(t.recitationUpload.profileId, p.id));
   }
 }
@@ -48,6 +60,12 @@ export async function purgeDeletedAccounts(db: Db, days = 30, now = new Date()):
       .from(t.profile)
       .where(inArray(t.profile.ownerAccountId, due))
   ).map((p) => p.id);
+  // lot F2 (revue E1) : la clé « titulaire » d'une classe est en RESTRICT ; un titulaire resté (classe désignée
+  // après la demande) est détaché ici, la classe reste à l'école (à la direction)
+  await db
+    .update(t.classGroup)
+    .set({ teacherAccountId: null })
+    .where(inArray(t.classGroup.teacherAccountId, due));
   const gone = await db
     .delete(t.account)
     .where(inArray(t.account.id, due))

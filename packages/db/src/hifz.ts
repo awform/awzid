@@ -14,7 +14,10 @@ import {
   validDay,
   validPart,
 } from './bounds.js';
+import { teachesClass } from './acces.js';
 import type { Db } from './client.js';
+import { currentSchoolYear, defaultSchoolFor } from './ecole.js';
+import { archivePupil, openEnrolment } from './school.js';
 import * as t from './schema.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -253,24 +256,65 @@ export function newJoinCode(): string {
   return s;
 }
 
-export async function createClass(db: Db, teacherAccountId: string, name: string) {
+/**
+ * Nouvelle classe (lot F2) : dans l'école indiquée (où le compte est enseignant ou à la direction), sinon dans
+ * son unique école, sinon dans une école « personnelle » créée pour lui ; année scolaire en cours de l'école ;
+ * le créateur en est le titulaire.
+ */
+export async function createClass(
+  db: Db,
+  teacherAccountId: string,
+  name: string,
+  opts: {
+    schoolId?: string;
+    kind?: 'classe' | 'cercle';
+    portion?: string | null;
+    /** année scolaire (une année « en préparation » : classes de la rentrée suivante) */
+    yearId?: string;
+  } = {},
+) {
+  const schoolId = opts.schoolId ?? (await defaultSchoolFor(db, teacherAccountId));
+  const [chosen] = opts.yearId
+    ? await db
+        .select()
+        .from(t.schoolYear)
+        .where(and(eq(t.schoolYear.id, opts.yearId), eq(t.schoolYear.schoolId, schoolId)))
+    : [];
+  if (opts.yearId && (!chosen || chosen.status === 'cloturee')) throw new Error('annee_invalide');
+  const year = chosen ?? (await currentSchoolYear(db, schoolId));
   for (let attempt = 0; attempt < 5; attempt++) {
     const rows = await db
       .insert(t.classGroup)
-      .values({ teacherAccountId, name, joinCode: newJoinCode() })
+      .values({
+        teacherAccountId,
+        schoolId,
+        schoolYearId: year.id,
+        schoolYear: year.label,
+        kind: opts.kind ?? 'classe',
+        portion: opts.portion ?? null,
+        subjectCode: opts.kind === 'cercle' ? 'coran' : null,
+        name,
+        joinCode: newJoinCode(),
+      })
       .onConflictDoNothing()
       .returning();
-    if (rows[0]) return rows[0];
+    if (rows[0]) {
+      await db
+        .insert(t.classTeacher)
+        .values({ classId: rows[0].id, accountId: teacherAccountId, role: 'titulaire' });
+      return rows[0];
+    }
   }
   throw new Error('code de classe introuvable');
 }
 
+/** Classes accessibles au compte (enseignant de la classe ou direction de l'école), actives d'abord. */
 export async function listClasses(db: Db, teacherAccountId: string) {
   return db
     .select()
     .from(t.classGroup)
-    .where(eq(t.classGroup.teacherAccountId, teacherAccountId))
-    .orderBy(asc(t.classGroup.createdAt));
+    .where(teachesClass(teacherAccountId))
+    .orderBy(asc(t.classGroup.status), asc(t.classGroup.createdAt));
 }
 
 export async function classByCode(db: Db, code: string) {
@@ -307,7 +351,7 @@ export async function teacherHasProfile(
   teacherAccountId: string,
   profileId: string,
 ): Promise<boolean> {
-  const classes = await listClasses(db, teacherAccountId);
+  const classes = (await listClasses(db, teacherAccountId)).filter((c) => c.status === 'active');
   if (!classes.length) return false;
   const [m] = await db
     .select({ p: t.classMember.profileId })
@@ -342,13 +386,50 @@ export async function joinClass(db: Db, classId: string, profileId: string, pare
     .select({ pseudonym: t.profile.pseudonym })
     .from(t.profile)
     .where(eq(t.profile.id, profileId));
-  await db
+  // lot F2 : un élève revenu dans une classe qu'il avait quittée retrouve sa ligne (archives comprises)
+  const [row] = await db
     .insert(t.classPupil)
     .values({ classId, profileId, displayName: p?.pseudonym ?? '?' })
-    .onConflictDoNothing();
+    .onConflictDoUpdate({
+      target: [t.classPupil.classId, t.classPupil.profileId],
+      set: { leftAt: null },
+    })
+    .returning({ id: t.classPupil.id });
+  if (row) await openEnrolment(db, classId, row.id);
 }
 
-export async function leaveClass(db: Db, classId: string, profileId: string) {
+/**
+ * Départ d'un profil d'une classe. Lot F2 (revue E8) : notes, copies d'épreuves, réponses libres corrigées et
+ * ligne du registre sont ARCHIVÉES (plus jamais effacées au départ) ; le partage avec l'enseignant s'arrête
+ * (class_member) ; seules les RÉCITATIONS envoyées (voix de l'élève) restent effacées (audit MIN-11).
+ */
+export async function leaveClass(
+  db: Db,
+  classId: string,
+  profileId: string,
+  opts: { erase?: boolean } = {},
+) {
+  if (opts.erase) {
+    // suppression du compte demandée (audit MIN-5, droit à l'effacement) : copies et réponses libres effacées
+    // aussitôt, comme avant le lot F2 ; la ligne du registre reste (notes papier), détachée à l'effacement
+    await db
+      .delete(t.examSubmission)
+      .where(
+        and(
+          eq(t.examSubmission.profileId, profileId),
+          inArray(
+            t.examSubmission.sessionId,
+            db
+              .select({ id: t.examSession.id })
+              .from(t.examSession)
+              .where(eq(t.examSession.classId, classId)),
+          ),
+        ),
+      );
+    await db
+      .delete(t.freeAnswer)
+      .where(and(eq(t.freeAnswer.classId, classId), eq(t.freeAnswer.profileId, profileId)));
+  }
   const [p] = await db
     .select({ id: t.classPupil.id })
     .from(t.classPupil)
@@ -358,38 +439,16 @@ export async function leaveClass(db: Db, classId: string, profileId: string) {
       .update(t.certificate)
       .set({ detachedAt: new Date() })
       .where(and(eq(t.certificate.pupilId, p.id), isNull(t.certificate.detachedAt)));
-  // copies des épreuves de cette classe : effacées au départ de l'élève (lot 19 ; la note reste au registre
-  // des certificats si un certificat a été délivré)
-  await db
-    .delete(t.examSubmission)
-    .where(
-      and(
-        eq(t.examSubmission.profileId, profileId),
-        inArray(
-          t.examSubmission.sessionId,
-          db
-            .select({ id: t.examSession.id })
-            .from(t.examSession)
-            .where(eq(t.examSession.classId, classId)),
-        ),
-      ),
-    );
   // récitations envoyées à cette classe : effacées au départ de l'élève (audit MIN-11)
   await db
     .delete(t.recitationUpload)
     .where(
       and(eq(t.recitationUpload.classId, classId), eq(t.recitationUpload.profileId, profileId)),
     );
-  // réponses libres envoyées à cette classe : effacées au départ de l'élève (lot 18)
-  await db
-    .delete(t.freeAnswer)
-    .where(and(eq(t.freeAnswer.classId, classId), eq(t.freeAnswer.profileId, profileId)));
   await db
     .delete(t.classMember)
     .where(and(eq(t.classMember.classId, classId), eq(t.classMember.profileId, profileId)));
-  await db
-    .delete(t.classPupil)
-    .where(and(eq(t.classPupil.classId, classId), eq(t.classPupil.profileId, profileId)));
+  if (p) await archivePupil(db, p.id, 'parti');
 }
 
 /** Divisions officielles (null si les métadonnées Tanzil n'ont pas été importées). */

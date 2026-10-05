@@ -7,6 +7,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { answerPaths } from '@awform/content';
+import { and, eq } from 'drizzle-orm';
 import { schema as t } from '@awform/db';
 import { child, join, newClass, parent, setupEdition, teacher, type Ctx } from './helpers.js';
 
@@ -224,7 +225,8 @@ describe.skipIf(!URL_)('lot 19 — épreuves notées (awform_test)', () => {
     expect(row('Moussa').bilans).toEqual([20]);
   });
 
-  it('examen /100 ; quitter la classe efface les copies de cette classe', async () => {
+  // lot F2 (revue E8) : les copies sont ARCHIVÉES au départ de l'élève (registre), plus effacées
+  it('examen /100 ; quitter la classe archive les copies de cette classe', async () => {
     const ex = await c.req('POST', `/api/v1/ecole/classes/${cls.id}/epreuves`, T, {
       unitId: 'en1.l05',
       closesAt: soon(),
@@ -234,7 +236,11 @@ describe.skipIf(!URL_)('lot 19 — épreuves notées (awform_test)', () => {
       (await c.req('DELETE', `/api/v1/profiles/${moussa}/classes/${cls.id}`, fam.P)).statusCode,
     ).toBe(200);
     const left = await c.h.db.select().from(t.examSubmission);
-    expect(left.every((x) => x.profileId !== moussa)).toBe(true);
-    expect(left).toHaveLength(1);
+    expect(left.some((x) => x.profileId === moussa)).toBe(true);
+    const [pupil] = await c.h.db
+      .select()
+      .from(t.classPupil)
+      .where(and(eq(t.classPupil.classId, cls.id), eq(t.classPupil.profileId, moussa)));
+    expect(pupil?.leftAt).not.toBeNull();
   });
 });

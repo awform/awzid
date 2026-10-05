@@ -2,10 +2,10 @@
 
 | Élément | Poids transféré | Budget |
 |---|---|---|
-| JavaScript + CSS initiaux, page la plus lourde (`/lecons/[id]`, Brotli) | 145.1 Ko | ≤ 150.0 Ko |
-| JavaScript de toutes les pages (Brotli) | 338.2 Ko | ≤ 375.0 Ko |
-| CSS (Brotli) | 34.0 Ko | — |
-| Service worker (Brotli) | 5.9 Ko | — |
+| JavaScript + CSS initiaux, page la plus lourde (`/lecons/[id]`, Brotli) | 137.7 Ko | ≤ 150.0 Ko |
+| JavaScript de toutes les pages (Brotli) | 330.2 Ko | ≤ 365.0 Ko |
+| CSS (Brotli) | 31.9 Ko | — |
+| Service worker (Brotli) | 5.8 Ko | — |
 | Polices WOFF2 (une seule fois, déjà compressées) | 222.6 Ko | ≤ 600.0 Ko |
 | Police d'une riwāya, la plus lourde (6 polices, à la demande, hors coquille) | 781.6 Ko | ≤ 1024.0 Ko |
 
@@ -13,11 +13,11 @@
 
 | Page | JavaScript + CSS initiaux (Brotli) |
 |---|---|
-| `/lecons/[id]` | 145.1 Ko |
-| `/coran/mushaf` | 122.4 Ko |
-| `/coran/ecouter` | 120.0 Ko |
-| `/enseignant/classe/[id]` | 119.9 Ko |
-| `/lectures/[code]` | 119.5 Ko |
-| `/coran/memoriser` | 115.7 Ko |
-| `/coran/lecteur` | 112.2 Ko |
-| `/hifz` | 111.0 Ko |
+| `/lecons/[id]` | 137.7 Ko |
+| `/coran/mushaf` | 115.6 Ko |
+| `/coran/ecouter` | 113.1 Ko |
+| `/enseignant/classe/[id]` | 113.0 Ko |
+| `/lectures/[code]` | 112.7 Ko |
+| `/coran/memoriser` | 108.8 Ko |
+| `/coran/lecteur` | 105.3 Ko |
+| `/hifz` | 104.2 Ko |

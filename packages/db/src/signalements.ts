@@ -252,7 +252,11 @@ export async function suspensionsVersion(db: Db): Promise<string> {
 
 // ------------------------------------------------------------------ rôles
 
-export async function hasRole(db: Db, accountId: string, role: 'referent'): Promise<boolean> {
+export async function hasRole(
+  db: Db,
+  accountId: string,
+  role: t.AccountRoleName,
+): Promise<boolean> {
   const [r] = await db
     .select({ a: t.accountRole.accountId })
     .from(t.accountRole)
@@ -260,6 +264,7 @@ export async function hasRole(db: Db, accountId: string, role: 'referent'): Prom
   return !!r;
 }
 
-export async function grantRole(db: Db, accountId: string, role: 'referent'): Promise<void> {
+/** Rôle de plateforme (portée : toute l'application) ; lot F2 : referent, moderateur, support, admin… */
+export async function grantRole(db: Db, accountId: string, role: t.AccountRoleName): Promise<void> {
   await db.insert(t.accountRole).values({ accountId, role }).onConflictDoNothing();
 }

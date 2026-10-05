@@ -232,7 +232,8 @@ describe.skipIf(!URL_)('récital de hifẓ (awform_test)', () => {
     expect(f.recitals.map((x: { titre: string }) => x.titre)).toEqual(['Récital de fin d’année']);
   });
 
-  it('RGPD : export du compte famille, effacement avec le profil', async () => {
+  // lot F2 (revue E8) : le profil effacé, la note du récital reste au REGISTRE de l'école, détachée du profil
+  it('RGPD : export du compte famille ; profil effacé → note gardée au registre, détachée', async () => {
     const exp = (await c.req('GET', '/api/v1/account/export', fam.P)).json();
     expect(exp.recitalsDeHifz).toHaveLength(1);
     expect(exp.recitalsDeHifz[0]).toMatchObject({ titre: 'Récital de fin d’année' });
@@ -241,6 +242,11 @@ describe.skipIf(!URL_)('récital de hifẓ (awform_test)', () => {
       .select()
       .from(t.hifzRecitalEntry)
       .where(eq(t.hifzRecitalEntry.id, entryApp));
-    expect(rows).toEqual([]);
+    expect(rows).toHaveLength(1);
+    const [pupil] = await c.h.db
+      .select()
+      .from(t.classPupil)
+      .where(eq(t.classPupil.id, rows[0]!.pupilId));
+    expect(pupil?.profileId).toBeNull();
   });
 });

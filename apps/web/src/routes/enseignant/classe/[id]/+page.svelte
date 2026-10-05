@@ -6,7 +6,7 @@
   import { note, suraName, type Counters } from '@awform/hifz';
   import { localIso } from '$lib/hifz';
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
-  import { call, fetchMe, type Me } from '$lib/session';
+  import { call, fetchMe, isStaff, type Me } from '$lib/session';
   import CorrectionsClasse from '$lib/CorrectionsClasse.svelte';
   import EpreuvesClasse from '$lib/EpreuvesClasse.svelte';
   import MessagerieClasse from '$lib/MessagerieClasse.svelte';
@@ -108,7 +108,7 @@
   let error = $state('');
   const id = $derived(page.params.id ?? '');
   const blocked = $derived(!!me && me.mfaRequired && !me.mfaVerified);
-  const isTeacher = $derived(me?.account.kind === 'enseignant');
+  const isTeacher = $derived(isStaff(me));
 
   // réglages
   let settings = $state({

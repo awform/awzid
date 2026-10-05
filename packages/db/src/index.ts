@@ -22,3 +22,7 @@ export * from './audio/index.js';
 export * from './lecons-audio.js';
 export * from './signalements.js';
 export * from './traductions.js';
+export * from './acces.js';
+export * from './ecole.js';
+export * from './responsables.js';
+export * from './niveaux.js';

@@ -6,7 +6,7 @@
  *  - verrouillage progressif après 5 échecs (par compte et par adresse IP), partagé en base.
  */
 import { and, eq, gt, isNull, sql } from 'drizzle-orm';
-import { schema as t, type Db } from '@awform/db';
+import { accountRoles, schema as t, type Db } from '@awform/db';
 import { randomToken, sha256 } from './crypto.js';
 import { sessionTtlMs } from './policy.js';
 
@@ -14,12 +14,37 @@ export const COOKIE = 'awform_session';
 
 export interface AuthCtx {
   accountId: string;
-  kind: 'parent' | 'adulte' | 'admin' | 'enseignant';
+  /** type du TITULAIRE du compte (lot F2 : famille, adulte, école, ou compte de personnel seul) */
+  kind: 'parent' | 'adulte' | 'admin' | 'enseignant' | 'ecole';
   tokenHash: string;
   mfaVerified: boolean;
   totpEnabled: boolean;
   country: string | null;
+  /** lot F2 (revue E2) : rôles du compte (plateforme, écoles) — les gardes lisent ces rôles */
+  roles: string[];
+  /** lot F2 (revue E3) : session de TABLETTE DE CLASSE (compte de l'école, limitée aux élèves de la classe) */
+  tablet: { classId: string } | null;
 }
+
+/** Rôles de PERSONNEL : les espaces qu'ils ouvrent exigent le second facteur. */
+export const STAFF_ROLES = [
+  'enseignant',
+  'direction',
+  'secretariat',
+  'referent',
+  'moderateur',
+  'support',
+  'admin',
+] as const;
+
+export const hasRole = (a: AuthCtx | null | undefined, ...roles: string[]) =>
+  !!a && roles.some((r) => a.roles.includes(r));
+/** Enseignant ou direction d'une école (ou compte enseignant existant). */
+export const isTeacher = (a: AuthCtx | null | undefined) => hasRole(a, 'enseignant', 'direction');
+export const isAdmin = (a: AuthCtx | null | undefined) => hasRole(a, 'admin');
+/** Compte de PERSONNEL SEUL (type enseignant ou admin) : jamais traité comme une famille. */
+export const staffOnly = (a: AuthCtx | null | undefined) =>
+  !!a && (a.kind === 'enseignant' || a.kind === 'admin');
 
 export function readCookie(header: string | undefined, name = COOKIE): string | null {
   for (const part of (header ?? '').split(';')) {
@@ -44,14 +69,22 @@ export function clearCookie(secure: boolean): string {
   return sessionCookie('', 0, secure);
 }
 
-export async function createSession(db: Db, accountId: string, kind: string, mfaVerified: boolean) {
+export async function createSession(
+  db: Db,
+  accountId: string,
+  kind: string,
+  mfaVerified: boolean,
+  extra: { tabletClassId?: string; tabletOpenedBy?: string; ttlMs?: number } = {},
+) {
   const token = randomToken(32);
-  const ttl = sessionTtlMs(kind);
+  const ttl = extra.ttlMs ?? sessionTtlMs(kind);
   await db.insert(t.session).values({
     tokenHash: sha256(token),
     accountId,
     expiresAt: new Date(Date.now() + ttl),
     mfaVerified,
+    tabletClassId: extra.tabletClassId ?? null,
+    tabletOpenedBy: extra.tabletOpenedBy ?? null,
   });
   return { token, ttl };
 }
@@ -68,6 +101,7 @@ export async function lookupSession(db: Db, token: string | null): Promise<AuthC
       kind: t.account.kind,
       totpEnabled: t.account.totpEnabled,
       country: t.account.country,
+      tabletClassId: t.session.tabletClassId,
     })
     .from(t.session)
     .innerJoin(t.account, eq(t.account.id, t.session.accountId))
@@ -91,7 +125,15 @@ export async function lookupSession(db: Db, token: string | null): Promise<AuthC
         .set({ expiresAt: new Date(Date.now() + ttl), lastSeenAt: new Date() })
         .where(eq(t.session.tokenHash, tokenHash));
   }
-  return { ...r, tokenHash };
+  const { tabletClassId, ...rest } = r;
+  // tablette de classe : aucun rôle (ni personnel ni famille), seulement les élèves de la classe
+  const roles = tabletClassId ? [] : await accountRoles(db, r.accountId, r.kind);
+  return {
+    ...rest,
+    tokenHash,
+    roles,
+    tablet: tabletClassId ? { classId: tabletClassId } : null,
+  };
 }
 
 export async function revokeSession(db: Db, tokenHash: string): Promise<void> {

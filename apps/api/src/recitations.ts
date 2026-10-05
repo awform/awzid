@@ -28,7 +28,7 @@ import {
 import { note, qualityOf, type Counters } from '@awform/hifz';
 import { ownsProfile } from './auth/routes.js';
 import { minorHolder, parentGate as guardParent } from './guards.js';
-import { audit } from './auth/service.js';
+import { audit, isTeacher, staffOnly } from './auth/service.js';
 import { lawEvidence, TEXT_VERSION } from './auth/policy.js';
 
 const err = (reply: FastifyReply, status: number, code: string, extra: object = {}) =>
@@ -81,10 +81,8 @@ export function registerRecitations(app: FastifyInstance, db: Db, key: Recitatio
   };
   const owned = async (req: FastifyRequest, reply: FastifyReply, profileId: string) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    if (req.auth.kind === 'enseignant' || req.auth.kind === 'admin')
-      return err(reply, 403, 'reserve_aux_familles');
-    if (!(await ownsProfile(db, req.auth.accountId, profileId)))
-      return err(reply, 404, 'introuvable');
+    if (staffOnly(req.auth)) return err(reply, 403, 'reserve_aux_familles');
+    if (!(await ownsProfile(db, req.auth, profileId))) return err(reply, 404, 'introuvable');
     return null;
   };
 
@@ -228,7 +226,7 @@ export function registerRecitations(app: FastifyInstance, db: Db, key: Recitatio
 
   const needTeacher = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    if (req.auth.kind !== 'enseignant') return err(reply, 403, 'reserve_aux_enseignants');
+    if (!isTeacher(req.auth)) return err(reply, 403, 'reserve_aux_enseignants');
     if (!req.auth.mfaVerified)
       return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   };

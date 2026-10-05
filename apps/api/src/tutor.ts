@@ -37,6 +37,7 @@ import {
   type TutorSetup,
 } from '@awform/tutor';
 import { ownsProfile } from './auth/routes.js';
+import { isTeacher as isTeacherRole } from './auth/service.js';
 import { lawEvidence, TEXT_VERSION } from './auth/policy.js';
 import { currentSuspensions, maskUnit } from './suspensions.js';
 
@@ -58,7 +59,7 @@ export function registerTutor(
   const contexts = new Map<string, ContextPack>();
 
   const isTeacher = (req: FastifyRequest) =>
-    !!req.auth && (req.auth.kind === 'enseignant' || req.auth.kind === 'admin');
+    !!req.auth && (isTeacherRole(req.auth) || req.auth.kind === 'admin');
   const needTeacher = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
     if (!isTeacher(req)) return err(reply, 403, 'reserve_aux_enseignants');
@@ -66,7 +67,7 @@ export function registerTutor(
       return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   };
   const owner = async (req: FastifyRequest, profileId: string) =>
-    !!req.auth && (await ownsProfile(db, req.auth.accountId, profileId));
+    !!req.auth && (await ownsProfile(db, req.auth, profileId));
 
   async function context(editionId: string, unitId: string): Promise<ContextPack | null> {
     // lot F1 (M1) : un contenu suspendu n'entre jamais dans le contexte du tuteur

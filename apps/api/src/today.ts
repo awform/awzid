@@ -28,8 +28,7 @@ export const mondayOf = (d: string) => iso(ms(d) - (isoWeekday(d) - 1) * 86_400_
 export function registerToday(app: FastifyInstance, db: Db, edition: Edition): void {
   const guard = async (req: FastifyRequest, reply: FastifyReply, id: string) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    if (!(await ownsProfile(db, req.auth.accountId, id)))
-      return err(reply, 404, 'profil_introuvable');
+    if (!(await ownsProfile(db, req.auth, id))) return err(reply, 404, 'profil_introuvable');
   };
 
   async function profileOf(id: string) {

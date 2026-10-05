@@ -111,9 +111,23 @@ export const API_GRANTS: Record<string, Right[]> = {
   // jamais d'effacement (la trace reste ; le compte de l'auteur est détaché à sa suppression)
   exercise_lineage: R,
   content_translation: R,
-  account_role: R,
+  // lot F2 : rôles de plateforme posés par l'outil staff ; rôles d'école et « parent » / « élève adulte »
+  // posés par l'API (inscription, direction de l'école)
+  account_role: RID,
   content_report: RIU,
   content_suspension: RIU,
+  // lot F2 : écoles, personnel, enseignants de classe, rôles (portée), responsables d'un profil, niveaux par
+  // matière, années, inscriptions (jamais effacées par l'API : archivées), mots du Coran (posés par l'import)
+  school: RIU,
+  school_member: ALL,
+  class_teacher: ALL,
+  school_year: RIU,
+  enrolment: RIU,
+  profile_custodian: RIU,
+  profile_level: RIU,
+  subject: R,
+  quran_lemma: R,
+  profile_lemma: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */
@@ -151,6 +165,8 @@ export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
   session: ['expires_at', 'revoked_at'],
   billing_checkout: ['status', 'created_at'],
   message: ['created_at'],
+  // lot F2 : détacher le titulaire d'une classe avant l'effacement définitif de son compte
+  class_group: ['id', 'teacher_account_id'],
 };
 
 /**
@@ -159,6 +175,7 @@ export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
  */
 export const WORKER_COLUMN_UPDATES: Record<string, string[]> = {
   audit_log: ['target', 'before', 'after'],
+  class_group: ['teacher_account_id'],
 };
 
 export const SEQUENCES = ['audit_log_id_seq'];

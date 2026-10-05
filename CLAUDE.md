@@ -33,6 +33,10 @@ Lot 18 (branche `lot18-wip`, V1-a) : TERMINÉ — réponses libres corrigées pa
 Lot 19 (branche `lot19-wip`, V1-b) : TERMINÉ — épreuves notées, textes non préparés, remédiation.
 Lot 20 (branche `lot20-wip`, V1-e) : TERMINÉ — certificats signés (Ed25519) et vérifiables par QR.
 Lot 21 (branche `lot21-wip`, V1-f) : PARTIEL (schéma seulement) — arrêté pour les corrections d'audit.
+Lot F2 (branche `f2-ecole-wip`, revue d'architecture E1-E4, E8) : TERMINÉ — école, personnel, rôles multiples,
+responsables d'un profil (`profile_custodian`), tablette de classe, émancipation, niveau par matière, années,
+passage de fin d'année, archives, API « mon parcours » (`packages/db/src/{ecole,responsables,niveaux}.ts`,
+`apps/api/src/ecole-f2.ts`) ; l'interface du parcours par niveau vient avec A27.
 Lot 29 : tajwid en couleurs (Ḥafṣ) TERMINÉ — source CC BY 4.0 recalée et contrôlée (`packages/content/src/tajwid.ts`,
 `docs/projet/LICENCES.md`), affichage `apps/web/src/lib/quran/Tajwid*.svelte` ; décision D29.
 Lot 27 : interface de l'espace Coran TERMINÉE (branche `lot27-wip` = `lot27-api-wip` + lot 26 + écrans ; `apps/web/src/lib/quran/`).

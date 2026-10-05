@@ -1,6 +1,7 @@
 /** Tuteurs IA (lot 9) : journal, dépense du mois, questions transmises à l'enseignant, alertes. */
 import { and, desc, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
 import type { Db } from './client.js';
+import { teachesClass } from './acces.js';
 import * as t from './schema.js';
 
 export type TutorLogRow = typeof t.tutorLog.$inferInsert;
@@ -112,9 +113,7 @@ export async function teacherQuestions(db: Db, teacherAccountId: string, status 
     .innerJoin(t.classMember, eq(t.classMember.profileId, t.tutorQuestion.profileId))
     .innerJoin(t.classGroup, eq(t.classGroup.id, t.classMember.classId))
     .innerJoin(t.profile, eq(t.profile.id, t.tutorQuestion.profileId))
-    .where(
-      and(eq(t.classGroup.teacherAccountId, teacherAccountId), eq(t.tutorQuestion.status, status)),
-    )
+    .where(and(teachesClass(teacherAccountId), eq(t.tutorQuestion.status, status)))
     .orderBy(t.tutorQuestion.id);
 }
 
@@ -130,9 +129,7 @@ export async function answerTutorQuestion(
     .from(t.tutorQuestion)
     .innerJoin(t.classMember, eq(t.classMember.profileId, t.tutorQuestion.profileId))
     .innerJoin(t.classGroup, eq(t.classGroup.id, t.classMember.classId))
-    .where(
-      and(eq(t.tutorQuestion.id, questionId), eq(t.classGroup.teacherAccountId, teacherAccountId)),
-    )
+    .where(and(eq(t.tutorQuestion.id, questionId), teachesClass(teacherAccountId)))
     .limit(1);
   if (!mine.length) return false;
   await db

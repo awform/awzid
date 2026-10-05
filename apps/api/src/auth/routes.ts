@@ -11,8 +11,16 @@
  * à la connexion.
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { and, asc, eq, isNull, sql } from 'drizzle-orm';
-import { schema as t, type Db } from '@awform/db';
+import { and, eq, isNull, sql } from 'drizzle-orm';
+import {
+  accountRoles,
+  canActForProfile,
+  grantAccountRole,
+  schema as t,
+  schoolsOf,
+  visibleProfiles,
+  type Db,
+} from '@awform/db';
 import { decrypt, encrypt, hashSecret, newTotpSecret, verifySecret, verifyTotp } from './crypto.js';
 import { checkPassword, MAX_LENGTH } from './passwords.js';
 import {
@@ -40,8 +48,12 @@ import {
   revokeAll,
   revokeSession,
   sessionCookie,
+  STAFF_ROLES,
+  isTeacher,
   type AuthCtx,
 } from './service.js';
+
+const STAFF_SET = new Set<string>(STAFF_ROLES);
 
 import {
   COUNTRY,
@@ -139,31 +151,43 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     return true;
   };
 
-  const me = async (accountId: string, mfaVerified: boolean) => {
+  const me = async (
+    accountId: string,
+    mfaVerified: boolean,
+    tablet: { classId: string } | null = null,
+  ) => {
     const [a] = await db.select().from(t.account).where(eq(t.account.id, accountId));
     if (!a) return null;
-    const profiles = await db
-      .select({
-        id: t.profile.id,
-        kind: t.profile.kind,
-        pseudonym: t.profile.pseudonym,
-        birthYear: t.profile.birthYear,
-        avatar: t.profile.avatar,
-        levelCode: t.profile.levelCode,
-      })
-      .from(t.profile)
-      .where(eq(t.profile.ownerAccountId, accountId))
-      .orderBy(asc(t.profile.createdAt));
+    // lot F2 (revue E3, E4) : profils dont le compte est titulaire OU parent responsable (second parent) ;
+    // en mode tablette : les élèves de la classe ; type enfant / ado / adulte recalculé depuis l'année
+    const profiles = (await visibleProfiles(db, accountId, tablet)).map(({ lien, ...p }) => ({
+      ...p,
+      lien,
+    }));
     const [local = '', domain = ''] = (a.email ?? '').split('@');
-    // lot F1 : rôles portés en plus du type de compte (référent religieux)
-    const roles = (
-      await db
-        .select({ role: t.accountRole.role })
-        .from(t.accountRole)
-        .where(eq(t.accountRole.accountId, accountId))
-    ).map((r) => r.role);
+    // lot F1 puis F2 (revue E2) : rôles multiples (plateforme, écoles), en plus du type du titulaire
+    const roles = tablet ? [] : await accountRoles(db, accountId, a.kind);
+    const ecoles = tablet
+      ? []
+      : (await schoolsOf(db, accountId)).map((s) => ({
+          id: s.school.id,
+          name: s.school.name,
+          personal: s.school.personal,
+          roles: s.roles,
+        }));
+    let tablette: { classId: string; className: string; school: string } | null = null;
+    if (tablet) {
+      const [c] = await db
+        .select({ name: t.classGroup.name, school: t.school.name })
+        .from(t.classGroup)
+        .innerJoin(t.school, eq(t.school.id, t.classGroup.schoolId))
+        .where(eq(t.classGroup.id, tablet.classId));
+      tablette = { classId: tablet.classId, className: c?.name ?? '', school: c?.school ?? '' };
+    }
     return {
       roles,
+      ecoles,
+      tablette,
       account: {
         id: a.id,
         kind: a.kind,
@@ -175,7 +199,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         createdAt: a.createdAt,
       },
       profiles,
-      mfaRequired: requiresMfa(a.kind),
+      mfaRequired: requiresMfa(a.kind) || roles.some((r) => STAFF_SET.has(r)),
       mfaVerified,
     };
   };
@@ -270,6 +294,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         })
         .returning({ id: t.account.id });
       if (!a) throw new Error('création du compte impossible');
+      // lot F2 (revue E2) : rôle du titulaire (un même compte pourra recevoir ensuite d'autres rôles)
+      await grantAccountRole(db, a.id, b.kind === 'parent' ? 'parent' : 'eleve_adulte');
       const accepted = b.consents.filter(
         (c) =>
           requiredAccountConsents(b.country).includes(c as ConsentType) || OPTIONAL_CONSENTS.has(c),
@@ -348,7 +374,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         return err(reply, 401, 'identifiants_incorrects');
       }
       let mfa = false;
-      if (requiresMfa(a.kind) && a.totpEnabled) {
+      // lot F2 : un compte famille qui a aussi un rôle de personnel (parent ET enseignant) donne son second
+      // facteur à la connexion s'il l'a activé ; sans lui, seuls les espaces de la famille lui sont ouverts
+      const staffRoles = (await accountRoles(db, a.id, a.kind)).some((r) => STAFF_SET.has(r));
+      if ((requiresMfa(a.kind) || staffRoles) && a.totpEnabled) {
         if (!req.body.totp) return err(reply, 401, 'totp_requis');
         if (!opts.secretKey) return err(reply, 503, 'deux_facteurs_indisponible');
         const counter = verifyTotp(decrypt(a.totpSecretEnc ?? '', opts.secretKey), req.body.totp);
@@ -395,7 +424,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
 
   app.get('/api/v1/auth/me', async (req, reply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
-    return me(req.auth.accountId, req.auth.mfaVerified);
+    return me(req.auth.accountId, req.auth.mfaVerified, req.auth.tablet);
   });
 
   app.post<{ Body: { current: string; next: string } }>(
@@ -507,14 +536,23 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     },
   );
 
-  const kit: AuthKit = { db, needAuth, needParent, passwordOk, insertConsents, secureFor, me };
+  const kit: AuthKit = {
+    db,
+    needAuth,
+    needParent,
+    passwordOk,
+    insertConsents,
+    secureFor,
+    me,
+    setSession,
+  };
   registerProfiles(app, kit);
   registerPrivacy(app, kit);
 
   // ---------------------------------------------------------------- enseignant (lot 4 : accès sécurisé seulement)
 
   app.get('/api/v1/teacher/overview', { preHandler: needAuth }, async (req, reply) => {
-    if (req.auth!.kind !== 'enseignant' && req.auth!.kind !== 'admin')
+    if (!isTeacher(req.auth) && req.auth!.kind !== 'admin')
       return err(reply, 403, 'reserve_aux_enseignants');
     return { classes: [], message: 'classes_v1' };
   });
@@ -523,11 +561,25 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   void COOKIE;
 }
 
-/** Le profil appartient-il au compte connecté ? (politique d'accès commune) */
-export async function ownsProfile(db: Db, accountId: string, profileId: string): Promise<boolean> {
-  const [p] = await db
-    .select({ id: t.profile.id })
-    .from(t.profile)
-    .where(and(eq(t.profile.id, profileId), eq(t.profile.ownerAccountId, accountId)));
-  return !!p;
+/**
+ * Le compte connecté peut-il agir pour ce profil ? (politique d'accès commune) — lot F2 : titulaire OU parent
+ * responsable actif (second parent) ; session de tablette de classe : élèves de cette classe seulement. Le
+ * compte technique d'une école n'agit JAMAIS hors d'une session de tablette.
+ */
+export async function ownsProfile(
+  db: Db,
+  who: AuthCtx | string | null | undefined,
+  profileId: string,
+): Promise<boolean> {
+  if (!who) return false;
+  if (typeof who !== 'string') {
+    if (who.kind === 'ecole' && !who.tablet) return false;
+    return canActForProfile(db, who.accountId, profileId, who.tablet);
+  }
+  const [a] = await db
+    .select({ kind: t.account.kind })
+    .from(t.account)
+    .where(eq(t.account.id, who));
+  if (!a || a.kind === 'ecole') return false;
+  return canActForProfile(db, who, profileId);
 }

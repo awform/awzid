@@ -50,5 +50,8 @@ export interface AuthKit {
   me: (
     accountId: string,
     mfaVerified: boolean,
+    tablet?: { classId: string } | null,
   ) => Promise<{ profiles: Array<{ id: string }> } | null>;
+  /** session de création d'un compte (connexion après l'inscription, reprise d'un profil) */
+  setSession: (reply: FastifyReply, accountId: string, kind: string, mfa: boolean) => Promise<void>;
 }
