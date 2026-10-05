@@ -87,6 +87,11 @@ export async function playLessonAudio(id: string, slow: boolean): Promise<HTMLAu
 }
 
 /** Paramètres du lien vers la récitation du Complexe d'un verset (« Al-Fātiḥa 1:2 », « 112:1-4 ») ; null sinon. */
+/** Texte « à écouter » d'une page de lecture graduée : la page entière, lignes (« | ») jointes par une espace. */
+export function pageAudioText(ar: string): string {
+  return ar.replace(/\|/g, ' ');
+}
+
 export function recitationQuery(ref: string | undefined): string | null {
   const m = /(\d{1,3})\s*:\s*(\d{1,3})/.exec(ref ?? '');
   const s = Number(m?.[1]);

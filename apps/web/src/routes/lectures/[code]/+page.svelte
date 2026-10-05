@@ -6,6 +6,8 @@
   import type { SceneSpec } from '@awform/content/scene';
   import type { Exercise as ExerciseData } from '@awform/content/types';
   import Ar from '$lib/Ar.svelte';
+  import Ecouter from '$lib/Ecouter.svelte';
+  import { AUDIO_CTX, levelAudio, pageAudioText, type LevelAudio } from '$lib/lecons-audio';
   import { loadBooklet, markRead, type BookletPack } from '$lib/booklets';
   import Exercise from '$lib/Exercise.svelte';
   import { t } from '$lib/i18n';
@@ -25,6 +27,9 @@
   let showFr = $state(false);
   let done = $state(false);
   setContext('illustrations', () => pack?.illustrations ?? {});
+  // audio des lectures (A3) : fichiers du livret (niveau « lect-<code> » de l'index des livres)
+  let audio: LevelAudio | null = $state(null);
+  setContext(AUDIO_CTX, () => audio);
 
   const B = $derived((pack?.booklet ?? {}) as Obj);
   const pages = $derived((Array.isArray(B.pages) ? B.pages : []) as Obj[]);
@@ -36,6 +41,7 @@
   onMount(async () => {
     pack = await loadBooklet(page.params.code ?? '');
     loaded = true;
+    if (pack) audio = await levelAudio(`lect-${pack.code}`);
   });
   async function finish() {
     await markRead(pack!.code);
@@ -54,8 +60,11 @@
 {:else if pack}
   <article class="livret" data-testid="livret" data-code={pack.code}>
     <header>
-      <h1><Ar text={str(B.titre_ar)} /></h1>
+      <h1><Ar text={str(B.titre_ar)} /><Ecouter text={str(B.titre_ar)} small /></h1>
       <p class="sub"><Bidi text={str(B.titre_fr)} /></p>
+      {#if audio}<p class="muted small" data-testid="audio-credit">
+          <Bidi text={[t('audio.mention'), ...audio.credits].join(' · ')} />
+        </p>{/if}
     </header>
 
     {#if p === 0 && B.couverture}
@@ -70,6 +79,8 @@
         <div class="texte" lang="ar" dir="rtl">
           {#each str(pg.ar).split('|') as line, i (i)}<p><Ar text={line.trim()} /></p>{/each}
         </div>
+        <!-- la page entière, comme le bouton du moteur des livres (lignes jointes par une espace) -->
+        <Ecouter text={pageAudioText(str(pg.ar))} label={t('audio.ecouter_page')} />
         <button
           type="button"
           class="small"
@@ -97,7 +108,8 @@
           <h2>{t('bib.mes_mots')}</h2>
           <ul class="gloss">
             {#each glossaire as g, i (i)}<li>
-                <Ar text={str(g.ar)} /> <span><Bidi text={str(g.fr)} /></span>
+                <Ar text={str(g.ar)} /><Ecouter text={str(g.ar)} small />
+                <span><Bidi text={str(g.fr)} /></span>
               </li>{/each}
           </ul>
         </section>

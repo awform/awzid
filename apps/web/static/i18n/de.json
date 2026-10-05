@@ -88,6 +88,7 @@
   "audio.lent": "Langsam",
   "audio.ecouter_question": "Frage {n} anhören",
   "audio.ecouter_lettre": "Buchstaben {nom} anhören",
+  "audio.ecouter_page": "Seite anhören",
   "audio.mention": "Synthetische Stimme (vorläufig)",
   "audio.recitation": "▶ Rezitation anhören",
   "audio.avec": "mit Audio ({poids})",

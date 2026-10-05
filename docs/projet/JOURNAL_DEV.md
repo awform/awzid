@@ -8,6 +8,27 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 05/10/2026 — Chantier A3 (suite) : audio des lectures graduées
+
+- Lecteur de livret (`/lectures/[code]`) : même composant `Ecouter.svelte`, mêmes règles (pas de fichier → pas de
+  bouton, garde coranique, aucune lecture automatique, lent 0,8). Un bouton par page : la page entière, lignes
+  « | » jointes par une espace (`pageAudioText`, clé du moteur des livres) ; mots du glossaire ; titre et consignes
+  des questions quand un fichier existe ; mention « Voix de synthèse (provisoire) · Voix : Google Cloud
+  Text-to-Speech ». Fichiers du livret = niveau `lect-<code>` de l'index.
+- Hors ligne : sur la bibliothèque, un livret gardé sur l'appareil propose « Ajouter l'audio (taille) » /
+  « audio inclus · retirer l'audio » (Wi-Fi seulement par défaut, réglage des téléchargements) ; retirer le livret
+  retire son audio.
+- Couverture (97 livrets) : pages 1 306/1 329, glossaire 1 265/1 268 → **2 571/2 597 (99,0 %)** ; avec titres et
+  consignes (que le moteur ne lit presque pas) 2 589/3 080 (84,1 %). Les pages sans fichier citent le Coran (garde).
+- Poids hors ligne : 0,2 à 5,5 Mo par livret (moyenne 2,2) ; par niveau (Mo) en1 1,8 · en2 3,5 · en3 6,8 · en4 8,7 ·
+  en5 8,3 · ad1 4,2 · ad2 9,3 · ad3 11,2 · ad4 12,2 · ad5 15,7 · ad6 14,9 · ad7 24,1 · ad8 22,8 · ad9 24,5 · ad10 24,0 ·
+  ado1 3,3 · ado2 6,0 · ado3 7,2 · ado4 9,1.
+- Budget : JavaScript 293,9 + CSS 27,8 = 321,7 Ko ≤ 325 (aucune hausse) ; page la plus lourde 135,5 Ko.
+- Tests : web +1 unitaire ; e2e `a3b.spec.ts` (la page 1 d'ad1-01 joue le bon fichier) ; e2e a3, a3b, a11y,
+  captures, horsligne, lot8 : 63 passés.
+
+---
+
 ## 05/10/2026 — Chantier A3 : audio des leçons (voix de synthèse provisoire des livres)
 
 - **Clé** (`packages/content/src/audio-cle.ts`, export `@awform/content/audio-cle`) : `audioKey` = copie EXACTE de

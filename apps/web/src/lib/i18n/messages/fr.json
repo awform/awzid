@@ -88,6 +88,7 @@
   "audio.lent": "Lent",
   "audio.ecouter_question": "Écouter la question {n}",
   "audio.ecouter_lettre": "Écouter la lettre {nom}",
+  "audio.ecouter_page": "Écouter la page",
   "audio.mention": "Voix de synthèse (provisoire)",
   "audio.recitation": "▶ Écouter la récitation",
   "audio.avec": "avec l’audio ({poids})",

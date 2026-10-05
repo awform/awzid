@@ -88,6 +88,7 @@
   "audio.lent": "بِبُطْءٍ",
   "audio.ecouter_question": "اِسْتَمِعْ إِلَى السُّؤَالِ {n}",
   "audio.ecouter_lettre": "اِسْتَمِعْ إِلَى الْحَرْفِ {nom}",
+  "audio.ecouter_page": "اِسْتَمِعْ إِلَى الصَّفْحَةِ",
   "audio.mention": "صوت مُركَّب آليًّا (مؤقّت)",
   "audio.recitation": "▶ استمع إلى التلاوة",
   "audio.avec": "مع الصوت ({poids})",

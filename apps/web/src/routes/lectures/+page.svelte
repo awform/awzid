@@ -12,7 +12,16 @@
     removeBooklet,
     type BookletSummary,
   } from '$lib/booklets';
-  import { t } from '$lib/i18n';
+  import { fmtBytes, t } from '$lib/i18n';
+  import { getSettings } from '$lib/offline';
+  import {
+    audioSummary,
+    downloadLevelAudio,
+    hasLevelAudio,
+    onWifi,
+    removeLevelAudio,
+    type AudioSummary,
+  } from '$lib/lecons-audio-offline';
 
   /**
    * Bibliothèque des livrets gradués : un livret est proposé après la leçon où l'élève a vu ses mots
@@ -28,6 +37,26 @@
   let ready = $state(false);
   const levels = $derived([...new Set(list.map((b) => b.level))]);
   const shown = $derived(list.filter((b) => !level || b.level === level));
+  /** audio des lectures (A3) : taille par livret, livrets gardés AVEC l'audio */
+  let audioSum: AudioSummary[] = $state([]);
+  let withAudio: string[] = $state([]);
+  const audioOf = (code: string) => audioSum.find((a) => a.niveau === `lect-${code}`);
+  async function refreshAudio(l: readonly BookletSummary[]) {
+    const out: string[] = [];
+    for (const b of l) if (await hasLevelAudio(`lect-${b.code}`)) out.push(b.code);
+    withAudio = out;
+  }
+  async function toggleAudio(code: string) {
+    busy = code;
+    if (withAudio.includes(code)) await removeLevelAudio(`lect-${code}`);
+    else if ((await getSettings()).audioWifi && onWifi() === false) msg = t('audio.pas_wifi');
+    else
+      await downloadLevelAudio(`lect-${code}`).catch(
+        (e: Error) => (msg = t('horsligne.echec', { raison: e.message })),
+      );
+    await refreshAudio(list);
+    busy = '';
+  }
 
   onMount(async () => {
     const r = await listBooklets();
@@ -40,6 +69,8 @@
     list = r.list;
     offline = r.offline;
     ready = true;
+    await refreshAudio(r.list);
+    if (!offline) audioSum = await audioSummary();
   });
 
   async function keepLevel() {
@@ -52,8 +83,11 @@
   }
   async function toggleKeep(code: string) {
     busy = code;
-    if (kept.includes(code)) await removeBooklet(code);
-    else await keepBooklet(code);
+    if (kept.includes(code)) {
+      await removeBooklet(code);
+      await removeLevelAudio(`lect-${code}`);
+      await refreshAudio(list);
+    } else await keepBooklet(code);
     kept = [...(await keptBooklets(list))];
     busy = '';
   }
@@ -101,6 +135,20 @@
         <button type="button" class="small" disabled={!!busy} onclick={() => toggleKeep(b.code)}
           ><Bidi text={kept.includes(b.code) ? t('bib.retirer') : t('bib.garder')} /></button
         >
+        {#if kept.includes(b.code) && audioOf(b.code)}
+          <button
+            type="button"
+            class="small"
+            data-testid="livret-audio"
+            disabled={!!busy}
+            onclick={() => toggleAudio(b.code)}
+            ><Bidi
+              text={withAudio.includes(b.code)
+                ? `${t('audio.inclus')} · ${t('audio.retirer')}`
+                : t('audio.ajouter', { poids: fmtBytes(audioOf(b.code)?.octets ?? 0) })}
+            /></button
+          >
+        {/if}
       {/if}
     </li>
   {:else}

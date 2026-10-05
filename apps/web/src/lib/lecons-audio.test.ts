@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { audioFileId } from '@awform/content/audio-cle';
-import { audioIdFor, recitationQuery, SLOW_RATE, type LevelAudio } from './lecons-audio';
+import {
+  audioIdFor,
+  pageAudioText,
+  recitationQuery,
+  SLOW_RATE,
+  type LevelAudio,
+} from './lecons-audio';
 
 const la = (texts: string[]): LevelAudio => ({
   niveau: 'en1',
@@ -34,4 +40,14 @@ describe('A3 — boutons « écouter » des leçons', () => {
   });
 
   it('lecture lente à 0,8', () => expect(SLOW_RATE).toBe(0.8));
+
+  it('lecture graduée : la page entière, lignes jointes (clé du moteur des livres)', () => {
+    const page = 'فِي السُّوقِ تَمْرٌ. | السُّوقُ قَرِيبٌ.';
+    const a = la(['فِي السُّوقِ تَمْرٌ. السُّوقُ قَرِيبٌ.']);
+    expect(audioIdFor(pageAudioText(page), a)).toBe(
+      audioFileId('فِي السُّوقِ تَمْرٌ. السُّوقُ قَرِيبٌ.'),
+    );
+    // une page qui cite le Coran (signes du Muṣḥaf) : jamais de bouton
+    expect(audioIdFor(pageAudioText('قَالَ: ﴿ذَٰلِكَ ٱلْكِتَٰبُ﴾ | نَعَمْ'), a)).toBeNull();
+  });
 });

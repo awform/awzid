@@ -88,6 +88,7 @@
   "audio.lent": "Slow",
   "audio.ecouter_question": "Listen to question {n}",
   "audio.ecouter_lettre": "Listen to the letter {nom}",
+  "audio.ecouter_page": "Listen to the page",
   "audio.mention": "Synthetic voice (provisional)",
   "audio.recitation": "▶ Listen to the recitation",
   "audio.avec": "with audio ({poids})",

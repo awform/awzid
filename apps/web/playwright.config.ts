@@ -97,7 +97,7 @@ export default defineConfig({
     {
       // base de TEST remise à zéro, édition « e2e » importée ; comptes créés par globalSetup
       // puis comptes PostgreSQL séparés ; l'API tourne sous le compte « api » (droits minimaux)
-      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node e2e/audio-essai.mjs ${AUDIO_DIR} && node ../../packages/db/dist/cli/lecons-audio.js importer --test --si-present --niveaux en1 --source ${LECONS_SRC} --stockage ${LECONS_DIR} && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
+      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node e2e/audio-essai.mjs ${AUDIO_DIR} && node ../../packages/db/dist/cli/lecons-audio.js importer --test --si-present --niveaux en1,lect-ad1-01 --source ${LECONS_SRC} --stockage ${LECONS_DIR} && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
       env: {
         DATABASE_URL: API_DB,
