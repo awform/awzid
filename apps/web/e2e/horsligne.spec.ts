@@ -107,13 +107,14 @@ async function runEcole(page: Page) {
   await expect(page.getByTestId('eleve-actif')).toHaveCount(0);
 }
 
-// lot 26 : cinq entrées au plus (adulte : Accueil, Arabe, Coran, Sciences, Plus), le reste sous « Plus »
+// lot 26 : cinq entrées au plus (adulte : Accueil, Arabe, Coran, Sciences, Plus), le reste sous « Plus » ;
+// A12 : « Au quotidien » en sixième entrée pour les adultes
 test('navigation : cinq entrées, entrée active, « Plus », barre en bas sur téléphone', async ({
   page,
 }, info) => {
   await page.goto('/');
   const tabs = page.locator('nav.tabs a');
-  await expect(tabs).toHaveCount(5);
+  await expect(tabs).toHaveCount(6);
   await expect(page.locator('nav.tabs a[data-tab="arabe"]')).toHaveAttribute(
     'aria-current',
     'page',
@@ -124,7 +125,7 @@ test('navigation : cinq entrées, entrée active, « Plus », barre en bas sur t
     'aria-current',
     'page',
   );
-  for (const t of ['sciences', 'aujourdhui', 'plus']) {
+  for (const t of ['sciences', 'aujourdhui', 'quotidien', 'plus']) {
     await page.locator(`nav.tabs a[data-tab="${t}"]`).click();
     await expect(page.locator(`nav.tabs a[data-tab="${t}"]`)).toHaveAttribute(
       'aria-current',

@@ -36,6 +36,10 @@
     "./riwayat": {
       "types": "./dist/riwayat.d.ts",
       "default": "./dist/riwayat.js"
+    },
+    "./adhkar": {
+      "types": "./dist/adhkar.d.ts",
+      "default": "./dist/adhkar.js"
     }
   },
   "bin": {

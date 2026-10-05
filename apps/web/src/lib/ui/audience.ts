@@ -38,6 +38,7 @@ export function themeOf(a: Audience): ThemeName {
 
 export type NavId =
   | 'aujourdhui'
+  | 'quotidien'
   | 'arabe'
   | 'coran'
   | 'sciences'
@@ -63,6 +64,8 @@ export interface NavItem {
 
 const ITEMS: Record<NavId, Omit<NavItem, 'id'>> = {
   aujourdhui: { href: '/aujourdhui', icon: 'maison' },
+  // A12 : horaires de prière, qibla, adhkār, verset à partager (sur l'appareil, hors ligne)
+  quotidien: { href: '/quotidien', icon: 'quotidien' },
   arabe: { href: '/', icon: 'alif' },
   coran: { href: '/coran', icon: 'mushaf' },
   sciences: { href: '/sciences', icon: 'livres' },
@@ -84,12 +87,14 @@ const ITEMS: Record<NavId, Omit<NavItem, 'id'>> = {
 const NAV: Record<Audience, NavId[]> = {
   // enfant : une matière = une icône ; « Plus » serait trop abstrait pour un non-lecteur
   enfant: ['aujourdhui', 'arabe', 'coran', 'sciences', 'ecriture'],
-  ado: ['aujourdhui', 'arabe', 'coran', 'sciences', 'plus'],
-  adulte: ['aujourdhui', 'arabe', 'coran', 'sciences', 'plus'],
-  parent: ['famille', 'suivi', 'messages', 'compte'],
+  // A12 (décision du chef de projet, à valider par le client) : « Au quotidien » dans la navigation principale ;
+  // ados et adultes passent à six entrées (libellés courts) plutôt que de ranger « Sciences » sous « Plus »
+  ado: ['aujourdhui', 'arabe', 'coran', 'sciences', 'quotidien', 'plus'],
+  adulte: ['aujourdhui', 'arabe', 'coran', 'sciences', 'quotidien', 'plus'],
+  parent: ['famille', 'suivi', 'messages', 'quotidien', 'compte'],
   enseignant: ['classes', 'ecole', 'questions', 'compte'],
   admin: ['admin', 'compte', 'aide'],
-  visiteur: ['livres', 'connexion', 'aide'],
+  visiteur: ['livres', 'quotidien', 'connexion', 'aide'],
 };
 
 export function navFor(a: Audience): NavItem[] {

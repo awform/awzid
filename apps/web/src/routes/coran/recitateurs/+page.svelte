@@ -145,7 +145,7 @@
         </p>
         <p class="muted small credit" data-testid="credit-recitateur"><Bidi text={r.credit} /></p>
         {#if r.creditAr}<p class="muted small credit" lang="ar" dir="rtl">
-            <Bidi text={r.creditAr} />
+            <Bidi text={r.creditAr} base="ar" />
           </p>{/if}
         {#if r.usageNote}<p class="muted small credit" data-testid="usage-note">
             <Bidi text={r.usageNote} />

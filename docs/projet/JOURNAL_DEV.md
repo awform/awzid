@@ -8,6 +8,62 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 05/10/2026 — Chantier A12 : espace « Au quotidien » (horaires de prière, qibla, adhkār, verset en image)
+
+Branche `a12-quotidien-wip` (depuis `main` a2a64ec, worktree `~/awform-a12`, base e2e isolée). Mesures sur la VM.
+
+1. **Horaires de prière sur l'appareil, hors ligne** (`lib/quotidien/priere.ts`) : adhan-js 4.4.6 (**MIT**,
+   `pnpm add`, LICENCES.md § 7), chargée à la demande (4 Ko Brotli). Méthodes : Ligue islamique mondiale, UOIF 12°,
+   Grande Mosquée de Paris (18°/17°, à confirmer), ISNA, Égypte, Karachi, Umm al-Qurā, Moonsighting, Diyanet, Dubaï,
+   Koweït, Qatar, Singapour (angles contrôlés contre api.aladhan.com/v1/methods). Défaut par pays : France → choix
+   proposé à l'utilisateur (UOIF, Grande Mosquée de Paris, Ligue) ; Sénégal et autres → Ligue ; Arabie → Umm al-Qurā.
+   ʿAṣr : majorité (ombre ×1) par défaut, ḥanafite au choix ; ajustement ±30 min par horaire ; règle des hautes
+   latitudes (automatique, milieu, septième de la nuit, angle) ; cercle polaire : jour le plus proche. Prochaine
+   prière et temps restant ; mention « Horaires calculés ; suivez votre mosquée locale. »
+2. **Lieu** : 58 villes intégrées (France, Belgique, Suisse, Luxembourg, Canada, Sénégal, Maghreb, Afrique de l'Ouest,
+   La Mecque, Médine ; fuseau de la ville) ou position de l'appareil APRÈS accord explicite (bouton + texte « jamais
+   envoyée » + autorisation du navigateur), arrondie à 0,001° et gardée dans `localStorage` seulement. Test unitaire
+   (aucun `fetch`) et e2e (toutes les requêtes du parcours surveillées : aucune ne contient les coordonnées).
+3. **Qibla** : grand cercle vers (21.4225, 39.8262), contrôlé contre api.aladhan.com/v1/qibla : Paris 119,16°,
+   **Dakar 73,93°** (et non ≈ 66°), Montréal 58,69°, Bruxelles 123,48° ; boussole par l'orientation de l'appareil
+   (permission iOS demandée au geste ; `deviceorientationabsolute` sur Android), sinon rose fixe nord en haut ;
+   carte schématique SVG (grand cercle, sans fond de carte) ; avertissement métaux et aimants.
+4. **Calendrier hégirien** : `Intl` islamic-umalqura, décalage −2…+2 jours ; « l'observation locale de la lune fait
+   foi (Ramaḍān, ʿĪd) ». Contrôlé : 05/10/2026 = 24 Rabīʿ al-ākhir 1448, 17/02/2026 = 29 Shaʿbān 1447 (aladhan).
+5. **Adhkār** (matin, soir, après la prière, appel à la prière, coucher) : AUCUN texte écrit ; sélection de chemins
+   dans les livres gelés (`packages/content/src/adhkar.ts`), servie par `GET /api/v1/adhkar` depuis la projection
+   élève de l'édition publiée (public, ETag), gardée sur l'appareil. **21 entrées des livres** (17 invocations
+   `duas` avec source et degré, 4 récitations coraniques recommandées par les livres : āyat al-kursī, trois
+   sourates — versets = Tanzil via l'API du Coran, aucune voix de synthèse) ; 25 affichages. Test sur les vrais
+   livres : sélection présente, moment cohérent, texte coranique = Tanzil octet par octet, hadiths fondateurs
+   VERIFIE. **17 invocations à compléter** par le référent (références seulement) : `A12_ADHKAR_A_COMPLETER.md`.
+   Compteur de répétitions (objectif du livre : 3, 33, 100) et compteur libre, silencieux.
+6. **Rappels doux** : désactivés par défaut, notification silencieuse ; ne fonctionnent que l'application ouverte
+   (le web ne sait pas programmer une notification une fois fermé sans serveur, et un envoi serveur exigerait la
+   position : refusé) — dit à l'utilisateur.
+7. **Verset en image** (`/quotidien/verset?s=&a=`) : canvas 1080×1350, texte Tanzil tel quel (lignes coupées aux
+   espaces seulement ; test : jointure = texte), police Amiri Quran, référence, traduction QuranEnc (Rachid Maach /
+   Rowwad, source et version sur l'image), filets et étoiles à huit pointes, couleurs du Muṣḥaf ou du thème ;
+   partage système ou enregistrement.
+8. **Interface** : 4 onglets (Horaires, Qibla, Adhkār, Verset), thèmes et mode sombre par les jetons, 320 px sans
+   défilement horizontal (captures `reports/a12/`), cibles ≥ 44 px, `<Bidi>` partout ; 173 textes en fr, en, es,
+   de, ar (en préparation). **Navigation principale** : entrée « Prières » — ados et adultes 6 entrées (au lieu de 5),
+   parent 5, visiteur 4 ; enfants inchangés (décision D-A12 à valider). Nouvelles icônes géométriques.
+9. **Correction en passant** : `bidi.spec.ts` « Mes récitateurs » (échec connu depuis A1/A8) — crédit arabe affiché
+   avec `base="ar"` (les noms latins y sont isolés de gauche à droite).
+10. **Poids** : page la plus lourde `/lecons/[id]` 139,9 Ko ≤ 150 ; total JS 323,7 + CSS 31,2 = **354,9 Ko** > 325 →
+    budget total porté à **360 Ko (D-A12, à valider)** : +33 Ko pour 4 pages, adhan-js et les textes français de
+    la coquille (+4,4 Ko sur chaque page).
+11. **Tests** : `pnpm check` vert (build, types, lint, budget) — unitaires **1 379 réussis, 1 ignoré** (content +4,
+    api +2, web +18 dont 5 villes de référence : Paris UOIF et Ligue, Dakar, Montréal ISNA, Médine Umm al-Qurā à
+    ±2 min d'aladhan) ; e2e complets : **245 réussis, 22 ignorés, 1 échec** (bidi, corrigé puis relancé vert :
+    bidi + lot27 + a1 16/16) ; e2e `a12.spec.ts` 7 réussis (parcours, hors ligne, position, 320 px).
+
+Décisions à prendre (D-A12) : 6 entrées de navigation ; angles de la Grande Mosquée de Paris ; Umm al-Qurā pour
+l'Arabie ; budget 360 Ko ; rappels application ouverte ; validation des 21 adhkār et des 17 à ajouter.
+
+---
+
 ## 05/10/2026 — Chantier A3 (suite) : audio des lectures graduées
 
 - Lecteur de livret (`/lectures/[code]`) : même composant `Ecouter.svelte`, mêmes règles (pas de fichier → pas de

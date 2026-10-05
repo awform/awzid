@@ -21,6 +21,7 @@
     "@awform/grading": "workspace:*",
     "@awform/hifz": "workspace:*",
     "@awform/school": "workspace:*",
+    "adhan": "4.4.6",
     "intl-messageformat": "^12.1.2",
     "qrcode-generator": "^2.0.4"
   },
