@@ -23,6 +23,11 @@ describe('audio du Coran : déploiement', () => {
     expect(api).toContain("'audio:/audio:ro'");
     expect(compose).toMatch(/\nvolumes:[\s\S]*\n {2}audio:\n/);
   });
+  it('déploiement : volume « audio » remis au compte node de l’outil (import possible, A1)', () => {
+    const deploy = readFileSync(join(PROD, 'deploy.sh'), 'utf8');
+    expect(deploy).toContain('--user root --entrypoint chown coran-audio node:node /audio');
+  });
+
   it('outil d’import : profil « outils », compte propriétaire, source en lecture seule, ffmpeg', () => {
     const s = service('coran-audio');
     expect(s).toContain('profiles: [outils]');

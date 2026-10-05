@@ -121,6 +121,9 @@ for i in $(seq 1 30); do
 done
 "$PROD/backup.sh" >/dev/null || { echo "ÉCHEC : sauvegarde avant migration — déploiement arrêté"; exit 1; }
 "${DC[@]}" --profile outils run --rm migrate
+# audio du Coran (A1) : le volume « audio », créé vide par Docker (propriétaire root), doit appartenir au
+# compte « node » de l'outil coran-audio pour l'import ; idempotent (l'API le monte en lecture seule)
+"${DC[@]}" --profile outils run --rm -T --user root --entrypoint chown coran-audio node:node /audio
 # comptes de l'API et du travailleur (idempotent : droits recalculés à chaque déploiement)
 "${DC[@]}" --profile outils run --rm roles
 # livres GELÉS publiés (AWFORM_LEVELS) ; démonstration : livres en relecture en « aperçu » (AWFORM_APERCU)
