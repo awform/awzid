@@ -126,5 +126,50 @@ export const COMPLEXE_NOMMAGES_SOURATE: Readonly<Record<string, string>> = {
   'huthify-shuba': '09-SSSD00-A01.mp3',
 };
 
+/** Validation à l'écoute (A1) : condition d'activation hors démo, décidée par le client et le référent. */
+export const VALIDATION_ECOUTE = 'écoute de contrôle client + référent provisoire, 05/10/2026';
+
+/**
+ * Plan d'import de chaque muṣḥaf (chemins relatifs au dossier source, AWFORM_AUDIO_SOURCE monté sur /source) et
+ * validation à l'écoute. Une récitation VALIDÉE est importée PUIS ACTIVÉE par `coran-audio importer-valides`
+ * dans tout déploiement (démo, bêta, production) ; contrôles automatiques toujours appliqués (un import bloqué
+ * n'active rien).
+ */
+export interface ImportPlan {
+  dossiers: string[];
+  sourateDuDossier?: boolean;
+  fichiersSourate?: string;
+  repliSourates?: number[];
+  validation: string | null;
+}
+export const COMPLEXE_IMPORT: Readonly<Record<string, ImportPlan>> = {
+  'ayyoub-hafs': { dossiers: ['ayyoub-hafs'], validation: VALIDATION_ECOUTE },
+  'muaiqly-hafs': { dossiers: ['muaiqly-hafs'], validation: VALIDATION_ECOUTE },
+  'huthify-hafs': {
+    dossiers: ['huthify-hafs', '_extras/huthify-hafs/الحذيفي-ايات/002 Al-Baqarah البقرة'],
+    validation: VALIDATION_ECOUTE,
+  },
+  'akhdar-hafs': { dossiers: ['akhdar-hafs'], validation: VALIDATION_ECOUTE },
+  // zip réextrait AVEC ses dossiers (an-Naṣr nommée 109 dans le dossier 110) ; sourate 42 en fichier entier
+  // (42:1 et 42:2 contiennent chacun « حم عسق » ; décision du référent)
+  'muhanna-hafs': {
+    dossiers: ['_extras/muhanna-hafs/muhanna-ayat'],
+    sourateDuDossier: true,
+    fichiersSourate: '_sura/muhanna-hafs-sura/muhanna-sura',
+    repliSourates: [42],
+    validation: VALIDATION_ECOUTE,
+  },
+  'huthify-shuba': { dossiers: ['huthify-shuba'], validation: VALIDATION_ECOUTE },
+  'juhani-duri': { dossiers: ['juhani-duri'], validation: VALIDATION_ECOUTE },
+  // al-Mulk : 30 fichiers pour 31 versets dans le texte officiel → fichier de sourate entière
+  'sediki-susi': {
+    dossiers: ['sediki-susi'],
+    fichiersSourate: '_sura/sediki-susi-sura/sediki',
+    validation: VALIDATION_ECOUTE,
+  },
+  // al-Fātiḥa : fichier 1 = basmala (annexe), reconnu par l'outil
+  'huthify-qalun': { dossiers: ['huthify-qalun'], validation: VALIDATION_ECOUTE },
+};
+
 /** Conseil pour un débutant (décision du client) : Muḥammad Ayyūb, Ḥafṣ. */
 export const BEGINNER_RECITER = 'ayyoub-hafs';

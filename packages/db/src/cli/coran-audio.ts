@@ -7,6 +7,7 @@
  *   node dist/cli/coran-audio.js importer --recitateur ID --dossier DIR [--activer] [options]
  *   node dist/cli/coran-audio.js activer  --recitateur ID [--reactiver]
  *   node dist/cli/coran-audio.js retirer  --recitateur ID --motif "…"
+ *   node dist/cli/coran-audio.js importer-valides [--source /source] [--sans-silences]
  *   node dist/cli/coran-audio.js etat
  *
  * Options : --nommage SSSVVV.mp3 (défaut : nommage relevé du Complexe ; plusieurs, séparés par des virgules)
@@ -25,6 +26,7 @@ import { loadRootEnv } from '../env.js';
 import {
   activateReciter,
   COMPLEXE_CATALOGUE,
+  COMPLEXE_IMPORT,
   COMPLEXE_NOMMAGES,
   COMPLEXE_NOMMAGES_SOURATE,
   formatReport,
@@ -133,6 +135,42 @@ try {
       console.log(`Rapport complet : ${out}`);
     }
     if (report.blocking > 0) code = 2;
+  } else if (cmd === 'importer-valides') {
+    // récitations validées à l'écoute (catalogue) : import selon leur plan, puis activation ; contrôles intacts
+    const src = str('source') ?? '/source';
+    const storageDir = str('stockage') ?? process.env.AWFORM_AUDIO_DIR;
+    if (!storageDir) throw new Error('stockage audio : --stockage ou AWFORM_AUDIO_DIR');
+    for (const m of COMPLEXE_CATALOGUE) {
+      const plan = COMPLEXE_IMPORT[m.id];
+      if (!plan?.validation) {
+        console.log(`${m.id} : non validé à l'écoute, ignoré`);
+        continue;
+      }
+      await upsertReciter(h.db, m);
+      const r = await importReciterAudio(h.db, {
+        reciterId: m.id,
+        dir: `${src}/${plan.dossiers[0]}`,
+        ...(plan.dossiers.length > 1
+          ? { extraDirs: plan.dossiers.slice(1).map((d) => `${src}/${d}`) }
+          : {}),
+        pattern: COMPLEXE_NOMMAGES[m.id]!,
+        ...(plan.sourateDuDossier ? { suraFromFolder: true } : {}),
+        ...(plan.fichiersSourate
+          ? {
+              suraFilesDir: `${src}/${plan.fichiersSourate}`,
+              suraFilesPattern: COMPLEXE_NOMMAGES_SOURATE[m.id]!,
+            }
+          : {}),
+        ...(plan.repliSourates ? { forceSuraFallback: plan.repliSourates } : {}),
+        silence: !flags.has('sans-silences'),
+        storageDir,
+        activate: true,
+      });
+      console.log(
+        `${m.id} : ${r.status} (${r.report.found}/${r.report.expected}, validé : ${plan.validation})`,
+      );
+      if (r.report.blocking > 0) code = 2;
+    }
   } else if (cmd === 'activer') {
     const r = await activateReciter(h.db, need('recitateur'), {
       reactivate: flags.has('reactiver'),
@@ -160,7 +198,9 @@ try {
         `${r.id.padEnd(16)} ${r.riwaya.padEnd(6)} ${r.status.padEnd(10)} ${r.tracks}/${r.expected}`,
       );
   } else {
-    console.error('commandes : catalogue | verifier | importer | activer | retirer | etat');
+    console.error(
+      'commandes : catalogue | verifier | importer | importer-valides | activer | retirer | etat',
+    );
     code = 1;
   }
 } catch (e) {

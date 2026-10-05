@@ -25,6 +25,10 @@ import {
   activateReciter,
   beepWav,
   COMPLEXE_CATALOGUE,
+  COMPLEXE_IMPORT,
+  COMPLEXE_NOMMAGES,
+  COMPLEXE_NOMMAGES_SOURATE,
+  VALIDATION_ECOUTE,
   compilePattern,
   compilePatterns,
   findFfmpeg,
@@ -523,6 +527,17 @@ describe.skipIf(!URL)('import en base : rien n’est activé si un contrôle blo
     await h.pool.query("update quran_reciter set status = 'en_attente' where id = 'essai-hafs'");
     const r = await activateReciter(h.db, 'essai-hafs');
     expect(r).toEqual({ ok: false, reason: '22 versets en base, 6236 attendus' });
+  });
+
+  it('A1 : les 9 récitations validées à l’écoute, avec un plan d’import complet (actives par défaut)', () => {
+    for (const m of COMPLEXE_CATALOGUE) {
+      const plan = COMPLEXE_IMPORT[m.id];
+      expect(plan?.validation).toBe(VALIDATION_ECOUTE);
+      expect(plan!.dossiers.length).toBeGreaterThan(0);
+      expect(COMPLEXE_NOMMAGES[m.id]).toBeTruthy();
+      if (plan!.fichiersSourate) expect(COMPLEXE_NOMMAGES_SOURATE[m.id]).toBeTruthy();
+    }
+    expect(VALIDATION_ECOUTE).toContain('05/10/2026');
   });
 
   it('catalogue du client : 9 muṣḥafs, conseil débutant présent, comptes déclarés hors Ḥafṣ', () => {
