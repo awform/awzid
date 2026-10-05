@@ -1600,6 +1600,7 @@
   "ca.arreter": "Stopp",
   "ca.verset_n": "Vers {n}",
   "ca.voir": "Zeigen",
+  "ca.sourate_entiere": "Diese Sure wird vollständig abgespielt: Ihre Aufteilung in Verse entspricht nicht dem offiziellen Text der Riwāya.",
   "ca.sans_surlignage": "Andere Riwāya: Der gehörte Vers wird nicht hervorgehoben (andere Nummerierung als im Ḥafṣ-Text).",
   "ca.garder_titre": "Auf dem Gerät behalten",
   "ca.garder_texte": "Diese Sure: {taille}, {duree} Hörzeit. Einmal gespeichert, läuft sie ohne Internet.",

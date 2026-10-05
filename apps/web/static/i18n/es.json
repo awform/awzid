@@ -1600,6 +1600,7 @@
   "ca.arreter": "Detener",
   "ca.verset_n": "aleya {n}",
   "ca.voir": "Ver",
+  "ca.sourate_entiere": "Esta sura se escucha completa: su división por versículos no corresponde al texto oficial de la riwāya.",
   "ca.sans_surlignage": "Otra riwāya: la aleya escuchada no se resalta (numeración distinta del texto de Ḥafṣ).",
   "ca.garder_titre": "Guardar en el dispositivo",
   "ca.garder_texte": "Esta sura: {taille}, {duree} de escucha. Una vez guardada, se escucha sin Internet.",

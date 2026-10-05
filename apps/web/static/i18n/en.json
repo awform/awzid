@@ -1622,6 +1622,7 @@
   "ca.arreter": "Stop",
   "ca.verset_n": "verse {n}",
   "ca.voir": "Show",
+  "ca.sourate_entiere": "This surah plays in full: its verse-by-verse division does not match the official text of the riwāya.",
   "ca.sans_surlignage": "Other riwāya: the verse heard is not highlighted (numbering differs from the Ḥafṣ text).",
   "ca.garder_titre": "Keep on the device",
   "ca.garder_texte": "This surah: {taille}, {duree} of listening. Once saved, it plays without Internet.",
