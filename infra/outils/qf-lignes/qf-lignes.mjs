@@ -15,6 +15,12 @@
 //   node infra/outils/qf-lignes/qf-lignes.mjs sync --dir <QF_SYNC_DIR> --polices <dossier QCF_Pnnn.ttf>
 //   node infra/outils/qf-lignes/qf-lignes.mjs verifier --dir <QF_SYNC_DIR> --polices <dossier>   (sans réseau)
 //   node infra/outils/qf-lignes/qf-lignes.mjs inspecter --dir <QF_SYNC_DIR>   (champs reçus, sans réseau)
+//   node infra/outils/qf-lignes/qf-lignes.mjs diagnostic   (ou --diagnostic : codes HTTP, clés JSON, noms des
+//     ressources ; aucune écriture, jamais de secret, de jeton ni de texte coranique affiché)
+// Protocole (doc QF) : GET /resources/sync?bootstrap=true&resources=mushafs:<id>&per_page=100 → { sync: {
+// mutations: [RESOURCE_CREATE + snapshot_url], has_more, next_page_url, next_sync_token } } ; instantané
+// GET /resources/snapshots/mushafs/<id> → { resource_group, …, records: [{ record_type: "mushaf_word", … }] } ;
+// ensuite sync_token=<next_sync_token> ; 410 « resync_required » → nouvel amorçage.
 // Options : --mushaf <id> (défaut 2 = « QCF V1 » ; vérifié sur la fiche du muṣḥaf), --tanzil <tsv>,
 // --meta <quran-data.js>, --sans-polices (refusé pour la publication), --bootstrap (repartir de zéro).
 // Relance : au moins tous les 7 jours (minuteur systemd/cron du serveur, voir EXPLOITATION.md).
@@ -311,33 +317,180 @@ export function apiUrl(env, path) {
   return `${QF[env].api}${CONTENT_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
 }
 
-/** Une passe de synchronisation (amorçage ou incrémentale) : applique toutes les mutations, page après page. */
-export async function syncOnce({ env, mushafId, state, rows, fetchImpl = fetch }) {
-  const tk = await token(env, fetchImpl);
-  const get = async (path) => {
+/** Erreur HTTP de l'API (code d'erreur QF lisible, jamais d'en-tête ni de jeton). */
+export class QfHttpError extends Error {
+  constructor(status, code, path) {
+    super(`HTTP ${status}${code ? ` (${code})` : ''} sur ${path.split('?')[0]}`);
+    this.status = status;
+    this.code = code;
+  }
+}
+
+/** Corps d'une réponse de synchronisation : documenté sous la clé « sync » ; accepte aussi la forme à plat. */
+export const syncBody = (j) =>
+  j && typeof j === 'object' && j.sync && typeof j.sync === 'object' ? j.sync : j;
+/** Corps d'un instantané : `{ resource_group, …, records }`, éventuellement enveloppé (« snapshot », « data »). */
+export function snapshotBody(j) {
+  if (j && Array.isArray(j.records)) return j;
+  for (const k of ['snapshot', 'data', 'resource'])
+    if (j && j[k] && Array.isArray(j[k].records)) return j[k];
+  return j ?? {};
+}
+
+function client(env, fetchImpl, tk) {
+  return async (path) => {
     const r = await fetchImpl(apiUrl(env, path), {
       headers: { 'x-auth-token': tk.access, 'x-client-id': tk.id, accept: 'application/json' },
     });
-    if (!r.ok) throw new Error(`HTTP ${r.status} sur ${path.split('?')[0]}`);
+    if (!r.ok) {
+      let code = null;
+      try {
+        const e = await r.json();
+        code = e?.error?.code ?? e?.code ?? e?.type ?? null;
+      } catch {
+        /* corps non JSON */
+      }
+      throw new QfHttpError(r.status, code, path);
+    }
     return r.json();
   };
-  const resource = `mushafs:${mushafId}`;
-  let next = state.syncToken
-    ? `/resources/sync?sync_token=${encodeURIComponent(state.syncToken)}&resources=${resource}&per_page=100`
+}
+
+const syncPath = (resource, tokenValue) =>
+  tokenValue
+    ? `/resources/sync?sync_token=${encodeURIComponent(tokenValue)}&resources=${resource}&per_page=100`
     : `/resources/sync?bootstrap=true&resources=${resource}&per_page=100`;
+export const snapshotPath = (mushafId) => `/resources/snapshots/mushafs/${mushafId}`;
+
+/**
+ * Une passe de synchronisation : incrémentale si un jeton est gardé, sinon AMORÇAGE (bootstrap=true). Un jeton
+ * refusé (410 « resync_required », 422 « token_filter_mismatch ») relance l'amorçage depuis zéro. Si l'amorçage
+ * n'apporte aucun instantané du muṣḥaf, l'instantané documenté (`/resources/snapshots/mushafs/<id>`) est lu.
+ */
+export async function syncOnce({ env, mushafId, state, rows, fetchImpl = fetch, log = () => {} }) {
+  const tk = await token(env, fetchImpl);
+  const get = client(env, fetchImpl, tk);
+  const resource = `mushafs:${mushafId}`;
   const actions = {};
-  let syncToken = state.syncToken ?? null;
-  for (let guard = 0; next && guard < 10000; guard++) {
-    const page = await get(next);
-    for (const m of page.mutations ?? []) {
-      if (m.resource_group && m.resource_group !== 'mushafs') continue;
-      const a = await applyMutation(rows, m, (u) => get(u));
-      actions[a] = (actions[a] ?? 0) + 1;
+  const run = async (tokenValue) => {
+    let next = syncPath(resource, tokenValue);
+    let syncToken = tokenValue ?? null;
+    for (let guard = 0; next && guard < 10000; guard++) {
+      const page = syncBody(await get(next));
+      for (const m of page.mutations ?? []) {
+        if (m.resource_group && m.resource_group !== 'mushafs') continue;
+        if (m.resource_id !== undefined && Number(m.resource_id) !== mushafId) continue;
+        if (m.unavailable_reason) log(`ressource indisponible : ${m.unavailable_reason}`);
+        const a = await applyMutation(rows, m, async (u) => snapshotBody(await get(u)));
+        actions[a] = (actions[a] ?? 0) + 1;
+      }
+      if (page.next_sync_token) syncToken = page.next_sync_token;
+      next = page.has_more ? page.next_page_url : null;
     }
-    if (page.next_sync_token) syncToken = page.next_sync_token;
-    next = page.has_more ? page.next_page_url : null;
+    return syncToken;
+  };
+  let syncToken;
+  try {
+    syncToken = await run(state.syncToken);
+  } catch (e) {
+    if (!(e instanceof QfHttpError) || !state.syncToken || ![410, 422].includes(e.status)) throw e;
+    log(`jeton refusé (${e.message}) : nouvel amorçage`);
+    rows.clear();
+    actions.reamorcage = 1;
+    syncToken = await run(null);
+  }
+  if (!state.syncToken && !actions.instantane && !actions.ressource_retiree) {
+    log("amorçage sans instantané du muṣḥaf : lecture de l'instantané documenté");
+    await applyMutation(
+      rows,
+      { type: 'RESOURCE_CREATE', snapshot_url: snapshotPath(mushafId) },
+      async (u) => snapshotBody(await get(u)),
+    );
+    actions.instantane_direct = 1;
   }
   return { syncToken, actions };
+}
+
+/** Description d'une valeur JSON SANS son contenu : clés, types, longueurs (jamais de texte ni de jeton). */
+export function shape(v, depth = 0) {
+  if (Array.isArray(v))
+    return depth > 1
+      ? `tableau(${v.length})`
+      : { tableau: v.length, premier: v.length ? shape(v[0], depth + 1) : null };
+  if (v && typeof v === 'object')
+    return depth > 2
+      ? `objet(${Object.keys(v).length})`
+      : Object.fromEntries(Object.keys(v).map((k) => [k, shape(v[k], depth + 1)]));
+  return v === null ? 'null' : typeof v;
+}
+
+/**
+ * Diagnostic SANS écriture : codes HTTP, clés de premier niveau, types et noms des ressources reçues. N'affiche ni
+ * le secret, ni le jeton, ni le contenu coranique (seulement des noms de clés, des types et des nombres).
+ */
+export async function diagnostic({ env, mushafId, fetchImpl = fetch, out = console.log }) {
+  out(`environnement : ${env} ; ressource : mushafs:${mushafId}`);
+  let tk;
+  try {
+    tk = await token(env, fetchImpl);
+    out('jeton : OK');
+  } catch (e) {
+    out(`jeton : ÉCHEC — ${e.message}`);
+    return false;
+  }
+  const probe = async (label, path) => {
+    const r = await fetchImpl(apiUrl(env, path), {
+      headers: { 'x-auth-token': tk.access, 'x-client-id': tk.id, accept: 'application/json' },
+    });
+    let j = null;
+    try {
+      j = await r.json();
+    } catch {
+      /* corps non JSON */
+    }
+    out(
+      `\n${label} : HTTP ${r.status} — GET ${path.split('?')[0]}${path.includes('?') ? ' ?' + path.split('?')[1].replace(/sync_token=[^&]*/, 'sync_token=…') : ''}`,
+    );
+    out(`  clés : ${j && typeof j === 'object' ? Object.keys(j).join(', ') : '(aucune)'}`);
+    if (j && (j.error || j.type)) out(`  erreur : ${j.error?.code ?? j.type ?? ''}`);
+    return j;
+  };
+  const list = await probe('liste des muṣḥafs', '/mushafs');
+  const ms = list?.mushafs ?? list?.data ?? [];
+  if (Array.isArray(ms))
+    for (const m of ms)
+      out(
+        `  - ${m.id} : ${m.name ?? ''} (lignes : ${m.lines_per_page ?? '?'}, pages : ${m.pages_count ?? '?'})`,
+      );
+  const boot = await probe('amorçage', syncPath(`mushafs:${mushafId}`, null));
+  const body = syncBody(boot);
+  if (body && body !== boot) out(`  clés de « sync » : ${Object.keys(body).join(', ')}`);
+  const muts = body?.mutations ?? [];
+  out(
+    `  mutations : ${Array.isArray(muts) ? muts.length : 'absentes'} ; has_more : ${body?.has_more} ; next_sync_token : ${body?.next_sync_token ? 'présent' : 'absent'}`,
+  );
+  for (const m of (Array.isArray(muts) ? muts : []).slice(0, 10))
+    out(
+      `  - ${m.type} ${m.resource_group}:${m.resource_id} ${m.record_type ?? ''} snapshot_url=${m.snapshot_url ?? '-'} unavailable_reason=${m.unavailable_reason ?? '-'}`,
+    );
+  const snap = snapshotBody(await probe('instantané', snapshotPath(mushafId)));
+  const recs = Array.isArray(snap.records) ? snap.records : [];
+  out(`  records : ${recs.length} ; schema_version : ${snap.schema_version ?? '?'}`);
+  const types = {};
+  for (const r of recs) {
+    const k = String(r.record_type ?? rowKind(r));
+    types[k] ??= { n: 0, champs: Object.keys(r) };
+    types[k].n++;
+  }
+  for (const [k, v] of Object.entries(types))
+    out(`  - ${k} : ${v.n} ; champs : ${v.champs.join(', ')}`);
+  const fiche = recs.find((r) => rowKind(r) === 'mushaf');
+  if (fiche)
+    out(
+      `  fiche : ${fiche.name ?? ''} — ${fiche.pages_count} pages × ${fiche.lines_per_page} lignes — police ${fiche.default_font_name ?? '?'}`,
+    );
+  out(`\nverdict fiche : ${checkMushafRecord(fiche ?? null) ?? 'OK (QCF V1, 604 × 15)'}`);
+  return true;
 }
 
 // ---------------------------------------------------------------------------------------- commande
@@ -377,19 +530,23 @@ async function main() {
   const o = args(process.argv.slice(2));
   const cmd = o._[0];
   const dir = resolve(String(o.dir ?? process.env.QF_SYNC_DIR ?? ''));
+  const env = String(process.env.QF_ENV ?? 'prelive');
+  if (!QF[env]) throw new Error(`QF_ENV inconnu : ${env}`);
+  const mushafId = Number(o.mushaf ?? DEFAULT_MUSHAF);
+  if (cmd === 'diagnostic' || o.diagnostic) {
+    if (!(await diagnostic({ env, mushafId }))) process.exit(1);
+    return;
+  }
   if (
     !cmd ||
     !['sync', 'verifier', 'inspecter'].includes(cmd) ||
     (!o.dir && !process.env.QF_SYNC_DIR)
   ) {
     console.error(
-      'usage : qf-lignes.mjs sync|verifier|inspecter --dir <QF_SYNC_DIR> [--polices <dossier>]',
+      'usage : qf-lignes.mjs sync|verifier|inspecter --dir <QF_SYNC_DIR> [--polices <dossier>] | diagnostic | --diagnostic',
     );
     process.exit(2);
   }
-  const env = String(process.env.QF_ENV ?? 'prelive');
-  if (!QF[env]) throw new Error(`QF_ENV inconnu : ${env}`);
-  const mushafId = Number(o.mushaf ?? DEFAULT_MUSHAF);
   mkdirSync(join(dir, 'copie'), { recursive: true });
   const statePath = join(dir, 'etat.json');
   const copyPath = join(dir, 'copie', `mushafs-${mushafId}.json`);
@@ -409,7 +566,15 @@ async function main() {
   }
 
   if (cmd === 'sync') {
-    const res = await syncOnce({ env, mushafId, state, rows });
+    const res = await syncOnce({ env, mushafId, state, rows, log: (m) => console.log(m) });
+    const words = [...rows.values()].filter((r) => rowKind(r) === 'word').length;
+    if (!words && !res.actions.ressource_retiree) {
+      // rien d'enregistré : ni copie vide, ni jeton (la prochaine passe refera l'amorçage)
+      console.error(
+        `ÉCHEC : aucune ligne « mot » reçue (actions : ${JSON.stringify(res.actions)}) — lancer « diagnostic »`,
+      );
+      process.exit(1);
+    }
     writeFileSync(copyPath, JSON.stringify([...rows.entries()]));
     const now = new Date().toISOString();
     writeFileSync(

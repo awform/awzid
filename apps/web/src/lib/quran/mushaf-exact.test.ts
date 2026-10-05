@@ -30,6 +30,8 @@ import {
   apiUrl,
   buildExactFile,
   checkMushafRecord,
+  diagnostic,
+  mushafRecord,
   publish,
   readPageStarts,
   readTanzil,
@@ -327,7 +329,16 @@ describe('A34 — outil de synchronisation (sans réseau)', () => {
     process.env.QF_CLIENT_ID = 'id-test';
     process.env.QF_CLIENT_SECRET = 'secret-test';
     const calls: string[] = [];
-    const snap = { records: synthRows() };
+    // forme DOCUMENTÉE : instantané à plat, lignes avec record_type ; synchronisation sous la clé « sync »
+    const snap = {
+      resource_group: 'mushafs',
+      resource_id: 2,
+      schema_version: 1,
+      records: synthRows().map((r) => ({
+        record_type: rowKind(r) === 'word' ? 'mushaf_word' : 'mushaf',
+        ...r,
+      })),
+    };
     const fake = (async (url: string, init?: RequestInit) => {
       calls.push(url);
       const json = (x: unknown) => new Response(JSON.stringify(x), { status: 200 });
@@ -339,17 +350,22 @@ describe('A34 — outil de synchronisation (sans réseau)', () => {
       if (url.includes('/snapshots/')) return json(snap);
       if (url.includes('bootstrap=true'))
         return json({
-          has_more: true,
-          next_page_url: '/api/v4/resources/sync?cursor=2',
-          mutations: [
-            {
-              type: 'RESOURCE_CREATE',
-              resource_group: 'mushafs',
-              snapshot_url: '/api/v4/resources/snapshots/mushafs/2',
-            },
-          ],
+          sync: {
+            sync_until_sequence: 7,
+            has_more: true,
+            next_page_url: '/api/v4/resources/sync?cursor=2',
+            mutations: [
+              {
+                type: 'RESOURCE_CREATE',
+                resource_group: 'mushafs',
+                resource_id: 2,
+                snapshot_url: '/api/v4/resources/snapshots/mushafs/2',
+                unavailable_reason: null,
+              },
+            ],
+          },
         });
-      return json({ has_more: false, next_sync_token: 'tok-1', mutations: [] });
+      return json({ sync: { has_more: false, next_sync_token: 'tok-1', mutations: [] } });
     }) as typeof fetch;
     const rows = new Map<string, Row>();
     const r = await syncOnce({ env: 'prelive', mushafId: 2, state: {}, rows, fetchImpl: fake });
@@ -358,6 +374,106 @@ describe('A34 — outil de synchronisation (sans réseau)', () => {
     expect(rows.size).toBe(snap.records.length);
     expect(calls[1]).toMatch(/resources=mushafs:2/);
     expect(calls.join(' ')).not.toMatch(/secret-test/);
+    const { file } = buildExactFile(rows, tanzil.lengths, null);
+    expect(file.pages[0]).toEqual(synthPage().page);
+  });
+
+  /** faux serveur : jeton, synchronisation (410 sur un jeton périmé), instantané direct */
+  function fakeQf(o: { bootstrapMutations: unknown[]; snap: unknown }) {
+    const calls: string[] = [];
+    const json = (x: unknown, status = 200) => new Response(JSON.stringify(x), { status });
+    const f = (async (url: string) => {
+      calls.push(url);
+      if (url.includes('oauth2')) return json({ access_token: 'jeton-tres-secret' });
+      if (url.endsWith('/mushafs'))
+        return json({ mushafs: [{ id: 2, name: 'QCF V1', lines_per_page: 15, pages_count: 604 }] });
+      if (url.includes('sync_token='))
+        return json(
+          {
+            error: {
+              code: 'resync_required',
+              message: 'The sync token is invalid or incompatible. Bootstrap again.',
+            },
+          },
+          410,
+        );
+      if (url.includes('bootstrap=true'))
+        return json({
+          sync: { has_more: false, next_sync_token: 'tok-2', mutations: o.bootstrapMutations },
+        });
+      if (url.includes('/snapshots/')) return json(o.snap);
+      return json({ message: 'not found', type: 'not_found', success: false }, 404);
+    }) as typeof fetch;
+    return { f, calls };
+  }
+  const flatSnap = () => ({
+    resource_group: 'mushafs',
+    resource_id: 2,
+    records: synthRows().map((r) => ({
+      record_type: rowKind(r) === 'word' ? 'mushaf_word' : 'mushaf',
+      ...r,
+    })),
+  });
+
+  it('jeton refusé (410 resync_required) : copie vidée puis nouvel amorçage', async () => {
+    const { f, calls } = fakeQf({
+      bootstrapMutations: [
+        {
+          type: 'RESOURCE_CREATE',
+          resource_group: 'mushafs',
+          resource_id: 2,
+          snapshot_url: '/api/v4/resources/snapshots/mushafs/2',
+        },
+      ],
+      snap: flatSnap(),
+    });
+    const rows = new Map<string, Row>([['word:999', { id: 999, line_number: 1, verse_id: 1 }]]);
+    const r = await syncOnce({
+      env: 'prelive',
+      mushafId: 2,
+      state: { syncToken: 'vieux' },
+      rows,
+      fetchImpl: f,
+    });
+    expect(r.actions).toMatchObject({ reamorcage: 1, instantane: 1 });
+    expect(r.syncToken).toBe('tok-2');
+    expect(rows.has('word:999')).toBe(false);
+    expect(calls.some((c) => c.includes('bootstrap=true'))).toBe(true);
+  });
+
+  it('amorçage sans instantané du muṣḥaf : lecture de l’instantané documenté', async () => {
+    const { f, calls } = fakeQf({ bootstrapMutations: [], snap: flatSnap() });
+    const rows = new Map<string, Row>();
+    const r = await syncOnce({ env: 'prelive', mushafId: 2, state: {}, rows, fetchImpl: f });
+    expect(r.actions).toEqual({ instantane_direct: 1 });
+    expect(calls.at(-1)).toMatch(/\/content\/api\/v4\/resources\/snapshots\/mushafs\/2$/);
+    expect(checkMushafRecord(mushafRecord(rows))).toBeNull();
+  });
+
+  it('diagnostic : codes HTTP, clés et noms de ressources — jamais le secret, le jeton ni le texte', async () => {
+    const { f } = fakeQf({
+      bootstrapMutations: [
+        {
+          type: 'RESOURCE_CREATE',
+          resource_group: 'mushafs',
+          resource_id: 2,
+          snapshot_url: '/api/v4/resources/snapshots/mushafs/2',
+          unavailable_reason: null,
+        },
+      ],
+      snap: flatSnap(),
+    });
+    const lines: string[] = [];
+    await diagnostic({ env: 'prelive', mushafId: 2, fetchImpl: f, out: (s) => lines.push(s) });
+    const all = lines.join('\n');
+    expect(all).toMatch(/jeton : OK/);
+    expect(all).toMatch(/amorçage : HTTP 200/);
+    expect(all).toMatch(/clés de « sync » : has_more, next_sync_token, mutations/);
+    expect(all).toMatch(/RESOURCE_CREATE mushafs:2/);
+    expect(all).toMatch(/mushaf_word : \d+ ; champs : record_type, id, verse_id/);
+    expect(all).toMatch(/verdict fiche : OK/);
+    expect(all).not.toMatch(/secret-test|jeton-tres-secret|id-test/);
+    expect(all).not.toMatch(/[ﭐ-﷿]/);
   });
 
   it('publication d’un bloc : lignes-v1.json, pages/NNN.json, manifeste (empreinte, source, crédit)', () => {

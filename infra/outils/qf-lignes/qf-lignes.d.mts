@@ -46,7 +46,22 @@ export function syncOnce(o: {
   state: { syncToken?: string };
   rows: Map<string, Row>;
   fetchImpl?: typeof fetch;
+  log?: (m: string) => void;
 }): Promise<{ syncToken: string | null; actions: Record<string, number> }>;
+export function diagnostic(o: {
+  env: 'prelive' | 'production';
+  mushafId: number;
+  fetchImpl?: typeof fetch;
+  out?: (line: string) => void;
+}): Promise<boolean>;
+export function syncBody(j: unknown): Record<string, unknown>;
+export function snapshotBody(j: unknown): { records?: unknown[] } & Record<string, unknown>;
+export function snapshotPath(mushafId: number): string;
+export function shape(v: unknown): unknown;
+export class QfHttpError extends Error {
+  status: number;
+  code: string | null;
+}
 export function mushafRecord(rows: Map<string, Row>): Row | null;
 export function checkMushafRecord(m: Row | null): string | null;
 export function fontChecker(dir: string): (p: number, cp: number) => boolean;
