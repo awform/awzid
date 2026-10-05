@@ -80,6 +80,18 @@ export interface ScanOptions {
   /** plus long silence toléré sans avertissement (ms, défaut 4 000) */
   longSilenceMs?: number;
   concurrency?: number;
+  /**
+   * dossiers « par sourate » (zip du Complexe décompressé AVEC ses dossiers) : chaque sous-dossier « NNN … »
+   * donne la sourate de ses fichiers (nom du dossier, pas nom du fichier) ; rien n'est renommé
+   */
+  suraFromFolder?: boolean;
+  /**
+   * fichiers de SOURATE ENTIÈRE (zip « sura ») : pour une riwāya autre que Ḥafṣ, une sourate dont le découpage
+   * par verset n'est pas conforme au texte officiel est servie par son fichier de sourate (piste « verset 0 »)
+   */
+  suraFilesDir?: string;
+  /** nommage des fichiers de sourate : S = chiffres de la sourate (ex. « 06-SSSD00-10mp3.mp3 ») */
+  suraFilesPattern?: string;
 }
 
 export interface ScanReport {
@@ -99,6 +111,8 @@ export interface ScanReport {
   counts: Record<string, number>;
   issues: AudioIssue[];
   tracks: ScannedTrack[];
+  /** sourates servies par leur fichier de sourate entière (repli) */
+  suraFallback?: number[];
 }
 
 const pad3 = (n: number) => String(n).padStart(3, '0');
@@ -124,6 +138,25 @@ export function compilePattern(
     if (!m) return null;
     const vals = order.map((_, i) => Number(m[i + 1]));
     return { sura: vals[order.indexOf('S')]!, aya: vals[order.indexOf('V')]! };
+  };
+}
+
+/** Nommage d'un fichier de sourate entière (« 06-SSSD00-10mp3.mp3 ») → numéro de sourate (null : hors nommage). */
+export function compileSuraPattern(pattern: string): (name: string) => number | null {
+  let re = '';
+  let n = 0;
+  for (const m of pattern.matchAll(/S+|[^S]+/g)) {
+    const tok = m[0];
+    if (tok[0] === 'S') {
+      n++;
+      re += tok.length === 1 ? '(\\d{1,3})' : `(\\d{${tok.length}})`;
+    } else re += tok.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+  if (n !== 1) throw new Error(`nommage de sourate « ${pattern} » : une suite de S attendue`);
+  const rx = new RegExp(`^${re}$`, 'i');
+  return (name) => {
+    const m = rx.exec(name);
+    return m ? Number(m[1]) : null;
   };
 }
 
@@ -206,7 +239,9 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
     // hors périmètre d'abord : une sourate écartée d'un import partiel ne bloque pas les autres
     if (scope && !scope.has(v.sura))
       return add('avertissement', 'hors_perimetre', { file, sura: v.sura, aya: v.aya });
-    const max = table ? (table[v.sura - 1] ?? 0) : 286;
+    // autre riwāya au compte connu : un verset au-delà du compte officiel est jugé à l'étape 2 (basmala
+    // d'al-Fātiḥa, repli sur le fichier de sourate) ; Ḥafṣ : refusé tout de suite
+    const max = table && hafs ? (table[v.sura - 1] ?? 0) : 286;
     if (v.sura < 1 || v.sura > 114 || v.aya > max)
       return add('bloquant', 'hors_mushaf', { file, sura: v.sura, aya: v.aya });
     const key = `${v.sura}:${v.aya}`;
@@ -216,20 +251,38 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
     byVerse.set(key, { file, source, ...v });
   };
   let annexes = 0;
+  let folderMismatch = 0;
   for (const dir of [o.dir, ...(o.extraDirs ?? [])]) {
     if (!existsSync(dir)) {
       add('bloquant', 'dossier_absent', { detail: dir });
       continue;
     }
-    for (const file of readdirSync(dir).sort()) {
-      const source = join(dir, file);
-      if (!statSync(source).isFile()) continue;
-      const v = parse(file);
-      if (v) addVerse(file, source, v);
-      else if (isAnnexName(o.pattern, file)) annexes++;
-      else add('avertissement', 'nom_inattendu', { file });
-    }
+    const readFiles = (d: string, folderSura: number | null) => {
+      for (const file of readdirSync(d).sort()) {
+        const source = join(d, file);
+        if (statSync(source).isDirectory()) {
+          const m = /^(\d{3})(?:\D|$)/.exec(file);
+          if (o.suraFromFolder && folderSura === null && m && +m[1]! >= 1 && +m[1]! <= 114)
+            readFiles(source, +m[1]!);
+          continue;
+        }
+        if (!statSync(source).isFile()) continue;
+        const v = parse(file);
+        if (v && folderSura !== null && v.sura !== folderSura) {
+          folderMismatch++;
+          v.sura = folderSura;
+        }
+        if (v) addVerse(file, source, v);
+        else if (isAnnexName(o.pattern, file)) annexes++;
+        else add('avertissement', 'nom_inattendu', { file });
+      }
+    };
+    readFiles(dir, null);
   }
+  if (folderMismatch)
+    add('avertissement', 'sourate_du_dossier', {
+      detail: `${folderMismatch} fichier(s) dont le nom porte une autre sourate que leur dossier : sourate du dossier retenue`,
+    });
   if (annexes)
     add('avertissement', 'annexes_ignorees', {
       detail: `${annexes} fichier(s) basmala / isti'ādha (B/C) non importés`,
@@ -238,6 +291,52 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
   // 2. versets attendus
   const suras = o.suras ? [...o.suras] : Array.from({ length: 114 }, (_, i) => i + 1);
   let expected: number;
+  const fallback = new Set<number>();
+  if (table && !hafs) {
+    const ofSura = (s: number) =>
+      [...byVerse.values()].filter((x) => x.sura === s && x.aya > 0).sort((a, b) => a.aya - b.aya);
+    // a) al-Fātiḥa : riwāyāt où la basmala n'est pas un verset (toutes sauf le compte koufi : Ḥafṣ, Shuʿba) ;
+    //    n + 1 fichiers numérotés 1..n+1 → le fichier 1 est la basmala (annexe), les suivants les versets 1..n
+    const n1 = table[0]!;
+    const f1 = ofSura(1);
+    if (o.riwaya !== 'shuba' && f1.length === n1 + 1 && f1.every((x, i) => x.aya === i + 1)) {
+      for (const x of f1) byVerse.delete(`1:${x.aya}`);
+      for (const x of f1.slice(1)) byVerse.set(`1:${x.aya - 1}`, { ...x, aya: x.aya - 1 });
+      annexes++;
+      add('avertissement', 'basmala_fatiha', {
+        sura: 1,
+        detail: `${f1[0]!.file} : basmala (annexe) ; fichiers 2 à ${n1 + 1} = versets 1 à ${n1}`,
+      });
+    }
+    // b) découpage par verset non conforme au texte officiel → fichier de sourate entière, s'il est fourni
+    const suraFiles = new Map<number, { file: string; source: string }>();
+    if (o.suraFilesDir && o.suraFilesPattern && existsSync(o.suraFilesDir)) {
+      const ps = compileSuraPattern(o.suraFilesPattern);
+      for (const file of readdirSync(o.suraFilesDir)) {
+        const s = ps(file);
+        if (s && statSync(join(o.suraFilesDir, file)).isFile())
+          suraFiles.set(s, { file, source: join(o.suraFilesDir, file) });
+      }
+    }
+    for (const s of suras) {
+      const f = ofSura(s);
+      const n = table[s - 1]!;
+      if (f.length === n && f.every((x, i) => x.aya === i + 1)) continue;
+      const whole = suraFiles.get(s);
+      if (whole) {
+        for (const x of f) byVerse.delete(`${s}:${x.aya}`);
+        byVerse.set(`${s}:0`, { ...whole, sura: s, aya: 0 });
+        fallback.add(s);
+        add('avertissement', 'repli_sourate', {
+          sura: s,
+          file: whole.file,
+          detail: `${f.length} fichier(s) par verset pour ${n} versets dans le texte officiel : fichier de sourate entière`,
+        });
+      } else
+        for (const x of f)
+          if (x.aya > n) add('bloquant', 'hors_mushaf', { file: x.file, sura: s, aya: x.aya });
+    }
+  }
   if (table) {
     expected = suras.reduce((n, s) => n + table[s - 1]!, 0);
     if (hafs && !o.suras && expected !== HAFS_TOTAL_VERSES)
@@ -246,7 +345,7 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
       add('bloquant', 'compte_incorrect', {
         detail: `compte déclaré ${o.declaredVerses}, compte officiel de la riwāya ${expected}`,
       });
-    for (const s of suras)
+    for (const s of suras.filter((x) => !fallback.has(x)))
       for (let a = 1; a <= table[s - 1]!; a++)
         if (!byVerse.has(`${s}:${a}`))
           add('bloquant', 'manquant', { sura: s, aya: a, detail: `${pad3(s)}${pad3(a)}` });
@@ -269,12 +368,15 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
           add('bloquant', 'manquant', { sura: s, aya: a, detail: `${pad3(s)}${pad3(a)}` });
     }
   }
-  const counted = [...byVerse.values()].filter((x) => x.aya > 0).length;
+  // versets couverts : un par fichier de verset, plus ceux des sourates servies en entier
+  const counted =
+    [...byVerse.values()].filter((x) => x.aya > 0).length +
+    [...fallback].reduce((n, s) => n + (table?.[s - 1] ?? 0), 0);
   if (expected && counted !== expected)
     add('bloquant', 'compte_incorrect', {
       detail: `${counted} versets trouvés, ${expected} attendus`,
     });
-  const zeros = [...byVerse.values()].filter((x) => x.aya === 0).length;
+  const zeros = [...byVerse.values()].filter((x) => x.aya === 0 && !fallback.has(x.sura)).length;
   if (zeros)
     add('avertissement', 'verset_zero', { detail: `${zeros} fichier(s) « 000 » gardés à part` });
 
@@ -367,6 +469,7 @@ export async function scanAudioDir(o: ScanOptions): Promise<ScanReport> {
     counts,
     issues,
     tracks,
+    ...(fallback.size ? { suraFallback: [...fallback].sort((a, b) => a - b) } : {}),
   };
 }
 

@@ -71,7 +71,10 @@
 
   const reciter = $derived(list.find((r) => r.id === reciterId) ?? null);
   const count = $derived(meta?.weights[sura - 1]?.length ?? 0);
-  const queue = $derived(listenQueue({ from, to, repeatVerse, repeatRange }));
+  // sourate servie en entier (découpage par verset non conforme au texte officiel) : un seul fichier
+  const queue = $derived(
+    pack?.mode === 'sourate' ? [0] : listenQueue({ from, to, repeatVerse, repeatRange }),
+  );
   const highlight = $derived(reciter ? canHighlight(reciter) : false);
 
   onMount(async () => {
@@ -332,6 +335,9 @@
       } else to = Math.max(from, a);
     }}
   />
+  {#if pack?.mode === 'sourate'}<p class="muted small" data-testid="sourate-entiere">
+      {t('ca.sourate_entiere')}
+    </p>{/if}
   {#if reciter && !highlight}<p class="muted small" data-testid="sans-surlignage">
       {t('ca.sans_surlignage')}
     </p>{/if}

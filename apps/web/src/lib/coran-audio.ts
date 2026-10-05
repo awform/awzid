@@ -46,6 +46,8 @@ export interface SuraPack {
   sura: number;
   hash: string;
   surlignage: Surlignage;
+  /** « sourate » : un seul fichier de sourate entière (piste 0), pas d'écoute verset par verset */
+  mode?: 'versets' | 'sourate';
   wifiSeulement: boolean;
   bytes: number;
   durationMs: number;

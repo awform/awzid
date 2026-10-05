@@ -131,6 +131,8 @@ async function suraManifest(db: Db, r: Reciter, sura: number) {
     sura,
     hash,
     surlignage,
+    // « sourate » : découpage par verset non conforme au texte officiel → un seul fichier de sourate entière
+    mode: tracks.every((x) => x.aya === 0) ? ('sourate' as const) : ('versets' as const),
     wifiSeulement: true,
     bytes: tracks.reduce((n, x) => n + x.bytes, 0),
     durationMs: tracks.reduce((n, x) => n + x.durationMs, 0),

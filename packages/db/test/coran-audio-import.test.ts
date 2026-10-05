@@ -7,6 +7,7 @@ import { spawnSync } from 'node:child_process';
 import {
   copyFileSync,
   existsSync,
+  mkdirSync,
   mkdtempSync,
   readdirSync,
   readFileSync,
@@ -246,6 +247,98 @@ describe('contrôles avant activation (dossier local)', () => {
     expect(p('06-01007A10.wav.mp3')).toEqual({ sura: 1, aya: 7 });
     expect(p('06-01C00A10.wav.mp3')).toBeNull();
     expect(isAnnexName('06-SSVVVA10.wav.mp3', '06-01C00A10.wav.mp3')).toBe(true);
+  });
+
+  it('A1 : sourate lue dans le NOM DU DOSSIER (zip décompressé avec ses dossiers), sans renommer', async () => {
+    const src = mk();
+    writeTestMushaf(src, [112, 113]);
+    const root = mk();
+    const d112 = join(root, '112 Al-Ikhlas');
+    const d113 = join(root, '113 Al-Falaq');
+    mkdirSync(d112);
+    mkdirSync(d113);
+    const n3 = (v: number) => String(v).padStart(3, '0');
+    // dossier 112 : fichiers mal nommés « 111 » (cas d'al-Muhannā : an-Naṣr nommée 109)
+    for (let v = 1; v <= 4; v++)
+      copyFileSync(join(src, `112${n3(v)}.wav`), join(d112, `10-111${n3(v)}-A06.wav`));
+    for (let v = 1; v <= 5; v++)
+      copyFileSync(join(src, `113${n3(v)}.wav`), join(d113, `10-113${n3(v)}-A06.wav`));
+    const opts = { dir: root, pattern: '10-SSSVVV-A06.wav', riwaya: 'hafs', suras: [112, 113] };
+    const r = await scanAudioDir({ ...opts, suraFromFolder: true });
+    expect(r.blocking).toBe(0);
+    expect(codes(r, 'avertissement')).toEqual(['sourate_du_dossier']);
+    expect(r.tracks.find((x) => x.sura === 112 && x.aya === 4)?.source).toBe(
+      join(d112, '10-111004-A06.wav'),
+    );
+    expect(readdirSync(d112)).toEqual([
+      '10-111001-A06.wav',
+      '10-111002-A06.wav',
+      '10-111003-A06.wav',
+      '10-111004-A06.wav',
+    ]);
+    // sans l'option : les sous-dossiers ne sont pas lus
+    expect(codes(await scanAudioDir(opts))).toContain('manquant');
+  });
+
+  it('A1 : Qālūn — al-Fātiḥa en 8 fichiers : le 1er est la basmala (annexe), 2 à 8 = versets 1 à 7', async () => {
+    const d = mk();
+    writeTestMushaf(d, [1], { counts: { 1: 8 } });
+    const r = await scanAudioDir({
+      dir: d,
+      pattern: 'SSSVVV.wav',
+      riwaya: 'qalun',
+      suras: [1],
+      silence: false,
+    });
+    expect(r.blocking).toBe(0);
+    expect(codes(r, 'avertissement')).toContain('basmala_fatiha');
+    expect(r.found).toBe(7);
+    expect(r.tracks.find((x) => x.aya === 7)?.file).toBe('001008.wav');
+    expect(r.tracks.find((x) => x.aya === 1)?.file).toBe('001002.wav');
+    // Shuʿba (compte koufi) : pas de remappage, le 8e fichier est hors muṣḥaf
+    const s = await scanAudioDir({
+      dir: d,
+      pattern: 'SSSVVV.wav',
+      riwaya: 'shuba',
+      suras: [1],
+      silence: false,
+    });
+    expect(codes(s)).toContain('hors_mushaf');
+  });
+
+  it('A1 : découpage par verset non conforme au texte officiel → repli sur le fichier de sourate entière', async () => {
+    const d = mk();
+    writeTestMushaf(d, [67, 112], { counts: { 67: 30 } });
+    const whole = mk();
+    copyFileSync(join(d, '067001.wav'), join(whole, '06-067D00-10.wav'));
+    const base = {
+      dir: d,
+      pattern: 'SSSVVV.wav',
+      riwaya: 'susi',
+      suras: [67, 112],
+      silence: false,
+    };
+    // sans fichier de sourate : bloqué (verset 31 manquant)
+    expect(codes(await scanAudioDir(base))).toContain('manquant');
+    const r = await scanAudioDir({
+      ...base,
+      suraFilesDir: whole,
+      suraFilesPattern: '06-SSSD00-10.wav',
+    });
+    expect(r.blocking).toBe(0);
+    expect(r.suraFallback).toEqual([67]);
+    expect(codes(r, 'avertissement')).toContain('repli_sourate');
+    expect(r.tracks.filter((x) => x.sura === 67).map((x) => x.aya)).toEqual([0]);
+    expect(r.found).toBe(31 + 4);
+    // Ḥafṣ : jamais de repli (le découpage par verset est exigé)
+    const h = await scanAudioDir({
+      ...base,
+      riwaya: 'hafs',
+      suraFilesDir: whole,
+      suraFilesPattern: '06-SSSD00-10.wav',
+    });
+    expect(h.suraFallback).toBeUndefined();
+    expect(h.tracks.some((x) => x.aya === 0)).toBe(false);
   });
 
   it('riwāya au compte officiel connu (as-Sūsī, Qālūn) : compte par sourate imposé', async () => {

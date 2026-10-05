@@ -7,7 +7,7 @@ Fichiers lus seulement.
 """
 import glob, json, os, subprocess, sys, tempfile
 sys.path.insert(0, '/work')
-from asr_controle import RECITATIONS, TEXTES, SRC, TXT, OUT, MODEL, compile_pattern, strip, sim
+from asr_controle import RECITATIONS, TEXTES, TXT, OUT, MODEL, files_for, strip, sim
 
 
 def main(ids):
@@ -19,15 +19,8 @@ def main(ids):
     for rid in ids:
         path = f'{OUT}/asr-{rid}.json'
         rep = json.load(open(path, encoding='utf-8'))
-        riw, dirs, pats = RECITATIONS[rid]
-        parsers = [compile_pattern(p) for p in pats]
-        files = {}
-        for d in dirs:
-            if not os.path.isdir(d): continue
-            for n in sorted(os.listdir(d)):
-                for p in parsers:
-                    v = p(n)
-                    if v: files.setdefault(v, os.path.join(d, n)); break
+        riw = RECITATIONS[rid][0]
+        files, _ = files_for(rid)
         tdir, field = TEXTES[riw]
         data = json.load(open(glob.glob(f'{TXT}/{tdir}/*data*/*.json')[0], encoding='utf-8'))
         ref = {(int(x['sura_no']), int(x['aya_no'])): strip(x[field]) for x in data}

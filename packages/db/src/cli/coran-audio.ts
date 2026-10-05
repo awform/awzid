@@ -10,7 +10,9 @@
  *   node dist/cli/coran-audio.js etat
  *
  * Options : --nommage SSSVVV.mp3 (défaut : nommage relevé du Complexe ; plusieurs, séparés par des virgules)
- * · --dossier répété (dossiers supplémentaires) · --sourates 1,112-114 (muṣḥaf partiel) · --versets N (compte
+ * · --dossier répété (dossiers supplémentaires) · --sourate-du-dossier (sous-dossiers « NNN … » : sourate lue
+ * dans le nom du dossier) · --fichiers-sourate DIR [--nommage-sourate 06-SSSD00-10mp3.mp3] (repli sur le
+ * fichier de sourate entière d'une sourate au découpage non conforme, riwāyāt autres que Ḥafṣ) · --sourates 1,112-114 (muṣḥaf partiel) · --versets N (compte
  * déclaré, riwāyāt autres que Ḥafṣ) · --empreintes SHA256SUMS · --sans-silences · --silence-max 4000 (ms)
  * · --stockage DIR (défaut AWFORM_AUDIO_DIR) · --rapport fichier.json · --partiel · --reactiver · --test.
  * Code de sortie : 0 succès ; 2 import bloqué ou refus ; 1 erreur.
@@ -23,6 +25,7 @@ import {
   activateReciter,
   COMPLEXE_CATALOGUE,
   COMPLEXE_NOMMAGES,
+  COMPLEXE_NOMMAGES_SOURATE,
   formatReport,
   importReciterAudio,
   parseSuraList,
@@ -79,6 +82,13 @@ try {
       dir: need('dossier'),
       ...(dossiers.length > 1 ? { extraDirs: dossiers.slice(1) } : {}),
       pattern: str('nommage') ?? COMPLEXE_NOMMAGES[id] ?? 'SSSVVV.mp3',
+      ...(flags.has('sourate-du-dossier') ? { suraFromFolder: true } : {}),
+      ...(str('fichiers-sourate')
+        ? {
+            suraFilesDir: str('fichiers-sourate')!,
+            suraFilesPattern: str('nommage-sourate') ?? COMPLEXE_NOMMAGES_SOURATE[id] ?? 'SSS.mp3',
+          }
+        : {}),
       ...(str('sourates') ? { suras: parseSuraList(str('sourates')!) } : {}),
       ...(str('versets') ? { declaredVerses: Number(str('versets')) } : {}),
       ...(str('empreintes') ? { checksums: readChecksums(str('empreintes')!) } : {}),

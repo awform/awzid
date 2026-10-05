@@ -100,9 +100,11 @@
     return { from: cur && cur.s === activeSura ? cur.a : g[0]!.from, to: g[g.length - 1]!.to };
   });
   const queue = $derived(
-    activeRange
-      ? repeatQueue(activeRange.from, activeRange.to, prefs.repeatVerse, prefs.repeatRange)
-      : [],
+    pack?.mode === 'sourate'
+      ? [0]
+      : activeRange
+        ? repeatQueue(activeRange.from, activeRange.to, prefs.repeatVerse, prefs.repeatRange)
+        : [],
   );
   const trad = $derived(translationInfo(prefs.translation));
   const lastPage = $derived(p >= 604 || (double && spreadOf(p)[1] >= 604));

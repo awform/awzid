@@ -79,6 +79,26 @@ def sim(a, b):
     return SequenceMatcher(None, a, b, autojunk=False).ratio()
 
 
+def files_for(rid):
+    """Fichiers par verset : de préférence la correspondance établie par l'outil coran-audio (rapport du
+    verifier : nommages, dossiers par sourate, basmala d'al-Fātiḥa, replis), sinon les nommages ci-dessus."""
+    rp = f'/rapports/verifier-{rid}.json'
+    if os.path.exists(rp):
+        r = json.load(open(rp, encoding='utf-8'))
+        files = {(t['sura'], t['aya']): t['source'].replace('/source', SRC, 1) for t in r['tracks'] if t['aya'] > 0}
+        return files, set(r.get('suraFallback', []))
+    riw, dirs, pats = RECITATIONS[rid]
+    parsers = [compile_pattern(p) for p in pats]
+    files = {}
+    for d in dirs:
+        if not os.path.isdir(d): continue
+        for n in sorted(os.listdir(d)):
+            for p in parsers:
+                v = p(n)
+                if v: files.setdefault(v, os.path.join(d, n)); break
+    return files, set()
+
+
 def main(ids):
     import nemo.collections.asr as nemo_asr
     import torch
@@ -86,15 +106,8 @@ def main(ids):
     model = nemo_asr.models.ASRModel.restore_from(MODEL, map_location='cpu')
     model.eval()
     for rid in ids:
-        riw, dirs, pats = RECITATIONS[rid]
-        parsers = [compile_pattern(p) for p in pats]
-        files = {}
-        for d in dirs:
-            if not os.path.isdir(d): continue
-            for n in sorted(os.listdir(d)):
-                for p in parsers:
-                    v = p(n)
-                    if v: files.setdefault(v, os.path.join(d, n)); break
+        riw = RECITATIONS[rid][0]
+        files, repli = files_for(rid)
         if not files:
             print(rid, 'aucun fichier'); continue
         tdir, field = TEXTES[riw]
@@ -109,7 +122,8 @@ def main(ids):
         pool = sorted(k for k in ref if k not in sample)
         sample |= set(rng.sample(pool, 300))
         sample |= set(EXTRA.get(rid, []))
-        sample = sorted(sample)
+        # sourates servies par leur fichier entier (repli) : pas d'écoute verset par verset à contrôler
+        sample = sorted(k for k in sample if k[0] not in repli)
         absent = [k for k in sample if k not in files]
         todo = [k for k in sample if k in files]
         t0 = time.time()

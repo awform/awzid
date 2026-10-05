@@ -1622,6 +1622,7 @@
   "ca.arreter": "Arrêter",
   "ca.verset_n": "verset {n}",
   "ca.voir": "Voir",
+  "ca.sourate_entiere": "Cette sourate s'écoute en entier : son découpage par verset ne correspond pas au texte officiel de la riwāya.",
   "ca.sans_surlignage": "Autre riwāya : le verset entendu n'est pas surligné (numérotation différente du texte de Ḥafṣ).",
   "ca.garder_titre": "Garder sur l'appareil",
   "ca.garder_texte": "Cette sourate : {taille}, {duree} d'écoute. Une fois gardée, elle s'écoute sans Internet.",

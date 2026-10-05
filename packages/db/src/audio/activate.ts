@@ -6,6 +6,7 @@
 import { desc, eq, sql } from 'drizzle-orm';
 import type { Db } from '../client.js';
 import * as t from '../schema.js';
+import { HAFS_SURA_VERSES, riwayaSuraVerses } from './suras.js';
 
 export async function activateReciter(
   db: Db,
@@ -25,10 +26,18 @@ export async function activateReciter(
     .limit(1);
   if (!last) return { ok: false, reason: 'aucun import' };
   if (last.status === 'bloque') return { ok: false, reason: 'dernier import bloqué' };
-  const [{ n } = { n: 0 }] = await db
-    .select({ n: sql<number>`count(*)::int` })
+  // versets couverts : pistes par verset + versets des sourates servies par leur fichier entier (piste 0 seule)
+  const rows = await db
+    .select({
+      sura: t.quranTrack.sura,
+      v: sql<number>`count(*) filter (where ${t.quranTrack.aya} > 0)::int`,
+      z: sql<boolean>`bool_or(${t.quranTrack.aya} = 0)`,
+    })
     .from(t.quranTrack)
-    .where(sql`${t.quranTrack.reciterId} = ${id} and ${t.quranTrack.aya} > 0`);
+    .where(eq(t.quranTrack.reciterId, id))
+    .groupBy(t.quranTrack.sura);
+  const table = riwayaSuraVerses(rec.riwaya) ?? HAFS_SURA_VERSES;
+  const n = rows.reduce((s, r) => s + (r.v > 0 ? r.v : r.z ? (table[r.sura - 1] ?? 0) : 0), 0);
   if (n !== rec.expectedVerses && !o.partialOk)
     return { ok: false, reason: `${n} versets en base, ${rec.expectedVerses} attendus` };
   await db
