@@ -419,6 +419,54 @@ describe.skipIf(!URL)('A27 — parcours par niveau et par classe (awform_test)',
     expect(s.mots).toBe(2);
   });
 
+  it('mots du Coran : rattachement ados et lien mot ↔ leçon lus en relançant l’import', async () => {
+    await c.h.pool.query(
+      `insert into level (code, track, rank, title_fr, subject_code) values ('ado1', 'ados', 1, 'Ados 1', 'arabe')
+       on conflict do nothing`,
+    );
+    const r = await importQuranLemmas(
+      c.h.db,
+      {
+        lemmes: [
+          {
+            n: 1,
+            arabe: 'مِنْ',
+            lemme_corpus_buckwalter: 'min',
+            frequence: 50,
+            niveau_enfants: 'E1',
+            niveau_ados: 'D1',
+            lecon_enfants: 'en1.l02',
+          },
+          {
+            n: 2,
+            arabe: 'فِي',
+            lemme_corpus_buckwalter: 'fiY',
+            frequence: 30,
+            niveau_enfants: 'E1',
+            niveau_ados: 'ado1',
+            lecon_enfants: 'en2.l01',
+          },
+        ],
+      },
+      'test-a27-ados',
+    );
+    // une leçon d'un autre niveau que celui du mot est refusée
+    expect(r).toMatchObject({ lemmes: 2, enfants: 2, ados: 2, lecons: 1, ignores: 1 });
+    const [l1] = await c.h.db.select().from(t.quranLemma).where(eq(t.quranLemma.rank, 1));
+    expect(l1).toMatchObject({ levelAdos: 'ado1', unitEnfants: 'en1.l02' });
+    // la leçon du livre faite : le mot est acquis sans passer par le jeu
+    const fam = await parent(c, 'mots-lecon@exemple.org');
+    const kid = await child(c, fam.P, 'Idriss', 8);
+    await c.h.db
+      .insert(t.progress)
+      .values({ profileId: kid, unitId: 'en1.l02', status: 'terminee' });
+    const m = (await c.req('GET', `/api/v1/profiles/${kid}/mots-coran`, fam.P)).json();
+    expect(m.mots.map((x: { rang: number; acquis: boolean }) => [x.rang, x.acquis])).toEqual([
+      [1, true],
+      [2, false],
+    ]);
+  });
+
   it('accueil : résumé des matières, piste Coran, classes', async () => {
     const fam = await parent(c, 'accueil@exemple.org');
     const kid = await child(c, fam.P, 'Sami', 8);
@@ -444,6 +492,21 @@ describe.skipIf(!URL)('A27 — parcours par niveau et par classe (awform_test)',
     }));
     expect(selectExercises(exs, 'positionnement').map((e) => e.id)).toEqual(['en1.ex1', 'en1.ex2']);
     expect(selectExercises(exs, 'epreuve').map((e) => e.id)).toEqual(['en1.ex1', 'en1.ex2']);
+    // D-A27 : QUATRE exercices par niveau, ceux du livre d'abord, puis du cahier ; ordre du livre gardé
+    const six = ['vrai_faux', 'complete', 'ecoute', 'complete', 'ordre', 'complete'].map(
+      (type, i) => ({
+        id: `x${i + 1}`,
+        position: i + 1,
+        type,
+        content: { type, items: [{}], ...(i === 1 || i === 3 ? { livre: 'ecriture' } : {}) },
+      }),
+    );
+    expect(selectExercises(six, 'positionnement').map((e) => e.id)).toEqual([
+      'x1',
+      'x2',
+      'x5',
+      'x6',
+    ]);
     expect(gradeSelection(exs.slice(0, 2), GOOD('en1'))).toEqual({ points: 4, max: 4 });
     const qcm = {
       id: 'q',

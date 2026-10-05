@@ -81,10 +81,14 @@ export function profileKindFromYear(
 /**
  * Mots du Coran (décision du client, 05/10/2026) : chaque lemme est rattaché au NIVEAU DE LIVRE qui l'enseigne
  * (données des livres `mots_coran_1000.json` : `niveau_enfants` E1-E5, `niveau_adultes` A1-A10). Aucune
- * hiérarchie propre : « E3 » → en3, « A7 » → ad7.
+ * hiérarchie propre : « E3 » → en3, « A7 » → ad7. A27 : le rattachement aux livres ADOS (à exporter par les
+ * livres) est lu sous la forme « D2 » (ado2) ou directement par le code du niveau (« ado2 », « en3 », « ad7 »).
  */
 export function lemmaLevelCode(v: string | null | undefined): string | null {
-  const m = /^\s*([EA])(\d{1,2})\s*$/.exec(v ?? '');
+  const s = String(v ?? '').trim();
+  const code = /^(en|ado|ad)(\d{1,2})$/i.exec(s);
+  if (code) return `${code[1]!.toLowerCase()}${Number(code[2])}`;
+  const m = /^([EAD])(\d{1,2})$/.exec(s);
   if (!m) return null;
-  return `${m[1] === 'E' ? 'en' : 'ad'}${Number(m[2])}`;
+  return `${m[1] === 'E' ? 'en' : m[1] === 'A' ? 'ad' : 'ado'}${Number(m[2])}`;
 }

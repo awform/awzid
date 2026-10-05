@@ -538,6 +538,14 @@ export interface LemmaSource {
     racine?: string;
     reference?: string;
     categorie?: string;
+    /**
+     * A27 : leçon du livre qui enseigne le mot, par filière (à exporter par les livres : identifiant d'unité,
+     * « ad1.l05 ») ; `lecon` seul vaut pour toutes. Absente : le mot reste rattaché au niveau seulement.
+     */
+    lecon?: string;
+    lecon_enfants?: string;
+    lecon_adultes?: string;
+    lecon_ados?: string;
   }>;
 }
 
@@ -561,23 +569,49 @@ export async function importQuranLemmas(db: Db, src: LemmaSource, sha256: string
     const c = lemmaLevelCode(v);
     return c && known.has(c) ? c : null;
   };
+  // A27 : leçons connues (lien mot ↔ leçon exporté par les livres) ; une leçon d'un autre niveau que celui du
+  // mot dans la filière est refusée (comptée dans « ignores »)
+  const units = new Set((await db.select({ id: t.unit.id }).from(t.unit)).map((u) => u.id));
+  const unitOf = (v: string | undefined, level: string | null) => {
+    const id = v?.trim();
+    if (!id || !level || !units.has(id) || !id.startsWith(`${level}.`)) return null;
+    return id;
+  };
   let enfants = 0;
   let adultes = 0;
+  let ados = 0;
+  let lecons = 0;
   let ignores = 0;
   await db.transaction(async (tx) => {
     for (const l of src.lemmes) {
       const e = lv(l.niveau_enfants);
       const a = lv(l.niveau_adultes);
+      const d = lv(l.niveau_ados);
       if (l.niveau_enfants && !e) ignores++;
       if (l.niveau_adultes && !a) ignores++;
+      if (l.niveau_ados && !d) ignores++;
       if (e) enfants++;
       if (a) adultes++;
+      if (d) ados++;
+      const ue = unitOf(l.lecon_enfants ?? l.lecon, e);
+      const ua = unitOf(l.lecon_adultes ?? l.lecon, a);
+      const ud = unitOf(l.lecon_ados ?? l.lecon, d);
+      for (const [given, got] of [
+        [l.lecon_enfants, ue],
+        [l.lecon_adultes, ua],
+        [l.lecon_ados, ud],
+      ] as const)
+        if (given && !got) ignores++;
+      lecons += [ue, ua, ud].filter(Boolean).length;
       const row = {
         lemmaKey: l.lemme_corpus_buckwalter,
         arabic: l.arabe,
         levelEnfants: e,
         levelAdultes: a,
-        levelAdos: null,
+        levelAdos: d,
+        unitEnfants: ue,
+        unitAdultes: ua,
+        unitAdos: ud,
         frequency: l.frequence ?? null,
         sourceSha256: sha256,
         meaningFr: l.sens_fr?.trim() || null,
@@ -601,7 +635,7 @@ export async function importQuranLemmas(db: Db, src: LemmaSource, sha256: string
           set: { totalWords: total, sourceSha256: sha256, importedAt: new Date() },
         });
   });
-  return { lemmes: src.lemmes.length, enfants, adultes, ignores };
+  return { lemmes: src.lemmes.length, enfants, adultes, ados, lecons, ignores };
 }
 
 /** Mots du Coran d'un niveau de livre (pour l'onglet « Mots du Coran » d'A27). */

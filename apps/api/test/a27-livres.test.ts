@@ -34,7 +34,7 @@ describe.skipIf(!URL || !REAL_BOOKS)(
       expect(a.coranEcriture).toEqual({ depuis: 'ad1.l19', visible: false });
     });
 
-    it('positionnement sur les livres : deux exercices de l’examen de fin de niveau, sans corrigé', async () => {
+    it('positionnement sur les livres : quatre exercices au plus de l’examen de fin de niveau, sans corrigé', async () => {
       const fam = await parent(c, 'livres-pos-a27@exemple.org');
       const kid = await child(c, fam.P, 'Nour', 9);
       for (const lv of ['en1', 'en2']) {
@@ -42,8 +42,8 @@ describe.skipIf(!URL || !REAL_BOOKS)(
         expect(r.statusCode, r.body).toBe(200);
         const v = r.json();
         expect(v.unit).toMatch(new RegExp(`^${lv}\\.l\\d\\d$`));
-        expect(v.exercises.length).toBeGreaterThanOrEqual(1);
-        expect(v.exercises.length).toBeLessThanOrEqual(2);
+        expect(v.exercises.length).toBeGreaterThanOrEqual(3);
+        expect(v.exercises.length).toBeLessThanOrEqual(4);
         expect(r.body).not.toMatch(/"reponse"|"vrai"\s*:/);
       }
     });

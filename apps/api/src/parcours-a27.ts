@@ -48,36 +48,41 @@ const isObj = (v: unknown): v is Obj => !!v && typeof v === 'object' && !Array.i
 
 /** Réussite d'un niveau (positionnement) ou d'une épreuve de passage : 70 % des points notés automatiquement. */
 export const PASS_RATIO = 0.7;
-/** Exercices d'un test de positionnement par niveau (test COURT). */
-export const PLACEMENT_PER_LEVEL = 2;
+/**
+ * Exercices d'un test de positionnement par niveau : 4 (décision D-A27 du chef de projet : 2 ne plaçaient pas de façon
+ * fiable) ; test ADAPTATIF : arrêt dès qu'un niveau est manqué.
+ */
+export const PLACEMENT_PER_LEVEL = 4;
 /** Après une épreuve de passage manquée : nouvel essai le lendemain. */
 export const PASSAGE_RETRY_MS = 20 * 3600_000;
 /** Un test de positionnement est une suite d'essais rapprochés. */
 const PLACEMENT_WINDOW_MS = 3 * 3600_000;
 
 /** Types notés par le serveur sans audio ni ordre propre à l'élève (choix, vrai/faux, remise en ordre). */
-const PLACEMENT_TYPES = new Set(['vrai_faux', 'complete', 'premiere_lettre', 'qcm']);
-const PASSAGE_TYPES = new Set([...PLACEMENT_TYPES, 'ordre']);
+const PASSAGE_TYPES = new Set(['vrai_faux', 'complete', 'premiere_lettre', 'qcm', 'ordre']);
 
 /**
- * Exercices retenus dans l'épreuve de fin de niveau du livre : test de positionnement = les DEUX premiers
- * exercices notables (hors cahier d'écriture) ; épreuve de passage = tous les exercices notables par le serveur.
- * Rien n'est réécrit : ce sont les exercices du livre, dans son ordre.
+ * Exercices retenus dans l'épreuve de fin de niveau du livre (rien n'est réécrit : exercices du livre, dans son
+ * ordre) : épreuve de passage = tous les exercices notables par le serveur ; test de positionnement = QUATRE
+ * exercices notables par niveau (D-A27), ceux du livre de l'élève d'abord, puis ceux du cahier d'écriture (le choix
+ * y est noté, la recopie reste sur papier) si le livre n'en a pas assez.
  */
 export function selectExercises(
   exercises: ReadonlyArray<{ id: string; position: number; type: string; content: unknown }>,
   mode: 'positionnement' | 'epreuve',
 ) {
   const ok = (e: { type: string; content: unknown }) =>
-    (mode === 'positionnement' ? PLACEMENT_TYPES : PASSAGE_TYPES).has(e.type) &&
+    PASSAGE_TYPES.has(e.type) &&
     isObj(e.content) &&
     Array.isArray(e.content.items) &&
-    e.content.items.length > 0 &&
-    (mode === 'epreuve' || e.content.livre !== 'ecriture');
+    e.content.items.length > 0;
   const list = exercises.filter(ok);
-  return mode === 'positionnement' ? list.slice(0, PLACEMENT_PER_LEVEL) : list;
+  if (mode === 'epreuve') return list;
+  const cahier = (e: { content: unknown }) => isObj(e.content) && e.content.livre === 'ecriture';
+  return [...list.filter((e) => !cahier(e)), ...list.filter(cahier)]
+    .slice(0, PLACEMENT_PER_LEVEL)
+    .sort((a, b) => a.position - b.position);
 }
-
 /**
  * Note des exercices retenus : types « langue » par `gradeExam` (mêmes règles que les épreuves) ; QCM des livres
  * de sciences : un point par item dont l'option choisie est la réponse du livre.

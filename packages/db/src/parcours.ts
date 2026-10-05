@@ -469,6 +469,9 @@ export async function lemmasOfLevels(db: Db, codes: string[]) {
       exampleRef: t.quranLemma.exampleRef,
       category: t.quranLemma.category,
       frequency: t.quranLemma.frequency,
+      unitEnfants: t.quranLemma.unitEnfants,
+      unitAdultes: t.quranLemma.unitAdultes,
+      unitAdos: t.quranLemma.unitAdos,
     })
     .from(t.quranLemma)
     .where(
@@ -498,7 +501,17 @@ export async function quranWords(db: Db, editionId: string, profileId: string) {
     .select({ rank: t.profileLemma.rank })
     .from(t.profileLemma)
     .where(eq(t.profileLemma.profileId, profileId));
-  const acquired = new Set([...older.map((l) => l.rank), ...validated.map((v) => v.rank)]);
+  // A27 : lien mot ↔ leçon (si les livres l'exportent) : un mot dont la leçon de SA filière est faite est acquis
+  const doneUnits = new Set(
+    space.unites.filter((u) => u.statut && DONE.has(u.statut)).map((u) => u.id),
+  );
+  const lessonOf = (l: (typeof mine)[number]) =>
+    space.piste === 'en' ? l.unitEnfants : space.piste === 'ado' ? l.unitAdos : l.unitAdultes;
+  const acquired = new Set([
+    ...older.map((l) => l.rank),
+    ...validated.map((v) => v.rank),
+    ...mine.filter((l) => lessonOf(l) && doneUnits.has(lessonOf(l)!)).map((l) => l.rank),
+  ]);
   const [meta] = await db.select().from(t.quranLemmaMeta).where(eq(t.quranLemmaMeta.id, 1));
   const freq = new Map<number, number>();
   for (const l of [...mine, ...older]) freq.set(l.rank, l.frequency ?? 0);
