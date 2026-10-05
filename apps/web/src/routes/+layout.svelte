@@ -404,10 +404,6 @@
     .with-tabs main {
       padding-bottom: 112px;
     }
-    /* A12 : six entrées (ados, adultes) : libellés un peu plus petits */
-    .tabs:has(a:nth-child(6)) a {
-      font-size: 0.68rem;
-    }
     /* enfants : barre plus haute, icônes plus grandes */
     .tabs[data-public='enfant'] a {
       min-height: 64px;

@@ -6,6 +6,8 @@
 
   /** Lot 26 — « Plus » : les espaces qui ne tiennent pas dans les cinq entrées de la navigation. */
   const ITEMS = [
+    // A12 : sciences islamiques (ados et adultes) en attendant la refonte de l'accueil par niveau (A27)
+    { href: '/sciences', icon: 'livres', titre: 'nav.sciences', desc: 'plus.d_sciences' },
     { href: '/ecriture', icon: 'plume', titre: 'trace.titre', desc: 'plus.d_ecriture' },
     { href: '/lectures', icon: 'lire', titre: 'onglets.lectures', desc: 'plus.d_lectures' },
     { href: '/revisions', icon: 'revisions', titre: 'revisions.titre', desc: 'plus.d_revisions' },

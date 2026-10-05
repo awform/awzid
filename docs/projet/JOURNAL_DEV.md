@@ -76,6 +76,21 @@ dans `main`, démo redéployée. Base de tests unitaires propre au worktree (`aw
 
 Décisions à prendre (D-F1) : budget total 365 Ko ; durée de conservation des signalements ; titulaire du rôle
 référent ; export `ids/lignee.json` côté livres ; formulation « Selon l'école mālikite ».
+## 05/10/2026 — Chantier A12 (suite) : décisions du chef de projet (D-A12) appliquées
+
+- **Navigation : cinq entrées au plus** (règle du lot 26 maintenue). Ados et adultes : Accueil, Arabe, Coran,
+  **Prières**, Plus ; « Sciences » passe sous « Plus » (tuile en tête, entrée « Plus » active dans les sciences),
+  en attendant la refonte de l'accueil par niveau (A27 : Mon arabe / Mon Coran / Mes sciences / Au quotidien /
+  Ma classe). Enfant inchangé (garde « Sciences »), parent 5, visiteur 4. e2e adaptés : lot8 (sciences par « Plus »),
+  lot26 et horsligne (5 entrées).
+- Grande Mosquée de Paris 18°/17° gardé, « à confirmer auprès de la mosquée » dans LICENCES.md § 7 (pas dans
+  l'interface) ; Arabie saoudite → Umm al-Qurā validé ; budget 360 Ko accepté provisoirement ; rappels limités à
+  l'application ouverte (solution native F3/A16) ; tâches dans le nouveau `TACHES_TECHNIQUES.md` (réduire sous
+  325 Ko en chargeant les textes d'interface par route ; notifications locales natives).
+- Adhkār : les 21 en place **validés par le référent** ; les 17 manquants seront ajoutés côté livres/registre
+  (`A12_ADHKAR_A_COMPLETER.md`), rien côté appli.
+- Tests (VM) : `pnpm check` vert — unitaires **1 379 réussis, 1 ignoré** ; e2e complets **246 réussis, 22 ignorés,
+  0 échec** (12,7 min). Budget : page la plus lourde 139,9 Ko, total 354,8 Ko ≤ 360.
 
 ---
 

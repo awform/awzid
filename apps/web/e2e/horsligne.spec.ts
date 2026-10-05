@@ -108,13 +108,13 @@ async function runEcole(page: Page) {
 }
 
 // lot 26 : cinq entrées au plus (adulte : Accueil, Arabe, Coran, Sciences, Plus), le reste sous « Plus » ;
-// A12 : « Au quotidien » en sixième entrée pour les adultes
+// A12 : « Prières » (Au quotidien) remplace « Sciences », rangé sous « Plus »
 test('navigation : cinq entrées, entrée active, « Plus », barre en bas sur téléphone', async ({
   page,
 }, info) => {
   await page.goto('/');
   const tabs = page.locator('nav.tabs a');
-  await expect(tabs).toHaveCount(6);
+  await expect(tabs).toHaveCount(5);
   await expect(page.locator('nav.tabs a[data-tab="arabe"]')).toHaveAttribute(
     'aria-current',
     'page',
@@ -125,7 +125,7 @@ test('navigation : cinq entrées, entrée active, « Plus », barre en bas sur t
     'aria-current',
     'page',
   );
-  for (const t of ['sciences', 'aujourdhui', 'quotidien', 'plus']) {
+  for (const t of ['aujourdhui', 'quotidien', 'plus']) {
     await page.locator(`nav.tabs a[data-tab="${t}"]`).click();
     await expect(page.locator(`nav.tabs a[data-tab="${t}"]`)).toHaveAttribute(
       'aria-current',
@@ -133,7 +133,7 @@ test('navigation : cinq entrées, entrée active, « Plus », barre en bas sur t
     );
   }
   // « Plus » reste l'entrée active dans l'écriture, les lectures et le suivi
-  for (const href of ['/ecriture', '/lectures', '/suivi']) {
+  for (const href of ['/sciences', '/ecriture', '/lectures', '/suivi']) {
     await page.locator(`[data-plus="${href}"]`).click();
     await expect(page.locator('nav.tabs a[data-tab="plus"]')).toHaveAttribute(
       'aria-current',

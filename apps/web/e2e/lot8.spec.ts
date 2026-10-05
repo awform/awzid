@@ -24,7 +24,9 @@ test('Sciences islamiques : livres re, ra en aperçu, leçon de religion avec QC
   await expect(page.locator('a[href="/niveaux/en1"]')).toBeVisible();
   await expect(page.locator('a[href="/niveaux/re1"]')).toHaveCount(0);
 
-  await page.locator('nav.tabs a[data-tab="sciences"]').click();
+  // A12 : « Sciences » est sous « Plus » pour les adultes
+  await page.locator('nav.tabs a[data-tab="plus"]').click();
+  await page.locator('[data-plus="/sciences"]').click();
   await expect(page.locator('[data-testid="niveau-religion"][data-level="re1"]')).toBeVisible();
   await expect(page.locator('[data-testid="niveau-religion"][data-level="re2"]')).toBeVisible();
   // lot 16 : ra1 et ra2 sont GELÉS, publiés sans la mention « aperçu »
@@ -33,10 +35,7 @@ test('Sciences islamiques : livres re, ra en aperçu, leçon de religion avec QC
   await expect(ra1.getByTestId('apercu')).toHaveCount(0);
 
   await page.locator('[data-testid="niveau-religion"][data-level="re1"]').click();
-  await expect(page.locator('nav.tabs a[data-tab="sciences"]')).toHaveAttribute(
-    'aria-current',
-    'page',
-  );
+  await expect(page.locator('nav.tabs a[data-tab="plus"]')).toHaveAttribute('aria-current', 'page');
   await page.getByTestId('unit').first().click();
   const lesson = page.getByTestId('lecon-religion');
   await expect(lesson).toBeVisible();
