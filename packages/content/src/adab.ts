@@ -98,6 +98,8 @@ export interface AdabEntry {
   rangement: Rangement;
   /** fiches liées par l'index officiel */
   fiches?: string[];
+  /** rubrique d'un bilan (révision), et non d'une leçon */
+  bilan?: boolean;
   /** défi possible : point du livre à la première personne (« Je … »), recopié tel quel */
   defi?: { ar?: string; fr: string };
   /** situations « Que fais-tu si… ? » du livre (rubriques de religion) */

@@ -192,7 +192,12 @@
     <h2><Bidi text={str(block.titre_fr) || entry.titre_fr} /></h2>
     {#if str(block.titre_ar)}<Ar text={str(block.titre_ar)} block />{/if}
     <p class="muted">
-      <Bidi text={t('vi.lecon', { niveau: levelLabel(entry.level), n: entry.n })} /> ·
+      <Bidi
+        text={t(entry.bilan ? 'vi.bilan' : 'vi.lecon', {
+          niveau: levelLabel(entry.level),
+          n: entry.n,
+        })}
+      /> ·
       <a href={resolve(`/lecons/${entry.unit}` as '/')} data-testid="vi-voir-lecon"
         >{t('vi.voir_lecon')}</a
       >
