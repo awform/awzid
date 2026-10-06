@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { draftsAllowed } from '$lib/config';
   import AvisBouton from '$lib/avis/AvisBouton.svelte';
   import ModeProfil from '$lib/parcours/ModeProfil.svelte';
   import Bidi from '$lib/Bidi.svelte';
@@ -116,7 +117,8 @@
       .catch(() => {});
   });
   onMount(async () => {
-    allowDrafts = ((await kvGet<boolean>('draftsAllowed').catch(() => false)) ?? false) === true;
+    // F5 : réponse du serveur attendue ici (la mise en page ne l'attend plus)
+    allowDrafts = await draftsAllowed();
     drafts = allowDrafts && ((await kvGet<boolean>('draftLocales').catch(() => false)) ?? false);
     await reload();
   });

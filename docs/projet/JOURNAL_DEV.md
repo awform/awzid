@@ -8,6 +8,75 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Lot F5 : performance + « penser large »
+
+Branche `perf-penser-large-wip` (worktree `~/awform-perf`, depuis `main` 0f6e305), base de tests `awform_f5_test`, e2e
+isolés (ports 3590/4590).
+
+1. **Mesure du poids repensée** (décision du chef de projet ; `apps/web/scripts/budget.mjs`, `e2e/perf.spec.ts`,
+   EXPLOITATION § 14) — trois indicateurs bloquants : **(a) appareil d'un élève** (JS + CSS préchargés ET textes
+   préchargés, Brotli) ≤ 350 Ko ; **(b) première ouverture** (JS + CSS initiaux de l'accueil `/`) ≤ 150 Ko, vérifiée
+   aussi côté navigateur ; **(c) ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s, médiane de 3 premières
+   ouvertures de l'élève, et relance) < 3 s, dans la suite e2e (`reports/perf-3g.json`, recopié dans
+   `reports/budget-web.md`). Page la plus lourde ≤ 150 Ko gardée (CDC § 4.3). Le total de toutes les pages reste
+   affiché, **non bloquant**.
+2. **Allègement réel** — mesures avant (main 0f6e305) → après :
+
+   | Indicateur | Avant | Après |
+   |---|---|---|
+   | (a) Appareil d'un élève (JS + CSS + textes préchargés) | 356,8 Ko | **311,7 Ko** |
+   | (b) Première ouverture (`/`) | 111,0 Ko | **108,3 Ko** |
+   | (c) Ouverture en 3G simulée (médiane) | 3,02 s (au-delà du budget) | **1,9 s** |
+   | Fichiers téléchargés pour ouvrir l'accueil | 51 | 11 |
+   | Page la plus lourde (`/lecons/[id]`) | 138,7 Ko | 136,6 Ko |
+   | Total de toutes les pages (non bloquant) | 405,5 Ko | 391,7 Ko |
+
+   - **Groupes non préchargés** (`scripts/groupes.mjs` remplace `personnel.mjs` → `groupes.json`, service worker) :
+     personnel (`/enseignant`, `/admin`), **pages rares** utiles en ligne seulement (offres, abonnement, inscription,
+     activation, certificats, protections du compte, réglages du tuteur, garanties, errata, démonstration) et
+     **modules à la demande qui ont besoin du réseau** (lignes du Muṣḥaf exact, tuteur, avis et image d'écran) ;
+     un fichier atteint par une page de l'élève n'est jamais exclu. Sans réseau, une page rare jamais ouverte
+     affiche « Cette page a besoin d'Internet ».
+   - **Morceau commun** (Rolldown `codeSplitting`, modules partagés par ≥ 3 pages) : 11 fichiers au lieu de 51
+     pour ouvrir l'accueil (chaque fichier coûte un aller-retour en 3G), −21 Ko pour l'élève (meilleure compression).
+   - **Chargés à la demande** : tuteur, lignes du Muṣḥaf exact, réglages du compte (notifications, animations),
+     dessin du verset à partager, fenêtre d'avis et sa capture ; animations déjà à la demande (A21b).
+   - **Textes par route** : `static/i18n/fr-rares.json` (247 textes des pages rares + fenêtre d'avis, jamais
+     préchargés) ; espaces Prières et Vivre l'islam préchargés comme avant (comptés désormais dans (a)).
+   - **Ouverture** : la langue n'attend plus `/api/v1/config` sauf si une langue en préparation peut s'afficher ;
+     `fetchMe` regroupe les appels simultanés (3 requêtes → 1).
+   - Hors ligne de l'élève vérifié en e2e : 19 espaces ouverts sans réseau, aucun fichier des groupes en cache.
+3. **Penser large** :
+   - **Interrupteurs de fonctions** (registre `packages/school/src/fonctions.ts`, tables `feature_flag` et
+     `feature_rule`, migration `0042_f5_penser_large`, API `apps/api/src/f5.ts`, écran *Administration →
+     Fonctions*) : état de base ouvert / coupé / bêta et exceptions par rôle, âge, pays, école, canal ; la plus
+     précise l'emporte, « couper » à égalité ; cache serveur 30 s, copie de l'appareil 5 min (hors ligne : dernière
+     connue), valeur par défaut sûre du registre. Branchés : animations, Muṣḥaf exact, tuteur, Vivre l'islam,
+     défis, certificats individuels, mode serein, avis (récitateurs en ligne : clé prête, branchée à la fusion
+     de A2). Refus serveur `fonction_coupee` (tuteur, certificats, Vivre l'islam, Muṣḥaf exact, choix serein).
+   - **Canal bêta** (`beta_member`) : comptes (par e-mail) et écoles ; un élève d'une école bêta en fait partie.
+   - **« Donner mon avis »** (accueil de l'élève, Plus, compte, espace enseignant) : catégorie, texte ≤ 500 (aucun
+     pour un enfant), image facultative de l'écran faite sur l'appareil (champs et pseudonyme masqués, interdite
+     sur les pages qui montrent d'autres personnes), aperçu avant envoi ; 5 par compte et par jour, 300 par heure ;
+     file *Avis reçus* avec statut ; image effacée à 90 jours, avis à 12 mois (travailleur).
+   - **Usage sans traceur** (`usage_day` ; empreintes et sels du jour effacés après 2 jours) : clés d'une liste
+     fermée, une fois par jour et par personne ; tableau *Usage* (personnes-jours, ouvertures, jamais utilisées,
+     leçons où l'on abandonne, temps médian) ; **aucun chiffre sous 10 personnes**.
+   - **Étiquette `avant-<lot>`** avant chaque fusion (`infra/outils/etiquette-avant-fusion.sh`) et procédure de
+     retour arrière en 4 niveaux (EXPLOITATION § 11).
+4. **Nettoyage Docker hebdomadaire** (`infra/prod/nettoyage-docker.sh`, EXPLOITATION § 12) : images inutilisées
+   et cache de construction de plus de 7 jours, jamais les volumes ; **cron installé sur la VM** (dimanche 04:23,
+   `~/.local/bin/awzid-nettoyage-docker.sh`).
+5. **Textes** : 105 nouveaux textes (`avis.*`, `fn.*`, `beta.*`, `avisadm.*`, `usage.*`, erreurs, page « en ligne »)
+   en fr, en, es, de, ar (A_RELIRE.md).
+6. **Tests** : unitaires **1 632 réussis, 1 ignoré, 0 échec** (api `f5.test.ts` 10 : registre, rôle et âge, refus
+   serveur, pays, mode serein, canal bêta compte et école, avis, limites, conservation, usage et seuil ; web
+   `fonctions.test.ts` 7 ; i18n : textes des pages rares ; worker : purge F5). e2e `f5.spec.ts` (interrupteur par
+   l'écran admin pour les enfants, canal bêta, avis d'un enfant, avis avec image → file → statut, usage anonymisé,
+   hors ligne complet), `perf.spec.ts` réécrit, `a27.spec.ts` adapté. **Suite e2e complète (sous le verrou partagé) : 338 réussis, 45 ignorés, 13 échecs** — 6 tests de langue (la page Compte lisait le réglage « langues en préparation » avant la réponse du serveur, que la mise en page n'attend plus : corrigé, `lib/config.ts`) et 7 des leçons vivantes (l'animation se réinstallait à chaque relecture des interrupteurs : corrigé, valeur dérivée) ; les 5 fichiers concernés relancés : **53 réussis**, 1 intermittent connu (captures A21b, « carte vide », réussi deux fois de suite à la relance ; stabilisé sur `coran-corrections-wip`). Ouverture en 3G simulée : 1,9 s seule, 2,6 s pendant la suite complète (VM chargée par 4 agents).
+
+Décisions à prendre (D-F5) : voir DECISIONS_EN_ATTENTE.
+
 ## 06/10/2026 — Chantier A39 (suite) : décisions D-A39 appliquées
 
 Branche `a39b-certificat-wip` (depuis `main` 7785a3f).

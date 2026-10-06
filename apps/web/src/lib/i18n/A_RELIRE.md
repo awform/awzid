@@ -116,3 +116,13 @@ personnel sont désormais dans `static/i18n/fr-personnel.json` (mêmes clés, ho
 A37 (suite, 07/10/2026) : 8 textes ajoutés (`vi.statut.conseil` — arabe « نصيحة », `vi.a_eviter`, `vi.attention`,
 `vi.religion_coutume`, `vi.fiches_liees`, `vi.retenir`, `vi.coran_ref`, `vi.en_bref`), à relire avec le reste. Les textes
 français des espaces Prières et Vivre l'islam sont dans `static/i18n/fr-quotidien.json` et `fr-vivre.json` (mêmes clés).
+
+## F5 « performance + penser large » (06/10/2026)
+
+105 textes ajoutés (`avis.*` — fenêtre « Donner mon avis », `fn.*` — interrupteurs, `beta.*`, `avisadm.*`, `usage.*`,
+`erreur.fonction_coupee`, `erreur.trop_d_avis`, `erreur.capture_invalide`, `erreur.regle_sans_critere`,
+`erreur_page.en_ligne*`), écrits par Claude dans les quatre langues en préparation, **à relire**. Arabe vocalisé ;
+« قَنَاةُ التَّجْرِبَةِ » pour le canal bêta, « الْمُرْشِدُ » pour le tuteur (comme ailleurs). Les textes FRANÇAIS des pages
+rares (offres, abonnement, inscription, certificats…) et de la fenêtre d'avis sont dans `static/i18n/fr-rares.json`
+(mêmes clés, hors de la coquille de l'élève).
+

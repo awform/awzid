@@ -394,6 +394,8 @@ Lecture : (1) à tour égal, la séance de fin de parcours est presque la même 
 | Une minute de récitation envoyée (Opus 16 kbit/s) | ≈ 120 Ko (Wi-Fi seulement en mode « données économes ») |
 | Une minute d'audio de référence (Opus 24 kbit/s) | ≈ 180 Ko, téléchargé seulement à la demande |
 
+**Mesures (lot F5, 06/10/2026)** — trois indicateurs bloquants remplacent le « total de toutes les pages » (toujours affiché) : appareil d'un élève ≤ 350 Ko (311,7 Ko mesurés), première ouverture de l'accueil ≤ 150 Ko (108,3 Ko), ouverture en 3G simulée < 3 s (1,9 s) ; détail et procédure : `EXPLOITATION.md` § 14, rapport `reports/budget-web.md`.
+
 **Mode « données économes »** (activé par défaut en Afrique) : pas d'image lourde, pas d'audio sans accord, envoi des récitations en Wi-Fi seulement, poids affiché avant tout téléchargement > 200 Ko, compteur de Mo du mois visible par le parent (maquette `parent.html`, `horsligne.html`).
 
 ### 3.4 Mode école : une tablette, plusieurs élèves
@@ -739,7 +741,8 @@ Dans le **livre de l'élève**, en **bas de la page d'ouverture de chaque leçon
 
 ## 8 quater. Mise en service (lot 7, 29/09)
 
-Réalisé sans aucun compte externe : infra/prod (Docker Compose : Caddy, web, api, worker pg-boss, PostgreSQL 18 ; images construites en intégration continue), déploiement idempotent (deploy.sh), sauvegarde chiffrée nocturne et **test de restauration** (ackup.sh, estore-test.sh), supervision minimale (status.sh, santé, journaux tournants), démarrage automatique (systemd), **instance de démonstration permanente** sur la VM (http/https sur le réseau local, tunnel ssh pour le hors ligne), guide infra/prod/EXPLOITATION.md (dont la liste des comptes à créer par le client : hébergeur européen, domaine et DNS, stockage de sauvegarde externe, e-mail transactionnel, sonde de disponibilité, coffre de mots de passe ; plus tard Stripe, Apple, Google).
+Réalisé sans aucun compte externe : infra/prod (Docker Compose : Caddy, web, api, worker pg-boss, PostgreSQL 18 ; images construites en intégration continue), déploiement idempotent (deploy.sh), sauvegarde chiffrée nocturne et **test de restauration** (ackup.sh, 
+estore-test.sh), supervision minimale (status.sh, santé, journaux tournants), démarrage automatique (systemd), **instance de démonstration permanente** sur la VM (http/https sur le réseau local, tunnel ssh pour le hors ligne), guide infra/prod/EXPLOITATION.md (dont la liste des comptes à créer par le client : hébergeur européen, domaine et DNS, stockage de sauvegarde externe, e-mail transactionnel, sonde de disponibilité, coffre de mots de passe ; plus tard Stripe, Apple, Google).
 
 ## 8 ter. Public international (priorité client du 28/09) : langues, conformité, paiements, magasins, CDN
 

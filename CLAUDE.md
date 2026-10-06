@@ -50,6 +50,10 @@ Lot 27 (branche `lot27-api-wip`) : audio du Coran, partie SERVEUR TERMINÉE (fic
 interface par un autre agent) — `apps/api/src/coran-audio.ts`, `packages/db/src/audio/`, EXPLOITATION § 7.
 Corrections d'audit : branche `corrections-audit` — les 73 constats traités (corrigés, ou reportés avec leur
 raison), suivi `docs/projet/CORRECTIONS_AUDIT.md`, bilan `docs/projet/RAPPORT_CLOUD.md` ; CI entièrement verte.
+Lot F5 (branche `perf-penser-large-wip`) : mesure du poids (élève, première ouverture, 3G simulée ; EXPLOITATION § 14),
+pages rares et modules en ligne non préchargés (`apps/web/scripts/groupes.mjs`), interrupteurs de fonctions et canal
+bêta (`packages/school/src/fonctions.ts`, `apps/api/src/f5.ts`, `fn()` dans l'application), avis, usage sans
+traceur, étiquette `avant-<lot>` avant chaque fusion (EXPLOITATION § 11).
 Tests : `apps/api/test/content.ts` (vrais livres, sinon contenu synthétique `infra/ci/contenu-synthetique`,
 généré par `infra/ci/synthetique/generer.mjs`, sans texte religieux) ; `helpers.ts` pour les nouveaux lots.
 État des lignes V1 : `docs/projet/ECARTS.md` ; décisions du client : `docs/projet/DECISIONS_EN_ATTENTE.md`.
