@@ -84,8 +84,8 @@ suivant, notions à revoir, petit défi de révision, étoiles), `parc.origine_l
 4 `erreur.*`, écrits par Claude dans les quatre langues en préparation — **à relire**. Choix : anglais « Calm
 mode », espagnol « Modo sereno », allemand « Gelassener Modus », arabe « الوضع الهادئ » ; le jeune est tutoyé comme
 ailleurs (arabe : singulier) ; « parent » rendu par « padre o madre » / « Eltern » / « الولي ».
-La version anglaise des pages légales et de l'aide est désormais dans `static/i18n/legal-en.json` (contenu
-inchangé, toujours à relire par un locuteur natif et à valider par le juriste).
+Pages légales et aide en français : texte inchangé, désormais dans `static/i18n/legal/fr.json` (à côté de
+`en.json`), toujours à valider par le juriste.
 
 ## Coran épuré (06/10/2026)
 

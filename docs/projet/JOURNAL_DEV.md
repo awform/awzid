@@ -10,7 +10,8 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ## 06/10/2026 — Chantier A39 : « MODE SEREIN » — l'évaluation ne doit jamais décourager (décision du client)
 
-Branche `a39-serein-wip` (worktree `~/awform-a39`, depuis `main` f9467cd), base de tests `awform_a39_test`, e2e isolés.
+Branche `a39-serein-wip` (worktree `~/awform-a39`, depuis `main` f9467cd, puis fusionnée avec `main` 147c5fc — A37),
+base de tests `awform_a39_test`, e2e isolés.
 
 1. **Modèle** (migration `0040_a39_serein`, en avant seulement, retour arrière en tête du fichier) : `eval_mode`
    HISTORISÉ (une ligne ouverte = choix courant) pour un PROFIL (décideur « soi » : l'adulte autonome, ou « parent »)
@@ -52,12 +53,13 @@ Branche `a39-serein-wip` (worktree `~/awform-a39`, depuis `main` f9467cd), base 
    classe de l'enseignant (mode de la classe, notions fragiles). Certificats : inchangés (délivrés par l'école
    après une épreuve réussie) ; un niveau ouvert sans épreuve n'en ouvre aucun.
 6. **Textes** : 42 textes `ser.*`, `parc.origine_lecons|choix`, `erreur.*` en fr, en, es, de, ar (A_RELIRE.md).
-7. **Poids** : le mode serein ajoutait 5,3 Ko (412,9 Ko > 410). La version ANGLAISE des pages légales et de l'aide
-   (≈ 3 Ko Brotli, servie seulement quand l'anglais — langue en préparation — est choisi) sort de la coquille :
-   fichier statique `static/i18n/legal-en.json` téléchargé à la demande et gardé par le service worker, comme les
-   catalogues de langues du lot 25 (`lib/legal/pages.ts`, test). Styles des nouveaux composants réduits aux classes
-   globales. Résultat : toutes pages 409,5 Ko ≤ 410 (sans la sortie de l'anglais : 412,9), appareil d'un élève 349,3 Ko ≤ 355, page la plus lourde 144,1 Ko ≤ 150.
-8. **Tests** : unitaires 1 592 réussis, 1 ignoré, 0 échec (`pnpm check` vert) dont api `a39.test.ts` (9 : adulte serein sans épreuve, choix du
+7. **Poids** : après fusion de `main` (A37 : 409,0 Ko), le mode serein ajoutait 4,8 Ko (413,8 Ko > 410). Comme A37
+   l'a fait pour l'anglais, la version FRANÇAISE des pages légales et de l'aide (brouillons, ≈ 4 Ko Brotli) sort de
+   la coquille : `static/i18n/legal/fr.json`, chargé par ces pages (`loadLegal`, A37) et gardé par le service worker
+   au premier usage ; `lib/legal/content.ts` ne garde que la forme des textes et la liste des pages (test). Textes
+   `ser.classe_*` (personnel seulement) dans `fr-personnel.json` ; styles des nouveaux composants réduits aux classes
+   globales. Résultat : toutes pages 409,3 Ko ≤ 410, appareil d'un élève 348,7 Ko ≤ 355, page la plus lourde 141,1 Ko ≤ 150.
+8. **Tests** : unitaires 1 611 réussis, 1 ignoré, 0 échec (`pnpm check` vert) dont api `a39.test.ts` (9 : adulte serein sans épreuve, choix du
    niveau, mode modifiable et historique ; adulte « avec vérification » ; certificat seulement avec épreuve ; enfant
    — parent avec code, défi doux, étoiles ; ado — préférence validée/refusée ; enfant en classe — l'enseignant
    décide, retour au choix du parent ; garde-fou et suivi de l'enseignant ; inscription), `a27.test.ts` adapté
@@ -65,9 +67,10 @@ Branche `a39-serein-wip` (worktree `~/awform-a39`, depuis `main` f9467cd), base 
    `a39.spec.ts` (3 × 2 : adulte serein de l'inscription au niveau suivant, épreuve facultative en étoiles ; enfant
    — défi doux, récapitulatif « Revoir d'abord / Continuer quand même », suivi du parent, choix du parent ; enfant en
    classe — décision de l'enseignant), `a27.spec.ts` adapté (récapitulatif avant l'épreuve). **Suite e2e complète :
-   324 réussis, 42 ignorés ; 2 échecs intermittents hors A39 (lot26 contraste en sombre sur téléphone, coran-epure grand écran) réussis au second passage, puis sous-ensemble relancé après les dernières retouches (a39, a27, lot11, lot15, lot26, f2) : vert**.
+   337 réussis, 43 ignorés, 0 échec (22,5 min, après fusion de main A37)**.
 
 Décisions à prendre (D-A39) : voir DECISIONS_EN_ATTENTE.
+
 ## 06/10/2026 — Chantier A37 : onglet « Vivre l'islam » (bon comportement, prières, adhkār)
 
 Branche `a37-vivre-islam-wip` (worktree `~/awform-a37`, depuis `main` f9467cd), base de tests `awform_a37_test`, e2e
