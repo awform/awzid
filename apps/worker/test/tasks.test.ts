@@ -38,11 +38,13 @@ describe.skipIf(!URL_)('purge de la nuit', () => {
         'certificatsReduits',
         'comptes',
         'conservation',
+        'f5',
         'journalTuteur',
         'recitationsEffacees',
         'verrous',
       ].sort(),
     );
     expect(n.conservation).toMatchObject({ journal: 0, sessions: 0 });
+    expect(n.f5).toMatchObject({ empreintes: 0, captures: 0, avis: 0 });
   });
 });

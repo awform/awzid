@@ -135,6 +135,15 @@ export const API_GRANTS: Record<string, Right[]> = {
   reenrolment_offer: RIU,
   // A39 : mode d'évaluation (profil ou classe), historisé : une ligne se ferme (until), jamais effacée par l'API
   eval_mode: RIU,
+  // F5 : interrupteurs de fonctions et canal bêta (réglés par l'administrateur), avis (file de l'administrateur),
+  // usage sans traceur (agrégats par jour ; empreintes et sels du jour, effacés après 2 jours)
+  feature_flag: ALL,
+  feature_rule: ALL,
+  beta_member: ALL,
+  feedback: ALL,
+  usage_day: ALL,
+  usage_seen: ALL,
+  usage_salt: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */
@@ -160,6 +169,10 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
   class_assignment: ['SELECT'],
   class_pupil: ['SELECT'],
   assignment_mark: ['SELECT'],
+  // F5 : conservation — empreintes d'usage (2 jours), captures des avis (90 jours), avis (12 mois)
+  usage_seen: ['DELETE'],
+  usage_salt: ['DELETE'],
+  feedback: ['DELETE'],
 };
 
 /** Droits par COLONNE du travailleur (ni pseudonyme ni année de naissance : seulement le lien au compte). */
@@ -174,6 +187,9 @@ export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
   message: ['created_at'],
   // lot F2 : détacher le titulaire d'une classe avant l'effacement définitif de son compte
   class_group: ['id', 'teacher_account_id'],
+  usage_seen: ['day'],
+  usage_salt: ['day'],
+  feedback: ['created_at', 'capture_type'],
 };
 
 /**
@@ -186,6 +202,8 @@ export const WORKER_COLUMN_UPDATES: Record<string, string[]> = {
   // A27 (décision D-F2 1, PROVISOIRE, à confirmer par le juriste) : registre d'un élève parti depuis 3 ans
   // anonymisé (nom, nom arabe, genre, lien au profil) ; notes et copies restent, anonymes
   class_pupil: ['display_name', 'name_ar', 'gender', 'profile_id'],
+  // F5 : capture d'un avis effacée après 90 jours (l'avis reste jusqu'à 12 mois)
+  feedback: ['capture', 'capture_type'],
 };
 
 export const SEQUENCES = ['audit_log_id_seq'];

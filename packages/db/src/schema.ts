@@ -2564,3 +2564,151 @@ export const relayReciter = pgTable(
   },
   (t) => [primaryKey({ columns: [t.relayId, t.reciterId] })],
 );
+
+// ================================================================ F5 « penser large »
+
+/**
+ * Interrupteur d'une fonction (registre `FONCTIONS` de @awform/school) : état de base réglé par l'administrateur,
+ * sans redéploiement. Absente : l'état par défaut du registre s'applique (valeur sûre).
+ */
+export const featureFlag = pgTable(
+  'feature_flag',
+  {
+    key: text('key').primaryKey(),
+    state: text('state').notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedBy: uuid('updated_by').references(() => account.id, { onDelete: 'set null' }),
+  },
+  (t) => [check('feature_flag_state', sql`${t.state} IN ('on', 'off', 'beta')`)],
+);
+
+/** Exception à l'état de base : par rôle, âge, pays, école ou canal (critère vide = tous). */
+export const featureRule = pgTable(
+  'feature_rule',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    key: text('key').notNull(),
+    effect: text('effect').notNull(),
+    role: text('role'),
+    age: text('age'),
+    country: text('country'),
+    schoolId: uuid('school_id').references(() => school.id, { onDelete: 'cascade' }),
+    channel: text('channel'),
+    createdAt: createdAt(),
+    createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    index('feature_rule_key').on(t.key),
+    check('feature_rule_effect', sql`${t.effect} IN ('on', 'off')`),
+    check(
+      'feature_rule_role',
+      sql`${t.role} IS NULL OR ${t.role} IN ('eleve', 'parent', 'enseignant', 'direction', 'admin', 'visiteur')`,
+    ),
+    check('feature_rule_age', sql`${t.age} IS NULL OR ${t.age} IN ('enfant', 'ado', 'adulte')`),
+    check('feature_rule_country', sql`${t.country} IS NULL OR ${t.country} ~ '^[A-Z]{2}$'`),
+    check(
+      'feature_rule_channel',
+      sql`${t.channel} IS NULL OR ${t.channel} IN ('beta', 'production')`,
+    ),
+  ],
+);
+
+/** Canal BÊTA (fonctions en essai) : comptes, profils ou écoles marqués par l'administrateur. */
+export const betaMember = pgTable(
+  'beta_member',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    accountId: uuid('account_id').references(() => account.id, { onDelete: 'cascade' }),
+    profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'cascade' }),
+    schoolId: uuid('school_id').references(() => school.id, { onDelete: 'cascade' }),
+    addedAt: timestamp('added_at', { withTimezone: true }).notNull().defaultNow(),
+    addedBy: uuid('added_by').references(() => account.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    uniqueIndex('beta_member_account').on(t.accountId),
+    uniqueIndex('beta_member_profile').on(t.profileId),
+    uniqueIndex('beta_member_school').on(t.schoolId),
+    check('beta_member_one', sql`num_nonnulls(${t.accountId}, ${t.profileId}, ${t.schoolId}) = 1`),
+  ],
+);
+
+/**
+ * « Donner mon avis » (élève, parent, enseignant) : catégorie, texte court (pas pour un enfant), capture
+ * FACULTATIVE de l'écran (données des autres personnes masquées sur l'appareil, aperçu avant l'envoi), file
+ * de l'administrateur avec statut. Capture effacée après 90 jours, avis après 12 mois (travailleur).
+ */
+export const feedback = pgTable(
+  'feedback',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    accountId: uuid('account_id').references(() => account.id, { onDelete: 'set null' }),
+    profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'set null' }),
+    role: text('role').notNull(),
+    age: text('age'),
+    category: text('category').notNull(),
+    body: text('body'),
+    page: text('page'),
+    appVersion: text('app_version'),
+    capture: bytea('capture'),
+    captureType: text('capture_type'),
+    status: text('status').notNull().default('nouveau'),
+    handledAt: timestamp('handled_at', { withTimezone: true }),
+    handledBy: uuid('handled_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('feedback_status').on(t.status, t.createdAt),
+    index('feedback_account').on(t.accountId, t.createdAt),
+    check('feedback_status_check', sql`${t.status} IN ('nouveau', 'lu', 'traite', 'rejete')`),
+    check(
+      'feedback_category',
+      sql`${t.category} IN ('idee', 'probleme', 'difficile', 'aime', 'autre')`,
+    ),
+    check('feedback_body', sql`${t.body} IS NULL OR char_length(${t.body}) <= 500`),
+    check(
+      'feedback_capture_type',
+      sql`${t.captureType} IS NULL OR ${t.captureType} IN ('image/jpeg', 'image/png')`,
+    ),
+  ],
+);
+
+/**
+ * Tableau d'USAGE sans traceur : agrégats PAR JOUR (clé d'usage × rôle) — nombre de personnes distinctes et
+ * d'ouvertures ; aucun événement individuel gardé.
+ */
+export const usageDay = pgTable(
+  'usage_day',
+  {
+    day: date('day').notNull(),
+    key: text('key').notNull(),
+    role: text('role').notNull(),
+    persons: integer('persons').notNull().default(0),
+    events: integer('events').notNull().default(0),
+  },
+  (t) => [primaryKey({ columns: [t.day, t.key, t.role] })],
+);
+
+/**
+ * Empreintes du JOUR (HMAC d'un identifiant de profil ou de compte avec le sel du jour) : servent seulement à
+ * compter une personne une fois par jour ; effacées avec leur sel après 2 jours (aucun lien possible ensuite).
+ */
+export const usageSeen = pgTable(
+  'usage_seen',
+  {
+    day: date('day').notNull(),
+    key: text('key').notNull(),
+    fingerprint: text('fingerprint').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.day, t.key, t.fingerprint] })],
+);
+
+export const usageSalt = pgTable('usage_salt', {
+  day: date('day').primaryKey(),
+  salt: text('salt').notNull(),
+});

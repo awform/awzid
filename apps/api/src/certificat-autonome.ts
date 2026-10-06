@@ -33,6 +33,7 @@ import { newVerifCode, signCert, type CertSigner } from './certsign.js';
 import { err, familyProfile, UUID } from './guards.js';
 import { certQr, ORIGIN } from './qr.js';
 import { today, type Edition } from './school-common.js';
+import { exigeFonction } from './f5.js';
 
 export const AUTONOME_FR = 'Awzid — parcours autonome';
 
@@ -169,6 +170,8 @@ export function registerCertificatAutonome(
       if (!p) return reply;
       const auto = await autonomous(db, req, p.id);
       if (!auto) return err(reply, 403, 'reserve_adulte_autonome');
+      // F5 : interrupteur « certificats » (certificats individuels ; ceux des écoles ne passent pas ici)
+      if (!(await exigeFonction(db, req, reply, 'certificats', p.id))) return reply;
       const b = req.body;
       const [best] = await db
         .select()

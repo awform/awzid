@@ -45,6 +45,7 @@ import { registerParcoursA27 } from './parcours-a27.js';
 import { registerSereinA39 } from './serein-a39.js';
 import { registerCertificatAutonome } from './certificat-autonome.js';
 import { registerVivre } from './vivre.js';
+import { registerF5 } from './f5.js';
 import { registerVerification } from './verification.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
 import type { RecitationKey } from '@awform/db';
@@ -212,6 +213,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
       ? (process.env.AWFORM_QF_MUSHAF_DIR ?? null)
       : opts.mushafExactDir,
     opts.qcfFontsDir === undefined ? (process.env.AWFORM_QCF_DIR ?? null) : opts.qcfFontsDir,
+    undefined,
+    db,
   );
   registerVerification(app, db, signer);
   registerRelais(
@@ -251,5 +254,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerCertificatAutonome(app, db, edition, signer);
   // A37 : « Vivre l'islam », bon comportement (rubriques des livres par cercle et par lieu, fiches)
   registerVivre(app, db, edition);
+  // F5 : interrupteurs de fonctions, canal bêta, avis, usage sans traceur
+  registerF5(app, db, opts.version ?? '0.2.0');
   return app;
 }

@@ -6,6 +6,7 @@ import {
   purgeCertificateDocuments,
   purgeDeletedAccounts,
   purgeExpiredRecitations,
+  purgeF5,
   purgeRetention,
   purgeTutorLog,
   type Db,
@@ -46,5 +47,7 @@ export async function nightlyPurge(db: Db, now = new Date()) {
     verrous: await purgeAuthThrottle(db, now),
     // durées de conservation : tuteur, journal, sessions, paiements abandonnés (audit MIN-8)
     conservation: await purgeRetention(db, now),
+    // F5 : empreintes d'usage (2 jours), captures des avis (90 jours), avis (12 mois)
+    f5: await purgeF5(db, now),
   };
 }

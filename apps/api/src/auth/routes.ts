@@ -66,6 +66,8 @@ import {
   YEAR,
   type AuthKit,
 } from './common.js';
+import { fonctionActive } from '@awform/school';
+import { readFlags } from '@awform/db';
 import { registerPrivacy } from './donnees.js';
 import { registerProfiles } from './profils.js';
 import { demoLogin } from '../demo-mode.js';
@@ -325,7 +327,23 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
           })
           .returning({ id: t.profile.id });
         // A39 : « Avec vérification » ou « Mode serein », choisi à l'inscription
-        if (b.evalMode && own) await setProfileEvalMode(db, own.id, b.evalMode, 'soi', a.id);
+        // F5 : « Mode serein » coupé (interrupteur) → choix ignoré, le défaut s'applique
+        const sereinOk =
+          b.evalMode !== 'serein' ||
+          fonctionActive(
+            'mode_serein',
+            {
+              roles: ['eleve'],
+              age: 'adulte',
+              pays: b.country ?? null,
+              ecoles: [],
+              canal: 'production',
+            },
+            (await readFlags(db)).etats.mode_serein,
+            (await readFlags(db)).regles.filter((r) => r.cle === 'mode_serein'),
+          );
+        if (b.evalMode && own && sereinOk)
+          await setProfileEvalMode(db, own.id, b.evalMode, 'soi', a.id);
       }
       await audit(db, a.id, 'compte.creation', a.id, { kind: b.kind, country: b.country });
       await setSession(reply, a.id, b.kind, false);
