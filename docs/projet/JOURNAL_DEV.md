@@ -8,6 +8,48 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 07/10/2026 — Chantier A37 (suite) : vraies données du livret « Bon comportement », décisions D-A37, barre lisible
+
+Même branche `a37-vivre-islam-wip` (fusionnée une première fois dans `main` 147c5fc).
+
+1. **Données des livres (B9) — leur format fait foi** (`~/awform-content/ids/akhlaq-SCHEMA-B9.md`) : import adapté,
+   aucune demande de changement aux livres.
+   - **Index officiel** `data/akhlaq/index-adab.json` (567 rubriques : 476 `fiqh_adab` + adab 67, usra 9, muʿāmalāt
+     15) : il **remplace** le classement automatique (gardé en repli seulement, sans index) ; rubriques repérées par
+     leçon et titre, sinon par identifiant (`.adab` = bloc `fiqh_adab`, `.r<k>` = k-ième rubrique) ; fiches liées
+     montrées sous la rubrique. Identifiants de cercles des livres (`autorites`, `espace_public`, `musulmans_avis`,
+     `autres_religions`, `animaux_nature`, `numerique`…), libellés du client inchangés.
+   - **120 fiches** `akh.f001…f120` (aucune refusée) : situation par âge, points avec `enfant_fr` / `ado_fr` /
+     `adulte_fr` et `ages`, `dire` (hadith du registre au statut VERIFIE avec « Rapporté par … (n) », verset Tanzil
+     en BLOC avec renvoi au récitant — `audio` interdit, contrôlé —, formule), pourquoi (version enfant), attention,
+     vraie vie du **pays de la famille** (« tous » + son pays), religion ou coutume (adultes), défi (version enfant),
+     sources lisibles (`sources.json`, registre ; clés internes non montrées), fiches liées. Résumés dans le
+     catalogue, fiche entière à l'ouverture (`GET /api/v1/vivre/fiches/:id`, gardée sur l'appareil).
+   - **Étiquettes (référent)** : cinq statuts religieux ; `force: "forte"` = « Recommandé · sunna » ; déconseillé et
+     interdit affichés « À éviter — … » (le statut qualifie la conduite évitée) ; `conseil` = pastille NEUTRE
+     « Conseil », jamais présentée comme une règle religieuse. Livres de religion : fard → Obligatoire ; sunna,
+     mustaḥabb, faḍīla → Recommandé avec le terme du livre en petit.
+   - **Âges** : Époux et Enfants (éduquer) aux adultes, Travail aux ados et adultes ; `ages` et variantes des points.
+   - **Audio** des textes arabes non coraniques des fiches : niveaux « akhlaq-enf » (fiches qui ont l'âge enfant) et
+     « akhlaq », lus par le bouton « écouter » existant dès que les MP3 sont importés (`deploy.sh` importe tout
+     `~/lecons-audio`) ; jamais sur un verset.
+   - **Guide des parents** `data/gp/c18.js` « Transmettre les valeurs » : importé s'il est là (document `gp.c18`),
+     affiché dans l'espace Famille (« Transmettre les valeurs ») section par section — paragraphes, listes,
+     tableaux, encadrés, hadiths, versets en bloc, réponse mālikite, blocs du pays de la famille ; vérifié en e2e
+     avec la copie du PC (`E2E_GP_C18`), en attendant la synchro.
+   - `infra/sync-content.ps1` copie désormais `data/akhlaq` et `data/gp/c18.js`.
+2. **Barre du bas** : « Vivre l'islam » ENTIER sur deux lignes centrées (« Vivre » / « l'islam »), icônes alignées
+   en haut ; e2e « aucun libellé tronqué » (5 langues, 375 et 320 px, enfant et adulte).
+3. **Poids** (budget 410 inchangé) : textes français des espaces Prières (163 `qt.*`) et Vivre l'islam (77 `vi.*`)
+   chargés par leur mise en page (`static/i18n/fr-quotidien.json`, `fr-vivre.json`, PRÉCHARGÉS par le service
+   worker pour le hors ligne, comme les textes du personnel `fr-personnel.json` qui, eux, ne le sont pas) :
+   **toutes pages 409,1 Ko ≤ 410, appareil d'un élève 349,1 Ko ≤ 355** (les deux fichiers d'espace pèsent ≈ 4,5 Ko
+   compressés, préchargés mais hors de la mesure JS/CSS).
+4. Textes : `vi.statut.conseil`, `vi.a_eviter`, `vi.attention`, `vi.religion_coutume`, `vi.fiches_liees`,
+   `vi.retenir`, `vi.coran_ref`, `vi.en_bref` (5 langues, A_RELIRE.md) ; clés de cercles renommées.
+5. Tests : unitaires **1 600 réussis, 1 ignoré** ; e2e suite complète **333 réussis, 41 ignorés, 0 échec** (23,0 min ; `a37.spec.ts` 13, guide des parents compris). Captures 375 px (vraie fiche akh.f001 enfant/ado/adulte, f008 avec
+   verset, guide des parents) : `application/a37-captures/`.
+
 ## 06/10/2026 — Chantier A37 : onglet « Vivre l'islam » (bon comportement, prières, adhkār)
 
 Branche `a37-vivre-islam-wip` (worktree `~/awform-a37`, depuis `main` f9467cd), base de tests `awform_a37_test`, e2e
