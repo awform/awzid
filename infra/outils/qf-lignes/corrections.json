@@ -5,6 +5,7 @@
     {
       "id": "qf-2-181-fin",
       "mushaf": 2,
+      "env": ["prelive"],
       "verset": "2:181",
       "record": {
         "record_type": "mushaf_word",
@@ -26,7 +27,19 @@
       "preuve": "Rendu de la police officielle QCF_P027.ttf du Complexe (Data.zip SHA-256 7fe7a871…edb8) : U+FBEF…U+FBFD = les 13 mots de 2:181 dans l'ordre, U+FBFE = rosace « ١٨١ » (vérifié le 06/10/2026, chantier A34).",
       "date": "2026-10-06",
       "validation": "validé par le référent provisoire (06/10/2026)",
-      "signalement": "docs/projet/QF_SIGNALEMENT_2-181.md"
+      "signalement": "docs/projet/QF_SIGNALEMENT_2-181.md",
+      "note": "Donnée erronée du seul PRÉLANCEMENT : la copie de production (06/10/2026) porte déjà « end » (correction signalée obsolète)."
+    },
+    {
+      "id": "seg-37-130",
+      "type": "segmentation",
+      "mushaf": 2,
+      "verset": "37:130",
+      "groupes": [[1], [2], [3, 4]],
+      "correction": "Même texte, segmentation différente : Tanzil écrit « إِلْ يَاسِينَ » en DEUX mots (mots 3 et 4) ; les données QF (production, page 451, ligne 2) en font UN mot (position 3) dont le glyphe est « U+FB61 U+0020 U+FB62 ». Aucun enregistrement n'est modifié : le contrôle attend 3 mots de données pour 4 mots Tanzil, le 3e couvrant les mots Tanzil 3 et 4.",
+      "preuve": "Rendu de la police officielle QCF_P451.ttf (Data.zip SHA-256 7fe7a871…edb8) : U+FB5F = سَلَٰمٌ, U+FB60 = عَلَىٰٓ, U+FB61 = إِلْ, U+FB62 = يَاسِينَ, U+FB63 = fin de verset ١٣٠ ; mêmes lettres et mêmes signes que Tanzil (sukūn dessiné à la manière du Muṣḥaf de Médine). Capture : application/a34-captures/preuve-37-130.png (06/10/2026).",
+      "date": "2026-10-06",
+      "validation": "validé par le référent provisoire (06/10/2026)"
     }
   ]
 }

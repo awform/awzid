@@ -26,9 +26,17 @@ export interface ExactLine {
   n: number;
   w: ExactWord[];
 }
+/** Ligne d'en-tête de sourate ou de basmala (police QCF_BSML), placée par `placeHeads`. */
+export interface HeadLine {
+  n: number;
+  kind: 'sourate' | 'basmala';
+  s: number;
+}
 export interface ExactPage {
   p: number;
   lines: ExactLine[];
+  /** en-têtes et basmalas de la page (calculés sur TOUT le muṣḥaf : l'en-tête peut finir la page précédente) */
+  h?: HeadLine[];
 }
 export interface ExactSource {
   /** « Quran Foundation — Content Sync » */
@@ -94,21 +102,58 @@ function suraStarts(page: ExactPage): { s: number; line: number }[] {
 }
 
 /**
- * Lignes à afficher d'une page : les lignes de texte des données, et, juste avant le premier mot d'une sourate,
- * la basmala (sauf sourates 1 et 9) puis, au-dessus, l'en-tête de la sourate. Les lignes restantes sont « vides »
- * (ne doit jamais arriver sur une page complète : le contrôle le refuse).
+ * En-têtes de sourate et basmalas de tout le muṣḥaf. Règle du Muṣḥaf de Médine 1405, relevée sur les données
+ * complètes (06/10/2026, 21 cas, ex. pages 76/77, 548/549) : juste avant le premier mot d'une sourate, la basmala
+ * (sauf sourates 1 et 9), et au-dessus l'en-tête ; quand la sourate commence en ligne 2, la basmala occupe la
+ * ligne 1 et l'en-tête la DERNIÈRE ligne (15) de la page précédente. Une ligne prise doit être libre de tout texte,
+ * sinon : écart.
+ */
+export function placeHeads(pages: readonly ExactPage[]): {
+  heads: Map<number, HeadLine[]>;
+  errors: string[];
+} {
+  const byP = new Map(pages.map((p) => [p.p, p]));
+  const heads = new Map<number, HeadLine[]>();
+  const errors: string[] = [];
+  const taken = (p: number, n: number) =>
+    !!byP.get(p)?.lines.some((l) => l.n === n) || !!heads.get(p)?.some((h) => h.n === n);
+  for (const pg of pages)
+    for (const { s, line } of suraStarts(pg)) {
+      const need: HeadLine['kind'][] = s === 1 || s === 9 ? ['sourate'] : ['sourate', 'basmala'];
+      let p = pg.p;
+      let n = line - 1;
+      for (let i = need.length - 1; i >= 0; i--) {
+        if (n < 1) {
+          p -= 1;
+          n = EXACT_LINES;
+          if (!byP.has(p)) {
+            errors.push(`page ${pg.p} : en-tête de la sourate ${s} sur la page ${p}, absente`);
+            break;
+          }
+        }
+        if (taken(p, n)) {
+          errors.push(
+            `page ${p} ligne ${n} : déjà occupée, ${need[i]} de la sourate ${s} impossible`,
+          );
+          break;
+        }
+        heads.set(p, [...(heads.get(p) ?? []), { n, kind: need[i]!, s }]);
+        n--;
+      }
+    }
+  return { heads, errors };
+}
+
+/**
+ * Lignes à afficher d'une page : les lignes de texte des données et ses en-têtes/basmalas (`page.h`, calculés sur
+ * tout le muṣḥaf par `placeHeads` ; à défaut, sur la page seule). Les lignes restantes sont « vides » (refusé par
+ * le contrôle sur une page complète).
  */
 export function displayLines(page: ExactPage): DisplayLine[] {
   const byN = new Map<number, DisplayLine>();
   for (const l of page.lines) byN.set(l.n, { n: l.n, kind: 'texte', w: l.w });
-  for (const { s, line } of suraStarts(page)) {
-    let at = line - 1;
-    if (s !== 1 && s !== 9) {
-      if (at >= 1 && !byN.has(at)) byN.set(at, { n: at, kind: 'basmala', s });
-      at--;
-    }
-    if (at >= 1 && !byN.has(at)) byN.set(at, { n: at, kind: 'sourate', s });
-  }
+  for (const h of page.h ?? placeHeads([page]).heads.get(page.p) ?? [])
+    if (!byN.has(h.n)) byN.set(h.n, { ...h });
   const used = [...byN.keys()];
   const last = page.p <= 2 ? Math.max(...used, 1) : EXACT_LINES;
   // pages 1 et 2 : bloc court (numéros de ligne relevés dans les données : bas de la grille) — seulement les lignes
@@ -168,6 +213,19 @@ export interface CheckInput {
   fontHas?: (p: number, cp: number) => boolean | null;
   /** contrôle partiel (échantillon) : seulement ces pages, sans exiger les 604 ni tous les versets */
   partial?: boolean;
+  /**
+   * Segmentations EXPLICITES (corrections.json, validées par le référent) : verset « s:a » → pour chaque mot des
+   * données, les numéros des mots Tanzil qu'il dessine (ex. 37:130 : [[1], [2], [3, 4]]). Ailleurs : 1 pour 1.
+   */
+  segments?: ReadonlyMap<string, readonly (readonly number[])[]>;
+}
+
+/** Une segmentation couvre-t-elle les mots 1..n de Tanzil, dans l'ordre, chacun une seule fois ? */
+export function segmentationCovers(groups: readonly (readonly number[])[], n: number): boolean {
+  const flat = groups.flat();
+  return (
+    groups.every((g) => g.length > 0) && flat.length === n && flat.every((x, i) => x === i + 1)
+  );
 }
 
 /**
@@ -185,6 +243,14 @@ export function checkExactFile(inp: CheckInput): string[] {
   if (lengths.length !== 114) add(`sourates : ${lengths.length} ≠ 114`);
   if (!inp.partial && file.pages.length !== EXACT_PAGES)
     add(`pages : ${file.pages.length} ≠ ${EXACT_PAGES}`);
+  // en-têtes et basmalas : placés sur l'ensemble reçu (une page publiée seule porte les siens dans `h`)
+  const placed = placeHeads(file.pages);
+  const withH = file.pages.every((pg) => pg.h);
+  if (!withH) placed.errors.forEach(add);
+  else if (!inp.partial)
+    for (const pg of file.pages)
+      if (JSON.stringify(pg.h) !== JSON.stringify(placed.heads.get(pg.p) ?? []))
+        add(`page ${pg.p} : en-têtes publiés différents de ceux recalculés`);
   // mots relevés par verset, dans l'ordre de lecture (page, ligne, rang)
   const seen = new Map<string, { pos: number[]; ends: number }>();
   let prev: [number, number] = [0, 0];
@@ -230,16 +296,11 @@ export function checkExactFile(inp: CheckInput): string[] {
         seen.set(k, v);
       }
     }
-    // 15 lignes occupées (texte + en-têtes + basmala), sauf pages 1 et 2
-    const disp = displayLines(pg);
+    // 15 lignes occupées (texte + en-têtes + basmala, y compris un en-tête qui finit la page), sauf pages 1 et 2
+    const disp = displayLines({ ...pg, h: pg.h ?? placed.heads.get(pg.p) ?? [] });
     if (pg.p > 2) {
       const vides = disp.filter((d) => d.kind === 'vide').map((d) => d.n);
       if (vides.length) add(`page ${pg.p} : lignes sans contenu ${vides.join(', ')}`);
-    }
-    for (const { s, line } of suraStarts(pg)) {
-      const need = s === 1 || s === 9 ? 1 : 2;
-      if (line - need < 1)
-        add(`page ${pg.p} : en-tête de la sourate ${s} hors de la page (ligne ${line})`);
     }
     if (inp.pageStarts) {
       const st = inp.pageStarts[pg.p - 1];
@@ -262,10 +323,17 @@ export function checkExactFile(inp: CheckInput): string[] {
         add(`${k} : texte Tanzil absent`);
         continue;
       }
-      const n = tanzilWords(s, a, t, basmala).length;
+      const nt = tanzilWords(s, a, t, basmala).length;
+      const seg = inp.segments?.get(k);
+      if (seg && !segmentationCovers(seg, nt))
+        add(`${k} : segmentation explicite incohérente avec les ${nt} mots de Tanzil`);
+      // mots attendus dans les données : 1 pour 1, ou le nombre de groupes d'une segmentation explicite
+      const n = seg ? seg.length : nt;
       if (v.ends !== 1) add(`${k} : ${v.ends} signe(s) de fin de verset (attendu : 1)`);
       if (v.pos.length !== n)
-        add(`${k} : ${v.pos.length} mot(s) dans les données, ${n} dans Tanzil`);
+        add(
+          `${k} : ${v.pos.length} mot(s) dans les données, ${nt} dans Tanzil${seg ? ` (${n} attendus)` : ''}`,
+        );
       else if (v.pos.some((p, i) => p !== i + 1)) add(`${k} : mots en double ou dans le désordre`);
     }
   return err;

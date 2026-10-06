@@ -37,10 +37,16 @@ test.describe('A34 — mise en page exacte (partielle)', () => {
     await page.getByTestId('infos-texte').click();
     await expect(page.getByTestId('credit-exact')).toContainText('Quran Foundation');
     await close(page);
-    // page 604 : non publiée en prélancement → page fluide, sans message
+    // page 604 : publiée (copie complète, production) → exacte ; sinon (prélancement) → page fluide, sans message
+    const etat = await (await page.request.get('/api/v1/quran/mushaf-exact')).json();
     await page.goto('/coran/lecteur?page=604');
-    await expect(page.locator('[data-page="604"] [data-verse="112:1"]')).toBeVisible();
-    await expect(page.locator('[data-page="604"]')).not.toHaveAttribute('data-exact', '1');
+    if (etat.partiel && !etat.pages?.includes(604)) {
+      await expect(page.locator('[data-page="604"] [data-verse="112:1"]')).toBeVisible();
+      await expect(page.locator('[data-page="604"]')).not.toHaveAttribute('data-exact', '1');
+    } else {
+      const p604 = await exactPage(page, 604);
+      await expect(p604.locator('[data-testid="page-exacte"] .ligne')).toHaveCount(15);
+    }
   });
 
   test('toucher un verset : menu du verset et surlignage, comme sur la page fluide', async ({
@@ -100,6 +106,20 @@ test.describe('A34 — mise en page exacte (partielle)', () => {
     }
   });
 
+  test('page qui finit par l’en-tête de la sourate suivante (copie complète) : 15 lignes, basmala en tête de la suivante', async ({
+    page,
+  }) => {
+    const etat = await (await page.request.get('/api/v1/quran/mushaf-exact')).json();
+    test.skip(!!etat.partiel && !etat.pages?.includes(77), 'pages 76-77 non publiées');
+    await page.goto('/coran/lecteur?page=76');
+    const p76 = await exactPage(page, 76);
+    const last = p76.locator('[data-testid="page-exacte"] .ligne').last();
+    await expect(last).toHaveAttribute('data-sura-start', '4');
+    await page.goto('/coran/lecteur?page=77');
+    const p77 = await exactPage(page, 77);
+    await expect(p77.locator('[data-testid="page-exacte"] .ligne').first()).toHaveClass(/basmala/);
+  });
+
   test('captures : page exacte, clair et sombre', async ({ page }, info) => {
     test.skip(!CAP, 'A34_CAPTURES non défini');
     mkdirSync(CAP!, { recursive: true });
@@ -107,7 +127,8 @@ test.describe('A34 — mise en page exacte (partielle)', () => {
     for (const scheme of ['light', 'dark'] as const) {
       await page.emulateMedia({ colorScheme: scheme });
       await page.setViewportSize({ width: w, height: mobile(info.project.name) ? 812 : 900 });
-      for (const n of [2, 3]) {
+      const list = (process.env.A34_PAGES ?? '2,3').split(',').map(Number);
+      for (const n of list) {
         await page.goto(`/coran/lecteur?page=${n}`);
         await exactPage(page, n);
         await page.evaluate(() => document.fonts.ready);
