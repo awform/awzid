@@ -8,7 +8,9 @@ import {
   detectLocale,
   fmtBytes,
   loadLocale,
+  loadStaffTexts,
   localeInfo,
+  STAFF_CATALOG,
   LOCALES,
   setLocale,
   t,
@@ -39,6 +41,8 @@ const fromDisk = async (code: string) =>
 
 beforeAll(async () => {
   for (const l of LOCALES) await loadLocale(l.code, fromDisk);
+  // A37 : textes français du personnel (fichier statique) ajoutés au catalogue français, comme sur leurs pages
+  await loadStaffTexts(fromDisk);
 });
 afterEach(() => setLocale('fr'));
 
@@ -180,6 +184,25 @@ describe('fonctions', () => {
       expect(statSync(join(STATIC, `${l.code}.json`)).isFile(), l.code).toBe(true);
     const sw = readFileSync(join(SRC, 'service-worker.ts'), 'utf8');
     expect(sw).toContain('!isCatalog(f)');
+    // A37 : textes français du personnel hors de la coquille, chargés par les mises en page du personnel ;
+    // aucun n'est dans messages/fr.json ni utilisé par une page de l'élève
+    const staff = JSON.parse(readFileSync(join(STATIC, `${STAFF_CATALOG}.json`), 'utf8')) as object;
+    const shell = JSON.parse(readFileSync(join(SRC, 'lib', 'i18n', 'messages', 'fr.json'), 'utf8'));
+    expect(Object.keys(staff).length).toBeGreaterThan(100);
+    expect(Object.keys(staff).filter((k) => k in shell)).toEqual([]);
+    for (const p of ['enseignant', 'admin'])
+      expect(readFileSync(join(SRC, 'routes', p, '+layout.ts'), 'utf8'), p).toContain(
+        'loadStaffTexts',
+      );
+    const student = files(join(SRC, 'routes')).filter(
+      (f) => !/[\\/]routes[\\/](enseignant|admin)[\\/]/.test(f),
+    );
+    const used: string[] = [];
+    for (const f of student) {
+      const src = readFileSync(f, 'utf8');
+      for (const k of Object.keys(staff)) if (src.includes(`'${k}'`)) used.push(`${f}: ${k}`);
+    }
+    expect(used).toEqual([]);
     // police du Coran : plus de préchargement sur toutes les pages
     expect(readFileSync(join(SRC, 'app.html'), 'utf8')).not.toContain('amiri-quran');
   });

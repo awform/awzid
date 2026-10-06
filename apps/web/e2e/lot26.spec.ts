@@ -112,7 +112,7 @@ test.describe('famille', () => {
     await page.goto('/aujourdhui');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'jardin');
     await expect(page.locator('nav.tabs a')).toHaveCount(5);
-    await expect(page.locator('nav.tabs a[data-tab="ecriture"]')).toBeVisible();
+    await expect(page.locator('nav.tabs a[data-tab="vivre"]')).toBeVisible();
     // consignes lues par l'adulte pour un enfant non lecteur
     await expect(page.getByTestId('bienvenue')).toContainText('Pour l’adulte'.replace('’', "'"));
     const h = await page

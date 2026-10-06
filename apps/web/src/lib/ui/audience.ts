@@ -65,7 +65,7 @@ export function paletteOf(
 
 export type NavId =
   | 'aujourdhui'
-  | 'quotidien'
+  | 'vivre'
   | 'arabe'
   | 'coran'
   | 'sciences'
@@ -91,8 +91,8 @@ export interface NavItem {
 
 const ITEMS: Record<NavId, Omit<NavItem, 'id'>> = {
   aujourdhui: { href: '/aujourdhui', icon: 'maison' },
-  // A12 : horaires de prière, qibla, adhkār, verset à partager (sur l'appareil, hors ligne)
-  quotidien: { href: '/quotidien', icon: 'quotidien' },
+  // A37 : « Vivre l'islam » (bon comportement, puis les prières et les adhkār d'A12 : horaires, qibla, verset)
+  vivre: { href: '/vivre', icon: 'vivre' },
   arabe: { href: '/', icon: 'alif' },
   coran: { href: '/coran', icon: 'mushaf' },
   sciences: { href: '/sciences', icon: 'livres' },
@@ -112,16 +112,18 @@ const ITEMS: Record<NavId, Omit<NavItem, 'id'>> = {
 };
 
 const NAV: Record<Audience, NavId[]> = {
-  // enfant : une matière = une icône ; « Plus » serait trop abstrait pour un non-lecteur
-  enfant: ['aujourdhui', 'arabe', 'coran', 'sciences', 'ecriture'],
+  // enfant : une matière = une icône ; « Plus » serait trop abstrait pour un non-lecteur. A37 : « Vivre l'islam »
+  // prend la place d'« Écriture », toujours ouverte depuis l'espace Arabe (onglet Écriture) et l'accueil
+  enfant: ['aujourdhui', 'arabe', 'coran', 'vivre', 'sciences'],
   // A12 (décision du chef de projet, 05/10/2026) : cinq entrées au plus ; « Prières » (Au quotidien) entre dans la
   // barre et « Sciences » passe sous « Plus », en attendant la refonte de l'accueil par niveau (A27)
-  ado: ['aujourdhui', 'arabe', 'coran', 'quotidien', 'plus'],
-  adulte: ['aujourdhui', 'arabe', 'coran', 'quotidien', 'plus'],
-  parent: ['famille', 'suivi', 'messages', 'quotidien', 'compte'],
+  // A37 : « Prières » devient « Vivre l'islam » (même place)
+  ado: ['aujourdhui', 'arabe', 'coran', 'vivre', 'plus'],
+  adulte: ['aujourdhui', 'arabe', 'coran', 'vivre', 'plus'],
+  parent: ['famille', 'suivi', 'messages', 'vivre', 'compte'],
   enseignant: ['classes', 'ecole', 'questions', 'compte'],
   admin: ['admin', 'compte', 'aide'],
-  visiteur: ['livres', 'quotidien', 'connexion', 'aide'],
+  visiteur: ['livres', 'vivre', 'connexion', 'aide'],
 };
 
 export function navFor(a: Audience): NavItem[] {
@@ -162,6 +164,10 @@ export function activeNav(items: NavItem[], path: string): NavId | '' {
   if (path === '/' || path.startsWith('/niveaux') || path.startsWith('/lecons'))
     return has('arabe') || has('livres');
   if (path.startsWith('/hifz') || path.startsWith('/coran')) return has('coran');
+  // A37 : prières, qibla, adhkār et verset à partager sont dans « Vivre l'islam »
+  if (under(path, ['/vivre', '/quotidien'])) return has('vivre');
+  // enfant : l'écriture se fait depuis l'espace Arabe (plus d'entrée « Écriture » dans sa barre)
+  if (under(path, ['/ecriture']) && !ids.has('ecriture') && !ids.has('plus')) return has('arabe');
   // l'entrée la plus précise d'abord (/enseignant/ecole avant /enseignant)
   const direct = [...items]
     .filter((i) => i.href !== '/')

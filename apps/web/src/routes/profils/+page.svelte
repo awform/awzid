@@ -131,6 +131,15 @@
   {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
     <p><a href={resolve('/famille')} data-testid="lien-famille">{t('fam.lien')}</a></p>
   {/if}
+  <!-- A37 : « Transmettre les valeurs » (guide des parents, défis de la semaine à faire avec l'enfant) -->
+  {#if me.account.kind === 'parent' && me.profiles.length}
+    <p>
+      <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- chemin résolu, suivi d'un paramètre -->
+      <a href={`${resolve('/vivre')}?parents`} data-testid="lien-transmettre"
+        >{t('vi.transmettre')}</a
+      >
+    </p>
+  {/if}
 
   {#if me.account.kind === 'parent'}
     {#if !adding}

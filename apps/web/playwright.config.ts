@@ -143,6 +143,8 @@ export default defineConfig({
         // SEULEMENT en test (Coran épuré : jamais en démonstration ni en production)
         AWFORM_AUDIO_DIR: AUDIO_DIR,
         AWFORM_AUDIO_ESSAI: 'on',
+        // A37 : fiches d'ESSAI du livret « Bon comportement » (textes neutres), SEULEMENT en test
+        AWFORM_AKHLAQ_ESSAI: 'on',
         // A3 : audio des leçons d'en1
         AWFORM_LECONS_AUDIO_DIR: LECONS_DIR,
         AWFORM_VAPID_PUBLIC: `B${'A'.repeat(86)}`,
