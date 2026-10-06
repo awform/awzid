@@ -8,6 +8,65 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Coran épuré : un seul écran de lecture, palette « vert, blanc, or », nom « Awzid »
+
+Branche `coran-epure-wip` (worktree `~/awform-coran`, depuis `main` 73ec68d), e2e isolés (ports 3460/4460, réglables
+par `E2E_API_PORT` / `E2E_WEB_PORT`). Constat du client : espace Coran « saturé » (formulaire de 7 champs avant le texte
+dans « Écouter », muṣḥaf en bas, longs textes sur l'accueil, 5 onglets, « AWFORM » affiché). Inspiration montrée par le
+client (autre application) : seulement l'esprit, aucun élément graphique, police ni image repris.
+
+1. **Un seul écran de lecture** `/coran/lecteur` (`routes/coran/lecteur`, composants `lib/quran/lecture/`, logique
+   pure `lib/quran/lecture.ts`) : le texte occupe l'écran — **page du Muṣḥaf** (cadre vert existant, double page sans
+   traduction) ou **sourate en versets** (feuille « Affichage »). Téléphone : une **puce** « Al-Ikhlāṣ · v. 2 · p. 604
+   · juzʾ 30 » (deux lignes) ouvre le **sélecteur** (recherche en tête : référence, nom de sourate, mots arabes ;
+   onglets Sourate / Page / Juzʾ / Ḥizb, ḥizb absent hors Ḥafṣ) ; **mini-barre** fixe au-dessus de la navigation,
+   montrée après le premier « Écouter » (récitateur abrégé, ◀ ▶, lecture/pause, arrêt, progression fine, icône
+   répétition). Bureau et tablette paysage : **une barre compacte** — écoute (réglages, récitateur, lecture/pause/arrêt,
+   progression, volume) | affichage, traduction, recherche | sourate, verset, page, juzʾ en **sélecteurs dorés** ;
+   traduction **à gauche**, page **à droite** avec flèches sur les côtés, la traduction suit la page et le verset
+   entendu (surbrillance douce). Téléphone : glisser pour tourner ; traduction en feuille (vue page) ou sous chaque
+   verset (vue versets, paragraphe séparé, jamais sur la ligne de l'arabe).
+2. **Toucher un verset → petit menu** (popover sur grand écran, feuille du bas sur téléphone, clavier : Entrée / Échap) :
+   Écouter d'ici · Répéter ce verset · Traduction (texte QuranEnc dans le menu, crédit) · Signet (gardé sur l'appareil,
+   repris sur l'accueil) · Écrire de mémoire (« J'écris le Coran » A27, seulement si le verset est au programme
+   d'écriture de l'élève) · Partager (verset en image A12) ; en mémorisation : Voir / masquer ce verset.
+3. **Feuille « Réglages d'écoute »** (icône répétition) : préréglages — Écoute simple, Répéter chaque verset 3 fois,
+   Boucle sur la sourate, Répéter un verset, Mémoriser (écouter, répéter, enchaîner) — puis réglages avancés : récitateur
+   (riwāya en clair, « autre riwāya » et passage au texte de cette riwāya), du / au, chaque verset, toute la plage,
+   vitesse (hauteur conservée), arrêt automatique, écoutes du nouveau verset et enchaînements, **garder la sourate hors
+   ligne** (Wi-Fi seulement, suppression), crédits FR/AR et condition d'usage, lien « Tous les récitateurs ». Aucune
+   perte de fonction : la **lecture guidée mot à mot sans son** (lot C1) est gardée dans « Affichage ».
+4. **Mémoriser** : même écran, « masquer peu à peu » (4 niveaux) depuis « Affichage » ou le menu ; Ḥafṣ seulement
+   (texte et récitateurs) ; portion du jour du carnet proposée ; carnet par lien discret. Anciennes adresses
+   `/coran/ecouter`, `/coran/memoriser`, `/coran/mushaf` **redirigées** avec leurs paramètres (liens des leçons et des
+   livres valables ; l'écoute est préparée, jamais lancée).
+5. **Accueil sobre** : « Reprendre où j'en étais » (dernière lecture), « Ouvrir le Muṣḥaf », portion du jour du hifẓ,
+   signets, petits liens Récitateurs et Carnet, livrets qc ; « Avec respect », hifẓ, qāʿida et garanties derrière
+   l'**icône d'information**. Onglets Lire / Écouter / Mémoriser / Récitateurs retirés (`CoranTabs`, `RiwayaPicker`).
+6. **Palette « verdure »** (`tokens.ts` : `PALETTES`, jetons `or-*` communs) posée par `data-palette` par-dessus le
+   thème du public (le Jardin garde ses tailles et cibles) : espace Coran et carnet de hifẓ des élèves et visiteurs ;
+   claire et sombre, contrastes AA contrôlés (2 palettes de plus dans `tokens.test.ts`) ; **un seul réglage**
+   (`VERDURE_PARTOUT`, `lib/ui/audience.ts`) en fait le thème clair par défaut de toute l'application élève (D-CE).
+7. **Récitateurs d'essai** (`essai-*`, bips) : jamais proposés hors tests — l'API les écarte de toutes les listes, pistes
+   et du relais sauf `AWFORM_AUDIO_ESSAI=on` (API des e2e seulement) ; test API (lot27). Démo vérifiée : 9 récitateurs
+   du Complexe, aucun « Essai ».
+8. **Nom affiché « Awzid »** : `app.nom` et tous les textes des 5 catalogues, mentions légales, manifeste (name,
+   short_name), notifications, produit de paiement, tuteur, école de démonstration ; identifiants techniques, clés,
+   variables `AWFORM_*`, URL et émetteur TOTP inchangés.
+9. **Textes** : 54 clés `cl.*` (fr, en, es, de, ar — à relire, A_RELIRE.md), 62 clés devenues inutiles retirées.
+10. **Poids** : `/coran/lecteur` 132,0 Ko (au lieu de `/coran/mushaf` 119,2 + `/coran/ecouter` 116,8 + `/coran/memoriser`
+    112,5) ; total JS + CSS **399,3 Ko** (400,0 avant) ; appareil d'un élève **352,4 Ko** (353,0 avant) — en baisse.
+11. **Tests** : `pnpm check` vert — unitaires **1 500 réussis, 1 ignoré** (web +12 : `lecture.test.ts` 7, palette,
+    audience ; api +1 : récitateurs d'essai) ; **e2e complets 300 réussis, 28 ignorés, 0 échec** (17,9 min), dont
+    `coran-epure.spec.ts` (écran unique et aucune lecture automatique, sélecteur, menu du verset, réglages et
+    préréglages, mémoriser, vue versets / traduction / tajwid / riwāya, traduction à gauche, téléphone 320 px,
+    accueil, nom Awzid) ; adaptés : lot27, mushaf, a1, a8, lot29, lot8, lot12, lot26, bidi, a11y, captures (aide
+    commune `e2e/coran.ts`). Captures avant / après (375 px et bureau, clair et sombre) : `reports/coran-epure/` (hors dépôt,
+    copiées sur le PC dans `application/coran-epure-captures/`).
+
+Décisions à prendre (D-CE) : voir DECISIONS_EN_ATTENTE.
+---
+
 ## 05/10/2026 — Chantier A27 (suite) : décisions D-A27 appliquées
 
 - Positionnement **adaptatif de 4 exercices par niveau** (examens des livres ; ceux du livre de l'élève d'abord, puis
