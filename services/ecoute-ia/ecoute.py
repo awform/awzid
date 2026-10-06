@@ -129,8 +129,10 @@ class Seance:
     (mots « partiels », jamais utilisés pour signaler une erreur)."""
 
     def __init__(self):
+        # SEULEMENT le passage pas encore transcrit : un passage transcrit est effacé aussitôt
         self.buf = np.zeros(0, dtype=np.float32)
-        self.debut = 0  # échantillon de début du passage non encore transcrit
+        self.decal = 0  # échantillons déjà transcrits (et effacés) depuis le début de la séance
+        self.total = 0  # échantillons reçus (limite de 5 min)
         self.vu = time.monotonic()
         self.verrou = asyncio.Lock()
 
@@ -172,24 +174,30 @@ def _coupe(x: np.ndarray, sr: int) -> int | None:
 
 def _direct(s: Seance, morceau: np.ndarray) -> dict:
     s.buf = np.concatenate([s.buf, morceau])
+    s.total += len(morceau)
     sr = asr.SR
     mots: list[dict] = []
+    voix: list[list[float]] = []
     while True:
-        reste = s.buf[s.debut:]
-        cut = _coupe(reste, sr)
+        cut = _coupe(s.buf, sr)
         if cut is None:
             break
-        off = s.debut / sr
-        for w in etat['modele'].transcrire(reste[:cut]) if len(reste[:cut]) > sr // 2 else []:
+        off = s.decal / sr
+        seg = s.buf[:cut]
+        for w in etat['modele'].transcrire(seg) if len(seg) > sr // 2 else []:
             mots.append({**w, 't0': round(w['t0'] + off, 2), 't1': round(w['t1'] + off, 2)})
-        s.debut += cut
-    reste = s.buf[s.debut:]
+        # zones de voix du passage fini : distinguer un mot oublié (silence) d'un mot mal entendu (doute)
+        voix += [[round(a + off, 2), round(b + off, 2)] for a, b in asr.zones_de_voix(seg, sr)]
+        # passage transcrit : son audio est effacé tout de suite
+        s.buf = s.buf[cut:].copy()
+        s.decal += cut
+        del seg
     partiel = []
-    if len(reste) > int(0.6 * sr) and asr.zones_de_voix(reste, sr):
-        off = s.debut / sr
+    if len(s.buf) > int(0.6 * sr) and asr.zones_de_voix(s.buf, sr):
+        off = s.decal / sr
         partiel = [{**w, 't0': round(w['t0'] + off, 2), 't1': round(w['t1'] + off, 2)}
-                   for w in etat['modele'].transcrire(reste)]
-    return {'mots': mots, 'partiel': partiel, 't': round(len(s.buf) / sr, 2)}
+                   for w in etat['modele'].transcrire(s.buf)]
+    return {'mots': mots, 'partiel': partiel, 'voix': voix, 't': round(s.total / sr, 2)}
 
 
 @app.post('/direct/{sid}')
@@ -211,7 +219,7 @@ async def direct(sid: str, req: Request):
         return _erreur(400, 'morceau')
     morceau = np.frombuffer(data, dtype='<i2').astype(np.float32) / 32768.0
     del data
-    if (len(s.buf) + len(morceau)) / asr.SR > MAX_S:
+    if (s.total + len(morceau)) / asr.SR > MAX_S:
         _seances.pop(sid, None)
         s.effacer()
         return _erreur(413, 'trop_long')

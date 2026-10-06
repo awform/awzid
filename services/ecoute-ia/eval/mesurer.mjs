@@ -1,4 +1,4 @@
-// A5 — mesure de la détection (même comparaison que le service : @awform/hifz `comparer`).
+// A5 \u2014 mesure de la d\u00E9tection (m\u00EAme comparaison que le service : @awform/hifz `comparer`).
 //   node mesurer.mjs <dossier de travail> <tanzil-uthmani.tsv> [seuils JSON]
 // Lit cas.json (vérité des erreurs simulées) et hyp-<modele>.json (mots entendus) ; écrit mesures.json.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -17,7 +17,7 @@ for (const l of readFileSync(TSV, 'utf8')
 const bism = T.get('1:1');
 const cas = new Map(JSON.parse(readFileSync(`${W}/cas.json`, 'utf8')).map((c) => [c.id, c]));
 const out = {};
-for (const modele of ['nemo', 'whisper']) {
+for (const modele of ['nemo', 'nemo_rnnt', 'whisper']) {
   const f = `${W}/hyp-${modele}.json`;
   if (!existsSync(f)) continue;
   const hyps = JSON.parse(readFileSync(f, 'utf8'));

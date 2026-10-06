@@ -146,6 +146,45 @@ class NemoCTC:
                  't1': round((m['t1'] + 1) * FRAME_S, 2)} for m in mots if m['w']]
 
 
+class NemoRNNT(NemoCTC):
+    """Même modèle, décodeur PRINCIPAL (RNN-T, glouton) : plus précis que la tête CTC auxiliaire ; confiance par
+    mot (probabilité maximale, agrégée au minimum) et instants des mots fournis par NeMo."""
+    nom = 'nemo_rnnt'
+
+    def __init__(self, chemin: str, threads: int = 4):
+        super().__init__(chemin, threads)
+        from omegaconf import OmegaConf, open_dict
+        from nemo.collections.asr.parts.utils.asr_confidence_utils import (ConfidenceConfig,
+                                                                           ConfidenceMethodConfig)
+        cfg = self.m.cfg.decoding
+        with open_dict(cfg):
+            cfg.strategy = 'greedy_batch'
+            cfg.compute_timestamps = True
+            cfg.confidence_cfg = OmegaConf.structured(ConfidenceConfig(
+                preserve_word_confidence=True, preserve_token_confidence=True, aggregation='min',
+                method_cfg=ConfidenceMethodConfig(name='max_prob')))
+        self.m.change_decoding_strategy(cfg, decoder_type='rnnt', verbose=False)
+
+    def transcrire(self, x: np.ndarray) -> list[dict]:
+        with self.torch.inference_mode():
+            r = self.m.transcribe([x], batch_size=1, return_hypotheses=True, timestamps=True, verbose=False)
+        h = r[0] if isinstance(r, list) else r
+        if isinstance(h, (list, tuple)):
+            h = h[0]
+        ts = (getattr(h, 'timestamp', None) or {}).get('word', []) or []
+        confs = list(getattr(h, 'word_confidence', None) or [])
+        mots = []
+        for n, w in enumerate(ts):
+            txt = _arabe(w.get('word', ''))
+            if not txt:
+                continue
+            c = float(confs[n]) if n < len(confs) else 0.0
+            t0 = w.get('start', w.get('start_offset', 0) * FRAME_S)
+            t1 = w.get('end', w.get('end_offset', 0) * FRAME_S)
+            mots.append({'w': txt, 'conf': round(c, 3), 't0': round(float(t0), 2), 't1': round(float(t1), 2)})
+        return mots
+
+
 class WhisperQuran:
     nom = 'whisper'
 
@@ -162,17 +201,18 @@ class WhisperQuran:
         torch = self.torch
         f = self.proc(x, sampling_rate=SR, return_tensors='pt').input_features
         with torch.inference_mode():
-            out = self.m.generate(f, language='ar', task='transcribe', return_dict_in_generate=True,
-                                  output_scores=True, max_new_tokens=220)
-        seq = out.sequences[0].tolist()
-        scores = out.scores
-        n0 = len(seq) - len(scores)
+            # invite de décodage du modèle (arabe, transcription) gardée dans sa configuration
+            seq_t = self.m.generate(f, max_new_tokens=220)
+            # probabilité de chaque jeton : un passage « forcé » sur la séquence obtenue
+            logits = self.m(input_features=f, decoder_input_ids=seq_t[:, :-1]).logits[0]
+            probs = torch.softmax(logits.float(), -1)
+        seq = seq_t[0].tolist()
         mots: list[dict] = []
-        for k, sc in enumerate(scores):
-            tid = seq[n0 + k]
+        for k in range(1, len(seq)):
+            tid = seq[k]
             if tid in self.proc.tokenizer.all_special_ids:
                 continue
-            p = float(torch.softmax(sc[0].float(), -1)[tid])
+            p = float(probs[k - 1, tid])
             piece = self.proc.tokenizer.convert_ids_to_tokens([tid])[0]
             txt = self.proc.tokenizer.convert_tokens_to_string([piece])
             debut = txt.startswith(' ') or not mots
@@ -201,8 +241,11 @@ class WhisperQuran:
 
 
 def charger(nom: str, threads: int = 4):
+    chemin = os.environ.get('ECOUTE_MODELE', '/model/stt_ar_fastconformer_hybrid_large_pcd_v1.0.nemo')
     if nom == 'nemo':
-        return NemoCTC(os.environ.get('ECOUTE_MODELE', '/model/stt_ar_fastconformer_hybrid_large_pcd_v1.0.nemo'), threads)
+        return NemoCTC(chemin, threads)
+    if nom == 'nemo_rnnt':
+        return NemoRNNT(chemin, threads)
     if nom == 'whisper':
         return WhisperQuran(os.environ.get('ECOUTE_WHISPER', '/whisper'), threads)
     raise ValueError(nom)

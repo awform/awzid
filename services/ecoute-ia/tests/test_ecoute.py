@@ -140,6 +140,9 @@ def test_direct_mots_surs_aux_pauses_puis_effacement(client):
     r2 = client.post(f'/direct/{sid}', content=np.concatenate([silence, silence]).tobytes(),
                      headers={'x-essai-mots': HEX}).json()
     assert [m['w'] for m in r1['mots'] + r2['mots']], 'le passage terminé par une pause doit être transcrit'
+    assert r2['t'] == 4.0
+    # le passage transcrit est effacé aussitôt : il ne reste en mémoire que la fin non transcrite
+    assert len(ecoute._seances[sid].buf) < 16000
     assert client.get('/sante').json()['direct'] == 1
     client.delete(f'/direct/{sid}')
     assert client.get('/sante').json()['direct'] == 0

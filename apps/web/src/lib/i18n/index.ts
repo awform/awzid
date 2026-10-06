@@ -70,7 +70,8 @@ export const STAFF_CATALOG = 'fr-personnel';
  * verset) et `fr-vivre` (bon comportement), chargés par les mises en page `/quotidien` et `/vivre` ; ces deux
  * fichiers-là sont préchargés par le service worker (hors ligne dès l'installation).
  */
-export const SPACE_CATALOGS = ['personnel', 'quotidien', 'vivre'] as const;
+// A5 : textes de « Réciter et vérifier » (canal bêta), chargés seulement quand la fonction est ouverte
+export const SPACE_CATALOGS = ['personnel', 'quotidien', 'vivre', 'ecoute'] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 export function loadTexts(
   name: (typeof SPACE_CATALOGS)[number],

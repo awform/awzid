@@ -15,25 +15,25 @@
 // ------------------------------------------------------------------ normalisation (comparaison seulement)
 
 /** voyelles, sukūn, chadda, signes coraniques (petites lettres, arrêts), tatweel — PAS l'alif suscrit (U+0670) */
-const SIGNES = /[ؐ-ًؚ-ٟۖ-ۭـ]/g;
-const LETTRE = /[ء-ي]/;
+const SIGNES = /[\u0610-\u061A\u064B-\u065F\u06D6-\u06ED\u0640]/g;
+const LETTRE = /[\u0621-\u064A]/;
 
 /** Clé de comparaison d'un mot (graphie ʿuthmānī ou courante) : lettres de base, hamza et alifs unifiés. */
 export function cleMot(mot: string): string {
   return mot
     .replace(SIGNES, '')
-    .replace(/ٰ/g, 'ا') // alif suscrit : ٱلرَّحْمَٰنِ -> الرحمان
-    .replace(/[ٱآأإ]/g, 'ا')
-    .replace(/ؤ/g, 'و')
-    .replace(/ئ/g, 'ي')
-    .replace(/ى/g, 'ي')
-    .replace(/ة/g, 'ه')
-    .replace(/[^ء-ي]/g, '');
+    .replace(/\u0670/g, 'ا') // alif suscrit : ٱلرَّحْمَٰنِ -> الرحمان
+    .replace(/[\u0671\u0622\u0623\u0625]/g, 'ا')
+    .replace(/\u0624/g, 'و')
+    .replace(/\u0626/g, 'ي')
+    .replace(/\u0649/g, 'ي')
+    .replace(/\u0629/g, 'ه')
+    .replace(/[^\u0621-\u064A]/g, '');
 }
 
-/** Squelette : la clé sans alif ni hamza (écarts d'orthographe ʿuthmānī / courante, ex. صلوة / صلاة). */
+/** Squelette : la clé sans alif ni hamza (écarts d'orthographe ʿuthmānī / courante, ex. \u0635\u0644\u0648\u0629 / صلاة). */
 export function squelette(cle: string): string {
-  return cle.replace(/[اء]/g, '');
+  return cle.replace(/[\u0627\u0621]/g, '');
 }
 
 function leven(a: string, b: string): number {
@@ -351,7 +351,7 @@ export function comparer(
 
   const voix = opts.voix;
   const confDe = (j: number | undefined) => (j === undefined ? 0 : (ent[j]?.conf ?? 0));
-  /** mot entendu reconnu le plus proche avant / après le mot attendu i */
+  /** mot entendu reconnu le plus proche avant / apr\u00E8s le mot attendu i */
   const voisinAvant = (i: number) => {
     for (let x = i - 1; x >= debut; x--) if (okEnt.has(x)) return okEnt.get(x);
     return undefined;

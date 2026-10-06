@@ -180,7 +180,7 @@ describe.skipIf(!URL_)('A5 : écoute de la récitation (awform_test)', () => {
     expect(journal.length).toBeGreaterThan(0);
     for (const l of journal) {
       const s = JSON.stringify(l);
-      expect(s).not.toMatch(/[؀-ۿ]/); // aucun mot entendu
+      expect(s).not.toMatch(/[\u0600-\u06FF]/); // aucun mot entendu
       expect(s).not.toContain('OggS');
     }
   });

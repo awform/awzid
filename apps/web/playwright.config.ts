@@ -47,6 +47,8 @@ process.env.E2E_TOTP_FILE ??= join(tmpdir(), `awform-e2e-totp-counter${ISOLE ? `
 // ports changeables (plusieurs dossiers de travail lancent leurs e2e en même temps sur la VM)
 const API_PORT = Number(process.env.E2E_API_PORT ?? 3100);
 const WEB_PORT = Number(process.env.E2E_WEB_PORT ?? 4180);
+// A5 : service d'écoute FACTICE (e2e/ecoute-essai.mjs : aucun modèle, rien n'est gardé)
+const ECOUTE_PORT = Number(process.env.E2E_ECOUTE_PORT ?? API_PORT + 11);
 process.env.E2E_KEY ??= randomBytes(32).toString('hex');
 const E2E_KEY = process.env.E2E_KEY;
 // lot 27 : stockage de l'audio d'ESSAI (bips non coraniques) servi par l'API de test
@@ -112,6 +114,12 @@ export default defineConfig({
   ],
   webServer: [
     {
+      command: `node e2e/ecoute-essai.mjs ${ECOUTE_PORT}`,
+      url: `http://127.0.0.1:${ECOUTE_PORT}/sante`,
+      reuseExistingServer: false,
+      timeout: 30_000,
+    },
+    {
       // base de TEST remise à zéro, édition « e2e » importée ; comptes créés par globalSetup
       // puis comptes PostgreSQL séparés ; l'API tourne sous le compte « api » (droits minimaux)
       command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node e2e/audio-essai.mjs ${AUDIO_DIR} && node ../../packages/db/dist/cli/lecons-audio.js importer --test --si-present --niveaux en1,lect-ad1-01 --source ${LECONS_SRC} --stockage ${LECONS_DIR} && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
@@ -148,6 +156,9 @@ export default defineConfig({
         // A3 : audio des leçons d'en1
         AWFORM_LECONS_AUDIO_DIR: LECONS_DIR,
         AWFORM_VAPID_PUBLIC: `B${'A'.repeat(86)}`,
+        // A5 : « Réciter et vérifier » ouvert pour les e2e, service d'écoute factice
+        AWFORM_ECOUTE_IA: 'on',
+        AWFORM_ECOUTE_URL: `http://127.0.0.1:${ECOUTE_PORT}`,
         ...(EXACT ? { AWFORM_QF_MUSHAF_DIR: QF_DIR, AWFORM_QCF_DIR: QCF_DIR } : {}),
       },
       reuseExistingServer: false,

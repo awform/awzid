@@ -55,6 +55,8 @@ export interface EcouteBrute {
 export interface DirectBrut {
   mots: MotEntendu[];
   partiel: MotEntendu[];
+  /** zones de voix des passages finis (secondes depuis le début de la séance) */
+  voix?: Array<[number, number]>;
   t: number;
 }
 export type Echec = { erreur: string; statut: number };

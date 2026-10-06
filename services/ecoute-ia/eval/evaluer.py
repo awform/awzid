@@ -14,7 +14,7 @@ même code que le service (@awform/hifz, mesurer.mjs).
 import json, os, random, re, subprocess, sys, time, unicodedata
 import numpy as np
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import asr  # noqa: E402
 
 SR = asr.SR
@@ -73,6 +73,9 @@ def preparer():
     os.makedirs(f'{W}/cas', exist_ok=True)
     portions = []
     for rid in RECITANTS:
+        if not os.path.exists(f'/rapports/verifier-{rid}.json'):
+            print('pas de rapport', rid, flush=True)
+            continue
         P = pistes(rid)
         cles = sorted(k for k in P if k[0] not in EXCLUS.get(rid, set()))
         n = 0
@@ -97,10 +100,15 @@ def preparer():
         rc = [m['cle'] for m in p['ref']]
         hc = [cle(w['w']) for w in p['hyp']]
         sol = []
-        for j, w in enumerate(p['hyp']):
+        H = p['hyp']
+        for j, w in enumerate(H):
             c = hc[j]
             if w['conf'] >= 0.9 and len(c) >= 3 and rc.count(c) == 1 and hc.count(c) == 1:
-                sol.append({'j': j, 'i': rc.index(c), 't0': w['t0'], 't1': w['t1'], 'cle': c})
+                # frontières du mot : milieu des intervalles avec les mots voisins (les instants CTC sont des
+                # pics étroits ; le mot entier, voyelles longues comprises, est entre ces milieux)
+                a = (H[j - 1]['t1'] + w['t0']) / 2 if j > 0 else max(0.0, w['t0'] - 0.2)
+                b = (w['t1'] + H[j + 1]['t0']) / 2 if j + 1 < len(H) else w['t1'] + 0.3
+                sol.append({'j': j, 'i': rc.index(c), 't0': a + 0.04, 't1': b - 0.04, 'cle': c})
         p['solides'] = sol
     cas = []
     num = [0]
@@ -205,7 +213,7 @@ def vitesse():
     P = pistes('akhdar-hafs')
     res = {'longues': [], 'fenetres': []}
     x = np.concatenate([lire(P[(2, a)][0]) for a in range(1, 30)])
-    for nom in ['nemo', 'whisper']:
+    for nom in ['nemo', 'nemo_rnnt', 'whisper']:
         for th in [4, 2]:
             m = asr.charger(nom, th)
             for minutes in [1, 2, 5]:
