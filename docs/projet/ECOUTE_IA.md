@@ -169,7 +169,10 @@ appareil (lecteur Mémoriser, carnet)          API (Fastify)                    
   chaque passage transcrit est **effacé aussitôt**, la séance entière à la fin, après 20 s sans morceau ou à 5 min ;
   conteneur **en lecture seule**, `/tmp` en mémoire, aucun port, aucun secret, journal d'accès coupé.
   Tests `services/ecoute-ia/tests/test_ecoute.py` : aucun fichier créé (dossiers temporaires, mémoire partagée,
-  dossier de travail) ni descripteur laissé ouvert après traitement ; séance effacée ; refus > 5 min ; file pleine.
+  dossier de travail) ni descripteur laissé ouvert après traitement ; séance effacée ; refus > 5 min ; file pleine
+  sans erreur interne (9 tests, exécutés dans l'image en lecture seule). Essai réel avec le modèle (06/10/2026) :
+  après vérifications, 3 envois simultanés (3 × 200) et un refus de 5 min 10 s (413), `docker diff` du conteneur
+  ne montre **aucun fichier** créé (seul le point de montage `/model`) et `/tmp` ne contient aucun audio.
 - API : corps gardé en mémoire le temps de l'appel, jamais en base ni dans les journaux ; `a5.test.ts` vérifie
   qu'aucune récitation n'est enregistrée et que le journal ne contient ni audio ni mot entendu ;
   `a5-compose.test.ts` vérifie lecture seule, `/tmp` en mémoire, aucun port, aucun secret.
