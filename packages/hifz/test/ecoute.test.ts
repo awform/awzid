@@ -69,8 +69,11 @@ describe('A5 : écarts sur cas simulés', () => {
   });
 
   it('mot absent mais de la VOIX à sa place : doute, rien n’est signalé', () => {
-    const ent = entendu(nus()).ent.filter((_, n) => n !== 8);
-    const voix: Array<[number, number]> = [[0, 20]]; // voix continue : le mot a peut-être été dit
+    // 2 s de voix sans mot reconnu à la place du mot : il a peut-être été dit, mal entendu
+    const ent = entendu(nus())
+      .ent.filter((_, n) => n !== 8)
+      .map((e, n) => (n >= 8 ? { ...e, t0: e.t0! + 2, t1: e.t1! + 2 } : e));
+    const voix: Array<[number, number]> = [[0, 30]];
     const r = comparer(ATT, ent, { voix });
     expect(r.ecarts).toEqual([]);
     expect(r.doutes).toBe(1);

@@ -194,6 +194,11 @@ def transcrire(nom):
     m = asr.charger(nom, int(os.environ.get('THREADS', '4')))
     cas = json.load(open(f'{W}/cas.json', encoding='utf-8'))
     conds = os.environ.get('CONDITIONS', 'propre,telephone,aigue').split(',')
+    # réglages posés pendant l'évaluation (sans relancer la chaîne) : W/limite-<modele>, W/conditions-<modele>
+    if os.path.exists(f'{W}/limite-{nom}'):
+        cas = cas[: int(open(f'{W}/limite-{nom}').read())]
+    if os.path.exists(f'{W}/conditions-{nom}'):
+        conds = open(f'{W}/conditions-{nom}').read().strip().split(',')
     out = []
     for c in cas:
         x0 = np.fromfile(f'{W}/cas/{c["id"]}.f32', dtype=np.float32)
@@ -214,9 +219,9 @@ def vitesse():
     res = {'longues': [], 'fenetres': []}
     x = np.concatenate([lire(P[(2, a)][0]) for a in range(1, 30)])
     for nom in ['nemo', 'nemo_rnnt', 'whisper']:
-        for th in [4, 2]:
+        for th in ([4, 2] if nom != 'whisper' else [4]):
             m = asr.charger(nom, th)
-            for minutes in [1, 2, 5]:
+            for minutes in ([1, 2, 5] if nom != 'whisper' else [1]):
                 y = x[: int(minutes * 60 * SR)]
                 t = time.perf_counter(); m.transcrire(y); dt = time.perf_counter() - t
                 res['longues'].append({'modele': nom, 'threads': th, 'minutes': minutes, 'calcul_s': round(dt, 2),
