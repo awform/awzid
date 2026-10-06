@@ -257,6 +257,19 @@
       <Bidi text={t('cl.enchainer')} /></label
     >
   </details>
+  <!-- en changeant de page pendant une lecture : demander (par défaut) ou continuer automatiquement -->
+  <div class="field">
+    <label for="cl-nav">{t('cl.nav_titre')}</label>
+    <select
+      id="cl-nav"
+      value={prefs.navAuto ? 'auto' : 'demander'}
+      onchange={(e) => (prefs.navAuto = e.currentTarget.value === 'auto')}
+      data-testid="nav-lecture"
+    >
+      <option value="demander">{t('cl.nav_demander')}</option>
+      <option value="auto">{t('cl.nav_continuer')}</option>
+    </select>
+  </div>
 </section>
 
 <section class="sec" id="reg-recitateur" data-testid="reglages-recitateur">

@@ -5,7 +5,7 @@
   import type { Reciter, SuraPack } from '$lib/coran-audio';
   import { fmtNumber, t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
-  import { shortName } from './lecture';
+  import { BASMALA, shortName } from './lecture';
   import { clampRate, isHafs } from './player';
   import { garderEcoute, playableUrl } from './offline-audio';
 
@@ -24,12 +24,18 @@
     sleepMin = 0,
     volume = 1,
     status = '',
+    basmala = null,
     onaya,
     onindex,
     onend,
+    onplaystate,
     onsettings,
     onvolume,
   }: {
+    /** fichier de la basmala (entrée BASMALA de la file), du même récitateur ; null : entrée sautée */
+    basmala?: string | null;
+    /** lecture en cours (true) ou en pause / arrêtée (false) */
+    onplaystate?: (on: boolean) => void;
     reciter: Reciter;
     pack: SuraPack | null;
     queue: number[];
@@ -41,7 +47,8 @@
     onaya?: (aya: number | null) => void;
     /** position dans la file (mémorisation : nouveau verset ou enchaînement) */
     onindex?: (i: number | null) => void;
-    onend?: () => void;
+    /** fin de la file (« fin ») ou arrêt automatique (« sommeil ») */
+    onend?: (why: 'fin' | 'sommeil') => void;
     /** ouvre le panneau « Réglages » du lecteur (à la section donnée : « ecoute », « recitateur ») */
     onsettings?: (section?: 'ecoute' | 'recitateur') => void;
     onvolume?: (v: number) => void;
@@ -56,6 +63,7 @@
   let lastUrl = '';
 
   const aya = $derived(queue[idx] ?? null);
+  $effect(() => onplaystate?.(playing));
   $effect(() => {
     if (audio) {
       audio.playbackRate = clampRate(rate);
@@ -76,7 +84,10 @@
     if (!('mediaSession' in navigator)) return;
     try {
       navigator.mediaSession.metadata = new MediaMetadata({
-        title: t('ca.media_titre', { sourate: suraName(pack?.sura ?? 1), aya: fmtNumber(a) }),
+        title:
+          a === BASMALA
+            ? t('ca.media_basmala', { sourate: suraName(pack?.sura ?? 1) })
+            : t('ca.media_titre', { sourate: suraName(pack?.sura ?? 1), aya: fmtNumber(a) }),
         artist: reciter.nameFr,
         album: t('ca.media_album', { riwaya: reciter.riwayaFr }),
       });
@@ -92,9 +103,14 @@
 
   async function playAt(i: number) {
     if (!audio || !pack) return;
-    if (i >= queue.length) return finish();
+    if (i >= queue.length) return finish('fin');
     idx = Math.max(0, i);
-    const f = pack.files.find((x) => x.aya === queue[idx]);
+    const f =
+      queue[idx] === BASMALA
+        ? basmala
+          ? { aya: BASMALA, url: basmala }
+          : null
+        : pack.files.find((x) => x.aya === queue[idx]);
     if (!f) return playAt(idx + 1);
     error = '';
     if (lastUrl.startsWith('blob:')) URL.revokeObjectURL(lastUrl);
@@ -127,6 +143,16 @@
     await playAt(0);
   }
 
+  /** Pause (changement d'emplacement pendant la lecture) ; `resume` reprend au même endroit. */
+  export function pause() {
+    if (!audio || !playing) return;
+    audio.pause();
+    playing = false;
+  }
+  export async function resume() {
+    if (!playing) await toggle();
+  }
+
   async function toggle() {
     if (!audio) return;
     if (playing) {
@@ -155,12 +181,12 @@
     // « en ligne seulement »
     const f = pack?.files.find((x) => x.aya === queue[idx]);
     if (f && !reciter.enLigne && !lastUrl.startsWith('blob:')) void garderEcoute(f.url);
-    if (sleepUntil && Date.now() >= sleepUntil) return finish();
+    if (sleepUntil && Date.now() >= sleepUntil) return finish('sommeil');
     void playAt(idx + 1);
   }
-  function finish() {
+  function finish(why: 'fin' | 'sommeil') {
     stop();
-    onend?.();
+    onend?.(why);
   }
   export function stop() {
     audio?.pause();
@@ -246,7 +272,12 @@
       <span style:width={`${pct}%`}></span>
     </div>
     <p class="where" aria-live="polite" data-testid="position">
-      {#if started && aya}<Bidi
+      {#if started && aya === BASMALA}<Bidi
+          text={t('ca.position_basmala', {
+            n: fmtNumber(idx + 1),
+            total: fmtNumber(queue.length),
+          })}
+        />{:else if started && aya}<Bidi
           text={t('ca.position', {
             aya: fmtNumber(aya),
             n: fmtNumber(idx + 1),

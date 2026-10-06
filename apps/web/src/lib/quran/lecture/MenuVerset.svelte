@@ -101,11 +101,28 @@
   onclick={(e) => e.target === dlg && close()}
 >
   {#if at}
+    {@const bsm = at.a === 0}
     <p class="head" id="menu-verset-titre">
-      <Bidi text={t('cl.menu_titre', { sourate: suraName(at.s), a: at.a })} />
+      <Bidi
+        text={bsm
+          ? t('cl.menu_titre_basmala', { sourate: suraName(at.s) })
+          : t('cl.menu_titre', { sourate: suraName(at.s), a: at.a })}
+      />
     </p>
     <ul>
-      {#if memo}
+      <!-- « Écouter d'ici » en PREMIER et le plus visible -->
+      {#if canListen}
+        <li>
+          <button
+            type="button"
+            class="principal"
+            onclick={() => act(onlisten)}
+            data-testid="menu-ecouter"
+            ><Icon name="lecture" filled size={22} /><Bidi text={t('cl.menu_ecouter')} /></button
+          >
+        </li>
+      {/if}
+      {#if memo && !bsm}
         <li>
           <button type="button" onclick={() => act(onreveal)} data-testid="menu-voir"
             ><Icon name="masque" size={20} /><Bidi
@@ -114,19 +131,14 @@
           >
         </li>
       {/if}
-      {#if canListen}
-        <li>
-          <button type="button" onclick={() => act(onlisten)} data-testid="menu-ecouter"
-            ><Icon name="lecture" size={20} /><Bidi text={t('cl.menu_ecouter')} /></button
-          >
-        </li>
+      {#if canListen && !bsm}
         <li>
           <button type="button" onclick={() => act(onrepeat)} data-testid="menu-repeter"
             ><Icon name="repeter" size={20} /><Bidi text={t('cl.menu_repeter')} /></button
           >
         </li>
       {/if}
-      {#if hafs && info}
+      {#if hafs && info && !bsm}
         <li>
           <button
             type="button"
@@ -154,18 +166,18 @@
           {/if}
         </li>
       {/if}
-      <li>
-        <button
-          type="button"
-          onclick={() => act(onmark)}
-          aria-pressed={marked}
-          data-testid="menu-signet"
-          ><Icon name="etoile" size={20} /><Bidi
-            text={marked ? t('cl.menu_signet_retirer') : t('cl.menu_signet')}
-          /></button
-        >
-      </li>
-      {#if ecrire}
+      {#if !bsm}<li>
+          <button
+            type="button"
+            onclick={() => act(onmark)}
+            aria-pressed={marked}
+            data-testid="menu-signet"
+            ><Icon name="etoile" size={20} /><Bidi
+              text={marked ? t('cl.menu_signet_retirer') : t('cl.menu_signet')}
+            /></button
+          >
+        </li>{/if}
+      {#if ecrire && !bsm}
         <li>
           <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- chemin résolu, suivi d'un paramètre -->
           <a href={ecrire} onclick={close} data-testid="menu-ecrire"
@@ -173,7 +185,7 @@
           >
         </li>
       {/if}
-      {#if hafs}
+      {#if hafs && !bsm}
         <li>
           <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu, suivi d'un paramètre -->
           <a
@@ -186,6 +198,9 @@
         </li>
       {/if}
     </ul>
+    {#if canListen}<p class="astuce" data-testid="menu-astuce">
+        <Bidi text={t('cl.astuce_appui_long')} />
+      </p>{/if}
   {/if}
 </dialog>
 
@@ -258,6 +273,25 @@
   button:hover,
   a:hover {
     background: var(--mp-mint);
+  }
+  /* « Écouter d'ici » : action principale, la plus visible */
+  .principal {
+    min-height: 54px;
+    margin-bottom: 4px;
+    font-weight: 800;
+    color: var(--mp-on-band);
+    background: var(--mp-band);
+  }
+  .principal :global(svg) {
+    color: var(--mp-on-band);
+  }
+  .principal:hover {
+    background: var(--mp-green);
+  }
+  .astuce {
+    margin: 6px 10px 0;
+    font-size: 0.78rem;
+    color: var(--ink2);
   }
   button[aria-pressed='true'] :global(svg) {
     color: var(--or-line);
