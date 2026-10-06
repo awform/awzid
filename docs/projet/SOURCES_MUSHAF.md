@@ -95,7 +95,7 @@ qu'une présentation, et chaque verset doit avoir exactement le même nombre de 
 
 Conditions relues le 06/10/2026 (« Developer Terms », mise à jour du **04/10/2026**,
 https://api-docs.quran.foundation/legal/developer-terms/ ; documentation audio : `/recitations/{id}/by_chapter/{sourate}`,
-`/recitations/{id}/by_ayah/{verset}`, `/chapter_recitations/{id}/{sourate}` ; guide Content Sync,
+`/recitations/{id}/by_ayah/{verset}`, fichier de sourate des « chapter reciters » avec minutage par verset ; guide Content Sync,
 https://api-docs.quran.foundation/docs/tutorials/content-sync/getting-started/) :
 
 | Point | Texte (extraits courts) | Conséquence pour Awzid |
