@@ -1,5 +1,5 @@
 {
-  "id": "b9d4a2be-88ea-4ef5-9daf-78df3f95467d",
+  "id": "3d7fe20b-bb55-4870-8240-52cd92f37884",
   "prevId": "99e5a0e9-8304-4c75-b1be-219895d873bb",
   "version": "7",
   "dialect": "postgresql",
@@ -1350,6 +1350,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
         "issued_by": {
           "name": "issued_by",
           "type": "uuid",
@@ -1440,6 +1446,21 @@
           "method": "btree",
           "with": {}
         },
+        "certificate_profile": {
+          "name": "certificate_profile",
+          "columns": [
+            {
+              "expression": "profile_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "certificate_verif": {
           "name": "certificate_verif",
           "columns": [
@@ -1476,6 +1497,19 @@
           "tableTo": "class_pupil",
           "columnsFrom": [
             "pupil_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "certificate_profile_id_profile_id_fk": {
+          "name": "certificate_profile_id_profile_id_fk",
+          "tableFrom": "certificate",
+          "tableTo": "profile",
+          "columnsFrom": [
+            "profile_id"
           ],
           "columnsTo": [
             "id"
@@ -8132,13 +8166,6 @@
           "notNull": true,
           "default": "''"
         },
-        "source": {
-          "name": "source",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'complexe'"
-        },
         "status": {
           "name": "status",
           "type": "text",
@@ -8197,10 +8224,6 @@
         "quran_reciter_status": {
           "name": "quran_reciter_status",
           "value": "\"quran_reciter\".\"status\" IN ('en_attente', 'actif', 'retire')"
-        },
-        "quran_reciter_source": {
-          "name": "quran_reciter_source",
-          "value": "\"quran_reciter\".\"source\" IN ('complexe', 'qf')"
         },
         "quran_reciter_retrait": {
           "name": "quran_reciter_retrait",

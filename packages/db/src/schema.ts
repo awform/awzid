@@ -1576,6 +1576,11 @@ export const certificate = pgTable(
     kind: text('kind').notNull(),
     classId: uuid('class_id').references(() => classGroup.id, { onDelete: 'set null' }),
     pupilId: uuid('pupil_id').references(() => classPupil.id, { onDelete: 'set null' }),
+    /**
+     * A39 (décision D-A39 4) : certificat INDIVIDUEL de l'adulte autonome (« Awzid — parcours autonome »),
+     * délivré après une épreuve de passage réussie ; sans classe ni élève du registre d'une école.
+     */
+    profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'set null' }),
     issuedBy: uuid('issued_by').references(() => account.id, { onDelete: 'set null' }),
     /** niveau (en1…) ou passage (112:1-4) */
     subject: text('subject').notNull(),
@@ -1599,6 +1604,7 @@ export const certificate = pgTable(
   },
   (t) => [
     index('certificate_class').on(t.classId),
+    index('certificate_profile').on(t.profileId),
     uniqueIndex('certificate_verif').on(t.verifCode),
     check('certificate_kind', sql`${t.kind} IN ('niveau', 'hifz')`),
   ],

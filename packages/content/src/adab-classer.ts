@@ -49,25 +49,25 @@ const CERCLE_RULES: ReadonlyArray<Rule<CercleId>> = [
     /\b(travail|travailler|metier|collegues?|employeur|salaire|commerce|commercant|vendre|vente|acheter|achat|marchand\w*|dettes?)\b/g,
   ],
   [
-    'societe',
+    'autorites',
     /\b(lois?|societe|citoyen\w*|justice|regles? de (la )?vie|pays|autorites?|police|temoignage|promesses?|engagements?|depot)\b/g,
   ],
-  ['rue', /\b(rue|routes?|trottoir|passants?|dehors|en ville)\b/g],
+  ['espace_public', /\b(rue|routes?|trottoir|passants?|dehors|en ville)\b/g],
   [
     'fragiles',
     /\b(malades?|maladie|pauvres?|orphelins?|personnes? agees?|vieillards?|handicap\w*|faibles?|necessiteux|mendiants?|invalides?|veuves?)\b/g,
   ],
-  ['musulmans', /\b(musulmans?|musulmane|oumma|umma|communaute|fraternite)\b/g],
+  ['musulmans_avis', /\b(musulmans?|musulmane|oumma|umma|communaute|fraternite)\b/g],
   [
-    'religions',
+    'autres_religions',
     /\b(non-musulmans?|chretiens?|juifs?|autres (religions|cultures|croyances)|toutes les religions|gens du livre)\b/g,
   ],
   [
-    'nature',
+    'animaux_nature',
     /\b(animaux|animal|chats?|chiens?|oiseaux?|fourmis?|chevaux|cheval|moutons?|plantes?|arbres?|nature|environnement|gaspill\w*)\b/g,
   ],
   [
-    'ecrans',
+    'numerique',
     /\b(telephones?|portables?|ecrans?|reseaux?( sociaux)?|internet|videos?|jeux video|tablettes?|en ligne)\b/g,
   ],
 ];
@@ -257,55 +257,110 @@ export interface Rangee {
  */
 export const ADAB_CORRECTIONS: Readonly<Record<string, Rangee>> = {};
 
-/**
- * Index officiel des livres (`data/akhlaq/index-adab.json`) : `{ "entrees": { "<id>": { cercles, lieux } } }` ou
- * `{ "entrees": [{ "id": "<id>", cercles, lieux }] }` ; un identifiant de leçon seul (« en1.l05 ») vaut pour
- * son bloc `fiqh_adab`. Les identifiants inconnus de cercle ou de lieu sont signalés et ignorés.
- */
-export function readAdabIndex(raw: unknown): { map: Map<string, Rangee>; problems: string[] } {
-  const map = new Map<string, Rangee>();
-  const problems: string[] = [];
-  const src = isObj(raw) ? raw.entrees : raw;
-  const rows: Array<[string, unknown]> = Array.isArray(src)
-    ? src.map((r) => [isObj(r) ? str(r.id) : '', r])
-    : isObj(src)
-      ? Object.entries(src)
-      : [];
-  if (!rows.length && raw !== undefined && raw !== null) problems.push('index vide ou illisible');
-  for (const [id0, r] of rows) {
-    const id = /^[a-z]{2,4}\d{1,2}\.l\d{2}$/.test(id0) ? `${id0}.fiqh_adab` : id0;
-    if (!id || !isObj(r)) {
-      problems.push(`entrée sans identifiant ou illisible : ${JSON.stringify(id0)}`);
-      continue;
-    }
-    const pick = (k: 'cercles' | 'lieux', ok: (x: unknown) => boolean) => {
-      if (!Array.isArray(r[k])) return undefined;
-      const list = r[k] as unknown[];
-      for (const x of list) if (!ok(x)) problems.push(`${id} : ${k} inconnu « ${String(x)} »`);
-      return list.filter(ok) as string[];
-    };
-    const cercles = pick('cercles', isCercle);
-    const lieux = pick('lieux', isLieu);
-    map.set(id, { ...(cercles ? { cercles } : {}), ...(lieux ? { lieux } : {}) });
-  }
-  return { map, problems };
+/** Rubrique de l'index officiel des livres (champs utiles à l'application). */
+export interface IndexRow {
+  id: string;
+  unit: string;
+  titre_fr: string;
+  cercles: string[];
+  lieux: string[];
+  fiches: string[];
 }
 
-/** Applique corrections puis index officiel (le plus fort l'emporte) ; `rangement` dit d'où vient le rangement. */
+/**
+ * Index officiel des livres (`data/akhlaq/index-adab.json`, format « awzid-akhlaq-index », chantier B9) :
+ * `{ rubriques: [{ id: "<livre>.<lNN>.adab" | "<livre>.<lNN>.r<k>", livre, lecon, titre_fr, cercle,
+ * cercles_lies, lieux, fiches }] }`. Accepte aussi la forme réduite gardée par l'import (`IndexRow[]`).
+ * Les identifiants inconnus de cercle ou de lieu sont signalés et ignorés.
+ */
+export function readAdabIndex(raw: unknown): { rows: IndexRow[]; problems: string[] } {
+  const problems: string[] = [];
+  const list = isObj(raw) && Array.isArray(raw.rubriques) ? raw.rubriques : [];
+  if (!list.length) problems.push('index vide ou illisible');
+  const rows: IndexRow[] = [];
+  for (const r of list) {
+    const id = isObj(r) ? str(r.id) : '';
+    const m = /^([a-z]{2,4}\d{1,2}\.l\d{2})\.(adab|r\d+|fiqh_adab|rubriques\.\d+)$/.exec(id);
+    if (!isObj(r) || !m) {
+      problems.push(`rubrique sans identifiant valable : ${JSON.stringify(id)}`);
+      continue;
+    }
+    const ids = (k: string, ok: (x: unknown) => boolean) => {
+      const v = (Array.isArray(r[k]) ? r[k] : typeof r[k] === 'string' ? [r[k]] : []) as unknown[];
+      for (const x of v) if (!ok(x)) problems.push(`${id} : ${k} « ${String(x)} » inconnu`);
+      return v.filter(ok) as string[];
+    };
+    rows.push({
+      id,
+      unit: m[1]!,
+      titre_fr: str(r.titre_fr),
+      cercles: [
+        ...new Set([
+          ...ids('cercle', isCercle),
+          ...ids('cercles_lies', isCercle),
+          ...ids('cercles', isCercle),
+        ]),
+      ],
+      lieux: ids('lieux', isLieu),
+      fiches: ids('fiches', (x) => typeof x === 'string'),
+    });
+  }
+  return { rows, problems };
+}
+
+const titleKey = (unit: string, titre: string) =>
+  `${unit}|${norm(titre).replace(/\s+/g, ' ').trim()}`;
+
+/**
+ * Range les rubriques : avec l'index officiel, SEULES ses rubriques sont gardées, rangées comme il le dit (repérées
+ * par leçon et titre, sinon par identifiant : `.adab` = bloc `fiqh_adab`, `.r<k>` = k-ième rubrique) ; sans index,
+ * classement automatique et corrections manuelles. `unmatched` : rubriques de l'index introuvables dans les leçons.
+ */
 export function applyRangement(
   entries: readonly AdabEntry[],
-  index: ReadonlyMap<string, Rangee> | null,
+  index: readonly IndexRow[] | null,
   corrections: Readonly<Record<string, Rangee>> = ADAB_CORRECTIONS,
-): AdabEntry[] {
-  return entries.map((e) => {
-    const r = index?.get(e.id) ?? corrections[e.id];
-    if (!r) return e;
-    const rangement: Rangement = index?.has(e.id) ? 'index' : 'correction';
+): { entries: AdabEntry[]; unmatched: string[] } {
+  if (!index?.length)
     return {
-      ...e,
-      cercles: (r.cercles ?? e.cercles).filter(isCercle),
-      lieux: (r.lieux ?? e.lieux).filter(isLieu),
-      rangement,
+      entries: entries.map((e) => {
+        const r = corrections[e.id];
+        return r
+          ? {
+              ...e,
+              cercles: (r.cercles ?? e.cercles).filter(isCercle),
+              lieux: (r.lieux ?? e.lieux).filter(isLieu),
+              rangement: 'correction' as Rangement,
+            }
+          : e;
+      }),
+      unmatched: [],
     };
-  });
+  const byTitle = new Map(entries.map((e) => [titleKey(e.unit, e.titre_fr), e]));
+  const byId = new Map(entries.map((e) => [e.id, e]));
+  const out: AdabEntry[] = [];
+  const unmatched: string[] = [];
+  const seen = new Set<string>();
+  for (const r of index) {
+    const k = /\.r(\d+)$/.exec(r.id)?.[1];
+    const guess = r.id.endsWith('.adab')
+      ? `${r.unit}.fiqh_adab`
+      : k
+        ? `${r.unit}.rubriques.${Number(k) - 1}`
+        : r.id;
+    const e = byTitle.get(titleKey(r.unit, r.titre_fr)) ?? byId.get(guess);
+    if (!e || seen.has(e.id)) {
+      unmatched.push(r.id);
+      continue;
+    }
+    seen.add(e.id);
+    out.push({
+      ...e,
+      cercles: r.cercles.filter(isCercle),
+      lieux: r.lieux.filter(isLieu),
+      rangement: 'index',
+      ...(r.fiches.length ? { fiches: r.fiches } : {}),
+    });
+  }
+  return { entries: out, unmatched };
 }

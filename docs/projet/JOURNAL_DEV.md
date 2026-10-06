@@ -8,6 +8,135 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Corrections du lecteur Coran (signalements du client sur la démo)
+
+Branche `coran-corrections-wip` (worktree `~/awform-corfix`, depuis `main` fd3cad7), e2e isolés (ports 3472/4472).
+
+1. **« Je touche un verset pour le faire répéter, il lit le verset au-dessus » — cause** : le lecteur demandait le
+   fichier « verset n » du récitateur choisi QUEL QUE SOIT le muṣḥaf affiché. Or chaque riwāya a sa numérotation
+   (compte koufi de Ḥafṣ et Shuʿba, madanī de Warsh et Qālūn, baṣrī d'ad-Dūrī et as-Sūsī, makkī d'al-Bazzī) :
+   « الم » est le verset 2:1 en Ḥafṣ mais pas en Qālūn, si bien que le verset 90 du muṣḥaf de Qālūn est le 91 de
+   Ḥafṣ. Muṣḥaf d'une autre riwāya + récitateur Ḥafṣ (récitateur par défaut) → on entendait le verset
+   AU-DESSUS ; texte Ḥafṣ + récitateur Qālūn, ad-Dūrī ou as-Sūsī → le verset en dessous (al-Fātiḥa de Qālūn :
+   basmala non comptée). Le surlignage était déjà coupé dans ce cas (A8), pas la lecture. Vérifié sur les vrais
+   fichiers de la démo : en Ḥafṣ sur Ḥafṣ, page fluide, page exacte et vue versets, le fichier demandé était déjà
+   le bon (index, page, basmala, plage du/au corrects).
+   **Correction à la racine** : le récitateur SUIT le muṣḥaf (`reciterFor`, `lecture.ts`) — changer de muṣḥaf
+   change le récitateur (avis « Le récitateur change : … »), choisir un récitateur d'une autre riwāya fait passer
+   le muṣḥaf à sa riwāya (avis), muṣḥaf sans récitateur (Warsh, al-Bazzī) : avis, rien n'est lu ; garde dans
+   `playFrom` ; la file n'est faite de numéros de versets que si la récitation est découpée comme le texte
+   affiché (`listenFiles` + `highlightOn`), sinon la sourate entière, dite (al-Mulk d'ad-Dūrī 31/30, as-Sūsī).
+   L'état « autre riwāya » (encadré, lien) disparaît.
+   **Trouvé en passant (page exacte A34, téléphone)** : la mesure des lignes (texte à 100 px, `.mesure`) élargissait
+   la page de plusieurs milliers de pixels → page dézoomée sur téléphone, feuilles et menu du verset mal placés
+   (clics interceptés). Corrigé (`width: 0; overflow: hidden`), contrôlé par e2e (`innerWidth` = largeur d'écran).
+2. **Puce** : « Al-Baqara · verset 90 · page 14 · juzʾ 1 » en toutes lettres (téléphone : « Al-Baqara » /
+   « verset 90 · page 14 · juzʾ 1 », blocs insécables), 5 langues ; la puce prend toute la ligne, les outils
+   dessous.
+3. **Un seul point d'entrée « Réglages »** (icône ET libellé, téléphone et bureau) : `Reglages.svelte` remplace les
+   feuilles « Réglages d'écoute » et « Affichage » ; sections en toutes lettres avec sauts : Écoute (préréglages,
+   plage, répétitions, vitesse, arrêt automatique), Récitateur (ceux de la riwāya affichée d'abord, « en ligne »
+   étiquetés — champ `enLigne` prévu pour A2), Muṣḥaf (style : « Muṣḥaf de Médine (pages à l'identique) » OU
+   « Notre muṣḥaf habituel (cadre vert) », choix gardé ; riwāyāt décrites comme les récitateurs : nom en clair,
+   courte description, nombre de récitateurs), Affichage (vue, **taille du texte** normale / grande / très grande,
+   lecture seule, une page), Traduction, Tajwid, Mémoriser (+ lecture guidée), Hors ligne. Icône « ⋯ » et loupe
+   en double (même sélecteur que la puce) retirées ; l'icône répétition et le nom du récitateur de la mini-barre ouvrent ce panneau à leur
+   section. **Enfants** : quatre grosses tuiles (Écouter · Répéter · Plus grand · Masquer pour mémoriser), le reste
+   replié sous « Tous les réglages (avec un parent) ».
+4. **Thème** : `VERDURE` par public (`audience.ts`) — « vert, blanc, or » partout pour les ADULTES ; enfants
+   (Jardin) et ados (Nuit étoilée) gardent leur thème, espace Coran compris ; visiteurs : espace Coran (inchangé).
+5. **Tests** : unitaires `lecture-corrections.test.ts` (5), `audience.test.ts` (adapté) ; e2e
+   `coran-corrections.spec.ts` (9) sur les **vraies récitations de la démo** (9 récitateurs, 5 riwāyāt, copiées
+   dans la base de test, fichiers lus dans le volume de la démo : `e2e/audio-demo.ts`) : clé du fichier demandé =
+   verset touché pour 1:1, 1:7, 2:1, 2:5, 2:90, 112:2 (« Répéter » et « Écouter d'ici »), surlignage = verset
+   touché ; pages fluides ET exactes (début, milieu, fin de page, basmala) ; Qālūn page 1 ; al-Mulk ; changement
+   de muṣḥaf / de récitateur ; puce (320 à 768 px, 5 langues) ; panneau Réglages ; tuiles enfant ; thèmes adulte,
+   enfant, ado. Mode `E2E_MUSHAF_EXACT=1` : les 9 anciens tests qui cherchaient le texte visible vérifient le
+   texte Tanzil ACCESSIBLE des pages exactes (`expectVerse`, `e2e/coran.ts`) ou visent un glyphe (`.first()`).
+   **Résultats** : `pnpm check` vert — unitaires verts ; e2e complets (après les fusions de main) **362 réussis,
+   38 ignorés, 0 échec** avec `E2E_MUSHAF_EXACT=1` (604 pages exactes publiées) et **354 réussis, 46 ignorés, 0 échec** sans.
+6. **Budget** (après fusion de `main` 0f6e305 = A37 et A39 suite, 405,4 Ko) : sans rien changer, les ajouts
+   portaient le total au-delà de 410 Ko → les textes FRANÇAIS de l'espace Coran (`cl.*`, `ca.*`, `mp.*` sauf les noms
+   de traduction, `mpx.*`, `rw.*`, `tj.*` : 247 textes) sortent de la coquille par le mécanisme des espaces d'A37 :
+   `static/i18n/fr-coran.json` (`SPACE_CATALOGS`), chargé par les mises en page `/coran` et `/enseignant`
+   (récitateurs de la classe), **préchargé** par le service worker (Coran hors ligne dès l'installation) ; contrôlé
+   par `i18n.test.ts` (aucun de ces textes utilisé hors de l'espace Coran). Total **404,4 Ko** (main : 405,4) ≤ 410 ;
+   appareil d’un élève **351,3 Ko** ≤ 355 ; `/coran/lecteur` 128,5 Ko. Panneaux fusionnés en un composant, textes
+   « autre riwāya » et doublons retirés.
+7. Captures avant / après (puce, réglages adulte et enfant, thème adulte ; 375 px et bureau) :
+   `reports/coran-corrections/` (hors dépôt), copiées sur le PC (`application/coran-corrections-captures/`).
+## 06/10/2026 — Chantier A39 (suite) : décisions D-A39 appliquées
+
+Branche `a39b-certificat-wip` (depuis `main` 7785a3f).
+
+1. **Décisions consignées** (D-A39, client) : (1) l'adulte garde son choix, même dans une classe ; (2) notion
+   fragile = au moins 2 erreurs non revues ; (3) le parent peut choisir « Avec vérification » pour un mineur ;
+   (4) certificat individuel de l'adulte autonome ; (5) pages légales hors du paquet, gardées pour le hors ligne.
+2. **Inscription adulte** : « Mode serein » PRÉSÉLECTIONNÉ (« Avec vérification » reste au choix sur le même écran
+   et dans le compte) ; les adultes déjà inscrits ne changent pas (sans choix enregistré : « Avec vérification »).
+3. **Certificat individuel de l'adulte autonome** (`apps/api/src/certificat-autonome.ts`, migration
+   `0041_a39_certificat_autonome` : `certificate.profile_id`) : seulement après une épreuve de passage RÉUSSIE (tous
+   les modes), même modèle « niveau » des livres, même registre numéroté (AWF-<NIVEAU>-<ANNÉE>-<NNNN>), même
+   signature Ed25519 et même vérification publique par QR que les certificats d'école ; établissement « Awzid —
+   parcours autonome », lieu « en ligne » ; note = épreuve sur 100, mention selon les règles des livres ; nom et
+   civilité donnés par l'adulte, naissance facultative ; tout champ qu'aucune école n'a saisi (degrés…) imprimé
+   « — », jamais inventé ; un certificat valide par niveau. Page « Mes certificats » (`/certificats`), liens depuis
+   le compte et le résultat de l'épreuve. Rendu du certificat partagé avec l'espace enseignant
+   (`lib/CertificatDoc.svelte`).
+4. **QR calculé par l'API** (`apps/api/src/qr.ts`, même bibliothèque `qrcode-generator`, déplacée de l'application
+   vers l'API ; origine du site contrôlée) : la bibliothèque n'est plus dans le paquet de l'application (≈ 6 Ko) —
+   place gagnée pour le certificat sans relever la limite.
+5. **Pages légales hors ligne** : le service worker copie `/i18n/legal/fr.json` et `en.json` dans le cache de sa
+   version juste après l'activation (sans bloquer le démarrage) ; lisibles hors ligne dès la première ouverture.
+6. **Textes** : 10 `cert.*` et `erreur.reserve_adulte_autonome` en fr, en, es, de, ar (A_RELIRE.md) ; 5 textes du
+   rendu du certificat remis dans la coquille (utilisés aussi par la page de l'adulte).
+7. **Poids** : toutes pages 405,6 Ko ≤ 410 (409,3 avant ce lot), appareil d'un élève 352,4 Ko ≤ 355, page la plus lourde 141,4 Ko ≤ 150.
+8. **Tests** : unitaires 1 613 réussis, 1 ignoré, 0 échec (api `a39.test.ts` +1 : certificat refusé sans épreuve, délivré après, registre et
+   vérification publique, un seul par niveau, réservé à l'adulte autonome ; `qr.test.ts` 2) ; e2e `a39.spec.ts` +2
+   (certificat de bout en bout avec QR et vérification ; pages légales en cache puis lues hors ligne) et mode serein
+   présélectionné. **Suite e2e complète : 340 réussis, 43 ignorés ; 1 échec intermittent hors A39 (lot6, cartes de mots, téléphone) réussi au second passage**.
+
+## 07/10/2026 — Chantier A37 (suite) : vraies données du livret « Bon comportement », décisions D-A37, barre lisible
+
+Même branche `a37-vivre-islam-wip` (fusionnée une première fois dans `main` 147c5fc).
+
+1. **Données des livres (B9) — leur format fait foi** (`~/awform-content/ids/akhlaq-SCHEMA-B9.md`) : import adapté,
+   aucune demande de changement aux livres.
+   - **Index officiel** `data/akhlaq/index-adab.json` (567 rubriques : 476 `fiqh_adab` + adab 67, usra 9, muʿāmalāt
+     15) : il **remplace** le classement automatique (gardé en repli seulement, sans index) ; rubriques repérées par
+     leçon et titre, sinon par identifiant (`.adab` = bloc `fiqh_adab`, `.r<k>` = k-ième rubrique) ; fiches liées
+     montrées sous la rubrique. Identifiants de cercles des livres (`autorites`, `espace_public`, `musulmans_avis`,
+     `autres_religions`, `animaux_nature`, `numerique`…), libellés du client inchangés.
+   - **120 fiches** `akh.f001…f120` (aucune refusée) : situation par âge, points avec `enfant_fr` / `ado_fr` /
+     `adulte_fr` et `ages`, `dire` (hadith du registre au statut VERIFIE avec « Rapporté par … (n) », verset Tanzil
+     en BLOC avec renvoi au récitant — `audio` interdit, contrôlé —, formule), pourquoi (version enfant), attention,
+     vraie vie du **pays de la famille** (« tous » + son pays), religion ou coutume (adultes), défi (version enfant),
+     sources lisibles (`sources.json`, registre ; clés internes non montrées), fiches liées. Résumés dans le
+     catalogue, fiche entière à l'ouverture (`GET /api/v1/vivre/fiches/:id`, gardée sur l'appareil).
+   - **Étiquettes (référent)** : cinq statuts religieux ; `force: "forte"` = « Recommandé · sunna » ; déconseillé et
+     interdit affichés « À éviter — … » (le statut qualifie la conduite évitée) ; `conseil` = pastille NEUTRE
+     « Conseil », jamais présentée comme une règle religieuse. Livres de religion : fard → Obligatoire ; sunna,
+     mustaḥabb, faḍīla → Recommandé avec le terme du livre en petit.
+   - **Âges** : Époux et Enfants (éduquer) aux adultes, Travail aux ados et adultes ; `ages` et variantes des points.
+   - **Audio** des textes arabes non coraniques des fiches : niveaux « akhlaq-enf » (fiches qui ont l'âge enfant) et
+     « akhlaq », lus par le bouton « écouter » existant dès que les MP3 sont importés (`deploy.sh` importe tout
+     `~/lecons-audio`) ; jamais sur un verset.
+   - **Guide des parents** `data/gp/c18.js` « Transmettre les valeurs » : importé s'il est là (document `gp.c18`),
+     affiché dans l'espace Famille (« Transmettre les valeurs ») section par section — paragraphes, listes,
+     tableaux, encadrés, hadiths, versets en bloc, réponse mālikite, blocs du pays de la famille ; vérifié en e2e
+     avec la copie du PC (`E2E_GP_C18`), en attendant la synchro.
+   - `infra/sync-content.ps1` copie désormais `data/akhlaq` et `data/gp/c18.js`.
+2. **Barre du bas** : « Vivre l'islam » ENTIER sur deux lignes centrées (« Vivre » / « l'islam »), icônes alignées
+   en haut ; e2e « aucun libellé tronqué » (5 langues, 375 et 320 px, enfant et adulte).
+3. **Poids** (budget 410 inchangé) : textes français des espaces Prières (163 `qt.*`) et Vivre l'islam (77 `vi.*`)
+   chargés par leur mise en page (`static/i18n/fr-quotidien.json`, `fr-vivre.json`, PRÉCHARGÉS par le service
+   worker pour le hors ligne, comme les textes du personnel `fr-personnel.json` qui, eux, ne le sont pas) :
+   **toutes pages 409,1 Ko ≤ 410, appareil d'un élève 349,1 Ko ≤ 355** (les deux fichiers d'espace pèsent ≈ 4,5 Ko
+   compressés, préchargés mais hors de la mesure JS/CSS).
+4. Textes : `vi.statut.conseil`, `vi.a_eviter`, `vi.attention`, `vi.religion_coutume`, `vi.fiches_liees`,
+   `vi.retenir`, `vi.coran_ref`, `vi.en_bref` (5 langues, A_RELIRE.md) ; clés de cercles renommées.
+5. Tests (après fusion de `main` A39) : unitaires **1 613 réussis, 1 ignoré** ; e2e suite complète **339 réussis, 43 ignorés, 0 échec** (22,1 min ; `a37.spec.ts` 13, guide des parents compris) ; budget après fusion **409,5 Ko** ≤ 410, élève 349,1 Ko. Puis rubriques des **bilans** (révisions) de l'index montrées (libellé « bilan »), jamais celles des épreuves (sujets) : 528 rubriques montrées sur la démo (567 moins 19 d’épreuves et 20 bilans des enfants, dont la page n’a pas ce bloc). Vérification finale : unitaires 1 613 réussis, 1 ignoré ; e2e **337 réussis, 45 ignorés, 0 échec** (23,5 min) ; budget **409,6 Ko**, élève 349,2 Ko. (La VM s'est figée une heure pendant une vérification et a redémarré : vérification relancée en entier.). Captures 375 px (vraie fiche akh.f001 enfant/ado/adulte, f008 avec
+   verset, guide des parents) : `application/a37-captures/`.
 ## 06/10/2026 — Chantier A39 : « MODE SEREIN » — l'évaluation ne doit jamais décourager (décision du client)
 
 Branche `a39-serein-wip` (worktree `~/awform-a39`, depuis `main` f9467cd, puis fusionnée avec `main` 147c5fc — A37),

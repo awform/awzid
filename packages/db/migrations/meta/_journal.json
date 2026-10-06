@@ -292,8 +292,15 @@
     {
       "idx": 41,
       "version": "7",
-      "when": 1791273949222,
-      "tag": "0041_a2_qf_en_ligne",
+      "when": 1791273450649,
+      "tag": "0041_a39_certificat_autonome",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1791315991856,
+      "tag": "0042_a2_qf_en_ligne",
       "breakpoints": true
     }
   ]

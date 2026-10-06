@@ -77,6 +77,12 @@ positionnement, épreuve de passage, Mon cahier, fiche à imprimer, « J'écris 
 sans voyelles comme le reste de l'interface ; « القسم » pour la classe ; espagnol « profesor », « aleya ». À vérifier
 en priorité : `parc.rasm_texte` (orthographe du Muṣḥaf) et `fam.demande_aide` (âge légal, « de droit à 18 ans »).
 
+## Chantier A39 (suite) — certificat de l'adulte autonome (06/10/2026)
+
+10 textes `cert.*` (« Mes certificats », formulaire, civilités « M. / Mme ») et `erreur.reserve_adulte_autonome`,
+écrits par Claude dans les quatre langues — **à relire**. La mention « Awzid — parcours autonome » est gardée en
+français sur le certificat (nom du parcours) ; lieu en arabe : « عَبْرَ الْإِنْتَرْنِتِ ».
+
 ## Chantier A39 — mode serein (06/10/2026)
 
 42 textes `ser.*` (« Ma façon d'avancer », « Mode serein », « Vérification douce », récapitulatif avant le niveau
@@ -99,6 +105,14 @@ Chantier A21b (05/10/2026) : textes `viv.*` — 9 ajoutés (`viv.m_racine`, `viv
 `viv.lecon1`) ; traduits par Claude, relecteur provisoire, dans les quatre langues en préparation — à relire avec le
 reste. Arabe vocalisé comme les autres textes `viv.*` ; « الْجَذْرُ وَالْوَزْنُ » pour « racine et schème ».
 
+## Corrections du lecteur (06/10/2026)
+
+Textes `cl.*` ajoutés par Claude dans les quatre langues, **à relire** : puce en toutes lettres
+(`cl.puce`, `cl.puce_detail` : « verset · page · juzʾ », plus d'abréviations), panneau unique « Réglages »
+(`cl.reglages`, `cl.sec_*`), style des pages (`cl.style_*`), riwāyāt décrites
+(`cl.riwaya_desc_*`, `cl.riwaya_recitateurs`, `cl.riwaya_sans_recitateur`), taille du texte (`cl.taille*`),
+avis du lecteur (`cl.avis_*`), tuiles des enfants (`cl.k_*`), `cl.en_ligne`. Retirés (plus d'état « autre riwāya ») : `ca.autre_riwaya_texte`,
+`rw.autre_texte`, `rw.voir_texte`.
 ## A37 « Vivre l'islam » (06/10/2026)
 
 Les 74 textes `vi.*` (onglet Bon comportement : sous-onglets, défi de la semaine, 18 cercles, 9 lieux, 5 statuts
@@ -106,3 +120,7 @@ Les 74 textes `vi.*` (onglet Bon comportement : sous-onglets, défi de la semain
 (« Living Islam », « Vivir el islam », « Den Islam leben », « عِشِ الْإِسْلَامَ » demandés par le client) ; `qt.titre`,
 `parc.au_quotidien`, `parc.quotidien_texte` mis à jour. Écrits par Claude, **à relire**. Les textes français du
 personnel sont désormais dans `static/i18n/fr-personnel.json` (mêmes clés, hors de la coquille de l'élève).
+
+A37 (suite, 07/10/2026) : 8 textes ajoutés (`vi.statut.conseil` — arabe « نصيحة », `vi.a_eviter`, `vi.attention`,
+`vi.religion_coutume`, `vi.fiches_liees`, `vi.retenir`, `vi.coran_ref`, `vi.en_bref`), à relire avec le reste. Les textes
+français des espaces Prières et Vivre l'islam sont dans `static/i18n/fr-quotidien.json` et `fr-vivre.json` (mêmes clés).

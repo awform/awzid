@@ -16,27 +16,25 @@ const serious = async (page: Page) =>
     .filter((v) => v.impact === 'serious' || v.impact === 'critical')
     .map((v) => `${v.id} ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`);
 
-test('autre riwāya : badge visible, pas de surlignage, absente du mode Mémoriser', async ({
+test('autre riwāya : badge visible, le muṣḥaf suit la riwāya du récitateur, absente du mode Mémoriser', async ({
   page,
 }) => {
   await page.goto('/coran/ecouter?r=essai-qalun&s=1');
+  // corrections du 06/10/2026 : jamais une récitation de Qālūn sur le texte de Ḥafṣ (autre numérotation)
+  await expect(page.getByTestId('mp-riwaya-affichee')).toContainText('Qālūn');
   await openSettings(page);
-  await expect(page.getByTestId('autre-riwaya')).toBeVisible();
-  await expect(page.getByTestId('reglages-ecoute').getByTestId('badge-riwaya')).toHaveAttribute(
-    'data-riwaya',
-    'qalun',
-  );
-  await expect(page.getByTestId('reglages-ecoute').getByTestId('badge-riwaya')).toContainText(
-    'autre riwāya',
-  );
+  await expect(page.getByTestId('autre-riwaya')).toHaveCount(0);
+  const sec = page.getByTestId('reglages-recitateur');
+  await expect(sec.getByTestId('badge-riwaya')).toHaveAttribute('data-riwaya', 'qalun');
+  await expect(sec.getByTestId('badge-riwaya')).toContainText('autre riwāya');
   await page.keyboard.press('Escape');
   await expect(page.getByTestId('mini-autre-riwaya')).toBeVisible();
   await page.getByTestId('jouer').click();
   await expect(page.getByTestId('position')).toContainText('Verset 1');
-  await expect(page.getByTestId('sans-surlignage')).toBeVisible();
-  // le verset entendu n'est jamais surligné sur le texte d'une autre riwāya
+  // même riwāya, même découpage : le verset entendu est surligné sur le texte de Qālūn
   await expect(page.getByTestId('position')).toContainText('Verset 2', { timeout: 8000 });
-  await expect(page.locator('[data-aya="1:2"]')).not.toHaveClass(/\bon\b/);
+  await expect(page.locator('[data-aya="1:2"]')).toHaveClass(/\bon\b/);
+  await expect(page.getByTestId('sans-surlignage')).toHaveCount(0);
   await page.getByTestId('arreter-audio').click();
 
   await page.goto('/coran/memoriser');
@@ -88,8 +86,8 @@ test.describe('parent', () => {
     const pick = page.getByTestId('choix-recitateur');
     await expect(pick.locator('option')).toHaveCount(1);
     await expect(pick.locator('option[value="essai-hafs"]')).toHaveCount(1);
-    // l'enfant garde son thème (tailles, cibles) ; l'espace Coran prend la palette vert-blanc-or
+    // l'enfant garde son thème (tailles, cibles, couleurs), espace Coran compris (décision du 06/10/2026)
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'jardin');
-    await expect(page.locator('html')).toHaveAttribute('data-palette', 'verdure');
+    await expect(page.locator('html')).not.toHaveAttribute('data-palette', /.+/);
   });
 });

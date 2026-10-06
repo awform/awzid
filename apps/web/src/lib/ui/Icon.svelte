@@ -38,7 +38,6 @@
     tajwid: 'M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11ZM9.5 14.5a2.5 2.5 0 0 0 2.5 2.5',
     traduction:
       'M3 5h9M7.5 3v2M5 5c.5 3.5 2.6 6 6 7.5M10 5c-.8 3.7-3 6.4-6.5 8M13 21l4-9 4 9M14.4 18h5.2',
-    points: 'M5 12h.01M12 12h.01M19 12h.01',
     chevron: 'm9 6 6 6-6 6',
     // A12 « Au quotidien » : boussole (qibla), chapelet (adhkār), partager, lever du jour, cloche, lieu, ±
     boussole: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM15.5 8.5l-2 5-5 2 2-5z',
@@ -69,6 +68,9 @@
     revisions: 'M4 7h12v12H4zM8 3h12v12',
     // Coran épuré : recherche
     loupe: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM20 20l-4-4',
+    // corrections du lecteur : réglages (curseurs) et taille du texte (deux lettres)
+    reglages: 'M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1M15 4v4M9 10v4M17 16v4',
+    taille: 'M3 19 8 5l5 14M4.8 14h6.4M14 19l3.5-9 3.5 9M15.2 16h4.6',
     // A37 « Vivre l'islam » : cercles et lieux du bon comportement (objets et formes, aucun visage)
     'v-soi': 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z',
     'v-fratrie':
@@ -81,15 +83,15 @@
     'v-voisins': 'M2 12l5-4 5 4v8H2zM12 12l5-4 5 4v8H12z',
     'v-amis': 'M3 5h11v7H7l-4 3zM10 15h7l4 3v-8h-3',
     'v-travail': 'M3 8h18v11H3zM9 8V5h6v3M3 13h18',
-    'v-societe': 'M12 4v16M7 20h10M5 7h14M5 7l-3 6h6zM19 7l-3 6h6z',
+    'v-autorites': 'M12 4v16M7 20h10M5 7h14M5 7l-3 6h6zM19 7l-3 6h6z',
     'v-rue': 'M8 3 5 21M16 3l3 18M12 5v3M12 11v3M12 17v3',
     'v-fragiles':
       'M12 12s-4-2.6-4-5.5A2.2 2.2 0 0 1 12 5a2.2 2.2 0 0 1 4 1.5C16 9.4 12 12 12 12ZM3 15h4l3 2h5a2 2 0 0 1 0 4H8M3 15v6',
-    'v-musulmans': 'M14 3a9 9 0 1 0 7 13 7 7 0 0 1-7-13Z',
-    'v-religions':
+    'v-musulmans_avis': 'M14 3a9 9 0 1 0 7 13 7 7 0 0 1-7-13Z',
+    'v-autres_religions':
       'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3',
-    'v-nature': 'M5 19c0-8 6-14 15-14 0 9-6 15-14 15M5 19l7-7',
-    'v-ecrans': 'M7 2h10v20H7zM11 18h2',
+    'v-animaux_nature': 'M5 19c0-8 6-14 15-14 0 9-6 15-14 15M5 19l7-7',
+    'v-numerique': 'M7 2h10v20H7zM11 18h2',
     'v-chambre': 'M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5M6 11h2',
     'v-cuisine':
       'M4 10h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6zM2 10h2M20 10h2M9 6c0-1 1-1 1-2M14 6c0-1 1-1 1-2',
@@ -103,6 +105,7 @@
     maison: 'maison',
     toilettes: 'tajwid',
     mosquee: 'vivre',
+    espace_public: 'v-rue',
   };
   export const vIcon = (id: string) => V_SAME[id] ?? `v-${id}`;
 </script>

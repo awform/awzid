@@ -8,18 +8,33 @@ import { and, eq, inArray, sql } from 'drizzle-orm';
 import { levelParts } from '@awform/content';
 import type { AdabEntry, Fiche } from '@awform/content/adab';
 import { applyRangement, entriesOfLesson, readAdabIndex } from '@awform/content/adab-classer';
-import { readFiches } from '@awform/content/akhlaq';
 import type { Db } from './client.js';
 import { currentLevelOf, trackLevels } from './parcours.js';
 import * as t from './schema.js';
 
-/** Rubriques de bon comportement de l'édition, rangées (index officiel > corrections > automatique). */
-export async function adabEntries(db: Db, editionId: string): Promise<AdabEntry[]> {
+const doc = async (db: Db, editionId: string, key: string) =>
+  (
+    await db
+      .select({ content: t.evalDoc.content })
+      .from(t.evalDoc)
+      .where(and(eq(t.evalDoc.editionId, editionId), eq(t.evalDoc.key, key)))
+  )[0]?.content ?? null;
+
+/**
+ * Rubriques de bon comportement de l'édition : avec l'index officiel des livres (`akhlaq.index`), ses seules
+ * rubriques, rangées comme il le dit ; sans index, classement automatique prudent. `unmatched` : rubriques de
+ * l'index introuvables dans les leçons publiées (à signaler aux livres).
+ */
+export async function adabCatalog(
+  db: Db,
+  editionId: string,
+): Promise<{ entries: AdabEntry[]; unmatched: string[]; index: boolean }> {
   const rows = await db
     .select({
       id: t.unit.id,
       level: t.unit.levelCode,
       n: t.unit.n,
+      kind: t.unit.kind,
       fa: sql<unknown>`${t.unitVersion.student}->'fiqh_adab'`,
       rub: sql<unknown>`${t.unitVersion.student}->'rubriques'`,
     })
@@ -28,7 +43,8 @@ export async function adabEntries(db: Db, editionId: string): Promise<AdabEntry[
     .where(
       and(
         eq(t.unitVersion.editionId, editionId),
-        eq(t.unit.kind, 'lecon'),
+        // leçons et bilans (révisions) ; jamais les épreuves (sujets) ; les bilans des enfants n'ont pas ce bloc
+        inArray(t.unit.kind, ['lecon', 'bilan']),
         sql`(${t.unitVersion.student} ? 'fiqh_adab' OR ${t.unitVersion.student} ? 'rubriques')`,
       ),
     );
@@ -37,28 +53,24 @@ export async function adabEntries(db: Db, editionId: string): Promise<AdabEntry[
       entriesOfLesson(r.id, r.level, r.n, {
         ...(r.fa ? { fiqh_adab: r.fa } : {}),
         ...(r.rub ? { rubriques: r.rub } : {}),
-      }),
+      }).map((e) => (r.kind === 'bilan' ? { ...e, bilan: true } : e)),
     )
     .sort((a, b) => a.level.localeCompare(b.level) || a.n - b.n || a.path.localeCompare(b.path));
-  const [idx] = await db
-    .select({ content: t.evalDoc.content })
-    .from(t.evalDoc)
-    .where(and(eq(t.evalDoc.editionId, editionId), eq(t.evalDoc.key, 'akhlaq.index')));
-  return applyRangement(entries, idx ? readAdabIndex(idx.content).map : null);
+  const idx = await doc(db, editionId, 'akhlaq.index');
+  const index = idx ? readAdabIndex(idx).rows : null;
+  return { ...applyRangement(entries, index), index: !!index?.length };
 }
 
-/** Fiches du livret « Bon comportement » importées avec l'édition (contrôlées de nouveau à la lecture). */
+/** Fiches du livret « Bon comportement » importées avec l'édition (contrôlées à l'import). */
 export async function akhlaqFiches(db: Db, editionId: string): Promise<Fiche[]> {
-  const [doc] = await db
-    .select({ content: t.evalDoc.content })
-    .from(t.evalDoc)
-    .where(and(eq(t.evalDoc.editionId, editionId), eq(t.evalDoc.key, 'akhlaq.fiches')));
-  const list = (doc?.content as { fiches?: unknown[] } | undefined)?.fiches ?? [];
-  return readFiches(list.map((raw, i) => ({ file: `akhlaq.fiches[${i}]`, raw }))).fiches.filter(
-    (f) => !f.test,
-  );
+  const c = (await doc(db, editionId, 'akhlaq.fiches')) as { fiches?: Fiche[] } | null;
+  return (c?.fiches ?? []).filter((f) => !f.test);
 }
 
+/** Chapitre du guide des parents importé avec l'édition (`gp.c18` « Transmettre les valeurs »), ou null. */
+export async function guideChapter(db: Db, editionId: string, id: string): Promise<unknown> {
+  return /^gp\.c\d{2}$/.test(id) ? doc(db, editionId, id) : null;
+}
 /**
  * Leçons (arabe et sciences) que l'élève a déjà atteintes : tous les livres des niveaux précédents de sa filière,
  * et dans son niveau courant les leçons faites ou commencées et la leçon où il en est.

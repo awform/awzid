@@ -22,6 +22,8 @@ const CACHE = `awform-shell-${version}`;
 const SHELL = '/';
 // lot 25 : les catalogues de langues (/i18n/*.json) ne sont pas préchargés : seul celui qui sert est gardé
 const isCatalog = (p: string) => p.startsWith('/i18n/');
+// A37/A39 : textes légaux hors coquille, copiés après l'activation (voir legalCopy)
+const LEGAL = ['/i18n/legal/fr.json', '/i18n/legal/en.json'];
 // lot 29 : les annotations du tajwid (une par sourate) ne sont pas préchargées : chargées à la demande et
 // gardées dans IndexedDB par l'application (hors ligne ensuite)
 const isTajwid = (p: string) => p.startsWith('/tajwid/');
@@ -32,10 +34,17 @@ const isRiwaya = (p: string) => p.startsWith('/riwayat/');
 // … la police d'une riwāya, une fois chargée, est gardée (hors ligne ensuite) dans un cache à part, conservé
 // aux mises à jour (le nom du fichier change avec la version du Complexe)
 const RIWAYAT_CACHE = 'awzid-riwayat-polices';
+// A37 : textes français des espaces de l'élève chargés par route (Prières, Vivre l'islam) : préchargés, eux
+const STUDENT_TEXTS = ['/i18n/fr-quotidien.json', '/i18n/fr-vivre.json', '/i18n/fr-coran.json'];
 const ASSETS = [
   ...build,
   ...files.filter(
-    (f) => !f.endsWith('.txt') && !isCatalog(f) && !isTajwid(f) && !isTraduction(f) && !isRiwaya(f),
+    (f) =>
+      !f.endsWith('.txt') &&
+      (!isCatalog(f) || STUDENT_TEXTS.includes(f)) &&
+      !isTajwid(f) &&
+      !isTraduction(f) &&
+      !isRiwaya(f),
   ),
 ];
 
@@ -99,9 +108,21 @@ sw.addEventListener('activate', (event) => {
       )
       // enregistrements locaux de plus de 7 jours : effacés même si l'écran n'est jamais rouvert (MIN-16)
       .then(() => purgeOldRecordings().catch(() => 0))
-      .then(() => sw.clients.claim()),
+      .then(() => sw.clients.claim())
+      // D-A39 (5) : pages légales et aide (hors coquille) gardées dès la première ouverture, sans bloquer
+      .then(() => void legalCopy()),
   );
 });
+
+/** Copie discrète des textes légaux (français, anglais) dans le cache de cette version, pour le hors ligne. */
+async function legalCopy() {
+  const c = await caches.open(CACHE);
+  for (const p of LEGAL)
+    if (!(await c.match(p)))
+      await fetch(p)
+        .then((r) => (r.ok ? c.put(p, r) : undefined))
+        .catch(() => undefined);
+}
 
 sw.addEventListener('fetch', (event) => {
   const req = event.request;

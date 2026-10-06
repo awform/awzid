@@ -42,8 +42,8 @@
     /** position dans la file (mémorisation : nouveau verset ou enchaînement) */
     onindex?: (i: number | null) => void;
     onend?: () => void;
-    /** ouvre la feuille « Réglages d'écoute » */
-    onsettings?: () => void;
+    /** ouvre le panneau « Réglages » du lecteur (à la section donnée : « ecoute », « recitateur ») */
+    onsettings?: (section?: 'ecoute' | 'recitateur') => void;
     onvolume?: (v: number) => void;
   } = $props();
 
@@ -177,7 +177,7 @@
   <button
     type="button"
     class="who"
-    onclick={() => onsettings?.()}
+    onclick={() => onsettings?.('recitateur')}
     title={reciter.nameFr}
     aria-label={t('cl.reglages_de', { nom: reciter.nameFr })}
     data-testid="mini-recitateur"
@@ -265,7 +265,7 @@
   <button
     type="button"
     class="ic rep"
-    onclick={() => onsettings?.()}
+    onclick={() => onsettings?.('ecoute')}
     aria-label={t('cl.reglages_ecoute')}
     title={t('cl.reglages_ecoute')}
     aria-haspopup="dialog"
