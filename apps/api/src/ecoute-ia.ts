@@ -374,10 +374,8 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
         const att = await portion(req.query.s, req.query.from, req.query.to);
         if (!att) return err(reply, 400, 'portion_invalide');
         if (!quota(req.auth!.accountId)) return err(reply, 429, 'trop_de_demandes');
-        let audio: Buffer | null = req.body;
-        const r = await client.ecouter(audio, mime);
+        const r = await client.ecouter(req.body, mime);
         // la voix n'est plus référencée nulle part (ni base, ni disque, ni journal)
-        audio = null;
         (req as { body: unknown }).body = null;
         if ('erreur' in r) {
           const code =

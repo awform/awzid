@@ -7,10 +7,12 @@ import { comparer, motsAttendus, SEUILS } from '../../../packages/hifz/dist/inde
 const [W, TSV, seuils] = process.argv.slice(2);
 if (seuils) Object.assign(SEUILS, JSON.parse(seuils));
 const T = new Map();
-for (const l of readFileSync(TSV, 'utf8').replace(/^﻿/, '').split('\n')) {
+for (const l of readFileSync(TSV, 'utf8')
+  .replace(/^\uFEFF/, '')
+  .split('\n')) {
   const x = l.replace(/\r$/, '');
   const t = x.indexOf('\t');
-  if (t > 0) T.set(x.slice(0, t).trim(), x.slice(t + 1).replace(/^﻿/, ''));
+  if (t > 0) T.set(x.slice(0, t).trim(), x.slice(t + 1).replace(/^\uFEFF/, ''));
 }
 const bism = T.get('1:1');
 const cas = new Map(JSON.parse(readFileSync(`${W}/cas.json`, 'utf8')).map((c) => [c.id, c]));

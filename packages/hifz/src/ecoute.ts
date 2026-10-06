@@ -107,7 +107,7 @@ export function motsAttendus(versets: readonly VersetTexte[], basmala = ''): Mot
   const out: MotAttendu[] = [];
   const bismCles = basmala ? basmala.split(' ').map(cleMot) : [];
   for (const v of versets) {
-    const toks = v.text.replace(/^﻿/, '').split(' ');
+    const toks = v.text.replace(/^\uFEFF/, '').split(' ');
     const avecBasmala =
       v.a === 1 &&
       v.s !== 1 &&

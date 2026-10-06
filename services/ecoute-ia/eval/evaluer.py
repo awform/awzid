@@ -40,8 +40,8 @@ def tanzil():
         if '\t' not in line:
             continue
         k, v = line.split('\t', 1)
-        s, a = k.replace('﻿', '').strip().split(':')
-        t[(int(s), int(a))] = v.replace('﻿', '')
+        s, a = k.replace('\ufeff', '').strip().split(':')
+        t[(int(s), int(a))] = v.replace('\ufeff', '')
     return t
 
 
