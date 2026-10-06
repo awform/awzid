@@ -109,7 +109,7 @@ const BUDGET_INITIAL = 150 * 1024;
 // Vivre l'islam chargés par route (static/i18n/fr-quotidien.json, fr-vivre.json, préchargés) : 409,1 Ko.
 // A5 (06/10/2026) : « Réciter et vérifier » (IA qui écoute la récitation, canal bêta) : bouton, bilans du carnet et
 // panneau à la demande (comparaison mot à mot, suivi en direct) ; textes dans static/i18n/fr-ecoute.json (hors
-// coquille) ; +11,6 Ko au total (main : 405,5 Ko), dont 9,2 Ko JAMAIS préchargés (en ligne seulement) → 418 Ko,
+// coquille) ; +11,9 Ko au total (main : 405,5 Ko), dont 9,6 Ko JAMAIS préchargés (en ligne seulement) → 418 Ko,
 // à valider (décision D-A5) ; appareil d'un élève : +2,4 Ko (352,4 → 354,8 Ko), sous BUDGET_ELEVE.
 const BUDGET_TOTAL = 418 * 1024;
 const BUDGET_FONTS = 600 * 1024;

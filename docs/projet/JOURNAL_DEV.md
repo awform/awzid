@@ -8,6 +8,56 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Chantier A5 : « L'IA qui écoute la récitation » (prototype, canal bêta)
+
+Branche `a5-ecoute-wip` (worktree `~/awform-a5`, depuis `main` 0f6e305), **non fusionnée** (file de fusion : après
+F3). Décision du client : prototype maintenant, derrière l'interrupteur `ecoute_ia`. Rapport chiffré, architecture et
+limites : `docs/projet/ECOUTE_IA.md` ; licences : `LICENCES.md` § 9 ; exploitation : `EXPLOITATION.md` § 11 ;
+décisions : D-A5.
+
+1. **Règles** : la machine ne repère que des MOTS (oublié, ajouté, remplacé, ordre, verset sauté) contre le texte
+   Tanzil (Ḥafṣ) ; jamais de tajwīd, de note ni de « valide » ; confiance par écart, doute = silence ; rappel
+   permanent « Seul ton maître juge ta récitation » ; « Envoyer au maître » (envoi du lot 16) ; voix jamais
+   conservée ; accord `analyse_vocale_ia` (type du lot F3) au premier usage, enfant : code parent.
+2. **Évaluation** (récitations réelles du Complexe, 5 récitateurs Ḥafṣ, 203 cas dont 163 erreurs simulées en
+   découpant l'audio, 3 conditions : propre, téléphone, voix aiguë ; 609 écoutes, 6 189 mots) — NeMo RNN-T
+   (CC-BY-4.0) **retenu** : **0 fausse alerte**, oublis 50-60 % (67-80 % hors premier/dernier mot), remplacements
+   53-57 %, ajouts 59-62 %, inversions 71-83 %, versets sautés 78 % ; ≈ 3 s de calcul par minute d'audio
+   (4 cœurs). NeMo CTC : moins bon sur les ajouts et 2 fausses alertes (voix aiguë) ; Whisper (Tarteel) : pas
+   meilleur, sans instants, 9 fois plus lent ; muʿallim : écarté (modèle de prononciation/tajwīd).
+3. **Comparaison mot à mot** `packages/hifz/src/ecoute.ts` (partagée serveur / appareil) : normalisation pour
+   comparer seulement (Tanzil jamais modifié), alignement (mots écrits en un et entendus en deux, lettres isolées,
+   basmala facultative, isti'ādha et āmīn permis, élève qui se reprend), seuils calibrés (`SEUILS`).
+4. **Service** `services/ecoute-ia/` (Python, CPU, image `awzid/ecoute-ia`, profil compose `ecoute`) : file de
+   traitement (réserve d'un modèle par calcul simultané — NeMo `transcribe()` n'est pas sûr entre fils : erreur
+   500 constatée et corrigée —, 8 en attente, sinon 503), refus > 5 min, conteneur en lecture seule, `/tmp` en
+   mémoire, aucun port ni secret ; audio en mémoire seulement (memfd) ; essai réel : Āyat al-Kursī (73,6 s)
+   vérifiée en 3,7 s, 1,2 Go par modèle ; 5 min d'audio en 34 s (4 fils).
+5. **Suivi en direct** (demande du client, « comme chez Tarteel ») : mesuré sur 12 séances réelles rejouées
+   seconde par seconde — vitesse suffisante (0,36 s de calcul par seconde, mot en cours ≈ 1,5 s de retard) mais
+   passages isolés moins bien reconnus : 7 fausses alertes en direct (23 avec des passages courts). Livré en
+   ESSAI sans erreurs signalées pendant la récitation (`SIGNALER_EN_DIRECT = false`) : le texte avance, le mot en
+   cours s'éclaire, le texte caché se dévoile ; le bilan vient de la vérification de tout l'enregistrement. Ce
+   qu'il faut pour signaler en direct : `ECOUTE_IA.md` § 4 (flux continu avec contexte, WebSocket, remesure).
+6. **API** `apps/api/src/ecoute-ia.ts` : état, accord (et retrait), vérification d'une portion (écarts + positions),
+   suivi en direct (séance propre au compte), « L'IA s'est trompée ? » (compteur sans voix ni mots), quota par
+   heure, journal sans contenu. Points à brancher : interrupteur F5 (`ecoute_ia`, défaut « beta ») et accord F3.
+7. **Appli** `apps/web/src/lib/ecoute/` : bouton « Réciter et vérifier » dans le lecteur (mode Mémoriser) et le
+   carnet de hifẓ (portion du jour) ; panneau : accord, « Enregistrer puis vérifier », « Suivi en direct (essai) »
+   avec texte caché qui se dévoile et mot en cours, résultat surligné (oublié, changé, désordre, ajouté), message
+   bienveillant (« 2 mots à revoir », enfants : « Bravo pour tes efforts ! »), « Envoyer au maître » ; bilans de
+   séance sur l'appareil, repris par le carnet (« À revoir »). Panneau et liste chargés À LA DEMANDE, jamais
+   préchargés (`_app/ecoute.json`). Textes `ec.*` en 5 langues (`static/i18n/fr-ecoute.json`, hors coquille ;
+   es/de/ar à relire, D14). « L'IA s'est trompée ? » : compteur pour mesurer les fausses alertes en bêta.
+8. **Poids** : total 417,4 Ko (main 405,5) → budget 418 Ko à valider (D-A5) ; appareil d'un élève 354,8 Ko ≤ 355.
+9. **Tests** : `pnpm` build, typecheck, lint, tests et budget verts — unitaires **1 643 réussis, 1 ignoré** (hifz
+   +14 `ecoute.test.ts` ; API +13 : `a5.test.ts` 11, `a5-compose.test.ts` 2, env-scopes ; web +2) ; e2e `a5.spec.ts`
+   (2 parcours × 2 appareils : micro FACTICE de Chromium, service d'écoute FACTICE `e2e/ecoute-essai.mjs`) ;
+   service Python 9 (`tests/test_ecoute.py`, dans l'image en lecture seule : aucun fichier écrit, descripteurs
+   fermés, séance effacée, passage du direct effacé dès transcription, > 5 min refusé, file pleine sans erreur 500).
+
+---
+
 ## 06/10/2026 — Chantier A39 (suite) : décisions D-A39 appliquées
 
 Branche `a39b-certificat-wip` (depuis `main` 7785a3f).
