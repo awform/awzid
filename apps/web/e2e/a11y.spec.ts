@@ -59,7 +59,7 @@ test.describe('adulte', () => {
       ['/niveaux/ad1', undefined],
       ['/lecons/ad1.l01', undefined],
       ['/coran', undefined],
-      ['/coran/lecteur?s=1', '[data-verse="1:2"]'],
+      ['/coran/lecteur?s=1&vue=versets', '[data-verse="1:2"]'],
       ['/hifz', undefined],
       ['/sciences', undefined],
       ['/lectures', undefined],

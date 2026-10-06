@@ -2,7 +2,7 @@
  * Lot 26 — public de l'écran : thème graphique et navigation (3 à 5 entrées par public).
  * Fonctions pures (testées dans audience.test.ts), utilisées par la mise en page.
  */
-import type { ThemeName } from '$lib/theme/tokens';
+import type { PaletteName, ThemeName } from '$lib/theme/tokens';
 
 export type Audience = 'enfant' | 'ado' | 'adulte' | 'parent' | 'enseignant' | 'admin' | 'visiteur';
 
@@ -43,6 +43,24 @@ export function audienceOf(c: Context): Audience {
 
 export function themeOf(a: Audience): ThemeName {
   return a === 'enfant' ? 'jardin' : a === 'ado' ? 'nuit' : a === 'adulte' ? 'manuscrit' : 'clair';
+}
+
+/**
+ * Coran épuré (06/10/2026) — palette « verdure » (vert, blanc, or) par-dessus le thème du public : dans
+ * l'espace Coran (et le carnet de hifẓ) pour les élèves et les visiteurs. Mettre `VERDURE_PARTOUT` à vrai en
+ * fait le thème clair PAR DÉFAUT de toute l'application élève (décision du client après validation).
+ * Les adultes responsables (parent, enseignant, administration) gardent le thème « clair et minimal ».
+ */
+export const VERDURE_PARTOUT = false;
+const ELEVES: Audience[] = ['enfant', 'ado', 'adulte', 'visiteur'];
+export function paletteOf(
+  a: Audience,
+  path: string,
+  partout = VERDURE_PARTOUT,
+): PaletteName | null {
+  if (!ELEVES.includes(a)) return null;
+  if (partout) return 'verdure';
+  return under(path, ['/coran', '/hifz']) ? 'verdure' : null;
 }
 
 export type NavId =

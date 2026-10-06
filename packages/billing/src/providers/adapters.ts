@@ -72,7 +72,7 @@ export class StripeProvider extends Skeleton {
       'line_items[0][quantity]': String(input.places ?? 1),
       'line_items[0][price_data][currency]': input.devise.toLowerCase(),
       'line_items[0][price_data][unit_amount]': String(input.montant),
-      'line_items[0][price_data][product_data][name]': `AWFORM ${input.plan}`,
+      'line_items[0][price_data][product_data][name]': `Awzid ${input.plan}`,
       ...(input.renouvelable
         ? input.periodeMois === 12
           ? { 'line_items[0][price_data][recurring][interval]': 'year' }

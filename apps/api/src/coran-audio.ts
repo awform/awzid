@@ -16,7 +16,7 @@
 import { createReadStream, existsSync } from 'node:fs';
 import { join, normalize } from 'node:path';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { and, asc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull, notLike, sql } from 'drizzle-orm';
 import {
   BEGINNER_RECITER,
   RIWAYA_FR,
@@ -73,6 +73,15 @@ function publicReciter(r: Reciter, verses: number) {
   };
 }
 
+/**
+ * Coran épuré : les récitateurs d'ESSAI (« essai-* », bips non coraniques des tests) ne sont JAMAIS proposés
+ * hors des tests, même importés par erreur dans une base de démonstration ou de production. Seule l'API des
+ * e2e les montre (AWFORM_AUDIO_ESSAI=on).
+ */
+export const showTestReciters = () => process.env.AWFORM_AUDIO_ESSAI === 'on';
+const hideTestReciters = () =>
+  showTestReciters() ? undefined : notLike(t.quranReciter.id, 'essai-%');
+
 async function activeReciters(db: Db, ids?: string[]) {
   const rows = await db
     .select({
@@ -84,6 +93,7 @@ async function activeReciters(db: Db, ids?: string[]) {
       and(
         eq(t.quranReciter.status, 'actif'),
         ids ? inArray(t.quranReciter.id, ids.length ? ids : ['']) : undefined,
+        hideTestReciters(),
       ),
     )
     .orderBy(asc(t.quranReciter.id));
@@ -97,7 +107,7 @@ async function activeReciter(db: Db, id: string): Promise<Reciter | null> {
   const [r] = await db
     .select()
     .from(t.quranReciter)
-    .where(and(eq(t.quranReciter.id, id), eq(t.quranReciter.status, 'actif')));
+    .where(and(eq(t.quranReciter.id, id), eq(t.quranReciter.status, 'actif'), hideTestReciters()));
   return r ?? null;
 }
 
@@ -671,7 +681,13 @@ export function registerCoranAudio(app: FastifyInstance, db: Db, audioDir: strin
       .from(t.relayReciter)
       .innerJoin(t.quranReciter, eq(t.quranReciter.id, t.relayReciter.reciterId))
       .innerJoin(t.quranTrack, eq(t.quranTrack.reciterId, t.relayReciter.reciterId))
-      .where(and(eq(t.relayReciter.relayId, relay.id), eq(t.quranReciter.status, 'actif')))
+      .where(
+        and(
+          eq(t.relayReciter.relayId, relay.id),
+          eq(t.quranReciter.status, 'actif'),
+          hideTestReciters(),
+        ),
+      )
       .orderBy(asc(t.quranTrack.reciterId), asc(t.quranTrack.sura), asc(t.quranTrack.aya));
     const by = new Map<
       string,

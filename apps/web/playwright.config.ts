@@ -44,8 +44,9 @@ const TEST_DB = (() => {
   return u.toString();
 })();
 process.env.E2E_TOTP_FILE ??= join(tmpdir(), `awform-e2e-totp-counter${ISOLE ? `-${SUFFIX}` : ''}`);
-const API_PORT = 3100;
-const WEB_PORT = 4180;
+// ports changeables (plusieurs dossiers de travail lancent leurs e2e en même temps sur la VM)
+const API_PORT = Number(process.env.E2E_API_PORT ?? 3100);
+const WEB_PORT = Number(process.env.E2E_WEB_PORT ?? 4180);
 process.env.E2E_KEY ??= randomBytes(32).toString('hex');
 const E2E_KEY = process.env.E2E_KEY;
 // lot 27 : stockage de l'audio d'ESSAI (bips non coraniques) servi par l'API de test
@@ -122,8 +123,10 @@ export default defineConfig({
         AWFORM_RECITATION_KEY: `v1:${randomBytes(32).toString('hex')}`,
         // lot 21 : clé de chiffrement des messages école ↔ famille (tirée au hasard)
         AWFORM_MESSAGE_KEY: `v1:${randomBytes(32).toString('hex')}`,
-        // lot 27 : fichiers audio d'essai (bips), jamais une récitation
+        // lot 27 : fichiers audio d'essai (bips), jamais une récitation ; récitateurs « essai-* » montrés
+        // SEULEMENT en test (Coran épuré : jamais en démonstration ni en production)
         AWFORM_AUDIO_DIR: AUDIO_DIR,
+        AWFORM_AUDIO_ESSAI: 'on',
         // A3 : audio des leçons d'en1
         AWFORM_LECONS_AUDIO_DIR: LECONS_DIR,
         AWFORM_VAPID_PUBLIC: `B${'A'.repeat(86)}`,

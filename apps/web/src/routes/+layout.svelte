@@ -19,7 +19,7 @@
   import { purgeOldRecordings } from '$lib/recordings';
   import { remindersOn } from '$lib/quotidien/reglages';
   import { cachedMe, fetchMe, type Me } from '$lib/session';
-  import { activeNav, audienceOf, navFor, themeOf } from '$lib/ui/audience';
+  import { activeNav, audienceOf, navFor, paletteOf, themeOf } from '$lib/ui/audience';
   import Brand from '$lib/ui/Brand.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import { applyMode, nextMode, readMode, writeMode, type Mode } from '$lib/ui/mode';
@@ -54,8 +54,20 @@
   const showTabs = $derived(!NO_TABS.some((p) => page.url.pathname.startsWith(p)));
 
   $effect(() => {
-    document.documentElement.dataset.theme = themeOf(audience);
-    document.documentElement.dataset.public = audience;
+    const root = document.documentElement;
+    root.dataset.theme = themeOf(audience);
+    root.dataset.public = audience;
+    // Coran épuré : palette « vert, blanc, or » par-dessus le thème (espace Coran des élèves)
+    const pal = paletteOf(audience, page.url.pathname);
+    if (pal) root.dataset.palette = pal;
+    else delete root.dataset.palette;
+    // couleur de la barre du navigateur : celle de l'en-tête affiché
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta)
+      meta.setAttribute(
+        'content',
+        getComputedStyle(root).getPropertyValue('--header').trim() || '#15324a',
+      );
   });
 
   function cycleMode() {

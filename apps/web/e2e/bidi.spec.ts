@@ -1,6 +1,7 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Locator, Page } from '@playwright/test';
+import { setTajwid } from './coran';
 import { expect, test } from './fixtures';
 
 /**
@@ -80,13 +81,14 @@ test('arabe et français : chaque segment est isolé dans sa direction (cas rée
 });
 
 test('espace Coran : libellés isolés, texte coranique jamais découpé', async ({ page }, info) => {
-  test.skip(!info.project.name.startsWith('desktop'), 'légende dépliée sur ordinateur');
+  test.skip(!info.project.name.startsWith('desktop'), 'une seule passe');
   const bad: string[] = [];
   // légende du tajwīd : termes arabes dans les libellés français
-  await page.goto('/coran/lecteur?s=114');
+  await page.goto('/coran/lecteur?s=114&vue=versets');
   await expect(page.locator('[data-verse="114:6"]')).toBeVisible();
-  await page.getByTestId('tajwid').click();
+  await setTajwid(page, true);
   const leg = page.getByTestId('tajwid-legende');
+  await leg.locator('summary').click();
   await expect(leg.locator('.ex .tj').first()).toBeVisible();
   for (const f of await fautes(leg)) bad.push(`légende ${f}`);
   // mes récitateurs : noms arabes et français, licences
@@ -95,7 +97,7 @@ test('espace Coran : libellés isolés, texte coranique jamais découpé', async
   for (const f of await fautes(page.locator('main'))) bad.push(`récitateurs ${f}`);
   expect(bad, bad.join('\n')).toEqual([]);
   // le texte du Muṣḥaf n'est jamais enveloppé par le composant de découpage
-  await page.goto('/coran/lecteur?s=114');
+  await page.goto('/coran/lecteur?s=114&vue=versets');
   await expect(page.locator('[data-verse="114:6"]')).toBeVisible();
   await expect(
     page.locator('.quran-text bdi, .quran-text .bidi-ar, .quran-text .bidi-ltr'),

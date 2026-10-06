@@ -1,5 +1,6 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { openDisplay } from './coran';
 import { expect, newAdult, PARENT_PIN, password, test } from './fixtures';
 import { loginTeacher } from './enseignant';
 import { solveExercise, unitData } from './solve';
@@ -243,8 +244,10 @@ test.describe('lot 8', () => {
     await page.getByTestId('traduction').click();
     await shot('37-livret-page');
     await page.clock.install();
-    await page.goto('/coran/lecteur?s=112');
+    await page.goto('/coran/lecteur?s=112&vue=versets');
     await page.locator('[data-verse="112:1"]').waitFor();
+    await openDisplay(page);
+    await page.locator('details.guide summary').click();
     await page.getByTestId('lire').click();
     await page.locator('.w.on').waitFor();
     await shot('38-lecteur-coranique');
@@ -373,7 +376,7 @@ test.describe('lot 12', () => {
   }, info) => {
     const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
     mkdirSync(DIR, { recursive: true });
-    await page.goto('/coran/lecteur?s=2&from=1&to=7');
+    await page.goto('/coran/lecteur?s=2&vue=versets');
     await page.locator('[data-verse="2:5"]').first().waitFor();
     await page.evaluate(() => document.fonts.ready);
     await page.locator('[data-verse="2:2"]').first().scrollIntoViewIfNeeded();
