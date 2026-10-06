@@ -8,7 +8,7 @@
   /**
    * Réglages protecteurs des mineurs (lot 11, étude rec. 5) : l'état de chaque protection pour chaque
    * profil d'enfant ou d'ado, avec les valeurs PAR DÉFAUT les plus protectrices. Ce qui peut changer se
-   * change ailleurs (accord du tuteur, classe, rappels) ; le reste n'existe tout simplement pas dans AWFORM.
+   * change ailleurs (accord du tuteur, classe, rappels) ; le reste n'existe tout simplement pas dans Awzid.
    */
   interface P {
     mineur: boolean;

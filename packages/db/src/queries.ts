@@ -2,6 +2,7 @@
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import type { Db } from './client.js';
 import * as t from './schema.js';
+import { annotateLessonVerses } from './versets.js';
 
 export interface EditionRow {
   id: string;
@@ -81,6 +82,8 @@ export async function getUnitForStudent(db: Db, editionId: string, unitId: strin
     .limit(1);
   const unit = rows[0];
   if (!unit) return null;
+  // versets cités dans les points, notes et exemples : repérés sur le texte Tanzil (affichés en bloc de verset)
+  await annotateLessonVerses(db, unit.lesson);
   const exercises = await db
     .select({
       id: t.exercise.id,

@@ -17,7 +17,7 @@ test('lecteur coranique : tanwins affichés comme le Muṣḥaf de Médine, text
   const iqlab = verses.find((v) => /[ًٌ]ۢ/.test(v.text))!;
   expect(fused && iqlab).toBeTruthy();
 
-  await page.goto('/coran/lecteur?s=2');
+  await page.goto('/coran/lecteur?s=2&vue=versets');
   for (const v of [fused, iqlab]) {
     const shown = (await page.locator(`[data-verse="2:${v.a}"]`).first().textContent()) ?? '';
     // plus aucune suite tanwin + petite mīm à l'écran

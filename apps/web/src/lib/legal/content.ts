@@ -27,7 +27,7 @@ export const LEGAL: Record<LegalKey, LegalPage> = {
       {
         titre: 'Éditeur',
         paras: [
-          'AWFORM (nom commercial envisagé : Awzid) — [raison sociale, forme juridique, capital : à compléter].',
+          'Awzid — [raison sociale, forme juridique, capital : à compléter].',
           'Siège : [adresse à compléter]. Immatriculation : [RCS / SIREN ou NINEA : à compléter].',
           'Directeur ou directrice de la publication : [nom à compléter].',
           'Contact : [adresse électronique de contact à créer].',
@@ -42,7 +42,7 @@ export const LEGAL: Record<LegalKey, LegalPage> = {
       {
         titre: 'Propriété intellectuelle',
         paras: [
-          "Les livres, leçons, illustrations, exercices et textes AWFORM sont protégés ; toute reproduction hors de l'usage personnel ou scolaire prévu par les conditions d'utilisation est interdite sans autorisation écrite.",
+          "Les livres, leçons, illustrations, exercices et textes Awzid sont protégés ; toute reproduction hors de l'usage personnel ou scolaire prévu par les conditions d'utilisation est interdite sans autorisation écrite.",
           'Texte coranique : Tanzil (tanzil.net), riwāya Ḥafṣ ʿan ʿĀṣim, reproduit à l’identique, sans aucune modification. Métadonnées du Coran (ajzāʾ, aḥzāb, pages du Muṣḥaf de Médine) : Tanzil.info, licence Creative Commons Attribution 3.0.',
         ],
       },
@@ -55,7 +55,7 @@ export const LEGAL: Record<LegalKey, LegalPage> = {
       {
         titre: 'Objet',
         paras: [
-          "AWFORM est une application d'apprentissage de l'arabe, de mémorisation du Coran (hifẓ) et d'éducation religieuse de base, qui accompagne les livres AWFORM. Les présentes conditions règlent son utilisation.",
+          "Awzid est une application d'apprentissage de l'arabe, de mémorisation du Coran (hifẓ) et d'éducation religieuse de base, qui accompagne les livres Awzid. Les présentes conditions règlent son utilisation.",
         ],
       },
       {
@@ -78,7 +78,7 @@ export const LEGAL: Record<LegalKey, LegalPage> = {
       {
         titre: 'Offres, paiement, résiliation',
         paras: [
-          "Une offre gratuite permet d'essayer les premières leçons. Les formules payantes, leurs prix et leur durée sont indiqués avant l'achat ; seul l'adulte peut acheter (code parent). Aucune donnée de carte ne passe par AWFORM : le paiement est fait chez le prestataire choisi.",
+          "Une offre gratuite permet d'essayer les premières leçons. Les formules payantes, leurs prix et leur durée sont indiqués avant l'achat ; seul l'adulte peut acheter (code parent). Aucune donnée de carte ne passe par Awzid : le paiement est fait chez le prestataire choisi.",
           "L'abonnement peut être arrêté à tout moment ; les droits restent acquis jusqu'à la fin de la période payée. [Droit de rétractation, remboursement : à compléter selon le pays et le prestataire.]",
         ],
       },
@@ -104,7 +104,7 @@ export const LEGAL: Record<LegalKey, LegalPage> = {
         titre: 'Responsable du traitement',
         paras: [
           '[Raison sociale et adresse : à compléter]. Contact pour vos données : [adresse électronique à créer]. Délégué à la protection des données : [à désigner si nécessaire].',
-          "Pour une école qui utilise l'espace école (classe papier, résultats, certificats), l'école est responsable des données qu'elle saisit ; AWFORM agit pour son compte (sous-traitant). [Contrat de sous-traitance à prévoir.]",
+          "Pour une école qui utilise l'espace école (classe papier, résultats, certificats), l'école est responsable des données qu'elle saisit ; Awzid agit pour son compte (sous-traitant). [Contrat de sous-traitance à prévoir.]",
         ],
       },
       {
@@ -260,7 +260,7 @@ export const FAQ: Array<{ titre: string; items: FaqItem[] }> = [
       },
       {
         q: "J'ai oublié mon mot de passe.",
-        r: "[Procédure de réinitialisation par e-mail : disponible à l'ouverture publique, avec le service d'e-mail.] En attendant, contactez l'école ou l'équipe AWFORM.",
+        r: "[Procédure de réinitialisation par e-mail : disponible à l'ouverture publique, avec le service d'e-mail.] En attendant, contactez l'école ou l'équipe Awzid.",
       },
       {
         q: "L'application est indisponible, que faire ?",

@@ -116,6 +116,13 @@ const MUSHAF_SOMBRE = {
   'mp-ink2': '#a9c5b5',
 };
 
+/**
+ * Coran épuré (06/10/2026) — OR des commandes actives (sélecteurs sourate / verset / page / juzʾ, préréglage
+ * choisi) : fond doré très clair, texte or sombre, filet or. Commun à tous les thèmes (contrastes contrôlés).
+ */
+const OR_CLAIR = { 'or-soft': '#fbf1d3', 'or-ink': '#6e5000', 'or-line': '#c99a2e' };
+const OR_SOMBRE = { 'or-soft': '#33290d', 'or-ink': '#f0d27e', 'or-line': '#c9a24a' };
+
 // « ﷺ » et l'arabe cité dans une phrase française : glyphes pris dans Noto Naskh Arabic (pas de repli illisible)
 const SANS = "'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif";
 /** titres « manuscrit » : serif du système (aucun téléchargement de police supplémentaire) */
@@ -154,6 +161,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       ...LETTRES_CLAIR,
       ...TAJWID_CLAIR,
       ...MUSHAF_CLAIR,
+      ...OR_CLAIR,
       primary: '#1b6a85',
       'on-primary': '#ffffff',
       'primary-soft': '#e2f0f5',
@@ -189,6 +197,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       ...LETTRES_SOMBRE,
       ...TAJWID_SOMBRE,
       ...MUSHAF_SOMBRE,
+      ...OR_SOMBRE,
       primary: '#72c6e0',
       'on-primary': '#07141b',
       'primary-soft': '#1b3340',
@@ -238,6 +247,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       ...LETTRES_CLAIR,
       ...TAJWID_CLAIR,
       ...MUSHAF_CLAIR,
+      ...OR_CLAIR,
       primary: '#1f7a52',
       'on-primary': '#ffffff',
       'primary-soft': '#ddf3e6',
@@ -273,6 +283,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       ...LETTRES_SOMBRE,
       ...TAJWID_SOMBRE,
       ...MUSHAF_SOMBRE,
+      ...OR_SOMBRE,
       primary: '#7fd6a6',
       'on-primary': '#0b1f15',
       'primary-soft': '#1d3a2c',
@@ -325,6 +336,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       ...LETTRES_SOMBRE,
       ...TAJWID_SOMBRE,
       ...MUSHAF_SOMBRE,
+      ...OR_SOMBRE,
       primary: '#8fd0ff',
       'on-primary': '#081325',
       'primary-soft': '#1c2d4f',
@@ -361,6 +373,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       ...LETTRES_CLAIR,
       ...TAJWID_CLAIR,
       ...MUSHAF_CLAIR,
+      ...OR_CLAIR,
       primary: '#3346a8',
       'on-primary': '#ffffff',
       'primary-soft': '#e6eafb',
@@ -413,6 +426,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       ...LETTRES_CLAIR,
       ...TAJWID_CLAIR,
       ...MUSHAF_CLAIR,
+      ...OR_CLAIR,
       primary: '#1d5f57',
       'on-primary': '#ffffff',
       'primary-soft': '#e3efe9',
@@ -448,6 +462,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       ...LETTRES_SOMBRE,
       ...TAJWID_SOMBRE,
       ...MUSHAF_SOMBRE,
+      ...OR_SOMBRE,
       primary: '#8fd1bd',
       'on-primary': '#0f241e',
       'primary-soft': '#1d332c',
@@ -477,6 +492,99 @@ export const THEMES: Record<ThemeName, Theme> = {
     },
     motifs: { fond: etoile('#a8792a', 0.08), carte: 'none' },
     mouvement: MOUVEMENT,
+  },
+};
+
+/**
+ * PALETTES — couleurs seules, posées PAR-DESSUS le thème du public (attribut `data-palette` de <html>) : le
+ * thème garde ses polices, tailles, cibles et rayons (le Jardin des enfants reste grand), la palette remplace
+ * les couleurs. Clair et sombre ; « auto » suit la préférence du système, comme les thèmes.
+ *
+ * « verdure » (Coran épuré, 06/10/2026, souhait du client) : VERT, BLANC, OR — fond blanc et vert très clair,
+ * en-tête blanc, actions vertes, commandes actives dorées ; sombre : vert nuit et or. Posée dans l'espace Coran
+ * pour les élèves ; prévue pour devenir le thème clair PAR DÉFAUT de toute l'application élève par un seul
+ * réglage (`VERDURE_PARTOUT`, `lib/ui/audience.ts`). Contrastes contrôlés comme les thèmes (tokens.test.ts).
+ */
+export type PaletteName = 'verdure';
+export const PALETTE_NAMES: PaletteName[] = ['verdure'];
+export const PALETTES: Record<
+  PaletteName,
+  { clair: Record<string, string>; sombre: Record<string, string> }
+> = {
+  verdure: {
+    clair: {
+      ink: '#13231a',
+      ink2: '#44594c',
+      paper: '#f6fbf7',
+      card: '#ffffff',
+      surface: '#ecf6ef',
+      line: '#d3e8da',
+      teal: '#11683f',
+      navy: '#0f4a2e',
+      header: '#ffffff',
+      'on-header': '#14563a',
+      good: '#1f9d6b',
+      soft: '#e1f2e7',
+      ...LETTRES_CLAIR,
+      ...TAJWID_CLAIR,
+      ...MUSHAF_CLAIR,
+      'mp-paper': '#ffffff',
+      ...OR_CLAIR,
+      primary: '#16653f',
+      'on-primary': '#ffffff',
+      'primary-soft': '#e1f2e7',
+      accent: '#b8892c',
+      'ok-bg': '#e6f5ec',
+      'ok-ink': '#17703f',
+      'bad-ink': '#b3261e',
+      'bad-bg': '#fdecea',
+      'warn-bg': '#fdf5dc',
+      'warn-ink': '#6e5000',
+      'soon-ink': '#7d5a00',
+      sand: '#f1f8f3',
+      gold: '#e0b23f',
+      info: '#1f4e79',
+      'info-bg': '#e7f0fa',
+      focus: '#16653f',
+      illus: '#ffffff',
+      mark: '#fbecb8',
+    },
+    sombre: {
+      ink: '#e8f2ec',
+      ink2: '#a9c5b5',
+      paper: '#0a1611',
+      card: '#10201a',
+      surface: '#152a20',
+      line: '#24402f',
+      teal: '#82d9a7',
+      navy: '#bfe8d3',
+      header: '#10201a',
+      'on-header': '#e8f2ec',
+      good: '#4fd39a',
+      soft: '#1b3a2b',
+      ...LETTRES_SOMBRE,
+      ...TAJWID_SOMBRE,
+      ...MUSHAF_SOMBRE,
+      ...OR_SOMBRE,
+      primary: '#82d9a7',
+      'on-primary': '#0b1f15',
+      'primary-soft': '#1b3a2b',
+      accent: '#d8b45c',
+      'ok-bg': '#163126',
+      'ok-ink': '#8fe3b8',
+      'bad-ink': '#ffb4ab',
+      'bad-bg': '#3b1a17',
+      'warn-bg': '#33290d',
+      'warn-ink': '#f5d27a',
+      'soon-ink': '#f5d27a',
+      sand: '#152a20',
+      gold: '#d8b45c',
+      info: '#a9cdf2',
+      'info-bg': '#16283a',
+      focus: '#d8b45c',
+      illus: '#f4f1ea',
+      mark: '#4a3d12',
+    },
   },
 };
 
@@ -534,20 +642,31 @@ export const CONTRAST_PAIRS: Array<{ fg: string; bg: string; grand?: boolean; us
     { fg, bg: 'mp-paper', usage: `tajwid ${fg} sur la page du Muṣḥaf` },
     { fg, bg: 'mp-mark', grand: true, usage: `tajwid ${fg} sur le verset choisi` },
   ]),
+  // Coran épuré : commandes actives dorées
+  { fg: 'or-ink', bg: 'or-soft', usage: 'sélecteur actif (or)' },
+  { fg: 'or-ink', bg: 'card', usage: 'libellé doré sur la barre' },
+  { fg: 'ink', bg: 'or-soft', usage: 'texte sur fond doré' },
+  { fg: 'mp-ink', bg: 'mp-mint', usage: 'barre claire du Coran' },
 ];
 
 /** Écarts connus (aucun écart NOUVEAU n'est accepté). */
 export const KNOWN_CONTRAST_GAPS: string[] = [];
 
-/** Les huit palettes contrôlées : chaque thème dans ses deux modes. */
+/** Les palettes contrôlées : chaque thème dans ses deux modes, puis chaque palette (verdure) dans les siens. */
 export function palettes(): Array<{ nom: string; couleurs: Record<string, string> }> {
-  return THEME_NAMES.flatMap((n) => [
-    { nom: `${n}/${THEMES[n].naturel}`, couleurs: THEMES[n].couleurs },
-    {
-      nom: `${n}/${THEMES[n].naturel === 'clair' ? 'sombre' : 'clair'}`,
-      couleurs: THEMES[n].inverse,
-    },
-  ]);
+  return [
+    ...THEME_NAMES.flatMap((n) => [
+      { nom: `${n}/${THEMES[n].naturel}`, couleurs: THEMES[n].couleurs },
+      {
+        nom: `${n}/${THEMES[n].naturel === 'clair' ? 'sombre' : 'clair'}`,
+        couleurs: THEMES[n].inverse,
+      },
+    ]),
+    ...PALETTE_NAMES.flatMap((n) => [
+      { nom: `palette ${n}/clair`, couleurs: PALETTES[n].clair },
+      { nom: `palette ${n}/sombre`, couleurs: PALETTES[n].sombre },
+    ]),
+  ];
 }
 
 function colorVars(c: Record<string, string>): Array<[string, string]> {
@@ -602,6 +721,12 @@ export function renderCss(themes: Record<ThemeName, Theme> = THEMES): string {
     out.push(block(sel, [...colorVars(t.couleurs), ...otherVars(t)], nat));
     out.push(block(`[data-theme='${n}'][data-mode='${invMode}']`, colorVars(t.inverse), inv));
   }
+  // palettes (couleurs seules) APRÈS les thèmes : à spécificité égale, elles l'emportent
+  for (const n of PALETTE_NAMES) {
+    const sel = `[data-palette='${n}']`;
+    out.push(block(`${sel},\n${sel}[data-mode='clair']`, colorVars(PALETTES[n].clair), 'light'));
+    out.push(block(`${sel}[data-mode='sombre']`, colorVars(PALETTES[n].sombre), 'dark'));
+  }
   // sans réglage de l'appareil, les thèmes clairs suivent la préférence sombre du système ; la « nuit »
   // reste sombre (c'est son identité) sauf réglage « clair » explicite
   const auto = THEME_NAMES.filter((n) => themes[n].naturel === 'clair')
@@ -616,7 +741,13 @@ export function renderCss(themes: Record<ThemeName, Theme> = THEMES): string {
         .join('\n');
     })
     .join('\n');
-  out.push(`@media (prefers-color-scheme: dark) {\n${auto}}\n`);
+  const autoPal = PALETTE_NAMES.map((n) =>
+    block(`:root:not([data-mode])[data-palette='${n}']`, colorVars(PALETTES[n].sombre), 'dark')
+      .split('\n')
+      .map((l) => (l ? `  ${l}` : l))
+      .join('\n'),
+  ).join('\n');
+  out.push(`@media (prefers-color-scheme: dark) {\n${auto}\n${autoPal}}\n`);
   out.push(
     '@media (prefers-reduced-motion: reduce) {\n  *,\n  *::before,\n  *::after {\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n    transition-duration: 0.01ms !important;\n    scroll-behavior: auto !important;\n  }\n}\n',
   );

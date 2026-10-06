@@ -54,8 +54,14 @@ test('mode sombre : aucune violation grave de contraste (axe-core) sur les écra
   await page.getByTestId('mode-affichage').click(); // auto → sombre
   await page.getByTestId('mode-affichage').click(); // sombre → clair
   await expect(page.locator('html')).toHaveAttribute('data-mode', 'clair');
+  // dernière page : l'espace Coran, palette « vert, blanc, or » (Coran épuré) en mode clair imposé
   const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  expect(bg).toBe('rgb(247, 241, 227)');
+  expect(bg).toBe('rgb(246, 251, 247)');
+  await page.goto('/plus');
+  await page.locator('main h1').first().waitFor();
+  expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe(
+    'rgb(247, 241, 227)',
+  );
 });
 
 test('petit écran de 320 px : aucune page ne défile horizontalement', async ({ page }) => {

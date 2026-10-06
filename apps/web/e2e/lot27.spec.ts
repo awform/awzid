@@ -1,11 +1,13 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
+import { openSettings } from './coran';
 import { expect, PARENT_PIN, test } from './fixtures';
 import { pickProfile } from './profil';
 
 /**
- * Lot 27 — espace Coran : Lire, Écouter, Mémoriser, Mes récitateurs. Les récitateurs « Essai » n'ont que
- * des FICHIERS D'ESSAI NON CORANIQUES (bips générés par e2e/audio-essai.mjs) — jamais une récitation.
+ * Lot 27 — Mes récitateurs, liste du parent. (Écouter, Mémoriser et le Muṣḥaf page par page sont désormais
+ * UN SEUL écran : coran-epure.spec.ts.) Les récitateurs « Essai » n'ont que des FICHIERS D'ESSAI NON
+ * CORANIQUES (bips générés par e2e/audio-essai.mjs) — jamais une récitation.
  */
 const serious = async (page: Page) =>
   (
@@ -14,115 +16,37 @@ const serious = async (page: Page) =>
     .filter((v) => v.impact === 'serious' || v.impact === 'critical')
     .map((v) => `${v.id} ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`);
 
-const audioState = (page: Page) =>
-  page.locator('[data-testid="lecteur-audio"] audio').evaluate((a: HTMLAudioElement) => ({
-    paused: a.paused,
-    rate: a.playbackRate,
-    pitch: a.preservesPitch,
-    src: a.currentSrc,
-  }));
-
-test('écouter : riwāya affichée, pas de lecture automatique, répétition, vitesse sans changer la hauteur, surlignage Ḥafṣ', async ({
-  page,
-}) => {
-  const audioRequests: string[] = [];
-  page.on('request', (r) => {
-    if (r.url().includes('/quran/audio/files/')) audioRequests.push(r.url());
-  });
-  await page.goto('/coran');
-  await expect(page.getByTestId('ouvrir-ecouter')).toBeVisible();
-  await page.getByTestId('ouvrir-ecouter').click();
-  const pick = page.getByTestId('choix-recitateur');
-  await expect(pick.locator('option[value="essai-hafs"]')).toHaveCount(1);
-  await pick.selectOption('essai-hafs');
-  await page.getByTestId('sourate').selectOption('112');
-  await expect(page.locator('[data-verse="112:4"]')).toBeVisible();
-  await expect(page.getByTestId('badge-riwaya').first()).toContainText('Ḥafṣ');
-  await expect(page.getByTestId('credit')).toContainText('non coraniques');
-  // A1 : crédit en arabe et condition d'usage (ne pas vendre l'audio) affichés avec le crédit
-  await expect(page.getByTestId('credit-ar')).toHaveAttribute('lang', 'ar');
-  await expect(page.getByTestId('usage-note')).toContainText('ne pas vendre');
-  // adab : rien ne joue ni ne se télécharge avant le geste de l'utilisateur
-  await page.waitForTimeout(500);
-  expect((await audioState(page)).paused).toBe(true);
-  expect(audioRequests).toEqual([]);
-
-  await page.getByTestId('repeter-verset').fill('2');
-  await page.getByTestId('vitesse').selectOption('1.5');
-  await expect(page.getByTestId('position')).toContainText('8');
-  await page.getByTestId('jouer').click();
-  await expect(page.getByTestId('position')).toContainText('Verset 1');
-  const st = await audioState(page);
-  expect(st.paused).toBe(false);
-  expect(st.rate).toBe(1.5);
-  expect(st.pitch).toBe(true);
-  await expect(page.locator('.aya.now[data-aya="1"]')).toBeVisible();
-  // commandes du système (Media Session) renseignées
-  const title = await page.evaluate(() => navigator.mediaSession?.metadata?.title ?? '');
-  expect(title).toContain('verset 1');
-  await page.getByTestId('arreter-audio').click();
-  expect((await audioState(page)).paused).toBe(true);
-  expect(await serious(page)).toEqual([]);
-});
-
 test('autre riwāya : badge visible, pas de surlignage, absente du mode Mémoriser', async ({
   page,
 }) => {
-  await page.goto('/coran/ecouter?r=essai-qalun');
+  await page.goto('/coran/ecouter?r=essai-qalun&s=1');
+  await openSettings(page);
   await expect(page.getByTestId('autre-riwaya')).toBeVisible();
-  await expect(page.getByTestId('badge-riwaya').first()).toHaveAttribute('data-riwaya', 'qalun');
-  await expect(page.getByTestId('badge-riwaya').first()).toContainText('autre riwāya');
-  await expect(page.getByTestId('sans-surlignage')).toBeVisible();
+  await expect(page.getByTestId('reglages-ecoute').getByTestId('badge-riwaya')).toHaveAttribute(
+    'data-riwaya',
+    'qalun',
+  );
+  await expect(page.getByTestId('reglages-ecoute').getByTestId('badge-riwaya')).toContainText(
+    'autre riwāya',
+  );
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('mini-autre-riwaya')).toBeVisible();
   await page.getByTestId('jouer').click();
   await expect(page.getByTestId('position')).toContainText('Verset 1');
-  await expect(page.locator('.aya.now')).toHaveCount(0);
+  await expect(page.getByTestId('sans-surlignage')).toBeVisible();
+  // le verset entendu n'est jamais surligné sur le texte d'une autre riwāya
+  await expect(page.getByTestId('position')).toContainText('Verset 2', { timeout: 8000 });
+  await expect(page.locator('[data-aya="1:2"]')).not.toHaveClass(/\bon\b/);
   await page.getByTestId('arreter-audio').click();
 
   await page.goto('/coran/memoriser');
+  await openSettings(page);
   const pick = page.getByTestId('choix-recitateur');
   await expect(pick.locator('option[value="essai-hafs"]')).toHaveCount(1);
   await expect(pick.locator('option[value="essai-qalun"]')).toHaveCount(0);
 });
 
-test('mémoriser : écouter-répéter-enchaîner et masquage progressif du texte', async ({ page }) => {
-  await page.goto('/coran/memoriser');
-  await page.getByTestId('sourate').selectOption('113');
-  await expect(page.locator('[data-verse="113:5"]')).toBeVisible();
-  await page.getByTestId('de').fill('1');
-  await page.getByTestId('au').fill('2');
-  await page.getByTestId('repeter-nouveau').fill('1');
-  await page.getByTestId('enchainements').fill('1');
-  // 1 ; 2 ; 1-2 → 4 écoutes
-  await expect(page.getByTestId('position')).toContainText('4');
-  await page.locator('[data-mask="3"]').check({ force: true });
-  await expect(page.locator('[data-aya="1"] .w.voile').first()).toBeVisible();
-  // le texte n'est jamais modifié : seul l'affichage est voilé
-  const text = await page.locator('[data-verse="113:1"]').textContent();
-  expect(text?.length).toBeGreaterThan(5);
-  await page.getByTestId('jouer').click();
-  await expect(page.getByTestId('etape')).toContainText('Nouveau verset');
-  await page.getByTestId('arreter-audio').click();
-  expect(await serious(page)).toEqual([]);
-});
-
-test('hors ligne : sourate gardée sur l’appareil, listée, puis supprimée', async ({ page }) => {
-  await page.goto('/coran/ecouter?r=essai-hafs&s=114');
-  await expect(page.getByTestId('wifi-seulement')).toBeChecked();
-  await page.getByTestId('garder-sourate').click();
-  await expect(page.getByTestId('sur-appareil')).toBeVisible();
-  await page.goto('/coran/recitateurs');
-  await expect(page.locator('[data-saved="essai-hafs:114"]')).toBeVisible();
-  // l'écoute marche sans réseau à partir des fichiers gardés
-  await page.goto('/coran/ecouter?r=essai-hafs&s=114');
-  await expect(page.getByTestId('sur-appareil')).toBeVisible();
-  await page.getByTestId('jouer').click();
-  await expect.poll(async () => (await audioState(page)).src).toMatch(/^blob:/);
-  await page.getByTestId('arreter-audio').click();
-  await page.getByTestId('supprimer-sourate').click();
-  await expect(page.getByTestId('garder-sourate')).toBeVisible();
-});
-
-test('mes récitateurs : choix gardé, crédits et licence ; lire : aller à une page du Muṣḥaf', async ({
+test('mes récitateurs : choix gardé, crédits et licence ; retour à la lecture', async ({
   page,
 }) => {
   await page.goto('/coran/recitateurs');
@@ -135,13 +59,8 @@ test('mes récitateurs : choix gardé, crédits et licence ; lire : aller à une
   await expect(card.getByTestId('usage-note')).toContainText('ne pas vendre');
   expect(await serious(page)).toEqual([]);
   await page.locator('[data-reciter="essai-hafs"]').getByTestId('choisir').click();
-
-  await page.goto('/coran/lecteur');
-  await page.getByTestId('aller-type').selectOption('page');
-  await page.getByTestId('aller-n').fill('604');
-  await page.getByTestId('aller-a').getByRole('button').click();
-  await expect(page.locator('[data-verse="112:1"]')).toBeVisible();
-  await expect(page.locator('[data-page="604"]')).toBeVisible();
+  await page.getByTestId('retour-lecture').click();
+  await expect(page).toHaveURL(/\/coran\/lecteur/);
 });
 
 test.describe('parent', () => {
@@ -162,10 +81,13 @@ test.describe('parent', () => {
     await box.getByTestId('enregistrer-permis').click();
     await expect(box.getByRole('status')).toContainText('enregistrée');
     await pickProfile(page, 'Yanis');
-    await page.goto('/coran/ecouter');
+    await page.goto('/coran/lecteur?page=1');
+    await openSettings(page);
     const pick = page.getByTestId('choix-recitateur');
     await expect(pick.locator('option')).toHaveCount(1);
     await expect(pick.locator('option[value="essai-hafs"]')).toHaveCount(1);
+    // l'enfant garde son thème (tailles, cibles) ; l'espace Coran prend la palette vert-blanc-or
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'jardin');
+    await expect(page.locator('html')).toHaveAttribute('data-palette', 'verdure');
   });
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { activeNav, audienceOf, navFor, themeOf, type Context } from './audience';
+import { activeNav, audienceOf, navFor, paletteOf, themeOf, type Context } from './audience';
 
 const ctx = (c: Partial<Context>): Context => ({
   profileKind: null,
@@ -22,6 +22,18 @@ describe('lot 26 — public, thème et navigation', () => {
     expect(themeOf(audienceOf(ctx({ accountKind: 'enseignant' })))).toBe('clair');
     expect(themeOf(audienceOf(ctx({ accountKind: 'admin' })))).toBe('clair');
     expect(themeOf(audienceOf(ctx({})))).toBe('clair');
+  });
+
+  it('Coran épuré : palette verdure dans l’espace Coran pour les élèves ; réglage « partout » prêt', () => {
+    for (const a of ['enfant', 'ado', 'adulte', 'visiteur'] as const) {
+      expect(paletteOf(a, '/coran/lecteur')).toBe('verdure');
+      expect(paletteOf(a, '/hifz')).toBe('verdure');
+      expect(paletteOf(a, '/lecons/ad1.l01')).toBeNull();
+      expect(paletteOf(a, '/lecons/ad1.l01', true)).toBe('verdure');
+    }
+    expect(paletteOf('parent', '/coran', true)).toBeNull();
+    expect(paletteOf('enseignant', '/coran')).toBeNull();
+    expect(paletteOf('enfant', '/coranique')).toBeNull();
   });
 
   it("les espaces du parent restent « clairs » même quand un enfant est actif sur l'appareil", () => {

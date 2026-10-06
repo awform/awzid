@@ -1,7 +1,7 @@
 /**
  * English version of the legal pages and help (lot 15) — DRAFT TRANSLATION, TO BE REVIEWED BY A NATIVE
  * SPEAKER, and like the French original, TO BE VALIDATED BY A LAWYER. Shown only when English (a language
- * « in preparation ») is enabled on the server (AWFORM_LANGUES_PREPARATION).
+ * « in preparation ») is enabled on the server (Awzid_LANGUES_PREPARATION).
  */
 import type { FaqItem, LegalKey, LegalPage } from './content';
 
@@ -15,7 +15,7 @@ export const LEGAL_EN: Record<LegalKey, LegalPage> = {
       {
         titre: 'Publisher',
         paras: [
-          'AWFORM (proposed trade name: Awzid) — [company name, legal form, share capital: to be completed].',
+          'Awzid — [company name, legal form, share capital: to be completed].',
           'Registered office: [address to be completed]. Registration: [RCS / SIREN or NINEA: to be completed].',
           'Publication director: [name to be completed].',
           'Contact: [contact email address to be created].',
@@ -30,7 +30,7 @@ export const LEGAL_EN: Record<LegalKey, LegalPage> = {
       {
         titre: 'Intellectual property',
         paras: [
-          'AWFORM books, lessons, illustrations, exercises and texts are protected; any reproduction beyond the personal or school use allowed by the terms of use is forbidden without written permission.',
+          'Awzid books, lessons, illustrations, exercises and texts are protected; any reproduction beyond the personal or school use allowed by the terms of use is forbidden without written permission.',
           'Quranic text: Tanzil (tanzil.net), riwāya Ḥafṣ ʿan ʿĀṣim, reproduced exactly, without any change. Quran metadata (ajzāʾ, aḥzāb, pages of the Madinah Muṣḥaf): Tanzil.info, Creative Commons Attribution 3.0 licence.',
         ],
       },
@@ -43,7 +43,7 @@ export const LEGAL_EN: Record<LegalKey, LegalPage> = {
       {
         titre: 'Purpose',
         paras: [
-          'AWFORM is an app for learning Arabic, memorising the Quran (hifẓ) and basic religious education, alongside the AWFORM books. These terms govern its use.',
+          'Awzid is an app for learning Arabic, memorising the Quran (hifẓ) and basic religious education, alongside the Awzid books. These terms govern its use.',
         ],
       },
       {
@@ -66,7 +66,7 @@ export const LEGAL_EN: Record<LegalKey, LegalPage> = {
       {
         titre: 'Plans, payment, cancellation',
         paras: [
-          'A free plan lets you try the first lessons. Paid plans, their prices and duration are shown before purchase; only the adult can buy (parent code). No card details go through AWFORM: payment is made with the chosen provider.',
+          'A free plan lets you try the first lessons. Paid plans, their prices and duration are shown before purchase; only the adult can buy (parent code). No card details go through Awzid: payment is made with the chosen provider.',
           'A subscription can be stopped at any time; rights last until the end of the paid period. [Right of withdrawal and refunds: to be completed according to the country and the provider.]',
         ],
       },
@@ -92,7 +92,7 @@ export const LEGAL_EN: Record<LegalKey, LegalPage> = {
         titre: 'Data controller',
         paras: [
           '[Company name and address: to be completed]. Contact about your data: [email address to be created]. Data protection officer: [to be appointed if required].',
-          'For a school using the school space (paper class, results, certificates), the school is the controller of the data it enters; AWFORM acts on its behalf (processor). [Data processing agreement to be drawn up.]',
+          'For a school using the school space (paper class, results, certificates), the school is the controller of the data it enters; Awzid acts on its behalf (processor). [Data processing agreement to be drawn up.]',
         ],
       },
       {
@@ -242,7 +242,7 @@ export const FAQ_EN: Array<{ titre: string; items: FaqItem[] }> = [
       },
       {
         q: 'I forgot my password.',
-        r: '[Reset by email: available at public launch, with the email service.] Meanwhile, contact the school or the AWFORM team.',
+        r: '[Reset by email: available at public launch, with the email service.] Meanwhile, contact the school or the Awzid team.',
       },
       {
         q: 'The app is unavailable — what should I do?',

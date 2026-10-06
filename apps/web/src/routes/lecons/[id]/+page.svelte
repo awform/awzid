@@ -3,6 +3,8 @@
   import { onMount, setContext } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
+  import ArFr from '$lib/ArFr.svelte';
+  import type { VerseMark } from '@awform/content/versets';
   import Exercise from '$lib/Exercise.svelte';
   import ExamExercise from '$lib/ExamExercise.svelte';
   import { call } from '$lib/session';
@@ -69,21 +71,28 @@
   );
   type Obj = Record<string, unknown>;
   const R = $derived((L.lecture ?? {}) as Obj & NonNullable<typeof L.lecture>);
+  type Phrase = { ar: string; fr?: string; verset_tanzil?: VerseMark };
   const phrases = $derived([
-    ...((R.phrases ?? []) as Array<{ ar: string; fr?: string }>),
-    ...((R.paragraphes ?? []) as Array<string | { ar: string; fr?: string }>).map((p) =>
+    ...((R.phrases ?? []) as Phrase[]),
+    ...((R.paragraphes ?? []) as Array<string | Phrase>).map((p) =>
       typeof p === 'string' ? { ar: p } : p,
     ),
-  ] as Array<{ ar: string; fr?: string }>);
+  ] as Phrase[]);
   const E = $derived((L.ecriture ?? {}) as Obj);
   const dialogue = $derived(L.dialogue as (Obj & NonNullable<typeof L.dialogue>) | undefined);
   const Q = $derived(L.coran as (Obj & NonNullable<typeof L.coran>) | undefined);
   const fiqh = $derived(
     L.fiqh_adab as
-      | { titre_ar?: string; titre_fr?: string; points?: Array<{ ar?: string; fr?: string }> }
+      | {
+          titre_ar?: string;
+          titre_fr?: string;
+          points?: Array<{ ar?: string; fr?: string; verset_tanzil?: unknown }>;
+        }
       | undefined,
   );
-  const lexique = $derived((L.lexique ?? []) as Array<{ ar: string; fr?: string }>);
+  const lexique = $derived(
+    (L.lexique ?? []) as Array<{ ar: string; fr?: string; verset_tanzil?: unknown }>,
+  );
   const oral = $derived((L.oral ?? []) as Array<{ fr?: string; points?: number }>);
   const checkItems = $derived(L.checklist ?? L.objectifs ?? []);
 
@@ -363,16 +372,22 @@
           </div>
         {:else}
           {#if R.vedette}
+            {@const vt = (R.vedette as { verset_tanzil?: unknown }).verset_tanzil}
             <div class="note">
-              <Ar text={R.vedette.ar} {lettres} /><Ecouter text={R.vedette.ar} />
-              {#if R.vedette.fr}<span class="fr"> — « <Bidi text={R.vedette.fr} /> »</span>{/if}
-              {#if R.vedette.note_fr}<span class="fr"> <Bidi text={R.vedette.note_fr} /></span>{/if}
+              <ArFr
+                ar={R.vedette.ar}
+                fr={R.vedette.fr ? `« ${R.vedette.fr} »` : ''}
+                verset={vt}
+                {lettres}
+                stack
+              />{#if !vt}<Ecouter text={R.vedette.ar} />{/if}
+              {#if R.vedette.note_fr}<p class="fr"><Bidi text={R.vedette.note_fr} /></p>{/if}
             </div>
           {/if}
           {#each phrases as p, i (i)}
             <div class="phrase">
-              <Ar tag="p" text={p.ar} {lettres} /><Ecouter text={p.ar} />
-              {#if p.fr}<p class="fr"><Bidi text={p.fr} /></p>{/if}
+              <ArFr ar={p.ar} fr={p.fr ?? ''} verset={p.verset_tanzil} {lettres} stack />
+              {#if !p.verset_tanzil}<Ecouter text={p.ar} />{/if}
             </div>
           {/each}
         {/if}
@@ -471,7 +486,7 @@
         <h2><Ar text="مُعْجَمُ الدَّرْسِ" /> <span>{t('lecon.lexique')}</span></h2>
         <div class="lex">
           {#each lexique as x, i (i)}<div>
-              <Ar text={x.ar} /> <span class="fr"><Bidi text={x.fr ?? ''} /></span>
+              <ArFr ar={x.ar} fr={x.fr ?? ''} verset={x.verset_tanzil} />
             </div>{/each}
         </div>
       </section>
@@ -512,8 +527,13 @@
       {:else if L.retiens?.length}
         <div class="memo">
           <h3><Ar text="أَتَذَكَّرُ" /> <span>{t('lecon.je_retiens')}</span></h3>
-          {#each L.retiens as r, i (i)}<div class="row">
-              <Ar text={r.ar} /> <span class="fr"><Bidi text={r.fr} /></span>
+          {#each L.retiens as r, i (i)}<div class="row pt">
+              <ArFr
+                ar={r.ar}
+                fr={r.fr}
+                verset={(r as { verset_tanzil?: unknown }).verset_tanzil}
+                stack
+              />
             </div>{/each}
         </div>
       {/if}
@@ -758,9 +778,9 @@
       <span><Bidi text={fiqh?.titre_fr ?? t('lecon.adab')} /></span>
     </h2>
     <ul>
-      {#each fiqh?.points ?? [] as p, i (i)}<li>
-          {#if p.ar}<Ar text={p.ar} /> —
-          {/if}<span class="fr"><Bidi text={p.fr ?? ''} /></span>
+      {#each fiqh?.points ?? [] as p, i (i)}<li class="pt">
+          <!-- verset (texte Tanzil exact) : bloc de verset ; hadith, phrase : l'arabe sur sa ligne, le français dessous -->
+          <ArFr ar={p.ar ?? ''} fr={p.fr ?? ''} verset={p.verset_tanzil} stack />
         </li>{/each}
     </ul>
     <!-- lot F1 (G2) : école juridique, étiquette posée à l'import (le texte du livre est inchangé) -->
@@ -1069,6 +1089,12 @@
   }
   .fiqh ul {
     padding-inline-start: 1.2em;
+  }
+  .pt {
+    margin-block: 6px;
+  }
+  .pt :global(.arfr-fr) {
+    margin-top: 2px;
   }
   .memo .row {
     display: flex;

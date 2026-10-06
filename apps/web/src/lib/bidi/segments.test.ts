@@ -41,19 +41,19 @@ const CASES: [string, 'fr' | 'ar', [string, string][]][] = [
     ],
   ],
   [
-    // ad1, leçon 2 : prérequis — liste à la virgule arabe : un seul segment
+    // ad1, leçon 2 : prérequis — liste à la virgule arabe : un seul segment ; 3 mots → sur sa ligne
     'Leçon 1 : ب ت ث ن ي, les trois voyelles brèves, ثَبَتَ، نَبَتَ، بُنِيَ ; le salam.',
     'fr',
     [
       ['ar', 'ب ت ث ن ي'],
-      ['ar', 'ثَبَتَ، نَبَتَ، بُنِيَ'],
+      ['ar-long', 'ثَبَتَ، نَبَتَ، بُنِيَ'],
     ],
   ],
   [
-    // ra1, leçon 2 : citation longue ENTRE GUILLEMETS → reste dans la ligne
+    // ra1, leçon 2 : citation longue ENTRE GUILLEMETS → sur sa ligne, guillemets compris (règle du client)
     "Hadith d'Abū Hurayra, rapporté par al-Bukhārī (7288, avec ces mots, dans un hadith plus long) et Muslim (1337, même sens : « … وَإِذَا نَهَيْتُكُمْ عَنْ شَيْءٍ فَدَعُوهُ ») ; n° 9 des Quarante d'an-Nawawī.",
     'fr',
-    [['ar', 'وَإِذَا نَهَيْتُكُمْ عَنْ شَيْءٍ فَدَعُوهُ']],
+    [['ar-long', '« … وَإِذَا نَهَيْتُكُمْ عَنْ شَيْءٍ فَدَعُوهُ »']],
   ],
   [
     // ad1, leçon 20 : exemple long suivi de sa traduction → sur sa propre ligne, la traduction dessous
@@ -62,10 +62,10 @@ const CASES: [string, 'fr' | 'ar', [string, string][]][] = [
     [['ar-long', 'فَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ خَيْرًۭا يَرَهُۥ']],
   ],
   [
-    // ad1, leçon 7 : longue liste entre parenthèses → reste dans la ligne
+    // ad1, leçon 7 : longue liste entre parenthèses → sur sa ligne, parenthèses comprises
     "J'écris 3 phrases courtes avec les verbes déjà lus (كَتَبَ، عَلِمَ، عَمِلَ، فَهِمَ، سَمِعَ، غَسَلَ).",
     'fr',
-    [['ar', 'كَتَبَ، عَلِمَ، عَمِلَ، فَهِمَ، سَمِعَ، غَسَلَ']],
+    [['ar-long', '(كَتَبَ، عَلِمَ، عَمِلَ، فَهِمَ، سَمِعَ، غَسَلَ)']],
   ],
   [
     // ra1, leçon 20 : citation interrompue « … » collée à l'arabe
@@ -115,6 +115,15 @@ describe('bidiSegments — cas réels des livres', () => {
       { text: 'بِسْمِ اللَّهِ', kind: 'plain' },
     ]);
     expect(bidiSegments('')).toEqual([]);
+  });
+
+  it('règle du client : 1 ou 2 mots arabes dans la ligne, 3 mots ou plus sur leur propre ligne', () => {
+    const kinds = (t: string) => isolated(bidiSegments(t)).map((x) => x[0]);
+    expect(kinds('Le mot كِتَابٌ veut dire livre.')).toEqual(['ar']);
+    expect(kinds('On dit بِسْمِ اللَّهِ avant de manger.')).toEqual(['ar']);
+    expect(kinds('On dit إِنْ شَاءَ اللَّهُ quand on promet.')).toEqual(['ar-long']);
+    // au milieu d'une phrase française, ou à la fin : toujours sur sa ligne
+    expect(kinds('Il répond : جَزَاكَ اللَّهُ خَيْرًا.')).toEqual(['ar-long']);
   });
 
   it('parenthèses jamais coupées par une frontière de segment', () => {

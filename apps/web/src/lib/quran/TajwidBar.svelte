@@ -27,7 +27,10 @@
     basmala,
     prefs = $bindable(readTajwidPrefs()),
     data = $bindable(null),
+    compact = false,
   }: {
+    /** Coran épuré : dans la feuille « Affichage » — sans carte ni bouton flottant, légende repliée */
+    compact?: boolean;
     riwaya: string | null | undefined;
     sura: number;
     verses: Array<{ s: number; a: number; text: string }>;
@@ -120,7 +123,7 @@
 {/snippet}
 
 {#if allowed}
-  <section class="card tjbar" data-testid="tajwid-barre">
+  <section class="tjbar" class:card={!compact} data-testid="tajwid-barre">
     <div class="row">
       <button
         type="button"
@@ -145,13 +148,13 @@
       {#if failed}<p class="muted small" role="status" data-testid="tajwid-indisponible">
           {t('tj.indisponible')}
         </p>{/if}
-      <details open={wide} data-testid="tajwid-legende">
+      <details open={wide && !compact} data-testid="tajwid-legende">
         <summary>{t('tj.legende')}</summary>
         {@render legende()}
       </details>
     {/if}
   </section>
-  {#if prefs.on}
+  {#if prefs.on && !compact}
     <button
       type="button"
       class="fab"

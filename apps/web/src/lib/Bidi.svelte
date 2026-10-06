@@ -4,8 +4,9 @@
 
   /**
    * Composant commun de tout texte affiché (livres, interface) : isole chaque segment arabe d'un texte
-   * français (et chaque segment latin d'un texte arabe), avec la police arabe ; une phrase arabe longue
-   * passe sur sa propre ligne, alignée à droite. Le texte n'est JAMAIS modifié : il est seulement découpé
+   * français (et chaque segment latin d'un texte arabe), avec la police arabe ; une phrase arabe (3 mots ou
+   * plus) passe sur sa propre ligne, alignée à droite, partout (règle du client : jamais une phrase arabe sur
+   * la même ligne que le français). Le texte n'est JAMAIS modifié : il est seulement découpé
    * (voir bidi/segments.ts). `base` : écriture du contexte (par défaut, celle de la langue de l'interface).
    */
   let { text, base }: { text: unknown; base?: BidiBase } = $props();
@@ -37,11 +38,6 @@
     font-size: 1.2em;
     line-height: 1.9;
     margin-block: 0.15em;
-  }
-  /* sauf dans les libellés courts (boutons, liens, titres) : reste dans la ligne */
-  :global(:is(button, a, label, summary, legend, h1, h2, h3, h4, th)) .bidi-long {
-    display: inline;
-    font-size: 1.15em;
   }
   .bidi-ltr {
     unicode-bidi: isolate;

@@ -44,7 +44,7 @@ export function inQuietHours(hour: number, start: number, end: number): boolean 
 
 const TEXTS = {
   fr: {
-    title: 'AWFORM',
+    title: 'Awzid',
     devoirs: (n: number) =>
       n === 1
         ? 'Un devoir est prévu pour demain. Bonne séance !'
@@ -52,7 +52,7 @@ const TEXTS = {
     rapport: 'Le rapport de la semaine est prêt.',
   },
   en: {
-    title: 'AWFORM',
+    title: 'Awzid',
     devoirs: (n: number) =>
       n === 1
         ? 'One piece of homework is planned for tomorrow. Enjoy your session!'

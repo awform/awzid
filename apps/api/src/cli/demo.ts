@@ -378,7 +378,7 @@ try {
       .where(eq(t.account.email, E.enseignant));
     await updateClassSettings(h.db, schoolCls.id, {
       levelCode: 'en1',
-      schoolName: 'École de démonstration AWFORM',
+      schoolName: 'École de démonstration Awzid',
       place: 'Dakar',
       placeAr: 'دَاكَار',
       schoolYear: '2026-2027',
@@ -386,7 +386,7 @@ try {
     // lot F2 : l'école (personnelle) de l'enseignant porte le nom de l'établissement de démonstration
     await h.db
       .update(t.school)
-      .set({ name: 'École de démonstration AWFORM', place: 'Dakar', placeAr: 'دَاكَار' })
+      .set({ name: 'École de démonstration Awzid', place: 'Dakar', placeAr: 'دَاكَار' })
       .where(eq(t.school.id, schoolCls.schoolId));
     const bilans = (await listUnits(h.db, ed.id, 'en1')).filter((u) => u.kind === 'bilan');
     const pupils: Array<[string, 'm' | 'f', number[], number | null]> = [

@@ -5,6 +5,7 @@ import {
   CONTRAST_PAIRS,
   KNOWN_CONTRAST_GAPS,
   palettes,
+  PALETTES,
   renderCss,
   THEME_NAMES,
   THEMES,
@@ -33,6 +34,19 @@ describe('thème par jetons', () => {
     expect(css).toContain('prefers-color-scheme: dark');
     // la nuit ne suit pas la préférence claire du système : elle reste sombre
     expect(css).not.toContain(":root:not([data-mode])[data-theme='nuit']");
+  });
+
+  it('Coran épuré : palette « verdure » (vert, blanc, or), claire et sombre, mêmes jetons que les thèmes', () => {
+    const css = renderCss();
+    const keys = Object.keys(THEMES.clair.couleurs).sort();
+    expect(Object.keys(PALETTES.verdure.clair).sort()).toEqual(keys);
+    expect(Object.keys(PALETTES.verdure.sombre).sort()).toEqual(keys);
+    expect(PALETTES.verdure.clair.header).toBe('#ffffff');
+    // après les thèmes (à spécificité égale, la palette l'emporte), mode imposé et préférence du système
+    const at = css.indexOf("[data-palette='verdure']");
+    expect(at).toBeGreaterThan(css.indexOf("[data-theme='manuscrit'][data-mode='sombre']"));
+    expect(css).toContain("[data-palette='verdure'][data-mode='sombre']");
+    expect(css).toContain(":root:not([data-mode])[data-palette='verdure']");
   });
 
   it('lot 26 : cibles tactiles ≥ 48 px dans chaque thème (56 px pour les enfants)', () => {

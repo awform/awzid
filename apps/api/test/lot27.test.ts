@@ -314,6 +314,37 @@ describe.skipIf(!URL_)('lot 27 : audio du Coran (API)', () => {
     );
   });
 
+  it('Coran épuré : un récitateur d’ESSAI (« essai-* ») n’est jamais proposé hors des tests', async () => {
+    await upsertReciter(c.h.db, { ...cat('ayyoub-hafs'), id: 'essai-hafs' });
+    writeTestMushaf(join(src, 'e'), [112]);
+    const e = await importReciterAudio(c.h.db, {
+      reciterId: 'essai-hafs',
+      dir: join(src, 'e'),
+      pattern: 'SSSVVV.wav',
+      suras: [112],
+      storageDir: store,
+      activate: true,
+      partialOk: true,
+    });
+    expect(e.status).toBe('active');
+    const ids = async () =>
+      (await c.req('GET', '/api/v1/quran/audio/reciters'))
+        .json()
+        .reciters.map((x: { id: string }) => x.id);
+    expect(await ids()).not.toContain('essai-hafs');
+    expect(
+      (await c.req('GET', '/api/v1/quran/audio/reciters/essai-hafs/suras/112')).statusCode,
+    ).toBe(404);
+    const p = (await c.req('GET', `/api/v1/profiles/${kid}/quran/reciters`, P)).json();
+    expect(p.reciters.map((x: { id: string }) => x.id)).not.toContain('essai-hafs');
+    process.env.AWFORM_AUDIO_ESSAI = 'on';
+    try {
+      expect(await ids()).toContain('essai-hafs');
+    } finally {
+      delete process.env.AWFORM_AUDIO_ESSAI;
+    }
+  });
+
   it('retrait immédiat (administrateur, motif) : hors des réponses, des paquets, des fichiers et du relais', async () => {
     const f = (await c.req('GET', '/api/v1/quran/audio/reciters/ayyoub-hafs/suras/112')).json()
       .files[0];

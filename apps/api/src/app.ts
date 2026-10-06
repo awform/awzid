@@ -11,7 +11,8 @@ import { neededIllustrations } from './needed.js';
 import { registerAuth } from './auth/routes.js';
 
 export { neededIllustrations };
-import { currentEdition, ping, type Db } from '@awform/db';
+import { currentEdition, ping, setVerseSuraNames, type Db } from '@awform/db';
+import { suraName } from '@awform/hifz';
 import { registerHifz } from './hifz.js';
 import { registerLibrary } from './library.js';
 import { registerTutor } from './tutor.js';
@@ -102,6 +103,8 @@ export const logSerializers = {
 };
 
 export function buildApp(opts: AppOptions): FastifyInstance {
+  // versets cités dans les leçons : nom de la sourate de la référence affichée (métadonnées Tanzil)
+  setVerseSuraNames(suraName);
   const hops = /^[1-9]$/.test(process.env.TRUST_PROXY ?? '') ? Number(process.env.TRUST_PROXY) : 0;
   // fonction de confiance : seuls les `hops` sauts les plus proches (Caddy) sont crus
   const proxyOpts = hops ? { trustProxy: (_addr: string, hop: number) => hop < hops } : {};

@@ -2,6 +2,7 @@ import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
+import { close, openDisplay, setTajwid } from './coran';
 import { expect, password, test } from './fixtures';
 import { pickProfile } from './profil';
 
@@ -40,71 +41,61 @@ const colorOf = (page: Page, sel: string, token: string) =>
 
 test('lire : désactivé par défaut, couleurs à la demande, texte identique, légende, soulignés, sombre', async ({
   page,
-}, info) => {
+}) => {
   const reqs: string[] = [];
   page.on('request', (r) => {
     if (r.url().includes('/tajwid/')) reqs.push(new URL(r.url()).pathname);
   });
-  await page.goto('/coran/lecteur?s=114');
+  await page.goto('/coran/lecteur?s=114&vue=versets');
   await expect(page.locator('[data-verse="114:6"]')).toBeVisible();
-  const btn = page.getByTestId('tajwid');
-  await expect(btn).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.locator('[data-testid="sourate-texte"] .tj')).toHaveCount(0);
-  const before = await texts(page, 'sourate-texte');
+  await expect(page.locator('[data-testid="texte-coran"] .tj')).toHaveCount(0);
+  const before = await texts(page, 'texte-coran');
   expect(reqs).toEqual([]);
 
+  // Coran épuré : le bouton du tajwid est dans la feuille « Affichage »
+  await openDisplay(page);
+  const btn = page.getByTestId('tajwid');
+  await expect(btn).toHaveAttribute('aria-pressed', 'false');
   await btn.click();
   await expect(btn).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('[data-testid="sourate-texte"] .tj').first()).toBeVisible();
+  await expect(page.locator('[data-testid="texte-coran"] .tj').first()).toBeVisible();
   // intégrité : le texte affiché est exactement le même, caractère pour caractère
-  expect(await texts(page, 'sourate-texte')).toEqual(before);
+  expect(await texts(page, 'texte-coran')).toEqual(before);
   expect(reqs).toEqual(['/tajwid/114.json']);
 
+  // légende repliée dans la feuille, toujours accessible
   const leg = page.getByTestId('tajwid-legende');
-  // repliée sur téléphone (le texte d'abord), dépliée sur ordinateur
-  const open = await leg.evaluate((d) => (d as HTMLDetailsElement).open);
-  expect(open).toBe(!info.project.name.startsWith('mobile'));
-  if (!open) await leg.locator('summary').click();
+  await leg.locator('summary').click();
   await expect(leg.locator('[data-legende]')).toHaveCount(12);
   // termes arabes isolés dans les libellés français (ordre d'affichage juste)
   await expect(leg.locator('[data-legende="tj-ghunna"] bdi[lang="ar"]')).toHaveText('الْغُنَّةُ');
   await expect(leg).toContainText('le son nasal');
   await expect(leg).toContainText('allongement');
-  await expect(
-    leg.locator('[data-legende="tj-ghunna"] .ex .quran-text .tj[data-tj="tj-ghunna"]').first(),
-  ).toBeVisible();
   await expect(page.getByTestId('tajwid-credit').first()).toContainText('CC BY 4.0');
+  // daltonisme : soulignés par famille en plus des couleurs
+  await page.getByTestId('tajwid-motifs').check();
+  await close(page);
   const light = await colorOf(
     page,
-    '[data-testid="sourate-texte"] .tj[data-tj="tj-ghunna"]',
+    '[data-testid="texte-coran"] .tj[data-tj="tj-ghunna"]',
     'tj-ghunna',
   );
   expect(light.got).toBe(light.want);
-
-  // daltonisme : soulignés par famille en plus des couleurs
-  await page.getByTestId('tajwid-motifs').check();
-  await expect(page.getByTestId('sourate-texte')).toHaveClass(/motifs/);
+  await expect(page.getByTestId('texte-coran')).toHaveClass(/motifs/);
   const deco = await page
-    .locator('[data-testid="sourate-texte"] .tj[data-tjf="nasal"]')
+    .locator('[data-testid="texte-coran"] .tj[data-tjf="nasal"]')
     .first()
     .evaluate((el) => getComputedStyle(el).textDecorationStyle);
   expect(deco).toBe('wavy');
-
-  // légende toujours accessible (bouton flottant)
-  await page.getByTestId('tajwid-fab').click();
-  await expect(page.getByTestId('tajwid-dialogue')).toBeVisible();
-  await page.getByTestId('tajwid-dialogue').getByRole('button').click();
-  await expect(page.getByTestId('tajwid-dialogue')).toBeHidden();
   expect(await serious(page)).toEqual([]);
 
   // réglage gardé sur l'appareil ; mode sombre : couleurs de la palette sombre
   await page.reload();
-  await expect(page.getByTestId('tajwid')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-testid="texte-coran"] .tj').first()).toBeVisible();
   await page.emulateMedia({ colorScheme: 'dark' });
-  await expect(page.locator('[data-testid="sourate-texte"] .tj').first()).toBeVisible();
   const dark = await colorOf(
     page,
-    '[data-testid="sourate-texte"] .tj[data-tj="tj-ghunna"]',
+    '[data-testid="texte-coran"] .tj[data-tj="tj-ghunna"]',
     'tj-ghunna',
   );
   expect(dark.got).toBe(dark.want);
@@ -117,53 +108,67 @@ test('très petit écran (320 px) : pas de défilement horizontal avec le tajwid
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 720 });
-  await page.goto('/coran/lecteur?s=2');
+  await page.goto('/coran/lecteur?s=2&vue=versets');
   await expect(page.locator('[data-verse="2:5"]')).toBeVisible();
-  await page.getByTestId('tajwid').click();
-  await expect(page.locator('[data-testid="sourate-texte"] .tj').first()).toBeVisible();
-  const over = await page.evaluate(
-    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-  );
-  expect(over).toBeLessThanOrEqual(0);
+  await setTajwid(page, true);
+  await page.getByTestId('tajwid-legende').locator('summary').click();
+  const over = () =>
+    page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+  expect(await over()).toBeLessThanOrEqual(0);
+  await close(page);
+  await expect(page.locator('[data-testid="texte-coran"] .tj').first()).toBeVisible();
+  expect(await over()).toBeLessThanOrEqual(0);
 });
 
 test('hors ligne : sourate déjà vue gardée sur l’appareil ; sinon texte sans couleur et message', async ({
   page,
 }) => {
-  await page.goto('/coran/lecteur?s=113');
-  await page.getByTestId('tajwid').click();
-  await expect(page.locator('[data-testid="sourate-texte"] .tj').first()).toBeVisible();
+  await page.goto('/coran/lecteur?s=113&vue=versets');
+  await setTajwid(page, true);
+  await close(page);
+  await expect(page.locator('[data-testid="texte-coran"] .tj').first()).toBeVisible();
   // plus de réseau pour les annotations
   await page.route('**/tajwid/**', (r) => r.abort());
-  await page.getByTestId('sourate').selectOption('109');
-  await expect(page.getByTestId('tajwid-indisponible')).toBeVisible();
+  await page.goto('/coran/lecteur?s=109&vue=versets');
   await expect(page.locator('[data-verse="109:6"]')).toBeVisible();
-  await expect(page.locator('[data-testid="sourate-texte"] .tj')).toHaveCount(0);
-  await page.getByTestId('sourate').selectOption('113');
+  await expect(page.getByTestId('tajwid-absent')).toBeVisible();
+  await expect(page.locator('[data-testid="texte-coran"] .tj')).toHaveCount(0);
+  await page.goto('/coran/lecteur?s=113&vue=versets');
   await expect(page.locator('[data-verse="113:5"] .tj').first()).toBeVisible();
-  await expect(page.getByTestId('tajwid-indisponible')).toHaveCount(0);
+  await expect(page.getByTestId('tajwid-absent')).toHaveCount(0);
 });
 
-test('riwāya : bouton absent pour une autre riwāya (Écouter), présent en Ḥafṣ ; Mémoriser avec masquage', async ({
+test('riwāya : bouton absent pour un autre muṣḥaf, présent en Ḥafṣ ; mémoriser avec masquage', async ({
   page,
 }) => {
-  await page.goto('/coran/ecouter?r=essai-qalun&s=1');
-  await expect(page.getByTestId('autre-riwaya')).toBeVisible();
+  await page.goto('/coran/lecteur?s=1&m=qalun&vue=versets');
+  await openDisplay(page);
   await expect(page.getByTestId('tajwid')).toHaveCount(0);
-  await page.goto('/coran/ecouter?r=essai-hafs&s=112');
-  await expect(page.locator('[data-verse="112:4"]')).toBeVisible();
+  await page.getByTestId('choix-mushaf').selectOption('hafs');
   await expect(page.getByTestId('tajwid')).toBeVisible();
+  await close(page);
 
   await page.goto('/coran/memoriser');
-  await page.getByTestId('sourate').selectOption('113');
+  await page.goto('/coran/lecteur?s=113&vue=versets');
   await expect(page.locator('[data-verse="113:5"]')).toBeVisible();
+  await openDisplay(page);
+  await page.locator('[data-mask="0"]').check({ force: true });
+  await close(page);
   const before = await texts(page, 'texte-coran');
-  await page.getByTestId('tajwid').click();
+  await setTajwid(page, true);
+  await close(page);
   await expect(page.locator('[data-testid="texte-coran"] .tj').first()).toBeVisible();
-  expect(await texts(page, 'texte-coran')).toEqual(before);
   // le masquage progressif marche aussi en couleurs
+  await openDisplay(page);
   await page.locator('[data-mask="2"]').check({ force: true });
+  await close(page);
   await expect(page.locator('[data-testid="texte-coran"] .w.voile').first()).toBeVisible();
+  await openDisplay(page);
+  await page.locator('[data-mask="0"]').check({ force: true });
+  await close(page);
+  expect(await texts(page, 'texte-coran')).toEqual(before);
   expect(await serious(page)).toEqual([]);
 });
 
@@ -171,26 +176,23 @@ test.describe('famille', () => {
   test.use({ compte: 'parent' });
   test('enfant : quatre familles, chant du nez en vert, grand texte', async ({ page }) => {
     await pickProfile(page, 'Amina');
-    await page.goto('/coran/lecteur?s=114');
+    await page.goto('/coran/lecteur?s=114&vue=versets');
     await expect(page.locator('html')).toHaveAttribute('data-public', 'enfant');
-    await page.getByTestId('tajwid').click();
+    await setTajwid(page, true);
     const leg = page.getByTestId('tajwid-legende');
     await expect(leg.locator('[data-legende]')).toHaveCount(4);
     await expect(leg).toContainText('le chant du nez (الْغُنَّةُ)');
     await expect(leg).toContainText('le son long');
     await expect(leg).toContainText('le rebond');
     await expect(leg).toContainText('ne prononce pas');
-    const c = await colorOf(
-      page,
-      '[data-testid="sourate-texte"] .tj[data-tjk="tjk-nez"]',
-      'tjk-nez',
-    );
+    await close(page);
+    const c = await colorOf(page, '[data-testid="texte-coran"] .tj[data-tjk="tjk-nez"]', 'tjk-nez');
     expect(c.got).toBe(c.want);
     const [r, g, b] = c.got.match(/\d+/g)!.map(Number);
     expect(g).toBeGreaterThan(r!);
     expect(g).toBeGreaterThan(b!);
     const size = await page
-      .locator('[data-testid="sourate-texte"] .aya')
+      .locator('[data-testid="texte-coran"] .aya')
       .first()
       .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
     expect(size).toBeGreaterThanOrEqual(28);
@@ -235,12 +237,13 @@ test.describe('adolescent', () => {
   test.use({ compte: null });
   test('ado : palette complète, « le son nasal »', async ({ page }) => {
     await parentWithTeen(page);
-    await page.goto('/coran/lecteur?s=114');
+    await page.goto('/coran/lecteur?s=114&vue=versets');
     await expect(page.locator('html')).toHaveAttribute('data-public', 'ado');
-    await page.getByTestId('tajwid').click();
+    await setTajwid(page, true);
     await expect(page.getByTestId('tajwid-legende').locator('[data-legende]')).toHaveCount(12);
     await expect(page.getByTestId('tajwid-legende')).toContainText('le son nasal');
-    await expect(page.locator('[data-testid="sourate-texte"] .tj').first()).toBeVisible();
+    await close(page);
+    await expect(page.locator('[data-testid="texte-coran"] .tj').first()).toBeVisible();
     expect(await serious(page)).toEqual([]);
   });
 });
@@ -256,8 +259,8 @@ test.describe('captures', () => {
     mkdirSync(DIR, { recursive: true });
     const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
     const shot = async (name: string, s: number) => {
-      await page.goto(`/coran/lecteur?s=${s}`);
-      await page.locator(`[data-testid="sourate-texte"] .tj`).first().waitFor();
+      await page.goto(`/coran/lecteur?s=${s}&vue=versets`);
+      await page.locator(`[data-testid="texte-coran"] .tj`).first().waitFor();
       await page.evaluate(() => document.fonts.ready);
       await page.waitForTimeout(500);
       await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: true });
@@ -280,8 +283,8 @@ test.describe('captures', () => {
         ['tajwid-ado-sombre', 'dark'],
       ] as const) {
         await page.emulateMedia({ colorScheme: scheme });
-        await page.goto('/coran/lecteur?s=114');
-        await page.locator(`[data-testid="sourate-texte"] .tj`).first().waitFor();
+        await page.goto('/coran/lecteur?s=114&vue=versets');
+        await page.locator(`[data-testid="texte-coran"] .tj`).first().waitFor();
         await page.evaluate(() => document.fonts.ready);
         await page.waitForTimeout(500);
         await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: true });
@@ -297,8 +300,8 @@ test.describe('captures', () => {
       await page.goto('/coran');
       await page.evaluate(() => localStorage.setItem('awzid.tajwid', '{"on":true,"motifs":false}'));
       const shot = async (name: string, s: number, full = true) => {
-        await page.goto(`/coran/lecteur?s=${s}`);
-        await page.locator(`[data-testid="sourate-texte"] .tj`).first().waitFor();
+        await page.goto(`/coran/lecteur?s=${s}&vue=versets`);
+        await page.locator(`[data-testid="texte-coran"] .tj`).first().waitFor();
         await page.evaluate(() => document.fonts.ready);
         await page.waitForTimeout(500);
         await page.screenshot({ path: join(DIR, `${dev}-${name}.png`), fullPage: full });

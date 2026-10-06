@@ -161,8 +161,20 @@ export function runAttrs(r: TajwidRule | null) {
   };
 }
 
-/** Fichier d'une sourate : sur l'appareil d'abord, sinon /tajwid/NNN.json (puis gardé pour le hors ligne). */
-export async function loadTajwid(s: number): Promise<TajwidSura | null> {
+/**
+ * Fichier d'une sourate : sur l'appareil d'abord, sinon /tajwid/NNN.json (puis gardé pour le hors ligne).
+ * Coran épuré : une seule requête à la fois par sourate (la page et la feuille « Affichage » la demandent).
+ */
+const inflight = new Map<number, Promise<TajwidSura | null>>();
+export function loadTajwid(s: number): Promise<TajwidSura | null> {
+  let p = inflight.get(s);
+  if (!p) {
+    p = loadTajwidOnce(s).finally(() => inflight.delete(s));
+    inflight.set(s, p);
+  }
+  return p;
+}
+async function loadTajwidOnce(s: number): Promise<TajwidSura | null> {
   const key = `tajwid:${s}`;
   const have = await kvGet<TajwidSura>(key).catch(() => undefined);
   if (have?.v === 1 && have.s === s) return have;

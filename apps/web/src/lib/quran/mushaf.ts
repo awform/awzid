@@ -5,6 +5,7 @@
  * références (sourate, verset) ; la recherche compare une forme SANS signes calculée à part, jamais affichée.
  */
 import type { QuranMeta } from '@awform/hifz';
+import { SLEEP_CHOICES as SLEEP } from './player';
 
 export type Ref = readonly [number, number];
 /**
@@ -200,6 +201,19 @@ export interface MushafPrefs {
   repeatVerse: number;
   repeatRange: number;
   page: number;
+  /** Coran épuré : affichage du texte — page du Muṣḥaf ou sourate en versets */
+  vue: 'page' | 'versets';
+  /** traduction montrée (bouton « Traduction ») ; `translation` garde la langue choisie */
+  showTrad: boolean;
+  /** vitesse (0,5 à 1,5, hauteur conservée) et arrêt automatique (minutes, 0 : sans) */
+  rate: number;
+  sleepMin: number;
+  /** mémoriser : « écouter, répéter, enchaîner » (chaque nouveau verset N fois, puis la plage M fois) */
+  chain: boolean;
+  repeatNew: number;
+  repeatChain: number;
+  /** volume du lecteur (0 à 1) */
+  volume: number;
 }
 export const DEFAULT_PREFS: MushafPrefs = {
   kind: 'hafs',
@@ -210,6 +224,14 @@ export const DEFAULT_PREFS: MushafPrefs = {
   repeatVerse: 1,
   repeatRange: 1,
   page: 1,
+  vue: 'page',
+  showTrad: false,
+  rate: 1,
+  sleepMin: 0,
+  chain: false,
+  repeatNew: 5,
+  repeatChain: 2,
+  volume: 1,
 };
 const KEY = 'awzid.mushaf.v1';
 const storage = (): Storage | null => {
@@ -238,6 +260,19 @@ export function readPrefs(store: Pick<Storage, 'getItem'> | null = storage()): M
       repeatVerse: clampInt(raw.repeatVerse, 1, 20, 1),
       repeatRange: clampInt(raw.repeatRange, 1, 20, 1),
       page: clampInt(raw.page, 1, PAGE_COUNT, 1),
+      vue: raw.vue === 'versets' ? 'versets' : 'page',
+      showTrad: raw.showTrad === true,
+      rate: [0.5, 0.75, 1, 1.25, 1.5].includes(Number(raw.rate)) ? Number(raw.rate) : 1,
+      sleepMin: (SLEEP as readonly number[]).includes(Number(raw.sleepMin))
+        ? Number(raw.sleepMin)
+        : 0,
+      chain: raw.chain === true,
+      repeatNew: clampInt(raw.repeatNew, 1, 20, 5),
+      repeatChain: clampInt(raw.repeatChain, 0, 10, 2),
+      volume:
+        Number.isFinite(Number(raw.volume)) && raw.volume !== undefined
+          ? Math.max(0, Math.min(1, Number(raw.volume)))
+          : 1,
     };
   } catch {
     return { ...DEFAULT_PREFS };
