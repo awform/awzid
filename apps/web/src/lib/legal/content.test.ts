@@ -1,13 +1,22 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { FAQ, LEGAL, LEGAL_PAGES, type FaqItem, type LegalKey, type LegalPage } from './content';
+import type { LegalTexts } from './content';
+import { LEGAL_PAGES } from './content';
 
-// A37 : version anglaise dans un fichier statique (hors de la coquille), chargée à la demande
-const { legal: LEGAL_EN, faq: FAQ_EN } = JSON.parse(
-  readFileSync(new URL('../../../static/i18n/legal/en.json', import.meta.url), 'utf8'),
-) as { legal: Record<LegalKey, LegalPage>; faq: Array<{ titre: string; items: FaqItem[] }> };
+// A37 : version anglaise dans un fichier statique (hors de la coquille), chargée à la demande ;
+// A39 : version française aussi (même forme), seule source des brouillons légaux
+const read = (lang: string) =>
+  JSON.parse(
+    readFileSync(new URL(`../../../static/i18n/legal/${lang}.json`, import.meta.url), 'utf8'),
+  ) as LegalTexts;
+const { legal: LEGAL, faq: FAQ } = read('fr');
+const { legal: LEGAL_EN, faq: FAQ_EN } = read('en');
 
 describe('pages légales et aide : version anglaise complète (à relire par un locuteur natif)', () => {
+  it('le français a toutes les pages, avec des sections', () => {
+    for (const k of LEGAL_PAGES) expect(LEGAL[k].sections.length, k).toBeGreaterThan(0);
+    expect(FAQ.length).toBeGreaterThan(0);
+  });
   it('mêmes pages, mêmes sections, mêmes paragraphes', () => {
     for (const k of LEGAL_PAGES) {
       expect(

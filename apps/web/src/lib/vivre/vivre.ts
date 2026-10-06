@@ -3,16 +3,16 @@
  * (gardé sur l'appareil pour le hors ligne) et leçons atteintes de l'élève actif. Le filtrage par âge et par
  * niveau est fait ici, par les fonctions pures de `@awform/content/adab` (testées).
  */
-import type { AdabEntry, Fiche, Kind, Learner } from '@awform/content/adab';
+import type { AdabEntry, Fiche, FicheResume, Kind, Learner } from '@awform/content/adab';
 import { kvGet, kvSet } from '$lib/idb';
 import { call } from '$lib/session';
 
-export type { AdabEntry, Fiche, Kind, Learner };
+export type { AdabEntry, Fiche, FicheResume, Kind, Learner };
 export interface Catalogue {
   edition: string;
   rangement: 'index' | 'auto';
   entrees: AdabEntry[];
-  fiches: Fiche[];
+  fiches: FicheResume[];
 }
 const KV = 'vivre.v1';
 
@@ -31,6 +31,36 @@ export async function loadCatalogue(): Promise<{ data: Catalogue | null; offline
   const data = (await kvGet<Catalogue>(KV).catch(() => undefined)) ?? null;
   return { data, offline: true };
 }
+
+/** Document public (réseau d'abord, copie sur l'appareil ensuite) ; null s'il n'existe pas ou hors ligne sans copie. */
+async function cached<T>(path: string, key: string): Promise<T | null> {
+  try {
+    const r = await fetch(path, { signal: AbortSignal.timeout(10_000) });
+    if (r.ok) {
+      const data = (await r.json()) as T;
+      await kvSet(key, data).catch(() => {});
+      return data;
+    }
+    if (r.status === 404) return null;
+  } catch {
+    /* hors ligne */
+  }
+  return (await kvGet<T>(key).catch(() => undefined)) ?? null;
+}
+
+/** Une fiche entière du livret « Bon comportement » (gardée sur l'appareil une fois ouverte). */
+export const loadFiche = async (id: string) =>
+  (
+    await cached<{ fiche: Fiche }>(
+      `/api/v1/vivre/fiches/${encodeURIComponent(id)}`,
+      `vivre.fiche.${id}`,
+    )
+  )?.fiche ?? null;
+
+/** Chapitre du guide des parents « Transmettre les valeurs » (gp.c18), s'il est publié. */
+export const loadGuide = async () =>
+  (await cached<{ chapitre: Record<string, unknown> }>('/api/v1/vivre/guide', 'vivre.guide'))
+    ?.chapitre ?? null;
 
 /**
  * Ce que voit un élève : son âge et ses leçons atteintes (réseau, sinon copie locale). Sans élève actif (visiteur,

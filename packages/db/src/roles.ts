@@ -133,6 +133,8 @@ export const API_GRANTS: Record<string, Right[]> = {
   quran_lemma_meta: R,
   placement_attempt: RI,
   reenrolment_offer: RIU,
+  // A39 : mode d'évaluation (profil ou classe), historisé : une ligne se ferme (until), jamais effacée par l'API
+  eval_mode: RIU,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */

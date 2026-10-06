@@ -65,36 +65,34 @@ export async function loadLocale(
  * Les autres langues gardent ces textes dans leur catalogue (déjà chargé à la demande).
  */
 export const STAFF_CATALOG = 'fr-personnel';
-let staffTexts: Promise<void> | null = null;
-export function loadStaffTexts(fetcher: CatalogFetcher = fetchCatalog): Promise<void> {
-  staffTexts ??= fetcher(STAFF_CATALOG)
-    .then((m) => {
-      for (const [k, v] of Object.entries(m)) CATALOG.fr![k] ??= v;
-    })
-    .catch(() => {
-      staffTexts = null;
-    });
-  return staffTexts;
-}
-
 /**
- * Corrections du lecteur (06/10/2026) : de même, les textes FRANÇAIS propres à l'espace Coran (lecteur, accueil,
- * récitateurs : `cl.*`, `ca.*`, `mp.*` sauf les noms de traduction, `mpx.*`, `rw.*`, `tj.*`) sont hors de la coquille,
- * dans `static/i18n/fr-coran.json`, chargé par la mise en page `/coran` (et `/enseignant` : récitateurs de la classe) ; ce fichier est PRÉCHARGÉ par le service
- * worker (lecture du Coran hors ligne dès l'installation).
+ * A37 : même principe par ESPACE de l'élève (textes chargés par route) — `fr-quotidien` (prières, qibla, adhkār,
+ * verset) et `fr-vivre` (bon comportement), chargés par les mises en page `/quotidien` et `/vivre` ; ces deux
+ * fichiers-là sont préchargés par le service worker (hors ligne dès l'installation).
+ * Corrections du lecteur (06/10/2026) : `fr-coran` (`cl.*`, `ca.*`, `mp.*` sauf les noms de traduction, `mpx.*`,
+ * `rw.*`, `tj.*`), chargé par `/coran` et `/enseignant` (récitateurs de la classe), préchargé lui aussi.
  */
-export const CORAN_CATALOG = 'fr-coran';
-let coranTexts: Promise<void> | null = null;
-export function loadCoranTexts(fetcher: CatalogFetcher = fetchCatalog): Promise<void> {
-  coranTexts ??= fetcher(CORAN_CATALOG)
-    .then((m) => {
-      for (const [k, v] of Object.entries(m)) CATALOG.fr![k] ??= v;
-    })
-    .catch(() => {
-      coranTexts = null;
-    });
-  return coranTexts;
+export const SPACE_CATALOGS = ['personnel', 'quotidien', 'vivre', 'coran'] as const;
+const loadedTexts = new Map<string, Promise<void>>();
+export function loadTexts(
+  name: (typeof SPACE_CATALOGS)[number],
+  fetcher: CatalogFetcher = fetchCatalog,
+): Promise<void> {
+  let p = loadedTexts.get(name);
+  if (!p) {
+    p = fetcher(`fr-${name}`)
+      .then((m) => {
+        for (const [k, v] of Object.entries(m)) CATALOG.fr![k] ??= v;
+      })
+      .catch(() => {
+        loadedTexts.delete(name);
+      });
+    loadedTexts.set(name, p);
+  }
+  return p;
 }
+export const loadStaffTexts = (fetcher: CatalogFetcher = fetchCatalog) =>
+  loadTexts('personnel', fetcher);
 
 let current = FALLBACK;
 

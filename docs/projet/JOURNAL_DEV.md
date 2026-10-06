@@ -55,16 +55,120 @@ Branche `coran-corrections-wip` (worktree `~/awform-corfix`, depuis `main` fd3ca
    texte Tanzil ACCESSIBLE des pages exactes (`expectVerse`, `e2e/coran.ts`) ou visent un glyphe (`.first()`).
    **Résultats** : `pnpm check` vert — unitaires **1 580 réussis, 1 ignoré** ; e2e complets **342 réussis,
    34 ignorés, 0 échec** avec `E2E_MUSHAF_EXACT=1` (25,0 min) et **336 réussis, 40 ignorés, 0 échec** sans.
-6. **Budget** (après fusion de `main` = A37, 409,0 Ko) : les ajouts portaient le total à 411,6 Ko → les textes
-   FRANÇAIS de l'espace Coran (`cl.*`, `ca.*`, `mp.*` sauf les noms de traduction, `mpx.*`, `rw.*`, `tj.*` :
-   247 textes) sortent de la coquille, comme ceux du personnel en A37 : `static/i18n/fr-coran.json`, chargé par les
-   mises en page `/coran` et `/enseignant` (récitateurs de la classe), **préchargé** par le service worker (Coran
-   hors ligne dès l'installation) ; contrôlé par `i18n.test.ts` (aucun de ces textes utilisé hors de l'espace
-   Coran). Total **407,9 Ko** (main : 409,0) ≤ 410 ; appareil d’un élève **347,9 Ko** (main : 348,9) ≤ 355 ;
-   `/coran/lecteur` 130,7 Ko (main : 131,7). Panneaux fusionnés en un composant, textes « autre riwāya » et
-   doublons retirés.
+6. **Budget** (après fusion de `main` 0cb3e8a = A37 suite, 409,5 Ko) : sans rien changer, les ajouts
+   portaient le total au-delà de 410 Ko → les textes FRANÇAIS de l'espace Coran (`cl.*`, `ca.*`, `mp.*` sauf les noms
+   de traduction, `mpx.*`, `rw.*`, `tj.*` : 247 textes) sortent de la coquille par le mécanisme des espaces d'A37 :
+   `static/i18n/fr-coran.json` (`SPACE_CATALOGS`), chargé par les mises en page `/coran` et `/enseignant`
+   (récitateurs de la classe), **préchargé** par le service worker (Coran hors ligne dès l'installation) ; contrôlé
+   par `i18n.test.ts` (aucun de ces textes utilisé hors de l'espace Coran). Total **408,3 Ko** (main : 409,5) ≤ 410 ;
+   appareil d'un élève **347,8 Ko** ≤ 355 ; `/coran/lecteur` 128,2 Ko. Panneaux fusionnés en un composant, textes
+   « autre riwāya » et doublons retirés.
 7. Captures avant / après (puce, réglages adulte et enfant, thème adulte ; 375 px et bureau) :
    `reports/coran-corrections/` (hors dépôt), copiées sur le PC (`application/coran-corrections-captures/`).
+## 07/10/2026 — Chantier A37 (suite) : vraies données du livret « Bon comportement », décisions D-A37, barre lisible
+
+Même branche `a37-vivre-islam-wip` (fusionnée une première fois dans `main` 147c5fc).
+
+1. **Données des livres (B9) — leur format fait foi** (`~/awform-content/ids/akhlaq-SCHEMA-B9.md`) : import adapté,
+   aucune demande de changement aux livres.
+   - **Index officiel** `data/akhlaq/index-adab.json` (567 rubriques : 476 `fiqh_adab` + adab 67, usra 9, muʿāmalāt
+     15) : il **remplace** le classement automatique (gardé en repli seulement, sans index) ; rubriques repérées par
+     leçon et titre, sinon par identifiant (`.adab` = bloc `fiqh_adab`, `.r<k>` = k-ième rubrique) ; fiches liées
+     montrées sous la rubrique. Identifiants de cercles des livres (`autorites`, `espace_public`, `musulmans_avis`,
+     `autres_religions`, `animaux_nature`, `numerique`…), libellés du client inchangés.
+   - **120 fiches** `akh.f001…f120` (aucune refusée) : situation par âge, points avec `enfant_fr` / `ado_fr` /
+     `adulte_fr` et `ages`, `dire` (hadith du registre au statut VERIFIE avec « Rapporté par … (n) », verset Tanzil
+     en BLOC avec renvoi au récitant — `audio` interdit, contrôlé —, formule), pourquoi (version enfant), attention,
+     vraie vie du **pays de la famille** (« tous » + son pays), religion ou coutume (adultes), défi (version enfant),
+     sources lisibles (`sources.json`, registre ; clés internes non montrées), fiches liées. Résumés dans le
+     catalogue, fiche entière à l'ouverture (`GET /api/v1/vivre/fiches/:id`, gardée sur l'appareil).
+   - **Étiquettes (référent)** : cinq statuts religieux ; `force: "forte"` = « Recommandé · sunna » ; déconseillé et
+     interdit affichés « À éviter — … » (le statut qualifie la conduite évitée) ; `conseil` = pastille NEUTRE
+     « Conseil », jamais présentée comme une règle religieuse. Livres de religion : fard → Obligatoire ; sunna,
+     mustaḥabb, faḍīla → Recommandé avec le terme du livre en petit.
+   - **Âges** : Époux et Enfants (éduquer) aux adultes, Travail aux ados et adultes ; `ages` et variantes des points.
+   - **Audio** des textes arabes non coraniques des fiches : niveaux « akhlaq-enf » (fiches qui ont l'âge enfant) et
+     « akhlaq », lus par le bouton « écouter » existant dès que les MP3 sont importés (`deploy.sh` importe tout
+     `~/lecons-audio`) ; jamais sur un verset.
+   - **Guide des parents** `data/gp/c18.js` « Transmettre les valeurs » : importé s'il est là (document `gp.c18`),
+     affiché dans l'espace Famille (« Transmettre les valeurs ») section par section — paragraphes, listes,
+     tableaux, encadrés, hadiths, versets en bloc, réponse mālikite, blocs du pays de la famille ; vérifié en e2e
+     avec la copie du PC (`E2E_GP_C18`), en attendant la synchro.
+   - `infra/sync-content.ps1` copie désormais `data/akhlaq` et `data/gp/c18.js`.
+2. **Barre du bas** : « Vivre l'islam » ENTIER sur deux lignes centrées (« Vivre » / « l'islam »), icônes alignées
+   en haut ; e2e « aucun libellé tronqué » (5 langues, 375 et 320 px, enfant et adulte).
+3. **Poids** (budget 410 inchangé) : textes français des espaces Prières (163 `qt.*`) et Vivre l'islam (77 `vi.*`)
+   chargés par leur mise en page (`static/i18n/fr-quotidien.json`, `fr-vivre.json`, PRÉCHARGÉS par le service
+   worker pour le hors ligne, comme les textes du personnel `fr-personnel.json` qui, eux, ne le sont pas) :
+   **toutes pages 409,1 Ko ≤ 410, appareil d'un élève 349,1 Ko ≤ 355** (les deux fichiers d'espace pèsent ≈ 4,5 Ko
+   compressés, préchargés mais hors de la mesure JS/CSS).
+4. Textes : `vi.statut.conseil`, `vi.a_eviter`, `vi.attention`, `vi.religion_coutume`, `vi.fiches_liees`,
+   `vi.retenir`, `vi.coran_ref`, `vi.en_bref` (5 langues, A_RELIRE.md) ; clés de cercles renommées.
+5. Tests (après fusion de `main` A39) : unitaires **1 613 réussis, 1 ignoré** ; e2e suite complète **339 réussis, 43 ignorés, 0 échec** (22,1 min ; `a37.spec.ts` 13, guide des parents compris) ; budget après fusion **409,5 Ko** ≤ 410, élève 349,1 Ko. Captures 375 px (vraie fiche akh.f001 enfant/ado/adulte, f008 avec
+   verset, guide des parents) : `application/a37-captures/`.
+## 06/10/2026 — Chantier A39 : « MODE SEREIN » — l'évaluation ne doit jamais décourager (décision du client)
+
+Branche `a39-serein-wip` (worktree `~/awform-a39`, depuis `main` f9467cd, puis fusionnée avec `main` 147c5fc — A37),
+base de tests `awform_a39_test`, e2e isolés.
+
+1. **Modèle** (migration `0040_a39_serein`, en avant seulement, retour arrière en tête du fichier) : `eval_mode`
+   HISTORISÉ (une ligne ouverte = choix courant) pour un PROFIL (décideur « soi » : l'adulte autonome, ou « parent »)
+   ou une CLASSE (décideur « enseignant » ; mode vide = choix laissé aux familles) ; `profile.eval_mode_wish` :
+   préférence exprimée par l'ado, validée ou refusée par le parent ; `unit_version.facultatif` : rubrique « Pour
+   aller plus loin » (`facultatif: true` ou `rubrique: "pour_aller_plus_loin"` dans le livre), JAMAIS comptée
+   pour le passage ni les épreuves ; `profile_level.source` + « lecons » (niveau ouvert en mode serein) et
+   « choix » (niveau choisi par l'élève). Droits : `eval_mode` en lecture/ajout/mise à jour pour l'API.
+2. **Trois modes** (`packages/db/src/serein.ts`) : « Avec vérification » (défaut des adultes, comportement d'avant :
+   épreuve, nouvel essai le lendemain, note chiffrée), « Vérification douce » (défaut des enfants et ados : la fin
+   de niveau devient un **petit défi de révision**, essais libres, **étoiles** 1 à 3 — jamais zéro —, aucune note
+   chiffrée renvoyée par l'API), « Mode serein » (le niveau suivant s'ouvre quand les leçons du niveau sont faites,
+   sans épreuve ; test de positionnement facultatif — l'élève peut choisir son niveau ; épreuve facultative,
+   seulement pour un certificat ; aucune note ni objectif hebdomadaire : « Tu as terminé N leçons cette semaine »).
+   Mode effectif : classe active de l'élève MINEUR où l'enseignant a décidé (matière de la classe), sinon choix du
+   profil, sinon défaut. Le choix du parent reste enregistré et reprend dès que l'élève quitte la classe ou que
+   l'enseignant rend le choix aux familles.
+3. **API** (`apps/api/src/serein-a39.ts`) : `GET|PUT /profiles/:id/mode-evaluation` (adulte : lui-même ; mineur :
+   le parent, **code parent** s'il existe — c'est ce qui distingue le parent du jeune sur un appareil partagé ; tablette
+   de classe refusée), `POST|DELETE …/souhait` (l'ado propose ; le parent refuse avec son code), `GET
+   /profiles/:id/recapitulatif/:matiere`, `POST /profiles/:id/niveau-suivant/:matiere` (mode serein seulement,
+   leçons faites ; refus « epreuve_requise » / « lecons_a_finir »), `POST /profiles/:id/choisir-niveau/:matiere`
+   (mode serein), `GET|PUT /ecole/classes/:id/mode-evaluation` et `GET /ecole/classes/:id/notions-fragiles`
+   (enseignant de la classe ou direction, second facteur). Inscription adulte : champ `evalMode`. Épreuve de passage :
+   attente du lendemain seulement « avec vérification » ; réponse `certificat` (épreuve réussie) et `etoiles` ;
+   espace du niveau : `mode`, `semaine`, `epreuvesReussies` ; « Aujourd'hui » : `serein`, `leconsSemaine`.
+4. **Garde-fou pédagogique (tous les modes)** : avant d'ouvrir le niveau suivant — et avant le défi ou l'épreuve —
+   un **récapitulatif bienveillant** (leçons faites ; notions fragiles = leçons du niveau où au moins 2 items ont une
+   dernière réponse encore fausse, c'est-à-dire des erreurs non revues ; 2-3 recommandées, les plus fragiles
+   d'abord) avec « Revoir d'abord » / « Continuer quand même » — jamais bloquant en mode serein (le choix est gardé
+   dans l'historique du niveau). Le parent voit discrètement les notions à revoir dans « Suivi » ; l'enseignant,
+   dans sa classe (onglet Élèves).
+5. **Interfaces** : inscription adulte (« Avec vérification » / « Mode serein »), compte adulte (« Ma façon
+   d'avancer »), « Famille » (choix du parent par enfant, préférence de l'ado à valider, décision de la classe
+   affichée), espace du niveau (encouragement, « Ouvrir le niveau suivant », « Épreuve facultative (pour un
+   certificat) », « Petit défi de révision », choix du niveau en mode serein, préférence de l'ado), défi/épreuve
+   (étoiles, essais libres), accueil (prochaine activité « Ouvrir le niveau suivant »), leçon (pourcentage affiché
+   seulement « avec vérification »), « Aujourd'hui » (mode serein : ni objectif ni réglage, un encouragement),
+   classe de l'enseignant (mode de la classe, notions fragiles). Certificats : inchangés (délivrés par l'école
+   après une épreuve réussie) ; un niveau ouvert sans épreuve n'en ouvre aucun.
+6. **Textes** : 42 textes `ser.*`, `parc.origine_lecons|choix`, `erreur.*` en fr, en, es, de, ar (A_RELIRE.md).
+7. **Poids** : après fusion de `main` (A37 : 409,0 Ko), le mode serein ajoutait 4,8 Ko (413,8 Ko > 410). Comme A37
+   l'a fait pour l'anglais, la version FRANÇAISE des pages légales et de l'aide (brouillons, ≈ 4 Ko Brotli) sort de
+   la coquille : `static/i18n/legal/fr.json`, chargé par ces pages (`loadLegal`, A37) et gardé par le service worker
+   au premier usage ; `lib/legal/content.ts` ne garde que la forme des textes et la liste des pages (test). Textes
+   `ser.classe_*` (personnel seulement) dans `fr-personnel.json` ; styles des nouveaux composants réduits aux classes
+   globales. Résultat : toutes pages 409,3 Ko ≤ 410, appareil d'un élève 348,7 Ko ≤ 355, page la plus lourde 141,1 Ko ≤ 150.
+8. **Tests** : unitaires 1 611 réussis, 1 ignoré, 0 échec (`pnpm check` vert) dont api `a39.test.ts` (9 : adulte serein sans épreuve, choix du
+   niveau, mode modifiable et historique ; adulte « avec vérification » ; certificat seulement avec épreuve ; enfant
+   — parent avec code, défi doux, étoiles ; ado — préférence validée/refusée ; enfant en classe — l'enseignant
+   décide, retour au choix du parent ; garde-fou et suivi de l'enseignant ; inscription), `a27.test.ts` adapté
+   (l'attente du lendemain suppose « avec vérification »), web `mode.test.ts` (3), `content.test.ts` (+1). e2e
+   `a39.spec.ts` (3 × 2 : adulte serein de l'inscription au niveau suivant, épreuve facultative en étoiles ; enfant
+   — défi doux, récapitulatif « Revoir d'abord / Continuer quand même », suivi du parent, choix du parent ; enfant en
+   classe — décision de l'enseignant), `a27.spec.ts` adapté (récapitulatif avant l'épreuve). **Suite e2e complète :
+   337 réussis, 43 ignorés, 0 échec (22,5 min, après fusion de main A37)**.
+
+Décisions à prendre (D-A39) : voir DECISIONS_EN_ATTENTE.
+
 ## 06/10/2026 — Chantier A37 : onglet « Vivre l'islam » (bon comportement, prières, adhkār)
 
 Branche `a37-vivre-islam-wip` (worktree `~/awform-a37`, depuis `main` f9467cd), base de tests `awform_a37_test`, e2e

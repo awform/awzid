@@ -14,8 +14,17 @@ import { currentSchoolYear } from './ecole.js';
 import { archivePupil, openEnrolment } from './school.js';
 import * as t from './schema.js';
 
+/** A39 : « lecons » = niveau ouvert en mode serein (leçons faites) ; « choix » = niveau choisi par l'élève adulte. */
 export type LevelSource =
-  'positionnement' | 'epreuve' | 'enseignant' | 'parent' | 'passage' | 'reprise' | 'inscription';
+  | 'positionnement'
+  | 'epreuve'
+  | 'enseignant'
+  | 'parent'
+  | 'passage'
+  | 'reprise'
+  | 'inscription'
+  | 'lecons'
+  | 'choix';
 
 /** Niveaux courants d'un profil, par matière. */
 export async function currentLevels(db: Db, profileId: string) {

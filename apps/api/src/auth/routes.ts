@@ -18,6 +18,7 @@ import {
   grantAccountRole,
   schema as t,
   schoolsOf,
+  setProfileEvalMode,
   visibleProfiles,
   type Db,
 } from '@awform/db';
@@ -236,6 +237,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       birthYear?: number;
       pseudonym?: string;
       consents: string[];
+      evalMode?: 'verification' | 'serein';
     };
   }>(
     '/api/v1/auth/signup',
@@ -254,6 +256,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             birthYear: YEAR,
             pseudonym: { type: 'string', minLength: 1, maxLength: 40 },
             consents: { type: 'array', maxItems: 10, items: { type: 'string', maxLength: 40 } },
+            // A39 : l'adulte choisit sa façon d'avancer (modifiable ensuite dans son compte)
+            evalMode: { enum: ['verification', 'serein'] },
           },
         },
       },
@@ -308,15 +312,21 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         // audit MIN-3 : le parent déclare être majeur (année de naissance contrôlée)
         ...(b.kind === 'parent' ? { majoriteDeclaree: true } : {}),
       });
-      if (b.kind === 'adulte')
-        await db.insert(t.profile).values({
-          ownerAccountId: a.id,
-          // audit MIN-1 : un titulaire de moins de 18 ans a un profil « ado » (protections des mineurs)
-          kind: ageFromYear(b.birthYear!) < 18 ? 'ado' : 'adulte',
-          pseudonym: b.pseudonym ?? 'Moi',
-          birthYear: b.birthYear ?? null,
-          avatar: 'lune',
-        });
+      if (b.kind === 'adulte') {
+        const [own] = await db
+          .insert(t.profile)
+          .values({
+            ownerAccountId: a.id,
+            // audit MIN-1 : un titulaire de moins de 18 ans a un profil « ado » (protections des mineurs)
+            kind: ageFromYear(b.birthYear!) < 18 ? 'ado' : 'adulte',
+            pseudonym: b.pseudonym ?? 'Moi',
+            birthYear: b.birthYear ?? null,
+            avatar: 'lune',
+          })
+          .returning({ id: t.profile.id });
+        // A39 : « Avec vérification » ou « Mode serein », choisi à l'inscription
+        if (b.evalMode && own) await setProfileEvalMode(db, own.id, b.evalMode, 'soi', a.id);
+      }
       await audit(db, a.id, 'compte.creation', a.id, { kind: b.kind, country: b.country });
       await setSession(reply, a.id, b.kind, false);
       return reply.code(201).send(await me(a.id, false));

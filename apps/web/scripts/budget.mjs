@@ -90,6 +90,8 @@ const BUDGET_INITIAL = 150 * 1024;
 // A37 (06/10/2026) : « Vivre l'islam » (bon comportement : page /vivre, fiches, 74 textes ; +9 Ko) PAYÉ sans relever le
 // budget : textes français du personnel hors de la coquille (static/i18n/fr-personnel.json, −5,4 Ko) et pages
 // légales anglaises chargées à la demande (static/i18n/legal/en.json, −3,7 Ko) : 409,0 Ko (main : 407,7).
+// A37 (suite, 07/10/2026) : vraies fiches, guide des parents, étiquettes : payés par les textes des espaces Prières et
+// Vivre l'islam chargés par route (static/i18n/fr-quotidien.json, fr-vivre.json, préchargés) : 409,1 Ko.
 const BUDGET_TOTAL = 410 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 // A27 (décision D-F2 9) : appareil d'un élève (sans les pages du personnel) — 353,0 Ko mesurés, borne 355 Ko pour

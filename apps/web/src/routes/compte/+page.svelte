@@ -1,5 +1,6 @@
 <script lang="ts">
   import VivanteReglages from '$lib/vivante/VivanteReglages.svelte';
+  import ModeProfil from '$lib/parcours/ModeProfil.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import NotificationsReglages from '$lib/NotificationsReglages.svelte';
@@ -233,6 +234,11 @@
       </p>
     {/if}
   </section>
+
+  {#if me.account.kind === 'adulte' && me.profiles[0]}
+    <!-- A39 : « Avec vérification » ou « Mode serein », choisi par l'adulte lui-même -->
+    <section class="card"><ModeProfil pid={me.profiles[0].id} /></section>
+  {/if}
 
   {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
     <NotificationsReglages parent={me.account.kind === 'parent'} />

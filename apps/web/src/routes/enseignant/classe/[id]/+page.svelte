@@ -16,6 +16,7 @@
   import RecitalClasse from '$lib/RecitalClasse.svelte';
   import SouratesClasse from '$lib/SouratesClasse.svelte';
   import RecitateursClasse from '$lib/quran/RecitateursClasse.svelte';
+  import ModeClasse from '$lib/parcours/ModeClasse.svelte';
 
   /**
    * Espace ÉCOLE d'une classe (lot 13) : élèves et groupes, devoirs avec échéance, tableau de suivi,
@@ -469,6 +470,8 @@
         >{t('commun.enregistrer')}</button
       >
     </form>
+
+    {#if id}<ModeClasse classId={id} />{/if}
 
     <section class="card">
       <h2>{t('classe.groupes')}</h2>

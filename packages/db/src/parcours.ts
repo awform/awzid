@@ -71,6 +71,8 @@ async function unitsOf(db: Db, editionId: string, levelCode: string) {
       numBilan: t.unitVersion.numBilan,
       titleFr: t.unitVersion.titleFr,
       titleAr: t.unitVersion.titleAr,
+      // A39 : « Pour aller plus loin » — ne compte jamais pour le passage
+      facultatif: t.unitVersion.facultatif,
       // activité d'écriture du livre : bloc « ecriture » ou exercice du cahier (livre « ecriture »)
       aEcriture: sql<boolean>`(${t.unitVersion.content} ? 'ecriture' OR jsonb_path_exists(${t.unitVersion.content}, '$.exercices[*] ? (@.livre == "ecriture")'))`,
     })
@@ -209,6 +211,8 @@ export interface SpaceUnit {
   majLe: Date | null;
   aEcriture: boolean;
   ecritureFaite: boolean;
+  /** A39 : rubrique « Pour aller plus loin » (hors passage et hors épreuves) */
+  facultatif: boolean;
 }
 
 /**
@@ -277,8 +281,10 @@ export async function levelSpace(db: Db, editionId: string, profileId: string, s
     ecritureFaite: done.has(u.id),
   }));
   const isDone = (u: SpaceUnit) => !!u.statut && DONE.has(u.statut);
+  // A39 : leçons qui comptent pour le passage (ni l'épreuve, ni « Pour aller plus loin »)
+  const counts = (u: SpaceUnit) => u.kind !== 'examen' && !u.facultatif;
   const enCours = unites.find((u) => u.statut === 'commencee') ?? null;
-  const prochaine = unites.find((u) => !isDone(u) && u.kind !== 'examen') ?? null;
+  const prochaine = unites.find((u) => !isDone(u) && counts(u)) ?? null;
   const derniere =
     unites
       .filter((u) => isDone(u) && u.kind === 'lecon')
@@ -313,8 +319,8 @@ export async function levelSpace(db: Db, editionId: string, profileId: string, s
     niveaux: levels.map((l) => l.code),
     unites,
     progression: {
-      faites: unites.filter((u) => isDone(u) && u.kind !== 'examen').length,
-      total: unites.filter((u) => u.kind !== 'examen').length,
+      faites: unites.filter((u) => isDone(u) && counts(u)).length,
+      total: unites.filter(counts).length,
     },
     enCours: enCours?.id ?? null,
     prochaine: prochaine?.id ?? null,

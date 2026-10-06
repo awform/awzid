@@ -34,6 +34,8 @@
       semaine: Array<{ day: string; weekday: number; actif: boolean; repos: boolean }>;
     } | null;
     jalons: { lettres: string[]; leconsTerminees: number; leconsMaitrisees: number };
+    serein?: boolean;
+    leconsSemaine?: number;
   }
   const LESSON_MIN = 15;
   const WORDS_MIN = 5;
@@ -272,9 +274,16 @@
     {@const r = data.regularite}
     <section class="card" data-testid="regularite">
       <h2>{t('auj.semaine')}</h2>
-      <p data-testid="jours-travail">
-        <Bidi text={t('auj.jours_travail', { n: r.joursActifs, objectif: r.objectif })} />
-      </p>
+      {#if data.serein}
+        <!-- A39 : mode serein — aucun objectif ni série imposés, seulement un encouragement -->
+        <p data-testid="encouragement-semaine">
+          <Bidi text={t('ser.semaine', { n: data.leconsSemaine ?? 0 })} />
+        </p>
+      {:else}
+        <p data-testid="jours-travail">
+          <Bidi text={t('auj.jours_travail', { n: r.joursActifs, objectif: r.objectif })} />
+        </p>
+      {/if}
       <ol class="week">
         {#each r.semaine as d (d.day)}
           <li class:actif={d.actif} class:repos={d.repos} data-day={d.day} data-actif={d.actif}>
@@ -284,7 +293,7 @@
         {/each}
       </ol>
       <p class="muted small">{t('auj.sans_punition')}</p>
-      <details>
+      <details hidden={data.serein}>
         <summary>{t('auj.regler')}</summary>
         <form class="rhythm" onsubmit={saveRhythm}>
           <label

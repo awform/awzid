@@ -24,6 +24,10 @@ $items += , @("$aw\data\index-lecons.js", 'data/')
 $items += , @("$aw\data\hifz", 'data/')
 # bibliothèque des livrets gradués (catalogue.js + livrets)
 if (Test-Path "$aw\data\lect") { $items += , @("$aw\data\lect", 'data/') }
+# A37 : livret « Bon comportement » (fiches, index officiel des rubriques, sources) et chapitre du guide des
+# parents « Transmettre les valeurs » (gp.c18), lus par l'import de l'application
+if (Test-Path "$aw\data\akhlaq") { $items += , @("$aw\data\akhlaq", 'data/') }
+if (Test-Path "$aw\data\gp\c18.js") { $items += , @("$aw\data\gp\c18.js", 'data/gp/') }
 $items += , @("$aw\ECARTS_VERSETS.md", '')
 $items += , @("$aw\illus", '')
 $items += , @("$W\coran\tanzil-uthmani.tsv", 'coran/')
@@ -35,7 +39,7 @@ foreach ($f in 'certificats.js', 'referentiel.js', 'regles.js') {
 }
 # tables de correspondance des identifiants d'exercices (gel des livres) : ancien identifiant → id explicite
 if (Test-Path "$W\application\ids") { $items += , @("$W\application\ids", '') }
-ssh $VmHost "rm -rf ~/$Dest.tmp && mkdir -p ~/$Dest.tmp/data/eval ~/$Dest.tmp/registre ~/$Dest.tmp/coran"
+ssh $VmHost "rm -rf ~/$Dest.tmp && mkdir -p ~/$Dest.tmp/data/eval ~/$Dest.tmp/data/gp ~/$Dest.tmp/registre ~/$Dest.tmp/coran"
 foreach ($it in $items) {
   if (-not (Test-Path $it[0])) { throw "Introuvable : $($it[0])" }
   scp -q -r $it[0] "${VmHost}:$Dest.tmp/$($it[1])"

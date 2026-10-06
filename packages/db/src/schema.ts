@@ -154,6 +154,12 @@ export const unitVersion = pgTable(
      * fiqh ; null : pas encore calculé (rempli par `backfillContent`). Le texte du livre n'est pas touché.
      */
     madhhabBlocks: jsonb('madhhab_blocks'),
+    /**
+     * A39 : unité FACULTATIVE (rubrique « Pour aller plus loin » : poésie, fiqh classique…), lue dans le livre
+     * (`facultatif: true` ou `rubrique: "pour_aller_plus_loin"`). Ne compte JAMAIS pour le passage de niveau
+     * (leçons à faire, progression) ni pour les épreuves.
+     */
+    facultatif: boolean('facultatif').notNull().default(false),
   },
   (t) => [primaryKey({ columns: [t.editionId, t.unitId] })],
 );
@@ -495,6 +501,12 @@ export const profile = pgTable(
      * son pays) ; le parent valide ou refuse. À 18 ans, la reprise est de droit (aucune validation).
      */
     emancipationRequestAt: timestamp('emancipation_request_at', { withTimezone: true }),
+    /**
+     * A39 (mode serein) : préférence exprimée par l'ADO (« douce », « serein », « verification »), en attente de
+     * la validation du parent ; effacée quand le parent décide (accepte ou refuse).
+     */
+    evalModeWish: text('eval_mode_wish'),
+    evalModeWishAt: timestamp('eval_mode_wish_at', { withTimezone: true }),
   },
   (t) => [
     index('profile_owner').on(t.ownerAccountId),
@@ -503,6 +515,10 @@ export const profile = pgTable(
       sql`${t.birthYear} IS NULL OR ${t.birthYear} BETWEEN 1900 AND 2100`,
     ),
     check('profile_explanation_locale', sql`${t.explanationLocale} ~ '^[a-z]{2,3}(-[A-Z]{2})?$'`),
+    check(
+      'profile_eval_mode_wish',
+      sql`${t.evalModeWish} IS NULL OR ${t.evalModeWish} IN ('verification', 'douce', 'serein')`,
+    ),
   ],
 );
 
@@ -999,7 +1015,7 @@ export const profileLevel = pgTable(
       .where(sql`${t.until} IS NULL`),
     check(
       'profile_level_source',
-      sql`${t.source} IN ('positionnement', 'epreuve', 'enseignant', 'parent', 'passage', 'reprise', 'inscription')`,
+      sql`${t.source} IN ('positionnement', 'epreuve', 'enseignant', 'parent', 'passage', 'reprise', 'inscription', 'lecons', 'choix')`,
     ),
     check(
       'profile_level_outcome',
@@ -1079,6 +1095,53 @@ export const placementAttempt = pgTable(
   (t) => [
     index('placement_attempt_profile').on(t.profileId, t.subjectCode, t.at),
     check('placement_attempt_kind', sql`${t.kind} IN ('positionnement', 'epreuve')`),
+  ],
+);
+
+/**
+ * A39 « mode serein » (décision du client, 06/10/2026) : façon d'avancer d'un élève, HISTORISÉE (une ligne
+ * ouverte = choix courant) :
+ *  - « verification » : le niveau suivant s'ouvre par l'épreuve de passage ;
+ *  - « douce » (défaut des enfants et ados) : petit défi de révision, sans note chiffrée, essais libres ;
+ *  - « serein » : le niveau suivant s'ouvre quand les leçons sont faites ; épreuve facultative (certificat).
+ * Portée : un PROFIL (décidé par l'adulte lui-même — « soi » —, ou par le parent pour un mineur) ou une CLASSE
+ * (décidé par l'enseignant ; s'applique aux mineurs de la classe, le choix du parent valant hors classe).
+ */
+export const EVAL_MODES = ['verification', 'douce', 'serein'] as const;
+export type EvalModeName = (typeof EVAL_MODES)[number];
+export const evalMode = pgTable(
+  'eval_mode',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'cascade' }),
+    classId: uuid('class_id').references(() => classGroup.id, { onDelete: 'cascade' }),
+    /** null (classe seulement) : l'enseignant laisse le choix aux familles */
+    mode: text('mode'),
+    decider: text('decider').notNull(),
+    decidedBy: uuid('decided_by').references(() => account.id, { onDelete: 'set null' }),
+    since: timestamp('since', { withTimezone: true }).notNull().defaultNow(),
+    until: timestamp('until', { withTimezone: true }),
+  },
+  (t) => [
+    index('eval_mode_profile').on(t.profileId),
+    index('eval_mode_class').on(t.classId),
+    uniqueIndex('eval_mode_profile_courant')
+      .on(t.profileId)
+      .where(sql`${t.until} IS NULL AND ${t.profileId} IS NOT NULL`),
+    uniqueIndex('eval_mode_class_courant')
+      .on(t.classId)
+      .where(sql`${t.until} IS NULL AND ${t.classId} IS NOT NULL`),
+    check(
+      'eval_mode_mode',
+      sql`${t.mode} IS NULL OR ${t.mode} IN ('verification', 'douce', 'serein')`,
+    ),
+    check('eval_mode_decider', sql`${t.decider} IN ('soi', 'parent', 'enseignant')`),
+    check(
+      'eval_mode_portee',
+      sql`(${t.profileId} IS NOT NULL AND ${t.classId} IS NULL AND ${t.mode} IS NOT NULL) OR (${t.profileId} IS NULL AND ${t.classId} IS NOT NULL)`,
+    ),
   ],
 );
 

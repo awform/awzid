@@ -393,5 +393,7 @@
   "etab.archives": "Registre : élèves partis (notes conservées)",
   "etab.parti_le": "{nom} — parti le {date}",
   "parc.niveau_maitre": "Niveau (décision du maître)",
-  "parc.niveau_decide": "Niveau de {eleve} : {niveau}"
+  "parc.niveau_decide": "Niveau de {eleve} : {niveau}",
+  "ser.classe_titre": "Façon d'avancer de la classe",
+  "ser.classe_libre": "Laisser le choix aux familles"
 }
