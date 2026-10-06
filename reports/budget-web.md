@@ -6,9 +6,9 @@
 | JavaScript de toutes les pages (Brotli) | 366.5 Ko | ≤ 405.0 Ko |
 | CSS (Brotli) | 38.2 Ko | — |
 | Total JS + CSS de toutes les pages (Brotli) | 404.7 Ko | ≤ 405.0 Ko |
-| dont pages du personnel, NON préchargées sur l'appareil d'un élève (19 fichiers) | 46.9 Ko | — |
+| dont pages du personnel, NON préchargées sur l'appareil d'un élève (19 fichiers) | 46.8 Ko | — |
 | **Appareil d'un élève** : tout ce que précharge le service worker (JS + CSS, Brotli) | 345.2 Ko | ≤ 355.0 Ko (objectif 325 Ko) |
-| dont leçons vivantes : générateurs, lecteur, modèles (2 fichiers, à la demande, non préchargés) | 12.6 Ko | ≤ 20.0 Ko |
+| dont leçons vivantes : générateurs, lecteur, modèles (2 fichiers, à la demande, non préchargés) | 12.7 Ko | ≤ 20.0 Ko |
 | Service worker (Brotli) | 6.2 Ko | — |
 | Polices WOFF2 (une seule fois, déjà compressées) | 222.6 Ko | ≤ 600.0 Ko |
 | Police d'une riwāya, la plus lourde (6 polices, à la demande, hors coquille) | 781.6 Ko | ≤ 1024.0 Ko |
