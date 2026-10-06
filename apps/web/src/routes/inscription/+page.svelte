@@ -18,7 +18,8 @@
   let birthYear: number | undefined = $state(undefined);
   let pseudonym = $state('');
   /** A39 : façon d'avancer de l'adulte (modifiable ensuite dans son compte) */
-  let evalMode: 'verification' | 'serein' = $state('verification');
+  // D-A39 : « Mode serein » présélectionné (ne pas décourager) ; « Avec vérification » reste au choix
+  let evalMode: 'verification' | 'serein' = $state('serein');
   let cgu = $state(false);
   let transfert = $state(false);
   let rappels = $state(false);

@@ -222,7 +222,9 @@
       <a class="card item" href={`?e=${e.id}`} data-entree={e.id}>
         <strong><Bidi text={e.titre_fr} /></strong>
         <small class="muted"
-          ><Bidi text={t('vi.lecon', { niveau: levelLabel(e.level), n: e.n })} /></small
+          ><Bidi
+            text={t(e.bilan ? 'vi.bilan' : 'vi.lecon', { niveau: levelLabel(e.level), n: e.n })}
+          /></small
         >
         {#if e.situations && !enfant}<span class="pill"
             >{t('vi.que_fais_tu')} · {fmtNumber(e.situations)}</span

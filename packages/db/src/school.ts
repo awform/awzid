@@ -431,8 +431,10 @@ export async function issueCertificate(
     prefix: string;
     year: number;
     kind: 'niveau' | 'hifz';
-    classId: string;
-    pupilId: string;
+    /** école : classe et ligne du registre ; A39 : adulte autonome — profil seulement (null ici) */
+    classId: string | null;
+    pupilId: string | null;
+    profileId?: string | null;
     issuedBy: string;
     subject: string;
     holderName: string;
@@ -459,6 +461,7 @@ export async function issueCertificate(
             kind: c.kind,
             classId: c.classId,
             pupilId: c.pupilId,
+            profileId: c.profileId ?? null,
             issuedBy: c.issuedBy,
             subject: c.subject,
             holderName: c.holderName,

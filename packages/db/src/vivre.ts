@@ -34,6 +34,7 @@ export async function adabCatalog(
       id: t.unit.id,
       level: t.unit.levelCode,
       n: t.unit.n,
+      kind: t.unit.kind,
       fa: sql<unknown>`${t.unitVersion.student}->'fiqh_adab'`,
       rub: sql<unknown>`${t.unitVersion.student}->'rubriques'`,
     })
@@ -42,7 +43,8 @@ export async function adabCatalog(
     .where(
       and(
         eq(t.unitVersion.editionId, editionId),
-        eq(t.unit.kind, 'lecon'),
+        // leçons et bilans (révisions) ; jamais les épreuves (sujets) ; les bilans des enfants n'ont pas ce bloc
+        inArray(t.unit.kind, ['lecon', 'bilan']),
         sql`(${t.unitVersion.student} ? 'fiqh_adab' OR ${t.unitVersion.student} ? 'rubriques')`,
       ),
     );
@@ -51,7 +53,7 @@ export async function adabCatalog(
       entriesOfLesson(r.id, r.level, r.n, {
         ...(r.fa ? { fiqh_adab: r.fa } : {}),
         ...(r.rub ? { rubriques: r.rub } : {}),
-      }),
+      }).map((e) => (r.kind === 'bilan' ? { ...e, bilan: true } : e)),
     )
     .sort((a, b) => a.level.localeCompare(b.level) || a.n - b.n || a.path.localeCompare(b.path));
   const idx = await doc(db, editionId, 'akhlaq.index');

@@ -49,6 +49,13 @@ describe.skipIf(!url)('A37 — /api/v1/vivre', () => {
           ],
         },
       },
+      {
+        id: 'en1.l05',
+        n: 5,
+        kind: 'bilan',
+        student: { fiqh_adab: bloc('Révision', 'Je révise.') },
+      },
+      { id: 'en1.l06', n: 6, kind: 'examen', student: { fiqh_adab: bloc('Épreuve', 'Sujet.') } },
     ]);
     await c.h.db
       .insert(t.levelVersion)
@@ -76,6 +83,8 @@ describe.skipIf(!url)('A37 — /api/v1/vivre', () => {
             row('en1.l02.adab', 'Essai 2', 'voisins'),
             row('en1.l03.adab', 'Essai 3', 'famille', ['cuisine']),
             row('en1.l04.r2', 'Essai 4', 'animaux_nature'),
+            row('en1.l05.adab', 'Révision', 'soi'),
+            row('en1.l06.adab', 'Épreuve', 'soi'),
           ],
         },
       },
@@ -106,7 +115,10 @@ describe.skipIf(!url)('A37 — /api/v1/vivre', () => {
       ['en1.l02.fiqh_adab', ['voisins'], [], 'index'],
       ['en1.l03.fiqh_adab', ['famille'], ['cuisine'], 'index'],
       ['en1.l04.rubriques.1', ['animaux_nature'], [], 'index'],
+      // bilan (révision) gardé ; épreuve jamais montrée
+      ['en1.l05.fiqh_adab', ['soi'], [], 'index'],
     ]);
+    expect(b.entrees.find((e) => e.id === 'en1.l05.fiqh_adab')).toMatchObject({ bilan: true });
     expect(b.entrees[0]!.fiches).toEqual(['ok.01']);
     // résumés seulement (la fiche entière se charge à l'ouverture) ; aucune fiche d'essai sans la variable
     expect(b.fiches.map((f) => f.id)).toEqual(['ok.01', 'ok.02']);

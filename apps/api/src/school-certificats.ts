@@ -33,6 +33,7 @@ import {
   type RefLevel,
 } from '@awform/school';
 import { audit } from './auth/service.js';
+import { certQr, ORIGIN } from './qr.js';
 
 import { err, PART, partLabel, today, type Edition } from './school-common.js';
 
@@ -242,13 +243,24 @@ export function registerCertificates(app: FastifyInstance, kit: SchoolKit): void
     },
   );
 
-  app.get<{ Params: { cid: string } }>(
+  app.get<{ Params: { cid: string }; Querystring: { origin?: string } }>(
     '/api/v1/ecole/certificats/:cid',
-    { ...pre, schema: idParams('cid') },
+    {
+      ...pre,
+      schema: {
+        ...idParams('cid'),
+        querystring: {
+          type: 'object',
+          properties: { origin: { type: 'string', maxLength: 200, pattern: ORIGIN } },
+        },
+      },
+    },
     async (req, reply) => {
       const c = await teacherCertificate(db, me(req), req.params.cid);
       if (!c) return err(reply, 404, 'introuvable');
-      return { certificate: await seal(c) };
+      const sealed = await seal(c);
+      // A39 : QR de vérification calculé ici (bibliothèque hors du paquet de l'application)
+      return { certificate: { ...sealed, qr: certQr(req.query.origin, sealed) } };
     },
   );
 

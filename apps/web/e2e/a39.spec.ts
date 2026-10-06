@@ -80,7 +80,9 @@ async function signupSerein(page: Page): Promise<string> {
   await page.locator('#birthYear').fill('1988');
   const choix = page.getByTestId('mode-inscription');
   await expect(choix).toContainText('Mode serein');
-  await choix.locator('[data-mode-choix="serein"]').check();
+  // D-A39 : « Mode serein » présélectionné, « Avec vérification » au choix sur le même écran
+  await expect(choix.locator('[data-mode-choix="serein"]')).toBeChecked();
+  await expect(choix.locator('[data-mode-choix="verification"]')).not.toBeChecked();
   await page.getByTestId('consent-cgu').check();
   await page.locator('form button[type="submit"]').click();
   await expect(page).not.toHaveURL(/\/inscription/);
@@ -132,6 +134,55 @@ test('adulte en mode serein : niveau suivant après les leçons, sans épreuve ;
   await expect(res).toBeVisible();
   await expect(res.getByTestId('etoiles')).toHaveAttribute('data-n', '1');
   await expect(res.getByTestId('certificat-possible')).toHaveCount(0);
+});
+
+test('D-A39 : certificat individuel de l’adulte autonome (après épreuve réussie), vérifiable en ligne', async ({
+  page,
+}) => {
+  const pid = await signupSerein(page);
+  await page.request.post(`/api/v1/profiles/${pid}/commencer/arabe`, { headers: H, data: {} });
+  await page.goto('/certificats');
+  await expect(page.getByTestId('aucun-certificat')).toBeVisible();
+  await expect(page.getByTestId('obtenir-certificat')).toHaveCount(0);
+  // épreuve de passage réussie (comme si l'adulte l'avait passée)
+  sql(
+    `INSERT INTO placement_attempt (profile_id, subject_code, kind, level_code, points, max, passed)
+     VALUES ('${pid}', 'arabe', 'epreuve', 'ad1', 9, 10, true)`,
+  );
+  await page.reload();
+  const f = page.getByTestId('obtenir-certificat');
+  await f.locator('input').first().fill('Samir Diallo');
+  await f.locator('select').selectOption('M.');
+  await f.locator('button[type="submit"]').click();
+  const doc = page.getByTestId('certificat');
+  await expect(doc).toContainText('Awzid — parcours autonome');
+  await expect(doc).toContainText('Samir Diallo');
+  await expect(doc).not.toContainText('…………');
+  await expect(doc.getByTestId('qr-verification')).toBeVisible();
+  // même vérification publique que les certificats d'école
+  const numero = (await doc.getByTestId('numero').innerText()).match(/AWF-[A-Z0-9-]+/)![0];
+  const code = sql(`SELECT verif_code FROM certificate WHERE number = '${numero}'`).trim();
+  const v = await page.request.get(`/api/v1/public/certificats/${numero}?c=${code}`);
+  expect(((await v.json()) as { statut: string; titulaire: string }).titulaire).toBe(
+    'Samir Diallo',
+  );
+});
+
+test('D-A39 : pages légales gardées dès la première ouverture, lisibles hors ligne', async ({
+  page,
+  context,
+}) => {
+  await page.goto('/');
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await expect
+    .poll(() => page.evaluate(async () => !!(await caches.match('/i18n/legal/fr.json'))), {
+      timeout: 20_000,
+    })
+    .toBe(true);
+  await context.setOffline(true);
+  await page.goto('/legal/cgu').catch(() => {});
+  await expect(page.getByTestId('page-legale').locator('section').first()).toBeVisible();
+  await context.setOffline(false);
 });
 
 test('enfant : défi doux par défaut, garde-fou de révision, suivi du parent, choix du parent', async ({
