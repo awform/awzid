@@ -8,6 +8,25 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Chantier A34 : Muṣḥaf de Médine « à l'identique » — branchement dans le lecteur (mode partiel)
+
+Après la fusion de « Coran épuré » (main aea0b34), fusionnée dans `a34-mushaf-exact-wip` :
+- **Synchronisation réelle** (prélancement, par le chef de projet) : 6 488 lignes (1 fiche, 49 pages, 6 438 mots) ;
+  ordre de lecture = `position_in_page` (`position_in_line` non fiable) ; **49/49 pages conformes** après la
+  correction explicite `qf-2-181-fin` (`corrections.json`, validée par le référent ; signalement
+  `QF_SIGNALEMENT_2-181.md`) ; mode **partiel** hors production, 604 pages exigées en production.
+- **Lecteur** (`/coran/lecteur`, vue page) : une page publiée s'affiche en lignes exactes DANS le cadre commun de
+  `MushafPage` (un seul cadre, dessiné par nous ; `LignesExactes.svelte`, cartouche identique, couleurs `--mp-*`,
+  clair et sombre), une fois ses lignes ET ses polices prêtes ; sinon la page fluide, sans message. Ḥafṣ sans tajwid
+  ni masquage seulement. Surlignage (verset écouté/choisi), menu du verset, traduction à gauche, glisser :
+  inchangés ; clavier et lecteurs d'écran : un bouton (texte Tanzil) par verset.
+- **Crédits** : ⓘ du lecteur (`mpx.credit`) et « Nos garanties » (`gar.mushaf_exact`), 5 langues.
+- **Puce 375 px** : « v. 1 · p. 604 · juzʾ 30 » passe sur deux lignes au lieu d'être coupé.
+- **Déploiement** : `compose.yml` monte `~/awform-data/qf-mushaf` (dossier parent de `publie/`, remplacé d'un bloc)
+  et `~/awform-data/qcf-1405` en lecture seule (`AWFORM_QF_MUSHAF_DIR`, `AWFORM_QCF_DIR`) ; `deploy.sh` les crée vides
+  s'ils manquent (page fluide).
+- **Budget** : 407,5 Ko toutes pages (→ 410, D-A34), élève 347,7 Ko ≤ 355, page la plus lourde 143,2 Ko.
+
 ## 06/10/2026 — Chantier A34 : Muṣḥaf de Médine « à l'identique » (BROUILLON — en attente de la 1re synchronisation)
 
 Branche `a34-mushaf-exact-wip` (worktree `~/awform-a34`, depuis `main` 73ec68d). **Non fusionnée** : la fusion

@@ -153,6 +153,10 @@ done
 "${DC[@]}" --profile outils run --rm lecons-audio importer --si-present \
   || echo "ATTENTION : audio des leçons : fichiers refusés ou import en échec (voir ci-dessus)"
 
+# A34 : dossiers du Muṣḥaf exact (copie Content Sync, polices QCF) créés vides s'ils manquent (sinon Docker les
+# créerait au nom de root) ; vides, l'API répond « indisponible » et le lecteur garde la page fluide
+mkdir -p "${AWFORM_QF_MUSHAF_SOURCE:-$HOME/awform-data/qf-mushaf}" "${AWFORM_QCF_SOURCE:-$HOME/awform-data/qcf-1405}"
+
 # ---------------------------------------------------------------- 3. services
 "${DC[@]}" up -d --remove-orphans api worker web caddy
 for i in $(seq 1 60); do

@@ -84,7 +84,10 @@ const BUDGET_INITIAL = 150 * 1024;
 // 399,8 Ko) ; MAIS les pages du personnel (46,9 Ko) ne sont plus préchargées sur l'appareil d'un élève (D-F2 9) :
 // ce qu'il garde passe de 373,7 à 353,0 Ko. Budget « toutes pages » (le personnel les charge à l'usage) → 405 Ko,
 // à valider (décision D-A27) ; le budget qui compte pour l'élève est BUDGET_ELEVE ci-dessous.
-const BUDGET_TOTAL = 405 * 1024;
+// A34 (06/10/2026) : Muṣḥaf de Médine « à l'identique » dans le lecteur (lignes exactes dans le cadre commun,
+// chargement des pages et polices du Complexe à la demande, crédits en 5 langues ; +2,9 Ko, main était à 404,6 Ko) →
+// 410 Ko, à valider (décision D-A34) ; l'appareil d'un élève reste sous BUDGET_ELEVE.
+const BUDGET_TOTAL = 410 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 // A27 (décision D-F2 9) : appareil d'un élève (sans les pages du personnel) — 353,0 Ko mesurés, borne 355 Ko pour
 // empêcher toute dérive ; objectif 325 Ko (piste : textes d'interface du personnel hors de la coquille de l'élève)

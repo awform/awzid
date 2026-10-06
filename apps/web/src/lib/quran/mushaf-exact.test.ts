@@ -25,6 +25,7 @@ import {
   type ExactPage,
   type ExactWord,
 } from './mushaf-exact';
+import { exactAvailable } from './mushaf-exact-load';
 import {
   applyMutation,
   apiUrl,
@@ -158,6 +159,16 @@ describe('A34 — lignes d’une page (15 lignes, en-têtes, basmala)', () => {
     expect([cp(1), cp(37), cp(38), cp(114)]).toEqual([0xfb8d, 0xfbb1, 0xfbd3, 0xfc1f]);
     expect(new Set(Array.from({ length: 114 }, (_, i) => bsmlSuraName(i + 1))).size).toBe(114);
     expect(bsmlSuraName(0)).toBe('');
+  });
+});
+
+describe('A34 — pages disponibles (publication complète ou partielle)', () => {
+  it('complète : toutes ; partielle : la liste seulement ; indisponible : aucune', () => {
+    expect(exactAvailable({ disponible: true }, 300)).toBe(true);
+    expect(exactAvailable({ disponible: true, partiel: true, pages: [1, 2, 3] }, 3)).toBe(true);
+    expect(exactAvailable({ disponible: true, partiel: true, pages: [1, 2, 3] }, 50)).toBe(false);
+    expect(exactAvailable({ disponible: false }, 3)).toBe(false);
+    expect(exactAvailable(null, 3)).toBe(false);
   });
 });
 

@@ -20,7 +20,14 @@ export interface ExactState {
   version?: string;
   credit?: string;
   enRetard?: boolean;
+  /** publication partielle (prélancement) : seules ces pages sont exactes */
+  partiel?: boolean;
+  pages?: number[] | null;
 }
+
+/** La page n est-elle publiée en mise en page exacte ? (toutes, ou la liste d'une publication partielle) */
+export const exactAvailable = (s: ExactState | null, n: number) =>
+  !!s?.disponible && (!s.partiel || !s.pages || s.pages.includes(n));
 
 const hasCaches = () => typeof caches !== 'undefined';
 
