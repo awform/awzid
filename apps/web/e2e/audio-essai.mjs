@@ -66,6 +66,7 @@ try {
     ...meta('essai-qf', 'hafs', 'Essai en ligne (bips)'),
     credit:
       'Essai en ligne (bips) — API Quran Foundation simulée, fichiers d’essai non coraniques.',
+    usageNote: 'Écoute en ligne seulement (essai) : ni téléchargement, ni copie sur l’appareil.',
   });
   await h.pool.query(
     "update quran_reciter set source = 'qf', status = 'actif', activated_at = now() where id = 'essai-qf'",
