@@ -3,16 +3,15 @@
   import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import { levelLabel } from '$lib/levels';
-  import { PILOTES, readVivante, writeVivante, type VivReglage } from './reglage';
+  import { readVivante, writeVivante, type VivReglage } from './reglage';
 
-  /** Chantier A21 — préférences des leçons vivantes (réglage de l'appareil). */
+  /** Chantiers A21 / A21b — préférences des leçons vivantes (réglage de l'appareil). */
   const range = (p: string, n: number) => Array.from({ length: n }, (_, i) => `${p}${i + 1}`);
   /** livres d'arabe : enfants 1–5, ados 1–4, adultes 1–10 */
   const LEVELS = [...range('en', 5), ...range('ado', 4), ...range('ad', 10)];
-  let r: VivReglage = $state({ on: true, levels: [] });
+  let r: VivReglage = $state({ on: true, off: [] });
   onMount(() => (r = readVivante()));
   const save = () => writeVivante(r);
-  const pilotes = PILOTES.map((u) => levelLabel(u.split('.')[0]!)).join(', ');
 </script>
 
 <section class="card viv-reglages" data-testid="vivante-reglages">
@@ -24,19 +23,16 @@
     ></label
   >
   {#if r.on}
-    <p class="muted"><Bidi text={t('viv.pilotes', { liste: pilotes })} /></p>
     <fieldset>
       <legend>{t('viv.niveaux')}</legend>
       <div class="lv">
         {#each LEVELS as l (l)}<label class="check"
             ><input
               type="checkbox"
-              checked={r.levels.includes(l)}
+              checked={!r.off.includes(l)}
               data-viv-level={l}
               onchange={(e) => {
-                r.levels = e.currentTarget.checked
-                  ? [...r.levels, l]
-                  : r.levels.filter((x) => x !== l);
+                r.off = e.currentTarget.checked ? r.off.filter((x) => x !== l) : [...r.off, l];
                 save();
               }}
             /><span><Bidi text={levelLabel(l)} /></span></label

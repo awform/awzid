@@ -76,3 +76,9 @@ positionnement, épreuve de passage, Mon cahier, fiche à imprimer, « J'écris 
 `msg.ancien_enseignant` et 7 `erreur.*`, traduits par Claude, relecteur provisoire — à relire avec le reste. Arabe
 sans voyelles comme le reste de l'interface ; « القسم » pour la classe ; espagnol « profesor », « aleya ». À vérifier
 en priorité : `parc.rasm_texte` (orthographe du Muṣḥaf) et `fam.demande_aide` (âge légal, « de droit à 18 ans »).
+
+Chantier A21b (05/10/2026) : textes `viv.*` — 9 ajoutés (`viv.m_racine`, `viv.m_conjugaison`, `viv.m_nombre`,
+`viv.m_heure`, `viv.demo_choisir`, `viv.demo_livre`, `viv.demo_lecon`, `viv.demo_exemples`, `viv.demo_hors_ligne`), 2 changés
+(`viv.niveaux`, `viv.demo_intro` : animations actives partout, désactivables par niveau), 2 retirés (`viv.pilotes`,
+`viv.lecon1`) ; traduits par Claude, relecteur provisoire, dans les quatre langues en préparation — à relire avec le
+reste. Arabe vocalisé comme les autres textes `viv.*` ; « الْجَذْرُ وَالْوَزْنُ » pour « racine et schème ».

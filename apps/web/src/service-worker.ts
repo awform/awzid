@@ -55,11 +55,25 @@ async function staffOnly(): Promise<Set<string>> {
   }
 }
 
+/**
+ * A21b : code des leçons vivantes (générateurs, lecteur, modèles ; liste écrite à la construction par
+ * vite.config.ts) — pas dans la coquille ; gardé dans le cache de cette version au premier usage ou au
+ * téléchargement d'un niveau d'arabe (voir le traitement des fichiers non préchargés plus bas).
+ */
+async function vivante(): Promise<Set<string>> {
+  try {
+    const r = await fetch('/_app/vivante.json', { cache: 'no-store' });
+    return new Set(r.ok ? ((await r.json()) as string[]).map(String) : []);
+  } catch {
+    return new Set();
+  }
+}
+
 sw.addEventListener('install', (event) => {
   event.waitUntil(
-    staffOnly().then(async (staff) => {
+    Promise.all([staffOnly(), vivante()]).then(async ([staff, viv]) => {
       const c = await caches.open(CACHE);
-      await c.addAll([...ASSETS.filter((a) => !staff.has(a)), SHELL]);
+      await c.addAll([...ASSETS.filter((a) => !staff.has(a) && !viv.has(a)), SHELL]);
     }),
   );
 });
@@ -113,7 +127,7 @@ sw.addEventListener('fetch', (event) => {
     return;
   }
   if (ASSETS.includes(url.pathname)) {
-    // fichier non préchargé (pages du personnel) : réseau, puis gardé dans le cache de cette version
+    // fichier non préchargé (pages du personnel, leçons vivantes) : réseau, puis gardé dans le cache de cette version
     event.respondWith(
       caches.match(url.pathname).then(
         (r) =>

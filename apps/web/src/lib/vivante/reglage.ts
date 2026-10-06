@@ -1,9 +1,12 @@
 /**
- * Chantier A21 — réglage des « leçons vivantes » (animations après chaque partie d'une leçon et condensé) :
- * réglage de confort propre à l'appareil, comme le mode clair/sombre (stockage local ; indisponible → défaut).
+ * Chantiers A21 / A21b — réglage des « leçons vivantes » (animations après chaque partie d'une leçon et
+ * condensé) : réglage de confort propre à l'appareil, comme le mode clair/sombre (stockage local ; indisponible
+ * → défaut).
  *  - interrupteur général (activé par défaut) ;
- *  - activées d'office sur les trois leçons pilotes ; activables pour tout un niveau.
+ *  - A21b : activées PARTOUT par défaut (toutes les leçons des livres d'arabe) ; un niveau peut être désactivé.
+ * Les leçons de religion (re, ra) et de lecture du Coran (qc) n'ont jamais d'animation.
  */
+/** leçons pilotes du chantier A21 (démonstration) */
 export const PILOTES = ['en1.l01', 'ado1.l01', 'ad1.l01'] as const;
 /** niveaux d'arabe qui peuvent être rendus vivants (enfants, ados, adultes) */
 export const VIV_LEVEL = /^(en|ado|ad)\d+$/;
@@ -12,8 +15,8 @@ const KEY = 'awzid.vivante';
 export interface VivReglage {
   /** interrupteur général */
   on: boolean;
-  /** niveaux entièrement activés */
-  levels: string[];
+  /** niveaux où les animations sont désactivées */
+  off: string[];
 }
 type Store = Pick<Storage, 'getItem' | 'setItem'>;
 
@@ -30,27 +33,23 @@ export function readVivante(store: Store | null = safeStorage()): VivReglage {
     const v = JSON.parse(store?.getItem(KEY) ?? 'null') as Partial<VivReglage> | null;
     return {
       on: v?.on !== false,
-      levels: Array.isArray(v?.levels) ? v.levels.filter((l) => VIV_LEVEL.test(String(l))) : [],
+      // l'ancien réglage du pilote (`levels` activés) ne restreint plus rien : tout est actif par défaut
+      off: Array.isArray(v?.off) ? v.off.filter((l) => VIV_LEVEL.test(String(l))) : [],
     };
   } catch {
-    return { on: true, levels: [] };
+    return { on: true, off: [] };
   }
 }
 
 export function writeVivante(r: VivReglage, store: Store | null = safeStorage()): void {
   try {
-    store?.setItem(KEY, JSON.stringify({ on: r.on, levels: [...new Set(r.levels)].sort() }));
+    store?.setItem(KEY, JSON.stringify({ on: r.on, off: [...new Set(r.off)].sort() }));
   } catch {
     /* navigation privée : réglage pour cette visite seulement */
   }
 }
 
-/** La leçon est-elle vivante ? (leçon d'arabe seulement ; pilotes, ou niveau activé) */
-export function vivanteActive(
-  unitId: string,
-  level: string,
-  r: VivReglage = readVivante(),
-): boolean {
-  if (!r.on || !VIV_LEVEL.test(level)) return false;
-  return (PILOTES as readonly string[]).includes(unitId) || r.levels.includes(level);
+/** La leçon est-elle vivante ? (leçon d'arabe seulement ; interrupteur général, niveau non désactivé) */
+export function vivanteActive(level: string, r: VivReglage = readVivante()): boolean {
+  return r.on && VIV_LEVEL.test(level) && !r.off.includes(level);
 }

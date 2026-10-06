@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import Ar from '$lib/Ar.svelte';
   import Bidi from '$lib/Bidi.svelte';
+  import ModelesPlus from './ModelesPlus.svelte';
   import { fmtNumber, t } from '$lib/i18n';
   import { audioIdFor, playLessonAudio, stopLessonAudio, type LevelAudio } from '$lib/lecons-audio';
   import type { VivBeat, VivMotion } from '@awform/content/vivante';
@@ -253,6 +254,9 @@
       {#if b.ar}<span class="ar rule"><Ar text={b.ar} {lettres} /></span>{/if}
       {#if b.fr}<span class="fr up late"><Bidi text={b.fr} /></span>{/if}
     </div>
+  {:else if b.k === 'racine' || b.k === 'conj' || b.k === 'nombre' || b.k === 'heure'}
+    <!-- A21b : racine et schème, conjugaison, nombres, heure (même morceau à la demande que le lecteur) -->
+    <ModelesPlus {b} {lettres} />
   {:else if b.k === 'question'}
     {@const a = answers[n]}
     <div class="b question" data-testid="question-eclair" data-kind={b.q.kind}>
@@ -936,7 +940,9 @@
   }
   /* version calme (appareil : moins d'animations) : simples fondus, aucun mouvement */
   .calme .b,
-  .calme .b :global(*) {
+  .calme .b :global(*),
+  .calme :global(.plus),
+  .calme :global(.plus *) {
     animation: fade 500ms ease both !important;
   }
   .calme .draw text {
