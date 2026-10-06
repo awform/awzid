@@ -280,7 +280,7 @@
         <button type="button" onclick={() => (shown[i] = !shown[i])}>{t('rel.voir_reponse')}</button
         >
         {#if shown[i]}<p class="just">
-            {#if str(it.reponse_ar)}<Ar text={str(it.reponse_ar)} /> —
+            {#if str(it.reponse_ar)}<Ar text={str(it.reponse_ar)} sep />
             {/if}<Bidi text={str(it.reponse_fr)} />
           </p>{/if}
       </div>
@@ -373,7 +373,7 @@
   {:else if type === 'carnet'}
     <ul class="carnet">
       {#each arr(ex.lignes) as l, k (k)}<li>
-          {#if str((l as Obj).ar)}<Ar text={str((l as Obj).ar)} /> —
+          {#if str((l as Obj).ar)}<Ar text={str((l as Obj).ar)} sep />
           {/if}<Bidi text={str((l as Obj).fr)} />
         </li>{/each}
     </ul>

@@ -1088,13 +1088,13 @@
     margin-top: 8px;
   }
   .fiqh ul {
-    padding-inline-start: 1.2em;
+    list-style: none;
+    padding: 0;
   }
+  /* points sans puce, séparés par un filet discret */
   .pt {
-    margin-block: 6px;
-  }
-  .pt :global(.arfr-fr) {
-    margin-top: 2px;
+    padding-block: 8px;
+    border-top: 1px solid var(--line);
   }
   .memo .row {
     display: flex;

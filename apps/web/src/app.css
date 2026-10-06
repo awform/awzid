@@ -130,6 +130,10 @@ h3 {
   text-align: right;
   flex-basis: 100%;
 }
+/* point dont l'arabe passe sur sa ligne : pas de puce seule à côté */
+li:has(> :is(.arfr, .verset-bloc):first-child) {
+  list-style: none;
+}
 /* texte coranique : Amiri Quran uniquement */
 .quran-text {
   font-family: var(--font-quran);

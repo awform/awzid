@@ -34,7 +34,7 @@
     >{#if ar}<Ar text={ar} {lettres} block />{/if}{#if fr}<span class="fr arfr-fr"
         ><Bidi text={fr} /></span
       >{/if}</span
-  >{:else}{#if ar}<Ar text={ar} {lettres} /> —
+  >{:else}{#if ar}<Ar text={ar} {lettres} sep />
   {/if}<span class="fr"><Bidi text={fr} /></span>{/if}
 
 <style>

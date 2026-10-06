@@ -60,7 +60,7 @@
                 onchange={(e) => toggle(l, (e.currentTarget as HTMLInputElement).checked)}
               />
               <a href={resolve('/lecons/[id]', { id: l.unitId })}><Bidi text={l.unitId} /></a> —
-              {#if l.ar}<Ar text={l.ar} /> —
+              {#if l.ar}<Ar text={l.ar} sep />
               {/if}<Bidi text={l.fr} /></label
             >
           </li>
