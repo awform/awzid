@@ -8,6 +8,8 @@
   import { suraTitleAr, ayaNumberAr } from './sura-names-ar';
   import { verseRuns, type TajwidSura } from './tajwid';
   import TajwidRuns from './TajwidRuns.svelte';
+  import LignesExactes from './LignesExactes.svelte';
+  import type { ExactPage } from './mushaf-exact';
 
   /**
    * Muṣḥaf par page — UNE page du Muṣḥaf de Médine (versets de la page d'après les métadonnées Tanzil) dans un
@@ -30,8 +32,14 @@
     revealed = new Set<string>(),
     compact = false,
     riwaya = null,
+    exact = null,
     onpick,
   }: {
+    /**
+     * A34 — lignes EXACTES de la page (copie Content Sync + police QCF de la page déjà chargée) : affichées dans
+     * ce même cadre à la place de la mise en page fluide. Null = mise en page fluide.
+     */
+    exact?: ExactPage | null;
     /**
      * A8 — muṣḥaf d'une autre riwāya que Ḥafṣ : texte du Complexe affiché TEL QUEL (avec son signe de fin de
      * verset et son numéro, dessinés par la police du Complexe), noms de sourate du Complexe, aucune retouche
@@ -81,6 +89,7 @@
   class:readonly={readOnly}
   class:compact
   data-page={p}
+  data-exact={exact ? '1' : undefined}
   data-testid="mushaf-page"
   aria-label={t('mp.page_aria', { n: p })}
 >
@@ -122,92 +131,96 @@
       dir="rtl"
       style:--rw-font={riwaya ? `${riwaya.family}` : undefined}
     >
-      {#if !complete}<p class="loading small" lang={localeInfo().code} dir={localeInfo().dir}>
-          {t('mp.chargement')}
-        </p>{/if}
-      {#each segments as g (g.s)}
-        {#if g.from === 1}
-          <div class="band" data-sura-start={g.s}>
-            <svg
-              class="cartouche"
-              viewBox="0 0 400 48"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M30 3 H370 Q384 3 397 24 Q384 45 370 45 H30 Q16 45 3 24 Q16 3 30 3 Z"
-                class="cart-out"
-                vector-effect="non-scaling-stroke"
-              />
-              <path
-                d="M34 8 H366 Q377 8 387 24 Q377 40 366 40 H34 Q23 40 13 24 Q23 8 34 8 Z"
-                class="cart-in"
-                vector-effect="non-scaling-stroke"
-              />
-            </svg>
-            <svg class="medal s" viewBox="-12 -12 24 24" aria-hidden="true" focusable="false"
-              ><path d={star(10)} /><circle r="3" /></svg
-            >
-            {#if riwaya}<span class="band-title rw"
-                ><Bidi text={riwaya.suraName(g.s) ?? ''} base="ar" /></span
-              >{:else}<span class="band-title"><Bidi text={suraTitleAr(g.s)} base="ar" /></span
-              >{/if}
-            <svg class="medal e" viewBox="-12 -12 24 24" aria-hidden="true" focusable="false"
-              ><path d={star(10)} /><circle r="3" /></svg
-            >
-          </div>
-        {/if}
-        <p class="flow">
-          {#each Array.from({ length: g.to - g.from + 1 }, (_, i) => g.from + i) as a (a)}
-            {@const raw = text(g.s, a)}
-            {#if raw !== undefined && riwaya}
-              <span
-                class="aya"
-                class:on={current?.s === g.s && current?.a === a}
-                data-aya={`${g.s}:${a}`}
-                role="button"
-                tabindex={readOnly ? -1 : 0}
-                aria-disabled={readOnly ? 'true' : undefined}
-                aria-haspopup={readOnly ? undefined : 'dialog'}
-                onclick={(e) => !readOnly && onpick?.(g.s, a, e.currentTarget)}
-                onkeydown={(e) => key(e, g.s, a)}
-                ><span class="quran-text rw-text" data-verse={`${g.s}:${a}`}>{raw}</span></span
+      {#if exact}
+        <LignesExactes page={exact} {text} {basmala} {current} {readOnly} {onpick} />
+      {:else}
+        {#if !complete}<p class="loading small" lang={localeInfo().code} dir={localeInfo().dir}>
+            {t('mp.chargement')}
+          </p>{/if}
+        {#each segments as g (g.s)}
+          {#if g.from === 1}
+            <div class="band" data-sura-start={g.s}>
+              <svg
+                class="cartouche"
+                viewBox="0 0 400 48"
+                preserveAspectRatio="none"
+                aria-hidden="true"
               >
-            {:else if raw !== undefined}
-              {@const parts = splitBasmala(g.s, a, raw, basmala)}
-              {@const tj = tajwid ? tajwid(g.s) : null}
-              {@const tv = tj ? verseRuns({ s: g.s, a, text: raw }, basmala, tj) : null}
-              {@const ws = parts.rest.split(' ')}
-              {@const vis = visibleWords(ws.length, revealed.has(`${g.s}:${a}`) ? 0 : memo)}
-              {#if parts.basmala}<span class="basmala"
-                  ><span class="quran-text" data-basmala={`${g.s}:${a}`}
-                    >{#if tv?.basmala}{#each tv.basmala as bw, i (i)}{sep(i)}<TajwidRuns
-                          runs={bw}
-                        />{/each}{:else}{tanwinDisplay(parts.basmala)}{/if}</span
-                  ></span
+                <path
+                  d="M30 3 H370 Q384 3 397 24 Q384 45 370 45 H30 Q16 45 3 24 Q16 3 30 3 Z"
+                  class="cart-out"
+                  vector-effect="non-scaling-stroke"
+                />
+                <path
+                  d="M34 8 H366 Q377 8 387 24 Q377 40 366 40 H34 Q23 40 13 24 Q23 8 34 8 Z"
+                  class="cart-in"
+                  vector-effect="non-scaling-stroke"
+                />
+              </svg>
+              <svg class="medal s" viewBox="-12 -12 24 24" aria-hidden="true" focusable="false"
+                ><path d={star(10)} /><circle r="3" /></svg
+              >
+              {#if riwaya}<span class="band-title rw"
+                  ><Bidi text={riwaya.suraName(g.s) ?? ''} base="ar" /></span
+                >{:else}<span class="band-title"><Bidi text={suraTitleAr(g.s)} base="ar" /></span
                 >{/if}
-              <span
-                class="aya"
-                class:on={current?.s === g.s && current?.a === a}
-                data-aya={`${g.s}:${a}`}
-                role="button"
-                tabindex={readOnly ? -1 : 0}
-                aria-disabled={readOnly ? 'true' : undefined}
-                aria-haspopup={readOnly ? undefined : 'dialog'}
-                onclick={(e) => !readOnly && onpick?.(g.s, a, e.currentTarget)}
-                onkeydown={(e) => key(e, g.s, a)}
-                ><span class="quran-text" data-verse={`${g.s}:${a}`}
-                  >{#each ws as w, i (i)}{sep(i)}<span class="w" class:voile={!vis[i]}
-                      >{#if tv}<TajwidRuns runs={tv.words[i] ?? []} />{:else}{tanwinDisplay(
-                          w,
-                        )}{/if}</span
-                    >{/each}</span
-                ><span class="n" aria-hidden="true"><Bidi text={num(a)} base="ar" /></span></span
+              <svg class="medal e" viewBox="-12 -12 24 24" aria-hidden="true" focusable="false"
+                ><path d={star(10)} /><circle r="3" /></svg
               >
-            {/if}
-          {/each}
-        </p>
-      {/each}
+            </div>
+          {/if}
+          <p class="flow">
+            {#each Array.from({ length: g.to - g.from + 1 }, (_, i) => g.from + i) as a (a)}
+              {@const raw = text(g.s, a)}
+              {#if raw !== undefined && riwaya}
+                <span
+                  class="aya"
+                  class:on={current?.s === g.s && current?.a === a}
+                  data-aya={`${g.s}:${a}`}
+                  role="button"
+                  tabindex={readOnly ? -1 : 0}
+                  aria-disabled={readOnly ? 'true' : undefined}
+                  aria-haspopup={readOnly ? undefined : 'dialog'}
+                  onclick={(e) => !readOnly && onpick?.(g.s, a, e.currentTarget)}
+                  onkeydown={(e) => key(e, g.s, a)}
+                  ><span class="quran-text rw-text" data-verse={`${g.s}:${a}`}>{raw}</span></span
+                >
+              {:else if raw !== undefined}
+                {@const parts = splitBasmala(g.s, a, raw, basmala)}
+                {@const tj = tajwid ? tajwid(g.s) : null}
+                {@const tv = tj ? verseRuns({ s: g.s, a, text: raw }, basmala, tj) : null}
+                {@const ws = parts.rest.split(' ')}
+                {@const vis = visibleWords(ws.length, revealed.has(`${g.s}:${a}`) ? 0 : memo)}
+                {#if parts.basmala}<span class="basmala"
+                    ><span class="quran-text" data-basmala={`${g.s}:${a}`}
+                      >{#if tv?.basmala}{#each tv.basmala as bw, i (i)}{sep(i)}<TajwidRuns
+                            runs={bw}
+                          />{/each}{:else}{tanwinDisplay(parts.basmala)}{/if}</span
+                    ></span
+                  >{/if}
+                <span
+                  class="aya"
+                  class:on={current?.s === g.s && current?.a === a}
+                  data-aya={`${g.s}:${a}`}
+                  role="button"
+                  tabindex={readOnly ? -1 : 0}
+                  aria-disabled={readOnly ? 'true' : undefined}
+                  aria-haspopup={readOnly ? undefined : 'dialog'}
+                  onclick={(e) => !readOnly && onpick?.(g.s, a, e.currentTarget)}
+                  onkeydown={(e) => key(e, g.s, a)}
+                  ><span class="quran-text" data-verse={`${g.s}:${a}`}
+                    >{#each ws as w, i (i)}{sep(i)}<span class="w" class:voile={!vis[i]}
+                        >{#if tv}<TajwidRuns runs={tv.words[i] ?? []} />{:else}{tanwinDisplay(
+                            w,
+                          )}{/if}</span
+                      >{/each}</span
+                  ><span class="n" aria-hidden="true"><Bidi text={num(a)} base="ar" /></span></span
+                >
+              {/if}
+            {/each}
+          </p>
+        {/each}
+      {/if}
     </div>
 
     <footer class="folio" lang={localeInfo().code} dir={localeInfo().dir}>

@@ -23,6 +23,56 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
   311 réussis, 25 ignorés ; un échec intermittent d'A21b (en4 l12, carte « heure » vide) réussi en relance (×2).
   Budgets : toutes pages 404,7 Ko ≤ 405, appareil d'un élève 345,1 Ko ≤ 355.
 
+## 06/10/2026 — Chantier A34 : Muṣḥaf de Médine « à l'identique » — branchement dans le lecteur (mode partiel)
+
+Après la fusion de « Coran épuré » (main aea0b34), fusionnée dans `a34-mushaf-exact-wip` :
+- **Synchronisation réelle** (prélancement, par le chef de projet) : 6 488 lignes (1 fiche, 49 pages, 6 438 mots) ;
+  ordre de lecture = `position_in_page` (`position_in_line` non fiable) ; **49/49 pages conformes** après la
+  correction explicite `qf-2-181-fin` (`corrections.json`, validée par le référent ; signalement
+  `QF_SIGNALEMENT_2-181.md`) ; mode **partiel** hors production, 604 pages exigées en production.
+- **Lecteur** (`/coran/lecteur`, vue page) : une page publiée s'affiche en lignes exactes DANS le cadre commun de
+  `MushafPage` (un seul cadre, dessiné par nous ; `LignesExactes.svelte`, cartouche identique, couleurs `--mp-*`,
+  clair et sombre), une fois ses lignes ET ses polices prêtes ; sinon la page fluide, sans message. Ḥafṣ sans tajwid
+  ni masquage seulement. Surlignage (verset écouté/choisi), menu du verset, traduction à gauche, glisser :
+  inchangés ; clavier et lecteurs d'écran : un bouton (texte Tanzil) par verset.
+- **Crédits** : ⓘ du lecteur (`mpx.credit`) et « Nos garanties » (`gar.mushaf_exact`), 5 langues.
+- **Puce 375 px** : « v. 1 · p. 604 · juzʾ 30 » passe sur deux lignes au lieu d'être coupé.
+- **Déploiement** : `compose.yml` monte `~/awform-data/qf-mushaf` (dossier parent de `publie/`, remplacé d'un bloc)
+  et `~/awform-data/qcf-1405` en lecture seule (`AWFORM_QF_MUSHAF_DIR`, `AWFORM_QCF_DIR`) ; `deploy.sh` les crée vides
+  s'ils manquent (page fluide).
+- **Budget** : 407,5 Ko toutes pages (→ 410, D-A34), élève 347,7 Ko ≤ 355, page la plus lourde 143,2 Ko.
+
+## 06/10/2026 — Chantier A34 : Muṣḥaf de Médine « à l'identique » (BROUILLON — en attente de la 1re synchronisation)
+
+Branche `a34-mushaf-exact-wip` (worktree `~/awform-a34`, depuis `main` 73ec68d). **Non fusionnée** : la fusion
+attend le vrai fichier de lignes, généré par le chef de projet avec le secret QF, et validé par le contrôle.
+
+- **Juridique** (`SOURCES_MUSHAF.md` § 7, `LICENCES.md` § 8, D30) : conditions QF du 04/10/2026 → garde hors ligne
+  seulement par Content Sync (≤ 7 jours entre deux synchronisations), **pas de paquet de construction** : aucune
+  donnée QF dans le dépôt ; copie sur le serveur, servie page par page aux comptes connectés.
+- **Compatibilité police/codes** vérifiée en dessinant les polices officielles du Complexe (`QCF_P002` : U+FB51 =
+  « الٓمٓ » = code_v1 de 2:1 mot 1) ; glyphes de `QCF_BSML` relevés (basmala, « سورة », 114 noms).
+- **Outil** `infra/outils/qf-lignes/` : `qf-lignes.mjs sync|verifier|inspecter` (jeton OAuth2 « client
+  credentials », amorçage puis synchronisation incrémentale, instantané, mutations ROW_*/RESOURCE_*, publication
+  d'un bloc seulement si le contrôle est vide), `installer-polices.sh` (empreinte de `Data.zip`, 605 TTF tels quels,
+  `SHA256SUMS`), lecteur `cmap` sans dépendance.
+- **Contrôle bloquant** (`mushaf-exact.ts`) : 604 pages, lignes 1-15 sans trou (texte + en-têtes + basmala, pages
+  1-2 à part), chaque verset = mots 1..n de Tanzil (signes de pause, ۞, ۩ et basmala de tête exclus) + un signe de
+  fin, ordre de lecture, débuts de page = métadonnées Tanzil, chaque glyphe présent dans la police de sa page.
+- **API** `/api/v1/quran/mushaf-exact` (état, retard > 7 jours), `…/pages/:p` (connecté), `…/polices/:file`
+  (TTF octet pour octet, ETag SHA-256) ; variables `AWFORM_QF_MUSHAF_DIR`, `AWFORM_QCF_DIR`.
+- **Rendu** `MushafPageExacte.svelte` (prototype, non branché) : 15 lignes justifiées (taille calculée pour que la
+  plus longue ligne remplisse la largeur et que 15 lignes tiennent dans le cadre), en-têtes et basmala en
+  `QCF_BSML`, cartouche et cadre SVG originaux (vert, or, papier crème clair), juzʾ et numéro de page, surlignage du
+  verset en cours, texte Tanzil caché pour les lecteurs d'écran, Ctrl+C = texte Tanzil ; chargement page par page
+  (`mushaf-exact-load.ts` : caches « awzid-mushaf-exact » gardés aux mises à jour par le service worker).
+  Vérifié à l'œil sur un banc d'essai LOCAL non commité (pages synthétiques, vraies polices), bureau et téléphone.
+- **Budget** : aucune hausse (composant non importé par une page ; 400,0 Ko / élève 353,1 Ko inchangés). Polices :
+  95,4 Mo au total sur le serveur, hors budget, chargées à la demande.
+- Tests : web `mushaf-exact.test.ts` (28), api `a34.test.ts` (4).
+- **À faire par le chef de projet** : lancer `sync` (commande dans le rapport A34), lire `rapport.txt`, puis
+  brancher l'écran Coran (après la refonte `coran-epure-wip`).
+
 ## 06/10/2026 — Coran épuré : un seul écran de lecture, palette « vert, blanc, or », nom « Awzid »
 
 Branche `coran-epure-wip` (worktree `~/awform-coran`, depuis `main` 73ec68d), e2e isolés (ports 3460/4460, réglables

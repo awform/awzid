@@ -35,6 +35,7 @@
     </li>
   {/each}
 </ol>
+<p class="muted small" data-testid="credit-mushaf-exact"><Bidi text={t('gar.mushaf_exact')} /></p>
 <p class="muted small"><Bidi text={t('gar.contact')} /></p>
 <p><a href={resolve('/')}>{t('gar.retour')}</a></p>
 
