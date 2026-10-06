@@ -23,6 +23,41 @@ const memeLigne = (root: Element) => {
     }
   return bad;
 };
+/**
+ * Carte vivante : vide (aucun texte visible dans la scène) ? recouverte (barre de navigation du bas ou autre
+ * élément au-dessus de ses boutons ou de sa scène) ?
+ */
+const controle = (card: Element) => {
+  const stage = card.querySelector('.stage');
+  const visible = (el: Element) => {
+    for (let x: Element | null = el; x && x !== card; x = x.parentElement)
+      if (Number(getComputedStyle(x).opacity) < 0.3 || getComputedStyle(x).visibility === 'hidden')
+        return false;
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  };
+  const textes = stage
+    ? [...stage.querySelectorAll('*')].filter(
+        (e) =>
+          !e.closest('.tag') &&
+          !e.closest('svg.deco') &&
+          [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent!.trim()) &&
+          visible(e),
+      )
+    : [];
+  const dessus = (el: Element | null) => {
+    if (!el) return false;
+    const r = el.getBoundingClientRect();
+    const x = r.left + r.width / 2;
+    const y = Math.min(r.bottom - 2, innerHeight - 1);
+    const hit = document.elementFromPoint(x, y);
+    return !!hit && !card.contains(hit);
+  };
+  return {
+    vide: textes.length === 0,
+    recouverte: dessus(card.querySelector('[data-testid="vivante-pause"]')) || dessus(stage),
+  };
+};
 const DIR = process.env.A21B_CAPTURES_DIR ?? join('..', '..', 'reports', 'a21b');
 
 test('A21b : une leçon par famille de niveau, hors pilotes — animations après les parties', async ({
@@ -157,6 +192,28 @@ test('A21b : hors ligne — code des leçons vivantes gardé au téléchargement
   await context.setOffline(false);
 });
 
+test('A21b : aucune carte vivante vide ni recouverte par la barre du bas (téléphone)', async ({
+  page,
+}, info) => {
+  test.skip(!info.project.name.startsWith('mobile'), 'barre du bas : téléphone');
+  test.setTimeout(180_000);
+  for (const unit of ['en5.l02', 'ad3.l01', 'ado1.l22', 'en4.l12', 'en3.l02', 'ad7.l02']) {
+    await page.goto(`/lecons/${unit}`);
+    await expect(page.getByTestId('vivante').first()).toBeAttached();
+    for (const card of await page.locator('[data-testid="vivante"]').all()) {
+      await card.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
+      await expect(card).toHaveAttribute('data-state', 'lecture');
+      await page.waitForTimeout(1500);
+      await card.getByTestId('vivante-pause').click();
+      await card.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
+      const model = await card.getAttribute('data-model');
+      expect(await card.evaluate(controle), `${unit} ${model}`).toEqual({
+        vide: false,
+        recouverte: false,
+      });
+    }
+  }
+});
 test('A21b : captures — chaque nouveau modèle, téléphone 375 px, clair et sombre', async ({
   page,
 }, info) => {
@@ -171,8 +228,8 @@ test('A21b : captures — chaque nouveau modèle, téléphone 375 px, clair et s
     await page.evaluate(() => document.fonts.ready);
     await page.locator('body').screenshot({ path: join(DIR, `${mode}-01-demo.png`) });
     for (const [unit, m, name, wait] of [
-      ['en5.l02', 'racine', '02-racine-schema', 4200],
-      ['ad3.l01', 'conjugaison', '03-conjugaison', 5600],
+      ['en5.l02', 'racine', '02-racine-schema', 3600],
+      ['ad3.l01', 'conjugaison', '03-conjugaison', 6400],
       ['ado1.l22', 'nombre', '04-nombres', 2300],
       ['en4.l12', 'heure', '05-heure', 2600],
     ] as const) {
@@ -181,7 +238,15 @@ test('A21b : captures — chaque nouveau modèle, téléphone 375 px, clair et s
       await loc.scrollIntoViewIfNeeded();
       await expect(loc).toHaveAttribute('data-state', 'lecture');
       await page.evaluate(() => document.fonts.ready);
-      await page.waitForTimeout(wait); // fin des mouvements du premier temps
+      // milieu du premier temps (contenu entièrement formé), puis pause : capture fixe, jamais un temps vide
+      await page.waitForTimeout(wait);
+      await loc.getByTestId('vivante-pause').click();
+      await expect(loc).toHaveAttribute('data-state', 'pause');
+      await loc.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
+      expect(await loc.evaluate(controle), `${unit} ${m}`).toEqual({
+        vide: false,
+        recouverte: false,
+      });
       await loc.screenshot({ path: join(DIR, `${mode}-${name}.png`) });
     }
   }
