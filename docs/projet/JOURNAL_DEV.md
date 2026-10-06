@@ -64,6 +64,10 @@ client (autre application) : seulement l'esprit, aucun élément graphique, poli
     commune `e2e/coran.ts`). Captures avant / après (375 px et bureau, clair et sombre) : `reports/coran-epure/` (hors dépôt,
     copiées sur le PC dans `application/coran-epure-captures/`).
 
+12. **Après fusion de `main`** (versets dans les leçons, A21b) : `pnpm check` vert — unitaires **1 541 réussis,
+    1 ignoré** ; e2e complets **319 réussis, 31 ignorés, 0 échec** (20,4 min) ; budget total **404,5 Ko** ≤ 405 (main :
+    404,7), appareil d'un élève **344,8 Ko** ≤ 355 (main : 345,2). Fusionné dans `main`, démo redéployée.
+
 Décisions à prendre (D-CE) : voir DECISIONS_EN_ATTENTE.
 ---
 
