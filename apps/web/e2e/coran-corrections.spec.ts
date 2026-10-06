@@ -112,7 +112,18 @@ test.describe('1. verset lu = verset touché (vraies récitations de la démo)',
             });
           });
           const key = await tapAndPlay(page, asked, v, action);
-          expect(key, `${r.id} ${s}:${a} ${action}`).toBe(fileKey(r.id, s, a));
+          // finitions (07/10/2026) : « Écouter d'ici » au verset 1 → la basmala d'abord (verset 1 d'al-Fātiḥa
+          // du même récitateur, riwāyāt où elle est ce verset), puis le verset touché
+          if (
+            action === 'menu-ecouter' &&
+            a === 1 &&
+            s !== 1 &&
+            s !== 9 &&
+            ['hafs', 'shuba', 'bazzi'].includes(r.riwaya)
+          ) {
+            expect(key, `${r.id} ${s}:${a} basmala`).toBe(fileKey(r.id, 1, 1));
+            await expect.poll(() => asked[1], { timeout: 30_000 }).toBe(fileKey(r.id, s, a));
+          } else expect(key, `${r.id} ${s}:${a} ${action}`).toBe(fileKey(r.id, s, a));
           // surlignage du verset entendu = verset touché
           await expect
             .poll(
