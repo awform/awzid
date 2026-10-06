@@ -35,7 +35,6 @@
     tajwid: 'M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11ZM9.5 14.5a2.5 2.5 0 0 0 2.5 2.5',
     traduction:
       'M3 5h9M7.5 3v2M5 5c.5 3.5 2.6 6 6 7.5M10 5c-.8 3.7-3 6.4-6.5 8M13 21l4-9 4 9M14.4 18h5.2',
-    points: 'M5 12h.01M12 12h.01M19 12h.01',
     chevron: 'm9 6 6 6-6 6',
     // A12 « Au quotidien » : boussole (qibla), chapelet (adhkār), partager, lever du jour, cloche, lieu, ±
     boussole: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM15.5 8.5l-2 5-5 2 2-5z',
@@ -66,6 +65,9 @@
     revisions: 'M4 7h12v12H4zM8 3h12v12',
     // Coran épuré : recherche
     loupe: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM20 20l-4-4',
+    // corrections du lecteur : réglages (curseurs) et taille du texte (deux lettres)
+    reglages: 'M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1M15 4v4M9 10v4M17 16v4',
+    taille: 'M3 19 8 5l5 14M4.8 14h6.4M14 19l3.5-9 3.5 9M15.2 16h4.6',
     // A37 « Vivre l'islam » : cercles et lieux du bon comportement (objets et formes, aucun visage)
     'v-soi': 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z',
     'v-fratrie':

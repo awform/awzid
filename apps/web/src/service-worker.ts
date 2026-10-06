@@ -35,7 +35,7 @@ const isRiwaya = (p: string) => p.startsWith('/riwayat/');
 // aux mises à jour (le nom du fichier change avec la version du Complexe)
 const RIWAYAT_CACHE = 'awzid-riwayat-polices';
 // A37 : textes français des espaces de l'élève chargés par route (Prières, Vivre l'islam) : préchargés, eux
-const STUDENT_TEXTS = ['/i18n/fr-quotidien.json', '/i18n/fr-vivre.json'];
+const STUDENT_TEXTS = ['/i18n/fr-quotidien.json', '/i18n/fr-vivre.json', '/i18n/fr-coran.json'];
 const ASSETS = [
   ...build,
   ...files.filter(

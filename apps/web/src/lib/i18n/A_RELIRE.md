@@ -105,6 +105,14 @@ Chantier A21b (05/10/2026) : textes `viv.*` — 9 ajoutés (`viv.m_racine`, `viv
 `viv.lecon1`) ; traduits par Claude, relecteur provisoire, dans les quatre langues en préparation — à relire avec le
 reste. Arabe vocalisé comme les autres textes `viv.*` ; « الْجَذْرُ وَالْوَزْنُ » pour « racine et schème ».
 
+## Corrections du lecteur (06/10/2026)
+
+Textes `cl.*` ajoutés par Claude dans les quatre langues, **à relire** : puce en toutes lettres
+(`cl.puce`, `cl.puce_detail` : « verset · page · juzʾ », plus d'abréviations), panneau unique « Réglages »
+(`cl.reglages`, `cl.sec_*`), style des pages (`cl.style_*`), riwāyāt décrites
+(`cl.riwaya_desc_*`, `cl.riwaya_recitateurs`, `cl.riwaya_sans_recitateur`), taille du texte (`cl.taille*`),
+avis du lecteur (`cl.avis_*`), tuiles des enfants (`cl.k_*`), `cl.en_ligne`. Retirés (plus d'état « autre riwāya ») : `ca.autre_riwaya_texte`,
+`rw.autre_texte`, `rw.voir_texte`.
 ## A37 « Vivre l'islam » (06/10/2026)
 
 Les 74 textes `vi.*` (onglet Bon comportement : sous-onglets, défi de la semaine, 18 cercles, 9 lieux, 5 statuts

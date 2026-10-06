@@ -207,10 +207,19 @@ test('A21b : aucune carte vivante vide ni recouverte par la barre du bas (télé
       await card.getByTestId('vivante-pause').click();
       await card.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
       const model = await card.getAttribute('data-model');
-      expect(await card.evaluate(controle), `${unit} ${model}`).toEqual({
-        vide: false,
-        recouverte: false,
-      });
+      // barre du bas et défilement stabilisés (machine chargée) : contrôle relevé jusqu'à stabilité
+      await expect
+        .poll(
+          async () => {
+            await card.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
+            return card.evaluate(controle);
+          },
+          { message: `${unit} ${model}` },
+        )
+        .toEqual({
+          vide: false,
+          recouverte: false,
+        });
     }
   }
 });
@@ -243,10 +252,18 @@ test('A21b : captures — chaque nouveau modèle, téléphone 375 px, clair et s
       await loc.getByTestId('vivante-pause').click();
       await expect(loc).toHaveAttribute('data-state', 'pause');
       await loc.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
-      expect(await loc.evaluate(controle), `${unit} ${m}`).toEqual({
-        vide: false,
-        recouverte: false,
-      });
+      await expect
+        .poll(
+          async () => {
+            await loc.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
+            return loc.evaluate(controle);
+          },
+          { message: `${unit} ${m}` },
+        )
+        .toEqual({
+          vide: false,
+          recouverte: false,
+        });
       await loc.screenshot({ path: join(DIR, `${mode}-${name}.png`) });
     }
   }

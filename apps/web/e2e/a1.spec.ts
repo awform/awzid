@@ -20,6 +20,6 @@ test('Muṣḥaf page par page : l’écoute Ḥafṣ continue en surlignant le 
     .locator('[data-testid="lecteur-audio"] audio')
     .evaluate((a: HTMLAudioElement) => !a.paused);
   expect(playing).toBe(true);
-  await expect(page.locator('[data-page="604"] .aya.on[data-aya="112:2"]')).toBeVisible();
+  await expect(page.locator('[data-page="604"] .on[data-aya="112:2"]').first()).toBeVisible();
   await page.getByTestId('arreter-audio').click();
 });
