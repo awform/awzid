@@ -1,28 +1,42 @@
 /**
  * Pages légales et aide dans la langue de l'interface (français ; anglais en préparation, lot 15).
- * A39 (poids) : la version anglaise n'est plus dans la coquille — fichier statique `/i18n/legal-en.json`,
- * téléchargé seulement quand l'anglais sert (comme les catalogues de langues du lot 25) et gardé ensuite par le
- * service worker. Sans réseau ni copie : le français.
+ * A37 : la version anglaise est hors de la coquille de l'élève, dans le fichier statique
+ * `static/i18n/legal/en.json` (comme les catalogues des autres langues), chargé par `loadLegal()` seulement si
+ * l'interface est en anglais ; tant qu'il n'est pas là, le français s'affiche.
+ * A39 (poids) : la version FRANÇAISE suit le même chemin (`static/i18n/legal/fr.json`) : ces brouillons ne servent
+ * qu'aux pages « Mentions, CGU, confidentialité, cookies » et « Aide », jamais à l'apprentissage ; le service worker
+ * les garde au premier usage (catalogues `/i18n/`). Sans réseau ni copie : titres seuls.
  */
-import { locale } from '$lib/i18n';
-import { FAQ, LEGAL, type FaqItem, type LegalKey, type LegalPage } from './content';
+import { locale, t } from '$lib/i18n';
+import { LEGAL_PAGES, type LegalKey, type LegalPage, type LegalTexts } from './content';
 
-export interface LegalTexts {
-  lang: 'fr' | 'en';
-  legal: Record<LegalKey, LegalPage>;
-  faq: Array<{ titre: string; items: FaqItem[] }>;
+const texts: Partial<Record<'fr' | 'en', LegalTexts>> = {};
+
+const get = (fetcher: typeof fetch, lang: 'fr' | 'en') =>
+  fetcher(`/i18n/legal/${lang}.json`)
+    .then((r) => (r.ok ? (r.json() as Promise<LegalTexts>) : undefined))
+    .catch(() => undefined);
+
+/** Charge les textes dans la langue de l'interface (anglais, ou français à défaut) ; sans effet s'ils sont là. */
+export async function loadLegal(fetcher: typeof fetch = fetch): Promise<void> {
+  if (locale() === 'en' && !texts.en) texts.en = await get(fetcher, 'en');
+  if (!texts.fr && !(locale() === 'en' && texts.en)) texts.fr = await get(fetcher, 'fr');
 }
 
-/** Français, toujours disponible (rendu immédiat). */
-export const LEGAL_FR: LegalTexts = { lang: 'fr', legal: LEGAL, faq: FAQ };
+export function legalLang(): 'fr' | 'en' {
+  return locale() === 'en' && texts.en ? 'en' : 'fr';
+}
+const current = () => texts[legalLang()];
 
-export async function loadLegal(get: typeof fetch = fetch): Promise<LegalTexts> {
-  if (locale() !== 'en') return LEGAL_FR;
-  try {
-    const r = await get('/i18n/legal-en.json');
-    if (r.ok) return { lang: 'en', ...((await r.json()) as Omit<LegalTexts, 'lang'>) };
-  } catch {
-    /* hors ligne sans copie : le français */
-  }
-  return LEGAL_FR;
+/** Hors ligne sans copie : titres seuls (« page indisponible » affichée par la page). */
+export function legalPages(): Record<LegalKey, LegalPage> {
+  return (
+    current()?.legal ??
+    (Object.fromEntries(
+      LEGAL_PAGES.map((k) => [k, { titre: t('legal.titre'), maj: '', sections: [] }]),
+    ) as unknown as Record<LegalKey, LegalPage>)
+  );
+}
+export function faq(): LegalTexts['faq'] {
+  return current()?.faq ?? [];
 }

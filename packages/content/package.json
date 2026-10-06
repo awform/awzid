@@ -56,6 +56,18 @@
     "./versets": {
       "types": "./dist/versets.d.ts",
       "default": "./dist/versets.js"
+    },
+    "./adab": {
+      "types": "./dist/adab.d.ts",
+      "default": "./dist/adab.js"
+    },
+    "./adab-classer": {
+      "types": "./dist/adab-classer.d.ts",
+      "default": "./dist/adab-classer.js"
+    },
+    "./akhlaq": {
+      "types": "./dist/akhlaq.d.ts",
+      "default": "./dist/akhlaq.js"
     }
   },
   "bin": {

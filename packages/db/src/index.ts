@@ -29,3 +29,4 @@ export * from './niveaux.js';
 export * from './parcours.js';
 export * from './serein.js';
 export * from './versets.js';
+export * from './vivre.js';

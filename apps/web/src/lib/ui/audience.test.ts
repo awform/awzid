@@ -77,16 +77,35 @@ describe('lot 26 — public, thème et navigation', () => {
     expect(activeNav(adulte, '/hifz')).toBe('coran');
     expect(activeNav(adulte, '/coran/lecteur')).toBe('coran');
     expect(activeNav(adulte, '/aujourdhui')).toBe('aujourdhui');
-    expect(activeNav(adulte, '/quotidien/qibla')).toBe('quotidien');
-    for (const a of ['ado', 'adulte', 'parent', 'visiteur'] as const)
+    // A37 : « Vivre l'islam » (bon comportement, prières, qibla, adhkār, verset) à la place de « Prières »
+    for (const p of [
+      '/vivre',
+      '/vivre/fiche',
+      '/quotidien',
+      '/quotidien/qibla',
+      '/quotidien/adhkar',
+    ])
+      expect(activeNav(adulte, p), p).toBe('vivre');
+    for (const a of ['enfant', 'ado', 'adulte', 'parent', 'visiteur'] as const)
       expect(
-        navFor(a).some((x) => x.id === 'quotidien'),
+        navFor(a).some((x) => x.id === 'vivre'),
         a,
       ).toBe(true);
+    // même place que « Prières » : 4e entrée des ados et adultes
+    expect(navFor('ado').map((x) => x.id)).toEqual([
+      'aujourdhui',
+      'arabe',
+      'coran',
+      'vivre',
+      'plus',
+    ]);
     for (const p of ['/ecriture', '/lectures/x', '/revisions', '/suivi', '/plus'])
       expect(activeNav(adulte, p), p).toBe('plus');
     const enfant = navFor('enfant');
-    expect(activeNav(enfant, '/ecriture')).toBe('ecriture');
+    expect(enfant.map((x) => x.id)).toEqual(['aujourdhui', 'arabe', 'coran', 'vivre', 'sciences']);
+    expect(activeNav(enfant, '/vivre')).toBe('vivre');
+    // l'écriture de l'enfant se fait depuis l'espace Arabe
+    expect(activeNav(enfant, '/ecriture')).toBe('arabe');
     const ens = navFor('enseignant');
     expect(activeNav(ens, '/enseignant/ecole')).toBe('ecole');
     expect(activeNav(ens, '/enseignant/classe/42')).toBe('classes');

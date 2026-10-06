@@ -43,6 +43,7 @@ import { registerSignalements } from './signalements.js';
 import { registerEcoleF2 } from './ecole-f2.js';
 import { registerParcoursA27 } from './parcours-a27.js';
 import { registerSereinA39 } from './serein-a39.js';
+import { registerVivre } from './vivre.js';
 import { registerVerification } from './verification.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
 import type { RecitationKey } from '@awform/db';
@@ -245,5 +246,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerParcoursA27(app, db, edition);
   // A39 : mode serein (mode d'évaluation, récapitulatif, niveau suivant sans épreuve, notions fragiles)
   registerSereinA39(app, db, edition);
+  // A37 : « Vivre l'islam », bon comportement (rubriques des livres par cercle et par lieu, fiches)
+  registerVivre(app, db, edition);
   return app;
 }

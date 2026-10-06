@@ -19,7 +19,7 @@ test('A12 : horaires (Paris, choix de la méthode), réglages, qibla, adhkār, v
   request,
 }) => {
   await page.goto('/quotidien');
-  await expect(page.locator('nav.tabs a[data-tab="quotidien"]')).toHaveAttribute(
+  await expect(page.locator('nav.tabs a[data-tab="vivre"]')).toHaveAttribute(
     'aria-current',
     'page',
   );
@@ -61,7 +61,7 @@ test('A12 : horaires (Paris, choix de la méthode), réglages, qibla, adhkār, v
   await expect(page.getByTestId('qt-carte')).toBeVisible();
 
   // adhkār : textes des livres, source affichée, compteur
-  await page.locator('[data-quotidien-tab="adhkar"]').click();
+  await page.locator('[data-vivre-tab="adhkar"]').click();
   await page.locator('[data-categorie="apres_priere"]').click();
   const tasbih = page.locator('[data-dhikr="tasbih-33"]');
   await expect(tasbih).toBeVisible();
@@ -107,7 +107,7 @@ test('A12 : hors ligne — les horaires et la qibla se calculent sans réseau', 
   await page.getByTestId('qt-ville-ok').click();
   // Sénégal : Ligue islamique mondiale par défaut, pas de choix imposé
   await expect(page.getByTestId('qt-horaires').locator('li')).toHaveCount(6);
-  await page.locator('[data-quotidien-tab="adhkar"]').click();
+  await page.locator('[data-vivre-tab="adhkar"]').click();
   await expect(page.locator('[data-dhikr]').first()).toBeVisible();
 
   await context.setOffline(true);
@@ -179,9 +179,10 @@ test.describe('position de l’appareil', () => {
     // parcours complet de l'espace
     await page.locator('[data-quotidien-tab="qibla"]').click();
     await expect(page.getByTestId('qt-qibla-angle')).toBeVisible();
-    await page.locator('[data-quotidien-tab="adhkar"]').click();
+    await page.locator('[data-vivre-tab="adhkar"]').click();
     await expect(page.locator('[data-dhikr]').first()).toBeVisible();
-    await page.locator('[data-quotidien-tab="horaires"]').click();
+    // A37 : retour aux horaires par le sous-onglet « Prières » de « Vivre l'islam »
+    await page.locator('[data-vivre-tab="prieres"]').click();
     await expect(page.getByTestId('qt-horaires')).toBeVisible();
     // aucune requête (adresse ou corps) ne contient les coordonnées, même arrondies
     expect(seen.length).toBeGreaterThan(0);

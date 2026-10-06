@@ -108,7 +108,7 @@ async function runEcole(page: Page) {
 }
 
 // lot 26 : cinq entrées au plus (adulte : Accueil, Arabe, Coran, Sciences, Plus), le reste sous « Plus » ;
-// A12 : « Prières » (Au quotidien) remplace « Sciences », rangé sous « Plus »
+// A12 : « Prières » (Au quotidien) remplace « Sciences », rangé sous « Plus » ; A37 : « Prières » devient « Vivre l'islam »
 test('navigation : cinq entrées, entrée active, « Plus », barre en bas sur téléphone', async ({
   page,
 }, info) => {
@@ -125,7 +125,7 @@ test('navigation : cinq entrées, entrée active, « Plus », barre en bas sur t
     'aria-current',
     'page',
   );
-  for (const t of ['aujourdhui', 'quotidien', 'plus']) {
+  for (const t of ['aujourdhui', 'vivre', 'plus']) {
     await page.locator(`nav.tabs a[data-tab="${t}"]`).click();
     await expect(page.locator(`nav.tabs a[data-tab="${t}"]`)).toHaveAttribute(
       'aria-current',

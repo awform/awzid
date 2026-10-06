@@ -84,7 +84,7 @@ test('accueil : « Ma prochaine activité » selon le livre, puis mes espaces', 
   await expect(next).toHaveAttribute('data-activite', 'lecon');
   await expect(next).toHaveAttribute('data-cible', 'ad1.l01');
   const spaces = page.getByTestId('mes-espaces');
-  for (const e of ['arabe', 'coran', 'sciences', 'quotidien'])
+  for (const e of ['arabe', 'coran', 'sciences', 'vivre'])
     await expect(spaces.locator(`[data-espace="${e}"]`)).toBeVisible();
   // pas de classe : pas de « Ma classe »
   await expect(spaces.locator('[data-espace="classe"]')).toHaveCount(0);
@@ -139,7 +139,8 @@ test('enfant : onglets Leçons, Lectures, Écriture seulement ; barre des enfant
     .evaluateAll((b) => b.map((x) => x.getAttribute('data-onglet')));
   expect(names).toEqual(['lecons', 'lectures', 'ecriture']);
   await expect(page.locator('nav.tabs a')).toHaveCount(5);
-  await expect(page.locator('nav.tabs a[data-tab="ecriture"]')).toBeVisible();
+  // A37 : « Vivre l'islam » dans la barre de l'enfant (l'écriture reste dans l'espace Arabe)
+  await expect(page.locator('nav.tabs a[data-tab="vivre"]')).toBeVisible();
 });
 
 test('test de positionnement : exercices des livres, niveau fixé (origine « positionnement »)', async ({
