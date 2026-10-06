@@ -203,6 +203,9 @@ class WhisperQuran:
         with torch.inference_mode():
             # invite de décodage du modèle (arabe, transcription) gardée dans sa configuration
             seq_t = self.m.generate(f, max_new_tokens=220)
+            debut = self.m.config.decoder_start_token_id
+            if int(seq_t[0, 0]) != debut:  # séquence rendue sans le jeton de départ : on le remet
+                seq_t = torch.cat([torch.tensor([[debut]], dtype=seq_t.dtype), seq_t], 1)
             # probabilité de chaque jeton : un passage « forcé » sur la séquence obtenue
             logits = self.m(input_features=f, decoder_input_ids=seq_t[:, :-1]).logits[0]
             probs = torch.softmax(logits.float(), -1)

@@ -145,6 +145,8 @@ describe('secrets : un périmètre par service (env-scopes.conf)', () => {
     }
     for (const [svc, file] of Object.entries(want)) expect(seen[svc], svc).toBe(file);
     expect(seen.web, 'web ne reçoit aucun fichier').toBeNull();
+    // A5 : le service d'écoute (IA) ne reçoit aucun secret
+    expect(seen.ecoute, 'ecoute ne reçoit aucun fichier').toBeNull();
     // relais d'école : la copie des certificats ne reçoit que les adresses
     expect(seen.certsrelais).toBe('caddy');
   });

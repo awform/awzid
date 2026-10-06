@@ -1,5 +1,6 @@
 # AWFORM — production et démonstration (Docker Compose).
-# Services : Caddy (entrée HTTP/HTTPS), web (SvelteKit), api (Fastify), worker (pg-boss), db (PostgreSQL 18).
+# Services : Caddy (entrée HTTP/HTTPS), web (SvelteKit), api (Fastify), worker (pg-boss), db (PostgreSQL 18),
+# ecoute (A5, IA qui écoute la récitation, profil « ecoute » seulement).
 # Secrets : UNIQUEMENT dans ~/.config/awform/prod.env (droits 600, hors dépôt), écrit par deploy.sh, et JAMAIS
 # monté tel quel : chaque service reçoit son fichier <service>.env (AWFORM_ENV_DIR), découpé par env-split.sh
 # selon env-scopes.conf (moindre privilège, vérifié par un test et par env-check.sh). Redémarrage automatique (Docker est lancé au démarrage de la machine).
@@ -162,6 +163,37 @@ services:
     # la base seulement (ni clé de session, ni clés du tuteur ou des paiements)
     env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/worker.env'
     depends_on: { db: { condition: service_healthy } }
+    logging: *logs
+
+  ecoute:
+    # A5 : service d'écoute de la récitation (IA, CPU) — interne au réseau Docker, AUCUN port publié, AUCUN
+    # secret (aucun fichier .env). Modèle monté en lecture seule (licence CC-BY-4.0, LICENCES.md § 9).
+    # La voix n'est JAMAIS écrite : système de fichiers en LECTURE SEULE, /tmp en mémoire (dépliage du modèle au
+    # démarrage), journal d'accès coupé. Démarré seulement avec le profil « ecoute » (EXPLOITATION § 11).
+    image: awzid/ecoute-ia:${AWFORM_VERSION:-local}
+    build: { context: ../../services/ecoute-ia, target: service }
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ['/tmp:size=1g,mode=1777']
+    environment:
+      {
+        HOME: /tmp,
+        NUMBA_CACHE_DIR: /tmp,
+        MPLCONFIGDIR: /tmp,
+        ECOUTE_NOM: nemo_rnnt,
+        ECOUTE_MODELE: /model/stt_ar_fastconformer_hybrid_large_pcd_v1.0.nemo,
+        ECOUTE_CONCURRENCE: '2',
+        ECOUTE_THREADS: '3',
+        ECOUTE_FILE: '8',
+        ECOUTE_MAX_S: '300',
+      }
+    volumes:
+      [
+        '${AWFORM_MODELE_ECOUTE:-~/modeles-ia/nvidia_stt_ar_fastconformer_hybrid_large_pcd_v1.0}:/model:ro',
+      ]
+    cpus: 6
+    mem_limit: 6g
+    profiles: [ecoute]
     logging: *logs
 
   web:
