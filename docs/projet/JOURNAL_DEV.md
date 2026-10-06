@@ -47,7 +47,7 @@ Même branche `a37-vivre-islam-wip` (fusionnée une première fois dans `main` 1
    compressés, préchargés mais hors de la mesure JS/CSS).
 4. Textes : `vi.statut.conseil`, `vi.a_eviter`, `vi.attention`, `vi.religion_coutume`, `vi.fiches_liees`,
    `vi.retenir`, `vi.coran_ref`, `vi.en_bref` (5 langues, A_RELIRE.md) ; clés de cercles renommées.
-5. Tests : unitaires **1 600 réussis, 1 ignoré** ; e2e suite complète **333 réussis, 43 ignorés, 0 échec** (23,0 min ; `a37.spec.ts` 13, guide des parents compris). Captures 375 px (vraie fiche akh.f001 enfant/ado/adulte, f008 avec
+5. Tests (après fusion de `main` A39) : unitaires **1 613 réussis, 1 ignoré** ; e2e suite complète **339 réussis, 43 ignorés, 0 échec** (22,1 min ; `a37.spec.ts` 13, guide des parents compris) ; budget après fusion **409,5 Ko** ≤ 410, élève 349,1 Ko. Captures 375 px (vraie fiche akh.f001 enfant/ado/adulte, f008 avec
    verset, guide des parents) : `application/a37-captures/`.
 ## 06/10/2026 — Chantier A39 : « MODE SEREIN » — l'évaluation ne doit jamais décourager (décision du client)
 
