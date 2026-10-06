@@ -20,8 +20,8 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 - Ornements : ﴿ (U+FD3F) en début de verset, donc à droite ; ﴾ (U+FD3E) à la fin, à gauche (vérifié par mesure).
 - e2e `versets.spec.ts` +1 (ad1 l01, en5 l16, ado2 l02, ra1 l04 à 375 px : aucune puce seule — les numéros des
   exercices restent —, rien à moins de 12 px des bords, ornements bien placés). Unitaires verts ; e2e complets
-  311 réussis, 25 ignorés ; un échec intermittent d'A21b (en4 l12, carte « heure » vide) réussi en relance (×2).
-  Budgets : toutes pages 404,7 Ko ≤ 405, appareil d'un élève 345,1 Ko ≤ 355.
+  vérification finale après fusion de main (Coran épuré, A34) : unitaires verts, **e2e complets 320 réussis,
+  40 ignorés, 0 échec** (20,4 min). Budgets : toutes pages 407,4 Ko ≤ 410, appareil d'un élève 347,7 Ko ≤ 355.
 
 ## 06/10/2026 — Chantier A34 : Muṣḥaf de Médine « à l'identique » — branchement dans le lecteur (mode partiel)
 
