@@ -1,4 +1,5 @@
 <script lang="ts">
+  import AvisBouton from '$lib/avis/AvisBouton.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
@@ -381,6 +382,9 @@
     <p><a href={resolve('/suivi/rapport')} data-testid="lien-rapport">{t('auj.rapport')}</a></p>
   {/if}
 {/if}
+
+<!-- F5 : « Donner mon avis » (chargé à la demande, en ligne) -->
+<AvisBouton />
 
 <style>
   .duree {

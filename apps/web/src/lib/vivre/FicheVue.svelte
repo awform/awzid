@@ -1,5 +1,6 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import { setContext } from 'svelte';
   import { resolve } from '$app/paths';
   import {
@@ -172,7 +173,7 @@
       <h3>{t('vi.religion_coutume')}</h3>
       <p data-testid="vi-religion-coutume"><Bidi text={fiche.religion_coutume_fr} /></p>
     {/if}
-    {#if defi}
+    {#if defi && fn('vivre_defi')}
       <p class="warnbox" data-testid="vi-fiche-defi">
         <strong>{t('vi.defi')}</strong> · <Bidi text={defi} />
       </p>

@@ -19,6 +19,8 @@
   import { purgeOldRecordings } from '$lib/recordings';
   import { remindersOn } from '$lib/quotidien/reglages';
   import { cachedMe, fetchMe, type Me } from '$lib/session';
+  import { chargerFonctions } from '$lib/fonctions.svelte';
+  import { cleDeChemin, envoyer, noterUsage, usagePour } from '$lib/usage';
   import { activeNav, audienceOf, navFor, paletteOf, themeOf } from '$lib/ui/audience';
   import Brand from '$lib/ui/Brand.svelte';
   import Icon from '$lib/ui/Icon.svelte';
@@ -80,7 +82,10 @@
     mode = readMode();
     applyMode(mode);
     online = navigator.onLine;
-    const on = () => (online = true);
+    const on = () => {
+      online = true;
+      void envoyer();
+    };
     const off = () => (online = false);
     window.addEventListener('online', on);
     window.addEventListener('offline', off);
@@ -123,6 +128,11 @@
     profile = await activeProfile().catch(() => null);
     me = await cachedMe();
     lastActivity = Date.now();
+    // F5 : interrupteurs de fonctions (copie courte, hors ligne : dernière connue) et usage sans traceur
+    const qui = me ? (profile?.id ?? 'compte') : null;
+    usagePour(qui);
+    void chargerFonctions(me ? (profile?.id ?? null) : null);
+    noterUsage(cleDeChemin(page.url.pathname), qui);
   }
   // à chaque navigation : relire réglages, compte et profil (ils ont pu changer)
   $effect(() => {
@@ -173,7 +183,8 @@
         ><span class="chip-t"><Bidi text={t('entete.attente', { n: pending })} /></span></span
       >{/if}
     {#if profile}
-      <span class="who" data-testid="eleve-actif"><Bidi text={profile.pseudonym} /></span>
+      <span class="who" data-testid="eleve-actif" data-prive><Bidi text={profile.pseudonym} /></span
+      >
       {#if me?.profiles && me.profiles.length > 1}
         <button
           type="button"

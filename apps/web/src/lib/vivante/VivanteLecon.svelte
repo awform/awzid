@@ -2,6 +2,8 @@
   import { getContext } from 'svelte';
   import { AUDIO_CTX, type LevelAudio } from '$lib/lecons-audio';
   import { vivanteActive } from './reglage';
+  import { fn } from '$lib/fonctions.svelte';
+  import { noter } from '$lib/usage';
 
   /**
    * Chantiers A21 / A21b — point d'accroche des « leçons vivantes » dans la page de leçon. Quelques octets ici :
@@ -20,7 +22,9 @@
   $effect(() => {
     const u = unit;
     const article = mark?.closest('article');
-    if (!article || u.kind !== 'lecon' || !vivanteActive(u.levelCode)) return;
+    // F5 : interrupteur « animations » (rôle, âge, pays, école, canal)
+    if (!article || u.kind !== 'lecon' || !fn('animations') || !vivanteActive(u.levelCode)) return;
+    noter('animations');
     let dead = false;
     let stop: (() => void) | undefined;
     void import('./installer')

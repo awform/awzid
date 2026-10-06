@@ -1,5 +1,6 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import { onMount, setContext } from 'svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
@@ -165,7 +166,9 @@
       </p>
     {:else if result.reussi}
       <h2><Bidi text={t('parc.epreuve_reussie', { niveau: levelLabel(result.niveau) })} /></h2>
-      {#if mode === 'epreuve' && profile.kind === 'adulte'}<p data-testid="certificat-possible">
+      {#if mode === 'epreuve' && profile.kind === 'adulte' && fn('certificats')}<p
+          data-testid="certificat-possible"
+        >
           {t('ser.certif_ok')}
           <a href={resolve('/certificats')} data-testid="lien-certificat">{t('cert.titre')}</a>
         </p>{/if}

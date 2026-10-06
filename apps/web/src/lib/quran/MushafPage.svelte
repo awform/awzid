@@ -8,7 +8,6 @@
   import { suraTitleAr, ayaNumberAr } from './sura-names-ar';
   import { verseRuns, type TajwidSura } from './tajwid';
   import TajwidRuns from './TajwidRuns.svelte';
-  import LignesExactes from './LignesExactes.svelte';
   import type { ExactPage } from './mushaf-exact';
 
   /**
@@ -82,6 +81,14 @@
     const q = r * 0.7071;
     return `M0 ${-r}L${q} ${-q}L${r} 0L${q} ${q}L0 ${r}L${-q} ${q}L${-r} 0L${-q} ${-q}Z`;
   };
+  // F5 : lignes exactes chargées À LA DEMANDE (une page exacte vient du serveur) ; page fluide en attendant
+  let LignesExactes = $state<typeof import('./LignesExactes.svelte').default | null>(null);
+  $effect(() => {
+    if (exact && !LignesExactes)
+      void import('./LignesExactes.svelte')
+        .then((m) => (LignesExactes = m.default))
+        .catch(() => {});
+  });
 </script>
 
 <article
@@ -131,7 +138,7 @@
       dir="rtl"
       style:--rw-font={riwaya ? `${riwaya.family}` : undefined}
     >
-      {#if exact}
+      {#if exact && LignesExactes}
         <LignesExactes page={exact} {text} {basmala} {current} {readOnly} {onpick} />
       {:else}
         {#if !complete}<p class="loading small" lang={localeInfo().code} dir={localeInfo().dir}>

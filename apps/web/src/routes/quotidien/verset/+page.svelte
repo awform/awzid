@@ -8,7 +8,8 @@
   import Icon from '$lib/ui/Icon.svelte';
   import QuotidienTabs from '$lib/quotidien/QuotidienTabs.svelte';
   import { loadTranslation, translationInfo } from '$lib/quran/translation';
-  import { colorsFrom, drawVerse, H, W } from '$lib/quotidien/partage';
+  // F5 : dessin de l'image chargé à la demande (gardé pour le hors ligne avec la coquille)
+  import { H, W } from '$lib/quotidien/partage-taille';
 
   /**
    * A12 — partager un verset en image : texte Tanzil tel quel (police Amiri Quran), référence et traduction du
@@ -58,6 +59,7 @@
     }
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+    const { colorsFrom, drawVerse } = await import('$lib/quotidien/partage');
     const r = drawVerse(
       ctx,
       {

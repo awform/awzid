@@ -1,5 +1,6 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import { onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import { call } from '$lib/session';
@@ -58,7 +59,8 @@
     {#if d.classe}<p class="muted" data-testid="mode-par-classe">
         <Bidi text={t('ser.par_classe', { classe: d.classe.name, mode: t(`ser.m_${d.mode}`) })} />
       </p>{/if}
-    {#each d.choix as m (m)}
+    <!-- F5 : « Mode serein » coupé → plus proposé (un choix déjà fait reste affiché) -->
+    {#each d.choix.filter((m) => m !== 'serein' || fn('mode_serein') || d!.famille === 'serein') as m (m)}
       <label
         ><input type="radio" name="mode-{pid}" value={m} bind:group={v} data-mode-choix={m} />
         <strong><Bidi text={t(`ser.m_${m}`)} /></strong> — <Bidi text={t(`ser.a_${m}`)} /></label

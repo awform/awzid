@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fn } from '$lib/fonctions.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount, tick, untrack } from 'svelte';
   import { goto } from '$app/navigation';
@@ -267,7 +268,8 @@
   // A34 : mise en page EXACTE (Ḥafṣ, sans tajwid ni masquage) pour les pages publiées ; sinon page fluide
   let exactInfo = $state<ExactState | null>(null);
   let exactPages = $state<Record<number, ExactPage | null>>({});
-  const exactOn = $derived(!isRw && !tajwidOn && prefs.memo === 0);
+  // F5 : interrupteur « Muṣḥaf exact »
+  const exactOn = $derived(fn('mushaf_exact') && !isRw && !tajwidOn && prefs.memo === 0);
   const exactOf = (n: number) => (exactOn ? (exactPages[n] ?? null) : null);
   const anyExact = $derived(vue === 'page' && shown.some((n) => !!exactOf(n)));
   /** Lignes et polices des pages affichées disponibles en mise en page exacte (montrées une fois prêtes). */

@@ -135,7 +135,16 @@ export async function flagContext(db: Db, i: FlagContextInput): Promise<FlagCont
     age = (p?.kind as FlagContext['age']) ?? null;
   }
   if (i.accountKind === 'parent' || i.roles.includes('parent')) roles.add('parent');
-  if (i.accountKind === 'adulte' && !i.profileId) roles.add('eleve');
+  if (i.accountKind === 'adulte' && !i.profileId) {
+    // adulte autonome sans profil choisi : son propre profil donne l'âge (adulte, ou ado titulaire)
+    roles.add('eleve');
+    const [own] = await db
+      .select({ kind: t.profile.kind })
+      .from(t.profile)
+      .where(eq(t.profile.ownerAccountId, i.accountId))
+      .limit(1);
+    age = (own?.kind as FlagContext['age']) ?? null;
+  }
   for (const r of ['enseignant', 'direction', 'admin']) if (i.roles.includes(r)) roles.add(r);
   if (i.accountKind === 'enseignant') roles.add('enseignant');
   if (i.accountKind === 'admin') roles.add('admin');

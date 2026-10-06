@@ -91,7 +91,16 @@ export async function call<T>(
 }
 
 /** Compte connecté (réseau), sinon la dernière copie gardée sur l'appareil. */
-export async function fetchMe(): Promise<Me | null> {
+/** F5 (ouverture en 3G) : appels simultanés regroupés en UNE requête (la mise en page et la page la demandent). */
+let meEnCours: Promise<Me | null> | null = null;
+export function fetchMe(): Promise<Me | null> {
+  meEnCours ??= fetchMeOnce().finally(() => {
+    meEnCours = null;
+  });
+  return meEnCours;
+}
+
+async function fetchMeOnce(): Promise<Me | null> {
   const r = await call<Me>('GET', '/auth/me');
   if (r.ok && r.data) {
     await kvSet('me', r.data).catch(() => {});

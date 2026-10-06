@@ -1,9 +1,9 @@
 <script lang="ts">
-  import VivanteReglages from '$lib/vivante/VivanteReglages.svelte';
+  import AvisBouton from '$lib/avis/AvisBouton.svelte';
   import ModeProfil from '$lib/parcours/ModeProfil.svelte';
   import Bidi from '$lib/Bidi.svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import { onMount } from 'svelte';
-  import NotificationsReglages from '$lib/NotificationsReglages.svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { setActiveProfile } from '$lib/attempts';
@@ -102,6 +102,19 @@
     await setRecordingAllowed(profileId, v);
     hifz[profileId]!.rec = v;
   }
+  // F5 : réglages (notifications, animations) chargés à la demande, après la page
+  let Reglages = $state<{
+    N: typeof import('$lib/NotificationsReglages.svelte').default;
+    V: typeof import('$lib/vivante/VivanteReglages.svelte').default;
+  } | null>(null);
+  onMount(() => {
+    void Promise.all([
+      import('$lib/NotificationsReglages.svelte'),
+      import('$lib/vivante/VivanteReglages.svelte'),
+    ])
+      .then(([n, v]) => (Reglages = { N: n.default, V: v.default }))
+      .catch(() => {});
+  });
   onMount(async () => {
     allowDrafts = ((await kvGet<boolean>('draftsAllowed').catch(() => false)) ?? false) === true;
     drafts = allowDrafts && ((await kvGet<boolean>('draftLocales').catch(() => false)) ?? false);
@@ -239,17 +252,17 @@
     <!-- A39 : « Avec vérification » ou « Mode serein », choisi par l'adulte lui-même -->
     <section class="card">
       <ModeProfil pid={me.profiles[0].id} />
-      <p>
-        <a href={resolve('/certificats')} data-testid="lien-certificats">{t('cert.titre')}</a>
-      </p>
+      {#if fn('certificats')}<p>
+          <a href={resolve('/certificats')} data-testid="lien-certificats">{t('cert.titre')}</a>
+        </p>{/if}
     </section>
   {/if}
 
   {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
-    <NotificationsReglages parent={me.account.kind === 'parent'} />
+    {#if Reglages}<Reglages.N parent={me.account.kind === 'parent'} />{/if}
   {/if}
 
-  <VivanteReglages />
+  {#if Reglages}<Reglages.V />{/if}
 
   <section class="card">
     <h2>{t('compte.langue')}</h2>
@@ -400,9 +413,10 @@
     <section class="card">
       <h2>{t('compte.tuteur_titre')}</h2>
       <p class="muted small">{t('compte.tuteur_aide')}</p>
-      <p>
-        <a href={resolve('/compte/tuteur')} data-testid="lien-tuteur">{t('compte.tuteur_lien')}</a>
-      </p>
+      {#if fn('tuteur')}<p>
+          <a href={resolve('/compte/tuteur')} data-testid="lien-tuteur">{t('compte.tuteur_lien')}</a
+          >
+        </p>{/if}
       <p><a href={resolve('/messages')} data-testid="lien-messages">{t('msg.titre')}</a></p>
       <p><a href={resolve('/sourates')} data-testid="lien-sourates">{t('sour.titre')}</a></p>
       {#if me.account.kind === 'adulte'}<p>
@@ -561,6 +575,9 @@
     </form>
   </section>
 {/if}
+
+<!-- F5 : « Donner mon avis » (chargé à la demande, en ligne) -->
+<AvisBouton />
 
 <style>
   .form {

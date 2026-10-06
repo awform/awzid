@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fn } from '$lib/fonctions.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
@@ -20,6 +21,13 @@
   /** A39 : façon d'avancer de l'adulte (modifiable ensuite dans son compte) */
   // D-A39 : « Mode serein » présélectionné (ne pas décourager) ; « Avec vérification » reste au choix
   let evalMode: 'verification' | 'serein' = $state('serein');
+  // F5 : interrupteur « Mode serein » coupé → « Avec vérification » seulement
+  const modesInscription = $derived<Array<'verification' | 'serein'>>(
+    fn('mode_serein') ? ['verification', 'serein'] : ['verification'],
+  );
+  $effect(() => {
+    if (!fn('mode_serein') && evalMode === 'serein') evalMode = 'verification';
+  });
   let cgu = $state(false);
   let transfert = $state(false);
   let rappels = $state(false);
@@ -132,7 +140,7 @@
     <input id="pseudonym" maxlength="40" bind:value={pseudonym} />
     <fieldset data-testid="mode-inscription">
       <legend>{t('ser.titre')}</legend>
-      {#each ['verification', 'serein'] as const as m (m)}
+      {#each modesInscription as m (m)}
         <label class="radio"
           ><input
             type="radio"

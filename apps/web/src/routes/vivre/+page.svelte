@@ -1,5 +1,6 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import { onMount } from 'svelte';
   import { page } from '$app/state';
   import {
@@ -159,7 +160,10 @@
 <h1>{t('nav.vivre')}</h1>
 <VivreTabs current="comportement" />
 
-{#if !loaded}
+{#if !fn('vivre_islam')}
+  <!-- F5 : interrupteur « Vivre l'islam » (les onglets Prières restent ouverts) -->
+  <EmptyState icon="horsligne" title={t('fn.coupee')} />
+{:else if !loaded}
   <Loading />
 {:else if !cat}
   <EmptyState icon="horsligne" title={t('vi.absent_titre')} text={t('vi.absent_texte')} />
@@ -176,7 +180,7 @@
     <Loading />
   {:else if !kids.length}
     <EmptyState icon="famille" title={t('vi.aucun_enfant')} />
-  {:else}
+  {:else if fn('vivre_defi')}
     {#each kids as k (k.p.id)}
       <section class="card defi" data-testid="vi-defi-enfant" data-profil={k.p.id}>
         {@render defiCard(k.defi, t('vi.defi_enfant', { nom: k.p.pseudonym }))}
@@ -239,9 +243,13 @@
       <strong>{t('vi.transmettre')}</strong><small class="muted">{t('vi.transmettre_lien')}</small>
     </a>
   {/if}
-  <section class="card defi" data-testid="vi-defi" data-defi={defi?.kind ?? ''}>
-    {@render defiCard(defi, t('vi.defi_titre'))}
-  </section>
+  {#if fn('vivre_defi')}<section
+      class="card defi"
+      data-testid="vi-defi"
+      data-defi={defi?.kind ?? ''}
+    >
+      {@render defiCard(defi, t('vi.defi_titre'))}
+    </section>{/if}
   <div class="par" role="group" aria-label={t('vi.choix')}>
     {#each ['cercle', 'lieu'] as const as p (p)}
       <a

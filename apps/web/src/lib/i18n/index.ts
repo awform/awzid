@@ -70,7 +70,12 @@ export const STAFF_CATALOG = 'fr-personnel';
  * verset) et `fr-vivre` (bon comportement), chargés par les mises en page `/quotidien` et `/vivre` ; ces deux
  * fichiers-là sont préchargés par le service worker (hors ligne dès l'installation).
  */
-export const SPACE_CATALOGS = ['personnel', 'quotidien', 'vivre'] as const;
+/**
+ * F5 : `fr-rares` — textes des pages RARES, utiles en ligne seulement (offres, abonnement, inscription, certificats,
+ * protections du compte, réglages du tuteur, garanties, errata…) et de la fenêtre « Donner mon avis » : chargés par
+ * ces pages, jamais préchargés (comme leurs fichiers, voir scripts/groupes.mjs).
+ */
+export const SPACE_CATALOGS = ['personnel', 'quotidien', 'vivre', 'rares'] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 export function loadTexts(
   name: (typeof SPACE_CATALOGS)[number],

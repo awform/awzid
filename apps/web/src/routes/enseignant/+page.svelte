@@ -1,4 +1,5 @@
 <script lang="ts">
+  import AvisBouton from '$lib/avis/AvisBouton.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { carnetLabel } from '$lib/levels';
@@ -328,6 +329,9 @@
     </form>
   {/if}
 {/if}
+
+<!-- F5 : « Donner mon avis » (chargé à la demande, en ligne) -->
+<AvisBouton />
 
 <style>
   .classes,

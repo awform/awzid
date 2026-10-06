@@ -213,6 +213,24 @@ describe('fonctions', () => {
       for (const k of Object.keys(staff)) if (src.includes(`'${k}'`)) used.push(`${f}: ${k}`);
     }
     expect(used).toEqual([]);
+    // F5 : textes des pages RARES (en ligne seulement) : chargés par ces pages, jamais préchargés, jamais en double,
+    // utilisés seulement par ces pages, la fenêtre « Donner mon avis » et l'administration (qui les charge aussi)
+    const rares = JSON.parse(readFileSync(join(STATIC, 'fr-rares.json'), 'utf8')) as object;
+    expect(Object.keys(rares).length).toBeGreaterThan(100);
+    expect(Object.keys(rares).filter((k) => k in shell || k in staff)).toEqual([]);
+    expect(sw).not.toContain('/i18n/fr-rares.json');
+    const RARES =
+      /[\\/]routes[\\/](abonnement|offres|garanties|activation|certificats|compte[\\/]protections|compte[\\/]tuteur|demo|inscription|errata|admin|enseignant)[\\/]|[\\/]lib[\\/](avis|admin)[\\/]/;
+    for (const p of ['abonnement', 'offres', 'inscription', 'certificats', 'compte/tuteur'])
+      expect(readFileSync(join(SRC, 'routes', p, '+layout.ts'), 'utf8'), p).toContain(
+        "loadTexts('rares')",
+      );
+    const horsRares: string[] = [];
+    for (const f of files(SRC).filter((x) => !RARES.test(x))) {
+      const src = readFileSync(f, 'utf8');
+      for (const k of Object.keys(rares)) if (src.includes(`'${k}'`)) horsRares.push(`${f}: ${k}`);
+    }
+    expect(horsRares).toEqual([]);
     // police du Coran : plus de préchargement sur toutes les pages
     expect(readFileSync(join(SRC, 'app.html'), 'utf8')).not.toContain('amiri-quran');
   });

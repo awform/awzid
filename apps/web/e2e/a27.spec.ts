@@ -240,9 +240,9 @@ test('mots du Coran du niveau du livre (données des livres)', async ({ page }) 
 test('budget : les pages du personnel ne sont pas préchargées sur l’appareil de l’élève', async ({
   page,
 }) => {
-  const staff = (await (await page.request.get('/personnel.json')).json()) as {
-    fichiers: string[];
-  };
+  // F5 : liste commune des groupes non préchargés (personnel, pages rares, modules en ligne)
+  const g = (await (await page.request.get('/groupes.json')).json()) as { personnel: string[] };
+  const staff = { fichiers: g.personnel };
   expect(staff.fichiers.length).toBeGreaterThan(0);
   await page.goto('/');
   const cached = await page.evaluate(async () => {
