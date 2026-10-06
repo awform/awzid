@@ -17,6 +17,8 @@
   let country = $state('FR');
   let birthYear: number | undefined = $state(undefined);
   let pseudonym = $state('');
+  /** A39 : façon d'avancer de l'adulte (modifiable ensuite dans son compte) */
+  let evalMode: 'verification' | 'serein' = $state('verification');
   let cgu = $state(false);
   let transfert = $state(false);
   let rappels = $state(false);
@@ -58,6 +60,7 @@
       consents,
       birthYear,
       ...(kind === 'adulte' && pseudonym ? { pseudonym } : {}),
+      ...(kind === 'adulte' ? { evalMode } : {}),
     });
     busy = false;
     if (!r.ok) {
@@ -126,6 +129,22 @@
   {#if kind === 'adulte'}
     <label for="pseudonym">{t('champ.pseudonyme')}</label>
     <input id="pseudonym" maxlength="40" bind:value={pseudonym} />
+    <fieldset data-testid="mode-inscription">
+      <legend>{t('ser.titre')}</legend>
+      {#each ['verification', 'serein'] as const as m (m)}
+        <label class="radio"
+          ><input
+            type="radio"
+            name="evalMode"
+            value={m}
+            bind:group={evalMode}
+            data-mode-choix={m}
+          />
+          <span><strong>{t(`ser.m_${m}`)}</strong> — {t(`ser.a_${m}`)}</span></label
+        >
+      {/each}
+      <p class="muted small">{t('ser.modifiable')}</p>
+    </fieldset>
   {/if}
 
   <fieldset>

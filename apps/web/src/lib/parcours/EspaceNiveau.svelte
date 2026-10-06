@@ -16,6 +16,9 @@
   import EcritureNiveau from './EcritureNiveau.svelte';
   import LivretsNiveau from './LivretsNiveau.svelte';
   import MotsCoran from './MotsCoran.svelte';
+  import ModeProfil from './ModeProfil.svelte';
+  import Recap from './Recap.svelte';
+  import { call } from '$lib/session';
   import { commencer, espace, tabsFor, type Espace, type Matiere, type Onglet } from './parcours';
 
   /**
@@ -59,6 +62,20 @@
     busy = false;
     if (r.ok) await load();
   }
+  // A39 : mode d'évaluation ; récapitulatif bienveillant avant le niveau suivant (tous les modes)
+  const mode = $derived(e?.mode?.mode ?? 'verification');
+  let recap = $state(false);
+  let choix = $state('');
+  async function choose() {
+    const r = await call('POST', `/profiles/${profile.id}/choisir-niveau/${matiere}`, {
+      niveau: choix,
+    });
+    if (r.ok) await load();
+  }
+  async function opened() {
+    recap = false;
+    await load();
+  }
   const ICON: Record<Onglet, string> = {
     lecons: 'alif',
     lectures: 'lire',
@@ -67,7 +84,7 @@
     mots: 'mushaf',
   };
   const origine = (o: string) =>
-    ['positionnement', 'epreuve', 'enseignant', 'passage'].includes(o)
+    ['positionnement', 'epreuve', 'enseignant', 'passage', 'lecons', 'choix'].includes(o)
       ? t(`parc.origine_${o}`)
       : '';
 </script>
@@ -100,6 +117,15 @@
         >
       {/if}
     </div>
+    {#if mode === 'serein' && matiere !== 'coran'}
+      <!-- A39 : le test est facultatif, l'élève peut choisir son niveau lui-même -->
+      <div class="row" data-testid="choisir-niveau">
+        <select bind:value={choix} aria-label={t('ser.choisir')}>
+          {#each e.niveaux as n (n)}<option value={n}>{levelLabel(n)}</option>{/each}
+        </select>
+        <button type="button" disabled={!choix} onclick={choose}>{t('ser.choisir')}</button>
+      </div>
+    {/if}
     <p class="muted small">{t('parc.livre_papier')}</p>
   </section>
 {:else}
@@ -122,6 +148,12 @@
       <Bidi text={t('parc.progression', { n: e.progression.faites, total: e.progression.total })} />
       {#if local}· {t('parc.copie_locale')}{/if}
     </p>
+    {#if mode !== 'verification' && e.semaine != null}
+      <!-- A39 : seulement des encouragements (aucune note, aucune série imposée) -->
+      <p class="bravo" data-testid="encouragement" data-mode={mode}>
+        <Icon name="etoile" size={18} /><Bidi text={t('ser.semaine', { n: e.semaine })} />
+      </p>
+    {/if}
     {#if next}
       <a
         class="button primary go"
@@ -234,16 +266,39 @@
           {/each}
         </ol>
       </details>
-      <p class="muted small">{t('parc.apercu_regle')}</p>
-      {#if matiere !== 'coran'}
-        <div class="row">
-          {#if e.epreuve?.attendre}
+      <p class="muted small">
+        {t(mode === 'serein' ? 'ser.lecons_a_faire' : 'parc.apercu_regle')}
+      </p>
+      {#if matiere === 'coran'}
+        <!-- pas d'épreuve de passage pour les livrets du Coran -->
+      {:else if recap}
+        <Recap pid={profile.id} {matiere} onopen={opened} />
+      {:else}
+        <div class="row" data-mode={mode}>
+          {#if mode === 'serein'}
+            {#if e.progression.total && e.progression.faites >= e.progression.total}
+              <button
+                type="button"
+                class="primary"
+                onclick={() => (recap = true)}
+                data-testid="ouvrir-suivant">{t('ser.ouvrir')}</button
+              >
+            {/if}
+            <!-- épreuve facultative : seulement pour un certificat -->
+            <a
+              class="button"
+              href={resolve('/epreuve-passage/[matiere]', { matiere })}
+              data-testid="epreuve-facultative">{t('ser.epreuve_facultative')}</a
+            >
+          {:else if e.epreuve?.attendre}
             <p class="muted" data-testid="epreuve-attendre">{t('parc.epreuve_demain')}</p>
           {:else}
-            <a
-              class="button primary"
-              href={resolve('/epreuve-passage/[matiere]', { matiere })}
-              data-testid="passer-epreuve">{t('parc.passer_epreuve')}</a
+            <button
+              type="button"
+              class="primary"
+              onclick={() => (recap = true)}
+              data-testid="passer-epreuve"
+              >{t(mode === 'douce' ? 'ser.defi' : 'parc.passer_epreuve')}</button
             >
           {/if}
           <a class="button" href={resolve('/positionnement/[matiere]', { matiere })}
@@ -252,6 +307,12 @@
         </div>
       {/if}
     </section>
+  {/if}
+  {#if profile.kind === 'ado'}
+    <details class="card">
+      <summary>{t('ser.titre')}</summary>
+      <ModeProfil pid={profile.id} ctx="eleve" />
+    </details>
   {/if}
 {/if}
 
@@ -421,5 +482,13 @@
   }
   .small {
     font-size: 0.9rem;
+  }
+  .bravo {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin: 0;
+    color: var(--ok-ink);
+    font-weight: 700;
   }
 </style>

@@ -3,11 +3,14 @@
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
+  import { onMount } from 'svelte';
   import { LEGAL_PAGES, type LegalKey } from '$lib/legal/content';
-  import { legalLang, legalPages } from '$lib/legal/pages';
-  const LEGAL = legalPages();
+  import { LEGAL_FR, loadLegal } from '$lib/legal/pages';
 
   /** Pages légales (lot 14) : BROUILLONS à valider par un juriste ; textes dans $lib/legal/content.ts. */
+  let L = $state(LEGAL_FR);
+  onMount(async () => (L = await loadLegal()));
+  const LEGAL = $derived(L.legal);
   const key = $derived(page.params.page as LegalKey);
   const doc = $derived(LEGAL_PAGES.includes(key) ? LEGAL[key] : null);
 </script>
@@ -24,7 +27,7 @@
 </nav>
 
 {#if doc}
-  <article class="card" data-testid="page-legale" lang={legalLang()}>
+  <article class="card" data-testid="page-legale" lang={L.lang}>
     <p class="brouillon" role="note">{t('legal.brouillon')}</p>
     <h1><Bidi text={doc.titre} /></h1>
     <p class="muted small"><Bidi text={t('legal.maj', { date: doc.maj })} /></p>

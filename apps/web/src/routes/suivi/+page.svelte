@@ -33,6 +33,8 @@
     p: ProfileInfo;
     dash: Dash | null;
     hifz: HifzSummary | null;
+    /** A39 : notions fragiles (erreurs non revues), montrées discrètement */
+    fragiles: Array<{ unitId: string; titleFr: string }>;
   }
   let profile: DevProfile | null = $state(null);
   let rows: Row[] = $state([]);
@@ -55,7 +57,14 @@
     for (const p of list) {
       const r = await call<Dash>('GET', `/dashboard/${p.id}?today=${localIso()}`);
       if (!r.ok) offline = true;
-      rows = [...rows, { p, dash: r.data, hifz: await hifzSummary(p.id) }];
+      const f = await call<{ fragiles: Row['fragiles'] }>(
+        'GET',
+        `/profiles/${p.id}/recapitulatif/arabe`,
+      );
+      rows = [
+        ...rows,
+        { p, dash: r.data, hifz: await hifzSummary(p.id), fragiles: f.data?.fragiles ?? [] },
+      ];
     }
     loaded = true;
   });
@@ -113,6 +122,15 @@
           text={t('tableau.cartes_resume', { n: r.dash.cartes.sus, total: r.dash.cartes.total })}
         />
       </p>
+    {/if}
+    {#if r.fragiles.length}
+      <details class="small" data-testid="notions-fragiles">
+        <summary>{t('ser.fragiles_titre')} ({r.fragiles.length})</summary>
+        <p class="muted">{t('ser.fragiles_aide')}</p>
+        <ul>
+          {#each r.fragiles as f (f.unitId)}<li><Bidi text={f.titleFr} /></li>{/each}
+        </ul>
+      </details>
     {/if}
     <h3>{t('suivi.hifz')}</h3>
     <p class="small" data-testid="suivi-hifz">

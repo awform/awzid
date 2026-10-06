@@ -165,6 +165,8 @@ test('épreuve de passage : manquée, nouvel essai le lendemain', async ({ page 
   await adultAt(page, 'a27-passage');
   await page.goto('/');
   await page.getByTestId('apercu-suivant').getByTestId('passer-epreuve').click();
+  // A39 : récapitulatif bienveillant avant l'épreuve (garde-fou)
+  await page.getByTestId('recapitulatif').getByTestId('continuer-quand-meme').click();
   await expect(page).toHaveURL(/\/epreuve-passage\/arabe$/);
   await page.getByTestId('commencer-test').click();
   await expect(page.locator('section.ex').first()).toBeVisible();

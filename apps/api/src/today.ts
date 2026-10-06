@@ -9,7 +9,15 @@
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, eq, gte, isNull, lte, sql } from 'drizzle-orm';
-import { dashboard, levelProgress, listUnits, schema as t, type Db } from '@awform/db';
+import {
+  dashboard,
+  effectiveEvalMode,
+  lessonsDoneSince,
+  levelProgress,
+  listUnits,
+  schema as t,
+  type Db,
+} from '@awform/db';
 import { ownsProfile } from './auth/routes.js';
 
 type Edition = () => Promise<{ id: string; code: string } | null>;
@@ -140,12 +148,16 @@ export function registerToday(app: FastifyInstance, db: Db, edition: Edition): v
           })),
         };
       }
+      // A39 : mode serein — aucun objectif ni série imposés, seulement un encouragement (leçons de la semaine)
+      const serein = (await effectiveEvalMode(db, p.id))?.mode === 'serein';
       return {
         profil: { id: p.id, kind: p.kind, enfant: p.enfant, levelCode: p.levelCode },
         today,
         dimanche: isoWeekday(today) === 7,
         lecon,
         regularite,
+        serein,
+        leconsSemaine: await lessonsDoneSince(db, p.id, new Date(ms(mondayOf(today)))),
         jalons: await milestones(p.id),
       };
     },

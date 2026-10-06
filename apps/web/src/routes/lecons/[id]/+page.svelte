@@ -21,6 +21,8 @@
   import { arabicSize, isQuranReadingLevel, unitLabel } from '$lib/api';
   import { fmtNumber, t } from '$lib/i18n';
   import { demoProfileFor, enqueue, flush, onProgress } from '$lib/attempts';
+  // A39 : note chiffrée seulement « avec vérification »
+  import { showsScore } from '$lib/parcours/mode';
   import type { ItemResponse } from '@awform/grading';
   import { personaKey, type SceneSpec } from '@awform/content/scene';
   import Signaler, { SIGNAL_CTX } from '$lib/Signaler.svelte';
@@ -274,7 +276,9 @@
       </h1>
       {#if progress}<p class="prog" data-testid="progression">
           <Bidi text={t('lecon.progression', { statut: t(`statut.${progress.status}`) })} /><Bidi
-            text={progress.bestScore != null
+            text={progress.bestScore != null &&
+            profileInfo &&
+            showsScore(profileInfo.id, profileInfo.kind)
               ? ` · ${fmtNumber(progress.bestScore, { style: 'percent' })}`
               : ''}
           />

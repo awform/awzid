@@ -20,7 +20,7 @@
     const r = await accueil(profile.id);
     if (r.ok) a = r.data;
   });
-  const act = $derived<Activite | null>(a ? nextActivity(a.arabe, due, localIso()) : null);
+  const act = $derived<Activite | null>(a ? nextActivity(a.arabe, due, localIso(), a.mode) : null);
 
   const link = (x: Activite): string => {
     switch (x.kind) {
@@ -31,7 +31,9 @@
       case 'revisions':
         return resolve('/revisions');
       case 'epreuve':
-        return resolve('/epreuve-passage/[matiere]', { matiere: 'arabe' });
+      case 'ouvrir':
+        // A39 : le récapitulatif bienveillant (espace du niveau) précède le défi, l'épreuve ou l'ouverture
+        return resolve('/');
       case 'lectures':
         return `${resolve('/')}?onglet=lectures`;
       default:
@@ -47,7 +49,11 @@
       case 'revisions':
         return t('parc.act_revisions', { n: x.mots });
       case 'epreuve':
-        return t('parc.act_epreuve', { niveau: levelLabel(x.niveau) });
+        return a?.mode === 'douce'
+          ? t('ser.defi')
+          : t('parc.act_epreuve', { niveau: levelLabel(x.niveau) });
+      case 'ouvrir':
+        return t('ser.ouvrir');
       case 'lectures':
         return t('parc.act_lectures');
       default:
@@ -59,6 +65,7 @@
     ecriture: 'plume',
     revisions: 'revisions',
     epreuve: 'coche',
+    ouvrir: 'etoile',
     lectures: 'lire',
     commencer: 'etoile',
   };
@@ -89,6 +96,9 @@
         <strong>{t('parc.mon_arabe')}</strong>
         {#if a.arabe?.courant}
           <small><Bidi text={levelLabel(a.arabe.courant.code)} /></small>
+          {#if a.mode !== 'verification' && a.semaine}<small data-testid="encouragement-accueil"
+              ><Bidi text={t('ser.semaine', { n: a.semaine })} /></small
+            >{/if}
           <Progress
             value={a.arabe.progression.faites}
             max={a.arabe.progression.total}

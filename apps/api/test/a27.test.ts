@@ -302,6 +302,15 @@ describe.skipIf(!URL)('A27 — parcours par niveau et par classe (awform_test)',
   it('épreuve de passage : niveau suivant (origine « épreuve »), nouvel essai le lendemain', async () => {
     const fam = await parent(c, 'passage-a27@exemple.org');
     const kid = await child(c, fam.P, 'Bilal', 9);
+    // A39 : l'attente du lendemain ne vaut qu'« avec vérification » (choisi par le parent ; défaut d'un enfant :
+    // défi doux, essais libres — voir a39.test.ts)
+    expect(
+      (
+        await c.req('PUT', `/api/v1/profiles/${kid}/mode-evaluation`, fam.pin, {
+          mode: 'verification',
+        })
+      ).statusCode,
+    ).toBe(200);
     const v = await c.req('GET', `/api/v1/profiles/${kid}/epreuve/arabe`, fam.P);
     expect(v.statusCode, v.body).toBe(200);
     expect(v.json().unit).toBe('en1.l03');

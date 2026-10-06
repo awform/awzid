@@ -12,6 +12,9 @@ import { enqueue } from '$lib/attempts';
 import { localIso } from '$lib/hifz';
 import { kvGet, kvSet } from '$lib/idb';
 import { call, type ApiResult } from '$lib/session';
+import { setModeLocal, type Mode } from './mode';
+
+export type { Mode } from './mode';
 
 export type Matiere = 'arabe' | 'sciences' | 'coran';
 export type Kind = 'enfant' | 'ado' | 'adulte';
@@ -61,6 +64,10 @@ export interface Espace {
   } | null;
   coranEcriture: { depuis: string | null; visible: boolean };
   epreuve: { le: string; reussie: boolean; niveau: string; attendre: string | null } | null;
+  /** A39 : mode d'évaluation, leçons terminées cette semaine, niveaux dont l'épreuve est réussie */
+  mode?: { mode: Mode; decideur: string; classe: { id: string; name: string } | null };
+  semaine?: number;
+  epreuvesReussies?: string[];
 }
 
 export interface Bref {
@@ -82,6 +89,8 @@ export interface Resume {
 }
 export interface Accueil {
   kind: Kind;
+  mode?: Mode;
+  semaine?: number;
   arabe: Resume | null;
   sciences: Resume | null;
   coran: {
@@ -142,8 +151,25 @@ async function cached<T>(key: string, path: string): Promise<ApiResult<T> & { lo
   return r;
 }
 
-export const espace = (pid: string, m: Matiere) =>
-  cached<Espace>(`espace:${pid}:${m}`, `/profiles/${pid}/espace/${m}`);
+export const espace = async (pid: string, m: Matiere) => {
+  const r = await cached<Espace>(`espace:${pid}:${m}`, `/profiles/${pid}/espace/${m}`);
+  if (m === 'arabe') setModeLocal(pid, r.data?.mode?.mode);
+  return r;
+};
+
+/** A39 : récapitulatif bienveillant avant le niveau suivant (notions fragiles, leçons faites). */
+export interface Recap {
+  niveau: string;
+  suivant: string | null;
+  mode: Mode;
+  lecons: { faites: number; total: number };
+  toutesFaites: boolean;
+  semaine: number;
+  fragiles: Array<{ unitId: string; n: number; numLecon: number | null; titleFr: string }>;
+  recommandation: boolean;
+}
+export const recapitulatif = (pid: string, m: Matiere) =>
+  call<Recap>('GET', `/profiles/${pid}/recapitulatif/${m}`);
 export const accueil = (pid: string) =>
   cached<Accueil>(`accueil:${pid}`, `/profiles/${pid}/accueil`);
 export const ecriture = (pid: string) =>
@@ -185,6 +211,7 @@ export type Activite =
   | { kind: 'ecriture'; unitId: string; n: number; titre: string }
   | { kind: 'revisions'; mots: number }
   | { kind: 'epreuve'; niveau: string }
+  | { kind: 'ouvrir'; niveau: string }
   | { kind: 'commencer'; matiere: Matiere; proposition: string | null }
   | { kind: 'lectures' };
 
@@ -197,7 +224,8 @@ const dayOf = (iso: string | null | undefined) => {
 /**
  * Ma prochaine activité, choisie selon le livre : (1) la leçon commencée ; (2) l'écriture de la leçon qui vient
  * d'être faite ; (3) les révisions dues si une leçon a été faite aujourd'hui ; (4) la leçon suivante ; (5) les
- * révisions dues ; (6) l'épreuve de fin de niveau (toutes les leçons faites) ; sinon les lectures du niveau.
+ * révisions dues ; (6) l'épreuve de fin de niveau (toutes les leçons faites) — en MODE SEREIN (A39), ouvrir le
+ * niveau suivant, sans épreuve ; sinon les lectures du niveau.
  */
 export function nextActivity(
   a: Pick<
@@ -206,6 +234,7 @@ export function nextActivity(
   > | null,
   due: number,
   today: string,
+  mode?: Mode,
 ): Activite {
   if (!a || !a.courant)
     return { kind: 'commencer', matiere: 'arabe', proposition: a?.proposition ?? null };
@@ -230,7 +259,7 @@ export function nextActivity(
       reprise: false,
     };
   if (due > 0) return { kind: 'revisions', mots: due };
-  if (a.suivant) return { kind: 'epreuve', niveau: a.courant.code };
+  if (a.suivant) return { kind: mode === 'serein' ? 'ouvrir' : 'epreuve', niveau: a.courant.code };
   return { kind: 'lectures' };
 }
 

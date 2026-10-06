@@ -16,13 +16,17 @@ import {
   acquireWords,
   currentLevelOf,
   decideReenrolment,
+  effectiveEvalMode,
   expectedPlacementLevel,
   illustrationsFor,
   lastPassageAttempt,
   learnerClasses,
   learnerPath,
+  lessonsDoneSince,
+  levelsWithPassedExam,
   levelSpace,
   listUnits,
+  mondayUtc,
   placementAttempts,
   quranWords,
   recordPlacement,
@@ -57,6 +61,15 @@ export const PLACEMENT_PER_LEVEL = 4;
 export const PASSAGE_RETRY_MS = 20 * 3600_000;
 /** Un test de positionnement est une suite d'essais rapprochés. */
 const PLACEMENT_WINDOW_MS = 3 * 3600_000;
+
+/**
+ * A39 : étoiles d'un défi de révision (jamais de note chiffrée pour l'enfant), toujours au moins une — un essai
+ * n'est jamais humiliant : 3 (presque tout juste), 2 (réussi), 1 (encore un peu d'entraînement).
+ */
+export const starsFor = (points: number, max: number): 1 | 2 | 3 => {
+  const r = max > 0 ? points / max : 0;
+  return r >= 0.9 ? 3 : r >= PASS_RATIO ? 2 : 1;
+};
 
 /** Types notés par le serveur sans audio ni ordre propre à l'élève (choix, vrai/faux, remise en ordre). */
 const PASSAGE_TYPES = new Set(['vrai_faux', 'complete', 'premiere_lettre', 'qcm', 'ordre']);
@@ -186,16 +199,23 @@ export function registerParcoursA27(app: FastifyInstance, db: Db, edition: Editi
       const s = await levelSpace(db, e.id, p.id, req.params.matiere);
       if (!s) return err(reply, 404, 'introuvable');
       const last = await lastPassageAttempt(db, p.id, req.params.matiere);
+      // A39 : mode d'évaluation, encouragement de la semaine, niveaux dont l'épreuve est réussie (certificat)
+      const eff = (await effectiveEvalMode(db, p.id, req.params.matiere))!;
       return {
         edition: e.code,
         ...s,
+        mode: { mode: eff.mode, decideur: eff.decideur, classe: eff.classe },
+        semaine: await lessonsDoneSince(db, p.id, mondayUtc()),
+        epreuvesReussies: await levelsWithPassedExam(db, p.id, req.params.matiere),
         epreuve: last
           ? {
               le: last.at,
               reussie: last.passed,
               niveau: last.levelCode,
               attendre:
-                !last.passed && Date.now() - last.at.getTime() < PASSAGE_RETRY_MS
+                eff.mode === 'verification' &&
+                !last.passed &&
+                Date.now() - last.at.getTime() < PASSAGE_RETRY_MS
                   ? new Date(last.at.getTime() + PASSAGE_RETRY_MS)
                   : null,
             }
@@ -238,6 +258,9 @@ export function registerParcoursA27(app: FastifyInstance, db: Db, edition: Editi
       return {
         edition: e.code,
         kind: p.kind,
+        // A39 : mode d'évaluation (arabe) et leçons terminées cette semaine (encouragement)
+        mode: (await effectiveEvalMode(db, p.id, 'arabe'))!.mode,
+        semaine: await lessonsDoneSince(db, p.id, mondayUtc()),
         arabe: await sum('arabe'),
         sciences: await sum('sciences'),
         coran: {
@@ -492,8 +515,15 @@ export function registerParcoursA27(app: FastifyInstance, db: Db, edition: Editi
       const m = req.params.matiere;
       const cur = await currentLevelOf(db, p.id, m);
       if (!cur) return err(reply, 409, 'aucun_niveau');
+      // A39 : « avec vérification » seulement : nouvel essai le lendemain ; défi doux et mode serein : essais libres
+      const mode = (await effectiveEvalMode(db, p.id, m))!.mode;
       const last = await lastPassageAttempt(db, p.id, m);
-      if (last && !last.passed && Date.now() - last.at.getTime() < PASSAGE_RETRY_MS)
+      if (
+        mode === 'verification' &&
+        last &&
+        !last.passed &&
+        Date.now() - last.at.getTime() < PASSAGE_RETRY_MS
+      )
         return err(reply, 429, 'reessayer_plus_tard', {
           le: new Date(last.at.getTime() + PASSAGE_RETRY_MS),
         });
@@ -522,12 +552,15 @@ export function registerParcoursA27(app: FastifyInstance, db: Db, edition: Editi
         });
         await audit(db, req.auth!.accountId, 'parcours.epreuve', p.id, { niveau: next });
       }
-      return {
-        points: g.points,
-        max: g.max,
+      const result = {
         reussi: passed,
         niveau: passed ? next : cur.levelCode,
+        // A39 : seule une épreuve RÉUSSIE ouvre droit à un certificat (dans tous les modes)
+        certificat: passed,
+        etoiles: starsFor(g.points, g.max),
       };
+      // A39 : défi doux et mode serein — aucune note chiffrée, seulement des étoiles
+      return mode === 'verification' ? { points: g.points, max: g.max, ...result } : result;
     },
   );
 

@@ -20,6 +20,16 @@ import { answerHashOf, refreshProgress } from './attempts.js';
 import type { Db } from './client.js';
 import * as t from './schema.js';
 
+/**
+ * A39 : unité FACULTATIVE d'après le livre (`facultatif: true`, ou rubrique « Pour aller plus loin ») — ne
+ * compte jamais pour le passage de niveau ni pour les épreuves.
+ */
+export function isOptionalUnit(content: unknown): boolean {
+  if (!content || typeof content !== 'object') return false;
+  const c = content as { facultatif?: unknown; rubrique?: unknown };
+  return c.facultatif === true || c.rubrique === 'pour_aller_plus_loin';
+}
+
 export interface ImportOptions {
   /** code de l'édition, ex. `2027.1` ou `dev` */
   code: string;
@@ -241,6 +251,8 @@ export async function importEdition(
           content: u.content,
           student: forStudent(studentProjection(u.content, lv.code)),
           madhhabBlocks: blockMadhhabs(u.content),
+          // A39 : rubrique « Pour aller plus loin » (jamais comptée pour le passage ni les épreuves)
+          facultatif: isOptionalUnit(u.content),
         });
         await tx
           .insert(t.qrRedirect)
