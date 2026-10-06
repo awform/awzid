@@ -97,15 +97,31 @@ test.describe('1. verset lu = verset touché (vraies récitations de la démo)',
           ).toHaveAttribute('data-riwaya', r.riwaya);
         const v = page.locator(`[data-testid="texte-coran"] [data-aya="${a}"]`);
         for (const action of ['menu-repeter', 'menu-ecouter'] as const) {
+          // premier verset surligné, relevé dès qu'il apparaît (le dernier verset d'une sourate, écouté « d'ici »,
+          // peut finir et s'éteindre avant la vérification)
+          await page.evaluate(() => {
+            const w = window as unknown as { __heard: string[] };
+            w.__heard = [];
+            new MutationObserver(() => {
+              const el = document.querySelector('[data-testid="texte-coran"] .aya.now');
+              if (el) w.__heard.push(el.getAttribute('data-aya') ?? '');
+            }).observe(document.body, {
+              subtree: true,
+              attributes: true,
+              attributeFilter: ['class'],
+            });
+          });
           const key = await tapAndPlay(page, asked, v, action);
           expect(key, `${r.id} ${s}:${a} ${action}`).toBe(fileKey(r.id, s, a));
           // surlignage du verset entendu = verset touché
-          await expect(page.locator('[data-testid="texte-coran"] .aya.now')).toHaveAttribute(
-            'data-aya',
-            String(a),
-            { timeout: 15_000 },
-          );
-          await expect(page.getByTestId('position')).toContainText(`Verset ${a}`);
+          await expect
+            .poll(
+              () => page.evaluate(() => (window as unknown as { __heard: string[] }).__heard[0]),
+              {
+                timeout: 15_000,
+              },
+            )
+            .toBe(String(a));
           await stop(page);
         }
       }
