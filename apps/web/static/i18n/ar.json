@@ -2441,5 +2441,16 @@
   "erreur.lecons_a_finir": "أنهِ أولًا دروس هذا المستوى.",
   "erreur.epreuve_requise": "في هذا الوضع يُفتح المستوى التالي بالاختبار.",
   "erreur.mode_non_propose": "هذا الوضع غير متاح لهذا الملف.",
-  "erreur.reserve_aux_ados": "خاص باليافعين."
+  "erreur.reserve_aux_ados": "خاص باليافعين.",
+  "cert.titre": "شهاداتي",
+  "cert.aide": "اختيارية: تُطلب الشهادة بعد النجاح في الاختبار. تحمل عبارة «Awzid — parcours autonome» ويمكن التحقق منها عبر الإنترنت بواسطة رمز QR.",
+  "cert.obtenir": "شهادة — {niveau}",
+  "cert.nom": "الاسم الكامل (كما سيُطبع)",
+  "cert.civilite": "اللقب (اختياري)",
+  "cert.naissance": "تاريخ الميلاد (اختياري)",
+  "cert.delivrer": "احصل على شهادتي",
+  "cert.aucun": "لا توجد شهادة بعد: تُطلب بعد النجاح في الاختبار.",
+  "erreur.reserve_adulte_autonome": "خاص بالبالغ الذي يتعلم ذاتيًا.",
+  "cert.m": "السيد",
+  "cert.mme": "السيدة"
 }

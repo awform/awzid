@@ -2044,5 +2044,21 @@
   "erreur.lecons_a_finir": "Termine d'abord les leçons de ce niveau.",
   "erreur.epreuve_requise": "Dans ce mode, le niveau suivant s'ouvre par l'épreuve.",
   "erreur.mode_non_propose": "Ce mode n'est pas proposé pour ce profil.",
-  "erreur.reserve_aux_ados": "Réservé aux ados."
+  "erreur.reserve_aux_ados": "Réservé aux ados.",
+  "cert.titre": "Mes certificats",
+  "cert.aide": "Facultatifs : un certificat se demande après une épreuve réussie. Il porte la mention « Awzid — parcours autonome » et se vérifie en ligne par son QR code.",
+  "cert.obtenir": "Certificat — {niveau}",
+  "cert.nom": "Nom complet (tel qu’il sera imprimé)",
+  "cert.civilite": "Civilité (facultatif)",
+  "cert.naissance": "Date de naissance (facultatif)",
+  "cert.delivrer": "Obtenir mon certificat",
+  "cert.aucun": "Pas encore de certificat : il se demande après une épreuve réussie.",
+  "erreur.reserve_adulte_autonome": "Réservé à l’adulte qui apprend en autonomie.",
+  "classe.numero": "N° {numero}",
+  "verif.qr_aria": "QR code de vérification du certificat",
+  "verif.qr_legende": "Vérifier : scanner ce code (code {code})",
+  "verif.annule_court": "Certificat annulé : {motif}",
+  "classe.imprimer_pdf": "Imprimer ou enregistrer en PDF",
+  "cert.m": "M.",
+  "cert.mme": "Mme"
 }

@@ -2441,5 +2441,16 @@
   "erreur.lecons_a_finir": "First finish the lessons of this level.",
   "erreur.epreuve_requise": "In this mode, the next level opens with the test.",
   "erreur.mode_non_propose": "This mode is not offered for this profile.",
-  "erreur.reserve_aux_ados": "For teenagers only."
+  "erreur.reserve_aux_ados": "For teenagers only.",
+  "cert.titre": "My certificates",
+  "cert.aide": "Optional: a certificate can be requested after a passed test. It reads “Awzid — parcours autonome” and can be checked online with its QR code.",
+  "cert.obtenir": "Certificate — {niveau}",
+  "cert.nom": "Full name (as it will be printed)",
+  "cert.civilite": "Title (optional)",
+  "cert.naissance": "Date of birth (optional)",
+  "cert.delivrer": "Get my certificate",
+  "cert.aucun": "No certificate yet: it can be requested after a passed test.",
+  "erreur.reserve_adulte_autonome": "For adults learning on their own only.",
+  "cert.m": "Mr",
+  "cert.mme": "Ms"
 }

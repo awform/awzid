@@ -292,6 +292,73 @@ describe.skipIf(!URL)('A39 — mode serein (awform_test)', () => {
     expect(s.epreuvesReussies).toEqual(['ad1']);
   });
 
+  it('D-A39 (4) : certificat individuel de l’adulte autonome, même modèle, vérifiable en ligne', async () => {
+    // modèle « niveau » des livres (forme seulement, texte de test) ; règles : celles par défaut
+    await c.h.db
+      .insert(t.evalDoc)
+      .values({
+        editionId: c.editionId,
+        key: 'certificats',
+        content: {
+          modeles: {
+            niveau_adultes: {
+              titre_fr: 'Certificat de niveau',
+              fr: [
+                "L'établissement {etablissement} certifie que **{civilite} {prenom_nom}**, né(e) le {naissance}, a réussi le niveau {n} : {nf}/100, mention {mention}.",
+                'Coran : {degre_C}. Fait à {lieu}, le {date}.',
+              ],
+            },
+          },
+        },
+      })
+      .onConflictDoNothing();
+    const { A, id } = await adultSignup('certif-auto@exemple.org', 'serein');
+    await c.req('POST', `/api/v1/profiles/${id}/commencer/arabe`, A, {});
+    const body = { niveau: 'ad1', nom: 'Samir Diallo', civilite: 'M.' };
+    // pas d'épreuve réussie : pas de certificat
+    expect(
+      (await c.req('POST', `/api/v1/profiles/${id}/certificats`, A, body)).json().error.code,
+    ).toBe('epreuve_requise');
+    await c.req('POST', `/api/v1/profiles/${id}/epreuve/arabe`, A, { answers: GOOD('ad1') });
+    let l = (await c.req('GET', `/api/v1/profiles/${id}/certificats`, A)).json();
+    expect(l).toMatchObject({ autonome: true, certificats: [], possibles: ['ad1'] });
+    const r = await c.req('POST', `/api/v1/profiles/${id}/certificats`, A, body);
+    expect(r.statusCode, r.body).toBe(201);
+    const cert = r.json().certificate;
+    expect(cert.number).toMatch(/^AWF-AD1-\d{4}-\d{4}$/);
+    expect(cert.verifCode).toBeTruthy();
+    const text = JSON.stringify(cert.document);
+    expect(text).toContain('Awzid — parcours autonome');
+    expect(text).toContain('100/100');
+    expect(text).toContain('Très bien');
+    // champs qu'aucune école n'a saisis : « — », jamais de blanc à remplir
+    expect(text).not.toContain('…………');
+    // même vérification publique que les certificats d'école
+    const v = await c.req('GET', `/api/v1/public/certificats/${cert.number}?c=${cert.verifCode}`);
+    expect(v.statusCode, v.body).toBe(200);
+    expect(v.json()).toMatchObject({ titulaire: 'Samir Diallo', statut: 'valide', sujet: 'ad1' });
+    // un seul certificat valide par niveau ; lisible par son titulaire
+    const again = (await c.req('POST', `/api/v1/profiles/${id}/certificats`, A, body)).json();
+    expect(again.certificate.id).toBe(cert.id);
+    l = (await c.req('GET', `/api/v1/profiles/${id}/certificats`, A)).json();
+    expect(l.certificats).toEqual([expect.objectContaining({ id: cert.id, niveau: 'ad1' })]);
+    expect(
+      (await c.req('GET', `/api/v1/profiles/${id}/certificats/${cert.id}`, A)).json().certificate
+        .number,
+    ).toBe(cert.number);
+    // réservé à l'adulte autonome : pas pour l'enfant d'un parent
+    const fam = await parent(c, 'parent-certif@exemple.org');
+    const kid = await child(c, fam.P, 'Nadia', 9);
+    expect(
+      (
+        await c.req('POST', `/api/v1/profiles/${kid}/certificats`, fam.pin, {
+          niveau: 'en1',
+          nom: 'Nadia',
+        })
+      ).statusCode,
+    ).toBe(403);
+  });
+
   it('enfant : le parent choisit (code parent), défaut « vérification douce » avec étoiles et essais libres', async () => {
     const fam = await parent(c, 'parent-a39@exemple.org');
     const kid = await child(c, fam.P, 'Sara', 8);

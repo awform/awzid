@@ -237,7 +237,12 @@
 
   {#if me.account.kind === 'adulte' && me.profiles[0]}
     <!-- A39 : « Avec vérification » ou « Mode serein », choisi par l'adulte lui-même -->
-    <section class="card"><ModeProfil pid={me.profiles[0].id} /></section>
+    <section class="card">
+      <ModeProfil pid={me.profiles[0].id} />
+      <p>
+        <a href={resolve('/certificats')} data-testid="lien-certificats">{t('cert.titre')}</a>
+      </p>
+    </section>
   {/if}
 
   {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}

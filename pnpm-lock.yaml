@@ -94,6 +94,9 @@ importers:
       fastify:
         specifier: ^5.12.5
         version: 5.12.5
+      qrcode-generator:
+        specifier: 2.0.4
+        version: 2.0.4
     devDependencies:
       '@types/node':
         specifier: ^24.19.0
@@ -144,9 +147,6 @@ importers:
       intl-messageformat:
         specifier: ^12.1.2
         version: 12.1.2
-      qrcode-generator:
-        specifier: ^2.0.4
-        version: 2.0.4
     devDependencies:
       '@axe-core/playwright':
         specifier: ^4.13.0

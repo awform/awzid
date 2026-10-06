@@ -165,7 +165,10 @@
       </p>
     {:else if result.reussi}
       <h2><Bidi text={t('parc.epreuve_reussie', { niveau: levelLabel(result.niveau) })} /></h2>
-      {#if doux === 'serein'}<p data-testid="certificat-possible">{t('ser.certif_ok')}</p>{/if}
+      {#if mode === 'epreuve' && profile.kind === 'adulte'}<p data-testid="certificat-possible">
+          {t('ser.certif_ok')}
+          <a href={resolve('/certificats')} data-testid="lien-certificat">{t('cert.titre')}</a>
+        </p>{/if}
     {:else}
       <h2>{t('parc.epreuve_pas_encore')}</h2>
       <p><Bidi text={t(doux === 'verification' ? 'parc.epreuve_conseil' : 'ser.defi_encore')} /></p>

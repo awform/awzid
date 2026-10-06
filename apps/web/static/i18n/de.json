@@ -2441,5 +2441,16 @@
   "erreur.lecons_a_finir": "Beende zuerst die Lektionen dieser Stufe.",
   "erreur.epreuve_requise": "In diesem Modus öffnet die Prüfung die nächste Stufe.",
   "erreur.mode_non_propose": "Dieser Modus wird für dieses Profil nicht angeboten.",
-  "erreur.reserve_aux_ados": "Nur für Jugendliche."
+  "erreur.reserve_aux_ados": "Nur für Jugendliche.",
+  "cert.titre": "Meine Zertifikate",
+  "cert.aide": "Freiwillig: Ein Zertifikat kann nach einer bestandenen Prüfung angefordert werden. Es trägt den Vermerk „Awzid — parcours autonome“ und ist per QR-Code online überprüfbar.",
+  "cert.obtenir": "Zertifikat — {niveau}",
+  "cert.nom": "Vollständiger Name (wie er gedruckt wird)",
+  "cert.civilite": "Anrede (freiwillig)",
+  "cert.naissance": "Geburtsdatum (freiwillig)",
+  "cert.delivrer": "Mein Zertifikat erhalten",
+  "cert.aucun": "Noch kein Zertifikat: Es kann nach einer bestandenen Prüfung angefordert werden.",
+  "erreur.reserve_adulte_autonome": "Nur für Erwachsene, die selbstständig lernen.",
+  "cert.m": "Herr",
+  "cert.mme": "Frau"
 }

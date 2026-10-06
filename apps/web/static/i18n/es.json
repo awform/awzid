@@ -2441,5 +2441,16 @@
   "erreur.lecons_a_finir": "Termina primero las lecciones de este nivel.",
   "erreur.epreuve_requise": "En este modo, el nivel siguiente se abre con la prueba.",
   "erreur.mode_non_propose": "Este modo no se ofrece para este perfil.",
-  "erreur.reserve_aux_ados": "Solo para adolescentes."
+  "erreur.reserve_aux_ados": "Solo para adolescentes.",
+  "cert.titre": "Mis certificados",
+  "cert.aide": "Opcionales: un certificado se solicita tras una prueba superada. Lleva la mención «Awzid — parcours autonome» y se verifica en línea con su código QR.",
+  "cert.obtenir": "Certificado — {niveau}",
+  "cert.nom": "Nombre completo (tal como se imprimirá)",
+  "cert.civilite": "Tratamiento (opcional)",
+  "cert.naissance": "Fecha de nacimiento (opcional)",
+  "cert.delivrer": "Obtener mi certificado",
+  "cert.aucun": "Aún no hay certificado: se solicita tras una prueba superada.",
+  "erreur.reserve_adulte_autonome": "Solo para adultos que aprenden por su cuenta.",
+  "cert.m": "Sr.",
+  "cert.mme": "Sra."
 }
