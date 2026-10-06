@@ -195,8 +195,10 @@ def _direct(s: Seance, morceau: np.ndarray) -> dict:
     partiel = []
     if len(s.buf) > int(0.6 * sr) and asr.zones_de_voix(s.buf, sr):
         off = s.decal / sr
+        # passage en cours : décodage rapide (tête CTC) — il ne sert qu'à placer le mot en cours
+        rapide = getattr(etat['modele'], 'transcrire_rapide', etat['modele'].transcrire)
         partiel = [{**w, 't0': round(w['t0'] + off, 2), 't1': round(w['t1'] + off, 2)}
-                   for w in etat['modele'].transcrire(s.buf)]
+                   for w in rapide(s.buf)]
     return {'mots': mots, 'partiel': partiel, 'voix': voix, 't': round(s.total / sr, 2)}
 
 

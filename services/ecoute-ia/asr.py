@@ -165,6 +165,11 @@ class NemoRNNT(NemoCTC):
                 method_cfg=ConfidenceMethodConfig(name='max_prob')))
         self.m.change_decoding_strategy(cfg, decoder_type='rnnt', verbose=False)
 
+    def transcrire_rapide(self, x: np.ndarray) -> list[dict]:
+        """Tête CTC du même modèle (aucune mémoire de plus) : pour les mots PARTIELS du suivi en direct, qui ne
+        servent qu'à placer le mot en cours, jamais à signaler une erreur."""
+        return NemoCTC.transcrire(self, x)
+
     def transcrire(self, x: np.ndarray) -> list[dict]:
         with self.torch.inference_mode():
             r = self.m.transcribe([x], batch_size=1, return_hypotheses=True, timestamps=True, verbose=False)
