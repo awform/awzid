@@ -61,7 +61,7 @@
     {#each d.choix as m (m)}
       <label
         ><input type="radio" name="mode-{pid}" value={m} bind:group={v} data-mode-choix={m} />
-        <span><strong>{t(`ser.m_${m}`)}</strong> — {t(`ser.a_${m}`)}</span></label
+        <strong><Bidi text={t(`ser.m_${m}`)} /></strong> — <Bidi text={t(`ser.a_${m}`)} /></label
       >
     {/each}
     {#if !wish && d.souhait}
@@ -83,8 +83,9 @@
       type="button"
       class="primary"
       onclick={() => send(wish ? 'POST' : 'PUT', v)}
-      data-testid="mode-enregistrer">{t(wish ? 'ser.envoyer' : 'commun.enregistrer')}</button
+      data-testid="mode-enregistrer"
+      ><Bidi text={t(wish ? 'ser.envoyer' : 'commun.enregistrer')} /></button
     >
-    {#if msg}<p class="muted" role="status">{msg}</p>{/if}
+    {#if msg}<p class="muted" role="status"><Bidi text={msg} /></p>{/if}
   </fieldset>
 {/if}

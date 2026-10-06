@@ -267,7 +267,7 @@
         </ol>
       </details>
       <p class="muted small">
-        {t(mode === 'serein' ? 'ser.lecons_a_faire' : 'parc.apercu_regle')}
+        <Bidi text={t(mode === 'serein' ? 'ser.lecons_a_faire' : 'parc.apercu_regle')} />
       </p>
       {#if matiere === 'coran'}
         <!-- pas d'épreuve de passage pour les livrets du Coran -->
@@ -298,7 +298,7 @@
               class="primary"
               onclick={() => (recap = true)}
               data-testid="passer-epreuve"
-              >{t(mode === 'douce' ? 'ser.defi' : 'parc.passer_epreuve')}</button
+              ><Bidi text={t(mode === 'douce' ? 'ser.defi' : 'parc.passer_epreuve')} /></button
             >
           {/if}
           <a class="button" href={resolve('/positionnement/[matiere]', { matiere })}

@@ -125,7 +125,7 @@
     {/if}
     {#if r.fragiles.length}
       <details class="small" data-testid="notions-fragiles">
-        <summary>{t('ser.fragiles_titre')} ({r.fragiles.length})</summary>
+        <summary><Bidi text={`${t('ser.fragiles_titre')} (${r.fragiles.length})`} /></summary>
         <p class="muted">{t('ser.fragiles_aide')}</p>
         <ul>
           {#each r.fragiles as f (f.unitId)}<li><Bidi text={f.titleFr} /></li>{/each}

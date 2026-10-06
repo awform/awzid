@@ -140,7 +140,11 @@
             bind:group={evalMode}
             data-mode-choix={m}
           />
-          <span><strong>{t(`ser.m_${m}`)}</strong> — {t(`ser.a_${m}`)}</span></label
+          <span
+            ><strong><Bidi text={t(`ser.m_${m}`)} /></strong> — <Bidi
+              text={t(`ser.a_${m}`)}
+            /></span
+          ></label
         >
       {/each}
       <p class="muted small">{t('ser.modifiable')}</p>

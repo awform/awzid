@@ -168,13 +168,17 @@
       {#if doux === 'serein'}<p data-testid="certificat-possible">{t('ser.certif_ok')}</p>{/if}
     {:else}
       <h2>{t('parc.epreuve_pas_encore')}</h2>
-      <p>{t(doux === 'verification' ? 'parc.epreuve_conseil' : 'ser.defi_encore')}</p>
+      <p><Bidi text={t(doux === 'verification' ? 'parc.epreuve_conseil' : 'ser.defi_encore')} /></p>
     {/if}
     {#if result.etoiles}
       <!-- A39 : des étoiles, jamais de note chiffrée -->
-      <p class="stars" data-testid="etoiles" data-n={result.etoiles}>
-        {'★'.repeat(result.etoiles)}{'☆'.repeat(3 - result.etoiles)}
-        <span class="sr">{t('ser.etoiles', { n: result.etoiles })}</span>
+      <p
+        class="stars"
+        data-testid="etoiles"
+        data-n={result.etoiles}
+        aria-label={t('ser.etoiles', { n: result.etoiles })}
+      >
+        <Bidi text={'★'.repeat(result.etoiles) + '☆'.repeat(3 - result.etoiles)} />
       </p>
     {/if}
     <p class="muted small">{t('parc.maitre_corrige')}</p>

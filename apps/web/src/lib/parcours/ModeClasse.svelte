@@ -46,11 +46,11 @@
     <button type="button" class="primary" onclick={save} data-testid="mode-classe-enregistrer"
       >{t('commun.enregistrer')}</button
     >
-    {#if msg}<span role="status">{msg}</span>{/if}
+    {#if msg}<span role="status"><Bidi text={msg} /></span>{/if}
   </p>
   {#if eleves.length}
     <details data-testid="fragiles-classe">
-      <summary>{t('ser.fragiles_titre')} ({eleves.length})</summary>
+      <summary><Bidi text={`${t('ser.fragiles_titre')} (${eleves.length})`} /></summary>
       <p class="muted">{t('ser.fragiles_aide')}</p>
       <ul>
         {#each eleves as e (e.pupilId)}

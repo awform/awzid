@@ -64,7 +64,7 @@
         class:primary={!r.fragiles.length}
         onclick={go}
         data-testid="continuer-quand-meme"
-        >{t(r.fragiles.length ? 'ser.continuer_qm' : 'ser.continuer')}</button
+        ><Bidi text={t(r.fragiles.length ? 'ser.continuer_qm' : 'ser.continuer')} /></button
       >
     </p>
   </div>
