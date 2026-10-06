@@ -394,7 +394,7 @@ Lecture : (1) à tour égal, la séance de fin de parcours est presque la même 
 | Une minute de récitation envoyée (Opus 16 kbit/s) | ≈ 120 Ko (Wi-Fi seulement en mode « données économes ») |
 | Une minute d'audio de référence (Opus 24 kbit/s) | ≈ 180 Ko, téléchargé seulement à la demande |
 
-**Mesures (lot F5, 06/10/2026)** — trois indicateurs bloquants remplacent le « total de toutes les pages » (toujours affiché) : appareil d'un élève ≤ 350 Ko (311,7 Ko mesurés), première ouverture de l'accueil ≤ 150 Ko (108,3 Ko), ouverture en 3G simulée < 3 s (1,9 s) ; détail et procédure : `EXPLOITATION.md` § 14, rapport `reports/budget-web.md`.
+**Mesures (lot F5, 06/10/2026)** — trois indicateurs bloquants remplacent le « total de toutes les pages » (toujours affiché) : appareil d'un élève ≤ 350 Ko (313,8 Ko mesurés), première ouverture de l'accueil ≤ 150 Ko (108,8 Ko), ouverture en 3G simulée < 3 s (1,9 s) ; détail et procédure : `EXPLOITATION.md` § 14, rapport `reports/budget-web.md`.
 
 **Mode « données économes »** (activé par défaut en Afrique) : pas d'image lourde, pas d'audio sans accord, envoi des récitations en Wi-Fi seulement, poids affiché avant tout téléchargement > 200 Ko, compteur de Mo du mois visible par le parent (maquette `parent.html`, `horsligne.html`).
 

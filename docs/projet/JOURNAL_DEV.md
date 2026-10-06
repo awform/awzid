@@ -24,11 +24,11 @@ isolés (ports 3590/4590).
 
    | Indicateur | Avant | Après |
    |---|---|---|
-   | (a) Appareil d'un élève (JS + CSS + textes préchargés) | 356,8 Ko | **311,7 Ko** |
-   | (b) Première ouverture (`/`) | 111,0 Ko | **108,3 Ko** |
+   | (a) Appareil d'un élève (JS + CSS + textes préchargés) | 356,8 Ko | **313,8 Ko** |
+   | (b) Première ouverture (`/`) | 111,0 Ko | **108,8 Ko** |
    | (c) Ouverture en 3G simulée (médiane) | 3,02 s (au-delà du budget) | **1,9 s** |
    | Fichiers téléchargés pour ouvrir l'accueil | 51 | 11 |
-   | Page la plus lourde (`/lecons/[id]`) | 138,7 Ko | 136,6 Ko |
+   | Page la plus lourde (`/lecons/[id]`) | 138,7 Ko | 137,2 Ko |
    | Total de toutes les pages (non bloquant) | 405,5 Ko | 391,7 Ko |
 
    - **Groupes non préchargés** (`scripts/groupes.mjs` remplace `personnel.mjs` → `groupes.json`, service worker) :
