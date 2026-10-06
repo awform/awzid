@@ -2314,5 +2314,6 @@
   "lecteur.arreter": "Arrêter",
   "cl.guidage": "Lecture guidée mot à mot (sans son)",
   "cl.guidage_aide": "Les mots s'allument l'un après l'autre sur la plage choisie, puis une pause « à toi » pour réciter seul.",
-  "cl.plage": "Écoute : {sourate}, versets {de} à {a}"
+  "cl.plage": "Écoute : {sourate}, versets {de} à {a}",
+  "cl.puce_detail": "v. {a} · p. {p} · juzʾ {juz}"
 }
