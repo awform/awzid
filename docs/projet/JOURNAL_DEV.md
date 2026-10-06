@@ -53,15 +53,15 @@ Branche `coran-corrections-wip` (worktree `~/awform-corfix`, depuis `main` fd3ca
    de muṣḥaf / de récitateur ; puce (320 à 768 px, 5 langues) ; panneau Réglages ; tuiles enfant ; thèmes adulte,
    enfant, ado. Mode `E2E_MUSHAF_EXACT=1` : les 9 anciens tests qui cherchaient le texte visible vérifient le
    texte Tanzil ACCESSIBLE des pages exactes (`expectVerse`, `e2e/coran.ts`) ou visent un glyphe (`.first()`).
-   **Résultats** : `pnpm check` vert — unitaires **1 580 réussis, 1 ignoré** ; e2e complets **342 réussis,
-   34 ignorés, 0 échec** avec `E2E_MUSHAF_EXACT=1` (25,0 min) et **336 réussis, 40 ignorés, 0 échec** sans.
-6. **Budget** (après fusion de `main` 0cb3e8a = A37 suite, 409,5 Ko) : sans rien changer, les ajouts
+   **Résultats** : `pnpm check` vert — unitaires verts ; e2e complets (après les fusions de main) **362 réussis,
+   38 ignorés, 0 échec** avec `E2E_MUSHAF_EXACT=1` (604 pages exactes publiées) et **354 réussis, 46 ignorés, 0 échec** sans.
+6. **Budget** (après fusion de `main` 0f6e305 = A37 et A39 suite, 405,4 Ko) : sans rien changer, les ajouts
    portaient le total au-delà de 410 Ko → les textes FRANÇAIS de l'espace Coran (`cl.*`, `ca.*`, `mp.*` sauf les noms
    de traduction, `mpx.*`, `rw.*`, `tj.*` : 247 textes) sortent de la coquille par le mécanisme des espaces d'A37 :
    `static/i18n/fr-coran.json` (`SPACE_CATALOGS`), chargé par les mises en page `/coran` et `/enseignant`
    (récitateurs de la classe), **préchargé** par le service worker (Coran hors ligne dès l'installation) ; contrôlé
-   par `i18n.test.ts` (aucun de ces textes utilisé hors de l'espace Coran). Total **408,3 Ko** (main : 409,5) ≤ 410 ;
-   appareil d'un élève **347,8 Ko** ≤ 355 ; `/coran/lecteur` 128,2 Ko. Panneaux fusionnés en un composant, textes
+   par `i18n.test.ts` (aucun de ces textes utilisé hors de l'espace Coran). Total **404,4 Ko** (main : 405,4) ≤ 410 ;
+   appareil d’un élève **351,3 Ko** ≤ 355 ; `/coran/lecteur` 128,5 Ko. Panneaux fusionnés en un composant, textes
    « autre riwāya » et doublons retirés.
 7. Captures avant / après (puce, réglages adulte et enfant, thème adulte ; 375 px et bureau) :
    `reports/coran-corrections/` (hors dépôt), copiées sur le PC (`application/coran-corrections-captures/`).
