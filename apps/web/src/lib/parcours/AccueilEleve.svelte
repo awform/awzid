@@ -124,8 +124,8 @@
       </a>
     </li>
     <li>
-      <a class="space" href={resolve('/quotidien')} data-espace="quotidien">
-        <span class="sp-ic"><Icon name="quotidien" /></span>
+      <a class="space" href={resolve('/vivre')} data-espace="vivre">
+        <span class="sp-ic"><Icon name="vivre" /></span>
         <strong>{t('parc.au_quotidien')}</strong>
         <small>{t('parc.quotidien_texte')}</small>
       </a>

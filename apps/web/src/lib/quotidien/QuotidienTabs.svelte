@@ -3,33 +3,37 @@
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
+  import VivreTabs from '$lib/vivre/VivreTabs.svelte';
 
-  /** A12 — onglets de l'espace « Au quotidien » : horaires, qibla, adhkār, verset à partager. */
+  /**
+   * A12 — onglets de l'espace « Au quotidien » : horaires, qibla, verset à partager. A37 : cet espace est dans
+   * « Vivre l'islam » (sous-onglets Bon comportement · Prières · Adhkār) ; les adhkār y sont un sous-onglet.
+   */
   let { current }: { current: 'horaires' | 'qibla' | 'adhkar' | 'verset' } = $props();
   const TABS = [
     { id: 'horaires', href: '/quotidien', icon: 'minuterie' },
     { id: 'qibla', href: '/quotidien/qibla', icon: 'boussole' },
-    { id: 'adhkar', href: '/quotidien/adhkar', icon: 'chapelet' },
     { id: 'verset', href: '/quotidien/verset', icon: 'partager' },
   ] as const;
 </script>
 
-<nav class="seg" aria-label={t('qt.espace')}>
-  {#each TABS as x (x.id)}
-    <a
-      href={resolve(x.href)}
-      class:on={current === x.id}
-      aria-current={current === x.id ? 'page' : undefined}
-      data-quotidien-tab={x.id}
-      ><Icon name={x.icon} size={20} /><span><Bidi text={t(`qt.onglet_${x.id}`)} /></span></a
-    >
-  {/each}
-</nav>
+<VivreTabs current={current === 'adhkar' ? 'adhkar' : 'prieres'} />
+{#if current !== 'adhkar'}<nav class="seg" aria-label={t('qt.espace')}>
+    {#each TABS as x (x.id)}
+      <a
+        href={resolve(x.href)}
+        class:on={current === x.id}
+        aria-current={current === x.id ? 'page' : undefined}
+        data-quotidien-tab={x.id}
+        ><Icon name={x.icon} size={20} /><span><Bidi text={t(`qt.onglet_${x.id}`)} /></span></a
+      >
+    {/each}
+  </nav>{/if}
 
 <style>
   .seg {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 4px;
     padding: 4px;
     margin: var(--space-s) 0 var(--space-m);
