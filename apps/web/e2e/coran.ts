@@ -88,6 +88,12 @@ export async function expectVerse(page: Page, key: string, scope: Page | Locator
   if ((await v.getAttribute('data-exact-verse')) === null) await expect(v).toBeVisible();
   else expect((await v.textContent())!.startsWith(`${await tanzil(page, key)} (`), key).toBe(true);
 }
+/** Verset choisi au clavier : bouton Tanzil de la page exacte, sinon le verset de la page fluide. */
+export async function focusVerse(page: Page, key: string) {
+  const exact = page.locator(`[data-exact-verse="${key}"]`);
+  if (EXACT_ON) await exact.waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});
+  await ((await exact.count()) ? exact : page.locator(`[data-aya="${key}"]`)).first().focus();
+}
 export async function close(page: Page) {
   await page.keyboard.press('Escape');
 }

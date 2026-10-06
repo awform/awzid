@@ -603,6 +603,12 @@
     font-weight: 700;
     font-size: 0.9rem;
   }
+  .preset,
+  .seg label,
+  .mask,
+  .card-opt {
+    position: relative;
+  }
   .preset {
     display: inline-flex;
     align-items: center;
@@ -704,10 +710,13 @@
   .seg input,
   .mask input,
   .card-opt input {
+    /* bouton radio invisible couvrant tout le choix (cible entière, jamais cachée sous l'en-tête) */
     position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
     opacity: 0;
-    width: 1px;
-    height: 1px;
   }
   .preset:has(input:focus-visible),
   .seg label:has(input:focus-visible),

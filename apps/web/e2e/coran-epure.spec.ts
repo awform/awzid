@@ -2,7 +2,15 @@ import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { close, expectVerse, listen, openDisplay, openSelector, openSettings } from './coran';
+import {
+  close,
+  expectVerse,
+  focusVerse,
+  listen,
+  openDisplay,
+  openSelector,
+  openSettings,
+} from './coran';
 import { expect, test } from './fixtures';
 
 /**
@@ -46,7 +54,7 @@ test('écran unique : le texte d’abord, aucune lecture automatique, mini-barre
       audio.push(r.url());
   });
   await page.goto('/coran/lecteur?page=604');
-  await expect(page.locator('[data-page="604"] [data-verse="112:1"]')).toBeVisible();
+  await expectVerse(page, '112:1', page.locator('[data-page="604"]'));
   // palette « vert, blanc, or » posée sur l'espace Coran
   await expect(page.locator('html')).toHaveAttribute('data-palette', 'verdure');
   // plus de formulaire avant le texte : aucun champ visible sur l'écran de lecture (seul le curseur du volume
@@ -75,7 +83,7 @@ test('écran unique : le texte d’abord, aucune lecture automatique, mini-barre
   expect((await audioState(page)).paused).toBe(false);
   await expect(page.getByTestId('mini-recitateur')).toBeVisible();
   // surlignage du verset entendu (Ḥafṣ), commandes du système renseignées
-  await expect(page.locator('[data-page="604"] .aya.on[data-aya="112:1"]')).toBeVisible();
+  await expect(page.locator('[data-page="604"] .on[data-aya="112:1"]').first()).toBeVisible();
   const title = await page.evaluate(() => navigator.mediaSession?.metadata?.title ?? '');
   expect(title).toContain('verset 1');
   // la lecture enchaîne (bips de 0,6 s) sans être coupée par le surlignage (A1)
@@ -126,7 +134,7 @@ test('sélecteur : sourate (filtre par le nom), page, juzʾ, ḥizb, recherche',
   await expect(page.locator('[data-aya="2:255"]').first()).toHaveClass(/\bon\b/);
   // mots arabes dans les sourates déjà ouvertes (pages 604 et 1 vues plus haut)
   await page.goto('/coran/lecteur?page=604');
-  await expect(page.locator('[data-verse="113:1"]')).toBeVisible();
+  await expectVerse(page, '113:1');
   await openSelector(page);
   await page.getByTestId('sel-recherche').fill('الفلق');
   await page.getByTestId('sel-recherche').press('Enter');
@@ -141,7 +149,7 @@ test('menu du verset : écouter d’ici, répéter, traduction, signet, partager
   request,
 }) => {
   await page.goto('/coran/lecteur?page=604');
-  await page.locator('[data-aya="112:2"]').click();
+  await page.locator('[data-aya="112:2"]').first().click();
   const menu = page.getByTestId('menu-verset');
   await expect(menu).toBeVisible();
   await expect(menu).toContainText('Al-Ikhlāṣ, verset 2');
@@ -168,7 +176,7 @@ test('menu du verset : écouter d’ici, répéter, traduction, signet, partager
   // signet, gardé sur l'appareil et repris sur l'accueil
   await menu.getByTestId('menu-signet').click();
   await expect(menu).toBeHidden();
-  await page.locator('[data-aya="112:2"]').click();
+  await page.locator('[data-aya="112:2"]').first().click();
   await expect(menu.getByTestId('menu-signet')).toHaveAttribute('aria-pressed', 'true');
   // « Répéter ce verset » : le verset 2 seul, en boucle
   await menu.getByTestId('menu-repeter').click();
@@ -176,7 +184,7 @@ test('menu du verset : écouter d’ici, répéter, traduction, signet, partager
   await expect(page.getByTestId('position')).toContainText('sur 20');
   await page.getByTestId('arreter-audio').click();
   // « Écouter d'ici » : du verset 3 à la fin de la sourate
-  await page.locator('[data-aya="112:3"]').click();
+  await page.locator('[data-aya="112:3"]').first().click();
   await page.getByTestId('menu-ecouter').click();
   await expect(page.getByTestId('position')).toContainText('Verset 3');
   await page.getByTestId('arreter-audio').click();
@@ -185,7 +193,7 @@ test('menu du verset : écouter d’ici, répéter, traduction, signet, partager
   await expect(page.getByTestId('reprendre')).toBeVisible();
   // clavier : un verset se choisit au clavier, Échap ferme le menu
   await page.goto('/coran/lecteur?page=604');
-  await page.locator('[data-aya="112:4"]').focus();
+  await focusVerse(page, '112:4');
   await page.keyboard.press('Enter');
   await expect(menu).toBeVisible();
   expect(await serious(page)).toEqual([]);
@@ -420,7 +428,7 @@ test('accueil épuré : reprendre, liens discrets, explications derrière l’ic
   page,
 }) => {
   await page.goto('/coran/lecteur?s=112&a=3');
-  await expect(page.locator('[data-aya="112:3"]')).toBeVisible();
+  await expect(page.locator('[data-aya="112:3"]').first()).toBeVisible();
   await page.goto('/coran');
   await expect(page.getByTestId('reprendre')).toContainText('Al-Ikhlāṣ');
   await expect(page.getByTestId('reprendre')).toHaveAttribute('href', '/coran/lecteur?s=112&a=3');
@@ -495,7 +503,7 @@ test.describe('captures', () => {
         await page.waitForTimeout(400);
         await page.screenshot({ path: join(CAP!, `${sfx}-reglages.png`) });
         await close(page);
-        await page.locator('[data-aya="112:2"]').click();
+        await page.locator('[data-aya="112:2"]').first().click();
         await page.waitForTimeout(400);
         await page.screenshot({ path: join(CAP!, `${sfx}-menu-verset.png`) });
         await close(page);
