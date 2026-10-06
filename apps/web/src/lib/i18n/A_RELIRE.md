@@ -106,3 +106,7 @@ Les 74 textes `vi.*` (onglet Bon comportement : sous-onglets, défi de la semain
 (« Living Islam », « Vivir el islam », « Den Islam leben », « عِشِ الْإِسْلَامَ » demandés par le client) ; `qt.titre`,
 `parc.au_quotidien`, `parc.quotidien_texte` mis à jour. Écrits par Claude, **à relire**. Les textes français du
 personnel sont désormais dans `static/i18n/fr-personnel.json` (mêmes clés, hors de la coquille de l'élève).
+
+A37 (suite, 07/10/2026) : 8 textes ajoutés (`vi.statut.conseil` — arabe « نصيحة », `vi.a_eviter`, `vi.attention`,
+`vi.religion_coutume`, `vi.fiches_liees`, `vi.retenir`, `vi.coran_ref`, `vi.en_bref`), à relire avec le reste. Les textes
+français des espaces Prières et Vivre l'islam sont dans `static/i18n/fr-quotidien.json` et `fr-vivre.json` (mêmes clés).

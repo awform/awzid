@@ -78,15 +78,15 @@
     'v-voisins': 'M2 12l5-4 5 4v8H2zM12 12l5-4 5 4v8H12z',
     'v-amis': 'M3 5h11v7H7l-4 3zM10 15h7l4 3v-8h-3',
     'v-travail': 'M3 8h18v11H3zM9 8V5h6v3M3 13h18',
-    'v-societe': 'M12 4v16M7 20h10M5 7h14M5 7l-3 6h6zM19 7l-3 6h6z',
+    'v-autorites': 'M12 4v16M7 20h10M5 7h14M5 7l-3 6h6zM19 7l-3 6h6z',
     'v-rue': 'M8 3 5 21M16 3l3 18M12 5v3M12 11v3M12 17v3',
     'v-fragiles':
       'M12 12s-4-2.6-4-5.5A2.2 2.2 0 0 1 12 5a2.2 2.2 0 0 1 4 1.5C16 9.4 12 12 12 12ZM3 15h4l3 2h5a2 2 0 0 1 0 4H8M3 15v6',
-    'v-musulmans': 'M14 3a9 9 0 1 0 7 13 7 7 0 0 1-7-13Z',
-    'v-religions':
+    'v-musulmans_avis': 'M14 3a9 9 0 1 0 7 13 7 7 0 0 1-7-13Z',
+    'v-autres_religions':
       'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3',
-    'v-nature': 'M5 19c0-8 6-14 15-14 0 9-6 15-14 15M5 19l7-7',
-    'v-ecrans': 'M7 2h10v20H7zM11 18h2',
+    'v-animaux_nature': 'M5 19c0-8 6-14 15-14 0 9-6 15-14 15M5 19l7-7',
+    'v-numerique': 'M7 2h10v20H7zM11 18h2',
     'v-chambre': 'M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5M6 11h2',
     'v-cuisine':
       'M4 10h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6zM2 10h2M20 10h2M9 6c0-1 1-1 1-2M14 6c0-1 1-1 1-2',
@@ -100,6 +100,7 @@
     maison: 'maison',
     toilettes: 'tajwid',
     mosquee: 'vivre',
+    espace_public: 'v-rue',
   };
   export const vIcon = (id: string) => V_SAME[id] ?? `v-${id}`;
 </script>

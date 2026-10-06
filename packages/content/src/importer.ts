@@ -40,11 +40,17 @@ import { readAdabIndex } from './adab-classer.js';
 import { readFiches } from './akhlaq.js';
 
 /**
- * A37 — `data/akhlaq/` des livres : index officiel des rubriques (`index-adab.json`) et fiches du livret « Bon
- * comportement » (`fiches/*.json`). Rangés dans les documents de l'édition (`akhlaq.index`, `akhlaq.fiches`) ;
- * une fiche invalide est écartée et signalée (avertissement), jamais bloquante.
+ * A37 — `data/akhlaq/` des livres (format B9, `ids/akhlaq-SCHEMA-B9.md`) : index officiel des rubriques
+ * (`index-adab.json`, gardé réduit : identifiant, leçon, titre, cercles, lieux, fiches liées) et fiches du livret
+ * « Bon comportement » (`fiches/*.json`, sources rendues lisibles d'après `sources.json` et le registre des
+ * hadiths). Rangés dans les documents de l'édition (`akhlaq.index`, `akhlaq.fiches`) ; une fiche invalide est
+ * écartée et signalée (avertissement), jamais bloquante.
  */
-export function readAkhlaq(dir: string, issues: Issue[]): Record<string, unknown> {
+export function readAkhlaq(
+  dir: string,
+  issues: Issue[],
+  hadiths: Record<string, Record<string, unknown>> = {},
+): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   if (!existsSync(dir)) return out;
   const json = (p: string) => JSON.parse(readFileSync(p, 'utf8').replace(/^\uFEFF/, '')) as unknown;
@@ -53,14 +59,30 @@ export function readAkhlaq(dir: string, issues: Issue[]): Record<string, unknown
   const idx = join(dir, 'index-adab.json');
   if (existsSync(idx)) {
     try {
-      const raw = json(idx);
-      const r = readAdabIndex(raw);
+      const r = readAdabIndex(json(idx));
       for (const p of r.problems) warn('akhlaq_index', 'data/akhlaq/index-adab.json', p);
-      out['akhlaq.index'] = { entrees: Object.fromEntries(r.map) };
+      out['akhlaq.index'] = { rubriques: r.rows };
     } catch (e) {
       warn('akhlaq_index', 'data/akhlaq/index-adab.json', `illisible : ${String(e)}`);
     }
   }
+  let ouvrages: Record<string, { ouvrage?: string; chapitre_fr?: string }> = {};
+  try {
+    const s = json(join(dir, 'sources.json')) as { sources?: typeof ouvrages };
+    ouvrages = s.sources ?? {};
+  } catch {
+    /* pas de sources : libellés absents */
+  }
+  const labels = {
+    ouvrage: (k: string) => ouvrages[k]?.ouvrage ?? null,
+    hadith: (k: string) => {
+      const h = hadiths[k];
+      // seuls les hadiths VERIFIE du registre sont cités (contrôle A4 des livres)
+      return h && h.statut === 'VERIFIE' && h.recueil
+        ? `Rapporté par ${String(h.recueil)}${h.numero ? ` (${String(h.numero)})` : ''}`
+        : null;
+    },
+  };
   const fdir = join(dir, 'fiches');
   if (existsSync(fdir)) {
     const files = readdirSync(fdir)
@@ -74,13 +96,33 @@ export function readAkhlaq(dir: string, issues: Issue[]): Record<string, unknown
           return { file, raw: null };
         }
       });
-    const r = readFiches(files);
+    const r = readFiches(files, labels);
     for (const m of r.errors) warn('akhlaq_fiche', 'data/akhlaq/fiches', m);
     out['akhlaq.fiches'] = { fiches: r.fiches.filter((f) => !f.test) };
   }
   return out;
 }
 
+/**
+ * A37 — chapitre du guide des parents « Transmettre les valeurs » (`data/gp/c18.js`, AW.texteChapitre), montré
+ * dans l'espace Famille ; lu tel quel (document de l'édition `gp.c18`), absent tant que les livres ne l'ont pas.
+ */
+export function readGuideChapter(dataDir: string, id: string, issues: Issue[]): unknown {
+  const n = /^gp\.(c\d{2})$/.exec(id)?.[1];
+  const p = n ? join(dataDir, 'gp', `${n}.js`) : '';
+  if (!p || !existsSync(p)) return null;
+  try {
+    return parseDataFile(readFileSync(p, 'utf8'), `data/gp/${n}.js`).value;
+  } catch (e) {
+    issues.push({
+      severity: 'avertissement',
+      code: 'guide_illisible',
+      file: `data/gp/${n}.js`,
+      message: String(e),
+    });
+    return null;
+  }
+}
 export interface VerseStats {
   total: number;
   identique: number;
@@ -842,7 +884,9 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
     }
   }
   // A37 : livret « Bon comportement » (fiches) et index officiel des rubriques — facultatifs, jamais bloquants
-  Object.assign(evalDocs, readAkhlaq(join(dataDir, 'akhlaq'), issues));
+  Object.assign(evalDocs, readAkhlaq(join(dataDir, 'akhlaq'), issues, registry?.hadiths ?? {}));
+  const c18 = readGuideChapter(dataDir, 'gp.c18', issues);
+  if (c18) evalDocs['gp.c18'] = c18;
 
   // activité « racines » (lot 15) : éléments vérifiés mot pour mot dans les leçons gelées de l'édition
   const rootSources = new Map<string, string>();

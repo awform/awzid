@@ -381,7 +381,8 @@
       flex: 1 1 0;
       min-width: 0;
       flex-direction: column;
-      justify-content: center;
+      /* A37 : icônes alignées en haut, même si un libellé passe sur deux lignes */
+      justify-content: flex-start;
       gap: 2px;
       padding: 4px 2px;
       min-height: 56px;
@@ -416,9 +417,10 @@
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       line-clamp: 2;
-      line-height: 1.1;
+      /* 1,25 : place des voyelles et signes de l'arabe au-dessus et au-dessous */
+      line-height: 1.25;
       text-align: center;
-      overflow-wrap: anywhere;
+      white-space: normal;
     }
     .with-tabs main {
       padding-bottom: 112px;
