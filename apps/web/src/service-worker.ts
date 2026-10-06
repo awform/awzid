@@ -32,10 +32,17 @@ const isRiwaya = (p: string) => p.startsWith('/riwayat/');
 // … la police d'une riwāya, une fois chargée, est gardée (hors ligne ensuite) dans un cache à part, conservé
 // aux mises à jour (le nom du fichier change avec la version du Complexe)
 const RIWAYAT_CACHE = 'awzid-riwayat-polices';
+// A37 : textes français des espaces de l'élève chargés par route (Prières, Vivre l'islam) : préchargés, eux
+const STUDENT_TEXTS = ['/i18n/fr-quotidien.json', '/i18n/fr-vivre.json'];
 const ASSETS = [
   ...build,
   ...files.filter(
-    (f) => !f.endsWith('.txt') && !isCatalog(f) && !isTajwid(f) && !isTraduction(f) && !isRiwaya(f),
+    (f) =>
+      !f.endsWith('.txt') &&
+      (!isCatalog(f) || STUDENT_TEXTS.includes(f)) &&
+      !isTajwid(f) &&
+      !isTraduction(f) &&
+      !isRiwaya(f),
   ),
 ];
 

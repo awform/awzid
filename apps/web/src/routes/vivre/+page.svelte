@@ -24,13 +24,17 @@
   import Icon, { vIcon } from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import FicheVue from '$lib/vivre/FicheVue.svelte';
+  import TexteGuide from '$lib/vivre/TexteGuide.svelte';
   import VivreTabs from '$lib/vivre/VivreTabs.svelte';
   import {
     blockAt,
     learnerOf,
     loadCatalogue,
+    loadFiche,
+    loadGuide,
     TILE_TONES,
     type Catalogue,
+    type Fiche,
     type Learner,
   } from '$lib/vivre/vivre';
 
@@ -40,7 +44,8 @@
    *    filtrées par l'âge et ce que les livres de l'élève ont déjà enseigné (enfants : grandes tuiles) ;
    *  - `?c=<cercle>` / `?l=<lieu>` : fiches et rubriques des livres du groupe ;
    *  - `?f=<fiche>` / `?e=<rubrique>` : une fiche, ou une rubrique lue dans sa leçon ;
-   *  - `?parents` (espace Famille) : « Transmettre les valeurs », défi de la semaine de chaque enfant.
+   *  - `?parents` (espace Famille) : « Transmettre les valeurs » — chapitre du guide des parents (gp.c18) et défi
+   *    de la semaine de chaque enfant.
    */
   type Obj = Record<string, unknown>;
   type KidDefi = { p: ProfileInfo; defi: Defi | null };
@@ -52,6 +57,8 @@
   let me = $state<Me | null>(null);
   let unit = $state<{ id: string; block: Obj | null; madhhab: string | null } | null>(null);
   let kids = $state<KidDefi[] | null>(null);
+  let guide = $state<Obj | null>(null);
+  let loadedFiche = $state<{ id: string; fiche: Fiche | null } | null>(null);
 
   const q = $derived(page.url.searchParams);
   const par = $derived<'cercle' | 'lieu'>(
@@ -64,14 +71,14 @@
   const entries = $derived(cat ? visibleEntries(cat.entrees, who) : []);
   // fiches d'essai : servies par l'API de TEST seulement (jamais en démonstration), signalées « Fiche d'essai »
   const fiches = $derived(cat ? visibleFiches(cat.fiches, who, true) : []);
-  const defi = $derived(weeklyChallenge(entries, fiches, new Date(), profile?.id ?? ''));
+  const defi = $derived(weeklyChallenge(entries, fiches, new Date(), profile?.id ?? '', who.kind));
   const counts = $derived(countBy([...fiches, ...entries], par));
   const tiles = $derived(
     (par === 'cercle' ? cerclesFor(who.kind) : lieuxFor(who.kind)).filter((g) => counts[g.id]),
   );
   const enfant = $derived(who.kind === 'enfant');
   const parentAccount = $derived(!profile && me?.account.kind === 'parent');
-  const fiche = $derived(ficheId ? (cat?.fiches.find((f) => f.id === ficheId) ?? null) : null);
+  const titres = $derived(Object.fromEntries((cat?.fiches ?? []).map((f) => [f.id, f.titre_fr])));
   const entry = $derived(entryId ? (cat?.entrees.find((e) => e.id === entryId) ?? null) : null);
   const label = (by: 'cercle' | 'lieu', id: string) => t(`vi.${by === 'cercle' ? 'c' : 'l'}.${id}`);
 
@@ -109,6 +116,13 @@
     })();
   });
 
+  // fiche du livret : chargée à l'ouverture (gardée sur l'appareil)
+  $effect(() => {
+    const id = ficheId;
+    if (!id || loadedFiche?.id === id) return;
+    void loadFiche(id).then((fiche) => (loadedFiche = { id, fiche }));
+  });
+
   // espace Famille : défi de la semaine de chaque enfant (le même que celui qu'il voit)
   $effect(() => {
     if (!parents || !loaded || kids) return;
@@ -118,9 +132,10 @@
         const w = await learnerOf(p);
         const es = cat ? visibleEntries(cat.entrees, w) : [];
         const fs = cat ? visibleFiches(cat.fiches, w, true) : [];
-        out.push({ p, defi: weeklyChallenge(es, fs, new Date(), p.id) });
+        out.push({ p, defi: weeklyChallenge(es, fs, new Date(), p.id, w.kind) });
       }
       kids = out;
+      guide = await loadGuide();
     })();
   });
 </script>
@@ -151,7 +166,12 @@
 {:else if parents}
   <a class="back" href="?" data-testid="vi-retour">← {t('vi.toutes')}</a>
   <h2>{t('vi.transmettre')}</h2>
-  <p class="muted">{t('vi.transmettre_texte')}</p>
+  {#if guide}<TexteGuide chapitre={guide} pays={me?.account.country ?? null} />{:else}<p
+      class="muted"
+    >
+      {t('vi.transmettre_texte')}
+    </p>{/if}
+  <h2>{t('vi.ensemble')}</h2>
   {#if !kids}
     <Loading />
   {:else if !kids.length}
@@ -165,10 +185,17 @@
   {/if}
 {:else if ficheId || entryId}
   <a class="back" href="?" data-testid="vi-retour">← {t('vi.toutes')}</a>
-  {#if fiche}
-    <FicheVue {fiche} kind={who.kind} />
+  {#if ficheId && loadedFiche?.id !== ficheId}
+    <Loading />
+  {:else if ficheId && loadedFiche?.fiche}
+    <FicheVue
+      fiche={loadedFiche.fiche}
+      kind={who.kind}
+      pays={me?.account.country ?? null}
+      {titres}
+    />
   {:else if entry && unit?.id === entryId && unit.block}
-    <FicheVue {entry} block={unit.block} madhhab={unit.madhhab} kind={who.kind} />
+    <FicheVue {entry} block={unit.block} madhhab={unit.madhhab} kind={who.kind} {titres} />
   {:else if entry && unit?.id !== entryId}
     <Loading />
   {:else}

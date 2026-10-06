@@ -11,7 +11,12 @@ const read = (p: string) =>
   >;
 const CATALOGS: Record<string, Record<string, string>> = {
   // A37 : textes du personnel dans un fichier statique à part
-  fr: { ...read('./messages/fr.json'), ...read('../../../static/i18n/fr-personnel.json') },
+  fr: {
+    ...read('./messages/fr.json'),
+    ...read('../../../static/i18n/fr-personnel.json'),
+    ...read('../../../static/i18n/fr-quotidien.json'),
+    ...read('../../../static/i18n/fr-vivre.json'),
+  },
   en: read('../../../static/i18n/en.json'),
   es: read('../../../static/i18n/es.json'),
   de: read('../../../static/i18n/de.json'),
