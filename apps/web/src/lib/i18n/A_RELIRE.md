@@ -77,6 +77,16 @@ positionnement, épreuve de passage, Mon cahier, fiche à imprimer, « J'écris 
 sans voyelles comme le reste de l'interface ; « القسم » pour la classe ; espagnol « profesor », « aleya ». À vérifier
 en priorité : `parc.rasm_texte` (orthographe du Muṣḥaf) et `fam.demande_aide` (âge légal, « de droit à 18 ans »).
 
+## Chantier A39 — mode serein (06/10/2026)
+
+42 textes `ser.*` (« Ma façon d'avancer », « Mode serein », « Vérification douce », récapitulatif avant le niveau
+suivant, notions à revoir, petit défi de révision, étoiles), `parc.origine_lecons`, `parc.origine_choix` et
+4 `erreur.*`, écrits par Claude dans les quatre langues en préparation — **à relire**. Choix : anglais « Calm
+mode », espagnol « Modo sereno », allemand « Gelassener Modus », arabe « الوضع الهادئ » ; le jeune est tutoyé comme
+ailleurs (arabe : singulier) ; « parent » rendu par « padre o madre » / « Eltern » / « الولي ».
+Pages légales et aide en français : texte inchangé, désormais dans `static/i18n/legal/fr.json` (à côté de
+`en.json`), toujours à valider par le juriste.
+
 ## Coran épuré (06/10/2026)
 
 Les 54 textes `cl.*` (écran de lecture unique : puce, sélecteur, menu du verset, réglages d'écoute et préréglages,

@@ -8,6 +8,69 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Chantier A39 : « MODE SEREIN » — l'évaluation ne doit jamais décourager (décision du client)
+
+Branche `a39-serein-wip` (worktree `~/awform-a39`, depuis `main` f9467cd, puis fusionnée avec `main` 147c5fc — A37),
+base de tests `awform_a39_test`, e2e isolés.
+
+1. **Modèle** (migration `0040_a39_serein`, en avant seulement, retour arrière en tête du fichier) : `eval_mode`
+   HISTORISÉ (une ligne ouverte = choix courant) pour un PROFIL (décideur « soi » : l'adulte autonome, ou « parent »)
+   ou une CLASSE (décideur « enseignant » ; mode vide = choix laissé aux familles) ; `profile.eval_mode_wish` :
+   préférence exprimée par l'ado, validée ou refusée par le parent ; `unit_version.facultatif` : rubrique « Pour
+   aller plus loin » (`facultatif: true` ou `rubrique: "pour_aller_plus_loin"` dans le livre), JAMAIS comptée
+   pour le passage ni les épreuves ; `profile_level.source` + « lecons » (niveau ouvert en mode serein) et
+   « choix » (niveau choisi par l'élève). Droits : `eval_mode` en lecture/ajout/mise à jour pour l'API.
+2. **Trois modes** (`packages/db/src/serein.ts`) : « Avec vérification » (défaut des adultes, comportement d'avant :
+   épreuve, nouvel essai le lendemain, note chiffrée), « Vérification douce » (défaut des enfants et ados : la fin
+   de niveau devient un **petit défi de révision**, essais libres, **étoiles** 1 à 3 — jamais zéro —, aucune note
+   chiffrée renvoyée par l'API), « Mode serein » (le niveau suivant s'ouvre quand les leçons du niveau sont faites,
+   sans épreuve ; test de positionnement facultatif — l'élève peut choisir son niveau ; épreuve facultative,
+   seulement pour un certificat ; aucune note ni objectif hebdomadaire : « Tu as terminé N leçons cette semaine »).
+   Mode effectif : classe active de l'élève MINEUR où l'enseignant a décidé (matière de la classe), sinon choix du
+   profil, sinon défaut. Le choix du parent reste enregistré et reprend dès que l'élève quitte la classe ou que
+   l'enseignant rend le choix aux familles.
+3. **API** (`apps/api/src/serein-a39.ts`) : `GET|PUT /profiles/:id/mode-evaluation` (adulte : lui-même ; mineur :
+   le parent, **code parent** s'il existe — c'est ce qui distingue le parent du jeune sur un appareil partagé ; tablette
+   de classe refusée), `POST|DELETE …/souhait` (l'ado propose ; le parent refuse avec son code), `GET
+   /profiles/:id/recapitulatif/:matiere`, `POST /profiles/:id/niveau-suivant/:matiere` (mode serein seulement,
+   leçons faites ; refus « epreuve_requise » / « lecons_a_finir »), `POST /profiles/:id/choisir-niveau/:matiere`
+   (mode serein), `GET|PUT /ecole/classes/:id/mode-evaluation` et `GET /ecole/classes/:id/notions-fragiles`
+   (enseignant de la classe ou direction, second facteur). Inscription adulte : champ `evalMode`. Épreuve de passage :
+   attente du lendemain seulement « avec vérification » ; réponse `certificat` (épreuve réussie) et `etoiles` ;
+   espace du niveau : `mode`, `semaine`, `epreuvesReussies` ; « Aujourd'hui » : `serein`, `leconsSemaine`.
+4. **Garde-fou pédagogique (tous les modes)** : avant d'ouvrir le niveau suivant — et avant le défi ou l'épreuve —
+   un **récapitulatif bienveillant** (leçons faites ; notions fragiles = leçons du niveau où au moins 2 items ont une
+   dernière réponse encore fausse, c'est-à-dire des erreurs non revues ; 2-3 recommandées, les plus fragiles
+   d'abord) avec « Revoir d'abord » / « Continuer quand même » — jamais bloquant en mode serein (le choix est gardé
+   dans l'historique du niveau). Le parent voit discrètement les notions à revoir dans « Suivi » ; l'enseignant,
+   dans sa classe (onglet Élèves).
+5. **Interfaces** : inscription adulte (« Avec vérification » / « Mode serein »), compte adulte (« Ma façon
+   d'avancer »), « Famille » (choix du parent par enfant, préférence de l'ado à valider, décision de la classe
+   affichée), espace du niveau (encouragement, « Ouvrir le niveau suivant », « Épreuve facultative (pour un
+   certificat) », « Petit défi de révision », choix du niveau en mode serein, préférence de l'ado), défi/épreuve
+   (étoiles, essais libres), accueil (prochaine activité « Ouvrir le niveau suivant »), leçon (pourcentage affiché
+   seulement « avec vérification »), « Aujourd'hui » (mode serein : ni objectif ni réglage, un encouragement),
+   classe de l'enseignant (mode de la classe, notions fragiles). Certificats : inchangés (délivrés par l'école
+   après une épreuve réussie) ; un niveau ouvert sans épreuve n'en ouvre aucun.
+6. **Textes** : 42 textes `ser.*`, `parc.origine_lecons|choix`, `erreur.*` en fr, en, es, de, ar (A_RELIRE.md).
+7. **Poids** : après fusion de `main` (A37 : 409,0 Ko), le mode serein ajoutait 4,8 Ko (413,8 Ko > 410). Comme A37
+   l'a fait pour l'anglais, la version FRANÇAISE des pages légales et de l'aide (brouillons, ≈ 4 Ko Brotli) sort de
+   la coquille : `static/i18n/legal/fr.json`, chargé par ces pages (`loadLegal`, A37) et gardé par le service worker
+   au premier usage ; `lib/legal/content.ts` ne garde que la forme des textes et la liste des pages (test). Textes
+   `ser.classe_*` (personnel seulement) dans `fr-personnel.json` ; styles des nouveaux composants réduits aux classes
+   globales. Résultat : toutes pages 409,3 Ko ≤ 410, appareil d'un élève 348,7 Ko ≤ 355, page la plus lourde 141,1 Ko ≤ 150.
+8. **Tests** : unitaires 1 611 réussis, 1 ignoré, 0 échec (`pnpm check` vert) dont api `a39.test.ts` (9 : adulte serein sans épreuve, choix du
+   niveau, mode modifiable et historique ; adulte « avec vérification » ; certificat seulement avec épreuve ; enfant
+   — parent avec code, défi doux, étoiles ; ado — préférence validée/refusée ; enfant en classe — l'enseignant
+   décide, retour au choix du parent ; garde-fou et suivi de l'enseignant ; inscription), `a27.test.ts` adapté
+   (l'attente du lendemain suppose « avec vérification »), web `mode.test.ts` (3), `content.test.ts` (+1). e2e
+   `a39.spec.ts` (3 × 2 : adulte serein de l'inscription au niveau suivant, épreuve facultative en étoiles ; enfant
+   — défi doux, récapitulatif « Revoir d'abord / Continuer quand même », suivi du parent, choix du parent ; enfant en
+   classe — décision de l'enseignant), `a27.spec.ts` adapté (récapitulatif avant l'épreuve). **Suite e2e complète :
+   337 réussis, 43 ignorés, 0 échec (22,5 min, après fusion de main A37)**.
+
+Décisions à prendre (D-A39) : voir DECISIONS_EN_ATTENTE.
+
 ## 06/10/2026 — Chantier A37 : onglet « Vivre l'islam » (bon comportement, prières, adhkār)
 
 Branche `a37-vivre-islam-wip` (worktree `~/awform-a37`, depuis `main` f9467cd), base de tests `awform_a37_test`, e2e

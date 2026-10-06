@@ -1,6 +1,6 @@
 {
-  "id": "99e5a0e9-8304-4c75-b1be-219895d873bb",
-  "prevId": "a3ab23de-a94d-4aa2-a18f-aa66908ec1b4",
+  "id": "b9d4a2be-88ea-4ef5-9daf-78df3f95467d",
+  "prevId": "99e5a0e9-8304-4c75-b1be-219895d873bb",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -8132,6 +8132,13 @@
           "notNull": true,
           "default": "''"
         },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'complexe'"
+        },
         "status": {
           "name": "status",
           "type": "text",
@@ -8190,6 +8197,10 @@
         "quran_reciter_status": {
           "name": "quran_reciter_status",
           "value": "\"quran_reciter\".\"status\" IN ('en_attente', 'actif', 'retire')"
+        },
+        "quran_reciter_source": {
+          "name": "quran_reciter_source",
+          "value": "\"quran_reciter\".\"source\" IN ('complexe', 'qf')"
         },
         "quran_reciter_retrait": {
           "name": "quran_reciter_retrait",
