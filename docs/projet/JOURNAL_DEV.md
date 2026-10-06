@@ -8,6 +8,71 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Lot F3 : comptes de la bêta (revue d'architecture M7, E10, G3, G4, M8, M9, F7, F8)
+
+Branche `f3-comptes-wip` (worktree `~/awform-f3`, depuis `main` 0f6e305), base de tests unitaires propre
+(`awform_f3_test`), e2e isolés (ports 3173/4273). Bêta GRATUITE du 20/10 : aucun paiement, aucune boutique.
+Décisions existantes conservées (mode serein, rôles F2, responsables).
+
+1. **E-mails (M7)** — `apps/api/src/mail/` : prestataire **SMTP configurable** (`AWFORM_MAIL=smtp`,
+   `AWFORM_SMTP_*`, STARTTLS exigé vers un prestataire, nodemailer 10.0.15) ; **boîte de démonstration**
+   (`AWFORM_MAIL=journal` : aucun envoi, un fichier JSON par message, volume `boite`, `infra/prod/boite-demo.sh`,
+   posé par `deploy.sh --demo`) ; garde-fou : en démonstration, un SMTP public est refusé ; absent = désactivé.
+   Expéditeur `Awzid <no-reply@awzid.com>`. **6 modèles sobres × 5 langues** (texte + HTML minimal, langue du
+   compte ; en arabe, adresse et lien sur leur propre ligne). Liens vers `AWFORM_PUBLIC_URL` ou `https://SITE`,
+   jamais l'en-tête Host. Enregistrements **SPF, DKIM, DMARC** et contrôles : EXPLOITATION § 11.
+2. **Récupération du compte (M7)** — `apps/api/src/auth/recuperation.ts`, table `account_link` (empreinte
+   SHA-256 seulement, usage, adresse visée, expiration, `used_at`, consommation atomique) : **vérification de
+   l'adresse** à l'inscription (24 h, renvoi limité), **mot de passe oublié** (30 min, usage unique, nouveau lien =
+   ancien annulé ; réponse 202 IDENTIQUE avec ou sans compte, travail fait après la réponse ; 3 liens/h/adresse,
+   10 demandes/h/IP ; nouveau mot de passe = toutes les sessions fermées + avis au titulaire ; le lien vérifie
+   aussi l'adresse), **changement d'adresse vérifié** (mot de passe ressaisi, lien à la NOUVELLE adresse, avis
+   masqué à l'ancienne, adresse prise : avis neutre). Jeton dans le **fragment** (`/acces#reinit=…`), retiré de la
+   barre d'adresse à l'ouverture. Page unique **`/acces/[[mode]]`** (mot de passe oublié, nouveau mot de passe,
+   vérification, accords), hors du préchargement de l'élève (n'a de sens qu'en ligne) ; lien « Mot de passe
+   oublié ? » sur la connexion ; « Mon compte » : adresse vérifiée ou non (renvoi), changement d'adresse.
+3. **Accords (E10, G3, M9)** — types `donnee_religieuse_art9` (NÉCESSAIRE, explicite, jamais coché d'avance :
+   inscription, chaque profil d'enfant, et **au premier usage** pour les comptes existants via `accordsManquants`
+   de `/auth/me` → page « Accords » `/acces/accords`, mot de passe ressaisi = preuve ; **retirable** : le compte
+   ou le profil est mis en pause, rien n'est effacé) et `analyse_vocale_ia` (facultatif, séparé, profil par
+   profil, au premier usage ; `hasActiveConsent` = future garde ; aucune fonction ne l'utilise). Âge du
+   consentement par **subdivision** (`DIGITAL_CONSENT_AGE_REGION` : **Québec 14 ans** ; province demandée à
+   l'inscription au Canada ; `account.region`) ; **États-Unis : moins de 13 ans FERMÉS** (`CLOSED_UNDER_AGE` :
+   profil d'enfant, adulte, élève d'une école américaine ; message clair `erreur.ferme_moins_13`, avertissement
+   dans le formulaire ; plus de consentement COPPA recueilli). **Fiche de consentement papier** imprimable pour
+   les écoles (`static/documents/fiche-consentement-ecole.html`, A4, sans script ; lien dans « Mon école »).
+   Démonstration : accords art. 9 des comptes fictifs donnés par `cli/demo.ts` (complément idempotent).
+4. **Juridique (F7, F8)** — pages légales complétées (âge et pays, accès au compte, suppression et abonnement de
+   boutique, modifications, art. 9, analyse vocale, Québec, Royaume-Uni, région d'hébergement, liens par e-mail,
+   contact) et nouvelle page **« Conditions de la bêta »** (gratuite, sans engagement, données effaçables, fin de
+   bêta) en français et en anglais, marquées « à relire par un juriste » ; **classification d'âge et fiches des
+   boutiques** : `docs/juridique/CLASSIFICATION_AGE_BOUTIQUES.md` ; registre des traitements complété.
+   **Suppression du compte** : rappel permanent (abonnement App Store / Google Play non arrêté) et avertissement
+   nominatif si un abonnement de boutique est actif (`GET /account/suppression`) ; liens envoyés effacés.
+   **Export RGPD** vérifié (adresse vérifiée le, région, fuseau, région des données, liens sans empreinte).
+5. **Région et fuseau (G4, M8)** — `account.data_region` et `school.data_region` (« eu » par défaut, contrôlés) ;
+   `account.tz` (fuseau de l'appareil à l'inscription, réglable dans « Mon compte », recopié dans les heures
+   calmes des rappels), `school.tz` modifiable (contrôlé, défaut selon le pays à la création) ; les dates restent
+   des `timestamptz` ; **affichage des heures dans le fuseau du compte** (`fmtDate`, un jour seul n'est jamais
+   décalé). Pas de sélecteur de base par région (une seule région) : l'étiquette suffit pour séparer plus tard.
+6. **Migration** `0042_f3_comptes` (en avant seulement, retour arrière manuel en tête) : `account_link`,
+   `account.email_verified_at|region|tz|data_region`, `school.data_region` ; droits API `account_link` ; comptes
+   existants : adresse « non vérifiée », aucune donnée modifiée. **Numéro à vérifier avant la fusion**.
+7. **Textes** : 65 nouvelles clés (et 2 mises à jour) en fr, en, es, de, ar (A_RELIRE.md), textes français hors de la coquille
+   (`static/i18n/fr-acces.json`) ; `erreur.reinitialisation_desactivee` retiré.
+8. **Poids** : toutes pages **409,9 à 410,0 Ko ≤ 410** (405,5 sur `main`), appareil d'un élève **354,6 Ko ≤ 355**,
+   page la plus lourde 139,1 Ko — marge nulle (D-F3 9).
+9. **Tests** : unitaires **1 629 réussis, 1 ignoré, 0 échec** (`pnpm test`, base `awform_f3_test`) dont api
+   `f3.test.ts` (14 : modèles 5 langues, garde-fou de la démonstration, âges ; vérification ; mot de passe oublié de
+   bout en bout ; expiration, annulation, limitation ; changement d'adresse ; accords art. 9 et premier usage ;
+   analyse vocale ; Québec ; États-Unis ; fuseaux et région ; boutique et export ; comptes exclus et limite IP),
+   tests existants adaptés (accord art. 9, COPPA → fermeture, réinitialisation). e2e `f3.spec.ts` (5 × téléphone
+   et ordinateur, boîte de démonstration réelle : inscription avec vérification, mot de passe oublié de bout en
+   bout, accord retiré puis redonné au premier usage, mineur américain refusé, fuseau) : 10/10 ;
+   **suite e2e complète (sous verrou) : 351 réussis, 45 ignorés, 0 échec** (23,9 min). Build, types, lint, budget verts.
+
+Décisions à prendre (D-F3) : voir DECISIONS_EN_ATTENTE.
+
 ## 06/10/2026 — Chantier A39 (suite) : décisions D-A39 appliquées
 
 Branche `a39b-certificat-wip` (depuis `main` 7785a3f).

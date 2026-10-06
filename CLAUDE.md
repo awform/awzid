@@ -37,6 +37,10 @@ Lot F2 (branche `f2-ecole-wip`, revue d'architecture E1-E4, E8) : TERMINÉ — �
 responsables d'un profil (`profile_custodian`), tablette de classe, émancipation, niveau par matière, années,
 passage de fin d'année, archives, API « mon parcours » (`packages/db/src/{ecole,responsables,niveaux}.ts`,
 `apps/api/src/ecole-f2.ts`) ; l'interface du parcours par niveau vient avec A27.
+Lot F3 (branche `f3-comptes-wip`, revue M7, E10, G3, G4, M8, M9, F7, F8) : comptes de la bêta — e-mails
+(`apps/api/src/mail/`, `AWFORM_MAIL` : smtp / journal = boîte de démonstration), récupération du compte
+(`apps/api/src/auth/recuperation.ts`, page `/acces`), accords art. 9 et analyse vocale (`auth/accords.ts`, premier
+usage), Québec 14 ans, États-Unis < 13 ans fermés, fuseau et région des données (migration `0042_f3_comptes`).
 Chantier A27 (branche `a27-parcours-wip`) : TERMINÉ — parcours par niveau (accueil « Ma prochaine activité », espace du
 niveau, positionnement, épreuve de passage, « J'écris le Coran », mots du Coran, « Ma classe ») et décisions D-F2
 (`packages/db/src/parcours.ts`, `apps/api/src/parcours-a27.ts`, `apps/web/src/lib/parcours/`) ; pages du personnel
