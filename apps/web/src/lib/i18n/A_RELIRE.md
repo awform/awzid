@@ -97,3 +97,10 @@ Textes `cl.*` ajoutés par Claude dans les quatre langues, **à relire** : puce 
 (`cl.riwaya_desc_*`, `cl.riwaya_recitateurs`, `cl.riwaya_sans_recitateur`), taille du texte (`cl.taille*`),
 avis du lecteur (`cl.avis_*`), tuiles des enfants (`cl.k_*`), `cl.en_ligne`. Retirés (plus d'état « autre riwāya ») : `ca.autre_riwaya_texte`,
 `rw.autre_texte`, `rw.voir_texte`.
+## A37 « Vivre l'islam » (06/10/2026)
+
+Les 74 textes `vi.*` (onglet Bon comportement : sous-onglets, défi de la semaine, 18 cercles, 9 lieux, 5 statuts
+— arabe : واجب، مستحب، مباح، مكروه، حرام —, fiche, « Que fais-tu si… ? », Transmettre les valeurs) et `nav.vivre`
+(« Living Islam », « Vivir el islam », « Den Islam leben », « عِشِ الْإِسْلَامَ » demandés par le client) ; `qt.titre`,
+`parc.au_quotidien`, `parc.quotidien_texte` mis à jour. Écrits par Claude, **à relire**. Les textes français du
+personnel sont désormais dans `static/i18n/fr-personnel.json` (mêmes clés, hors de la coquille de l'élève).

@@ -178,6 +178,14 @@ test('ad1 l01 « L’intention » : le verset est un bloc à part, Tanzil exact,
       await fiqh.scrollIntoViewIfNeeded();
       await page.evaluate(() => document.fonts.ready);
       await fiqh.screenshot({ path: join(DIR, `ad1-l01-intention-375-${scheme}.png`) });
+      // pleine largeur (375 px, bords de l'écran compris) : preuve de la gouttière
+      const y = await fiqh.evaluate((e) => e.getBoundingClientRect().top + window.scrollY);
+      const h = await fiqh.evaluate((e) => e.getBoundingClientRect().height);
+      await page.screenshot({
+        path: join(DIR, `ad1-l01-intention-375-${scheme}-pleine-largeur.png`),
+        fullPage: true,
+        clip: { x: 0, y: Math.max(0, y - 80), width: 375, height: h + 160 },
+      });
     }
     // autres publics : enfant (en5 l16), ado (ado2 l02), sciences (ra1 l04, re2 l08)
     await page.emulateMedia({ colorScheme: 'light' });
@@ -240,6 +248,75 @@ test('aucune ligne rendue ne mêle une phrase arabe (3 mots ou plus) et du fran�
     await page.locator('main h1, main h2').first().waitFor({ timeout: 15_000 });
     await page.evaluate(() => document.fonts.ready);
     for (const l of await lignesMelees(page)) bad.push(`${url} : ${l}`);
+  }
+  expect(bad, bad.join('\n')).toEqual([]);
+});
+
+/** les quatre leçons des captures : adulte, enfant, ado, sciences */
+const QUATRE = ['/lecons/ad1.l01', '/lecons/en5.l16', '/lecons/ado2.l02', '/lecons/ra1.l04'];
+
+test('375 px : aucune puce seule, gouttière d’au moins 12 px, ornements ﴿ à droite et ﴾ à gauche', async ({
+  page,
+}, info) => {
+  test.skip(!info.project.name.startsWith('mobile'), 'largeur de téléphone');
+  test.setTimeout(300_000);
+  await page.setViewportSize({ width: 375, height: 812 });
+  const bad: string[] = [];
+  for (const url of QUATRE) {
+    await ouvrir(page, url);
+    const r = await page
+      .locator('main')
+      .first()
+      .evaluate((main) => {
+        const out: string[] = [];
+        const W = document.documentElement.clientWidth;
+        // puce seule : point à puce dont le premier contenu passe à la ligne (les listes NUMÉROTÉES des
+        // exercices gardent leur numéro, qui désigne la question)
+        for (const li of main.querySelectorAll('li')) {
+          const cs = getComputedStyle(li);
+          if (cs.display !== 'list-item' || !/disc|circle|square/.test(cs.listStyleType)) continue;
+          let n = li.firstChild;
+          while (n && n.nodeType === 3 && !n.nodeValue!.trim()) n = n.nextSibling;
+          if (n instanceof Element && !/^inline/.test(getComputedStyle(n).display))
+            out.push(`puce seule : ${(li.textContent ?? '').trim().slice(0, 50)}`);
+        }
+        // gouttière : texte, images et blocs de verset à 12 px au moins des bords (hors tableaux défilants)
+        const scrolls = (e: Element | null): boolean => {
+          for (; e && e !== main; e = e.parentElement)
+            if (/auto|scroll/.test(getComputedStyle(e).overflowX)) return true;
+          return false;
+        };
+        const check = (rc: DOMRect, what: string) => {
+          if (!rc.width || !rc.height) return;
+          if (rc.left < 12 || rc.right > W - 12)
+            out.push(
+              `bord (${Math.round(rc.left)}–${Math.round(rc.right)}) : ${what.slice(0, 50)}`,
+            );
+        };
+        const tw = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+        for (let n = tw.nextNode(); n; n = tw.nextNode()) {
+          if (!n.nodeValue!.trim() || scrolls(n.parentElement)) continue;
+          const rg = document.createRange();
+          rg.selectNodeContents(n);
+          for (const rc of rg.getClientRects()) check(rc, n.nodeValue!.trim());
+        }
+        for (const e of main.querySelectorAll('img, svg, .verset-bloc'))
+          if (!scrolls(e)) check(e.getBoundingClientRect(), e.className.toString() || e.tagName);
+        // ornements : ﴿ (U+FD3F) au début du verset, donc à droite ; ﴾ (U+FD3E) à la fin, à gauche
+        for (const v of main.querySelectorAll('.verset-bloc .v')) {
+          const o = v.querySelectorAll('.orn');
+          const t = v.querySelector('.quran-text')!.getBoundingClientRect();
+          const a = o[0]!.getBoundingClientRect();
+          const b = o[1]!.getBoundingClientRect();
+          if (o[0]!.textContent !== '﴿' || o[1]!.textContent !== '﴾')
+            out.push('ornements : mauvais caractères');
+          // texte sur plusieurs lignes : l'ouvrant à droite de la première ligne, le fermant à gauche de la dernière
+          if (!(a.left >= t.left + t.width / 2) || !(b.right <= t.left + t.width / 2))
+            out.push(`ornements mal placés (${Math.round(a.left)}, ${Math.round(b.right)})`);
+        }
+        return out;
+      });
+    for (const x of r) bad.push(`${url} : ${x}`);
   }
   expect(bad, bad.join('\n')).toEqual([]);
 });

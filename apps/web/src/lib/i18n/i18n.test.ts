@@ -8,7 +8,11 @@ import {
   detectLocale,
   fmtBytes,
   loadLocale,
+  loadStaffTexts,
+  loadCoranTexts,
+  CORAN_CATALOG,
   localeInfo,
+  STAFF_CATALOG,
   LOCALES,
   setLocale,
   t,
@@ -39,6 +43,9 @@ const fromDisk = async (code: string) =>
 
 beforeAll(async () => {
   for (const l of LOCALES) await loadLocale(l.code, fromDisk);
+  // A37 : textes français du personnel (fichier statique) ajoutés au catalogue français, comme sur leurs pages
+  await loadStaffTexts(fromDisk);
+  await loadCoranTexts(fromDisk);
 });
 afterEach(() => setLocale('fr'));
 
@@ -180,6 +187,45 @@ describe('fonctions', () => {
       expect(statSync(join(STATIC, `${l.code}.json`)).isFile(), l.code).toBe(true);
     const sw = readFileSync(join(SRC, 'service-worker.ts'), 'utf8');
     expect(sw).toContain('!isCatalog(f)');
+    // A37 : textes français du personnel hors de la coquille, chargés par les mises en page du personnel ;
+    // aucun n'est dans messages/fr.json ni utilisé par une page de l'élève
+    const staff = JSON.parse(readFileSync(join(STATIC, `${STAFF_CATALOG}.json`), 'utf8')) as object;
+    const shell = JSON.parse(readFileSync(join(SRC, 'lib', 'i18n', 'messages', 'fr.json'), 'utf8'));
+    expect(Object.keys(staff).length).toBeGreaterThan(100);
+    expect(Object.keys(staff).filter((k) => k in shell)).toEqual([]);
+    for (const p of ['enseignant', 'admin'])
+      expect(readFileSync(join(SRC, 'routes', p, '+layout.ts'), 'utf8'), p).toContain(
+        'loadStaffTexts',
+      );
+    const student = files(join(SRC, 'routes')).filter(
+      (f) => !/[\\/]routes[\\/](enseignant|admin)[\\/]/.test(f),
+    );
+    const used: string[] = [];
+    for (const f of student) {
+      const src = readFileSync(f, 'utf8');
+      for (const k of Object.keys(staff)) if (src.includes(`'${k}'`)) used.push(`${f}: ${k}`);
+    }
+    expect(used).toEqual([]);
+    // corrections du lecteur : textes français de l'espace Coran hors de la coquille, chargés par la mise en
+    // page /coran, préchargés par le service worker ; aucun n'est utilisé hors de l'espace Coran
+    const coran = JSON.parse(readFileSync(join(STATIC, `${CORAN_CATALOG}.json`), 'utf8')) as object;
+    expect(Object.keys(coran).length).toBeGreaterThan(100);
+    expect(Object.keys(coran).filter((k) => k in shell)).toEqual([]);
+    // /enseignant : récitateurs de la classe (`ca.*`)
+    for (const p of ['coran', 'enseignant'])
+      expect(readFileSync(join(SRC, 'routes', p, '+layout.ts'), 'utf8'), p).toContain(
+        'loadCoranTexts',
+      );
+    expect(sw).toContain("p !== '/i18n/fr-coran.json'");
+    const outside = [...files(join(SRC, 'routes')), ...files(join(SRC, 'lib'))].filter(
+      (f) => !/[\\/](routes[\\/]coran|lib[\\/]quran)[\\/]/.test(f),
+    );
+    const horsCoran: string[] = [];
+    for (const f of outside) {
+      const src = readFileSync(f, 'utf8');
+      for (const k of Object.keys(coran)) if (src.includes(`'${k}'`)) horsCoran.push(`${f}: ${k}`);
+    }
+    expect(horsCoran).toEqual([]);
     // police du Coran : plus de préchargement sur toutes les pages
     expect(readFileSync(join(SRC, 'app.html'), 'utf8')).not.toContain('amiri-quran');
   });

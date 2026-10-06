@@ -95,7 +95,7 @@
         {#if it.dua}
           {@const d = it.dua}
           <p class="moment">
-            {#if d.moment_ar}<Ar text={d.moment_ar} /> —
+            {#if d.moment_ar}<Ar text={d.moment_ar} sep />
             {/if}<Bidi text={d.moment_fr} />
           </p>
           {#if d.coranique}

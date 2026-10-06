@@ -57,7 +57,14 @@ const LECONS_DIR = join(tmpdir(), `awform-e2e-lecons${ISOLE ? `-${SUFFIX}` : ''}
 if (existsSync(join(LECONS_SRC, 'index.js'))) process.env.E2E_LECONS_AUDIO = '1';
 // A34 : Muṣḥaf exact — SEULEMENT avec E2E_MUSHAF_EXACT=1 et la copie Content Sync du serveur (jamais dans le
 // dépôt) : les autres suites gardent la page fluide qu'elles vérifient
-const QF_DIR = process.env.E2E_QF_MUSHAF_DIR ?? join(homedir(), 'awform-data', 'qf-mushaf');
+// copie de production (604 pages) si elle est là, sinon celle du prélancement (49 pages)
+const QF_DIR =
+  process.env.E2E_QF_MUSHAF_DIR ??
+  [
+    join(homedir(), 'awform-data', 'qf-mushaf-prod'),
+    join(homedir(), 'awform-data', 'qf-mushaf'),
+  ].find((d) => existsSync(join(d, 'publie', 'manifeste.json'))) ??
+  join(homedir(), 'awform-data', 'qf-mushaf');
 const QCF_DIR = process.env.E2E_QCF_DIR ?? join(homedir(), 'awform-data', 'qcf-1405');
 const EXACT =
   process.env.E2E_MUSHAF_EXACT === '1' &&
@@ -136,6 +143,8 @@ export default defineConfig({
         // SEULEMENT en test (Coran épuré : jamais en démonstration ni en production)
         AWFORM_AUDIO_DIR: AUDIO_DIR,
         AWFORM_AUDIO_ESSAI: 'on',
+        // A37 : fiches d'ESSAI du livret « Bon comportement » (textes neutres), SEULEMENT en test
+        AWFORM_AKHLAQ_ESSAI: 'on',
         // A3 : audio des leçons d'en1
         AWFORM_LECONS_AUDIO_DIR: LECONS_DIR,
         AWFORM_VAPID_PUBLIC: `B${'A'.repeat(86)}`,

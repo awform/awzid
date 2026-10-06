@@ -55,11 +55,113 @@ Branche `coran-corrections-wip` (worktree `~/awform-corfix`, depuis `main` fd3ca
    texte Tanzil ACCESSIBLE des pages exactes (`expectVerse`, `e2e/coran.ts`) ou visent un glyphe (`.first()`).
    **Résultats** : `pnpm check` vert — unitaires **1 580 réussis, 1 ignoré** ; e2e complets **342 réussis,
    34 ignorés, 0 échec** avec `E2E_MUSHAF_EXACT=1` (25,0 min) et **336 réussis, 40 ignorés, 0 échec** sans.
-6. **Budget** : total **409,8 Ko** (main : 407,7) ≤ 410 ; appareil d'un élève 350,1 Ko (main : 348,0) ≤ 355.
-   Marge faible (0,2 Ko) : deux feuilles fusionnées en un composant, textes « autre riwāya » et doublons retirés ;
-   toute nouvelle fonction du lecteur devra libérer de la place (ou relever le budget, décision du client).
+6. **Budget** (après fusion de `main` = A37, 409,0 Ko) : les ajouts portaient le total à 411,6 Ko → les textes
+   FRANÇAIS de l'espace Coran (`cl.*`, `ca.*`, `mp.*` sauf les noms de traduction, `mpx.*`, `rw.*`, `tj.*` :
+   247 textes) sortent de la coquille, comme ceux du personnel en A37 : `static/i18n/fr-coran.json`, chargé par les
+   mises en page `/coran` et `/enseignant` (récitateurs de la classe), **préchargé** par le service worker (Coran
+   hors ligne dès l'installation) ; contrôlé par `i18n.test.ts` (aucun de ces textes utilisé hors de l'espace
+   Coran). Total **407,9 Ko** (main : 409,0) ≤ 410 ; appareil d’un élève **347,9 Ko** (main : 348,9) ≤ 355 ;
+   `/coran/lecteur` 130,7 Ko (main : 131,7). Panneaux fusionnés en un composant, textes « autre riwāya » et
+   doublons retirés.
 7. Captures avant / après (puce, réglages adulte et enfant, thème adulte ; 375 px et bureau) :
    `reports/coran-corrections/` (hors dépôt), copiées sur le PC (`application/coran-corrections-captures/`).
+## 06/10/2026 — Chantier A37 : onglet « Vivre l'islam » (bon comportement, prières, adhkār)
+
+Branche `a37-vivre-islam-wip` (worktree `~/awform-a37`, depuis `main` f9467cd), base de tests `awform_a37_test`, e2e
+isolés (ports 3470/4470). Validé par le client le 06/10.
+
+1. **Navigation** : « Prières » devient **« Vivre l'islam »** (même place, icône coupole et porte `vivre`) — ados et
+   adultes : Accueil · Arabe · Coran · Vivre l'islam · Plus ; parent et visiteur aussi ; **enfants** : Accueil · Arabe ·
+   Coran · Vivre l'islam · Sciences (« Écriture » sort de leur barre : elle reste dans l'onglet Écriture de l'espace
+   Arabe et sur l'accueil ; `/ecriture` active « Arabe »). Libellés fr / en « Living Islam » / es « Vivir el islam » /
+   de « Den Islam leben » / ar « عِشِ الْإِسْلَامَ » ; un libellé long passe sur deux lignes (plus de « Vivre l'isl… »).
+2. **Sous-onglets bien visibles** (`lib/vivre/VivreTabs.svelte`) : **Bon comportement** (en premier, `/vivre`) ·
+   Prières (A12 inchangé : horaires, qibla, verset ; `/quotidien`) · Adhkār (`/quotidien/adhkar`). Carte **« Le défi de
+   la semaine »** en tête (même défi toute la semaine pour un élève, change le lundi ; d'abord le défi d'une fiche,
+   sinon un point « Je … » d'une rubrique déjà étudiée, recopié tel quel ; jamais un verset ni une citation).
+3. **Bon comportement** (une seule page `/vivre`, vues par paramètres `?c=` cercle, `?l=` lieu, `?f=` fiche, `?e=`
+   rubrique, `?parents`) : **18 cercles** (Soi ; Allah et le Prophète ﷺ ; Parents ; Frères et sœurs ; Époux et Enfants
+   — adultes ; Famille ; Voisins ; Amis ; École et enseignants ; Travail et collègues — ados, adultes ; Société et lois ;
+   Dans la rue et les transports ; Personnes fragiles ; Autres musulmans ; Autres religions et cultures ; Animaux et
+   nature ; Téléphone et réseaux) et **9 lieux** (Maison, Chambre, Cuisine, Toilettes, Mosquée, École, Rue,
+   Transports, Travail), seulement ceux qui ont du contenu pour l'élève. **Filtres** (`@awform/content/adab`, fonctions
+   pures) : rubriques des leçons **déjà atteintes** (niveaux précédents de sa filière + leçons faites/commencées et
+   celle où il en est, arabe et sciences — `reachedUnits`) ; fiches **de son âge** (et prérequis atteints). Enfants :
+   grandes tuiles illustrées (icônes sans visage), fiche courte (situation, étapes, ce qu'on dit, défi) ; ados : +
+   « Que fais-tu si… ? » et le pourquoi ; adultes : tout (+ « Dans la vraie vie », sources des points).
+4. **Données (a) — rubriques des livres** : 667 blocs (476 `fiqh_adab` des leçons de langue + rubriques de sciences
+   `adab` 67, `fiqh` 100, `usra` 9, `muamalat` 15 ; ce sont les « 576 » du client — 476 + 100 fiqh — plus adab, usra et
+   muʿāmalāt). Texte lu dans la leçon (`/api/v1/units/:id`, ou l'appareil si le niveau est téléchargé) : verset en bloc
+   (composant existant), arabe sur sa ligne, français dessous, mention de l'école ; étapes des sciences étiquetées
+   (fard → Obligatoire ; sunna, mustaḥabb, faḍīla → Recommandé). **Classement automatique PRUDENT**
+   (`packages/content/src/adab-classer.ts`) : mot du titre = 3, du texte = 1, seuil 3 ; « Allah » seul ne range rien ;
+   « école mālikite », « chemin d'Allah », « nature originelle » écartés ; époux/éducation des enfants seulement chez les
+   adultes ; à défaut « Soi » (« Allah et le Prophète ﷺ » pour le fiqh) ; lieux seulement s'ils sont clairs (205 sur
+   667). Corrigeable : `ADAB_CORRECTIONS` (à la main), puis l'**index officiel** `data/akhlaq/index-adab.json`
+   (`{"entrees": {"<leçon>.fiqh_adab" | "<leçon>.rubriques.N" | "<leçon>": {"cercles": [], "lieux": []}}}`) qui
+   l'emporte entrée par entrée (identifiants inconnus signalés à l'import).
+5. **Données (b) — fiches du livret « Bon comportement »** : import de `data/akhlaq/fiches/*.json` (`readAkhlaq`,
+   documents de l'édition `akhlaq.fiches` / `akhlaq.index` : aucune migration) ; **format proposé aux livres** dans
+   l'en-tête de `packages/content/src/akhlaq.ts` (à reporter dans SCHEMA.md) : `id`, `titre_fr/ar`, `cercles`, `lieux`,
+   `ages`, `prerequis`, `situation_fr`, `etapes.avant/pendant/apres` (points `fr`, `statut` obligatoire|recommande|
+   permis|deconseille|interdit, `ar`, `source_fr`), `dire` (arabe, traduction, source), `pourquoi_fr`, `vraie_vie_fr`,
+   `situations` (question/réponse), `defi_fr`. Fiche invalide écartée et signalée, jamais bloquante. **Étiquettes de
+   couleur** (mot toujours écrit, couleurs des jetons déjà contrôlés AA). **3 fiches d'ESSAI** (textes neutres, sans
+   contenu religieux, `test: true`) servies SEULEMENT avec `AWFORM_AKHLAQ_ESSAI=on` (API des e2e) : jamais en démo.
+6. **API** (`apps/api/src/vivre.ts`) : `GET /api/v1/vivre` (public, ETag, mémorisé par édition : rubriques rangées —
+   titres seulement — et fiches) ; `GET /api/v1/profiles/:id/vivre` (famille : âge, leçons atteintes qui ont une
+   rubrique). Copie sur l'appareil pour le hors ligne.
+7. **Parents** (espace Famille) : lien **« Transmettre les valeurs »** (`/profils` et `/vivre`) → défi de la semaine de
+   chaque enfant (le même que le sien), à faire ensemble ; le chapitre du guide des parents s'y ajoutera.
+8. Aucune voix de synthèse sur le Coran, aucun compteur de ḥasanāt ni classement (e2e), ton bienveillant.
+9. **Poids** — pour rester sous 410 Ko sans relever le budget : (a) textes FRANÇAIS du personnel (395 textes `classe.*`,
+   `etab.*`, `ens.*`… utilisés seulement par `/enseignant` et `/admin`, calculé sur le graphe des imports) sortis de la
+   coquille dans `static/i18n/fr-personnel.json`, chargé par les mises en page `/enseignant` et `/admin`
+   (`loadStaffTexts`) — tâche prévue dans TACHES_TECHNIQUES (−5,4 Ko) ; (b) pages légales en ANGLAIS (langue en
+   préparation) dans `static/i18n/legal/en.json`, chargées seulement si l'interface est en anglais (−3,7 Ko) ;
+   (c) `personnel.mjs` : une mise en page propre au personnel n'est plus préchargée par l'élève. Mesures : **toutes
+   pages 409,0 Ko ≤ 410** (main : 407,7), **appareil d'un élève 348,9 Ko ≤ 355** (main : 348,0), page la plus lourde
+   140,2 Ko.
+10. **Textes** : 74 `vi.*` + `nav.vivre` (et `qt.titre`, `parc.au_quotidien`, `parc.quotidien_texte` mis à jour) en fr,
+    en, es, de, ar — à relire (A_RELIRE.md).
+11. **Tests** : unitaires **1 598 réussis, 1 ignoré** (content `adab.test.ts` 17 : classement, index et corrections, filtres âge/niveau,
+    fiches, défi, import du dossier `akhlaq` ; api `a37.test.ts` 2 ; web : navigation, textes du personnel) ; e2e
+    `a37.spec.ts` (navigation, sous-onglets, cercles et lieux filtrés par le niveau, rubrique lue dans la leçon avec
+    l'arabe au-dessus du français, fiche et étiquettes, enfant/ado/adulte, parents, captures) ; adaptés : a12, a27, lot26,
+    horsligne. **Suite e2e complète : **331 réussis** (327 au premier passage + les 4 échecs corrigés et relancés : attente du libellé « rubriques », ordre de chargement des textes légaux anglais), **43 ignorés, 0 échec** (22,7 min)**. Captures 375 px clair/sombre (enfant, ado, adulte) : `reports/a37/`,
+    copiées sur le PC (`application/a37-captures/`).
+
+Décisions à prendre (D-A37) : voir DECISIONS_EN_ATTENTE.
+
+## 06/10/2026 — Chantier A34 : copie de PRODUCTION (604/604 pages conformes), démo basculée, synchro hebdomadaire
+
+- Synchronisation de production (identifiants du client, par le chef de projet) : 604 pages, 83 665 mots.
+- **Règle des en-têtes** relevée sur les données (21 cas : pages 76/77, 207/208, … 594/595) : quand une sourate
+  commence en ligne 2, la basmala occupe la ligne 1 et l'en-tête de sourate la DERNIÈRE ligne de la page
+  précédente. Contrôle et rendu suivent cette règle (`placeHeads`, en-têtes publiés avec chaque page `h`) ; la
+  vérification du texte n'est pas assouplie (ligne occupée ou page précédente absente : écart). Vérifié à l'œil
+  (pages 76, 77, 604 ; captures `application/a34-captures/production/`).
+- **37:130** : « إِلْ يَاسِينَ » = 2 mots Tanzil, 1 mot des données (glyphe U+FB61 U+0020 U+FB62) : segmentation
+  explicite `seg-37-130` (`corrections.json`, preuve `preuve-37-130.png`, validée par le référent provisoire).
+  `qf-2-181-fin` réservée au prélancement (`env`), la production étant déjà juste.
+- `verifier` (production) : **CONFORME, 604 pages**, publié (`lignes-v1.json` 2,09 Mo, SHA-256 `224c261c…deb9d`).
+- Démo : `compose.yml` monte par défaut `~/awform-data/qf-mushaf-prod` ; cron hebdomadaire `synchro-hebdo.sh`
+  (secret : `~/.config/awform/qf.env`, 600). e2e a34 sur la copie de production : 10/10.
+
+## 06/10/2026 — Versets dans les leçons (v2, retours du chef de projet)
+
+- Puces : points empilés de « L'intention » (et de tout bloc fiqh/adab) sans puce, séparés par un filet discret ;
+  règle globale : un point de liste dont le premier contenu est un bloc arabe ou un verset n'a pas de puce.
+- « — » : `Ar` porte le séparateur (`sep`) et ne l'affiche que si l'arabe reste dans la ligne (1-2 mots) ; carnet,
+  adhkār, corrigés des sciences et `ArFr` l'utilisent (code partagé, aucune duplication).
+- Marges : la gouttière de 16 px était déjà là (captures précédentes = rubrique seule, rognée) ; preuve en capture
+  pleine largeur. Le contrôle a révélé un VRAI débordement des leçons de sciences (ra1 l02 : page de 728 px, ra1
+  l04 : 479 px à 375 px) : la grille de la leçon prenait la largeur d'un tableau ; corrigé (`minmax(0, 1fr)`).
+- Ornements : ﴿ (U+FD3F) en début de verset, donc à droite ; ﴾ (U+FD3E) à la fin, à gauche (vérifié par mesure).
+- e2e `versets.spec.ts` +1 (ad1 l01, en5 l16, ado2 l02, ra1 l04 à 375 px : aucune puce seule — les numéros des
+  exercices restent —, rien à moins de 12 px des bords, ornements bien placés). Unitaires verts ; e2e complets
+  vérification finale après fusion de main (Coran épuré, A34) : unitaires verts, **e2e complets 320 réussis,
+  40 ignorés, 0 échec** (20,4 min). Budgets : toutes pages 407,4 Ko ≤ 410, appareil d'un élève 347,7 Ko ≤ 355.
 
 ## 06/10/2026 — Chantier A34 : Muṣḥaf de Médine « à l'identique » — branchement dans le lecteur (mode partiel)
 

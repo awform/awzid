@@ -155,7 +155,7 @@ done
 
 # A34 : dossiers du Muṣḥaf exact (copie Content Sync, polices QCF) créés vides s'ils manquent (sinon Docker les
 # créerait au nom de root) ; vides, l'API répond « indisponible » et le lecteur garde la page fluide
-mkdir -p "${AWFORM_QF_MUSHAF_SOURCE:-$HOME/awform-data/qf-mushaf}" "${AWFORM_QCF_SOURCE:-$HOME/awform-data/qcf-1405}"
+mkdir -p "${AWFORM_QF_MUSHAF_SOURCE:-$HOME/awform-data/qf-mushaf-prod}" "${AWFORM_QCF_SOURCE:-$HOME/awform-data/qcf-1405}"
 
 # ---------------------------------------------------------------- 3. services
 "${DC[@]}" up -d --remove-orphans api worker web caddy

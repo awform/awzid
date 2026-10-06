@@ -36,6 +36,50 @@ import {
   type LessonIndexEntry,
   type UnitKind,
 } from './types.js';
+import { readAdabIndex } from './adab-classer.js';
+import { readFiches } from './akhlaq.js';
+
+/**
+ * A37 — `data/akhlaq/` des livres : index officiel des rubriques (`index-adab.json`) et fiches du livret « Bon
+ * comportement » (`fiches/*.json`). Rangés dans les documents de l'édition (`akhlaq.index`, `akhlaq.fiches`) ;
+ * une fiche invalide est écartée et signalée (avertissement), jamais bloquante.
+ */
+export function readAkhlaq(dir: string, issues: Issue[]): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  if (!existsSync(dir)) return out;
+  const json = (p: string) => JSON.parse(readFileSync(p, 'utf8').replace(/^\uFEFF/, '')) as unknown;
+  const warn = (code: string, file: string, message: string) =>
+    issues.push({ severity: 'avertissement', code, file, message });
+  const idx = join(dir, 'index-adab.json');
+  if (existsSync(idx)) {
+    try {
+      const raw = json(idx);
+      const r = readAdabIndex(raw);
+      for (const p of r.problems) warn('akhlaq_index', 'data/akhlaq/index-adab.json', p);
+      out['akhlaq.index'] = { entrees: Object.fromEntries(r.map) };
+    } catch (e) {
+      warn('akhlaq_index', 'data/akhlaq/index-adab.json', `illisible : ${String(e)}`);
+    }
+  }
+  const fdir = join(dir, 'fiches');
+  if (existsSync(fdir)) {
+    const files = readdirSync(fdir)
+      .filter((n) => n.endsWith('.json'))
+      .sort()
+      .map((n) => {
+        const file = `data/akhlaq/fiches/${n}`;
+        try {
+          return { file, raw: json(join(fdir, n)) };
+        } catch {
+          return { file, raw: null };
+        }
+      });
+    const r = readFiches(files);
+    for (const m of r.errors) warn('akhlaq_fiche', 'data/akhlaq/fiches', m);
+    out['akhlaq.fiches'] = { fiches: r.fiches.filter((f) => !f.test) };
+  }
+  return out;
+}
 
 export interface VerseStats {
   total: number;
@@ -797,6 +841,8 @@ export function loadEdition(opts: LoadOptions): EditionLoad {
       });
     }
   }
+  // A37 : livret « Bon comportement » (fiches) et index officiel des rubriques — facultatifs, jamais bloquants
+  Object.assign(evalDocs, readAkhlaq(join(dataDir, 'akhlaq'), issues));
 
   // activité « racines » (lot 15) : éléments vérifiés mot pour mot dans les leçons gelées de l'édition
   const rootSources = new Map<string, string>();

@@ -489,6 +489,8 @@
 <style>
   .rel {
     display: grid;
+    /* colonne bornée à l'écran : un tableau large défile dans son cadre, la page ne déborde pas */
+    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
   }
   header h1 {

@@ -1,6 +1,11 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { FAQ, LEGAL, LEGAL_PAGES } from './content';
-import { FAQ_EN, LEGAL_EN } from './content-en';
+import { FAQ, LEGAL, LEGAL_PAGES, type FaqItem, type LegalKey, type LegalPage } from './content';
+
+// A37 : version anglaise dans un fichier statique (hors de la coquille), chargée à la demande
+const { legal: LEGAL_EN, faq: FAQ_EN } = JSON.parse(
+  readFileSync(new URL('../../../static/i18n/legal/en.json', import.meta.url), 'utf8'),
+) as { legal: Record<LegalKey, LegalPage>; faq: Array<{ titre: string; items: FaqItem[] }> };
 
 describe('pages légales et aide : version anglaise complète (à relire par un locuteur natif)', () => {
   it('mêmes pages, mêmes sections, mêmes paragraphes', () => {
