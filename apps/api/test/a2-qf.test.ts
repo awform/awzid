@@ -3,7 +3,9 @@
  * réglage (inactif sans identifiants), adresses acceptées, jeton gardé et renouvelé, pagination, contrôle
  * des versets, cache ≤ 24 h (conditions : ≤ 7 jours), erreurs ; catalogue des récitateurs.
  */
-import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { chmodSync, mkdtempSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { HAFS_SURA_VERSES, QF_CATALOGUE, qfRecitationId, QF_ESSAI_RECITER } from '@awform/db';
@@ -281,5 +283,56 @@ describe('A2 : catalogue des récitateurs en ligne', () => {
     expect(qfRecitationId('qf-afasy', 'essai')).toBeNull();
     expect(qfRecitationId(QF_ESSAI_RECITER, 'essai')).toBe(7);
     expect(qfRecitationId(QF_ESSAI_RECITER, 'prelive')).toBeNull();
+  });
+});
+
+describe('A2 : identifiants QF du déploiement (infra/prod/qf-env.sh → api.env)', () => {
+  const SCRIPT = join(import.meta.dirname, '..', '..', '..', 'infra', 'prod', 'qf-env.sh');
+  const run = (src: string, dest: string) =>
+    execFileSync('bash', [SCRIPT, src, dest], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+  const fresh = () => {
+    const d = mkdtempSync(join(tmpdir(), 'awzid-qfenv-'));
+    const api = join(d, 'api.env');
+    writeFileSync(api, 'TZ=Europe/Paris\n', { mode: 0o600 });
+    return { d, api, qf: join(d, 'qf.env') };
+  };
+
+  it('absent : rien d’ajouté, déploiement non bloqué', () => {
+    const { api, qf } = fresh();
+    run(qf, api);
+    expect(readFileSync(api, 'utf8')).toBe('TZ=Europe/Paris\n');
+  });
+
+  it('valide (600) : les trois variables ajoutées à api.env (600), secret jamais affiché', () => {
+    const { api, qf } = fresh();
+    writeFileSync(qf, 'QF_CLIENT_ID=id-essai\nQF_CLIENT_SECRET=secret-essai\nQF_ENV=prelive\n', {
+      mode: 0o600,
+    });
+    const out = run(qf, api);
+    expect(out).not.toContain('secret-essai');
+    expect(readFileSync(api, 'utf8')).toBe(
+      'TZ=Europe/Paris\nQF_ENV=prelive\nQF_CLIENT_ID=id-essai\nQF_CLIENT_SECRET=secret-essai\n',
+    );
+    expect(statSync(api).mode & 0o777).toBe(0o600);
+    // relancé : pas de doublon ; une valeur déjà dans api.env (prod.env) garde la priorité
+    run(qf, api);
+    expect(readFileSync(api, 'utf8').match(/QF_CLIENT_ID=/g)).toHaveLength(1);
+  });
+
+  it('refusé (droits trop larges, clé inattendue, incomplet) : rien d’ajouté', () => {
+    for (const [body, mode] of [
+      ['QF_CLIENT_ID=a\nQF_CLIENT_SECRET=b\n', 0o644],
+      ['QF_CLIENT_ID=a\nQF_CLIENT_SECRET=b\nAUTRE=c\n', 0o600],
+      ['QF_CLIENT_ID=a\n', 0o600],
+    ] as const) {
+      const { api, qf } = fresh();
+      writeFileSync(qf, body);
+      chmodSync(qf, mode);
+      run(qf, api);
+      expect(readFileSync(api, 'utf8')).toBe('TZ=Europe/Paris\n');
+    }
   });
 });

@@ -3,9 +3,12 @@
 // (jamais affichés). Liste les récitations verset par verset (/resources/recitations) et les récitateurs par
 // sourate (/resources/chapter_reciters) de l'environnement, puis essaie al-Fātiḥa pour chaque récitateur du
 // catalogue Awzid (packages/db/src/audio/qf-catalogue.ts) : nombre de fichiers, hôte de diffusion accepté.
-// Usage (depuis la racine du dépôt, après « pnpm build ») :
-//   env $(grep '^QF_' ~/.config/awform/prod.env | xargs) node infra/outils/qf-audio/qf-recitateurs.mjs
-// QF_ENV=prelive (défaut) ou production. Aucune donnée n'est écrite (lecture seule, rien n'est gardé).
+// Usage (depuis la racine du dépôt, après « pnpm build ») : node infra/outils/qf-audio/qf-recitateurs.mjs
+// Secret : ~/.config/awform/qf.env (droits 600 ; autre chemin : AWFORM_QF_SECRET), ou variables QF_CLIENT_ID,
+// QF_CLIENT_SECRET, QF_ENV (prelive par défaut, ou production). Lecture seule : rien n'est écrit ni gardé.
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 import { QF_CATALOGUE } from '../../../packages/db/dist/audio/qf-catalogue.js';
 
 const QF = {
@@ -25,9 +28,20 @@ const HOSTS = [
   'mirrors.quranicaudio.com',
   'download.quranicaudio.com',
 ];
-const env = process.env.QF_ENV ?? 'prelive';
-const id = process.env.QF_CLIENT_ID;
-const secret = process.env.QF_CLIENT_SECRET;
+// secret : variables d'environnement, sinon le fichier de déploiement (LU, jamais exécuté ; droits 600)
+const SECRET_FILE = process.env.AWFORM_QF_SECRET ?? join(homedir(), '.config', 'awform', 'qf.env');
+const fromFile = {};
+if (!process.env.QF_CLIENT_ID && existsSync(SECRET_FILE)) {
+  if ((statSync(SECRET_FILE).mode & 0o777) !== 0o600)
+    throw new Error(`${SECRET_FILE} doit avoir les droits 600`);
+  for (const line of readFileSync(SECRET_FILE, 'utf8').split('\n')) {
+    const m = /^(QF_CLIENT_ID|QF_CLIENT_SECRET|QF_ENV)=(.*)$/.exec(line.trim());
+    if (m) fromFile[m[1]] = m[2];
+  }
+}
+const env = process.env.QF_ENV ?? fromFile.QF_ENV ?? 'prelive';
+const id = process.env.QF_CLIENT_ID ?? fromFile.QF_CLIENT_ID;
+const secret = process.env.QF_CLIENT_SECRET ?? fromFile.QF_CLIENT_SECRET;
 if (!QF[env]) throw new Error(`QF_ENV inconnu : ${env}`);
 if (!id || !secret)
   throw new Error('QF_CLIENT_ID et QF_CLIENT_SECRET sont requis (variables d’environnement)');
