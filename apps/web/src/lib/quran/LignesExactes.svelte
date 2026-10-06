@@ -90,7 +90,14 @@
   }
 </script>
 
-<div class="exact" data-testid="page-exacte" data-exact-page={page.p} {oncopy} role="none">
+<div
+  class="exact"
+  class:courte={centered}
+  data-testid="page-exacte"
+  data-exact-page={page.p}
+  {oncopy}
+  role="none"
+>
   <div class="lignes quran-text" class:centre={centered} bind:this={box} aria-hidden="true">
     {#each lines as l (l.n)}
       {#if l.kind === 'texte'}
@@ -155,6 +162,13 @@
   .exact {
     position: relative;
     padding-block: 6px 2px;
+  }
+  /* pages 1 et 2 : bloc court centré dans la hauteur de la page, comme dans le muṣḥaf imprimé */
+  .exact.courte {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
   }
   .lignes {
     display: flex;

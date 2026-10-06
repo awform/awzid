@@ -111,7 +111,9 @@ export function displayLines(page: ExactPage): DisplayLine[] {
   }
   const used = [...byN.keys()];
   const last = page.p <= 2 ? Math.max(...used, 1) : EXACT_LINES;
-  const first = page.p <= 2 ? Math.min(...used, 1) : 1;
+  // pages 1 et 2 : bloc court (numéros de ligne relevés dans les données : bas de la grille) — seulement les lignes
+  // occupées, centrées verticalement à l'affichage
+  const first = page.p <= 2 ? Math.min(...used) : 1;
   const out: DisplayLine[] = [];
   for (let n = first; n <= last; n++) out.push(byN.get(n) ?? { n, kind: 'vide' });
   return out;

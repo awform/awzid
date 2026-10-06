@@ -136,6 +136,17 @@ describe('A34 — lignes d’une page (15 lignes, en-têtes, basmala)', () => {
     expect(d[0]).toMatchObject({ kind: 'sourate', s: 112 });
     expect(d[7]).toMatchObject({ kind: 'basmala', s: 113 });
   });
+  it('pages 1 et 2 : seulement les lignes occupées (pas de lignes vides au-dessus)', () => {
+    const page: ExactPage = {
+      p: 1,
+      lines: [9, 10].map((n) => ({ n, w: [[1, n - 8, 1, 'x', 'word']] as ExactWord[] })),
+    };
+    const d = displayLines({
+      ...page,
+      lines: [{ n: 9, w: [[1, 1, 1, 'x', 'word']] }, page.lines[1]!],
+    });
+    expect(d.map((l) => `${l.n}:${l.kind}`)).toEqual(['8:sourate', '9:texte', '10:texte']);
+  });
   it('sourate 9 : en-tête seul (pas de basmala)', () => {
     const page: ExactPage = { p: 187, lines: [{ n: 3, w: [[9, 1, 1, 'x', 'word']] }] };
     const d = displayLines(page);
