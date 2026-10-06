@@ -4,6 +4,8 @@
 //    avec leurs imports statiques, d'après le manifeste de Vite) ≤ 150 Ko : la pire page est retenue ;
 //  - TOTAL de toutes les pages ≤ 405 Ko (D30, A8, D31, A12, F1, A21, A27) ; APPAREIL D'UN ÉLÈVE (tout ce que le service
 //    worker précharge : toutes les pages sauf celles du personnel, D-F2 9) ≤ 355 Ko, objectif 325 Ko ;
+//  - A21b : code des leçons vivantes, chargé à la demande (non préchargé, gardé au premier usage ou au
+//    téléchargement d'un niveau d'arabe) ≤ 20 Ko : compté dans le total, pas dans ce que précharge l'appareil ;
 //  - polices une seule fois ≤ 600 Ko.
 // Écrit reports/budget-web.md à la racine du dépôt ; code de sortie 1 si un budget est dépassé.
 import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
@@ -48,8 +50,21 @@ const staffBr = sum(
   [...js, ...css].filter((p) => staffSet.has(p)),
   br,
 );
-const eleveBr = r.jsBr + r.cssBr - staffBr;
 const swStaff = /personnel\.json/.test(swSrc);
+// A21b : liste écrite par vite.config.ts, lue par le service worker (non préchargée)
+const vivList = (() => {
+  try {
+    return JSON.parse(readFileSync(join(client, '_app', 'vivante.json'), 'utf8'));
+  } catch {
+    return [];
+  }
+})();
+const vivFiles = vivList.map((f) => join(client, f));
+const vivBr = sum(vivFiles, br);
+const swViv = /vivante\.json/.test(swSrc);
+const BUDGET_VIVANTE = 20 * 1024;
+// ce que précharge l'appareil d'un élève : tout, moins les pages du personnel et les leçons vivantes (à la demande)
+const eleveBr = r.jsBr + r.cssBr - staffBr - vivBr;
 const ko = (n) => `${(n / 1024).toFixed(1)} Ko`;
 const BUDGET_INITIAL = 150 * 1024;
 // Muṣḥaf par page (04/10/2026) : 300 → 315 Ko, à valider (décision D30) ; A8 (05/10/2026) : muṣḥafs des
@@ -140,7 +155,8 @@ const lines = [
   `| CSS (Brotli) | ${ko(r.cssBr)} | — |`,
   `| Total JS + CSS de toutes les pages (Brotli) | ${ko(r.jsBr + r.cssBr)} | ≤ ${ko(BUDGET_TOTAL)} |`,
   `| dont pages du personnel, NON préchargées sur l'appareil d'un élève (${staffSet.size} fichiers${swStaff ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(staffBr)} | — |`,
-  `| **Appareil d'un élève** : tout ce que garde le service worker (JS + CSS, Brotli) | ${ko(eleveBr)} | ≤ ${ko(BUDGET_ELEVE)} (objectif 325 Ko) |`,
+  `| **Appareil d'un élève** : tout ce que précharge le service worker (JS + CSS, Brotli) | ${ko(eleveBr)} | ≤ ${ko(BUDGET_ELEVE)} (objectif 325 Ko) |`,
+  `| dont leçons vivantes : générateurs, lecteur, modèles (${vivFiles.length} fichiers, à la demande, non préchargés${swViv ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(vivBr)} | ≤ ${ko(BUDGET_VIVANTE)} |`,
   `| Service worker (Brotli) | ${ko(r.swBr)} | — |`,
   `| Polices WOFF2 (une seule fois, déjà compressées) | ${ko(r.fonts)} | ≤ ${ko(BUDGET_FONTS)} |`,
   `| Police d'une riwāya, la plus lourde (${rwFonts.length} polices, à la demande, hors coquille${rwExcluded ? '' : ' — NON EXCLUE du service worker'}) | ${ko(rwWorst)} | ≤ ${ko(BUDGET_RIWAYA_FONT)} |`,
@@ -161,7 +177,10 @@ if (
   rwWorst > BUDGET_RIWAYA_FONT ||
   !rwExcluded ||
   eleveBr > BUDGET_ELEVE ||
-  !swStaff
+  !swStaff ||
+  !vivFiles.length ||
+  vivBr > BUDGET_VIVANTE ||
+  !swViv
 ) {
   console.error('Budget dépassé');
   process.exit(1);

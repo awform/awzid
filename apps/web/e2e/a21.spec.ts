@@ -125,28 +125,29 @@ test('A21 : hors ligne — niveau téléchargé, l’animation apparaît sans r�
   await context.setOffline(false);
 });
 
-test('A21 : démonstration (3 pilotes) et réglage par niveau', async ({ page }) => {
+test('A21 / A21b : actives partout par défaut, réglage par niveau, interrupteur général', async ({
+  page,
+}) => {
+  // A21b : hors pilote aussi, par défaut
+  await page.goto('/lecons/en1.l02');
+  await expect(page.getByTestId('vivante').first()).toBeAttached();
+  // niveau en1 désactivé : plus rien dans ce niveau, le reste inchangé
   await page.goto('/demo/vivante');
-  await expect(page.getByTestId('vivante-pilotes').locator('a[data-pilote]')).toHaveCount(3);
-  // hors pilote : rien par défaut
+  await page.locator('[data-viv-level="en1"]').uncheck();
   await page.goto('/lecons/en1.l02');
   await expect(page.locator('h1')).toBeVisible();
   await page.waitForTimeout(500);
   await expect(page.getByTestId('vivante')).toHaveCount(0);
-  // activé pour tout le niveau en1
-  await page.goto('/demo/vivante');
-  await page.locator('[data-viv-level="en1"]').check();
-  await page.goto('/lecons/en1.l02');
+  await page.goto('/lecons/en2.l01');
   await expect(page.getByTestId('vivante').first()).toBeAttached();
   // interrupteur général : plus rien, même sur un pilote
   await page.goto('/demo/vivante');
   await page.getByTestId('vivante-actif').uncheck();
-  await page.goto('/lecons/en1.l01');
+  await page.goto('/lecons/ad1.l01');
   await expect(page.locator('h1')).toBeVisible();
   await page.waitForTimeout(500);
   await expect(page.getByTestId('vivante')).toHaveCount(0);
 });
-
 test('A21 : captures — téléphone 375 px, clair et sombre', async ({ page }, info) => {
   test.skip(!info.project.name.startsWith('mobile'), 'captures sur téléphone seulement');
   test.setTimeout(300_000);

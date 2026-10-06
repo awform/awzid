@@ -52,6 +52,10 @@
     "./vivante": {
       "types": "./dist/vivante.d.ts",
       "default": "./dist/vivante.js"
+    },
+    "./versets": {
+      "types": "./dist/versets.d.ts",
+      "default": "./dist/versets.js"
     }
   },
   "bin": {

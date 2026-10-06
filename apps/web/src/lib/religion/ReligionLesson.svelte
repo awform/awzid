@@ -4,6 +4,7 @@
   import type { SceneSpec } from '@awform/content/scene';
   import { tanwinDisplay } from '@awform/content/text';
   import Ar from '$lib/Ar.svelte';
+  import ArFr from '$lib/ArFr.svelte';
   import Ecouter from '$lib/Ecouter.svelte';
   import Illus from '$lib/Illus.svelte';
   import Scene from '$lib/Scene.svelte';
@@ -97,8 +98,7 @@
       <h2>{t('rel.objectifs')}</h2>
       <ul>
         {#each arr(L.objectifs) as o, i (i)}<li>
-            {#if str(o.ar)}<Ar text={str(o.ar)} /> —
-            {/if}<Bidi text={str(o.fr)} />
+            <ArFr ar={str(o.ar)} fr={str(o.fr)} verset={o.verset_tanzil} />
           </li>{/each}
       </ul>
     </section>
@@ -132,23 +132,28 @@
           </p>{/if}
         {#each arr(r.texte) as p, i (i)}
           <div class="para">
-            {#if str(p.ar)}<Ar text={str(p.ar)} tag="p" />{/if}
-            <p><Bidi text={str(p.fr)} /></p>
+            <ArFr ar={str(p.ar)} fr={str(p.fr)} verset={p.verset_tanzil} stack />
           </div>
         {/each}
         {#if arr(r.points).length}
           <ul class="points">
             {#each arr(r.points) as p, i (i)}<li>
                 {#if p.img}<Illus k={str(p.img)} cls="mini" />{/if}
-                {#if str(p.ar)}<Ar text={str(p.ar)} />{/if}
-                <span><Bidi text={str(p.fr)} /></span>
+                <div class="pt">
+                  <ArFr
+                    ar={str(p.ar)}
+                    fr={str(p.fr)}
+                    verset={p.verset_tanzil}
+                    stack={!!str(p.ar)}
+                  />
+                </div>
               </li>{/each}
           </ul>
         {/if}
         {#if arr(r.noms).length}
           <dl class="noms">
             {#each arr(r.noms) as nm, i (i)}
-              <dt><Ar text={str(nm.ar)} /> — <Bidi text={str(nm.fr)} /></dt>
+              <dt><ArFr ar={str(nm.ar)} fr={str(nm.fr)} /></dt>
               <dd>
                 <Bidi text={str(nm.explication_fr)} />
                 <Bidi text={str(nm.exemple_fr)} />
@@ -159,14 +164,17 @@
         {/if}
         {#if r.bulles}{@const b = r.bulles as Obj}
           <div class="bulles">
-            <p class="centre">
-              {#if str((b.centre as Obj)?.ar)}<Ar text={str((b.centre as Obj).ar)} />
-              {/if}<Bidi text={str((b.centre as Obj)?.fr)} />
-            </p>
+            <div class="centre">
+              <ArFr
+                ar={str((b.centre as Obj)?.ar)}
+                fr={str((b.centre as Obj)?.fr)}
+                verset={(b.centre as Obj)?.verset_tanzil}
+                stack={!!str((b.centre as Obj)?.ar)}
+              />
+            </div>
             <ul>
               {#each arr(b.autour) as a, i (i)}<li>
-                  {#if str(a.ar)}<Ar text={str(a.ar)} /> —
-                  {/if}<Bidi text={str(a.fr)} />
+                  <ArFr ar={str(a.ar)} fr={str(a.fr)} verset={a.verset_tanzil} />
                 </li>{/each}
             </ul>
           </div>
@@ -178,10 +186,7 @@
                 class:mal={s.bien === false}
               >
                 {#if s.img}<Illus k={str(s.img)} cls="mini" />{/if}
-                <span
-                  >{#if str(s.ar)}<Ar text={str(s.ar)} /> —
-                  {/if}<Bidi text={str(s.fr)} /></span
-                >
+                <span><ArFr ar={str(s.ar)} fr={str(s.fr)} verset={s.verset_tanzil} /></span>
                 <span class="pourquoi"
                   ><Bidi text={s.bien ? t('rel.bien') : t('rel.pas_bien')} />
                   <Bidi text={str(s.pourquoi_fr)} /></span
@@ -213,11 +218,11 @@
         {#each arr(r.duas) as d, i (i)}
           <div class="dua">
             <p class="moment">
-              {#if str(d.moment_ar)}<Ar text={str(d.moment_ar)} /> —
-              {/if}<Bidi text={str(d.moment_fr)} />
+              <ArFr ar={str(d.moment_ar)} fr={str(d.moment_fr)} />
             </p>
-            <Ar text={str(d.ar)} tag="p" /><Ecouter text={str(d.ar)} />
-            <p><Bidi text={str(d.fr)} /></p>
+            <!-- verset (texte Tanzil exact) : bloc de verset, sans voix de synthèse -->
+            <ArFr ar={str(d.ar)} fr={str(d.fr)} verset={d.verset_tanzil} stack />
+            {#if !d.verset_tanzil}<Ecouter text={str(d.ar)} />{/if}
             {#if str(d.source_fr)}<p class="ref"><Bidi text={str(d.source_fr)} /></p>{/if}
           </div>
         {/each}
@@ -287,8 +292,7 @@
             {#if c.img}<Illus k={str(c.img)} cls="map" />{/if}
             <ul>
               {#each arr(c.lieux) as l, k (k)}<li>
-                  {#if str(l.ar)}<Ar text={str(l.ar)} /> —
-                  {/if}<Bidi text={str(l.fr)} />
+                  <ArFr ar={str(l.ar)} fr={str(l.fr)} />
                 </li>{/each}
             </ul>
             <figcaption><Bidi text={str(c.legende_fr)} /></figcaption>
@@ -334,10 +338,9 @@
         {/if}
         {#if arr(r.retiens).length}
           <div class="retiens">
-            {#each arr(r.retiens) as x, i (i)}<p>
-                {#if str(x.ar)}<Ar text={str(x.ar)} /> —
-                {/if}<Bidi text={str(x.fr)} />
-              </p>{/each}
+            {#each arr(r.retiens) as x, i (i)}<div class="pt">
+                <ArFr ar={str(x.ar)} fr={str(x.fr)} verset={x.verset_tanzil} stack={!!str(x.ar)} />
+              </div>{/each}
           </div>
         {/if}
         {#if unit.madhhab?.[`rubriques.${ri}`]}<Signaler
@@ -446,10 +449,9 @@
   {#if arr(L.retiens).length}
     <section class="card retiens">
       <h2>{t('lecon.je_retiens')}</h2>
-      {#each arr(L.retiens) as x, i (i)}<p>
-          {#if str(x.ar)}<Ar text={str(x.ar)} /> —
-          {/if}<Bidi text={str(x.fr)} />
-        </p>{/each}
+      {#each arr(L.retiens) as x, i (i)}<div class="pt">
+          <ArFr ar={str(x.ar)} fr={str(x.fr)} verset={x.verset_tanzil} stack={!!str(x.ar)} />
+        </div>{/each}
     </section>
   {/if}
 
@@ -457,8 +459,7 @@
     <section class="card">
       <h2>{t('rel.carnet')}</h2>
       <p>
-        {#if str(cn.ar)}<Ar text={str(cn.ar)} /> —
-        {/if}<Bidi text={str(cn.fr)} />
+        <ArFr ar={str(cn.ar)} fr={str(cn.fr)} />
       </p>
       {#if profile?.kind === 'adulte' && unit.id.startsWith('ra')}
         <!-- adulte : liste personnelle à cocher, sans signature -->
@@ -477,10 +478,7 @@
             checked={checked[i] ?? false}
             onchange={(e) => toggle(i, e.currentTarget.checked)}
           />
-          <span
-            >{#if str(c.ar)}<Ar text={str(c.ar)} /> —
-            {/if}<Bidi text={str(c.fr)} /></span
-          ></label
+          <span><ArFr ar={str(c.ar)} fr={str(c.fr)} /></span></label
         >
       {/each}
     </section>
@@ -524,6 +522,10 @@
     padding: 0;
     display: grid;
     gap: 6px;
+  }
+  .points .pt {
+    flex: 1 1 220px;
+    min-width: 0;
   }
   .points li,
   .mots li,

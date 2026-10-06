@@ -67,6 +67,134 @@ client (autre application) : seulement l'esprit, aucun élément graphique, poli
 Décisions à prendre (D-CE) : voir DECISIONS_EN_ATTENTE.
 ---
 
+## 06/10/2026 — Versets dans les leçons (signalement du client : ad1 l01, « L'intention »)
+
+Branche `versets-lecons-wip` (worktree `~/awform-versets`, depuis `main` 73ec68d).
+
+- **Repérage des versets par les DONNÉES** (`packages/content/src/versets.ts`, `packages/db/src/versets.ts`) : à la
+  lecture d'une leçon (`getUnitForStudent`, donc aussi les paquets hors ligne), chaque élément `{ ar, … }` des blocs
+  d'affichage (fiqh/adab, je retiens, lecture, rubriques des sciences, invocations… ; jamais exercices, Coran,
+  Muṣḥaf, écriture) reçoit `verset_tanzil` si son texte arabe, ponctuation des bords écartée, est une suite de mots
+  ENTIERS du texte Tanzil de la base (`quran_verse`), octet pour octet, sur un verset ou deux versets consécutifs
+  d'une même sourate : au moins 3 mots, ou 2 mots avec la référence dans le point. Ambigu : la référence du livre
+  tranche, sinon le verset entier, sinon AUCUNE référence (jamais inventée). Hadiths et phrases en écriture courante
+  ne correspondent jamais. Index bâti une fois par processus (≈ 50 ms), ≈ 1,3 ms par leçon. La référence affichée
+  (celle du livre en fin de traduction si elle désigne ce verset, sinon « Sourate s:a » avec le nom fourni par l'API,
+  `setVerseSuraNames`) est calculée par le serveur : rien de plus dans le JavaScript de l'élève.
+- **Composant unique du verset** (`lib/quran/VersetBloc.svelte`) : bloc à part, police du Muṣḥaf (`.quran-text`),
+  sous-chaîne Tanzil exacte (seul l'affichage des tanwins suit le Muṣḥaf de Médine, comme partout), ornements ﴿ ﴾
+  hors du texte (aria-hidden), puis sur leurs propres lignes : référence, traduction, « ▶ Écouter la récitation » (Complexe, comme A3) ; aucune
+  voix de synthèse. `lib/ArFr.svelte` : point « arabe + français » (verset → bloc de verset ; phrase ou point de
+  liste → l'arabe sur sa ligne, le français dessous ; terme de 1-2 mots → « terme — français »).
+- **Règle élargie du client** (toute l'application) : jamais une phrase arabe (3 mots ou plus), ni sa fin, sur la
+  même ligne que le français. `bidi/segments.ts` : seuil 5 → 3 mots, même au milieu d'une phrase, entre parenthèses
+  ou guillemets (les signes qui l'entourent passent avec elle sur sa ligne) ; plus d'exception dans les boutons,
+  liens et titres. `Ar.svelte` : un texte arabe de 3 mots ou plus (ou coranique) est un bloc sur sa propre ligne
+  (classe globale `.ar-long` d'app.css, aussi dans une ligne flexible).
+- Écrans corrigés : leçon (fiqh/adab, je retiens, lexique, lecture : vedette et phrases), sciences (objectifs,
+  textes, points, noms, bulles, situations, invocations, lieux, retiens des rubriques et de la leçon, carnet,
+  liste à cocher). Ailleurs (carnet, adhkār, corrigés des sciences), la phrase arabe passe déjà sur sa ligne par
+  `Ar` ; le « — » y commence alors la ligne du français (gardé pour ne pas dépasser le budget de poids).
+- **Revue des livres** (vrais livres, 897 fichiers) : 462 points de leçon où un verset était affiché en ligne :
+  fiqh/adab 353 (ad1 16, ad2 27, ad3 20, ad4 28, ad5 30, ad6 29, ad7 37, ad8 16, ad9 6, ad10 6, ado1 27, ado2 19,
+  ado3 33, ado4 32, en1 5, en2 6, en3 3, en4 5, en5 8), je retiens 52, lecture 13 (ad1 l19 et l23, ad9, en1),
+  rubriques des sciences 44 (re1 2, re2 3, re3 5, re4 7, re5 14, ra1 5, ra2 2, ra3 4, ra4 2) et leurs retiens.
+  11 passages sans référence certaine (basmala hors 1:1, passages présents dans plusieurs sourates sans référence
+  dans le point, ex. en5 l16 27:19 / 46:15) : bloc de verset sans référence ni lien de récitation.
+- Cas limites : listes de mots séparées par la virgule arabe (3 mots ou plus) passent aussi sur leur ligne ;
+  formules de 2 mots (بِسْمِ اللَّهِ) restent dans la ligne ; un segment de 3 mots dont les mots ont une seule
+  lettre (lettres isolées) n'est pas une phrase ; leçons vivantes non traitées ici (autre chantier).
+- Le texte corrigé de ad1 l01 (dernier point de « L'intention ») arrive par la synchronisation du contenu : rien
+  de modifié dans l'application.
+- Tests : unitaires content `versets.test.ts` (8 : verset reconnu, hadith non, phrase non, mots entiers, 2 mots avec
+  référence, ambiguïté, annotation) et `verset-ref.test.ts` (4), web `segments.test.ts` (règle 3 mots), api
+  `versets-livres.test.ts` (vrais livres : ad1 l01 → 98:5, sous-chaîne exacte du verset Tanzil) ; e2e
+  `versets.spec.ts` (ad1 l01 : bloc séparé, Tanzil exact, traduction dessous, récitation ; contrôle générique : aucune
+  ligne rendue ne mêle une phrase arabe et du français sur 16 écrans — leçons adulte, enfant, ado, sciences re/ra,
+  lecture, Coran, Au quotidien, adhkār — avec contrôle du détecteur). Captures 375 px clair/sombre avant/après :
+  `reports/versets/` (hors dépôt). Budgets inchangés, mesurés après fusion de main (A21b) : toutes pages 404,7 Ko
+  ≤ 405 Ko, appareil d'un élève 345,2 Ko ≤ 355 Ko, page de leçon 142,5 Ko.
+- Vérification complète après fusion de main (A21b) : unitaires **1 529 réussis, 1 ignoré, 0 échec** ; **e2e complets
+  310 réussis, 26 ignorés, 0 échec** (20,4 min).
+
+## 05/10/2026 — Chantier A21b : « application vivante » partout (toutes les leçons, tous les niveaux)
+
+Branche `a21b-vivante-partout-wip` (depuis `main` 0095df4, worktree `~/awform-a21b`), `main` (A27) fusionné.
+Validé par le client après le pilote A21.
+
+1. **Robustesse sur toutes les leçons** : un test génère les animations des **381 leçons d'élève** des 19 livres
+   d'arabe (en1–en5, ado1–ado4, ad1–ad10 ; bilans et examens exclus comme avant) et vérifie pour chacune :
+   aucune erreur, au moins une animation, 10–20 s chacune, aucun temps vide, condensé ≤ 2 min (≥ 1 min dès que
+   la matière le permet), chaque chaîne arabe = chaîne du livre (ou morceau coupé entre deux mots, hors parties
+   Coran et adab/fiqh), voix seulement sur des textes entiers du livre, rien des parties Coran et adab/fiqh,
+   aucun extrait ni citation du Coran (texte Tanzil). Corrections du générateur pour les formats rencontrés :
+   - **textes sacrés recopiés ailleurs** (hadith dans « je retiens », invocation dans une réplique, formule dans
+     un schéma) : tout texte de 2 mots ou plus égal à un texte des parties Coran/adab-fiqh, contenu dedans ou le
+     contenant est écarté ; citations entre ﴿ ﴾ écartées ; garde appliquée à CHAQUE temps (toutes ses chaînes) ;
+   - **citations du Coran sans marque** (« أَحَدَ عَشَرَ كَوْكَبًا », sourates d'ad1 l24…) : liste
+     `packages/content/src/vivante-garde.ts` (21 empreintes de la clé audio des livres), **tenue à jour par un
+     test** qui compare toutes les animations au texte Tanzil (`VIVANTE_GARDE=ecrire` pour la régénérer) ;
+   - **textes longs** (notions et paragraphes des niveaux avancés, répliques longues) : au-delà de 14 mots, rien
+     n'est animé (le texte reste dans la page) ; un dialogue s'arrête à la première réplique écartée ;
+   - **notes de dialogue** aux séparateurs variés (— · • ● | /) : schéma de 4 parties au plus, une case seulement
+     quand « … » termine la partie, guillemets et ponctuation hors de la case ;
+   - lettres et signes du Muṣḥaf (ٱ, ۥ ۦ) écartés ; nombres et dates dans les textes sans erreur.
+   - **règle du client « l'arabe a sa ligne »** : aucune traduction montrée si elle contient 3 mots arabes ou
+     plus, ou une fin de phrase arabe (`frSeul`) ; l'arabe et le français sont toujours sur des lignes séparées
+     dans tous les modèles (contrôlé par le test des 381 leçons et, à l'écran, par l'e2e qui mesure les lignes).
+   Couverture : **381 / 381 leçons animées** (en1 21/21, en2–en5 20/20, ado1–ado4 20/20, ad1–ad10 20/20),
+   1 769 animations. **Sans animation** : religion (re, ra) et lecture du Coran (qc) — voir « décisions » ; bilans
+   et examens (inchangé) ; à l'intérieur des leçons, les parties dont tous les textes sont écartés (Coran, adab,
+   textes longs, textes non préparés).
+2. **Activation partout par défaut** (`reglage.ts`) : interrupteur général gardé ; chaque niveau peut être
+   désactivé (« Animations dans ces niveaux ») ; l'ancien réglage du pilote ne restreint plus rien. Page
+   **`/demo/vivante`** : choix du livre puis de la leçon (liste des leçons du niveau), un exemple de chaque
+   modèle, garanties, réglage.
+3. **Nouveaux modèles**, seulement là où les données le permettent (`ModelesPlus.svelte`) :
+   - **racine et schème** (22 leçons : en5 l02, l03, l13, l14 ; ado2 l11, l12, l17 ; ado3 l06, l09, l11, l12 ; ad2
+     l12 ; ad3 l11, l14, l17 ; ad4 l06, l09, l11, l12 ; ad5 l01, l02 ; ad6 l18) : les trois lettres de la racine
+     écrite dans la leçon glissent dans le schème du livre (فَاعِلٌ، مَفْعُولٌ…), puis le mot du livre se forme,
+     racine en couleur ; une décomposition n'est montrée que si elle se **vérifie lettre à lettre** (racines
+     faibles écartées) ;
+   - **conjugaison** (14 leçons : en4 l02, l03, l06, l07 ; ado1 l23 ; ado2 l01–l04 ; ad2 l21 ; ad3 l01–l04) :
+     ligne par ligne, le pronom, le radical puis la terminaison **balisée par le livre** `[..]` (même verbe écrit
+     ailleurs dans la leçon avec sa terminaison balisée ; sans balisage, rien : on n'invente pas où elle commence) ;
+   - **nombres** (8 leçons : en2 l21, en4 l24, ado1 l22, ado2 l13, ad2 l14, ad3 l13, l14, l24) : paires
+     « chiffre ← mot » du livre, le chiffre, la quantité en points (≤ 20), puis le mot ;
+   - **heure** (1 leçon : en4 l12) : horloge réglée sur l'heure lue dans la traduction du livre (« 8 h 30 ») de
+     la phrase arabe, seulement dans une leçon sur l'heure ; les autres leçons sur l'heure ou les dates (ado1
+     l22, ad2 l16, ado2 l14…) n'ont pas de phrase traduite avec une heure : rien d'inventé ;
+   - **tracé : non fait** — les données du lot 6 (`lib/trace/letters.ts`) ne donnent que le côté de départ et
+     « les points à la fin » (marqués « à relire »), pas l'ordre des traits : rien d'inventé.
+4. **Poids** : le code des leçons vivantes (générateurs, lecteur, modèles : 2 fichiers, **12,5 Ko**) n'est plus
+   préchargé avec la coquille : liste écrite à la construction (`vite.config.ts` → `/_app/vivante.json`), le
+   service worker l'écarte du préchargement et le garde au premier usage ; au téléchargement d'un niveau d'arabe
+   (`offline.ts`), il est demandé une fois pour le hors ligne (sauf niveau désactivé). Après fusion d'A27 :
+   page la plus lourde `/lecons/[id]` 141,8 Ko ≤ 150 ; **total 404,0 Ko ≤ 405** (budget d'A27, non relevé) ;
+   **appareil d'un élève 344,6 Ko ≤ 355** (main : 353,1) ; leçons vivantes 12,5 Ko ≤ 20 (ligne nouvelle).
+5. **Tests** : content `vivante.test.ts` (règles, schéma, racine, conjugaison, nombres/heure, garde coranique à
+   jour, 19 livres × toutes leçons), web `reglage.test.ts` (5) ; e2e `a21b.spec.ts` (8 × 2 appareils : en3 l02,
+   ado3 l02, ad7 l02 hors pilotes, religion et Coran sans animation, racine, conjugaison, nombres et heure,
+   démonstration, hors ligne avec le code gardé au téléchargement, captures 375 px clair/sombre dans
+   `reports/a21b/`), `a21.spec.ts` mis à jour (actives partout, réglage par niveau, interrupteur).
+   Textes : 9 ajoutés, 2 changés, 2 retirés (fr, en, es, de, ar ; A_RELIRE.md).
+   **Vérification complète après fusion de `main` (A27 et suite)** : `pnpm check` vert — unitaires **1 515 réussis,
+   1 ignoré** ; e2e complets **307 réussis, 25 ignorés, 0 échec** (37,7 min) ; budget : `/lecons/[id]` 141,8 Ko,
+   total 404,2 Ko ≤ 405, appareil d'un élève 344,7 Ko ≤ 355, leçons vivantes 12,6 Ko ≤ 20.
+
+Décisions D-A21b (prises le 06/10) : religion re/ra sans animation pour l'instant (champ « profane » côté livres,
+B7) ; non-préchargement accepté ; tracé plus tard (ordre des traits côté livres) ; seuil 14 mots accepté ; budget au
+lot performance avant la bêta.
+
+**Correctif du 06/10** (relecture des captures) : la capture « racine » montrait une carte vide, à moitié sous la
+barre du bas — capture prise au changement de temps, carte poussée vers le bas par la carte du dessus qui
+grandissait. Le contenu était bien là ; corrigé quand même : départ seul seulement quand la carte est visible
+AU-DESSUS de la barre de navigation (marge de l'observateur), marge de défilement de la carte (en-tête et barre
+du bas), scène qui ne rétrécit jamais d'un temps à l'autre (moins de sauts de page) ; captures prises au milieu
+du premier temps puis en pause. Nouvel e2e « aucune carte vivante vide ni recouverte » (6 leçons, chaque carte :
+texte visible dans la scène, boutons et scène non recouverts).
+
+---
 ## 05/10/2026 — Chantier A27 (suite) : décisions D-A27 appliquées
 
 - Positionnement **adaptatif de 4 exercices par niveau** (examens des livres ; ceux du livre de l'élève d'abord, puis

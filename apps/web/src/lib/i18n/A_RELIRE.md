@@ -82,3 +82,9 @@ en priorité : `parc.rasm_texte` (orthographe du Muṣḥaf) et `fam.demande_aid
 Les 54 textes `cl.*` (écran de lecture unique : puce, sélecteur, menu du verset, réglages d'écoute et préréglages,
 affichage, lecture guidée, accueil) écrits par Claude dans les quatre langues, **à relire** ; « juzʾ », « ḥizb »
 gardés tels qu'en français (allemand : « Dschuzʾ », comme ailleurs). Nom affiché : « Awzid » dans tous les textes.
+
+Chantier A21b (05/10/2026) : textes `viv.*` — 9 ajoutés (`viv.m_racine`, `viv.m_conjugaison`, `viv.m_nombre`,
+`viv.m_heure`, `viv.demo_choisir`, `viv.demo_livre`, `viv.demo_lecon`, `viv.demo_exemples`, `viv.demo_hors_ligne`), 2 changés
+(`viv.niveaux`, `viv.demo_intro` : animations actives partout, désactivables par niveau), 2 retirés (`viv.pilotes`,
+`viv.lecon1`) ; traduits par Claude, relecteur provisoire, dans les quatre langues en préparation — à relire avec le
+reste. Arabe vocalisé comme les autres textes `viv.*` ; « الْجَذْرُ وَالْوَزْنُ » pour « racine et schème ».

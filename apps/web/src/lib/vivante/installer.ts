@@ -1,7 +1,8 @@
 /**
  * Chantier A21 — chargé À LA DEMANDE (aucun octet dans la page de leçon tant que la leçon n'est pas vivante) :
  * génère les animations depuis la leçon reçue (projection élève) et les place après chaque partie de la page.
- * Les animations ne sont jamais écrites à la main : `buildVivante` (packages/content) applique six modèles.
+ * Les animations ne sont jamais écrites à la main : `buildVivante` (packages/content) applique les modèles
+ * (six depuis A21 ; racine et schème, conjugaison, nombres, heure depuis A21b, là où le livre le permet).
  */
 import { mount, unmount } from 'svelte';
 import { buildVivante, type VivSlot } from '@awform/content/vivante';
@@ -43,10 +44,13 @@ export async function installer(
   );
   const sections = [...article.querySelectorAll<HTMLElement>(':scope > section')];
   const made: Array<{ host: HTMLElement; app: ReturnType<typeof mount> }> = [];
+  // A21b : plusieurs animations après la même partie (structure, puis racine, conjugaison…) : dans l'ordre
+  const tail = new Map<Element, Element>();
   const place = (after: Element, m: (typeof motions)[number], isCondense = false) => {
     const host = document.createElement('div');
     host.className = 'vivante-hote';
-    after.after(host);
+    (tail.get(after) ?? after).after(host);
+    tail.set(after, host);
     const app = mount(Motion, {
       target: host,
       props: {

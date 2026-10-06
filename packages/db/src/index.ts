@@ -27,3 +27,4 @@ export * from './ecole.js';
 export * from './responsables.js';
 export * from './niveaux.js';
 export * from './parcours.js';
+export * from './versets.js';

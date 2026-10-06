@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import Ar from '$lib/Ar.svelte';
   import Bidi from '$lib/Bidi.svelte';
+  import ModelesPlus from './ModelesPlus.svelte';
   import { fmtNumber, t } from '$lib/i18n';
   import { audioIdFor, playLessonAudio, stopLessonAudio, type LevelAudio } from '$lib/lecons-audio';
   import type { VivBeat, VivMotion } from '@awform/content/vivante';
@@ -32,6 +33,8 @@
   const beats = $derived(motion.beats);
   const nQ = $derived(beats.filter((b) => b.k === 'question').length);
   let root: HTMLElement | undefined = $state();
+  let stage: HTMLElement | undefined = $state();
+  let stageMin = $state(0);
   let reduced = $state(false);
   /** -1 : pas encore lancée */
   let i = $state(-1);
@@ -145,17 +148,26 @@
       elapsed += 100;
       if (elapsed >= (beat?.ms ?? 0)) go(i + 1);
     }, 100);
-    // départ sans son quand l'animation arrive à l'écran (pas en version calme, jamais le condensé)
+    // départ sans son quand l'animation arrive à l'écran (pas en version calme, jamais le condensé) ;
+    // A21b : zone visible = écran MOINS la barre de navigation du bas (téléphone), jamais sous la barre
+    const bar = matchMedia('(max-width: 899px)').matches ? 96 : 0;
     const io = new IntersectionObserver(
       (es) => {
         if (es.some((e) => e.isIntersecting) && i < 0 && !condense && !reduced && !skipped) start();
       },
-      { threshold: 0.6 },
+      { threshold: 0.6, rootMargin: `0px 0px -${bar}px 0px` },
     );
     if (root) io.observe(root);
+    // A21b : la scène ne rétrécit jamais d'un temps à l'autre (moins de sauts de la page)
+    const ro = new ResizeObserver(() => {
+      const h = stage?.offsetHeight ?? 0;
+      if (h > stageMin) stageMin = h;
+    });
+    if (stage) ro.observe(stage);
     return () => {
       clearInterval(tick);
       io.disconnect();
+      ro.disconnect();
       token++;
     };
   });
@@ -253,6 +265,9 @@
       {#if b.ar}<span class="ar rule"><Ar text={b.ar} {lettres} /></span>{/if}
       {#if b.fr}<span class="fr up late"><Bidi text={b.fr} /></span>{/if}
     </div>
+  {:else if b.k === 'racine' || b.k === 'conj' || b.k === 'nombre' || b.k === 'heure'}
+    <!-- A21b : racine et schème, conjugaison, nombres, heure (même morceau à la demande que le lecteur) -->
+    <ModelesPlus {b} {lettres} />
   {:else if b.k === 'question'}
     {@const a = answers[n]}
     <div class="b question" data-testid="question-eclair" data-kind={b.q.kind}>
@@ -386,7 +401,13 @@
     <div class="bars" aria-hidden="true">
       {#each beats as _b, j (j)}<span><i style="width: {pct(j)}%"></i></span>{/each}
     </div>
-    <div class="stage" class:paused class:attente={i < 0}>
+    <div
+      class="stage"
+      class:paused
+      class:attente={i < 0}
+      bind:this={stage}
+      style:min-height={stageMin ? `${stageMin}px` : undefined}
+    >
       <svg class="deco" viewBox="0 0 200 200" aria-hidden="true"
         ><circle cx="30" cy="40" r="26" /><circle cx="176" cy="160" r="40" /><path
           class="star"
@@ -470,6 +491,8 @@
 
 <style>
   .viv {
+    /* A21b : jamais sous la barre de navigation du bas ni sous l'en-tête quand on la fait venir à l'écran */
+    scroll-margin: 72px 0 104px;
     --v1: color-mix(in srgb, var(--primary) 14%, var(--card));
     --v2: color-mix(in srgb, var(--accent) 12%, var(--card));
     margin: 14px 0 22px;
@@ -936,7 +959,9 @@
   }
   /* version calme (appareil : moins d'animations) : simples fondus, aucun mouvement */
   .calme .b,
-  .calme .b :global(*) {
+  .calme .b :global(*),
+  .calme :global(.plus),
+  .calme :global(.plus *) {
     animation: fade 500ms ease both !important;
   }
   .calme .draw text {

@@ -174,6 +174,7 @@ export async function downloadPack(
     illusKeys: Object.keys(pack.illustrations),
   };
   await put('packs', stored);
+  await gardeVivante(level);
   return stored;
 }
 
@@ -303,3 +304,25 @@ export async function requestPersistence(): Promise<boolean> {
 
 /** Poids lisible selon la langue de l'interface. */
 export { fmtBytes as formatBytes } from './i18n';
+
+/**
+ * A21b — le code des leçons vivantes n'est pas préchargé avec la coquille : quand un niveau d'arabe est gardé
+ * pour le hors ligne (et que ses animations ne sont pas désactivées, réglage `awzid.vivante`), ses fichiers
+ * (liste `/_app/vivante.json`) sont demandés une fois pour que le service worker les garde (avant d'annoncer le
+ * niveau « sur l'appareil » ; une erreur n'empêche jamais le téléchargement).
+ */
+async function gardeVivante(level: string): Promise<void> {
+  try {
+    const r = JSON.parse(localStorage.getItem('awzid.vivante') ?? '{}') as {
+      on?: boolean;
+      off?: string[];
+    };
+    if (!/^(en|ado|ad)\d+$/.test(level) || r.on === false || r.off?.includes(level)) return;
+  } catch {
+    /* réglage illisible : par défaut, actives */
+  }
+  await fetch('/_app/vivante.json')
+    .then((r) => (r.ok ? (r.json() as Promise<string[]>) : []))
+    .then((l) => Promise.all(l.map((f) => fetch(f))))
+    .catch(() => undefined);
+}
