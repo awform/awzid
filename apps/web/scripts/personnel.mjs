@@ -49,13 +49,15 @@ export function staffOnlyFiles(root) {
   const isStaff = (r) => STAFF_ROUTES.some((p) => r === p || r.startsWith(`${p}/`));
   const staffNodes = new Set();
   const otherNodes = new Set();
+  const staffLayouts = new Set();
   for (const r of routes) {
-    // le dernier nœud est la page ; les autres sont les mises en page (partagées) ou la racine
+    // le dernier nœud est la page ; les autres sont les mises en page ou la racine
     const page = r.nodes[r.nodes.length - 1];
     (isStaff(r.route) ? staffNodes : otherNodes).add(page);
-    for (const n of r.nodes.slice(0, -1)) otherNodes.add(n);
+    for (const n of r.nodes.slice(0, -1)) (isStaff(r.route) ? staffLayouts : otherNodes).add(n);
   }
-  // une mise en page propre au personnel (rare) reste comptée « partagée » : on reste prudent
+  // A37 : une mise en page qui ne sert QU'À des pages du personnel (chargement de leurs textes) est à elles
+  for (const n of staffLayouts) if (!otherNodes.has(n)) staffNodes.add(n);
   const base = [
     keyOf('/@sveltejs/kit/src/runtime/client/entry.js'),
     keyOf('client-optimized/app.js'),

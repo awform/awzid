@@ -87,6 +87,9 @@ const BUDGET_INITIAL = 150 * 1024;
 // A34 (06/10/2026) : Muṣḥaf de Médine « à l'identique » dans le lecteur (lignes exactes dans le cadre commun,
 // chargement des pages et polices du Complexe à la demande, crédits en 5 langues ; +2,9 Ko, main était à 404,6 Ko) →
 // 410 Ko, à valider (décision D-A34) ; l'appareil d'un élève reste sous BUDGET_ELEVE.
+// A37 (06/10/2026) : « Vivre l'islam » (bon comportement : page /vivre, fiches, 74 textes ; +9 Ko) PAYÉ sans relever le
+// budget : textes français du personnel hors de la coquille (static/i18n/fr-personnel.json, −5,4 Ko) et pages
+// légales anglaises chargées à la demande (static/i18n/legal/en.json, −3,7 Ko) : 409,0 Ko (main : 407,7).
 const BUDGET_TOTAL = 410 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 // A27 (décision D-F2 9) : appareil d'un élève (sans les pages du personnel) — 353,0 Ko mesurés, borne 355 Ko pour

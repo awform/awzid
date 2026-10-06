@@ -88,3 +88,11 @@ Chantier A21b (05/10/2026) : textes `viv.*` — 9 ajoutés (`viv.m_racine`, `viv
 (`viv.niveaux`, `viv.demo_intro` : animations actives partout, désactivables par niveau), 2 retirés (`viv.pilotes`,
 `viv.lecon1`) ; traduits par Claude, relecteur provisoire, dans les quatre langues en préparation — à relire avec le
 reste. Arabe vocalisé comme les autres textes `viv.*` ; « الْجَذْرُ وَالْوَزْنُ » pour « racine et schème ».
+
+## A37 « Vivre l'islam » (06/10/2026)
+
+Les 74 textes `vi.*` (onglet Bon comportement : sous-onglets, défi de la semaine, 18 cercles, 9 lieux, 5 statuts
+— arabe : واجب، مستحب، مباح، مكروه، حرام —, fiche, « Que fais-tu si… ? », Transmettre les valeurs) et `nav.vivre`
+(« Living Islam », « Vivir el islam », « Den Islam leben », « عِشِ الْإِسْلَامَ » demandés par le client) ; `qt.titre`,
+`parc.au_quotidien`, `parc.quotidien_texte` mis à jour. Écrits par Claude, **à relire**. Les textes français du
+personnel sont désormais dans `static/i18n/fr-personnel.json` (mêmes clés, hors de la coquille de l'élève).

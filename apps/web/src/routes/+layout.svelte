@@ -408,11 +408,17 @@
       border-radius: var(--radius-pill);
       transition: background var(--motion-fast) ease;
     }
+    /* A37 : un libellé long (« Vivre l'islam ») passe sur deux lignes au lieu d'être coupé */
     .tl {
       max-width: 100%;
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      line-height: 1.1;
+      text-align: center;
+      overflow-wrap: anywhere;
     }
     .with-tabs main {
       padding-bottom: 112px;
