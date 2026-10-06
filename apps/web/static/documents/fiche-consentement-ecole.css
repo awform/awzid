@@ -1,0 +1,77 @@
+/* Lot F3 (revue G3) : fiche de consentement papier pour les écoles — A4, noir et blanc, sans script. */
+body {
+  margin: 0;
+  background: #f4f6f3;
+  color: #111;
+  font:
+    15px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+main {
+  max-width: 190mm;
+  margin: 0 auto;
+  padding: 12mm 10mm;
+  background: #fff;
+}
+h1 {
+  font-size: 19px;
+  margin: 6px 0 10px;
+}
+h2 {
+  font-size: 15px;
+  margin: 14px 0 6px;
+  border-bottom: 1px solid #111;
+}
+.brouillon {
+  font-size: 12px;
+  border: 1px dashed #555;
+  padding: 4px 8px;
+}
+.note {
+  font-size: 13px;
+  color: #333;
+}
+.champ {
+  margin: 10px 0;
+}
+.ligne {
+  display: inline-block;
+  min-width: 70mm;
+  border-bottom: 1px solid #111;
+  height: 1em;
+}
+.ligne.courte {
+  min-width: 35mm;
+}
+.case {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid #111;
+  vertical-align: -1px;
+  margin-inline-end: 4px;
+}
+.accords li {
+  margin: 6px 0;
+}
+.ecole {
+  border: 1px solid #111;
+  padding: 0 8px 4px;
+  margin-top: 16px;
+}
+@media print {
+  body {
+    background: #fff;
+  }
+  main {
+    padding: 0;
+  }
+  .imprimer {
+    display: none;
+  }
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}

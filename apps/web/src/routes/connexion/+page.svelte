@@ -88,7 +88,7 @@
 </form>
 <p>{t('connexion.pas_de_compte')} <a href={resolve('/inscription')}>{t('inscription.titre')}</a></p>
 <p><a href={resolve('/garanties')} data-testid="lien-garanties">{t('gar.titre')}</a></p>
-<p class="muted small"><Bidi text={t('connexion.oubli')} /></p>
+<p><a href={resolve('/acces/[[mode]]', {})} data-testid="lien-oubli">{t('connexion.oubli')}</a></p>
 
 <style>
   .form {
@@ -106,8 +106,5 @@
   .error {
     color: var(--bad-ink);
     font-weight: 700;
-  }
-  .small {
-    font-size: 0.9rem;
   }
 </style>

@@ -2,7 +2,7 @@
   "legal": {
     "mentions": {
       "titre": "Mentions légales",
-      "maj": "29 septembre 2026 (brouillon)",
+      "maj": "6 octobre 2026 (brouillon, à relire par un juriste)",
       "sections": [
         {
           "titre": "Éditeur",
@@ -25,12 +25,25 @@
             "Les livres, leçons, illustrations, exercices et textes Awzid sont protégés ; toute reproduction hors de l'usage personnel ou scolaire prévu par les conditions d'utilisation est interdite sans autorisation écrite.",
             "Texte coranique : Tanzil (tanzil.net), riwāya Ḥafṣ ʿan ʿĀṣim, reproduit à l’identique, sans aucune modification. Métadonnées du Coran (ajzāʾ, aḥzāb, pages du Muṣḥaf de Médine) : Tanzil.info, licence Creative Commons Attribution 3.0."
           ]
+        },
+        {
+          "titre": "Contact et e-mails",
+          "paras": [
+            "Les e-mails de service (vérification de l'adresse, mot de passe oublié, changement d'adresse) sont envoyés depuis no-reply@awzid.com, une adresse qui ne reçoit pas de réponse. Prestataire d'envoi : [prestataire d'e-mail à désigner, de préférence dans l'Union européenne].",
+            "Pour toute question ou réclamation : [adresse de contact à créer, par exemple contact@awzid.com]. Un contenu peut aussi être signalé dans l'application (« Signaler une erreur »)."
+          ]
+        },
+        {
+          "titre": "Statut de ces textes",
+          "paras": [
+            "Les pages légales sont des brouillons structurés, rédigés d'après le fonctionnement réel de l'application ; elles doivent être relues et validées par un juriste avant toute ouverture publique. [Relecture juridique : à faire.]"
+          ]
         }
       ]
     },
     "cgu": {
       "titre": "Conditions générales d'utilisation",
-      "maj": "29 septembre 2026 (brouillon)",
+      "maj": "6 octobre 2026 (brouillon, à relire par un juriste)",
       "sections": [
         {
           "titre": "Objet",
@@ -48,6 +61,21 @@
           ]
         },
         {
+          "titre": "Âge, pays et accords",
+          "paras": [
+            "L'âge du consentement numérique dépend du pays (et, au Canada, de la province : 14 ans au Québec). En dessous de cet âge, seul un parent peut créer le profil d'un enfant.",
+            "États-Unis : pendant la bêta, Awzid n'est pas ouvert aux enfants de moins de 13 ans (ni par un parent, ni par une école).",
+            "L'usage d'Awzid (Coran, hifẓ, sciences islamiques) peut révéler des convictions religieuses : un accord explicite est demandé à l'inscription, pour chaque profil d'enfant, et aux comptes plus anciens à leur première utilisation. Il peut être retiré à tout moment ; le compte ou le profil est alors mis en pause."
+          ]
+        },
+        {
+          "titre": "Adresse e-mail et accès au compte",
+          "paras": [
+            "L'adresse e-mail est vérifiée par un lien à usage unique. En cas d'oubli du mot de passe, un lien valable 30 minutes est envoyé à l'adresse du compte ; la réponse de l'application est la même que l'adresse soit connue ou non.",
+            "Un changement d'adresse n'a lieu qu'après confirmation depuis la nouvelle adresse ; l'ancienne adresse en est informée."
+          ]
+        },
+        {
           "titre": "Contenus religieux et tuteur",
           "paras": [
             "Le texte coranique affiché vient uniquement du texte de référence Tanzil ; aucun programme ne l'écrit ni ne le retouche. Les hadiths ne sont montrés que s'ils sont marqués « vérifiés » dans le registre des livres.",
@@ -59,13 +87,27 @@
           "titre": "Offres, paiement, résiliation",
           "paras": [
             "Une offre gratuite permet d'essayer les premières leçons. Les formules payantes, leurs prix et leur durée sont indiqués avant l'achat ; seul l'adulte peut acheter (code parent). Aucune donnée de carte ne passe par Awzid : le paiement est fait chez le prestataire choisi.",
-            "L'abonnement peut être arrêté à tout moment ; les droits restent acquis jusqu'à la fin de la période payée. [Droit de rétractation, remboursement : à compléter selon le pays et le prestataire.]"
+            "L'abonnement peut être arrêté à tout moment ; les droits restent acquis jusqu'à la fin de la période payée. [Droit de rétractation, remboursement : à compléter selon le pays et le prestataire.]",
+            "Pendant la bêta, l'application est gratuite : aucun paiement n'est demandé ni enregistré (voir « Conditions de la bêta »)."
           ]
         },
         {
           "titre": "Responsabilité et suspension",
           "paras": [
             "L'application est fournie avec soin mais sans garantie d'absence d'interruption. Un compte peut être suspendu en cas d'usage contraire aux présentes conditions ou à la loi, après information de son titulaire sauf urgence."
+          ]
+        },
+        {
+          "titre": "Suppression du compte",
+          "paras": [
+            "Le titulaire peut supprimer son compte à tout moment depuis « Mon compte » : l'accès est coupé aussitôt et les données sont effacées définitivement sous 30 jours.",
+            "Un abonnement souscrit dans l'App Store ou sur Google Play n'est pas arrêté par la suppression du compte : il doit être résilié dans la boutique. L'application le rappelle avant la suppression."
+          ]
+        },
+        {
+          "titre": "Modification des conditions",
+          "paras": [
+            "Toute modification importante est annoncée dans l'application ; si elle touche un accord, un nouvel accord est demandé avant de continuer (version datée des textes)."
           ]
         },
         {
@@ -78,7 +120,7 @@
     },
     "confidentialite": {
       "titre": "Politique de confidentialité",
-      "maj": "29 septembre 2026 (brouillon)",
+      "maj": "6 octobre 2026 (brouillon, à relire par un juriste)",
       "sections": [
         {
           "titre": "Responsable du traitement",
@@ -95,7 +137,8 @@
             "Apprentissage : réponses aux exercices, progression, hifẓ, tracés des lettres, cartes de mots, jours de travail des ados et adultes.",
             "Enregistrements de la voix : ils restent sur l'appareil et s'effacent après 7 jours ; une famille peut choisir d'en envoyer un à l'enseignant de la classe (accord retirable, code parent pour un enfant) : chiffré, écouté par lui seul, jamais utilisé pour entraîner une intelligence artificielle.",
             "Espace école : prénom et initiale des élèves de classe papier, notes des bilans, récitations, devoirs ; nom complet saisi seulement au moment d'un certificat.",
-            "Paiement : formule, statut et référence chez le prestataire ; jamais de numéro de carte."
+            "Paiement : formule, statut et référence chez le prestataire ; jamais de numéro de carte.",
+            "Sécurité du compte : liens envoyés par e-mail (vérification, mot de passe oublié, changement d'adresse) — seule une empreinte du lien est gardée, avec son usage et sa date ; fuseau horaire et, au Canada, province (âge du consentement)."
           ]
         },
         {
@@ -106,17 +149,32 @@
           ]
         },
         {
+          "titre": "Données révélant une conviction religieuse (RGPD, article 9)",
+          "paras": [
+            "Apprendre le Coran, le hifẓ ou les sciences islamiques avec Awzid peut révéler une conviction religieuse. Ces données sont traitées sur la base de votre consentement explicite (article 9, paragraphe 2, a), recueilli séparément, daté, avec la version du texte et la preuve de l'accord.",
+            "Vous pouvez retirer cet accord à tout moment dans « Mon compte » : le compte (ou le profil concerné) est mis en pause ; rien n'est effacé tant que vous ne demandez pas la suppression, et vous pouvez exporter vos données."
+          ]
+        },
+        {
+          "titre": "Analyse automatique de la voix",
+          "paras": [
+            "Aucune analyse automatique de la voix par une intelligence artificielle n'existe aujourd'hui. Si une telle fonction arrive, elle sera facultative, demandée profil par profil au premier usage (accord séparé, jamais coché d'avance) et retirable à tout moment."
+          ]
+        },
+        {
           "titre": "Enfants : RGPD, COPPA, loi sénégalaise n° 2008-12",
           "paras": [
             "RGPD (article 8) : le compte d'un enfant est toujours ouvert et géré par un parent, quel que soit l'âge du consentement numérique du pays (15 ans en France).",
-            "États-Unis (COPPA) : pour un enfant de moins de 13 ans, le consentement du parent est recueilli avant toute collecte ; le parent peut consulter, exporter et faire supprimer les données de son enfant et retirer son accord à tout moment. [Méthode de vérification du consentement parental : à valider.]",
-            "Sénégal : les traitements respectent la loi n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel ; [formalités auprès de la Commission de protection des données personnelles (CDP) : à accomplir]. L'hébergement hors du Sénégal (Union européenne) n'a lieu qu'avec l'accord explicite du titulaire."
+            "États-Unis (COPPA) : pendant la bêta, aucun profil d'enfant de moins de 13 ans n'est créé (fermeture au lancement) ; un consentement parental vérifiable selon les méthodes reconnues par la FTC sera mis en place avant toute ouverture. [Méthode à valider par le juriste.]",
+            "Sénégal : les traitements respectent la loi n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel ; [formalités auprès de la Commission de protection des données personnelles (CDP) : à accomplir]. L'hébergement hors du Sénégal (Union européenne) n'a lieu qu'avec l'accord explicite du titulaire.",
+            "Canada : au Québec (loi 25), le consentement du titulaire de l'autorité parentale est demandé pour un enfant de moins de 14 ans ; ailleurs au Canada, de moins de 13 ans. Royaume-Uni : réglages les plus protecteurs par défaut (Children's Code de l'ICO) : notifications coupées, aucun traceur, aucune publicité. [À confirmer par le juriste.]"
           ]
         },
         {
           "titre": "Destinataires et sous-traitants",
           "paras": [
-            "Hébergeur européen [à désigner] ; service d'envoi d'e-mails [à désigner] ; prestataires de paiement (Stripe, PayPal, agrégateur de mobile money) seulement si vous payez ; fournisseur d'intelligence artificielle (Anthropic) seulement si le tuteur est activé, sans nom ni adresse, avec un pseudonyme ; service de notification du navigateur (Google, Mozilla, Apple…) seulement si vous activez les notifications — leur contenu est chiffré et ne contient aucun nom. Aucune autre transmission."
+            "Hébergeur européen [à désigner] ; service d'envoi d'e-mails [à désigner] ; prestataires de paiement (Stripe, PayPal, agrégateur de mobile money) seulement si vous payez ; fournisseur d'intelligence artificielle (Anthropic) seulement si le tuteur est activé, sans nom ni adresse, avec un pseudonyme ; service de notification du navigateur (Google, Mozilla, Apple…) seulement si vous activez les notifications — leur contenu est chiffré et ne contient aucun nom. Aucune autre transmission.",
+            "Région d'hébergement : chaque compte et chaque école portent une étiquette de région des données (« UE » aujourd'hui : un seul serveur, dans l'Union européenne). Les transferts hors de l'Union (fournisseur d'intelligence artificielle aux États-Unis, si le tuteur est activé) reposent sur les garanties prévues par le RGPD. [Clauses contractuelles types ou décision d'adéquation : à vérifier.]"
           ]
         },
         {
@@ -124,13 +182,15 @@
           "paras": [
             "Compte supprimé : effacement définitif sous 30 jours (sauvegardes chiffrées : 14 jours glissants).",
             "Journal du tuteur : 12 mois au plus. Enregistrements vocaux : 7 jours sur l’appareil ; récitation envoyée à l’enseignant : effacée après la durée réglée par la classe (14 jours par défaut, 30 au plus), ou dès que la famille la supprime.",
-            "Registre des certificats de l'école : numéro, nom affiché, niveau, date et mention conservés durablement (preuve d'un diplôme) ; les autres données de l'élève suivent les durées ci-dessus et le document complet est réduit 30 jours après le départ de l'élève. [À confirmer par le juriste.]"
+            "Registre des certificats de l'école : numéro, nom affiché, niveau, date et mention conservés durablement (preuve d'un diplôme) ; les autres données de l'élève suivent les durées ci-dessus et le document complet est réduit 30 jours après le départ de l'élève. [À confirmer par le juriste.]",
+            "Liens envoyés par e-mail : 30 minutes (mot de passe oublié) ou 24 heures (vérification, changement d'adresse), utilisables une seule fois ; effacés avec le compte."
           ]
         },
         {
           "titre": "Vos droits",
           "paras": [
-            "Accès, rectification, effacement, portabilité (export complet depuis « Mon compte »), opposition, limitation, retrait d'un accord à tout moment. Réclamation possible auprès de la CNIL (France) ou de la CDP (Sénégal)."
+            "Accès, rectification, effacement, portabilité (export complet depuis « Mon compte »), opposition, limitation, retrait d'un accord à tout moment. Réclamation possible auprès de la CNIL (France) ou de la CDP (Sénégal).",
+            "Réclamation : auprès de l'autorité de protection des données de votre pays (CNIL en France, CDP au Sénégal, Commissariat à la protection de la vie privée au Canada et Commission d'accès à l'information au Québec, ICO au Royaume-Uni…)."
           ]
         },
         {
@@ -143,7 +203,7 @@
     },
     "cookies": {
       "titre": "Cookies et stockage sur l’appareil",
-      "maj": "29 septembre 2026 (brouillon)",
+      "maj": "6 octobre 2026 (brouillon, à relire par un juriste)",
       "sections": [
         {
           "titre": "Ce que nous utilisons",
@@ -163,6 +223,49 @@
           "paras": [
             "Les cookies et le stockage strictement nécessaires au service que vous demandez sont exemptés de consentement (article 82 de la loi Informatique et Libertés ; lignes directrices de la CNIL). N'utilisant rien d'autre, l'application n'affiche pas de bannière. Si un traceur non nécessaire devait un jour être ajouté, une bannière (refuser aussi simple qu'accepter) serait obligatoire avant tout dépôt. [À confirmer par le juriste.]"
           ]
+        },
+        {
+          "titre": "Liens reçus par e-mail",
+          "paras": [
+            "Les liens de vérification et de réinitialisation portent leur code dans la partie de l'adresse qui n'est jamais envoyée au serveur (après « # ») ; la page l'efface de la barre d'adresse dès son ouverture. Aucun cookie n'est ajouté."
+          ]
+        }
+      ]
+    },
+    "beta": {
+      "titre": "Conditions de la bêta",
+      "maj": "6 octobre 2026 (brouillon, à relire par un juriste)",
+      "sections": [
+        {
+          "titre": "Une bêta gratuite",
+          "paras": [
+            "La bêta d'Awzid est gratuite : aucun paiement n'est demandé, aucune carte n'est enregistrée et aucun abonnement ne démarre à la fin de la bêta.",
+            "Sans engagement : vous pouvez arrêter à tout moment, sans formalité."
+          ]
+        },
+        {
+          "titre": "Ce que « bêta » veut dire",
+          "paras": [
+            "L'application est en cours de finition : des fonctions peuvent changer, être retirées ou connaître des erreurs. Les contenus des livres restent la référence ; un contenu signalé comme erroné est corrigé ou masqué au plus vite.",
+            "Vos retours sont précieux : « Signaler une erreur » dans les leçons, ou [adresse de contact de la bêta à créer]."
+          ]
+        },
+        {
+          "titre": "Vos données pendant la bêta",
+          "paras": [
+            "Vos données sont hébergées dans l'Union européenne et protégées comme décrit dans la politique de confidentialité. Elles sont effaçables à tout moment : la suppression du compte, depuis « Mon compte », coupe l'accès aussitôt et efface tout sous 30 jours.",
+            "Vous pouvez aussi exporter toutes vos données (fichier JSON) avant de partir."
+          ]
+        },
+        {
+          "titre": "Fin de la bêta",
+          "paras": [
+            "Vous serez prévenu avant la fin de la bêta. Vous choisirez alors de garder votre compte (aux conditions publiées à ce moment-là) ou de le supprimer ; rien ne devient payant sans votre accord explicite. [Durée de la bêta et préavis : à fixer.]"
+          ]
+        },
+        {
+          "titre": "Statut de ce texte",
+          "paras": ["Brouillon à relire par un juriste avant l'ouverture publique."]
         }
       ]
     }

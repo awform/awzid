@@ -5,7 +5,7 @@
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { activeProfile, setActiveProfile, type DevProfile } from '$lib/attempts';
-  import { t } from '$lib/i18n';
+  import { loadTexts, t } from '$lib/i18n';
   import { call, fetchMe, type Me } from '$lib/session';
   import Sym from '$lib/Sym.svelte';
   import { SYMBOLS } from '$lib/symbols';
@@ -32,10 +32,11 @@
     levelCode: 'en1',
     password: '',
     suivi: false,
-    coppa: false,
+    art9: false,
   });
   const age = $derived(YEAR - 1 - Number(form.birthYear));
-  const needCoppa = $derived(me?.account.country === 'US' && age < 13);
+  // lot F3 (revue G3) : États-Unis, moins de 13 ans : fermé au lancement (dit avant l'envoi)
+  const closed = $derived(me?.account.country === 'US' && age < 13);
 
   /** livres publiés de l'édition (hors aperçus) */
   let levels = $state<string[]>(['en1']);
@@ -70,10 +71,9 @@
   async function addChild(e: SubmitEvent) {
     e.preventDefault();
     error = '';
-    const consents = [
-      form.suivi && 'compte_suivi',
-      needCoppa && form.coppa && 'coppa_parent',
-    ].filter(Boolean);
+    const consents = [form.suivi && 'compte_suivi', form.art9 && 'donnee_religieuse_art9'].filter(
+      Boolean,
+    );
     const r = await call<{ id: string }>('POST', '/profiles', {
       pseudonym: form.pseudonym,
       birthYear: Number(form.birthYear),
@@ -87,7 +87,7 @@
       return;
     }
     info = t('profils.ajoute', { nom: form.pseudonym });
-    form = { ...form, pseudonym: '', password: '', suivi: false, coppa: false };
+    form = { ...form, pseudonym: '', password: '', suivi: false, art9: false };
     adding = false;
     me = await fetchMe();
   }
@@ -147,7 +147,11 @@
         <button
           type="button"
           class="primary"
-          onclick={() => (adding = true)}
+          onclick={async () => {
+            // lot F3 : textes de l'accord « article 9 » (hors de la coquille) chargés avant le formulaire
+            await loadTexts('acces');
+            adding = true;
+          }}
           data-testid="ajouter-enfant">{t('profils.ajouter')}</button
         >
       </p>
@@ -197,18 +201,20 @@
             />
             <span>{t('consent.compte_suivi')}</span></label
           >
-          {#if needCoppa}
-            <label class="check"
-              ><input
-                id="coppa"
-                type="checkbox"
-                required
-                bind:checked={form.coppa}
-                data-testid="consent-coppa"
-              />
-              <span><Bidi text={t('consent.coppa_parent')} /></span></label
-            >
-          {/if}
+          <!-- lot F3 (revue E10) : accord explicite « article 9 » pour l'enfant, jamais coché d'avance -->
+          <label class="check"
+            ><input
+              id="art9"
+              type="checkbox"
+              required
+              bind:checked={form.art9}
+              data-testid="consent-art9"
+            />
+            <span><Bidi text={t('consent.art9_enfant')} /></span></label
+          >
+          {#if closed}<p class="warnbox" role="note" data-testid="ferme-moins-13">
+              <Bidi text={t('inscription.ferme_moins_13')} />
+            </p>{/if}
         </fieldset>
         <label for="password">{t('profils.mot_de_passe_parent')}</label>
         <input

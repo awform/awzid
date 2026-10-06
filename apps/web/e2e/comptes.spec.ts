@@ -30,6 +30,7 @@ async function signup(
     .locator('#birthYear')
     .fill(String(opts.birthYear ?? (kind === 'parent' ? 1985 : 1990)));
   await page.getByTestId('consent-cgu').check();
+  await page.getByTestId('consent-art9').check();
   if (opts.country === 'SN') await page.getByTestId('consent-transfert').check();
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
 }
@@ -44,6 +45,7 @@ test('parent : inscription, profil enfant avec consentement, réponses enregistr
   await page.locator('#pseudonym').fill('Lina');
   await page.locator('#birthYear').fill(String(YEAR - 8));
   await page.getByTestId('consent-suivi').check();
+  await page.getByTestId('consent-art9').check();
   await page.locator('#password').fill(password());
   await page.getByTestId('creer-profil').click();
   await expect(

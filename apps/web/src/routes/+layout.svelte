@@ -14,7 +14,7 @@
     startSync,
     type DevProfile,
   } from '$lib/attempts';
-  import { t } from '$lib/i18n';
+  import { setTimeZone, t } from '$lib/i18n';
   import { getSettings, type Settings } from '$lib/offline';
   import { purgeOldRecordings } from '$lib/recordings';
   import { remindersOn } from '$lib/quotidien/reglages';
@@ -50,7 +50,19 @@
   );
   const nav = $derived(navFor(audience));
   const current = $derived(activeNav(nav, page.url.pathname));
-  const NO_TABS = ['/ecole', '/connexion', '/inscription'];
+  const NO_TABS = ['/ecole', '/connexion', '/inscription', '/acces'];
+  /**
+   * Lot F3 (revue E10) : un accord nécessaire manque (compte d'avant F3, ou accord retiré) → page « Accords »
+   * (`/acces/accords`)
+   * au premier usage ; seules les pages du compte, légales et d'aide restent ouvertes. Fuseau du compte (M8).
+   */
+  const GATE_FREE = /^\/(compte|legal|aide|connexion|inscription|acces|garanties)(\/|$)/;
+  $effect(() => {
+    setTimeZone(me?.account.tz);
+    const path = page.url.pathname;
+    if (me?.accordsManquants?.length && !GATE_FREE.test(path))
+      void goto(resolve('/acces/[[mode]]', { mode: 'accords' }));
+  });
   const showTabs = $derived(!NO_TABS.some((p) => page.url.pathname.startsWith(p)));
 
   $effect(() => {

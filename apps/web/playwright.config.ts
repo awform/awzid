@@ -54,6 +54,8 @@ const AUDIO_DIR = join(tmpdir(), `awform-e2e-audio${ISOLE ? `-${SUFFIX}` : ''}`)
 // A3 : audio des leçons d'en1 (fichiers réels des livres) importé depuis ~/lecons-audio s'il est là
 const LECONS_SRC = process.env.AWFORM_LECONS_AUDIO_SOURCE ?? join(homedir(), 'lecons-audio');
 const LECONS_DIR = join(tmpdir(), `awform-e2e-lecons${ISOLE ? `-${SUFFIX}` : ''}`);
+// lot F3 : boîte de DÉMONSTRATION des e-mails (aucun envoi réel), lue par les tests (f3.spec.ts)
+process.env.E2E_MAIL_DIR ??= join(tmpdir(), `awform-e2e-boite${ISOLE ? `-${SUFFIX}` : ''}`);
 if (existsSync(join(LECONS_SRC, 'index.js'))) process.env.E2E_LECONS_AUDIO = '1';
 // A34 : Muṣḥaf exact — SEULEMENT avec E2E_MUSHAF_EXACT=1 et la copie Content Sync du serveur (jamais dans le
 // dépôt) : les autres suites gardent la page fluide qu'elles vérifient
@@ -148,6 +150,10 @@ export default defineConfig({
         // A3 : audio des leçons d'en1
         AWFORM_LECONS_AUDIO_DIR: LECONS_DIR,
         AWFORM_VAPID_PUBLIC: `B${'A'.repeat(86)}`,
+        // lot F3 : e-mails écrits dans la boîte de démonstration ; liens vers l'application de test
+        AWFORM_MAIL: 'journal',
+        AWFORM_MAIL_JOURNAL_DIR: process.env.E2E_MAIL_DIR,
+        AWFORM_PUBLIC_URL: `http://127.0.0.1:${WEB_PORT}`,
         ...(EXACT ? { AWFORM_QF_MUSHAF_DIR: QF_DIR, AWFORM_QCF_DIR: QCF_DIR } : {}),
       },
       reuseExistingServer: false,

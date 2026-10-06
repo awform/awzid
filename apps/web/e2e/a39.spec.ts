@@ -84,6 +84,7 @@ async function signupSerein(page: Page): Promise<string> {
   await expect(choix.locator('[data-mode-choix="serein"]')).toBeChecked();
   await expect(choix.locator('[data-mode-choix="verification"]')).not.toBeChecked();
   await page.getByTestId('consent-cgu').check();
+  await page.getByTestId('consent-art9').check();
   await page.locator('form button[type="submit"]').click();
   await expect(page).not.toHaveURL(/\/inscription/);
   const me = (await (await page.request.get('/api/v1/auth/me')).json()) as {
