@@ -113,7 +113,7 @@ describe.skipIf(!URL_)('connexion simplifiée de la démonstration (awform_test)
         email: 'court@exemple.test',
         password: 'awzid',
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
         birthYear: 1990,
       },
     );

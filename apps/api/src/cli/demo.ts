@@ -94,7 +94,7 @@ try {
         email: E.parent,
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       }),
     );
     await call('POST', '/api/v1/account/pin', parent, { pin: PIN, password: PW });
@@ -109,7 +109,7 @@ try {
         birthYear: year - 1 - age,
         levelCode: 'en1',
         password: PW,
-        consents: ['compte_suivi'],
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
       });
       kids.push(r.json().id);
     }
@@ -121,7 +121,7 @@ try {
       country: 'FR',
       birthYear: 1990,
       pseudonym: 'Samir',
-      consents: ['cgu'],
+      consents: ['cgu', 'donnee_religieuse_art9'],
     });
     const adultCookie = cookieOf(adult);
     const adultProfile = adult.json().profiles[0].id as string;
@@ -338,7 +338,7 @@ try {
         : 'ad1',
       avatar: 'lune',
       password: PW,
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     });
     result = { ...result, ado: 'Yanis (15 ans)' };
   }

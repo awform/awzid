@@ -87,7 +87,7 @@ describe.skipIf(!READY)('lot 9 — tuteur (awform_test)', () => {
         email: 'parent.tuteur@exemple.org',
         password: PW,
         country: 'SN',
-        consents: ['cgu', 'transfert_hors_pays'],
+        consents: ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays'],
       }),
     );
     const mk = async (pseudonym: string, age: number) =>
@@ -97,7 +97,7 @@ describe.skipIf(!READY)('lot 9 — tuteur (awform_test)', () => {
           birthYear: YEAR - age,
           levelCode: 'en1',
           password: PW,
-          consents: ['compte_suivi'],
+          consents: ['compte_suivi', 'donnee_religieuse_art9'],
         })
       ).json().id as string;
     child = await mk('Lina', 8);
@@ -108,7 +108,7 @@ describe.skipIf(!READY)('lot 9 — tuteur (awform_test)', () => {
         email: 'adulte.tuteur@exemple.org',
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
         birthYear: 1990,
         pseudonym: 'Moi',
       }),

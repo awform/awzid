@@ -9,6 +9,7 @@ import type { TutorSetup } from '@awform/tutor';
 import type { BillingSetup } from '@awform/billing';
 import { neededIllustrations } from './needed.js';
 import { registerAuth } from './auth/routes.js';
+import { mailerFromEnv, publicUrlFromEnv, type Mailer } from './mail/envoi.js';
 
 export { neededIllustrations };
 import { currentEdition, ping, setVerseSuraNames, type Db } from '@awform/db';
@@ -81,6 +82,10 @@ export interface AppOptions {
   leconsAudioDir?: string | null;
   /** DÉMONSTRATION seulement (server.ts : AWFORM_DEMO=1 et garde-fou) : connexion simplifiée */
   demoLogin?: boolean;
+  /** lot F3 : envoi des e-mails (tests) ; sinon AWFORM_MAIL (smtp, journal, ou désactivé) */
+  mailer?: Mailer;
+  /** lot F3 : adresse publique du site pour les liens des e-mails (tests) ; sinon AWFORM_PUBLIC_URL ou SITE */
+  publicUrl?: string | null;
 }
 
 /**
@@ -133,11 +138,16 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     if (req.method !== 'GET' && req.method !== 'HEAD' && req.headers['x-awform'] !== '1')
       return reply.code(403).send({ error: { code: 'csrf' } });
   });
+  // lot F3 (revue M7) : e-mails (vérification, mot de passe oublié) — prestataire SMTP, boîte de démonstration
+  const mailer =
+    opts.mailer ?? mailerFromEnv(process.env, (m) => (opts.logger ? app.log.warn(m) : undefined));
   registerAuth(app, {
     db,
     cookieSecure: opts.cookieSecure ?? true,
     secretKey: opts.secretKey ?? null,
     demoLogin: opts.demoLogin === true,
+    mailer,
+    publicUrl: opts.publicUrl === undefined ? publicUrlFromEnv(process.env) : opts.publicUrl,
   });
 
   // en-têtes de sécurité de base (la CSP stricte est posée par SvelteKit / Caddy)
@@ -180,7 +190,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerAdmin(app, db);
   registerToday(app, db, edition);
   registerSchool(app, db, edition, signer);
-  registerActivities(app, db, edition, opts.demoLogin === true);
+  registerActivities(app, db, edition, opts.demoLogin === true, mailer.mode !== 'inactif');
   registerRecitations(
     app,
     db,

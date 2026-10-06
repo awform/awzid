@@ -164,7 +164,14 @@ export async function parent(c: Ctx, email: string) {
     'POST',
     '/api/v1/auth/signup',
     {},
-    { kind: 'parent', birthYear: 1985, email, password: PW, country: 'FR', consents: ['cgu'] },
+    {
+      kind: 'parent',
+      birthYear: 1985,
+      email,
+      password: PW,
+      country: 'FR',
+      consents: ['cgu', 'donnee_religieuse_art9'],
+    },
   );
   if (su.statusCode !== 201) throw new Error(su.body);
   const P = { cookie: cookieOf(su) };
@@ -178,7 +185,7 @@ export async function child(c: Ctx, P: Record<string, string>, pseudonym: string
     birthYear: YEAR - age,
     levelCode: 'en1',
     password: PW,
-    consents: ['compte_suivi'],
+    consents: ['compte_suivi', 'donnee_religieuse_art9'],
   });
   if (r.statusCode !== 201) throw new Error(r.body);
   return r.json().id as string;
@@ -195,7 +202,7 @@ export async function adult(c: Ctx, email: string) {
       email,
       password: PW,
       country: 'FR',
-      consents: ['cgu'],
+      consents: ['cgu', 'donnee_religieuse_art9'],
       birthYear: YEAR - 30,
     },
   );

@@ -86,7 +86,7 @@ describe.skipIf(!READY)('hifẓ (awform_test)', () => {
           email,
           password: PW,
           country: 'FR',
-          consents: ['cgu'],
+          consents: ['cgu', 'donnee_religieuse_art9'],
         }),
       );
     parent = await signup('parent.hifz@exemple.org');
@@ -96,7 +96,7 @@ describe.skipIf(!READY)('hifẓ (awform_test)', () => {
       birthYear: YEAR - 8,
       levelCode: 'en1',
       password: PW,
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     });
     child = r.json().id;
     // enseignant avec second facteur

@@ -458,9 +458,28 @@ export const account = pgTable(
     createdAt: createdAt(),
     /** suppression demandée : effacement définitif sous 30 jours */
     deletedAt: timestamp('deleted_at', { withTimezone: true }),
+    /**
+     * Lot F3 (revue M7) : adresse e-mail VÉRIFIÉE (lien à usage unique reçu et ouvert) ; null tant qu'elle ne
+     * l'est pas. Toute nouvelle adresse (changement) n'est enregistrée qu'après vérification.
+     */
+    emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
+    /**
+     * Lot F3 (revue M9) : subdivision du pays (ISO 3166-2, ex. « CA-QC »), facultative ; sert aux règles qui
+     * dépendent d'une province ou d'un canton (âge du consentement au Québec).
+     */
+    region: text('region'),
+    /** Lot F3 (revue M8) : fuseau horaire IANA du compte (affichage des heures) ; null = celui de l'appareil */
+    tz: text('tz'),
+    /**
+     * Lot F3 (revue G4) : région d'hébergement des données (« eu » partout aujourd'hui : serveur unique dans
+     * l'Union européenne). Étiquette posée dès maintenant pour qu'un hébergement local futur reste possible.
+     */
+    dataRegion: text('data_region').notNull().default('eu'),
   },
   (t) => [
     uniqueIndex('account_email').on(t.email),
+    check('account_region', sql`${t.region} IS NULL OR ${t.region} ~ '^[A-Z]{2}-[A-Z0-9]{1,3}$'`),
+    check('account_data_region', sql`${t.dataRegion} ~ '^[a-z]{2,10}$'`),
     check(
       'account_kind_check',
       sql`${t.kind} IN ('parent', 'adulte', 'admin', 'enseignant', 'ecole')`,
@@ -646,6 +665,42 @@ export const authThrottle = pgTable('auth_throttle', {
   lockedUntil: timestamp('locked_until', { withTimezone: true }),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+/**
+ * Lot F3 (revue M7) : liens à USAGE UNIQUE envoyés par e-mail — vérification de l'adresse, réinitialisation du
+ * mot de passe, changement d'adresse. Seul le SHA-256 du jeton est gardé (le jeton n'existe que dans l'e-mail) ;
+ * expiration courte ; `used_at` posé à l'usage (un lien ne sert qu'une fois) ; `email` = adresse visée.
+ */
+export const ACCOUNT_TOKEN_PURPOSES = [
+  'verification_email',
+  'reinitialisation',
+  'changement_email',
+] as const;
+export const accountToken = pgTable(
+  'account_link',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    accountId: uuid('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    purpose: text('purpose', { enum: ACCOUNT_TOKEN_PURPOSES }).notNull(),
+    tokenHash: text('token_hash').notNull(),
+    email: text('email'),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    usedAt: timestamp('used_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex('account_link_hash').on(t.tokenHash),
+    index('account_link_account').on(t.accountId),
+    check(
+      'account_link_purpose',
+      sql`${t.purpose} IN ('verification_email', 'reinitialisation', 'changement_email')`,
+    ),
+  ],
+);
 
 // ================================================================ apprentissage
 
@@ -867,11 +922,14 @@ export const school = pgTable(
     accountId: uuid('account_id').references(() => account.id, { onDelete: 'restrict' }),
     createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
     createdAt: createdAt(),
+    /** Lot F3 (revue G4) : région d'hébergement des données de l'école (« eu » partout aujourd'hui) */
+    dataRegion: text('data_region').notNull().default('eu'),
   },
   (t) => [
     uniqueIndex('school_account').on(t.accountId),
     check('school_status', sql`${t.status} IN ('active', 'suspendue', 'fermee')`),
     check('school_name', sql`char_length(${t.name}) BETWEEN 1 AND 120`),
+    check('school_data_region', sql`${t.dataRegion} ~ '^[a-z]{2,10}$'`),
   ],
 );
 

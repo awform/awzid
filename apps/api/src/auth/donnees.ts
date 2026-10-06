@@ -16,19 +16,24 @@ import {
 import { countryRules, COUNTRY_CODE, isCountry } from './policy.js';
 import { audit, clearCookie, revokeAll } from './service.js';
 
-import { err, OPTIONAL_CONSENTS, type AuthKit } from './common.js';
+import { err, OPTIONAL_CONSENTS, WITHDRAWABLE_CONSENTS, type AuthKit } from './common.js';
 
 export function registerPrivacy(app: FastifyInstance, kit: AuthKit): void {
   const { db, needAuth, passwordOk, secureFor } = kit;
   // ---------------------------------------------------------------- droits RGPD
 
   // règles du pays (public) : âge, accords obligatoires, loi applicable et autorité de contrôle (lot 17)
-  app.get<{ Params: { code: string } }>('/api/v1/pays/:code/regles', async (req, reply) => {
-    if (!COUNTRY_CODE.test(req.params.code) || !isCountry(req.params.code))
-      return err(reply, 400, 'pays_invalide');
-    reply.header('Cache-Control', 'public, max-age=3600');
-    return countryRules(req.params.code);
-  });
+  // lot F3 (revue M9) : ?region=CA-QC — âge du consentement de la subdivision
+  app.get<{ Params: { code: string }; Querystring: { region?: string } }>(
+    '/api/v1/pays/:code/regles',
+    async (req, reply) => {
+      if (!COUNTRY_CODE.test(req.params.code) || !isCountry(req.params.code))
+        return err(reply, 400, 'pays_invalide');
+      reply.header('Cache-Control', 'public, max-age=3600');
+      const region = typeof req.query.region === 'string' ? req.query.region.slice(0, 6) : null;
+      return countryRules(req.params.code, region);
+    },
+  );
 
   app.get('/api/v1/account/consents', { preHandler: needAuth }, async (req) => {
     const rows = await db
@@ -43,7 +48,14 @@ export function registerPrivacy(app: FastifyInstance, kit: AuthKit): void {
       .from(t.consent)
       .where(eq(t.consent.accountId, req.auth!.accountId))
       .orderBy(asc(t.consent.givenAt));
-    return { consents: rows.map((c) => ({ ...c, optional: OPTIONAL_CONSENTS.has(c.type) })) };
+    return {
+      consents: rows.map((c) => ({
+        ...c,
+        optional: OPTIONAL_CONSENTS.has(c.type),
+        // lot F3 : l'accord « article 9 » se retire aussi (le compte ou le profil est alors en pause)
+        retirable: WITHDRAWABLE_CONSENTS.has(c.type),
+      })),
+    };
   });
 
   app.post<{ Params: { id: string } }>(
@@ -64,8 +76,10 @@ export function registerPrivacy(app: FastifyInstance, kit: AuthKit): void {
         .from(t.consent)
         .where(and(eq(t.consent.id, req.params.id), eq(t.consent.accountId, req.auth!.accountId)));
       if (!c) return err(reply, 404, 'introuvable');
-      // un consentement nécessaire au service se retire en supprimant le profil ou le compte
-      if (!OPTIONAL_CONSENTS.has(c.type)) return err(reply, 409, 'consentement_necessaire');
+      // un consentement nécessaire au service se retire en supprimant le profil ou le compte — sauf l'accord
+      // « article 9 » (lot F3) : retirable, il met le compte ou le profil en pause (page « Accords »)
+      if (!WITHDRAWABLE_CONSENTS.has(c.type)) return err(reply, 409, 'consentement_necessaire');
+      if (c.withdrawnAt) return { ok: true };
       await db.update(t.consent).set({ withdrawnAt: new Date() }).where(eq(t.consent.id, c.id));
       // retrait du partage avec l'enseignant : le profil quitte ses classes
       if (c.type === 'partage_enseignant' && c.profileId) {
@@ -194,6 +208,11 @@ export function registerPrivacy(app: FastifyInstance, kit: AuthKit): void {
         anneeNaissance: a?.birthYear,
         creeLe: a?.createdAt,
         deuxFacteurs: a?.totpEnabled,
+        // lot F3 : adresse vérifiée le, subdivision, fuseau horaire, région d'hébergement des données
+        emailVerifieLe: a?.emailVerifiedAt ?? null,
+        region: a?.region ?? null,
+        fuseauHoraire: a?.tz ?? null,
+        regionDesDonnees: a?.dataRegion,
       },
       profils: profiles,
       consentements: consents,
@@ -250,6 +269,8 @@ export function registerPrivacy(app: FastifyInstance, kit: AuthKit): void {
         .where(eq(t.account.id, a.id));
       await withdrawAccount(db, a.id);
       await revokeAll(db, a.id);
+      // lot F3 : plus aucun lien envoyé par e-mail ne vaut (réinitialisation, vérification)
+      await db.delete(t.accountToken).where(eq(t.accountToken.accountId, a.id));
       await audit(db, a.id, 'compte.suppression_demandee');
       reply.header('Set-Cookie', clearCookie(secureFor(req)));
       return { ok: true, effacementDefinitif: new Date(Date.now() + 30 * 86400_000).toISOString() };

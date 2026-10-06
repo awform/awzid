@@ -76,7 +76,7 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
         email,
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       }),
     );
 
@@ -99,7 +99,7 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
         birthYear: YEAR - 8,
         levelCode: 'en1',
         password: PW,
-        consents: ['compte_suivi'],
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
       })
     ).json().id;
     teacher = await staff('enseignant', 'maitre13@ecole.example', true);

@@ -40,7 +40,7 @@ export default async function globalSetup(): Promise<void> {
     locale: 'fr',
     birthYear: 1990,
     pseudonym: 'Adulte',
-    consents: ['cgu'],
+    consents: ['cgu', 'donnee_religieuse_art9'],
   });
   const parent = await post('/auth/signup', {
     kind: 'parent',
@@ -49,7 +49,7 @@ export default async function globalSetup(): Promise<void> {
     password,
     country: 'FR',
     locale: 'fr',
-    consents: ['cgu'],
+    consents: ['cgu', 'donnee_religieuse_art9'],
   });
   // code parent (réglages du mode école, écoute du parent)
   await post('/account/pin', { pin: PARENT_PIN, password }, parent.cookie);
@@ -84,7 +84,7 @@ export default async function globalSetup(): Promise<void> {
         birthYear: year - 1 - age,
         levelCode: 'en1',
         password,
-        consents: ['compte_suivi'],
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
       },
       parent.cookie,
     );

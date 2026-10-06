@@ -42,7 +42,7 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
         email: 'college@exemple.org',
         password: PW,
         country: 'US',
-        consents: ['cgu', 'transfert_hors_pays'],
+        consents: ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays'],
         birthYear: YEAR - 14, // 13 ans au plus bas : âge du consentement numérique aux États-Unis
       },
     );
@@ -67,7 +67,7 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
         email: 'majeur@exemple.org',
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
         birthYear: YEAR - 30,
       },
     );
@@ -98,7 +98,7 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
       email: 'min3@exemple.org',
       password: PW,
       country: 'SN',
-      consents: ['cgu', 'transfert_hors_pays'],
+      consents: ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays'],
     };
     const sans = await c.req('POST', '/api/v1/auth/signup', {}, base);
     expect(sans.json().error?.code).toBe('annee_naissance_requise');
@@ -169,7 +169,7 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
         email: 'min17@exemple.org',
         password: PW,
         country: 'SN',
-        consents: ['cgu', 'transfert_hors_pays'],
+        consents: ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays'],
       },
     );
     const P = { cookie: cookieOf(su) };
@@ -179,7 +179,11 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
     const rows = await c.h.pool
       .query('select type, evidence from consent where profile_id = $1', [kid])
       .then((r) => r.rows as Array<{ type: string; evidence: Record<string, unknown> }>);
-    expect(rows.map((r) => r.type).sort()).toEqual(['compte_suivi', 'tuteur_ia']);
+    expect(rows.map((r) => r.type).sort()).toEqual([
+      'compte_suivi',
+      'donnee_religieuse_art9',
+      'tuteur_ia',
+    ]);
     for (const r of rows)
       expect(r.evidence, r.type).toMatchObject({ loi: 'sn_2008_12', autorite: 'cdp_sn' });
   });
@@ -194,7 +198,7 @@ describe.skipIf(!URL_)('audit — mineurs', () => {
         email: 'zz-min15@exemple.org',
         password: PW,
         country: 'ZZ',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
         birthYear: 1990,
       },
     );

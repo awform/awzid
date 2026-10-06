@@ -59,7 +59,7 @@ describe.skipIf(!READY)('lot 6 (awform_test)', () => {
         password: PW,
         country: 'FR',
         birthYear: 1990,
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       });
     const a = await signup('adulte.lot6@exemple.org');
     adult = cookieOf(a);
@@ -153,7 +153,7 @@ describe.skipIf(!READY)('lot 6 (awform_test)', () => {
           email,
           password: PW,
           country: 'FR',
-          consents: ['cgu'],
+          consents: ['cgu', 'donnee_religieuse_art9'],
         },
       });
     expect(String((await signup('https.lot7@exemple.org', 'https')).headers['set-cookie'])).toMatch(

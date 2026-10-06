@@ -55,7 +55,10 @@ describe.skipIf(!URL)('lot 10 — paiements (awform_test)', () => {
         email,
         password: PW,
         country,
-        consents: country === 'SN' ? ['cgu', 'transfert_hors_pays'] : ['cgu'],
+        consents:
+          country === 'SN'
+            ? ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays']
+            : ['cgu', 'donnee_religieuse_art9'],
         birthYear: 1985,
         ...(kind === 'adulte' ? { pseudonym: 'Moi' } : {}),
       }),
@@ -78,7 +81,7 @@ describe.skipIf(!URL)('lot 10 — paiements (awform_test)', () => {
         pseudonym: 'Awa',
         birthYear: YEAR - 9,
         password: PW,
-        consents: ['compte_suivi'],
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
       })
     ).json().id;
     await h.db.insert(t.account).values({

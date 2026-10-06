@@ -20,6 +20,8 @@ export interface AuthCtx {
   mfaVerified: boolean;
   totpEnabled: boolean;
   country: string | null;
+  /** lot F3 (revue M9) : subdivision du pays (ex. CA-QC), pour l'âge du consentement */
+  region: string | null;
   /** lot F2 (revue E2) : rôles du compte (plateforme, écoles) — les gardes lisent ces rôles */
   roles: string[];
   /** lot F2 (revue E3) : session de TABLETTE DE CLASSE (compte de l'école, limitée aux élèves de la classe) */
@@ -101,6 +103,7 @@ export async function lookupSession(db: Db, token: string | null): Promise<AuthC
       kind: t.account.kind,
       totpEnabled: t.account.totpEnabled,
       country: t.account.country,
+      region: t.account.region,
       tabletClassId: t.session.tabletClassId,
     })
     .from(t.session)

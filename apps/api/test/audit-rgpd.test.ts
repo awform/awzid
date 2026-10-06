@@ -204,7 +204,7 @@ describe.skipIf(!URL_)('audit — RGPD', () => {
         email: 'rappels-min9@exemple.org',
         password: PW,
         country: 'FR',
-        consents: ['cgu', 'rappels'],
+        consents: ['cgu', 'donnee_religieuse_art9', 'rappels'],
         birthYear: 1990,
       },
     );
@@ -255,7 +255,7 @@ describe.skipIf(!URL_)('audit — RGPD', () => {
         email: 'sanscode-min10@exemple.org',
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       },
     );
     const P = { cookie: cookieOf(su) };

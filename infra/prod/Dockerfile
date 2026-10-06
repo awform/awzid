@@ -27,6 +27,10 @@ USER node
 
 FROM runtime AS api
 COPY --from=build --chown=node:node /out/api /app
+# lot F3 : boîte de démonstration des e-mails (volume « boite », écrit par l'API seule, droits 700)
+USER root
+RUN install -d -o node -g node -m 700 /boite
+USER node
 ENV API_HOST=0.0.0.0 API_PORT=3000
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \

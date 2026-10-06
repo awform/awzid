@@ -38,7 +38,7 @@ describe.skipIf(!URL_)('audit INF-6 — adresse du client derrière le mandatair
           email: `inf6-${i}@exemple.org`,
           password: PW,
           country: 'FR',
-          consents: ['cgu'],
+          consents: ['cgu', 'donnee_religieuse_art9'],
         },
       });
       statuses.push(r.statusCode);

@@ -182,7 +182,7 @@ describe.skipIf(!URL_)('lot 22 — carnet de pratique et sourates', () => {
         email: 'p22c@test.fr',
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       },
     );
     expect(su.statusCode).toBe(201);

@@ -214,7 +214,7 @@ async function parentWithTeen(page: Page) {
       password: password(),
       country: 'FR',
       locale: 'fr',
-      consents: ['cgu'],
+      consents: ['cgu', 'donnee_religieuse_art9'],
     },
   });
   expect(signup.status(), await signup.text()).toBeLessThan(300);
@@ -226,7 +226,7 @@ async function parentWithTeen(page: Page) {
       birthYear: new Date().getFullYear() - 16,
       levelCode: 'ado1',
       password: password(),
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     },
   });
   expect(res.status(), await res.text()).toBeLessThan(300);

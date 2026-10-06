@@ -47,7 +47,7 @@ import {
 } from '@awform/db';
 import { ownsProfile } from './auth/routes.js';
 import { hashSecret, verifySecret } from './auth/crypto.js';
-import { ageFromYear, consentAge } from './auth/policy.js';
+import { ageFromYear, closedForAge, consentAge, defaultTz, normTz } from './auth/policy.js';
 import {
   audit,
   clearFailures,
@@ -151,7 +151,13 @@ export function registerEcoleF2(
   });
 
   app.post<{
-    Body: { name: string; nameAr?: string | null; country?: string | null; place?: string | null };
+    Body: {
+      name: string;
+      nameAr?: string | null;
+      country?: string | null;
+      place?: string | null;
+      tz?: string;
+    };
   }>(
     '/api/v1/ecole/ecoles',
     {
@@ -166,19 +172,25 @@ export function registerEcoleF2(
             nameAr: { type: ['string', 'null'], maxLength: 120 },
             country: { type: ['string', 'null'], pattern: '^[A-Z]{2}$' },
             place: { type: ['string', 'null'], maxLength: 80 },
+            // lot F3 (revue M8) : fuseau horaire de l'école (défaut : celui du pays)
+            tz: { type: 'string', maxLength: 64 },
           },
         },
       },
     },
     async (req, reply) => {
       if (!isTeacher(req.auth)) return err(reply, 403, 'reserve_aux_enseignants');
+      const tz = req.body.tz === undefined ? undefined : normTz(req.body.tz);
+      if (tz === null) return err(reply, 400, 'fuseau_inconnu');
+      const country = req.body.country ?? req.auth!.country;
       const s = await createSchool(
         db,
         {
           name: req.body.name,
           nameAr: req.body.nameAr ?? null,
-          country: req.body.country ?? req.auth!.country,
+          country,
           place: req.body.place ?? null,
+          tz: tz ?? defaultTz(country),
         },
         me(req),
       );
@@ -214,6 +226,8 @@ export function registerEcoleF2(
           country: s.country,
           personal: s.personal,
           status: s.status,
+          tz: s.tz,
+          dataRegion: s.dataRegion,
         },
         roles,
         membres: lead ? await schoolMembers(db, s.id) : [],
@@ -225,7 +239,13 @@ export function registerEcoleF2(
 
   app.patch<{
     Params: { id: string };
-    Body: { name?: string; nameAr?: string | null; place?: string | null; placeAr?: string | null };
+    Body: {
+      name?: string;
+      nameAr?: string | null;
+      place?: string | null;
+      placeAr?: string | null;
+      tz?: string;
+    };
   }>(
     '/api/v1/ecole/ecoles/:id',
     {
@@ -240,15 +260,22 @@ export function registerEcoleF2(
             nameAr: { type: ['string', 'null'], maxLength: 120 },
             place: { type: ['string', 'null'], maxLength: 80 },
             placeAr: { type: ['string', 'null'], maxLength: 80 },
+            tz: { type: 'string', maxLength: 64 },
           },
         },
       },
     },
     async (req, reply) => {
       if (!(await needDirection(req, reply, req.params.id))) return reply;
+      const body = { ...req.body };
+      if (body.tz !== undefined) {
+        const tz = normTz(body.tz);
+        if (!tz) return err(reply, 400, 'fuseau_inconnu');
+        body.tz = tz;
+      }
       const [s] = await db
         .update(t.school)
-        .set(req.body)
+        .set(body)
         .where(eq(t.school.id, req.params.id))
         .returning();
       await audit(db, me(req), 'ecole.reglages', s!.id, Object.keys(req.body));
@@ -597,6 +624,13 @@ export function registerEcoleF2(
       if (age >= 18) return err(reply, 400, 'adulte_compte_personnel');
       if (req.body.consent.date > new Date().toISOString().slice(0, 10))
         return err(reply, 400, 'date_consentement_invalide');
+      // lot F3 (revue G3) : école aux États-Unis, élève de moins de 13 ans : fermé au lancement
+      const [sc] = await db
+        .select({ country: t.school.country })
+        .from(t.school)
+        .where(eq(t.school.id, x.cls.schoolId));
+      if (closedForAge(sc?.country, age))
+        return err(reply, 403, 'ferme_moins_13', { age: 13, pays: sc?.country });
       const levelCode = req.body.levelCode ?? x.cls.levelCode ?? null;
       if (levelCode) {
         const [lv] = await db
@@ -921,7 +955,7 @@ export function registerEcoleF2(
       if (req.auth!.kind !== 'parent') return err(reply, 403, 'reserve_aux_parents');
       const p = await ownedProfile(me(req), req.params.id);
       if (!p) return err(reply, 404, 'introuvable');
-      const min = consentAge(req.auth!.country);
+      const min = consentAge(req.auth!.country, req.auth!.region);
       if (!p.birthYear || ageFromYear(p.birthYear) < min)
         return err(reply, 403, 'trop_jeune', { age: min });
       if (!(await passwordOk(reply, me(req), req.body.password))) return reply;
@@ -957,7 +991,7 @@ export function registerEcoleF2(
       // un profil déjà porté par son propre compte adulte n'a rien à demander
       if (owner?.kind !== 'parent') return err(reply, 409, 'deja_autonome');
       const age = p.birthYear ? ageFromYear(p.birthYear) : 0;
-      const min = consentAge(req.auth!.country);
+      const min = consentAge(req.auth!.country, req.auth!.region);
       if (age < min) return err(reply, 403, 'trop_jeune', { age: min });
       if (age >= 18) {
         const inv = await createInvite(db, {

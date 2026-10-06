@@ -25,7 +25,7 @@ const DEMO_IDS: Record<string, { role: string; kind: Kind; profile?: string }> =
   admin: { role: 'admin', kind: 'admin' },
 };
 
-const PRIVATE_HOST =
+export const PRIVATE_HOST =
   /^(localhost|127(\.\d{1,3}){3}|10(\.\d{1,3}){3}|192\.168(\.\d{1,3}){2}|172\.(1[6-9]|2\d|3[01])(\.\d{1,3}){2}|[a-z0-9-]+(\.[a-z0-9-]+)*\.(localhost|test|local|lan|home\.arpa))$/;
 
 /**
