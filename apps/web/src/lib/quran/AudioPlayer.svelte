@@ -111,7 +111,9 @@
       setMedia(f.aya);
     } catch {
       playing = false;
-      error = navigator.onLine ? t('ca.erreur_lecture') : t('ca.erreur_hors_ligne');
+      error = navigator.onLine
+        ? t('ca.erreur_lecture')
+        : t(reciter.enLigne ? 'ca.dispo_internet' : 'ca.erreur_hors_ligne');
     }
   }
 

@@ -2495,5 +2495,16 @@
   "cl.k_normal": "Normal size",
   "cl.k_masquer": "Hide to memorise",
   "cl.k_montrer": "Show all",
-  "cl.k_parent": "All settings (with a parent)"
+  "cl.k_parent": "All settings (with a parent)",
+  "ca.en_ligne": "Online",
+  "ca.en_ligne_aide": "Online listening only (Quran Foundation): nothing is saved on the device.",
+  "ca.dispo_internet": "Available with Internet",
+  "ca.en_ligne_option": "{nom} — online",
+  "ca.en_ligne_option_hors": "{nom} — available with Internet",
+  "erreur.connexion_requise": "Sign in to listen to online reciters.",
+  "erreur.qf_indisponible": "Online listening is not responding right now. Try again later or choose a reciter from the King Fahd Complex.",
+  "erreur.qf_incomplet": "This surah is not available online for this reciter.",
+  "erreur.qf_refus": "Online listening is temporarily unavailable.",
+  "erreur.en_ligne_seulement": "This reciter is online only: it cannot be saved on the device.",
+  "gar.audio_en_ligne": "“Online” reciters (al-Ḥuṣarī, al-ʿAfāsī…): audio provided by Quran Foundation (quran.foundation), online only — nothing is downloaded, stored or resold; the other recitations come from the King Fahd Complex (Madinah)."
 }

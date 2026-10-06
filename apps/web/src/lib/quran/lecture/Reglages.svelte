@@ -5,6 +5,7 @@
   import type { Reciter, SuraPack } from '$lib/coran-audio';
   import { fmtBytes, fmtNumber, localeInfo, t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
+  import { ecoutable, reseau } from '$lib/reseau.svelte';
   import { PRESETS, type PresetId, type Range } from '../lecture';
   import type { MushafPrefs } from '../mushaf';
   import { fmtDuration, isHafs, SLEEP_CHOICES } from '../player';
@@ -270,10 +271,10 @@
       data-testid="choix-recitateur"
     >
       {#if !reciter}<option value="">{t('mp.aucun_recitateur')}</option>{/if}
-      {#each sorted as r (r.id)}<option value={r.id}
-          >{r.nameFr} — {r.riwayaFr}{online(r) ? ` · ${t('cl.en_ligne')}` : ''}{r.id === conseil
-            ? ` · ${t('ca.conseil_court')}`
-            : ''}</option
+      {#each sorted as r (r.id)}<option value={r.id} disabled={!ecoutable(r) && r.id !== reciterId}
+          >{r.nameFr} — {r.riwayaFr}{online(r)
+            ? ` · ${t(reseau.enLigne ? 'cl.en_ligne' : 'ca.dispo_internet')}`
+            : ''}{r.id === conseil ? ` · ${t('ca.conseil_court')}` : ''}</option
         >{/each}
     </select>
   </div>
@@ -285,6 +286,12 @@
         >{/if}
       {#if restreint}<span class="pill">{t('ca.liste_restreinte')}</span>{/if}
     </p>
+    {#if online(reciter)}<p
+        class={reseau.enLigne ? 'muted small' : 'warnbox'}
+        data-testid={reseau.enLigne ? 'en-ligne-aide' : 'dispo-internet'}
+      >
+        <Bidi text={t(reseau.enLigne ? 'ca.en_ligne_aide' : 'ca.dispo_internet')} />
+      </p>{/if}
     <!-- le récitateur est toujours de la riwāya du muṣḥaf affiché (plus d'état « autre riwāya ») -->
     {#if !isHafs(reciter.riwaya)}
       <p class="muted small" data-testid="meme-riwaya">
@@ -513,7 +520,12 @@
 
 <section class="sec" id="reg-horsligne" data-testid="hors-ligne-sourate">
   <h3><Icon name="telecharger" size={20} />{t('ca.garder_titre')}</h3>
-  {#if pack}
+  {#if online(reciter ?? ({} as Reciter)) || pack?.enLigne}
+    <!-- A2 : récitateur en ligne (Quran Foundation) : aucune copie sur l'appareil -->
+    <p class="muted small" data-testid="garde-impossible-en-ligne">
+      <Bidi text={t('erreur.en_ligne_seulement')} />
+    </p>
+  {:else if pack}
     <p class="muted small">
       <Bidi
         text={t('ca.garder_texte', {

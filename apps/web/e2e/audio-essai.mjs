@@ -60,7 +60,18 @@ try {
         `${id} : import bloqué (${r.status}) ${JSON.stringify(r.report.issues.slice(0, 3))}`,
       );
   }
-  console.log('audio d’essai : 2 récitateurs (bips non coraniques) importés');
+  // A2 : récitateur EN LIGNE d'essai (source « qf ») : l'API QF est SIMULÉE par l'API de test (QF_ENV=essai)
+  // et renvoie les bips d'« essai-hafs » ; jamais un vrai récitateur de Quran Foundation dans les e2e
+  await upsertReciter(h.db, {
+    ...meta('essai-qf', 'hafs', 'Essai en ligne (bips)'),
+    credit:
+      'Essai en ligne (bips) — API Quran Foundation simulée, fichiers d’essai non coraniques.',
+    usageNote: 'Écoute en ligne seulement (essai) : ni téléchargement, ni copie sur l’appareil.',
+  });
+  await h.pool.query(
+    "update quran_reciter set source = 'qf', status = 'actif', activated_at = now() where id = 'essai-qf'",
+  );
+  console.log('audio d’essai : 3 récitateurs (bips non coraniques) importés, dont 1 « en ligne »');
 } finally {
   await h.close();
 }

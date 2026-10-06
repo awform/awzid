@@ -143,6 +143,8 @@ export default defineConfig({
         // SEULEMENT en test (Coran épuré : jamais en démonstration ni en production)
         AWFORM_AUDIO_DIR: AUDIO_DIR,
         AWFORM_AUDIO_ESSAI: 'on',
+        // A2 : récitateur en ligne d'essai : API de Quran Foundation SIMULÉE dans l'API de test (aucun réseau)
+        QF_ENV: 'essai',
         // A37 : fiches d'ESSAI du livret « Bon comportement » (textes neutres), SEULEMENT en test
         AWFORM_AKHLAQ_ESSAI: 'on',
         // A3 : audio des leçons d'en1

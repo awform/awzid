@@ -245,5 +245,10 @@
   "cl.k_normal": "Taille normale",
   "cl.k_masquer": "Masquer pour mémoriser",
   "cl.k_montrer": "Tout montrer",
-  "cl.k_parent": "Tous les réglages (avec un parent)"
+  "cl.k_parent": "Tous les réglages (avec un parent)",
+  "ca.en_ligne": "En ligne",
+  "ca.en_ligne_aide": "Écoute en ligne seulement (Quran Foundation) : rien n'est gardé sur l'appareil.",
+  "ca.dispo_internet": "Disponible avec Internet",
+  "ca.en_ligne_option": "{nom} — en ligne",
+  "ca.en_ligne_option_hors": "{nom} — disponible avec Internet"
 }

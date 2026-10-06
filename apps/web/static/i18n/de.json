@@ -2495,5 +2495,16 @@
   "cl.k_normal": "Normale Größe",
   "cl.k_masquer": "Ausblenden zum Lernen",
   "cl.k_montrer": "Alles zeigen",
-  "cl.k_parent": "Alle Einstellungen (mit einem Elternteil)"
+  "cl.k_parent": "Alle Einstellungen (mit einem Elternteil)",
+  "ca.en_ligne": "Online",
+  "ca.en_ligne_aide": "Nur online anhören (Quran Foundation): Auf dem Gerät wird nichts gespeichert.",
+  "ca.dispo_internet": "Mit Internet verfügbar",
+  "ca.en_ligne_option": "{nom} — online",
+  "ca.en_ligne_option_hors": "{nom} — mit Internet verfügbar",
+  "erreur.connexion_requise": "Melde dich an, um Online-Rezitatoren zu hören.",
+  "erreur.qf_indisponible": "Das Online-Hören antwortet gerade nicht. Versuche es später erneut oder wähle einen Rezitator des König-Fahd-Komplexes.",
+  "erreur.qf_incomplet": "Diese Sure ist für diesen Rezitator nicht online verfügbar.",
+  "erreur.qf_refus": "Das Online-Hören ist vorübergehend nicht verfügbar.",
+  "erreur.en_ligne_seulement": "Dieser Rezitator ist nur online verfügbar: Er kann nicht auf dem Gerät gespeichert werden.",
+  "gar.audio_en_ligne": "„Online“-Rezitatoren (al-Ḥuṣarī, al-ʿAfāsī…): Audio von der Quran Foundation (quran.foundation), nur online — nichts wird heruntergeladen, gespeichert oder weiterverkauft; die übrigen Rezitationen stammen vom König-Fahd-Komplex (Medina)."
 }

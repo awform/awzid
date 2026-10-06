@@ -32,6 +32,7 @@ import { registerPratiqueAdulte } from './pratique-adulte.js';
 import { registerRecital } from './recital.js';
 import { registerEcoleSynthese } from './ecole-synthese.js';
 import { registerCoranAudio } from './coran-audio.js';
+import { essaiFetch, QfAudioClient, qfConfigFromEnv } from './coran-qf.js';
 import { registerLeconsAudio } from './lecons-audio.js';
 import { registerMushafExact } from './mushaf-exact.js';
 import { registerContent } from './contenu.js';
@@ -73,6 +74,8 @@ export interface AppOptions {
   billing?: BillingSetup;
   /** stockage des fichiers audio du Coran (tests) ; sinon AWFORM_AUDIO_DIR ; null : fichiers non servis */
   audioDir?: string | null;
+  /** A2 : client de l'audio en ligne de Quran Foundation (tests) ; sinon QF_* ; null : inactif */
+  qf?: QfAudioClient | null;
   /** A34 : dossier de synchronisation QF (publie/…) ; null = mise en page exacte indisponible */
   mushafExactDir?: string | null;
   /** A34 : dossier des polices QCF du Complexe (installer-polices.sh) */
@@ -104,6 +107,14 @@ export const logSerializers = {
     remoteAddress: truncIp(req.ip),
   }),
 };
+
+/** A2 : audio en ligne de Quran Foundation d'après l'environnement (inactif sans identifiants). */
+function qfFromEnv(db: Db): QfAudioClient | null {
+  const essai = process.env.AWFORM_AUDIO_ESSAI === 'on';
+  const cfg = qfConfigFromEnv(process.env, essai);
+  if (!cfg) return null;
+  return new QfAudioClient(cfg, cfg.env === 'essai' ? essaiFetch(db) : undefined);
+}
 
 export function buildApp(opts: AppOptions): FastifyInstance {
   // versets cités dans les leçons : nom de la sourate de la référence affichée (métadonnées Tanzil)
@@ -198,6 +209,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     app,
     db,
     opts.audioDir === undefined ? (process.env.AWFORM_AUDIO_DIR ?? null) : opts.audioDir,
+    opts.qf === undefined ? qfFromEnv(db) : opts.qf,
   );
   registerLeconsAudio(
     app,

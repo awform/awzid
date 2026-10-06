@@ -2495,5 +2495,16 @@
   "cl.k_normal": "Tamaño normal",
   "cl.k_masquer": "Ocultar para memorizar",
   "cl.k_montrer": "Mostrar todo",
-  "cl.k_parent": "Todos los ajustes (con un adulto)"
+  "cl.k_parent": "Todos los ajustes (con un adulto)",
+  "ca.en_ligne": "En línea",
+  "ca.en_ligne_aide": "Solo escucha en línea (Quran Foundation): no se guarda nada en el dispositivo.",
+  "ca.dispo_internet": "Disponible con Internet",
+  "ca.en_ligne_option": "{nom} — en línea",
+  "ca.en_ligne_option_hors": "{nom} — disponible con Internet",
+  "erreur.connexion_requise": "Inicia sesión para escuchar a los recitadores en línea.",
+  "erreur.qf_indisponible": "La escucha en línea no responde por ahora. Inténtalo más tarde o elige un recitador del Complejo del Rey Fahd.",
+  "erreur.qf_incomplet": "Esta sura no está disponible en línea para este recitador.",
+  "erreur.qf_refus": "La escucha en línea no está disponible por el momento.",
+  "erreur.en_ligne_seulement": "Este recitador solo se escucha en línea: no se puede guardar en el dispositivo.",
+  "gar.audio_en_ligne": "Recitadores «en línea» (al-Ḥuṣarī, al-ʿAfāsī…): audio proporcionado por Quran Foundation (quran.foundation), solo en línea — nada se descarga, se guarda ni se revende; las demás recitaciones proceden del Complejo del Rey Fahd (Medina)."
 }
