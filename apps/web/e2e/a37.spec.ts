@@ -1,16 +1,19 @@
 import { execFileSync } from 'node:child_process';
-import { mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import type { APIRequestContext, Page } from '@playwright/test';
 import { expect, newAdult, password, test } from './fixtures';
 import { pickProfile } from './profil';
 
 /**
- * Chantier A37 — « Vivre l'islam » (vrais livres de l'édition e2e, fiches d'ESSAI servies par l'API de test) :
- *  - navigation : « Vivre l'islam » à la place de « Prières » (ados, adultes), dans la barre de l'enfant ;
+ * Chantier A37 — « Vivre l'islam » (vrais livres de l'édition e2e, dont le livret « Bon comportement » des livres
+ * — 120 fiches, index officiel — et 3 fiches d'ESSAI servies par l'API de test) :
+ *  - navigation : « Vivre l'islam » à la place de « Prières » (ados, adultes), dans la barre de l'enfant, libellés
+ *    jamais tronqués (5 langues, 375 et 320 px) ;
  *  - sous-onglets Bon comportement (en premier) · Prières · Adhkār ;
  *  - défi de la semaine ; rubriques par cercle et par lieu filtrées par le niveau ; rubrique lue dans sa leçon ;
- *  - fiche : étiquettes des statuts, « Que fais-tu si… ? » (ados, adultes), « Dans la vraie vie » (adultes) ;
- *  - espace Famille : « Transmettre les valeurs » ;
+ *  - fiche : texte de l'âge, étiquettes (« Recommandé · sunna », « À éviter — Interdit », « Conseil » neutre),
+ *    ce qu'on dit avec sa source, verset en bloc sans voix de synthèse ;
+ *  - espace Famille : « Transmettre les valeurs » (chapitre gp.c18 s'il est publié, défis des enfants) ;
  *  - captures 375 px clair / sombre (enfant, ado, adulte) dans reports/a37/.
  */
 test.use({ compte: null });
@@ -66,19 +69,21 @@ async function parentWith(req: APIRequestContext, pseudonym: string, age: number
   return ((await p.json()) as { id: string }).id;
 }
 
-/** Aucune ligne ne mêle de l'arabe et du français : l'arabe des points est dans son propre bloc. */
+/** Aucune ligne ne mêle arabe et français : l'arabe de chaque point est AU-DESSUS du français. */
 async function arabicOnOwnLine(page: Page) {
-  // chaque point : l'arabe (bloc) entièrement AU-DESSUS du français, jamais sur la même ligne
   const mixed = await page
     .locator('[data-testid="vi-entree"], [data-testid="vi-fiche"]')
     .evaluate((root) =>
       [...root.querySelectorAll('.pt')].flatMap((pt) => {
-        const ar = pt.querySelector('[lang="ar"]');
-        const fr = [...pt.querySelectorAll('span')].find(
+        // phrase arabe (3 mots ou plus) : sur sa ligne ; un terme isolé (1-2 mots) peut rester dans le français
+        const ar = [...pt.querySelectorAll('[lang="ar"]')].find(
+          (x) => (x.textContent ?? '').trim().split(/\s+/).length >= 3,
+        );
+        const fr = [...pt.querySelectorAll('span, p')].find(
           (s) =>
             !s.closest('[lang="ar"]') &&
-            /[A-Za-zÀ-ÿ]{3,}/.test(s.textContent ?? '') &&
-            !s.querySelector('[lang="ar"]'),
+            !s.querySelector('[lang="ar"]') &&
+            /[A-Za-zÀ-ÿ]{3,}/.test(s.textContent ?? ''),
         );
         if (!ar || !fr) return [];
         return ar.getBoundingClientRect().bottom <= fr.getBoundingClientRect().top + 2
@@ -88,6 +93,39 @@ async function arabicOnOwnLine(page: Page) {
     );
   expect(mixed).toEqual([]);
 }
+
+/** Barre du bas : chaque libellé ENTIER (deux lignes au plus, aucun mot coupé) et icônes alignées. */
+async function tabsReadable(page: Page, where: string) {
+  for (const width of [375, 320]) {
+    await page.setViewportSize({ width, height: 740 });
+    await page.goto('/vivre');
+    await expect(page.locator('nav.tabs a[data-tab="vivre"]')).toBeVisible();
+    const r = await page.locator('nav.tabs').evaluate((nav) => {
+      // texte réellement rendu (Range) : lignes distinctes et largeur, comparées à la case du libellé
+      const labels = [...nav.querySelectorAll<HTMLElement>('.tl')].map((el) => {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const rects = [...range.getClientRects()];
+        const box = el.getBoundingClientRect();
+        const tops = rects.map((r) => r.top).sort((x, y) => x - y);
+        const lines = tops.filter((v, k) => k === 0 || v - tops[k - 1]! > 6).length;
+        const shown = rects.every((r) => r.bottom <= box.bottom + 4 && r.top >= box.top - 4);
+        const wide = Math.max(...rects.map((r) => r.width)) > box.width + 1;
+        return { text: el.textContent?.trim() ?? '', cut: !shown || wide, lines };
+      });
+      const tops = [...nav.querySelectorAll('.ti')].map((i) =>
+        Math.round(i.getBoundingClientRect().top),
+      );
+      return { labels, aligned: new Set(tops).size === 1 };
+    });
+    for (const l of r.labels) {
+      expect(l.cut, `${where} ${width} px : « ${l.text} » tronqué`).toBe(false);
+      expect(l.lines, `${where} ${width} px : « ${l.text} »`).toBeLessThanOrEqual(2);
+    }
+    expect(r.aligned, `${where} ${width} px : icônes alignées`).toBe(true);
+  }
+}
+
 test('navigation : « Vivre l’islam » à la place de « Prières », sous-onglets bien visibles', async ({
   page,
 }) => {
@@ -119,7 +157,6 @@ test('navigation : « Vivre l’islam » à la place de « Prières », sous-ong
     'aria-current',
     'page',
   );
-  // Prières : l'existant A12 (horaires, qibla, verset) sous « Vivre l'islam »
   await page.locator('[data-vivre-tab="prieres"]').click();
   await expect(page).toHaveURL(/\/quotidien$/);
   await expect(page.locator('[data-quotidien-tab="qibla"]')).toBeVisible();
@@ -134,24 +171,31 @@ test('navigation : « Vivre l’islam » à la place de « Prières », sous-ong
   await expect(page.getByTestId('vi-defi')).toBeVisible();
 });
 
-test('adulte : défi, rubriques par cercle (niveau atteint seulement) et par lieu, rubrique et fiche', async ({
+test('adulte : défi, rubriques de l’index par cercle (niveau atteint) et par lieu, rubrique et fiche', async ({
   page,
 }) => {
   const pid = await adultAt(page, 'a37-adulte');
   doneUntil(pid, 'ad1', 6);
   const reached = (
-    (await (await page.request.get(`/api/v1/profiles/${pid}/vivre`)).json()) as { units: string[] }
+    (await (await page.request.get(`/api/v1/profiles/${pid}/vivre`)).json()) as {
+      units: string[];
+    }
   ).units;
   expect(reached.length).toBeGreaterThan(0);
   expect(reached.every((u) => /^ad1\.l0[1-7]$/.test(u))).toBe(true);
+  const cat = (await (await page.request.get('/api/v1/vivre')).json()) as {
+    rangement: string;
+    fiches: unknown[];
+  };
+  // index officiel des livres et 120 fiches du livret (plus les 3 fiches d'essai de l'API de test)
+  expect(cat.rangement).toBe('index');
+  expect(cat.fiches.length).toBeGreaterThanOrEqual(123);
   await page.goto('/vivre');
-  // défi : celui d'une fiche (les fiches d'essai en ont un), le même au rechargement
   const defi = page.getByTestId('vi-defi');
   await expect(defi).toHaveAttribute('data-defi', /fiche|rubrique/);
   const first = await defi.textContent();
   await page.reload();
   await expect(defi).toHaveText(first!);
-  // par cercle : tuiles avec le nombre de fiches ; aucune rubrique d'une leçon non atteinte
   const tiles = page.getByTestId('vi-tuiles');
   await expect(tiles).toHaveAttribute('data-par', 'cercle');
   await expect(tiles.locator('[data-groupe="soi"]')).toContainText(/rubrique/);
@@ -182,26 +226,37 @@ test('adulte : défi, rubriques par cercle (niveau atteint seulement) et par lie
   await page.locator('[data-fiche="essai.chambre.01"]').click();
   const f = page.getByTestId('vi-fiche');
   await expect(f).toContainText('Fiche d’essai');
-  for (const [s, mot] of [
-    ['obligatoire', 'Obligatoire'],
-    ['recommande', 'Recommandé'],
-    ['permis', 'Permis'],
-    ['deconseille', 'Déconseillé'],
-  ])
-    await expect(f.locator(`[data-statut="${s}"]`)).toHaveText(mot);
-  await expect(f.locator('[data-etape="avant"]')).toBeVisible();
-  await expect(page.getByTestId('vi-dire')).toContainText('Source d’essai');
-  await expect(page.getByTestId('vi-vraie-vie')).toBeVisible();
-  await expect(page.getByTestId('vi-situations')).toBeVisible();
-  await expect(page.getByTestId('vi-fiche-defi')).toBeVisible();
+  await expect(f.locator('[data-statut="obligatoire"]')).toHaveText('Obligatoire');
+  await expect(f.locator('[data-statut="recommande"]').first()).toHaveText(
+    /^Recommandé\s*· sunna$/,
+  );
+  await expect(f.locator('[data-statut="permis"]')).toHaveText('Permis');
+  await expect(f.locator('[data-statut="deconseille"]')).toHaveText('À éviter — Déconseillé');
+  await expect(f.locator('[data-statut="conseil"]')).toHaveText('Conseil');
+  // adulte : point réservé aux adultes, vraie vie de son pays (FR : pas celle du Sénégal), religion ou coutume
+  await expect(f.locator('[data-point="essai.F"]')).toBeVisible();
+  await expect(page.getByTestId('vi-vraie-vie')).toContainText('Exemple d’essai dans la vraie vie');
+  await expect(page.getByTestId('vi-vraie-vie')).not.toContainText('Sénégal');
+  await expect(page.getByTestId('vi-religion-coutume')).toBeVisible();
+  await expect(page.getByTestId('vi-fiche-defi')).toContainText('trois objets');
   await arabicOnOwnLine(page);
   await page.goto('/vivre?f=essai.rue.01');
-  await expect(f.locator('[data-statut="interdit"]')).toHaveText('Interdit');
-  // ni compteur de bonnes actions ni classement
+  await expect(f.locator('[data-statut="interdit"]')).toHaveText('À éviter — Interdit');
+  await expect(page.getByTestId('vi-attention')).toBeVisible();
+  // vraie fiche des livres : invocation avec sa source (registre VERIFIE)
+  await page.goto('/vivre?f=akh.f001');
+  await expect(f).toContainText('Aller aux toilettes');
+  await expect(page.getByTestId('vi-dire')).toContainText('Rapporté par al-Bukhārī (142)');
+  await arabicOnOwnLine(page);
+  // verset : bloc du Muṣḥaf, aucune voix de synthèse (seul le lien vers un récitant)
+  await page.goto('/vivre?f=akh.f008');
+  const v = f.locator('[data-dire="coran"]').first();
+  await expect(v.getByTestId('verset-bloc')).toBeVisible();
+  await expect(v.getByTestId('ecouter')).toHaveCount(0);
   await expect(page.locator('body')).not.toContainText(/ḥasanāt|hasanat|classement/i);
 });
 
-test('enfant : « Vivre l’islam » dans sa barre, grandes tuiles, fiche très courte', async ({
+test('enfant : « Vivre l’islam » dans sa barre, grandes tuiles, fiche courte et texte de l’enfant', async ({
   page,
 }) => {
   const id = await parentWith(page.request, 'Nour', 8, 'en1');
@@ -209,48 +264,56 @@ test('enfant : « Vivre l’islam » dans sa barre, grandes tuiles, fiche très 
   await pickProfile(page, 'Nour');
   await page.goto('/aujourdhui');
   await expect(page.locator('nav.tabs a')).toHaveCount(5);
-  await expect(page.locator('nav.tabs a[data-tab="vivre"]')).toBeVisible();
   await page.locator('nav.tabs a[data-tab="vivre"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'jardin');
   const tiles = page.getByTestId('vi-tuiles');
   await expect(tiles.locator('[data-groupe]').first()).toBeVisible();
-  // grandes tuiles illustrées, sans nombre ; aucun cercle d'adulte
   const box = await tiles.locator('.tile-ic').first().boundingBox();
   expect(box!.height).toBeGreaterThanOrEqual(60);
   await expect(tiles.locator('small')).toHaveCount(0);
   for (const g of ['epoux', 'enfants', 'travail'])
     await expect(tiles.locator(`[data-groupe="${g}"]`)).toHaveCount(0);
-  // fiche courte : ni « Que fais-tu si… ? » ni « Dans la vraie vie »
   await page.goto('/vivre?f=essai.chambre.01');
   const f = page.getByTestId('vi-fiche');
-  await expect(f.locator('[data-etape="pendant"]')).toBeVisible();
-  await expect(page.getByTestId('vi-dire')).toBeVisible();
-  await expect(page.getByTestId('vi-situations')).toHaveCount(0);
+  await expect(page.getByTestId('vi-situation')).toHaveText('Situation d’essai pour l’enfant.');
+  await expect(f.locator('[data-point="essai.B"]')).toContainText('Point d’essai B (enfant).');
+  await expect(f.locator('[data-point="essai.F"]')).toHaveCount(0);
+  await expect(page.getByTestId('vi-dire')).toContainText('Texte d’essai (enfant).');
   await expect(page.getByTestId('vi-vraie-vie')).toHaveCount(0);
-  // la fiche réservée aux ados et adultes n'est pas dans ses rubriques
+  await expect(page.getByTestId('vi-fiche-defi')).toContainText('ranger un jouet');
+  await page.goto('/vivre?f=akh.f001');
+  await expect(f).toContainText('Avant d’entrer, je dis la petite invocation.'.replace('’', "'"));
   await page.goto('/vivre?l=rue');
   await expect(page.locator('[data-fiche="essai.rue.01"]')).toHaveCount(0);
 });
 
-test('ado : « Que fais-tu si… ? », sans « Dans la vraie vie »', async ({ page }) => {
+test('ado : texte de l’ado, pas de cercle d’adulte, sans « Religion ou coutume »', async ({
+  page,
+}) => {
   const id = await parentWith(page.request, 'Ilyes', 14, 'ado1');
   doneUntil(id, 'ado1', 3);
   await pickProfile(page, 'Ilyes');
   await page.goto('/vivre?l=rue');
   await page.locator('[data-fiche="essai.rue.01"]').click();
-  await expect(page.getByTestId('vi-situations')).toBeVisible();
-  await page.getByTestId('vi-situations').locator('summary').first().click();
-  await expect(page.getByTestId('vi-situations')).toContainText('Réponse d’essai 2.');
+  await expect(page.getByTestId('vi-attention')).toBeVisible();
   await page.goto('/vivre?f=essai.chambre.01');
-  await expect(page.getByTestId('vi-vraie-vie')).toHaveCount(0);
-  // ado : pas de cercle « Époux » ni « Enfants »
+  await expect(page.locator('[data-point="essai.C"]')).toContainText('Point d’essai C (ado).');
+  await expect(page.getByTestId('vi-religion-coutume')).toHaveCount(0);
   await page.goto('/vivre');
   await expect(page.locator('[data-groupe="epoux"], [data-groupe="enfants"]')).toHaveCount(0);
 });
 
-test('parent : « Transmettre les valeurs », défi de la semaine de chaque enfant', async ({
+test('parent : « Transmettre les valeurs » (guide des parents s’il est publié), défis des enfants', async ({
   page,
 }) => {
+  // chapitre gp.c18 des livres : publié dans l'édition de test s'il est fourni (E2E_GP_C18 = JSON du chapitre)
+  const c18 = process.env.E2E_GP_C18;
+  if (c18 && existsSync(c18))
+    sql(
+      `INSERT INTO eval_doc (edition_id, key, content) SELECT id, 'gp.c18', $j$${readFileSync(c18, 'utf8')}$j$::jsonb
+       FROM edition WHERE status = 'publiee' ON CONFLICT DO NOTHING`,
+    );
+  const guide = (await page.request.get('/api/v1/vivre/guide')).ok();
   const id = await parentWith(page.request, 'Sami', 9, 'en1');
   doneUntil(id, 'en1', 4);
   await page.goto('/profils');
@@ -259,8 +322,37 @@ test('parent : « Transmettre les valeurs », défi de la semaine de chaque enfa
   const cards = page.getByTestId('vi-defi-enfant');
   await expect(cards).toHaveCount(1);
   await expect(cards.first()).toContainText('Défi de Sami');
+  if (guide) {
+    const g = page.getByTestId('vi-guide');
+    await expect(g).toContainText('Transmettre les valeurs');
+    await g.locator('details.sec summary').first().click();
+    await expect(g.getByTestId('verset-bloc').first()).toBeVisible();
+    // bloc propre à la France montré à une famille de France
+    await expect(g.locator('[data-genre]').first()).toBeVisible();
+  }
   await page.goto('/vivre');
   await expect(page.getByTestId('vi-transmettre')).toBeVisible();
+});
+
+test('barre du bas : aucun libellé tronqué (5 langues, 375 et 320 px ; enfant et adulte)', async ({
+  page,
+}) => {
+  await adultAt(page, 'a37-barre');
+  await page.goto('/compte');
+  await page.getByTestId('langues-preparation').check();
+  for (const code of ['fr', 'en', 'es', 'de', 'ar']) {
+    await page.goto('/compte');
+    await Promise.all([page.waitForEvent('load'), page.locator(`[data-locale="${code}"]`).click()]);
+    await expect(page.locator('html')).toHaveAttribute('lang', code);
+    await tabsReadable(page, `adulte ${code}`);
+  }
+  await page.goto('/compte');
+  await Promise.all([page.waitForEvent('load'), page.locator('[data-locale="fr"]').click()]);
+  await page.context().clearCookies();
+  const id = await parentWith(page.request, 'Inès', 8, 'en1');
+  doneUntil(id, 'en1', 3);
+  await pickProfile(page, 'Inès');
+  await tabsReadable(page, 'enfant fr');
 });
 
 test('captures 375 px clair / sombre : enfant, ado, adulte', async ({ page }) => {
@@ -283,21 +375,22 @@ test('captures 375 px clair / sombre : enfant, ado, adulte', async ({ page }) =>
   doneUntil(pid, 'ad1', 10);
   await shoot('adulte', '/vivre', 'accueil');
   await shoot('adulte', '/vivre?par=lieu', 'lieux');
-  await shoot('adulte', '/vivre?f=essai.chambre.01', 'fiche');
+  await shoot('adulte', '/vivre?f=akh.f001', 'fiche-f001');
+  await shoot('adulte', '/vivre?f=akh.f008', 'fiche-f008-verset');
   await shoot('adulte', '/vivre?c=allah_prophete', 'rubrique');
   const e = await page.locator('[data-entree]').first().getAttribute('data-entree');
   if (e) await shoot('adulte', `/vivre?e=${e}`, 'rubrique-livre');
-  await shoot('adulte', '/quotidien', 'prieres');
   await page.context().clearCookies();
   await parentWith(page.request, 'Yasmine', 14, 'ado1');
   await pickProfile(page, 'Yasmine');
   await shoot('ado', '/vivre', 'accueil');
-  await shoot('ado', '/vivre?f=essai.rue.01', 'fiche');
+  await shoot('ado', '/vivre?f=akh.f001', 'fiche-f001');
   await page.context().clearCookies();
   const kid = await parentWith(page.request, 'Safa', 8, 'en1');
   doneUntil(kid, 'en1', 8);
+  await shoot('parent', '/vivre?parents', 'transmettre');
   await pickProfile(page, 'Safa');
   await shoot('enfant', '/vivre', 'accueil');
   await shoot('enfant', '/vivre?par=lieu', 'lieux');
-  await shoot('enfant', '/vivre?f=essai.chambre.01', 'fiche');
+  await shoot('enfant', '/vivre?f=akh.f001', 'fiche-f001');
 });

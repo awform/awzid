@@ -65,17 +65,32 @@ export async function loadLocale(
  * Les autres langues gardent ces textes dans leur catalogue (déjà chargé à la demande).
  */
 export const STAFF_CATALOG = 'fr-personnel';
-let staffTexts: Promise<void> | null = null;
-export function loadStaffTexts(fetcher: CatalogFetcher = fetchCatalog): Promise<void> {
-  staffTexts ??= fetcher(STAFF_CATALOG)
-    .then((m) => {
-      for (const [k, v] of Object.entries(m)) CATALOG.fr![k] ??= v;
-    })
-    .catch(() => {
-      staffTexts = null;
-    });
-  return staffTexts;
+/**
+ * A37 : même principe par ESPACE de l'élève (textes chargés par route) — `fr-quotidien` (prières, qibla, adhkār,
+ * verset) et `fr-vivre` (bon comportement), chargés par les mises en page `/quotidien` et `/vivre` ; ces deux
+ * fichiers-là sont préchargés par le service worker (hors ligne dès l'installation).
+ */
+export const SPACE_CATALOGS = ['personnel', 'quotidien', 'vivre'] as const;
+const loadedTexts = new Map<string, Promise<void>>();
+export function loadTexts(
+  name: (typeof SPACE_CATALOGS)[number],
+  fetcher: CatalogFetcher = fetchCatalog,
+): Promise<void> {
+  let p = loadedTexts.get(name);
+  if (!p) {
+    p = fetcher(`fr-${name}`)
+      .then((m) => {
+        for (const [k, v] of Object.entries(m)) CATALOG.fr![k] ??= v;
+      })
+      .catch(() => {
+        loadedTexts.delete(name);
+      });
+    loadedTexts.set(name, p);
+  }
+  return p;
 }
+export const loadStaffTexts = (fetcher: CatalogFetcher = fetchCatalog) =>
+  loadTexts('personnel', fetcher);
 
 let current = FALLBACK;
 
