@@ -77,6 +77,12 @@ positionnement, épreuve de passage, Mon cahier, fiche à imprimer, « J'écris 
 sans voyelles comme le reste de l'interface ; « القسم » pour la classe ; espagnol « profesor », « aleya ». À vérifier
 en priorité : `parc.rasm_texte` (orthographe du Muṣḥaf) et `fam.demande_aide` (âge légal, « de droit à 18 ans »).
 
+## Chantier A39 (suite) — certificat de l'adulte autonome (06/10/2026)
+
+10 textes `cert.*` (« Mes certificats », formulaire, civilités « M. / Mme ») et `erreur.reserve_adulte_autonome`,
+écrits par Claude dans les quatre langues — **à relire**. La mention « Awzid — parcours autonome » est gardée en
+français sur le certificat (nom du parcours) ; lieu en arabe : « عَبْرَ الْإِنْتَرْنِتِ ».
+
 ## Chantier A39 — mode serein (06/10/2026)
 
 42 textes `ser.*` (« Ma façon d'avancer », « Mode serein », « Vérification douce », récapitulatif avant le niveau

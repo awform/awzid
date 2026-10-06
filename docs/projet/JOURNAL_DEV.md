@@ -8,6 +8,37 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Chantier A39 (suite) : décisions D-A39 appliquées
+
+Branche `a39b-certificat-wip` (depuis `main` 7785a3f).
+
+1. **Décisions consignées** (D-A39, client) : (1) l'adulte garde son choix, même dans une classe ; (2) notion
+   fragile = au moins 2 erreurs non revues ; (3) le parent peut choisir « Avec vérification » pour un mineur ;
+   (4) certificat individuel de l'adulte autonome ; (5) pages légales hors du paquet, gardées pour le hors ligne.
+2. **Inscription adulte** : « Mode serein » PRÉSÉLECTIONNÉ (« Avec vérification » reste au choix sur le même écran
+   et dans le compte) ; les adultes déjà inscrits ne changent pas (sans choix enregistré : « Avec vérification »).
+3. **Certificat individuel de l'adulte autonome** (`apps/api/src/certificat-autonome.ts`, migration
+   `0041_a39_certificat_autonome` : `certificate.profile_id`) : seulement après une épreuve de passage RÉUSSIE (tous
+   les modes), même modèle « niveau » des livres, même registre numéroté (AWF-<NIVEAU>-<ANNÉE>-<NNNN>), même
+   signature Ed25519 et même vérification publique par QR que les certificats d'école ; établissement « Awzid —
+   parcours autonome », lieu « en ligne » ; note = épreuve sur 100, mention selon les règles des livres ; nom et
+   civilité donnés par l'adulte, naissance facultative ; tout champ qu'aucune école n'a saisi (degrés…) imprimé
+   « — », jamais inventé ; un certificat valide par niveau. Page « Mes certificats » (`/certificats`), liens depuis
+   le compte et le résultat de l'épreuve. Rendu du certificat partagé avec l'espace enseignant
+   (`lib/CertificatDoc.svelte`).
+4. **QR calculé par l'API** (`apps/api/src/qr.ts`, même bibliothèque `qrcode-generator`, déplacée de l'application
+   vers l'API ; origine du site contrôlée) : la bibliothèque n'est plus dans le paquet de l'application (≈ 6 Ko) —
+   place gagnée pour le certificat sans relever la limite.
+5. **Pages légales hors ligne** : le service worker copie `/i18n/legal/fr.json` et `en.json` dans le cache de sa
+   version juste après l'activation (sans bloquer le démarrage) ; lisibles hors ligne dès la première ouverture.
+6. **Textes** : 10 `cert.*` et `erreur.reserve_adulte_autonome` en fr, en, es, de, ar (A_RELIRE.md) ; 5 textes du
+   rendu du certificat remis dans la coquille (utilisés aussi par la page de l'adulte).
+7. **Poids** : toutes pages 405,6 Ko ≤ 410 (409,3 avant ce lot), appareil d'un élève 352,4 Ko ≤ 355, page la plus lourde 141,4 Ko ≤ 150.
+8. **Tests** : unitaires 1 613 réussis, 1 ignoré, 0 échec (api `a39.test.ts` +1 : certificat refusé sans épreuve, délivré après, registre et
+   vérification publique, un seul par niveau, réservé à l'adulte autonome ; `qr.test.ts` 2) ; e2e `a39.spec.ts` +2
+   (certificat de bout en bout avec QR et vérification ; pages légales en cache puis lues hors ligne) et mode serein
+   présélectionné. **Suite e2e complète : 340 réussis, 43 ignorés ; 1 échec intermittent hors A39 (lot6, cartes de mots, téléphone) réussi au second passage**.
+
 ## 07/10/2026 — Chantier A37 (suite) : vraies données du livret « Bon comportement », décisions D-A37, barre lisible
 
 Même branche `a37-vivre-islam-wip` (fusionnée une première fois dans `main` 147c5fc).
