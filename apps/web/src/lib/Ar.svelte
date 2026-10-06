@@ -24,7 +24,11 @@
     tag?: 'span' | 'p' | 'h1' | 'h2' | 'div';
     block?: boolean;
   } = $props();
-  const long = $derived(block || quran || arabicWords(String(text ?? '')) >= LONG_WORDS);
+  // phrase arabe (3 mots ou plus), texte coranique ou `block` : sur sa propre ligne (`.ar-long`, app.css)
+  const cls = $derived(
+    (quran ? 'quran-text' : 'ar') +
+      (block || quran || arabicWords(String(text ?? '')) >= LONG_WORDS ? ' ar-long' : ''),
+  );
 
   // tanwins du Muṣḥaf de Médine : AFFICHAGE seulement (le texte reçu, stocké et comparé reste celui du livre / Tanzil)
   const segments = $derived(
@@ -35,12 +39,7 @@
   );
 </script>
 
-<svelte:element
-  this={tag}
-  class={quran ? 'quran-text' : 'ar'}
-  class:ar-long={long}
-  lang="ar"
-  dir="rtl"
+<svelte:element this={tag} class={cls} lang="ar" dir="rtl"
   >{#each segments as s, i (i)}{#if s.marked}<span class="c{letterColorIndex(s.text, lettres)}"
         >{s.text}</span
       >{:else if s.parts}{#each s.parts as p, j (j)}{#if p.kind === 'ltr'}<bdi dir="ltr" class="ltr"
@@ -49,13 +48,6 @@
 >
 
 <style>
-  /* phrase arabe : sur sa propre ligne, alignée à droite */
-  .ar-long {
-    display: block;
-    text-align: right;
-    /* dans une ligne flexible (titre arabe + français) : seule sur sa ligne */
-    flex-basis: 100%;
-  }
   /* fragment latin dans l'arabe : police de l'interface, taille du texte courant */
   .ltr {
     font-family: var(--font-ui);

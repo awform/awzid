@@ -29,8 +29,10 @@ export interface VerseMark {
   a?: number;
   /** dernier verset si le passage en couvre deux */
   a2?: number;
-  /** nom de la sourate (translittéré), posé par le serveur pour la référence affichée */
-  nom?: string;
+  /** référence affichée (celle du livre en fin de traduction si elle désigne ce verset, sinon « Sourate s:a ») */
+  ref?: string;
+  /** la traduction du livre s'arrête à `k` quand sa référence finale est reprise dans `ref` */
+  k?: number;
 }
 
 /** Champ posé par le serveur sur un élément `{ ar, … }` reconnu comme verset. */
@@ -153,6 +155,30 @@ export function locateVerse(loc: VerseLocator | null, ar: string, hint = ''): Ve
   return m;
 }
 
+/** référence écrite par le livre à la fin de la traduction : « … » (Al-Bayyina 98:5, extrait). */
+const REF_TAIL = /\s*\(([^()]*?(\d{1,3})\s*:\s*(\d{1,3})[^()]*)\)\s*[.;]?\s*$/;
+
+/**
+ * Référence affichée sous le verset et fin de la traduction (affichage seulement, sur deux lignes) : la
+ * référence écrite par le livre à la fin du texte français si elle désigne ce verset (la traduction s'arrête
+ * alors à `k`), sinon « Sourate s:a » calculée à partir du passage repéré (aucune si le passage est ambigu).
+ */
+export function splitVerseRef(
+  fr: string,
+  m: Pick<VerseMark, 's' | 'a' | 'a2'>,
+  suraName: string,
+): { ref: string; k?: number } {
+  const x = REF_TAIL.exec(fr ?? '');
+  if (x) {
+    const s = Number(x[2]);
+    const a = Number(x[3]);
+    if (!m.s || (s === m.s && a >= (m.a ?? 0) && a <= (m.a2 ?? m.a ?? 0)))
+      return { ref: x[1]!.trim(), k: x.index };
+  }
+  const ref = m.s && m.a ? `${suraName} ${m.s}:${m.a}${m.a2 ? `-${m.a2}` : ''}`.trim() : '';
+  return { ref };
+}
+
 /** blocs jamais annotés : exercices (corrigés), Coran et Muṣḥaf (déjà des versets), écriture, lettres */
 const SKIP = new Set(['exercices', 'coran', 'mushaf', 'ecriture', 'lettres', 'guide', 'scene']);
 
@@ -183,7 +209,13 @@ export function annotateVerses(
         .join(' ');
       const m = locateVerse(loc, v.ar, hint);
       if (m) {
-        if (m.s && suraName) m.nom = suraName(m.s);
+        const r = splitVerseRef(
+          typeof v.fr === 'string' ? v.fr : '',
+          m,
+          m.s && suraName ? suraName(m.s) : '',
+        );
+        if (r.ref) m.ref = r.ref;
+        if (r.k !== undefined) m.k = r.k;
         v[VERSE_FIELD] = m;
         n++;
       }

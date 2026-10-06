@@ -2,8 +2,8 @@
   import Ar from './Ar.svelte';
   import Bidi from './Bidi.svelte';
   import { arabicWords, LONG_WORDS } from './bidi/segments';
+  import type { VerseMark } from '@awform/content/versets';
   import VersetBloc from './quran/VersetBloc.svelte';
-  import { vmark } from './quran/verset-bloc';
 
   /**
    * Point « arabe + français » d'un bloc de leçon (fiqh, adab, je retiens, rubriques…). Règle du client :
@@ -26,7 +26,7 @@
     lettres?: ReadonlyArray<{ l: string }>;
   } = $props();
 
-  const m = $derived(vmark({ verset_tanzil: verset }));
+  const m = $derived((verset as VerseMark | undefined)?.j ? (verset as VerseMark) : null);
   const long = $derived(stack || arabicWords(ar) >= LONG_WORDS);
 </script>
 

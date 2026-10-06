@@ -123,6 +123,13 @@ h3 {
   line-height: 1.9;
   unicode-bidi: isolate;
 }
+/* phrase arabe (3 mots ou plus) : jamais sur la ligne du français (règle du client) ; seule sur sa ligne,
+   aussi dans une ligne flexible (titre arabe + français) */
+.ar-long {
+  display: block;
+  text-align: right;
+  flex-basis: 100%;
+}
 /* texte coranique : Amiri Quran uniquement */
 .quran-text {
   font-family: var(--font-quran);

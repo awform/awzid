@@ -34,7 +34,7 @@ describe.skipIf(!URL || !REAL_BOOKS)('versets dans les leçons — vrais livres 
     const v = points.filter((p) => p[VERSE_FIELD]);
     expect(v).toHaveLength(1);
     const m = v[0]![VERSE_FIELD]!;
-    expect(m).toMatchObject({ s: 98, a: 5, nom: 'Al-Bayyina' });
+    expect(m).toMatchObject({ s: 98, a: 5, ref: 'Al-Bayyina 98:5, extrait' });
     const exact = v[0]!.ar.slice(m.i, m.j);
     const tz = readFileSync(join(TEST_CONTENT_DIR, 'coran', 'tanzil-uthmani.tsv'), 'utf8')
       .split(/\r?\n/)

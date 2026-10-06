@@ -19,19 +19,19 @@ Branche `versets-lecons-wip` (worktree `~/awform-versets`, depuis `main` 73ec68d
   ENTIERS du texte Tanzil de la base (`quran_verse`), octet pour octet, sur un verset ou deux versets consécutifs
   d'une même sourate : au moins 3 mots, ou 2 mots avec la référence dans le point. Ambigu : la référence du livre
   tranche, sinon le verset entier, sinon AUCUNE référence (jamais inventée). Hadiths et phrases en écriture courante
-  ne correspondent jamais. Index bâti une fois par processus (≈ 50 ms), ≈ 1,3 ms par leçon. Nom de la sourate fourni
-  par l'API (`setVerseSuraNames`, paquet hifz) : rien de plus dans le JavaScript de l'élève.
+  ne correspondent jamais. Index bâti une fois par processus (≈ 50 ms), ≈ 1,3 ms par leçon. La référence affichée
+  (celle du livre en fin de traduction si elle désigne ce verset, sinon « Sourate s:a » avec le nom fourni par l'API,
+  `setVerseSuraNames`) est calculée par le serveur : rien de plus dans le JavaScript de l'élève.
 - **Composant unique du verset** (`lib/quran/VersetBloc.svelte`) : bloc à part, police du Muṣḥaf (`.quran-text`),
   sous-chaîne Tanzil exacte (seul l'affichage des tanwins suit le Muṣḥaf de Médine, comme partout), ornements ﴿ ﴾
-  hors du texte (aria-hidden), puis sur leurs propres lignes : référence (celle du livre en fin de traduction si elle
-  désigne ce verset, sinon « Sourate s:a »), traduction, « ▶ Écouter la récitation » (Complexe, comme A3) ; aucune
+  hors du texte (aria-hidden), puis sur leurs propres lignes : référence, traduction, « ▶ Écouter la récitation » (Complexe, comme A3) ; aucune
   voix de synthèse. `lib/ArFr.svelte` : point « arabe + français » (verset → bloc de verset ; phrase ou point de
   liste → l'arabe sur sa ligne, le français dessous ; terme de 1-2 mots → « terme — français »).
 - **Règle élargie du client** (toute l'application) : jamais une phrase arabe (3 mots ou plus), ni sa fin, sur la
   même ligne que le français. `bidi/segments.ts` : seuil 5 → 3 mots, même au milieu d'une phrase, entre parenthèses
   ou guillemets (les signes qui l'entourent passent avec elle sur sa ligne) ; plus d'exception dans les boutons,
   liens et titres. `Ar.svelte` : un texte arabe de 3 mots ou plus (ou coranique) est un bloc sur sa propre ligne
-  (aussi dans une ligne flexible).
+  (classe globale `.ar-long` d'app.css, aussi dans une ligne flexible).
 - Écrans corrigés : leçon (fiqh/adab, je retiens, lexique, lecture : vedette et phrases), sciences (objectifs,
   textes, points, noms, bulles, situations, invocations, lieux, retiens des rubriques et de la leçon, carnet,
   liste à cocher). Ailleurs (carnet, adhkār, corrigés des sciences), la phrase arabe passe déjà sur sa ligne par
@@ -48,12 +48,15 @@ Branche `versets-lecons-wip` (worktree `~/awform-versets`, depuis `main` 73ec68d
 - Le texte corrigé de ad1 l01 (dernier point de « L'intention ») arrive par la synchronisation du contenu : rien
   de modifié dans l'application.
 - Tests : unitaires content `versets.test.ts` (8 : verset reconnu, hadith non, phrase non, mots entiers, 2 mots avec
-  référence, ambiguïté, annotation), web `verset-bloc.test.ts` (4) et `segments.test.ts` (règle 3 mots), api
+  référence, ambiguïté, annotation) et `verset-ref.test.ts` (4), web `segments.test.ts` (règle 3 mots), api
   `versets-livres.test.ts` (vrais livres : ad1 l01 → 98:5, sous-chaîne exacte du verset Tanzil) ; e2e
   `versets.spec.ts` (ad1 l01 : bloc séparé, Tanzil exact, traduction dessous, récitation ; contrôle générique : aucune
   ligne rendue ne mêle une phrase arabe et du français sur 16 écrans — leçons adulte, enfant, ado, sciences re/ra,
   lecture, Coran, Au quotidien, adhkār — avec contrôle du détecteur). Captures 375 px clair/sombre avant/après :
-  `reports/versets/`. Budget : appareil d'un élève 354,8 Ko ≤ 355 Ko (budget inchangé), page de leçon 142,9 Ko.
+  `reports/versets/` (hors dépôt). Budgets inchangés, mesurés après fusion de main (A21b) : toutes pages 404,7 Ko
+  ≤ 405 Ko, appareil d'un élève 345,2 Ko ≤ 355 Ko, page de leçon 142,5 Ko.
+- Vérification complète après fusion de main (A21b) : unitaires **1 529 réussis, 1 ignoré, 0 échec** ; **e2e complets
+  310 réussis, 26 ignorés, 0 échec** (20,4 min).
 
 ## 05/10/2026 — Chantier A21b : « application vivante » partout (toutes les leçons, tous les niveaux)
 

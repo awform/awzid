@@ -5,7 +5,6 @@
   import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import { recitationQuery } from '$lib/lecons-audio';
-  import { splitVerseRef } from './verset-bloc';
 
   /**
    * Verset cité dans un point de leçon (fiqh, adab, « je retiens », rubriques des sciences…) : bloc à part,
@@ -17,7 +16,7 @@
   let { ar, m, fr = '' }: { ar: string; m: VerseMark; fr?: string } = $props();
 
   const texte = $derived(ar.slice(m.i, m.j));
-  const parts = $derived(splitVerseRef(fr, m, m.nom ?? ''));
+  const sens = $derived(fr.slice(0, m.k ?? fr.length).trim());
   const q = $derived(m.s && m.a ? recitationQuery(`${m.s}:${m.a}`) : null);
 </script>
 
@@ -32,8 +31,8 @@
     ><span class="orn" aria-hidden="true">﴾</span>
   </p>
   <figcaption>
-    {#if parts.ref}<p class="ref" data-testid="verset-ref"><Bidi text={parts.ref} /></p>{/if}
-    {#if parts.sens}<p class="fr" data-testid="verset-sens"><Bidi text={parts.sens} /></p>{/if}
+    {#if m.ref}<p class="ref" data-testid="verset-ref"><Bidi text={m.ref} /></p>{/if}
+    {#if sens}<p class="fr" data-testid="verset-sens"><Bidi text={sens} /></p>{/if}
     <!-- A3 : jamais de synthèse sur un verset ; renvoi à la récitation du Complexe -->
     <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu, suivi d'un paramètre -->
     {#if q}<a
