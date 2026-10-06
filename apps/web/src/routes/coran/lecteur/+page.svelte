@@ -11,6 +11,15 @@
   import { fmtNumber, localeInfo, t } from '$lib/i18n';
   import AudioPlayer from '$lib/quran/AudioPlayer.svelte';
   import MushafPage from '$lib/quran/MushafPage.svelte';
+  import type { ExactPage } from '$lib/quran/mushaf-exact';
+  import {
+    exactAvailable,
+    exactState,
+    loadBsmlFont,
+    loadExactPage,
+    loadPageFont,
+    type ExactState,
+  } from '$lib/quran/mushaf-exact-load';
   import QuranText from '$lib/quran/QuranText.svelte';
   import RiwayaBadge from '$lib/quran/RiwayaBadge.svelte';
   import Affichage from '$lib/quran/lecture/Affichage.svelte';
@@ -255,6 +264,32 @@
     return out;
   });
   const heardOrCur = $derived(heard ?? cur);
+  // A34 : mise en page EXACTE (Ḥafṣ, sans tajwid ni masquage) pour les pages publiées ; sinon page fluide
+  let exactInfo = $state<ExactState | null>(null);
+  let exactPages = $state<Record<number, ExactPage | null>>({});
+  const exactOn = $derived(!isRw && !tajwidOn && prefs.memo === 0);
+  const exactOf = (n: number) => (exactOn ? (exactPages[n] ?? null) : null);
+  const anyExact = $derived(vue === 'page' && shown.some((n) => !!exactOf(n)));
+  /** Lignes et polices des pages affichées disponibles en mise en page exacte (montrées une fois prêtes). */
+  async function ensureExact() {
+    const info = exactInfo;
+    if (!info || !exactOn || vue !== 'page') return;
+    await Promise.all(
+      shown.map(async (n) => {
+        if (n in exactPages || !exactAvailable(info, n)) return;
+        const [pg, f1, f2] = await Promise.all([
+          loadExactPage(n, info.version),
+          loadPageFont(n),
+          loadBsmlFont(),
+        ]);
+        exactPages = { ...exactPages, [n]: pg && f1 && f2 ? pg : null };
+      }),
+    );
+  }
+  $effect(() => {
+    void [exactOn, shown, vue, exactInfo];
+    untrack(() => void ensureExact());
+  });
 
   $effect(() => writePrefs({ ...prefs, page: p }));
   // dernière lecture (accueil : « Reprendre où j'en étais »), gardée sur l'appareil
@@ -282,6 +317,7 @@
   });
 
   async function init() {
+    void exactState().then((s) => (exactInfo = s));
     meta = await loadMeta();
     if (!meta || !pageStarts(meta)) {
       noPages = true;
@@ -750,7 +786,9 @@
           aria-label={chip}
           ><span class="c"
             ><span class="cs"><Bidi text={suraName(activeSura)} /></span><span class="cd"
-              ><Bidi text={chipDetail} /></span
+              >{#each chipDetail.split(' · ') as part, i (i)}<span class="nw"
+                  ><Bidi text={part} /></span
+                >{/each}</span
             ></span
           ><Icon name="chevron" size={16} /></button
         >
@@ -923,6 +961,7 @@
                 readOnly={prefs.readOnly}
                 {revealed}
                 compact={double}
+                exact={exactOf(n)}
                 onpick={pick}
               />
             {/each}
@@ -1081,8 +1120,17 @@
       <li>{t('ca.adab_3')}</li>
     </ul>
     <p class="small">
-      <Bidi text={isRw ? t('rw.mise_en_page') : t('mp.mise_en_page_fluide')} />
+      <Bidi
+        text={isRw
+          ? t('rw.mise_en_page')
+          : anyExact
+            ? t('mpx.mise_en_page_exacte')
+            : t('mp.mise_en_page_fluide')}
+      />
     </p>
+    {#if anyExact}<p class="small" data-testid="credit-exact">
+        <Bidi text={t('mpx.credit')} />
+      </p>{/if}
     {#if isRw}<p class="small" data-testid="mp-trad-hafs">{t('rw.traduction_hafs')}</p>{/if}
     {#if tajwidOn}<p class="small"><Bidi text={t('tj.credit')} /></p>{/if}
     <p class="small"><a href={resolve('/garanties')}>{t('pied.garanties')}</a></p>
@@ -1177,6 +1225,17 @@
     font-size: 0.74rem;
     font-weight: 600;
     color: var(--mp-ink2);
+    /* « v. 1 · p. 604 · juzʾ 30 » toujours en entier : passe sur deux lignes plutôt que d'être coupé */
+    white-space: normal;
+    overflow: visible;
+  }
+  /* blocs insécables (« v. 1 », « p. 604 », « juzʾ 30 ») : la ligne ne se coupe qu'entre eux */
+  .nw {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .nw + .nw::before {
+    content: '\00a0·\00a0';
   }
   .puce :global(svg) {
     flex: none;

@@ -107,3 +107,13 @@ modification. »
   sans bibliothèque.
 - **Partage d'un verset en image** : texte Tanzil (§ 3) et traduction QuranEnc (§ 4, source et version écrites
   sur l'image) ; police Amiri Quran déjà livrée (SIL OFL).
+
+## 8. Muṣḥaf de Médine « à l'identique » — lignes Quran Foundation et polices QCF 1405 (chantier A34)
+
+| Élément | Détail |
+|---|---|
+| Données | mise en page (page, ligne, ordre, glyphe `code_v1`) de la ressource `mushafs:<id>` « QCF V1 » de Quran Foundation, obtenue et tenue à jour **uniquement** par les « Content Sync APIs » (compte développeur du client, identifiants hors dépôt) |
+| Conditions | Developer Terms (mise à jour du 04/10/2026, lue le 06/10/2026) : https://api-docs.quran.foundation/legal/developer-terms/ — garde au-delà d'une semaine seulement via Content Sync, synchronisation au moins tous les 7 jours quand la connexion le permet, pas de base pré-emballée ni de paquet de construction, pas de revente ni de redistribution comme données (y compris par notre propre API), applications payantes permises, compte actif et crédit visible, suppression à la résiliation (détail : `SOURCES_MUSHAF.md` § 7) |
+| Copie | serveur seulement (`AWFORM_QF_MUSHAF_DIR` : `copie/`, `publie/`, `etat.json`) ; **jamais dans le dépôt** ; l'appareil ne garde que les pages consultées, revalidées au-delà de 7 jours |
+| Polices | `QCF_P001…604` + `QCF_BSML` du Complexe du Roi Fahd (édition 1405, `Data.zip` SHA-256 `7fe7a8719695c4dfb614cf7fb16af9d197729ae94bff347c30f804ac2fc7edb8`), conditions du Complexe (§ 1 de SOURCES_MUSHAF) : servies **telles quelles** (ni sous-ensemble ni conversion), gratuitement, depuis `AWFORM_QCF_DIR` (empreintes : `SHA256SUMS` écrit par `installer-polices.sh`) |
+| Crédit affiché | « Données de mise en page : Quran Foundation (Content Sync) — polices : Complexe du Roi Fahd » (sous la page ; à ajouter à « Garanties » lors de l'intégration) |

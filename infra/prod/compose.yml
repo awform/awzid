@@ -137,10 +137,21 @@ services:
         AWFORM_RELAIS_CERTS: /relais-certs,
         AWFORM_AUDIO_DIR: /audio,
         AWFORM_LECONS_AUDIO_DIR: /lecons-audio,
+        AWFORM_QF_MUSHAF_DIR: /qf-mushaf,
+        AWFORM_QCF_DIR: /qcf,
       }
     # certificats des SEULS relais d'école (copiés par certsrelais), jamais le stockage de Caddy ;
     # audio du Coran (lot 27) et audio des leçons (A3) en lecture seule
-    volumes: ['relais_certs:/relais-certs:ro', 'audio:/audio:ro', 'audio_lecons:/lecons-audio:ro']
+    # A34 : copie Content Sync de Quran Foundation (dossier PARENT de publie/, remplacé d'un bloc par l'outil :
+    # monter publie/ seul garderait l'ancienne version) et polices QCF du Complexe ; vides = page fluide
+    volumes:
+      [
+        'relais_certs:/relais-certs:ro',
+        'audio:/audio:ro',
+        'audio_lecons:/lecons-audio:ro',
+        '${AWFORM_QF_MUSHAF_SOURCE:-~/awform-data/qf-mushaf}:/qf-mushaf:ro',
+        '${AWFORM_QCF_SOURCE:-~/awform-data/qcf-1405}:/qcf:ro',
+      ]
     depends_on: { db: { condition: service_healthy } }
     logging: *logs
 

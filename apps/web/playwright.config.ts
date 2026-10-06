@@ -55,6 +55,15 @@ const AUDIO_DIR = join(tmpdir(), `awform-e2e-audio${ISOLE ? `-${SUFFIX}` : ''}`)
 const LECONS_SRC = process.env.AWFORM_LECONS_AUDIO_SOURCE ?? join(homedir(), 'lecons-audio');
 const LECONS_DIR = join(tmpdir(), `awform-e2e-lecons${ISOLE ? `-${SUFFIX}` : ''}`);
 if (existsSync(join(LECONS_SRC, 'index.js'))) process.env.E2E_LECONS_AUDIO = '1';
+// A34 : Muṣḥaf exact — SEULEMENT avec E2E_MUSHAF_EXACT=1 et la copie Content Sync du serveur (jamais dans le
+// dépôt) : les autres suites gardent la page fluide qu'elles vérifient
+const QF_DIR = process.env.E2E_QF_MUSHAF_DIR ?? join(homedir(), 'awform-data', 'qf-mushaf');
+const QCF_DIR = process.env.E2E_QCF_DIR ?? join(homedir(), 'awform-data', 'qcf-1405');
+const EXACT =
+  process.env.E2E_MUSHAF_EXACT === '1' &&
+  existsSync(join(QF_DIR, 'publie', 'manifeste.json')) &&
+  existsSync(join(QCF_DIR, 'QCF_BSML.ttf'));
+process.env.E2E_MUSHAF_EXACT_ON = EXACT ? '1' : '';
 // lot 14 : l'API de test tourne sous son compte PostgreSQL à droits minimaux (comme en production)
 process.env.E2E_DB_API_PW ??= randomBytes(24).toString('hex');
 process.env.E2E_DB_WORKER_PW ??= randomBytes(24).toString('hex');
@@ -130,6 +139,7 @@ export default defineConfig({
         // A3 : audio des leçons d'en1
         AWFORM_LECONS_AUDIO_DIR: LECONS_DIR,
         AWFORM_VAPID_PUBLIC: `B${'A'.repeat(86)}`,
+        ...(EXACT ? { AWFORM_QF_MUSHAF_DIR: QF_DIR, AWFORM_QCF_DIR: QCF_DIR } : {}),
       },
       reuseExistingServer: false,
       timeout: 120_000,

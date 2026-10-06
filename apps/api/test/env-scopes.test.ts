@@ -66,6 +66,9 @@ const FIXED = new Set([
   'AWFORM_FFMPEG',
   // audio des leçons (A3) : stockage fixé par compose.yml
   'AWFORM_LECONS_AUDIO_DIR',
+  // A34 : copie Content Sync de Quran Foundation et polices QCF du Complexe, fixées par compose.yml
+  'AWFORM_QF_MUSHAF_DIR',
+  'AWFORM_QCF_DIR',
 ]);
 const isSecret = (v: string) => /SECRET|KEY|PASSWORD|TOKEN|DATABASE_URL/.test(v);
 const pkg = (n: string) => join(ROOT, 'packages', n, 'src');
