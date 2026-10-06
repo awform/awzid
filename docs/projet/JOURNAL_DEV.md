@@ -8,6 +8,21 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Versets dans les leçons (v2, retours du chef de projet)
+
+- Puces : points empilés de « L'intention » (et de tout bloc fiqh/adab) sans puce, séparés par un filet discret ;
+  règle globale : un point de liste dont le premier contenu est un bloc arabe ou un verset n'a pas de puce.
+- « — » : `Ar` porte le séparateur (`sep`) et ne l'affiche que si l'arabe reste dans la ligne (1-2 mots) ; carnet,
+  adhkār, corrigés des sciences et `ArFr` l'utilisent (code partagé, aucune duplication).
+- Marges : la gouttière de 16 px était déjà là (captures précédentes = rubrique seule, rognée) ; preuve en capture
+  pleine largeur. Le contrôle a révélé un VRAI débordement des leçons de sciences (ra1 l02 : page de 728 px, ra1
+  l04 : 479 px à 375 px) : la grille de la leçon prenait la largeur d'un tableau ; corrigé (`minmax(0, 1fr)`).
+- Ornements : ﴿ (U+FD3F) en début de verset, donc à droite ; ﴾ (U+FD3E) à la fin, à gauche (vérifié par mesure).
+- e2e `versets.spec.ts` +1 (ad1 l01, en5 l16, ado2 l02, ra1 l04 à 375 px : aucune puce seule — les numéros des
+  exercices restent —, rien à moins de 12 px des bords, ornements bien placés). Unitaires verts ; e2e complets
+  vérification finale après fusion de main (Coran épuré, A34) : unitaires verts, **e2e complets 320 réussis,
+  40 ignorés, 0 échec** (20,4 min). Budgets : toutes pages 407,4 Ko ≤ 410, appareil d'un élève 347,7 Ko ≤ 355.
+
 ## 06/10/2026 — Chantier A34 : Muṣḥaf de Médine « à l'identique » — branchement dans le lecteur (mode partiel)
 
 Après la fusion de « Coran épuré » (main aea0b34), fusionnée dans `a34-mushaf-exact-wip` :

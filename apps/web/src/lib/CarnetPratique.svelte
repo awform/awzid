@@ -73,7 +73,7 @@
         {#each carnet.lignes as l, i (i)}
           <tr>
             <th scope="row"
-              >{#if l.ar}<Ar text={l.ar} /> —
+              >{#if l.ar}<Ar text={l.ar} sep />
               {/if}<Bidi text={l.fr} /></th
             >
             {#each Array.from({ length: carnet.jours }, (_, d) => d) as d (d)}
