@@ -209,7 +209,13 @@ test('A21b : aucune carte vivante vide ni recouverte par la barre du bas (télé
       const model = await card.getAttribute('data-model');
       // barre du bas et défilement stabilisés (machine chargée) : contrôle relevé jusqu'à stabilité
       await expect
-        .poll(() => card.evaluate(controle), { message: `${unit} ${model}` })
+        .poll(
+          async () => {
+            await card.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
+            return card.evaluate(controle);
+          },
+          { message: `${unit} ${model}` },
+        )
         .toEqual({
           vide: false,
           recouverte: false,
@@ -247,7 +253,13 @@ test('A21b : captures — chaque nouveau modèle, téléphone 375 px, clair et s
       await expect(loc).toHaveAttribute('data-state', 'pause');
       await loc.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
       await expect
-        .poll(() => loc.evaluate(controle), { message: `${unit} ${m}` })
+        .poll(
+          async () => {
+            await loc.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
+            return loc.evaluate(controle);
+          },
+          { message: `${unit} ${m}` },
+        )
         .toEqual({
           vide: false,
           recouverte: false,
