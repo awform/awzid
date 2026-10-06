@@ -90,13 +90,55 @@ Whisper n'est pas meilleur, ne donne pas d'instants par mot (les oublis ne peuve
 silence) et calcule **9 fois plus lentement** : écarté. Entre les deux têtes de NeMo, le RNN-T l'emporte sur
 l'ensemble des 609 écoutes (ajouts 62 % contre 28 %, voix aiguë sans fausse alerte) : **retenu**.
 
-### 3.4 Vitesse sur processeur
+### 3.4 Vitesse sur processeur (cible : moins de 2 × la durée de l'audio)
 
-(complété après les mesures de vitesse)
+| Audio | RNN-T, 4 fils | RNN-T, 2 fils | CTC, 4 fils | Whisper, 4 fils |
+|---|---|---|---|---|
+| 1 min | 2,6 s | 2,8 s | 4,0 s | 30,6 s |
+| 2 min | 7,9 s | 9,9 s | 9,6 s | — |
+| 5 min (maximum) | 34,2 s (0,11 ×) | 58,6 s (0,20 ×) | 42,3 s | — |
+| fenêtre de 2 / 4 / 8 s (direct) | 0,17 / 0,23 / 0,32 s | 0,30 / 0,42 / 0,56 s | 0,17 / 0,30 / 0,38 s | 3,7 / 4,0 / 5,0 s |
+
+**Service réel** (image `awzid/ecoute-ia`, conteneur en lecture seule, 3 fils) : Āyat al-Kursī (73,6 s, al-Akhḍar)
+vérifiée en **3,7 s** (0,05 ×), 50 mots ; 1,2 Go de mémoire par modèle chargé. Le coût croît plus vite que la
+durée (attention complète) mais reste très loin de la cible : 5 min → 34 à 59 s.
+
+**Défaut trouvé et corrigé** : NeMo `transcribe()` n'est pas sûr entre deux fils (3 envois simultanés → erreur
+500 « Cannot unfreeze partially ») : le service garde une **réserve d'un modèle par calcul simultané**
+(2 × 1,2 Go) ; test « jamais d'erreur interne sous la charge ».
 
 ## 4. Suivi en direct (« comme chez Tarteel ») — faisabilité sur processeur
 
-(complété ci-dessous après la simulation)
+**Mesure** (`direct_sim.py` / `direct.mjs`) : 12 séances réelles de 25 à 60 s (3 récitateurs), dont 3 avec un
+verset sauté, rejouées par morceaux d'une seconde dans la MÊME logique que le service (passages coupés aux pauses,
+mots sûrs par le RNN-T, mots partiels par la tête CTC du même modèle), comparées avec le code de l'appli.
+
+| Réglage des passages | Calcul par morceau d'1 s (médiane / 90 %) | Retard d'un mot « sûr » (médiane / 90 %) | Fausses alertes en direct | Versets sautés vus |
+|---|---|---|---|---|
+| pause ≥ 0,35 s, coupe forcée à 12 s | 0,26 / 0,46 s | 4,0 / 7,8 s | **23** (7 séances sur 12) | 1 / 3 |
+| pause ≥ 0,6 s, coupe forcée à 25 s (retenu) | 0,36 / 0,75 s | 5,2 / 12,2 s | **7** (4 séances sur 12) | 2 / 3 |
+
+Conclusion :
+- **La vitesse suffit** : chaque seconde de récitation est traitée en 0,3 à 0,4 s (médiane) ; le mot en cours
+  (mots partiels, renouvelés à chaque seconde) avance avec environ 1,5 s de retard ; un serveur à 6 cœurs suit
+  environ 6 élèves en direct à la fois (`ECOUTE_DIRECT_MAX`).
+- **La fiabilité ne suffit pas pour signaler des erreurs en direct** : un passage transcrit seul (sans le contexte
+  de toute la récitation, coupé dans un madd ou au milieu d'un long verset) est moins bien reconnu (« صُرْفٍ مُطَاعٍ »
+  pour « من سلطان ») ; 7 fausses alertes en 12 séances, contre 0 sur 609 écoutes d'enregistrements entiers.
+- **Livré** (essai, `SIGNALER_EN_DIRECT = false`) : le texte avance tout seul, le mot en cours s'éclaire ; en
+  mode Mémoriser le texte est CACHÉ et les mots se dévoilent quand ils sont reconnus (un mot oublié reste
+  simplement caché : aucun signal d'erreur faux possible) ; à la fin, le **bilan** (écarts surlignés, « 2 mots à
+  revoir », bilan de séance du carnet) vient de la **vérification de tout l'enregistrement**, comme en mode
+  « enregistrer puis vérifier ».
+
+**Ce qu'il faut pour signaler des erreurs en direct** (dans l'ordre) :
+1. Transcription **en flux continu** avec contexte (FastConformer « cache-aware streaming » ou fenêtres
+   glissantes chevauchantes de 20-30 s dont on ne garde que le milieu stable) au lieu de passages isolés ;
+2. **WebSocket** (un seul canal, moins de 300 ms de réseau) au lieu d'un envoi HTTP par seconde ;
+3. Remesurer avec `direct_sim.py` / `direct.mjs` : objectif **0 fausse alerte** sur ≥ 50 séances justes, puis
+   passer `SIGNALER_EN_DIRECT` à vrai (une ligne) ;
+4. Matériel : un cœur par élève suivi en direct environ ; au-delà de quelques dizaines d'élèves simultanés, un
+   serveur de calcul dédié (ou une carte graphique).
 
 ## 5. Architecture
 
