@@ -22,14 +22,20 @@ let k = 0;
 for (const h of JSON.parse(readFileSync(`${W}/hyp-${modele}.json`, 'utf8'))) {
   if (h.cond !== cond) continue;
   const c = cas.get(h.id);
-  if (!c.verite.length || (type && c.type !== type)) continue;
+  const fausses = type === 'FAUSSES';
+  if (!fausses && (!c.verite.length || (type && c.type !== type))) continue;
   const att = motsAttendus(
     c.versets.map(([s, a]) => ({ s, a, text: T.get(`${s}:${a}`) })),
     T.get('1:1'),
   );
   const r = comparer(att, h.mots, { voix: h.voix });
-  const v = c.verite[0];
-  if (r.ecarts.some((e) => e.fin >= v.i - 1 && e.i <= v.fin + 1)) continue;
+  const v = c.verite[0] ?? { i: -9, fin: -9 };
+  const loin = r.ecarts.filter((e) => !(e.fin >= v.i - 1 && e.i <= v.fin + 1));
+  if (fausses) {
+    if (!loin.length) continue;
+    Object.assign(v, { i: loin[0].i, fin: loin[0].fin });
+    console.log('FAUSSE ALERTE', JSON.stringify(loin));
+  } else if (r.ecarts.some((e) => e.fin >= v.i - 1 && e.i <= v.fin + 1)) continue;
   if (++k > Number(n)) break;
   const lo = Math.max(0, v.i - 3);
   const hi = Math.min(att.length, v.fin + 4);

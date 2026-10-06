@@ -2513,5 +2513,6 @@
   "ec.carnet_titre": "To review (listening to my recitation)",
   "ec.carnet_ligne": "{sourate}, verses {de} to {a}: {n, plural, one {# word} other {# words}} to review",
   "ec.carnet_ouvrir": "Review this passage",
-  "ec.carnet_aide": "Kept only on this device. Only your teacher judges your recitation."
+  "ec.carnet_aide": "Kept only on this device. Only your teacher judges your recitation.",
+  "ec.debut_non_entendu": "The very beginning was not heard: start recording before you begin reciting."
 }

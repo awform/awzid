@@ -2513,5 +2513,6 @@
   "ec.carnet_titre": "Para repasar (escucha de mi recitación)",
   "ec.carnet_ligne": "{sourate}, aleyas {de} a {a}: {n, plural, one {# palabra} other {# palabras}} para repasar",
   "ec.carnet_ouvrir": "Repasar este pasaje",
-  "ec.carnet_aide": "Guardado solo en este dispositivo. Solo tu maestro juzga tu recitación."
+  "ec.carnet_aide": "Guardado solo en este dispositivo. Solo tu maestro juzga tu recitación.",
+  "ec.debut_non_entendu": "No se ha oído el principio: empieza a grabar antes de comenzar a recitar."
 }

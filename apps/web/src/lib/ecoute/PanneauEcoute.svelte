@@ -218,6 +218,12 @@
   const mmss = (n: number) => `${Math.floor(n / 60)}:${String(n % 60).padStart(2, '0')}`;
   const titre = $derived(t(enfant ? 'ec.titre_enfant' : 'ec.titre'));
   const fini_ = $derived(resultat?.statut === 'resultat');
+  /** le premier mot attendu (hors basmala, lettres isolées) n'a pas été entendu : dit sans le compter en erreur */
+  const debutNonEntendu = $derived(
+    !!resultat &&
+      resultat.statut === 'resultat' &&
+      resultat.debut > (att.find((m) => !m.facultatif && !m.lettres)?.i ?? 0),
+  );
   const nonRecite = $derived(
     resultat && resultat.statut === 'resultat' && resultat.finRecitee < att.length - 1
       ? att[resultat.finRecitee + 1]?.a
@@ -303,6 +309,9 @@
           {/if}
           {#if fini_ && resultat.doutes > 0 && !enfant}
             <p class="small muted"><Bidi text={t('ec.doutes', { n: resultat.doutes })} /></p>
+          {/if}
+          {#if debutNonEntendu}
+            <p class="small muted"><Bidi text={t('ec.debut_non_entendu')} /></p>
           {/if}
           {#if nonRecite !== undefined}
             <p class="small muted"><Bidi text={t('ec.suite_non_entendue', { n: nonRecite })} /></p>

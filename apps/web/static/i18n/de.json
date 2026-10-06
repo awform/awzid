@@ -2513,5 +2513,6 @@
   "ec.carnet_titre": "Zum Wiederholen (Anhören meiner Rezitation)",
   "ec.carnet_ligne": "{sourate}, Verse {de} bis {a}: {n, plural, one {# Wort} other {# Wörter}} zum Wiederholen",
   "ec.carnet_ouvrir": "Diesen Abschnitt wiederholen",
-  "ec.carnet_aide": "Nur auf diesem Gerät gespeichert. Nur dein Lehrer beurteilt deine Rezitation."
+  "ec.carnet_aide": "Nur auf diesem Gerät gespeichert. Nur dein Lehrer beurteilt deine Rezitation.",
+  "ec.debut_non_entendu": "Der Anfang wurde nicht gehört: Starte die Aufnahme, bevor du mit dem Rezitieren beginnst."
 }

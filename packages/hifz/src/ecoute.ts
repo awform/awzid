@@ -15,25 +15,25 @@
 // ------------------------------------------------------------------ normalisation (comparaison seulement)
 
 /** voyelles, sukūn, chadda, signes coraniques (petites lettres, arrêts), tatweel — PAS l'alif suscrit (U+0670) */
-const SIGNES = /[ؐ-ًؚ-ٟۖ-ۭـ]/g;
-const LETTRE = /[ء-ي]/;
+const SIGNES = /[\u0610-\u061A\u064B-\u065F\u06D6-\u06ED\u0640]/g;
+const LETTRE = /[\u0621-\u064A]/;
 
 /** Clé de comparaison d'un mot (graphie ʿuthmānī ou courante) : lettres de base, hamza et alifs unifiés. */
 export function cleMot(mot: string): string {
   return mot
     .replace(SIGNES, '')
-    .replace(/ٰ/g, 'ا') // alif suscrit : ٱلرَّحْمَٰنِ -> الرحمان
-    .replace(/[ٱآأإ]/g, 'ا')
-    .replace(/ؤ/g, 'و')
-    .replace(/ئ/g, 'ي')
-    .replace(/ى/g, 'ي')
-    .replace(/ة/g, 'ه')
-    .replace(/[^ء-ي]/g, '');
+    .replace(/\u0670/g, 'ا') // alif suscrit : ٱلرَّحْمَٰنِ -> الرحمان
+    .replace(/[\u0671\u0622\u0623\u0625]/g, 'ا')
+    .replace(/\u0624/g, 'و')
+    .replace(/\u0626/g, 'ي')
+    .replace(/\u0649/g, 'ي')
+    .replace(/\u0629/g, 'ه')
+    .replace(/[^\u0621-\u064A]/g, '');
 }
 
-/** Squelette : la clé sans alif ni hamza (écarts d'orthographe ʿuthmānī / courante, ex. صلوة / صلاة). */
+/** Squelette : la clé sans alif ni hamza (écarts d'orthographe ʿuthmānī / courante, ex. \u0635\u0644\u0648\u0629 / صلاة). */
 export function squelette(cle: string): string {
-  return cle.replace(/[اء]/g, '');
+  return cle.replace(/[\u0627\u0621]/g, '');
 }
 
 function leven(a: string, b: string): number {
@@ -153,7 +153,7 @@ export const SEUILS = {
   /** au-dessous : mot différent (entre les deux : doute, rien n'est signalé) */
   different: 0.45,
   /** confiance minimale de la machine pour signaler un mot remplacé ou ajouté */
-  confMot: 0.8,
+  confMot: 0.75,
   /** confiance minimale d'un écart pour être montré */
   confEcart: 0.6,
   /**
@@ -326,12 +326,17 @@ export function comparer(
   const ops = aligner(att, ent);
   const etat: EtatMot[] = att.map(() => 'non_recite');
   const okEnt = new Map<number, number>(); // mot attendu -> mot entendu reconnu
+  const okSim = new Map<number, number>(); // mot attendu -> ressemblance avec le mot entendu
   for (const o of ops) {
-    if (o.t === 'eg' && o.sim >= SEUILS.meme) okEnt.set(o.i, o.j);
-    if (o.t === 'fus' && o.sim >= SEUILS.meme) okEnt.set(o.i, o.j);
+    if ((o.t === 'eg' || o.t === 'fus') && o.sim >= SEUILS.meme) {
+      okEnt.set(o.i, o.j);
+      okSim.set(o.i, o.sim);
+    }
     if (o.t === 'sep' && o.sim >= SEUILS.meme) {
       okEnt.set(o.i, o.j);
       okEnt.set(o.i + 1, o.j);
+      okSim.set(o.i, o.sim);
+      okSim.set(o.i + 1, o.sim);
     }
   }
   const reconnus = [...okEnt.keys()].sort((x, y) => x - y);
@@ -360,13 +365,13 @@ export function comparer(
 
   const voix = opts.voix;
   const confDe = (j: number | undefined) => (j === undefined ? 0 : (ent[j]?.conf ?? 0));
-  /** mot entendu reconnu le plus proche avant / après le mot attendu i */
+  /** mot attendu reconnu le plus proche avant / apr\u00E8s le mot attendu i */
   const voisinAvant = (i: number) => {
-    for (let x = i - 1; x >= debut; x--) if (okEnt.has(x)) return okEnt.get(x);
+    for (let x = i - 1; x >= debut; x--) if (okEnt.has(x)) return x;
     return undefined;
   };
   const voisinApres = (i: number) => {
-    for (let x = i + 1; x <= finR; x++) if (okEnt.has(x)) return okEnt.get(x);
+    for (let x = i + 1; x <= finR; x++) if (okEnt.has(x)) return x;
     return undefined;
   };
 
@@ -437,9 +442,19 @@ export function comparer(
   for (const c of groupes) {
     let conf = c.conf;
     if (c.type === 'oublie') {
-      const av = voisinAvant(c.i);
-      const ap = voisinApres(c.fin);
+      const iav = voisinAvant(c.i);
+      const iap = voisinApres(c.fin);
+      const av = iav === undefined ? undefined : okEnt.get(iav);
+      const ap = iap === undefined ? undefined : okEnt.get(iap);
       conf = Math.min(confDe(av), confDe(ap));
+      // voisin reconnu imparfaitement : la machine a pu « avaler » le mot dans son voisin (نزل بساحتهم -> نزاحتهم)
+      const simVoisins = Math.min(
+        iav === undefined ? 1 : (okSim.get(iav) ?? 1),
+        iap === undefined ? 1 : (okSim.get(iap) ?? 1),
+      );
+      if (simVoisins < 0.9) conf *= 0.5;
+      // mot COURT oublié seul (هو، فهم) : souvent avalé par la machine — il faut des voisins très sûrs
+      if (c.fin === c.i && att[c.i]!.cle.length <= 3 && conf < 0.92) conf *= 0.5;
       const e0 = av !== undefined ? ent[av] : undefined;
       const e1 = ap !== undefined ? ent[ap] : undefined;
       if (voix && e0?.t1 !== undefined && e1?.t0 !== undefined) {

@@ -50,5 +50,6 @@
   "ec.carnet_titre": "À revoir (écoute de ma récitation)",
   "ec.carnet_ligne": "{sourate}, versets {de} à {a} : {n, plural, one {# mot} other {# mots}} à revoir",
   "ec.carnet_ouvrir": "Revoir ce passage",
-  "ec.carnet_aide": "Gardé seulement sur cet appareil. Seul ton maître juge ta récitation."
+  "ec.carnet_aide": "Gardé seulement sur cet appareil. Seul ton maître juge ta récitation.",
+  "ec.debut_non_entendu": "Le tout début n'a pas été entendu : lance l'enregistrement avant de commencer à réciter."
 }
