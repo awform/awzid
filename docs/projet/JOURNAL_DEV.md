@@ -8,6 +8,53 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Versets dans les leçons (signalement du client : ad1 l01, « L'intention »)
+
+Branche `versets-lecons-wip` (worktree `~/awform-versets`, depuis `main` 73ec68d).
+
+- **Repérage des versets par les DONNÉES** (`packages/content/src/versets.ts`, `packages/db/src/versets.ts`) : à la
+  lecture d'une leçon (`getUnitForStudent`, donc aussi les paquets hors ligne), chaque élément `{ ar, … }` des blocs
+  d'affichage (fiqh/adab, je retiens, lecture, rubriques des sciences, invocations… ; jamais exercices, Coran,
+  Muṣḥaf, écriture) reçoit `verset_tanzil` si son texte arabe, ponctuation des bords écartée, est une suite de mots
+  ENTIERS du texte Tanzil de la base (`quran_verse`), octet pour octet, sur un verset ou deux versets consécutifs
+  d'une même sourate : au moins 3 mots, ou 2 mots avec la référence dans le point. Ambigu : la référence du livre
+  tranche, sinon le verset entier, sinon AUCUNE référence (jamais inventée). Hadiths et phrases en écriture courante
+  ne correspondent jamais. Index bâti une fois par processus (≈ 50 ms), ≈ 1,3 ms par leçon. Nom de la sourate fourni
+  par l'API (`setVerseSuraNames`, paquet hifz) : rien de plus dans le JavaScript de l'élève.
+- **Composant unique du verset** (`lib/quran/VersetBloc.svelte`) : bloc à part, police du Muṣḥaf (`.quran-text`),
+  sous-chaîne Tanzil exacte (seul l'affichage des tanwins suit le Muṣḥaf de Médine, comme partout), ornements ﴿ ﴾
+  hors du texte (aria-hidden), puis sur leurs propres lignes : référence (celle du livre en fin de traduction si elle
+  désigne ce verset, sinon « Sourate s:a »), traduction, « ▶ Écouter la récitation » (Complexe, comme A3) ; aucune
+  voix de synthèse. `lib/ArFr.svelte` : point « arabe + français » (verset → bloc de verset ; phrase ou point de
+  liste → l'arabe sur sa ligne, le français dessous ; terme de 1-2 mots → « terme — français »).
+- **Règle élargie du client** (toute l'application) : jamais une phrase arabe (3 mots ou plus), ni sa fin, sur la
+  même ligne que le français. `bidi/segments.ts` : seuil 5 → 3 mots, même au milieu d'une phrase, entre parenthèses
+  ou guillemets (les signes qui l'entourent passent avec elle sur sa ligne) ; plus d'exception dans les boutons,
+  liens et titres. `Ar.svelte` : un texte arabe de 3 mots ou plus (ou coranique) est un bloc sur sa propre ligne
+  (aussi dans une ligne flexible).
+- Écrans corrigés : leçon (fiqh/adab, je retiens, lexique, lecture : vedette et phrases), sciences (objectifs,
+  textes, points, noms, bulles, situations, invocations, lieux, retiens des rubriques et de la leçon, carnet,
+  liste à cocher). Ailleurs (carnet, adhkār, corrigés des sciences), la phrase arabe passe déjà sur sa ligne par
+  `Ar` ; le « — » y commence alors la ligne du français (gardé pour ne pas dépasser le budget de poids).
+- **Revue des livres** (vrais livres, 897 fichiers) : 462 points de leçon où un verset était affiché en ligne :
+  fiqh/adab 353 (ad1 16, ad2 27, ad3 20, ad4 28, ad5 30, ad6 29, ad7 37, ad8 16, ad9 6, ad10 6, ado1 27, ado2 19,
+  ado3 33, ado4 32, en1 5, en2 6, en3 3, en4 5, en5 8), je retiens 52, lecture 13 (ad1 l19 et l23, ad9, en1),
+  rubriques des sciences 44 (re1 2, re2 3, re3 5, re4 7, re5 14, ra1 5, ra2 2, ra3 4, ra4 2) et leurs retiens.
+  11 passages sans référence certaine (basmala hors 1:1, passages présents dans plusieurs sourates sans référence
+  dans le point, ex. en5 l16 27:19 / 46:15) : bloc de verset sans référence ni lien de récitation.
+- Cas limites : listes de mots séparées par la virgule arabe (3 mots ou plus) passent aussi sur leur ligne ;
+  formules de 2 mots (بِسْمِ اللَّهِ) restent dans la ligne ; un segment de 3 mots dont les mots ont une seule
+  lettre (lettres isolées) n'est pas une phrase ; leçons vivantes non traitées ici (autre chantier).
+- Le texte corrigé de ad1 l01 (dernier point de « L'intention ») arrive par la synchronisation du contenu : rien
+  de modifié dans l'application.
+- Tests : unitaires content `versets.test.ts` (8 : verset reconnu, hadith non, phrase non, mots entiers, 2 mots avec
+  référence, ambiguïté, annotation), web `verset-bloc.test.ts` (4) et `segments.test.ts` (règle 3 mots), api
+  `versets-livres.test.ts` (vrais livres : ad1 l01 → 98:5, sous-chaîne exacte du verset Tanzil) ; e2e
+  `versets.spec.ts` (ad1 l01 : bloc séparé, Tanzil exact, traduction dessous, récitation ; contrôle générique : aucune
+  ligne rendue ne mêle une phrase arabe et du français sur 16 écrans — leçons adulte, enfant, ado, sciences re/ra,
+  lecture, Coran, Au quotidien, adhkār — avec contrôle du détecteur). Captures 375 px clair/sombre avant/après :
+  `reports/versets/`. Budget : appareil d'un élève 354,8 Ko ≤ 355 Ko (budget inchangé), page de leçon 142,9 Ko.
+
 ## 05/10/2026 — Chantier A27 (suite) : décisions D-A27 appliquées
 
 - Positionnement **adaptatif de 4 exercices par niveau** (examens des livres ; ceux du livre de l'élève d'abord, puis

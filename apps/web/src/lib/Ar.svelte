@@ -1,6 +1,6 @@
 <script lang="ts">
   import { letterColorIndex, splitMarked, tanwinDisplay } from '@awform/content/text';
-  import { bidiSegments } from './bidi/segments';
+  import { arabicWords, bidiSegments, LONG_WORDS } from './bidi/segments';
 
   /**
    * Texte arabe tel qu'écrit dans le livre. Le balisage `[..]` colore la lettre étudiée selon sa position
@@ -8,18 +8,23 @@
    * Muṣḥaf de Médine (tanwinDisplay, comme awform.js) ; le texte lui-même n'est jamais modifié.
    * Un fragment latin dans le texte arabe (« نَعْبُدُ : نَـ = nous ») est isolé de gauche à droite
    * (bidi/segments.ts) ; jamais pour le texte coranique, rendu tel quel.
+   * Règle du client : une phrase arabe (3 mots ou plus) n'est jamais sur la même ligne que le français ; elle
+   * passe sur sa propre ligne (`block`, ou automatiquement à partir de 3 mots).
    */
   let {
     text,
     lettres = [],
     quran = false,
     tag = 'span',
+    block = false,
   }: {
     text: string;
     lettres?: ReadonlyArray<{ l: string }>;
     quran?: boolean;
     tag?: 'span' | 'p' | 'h1' | 'h2' | 'div';
+    block?: boolean;
   } = $props();
+  const long = $derived(block || quran || arabicWords(String(text ?? '')) >= LONG_WORDS);
 
   // tanwins du Muṣḥaf de Médine : AFFICHAGE seulement (le texte reçu, stocké et comparé reste celui du livre / Tanzil)
   const segments = $derived(
@@ -30,7 +35,12 @@
   );
 </script>
 
-<svelte:element this={tag} class={quran ? 'quran-text' : 'ar'} lang="ar" dir="rtl"
+<svelte:element
+  this={tag}
+  class={quran ? 'quran-text' : 'ar'}
+  class:ar-long={long}
+  lang="ar"
+  dir="rtl"
   >{#each segments as s, i (i)}{#if s.marked}<span class="c{letterColorIndex(s.text, lettres)}"
         >{s.text}</span
       >{:else if s.parts}{#each s.parts as p, j (j)}{#if p.kind === 'ltr'}<bdi dir="ltr" class="ltr"
@@ -39,6 +49,13 @@
 >
 
 <style>
+  /* phrase arabe : sur sa propre ligne, alignée à droite */
+  .ar-long {
+    display: block;
+    text-align: right;
+    /* dans une ligne flexible (titre arabe + français) : seule sur sa ligne */
+    flex-basis: 100%;
+  }
   /* fragment latin dans l'arabe : police de l'interface, taille du texte courant */
   .ltr {
     font-family: var(--font-ui);

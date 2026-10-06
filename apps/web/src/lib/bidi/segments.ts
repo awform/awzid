@@ -13,8 +13,9 @@
  *   ponctuation qui entourent un terme arabe restent dans le français, donc du bon côté ;
  * - « … » collé à la fin d'un segment arabe lui appartient (citation interrompue) ;
  * - un segment arabe d'au moins LONG_WORDS mots (de deux lettres ou plus) est « long » : il passe sur sa
- *   propre ligne, aligné à droite, la suite (traduction) en dessous — sauf s'il est entre parenthèses ou
- *   entre guillemets (liste de mots, citation dans la phrase), où il reste dans la ligne.
+ *   propre ligne, aligné à droite, la suite (traduction) en dessous — règle du client : jamais une phrase
+ *   arabe (ni sa fin) sur la même ligne que le français, même au milieu d'une phrase ; entre parenthèses ou
+ *   entre guillemets, les signes qui l'entourent passent avec lui sur sa ligne (jamais une parenthèse seule).
  */
 export type BidiBase = 'fr' | 'ar';
 export type BidiKind = 'plain' | 'ar' | 'ar-long' | 'ltr';
@@ -23,8 +24,8 @@ export interface BidiSegment {
   kind: BidiKind;
 }
 
-/** Nombre de mots arabes à partir duquel une phrase arabe passe sur sa propre ligne. */
-export const LONG_WORDS = 5;
+/** Nombre de mots arabes à partir duquel une phrase arabe passe sur sa propre ligne (1 ou 2 mots : dans la ligne). */
+export const LONG_WORDS = 3;
 
 const AR_ANY = /\p{scx=Arabic}/u; // lettres, signes (ḥarakāt), ponctuation et chiffres arabes, ﷺ
 const AR_LETTER = /(?=\p{L})\p{sc=Arabic}/u;
@@ -56,7 +57,8 @@ function balancedEnd(text: string, start: number, end: number): number {
   return stack.length ? stack[0]! : end;
 }
 
-function arabicWords(s: string): number {
+/** Mots arabes d'au moins deux lettres. */
+export function arabicWords(s: string): number {
   let n = 0;
   for (const w of s.split(/\s+/)) {
     let letters = 0;
@@ -107,16 +109,20 @@ export function bidiSegments(text: string, base: BidiBase = 'fr'): BidiSegment[]
     if (!rtl && text[end] === '…') end++;
     // signes collés devant la première lettre (tatwīl de « ـنَا », chiffres de « 2nd ») : même segment
     while (i > plainFrom && isCore(text[i - 1]!)) i--;
+    let seg = text.slice(i, end);
+    const long = !rtl && arabicWords(seg) >= LONG_WORDS;
+    if (long) {
+      // phrase entre parenthèses ou guillemets : les signes qui l'entourent passent avec elle sur sa ligne
+      const before = /[([«“"]\s*…?\s*$/.exec(text.slice(Math.max(plainFrom, i - 4), i));
+      const after = /^\s*…?\s*[)\]»”"]/.exec(text.slice(end, end + 4));
+      if (before && after) {
+        i -= before[0].length;
+        end += after[0].length;
+        seg = text.slice(i, end);
+      }
+    }
     if (i > plainFrom) out.push({ text: text.slice(plainFrom, i), kind: 'plain' });
-    const seg = text.slice(i, end);
-    // phrase longue sur sa propre ligne, sauf entre parenthèses ou guillemets (liste, citation dans la phrase)
-    const enclosed =
-      /[([«]\s*…?\s*$/.test(text.slice(Math.max(0, i - 4), i)) &&
-      /^\s*…?\s*[)\]»]/.test(text.slice(end, end + 4));
-    out.push({
-      text: seg,
-      kind: rtl ? 'ltr' : !enclosed && arabicWords(seg) >= LONG_WORDS ? 'ar-long' : 'ar',
-    });
+    out.push({ text: seg, kind: rtl ? 'ltr' : long ? 'ar-long' : 'ar' });
     plainFrom = i = end;
   }
   if (plainFrom < text.length) out.push({ text: text.slice(plainFrom), kind: 'plain' });
