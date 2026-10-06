@@ -101,6 +101,37 @@ export function playQueue(
   };
 }
 
+/**
+ * Récitateur qui suit le muṣḥaf affiché (corrections du 06/10/2026). La numérotation des versets dépend de la
+ * riwāya (compte koufi de Ḥafṣ et Shuʿba, madanī de Warsh et Qālūn, baṣrī d'ad-Dūrī et as-Sūsī, makkī
+ * d'al-Bazzī) : le fichier « verset n » d'un récitateur n'est le verset n du texte affiché QUE si les deux sont de
+ * la même riwāya. Renvoie le premier récitateur préféré de cette riwāya, sinon le premier de la liste, sinon null.
+ */
+export function reciterFor(
+  list: ReadonlyArray<{ id: string; riwaya: string }>,
+  riwaya: string,
+  prefer: ReadonlyArray<string | null | undefined>,
+): string | null {
+  const ok = list.filter((r) => r.riwaya === riwaya);
+  return prefer.find((id) => !!id && ok.some((r) => r.id === id)) ?? ok[0]?.id ?? null;
+}
+
+/**
+ * Fichiers à jouer : la file des versets choisis SEULEMENT si la récitation est découpée comme le texte affiché
+ * (`aligned`, cf. `highlightOn`) ; sinon jamais un « verset n » pris au hasard d'une autre numérotation : la
+ * sourate entière (fichier unique, ou tous les fichiers dans l'ordre, p. ex. al-Mulk d'ad-Dūrī 31/30).
+ */
+export function listenFiles(
+  pack: { mode?: string; files: ReadonlyArray<{ aya: number }> } | null,
+  aligned: boolean,
+  queue: number[],
+): number[] {
+  if (!pack) return queue;
+  if (pack.mode === 'sourate') return [0];
+  if (!aligned) return pack.files.map((f) => f.aya).filter((a) => a >= 1);
+  return queue;
+}
+
 /** Débuts des 60 ḥizb (Ḥafṣ) : un ḥizb = quatre quarts (métadonnées Tanzil). */
 export function hizbStart(
   quarters: readonly (readonly [number, number])[] | undefined,

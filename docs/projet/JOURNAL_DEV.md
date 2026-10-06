@@ -77,6 +77,88 @@ isolés (ports 3590/4590).
 
 Décisions à prendre (D-F5) : voir DECISIONS_EN_ATTENTE.
 
+## 06/10/2026 — Chantier A2 : récitateurs EN LIGNE (Quran Foundation)
+
+Branche `a2-en-ligne-wip` (worktree `~/awform-a2`, base de tests unitaires propre `awform_a2_test`), après la fusion
+des corrections du lecteur (main a5b13ca).
+- **Juridique** (`SOURCES_MUSHAF.md` § 8, `LICENCES.md` § 9 ; Developer Terms du 04/10/2026 lues le 06/10) : lecture
+  en continu PERMISE dans l'application payante ; réponses gardées ≤ 1 semaine hors Content Sync (nous : 24 h en
+  mémoire) ; « audio URLs are distinct from the underlying recordings » → AUCUNE copie des enregistrements (ni hors
+  ligne, ni relais) ; pas d'API ouverte (comptes connectés seulement) ; crédit QF et compte actif.
+- **Serveur** (`apps/api/src/coran-qf.ts`) : jeton OAuth2 client_credentials côté serveur, `/recitations/{id}/by_chapter/{s}`
+  paginé, versets 1…n exigés, adresses contrôlées (hôtes QF = `media-src` de la CSP), cache mémoire 24 h ; sans
+  identifiants : inactif sans erreur. Base : colonne `source` (migration 0042), catalogue `qf-catalogue.ts` (11
+  récitateurs, ids prélancement 6/7, production 1-10 et 12) synchronisé après les migrations ; paquets → 404
+  `en_ligne_seulement`, relais refusé ; préférence, listes parent/enseignant, mémoriser, retrait : comme le Complexe.
+- **Secret** : `~/.config/awform/qf.env` (le même que la synchronisation A34, 600) → `infra/prod/qf-env.sh` l'ajoute au
+  seul `api.env` au déploiement ; contrôle : `infra/outils/qf-audio/qf-recitateurs.mjs` (EXPLOITATION § 11).
+- **Interface** : Mes récitateurs (étiquette « En ligne » + icône réseau, crédit, « Disponible avec Internet » hors
+  connexion), panneau Réglages (étiquette, aide, option désactivée hors connexion, pas de « garder cette sourate »),
+  « Nos garanties » (5 langues) ; textes du Coran dans `fr-coran.json`.
+- **Tests** : unitaires 1 642 réussis (1 ignoré) dont `a2-qf.test.ts` (client QF simulé, qf-env.sh) et `a2.test.ts`
+  (API) ; e2e `a2.spec.ts` (10 : liste, hors connexion, garanties, API réservée, **verset lu = verset choisi** en
+  répétition et « écouter d'ici », Réglages) avec une API QF SIMULÉE (bips d'essai) ; e2e complets (sous flock) : 368 réussis, 46 ignorés, 0 échec.
+- **Budget** : 405,2 Ko ≤ 410 ; appareil d'un élève 352,0 Ko ≤ 355.
+- **À faire** : ʿAbd Allāh al-Maṭrūd (×2) seulement en « chapter reciters » (fichier par sourate + minutage) → relever
+  les ids avec l'outil et ajouter la lecture « sourate minutée » ; aṭ-Ṭablāwī (id 11) disponible, non activé.
+
+## 06/10/2026 — Corrections du lecteur Coran (signalements du client sur la démo)
+
+Branche `coran-corrections-wip` (worktree `~/awform-corfix`, depuis `main` fd3cad7), e2e isolés (ports 3472/4472).
+
+1. **« Je touche un verset pour le faire répéter, il lit le verset au-dessus » — cause** : le lecteur demandait le
+   fichier « verset n » du récitateur choisi QUEL QUE SOIT le muṣḥaf affiché. Or chaque riwāya a sa numérotation
+   (compte koufi de Ḥafṣ et Shuʿba, madanī de Warsh et Qālūn, baṣrī d'ad-Dūrī et as-Sūsī, makkī d'al-Bazzī) :
+   « الم » est le verset 2:1 en Ḥafṣ mais pas en Qālūn, si bien que le verset 90 du muṣḥaf de Qālūn est le 91 de
+   Ḥafṣ. Muṣḥaf d'une autre riwāya + récitateur Ḥafṣ (récitateur par défaut) → on entendait le verset
+   AU-DESSUS ; texte Ḥafṣ + récitateur Qālūn, ad-Dūrī ou as-Sūsī → le verset en dessous (al-Fātiḥa de Qālūn :
+   basmala non comptée). Le surlignage était déjà coupé dans ce cas (A8), pas la lecture. Vérifié sur les vrais
+   fichiers de la démo : en Ḥafṣ sur Ḥafṣ, page fluide, page exacte et vue versets, le fichier demandé était déjà
+   le bon (index, page, basmala, plage du/au corrects).
+   **Correction à la racine** : le récitateur SUIT le muṣḥaf (`reciterFor`, `lecture.ts`) — changer de muṣḥaf
+   change le récitateur (avis « Le récitateur change : … »), choisir un récitateur d'une autre riwāya fait passer
+   le muṣḥaf à sa riwāya (avis), muṣḥaf sans récitateur (Warsh, al-Bazzī) : avis, rien n'est lu ; garde dans
+   `playFrom` ; la file n'est faite de numéros de versets que si la récitation est découpée comme le texte
+   affiché (`listenFiles` + `highlightOn`), sinon la sourate entière, dite (al-Mulk d'ad-Dūrī 31/30, as-Sūsī).
+   L'état « autre riwāya » (encadré, lien) disparaît.
+   **Trouvé en passant (page exacte A34, téléphone)** : la mesure des lignes (texte à 100 px, `.mesure`) élargissait
+   la page de plusieurs milliers de pixels → page dézoomée sur téléphone, feuilles et menu du verset mal placés
+   (clics interceptés). Corrigé (`width: 0; overflow: hidden`), contrôlé par e2e (`innerWidth` = largeur d'écran).
+2. **Puce** : « Al-Baqara · verset 90 · page 14 · juzʾ 1 » en toutes lettres (téléphone : « Al-Baqara » /
+   « verset 90 · page 14 · juzʾ 1 », blocs insécables), 5 langues ; la puce prend toute la ligne, les outils
+   dessous.
+3. **Un seul point d'entrée « Réglages »** (icône ET libellé, téléphone et bureau) : `Reglages.svelte` remplace les
+   feuilles « Réglages d'écoute » et « Affichage » ; sections en toutes lettres avec sauts : Écoute (préréglages,
+   plage, répétitions, vitesse, arrêt automatique), Récitateur (ceux de la riwāya affichée d'abord, « en ligne »
+   étiquetés — champ `enLigne` prévu pour A2), Muṣḥaf (style : « Muṣḥaf de Médine (pages à l'identique) » OU
+   « Notre muṣḥaf habituel (cadre vert) », choix gardé ; riwāyāt décrites comme les récitateurs : nom en clair,
+   courte description, nombre de récitateurs), Affichage (vue, **taille du texte** normale / grande / très grande,
+   lecture seule, une page), Traduction, Tajwid, Mémoriser (+ lecture guidée), Hors ligne. Icône « ⋯ » et loupe
+   en double (même sélecteur que la puce) retirées ; l'icône répétition et le nom du récitateur de la mini-barre ouvrent ce panneau à leur
+   section. **Enfants** : quatre grosses tuiles (Écouter · Répéter · Plus grand · Masquer pour mémoriser), le reste
+   replié sous « Tous les réglages (avec un parent) ».
+4. **Thème** : `VERDURE` par public (`audience.ts`) — « vert, blanc, or » partout pour les ADULTES ; enfants
+   (Jardin) et ados (Nuit étoilée) gardent leur thème, espace Coran compris ; visiteurs : espace Coran (inchangé).
+5. **Tests** : unitaires `lecture-corrections.test.ts` (5), `audience.test.ts` (adapté) ; e2e
+   `coran-corrections.spec.ts` (9) sur les **vraies récitations de la démo** (9 récitateurs, 5 riwāyāt, copiées
+   dans la base de test, fichiers lus dans le volume de la démo : `e2e/audio-demo.ts`) : clé du fichier demandé =
+   verset touché pour 1:1, 1:7, 2:1, 2:5, 2:90, 112:2 (« Répéter » et « Écouter d'ici »), surlignage = verset
+   touché ; pages fluides ET exactes (début, milieu, fin de page, basmala) ; Qālūn page 1 ; al-Mulk ; changement
+   de muṣḥaf / de récitateur ; puce (320 à 768 px, 5 langues) ; panneau Réglages ; tuiles enfant ; thèmes adulte,
+   enfant, ado. Mode `E2E_MUSHAF_EXACT=1` : les 9 anciens tests qui cherchaient le texte visible vérifient le
+   texte Tanzil ACCESSIBLE des pages exactes (`expectVerse`, `e2e/coran.ts`) ou visent un glyphe (`.first()`).
+   **Résultats** : `pnpm check` vert — unitaires verts ; e2e complets (après les fusions de main) **362 réussis,
+   38 ignorés, 0 échec** avec `E2E_MUSHAF_EXACT=1` (604 pages exactes publiées) et **354 réussis, 46 ignorés, 0 échec** sans.
+6. **Budget** (après fusion de `main` 0f6e305 = A37 et A39 suite, 405,4 Ko) : sans rien changer, les ajouts
+   portaient le total au-delà de 410 Ko → les textes FRANÇAIS de l'espace Coran (`cl.*`, `ca.*`, `mp.*` sauf les noms
+   de traduction, `mpx.*`, `rw.*`, `tj.*` : 247 textes) sortent de la coquille par le mécanisme des espaces d'A37 :
+   `static/i18n/fr-coran.json` (`SPACE_CATALOGS`), chargé par les mises en page `/coran` et `/enseignant`
+   (récitateurs de la classe), **préchargé** par le service worker (Coran hors ligne dès l'installation) ; contrôlé
+   par `i18n.test.ts` (aucun de ces textes utilisé hors de l'espace Coran). Total **404,4 Ko** (main : 405,4) ≤ 410 ;
+   appareil d’un élève **351,3 Ko** ≤ 355 ; `/coran/lecteur` 128,5 Ko. Panneaux fusionnés en un composant, textes
+   « autre riwāya » et doublons retirés.
+7. Captures avant / après (puce, réglages adulte et enfant, thème adulte ; 375 px et bureau) :
+   `reports/coran-corrections/` (hors dépôt), copiées sur le PC (`application/coran-corrections-captures/`).
 ## 06/10/2026 — Chantier A39 (suite) : décisions D-A39 appliquées
 
 Branche `a39b-certificat-wip` (depuis `main` 7785a3f).

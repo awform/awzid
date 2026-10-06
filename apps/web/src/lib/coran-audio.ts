@@ -25,6 +25,8 @@ export interface Reciter {
   verses: number;
   surlignage: Surlignage;
   conseilDebutant: boolean;
+  /** A2 : écoute EN LIGNE seulement (Quran Foundation) : ni paquet hors ligne, ni relais */
+  enLigne?: boolean;
 }
 
 export interface AudioFile {
@@ -48,6 +50,8 @@ export interface SuraPack {
   surlignage: Surlignage;
   /** « sourate » : un seul fichier de sourate entière (piste 0), pas d'écoute verset par verset */
   mode?: 'versets' | 'sourate';
+  /** A2 : fichiers lus sur le réseau de Quran Foundation (adresses https), jamais gardés sur l'appareil */
+  enLigne?: boolean;
   wifiSeulement: boolean;
   bytes: number;
   durationMs: number;

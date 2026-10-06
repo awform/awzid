@@ -101,6 +101,8 @@ echo "AWFORM_VAPID_SUBJECT=https://$SITE" >> "$ENVF"
 # moindre privilège : un fichier par service (env-scopes.conf) ; prod.env n'est monté dans aucun conteneur
 export AWFORM_ENV_DIR="$CONF"
 "$PROD/env-split.sh" "$ENVF" "$CONF"
+# A2 : identifiants de Quran Foundation (même fichier que la synchronisation A34) → api.env seulement
+"$PROD/qf-env.sh" "${AWFORM_QF_SECRET:-$CONF/qf.env}" "$CONF/api.env"
 export AWFORM_CONTENT_DIR="${AWFORM_CONTENT_DIR:-$HOME/awform-content}"
 AWFORM_VERSION="${AWFORM_VERSION:-$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo local)}"
 export AWFORM_VERSION

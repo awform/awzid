@@ -1,0 +1,2 @@
+ALTER TABLE "quran_reciter" ADD COLUMN "source" text DEFAULT 'complexe' NOT NULL;--> statement-breakpoint
+ALTER TABLE "quran_reciter" ADD CONSTRAINT "quran_reciter_source" CHECK ("quran_reciter"."source" IN ('complexe', 'qf'));

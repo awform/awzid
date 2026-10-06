@@ -188,7 +188,7 @@
   }
   .aya {
     font-family: var(--font-quran);
-    font-size: max(1.7rem, var(--ar-size));
+    font-size: calc(max(1.7rem, var(--ar-size)) * var(--qz, 1));
     line-height: 2.3;
     margin: 2px 0;
     padding: 0 8px;
@@ -260,7 +260,7 @@
   }
   @media (max-width: 400px) {
     .aya {
-      font-size: max(1.45rem, var(--ar-size));
+      font-size: calc(max(1.45rem, var(--ar-size)) * var(--qz, 1));
     }
   }
 </style>

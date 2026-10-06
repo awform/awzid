@@ -69,13 +69,15 @@ export const STAFF_CATALOG = 'fr-personnel';
  * A37 : même principe par ESPACE de l'élève (textes chargés par route) — `fr-quotidien` (prières, qibla, adhkār,
  * verset) et `fr-vivre` (bon comportement), chargés par les mises en page `/quotidien` et `/vivre` ; ces deux
  * fichiers-là sont préchargés par le service worker (hors ligne dès l'installation).
+ * Corrections du lecteur (06/10/2026) : `fr-coran` (`cl.*`, `ca.*`, `mp.*` sauf les noms de traduction, `mpx.*`,
+ * `rw.*`, `tj.*`), chargé par `/coran` et `/enseignant` (récitateurs de la classe), préchargé lui aussi.
  */
 /**
  * F5 : `fr-rares` — textes des pages RARES, utiles en ligne seulement (offres, abonnement, inscription, certificats,
  * protections du compte, réglages du tuteur, garanties, errata…) et de la fenêtre « Donner mon avis » : chargés par
  * ces pages, jamais préchargés (comme leurs fichiers, voir scripts/groupes.mjs).
  */
-export const SPACE_CATALOGS = ['personnel', 'quotidien', 'vivre', 'rares'] as const;
+export const SPACE_CATALOGS = ['personnel', 'quotidien', 'vivre', 'coran', 'rares'] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 export function loadTexts(
   name: (typeof SPACE_CATALOGS)[number],

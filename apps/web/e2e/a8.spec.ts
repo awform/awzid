@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { close, openDisplay, openSettings } from './coran';
+import { chooseMushaf, close, expectVerse, openDisplay, openSettings } from './coran';
 import { expect, test } from './fixtures';
 
 /**
@@ -49,16 +49,16 @@ test('Muṣḥaf Warsh page par page : texte du Complexe tel quel, police à la 
     if (r.url().includes('/riwayat/')) rw.push(new URL(r.url()).pathname);
   });
   await page.goto('/coran/lecteur?page=1&vue=page');
-  await expect(page.locator('[data-verse="1:7"]')).toBeVisible();
+  await expectVerse(page, '1:7');
   // Ḥafṣ par défaut : aucune donnée ni police d'une autre riwāya chargée, pas de badge « autre riwāya »
   await expect(page.getByTestId('mp-riwaya-affichee')).toHaveCount(0);
   await expect(page.getByTestId('credit-texte')).toContainText('Tanzil');
   expect(rw).toEqual([]);
 
   await openDisplay(page);
-  await expect(page.getByTestId('choix-mushaf')).toHaveValue('hafs');
-  await page.getByTestId('choix-mushaf').selectOption('warsh');
+  await expect(page.getByTestId('choix-mushaf')).toHaveAttribute('data-value', 'hafs');
   await close(page);
+  await chooseMushaf(page, 'warsh');
   const badge = page.getByTestId('mp-riwaya-affichee').getByTestId('badge-riwaya');
   await expect(badge).toHaveAttribute('data-riwaya', 'warsh');
   await expect(badge).toContainText('Warsh ʿan Nāfiʿ');
@@ -115,8 +115,8 @@ test('Muṣḥaf Warsh page par page : texte du Complexe tel quel, police à la 
     page.locator('[data-testid="mushaf-livre"], [data-testid="texte-coran"]').first(),
   ).toBeVisible();
   await openDisplay(page);
-  await expect(page.getByTestId('choix-mushaf')).toHaveValue('hafs');
-  await expect(page.getByTestId('choix-mushaf')).toBeDisabled();
+  await expect(page.getByTestId('choix-mushaf')).toHaveAttribute('data-value', 'hafs');
+  await expect(page.locator('[data-mushaf="warsh"]')).toBeDisabled();
   await page.locator('[data-mask="0"]').check({ force: true });
   await close(page);
 });
@@ -125,13 +125,13 @@ test('Qālūn : surlignage seulement quand la riwāya du récitateur est celle d
   page,
 }, info) => {
   await page.goto('/coran/ecouter?r=essai-qalun&s=1');
-  // texte Ḥafṣ par défaut : récitation d'une autre riwāya, explication et passage au texte de Qālūn
+  // corrections du 06/10/2026 : récitateur d'une autre riwāya demandé → le muṣḥaf SUIT sa riwāya (même
+  // numérotation des versets), sans étape ; jamais le texte de Ḥafṣ avec une récitation de Qālūn
+  await expect(page.getByTestId('mp-riwaya-affichee')).toContainText('Qālūn');
   await openSettings(page);
-  await expect(page.getByTestId('autre-riwaya')).toBeVisible();
-  await page.getByTestId('voir-riwaya').click();
+  await expect(page.getByTestId('autre-riwaya')).toHaveCount(0);
   await expect(page.getByTestId('meme-riwaya')).toBeVisible();
   await close(page);
-  await expect(page.getByTestId('mp-riwaya-affichee')).toContainText('Qālūn');
   const q1 = sura('qalun', 1);
   await expect(page.locator('[data-verse="1:1"]').first()).toHaveText(q1.t[0]![3]);
   await fontReady(page, 'qalun');
@@ -142,18 +142,14 @@ test('Qālūn : surlignage seulement quand la riwāya du récitateur est celle d
   await shot(page, '03-qalun-surlignage', info.project.name);
   await page.getByTestId('arreter-audio').click();
 
-  // texte d'une autre riwāya (Warsh) avec la récitation de Qālūn : jamais de surlignage
-  await openDisplay(page);
-  await page.getByTestId('choix-mushaf').selectOption('warsh');
-  await close(page);
-  await page.getByTestId('jouer').click();
-  await expect(page.getByTestId('position')).toContainText('Verset 2', { timeout: 8000 });
-  await expect(page.getByTestId('sans-surlignage')).toBeVisible();
-  await expect(page.locator('[data-aya="1:2"]')).not.toHaveClass(/\bon\b/);
-  await page.getByTestId('arreter-audio').click();
-  await openDisplay(page);
-  await page.getByTestId('choix-mushaf').selectOption('hafs');
-  await close(page);
+  // muṣḥaf d'une autre riwāya (Warsh) sans récitateur de cette riwāya : on le dit, rien n'est lu dans une autre
+  // numérotation (avant : la récitation de Qālūn jouait « son » verset n sur le texte de Warsh)
+  await chooseMushaf(page, 'warsh');
+  await expect(page.getByTestId('avis-lecteur')).toContainText('Pas encore de récitateur');
+  await expect(page.getByTestId('jouer')).toHaveCount(0);
+  await chooseMushaf(page, 'hafs');
+  await expect(page.getByTestId('avis-lecteur')).toContainText('Le récitateur change');
+  await expect(page.getByTestId('lecteur-audio')).toHaveAttribute('data-reciter', 'essai-hafs');
 });
 
 test('téléphone 320 px : muṣḥaf Warsh lisible, sans défilement horizontal', async ({

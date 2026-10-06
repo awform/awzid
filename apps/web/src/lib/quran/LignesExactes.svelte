@@ -191,8 +191,12 @@
     justify-content: center;
     gap: 0.25em;
   }
+  /* mesure de la ligne à 100 px : largeur nulle et contenu masqué, sinon (plusieurs milliers de pixels) elle
+     élargissait la page — sur téléphone, toute la page était dézoomée et les feuilles mal placées */
   .mesure {
     position: absolute;
+    width: 0;
+    overflow: hidden;
     visibility: hidden;
     pointer-events: none;
   }

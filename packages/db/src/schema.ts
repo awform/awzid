@@ -2432,6 +2432,11 @@ export const quranReciter = pgTable(
     creditAr: text('credit_ar').notNull().default(''),
     /** condition d'usage affichée avec le crédit (ex. « ne pas vendre l'audio ») */
     usageNote: text('usage_note').notNull().default(''),
+    /**
+     * A2 : « complexe » = fichiers hébergés chez nous (import contrôlé) ; « qf » = écoute EN LIGNE par l'API de
+     * Quran Foundation (aucun fichier chez nous, aucun paquet hors ligne ; catalogue : audio/qf-catalogue.ts)
+     */
+    source: text('source').notNull().default('complexe'),
     status: text('status').notNull().default('en_attente'),
     activatedAt: timestamp('activated_at', { withTimezone: true }),
     retiredAt: timestamp('retired_at', { withTimezone: true }),
@@ -2453,6 +2458,7 @@ export const quranReciter = pgTable(
       sql`${t.style} IS NULL OR ${t.style} IN ('murattal', 'mujawwad', 'muallim')`,
     ),
     check('quran_reciter_status', sql`${t.status} IN ('en_attente', 'actif', 'retire')`),
+    check('quran_reciter_source', sql`${t.source} IN ('complexe', 'qf')`),
     check(
       'quran_reciter_retrait',
       sql`${t.status} <> 'retire' OR (${t.retiredAt} IS NOT NULL AND length(${t.retiredReason}) > 0)`,
