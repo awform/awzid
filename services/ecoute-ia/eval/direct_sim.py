@@ -47,7 +47,7 @@ def seances():
 def main(noms):
     S = seances()
     for nom in noms:
-        ecoute.etat['modele'] = asr.charger(nom, int(os.environ.get('THREADS', '4')))
+        modele = asr.charger(nom, int(os.environ.get('THREADS', '4')))
         res = []
         for k, se in enumerate(S):
             s = ecoute.Seance()
@@ -56,18 +56,19 @@ def main(noms):
             for i in range(0, len(x), SR):
                 bloc = x[i: i + SR]
                 t = time.perf_counter()
-                r = ecoute._direct(s, bloc)
+                r = ecoute._direct(modele, s, bloc)
                 morceaux.append({'t': round((i + len(bloc)) / SR, 2), 'calcul': round(time.perf_counter() - t, 3),
                                  'mots': r['mots'], 'partiel': r['partiel'], 'voix': r['voix']})
             # fin : une seconde de silence pour clore le dernier passage (comme l'appli)
             t = time.perf_counter()
-            r = ecoute._direct(s, np.zeros(SR, dtype=np.float32))
+            r = ecoute._direct(modele, s, np.zeros(SR, dtype=np.float32))
             morceaux.append({'t': round(len(x) / SR + 1, 2), 'calcul': round(time.perf_counter() - t, 3),
                              'mots': r['mots'], 'partiel': r['partiel'], 'voix': r['voix'], 'fin': True})
             res.append({'rid': se['rid'], 'versets': se['versets'], 'saut': se['saut'], 'morceaux': morceaux})
             print(nom, k, len(morceaux), 'morceaux', flush=True)
-        json.dump(res, open(f'/work/direct-{nom}.json', 'w', encoding='utf-8'), ensure_ascii=False)
-        del ecoute.etat['modele']
+        tag = os.environ.get('TAG', '')
+        json.dump(res, open(f'/work/direct-{nom}{tag}.json', 'w', encoding='utf-8'), ensure_ascii=False)
+        del modele
 
 
 if __name__ == '__main__':

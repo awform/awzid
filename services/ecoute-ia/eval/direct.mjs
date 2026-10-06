@@ -49,7 +49,23 @@ for (const se of S) {
     for (const e of r.ecarts) {
       const vrai = se.saut && e.s === se.saut[0] && e.a === se.saut[1];
       if (vrai) sautVu = true;
-      else vues.add(`${e.type}:${e.i}`);
+      else {
+        const k = `${e.type}:${e.i}`;
+        if (process.env.DIAG && !vues.has(k))
+          console.error(
+            `t=${m.t} ${e.type} i=${e.i}-${e.fin} (${att[e.i]?.cle}) conf=${e.confiance} | entendu autour :`,
+            surs
+              .map((w) => `${w.w}@${w.t0}`)
+              .slice(-12)
+              .join(' '),
+            '| attendu :',
+            att
+              .slice(Math.max(0, e.i - 3), e.fin + 3)
+              .map((x) => x.cle)
+              .join(' '),
+          );
+        vues.add(k);
+      }
     }
   }
   if (se.saut) {

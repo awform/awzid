@@ -10,6 +10,7 @@ M=$HOME/modeles-ia
 exec flock "$HOME/.awzid-e2e.lock" docker run --rm --cpus 4 -u "$(id -u):$(id -g)" \
   -e THREADS=4 -e OMP_NUM_THREADS=4 -e MKL_NUM_THREADS=4 -e PORTIONS="${PORTIONS:-8}" \
   -e CONDITIONS="${CONDITIONS:-propre,telephone,aigue}" \
+  -e ECOUTE_PAUSE_S="${ECOUTE_PAUSE_S:-0.6}" -e ECOUTE_COUPE_S="${ECOUTE_COUPE_S:-25}" -e TAG="${TAG:-}" \
   -e HOME=/tmp -e NUMBA_CACHE_DIR=/tmp -e MPLCONFIGDIR=/tmp -e HF_HOME=/tmp/hf \
   -v "$HOME/coran-audio-source:/src:ro" -v "$HOME/a1-rapports:/rapports:ro" \
   -v "${AWFORM_CONTENT_DIR:-$HOME/awform-content}:/content:ro" \

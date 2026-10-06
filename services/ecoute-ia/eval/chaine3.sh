@@ -2,22 +2,22 @@
 # A5 — image du service, tests dans l'image, essai réel (modèle NeMo RNN-T) : sous le verrou commun
 cd ~/awform-a5/services/ecoute-ia
 L=~/a5/eval/service.log
-while pgrep -f 'eval/chaine2.sh' > /dev/null || pgrep -f 'eval/chaine.sh' > /dev/null; do sleep 20; done
+
 flock ~/.awzid-e2e.lock bash -c '
 set -x
 date
 docker build --target service -t awzid/ecoute-ia:local . 2>&1 | tail -3
 # tests (modèle factice), conteneur en lecture seule comme en production
 docker run --rm --read-only --tmpfs /tmp:size=256m -e HOME=/tmp -e ECOUTE_ESSAI=1 awzid/ecoute-ia:local \
-  python -m pytest -q -p no:cacheprovider tests 2>&1 | tail -5
+  python -m pytest -q -p no:cacheprovider tests 2>&1 | grep -v -i warn | tail -15
 # essai réel
 docker rm -f a5-ecoute-essai >/dev/null 2>&1
 docker run -d --name a5-ecoute-essai --read-only --tmpfs /tmp:size=1g,mode=1777 --cpus 6 -m 6g \
-  -e HOME=/tmp -e NUMBA_CACHE_DIR=/tmp -e MPLCONFIGDIR=/tmp -e ECOUTE_NOM=nemo_rnnt -e ECOUTE_THREADS=3 \
+  -e HOME=/tmp -e NUMBA_CACHE_DIR=/tmp -e MPLCONFIGDIR=/tmp -e ECOUTE_NOM=nemo_rnnt -e ECOUTE_THREADS=3 -e ECOUTE_CONCURRENCE=2 \
   -e ECOUTE_MODELE=/model/stt_ar_fastconformer_hybrid_large_pcd_v1.0.nemo \
   -v ~/modeles-ia/nvidia_stt_ar_fastconformer_hybrid_large_pcd_v1.0:/model:ro -p 127.0.0.1:18765:8000 \
   awzid/ecoute-ia:local
-for i in $(seq 1 90); do curl -s 127.0.0.1:18765/sante | grep -q "\"pret\":true" && break; sleep 2; done
+for i in $(seq 1 90); do curl -s 127.0.0.1:18765/sante | grep -q "\"modeles_charges\":2" && break; sleep 2; done
 curl -s 127.0.0.1:18765/sante; echo
 docker stats --no-stream --format "{{.Name}} {{.MemUsage}}" a5-ecoute-essai
 F=~/coran-audio-source/akhdar-hafs/10-002255-A02.mp3

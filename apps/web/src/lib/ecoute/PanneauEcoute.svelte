@@ -189,20 +189,20 @@
     flux = null;
     audio = b;
     etape = 'analyse';
-    let r: ResultatEcoute;
+    // suivi en direct : la séance est close (son audio effacé du serveur) ; le BILAN, lui, vient toujours de la
+    // vérification de tout l'enregistrement (plus sûre que les passages du direct, ECOUTE_IA.md § 4)
     if (modeDirect && suivi) {
-      r = await suivi.arreter();
+      await suivi.arreter();
       suivi = null;
       direct = null;
-    } else {
-      const v = await verifier(profileId, portion, b);
-      if (!v.ok) {
-        erreur = message(v.code);
-        etape = 'pret';
-        return;
-      }
-      r = v.v.resultat;
     }
+    const v = await verifier(profileId, portion, b);
+    if (!v.ok) {
+      erreur = message(v.code);
+      etape = 'pret';
+      return;
+    }
+    const r: ResultatEcoute = v.v.resultat;
     resultat = r;
     etape = 'resultat';
     // bilan de séance (positions des mots à revoir, jamais l'audio) : repris par le carnet

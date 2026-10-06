@@ -172,3 +172,5 @@ def test_file_de_traitement_refuse_au_dela(client, monkeypatch):
                                                    headers={'x-essai-mots': HEX}).status_code, range(8)))
     # 1 calcul à la fois + 2 en attente : le reste est refusé (« réessaie dans un instant »)
     assert 503 in codes and 200 in codes
+    # jamais d'erreur interne sous la charge (un modèle de la réserve par calcul)
+    assert set(codes) <= {200, 503}

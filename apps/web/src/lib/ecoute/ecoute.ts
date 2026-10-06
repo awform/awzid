@@ -16,6 +16,7 @@ import type { Bilan } from './bilans';
 import {
   comparer,
   motsARevoir,
+  type EtatMot,
   type MotAttendu,
   type MotEntendu,
   type ResultatEcoute,
@@ -27,6 +28,12 @@ export interface Portion {
   to: number;
 }
 export const MAX_S = 300;
+/**
+ * Signaler les erreurs PENDANT le suivi en direct ? Non pour l'instant : mesuré le 06/10/2026, les passages du
+ * direct (coupés aux pauses) sont moins bien reconnus que l'enregistrement entier et donnaient de fausses alertes
+ * (ECOUTE_IA.md § 4). Le texte avance et se dévoile ; les écarts viennent du bilan de fin.
+ */
+export const SIGNALER_EN_DIRECT = false;
 
 // ------------------------------------------------------------------ accord, vérification
 
@@ -226,33 +233,35 @@ export class SuiviDirect {
     }
   }
 
-  /** État courant : erreurs sur les mots SÛRS seulement ; position avec les partiels. */
+  /**
+   * État courant : mots reconnus (sûrs ou partiels) dévoilés, mot en cours ; erreurs signalées en direct
+   * seulement si `SIGNALER_EN_DIRECT` (sinon un mot oublié reste simplement caché, et le bilan de fin le dira).
+   */
   etat(): EtatDirect {
     const resultat = comparer(this.att, this.surs, { voix: this.voix, enCours: true });
     const avecPartiel = comparer(this.att, [...this.surs, ...this.partiel], { enCours: true });
     const fin = Math.max(resultat.finRecitee, avecPartiel.finRecitee);
-    // les mots reconnus dans le passage en cours se dévoilent aussi (jamais d'erreur sur eux)
-    const mots = resultat.mots.map((m, i) =>
-      m === 'non_recite' && avecPartiel.mots[i] === 'ok' ? 'ok' : m,
-    );
-    return { resultat: { ...resultat, mots }, courant: fin + 1, secondes: this.secondes };
+    const mots: EtatMot[] = resultat.mots.map((m, i) => {
+      if (m === 'non_recite' && avecPartiel.mots[i] === 'ok') return 'ok';
+      if (!SIGNALER_EN_DIRECT && m !== 'ok') return 'non_recite';
+      return m;
+    });
+    const ecarts = SIGNALER_EN_DIRECT ? resultat.ecarts : [];
+    return { resultat: { ...resultat, mots, ecarts }, courant: fin + 1, secondes: this.secondes };
   }
 
-  /** Fin : derniers morceaux, puis la séance est close (l'audio est effacé de la mémoire du service). */
-  async arreter(): Promise<ResultatEcoute> {
-    if (!this.arrete) {
-      this.arrete = true;
-      this.noeud?.disconnect();
-      this.source?.disconnect();
-      await this.ctx?.close().catch(() => {});
-      for (let k = 0; k < 20 && this.enCours; k++) await new Promise((r) => setTimeout(r, 100));
-      await this.envoyer(true);
-      // un dernier silence pour clore le passage en cours côté service
-      this.tampon.push(new Int16Array(16000));
-      await this.envoyer(true);
-      if (this.sid) await call('DELETE', `/ecoute/direct/${this.sid}`).catch(() => null);
-    }
-    return comparer(this.att, this.surs, { voix: this.voix });
+  /**
+   * Fin : la séance est close (l'audio est effacé de la mémoire du service). Le bilan vient ensuite de la
+   * vérification de TOUT l'enregistrement (`verifier`), plus sûre que les passages du direct.
+   */
+  async arreter(): Promise<void> {
+    if (this.arrete) return;
+    this.arrete = true;
+    this.tampon = [];
+    this.noeud?.disconnect();
+    this.source?.disconnect();
+    await this.ctx?.close().catch(() => {});
+    if (this.sid) await call('DELETE', `/ecoute/direct/${this.sid}`).catch(() => null);
   }
 }
 
