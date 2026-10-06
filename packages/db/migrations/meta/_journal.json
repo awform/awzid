@@ -281,6 +281,13 @@
       "when": 1791233373691,
       "tag": "0039_a27_mots_lecons",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1791265898228,
+      "tag": "0040_a39_serein",
+      "breakpoints": true
     }
   ]
 }
