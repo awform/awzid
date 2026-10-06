@@ -70,12 +70,16 @@ async function staffOnly(): Promise<Set<string>> {
  * téléchargement d'un niveau d'arabe (voir le traitement des fichiers non préchargés plus bas).
  */
 async function vivante(): Promise<Set<string>> {
-  try {
-    const r = await fetch('/_app/vivante.json', { cache: 'no-store' });
-    return new Set(r.ok ? ((await r.json()) as string[]).map(String) : []);
-  } catch {
-    return new Set();
-  }
+  const out = new Set<string>();
+  // A5 : panneau « Réciter et vérifier » (en ligne seulement) — jamais préchargé non plus
+  for (const liste of ['/_app/vivante.json', '/_app/ecoute.json'])
+    try {
+      const r = await fetch(liste, { cache: 'no-store' });
+      if (r.ok) for (const f of (await r.json()) as string[]) out.add(String(f));
+    } catch {
+      /* liste absente : rien d'exclu */
+    }
+  return out;
 }
 
 sw.addEventListener('install', (event) => {

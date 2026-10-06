@@ -7,11 +7,17 @@ import { defineConfig, type Plugin } from 'vite';
  * niveau d'arabe. Ce module écrit la liste de ses fichiers (morceaux JS chargés seulement par import dynamique
  * depuis `$lib/vivante`, et leurs CSS) dans `/_app/vivante.json`, lue par le service worker et par le budget.
  */
-function vivanteALaDemande(): Plugin {
-  const VIV =
-    /[\\/](lib[\\/]vivante[\\/](installer\.ts|Motion\.svelte|ModelesPlus\.svelte)|content[\\/](dist|src)[\\/]vivante(-garde)?\.[jt]s)/;
+const VIVANTE =
+  /[\\/](lib[\\/]vivante[\\/](installer\.ts|Motion\.svelte|ModelesPlus\.svelte)|content[\\/](dist|src)[\\/]vivante(-garde)?\.[jt]s)/;
+/**
+ * A5 — panneau « Réciter et vérifier » (IA, EN LIGNE seulement : le service d'écoute est sur le serveur) : même
+ * principe, jamais préchargé par le service worker ; liste dans `/_app/ecoute.json`.
+ */
+const ECOUTE =
+  /[\\/]lib[\\/]ecoute[\\/](PanneauEcoute\.svelte|ARevoirEcoute\.svelte|ecoute\.ts|bilans\.ts)/;
+function vivanteALaDemande(VIV = VIVANTE, nom = 'vivante'): Plugin {
   return {
-    name: 'awzid-vivante-a-la-demande',
+    name: `awzid-${nom}-a-la-demande`,
     apply: 'build',
     generateBundle(options, bundle) {
       if (!/[\\/]client$/.test(options.dir ?? '')) return;
@@ -32,7 +38,7 @@ function vivanteALaDemande(): Plugin {
         ]);
       this.emitFile({
         type: 'asset',
-        fileName: '_app/vivante.json',
+        fileName: `_app/${nom}.json`,
         source: JSON.stringify(files.map((f) => `/${f}`)),
       });
     },
@@ -40,7 +46,7 @@ function vivanteALaDemande(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [sveltekit(), vivanteALaDemande()],
+  plugins: [sveltekit(), vivanteALaDemande(), vivanteALaDemande(ECOUTE, 'ecoute')],
   // accessible depuis le réseau local de développement (ufw : 192.168.50.0/24 seulement)
   server: { host: '0.0.0.0', port: 5173, strictPort: true },
   preview: { host: '0.0.0.0', port: 4173, strictPort: true },

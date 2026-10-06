@@ -36,7 +36,6 @@
   import { recordingAllowed } from '$lib/recordings';
   import Recorder from '$lib/Recorder.svelte';
   import RecitationEnvoi from '$lib/RecitationEnvoi.svelte';
-  import ARevoirEcoute from '$lib/ecoute/ARevoirEcoute.svelte';
   import BoutonEcoute from '$lib/ecoute/BoutonEcoute.svelte';
   import { portionRange } from '$lib/quran/player';
   import { call, fetchMe, type Me } from '$lib/session';
@@ -674,13 +673,14 @@
 
   {#if profile}
     <!-- A5 : l'IA écoute la récitation de la portion du jour (canal bêta) ; passages à revoir -->
-    {@const ecoutePortion = portionRange(view.plan.recent[0]?.key ?? null)}
-    {#if ecoutePortion}
-      <div class="row" data-testid="carnet-ecoute">
-        <BoutonEcoute profileId={profile.id} kind={profile.kind} portion={ecoutePortion} />
-      </div>
-    {/if}
-    <ARevoirEcoute profileId={profile.id} />
+    <div class="row" data-testid="carnet-ecoute">
+      <BoutonEcoute
+        profileId={profile.id}
+        kind={profile.kind}
+        portion={portionRange(view.plan.recent[0]?.key ?? null)}
+        carnet
+      />
+    </div>
   {/if}
 
   {#if recAllowed}
