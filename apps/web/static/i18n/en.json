@@ -2514,5 +2514,7 @@
   "ec.carnet_ligne": "{sourate}, verses {de} to {a}: {n, plural, one {# word} other {# words}} to review",
   "ec.carnet_ouvrir": "Review this passage",
   "ec.carnet_aide": "Kept only on this device. Only your teacher judges your recitation.",
-  "ec.debut_non_entendu": "The very beginning was not heard: start recording before you begin reciting."
+  "ec.debut_non_entendu": "The very beginning was not heard: start recording before you begin reciting.",
+  "ec.ia_trompee": "Did the AI get it wrong?",
+  "ec.merci_signalement": "Thank you, noted (without your voice). This helps us make listening more accurate."
 }

@@ -142,6 +142,7 @@
 
   async function commencer(enDirect: boolean) {
     erreur = '';
+    signale = false;
     resultat = null;
     direct = null;
     envoi = 'non';
@@ -206,6 +207,17 @@
     etape = 'resultat';
     // bilan de séance (positions des mots à revoir, jamais l'audio) : repris par le carnet
     await garderBilan(profileId, bilanDe(portion, att, r));
+  }
+
+  /** « L'IA s'est trompée » : un compteur pour mesurer les fausses alertes en bêta (ni voix, ni mots) */
+  let signale = $state(false);
+  async function signaler() {
+    if (!resultat) return;
+    await call('POST', `/profiles/${profileId}/ecoute/signalement`, {
+      ecarts: resultat.ecarts.length,
+      statut: resultat.statut,
+    }).catch(() => null);
+    signale = true;
   }
 
   async function versMaitre() {
@@ -367,6 +379,16 @@
             >
           {/if}
         </div>
+        {#if signale}
+          <p class="small muted" role="status"><Bidi text={t('ec.merci_signalement')} /></p>
+        {:else}
+          <button
+            type="button"
+            class="link small"
+            onclick={signaler}
+            data-testid="ecoute-ia-trompee">{t('ec.ia_trompee')}</button
+          >
+        {/if}
         {#if envoi === 'refuse'}
           <p class="small muted"><Bidi text={t('ec.envoi_reglage')} /></p>
         {:else if envoi === 'pret'}

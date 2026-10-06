@@ -185,6 +185,30 @@ describe.skipIf(!URL_)('A5 : écoute de la récitation (awform_test)', () => {
     }
   });
 
+  it('« l’IA s’est trompée » : compteur seulement (ni voix ni mots)', async () => {
+    const r = await c.req('POST', `/api/v1/profiles/${enfant}/ecoute/signalement`, P, {
+      ecarts: 2,
+      statut: 'resultat',
+    });
+    expect(r.statusCode).toBe(200);
+    const [l] = await c.h.db
+      .select()
+      .from(t.auditLog)
+      .where(eq(t.auditLog.action, 'ecoute.ia_trompee'));
+    expect(l!.after).toEqual({ ecarts: 2, statut: 'resultat' });
+    // un champ de plus (des mots) n'est jamais gardé
+    await c.req('POST', `/api/v1/profiles/${enfant}/ecoute/signalement`, P, {
+      ecarts: 1,
+      statut: 'resultat',
+      mots: 'كتب',
+    });
+    const tous = await c.h.db
+      .select()
+      .from(t.auditLog)
+      .where(eq(t.auditLog.action, 'ecoute.ia_trompee'));
+    expect(JSON.stringify(tous)).not.toMatch(/[\u0600-\u06FF]/);
+  });
+
   it('suivi en direct : séance à soi, morceaux relayés, fin = effacement', async () => {
     const d = await c.req('POST', `/api/v1/profiles/${enfant}/ecoute/direct?${Q}`, P, {});
     expect(d.statusCode).toBe(200);

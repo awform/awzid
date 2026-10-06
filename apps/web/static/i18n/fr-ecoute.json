@@ -51,5 +51,7 @@
   "ec.carnet_ligne": "{sourate}, versets {de} à {a} : {n, plural, one {# mot} other {# mots}} à revoir",
   "ec.carnet_ouvrir": "Revoir ce passage",
   "ec.carnet_aide": "Gardé seulement sur cet appareil. Seul ton maître juge ta récitation.",
-  "ec.debut_non_entendu": "Le tout début n'a pas été entendu : lance l'enregistrement avant de commencer à réciter."
+  "ec.debut_non_entendu": "Le tout début n'a pas été entendu : lance l'enregistrement avant de commencer à réciter.",
+  "ec.ia_trompee": "L'IA s'est trompée ?",
+  "ec.merci_signalement": "Merci, c'est noté (sans ta voix). Cela nous aide à rendre l'écoute plus juste."
 }

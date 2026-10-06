@@ -2514,5 +2514,7 @@
   "ec.carnet_ligne": "{sourate}, Verse {de} bis {a}: {n, plural, one {# Wort} other {# Wörter}} zum Wiederholen",
   "ec.carnet_ouvrir": "Diesen Abschnitt wiederholen",
   "ec.carnet_aide": "Nur auf diesem Gerät gespeichert. Nur dein Lehrer beurteilt deine Rezitation.",
-  "ec.debut_non_entendu": "Der Anfang wurde nicht gehört: Starte die Aufnahme, bevor du mit dem Rezitieren beginnst."
+  "ec.debut_non_entendu": "Der Anfang wurde nicht gehört: Starte die Aufnahme, bevor du mit dem Rezitieren beginnst.",
+  "ec.ia_trompee": "Hat sich die KI geirrt?",
+  "ec.merci_signalement": "Danke, notiert (ohne deine Stimme). Das hilft uns, das Zuhören genauer zu machen."
 }

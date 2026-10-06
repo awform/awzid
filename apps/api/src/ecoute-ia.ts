@@ -278,6 +278,38 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
     },
   );
 
+  /**
+   * « L'IA s'est trompée » : l'élève (ou son maître à côté de lui) signale un résultat faux. Seul un COMPTEUR est
+   * gardé (journal : nombre d'écarts montrés, statut) — ni voix, ni mots : c'est la mesure des fausses alertes
+   * en bêta.
+   */
+  app.post<{ Params: { id: string }; Body: { ecarts: number; statut: string } }>(
+    '/api/v1/profiles/:id/ecoute/signalement',
+    {
+      schema: {
+        params: { type: 'object', required: ['id'], properties: { id: UUID } },
+        body: {
+          type: 'object',
+          required: ['ecarts', 'statut'],
+          additionalProperties: false,
+          properties: {
+            ecarts: { type: 'integer', minimum: 0, maximum: 500 },
+            statut: { type: 'string', enum: ['resultat', 'pas_compris'] },
+          },
+        },
+      },
+    },
+    async (req, reply) => {
+      const p = await garde(req, reply, req.params.id);
+      if (!p) return reply;
+      await audit(db, req.auth!.accountId, 'ecoute.ia_trompee', p.id, {
+        ecarts: req.body.ecarts,
+        statut: req.body.statut,
+      });
+      return { ok: true };
+    },
+  );
+
   /** Portion demandée : versets Tanzil (Ḥafṣ) existants, mots attendus. */
   const portion = async (s: number, from: number, to: number) => {
     if (to < from) return null;

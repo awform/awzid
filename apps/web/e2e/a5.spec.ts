@@ -60,6 +60,9 @@ test('enregistrer puis vérifier : mot oublié surligné, le maître seul juge',
   );
   // « Envoyer au maître » proposé (par l'envoi existant, avec son propre accord)
   await expect(page.getByTestId('ecoute-envoyer-maitre')).toBeVisible();
+  // « L'IA s'est trompée ? » : un simple compteur
+  await page.getByTestId('ecoute-ia-trompee').click();
+  await expect(page.getByTestId('panneau-ecoute')).toContainText('sans ta voix');
   // réciter encore : retour au choix
   await page.getByTestId('ecoute-encore').click();
   await expect(page.getByTestId('ecoute-pret')).toBeVisible();

@@ -2514,5 +2514,7 @@
   "ec.carnet_ligne": "{sourate}, aleyas {de} a {a}: {n, plural, one {# palabra} other {# palabras}} para repasar",
   "ec.carnet_ouvrir": "Repasar este pasaje",
   "ec.carnet_aide": "Guardado solo en este dispositivo. Solo tu maestro juzga tu recitación.",
-  "ec.debut_non_entendu": "No se ha oído el principio: empieza a grabar antes de comenzar a recitar."
+  "ec.debut_non_entendu": "No se ha oído el principio: empieza a grabar antes de comenzar a recitar.",
+  "ec.ia_trompee": "¿Se ha equivocado la IA?",
+  "ec.merci_signalement": "Gracias, queda anotado (sin tu voz). Nos ayuda a que la escucha sea más precisa."
 }
