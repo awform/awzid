@@ -8,6 +8,31 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Chantier A2 : récitateurs EN LIGNE (Quran Foundation)
+
+Branche `a2-en-ligne-wip` (worktree `~/awform-a2`, base de tests unitaires propre `awform_a2_test`), après la fusion
+des corrections du lecteur (main a5b13ca).
+- **Juridique** (`SOURCES_MUSHAF.md` § 8, `LICENCES.md` § 9 ; Developer Terms du 04/10/2026 lues le 06/10) : lecture
+  en continu PERMISE dans l'application payante ; réponses gardées ≤ 1 semaine hors Content Sync (nous : 24 h en
+  mémoire) ; « audio URLs are distinct from the underlying recordings » → AUCUNE copie des enregistrements (ni hors
+  ligne, ni relais) ; pas d'API ouverte (comptes connectés seulement) ; crédit QF et compte actif.
+- **Serveur** (`apps/api/src/coran-qf.ts`) : jeton OAuth2 client_credentials côté serveur, `/recitations/{id}/by_chapter/{s}`
+  paginé, versets 1…n exigés, adresses contrôlées (hôtes QF = `media-src` de la CSP), cache mémoire 24 h ; sans
+  identifiants : inactif sans erreur. Base : colonne `source` (migration 0042), catalogue `qf-catalogue.ts` (11
+  récitateurs, ids prélancement 6/7, production 1-10 et 12) synchronisé après les migrations ; paquets → 404
+  `en_ligne_seulement`, relais refusé ; préférence, listes parent/enseignant, mémoriser, retrait : comme le Complexe.
+- **Secret** : `~/.config/awform/qf.env` (le même que la synchronisation A34, 600) → `infra/prod/qf-env.sh` l'ajoute au
+  seul `api.env` au déploiement ; contrôle : `infra/outils/qf-audio/qf-recitateurs.mjs` (EXPLOITATION § 11).
+- **Interface** : Mes récitateurs (étiquette « En ligne » + icône réseau, crédit, « Disponible avec Internet » hors
+  connexion), panneau Réglages (étiquette, aide, option désactivée hors connexion, pas de « garder cette sourate »),
+  « Nos garanties » (5 langues) ; textes du Coran dans `fr-coran.json`.
+- **Tests** : unitaires 1 642 réussis (1 ignoré) dont `a2-qf.test.ts` (client QF simulé, qf-env.sh) et `a2.test.ts`
+  (API) ; e2e `a2.spec.ts` (10 : liste, hors connexion, garanties, API réservée, **verset lu = verset choisi** en
+  répétition et « écouter d'ici », Réglages) avec une API QF SIMULÉE (bips d'essai) ; e2e complets (sous flock) : 368 réussis, 46 ignorés, 0 échec.
+- **Budget** : 405,2 Ko ≤ 410 ; appareil d'un élève 352,0 Ko ≤ 355.
+- **À faire** : ʿAbd Allāh al-Maṭrūd (×2) seulement en « chapter reciters » (fichier par sourate + minutage) → relever
+  les ids avec l'outil et ajouter la lecture « sourate minutée » ; aṭ-Ṭablāwī (id 11) disponible, non activé.
+
 ## 06/10/2026 — Corrections du lecteur Coran (signalements du client sur la démo)
 
 Branche `coran-corrections-wip` (worktree `~/awform-corfix`, depuis `main` fd3cad7), e2e isolés (ports 3472/4472).
