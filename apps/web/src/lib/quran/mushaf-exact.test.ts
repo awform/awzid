@@ -16,6 +16,8 @@ import {
   EXACT_LINES,
   bsmlSuraName,
   checkExactFile,
+  placeHeads,
+  segmentationCovers,
   displayLines,
   pageFontFile,
   pageVerseKeys,
@@ -34,6 +36,7 @@ import {
   checkMushafRecord,
   diagnostic,
   readCorrections,
+  segmentsFrom,
   mushafRecord,
   publish,
   readPageStarts,
@@ -170,6 +173,62 @@ describe('A34 — lignes d’une page (15 lignes, en-têtes, basmala)', () => {
     expect([cp(1), cp(37), cp(38), cp(114)]).toEqual([0xfb8d, 0xfbb1, 0xfbd3, 0xfc1f]);
     expect(new Set(Array.from({ length: 114 }, (_, i) => bsmlSuraName(i + 1))).size).toBe(114);
     expect(bsmlSuraName(0)).toBe('');
+  });
+});
+
+describe('A34 — en-têtes de sourate entre deux pages (règle relevée sur les données de production)', () => {
+  // SYNTHÉTIQUE : page 76 pleine jusqu'à la ligne 14, sourate 4 qui commence en ligne 2 de la page 77
+  const fill = (p: number, from: number, to: number, s: number, a: number): ExactPage => ({
+    p,
+    lines: Array.from({ length: to - from + 1 }, (_, i) => ({
+      n: from + i,
+      w: [[s, a + i, 1, 'x', 'word']] as ExactWord[],
+    })),
+  });
+  it('sourate en ligne 2 : basmala en ligne 1, en-tête en ligne 15 de la page précédente', () => {
+    const p76 = fill(76, 1, 14, 3, 180);
+    const p77 = fill(77, 2, 15, 4, 1);
+    const { heads, errors } = placeHeads([p76, p77]);
+    expect(errors).toEqual([]);
+    expect(heads.get(76)).toEqual([{ n: 15, kind: 'sourate', s: 4 }]);
+    expect(heads.get(77)).toEqual([{ n: 1, kind: 'basmala', s: 4 }]);
+    const d76 = displayLines({ ...p76, h: heads.get(76) });
+    expect(d76.at(-1)).toMatchObject({ n: 15, kind: 'sourate', s: 4 });
+    expect(d76.some((l) => l.kind === 'vide')).toBe(false);
+  });
+  it('ligne déjà occupée ou page précédente absente : écart', () => {
+    const p77 = fill(77, 2, 15, 4, 1);
+    expect(placeHeads([fill(76, 1, 15, 3, 180), p77]).errors[0]).toMatch(
+      /page 76 ligne 15 : déjà occupée/,
+    );
+    expect(placeHeads([p77]).errors[0]).toMatch(/page 76, absente/);
+  });
+});
+
+describe('A34 — segmentation explicite (37:130 : « إِلْ يَاسِينَ » en un seul mot des données)', () => {
+  it('groupes couvrant 1..n dans l’ordre', () => {
+    expect(segmentationCovers([[1], [2], [3, 4]], 4)).toBe(true);
+    expect(segmentationCovers([[1], [3], [2, 4]], 4)).toBe(false);
+    expect(segmentationCovers([[1], [2], [3]], 4)).toBe(false);
+    expect(segmentationCovers([[1], [], [2, 3, 4]], 4)).toBe(false);
+  });
+  it('37:130 : 3 mots de données acceptés SEULEMENT avec la segmentation explicite', () => {
+    expect(words(37, 130)).toHaveLength(4);
+    let cp = 0xfb51;
+    const w: ExactWord[] = [1, 2, 3].map((i) => [37, 130, i, String.fromCodePoint(cp++), 'word']);
+    w.push([37, 130, 0, String.fromCodePoint(cp++), 'end']);
+    const f = fileOf({ p: 451, lines: [{ n: 2, w }] });
+    const base = { file: f, lengths: tanzil.lengths, text, basmala: tanzil.basmala, partial: true };
+    expect(checkExactFile(base).join('\n')).toMatch(
+      /37:130 : 3 mot\(s\) dans les données, 4 dans Tanzil/,
+    );
+    const list = readCorrections(join(REPO, 'infra/outils/qf-lignes/corrections.json'));
+    const segments = segmentsFrom(list, 2);
+    expect(segments.get('37:130')).toEqual([[1], [2], [3, 4]]);
+    expect(checkExactFile({ ...base, segments }).filter((e) => e.startsWith('37:130'))).toEqual([]);
+    expect(list.find((c) => c.id === 'seg-37-130')).toMatchObject({
+      validation: expect.stringMatching(/référent provisoire/),
+    });
   });
 });
 
@@ -345,7 +404,7 @@ describe('A34 — outil de synchronisation (sans réseau)', () => {
     const { file, unknown } = buildExactFile(rows, tanzil.lengths, null);
     expect(unknown).toEqual([]);
     expect(file.pages.map((p) => p.p)).toEqual([604]);
-    expect(file.pages[0]).toEqual(synthPage().page);
+    expect({ p: file.pages[0]!.p, lines: file.pages[0]!.lines }).toEqual(synthPage().page);
     expect(check(file, synthPage().codes)).toEqual([]);
   });
 
@@ -363,7 +422,7 @@ describe('A34 — outil de synchronisation (sans réseau)', () => {
       }),
     );
     const { file } = buildExactFile(rows, tanzil.lengths, null);
-    expect(file.pages[0]).toEqual(synthPage().page);
+    expect({ p: file.pages[0]!.p, lines: file.pages[0]!.lines }).toEqual(synthPage().page);
   });
 
   it('corrections explicites : appliquée si « avant » correspond, obsolète si déjà corrigée, sinon bloquante', () => {
@@ -433,7 +492,7 @@ describe('A34 — outil de synchronisation (sans réseau)', () => {
     expect(calls[1]).toMatch(/resources=mushafs:2/);
     expect(calls.join(' ')).not.toMatch(/secret-test/);
     const { file } = buildExactFile(rows, tanzil.lengths, null);
-    expect(file.pages[0]).toEqual(synthPage().page);
+    expect({ p: file.pages[0]!.p, lines: file.pages[0]!.lines }).toEqual(synthPage().page);
   });
 
   /** faux serveur : jeton, synchronisation (410 sur un jeton périmé), instantané direct */
