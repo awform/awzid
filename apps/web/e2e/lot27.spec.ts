@@ -77,6 +77,8 @@ test.describe('parent', () => {
     if (await tous.isChecked()) await tous.uncheck();
     await box.locator('[data-permis="essai-hafs"]').check();
     await box.locator('[data-permis="essai-qalun"]').uncheck();
+    // A2 : le récitateur en ligne d'essai fait aussi partie de la liste
+    await box.locator('[data-permis="essai-qf"]').uncheck();
     await box.locator('#pin-coran').fill(PARENT_PIN);
     await box.getByTestId('enregistrer-permis').click();
     await expect(box.getByRole('status')).toContainText('enregistrée');
