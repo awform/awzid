@@ -12,6 +12,7 @@
   import Sprite from '$lib/Sprite.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
+  import { modeLocal } from './mode';
 
   /**
    * A27 — test de POSITIONNEMENT (court : deux exercices de l'épreuve de fin de chaque niveau, du premier au
@@ -40,7 +41,16 @@
   let busy = $state(false);
   let error = $state('');
   let passes = $state<string[]>([]);
-  let result = $state<{ niveau: string; change?: boolean; reussi: boolean } | null>(null);
+  let result = $state<{
+    niveau: string;
+    change?: boolean;
+    reussi: boolean;
+    etoiles?: number;
+  } | null>(null);
+  // A39 : défi doux (enfants, ados : étoiles, essais libres) ; mode serein : épreuve facultative (certificat)
+  const doux = $derived(
+    mode === 'epreuve' && profile ? modeLocal(profile.id, profile.kind) : 'verification',
+  );
   setContext('illustrations', () => view?.illustrations ?? {});
 
   const base = $derived(
@@ -82,6 +92,7 @@
       suivant?: string;
       niveau?: string;
       change?: boolean;
+      etoiles?: number;
     }>(
       'POST',
       mode === 'epreuve' ? base : `${base}/${view.niveau}`,
@@ -100,7 +111,12 @@
       window.scrollTo({ top: 0 });
       return;
     }
-    result = { niveau: r.data.niveau ?? view.niveau, change: r.data.change, reussi: r.data.reussi };
+    result = {
+      niveau: r.data.niveau ?? view.niveau,
+      change: r.data.change,
+      reussi: r.data.reussi,
+      etoiles: r.data.etoiles,
+    };
   }
   const phrases = $derived(
     (() => {
@@ -120,7 +136,11 @@
 
 <p><a href={resolve(matiere === 'sciences' ? '/sciences' : '/')}>{t('commun.retour')}</a></p>
 <h1>
-  <Bidi text={mode === 'epreuve' ? t('parc.epreuve_titre') : t('parc.positionnement_titre')} />
+  <Bidi
+    text={mode === 'epreuve'
+      ? t(doux === 'douce' ? 'ser.defi' : 'parc.epreuve_titre')
+      : t('parc.positionnement_titre')}
+  />
 </h1>
 
 {#if !profile}
@@ -145,9 +165,21 @@
       </p>
     {:else if result.reussi}
       <h2><Bidi text={t('parc.epreuve_reussie', { niveau: levelLabel(result.niveau) })} /></h2>
+      {#if doux === 'serein'}<p data-testid="certificat-possible">{t('ser.certif_ok')}</p>{/if}
     {:else}
       <h2>{t('parc.epreuve_pas_encore')}</h2>
-      <p>{t('parc.epreuve_conseil')}</p>
+      <p><Bidi text={t(doux === 'verification' ? 'parc.epreuve_conseil' : 'ser.defi_encore')} /></p>
+    {/if}
+    {#if result.etoiles}
+      <!-- A39 : des étoiles, jamais de note chiffrée -->
+      <p
+        class="stars"
+        data-testid="etoiles"
+        data-n={result.etoiles}
+        aria-label={t('ser.etoiles', { n: result.etoiles })}
+      >
+        <Bidi text={'★'.repeat(result.etoiles) + '☆'.repeat(3 - result.etoiles)} />
+      </p>
     {/if}
     <p class="muted small">{t('parc.maitre_corrige')}</p>
     <a
@@ -159,7 +191,17 @@
 {:else if !started}
   <section class="card intro" data-testid="test-intro">
     <p>
-      <Bidi text={mode === 'epreuve' ? t('parc.epreuve_intro') : t('parc.positionnement_intro')} />
+      <Bidi
+        text={mode === 'epreuve'
+          ? t(
+              doux === 'douce'
+                ? 'ser.defi_intro'
+                : doux === 'serein'
+                  ? 'ser.facultative_intro'
+                  : 'parc.epreuve_intro',
+            )
+          : t('parc.positionnement_intro')}
+      />
     </p>
     {#if mode === 'positionnement' && courant}
       <p class="muted small">
@@ -256,6 +298,11 @@
   }
   .send {
     margin-top: var(--space-m);
+  }
+  .stars {
+    font-size: 2rem;
+    color: var(--primary);
+    margin: 0;
   }
   .error {
     color: var(--bad-ink);

@@ -4,6 +4,7 @@
   import { resolve } from '$app/paths';
   import { fmtDate, t } from '$lib/i18n';
   import { call, fetchMe, type Me, type ProfileInfo } from '$lib/session';
+  import ModeProfil from '$lib/parcours/ModeProfil.svelte';
 
   /**
    * Lot F2 (revue E3, E4) — responsables d'un profil : parents (titulaire, second parent) et école ; invitation
@@ -249,6 +250,10 @@
             </li>
           {/each}
         </ul>
+        {#if p.kind !== 'adulte' && me.account.kind === 'parent'}
+          <!-- A39 : le parent choisit la façon d'avancer de son enfant (préférence de l'ado à valider) -->
+          <ModeProfil pid={p.id} nom={p.pseudonym} />
+        {/if}
         {#if r.titulaire && me.account.kind === 'parent'}
           <div class="row">
             {#if p.kind !== 'adulte'}
