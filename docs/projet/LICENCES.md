@@ -117,3 +117,25 @@ modification. »
 | Copie | serveur seulement (`AWFORM_QF_MUSHAF_DIR` : `copie/`, `publie/`, `etat.json`) ; **jamais dans le dépôt** ; l'appareil ne garde que les pages consultées, revalidées au-delà de 7 jours |
 | Polices | `QCF_P001…604` + `QCF_BSML` du Complexe du Roi Fahd (édition 1405, `Data.zip` SHA-256 `7fe7a8719695c4dfb614cf7fb16af9d197729ae94bff347c30f804ac2fc7edb8`), conditions du Complexe (§ 1 de SOURCES_MUSHAF) : servies **telles quelles** (ni sous-ensemble ni conversion), gratuitement, depuis `AWFORM_QCF_DIR` (empreintes : `SHA256SUMS` écrit par `installer-polices.sh`) |
 | Crédit affiché | « Données de mise en page : Quran Foundation (Content Sync) — polices : Complexe du Roi Fahd » (sous la page ; à ajouter à « Garanties » lors de l'intégration) |
+
+## 9. Modèles d'IA qui écoutent la récitation (chantier A5)
+
+Fichiers de licence relevés au téléchargement (`~/modeles-ia/LICENCE_*.md` sur la VM, cartes des modèles lues le
+06/10/2026). Règle A5 : n'utiliser qu'un modèle dont la licence permet l'usage dans une application **payante**.
+
+| Modèle | Licence | Usage payant | Retenu | Raison |
+|---|---|---|---|---|
+| `nvidia/stt_ar_fastconformer_hybrid_large_pcd_v1.0` (NeMo) | **CC-BY-4.0** ; carte : « ready for commercial and non-commercial use » | **oui**, avec attribution | **OUI** (service `ecoute`) | meilleur compromis précision / vitesse sur processeur (`docs/projet/ECOUTE_IA.md`) |
+| `tarteel-ai/whisper-base-ar-quran` | Apache-2.0 (modèle de base OpenAI Whisper : MIT) | oui | non | 15 à 20 fois plus lent sur processeur, données d'entraînement non décrites (« None dataset ») |
+| `obadx/muaalem-model-v3_2` | MIT dans l'en-tête, « More Information Needed » dans la carte ; jeu `muaalem-annotated-v3` sans licence lue | incertain | **non** | modèle de **prononciation / tajwīd** (sortie phonétique) : contraire à la règle « mots seulement, jamais de tajwīd » ; licence incomplète |
+| `obadx/recitation-segmenter-v2` | MIT | oui | non (pas nécessaire) | découpe aux pauses : remplacée par un simple détecteur d'énergie pour le suivi en direct ; à reconsidérer si le direct en a besoin |
+
+**Attribution exigée par CC-BY-4.0** (à reprendre dans « Garanties » et les mentions légales quand la fonction
+sort du canal bêta) : « Reconnaissance de la parole : modèle NVIDIA STT Arabic FastConformer Hybrid Large PCD v1.0,
+licence CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), utilisé sans modification des poids ; le
+décodage et la comparaison au texte sont propres à Awzid. »
+
+Remarques : le modèle a été entraîné notamment sur `tarteel-ai/everyayah` (récitations de récitateurs connus) :
+les résultats sur les fichiers du Complexe sont donc probablement **meilleurs** que sur des élèves réels
+(`ECOUTE_IA.md`, limites). Le modèle n'est **jamais** réentraîné ni affiné avec des voix d'élèves (aucune voix
+n'est gardée). Les poids ne sont pas dans le dépôt ni dans l'image : montés en lecture seule (`/model`).
