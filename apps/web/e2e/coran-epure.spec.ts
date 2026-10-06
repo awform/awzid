@@ -429,6 +429,8 @@ test('accueil épuré : reprendre, liens discrets, explications derrière l’ic
 }) => {
   await page.goto('/coran/lecteur?s=112&a=3');
   await expect(page.locator('[data-aya="112:3"]').first()).toBeVisible();
+  // dernière lecture gardée une fois le lecteur prêt (récitateurs chargés)
+  await expect(page.locator('[data-testid="ouvrir-ecoute"]:disabled')).toHaveCount(0);
   await page.goto('/coran');
   await expect(page.getByTestId('reprendre')).toContainText('Al-Ikhlāṣ');
   await expect(page.getByTestId('reprendre')).toHaveAttribute('href', '/coran/lecteur?s=112&a=3');
