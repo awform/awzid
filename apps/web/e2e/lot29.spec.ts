@@ -146,7 +146,7 @@ test('riwāya : bouton absent pour un autre muṣḥaf, présent en Ḥafṣ ; m
   await page.goto('/coran/lecteur?s=1&m=qalun&vue=versets');
   await openDisplay(page);
   await expect(page.getByTestId('tajwid')).toHaveCount(0);
-  await page.getByTestId('choix-mushaf').selectOption('hafs');
+  await page.locator('label:has([data-mushaf="hafs"])').click();
   await expect(page.getByTestId('tajwid')).toBeVisible();
   await close(page);
 

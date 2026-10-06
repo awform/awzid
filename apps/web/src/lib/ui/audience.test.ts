@@ -24,16 +24,20 @@ describe('lot 26 — public, thème et navigation', () => {
     expect(themeOf(audienceOf(ctx({})))).toBe('clair');
   });
 
-  it('Coran épuré : palette verdure dans l’espace Coran pour les élèves ; réglage « partout » prêt', () => {
-    for (const a of ['enfant', 'ado', 'adulte', 'visiteur'] as const) {
-      expect(paletteOf(a, '/coran/lecteur')).toBe('verdure');
-      expect(paletteOf(a, '/hifz')).toBe('verdure');
-      expect(paletteOf(a, '/lecons/ad1.l01')).toBeNull();
-      expect(paletteOf(a, '/lecons/ad1.l01', true)).toBe('verdure');
-    }
-    expect(paletteOf('parent', '/coran', true)).toBeNull();
-    expect(paletteOf('enseignant', '/coran')).toBeNull();
-    expect(paletteOf('enfant', '/coranique')).toBeNull();
+  it('palette verdure par public : adultes partout, enfants et ados jamais (Coran compris), visiteurs au Coran', () => {
+    for (const p of ['/coran/lecteur', '/hifz', '/lecons/ad1.l01', '/', '/quotidien'])
+      expect(paletteOf('adulte', p), p).toBe('verdure');
+    for (const a of ['enfant', 'ado'] as const)
+      for (const p of ['/coran/lecteur', '/hifz', '/lecons/ad1.l01'])
+        expect(paletteOf(a, p), `${a} ${p}`).toBeNull();
+    expect(paletteOf('visiteur', '/coran/lecteur')).toBe('verdure');
+    expect(paletteOf('visiteur', '/hifz')).toBe('verdure');
+    expect(paletteOf('visiteur', '/coranique')).toBeNull();
+    expect(paletteOf('visiteur', '/lecons/ad1.l01')).toBeNull();
+    for (const a of ['parent', 'enseignant', 'admin'] as const)
+      expect(paletteOf(a, '/coran')).toBeNull();
+    // réglage par public prêt pour la suite (p. ex. les ados aussi, plus tard)
+    expect(paletteOf('ado', '/', { ado: 'partout' })).toBe('verdure');
   });
 
   it("les espaces du parent restent « clairs » même quand un enfant est actif sur l'appareil", () => {

@@ -22,21 +22,22 @@
   } from '$lib/quran/mushaf-exact-load';
   import QuranText from '$lib/quran/QuranText.svelte';
   import RiwayaBadge from '$lib/quran/RiwayaBadge.svelte';
-  import Affichage from '$lib/quran/lecture/Affichage.svelte';
   import Feuille from '$lib/quran/lecture/Feuille.svelte';
   import MenuVerset from '$lib/quran/lecture/MenuVerset.svelte';
-  import ReglagesEcoute from '$lib/quran/lecture/ReglagesEcoute.svelte';
+  import Reglages from '$lib/quran/lecture/Reglages.svelte';
   import Selecteur from '$lib/quran/lecture/Selecteur.svelte';
   import {
     type Onglet,
     clampRange,
     hizbStart,
     isMarked,
+    listenFiles,
     playQueue,
     PRESETS,
     presetOf,
     presetRange,
     readMarks,
+    reciterFor,
     toggleMark,
     writeLast,
     type PresetId,
@@ -57,6 +58,7 @@
     stepPage,
     suraLengths,
     swipeStep,
+    TEXT_SCALE,
     writePrefs,
     type MushafPrefs,
   } from '$lib/quran/mushaf';
@@ -152,8 +154,13 @@
   // feuilles et menu
   let selOpen = $state(false);
   let selTab = $state<Onglet>('sourate');
+  /** panneau UNIQUE « Réglages » (écoute, récitateur, muṣḥaf, affichage, traduction, tajwid, mémoriser, hors ligne) */
   let regOpen = $state(false);
-  let affOpen = $state(false);
+  let kidAll = $state(false);
+  /** public de l'écran (enfant : tuiles simples d'abord, le reste pour le parent) */
+  let kid = $state(false);
+  /** avis du lecteur : récitateur ou muṣḥaf changés pour garder la même numérotation des versets */
+  let notice = $state('');
   let tradSheet = $state(false);
   let infoOpen = $state(false);
   let menuAt = $state<{ s: number; a: number } | null>(null);
@@ -209,9 +216,13 @@
     repeatChain: prefs.repeatChain,
   });
   const plan = $derived(playQueue(range, settings));
-  const queue = $derived(pack?.mode === 'sourate' ? [0] : plan.queue);
   const preset = $derived(presetOf(settings, range, suraLen(range.s)));
+  /**
+   * Le fichier « verset n » du récitateur est-il le verset n du texte affiché ? (même riwāya, même découpage).
+   * Sert au surlignage ET à la lecture : jamais un verset choisi lu dans une autre numérotation.
+   */
   const highlight = $derived(highlightOn(reciter, rw, pack, suraLen(range.s)));
+  const queue = $derived(listenFiles(pack, highlight, plan.queue));
   const lastPage = $derived(p >= 604 || (double && spreadOf(p)[1] >= 604));
   const position = $derived(
     t('mp.page_sur', {
@@ -267,7 +278,17 @@
   // A34 : mise en page EXACTE (Ḥafṣ, sans tajwid ni masquage) pour les pages publiées ; sinon page fluide
   let exactInfo = $state<ExactState | null>(null);
   let exactPages = $state<Record<number, ExactPage | null>>({});
-  const exactOn = $derived(!isRw && !tajwidOn && prefs.memo === 0);
+  // style choisi par l'élève (Médine à l'identique ou muṣḥaf habituel) ; texte agrandi : page fluide
+  const exactOn = $derived(
+    !isRw && !tajwidOn && prefs.memo === 0 && prefs.style === 'exact' && prefs.size === 0,
+  );
+  const exactCount = $derived(
+    !exactInfo?.disponible
+      ? 0
+      : exactInfo.partiel && exactInfo.pages
+        ? exactInfo.pages.length
+        : 604,
+  );
   const exactOf = (n: number) => (exactOn ? (exactPages[n] ?? null) : null);
   const anyExact = $derived(vue === 'page' && shown.some((n) => !!exactOf(n)));
   /** Lignes et polices des pages affichées disponibles en mise en page exacte (montrées une fois prêtes). */
@@ -343,7 +364,12 @@
     conseil = c.conseil;
     restreint = c.restreint;
     const r = q.get('r');
-    reciterId = r && c.list.some((x) => x.id === r) ? r : c.initial;
+    const asked = r ? c.list.find((x) => x.id === r) : undefined;
+    if (asked && !wantMemo && asked.riwaya !== rw && isMushafRiwaya(asked.riwaya)) {
+      // récitateur demandé (lien « Écouter » d'une autre riwāya) : le muṣḥaf suit sa riwāya
+      reciterId = asked.id;
+      await setRiwaya(asked.riwaya, true);
+    } else reciterId = reciterFor(reciters, rw, [asked?.id, c.initial, c.conseil]) ?? null;
     range = defaultRange();
     ready = true;
     if (wantMemo) await setMemo(Math.max(1, prefs.memo), true);
@@ -476,8 +502,11 @@
 
   /** Lecture sur un geste : plage donnée (ou plage en cours), mini-barre montrée. */
   async function playFrom(r: Range | null) {
-    if (!reciter) {
-      regOpen = true;
+    regOpen = false;
+    notice = '';
+    // garde : jamais un récitateur d'une autre riwāya que le texte affiché (autre numérotation des versets)
+    if (!reciter || reciter.riwaya !== rw) {
+      void openReg('recitateur');
       return;
     }
     if (r) range = clampRange(r, suraLen(r.s));
@@ -485,10 +514,17 @@
     await openTracks();
     await tick();
     if (!pack) {
-      regOpen = true;
+      void openReg('recitateur');
       return;
     }
+    // découpage différent du texte (sourate entière) : on le dit, la file est la sourate entière
+    if (!highlight && pack.mode !== 'sourate') notice = t('cl.avis_sourate_entiere');
     await player?.start();
+  }
+  /** « Répéter ce verset » (menu du verset, tuile des enfants) : le verset seul, en boucle. */
+  function repeat(s: number, a: number) {
+    Object.assign(prefs, PRESETS.find((x) => x.id === 'repeter')!.set);
+    void playFrom({ s, from: a, to: a });
   }
   function onaya(a: number | null) {
     if (a === null || !highlight) {
@@ -604,18 +640,54 @@
     if (!idx) rwError = true;
     return !!idx;
   }
-  async function setRiwaya(m: MushafRiwaya) {
+  /**
+   * Autre muṣḥaf (riwāya). Le récitateur SUIT : la numérotation des versets change d'une riwāya à l'autre
+   * (p. ex. « الم » est le verset 2:1 en Ḥafṣ, pas en Qālūn) — un récitateur d'une autre riwāya lirait un autre
+   * verset que celui touché. On prévient quand le récitateur change.
+   */
+  async function setRiwaya(m: MushafRiwaya, fromReciter = false) {
     rw = m;
     heard = null;
     revealed = new Set();
     if (!(await openRiwaya())) rw = HAFS;
     writeMushafRiwaya(rw);
+    if (!fromReciter && reciters.length) {
+      const id = reciterFor(reciters, rw, [reciterId, conseil]);
+      if (id !== reciterId) {
+        player?.stop();
+        reciterId = id;
+        const r = reciters.find((x) => x.id === id);
+        notice = r
+          ? t('cl.avis_recitateur_change', { nom: r.nameFr, riwaya: r.riwayaFr })
+          : t('cl.avis_sans_recitateur', { riwaya: mushafChoice(rw).fr });
+      }
+    }
     // même verset (vue « versets ») ou même numéro de page dans l'autre muṣḥaf
     if (vue === 'versets' && cur) await goVerse(cur.s, Math.min(cur.a, suraLen(cur.s)));
     else {
       cur = null;
       await goPage(p);
     }
+  }
+  /** Choix d'un récitateur : d'une autre riwāya, le muṣḥaf passe à cette riwāya (même numérotation), prévenu. */
+  async function chooseReciter(id: string) {
+    const r = reciters.find((x) => x.id === id);
+    if (!r) return;
+    reciterId = id;
+    if (r.riwaya !== rw && isMushafRiwaya(r.riwaya)) {
+      await setRiwaya(r.riwaya, true);
+      notice = t('cl.avis_mushaf_change', { riwaya: r.riwayaFr, nom: r.nameFr });
+    }
+  }
+  /** Ouvre le panneau « Réglages » (à une section donnée). */
+  async function openReg(section = '') {
+    kid = document.documentElement.dataset.public === 'enfant';
+    // enfant : les tuiles d'abord ; une section précise (récitateur, mémoriser…) ouvre « tous les réglages »
+    kidAll = !!section;
+    regOpen = true;
+    if (!section) return;
+    await tick();
+    document.getElementById(`reg-${section}`)?.scrollIntoView({ block: 'start' });
   }
   /** Mémoriser : masquer peu à peu (texte de Ḥafṣ, récitateurs en Ḥafṣ ; portion du carnet proposée). */
   async function setMemo(level: number, fromCarnet = false) {
@@ -677,7 +749,7 @@
   let gTimer: ReturnType<typeof setTimeout> | null = null;
   async function guidePlay() {
     guideStop();
-    affOpen = false;
+    regOpen = false;
     if (prefs.vue !== 'versets') {
       prefs.vue = 'versets';
       await ensure();
@@ -773,7 +845,7 @@
 {#if noPages}
   <p class="card" role="status">{t('mp.sans_pages')}</p>
 {:else}
-  <div class="lecture" class:audio-on={audioOn}>
+  <div class="lecture" class:audio-on={audioOn} style:--qz={TEXT_SCALE[prefs.size] ?? 1}>
     <!-- barre unique : puce (téléphone) ou sélecteurs dorés (grand écran), outils, écoute -->
     <nav class="cbar" aria-label={t('mp.commandes')} data-testid="barre-coran">
       <div class="nav-zone">
@@ -823,14 +895,7 @@
             ><Icon name="casque" size={22} /><span>{t('ecoute.ecouter')}</span></button
           >
         {/if}
-        <button
-          type="button"
-          class="tool search-btn"
-          onclick={() => openSel('sourate')}
-          aria-label={t('mp.recherche')}
-          title={t('mp.recherche')}
-          data-testid="ouvrir-recherche"><Icon name="loupe" size={22} /></button
-        >
+        <!-- recherche : par la puce ou les sélecteurs dorés (même sélecteur ; plus de loupe en double) -->
         {#if !isRw}
           <button
             type="button"
@@ -839,17 +904,20 @@
             onclick={toggleTrad}
             aria-label={t('mp.traduction_court')}
             title={t('mp.traduction_court')}
-            data-testid="mp-trad"><Icon name="traduction" size={22} /></button
+            data-testid="mp-trad"
+            ><Icon name="traduction" size={22} /><span class="lbl-wide"
+              >{t('mp.traduction_court')}</span
+            ></button
           >
         {/if}
+        <!-- UN SEUL point d'entrée pour tous les réglages du lecteur : icône ET libellé, téléphone et bureau -->
         <button
           type="button"
-          class="tool"
-          onclick={() => (affOpen = true)}
+          class="tool reg-btn"
+          onclick={() => openReg()}
           aria-haspopup="dialog"
-          aria-label={t('cl.affichage')}
-          title={t('cl.affichage')}
-          data-testid="ouvrir-affichage"><Icon name="points" size={22} /></button
+          data-testid="ouvrir-reglages-lecteur"
+          ><Icon name="reglages" size={22} /><span>{t('cl.reglages')}</span></button
         >
       </div>
       <div class="ecoute" class:on={audioOn} data-testid="mini-barre">
@@ -875,20 +943,25 @@
               playing = i !== null;
               step = i === null ? null : (plan.steps?.[i] ?? null);
             }}
-            onsettings={() => (regOpen = true)}
+            onsettings={(sec) => openReg(sec ?? 'ecoute')}
             onvolume={(v) => (prefs.volume = v)}
           />
         {:else}
           <button
             type="button"
             class="tool"
-            onclick={() => (regOpen = true)}
+            onclick={() => openReg('recitateur')}
             data-testid="sans-recitateur"
             ><Icon name="casque" size={22} /><span>{t('mp.aucun_recitateur')}</span></button
           >
         {/if}
       </div>
     </nav>
+    {#if notice}
+      <p class="avis" role="status" data-testid="avis-lecteur">
+        <Icon name="info" size={18} /><span><Bidi text={notice} /></span>
+      </p>
+    {/if}
     {#if rwError || (isRw && rwFont === 'erreur')}<p class="hint" role="status">
         <Bidi text={rwError ? t('rw.indisponible') : t('rw.police_erreur')} />
       </p>{/if}
@@ -906,7 +979,7 @@
     {#if memo}
       <p class="memo-line" data-testid="mode-memoriser">
         <Icon name="masque" size={18} /><Bidi text={t(`ca.masque_${prefs.memo}`)} />
-        <button type="button" class="link" onclick={() => (affOpen = true)}
+        <button type="button" class="link" onclick={() => openReg('memoriser')}
           >{t('cl.changer')}</button
         >
         <button
@@ -1058,51 +1131,92 @@
     }}
     {onsearch}
   />
-  <ReglagesEcoute
-    bind:open={regOpen}
-    bind:prefs
-    {reciters}
-    {reciterId}
-    {conseil}
-    {restreint}
-    {rw}
-    {range}
-    length={suraLen(range.s)}
-    {preset}
-    {pack}
-    {trackMsg}
-    {saved}
-    {wifi}
-    {progress}
-    {offMsg}
-    portion={memo ? portion : null}
-    onreciter={(id) => (reciterId = id)}
-    onpreset={applyPreset}
-    onrange={(from, to) => (range = clampRange({ s: range.s, from, to }, suraLen(range.s)))}
-    onkeep={keep}
-    ondrop={drop}
-    onwifi={(on) => {
-      wifi = on;
-      void setWifiOnly(on);
-    }}
-    onriwaya={setRiwaya}
-    onportion={usePortion}
-  />
-  <Affichage
-    bind:open={affOpen}
-    bind:prefs
-    bind:tjPrefs
-    bind:tjData
-    {rw}
-    wide={!narrow}
-    sura={activeSura}
-    verses={suraVerses}
-    basmala={meta?.basmala ?? ''}
-    onriwaya={setRiwaya}
-    onmemo={(n) => setMemo(n)}
-    bind:guide
-    onguide={guidePlay}
-  />
+  {#snippet tous()}
+    <Reglages
+      bind:prefs
+      bind:tjPrefs
+      bind:tjData
+      bind:guide
+      {reciters}
+      {reciterId}
+      {conseil}
+      {restreint}
+      {rw}
+      {range}
+      length={suraLen(range.s)}
+      {preset}
+      {pack}
+      {trackMsg}
+      {saved}
+      {wifi}
+      {progress}
+      {offMsg}
+      portion={memo ? portion : null}
+      wide={!narrow}
+      sura={activeSura}
+      verses={suraVerses}
+      basmala={meta?.basmala ?? ''}
+      exactPages={exactCount}
+      onreciter={chooseReciter}
+      onpreset={applyPreset}
+      onrange={(from, to) => (range = clampRange({ s: range.s, from, to }, suraLen(range.s)))}
+      onkeep={keep}
+      ondrop={drop}
+      onwifi={(on) => {
+        wifi = on;
+        void setWifiOnly(on);
+      }}
+      onportion={usePortion}
+      onriwaya={(m) => setRiwaya(m)}
+      onmemo={(n) => setMemo(n)}
+      onguide={guidePlay}
+    />
+  {/snippet}
+  <Feuille id="reglages" title={t('cl.reglages')} bind:open={regOpen} testid="reglages">
+    {#if kid}
+      <!-- ENFANT : quatre grosses tuiles ; le reste pour le parent -->
+      <div class="tuiles" data-testid="reglages-enfant">
+        <button
+          type="button"
+          class="tuile"
+          onclick={() => playFrom(null)}
+          data-testid="tuile-ecouter"><Icon name="casque" size={36} />{t('cl.k_ecouter')}</button
+        >
+        <button
+          type="button"
+          class="tuile"
+          onclick={() => repeat(activeSura, posA)}
+          data-testid="tuile-repeter"><Icon name="repeter" size={36} />{t('cl.k_repeter')}</button
+        >
+        <button
+          type="button"
+          class="tuile"
+          aria-pressed={prefs.size > 0}
+          onclick={() => (prefs.size = (prefs.size + 1) % TEXT_SCALE.length)}
+          data-testid="tuile-grand"
+          ><Icon name="taille" size={36} /><Bidi
+            text={t(prefs.size === TEXT_SCALE.length - 1 ? 'cl.k_normal' : 'cl.k_grand')}
+          /></button
+        >
+        <button
+          type="button"
+          class="tuile"
+          aria-pressed={prefs.memo > 0}
+          onclick={() => setMemo(prefs.memo > 0 ? 0 : 2)}
+          data-testid="tuile-masquer"
+          ><Icon name="masque" size={36} /><Bidi
+            text={t(prefs.memo > 0 ? 'cl.k_montrer' : 'cl.k_masquer')}
+          /></button
+        >
+      </div>
+      <details class="parent" bind:open={kidAll} data-testid="reglages-parent">
+        <summary>{t('cl.k_parent')}</summary>
+        {@render tous()}
+      </details>
+    {:else}
+      {@render tous()}
+    {/if}
+  </Feuille>
   <Feuille
     id="trad-feuille"
     title={t('mp.traduction_du_sens')}
@@ -1147,10 +1261,7 @@
     tradKey={prefs.translation}
     loadTrad={async (s, a) => (await loadTranslation(prefs.translation, s))?.verses.get(a) ?? null}
     onlisten={(s, a) => playFrom({ s, from: a, to: suraLen(s) })}
-    onrepeat={(s, a) => {
-      Object.assign(prefs, PRESETS.find((x) => x.id === 'repeter')!.set);
-      void playFrom({ s, from: a, to: a });
-    }}
+    onrepeat={repeat}
     onmark={(s, a) => (marks = toggleMark({ s, a, p: starts ? pageOf(starts, s, a) : p }))}
     onreveal={reveal}
   />
@@ -1313,6 +1424,68 @@
   .rwbadge {
     flex: none;
   }
+  /* « Réglages » : toujours avec son libellé (téléphone et bureau) */
+  .reg-btn {
+    padding: 0 12px;
+    color: var(--or-ink);
+    background: var(--or-soft);
+    border-color: var(--or-line);
+  }
+  .lbl-wide {
+    display: none;
+  }
+  .avis {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin: 8px 0 0;
+    padding: 6px 12px;
+    font-size: 0.92rem;
+    color: var(--ink);
+    background: var(--or-soft);
+    border: 1px solid var(--or-line);
+    border-radius: var(--radius-md);
+  }
+  .avis > span {
+    flex: 1 1 200px;
+  }
+  /* panneau « Réglages » des enfants : quatre grosses tuiles */
+  .tuiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 4px 0 14px;
+  }
+  .tuile {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 8px;
+    min-height: 120px;
+    padding: 12px 8px;
+    font: inherit;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--mp-green);
+    background: var(--mp-mint);
+    border: 2px solid var(--mp-mint2);
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+  .tuile[aria-pressed='true'] {
+    color: var(--or-ink);
+    background: var(--or-soft);
+    border-color: var(--or-line);
+  }
+  .parent summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    color: var(--ink2);
+    cursor: pointer;
+  }
   /* téléphone : la mini-barre, fixe en bas, au-dessus de la navigation, après le premier « Écouter » */
   .ecoute {
     display: none;
@@ -1333,9 +1506,6 @@
   .spacer {
     height: 84px;
   }
-  .search-btn {
-    display: none;
-  }
   @media (min-width: 900px) {
     .lecture {
       margin-inline: calc((100% - min(1400px, 100vw - 48px)) / 2);
@@ -1350,8 +1520,8 @@
     .gold {
       display: flex;
     }
-    .search-btn {
-      display: inline-flex;
+    .lbl-wide {
+      display: inline;
     }
     .ecouter-btn {
       display: none;
@@ -1585,9 +1755,24 @@
     font-size: 0.9rem;
   }
   @media (max-width: 899px) {
+    /* téléphone et tablette : la puce (emplacement en entier, lisible) sur sa ligne, les outils dessous */
     .cbar {
       top: 60px;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
+    }
+    .nav-zone {
+      flex: 1 1 100%;
+    }
+    .puce {
+      flex: 1 1 auto;
+      justify-content: space-between;
+    }
+    .tools {
+      flex: 1 1 100%;
+      gap: 6px;
+    }
+    .reg-btn {
+      margin-inline-start: auto;
     }
     .stage {
       grid-template-areas:

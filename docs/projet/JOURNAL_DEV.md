@@ -8,6 +8,59 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Corrections du lecteur Coran (signalements du client sur la démo)
+
+Branche `coran-corrections-wip` (worktree `~/awform-corfix`, depuis `main` fd3cad7), e2e isolés (ports 3472/4472).
+
+1. **« Je touche un verset pour le faire répéter, il lit le verset au-dessus » — cause** : le lecteur demandait le
+   fichier « verset n » du récitateur choisi QUEL QUE SOIT le muṣḥaf affiché. Or chaque riwāya a sa numérotation
+   (compte koufi de Ḥafṣ et Shuʿba, madanī de Warsh et Qālūn, baṣrī d'ad-Dūrī et as-Sūsī, makkī d'al-Bazzī) :
+   « الم » est le verset 2:1 en Ḥafṣ mais pas en Qālūn, si bien que le verset 90 du muṣḥaf de Qālūn est le 91 de
+   Ḥafṣ. Muṣḥaf d'une autre riwāya + récitateur Ḥafṣ (récitateur par défaut) → on entendait le verset
+   AU-DESSUS ; texte Ḥafṣ + récitateur Qālūn, ad-Dūrī ou as-Sūsī → le verset en dessous (al-Fātiḥa de Qālūn :
+   basmala non comptée). Le surlignage était déjà coupé dans ce cas (A8), pas la lecture. Vérifié sur les vrais
+   fichiers de la démo : en Ḥafṣ sur Ḥafṣ, page fluide, page exacte et vue versets, le fichier demandé était déjà
+   le bon (index, page, basmala, plage du/au corrects).
+   **Correction à la racine** : le récitateur SUIT le muṣḥaf (`reciterFor`, `lecture.ts`) — changer de muṣḥaf
+   change le récitateur (avis « Le récitateur change : … »), choisir un récitateur d'une autre riwāya fait passer
+   le muṣḥaf à sa riwāya (avis), muṣḥaf sans récitateur (Warsh, al-Bazzī) : avis, rien n'est lu ; garde dans
+   `playFrom` ; la file n'est faite de numéros de versets que si la récitation est découpée comme le texte
+   affiché (`listenFiles` + `highlightOn`), sinon la sourate entière, dite (al-Mulk d'ad-Dūrī 31/30, as-Sūsī).
+   L'état « autre riwāya » (encadré, lien) disparaît.
+   **Trouvé en passant (page exacte A34, téléphone)** : la mesure des lignes (texte à 100 px, `.mesure`) élargissait
+   la page de plusieurs milliers de pixels → page dézoomée sur téléphone, feuilles et menu du verset mal placés
+   (clics interceptés). Corrigé (`width: 0; overflow: hidden`), contrôlé par e2e (`innerWidth` = largeur d'écran).
+2. **Puce** : « Al-Baqara · verset 90 · page 14 · juzʾ 1 » en toutes lettres (téléphone : « Al-Baqara » /
+   « verset 90 · page 14 · juzʾ 1 », blocs insécables), 5 langues ; la puce prend toute la ligne, les outils
+   dessous.
+3. **Un seul point d'entrée « Réglages »** (icône ET libellé, téléphone et bureau) : `Reglages.svelte` remplace les
+   feuilles « Réglages d'écoute » et « Affichage » ; sections en toutes lettres avec sauts : Écoute (préréglages,
+   plage, répétitions, vitesse, arrêt automatique), Récitateur (ceux de la riwāya affichée d'abord, « en ligne »
+   étiquetés — champ `enLigne` prévu pour A2), Muṣḥaf (style : « Muṣḥaf de Médine (pages à l'identique) » OU
+   « Notre muṣḥaf habituel (cadre vert) », choix gardé ; riwāyāt décrites comme les récitateurs : nom en clair,
+   courte description, nombre de récitateurs), Affichage (vue, **taille du texte** normale / grande / très grande,
+   lecture seule, une page), Traduction, Tajwid, Mémoriser (+ lecture guidée), Hors ligne. Icône « ⋯ » et loupe
+   en double (même sélecteur que la puce) retirées ; l'icône répétition et le nom du récitateur de la mini-barre ouvrent ce panneau à leur
+   section. **Enfants** : quatre grosses tuiles (Écouter · Répéter · Plus grand · Masquer pour mémoriser), le reste
+   replié sous « Tous les réglages (avec un parent) ».
+4. **Thème** : `VERDURE` par public (`audience.ts`) — « vert, blanc, or » partout pour les ADULTES ; enfants
+   (Jardin) et ados (Nuit étoilée) gardent leur thème, espace Coran compris ; visiteurs : espace Coran (inchangé).
+5. **Tests** : unitaires `lecture-corrections.test.ts` (5), `audience.test.ts` (adapté) ; e2e
+   `coran-corrections.spec.ts` (9) sur les **vraies récitations de la démo** (9 récitateurs, 5 riwāyāt, copiées
+   dans la base de test, fichiers lus dans le volume de la démo : `e2e/audio-demo.ts`) : clé du fichier demandé =
+   verset touché pour 1:1, 1:7, 2:1, 2:5, 2:90, 112:2 (« Répéter » et « Écouter d'ici »), surlignage = verset
+   touché ; pages fluides ET exactes (début, milieu, fin de page, basmala) ; Qālūn page 1 ; al-Mulk ; changement
+   de muṣḥaf / de récitateur ; puce (320 à 768 px, 5 langues) ; panneau Réglages ; tuiles enfant ; thèmes adulte,
+   enfant, ado. Mode `E2E_MUSHAF_EXACT=1` : les 9 anciens tests qui cherchaient le texte visible vérifient le
+   texte Tanzil ACCESSIBLE des pages exactes (`expectVerse`, `e2e/coran.ts`) ou visent un glyphe (`.first()`).
+   **Résultats** : `pnpm check` vert — unitaires **1 580 réussis, 1 ignoré** ; e2e complets **342 réussis,
+   34 ignorés, 0 échec** avec `E2E_MUSHAF_EXACT=1` (25,0 min) et **336 réussis, 40 ignorés, 0 échec** sans.
+6. **Budget** : total **409,8 Ko** (main : 407,7) ≤ 410 ; appareil d'un élève 350,1 Ko (main : 348,0) ≤ 355.
+   Marge faible (0,2 Ko) : deux feuilles fusionnées en un composant, textes « autre riwāya » et doublons retirés ;
+   toute nouvelle fonction du lecteur devra libérer de la place (ou relever le budget, décision du client).
+7. Captures avant / après (puce, réglages adulte et enfant, thème adulte ; 375 px et bureau) :
+   `reports/coran-corrections/` (hors dépôt), copiées sur le PC (`application/coran-corrections-captures/`).
+
 ## 06/10/2026 — Chantier A34 : Muṣḥaf de Médine « à l'identique » — branchement dans le lecteur (mode partiel)
 
 Après la fusion de « Coran épuré » (main aea0b34), fusionnée dans `a34-mushaf-exact-wip` :

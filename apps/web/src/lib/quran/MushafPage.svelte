@@ -349,11 +349,12 @@
     text-align: justify;
     text-align-last: center;
     font-family: var(--font-quran);
-    font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.8rem);
+    /* --qz : taille du texte choisie (réglage « Taille du texte », « Plus grand ») */
+    font-size: calc(clamp(1.3rem, 1.1rem + 0.9vw, 1.8rem) * var(--qz, 1));
     line-height: 2.3;
   }
   .compact .flow {
-    font-size: clamp(1.1rem, 0.55rem + 0.85vw, 1.55rem);
+    font-size: calc(clamp(1.1rem, 0.55rem + 0.85vw, 1.55rem) * var(--qz, 1));
     line-height: 2.15;
   }
   .band {

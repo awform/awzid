@@ -25,6 +25,8 @@ export interface Reciter {
   verses: number;
   surlignage: Surlignage;
   conseilDebutant: boolean;
+  /** récitation servie EN LIGNE (A2, Quran Foundation) : étiquetée dans le panneau « Réglages » du lecteur */
+  enLigne?: boolean;
 }
 
 export interface AudioFile {
