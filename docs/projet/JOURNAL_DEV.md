@@ -123,8 +123,17 @@ Validé par le client après le pilote A21.
    1 ignoré** ; e2e complets **307 réussis, 25 ignorés, 0 échec** (37,7 min) ; budget : `/lecons/[id]` 141,8 Ko,
    total 404,2 Ko ≤ 405, appareil d'un élève 344,7 Ko ≤ 355, leçons vivantes 12,6 Ko ≤ 20.
 
-Décisions à prendre (D-A21b) : religion (re/ra) sans animation ; code des leçons vivantes non préchargé ;
-modèle « tracé » en attente de données ; seuil de 14 mots.
+Décisions D-A21b (prises le 06/10) : religion re/ra sans animation pour l'instant (champ « profane » côté livres,
+B7) ; non-préchargement accepté ; tracé plus tard (ordre des traits côté livres) ; seuil 14 mots accepté ; budget au
+lot performance avant la bêta.
+
+**Correctif du 06/10** (relecture des captures) : la capture « racine » montrait une carte vide, à moitié sous la
+barre du bas — capture prise au changement de temps, carte poussée vers le bas par la carte du dessus qui
+grandissait. Le contenu était bien là ; corrigé quand même : départ seul seulement quand la carte est visible
+AU-DESSUS de la barre de navigation (marge de l'observateur), marge de défilement de la carte (en-tête et barre
+du bas), scène qui ne rétrécit jamais d'un temps à l'autre (moins de sauts de page) ; captures prises au milieu
+du premier temps puis en pause. Nouvel e2e « aucune carte vivante vide ni recouverte » (6 leçons, chaque carte :
+texte visible dans la scène, boutons et scène non recouverts).
 
 ---
 ## 05/10/2026 — Chantier A27 (suite) : décisions D-A27 appliquées
