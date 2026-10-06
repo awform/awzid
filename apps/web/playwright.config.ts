@@ -57,7 +57,14 @@ const LECONS_DIR = join(tmpdir(), `awform-e2e-lecons${ISOLE ? `-${SUFFIX}` : ''}
 if (existsSync(join(LECONS_SRC, 'index.js'))) process.env.E2E_LECONS_AUDIO = '1';
 // A34 : Muṣḥaf exact — SEULEMENT avec E2E_MUSHAF_EXACT=1 et la copie Content Sync du serveur (jamais dans le
 // dépôt) : les autres suites gardent la page fluide qu'elles vérifient
-const QF_DIR = process.env.E2E_QF_MUSHAF_DIR ?? join(homedir(), 'awform-data', 'qf-mushaf');
+// copie de production (604 pages) si elle est là, sinon celle du prélancement (49 pages)
+const QF_DIR =
+  process.env.E2E_QF_MUSHAF_DIR ??
+  [
+    join(homedir(), 'awform-data', 'qf-mushaf-prod'),
+    join(homedir(), 'awform-data', 'qf-mushaf'),
+  ].find((d) => existsSync(join(d, 'publie', 'manifeste.json'))) ??
+  join(homedir(), 'awform-data', 'qf-mushaf');
 const QCF_DIR = process.env.E2E_QCF_DIR ?? join(homedir(), 'awform-data', 'qcf-1405');
 const EXACT =
   process.env.E2E_MUSHAF_EXACT === '1' &&

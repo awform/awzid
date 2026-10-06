@@ -65,8 +65,10 @@ export function applyCorrections(
   rows: Map<string, Row>,
   list: Correction[],
   mushafId: number,
+  env?: string | null,
 ): { rows: Map<string, Row>; applied: string[]; obsolete: string[]; errors: string[] };
-export function readCorrections(path: string): Correction[];
+export function readCorrections(path: string): (Correction & Row)[];
+export function segmentsFrom(list: unknown[], mushafId: number): Map<string, number[][]>;
 export function syncBody(j: unknown): Record<string, unknown>;
 export function snapshotBody(j: unknown): { records?: unknown[] } & Record<string, unknown>;
 export function snapshotPath(mushafId: number): string;

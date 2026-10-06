@@ -43,6 +43,7 @@ import {
   bsmlSuraName,
   checkExactFile,
   pageFontFile,
+  placeHeads,
 } from '../../../apps/web/src/lib/quran/mushaf-exact.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -212,7 +213,11 @@ export function buildExactFile(rows, lengths, source) {
           })),
       })),
   };
-  return { file: out, unknown };
+  // en-têtes de sourate et basmalas, placés sur l'ensemble des pages reçues (un en-tête peut finir la page
+  // précédente) et publiés avec chaque page : l'appareil n'a jamais besoin de la page voisine
+  const placed = placeHeads(out.pages);
+  for (const pg of out.pages) pg.h = placed.heads.get(pg.p) ?? [];
+  return { file: out, unknown, headErrors: placed.errors };
 }
 
 // ---------------------------------------------------------------------------------------- corrections
@@ -221,13 +226,15 @@ export function buildExactFile(rows, lengths, source) {
  * correction ne s'applique que si l'enregistrement (même id, word_id, verse_id) porte exactement les valeurs
  * « avant » ; s'il porte déjà « apres », elle est obsolète (corrigée chez QF, à retirer) ; sinon : écart bloquant.
  */
-export function applyCorrections(rows, list, mushafId) {
+export function applyCorrections(rows, list, mushafId, env = null) {
   const out = new Map(rows);
   const applied = [];
   const obsolete = [];
   const errors = [];
   for (const c of list ?? []) {
-    if (Number(c.mushaf) !== Number(mushafId)) continue;
+    if (Number(c.mushaf) !== Number(mushafId) || c.type === 'segmentation') continue;
+    // correction propre à un environnement (ex. donnée erronée du seul prélancement)
+    if (env && Array.isArray(c.env) && !c.env.includes(env)) continue;
     const hits = [...out.entries()].filter(
       ([, r]) =>
         Number(r.id) === Number(c.record.id) &&
@@ -257,6 +264,15 @@ export function applyCorrections(rows, list, mushafId) {
 export const readCorrections = (path) =>
   existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')).corrections ?? []) : [];
 
+/** Segmentations explicites (type « segmentation ») : verset « s:a » → groupes de mots Tanzil par mot des données. */
+export function segmentsFrom(list, mushafId) {
+  const m = new Map();
+  for (const c of list ?? [])
+    if (c.type === 'segmentation' && Number(c.mushaf) === Number(mushafId))
+      m.set(c.verset, c.groupes);
+  return m;
+}
+
 // ------------------------------------------------------------------------------------------ contrôle
 export function fontChecker(dir) {
   const cache = new Map();
@@ -270,7 +286,7 @@ export function fontChecker(dir) {
   };
 }
 
-export function verify(file, { tanzil, pageStarts, fontsDir }) {
+export function verify(file, { tanzil, pageStarts, fontsDir, segments }) {
   const bsml = [];
   if (fontsDir) {
     const f = join(fontsDir, BSML_FONT_FILE);
@@ -291,6 +307,7 @@ export function verify(file, { tanzil, pageStarts, fontsDir }) {
       basmala: tanzil.basmala,
       pageStarts,
       fontHas: fontsDir ? fontChecker(fontsDir) : undefined,
+      segments,
     }),
   );
 }
@@ -300,7 +317,7 @@ export function verify(file, { tanzil, pageStarts, fontsDir }) {
  * Muṣḥaf de Médine commencent et finissent sur des versets entiers : un verset coupé serait signalé), plus les
  * glyphes de QCF_BSML. Renvoie les écarts globaux et ceux de chaque page.
  */
-export function verifyPages(file, { tanzil, pageStarts, fontsDir }) {
+export function verifyPages(file, { tanzil, pageStarts, fontsDir, segments }) {
   const global = verify({ ...file, pages: [] }, { tanzil, pageStarts, fontsDir }).filter((e) =>
     e.includes(BSML_FONT_FILE),
   );
@@ -317,6 +334,7 @@ export function verifyPages(file, { tanzil, pageStarts, fontsDir }) {
         pageStarts,
         fontHas,
         partial: true,
+        segments,
       }),
     );
   return { global, perPage };
@@ -333,7 +351,9 @@ export function publish(dir, file, extra = {}) {
   writeFileSync(join(tmp, 'lignes-v1.json'), all);
   let bytes = 0;
   for (const pg of file.pages) {
-    const b = Buffer.from(JSON.stringify({ format: file.format, p: pg.p, lines: pg.lines }));
+    const b = Buffer.from(
+      JSON.stringify({ format: file.format, p: pg.p, lines: pg.lines, h: pg.h ?? [] }),
+    );
     bytes += b.length;
     writeFileSync(join(tmp, 'pages', `${String(pg.p).padStart(3, '0')}.json`), b);
   }
@@ -717,19 +737,18 @@ async function main() {
     mushafName: String(m.name ?? ''),
     syncedAt: st.lastSync ?? '',
   };
-  const corr = applyCorrections(
-    rows,
-    readCorrections(String(o.corrections ?? join(HERE, 'corrections.json'))),
-    mushafId,
-  );
-  source.corrections = corr.applied;
-  const { file, unknown } = buildExactFile(corr.rows, tanzil.lengths, source);
+  const list = readCorrections(String(o.corrections ?? join(HERE, 'corrections.json')));
+  const corr = applyCorrections(rows, list, mushafId, env);
+  const segments = segmentsFrom(list, mushafId);
+  source.corrections = [...corr.applied, ...segments.keys()].map(String);
+  const { file, unknown, headErrors } = buildExactFile(corr.rows, tanzil.lengths, source);
   const fontsDir = o.polices ? resolve(String(o.polices)) : null;
   const head = [
     `Contrôle A34 — ${new Date().toISOString()} — ${file.pages.length} pages reçues, muṣḥaf « ${m.name} »`,
+    `segmentations explicites : ${[...segments.keys()].join(', ') || 'aucune'}`,
     `corrections explicites appliquées : ${corr.applied.join(', ') || 'aucune'}${corr.obsolete.length ? ` ; OBSOLÈTES (corrigées chez QF, à retirer de corrections.json) : ${corr.obsolete.join(', ')}` : ''}`,
   ].join('\n');
-  const pre = [...corr.errors];
+  const pre = [...corr.errors, ...headErrors];
   if (unknown.length) pre.push(`${unknown.length} mot(s) sans verset reconnu`);
   if (!fontsDir)
     pre.push('contrôle des glyphes non fait (--polices manquant) : publication refusée');
@@ -738,7 +757,7 @@ async function main() {
   // seules les pages reçues ET conformes sont publiées, manifeste marqué « partiel ».
   const partial = env !== 'production' && (env === 'prelive' || Boolean(o.partiel));
   if (!partial) {
-    const errs = [...pre, ...verify(file, { tanzil, pageStarts, fontsDir })];
+    const errs = [...pre, ...verify(file, { tanzil, pageStarts, fontsDir, segments })];
     const report = [
       head,
       errs.length
@@ -753,7 +772,7 @@ async function main() {
     console.log(`publié : lignes-v1.json ${man.bytes.total} octets, SHA-256 ${man.sha256}`);
     return;
   }
-  const { global, perPage } = verifyPages(file, { tanzil, pageStarts, fontsDir });
+  const { global, perPage } = verifyPages(file, { tanzil, pageStarts, fontsDir, segments });
   const okPages = file.pages.filter((pg) => (perPage.get(pg.p) ?? []).length === 0);
   const blocking = [...pre, ...global];
   const lines = [

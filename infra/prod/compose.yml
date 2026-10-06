@@ -149,7 +149,7 @@ services:
         'relais_certs:/relais-certs:ro',
         'audio:/audio:ro',
         'audio_lecons:/lecons-audio:ro',
-        '${AWFORM_QF_MUSHAF_SOURCE:-~/awform-data/qf-mushaf}:/qf-mushaf:ro',
+        '${AWFORM_QF_MUSHAF_SOURCE:-~/awform-data/qf-mushaf-prod}:/qf-mushaf:ro',
         '${AWFORM_QCF_SOURCE:-~/awform-data/qcf-1405}:/qcf:ro',
       ]
     depends_on: { db: { condition: service_healthy } }

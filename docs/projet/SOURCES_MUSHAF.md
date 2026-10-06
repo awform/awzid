@@ -84,6 +84,11 @@ TELLES QUELLES (fichiers TTF d'origine, seul le nom est uniformisé en `.ttf`), 
 605 fichiers, **95,4 Mo** bruts (page : 81 à 180 Ko ; environ 51 Mo au total une fois compressés en Brotli). Le contrôle bloquant de l'outil vérifie que **chaque glyphe
 des données existe dans la police de sa page** (table `cmap`) : un écart d'édition (V1 ≠ 1405) serait refusé.
 
+**Règle des en-têtes (données de production, 06/10/2026)** : quand une sourate commence en ligne 2 d'une page, la
+basmala est en ligne 1 et l'en-tête de sourate en DERNIÈRE ligne (15) de la page précédente (21 cas). **Écarts de
+segmentation** avec Tanzil (même texte) : 37:130 (« إِلْ يَاسِينَ », 2 mots Tanzil, 1 mot des données), déclaré dans
+`corrections.json`.
+
 **Outils** : `infra/outils/qf-lignes/qf-lignes.mjs` (`sync` / `verifier` / `inspecter`),
 `installer-polices.sh` ; logique et contrôle : `apps/web/src/lib/quran/mushaf-exact.ts` (testé :
 `mushaf-exact.test.ts`) ; API : `apps/api/src/mushaf-exact.ts` ; composant : `MushafPageExacte.svelte`

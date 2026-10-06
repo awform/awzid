@@ -8,6 +8,21 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 06/10/2026 — Chantier A34 : copie de PRODUCTION (604/604 pages conformes), démo basculée, synchro hebdomadaire
+
+- Synchronisation de production (identifiants du client, par le chef de projet) : 604 pages, 83 665 mots.
+- **Règle des en-têtes** relevée sur les données (21 cas : pages 76/77, 207/208, … 594/595) : quand une sourate
+  commence en ligne 2, la basmala occupe la ligne 1 et l'en-tête de sourate la DERNIÈRE ligne de la page
+  précédente. Contrôle et rendu suivent cette règle (`placeHeads`, en-têtes publiés avec chaque page `h`) ; la
+  vérification du texte n'est pas assouplie (ligne occupée ou page précédente absente : écart). Vérifié à l'œil
+  (pages 76, 77, 604 ; captures `application/a34-captures/production/`).
+- **37:130** : « إِلْ يَاسِينَ » = 2 mots Tanzil, 1 mot des données (glyphe U+FB61 U+0020 U+FB62) : segmentation
+  explicite `seg-37-130` (`corrections.json`, preuve `preuve-37-130.png`, validée par le référent provisoire).
+  `qf-2-181-fin` réservée au prélancement (`env`), la production étant déjà juste.
+- `verifier` (production) : **CONFORME, 604 pages**, publié (`lignes-v1.json` 2,09 Mo, SHA-256 `224c261c…deb9d`).
+- Démo : `compose.yml` monte par défaut `~/awform-data/qf-mushaf-prod` ; cron hebdomadaire `synchro-hebdo.sh`
+  (secret : `~/.config/awform/qf.env`, 600). e2e a34 sur la copie de production : 10/10.
+
 ## 06/10/2026 — Chantier A34 : Muṣḥaf de Médine « à l'identique » — branchement dans le lecteur (mode partiel)
 
 Après la fusion de « Coran épuré » (main aea0b34), fusionnée dans `a34-mushaf-exact-wip` :
