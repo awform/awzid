@@ -30,6 +30,9 @@
     horsligne:
       'M3 3l18 18M8.5 8.6A6 6 0 0 0 6 13a4 4 0 0 0 1 7.9h10.5M12 6a6 6 0 0 1 6 6 3.5 3.5 0 0 1 2.7 5',
     rafraichir: 'M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7',
+    // A2 : écoute en ligne (ondes du réseau)
+    reseau:
+      'M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.8 16a5 5 0 0 1 6.4 0M12 19.5h.01',
     fleche: 'M5 12h14m-6-6 6 6-6 6',
     // Muṣḥaf vert (04/10/2026) : tajwid (goutte d'encre), traduction (deux écritures), menu « Plus », chevron
     tajwid: 'M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11ZM9.5 14.5a2.5 2.5 0 0 0 2.5 2.5',

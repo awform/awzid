@@ -2325,5 +2325,16 @@
   "cl.guidage": "Lectura guiada palabra por palabra (sin sonido)",
   "cl.guidage_aide": "Las palabras se iluminan una tras otra en el pasaje elegido; luego, una pausa «te toca» para recitar solo.",
   "cl.plage": "Escucha: {sourate}, versículos {de} a {a}",
-  "cl.puce_detail": "v. {a} · p. {p} · juzʾ {juz}"
+  "cl.puce_detail": "v. {a} · p. {p} · juzʾ {juz}",
+  "ca.en_ligne": "En línea",
+  "ca.en_ligne_aide": "Solo escucha en línea (Quran Foundation): no se guarda nada en el dispositivo.",
+  "ca.dispo_internet": "Disponible con Internet",
+  "ca.en_ligne_option": "{nom} — en línea",
+  "ca.en_ligne_option_hors": "{nom} — disponible con Internet",
+  "erreur.connexion_requise": "Inicia sesión para escuchar a los recitadores en línea.",
+  "erreur.qf_indisponible": "La escucha en línea no responde por ahora. Inténtalo más tarde o elige un recitador del Complejo del Rey Fahd.",
+  "erreur.qf_incomplet": "Esta sura no está disponible en línea para este recitador.",
+  "erreur.qf_refus": "La escucha en línea no está disponible por el momento.",
+  "erreur.en_ligne_seulement": "Este recitador solo se escucha en línea: no se puede guardar en el dispositivo.",
+  "gar.audio_en_ligne": "Recitadores «en línea» (al-Ḥuṣarī, al-ʿAfāsī…): audio proporcionado por Quran Foundation (quran.foundation), solo en línea — nada se descarga, se guarda ni se revende; las demás recitaciones proceden del Complejo del Rey Fahd (Medina)."
 }

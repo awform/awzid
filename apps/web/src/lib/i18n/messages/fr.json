@@ -2325,5 +2325,16 @@
   "cl.guidage": "Lecture guidée mot à mot (sans son)",
   "cl.guidage_aide": "Les mots s'allument l'un après l'autre sur la plage choisie, puis une pause « à toi » pour réciter seul.",
   "cl.plage": "Écoute : {sourate}, versets {de} à {a}",
-  "cl.puce_detail": "v. {a} · p. {p} · juzʾ {juz}"
+  "cl.puce_detail": "v. {a} · p. {p} · juzʾ {juz}",
+  "ca.en_ligne": "En ligne",
+  "ca.en_ligne_aide": "Écoute en ligne seulement (Quran Foundation) : rien n'est gardé sur l'appareil.",
+  "ca.dispo_internet": "Disponible avec Internet",
+  "ca.en_ligne_option": "{nom} — en ligne",
+  "ca.en_ligne_option_hors": "{nom} — disponible avec Internet",
+  "erreur.connexion_requise": "Connecte-toi pour écouter les récitateurs en ligne.",
+  "erreur.qf_indisponible": "L'écoute en ligne ne répond pas pour l'instant. Réessaie plus tard ou choisis un récitateur du Complexe.",
+  "erreur.qf_incomplet": "Cette sourate n'est pas disponible en ligne pour ce récitateur.",
+  "erreur.qf_refus": "L'écoute en ligne est momentanément indisponible.",
+  "erreur.en_ligne_seulement": "Ce récitateur s'écoute en ligne seulement : il ne peut pas être gardé sur l'appareil.",
+  "gar.audio_en_ligne": "Récitateurs « en ligne » (al-Ḥuṣarī, al-ʿAfāsī…) : écoute fournie par Quran Foundation (quran.foundation), en ligne seulement — rien n'est téléchargé, gardé ni revendu ; les autres récitations viennent du Complexe du Roi Fahd (Médine)."
 }
