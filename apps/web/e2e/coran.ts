@@ -35,6 +35,7 @@ export async function openSettings(page: Page) {
   await showBar(page);
   await page.getByTestId('ouvrir-reglages').click();
   await expect(page.getByTestId('reglages-ecoute')).toBeVisible();
+  await settled(page);
 }
 /** Panneau unique « Réglages » (corrections du 06/10/2026) : section « Affichage » visible. */
 export async function openDisplay(page: Page) {
@@ -45,6 +46,7 @@ export async function openDisplay(page: Page) {
   if ((await parent.count()) && (await parent.getAttribute('open')) === null)
     await parent.locator(':scope > summary').click();
   await expect(page.getByTestId('affichage')).toBeVisible();
+  await settled(page);
 }
 /** Muṣḥaf affiché (section « Muṣḥaf » du panneau « Réglages »), panneau refermé. */
 export async function chooseMushaf(page: Page, key: string) {
@@ -93,6 +95,23 @@ export async function focusVerse(page: Page, key: string) {
   const exact = page.locator(`[data-exact-verse="${key}"]`);
   if (EXACT_ON) await exact.waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});
   await ((await exact.count()) ? exact : page.locator(`[data-aya="${key}"]`)).first().focus();
+}
+/**
+ * Feuille ouverte et immobile (fin de l'animation d'entrée) : un clic « forcé » sur un choix pendant que la
+ * feuille glisse tombait à côté (téléphone).
+ */
+export async function settled(page: Page) {
+  await page.evaluate(() =>
+    Promise.race([
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => a.effect?.getTiming().iterations !== Infinity)
+          .map((a) => a.finished.catch(() => null)),
+      ),
+      new Promise((r) => setTimeout(r, 2000)),
+    ]),
+  );
 }
 export async function close(page: Page) {
   await page.keyboard.press('Escape');
