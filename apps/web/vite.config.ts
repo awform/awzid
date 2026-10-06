@@ -14,7 +14,7 @@ const VIVANTE =
  * principe, jamais préchargé par le service worker ; liste dans `/_app/ecoute.json`.
  */
 const ECOUTE =
-  /[\\/]lib[\\/]ecoute[\\/](PanneauEcoute\.svelte|ARevoirEcoute\.svelte|ecoute\.ts|bilans\.ts)/;
+  /[\\/]lib[\\/]ecoute[\\/](PanneauEcoute\.svelte|TexteEcoute\.svelte|ARevoirEcoute\.svelte|ecoute\.ts|bilans\.ts)/;
 function vivanteALaDemande(VIV = VIVANTE, nom = 'vivante'): Plugin {
   return {
     name: `awzid-${nom}-a-la-demande`,

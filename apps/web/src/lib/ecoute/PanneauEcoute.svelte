@@ -9,6 +9,7 @@
   import { call } from '$lib/session';
   import { motsAttendus, type EtatMot, type MotAttendu, type ResultatEcoute } from '@awform/hifz';
   import { garderBilan } from './bilans';
+  import TexteEcoute from './TexteEcoute.svelte';
   import type { EtatEcoute } from './etat';
   import {
     MAX_S,
@@ -214,8 +215,6 @@
     envoi = 'pret';
   }
 
-  /** espace entre deux mots du texte (gardé tel quel dans le texte affiché) */
-  const ESPACE = ' ';
   const mmss = (n: number) => `${Math.floor(n / 60)}:${String(n % 60).padStart(2, '0')}`;
   const titre = $derived(t(enfant ? 'ec.titre_enfant' : 'ec.titre'));
   const fini_ = $derived(resultat?.statut === 'resultat');
@@ -279,8 +278,8 @@
       {:else if etape === 'ecoute' || etape === 'direct'}
         <div class="enreg" role="status" data-testid="ecoute-en-cours">
           <span class="point" aria-hidden="true"></span>
-          <span>{t(enfant ? 'ec.je_t_ecoute_enfant' : 'ec.je_t_ecoute')}</span>
-          <span class="temps">{mmss(secondes)} / {mmss(MAX_S)}</span>
+          <span><Bidi text={t(enfant ? 'ec.je_t_ecoute_enfant' : 'ec.je_t_ecoute')} /></span>
+          <span class="temps"><Bidi text={`${mmss(secondes)} / ${mmss(MAX_S)}`} /></span>
           <button type="button" class="primary" onclick={terminer} data-testid="ecoute-terminer"
             >{t('ec.terminer')}</button
           >
@@ -312,30 +311,15 @@
       {/if}
 
       {#if versets.length}
-        <div
-          class="texte"
-          class:masque={masque && etape === 'direct'}
-          lang="ar"
-          dir="rtl"
-          data-testid="ecoute-texte"
-        >
-          {#each versets as v (v.a)}
-            <p class="verset" class:saute={sautes.has(`${v.s}:${v.a}`)}>
-              {#each v.text.split(' ') as w, k (k)}
-                {@const i = index.get(`${v.s}:${v.a}:${k}`)}
-                {@const e = i === undefined ? undefined : etats[i]}
-                <span
-                  class="mot {e ?? ''}"
-                  class:courant={direct && i === direct.courant}
-                  data-etat={e}>{w}</span
-                >{#if i !== undefined && ajouts.has(i)}<span class="ajout" aria-hidden="true"
-                    >+</span
-                  >{/if}{ESPACE}
-              {/each}
-              <span class="num">﴿{v.a}﴾</span>
-            </p>
-          {/each}
-        </div>
+        <TexteEcoute
+          {versets}
+          {index}
+          {etats}
+          {ajouts}
+          {sautes}
+          courant={direct?.courant ?? -1}
+          masque={masque && etape === 'direct'}
+        />
       {/if}
 
       {#if etape === 'resultat' && resultat && resultat.ecarts.length}
@@ -433,61 +417,28 @@
   .temps {
     font-variant-numeric: tabular-nums;
   }
-  .texte {
-    font-family: var(--font-quran);
-    font-size: 1.6rem;
-    line-height: 2.4;
-    text-align: right;
-  }
-  .enfant .texte {
-    font-size: 1.9rem;
-  }
-  .verset {
-    margin: 0 0 6px;
-  }
-  .verset.saute {
-    background: var(--warn-bg, transparent);
-    border-radius: 8px;
-  }
+  /* légende : mêmes marques que le texte (TexteEcoute) */
   .mot {
     border-radius: 6px;
-    padding: 0 2px;
-    transition: background-color 0.2s;
+    padding: 0 4px;
   }
   .mot.oublie {
     background: var(--warn-bg);
     text-decoration: underline dotted var(--warn-ink);
-    text-underline-offset: 8px;
+    text-underline-offset: 4px;
   }
   .mot.remplace {
     background: var(--bad-bg);
     color: var(--bad-ink);
   }
   .mot.ordre {
-    background: var(--info-bg, var(--warn-bg));
+    background: var(--warn-bg);
     text-decoration: underline wavy var(--warn-ink);
-    text-underline-offset: 8px;
-  }
-  .mot.courant {
-    outline: 2px solid var(--accent);
-    background: var(--accent-bg, transparent);
-  }
-  .masque .mot:not(.ok):not(.oublie):not(.remplace):not(.ordre) {
-    color: transparent;
-    border-bottom: 2px dotted var(--muted, #999);
-  }
-  .masque .mot.courant {
-    color: transparent;
+    text-underline-offset: 4px;
   }
   .ajout {
     color: var(--bad-ink);
-    font-family: var(--font-ui);
     font-weight: 700;
-    padding: 0 3px;
-  }
-  .num {
-    font-size: 0.8em;
-    color: var(--muted);
   }
   .bien {
     color: var(--ok-ink);

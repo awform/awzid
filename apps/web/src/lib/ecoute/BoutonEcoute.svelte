@@ -49,7 +49,7 @@
 
 {#if etat?.active && profileId}
   {#if portion}
-    <button type="button" class="ecoute" onclick={ouvrir} data-testid="reciter-verifier"
+    <button type="button" class="ecoute primary" onclick={ouvrir} data-testid="reciter-verifier"
       >{t('ec.bouton')}</button
     >
   {/if}
@@ -64,8 +64,5 @@
     border-radius: 999px;
     padding: 6px 14px;
     font-weight: 600;
-    background: var(--accent);
-    color: var(--accent-ink, #fff);
-    border-color: var(--accent);
   }
 </style>
