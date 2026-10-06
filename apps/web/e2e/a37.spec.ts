@@ -154,7 +154,7 @@ test('adulte : défi, rubriques par cercle (niveau atteint seulement) et par lie
   // par cercle : tuiles avec le nombre de fiches ; aucune rubrique d'une leçon non atteinte
   const tiles = page.getByTestId('vi-tuiles');
   await expect(tiles).toHaveAttribute('data-par', 'cercle');
-  await expect(tiles.locator('[data-groupe="soi"]')).toContainText(/fiche/);
+  await expect(tiles.locator('[data-groupe="soi"]')).toContainText(/rubrique/);
   const groups = await tiles
     .locator('[data-groupe]')
     .evaluateAll((a) => a.map((x) => x.getAttribute('data-groupe')!));
