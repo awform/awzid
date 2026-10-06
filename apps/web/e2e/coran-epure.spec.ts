@@ -395,6 +395,8 @@ test('téléphone : glisser pour tourner, traduction en feuille, 320 px sans dé
   await expect(page.getByTestId('feuille-traduction').locator('[data-trad="2:6"]')).toBeVisible();
   await close(page);
   await page.setViewportSize({ width: 320, height: 700 });
+  // sourate qui a des fichiers d'essai (bips) : 112
+  await page.goto('/coran/lecteur?page=604');
   await listen(page);
   await page.getByTestId('arreter-audio').click();
   const over = () =>

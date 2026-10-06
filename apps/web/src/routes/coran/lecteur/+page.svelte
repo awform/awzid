@@ -749,7 +749,7 @@
           data-testid="puce"
           aria-label={chip}
           ><span class="c"
-            ><span class="c1"><Bidi text={suraName(activeSura)} /></span><span class="c2"
+            ><span class="cs"><Bidi text={suraName(activeSura)} /></span><span class="cd"
               ><Bidi text={chipDetail} /></span
             ></span
           ><Icon name="chevron" size={16} /></button
@@ -1166,14 +1166,14 @@
     text-align: start;
     line-height: 1.15;
   }
-  .c1,
-  .c2 {
+  .cs,
+  .cd {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .c2 {
+  .cd {
     font-size: 0.74rem;
     font-weight: 600;
     color: var(--mp-ink2);

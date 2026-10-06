@@ -79,6 +79,6 @@ en priorité : `parc.rasm_texte` (orthographe du Muṣḥaf) et `fam.demande_aid
 
 ## Coran épuré (06/10/2026)
 
-59 textes `cl.*` (écran de lecture unique : puce, sélecteur, menu du verset, réglages d'écoute et préréglages,
+Les 54 textes `cl.*` (écran de lecture unique : puce, sélecteur, menu du verset, réglages d'écoute et préréglages,
 affichage, lecture guidée, accueil) écrits par Claude dans les quatre langues, **à relire** ; « juzʾ », « ḥizb »
 gardés tels qu'en français (allemand : « Dschuzʾ », comme ailleurs). Nom affiché : « Awzid » dans tous les textes.
