@@ -5,6 +5,7 @@
   import { localeInfo, t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
   import { noteLines, translationInfo, type TranslatedVerse } from '../translation';
+  import { enPaysage } from './paysage';
 
   /**
    * Coran épuré — PETIT MENU d'un verset (toucher un verset) : Écouter d'ici · Répéter ce verset · Traduction ·
@@ -60,8 +61,21 @@
       dlg.showModal();
     } else if (!at && dlg.open) dlg.close();
   });
+  /**
+   * Téléphone couché : panneau latéral sur toute la hauteur, du côté opposé au verset touché (il reste visible),
+   * défilable ; aucun choix ne passe sous une barre (12/10/2026).
+   */
+  let gauche = $state(false);
+  let lateral = $state(false);
   /** grand écran : sous le verset touché, sans sortir de l'écran */
   function place() {
+    lateral = enPaysage();
+    if (lateral) {
+      const r = anchor?.getBoundingClientRect();
+      gauche = !!r && r.left + r.width / 2 > window.innerWidth / 2;
+      style = '';
+      return;
+    }
     if (!anchor || window.innerWidth < 600) {
       style = '';
       return;
@@ -92,6 +106,8 @@
   bind:this={dlg}
   class="menu"
   class:placed={!!style}
+  class:lateral
+  class:gauche
   {style}
   aria-labelledby="menu-verset-titre"
   data-testid="menu-verset"
@@ -208,7 +224,11 @@
   .menu {
     width: min(100vw, 420px);
     max-width: 100vw;
+    /* barre d'adresse d'Android : la hauteur VISIBLE (dvh), sinon le bas du menu sort de l'écran */
     max-height: 80vh;
+    max-height: 90dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     margin: auto 0 0;
     padding: 6px 8px 12px;
     color: var(--ink);
@@ -234,6 +254,33 @@
     }
     .menu::backdrop {
       background: transparent;
+    }
+  }
+  /* téléphone couché (PAYSAGE_MQ) : panneau latéral, toute la hauteur visible, défilable, au-dessus de tout */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .menu.lateral {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: auto;
+      right: 0;
+      width: min(340px, 46vw);
+      height: auto;
+      max-height: none;
+      margin: 0;
+      padding: 6px 8px max(12px, env(safe-area-inset-bottom));
+      border: 0;
+      border-left: 3px solid var(--or-line);
+      border-radius: 0;
+    }
+    .menu.lateral.gauche {
+      left: 0;
+      right: auto;
+      border-left: 0;
+      border-right: 3px solid var(--or-line);
+    }
+    .menu.lateral::backdrop {
+      background: color-mix(in srgb, var(--mp-ink) 20%, transparent);
     }
   }
   .head {

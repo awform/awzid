@@ -9,7 +9,7 @@ import {
   serveDemoAudio,
   tapVisible,
 } from './audio-demo';
-import { close, openDisplay, openSelector } from './coran';
+import { close, commandes, openDisplay, openSelector } from './coran';
 import { expect, test } from './fixtures';
 
 /**
@@ -236,7 +236,9 @@ test.describe('basmala, pages tournées, « Aller », appui long (vraies récita
     await playingNow(page);
     await expect(prop).toHaveCount(0);
 
-    // c) « Reprendre où j'étais » : retour au verset écouté, la lecture reprend
+    // c) « Reprendre où j'étais » : retour au verset écouté, la lecture reprend (téléphone : flèches effacées
+    // pendant l'écoute, on les montre comme l'élève, d'un toucher)
+    await commandes(page);
     await page.getByTestId('mp-prec').click();
     await expect(page.getByTestId('reprendre-lecture')).toBeVisible();
     await page.getByTestId('reprendre-lecture').click();

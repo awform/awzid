@@ -27,6 +27,7 @@
   import RiwayaBadge from '$lib/quran/RiwayaBadge.svelte';
   import Feuille from '$lib/quran/lecture/Feuille.svelte';
   import MenuVerset from '$lib/quran/lecture/MenuVerset.svelte';
+  import { PAYSAGE_MQ } from '$lib/quran/lecture/paysage';
   import Reglages from '$lib/quran/lecture/Reglages.svelte';
   import { appliquerFond } from '$lib/theme/fond';
   import Selecteur from '$lib/quran/lecture/Selecteur.svelte';
@@ -150,6 +151,8 @@
   let trads = $state<Record<number, TranslationSura | null>>({});
   let revealed = $state(new Set<string>());
   let narrow = $state(true);
+  /** téléphone couché (peu haut) : habillage compact, barre audio réduite à la pastille (12/10/2026) */
+  let paysage = $state(false);
   let noPages = $state(false);
   let ready = $state(false);
 
@@ -408,8 +411,16 @@
     narrow = !mq.matches;
     const on = () => (narrow = !mq.matches);
     mq.addEventListener('change', on);
+    // même requête que le CSS « paysage » (en-tête compact, onglets masqués, pastille d'écoute)
+    const mqp = window.matchMedia(PAYSAGE_MQ);
+    paysage = mqp.matches;
+    const onp = () => (paysage = mqp.matches);
+    mqp.addEventListener('change', onp);
     void init();
-    return () => mq.removeEventListener('change', on);
+    return () => {
+      mq.removeEventListener('change', on);
+      mqp.removeEventListener('change', onp);
+    };
   });
 
   async function init() {
@@ -1943,8 +1954,9 @@
     <!-- 11/10/2026 : crédits (texte long) derrière ⓘ (dans les commandes) ; lus en entier par les lecteurs d'écran -->
     <p class="sr-only" data-testid="credit-texte">{@render credit()}</p>
     {#if audioOn}<div class="spacer" aria-hidden="true"></div>{/if}
-    {#if audioOn && hidden && reciter}
-      <!-- écoute, commandes cachées : pastille discrète (pause/lecture + verset) ; toucher le verset ouvre tout -->
+    {#if audioOn && (hidden || paysage) && reciter}
+      <!-- écoute, commandes cachées : pastille discrète (pause/lecture + verset) ; toucher le verset ouvre tout ;
+           téléphone couché : toujours la pastille (aucune barre audio, le texte garde la hauteur) -->
       <div class="pastille" data-testid="pastille-audio">
         <button
           type="button"
@@ -2596,23 +2608,14 @@
     width: auto;
     height: auto;
   }
-  :global(html[data-lecteur] header.top),
-  :global(html[data-lecteur] nav.tabs),
-  .cbar,
-  .turn {
-    transition:
-      opacity var(--motion) ease,
-      transform var(--motion) ease;
-  }
+  /*
+   * 12/10/2026 (essai du client, téléphone couché) : AUCUN fondu. Pendant le fondu, l'en-tête et la barre du
+   * lecteur restaient à demi visibles par-dessus les versets (fantôme « Awzid », « Réglages », « Traduction ») :
+   * ils sont désormais opaques ou absents, d'un coup.
+   */
   :global(html[data-epure] header.top),
-  :global(html[data-epure]) .cbar {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  :global(html[data-epure] nav.tabs) {
-    opacity: 0;
-    transform: translateY(6px);
-  }
+  :global(html[data-epure] nav.tabs),
+  :global(html[data-epure]) .cbar,
   :global(html[data-epure]) .turn {
     opacity: 0;
   }
@@ -2630,23 +2633,6 @@
      barre audio (en bas, comme avant) reste atteignable à la souris */
   :global(html[data-epure][data-surcouche]:not([data-lecteur-tactile])) .cbar .ecoute {
     pointer-events: auto;
-  }
-  /* sans transformation : la barre audio (position fixe) reste en bas de l'écran, pas dans la barre du haut */
-  :global(html[data-epure][data-surcouche]) .cbar {
-    transform: none;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    :global(html[data-lecteur] header.top),
-    :global(html[data-lecteur] nav.tabs),
-    .cbar,
-    .turn {
-      transition: none;
-    }
-    :global(html[data-epure] header.top),
-    :global(html[data-epure] nav.tabs),
-    :global(html[data-epure]) .cbar {
-      transform: none;
-    }
   }
   /* pastille d'écoute (commandes cachées) */
   .pastille {
@@ -2954,6 +2940,91 @@
     :global(html[data-lecteur] main) {
       max-width: none;
       padding-inline: 8px;
+    }
+  }
+  /*
+   * TÉLÉPHONE COUCHÉ (essai du client, 12/10/2026, Xiaomi ≈ 915 × 412) : en-tête, bandeau doré, barre audio et
+   * onglets mangeaient presque toute la hauteur. Ici (même requête que PAYSAGE_MQ, lecture/paysage.ts) :
+   * en-tête compact sur UNE ligne (44 px, chaque bouton garde son nom écrit, à côté de l'icône), onglets du bas
+   * masqués (le logo ramène à l'accueil), emplacement replié en une puce, outils sur la même ligne, barre audio
+   * réduite à la pastille. Le texte garde ≥ 75 % de la hauteur, commandes montrées ; 100 % quand elles sont cachées.
+   */
+  @media (orientation: landscape) and (max-height: 500px) {
+    :global(html[data-lecteur] header.top) {
+      box-sizing: border-box;
+      height: 44px;
+      min-height: 0;
+      padding-block: 0;
+      gap: 6px;
+      flex-wrap: nowrap;
+    }
+    :global(html[data-lecteur] header.top .brand) {
+      min-height: 40px;
+    }
+    :global(html[data-lecteur] header.top .icon-btn) {
+      flex-direction: row;
+      gap: 6px;
+      min-height: 40px;
+      padding: 0 8px;
+    }
+    :global(html[data-lecteur] nav.tabs) {
+      display: none;
+    }
+    :global(html[data-lecteur] .app.with-tabs main) {
+      padding-bottom: 24px;
+    }
+    .cbar,
+    .surcouche .cbar {
+      top: calc(var(--haut, 44px) + 2px);
+      /* avis et lignes de mode (rares) passent dessous ; puce et outils restent sur une ligne */
+      flex-wrap: wrap;
+      gap: 4px 8px;
+      padding: 2px 6px;
+    }
+    .nav-zone {
+      flex: 1 1 auto;
+      justify-content: flex-start;
+    }
+    .puce {
+      display: inline-flex;
+      flex: 0 1 auto;
+      min-height: 40px;
+      padding-block: 2px;
+    }
+    /* sourate et emplacement sur la même ligne */
+    .puce .c {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .gold {
+      display: none;
+    }
+    .tools {
+      flex: none;
+      flex-wrap: nowrap;
+      gap: 4px;
+      padding-inline-end: 0;
+      border-inline-end: 0;
+    }
+    .tool {
+      min-height: 40px;
+    }
+    .ecouter-btn {
+      display: inline-flex;
+    }
+    /* barre audio : la pastille la remplace (le lecteur audio reste chargé, invisible) */
+    .ecoute,
+    .ecoute.on,
+    .spacer {
+      display: none;
+    }
+    .prop-zone,
+    .audio-on .prop-zone {
+      bottom: calc(68px + env(safe-area-inset-bottom));
+    }
+    .pastille {
+      bottom: calc(8px + env(safe-area-inset-bottom));
     }
   }
 </style>

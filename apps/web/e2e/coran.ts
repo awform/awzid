@@ -17,6 +17,25 @@ export async function commandes(page: Page) {
   await page.keyboard.press('Enter');
   await expect.poll(cachees).toBe(false);
 }
+/**
+ * Commandes FLOTTANTES (téléphone, lecture épurée) effacées : comme l'élève, on attend qu'elles disparaissent
+ * (3 s) avant de toucher un verset du haut de la page qu'elles couvraient. Ailleurs (grand écran, commandes
+ * dans la page, ou lecture épurée désactivée) : rien à attendre.
+ */
+export async function sansCommandes(page: Page) {
+  const flottantes = await page.evaluate(() =>
+    document.documentElement.hasAttribute('data-surcouche'),
+  );
+  if (!flottantes) return;
+  // panneau refermé par Échap : le focus (visible, clavier) revient sur « Réglages » et garde les commandes
+  // montrées, comme voulu au clavier ; l'élève au doigt n'a pas ce focus
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur?.());
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.hasAttribute('data-epure')), {
+      timeout: 8000,
+    })
+    .toBe(true);
+}
 export async function openSelector(page: Page, tab?: 'page' | 'juz' | 'hizb') {
   await commandes(page);
   const puce = page.getByTestId('puce');

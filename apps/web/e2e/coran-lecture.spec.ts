@@ -144,7 +144,13 @@ test.describe('téléphone : muṣḥaf zoomable et lecture épurée', () => {
     // double-toucher : zoom confortable, puis page entière
     const box = (await page.getByTestId('mushaf-livre').boundingBox())!;
     // milieu de la page (téléphone : la page commence en haut de l'écran, sous les commandes flottantes)
-    const [x, y] = [box.x + box.width / 2, box.y + Math.max(box.height / 2, 300)];
+    // dans l'ÉCRAN : la page fluide (par défaut, sans les données exactes) mesure ≈ 1 700 px de haut à 412 px ;
+    // son milieu tombait sous le bas de l'écran (toucher perdu, aucun zoom)
+    const vp = page.viewportSize()!;
+    const [x, y] = [
+      box.x + box.width / 2,
+      Math.min(box.y + Math.max(box.height / 2, 300), box.y + box.height - 20, vp.height / 2),
+    ];
     await page.touchscreen.tap(x, y);
     await page.touchscreen.tap(x, y);
     await expect.poll(() => zoom(page)).toBeCloseTo(1.8, 1);

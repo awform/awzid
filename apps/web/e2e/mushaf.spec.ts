@@ -1,5 +1,13 @@
 import type { Page } from '@playwright/test';
-import { close, EXACT_ON, expectVerse, openDisplay, setTajwid, verseOf } from './coran';
+import {
+  close,
+  EXACT_ON,
+  expectVerse,
+  openDisplay,
+  sansCommandes,
+  setTajwid,
+  verseOf,
+} from './coran';
 import { expect, test } from './fixtures';
 
 /**
@@ -95,6 +103,9 @@ test('options : mémoriser (voile, voir), lecture seule, une page', async ({ pag
   await close(page);
   await expect(page.locator('[data-page="1"] .w.voile').first()).toBeVisible();
   expect(await page.locator('[data-verse="1:2"] .w.voile').count()).toBeGreaterThan(0);
+  // téléphone : la barre flottante (montrée 3 s après la fermeture du panneau) couvre le haut de la page 1 ;
+  // l'élève touche le verset une fois la barre effacée
+  await sansCommandes(page);
   await page.locator('[data-aya="1:2"]').click();
   await page.getByTestId('menu-voir').click();
   await expect(page.locator('[data-verse="1:2"] .w.voile')).toHaveCount(0);

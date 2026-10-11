@@ -1,7 +1,7 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Page } from '@playwright/test';
-import { close, EXACT_ON, listen, openDisplay } from './coran';
+import { close, EXACT_ON, listen, openDisplay, sansCommandes, settled } from './coran';
 import { expect, test } from './fixtures';
 
 /**
@@ -29,6 +29,9 @@ async function openPage(page: Page, n: number) {
   await expect(page.getByTestId('barre-coran')).toBeVisible();
   await expect(page.locator('[data-testid="ouvrir-ecoute"]:disabled')).toHaveCount(0);
   await page.evaluate(() => document.fonts.ready);
+  // page posée : son entrée glisse de 6 px (animation « mp-in », --motion) ; mesurée pendant ce glissement, la
+  // page fluide (prête plus vite que la page exacte) paraissait 2 à 4 px trop bas (vu le 12/10/2026)
+  await settled(page);
   return art;
 }
 /** Haut de la page du muṣḥaf par rapport au haut de l'écran (défilement à 0). */
@@ -123,6 +126,10 @@ test.describe('retouches du lecteur (téléphone 412 px)', () => {
     page,
   }) => {
     await openPage(page, 2);
+    // commandes montrées (3 s), la flèche « page suivante » flotte au bord gauche, à mi-hauteur : en page fluide,
+    // le point visé (bord gauche, 60 % de la page) tombait SUR elle (deux pages tournées au lieu du zoom).
+    // L'élève double-touche le texte une fois les commandes effacées.
+    await sansCommandes(page);
     const box = (await page.getByTestId('mushaf-livre').boundingBox())!;
     // toucher à GAUCHE d'une ligne : la vue zoomée montre quand même le début (bord droit)
     const ty = box.y + box.height * 0.6;
