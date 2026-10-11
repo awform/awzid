@@ -31,7 +31,14 @@ export interface Me {
     totpEnabled: boolean;
     hasPin: boolean;
     createdAt: string;
+    /** lot F3 : adresse vérifiée, subdivision (ex. CA-QC), fuseau IANA (null : celui de l'appareil), région */
+    emailVerified?: boolean;
+    region?: string | null;
+    tz?: string | null;
+    dataRegion?: string;
   };
+  /** lot F3 (revue E10) : accords nécessaires manquants — page « Accords » au premier usage */
+  accordsManquants?: Array<{ type: string; profileId: string | null; pseudonym: string | null }>;
   profiles: ProfileInfo[];
   mfaRequired: boolean;
   mfaVerified: boolean;

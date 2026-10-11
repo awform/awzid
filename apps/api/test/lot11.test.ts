@@ -60,7 +60,7 @@ describe.skipIf(!READY)('lot 11 (awform_test)', () => {
         email: 'p11@exemple.org',
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       }),
     );
     const mk = async (pseudonym: string, age: number) =>
@@ -70,7 +70,7 @@ describe.skipIf(!READY)('lot 11 (awform_test)', () => {
           birthYear: YEAR - age,
           levelCode: 'en1',
           password: PW,
-          consents: ['compte_suivi'],
+          consents: ['compte_suivi', 'donnee_religieuse_art9'],
         })
       ).json().id as string;
     child = await mk('Nour', 8);
@@ -149,7 +149,7 @@ describe.skipIf(!READY)('lot 11 (awform_test)', () => {
         email: 'autre11@exemple.org',
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       }),
     );
     expect((await req('GET', `/api/v1/today/${child}`, other)).statusCode).toBe(404);

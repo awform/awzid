@@ -144,6 +144,8 @@ export const API_GRANTS: Record<string, Right[]> = {
   usage_day: ALL,
   usage_seen: ALL,
   usage_salt: ALL,
+  // lot F3 : liens à usage unique envoyés par e-mail (vérification, réinitialisation, changement d'adresse)
+  account_link: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */

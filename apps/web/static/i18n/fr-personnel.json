@@ -467,5 +467,6 @@
   "usage.abandon": "Abandonnées (7 j sans réponse)",
   "usage.terminees": "Terminées",
   "usage.minutes": "Temps médian (min)",
-  "usage.aucune": "Pas encore assez de données (au moins {seuil} élèves par leçon)."
+  "usage.aucune": "Pas encore assez de données (au moins {seuil} élèves par leçon).",
+  "etab.fiche_modele": "Modèle de fiche de consentement à imprimer"
 }

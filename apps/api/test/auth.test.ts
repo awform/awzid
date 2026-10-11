@@ -65,7 +65,7 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
       email,
       password: PW,
       country: 'FR',
-      consents: ['cgu'],
+      consents: ['cgu', 'donnee_religieuse_art9'],
       ...over,
     });
 
@@ -130,8 +130,12 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
       missing: ['transfert_hors_pays'],
     });
     expect(
-      (await signup('sn@exemple.org', { country: 'SN', consents: ['cgu', 'transfert_hors_pays'] }))
-        .statusCode,
+      (
+        await signup('sn@exemple.org', {
+          country: 'SN',
+          consents: ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays'],
+        })
+      ).statusCode,
     ).toBe(201);
     const young = await signup('jeune@exemple.org', { kind: 'adulte', birthYear: YEAR - 14 });
     expect(young.json().error).toMatchObject({ code: 'age_parent_requis', age: 15 });
@@ -153,7 +157,7 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
       birthYear: YEAR - 7,
       avatar: 'etoile',
       levelCode: 'en1',
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     };
     expect(
       (await post('/api/v1/profiles', { ...base, password: 'mauvais mot de passe' }, c)).statusCode,
@@ -173,24 +177,29 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
       country: 'FR',
       evidence: expect.objectContaining({ methode: 'reauthentification_mot_de_passe+declaration' }),
     });
-    // États-Unis, moins de 13 ans : consentement parental vérifiable exigé
+    // États-Unis, moins de 13 ans : FERMÉ au lancement (lot F3, revue G3), même avec l'accord COPPA
     const us = cookieOf(
-      await signup('us@exemple.org', { country: 'US', consents: ['cgu', 'transfert_hors_pays'] }),
+      await signup('us@exemple.org', {
+        country: 'US',
+        consents: ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays'],
+      }),
     );
     const k = await post('/api/v1/profiles', { ...base, password: PW }, us);
-    expect(k.json().error).toMatchObject({
-      code: 'consentement_requis',
-      missing: ['coppa_parent'],
-    });
+    expect(k.statusCode).toBe(403);
+    expect(k.json().error).toMatchObject({ code: 'ferme_moins_13', age: 13 });
     expect(
       (
         await post(
           '/api/v1/profiles',
-          { ...base, password: PW, consents: ['compte_suivi', 'coppa_parent'] },
+          {
+            ...base,
+            password: PW,
+            consents: ['compte_suivi', 'donnee_religieuse_art9', 'coppa_parent'],
+          },
           us,
         )
       ).statusCode,
-    ).toBe(201);
+    ).toBe(403);
     // un adulte n'a pas de profil d'enfant
     expect(
       (await post('/api/v1/profiles', { ...base, password: PW, birthYear: 1990 }, c)).json().error
@@ -285,7 +294,10 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
       await post('/api/v1/auth/login', { email: 'adulte@exemple.org', password: PW }),
     );
     const consents = (await get('/api/v1/account/consents', c)).json().consents;
-    expect(consents.map((x: { type: string }) => x.type)).toEqual(['cgu']);
+    expect(consents.map((x: { type: string }) => x.type)).toEqual([
+      'cgu',
+      'donnee_religieuse_art9',
+    ]);
     expect(
       (await post(`/api/v1/account/consents/${consents[0].id}/withdraw`, {}, c)).statusCode,
     ).toBe(409);
@@ -363,16 +375,21 @@ describe.skipIf(!READY)('comptes, profils et droits (awform_test)', () => {
       (
         await post(
           '/api/v1/profiles',
-          { pseudonym: 'x', birthYear: YEAR - 8, password: PW, consents: ['compte_suivi'] },
+          {
+            pseudonym: 'x',
+            birthYear: YEAR - 8,
+            password: PW,
+            consents: ['compte_suivi', 'donnee_religieuse_art9'],
+          },
           cookieOf(ok),
         )
       ).json().error.code,
     ).toBe('reserve_aux_parents');
   });
 
-  it('réinitialisation par e-mail : désactivée (fournisseur d’e-mail requis)', async () => {
-    expect((await post('/api/v1/auth/password-reset', {})).json().error.code).toBe(
-      'reinitialisation_desactivee',
-    );
+  it('mot de passe oublié (lot F3) : même réponse, que l’adresse existe ou non (aucun e-mail configuré ici)', async () => {
+    const a = await post('/api/v1/auth/password-reset', { email: 'inconnu@example.org' });
+    expect(a.statusCode).toBe(202);
+    expect((await post('/api/v1/auth/password-reset', {})).statusCode).toBe(400);
   });
 });

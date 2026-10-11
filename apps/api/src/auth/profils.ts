@@ -8,7 +8,13 @@ import { and, eq } from 'drizzle-orm';
 import { addParentCustodian, canActForProfile, schema as t, setProfileLevel } from '@awform/db';
 import { profileKindFromYear } from '@awform/content';
 import { hashSecret, verifySecret } from './crypto.js';
-import { ageFromYear, lawEvidence, requiredChildConsents, type ConsentType } from './policy.js';
+import {
+  ageFromYear,
+  closedForAge,
+  lawEvidence,
+  requiredChildConsents,
+  type ConsentType,
+} from './policy.js';
 import { audit, clearFailures, failAttempt, reserveAttempt, lockedUntil } from './service.js';
 
 import { AVATARS, err, OPTIONAL_CONSENTS, YEAR, type AuthKit } from './common.js';
@@ -62,6 +68,9 @@ export function registerProfiles(app: FastifyInstance, kit: AuthKit): void {
       if (age < 3) return err(reply, 400, 'annee_naissance_invalide');
       if (age >= 18) return err(reply, 400, 'adulte_compte_personnel');
       const country = a.country ?? '';
+      // lot F3 (revue G3) : États-Unis, moins de 13 ans : fermé au lancement
+      if (closedForAge(country, age))
+        return err(reply, 403, 'ferme_moins_13', { age: 13, pays: country });
       const missing = requiredChildConsents(country, age).filter((c) => !b.consents.includes(c));
       if (missing.length) return err(reply, 400, 'consentement_requis', { missing });
       if (b.levelCode) {

@@ -136,3 +136,16 @@ rares (offres, abonnement, inscription, certificats…) et de la fenêtre d'avis
 
 F5 (suite, 11/10/2026) : 1 texte ajouté (`module.connexion_necessaire` — « Connexion nécessaire pour cette fonction »,
 module chargé à la demande indisponible après les nouvelles tentatives), écrit par Claude dans les quatre langues, **à relire**.
+## F3 « Comptes de la bêta » (06/10/2026)
+
+Textes ajoutés (traduits par Claude, relecteur provisoire, **à relire** avec le reste) : accès au compte et accords
+`acces.*`, `accords.*` ; accord « article 9 » `consent.donnee_religieuse_art9`, `consent.art9_enfant`,
+`consent.nom.donnee_religieuse_art9`, `consent.nom.analyse_vocale_ia` ; réglages du compte `compte.email_*`,
+`compte.fuseau*`, `compte.donnees_ue`, `compte.retirer_art9`, `compte.boutique_*`, `compte.renvoyer_lien`,
+`compte.lien_envoye` ; inscription `inscription.region`, `inscription.ferme_moins_13` ; 13 provinces et territoires
+du Canada `region.CA-*` ; erreurs `erreur.ferme_moins_13`, `erreur.region_inconnue`, `erreur.lien_invalide`,
+`erreur.email_identique`, `erreur.accord_inconnu`, `erreur.interdit`, `erreur.email_absent` ; `connexion.oubli`
+(lien « Mot de passe oublié ? ») et `legal.brouillon` mis à jour ; `etab.fiche_modele` (personnel) ;
+`erreur.reinitialisation_desactivee` retiré. Les textes français de ces écrans sont dans `static/i18n/fr-acces.json`
+(mêmes clés, hors de la coquille). Les **modèles d'e-mails** (5 langues) sont dans `apps/api/src/mail/modeles.ts`,
+à relire de la même façon ; en arabe, l'adresse et le lien sont toujours sur leur propre ligne.

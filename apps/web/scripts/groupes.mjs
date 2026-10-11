@@ -25,6 +25,7 @@ export const RARE_ROUTES = [
   '/compte/tuteur',
   '/demo',
   '/inscription',
+  '/acces',
   '/errata',
 ];
 /** Modules chargés à la demande ET qui ont besoin du réseau (chemin du fichier source). */

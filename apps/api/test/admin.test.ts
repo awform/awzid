@@ -52,7 +52,7 @@ describe.skipIf(!URL)('administration (awform_test)', () => {
         email: 'adulte.adm@exemple.org',
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
         birthYear: 1980,
         pseudonym: 'Moi',
       }),

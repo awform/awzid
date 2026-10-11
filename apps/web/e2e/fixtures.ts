@@ -45,7 +45,10 @@ export async function newAdult(
       birthYear: 1988,
       pseudonym: 'Hafiz',
       // hors de l'Union européenne (Sénégal…) : accord exprès à l'hébergement hors du pays
-      consents: country === 'FR' ? ['cgu'] : ['cgu', 'transfert_hors_pays'],
+      consents:
+        country === 'FR'
+          ? ['cgu', 'donnee_religieuse_art9']
+          : ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays'],
     },
   });
   expect(r.status(), await r.text()).toBe(201);

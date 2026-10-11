@@ -77,7 +77,14 @@ export const STAFF_CATALOG = 'fr-personnel';
  * protections du compte, réglages du tuteur, garanties, errata…) et de la fenêtre « Donner mon avis » : chargés par
  * ces pages, jamais préchargés (comme leurs fichiers, voir scripts/groupes.mjs).
  */
-export const SPACE_CATALOGS = ['personnel', 'quotidien', 'vivre', 'coran', 'rares'] as const;
+export const SPACE_CATALOGS = [
+  'personnel',
+  'quotidien',
+  'vivre',
+  'acces',
+  'coran',
+  'rares',
+] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 export function loadTexts(
   name: (typeof SPACE_CATALOGS)[number],
@@ -135,11 +142,28 @@ export function t(key: string, values?: Record<string, unknown>): string {
   return formatIcu(msg, current, values ?? {});
 }
 
+/** Lot F3 (revue M8) : fuseau du compte (null : celui de l'appareil) — les heures s'affichent dans ce fuseau. */
+let zone: string | undefined;
+export function setTimeZone(tz: string | null | undefined): void {
+  try {
+    zone = tz
+      ? new Intl.DateTimeFormat('en', { timeZone: tz }).resolvedOptions().timeZone
+      : undefined;
+  } catch {
+    zone = undefined;
+  }
+}
+
 export function fmtDate(
   d: Date | string | number,
   opts: Intl.DateTimeFormatOptions = { dateStyle: 'medium', timeStyle: 'short' },
 ): string {
-  return new Intl.DateTimeFormat(current, opts).format(new Date(d));
+  // un jour seul (« AAAA-MM-JJ ») n'a pas d'heure : jamais décalé d'un fuseau à l'autre
+  const day = typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d);
+  return new Intl.DateTimeFormat(current, {
+    ...opts,
+    timeZone: day ? 'UTC' : (opts.timeZone ?? zone),
+  }).format(new Date(d));
 }
 
 export function fmtNumber(n: number, opts: Intl.NumberFormatOptions = {}): string {

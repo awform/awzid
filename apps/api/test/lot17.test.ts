@@ -34,7 +34,7 @@ describe('consentement par pays (sans base)', () => {
       authority: 'cdp_sn',
       consentAge: 18,
       transferConsent: true,
-      accountConsents: ['cgu', 'transfert_hors_pays'],
+      accountConsents: ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays'],
       aValider: true,
     });
   });
@@ -44,12 +44,13 @@ describe('consentement par pays (sans base)', () => {
       authority: 'cnil',
       consentAge: 15,
       transferConsent: false,
-      accountConsents: ['cgu'],
+      accountConsents: ['cgu', 'donnee_religieuse_art9'],
     });
     const us = countryRules('US');
     expect(us).toMatchObject({ law: 'coppa', authority: 'ftc_us', transferConsent: true });
-    expect(us.childConsents.moins13).toContain('coppa_parent');
-    expect(us.childConsents.plus13).not.toContain('coppa_parent');
+    // lot F3 (revue G3) : moins de 13 ans FERMÉS au lancement (plus de consentement COPPA recueilli)
+    expect(us.closedUnder).toBe(13);
+    expect(us.childConsents.moins13).not.toContain('coppa_parent');
   });
   it('pays sans entrée : RGPD dans l’UE, mention générique ailleurs ; jamais d’autorité inventée', () => {
     expect(countryRules('DE')).toMatchObject({ law: 'rgpd', authority: 'autorite_ue' });
@@ -205,7 +206,12 @@ describe.skipIf(!URL_)('lot 17 (awform_test)', () => {
       password: PW,
       country: 'SN',
     };
-    const no = await req('POST', '/api/v1/auth/signup', {}, { ...base, consents: ['cgu'] });
+    const no = await req(
+      'POST',
+      '/api/v1/auth/signup',
+      {},
+      { ...base, consents: ['cgu', 'donnee_religieuse_art9'] },
+    );
     expect(no.statusCode).toBe(400);
     expect(no.json().error).toMatchObject({
       code: 'consentement_requis',
@@ -215,11 +221,15 @@ describe.skipIf(!URL_)('lot 17 (awform_test)', () => {
       'POST',
       '/api/v1/auth/signup',
       {},
-      { ...base, consents: ['cgu', 'transfert_hors_pays'] },
+      { ...base, consents: ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays'] },
     );
     expect(ok.statusCode, ok.body).toBe(201);
     const rows = await h.db.select().from(t.consent).where(eq(t.consent.country, 'SN'));
-    expect(rows.map((c) => c.type).sort()).toEqual(['cgu', 'transfert_hors_pays']);
+    expect(rows.map((c) => c.type).sort()).toEqual([
+      'cgu',
+      'donnee_religieuse_art9',
+      'transfert_hors_pays',
+    ]);
     for (const c of rows)
       expect(c.evidence).toEqual({ loi: 'sn_2008_12', autorite: 'cdp_sn', majoriteDeclaree: true });
   });
@@ -235,7 +245,7 @@ describe.skipIf(!URL_)('lot 17 (awform_test)', () => {
         email: 'p17@exemple.org',
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       },
     );
     expect(su.statusCode, su.body).toBe(201);
@@ -246,7 +256,7 @@ describe.skipIf(!URL_)('lot 17 (awform_test)', () => {
       birthYear: YEAR - 10,
       levelCode: 'en1',
       password: PW,
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     });
     expect(pr.statusCode, pr.body).toBe(201);
     const child = pr.json().id;
@@ -298,7 +308,7 @@ describe.skipIf(!URL_)('lot 17 (awform_test)', () => {
         birthYear: YEAR - 11,
         levelCode: 'en1',
         password: PW,
-        consents: ['compte_suivi'],
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
       })
     ).json().id;
     await req(

@@ -94,7 +94,7 @@ try {
         email: E.parent,
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       }),
     );
     await call('POST', '/api/v1/account/pin', parent, { pin: PIN, password: PW });
@@ -109,7 +109,7 @@ try {
         birthYear: year - 1 - age,
         levelCode: 'en1',
         password: PW,
-        consents: ['compte_suivi'],
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
       });
       kids.push(r.json().id);
     }
@@ -121,7 +121,7 @@ try {
       country: 'FR',
       birthYear: 1990,
       pseudonym: 'Samir',
-      consents: ['cgu'],
+      consents: ['cgu', 'donnee_religieuse_art9'],
     });
     const adultCookie = cookieOf(adult);
     const adultProfile = adult.json().profiles[0].id as string;
@@ -338,9 +338,25 @@ try {
         : 'ad1',
       avatar: 'lune',
       password: PW,
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     });
     result = { ...result, ado: 'Yanis (15 ans)' };
+  }
+  // ---- complément (idempotent, lot F3) : accord « article 9 » des comptes FICTIFS créés avant F3 (parent et ses
+  // enfants, adulte), donné par la route réelle (mot de passe de démonstration) — la démo ne s'arrête pas sur
+  // la page « Accords » ; un compte réel, lui, donne cet accord lui-même au premier usage
+  for (const email of [E.parent, E.adulte]) {
+    const ck = cookieOf(await call('POST', '/api/v1/auth/login', '', { email, password: PW }));
+    const m = (await call('GET', '/api/v1/auth/me', ck)).json() as {
+      accordsManquants?: Array<{ type: string; profileId: string | null }>;
+    };
+    if (m.accordsManquants?.length) {
+      await call('POST', '/api/v1/account/accords', ck, {
+        password: PW,
+        accords: m.accordsManquants.map((x) => ({ type: x.type, profileId: x.profileId })),
+      });
+      result = { ...result, accordsArt9: [...((result.accordsArt9 as string[]) ?? []), email] };
+    }
   }
   // ---- complément (idempotent, A27) : Yanis (ado) placé dans les livres ADOS (ado1) et en sciences ra1 — une démo
   // créée avant A27 l'avait mis en ad1 (livres adultes) ; un niveau choisi ensuite (test, épreuve, maître) est gardé

@@ -59,7 +59,7 @@ async function parentWith(
       email,
       password: password(),
       country: 'FR',
-      consents: ['cgu'],
+      consents: ['cgu', 'donnee_religieuse_art9'],
     },
   });
   expect(s.status(), await s.text()).toBe(201);
@@ -70,7 +70,7 @@ async function parentWith(
       birthYear: YEAR - 1 - age,
       levelCode,
       password: password(),
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     },
   });
   expect(p.status(), await p.text()).toBe(201);

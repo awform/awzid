@@ -2,7 +2,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { resolve } from '$app/paths';
+  import { asset, resolve } from '$app/paths';
   import { fmtDate, t } from '$lib/i18n';
   import { call, fetchMe, isStaff, type Me } from '$lib/session';
 
@@ -448,6 +448,15 @@
         <form class="form" onsubmit={convert} data-testid="etab-conversion">
           <h3><Bidi text={t('etab.profil_de', { nom: conv.displayName })} /></h3>
           <p class="muted small">{t('etab.consentement_papier')}</p>
+          <!-- lot F3 (revue G3) : modèle imprimable de la fiche (accords nécessaires et facultatifs) -->
+          <p class="small">
+            <a
+              href={asset('/documents/fiche-consentement-ecole.html')}
+              target="_blank"
+              rel="noopener"
+              data-testid="fiche-consentement">{t('etab.fiche_modele')}</a
+            >
+          </p>
           <label for="cyear">{t('champ.annee_naissance')}</label>
           <input
             id="cyear"
