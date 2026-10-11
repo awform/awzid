@@ -68,7 +68,10 @@ describe.skipIf(!URL)('F5 — interrupteurs, bêta, avis, usage (awform_test)', 
         email,
         password: PW,
         country,
-        consents: country === 'FR' ? ['cgu'] : ['cgu', 'transfert_hors_pays'],
+        consents:
+          country === 'FR'
+            ? ['cgu', 'donnee_religieuse_art9']
+            : ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays'],
         birthYear: YEAR - 30,
         pseudonym: 'Moi',
       },
