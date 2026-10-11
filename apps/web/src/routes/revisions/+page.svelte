@@ -109,6 +109,7 @@
       }
     } else wrong = w.ar;
   }
+  import SeanceSuite from '$lib/SeanceSuite.svelte';
 </script>
 
 <svelte:head><title>{t('app.nom')} — {t('revisions.titre')}</title></svelte:head>
@@ -198,6 +199,9 @@
   <h2 class="mc-titre">{t('parc.mots_coran_jeu')}</h2>
   <MotsCoran {profile} jeu />
 {/if}
+
+<!-- D1 : suite de « Ma séance du jour » (hifẓ) -->
+<SeanceSuite ici="mots" />
 
 <style>
   .cardbox {

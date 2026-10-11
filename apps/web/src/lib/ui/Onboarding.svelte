@@ -23,9 +23,15 @@
   let show = $state(false);
   const key = $derived(`bienvenue:${audience}`);
 
+  /** D1 : montré aux 3 premières ouvertures seulement, et fermable à tout moment */
+  const FOIS = 3;
   onMount(async () => {
     if (!STEPS[audience]) return;
-    show = !(await kvGet<boolean>(key).catch(() => true));
+    if (await kvGet<boolean>(key).catch(() => true)) return;
+    const n = (await kvGet<number>(`${key}:vues`).catch(() => 0)) ?? 0;
+    if (n >= FOIS) return;
+    show = true;
+    await kvSet(`${key}:vues`, n + 1).catch(() => {});
   });
   async function done() {
     // enregistré AVANT de masquer : un rechargement immédiat ne remontre pas l'accueil
@@ -42,7 +48,12 @@
     data-public={audience}
     aria-labelledby="bienvenue-titre"
   >
-    <h2 id="bienvenue-titre"><Bidi text={t(`bienvenue.${audience}.titre`)} /></h2>
+    <div class="tete">
+      <h2 id="bienvenue-titre"><Bidi text={t(`bienvenue.${audience}.titre`)} /></h2>
+      <button type="button" class="fermer" onclick={done} data-testid="bienvenue-fermer"
+        ><Icon name="moins" size={18} /><span>{t('bienvenue.fermer')}</span></button
+      >
+    </div>
     <ol>
       {#each steps as icon, i (icon)}
         <li>
@@ -52,7 +63,7 @@
       {/each}
     </ol>
     {#if audience === 'enfant'}<p class="adulte">{t('bienvenue.pour_adulte')}</p>{/if}
-    <button type="button" class="primary" onclick={done} data-testid="bienvenue-ok"
+    <button type="button" class="ok" onclick={done} data-testid="bienvenue-ok"
       >{t('bienvenue.ok')}</button
     >
   </section>
@@ -68,6 +79,25 @@
   }
   h2 {
     margin: 0 0 var(--space-s);
+  }
+  .tete {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-s);
+  }
+  .fermer {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 44px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: var(--card);
+    color: var(--ink);
+    font-weight: 600;
+    flex: none;
   }
   ol {
     list-style: none;
@@ -90,6 +120,12 @@
     border-radius: var(--radius-md);
     background: var(--card);
     color: var(--primary);
+  }
+  /* D1 : une seule action principale par écran (celle de l'écran, pas l'accueil de premier lancement) */
+  .ok {
+    min-height: var(--target);
+    padding: 0 20px;
+    font-weight: 700;
   }
   .adulte {
     font-size: 0.95rem;

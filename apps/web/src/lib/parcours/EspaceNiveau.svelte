@@ -18,6 +18,8 @@
   import MotsCoran from './MotsCoran.svelte';
   import ModeProfil from './ModeProfil.svelte';
   import Recap from './Recap.svelte';
+  import UniteCouverture from './UniteCouverture.svelte';
+  import { grouperUnites, type EtatUnite } from './unites';
   import { call } from '$lib/session';
   import { commencer, espace, tabsFor, type Espace, type Matiere, type Onglet } from './parcours';
 
@@ -39,6 +41,28 @@
   const asked = $derived(page.url.searchParams.get('onglet') as Onglet | null);
   const tab = $derived(asked && tabs.includes(asked) ? asked : (tabs[0] ?? 'lecons'));
   const next = $derived(e?.unites.find((u) => u.id === (e?.enCours ?? e?.prochaine)) ?? null);
+  const enCoursIci = $derived(!!e?.enCours && e.enCours === next?.id);
+  // D1 : unités (entre deux bilans) ; l'unité en cours dépliée, les autres fermées
+  const groupes = $derived(e ? grouperUnites(e.unites, (n) => t('parc.unite_lecons', n)) : []);
+  let choisis = $state<number[] | null>(null);
+  const ouverts = $derived(
+    choisis ??
+      (() => {
+        const i = groupes.findIndex((g) => g.lecons.some((u) => u.id === next?.id));
+        return [i >= 0 ? i : 0];
+      })(),
+  );
+  function basculer(i: number) {
+    const o = ouverts;
+    choisis = o.includes(i) ? o.filter((x) => x !== i) : [...o, i];
+  }
+  function etatDe(u: { id: string; kind: string; statut: string | null }): EtatUnite {
+    if (u.statut === 'terminee' || u.statut === 'maitrisee') return 'fait';
+    if (u.kind === 'examen') return 'examen';
+    if (u.kind === 'bilan') return 'bilan';
+    if (u.id === next?.id) return 'en-cours';
+    return 'numero';
+  }
 
   async function load() {
     failed = null;
@@ -130,15 +154,31 @@
   </section>
 {:else}
   {@const c = e.courant}
-  <header class="book card" data-testid="mon-niveau" data-niveau={c.code} data-piste={e.piste}>
-    <div class="book-head">
+  <!-- D1 : carte « Reprendre » (titre arabe calligraphié, bouton doré), avancement du niveau -->
+  <header class="reprendre" data-testid="mon-niveau" data-niveau={c.code} data-piste={e.piste}>
+    <div class="rp-tete">
       <span class="code"><Bidi text={levelLabel(c.code)} /></span>
       {#if origine(c.origine)}<span class="chip" data-testid="origine"
           ><Bidi text={origine(c.origine)} /></span
         >{/if}
     </div>
-    {#if c.titreAr}<p class="titre-ar"><Ar text={c.titreAr} /></p>{/if}
-    {#if c.titre}<p class="titre"><Bidi text={c.titre} /></p>{/if}
+    {#if next}
+      <p class="rp-quoi">
+        <Bidi text={t(enCoursIci ? 'parc.reprendre' : 'parc.a_suivre')} /> · <Bidi
+          text={`${unitLabel(next)} — ${next.titleFr}`}
+        />
+      </p>
+      <!-- D1 : marques [..] du livre RENDUES (lettres mises en valeur), jamais affichées en crochets -->
+      <div class="rp-ar"><Ar text={next.titleAr} block /></div>
+      <a class="button dore" href={resolve('/lecons/[id]', { id: next.id })} data-testid="continuer"
+        ><Icon name="fleche" size={20} /><span
+          ><Bidi text={t(enCoursIci ? 'parc.continuer_lecon' : 'parc.commencer_lecon')} /></span
+        ></a
+      >
+    {:else}
+      {#if c.titreAr}<div class="rp-ar"><Ar text={c.titreAr} block /></div>{/if}
+      {#if c.titre}<p class="rp-quoi"><Bidi text={c.titre} /></p>{/if}
+    {/if}
     <Progress
       value={e.progression.faites}
       max={e.progression.total}
@@ -153,14 +193,6 @@
       <p class="bravo" data-testid="encouragement" data-mode={mode}>
         <Icon name="etoile" size={18} /><Bidi text={t('ser.semaine', { n: e.semaine })} />
       </p>
-    {/if}
-    {#if next}
-      <a
-        class="button primary go"
-        href={resolve('/lecons/[id]', { id: next.id })}
-        data-testid="continuer"
-        ><Icon name="fleche" size={20} /><Bidi text={`${unitLabel(next)} — ${next.titleFr}`} /></a
-      >
     {/if}
   </header>
 
@@ -189,18 +221,63 @@
         <p class="muted">{t('niveau.bientot_texte')}</p>
       </div>
     {:else if tab === 'lecons'}
-      <ol class="units" style="--ar-size: {arabicSize(c.code)}px" data-testid="lecons-niveau">
-        {#each e.unites as u (u.id)}
-          <li class={u.kind} class:next={u.id === next?.id}>
-            <a href={resolve('/lecons/[id]', { id: u.id })} data-testid="unit">
-              <span class="label"><Bidi text={unitLabel(u)} /></span>
-              <span class="fr"><Bidi text={u.titleFr} /></span>
-              {#if u.statut && u.statut !== 'ouverte'}<span
-                  class="st {u.statut}"
-                  data-testid="statut"><Bidi text={t(`statut.${u.statut}`)} /></span
-                >{/if}
-              <Ar text={u.titleAr} />
-            </a>
+      <!-- D1 : leçons groupées par unité (entre deux bilans) ; seule l'unité en cours est dépliée -->
+      <ol class="unites" style="--ar-size: {arabicSize(c.code)}px" data-testid="lecons-niveau">
+        {#each groupes as g, gi (gi)}
+          <li class="unite-bloc">
+            <UniteCouverture
+              index={gi}
+              lecons={g.libelle}
+              faites={t('parc.unite_faites', { n: g.faites, total: g.lecons.length })}
+              premiere={g.lecons.find((x) => x.kind === 'lecon')?.id ?? null}
+              ouvert={ouverts.includes(gi)}
+              ontoggle={() => basculer(gi)}
+              controle="unite-{gi}"
+            />
+            {#if ouverts.includes(gi)}
+              <ol class="units" id="unite-{gi}">
+                {#each g.lecons as u (u.id)}
+                  {@const etat = etatDe(u)}
+                  <li class={u.kind} class:next={u.id === next?.id} data-etat={etat}>
+                    <a href={resolve('/lecons/[id]', { id: u.id })} data-testid="unit">
+                      <span class="pastille {etat}" aria-hidden="true"
+                        >{#if etat === 'fait'}<Icon
+                            name="coche"
+                            size={18}
+                          />{:else if etat === 'bilan'}★{:else if etat === 'examen'}<svg
+                            viewBox="0 0 24 24"
+                            width="22"
+                            height="22"
+                            ><path
+                              d="M12 2l2.4 2.6 3.4-.6.9 3.4 3.2 1.4-1.2 3.2 1.2 3.2-3.2 1.4-.9 3.4-3.4-.6L12 22l-2.4-2.6-3.4.6-.9-3.4-3.2-1.4L3.3 12 2.1 8.8l3.2-1.4.9-3.4 3.4.6z"
+                              fill="currentColor"
+                            /><path
+                              d="m8.5 12 2.4 2.4 4.6-4.8"
+                              fill="none"
+                              stroke="var(--card)"
+                              stroke-width="2"
+                            /></svg
+                          >{:else if etat === 'en-cours'}<span class="cercle"></span>{:else}<Bidi
+                            text={u.numLecon ?? u.n}
+                          />{/if}</span
+                      >
+                      <span class="txt">
+                        <span class="label"><Bidi text={unitLabel(u)} /></span>
+                        <span class="fr"><Bidi text={u.titleFr} /></span>
+                      </span>
+                      <span class="sr"
+                        ><Bidi text={t(`parc.etat_${etat.replace('-', '_')}`)} /></span
+                      >
+                      {#if u.statut && u.statut !== 'ouverte'}<span
+                          class="st {u.statut}"
+                          data-testid="statut"><Bidi text={t(`statut.${u.statut}`)} /></span
+                        >{/if}
+                      <Ar text={u.titleAr} />
+                    </a>
+                  </li>
+                {/each}
+              </ol>
+            {/if}
           </li>
         {/each}
       </ol>
@@ -323,17 +400,55 @@
 {/if}
 
 <style>
-  .book {
+  /* D1 : carte « Reprendre » — filet doré, titre arabe calligraphié (Amiri), bouton doré */
+  .reprendre {
     display: grid;
     gap: 6px;
-    border-inline-start: 6px solid var(--primary);
+    padding: var(--space-m);
+    border-radius: 16px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--gold);
+    box-shadow: var(--shadow-card);
   }
-  .book-head {
+  .rp-tete {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
     justify-content: space-between;
+  }
+  .rp-quoi {
+    margin: 0;
+    font-weight: 600;
+  }
+  .rp-ar :global(.ar) {
+    margin: 0;
+    font-family: var(--font-ar-titre);
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 1.7;
+    text-align: right;
+    color: var(--ink);
+  }
+  .reprendre a.dore {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 56px;
+    border-radius: 12px;
+    border: 0;
+    background: var(--gold);
+    /* texte foncé sur l'or (6:1) : l'or n'est jamais une couleur de texte */
+    color: var(--sur-or);
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-decoration: none;
+  }
+  .reprendre a.dore:hover {
+    filter: brightness(1.05);
   }
   .code {
     font-weight: 800;
@@ -349,29 +464,6 @@
     background: var(--primary-soft);
     color: var(--primary);
     font-weight: 700;
-  }
-  .titre-ar {
-    margin: 0;
-    font-size: 1.35rem;
-  }
-  .titre {
-    margin: 0;
-    font-weight: 700;
-    font-size: 1.1rem;
-  }
-  .go {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    min-height: var(--target);
-    padding: 10px 16px;
-    border-radius: var(--radius-md);
-    text-align: start;
-    line-height: 1.35;
-  }
-  .go :global(svg) {
-    flex: 0 0 auto;
   }
   .tabs {
     display: flex;
@@ -399,10 +491,17 @@
     border-color: var(--primary);
     color: var(--on-primary);
   }
-  .units {
+  .unites {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: grid;
+    gap: var(--space-m);
+  }
+  .units {
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0;
   }
   .units a {
     display: grid;
@@ -411,19 +510,58 @@
     align-items: center;
     padding: 10px 14px;
     margin: 8px 0;
+    min-height: 56px;
     background: var(--card);
-    border: 2px solid var(--line);
-    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    border-radius: 12px;
     text-decoration: none;
     color: var(--ink);
   }
   .units li.next a {
-    border-color: var(--primary);
+    border: 2px solid var(--primary);
     box-shadow: var(--shadow-card);
   }
   .units :global(.ar) {
     grid-column: 1 / -1;
     text-align: right;
+  }
+  .txt {
+    display: grid;
+    min-width: 0;
+  }
+  /* états : ✓ fait, cercle en cours, numéro, ★ bilan, sceau examen */
+  .pastille {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    font-weight: 700;
+    color: var(--ink2);
+  }
+  .pastille.fait {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--on-primary);
+  }
+  .pastille.en-cours {
+    border-color: var(--primary);
+  }
+  .cercle {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--primary);
+  }
+  .pastille.bilan {
+    border-color: var(--gold);
+    color: var(--gold);
+    font-size: 1.2rem;
+  }
+  .pastille.examen {
+    border: 0;
+    color: var(--gold);
   }
   .label {
     font-weight: 700;

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Ar from '$lib/Ar.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
@@ -56,7 +57,8 @@
   <article class="sheet" data-testid="fiche-ecriture" data-lecon={unit.id}>
     <header>
       <h1><Bidi text={`${unitLabel(unit)} — ${unit.titleFr}`} /></h1>
-      <p class="ar-title" lang="ar" dir="rtl"><Bidi text={unit.titleAr} base="ar" /></p>
+      <!-- D1 : marques [..] du livre rendues, jamais en crochets -->
+      <div class="ar-title"><Ar text={unit.titleAr} block /></div>
       <p class="name">
         {t('parc.fiche_nom')} ____________________ · {t('parc.fiche_date')} ____________
       </p>

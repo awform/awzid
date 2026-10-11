@@ -8,6 +8,38 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 11/10/2026 — Lot D1 « Design V3 + agencement » : accueil, Arabe par unités, leçon par étapes, « Grandir »
+
+Branche `design-d1-wip` (worktree `~/awform-d1`, depuis `main` 2673d1c), **non fusionnée** (captures relues par la DA
+avant fusion). Conception : `ux/AGENCEMENT.md` § 1, 2, 3, 5, 8, 8 bis, 9.
+
+1. **Accueil « Aujourd'hui » en un écran** : « Ma séance du jour » en héros (bandeau émeraude étoilé, filet doré),
+   un bouton « Commencer ma séance » qui enchaîne leçon → mots → hifẓ (`src/lib/seance.ts`, plan de l'onglet en
+   cours ; « Continuer ma séance » en fin de leçon et sur Révisions), étapes dépliables ; devoirs s'il y en a ;
+   « Ma semaine » en une ligne → « Mon suivi » (`src/lib/suivi/MaSemaine.svelte` : semaine et réglage, arbre,
+   jalons, activités, rapport). « Bienvenue » aux 3 premières ouvertures, fermable. Retirés de l'accueil : cartes
+   d'espaces (barre du bas), avis et liens juridiques (pied masqué sur accueil, Arabe et leçon de l'élève, et
+   partout pour l'enfant), « Ma classe » (→ Plus). Accueil enfant réécrit (plus de « jardin », l'arbre au lieu des
+   étoiles), 5 langues.
+2. **Arabe** : carte « Reprendre » (titre arabe en Amiri, bouton doré « Continuer la leçon », barre du niveau) ;
+   leçons groupées par unité jusqu'au bilan inclus (`parcours/unites.ts`, ordre du livre inchangé), seule l'unité
+   en cours dépliée ; couverture (`UniteCouverture.svelte`) : aplat émeraude / émeraude profond / vert feuille
+   foncé, motif étoilé, « الوحدة الأولى… » en Amiri, objet ou décor de la scène de la 1re leçon (personnages et
+   animaux exclus), chargé à l'approche de l'écran ; états ✓ / cercle / numéro / ★ / sceau.
+3. **Leçon section par section** : barre d'avancement, « Suivant » / « Précédent », sommaire, « Tout voir d'un coup »
+   (adulte, enseignant ; choix gardé). Ordre réel du moteur conservé : Découvrir, Lire, Mes mots, M'entraîner,
+   Parler, Lexique, Coran, Adab, Oral, Bilan, Écrire (le cahier vient après le bilan, comme dans le livre). Les
+   sections cachées restent montées (aucune réponse perdue) ; les animations vivantes restent dans leur étape.
+   Fin de leçon : le symbole pousse (désactivé si mouvement réduit), arbre de l'élève (`ui/Arbre.svelte`, une
+   feuille par leçon terminée, ni points ni classement).
+4. **En-tête** : « Changer d'élève » en tête de `/compte`, prénom jamais tronqué. **Noms écrits** : « Écouter »
+   (leçons), lecture / pause / revoir (animations). **Titres en Lexend** ; Amiri 700 (sous-ensemble arabe, à la
+   demande) pour les titres arabes (`@fontsource/amiri`).
+5. **Tests** : `unites.test.ts` ; e2e `d1-design.spec.ts` (parcours débutant en 2 touchers, accueil < 1 000 px,
+   une action principale, zéro icône sans nom sur accueil / Arabe / leçon / sommaire / fin, axe, étapes, tout voir,
+   fin « Grandir », mouvement réduit, enfant 56 px) ; adaptés : a21, a27, lot11, lot14, lot15, captures, profil.ts,
+   fixtures (les suites de contenu gardent la leçon entière, option `parEtapes`).
+
 ## 11/10/2026 — Chantier A26b, phase 1 : « Je parle », arabe conversationnel SANS IA
 
 Branche `conversation-p1-wip` (worktree `~/awform-conv`, depuis `main` ae8d1dc), **non fusionnée**. Cahier :

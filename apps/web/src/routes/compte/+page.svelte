@@ -9,7 +9,9 @@
   import ConnexionNecessaire from '$lib/ConnexionNecessaire.svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
-  import { setActiveProfile } from '$lib/attempts';
+  import { activeProfile, setActiveProfile } from '$lib/attempts';
+  import { getSettings } from '$lib/offline';
+  import Icon from '$lib/ui/Icon.svelte';
   import { countryName } from '$lib/countries';
   import { fmtDate, locale, LOCALES, setTimeZone, t } from '$lib/i18n';
   import { kvGet, kvSet } from '$lib/idb';
@@ -145,6 +147,16 @@
       .catch(() => (reglagesEchec = true));
   }
   onMount(chargerReglages);
+  /** D1 : « Changer d'élève » (comptes à plusieurs profils) en tête de « Compte », plus dans l'en-tête */
+  let eleveActif = $state<string | null>(null);
+  onMount(async () => {
+    eleveActif = (await activeProfile().catch(() => null))?.pseudonym ?? null;
+  });
+  async function changerEleve() {
+    const ecole = (await getSettings().catch(() => null))?.ecole;
+    await setActiveProfile(null);
+    await goto(resolve(ecole ? '/ecole' : '/profils'));
+  }
   onMount(async () => {
     // F5 : réponse du serveur attendue ici (la mise en page ne l'attend plus)
     allowDrafts = await draftsAllowed();
@@ -270,6 +282,14 @@
     {t('profils.connexion_requise')} <a href={resolve('/connexion')}>{t('entete.connexion')}</a>
   </p>
 {:else}
+  {#if me.profiles.length > 1 && eleveActif}
+    <section class="card changer" data-testid="changer-eleve-carte">
+      <p class="muted"><Bidi text={t('compte.eleve_actif', { nom: eleveActif })} /></p>
+      <button type="button" class="changer-btn" onclick={changerEleve} data-testid="changer-eleve"
+        ><Icon name="famille" /><span>{t('entete.changer_eleve')}</span></button
+      >
+    </section>
+  {/if}
   {#if me.mfaRequired && !me.mfaVerified}
     <section class="card warnbox" data-testid="mfa-requis">
       <h2>{t('compte.totp_titre')}</h2>
@@ -681,6 +701,14 @@
 <AvisBouton />
 
 <style>
+  .changer-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 56px;
+    padding: 0 18px;
+    font-weight: 700;
+  }
   .form {
     display: grid;
     gap: 6px;

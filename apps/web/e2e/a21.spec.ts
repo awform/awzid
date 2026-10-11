@@ -26,9 +26,11 @@ test('A21 : une animation après chaque partie de la leçon pilote, sans son, pa
   await page.goto('/lecons/en1.l01');
   for (const slot of ['lettres', 'lecture', 'mots', 'dialogue', 'retiens'])
     await expect(motion(page, slot)).toHaveCount(1);
-  // placée juste après la partie « mots » (ordre de la page)
+  // placée juste après la partie « mots » (ordre de la page) ; D1 : à la fin de sa section (étape « Mes mots »)
   await expect(
-    page.locator('article.lesson > section:has(.words) + .vivante-hote [data-slot="mots"]'),
+    page.locator(
+      'article.lesson > section:has(.words) > .vivante-hote:last-child [data-slot="mots"]',
+    ),
   ).toHaveCount(1);
   const m = motion(page, 'mots');
   await m.scrollIntoViewIfNeeded();

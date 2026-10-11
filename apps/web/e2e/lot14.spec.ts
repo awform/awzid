@@ -6,7 +6,8 @@ import { expect, test } from './fixtures';
  * un autre site — d'où l'absence de bannière de consentement.
  */
 test('pied de page : aide, garanties et pages légales en brouillon', async ({ page }) => {
-  await page.goto('/aujourdhui');
+  // D1 : plus de liens juridiques sur l'accueil de l'élève ; le pied de page reste dans « Plus » et ailleurs
+  await page.goto('/plus');
   const pied = page.getByTestId('pied');
   await pied.getByRole('link', { name: 'Confidentialité' }).click();
   await expect(page.getByTestId('page-legale')).toContainText('Politique de confidentialité');

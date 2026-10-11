@@ -30,10 +30,7 @@
 
 <svelte:head><title>{t('app.nom')} — {t('onglets.arabe')}</title></svelte:head>
 
-<a class="today card" href={resolve('/aujourdhui')} data-testid="lien-aujourdhui">
-  <span class="today-ic"><Icon name="maison" /></span>
-  <span>{t('auj.lien')}</span>
-</a>
+<!-- D1 : plus de lien « Ma séance du jour » ici (l'accueil est dans la barre du bas ; « Reprendre » en tête) -->
 {#if profile}
   <!-- A27 : l'élève ne voit QUE son niveau (onglets, anciens livres, aperçu du suivant) -->
   <h1>{t('parc.mon_arabe')}</h1>
@@ -80,23 +77,6 @@
 {/if}
 
 <style>
-  .today {
-    display: flex;
-    align-items: center;
-    gap: var(--space-m);
-    text-decoration: none;
-    font-weight: 700;
-    color: var(--primary);
-    min-height: var(--target);
-  }
-  .today-ic {
-    display: grid;
-    place-items: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--primary-soft);
-  }
   .books {
     list-style: none;
     padding: 0;
