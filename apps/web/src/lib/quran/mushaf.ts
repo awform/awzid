@@ -226,7 +226,14 @@ export interface MushafPrefs {
    * true = continuer la lecture automatiquement au premier verset de la destination
    */
   navAuto: boolean;
+  /**
+   * Fond de lecture (11/10/2026), mode clair seulement : « ivoire » (défaut) ou « sepia » ; en mode sombre, le fond
+   * sombre de la marque. Aucun décor derrière le texte.
+   */
+  fond: Fond;
 }
+export type Fond = 'ivoire' | 'sepia';
+export const FONDS: Fond[] = ['ivoire', 'sepia'];
 export const DEFAULT_PREFS: MushafPrefs = {
   kind: 'hafs',
   translation: 'french_rashid',
@@ -247,6 +254,7 @@ export const DEFAULT_PREFS: MushafPrefs = {
   style: 'exact',
   size: 0,
   navAuto: false,
+  fond: 'ivoire',
 };
 /** Facteur de la taille du texte coranique (réglage « Taille du texte », « Plus grand » des enfants). */
 export const TEXT_SCALE = [1, 1.25, 1.5] as const;
@@ -293,6 +301,7 @@ export function readPrefs(store: Pick<Storage, 'getItem'> | null = storage()): M
       style: raw.style === 'fluide' ? 'fluide' : 'exact',
       size: clampInt(raw.size, 0, TEXT_SCALE.length - 1, 0),
       navAuto: raw.navAuto === true,
+      fond: raw.fond === 'sepia' ? 'sepia' : 'ivoire',
     };
   } catch {
     return { ...DEFAULT_PREFS };

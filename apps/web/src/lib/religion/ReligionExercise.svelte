@@ -432,8 +432,8 @@
   }
   button.bad,
   select.bad {
-    border-color: var(--bad-ink);
-    background: var(--bad-bg);
+    border-color: var(--attention);
+    background: var(--warn-bg);
   }
   .fb {
     font-weight: 700;

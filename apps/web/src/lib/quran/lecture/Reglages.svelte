@@ -7,7 +7,7 @@
   import Icon from '$lib/ui/Icon.svelte';
   import { ecoutable, reseau } from '$lib/reseau.svelte';
   import { PRESETS, type PresetId, type Range } from '../lecture';
-  import type { MushafPrefs } from '../mushaf';
+  import { FONDS, type MushafPrefs } from '../mushaf';
   import { fmtDuration, isHafs, SLEEP_CHOICES } from '../player';
   import RiwayaBadge from '../RiwayaBadge.svelte';
   import { mushafChoice, MUSHAF_RIWAYAT, type MushafRiwaya } from '../riwayat';
@@ -425,6 +425,21 @@
   {#if prefs.size > 0 && prefs.style === 'exact'}<p class="muted small">
       {t('cl.taille_fluide')}
     </p>{/if}
+  <!-- 11/10/2026 : fond de lecture, Ivoire (défaut) ou Sépia en mode clair ; sombre : fond de la marque -->
+  <div class="seg" role="radiogroup" aria-label={t('cl.fond')} data-testid="fond-lecture">
+    {#each FONDS as f (f)}
+      <label class:on={prefs.fond === f}
+        ><input
+          type="radio"
+          name="fond"
+          value={f}
+          bind:group={prefs.fond}
+          data-testid={`fond-${f}`}
+        /><Bidi text={t(`cl.fond_${f === 'sepia' ? 'sepia' : 'ivoire'}`)} /></label
+      >
+    {/each}
+  </div>
+  <p class="muted small">{t('cl.fond_aide')}</p>
   <label class="check"
     ><input type="checkbox" bind:checked={prefs.readOnly} data-testid="mp-lecture-seule" />
     {t('mp.lecture_seule')}</label

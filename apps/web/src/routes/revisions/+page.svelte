@@ -252,7 +252,7 @@
     background: var(--ok-bg);
   }
   .pic.bad {
-    border-color: var(--bad-ink);
+    border-color: var(--attention);
   }
   .ok {
     background: var(--ok-bg);

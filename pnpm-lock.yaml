@@ -160,6 +160,9 @@ importers:
       '@fontsource/amiri-quran':
         specifier: ^5.3.0
         version: 5.3.0
+      '@fontsource/lexend':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@fontsource/noto-naskh-arabic':
         specifier: ^5.3.0
         version: 5.3.0
@@ -757,6 +760,9 @@ packages:
 
   '@fontsource/amiri-quran@5.3.0':
     resolution: {integrity: sha512-z/Y3JCqGWnWLpfJGBWPf7C42IxHjxxuwgcCHLmsU/hYd65GHXkZ/XTVpEGtWrEx9VlzdzMMRHDNTJvs8OwAeEw==}
+
+  '@fontsource/lexend@5.3.0':
+    resolution: {integrity: sha512-4igbsooynC6xwfagkAW6eo9JMrw8ALFGkWn1YChYmYchufMJSPgWihD+cy5ruX5YX/gDk/gllcl1Oj7q6KUZmw==}
 
   '@fontsource/noto-naskh-arabic@5.3.0':
     resolution: {integrity: sha512-S/GDgQ6mh/PKo4mz5+eXNYbEarvpI7yh6eCdOz8tTVbeM7+OUiacIEscaYEibr/+egDtGbO2ZB00sjy1bJC1kQ==}
@@ -3028,6 +3034,8 @@ snapshots:
       ipaddr.js: 2.5.0
 
   '@fontsource/amiri-quran@5.3.0': {}
+
+  '@fontsource/lexend@5.3.0': {}
 
   '@fontsource/noto-naskh-arabic@5.3.0': {}
 

@@ -8,7 +8,7 @@ describe('marque : choix du symbole et de l’encre selon le fond réel', () => 
     ['#ffffff', false],
     ['#fbf7ee', false],
     ['#14261f', true],
-    ['#22764f', true], // en-tête vert du thème « jardin » : le livre #0B6E4F s'y perdrait
+    ['#22764f', true], // en-tête vert (ancien jardin) : le livre #0B6E4F s'y perdrait
     ['#0d1324', true],
   ])('fond %s : symbole sombre = %s', (fond, sombre) => {
     expect(choisirEncre(fond, PAIRE).fondSombre).toBe(sombre);

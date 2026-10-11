@@ -826,9 +826,9 @@
     color: var(--ok-ink);
   }
   .opt.ko {
-    border-color: var(--bad-ink);
-    background: var(--bad-bg);
-    color: var(--bad-ink);
+    border-color: var(--attention);
+    background: var(--warn-bg);
+    color: var(--attention);
   }
   .verdict {
     margin: 0;
