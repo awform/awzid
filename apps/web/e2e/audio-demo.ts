@@ -57,10 +57,29 @@ export const DEMO_PREFIX = 'zz-';
 const realId = (id: string) => (id.startsWith(DEMO_PREFIX) ? id.slice(DEMO_PREFIX.length) : id);
 
 /**
- * Copie ces récitateurs (ids préfixés) et leurs pistes des sourates données dans la base de test.
- * Idempotent et sans suppression : deux projets (mobile, bureau) et plusieurs fichiers peuvent l'appeler en
- * même temps ; la base de test est remise à zéro à chaque lancement.
+ * Copies PARTAGÉES et COMPTÉES : chaque processus de test qui les utilise s'inscrit (table « e2e_demo_holder »
+ * de la base de TEST, verrou consultatif) ; le dernier qui s'en va les supprime. Deux projets (mobile, bureau) et
+ * plusieurs fichiers peuvent donc les utiliser en même temps sans se couper la lecture, et elles ne restent pas
+ * dans la base pour les autres fichiers (vu le 11/10/2026 : lot27, liste d'un enfant restreinte par le parent,
+ * polluée par les copies « zz- »). Seuls les ids « zz-… » sont supprimés (jamais un récitateur réel ni « qf- ») ;
+ * pistes et préférences suivent (clés étrangères « on delete cascade »).
  */
+const HOLDER = `${process.pid}-${Math.random().toString(36).slice(2, 10)}`;
+const LOCK = 'select pg_advisory_xact_lock(724242);';
+const HOLDERS =
+  'create table if not exists e2e_demo_holder (holder text primary key, at timestamptz not null default now());';
+const testPsql = (script: string) =>
+  execFileSync(
+    'psql',
+    [process.env.TEST_DATABASE_URL!, '-Atq', '-v', 'ON_ERROR_STOP=1', '-f', '-'],
+    {
+      input: script,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    },
+  );
+
+/** Copie ces récitateurs (ids préfixés) et leurs pistes des sourates données dans la base de test (idempotent). */
 export function installDemoReciters(ids: string[], suras: number[]) {
   const list = ids.map((x) => `'${realId(x).replace(/[^a-z0-9-]/g, '')}'`).join(',');
   const s = suras.map((n) => Math.trunc(n)).join(',');
@@ -77,6 +96,10 @@ export function installDemoReciters(ids: string[], suras: number[]) {
     `\\copy (select ${trSel} from quran_track where reciter_id in (${list}) and sura in (${s})) to stdout`,
   );
   const script = [
+    'begin;',
+    LOCK,
+    HOLDERS,
+    `insert into e2e_demo_holder (holder) values ('${HOLDER}') on conflict do nothing;`,
     `create temp table s_r as select ${RECITER_COLS} from quran_reciter with no data;`,
     `create temp table s_t as select ${TRACK_COLS} from quran_track with no data;`,
     `copy s_r (${RECITER_COLS}) from stdin;`,
@@ -87,20 +110,30 @@ export function installDemoReciters(ids: string[], suras: number[]) {
     '\\.',
     `insert into quran_reciter (${RECITER_COLS}) select ${RECITER_COLS} from s_r on conflict do nothing;`,
     `insert into quran_track (${TRACK_COLS}) select ${TRACK_COLS} from s_t on conflict do nothing;`,
+    'commit;',
     '',
   ].join('\n');
-  execFileSync(
-    'psql',
-    [process.env.TEST_DATABASE_URL!, '-Atq', '-v', 'ON_ERROR_STOP=1', '-f', '-'],
-    {
-      input: script,
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-    },
+  testPsql(script);
+}
+/**
+ * Ce processus n'utilise plus les copies ; s'il était le dernier, elles sont supprimées (ids « zz-… » seulement).
+ * Idempotent ; les ids reçus ne servent pas (toutes les copies partent ensemble, quand plus personne ne lit).
+ */
+export function removeDemoReciters(_ids: string[]) {
+  if (!process.env.TEST_DATABASE_URL) return;
+  const zz = `'${DEMO_PREFIX.replace(/[^a-z0-9-]/g, '')}%'`;
+  testPsql(
+    [
+      'begin;',
+      LOCK,
+      HOLDERS,
+      `delete from e2e_demo_holder where holder = '${HOLDER}';`,
+      `delete from quran_reciter where id like ${zz} and not exists (select 1 from e2e_demo_holder);`,
+      'commit;',
+      '',
+    ].join('\n'),
   );
 }
-/** Volontairement sans effet (voir installDemoReciters) : supprimer en plein test de l'autre projet casserait sa lecture. */
-export function removeDemoReciters(_ids: string[]) {}
 
 /**
  * Sert au navigateur les vrais fichiers de la démo et relève la clé (« récitateur/SSSVVV ») de chaque fichier
