@@ -221,6 +221,64 @@ test.describe('lecteur en paysage (téléphone couché 915 × 412)', () => {
   });
 });
 
+/**
+ * Capture du client (12/10/2026, page 1, portrait 412 px) : la pastille « ⏸ Verset 1 » cachait le numéro de
+ * page en bas du cadre. En fin de défilement, ni le numéro de page ni le dernier verset ne sont sous la pastille.
+ */
+async function pastilleSansChevauchement(page: Page) {
+  await openPage(page, 1);
+  await listen(page);
+  const pill = page.getByTestId('pastille-audio');
+  await expect(pill).toBeVisible({ timeout: 10_000 });
+  // pause (la vue ne suit plus la récitation), puis tout en bas
+  await page.getByTestId('pastille-jouer').click();
+  await expect(page.getByTestId('pastille-jouer')).toHaveAttribute('aria-pressed', 'false');
+  await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+  await page.waitForTimeout(300);
+  await expect(pill).toBeVisible();
+  const r = await page.evaluate(() => {
+    const box = (sel: string) => {
+      const els = [...document.querySelectorAll(sel)];
+      const el = els[els.length - 1];
+      if (!el) return null;
+      const b = el.getBoundingClientRect();
+      return { top: b.top, bottom: b.bottom, left: b.left, right: b.right };
+    };
+    return {
+      pastille: box('[data-testid="pastille-audio"]'),
+      numero: box('[data-page="1"] [data-testid="page-n"]'),
+      verset: box('[data-testid="mushaf-livre"] [data-aya]:not([data-aya$=":0"])'),
+      H: innerHeight,
+    };
+  });
+  expect(r.pastille, JSON.stringify(r)).not.toBeNull();
+  expect(r.numero, JSON.stringify(r)).not.toBeNull();
+  const croise = (
+    a: { top: number; bottom: number; left: number; right: number },
+    b: { top: number; bottom: number; left: number; right: number },
+  ) => a.top < b.bottom && b.top < a.bottom && a.left < b.right && b.left < a.right;
+  expect(croise(r.pastille!, r.numero!), JSON.stringify(r)).toBe(false);
+  if (r.verset) expect(croise(r.pastille!, r.verset), JSON.stringify(r)).toBe(false);
+  // marge : le numéro de page finit au moins 16 px au-dessus de la pastille
+  expect(r.numero!.bottom, JSON.stringify(r)).toBeLessThanOrEqual(r.pastille!.top - 16 + 0.5);
+}
+
+test.describe('pastille d’écoute et fin de page', () => {
+  test.skip(({ isMobile }) => !isMobile, 'téléphone');
+  test('paysage 915 × 412 : la pastille ne couvre ni le numéro de page ni le dernier verset', async ({
+    page,
+  }) => {
+    await page.setViewportSize(PAYSAGE);
+    await pastilleSansChevauchement(page);
+  });
+  test('portrait 412 × 915 : la pastille ne couvre ni le numéro de page ni le dernier verset', async ({
+    page,
+  }) => {
+    await page.setViewportSize(PORTRAIT);
+    await pastilleSansChevauchement(page);
+  });
+});
+
 test.describe('captures paysage et portrait', () => {
   test.skip(!CAP, 'captures : CORAN_PAYSAGE_CAPTURES non défini');
   test('captures 915 × 412 et 412 × 915, clair et sombre', async ({ page }, info) => {
@@ -251,6 +309,15 @@ test.describe('captures paysage et portrait', () => {
         await expect.poll(() => epure(page), { timeout: 6000 }).toBe(true);
         await page.waitForTimeout(400);
         await save('p4-texte');
+        // pages 2 et 3 : signes de pause sur la ligne de leur mot
+        for (const n of [2, 3]) {
+          await openPage(page, n);
+          await expect.poll(() => epure(page), { timeout: 8000 }).toBe(true);
+          await page.waitForTimeout(300);
+          await save(`p${n}-texte`);
+        }
+        await openPage(page, 4);
+        await expect.poll(() => epure(page), { timeout: 8000 }).toBe(true);
         const v = dernierVerset(page);
         await v.scrollIntoViewIfNeeded();
         await v.tap();

@@ -1174,6 +1174,9 @@
     armChrome();
   }
   function toggleChrome() {
+    // page zoomée au doigt (téléphone, commandes flottantes) : l'habillage reste masqué (essai du client,
+    // 12/10/2026 : il revenait par-dessus le texte agrandi) ; clavier : « Afficher les commandes » reste possible
+    if (hidden && zoomed && surcouche) return;
     if (hidden) showChrome();
     else if (prefs.epure) {
       if (chromeTimer) clearTimeout(chromeTimer);
@@ -1190,10 +1193,20 @@
         if (chromeTimer) clearTimeout(chromeTimer);
         chromeTimer = null;
       } else if (ready && !sheetOpen) {
-        if (quiet) chrome = false;
+        // page zoomée au doigt : le menu d'un verset refermé ne ramène pas l'habillage sur le texte agrandi
+        if (quiet || (zoomed && surcouche)) chrome = false;
         else showChrome();
       }
       quiet = false;
+    });
+  });
+  // zoom au doigt (pincement, double-toucher) : les commandes flottantes s'effacent tout de suite
+  $effect(() => {
+    if (!(zoomed && surcouche)) return;
+    untrack(() => {
+      if (chromeTimer) clearTimeout(chromeTimer);
+      chromeTimer = null;
+      chrome = false;
     });
   });
   $effect(() => {
@@ -1275,6 +1288,8 @@
   let tabsH = $state(76);
   let hautH = $state(60);
   let ecouteH = $state(0);
+  /** hauteur mesurée de la pastille d'écoute (marge de fin : elle ne couvre jamais le dernier verset) */
+  let pastilleH = $state(0);
   let ecouteEl = $state<HTMLElement | undefined>();
   $effect(() => {
     const tabs = document.querySelector<HTMLElement>('nav.tabs');
@@ -1635,6 +1650,7 @@
     style:--bas={`${tabsH}px`}
     style:--haut={`${hautH}px`}
     style:--ecoute-h={`${ecouteH}px`}
+    style:--pastille-h={`${pastilleH || 52}px`}
     role="none"
     onpointerdown={longDown}
     onpointermove={longMove}
@@ -1844,7 +1860,7 @@
             {@render tradList(shownVerses)}
           </aside>
         {/if}
-        <div class="stage" class:epure={prefs.epure}>
+        <div class="stage" class:epure={prefs.epure} class:zoomed>
           <button
             type="button"
             class="turn next"
@@ -1957,7 +1973,7 @@
     {#if audioOn && (hidden || paysage) && reciter}
       <!-- écoute, commandes cachées : pastille discrète (pause/lecture + verset) ; toucher le verset ouvre tout ;
            téléphone couché : toujours la pastille (aucune barre audio, le texte garde la hauteur) -->
-      <div class="pastille" data-testid="pastille-audio">
+      <div class="pastille" data-testid="pastille-audio" bind:offsetHeight={pastilleH}>
         <button
           type="button"
           class="pj"
@@ -2396,8 +2412,16 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-float);
   }
+  /*
+   * espace de fin (pendant l'écoute) : la barre audio OU la pastille (12/10/2026, capture du client, page 1 :
+   * la pastille cachait le numéro de page) ne couvre jamais le dernier verset ni le numéro de page en bas :
+   * au moins la hauteur de la pastille + son écart au bas de l'écran (14 px) + 16 px
+   */
   .spacer {
-    height: calc(var(--ecoute-h, 100px) + 12px);
+    height: max(
+      calc(var(--ecoute-h, 100px) + 12px),
+      calc(var(--pastille-h, 52px) + 30px + env(safe-area-inset-bottom))
+    );
   }
   .bsm-hint {
     margin: 0 4px 2px;
@@ -2512,8 +2536,9 @@
       padding-inline-end: 6px;
       border-inline-end: 1px solid var(--mp-mint2);
     }
+    /* barre audio dans la barre du haut : seule la pastille (commandes cachées) peut couvrir le bas */
     .spacer {
-      display: none;
+      height: calc(var(--pastille-h, 52px) + 30px);
     }
   }
   .memo-line {
@@ -2906,6 +2931,11 @@
     :global(html[data-epure]) .stage.epure .turn {
       opacity: 0;
     }
+    /* page zoomée : les flèches (posées sur le texte) disparaissent ; glisser déplace la page, double-toucher
+       ou pincement la rend entière */
+    .stage.epure.zoomed .turn {
+      display: none;
+    }
   }
   /*
    * téléphone et tablette, lecture épurée (essai du client, 11/10/2026) : en-tête et barre du lecteur FLOTTENT
@@ -3015,9 +3045,13 @@
     }
     /* barre audio : la pastille la remplace (le lecteur audio reste chargé, invisible) */
     .ecoute,
-    .ecoute.on,
-    .spacer {
+    .ecoute.on {
       display: none;
+    }
+    /* fin de page : la pastille (8 px du bas) ne couvre jamais le dernier verset ni le numéro de page */
+    .spacer {
+      display: block;
+      height: calc(var(--pastille-h, 52px) + 24px + env(safe-area-inset-bottom));
     }
     .prop-zone,
     .audio-on .prop-zone {

@@ -5,9 +5,10 @@
   import { fmtNumber, localeInfo, t } from '$lib/i18n';
   import { visibleWords } from './player';
   import { suraTitleAr } from './sura-names-ar';
-  import { verseRuns, type TajwidSura } from './tajwid';
+  import { verseRuns, type Run, type TajwidSura } from './tajwid';
   import TajwidRuns from './TajwidRuns.svelte';
   import type { TranslatedVerse } from './translation';
+  import { pauseGroups } from './pause';
 
   /**
    * Texte du Muṣḥaf EN VERSETS (Tanzil, octet par octet, découpé aux espaces seulement) — vue « versets » de
@@ -78,6 +79,17 @@
   };
 </script>
 
+<!-- un mot Tanzil (tel quel ; tajwid en enveloppes ; voile du masquage ; mot entendu) -->
+{#snippet mot(w: string, i: number, voile: boolean, on: boolean, runs: Run[] | null)}<span
+    class="w"
+    class:voile
+    class:on
+    data-w={i}
+    ><span class="t"
+      >{#if runs}<TajwidRuns {runs} />{:else}{tanwinDisplay(w)}{/if}</span
+    ></span
+  >{/snippet}
+
 <section
   class="mushaf"
   class:tajwid={!!tajwid}
@@ -134,17 +146,22 @@
       >
         {#if riwaya}<span class="quran-text rw-text" data-verse={`${v.s}:${v.a}`}>{v.text}</span
           >{:else}<span class="quran-text" data-verse={`${v.s}:${v.a}`}
-            >{#each ws as w, i (i)}{i > 0 ? ' ' : ''}<span
-                class="w"
-                class:voile={!vis[i]}
-                class:on={word?.a === v.a && word?.w === i}
-                data-w={i}
-                ><span class="t"
-                  >{#if tv}<TajwidRuns runs={tv.words[i] ?? []} />{:else}{tanwinDisplay(
-                      w,
-                    )}{/if}</span
-                ></span
-              >{/each}</span
+            >{#each pauseGroups(ws) as gr, gi (gi)}{gi > 0 ? ' ' : ''}{#if gr.length > 1}<span
+                  class="wg"
+                  >{#each gr as i, k (i)}{k > 0 ? ' ' : ''}{@render mot(
+                      ws[i]!,
+                      i,
+                      !vis[i],
+                      word?.a === v.a && word?.w === i,
+                      tv ? (tv.words[i] ?? []) : null,
+                    )}{/each}</span
+                >{:else}{@render mot(
+                  ws[gr[0]!]!,
+                  gr[0]!,
+                  !vis[gr[0]!],
+                  word?.a === v.a && word?.w === gr[0],
+                  tv ? (tv.words[gr[0]!] ?? []) : null,
+                )}{/if}{/each}</span
           ><span class="n" aria-label={t('ca.verset_n', { n: v.a })}
             >{fmtNumber(v.a, { useGrouping: false })}</span
           >{/if}
@@ -241,6 +258,10 @@
   .w.on {
     background: var(--mark);
     border-radius: 6px;
+  }
+  /* mot + signe(s) de pause : insécables, jamais séparés par un retour à la ligne */
+  .wg {
+    white-space: nowrap;
   }
   .w.voile {
     background: var(--mp-mint2);

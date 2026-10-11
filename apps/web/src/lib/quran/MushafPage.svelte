@@ -6,7 +6,8 @@
   import { visibleWords } from './player';
   import type { PageSegment } from './mushaf';
   import { suraTitleAr, ayaNumberAr } from './sura-names-ar';
-  import { verseRuns, type TajwidSura } from './tajwid';
+  import { verseRuns, type Run, type TajwidSura } from './tajwid';
+  import { pauseGroups } from './pause';
   import TajwidRuns from './TajwidRuns.svelte';
   import type { ExactPage } from './mushaf-exact';
   import { untrack } from 'svelte';
@@ -98,6 +99,11 @@
     if (exact && !LignesExactes && !untrack(() => exactEchec)) untrack(chargerLignes);
   });
 </script>
+
+<!-- un mot Tanzil (tel quel ; tajwid en enveloppes ; voile du masquage) -->
+{#snippet mot(w: string, voile: boolean, runs: Run[] | null)}<span class="w" class:voile
+    >{#if runs}<TajwidRuns {runs} />{:else}{tanwinDisplay(w)}{/if}</span
+  >{/snippet}
 
 <article
   class="page"
@@ -236,11 +242,18 @@
                   onclick={(e) => !readOnly && onpick?.(g.s, a, e.currentTarget)}
                   onkeydown={(e) => key(e, g.s, a)}
                   ><span class="quran-text" data-verse={`${g.s}:${a}`}
-                    >{#each ws as w, i (i)}{sep(i)}<span class="w" class:voile={!vis[i]}
-                        >{#if tv}<TajwidRuns runs={tv.words[i] ?? []} />{:else}{tanwinDisplay(
-                            w,
-                          )}{/if}</span
-                      >{/each}</span
+                    >{#each pauseGroups(ws) as gr, gi (gi)}{sep(gi)}{#if gr.length > 1}<span
+                          class="wg"
+                          >{#each gr as i, k (i)}{sep(k)}{@render mot(
+                              ws[i]!,
+                              !vis[i],
+                              tv ? (tv.words[i] ?? []) : null,
+                            )}{/each}</span
+                        >{:else}{@render mot(
+                          ws[gr[0]!]!,
+                          !vis[gr[0]!],
+                          tv ? (tv.words[gr[0]!] ?? []) : null,
+                        )}{/if}{/each}</span
                   ><span class="n" aria-hidden="true"><Bidi text={num(a)} base="ar" /></span></span
                 >
               {/if}
@@ -510,6 +523,10 @@
       center / contain no-repeat;
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-20 -20 40 40'%3E%3Cg fill='none' stroke='%23000' stroke-linejoin='round'%3E%3Cpath stroke-width='2.4' d='M0-18L5.3-12.7H12.7V-5.3L18 0 12.7 5.3V12.7H5.3L0 18-5.3 12.7H-12.7V5.3L-18 0-12.7-5.3V-12.7H-5.3Z'/%3E%3C/g%3E%3C/svg%3E")
       center / contain no-repeat;
+  }
+  /* mot + signe(s) de pause : insécables, jamais séparés par un retour à la ligne */
+  .wg {
+    white-space: nowrap;
   }
   .w.voile {
     color: transparent;
