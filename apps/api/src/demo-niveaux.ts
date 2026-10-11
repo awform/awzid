@@ -37,6 +37,8 @@ export interface DemoNiveau {
   sciences: string;
   /** pseudonyme du profil (adulte : profil du compte ; ado, enfant : profil du compte parent-niveaux) */
   pseudonym: string;
+  /** vrai : simple alias de connexion d'un profil du compte `parent` existant (ni compte ni profil créés) */
+  alias?: boolean;
 }
 
 /** Source : programme/religion_ra_architecture.md l.68 : ra1 avec ad1-ad2 ou ado1, ra2 avec ad3-ad5 ou ado2-ado4, ra3 avec ad6-ad7, ra4 avec ad8-ad10. */
@@ -45,7 +47,15 @@ export const TABLE_ADOS: readonly number[] = [1, 2, 2, 2];
 /** Religion ra des adultes N1-N10 (même source que TABLE_ADOS). */
 export const TABLE_ADULTES: readonly number[] = [1, 1, 2, 2, 2, 3, 3, 4, 4, 4];
 
-export const DEMO_NIVEAUX: readonly DemoNiveau[] = [
+/**
+ * Alias de connexion (demande du client) : `ado1` et `enfant1` sont le niveau 1 des comptes de démonstration
+ * EXISTANTS (Yanis = ado1, Lina = en1, du compte `parent`) : même compte, même progression, aucun doublon.
+ * `adulte1` reste un compte à part : l'adulte existant (Samir) n'a AUCUN niveau posé (ni ad1 ni autre).
+ */
+export const ALIAS_EXISTANTS: Readonly<Record<string, string>> = { ado1: 'Yanis', enfant1: 'Lina' };
+export const ALIAS_ROLE = 'parent';
+
+const BRUT: readonly DemoNiveau[] = [
   ...Array.from({ length: 10 }, (_, i) => ({
     id: `adulte${i + 1}`,
     filiere: 'adultes' as const,
@@ -72,13 +82,17 @@ export const DEMO_NIVEAUX: readonly DemoNiveau[] = [
   })),
 ];
 
+export const DEMO_NIVEAUX: readonly DemoNiveau[] = BRUT.map((n) =>
+  ALIAS_EXISTANTS[n.id] ? { ...n, pseudonym: ALIAS_EXISTANTS[n.id]!, alias: true } : n,
+);
+
 /** Compte parent portant les profils ados et enfants (identifiant court et rôle dans l'adresse). */
 export const PARENT_NIVEAUX_ID = 'parent-niveaux';
 export const PARENT_NIVEAUX_ROLE = 'niveaux-parent';
 
 /** Rôle (partie de l'adresse e-mail fictive) du compte d'un niveau. */
 export const roleOf = (n: DemoNiveau): string =>
-  n.filiere === 'adultes' ? `niveau-${n.id}` : PARENT_NIVEAUX_ROLE;
+  n.alias ? ALIAS_ROLE : n.filiere === 'adultes' ? `niveau-${n.id}` : PARENT_NIVEAUX_ROLE;
 
 export const emailOf = (role: string, tag: string): string => `${role}-${tag}@${DOMAIN}`;
 
@@ -143,8 +157,8 @@ export async function seedNiveaux(d: SeedDeps): Promise<{ crees: string[]; absen
   const crees: string[] = [];
   // livres pas encore importés sur cette machine : le compte du niveau est créé à une exécution ulterieure
   const known = new Set((await db.select({ c: t.level.code }).from(t.level)).map((l) => l.c));
-  const absents = DEMO_NIVEAUX.filter((n) => !known.has(n.arabe)).map((n) => n.id);
-  const niveaux = DEMO_NIVEAUX.filter((n) => known.has(n.arabe));
+  const absents = DEMO_NIVEAUX.filter((n) => !n.alias && !known.has(n.arabe)).map((n) => n.id);
+  const niveaux = DEMO_NIVEAUX.filter((n) => n.alias || known.has(n.arabe));
   const accountByEmail = async (email: string) =>
     (
       await db
@@ -176,7 +190,16 @@ export async function seedNiveaux(d: SeedDeps): Promise<{ crees: string[]; absen
   } else parentCookie = await login(parentEmail);
   const parentMe = await meOf(parentCookie);
   const profileIds = new Map<string, string>();
-  for (const n of niveaux.filter((x) => x.filiere !== 'adultes')) {
+  // alias : ado1 = Yanis, enfant1 = Lina (profils du compte `parent` existant) ; jamais créés ni modifiés
+  const aliasEmail = emailOf(ALIAS_ROLE, tag);
+  let aliasCookie = '';
+  for (const n of DEMO_NIVEAUX.filter((x) => x.alias)) {
+    if (!(await accountByEmail(aliasEmail))) continue;
+    aliasCookie ||= await login(aliasEmail);
+    const p = (await meOf(aliasCookie)).profiles.find((x) => x.pseudonym === n.pseudonym);
+    if (p) profileIds.set(n.id, p.id);
+  }
+  for (const n of niveaux.filter((x) => x.filiere !== 'adultes' && !x.alias)) {
     let p = parentMe.profiles.find((x) => x.pseudonym === n.pseudonym);
     if (!p) {
       const age = n.filiere === 'enfants' ? 6 + n.n : 12 + n.n;
@@ -259,13 +282,14 @@ export async function seedNiveaux(d: SeedDeps): Promise<{ crees: string[]; absen
         cls = { id: c.id, joinCode: c.joinCode };
       }
       for (const n of niveaux.filter((x) => x.filiere === f)) {
-        const pid = profileIds.get(n.id)!;
+        const pid = profileIds.get(n.id);
+        if (!pid) continue;
         const [m] = await db
           .select({ p: t.classMember.profileId })
           .from(t.classMember)
           .where(and(eq(t.classMember.classId, cls.id), eq(t.classMember.profileId, pid)));
         if (m) continue;
-        const cookie = f === 'adultes' ? cookies.get(n.id)! : parentCookie;
+        const cookie = f === 'adultes' ? cookies.get(n.id)! : n.alias ? aliasCookie : parentCookie;
         await call('POST', `/api/v1/profiles/${pid}/classes`, cookie, {
           code: cls.joinCode,
           consent: true,

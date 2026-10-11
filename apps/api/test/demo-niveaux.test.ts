@@ -27,7 +27,15 @@ import {
   TABLE_ADULTES,
   type Call,
 } from '../src/demo-niveaux.js';
-import { cookieOf, PW, setupEdition, teacherWithSecret, type Ctx } from './helpers.js';
+import {
+  cookieOf,
+  parent,
+  PW,
+  setupEdition,
+  teacherWithSecret,
+  YEAR,
+  type Ctx,
+} from './helpers.js';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 const read = (p: string) => readFileSync(join(root, p), 'utf8');
@@ -200,6 +208,21 @@ describe.skipIf(!URL_)('comptes par niveau sur la base de test', () => {
           [code, trackOf(code), Number(/\d+$/.exec(code)![0]), subjectOf(code)],
         );
     await teacherWithSecret(c, `enseignant-${TAG}@${DEMO_DOMAIN}`);
+    // comptes d'origine de la démonstration : `parent` avec Lina (en1) et Yanis (ado1)
+    const { P } = await parent(c, `parent-${TAG}@${DEMO_DOMAIN}`);
+    for (const [pseudonym, age, levelCode] of [
+      ['Lina', 7, 'en1'],
+      ['Yanis', 15, 'ado1'],
+    ] as const) {
+      const r = await c.req('POST', '/api/v1/profiles', P, {
+        pseudonym,
+        birthYear: YEAR - 1 - age,
+        levelCode,
+        password: PW,
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
+      });
+      if (r.statusCode !== 201) throw new Error(r.body);
+    }
     demo = buildApp({
       db: c.h.db,
       secretKey: randomBytes(32),
@@ -216,9 +239,17 @@ describe.skipIf(!URL_)('comptes par niveau sur la base de test', () => {
 
   it('création : 19 comptes au début de leur niveau, réglages de leur âge', async () => {
     const r = await seed();
-    expect(r.crees).toHaveLength(20); // 19 niveaux + parent-niveaux
+    // 19 identifiants - 2 alias (ado1 = Yanis, enfant1 = Lina) + parent-niveaux
+    expect(r.crees).toHaveLength(18);
+    expect(r.crees).not.toContain('ado1');
+    expect(r.crees).not.toContain('enfant1');
     expect(r.absents).toEqual([]);
     for (const n of DEMO_NIVEAUX) {
+      if (n.alias) {
+        // alias : profil existant, niveau 1 d'origine, jamais modifié par le semis
+        expect((await levels(n.id)).arabe, n.id).toBe(n.arabe);
+        continue;
+      }
       expect(await levels(n.id), n.id).toEqual({ arabe: n.arabe, sciences: n.sciences });
       const m = await profileEvalMode(c.h.db, await profileOf(n.id));
       expect(m?.mode, n.id).toBe(n.filiere === 'adultes' ? 'serein' : 'douce');
@@ -244,7 +275,23 @@ describe.skipIf(!URL_)('comptes par niveau sur la base de test', () => {
     expect((await levels('enfant4')).arabe).toBe('en4');
     const p = await login(demo, 'parent-niveaux');
     expect(p.json().profilDemo).toBeNull();
-    expect(p.json().profiles).toHaveLength(9);
+    expect(p.json().profiles).toHaveLength(7); // ado2-4 et enfant2-5 (ado1 et enfant1 : alias)
+    // alias : même compte et même profil que `ado` (Yanis) et `enfant` (Lina), aucun doublon
+    for (const [alias, orig] of [
+      ['ado1', 'ado'],
+      ['enfant1', 'enfant'],
+    ] as const) {
+      const a = await login(demo, alias);
+      const o = await login(demo, orig);
+      expect(a.statusCode).toBe(200);
+      expect(a.json().account.id).toBe(o.json().account.id);
+      expect(a.json().profilDemo).toBe(o.json().profilDemo);
+      expect(a.json().profilDemo).toBe(await profileOf(alias));
+    }
+    const { rows: dup } = await c.h.pool.query<{ n: string }>(
+      "select count(*) n from profile where pseudonym in ('Ado 1', 'Enfant 1')",
+    );
+    expect(Number(dup[0]!.n)).toBe(0);
     // mauvais mot de passe ; les six comptes d'origine restent distincts
     expect((await login(demo, 'adulte2', 'autre')).statusCode).toBe(401);
     expect((await login(demo, 'adulte', 'awzid')).statusCode).toBe(401); // pas de compte `adulte` ici
