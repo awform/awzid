@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { fn } from '$lib/fonctions.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount, tick, untrack } from 'svelte';
+  import { getSettings } from '$lib/offline';
+  import { chargerModule } from '$lib/charger';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
@@ -278,9 +281,15 @@
   // A34 : mise en page EXACTE (Ḥafṣ, sans tajwid ni masquage) pour les pages publiées ; sinon page fluide
   let exactInfo = $state<ExactState | null>(null);
   let exactPages = $state<Record<number, ExactPage | null>>({});
+  // F5 : interrupteur « Muṣḥaf exact »
   // style choisi par l'élève (Médine à l'identique ou muṣḥaf habituel) ; texte agrandi : page fluide
   const exactOn = $derived(
-    !isRw && !tajwidOn && prefs.memo === 0 && prefs.style === 'exact' && prefs.size === 0,
+    fn('mushaf_exact') &&
+      !isRw &&
+      !tajwidOn &&
+      prefs.memo === 0 &&
+      prefs.style === 'exact' &&
+      prefs.size === 0,
   );
   const exactCount = $derived(
     !exactInfo?.disponible
@@ -292,20 +301,39 @@
   const exactOf = (n: number) => (exactOn ? (exactPages[n] ?? null) : null);
   const anyExact = $derived(vue === 'page' && shown.some((n) => !!exactOf(n)));
   /** Lignes et polices des pages affichées disponibles en mise en page exacte (montrées une fois prêtes). */
+  /** Pages (ou double page) qui précèdent et qui suivent celles affichées, dans le Muṣḥaf (1 à 604). */
+  function voisines(vues: number[]): number[] {
+    const a = Math.min(...vues);
+    const b = Math.max(...vues);
+    const pas = vues.length;
+    const out: number[] = [];
+    for (let i = 1; i <= pas; i++) out.push(a - i, b + i);
+    return out.filter((n) => n >= 1 && n <= 604);
+  }
   async function ensureExact() {
     const info = exactInfo;
     if (!info || !exactOn || vue !== 'page') return;
-    await Promise.all(
-      shown.map(async (n) => {
-        if (n in exactPages || !exactAvailable(info, n)) return;
-        const [pg, f1, f2] = await Promise.all([
-          loadExactPage(n, info.version),
-          loadPageFont(n),
-          loadBsmlFont(),
-        ]);
-        exactPages = { ...exactPages, [n]: pg && f1 && f2 ? pg : null };
-      }),
-    );
+    const charger = (pages: number[]) =>
+      Promise.all(
+        pages.map(async (n) => {
+          if (n in exactPages || !exactAvailable(info, n)) return;
+          const [pg, f1, f2] = await Promise.all([
+            loadExactPage(n, info.version),
+            loadPageFont(n),
+            loadBsmlFont(),
+          ]);
+          // une page voisine qui n'a pas pu venir (réseau) sera redemandée quand elle sera affichée
+          if (!(pg && f1 && f2) && !shown.includes(n)) return;
+          exactPages = { ...exactPages, [n]: pg && f1 && f2 ? pg : null };
+        }),
+      );
+    const vues = [...shown];
+    await charger(vues);
+    // F5 : pages PRÉCÉDENTE et SUIVANTE (lignes et police) préchargées une fois la page affichée : tourner la
+    // page est immédiat, même en 3G ; pas en mode « économe » (données comptées)
+    if ((await getSettings().catch(() => null))?.econome) return;
+    if (String(vues) !== String(shown)) return;
+    await charger(voisines(vues));
   }
   $effect(() => {
     void [exactOn, shown, vue, exactInfo];
@@ -553,7 +581,9 @@
   async function loadEcriture() {
     const pid = profileId;
     if (!pid) return;
-    const m = await import('$lib/parcours/parcours');
+    // F5 : nouvelles tentatives ; sans le module, le menu du verset reste complet (lien d'écriture en moins)
+    const m = await chargerModule(() => import('$lib/parcours/parcours')).catch(() => null);
+    if (!m) return;
     const r = await m.ecriture(pid).catch(() => null);
     ecritureRefs = new Set(
       r?.ok && r.data?.coran.visible ? r.data.coran.versets.map((v) => v.ref) : [],

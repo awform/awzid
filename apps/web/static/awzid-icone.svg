@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Awzid">
+  <rect width="1024" height="1024" rx="224" fill="#0B6E4F"/>
+  <g transform="translate(512 512) scale(3.3) translate(-160 -144)">
+    <path d="M114,142 L114,118 Q114,82 150,66 Q158,60 160,46 Q162,60 170,66 Q206,82 206,118 L206,142" fill="none" stroke="#D9B54A" stroke-width="11"/>
+    <polygon points="160,84 164.5,98.5 179,103 164.5,107.5 160,122 155.5,107.5 141,103 155.5,98.5" fill="#D9B54A"/>
+    <path d="M160,196 Q118,186 100,146 Q140,148 160,196 Z" fill="#7FD3AE"/>
+    <path d="M160,196 Q202,186 220,146 Q180,148 160,196 Z" fill="#7FD3AE"/>
+    <path d="M160,196 L160,150" stroke="#7FD3AE" stroke-width="5" stroke-linecap="round"/>
+    <path d="M160,214 Q128,188 86,180 L86,198 Q126,204 160,232 Z" fill="#FBF7EE"/>
+    <path d="M160,214 Q192,188 234,180 L234,198 Q194,204 160,232 Z" fill="#FBF7EE"/>
+    <path d="M84,206 Q126,214 160,242 Q194,214 236,206" fill="none" stroke="#D9B54A" stroke-width="4"/>
+  </g>
+</svg>

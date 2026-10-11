@@ -18,7 +18,7 @@
   import { fetchMe, type Me, type ProfileInfo } from '$lib/session';
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Icon from '$lib/ui/Icon.svelte';
-  import { ecoutable, reseau } from '$lib/reseau.svelte';
+  import { ecoutable, montre, reseau } from '$lib/reseau.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import StatusMessage from '$lib/ui/StatusMessage.svelte';
 
@@ -125,7 +125,7 @@
   {/if}
 
   <ul class="reciters">
-    {#each list as r (r.id)}
+    {#each list.filter(montre) as r (r.id)}
       <li
         class="card rc"
         class:chosen={chosen === r.id}
@@ -250,7 +250,7 @@
         {#if !allowAll}
           <fieldset>
             <legend>{t('ca.parent_liste')}</legend>
-            {#each all as r (r.id)}
+            {#each all.filter(montre) as r (r.id)}
               <label class="check"
                 ><input type="checkbox" value={r.id} bind:group={allowed} data-permis={r.id} /><Bidi
                   text={r.enLigne ? t('ca.en_ligne_option', { nom: r.nameFr }) : r.nameFr}

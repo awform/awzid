@@ -17,6 +17,7 @@ import { FICHES_ESSAI } from '@awform/content/akhlaq';
 import { adabCatalog, akhlaqFiches, guideChapter, reachedUnits, type Db } from '@awform/db';
 import { familyProfile, UUID } from './guards.js';
 import { notFound, type Edition } from './routes-common.js';
+import { exigeFonction } from './f5.js';
 
 interface Memo {
   edition: string;
@@ -109,6 +110,8 @@ export function registerVivre(app: FastifyInstance, db: Db, edition: Edition): v
     async (req, reply) => {
       const p = await familyProfile(db, req, reply, req.params.id);
       if (!p) return reply;
+      // F5 : interrupteur « Vivre l'islam »
+      if (!(await exigeFonction(db, req, reply, 'vivre_islam', p.id))) return reply;
       const ed = await edition();
       if (!ed) return reply.code(404).send(notFound('aucune édition publiée'));
       const m = await load(ed);

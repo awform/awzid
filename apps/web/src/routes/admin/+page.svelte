@@ -7,6 +7,9 @@
   import ActivationAdmin from '$lib/ActivationAdmin.svelte';
   import ModerationAdmin from '$lib/ModerationAdmin.svelte';
   import ContenuAdmin from '$lib/ContenuAdmin.svelte';
+  import FonctionsAdmin from '$lib/admin/FonctionsAdmin.svelte';
+  import AvisAdmin from '$lib/admin/AvisAdmin.svelte';
+  import UsageAdmin from '$lib/admin/UsageAdmin.svelte';
 
   /**
    * Tableau de bord ADMINISTRATEUR minimal, en lecture seule : utilisateurs (e-mails masqués), éditions et
@@ -104,6 +107,10 @@
   <ContenuAdmin />
   <ModerationAdmin />
   <ActivationAdmin />
+  <!-- F5 : interrupteurs de fonctions et canal bêta, avis reçus, usage sans traceur -->
+  <FonctionsAdmin />
+  <AvisAdmin />
+  <UsageAdmin />
 
   <section class="card">
     <h2 id="t-editions">{t('admin.editions')}</h2>

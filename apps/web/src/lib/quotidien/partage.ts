@@ -24,8 +24,9 @@ export interface ShareContent {
   brand: string;
 }
 
-export const W = 1080;
-export const H = 1350;
+import { H, W } from './partage-taille';
+
+export { H, W };
 
 type Measure = (s: string) => number;
 

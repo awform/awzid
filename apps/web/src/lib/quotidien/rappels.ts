@@ -40,7 +40,7 @@ async function notify(title: string, body: string): Promise<void> {
     body,
     silent: true,
     tag: 'awzid-priere',
-    icon: '/icon.svg',
+    icon: '/icons/icon-192.png',
     data: { url: '/quotidien' },
   };
   try {

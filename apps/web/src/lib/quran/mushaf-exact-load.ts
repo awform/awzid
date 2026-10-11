@@ -8,6 +8,7 @@
  *    déclarée au navigateur (FontFace) sous le nom de la page.
  */
 import { BSML_FONT_FILE, pageFontFile, type ExactPage } from './mushaf-exact';
+import { kvGet } from '../idb';
 
 export const EXACT_API = '/api/v1/quran/mushaf-exact';
 export const PAGES_CACHE = 'awzid-mushaf-exact';
@@ -67,7 +68,12 @@ export async function loadExactPage(
     (!version || hit.headers.get('x-awzid-version') === version);
   if (hit && fresh) return (await hit.json()) as ExactPage;
   try {
-    const r = await fetchImpl(pageUrl(p), { credentials: 'same-origin' });
+    // F5 (D-F5) : profil actif envoyé — l'interrupteur « Muṣḥaf exact » s'applique aussi par âge côté serveur
+    const prof = await kvGet<{ id: string } | null>('activeProfile').catch(() => null);
+    const r = await fetchImpl(pageUrl(p), {
+      credentials: 'same-origin',
+      ...(prof?.id ? { headers: { 'x-profil': prof.id } } : {}),
+    });
     if (r.status === 404 || r.status === 401) {
       if (r.status === 404 && c) await c.delete(pageUrl(p));
       return null;

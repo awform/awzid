@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Awzid">
+  <rect width="48" height="48" rx="11" fill="#0B6E4F"/>
+  <g transform="translate(24 25) scale(0.2) translate(-160 -147)">
+    <path d="M112,146 L112,118 Q112,78 160,50 Q208,78 208,118 L208,146" fill="none" stroke="#D9B54A" stroke-width="18"/>
+    <polygon points="160,78 167,97 186,104 167,111 160,130 153,111 134,104 153,97" fill="#D9B54A"/>
+    <path d="M160,200 Q112,188 92,146 Q140,148 160,200 Z" fill="#FBF7EE"/>
+    <path d="M160,200 Q208,188 228,146 Q180,148 160,200 Z" fill="#FBF7EE"/>
+    <path d="M160,220 Q126,190 80,182 L80,206 Q124,210 160,244 Z" fill="#FBF7EE"/>
+    <path d="M160,220 Q194,190 240,182 L240,206 Q196,210 160,244 Z" fill="#FBF7EE"/>
+  </g>
+</svg>

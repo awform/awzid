@@ -1,4 +1,5 @@
 <script lang="ts">
+  import AvisBouton from '$lib/avis/AvisBouton.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
@@ -38,3 +39,6 @@
     </li>
   {/each}
 </ul>
+
+<!-- F5 : « Donner mon avis » (chargé à la demande, en ligne) -->
+<AvisBouton />

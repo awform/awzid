@@ -38,6 +38,7 @@ import {
 import { audit } from './auth/service.js';
 import { err, familyProfile, needTeacher, parentGate, UUID } from './guards.js';
 import type { Edition } from './school-common.js';
+import { exigeFonction } from './f5.js';
 
 const MODE = { enum: ['verification', 'douce', 'serein'] } as const;
 
@@ -128,6 +129,9 @@ export function registerSereinA39(app: FastifyInstance, db: Db, edition: Edition
       const p = await familyDecision(req, reply, req.params.id);
       if (!p) return reply;
       if (!evalModesFor(p.kind).includes(req.body.mode)) return err(reply, 400, 'mode_non_propose');
+      // F5 : « Mode serein » coupé → plus proposé (un choix déjà fait reste enregistré)
+      if (req.body.mode === 'serein' && !(await exigeFonction(db, req, reply, 'mode_serein', p.id)))
+        return reply;
       await setProfileEvalMode(db, p.id, req.body.mode, p.decider, me(req));
       await audit(db, me(req), 'parcours.mode', p.id, { mode: req.body.mode, par: p.decider });
       return { mode: (await effectiveEvalMode(db, p.id))!.mode, famille: req.body.mode };
