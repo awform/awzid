@@ -148,6 +148,34 @@ describe.skipIf(process.platform === 'win32')(
   },
 );
 
+describe('A5 — interrupteur AWFORM_ECOUTE (déploiement)', () => {
+  it('défaut : rien ; =1 : URL du service, fonction ouverte en démonstration seulement', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'ecoute-env-'));
+    try {
+      const f = join(dir, 'prod.env');
+      writeFileSync(f, 'SITE=x\n');
+      const run = (demo: string, env: Record<string, string> = {}) =>
+        spawnSync('bash', [join(PROD, 'ecoute-env.sh'), f, demo], {
+          encoding: 'utf8',
+          env: { PATH: process.env.PATH, ...env },
+        }).stdout.trim();
+      expect(run('1')).toBe('0');
+      expect(readFileSync(f, 'utf8')).toBe('SITE=x\n');
+      writeFileSync(f, 'SITE=x\nAWFORM_ECOUTE=1\n');
+      expect(run('0')).toBe('1');
+      expect(readFileSync(f, 'utf8')).toMatch(/^AWFORM_ECOUTE_URL=http:\/\/ecoute:8000$/m);
+      expect(readFileSync(f, 'utf8')).not.toMatch(/AWFORM_ECOUTE_IA=/);
+      expect(run('1')).toBe('1');
+      expect(readFileSync(f, 'utf8')).toMatch(/^AWFORM_ECOUTE_IA=on$/m);
+      const deploy = readFileSync(join(PROD, 'deploy.sh'), 'utf8');
+      expect(deploy).toMatch(/ecoute-env\.sh/);
+      expect(deploy).toMatch(/--profile ecoute up -d ecoute/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
 describe('audit INF-10 — déploiement', () => {
   it('sauvegarde avant migration, retour à la version précédente si la santé échoue', () => {
     const d = readFileSync(join(PROD, 'deploy.sh'), 'utf8');

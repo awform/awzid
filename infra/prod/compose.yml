@@ -195,6 +195,19 @@ services:
       ]
     cpus: 6
     mem_limit: 6g
+    # « healthy » seulement quand le modèle est chargé (/sante -> pret) ; démarrage du modèle : 20 à 50 s
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'python',
+          '-c',
+          "import json,urllib.request,sys; sys.exit(0 if json.load(urllib.request.urlopen('http://127.0.0.1:8000/sante', timeout=4)).get('pret') else 1)",
+        ]
+      interval: 15s
+      timeout: 6s
+      retries: 6
+      start_period: 90s
     profiles: [ecoute]
     logging: *logs
 
