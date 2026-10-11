@@ -82,6 +82,8 @@
   "niveau.erreur": "Herunterladen gerade nicht möglich",
   "niveau.en1": "Kinder — Stufe 1",
   "niveau.ad1": "Erwachsene — Stufe 1",
+  "niveau.bientot": "Diese Stufe kommt bald.",
+  "niveau.bientot_texte": "Die Lektionen dieses Buches sind noch nicht in der App. Komm bald wieder oder arbeite in der Zwischenzeit mit einem anderen Buch.",
   "lecon.retour": "← Lektionen {level}",
   "audio.ecouter": "Anhören",
   "audio.ecouter_lent": "Langsam anhören",

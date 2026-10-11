@@ -103,6 +103,13 @@
       </li>
     {/each}
   </ol>
+  {#if data.units.length === 0}
+    <!-- niveau sans leçon importée : message clair, jamais une page vide muette -->
+    <section class="card info" data-testid="niveau-bientot">
+      <h2>{t('niveau.bientot')}</h2>
+      <p class="muted">{t('niveau.bientot_texte')}</p>
+    </section>
+  {/if}
 {/if}
 
 <style>
