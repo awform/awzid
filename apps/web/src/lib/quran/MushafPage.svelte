@@ -453,11 +453,7 @@
   .readonly .basmala {
     cursor: default;
   }
-  @media (hover: hover) {
-    .page:not(.readonly) .basmala:hover {
-      background: color-mix(in srgb, var(--mp-mark) 55%, transparent);
-    }
-  }
+  /* 11/10/2026 : aucun fond au survol (texte coranique), seulement le verset sélectionné ou en cours de lecture */
   .basmala.on {
     background: var(--mp-mark);
     box-shadow: 0 0 0 3px var(--mp-mark);
@@ -482,13 +478,7 @@
   .readonly .aya {
     cursor: default;
   }
-  @media (hover: hover) {
-    .page:not(.readonly) .aya:hover {
-      background: color-mix(in srgb, var(--mp-mark) 55%, transparent);
-    }
-  }
-  .aya.on,
-  .page:not(.readonly) .aya.on:hover {
+  .aya.on {
     background: var(--mp-mark);
     box-shadow: 0 0 0 3px var(--mp-mark);
   }

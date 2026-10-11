@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { readMode } from '../ui/mode';
 import { readPrefs } from '../quran/mushaf';
-import { ancienTheme, apresMigration, CLE_MIGRATION, migrerThemesSupprimes } from './migration';
+import {
+  ancienTheme,
+  apresMigration,
+  CLE_MIGRATION,
+  marquerAppareilNeuf,
+  migrerThemesSupprimes,
+} from './migration';
 
 function mem(init: Record<string, string> = {}) {
   const m = new Map<string, string>(Object.entries(init));
@@ -71,6 +77,18 @@ describe('11/10/2026 — migration silencieuse des thèmes supprimés', () => {
     const s = mem();
     expect(migrerThemesSupprimes(s, 'manuscrit')).toBe(false);
     expect(s.dump()).toEqual({ [CLE_MIGRATION]: '1' });
+  });
+
+  it('appareil neuf marqué dès le premier affichage : le lecteur qui écrit ensuite ne déclenche pas la migration', () => {
+    const s = mem();
+    marquerAppareilNeuf(s);
+    s.setItem('awzid.coran.derniere-lecture.v1', '{}');
+    expect(migrerThemesSupprimes(s, 'manuscrit')).toBe(false);
+    expect(s.getItem('awzid.mode')).toBeNull();
+    // un ancien appareil (traces d'usage) n'est pas marqué : sa migration reste à faire
+    const v = mem({ ...USAGE });
+    marquerAppareilNeuf(v);
+    expect(v.getItem(CLE_MIGRATION)).toBeNull();
   });
 
   it('ancienne clé de thème ou de palette enregistrée : elle prime, puis elle est effacée', () => {

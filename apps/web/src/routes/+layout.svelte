@@ -22,7 +22,7 @@
   import { chargerFonctions } from '$lib/fonctions.svelte';
   import { cleDeChemin, envoyer, noterUsage, usagePour } from '$lib/usage';
   import { appliquerFond, lireFond, stockageLocal } from '$lib/theme/fond';
-  import { migrerThemesSupprimes } from '$lib/theme/migration';
+  import { marquerAppareilNeuf, migrerThemesSupprimes } from '$lib/theme/migration';
   import { activeNav, ancienThemeDuPublic, audienceOf, navFor } from '$lib/ui/audience';
   import Brand from '$lib/ui/Brand.svelte';
   import Icon from '$lib/ui/Icon.svelte';
@@ -152,6 +152,7 @@
   });
 
   async function refresh() {
+    marquerAppareilNeuf(stockageLocal()); // avant toute écriture du lecteur : appareil neuf = rien à migrer
     settings = await getSettings().catch(() => null);
     profile = await activeProfile().catch(() => null);
     me = await cachedMe();
