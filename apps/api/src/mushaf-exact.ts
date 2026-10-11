@@ -11,6 +11,8 @@ import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import type { FastifyInstance } from 'fastify';
 import { err } from './guards.js';
+import { exigeFonction } from './f5.js';
+import type { Db } from '@awform/db';
 
 const PAGE = { type: 'integer', minimum: 1, maximum: 604 } as const;
 const FONT = { type: 'string', pattern: '^QCF_(P[0-9]{3}|BSML)\\.ttf$' } as const;
@@ -34,6 +36,8 @@ export function registerMushafExact(
   dataDir: string | null,
   fontsDir: string | null,
   now: () => number = Date.now,
+  /** F5 : base (interrupteur « mushaf_exact ») ; absente : pas de contrôle (tests du module seul) */
+  db?: Db,
 ) {
   const live = dataDir ? join(dataDir, 'publie') : null;
   const manifest = (): Manifest | null => {
@@ -83,6 +87,8 @@ export function registerMushafExact(
     { schema: { params: { type: 'object', properties: { p: PAGE } } } },
     async (req, reply) => {
       if (!req.auth) return err(reply, 401, 'non_connecte');
+      // F5 : interrupteur « Muṣḥaf exact » (profil actif proposé par l'en-tête x-profil)
+      if (db && !(await exigeFonction(db, req, reply, 'mushaf_exact'))) return reply;
       const m = manifest();
       if (!m || !live) return err(reply, 404, 'mushaf_exact_indisponible');
       const f = join(live, 'pages', `${String(req.params.p).padStart(3, '0')}.json`);

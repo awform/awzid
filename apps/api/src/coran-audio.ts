@@ -30,6 +30,7 @@ import {
 import { isAdmin } from './auth/service.js';
 import { err, familyProfile, needTeacher, parentGate } from './guards.js';
 import { QfError, type QfAudioClient } from './coran-qf.js';
+import { exigeFonction } from './f5.js';
 
 /** riwāya des carnets de hifẓ : texte Tanzil de Ḥafṣ ʿan ʿĀṣim */
 export const CARNET_RIWAYA = 'hafs';
@@ -339,6 +340,9 @@ export function registerCoranAudio(
       if (!r) return err(reply, 404, 'recitateur_indisponible');
       // A2 : adresses de Quran Foundation seulement pour les comptes connectés (pas d'API ouverte)
       if (r.source === 'qf' && !req.auth) return err(reply, 401, 'connexion_requise');
+      // F5 : interrupteur « récitateurs en ligne » (profil actif : en-tête x-profil)
+      if (r.source === 'qf' && !(await exigeFonction(db, req, reply, 'recitateurs_en_ligne')))
+        return reply;
       let m: Awaited<ReturnType<typeof suraManifest>>;
       try {
         m = await suraManifest(db, r, req.params.sura);
@@ -514,6 +518,8 @@ export function registerCoranAudio(
       if (!r) return err(reply, 404, 'recitateur_indisponible');
       const allowed = await allowedFor(db, p.id);
       if (allowed && !allowed.has(r.id)) return err(reply, 403, 'recitateur_non_autorise');
+      if (r.source === 'qf' && !(await exigeFonction(db, req, reply, 'recitateurs_en_ligne', p.id)))
+        return reply;
       if (req.query.mode === 'memoriser' && r.riwaya !== CARNET_RIWAYA)
         return err(reply, 409, 'riwaya_differente_du_carnet', { riwayaCarnet: CARNET_RIWAYA });
       let m: Awaited<ReturnType<typeof suraManifest>>;

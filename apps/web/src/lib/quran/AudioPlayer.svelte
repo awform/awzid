@@ -7,7 +7,7 @@
   import Icon from '$lib/ui/Icon.svelte';
   import { shortName } from './lecture';
   import { clampRate, isHafs } from './player';
-  import { playableUrl } from './offline-audio';
+  import { garderEcoute, playableUrl } from './offline-audio';
 
   /**
    * Lecteur audio de l'espace Coran — Coran épuré (06/10/2026) : UNE barre discrète (récitateur abrégé,
@@ -151,6 +151,10 @@
     await playAt(i);
   }
   function ended() {
+    // F5 : verset entendu jusqu'au bout (en ligne) gardé pour être réécouté hors ligne ; jamais un récitateur
+    // « en ligne seulement »
+    const f = pack?.files.find((x) => x.aya === queue[idx]);
+    if (f && !reciter.enLigne && !lastUrl.startsWith('blob:')) void garderEcoute(f.url);
     if (sleepUntil && Date.now() >= sleepUntil) return finish();
     void playAt(idx + 1);
   }

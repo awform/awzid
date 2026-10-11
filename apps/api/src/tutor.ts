@@ -40,6 +40,7 @@ import { ownsProfile } from './auth/routes.js';
 import { isTeacher as isTeacherRole } from './auth/service.js';
 import { lawEvidence, TEXT_VERSION } from './auth/policy.js';
 import { currentSuspensions, maskUnit } from './suspensions.js';
+import { exigeFonction } from './f5.js';
 
 type Edition = () => Promise<{ id: string; code: string } | null>;
 const err = (reply: FastifyReply, status: number, code: string) =>
@@ -164,6 +165,8 @@ export function registerTutor(
       if (!req.auth) return err(reply, 401, 'non_connecte');
       const { profileId } = req.params;
       if (!(await owner(req, profileId))) return err(reply, 403, 'profil_interdit');
+      // F5 : interrupteur « tuteur » (rôle, âge, pays, école, canal)
+      if (!(await exigeFonction(db, req, reply, 'tuteur', profileId))) return reply;
       const b = req.body;
       if (!ARABIC_UNIT.test(b.unitId)) return err(reply, 400, 'hors_perimetre');
       // audit CON-6 : le texte libre n'accompagne que « question » (classé avant tout appel au modèle)
