@@ -23,6 +23,7 @@ import {
   PARENT_NIVEAUX_ROLE,
   roleOf,
   seedNiveaux,
+  TABLE_ADOS,
   TABLE_ADULTES,
   type Call,
 } from '../src/demo-niveaux.js';
@@ -56,7 +57,8 @@ describe('table des comptes de niveau', () => {
       expect(n.arabe).toBe(`${{ adultes: 'ad', ados: 'ado', enfants: 'en' }[n.filiere]}${n.n}`);
     }
     expect(DEMO_NIVEAUX.find((n) => n.id === 'enfant4')!.sciences).toBe('re4');
-    expect(DEMO_NIVEAUX.find((n) => n.id === 'ado3')!.sciences).toBe('ra3');
+    expect(DEMO_NIVEAUX.map((n) => n.sciences).slice(10, 14)).toEqual(['ra1', 'ra2', 'ra2', 'ra2']);
+    expect(TABLE_ADOS).toEqual([1, 2, 2, 2]);
     expect(TABLE_ADULTES).toHaveLength(10);
     expect(Math.max(...TABLE_ADULTES)).toBeLessThanOrEqual(4);
   });

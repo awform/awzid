@@ -6,7 +6,7 @@
  *  - ado1 … ado4 : filière Ados (ado1–ado4), profils du compte parent « parent-niveaux » ;
  *  - enfant1 … enfant5 : filière Enfants (en1–en5), profils du même compte « parent-niveaux » (vérification
  *    « douce », décidée par le parent) ; connexion directe sur le profil, comme `enfant` (Lina) ;
- *  - religion (sciences) : re<N> pour un enfant, ra<N> pour un ado, ra suivant TABLE_ADULTES pour un adulte
+ *  - religion (sciences) : re<N> pour un enfant, ra suivant TABLE_ADOS pour un ado, ra suivant TABLE_ADULTES pour un adulte
  *    (les livres de religion adultes n'ont que 4 niveaux pour 10 niveaux d'arabe). TABLE MODIFIABLE ICI SEULE ;
  *  - Coran (qc) : non posé, l'appli propose qc1 comme à tout élève ; le parcours Coran personnel et « Vivre
  *    l'islam » restent ouverts comme pour tout élève ;
@@ -39,7 +39,10 @@ export interface DemoNiveau {
   pseudonym: string;
 }
 
-/** Livres de religion adultes : 4 niveaux pour 10 niveaux d'arabe (choix de démonstration, modifiable). */
+/** Source : programme/religion_ra_architecture.md l.68 : ra1 avec ad1-ad2 ou ado1, ra2 avec ad3-ad5 ou ado2-ado4, ra3 avec ad6-ad7, ra4 avec ad8-ad10. */
+export const TABLE_ADOS: readonly number[] = [1, 2, 2, 2];
+
+/** Religion ra des adultes N1-N10 (même source que TABLE_ADOS). */
 export const TABLE_ADULTES: readonly number[] = [1, 1, 2, 2, 2, 3, 3, 4, 4, 4];
 
 export const DEMO_NIVEAUX: readonly DemoNiveau[] = [
@@ -56,7 +59,7 @@ export const DEMO_NIVEAUX: readonly DemoNiveau[] = [
     filiere: 'ados' as const,
     n: i + 1,
     arabe: `ado${i + 1}`,
-    sciences: `ra${i + 1}`,
+    sciences: `ra${TABLE_ADOS[i]}`,
     pseudonym: `Ado ${i + 1}`,
   })),
   ...Array.from({ length: 5 }, (_, i) => ({
