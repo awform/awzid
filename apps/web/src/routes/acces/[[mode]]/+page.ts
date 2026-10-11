@@ -3,5 +3,5 @@ import type { PageLoad } from './$types';
 
 /** Lot F3 : textes français de la récupération du compte (hors de la coquille), chargés avant la page. */
 export const load: PageLoad = async () => {
-  await loadTexts('acces');
+  await Promise.all([loadTexts('acces'), loadTexts('rares')]);
 };
