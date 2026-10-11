@@ -84,6 +84,8 @@ export const SPACE_CATALOGS = [
   'acces',
   'coran',
   'rares',
+  // A5 : textes de « Réciter et vérifier » (canal bêta), chargés seulement quand la fonction est ouverte
+  'ecoute',
 ] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 export function loadTexts(

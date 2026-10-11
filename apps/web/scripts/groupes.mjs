@@ -34,6 +34,8 @@ export const EN_LIGNE_MODULES = [
   /src\/lib\/TutorPanel\.svelte$/,
   /src\/lib\/avis\/AvisDialog\.svelte$/,
   /src\/lib\/avis\/capture\.ts$/,
+  // A5 : « Réciter et vérifier » (le service d'écoute est sur le serveur) : panneau et bilans, à la demande
+  /src\/lib\/ecoute\/(PanneauEcoute|ARevoirEcoute)\.svelte$/,
 ];
 
 const under = (r, prefixes) => prefixes.some((p) => r === p || r.startsWith(`${p}/`));

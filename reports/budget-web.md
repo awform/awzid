@@ -6,24 +6,24 @@ bloquant. Compression Brotli (qualité 11).
 
 | Indicateur | Mesure | Budget | Tenu |
 |---|---|---|---|
-| **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | 319.2 Ko | ≤ 350.0 Ko | oui |
-| **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (`/`) | 106.0 Ko | ≤ 150.0 Ko | oui |
+| **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | 325.1 Ko | ≤ 350.0 Ko | oui |
+| **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (`/`) | 107.6 Ko | ≤ 150.0 Ko | oui |
 | **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | 1.79 s (élève, premier lancement ; relance 0.53 s ; mesuré le 2026-10-11) | < 3 s | oui |
-| Page la plus lourde au premier chargement (`/coran/lecteur`) | 136.1 Ko | ≤ 150.0 Ko | oui |
+| Page la plus lourde au premier chargement (`/coran/lecteur`) | 139.9 Ko | ≤ 150.0 Ko | oui |
 
 ## Détail
 
 | Élément | Poids transféré |
 |---|---|
-| (a) dont JS + CSS de la coquille de l'élève | 309.9 Ko |
-| (a) dont textes préchargés (`/i18n/fr-quotidien.json`, `/i18n/fr-vivre.json`, `/i18n/fr-coran.json`) | 9.2 Ko |
-| Pages du personnel, NON préchargées (27 fichiers) | 47.5 Ko |
+| (a) dont JS + CSS de la coquille de l'élève | 315.7 Ko |
+| (a) dont textes préchargés (`/i18n/fr-quotidien.json`, `/i18n/fr-vivre.json`, `/i18n/fr-coran.json`) | 9.4 Ko |
+| Pages du personnel, NON préchargées (27 fichiers) | 47.7 Ko |
 | Pages rares, en ligne seulement, NON préchargées (34 fichiers) | 22.4 Ko |
-| Modules à la demande qui ont besoin du réseau, NON préchargés (4 fichiers) | 4.8 Ko |
-| Leçons vivantes, à la demande (2 fichiers) | 12.7 Ko (≤ 20.0 Ko) |
-| Total JS + CSS de toutes les pages (mesuré, non bloquant) | 397.3 Ko |
-| dont CSS | 40.7 Ko |
-| Service worker | 6.1 Ko |
+| Modules à la demande qui ont besoin du réseau, NON préchargés (9 fichiers) | 14.3 Ko |
+| Leçons vivantes, à la demande (2 fichiers) | 12.8 Ko (≤ 20.0 Ko) |
+| Total JS + CSS de toutes les pages (mesuré, non bloquant) | 412.8 Ko |
+| dont CSS | 42.3 Ko |
+| Service worker | 6.3 Ko |
 | Polices WOFF2 (une seule fois, déjà compressées) | 222.6 Ko (≤ 600.0 Ko) |
 | Police d'une riwāya, la plus lourde (6 polices, à la demande, hors coquille) | 781.6 Ko (≤ 1024.0 Ko) |
 
@@ -31,11 +31,11 @@ bloquant. Compression Brotli (qualité 11).
 
 | Page | JavaScript + CSS initiaux (Brotli) |
 |---|---|
-| `/coran/lecteur` | 136.1 Ko |
-| `/lecons/[id]` | 134.4 Ko |
-| `/enseignant/classe/[id]` | 117.2 Ko |
-| `/lectures/[code]` | 113.6 Ko |
-| `/hifz` | 108.8 Ko |
-| `/vivre` | 108.1 Ko |
-| `/aujourdhui` | 107.5 Ko |
-| `/quotidien` | 106.5 Ko |
+| `/coran/lecteur` | 139.9 Ko |
+| `/lecons/[id]` | 136.0 Ko |
+| `/enseignant/classe/[id]` | 118.7 Ko |
+| `/lectures/[code]` | 115.2 Ko |
+| `/hifz` | 112.3 Ko |
+| `/vivre` | 109.8 Ko |
+| `/aujourdhui` | 109.1 Ko |
+| `/quotidien` | 108.0 Ko |

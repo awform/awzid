@@ -23,6 +23,7 @@ import { registerToday } from './today.js';
 import { registerSchool } from './school.js';
 import { registerActivities } from './activities.js';
 import { recitationKeyFromEnv, registerRecitations } from './recitations.js';
+import { registerEcouteIa, type OptionsEcoute } from './ecoute-ia.js';
 import { messageKeyFromEnv, registerMessagerie } from './messagerie.js';
 import { registerPush } from './push.js';
 import { registerRelais } from './relais.js';
@@ -86,6 +87,8 @@ export interface AppOptions {
   leconsAudioDir?: string | null;
   /** DÉMONSTRATION seulement (server.ts : AWFORM_DEMO=1 et garde-fou) : connexion simplifiée */
   demoLogin?: boolean;
+  /** A5 : écoute de la récitation (tests : service factice, interrupteur) ; sinon AWFORM_ECOUTE_* */
+  ecoute?: OptionsEcoute;
   /** lot F3 : envoi des e-mails (tests) ; sinon AWFORM_MAIL (smtp, journal, ou désactivé) */
   mailer?: Mailer;
   /** lot F3 : adresse publique du site pour les liens des e-mails (tests) ; sinon AWFORM_PUBLIC_URL ou SITE */
@@ -208,6 +211,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     db,
     opts.recitationKey === undefined ? recitationKeyFromEnv() : opts.recitationKey,
   );
+  // A5 : l'IA qui écoute la récitation (interrupteur « ecoute_ia », voix jamais conservée)
+  registerEcouteIa(app, db, opts.ecoute);
   registerPush(app, db);
   registerCorrections(app, db, edition);
   registerEpreuves(app, db, edition);

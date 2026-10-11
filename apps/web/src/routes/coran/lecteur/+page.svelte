@@ -103,6 +103,7 @@
     type TranslationSura,
   } from '$lib/quran/translation';
   import Icon from '$lib/ui/Icon.svelte';
+  import BoutonEcoute from '$lib/ecoute/BoutonEcoute.svelte';
 
   /**
    * CORAN ÉPURÉ (06/10/2026) — UN SEUL écran de lecture : le texte occupe l'écran (page du Muṣḥaf ou sourate
@@ -142,6 +143,8 @@
 
   // écoute
   let profileId = $state<string | null>(null);
+  /** A5 : public du profil (enfant : présentation simple de « Réciter et vérifier ») */
+  let profKind = $state('adulte');
   let allReciters = $state<Reciter[]>([]);
   let conseil = $state<string | null>(null);
   let restreint = $state(false);
@@ -412,6 +415,7 @@
     else await goPage(Number(q.get('page')) || prefs.page);
     const prof = await demoProfileFor('').catch(() => null);
     profileId = prof?.id ?? null;
+    profKind = prof?.kind ?? 'adulte';
     wifi = await wifiOnly();
     const c = await loadReciters(profileId, 'ecouter');
     allReciters = c.list;
@@ -1301,6 +1305,10 @@
           onclick={() => setMemo(0)}
           data-testid="quitter-memoriser">{t('cl.quitter_memoriser')}</button
         >
+        {#if profileId}
+          <!-- A5 : l'IA écoute la récitation (interrupteur « ecoute_ia », canal bêta) -->
+          <BoutonEcoute {profileId} kind={profKind} portion={range} memoriser />
+        {/if}
       </p>
     {/if}
     {#if reciter && heard === null && playing && !highlight && pack?.mode !== 'sourate'}
