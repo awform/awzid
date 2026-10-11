@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
  * A26b, phase 1 — génère les scénarios guidés (sans IA) depuis les dialogues des livres :
- *   node dist/cli-conversation.js [--dir ~/awform-content] [--out ../../apps/web/static/conversation]
+ *   node dist/cli-conversation.js [--dir ~/awform-content] [--out ../conversation]
  *                                 [--levels en1,en2,ad1] [--check]
- * Écrit `<out>/<niveau>/<lecon>.json` et la liste des leçons disponibles
+ * Écrit `<out>/<niveau>/<lecon>.json` (jamais public : servi par l'API avec les droits des leçons) et la liste des leçons disponibles
  * (`apps/web/src/lib/conversation/disponibles.ts`). Avec --check : rien n'est écrit, code de sortie 1 si les
  * fichiers du dépôt diffèrent de ce que donnent les livres. Code de sortie 1 au moindre écart de contrôle
  * (phrase hors livre, distracteur d'une leçon non vue).
@@ -79,7 +79,7 @@ ${lignes.join('\n')}
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const args = process.argv.slice(2);
   let dir = process.env.AWFORM_CONTENT_DIR ?? join(homedir(), 'awform-content');
-  let out = join(WEB, 'static', 'conversation');
+  let out = join(here, '..', 'conversation');
   let levels: string[] | null = null;
   let check = false;
   for (let i = 0; i < args.length; i++) {

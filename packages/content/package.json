@@ -78,7 +78,8 @@
     "awform-content": "./dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "conversation"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

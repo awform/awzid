@@ -1407,10 +1407,16 @@
   "conv.mots_gardes": "{n, plural, =0 {Ces mots sont déjà dans Mes mots.} one {# mot ajouté à Mes mots.} other {# mots ajoutés à Mes mots.}}",
   "conv.rejouer": "Rejouer la scène",
   "conv.fermer": "Fermer",
-  "conv.indisponible": "Cette scène n'est pas encore sur l'appareil. Ouvre la leçon une fois avec Internet.",
+  "conv.indisponible": "Cette scène n'est pas ouverte pour ce profil.",
   "conv.reglage_titre": "Voix du partenaire de conversation",
   "conv.voix_f": "Voix féminine",
   "conv.voix_m": "Voix masculine",
   "conv.voix_fixe": "Fixer ce choix (l'enfant ne peut plus le changer)",
-  "conv.voix_note": "Prêt pour l'oral : sans effet tant que les voix ne sont pas enregistrées."
+  "conv.voix_note": "Prêt pour l'oral : sans effet tant que les voix ne sont pas enregistrées.",
+  "conv.perso.Grandpere": "Grand-père",
+  "conv.perso.Grandmere": "Grand-mère",
+  "conv.perso.Papa": "Papa",
+  "conv.perso.Maman": "Maman",
+  "conv.perso.Imam": "L'imam",
+  "conv.perso.Hadj": "Hadj"
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { tick } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import Ar from '$lib/Ar.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import Ecouter from '$lib/Ecouter.svelte';
@@ -80,25 +80,49 @@
     ).catch(() => 0);
     motsMsg = t('conv.mots_gardes', { n });
   }
-  const nom = (l: { qui: string; qui_ar?: string }) => l.qui_ar ?? l.qui;
+  /** nom français du personnage (clé du livre → libellé : « Grandpere » → « Grand-père ») */
+  const PERSOS = ['Grandpere', 'Grandmere', 'Papa', 'Maman', 'Imam', 'Hadj'];
+  const persoFr = (qui: string) => (PERSOS.includes(qui) ? t(`conv.perso.${qui}`) : qui);
+  const titreFr = $derived(
+    scenario.titre_fr ? `${t('conv.titre')} · ${scenario.titre_fr}` : t('conv.titre'),
+  );
+
+  // écran plein (fenêtre modale) : la leçon dessous — dont son dialogue — n'est ni visible ni lue tant que
+  // l'élève joue (la réplique à choisir n'apparaît jamais avant son choix) ; Échap ferme
+  onMount(() => {
+    document.body.classList.add('jp-ouvert');
+    void tick().then(() => titre?.focus());
+    const k = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onclose();
+    };
+    window.addEventListener('keydown', k);
+    return () => {
+      document.body.classList.remove('jp-ouvert');
+      window.removeEventListener('keydown', k);
+    };
+  });
 </script>
 
-<section class="card jeparle" data-testid="je-parle" aria-labelledby="jp-titre">
+<div
+  class="jeparle"
+  data-testid="je-parle"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="jp-titre"
+>
   <div class="tete">
     <h2 id="jp-titre" tabindex="-1" bind:this={titre}>
       {#if scenario.titre_ar}<Ar text={scenario.titre_ar} block />{/if}
-      <span
-        ><Bidi text={t('conv.titre')} />{#if scenario.titre_fr}
-          · <Bidi text={scenario.titre_fr} />{/if}</span
-      >
+      <span><Bidi text={titreFr} /></span>
     </h2>
     <button type="button" class="fermer" onclick={onclose} data-testid="jp-fermer"
       >{t('conv.fermer')}</button
     >
   </div>
   <p class="role fr">
-    <Bidi text={t('conv.tu_joues', { qui: scenario.role.qui })} />
-    {#if scenario.role.qui_ar}<span lang="ar" dir="rtl" class="ar">{scenario.role.qui_ar}</span
+    <Bidi text={t('conv.tu_joues', { qui: persoFr(scenario.role.qui) })} />
+    {#if scenario.role.qui_ar}<span lang="ar" class="ar"
+        ><Bidi text={scenario.role.qui_ar} base="ar" /></span
       >{/if}
   </p>
   <p>
@@ -126,9 +150,10 @@
     {#each lignes as l, i (i)}
       <li class="rep" class:moi={l.moi} data-testid={l.moi ? 'jp-moi' : 'jp-partenaire'}>
         <p class="qui">
-          <span lang="ar" dir="rtl">{nom(l)}</span>{#if l.qui_ar}<span aria-hidden="true">
-              ·
-            </span><Bidi text={l.qui} />{/if}
+          {#if l.qui_ar}<span lang="ar"><Bidi text={l.qui_ar} base="ar" /></span><span
+              class="sep"
+              aria-hidden="true">·</span
+            >{/if}<Bidi text={persoFr(l.qui)} />
         </p>
         <Ar text={l.ar} block /><Ecouter text={l.ar} />
         {#if traduction && l.fr}<p class="fr sens"><Bidi text={l.fr} /></p>{/if}
@@ -139,7 +164,7 @@
   {#if etape}
     <div class="tour" data-testid="jp-tour">
       <p class="consigne fr">
-        <Bidi text={t('conv.a_toi', { qui: etape.qui })} />
+        <Bidi text={t('conv.a_toi', { qui: persoFr(etape.qui) })} />
       </p>
       {#if aide}
         <p class="aide fr" role="status" data-testid="jp-aide">
@@ -196,13 +221,28 @@
       </p>
     </div>
   {/if}
-</section>
+</div>
 
 <style>
   .jeparle {
     display: flex;
     flex-direction: column;
     gap: var(--space-s);
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--paper);
+    padding: var(--space-m) max(var(--space-m), calc((100vw - 760px) / 2));
+  }
+  /* leçon dessous : masquée (et hors du lecteur d'écran) pendant la scène */
+  :global(body.jp-ouvert) {
+    overflow: hidden;
+  }
+  :global(body.jp-ouvert .dlg),
+  :global(body.jp-ouvert .vivante-hote) {
+    visibility: hidden;
   }
   .tete {
     display: flex;
@@ -316,6 +356,9 @@
     background: var(--primary-soft);
     margin-inline-end: 0;
     margin-inline-start: 12%;
+  }
+  .qui .sep {
+    margin-inline: 0.35em;
   }
   .qui {
     margin: 0;

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import Bidi from '$lib/Bidi.svelte';
   import ConnexionNecessaire from '$lib/ConnexionNecessaire.svelte';
   import { chargerModule } from '$lib/charger';
@@ -9,32 +8,31 @@
 
   /**
    * A26b — accroche « Je parle » sous le dialogue de la leçon (quelques octets) : l'écran et le scénario sont
-   * chargés À LA DEMANDE ; le scénario est gardé sur l'appareil dès l'ouverture de la leçon (hors ligne ensuite).
+   * chargés À LA DEMANDE (scénario servi par l'API avec les droits des leçons) ; le scénario est gardé sur
+   * l'appareil pour ce profil dès l'ouverture de la leçon (hors ligne ensuite).
    */
-  let { unitId }: { unitId: string } = $props();
+  let { unitId, profileId }: { unitId: string; profileId: string } = $props();
   let Ecran = $state<typeof import('./JeParle.svelte').default | null>(null);
   let scenario = $state<Scenario | null>(null);
   let ouvert = $state(false);
   let echec = $state(false);
-  let absent = $state(false);
+  let refuse = $state(false);
   let bouton: HTMLButtonElement | undefined = $state();
 
-  onMount(() => {
-    void garderScenario(unitId);
+  $effect(() => {
+    void garderScenario(profileId, unitId);
   });
 
   async function ouvrir() {
     echec = false;
-    absent = false;
+    refuse = false;
     try {
       const [m, s] = await Promise.all([
         chargerModule(() => import('./JeParle.svelte')),
-        chargerScenario(unitId),
+        chargerScenario(profileId, unitId),
       ]);
-      if (!s) {
-        absent = true;
-        return;
-      }
+      if (s === 'refuse') return void (refuse = true);
+      if (s === 'reseau') return void (echec = true);
       Ecran = m.default;
       scenario = s;
       ouvert = true;
@@ -51,19 +49,16 @@
 
 {#if ouvert && Ecran && scenario}
   <Ecran {scenario} onclose={fermer} />
-{:else}
-  <p class="jp-accroche">
-    <button
-      type="button"
-      class="primary"
-      bind:this={bouton}
-      onclick={ouvrir}
-      data-testid="jp-ouvrir">{t('conv.ouvrir')}</button
-    >
-  </p>
-  {#if absent}<p class="fr muted" role="status"><Bidi text={t('conv.indisponible')} /></p>{/if}
-  {#if echec}<ConnexionNecessaire onretry={ouvrir} />{/if}
 {/if}
+<p class="jp-accroche">
+  <button type="button" class="primary" bind:this={bouton} onclick={ouvrir} data-testid="jp-ouvrir"
+    >{t('conv.ouvrir')}</button
+  >
+</p>
+{#if refuse}<p class="fr muted" role="status" data-testid="jp-refuse">
+    <Bidi text={t('conv.indisponible')} />
+  </p>{/if}
+{#if echec}<ConnexionNecessaire onretry={ouvrir} />{/if}
 
 <style>
   .jp-accroche button {

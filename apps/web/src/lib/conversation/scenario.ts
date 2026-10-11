@@ -1,7 +1,8 @@
 /**
- * A26b, phase 1 — scénarios « Je parle » (sans IA) : fichiers statiques `/conversation/<niveau>/<lecon>.json`
- * générés depuis les dialogues des livres (packages/content, cli-conversation). Jamais préchargés par le service
- * worker : demandés quand l'élève ouvre une leçon, puis gardés dans IndexedDB (hors ligne ensuite).
+ * A26b, phase 1 — scénarios « Je parle » (sans IA), générés depuis les dialogues des livres
+ * (packages/content, cli-conversation). Servis par l'API avec les droits des leçons
+ * (`GET /api/v1/profiles/:id/conversation/:unit` : profil de la famille, interrupteur, formule, parcours), jamais
+ * publics ; gardés ensuite dans IndexedDB, PAR PROFIL (hors ligne après la première ouverture).
  */
 import type { Scenario } from '@awform/content/conversation';
 import { DISPONIBLES } from './disponibles';
@@ -9,7 +10,7 @@ import { kvGet, kvSet } from '../idb';
 
 export type { Scenario };
 const VERSION = 1;
-const cle = (id: string) => `conv:${id}`;
+const cle = (profileId: string, id: string) => `conv:${profileId}:${id}`;
 
 /** La leçon a-t-elle un scénario « Je parle » ? (liste écrite à la génération) */
 export function aUnScenario(unitId: string): boolean {
@@ -17,36 +18,45 @@ export function aUnScenario(unitId: string): boolean {
   return !!m && (DISPONIBLES[m[1]!] ?? '').split(',').includes(m[2]!);
 }
 
-export function urlScenario(unitId: string): string {
-  const [lv, l] = unitId.split('.');
-  return `/conversation/${lv}/${l}.json`;
-}
+export const urlScenario = (profileId: string, unitId: string) =>
+  `/api/v1/profiles/${encodeURIComponent(profileId)}/conversation/${encodeURIComponent(unitId)}`;
 
-async function duReseau(unitId: string): Promise<Scenario | null> {
-  const r = await fetch(urlScenario(unitId), { signal: AbortSignal.timeout(6000) });
-  if (!r.ok) return null;
+export type Echec = 'refuse' | 'reseau';
+
+/** Réponse du serveur : scénario, refus (droits, niveau fermé, fonction coupée) ou réseau absent. */
+async function duServeur(profileId: string, unitId: string): Promise<Scenario | Echec> {
+  let r: Response;
+  try {
+    r = await fetch(urlScenario(profileId, unitId), {
+      credentials: 'same-origin',
+      signal: AbortSignal.timeout(6000),
+    });
+  } catch {
+    return 'reseau';
+  }
+  if (r.status === 401 || r.status === 403 || r.status === 404) return 'refuse';
+  if (!r.ok) return 'reseau';
   const s = (await r.json()) as Scenario;
-  if (s?.v !== VERSION || s.id !== unitId) return null;
-  await kvSet(cle(unitId), s).catch(() => {});
+  if (s?.v !== VERSION || s.id !== unitId) return 'refuse';
+  await kvSet(cle(profileId, unitId), s).catch(() => {});
   return s;
 }
 
-/** Scénario de la leçon : réseau d'abord (à jour), sinon la copie gardée sur l'appareil. */
-export async function chargerScenario(unitId: string): Promise<Scenario | null> {
-  try {
-    const s = await duReseau(unitId);
-    if (s) return s;
-  } catch {
-    /* hors ligne : copie gardée */
-  }
-  const s = await kvGet<Scenario>(cle(unitId)).catch(() => undefined);
-  return s?.v === VERSION ? s : null;
+/** Scénario de la leçon : serveur d'abord (à jour, droits vérifiés), sinon la copie gardée pour CE profil. */
+export async function chargerScenario(
+  profileId: string,
+  unitId: string,
+): Promise<Scenario | Echec> {
+  const s = await duServeur(profileId, unitId);
+  if (typeof s !== 'string' || s === 'refuse') return s;
+  const k = await kvGet<Scenario>(cle(profileId, unitId)).catch(() => undefined);
+  return k?.v === VERSION ? k : 'reseau';
 }
 
 /** Garde le scénario sur l'appareil dès l'ouverture de la leçon (en ligne), sans rien bloquer. */
-export async function garderScenario(unitId: string): Promise<void> {
+export async function garderScenario(profileId: string, unitId: string): Promise<void> {
   if (!aUnScenario(unitId)) return;
-  const deja = await kvGet<Scenario>(cle(unitId)).catch(() => undefined);
+  const deja = await kvGet<Scenario>(cle(profileId, unitId)).catch(() => undefined);
   if (deja?.v === VERSION) return;
-  await duReseau(unitId).catch(() => null);
+  await duServeur(profileId, unitId);
 }

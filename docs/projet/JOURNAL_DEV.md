@@ -31,6 +31,11 @@ Branche `conversation-p1-wip` (worktree `~/awform-conv`, depuis `main` ae8d1dc),
 4. **Tests** : 11 unitaires (`packages/content/test/conversation.test.ts`, dont fichiers du dépôt = génération,
    0 écart sur 19 niveaux) ; e2e `e2e/conversation.spec.ts` (en1.l05 et ad1.l01 complets, hors ligne compris).
    Budget : élève 331,6 Ko ≤ 350 ; accueil 108,4 Ko ≤ 150.
+5. **Retouches avant fusion** : scénarios déplacés dans `packages/content/conversation/` (livrés avec le paquet,
+   jamais publics) et servis par `GET /api/v1/profiles/:id/conversation/:unit` (profil de la famille, formule,
+   parcours A27 : courant / révision / aperçu, sinon 403 ; visiteur 401), copie par profil dans IndexedDB ;
+   interrupteur `conversation` en « beta » ; écran plein (le dialogue de la leçon est masqué : la réplique à choisir
+   n'est jamais visible avant le choix) ; noms français des personnages (« Grand-père ») ; e2e : 5 tests.
 
 ## 06/10/2026 — Chantier A5 : « L'IA qui écoute la récitation » (prototype, canal bêta)
 

@@ -734,7 +734,10 @@
       </div>
     {/if}
     <!-- A26b : « Je parle », scénario guidé sans IA (écran et scénario chargés à la demande, hors ligne ensuite) -->
-    {#if !isEval && fn('conversation') && aUnScenario(u.id)}<JeParleBouton unitId={u.id} />{/if}
+    {#if !isEval && profileId && fn('conversation') && aUnScenario(u.id)}<JeParleBouton
+        unitId={u.id}
+        {profileId}
+      />{/if}
   </section>
 {/snippet}
 

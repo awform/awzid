@@ -2761,11 +2761,17 @@
   "conv.mots_gardes": "{n, plural, =0 {Diese Wörter sind schon in Meine Wörter.} one {# Wort zu Meine Wörter hinzugefügt.} other {# Wörter zu Meine Wörter hinzugefügt.}}",
   "conv.rejouer": "Szene noch einmal spielen",
   "conv.fermer": "Schließen",
-  "conv.indisponible": "Diese Szene ist noch nicht auf dem Gerät. Öffne die Lektion einmal mit Internet.",
+  "conv.indisponible": "Diese Szene ist für dieses Profil nicht freigegeben.",
   "conv.reglage_titre": "Stimme des Gesprächspartners",
   "conv.voix_f": "Frauenstimme",
   "conv.voix_m": "Männerstimme",
   "conv.voix_fixe": "Diese Wahl festlegen (das Kind kann sie nicht mehr ändern)",
   "conv.voix_note": "Für das Sprechen vorbereitet: ohne Wirkung, solange die Stimmen nicht aufgenommen sind.",
-  "fn.conversation": "„Ich spreche“ (Gesprächsszenen ohne KI)"
+  "fn.conversation": "„Ich spreche“ (Gesprächsszenen ohne KI)",
+  "conv.perso.Grandpere": "Opa",
+  "conv.perso.Grandmere": "Oma",
+  "conv.perso.Papa": "Papa",
+  "conv.perso.Maman": "Mama",
+  "conv.perso.Imam": "Der Imam",
+  "conv.perso.Hadj": "Hadsch"
 }

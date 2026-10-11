@@ -27,8 +27,6 @@ const LEGAL = ['/i18n/legal/fr.json', '/i18n/legal/en.json'];
 // lot 29 : les annotations du tajwid (une par sourate) ne sont pas préchargées : chargées à la demande et
 // gardées dans IndexedDB par l'application (hors ligne ensuite)
 const isTajwid = (p: string) => p.startsWith('/tajwid/');
-// A26b : scénarios « Je parle » (un par leçon) chargés à la demande, gardés dans IndexedDB par l'application
-const isConversation = (p: string) => p.startsWith('/conversation/');
 // Muṣḥaf par page : traductions du sens (une par sourate) chargées à la demande, gardées dans IndexedDB
 const isTraduction = (p: string) => p.startsWith('/traductions/');
 // A8 : muṣḥafs des riwāyāt (texte par sourate et police du Complexe) chargés à la demande seulement
@@ -45,7 +43,6 @@ const ASSETS = [
       !f.endsWith('.txt') &&
       (!isCatalog(f) || STUDENT_TEXTS.includes(f)) &&
       !isTajwid(f) &&
-      !isConversation(f) &&
       !isTraduction(f) &&
       !isRiwaya(f),
   ),

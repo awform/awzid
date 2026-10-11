@@ -2761,11 +2761,17 @@
   "conv.mots_gardes": "{n, plural, =0 {These words are already in My words.} one {# word added to My words.} other {# words added to My words.}}",
   "conv.rejouer": "Play the scene again",
   "conv.fermer": "Close",
-  "conv.indisponible": "This scene is not on the device yet. Open the lesson once with Internet.",
+  "conv.indisponible": "This scene is not open for this profile.",
   "conv.reglage_titre": "Conversation partner's voice",
   "conv.voix_f": "Female voice",
   "conv.voix_m": "Male voice",
   "conv.voix_fixe": "Lock this choice (the child can no longer change it)",
   "conv.voix_note": "Ready for speaking practice: no effect until the voices are recorded.",
-  "fn.conversation": "“I speak” (conversation scenes, no AI)"
+  "fn.conversation": "“I speak” (conversation scenes, no AI)",
+  "conv.perso.Grandpere": "Grandpa",
+  "conv.perso.Grandmere": "Grandma",
+  "conv.perso.Papa": "Dad",
+  "conv.perso.Maman": "Mum",
+  "conv.perso.Imam": "The imam",
+  "conv.perso.Hadj": "Hajj"
 }

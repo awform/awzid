@@ -70,7 +70,7 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // bouton « Donner mon avis » (F5)
   avis: { defaut: 'on' },
   // « Je parle » (A26b) : scénarios guidés tirés des dialogues des livres, sans IA, hors ligne
-  conversation: { defaut: 'on' },
+  conversation: { defaut: 'beta' },
 };
 
 /** Règle d'exception (valeurs contrôlées à l'écriture : rôles, âges, canaux ci-dessus). */

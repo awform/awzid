@@ -28,4 +28,4 @@ apps/web/static/traductions/
 apps/web/static/riwayat/
 
 # A26b : scénarios « Je parle » générés (pnpm --filter @awform/content conversation), contrôlés par test
-apps/web/static/conversation/
+packages/content/conversation/

@@ -166,7 +166,7 @@ describe('A26b — générateur de scénarios (sans IA)', () => {
 const DIR = process.env.AWFORM_CONTENT_DIR ?? join(homedir(), 'awform-content');
 const DATA = join(DIR, 'data');
 const REAL = existsSync(join(DATA, 'index-lecons.js')) && !existsSync(join(DIR, 'SYNTHETIQUE.md'));
-const STATIC = join(import.meta.dirname, '..', '..', '..', 'apps', 'web', 'static', 'conversation');
+const STATIC = join(import.meta.dirname, '..', 'conversation');
 
 describe.skipIf(!REAL)('A26b — scénarios des vrais livres', () => {
   it('en1, en2, ad1 : un scénario par leçon qui a un dialogue', () => {
