@@ -30,6 +30,10 @@
 
   let { children } = $props();
 
+  // appareil neuf : drapeau posé dès l'initialisation de la page, avant que le lecteur (enfant, initialisé après
+  // ce script) écrive ses réglages ; sinon la migration prendrait l'appareil pour un ancien « manuscrit » (mode clair forcé)
+  marquerAppareilNeuf(stockageLocal());
+
   let online = $state(true);
   let pending = $state(0);
   let storageFull = $state(false);
@@ -152,7 +156,6 @@
   });
 
   async function refresh() {
-    marquerAppareilNeuf(stockageLocal()); // avant toute écriture du lecteur : appareil neuf = rien à migrer
     settings = await getSettings().catch(() => null);
     profile = await activeProfile().catch(() => null);
     me = await cachedMe();
