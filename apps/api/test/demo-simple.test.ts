@@ -53,6 +53,23 @@ describe('garde-fou de démarrage (AWFORM_DEMO=1)', () => {
     expect(demoGuard({ ...ts, SITE_LAN: '82.64.10.1' })).toMatch(/publique/);
     expect(demoGuard({ ...ts, SITE: '' })).toMatch(/SITE absent/);
   });
+  it('nom Tailscale SITE_TSNAME : seulement *.ts.net ; tout autre nom (public, voisin) est refusé', () => {
+    const ts = { ...lan, SITE_TS: '100.70.250.29', SITE_TSNAME: 'awzid-demo.tail0eb8e3.ts.net' };
+    expect(demoGuard(ts)).toBeNull();
+    expect(demoGuard({ ...ts, SITE_TSNAME: '' })).toBeNull();
+    expect(demoGuard({ ...ts, SITE_TSNAME: 'AWZID-Demo.tail0eb8e3.TS.net' })).toBeNull();
+    for (const bad of [
+      'awzid.com',
+      'ts.net',
+      'x.ts.net.evil.com',
+      'evil.com/.ts.net',
+      'a b.ts.net',
+      '-x.ts.net',
+      '82.64.10.1',
+    ])
+      expect(demoGuard({ ...ts, SITE_TSNAME: bad }), bad).toMatch(/Tailscale/);
+    expect(demoGuard({ ...ts, SITE: 'awzid-demo.tail0eb8e3.ts.net' })).toMatch(/publique/);
+  });
   it('domaine ou adresse publics, relais public, mode production, SITE absent : refusé', () => {
     expect(demoGuard({ ...lan, SITE: 'awzid.com' })).toMatch(/publique/);
     expect(demoGuard({ ...lan, SITE_LAN: '82.64.10.1' })).toMatch(/publique/);

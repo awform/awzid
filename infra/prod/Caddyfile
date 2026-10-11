@@ -58,6 +58,10 @@
 	}
 }
 
+# nom Tailscale (deploy.sh --ts-name) : site HTTP+HTTPS avec le certificat Let's Encrypt de Tailscale, décrit
+# dans /etc/caddy/tsnet/ts.caddy (écrit par ts-cert.sh) ; dossier vide = rien de plus n'est servi
+import /etc/caddy/tsnet/*.caddy
+
 # HTTP sur l'adresse du site (audit SEC-7) : servi en réseau local (AWFORM_HTTP=servir, défaut), redirigé vers
 # HTTPS en production (AWFORM_HTTP=rediriger, deploy.sh --production)
 (servir) {
