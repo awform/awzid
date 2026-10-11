@@ -266,5 +266,19 @@
   "avis.annuler": "Annuler",
   "avis.fermer": "Fermer",
   "avis.merci": "Merci ! Votre avis a bien été envoyé.",
-  "gar.audio_en_ligne": "Récitateurs « en ligne » (al-Ḥuṣarī, al-ʿAfāsī…) : écoute fournie par Quran Foundation (quran.foundation), en ligne seulement — rien n'est téléchargé, gardé ni revendu ; les autres récitations viennent du Complexe du Roi Fahd (Médine)."
+  "gar.audio_en_ligne": "Récitateurs « en ligne » (al-Ḥuṣarī, al-ʿAfāsī…) : écoute fournie par Quran Foundation (quran.foundation), en ligne seulement — rien n'est téléchargé, gardé ni revendu ; les autres récitations viennent du Complexe du Roi Fahd (Médine).",
+  "probleme.titre": "Signaler un problème",
+  "probleme.intro": "Dites-nous ce qui ne va pas : l'équipe lit chaque signalement.",
+  "probleme.intro_enfant": "Dis-nous ce qui ne va pas. Choisis une réponse.",
+  "probleme.categorie": "De quoi s'agit-il ?",
+  "probleme.cat.bug": "Quelque chose ne marche pas",
+  "probleme.cat.contenu": "Un contenu à corriger",
+  "probleme.cat.religieux": "Un point religieux à vérifier",
+  "probleme.cat.autre": "Autre chose",
+  "probleme.texte": "Décrivez le problème (500 caractères au plus)",
+  "probleme.texte_aide": "N'écrivez ni nom, ni adresse, ni numéro de téléphone.",
+  "probleme.joint": "La page où vous êtes et la version de l'application sont jointes automatiquement ; rien d'autre sur vous.",
+  "probleme.envoyer": "Envoyer le signalement",
+  "probleme.merci": "Merci ! Votre signalement est envoyé : l'équipe va le lire.",
+  "probleme.hors_ligne": "Il faut Internet pour signaler un problème."
 }

@@ -40,5 +40,6 @@
   {/each}
 </ul>
 
-<!-- F5 : « Donner mon avis » (chargé à la demande, en ligne) -->
+<!-- F5 : « Donner mon avis » ; bêta-support : « Signaler un problème » (chargés à la demande, en ligne) -->
 <AvisBouton />
+<AvisBouton mode="probleme" />

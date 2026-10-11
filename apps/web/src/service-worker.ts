@@ -7,8 +7,9 @@
  *  - coquille de l'application (JS, CSS, polices, icônes, page de démarrage) mise en cache à l'installation ;
  *  - toute navigation sans réseau reçoit la coquille : l'application monopage lit ensuite les paquets de
  *    niveau dans IndexedDB ;
- *  - nouvelle version : téléchargée en arrière-plan et appliquée au PROCHAIN démarrage (pas de skipWaiting :
- *    jamais de changement au milieu d'une leçon) ;
+ *  - nouvelle version : téléchargée en arrière-plan et appliquée au PROCHAIN démarrage (pas de skipWaiting
+ *    automatique : jamais de changement au milieu d'une leçon) — ou quand l'élève touche « Mettre à jour » dans
+ *    le bandeau de l'application (message SKIP_WAITING, voir `lib/maj.ts`, jamais pendant une leçon ou une écoute) ;
  *  - Background Sync « awform-sync » : renvoie la file des réponses quand le réseau revient, même page fermée.
  * Les réponses de l'API ne sont pas mises en cache ici (les paquets vivent dans IndexedDB).
  */
@@ -91,6 +92,11 @@ sw.addEventListener('install', (event) => {
       await c.addAll([...ASSETS.filter((a) => !staff.has(a) && !viv.has(a)), SHELL]);
     }),
   );
+});
+
+// « Mettre à jour » : seul message accepté, envoyé par l'application d'une page de ce site
+sw.addEventListener('message', (event) => {
+  if ((event.data as { type?: string } | null)?.type === 'SKIP_WAITING') void sw.skipWaiting();
 });
 
 sw.addEventListener('activate', (event) => {

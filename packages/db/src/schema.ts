@@ -2743,6 +2743,50 @@ export const feedback = pgTable(
 );
 
 /**
+ * « Signaler un problème » (bêta-support) : catégorie (bug, contenu à corriger, point religieux à vérifier,
+ * autre), description courte (jamais pour un enfant), capture FACULTATIVE, page d'origine (chemin seul) et
+ * version de l'application jointes par le serveur ; file de l'administrateur avec statut. Capture effacée
+ * après 90 jours, signalement réglé après 12 mois (travailleur). Aucune donnée personnelle superflue : le
+ * compte n'est gardé que pour la limite anti-abus (lien supprimé avec le compte).
+ */
+export const problemReport = pgTable(
+  'problem_report',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    accountId: uuid('account_id').references(() => account.id, { onDelete: 'set null' }),
+    profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'set null' }),
+    role: text('role').notNull(),
+    age: text('age'),
+    category: text('category').notNull(),
+    body: text('body'),
+    page: text('page'),
+    appVersion: text('app_version'),
+    capture: bytea('capture'),
+    captureType: text('capture_type'),
+    status: text('status').notNull().default('nouveau'),
+    handledAt: timestamp('handled_at', { withTimezone: true }),
+    handledBy: uuid('handled_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('problem_report_status').on(t.status, t.createdAt),
+    index('problem_report_account').on(t.accountId, t.createdAt),
+    check('problem_report_status_check', sql`${t.status} IN ('nouveau', 'en_cours', 'regle')`),
+    check(
+      'problem_report_category',
+      sql`${t.category} IN ('bug', 'contenu', 'religieux', 'autre')`,
+    ),
+    check('problem_report_body', sql`${t.body} IS NULL OR char_length(${t.body}) <= 500`),
+    check(
+      'problem_report_capture_type',
+      sql`${t.captureType} IS NULL OR ${t.captureType} IN ('image/jpeg', 'image/png')`,
+    ),
+  ],
+);
+
+/**
  * Tableau d'USAGE sans traceur : agrégats PAR JOUR (clé d'usage × rôle) — nombre de personnes distinctes et
  * d'ouvertures ; aucun événement individuel gardé.
  */

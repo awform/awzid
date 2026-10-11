@@ -13,10 +13,19 @@
    * image FACULTATIVE de l'écran faite sur l'appareil, montrée avant l'envoi. Jamais d'image sur les pages qui
    * montrent d'autres personnes (classe, famille, messages, espaces du personnel) ; ailleurs, les zones marquées
    * `data-prive` (pseudonyme affiché…) sont masquées. Envoi en ligne seulement ; limite par compte côté serveur.
+   *
+   * Bêta-support — `mode="probleme"` : « Signaler un problème » (bug, contenu à corriger, point religieux à
+   * vérifier, autre) vers `/problemes` ; la page d'origine et la version sont jointes (version : par le serveur) ;
+   * un enfant n'envoie que la catégorie (ni texte libre, ni image).
    */
-  let { onclose }: { onclose: () => void } = $props();
+  let { onclose, mode = 'avis' }: { onclose: () => void; mode?: 'avis' | 'probleme' } = $props();
 
-  const CATS = ['idee', 'probleme', 'difficile', 'aime', 'autre'] as const;
+  const CATS_PAR_MODE = {
+    avis: ['idee', 'probleme', 'difficile', 'aime', 'autre'],
+    probleme: ['bug', 'contenu', 'religieux', 'autre'],
+  } as const;
+  const CATS = $derived<readonly string[]>(CATS_PAR_MODE[mode]);
+  const P = $derived(mode);
   const PRIVE = [
     '/enseignant',
     '/admin',
@@ -29,7 +38,7 @@
   ];
   let dlg = $state<HTMLDialogElement | null>(null);
   let pret = $state(false);
-  let categorie = $state<(typeof CATS)[number] | ''>('');
+  let categorie = $state('');
   let texte = $state('');
   let joindre = $state(false);
   let image = $state<string | null>(null);
@@ -40,7 +49,9 @@
   let fait = $state(false);
   let erreur = $state('');
   const chemin = page.url.pathname;
-  const imagePossible = !PRIVE.some((p) => chemin === p || chemin.startsWith(`${p}/`));
+  // image impossible sur les pages qui montrent d'autres personnes ; et, pour un signalement, jamais pour un enfant
+  const imagePage = !PRIVE.some((p) => chemin === p || chemin.startsWith(`${p}/`));
+  const imagePossible = $derived(imagePage && !(mode === 'probleme' && enfant));
 
   onMount(async () => {
     await loadTexts('rares');
@@ -71,12 +82,12 @@
     e.preventDefault();
     if (!categorie) return;
     if (!navigator.onLine) {
-      erreur = t('avis.hors_ligne');
+      erreur = t(`${P}.hors_ligne`);
       return;
     }
     envoi = true;
     erreur = '';
-    const r = await call('POST', '/avis', {
+    const r = await call('POST', P === 'probleme' ? '/problemes' : '/avis', {
       categorie,
       ...(texte.trim() && !enfant ? { texte: texte.trim() } : {}),
       page: chemin,
@@ -86,7 +97,7 @@
     envoi = false;
     if (r.ok) {
       fait = true;
-      noter('avis');
+      if (P === 'avis') noter('avis');
     } else erreur = t(`erreur.${r.code ?? 'reseau'}`);
   }
   function fermer() {
@@ -99,33 +110,33 @@
   <dialog
     bind:this={dlg}
     class="card avis"
-    aria-labelledby="avis-titre"
-    data-testid="avis-dialogue"
+    aria-labelledby="{P}-titre"
+    data-testid="{P}-dialogue"
     data-avis-exclu
     {onclose}
   >
-    <h2 id="avis-titre">{t('avis.titre')}</h2>
+    <h2 id="{P}-titre"><Bidi text={t(`${P}.titre`)} /></h2>
     {#if fait}
-      <p role="status" data-testid="avis-merci">{t('avis.merci')}</p>
+      <p role="status" data-testid="{P}-merci"><Bidi text={t(`${P}.merci`)} /></p>
       <button type="button" class="primary" onclick={fermer}>{t('avis.fermer')}</button>
     {:else}
-      <p class="muted"><Bidi text={enfant ? t('avis.intro_enfant') : t('avis.intro')} /></p>
+      <p class="muted"><Bidi text={enfant ? t(`${P}.intro_enfant`) : t(`${P}.intro`)} /></p>
       <form onsubmit={envoyer}>
         <fieldset>
-          <legend>{t('avis.categorie')}</legend>
+          <legend><Bidi text={t(`${P}.categorie`)} /></legend>
           <div class="cats">
             {#each CATS as c (c)}
               <label class="cat" class:on={categorie === c}>
-                <input type="radio" name="avis-cat" value={c} bind:group={categorie} />
-                <Bidi text={t(`avis.cat.${c}`)} />
+                <input type="radio" name="{P}-cat" value={c} bind:group={categorie} />
+                <Bidi text={t(`${P}.cat.${c}`)} />
               </label>
             {/each}
           </div>
         </fieldset>
         {#if !enfant}
-          <label for="avis-texte">{t('avis.texte')}</label>
-          <textarea id="avis-texte" bind:value={texte} maxlength="500" rows="3"></textarea>
-          <p class="muted">{t('avis.texte_aide')}</p>
+          <label for="{P}-texte"><Bidi text={t(`${P}.texte`)} /></label>
+          <textarea id="{P}-texte" bind:value={texte} maxlength="500" rows="3"></textarea>
+          <p class="muted"><Bidi text={t(`${P}.texte_aide`)} /></p>
         {/if}
         {#if imagePossible}
           <label class="row">
@@ -133,28 +144,35 @@
               type="checkbox"
               bind:checked={joindre}
               onchange={basculerImage}
-              data-testid="avis-image"
+              data-testid="{P}-image"
             />
             {t('avis.capture')}
           </label>
           <p class="muted">{t('avis.capture_aide')}</p>
           {#if image}
             <figure>
-              <img src={image} alt={t('avis.apercu')} data-testid="avis-apercu" />
+              <img src={image} alt={t('avis.apercu')} data-testid="{P}-apercu" />
               <figcaption class="muted">{t('avis.apercu')}</figcaption>
             </figure>
           {/if}
           {#if captureErr}<p class="muted" role="status">{t('avis.capture_impossible')}</p>{/if}
+        {:else if imagePage}
+          <!-- enfant (signalement) : catégorie seulement, aucune image -->
         {:else}
-          <p class="muted" data-testid="avis-image-interdite">{t('avis.capture_interdite')}</p>
+          <p class="muted" data-testid="{P}-image-interdite">{t('avis.capture_interdite')}</p>
+        {/if}
+        {#if P === 'probleme'}
+          <p class="muted" data-testid="probleme-joint">{t('probleme.joint')}</p>
         {/if}
         {#if erreur}<p class="error" role="alert"><Bidi text={erreur} /></p>{/if}
         <p class="row">
           <button
             type="submit"
             class="primary"
-            disabled={!categorie || envoi}
-            data-testid="avis-envoyer">{t('avis.envoyer')}</button
+            disabled={!categorie ||
+              envoi ||
+              (P === 'probleme' && !enfant && texte.trim().length < 3)}
+            data-testid="{P}-envoyer"><Bidi text={t(`${P}.envoyer`)} /></button
           >
           <button type="button" onclick={fermer}>{t('avis.annuler')}</button>
         </p>

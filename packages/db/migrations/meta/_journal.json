@@ -316,6 +316,13 @@
       "when": 1791695859615,
       "tag": "0044_f5_penser_large",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1791709426547,
+      "tag": "0045_beta_support",
+      "breakpoints": true
     }
   ]
 }

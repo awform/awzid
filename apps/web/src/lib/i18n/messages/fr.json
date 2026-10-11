@@ -1391,5 +1391,10 @@
   "erreur.qf_incomplet": "Cette sourate n'est pas disponible en ligne pour ce récitateur.",
   "erreur.qf_refus": "L'écoute en ligne est momentanément indisponible.",
   "erreur.en_ligne_seulement": "Ce récitateur s'écoute en ligne seulement : il ne peut pas être gardé sur l'appareil.",
-  "gar.titre": "Nos garanties"
+  "gar.titre": "Nos garanties",
+  "maj.pret": "Une nouvelle version est prête",
+  "maj.bouton": "Mettre à jour",
+  "maj.plus_tard": "Plus tard",
+  "probleme.bouton": "Signaler un problème",
+  "erreur.trop_de_signalements": "Merci ! Vous avez déjà envoyé plusieurs signalements aujourd'hui : réessayez demain."
 }
