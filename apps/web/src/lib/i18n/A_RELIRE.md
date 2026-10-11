@@ -149,3 +149,5 @@ du Canada `region.CA-*` ; erreurs `erreur.ferme_moins_13`, `erreur.region_inconn
 `erreur.reinitialisation_desactivee` retiré. Les textes français de ces écrans sont dans `static/i18n/fr-acces.json`
 (mêmes clés, hors de la coquille). Les **modèles d'e-mails** (5 langues) sont dans `apps/api/src/mail/modeles.ts`,
 à relire de la même façon ; en arabe, l'adresse et le lien sont toujours sur leur propre ligne.
+
+- Démo par niveau : `niveau.bientot` et `niveau.bientot_texte` (en, de, es, ar) traduits par Claude lors de la fusion, à faire relire.

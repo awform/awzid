@@ -82,6 +82,8 @@
   "niveau.erreur": "Download not possible right now",
   "niveau.en1": "Children — level 1",
   "niveau.ad1": "Adults — level 1",
+  "niveau.bientot": "This level is coming soon.",
+  "niveau.bientot_texte": "The lessons of this book are not in the app yet. Come back very soon, or work with another book in the meantime.",
   "lecon.retour": "← Lessons {level}",
   "audio.ecouter": "Listen",
   "audio.ecouter_lent": "Listen slowly",
