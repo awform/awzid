@@ -2814,5 +2814,17 @@
   "probadm.version": "Version: {version}",
   "probadm.voir_capture": "See the screen image",
   "probadm.religieux": "To be checked by the religious reviewer before any correction.",
-  "probadm.enfant": "Report from a child: category only, no text."
+  "probadm.enfant": "Report from a child: category only, no text.",
+  "cl.afficher_commandes": "Show controls",
+  "cl.zoom": "Page zoom",
+  "cl.zoom_valeur": "{n}%",
+  "cl.epure": "Hide controls while reading",
+  "cl.mode_lire": "Read",
+  "cl.mode_ecouter": "Listen",
+  "cl.mode_memoriser": "Memorize",
+  "cl.avance": "Advanced",
+  "cl.pastille": "Verse {n}",
+  "cl.pastille_basmala": "Basmala",
+  "cl.pastille_ouvrir": "open the audio player",
+  "cl.sources": "Sources"
 }

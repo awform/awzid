@@ -231,6 +231,10 @@ export interface MushafPrefs {
    * sombre de la marque. Aucun décor derrière le texte.
    */
   fond: Fond;
+  /** zoom de la page (11/10/2026) : 1 (page entière) à 3, gardé sur l'appareil et d'une page à l'autre */
+  zoom: number;
+  /** lecture épurée (11/10/2026, par défaut) : commandes cachées après 3 s sans geste, un toucher les montre */
+  epure: boolean;
 }
 export type Fond = 'ivoire' | 'sepia';
 export const FONDS: Fond[] = ['ivoire', 'sepia'];
@@ -255,6 +259,8 @@ export const DEFAULT_PREFS: MushafPrefs = {
   size: 0,
   navAuto: false,
   fond: 'ivoire',
+  zoom: 1,
+  epure: true,
 };
 /** Facteur de la taille du texte coranique (réglage « Taille du texte », « Plus grand » des enfants). */
 export const TEXT_SCALE = [1, 1.25, 1.5] as const;
@@ -302,6 +308,10 @@ export function readPrefs(store: Pick<Storage, 'getItem'> | null = storage()): M
       size: clampInt(raw.size, 0, TEXT_SCALE.length - 1, 0),
       navAuto: raw.navAuto === true,
       fond: raw.fond === 'sepia' ? 'sepia' : 'ivoire',
+      zoom: Number.isFinite(Number(raw.zoom))
+        ? Math.max(1, Math.min(3, Math.round(Number(raw.zoom) * 100) / 100))
+        : 1,
+      epure: raw.epure !== false,
     };
   } catch {
     return { ...DEFAULT_PREFS };

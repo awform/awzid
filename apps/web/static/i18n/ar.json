@@ -2814,5 +2814,17 @@
   "probadm.version": "الْإِصْدَارُ: {version}",
   "probadm.voir_capture": "عَرْضُ صُورَةِ الشَّاشَةِ",
   "probadm.religieux": "يُدَقِّقُهُ الْمَرْجِعُ الدِّينِيُّ قَبْلَ أَيِّ تَصْحِيحٍ.",
-  "probadm.enfant": "بَلَاغُ طِفْلٍ: الْفِئَةُ فَقَطْ، دُونَ نَصٍّ."
+  "probadm.enfant": "بَلَاغُ طِفْلٍ: الْفِئَةُ فَقَطْ، دُونَ نَصٍّ.",
+  "cl.afficher_commandes": "إظهار الأزرار",
+  "cl.zoom": "تكبير الصفحة",
+  "cl.zoom_valeur": "{n}٪",
+  "cl.epure": "إخفاء الأزرار أثناء القراءة",
+  "cl.mode_lire": "القراءة",
+  "cl.mode_ecouter": "الاستماع",
+  "cl.mode_memoriser": "الحفظ",
+  "cl.avance": "إعدادات متقدمة",
+  "cl.pastille": "الآية {n}",
+  "cl.pastille_basmala": "البسملة",
+  "cl.pastille_ouvrir": "فتح مشغل الصوت",
+  "cl.sources": "المصادر"
 }

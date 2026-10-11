@@ -42,9 +42,12 @@ export async function openDisplay(page: Page) {
   await page.getByTestId('ouvrir-reglages-lecteur').click();
   await expect(page.getByTestId('reglages')).toBeVisible();
   // enfant : tuiles d'abord, « Tous les réglages » replié
-  const parent = page.getByTestId('reglages-parent');
-  if ((await parent.count()) && (await parent.getAttribute('open')) === null)
-    await parent.locator(':scope > summary').click();
+  // adulte (11/10/2026) : trois préréglages d'abord, « Avancé » replié
+  for (const id of ['reglages-parent', 'reglages-avance']) {
+    const d = page.getByTestId(id);
+    if ((await d.count()) && (await d.getAttribute('open')) === null)
+      await d.locator(':scope > summary').click();
+  }
   await expect(page.getByTestId('affichage')).toBeVisible();
   await settled(page);
 }

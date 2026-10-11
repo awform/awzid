@@ -2814,5 +2814,17 @@
   "probadm.version": "Versión: {version}",
   "probadm.voir_capture": "Ver la imagen de la pantalla",
   "probadm.religieux": "Debe revisarlo el referente religioso antes de cualquier corrección.",
-  "probadm.enfant": "Aviso de un niño: solo la categoría, sin texto."
+  "probadm.enfant": "Aviso de un niño: solo la categoría, sin texto.",
+  "cl.afficher_commandes": "Mostrar los controles",
+  "cl.zoom": "Zoom de la página",
+  "cl.zoom_valeur": "{n} %",
+  "cl.epure": "Ocultar los controles durante la lectura",
+  "cl.mode_lire": "Leer",
+  "cl.mode_ecouter": "Escuchar",
+  "cl.mode_memoriser": "Memorizar",
+  "cl.avance": "Avanzado",
+  "cl.pastille": "Versículo {n}",
+  "cl.pastille_basmala": "Basmala",
+  "cl.pastille_ouvrir": "abrir el reproductor",
+  "cl.sources": "Fuentes"
 }

@@ -2814,5 +2814,17 @@
   "probadm.version": "Version: {version}",
   "probadm.voir_capture": "Bildschirmbild ansehen",
   "probadm.religieux": "Vor jeder Korrektur vom religiösen Referenten zu prüfen.",
-  "probadm.enfant": "Meldung eines Kindes: nur Kategorie, ohne Text."
+  "probadm.enfant": "Meldung eines Kindes: nur Kategorie, ohne Text.",
+  "cl.afficher_commandes": "Steuerelemente anzeigen",
+  "cl.zoom": "Seitenzoom",
+  "cl.zoom_valeur": "{n} %",
+  "cl.epure": "Steuerelemente beim Lesen ausblenden",
+  "cl.mode_lire": "Lesen",
+  "cl.mode_ecouter": "Anhören",
+  "cl.mode_memoriser": "Auswendig lernen",
+  "cl.avance": "Erweitert",
+  "cl.pastille": "Vers {n}",
+  "cl.pastille_basmala": "Basmala",
+  "cl.pastille_ouvrir": "Audioplayer öffnen",
+  "cl.sources": "Quellen"
 }
