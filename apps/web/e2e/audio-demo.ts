@@ -44,7 +44,7 @@ export function demoReciters(): DemoReciter[] | null {
   if (!process.env.TEST_DATABASE_URL) return null;
   try {
     return demoPsql(
-      "select id || '|' || riwaya from quran_reciter where status = 'actif' and id not like 'essai-%' order by id;",
+      "select id || '|' || riwaya from quran_reciter where status = 'actif' and id not like 'essai-%' and source <> 'qf' order by id;",
     )
       .trim()
       .split('\n')
