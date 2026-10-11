@@ -34,6 +34,7 @@
   import { aUnScenario } from '$lib/conversation/scenario';
   import { localIso } from '$lib/hifz';
   import SeanceSuite from '$lib/SeanceSuite.svelte';
+  import { etapeSuivante } from '$lib/seance';
   import Arbre from '$lib/ui/Arbre.svelte';
   import Icon from '$lib/ui/Icon.svelte';
 
@@ -320,7 +321,7 @@
     fini = false;
     // l'écran suivant commence en haut ; le lecteur d'écran annonce l'étape
     requestAnimationFrame(() => {
-      titreEtape?.scrollIntoView({ block: 'start' });
+      window.scrollTo({ top: 0 });
       titreEtape?.focus({ preventScroll: true });
     });
   }
@@ -333,18 +334,46 @@
       /* choix non gardé */
     }
   }
+  const lu = (k: string): number | null => {
+    try {
+      const v = localStorage.getItem(k);
+      return v == null ? null : Number(v) || 0;
+    } catch {
+      return null;
+    }
+  };
+  /** fin de leçon : « Continuer ma séance » est l'action principale s'il y a une séance, sinon le retour */
+  let enSeance = $state(false);
   async function terminer() {
+    enSeance = !!etapeSuivante('lecon');
     fini = true;
     sommaire = false;
-    requestAnimationFrame(() => titreEtape?.scrollIntoView({ block: 'start' }));
-    // « Grandir » : l'arbre de l'élève (une feuille par leçon terminée), compté par le serveur
-    if (profileId) {
-      await flush().catch(() => {});
-      const r = await call<{ jalons: { leconsTerminees: number } }>(
-        'GET',
-        `/today/${profileId}?today=${localIso()}`,
-      );
-      feuilles = r.ok && r.data ? r.data.jalons.leconsTerminees : null;
+    // la carte de fin (symbole, titre) commence sous la barre collante (scroll-margin-top de .fin)
+    requestAnimationFrame(() =>
+      document.querySelector('[data-testid="fin-lecon"]')?.scrollIntoView({ block: 'start' }),
+    );
+    // « Grandir » : l'arbre gagne tout de suite la feuille de cette leçon (affichage optimiste, dernier compte
+    // connu sur l'appareil), puis le compte du serveur le remplace ; une leçon déjà comptée ne pousse pas deux fois
+    if (!profileId) return;
+    const cle = `awzid.arbre.${profileId}`;
+    const dejaComptee = progress?.status === 'terminee' || progress?.status === 'maitrisee';
+    const connu = lu(cle);
+    feuilles = (connu ?? 0) + (dejaComptee ? 0 : 1);
+    await flush().catch(() => {});
+    const r = await call<{ jalons: { leconsTerminees: number } }>(
+      'GET',
+      `/today/${profileId}?today=${localIso()}`,
+    ).catch(() => null);
+    if (r?.ok && r.data) {
+      const serveur = r.data.jalons.leconsTerminees;
+      const finie = progress?.status === 'terminee' || progress?.status === 'maitrisee';
+      // le serveur n'a peut-être pas encore recalculé la leçon : la feuille de cette leçon reste montrée
+      feuilles = finie || dejaComptee ? serveur : Math.max(serveur, feuilles ?? 0, serveur + 1);
+      try {
+        localStorage.setItem(cle, String(serveur));
+      } catch {
+        /* compte non gardé */
+      }
     }
   }
 </script>
@@ -915,6 +944,7 @@
     <p class="fin-actions">
       <a
         class="button"
+        class:primary={!enSeance}
         href={profileId ? resolve('/') : resolve('/niveaux/[code]', { code: u.levelCode })}
         data-testid="retour-lecons">{t('fin.retour')}</a
       >
@@ -1183,6 +1213,7 @@
     transform: scaleX(-1);
   }
   .fin {
+    scroll-margin-top: 150px;
     display: grid;
     justify-items: center;
     text-align: center;

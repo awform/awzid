@@ -80,9 +80,10 @@
 
 {#if status?.disponible && profile}
   <section class="card tuteur" data-testid="tuteur">
+    <!-- D1 : bouton secondaire (une seule action principale par écran : celle de la leçon) -->
     <button
       type="button"
-      class="primary"
+      class="ouvrir"
       onclick={toggle}
       aria-expanded={open}
       data-testid="tuteur-ouvrir">{t('tuteur.demander')}</button
@@ -178,6 +179,10 @@
 {/if}
 
 <style>
+  .ouvrir {
+    min-height: 48px;
+    font-weight: 700;
+  }
   .tuteur {
     display: grid;
     gap: 8px;

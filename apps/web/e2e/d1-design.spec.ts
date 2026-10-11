@@ -74,12 +74,23 @@ async function shots(page: Page, nom: string, opts: { full?: boolean } = {}) {
   inventaire.push({ ecran: nom, ...m, iconesSansNom: icones });
   if (!DIR) return;
   mkdirSync(DIR, { recursive: true });
+  // images chargées à l'approche de l'écran (couvertures) : parcourir la page avant la capture pleine page
+  if (opts.full !== false) {
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.documentElement.scrollHeight; y += 600) {
+        window.scrollTo(0, y);
+        await new Promise((r) => setTimeout(r, 120));
+      }
+      window.scrollTo(0, 0);
+    });
+    await page.waitForTimeout(800);
+  }
   for (const scheme of ['light', 'dark'] as const) {
     await page.emulateMedia({ colorScheme: scheme });
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(250);
     await page.screenshot({
-      path: join(DIR, `${nom}-${scheme === 'light' ? 'clair' : 'sombre'}.png`),
+      path: join(DIR, `${nom}-v2-${scheme === 'light' ? 'clair' : 'sombre'}.png`),
       fullPage: opts.full ?? true,
     });
   }
@@ -177,7 +188,10 @@ test('Arabe adulte : « Reprendre », unités (seule la courante dépliée), ét
   await page.goto('/');
   const rep = page.getByTestId('mon-niveau');
   await expect(rep.getByTestId('continuer')).toBeVisible();
-  await expect(rep.locator('.rp-ar')).toHaveCSS('font-family', /Amiri/);
+  await expect(rep.locator('.rp-ar .ar')).toHaveCSS('font-family', /Amiri/);
+  // marques [..] du livre rendues (lettres mises en valeur), jamais affichées en crochets
+  await expect(page.locator('main')).not.toContainText('[');
+  // une seule action principale (le bouton doré « Continuer » n'est pas un .primary)
   const unites = page.getByTestId('unite');
   expect(await unites.count()).toBeGreaterThan(1);
   await expect(unites.first()).toHaveAttribute('aria-expanded', 'true');
@@ -191,6 +205,16 @@ test('Arabe adulte : « Reprendre », unités (seule la courante dépliée), ét
   await unites.nth(1).click();
   // couverture : un objet ou un décor du livre (jamais un personnage), chargé à la demande
   await expect(unites.first().locator('.objet svg')).toBeVisible();
+  // jamais un personnage, un animal ou le muṣḥaf : on fait défiler pour charger toutes les couvertures
+  for (const u of await unites.all()) await u.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(1500);
+  const objets = await page
+    .locator('[data-objet]')
+    .evaluateAll((e) => e.map((x) => x.getAttribute('data-objet') ?? ''));
+  for (const o of objets.filter(Boolean))
+    expect(o).not.toMatch(
+      /mushaf|rehal|kaaba|quran|surah|ayah|maman|papa|maryam|youssouf|mouth|eye|hand|sheep|camel|bird|sparrow|cat|dog|crow|gazelle|ostrich|x_/,
+    );
   expect(await sansNom(page)).toEqual([]);
   expect(await graves(page)).toEqual([]);
   await shots(page, 'arabe-adulte');
@@ -221,6 +245,7 @@ test('leçon section par section : barre, Suivant, sommaire, tout voir, fin « G
   ).toBeLessThan(30);
   expect(await sansNom(page)).toEqual([]);
   expect(await graves(page)).toEqual([]);
+  expect(m.principales, 'une seule action principale').toBe(1);
   await shots(page, 'lecon-ecran1', { full: false });
   // Suivant
   await page.getByTestId('etape-suivante').click();
@@ -252,6 +277,16 @@ test('leçon section par section : barre, Suivant, sommaire, tout voir, fin « G
   const fin = page.getByTestId('fin-lecon');
   await expect(fin).toBeVisible();
   await expect(fin.getByTestId('arbre')).toBeVisible();
+  // l'arbre compte la leçon qu'on vient de finir (affichage optimiste, puis serveur)
+  await expect
+    .poll(async () => Number(await fin.getByTestId('arbre').getAttribute('data-feuilles')))
+    .toBeGreaterThanOrEqual(1);
+  // la carte de fin n'est pas sous la barre collante
+  await page.waitForTimeout(300);
+  const barre = (await page.getByTestId('etapes').boundingBox())!;
+  const titre = (await fin.locator('h2').boundingBox())!;
+  expect(titre.y).toBeGreaterThanOrEqual(barre.y + barre.height - 1);
+  expect((await mesure(page)).principales).toBe(1);
   await expect(fin).not.toContainText(/points?\b|classement/i);
   expect(await sansNom(page)).toEqual([]);
   await shots(page, 'lecon-fin', { full: false });
@@ -267,7 +302,7 @@ test('mouvement réduit : la feuille ne s’anime pas', async ({ page }, info) =
   await page.getByTestId('terminer-lecon').click();
   const name = await page
     .getByTestId('fin-lecon')
-    .locator('.pousse')
+    .locator('span.pousse')
     .evaluate((el) => getComputedStyle(el).animationName);
   expect(name).toBe('none');
 });
@@ -291,6 +326,7 @@ test.describe('enfant', () => {
     if (await go.count()) expect((await go.boundingBox())!.height).toBeGreaterThanOrEqual(56);
     expect(await sansNom(page)).toEqual([]);
     expect(await graves(page)).toEqual([]);
+    expect((await mesure(page)).principales, 'une seule action principale').toBe(1);
     await shots(page, 'accueil-enfant');
     await page.goto('/');
     await expect(page.getByTestId('unite').first()).toBeVisible();

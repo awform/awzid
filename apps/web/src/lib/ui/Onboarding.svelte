@@ -63,7 +63,7 @@
       {/each}
     </ol>
     {#if audience === 'enfant'}<p class="adulte">{t('bienvenue.pour_adulte')}</p>{/if}
-    <button type="button" class="primary" onclick={done} data-testid="bienvenue-ok"
+    <button type="button" class="ok" onclick={done} data-testid="bienvenue-ok"
       >{t('bienvenue.ok')}</button
     >
   </section>
@@ -120,6 +120,12 @@
     border-radius: var(--radius-md);
     background: var(--card);
     color: var(--primary);
+  }
+  /* D1 : une seule action principale par écran (celle de l'écran, pas l'accueil de premier lancement) */
+  .ok {
+    min-height: var(--target);
+    padding: 0 20px;
+    font-weight: 700;
   }
   .adulte {
     font-size: 0.95rem;

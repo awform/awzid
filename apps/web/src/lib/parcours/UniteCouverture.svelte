@@ -48,10 +48,16 @@
   const teinte = $derived(TEINTES[index % 3]);
 
   /** êtres vivants exclus de la couverture (règle des images de la DA : objets et décors seulement) */
+  // clés des illustrations des livres (catalogue `illus/*.js`) : êtres vivants, personnes et parties du corps,
+  // gestes de prière, contre-exemples (x_*) et tout ce qui touche au muṣḥaf ou à un texte sacré sont exclus
   const VIVANTS =
-    /^(sparrow|bird|oiseau|chat|cat|dog|chien|elephant|giraffe|monkey|butterfly|lion|tiger|bear|fish|poisson|horse|cheval|camel|chameau|sheep|mouton|cow|vache|goat|chevre|rabbit|lapin|ant|fourmi|bee|abeille|duck|canard|hen|poule|rooster|coq|deer|frog|turtle|tortue|snake|owl|dove|pigeon|mouse|souris|donkey|ane|wolf|fox|insect|spider|whale|dolphin|parrot|peacock|eagle|falcon|ladybug)s?$/i;
-  /** le muṣḥaf n'est jamais un décor (règle des images) : ni muṣḥaf, ni support, ni texte coranique en couverture */
-  const SACRE = /^(mushaf|rehal|quran|coran|surah|sourate|ayah|aya|bismillah|kaaba)/i;
+    /(^|_)(ants?|anthill|bears?|bees?|birds?|butterfl\w*|camels?|cats?|cheetah|cows?|crab|crow|dinosaur|dogs?|donkey|doves|elephants?|fish|fly|frogs?|gazelle|giraffe|goats?|goose|grasshopper|hen|hoopoe|horses?|lamb|lions?|monkey|mouse|mouton|ostrich|owl|parrot|rabbit|ram|rooster|seagull|sheep|she_camel|sparrows?|tortoise|whale|wolf|worm|animals|herd|insects?|spider)(_|$)/i;
+  const PERSONNES =
+    /(^|_)(adam|child|clap|ears?|elbow|eyes?|fingers?|fingerprint|foot|footprints|footsteps|hands?|head|lips|lungs|mouth|nose|tooth|teeth|grandmere|grandpere|maman|papa|maryam|khadija|fatou|ilyas|youssouf|imam|smile|friends?|face|salat|wudu|tayammum|qc|ghusl|neighbor|teacher|interpreter)(_|$)|^x_|^help_/i;
+  /** le muṣḥaf n'est jamais un décor (règle des images) : ni muṣḥaf, ni support, ni texte sacré en couverture */
+  const SACRE =
+    /(mushaf|quran|rehal|surah|ayah|juz_marker|kaaba|injil|zabur|tawrat|suhuf|bismillah|lectern)/i;
+  let cle = $state('');
   let dessin = $state<{ viewBox: string; svg: string } | null>(null);
   let el: HTMLElement | undefined = $state();
 
@@ -84,10 +90,19 @@
       lesson.dialogue?.lieu,
       ...(lesson.mots ?? []).map((m) => m.img),
     ].filter(
-      (k): k is string => !!k && !persos.has(k) && !VIVANTS.test(k) && !SACRE.test(k) && !!ill[k],
+      (k): k is string =>
+        !!k &&
+        !persos.has(k) &&
+        !VIVANTS.test(k) &&
+        !PERSONNES.test(k) &&
+        !SACRE.test(k) &&
+        !!ill[k],
     );
     const k = candidats[0];
-    if (k) dessin = ill[k]!;
+    if (k) {
+      dessin = ill[k]!;
+      cle = k;
+    }
   }
 
   onMount(() => {
@@ -122,7 +137,7 @@
   data-ouvert={ouvert}
 >
   <span class="bandeau {teinte}">
-    <span class="objet" aria-hidden="true"
+    <span class="objet" class:vide={!dessin} aria-hidden="true" data-objet={cle}
       >{#if dessin}<svg viewBox={dessin.viewBox}
           ><!-- eslint-disable-next-line svelte/no-at-html-tags -- SVG des livres validé à l'import (liste blanche) -->
           {@html dessin.svg}</svg
@@ -143,6 +158,9 @@
 <style>
   .couv {
     display: grid;
+    /* le bandeau occupe toute la largeur de la carte (le bouton global centre son contenu) */
+    grid-template-columns: 100%;
+    justify-content: stretch;
     width: 100%;
     padding: 0;
     border: 1px solid var(--line);
@@ -186,6 +204,10 @@
     border-radius: 50%;
     background: var(--bande-texte);
     box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.7);
+  }
+  /* image pas encore chargée : rien plutôt qu'un cercle vide */
+  .objet.vide {
+    visibility: hidden;
   }
   .objet svg {
     width: 48px;

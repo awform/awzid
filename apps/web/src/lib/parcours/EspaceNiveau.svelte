@@ -168,16 +168,15 @@
           text={`${unitLabel(next)} — ${next.titleFr}`}
         />
       </p>
-      <p class="rp-ar" lang="ar" dir="rtl"><Bidi text={next.titleAr} base="ar" /></p>
+      <!-- D1 : marques [..] du livre RENDUES (lettres mises en valeur), jamais affichées en crochets -->
+      <div class="rp-ar"><Ar text={next.titleAr} block /></div>
       <a class="button dore" href={resolve('/lecons/[id]', { id: next.id })} data-testid="continuer"
         ><Icon name="fleche" size={20} /><span
           ><Bidi text={t(enCoursIci ? 'parc.continuer_lecon' : 'parc.commencer_lecon')} /></span
         ></a
       >
     {:else}
-      {#if c.titreAr}<p class="rp-ar" lang="ar" dir="rtl">
-          <Bidi text={c.titreAr} base="ar" />
-        </p>{/if}
+      {#if c.titreAr}<div class="rp-ar"><Ar text={c.titreAr} block /></div>{/if}
       {#if c.titre}<p class="rp-quoi"><Bidi text={c.titre} /></p>{/if}
     {/if}
     <Progress
@@ -423,7 +422,7 @@
     margin: 0;
     font-weight: 600;
   }
-  .rp-ar {
+  .rp-ar :global(.ar) {
     margin: 0;
     font-family: var(--font-ar-titre);
     font-weight: 700;
