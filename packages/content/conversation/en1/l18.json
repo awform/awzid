@@ -1,0 +1,8 @@
+{"v":1,"id":"en1.l18","niveau":"en1","lecon":"l18","titre_ar":"فِي الْمَطْبَخِ","titre_fr":"Dans la cuisine","scene":{"lieu":"maison","props":["fire","water","dates","clock"]},"role":{"qui":"Papa","qui_ar":"الْأَبُ"},"mots":[{"ar":"نَ[ا]رٌ","fr":"du feu","img":"fire"}],"tours":[
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"مَا هٰذَا يَا أَبِي؟","fr":"Qu'est-ce que c'est, papa ?"},
+{"t":"eleve","qui":"Papa","qui_ar":"الْأَبُ","choix":[{"ar":"هٰذِهِ نَارٌ. النَّارُ حَارَّةٌ، انْتَبِهِي!","fr":"C'est du feu. Le feu, ça brûle : fais attention !","kind":"bonne","src":"en1.l18#1"},{"ar":"يَهْدِيكُمُ اللَّهُ وَيُصْلِحُ بَالَكُمْ.","fr":"Qu'Allah vous guide et améliore votre état.","kind":"presque","src":"en1.l18#5"},{"ar":"[هَ]يَّا يَا أَبِي!","fr":"Allons-y, papa !","kind":"reprendre","src":"en1.l14#1"}]},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"حَسَنًا يَا أَبِي، لَا أَلْمِسُهَا.","fr":"D'accord, papa, je ne le touche pas."},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"الْحَمْدُ لِلَّهِ!","fr":"(Maryam éternue) Louange à Allah !"},
+{"t":"eleve","qui":"Papa","qui_ar":"الْأَبُ","choix":[{"ar":"الْحَمْدُ لِلَّهِ!","fr":"(Maryam éternue) Louange à Allah !","kind":"presque","src":"en1.l18#3"},{"ar":"الْقِ[طُّ] تَحْتَ ال[طَّ]اوِلَةِ.","fr":"Le chat est sous la table.","kind":"reprendre","src":"en1.l09#1"},{"ar":"يَرْحَمُكِ اللَّهُ.","fr":"Qu'Allah te fasse miséricorde.","kind":"bonne","src":"en1.l18#4"}]},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"يَهْدِيكُمُ اللَّهُ وَيُصْلِحُ بَالَكُمْ.","fr":"Qu'Allah vous guide et améliore votre état."}
+]}

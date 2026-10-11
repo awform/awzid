@@ -130,6 +130,7 @@
   let Reglages = $state<{
     N: typeof import('$lib/NotificationsReglages.svelte').default;
     V: typeof import('$lib/vivante/VivanteReglages.svelte').default;
+    C: typeof import('$lib/conversation/ConversationReglages.svelte').default;
   } | null>(null);
   // nouvelles tentatives automatiques, puis « Connexion nécessaire » (le reste de la page reste utilisable)
   let reglagesEchec = $state(false);
@@ -138,8 +139,9 @@
     void Promise.all([
       chargerModule(() => import('$lib/NotificationsReglages.svelte')),
       chargerModule(() => import('$lib/vivante/VivanteReglages.svelte')),
+      chargerModule(() => import('$lib/conversation/ConversationReglages.svelte')),
     ])
-      .then(([n, v]) => (Reglages = { N: n.default, V: v.default }))
+      .then(([n, v, c]) => (Reglages = { N: n.default, V: v.default, C: c.default }))
       .catch(() => (reglagesEchec = true));
   }
   onMount(chargerReglages);
@@ -329,7 +331,7 @@
     {#if Reglages}<Reglages.N parent={me.account.kind === 'parent'} />{/if}
   {/if}
 
-  {#if Reglages}<Reglages.V />{:else if reglagesEchec}<section class="card">
+  {#if Reglages}<Reglages.V /><Reglages.C />{:else if reglagesEchec}<section class="card">
       <ConnexionNecessaire onretry={chargerReglages} />
     </section>{/if}
 

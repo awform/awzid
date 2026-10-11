@@ -32,7 +32,12 @@ describe('F5 — interrupteurs gardés sur l’appareil', () => {
   it('sans copie : valeurs sûres du registre (fonctions publiées ouvertes)', () => {
     const d = decisionDe(null);
     expect(Object.keys(d).sort()).toEqual([...FONCTION_CLES].sort());
-    expect(Object.values(d).every((v) => v === true)).toBe(true);
+    // A26b : « conversation » en essai (canal bêta) ; toutes les autres sont publiées
+    expect(
+      Object.entries(d)
+        .filter(([, v]) => v !== true)
+        .map(([k]) => k),
+    ).toEqual(['conversation']);
   });
 
   it('copie par personne : décision du serveur, hors ligne comprise ; clé inconnue → défaut', () => {

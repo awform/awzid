@@ -1,0 +1,8 @@
+{"v":1,"id":"ad1.l22","niveau":"ad1","lecon":"l22","titre_ar":"لُعْبَةُ الْأَدْوَارِ: أُقَدِّمُ زَمِيلِي","titre_fr":"Jeu de rôle : présenter un camarade","scene":{"lieu":"classe","props":["name_tag","diploma"]},"role":{"qui":"Papa","qui_ar":"عَبْدُ اللَّهِ"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"مَنْ هٰذَا؟","fr":"Qui est-ce ?"},
+{"t":"eleve","qui":"Papa","qui_ar":"عَبْدُ اللَّهِ","choix":[{"ar":"هٰذَا الْحَاجُّ مُوسَى، هُوَ مِنْ مَالِي.","fr":"C'est le Hadj Moussa ; il vient du Mali.","kind":"bonne","src":"ad1.l22#1"},{"ar":"وَمَا عَمَلُهُ؟","fr":"Et quel est son métier ?","kind":"presque","src":"ad1.l22#2"},{"ar":"جَزَاكَ اللَّهُ خَيْرًا. وَأَيْنَ الْحَمَّامُ؟","fr":"Qu'Allah vous récompense. Et où sont les toilettes ?","kind":"reprendre","src":"ad1.l05#4"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"وَمَا عَمَلُهُ؟","fr":"Et quel est son métier ?"},
+{"t":"eleve","qui":"Papa","qui_ar":"عَبْدُ اللَّهِ","choix":[{"ar":"وَأَنْتَ يَا حَاجُّ، مَنْ هٰذِهِ؟","fr":"Et vous, Hadj, qui est-ce ?","kind":"presque","src":"ad1.l22#4"},{"ar":"هُوَ مُتَقَاعِدٌ، وَعِنْدَهُ دُكَّانٌ.","fr":"Il est retraité, et il a une boutique.","kind":"bonne","src":"ad1.l22#3"},{"ar":"عَفْوًا يَا أُسْتَاذَةُ، أَيْنَ الْحَمَّامُ؟","fr":"Excusez-moi, Madame, où sont les toilettes ?","kind":"reprendre","src":"ad1.l04#0"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"وَأَنْتَ يَا حَاجُّ، مَنْ هٰذِهِ؟","fr":"Et vous, Hadj, qui est-ce ?"},
+{"t":"partenaire","qui":"Hadj","qui_ar":"الْحَاجُّ مُوسَى","ar":"هٰذِهِ أَمِينَاتَا، هِيَ مُمَرِّضَةٌ، وَهِيَ مِنَ السِّنِغَالِ.","fr":"C'est Aminata ; elle est infirmière, et elle vient du Sénégal."}
+]}

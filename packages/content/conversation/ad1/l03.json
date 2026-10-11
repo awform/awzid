@@ -1,0 +1,8 @@
+{"v":1,"id":"ad1.l03","niveau":"ad1","lecon":"l03","titre_ar":"أَيْنَ تَسْكُنُ؟","titre_fr":"Où habitez-vous ?","scene":{"lieu":"classe","props":["house","mosque"]},"role":{"qui":"Papa","qui_ar":"عَبْدُ اللَّهِ"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"أَيْنَ تَسْكُنُ يَا عَبْدَ اللَّهِ؟","fr":"Où habitez-vous, ʿAbdullāh ?"},
+{"t":"eleve","qui":"Papa","qui_ar":"عَبْدُ اللَّهِ","choix":[{"ar":"أَسْكُنُ مَعَ زَوْجِي وَأَوْلَادِي. بَيْتُنَا صَغِيرٌ وَجَمِيلٌ.","fr":"J'habite avec mon mari et mes enfants. Notre logement est petit et joli.","kind":"presque","src":"ad1.l03#3"},{"ar":"الْحَمْدُ لِلَّهِ، بِخَيْرٍ. بَارَكَ اللَّهُ فِيكِ.","fr":"Louange à Allah, je vais bien. Qu'Allah vous bénisse.","kind":"reprendre","src":"ad1.l01#5"},{"ar":"أَسْكُنُ فِي بَارِيسَ، قَرِيبًا مِنَ الْمَسْجِدِ.","fr":"J'habite à Paris, près de la mosquée.","kind":"bonne","src":"ad1.l03#1"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"وَأَنْتِ يَا أَمِينَاتَا؟","fr":"Et vous, Aminata ?"},
+{"t":"partenaire","qui":"Maman","qui_ar":"أَمِينَاتَا","ar":"أَسْكُنُ مَعَ زَوْجِي وَأَوْلَادِي. بَيْتُنَا صَغِيرٌ وَجَمِيلٌ.","fr":"J'habite avec mon mari et mes enfants. Notre logement est petit et joli."},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"بَارَكَ اللَّهُ لَكُمْ فِيهِ. وَأَنْتَ يَا حَاجُّ؟","fr":"Qu'Allah vous le bénisse. Et vous, Hadj ?"},
+{"t":"partenaire","qui":"Hadj","qui_ar":"الْحَاجُّ مُوسَى","ar":"أَسْكُنُ فِي الْحَيِّ نَفْسِهِ، فَوْقَ دُكَّانِي.","fr":"J'habite dans le même quartier, au-dessus de mon épicerie."}
+]}

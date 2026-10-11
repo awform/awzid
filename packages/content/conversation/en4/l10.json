@@ -1,0 +1,10 @@
+{"v":1,"id":"en4.l10","niveau":"en4","lecon":"l10","titre_ar":"مَرْيَمُ رَئِيسَةُ الْفَرِيقِ","titre_fr":"Maryam, cheffe d'équipe (jeu de rôle, leçons 5 à 8)","scene":{"lieu":"ecole","props":["charity_box","table","candy"]},"role":{"qui":"Youssouf","qui_ar":"يُوسُفُ"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"يَا يُوسُفُ، خُذِ الزِّينَةَ، وَعَلِّقْهَا عَلَى الْبَابِ.","fr":"Youssouf, prends les décorations et accroche-les sur la porte."},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"حَسَنًا! وَأَنْتِ، مَاذَا تَفْعَلِينَ؟","fr":"D'accord ! Et toi, que fais-tu ?","kind":"bonne","src":"en4.l10#1"},{"ar":"يَا يُوسُفُ، خُذِ الزِّينَةَ، وَعَلِّقْهَا عَلَى الْبَابِ.","fr":"Youssouf, prends les décorations et accroche-les sur la porte.","kind":"presque","src":"en4.l10#0"},{"ar":"نَعَمْ، قُلْتُهَا بَعْدَ صَلَاةِ الْفَجْرِ.","fr":"Oui, je les ai dites après la prière de l'aube.","kind":"reprendre","src":"en4.l02#5"}]},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"أَكْتُبُ الدَّعَوَاتِ، وَسَأُعْطِيهَا لِلْأُسَرِ غَدًا.","fr":"J'écris les invitations, et je les donnerai aux familles demain."},
+{"t":"partenaire","qui":"Adam","qui_ar":"آدَمُ","ar":"وَنَحْنُ، مَاذَا نَفْعَلُ؟","fr":"Et nous, que faisons-nous ?"},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"اِحْمِلُوا الطَّاوِلَاتِ إِلَى السَّاحَةِ، وَلَا تَرْكُضُوا!","fr":"Portez les tables dans la cour, et ne courez pas !"},
+{"t":"partenaire","qui":"Khadija","qui_ar":"خَدِيجَةُ","ar":"هَلْ سَنَبِيعُ الْعَصِيرَ؟","fr":"Est-ce que nous vendrons du jus ?"},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"نَعَمْ، وَلَنْ نَنْسَى الْمُحْتَاجِينَ: الْمَالُ لِلصَّدَقَةِ.","fr":"Oui, et nous n'oublierons pas ceux qui sont dans le besoin : l'argent est pour l'aumône."},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"مَا شَاءَ اللَّهُ، فَرِيقٌ رَائِعٌ!","fr":"Ce qu'Allah a voulu, quelle belle équipe !"}
+]}

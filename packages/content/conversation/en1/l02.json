@@ -1,0 +1,8 @@
+{"v":1,"id":"en1.l02","niveau":"en1","lecon":"l02","titre_ar":"فِي سَاحَةِ الْمَدْرَسَةِ","titre_fr":"Dans la cour de l'école","scene":{"lieu":"ecole"},"role":{"qui":"Youssouf","qui_ar":"يُوسُفُ"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"السَّلَامُ عَلَيْكُمْ!","fr":"Que la paix soit sur vous !"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"وَعَلَيْكُمُ السَّلَامُ!","fr":"Et sur vous la paix !","kind":"bonne","src":"en1.l02#1"},{"ar":"السَّلَامُ عَلَيْكُمْ!","fr":"Que la paix soit sur vous !","kind":"presque","src":"en1.l02#0"},{"ar":"وَمَا هٰذِهِ؟","fr":"Et ça, qu'est-ce que c'est ? (féminin)","kind":"reprendre","src":"en1.l01#2"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"مَا اسْمُكَ؟","fr":"Comment t'appelles-tu ? (à un garçon)"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"مَا اسْمُكَ؟","fr":"Comment t'appelles-tu ? (à un garçon)","kind":"presque","src":"en1.l02#2"},{"ar":"اسْمِي [يُ]وسُفُ.","fr":"Je m'appelle Youssouf.","kind":"bonne","src":"en1.l02#3"},{"ar":"مَا هٰذَا؟","fr":"Qu'est-ce que c'est ?","kind":"reprendre","src":"en1.l01#0"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"وَمَا اسْمُكِ؟","fr":"Et toi, comment t'appelles-tu ? (à une fille)"},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"اسْمِي مَرْ[يَ]مُ.","fr":"Je m'appelle Maryam."}
+]}

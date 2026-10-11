@@ -1,0 +1,8 @@
+{"v":1,"id":"en1.l11","niveau":"en1","lecon":"l11","titre_ar":"فِي الْحَدِيقَةِ","titre_fr":"Au parc (épreuve orale)","scene":{"lieu":"jardin","props":["sparrow","tree","chat"]},"role":{"qui":"Youssouf","qui_ar":"يُوسُفُ"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"كَيْفَ حَالُكَ يَا يُوسُفُ؟","fr":"Comment vas-tu, Youssouf ?"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"هَلْ هٰذَا [عُ]صْفُورٌ؟","fr":"Est-ce que c'est un moineau ?","kind":"presque","src":"en1.l11#2"},{"ar":"الْ[حَ]مْدُ لِلَّهِ.","fr":"(à la fin du repas) Louange à Allah.","kind":"reprendre","src":"en1.l03#3"},{"ar":"بِخَيْرٍ، الْحَمْدُ لِلَّهِ.","fr":"Bien, louange à Allah.","kind":"bonne","src":"en1.l11#1"}]},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"هَلْ هٰذَا [عُ]صْفُورٌ؟","fr":"Est-ce que c'est un moineau ?"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"هَلْ هٰذَا [عُ]صْفُورٌ؟","fr":"Est-ce que c'est un moineau ?","kind":"presque","src":"en1.l11#2"},{"ar":"نَعَمْ، هُوَ عَلَى ال[شَّ]جَرَةِ.","fr":"Oui, il est sur l'arbre.","kind":"bonne","src":"en1.l11#3"},{"ar":"أُرِيدُ [رُ]مَّانَةً يَا جَدِّي، مِنْ فَضْلِكَ.","fr":"Je voudrais une grenade, grand-père, s'il te plaît.","kind":"reprendre","src":"en1.l05#4"}]},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"وَأَيْنَ الْقِ[طُّ]؟","fr":"Et où est le chat ?"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"الْقِ[طُّ] تَحْتَ ال[شَّ]جَرَةِ!","fr":"Le chat est sous l'arbre !","kind":"bonne","src":"en1.l11#5"},{"ar":"بِخَيْرٍ، الْحَمْدُ لِلَّهِ.","fr":"Bien, louange à Allah.","kind":"presque","src":"en1.l11#1"},{"ar":"اسْمِي [يُ]وسُفُ.","fr":"Je m'appelle Youssouf.","kind":"reprendre","src":"en1.l02#3"}]}
+]}

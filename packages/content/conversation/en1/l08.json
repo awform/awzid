@@ -1,0 +1,7 @@
+{"v":1,"id":"en1.l08","niveau":"en1","lecon":"l08","titre_ar":"أَيْنَ الصَّابُونُ؟","titre_fr":"Où est le savon ?","scene":{"lieu":"maison","props":["soap","sink"]},"role":{"qui":"Papa","qui_ar":"الْأَبُ"},"mots":[{"ar":"[صَ]ابُونٌ","fr":"du savon","img":"soap"},{"ar":"حَوْ[ضٌ]","fr":"un lavabo, un bassin","img":"sink"}],"tours":[
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"أَيْنَ ال[صَّ]ابُونُ يَا أَبِي؟","fr":"Où est le savon, papa ?"},
+{"t":"eleve","qui":"Papa","qui_ar":"الْأَبُ","choix":[{"ar":"أَيْنَ ال[صَّ]ابُونُ يَا أَبِي؟","fr":"Où est le savon, papa ?","kind":"presque","src":"en1.l08#0"},{"ar":"انْظُرَا! مَا هٰذَا؟","fr":"Regardez, tous les deux ! Qu'est-ce que c'est ?","kind":"reprendre","src":"en1.l05#0"},{"ar":"هُنَا، عِنْدَ الْحَوْ[ضِ]. تَفَضَّلْ.","fr":"Ici, près du lavabo. Tiens.","kind":"bonne","src":"en1.l08#1"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"شُكْرًا يَا أَبِي.","fr":"Merci, papa."},
+{"t":"eleve","qui":"Papa","qui_ar":"الْأَبُ","choix":[{"ar":"شُكْرًا يَا أَبِي.","fr":"Merci, papa.","kind":"presque","src":"en1.l08#2"},{"ar":"بِسْمِ اللَّهِ. وَهٰذَا [حَ]لِيبٌ!","fr":"Au nom d'Allah. Et ça, c'est du lait !","kind":"reprendre","src":"en1.l03#2"},{"ar":"لَا تُسْرِفْ فِي الْمَاءِ يَا بُنَيَّ.","fr":"Ne gaspille pas l'eau, mon fils.","kind":"bonne","src":"en1.l08#3"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"حَسَنًا، أُغْلِقُ الْحَنَفِيَّةَ.","fr":"D'accord, je ferme le robinet."}
+]}

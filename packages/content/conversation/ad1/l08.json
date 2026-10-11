@@ -1,0 +1,8 @@
+{"v":1,"id":"ad1.l08","niveau":"ad1","lecon":"l08","titre_ar":"كَيْفَ تَكْتُبِينَ اسْمَكِ؟","titre_fr":"Comment écrivez-vous votre prénom ?","scene":{"lieu":"classe","props":["blackboard","name_card"]},"role":{"qui":"Maman","qui_ar":"أَمِينَاتَا"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"مَا اسْمُكِ؟","fr":"Quel est votre prénom ?"},
+{"t":"eleve","qui":"Maman","qui_ar":"أَمِينَاتَا","choix":[{"ar":"مَا اسْمُكِ؟","fr":"Quel est votre prénom ?","kind":"presque","src":"ad1.l08#0"},{"ar":"أُرِيدُ مَاءً، مِنْ فَضْلِكَ.","fr":"Je voudrais de l'eau, s'il vous plaît.","kind":"reprendre","src":"ad1.l05#2"},{"ar":"اسْمِي أَمِينَاتَا.","fr":"Je m'appelle Aminata.","kind":"bonne","src":"ad1.l08#1"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"كَيْفَ تَكْتُبِينَهُ؟ تَهَجَّيْهِ مِنْ فَضْلِكِ.","fr":"Comment l'écrivez-vous ? Épelez-le, s'il vous plaît."},
+{"t":"eleve","qui":"Maman","qui_ar":"أَمِينَاتَا","choix":[{"ar":"عَيْنٌ، بَاءٌ، دَالٌ، ثُمَّ اسْمُ «اللَّه».","fr":"ع، ب، د, puis le nom « Allah ».","kind":"presque","src":"ad1.l08#5"},{"ar":"أَلِفٌ، مِيمٌ، يَاءٌ، نُونٌ، أَلِفٌ، تَاءٌ، أَلِفٌ.","fr":"ا، م، ي، ن، ا، ت، ا.","kind":"bonne","src":"ad1.l08#3"},{"ar":"السَّلَامُ عَلَيْكُمْ.","fr":"Que la paix soit sur vous.","kind":"reprendre","src":"ad1.l01#0"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"أَحْسَنْتِ! وَأَنْتَ يَا عَبْدَ اللَّهِ، كَيْفَ تَكْتُبُ اسْمَكَ؟","fr":"Très bien ! Et vous, ʿAbdullāh, comment écrivez-vous votre prénom ?"},
+{"t":"partenaire","qui":"Papa","qui_ar":"عَبْدُ اللَّهِ","ar":"عَيْنٌ، بَاءٌ، دَالٌ، ثُمَّ اسْمُ «اللَّه».","fr":"ع، ب، د, puis le nom « Allah »."}
+]}
