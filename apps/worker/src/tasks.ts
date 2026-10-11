@@ -7,6 +7,7 @@ import {
   purgeDeletedAccounts,
   purgeExpiredRecitations,
   purgeF5,
+  purgeProblemes,
   purgeRetention,
   purgeTutorLog,
   type Db,
@@ -49,5 +50,7 @@ export async function nightlyPurge(db: Db, now = new Date()) {
     conservation: await purgeRetention(db, now),
     // F5 : empreintes d'usage (2 jours), captures des avis (90 jours), avis (12 mois)
     f5: await purgeF5(db, now),
+    // bêta-support : captures des signalements (90 jours), signalements réglés (12 mois)
+    problemes: await purgeProblemes(db, now),
   };
 }

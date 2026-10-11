@@ -24,6 +24,7 @@ export const FONCTION_CLES = [
   'mode_serein',
   'avis',
   'conversation',
+  'signaler',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -71,6 +72,8 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   avis: { defaut: 'on' },
   // « Je parle » (A26b) : scénarios guidés tirés des dialogues des livres, sans IA, hors ligne
   conversation: { defaut: 'beta' },
+  // bouton « Signaler un problème » (bêta-support)
+  signaler: { defaut: 'on' },
 };
 
 /** Règle d'exception (valeurs contrôlées à l'écriture : rôles, âges, canaux ci-dessus). */

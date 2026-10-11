@@ -50,6 +50,7 @@ import { registerSereinA39 } from './serein-a39.js';
 import { registerCertificatAutonome } from './certificat-autonome.js';
 import { registerVivre } from './vivre.js';
 import { registerF5 } from './f5.js';
+import { registerSupport } from './support.js';
 import { registerVerification } from './verification.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
 import type { RecitationKey } from '@awform/db';
@@ -286,5 +287,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerVivre(app, db, edition);
   // F5 : interrupteurs de fonctions, canal bêta, avis, usage sans traceur
   registerF5(app, db, opts.version ?? '0.2.0');
+  // bêta-support : « Signaler un problème » (file de l'administrateur avec statut)
+  registerSupport(app, db, opts.version ?? '0.2.0');
   return app;
 }

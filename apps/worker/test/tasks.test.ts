@@ -40,6 +40,7 @@ describe.skipIf(!URL_)('purge de la nuit', () => {
         'conservation',
         'f5',
         'journalTuteur',
+        'problemes',
         'recitationsEffacees',
         'verrous',
       ].sort(),

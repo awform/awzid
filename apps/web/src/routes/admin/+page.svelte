@@ -9,6 +9,7 @@
   import ContenuAdmin from '$lib/ContenuAdmin.svelte';
   import FonctionsAdmin from '$lib/admin/FonctionsAdmin.svelte';
   import AvisAdmin from '$lib/admin/AvisAdmin.svelte';
+  import ProblemesAdmin from '$lib/admin/ProblemesAdmin.svelte';
   import UsageAdmin from '$lib/admin/UsageAdmin.svelte';
 
   /**
@@ -110,6 +111,8 @@
   <!-- F5 : interrupteurs de fonctions et canal bêta, avis reçus, usage sans traceur -->
   <FonctionsAdmin />
   <AvisAdmin />
+  <!-- bêta-support : problèmes signalés (nouveau / en cours / réglé) -->
+  <ProblemesAdmin />
   <UsageAdmin />
 
   <section class="card">

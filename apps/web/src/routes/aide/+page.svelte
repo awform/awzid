@@ -1,4 +1,5 @@
 <script lang="ts">
+  import AvisBouton from '$lib/avis/AvisBouton.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
@@ -36,6 +37,11 @@
     <li><a href={resolve('/garanties')}>{t('aide.garanties')}</a></li>
     <li><a href={resolve('/errata')}>{t('errata.titre')}</a></li>
   </ul>
+</section>
+
+<!-- bêta-support : « Signaler un problème » (chargé à la demande, en ligne) -->
+<section class="card">
+  <AvisBouton mode="probleme" />
 </section>
 
 <style>

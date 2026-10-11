@@ -31,3 +31,4 @@ export * from './serein.js';
 export * from './versets.js';
 export * from './vivre.js';
 export * from './fonctions.js';
+export * from './problemes.js';

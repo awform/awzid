@@ -1418,5 +1418,10 @@
   "conv.perso.Papa": "Papa",
   "conv.perso.Maman": "Maman",
   "conv.perso.Imam": "L'imam",
-  "conv.perso.Hadj": "Hadj"
+  "conv.perso.Hadj": "Hadj",
+  "maj.pret": "Une nouvelle version est prête",
+  "maj.bouton": "Mettre à jour",
+  "maj.plus_tard": "Plus tard",
+  "probleme.bouton": "Signaler un problème",
+  "erreur.trop_de_signalements": "Merci ! Vous avez déjà envoyé plusieurs signalements aujourd'hui : réessayez demain."
 }
