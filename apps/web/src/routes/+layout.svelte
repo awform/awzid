@@ -174,9 +174,11 @@
   });
 
   const piedCache = $derived(
-    // élève (enfant, ado, adulte autonome : celui-ci n'a pas toujours de profil actif)
-    ['enfant', 'ado', 'adulte'].includes(audience) &&
-      (audience === 'enfant' || /^\/(aujourdhui|lecons\/[^/]+)?\/?$/.test(page.url.pathname)),
+    // D2 : « Plus » range déjà ces liens dans la famille Aide (pas de doublon en bas de page)
+    /^\/plus\/?$/.test(page.url.pathname) ||
+      // élève (enfant, ado, adulte autonome : celui-ci n'a pas toujours de profil actif)
+      (['enfant', 'ado', 'adulte'].includes(audience) &&
+        (audience === 'enfant' || /^\/(aujourdhui|lecons\/[^/]+)?\/?$/.test(page.url.pathname))),
   );
   const modeIcon = $derived(mode === 'sombre' ? 'lune' : mode === 'clair' ? 'soleil' : 'auto');
 </script>

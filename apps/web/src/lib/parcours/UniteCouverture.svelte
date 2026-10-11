@@ -182,7 +182,7 @@
     min-height: 88px;
     padding: 8px 16px;
     color: var(--bande-texte);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.16' stroke-width='1'%3E%3Crect x='14' y='14' width='16' height='16'/%3E%3Crect x='14' y='14' width='16' height='16' transform='rotate(45 22 22)'/%3E%3C/g%3E%3C/svg%3E");
+    background-image: var(--motif-etoile);
     border-bottom: 2px solid var(--gold);
   }
   /* couleurs de la marque (identiques en clair et en sombre : ce sont des aplats, avec un titre ivoire) */

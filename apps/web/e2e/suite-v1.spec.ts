@@ -130,7 +130,7 @@ test('suivi des sourates et code d’activation mal saisi', async ({ page }) => 
 
 test('interface en arabe : page entière de droite à gauche', async ({ page }) => {
   await newAdult(page, 'ar25');
-  await page.goto('/compte');
+  await page.goto('/compte?r=profil');
   await page.getByTestId('langues-preparation').check();
   await Promise.all([page.waitForEvent('load'), page.locator('[data-locale="ar"]').click()]);
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');

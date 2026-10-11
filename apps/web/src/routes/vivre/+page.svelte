@@ -22,6 +22,7 @@
   import { fetchMe, type Me, type ProfileInfo } from '$lib/session';
   import { maskLocal } from '$lib/signaler';
   import EmptyState from '$lib/ui/EmptyState.svelte';
+  import EnTete from '$lib/ui/EnTete.svelte';
   import Icon, { vIcon } from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import FicheVue from '$lib/vivre/FicheVue.svelte';
@@ -33,7 +34,6 @@
     loadCatalogue,
     loadFiche,
     loadGuide,
-    TILE_TONES,
     type Catalogue,
     type Fiche,
     type Learner,
@@ -157,7 +157,7 @@
 
 <svelte:head><title>{t('app.nom')} — {t('nav.vivre')}</title></svelte:head>
 
-<h1>{t('nav.vivre')}</h1>
+<EnTete titre={t('nav.vivre')} ar="حَيَاةُ الْمُسْلِمِ" icon="vivre" teinte={2} />
 <VivreTabs current="comportement" />
 
 {#if !fn('vivre_islam')}
@@ -261,13 +261,12 @@
     {/each}
   </div>
   {#if tiles.length}
+    <!-- D2 : cartes par thème — bandeau étoilé de couleur et objet dans un médaillon (aucun personnage) -->
     <ul class="tiles" data-testid="vi-tuiles" data-par={par}>
       {#each tiles as g, i (g.id)}<li>
-          <a class="tile" href={`?${par === 'cercle' ? 'c' : 'l'}=${g.id}`} data-groupe={g.id}>
-            <span
-              class="tile-ic"
-              style:background={`var(--${TILE_TONES[i % TILE_TONES.length]})`}
-              style:color="var(--ink)"><Icon name={vIcon(g.id)} size={enfant ? 40 : 24} /></span
+          <a class="theme" href={`?${par === 'cercle' ? 'c' : 'l'}=${g.id}`} data-groupe={g.id}>
+            <span class="t-bande" style:background-color={`var(--bande-${(i % 3) + 1})`}
+              ><span class="t-ic"><Icon name={vIcon(g.id)} size={enfant ? 34 : 26} /></span></span
             >
             <strong><Bidi text={label(par, g.id)} /></strong>
             {#if !enfant}<small><Bidi text={t('vi.nombre', { n: counts[g.id] ?? 0 })} /></small
@@ -283,6 +282,60 @@
 <!-- eslint-enable svelte/no-navigation-without-resolve -->
 
 <style>
+  .theme {
+    display: grid;
+    gap: 2px;
+    align-content: start;
+    height: 100%;
+    padding: 0 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--card);
+    box-shadow: var(--shadow-card);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .theme:hover {
+    border-color: var(--primary);
+  }
+  .theme strong,
+  .theme small {
+    padding: 0 12px;
+  }
+  .theme strong {
+    margin-top: 8px;
+  }
+  .theme small {
+    color: var(--ink2);
+  }
+  .t-bande {
+    display: grid;
+    place-items: center;
+    height: 72px;
+    background-image: var(--motif-etoile);
+    border-bottom: 2px solid var(--gold);
+  }
+  .t-ic {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--bande-texte);
+    color: var(--bande-2);
+    box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.7);
+  }
+  :global([data-public='enfant']) .theme {
+    text-align: center;
+  }
+  :global([data-public='enfant']) .t-bande {
+    height: 88px;
+  }
+  :global([data-public='enfant']) .t-ic {
+    width: 64px;
+    height: 64px;
+  }
   .back {
     display: inline-block;
     min-height: 44px;

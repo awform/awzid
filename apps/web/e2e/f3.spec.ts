@@ -80,7 +80,7 @@ test('inscription : lien de vérification reçu dans la boîte de démonstration
   await page.getByTestId('consent-art9').check();
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
   await expect(page).toHaveURL(/\/profils$/);
-  await page.goto('/compte');
+  await page.goto('/compte?r=profil');
   await expect(page.getByTestId('email-statut')).toContainText('pas encore vérifiée');
   const m = await lastMail(email, 'verification');
   expect(m.subject).toBe('Confirmez votre adresse e-mail');
@@ -90,7 +90,7 @@ test('inscription : lien de vérification reçu dans la boîte de démonstration
   );
   // le jeton a quitté la barre d'adresse
   expect(page.url()).not.toContain('#');
-  await page.goto('/compte');
+  await page.goto('/compte?r=profil');
   await expect(page.getByTestId('email-statut')).toContainText('Adresse vérifiée');
 });
 
@@ -144,7 +144,7 @@ test('accord « article 9 » retiré : page « Accords » au premier usage, acco
     },
   });
   expect(kid.status()).toBe(201);
-  await page.goto('/compte');
+  await page.goto('/compte?r=donnees');
   page.once('dialog', (d) => void d.accept());
   const li = page
     .getByTestId('consentements')
@@ -190,7 +190,7 @@ test('fuseau horaire du compte : les heures s’affichent dans ce fuseau, pas da
   const at = new Date(me.account.createdAt);
   const hm = (tz: string) =>
     new Intl.DateTimeFormat('fr', { hour: '2-digit', minute: '2-digit', timeZone: tz }).format(at);
-  await page.goto('/compte');
+  await page.goto('/compte?r=profil');
   // appareil de test : Europe/Paris
   await expect(page.getByTestId('cree-le')).toContainText(hm('Europe/Paris'));
   await page.getByTestId('fuseau').selectOption('America/Toronto');

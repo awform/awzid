@@ -13,15 +13,15 @@ test.describe('adulte', () => {
   }) => {
     const cfg = await (await page.request.get('/api/v1/config')).json();
     expect(cfg.languesEnPreparation).toBe(true);
-    await page.goto('/compte');
+    await page.goto('/compte?r=profil');
     await expect(page.locator('[data-locale="en"]')).toHaveCount(0);
     await page.getByTestId('langues-preparation').check();
     await Promise.all([page.waitForEvent('load'), page.locator('[data-locale="en"]').click()]);
     await page.goto('/aujourdhui');
     await expect(page.locator('h1')).toContainText('Today');
     await expect(page.locator('[data-tab="arabe"]')).toContainText('Arabic');
-    // D1 : pied de page (liens juridiques) dans « Plus », plus sur l'accueil de l'élève
-    await page.goto('/plus');
+    // D1 : pied de page (liens juridiques) dans « Aide », plus sur l'accueil de l'élève
+    await page.goto('/aide');
     await page.getByTestId('pied').getByRole('link', { name: 'Privacy' }).click();
     await expect(page.getByTestId('page-legale')).toContainText('Privacy policy');
     await expect(page.getByTestId('page-legale')).toHaveAttribute('lang', 'en');
@@ -29,7 +29,7 @@ test.describe('adulte', () => {
     await page.goto('/aide');
     await expect(page.locator('main')).toContainText('Getting started');
     // retour au français
-    await page.goto('/compte');
+    await page.goto('/compte?r=profil');
     await Promise.all([page.waitForEvent('load'), page.locator('[data-locale="fr"]').click()]);
     await page.goto('/aujourdhui');
     await expect(page.locator('h1')).toContainText('Aujourd');

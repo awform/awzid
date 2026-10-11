@@ -5,43 +5,94 @@
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
 
-  /** Lot 26 — « Plus » : les espaces qui ne tiennent pas dans les cinq entrées de la navigation. */
-  const ITEMS = [
-    // A12 : sciences islamiques (ados et adultes) en attendant la refonte de l'accueil par niveau (A27)
-    { href: '/sciences', icon: 'livres', titre: 'nav.sciences', desc: 'plus.d_sciences' },
-    { href: '/ecriture', icon: 'plume', titre: 'trace.titre', desc: 'plus.d_ecriture' },
-    { href: '/lectures', icon: 'lire', titre: 'onglets.lectures', desc: 'plus.d_lectures' },
-    { href: '/revisions', icon: 'revisions', titre: 'revisions.titre', desc: 'plus.d_revisions' },
-    { href: '/suivi', icon: 'courbe', titre: 'onglets.suivi', desc: 'plus.d_suivi' },
-    // D1 : « Ma classe » quitte l'accueil pour « Plus »
-    { href: '/ma-classe', icon: 'classe', titre: 'parc.ma_classe', desc: 'plus.d_classe' },
+  /**
+   * « Plus » (D2) : les espaces hors de la barre du bas, RANGÉS EN FAMILLES, chacun avec son icône et son nom écrit.
+   * Emplacements prévus dans « Apprendre plus » : 1 000 mots, Madjaliss et Poésie — ajoutés ici (une ligne
+   * chacun) seulement quand leur page existera ; rien n'est affiché avant. Le pied juridique du layout est masqué ici (mêmes liens dans la famille Aide, sans doublon). Les liens juridiques ne sont pas montrés
+   * à un enfant (`.juridique`). « Signaler un problème » et « Donner mon avis » s'ouvrent sur place.
+   */
+  type Lien = { href: string; icon: string; titre: string; juridique?: boolean };
+  const FAMILLES: Array<{ id: string; titre: string; liens: Lien[]; avis?: boolean }> = [
     {
-      href: '/hors-ligne',
-      icon: 'telecharger',
-      titre: 'entete.telechargements',
-      desc: 'plus.d_hors_ligne',
+      id: 'apprendre',
+      titre: 'plus.f_apprendre',
+      liens: [
+        { href: '/lectures', icon: 'lire', titre: 'onglets.lectures' },
+        { href: '/sciences', icon: 'livres', titre: 'nav.sciences' },
+      ],
     },
-    { href: '/compte', icon: 'personne', titre: 'entete.compte', desc: 'plus.d_compte' },
-    { href: '/aide', icon: 'question', titre: 'aide.titre', desc: 'plus.d_aide' },
-  ] as const;
+    {
+      id: 'pratiquer',
+      titre: 'plus.f_pratiquer',
+      liens: [
+        { href: '/ecriture', icon: 'plume', titre: 'trace.titre' },
+        { href: '/revisions', icon: 'revisions', titre: 'revisions.titre' },
+        { href: '/hors-ligne', icon: 'telecharger', titre: 'entete.telechargements' },
+      ],
+    },
+    {
+      id: 'suivi',
+      titre: 'plus.f_suivi',
+      liens: [
+        // D1 : « Ma classe » quitte l'accueil pour « Plus »
+        { href: '/ma-classe', icon: 'classe', titre: 'parc.ma_classe' },
+        { href: '/suivi', icon: 'courbe', titre: 'onglets.suivi' },
+        { href: '/suivi/rapport', icon: 'message', titre: 'rap.titre' },
+      ],
+    },
+    {
+      id: 'aide',
+      titre: 'aide.titre',
+      avis: true,
+      liens: [
+        { href: '/aide', icon: 'question', titre: 'aide.titre' },
+        { href: '/garanties', icon: 'bouclier', titre: 'gar.titre', juridique: true },
+        { href: '/legal/mentions', icon: 'info', titre: 'pied.mentions', juridique: true },
+        { href: '/legal/cgu', icon: 'info', titre: 'pied.cgu', juridique: true },
+        {
+          href: '/legal/confidentialite',
+          icon: 'info',
+          titre: 'pied.confidentialite',
+          juridique: true,
+        },
+        { href: '/legal/cookies', icon: 'info', titre: 'pied.cookies', juridique: true },
+      ],
+    },
+    {
+      id: 'compte',
+      titre: 'plus.f_compte',
+      liens: [{ href: '/compte', icon: 'personne', titre: 'entete.compte' }],
+    },
+  ];
 </script>
 
 <svelte:head><title>{t('app.nom')} — {t('plus.titre')}</title></svelte:head>
 
 <h1>{t('plus.titre')}</h1>
-<p class="muted">{t('plus.intro')}</p>
-<ul class="tiles" data-testid="plus">
-  {#each ITEMS as x (x.href)}
-    <li>
-      <a class="tile" href={resolve(x.href)} data-plus={x.href}>
-        <span class="tile-ic"><Icon name={x.icon} /></span>
-        <strong><Bidi text={t(x.titre)} /></strong>
-        <small><Bidi text={t(x.desc)} /></small>
-      </a>
-    </li>
+<div data-testid="plus">
+  {#each FAMILLES as f (f.id)}
+    <h2 class="famille-titre" data-famille={f.id}><Bidi text={t(f.titre)} /></h2>
+    <ul class="nav-liste">
+      {#each f.liens as x, i (x.href)}
+        <li class:juridique={x.juridique}>
+          <a href={resolve(x.href as '/')} data-plus={x.href}
+            ><span class="ic"><Icon name={x.icon} /></span><span class="nom"
+              ><Bidi text={t(x.titre)} /></span
+            ><span class="chev"><Icon name="chevron" size={20} /></span></a
+          >
+        </li>
+        <!-- F5 : « Signaler un problème » et « Donner mon avis » (fenêtre chargée à la demande, en ligne) -->
+        {#if f.avis && i === 0}<AvisBouton mode="probleme" ligne /><AvisBouton ligne />{/if}
+      {/each}
+    </ul>
   {/each}
-</ul>
+</div>
 
-<!-- F5 : « Donner mon avis » ; bêta-support : « Signaler un problème » (chargés à la demande, en ligne) -->
-<AvisBouton />
-<AvisBouton mode="probleme" />
+<style>
+  :global([data-public='enfant']) .juridique {
+    display: none;
+  }
+  h1 {
+    margin-bottom: 0;
+  }
+</style>

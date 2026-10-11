@@ -12,7 +12,8 @@
    * d'écran) n'est chargée qu'à l'ouverture, en ligne (jamais préchargée sur l'appareil de l'élève).
    * Bêta-support — `mode="probleme"` : « Signaler un problème » (même fenêtre, autres catégories, autre file).
    */
-  let { mode = 'avis' }: { mode?: 'avis' | 'probleme' } = $props();
+  // D2 : `ligne` — entrée d'une liste de navigation (« Plus » : icône + nom écrit)
+  let { mode = 'avis', ligne = false }: { mode?: 'avis' | 'probleme'; ligne?: boolean } = $props();
   let Dialog = $state<Component<{ onclose: () => void; mode?: 'avis' | 'probleme' }> | null>(null);
   let open = $state(false);
   let horsLigne = $state(false);
@@ -29,7 +30,17 @@
   }
 </script>
 
-{#if fn(mode === 'probleme' ? 'signaler' : 'avis')}
+{#if fn(mode === 'probleme' ? 'signaler' : 'avis') && ligne}
+  <li>
+    <button type="button" data-testid="{mode}-ouvrir" onclick={ouvrir}
+      ><span class="ic"><Icon name={mode === 'probleme' ? 'alerte' : 'message'} /></span><span
+        class="nom"><Bidi text={t(`${mode}.bouton`)} /></span
+      ></button
+    >
+    {#if horsLigne}<ConnexionNecessaire onretry={ouvrir} />{/if}
+    {#if Dialog && open}<Dialog {mode} onclose={() => (open = false)} />{/if}
+  </li>
+{:else if fn(mode === 'probleme' ? 'signaler' : 'avis')}
   <p>
     <button type="button" class="ghost" data-testid="{mode}-ouvrir" onclick={ouvrir}
       >{#if mode === 'probleme'}<Icon name="question" size={20} />

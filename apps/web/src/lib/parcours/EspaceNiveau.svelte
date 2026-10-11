@@ -155,7 +155,12 @@
 {:else}
   {@const c = e.courant}
   <!-- D1 : carte « Reprendre » (titre arabe calligraphié, bouton doré), avancement du niveau -->
-  <header class="reprendre" data-testid="mon-niveau" data-niveau={c.code} data-piste={e.piste}>
+  <header
+    class="carte-reprendre"
+    data-testid="mon-niveau"
+    data-niveau={c.code}
+    data-piste={e.piste}
+  >
     <div class="rp-tete">
       <span class="code"><Bidi text={levelLabel(c.code)} /></span>
       {#if origine(c.origine)}<span class="chip" data-testid="origine"
@@ -400,17 +405,7 @@
 {/if}
 
 <style>
-  /* D1 : carte « Reprendre » — filet doré, titre arabe calligraphié (Amiri), bouton doré */
-  .reprendre {
-    display: grid;
-    gap: 6px;
-    padding: var(--space-m);
-    border-radius: 16px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--gold);
-    box-shadow: var(--shadow-card);
-  }
+  /* D1 : carte « Reprendre » (.carte-reprendre, app.css) — titre arabe calligraphié (Amiri), bouton doré */
   .rp-tete {
     display: flex;
     flex-wrap: wrap;
@@ -430,25 +425,6 @@
     line-height: 1.7;
     text-align: right;
     color: var(--ink);
-  }
-  .reprendre a.dore {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    min-height: 56px;
-    border-radius: 12px;
-    border: 0;
-    background: var(--gold);
-    /* texte foncé sur l'or (6:1) : l'or n'est jamais une couleur de texte */
-    color: var(--sur-or);
-    font-weight: 700;
-    font-size: 1.05rem;
-    text-decoration: none;
-  }
-  .reprendre a.dore:hover {
-    filter: brightness(1.05);
   }
   .code {
     font-weight: 800;

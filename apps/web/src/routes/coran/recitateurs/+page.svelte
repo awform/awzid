@@ -96,6 +96,15 @@
     parentMsg = r.ok ? t('ca.parent_enregistre') : t(`erreur.${r.code ?? 'reseau'}`);
     if (r.ok) pin = '';
   }
+  /** D2 : « Mes récitateurs » (mon choix, sourates gardées sur l'appareil) puis « Ajouter un récitateur » */
+  const groupes = $derived.by(() => {
+    const miens = new Set([chosen, ...saved.map((s) => s.reciter)]);
+    const vus = list.filter(montre);
+    return [
+      { id: 'miens', titre: 'ca.recitateurs_titre', list: vus.filter((r) => miens.has(r.id)) },
+      { id: 'ajouter', titre: 'ca.ajouter_recitateur', list: vus.filter((r) => !miens.has(r.id)) },
+    ];
+  });
   const nameOf = (id: string) =>
     list.find((x) => x.id === id)?.nameFr ?? all.find((x) => x.id === id)?.nameFr ?? id;
 </script>
@@ -105,7 +114,7 @@
 <p class="retour">
   <a href={resolve('/coran/lecteur')} data-testid="retour-lecture">{t('cl.retour_lecture')}</a>
 </p>
-<h1>{t('ca.recitateurs_titre')}</h1>
+<h1>{t('ca.onglet_recitateurs')}</h1>
 
 {#if !loaded}
   <Loading lines={4} />
@@ -124,48 +133,56 @@
     />
   {/if}
 
-  <ul class="reciters">
-    {#each list.filter(montre) as r (r.id)}
-      <li
-        class="card rc"
-        class:chosen={chosen === r.id}
-        class:indispo={!ecoutable(r)}
-        data-reciter={r.id}
-        data-en-ligne={r.enLigne ? '1' : undefined}
-      >
-        <div class="head">
-          <div>
-            <h2><Bidi text={r.nameFr} /></h2>
-            <p class="ar" lang="ar" dir="rtl"><Bidi text={r.nameAr} base="ar" /></p>
-          </div>
-          {#if profile}
-            {#if chosen === r.id}<span class="pill" data-testid="choisi">{t('ca.mon_choix')}</span
-              >{:else}<button
-                type="button"
-                onclick={() => choose(r.id)}
-                disabled={!ecoutable(r)}
-                data-testid="choisir">{t('ca.choisir')}</button
-              >{/if}
-          {/if}
+  {#each groupes as g (g.id)}{#if g.list.length}
+      <h2 class="groupe" data-groupe={g.id}><Bidi text={t(g.titre)} /></h2>
+      <ul class="reciters">
+        {#each g.list as r (r.id)}{@render carte(r)}{/each}
+      </ul>
+    {/if}{/each}
+
+  {#snippet carte(r: Reciter)}
+    <li
+      class="card rc"
+      class:chosen={chosen === r.id}
+      class:indispo={!ecoutable(r)}
+      data-reciter={r.id}
+      data-en-ligne={r.enLigne ? '1' : undefined}
+    >
+      <div class="head">
+        <div>
+          <h3><Bidi text={r.nameFr} /></h3>
+          <p class="ar" lang="ar" dir="rtl"><Bidi text={r.nameAr} base="ar" /></p>
         </div>
-        <p class="badges">
-          {#if r.enLigne}<span class="pill net" data-testid="en-ligne" title={t('ca.en_ligne_aide')}
-              ><Icon name="reseau" size={16} /><Bidi text={t('ca.en_ligne')} /></span
+        {#if profile}
+          {#if chosen === r.id}<span class="pill" data-testid="choisi">{t('ca.mon_choix')}</span
+            >{:else}<button
+              type="button"
+              onclick={() => choose(r.id)}
+              disabled={!ecoutable(r)}
+              data-testid="choisir">{t('ca.choisir')}</button
             >{/if}
-          <RiwayaBadge riwaya={r.riwaya} label={r.riwayaFr} />
-          {#if r.id === conseil}<span class="pill" data-testid="conseil">{t('ca.conseil')}</span
-            >{/if}
-          {#if r.style}<span class="pill"><Bidi text={t(`ca.style_${r.style}`)} /></span>{/if}
-          {#if r.speed}<span class="pill"><Bidi text={t(`ca.vitesse_${r.speed}`)} /></span>{/if}
-          <span class="pill"><Bidi text={t('ca.versets', { n: r.verses })} /></span>
-        </p>
-        {#if r.enLigne}<p
-            class="small credit"
-            class:warn={!reseau.enLigne}
-            data-testid={reseau.enLigne ? 'en-ligne-aide' : 'dispo-internet'}
-          >
-            <Bidi text={reseau.enLigne ? t('ca.en_ligne_aide') : t('ca.dispo_internet')} />
-          </p>{/if}
+        {/if}
+      </div>
+      <p class="badges">
+        {#if r.enLigne}<span class="pill net" data-testid="en-ligne" title={t('ca.en_ligne_aide')}
+            ><Icon name="reseau" size={16} /><Bidi text={t('ca.en_ligne')} /></span
+          >{/if}
+        <RiwayaBadge riwaya={r.riwaya} label={r.riwayaFr} />
+        {#if r.id === conseil}<span class="pill" data-testid="conseil">{t('ca.conseil')}</span>{/if}
+        {#if r.style}<span class="pill"><Bidi text={t(`ca.style_${r.style}`)} /></span>{/if}
+        {#if r.speed}<span class="pill"><Bidi text={t(`ca.vitesse_${r.speed}`)} /></span>{/if}
+        <span class="pill"><Bidi text={t('ca.versets', { n: r.verses })} /></span>
+      </p>
+      {#if r.enLigne}<p
+          class="small credit"
+          class:warn={!reseau.enLigne}
+          data-testid={reseau.enLigne ? 'en-ligne-aide' : 'dispo-internet'}
+        >
+          <Bidi text={reseau.enLigne ? t('ca.en_ligne_aide') : t('ca.dispo_internet')} />
+        </p>{/if}
+      <!-- D2 : crédits, note d'usage et licence derrière ⓘ (nom écrit) -->
+      <details class="credits">
+        <summary><Icon name="info" size={18} />{t('ca.licence_titre')}</summary>
         <p class="muted small credit" data-testid="credit-recitateur"><Bidi text={r.credit} /></p>
         {#if r.creditAr}<p class="muted small credit" lang="ar" dir="rtl">
             <Bidi text={r.creditAr} base="ar" />
@@ -173,26 +190,23 @@
         {#if r.usageNote}<p class="muted small credit" data-testid="usage-note">
             <Bidi text={r.usageNote} />
           </p>{/if}
-        <details>
-          <summary>{t('ca.licence_titre')}</summary>
-          <p class="small"><Bidi text={r.license.text} /></p>
-          <p class="small muted">
-            <Bidi
-              text={t('ca.licence_archive', {
-                source: r.license.source,
-                date: fmtDate(r.license.archivedOn, { dateStyle: 'long' }),
-              })}
-            />
-            {#if r.license.url.startsWith('https://')}<a
-                href={r.license.url}
-                rel="noopener noreferrer external"
-                target="_blank">{t('ca.licence_lien')}</a
-              >{/if}
-          </p>
-        </details>
-      </li>
-    {/each}
-  </ul>
+        <p class="small"><Bidi text={r.license.text} /></p>
+        <p class="small muted">
+          <Bidi
+            text={t('ca.licence_archive', {
+              source: r.license.source,
+              date: fmtDate(r.license.archivedOn, { dateStyle: 'long' }),
+            })}
+          />
+          {#if r.license.url.startsWith('https://')}<a
+              href={r.license.url}
+              rel="noopener noreferrer external"
+              target="_blank"><Bidi text={t(r.enLigne ? 'ca.site_qf' : 'ca.site_complexe')} /></a
+            >{/if}
+        </p>
+      </details>
+    </li>
+  {/snippet}
 
   <section class="card" data-testid="sur-cet-appareil">
     <h2>{t('ca.appareil_titre')}</h2>
@@ -309,9 +323,25 @@
     align-items: flex-start;
     gap: var(--space-s);
   }
-  .head h2 {
+  .head h3 {
     margin: 0;
     font-size: 1.15rem;
+  }
+  .groupe {
+    margin: var(--space-l) 0 0;
+    font-size: 1.15rem;
+  }
+  .rc {
+    border-radius: 16px;
+  }
+  .rc.chosen {
+    border-top: 3px solid var(--gold);
+  }
+  .credits summary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary);
   }
   .head .ar {
     margin: 0;

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fn } from '$lib/fonctions.svelte';
   import Bidi from '$lib/Bidi.svelte';
+  import Brand from '$lib/ui/Brand.svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { setActiveProfile } from '$lib/attempts';
@@ -95,6 +96,10 @@
 
 <svelte:head><title>{t('app.nom')} — {t('inscription.titre')}</title></svelte:head>
 
+<!-- D2 : bloc marque sobre (comme la connexion), puis le formulaire en trois temps : qui, identifiants, accords -->
+<div class="accueil-marque" data-testid="inscription-marque">
+  <Brand slogan surPage size={48} />
+</div>
 <h1>{t('inscription.titre')}</h1>
 <form class="card form" onsubmit={submit}>
   <fieldset>
@@ -209,15 +214,43 @@
   </fieldset>
 
   {#if error}<p class="error" role="alert" data-testid="erreur"><Bidi text={error} /></p>{/if}
-  <button type="submit" class="primary" disabled={busy}>{t('inscription.bouton')}</button>
+  <button type="submit" class="primary go" disabled={busy}>{t('inscription.bouton')}</button>
 </form>
-<p>{t('inscription.deja')} <a href={resolve('/connexion')}>{t('connexion.titre')}</a></p>
+<p class="deja">
+  {t('inscription.deja')} <a href={resolve('/connexion')}>{t('connexion.titre')}</a>
+</p>
 
 <style>
+  .accueil-marque {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    margin: 12px 0 4px;
+  }
+  .accueil-marque::after {
+    content: '';
+    width: 72px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gold);
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.4rem;
+  }
   .form {
     display: grid;
     gap: 8px;
     max-width: 560px;
+    margin-inline: auto;
+    border-radius: 16px;
+  }
+  .go {
+    min-height: 56px;
+    font-size: 1.05rem;
+  }
+  .deja {
+    text-align: center;
   }
   .form input:not([type='checkbox']):not([type='radio']),
   .form select {

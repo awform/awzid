@@ -127,7 +127,7 @@ test.describe('compte parent', () => {
     await shot('19-qui-apprend');
     await page.getByTestId('ajouter-enfant').click();
     await shot('20-ajout-enfant-consentement', true);
-    await page.goto('/compte');
+    await page.goto('/compte?r=donnees');
     await page.getByTestId('consentements').locator('li').first().waitFor();
     await shot('21-mon-compte', true);
     await page.goto('/connexion');
@@ -135,10 +135,10 @@ test.describe('compte parent', () => {
     await page.goto('/inscription');
     await page.locator('#country').selectOption('SN');
     await shot('23-inscription-senegal', true);
-    await page.goto('/compte');
+    await page.goto('/compte?r=profil');
     await page.getByTestId('langues-preparation').check();
     await page.locator('button[data-locale="en"]').click();
-    await expect(page.locator('main h1')).toHaveText('My account');
+    await expect(page.locator('main h1')).toHaveText('My profile');
     await page.goto('/');
     await expect(page.locator('main h1')).toHaveText('My Arabic books');
     await shot('24-interface-en-anglais');
@@ -294,7 +294,7 @@ test.describe('lot 9', () => {
     const code = /([A-HJ-NP-Z2-9]{8})/.exec(
       (await tp.getByTestId('ens-message').textContent()) ?? '',
     )![1]!;
-    await page.goto('/compte');
+    await page.goto('/compte?r=apprentissage');
     const block = page.getByTestId('hifz-compte').locator('.hp').first();
     await block.getByTestId('code-classe').fill(code);
     await block.getByTestId('consent-partage').check();
@@ -477,7 +477,7 @@ test.describe('lot 15', () => {
     await page.locator('[data-option="كُتُبٌ"]').click();
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({ path: join(DIR, `${dev}-52-racines.png`) });
-    await page.goto('/compte');
+    await page.goto('/compte?r=profil');
     await page.getByTestId('langues-preparation').check();
     await Promise.all([page.waitForEvent('load'), page.locator('[data-locale="en"]').click()]);
     await page.goto('/aujourdhui');
@@ -496,7 +496,7 @@ test.describe('lot 16', () => {
     test.setTimeout(120_000);
     const dev = info.project.name.startsWith('mobile') ? 'mobile' : 'bureau';
     mkdirSync(DIR, { recursive: true });
-    await page.goto('/compte');
+    await page.goto('/compte?r=notifications');
     await page.getByTestId('notifications').scrollIntoViewIfNeeded();
     await page.evaluate(() => document.fonts.ready);
     await page

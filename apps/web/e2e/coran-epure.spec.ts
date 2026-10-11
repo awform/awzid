@@ -433,7 +433,8 @@ test('accueil épuré : reprendre, liens discrets, explications derrière l’ic
   // dernière lecture gardée une fois le lecteur prêt (récitateurs chargés)
   await expect(page.locator('[data-testid="ouvrir-ecoute"]:disabled')).toHaveCount(0);
   await page.goto('/coran');
-  await expect(page.getByTestId('reprendre')).toContainText('Al-Ikhlāṣ');
+  // D2 : carte « Reprendre la lecture » (nom de la sourate), bouton doré « Continuer la lecture »
+  await expect(page.getByTestId('reprendre-carte')).toContainText('Al-Ikhlāṣ');
   await expect(page.getByTestId('reprendre')).toHaveAttribute('href', '/coran/lecteur?s=112&a=3');
   await expect(page.getByTestId('ouvrir-recitateurs')).toBeVisible();
   await expect(page.getByTestId('ouvrir-hifz')).toBeVisible();

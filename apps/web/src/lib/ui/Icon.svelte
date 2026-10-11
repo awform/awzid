@@ -73,11 +73,13 @@
     taille: 'M3 19 8 5l5 14M4.8 14h6.4M14 19l3.5-9 3.5 9M15.2 16h4.6',
     // A37 « Vivre l'islam » : cercles et lieux du bon comportement (objets et formes, aucun visage)
     'v-soi': 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z',
+    // D2 : objets seulement (jamais de silhouette) — chaîne de trois anneaux, cerf-volant, maison au cœur
     'v-fratrie':
-      'M7 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM17 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM3 19c0-3 1.8-5 4-5s4 2 4 5M13 19c0-3 1.8-5 4-5s4 2 4 5',
+      'M2 12a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0ZM8.5 12a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0ZM15 12a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0',
     'v-epoux': 'M4 14a5 5 0 1 0 10 0 5 5 0 0 0-10 0ZM10 14a5 5 0 1 0 10 0 5 5 0 0 0-10 0',
-    'v-enfants':
-      'M9 7a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM5 17c0-3 1.8-5 4-5s4 2 4 5M17 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM14 21c0-2 1.3-3.5 3-3.5s3 1.5 3 3.5',
+    'v-enfants': 'M12 2l6 7-6 8-6-8zM6 9h12M12 2v15M12 17c-1 2 1 3 0 5',
+    'v-parents':
+      'M3 11l9-7 9 7M5 9.5V20h14V9.5M12 17s-3-1.8-3-3.6a1.6 1.6 0 0 1 3-.8 1.6 1.6 0 0 1 3 .8c0 1.8-3 3.6-3 3.6Z',
     'v-famille':
       'M12 21v-8M12 13 6 8M12 13l6-5M4 6a2 2 0 1 0 4 0 2 2 0 0 0-4 0M16 6a2 2 0 1 0 4 0 2 2 0 0 0-4 0M10 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0',
     'v-voisins': 'M2 12l5-4 5 4v8H2zM12 12l5-4 5 4v8H12z',
@@ -100,7 +102,6 @@
   /** A37 : icône d'un cercle ou d'un lieu (celles qui existent déjà sont reprises). */
   const V_SAME: Record<string, string> = {
     allah_prophete: 'mushaf',
-    parents: 'famille',
     ecole: 'ecole',
     maison: 'maison',
     toilettes: 'tajwid',

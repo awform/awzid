@@ -268,7 +268,8 @@ test('enfant : « Vivre l’islam » dans sa barre, grandes tuiles, fiche courte
   await expect(page.locator('html')).toHaveAttribute('data-public', 'enfant');
   const tiles = page.getByTestId('vi-tuiles');
   await expect(tiles.locator('[data-groupe]').first()).toBeVisible();
-  const box = await tiles.locator('.tile-ic').first().boundingBox();
+  // D2 : médaillon de la carte de thème (objet), grand pour l'enfant
+  const box = await tiles.locator('.t-ic').first().boundingBox();
   expect(box!.height).toBeGreaterThanOrEqual(60);
   await expect(tiles.locator('small')).toHaveCount(0);
   for (const g of ['epoux', 'enfants', 'travail'])
@@ -338,15 +339,15 @@ test('barre du bas : aucun libellé tronqué (5 langues, 375 et 320 px ; enfant 
   page,
 }) => {
   await adultAt(page, 'a37-barre');
-  await page.goto('/compte');
+  await page.goto('/compte?r=profil');
   await page.getByTestId('langues-preparation').check();
   for (const code of ['fr', 'en', 'es', 'de', 'ar']) {
-    await page.goto('/compte');
+    await page.goto('/compte?r=profil');
     await Promise.all([page.waitForEvent('load'), page.locator(`[data-locale="${code}"]`).click()]);
     await expect(page.locator('html')).toHaveAttribute('lang', code);
     await tabsReadable(page, `adulte ${code}`);
   }
-  await page.goto('/compte');
+  await page.goto('/compte?r=profil');
   await Promise.all([page.waitForEvent('load'), page.locator('[data-locale="fr"]').click()]);
   await page.context().clearCookies();
   const id = await parentWith(page.request, 'Inès', 8, 'en1');

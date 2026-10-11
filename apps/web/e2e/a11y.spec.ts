@@ -142,7 +142,7 @@ test.describe('suite V1 (lot 24)', () => {
     await audit(page, '/sourates');
     await audit(page, '/activation');
     // interface en arabe (droite à gauche) : mêmes exigences
-    await page.goto('/compte');
+    await page.goto('/compte?r=profil');
     await page.getByTestId('langues-preparation').check();
     await Promise.all([page.waitForEvent('load'), page.locator('[data-locale="ar"]').click()]);
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');

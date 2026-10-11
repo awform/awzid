@@ -323,7 +323,7 @@ test('2. puce : « sourate · verset · page · juzʾ » en entier et lisible (t
 });
 /** Langue de l'interface (langues en préparation montrées, comme le lot 15). */
 async function setLocale(page: Page, code: string) {
-  await page.goto('/compte');
+  await page.goto('/compte?r=profil');
   const b = page.locator(`[data-locale="${code}"]`);
   if (!(await b.isVisible())) await page.getByTestId('langues-preparation').check();
   if ((await b.getAttribute('aria-pressed')) === 'true' || (await b.getAttribute('aria-current')))

@@ -86,20 +86,67 @@
     />
   {/if}
   {#if error}<p class="error" role="alert"><Bidi text={error} /></p>{/if}
-  <button type="submit" class="primary" disabled={busy}>{t('connexion.bouton')}</button>
+  <button type="submit" class="primary go" disabled={busy}>{t('connexion.bouton')}</button>
 </form>
-<p>{t('connexion.pas_de_compte')} <a href={resolve('/inscription')}>{t('inscription.titre')}</a></p>
-<p><a href={resolve('/garanties')} data-testid="lien-garanties">{t('gar.titre')}</a></p>
-<p><a href={resolve('/acces/[[mode]]', {})} data-testid="lien-oubli">{t('connexion.oubli')}</a></p>
+<p class="oubli">
+  <a href={resolve('/acces/[[mode]]', {})} data-testid="lien-oubli">{t('connexion.oubli')}</a>
+</p>
+<div class="autre">
+  <p>{t('connexion.pas_de_compte')}</p>
+  <a class="button" href={resolve('/inscription')}>{t('inscription.titre')}</a>
+</div>
+<p class="gar"><a href={resolve('/garanties')} data-testid="lien-garanties">{t('gar.titre')}</a></p>
 
 <style>
+  /* D2 : bloc marque sobre (symbole, nom, slogan), filet doré ; formulaire centré, une action principale */
   .accueil-marque {
-    margin: 8px 0 16px;
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    margin: 16px 0 8px;
+  }
+  .accueil-marque::after {
+    content: '';
+    width: 72px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gold);
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.4rem;
+  }
+  .form,
+  .oubli,
+  .autre,
+  .gar {
+    max-width: 460px;
+    margin-inline: auto;
   }
   .form {
     display: grid;
     gap: 8px;
-    max-width: 460px;
+    border-radius: 16px;
+  }
+  .go {
+    min-height: 56px;
+    margin-top: 8px;
+    font-size: 1.05rem;
+  }
+  .oubli,
+  .gar {
+    text-align: center;
+  }
+  .autre {
+    display: grid;
+    gap: 6px;
+    justify-items: center;
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .autre p {
+    margin: 0;
+    color: var(--ink2);
   }
   .form input {
     font: inherit;

@@ -97,7 +97,7 @@ test('adulte en mode serein : niveau suivant après les leçons, sans épreuve ;
   page,
 }) => {
   const pid = await signupSerein(page);
-  await page.goto('/compte');
+  await page.goto('/compte?r=profil');
   await expect(page.getByTestId('mode-profil')).toHaveAttribute('data-mode', 'serein');
   const c = await page.request.post(`/api/v1/profiles/${pid}/commencer/arabe`, {
     headers: H,
