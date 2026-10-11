@@ -2860,5 +2860,17 @@
   "fin.revoir": "Repasar la lección",
   "suivi.mon_arbre": "Mi árbol",
   "compte.eleve_actif": "Alumno activo: {nom}",
-  "plus.d_classe": "Mi clase, sus deberes y mensajes"
+  "plus.d_classe": "Mi clase, sus deberes y mensajes",
+  "cl.afficher_commandes": "Mostrar los controles",
+  "cl.zoom": "Zoom de la página",
+  "cl.zoom_valeur": "{n} %",
+  "cl.epure": "Ocultar los controles durante la lectura",
+  "cl.mode_lire": "Leer",
+  "cl.mode_ecouter": "Escuchar",
+  "cl.mode_memoriser": "Memorizar",
+  "cl.avance": "Avanzado",
+  "cl.pastille": "Versículo {n}",
+  "cl.pastille_basmala": "Basmala",
+  "cl.pastille_ouvrir": "abrir el reproductor",
+  "cl.sources": "Fuentes"
 }

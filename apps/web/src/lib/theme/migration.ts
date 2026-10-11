@@ -77,6 +77,23 @@ function lire(store: Magasin | null, cle: string): string | null {
 }
 
 /**
+ * Appareil neuf : à appeler dès le premier affichage (avant que le lecteur ou un réglage n'écrive quoi que ce soit),
+ * pour poser le drapeau tout de suite. Sans cela, un lecteur ouvert directement sur un appareil neuf écrivait ses
+ * traces d'usage avant que le public de l'écran soit connu : la migration le prenait pour un ancien appareil
+ * « manuscrit » et imposait le mode clair (le mode sombre du téléphone ne s'appliquait plus).
+ */
+export function marquerAppareilNeuf(store: Magasin | null): void {
+  try {
+    if (!store || lire(store, CLE_MIGRATION)) return;
+    const ancienne = CLES_ANCIENNES.some((k) => ancienTheme(lire(store, k)) !== null);
+    if (!ancienne && !CLES_USAGE.some((k) => lire(store, k) !== null))
+      store.setItem(CLE_MIGRATION, '1');
+  } catch {
+    /* stockage indisponible : rien à faire */
+  }
+}
+
+/**
  * Applique la migration une seule fois. `ancienParDefaut` : thème que le public de l'écran avait avant la
  * suppression (adulte → manuscrit…), utilisé quand aucune ancienne clé n'existe. Renvoie `true` si elle vient
  * d'être appliquée.

@@ -2860,5 +2860,17 @@
   "fin.revoir": "Review the lesson",
   "suivi.mon_arbre": "My tree",
   "compte.eleve_actif": "Active learner: {nom}",
-  "plus.d_classe": "My class, its homework and messages"
+  "plus.d_classe": "My class, its homework and messages",
+  "cl.afficher_commandes": "Show controls",
+  "cl.zoom": "Page zoom",
+  "cl.zoom_valeur": "{n}%",
+  "cl.epure": "Hide controls while reading",
+  "cl.mode_lire": "Read",
+  "cl.mode_ecouter": "Listen",
+  "cl.mode_memoriser": "Memorize",
+  "cl.avance": "Advanced",
+  "cl.pastille": "Verse {n}",
+  "cl.pastille_basmala": "Basmala",
+  "cl.pastille_ouvrir": "open the audio player",
+  "cl.sources": "Sources"
 }

@@ -265,5 +265,17 @@
   "ca.en_ligne_aide": "Écoute en ligne seulement (Quran Foundation) : rien n'est gardé sur l'appareil.",
   "ca.dispo_internet": "Disponible avec Internet",
   "ca.en_ligne_option": "{nom} — en ligne",
-  "ca.en_ligne_option_hors": "{nom} — disponible avec Internet"
+  "ca.en_ligne_option_hors": "{nom} — disponible avec Internet",
+  "cl.afficher_commandes": "Afficher les commandes",
+  "cl.zoom": "Zoom de la page",
+  "cl.zoom_valeur": "{n} %",
+  "cl.epure": "Cacher les commandes pendant la lecture",
+  "cl.mode_lire": "Lire",
+  "cl.mode_ecouter": "Écouter",
+  "cl.mode_memoriser": "Mémoriser",
+  "cl.avance": "Avancé",
+  "cl.pastille": "Verset {n}",
+  "cl.pastille_basmala": "Basmala",
+  "cl.pastille_ouvrir": "ouvrir le lecteur audio",
+  "cl.sources": "Sources"
 }

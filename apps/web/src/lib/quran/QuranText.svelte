@@ -191,9 +191,6 @@
   .basmala[role='button'] {
     cursor: pointer;
   }
-  .basmala[role='button']:hover {
-    background: color-mix(in srgb, var(--mp-mark) 50%, transparent);
-  }
   .basmala:focus-visible {
     outline: 2px solid var(--mp-green);
     outline-offset: 2px;
@@ -230,9 +227,6 @@
   }
   .aya[role='button'] {
     cursor: pointer;
-  }
-  .aya[role='button']:hover {
-    background: color-mix(in srgb, var(--mp-mark) 50%, transparent);
   }
   .aya:focus-visible {
     outline: 2px solid var(--mp-green);

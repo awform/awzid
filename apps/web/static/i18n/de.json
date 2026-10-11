@@ -2860,5 +2860,17 @@
   "fin.revoir": "Lektion wiederholen",
   "suivi.mon_arbre": "Mein Baum",
   "compte.eleve_actif": "Aktiver Lernender: {nom}",
-  "plus.d_classe": "Meine Klasse, Hausaufgaben und Nachrichten"
+  "plus.d_classe": "Meine Klasse, Hausaufgaben und Nachrichten",
+  "cl.afficher_commandes": "Steuerelemente anzeigen",
+  "cl.zoom": "Seitenzoom",
+  "cl.zoom_valeur": "{n} %",
+  "cl.epure": "Steuerelemente beim Lesen ausblenden",
+  "cl.mode_lire": "Lesen",
+  "cl.mode_ecouter": "Anhören",
+  "cl.mode_memoriser": "Auswendig lernen",
+  "cl.avance": "Erweitert",
+  "cl.pastille": "Vers {n}",
+  "cl.pastille_basmala": "Basmala",
+  "cl.pastille_ouvrir": "Audioplayer öffnen",
+  "cl.sources": "Quellen"
 }

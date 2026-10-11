@@ -2860,5 +2860,17 @@
   "fin.revoir": "مراجعة الدرس",
   "suivi.mon_arbre": "شجرتي",
   "compte.eleve_actif": "المتعلّم الحالي: {nom}",
-  "plus.d_classe": "فصلي وواجباته ورسائله"
+  "plus.d_classe": "فصلي وواجباته ورسائله",
+  "cl.afficher_commandes": "إظهار الأزرار",
+  "cl.zoom": "تكبير الصفحة",
+  "cl.zoom_valeur": "{n}٪",
+  "cl.epure": "إخفاء الأزرار أثناء القراءة",
+  "cl.mode_lire": "القراءة",
+  "cl.mode_ecouter": "الاستماع",
+  "cl.mode_memoriser": "الحفظ",
+  "cl.avance": "إعدادات متقدمة",
+  "cl.pastille": "الآية {n}",
+  "cl.pastille_basmala": "البسملة",
+  "cl.pastille_ouvrir": "فتح مشغل الصوت",
+  "cl.sources": "المصادر"
 }

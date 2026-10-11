@@ -105,6 +105,15 @@
   } from '$lib/quran/translation';
   import Icon from '$lib/ui/Icon.svelte';
   import BoutonEcoute from '$lib/ecoute/BoutonEcoute.svelte';
+  import {
+    clampVue,
+    isDoubleTap,
+    tapZone,
+    toggleZoom,
+    zoomAt,
+    ZOOM_MIN,
+    type Vue,
+  } from '$lib/quran/zoom';
 
   /**
    * CORAN ÉPURÉ (06/10/2026) — UN SEUL écran de lecture : le texte occupe l'écran (page du Muṣḥaf ou sourate
@@ -389,7 +398,11 @@
   });
 
   onMount(() => {
-    const mq = window.matchMedia('(min-width: 900px)');
+    // grand écran : large ET (assez haut, ou vraie souris) — un téléphone couché (tactile, peu haut) garde une
+    // seule page sur toute la largeur, même au-delà de 900 px
+    const mq = window.matchMedia(
+      '(min-width: 900px) and (min-height: 561px), (min-width: 900px) and (hover: hover) and (pointer: fine)',
+    );
     narrow = !mq.matches;
     const on = () => (narrow = !mq.matches);
     mq.addEventListener('change', on);
@@ -800,6 +813,24 @@
       longFired = false;
       return;
     }
+    // GESTE (11/10/2026) : sur la page, au doigt, le menu du verset s'ouvre après ≈ 0,3 s — le temps de savoir
+    // si c'est un DOUBLE-toucher (zoom) ; à la souris et au clavier, tout de suite (comme avant)
+    if (vue === 'page' && touchNow()) {
+      if (pickTimer) clearTimeout(pickTimer);
+      pickTimer = null;
+      if (doubleNow()) {
+        zoomToggleAt(downs[1]!.x, downs[1]!.y);
+        return;
+      }
+      pickTimer = setTimeout(() => {
+        pickTimer = null;
+        openPick(s, a, el);
+      }, 320);
+      return;
+    }
+    openPick(s, a, el);
+  }
+  function openPick(s: number, a: number, el: HTMLElement) {
     cur = { s, a };
     follow();
     menuAnchor = el;
@@ -847,36 +878,428 @@
     return searchVerses(all, q);
   }
 
-  // balayage (téléphone) : une page à la fois
+  /**
+   * GESTES SUR LA PAGE (décision du client, 11/10/2026) — page entière (1×) : glisser à l'horizontale tourne la
+   * page ; pincer zoome (1× à 3×) ; double-toucher bascule page entière ↔ zoom confortable (≈ 1,8×). Zoomée :
+   * glisser DÉPLACE la page (jamais de changement de page involontaire). Le zoom est une simple mise à l'échelle
+   * (transformation CSS) : le rendu du texte coranique n'est pas modifié. Zoom gardé (réglage de l'appareil) et
+   * conservé en tournant la page.
+   * TOUCHER SIMPLE : sur un VERSET → son menu (au doigt, après ≈ 0,3 s pour reconnaître un double-toucher) ;
+   * ailleurs sur la page → bords latéraux (≈ 18 %) : page suivante (gauche) ou précédente (droite), milieu :
+   * montrer / cacher les commandes. Appui long sur un verset : écoute immédiate (inchangé).
+   */
   let bookEl = $state<HTMLElement | undefined>();
+  let vz = $state<Vue>({ z: 1, x: 0, y: 0 });
+  const zoomed = $derived(vue === 'page' && vz.z > ZOOM_MIN + 0.01);
+  /** derniers appuis (doigt ou souris) : reconnaît le double-toucher */
+  let downs: Array<{ t: number; x: number; y: number; touch: boolean }> = [];
+  let pickTimer: ReturnType<typeof setTimeout> | null = null;
+  let tapTimer: ReturnType<typeof setTimeout> | null = null;
+  const touchNow = () => !!downs[1]?.touch;
+  const doubleNow = () =>
+    !!downs[0]?.touch && !!downs[1]?.touch && isDoubleTap(downs[0], downs[1]!);
+  function frame() {
+    return { w: bookEl?.clientWidth || 1, h: bookEl?.clientHeight || 1 };
+  }
+  /** Zoom et position ; `keep` : gardé dans les réglages (fin du geste). */
+  function setVue(v: Vue, keep = true) {
+    const f = frame();
+    vz = clampVue(v, f.w, f.h);
+    if (keep) prefs.zoom = vz.z;
+  }
+  /** Position de départ d'une page zoomée : en haut, à DROITE (début de la ligne arabe). */
+  function vueStart(z: number): Vue {
+    const f = frame();
+    return clampVue({ z, x: f.w - f.w * z, y: 0 }, f.w, f.h);
+  }
+  function zoomToggleAt(cx: number, cy: number) {
+    const r = bookEl?.getBoundingClientRect();
+    if (!r || vue !== 'page') return;
+    const f = frame();
+    setVue(toggleZoom(vz, cx - r.left, cy - r.top, f.w, f.h));
+  }
+  function zoomBy(step: number) {
+    const f = frame();
+    setVue(zoomAt(vz, vz.z + step, f.w / 2, f.h / 2, f.w, f.h));
+  }
+  // zoom changé dans les réglages (curseur) : appliqué au centre de la page
+  $effect(() => {
+    const z = prefs.zoom;
+    untrack(() => {
+      if (Math.abs(z - vz.z) < 0.01) return;
+      const f = frame();
+      vz = z <= ZOOM_MIN ? { z: 1, x: 0, y: 0 } : zoomAt(vz, z, f.w / 2, f.h / 2, f.w, f.h);
+    });
+  });
+  // nouvelle page : même zoom, en haut à droite ; page entière si la vue est en versets
+  $effect(() => {
+    void [p, vue, bookEl];
+    untrack(() => {
+      vz = vue === 'page' && bookEl ? vueStart(prefs.zoom) : { z: 1, x: 0, y: 0 };
+    });
+  });
+
+  let g: {
+    kind: 'un' | 'pince' | 'deplace' | 'souris';
+    x0: number;
+    y0: number;
+    v0: Vue;
+    d0: number;
+    cx: number;
+    cy: number;
+  } | null = null;
   $effect(() => {
     const el = bookEl;
     if (!el) return;
     el.addEventListener('touchstart', tstart, { passive: true });
+    el.addEventListener('touchmove', tmove, { passive: false });
     el.addEventListener('touchend', tend, { passive: true });
+    el.addEventListener('touchcancel', tend, { passive: true });
+    el.addEventListener('wheel', wheel, { passive: false });
     return () => {
       el.removeEventListener('touchstart', tstart);
+      el.removeEventListener('touchmove', tmove);
       el.removeEventListener('touchend', tend);
+      el.removeEventListener('touchcancel', tend);
+      el.removeEventListener('wheel', wheel);
     };
   });
-  let touch: { x: number; y: number } | null = null;
+  const mid = (a: Touch, b: Touch) => ({
+    x: (a.clientX + b.clientX) / 2,
+    y: (a.clientY + b.clientY) / 2,
+    d: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) || 1,
+  });
   function tstart(e: TouchEvent) {
-    const p0 = e.touches[0];
-    touch = p0 ? { x: p0.clientX, y: p0.clientY } : null;
+    const r = bookEl?.getBoundingClientRect();
+    if (!r) return;
+    if (e.touches.length >= 2 && vue === 'page') {
+      longCancel();
+      if (pickTimer) clearTimeout(pickTimer);
+      pickTimer = null;
+      const m = mid(e.touches[0]!, e.touches[1]!);
+      g = {
+        kind: 'pince',
+        x0: m.x,
+        y0: m.y,
+        v0: { ...vz },
+        d0: m.d,
+        cx: m.x - r.left,
+        cy: m.y - r.top,
+      };
+      return;
+    }
+    if (g?.kind === 'pince') return;
+    const t0 = e.touches[0];
+    if (!t0) return;
+    g = {
+      kind: zoomed ? 'deplace' : 'un',
+      x0: t0.clientX,
+      y0: t0.clientY,
+      v0: { ...vz },
+      d0: 1,
+      cx: 0,
+      cy: 0,
+    };
+  }
+  function tmove(e: TouchEvent) {
+    if (!g) return;
+    if (g.kind === 'pince' && e.touches.length >= 2) {
+      e.preventDefault();
+      const r = bookEl!.getBoundingClientRect();
+      const m = mid(e.touches[0]!, e.touches[1]!);
+      const f = frame();
+      const v = zoomAt(g.v0, (g.v0.z * m.d) / g.d0, g.cx, g.cy, f.w, f.h);
+      setVue({ ...v, x: v.x + (m.x - r.left - g.cx), y: v.y + (m.y - r.top - g.cy) }, false);
+    } else if (g.kind === 'deplace' && e.touches.length === 1) {
+      e.preventDefault();
+      const t1 = e.touches[0]!;
+      if (Math.hypot(t1.clientX - g.x0, t1.clientY - g.y0) > 10) longCancel();
+      setVue({ z: g.v0.z, x: g.v0.x + t1.clientX - g.x0, y: g.v0.y + t1.clientY - g.y0 }, false);
+    }
   }
   function tend(e: TouchEvent) {
+    if (!g) return;
+    if (g.kind === 'pince') {
+      // pincement fini quand tous les doigts sont levés (jamais un « glisser » au lever du premier doigt)
+      if (e.touches.length) return;
+      g = null;
+      setVue(vz.z <= ZOOM_MIN + 0.05 ? { z: 1, x: 0, y: 0 } : vz);
+      return;
+    }
+    const kind = g.kind;
     const p1 = e.changedTouches[0];
-    if (!touch || !p1) return;
-    const st = swipeStep(p1.clientX - touch.x, p1.clientY - touch.y);
-    touch = null;
+    const x0 = g.x0;
+    const y0 = g.y0;
+    g = null;
+    if (kind === 'deplace') {
+      prefs.zoom = vz.z;
+      return;
+    }
+    if (!p1 || zoomed) return;
+    const st = swipeStep(p1.clientX - x0, p1.clientY - y0);
     if (st) turn(st);
   }
+  /** Ctrl + molette (ou pincement du pavé tactile) : zoom autour du pointeur. */
+  function wheel(e: WheelEvent) {
+    if (!e.ctrlKey || vue !== 'page') return;
+    e.preventDefault();
+    const r = bookEl!.getBoundingClientRect();
+    const f = frame();
+    setVue(
+      zoomAt(
+        vz,
+        vz.z * (e.deltaY < 0 ? 1.1 : 1 / 1.1),
+        e.clientX - r.left,
+        e.clientY - r.top,
+        f.w,
+        f.h,
+      ),
+    );
+  }
+  /** Souris : glisser la page zoomée pour la déplacer. */
+  function mouseDown(e: PointerEvent) {
+    if (e.pointerType !== 'mouse' || e.button !== 0 || !zoomed) return;
+    g = { kind: 'souris', x0: e.clientX, y0: e.clientY, v0: { ...vz }, d0: 1, cx: 0, cy: 0 };
+  }
+  function mouseMove(e: PointerEvent) {
+    if (g?.kind !== 'souris' || !(e.buttons & 1)) return;
+    setVue({ z: g.v0.z, x: g.v0.x + e.clientX - g.x0, y: g.v0.y + e.clientY - g.y0 }, false);
+  }
+  function mouseUp() {
+    if (g?.kind !== 'souris') return;
+    g = null;
+    prefs.zoom = vz.z;
+  }
+  /** Toucher (ou clic) hors d'un verset et hors des commandes : bords = tourner, milieu = commandes. */
+  function onTap(e: MouseEvent) {
+    const el = e.target as Element | null;
+    if (
+      !el ||
+      el.closest(
+        'button, a, input, select, textarea, label, summary, details, dialog, [data-aya], [data-bsm], [data-exact-verse], .cbar, .prop-zone, .pastille, .avis',
+      )
+    )
+      return;
+    if (tapTimer) clearTimeout(tapTimer);
+    tapTimer = null;
+    const inBook = vue === 'page' && !!bookEl?.contains(el);
+    if (inBook && doubleNow()) {
+      zoomToggleAt(e.clientX, e.clientY);
+      return;
+    }
+    const x = e.clientX;
+    const act = () => {
+      tapTimer = null;
+      if (inBook && bookEl) {
+        const r = bookEl.getBoundingClientRect();
+        const zone = tapZone(x - r.left, r.width, zoomed);
+        if (zone === 'suivante') return turn(1);
+        if (zone === 'precedente') return turn(-1);
+      }
+      toggleChrome();
+    };
+    // au doigt, sur la page : on attend ≈ 0,3 s qu'un second toucher fasse un double-toucher (zoom)
+    if (inBook && touchNow()) tapTimer = setTimeout(act, 320);
+    else act();
+  }
+  function onDbl(e: MouseEvent) {
+    // souris : double-clic = zoom (au doigt, le double-toucher est reconnu par `onTap` et `pick`)
+    if (touchNow() || vue !== 'page') return;
+    zoomToggleAt(e.clientX, e.clientY);
+  }
+  onDestroy(() => {
+    if (pickTimer) clearTimeout(pickTimer);
+    if (tapTimer) clearTimeout(tapTimer);
+  });
+
+  /**
+   * LECTURE ÉPURÉE (décision du client, 11/10/2026 ; PAR DÉFAUT pour tous, adultes et enfants) — l'en-tête, la
+   * barre du lecteur (puce, Traduction, Réglages, audio), les flèches et la barre d'onglets du bas s'effacent
+   * après 3 s sans geste ; un toucher au milieu de la page les montre (et les recache). Ils restent dans l'ordre
+   * du clavier et lus par les lecteurs d'écran : un focus sur l'un d'eux (ou le bouton « Afficher les
+   * commandes ») les montre. Au doigt, cachés, ils ne captent plus les touchers (le texte dessous reste
+   * touchable). Pendant l'écoute, une pastille discrète (pause/lecture + verset) remplace la barre audio.
+   */
+  let chrome = $state(true);
+  let chromeTimer: ReturnType<typeof setTimeout> | null = null;
+  /** « Lire » : à la fermeture du panneau, les commandes s'effacent tout de suite */
+  let quiet = false;
+  const sheetOpen = $derived(selOpen || regOpen || tradSheet || infoOpen || !!menuAt);
+  const hidden = $derived.by(() => prefs.epure && ready && !chrome && !sheetOpen && !guiding);
+  const CHROME = '.cbar, header.top, nav.tabs, .turn, .montrer';
+  function chromeHeld(): boolean {
+    const a = document.activeElement;
+    // survol : seulement avec une vraie souris (au doigt, :hover reste collé après un toucher)
+    // focus du CLAVIER seulement (après un toucher ou un clic, le bouton garde le focus sans le montrer)
+    return (
+      (!!a?.closest?.(CHROME) && a.matches(':focus-visible')) ||
+      (window.matchMedia('(hover: hover)').matches &&
+        !!document.querySelector('.cbar:hover, header.top:hover, nav.tabs:hover, .turn:hover'))
+    );
+  }
+  function armChrome() {
+    if (chromeTimer) clearTimeout(chromeTimer);
+    chromeTimer = null;
+    if (!prefs.epure) return;
+    chromeTimer = setTimeout(() => {
+      chromeTimer = null;
+      if (chromeHeld() || sheetOpen) armChrome();
+      else chrome = false;
+    }, 3000);
+  }
+  function showChrome() {
+    chrome = true;
+    armChrome();
+  }
+  function toggleChrome() {
+    if (hidden) showChrome();
+    else if (prefs.epure) {
+      if (chromeTimer) clearTimeout(chromeTimer);
+      chromeTimer = null;
+      chrome = false;
+    }
+  }
+  // prêt, feuille refermée, réglage changé : les commandes restent 3 s puis s'effacent
+  $effect(() => {
+    void [ready, sheetOpen, prefs.epure];
+    untrack(() => {
+      if (!prefs.epure) {
+        chrome = true;
+        if (chromeTimer) clearTimeout(chromeTimer);
+        chromeTimer = null;
+      } else if (ready && !sheetOpen) {
+        if (quiet) chrome = false;
+        else showChrome();
+      }
+      quiet = false;
+    });
+  });
+  $effect(() => {
+    const h = document.documentElement;
+    if (hidden) h.dataset.epure = '';
+    else delete h.dataset.epure;
+  });
+  // première fois que les commandes s'effacent (vue page, en haut de l'écran) : la page vient en haut
+  let scrolled = false;
+  $effect(() => {
+    if (!hidden || scrolled || vue !== 'page') return;
+    scrolled = true;
+    untrack(() => {
+      if (window.scrollY > 8 || !bookEl) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const top = bookEl.getBoundingClientRect().top + window.scrollY - 8;
+      window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
+    });
+  });
+  onMount(() => {
+    const h = document.documentElement;
+    h.dataset.lecteur = '';
+    const down = (e: PointerEvent) => {
+      const touch = e.pointerType === 'touch' || e.pointerType === 'pen';
+      if (touch) h.dataset.lecteurTactile = '';
+      downs = [
+        downs[1] ?? { t: -1e9, x: 0, y: 0, touch: false },
+        {
+          t: e.timeStamp,
+          x: e.clientX,
+          y: e.clientY,
+          touch,
+        },
+      ];
+      if ((e.target as Element | null)?.closest?.(CHROME)) showChrome();
+    };
+    const move = (e: PointerEvent) => {
+      // souris : la bouger montre les commandes (comme un lecteur vidéo)
+      // (sauf sur la pastille d'écoute : elle reste sous le pointeur jusqu'au clic)
+      if (
+        e.pointerType === 'mouse' &&
+        (hidden || chromeTimer) &&
+        !(e.target as Element | null)?.closest?.('.pastille')
+      )
+        showChrome();
+    };
+    const focus = (e: FocusEvent) => {
+      if ((e.target as Element | null)?.closest?.(CHROME)) showChrome();
+    };
+    window.addEventListener('pointerdown', down, true);
+    window.addEventListener('pointermove', move, { passive: true });
+    window.addEventListener('focusin', focus);
+    // l'écran ne s'éteint pas pendant la lecture ou l'écoute (refusé ou absent : sans effet)
+    const vis = () => {
+      if (document.visibilityState === 'visible') void holdWake();
+    };
+    void holdWake();
+    document.addEventListener('visibilitychange', vis);
+    return () => {
+      window.removeEventListener('pointerdown', down, true);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('focusin', focus);
+      document.removeEventListener('visibilitychange', vis);
+      if (chromeTimer) clearTimeout(chromeTimer);
+      delete h.dataset.lecteur;
+      delete h.dataset.epure;
+      delete h.dataset.lecteurTactile;
+      void wake?.release().catch(() => {});
+      wake = null;
+    };
+  });
+  /**
+   * Ancrage de la barre audio (téléphone) : MESURÉ — juste au-dessus de la barre d'onglets (sa hauteur réelle,
+   * enfant ou adulte, marge de sécurité comprise) ; la proposition « Écouter ici » et l'espace de fin au-dessus
+   * de la barre audio (sa hauteur réelle, une ou deux lignes).
+   */
+  let tabsH = $state(76);
+  let ecouteH = $state(0);
+  let ecouteEl = $state<HTMLElement | undefined>();
+  $effect(() => {
+    const tabs = document.querySelector<HTMLElement>('nav.tabs');
+    const el = ecouteEl;
+    const ro = new ResizeObserver(() => {
+      const fixed = tabs && getComputedStyle(tabs).position === 'fixed';
+      tabsH = fixed ? Math.ceil(tabs.getBoundingClientRect().height) : 0;
+      ecouteH = el && audioOn ? Math.ceil(el.getBoundingClientRect().height) : 0;
+    });
+    if (tabs) ro.observe(tabs);
+    if (el) ro.observe(el);
+    void audioOn;
+    return () => ro.disconnect();
+  });
+  type Sentinel = { release(): Promise<void>; addEventListener(t: 'release', f: () => void): void };
+  let wake: Sentinel | null = null;
+  async function holdWake() {
+    const wl = (navigator as Navigator & { wakeLock?: { request(t: 'screen'): Promise<Sentinel> } })
+      .wakeLock;
+    if (!wl || wake || document.visibilityState !== 'visible') return;
+    try {
+      const s = await wl.request('screen');
+      wake = s;
+      s.addEventListener('release', () => {
+        if (wake === s) wake = null;
+      });
+    } catch {
+      wake = null;
+    }
+  }
+  /** pastille (écoute, commandes cachées) : verset entendu */
+  const pastille = $derived(
+    heard && heard.a === 0
+      ? t('cl.pastille_basmala')
+      : t('cl.pastille', { n: fmtNumber(heard?.a ?? range.from) }),
+  );
+  function pastilleToggle() {
+    if (audioPlaying) player?.pause();
+    else void player?.resume();
+  }
+
   function keys(e: KeyboardEvent) {
     const tag = (e.target as HTMLElement | null)?.tagName ?? '';
     if (/INPUT|SELECT|TEXTAREA/.test(tag) || document.querySelector('dialog[open]')) return;
     // livre arabe : la flèche gauche avance
     if (e.key === 'ArrowLeft') turn(1);
     else if (e.key === 'ArrowRight') turn(-1);
+    else if (vue === 'page' && (e.key === '+' || e.key === '=')) zoomBy(0.5);
+    else if (vue === 'page' && e.key === '-') zoomBy(-0.5);
+    else if (vue === 'page' && e.key === '0') setVue({ z: 1, x: 0, y: 0 });
   }
 
   /** Prépare le muṣḥaf choisi (index et police de la riwāya, à la demande). Faux si indisponible. */
@@ -942,6 +1365,8 @@
     kid = document.documentElement.dataset.public === 'enfant';
     // enfant : les tuiles d'abord ; une section précise (récitateur, mémoriser…) ouvre « tous les réglages »
     kidAll = !!section;
+    // adulte : les trois manières de lire d'abord, « Avancé » replié (ouvert pour une section précise)
+    avOpen = !!section;
     regOpen = true;
     if (!section) return;
     await tick();
@@ -969,6 +1394,25 @@
     if (!portion) return;
     await goVerse(portion.s, portion.from, false);
     range = clampRange(portion, suraLen(portion.s));
+  }
+  /** « Avancé » du panneau Réglages (adulte) */
+  let avOpen = $state(false);
+  /** Préréglage « Lire » : texte seul, sans audio ni masquage, commandes effacées. */
+  async function modeLire() {
+    quiet = prefs.epure;
+    regOpen = false;
+    player?.stop();
+    audioOn = false;
+    if (prefs.memo > 0) await setMemo(0);
+    chrome = false;
+  }
+  /** Préréglage « Mémoriser » : masquage progressif et écoute « écouter, répéter, enchaîner ». */
+  async function modeMemoriser() {
+    applyPreset('memoriser');
+    await setMemo(Math.max(1, prefs.memo));
+    avOpen = true;
+    await tick();
+    document.getElementById('reg-memoriser')?.scrollIntoView({ block: 'start' });
   }
   function applyPreset(id: PresetId) {
     const pr = PRESETS.find((x) => x.id === id)!;
@@ -1062,6 +1506,16 @@
 <svelte:window onkeydown={keys} />
 <svelte:head><title>{t('app.nom')} — {t('lecteur.titre')}</title></svelte:head>
 
+{#snippet credit()}
+  {#if rwDef}<Bidi
+      text={t('rw.credit', {
+        riwaya: rwDef.fr,
+        version: rwDef.version,
+        police: rwDef.fontVersion,
+      })}
+    />{:else}<Bidi text={t('lecteur.credit')} />{/if}
+{/snippet}
+
 {#snippet tradList(list: ReadonlyArray<readonly [number, number]>)}
   {#if trad}
     <ol class="tlist">
@@ -1103,18 +1557,32 @@
 {#if noPages}
   <p class="card" role="status">{t('mp.sans_pages')}</p>
 {:else}
+  <!-- clavier : bouton « Afficher les commandes », flèches, + et - (le toucher de la page n'a pas d'équivalent à donner) -->
   <div
     class="lecture"
     class:audio-on={audioOn}
+    class:epure={prefs.epure}
     style:--qz={TEXT_SCALE[prefs.size] ?? 1}
+    style:--bas={`${tabsH}px`}
+    style:--ecoute-h={`${ecouteH}px`}
     role="none"
     onpointerdown={longDown}
     onpointermove={longMove}
     onpointerup={longCancel}
     onpointercancel={longCancel}
     onclickcapture={longClick}
+    onclick={onTap}
+    ondblclick={onDbl}
     oncontextmenu={(e) => refOf(e.target) && e.preventDefault()}
   >
+    <!-- lecture épurée : visible au focus du clavier (et pour les lecteurs d'écran), montre les commandes -->
+    <button
+      type="button"
+      class="montrer"
+      onclick={showChrome}
+      aria-expanded={!hidden}
+      data-testid="afficher-commandes"><Bidi text={t('cl.afficher_commandes')} /></button
+    >
     <!-- barre unique : puce (téléphone) ou sélecteurs dorés (grand écran), outils, écoute -->
     <nav class="cbar" aria-label={t('mp.commandes')} data-testid="barre-coran">
       <div class="nav-zone">
@@ -1189,7 +1657,7 @@
           ><Icon name="reglages" size={22} /><span>{t('cl.reglages')}</span></button
         >
       </div>
-      <div class="ecoute" class:on={audioOn} data-testid="mini-barre">
+      <div class="ecoute" class:on={audioOn} data-testid="mini-barre" bind:this={ecouteEl}>
         {#if basmalaMissing && audioOn}<p class="hint bsm-hint" data-testid="basmala-absente">
             <Bidi text={t('cl.basmala_absente')} />
           </p>{/if}
@@ -1333,7 +1801,7 @@
             {@render tradList(shownVerses)}
           </aside>
         {/if}
-        <div class="stage">
+        <div class="stage" class:epure={prefs.epure}>
           <button
             type="button"
             class="turn next"
@@ -1343,25 +1811,45 @@
             title={t('mp.page_suivante')}
             data-testid="mp-suiv"><span class="back"><Icon name="fleche" size={24} /></span></button
           >
-          <div class="book" class:double dir="rtl" bind:this={bookEl} data-testid="mushaf-livre">
-            {#each shown as n (n)}
-              <MushafPage
-                p={n}
-                segments={segs(n)}
-                {text}
-                basmala={meta?.basmala ?? ''}
-                juz={juzOf(n)}
-                riwaya={rwPage}
-                tajwid={tajwidOn ? tajwidOf : null}
-                current={heardOrCur}
-                memo={prefs.memo}
-                readOnly={prefs.readOnly}
-                {revealed}
-                compact={double}
-                exact={exactOf(n)}
-                onpick={pick}
-              />
-            {/each}
+          <div
+            class="book"
+            class:zoomed
+            dir="rtl"
+            bind:this={bookEl}
+            data-testid="mushaf-livre"
+            data-zoom={vz.z}
+            role="none"
+            onpointerdown={mouseDown}
+            onpointermove={mouseMove}
+            onpointerup={mouseUp}
+            onpointercancel={mouseUp}
+          >
+            <!-- zoom : simple mise à l'échelle de la page (le rendu du texte n'est pas modifié) -->
+            <div
+              class="zoomer"
+              class:double
+              data-testid="zoom-page-cadre"
+              style:transform={vz.z > 1 ? `translate(${vz.x}px, ${vz.y}px) scale(${vz.z})` : null}
+            >
+              {#each shown as n (n)}
+                <MushafPage
+                  p={n}
+                  segments={segs(n)}
+                  {text}
+                  basmala={meta?.basmala ?? ''}
+                  juz={juzOf(n)}
+                  riwaya={rwPage}
+                  tajwid={tajwidOn ? tajwidOf : null}
+                  current={heardOrCur}
+                  memo={prefs.memo}
+                  readOnly={prefs.readOnly}
+                  {revealed}
+                  compact={double}
+                  exact={exactOf(n)}
+                  onpick={pick}
+                />
+              {/each}
+            </div>
           </div>
           <button
             type="button"
@@ -1420,24 +1908,44 @@
         {t('tj.indisponible')}
       </p>{/if}
 
+    <!-- 11/10/2026 : crédits (texte long) derrière ⓘ ; lus en entier par les lecteurs d'écran -->
     <p class="credits" data-testid="credit-texte">
-      {#if rwDef}<Bidi
-          text={t('rw.credit', {
-            riwaya: rwDef.fr,
-            version: rwDef.version,
-            police: rwDef.fontVersion,
-          })}
-        />{:else}<Bidi text={t('lecteur.credit')} />{/if}
+      <span class="sr-only">{@render credit()}</span>
       <button
         type="button"
         class="info"
         onclick={() => (infoOpen = true)}
-        aria-label={t('cl.infos')}
         title={t('cl.infos')}
-        data-testid="infos-texte"><Icon name="info" size={18} /></button
+        data-testid="infos-texte"
+        ><Icon name="info" size={18} /><span>{t('cl.sources')}</span></button
       >
     </p>
     {#if audioOn}<div class="spacer" aria-hidden="true"></div>{/if}
+    {#if audioOn && hidden && reciter}
+      <!-- écoute, commandes cachées : pastille discrète (pause/lecture + verset) ; toucher le verset ouvre tout -->
+      <div class="pastille" data-testid="pastille-audio">
+        <button
+          type="button"
+          class="pj"
+          onclick={pastilleToggle}
+          aria-pressed={audioPlaying}
+          aria-label={audioPlaying ? t('ca.pause') : t('ca.ecouter')}
+          data-testid="pastille-jouer"
+          >{#if audioPlaying}<Icon name="pause" size={20} />{:else}<Icon
+              name="lecture"
+              filled
+              size={20}
+            />{/if}</button
+        >
+        <button
+          type="button"
+          class="po"
+          onclick={showChrome}
+          aria-label={`${pastille} — ${t('cl.pastille_ouvrir')}`}
+          data-testid="pastille-ouvrir"><Bidi text={pastille} /></button
+        >
+      </div>
+    {/if}
   </div>
 
   <Selecteur
@@ -1538,7 +2046,35 @@
         {@render tous()}
       </details>
     {:else}
-      {@render tous()}
+      <!-- ADULTE (11/10/2026) : trois préréglages en tête, le reste dans « Avancé » (replié) -->
+      <div class="modes" data-testid="reglages-modes">
+        <button
+          type="button"
+          class="mode"
+          aria-pressed={!audioOn && !memo}
+          onclick={modeLire}
+          data-testid="mode-lire"><Icon name="lire" size={26} />{t('cl.mode_lire')}</button
+        >
+        <button
+          type="button"
+          class="mode"
+          aria-pressed={audioOn && !memo}
+          onclick={() => playFrom(null)}
+          data-testid="mode-ecouter"><Icon name="casque" size={26} />{t('cl.mode_ecouter')}</button
+        >
+        <button
+          type="button"
+          class="mode"
+          aria-pressed={memo}
+          onclick={modeMemoriser}
+          data-testid="mode-memoriser"
+          ><Icon name="masque" size={26} />{t('cl.mode_memoriser')}</button
+        >
+      </div>
+      <details class="parent" bind:open={avOpen} data-testid="reglages-avance">
+        <summary>{t('cl.avance')}</summary>
+        {@render tous()}
+      </details>
     {/if}
   </Feuille>
   <Feuille
@@ -1552,6 +2088,7 @@
     </div>
   </Feuille>
   <Feuille id="infos" title={t('cl.infos')} bind:open={infoOpen} testid="feuille-infos">
+    <p class="small" data-testid="credit-feuille">{@render credit()}</p>
     <ul class="adab">
       <li>{t('ca.adab_1')}</li>
       <li>{t('ca.adab_2')}</li>
@@ -1814,7 +2351,8 @@
   .ecoute.on {
     position: fixed;
     inset-inline: 8px;
-    bottom: calc(76px + env(safe-area-inset-bottom));
+    /* juste au-dessus de la barre d'onglets, hauteur mesurée (marge de sécurité de l'écran comprise) */
+    bottom: calc(var(--bas, 76px) + 6px);
     z-index: 19;
     display: block;
     padding: 4px 6px;
@@ -1825,7 +2363,7 @@
     box-shadow: var(--shadow-float);
   }
   .spacer {
-    height: 84px;
+    height: calc(var(--ecoute-h, 100px) + 12px);
   }
   .bsm-hint {
     margin: 0 4px 2px;
@@ -1842,7 +2380,7 @@
     pointer-events: none;
   }
   .audio-on .prop-zone {
-    bottom: calc(150px + env(safe-area-inset-bottom));
+    bottom: calc(var(--bas, 76px) + var(--ecoute-h, 100px) + 14px);
   }
   .prop {
     display: flex;
@@ -1991,13 +2529,159 @@
   }
   .book {
     grid-area: book;
-    display: grid;
-    gap: 6px;
     min-width: 0;
     touch-action: pan-y;
   }
-  .book.double {
+  /* zoomée : la page se déplace dans son cadre (aucun défilement ni changement de page au glisser) */
+  .book.zoomed {
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+    border-radius: var(--radius-md);
+  }
+  .zoomer {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    transform-origin: 0 0;
+  }
+  .zoomer.double {
     grid-template-columns: 1fr 1fr;
+  }
+  /* —— lecture épurée (11/10/2026) : commandes effacées après 3 s, gardées dans l'ordre du clavier —— */
+  .montrer {
+    position: fixed;
+    top: 8px;
+    inset-inline-start: 8px;
+    z-index: 30;
+    min-height: 44px;
+    padding: 0 14px;
+    font: inherit;
+    font-weight: 700;
+    color: var(--mp-on-band);
+    background: var(--mp-band);
+    border: 0;
+    border-radius: var(--radius-pill);
+    /* invisible tant qu'il n'a pas le focus du clavier */
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .montrer:focus-visible {
+    clip-path: none;
+    width: auto;
+    height: auto;
+  }
+  :global(html[data-lecteur] header.top),
+  :global(html[data-lecteur] nav.tabs),
+  .cbar,
+  .turn {
+    transition:
+      opacity var(--motion) ease,
+      transform var(--motion) ease;
+  }
+  :global(html[data-epure] header.top),
+  :global(html[data-epure]) .cbar {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  :global(html[data-epure] nav.tabs) {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  :global(html[data-epure]) .turn {
+    opacity: 0;
+  }
+  /* au doigt, cachées, elles laissent passer les touchers vers le texte (le clavier les atteint toujours) */
+  :global(html[data-epure][data-lecteur-tactile] header.top),
+  :global(html[data-epure][data-lecteur-tactile] nav.tabs),
+  :global(html[data-epure][data-lecteur-tactile]) .cbar,
+  :global(html[data-epure][data-lecteur-tactile]) .turn {
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html[data-lecteur] header.top),
+    :global(html[data-lecteur] nav.tabs),
+    .cbar,
+    .turn {
+      transition: none;
+    }
+    :global(html[data-epure] header.top),
+    :global(html[data-epure] nav.tabs),
+    :global(html[data-epure]) .cbar {
+      transform: none;
+    }
+  }
+  /* pastille d'écoute (commandes cachées) */
+  .pastille {
+    position: fixed;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    inset-inline-start: 50%;
+    z-index: 21;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    background: var(--card);
+    border: 1px solid var(--or-line);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-float);
+    transform: translateX(-50%);
+  }
+  :global([dir='rtl']) .pastille {
+    transform: translateX(50%);
+  }
+  .pastille .pj {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    color: var(--mp-on-band);
+    background: var(--mp-band);
+    border: 0;
+    border-radius: 50%;
+  }
+  .pastille .po {
+    min-height: 44px;
+    padding: 0 14px 0 10px;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--mp-green);
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+  /* panneau « Réglages » de l'adulte : trois préréglages */
+  .modes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 4px 0 12px;
+  }
+  .mode {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 4px;
+    min-height: 76px;
+    padding: 8px 4px;
+    font: inherit;
+    font-weight: 800;
+    color: var(--mp-green);
+    background: var(--mp-mint);
+    border: 2px solid var(--mp-mint2);
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+  .mode[aria-pressed='true'] {
+    color: var(--or-ink);
+    background: var(--or-soft);
+    border-color: var(--or-line);
   }
   .turn {
     position: sticky;
@@ -2187,6 +2871,45 @@
       position: static;
       margin-top: 4px;
       box-shadow: none;
+    }
+  }
+  /*
+   * téléphone, lecture épurée : la page prend toute la largeur (plus de colonnes de flèches) ; les flèches
+   * deviennent de petites commandes au bord de l'écran, effacées avec les autres (glisser et bords suffisent)
+   */
+  @media (max-width: 899px),
+    (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
+    .stage.epure {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        'book'
+        'pos';
+    }
+    .stage.epure .turn {
+      position: fixed;
+      top: 50%;
+      z-index: 16;
+      width: 40px;
+      height: 40px;
+      margin: 0;
+      opacity: 0.92;
+      box-shadow: var(--shadow-card);
+    }
+    .stage.epure .turn.next {
+      left: 4px;
+    }
+    .stage.epure .turn.prev {
+      right: 4px;
+    }
+    :global(html[data-epure]) .stage.epure .turn {
+      opacity: 0;
+    }
+  }
+  /* paysage (téléphone couché) : la page prend toute la largeur de l'écran */
+  @media (orientation: landscape) and (max-height: 560px) {
+    :global(html[data-lecteur] main) {
+      max-width: none;
+      padding-inline: 8px;
     }
   }
 </style>
