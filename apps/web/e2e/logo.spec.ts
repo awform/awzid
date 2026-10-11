@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures';
+import { pickProfile } from './profil';
 
 /**
  * Logo Awzid : symbole + nom en texte dans l'en-tête et sur la page de connexion (avec le slogan, seulement
@@ -85,4 +86,16 @@ test('manifeste : couleurs de marque, icônes 192, 512 et maskable valides et ch
   expect(await page.locator('link[rel="icon"][type="image/svg+xml"]').getAttribute('href')).toMatch(
     /\/favicon\.svg$/,
   );
+});
+
+test.describe('thème « jardin » (en-tête vert)', () => {
+  test.use({ compte: 'parent' });
+  test('en-tête vert : symbole pour fond sombre, nom lisible', async ({ page }) => {
+    await pickProfile(page, 'Amina');
+    await page.goto('/aujourdhui');
+    const marque = page.getByTestId('accueil').getByTestId('marque');
+    await expect(marque).toHaveAttribute('data-fond', 'sombre');
+    await expect(marque.locator('img[src="/awzid-symbole-sombre.svg"]')).toBeVisible();
+    await expect(marque.locator('img[src="/awzid-symbole.svg"]')).toBeHidden();
+  });
 });

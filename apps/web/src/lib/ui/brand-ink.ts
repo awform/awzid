@@ -5,6 +5,8 @@
  * sinon la couleur de texte du thème. Nom : #084C38 (clair) / #E8DFC8 (sombre) ; slogan : #0B6E4F / #D9B54A.
  */
 export const NOM = { clair: '#084C38', sombre: '#E8DFC8' } as const;
+/** Couleur du livre dans awzid-symbole.svg (version pour fond clair). */
+export const SYMBOLE_CLAIR = '#0B6E4F';
 export const SLOGAN = { clair: '#0B6E4F', sombre: '#D9B54A' } as const;
 
 type Rgb = [number, number, number];
@@ -43,7 +45,8 @@ export function choisirEncre(
   paire: { clair: string; sombre: string },
 ): { encre: string | null; fondSombre: boolean } {
   const f = parseCouleur(fond) ?? [255, 255, 255];
-  const fondSombre = luminance(f) < 0.2;
+  // fond foncé OU coloré (le livre #0B6E4F du symbole clair s'y perdrait, < 3:1) : version pour fond sombre
+  const fondSombre = luminance(f) < 0.2 || contraste(parseCouleur(SYMBOLE_CLAIR)!, f) < 3;
   const prefere = fondSombre ? paire.sombre : paire.clair;
   const autre = fondSombre ? paire.clair : paire.sombre;
   for (const c of [prefere, autre]) {
