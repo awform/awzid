@@ -98,6 +98,8 @@ echo "AWFORM_VAPID_SUBJECT=https://$SITE" >> "$ENVF"
 "$PROD/demo-env.sh" "$ENVF" "$DEMO"
 # exposition : production (redirection HTTPS, cookie Secure) ou réseau local (audit SEC-7)
 "$PROD/mode-env.sh" "$ENVF" "$PRODUCTION"
+# A5 : service d'écoute (profil « ecoute ») seulement si AWFORM_ECOUTE=1 (EXPLOITATION § 11) ; défaut : non démarré
+ECOUTE="$("$PROD/ecoute-env.sh" "$ENVF" "$DEMO")"
 # moindre privilège : un fichier par service (env-scopes.conf) ; prod.env n'est monté dans aucun conteneur
 export AWFORM_ENV_DIR="$CONF"
 "$PROD/env-split.sh" "$ENVF" "$CONF"
@@ -161,6 +163,15 @@ mkdir -p "${AWFORM_QF_MUSHAF_SOURCE:-$HOME/awform-data/qf-mushaf-prod}" "${AWFOR
 
 # ---------------------------------------------------------------- 3. services
 "${DC[@]}" up -d --remove-orphans api worker web caddy
+if [ "$ECOUTE" = 1 ]; then
+  "${DC[@]}" --profile ecoute build ecoute
+  "${DC[@]}" --profile ecoute up -d ecoute
+  for i in $(seq 1 40); do
+    [ "$(docker inspect -f '{{.State.Health.Status}}' awform-ecoute-1 2>/dev/null)" = healthy ] && { echo "écoute : healthy"; break; }
+    [ "$i" = 40 ] && echo "ATTENTION : le service d'écoute n'est pas « healthy » (docker logs awform-ecoute-1)"
+    sleep 3
+  done
+fi
 for i in $(seq 1 60); do
   if curl -fsS "http://127.0.0.1/api/v1/health" 2>/dev/null | grep -q '"status":"ok"'; then break; fi
   if [ "$i" = 60 ]; then
