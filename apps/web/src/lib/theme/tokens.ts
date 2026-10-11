@@ -13,7 +13,6 @@
  * HUIT palettes, cibles ≥ 48 px, mouvement réduit.
  * Fichier sans import (lisible par Node directement).
  */
-
 export type ThemeName = 'jardin' | 'nuit' | 'manuscrit' | 'clair';
 export const THEME_NAMES: ThemeName[] = ['clair', 'jardin', 'nuit', 'manuscrit'];
 
@@ -669,8 +668,82 @@ export function palettes(): Array<{ nom: string; couleurs: Record<string, string
   ];
 }
 
+/**
+ * Marque Awzid — couleur du nom et du slogan, symbole clair ou sombre, selon le fond réel du thème.
+ * Calculé À LA GÉNÉRATION de tokens.css (jamais dans le navigateur) : le CSS reçoit, pour chaque thème et mode,
+ * des variables `--mh-*` (marque posée sur l'en-tête) et `--mp-*` (marque posée sur le fond de la page) que
+ * Brand.svelte lit sans une ligne de JavaScript. Nom : #084C38 (clair) / #E8DFC8 (sombre) ; slogan : #0B6E4F /
+ * #D9B54A ; on retient la couleur lisible (≥ 4,5:1) sur le fond, sinon celle du texte du thème.
+ */
+export const NOM = { clair: '#084C38', sombre: '#E8DFC8' } as const;
+/** Couleur du livre dans awzid-symbole.svg (version pour fond clair). */
+const SYMBOLE_CLAIR = '#0B6E4F';
+export const SLOGAN = { clair: '#0B6E4F', sombre: '#D9B54A' } as const;
+
+type Rgb = [number, number, number];
+
+function parseCouleur(css: string): Rgb | null {
+  const h = css.trim().match(/^#([0-9a-f]{6})$/i);
+  if (!h) return null;
+  const n = parseInt(h[1]!, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function luminance([r, g, b]: Rgb): number {
+  const f = (v: number) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+}
+
+function contraste(a: Rgb, b: Rgb): number {
+  const [x, y] = [luminance(a), luminance(b)].sort((p, q) => q - p) as [number, number];
+  return (x + 0.05) / (y + 0.05);
+}
+
+/** Encre de marque lisible sur `fond` ; `null` si aucune des deux ne tient 4,5:1 (le thème garde sa couleur). */
+export function choisirEncre(
+  fond: string,
+  paire: { clair: string; sombre: string },
+): { encre: string | null; fondSombre: boolean } {
+  const f = parseCouleur(fond) ?? [255, 255, 255];
+  // fond foncé OU coloré (le livre #0B6E4F du symbole clair s'y perdrait, < 3:1) : version pour fond sombre
+  const fondSombre = luminance(f) < 0.2 || contraste(parseCouleur(SYMBOLE_CLAIR)!, f) < 3;
+  const prefere = fondSombre ? paire.sombre : paire.clair;
+  const autre = fondSombre ? paire.clair : paire.sombre;
+  for (const c of [prefere, autre]) {
+    if (contraste(parseCouleur(c)!, f) >= 4.5) return { encre: c, fondSombre };
+  }
+  return { encre: null, fondSombre };
+}
+
+/** Variables CSS de la marque pour un jeu de couleurs (en-tête `header`, page `paper`). */
+export function marqueVars(c: Record<string, string>): Array<[string, string]> {
+  const out: Array<[string, string]> = [];
+  for (const [p, cle] of [
+    ['h', 'header'],
+    ['p', 'paper'],
+  ] as const) {
+    const fond = c[cle];
+    if (!fond) continue;
+    const nom = choisirEncre(fond, NOM);
+    out.push(
+      [`--m${p}-clair`, nom.fondSombre ? 'none' : 'block'],
+      [`--m${p}-sombre`, nom.fondSombre ? 'block' : 'none'],
+      [`--m${p}-nom`, nom.encre ?? 'currentColor'],
+      [`--m${p}-slogan`, choisirEncre(fond, SLOGAN).encre ?? 'currentColor'],
+    );
+  }
+  return out;
+}
+
 function colorVars(c: Record<string, string>): Array<[string, string]> {
-  return Object.entries(c).map(([k, v]) => [`--${k}`, v] as [string, string]);
+  // + variables de la marque (symbole clair/sombre, couleur du nom et du slogan) : 100 % CSS, voir Brand.svelte
+  return [
+    ...Object.entries(c).map(([k, v]) => [`--${k}`, v] as [string, string]),
+    ...marqueVars(c),
+  ];
 }
 function otherVars(t: Theme): Array<[string, string]> {
   return [

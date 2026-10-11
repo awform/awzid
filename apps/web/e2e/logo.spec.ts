@@ -94,7 +94,6 @@ test.describe('thème « jardin » (en-tête vert)', () => {
     await pickProfile(page, 'Amina');
     await page.goto('/aujourdhui');
     const marque = page.getByTestId('accueil').getByTestId('marque');
-    await expect(marque).toHaveAttribute('data-fond', 'sombre');
     await expect(marque.locator('img[src="/awzid-symbole-sombre.svg"]')).toBeVisible();
     await expect(marque.locator('img[src="/awzid-symbole.svg"]')).toBeHidden();
   });

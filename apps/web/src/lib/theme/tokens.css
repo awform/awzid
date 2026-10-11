@@ -65,6 +65,14 @@
   --focus: #0b6e4f;
   --illus: #ffffff;
   --mark: #ffe38a;
+  --mh-clair: block;
+  --mh-sombre: none;
+  --mh-nom: #084C38;
+  --mh-slogan: #0B6E4F;
+  --mp-clair: block;
+  --mp-sombre: none;
+  --mp-nom: #084C38;
+  --mp-slogan: #0B6E4F;
   --font-ui: 'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-title: 'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-ar: 'Noto Naskh Arabic', serif;
@@ -156,6 +164,14 @@
   --focus: #5cc79c;
   --illus: #f4f1ea;
   --mark: #5c4a10;
+  --mh-clair: none;
+  --mh-sombre: block;
+  --mh-nom: #E8DFC8;
+  --mh-slogan: #D9B54A;
+  --mp-clair: none;
+  --mp-sombre: block;
+  --mp-nom: #E8DFC8;
+  --mp-slogan: #D9B54A;
 }
 
 [data-theme='jardin'] {
@@ -223,6 +239,14 @@
   --focus: #1d6f8a;
   --illus: #ffffff;
   --mark: #ffe38a;
+  --mh-clair: none;
+  --mh-sombre: block;
+  --mh-nom: currentColor;
+  --mh-slogan: currentColor;
+  --mp-clair: block;
+  --mp-sombre: none;
+  --mp-nom: #084C38;
+  --mp-slogan: #0B6E4F;
   --font-ui: 'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-title: 'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-ar: 'Noto Naskh Arabic', serif;
@@ -314,6 +338,14 @@
   --focus: #7fd6a6;
   --illus: #f4f1ea;
   --mark: #5c4a10;
+  --mh-clair: none;
+  --mh-sombre: block;
+  --mh-nom: #E8DFC8;
+  --mh-slogan: #D9B54A;
+  --mp-clair: none;
+  --mp-sombre: block;
+  --mp-nom: #E8DFC8;
+  --mp-slogan: #D9B54A;
 }
 
 [data-theme='nuit'] {
@@ -381,6 +413,14 @@
   --focus: #f5c76b;
   --illus: #f1efe9;
   --mark: #5c4a10;
+  --mh-clair: none;
+  --mh-sombre: block;
+  --mh-nom: #E8DFC8;
+  --mh-slogan: #D9B54A;
+  --mp-clair: none;
+  --mp-sombre: block;
+  --mp-nom: #E8DFC8;
+  --mp-slogan: #D9B54A;
   --font-ui: 'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-title: 'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-ar: 'Noto Naskh Arabic', serif;
@@ -472,6 +512,14 @@
   --focus: #3346a8;
   --illus: #ffffff;
   --mark: #ffe38a;
+  --mh-clair: none;
+  --mh-sombre: block;
+  --mh-nom: #E8DFC8;
+  --mh-slogan: #D9B54A;
+  --mp-clair: block;
+  --mp-sombre: none;
+  --mp-nom: #084C38;
+  --mp-slogan: #0B6E4F;
 }
 
 [data-theme='manuscrit'] {
@@ -539,6 +587,14 @@
   --focus: #1d5f57;
   --illus: #fffcf4;
   --mark: #ffe38a;
+  --mh-clair: none;
+  --mh-sombre: block;
+  --mh-nom: #E8DFC8;
+  --mh-slogan: #D9B54A;
+  --mp-clair: block;
+  --mp-sombre: none;
+  --mp-nom: #084C38;
+  --mp-slogan: #0B6E4F;
   --font-ui: 'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-title: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, 'Noto Naskh Arabic', serif;
   --font-ar: 'Noto Naskh Arabic', serif;
@@ -630,6 +686,14 @@
   --focus: #d9a94e;
   --illus: #f4ecdc;
   --mark: #5c4a10;
+  --mh-clair: none;
+  --mh-sombre: block;
+  --mh-nom: #E8DFC8;
+  --mh-slogan: #D9B54A;
+  --mp-clair: none;
+  --mp-sombre: block;
+  --mp-nom: #E8DFC8;
+  --mp-slogan: #D9B54A;
 }
 
 [data-palette='verdure'],
@@ -698,6 +762,14 @@
   --focus: #16653f;
   --illus: #ffffff;
   --mark: #fbecb8;
+  --mh-clair: block;
+  --mh-sombre: none;
+  --mh-nom: #084C38;
+  --mh-slogan: #0B6E4F;
+  --mp-clair: block;
+  --mp-sombre: none;
+  --mp-nom: #084C38;
+  --mp-slogan: #0B6E4F;
 }
 
 [data-palette='verdure'][data-mode='sombre'] {
@@ -765,6 +837,14 @@
   --focus: #d8b45c;
   --illus: #f4f1ea;
   --mark: #4a3d12;
+  --mh-clair: none;
+  --mh-sombre: block;
+  --mh-nom: #E8DFC8;
+  --mh-slogan: #D9B54A;
+  --mp-clair: none;
+  --mp-sombre: block;
+  --mp-nom: #E8DFC8;
+  --mp-slogan: #D9B54A;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -834,6 +914,14 @@
     --focus: #5cc79c;
     --illus: #f4f1ea;
     --mark: #5c4a10;
+    --mh-clair: none;
+    --mh-sombre: block;
+    --mh-nom: #E8DFC8;
+    --mh-slogan: #D9B54A;
+    --mp-clair: none;
+    --mp-sombre: block;
+    --mp-nom: #E8DFC8;
+    --mp-slogan: #D9B54A;
   }
 
   :root:not([data-mode])[data-theme='jardin'] {
@@ -901,6 +989,14 @@
     --focus: #7fd6a6;
     --illus: #f4f1ea;
     --mark: #5c4a10;
+    --mh-clair: none;
+    --mh-sombre: block;
+    --mh-nom: #E8DFC8;
+    --mh-slogan: #D9B54A;
+    --mp-clair: none;
+    --mp-sombre: block;
+    --mp-nom: #E8DFC8;
+    --mp-slogan: #D9B54A;
   }
 
   :root:not([data-mode])[data-theme='manuscrit'] {
@@ -968,6 +1064,14 @@
     --focus: #d9a94e;
     --illus: #f4ecdc;
     --mark: #5c4a10;
+    --mh-clair: none;
+    --mh-sombre: block;
+    --mh-nom: #E8DFC8;
+    --mh-slogan: #D9B54A;
+    --mp-clair: none;
+    --mp-sombre: block;
+    --mp-nom: #E8DFC8;
+    --mp-slogan: #D9B54A;
   }
 
   :root:not([data-mode])[data-palette='verdure'] {
@@ -1035,6 +1139,14 @@
     --focus: #d8b45c;
     --illus: #f4f1ea;
     --mark: #4a3d12;
+    --mh-clair: none;
+    --mh-sombre: block;
+    --mh-nom: #E8DFC8;
+    --mh-slogan: #D9B54A;
+    --mp-clair: none;
+    --mp-sombre: block;
+    --mp-nom: #E8DFC8;
+    --mp-slogan: #D9B54A;
   }
 }
 

@@ -54,7 +54,7 @@
 
 <svelte:head><title>{t('app.nom')} — {t('connexion.titre')}</title></svelte:head>
 
-<div class="accueil-marque" data-testid="connexion-marque"><Brand slogan size={56} /></div>
+<div class="accueil-marque" data-testid="connexion-marque"><Brand slogan surPage size={56} /></div>
 <h1>{t('connexion.titre')}</h1>
 <form class="card form" onsubmit={submit}>
   <label for="email">{t('champ.email')}</label>
