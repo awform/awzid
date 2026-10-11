@@ -41,6 +41,18 @@ describe('garde-fou de démarrage (AWFORM_DEMO=1)', () => {
     expect(demoGuard({ ...lan, SITE: 'localhost', SITE_LAN: 'awzid.test' })).toBeNull();
     expect(demoGuard({ SITE: 'awzid.com', COOKIE_SECURE: '1' })).toBeNull();
   });
+  it('trois adresses (SITE, SITE_LAN, SITE_TS Tailscale) : acceptées ; TS hors 100.64.0.0/10 ou publique : refusée', () => {
+    const ts = { ...lan, SITE_TS: '100.70.250.29' };
+    expect(demoGuard(ts)).toBeNull();
+    expect(demoGuard({ ...ts, SITE_TS: '' })).toBeNull();
+    expect(demoGuard({ ...ts, SITE_TS: '100.127.0.1' })).toBeNull();
+    expect(demoGuard({ ...ts, SITE_TS: '100.63.0.1' })).toMatch(/Tailscale/);
+    expect(demoGuard({ ...ts, SITE_TS: '100.128.0.1' })).toMatch(/Tailscale/);
+    expect(demoGuard({ ...ts, SITE_TS: '82.64.10.1' })).toMatch(/Tailscale/);
+    expect(demoGuard({ ...ts, SITE_TS: 'awzid.com' })).toMatch(/Tailscale/);
+    expect(demoGuard({ ...ts, SITE_LAN: '82.64.10.1' })).toMatch(/publique/);
+    expect(demoGuard({ ...ts, SITE: '' })).toMatch(/SITE absent/);
+  });
   it('domaine ou adresse publics, relais public, mode production, SITE absent : refusé', () => {
     expect(demoGuard({ ...lan, SITE: 'awzid.com' })).toMatch(/publique/);
     expect(demoGuard({ ...lan, SITE_LAN: '82.64.10.1' })).toMatch(/publique/);
