@@ -1,5 +1,6 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
+  import Brand from '$lib/ui/Brand.svelte';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
@@ -53,6 +54,7 @@
 
 <svelte:head><title>{t('app.nom')} — {t('connexion.titre')}</title></svelte:head>
 
+<div class="accueil-marque" data-testid="connexion-marque"><Brand slogan size={56} /></div>
 <h1>{t('connexion.titre')}</h1>
 <form class="card form" onsubmit={submit}>
   <label for="email">{t('champ.email')}</label>
@@ -91,6 +93,9 @@
 <p class="muted small"><Bidi text={t('connexion.oubli')} /></p>
 
 <style>
+  .accueil-marque {
+    margin: 8px 0 16px;
+  }
   .form {
     display: grid;
     gap: 8px;
