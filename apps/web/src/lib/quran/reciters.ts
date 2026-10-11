@@ -11,6 +11,23 @@ import {
   type Reciter,
   type SuraPack,
 } from '$lib/coran-audio';
+import { kvGet, kvSet } from '$lib/idb';
+import type { ApiResult } from '$lib/session';
+
+/**
+ * F5 — hors ligne, un verset DÉJÀ ÉCOUTÉ se réécoute : la dernière liste de récitateurs et les dernières pistes
+ * reçues (par profil, mode et sourate) sont gardées sur l'appareil et servies quand le réseau MANQUE (jamais
+ * quand le serveur refuse : liste restreinte par le parent, riwāya du carnet…). Données publiques, petites.
+ */
+async function gardee<T>(cle: string, r: ApiResult<T>): Promise<ApiResult<T>> {
+  if (r.ok && r.data) {
+    void kvSet(cle, r.data).catch(() => {});
+    return r;
+  }
+  if (r.status !== 0) return r;
+  const d = await kvGet<T>(cle).catch(() => undefined);
+  return d ? { ok: true, status: 200, data: d, code: null, error: null } : r;
+}
 
 export interface ReciterChoice {
   list: Reciter[];
@@ -31,7 +48,10 @@ export async function loadReciters(
   const offline = () =>
     typeof navigator !== 'undefined' && !navigator.onLine ? 'hors_ligne' : 'erreur';
   if (profileId) {
-    const r = await profileReciters(profileId, mode);
+    const r = await gardee(
+      `coranAudio.recitateurs.${profileId}.${mode}`,
+      await profileReciters(profileId, mode),
+    );
     if (!r.ok || !r.data)
       return { list: [], conseil: null, restreint: false, initial: null, error: offline() };
     const d = r.data;
@@ -47,7 +67,7 @@ export async function loadReciters(
       error: null,
     };
   }
-  const r = await reciters();
+  const r = await gardee('coranAudio.recitateurs.visiteur', await reciters());
   if (!r.ok || !r.data)
     return { list: [], conseil: null, restreint: false, initial: null, error: offline() };
   const ids = r.data.reciters.map((x) => x.id);
@@ -67,9 +87,12 @@ export async function loadTracks(
   sura: number,
   mode: ModeAudio = 'ecouter',
 ): Promise<{ pack: SuraPack | null; code: string | null }> {
-  const r = profileId
-    ? await profileSuraTracks(profileId, sura, reciterId, mode)
-    : await suraPack(reciterId, sura);
+  const r = await gardee(
+    `coranAudio.pistes.${profileId ?? 'visiteur'}.${mode}.${reciterId}.${sura}`,
+    profileId
+      ? await profileSuraTracks(profileId, sura, reciterId, mode)
+      : await suraPack(reciterId, sura),
+  );
   return r.ok
     ? { pack: r.data, code: null }
     : { pack: null, code: r.code ?? (navigator.onLine ? 'erreur' : 'hors_ligne') };

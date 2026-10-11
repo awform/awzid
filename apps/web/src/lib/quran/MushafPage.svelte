@@ -8,8 +8,10 @@
   import { suraTitleAr, ayaNumberAr } from './sura-names-ar';
   import { verseRuns, type TajwidSura } from './tajwid';
   import TajwidRuns from './TajwidRuns.svelte';
-  import LignesExactes from './LignesExactes.svelte';
   import type { ExactPage } from './mushaf-exact';
+  import { untrack } from 'svelte';
+  import { chargerModule } from '$lib/charger';
+  import ConnexionNecessaire from '$lib/ConnexionNecessaire.svelte';
 
   /**
    * Muṣḥaf par page — UNE page du Muṣḥaf de Médine (versets de la page d'après les métadonnées Tanzil) dans un
@@ -82,6 +84,19 @@
     const q = r * 0.7071;
     return `M0 ${-r}L${q} ${-q}L${r} 0L${q} ${q}L0 ${r}L${-q} ${q}L${-r} 0L${-q} ${-q}Z`;
   };
+  // F5 : lignes exactes chargées À LA DEMANDE (une page exacte vient du serveur) ; page fluide en attendant
+  // nouvelles tentatives automatiques ; échec : page fluide (texte complet) et « Connexion nécessaire »
+  let LignesExactes = $state<typeof import('./LignesExactes.svelte').default | null>(null);
+  let exactEchec = $state(false);
+  function chargerLignes() {
+    exactEchec = false;
+    void chargerModule(() => import('./LignesExactes.svelte'))
+      .then((m) => (LignesExactes = m.default))
+      .catch(() => (exactEchec = true));
+  }
+  $effect(() => {
+    if (exact && !LignesExactes && !untrack(() => exactEchec)) untrack(chargerLignes);
+  });
 </script>
 
 <article
@@ -131,9 +146,12 @@
       dir="rtl"
       style:--rw-font={riwaya ? `${riwaya.family}` : undefined}
     >
-      {#if exact}
+      {#if exact && LignesExactes}
         <LignesExactes page={exact} {text} {basmala} {current} {readOnly} {onpick} />
       {:else}
+        {#if exact && exactEchec}<div lang={localeInfo().code} dir={localeInfo().dir}>
+            <ConnexionNecessaire onretry={chargerLignes} />
+          </div>{/if}
         {#if !complete}<p class="loading small" lang={localeInfo().code} dir={localeInfo().dir}>
             {t('mp.chargement')}
           </p>{/if}
