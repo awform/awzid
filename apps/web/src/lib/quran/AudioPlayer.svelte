@@ -477,7 +477,6 @@
     .who {
       grid-area: who;
       max-width: none;
-      min-height: 36px;
       padding-inline: 6px;
     }
     .rep {

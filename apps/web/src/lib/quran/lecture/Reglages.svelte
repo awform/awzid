@@ -450,7 +450,8 @@
         step="0.1"
         bind:value={prefs.zoom}
         data-testid="zoom-page"
-      /><output>{t('cl.zoom_valeur', { n: Math.round(prefs.zoom * 100) })}</output></label
+      /><output><Bidi text={t('cl.zoom_valeur', { n: Math.round(prefs.zoom * 100) })} /></output
+      ></label
     >
   {/if}
   <label class="check"
