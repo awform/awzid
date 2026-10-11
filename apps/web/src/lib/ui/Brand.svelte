@@ -4,7 +4,7 @@
   /**
    * Marque Awzid : symbole (SVG de la marque, non modifié) + nom « Awzid » en texte HTML. Le slogan
    * « Grandir dans le savoir » n'est montré que si `slogan` (page de connexion/accueil), jamais sous l'icône
-   * carrée ni en petit. Sur fond sombre, le symbole est celui de l'icône (même dessin, couleurs pour fond foncé).
+   * carrée ni en petit. Sur fond sombre : awzid-symbole-sombre.svg (même dessin, couleurs pour fond foncé).
    */
   let { slogan = false, size = 32 }: { slogan?: boolean; size?: number } = $props();
   const largeur = $derived(Math.round((size * 168) / 216));
@@ -13,7 +13,7 @@
 <span class="brand-in" class:grand={slogan} data-marque data-testid="marque">
   <span class="sym" data-testid="marque-symbole" style:width="{size}px" style:height="{size}px">
     <img class="clair" src="/awzid-symbole.svg" alt="" width={largeur} height={size} />
-    <img class="sombre" src="/awzid-icone.svg" alt="" width={size} height={size} />
+    <img class="sombre" src="/awzid-symbole-sombre.svg" alt="" width={largeur} height={size} />
   </span>
   <span class="txt">
     <span class="word" use:encreDeMarque={NOM}>{t('app.nom')}</span>
