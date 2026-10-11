@@ -16,6 +16,8 @@ const wanted = [
   ['@fontsource/nunito', /^nunito-(latin|latin-ext)-(400|700)-normal\.woff2$/],
   // police de la marque (nom « Awzid » de l'en-tête) : un seul fichier, Lexend 600 latin
   ['@fontsource/lexend', /^lexend-latin-600-normal\.woff2$/],
+  // D1 : titres arabes calligraphiés (Amiri 700, sous-ensemble arabe seulement)
+  ['@fontsource/amiri', /^amiri-arabic-700-normal\.woff2$/],
 ];
 let n = 0;
 for (const [pkg, re] of wanted) {

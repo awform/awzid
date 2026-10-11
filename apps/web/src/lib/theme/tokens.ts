@@ -126,7 +126,9 @@ const SANS = "'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI
 export const POLICE_MARQUE = "'Lexend', 'Nunito', system-ui, sans-serif";
 const POLICES = {
   ui: SANS,
-  titre: SANS,
+  // D1 : tous les titres en Lexend (police de la marque), jamais une police à empattements par défaut
+  titre:
+    "'Lexend', 'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif",
   arabe: "'Noto Naskh Arabic', serif",
   coran: "'Amiri Quran', serif",
 };

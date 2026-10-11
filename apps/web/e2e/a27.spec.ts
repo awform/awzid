@@ -77,17 +77,21 @@ async function parentWith(
   return ((await p.json()) as { id: string }).id;
 }
 
-test('accueil : « Ma prochaine activité » selon le livre, puis mes espaces', async ({ page }) => {
+test('accueil : « Ma séance du jour » commence par la leçon du livre ; espaces dans la barre', async ({
+  page,
+}) => {
   await adultAt(page, 'a27-accueil');
   await page.goto('/aujourdhui');
-  const next = page.getByTestId('prochaine-activite');
-  await expect(next).toHaveAttribute('data-activite', 'lecon');
+  // D1 : la séance du jour (héros) remplace « Ma prochaine activité » et commence par la leçon du livre
+  const next = page.getByTestId('commencer-seance');
+  await expect(next).toHaveAttribute('data-etape', 'lecon');
   await expect(next).toHaveAttribute('data-cible', 'ad1.l01');
-  const spaces = page.getByTestId('mes-espaces');
-  for (const e of ['arabe', 'coran', 'sciences', 'vivre'])
-    await expect(spaces.locator(`[data-espace="${e}"]`)).toBeVisible();
-  // pas de classe : pas de « Ma classe »
-  await expect(spaces.locator('[data-espace="classe"]')).toHaveCount(0);
+  // D1 : plus de cartes d'espaces sur l'accueil : Arabe, Coran, Vivre l'islam sont dans la barre principale
+  await expect(page.getByTestId('mes-espaces')).toHaveCount(0);
+  for (const e of ['arabe', 'coran', 'vivre'])
+    await expect(page.locator(`nav.tabs [data-tab="${e}"]`)).toBeVisible();
+  // « Ma classe » n'est plus sur l'accueil (elle est dans « Plus »)
+  await expect(page.locator('main a[href="/ma-classe"]')).toHaveCount(0);
   // barre principale des adultes : cinq entrées au plus
   await expect(page.locator('nav.tabs a')).toHaveCount(5);
   await next.click();

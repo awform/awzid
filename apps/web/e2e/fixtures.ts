@@ -81,9 +81,24 @@ export async function loginTeacher(page: Page): Promise<void> {
   expect(r.status(), await r.text()).toBe(200);
 }
 
-export const test = base.extend<{ compte: Compte }>({
+export const test = base.extend<{ compte: Compte; parEtapes: boolean }>({
   compte: ['adulte', { option: true }],
-  page: async ({ page, compte }, use) => {
+  /**
+   * D1 : une leçon s'affiche section par section. Les suites qui vérifient le CONTENU des leçons (exercices,
+   * bilans, Coran, écriture…) gardent la leçon entière, comme le choix « Tout voir d'un coup » de l'adulte ;
+   * le parcours par étapes lui-même est vérifié par d1-design.spec.ts (`parEtapes: true`).
+   */
+  parEtapes: [false, { option: true }],
+  page: async ({ page, compte, parEtapes }, use) => {
+    if (!parEtapes)
+      await page.addInitScript(() => {
+        try {
+          if (localStorage.getItem('awzid.lecon.tout') === null)
+            localStorage.setItem('awzid.lecon.tout', '1');
+        } catch {
+          /* stockage indisponible */
+        }
+      });
     if (compte) await login(page, compte);
     await use(page);
   },

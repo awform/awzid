@@ -46,7 +46,7 @@
           fill="none"
           stroke-linecap="round"
         /></svg
-      ></button
+      ><span class="nom">{t('audio.ecouter')}</span></button
     ><button
       type="button"
       class="lent"
@@ -72,12 +72,19 @@
     font: inherit;
     padding: 0;
   }
+  /* D1 : jamais une icône seule — « Écouter » est écrit à côté du haut-parleur */
   .spk {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: inline-grid;
-    place-items: center;
+    min-height: 48px;
+    padding: 0 12px 0 8px;
+    border-radius: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .nom {
+    font-size: 14px;
+    font-family: var(--font-ui);
+    font-weight: 600;
   }
   .spk svg {
     width: 26px;
@@ -96,7 +103,6 @@
   }
   .small .spk,
   .small .lent {
-    width: auto;
     min-width: 44px;
     height: 44px;
     min-height: 44px;

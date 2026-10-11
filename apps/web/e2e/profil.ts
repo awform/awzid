@@ -14,7 +14,8 @@ export async function pickProfile(page: Page, name: string): Promise<void> {
   const prof = page.locator('[data-profile]').filter({ hasText: name }).first();
   await expect(pin.or(prof).first()).toBeVisible();
   if (await pin.isVisible()) {
-    await page.goto('/aide');
+    // D1 : « Changer d'élève » est en tête de la page « Compte »
+    await page.goto('/compte');
     await page
       .getByTestId('changer-eleve')
       .or(page.getByRole('button', { name: "Changer d'élève" }))

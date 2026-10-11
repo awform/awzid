@@ -32,6 +32,10 @@
   import VivanteLecon from '$lib/vivante/VivanteLecon.svelte';
   import JeParleBouton from '$lib/conversation/JeParleBouton.svelte';
   import { aUnScenario } from '$lib/conversation/scenario';
+  import { localIso } from '$lib/hifz';
+  import SeanceSuite from '$lib/SeanceSuite.svelte';
+  import Arbre from '$lib/ui/Arbre.svelte';
+  import Icon from '$lib/ui/Icon.svelte';
 
   /**
    * Lecteur de leçon : ordre et règles d'affichage du moteur des livres (awform.js : lectureLesson,
@@ -242,6 +246,107 @@
         ...(edition ? { edition } : {}),
       });
   }
+
+  /**
+   * D1 — leçon section par section : une section par écran, dans l'ordre du livre (aucun contenu retiré ni
+   * déplacé : les sections absentes du livre sont sautées), barre d'avancement, « Suivant », sommaire. L'adulte
+   * et l'enseignant peuvent tout voir d'un coup (choix gardé sur l'appareil). Les sections cachées restent
+   * montées : une réponse commencée n'est jamais perdue en changeant d'écran.
+   */
+  type EtapeId =
+    | 'decouvrir'
+    | 'lire'
+    | 'mots'
+    | 'exercices'
+    | 'parler'
+    | 'lexique'
+    | 'coran'
+    | 'adab'
+    | 'oral'
+    | 'bilan'
+    | 'ecrire';
+  const etapes = $derived.by(() => {
+    const s: EtapeId[] = ['decouvrir'];
+    if (L.notion || R.syllabes || R.ligne || phrases.length || R.vedette || R.non_prepare)
+      s.push('lire');
+    if (L.mots?.length) s.push('mots');
+    if (isEval && dialogue?.repliques?.length) s.push('parler');
+    if (isEval && Q) s.push('coran');
+    if (isEval && fiqh?.points?.length) s.push('adab');
+    if (livreEx.length) s.push('exercices');
+    if (!isEval && dialogue?.repliques?.length) s.push('parler');
+    if (lexique.length) s.push('lexique');
+    if (!isEval && Q) s.push('coran');
+    if (!isEval && fiqh?.points?.length) s.push('adab');
+    if (oral.length) s.push('oral');
+    s.push('bilan');
+    if (!isEval && (E.mots || E.lier || E.copie || E.production || cahierEx.length))
+      s.push('ecrire');
+    return s;
+  });
+  const TOUT_KEY = 'awzid.lecon.tout';
+  let etape = $state(0);
+  let tout = $state(false);
+  let fini = $state(false);
+  let sommaire = $state(false);
+  let feuilles = $state<number | null>(null);
+  let titreEtape: HTMLElement | undefined = $state();
+  /** tout voir d'un coup : l'adulte et l'enseignant (sans profil d'élève) */
+  const peutToutVoir = $derived.by(() => {
+    const p = profileInfo as { kind: string } | null;
+    return !p || p.kind === 'adulte';
+  });
+  const ici = $derived(etapes[Math.min(etape, etapes.length - 1)] ?? 'decouvrir');
+  const voir = (id: EtapeId) => !fini && (tout || ici === id);
+  onMount(() => {
+    try {
+      tout = localStorage.getItem(TOUT_KEY) === '1';
+    } catch {
+      /* stockage indisponible : section par section */
+    }
+  });
+  // nouvelle leçon (lien d'une leçon à l'autre) : on repart du début
+  $effect(() => {
+    void u.id;
+    untrack(() => {
+      etape = 0;
+      fini = false;
+      sommaire = false;
+    });
+  });
+  function aller(i: number) {
+    etape = Math.max(0, Math.min(i, etapes.length - 1));
+    sommaire = false;
+    fini = false;
+    // l'écran suivant commence en haut ; le lecteur d'écran annonce l'étape
+    requestAnimationFrame(() => {
+      titreEtape?.scrollIntoView({ block: 'start' });
+      titreEtape?.focus({ preventScroll: true });
+    });
+  }
+  function basculerTout() {
+    tout = !tout;
+    sommaire = false;
+    try {
+      localStorage.setItem(TOUT_KEY, tout ? '1' : '0');
+    } catch {
+      /* choix non gardé */
+    }
+  }
+  async function terminer() {
+    fini = true;
+    sommaire = false;
+    requestAnimationFrame(() => titreEtape?.scrollIntoView({ block: 'start' }));
+    // « Grandir » : l'arbre de l'élève (une feuille par leçon terminée), compté par le serveur
+    if (profileId) {
+      await flush().catch(() => {});
+      const r = await call<{ jalons: { leconsTerminees: number } }>(
+        'GET',
+        `/today/${profileId}?today=${localIso()}`,
+      );
+      feuilles = r.ok && r.data ? r.data.jalons.leconsTerminees : null;
+    }
+  }
 </script>
 
 <svelte:head><title>{t('app.nom')} — {unitLabel(u)} · {u.titleFr}</title></svelte:head>
@@ -287,67 +392,70 @@
         ><Bidi text={t('lecon.retour', { level: u.levelCode })} /></a
       >
     </p>
-    <header class="ltitle">
-      <p class="num"><Bidi text={unitLabel(u)} /> · <Bidi text={u.titleFr} /></p>
-      <h1 class="ar" lang="ar" dir="rtl">
-        <Ar text={L.titre_ar} {lettres} />
-        {#if lettres.length && !isEval}<span class="fam"
-            >{#each lettres as x, i (i)}<span class="c{i % 4}"><Bidi text={x.l} base="ar" /></span
-              >{/each}</span
-          >{/if}
-      </h1>
-      {#if progress}<p class="prog" data-testid="progression">
-          <Bidi text={t('lecon.progression', { statut: t(`statut.${progress.status}`) })} /><Bidi
-            text={progress.bestScore != null &&
-            profileInfo &&
-            showsScore(profileInfo.id, profileInfo.kind)
-              ? ` · ${fmtNumber(progress.bestScore, { style: 'percent' })}`
-              : ''}
-          />
-        </p>{/if}
-    </header>
+    {@render barreEtapes()}
+    <div class="etape" data-etape="decouvrir" hidden={!voir('decouvrir')}>
+      <header class="ltitle">
+        <p class="num"><Bidi text={unitLabel(u)} /> · <Bidi text={u.titleFr} /></p>
+        <h1 class="ar" lang="ar" dir="rtl">
+          <Ar text={L.titre_ar} {lettres} />
+          {#if lettres.length && !isEval}<span class="fam"
+              >{#each lettres as x, i (i)}<span class="c{i % 4}"><Bidi text={x.l} base="ar" /></span
+                >{/each}</span
+            >{/if}
+        </h1>
+        {#if progress}<p class="prog" data-testid="progression">
+            <Bidi text={t('lecon.progression', { statut: t(`statut.${progress.status}`) })} /><Bidi
+              text={progress.bestScore != null &&
+              profileInfo &&
+              showsScore(profileInfo.id, profileInfo.kind)
+                ? ` · ${fmtNumber(progress.bestScore, { style: 'percent' })}`
+                : ''}
+            />
+          </p>{/if}
+      </header>
 
-    {#if isEval && lettres.length}
-      <p class="readline big" dir="rtl">
-        {#each lettres as x, i (i)}<span class="c{i % 4}"><Bidi text={x.l} base="ar" /></span
-          >{/each}
-      </p>
-    {/if}
+      {#if isEval && lettres.length}
+        <p class="readline big" dir="rtl">
+          {#each lettres as x, i (i)}<span class="c{i % 4}"><Bidi text={x.l} base="ar" /></span
+            >{/each}
+        </p>
+      {/if}
 
-    {#if L.scene}
-      <Scene spec={L.scene as SceneSpec} {lettres} />
-      {#if (L.scene as SceneSpec).bulle_fr}<p class="bulle fr">
-          « <Bidi text={(L.scene as SceneSpec).bulle_fr} /> »
-        </p>{/if}
-    {/if}
+      {#if L.scene}
+        <Scene spec={L.scene as SceneSpec} {lettres} />
+        {#if (L.scene as SceneSpec).bulle_fr}<p class="bulle fr">
+            « <Bidi text={(L.scene as SceneSpec).bulle_fr} /> »
+          </p>{/if}
+      {/if}
 
-    {#if L.objectifs?.length && !isEval}
-      <div class="goal">
-        <svg viewBox="0 0 40 40" aria-hidden="true"
-          ><circle cx="20" cy="20" r="18" fill="#E5484D" /><circle
-            cx="20"
-            cy="20"
-            r="12"
-            fill="#fff"
-          /><circle cx="20" cy="20" r="6" fill="#E5484D" /></svg
-        >
-        <div>
-          <Ar text={'هَدَفِي: ' + L.objectifs[0]!.ar} {lettres} />
-          <p class="fr"><Bidi text={t('lecon.objectif', { texte: L.objectifs[0]!.fr })} /></p>
+      {#if L.objectifs?.length && !isEval}
+        <div class="goal">
+          <svg viewBox="0 0 40 40" aria-hidden="true"
+            ><circle cx="20" cy="20" r="18" fill="#E5484D" /><circle
+              cx="20"
+              cy="20"
+              r="12"
+              fill="#fff"
+            /><circle cx="20" cy="20" r="6" fill="#E5484D" /></svg
+          >
+          <div>
+            <Ar text={'هَدَفِي: ' + L.objectifs[0]!.ar} {lettres} />
+            <p class="fr"><Bidi text={t('lecon.objectif', { texte: L.objectifs[0]!.fr })} /></p>
+          </div>
         </div>
-      </div>
-    {/if}
+      {/if}
 
-    {#if !isEval}
-      <LettresLecon
-        {lettres}
-        decouvreAr={L.decouvre_ar as string | undefined}
-        decouvreFr={L.decouvre_fr as string | undefined}
-      />
-    {/if}
+      {#if !isEval}
+        <LettresLecon
+          {lettres}
+          decouvreAr={L.decouvre_ar as string | undefined}
+          decouvreFr={L.decouvre_fr as string | undefined}
+        />
+      {/if}
+    </div>
 
     {#if L.notion || R.syllabes || R.ligne || phrases.length || R.vedette || R.non_prepare}
-      <section class="blk">
+      <section class="blk etape" data-etape="lire" hidden={!voir('lire')}>
         {#if L.notion}
           {@const N = L.notion as {
             titre_ar?: string;
@@ -421,7 +529,7 @@
     {/if}
 
     {#if L.mots?.length}
-      <section class="blk">
+      <section class="blk etape" data-etape="mots" hidden={!voir('mots')}>
         <h2><Ar text="أَسْمَعُ وَأُرَدِّدُ" /> <span>{t('lecon.ecoute_repete')}</span></h2>
         <p class="hint fr">
           <Bidi text={(L.mots_fr as string) ?? t('lecon.mots_consigne')} />
@@ -439,17 +547,17 @@
     {/if}
 
     {#if isEval && dialogue?.repliques?.length}
-      {@render dlg()}
+      <div class="etape" data-etape="parler" hidden={!voir('parler')}>{@render dlg()}</div>
     {/if}
     {#if isEval && Q}
-      {@render coran()}
+      <div class="etape" data-etape="coran" hidden={!voir('coran')}>{@render coran()}</div>
     {/if}
     {#if isEval && fiqh?.points?.length}
-      {@render fiqhBlock()}
+      <div class="etape" data-etape="adab" hidden={!voir('adab')}>{@render fiqhBlock()}</div>
     {/if}
 
     {#if livreEx.length}
-      <section class="blk">
+      <section class="blk etape" data-etape="exercices" hidden={!voir('exercices')}>
         <h2>
           <Ar text={isEval ? 'حَصِيلَةٌ' : 'أَتَدَرَّبُ'} />
           <span><Bidi text={isEval ? t('lecon.mes_exercices') : t('lecon.entraine')} /></span>
@@ -504,11 +612,11 @@
     {/if}
 
     {#if !isEval && dialogue?.repliques?.length}
-      {@render dlg()}
+      <div class="etape" data-etape="parler" hidden={!voir('parler')}>{@render dlg()}</div>
     {/if}
 
     {#if lexique.length}
-      <section class="blk">
+      <section class="blk etape" data-etape="lexique" hidden={!voir('lexique')}>
         <h2><Ar text="مُعْجَمُ الدَّرْسِ" /> <span>{t('lecon.lexique')}</span></h2>
         <div class="lex">
           {#each lexique as x, i (i)}<div>
@@ -519,14 +627,14 @@
     {/if}
 
     {#if !isEval && Q}
-      {@render coran()}
+      <div class="etape" data-etape="coran" hidden={!voir('coran')}>{@render coran()}</div>
     {/if}
     {#if !isEval && fiqh?.points?.length}
-      {@render fiqhBlock()}
+      <div class="etape" data-etape="adab" hidden={!voir('adab')}>{@render fiqhBlock()}</div>
     {/if}
 
     {#if oral.length}
-      <section class="blk">
+      <section class="blk etape" data-etape="oral" hidden={!voir('oral')}>
         <h2><Ar text="الِاخْتِبَارُ الشَّفَهِيُّ" /> <span>{t('lecon.oral')}</span></h2>
         <ol>
           {#each oral as o, i (i)}<li>
@@ -537,7 +645,7 @@
       </section>
     {/if}
 
-    <section class="blk recap">
+    <section class="blk recap etape" data-etape="bilan" hidden={!voir('bilan')}>
       <h2><Ar text="حَصِيلَتِي" /> <span>{t('lecon.mon_bilan')}</span></h2>
       {#if lettres.some((x) => x.points_ar)}
         <div class="memo">
@@ -598,7 +706,7 @@
     </section>
 
     {#if !isEval && (E.mots || E.lier || E.copie || E.production || cahierEx.length)}
-      <section class="blk cahier">
+      <section class="blk cahier etape" data-etape="ecrire" hidden={!voir('ecrire')}>
         <h2><Ar text="أَكْتُبُ" /> <span>{t('lecon.cahier')}</span></h2>
         <p class="hint fr">
           {t('lecon.cahier_consigne')}
@@ -672,7 +780,9 @@
       </section>
     {/if}
     <!-- A21 : leçons vivantes (animations après chaque partie, condensé ; chargées à la demande) -->
-    <VivanteLecon unit={u} />
+    <div class="etape" hidden={!voir(etapes[etapes.length - 1]!)}><VivanteLecon unit={u} /></div>
+    {@render navEtapes()}
+    {#if fini}{@render finLecon()}{/if}
   </article>
   {#if TutorPanel && fn('tuteur')}<TutorPanel
       unitId={u.id}
@@ -680,7 +790,11 @@
       words={lessonWords}
     />{:else if tuteurEchec && fn('tuteur')}<ConnexionNecessaire onretry={chargerTuteur} />{/if}
 {/if}
-{#if suspendu !== 'unite'}<p class="sig-lecon" data-testid="signaler-lecon">
+<!-- D1 : « Signaler une erreur » sur la leçon : à la dernière étape (ou leçon entière), pas au premier écran -->
+{#if suspendu !== 'unite' && (religion || lectureCoran || tout || fini || ici === etapes.at(-1))}<p
+    class="sig-lecon"
+    data-testid="signaler-lecon"
+  >
     <Signaler kind="lecon" excerpt={u.titleFr} />
   </p>{/if}
 {#if audio?.fichiers.size}
@@ -688,6 +802,126 @@
     <Bidi text={[t('audio.mention'), ...audio.credits].join(' · ')} />
   </p>
 {/if}
+
+{#snippet barreEtapes()}
+  <!-- D1 : barre d'avancement de la leçon (Découvrir → … → Bilan, selon les sections du livre) -->
+  <div class="etapes-barre" data-testid="etapes" data-tout={tout}>
+    <p class="etape-nom" tabindex="-1" bind:this={titreEtape} aria-live="polite">
+      {#if fini}<strong>{t('fin.titre')}</strong>
+      {:else if tout}<strong>{t('etape.toute_lecon')}</strong>
+      {:else}<span class="muted"
+          ><Bidi text={t('etape.n_sur', { n: etape + 1, total: etapes.length })} /></span
+        >
+        ·
+        <strong data-testid="etape-courante" data-etape={ici}
+          ><Bidi text={t(`etape.${ici}`)} /></strong
+        >{/if}
+    </p>
+    <button
+      type="button"
+      class="sommaire-btn"
+      aria-expanded={sommaire}
+      aria-controls="sommaire-lecon"
+      onclick={() => (sommaire = !sommaire)}
+      data-testid="sommaire"
+      ><Icon name="grille" size={18} /><span>{t('etape.sommaire')}</span></button
+    >
+    {#if !tout}
+      <ol class="segments" aria-hidden="true">
+        {#each etapes as _e, i (i)}<li
+            class:fait={fini || i < etape}
+            class:ici={!fini && i === etape}
+          ></li>{/each}
+      </ol>
+    {/if}
+  </div>
+  {#if sommaire}
+    <nav
+      class="sommaire"
+      id="sommaire-lecon"
+      aria-label={t('etape.aria')}
+      data-testid="sommaire-liste"
+    >
+      <ol>
+        {#each etapes as e, i (e + i)}
+          <li>
+            <button
+              type="button"
+              aria-current={!tout && !fini && i === etape ? 'step' : undefined}
+              onclick={() => {
+                if (tout) basculerTout();
+                aller(i);
+              }}
+              data-aller={e}
+              ><span class="num" aria-hidden="true"
+                >{#if fini || i < etape}✓{:else}<Bidi text={i + 1} />{/if}</span
+              ><span><Bidi text={t(`etape.${e}`)} /></span></button
+            >
+          </li>
+        {/each}
+      </ol>
+      {#if peutToutVoir}
+        <button type="button" class="bascule" onclick={basculerTout} data-testid="tout-voir"
+          ><Bidi text={t(tout ? 'etape.par_etape' : 'etape.tout_voir')} /></button
+        >
+      {/if}
+    </nav>
+  {/if}
+{/snippet}
+
+{#snippet navEtapes()}
+  {#if !fini}
+    <div class="etapes-nav" data-testid="etapes-nav">
+      {#if !tout && etape > 0}<button
+          type="button"
+          onclick={() => aller(etape - 1)}
+          data-testid="etape-precedente">{t('etape.precedent')}</button
+        >{/if}
+      {#if !tout && etape < etapes.length - 1}
+        <button
+          type="button"
+          class="primary"
+          onclick={() => aller(etape + 1)}
+          data-testid="etape-suivante"
+          ><span>{t('etape.suivant')}</span><Icon name="fleche" size={20} /></button
+        >
+      {:else}
+        <button type="button" class="primary" onclick={terminer} data-testid="terminer-lecon"
+          >{t('etape.terminer')}</button
+        >
+      {/if}
+    </div>
+  {/if}
+{/snippet}
+
+{#snippet finLecon()}
+  <!-- D1 « Grandir » : la feuille du logo pousse, l'arbre de l'élève gagne une feuille (ni points ni classement) -->
+  <section class="fin" data-testid="fin-lecon" aria-labelledby="fin-titre">
+    <span class="pousse" aria-hidden="true"
+      ><img src="/awzid-symbole.svg" alt="" width="62" height="80" class="clair" /><img
+        src="/awzid-symbole-sombre.svg"
+        alt=""
+        width="62"
+        height="80"
+        class="sombre"
+      /></span
+    >
+    <h2 id="fin-titre">{t('fin.titre')}</h2>
+    {#if feuilles != null}
+      <Arbre {feuilles} pousse taille={140} />
+      <p class="muted"><Bidi text={t('fin.feuille')} /></p>
+    {/if}
+    <SeanceSuite ici="lecon" />
+    <p class="fin-actions">
+      <a
+        class="button"
+        href={profileId ? resolve('/') : resolve('/niveaux/[code]', { code: u.levelCode })}
+        data-testid="retour-lecons">{t('fin.retour')}</a
+      >
+      <button type="button" onclick={() => aller(0)}>{t('fin.revoir')}</button>
+    </p>
+  </section>
+{/snippet}
 
 {#snippet dlg()}
   <section class="blk">
@@ -827,6 +1061,184 @@
 {/snippet}
 
 <style>
+  /* D1 : leçon section par section */
+  .etapes-barre {
+    position: sticky;
+    top: 60px;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 6px 10px;
+    padding: 8px 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+  }
+  .etape-nom {
+    margin: 0;
+    font-family: var(--font-title);
+    min-width: 0;
+  }
+  .etape-nom:focus {
+    outline: none;
+  }
+  .sommaire-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+  }
+  .segments {
+    grid-column: 1 / -1;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 4px;
+  }
+  .segments li {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--line);
+    transition: background var(--motion-fast) ease;
+  }
+  .segments li.fait {
+    background: var(--primary);
+  }
+  .segments li.ici {
+    background: var(--gold);
+  }
+  .sommaire {
+    margin: 8px 0;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--card);
+  }
+  .sommaire ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .sommaire li button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 48px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ink);
+    text-align: start;
+    font: inherit;
+  }
+  .sommaire li button[aria-current='step'] {
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .sommaire .num {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    font-size: 0.85rem;
+    flex: none;
+  }
+  .bascule {
+    margin-top: 8px;
+    width: 100%;
+    min-height: 48px;
+  }
+  .etapes-nav {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    margin: 24px 0 8px;
+  }
+  .etapes-nav button {
+    min-height: 56px;
+    padding: 0 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .etapes-nav .primary {
+    margin-inline-start: auto;
+    flex: 1 1 auto;
+    justify-content: center;
+    font-size: 1.05rem;
+  }
+  :global([dir='rtl']) .etapes-nav .primary :global(svg) {
+    transform: scaleX(-1);
+  }
+  .fin {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 8px;
+    padding: 24px 16px;
+    margin: 16px 0;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--gold);
+    background: var(--card);
+  }
+  .fin h2 {
+    border: 0;
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  .pousse {
+    display: inline-flex;
+    transform-origin: 50% 100%;
+    animation: pousse 700ms cubic-bezier(0.2, 0.8, 0.3, 1.15) both;
+  }
+  .pousse .clair {
+    display: var(--mp-clair, block);
+  }
+  .pousse .sombre {
+    display: var(--mp-sombre, none);
+  }
+  @keyframes pousse {
+    from {
+      transform: scale(0.55);
+      opacity: 0.4;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pousse {
+      animation: none;
+    }
+    .segments li {
+      transition: none;
+    }
+  }
+  .fin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .fin-actions > * {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+  }
   .nav {
     margin: 0 0 4px;
   }

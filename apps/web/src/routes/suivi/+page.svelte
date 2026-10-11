@@ -10,6 +10,7 @@
   import { localPacks } from '$lib/offline';
   import { call, cachedMe, type ProfileInfo } from '$lib/session';
   import Sym from '$lib/Sym.svelte';
+  import MaSemaine from '$lib/suivi/MaSemaine.svelte';
   import { lastSync } from '$lib/sync-core';
 
   /**
@@ -76,6 +77,8 @@
 <svelte:head><title>{t('app.nom')} — {t('onglets.suivi')}</title></svelte:head>
 
 <h1>{t('onglets.suivi')}</h1>
+<!-- D1 : semaine, arbre, jalons et rapport de l'élève (déplacés depuis l'accueil) -->
+{#if profile}<MaSemaine {profile} />{/if}
 {#if loaded && rows.length === 0}
   <p class="card">
     {t('suivi.choisir_profil')} <a href={resolve('/profils')}>{t('suivi.qui_apprend')}</a>

@@ -428,7 +428,7 @@
           onclick={start}
           ><svg viewBox="0 0 24 24" aria-hidden="true"
             ><path d="M8 5v14l11-7z" fill="currentColor" /></svg
-          ></button
+          ><span>{t('viv.lecture')}</span></button
         >{/if}
     </div>
     <div class="ctl">
@@ -443,7 +443,7 @@
               d="M7 5h4v14H7zM13 5h4v14h-4z"
               fill="currentColor"
             />{/if}</svg
-        ></button
+        ><span><Bidi text={i < 0 || paused ? t('viv.lecture') : t('viv.pause')} /></span></button
       >
       <button
         type="button"
@@ -459,7 +459,7 @@
             stroke-width="2.2"
             stroke-linecap="round"
           /></svg
-        ></button
+        ><span>{t('viv.revoir')}</span></button
       >
       {#if hasVoice}<button
           type="button"
@@ -842,9 +842,15 @@
     position: absolute;
     inset: 0;
     margin: auto;
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
+    width: fit-content;
+    height: 56px;
+    padding: 0 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font: inherit;
+    font-weight: 700;
+    border-radius: 28px;
     border: 0;
     background: var(--primary);
     color: var(--on-primary);
@@ -878,9 +884,9 @@
     padding: 0 14px;
     cursor: pointer;
   }
+  /* D1 : jamais une icône seule — le nom est écrit à côté */
   .ctl .ic {
-    width: 44px;
-    padding: 0;
+    padding: 0 12px;
     justify-content: center;
   }
   .ctl svg,

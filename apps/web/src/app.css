@@ -48,6 +48,26 @@
   src: url('/fonts/lexend-latin-600-normal.woff2') format('woff2');
 }
 
+/* D1 : Amiri (SIL OFL), titres arabes calligraphiés (couvertures d'unité, carte « Reprendre ») ; chargée à la
+   demande par le navigateur, seulement quand un tel titre est affiché. Jamais pour le texte du Coran. */
+@font-face {
+  font-family: 'Amiri';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/amiri-arabic-700-normal.woff2') format('woff2');
+}
+:root {
+  --font-ar-titre: 'Amiri', 'Noto Naskh Arabic', serif;
+  /* D1 : aplats des couvertures d'unité (couleurs de la marque, identiques en clair et en sombre, titre ivoire :
+     6,4:1, 9,1:1 et 4,9:1) ; texte foncé sur l'or (bouton « Continuer ») */
+  --bande-1: #0b6e4f;
+  --bande-2: #084c38;
+  --bande-3: #17805d;
+  --bande-texte: #fbf7ee;
+  --sur-or: #1e2b25;
+}
+
 /* ------------------------------------------------------------------ base */
 *,
 *::before,

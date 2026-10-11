@@ -13,6 +13,8 @@
     { href: '/lectures', icon: 'lire', titre: 'onglets.lectures', desc: 'plus.d_lectures' },
     { href: '/revisions', icon: 'revisions', titre: 'revisions.titre', desc: 'plus.d_revisions' },
     { href: '/suivi', icon: 'courbe', titre: 'onglets.suivi', desc: 'plus.d_suivi' },
+    // D1 : « Ma classe » quitte l'accueil pour « Plus »
+    { href: '/ma-classe', icon: 'classe', titre: 'parc.ma_classe', desc: 'plus.d_classe' },
     {
       href: '/hors-ligne',
       icon: 'telecharger',

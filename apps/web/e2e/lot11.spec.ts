@@ -19,6 +19,10 @@ test.describe('adulte', () => {
     await expect(page).toHaveURL(/\/aujourdhui$/);
     await expect(page.getByTestId('seance')).toBeVisible();
     await expect(page.getByTestId('duree')).toContainText('min');
+    // D1 : l'accueil garde une ligne « Ma semaine », qui ouvre « Mon suivi » (semaine, jalons, rapport)
+    await expect(page.getByTestId('ma-semaine')).toContainText('1 jour de travail');
+    await page.getByTestId('ma-semaine').click();
+    await expect(page).toHaveURL(/\/suivi$/);
     await expect(page.getByTestId('jours-travail')).toContainText('1 jour de travail');
     await expect(page.locator('[data-actif="true"]')).toHaveCount(1);
 
@@ -77,10 +81,13 @@ test.describe('parent', () => {
     await page.goto('/profils');
     await page.locator('[data-profile]').filter({ hasText: 'Amina' }).click();
     await expect(page).toHaveURL(/\/$/);
-    await page.getByTestId('lien-aujourdhui').click();
+    // D1 : l'accueil est dans la barre du bas ; semaine et jalons sont dans « Mon suivi »
+    await page.locator('nav.tabs [data-tab="aujourdhui"]').click();
     await expect(page.getByTestId('seance')).toBeVisible();
-    await expect(page.getByTestId('regularite')).toHaveCount(0);
+    await expect(page.getByTestId('ma-semaine')).not.toContainText('jour de travail');
+    await page.getByTestId('ma-semaine').click();
     await expect(page.getByTestId('jalons')).toBeVisible();
+    await expect(page.getByTestId('regularite')).toHaveCount(0);
   });
 
   test('rapport : la même partie validée deux fois le même jour ne casse pas la page', async ({

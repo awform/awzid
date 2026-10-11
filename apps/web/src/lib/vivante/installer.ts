@@ -42,14 +42,21 @@ export async function installer(
   const lettres = ((unit.lesson as { lettres?: Array<{ l: string }> }).lettres ?? []).filter(
     (x) => typeof x?.l === 'string',
   );
-  const sections = [...article.querySelectorAll<HTMLElement>(':scope > section')];
+  // D1 : leçon par étapes — une partie est une section de l'article, ou une section dans une étape (.etape)
+  const sections = [
+    ...article.querySelectorAll<HTMLElement>(':scope > section, :scope > .etape > section'),
+  ];
   const made: Array<{ host: HTMLElement; app: ReturnType<typeof mount> }> = [];
   // A21b : plusieurs animations après la même partie (structure, puis racine, conjugaison…) : dans l'ordre
   const tail = new Map<Element, Element>();
   const place = (after: Element, m: (typeof motions)[number], isCondense = false) => {
     const host = document.createElement('div');
     host.className = 'vivante-hote';
-    (tail.get(after) ?? after).after(host);
+    // D1 : l'animation reste DANS l'étape de sa partie (montrée et cachée avec elle)
+    const prev = tail.get(after);
+    if (prev) prev.after(host);
+    else if (after.classList.contains('etape')) after.append(host);
+    else after.after(host);
     tail.set(after, host);
     const app = mount(Motion, {
       target: host,

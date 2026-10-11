@@ -361,7 +361,8 @@ test.describe('lot 11', () => {
     await solveExercise(page, unit.exercises[0]!.id, unit.lesson.exercices[0]!);
     await expect(page.getByTestId('en-attente')).toHaveCount(0, { timeout: 15_000 });
     await page.goto('/aujourdhui');
-    await page.getByTestId('jalons').waitFor();
+    // D1 : l'accueil tient en un écran (séance du jour) ; les jalons sont dans « Mon suivi »
+    await page.getByTestId('ma-semaine').waitFor();
     await shot('45-aujourdhui', true);
     await page.goto('/garanties');
     await page.getByTestId('garanties').waitFor();

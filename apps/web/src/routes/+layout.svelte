@@ -169,11 +169,11 @@
     void refresh();
   });
 
-  async function changeStudent() {
-    await setActiveProfile(null);
-    profile = null;
-    await goto(resolve(settings?.ecole ? '/ecole' : '/profils'));
-  }
+  const piedCache = $derived(
+    // élève (enfant, ado, adulte autonome : celui-ci n'a pas toujours de profil actif)
+    ['enfant', 'ado', 'adulte'].includes(audience) &&
+      (audience === 'enfant' || /^\/(aujourdhui|lecons\/[^/]+)?\/?$/.test(page.url.pathname)),
+  );
   const modeIcon = $derived(mode === 'sombre' ? 'lune' : mode === 'clair' ? 'soleil' : 'auto');
 </script>
 
@@ -214,16 +214,7 @@
     {#if profile}
       <span class="who" data-testid="eleve-actif" data-prive><Bidi text={profile.pseudonym} /></span
       >
-      {#if me?.profiles && me.profiles.length > 1}
-        <button
-          type="button"
-          class="icon-btn"
-          onclick={changeStudent}
-          aria-label={t('entete.changer_eleve')}
-          title={t('entete.changer_eleve')}
-          data-testid="changer-eleve"><Icon name="famille" /></button
-        >
-      {/if}
+      <!-- D1 : « Changer d'élève » est en tête de la page « Compte » (en-tête allégé, prénom jamais tronqué) -->
     {/if}
     <button
       type="button"
@@ -272,15 +263,20 @@
 
   <main id="contenu" tabindex="-1">
     {@render children()}
-    <footer class="pied" data-testid="pied">
-      <a href={resolve('/aide')}>{t('aide.titre')}</a>
-      <a href={resolve('/garanties')}>{t('pied.garanties')}</a>
-      <a href={resolve('/legal/[page]', { page: 'mentions' })}>{t('pied.mentions')}</a>
-      <a href={resolve('/legal/[page]', { page: 'cgu' })}>{t('pied.cgu')}</a>
-      <a href={resolve('/legal/[page]', { page: 'confidentialite' })}>{t('pied.confidentialite')}</a
-      >
-      <a href={resolve('/legal/[page]', { page: 'cookies' })}>{t('pied.cookies')}</a>
-    </footer>
+    <!-- D1 : pas de liens juridiques sur l'accueil, l'Arabe et les leçons de l'élève, ni nulle part pour un enfant
+         (ils restent dans « Plus », « Aide » et « Compte ») -->
+    {#if !piedCache}
+      <footer class="pied" data-testid="pied">
+        <a href={resolve('/aide')}>{t('aide.titre')}</a>
+        <a href={resolve('/garanties')}>{t('pied.garanties')}</a>
+        <a href={resolve('/legal/[page]', { page: 'mentions' })}>{t('pied.mentions')}</a>
+        <a href={resolve('/legal/[page]', { page: 'cgu' })}>{t('pied.cgu')}</a>
+        <a href={resolve('/legal/[page]', { page: 'confidentialite' })}
+          >{t('pied.confidentialite')}</a
+        >
+        <a href={resolve('/legal/[page]', { page: 'cookies' })}>{t('pied.cookies')}</a>
+      </footer>
+    {/if}
   </main>
 </div>
 
@@ -316,13 +312,12 @@
     padding: 2px 10px;
     white-space: nowrap;
   }
+  /* D1 : le prénom n'est jamais tronqué (au besoin sur deux lignes) */
   .who {
     font-weight: 700;
     font-size: 0.95rem;
-    max-width: 9em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.15;
+    flex-shrink: 0;
   }
   .icon-btn {
     display: inline-flex;
@@ -504,6 +499,10 @@
     .chip-n {
       display: inline;
     }
+    /* compte à plusieurs profils : le symbole seul (le nom « Awzid » reste lu), pour laisser le prénom entier */
+    .has-who .brand :global(.word) {
+      display: none;
+    }
     .chip-t {
       position: absolute;
       width: 1px;
@@ -511,12 +510,6 @@
       overflow: hidden;
       clip-path: inset(50%);
       white-space: nowrap;
-    }
-    .who {
-      max-width: 6em;
-    }
-    .has-who .brand :global(.word) {
-      display: none;
     }
   }
 </style>
