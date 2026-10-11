@@ -11,6 +11,7 @@ import { fromLeitner, isLeitner, review, type CardState } from './fsrs';
 import { kvGet, kvSet } from './idb';
 import { localUnit, localUnits } from './offline';
 import type { ProfileInfo } from './session';
+import { mesMots } from './conversation/mesmots';
 
 export interface Word {
   ar: string;
@@ -75,6 +76,9 @@ export async function loadDeck(p: ProfileInfo): Promise<Deck> {
         /* leçon indisponible hors ligne */
       }
   }
+  // A26b : mots gardés depuis « Je parle » (« Mes mots ») du même niveau
+  for (const m of await mesMots())
+    if (m.unit.startsWith(`${level}.`) && !words.some((w) => w.ar === m.ar)) words.push(m);
   return { level, words, illustrations };
 }
 

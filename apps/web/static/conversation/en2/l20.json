@@ -1,0 +1,7 @@
+{"v":1,"id":"en2.l20","niveau":"en2","lecon":"l20","titre_ar":"فِي غُرْفَةِ مَرْيَمَ","titre_fr":"Dans la chambre de Maryam (jeu de rôle, leçons 13 à 16)","scene":{"lieu":"maison","props":["bed","ball","lamp"]},"role":{"qui":"Maryam","qui_ar":"مَرْيَمُ"},"mots":[{"ar":"سَرِيرٌ","fr":"un lit","img":"bed"}],"tours":[
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"يَا مَرْيَمُ، هَلْ كُرَتِي فِي غُرْفَتِكِ؟","fr":"Maryam, est-ce que mon ballon est dans ta chambre ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"شُكْرًا يَا أُخْتِي!","fr":"Merci, ma sœur !","kind":"presque","src":"en2.l20#4"},{"ar":"مَا لَوْنُ كُرَتِكَ؟","fr":"De quelle couleur est ton ballon ?","kind":"bonne","src":"en2.l20#1"},{"ar":"انْتَظِرْ يَا يُوسُفُ، هُنَاكَ صَفٌّ.","fr":"Attends, Youssouf, il y a une file.","kind":"reprendre","src":"en2.l11#1"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"كُرَتِي حَمْرَاءُ.","fr":"Mon ballon est rouge."},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"مَا لَوْنُ كُرَتِكَ؟","fr":"De quelle couleur est ton ballon ?","kind":"presque","src":"en2.l20#1"},{"ar":"انْظُرْ يَا أَبِي! الْقَمَرُ جَمِيلٌ. سُبْحَانَ اللَّهِ!","fr":"Regarde, Papa ! La lune est belle. Gloire à Allah !","kind":"reprendre","src":"en2.l05#5"},{"ar":"نَعَمْ، هِيَ هُنَاكَ، تَحْتَ السَّرِيرِ.","fr":"Oui, il est là-bas, sous le lit.","kind":"bonne","src":"en2.l20#3"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"شُكْرًا يَا أُخْتِي!","fr":"Merci, ma sœur !"}
+]}

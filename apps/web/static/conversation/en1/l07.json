@@ -1,0 +1,7 @@
+{"v":1,"id":"en1.l07","niveau":"en1","lecon":"l07","titre_ar":"فِي الْحَدِيقَةِ","titre_fr":"Au parc","scene":{"lieu":"jardin","props":["tree","butterfly"]},"role":{"qui":"Youssouf","qui_ar":"يُوسُفُ"},"mots":[{"ar":"[شَ]مْ[سٌ]","fr":"un soleil","img":"sun"}],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"السَّلَامُ عَلَيْكُمْ! كَيْفَ حَالُكَ يَا يُوسُفُ؟","fr":"Que la paix soit sur vous ! Comment vas-tu, Youssouf ?"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"وَعَلَيْكُمُ السَّلَامُ. بِخَيْرٍ، الْحَمْدُ لِلَّهِ.","fr":"Et sur vous la paix. Bien, louange à Allah.","kind":"bonne","src":"en1.l07#1"},{"ar":"وَأَنْتِ يَا مَرْيَمُ، كَيْفَ حَالُكِ؟","fr":"Et toi, Maryam, comment vas-tu ?","kind":"presque","src":"en1.l07#2"},{"ar":"هٰذَا [تَ]مْرٌ.","fr":"Ce sont des dattes.","kind":"reprendre","src":"en1.l01#1"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"وَأَنْتِ يَا مَرْيَمُ، كَيْفَ حَالُكِ؟","fr":"Et toi, Maryam, comment vas-tu ?"},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"بِخَيْرٍ، الْحَمْدُ لِلَّهِ. وَأَنْتِ يَا أُسْتَاذَةُ؟","fr":"Bien, louange à Allah. Et vous, madame ?"},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"بِخَيْرٍ، الْحَمْدُ لِلَّهِ. انْظُرَا، ال[شَّ]مْ[سُ] جَمِيلَةٌ!","fr":"Bien, louange à Allah. Regardez, le soleil est beau !"}
+]}

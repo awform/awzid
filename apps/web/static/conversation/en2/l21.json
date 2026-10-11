@@ -1,0 +1,8 @@
+{"v":1,"id":"en2.l21","niveau":"en2","lecon":"l21","titre_ar":"كَمْ رَكْعَةً؟","titre_fr":"Combien d'unités de prière ?","scene":{"lieu":"classe","props":["prayer_rug","clock"]},"role":{"qui":"Maryam","qui_ar":"مَرْيَمُ"},"mots":[{"ar":"ثَلَاثَةٌ","fr":"trois (3 ballons)","img":"three"},{"ar":"خَمْسَةٌ","fr":"cinq (5 doigts)","img":"hand"}],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"كَمْ صَلَاةً فِي الْيَوْمِ؟","fr":"Combien de prières y a-t-il dans la journée ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"خَمْسُ صَلَوَاتٍ.","fr":"Cinq prières.","kind":"bonne","src":"en2.l21#1"},{"ar":"رَكْعَتَانِ!","fr":"Deux unités de prière !","kind":"presque","src":"en2.l21#3"},{"ar":"هَلْ مَرْيَمُ هُنَا؟","fr":"Est-ce que Maryam est ici ?","kind":"reprendre","src":"en2.l18#2"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"أَحْسَنْتِ! وَكَمْ رَكْعَةً فِي صَلَاةِ الْفَجْرِ؟","fr":"Bravo ! Et combien d'unités de prière dans la prière de l'aube ?"},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"رَكْعَتَانِ!","fr":"Deux unités de prière !"},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"وَفِي صَلَاةِ الْمَغْرِبِ؟","fr":"Et dans la prière du coucher du soleil ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"وَفِي صَلَاةِ الْمَغْرِبِ؟","fr":"Et dans la prière du coucher du soleil ?","kind":"presque","src":"en2.l21#4"},{"ar":"وَمَتَى صَلَاةُ الْمَغْرِبِ؟","fr":"Et quand est la prière du coucher du soleil (الْمَغْرِبُ) ?","kind":"reprendre","src":"en2.l03#3"},{"ar":"ثَلَاثُ رَكَعَاتٍ.","fr":"Trois unités de prière.","kind":"bonne","src":"en2.l21#5"}]}
+]}

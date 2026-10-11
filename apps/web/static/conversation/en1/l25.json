@@ -1,0 +1,8 @@
+{"v":1,"id":"en1.l25","niveau":"en1","lecon":"l25","titre_ar":"فِي حَلْقَةِ الْقُرْآنِ","titre_fr":"Au cercle de Coran de la mosquée","scene":{"lieu":"mosquee"},"role":{"qui":"Maryam","qui_ar":"مَرْيَمُ"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"هَلْ تَحْفَظِينَ الْفَاتِحَةَ يَا مَرْيَمُ؟","fr":"Connais-tu Al-Fātiḥa par cœur, Maryam ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ… وَلَا ٱلضَّآلِّينَ.","fr":"Au nom d'Allah, le Tout-Miséricordieux, le Très-Miséricordieux… ni des égarés.","kind":"presque","src":"en1.l25#3"},{"ar":"نَعَمْ، أَحْفَظُهَا، وَالْحَمْدُ لِلَّهِ.","fr":"Oui, je la connais par cœur, louange à Allah.","kind":"bonne","src":"en1.l25#1"},{"ar":"مَا اسْمُكَ؟","fr":"Comment t'appelles-tu ? (à un garçon)","kind":"reprendre","src":"en1.l02#2"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"اقْرَئِيهَا، مِنْ فَضْلِكِ.","fr":"Récite-la, s'il te plaît."},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ… وَلَا ٱلضَّآلِّينَ.","fr":"Au nom d'Allah, le Tout-Miséricordieux, le Très-Miséricordieux… ni des égarés.","kind":"bonne","src":"en1.l25#3"},{"ar":"آمِينَ!","fr":"Ô Allah, exauce !","kind":"presque","src":"en1.l25#4"},{"ar":"هٰذَا [كِ]تَابِي.","fr":"C'est mon livre.","kind":"reprendre","src":"en1.l13#1"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"آمِينَ!","fr":"Ô Allah, exauce !"},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"أَحْسَنْتِ يَا مَرْيَمُ! بَارَكَ اللَّهُ فِيكِ.","fr":"Bravo, Maryam ! Qu'Allah te bénisse."}
+]}

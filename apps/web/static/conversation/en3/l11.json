@@ -1,0 +1,10 @@
+{"v":1,"id":"en3.l11","niveau":"en3","lecon":"l11","titre_ar":"لُعْبَةُ الْأَسْئِلَةِ","titre_fr":"Le jeu des questions","scene":{"lieu":"classe","props":["quiz_cards","scoreboard","trophy"]},"role":{"qui":"Youssouf","qui_ar":"يُوسُفُ"},"mots":[{"ar":"سُؤَالٌ","fr":"une question","img":"question_mark"}],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"السُّؤَالُ الْأَوَّلُ: مَنْ خَلَقَنَا؟","fr":"Première question : qui nous a créés ?"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"الْكَعْبَةُ فِي مَكَّةَ الْمُكَرَّمَةِ.","fr":"La Kaaba est à La Mecque l'honorée.","kind":"presque","src":"en3.l11#7"},{"ar":"اللَّهُ خَلَقَنَا.","fr":"Allah nous a créés.","kind":"bonne","src":"en3.l11#1"},{"ar":"حَسَنًا، هَيَّا بِنَا إِلَى الْمَكْتَبَةِ.","fr":"D'accord, allons à la librairie.","kind":"reprendre","src":"en3.l07#5"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"أَحْسَنْتَ! مَتَى نُصَلِّي الْمَغْرِبَ؟","fr":"Bravo ! Quand faisons-nous la prière du coucher du soleil (الْمَغْرِبُ) ?"},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"نُصَلِّي الْمَغْرِبَ بَعْدَ غُرُوبِ الشَّمْسِ.","fr":"Nous faisons cette prière après le coucher du soleil."},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"كَمْ رَكْعَةً فِي صَلَاةِ الْفَجْرِ؟","fr":"Combien d'unités de prière y a-t-il dans la prière de l'aube (الْفَجْرُ) ?"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"أَيْنَ الْكَعْبَةُ؟","fr":"Où est la Kaaba ?","kind":"presque","src":"en3.l11#6"},{"ar":"وَعَلَيْكُمُ السَّلَامُ يَا أُسْتَاذَةُ!","fr":"Et sur vous la paix, Madame !","kind":"reprendre","src":"en3.l01#1"},{"ar":"رَكْعَتَانِ.","fr":"Deux unités de prière.","kind":"bonne","src":"en3.l11#5"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"أَيْنَ الْكَعْبَةُ؟","fr":"Où est la Kaaba ?"},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"الْكَعْبَةُ فِي مَكَّةَ الْمُكَرَّمَةِ.","fr":"La Kaaba est à La Mecque l'honorée."}
+]}

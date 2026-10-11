@@ -1,0 +1,8 @@
+{"v":1,"id":"en1.l23","niveau":"en1","lecon":"l23","titre_ar":"فِي الْمَزْرَعَةِ","titre_fr":"À la ferme","scene":{"lieu":"ferme","props":["sheep","sheep","hen","cow"]},"role":{"qui":"Youssouf","qui_ar":"يُوسُفُ"},"mots":[{"ar":"خِرَا[فٌ]","fr":"des moutons","img":"sheep"}],"tours":[
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"انْظُرْ يَا يُوسُفُ! خِرَافٌ!","fr":"Regarde, Youssouf ! Des moutons !"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"وَاحِدٌ، اثْنَانِ، ثَلَاثَةٌ، أَرْبَعَةٌ، خَمْسَةٌ!","fr":"Un, deux, trois, quatre, cinq !","kind":"bonne","src":"en1.l23#1"},{"ar":"انْظُرْ يَا يُوسُفُ! خِرَافٌ!","fr":"Regarde, Youssouf ! Des moutons !","kind":"presque","src":"en1.l23#0"},{"ar":"هٰذِهِ [تُ]فَّاحَةٌ.","fr":"C'est une pomme.","kind":"reprendre","src":"en1.l01#3"}]},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"خَمْسَةُ خِرَافٍ! مَا شَاءَ اللَّهُ!","fr":"Cinq moutons ! Ce qu'Allah a voulu !"},
+{"t":"partenaire","qui":"Papa","qui_ar":"الْأَبُ","ar":"الْخِرَافُ عِطَاشٌ. هَاتِ مَاءً يَا يُوسُفُ.","fr":"Les moutons ont soif. Apporte de l'eau, Youssouf."},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"تَفَضَّلْ يَا أَبِي، هٰذَا مَاءٌ.","fr":"Tiens, papa, voici de l'eau.","kind":"bonne","src":"en1.l23#4"},{"ar":"انْظُرْ يَا يُوسُفُ! خِرَافٌ!","fr":"Regarde, Youssouf ! Des moutons !","kind":"presque","src":"en1.l23#0"},{"ar":"وَمَنْ هٰذِهِ؟","fr":"Et qui est-ce ?","kind":"reprendre","src":"en1.l15#2"}]},
+{"t":"partenaire","qui":"Papa","qui_ar":"الْأَبُ","ar":"أَحْسَنْتَ! جَزَاكَ اللَّهُ خَيْرًا.","fr":"Bravo ! Qu'Allah te récompense par le bien."}
+]}

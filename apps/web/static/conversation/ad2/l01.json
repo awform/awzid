@@ -1,0 +1,11 @@
+{"v":1,"id":"ad2.l01","niveau":"ad2","lecon":"l01","titre_ar":"مَنْ أَنْتُمْ؟","titre_fr":"Qui êtes-vous ? L'imam visite la classe","scene":{"lieu":"classe","props":["name_tag","blackboard"]},"role":{"qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Imam","qui_ar":"الْإِمَامُ","ar":"السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ.","fr":"Que la paix et la miséricorde d'Allah soient sur vous."},
+{"t":"eleve","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","choix":[{"ar":"هُمْ زُمَلَاءُ جُدُدٌ: كَرِيمٌ وَسَمِيرَةُ وَإِلُودِي.","fr":"Ce sont de nouveaux camarades : Karim, Samira et Élodie.","kind":"presque","src":"ad2.l01#5"},{"ar":"السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ.","fr":"Que la paix et la miséricorde d'Allah soient sur vous.","kind":"presque","src":"ad2.l01#0"},{"ar":"وَعَلَيْكُمُ السَّلَامُ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ. مَرْحَبًا بِكَ يَا شَيْخُ.","fr":"Et sur vous la paix, la miséricorde d'Allah et Ses bénédictions. Soyez le bienvenu, cheikh.","kind":"bonne","src":"ad2.l01#1"}]},
+{"t":"partenaire","qui":"Imam","qui_ar":"الْإِمَامُ","ar":"مَنْ أَنْتُمْ؟ هَلْ أَنْتُمْ طُلَّابٌ جُدُدٌ؟","fr":"Qui êtes-vous ? Êtes-vous de nouveaux étudiants ?"},
+{"t":"partenaire","qui":"Hadj","qui_ar":"الْحَاجُّ مُوسَى","ar":"لَا، نَحْنُ طُلَّابٌ قُدَامَى، نَحْنُ مِنَ الْمُسْتَوَى الْأَوَّلِ.","fr":"Non, nous sommes d'anciens étudiants ; nous venons du niveau un."},
+{"t":"partenaire","qui":"Imam","qui_ar":"الْإِمَامُ","ar":"وَمَنْ هُمْ؟","fr":"Et qui sont-ils ?"},
+{"t":"partenaire","qui":"Papa","qui_ar":"عَبْدُ اللَّهِ","ar":"هُمْ زُمَلَاءُ جُدُدٌ: كَرِيمٌ وَسَمِيرَةُ وَإِلُودِي.","fr":"Ce sont de nouveaux camarades : Karim, Samira et Élodie."},
+{"t":"partenaire","qui":"Imam","qui_ar":"الْإِمَامُ","ar":"وَأَنْتُنَّ يَا أَخَوَاتُ، هَلْ أَنْتُنَّ مِنَ الْحَيِّ؟","fr":"Et vous, mes sœurs, êtes-vous du quartier ?"},
+{"t":"partenaire","qui":"Maman","qui_ar":"أَمِينَاتَا","ar":"نَعَمْ، نَحْنُ مِنَ الْحَيِّ، وَهُنَّ صَدِيقَاتِي.","fr":"Oui, nous sommes du quartier, et ce sont mes amies."},
+{"t":"partenaire","qui":"Imam","qui_ar":"الْإِمَامُ","ar":"بَارَكَ اللَّهُ فِيكُمْ جَمِيعًا.","fr":"Qu'Allah vous bénisse tous."}
+]}

@@ -468,5 +468,6 @@
   "usage.terminees": "Terminées",
   "usage.minutes": "Temps médian (min)",
   "usage.aucune": "Pas encore assez de données (au moins {seuil} élèves par leçon).",
-  "etab.fiche_modele": "Modèle de fiche de consentement à imprimer"
+  "etab.fiche_modele": "Modèle de fiche de consentement à imprimer",
+  "fn.conversation": "« Je parle » (scènes de conversation sans IA)"
 }

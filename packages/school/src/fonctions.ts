@@ -23,6 +23,7 @@ export const FONCTION_CLES = [
   'certificats',
   'mode_serein',
   'avis',
+  'conversation',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -68,6 +69,8 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   mode_serein: { defaut: 'on' },
   // bouton « Donner mon avis » (F5)
   avis: { defaut: 'on' },
+  // « Je parle » (A26b) : scénarios guidés tirés des dialogues des livres, sans IA, hors ligne
+  conversation: { defaut: 'on' },
 };
 
 /** Règle d'exception (valeurs contrôlées à l'écriture : rôles, âges, canaux ci-dessus). */

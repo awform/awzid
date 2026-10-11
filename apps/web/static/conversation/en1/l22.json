@@ -1,0 +1,6 @@
+{"v":1,"id":"en1.l22","niveau":"en1","lecon":"l22","titre_ar":"سُوقُ يَوْمِ السَّبْتِ","titre_fr":"Le marché du samedi (jeu de rôle)","scene":{"lieu":"marche","props":["watermelon","fig","milk","bread","dates"]},"role":{"qui":"Maryam","qui_ar":"مَرْيَمُ"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"السَّلَامُ عَلَيْكُمْ. أُرِيدُ حَلِيبًا، مِنْ فَضْلِكِ.","fr":"Bonjour. Je voudrais du lait, s'il vous plaît."},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"عَفْوًا.","fr":"De rien.","kind":"presque","src":"en1.l22#3"},{"ar":"مَاذَا تَأْكُلِينَ يَا مَرْيَمُ؟","fr":"Que manges-tu, Maryam ?","kind":"reprendre","src":"en1.l21#0"},{"ar":"وَعَلَيْكُمُ السَّلَامُ. تَفَضَّلْ.","fr":"Bonjour. Tenez.","kind":"bonne","src":"en1.l22#1"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"شُكْرًا جَزِيلًا!","fr":"Merci beaucoup !"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"السَّلَامُ عَلَيْكُمْ. أُرِيدُ حَلِيبًا، مِنْ فَضْلِكِ.","fr":"Bonjour. Je voudrais du lait, s'il vous plaît.","kind":"presque","src":"en1.l22#0"},{"ar":"مُمْتَازٌ! بَارَكَ اللَّهُ فِيكُمَا.","fr":"Excellent ! Qu'Allah vous bénisse tous les deux.","kind":"reprendre","src":"en1.l16#5"},{"ar":"عَفْوًا.","fr":"De rien.","kind":"bonne","src":"en1.l22#3"}]}
+]}

@@ -1,0 +1,7 @@
+{"v":1,"id":"en2.l02","niveau":"en2","lecon":"l02","titre_ar":"فِي اللَّيْلِ","titre_fr":"La nuit, sur la terrasse","scene":{"lieu":"maison","props":["moon","star"]},"role":{"qui":"Papa","qui_ar":"الْأَبُ"},"mots":[{"ar":"[الْ]قَمَرُ","fr":"la lune","img":"moon"}],"tours":[
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"يَا أَبِي، مَا هٰذَا فِي السَّمَاءِ؟","fr":"Papa, qu'est-ce que c'est, dans le ciel ?"},
+{"t":"eleve","qui":"Papa","qui_ar":"الْأَبُ","choix":[{"ar":"سُبْحَانَ اللَّهِ!","fr":"Gloire à Allah !","kind":"presque","src":"en2.l02#4"},{"ar":"هٰذَا الْقَمَرُ يَا يُوسُفُ.","fr":"C'est la lune, Youssouf.","kind":"bonne","src":"en2.l02#1"},{"ar":"اسْمِي يُوسُفُ، وَعُمْرِي سَبْعُ سَنَوَاتٍ.","fr":"Je m'appelle Youssouf et j'ai sept ans.","kind":"reprendre","src":"en2.l01#3"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"الْقَمَرُ كَبِيرٌ وَجَمِيلٌ!","fr":"La lune est grande et belle !"},
+{"t":"eleve","qui":"Papa","qui_ar":"الْأَبُ","choix":[{"ar":"هٰذَا الْقَمَرُ يَا يُوسُفُ.","fr":"C'est la lune, Youssouf.","kind":"presque","src":"en2.l02#1"},{"ar":"وَعَلَيْكُمُ السَّلَامُ يَا أُسْتَاذَةُ!","fr":"Et sur vous la paix, Madame !","kind":"reprendre","src":"en2.l01#1"},{"ar":"نَعَمْ، خَلَقَهُ اللَّهُ نُورًا لَنَا.","fr":"Oui, Allah l'a créée comme une lumière pour nous.","kind":"bonne","src":"en2.l02#3"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"سُبْحَانَ اللَّهِ!","fr":"Gloire à Allah !"}
+]}

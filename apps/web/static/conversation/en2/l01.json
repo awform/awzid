@@ -1,0 +1,8 @@
+{"v":1,"id":"en2.l01","niveau":"en2","lecon":"l01","titre_ar":"يَوْمُ الدُّخُولِ","titre_fr":"Le jour de la rentrée","scene":{"lieu":"classe","props":["bag","book","pencil"]},"role":{"qui":"Maryam","qui_ar":"مَرْيَمُ"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"السَّلَامُ عَلَيْكُمْ يَا أَوْلَادُ! مَرْحَبًا بِكُمْ.","fr":"Que la paix soit sur vous, les enfants ! Bienvenue."},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"اسْمِي يُوسُفُ، وَعُمْرِي سَبْعُ سَنَوَاتٍ.","fr":"Je m'appelle Youssouf et j'ai sept ans.","kind":"presque","src":"en2.l01#3"},{"ar":"وَعَلَيْكُمُ السَّلَامُ يَا أُسْتَاذَةُ!","fr":"Et sur vous la paix, Madame !","kind":"bonne","src":"en2.l01#1"},{"ar":"مَا اسْمُكَ؟ وَكَمْ عُمْرُكَ؟","fr":"Comment t'appelles-tu ? Et quel âge as-tu ?","kind":"presque","src":"en2.l01#2"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"مَا اسْمُكَ؟ وَكَمْ عُمْرُكَ؟","fr":"Comment t'appelles-tu ? Et quel âge as-tu ?"},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"اسْمِي يُوسُفُ، وَعُمْرِي سَبْعُ سَنَوَاتٍ.","fr":"Je m'appelle Youssouf et j'ai sept ans."},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"وَأَنْتِ يَا مَرْيَمُ، كَمْ عُمْرُكِ؟","fr":"Et toi, Maryam, quel âge as-tu ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"وَأَنْتِ يَا مَرْيَمُ، كَمْ عُمْرُكِ؟","fr":"Et toi, Maryam, quel âge as-tu ?","kind":"presque","src":"en2.l01#4"},{"ar":"وَعَلَيْكُمُ السَّلَامُ يَا أُسْتَاذَةُ!","fr":"Et sur vous la paix, Madame !","kind":"presque","src":"en2.l01#1"},{"ar":"عُمْرِي ثَمَانِي سَنَوَاتٍ.","fr":"J'ai huit ans.","kind":"bonne","src":"en2.l01#5"}]}
+]}
