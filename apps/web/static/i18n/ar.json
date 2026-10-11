@@ -2373,7 +2373,7 @@
   "cl.ecouter_ici": "الاستماع هنا",
   "cl.autres_actions": "إجراءات أخرى",
   "cl.astuce_appui_long": "نصيحة: الضغط المطوّل على آية يبدأ الاستماع مباشرة.",
-  "ca.position_basmala": "البسملة — {n} من {total}",
+  "ca.position_basmala": "البسملة — قبل الآية الأولى",
   "ca.media_basmala": "{sourate}، البسملة",
   "cl.ouvrir_mushaf": "فتح المصحف",
   "cl.ouvrir_mushaf_aide": "قراءة، استماع، حفظ",

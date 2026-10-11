@@ -681,6 +681,12 @@
     e.preventDefault();
   }
 
+  /**
+   * Pistes en cours de chargement : une lecture lancée vers une AUTRE sourate (enchaînement, « Écouter ici »)
+   * demande les pistes, et l'effet « sourate écoutée » aussi. Sans ce partage, la seconde réponse remplaçait
+   * `pack` pendant la basmala et le lecteur s'arrêtait (file changée).
+   */
+  let tracksLoading: { key: string; p: Promise<void> } | null = null;
   async function openTracks() {
     const s = range.s;
     const id = reciterId;
@@ -690,15 +696,27 @@
       return;
     }
     if (pack?.sura === s && pack.reciter === id) return;
-    pack = null;
-    trackCode = null;
-    saved = false;
-    const r = await loadTracks(profileId, id, s, memo ? 'memoriser' : 'ecouter');
-    if (s !== range.s || id !== reciterId) return;
-    pack = r.pack;
-    trackCode = r.code;
-    saved =
-      !!pack && (await savedSuras(pack.reciter)).some((x) => x.sura === s && x.hash === pack!.hash);
+    const mode = memo ? 'memoriser' : 'ecouter';
+    const key = `${id}:${s}:${mode}`;
+    if (tracksLoading?.key === key) return tracksLoading.p;
+    const p = (async () => {
+      pack = null;
+      trackCode = null;
+      saved = false;
+      const r = await loadTracks(profileId, id, s, mode);
+      if (s !== range.s || id !== reciterId) return;
+      pack = r.pack;
+      trackCode = r.code;
+      saved =
+        !!pack &&
+        (await savedSuras(pack.reciter)).some((x) => x.sura === s && x.hash === pack!.hash);
+    })();
+    tracksLoading = { key, p };
+    try {
+      await p;
+    } finally {
+      if (tracksLoading?.p === p) tracksLoading = null;
+    }
   }
 
   /**

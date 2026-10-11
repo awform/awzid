@@ -7,6 +7,7 @@ import {
   installDemoReciters,
   removeDemoReciters,
   serveDemoAudio,
+  tapVisible,
 } from './audio-demo';
 import { close, openDisplay, openSelector } from './coran';
 import { expect, test } from './fixtures';
@@ -56,8 +57,7 @@ async function watchHeard(page: Page) {
 const heard = (page: Page) =>
   page.evaluate(() => (window as unknown as { __heard: string[] }).__heard);
 async function tapListen(page: Page, target: Locator) {
-  await target.scrollIntoViewIfNeeded();
-  await target.click();
+  await tapVisible(page, target);
   const menu = page.getByTestId('menu-verset');
   await expect(menu).toBeVisible();
   // « Écouter d'ici » est la PREMIÈRE action du menu
@@ -108,7 +108,7 @@ test.describe('basmala, pages tournées, « Aller », appui long (vraies récita
     await expect.poll(() => asked[0], { timeout: 20_000 }).toBe(fileKey(id, 1, 1));
     await stop(page);
     // page (exacte ou fluide) : basmala touchable et surlignée
-    await page.goto(`/coran/lecteur?r=${id}&page=604`);
+    await page.goto(`/coran/lecteur?r=${id}&page=604&vue=page`);
     await ready(page);
     await watchHeard(page);
     asked.length = 0;
@@ -372,8 +372,8 @@ test('6. traduction après le clic sur « Traduction » (FR et EN, page exacte e
         if (tel) {
           // la feuille est au-dessus de tout (ni barre du bas ni mini-barre)
           const top = await v.evaluate((el) => {
-            const r = el.getBoundingClientRect();
-            const hit = document.elementFromPoint(r.left + 4, r.top + r.height / 2);
+            const r = el.getClientRects()[0]!;
+            const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
             return !!hit && el.contains(hit);
           });
           expect(top, tag).toBe(true);

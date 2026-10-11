@@ -202,6 +202,10 @@
     if (lastUrl.startsWith('blob:')) URL.revokeObjectURL(lastUrl);
   });
   const pct = $derived(started ? Math.round(((idx + 1) / Math.max(1, queue.length)) * 100) : 0);
+  // la basmala lue en tête de sourate n'est PAS un verset (sauf al-Fātiḥa en Ḥafṣ, où elle est le verset 1 et
+  // n'est donc pas ajoutée) : elle n'entre pas dans le compte des écoutes (« 4 versets × 3 » = 12, pas 13)
+  const lead = $derived(queue[0] === BASMALA ? 1 : 0);
+  const total = $derived(queue.length - lead);
 </script>
 
 <div class="player" data-testid="lecteur-audio" data-reciter={reciter.id}>
@@ -273,19 +277,16 @@
     </div>
     <p class="where" aria-live="polite" data-testid="position">
       {#if started && aya === BASMALA}<Bidi
-          text={t('ca.position_basmala', {
-            n: fmtNumber(idx + 1),
-            total: fmtNumber(queue.length),
-          })}
+          text={t('ca.position_basmala')}
         />{:else if started && aya}<Bidi
           text={t('ca.position', {
             aya: fmtNumber(aya),
-            n: fmtNumber(idx + 1),
-            total: fmtNumber(queue.length),
+            n: fmtNumber(idx + 1 - lead),
+            total: fmtNumber(total),
           })}
         />{#if status}<span class="st" data-testid="etape">
             · <Bidi text={status} /></span
-          >{/if}{:else}<Bidi text={t('ca.pret', { total: fmtNumber(queue.length) })} />{/if}
+          >{/if}{:else}<Bidi text={t('ca.pret', { total: fmtNumber(total) })} />{/if}
     </p>
   </div>
   <label class="vol" title={t('cl.volume')}

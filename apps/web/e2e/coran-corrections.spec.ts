@@ -7,6 +7,7 @@ import {
   installDemoReciters,
   removeDemoReciters,
   serveDemoAudio,
+  tapVisible,
   type DemoReciter,
 } from './audio-demo';
 import { close, openDisplay, openSettings } from './coran';
@@ -46,8 +47,7 @@ async function tapAndPlay(
   target: Locator,
   action: 'menu-repeter' | 'menu-ecouter',
 ): Promise<string> {
-  await target.scrollIntoViewIfNeeded();
-  await target.click();
+  await tapVisible(page, target);
   await expect(page.getByTestId('menu-verset')).toBeVisible();
   asked.length = 0;
   await page.getByTestId(action).click();

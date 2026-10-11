@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 /**
  * Corrections du lecteur (06/10/2026) — VRAIES récitations de la démonstration dans les e2e (VM seulement) :
@@ -111,7 +111,11 @@ export async function serveDemoAudio(page: Page): Promise<string[]> {
   await page.route(/\/api\/v1\/quran\/audio\/file\/([a-z0-9-]+)\/([\w.-]+)$/, async (route) => {
     const m = /\/file\/([a-z0-9-]+)\/([\w.-]+)$/.exec(new URL(route.request().url()).pathname)!;
     const rid = realId(m[1]!);
-    asked.push(`${rid.startsWith('essai-') ? '' : DEMO_PREFIX}${rid}/${m[2]!.slice(0, 6)}`);
+    // F5 : le verset entendu jusqu'au bout est recopié dans le cache « réécouter hors ligne » (fetch, servi par le
+    // cache HTTP dans un vrai navigateur) : servi ici aussi, mais ce n'est pas une LECTURE (seul l'élément audio,
+    // type « media », en est une)
+    if (route.request().resourceType() !== 'fetch')
+      asked.push(`${rid.startsWith('essai-') ? '' : DEMO_PREFIX}${rid}/${m[2]!.slice(0, 6)}`);
     try {
       const body = execFileSync('docker', ['exec', API, 'cat', `/audio/${rid}/${m[2]}`], {
         maxBuffer: 64 * 1024 * 1024,
@@ -122,6 +126,25 @@ export async function serveDemoAudio(page: Page): Promise<string[]> {
     }
   });
   return asked;
+}
+/**
+ * Touche un verset comme le ferait un élève : sur une partie VISIBLE et non couverte (un long verset peut dépasser
+ * l'écran ; le centre de sa boîte tombe alors sous la barre du lecteur ou l'en-tête, qu'un doigt ne toucherait pas).
+ */
+export async function tapVisible(page: Page, target: Locator): Promise<void> {
+  await target.scrollIntoViewIfNeeded();
+  const pt = await target.evaluate((el) => {
+    for (const r of Array.from(el.getClientRects())) {
+      const x = r.left + r.width / 2;
+      const y = r.top + r.height / 2;
+      if (r.width < 4 || y < 0 || y > innerHeight) continue;
+      const hit = document.elementFromPoint(x, y);
+      if (hit && el.contains(hit)) return { x, y };
+    }
+    return null;
+  });
+  if (pt) await page.mouse.click(pt.x, pt.y);
+  else await target.click();
 }
 export const fileKey = (id: string, s: number, a: number) =>
   `${id}/${String(s).padStart(3, '0')}${String(a).padStart(3, '0')}`;
