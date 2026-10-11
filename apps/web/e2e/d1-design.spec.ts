@@ -90,7 +90,7 @@ async function shots(page: Page, nom: string, opts: { full?: boolean } = {}) {
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(250);
     await page.screenshot({
-      path: join(DIR, `${nom}-v2-${scheme === 'light' ? 'clair' : 'sombre'}.png`),
+      path: join(DIR, `${nom}-v3-${scheme === 'light' ? 'clair' : 'sombre'}.png`),
       fullPage: opts.full ?? true,
     });
   }
@@ -305,6 +305,49 @@ test('mouvement réduit : la feuille ne s’anime pas', async ({ page }, info) =
     .locator('span.pousse')
     .evaluate((el) => getComputedStyle(el).animationName);
   expect(name).toBe('none');
+});
+
+test('arbre « Grandir » : né du symbole, il grandit par paliers (1, 5, 20 feuilles)', async ({
+  page,
+}, info) => {
+  test.skip(info.project.name.startsWith('desktop'), 'captures à 375 px');
+  await page.setViewportSize(MOBILE);
+  const ids: string[] = [];
+  for (const [faites, palier] of [
+    [0, '0'],
+    [4, '1'],
+    [19, '2'],
+  ] as const) {
+    const { profileId } = await adulteAd1(page, `d1-arbre-${faites}`);
+    // dernier compte connu sur l'appareil (affichage optimiste) : ${faites} feuilles, puis on finit une leçon
+    // (l'appareil peut garder l'élève actif précédent : le compte connu est posé pour chacun)
+    ids.push(profileId);
+    await page.addInitScript(
+      ([keys, v]) => {
+        for (const k of keys) localStorage.setItem(k, v);
+      },
+      [ids.map((id) => `awzid.arbre.${id}`), String(faites)] as const,
+    );
+    await page.goto('/lecons/ad1.l20');
+    await page.getByTestId('sommaire').click();
+    await page.getByTestId('sommaire-liste').locator('[data-aller]').last().click();
+    await page.getByTestId('terminer-lecon').click();
+    const arbre = page.getByTestId('fin-lecon').getByTestId('arbre');
+    await expect(arbre).toHaveAttribute('data-feuilles', String(faites + 1));
+    await expect(arbre).toHaveAttribute('data-palier', palier);
+    if (DIR)
+      for (const scheme of ['light', 'dark'] as const) {
+        await page.emulateMedia({ colorScheme: scheme, reducedMotion: 'reduce' });
+        await page.waitForTimeout(300);
+        await page.getByTestId('fin-lecon').screenshot({
+          path: join(
+            DIR,
+            `lecon-fin-v3-${faites + 1}-${scheme === 'light' ? 'clair' : 'sombre'}.png`,
+          ),
+        });
+      }
+    await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' });
+  }
 });
 
 test.describe('enfant', () => {

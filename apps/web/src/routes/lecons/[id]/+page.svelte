@@ -937,7 +937,13 @@
     >
     <h2 id="fin-titre">{t('fin.titre')}</h2>
     {#if feuilles != null}
-      <Arbre {feuilles} pousse taille={140} />
+      <!-- étoile d'or : bilan réussi (au moins la moitié des points) -->
+      <Arbre
+        {feuilles}
+        pousse
+        etoile={isEval && !!evalResult && evalResult.points * 2 >= evalResult.max}
+        taille={140}
+      />
       <p class="muted"><Bidi text={t('fin.feuille')} /></p>
     {/if}
     <SeanceSuite ici="lecon" />

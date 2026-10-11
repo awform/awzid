@@ -66,6 +66,31 @@
   --bande-3: #17805d;
   --bande-texte: #fbf7ee;
   --sur-or: #1e2b25;
+  /* D1 : l'arbre de l'élève (« Grandir ») — couleurs du symbole, tronc brun chaud (formes ≥ 3:1 sur la carte) */
+  --arbre-feuille: #1f9c73;
+  --arbre-feuille-2: #17805d;
+  --arbre-nervure: rgba(251, 247, 238, 0.55);
+  --arbre-tronc: #8a5a2b;
+  --arbre-livre: #0b6e4f;
+  --arbre-or: #c9a227;
+}
+[data-theme='clair'][data-mode='sombre'] {
+  --arbre-feuille: #5cc79c;
+  --arbre-feuille-2: #3fae84;
+  --arbre-nervure: rgba(13, 26, 21, 0.45);
+  --arbre-tronc: #c8955e;
+  --arbre-livre: #1f9c73;
+  --arbre-or: #d9b54a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode])[data-theme='clair'] {
+    --arbre-feuille: #5cc79c;
+    --arbre-feuille-2: #3fae84;
+    --arbre-nervure: rgba(13, 26, 21, 0.45);
+    --arbre-tronc: #c8955e;
+    --arbre-livre: #1f9c73;
+    --arbre-or: #d9b54a;
+  }
 }
 
 /* ------------------------------------------------------------------ base */
