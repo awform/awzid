@@ -44,7 +44,9 @@ export function demoReciters(): DemoReciter[] | null {
   if (!process.env.TEST_DATABASE_URL) return null;
   try {
     return demoPsql(
-      "select id || '|' || riwaya from quran_reciter where status = 'actif' and id not like 'essai-%' and source <> 'qf' order by id;",
+      "select '" +
+        DEMO_PREFIX +
+        "' || id || '|' || riwaya from quran_reciter where status = 'actif' and id not like 'essai-%' and id not like 'qf-%' and source <> 'qf' order by id;",
     )
       .trim()
       .split('\n')
@@ -58,24 +60,58 @@ export function demoReciters(): DemoReciter[] | null {
   }
 }
 
-/** Copie ces récitateurs et leurs pistes des sourates données dans la base de test. */
+/**
+ * Préfixe des récitateurs copiés : ils trient APRÈS les récitateurs d'essai (le défaut des autres fichiers e2e,
+ * lancés en parallèle sur la même base, ne change donc jamais) et ne portent pas l'identifiant du conseil débutant.
+ */
+export const DEMO_PREFIX = 'zz-';
+const realId = (id: string) => (id.startsWith(DEMO_PREFIX) ? id.slice(DEMO_PREFIX.length) : id);
+
+/**
+ * Copie ces récitateurs (ids préfixés) et leurs pistes des sourates données dans la base de test.
+ * Idempotent et sans suppression : deux projets (mobile, bureau) et plusieurs fichiers peuvent l'appeler en
+ * même temps ; la base de test est remise à zéro à chaque lancement.
+ */
 export function installDemoReciters(ids: string[], suras: number[]) {
-  const list = ids.map((x) => `'${x.replace(/[^a-z0-9-]/g, '')}'`).join(',');
+  const list = ids.map((x) => `'${realId(x).replace(/[^a-z0-9-]/g, '')}'`).join(',');
   const s = suras.map((n) => Math.trunc(n)).join(',');
+  const recSel = RECITER_COLS.split(', ')
+    .map((c) => (c === 'id' ? `'${DEMO_PREFIX}' || id` : c))
+    .join(', ');
+  const trSel = TRACK_COLS.split(', ')
+    .map((c) => (c === 'reciter_id' ? `'${DEMO_PREFIX}' || reciter_id` : c))
+    .join(', ');
   const rec = demoPsql(
-    `\\copy (select ${RECITER_COLS} from quran_reciter where id in (${list})) to stdout`,
+    `\\copy (select ${recSel} from quran_reciter where id in (${list})) to stdout`,
   );
   const tr = demoPsql(
-    `\\copy (select ${TRACK_COLS} from quran_track where reciter_id in (${list}) and sura in (${s})) to stdout`,
+    `\\copy (select ${trSel} from quran_track where reciter_id in (${list}) and sura in (${s})) to stdout`,
   );
-  testPsql(`delete from quran_reciter where id in (${list})`);
-  testPsql(`\\copy quran_reciter (${RECITER_COLS}) from stdin`, rec);
-  testPsql(`\\copy quran_track (${TRACK_COLS}) from stdin`, tr);
+  const script = [
+    `create temp table s_r as select ${RECITER_COLS} from quran_reciter with no data;`,
+    `create temp table s_t as select ${TRACK_COLS} from quran_track with no data;`,
+    `copy s_r (${RECITER_COLS}) from stdin;`,
+    rec.replace(/\n$/, ''),
+    '\\.',
+    `copy s_t (${TRACK_COLS}) from stdin;`,
+    tr.replace(/\n$/, ''),
+    '\\.',
+    `insert into quran_reciter (${RECITER_COLS}) select ${RECITER_COLS} from s_r on conflict do nothing;`,
+    `insert into quran_track (${TRACK_COLS}) select ${TRACK_COLS} from s_t on conflict do nothing;`,
+    '',
+  ].join('\n');
+  execFileSync(
+    'psql',
+    [process.env.TEST_DATABASE_URL!, '-Atq', '-v', 'ON_ERROR_STOP=1', '-f', '-'],
+    {
+      input: script,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    },
+  );
 }
-export function removeDemoReciters(ids: string[]) {
-  const list = ids.map((x) => `'${x.replace(/[^a-z0-9-]/g, '')}'`).join(',');
-  testPsql(`delete from quran_reciter where id in (${list})`);
-}
+/** Volontairement sans effet (voir installDemoReciters) : supprimer en plein test de l'autre projet casserait sa lecture. */
+export function removeDemoReciters(_ids: string[]) {}
 
 /**
  * Sert au navigateur les vrais fichiers de la démo et relève la clé (« récitateur/SSSVVV ») de chaque fichier
@@ -85,9 +121,10 @@ export async function serveDemoAudio(page: Page): Promise<string[]> {
   const asked: string[] = [];
   await page.route(/\/api\/v1\/quran\/audio\/file\/([a-z0-9-]+)\/([\w.-]+)$/, async (route) => {
     const m = /\/file\/([a-z0-9-]+)\/([\w.-]+)$/.exec(new URL(route.request().url()).pathname)!;
-    asked.push(`${m[1]}/${m[2]!.slice(0, 6)}`);
+    const rid = realId(m[1]!);
+    asked.push(`${rid.startsWith('essai-') ? '' : DEMO_PREFIX}${rid}/${m[2]!.slice(0, 6)}`);
     try {
-      const body = execFileSync('docker', ['exec', API, 'cat', `/audio/${m[1]}/${m[2]}`], {
+      const body = execFileSync('docker', ['exec', API, 'cat', `/audio/${rid}/${m[2]}`], {
         maxBuffer: 64 * 1024 * 1024,
       });
       await route.fulfill({ status: 200, contentType: 'audio/mpeg', body });
