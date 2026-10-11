@@ -44,6 +44,10 @@ export const PRIVATE_HOST =
 /** Adresse Tailscale : plage CGNAT 100.64.0.0/10 (100.64.x.x à 100.127.x.x), réseau privé chiffré, non routable sur Internet. */
 export const TAILSCALE_HOST = /^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])(\.\d{1,3}){2}$/;
 
+/** Nom Tailscale MagicDNS (<machine>.<tailnet>.ts.net) : ne se résout que dans le tailnet (réseau privé). */
+export const TAILSCALE_NAME =
+  /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\.ts\.net$/;
+
 /**
  * Garde-fou au démarrage (AWFORM_DEMO=1) : renvoie la raison du refus, ou null.
  * Démonstration acceptée seulement si TOUTES les adresses servies (SITE, SITE_LAN, SITE_TS) sont locales (IP privée,
@@ -60,6 +64,9 @@ export function demoGuard(env: NodeJS.ProcessEnv): string | null {
   const ts = (env.SITE_TS ?? '').trim().toLowerCase();
   if (ts && !TAILSCALE_HOST.test(ts))
     return `adresse Tailscale invalide (${ts}) : démonstration refusée`;
+  const tsName = (env.SITE_TSNAME ?? '').trim().toLowerCase();
+  if (tsName && !TAILSCALE_NAME.test(tsName))
+    return `nom Tailscale invalide (${tsName}) : démonstration refusée`;
   if ((env.RELAIS_DOMAINE ?? '').trim()) return 'domaine de relais public configuré';
   if (env.COOKIE_SECURE === undefined || env.COOKIE_SECURE === '1')
     return 'mode production (COOKIE_SECURE=1) : démonstration refusée';
