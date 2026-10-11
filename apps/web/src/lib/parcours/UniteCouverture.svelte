@@ -50,6 +50,8 @@
   /** êtres vivants exclus de la couverture (règle des images de la DA : objets et décors seulement) */
   const VIVANTS =
     /^(sparrow|bird|oiseau|chat|cat|dog|chien|elephant|giraffe|monkey|butterfly|lion|tiger|bear|fish|poisson|horse|cheval|camel|chameau|sheep|mouton|cow|vache|goat|chevre|rabbit|lapin|ant|fourmi|bee|abeille|duck|canard|hen|poule|rooster|coq|deer|frog|turtle|tortue|snake|owl|dove|pigeon|mouse|souris|donkey|ane|wolf|fox|insect|spider|whale|dolphin|parrot|peacock|eagle|falcon|ladybug)s?$/i;
+  /** le muṣḥaf n'est jamais un décor (règle des images) : ni muṣḥaf, ni support, ni texte coranique en couverture */
+  const SACRE = /^(mushaf|rehal|quran|coran|surah|sourate|ayah|aya|bismillah|kaaba)/i;
   let dessin = $state<{ viewBox: string; svg: string } | null>(null);
   let el: HTMLElement | undefined = $state();
 
@@ -81,7 +83,9 @@
       lesson.scene?.lieu,
       lesson.dialogue?.lieu,
       ...(lesson.mots ?? []).map((m) => m.img),
-    ].filter((k): k is string => !!k && !persos.has(k) && !VIVANTS.test(k) && !!ill[k]);
+    ].filter(
+      (k): k is string => !!k && !persos.has(k) && !VIVANTS.test(k) && !SACRE.test(k) && !!ill[k],
+    );
     const k = candidats[0];
     if (k) dessin = ill[k]!;
   }
