@@ -2851,6 +2851,8 @@
   "cl.afficher_commandes": "Mostrar los controles",
   "cl.zoom": "Zoom de la página",
   "cl.zoom_valeur": "{n} %",
+  "cl.grand_texte": "Texto grande",
+  "cl.grand_texte_aide": "El texto pasa a la línea, aleya por aleya; elija su tamaño justo debajo.",
   "cl.epure": "Ocultar los controles durante la lectura",
   "cl.mode_lire": "Leer",
   "cl.mode_ecouter": "Escuchar",

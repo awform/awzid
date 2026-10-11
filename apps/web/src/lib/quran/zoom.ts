@@ -41,11 +41,39 @@ export function zoomAt(v: Vue, z: number, cx: number, cy: number, w: number, h: 
   return clampVue({ z: nz, x: cx - px * nz, y: cy - py * nz }, w, h);
 }
 
-/** Double-toucher : page entière ↔ zoom confortable (centré sur le point touché). */
-export function toggleZoom(v: Vue, cx: number, cy: number, w: number, h: number): Vue {
-  return v.z > ZOOM_MIN + 0.05
-    ? { z: ZOOM_MIN, x: 0, y: 0 }
-    : zoomAt(v, ZOOM_CONFORT, cx, cy, w, h);
+/**
+ * Vue calée sur le DÉBUT des lignes (essai du client, 11/10/2026) : l'arabe se lit de droite à gauche, la vue
+ * zoomée montre le BORD DROIT de la page (jamais le milieu d'une ligne).
+ */
+export function alignRtl(v: Vue, w: number, h: number): Vue {
+  const z = clampZoom(v.z);
+  return clampVue({ z, x: w - w * z, y: v.y }, w, h);
+}
+
+/** Nouveau zoom `z` calé à droite (début des lignes), la hauteur `cy` du cadre restant immobile. */
+export function zoomRtl(v: Vue, z: number, cy: number, w: number, h: number): Vue {
+  return alignRtl(zoomAt(v, z, w / 2, cy, w, h), w, h);
+}
+
+/**
+ * Double-toucher : page entière ↔ zoom confortable. Zoom : la LIGNE touchée (hauteur `cy` du cadre) vient à la
+ * hauteur `ty` (par défaut le milieu du cadre ; le lecteur donne le milieu de la partie visible), vue calée sur
+ * le début des lignes (à droite). `cx` n'est pas utilisé (gardé pour l'appel).
+ */
+export function toggleZoom(
+  v: Vue,
+  cx: number,
+  cy: number,
+  w: number,
+  h: number,
+  ty: number = h / 2,
+): Vue {
+  void cx;
+  if (v.z > ZOOM_MIN + 0.05) return { z: ZOOM_MIN, x: 0, y: 0 };
+  const z = ZOOM_CONFORT;
+  // point de la page sous le doigt (coordonnées de la page à 1×)
+  const py = (cy - v.y) / v.z;
+  return clampVue({ z, x: w - w * z, y: ty - py * z }, w, h);
 }
 
 /**
