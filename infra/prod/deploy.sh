@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Déploiement AWFORM (idempotent : peut être relancé à volonté).
-#   infra/prod/deploy.sh [--demo | --production] [--site 192.168.50.10] [--lan-ip 192.168.1.106] [--ts-ip 100.x.y.z]
+#   infra/prod/deploy.sh [--demo | --production] [--site 192.168.50.10] [--lan-ip 192.168.1.106] [--ts-ip 100.x.y.z] [--ts-name machine.tailnet.ts.net]
 # --production (domaine public) : HTTP redirigé vers HTTPS, cookie toujours « Secure » (audit SEC-7) ;
 # sans lui : réseau local (HTTP servi sur l'adresse IP).
 # 1. secrets générés sur la machine (une seule fois) dans ~/.config/awform/prod.env (droits 600, hors dépôt) ;
@@ -21,6 +21,7 @@ PRODUCTION=0
 SITE="192.168.50.10"
 SITE_LAN=""
 SITE_TS=""
+SITE_TSNAME=""
 RELAIS_DOMAINE=""
 LAN="192.168.50.0/24"
 while [ $# -gt 0 ]; do
@@ -32,6 +33,8 @@ while [ $# -gt 0 ]; do
     --lan-ip) SITE_LAN="$2"; shift ;;
     # adresse Tailscale (réseau privé, démonstration seulement) ; vide = rien
     --ts-ip) SITE_TS="$2"; shift ;;
+    # nom Tailscale (MagicDNS, *.ts.net) servi en HTTPS avec un vrai certificat Let's Encrypt de Tailscale
+    --ts-name) SITE_TSNAME="$2"; shift ;;
     # relais d'école (lot 17) : domaine des sous-domaines des écoles, ex. relais.awzid.org
     --relais-domaine) RELAIS_DOMAINE="$2"; shift ;;
     *) echo "option inconnue : $1"; exit 2 ;;
@@ -65,6 +68,16 @@ if [ -n "$SITE_TS" ]; then
   case "$SITE_TS" in *[!0-9.]*) echo "adresse Tailscale invalide : $SITE_TS"; exit 2 ;; esac
   echo "SITE_TS=$SITE_TS" >> "$ENVF"
 fi
+sed -i '/^SITE_TSNAME=/d' "$ENVF"
+if [ -n "$SITE_TSNAME" ]; then
+  case "$SITE_TSNAME" in *.ts.net) ;; *) echo "nom Tailscale invalide (attendu *.ts.net) : $SITE_TSNAME"; exit 2 ;; esac
+  case "$SITE_TSNAME" in *[!a-z0-9.-]* | .* | *..*) echo "nom Tailscale invalide : $SITE_TSNAME"; exit 2 ;; esac
+  echo "SITE_TSNAME=$SITE_TSNAME" >> "$ENVF"
+  "$PROD/ts-cert.sh" "$SITE_TSNAME"
+else
+  rm -f "$CONF/tsnet/ts.caddy"
+fi
+mkdir -p "$CONF/tsnet"
 if [ -n "$RELAIS_DOMAINE" ]; then
   case "$RELAIS_DOMAINE" in *[!a-z0-9.-]* | .* | *.) echo "domaine des relais invalide : $RELAIS_DOMAINE"; exit 2 ;; esac
   sed -i '/^RELAIS_DOMAINE=/d' "$ENVF"

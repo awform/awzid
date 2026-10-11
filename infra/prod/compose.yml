@@ -230,6 +230,8 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./maintenance:/srv/maintenance:ro
+      # nom Tailscale *.ts.net : site + certificat Let's Encrypt écrits par ts-cert.sh (lecture seule ; vide sinon)
+      - ${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/tsnet:/etc/caddy/tsnet:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on: [web, api]
