@@ -141,6 +141,7 @@ export const API_GRANTS: Record<string, Right[]> = {
   feature_rule: ALL,
   beta_member: ALL,
   feedback: ALL,
+  problem_report: ALL,
   usage_day: ALL,
   usage_seen: ALL,
   usage_salt: ALL,
@@ -175,6 +176,8 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
   usage_seen: ['DELETE'],
   usage_salt: ['DELETE'],
   feedback: ['DELETE'],
+  // bêta-support : signalements réglés effacés après 12 mois
+  problem_report: ['DELETE'],
 };
 
 /** Droits par COLONNE du travailleur (ni pseudonyme ni année de naissance : seulement le lien au compte). */
@@ -192,6 +195,7 @@ export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
   usage_seen: ['day'],
   usage_salt: ['day'],
   feedback: ['created_at', 'capture_type'],
+  problem_report: ['created_at', 'capture_type', 'status'],
 };
 
 /**
@@ -206,6 +210,7 @@ export const WORKER_COLUMN_UPDATES: Record<string, string[]> = {
   class_pupil: ['display_name', 'name_ar', 'gender', 'profile_id'],
   // F5 : capture d'un avis effacée après 90 jours (l'avis reste jusqu'à 12 mois)
   feedback: ['capture', 'capture_type'],
+  problem_report: ['capture', 'capture_type'],
 };
 
 export const SEQUENCES = ['audit_log_id_seq'];

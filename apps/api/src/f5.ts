@@ -53,7 +53,7 @@ import { audit, hasRole } from './auth/service.js';
 import { err, UUID } from './guards.js';
 
 /** Profil actif proposé par l'appareil, retenu seulement s'il appartient à la personne connectée. */
-async function profilDe(db: Db, req: FastifyRequest, id: unknown): Promise<string | null> {
+export async function profilDe(db: Db, req: FastifyRequest, id: unknown): Promise<string | null> {
   if (!req.auth || typeof id !== 'string' || !/^[0-9a-f-]{36}$/i.test(id)) return null;
   return (await ownsProfile(db, req.auth, id)) ? id : null;
 }
@@ -103,15 +103,15 @@ export async function exigeFonction(
 }
 
 /** Rôle d'une personne pour les agrégats d'usage et les avis (un seul, le plus parlant). */
-function roleDe(ctx: FlagContext, profileId: string | null): string {
+export function roleDe(ctx: FlagContext, profileId: string | null): string {
   if (profileId) return 'eleve';
   for (const r of ['admin', 'direction', 'enseignant', 'parent', 'eleve'])
     if (ctx.roles.includes(r)) return r;
   return 'visiteur';
 }
 
-const IMG = /^data:(image\/(?:jpeg|png));base64,([A-Za-z0-9+/=]+)$/;
-const MAGIC: Record<string, number[]> = {
+export const IMG = /^data:(image\/(?:jpeg|png));base64,([A-Za-z0-9+/=]+)$/;
+export const MAGIC: Record<string, number[]> = {
   'image/jpeg': [0xff, 0xd8, 0xff],
   'image/png': [0x89, 0x50, 0x4e, 0x47],
 };

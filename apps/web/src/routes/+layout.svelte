@@ -1,7 +1,7 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
   import '../app.css';
-  import { onMount } from 'svelte';
+  import { onMount, type Component } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
@@ -36,6 +36,8 @@
   let me = $state<Me | null>(null);
   let mode = $state<Mode>('auto');
   let lastActivity = Date.now();
+  // bêta-support : bandeau « Mettre à jour », chargé après le démarrage (jamais dans le chargement initial)
+  let Maj = $state<Component | null>(null);
 
   /**
    * Lot 26 — public de l'écran : thème (jardin, nuit, manuscrit, clair) et navigation de 3 à 5 entrées.
@@ -91,6 +93,8 @@
   }
 
   onMount(() => {
+    if ('serviceWorker' in navigator)
+      void import('$lib/MajBandeau.svelte').then((m) => (Maj = m.default)).catch(() => {});
     mode = readMode();
     applyMode(mode);
     online = navigator.onLine;
@@ -246,6 +250,8 @@
   {#if storageFull}<p class="card bad" role="alert" data-testid="stockage-plein">
       {t('entete.stockage_plein')}
     </p>{/if}
+  <!-- bêta-support : nouvelle version prête (jamais en pleine leçon ou écoute, ni hors ligne) -->
+  {#if Maj}<Maj />{/if}
 
   <main id="contenu" tabindex="-1">
     {@render children()}

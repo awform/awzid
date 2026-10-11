@@ -468,5 +468,19 @@
   "usage.terminees": "Terminées",
   "usage.minutes": "Temps médian (min)",
   "usage.aucune": "Pas encore assez de données (au moins {seuil} élèves par leçon).",
-  "etab.fiche_modele": "Modèle de fiche de consentement à imprimer"
+  "etab.fiche_modele": "Modèle de fiche de consentement à imprimer",
+  "fn.signaler": "Bouton « Signaler un problème »",
+  "probadm.titre": "Problèmes signalés",
+  "probadm.filtre": "Statut",
+  "probadm.tous": "Tous",
+  "probadm.statut.nouveau": "Nouveau",
+  "probadm.statut.en_cours": "En cours",
+  "probadm.statut.regle": "Réglé",
+  "probadm.statut_actuel": "Statut : {statut}. Passer à :",
+  "probadm.vide": "Aucun signalement.",
+  "probadm.page": "Page : {page}",
+  "probadm.version": "Version : {version}",
+  "probadm.voir_capture": "Voir l'image de l'écran",
+  "probadm.religieux": "À faire vérifier par le référent religieux avant toute correction.",
+  "probadm.enfant": "Signalement d'un enfant : catégorie seulement, sans texte."
 }
