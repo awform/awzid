@@ -73,7 +73,7 @@ describe('table des comptes de niveau', () => {
   it('adresses fictives : aucune collision avec les six comptes de démonstration ni entre elles', () => {
     const emails = [
       emailOf(PARENT_NIVEAUX_ROLE, 'essai1'),
-      ...DEMO_NIVEAUX.filter((n) => n.filiere === 'adultes').map((n) =>
+      ...DEMO_NIVEAUX.filter((n) => n.filiere === 'adultes' && !n.alias).map((n) =>
         emailOf(roleOf(n), 'essai1'),
       ),
     ];
@@ -208,7 +208,22 @@ describe.skipIf(!URL_)('comptes par niveau sur la base de test', () => {
           [code, trackOf(code), Number(/\d+$/.exec(code)![0]), subjectOf(code)],
         );
     await teacherWithSecret(c, `enseignant-${TAG}@${DEMO_DOMAIN}`);
-    // comptes d'origine de la démonstration : `parent` avec Lina (en1) et Yanis (ado1)
+    // comptes d'origine : `adulte` (Samir, sans niveau), `parent` avec Lina (en1) et Yanis (ado1)
+    const sam = await c.req(
+      'POST',
+      '/api/v1/auth/signup',
+      {},
+      {
+        kind: 'adulte',
+        email: `adulte-${TAG}@${DEMO_DOMAIN}`,
+        password: PW,
+        country: 'FR',
+        birthYear: 1990,
+        pseudonym: 'Samir',
+        consents: ['cgu', 'donnee_religieuse_art9'],
+      },
+    );
+    if (sam.statusCode !== 201) throw new Error(sam.body);
     const { P } = await parent(c, `parent-${TAG}@${DEMO_DOMAIN}`);
     for (const [pseudonym, age, levelCode] of [
       ['Lina', 7, 'en1'],
@@ -239,15 +254,16 @@ describe.skipIf(!URL_)('comptes par niveau sur la base de test', () => {
 
   it('création : 19 comptes au début de leur niveau, réglages de leur âge', async () => {
     const r = await seed();
-    // 19 identifiants - 2 alias (ado1 = Yanis, enfant1 = Lina) + parent-niveaux
-    expect(r.crees).toHaveLength(18);
+    // 19 identifiants - 3 alias (adulte1 = Samir, ado1 = Yanis, enfant1 = Lina) + parent-niveaux
+    expect(r.crees).toHaveLength(17);
+    expect(r.crees).not.toContain('adulte1');
     expect(r.crees).not.toContain('ado1');
     expect(r.crees).not.toContain('enfant1');
     expect(r.absents).toEqual([]);
     for (const n of DEMO_NIVEAUX) {
       if (n.alias) {
-        // alias : profil existant, niveau 1 d'origine, jamais modifié par le semis
-        expect((await levels(n.id)).arabe, n.id).toBe(n.arabe);
+        // alias : profil existant ; niveau posé seulement s'il était vide (Samir, religion de Lina)
+        expect(await levels(n.id), n.id).toEqual({ arabe: n.arabe, sciences: n.sciences });
         continue;
       }
       expect(await levels(n.id), n.id).toEqual({ arabe: n.arabe, sciences: n.sciences });
@@ -278,6 +294,7 @@ describe.skipIf(!URL_)('comptes par niveau sur la base de test', () => {
     expect(p.json().profiles).toHaveLength(7); // ado2-4 et enfant2-5 (ado1 et enfant1 : alias)
     // alias : même compte et même profil que `ado` (Yanis) et `enfant` (Lina), aucun doublon
     for (const [alias, orig] of [
+      ['adulte1', 'adulte'],
       ['ado1', 'ado'],
       ['enfant1', 'enfant'],
     ] as const) {
@@ -286,15 +303,15 @@ describe.skipIf(!URL_)('comptes par niveau sur la base de test', () => {
       expect(a.statusCode).toBe(200);
       expect(a.json().account.id).toBe(o.json().account.id);
       expect(a.json().profilDemo).toBe(o.json().profilDemo);
-      expect(a.json().profilDemo).toBe(await profileOf(alias));
+      expect(a.json().profilDemo ?? a.json().profiles[0].id).toBe(await profileOf(alias));
     }
     const { rows: dup } = await c.h.pool.query<{ n: string }>(
-      "select count(*) n from profile where pseudonym in ('Ado 1', 'Enfant 1')",
+      "select count(*) n from profile where pseudonym in ('Adulte 1', 'Ado 1', 'Enfant 1')",
     );
     expect(Number(dup[0]!.n)).toBe(0);
     // mauvais mot de passe ; les six comptes d'origine restent distincts
     expect((await login(demo, 'adulte2', 'autre')).statusCode).toBe(401);
-    expect((await login(demo, 'adulte', 'awzid')).statusCode).toBe(401); // pas de compte `adulte` ici
+    expect((await login(demo, 'adulte', 'awzid')).statusCode).toBe(200); // pas de compte `adulte` ici
     expect((await login(demo, 'adulte11')).statusCode).toBe(401);
   });
 
