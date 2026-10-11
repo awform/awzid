@@ -37,6 +37,10 @@ Lot F2 (branche `f2-ecole-wip`, revue d'architecture E1-E4, E8) : TERMINÉ — �
 responsables d'un profil (`profile_custodian`), tablette de classe, émancipation, niveau par matière, années,
 passage de fin d'année, archives, API « mon parcours » (`packages/db/src/{ecole,responsables,niveaux}.ts`,
 `apps/api/src/ecole-f2.ts`) ; l'interface du parcours par niveau vient avec A27.
+Lot F3 (branche `f3-comptes-wip`, revue M7, E10, G3, G4, M8, M9, F7, F8) : comptes de la bêta — e-mails
+(`apps/api/src/mail/`, `AWFORM_MAIL` : smtp / journal = boîte de démonstration), récupération du compte
+(`apps/api/src/auth/recuperation.ts`, page `/acces`), accords art. 9 et analyse vocale (`auth/accords.ts`, premier
+usage), Québec 14 ans, États-Unis < 13 ans fermés, fuseau et région des données (migration `0042_f3_comptes`).
 Chantier A27 (branche `a27-parcours-wip`) : TERMINÉ — parcours par niveau (accueil « Ma prochaine activité », espace du
 niveau, positionnement, épreuve de passage, « J'écris le Coran », mots du Coran, « Ma classe ») et décisions D-F2
 (`packages/db/src/parcours.ts`, `apps/api/src/parcours-a27.ts`, `apps/web/src/lib/parcours/`) ; pages du personnel
@@ -50,6 +54,10 @@ Lot 27 (branche `lot27-api-wip`) : audio du Coran, partie SERVEUR TERMINÉE (fic
 interface par un autre agent) — `apps/api/src/coran-audio.ts`, `packages/db/src/audio/`, EXPLOITATION § 7.
 Corrections d'audit : branche `corrections-audit` — les 73 constats traités (corrigés, ou reportés avec leur
 raison), suivi `docs/projet/CORRECTIONS_AUDIT.md`, bilan `docs/projet/RAPPORT_CLOUD.md` ; CI entièrement verte.
+Lot F5 (branche `perf-penser-large-wip`) : mesure du poids (élève, première ouverture, 3G simulée ; EXPLOITATION § 14),
+pages rares et modules en ligne non préchargés (`apps/web/scripts/groupes.mjs`), interrupteurs de fonctions et canal
+bêta (`packages/school/src/fonctions.ts`, `apps/api/src/f5.ts`, `fn()` dans l'application), avis, usage sans
+traceur, étiquette `avant-<lot>` avant chaque fusion (EXPLOITATION § 11).
 Tests : `apps/api/test/content.ts` (vrais livres, sinon contenu synthétique `infra/ci/contenu-synthetique`,
 généré par `infra/ci/synthetique/generer.mjs`, sans texte religieux) ; `helpers.ts` pour les nouveaux lots.
 État des lignes V1 : `docs/projet/ECARTS.md` ; décisions du client : `docs/projet/DECISIONS_EN_ATTENTE.md`.

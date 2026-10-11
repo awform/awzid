@@ -46,21 +46,27 @@ export function themeOf(a: Audience): ThemeName {
 }
 
 /**
- * Coran épuré (06/10/2026) — palette « verdure » (vert, blanc, or) par-dessus le thème du public : dans
- * l'espace Coran (et le carnet de hifẓ) pour les élèves et les visiteurs. Mettre `VERDURE_PARTOUT` à vrai en
- * fait le thème clair PAR DÉFAUT de toute l'application élève (décision du client après validation).
- * Les adultes responsables (parent, enseignant, administration) gardent le thème « clair et minimal ».
+ * Palette « verdure » (vert, blanc, or) par-dessus le thème du public, réglée PAR PUBLIC :
+ * - « partout » : thème clair par défaut de toute l'application ;
+ * - « coran » : seulement dans l'espace Coran (et le carnet de hifẓ) ;
+ * - absent : le thème du public partout, espace Coran compris.
+ * Décision du client (06/10/2026, corrections du lecteur) : partout pour les ADULTES seulement (pour l'instant) ;
+ * les enfants (Jardin) et les ados (Nuit étoilée) gardent leur thème, y compris dans l'espace Coran ; visiteurs :
+ * espace Coran (inchangé). Les adultes responsables (parent, enseignant, administration) gardent « clair et minimal ».
  */
-export const VERDURE_PARTOUT = false;
-const ELEVES: Audience[] = ['enfant', 'ado', 'adulte', 'visiteur'];
+export const VERDURE: Partial<Record<Audience, 'partout' | 'coran'>> = {
+  adulte: 'partout',
+  visiteur: 'coran',
+};
 export function paletteOf(
   a: Audience,
   path: string,
-  partout = VERDURE_PARTOUT,
+  regle: Partial<Record<Audience, 'partout' | 'coran'>> = VERDURE,
 ): PaletteName | null {
-  if (!ELEVES.includes(a)) return null;
-  if (partout) return 'verdure';
-  return under(path, ['/coran', '/hifz']) ? 'verdure' : null;
+  const r = regle[a];
+  if (r === 'partout') return 'verdure';
+  if (r === 'coran') return under(path, ['/coran', '/hifz']) ? 'verdure' : null;
+  return null;
 }
 
 export type NavId =

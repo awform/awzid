@@ -2,6 +2,9 @@
   import { getContext } from 'svelte';
   import { AUDIO_CTX, type LevelAudio } from '$lib/lecons-audio';
   import { vivanteActive } from './reglage';
+  import { fn } from '$lib/fonctions.svelte';
+  import { noter } from '$lib/usage';
+  import { chargerModule } from '$lib/charger';
 
   /**
    * Chantiers A21 / A21b — point d'accroche des « leçons vivantes » dans la page de leçon. Quelques octets ici :
@@ -16,16 +19,23 @@
   );
   const audio = getContext<(() => LevelAudio | null) | undefined>(AUDIO_CTX);
   let mark: HTMLElement | undefined = $state();
+  // F5 : valeur booléenne dérivée — l'animation n'est réinstallée que si l'interrupteur CHANGE (pas à chaque
+  // relecture des décisions)
+  const anim = $derived(fn('animations'));
 
   $effect(() => {
     const u = unit;
     const article = mark?.closest('article');
-    if (!article || u.kind !== 'lecon' || !vivanteActive(u.levelCode)) return;
+    // F5 : interrupteur « animations » (rôle, âge, pays, école, canal)
+    if (!article || u.kind !== 'lecon' || !anim || !vivanteActive(u.levelCode)) return;
+    noter('animations');
     let dead = false;
     let stop: (() => void) | undefined;
-    void import('./installer')
+    // F5 : nouvelles tentatives automatiques ; en cas d'échec, la leçon reste entière sans animation
+    void chargerModule(() => import('./installer'))
       .then((m) => m.installer(article, u, illus, audio))
-      .then((s) => (dead ? s() : (stop = s)));
+      .then((s) => (dead ? s() : (stop = s)))
+      .catch(() => {});
     return () => {
       dead = true;
       stop?.();

@@ -57,10 +57,13 @@ test('mode sombre : aucune violation grave de contraste (axe-core) sur les écra
   // dernière page : l'espace Coran, palette « vert, blanc, or » (Coran épuré) en mode clair imposé
   const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   expect(bg).toBe('rgb(246, 251, 247)');
+  // corrections du 06/10/2026 : « vert, blanc, or » = thème clair par défaut de TOUTE l'application adulte
   await page.goto('/plus');
   await page.locator('main h1').first().waitFor();
+  // palette posée côté client une fois le profil connu
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'verdure');
   expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe(
-    'rgb(247, 241, 227)',
+    'rgb(246, 251, 247)',
   );
 });
 

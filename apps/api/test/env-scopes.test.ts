@@ -69,6 +69,8 @@ const FIXED = new Set([
   // A34 : copie Content Sync de Quran Foundation et polices QCF du Complexe, fixées par compose.yml
   'AWFORM_QF_MUSHAF_DIR',
   'AWFORM_QCF_DIR',
+  // lot F3 : boîte de démonstration des e-mails (mode journal), dossier fixé par compose.yml
+  'AWFORM_MAIL_JOURNAL_DIR',
 ]);
 const isSecret = (v: string) => /SECRET|KEY|PASSWORD|TOKEN|DATABASE_URL/.test(v);
 const pkg = (n: string) => join(ROOT, 'packages', n, 'src');

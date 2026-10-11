@@ -1,14 +1,17 @@
 <script lang="ts">
-  import VivanteReglages from '$lib/vivante/VivanteReglages.svelte';
+  import { draftsAllowed } from '$lib/config';
+  import AvisBouton from '$lib/avis/AvisBouton.svelte';
   import ModeProfil from '$lib/parcours/ModeProfil.svelte';
   import Bidi from '$lib/Bidi.svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import { onMount } from 'svelte';
-  import NotificationsReglages from '$lib/NotificationsReglages.svelte';
+  import { chargerModule } from '$lib/charger';
+  import ConnexionNecessaire from '$lib/ConnexionNecessaire.svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { setActiveProfile } from '$lib/attempts';
   import { countryName } from '$lib/countries';
-  import { fmtDate, locale, LOCALES, t } from '$lib/i18n';
+  import { fmtDate, locale, LOCALES, setTimeZone, t } from '$lib/i18n';
   import { kvGet, kvSet } from '$lib/idb';
   import { call, fetchMe, logout, type Me } from '$lib/session';
   import { recordingAllowed, setRecordingAllowed } from '$lib/recordings';
@@ -26,6 +29,8 @@
     givenAt: string;
     withdrawnAt: string | null;
     optional: boolean;
+    /** lot F3 : facultatifs + accord « article 9 » (son retrait met en pause) */
+    retirable?: boolean;
   }
   let me: Me | null = $state(null);
   let consents: Consent[] = $state([]);
@@ -39,6 +44,19 @@
   let delPassword = $state('');
   let delChild: { id: string; password: string } | null = $state(null);
   let totp: { secret: string; uri: string } | null = $state(null);
+  /** lot F3 : changement d'adresse, fuseau, abonnements de boutique (avant la suppression) */
+  let emailForm = $state({ email: '', password: '' });
+  let tzSel = $state('');
+  let boutiques: Array<{ boutique: string }> = $state([]);
+  const deviceTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const zones: string[] = (() => {
+    try {
+      return Intl.supportedValuesOf('timeZone');
+    } catch {
+      return [deviceTz];
+    }
+  })();
+  const STORE: Record<string, string> = { apple: 'App Store', google: 'Google Play' };
   let totpCode = $state('');
   /** hifẓ : classes de chaque profil, code saisi, consentement, enregistrement local autorisé */
   let hifz: Record<
@@ -60,6 +78,12 @@
     if (!me) return;
     const r = await call<{ consents: Consent[] }>('GET', '/account/consents');
     consents = r.data?.consents ?? [];
+    tzSel = me.account.tz ?? '';
+    const sup = await call<{ abonnementsBoutique: Array<{ boutique: string }> }>(
+      'GET',
+      '/account/suppression',
+    );
+    boutiques = sup.data?.abonnementsBoutique ?? [];
     if (me.account.kind === 'parent' || me.account.kind === 'adulte') {
       const next: typeof hifz = {};
       for (const p of me.profiles) {
@@ -102,8 +126,26 @@
     await setRecordingAllowed(profileId, v);
     hifz[profileId]!.rec = v;
   }
+  // F5 : réglages (notifications, animations) chargés à la demande, après la page
+  let Reglages = $state<{
+    N: typeof import('$lib/NotificationsReglages.svelte').default;
+    V: typeof import('$lib/vivante/VivanteReglages.svelte').default;
+  } | null>(null);
+  // nouvelles tentatives automatiques, puis « Connexion nécessaire » (le reste de la page reste utilisable)
+  let reglagesEchec = $state(false);
+  function chargerReglages() {
+    reglagesEchec = false;
+    void Promise.all([
+      chargerModule(() => import('$lib/NotificationsReglages.svelte')),
+      chargerModule(() => import('$lib/vivante/VivanteReglages.svelte')),
+    ])
+      .then(([n, v]) => (Reglages = { N: n.default, V: v.default }))
+      .catch(() => (reglagesEchec = true));
+  }
+  onMount(chargerReglages);
   onMount(async () => {
-    allowDrafts = ((await kvGet<boolean>('draftsAllowed').catch(() => false)) ?? false) === true;
+    // F5 : réponse du serveur attendue ici (la mise en page ne l'attend plus)
+    allowDrafts = await draftsAllowed();
     drafts = allowDrafts && ((await kvGet<boolean>('draftLocales').catch(() => false)) ?? false);
     await reload();
   });
@@ -134,11 +176,30 @@
     } else fail(r.code);
   }
   async function withdraw(c: Consent) {
+    if (c.type === 'donnee_religieuse_art9' && !confirm(t('compte.retirer_art9'))) return;
     const r = await call('POST', `/account/consents/${c.id}/withdraw`);
     if (r.ok) {
       say(t('compte.retrait_ok'));
       await reload();
     } else fail(r.code);
+  }
+  async function resend() {
+    const r = await call('POST', '/auth/email/verify/resend');
+    if (r.ok) say(t('compte.lien_envoye'));
+    else fail(r.code);
+  }
+  async function changeEmail(e: SubmitEvent) {
+    e.preventDefault();
+    const r = await call('POST', '/account/email', emailForm);
+    if (!r.ok) return fail(r.code);
+    emailForm = { email: '', password: '' };
+    say(t('compte.lien_envoye'));
+  }
+  async function saveTz() {
+    const r = await call('PATCH', '/account/reglages', { tz: tzSel || null });
+    if (!r.ok) return fail(r.code);
+    setTimeZone(tzSel || null);
+    await reload();
   }
   async function exportData() {
     const r = await fetch('/api/v1/account/export', { credentials: 'same-origin' });
@@ -221,11 +282,30 @@
         text={countryName(me.account.country ?? 'FR')}
       />
     </p>
-    <p class="muted small">
+    {#if me.account.email && me.account.kind !== 'ecole'}
+      <p class="small" data-testid="email-statut">
+        {#if me.account.emailVerified}{t('compte.email_verifiee')}{:else}<Bidi
+            text={t('compte.email_non_verifiee')}
+          />
+          <button type="button" class="small" onclick={resend} data-testid="renvoyer-lien"
+            >{t('compte.renvoyer_lien')}</button
+          >{/if}
+      </p>
+    {/if}
+    <p class="muted small" data-testid="cree-le">
       <Bidi
-        text={t('compte.cree_le', { date: fmtDate(me.account.createdAt, { dateStyle: 'long' }) })}
+        text={t('compte.cree_le', {
+          date: fmtDate(me.account.createdAt, { dateStyle: 'long', timeStyle: 'short' }),
+        })}
       />
     </p>
+    <p class="muted small">{t('compte.donnees_ue')}</p>
+    <label for="tz">{t('compte.fuseau')}</label>
+    <select id="tz" bind:value={tzSel} onchange={saveTz} data-testid="fuseau">
+      <option value="">{t('compte.fuseau_appareil', { tz: deviceTz })}</option>
+      {#each zones as z (z)}<option value={z}>{z}</option>{/each}
+    </select>
+    <p class="muted small">{t('compte.fuseau_aide')}</p>
     {#if me.account.kind === 'enseignant' || me.account.kind === 'admin'}
       <p>
         <a class="button primary" href={resolve('/enseignant')} data-testid="lien-enseignant"
@@ -239,17 +319,19 @@
     <!-- A39 : « Avec vérification » ou « Mode serein », choisi par l'adulte lui-même -->
     <section class="card">
       <ModeProfil pid={me.profiles[0].id} />
-      <p>
-        <a href={resolve('/certificats')} data-testid="lien-certificats">{t('cert.titre')}</a>
-      </p>
+      {#if fn('certificats')}<p>
+          <a href={resolve('/certificats')} data-testid="lien-certificats">{t('cert.titre')}</a>
+        </p>{/if}
     </section>
   {/if}
 
   {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
-    <NotificationsReglages parent={me.account.kind === 'parent'} />
+    {#if Reglages}<Reglages.N parent={me.account.kind === 'parent'} />{/if}
   {/if}
 
-  <VivanteReglages />
+  {#if Reglages}<Reglages.V />{:else if reglagesEchec}<section class="card">
+      <ConnexionNecessaire onretry={chargerReglages} />
+    </section>{/if}
 
   <section class="card">
     <h2>{t('compte.langue')}</h2>
@@ -400,9 +482,10 @@
     <section class="card">
       <h2>{t('compte.tuteur_titre')}</h2>
       <p class="muted small">{t('compte.tuteur_aide')}</p>
-      <p>
-        <a href={resolve('/compte/tuteur')} data-testid="lien-tuteur">{t('compte.tuteur_lien')}</a>
-      </p>
+      {#if fn('tuteur')}<p>
+          <a href={resolve('/compte/tuteur')} data-testid="lien-tuteur">{t('compte.tuteur_lien')}</a
+          >
+        </p>{/if}
       <p><a href={resolve('/messages')} data-testid="lien-messages">{t('msg.titre')}</a></p>
       <p><a href={resolve('/sourates')} data-testid="lien-sourates">{t('sour.titre')}</a></p>
       {#if me.account.kind === 'adulte'}<p>
@@ -466,7 +549,7 @@
                 })}
               />{/if}
           </span>
-          {#if c.optional && !c.withdrawnAt}<button
+          {#if (c.retirable ?? c.optional) && !c.withdrawnAt}<button
               type="button"
               class="small"
               onclick={() => withdraw(c)}>{t('compte.retirer')}</button
@@ -486,6 +569,29 @@
 
   <section class="card">
     <h2>{t('compte.securite')}</h2>
+    {#if me.account.email}
+      <h3>{t('compte.email_titre')}</h3>
+      <p class="muted small">{t('compte.email_aide')}</p>
+      <form class="form" onsubmit={changeEmail} data-testid="changer-email">
+        <label for="newmail">{t('compte.email_nouvelle')}</label>
+        <input
+          id="newmail"
+          type="email"
+          autocomplete="email"
+          required
+          bind:value={emailForm.email}
+        />
+        <label for="mailpw">{t('champ.mot_de_passe')}</label>
+        <input
+          id="mailpw"
+          type="password"
+          autocomplete="current-password"
+          required
+          bind:value={emailForm.password}
+        />
+        <button type="submit">{t('compte.email_bouton')}</button>
+      </form>
+    {/if}
     <form class="form" onsubmit={changePw}>
       <label for="cur">{t('compte.mdp_actuel')}</label>
       <input
@@ -546,6 +652,13 @@
   <section class="card">
     <h2>{t('compte.supprimer_titre')}</h2>
     <p>{t('compte.supprimer_aide')}</p>
+    <!-- lot F3 (revue F8) : la suppression du compte n'arrête pas un abonnement pris dans une boutique -->
+    {#each boutiques as b, i (i)}
+      <p class="warnbox" role="alert" data-testid="boutique-actif">
+        <Bidi text={t('compte.boutique_actif', { boutique: STORE[b.boutique] ?? b.boutique })} />
+      </p>
+    {/each}
+    <p class="muted small"><Bidi text={t('compte.boutique_rappel')} /></p>
     <form class="form" onsubmit={deleteAccount}>
       <label for="delpw">{t('champ.mot_de_passe')}</label>
       <input
@@ -561,6 +674,9 @@
     </form>
   </section>
 {/if}
+
+<!-- F5 : « Donner mon avis » (chargé à la demande, en ligne) -->
+<AvisBouton />
 
 <style>
   .form {

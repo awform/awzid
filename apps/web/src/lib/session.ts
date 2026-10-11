@@ -31,7 +31,14 @@ export interface Me {
     totpEnabled: boolean;
     hasPin: boolean;
     createdAt: string;
+    /** lot F3 : adresse vérifiée, subdivision (ex. CA-QC), fuseau IANA (null : celui de l'appareil), région */
+    emailVerified?: boolean;
+    region?: string | null;
+    tz?: string | null;
+    dataRegion?: string;
   };
+  /** lot F3 (revue E10) : accords nécessaires manquants — page « Accords » au premier usage */
+  accordsManquants?: Array<{ type: string; profileId: string | null; pseudonym: string | null }>;
   profiles: ProfileInfo[];
   mfaRequired: boolean;
   mfaVerified: boolean;
@@ -91,7 +98,16 @@ export async function call<T>(
 }
 
 /** Compte connecté (réseau), sinon la dernière copie gardée sur l'appareil. */
-export async function fetchMe(): Promise<Me | null> {
+/** F5 (ouverture en 3G) : appels simultanés regroupés en UNE requête (la mise en page et la page la demandent). */
+let meEnCours: Promise<Me | null> | null = null;
+export function fetchMe(): Promise<Me | null> {
+  meEnCours ??= fetchMeOnce().finally(() => {
+    meEnCours = null;
+  });
+  return meEnCours;
+}
+
+async function fetchMeOnce(): Promise<Me | null> {
   const r = await call<Me>('GET', '/auth/me');
   if (r.ok && r.data) {
     await kvSet('me', r.data).catch(() => {});

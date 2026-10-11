@@ -58,6 +58,249 @@ décisions : D-A5.
 
 ---
 
+## 11/10/2026 — Lot F5 (suite) : réseau faible, instabilité des e2e Coran
+
+1. **Échecs `coran-epure` / `coran-corrections` en `--workers=3` : PAS une régression F5.** Même reproduction sur
+   main (worktree temporaire, base et ports propres) : mêmes 2 échecs de `coran-corrections` (« duplicate key
+   quran_reciter_pkey » / « quran_track »), comme sur F5. Cause : le `beforeAll` de « 1. verset lu = verset touché »
+   copie les VRAIS récitateurs de la démo dans la base de test partagée, depuis les deux projets à la fois ; quand
+   l'un réussit, ces récitateurs deviennent le récitateur par défaut des autres fichiers lancés en même temps, dont
+   l'audio n'est pas servi → lecture arrêtée (« 20 écoutes prévues »). Piste dans TACHES_TECHNIQUES (11/10/2026).
+2. **Modules chargés à la demande** (`lib/charger.ts`) : nouvelles tentatives automatiques (0,6 s puis 1,5 s) sous
+   une adresse neuve — Chromium mémorise l'échec d'un `import()` pour la même adresse (vérifié : aucune requête au
+   second essai) ; puis « Connexion nécessaire pour cette fonction » avec « Réessayer » (`ConnexionNecessaire`) :
+   avis, capture, image du verset, tuteur, réglages du compte, lignes exactes du Muṣḥaf (page fluide gardée).
+3. **Verset déjà écouté, hors ligne** : dernière liste de récitateurs et dernières pistes gardées sur l'appareil
+   (servies seulement quand le réseau manque, jamais à la place d'un refus du serveur) ; fichier entendu jusqu'au
+   bout gardé dans `awzid-coran-audio-recents` (150 derniers, jamais un récitateur « en ligne seulement », rien en
+   mode économe, purgé avec les récitateurs retirés).
+4. **Muṣḥaf exact** : lignes et polices des pages précédente et suivante préchargées une fois la page affichée
+   (pas en mode économe) : tourner la page est immédiat, même sans réseau.
+5. **e2e `f5-reseau.spec.ts`** : (a) téléphone moyen en 3G (CPU ×4, 150 ms, 1,6 Mbit/s) : « Écouter » → fichier
+   audio demandé en 514 ms sur F5 (444 ms sur main ; budget < 1 s) ; (b) hors ligne : modules de l'élève dans le cache du service worker, verset déjà
+   écouté rejoué ; (c) module coupé : nouvelle tentative, message, page utilisable, « Réessayer » ; coupure brève :
+   aucune gêne ; (d) Muṣḥaf exact (E2E_MUSHAF_EXACT=1) : pages voisines préchargées.
+6. Budget : appareil d'un élève 317,5 Ko (313,8 avant ; ≤ 350).
+7. Suite complète (`flock`, `--retries=1 --workers=3`, b737d4f) : 379 réussis, 3 instables (coran-epure 205, hifz 145,
+   lot29 42), 3 échecs : coran-epure 48 et 147 (récitateurs de la démo laissés par `coran-corrections`, ci-dessus) et
+   lot16 12 (`totp_incorrect` à la connexion de l'enseignant) ; `f5-reseau` vert.
+
+## 06/10/2026 — Lot F5 : performance + « penser large »
+
+Branche `perf-penser-large-wip` (worktree `~/awform-perf`, depuis `main` 0f6e305), base de tests `awform_f5_test`, e2e
+isolés (ports 3590/4590).
+
+1. **Mesure du poids repensée** (décision du chef de projet ; `apps/web/scripts/budget.mjs`, `e2e/perf.spec.ts`,
+   EXPLOITATION § 14) — trois indicateurs bloquants : **(a) appareil d'un élève** (JS + CSS préchargés ET textes
+   préchargés, Brotli) ≤ 350 Ko ; **(b) première ouverture** (JS + CSS initiaux de l'accueil `/`) ≤ 150 Ko, vérifiée
+   aussi côté navigateur ; **(c) ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s, médiane de 3 premières
+   ouvertures de l'élève, et relance) < 3 s, dans la suite e2e (`reports/perf-3g.json`, recopié dans
+   `reports/budget-web.md`). Page la plus lourde ≤ 150 Ko gardée (CDC § 4.3). Le total de toutes les pages reste
+   affiché, **non bloquant**.
+2. **Allègement réel** — mesures avant (main 0f6e305) → après :
+
+   | Indicateur | Avant | Après |
+   |---|---|---|
+   | (a) Appareil d'un élève (JS + CSS + textes préchargés) | 356,8 Ko | **313,8 Ko** |
+   | (b) Première ouverture (`/`) | 111,0 Ko | **108,8 Ko** |
+   | (c) Ouverture en 3G simulée (médiane) | 3,02 s (au-delà du budget) | **1,9 s** |
+   | Fichiers téléchargés pour ouvrir l'accueil | 51 | 11 |
+   | Page la plus lourde (`/lecons/[id]`) | 138,7 Ko | 137,2 Ko |
+   | Total de toutes les pages (non bloquant) | 405,5 Ko | 391,7 Ko |
+
+   - **Groupes non préchargés** (`scripts/groupes.mjs` remplace `personnel.mjs` → `groupes.json`, service worker) :
+     personnel (`/enseignant`, `/admin`), **pages rares** utiles en ligne seulement (offres, abonnement, inscription,
+     activation, certificats, protections du compte, réglages du tuteur, garanties, errata, démonstration) et
+     **modules à la demande qui ont besoin du réseau** (lignes du Muṣḥaf exact, tuteur, avis et image d'écran) ;
+     un fichier atteint par une page de l'élève n'est jamais exclu. Sans réseau, une page rare jamais ouverte
+     affiche « Cette page a besoin d'Internet ».
+   - **Morceau commun** (Rolldown `codeSplitting`, modules partagés par ≥ 3 pages) : 11 fichiers au lieu de 51
+     pour ouvrir l'accueil (chaque fichier coûte un aller-retour en 3G), −21 Ko pour l'élève (meilleure compression).
+   - **Chargés à la demande** : tuteur, lignes du Muṣḥaf exact, réglages du compte (notifications, animations),
+     dessin du verset à partager, fenêtre d'avis et sa capture ; animations déjà à la demande (A21b).
+   - **Textes par route** : `static/i18n/fr-rares.json` (247 textes des pages rares + fenêtre d'avis, jamais
+     préchargés) ; espaces Prières et Vivre l'islam préchargés comme avant (comptés désormais dans (a)).
+   - **Ouverture** : la langue n'attend plus `/api/v1/config` sauf si une langue en préparation peut s'afficher ;
+     `fetchMe` regroupe les appels simultanés (3 requêtes → 1).
+   - Hors ligne de l'élève vérifié en e2e : 19 espaces ouverts sans réseau, aucun fichier des groupes en cache.
+3. **Penser large** :
+   - **Interrupteurs de fonctions** (registre `packages/school/src/fonctions.ts`, tables `feature_flag` et
+     `feature_rule`, migration `0042_f5_penser_large`, API `apps/api/src/f5.ts`, écran *Administration →
+     Fonctions*) : état de base ouvert / coupé / bêta et exceptions par rôle, âge, pays, école, canal ; la plus
+     précise l'emporte, « couper » à égalité ; cache serveur 30 s, copie de l'appareil 5 min (hors ligne : dernière
+     connue), valeur par défaut sûre du registre. Branchés : animations, Muṣḥaf exact, tuteur, Vivre l'islam,
+     défis, certificats individuels, mode serein, avis (récitateurs en ligne : clé prête, branchée à la fusion
+     de A2). Refus serveur `fonction_coupee` (tuteur, certificats, Vivre l'islam, Muṣḥaf exact, choix serein).
+   - **Canal bêta** (`beta_member`) : comptes (par e-mail) et écoles ; un élève d'une école bêta en fait partie.
+   - **« Donner mon avis »** (accueil de l'élève, Plus, compte, espace enseignant) : catégorie, texte ≤ 500 (aucun
+     pour un enfant), image facultative de l'écran faite sur l'appareil (champs et pseudonyme masqués, interdite
+     sur les pages qui montrent d'autres personnes), aperçu avant envoi ; 5 par compte et par jour, 300 par heure ;
+     file *Avis reçus* avec statut ; image effacée à 90 jours, avis à 12 mois (travailleur).
+   - **Usage sans traceur** (`usage_day` ; empreintes et sels du jour effacés après 2 jours) : clés d'une liste
+     fermée, une fois par jour et par personne ; tableau *Usage* (personnes-jours, ouvertures, jamais utilisées,
+     leçons où l'on abandonne, temps médian) ; **aucun chiffre sous 10 personnes**.
+   - **Étiquette `avant-<lot>`** avant chaque fusion (`infra/outils/etiquette-avant-fusion.sh`) et procédure de
+     retour arrière en 4 niveaux (EXPLOITATION § 11).
+4. **Nettoyage Docker hebdomadaire** (`infra/prod/nettoyage-docker.sh`, EXPLOITATION § 12) : images inutilisées
+   et cache de construction de plus de 7 jours, jamais les volumes ; **cron installé sur la VM** (dimanche 04:23,
+   `~/.local/bin/awzid-nettoyage-docker.sh`).
+5. **Textes** : 105 nouveaux textes (`avis.*`, `fn.*`, `beta.*`, `avisadm.*`, `usage.*`, erreurs, page « en ligne »)
+   en fr, en, es, de, ar (A_RELIRE.md).
+6. **Tests** : unitaires **1 632 réussis, 1 ignoré, 0 échec** (api `f5.test.ts` 10 : registre, rôle et âge, refus
+   serveur, pays, mode serein, canal bêta compte et école, avis, limites, conservation, usage et seuil ; web
+   `fonctions.test.ts` 7 ; i18n : textes des pages rares ; worker : purge F5). e2e `f5.spec.ts` (interrupteur par
+   l'écran admin pour les enfants, canal bêta, avis d'un enfant, avis avec image → file → statut, usage anonymisé,
+   hors ligne complet), `perf.spec.ts` réécrit, `a27.spec.ts` adapté. **Suite e2e complète (sous le verrou partagé) : 338 réussis, 45 ignorés, 13 échecs** — 6 tests de langue (la page Compte lisait le réglage « langues en préparation » avant la réponse du serveur, que la mise en page n'attend plus : corrigé, `lib/config.ts`) et 7 des leçons vivantes (l'animation se réinstallait à chaque relecture des interrupteurs : corrigé, valeur dérivée) ; les 5 fichiers concernés relancés : **53 réussis**, 1 intermittent connu (captures A21b, « carte vide », réussi deux fois de suite à la relance ; stabilisé sur `coran-corrections-wip`). Ouverture en 3G simulée : 1,9 s seule, 2,6 s pendant la suite complète (VM chargée par 4 agents).
+
+Décisions à prendre (D-F5) : voir DECISIONS_EN_ATTENTE.
+## 06/10/2026 — Lot F3 : comptes de la bêta (revue d'architecture M7, E10, G3, G4, M8, M9, F7, F8)
+
+Branche `f3-comptes-wip` (worktree `~/awform-f3`, depuis `main` 0f6e305), base de tests unitaires propre
+(`awform_f3_test`), e2e isolés (ports 3173/4273). Bêta GRATUITE du 20/10 : aucun paiement, aucune boutique.
+Décisions existantes conservées (mode serein, rôles F2, responsables).
+
+1. **E-mails (M7)** — `apps/api/src/mail/` : prestataire **SMTP configurable** (`AWFORM_MAIL=smtp`,
+   `AWFORM_SMTP_*`, STARTTLS exigé vers un prestataire, nodemailer 10.0.15) ; **boîte de démonstration**
+   (`AWFORM_MAIL=journal` : aucun envoi, un fichier JSON par message, volume `boite`, `infra/prod/boite-demo.sh`,
+   posé par `deploy.sh --demo`) ; garde-fou : en démonstration, un SMTP public est refusé ; absent = désactivé.
+   Expéditeur `Awzid <no-reply@awzid.com>`. **6 modèles sobres × 5 langues** (texte + HTML minimal, langue du
+   compte ; en arabe, adresse et lien sur leur propre ligne). Liens vers `AWFORM_PUBLIC_URL` ou `https://SITE`,
+   jamais l'en-tête Host. Enregistrements **SPF, DKIM, DMARC** et contrôles : EXPLOITATION § 11.
+2. **Récupération du compte (M7)** — `apps/api/src/auth/recuperation.ts`, table `account_link` (empreinte
+   SHA-256 seulement, usage, adresse visée, expiration, `used_at`, consommation atomique) : **vérification de
+   l'adresse** à l'inscription (24 h, renvoi limité), **mot de passe oublié** (30 min, usage unique, nouveau lien =
+   ancien annulé ; réponse 202 IDENTIQUE avec ou sans compte, travail fait après la réponse ; 3 liens/h/adresse,
+   10 demandes/h/IP ; nouveau mot de passe = toutes les sessions fermées + avis au titulaire ; le lien vérifie
+   aussi l'adresse), **changement d'adresse vérifié** (mot de passe ressaisi, lien à la NOUVELLE adresse, avis
+   masqué à l'ancienne, adresse prise : avis neutre). Jeton dans le **fragment** (`/acces#reinit=…`), retiré de la
+   barre d'adresse à l'ouverture. Page unique **`/acces/[[mode]]`** (mot de passe oublié, nouveau mot de passe,
+   vérification, accords), hors du préchargement de l'élève (n'a de sens qu'en ligne) ; lien « Mot de passe
+   oublié ? » sur la connexion ; « Mon compte » : adresse vérifiée ou non (renvoi), changement d'adresse.
+3. **Accords (E10, G3, M9)** — types `donnee_religieuse_art9` (NÉCESSAIRE, explicite, jamais coché d'avance :
+   inscription, chaque profil d'enfant, et **au premier usage** pour les comptes existants via `accordsManquants`
+   de `/auth/me` → page « Accords » `/acces/accords`, mot de passe ressaisi = preuve ; **retirable** : le compte
+   ou le profil est mis en pause, rien n'est effacé) et `analyse_vocale_ia` (facultatif, séparé, profil par
+   profil, au premier usage ; `hasActiveConsent` = future garde ; aucune fonction ne l'utilise). Âge du
+   consentement par **subdivision** (`DIGITAL_CONSENT_AGE_REGION` : **Québec 14 ans** ; province demandée à
+   l'inscription au Canada ; `account.region`) ; **États-Unis : moins de 13 ans FERMÉS** (`CLOSED_UNDER_AGE` :
+   profil d'enfant, adulte, élève d'une école américaine ; message clair `erreur.ferme_moins_13`, avertissement
+   dans le formulaire ; plus de consentement COPPA recueilli). **Fiche de consentement papier** imprimable pour
+   les écoles (`static/documents/fiche-consentement-ecole.html`, A4, sans script ; lien dans « Mon école »).
+   Démonstration : accords art. 9 des comptes fictifs donnés par `cli/demo.ts` (complément idempotent).
+4. **Juridique (F7, F8)** — pages légales complétées (âge et pays, accès au compte, suppression et abonnement de
+   boutique, modifications, art. 9, analyse vocale, Québec, Royaume-Uni, région d'hébergement, liens par e-mail,
+   contact) et nouvelle page **« Conditions de la bêta »** (gratuite, sans engagement, données effaçables, fin de
+   bêta) en français et en anglais, marquées « à relire par un juriste » ; **classification d'âge et fiches des
+   boutiques** : `docs/juridique/CLASSIFICATION_AGE_BOUTIQUES.md` ; registre des traitements complété.
+   **Suppression du compte** : rappel permanent (abonnement App Store / Google Play non arrêté) et avertissement
+   nominatif si un abonnement de boutique est actif (`GET /account/suppression`) ; liens envoyés effacés.
+   **Export RGPD** vérifié (adresse vérifiée le, région, fuseau, région des données, liens sans empreinte).
+5. **Région et fuseau (G4, M8)** — `account.data_region` et `school.data_region` (« eu » par défaut, contrôlés) ;
+   `account.tz` (fuseau de l'appareil à l'inscription, réglable dans « Mon compte », recopié dans les heures
+   calmes des rappels), `school.tz` modifiable (contrôlé, défaut selon le pays à la création) ; les dates restent
+   des `timestamptz` ; **affichage des heures dans le fuseau du compte** (`fmtDate`, un jour seul n'est jamais
+   décalé). Pas de sélecteur de base par région (une seule région) : l'étiquette suffit pour séparer plus tard.
+6. **Migration** `0042_f3_comptes` (en avant seulement, retour arrière manuel en tête) : `account_link`,
+   `account.email_verified_at|region|tz|data_region`, `school.data_region` ; droits API `account_link` ; comptes
+   existants : adresse « non vérifiée », aucune donnée modifiée. **Numéro à vérifier avant la fusion**.
+7. **Textes** : 65 nouvelles clés (et 2 mises à jour) en fr, en, es, de, ar (A_RELIRE.md), textes français hors de la coquille
+   (`static/i18n/fr-acces.json`) ; `erreur.reinitialisation_desactivee` retiré.
+8. **Poids** : toutes pages **409,9 à 410,0 Ko ≤ 410** (405,5 sur `main`), appareil d'un élève **354,6 Ko ≤ 355**,
+   page la plus lourde 139,1 Ko — marge nulle (D-F3 9).
+9. **Tests** : unitaires **1 629 réussis, 1 ignoré, 0 échec** (`pnpm test`, base `awform_f3_test`) dont api
+   `f3.test.ts` (14 : modèles 5 langues, garde-fou de la démonstration, âges ; vérification ; mot de passe oublié de
+   bout en bout ; expiration, annulation, limitation ; changement d'adresse ; accords art. 9 et premier usage ;
+   analyse vocale ; Québec ; États-Unis ; fuseaux et région ; boutique et export ; comptes exclus et limite IP),
+   tests existants adaptés (accord art. 9, COPPA → fermeture, réinitialisation). e2e `f3.spec.ts` (5 × téléphone
+   et ordinateur, boîte de démonstration réelle : inscription avec vérification, mot de passe oublié de bout en
+   bout, accord retiré puis redonné au premier usage, mineur américain refusé, fuseau) : 10/10 ;
+   **suite e2e complète (sous verrou) : 351 réussis, 45 ignorés, 0 échec** (23,9 min). Build, types, lint, budget verts.
+
+Décisions à prendre (D-F3) : voir DECISIONS_EN_ATTENTE.
+
+
+## 06/10/2026 — Chantier A2 : récitateurs EN LIGNE (Quran Foundation)
+
+Branche `a2-en-ligne-wip` (worktree `~/awform-a2`, base de tests unitaires propre `awform_a2_test`), après la fusion
+des corrections du lecteur (main a5b13ca).
+- **Juridique** (`SOURCES_MUSHAF.md` § 8, `LICENCES.md` § 9 ; Developer Terms du 04/10/2026 lues le 06/10) : lecture
+  en continu PERMISE dans l'application payante ; réponses gardées ≤ 1 semaine hors Content Sync (nous : 24 h en
+  mémoire) ; « audio URLs are distinct from the underlying recordings » → AUCUNE copie des enregistrements (ni hors
+  ligne, ni relais) ; pas d'API ouverte (comptes connectés seulement) ; crédit QF et compte actif.
+- **Serveur** (`apps/api/src/coran-qf.ts`) : jeton OAuth2 client_credentials côté serveur, `/recitations/{id}/by_chapter/{s}`
+  paginé, versets 1…n exigés, adresses contrôlées (hôtes QF = `media-src` de la CSP), cache mémoire 24 h ; sans
+  identifiants : inactif sans erreur. Base : colonne `source` (migration 0042), catalogue `qf-catalogue.ts` (11
+  récitateurs, ids prélancement 6/7, production 1-10 et 12) synchronisé après les migrations ; paquets → 404
+  `en_ligne_seulement`, relais refusé ; préférence, listes parent/enseignant, mémoriser, retrait : comme le Complexe.
+- **Secret** : `~/.config/awform/qf.env` (le même que la synchronisation A34, 600) → `infra/prod/qf-env.sh` l'ajoute au
+  seul `api.env` au déploiement ; contrôle : `infra/outils/qf-audio/qf-recitateurs.mjs` (EXPLOITATION § 11).
+- **Interface** : Mes récitateurs (étiquette « En ligne » + icône réseau, crédit, « Disponible avec Internet » hors
+  connexion), panneau Réglages (étiquette, aide, option désactivée hors connexion, pas de « garder cette sourate »),
+  « Nos garanties » (5 langues) ; textes du Coran dans `fr-coran.json`.
+- **Tests** : unitaires 1 642 réussis (1 ignoré) dont `a2-qf.test.ts` (client QF simulé, qf-env.sh) et `a2.test.ts`
+  (API) ; e2e `a2.spec.ts` (10 : liste, hors connexion, garanties, API réservée, **verset lu = verset choisi** en
+  répétition et « écouter d'ici », Réglages) avec une API QF SIMULÉE (bips d'essai) ; e2e complets (sous flock) : 368 réussis, 46 ignorés, 0 échec.
+- **Budget** : 405,2 Ko ≤ 410 ; appareil d'un élève 352,0 Ko ≤ 355.
+- **À faire** : ʿAbd Allāh al-Maṭrūd (×2) seulement en « chapter reciters » (fichier par sourate + minutage) → relever
+  les ids avec l'outil et ajouter la lecture « sourate minutée » ; aṭ-Ṭablāwī (id 11) disponible, non activé.
+
+## 06/10/2026 — Corrections du lecteur Coran (signalements du client sur la démo)
+
+Branche `coran-corrections-wip` (worktree `~/awform-corfix`, depuis `main` fd3cad7), e2e isolés (ports 3472/4472).
+
+1. **« Je touche un verset pour le faire répéter, il lit le verset au-dessus » — cause** : le lecteur demandait le
+   fichier « verset n » du récitateur choisi QUEL QUE SOIT le muṣḥaf affiché. Or chaque riwāya a sa numérotation
+   (compte koufi de Ḥafṣ et Shuʿba, madanī de Warsh et Qālūn, baṣrī d'ad-Dūrī et as-Sūsī, makkī d'al-Bazzī) :
+   « الم » est le verset 2:1 en Ḥafṣ mais pas en Qālūn, si bien que le verset 90 du muṣḥaf de Qālūn est le 91 de
+   Ḥafṣ. Muṣḥaf d'une autre riwāya + récitateur Ḥafṣ (récitateur par défaut) → on entendait le verset
+   AU-DESSUS ; texte Ḥafṣ + récitateur Qālūn, ad-Dūrī ou as-Sūsī → le verset en dessous (al-Fātiḥa de Qālūn :
+   basmala non comptée). Le surlignage était déjà coupé dans ce cas (A8), pas la lecture. Vérifié sur les vrais
+   fichiers de la démo : en Ḥafṣ sur Ḥafṣ, page fluide, page exacte et vue versets, le fichier demandé était déjà
+   le bon (index, page, basmala, plage du/au corrects).
+   **Correction à la racine** : le récitateur SUIT le muṣḥaf (`reciterFor`, `lecture.ts`) — changer de muṣḥaf
+   change le récitateur (avis « Le récitateur change : … »), choisir un récitateur d'une autre riwāya fait passer
+   le muṣḥaf à sa riwāya (avis), muṣḥaf sans récitateur (Warsh, al-Bazzī) : avis, rien n'est lu ; garde dans
+   `playFrom` ; la file n'est faite de numéros de versets que si la récitation est découpée comme le texte
+   affiché (`listenFiles` + `highlightOn`), sinon la sourate entière, dite (al-Mulk d'ad-Dūrī 31/30, as-Sūsī).
+   L'état « autre riwāya » (encadré, lien) disparaît.
+   **Trouvé en passant (page exacte A34, téléphone)** : la mesure des lignes (texte à 100 px, `.mesure`) élargissait
+   la page de plusieurs milliers de pixels → page dézoomée sur téléphone, feuilles et menu du verset mal placés
+   (clics interceptés). Corrigé (`width: 0; overflow: hidden`), contrôlé par e2e (`innerWidth` = largeur d'écran).
+2. **Puce** : « Al-Baqara · verset 90 · page 14 · juzʾ 1 » en toutes lettres (téléphone : « Al-Baqara » /
+   « verset 90 · page 14 · juzʾ 1 », blocs insécables), 5 langues ; la puce prend toute la ligne, les outils
+   dessous.
+3. **Un seul point d'entrée « Réglages »** (icône ET libellé, téléphone et bureau) : `Reglages.svelte` remplace les
+   feuilles « Réglages d'écoute » et « Affichage » ; sections en toutes lettres avec sauts : Écoute (préréglages,
+   plage, répétitions, vitesse, arrêt automatique), Récitateur (ceux de la riwāya affichée d'abord, « en ligne »
+   étiquetés — champ `enLigne` prévu pour A2), Muṣḥaf (style : « Muṣḥaf de Médine (pages à l'identique) » OU
+   « Notre muṣḥaf habituel (cadre vert) », choix gardé ; riwāyāt décrites comme les récitateurs : nom en clair,
+   courte description, nombre de récitateurs), Affichage (vue, **taille du texte** normale / grande / très grande,
+   lecture seule, une page), Traduction, Tajwid, Mémoriser (+ lecture guidée), Hors ligne. Icône « ⋯ » et loupe
+   en double (même sélecteur que la puce) retirées ; l'icône répétition et le nom du récitateur de la mini-barre ouvrent ce panneau à leur
+   section. **Enfants** : quatre grosses tuiles (Écouter · Répéter · Plus grand · Masquer pour mémoriser), le reste
+   replié sous « Tous les réglages (avec un parent) ».
+4. **Thème** : `VERDURE` par public (`audience.ts`) — « vert, blanc, or » partout pour les ADULTES ; enfants
+   (Jardin) et ados (Nuit étoilée) gardent leur thème, espace Coran compris ; visiteurs : espace Coran (inchangé).
+5. **Tests** : unitaires `lecture-corrections.test.ts` (5), `audience.test.ts` (adapté) ; e2e
+   `coran-corrections.spec.ts` (9) sur les **vraies récitations de la démo** (9 récitateurs, 5 riwāyāt, copiées
+   dans la base de test, fichiers lus dans le volume de la démo : `e2e/audio-demo.ts`) : clé du fichier demandé =
+   verset touché pour 1:1, 1:7, 2:1, 2:5, 2:90, 112:2 (« Répéter » et « Écouter d'ici »), surlignage = verset
+   touché ; pages fluides ET exactes (début, milieu, fin de page, basmala) ; Qālūn page 1 ; al-Mulk ; changement
+   de muṣḥaf / de récitateur ; puce (320 à 768 px, 5 langues) ; panneau Réglages ; tuiles enfant ; thèmes adulte,
+   enfant, ado. Mode `E2E_MUSHAF_EXACT=1` : les 9 anciens tests qui cherchaient le texte visible vérifient le
+   texte Tanzil ACCESSIBLE des pages exactes (`expectVerse`, `e2e/coran.ts`) ou visent un glyphe (`.first()`).
+   **Résultats** : `pnpm check` vert — unitaires verts ; e2e complets (après les fusions de main) **362 réussis,
+   38 ignorés, 0 échec** avec `E2E_MUSHAF_EXACT=1` (604 pages exactes publiées) et **354 réussis, 46 ignorés, 0 échec** sans.
+6. **Budget** (après fusion de `main` 0f6e305 = A37 et A39 suite, 405,4 Ko) : sans rien changer, les ajouts
+   portaient le total au-delà de 410 Ko → les textes FRANÇAIS de l'espace Coran (`cl.*`, `ca.*`, `mp.*` sauf les noms
+   de traduction, `mpx.*`, `rw.*`, `tj.*` : 247 textes) sortent de la coquille par le mécanisme des espaces d'A37 :
+   `static/i18n/fr-coran.json` (`SPACE_CATALOGS`), chargé par les mises en page `/coran` et `/enseignant`
+   (récitateurs de la classe), **préchargé** par le service worker (Coran hors ligne dès l'installation) ; contrôlé
+   par `i18n.test.ts` (aucun de ces textes utilisé hors de l'espace Coran). Total **404,4 Ko** (main : 405,4) ≤ 410 ;
+   appareil d’un élève **351,3 Ko** ≤ 355 ; `/coran/lecteur` 128,5 Ko. Panneaux fusionnés en un composant, textes
+   « autre riwāya » et doublons retirés.
+7. Captures avant / après (puce, réglages adulte et enfant, thème adulte ; 375 px et bureau) :
+   `reports/coran-corrections/` (hors dépôt), copiées sur le PC (`application/coran-corrections-captures/`).
 ## 06/10/2026 — Chantier A39 (suite) : décisions D-A39 appliquées
 
 Branche `a39b-certificat-wip` (depuis `main` 7785a3f).

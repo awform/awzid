@@ -81,7 +81,7 @@ describe.skipIf(!URL_)('lot 16 (awform_test)', () => {
         email,
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       }),
     );
 
@@ -109,7 +109,7 @@ describe.skipIf(!URL_)('lot 16 (awform_test)', () => {
         birthYear: YEAR - 9,
         levelCode: 'en1',
         password: PW,
-        consents: ['compte_suivi'],
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
       })
     ).json().id;
     teacher = await staff('maitre16@ecole.example');

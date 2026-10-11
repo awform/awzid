@@ -182,7 +182,13 @@
   {/if}
 
   <section role="tabpanel" data-panel={tab}>
-    {#if tab === 'lecons'}
+    {#if e.unites.length === 0}
+      <!-- niveau choisi mais sans leçon importée : message clair, jamais une page vide muette -->
+      <div class="card info" data-testid="niveau-bientot">
+        <h2>{t('niveau.bientot')}</h2>
+        <p class="muted">{t('niveau.bientot_texte')}</p>
+      </div>
+    {:else if tab === 'lecons'}
       <ol class="units" style="--ar-size: {arabicSize(c.code)}px" data-testid="lecons-niveau">
         {#each e.unites as u (u.id)}
           <li class={u.kind} class:next={u.id === next?.id}>

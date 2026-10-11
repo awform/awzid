@@ -34,7 +34,12 @@ test('carnet ra* : l’adulte coche la ligne de la leçon, retrouvée dans son c
   await page.goto('/lecons/ra1.l01');
   const box = page.getByTestId('carnet-perso-case');
   await expect(box).not.toBeChecked();
+  // coche enregistrée par le serveur avant d'ouvrir le carnet (machine chargée)
+  const saved = page.waitForResponse(
+    (r) => r.request().method() !== 'GET' && r.url().includes('carnet') && r.ok(),
+  );
   await box.check();
+  await saved;
   await expect(box).toBeChecked();
   await page.getByTestId('lien-carnet-perso').click();
   await expect(page.locator('main h1')).toHaveText('Mon carnet de pratique');

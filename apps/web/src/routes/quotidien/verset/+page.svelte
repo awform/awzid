@@ -8,7 +8,10 @@
   import Icon from '$lib/ui/Icon.svelte';
   import QuotidienTabs from '$lib/quotidien/QuotidienTabs.svelte';
   import { loadTranslation, translationInfo } from '$lib/quran/translation';
-  import { colorsFrom, drawVerse, H, W } from '$lib/quotidien/partage';
+  // F5 : dessin de l'image chargé à la demande (gardé pour le hors ligne avec la coquille)
+  import { H, W } from '$lib/quotidien/partage-taille';
+  import { chargerModule } from '$lib/charger';
+  import ConnexionNecessaire from '$lib/ConnexionNecessaire.svelte';
 
   /**
    * A12 — partager un verset en image : texte Tanzil tel quel (police Amiri Quran), référence et traduction du
@@ -26,6 +29,7 @@
   let status = $state<'' | 'charge' | 'hors_ligne' | 'trop_long'>('');
   let canvas = $state<HTMLCanvasElement | null>(null);
   let shared = $state('');
+  let moduleEchec = $state(false);
   const trKey = $derived(locale() === 'fr' ? 'french_rashid' : 'english_rwwad');
   const trInfo = $derived(translationInfo(trKey));
   const max = $derived(counts[sura - 1] ?? 286);
@@ -58,6 +62,16 @@
     }
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+    let m: typeof import('$lib/quotidien/partage');
+    try {
+      // F5 : nouvelles tentatives automatiques, puis « Connexion nécessaire » (page jamais figée)
+      m = await chargerModule(() => import('$lib/quotidien/partage'));
+      moduleEchec = false;
+    } catch {
+      moduleEchec = true;
+      return;
+    }
+    const { colorsFrom, drawVerse } = m;
     const r = drawVerse(
       ctx,
       {
@@ -185,9 +199,14 @@
 {:else if status === 'trop_long'}
   <p class="warnbox" role="status">{t('qt.verset_trop_long')}</p>
 {/if}
+{#if moduleEchec}<ConnexionNecessaire onretry={() => void render()} />{/if}
 <div class="actions">
-  <button type="button" class="primary" onclick={share} disabled={!text} data-testid="qt-partager"
-    ><Icon name="partager" size={20} />{t('qt.partager')}</button
+  <button
+    type="button"
+    class="primary"
+    onclick={share}
+    disabled={!text || moduleEchec}
+    data-testid="qt-partager"><Icon name="partager" size={20} />{t('qt.partager')}</button
   >
   <button
     type="button"
@@ -196,7 +215,8 @@
       const b = await blob();
       if (b) save(b);
     }}
-    disabled={!text}><Icon name="telecharger" size={20} />{t('qt.enregistrer')}</button
+    disabled={!text || moduleEchec}
+    ><Icon name="telecharger" size={20} />{t('qt.enregistrer')}</button
   >
 </div>
 {#if shared}<p class="muted" role="status"><Bidi text={shared} /></p>{/if}

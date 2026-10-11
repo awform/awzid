@@ -5,6 +5,7 @@
  */
 import type { SuraPack } from '$lib/coran-audio';
 import { kvGet, kvSet } from '$lib/idb';
+import { getSettings } from '$lib/offline';
 import { loadTajwid } from './tajwid';
 
 const CACHE = 'awzid-coran-audio-v1';
@@ -130,14 +131,53 @@ export async function purgeReciters(active: string[]): Promise<number> {
       await removeSura(s.reciter, s.sura);
       n++;
     }
+  // F5 : versets écoutés de ces récitateurs aussi
+  if (cacheAvailable())
+    try {
+      const c = await caches.open(RECENTS);
+      for (const k of await c.keys()) {
+        const r = /\/file\/([a-z0-9-]+)\//.exec(new URL(k.url).pathname)?.[1];
+        if (r && !active.includes(r)) await c.delete(k);
+      }
+    } catch {
+      /* cache indisponible */
+    }
   return n;
+}
+
+/**
+ * F5 — versets ÉCOUTÉS EN LIGNE (récitateurs du Complexe seulement, jamais ceux « en ligne seulement ») : le
+ * fichier entendu jusqu'au bout est gardé dans un petit cache borné (les 150 derniers, quelques Mo) pour être
+ * réécouté hors ligne. Copie prise dans le cache HTTP du navigateur (le fichier vient d'être lu : pas de second
+ * téléchargement) ; rien en mode « économe ». Le service worker garde ce cache (préfixe « awzid-coran-audio »).
+ */
+export const RECENTS = 'awzid-coran-audio-recents';
+export const MAX_RECENTS = 150;
+export async function garderEcoute(url: string): Promise<void> {
+  if (url.startsWith('blob:') || typeof caches === 'undefined') return;
+  try {
+    if ((await getSettings().catch(() => null))?.econome) return;
+    const c = await caches.open(RECENTS);
+    if (await c.match(url, { ignoreVary: true })) return;
+    const r = await fetch(url, { credentials: 'same-origin', cache: 'force-cache' });
+    if (r.status !== 200) return;
+    await c.put(url, r);
+    const keys = await c.keys();
+    for (const k of keys.slice(0, Math.max(0, keys.length - MAX_RECENTS))) await c.delete(k);
+  } catch {
+    /* stockage plein ou indisponible : le verset se réécoutera en ligne */
+  }
 }
 
 /** Adresse à donner au lecteur : le fichier gardé sur l'appareil s'il existe, sinon le réseau. */
 export async function playableUrl(url: string): Promise<string> {
   try {
     // ignoreVary : l'API répond « Vary » (encodage), le fichier gardé doit être retrouvé quand même
-    const hit = await (await caches.open(CACHE)).match(url, { ignoreVary: true });
+    const hit =
+      (await (await caches.open(CACHE)).match(url, { ignoreVary: true })) ??
+      (navigator.onLine === false
+        ? await (await caches.open(RECENTS)).match(url, { ignoreVary: true })
+        : undefined);
     if (hit) return URL.createObjectURL(await hit.blob());
   } catch {
     /* cache indisponible : réseau */

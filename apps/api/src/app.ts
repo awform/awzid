@@ -9,6 +9,7 @@ import type { TutorSetup } from '@awform/tutor';
 import type { BillingSetup } from '@awform/billing';
 import { neededIllustrations } from './needed.js';
 import { registerAuth } from './auth/routes.js';
+import { mailerFromEnv, publicUrlFromEnv, type Mailer } from './mail/envoi.js';
 
 export { neededIllustrations };
 import { currentEdition, ping, setVerseSuraNames, type Db } from '@awform/db';
@@ -33,6 +34,7 @@ import { registerPratiqueAdulte } from './pratique-adulte.js';
 import { registerRecital } from './recital.js';
 import { registerEcoleSynthese } from './ecole-synthese.js';
 import { registerCoranAudio } from './coran-audio.js';
+import { essaiFetch, QfAudioClient, qfConfigFromEnv } from './coran-qf.js';
 import { registerLeconsAudio } from './lecons-audio.js';
 import { registerMushafExact } from './mushaf-exact.js';
 import { registerContent } from './contenu.js';
@@ -46,6 +48,7 @@ import { registerParcoursA27 } from './parcours-a27.js';
 import { registerSereinA39 } from './serein-a39.js';
 import { registerCertificatAutonome } from './certificat-autonome.js';
 import { registerVivre } from './vivre.js';
+import { registerF5 } from './f5.js';
 import { registerVerification } from './verification.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
 import type { RecitationKey } from '@awform/db';
@@ -74,6 +77,8 @@ export interface AppOptions {
   billing?: BillingSetup;
   /** stockage des fichiers audio du Coran (tests) ; sinon AWFORM_AUDIO_DIR ; null : fichiers non servis */
   audioDir?: string | null;
+  /** A2 : client de l'audio en ligne de Quran Foundation (tests) ; sinon QF_* ; null : inactif */
+  qf?: QfAudioClient | null;
   /** A34 : dossier de synchronisation QF (publie/…) ; null = mise en page exacte indisponible */
   mushafExactDir?: string | null;
   /** A34 : dossier des polices QCF du Complexe (installer-polices.sh) */
@@ -84,6 +89,10 @@ export interface AppOptions {
   demoLogin?: boolean;
   /** A5 : écoute de la récitation (tests : service factice, interrupteur) ; sinon AWFORM_ECOUTE_* */
   ecoute?: OptionsEcoute;
+  /** lot F3 : envoi des e-mails (tests) ; sinon AWFORM_MAIL (smtp, journal, ou désactivé) */
+  mailer?: Mailer;
+  /** lot F3 : adresse publique du site pour les liens des e-mails (tests) ; sinon AWFORM_PUBLIC_URL ou SITE */
+  publicUrl?: string | null;
 }
 
 /**
@@ -107,6 +116,14 @@ export const logSerializers = {
     remoteAddress: truncIp(req.ip),
   }),
 };
+
+/** A2 : audio en ligne de Quran Foundation d'après l'environnement (inactif sans identifiants). */
+function qfFromEnv(db: Db): QfAudioClient | null {
+  const essai = process.env.AWFORM_AUDIO_ESSAI === 'on';
+  const cfg = qfConfigFromEnv(process.env, essai);
+  if (!cfg) return null;
+  return new QfAudioClient(cfg, cfg.env === 'essai' ? essaiFetch(db) : undefined);
+}
 
 export function buildApp(opts: AppOptions): FastifyInstance {
   // versets cités dans les leçons : nom de la sourate de la référence affichée (métadonnées Tanzil)
@@ -136,11 +153,16 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     if (req.method !== 'GET' && req.method !== 'HEAD' && req.headers['x-awform'] !== '1')
       return reply.code(403).send({ error: { code: 'csrf' } });
   });
+  // lot F3 (revue M7) : e-mails (vérification, mot de passe oublié) — prestataire SMTP, boîte de démonstration
+  const mailer =
+    opts.mailer ?? mailerFromEnv(process.env, (m) => (opts.logger ? app.log.warn(m) : undefined));
   registerAuth(app, {
     db,
     cookieSecure: opts.cookieSecure ?? true,
     secretKey: opts.secretKey ?? null,
     demoLogin: opts.demoLogin === true,
+    mailer,
+    publicUrl: opts.publicUrl === undefined ? publicUrlFromEnv(process.env) : opts.publicUrl,
   });
 
   // en-têtes de sécurité de base (la CSP stricte est posée par SvelteKit / Caddy)
@@ -183,7 +205,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerAdmin(app, db);
   registerToday(app, db, edition);
   registerSchool(app, db, edition, signer);
-  registerActivities(app, db, edition, opts.demoLogin === true);
+  registerActivities(app, db, edition, opts.demoLogin === true, mailer.mode !== 'inactif');
   registerRecitations(
     app,
     db,
@@ -203,6 +225,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     app,
     db,
     opts.audioDir === undefined ? (process.env.AWFORM_AUDIO_DIR ?? null) : opts.audioDir,
+    opts.qf === undefined ? qfFromEnv(db) : opts.qf,
   );
   registerLeconsAudio(
     app,
@@ -217,6 +240,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
       ? (process.env.AWFORM_QF_MUSHAF_DIR ?? null)
       : opts.mushafExactDir,
     opts.qcfFontsDir === undefined ? (process.env.AWFORM_QCF_DIR ?? null) : opts.qcfFontsDir,
+    undefined,
+    db,
   );
   registerVerification(app, db, signer);
   registerRelais(
@@ -256,5 +281,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerCertificatAutonome(app, db, edition, signer);
   // A37 : « Vivre l'islam », bon comportement (rubriques des livres par cercle et par lieu, fiches)
   registerVivre(app, db, edition);
+  // F5 : interrupteurs de fonctions, canal bêta, avis, usage sans traceur
+  registerF5(app, db, opts.version ?? '0.2.0');
   return app;
 }

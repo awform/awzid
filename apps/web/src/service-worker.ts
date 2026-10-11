@@ -35,7 +35,7 @@ const isRiwaya = (p: string) => p.startsWith('/riwayat/');
 // aux mises à jour (le nom du fichier change avec la version du Complexe)
 const RIWAYAT_CACHE = 'awzid-riwayat-polices';
 // A37 : textes français des espaces de l'élève chargés par route (Prières, Vivre l'islam) : préchargés, eux
-const STUDENT_TEXTS = ['/i18n/fr-quotidien.json', '/i18n/fr-vivre.json'];
+const STUDENT_TEXTS = ['/i18n/fr-quotidien.json', '/i18n/fr-vivre.json', '/i18n/fr-coran.json'];
 const ASSETS = [
   ...build,
   ...files.filter(
@@ -49,16 +49,22 @@ const ASSETS = [
 ];
 
 /**
- * A27 (décision D-F2 9) : fichiers qui ne servent QU'AUX pages du personnel (enseignant, direction, admin),
- * listés à la construction (`personnel.json`) : jamais préchargés sur l'appareil d'un élève ; gardés au premier
- * usage (le personnel est en ligne pour son second facteur). Liste absente : tout est préchargé, comme avant.
+ * A27 (décision D-F2 9), F5 : fichiers qui ne servent QU'AUX pages du personnel (enseignant, direction, admin),
+ * aux pages RARES utiles en ligne seulement (offres, abonnement, inscription, certificats…) et aux modules chargés
+ * à la demande qui ont besoin du réseau (Muṣḥaf exact, tuteur, avis) — listés à la construction
+ * (`groupes.json`, scripts/groupes.mjs) : jamais préchargés sur l'appareil d'un élève ; gardés au premier usage.
+ * Liste absente : tout est préchargé, comme avant.
  */
-async function staffOnly(): Promise<Set<string>> {
+async function horsEleve(): Promise<Set<string>> {
   try {
-    const r = await fetch('/personnel.json', { cache: 'no-store' });
+    const r = await fetch('/groupes.json', { cache: 'no-store' });
     if (!r.ok) return new Set();
-    const j = (await r.json()) as { fichiers?: unknown };
-    return new Set(Array.isArray(j.fichiers) ? j.fichiers.map(String) : []);
+    const j = (await r.json()) as Record<string, unknown>;
+    return new Set(
+      ['personnel', 'rares', 'enLigne'].flatMap((g) =>
+        Array.isArray(j[g]) ? (j[g] as unknown[]).map(String) : [],
+      ),
+    );
   } catch {
     return new Set();
   }
@@ -70,21 +76,17 @@ async function staffOnly(): Promise<Set<string>> {
  * téléchargement d'un niveau d'arabe (voir le traitement des fichiers non préchargés plus bas).
  */
 async function vivante(): Promise<Set<string>> {
-  const out = new Set<string>();
-  // A5 : panneau « Réciter et vérifier » (en ligne seulement) — jamais préchargé non plus
-  for (const liste of ['/_app/vivante.json', '/_app/ecoute.json'])
-    try {
-      const r = await fetch(liste, { cache: 'no-store' });
-      if (r.ok) for (const f of (await r.json()) as string[]) out.add(String(f));
-    } catch {
-      /* liste absente : rien d'exclu */
-    }
-  return out;
+  try {
+    const r = await fetch('/_app/vivante.json', { cache: 'no-store' });
+    return new Set(r.ok ? ((await r.json()) as string[]).map(String) : []);
+  } catch {
+    return new Set();
+  }
 }
 
 sw.addEventListener('install', (event) => {
   event.waitUntil(
-    Promise.all([staffOnly(), vivante()]).then(async ([staff, viv]) => {
+    Promise.all([horsEleve(), vivante()]).then(async ([staff, viv]) => {
       const c = await caches.open(CACHE);
       await c.addAll([...ASSETS.filter((a) => !staff.has(a) && !viv.has(a)), SHELL]);
     }),
@@ -159,7 +161,7 @@ sw.addEventListener('fetch', (event) => {
     return;
   }
   if (ASSETS.includes(url.pathname)) {
-    // fichier non préchargé (pages du personnel, leçons vivantes) : réseau, puis gardé dans le cache de cette version
+    // fichier non préchargé (personnel, pages rares, modules en ligne, leçons vivantes) : réseau, puis gardé dans le cache de cette version
     event.respondWith(
       caches.match(url.pathname).then(
         (r) =>

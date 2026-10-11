@@ -144,7 +144,7 @@ test.describe('famille', () => {
           birthYear: new Date().getFullYear() - 16,
           levelCode: 'ado1',
           password: password(),
-          consents: ['compte_suivi'],
+          consents: ['compte_suivi', 'donnee_religieuse_art9'],
         },
       });
       expect(r.status(), await r.text()).toBeLessThan(300);

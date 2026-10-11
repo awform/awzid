@@ -101,6 +101,82 @@ export function playQueue(
   };
 }
 
+/**
+ * Récitateur qui suit le muṣḥaf affiché (corrections du 06/10/2026). La numérotation des versets dépend de la
+ * riwāya (compte koufi de Ḥafṣ et Shuʿba, madanī de Warsh et Qālūn, baṣrī d'ad-Dūrī et as-Sūsī, makkī
+ * d'al-Bazzī) : le fichier « verset n » d'un récitateur n'est le verset n du texte affiché QUE si les deux sont de
+ * la même riwāya. Renvoie le premier récitateur préféré de cette riwāya, sinon le premier de la liste, sinon null.
+ */
+export function reciterFor(
+  list: ReadonlyArray<{ id: string; riwaya: string }>,
+  riwaya: string,
+  prefer: ReadonlyArray<string | null | undefined>,
+): string | null {
+  const ok = list.filter((r) => r.riwaya === riwaya);
+  return prefer.find((id) => !!id && ok.some((r) => r.id === id)) ?? ok[0]?.id ?? null;
+}
+
+/**
+ * Fichiers à jouer : la file des versets choisis SEULEMENT si la récitation est découpée comme le texte affiché
+ * (`aligned`, cf. `highlightOn`) ; sinon jamais un « verset n » pris au hasard d'une autre numérotation : la
+ * sourate entière (fichier unique, ou tous les fichiers dans l'ordre, p. ex. al-Mulk d'ad-Dūrī 31/30).
+ */
+export function listenFiles(
+  pack: { mode?: string; files: ReadonlyArray<{ aya: number }> } | null,
+  aligned: boolean,
+  queue: number[],
+): number[] {
+  if (!pack) return queue;
+  if (pack.mode === 'sourate') return [0];
+  if (!aligned) return pack.files.map((f) => f.aya).filter((a) => a >= 1);
+  return queue;
+}
+
+/** Entrée « basmala » dans une file de lecture (avant le verset 1 d'une sourate). */
+export const BASMALA = -1;
+/**
+ * Riwāyāt où la basmala est le verset 1 d'al-Fātiḥa (compte koufi de Ḥafṣ et Shuʿba, makkī d'al-Bazzī) : la
+ * basmala d'une sourate est lue dans CE fichier, du même récitateur (règle A8 : jamais l'audio d'une autre
+ * riwāya). Ailleurs (Warsh, Qālūn, as-Sūsī, ad-Dūrī), la basmala n'est pas un verset et son fichier annexe
+ * n'est pas importé : rien n'est lu, et c'est dit.
+ */
+const BASMALA_VERSE1 = new Set(['hafs', 'shuba', 'bazzi']);
+export const basmalaInFatiha = (riwaya: string) => BASMALA_VERSE1.has(riwaya);
+
+/**
+ * Faut-il lire la basmala avant cette lecture ? Oui au début d'une sourate (lecture commencée au verset 1),
+ * sauf at-Tawba (9), sauf al-Fātiḥa quand la basmala y est le verset 1 (déjà lu), et jamais pendant la
+ * répétition d'un verset seul, la mémorisation par enchaînement ou l'écoute d'une sourate d'un seul fichier.
+ */
+export function needsBasmala(
+  r: Range,
+  riwaya: string,
+  o: { chain: boolean; repeatVerse: number; wholeFile: boolean },
+): boolean {
+  if (r.s === 9 || r.from !== 1 || o.chain || o.wholeFile) return false;
+  if (r.from === r.to && o.repeatVerse > 1) return false;
+  if (r.s === 1 && basmalaInFatiha(riwaya)) return false;
+  return true;
+}
+/** File précédée de la basmala (si demandée, disponible, et si la file commence bien au verset 1). */
+export function withBasmala(queue: number[], need: boolean, available: boolean): number[] {
+  return need && available && queue[0] === 1 ? [BASMALA, ...queue] : queue;
+}
+/**
+ * Suite de la lecture à la sourate suivante (écoute simple jusqu'à la fin de la sourate) : la sourate suivante
+ * depuis son verset 1, ou null (répétitions, mémorisation, plage qui ne va pas jusqu'au bout, an-Nās).
+ */
+export function nextSuraRange(
+  r: Range,
+  length: number,
+  s: ListenSettings,
+  lengthOf: (s: number) => number,
+): Range | null {
+  if (s.chain || s.repeatRange !== 1 || r.to !== length || r.s >= 114) return null;
+  if (r.from === r.to && s.repeatVerse > 1) return null;
+  return { s: r.s + 1, from: 1, to: Math.max(1, lengthOf(r.s + 1)) };
+}
+
 /** Débuts des 60 ḥizb (Ḥafṣ) : un ḥizb = quatre quarts (métadonnées Tanzil). */
 export function hizbStart(
   quarters: readonly (readonly [number, number])[] | undefined,

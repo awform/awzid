@@ -8,8 +8,10 @@
   import { suraTitleAr, ayaNumberAr } from './sura-names-ar';
   import { verseRuns, type TajwidSura } from './tajwid';
   import TajwidRuns from './TajwidRuns.svelte';
-  import LignesExactes from './LignesExactes.svelte';
   import type { ExactPage } from './mushaf-exact';
+  import { untrack } from 'svelte';
+  import { chargerModule } from '$lib/charger';
+  import ConnexionNecessaire from '$lib/ConnexionNecessaire.svelte';
 
   /**
    * Muṣḥaf par page — UNE page du Muṣḥaf de Médine (versets de la page d'après les métadonnées Tanzil) dans un
@@ -82,6 +84,19 @@
     const q = r * 0.7071;
     return `M0 ${-r}L${q} ${-q}L${r} 0L${q} ${q}L0 ${r}L${-q} ${q}L${-r} 0L${-q} ${-q}Z`;
   };
+  // F5 : lignes exactes chargées À LA DEMANDE (une page exacte vient du serveur) ; page fluide en attendant
+  // nouvelles tentatives automatiques ; échec : page fluide (texte complet) et « Connexion nécessaire »
+  let LignesExactes = $state<typeof import('./LignesExactes.svelte').default | null>(null);
+  let exactEchec = $state(false);
+  function chargerLignes() {
+    exactEchec = false;
+    void chargerModule(() => import('./LignesExactes.svelte'))
+      .then((m) => (LignesExactes = m.default))
+      .catch(() => (exactEchec = true));
+  }
+  $effect(() => {
+    if (exact && !LignesExactes && !untrack(() => exactEchec)) untrack(chargerLignes);
+  });
 </script>
 
 <article
@@ -131,9 +146,12 @@
       dir="rtl"
       style:--rw-font={riwaya ? `${riwaya.family}` : undefined}
     >
-      {#if exact}
+      {#if exact && LignesExactes}
         <LignesExactes page={exact} {text} {basmala} {current} {readOnly} {onpick} />
       {:else}
+        {#if exact && exactEchec}<div lang={localeInfo().code} dir={localeInfo().dir}>
+            <ConnexionNecessaire onretry={chargerLignes} />
+          </div>{/if}
         {#if !complete}<p class="loading small" lang={localeInfo().code} dir={localeInfo().dir}>
             {t('mp.chargement')}
           </p>{/if}
@@ -191,7 +209,16 @@
                 {@const tv = tj ? verseRuns({ s: g.s, a, text: raw }, basmala, tj) : null}
                 {@const ws = parts.rest.split(' ')}
                 {@const vis = visibleWords(ws.length, revealed.has(`${g.s}:${a}`) ? 0 : memo)}
-                {#if parts.basmala}<span class="basmala"
+                {#if parts.basmala}<span
+                    class="basmala"
+                    class:on={current?.s === g.s && current?.a === 0}
+                    data-bsm={g.s}
+                    role="button"
+                    tabindex={readOnly ? -1 : 0}
+                    aria-disabled={readOnly ? 'true' : undefined}
+                    aria-haspopup={readOnly ? undefined : 'dialog'}
+                    onclick={(e) => !readOnly && onpick?.(g.s, 0, e.currentTarget)}
+                    onkeydown={(e) => key(e, g.s, 0)}
                     ><span class="quran-text" data-basmala={`${g.s}:${a}`}
                       >{#if tv?.basmala}{#each tv.basmala as bw, i (i)}{sep(i)}<TajwidRuns
                             runs={bw}
@@ -349,11 +376,12 @@
     text-align: justify;
     text-align-last: center;
     font-family: var(--font-quran);
-    font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.8rem);
+    /* --qz : taille du texte choisie (réglage « Taille du texte », « Plus grand ») */
+    font-size: calc(clamp(1.3rem, 1.1rem + 0.9vw, 1.8rem) * var(--qz, 1));
     line-height: 2.3;
   }
   .compact .flow {
-    font-size: clamp(1.1rem, 0.55rem + 0.85vw, 1.55rem);
+    font-size: calc(clamp(1.1rem, 0.55rem + 0.85vw, 1.55rem) * var(--qz, 1));
     line-height: 2.15;
   }
   .band {
@@ -413,9 +441,30 @@
   }
   .basmala {
     display: block;
-    margin: 2px 0 4px;
+    width: fit-content;
+    margin: 2px auto 4px;
+    padding: 0 8px;
     text-align: center;
     font-size: 1.06em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color var(--motion) ease;
+  }
+  .readonly .basmala {
+    cursor: default;
+  }
+  @media (hover: hover) {
+    .page:not(.readonly) .basmala:hover {
+      background: color-mix(in srgb, var(--mp-mark) 55%, transparent);
+    }
+  }
+  .basmala.on {
+    background: var(--mp-mark);
+    box-shadow: 0 0 0 3px var(--mp-mark);
+  }
+  .basmala:focus-visible {
+    outline: 2px solid var(--mp-green);
+    outline-offset: 2px;
   }
   .aya {
     border-radius: 8px;

@@ -29,6 +29,7 @@ import { setupTutor } from '@awform/tutor';
 import { buildApp } from '../app.js';
 import { hashSecret, totpAt } from '../auth/crypto.js';
 import { secretKeyFromEnv } from '../auth/key.js';
+import { seedNiveaux } from '../demo-niveaux.js';
 
 loadRootEnv();
 if (process.env.AWFORM_DEMO !== '1')
@@ -94,7 +95,7 @@ try {
         email: E.parent,
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       }),
     );
     await call('POST', '/api/v1/account/pin', parent, { pin: PIN, password: PW });
@@ -109,7 +110,7 @@ try {
         birthYear: year - 1 - age,
         levelCode: 'en1',
         password: PW,
-        consents: ['compte_suivi'],
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
       });
       kids.push(r.json().id);
     }
@@ -121,7 +122,7 @@ try {
       country: 'FR',
       birthYear: 1990,
       pseudonym: 'Samir',
-      consents: ['cgu'],
+      consents: ['cgu', 'donnee_religieuse_art9'],
     });
     const adultCookie = cookieOf(adult);
     const adultProfile = adult.json().profiles[0].id as string;
@@ -338,9 +339,25 @@ try {
         : 'ad1',
       avatar: 'lune',
       password: PW,
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     });
     result = { ...result, ado: 'Yanis (15 ans)' };
+  }
+  // ---- complément (idempotent, lot F3) : accord « article 9 » des comptes FICTIFS créés avant F3 (parent et ses
+  // enfants, adulte), donné par la route réelle (mot de passe de démonstration) — la démo ne s'arrête pas sur
+  // la page « Accords » ; un compte réel, lui, donne cet accord lui-même au premier usage
+  for (const email of [E.parent, E.adulte]) {
+    const ck = cookieOf(await call('POST', '/api/v1/auth/login', '', { email, password: PW }));
+    const m = (await call('GET', '/api/v1/auth/me', ck)).json() as {
+      accordsManquants?: Array<{ type: string; profileId: string | null }>;
+    };
+    if (m.accordsManquants?.length) {
+      await call('POST', '/api/v1/account/accords', ck, {
+        password: PW,
+        accords: m.accordsManquants.map((x) => ({ type: x.type, profileId: x.profileId })),
+      });
+      result = { ...result, accordsArt9: [...((result.accordsArt9 as string[]) ?? []), email] };
+    }
   }
   // ---- complément (idempotent, A27) : Yanis (ado) placé dans les livres ADOS (ado1) et en sciences ra1 — une démo
   // créée avant A27 l'avait mis en ad1 (livres adultes) ; un niveau choisi ensuite (test, épreuve, maître) est gardé
@@ -424,6 +441,27 @@ try {
       note: 'Réciter en classe',
     });
     result = { ...result, ecole: 'classe papier de démonstration (3 élèves fictifs)' };
+  }
+  // ---- complément (idempotent) : un compte DÉMO par niveau (adulte1…10, ado1…4, enfant1…5, parent-niveaux) et une
+  // classe par filière chez l'enseignant — jamais modifié s'il existe déjà (la progression du client est gardée)
+  {
+    const { crees, absents } = await seedNiveaux({
+      db: h.db,
+      call,
+      cookieOf: (r) => cookieOf(r as LightMyRequestResponse),
+      env: process.env,
+      password: PW,
+      pin: PIN,
+      tag: TAG,
+      teacherEmail: E.enseignant,
+    });
+    if (absents.length) result = { ...result, niveauxSansLivre: absents };
+    if (crees.length)
+      result = {
+        ...result,
+        demo: result.demo === 'creee' ? 'creee' : 'complement',
+        comptesNiveaux: crees,
+      };
   }
   console.log(JSON.stringify(result));
 } finally {

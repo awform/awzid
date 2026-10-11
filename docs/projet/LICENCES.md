@@ -139,3 +139,12 @@ Remarques : le modèle a été entraîné notamment sur `tarteel-ai/everyayah` (
 les résultats sur les fichiers du Complexe sont donc probablement **meilleurs** que sur des élèves réels
 (`ECOUTE_IA.md`, limites). Le modèle n'est **jamais** réentraîné ni affiné avec des voix d'élèves (aucune voix
 n'est gardée). Les poids ne sont pas dans le dépôt ni dans l'image : montés en lecture seule (`/model`).
+## 9. Récitateurs en ligne — Quran Foundation (chantier A2)
+
+| Élément | Détail |
+|---|---|
+| Données | adresses des fichiers audio verset par verset (`/recitations/{id}/by_chapter/{sourate}`) de l’API de contenu de Quran Foundation, compte développeur du client (identifiants hors dépôt, `QF_CLIENT_ID` / `QF_CLIENT_SECRET`) |
+| Conditions | Developer Terms (mise à jour du 04/10/2026, lue le 06/10/2026) : https://api-docs.quran.foundation/legal/developer-terms/ — application payante permise, contenu dans l’application seulement, ni revente ni redistribution comme données, garde ≤ 1 semaine hors Content Sync, « audio URLs are distinct from the underlying recordings », compte actif et crédit visible (détail : `SOURCES_MUSHAF.md` § 8) |
+| Copie | **aucune** : réponses gardées 24 h en mémoire du serveur ; fichiers lus sur le réseau de QF (`media-src` limité à ses hôtes) ; pas de téléchargement hors ligne, pas de relais d’école |
+| Crédit affiché | « Récitation : <nom> — écoute en ligne fournie par Quran Foundation (quran.foundation) » sur chaque récitateur, étiquette « En ligne », page « Nos garanties » |
+

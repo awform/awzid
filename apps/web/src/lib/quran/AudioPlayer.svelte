@@ -5,9 +5,9 @@
   import type { Reciter, SuraPack } from '$lib/coran-audio';
   import { fmtNumber, t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
-  import { shortName } from './lecture';
+  import { BASMALA, shortName } from './lecture';
   import { clampRate, isHafs } from './player';
-  import { playableUrl } from './offline-audio';
+  import { garderEcoute, playableUrl } from './offline-audio';
 
   /**
    * Lecteur audio de l'espace Coran — Coran épuré (06/10/2026) : UNE barre discrète (récitateur abrégé,
@@ -24,12 +24,18 @@
     sleepMin = 0,
     volume = 1,
     status = '',
+    basmala = null,
     onaya,
     onindex,
     onend,
+    onplaystate,
     onsettings,
     onvolume,
   }: {
+    /** fichier de la basmala (entrée BASMALA de la file), du même récitateur ; null : entrée sautée */
+    basmala?: string | null;
+    /** lecture en cours (true) ou en pause / arrêtée (false) */
+    onplaystate?: (on: boolean) => void;
     reciter: Reciter;
     pack: SuraPack | null;
     queue: number[];
@@ -41,9 +47,10 @@
     onaya?: (aya: number | null) => void;
     /** position dans la file (mémorisation : nouveau verset ou enchaînement) */
     onindex?: (i: number | null) => void;
-    onend?: () => void;
-    /** ouvre la feuille « Réglages d'écoute » */
-    onsettings?: () => void;
+    /** fin de la file (« fin ») ou arrêt automatique (« sommeil ») */
+    onend?: (why: 'fin' | 'sommeil') => void;
+    /** ouvre le panneau « Réglages » du lecteur (à la section donnée : « ecoute », « recitateur ») */
+    onsettings?: (section?: 'ecoute' | 'recitateur') => void;
     onvolume?: (v: number) => void;
   } = $props();
 
@@ -56,6 +63,7 @@
   let lastUrl = '';
 
   const aya = $derived(queue[idx] ?? null);
+  $effect(() => onplaystate?.(playing));
   $effect(() => {
     if (audio) {
       audio.playbackRate = clampRate(rate);
@@ -76,7 +84,10 @@
     if (!('mediaSession' in navigator)) return;
     try {
       navigator.mediaSession.metadata = new MediaMetadata({
-        title: t('ca.media_titre', { sourate: suraName(pack?.sura ?? 1), aya: fmtNumber(a) }),
+        title:
+          a === BASMALA
+            ? t('ca.media_basmala', { sourate: suraName(pack?.sura ?? 1) })
+            : t('ca.media_titre', { sourate: suraName(pack?.sura ?? 1), aya: fmtNumber(a) }),
         artist: reciter.nameFr,
         album: t('ca.media_album', { riwaya: reciter.riwayaFr }),
       });
@@ -92,9 +103,14 @@
 
   async function playAt(i: number) {
     if (!audio || !pack) return;
-    if (i >= queue.length) return finish();
+    if (i >= queue.length) return finish('fin');
     idx = Math.max(0, i);
-    const f = pack.files.find((x) => x.aya === queue[idx]);
+    const f =
+      queue[idx] === BASMALA
+        ? basmala
+          ? { aya: BASMALA, url: basmala }
+          : null
+        : pack.files.find((x) => x.aya === queue[idx]);
     if (!f) return playAt(idx + 1);
     error = '';
     if (lastUrl.startsWith('blob:')) URL.revokeObjectURL(lastUrl);
@@ -111,7 +127,9 @@
       setMedia(f.aya);
     } catch {
       playing = false;
-      error = navigator.onLine ? t('ca.erreur_lecture') : t('ca.erreur_hors_ligne');
+      error = navigator.onLine
+        ? t('ca.erreur_lecture')
+        : t(reciter.enLigne ? 'ca.dispo_internet' : 'ca.erreur_hors_ligne');
     }
   }
 
@@ -123,6 +141,16 @@
     sleepUntil = sleepMin > 0 ? Date.now() + sleepMin * 60_000 : null;
     started = false;
     await playAt(0);
+  }
+
+  /** Pause (changement d'emplacement pendant la lecture) ; `resume` reprend au même endroit. */
+  export function pause() {
+    if (!audio || !playing) return;
+    audio.pause();
+    playing = false;
+  }
+  export async function resume() {
+    if (!playing) await toggle();
   }
 
   async function toggle() {
@@ -149,12 +177,16 @@
     await playAt(i);
   }
   function ended() {
-    if (sleepUntil && Date.now() >= sleepUntil) return finish();
+    // F5 : verset entendu jusqu'au bout (en ligne) gardé pour être réécouté hors ligne ; jamais un récitateur
+    // « en ligne seulement »
+    const f = pack?.files.find((x) => x.aya === queue[idx]);
+    if (f && !reciter.enLigne && !lastUrl.startsWith('blob:')) void garderEcoute(f.url);
+    if (sleepUntil && Date.now() >= sleepUntil) return finish('sommeil');
     void playAt(idx + 1);
   }
-  function finish() {
+  function finish(why: 'fin' | 'sommeil') {
     stop();
-    onend?.();
+    onend?.(why);
   }
   export function stop() {
     audio?.pause();
@@ -170,6 +202,10 @@
     if (lastUrl.startsWith('blob:')) URL.revokeObjectURL(lastUrl);
   });
   const pct = $derived(started ? Math.round(((idx + 1) / Math.max(1, queue.length)) * 100) : 0);
+  // la basmala lue en tête de sourate n'est PAS un verset (sauf al-Fātiḥa en Ḥafṣ, où elle est le verset 1 et
+  // n'est donc pas ajoutée) : elle n'entre pas dans le compte des écoutes (« 4 versets × 3 » = 12, pas 13)
+  const lead = $derived(queue[0] === BASMALA ? 1 : 0);
+  const total = $derived(queue.length - lead);
 </script>
 
 <div class="player" data-testid="lecteur-audio" data-reciter={reciter.id}>
@@ -177,7 +213,7 @@
   <button
     type="button"
     class="who"
-    onclick={() => onsettings?.()}
+    onclick={() => onsettings?.('recitateur')}
     title={reciter.nameFr}
     aria-label={t('cl.reglages_de', { nom: reciter.nameFr })}
     data-testid="mini-recitateur"
@@ -240,15 +276,17 @@
       <span style:width={`${pct}%`}></span>
     </div>
     <p class="where" aria-live="polite" data-testid="position">
-      {#if started && aya}<Bidi
+      {#if started && aya === BASMALA}<Bidi
+          text={t('ca.position_basmala')}
+        />{:else if started && aya}<Bidi
           text={t('ca.position', {
             aya: fmtNumber(aya),
-            n: fmtNumber(idx + 1),
-            total: fmtNumber(queue.length),
+            n: fmtNumber(idx + 1 - lead),
+            total: fmtNumber(total),
           })}
         />{#if status}<span class="st" data-testid="etape">
             · <Bidi text={status} /></span
-          >{/if}{:else}<Bidi text={t('ca.pret', { total: fmtNumber(queue.length) })} />{/if}
+          >{/if}{:else}<Bidi text={t('ca.pret', { total: fmtNumber(total) })} />{/if}
     </p>
   </div>
   <label class="vol" title={t('cl.volume')}
@@ -265,7 +303,7 @@
   <button
     type="button"
     class="ic rep"
-    onclick={() => onsettings?.()}
+    onclick={() => onsettings?.('ecoute')}
     aria-label={t('cl.reglages_ecoute')}
     title={t('cl.reglages_ecoute')}
     aria-haspopup="dialog"

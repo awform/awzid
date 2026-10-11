@@ -14,11 +14,13 @@
     startSync,
     type DevProfile,
   } from '$lib/attempts';
-  import { t } from '$lib/i18n';
+  import { setTimeZone, t } from '$lib/i18n';
   import { getSettings, type Settings } from '$lib/offline';
   import { purgeOldRecordings } from '$lib/recordings';
   import { remindersOn } from '$lib/quotidien/reglages';
   import { cachedMe, fetchMe, type Me } from '$lib/session';
+  import { chargerFonctions } from '$lib/fonctions.svelte';
+  import { cleDeChemin, envoyer, noterUsage, usagePour } from '$lib/usage';
   import { activeNav, audienceOf, navFor, paletteOf, themeOf } from '$lib/ui/audience';
   import Brand from '$lib/ui/Brand.svelte';
   import Icon from '$lib/ui/Icon.svelte';
@@ -50,7 +52,19 @@
   );
   const nav = $derived(navFor(audience));
   const current = $derived(activeNav(nav, page.url.pathname));
-  const NO_TABS = ['/ecole', '/connexion', '/inscription'];
+  const NO_TABS = ['/ecole', '/connexion', '/inscription', '/acces'];
+  /**
+   * Lot F3 (revue E10) : un accord nécessaire manque (compte d'avant F3, ou accord retiré) → page « Accords »
+   * (`/acces/accords`)
+   * au premier usage ; seules les pages du compte, légales et d'aide restent ouvertes. Fuseau du compte (M8).
+   */
+  const GATE_FREE = /^\/(compte|legal|aide|connexion|inscription|acces|garanties)(\/|$)/;
+  $effect(() => {
+    setTimeZone(me?.account.tz);
+    const path = page.url.pathname;
+    if (me?.accordsManquants?.length && !GATE_FREE.test(path))
+      void goto(resolve('/acces/[[mode]]', { mode: 'accords' }));
+  });
   const showTabs = $derived(!NO_TABS.some((p) => page.url.pathname.startsWith(p)));
 
   $effect(() => {
@@ -80,7 +94,10 @@
     mode = readMode();
     applyMode(mode);
     online = navigator.onLine;
-    const on = () => (online = true);
+    const on = () => {
+      online = true;
+      void envoyer();
+    };
     const off = () => (online = false);
     window.addEventListener('online', on);
     window.addEventListener('offline', off);
@@ -123,6 +140,11 @@
     profile = await activeProfile().catch(() => null);
     me = await cachedMe();
     lastActivity = Date.now();
+    // F5 : interrupteurs de fonctions (copie courte, hors ligne : dernière connue) et usage sans traceur
+    const qui = me ? (profile?.id ?? 'compte') : null;
+    usagePour(qui);
+    void chargerFonctions(me ? (profile?.id ?? null) : null);
+    noterUsage(cleDeChemin(page.url.pathname), qui);
   }
   // à chaque navigation : relire réglages, compte et profil (ils ont pu changer)
   $effect(() => {
@@ -173,7 +195,8 @@
         ><span class="chip-t"><Bidi text={t('entete.attente', { n: pending })} /></span></span
       >{/if}
     {#if profile}
-      <span class="who" data-testid="eleve-actif"><Bidi text={profile.pseudonym} /></span>
+      <span class="who" data-testid="eleve-actif" data-prive><Bidi text={profile.pseudonym} /></span
+      >
       {#if me?.profiles && me.profiles.length > 1}
         <button
           type="button"

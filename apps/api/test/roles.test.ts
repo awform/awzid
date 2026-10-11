@@ -111,7 +111,7 @@ describe.skipIf(!URL_)('comptes PostgreSQL séparés (awform_test)', () => {
         email: 'roles14@exemple.org',
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       },
     });
     expect(r.statusCode, r.body).toBe(201);
@@ -125,7 +125,7 @@ describe.skipIf(!URL_)('comptes PostgreSQL séparés (awform_test)', () => {
         birthYear: new Date().getUTCFullYear() - 8,
         levelCode: 'en1',
         password: PW,
-        consents: ['compte_suivi'],
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
       },
     });
     expect(p.statusCode, p.body).toBe(201);

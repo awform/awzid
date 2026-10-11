@@ -1,6 +1,8 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
-  import { onMount, setContext } from 'svelte';
+  import { onMount, setContext, untrack } from 'svelte';
+  import { chargerModule } from '$lib/charger';
+  import ConnexionNecessaire from '$lib/ConnexionNecessaire.svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
   import ArFr from '$lib/ArFr.svelte';
@@ -11,7 +13,8 @@
   import { relierOriginal } from '@awform/content/projection';
   import ReligionLesson from '$lib/religion/ReligionLesson.svelte';
   import CoranLesson from '$lib/qc/CoranLesson.svelte';
-  import TutorPanel from '$lib/TutorPanel.svelte';
+  import { fn } from '$lib/fonctions.svelte';
+  import { noter } from '$lib/usage';
   import Illus from '$lib/Illus.svelte';
   import LettresLecon from '$lib/LettresLecon.svelte';
   import Ecouter from '$lib/Ecouter.svelte';
@@ -109,6 +112,23 @@
   // tentatives : profil actif du compte connecté (sans profil, les réponses ne sont pas enregistrées)
   let profileId: string | null = $state(null);
   let profileInfo: { id: string; kind: string; birthYear: number | null } | null = $state(null);
+  // F5 : tuteur chargé À LA DEMANDE (il a besoin du réseau), seulement si l'interrupteur « tuteur » est ouvert
+  let TutorPanel = $state<typeof import('$lib/TutorPanel.svelte').default | null>(null);
+  // nouvelles tentatives automatiques, puis « Connexion nécessaire » à la place du tuteur (la leçon reste là)
+  let tuteurEchec = $state(false);
+  function chargerTuteur() {
+    tuteurEchec = false;
+    void chargerModule(() => import('$lib/TutorPanel.svelte'))
+      .then((m) => {
+        TutorPanel = m.default;
+        noter('tuteur');
+      })
+      .catch(() => (tuteurEchec = true));
+  }
+  $effect(() => {
+    if (!fn('tuteur') || TutorPanel || untrack(() => tuteurEchec)) return;
+    untrack(chargerTuteur);
+  });
   /** mots de la leçon (bouton « Je ne comprends pas le mot… » du tuteur) */
   const lessonWords = $derived(
     ((L as unknown as { mots?: Array<{ ar?: string }> }).mots ?? [])
@@ -652,7 +672,11 @@
     <!-- A21 : leçons vivantes (animations après chaque partie, condensé ; chargées à la demande) -->
     <VivanteLecon unit={u} />
   </article>
-  <TutorPanel unitId={u.id} profile={profileInfo} words={lessonWords} />
+  {#if TutorPanel && fn('tuteur')}<TutorPanel
+      unitId={u.id}
+      profile={profileInfo}
+      words={lessonWords}
+    />{:else if tuteurEchec && fn('tuteur')}<ConnexionNecessaire onretry={chargerTuteur} />{/if}
 {/if}
 {#if suspendu !== 'unite'}<p class="sig-lecon" data-testid="signaler-lecon">
     <Signaler kind="lecon" excerpt={u.titleFr} />

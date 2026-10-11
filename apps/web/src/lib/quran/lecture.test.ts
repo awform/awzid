@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  BASMALA,
+  basmalaInFatiha,
   clampRange,
+  needsBasmala,
+  nextSuraRange,
+  withBasmala,
   hizbStart,
   isMarked,
   legacyQuery,
@@ -87,6 +92,44 @@ describe('Coran épuré — écran de lecture unique', () => {
     );
     const p = readPrefs(st);
     expect([p.vue, p.rate, p.sleepMin, p.volume, p.chain]).toEqual(['versets', 1, 0, 1, true]);
+  });
+
+  it('basmala avant le verset 1 : sauf at-Tawba, sauf Fātiḥa quand elle y est le verset 1, jamais d’une autre riwāya', () => {
+    const o = { chain: false, repeatVerse: 1, wholeFile: false };
+    expect(needsBasmala({ s: 2, from: 1, to: 286 }, 'hafs', o)).toBe(true);
+    expect(needsBasmala({ s: 112, from: 1, to: 4 }, 'hafs', o)).toBe(true);
+    expect(needsBasmala({ s: 9, from: 1, to: 129 }, 'hafs', o)).toBe(false);
+    expect(needsBasmala({ s: 2, from: 5, to: 286 }, 'hafs', o)).toBe(false);
+    expect(needsBasmala({ s: 1, from: 1, to: 7 }, 'hafs', o)).toBe(false);
+    expect(needsBasmala({ s: 1, from: 1, to: 7 }, 'shuba', o)).toBe(false);
+    expect(needsBasmala({ s: 1, from: 1, to: 7 }, 'qalun', o)).toBe(true);
+    expect(needsBasmala({ s: 2, from: 1, to: 1 }, 'hafs', { ...o, repeatVerse: 20 })).toBe(false);
+    expect(needsBasmala({ s: 2, from: 1, to: 286 }, 'hafs', { ...o, chain: true })).toBe(false);
+    expect(needsBasmala({ s: 67, from: 1, to: 30 }, 'susi', { ...o, wholeFile: true })).toBe(false);
+    expect(['hafs', 'shuba', 'bazzi'].every(basmalaInFatiha)).toBe(true);
+    expect(['warsh', 'qalun', 'susi', 'duri'].some(basmalaInFatiha)).toBe(false);
+    expect(withBasmala([1, 2, 3], true, true)).toEqual([BASMALA, 1, 2, 3]);
+    expect(withBasmala([1, 2, 3], true, false)).toEqual([1, 2, 3]);
+    expect(withBasmala([2, 3], true, true)).toEqual([2, 3]);
+    expect(withBasmala([1, 2], false, true)).toEqual([1, 2]);
+  });
+
+  it('lecture simple jusqu’au bout : la sourate suivante enchaîne (pas en répétition ni mémorisation)', () => {
+    const len = (s: number) => (s === 113 ? 5 : 4);
+    expect(nextSuraRange({ s: 112, from: 1, to: 4 }, 4, base, len)).toEqual({
+      s: 113,
+      from: 1,
+      to: 5,
+    });
+    expect(nextSuraRange({ s: 112, from: 1, to: 3 }, 4, base, len)).toBeNull();
+    expect(nextSuraRange({ s: 114, from: 1, to: 6 }, 6, base, len)).toBeNull();
+    expect(
+      nextSuraRange({ s: 112, from: 1, to: 4 }, 4, { ...base, repeatRange: 3 }, len),
+    ).toBeNull();
+    expect(nextSuraRange({ s: 112, from: 1, to: 4 }, 4, { ...base, chain: true }, len)).toBeNull();
+    expect(
+      nextSuraRange({ s: 112, from: 4, to: 4 }, 4, { ...base, repeatVerse: 20 }, len),
+    ).toBeNull();
   });
 
   it('anciennes adresses redirigées vers l’écran unique (paramètres gardés, rien de lancé)', () => {

@@ -105,6 +105,14 @@ Chantier A21b (05/10/2026) : textes `viv.*` — 9 ajoutés (`viv.m_racine`, `viv
 `viv.lecon1`) ; traduits par Claude, relecteur provisoire, dans les quatre langues en préparation — à relire avec le
 reste. Arabe vocalisé comme les autres textes `viv.*` ; « الْجَذْرُ وَالْوَزْنُ » pour « racine et schème ».
 
+## Corrections du lecteur (06/10/2026)
+
+Textes `cl.*` ajoutés par Claude dans les quatre langues, **à relire** : puce en toutes lettres
+(`cl.puce`, `cl.puce_detail` : « verset · page · juzʾ », plus d'abréviations), panneau unique « Réglages »
+(`cl.reglages`, `cl.sec_*`), style des pages (`cl.style_*`), riwāyāt décrites
+(`cl.riwaya_desc_*`, `cl.riwaya_recitateurs`, `cl.riwaya_sans_recitateur`), taille du texte (`cl.taille*`),
+avis du lecteur (`cl.avis_*`), tuiles des enfants (`cl.k_*`), `cl.en_ligne`. Retirés (plus d'état « autre riwāya ») : `ca.autre_riwaya_texte`,
+`rw.autre_texte`, `rw.voir_texte`.
 ## A37 « Vivre l'islam » (06/10/2026)
 
 Les 74 textes `vi.*` (onglet Bon comportement : sous-onglets, défi de la semaine, 18 cercles, 9 lieux, 5 statuts
@@ -116,3 +124,30 @@ personnel sont désormais dans `static/i18n/fr-personnel.json` (mêmes clés, ho
 A37 (suite, 07/10/2026) : 8 textes ajoutés (`vi.statut.conseil` — arabe « نصيحة », `vi.a_eviter`, `vi.attention`,
 `vi.religion_coutume`, `vi.fiches_liees`, `vi.retenir`, `vi.coran_ref`, `vi.en_bref`), à relire avec le reste. Les textes
 français des espaces Prières et Vivre l'islam sont dans `static/i18n/fr-quotidien.json` et `fr-vivre.json` (mêmes clés).
+
+## F5 « performance + penser large » (06/10/2026)
+
+105 textes ajoutés (`avis.*` — fenêtre « Donner mon avis », `fn.*` — interrupteurs, `beta.*`, `avisadm.*`, `usage.*`,
+`erreur.fonction_coupee`, `erreur.trop_d_avis`, `erreur.capture_invalide`, `erreur.regle_sans_critere`,
+`erreur_page.en_ligne*`), écrits par Claude dans les quatre langues en préparation, **à relire**. Arabe vocalisé ;
+« قَنَاةُ التَّجْرِبَةِ » pour le canal bêta, « الْمُرْشِدُ » pour le tuteur (comme ailleurs). Les textes FRANÇAIS des pages
+rares (offres, abonnement, inscription, certificats…) et de la fenêtre d'avis sont dans `static/i18n/fr-rares.json`
+(mêmes clés, hors de la coquille de l'élève).
+
+F5 (suite, 11/10/2026) : 1 texte ajouté (`module.connexion_necessaire` — « Connexion nécessaire pour cette fonction »,
+module chargé à la demande indisponible après les nouvelles tentatives), écrit par Claude dans les quatre langues, **à relire**.
+## F3 « Comptes de la bêta » (06/10/2026)
+
+Textes ajoutés (traduits par Claude, relecteur provisoire, **à relire** avec le reste) : accès au compte et accords
+`acces.*`, `accords.*` ; accord « article 9 » `consent.donnee_religieuse_art9`, `consent.art9_enfant`,
+`consent.nom.donnee_religieuse_art9`, `consent.nom.analyse_vocale_ia` ; réglages du compte `compte.email_*`,
+`compte.fuseau*`, `compte.donnees_ue`, `compte.retirer_art9`, `compte.boutique_*`, `compte.renvoyer_lien`,
+`compte.lien_envoye` ; inscription `inscription.region`, `inscription.ferme_moins_13` ; 13 provinces et territoires
+du Canada `region.CA-*` ; erreurs `erreur.ferme_moins_13`, `erreur.region_inconnue`, `erreur.lien_invalide`,
+`erreur.email_identique`, `erreur.accord_inconnu`, `erreur.interdit`, `erreur.email_absent` ; `connexion.oubli`
+(lien « Mot de passe oublié ? ») et `legal.brouillon` mis à jour ; `etab.fiche_modele` (personnel) ;
+`erreur.reinitialisation_desactivee` retiré. Les textes français de ces écrans sont dans `static/i18n/fr-acces.json`
+(mêmes clés, hors de la coquille). Les **modèles d'e-mails** (5 langues) sont dans `apps/api/src/mail/modeles.ts`,
+à relire de la même façon ; en arabe, l'adresse et le lien sont toujours sur leur propre ligne.
+
+- Démo par niveau : `niveau.bientot` et `niveau.bientot_texte` (en, de, es, ar) traduits par Claude lors de la fusion, à faire relire.

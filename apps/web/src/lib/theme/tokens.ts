@@ -13,7 +13,6 @@
  * HUIT palettes, cibles ≥ 48 px, mouvement réduit.
  * Fichier sans import (lisible par Node directement).
  */
-
 export type ThemeName = 'jardin' | 'nuit' | 'manuscrit' | 'clair';
 export const THEME_NAMES: ThemeName[] = ['clair', 'jardin', 'nuit', 'manuscrit'];
 
@@ -146,74 +145,74 @@ export const THEMES: Record<ThemeName, Theme> = {
   clair: {
     naturel: 'clair',
     couleurs: {
-      ink: '#16202b',
-      ink2: '#4b5868',
-      paper: '#f6f7f9',
+      ink: '#1e2b25',
+      ink2: '#4a5a52',
+      paper: '#fbf7ee',
       card: '#ffffff',
-      surface: '#eef1f5',
-      line: '#dfe3ea',
-      teal: '#1b6a85',
-      navy: '#15324a',
+      surface: '#f2ebda',
+      line: '#ddd3bd',
+      teal: '#0b6e4f',
+      navy: '#084c38',
       header: '#ffffff',
-      'on-header': '#15324a',
+      'on-header': '#084c38',
       good: '#1f9d6b',
-      soft: '#e3edf5',
+      soft: '#e4efe8',
       ...LETTRES_CLAIR,
       ...TAJWID_CLAIR,
       ...MUSHAF_CLAIR,
       ...OR_CLAIR,
-      primary: '#1b6a85',
+      primary: '#0b6e4f',
       'on-primary': '#ffffff',
-      'primary-soft': '#e2f0f5',
-      accent: '#c98a0b',
+      'primary-soft': '#ddefe6',
+      accent: '#c9a227',
       'ok-bg': '#e8f6ef',
       'ok-ink': '#17703f',
-      'bad-ink': '#b3261e',
+      'bad-ink': '#a3261e',
       'bad-bg': '#fdecea',
       'warn-bg': '#fff6dc',
-      'warn-ink': '#7d5100',
-      'soon-ink': '#8a5c00',
-      sand: '#f1f3f6',
-      gold: '#f2b233',
+      'warn-ink': '#7a5c0c',
+      'soon-ink': '#7a5c0c',
+      sand: '#f8f3e6',
+      gold: '#c9a227',
       info: '#1f4e79',
       'info-bg': '#e7f0fa',
-      focus: '#1b6a85',
+      focus: '#0b6e4f',
       illus: '#ffffff',
       mark: '#ffe38a',
     },
     inverse: {
-      ink: '#e6ebf1',
-      ink2: '#a9b5c4',
-      paper: '#0f141a',
-      card: '#171e27',
-      surface: '#1e2732',
-      line: '#2c3846',
-      teal: '#72c6e0',
-      navy: '#b9d7ea',
-      header: '#171e27',
-      'on-header': '#e6ebf1',
+      ink: '#e8dfc8',
+      ink2: '#b4c2ba',
+      paper: '#0d1a15',
+      card: '#14261f',
+      surface: '#14261f',
+      line: '#28423a',
+      teal: '#5cc79c',
+      navy: '#e8dfc8',
+      header: '#14261f',
+      'on-header': '#e8dfc8',
       good: '#4fd39a',
-      soft: '#22303d',
+      soft: '#1a2f27',
       ...LETTRES_SOMBRE,
       ...TAJWID_SOMBRE,
       ...MUSHAF_SOMBRE,
       ...OR_SOMBRE,
-      primary: '#72c6e0',
-      'on-primary': '#07141b',
-      'primary-soft': '#1b3340',
-      accent: '#e9b949',
+      primary: '#1f9c73',
+      'on-primary': '#0d1a15',
+      'primary-soft': '#10221b',
+      accent: '#d9b54a',
       'ok-bg': '#163126',
       'ok-ink': '#8fe3b8',
-      'bad-ink': '#ffb4ab',
+      'bad-ink': '#f2b8b5',
       'bad-bg': '#3b1a17',
       'warn-bg': '#3a2e10',
       'warn-ink': '#f5d27a',
       'soon-ink': '#f5d27a',
-      sand: '#1e2732',
-      gold: '#e9b949',
+      sand: '#1a2f27',
+      gold: '#d9b54a',
       info: '#a9cdf2',
       'info-bg': '#16283a',
-      focus: '#72c6e0',
+      focus: '#5cc79c',
       illus: '#f4f1ea',
       mark: '#5c4a10',
     },
@@ -669,8 +668,82 @@ export function palettes(): Array<{ nom: string; couleurs: Record<string, string
   ];
 }
 
+/**
+ * Marque Awzid — couleur du nom et du slogan, symbole clair ou sombre, selon le fond réel du thème.
+ * Calculé À LA GÉNÉRATION de tokens.css (jamais dans le navigateur) : le CSS reçoit, pour chaque thème et mode,
+ * des variables `--mh-*` (marque posée sur l'en-tête) et `--mp-*` (marque posée sur le fond de la page) que
+ * Brand.svelte lit sans une ligne de JavaScript. Nom : #084C38 (clair) / #E8DFC8 (sombre) ; slogan : #0B6E4F /
+ * #D9B54A ; on retient la couleur lisible (≥ 4,5:1) sur le fond, sinon celle du texte du thème.
+ */
+export const NOM = { clair: '#084C38', sombre: '#E8DFC8' } as const;
+/** Couleur du livre dans awzid-symbole.svg (version pour fond clair). */
+const SYMBOLE_CLAIR = '#0B6E4F';
+export const SLOGAN = { clair: '#0B6E4F', sombre: '#D9B54A' } as const;
+
+type Rgb = [number, number, number];
+
+function parseCouleur(css: string): Rgb | null {
+  const h = css.trim().match(/^#([0-9a-f]{6})$/i);
+  if (!h) return null;
+  const n = parseInt(h[1]!, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function luminance([r, g, b]: Rgb): number {
+  const f = (v: number) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+}
+
+function contraste(a: Rgb, b: Rgb): number {
+  const [x, y] = [luminance(a), luminance(b)].sort((p, q) => q - p) as [number, number];
+  return (x + 0.05) / (y + 0.05);
+}
+
+/** Encre de marque lisible sur `fond` ; `null` si aucune des deux ne tient 4,5:1 (le thème garde sa couleur). */
+export function choisirEncre(
+  fond: string,
+  paire: { clair: string; sombre: string },
+): { encre: string | null; fondSombre: boolean } {
+  const f = parseCouleur(fond) ?? [255, 255, 255];
+  // fond foncé OU coloré (le livre #0B6E4F du symbole clair s'y perdrait, < 3:1) : version pour fond sombre
+  const fondSombre = luminance(f) < 0.2 || contraste(parseCouleur(SYMBOLE_CLAIR)!, f) < 3;
+  const prefere = fondSombre ? paire.sombre : paire.clair;
+  const autre = fondSombre ? paire.clair : paire.sombre;
+  for (const c of [prefere, autre]) {
+    if (contraste(parseCouleur(c)!, f) >= 4.5) return { encre: c, fondSombre };
+  }
+  return { encre: null, fondSombre };
+}
+
+/** Variables CSS de la marque pour un jeu de couleurs (en-tête `header`, page `paper`). */
+export function marqueVars(c: Record<string, string>): Array<[string, string]> {
+  const out: Array<[string, string]> = [];
+  for (const [p, cle] of [
+    ['h', 'header'],
+    ['p', 'paper'],
+  ] as const) {
+    const fond = c[cle];
+    if (!fond) continue;
+    const nom = choisirEncre(fond, NOM);
+    out.push(
+      [`--m${p}-clair`, nom.fondSombre ? 'none' : 'block'],
+      [`--m${p}-sombre`, nom.fondSombre ? 'block' : 'none'],
+      [`--m${p}-nom`, nom.encre ?? 'currentColor'],
+      [`--m${p}-slogan`, choisirEncre(fond, SLOGAN).encre ?? 'currentColor'],
+    );
+  }
+  return out;
+}
+
 function colorVars(c: Record<string, string>): Array<[string, string]> {
-  return Object.entries(c).map(([k, v]) => [`--${k}`, v] as [string, string]);
+  // + variables de la marque (symbole clair/sombre, couleur du nom et du slogan) : 100 % CSS, voir Brand.svelte
+  return [
+    ...Object.entries(c).map(([k, v]) => [`--${k}`, v] as [string, string]),
+    ...marqueVars(c),
+  ];
 }
 function otherVars(t: Theme): Array<[string, string]> {
   return [

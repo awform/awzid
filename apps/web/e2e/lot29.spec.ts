@@ -146,7 +146,7 @@ test('riwāya : bouton absent pour un autre muṣḥaf, présent en Ḥafṣ ; m
   await page.goto('/coran/lecteur?s=1&m=qalun&vue=versets');
   await openDisplay(page);
   await expect(page.getByTestId('tajwid')).toHaveCount(0);
-  await page.getByTestId('choix-mushaf').selectOption('hafs');
+  await page.locator('label:has([data-mushaf="hafs"])').click();
   await expect(page.getByTestId('tajwid')).toBeVisible();
   await close(page);
 
@@ -214,7 +214,7 @@ async function parentWithTeen(page: Page) {
       password: password(),
       country: 'FR',
       locale: 'fr',
-      consents: ['cgu'],
+      consents: ['cgu', 'donnee_religieuse_art9'],
     },
   });
   expect(signup.status(), await signup.text()).toBeLessThan(300);
@@ -226,7 +226,7 @@ async function parentWithTeen(page: Page) {
       birthYear: new Date().getFullYear() - 16,
       levelCode: 'ado1',
       password: password(),
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     },
   });
   expect(res.status(), await res.text()).toBeLessThan(300);

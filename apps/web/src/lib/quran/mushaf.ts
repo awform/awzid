@@ -214,6 +214,18 @@ export interface MushafPrefs {
   repeatChain: number;
   /** volume du lecteur (0 à 1) */
   volume: number;
+  /**
+   * Style de la page (corrections du 06/10/2026, choix de l'élève, gardé) : « exact » = Muṣḥaf de Médine à
+   * l'identique (A34) là où la page est disponible ; « fluide » = notre muṣḥaf habituel (cadre vert)
+   */
+  style: 'exact' | 'fluide';
+  /** taille du texte : 0 normale, 1 grande, 2 très grande (page fluide et versets) */
+  size: number;
+  /**
+   * En changeant d'emplacement pendant une lecture : false = demander (pause + « Écouter ici », par défaut),
+   * true = continuer la lecture automatiquement au premier verset de la destination
+   */
+  navAuto: boolean;
 }
 export const DEFAULT_PREFS: MushafPrefs = {
   kind: 'hafs',
@@ -232,7 +244,12 @@ export const DEFAULT_PREFS: MushafPrefs = {
   repeatNew: 5,
   repeatChain: 2,
   volume: 1,
+  style: 'exact',
+  size: 0,
+  navAuto: false,
 };
+/** Facteur de la taille du texte coranique (réglage « Taille du texte », « Plus grand » des enfants). */
+export const TEXT_SCALE = [1, 1.25, 1.5] as const;
 const KEY = 'awzid.mushaf.v1';
 const storage = (): Storage | null => {
   try {
@@ -273,6 +290,9 @@ export function readPrefs(store: Pick<Storage, 'getItem'> | null = storage()): M
         Number.isFinite(Number(raw.volume)) && raw.volume !== undefined
           ? Math.max(0, Math.min(1, Number(raw.volume)))
           : 1,
+      style: raw.style === 'fluide' ? 'fluide' : 'exact',
+      size: clampInt(raw.size, 0, TEXT_SCALE.length - 1, 0),
+      navAuto: raw.navAuto === true,
     };
   } catch {
     return { ...DEFAULT_PREFS };

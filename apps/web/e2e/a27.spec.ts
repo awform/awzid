@@ -59,7 +59,7 @@ async function parentWith(
       email,
       password: password(),
       country: 'FR',
-      consents: ['cgu'],
+      consents: ['cgu', 'donnee_religieuse_art9'],
     },
   });
   expect(s.status(), await s.text()).toBe(201);
@@ -70,7 +70,7 @@ async function parentWith(
       birthYear: YEAR - 1 - age,
       levelCode,
       password: password(),
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     },
   });
   expect(p.status(), await p.text()).toBe(201);
@@ -240,9 +240,9 @@ test('mots du Coran du niveau du livre (données des livres)', async ({ page }) 
 test('budget : les pages du personnel ne sont pas préchargées sur l’appareil de l’élève', async ({
   page,
 }) => {
-  const staff = (await (await page.request.get('/personnel.json')).json()) as {
-    fichiers: string[];
-  };
+  // F5 : liste commune des groupes non préchargés (personnel, pages rares, modules en ligne)
+  const g = (await (await page.request.get('/groupes.json')).json()) as { personnel: string[] };
+  const staff = { fichiers: g.personnel };
   expect(staff.fichiers.length).toBeGreaterThan(0);
   await page.goto('/');
   const cached = await page.evaluate(async () => {

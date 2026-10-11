@@ -38,6 +38,7 @@
   const lines = $derived(displayLines(page));
   const verses = $derived(pageVerseKeys(page));
   const heads = $derived(new Set(lines.flatMap((l) => (l.kind === 'sourate' ? [l.s] : []))));
+  const bsms = $derived(new Set(lines.flatMap((l) => (l.kind === 'basmala' ? [l.s] : []))));
   const family = $derived(fontFamily(pageFontFile(page.p)));
   const centered = $derived(page.p <= 2);
   const ar = (n: number) => new Intl.NumberFormat('ar-EG', { useGrouping: false }).format(n);
@@ -133,7 +134,15 @@
           <span class="bsml titre">{BSML_SOURATE}{bsmlSuraName(l.s)}</span>
         </div>
       {:else if l.kind === 'basmala'}
-        <div class="ligne bsml basmala" style:font-size="{size}px">{BSML_BASMALA}</div>
+        <div class="ligne bsml basmala" style:font-size="{size}px">
+          <span
+            class="g"
+            class:on={current?.s === l.s && current?.a === 0}
+            data-bsm={l.s}
+            role="presentation"
+            onclick={(e) => choose(l.s, 0, e.currentTarget)}>{BSML_BASMALA}</span
+          >
+        </div>
       {:else}
         <div class="ligne" style:font-size="{size}px"></div>
       {/if}
@@ -144,6 +153,14 @@
   <div class="sr quran-text" lang="ar" dir="rtl">
     {#each verses as [s, a] (`${s}:${a}`)}
       {#if a === 1 && heads.has(s)}<p>{suraTitleAr(s)}</p>{/if}
+      {#if a === 1 && bsms.has(s)}<button
+          type="button"
+          class="v"
+          tabindex={readOnly ? -1 : 0}
+          aria-haspopup={readOnly ? undefined : 'dialog'}
+          data-exact-basmala={s}
+          onclick={(e) => choose(s, 0, e.currentTarget)}>{basmala}</button
+        >{/if}
       <button
         type="button"
         class="v"
@@ -191,8 +208,12 @@
     justify-content: center;
     gap: 0.25em;
   }
+  /* mesure de la ligne à 100 px : largeur nulle et contenu masqué, sinon (plusieurs milliers de pixels) elle
+     élargissait la page — sur téléphone, toute la page était dézoomée et les feuilles mal placées */
   .mesure {
     position: absolute;
+    width: 0;
+    overflow: hidden;
     visibility: hidden;
     pointer-events: none;
   }
@@ -219,6 +240,9 @@
   }
   .basmala {
     justify-content: center;
+  }
+  .basmala .g {
+    padding-inline: 0.3em;
   }
   .band {
     justify-content: center;

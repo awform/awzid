@@ -10,6 +10,7 @@
 import { timingSafeEqual } from 'node:crypto';
 import { and, eq, isNull, like } from 'drizzle-orm';
 import { schema as t, type Db } from '@awform/db';
+import { DEMO_NIVEAUX, PARENT_NIVEAUX_ID, PARENT_NIVEAUX_ROLE, roleOf } from './demo-niveaux.js';
 
 export const DEMO_PASSWORD = 'awzid';
 export const DEMO_DOMAIN = 'demo.awform.test';
@@ -23,9 +24,21 @@ const DEMO_IDS: Record<string, { role: string; kind: Kind; profile?: string }> =
   adulte: { role: 'adulte', kind: 'adulte' },
   enseignant: { role: 'enseignant', kind: 'enseignant' },
   admin: { role: 'admin', kind: 'admin' },
+  // un compte par niveau (demo-niveaux.ts) : adulte1…adulte10 (comptes adultes), ado1…ado4 et enfant1…enfant5
+  // (profils du compte « parent-niveaux », ouverts d'emblée comme `enfant`) ; adresses `niveau…` / `niveaux-parent-…`
+  // distinctes des six comptes ci-dessus (elles ne correspondent à aucun de leurs motifs)
+  [PARENT_NIVEAUX_ID]: { role: PARENT_NIVEAUX_ROLE, kind: 'parent' },
+  ...Object.fromEntries(
+    DEMO_NIVEAUX.map((n): [string, { role: string; kind: Kind; profile?: string }] => [
+      n.id,
+      n.filiere === 'adultes'
+        ? { role: roleOf(n), kind: 'adulte' }
+        : { role: roleOf(n), kind: 'parent', profile: n.pseudonym },
+    ]),
+  ),
 };
 
-const PRIVATE_HOST =
+export const PRIVATE_HOST =
   /^(localhost|127(\.\d{1,3}){3}|10(\.\d{1,3}){3}|192\.168(\.\d{1,3}){2}|172\.(1[6-9]|2\d|3[01])(\.\d{1,3}){2}|[a-z0-9-]+(\.[a-z0-9-]+)*\.(localhost|test|local|lan|home\.arpa))$/;
 
 /**

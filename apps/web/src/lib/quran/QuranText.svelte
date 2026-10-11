@@ -98,7 +98,19 @@
     {@const vis = visibleWords(ws.length, m)}
     {@const tv = tajwid && !riwaya ? verseRuns(v, basmala, tajwid) : null}
     {@const tr = trad?.(v.a)}
-    {#if parts.basmala}<p class="basmala">
+    {#if parts.basmala}<!-- svelte-ignore a11y_no_noninteractive_tabindex (rôle « button » posé seulement quand la basmala est choisissable) -->
+      <p
+        class="basmala"
+        class:now={current === 0}
+        class:sel={selected === 0}
+        data-bsm={v.s}
+        aria-current={current === 0 ? 'true' : undefined}
+        role={onpick && !readOnly ? 'button' : undefined}
+        aria-haspopup={onpick && !readOnly ? 'dialog' : undefined}
+        tabindex={onpick && !readOnly ? 0 : undefined}
+        onclick={(e) => pick(0, e)}
+        onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), pick(0, e))}
+      >
         <span class="quran-text" data-basmala={`${v.s}:${v.a}`}
           >{#if tv?.basmala}{#each tv.basmala as bw, i (i)}{i > 0 ? ' ' : ''}<TajwidRuns
                 runs={bw}
@@ -167,10 +179,30 @@
     color: var(--mp-green);
   }
   .basmala {
-    margin: 4px 0;
+    width: fit-content;
+    margin: 4px auto;
+    padding: 0 10px;
     text-align: center;
     font-family: var(--font-quran);
     font-size: 1.6rem;
+    border-radius: var(--radius-md);
+    transition: background-color var(--motion) ease;
+  }
+  .basmala[role='button'] {
+    cursor: pointer;
+  }
+  .basmala[role='button']:hover {
+    background: color-mix(in srgb, var(--mp-mark) 50%, transparent);
+  }
+  .basmala:focus-visible {
+    outline: 2px solid var(--mp-green);
+    outline-offset: 2px;
+  }
+  .basmala.sel {
+    background: var(--mp-mark);
+  }
+  .basmala.now {
+    background: var(--mark);
   }
   /* A8 : police fournie par le Complexe pour la riwāya affichée */
   .mushaf.riwaya .quran-text {
@@ -188,7 +220,7 @@
   }
   .aya {
     font-family: var(--font-quran);
-    font-size: max(1.7rem, var(--ar-size));
+    font-size: calc(max(1.7rem, var(--ar-size)) * var(--qz, 1));
     line-height: 2.3;
     margin: 2px 0;
     padding: 0 8px;
@@ -260,7 +292,7 @@
   }
   @media (max-width: 400px) {
     .aya {
-      font-size: max(1.45rem, var(--ar-size));
+      font-size: calc(max(1.45rem, var(--ar-size)) * var(--qz, 1));
     }
   }
 </style>

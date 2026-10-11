@@ -56,6 +56,8 @@ const AUDIO_DIR = join(tmpdir(), `awform-e2e-audio${ISOLE ? `-${SUFFIX}` : ''}`)
 // A3 : audio des leçons d'en1 (fichiers réels des livres) importé depuis ~/lecons-audio s'il est là
 const LECONS_SRC = process.env.AWFORM_LECONS_AUDIO_SOURCE ?? join(homedir(), 'lecons-audio');
 const LECONS_DIR = join(tmpdir(), `awform-e2e-lecons${ISOLE ? `-${SUFFIX}` : ''}`);
+// lot F3 : boîte de DÉMONSTRATION des e-mails (aucun envoi réel), lue par les tests (f3.spec.ts)
+process.env.E2E_MAIL_DIR ??= join(tmpdir(), `awform-e2e-boite${ISOLE ? `-${SUFFIX}` : ''}`);
 if (existsSync(join(LECONS_SRC, 'index.js'))) process.env.E2E_LECONS_AUDIO = '1';
 // A34 : Muṣḥaf exact — SEULEMENT avec E2E_MUSHAF_EXACT=1 et la copie Content Sync du serveur (jamais dans le
 // dépôt) : les autres suites gardent la page fluide qu'elles vérifient
@@ -151,6 +153,8 @@ export default defineConfig({
         // SEULEMENT en test (Coran épuré : jamais en démonstration ni en production)
         AWFORM_AUDIO_DIR: AUDIO_DIR,
         AWFORM_AUDIO_ESSAI: 'on',
+        // A2 : récitateur en ligne d'essai : API de Quran Foundation SIMULÉE dans l'API de test (aucun réseau)
+        QF_ENV: 'essai',
         // A37 : fiches d'ESSAI du livret « Bon comportement » (textes neutres), SEULEMENT en test
         AWFORM_AKHLAQ_ESSAI: 'on',
         // A3 : audio des leçons d'en1
@@ -159,6 +163,13 @@ export default defineConfig({
         // A5 : « Réciter et vérifier » ouvert pour les e2e, service d'écoute factice
         AWFORM_ECOUTE_IA: 'on',
         AWFORM_ECOUTE_URL: `http://127.0.0.1:${ECOUTE_PORT}`,
+        // lot F3 : e-mails écrits dans la boîte de démonstration ; liens vers l'application de test
+        AWFORM_MAIL: 'journal',
+        AWFORM_MAIL_JOURNAL_DIR: process.env.E2E_MAIL_DIR,
+        AWFORM_PUBLIC_URL: `http://127.0.0.1:${WEB_PORT}`,
+        // comptes de démonstration par niveau (demo-niveaux.spec.ts) : connexion simplifiée, réseau local ;
+        // SEULEMENT avec E2E_DEMO=1 (les autres suites tournent comme en production)
+        ...(process.env.E2E_DEMO === '1' ? { AWFORM_DEMO: '1', SITE: '127.0.0.1' } : {}),
         ...(EXACT ? { AWFORM_QF_MUSHAF_DIR: QF_DIR, AWFORM_QCF_DIR: QCF_DIR } : {}),
       },
       reuseExistingServer: false,
