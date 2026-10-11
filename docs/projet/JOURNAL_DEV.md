@@ -8,6 +8,35 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 11/10/2026 — Chantier A26b, phase 1 : « Je parle », arabe conversationnel SANS IA
+
+Branche `conversation-p1-wip` (worktree `~/awform-conv`, depuis `main` ae8d1dc), **non fusionnée**. Cahier :
+`CONCEPTION_A26b_CONVERSATION.md` (§ 3, 4, 5, 7 P1, 8).
+
+1. **Générateur déterministe** `packages/content/src/conversation.ts` + `cli-conversation.ts`
+   (`pnpm --filter @awform/content conversation [--check]`) : dialogue de leçon → scénario guidé ; l'élève joue le
+   personnage qui parle le plus (hors celui qui ouvre la scène) ; à chacune de ses répliques, 3 choix : bonne
+   (réplique du livre), « presque » (autre réplique de la même scène), « à reprendre » (réplique d'une leçon
+   PRÉCÉDENTE du niveau) ; une phrase qui répondait à la même question n'est jamais un distracteur. Aucun texte
+   arabe inventé : copie octet par octet (contrôlée par `verifierScenario`). Mots de la leçon présents dans le
+   dialogue → « Mes mots ».
+2. **Données versionnées** `apps/web/static/conversation/<niveau>/<lecon>.json` (v1) : 474 scénarios (en1 26,
+   en2–en5 25, ado1–ado4 25, ad1–ad8 25, ad9 24, ad10 24) ; liste `src/lib/conversation/disponibles.ts`
+   (générée). Jamais préchargés par le service worker : gardés dans IndexedDB dès l'ouverture de la leçon.
+3. **Écran « Je parle »** (chargé à la demande, sous le dialogue) : décor du livre sans aucun personnage
+   (`decor_seul` dans `scene.ts`), réplique écrite de droite à gauche dans le décor (coupée si moins de
+   mouvement), arabe sur sa ligne, traduction sur demande, gros boutons, aide douce (jamais de rouge ni de note),
+   audio des leçons s'il existe (jamais de synthèse), annonces au lecteur d'écran. Interrupteur `conversation`.
+   Voix f/m préparée dans `/compte` (verrou parent), sans effet avant l'audio double.
+4. **Tests** : 11 unitaires (`packages/content/test/conversation.test.ts`, dont fichiers du dépôt = génération,
+   0 écart sur 19 niveaux) ; e2e `e2e/conversation.spec.ts` (en1.l05 et ad1.l01 complets, hors ligne compris).
+   Budget : élève 331,6 Ko ≤ 350 ; accueil 108,4 Ko ≤ 150.
+5. **Retouches avant fusion** : scénarios déplacés dans `packages/content/conversation/` (livrés avec le paquet,
+   jamais publics) et servis par `GET /api/v1/profiles/:id/conversation/:unit` (profil de la famille, formule,
+   parcours A27 : courant / révision / aperçu, sinon 403 ; visiteur 401), copie par profil dans IndexedDB ;
+   interrupteur `conversation` en « beta » ; écran plein (le dialogue de la leçon est masqué : la réplique à choisir
+   n'est jamais visible avant le choix) ; noms français des personnages (« Grand-père ») ; e2e : 5 tests.
+
 ## 06/10/2026 — Chantier A5 : « L'IA qui écoute la récitation » (prototype, canal bêta)
 
 Branche `a5-ecoute-wip` (worktree `~/awform-a5`, depuis `main` 0f6e305), **non fusionnée** (file de fusion : après

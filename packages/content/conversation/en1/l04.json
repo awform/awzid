@@ -1,0 +1,7 @@
+{"v":1,"id":"en1.l04","niveau":"en1","lecon":"l04","titre_ar":"فِي الْقِسْمِ","titre_fr":"En classe","scene":{"lieu":"classe","props":["pencil","notebook"]},"role":{"qui":"Maryam","qui_ar":"مَرْيَمُ"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"أُرِي[دُ] قَلَمًا، مِنْ فَضْلِكِ.","fr":"Je voudrais un crayon, s'il te plaît."},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"أُرِي[دُ] قَلَمًا، مِنْ فَضْلِكِ.","fr":"Je voudrais un crayon, s'il te plaît.","kind":"presque","src":"en1.l04#0"},{"ar":"تَفَضَّلْ يَا يُوسُفُ.","fr":"Tiens, Youssouf.","kind":"bonne","src":"en1.l04#1"},{"ar":"بِسْمِ اللَّهِ. وَهٰذَا [حَ]لِيبٌ!","fr":"Au nom d'Allah. Et ça, c'est du lait !","kind":"reprendre","src":"en1.l03#2"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"شُكْرًا! جَزَاكِ اللَّهُ خَيْرًا.","fr":"Merci ! Qu'Allah te récompense par le bien."},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"شُكْرًا! جَزَاكِ اللَّهُ خَيْرًا.","fr":"Merci ! Qu'Allah te récompense par le bien.","kind":"presque","src":"en1.l04#2"},{"ar":"وَإِيَّاكَ.","fr":"Et toi aussi.","kind":"bonne","src":"en1.l04#3"},{"ar":"مَا هٰذَا؟","fr":"Qu'est-ce que c'est ?","kind":"reprendre","src":"en1.l01#0"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"أَحْسَنْتُمَا!","fr":"Bravo à vous deux !"}
+]}

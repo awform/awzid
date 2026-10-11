@@ -1,0 +1,10 @@
+{"v":1,"id":"en4.l13","niveau":"en4","lecon":"l13","titre_ar":"السُّؤَالُ الْأَخِيرُ","titre_fr":"La dernière question (au concours)","scene":{"lieu":"classe","props":["scoreboard","trophy","quiz_cards"]},"role":{"qui":"Maryam","qui_ar":"مَرْيَمُ"},"mots":[{"ar":"فَرِيقٌ","fr":"une équipe","img":"team_flags"}],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"السُّؤَالُ الْأَخِيرُ: كَمْ شَهْرًا فِي السَّنَةِ؟","fr":"Dernière question : combien y a-t-il de mois dans l'année ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"اثْنَا عَشَرَ شَهْرًا!","fr":"Douze mois !","kind":"bonne","src":"en4.l13#1"},{"ar":"أَحْسَنْتِ! يَا يُوسُفُ، كَمْ جَوَابًا صَحِيحًا لِفَرِيقِكُمْ؟","fr":"Bravo ! Youssouf, combien de bonnes réponses votre équipe a-t-elle ?","kind":"presque","src":"en4.l13#2"},{"ar":"يَا أُسْتَاذَةُ، هَلْ أَبْدَأُ بِالْجَرْيِ؟","fr":"Madame, est-ce que je commence par la course ?","kind":"reprendre","src":"en4.l09#1"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"أَحْسَنْتِ! يَا يُوسُفُ، كَمْ جَوَابًا صَحِيحًا لِفَرِيقِكُمْ؟","fr":"Bravo ! Youssouf, combien de bonnes réponses votre équipe a-t-elle ?"},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"سَبْعَةَ عَشَرَ جَوَابًا صَحِيحًا.","fr":"Dix-sept bonnes réponses."},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"وَفَرِيقُ النُّجُومِ يَا آدَمُ؟","fr":"Et l'équipe des Étoiles, Adam ?"},
+{"t":"partenaire","qui":"Adam","qui_ar":"آدَمُ","ar":"خَمْسَةَ عَشَرَ جَوَابًا. نَحْنُ فِي الْمَرْكَزِ الثَّانِي.","fr":"Quinze réponses. Nous sommes à la deuxième place."},
+{"t":"partenaire","qui":"Khadija","qui_ar":"خَدِيجَةُ","ar":"مَبْرُوكٌ لَكُمْ أَيْضًا! أَنْتُمْ أَقْوِيَاءُ.","fr":"Félicitations à vous aussi ! Vous êtes forts."},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"مَا شَاءَ اللَّهُ! كُلُّكُمْ فَائِزُونَ.","fr":"Ce qu'Allah a voulu ! Vous êtes tous gagnants."}
+]}

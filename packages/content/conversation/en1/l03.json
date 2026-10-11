@@ -1,0 +1,8 @@
+{"v":1,"id":"en1.l03","niveau":"en1","lecon":"l03","titre_ar":"عَلَى الْمَائِدَةِ","titre_fr":"À table","scene":{"lieu":"maison","props":["bread","cheese","milk","dates"]},"role":{"qui":"Youssouf","qui_ar":"يُوسُفُ"},"mots":[{"ar":"[جُ]بْنٌ","fr":"du fromage","img":"cheese"},{"ar":"[حَ]لِيبٌ","fr":"du lait","img":"milk"},{"ar":"[خُ]بْزٌ","fr":"du pain","img":"bread"}],"tours":[
+{"t":"partenaire","qui":"Papa","qui_ar":"الْأَبُ","ar":"تَفَضَّلُوا، هٰذَا [خُ]بْزٌ وَ[جُ]بْنٌ.","fr":"Servez-vous : voici du pain et du fromage."},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"بِسْمِ اللَّهِ.","fr":"Au nom d'Allah.","kind":"bonne","src":"en1.l03#1"},{"ar":"شُكْرًا يَا أَبِي!","fr":"Merci, papa !","kind":"presque","src":"en1.l03#4"},{"ar":"وَمَا هٰذِهِ؟","fr":"Et ça, qu'est-ce que c'est ? (féminin)","kind":"reprendre","src":"en1.l01#2"}]},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"بِسْمِ اللَّهِ. وَهٰذَا [حَ]لِيبٌ!","fr":"Au nom d'Allah. Et ça, c'est du lait !"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"بَارَكَ اللَّهُ فِيكُمَا.","fr":"Qu'Allah vous bénisse tous les deux.","kind":"presque","src":"en1.l03#5"},{"ar":"الْ[حَ]مْدُ لِلَّهِ.","fr":"(à la fin du repas) Louange à Allah.","kind":"bonne","src":"en1.l03#3"},{"ar":"مَا هٰذَا؟","fr":"Qu'est-ce que c'est ?","kind":"reprendre","src":"en1.l01#0"}]},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"شُكْرًا يَا أَبِي!","fr":"Merci, papa !"},
+{"t":"partenaire","qui":"Papa","qui_ar":"الْأَبُ","ar":"بَارَكَ اللَّهُ فِيكُمَا.","fr":"Qu'Allah vous bénisse tous les deux."}
+]}

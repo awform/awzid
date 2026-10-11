@@ -38,6 +38,7 @@ import { essaiFetch, QfAudioClient, qfConfigFromEnv } from './coran-qf.js';
 import { registerLeconsAudio } from './lecons-audio.js';
 import { registerMushafExact } from './mushaf-exact.js';
 import { registerContent } from './contenu.js';
+import { registerConversation } from './conversation.js';
 import { registerQuotidien } from './quotidien.js';
 import { notFound } from './routes-common.js';
 import { registerProgress } from './progression.js';
@@ -265,6 +266,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   });
 
   registerContent(app, db, edition, rights);
+  // A26b : scénarios « Je parle » (droits des leçons, parcours, interrupteur `conversation`)
+  registerConversation(app, db, edition, rights);
   // A12 : adhkār des livres (espace « Au quotidien »), public et sans donnée de l'utilisateur
   registerQuotidien(app, db, edition);
   registerProgress(app, db, edition);

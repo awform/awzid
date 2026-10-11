@@ -1,0 +1,8 @@
+{"v":1,"id":"en1.l15","niveau":"en1","lecon":"l15","titre_ar":"صُورَةُ أُسْرَتِي","titre_fr":"La photo de ma famille","scene":{"lieu":"classe","props":["photo"]},"role":{"qui":"Maryam","qui_ar":"مَرْيَمُ"},"mots":[{"ar":"[أَ]بٌ","fr":"un père","img":"papa"},{"ar":"[وَ]لَدٌ","fr":"un garçon","img":"youssouf"}],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"مَنْ هٰذَا يَا مَرْيَمُ؟","fr":"Qui est-ce, Maryam ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"مَنْ هٰذَا يَا مَرْيَمُ؟","fr":"Qui est-ce, Maryam ?","kind":"presque","src":"en1.l15#0"},{"ar":"هٰذَا [أَ]بِي.","fr":"C'est mon papa.","kind":"bonne","src":"en1.l15#1"},{"ar":"أَيْنَ الْقِ[طُّ]؟","fr":"Où est le chat ?","kind":"reprendre","src":"en1.l09#0"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"وَمَنْ هٰذِهِ؟","fr":"Et qui est-ce ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"هٰذَا [أَ]خِي يُوسُفُ.","fr":"C'est mon frère, Youssouf.","kind":"presque","src":"en1.l15#5"},{"ar":"هٰذِهِ [أُ]مِّي.","fr":"C'est ma maman.","kind":"bonne","src":"en1.l15#3"},{"ar":"[هَ]يَّا إِلَى الْ[مَ]سْجِدِ يَا يُوسُفُ.","fr":"Allons à la mosquée, Youssouf.","kind":"reprendre","src":"en1.l14#0"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"وَمَنْ هٰذَا الْ[وَ]لَدُ؟","fr":"Et qui est ce garçon ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"هٰذَا [أَ]خِي يُوسُفُ.","fr":"C'est mon frère, Youssouf.","kind":"bonne","src":"en1.l15#5"},{"ar":"وَمَنْ هٰذَا الْ[وَ]لَدُ؟","fr":"Et qui est ce garçon ?","kind":"presque","src":"en1.l15#4"},{"ar":"كَيْفَ حَالُكَ يَا يُوسُفُ؟","fr":"Comment vas-tu, Youssouf ?","kind":"reprendre","src":"en1.l11#0"}]}
+]}

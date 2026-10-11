@@ -1,0 +1,8 @@
+{"v":1,"id":"en1.l13","niveau":"en1","lecon":"l13","titre_ar":"فِي الْفَصْلِ","titre_fr":"En classe","scene":{"lieu":"classe","props":["book","ball","pencil"]},"role":{"qui":"Youssouf","qui_ar":"يُوسُفُ"},"mots":[{"ar":"[كِ]تَابٌ","fr":"un livre","img":"book"},{"ar":"[كُ]رَةٌ","fr":"un ballon","img":"ball"}],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"مَا هٰذَا يَا يُوسُفُ؟","fr":"Qu'est-ce que c'est, Youssouf ?"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"هٰذَا [كِ]تَابِي.","fr":"C'est mon livre.","kind":"bonne","src":"en1.l13#1"},{"ar":"أَحْسَنْتُمَا!","fr":"Bravo à vous deux !","kind":"presque","src":"en1.l13#5"},{"ar":"هٰذَا [رُ]مَّانٌ.","fr":"Ce sont des grenades.","kind":"reprendre","src":"en1.l05#1"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"وَمَا هٰذِهِ؟","fr":"Et ça, qu'est-ce que c'est ?"},
+{"t":"eleve","qui":"Youssouf","qui_ar":"يُوسُفُ","choix":[{"ar":"هٰذِهِ [كُ]رَتِي.","fr":"C'est mon ballon.","kind":"bonne","src":"en1.l13#3"},{"ar":"وَمَا هٰذِهِ؟","fr":"Et ça, qu'est-ce que c'est ?","kind":"presque","src":"en1.l13#2"},{"ar":"مَا هٰذَا؟","fr":"Qu'est-ce que c'est ?","kind":"reprendre","src":"en1.l01#0"}]},
+{"t":"partenaire","qui":"Maryam","qui_ar":"مَرْيَمُ","ar":"وَهٰذَا قَ[لَ]مِي!","fr":"Et ça, c'est mon crayon !"},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"أَحْسَنْتُمَا!","fr":"Bravo à vous deux !"}
+]}

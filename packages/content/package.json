@@ -68,13 +68,18 @@
     "./akhlaq": {
       "types": "./dist/akhlaq.d.ts",
       "default": "./dist/akhlaq.js"
+    },
+    "./conversation": {
+      "types": "./dist/conversation.d.ts",
+      "default": "./dist/conversation.js"
     }
   },
   "bin": {
     "awform-content": "./dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "conversation"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -83,7 +88,8 @@
     "check-content": "node dist/cli.js",
     "tajwid": "node dist/cli-tajwid.js",
     "traductions": "node --no-warnings dist/cli-traductions.js",
-    "riwayat": "node --no-warnings dist/cli-riwayat.js"
+    "riwayat": "node --no-warnings dist/cli-riwayat.js",
+    "conversation": "node dist/cli-conversation.js"
   },
   "devDependencies": {
     "@types/node": "^24.19.0",

@@ -71,6 +71,8 @@ const FIXED = new Set([
   'AWFORM_QCF_DIR',
   // lot F3 : boîte de démonstration des e-mails (mode journal), dossier fixé par compose.yml
   'AWFORM_MAIL_JOURNAL_DIR',
+  // A26b : dossier des sc?narios ? Je parle ?, livr? avec @awform/content (surcharge de test seulement)
+  'AWFORM_CONVERSATION_DIR',
 ]);
 const isSecret = (v: string) => /SECRET|KEY|PASSWORD|TOKEN|DATABASE_URL/.test(v);
 const pkg = (n: string) => join(ROOT, 'packages', n, 'src');

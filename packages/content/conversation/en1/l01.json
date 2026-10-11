@@ -1,0 +1,7 @@
+{"v":1,"id":"en1.l01","niveau":"en1","lecon":"l01","titre_ar":"فِي السُّوقِ","titre_fr":"Au marché","scene":{"lieu":"marche","props":["apple","dates","banana","apple","dates"]},"role":{"qui":"Maryam","qui_ar":"مَرْيَمُ"},"mots":[{"ar":"[تُ]فَّاحَةٌ","fr":"une pomme","img":"apple"},{"ar":"[تَ]مْرٌ","fr":"des dattes","img":"dates"}],"tours":[
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"مَا هٰذَا؟","fr":"Qu'est-ce que c'est ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"شُكْرًا يَا مَرْيَمُ!","fr":"Merci, Maryam !","kind":"presque","src":"en1.l01#4"},{"ar":"هٰذِهِ [تُ]فَّاحَةٌ.","fr":"C'est une pomme.","kind":"presque","src":"en1.l01#3"},{"ar":"هٰذَا [تَ]مْرٌ.","fr":"Ce sont des dattes.","kind":"bonne","src":"en1.l01#1"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"وَمَا هٰذِهِ؟","fr":"Et ça, qu'est-ce que c'est ? (féminin)"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"هٰذَا [تَ]مْرٌ.","fr":"Ce sont des dattes.","kind":"presque","src":"en1.l01#1"},{"ar":"هٰذِهِ [تُ]فَّاحَةٌ.","fr":"C'est une pomme.","kind":"bonne","src":"en1.l01#3"},{"ar":"شُكْرًا يَا مَرْيَمُ!","fr":"Merci, Maryam !","kind":"presque","src":"en1.l01#4"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"شُكْرًا يَا مَرْيَمُ!","fr":"Merci, Maryam !"}
+]}

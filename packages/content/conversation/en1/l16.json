@@ -1,0 +1,8 @@
+{"v":1,"id":"en1.l16","niveau":"en1","lecon":"l16","titre_ar":"أَمَامَ لَوْحَةِ الْحُرُوفِ","titre_fr":"Devant la frise de l'alphabet","scene":{"lieu":"classe","props":["book","slate"]},"role":{"qui":"Maryam","qui_ar":"مَرْيَمُ"},"mots":[],"tours":[
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"أَيُّ حَرْفٍ هٰذَا؟","fr":"Quelle lettre est-ce ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"مُمْتَازٌ! بَارَكَ اللَّهُ فِيكُمَا.","fr":"Excellent ! Qu'Allah vous bénisse tous les deux.","kind":"presque","src":"en1.l16#5"},{"ar":"هٰذَا حَرْفُ الدَّالِ.","fr":"C'est la lettre د.","kind":"bonne","src":"en1.l16#1"},{"ar":"أَحْسَنْتُمَا!","fr":"Bravo à vous deux !","kind":"reprendre","src":"en1.l04#4"}]},
+{"t":"partenaire","qui":"Youssouf","qui_ar":"يُوسُفُ","ar":"وَهٰذَا حَرْفُ الذَّالِ، فِيهِ نُقْطَةٌ.","fr":"Et celle-ci, c'est la lettre ذ : elle a un point."},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"كَمْ حَرْفًا فِي الْعَرَبِيَّةِ؟","fr":"Combien y a-t-il de lettres en arabe ?"},
+{"t":"eleve","qui":"Maryam","qui_ar":"مَرْيَمُ","choix":[{"ar":"ثَمَانِيَةٌ وَعِشْرُونَ حَرْفًا!","fr":"Vingt-huit lettres !","kind":"bonne","src":"en1.l16#4"},{"ar":"وَهٰذَا حَرْفُ الذَّالِ، فِيهِ نُقْطَةٌ.","fr":"Et celle-ci, c'est la lettre ذ : elle a un point.","kind":"presque","src":"en1.l16#2"},{"ar":"تَفَضَّلْ يَا يُوسُفُ.","fr":"Tiens, Youssouf.","kind":"reprendre","src":"en1.l04#1"}]},
+{"t":"partenaire","qui":"Fatou","qui_ar":"الْأُسْتَاذَةُ فَاتُو","ar":"مُمْتَازٌ! بَارَكَ اللَّهُ فِيكُمَا.","fr":"Excellent ! Qu'Allah vous bénisse tous les deux."}
+]}

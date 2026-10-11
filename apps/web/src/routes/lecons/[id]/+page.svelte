@@ -30,6 +30,8 @@
   import { personaKey, type SceneSpec } from '@awform/content/scene';
   import Signaler, { SIGNAL_CTX } from '$lib/Signaler.svelte';
   import VivanteLecon from '$lib/vivante/VivanteLecon.svelte';
+  import JeParleBouton from '$lib/conversation/JeParleBouton.svelte';
+  import { aUnScenario } from '$lib/conversation/scenario';
 
   /**
    * Lecteur de leçon : ordre et règles d'affichage du moteur des livres (awform.js : lectureLesson,
@@ -731,6 +733,11 @@
         <span class="fr"><Bidi text={dialogue.note_fr ?? ''} /></span>
       </div>
     {/if}
+    <!-- A26b : « Je parle », scénario guidé sans IA (écran et scénario chargés à la demande, hors ligne ensuite) -->
+    {#if !isEval && profileId && fn('conversation') && aUnScenario(u.id)}<JeParleBouton
+        unitId={u.id}
+        {profileId}
+      />{/if}
   </section>
 {/snippet}
 
