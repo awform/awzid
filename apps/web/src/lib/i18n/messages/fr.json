@@ -1,5 +1,6 @@
 {
   "app.nom": "Awzid",
+  "app.slogan": "Grandir dans le savoir",
   "commun.retour": "Retour",
   "commun.enregistrer": "Enregistrer",
   "commun.valider": "Valider",
@@ -78,6 +79,8 @@
   "niveau.econome": "Données économes : rien n'est téléchargé sans ton accord.",
   "niveau.econome_lien": "Télécharger ce niveau",
   "niveau.erreur": "Téléchargement impossible pour l'instant",
+  "niveau.bientot": "Ce niveau arrive bientôt.",
+  "niveau.bientot_texte": "Les leçons de ce livre ne sont pas encore dans l'application. Reviens très vite, ou travaille avec un autre livre en attendant.",
   "niveau.en1": "Enfants — niveau 1",
   "niveau.ad1": "Adultes — niveau 1",
   "lecon.retour": "← Leçons {level}",

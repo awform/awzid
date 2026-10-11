@@ -1,5 +1,6 @@
 {
   "app.nom": "Awzid",
+  "app.slogan": "Grandir dans le savoir",
   "commun.retour": "Volver",
   "commun.enregistrer": "Guardar",
   "commun.valider": "Validar",
@@ -81,6 +82,8 @@
   "niveau.erreur": "Por ahora no se puede descargar",
   "niveau.en1": "Niños — nivel 1",
   "niveau.ad1": "Adultos — nivel 1",
+  "niveau.bientot": "Este nivel llegará pronto.",
+  "niveau.bientot_texte": "Las lecciones de este libro aún no están en la aplicación. Vuelve muy pronto, o trabaja con otro libro mientras tanto.",
   "lecon.retour": "← Lecciones {level}",
   "audio.ecouter": "Escuchar",
   "audio.ecouter_lent": "Escuchar despacio",

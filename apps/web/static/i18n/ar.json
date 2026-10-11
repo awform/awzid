@@ -1,5 +1,6 @@
 {
   "app.nom": "Awzid",
+  "app.slogan": "Grandir dans le savoir",
   "commun.retour": "رجوع",
   "commun.enregistrer": "حفظ",
   "commun.valider": "تأكيد",
@@ -81,6 +82,8 @@
   "niveau.erreur": "التنزيل غير ممكن حاليا",
   "niveau.en1": "الأطفال — المستوى 1",
   "niveau.ad1": "البالغون — المستوى 1",
+  "niveau.bientot": "هذا المستوى سيتوفر قريبًا.",
+  "niveau.bientot_texte": "دروس هذا الكتاب ليست في التطبيق بعد. عد قريبًا جدًا، أو اعمل بكتاب آخر في الأثناء.",
   "lecon.retour": "→ دروس {level}",
   "audio.ecouter": "اِسْتَمِعْ",
   "audio.ecouter_lent": "اِسْتَمِعْ بِبُطْءٍ",

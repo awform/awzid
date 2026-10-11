@@ -124,6 +124,58 @@ describe('thème par jetons', () => {
       expect(fails).toEqual([]);
     });
 
+  it('charte Awzid : thème par défaut aux couleurs de la marque, paires de texte ≥ 4,5:1 (clair et sombre)', () => {
+    const c = THEMES.clair.couleurs;
+    const d = THEMES.clair.inverse;
+    expect([c.paper, c.card, c.surface, c.primary, c.navy, c.ink, c.ink2, c.teal, c.line]).toEqual([
+      '#fbf7ee',
+      '#ffffff',
+      '#f2ebda',
+      '#0b6e4f',
+      '#084c38',
+      '#1e2b25',
+      '#4a5a52',
+      '#0b6e4f',
+      '#ddd3bd',
+    ]);
+    expect([d.paper, d.card, d.primary, d.ink, d.ink2, d.teal, d.line, d.accent]).toEqual([
+      '#0d1a15',
+      '#14261f',
+      '#1f9c73',
+      '#e8dfc8',
+      '#b4c2ba',
+      '#5cc79c',
+      '#28423a',
+      '#d9b54a',
+    ]);
+    // bouton principal : blanc sur émeraude (clair) ; sur #1F9C73 le texte foncé #0D1A15 tient 4,5:1
+    expect(contrast(c['on-primary']!, c.primary!)).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(d['on-primary']!, d.primary!)).toBeGreaterThanOrEqual(4.5);
+    for (const [k, m] of [
+      ['clair', c],
+      ['sombre', d],
+    ] as const)
+      for (const [fg, bg] of [
+        ['ink', 'paper'],
+        ['ink', 'card'],
+        ['ink', 'surface'],
+        ['ink2', 'paper'],
+        ['ink2', 'card'],
+        ['ink2', 'surface'],
+        ['navy', 'paper'],
+        ['navy', 'card'],
+        ['teal', 'paper'],
+        ['teal', 'card'],
+        ['bad-ink', 'paper'],
+        ['bad-ink', 'card'],
+        ['on-header', 'header'],
+      ] as const)
+        expect(contrast(m[fg]!, m[bg]!), `${k} ${fg}/${bg}`).toBeGreaterThanOrEqual(4.5);
+    // l'or n'est jamais une couleur de texte sur fond clair
+    expect(contrast(c['warn-ink']!, c.paper!)).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(c.accent!, c.paper!)).toBeLessThan(4.5);
+  });
+
   it('le calcul de contraste suit WCAG (noir/blanc = 21)', () => {
     expect(contrast('#000000', '#ffffff')).toBeCloseTo(21, 5);
     expect(contrast('#777777', '#ffffff')).toBeCloseTo(4.48, 1);
