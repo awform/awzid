@@ -55,8 +55,9 @@ test('écran unique : le texte d’abord, aucune lecture automatique, mini-barre
   });
   await page.goto('/coran/lecteur?page=604');
   await expectVerse(page, '112:1', page.locator('[data-page="604"]'));
-  // palette « vert, blanc, or » posée sur l'espace Coran
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'verdure');
+  // une seule identité (11/10/2026) : plus de palette « verdure » posée sur l'espace Coran
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'clair');
+  await expect(page.locator('html')).not.toHaveAttribute('data-palette', /.+/);
   // plus de formulaire avant le texte : aucun champ visible sur l'écran de lecture (seul le curseur du volume
   // fait partie de la barre compacte sur grand écran)
   await expect(

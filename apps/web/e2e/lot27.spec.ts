@@ -87,8 +87,9 @@ test.describe('parent', () => {
     const pick = page.getByTestId('choix-recitateur');
     await expect(pick.locator('option')).toHaveCount(1);
     await expect(pick.locator('option[value="essai-hafs"]')).toHaveCount(1);
-    // l'enfant garde son thème (tailles, cibles, couleurs), espace Coran compris (décision du 06/10/2026)
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'jardin');
+    // 11/10/2026 : une seule identité ; l'enfant garde ses tailles et cibles (data-public), espace Coran compris
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'clair');
+    await expect(page.locator('html')).toHaveAttribute('data-public', 'enfant');
     await expect(page.locator('html')).not.toHaveAttribute('data-palette', /.+/);
   });
 });

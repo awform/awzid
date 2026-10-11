@@ -265,7 +265,7 @@ test('enfant : « Vivre l’islam » dans sa barre, grandes tuiles, fiche courte
   await page.goto('/aujourdhui');
   await expect(page.locator('nav.tabs a')).toHaveCount(5);
   await page.locator('nav.tabs a[data-tab="vivre"]').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'jardin');
+  await expect(page.locator('html')).toHaveAttribute('data-public', 'enfant');
   const tiles = page.getByTestId('vi-tuiles');
   await expect(tiles.locator('[data-groupe]').first()).toBeVisible();
   const box = await tiles.locator('.tile-ic').first().boundingBox();

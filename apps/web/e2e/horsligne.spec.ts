@@ -141,8 +141,8 @@ test('navigation : cinq entrées, entrée active, « Plus », barre en bas sur t
     );
     await page.locator('nav.tabs a[data-tab="plus"]').click();
   }
-  // thème « manuscrit » (adulte) posé sur la page, mode sombre au choix de l'appareil
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'manuscrit');
+  // une seule identité (clair), mode sombre au choix de l'appareil
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'clair');
   await page.getByTestId('mode-affichage').click();
   await expect(page.locator('html')).toHaveAttribute('data-mode', 'sombre');
   await page.reload();

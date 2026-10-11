@@ -88,13 +88,17 @@ test('manifeste : couleurs de marque, icônes 192, 512 et maskable valides et ch
   );
 });
 
-test.describe('thème « jardin » (en-tête vert)', () => {
+test.describe('en-tête de la marque (une seule identité, 11/10/2026)', () => {
   test.use({ compte: 'parent' });
-  test('en-tête vert : symbole pour fond sombre, nom lisible', async ({ page }) => {
+  test('en-tête clair : symbole pour fond clair, nom en Lexend', async ({ page }) => {
     await pickProfile(page, 'Amina');
     await page.goto('/aujourdhui');
     const marque = page.getByTestId('accueil').getByTestId('marque');
-    await expect(marque.locator('img[src="/awzid-symbole-sombre.svg"]')).toBeVisible();
-    await expect(marque.locator('img[src="/awzid-symbole.svg"]')).toBeHidden();
+    await expect(marque.locator('img[src="/awzid-symbole.svg"]')).toBeVisible();
+    await expect(marque.locator('img[src="/awzid-symbole-sombre.svg"]')).toBeHidden();
+    const police = await marque
+      .locator('.word')
+      .evaluate((el) => getComputedStyle(el).fontFamily + '|' + getComputedStyle(el).fontWeight);
+    expect(police).toMatch(/^"?Lexend.*\|600$/);
   });
 });

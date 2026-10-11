@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { activeNav, audienceOf, navFor, paletteOf, themeOf, type Context } from './audience';
+import { activeNav, ancienThemeDuPublic, audienceOf, navFor, type Context } from './audience';
 
 const ctx = (c: Partial<Context>): Context => ({
   profileKind: null,
@@ -9,35 +9,24 @@ const ctx = (c: Partial<Context>): Context => ({
   ...c,
 });
 
-describe('lot 26 — public, thème et navigation', () => {
-  it('le thème suit le public : enfant → jardin, ado → nuit, adulte → manuscrit, autres → clair', () => {
-    expect(themeOf(audienceOf(ctx({ accountKind: 'parent', profileKind: 'enfant' })))).toBe(
-      'jardin',
-    );
-    expect(themeOf(audienceOf(ctx({ accountKind: 'parent', profileKind: 'ado' })))).toBe('nuit');
-    expect(themeOf(audienceOf(ctx({ accountKind: 'adulte', profileKinds: ['adulte'] })))).toBe(
-      'manuscrit',
-    );
-    expect(themeOf(audienceOf(ctx({ accountKind: 'parent' })))).toBe('clair');
-    expect(themeOf(audienceOf(ctx({ accountKind: 'enseignant' })))).toBe('clair');
-    expect(themeOf(audienceOf(ctx({ accountKind: 'admin' })))).toBe('clair');
-    expect(themeOf(audienceOf(ctx({})))).toBe('clair');
-  });
-
-  it('palette verdure par public : adultes partout, enfants et ados jamais (Coran compris), visiteurs au Coran', () => {
-    for (const p of ['/coran/lecteur', '/hifz', '/lecons/ad1.l01', '/', '/quotidien'])
-      expect(paletteOf('adulte', p), p).toBe('verdure');
-    for (const a of ['enfant', 'ado'] as const)
-      for (const p of ['/coran/lecteur', '/hifz', '/lecons/ad1.l01'])
-        expect(paletteOf(a, p), `${a} ${p}`).toBeNull();
-    expect(paletteOf('visiteur', '/coran/lecteur')).toBe('verdure');
-    expect(paletteOf('visiteur', '/hifz')).toBe('verdure');
-    expect(paletteOf('visiteur', '/coranique')).toBeNull();
-    expect(paletteOf('visiteur', '/lecons/ad1.l01')).toBeNull();
-    for (const a of ['parent', 'enseignant', 'admin'] as const)
-      expect(paletteOf(a, '/coran')).toBeNull();
-    // réglage par public prêt pour la suite (p. ex. les ados aussi, plus tard)
-    expect(paletteOf('ado', '/', { ado: 'partout' })).toBe('verdure');
+describe('lot 26 — public et navigation', () => {
+  it("11/10/2026 : plus de thème par public ; l'ancien thème sert seulement à la migration", () => {
+    expect(
+      ancienThemeDuPublic(audienceOf(ctx({ accountKind: 'parent', profileKind: 'enfant' }))),
+    ).toBe('jardin');
+    expect(
+      ancienThemeDuPublic(audienceOf(ctx({ accountKind: 'parent', profileKind: 'ado' }))),
+    ).toBe('nuit');
+    expect(
+      ancienThemeDuPublic(audienceOf(ctx({ accountKind: 'adulte', profileKinds: ['adulte'] }))),
+    ).toBe('manuscrit');
+    for (const c of [
+      { accountKind: 'parent' },
+      { accountKind: 'enseignant' },
+      { accountKind: 'admin' },
+      {},
+    ] as const)
+      expect(ancienThemeDuPublic(audienceOf(ctx(c)))).toBe('clair');
   });
 
   it("les espaces du parent restent « clairs » même quand un enfant est actif sur l'appareil", () => {
@@ -50,7 +39,7 @@ describe('lot 26 — public, thème et navigation', () => {
     );
   });
 
-  it('un compte adulte (16-17 ans) dont le profil est « ado » a le thème nuit', () => {
+  it('un compte adulte (16-17 ans) dont le profil est « ado » est de public « ado »', () => {
     expect(audienceOf(ctx({ accountKind: 'adulte', profileKinds: ['ado'] }))).toBe('ado');
   });
 

@@ -28,6 +28,7 @@
   import Feuille from '$lib/quran/lecture/Feuille.svelte';
   import MenuVerset from '$lib/quran/lecture/MenuVerset.svelte';
   import Reglages from '$lib/quran/lecture/Reglages.svelte';
+  import { appliquerFond } from '$lib/theme/fond';
   import Selecteur from '$lib/quran/lecture/Selecteur.svelte';
   import {
     type Onglet,
@@ -370,6 +371,8 @@
   });
 
   $effect(() => writePrefs({ ...prefs, page: p }));
+  // fond de lecture (Ivoire par défaut, Sépia en mode clair) : posé sur la page entière
+  $effect(() => appliquerFond(prefs.fond));
   // dernière lecture (accueil : « Reprendre où j'en étais »), gardée sur l'appareil
   $effect(() => {
     if (ready) writeLast({ s: activeSura, a: posA, p });

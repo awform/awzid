@@ -2,34 +2,31 @@
  * JETONS DE THÈME — source unique de l'apparence (couleurs, polices, tailles, espacements, rayons, ombres,
  * motifs, mouvement). `pnpm --filter @awform/web theme` régénère src/lib/theme/tokens.css.
  *
- * Lot 26 — DESIGN V2 : système hybride PAR PUBLIC sur une base commune (direction du chef de projet) :
- *  - « jardin »    : enfants — couleurs douces et gaies, formes arrondies, grandes cibles ;
- *  - « nuit »      : adolescents — sombre élégant, accents lumineux, sobre ;
- *  - « manuscrit » : adultes — papier chaud, typographie soignée, ornements géométriques discrets ;
- *  - « clair »     : parents, enseignants, administration — clair et minimal, tableaux lisibles.
- * Chaque thème a sa variante sombre (« nuit » a une variante claire, « aube ») : attribut `data-mode`
- * (« clair » | « sombre ») posé par le réglage de l'appareil, sinon `prefers-color-scheme`.
+ * UNE SEULE IDENTITÉ (décision du client et de la direction artistique, 11/10/2026) : la marque, en « clair »
+ * et en « sombre ». Les anciens thèmes par public (« jardin », « nuit étoilée », « manuscrit ») et la palette
+ * « verdure » sont supprimés ; il reste l'ergonomie enfant (ERGO_ENFANT : tailles seulement). Attribut
+ * `data-mode` (« clair » | « sombre ») posé par le réglage de l'appareil, sinon `prefers-color-scheme`.
+ * Lecteur du Coran : fonds Ivoire (défaut) et Sépia en mode clair (`data-fond`), fond sombre de la marque en mode
+ * sombre, aucun décor derrière le texte.
  * Contrôles automatiques (tokens.test.ts) : CSS synchronisé, contraste WCAG AA des paires d'usage pour les
- * HUIT palettes, cibles ≥ 48 px, mouvement réduit.
+ * palettes (clair, sombre, clair + Sépia), couleurs de fonction ≥ 4,5:1, cibles ≥ 48 px, mouvement réduit.
  * Fichier sans import (lisible par Node directement).
  */
-export type ThemeName = 'jardin' | 'nuit' | 'manuscrit' | 'clair';
-export const THEME_NAMES: ThemeName[] = ['clair', 'jardin', 'nuit', 'manuscrit'];
+export type ThemeName = 'clair';
+export const THEME_NAMES: ThemeName[] = ['clair'];
 
 export interface Theme {
-  /** palette du thème dans son mode naturel (clair, sauf « nuit ») */
+  /** palette du mode clair */
   couleurs: Record<string, string>;
-  /** palette de l'autre mode (sombre, ou clair pour « nuit ») : mêmes clés */
+  /** palette du mode sombre : mêmes clés */
   inverse: Record<string, string>;
-  /** mode naturel de la palette `couleurs` */
-  naturel: 'clair' | 'sombre';
+  /** mode de la palette `couleurs` */
+  naturel: 'clair';
   polices: { ui: string; titre: string; arabe: string; coran: string };
   tailles: { base: string; arabe: string; interligne: string; titre: string; cible: string };
   espaces: { xs: string; s: string; m: string; l: string; xl: string };
   rayons: { petit: string; moyen: string; grand: string; pilule: string };
   ombres: { carte: string; flottante: string };
-  /** motif de fond (image CSS) ; « none » : aucun */
-  motifs: { fond: string; carte: string };
   /** durée des transitions (mouvement réduit : neutralisé) */
   mouvement: { court: string; moyen: string };
 }
@@ -48,7 +45,7 @@ const LETTRES_SOMBRE = { c0: '#ff8a8e', c1: '#86aefc', c2: '#4fd39a', c3: '#e9b9
 const TAJWID_CLAIR = {
   'tj-ghunna': '#167a3a',
   'tj-idgham': '#0b7066',
-  'tj-ikhfa': '#4f7a0c',
+  'tj-ikhfa': '#46700a',
   'tj-iqlab': '#0b6f8a',
   'tj-madd2': '#94600a',
   'tj-madd246': '#b54708',
@@ -57,11 +54,11 @@ const TAJWID_CLAIR = {
   'tj-madd6': '#7a1238',
   'tj-qalqala': '#1f56c9',
   'tj-assim': '#6b3fc0',
-  'tj-muet': '#69707a',
-  'tjk-nez': '#24803a',
-  'tjk-long': '#b05600',
-  'tjk-rebond': '#2f6fdb',
-  'tjk-muet': '#6c737d',
+  'tj-muet': '#5b626c',
+  'tjk-nez': '#1f7332',
+  'tjk-long': '#9c4c00',
+  'tjk-rebond': '#2860c2',
+  'tjk-muet': '#5e656f',
 };
 const TAJWID_SOMBRE = {
   'tj-ghunna': '#5fd38a',
@@ -103,9 +100,10 @@ const MUSHAF_CLAIR = {
   'mp-ink2': '#46604f',
 };
 const MUSHAF_SOMBRE = {
-  'mp-paper': '#10201a',
-  'mp-mint': '#0b1712',
-  'mp-mint2': '#1b3a2b',
+  // décision 11/10/2026 : en mode sombre, le fond du lecteur est le fond sombre de la marque
+  'mp-paper': '#14261f',
+  'mp-mint': '#0d1a15',
+  'mp-mint2': '#1a2f27',
   'mp-green': '#82d9a7',
   'mp-band': '#1c5139',
   'mp-on-band': '#eef8f1',
@@ -124,9 +122,8 @@ const OR_SOMBRE = { 'or-soft': '#33290d', 'or-ink': '#f0d27e', 'or-line': '#c9a2
 
 // « ﷺ » et l'arabe cité dans une phrase française : glyphes pris dans Noto Naskh Arabic (pas de repli illisible)
 const SANS = "'Nunito', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif";
-/** titres « manuscrit » : serif du système (aucun téléchargement de police supplémentaire) */
-const SERIF =
-  "'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, 'Noto Naskh Arabic', serif";
+/** Police de la marque : le nom « Awzid » de l'en-tête (Lexend 600, auto-hébergée comme les autres polices). */
+export const POLICE_MARQUE = "'Lexend', 'Nunito', system-ui, sans-serif";
 const POLICES = {
   ui: SANS,
   titre: SANS,
@@ -136,9 +133,26 @@ const POLICES = {
 const ESPACES = { xs: '4px', s: '8px', m: '16px', l: '24px', xl: '40px' };
 const MOUVEMENT = { court: '120ms', moyen: '220ms' };
 
-/** motif géométrique discret (étoile à huit branches, traits seulement, sans figuration) */
-const etoile = (stroke: string, op: number) =>
-  `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke='${encodeURIComponent(stroke)}' stroke-opacity='${op}' stroke-width='1'%3E%3Cpath d='M48 20l8 20 20 8-20 8-8 20-8-20-20-8 20-8z'/%3E%3Cpath d='M28 28h40v40H28z' transform='rotate(45 48 48)'/%3E%3Ccircle cx='48' cy='48' r='6'/%3E%3C/g%3E%3C/svg%3E")`;
+/**
+ * Couleurs de FONCTION (décision 11/10/2026) : succès (toujours avec l'icône ✓ et le mot), attention
+ * (« presque, réessaie » : remplace tout rouge de correction dans le mode serein), information. Le rouge
+ * `bad-ink` reste réservé aux erreurs du système. Contrastes ≥ 4,5:1 contrôlés (tokens.test.ts).
+ */
+export const FONCTION = {
+  clair: { succes: '#1B7A50', attention: '#8A5A0B', info: '#2F5D7C' },
+  sombre: { succes: '#5CC79C', attention: '#E0B060', info: '#8DB8D6' },
+} as const;
+
+/**
+ * Fond de lecture « Sépia » du lecteur du Coran (mode clair seulement) : posé par `data-fond='sepia'` sur <html>.
+ * L'« Ivoire » (défaut) est la page `mp-paper` de MUSHAF_CLAIR ; en mode sombre, le fond sombre de la marque.
+ */
+export const FOND_SEPIA = {
+  'mp-paper': '#f8f0de',
+  'mp-mint': '#efe4c9',
+  'mp-mint2': '#e3d3ae',
+  'mp-mark': '#ecdcae',
+};
 
 /** Clé : nom du jeton (variable CSS --nom). Les noms historiques (--ink, --teal…) restent valables. */
 export const THEMES: Record<ThemeName, Theme> = {
@@ -166,15 +180,17 @@ export const THEMES: Record<ThemeName, Theme> = {
       'primary-soft': '#ddefe6',
       accent: '#c9a227',
       'ok-bg': '#e8f6ef',
-      'ok-ink': '#17703f',
+      'ok-ink': FONCTION.clair.succes,
       'bad-ink': '#a3261e',
       'bad-bg': '#fdecea',
       'warn-bg': '#fff6dc',
-      'warn-ink': '#7a5c0c',
+      'warn-ink': FONCTION.clair.attention,
       'soon-ink': '#7a5c0c',
+      succes: FONCTION.clair.succes,
+      attention: FONCTION.clair.attention,
       sand: '#f8f3e6',
       gold: '#c9a227',
-      info: '#1f4e79',
+      info: FONCTION.clair.info,
       'info-bg': '#e7f0fa',
       focus: '#0b6e4f',
       illus: '#ffffff',
@@ -202,15 +218,17 @@ export const THEMES: Record<ThemeName, Theme> = {
       'primary-soft': '#10221b',
       accent: '#d9b54a',
       'ok-bg': '#163126',
-      'ok-ink': '#8fe3b8',
+      'ok-ink': FONCTION.sombre.succes,
       'bad-ink': '#f2b8b5',
       'bad-bg': '#3b1a17',
       'warn-bg': '#3a2e10',
-      'warn-ink': '#f5d27a',
+      'warn-ink': FONCTION.sombre.attention,
       'soon-ink': '#f5d27a',
+      succes: FONCTION.sombre.succes,
+      attention: FONCTION.sombre.attention,
       sand: '#1a2f27',
       gold: '#d9b54a',
-      info: '#a9cdf2',
+      info: FONCTION.sombre.info,
       'info-bg': '#16283a',
       focus: '#5cc79c',
       illus: '#f4f1ea',
@@ -224,368 +242,26 @@ export const THEMES: Record<ThemeName, Theme> = {
       carte: '0 1px 2px rgba(16, 24, 40, 0.06)',
       flottante: '0 8px 24px rgba(16, 24, 40, 0.12)',
     },
-    motifs: { fond: 'none', carte: 'none' },
-    mouvement: MOUVEMENT,
-  },
-
-  jardin: {
-    naturel: 'clair',
-    couleurs: {
-      ink: '#1f2a24',
-      ink2: '#4c5a52',
-      paper: '#fff8ec',
-      card: '#ffffff',
-      surface: '#fff1d6',
-      line: '#f0dfbf',
-      teal: '#1d6f8a',
-      navy: '#145a46',
-      header: '#22764f',
-      'on-header': '#ffffff',
-      good: '#1f9d6b',
-      soft: '#ffe3b8',
-      ...LETTRES_CLAIR,
-      ...TAJWID_CLAIR,
-      ...MUSHAF_CLAIR,
-      ...OR_CLAIR,
-      primary: '#1f7a52',
-      'on-primary': '#ffffff',
-      'primary-soft': '#ddf3e6',
-      accent: '#f4a52b',
-      'ok-bg': '#e3f6ea',
-      'ok-ink': '#17703f',
-      'bad-ink': '#b3261e',
-      'bad-bg': '#ffeceb',
-      'warn-bg': '#fff3d6',
-      'warn-ink': '#7d5100',
-      'soon-ink': '#8a5c00',
-      sand: '#fff1d6',
-      gold: '#f6b73c',
-      info: '#1f4e79',
-      'info-bg': '#e3f1fb',
-      focus: '#1d6f8a',
-      illus: '#ffffff',
-      mark: '#ffe38a',
-    },
-    inverse: {
-      ink: '#eef6f0',
-      ink2: '#b4c8bc',
-      paper: '#111a16',
-      card: '#19251f',
-      surface: '#21302a',
-      line: '#2f433a',
-      teal: '#7fd0e6',
-      navy: '#bfe8d3',
-      header: '#19251f',
-      'on-header': '#eef6f0',
-      good: '#4fd39a',
-      soft: '#2b3a32',
-      ...LETTRES_SOMBRE,
-      ...TAJWID_SOMBRE,
-      ...MUSHAF_SOMBRE,
-      ...OR_SOMBRE,
-      primary: '#7fd6a6',
-      'on-primary': '#0b1f15',
-      'primary-soft': '#1d3a2c',
-      accent: '#f6b73c',
-      'ok-bg': '#163126',
-      'ok-ink': '#8fe3b8',
-      'bad-ink': '#ffb4ab',
-      'bad-bg': '#3b1a17',
-      'warn-bg': '#3a2e10',
-      'warn-ink': '#f5d27a',
-      'soon-ink': '#f5d27a',
-      sand: '#21302a',
-      gold: '#f6b73c',
-      info: '#a9cdf2',
-      'info-bg': '#16283a',
-      focus: '#7fd6a6',
-      illus: '#f4f1ea',
-      mark: '#5c4a10',
-    },
-    polices: { ...POLICES, titre: SANS },
-    tailles: { base: '18px', arabe: '30px', interligne: '1.6', titre: '2rem', cible: '56px' },
-    espaces: { xs: '6px', s: '10px', m: '18px', l: '28px', xl: '44px' },
-    rayons: { petit: '12px', moyen: '18px', grand: '26px', pilule: '999px' },
-    ombres: {
-      carte: '0 3px 0 rgba(31, 42, 36, 0.06)',
-      flottante: '0 10px 28px rgba(31, 42, 36, 0.14)',
-    },
-    motifs: {
-      fond: 'radial-gradient(circle at 12% 8%, rgba(246, 183, 60, 0.16) 0 90px, transparent 91px), radial-gradient(circle at 92% 30%, rgba(47, 143, 98, 0.10) 0 120px, transparent 121px)',
-      carte: 'none',
-    },
-    mouvement: MOUVEMENT,
-  },
-
-  nuit: {
-    naturel: 'sombre',
-    couleurs: {
-      ink: '#e9edf7',
-      ink2: '#a9b3c9',
-      paper: '#0d1324',
-      card: '#151d33',
-      surface: '#1b2540',
-      line: '#29355a',
-      teal: '#8fd0ff',
-      navy: '#c9d6ff',
-      header: '#0d1324',
-      'on-header': '#e9edf7',
-      good: '#4fd39a',
-      soft: '#232f52',
-      ...LETTRES_SOMBRE,
-      ...TAJWID_SOMBRE,
-      ...MUSHAF_SOMBRE,
-      ...OR_SOMBRE,
-      primary: '#8fd0ff',
-      'on-primary': '#081325',
-      'primary-soft': '#1c2d4f',
-      accent: '#f5c76b',
-      'ok-bg': '#143026',
-      'ok-ink': '#8fe3b8',
-      'bad-ink': '#ffb4ab',
-      'bad-bg': '#3a1a22',
-      'warn-bg': '#3a2e14',
-      'warn-ink': '#f5d27a',
-      'soon-ink': '#f5d27a',
-      sand: '#1b2540',
-      gold: '#f5c76b',
-      info: '#a9cdf2',
-      'info-bg': '#17284a',
-      focus: '#f5c76b',
-      illus: '#f1efe9',
-      mark: '#5c4a10',
-    },
-    // « aube » : variante claire de la nuit étoilée (réglage « clair » de l'appareil)
-    inverse: {
-      ink: '#141b2d',
-      ink2: '#4a5570',
-      paper: '#f3f5fb',
-      card: '#ffffff',
-      surface: '#e9edf8',
-      line: '#d9dfee',
-      teal: '#2f45a8',
-      navy: '#1a2550',
-      header: '#141b2d',
-      'on-header': '#e9edf7',
-      good: '#1f9d6b',
-      soft: '#e3e8f8',
-      ...LETTRES_CLAIR,
-      ...TAJWID_CLAIR,
-      ...MUSHAF_CLAIR,
-      ...OR_CLAIR,
-      primary: '#3346a8',
-      'on-primary': '#ffffff',
-      'primary-soft': '#e6eafb',
-      accent: '#b07a10',
-      'ok-bg': '#e8f6ef',
-      'ok-ink': '#17703f',
-      'bad-ink': '#b3261e',
-      'bad-bg': '#fdecea',
-      'warn-bg': '#fff6dc',
-      'warn-ink': '#7d5100',
-      'soon-ink': '#8a5c00',
-      sand: '#eef1f8',
-      gold: '#f2b233',
-      info: '#1f4e79',
-      'info-bg': '#e7f0fa',
-      focus: '#3346a8',
-      illus: '#ffffff',
-      mark: '#ffe38a',
-    },
-    polices: POLICES,
-    tailles: { base: '17px', arabe: '26px', interligne: '1.55', titre: '1.8rem', cible: '48px' },
-    espaces: ESPACES,
-    rayons: { petit: '8px', moyen: '12px', grand: '16px', pilule: '999px' },
-    ombres: {
-      carte: '0 1px 0 rgba(255, 255, 255, 0.04) inset',
-      flottante: '0 12px 32px rgba(0, 0, 0, 0.45)',
-    },
-    motifs: {
-      fond: 'radial-gradient(1px 1px at 20% 12%, rgba(255,255,255,0.55) 50%, transparent 51%), radial-gradient(1px 1px at 72% 22%, rgba(255,255,255,0.4) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 44% 6%, rgba(245,199,107,0.6) 50%, transparent 51%), radial-gradient(1px 1px at 88% 9%, rgba(255,255,255,0.35) 50%, transparent 51%)',
-      carte: 'none',
-    },
-    mouvement: MOUVEMENT,
-  },
-
-  manuscrit: {
-    naturel: 'clair',
-    couleurs: {
-      ink: '#2a2118',
-      ink2: '#5e4f3d',
-      paper: '#f7f1e3',
-      card: '#fffcf4',
-      surface: '#f1e8d3',
-      line: '#e3d5b8',
-      teal: '#1d5f57',
-      navy: '#2c2a3f',
-      header: '#2b2620',
-      'on-header': '#f7f1e3',
-      good: '#1f9d6b',
-      soft: '#f3dfb6',
-      ...LETTRES_CLAIR,
-      ...TAJWID_CLAIR,
-      ...MUSHAF_CLAIR,
-      ...OR_CLAIR,
-      primary: '#1d5f57',
-      'on-primary': '#ffffff',
-      'primary-soft': '#e3efe9',
-      accent: '#a8792a',
-      'ok-bg': '#e8f3e8',
-      'ok-ink': '#2d6a32',
-      'bad-ink': '#a3241c',
-      'bad-bg': '#fbe9e4',
-      'warn-bg': '#fbf0d6',
-      'warn-ink': '#77500a',
-      'soon-ink': '#7f560a',
-      sand: '#f8f3e6',
-      gold: '#d9a94e',
-      info: '#2b4a6b',
-      'info-bg': '#e9eef3',
-      focus: '#1d5f57',
-      illus: '#fffcf4',
-      mark: '#ffe38a',
-    },
-    inverse: {
-      ink: '#f1e8d8',
-      ink2: '#c7b89f',
-      paper: '#15120e',
-      card: '#1f1a14',
-      surface: '#28221a',
-      line: '#3b3226',
-      teal: '#8fd1bd',
-      navy: '#e3d6bd',
-      header: '#1f1a14',
-      'on-header': '#f1e8d8',
-      good: '#4fd39a',
-      soft: '#33291c',
-      ...LETTRES_SOMBRE,
-      ...TAJWID_SOMBRE,
-      ...MUSHAF_SOMBRE,
-      ...OR_SOMBRE,
-      primary: '#8fd1bd',
-      'on-primary': '#0f241e',
-      'primary-soft': '#1d332c',
-      accent: '#d9a94e',
-      'ok-bg': '#1a2e1c',
-      'ok-ink': '#a6e3a9',
-      'bad-ink': '#ffb4ab',
-      'bad-bg': '#3b1a17',
-      'warn-bg': '#3a2e10',
-      'warn-ink': '#f5d27a',
-      'soon-ink': '#f5d27a',
-      sand: '#28221a',
-      gold: '#d9a94e',
-      info: '#b7cfe6',
-      'info-bg': '#1d2834',
-      focus: '#d9a94e',
-      illus: '#f4ecdc',
-      mark: '#5c4a10',
-    },
-    polices: { ...POLICES, titre: SERIF },
-    tailles: { base: '17px', arabe: '28px', interligne: '1.6', titre: '2rem', cible: '48px' },
-    espaces: ESPACES,
-    rayons: { petit: '6px', moyen: '10px', grand: '14px', pilule: '999px' },
-    ombres: {
-      carte: '0 1px 0 rgba(42, 33, 24, 0.05), 0 6px 18px -12px rgba(42, 33, 24, 0.25)',
-      flottante: '0 12px 30px rgba(42, 33, 24, 0.18)',
-    },
-    motifs: { fond: etoile('#a8792a', 0.08), carte: 'none' },
     mouvement: MOUVEMENT,
   },
 };
 
 /**
- * PALETTES — couleurs seules, posées PAR-DESSUS le thème du public (attribut `data-palette` de <html>) : le
- * thème garde ses polices, tailles, cibles et rayons (le Jardin des enfants reste grand), la palette remplace
- * les couleurs. Clair et sombre ; « auto » suit la préférence du système, comme les thèmes.
- *
- * « verdure » (Coran épuré, 06/10/2026, souhait du client) : VERT, BLANC, OR — fond blanc et vert très clair,
- * en-tête blanc, actions vertes, commandes actives dorées ; sombre : vert nuit et or. Posée dans l'espace Coran
- * pour les élèves ; prévue pour devenir le thème clair PAR DÉFAUT de toute l'application élève par un seul
- * réglage (`VERDURE_PARTOUT`, `lib/ui/audience.ts`). Contrastes contrôlés comme les thèmes (tokens.test.ts).
+ * Ergonomie ENFANT (seule trace restante de l'ancien thème « jardin ») : textes et cibles plus grands, espaces
+ * plus larges. Posée par `[data-public='enfant']` ; mêmes couleurs, même identité que pour tout le monde.
  */
-export type PaletteName = 'verdure';
-export const PALETTE_NAMES: PaletteName[] = ['verdure'];
-export const PALETTES: Record<
-  PaletteName,
-  { clair: Record<string, string>; sombre: Record<string, string> }
-> = {
-  verdure: {
-    clair: {
-      ink: '#13231a',
-      ink2: '#44594c',
-      paper: '#f6fbf7',
-      card: '#ffffff',
-      surface: '#ecf6ef',
-      line: '#d3e8da',
-      teal: '#11683f',
-      navy: '#0f4a2e',
-      header: '#ffffff',
-      'on-header': '#14563a',
-      good: '#1f9d6b',
-      soft: '#e1f2e7',
-      ...LETTRES_CLAIR,
-      ...TAJWID_CLAIR,
-      ...MUSHAF_CLAIR,
-      'mp-paper': '#ffffff',
-      ...OR_CLAIR,
-      primary: '#16653f',
-      'on-primary': '#ffffff',
-      'primary-soft': '#e1f2e7',
-      accent: '#b8892c',
-      'ok-bg': '#e6f5ec',
-      'ok-ink': '#17703f',
-      'bad-ink': '#b3261e',
-      'bad-bg': '#fdecea',
-      'warn-bg': '#fdf5dc',
-      'warn-ink': '#6e5000',
-      'soon-ink': '#7d5a00',
-      sand: '#f1f8f3',
-      gold: '#e0b23f',
-      info: '#1f4e79',
-      'info-bg': '#e7f0fa',
-      focus: '#16653f',
-      illus: '#ffffff',
-      mark: '#fbecb8',
-    },
-    sombre: {
-      ink: '#e8f2ec',
-      ink2: '#a9c5b5',
-      paper: '#0a1611',
-      card: '#10201a',
-      surface: '#152a20',
-      line: '#24402f',
-      teal: '#82d9a7',
-      navy: '#bfe8d3',
-      header: '#10201a',
-      'on-header': '#e8f2ec',
-      good: '#4fd39a',
-      soft: '#1b3a2b',
-      ...LETTRES_SOMBRE,
-      ...TAJWID_SOMBRE,
-      ...MUSHAF_SOMBRE,
-      ...OR_SOMBRE,
-      primary: '#82d9a7',
-      'on-primary': '#0b1f15',
-      'primary-soft': '#1b3a2b',
-      accent: '#d8b45c',
-      'ok-bg': '#163126',
-      'ok-ink': '#8fe3b8',
-      'bad-ink': '#ffb4ab',
-      'bad-bg': '#3b1a17',
-      'warn-bg': '#33290d',
-      'warn-ink': '#f5d27a',
-      'soon-ink': '#f5d27a',
-      sand: '#152a20',
-      gold: '#d8b45c',
-      info: '#a9cdf2',
-      'info-bg': '#16283a',
-      focus: '#d8b45c',
-      illus: '#f4f1ea',
-      mark: '#4a3d12',
-    },
-  },
-};
+export const ERGO_ENFANT: Array<[string, string]> = [
+  ['--font-size', '18px'],
+  ['--ar-size', '30px'],
+  ['--line-height', '1.6'],
+  ['--title-size', '2rem'],
+  ['--target', '56px'],
+  ['--space-xs', '6px'],
+  ['--space-s', '10px'],
+  ['--space-m', '18px'],
+  ['--space-l', '28px'],
+  ['--space-xl', '44px'],
+];
 
 /** Paires d'usage contrôlées (texte / fond) ; « grand » : texte ≥ 24 px ou ≥ 18,66 px gras (AA : 3:1). */
 export const CONTRAST_PAIRS: Array<{ fg: string; bg: string; grand?: boolean; usage: string }> = [
@@ -607,6 +283,15 @@ export const CONTRAST_PAIRS: Array<{ fg: string; bg: string; grand?: boolean; us
   { fg: 'warn-ink', bg: 'warn-bg', usage: 'avertissement' },
   { fg: 'soon-ink', bg: 'warn-bg', usage: 'pastille « bientôt »' },
   { fg: 'info', bg: 'info-bg', usage: 'information' },
+  // couleurs de fonction (11/10/2026) : succès, attention, info — texte ≥ 4,5:1 sur la page, la carte et leur fond
+  { fg: 'succes', bg: 'paper', usage: 'succès (avec ✓ et le mot) sur la page' },
+  { fg: 'succes', bg: 'card', usage: 'succès (avec ✓ et le mot) dans une carte' },
+  { fg: 'succes', bg: 'ok-bg', usage: 'succès sur son fond' },
+  { fg: 'attention', bg: 'paper', usage: 'attention (« presque, réessaie ») sur la page' },
+  { fg: 'attention', bg: 'card', usage: 'attention dans une carte' },
+  { fg: 'attention', bg: 'warn-bg', usage: 'attention sur son fond' },
+  { fg: 'info', bg: 'paper', usage: 'information sur la page' },
+  { fg: 'info', bg: 'card', usage: 'information dans une carte' },
   { fg: 'ink', bg: 'sand', usage: 'encadrés sable' },
   { fg: 'ink', bg: 'mark', usage: 'mot surligné (lecteur coranique)' },
   { fg: 'ink', bg: 'ok-bg', usage: 'encadrés verts' },
@@ -651,20 +336,12 @@ export const CONTRAST_PAIRS: Array<{ fg: string; bg: string; grand?: boolean; us
 /** Écarts connus (aucun écart NOUVEAU n'est accepté). */
 export const KNOWN_CONTRAST_GAPS: string[] = [];
 
-/** Les palettes contrôlées : chaque thème dans ses deux modes, puis chaque palette (verdure) dans les siens. */
+/** Les palettes contrôlées : la marque en clair, en sombre, et en clair avec le fond Sépia du lecteur. */
 export function palettes(): Array<{ nom: string; couleurs: Record<string, string> }> {
   return [
-    ...THEME_NAMES.flatMap((n) => [
-      { nom: `${n}/${THEMES[n].naturel}`, couleurs: THEMES[n].couleurs },
-      {
-        nom: `${n}/${THEMES[n].naturel === 'clair' ? 'sombre' : 'clair'}`,
-        couleurs: THEMES[n].inverse,
-      },
-    ]),
-    ...PALETTE_NAMES.flatMap((n) => [
-      { nom: `palette ${n}/clair`, couleurs: PALETTES[n].clair },
-      { nom: `palette ${n}/sombre`, couleurs: PALETTES[n].sombre },
-    ]),
+    { nom: 'clair', couleurs: THEMES.clair.couleurs },
+    { nom: 'sombre', couleurs: THEMES.clair.inverse },
+    { nom: 'clair + Sépia', couleurs: { ...THEMES.clair.couleurs, ...FOND_SEPIA } },
   ];
 }
 
@@ -749,6 +426,7 @@ function otherVars(t: Theme): Array<[string, string]> {
   return [
     ['--font-ui', t.polices.ui],
     ['--font-title', t.polices.titre],
+    ['--font-brand', POLICE_MARQUE],
     ['--font-ar', t.polices.arabe],
     ['--font-quran', t.polices.coran],
     ['--font-size', t.tailles.base],
@@ -767,8 +445,6 @@ function otherVars(t: Theme): Array<[string, string]> {
     ['--radius-pill', t.rayons.pilule],
     ['--shadow-card', t.ombres.carte],
     ['--shadow-float', t.ombres.flottante],
-    ['--pattern-bg', t.motifs.fond],
-    ['--pattern-card', t.motifs.carte],
     ['--motion-fast', t.mouvement.court],
     ['--motion', t.mouvement.moyen],
   ];
@@ -779,48 +455,36 @@ const block = (sel: string, vars: Array<[string, string]>, scheme?: string) =>
 
 /**
  * CSS généré. « clair » par défaut (avant que le profil soit connu). Mode : `data-mode='sombre'|'clair'`
- * imposé par le réglage de l'appareil ; sans réglage, `prefers-color-scheme` décide.
+ * imposé par le réglage de l'appareil ; sans réglage, `prefers-color-scheme` décide. Ensuite : l'ergonomie
+ * enfant (`data-public='enfant'`) et le fond Sépia du lecteur (`data-fond='sepia'`, mode clair seulement : les
+ * blocs du mode sombre, plus spécifiques, l'emportent).
  */
 export function renderCss(themes: Record<ThemeName, Theme> = THEMES): string {
   const out: string[] = [
     '/* FICHIER GÉNÉRÉ par `pnpm --filter @awform/web theme` depuis src/lib/theme/tokens.ts — ne pas modifier à la main. */',
   ];
-  for (const n of THEME_NAMES) {
-    const t = themes[n];
-    const nat = t.naturel === 'clair' ? 'light' : 'dark';
-    const inv = t.naturel === 'clair' ? 'dark' : 'light';
-    const invMode = t.naturel === 'clair' ? 'sombre' : 'clair';
-    const sel = n === 'clair' ? ":root,\n[data-theme='clair']" : `[data-theme='${n}']`;
-    out.push(block(sel, [...colorVars(t.couleurs), ...otherVars(t)], nat));
-    out.push(block(`[data-theme='${n}'][data-mode='${invMode}']`, colorVars(t.inverse), inv));
-  }
-  // palettes (couleurs seules) APRÈS les thèmes : à spécificité égale, elles l'emportent
-  for (const n of PALETTE_NAMES) {
-    const sel = `[data-palette='${n}']`;
-    out.push(block(`${sel},\n${sel}[data-mode='clair']`, colorVars(PALETTES[n].clair), 'light'));
-    out.push(block(`${sel}[data-mode='sombre']`, colorVars(PALETTES[n].sombre), 'dark'));
-  }
-  // sans réglage de l'appareil, les thèmes clairs suivent la préférence sombre du système ; la « nuit »
-  // reste sombre (c'est son identité) sauf réglage « clair » explicite
-  const auto = THEME_NAMES.filter((n) => themes[n].naturel === 'clair')
-    .map((n) => {
-      const sel =
-        n === 'clair'
-          ? ":root:not([data-mode]):not([data-theme]),\n:root:not([data-mode])[data-theme='clair']"
-          : `:root:not([data-mode])[data-theme='${n}']`;
-      return block(sel, colorVars(themes[n].inverse), 'dark')
-        .split('\n')
-        .map((l) => (l ? `  ${l}` : l))
-        .join('\n');
-    })
+  const t = themes.clair;
+  out.push(
+    block(":root,\n[data-theme='clair']", [...colorVars(t.couleurs), ...otherVars(t)], 'light'),
+  );
+  out.push(block("[data-theme='clair'][data-mode='sombre']", colorVars(t.inverse), 'dark'));
+  out.push(block("[data-public='enfant']", ERGO_ENFANT));
+  out.push(
+    block(
+      "[data-fond='sepia']",
+      Object.entries(FOND_SEPIA).map(([k, v]) => [`--${k}`, v] as [string, string]),
+    ),
+  );
+  // sans réglage de l'appareil, la préférence sombre du téléphone décide
+  const auto = block(
+    ":root:not([data-mode]):not([data-theme]),\n:root:not([data-mode])[data-theme='clair']",
+    colorVars(t.inverse),
+    'dark',
+  )
+    .split('\n')
+    .map((l) => (l ? `  ${l}` : l))
     .join('\n');
-  const autoPal = PALETTE_NAMES.map((n) =>
-    block(`:root:not([data-mode])[data-palette='${n}']`, colorVars(PALETTES[n].sombre), 'dark')
-      .split('\n')
-      .map((l) => (l ? `  ${l}` : l))
-      .join('\n'),
-  ).join('\n');
-  out.push(`@media (prefers-color-scheme: dark) {\n${auto}\n${autoPal}}\n`);
+  out.push(`@media (prefers-color-scheme: dark) {\n${auto}}\n`);
   out.push(
     '@media (prefers-reduced-motion: reduce) {\n  *,\n  *::before,\n  *::after {\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n    transition-duration: 0.01ms !important;\n    scroll-behavior: auto !important;\n  }\n}\n',
   );

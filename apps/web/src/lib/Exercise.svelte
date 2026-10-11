@@ -146,7 +146,13 @@
               >
             {/each}
           </div>
-          {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">
+              <span aria-hidden="true">↻</span>
+              {t('exo.essaie_encore')}
+            </p>{:else if found[i]}<p class="juste">
+              <span aria-hidden="true">✓</span>
+              {t('exo.juste')}
+            </p>{/if}
         </div>
       {/each}
     </div>
@@ -212,7 +218,13 @@
               >
             {/each}
           </div>
-          {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">
+              <span aria-hidden="true">↻</span>
+              {t('exo.essaie_encore')}
+            </p>{:else if found[i]}<p class="juste">
+              <span aria-hidden="true">✓</span>
+              {t('exo.juste')}
+            </p>{/if}
         </li>
       {/each}
     </ol>
@@ -234,7 +246,13 @@
           {#if found[i] && !it.vrai && it.correction_ar}<p class="corr">
               <Ar text={it.correction_ar} {lettres} />
             </p>{/if}
-          {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">
+              <span aria-hidden="true">↻</span>
+              {t('exo.essaie_encore')}
+            </p>{:else if found[i]}<p class="juste">
+              <span aria-hidden="true">✓</span>
+              {t('exo.juste')}
+            </p>{/if}
         </div>
       {/each}
     </div>
@@ -257,7 +275,13 @@
             {/each}
           </div>
           {#if it.fr}<p class="fr"><Bidi text={it.fr} /></p>{/if}
-          {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">
+              <span aria-hidden="true">↻</span>
+              {t('exo.essaie_encore')}
+            </p>{:else if found[i]}<p class="juste">
+              <span aria-hidden="true">✓</span>
+              {t('exo.juste')}
+            </p>{/if}
         </li>
       {/each}
     </ol>
@@ -294,7 +318,13 @@
               >{t('exo.recommencer')}</button
             >{/if}
           {#if it.fr}<p class="fr"><Bidi text={it.fr} /></p>{/if}
-          {#if retry[i] && !found[i]}<p class="retry">{t('exo.essaie_encore')}</p>{/if}
+          {#if retry[i] && !found[i]}<p class="retry">
+              <span aria-hidden="true">↻</span>
+              {t('exo.essaie_encore')}
+            </p>{:else if found[i]}<p class="juste">
+              <span aria-hidden="true">✓</span>
+              {t('exo.juste')}
+            </p>{/if}
         </li>
       {/each}
     </ol>
@@ -353,7 +383,7 @@
   }
   .ok {
     background: var(--ok-bg);
-    border-color: var(--good) !important;
+    border-color: var(--succes) !important;
     border-radius: 14px;
   }
   .opts,
@@ -380,11 +410,11 @@
   }
   .found {
     background: var(--ok-bg);
-    border-color: var(--good);
+    border-color: var(--succes);
   }
   .miss:not(.found) {
     animation: shake 0.3s;
-    border-color: var(--c3);
+    border-color: var(--attention);
   }
   @keyframes shake {
     25% {
@@ -416,7 +446,7 @@
   }
   .done {
     background: var(--ok-bg);
-    border-color: var(--good);
+    border-color: var(--succes);
   }
   .tag {
     font-size: 0.8rem;
@@ -450,8 +480,11 @@
     border-bottom: 2px solid var(--line);
     text-align: right;
   }
-  .good {
-    color: var(--ok-ink);
+  .good,
+  .juste {
+    color: var(--succes);
+    margin: 4px 0;
+    font-weight: 700;
   }
   .reset {
     font-size: 0.9rem;
@@ -461,7 +494,7 @@
     margin: 4px 0;
   }
   .retry {
-    color: var(--soon-ink);
+    color: var(--attention);
     margin: 4px 0;
     font-weight: 700;
   }

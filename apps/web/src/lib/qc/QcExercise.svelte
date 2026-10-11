@@ -479,8 +479,8 @@
     color: var(--ok-ink);
   }
   .ko {
-    border-color: var(--bad-ink);
-    color: var(--bad-ink);
+    border-color: var(--attention);
+    color: var(--attention);
   }
   .verdict {
     font-weight: 700;
