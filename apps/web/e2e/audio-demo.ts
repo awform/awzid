@@ -23,17 +23,6 @@ const demoPsql = (sql: string) =>
       stdio: ['pipe', 'pipe', 'pipe'],
     },
   );
-const testPsql = (sql: string, input?: string) =>
-  execFileSync(
-    'psql',
-    [process.env.TEST_DATABASE_URL!, '-Atq', '-v', 'ON_ERROR_STOP=1', '-c', sql],
-    {
-      input,
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-    },
-  );
-
 export interface DemoReciter {
   id: string;
   riwaya: string;
