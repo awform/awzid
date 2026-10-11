@@ -44,6 +44,8 @@ if [ -n "${AWFORM_BACKUP_HORS_SITE:-}" ]; then
   trap - ERR
   HS="$AWFORM_BACKUP_HORS_SITE"
   case "$HS" in
+    # Cloud Storage (serveur de bêta Google Cloud) : compte de service de la VM, droit « créer » seulement
+    gs://*) copy() { gcloud storage cp --quiet "$@" "$HS/"; } ;;
     *:*) copy() { rsync -a "$@" "$HS/"; } ;;          # autre machine (ssh)
     *) copy() { cp -p "$@" "$HS/"; } ;;              # dossier monté (disque externe, stockage réseau)
   esac

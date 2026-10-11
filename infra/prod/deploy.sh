@@ -164,7 +164,8 @@ mkdir -p "${AWFORM_QF_MUSHAF_SOURCE:-$HOME/awform-data/qf-mushaf-prod}" "${AWFOR
 # ---------------------------------------------------------------- 3. services
 "${DC[@]}" up -d --remove-orphans api worker web caddy
 if [ "$ECOUTE" = 1 ]; then
-  "${DC[@]}" --profile ecoute build ecoute
+  # (AWFORM_DEPLOY_BUILD=0 : image awzid/ecoute-ia:<version> déjà présente, ex. tirée d'Artifact Registry)
+  [ "${AWFORM_DEPLOY_BUILD:-1}" = 0 ] || "${DC[@]}" --profile ecoute build ecoute
   "${DC[@]}" --profile ecoute up -d ecoute
   for i in $(seq 1 40); do
     [ "$(docker inspect -f '{{.State.Health.Status}}' awform-ecoute-1 2>/dev/null)" = healthy ] && { echo "écoute : healthy"; break; }
@@ -244,9 +245,14 @@ sudo systemctl enable --now docker >/dev/null
 sudo systemctl enable awform.service awform-backup.timer >/dev/null
 sudo systemctl start awform-backup.timer
 
-# pare-feu : 80 et 443 depuis le réseau local seulement (SSH déjà autorisé)
-sudo ufw allow from "$LAN" to any port 80 proto tcp >/dev/null
-sudo ufw allow from "$LAN" to any port 443 proto tcp >/dev/null
+# pare-feu : 80 et 443 depuis le réseau local seulement (SSH déjà autorisé) ; serveur en nuage sans ufw
+# (Google Cloud) : pare-feu du fournisseur (infra/gcp/creer-ressources.sh), rien à faire ici
+if command -v ufw >/dev/null; then
+  sudo ufw allow from "$LAN" to any port 80 proto tcp >/dev/null
+  sudo ufw allow from "$LAN" to any port 443 proto tcp >/dev/null
+else
+  echo "ufw absent : pare-feu du fournisseur (aucune règle locale ajoutée)"
+fi
 fi
 
 # ---------------------------------------------------------------- 5. démonstration
