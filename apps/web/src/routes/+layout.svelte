@@ -87,10 +87,10 @@
   let prete = $state(false);
   let migre = false;
   $effect(() => {
-    // attendre un profil actif : le public (donc l'ancien thème) en dépend, pas du compte encore en chargement
-    if (!prete || migre || !profile) return;
+    // attendre le compte ou un profil actif : le public (donc l'ancien thème) en dépend (adulte autonome : pas de profil actif)
+    if (!prete || migre || (!profile && !me)) return;
     migre = true;
-    if (migrerThemesSupprimes(stockageLocal(), ancienThemeDuPublic(profile.kind))) {
+    if (migrerThemesSupprimes(stockageLocal(), ancienThemeDuPublic(audience))) {
       mode = readMode();
       applyMode(mode);
       appliquerFond(lireFond());
