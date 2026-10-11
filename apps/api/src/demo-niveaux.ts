@@ -12,18 +12,21 @@
  *    l'islam » restent ouverts comme pour tout élève ;
  *  - début de niveau : niveau d'arabe et de religion posés (source « inscription ») ; les niveaux précédents sont
  *    « en révision » par la règle du parcours (accessFor), la leçon 1 est la prochaine leçon (aucune progression) ;
+ *  - canal bêta : tous les comptes de démonstration (adresses *@demo.awform.test) sont inscrits au canal bêta
+ *    (`inscrireDemoBeta`, table beta_member), pour voir les fonctions en bêta (« Je parle ») ; jamais un autre compte ;
  *  - une classe par filière (Adultes, Ados, Enfants) chez l'enseignant de démonstration, pour voir le suivi.
  *
  * N'existe QUE dans la démonstration : tout passe par `assertDemo` (AWFORM_DEMO=1, posé par `deploy.sh --demo`).
  * Idempotent : un compte existant n'est JAMAIS modifié (la progression du client est gardée) ; la remise au début
  * d'un niveau est une commande à part (cli/demo-reset-niveau.ts, infra/prod/demo-reset-niveau.sh).
  */
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, isNull, like } from 'drizzle-orm';
 import {
   createClass,
   currentLevels,
   schema as t,
   setProfileEvalMode,
+  setBeta,
   setProfileLevel,
   type Db,
 } from '@awform/db';
@@ -329,4 +332,36 @@ export async function seedNiveaux(d: SeedDeps): Promise<{ crees: string[]; absen
     }
   }
   return { crees, absents };
+}
+
+/**
+ * Inscrit au canal bêta (table `beta_member`, par le compte) TOUS les comptes de démonstration existants :
+ * adresses `*@demo.awform.test` seulement (comptes d'origine et comptes par niveau), jamais un autre compte.
+ * Idempotent : un compte déjà inscrit n'est pas touché (aucun doublon). `added_by` = le compte admin de
+ * démonstration s'il existe. Refusé hors instance de démonstration (assertDemo, avant tout accès).
+ */
+export async function inscrireDemoBeta(
+  db: Db,
+  env: NodeJS.ProcessEnv,
+  adminEmail: string,
+): Promise<{ inscrits: number; total: number }> {
+  assertDemo(env);
+  const suffix = `@${DOMAIN}`;
+  const comptes = (
+    await db
+      .select({ id: t.account.id, email: t.account.email })
+      .from(t.account)
+      .where(and(isNull(t.account.deletedAt), like(t.account.email, `%${suffix}`)))
+  ).filter((a) => a.email?.toLowerCase().endsWith(suffix));
+  const admin = comptes.find((a) => a.email === adminEmail);
+  const deja = new Set(
+    (await db.select({ a: t.betaMember.accountId }).from(t.betaMember)).map((m) => m.a),
+  );
+  let inscrits = 0;
+  for (const a of comptes) {
+    if (deja.has(a.id)) continue;
+    await setBeta(db, { type: 'compte', id: a.id }, true, admin?.id ?? null);
+    inscrits++;
+  }
+  return { inscrits, total: comptes.length };
 }
