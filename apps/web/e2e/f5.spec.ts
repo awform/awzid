@@ -118,7 +118,7 @@ test.describe('compte parent', () => {
 
   test('avis d’un enfant : catégorie seulement (aucun texte libre), envoyé', async ({ page }) => {
     await pickProfile(page, 'Yanis');
-    await page.goto('/aujourdhui');
+    await page.goto('/plus');
     await page.getByTestId('avis-ouvrir').click();
     const d = page.getByTestId('avis-dialogue');
     await expect(d).toContainText('Dis-nous ce que tu penses');

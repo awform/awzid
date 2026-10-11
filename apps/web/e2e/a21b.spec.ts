@@ -203,7 +203,7 @@ test('A21b : aucune carte vivante vide ni recouverte par la barre du bas (télé
     for (const card of await page.locator('[data-testid="vivante"]').all()) {
       await card.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
       await expect(card).toHaveAttribute('data-state', 'lecture');
-      await page.waitForTimeout(1500);
+      await page.waitForTimeout(2600);
       await card.getByTestId('vivante-pause').click();
       await card.evaluate((e) => e.scrollIntoView({ block: 'nearest' }));
       const model = await card.getAttribute('data-model');
