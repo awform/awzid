@@ -156,6 +156,9 @@ export default defineConfig({
         AWFORM_MAIL: 'journal',
         AWFORM_MAIL_JOURNAL_DIR: process.env.E2E_MAIL_DIR,
         AWFORM_PUBLIC_URL: `http://127.0.0.1:${WEB_PORT}`,
+        // comptes de démonstration par niveau (demo-niveaux.spec.ts) : connexion simplifiée, réseau local ;
+        // SEULEMENT avec E2E_DEMO=1 (les autres suites tournent comme en production)
+        ...(process.env.E2E_DEMO === '1' ? { AWFORM_DEMO: '1', SITE: '127.0.0.1' } : {}),
         ...(EXACT ? { AWFORM_QF_MUSHAF_DIR: QF_DIR, AWFORM_QCF_DIR: QCF_DIR } : {}),
       },
       reuseExistingServer: false,

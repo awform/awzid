@@ -29,6 +29,7 @@ import { setupTutor } from '@awform/tutor';
 import { buildApp } from '../app.js';
 import { hashSecret, totpAt } from '../auth/crypto.js';
 import { secretKeyFromEnv } from '../auth/key.js';
+import { seedNiveaux } from '../demo-niveaux.js';
 
 loadRootEnv();
 if (process.env.AWFORM_DEMO !== '1')
@@ -440,6 +441,27 @@ try {
       note: 'Réciter en classe',
     });
     result = { ...result, ecole: 'classe papier de démonstration (3 élèves fictifs)' };
+  }
+  // ---- complément (idempotent) : un compte DÉMO par niveau (adulte1…10, ado1…4, enfant1…5, parent-niveaux) et une
+  // classe par filière chez l'enseignant — jamais modifié s'il existe déjà (la progression du client est gardée)
+  {
+    const { crees, absents } = await seedNiveaux({
+      db: h.db,
+      call,
+      cookieOf: (r) => cookieOf(r as LightMyRequestResponse),
+      env: process.env,
+      password: PW,
+      pin: PIN,
+      tag: TAG,
+      teacherEmail: E.enseignant,
+    });
+    if (absents.length) result = { ...result, niveauxSansLivre: absents };
+    if (crees.length)
+      result = {
+        ...result,
+        demo: result.demo === 'creee' ? 'creee' : 'complement',
+        comptesNiveaux: crees,
+      };
   }
   console.log(JSON.stringify(result));
 } finally {
