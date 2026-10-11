@@ -74,9 +74,10 @@ test.describe('parent', () => {
     const tous = box.getByTestId('tous-permis');
     if (await tous.isChecked()) await tous.uncheck();
     await box.locator('[data-permis="essai-hafs"]').check();
-    await box.locator('[data-permis="essai-qalun"]').uncheck();
-    // A2 : le récitateur en ligne d'essai fait aussi partie de la liste
-    await box.locator('[data-permis="essai-qf"]').uncheck();
+    // tous les AUTRES récitateurs de la liste décochés (essai-qalun, essai-qf en ligne (A2), et ceux qu'un autre
+    // fichier e2e aurait ajoutés à la base pendant ce test, p. ex. les copies « zz- » des tests Coran)
+    for (const c of await box.locator('[data-permis]:not([data-permis="essai-hafs"])').all())
+      await c.uncheck();
     await box.locator('#pin-coran').fill(PARENT_PIN);
     await box.getByTestId('enregistrer-permis').click();
     await expect(box.getByRole('status')).toContainText('enregistrée');

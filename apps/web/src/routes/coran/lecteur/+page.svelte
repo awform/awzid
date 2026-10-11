@@ -31,11 +31,16 @@
   import Selecteur from '$lib/quran/lecture/Selecteur.svelte';
   import {
     type Onglet,
+    BASMALA,
+    basmalaInFatiha,
     clampRange,
     hizbStart,
     isMarked,
     listenFiles,
+    needsBasmala,
+    nextSuraRange,
     playQueue,
+    withBasmala,
     PRESETS,
     presetOf,
     presetRange,
@@ -153,6 +158,10 @@
   let progress = $state<{ n: number; total: number } | null>(null);
   let offMsg = $state('');
   let portion = $state<Range | null>(null);
+  /** audio en train de jouer (pas en pause) */
+  let audioPlaying = $state(false);
+  /** basmala du récitateur (fichier du verset 1 d'al-Fātiḥa de la MÊME riwāya ; null : pas de fichier) */
+  let bsm = $state<{ reciter: string; url: string | null } | null>(null);
 
   // feuilles et menu
   let selOpen = $state(false);
@@ -204,8 +213,11 @@
       ? cur.s
       : (segs(p)[0]?.s ?? 1),
   );
+  // verset choisi ; la basmala (a = 0) compte comme le verset 1 pour la position
   const posA = $derived(
-    cur?.s === activeSura ? cur.a : (segs(p).find((g) => g.s === activeSura)?.from ?? 1),
+    cur?.s === activeSura
+      ? Math.max(1, cur.a)
+      : (segs(p).find((g) => g.s === activeSura)?.from ?? 1),
   );
   const suraLen = (s: number) => lengths[s - 1] ?? 1;
   const memo = $derived(prefs.memo > 0);
@@ -225,7 +237,21 @@
    * Sert au surlignage ET à la lecture : jamais un verset choisi lu dans une autre numérotation.
    */
   const highlight = $derived(highlightOn(reciter, rw, pack, suraLen(range.s)));
-  const queue = $derived(listenFiles(pack, highlight, plan.queue));
+  /** basmala à lire avant le verset 1 (début de sourate, sauf at-Tawba ; Fātiḥa selon la riwāya) */
+  const wantBasmala = $derived(
+    !!reciter &&
+      needsBasmala(range, reciter.riwaya, {
+        chain: prefs.chain,
+        repeatVerse: prefs.repeatVerse,
+        wholeFile: pack?.mode === 'sourate',
+      }),
+  );
+  const bsmUrl = $derived(bsm && bsm.reciter === reciter?.id ? bsm.url : null);
+  const queue = $derived(
+    withBasmala(listenFiles(pack, highlight, plan.queue), wantBasmala, !!bsmUrl),
+  );
+  /** basmala voulue mais sans fichier de la même riwāya : rien n'est lu, c'est dit en petit */
+  const basmalaMissing = $derived(wantBasmala && !!bsm && bsm.reciter === reciter?.id && !bsm.url);
   const lastPage = $derived(p >= 604 || (double && spreadOf(p)[1] >= 604));
   const position = $derived(
     t('mp.page_sur', {
@@ -499,15 +525,168 @@
     document.querySelector(sel)?.scrollIntoView({ block: 'center' });
     document.querySelector(`[data-trad="${s}:${a}"]`)?.scrollIntoView({ block: 'nearest' });
   }
+  /**
+   * NAVIGATION (règle du client, 07/10/2026) — à CHAQUE changement d'emplacement fait par l'utilisateur (flèche,
+   * glissement, clavier, recherche, « Aller à » une sourate, un juzʾ, un ḥizb, une page) :
+   *  1. le premier verset de la destination (ou la basmala si une sourate y commence) est SÉLECTIONNÉ ;
+   *  2. une petite proposition « Écouter ici » apparaît en bas (non bloquante, disparaît d'elle-même ≈ 6 s ou au
+   *     premier geste ailleurs ; une seule, mise à jour quand on feuillette vite) ;
+   *  3. une lecture EN COURS se met en pause : « Écouter ici » / « Reprendre où j'étais » — rien ne repart sans
+   *     geste ; réglage « En changeant de page : continuer la lecture » pour l'enchaînement automatique.
+   * Quand c'est l'audio qui avance, la page suit la récitation (onaya), sans passer par ici.
+   */
   const turn = (dir: 1 | -1) => {
     if (vue === 'versets') {
       const s = Math.max(1, Math.min(114, activeSura + dir));
-      if (s !== activeSura) void goVerse(s, 1);
+      if (s !== activeSura) void navigate(() => goVerse(s, 1), 'debut');
       return;
     }
-    void goPage(stepPage(p, dir, double));
+    void navigate(() => goPage(stepPage(p, dir, double)), 'debut');
   };
 
+  /** Premier verset affiché (page : début de la page ; vue versets : début de la sourate). */
+  function firstShown(): { s: number; a: number } {
+    if (vue === 'versets')
+      return cur?.s === activeSura ? { s: cur.s, a: Math.max(1, cur.a) } : { s: activeSura, a: 1 };
+    const st = starts?.[p - 1];
+    return st ? { s: st[0], a: st[1] } : { s: activeSura, a: posA };
+  }
+  /** Plage écoutée à partir d'un verset (portée du préréglage en cours : suite, sourate ou verset). */
+  function rangeAt(s: number, a: number): Range {
+    const pr = PRESETS.find((x) => x.id === preset);
+    return presetRange(pr?.portee ?? 'suite', s, Math.max(1, a), suraLen(s));
+  }
+  /** La basmala est-elle affichée en tête de cette sourate (texte Ḥafṣ, hors al-Fātiḥa et at-Tawba) ? */
+  const basmalaShown = (s: number) => !isRw && s !== 1 && s !== 9;
+
+  /** proposition « Écouter ici » (et « Reprendre où j'étais » si la lecture a été mise en pause) */
+  let prop = $state<{ s: number; a: number; resume: boolean } | null>(null);
+  /** verset écouté au moment de la pause (« Reprendre où j'étais ») */
+  let resumeAt: { s: number; a: number } | null = null;
+  let propTimer: ReturnType<typeof setTimeout> | null = null;
+  let propEl = $state<HTMLElement | undefined>();
+  function hideProp() {
+    if (propTimer) clearTimeout(propTimer);
+    propTimer = null;
+    prop = null;
+  }
+  /** Change d'emplacement ; `to` = « debut » (premier verset affiché) ou le verset visé. */
+  async function navigate(go: () => Promise<void>, to: 'debut' | { s: number; a: number }) {
+    const wasPlaying = audioPlaying;
+    if (wasPlaying && !prefs.navAuto) {
+      // pause AVANT de changer de page (sinon la page suivrait encore l'audio)
+      resumeAt = heard ? { ...heard } : { s: range.s, a: range.from };
+      player?.pause();
+      heard = null;
+    }
+    await go();
+    const f = to === 'debut' ? firstShown() : to;
+    const sel = f.a === 1 && basmalaShown(f.s) ? { s: f.s, a: 0 } : { s: f.s, a: f.a };
+    cur = sel;
+    if (wasPlaying && prefs.navAuto) {
+      hideProp();
+      void playFrom(rangeAt(f.s, f.a));
+      return;
+    }
+    // reprise possible tant que la lecture est en pause (même après plusieurs pages feuilletées)
+    if (!wasPlaying && !(playing && !audioPlaying)) resumeAt = null;
+    prop = { s: sel.s, a: sel.a, resume: !!resumeAt };
+    if (propTimer) clearTimeout(propTimer);
+    propTimer = setTimeout(hideProp, 6000);
+  }
+  async function jumpVerse(s: number, a: number) {
+    await navigate(() => goVerse(s, a), { s, a });
+  }
+  async function jumpPage(n: number) {
+    await navigate(() => goPage(n), 'debut');
+  }
+  function listenHere() {
+    const x = prop;
+    hideProp();
+    resumeAt = null;
+    if (x) void playFrom(rangeAt(x.s, x.a));
+  }
+  async function resumeWhere() {
+    const w = resumeAt;
+    hideProp();
+    resumeAt = null;
+    if (!w) return;
+    await goVerse(w.s, Math.max(1, w.a), false);
+    if (w.a === 0) cur = { s: w.s, a: 0 };
+    await player?.resume();
+  }
+  // premier geste ailleurs : la proposition disparaît
+  $effect(() => {
+    if (!prop) return;
+    const off = (e: PointerEvent) => {
+      if (propEl && !propEl.contains(e.target as Node)) hideProp();
+    };
+    window.addEventListener('pointerdown', off, true);
+    return () => window.removeEventListener('pointerdown', off, true);
+  });
+  onDestroy(() => propTimer && clearTimeout(propTimer));
+  /** Fin de la file : la lecture simple continue à la sourate suivante (basmala comprise). */
+  function onEnd(why: 'fin' | 'sommeil') {
+    if (why !== 'fin' || memo) return;
+    const next = nextSuraRange(range, suraLen(range.s), settings, suraLen);
+    if (next) void playFrom(next);
+  }
+
+  // —— appui long sur un verset (ou la basmala) : lecture immédiate depuis ce verset, sans menu ——
+  let longTimer: ReturnType<typeof setTimeout> | null = null;
+  let longFired = false;
+  let longAt: { x: number; y: number } | null = null;
+  function refOf(target: EventTarget | null): { s: number; a: number } | null {
+    const el = (target as Element | null)?.closest?.('[data-aya], [data-bsm]');
+    if (!el || !el.closest('[data-testid="mushaf-livre"], [data-testid="texte-coran"]'))
+      return null;
+    const b = el.getAttribute('data-bsm');
+    if (b) return { s: Number(b), a: 0 };
+    const k = el.getAttribute('data-aya') ?? '';
+    if (k.includes(':')) {
+      const [s, a] = k.split(':').map(Number);
+      return s && a ? { s, a } : null;
+    }
+    return Number(k) ? { s: activeSura, a: Number(k) } : null;
+  }
+  function longCancel() {
+    if (longTimer) clearTimeout(longTimer);
+    longTimer = null;
+    longAt = null;
+  }
+  function longDown(e: PointerEvent) {
+    longCancel();
+    longFired = false;
+    if (prefs.readOnly || guiding || !reciter || (e.pointerType === 'mouse' && e.button !== 0))
+      return;
+    const r = refOf(e.target);
+    if (!r) return;
+    longAt = { x: e.clientX, y: e.clientY };
+    longTimer = setTimeout(() => {
+      longTimer = null;
+      longFired = true;
+      navigator.vibrate?.(15);
+      cur = { s: r.s, a: r.a };
+      void playFrom({ s: r.s, from: Math.max(1, r.a), to: suraLen(r.s) });
+    }, 550);
+  }
+  function longMove(e: PointerEvent) {
+    if (longAt && Math.hypot(e.clientX - longAt.x, e.clientY - longAt.y) > 10) longCancel();
+  }
+  /** après un appui long, le clic qui suit n'ouvre pas le menu */
+  function longClick(e: MouseEvent) {
+    if (!longFired) return;
+    longFired = false;
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
+  /**
+   * Pistes en cours de chargement : une lecture lancée vers une AUTRE sourate (enchaînement, « Écouter ici »)
+   * demande les pistes, et l'effet « sourate écoutée » aussi. Sans ce partage, la seconde réponse remplaçait
+   * `pack` pendant la basmala et le lecteur s'arrêtait (file changée).
+   */
+  let tracksLoading: { key: string; p: Promise<void> } | null = null;
   async function openTracks() {
     const s = range.s;
     const id = reciterId;
@@ -517,21 +696,53 @@
       return;
     }
     if (pack?.sura === s && pack.reciter === id) return;
-    pack = null;
-    trackCode = null;
-    saved = false;
-    const r = await loadTracks(profileId, id, s, memo ? 'memoriser' : 'ecouter');
-    if (s !== range.s || id !== reciterId) return;
-    pack = r.pack;
-    trackCode = r.code;
-    saved =
-      !!pack && (await savedSuras(pack.reciter)).some((x) => x.sura === s && x.hash === pack!.hash);
+    const mode = memo ? 'memoriser' : 'ecouter';
+    const key = `${id}:${s}:${mode}`;
+    if (tracksLoading?.key === key) return tracksLoading.p;
+    const p = (async () => {
+      pack = null;
+      trackCode = null;
+      saved = false;
+      const r = await loadTracks(profileId, id, s, mode);
+      if (s !== range.s || id !== reciterId) return;
+      pack = r.pack;
+      trackCode = r.code;
+      saved =
+        !!pack &&
+        (await savedSuras(pack.reciter)).some((x) => x.sura === s && x.hash === pack!.hash);
+    })();
+    tracksLoading = { key, p };
+    try {
+      await p;
+    } finally {
+      if (tracksLoading?.p === p) tracksLoading = null;
+    }
+  }
+
+  /**
+   * Basmala du récitateur : le fichier du verset 1 d'al-Fātiḥa, SEULEMENT dans une riwāya où la basmala est ce
+   * verset (Ḥafṣ, Shuʿba, al-Bazzī) — même récitateur, donc même riwāya (A8). Ailleurs : aucun fichier.
+   */
+  async function loadBasmala() {
+    const r = reciter;
+    if (!r || bsm?.reciter === r.id) return;
+    let url: string | null = null;
+    if (basmalaInFatiha(r.riwaya)) {
+      const p1 =
+        pack?.sura === 1 && pack.reciter === r.id
+          ? pack
+          : (await loadTracks(profileId, r.id, 1, memo ? 'memoriser' : 'ecouter')).pack;
+      url = p1 && p1.mode !== 'sourate' ? (p1.files.find((f) => f.aya === 1)?.url ?? null) : null;
+    }
+    if (reciter?.id === r.id) bsm = { reciter: r.id, url };
   }
 
   /** Lecture sur un geste : plage donnée (ou plage en cours), mini-barre montrée. */
   async function playFrom(r: Range | null) {
     regOpen = false;
     notice = '';
+    hideProp();
+    resumeAt = null;
     // garde : jamais un récitateur d'une autre riwāya que le texte affiché (autre numérotation des versets)
     if (!reciter || reciter.riwaya !== rw) {
       void openReg('recitateur');
@@ -539,7 +750,7 @@
     }
     if (r) range = clampRange(r, suraLen(r.s));
     audioOn = true;
-    await openTracks();
+    await Promise.all([openTracks(), loadBasmala()]);
     await tick();
     if (!pack) {
       void openReg('recitateur');
@@ -559,10 +770,15 @@
       heard = null;
       return;
     }
-    heard = { s: range.s, a };
-    // la page suit la récitation (sans changer la plage écoutée)
+    // basmala : a = 0 (surlignée en tête de sourate, sur la page du verset 1)
+    heard = { s: range.s, a: a === BASMALA ? 0 : a };
+    // pendant que l'audio avance de lui-même, la vue suit la récitation (sans changer la plage écoutée)
+    if (vue === 'versets' && range.s !== activeSura) {
+      cur = { s: range.s, a: Math.max(1, heard.a) };
+      void ensure();
+    }
     if (vue === 'page' && starts) {
-      const n = pageOf(starts, range.s, a);
+      const n = pageOf(starts, range.s, Math.max(1, heard.a));
       if (!shown.includes(n)) {
         p = clampPage(n);
         setUrl();
@@ -572,6 +788,11 @@
   }
 
   function pick(s: number, a: number, el: HTMLElement) {
+    // appui long : la lecture a déjà commencé, pas de menu
+    if (longFired) {
+      longFired = false;
+      return;
+    }
     cur = { s, a };
     follow();
     menuAnchor = el;
@@ -601,10 +822,10 @@
   async function onsearch(q: string): Promise<Array<{ s: number; a: number }> | null> {
     const ref = parseRef(q, lengths);
     if (ref) {
-      if (ref.kind === 'verse') await goVerse(ref.s, ref.a);
-      else if (ref.kind === 'page') await goPage(ref.p);
-      else if (ref.kind === 'sura') await goVerse(ref.s, 1);
-      else await goPage(pageOfJ(ref.j));
+      if (ref.kind === 'verse') await jumpVerse(ref.s, ref.a);
+      else if (ref.kind === 'page') await jumpPage(ref.p);
+      else if (ref.kind === 'sura') await jumpVerse(ref.s, 1);
+      else await jumpPage(pageOfJ(ref.j));
       return null;
     }
     // texte arabe : recherche dans les sourates déjà ouvertes sur l'appareil (muṣḥaf affiché)
@@ -875,7 +1096,18 @@
 {#if noPages}
   <p class="card" role="status">{t('mp.sans_pages')}</p>
 {:else}
-  <div class="lecture" class:audio-on={audioOn} style:--qz={TEXT_SCALE[prefs.size] ?? 1}>
+  <div
+    class="lecture"
+    class:audio-on={audioOn}
+    style:--qz={TEXT_SCALE[prefs.size] ?? 1}
+    role="none"
+    onpointerdown={longDown}
+    onpointermove={longMove}
+    onpointerup={longCancel}
+    onpointercancel={longCancel}
+    onclickcapture={longClick}
+    oncontextmenu={(e) => refOf(e.target) && e.preventDefault()}
+  >
     <!-- barre unique : puce (téléphone) ou sélecteurs dorés (grand écran), outils, écoute -->
     <nav class="cbar" aria-label={t('mp.commandes')} data-testid="barre-coran">
       <div class="nav-zone">
@@ -935,7 +1167,7 @@
             aria-label={t('mp.traduction_court')}
             title={t('mp.traduction_court')}
             data-testid="mp-trad"
-            ><Icon name="traduction" size={22} /><span class="lbl-wide"
+            ><Icon name="traduction" size={22} /><span class="trad-lbl"
               >{t('mp.traduction_court')}</span
             ></button
           >
@@ -951,6 +1183,9 @@
         >
       </div>
       <div class="ecoute" class:on={audioOn} data-testid="mini-barre">
+        {#if basmalaMissing && audioOn}<p class="hint bsm-hint" data-testid="basmala-absente">
+            <Bidi text={t('cl.basmala_absente')} />
+          </p>{/if}
         {#if reciter}
           <AudioPlayer
             bind:this={player}
@@ -968,11 +1203,14 @@
                     a: fmtNumber(step.learning),
                   })
               : ''}
+            basmala={bsmUrl}
             {onaya}
             onindex={(i) => {
               playing = i !== null;
               step = i === null ? null : (plan.steps?.[i] ?? null);
             }}
+            onplaystate={(on) => (audioPlaying = on)}
+            onend={onEnd}
             onsettings={(sec) => openReg(sec ?? 'ecoute')}
             onvolume={(v) => (prefs.volume = v)}
           />
@@ -987,6 +1225,51 @@
         {/if}
       </div>
     </nav>
+    <!-- proposition après un changement d'emplacement : non bloquante, annoncée, disparaît d'elle-même -->
+    <div class="prop-zone" role="status" aria-live="polite">
+      {#if prop}
+        <div class="prop" bind:this={propEl} data-testid="proposition">
+          <button
+            type="button"
+            class="prop-play"
+            onclick={listenHere}
+            disabled={!ready}
+            data-testid="ecouter-ici"
+            ><Icon name="lecture" filled size={20} /><Bidi text={t('cl.ecouter_ici')} /></button
+          >
+          {#if prop.resume}
+            <button
+              type="button"
+              class="prop-alt"
+              onclick={resumeWhere}
+              data-testid="reprendre-lecture"><Bidi text={t('cl.reprendre_lecture')} /></button
+            >
+          {/if}
+          {#if prop.a > 0}
+            <!-- autres actions du verset (traduction, répéter, signet…) : son menu -->
+            <button
+              type="button"
+              class="prop-alt"
+              onclick={(e) => {
+                if (!prop) return;
+                const at = { s: prop.s, a: prop.a };
+                const el =
+                  document.querySelector<HTMLElement>(
+                    vue === 'versets'
+                      ? `[data-testid="texte-coran"] [data-aya="${at.a}"]`
+                      : `[data-testid="mushaf-livre"] [data-aya="${at.s}:${at.a}"]`,
+                  ) ?? e.currentTarget;
+                hideProp();
+                pick(at.s, at.a, el);
+              }}
+              aria-label={t('cl.autres_actions')}
+              title={t('cl.autres_actions')}
+              data-testid="ici-actions"><Icon name="ajouter" size={20} /></button
+            >
+          {/if}
+        </div>
+      {/if}
+    </div>
     {#if notice}
       <p class="avis" role="status" data-testid="avis-lecteur">
         <Icon name="info" size={18} /><span><Bidi text={notice} /></span>
@@ -1152,12 +1435,12 @@
     pos={{ s: activeSura, a: posA, p, juz: juzOf(p) }}
     {lengths}
     hizb={!isRw}
-    onverse={(s, a) => goVerse(s, a)}
-    onpage={goPage}
-    onjuz={(j) => goPage(pageOfJ(j))}
+    onverse={(s, a) => jumpVerse(s, a)}
+    onpage={jumpPage}
+    onjuz={(j) => jumpPage(pageOfJ(j))}
     onhizb={(n) => {
       const st = hizbStart(meta?.divisions?.quarters, n);
-      if (st) void goVerse(st[0], st[1]);
+      if (st) void jumpVerse(st[0], st[1]);
     }}
     {onsearch}
   />
@@ -1461,9 +1744,6 @@
     background: var(--or-soft);
     border-color: var(--or-line);
   }
-  .lbl-wide {
-    display: none;
-  }
   .avis {
     display: flex;
     flex-wrap: wrap;
@@ -1536,6 +1816,79 @@
   .spacer {
     height: 84px;
   }
+  .bsm-hint {
+    margin: 0 4px 2px;
+    font-size: 0.78rem;
+  }
+  /* proposition « Écouter ici » : en bas, au-dessus de la mini-barre, sans cacher le texte ni bloquer */
+  .prop-zone {
+    position: fixed;
+    inset-inline: 0;
+    bottom: calc(84px + env(safe-area-inset-bottom));
+    z-index: 18;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .audio-on .prop-zone {
+    bottom: calc(150px + env(safe-area-inset-bottom));
+  }
+  .prop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    max-width: calc(100vw - 24px);
+    padding: 6px;
+    background: var(--card);
+    border: 1px solid var(--or-line);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-float);
+    pointer-events: auto;
+    animation: prop-in var(--motion) ease-out;
+  }
+  @keyframes prop-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  .prop-play,
+  .prop-alt {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 14px;
+    font: inherit;
+    font-weight: 800;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+  }
+  .prop-play {
+    color: var(--mp-on-band);
+    background: var(--mp-band);
+    border: 0;
+  }
+  .prop-alt {
+    font-weight: 700;
+    color: var(--or-ink);
+    background: var(--or-soft);
+    border: 1px solid var(--or-line);
+  }
+  /* enfants : proposition plus grande */
+  :global([data-public='enfant']) .prop-play,
+  :global([data-public='enfant']) .prop-alt {
+    min-height: 56px;
+    padding: 0 20px;
+    font-size: 1.15rem;
+  }
+  @media (min-width: 900px) {
+    .prop-zone,
+    .audio-on .prop-zone {
+      bottom: 24px;
+    }
+  }
   @media (min-width: 900px) {
     .lecture {
       margin-inline: calc((100% - min(1400px, 100vw - 48px)) / 2);
@@ -1549,9 +1902,6 @@
     }
     .gold {
       display: flex;
-    }
-    .lbl-wide {
-      display: inline;
     }
     .ecouter-btn {
       display: none;
@@ -1797,9 +2147,21 @@
       flex: 1 1 auto;
       justify-content: space-between;
     }
+    /* Écouter, Traduction, Réglages : toujours icône ET mot écrit (passent à la ligne plutôt que perdre le mot) */
     .tools {
       flex: 1 1 100%;
+      flex-wrap: wrap;
       gap: 6px;
+    }
+  }
+  @media (max-width: 379px) {
+    .tools {
+      gap: 4px;
+    }
+    .tools .tool {
+      gap: 4px;
+      padding: 0 7px;
+      font-size: 0.8rem;
     }
     .reg-btn {
       margin-inline-start: auto;

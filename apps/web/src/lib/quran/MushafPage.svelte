@@ -209,7 +209,16 @@
                 {@const tv = tj ? verseRuns({ s: g.s, a, text: raw }, basmala, tj) : null}
                 {@const ws = parts.rest.split(' ')}
                 {@const vis = visibleWords(ws.length, revealed.has(`${g.s}:${a}`) ? 0 : memo)}
-                {#if parts.basmala}<span class="basmala"
+                {#if parts.basmala}<span
+                    class="basmala"
+                    class:on={current?.s === g.s && current?.a === 0}
+                    data-bsm={g.s}
+                    role="button"
+                    tabindex={readOnly ? -1 : 0}
+                    aria-disabled={readOnly ? 'true' : undefined}
+                    aria-haspopup={readOnly ? undefined : 'dialog'}
+                    onclick={(e) => !readOnly && onpick?.(g.s, 0, e.currentTarget)}
+                    onkeydown={(e) => key(e, g.s, 0)}
                     ><span class="quran-text" data-basmala={`${g.s}:${a}`}
                       >{#if tv?.basmala}{#each tv.basmala as bw, i (i)}{sep(i)}<TajwidRuns
                             runs={bw}
@@ -432,9 +441,30 @@
   }
   .basmala {
     display: block;
-    margin: 2px 0 4px;
+    width: fit-content;
+    margin: 2px auto 4px;
+    padding: 0 8px;
     text-align: center;
     font-size: 1.06em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color var(--motion) ease;
+  }
+  .readonly .basmala {
+    cursor: default;
+  }
+  @media (hover: hover) {
+    .page:not(.readonly) .basmala:hover {
+      background: color-mix(in srgb, var(--mp-mark) 55%, transparent);
+    }
+  }
+  .basmala.on {
+    background: var(--mp-mark);
+    box-shadow: 0 0 0 3px var(--mp-mark);
+  }
+  .basmala:focus-visible {
+    outline: 2px solid var(--mp-green);
+    outline-offset: 2px;
   }
   .aya {
     border-radius: 8px;
