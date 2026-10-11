@@ -20,6 +20,7 @@ export function registerActivities(
   db: Db,
   edition: Edition,
   demo = false,
+  email = false,
 ): void {
   app.get('/api/v1/config', async (_req, reply) => {
     reply.header('Cache-Control', 'no-cache');
@@ -29,6 +30,8 @@ export function registerActivities(
       vapidPublicKey: vapidPublicKey(),
       // démonstration (connexion simplifiée) : champ d'identifiant en texte libre
       demo,
+      // lot F3 : e-mails configurés (vérification, mot de passe oublié) ; sinon, l'application le dit
+      email,
     };
   });
 

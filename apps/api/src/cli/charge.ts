@@ -148,7 +148,7 @@ async function main(): Promise<void> {
         locale: 'fr',
         birthYear: 1990,
         pseudonym: `Charge ${i}`,
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       }),
     });
     if (r.status !== 201) throw new Error(`inscription ${i} : ${r.status} ${await r.text()}`);

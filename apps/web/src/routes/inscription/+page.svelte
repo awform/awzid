@@ -21,6 +21,10 @@
   // D-A39 : « Mode serein » présélectionné (ne pas décourager) ; « Avec vérification » reste au choix
   let evalMode: 'verification' | 'serein' = $state('serein');
   let cgu = $state(false);
+  /** lot F3 (revue E10) : accord explicite « article 9 », nécessaire, jamais coché d'avance */
+  let art9 = $state(false);
+  /** lot F3 (revue M9) : province (Canada : âge du consentement au Québec) */
+  let region = $state('');
   let transfert = $state(false);
   let rappels = $state(false);
   let error = $state('');
@@ -29,6 +33,9 @@
   type Rules = {
     country: string;
     consentAge: number;
+    region?: string | null;
+    regions?: string[];
+    closedUnder?: number | null;
     transferConsent: boolean;
     law: string;
     authority: string;
@@ -36,8 +43,9 @@
   let rules = $state<Rules | null>(null);
   $effect(() => {
     const c = country;
-    void call<Rules>('GET', `/pays/${c}/regles`).then((r) => {
-      if (country === c) rules = r.ok ? r.data : null;
+    const reg = region;
+    void call<Rules>('GET', `/pays/${c}/regles${reg ? `?region=${reg}` : ''}`).then((r) => {
+      if (country === c && region === reg) rules = r.ok ? r.data : null;
     });
   });
   const current = $derived(rules?.country === country ? rules : null);
@@ -49,6 +57,7 @@
     error = '';
     const consents = [
       cgu && 'cgu',
+      art9 && 'donnee_religieuse_art9',
       transferNeeded && transfert && 'transfert_hors_pays',
       rappels && 'rappels',
     ].filter(Boolean) as string[];
@@ -60,6 +69,8 @@
       locale: locale(),
       consents,
       birthYear,
+      ...(region && current?.regions?.includes(region) ? { region } : {}),
+      tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
       ...(kind === 'adulte' && pseudonym ? { pseudonym } : {}),
       ...(kind === 'adulte' ? { evalMode } : {}),
     });
@@ -106,9 +117,16 @@
   <p class="muted small">{t('inscription.mdp_aide')}</p>
 
   <label for="country">{t('champ.pays')}</label>
-  <select id="country" bind:value={country}>
+  <select id="country" bind:value={country} onchange={() => (region = '')}>
     {#each COUNTRIES as c (c)}<option value={c}>{countryName(c)}</option>{/each}
   </select>
+  {#if current?.regions?.length}
+    <label for="region">{t('inscription.region')}</label>
+    <select id="region" bind:value={region} required data-testid="region">
+      <option value=""></option>
+      {#each current.regions as r (r)}<option value={r}>{t(`region.${r}`)}</option>{/each}
+    </select>
+  {/if}
 
   {#if current}
     <p class="muted small" data-testid="loi-pays">
@@ -120,6 +138,7 @@
         })}
       />
       <Bidi text={t('inscription.loi_mineurs', { age: current.consentAge })} />
+      {#if current.closedUnder}<Bidi text={t('inscription.ferme_moins_13')} />{/if}
     </p>
   {/if}
 
@@ -157,6 +176,10 @@
     <label class="check"
       ><input id="cgu" type="checkbox" bind:checked={cgu} required data-testid="consent-cgu" />
       <span>{t('consent.cgu')}</span></label
+    >
+    <label class="check"
+      ><input id="art9" type="checkbox" bind:checked={art9} required data-testid="consent-art9" />
+      <span><Bidi text={t('consent.donnee_religieuse_art9')} /></span></label
     >
     {#if transferNeeded}
       <label class="check"

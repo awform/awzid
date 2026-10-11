@@ -8,7 +8,8 @@ set -euo pipefail
 ENVF="$1"
 DEMO="$2"
 # AWFORM_DEMO=1 : connexion simplifiée (identifiants courts ; garde-fou au démarrage de l'API)
-DEMO_KEYS=(AWFORM_TUTEUR=simule AWFORM_PAIEMENT=simule AWFORM_LANGUES_PREPARATION=on AWFORM_DEMO=1)
+# AWFORM_MAIL=journal (lot F3) : AUCUN vrai e-mail — boîte de démonstration (infra/prod/boite-demo.sh)
+DEMO_KEYS=(AWFORM_TUTEUR=simule AWFORM_PAIEMENT=simule AWFORM_LANGUES_PREPARATION=on AWFORM_DEMO=1 AWFORM_MAIL=journal)
 for kv in "${DEMO_KEYS[@]}"; do
   k="${kv%%=*}"
   if [ "$DEMO" = 1 ]; then

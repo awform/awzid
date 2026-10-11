@@ -32,7 +32,10 @@ async function signupParent(
       email,
       password: password(),
       country,
-      consents: country === 'SN' ? ['cgu', 'transfert_hors_pays'] : ['cgu'],
+      consents:
+        country === 'SN'
+          ? ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays']
+          : ['cgu', 'donnee_religieuse_art9'],
     },
   });
   expect(r.status(), await r.text()).toBe(201);
@@ -46,7 +49,7 @@ async function newChild(req: APIRequestContext, pseudonym: string, age = 9): Pro
       birthYear: YEAR - age,
       levelCode: 'en1',
       password: password(),
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     },
   });
   expect(r.status(), await r.text()).toBe(201);
@@ -206,7 +209,7 @@ test('émancipation : le jeune reprend son profil dans son propre compte', async
       email: `${uniq('yanis')}@e2e.test`,
       password: password(),
       country: 'FR',
-      consents: ['cgu'],
+      consents: ['cgu', 'donnee_religieuse_art9'],
       birthYear: YEAR - 17,
       pseudonym: 'Moi',
     },

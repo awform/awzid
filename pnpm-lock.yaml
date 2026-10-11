@@ -94,6 +94,9 @@ importers:
       fastify:
         specifier: ^5.12.5
         version: 5.12.5
+      nodemailer:
+        specifier: 10.0.15
+        version: 10.0.15
       qrcode-generator:
         specifier: 2.0.4
         version: 2.0.4
@@ -101,6 +104,9 @@ importers:
       '@types/node':
         specifier: ^24.19.0
         version: 24.19.0
+      '@types/nodemailer':
+        specifier: 8.0.2
+        version: 8.0.2
       tsx:
         specifier: ^4.23.15
         version: 4.23.15
@@ -1218,6 +1224,9 @@ packages:
   '@types/node@24.19.0':
     resolution: {integrity: sha512-zY+5tKxXdhGh1PYI0ac+7juvEu4OI6vWtVVoj5i2m42jxAY1U+zHGt6QCyOFwykdP62sM3MJ9stoYYUw5aCWew==}
 
+  '@types/nodemailer@8.0.2':
+    resolution: {integrity: sha512-c7M5ox8p0nEOfbJ2E9Qcmt8/QCu/VzsiAhzBiZbvky2PhKZDHpKB3sQHBM5MEZNkCfBOaS6S9//AGPRTNB7IaA==}
+
   '@types/pg@8.23.1':
     resolution: {integrity: sha512-fKVHpikPdg4GKks3JuLEhvwSyvwzF23hnabPy6DD8ljVbC7+6J5dQzdv4arV6jqq57djnMgs1HKBxX4P8aBI3A==}
 
@@ -2099,6 +2108,10 @@ packages:
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+
+  nodemailer@10.0.15:
+    resolution: {integrity: sha512-EUqp5PhtcsYXs9Fq/lS7s/8zlTrnBqmzZWzFFROrNikMiz+om/YRKMwqN907t+0A1KKyT8jd39CBUbFZmaZmcA==}
+    engines: {node: '>=20.0.0'}
 
   non-error@0.1.0:
     resolution: {integrity: sha512-TMB1uHiGsHRGv1uYclfhivcnf0/PdFp2pNqRxXjncaAsjYMoisaQJI+SSZCqRq+VliwRTC8tsMQfmrWjDMhkPQ==}
@@ -3400,6 +3413,10 @@ snapshots:
     dependencies:
       undici-types: 7.24.6
 
+  '@types/nodemailer@8.0.2':
+    dependencies:
+      '@types/node': 24.19.0
+
   '@types/pg@8.23.1':
     dependencies:
       '@types/node': 24.19.0
@@ -4214,6 +4231,8 @@ snapshots:
       - supports-color
 
   natural-compare@1.4.0: {}
+
+  nodemailer@10.0.15: {}
 
   non-error@0.1.0: {}
 

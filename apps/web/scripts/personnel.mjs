@@ -9,6 +9,12 @@ import { fileURLToPath } from 'node:url';
 
 /** Préfixes des routes réservées au personnel. */
 export const STAFF_ROUTES = ['/enseignant', '/admin'];
+/**
+ * Lot F3 : pages qui n'ont de sens QU'EN LIGNE (lien reçu par e-mail, mot de passe oublié, accord à donner au
+ * serveur) — même traitement que celles du personnel : jamais préchargées sur l'appareil d'un élève, gardées
+ * au premier usage.
+ */
+export const ONLINE_ROUTES = ['/acces'];
 
 export function staffOnlyFiles(root) {
   const client = join(root, '.svelte-kit', 'output', 'client');
@@ -46,7 +52,8 @@ export function staffOnlyFiles(root) {
     return out;
   };
   const nodeKey = (n) => keyOf(`client-optimized/nodes/${n}.js`);
-  const isStaff = (r) => STAFF_ROUTES.some((p) => r === p || r.startsWith(`${p}/`));
+  const isStaff = (r) =>
+    [...STAFF_ROUTES, ...ONLINE_ROUTES].some((p) => r === p || r.startsWith(`${p}/`));
   const staffNodes = new Set();
   const otherNodes = new Set();
   const staffLayouts = new Set();

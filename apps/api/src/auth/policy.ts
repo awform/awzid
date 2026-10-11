@@ -35,8 +35,60 @@ export const DIGITAL_CONSENT_AGE: Readonly<Record<string, number>> = {
 };
 export const DEFAULT_CONSENT_AGE = 16;
 
-export function consentAge(country: string | null | undefined): number {
+/**
+ * Lot F3 (revue M9) : âge du consentement par SUBDIVISION (ISO 3166-2), qui l'emporte sur celui du pays.
+ * Québec : loi 25, consentement du titulaire de l'autorité parentale sous 14 ans [à vérifier par le juriste].
+ */
+export const DIGITAL_CONSENT_AGE_REGION: Readonly<Record<string, number>> = {
+  'CA-QC': 14,
+};
+
+/** Subdivisions proposées à l'inscription (pays où une règle en dépend). */
+export const REGIONS_BY_COUNTRY: Readonly<Record<string, readonly string[]>> = {
+  CA: [
+    'CA-AB',
+    'CA-BC',
+    'CA-MB',
+    'CA-NB',
+    'CA-NL',
+    'CA-NS',
+    'CA-NT',
+    'CA-NU',
+    'CA-ON',
+    'CA-PE',
+    'CA-QC',
+    'CA-SK',
+    'CA-YT',
+  ],
+};
+
+/** Subdivision valable pour ce pays (liste connue), ou null. */
+export function normRegion(
+  country: string | null | undefined,
+  region: string | null | undefined,
+): string | null {
+  const c = (country ?? '').toUpperCase();
+  const r = (region ?? '').toUpperCase();
+  return r && (REGIONS_BY_COUNTRY[c] ?? []).includes(r) ? r : null;
+}
+
+export function consentAge(country: string | null | undefined, region?: string | null): number {
+  const r = normRegion(country, region);
+  if (r && DIGITAL_CONSENT_AGE_REGION[r] !== undefined) return DIGITAL_CONSENT_AGE_REGION[r];
   return DIGITAL_CONSENT_AGE[(country ?? '').toUpperCase()] ?? DEFAULT_CONSENT_AGE;
+}
+
+/**
+ * Lot F3 (revue G3, décision : fermeture au lancement) : pays FERMÉS aux enfants sous un âge donné. États-Unis :
+ * moins de 13 ans fermés (COPPA : la ré-authentification du parent n'est pas une méthode de consentement
+ * vérifiable reconnue par la FTC) — aucun profil d'enfant de moins de 13 ans, ni par un parent ni par une école.
+ */
+export const CLOSED_UNDER_AGE: Readonly<Record<string, number>> = { US: 13 };
+
+/** L'inscription d'un enfant de cet âge est-elle fermée dans ce pays ? */
+export function closedForAge(country: string | null | undefined, age: number): boolean {
+  const min = CLOSED_UNDER_AGE[(country ?? '').toUpperCase()];
+  return min !== undefined && age < min;
 }
 
 export function ageFromYear(birthYear: number, now = new Date()): number {
@@ -44,29 +96,42 @@ export function ageFromYear(birthYear: number, now = new Date()): number {
   return now.getUTCFullYear() - birthYear - 1;
 }
 
-/** Version des textes d'information (changer la version impose un nouveau consentement). */
-export const TEXT_VERSION = '2026-09-28';
+/**
+ * Version des textes d'information (changer la version impose un nouveau consentement). Lot F3 : CGU,
+ * confidentialité et conditions de la bêta revues (brouillons à relire par le juriste).
+ */
+export const TEXT_VERSION = '2026-10-06';
 
 export type ConsentType =
   | 'cgu' // conditions d'utilisation et politique de confidentialité
   | 'compte_suivi' // compte et suivi pédagogique (profil d'enfant)
   | 'transfert_hors_pays' // loi sénégalaise 2008-12 : données hébergées dans l'Union européenne
-  | 'coppa_parent' // États-Unis, moins de 13 ans : consentement parental vérifiable
-  | 'rappels'; // facultatif : rappels (notifications, plus tard WhatsApp/SMS)
+  | 'coppa_parent' // États-Unis, moins de 13 ans (HISTORIQUE : fermé au lancement, lot F3)
+  | 'rappels' // facultatif : rappels (notifications, plus tard WhatsApp/SMS)
+  // lot F3 (revue E10) : RGPD art. 9 — l'usage (hifẓ, sciences islamiques) révèle une conviction religieuse :
+  // consentement EXPLICITE, nécessaire au service, RETIRABLE (le compte ou le profil est alors mis en pause)
+  | 'donnee_religieuse_art9'
+  // lot F3 (revue E10) : analyse automatique de la voix (récitation) par une IA — facultatif, séparé,
+  // retirable ; demandé au PREMIER USAGE d'une telle fonction (aucune aujourd'hui), jamais coché d'avance
+  | 'analyse_vocale_ia';
+
+/** Consentement « article 9 » : nécessaire au service, mais retirable (mise en pause). */
+export const ART9: ConsentType = 'donnee_religieuse_art9';
 
 /** Consentements OBLIGATOIRES à l'inscription du titulaire, selon le pays. */
 export function requiredAccountConsents(country: string): ConsentType[] {
   const c = country.toUpperCase();
-  const list: ConsentType[] = ['cgu'];
+  const list: ConsentType[] = ['cgu', ART9];
   if (c !== '' && !EU_EEA.has(c) && c !== 'CH' && c !== 'GB') list.push('transfert_hors_pays');
   return list;
 }
 
-/** Consentements OBLIGATOIRES à la création d'un profil d'enfant, selon le pays et l'âge. */
-export function requiredChildConsents(country: string, age: number): ConsentType[] {
-  const list: ConsentType[] = ['compte_suivi'];
-  if (country.toUpperCase() === 'US' && age < 13) list.push('coppa_parent');
-  return list;
+/**
+ * Consentements OBLIGATOIRES à la création d'un profil d'enfant, selon le pays et l'âge. (États-Unis, moins de
+ * 13 ans : fermé au lancement — `closedForAge` est contrôlé avant.)
+ */
+export function requiredChildConsents(_country: string, _age: number): ConsentType[] {
+  return ['compte_suivi', ART9];
 }
 
 export const EU_EEA: ReadonlySet<string> = new Set([
@@ -160,8 +225,14 @@ const LAWS: Readonly<Record<string, [LawCode, AuthorityCode]>> = {
 
 export interface CountryRules {
   country: string;
+  /** lot F3 : subdivision prise en compte (ex. CA-QC), ou null */
+  region: string | null;
+  /** lot F3 : subdivisions proposées pour ce pays (vide : aucune) */
+  regions: readonly string[];
   /** âge en dessous duquel un parent crée le profil */
   consentAge: number;
+  /** lot F3 (G3) : âge en dessous duquel l'inscription d'un enfant est FERMÉE dans ce pays (sinon null) */
+  closedUnder: number | null;
   /** consentements obligatoires du titulaire du compte */
   accountConsents: ConsentType[];
   /** consentements obligatoires pour un profil d'enfant de moins de 13 ans / de 13 ans et plus */
@@ -174,14 +245,17 @@ export interface CountryRules {
   aValider: true;
 }
 
-export function countryRules(country: string): CountryRules {
+export function countryRules(country: string, region?: string | null): CountryRules {
   const c = country.toUpperCase();
   const [law, authority] =
     LAWS[c] ?? (EU_EEA.has(c) ? ['rgpd', 'autorite_ue'] : ['generique', 'autorite_locale']);
   const accountConsents = requiredAccountConsents(c);
   return {
     country: c,
-    consentAge: consentAge(c),
+    region: normRegion(c, region),
+    regions: REGIONS_BY_COUNTRY[c] ?? [],
+    consentAge: consentAge(c, region),
+    closedUnder: CLOSED_UNDER_AGE[c] ?? null,
     accountConsents,
     childConsents: { moins13: requiredChildConsents(c, 12), plus13: requiredChildConsents(c, 13) },
     transferConsent: accountConsents.includes('transfert_hors_pays'),
@@ -228,4 +302,44 @@ export function lawEvidence(country: string | null | undefined): {
 } {
   const r = countryRules(country ?? '');
   return { loi: r.law, autorite: r.authority };
+}
+
+/**
+ * Lot F3 (revue M8) : fuseau horaire IANA valable (« Europe/Paris », « America/Toronto », « UTC »…), ou null.
+ * Contrôlé par le moteur Intl (aucune liste recopiée).
+ */
+export function normTz(tz: string | null | undefined): string | null {
+  if (!tz || tz.length > 64 || !/^[A-Za-z0-9_+\-/]+$/.test(tz)) return null;
+  try {
+    return new Intl.DateTimeFormat('en', { timeZone: tz }).resolvedOptions().timeZone;
+  } catch {
+    return null;
+  }
+}
+
+/** Fuseau par défaut d'un pays (école créée sans fuseau) ; UTC à défaut. */
+const COUNTRY_TZ: Readonly<Record<string, string>> = {
+  SN: 'Africa/Dakar',
+  ML: 'Africa/Bamako',
+  GN: 'Africa/Conakry',
+  CI: 'Africa/Abidjan',
+  BF: 'Africa/Ouagadougou',
+  MA: 'Africa/Casablanca',
+  DZ: 'Africa/Algiers',
+  TN: 'Africa/Tunis',
+  FR: 'Europe/Paris',
+  BE: 'Europe/Brussels',
+  CH: 'Europe/Zurich',
+  LU: 'Europe/Luxembourg',
+  DE: 'Europe/Berlin',
+  NL: 'Europe/Amsterdam',
+  ES: 'Europe/Madrid',
+  IT: 'Europe/Rome',
+  GB: 'Europe/London',
+  IE: 'Europe/Dublin',
+  CA: 'America/Toronto',
+  US: 'America/New_York',
+};
+export function defaultTz(country: string | null | undefined): string {
+  return COUNTRY_TZ[(country ?? '').toUpperCase()] ?? 'UTC';
 }

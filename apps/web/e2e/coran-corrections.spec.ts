@@ -431,7 +431,7 @@ test.describe('ado', () => {
         locale: 'fr',
         birthYear: new Date().getFullYear() - 16,
         pseudonym: 'Ines',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
       },
     });
     expect(r.status(), await r.text()).toBe(201);

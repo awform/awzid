@@ -131,7 +131,7 @@ describe.skipIf(!URL_)('lot 21 — messagerie encadrée et visio', () => {
         email: 'ado21@exemple.org',
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
         birthYear: YEAR - 16,
       },
     );

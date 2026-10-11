@@ -375,7 +375,7 @@ describe.skipIf(!URL)('lot F2 — école, rôles, responsables, niveaux (awform_
         email: 'yanis@exemple.org',
         password: PW,
         country: 'FR',
-        consents: ['cgu'],
+        consents: ['cgu', 'donnee_religieuse_art9'],
         birthYear: YEAR - 17,
         pseudonym: 'Yanis',
       },

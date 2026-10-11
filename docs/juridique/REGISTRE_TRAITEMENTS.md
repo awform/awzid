@@ -58,3 +58,16 @@ Détail et preuves : `docs/juridique/AIPD_BROUILLON.md`.
 Identité du responsable ; DPO ; hébergeur et service d'e-mail ; contrat de sous-traitance avec les écoles ;
 durée de conservation des preuves d'accord et des paiements ; **fondement pour la donnée religieuse (D18)** ;
 formalités CDP (`docs/juridique/CDP_SENEGAL.md`).
+
+## Lot F3 (06/10/2026) — compléments à valider
+
+- **Récupération du compte** : adresse e-mail du titulaire, liens à usage unique (empreinte seulement, usage,
+  adresse visée, dates ; 30 min ou 24 h ; effacés avec le compte) ; prestataire d'envoi [à désigner, UE de
+  préférence] ; base proposée : exécution du contrat et sécurité (intérêt légitime).
+- **Données révélant une conviction religieuse** : consentement EXPLICITE (art. 9-2-a), recueilli séparément
+  (inscription, profil d'enfant, premier usage des comptes existants), daté, versionné, avec la preuve
+  (mot de passe ressaisi) ; retrait = pause du compte ou du profil. Fiche papier pour les écoles :
+  `apps/web/static/documents/fiche-consentement-ecole.html`.
+- **Analyse automatique de la voix par une IA** : aucun traitement aujourd'hui ; accord facultatif et séparé prévu.
+- **Fuseau horaire, province (Canada), région des données** (« eu ») : réglages du compte et de l'école.
+
