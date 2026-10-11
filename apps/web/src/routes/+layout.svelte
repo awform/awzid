@@ -22,13 +22,17 @@
   import { chargerFonctions } from '$lib/fonctions.svelte';
   import { cleDeChemin, envoyer, noterUsage, usagePour } from '$lib/usage';
   import { appliquerFond, lireFond, stockageLocal } from '$lib/theme/fond';
-  import { migrerThemesSupprimes } from '$lib/theme/migration';
+  import { marquerAppareilNeuf, migrerThemesSupprimes } from '$lib/theme/migration';
   import { activeNav, ancienThemeDuPublic, audienceOf, navFor } from '$lib/ui/audience';
   import Brand from '$lib/ui/Brand.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import { applyMode, nextMode, readMode, writeMode, type Mode } from '$lib/ui/mode';
 
   let { children } = $props();
+
+  // appareil neuf : drapeau posé dès l'initialisation de la page, avant que le lecteur (enfant, initialisé après
+  // ce script) écrive ses réglages ; sinon la migration prendrait l'appareil pour un ancien « manuscrit » (mode clair forcé)
+  marquerAppareilNeuf(stockageLocal());
 
   let online = $state(true);
   let pending = $state(0);

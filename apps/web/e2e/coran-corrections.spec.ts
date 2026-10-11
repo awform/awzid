@@ -344,6 +344,14 @@ test('3. un seul point d’entrée « Réglages » (icône et libellé) : toutes
   await b.click();
   const p = page.getByTestId('reglages');
   await expect(p).toBeVisible();
+  // 11/10/2026 : Lire, Écouter, Mémoriser en tête ; toutes les sections dans « Avancé » (replié)
+  await expect(p.getByTestId('reglages-modes').locator('button')).toHaveCount(3);
+  await expect(p.getByTestId('reglages-avance')).not.toHaveAttribute('open', '');
+  const avance = async () => {
+    const d = p.getByTestId('reglages-avance');
+    if ((await d.getAttribute('open')) === null) await d.locator(':scope > summary').click();
+  };
+  await avance();
   for (const id of [
     'reglages-ecoute',
     'reglages-recitateur',
@@ -383,6 +391,7 @@ test('3. un seul point d’entrée « Réglages » (icône et libellé) : toutes
     .first()
     .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
   await b.click();
+  await avance();
   await p.getByTestId('taille-2').check({ force: true });
   await close(page);
   const fs2 = await page
@@ -391,6 +400,7 @@ test('3. un seul point d’entrée « Réglages » (icône et libellé) : toutes
     .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
   expect(fs2).toBeGreaterThan(fs0 * 1.4);
   await b.click();
+  await avance();
   await p.getByTestId('taille-0').check({ force: true });
   await p.locator('label:has([data-style="exact"])').click();
   await close(page);

@@ -5,7 +5,7 @@
   import type { Reciter, SuraPack } from '$lib/coran-audio';
   import { fmtNumber, t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
-  import { BASMALA, shortName } from './lecture';
+  import { BASMALA } from './lecture';
   import { clampRate, isHafs } from './player';
   import { garderEcoute, playableUrl } from './offline-audio';
 
@@ -217,9 +217,9 @@
     title={reciter.nameFr}
     aria-label={t('cl.reglages_de', { nom: reciter.nameFr })}
     data-testid="mini-recitateur"
-    ><span class="nm"><Bidi text={shortName(reciter.nameFr)} /></span
-    >{#if !isHafs(reciter.riwaya)}<span class="autre" data-testid="mini-autre-riwaya"
-        ><Bidi text={reciter.riwayaFr} /></span
+    ><span class="nm"><Bidi text={reciter.nameFr} /></span>{#if !isHafs(reciter.riwaya)}<span
+        class="autre"
+        data-testid="mini-autre-riwaya"><Bidi text={reciter.riwayaFr} /></span
       >{/if}</button
   >
   <div class="controls">
@@ -326,7 +326,7 @@
     align-items: flex-start;
     justify-content: center;
     min-height: 44px;
-    max-width: 9.5em;
+    max-width: 14em;
     padding: 2px 8px;
     font: inherit;
     font-size: 0.82rem;
@@ -462,16 +462,44 @@
     .vol {
       display: none;
     }
+    /*
+     * 11/10/2026 (lisibilité) : le nom du récitateur sur SA ligne, en entier (plus de « M. a… ») ; dessous, les
+     * commandes et « Verset 12 » écrit en entier
+     */
     .player {
-      flex-wrap: nowrap;
-      gap: 2px 4px;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        'who who rep'
+        'controls track track';
+      gap: 0 4px;
     }
     .who {
-      max-width: 6.5em;
-      padding-inline: 4px;
+      grid-area: who;
+      max-width: none;
+      padding-inline: 6px;
+    }
+    .rep {
+      grid-area: rep;
+    }
+    .controls {
+      grid-area: controls;
+    }
+    .track {
+      grid-area: track;
+      align-self: center;
+    }
+    .where {
+      white-space: normal;
+      overflow: visible;
+      font-size: 0.8rem;
+      line-height: 1.25;
     }
     .controls .ic:not(.stop) {
       width: 40px;
+    }
+    .error {
+      grid-column: 1 / -1;
     }
   }
 </style>

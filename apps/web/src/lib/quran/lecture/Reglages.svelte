@@ -440,6 +440,24 @@
     {/each}
   </div>
   <p class="muted small">{t('cl.fond_aide')}</p>
+  <!-- 11/10/2026 : zoom de la page (aussi au pincement et au double-toucher), gardé sur l'appareil -->
+  {#if prefs.vue === 'page'}
+    <label class="zoom"
+      ><span><Bidi text={t('cl.zoom')} /></span><input
+        type="range"
+        min="1"
+        max="3"
+        step="0.1"
+        bind:value={prefs.zoom}
+        data-testid="zoom-page"
+      /><output><Bidi text={t('cl.zoom_valeur', { n: Math.round(prefs.zoom * 100) })} /></output
+      ></label
+    >
+  {/if}
+  <label class="check"
+    ><input type="checkbox" bind:checked={prefs.epure} data-testid="mp-epure" />
+    {t('cl.epure')}</label
+  >
   <label class="check"
     ><input type="checkbox" bind:checked={prefs.readOnly} data-testid="mp-lecture-seule" />
     {t('mp.lecture_seule')}</label
@@ -705,6 +723,23 @@
     align-items: center;
     gap: 8px;
     min-height: 44px;
+  }
+  .zoom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    min-height: 44px;
+    font-weight: 600;
+  }
+  .zoom input {
+    flex: 1 1 140px;
+    min-height: 44px;
+    accent-color: var(--mp-green);
+  }
+  .zoom output {
+    min-width: 3.5em;
+    font-variant-numeric: tabular-nums;
   }
   .ok-line {
     color: var(--ok-ink);

@@ -62,7 +62,9 @@
   .sheet {
     width: min(460px, 100vw);
     max-width: 100vw;
-    max-height: min(86vh, 760px);
+    /* 11/10/2026 : jamais plus de 70 % de l'écran (le texte reste visible au-dessus) */
+    max-height: min(70vh, 760px);
+    max-height: min(70dvh, 760px);
     margin: auto 0 0;
     padding: 0;
     color: var(--ink);
