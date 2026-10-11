@@ -8,6 +8,33 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 11/10/2026 — Lot F5 (suite) : réseau faible, instabilité des e2e Coran
+
+1. **Échecs `coran-epure` / `coran-corrections` en `--workers=3` : PAS une régression F5.** Même reproduction sur
+   main (worktree temporaire, base et ports propres) : mêmes 2 échecs de `coran-corrections` (« duplicate key
+   quran_reciter_pkey » / « quran_track »), comme sur F5. Cause : le `beforeAll` de « 1. verset lu = verset touché »
+   copie les VRAIS récitateurs de la démo dans la base de test partagée, depuis les deux projets à la fois ; quand
+   l'un réussit, ces récitateurs deviennent le récitateur par défaut des autres fichiers lancés en même temps, dont
+   l'audio n'est pas servi → lecture arrêtée (« 20 écoutes prévues »). Piste dans TACHES_TECHNIQUES (11/10/2026).
+2. **Modules chargés à la demande** (`lib/charger.ts`) : nouvelles tentatives automatiques (0,6 s puis 1,5 s) sous
+   une adresse neuve — Chromium mémorise l'échec d'un `import()` pour la même adresse (vérifié : aucune requête au
+   second essai) ; puis « Connexion nécessaire pour cette fonction » avec « Réessayer » (`ConnexionNecessaire`) :
+   avis, capture, image du verset, tuteur, réglages du compte, lignes exactes du Muṣḥaf (page fluide gardée).
+3. **Verset déjà écouté, hors ligne** : dernière liste de récitateurs et dernières pistes gardées sur l'appareil
+   (servies seulement quand le réseau manque, jamais à la place d'un refus du serveur) ; fichier entendu jusqu'au
+   bout gardé dans `awzid-coran-audio-recents` (150 derniers, jamais un récitateur « en ligne seulement », rien en
+   mode économe, purgé avec les récitateurs retirés).
+4. **Muṣḥaf exact** : lignes et polices des pages précédente et suivante préchargées une fois la page affichée
+   (pas en mode économe) : tourner la page est immédiat, même sans réseau.
+5. **e2e `f5-reseau.spec.ts`** : (a) téléphone moyen en 3G (CPU ×4, 150 ms, 1,6 Mbit/s) : « Écouter » → fichier
+   audio demandé en 514 ms sur F5 (444 ms sur main ; budget < 1 s) ; (b) hors ligne : modules de l'élève dans le cache du service worker, verset déjà
+   écouté rejoué ; (c) module coupé : nouvelle tentative, message, page utilisable, « Réessayer » ; coupure brève :
+   aucune gêne ; (d) Muṣḥaf exact (E2E_MUSHAF_EXACT=1) : pages voisines préchargées.
+6. Budget : appareil d'un élève 317,5 Ko (313,8 avant ; ≤ 350).
+7. Suite complète (`flock`, `--retries=1 --workers=3`, b737d4f) : 379 réussis, 3 instables (coran-epure 205, hifz 145,
+   lot29 42), 3 échecs : coran-epure 48 et 147 (récitateurs de la démo laissés par `coran-corrections`, ci-dessus) et
+   lot16 12 (`totp_incorrect` à la connexion de l'enseignant) ; `f5-reseau` vert.
+
 ## 06/10/2026 — Lot F5 : performance + « penser large »
 
 Branche `perf-penser-large-wip` (worktree `~/awform-perf`, depuis `main` 0f6e305), base de tests `awform_f5_test`, e2e
