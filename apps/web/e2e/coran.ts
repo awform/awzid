@@ -6,7 +6,19 @@ import { expect } from './fixtures';
  * ou les sélecteurs dorés (grand écran), le premier « Écouter », les feuilles « Réglages d'écoute » et
  * « Affichage ».
  */
+/**
+ * Commandes montrées (lecture épurée). Téléphone (11/10/2026) : cachées, elles flottent au-dessus du texte sans
+ * capter les touchers ni les clics ; on les montre comme au clavier (« Afficher les commandes »).
+ */
+export async function commandes(page: Page) {
+  const cachees = () => page.evaluate(() => document.documentElement.hasAttribute('data-epure'));
+  if (!(await cachees())) return;
+  await page.getByTestId('afficher-commandes').focus();
+  await page.keyboard.press('Enter');
+  await expect.poll(cachees).toBe(false);
+}
 export async function openSelector(page: Page, tab?: 'page' | 'juz' | 'hizb') {
+  await commandes(page);
   const puce = page.getByTestId('puce');
   if (await puce.isVisible()) await puce.click();
   else await page.getByTestId('barre-sourate').click();
@@ -18,6 +30,7 @@ export async function listen(page: Page) {
   await expect(page.getByTestId('barre-coran')).toBeVisible();
   // prêt : récitateurs chargés (le bouton « Écouter » est désactivé avant)
   await expect(page.locator('[data-testid="ouvrir-ecoute"]:disabled')).toHaveCount(0);
+  await commandes(page);
   const b = page.getByTestId('ouvrir-ecoute');
   if (await b.isVisible()) await b.click();
   else await page.getByTestId('jouer').click();
@@ -26,6 +39,7 @@ export async function listen(page: Page) {
 export async function showBar(page: Page) {
   await expect(page.getByTestId('barre-coran')).toBeVisible();
   await expect(page.locator('[data-testid="ouvrir-ecoute"]:disabled')).toHaveCount(0);
+  await commandes(page);
   if (!(await page.getByTestId('jouer').isVisible())) {
     await listen(page);
     await page.getByTestId('arreter-audio').click();
@@ -33,12 +47,14 @@ export async function showBar(page: Page) {
 }
 export async function openSettings(page: Page) {
   await showBar(page);
+  await commandes(page);
   await page.getByTestId('ouvrir-reglages').click();
   await expect(page.getByTestId('reglages-ecoute')).toBeVisible();
   await settled(page);
 }
 /** Panneau unique « Réglages » (corrections du 06/10/2026) : section « Affichage » visible. */
 export async function openDisplay(page: Page) {
+  await commandes(page);
   await page.getByTestId('ouvrir-reglages-lecteur').click();
   await expect(page.getByTestId('reglages')).toBeVisible();
   // enfant : tuiles d'abord, « Tous les réglages » replié

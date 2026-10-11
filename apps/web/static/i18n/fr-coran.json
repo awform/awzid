@@ -269,6 +269,8 @@
   "cl.afficher_commandes": "Afficher les commandes",
   "cl.zoom": "Zoom de la page",
   "cl.zoom_valeur": "{n} %",
+  "cl.grand_texte": "Grand texte",
+  "cl.grand_texte_aide": "Le texte revient à la ligne, verset par verset ; choisissez sa taille juste en dessous.",
   "cl.epure": "Cacher les commandes pendant la lecture",
   "cl.mode_lire": "Lire",
   "cl.mode_ecouter": "Écouter",

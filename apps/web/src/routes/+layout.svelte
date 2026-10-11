@@ -174,9 +174,11 @@
   });
 
   const piedCache = $derived(
-    // élève (enfant, ado, adulte autonome : celui-ci n'a pas toujours de profil actif)
-    ['enfant', 'ado', 'adulte'].includes(audience) &&
-      (audience === 'enfant' || /^\/(aujourdhui|lecons\/[^/]+)?\/?$/.test(page.url.pathname)),
+    // lecteur du Coran (11/10/2026) : jamais de pied juridique sous la page du muṣḥaf, pour tous
+    /^\/coran\/lecteur\/?$/.test(page.url.pathname) ||
+      // élève (enfant, ado, adulte autonome : celui-ci n'a pas toujours de profil actif)
+      (['enfant', 'ado', 'adulte'].includes(audience) &&
+        (audience === 'enfant' || /^\/(aujourdhui|lecons\/[^/]+)?\/?$/.test(page.url.pathname))),
   );
   const modeIcon = $derived(mode === 'sombre' ? 'lune' : mode === 'clair' ? 'soleil' : 'auto');
 </script>

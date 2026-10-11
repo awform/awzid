@@ -2864,6 +2864,8 @@
   "cl.afficher_commandes": "إظهار الأزرار",
   "cl.zoom": "تكبير الصفحة",
   "cl.zoom_valeur": "{n}٪",
+  "cl.grand_texte": "نص كبير",
+  "cl.grand_texte_aide": "يلتفّ النص آيةً آية؛ اختر حجمه أدناه مباشرة.",
   "cl.epure": "إخفاء الأزرار أثناء القراءة",
   "cl.mode_lire": "القراءة",
   "cl.mode_ecouter": "الاستماع",

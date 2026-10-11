@@ -2864,6 +2864,8 @@
   "cl.afficher_commandes": "Steuerelemente anzeigen",
   "cl.zoom": "Seitenzoom",
   "cl.zoom_valeur": "{n} %",
+  "cl.grand_texte": "Großer Text",
+  "cl.grand_texte_aide": "Der Text bricht um, Vers für Vers; die Größe wählen Sie direkt darunter.",
   "cl.epure": "Steuerelemente beim Lesen ausblenden",
   "cl.mode_lire": "Lesen",
   "cl.mode_ecouter": "Anhören",

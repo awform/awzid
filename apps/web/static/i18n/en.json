@@ -2864,6 +2864,8 @@
   "cl.afficher_commandes": "Show controls",
   "cl.zoom": "Page zoom",
   "cl.zoom_valeur": "{n}%",
+  "cl.grand_texte": "Large text",
+  "cl.grand_texte_aide": "The text wraps, verse by verse; choose its size just below.",
   "cl.epure": "Hide controls while reading",
   "cl.mode_lire": "Read",
   "cl.mode_ecouter": "Listen",
