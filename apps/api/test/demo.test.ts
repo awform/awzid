@@ -40,6 +40,13 @@ describe.skipIf(!URL_)('données de démonstration (awform_test)', () => {
       "select count(*) as n from account where email like '%@demo.awform.test'",
     );
     expect(Number(rows[0]!.n)).toBeGreaterThanOrEqual(3);
+    // canal bêta : chaque compte de démonstration (et seulement eux) y est inscrit par le script
+    const beta = await c.h.pool.query<{ ok: boolean }>(
+      `select (a.email like '%@demo.awform.test') as ok from account a
+       join beta_member b on b.account_id = a.id`,
+    );
+    expect(beta.rows).toHaveLength(Number(rows[0]!.n));
+    expect(beta.rows.every((r) => r.ok)).toBe(true);
   }, 150_000);
 
   it('seconde exécution : rien n’est recréé', async () => {
@@ -48,5 +55,8 @@ describe.skipIf(!URL_)('données de démonstration (awform_test)', () => {
     expect(out.demo).not.toBe('creee');
     const after = await c.h.pool.query<{ n: string }>('select count(*) as n from account');
     expect(after.rows[0]!.n).toBe(before.rows[0]!.n);
+    // rien n'est dupliqué dans le canal bêta
+    const beta = await c.h.pool.query<{ n: string }>('select count(*) as n from beta_member');
+    expect(Number(beta.rows[0]!.n)).toBe(Number(after.rows[0]!.n));
   }, 150_000);
 });

@@ -20,6 +20,7 @@ import {
   CLASSES,
   DEMO_NIVEAUX,
   emailOf,
+  inscrireDemoBeta,
   PARENT_NIVEAUX_ROLE,
   roleOf,
   seedNiveaux,
@@ -106,6 +107,10 @@ describe('JAMAIS en production', () => {
         teacherEmail: '',
       }),
     ).rejects.toThrow(/AWFORM_DEMO=1/);
+    // l'inscription au canal bêta refuse aussi, avant tout accès à la base
+    await expect(inscrireDemoBeta(undefined as never, {}, 'a@demo.awform.test')).rejects.toThrow(
+      /AWFORM_DEMO=1/,
+    );
   });
   it('deploy.sh : le service de démonstration n’est lancé que dans le bloc --demo', () => {
     const sh = read('infra/prod/deploy.sh');
@@ -132,6 +137,12 @@ describe('JAMAIS en production', () => {
     // le serveur n'appelle jamais le semis
     expect(read('apps/api/src/server.ts')).not.toMatch(/seedNiveaux|demo-niveaux/);
     expect(read('apps/api/src/app.ts')).not.toMatch(/seedNiveaux|demo-niveaux/);
+    // l'inscription au canal bêta n'est appelée que par le script de démonstration (jamais par l'API ni une route)
+    const appelants = walk(join(root, 'apps/api/src'))
+      .filter((f) => /inscrireDemoBeta/.test(readFileSync(f, 'utf8')))
+      .map((f) => f.slice(join(root, 'apps/api/src').length + 1).replaceAll('\\', '/'))
+      .sort();
+    expect(appelants).toEqual(['cli/demo.ts', 'demo-niveaux.ts']);
   });
   it('remise à zéro : refusée si prod.env n’a pas AWFORM_DEMO=1, identifiants contrôlés', () => {
     const sh = read('infra/prod/demo-reset-niveau.sh');
@@ -364,6 +375,53 @@ describe.skipIf(!URL_)('comptes par niveau sur la base de test', () => {
     expect(Number(rows[0]!.n)).toBe(1);
   }, 120_000);
 
+  it('canal bêta : tous les comptes de démo y sont inscrits, sans doublon, jamais un autre compte', async () => {
+    await seed();
+    // un compte HORS démonstration (autre domaine) et un administrateur de démonstration
+    await parent(c, 'autre-famille@exemple.test');
+    const admin = await c.h.pool.query<{ id: string }>(
+      "insert into account (kind, email, password_hash, country) values ('admin', $1, 'x', 'FR') returning id",
+      [`admin-${TAG}@${DEMO_DOMAIN}`],
+    );
+    const adminId = admin.rows[0]!.id;
+    const q = async <T extends object>(s: string) => (await c.h.pool.query<T>(s)).rows;
+    const attendus = (
+      await q<{ id: string }>(`select id from account where email like '%@${DEMO_DOMAIN}'`)
+    ).length;
+    expect(attendus).toBe(14); // origine (adulte, parent, enseignant, admin) + 9 adultes + parent-niveaux
+
+    const r1 = await inscrireDemoBeta(c.h.db, env, `admin-${TAG}@${DEMO_DOMAIN}`);
+    expect(r1).toEqual({ inscrits: attendus, total: attendus });
+    const dedans = await q<{ email: string; added_by: string | null; account_id: string }>(
+      'select a.email, b.added_by, b.account_id from beta_member b join account a on a.id = b.account_id',
+    );
+    expect(dedans).toHaveLength(attendus);
+    expect(dedans.every((m) => m.email.endsWith(`@${DEMO_DOMAIN}`))).toBe(true);
+    expect(dedans.every((m) => m.added_by === adminId)).toBe(true);
+    // comptes par niveau compris (adulte1 = Samir, adulte5, parent-niveaux) et comptes d'origine
+    for (const e of [
+      emailOf(roleOf(DEMO_NIVEAUX.find((x) => x.id === 'adulte5')!), TAG),
+      emailOf(PARENT_NIVEAUX_ROLE, TAG),
+      `adulte-${TAG}@${DEMO_DOMAIN}`,
+      `parent-${TAG}@${DEMO_DOMAIN}`,
+      `enseignant-${TAG}@${DEMO_DOMAIN}`,
+    ])
+      expect(dedans.map((m) => m.email)).toContain(e);
+    // le compte hors démonstration n'est JAMAIS inscrit
+    expect(
+      await q(
+        "select 1 from beta_member b join account a on a.id = b.account_id where a.email = 'autre-famille@exemple.test'",
+      ),
+    ).toHaveLength(0);
+    // relancer (semis compris) ne duplique rien
+    await seed();
+    const r2 = await inscrireDemoBeta(c.h.db, env, `admin-${TAG}@${DEMO_DOMAIN}`);
+    expect(r2.inscrits).toBe(0);
+    expect(await q('select 1 from beta_member')).toHaveLength(attendus);
+    // un compte retiré du canal à la main n'est pas touché ailleurs ; sans AWFORM_DEMO=1 : refus, rien d'écrit
+    await expect(inscrireDemoBeta(c.h.db, {}, '')).rejects.toThrow(/AWFORM_DEMO=1/);
+    expect(await q('select 1 from beta_member')).toHaveLength(attendus);
+  }, 180_000);
   it('remise au début d’un niveau : ce compte seulement', async () => {
     const { setProfileLevel } = await import('@awform/db');
     await setProfileLevel(c.h.db, await profileOf('adulte5'), 'ad6', 'epreuve');

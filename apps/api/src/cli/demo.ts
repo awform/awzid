@@ -29,7 +29,7 @@ import { setupTutor } from '@awform/tutor';
 import { buildApp } from '../app.js';
 import { hashSecret, totpAt } from '../auth/crypto.js';
 import { secretKeyFromEnv } from '../auth/key.js';
-import { seedNiveaux } from '../demo-niveaux.js';
+import { inscrireDemoBeta, seedNiveaux } from '../demo-niveaux.js';
 
 loadRootEnv();
 if (process.env.AWFORM_DEMO !== '1')
@@ -462,6 +462,11 @@ try {
         demo: result.demo === 'creee' ? 'creee' : 'complement',
         comptesNiveaux: crees,
       };
+  }
+  // ---- canal bêta : tous les comptes de démonstration y sont inscrits (idempotent, par le code, jamais à la main)
+  {
+    const b = await inscrireDemoBeta(h.db, process.env, E.admin);
+    if (b.inscrits) result = { ...result, betaInscrits: b.inscrits };
   }
   console.log(JSON.stringify(result));
 } finally {
