@@ -8,7 +8,7 @@
   /**
    * « Plus » (D2) : les espaces hors de la barre du bas, RANGÉS EN FAMILLES, chacun avec son icône et son nom écrit.
    * Emplacements prévus dans « Apprendre plus » : 1 000 mots, Madjaliss et Poésie — ajoutés ici (une ligne
-   * chacun) seulement quand leur page existera ; rien n'est affiché avant. Les liens juridiques ne sont pas montrés
+   * chacun) seulement quand leur page existera ; rien n'est affiché avant. Le pied juridique du layout est masqué ici (mêmes liens dans la famille Aide, sans doublon). Les liens juridiques ne sont pas montrés
    * à un enfant (`.juridique`). « Signaler un problème » et « Donner mon avis » s'ouvrent sur place.
    */
   type Lien = { href: string; icon: string; titre: string; juridique?: boolean };
@@ -48,6 +48,14 @@
         { href: '/aide', icon: 'question', titre: 'aide.titre' },
         { href: '/garanties', icon: 'bouclier', titre: 'gar.titre', juridique: true },
         { href: '/legal/mentions', icon: 'info', titre: 'pied.mentions', juridique: true },
+        { href: '/legal/cgu', icon: 'info', titre: 'pied.cgu', juridique: true },
+        {
+          href: '/legal/confidentialite',
+          icon: 'info',
+          titre: 'pied.confidentialite',
+          juridique: true,
+        },
+        { href: '/legal/cookies', icon: 'info', titre: 'pied.cookies', juridique: true },
       ],
     },
     {

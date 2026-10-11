@@ -189,6 +189,9 @@
     border-radius: var(--radius-pill);
   }
   /* carte « Reprendre » (.carte-reprendre et a.dore, app.css : même vocabulaire que l'Arabe, D1) */
+  .reprendre {
+    gap: 2px;
+  }
   .reprendre h2 {
     margin: 0;
     font-size: 1rem;
@@ -199,7 +202,7 @@
     font-family: var(--font-ar-titre);
     font-weight: 700;
     font-size: 2rem;
-    line-height: 1.7;
+    line-height: 1.4;
     text-align: right;
   }
   .rp-ref {

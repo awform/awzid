@@ -20,8 +20,8 @@ test.describe('adulte', () => {
     await page.goto('/aujourdhui');
     await expect(page.locator('h1')).toContainText('Today');
     await expect(page.locator('[data-tab="arabe"]')).toContainText('Arabic');
-    // D1 : pied de page (liens juridiques) dans « Plus », plus sur l'accueil de l'élève
-    await page.goto('/plus');
+    // D1 : pied de page (liens juridiques) dans « Aide », plus sur l'accueil de l'élève
+    await page.goto('/aide');
     await page.getByTestId('pied').getByRole('link', { name: 'Privacy' }).click();
     await expect(page.getByTestId('page-legale')).toContainText('Privacy policy');
     await expect(page.getByTestId('page-legale')).toHaveAttribute('lang', 'en');
