@@ -187,8 +187,8 @@
     border-color: var(--ok-ink);
   }
   .bad {
-    background: var(--bad-bg);
-    color: var(--bad-ink);
+    background: var(--warn-bg);
+    color: var(--attention);
   }
   .okmsg {
     color: var(--ok-ink);

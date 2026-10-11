@@ -2,7 +2,6 @@
  * Lot 26 — public de l'écran : thème graphique et navigation (3 à 5 entrées par public).
  * Fonctions pures (testées dans audience.test.ts), utilisées par la mise en page.
  */
-import type { PaletteName, ThemeName } from '$lib/theme/tokens';
 
 export type Audience = 'enfant' | 'ado' | 'adulte' | 'parent' | 'enseignant' | 'admin' | 'visiteur';
 
@@ -41,32 +40,14 @@ export function audienceOf(c: Context): Audience {
   return c.accountKind === 'parent' ? 'parent' : 'visiteur';
 }
 
-export function themeOf(a: Audience): ThemeName {
-  return a === 'enfant' ? 'jardin' : a === 'ado' ? 'nuit' : a === 'adulte' ? 'manuscrit' : 'clair';
-}
-
 /**
- * Palette « verdure » (vert, blanc, or) par-dessus le thème du public, réglée PAR PUBLIC :
- * - « partout » : thème clair par défaut de toute l'application ;
- * - « coran » : seulement dans l'espace Coran (et le carnet de hifẓ) ;
- * - absent : le thème du public partout, espace Coran compris.
- * Décision du client (06/10/2026, corrections du lecteur) : partout pour les ADULTES seulement (pour l'instant) ;
- * les enfants (Jardin) et les ados (Nuit étoilée) gardent leur thème, y compris dans l'espace Coran ; visiteurs :
- * espace Coran (inchangé). Les adultes responsables (parent, enseignant, administration) gardent « clair et minimal ».
+ * Depuis le 11/10/2026 il n'y a plus qu'UNE identité (la marque, clair et sombre) pour tous les publics : le public
+ * ne change plus que la navigation et l'ergonomie (enfant : `data-public='enfant'`, tailles).
+ * Thème que le public avait AVANT le 11/10/2026 (enfant : jardin, ado : nuit, adulte : manuscrit, autres : clair) :
+ * sert seulement à la migration silencieuse des réglages (`lib/theme/migration.ts`).
  */
-export const VERDURE: Partial<Record<Audience, 'partout' | 'coran'>> = {
-  adulte: 'partout',
-  visiteur: 'coran',
-};
-export function paletteOf(
-  a: Audience,
-  path: string,
-  regle: Partial<Record<Audience, 'partout' | 'coran'>> = VERDURE,
-): PaletteName | null {
-  const r = regle[a];
-  if (r === 'partout') return 'verdure';
-  if (r === 'coran') return under(path, ['/coran', '/hifz']) ? 'verdure' : null;
-  return null;
+export function ancienThemeDuPublic(a: Audience): 'jardin' | 'nuit' | 'manuscrit' | 'clair' {
+  return a === 'enfant' ? 'jardin' : a === 'ado' ? 'nuit' : a === 'adulte' ? 'manuscrit' : 'clair';
 }
 
 export type NavId =

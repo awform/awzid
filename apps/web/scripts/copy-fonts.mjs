@@ -14,6 +14,8 @@ const wanted = [
   ['@fontsource/amiri-quran', /^amiri-quran-(arabic|latin)-400-normal\.woff2$/],
   ['@fontsource/noto-naskh-arabic', /^noto-naskh-arabic-arabic-(400|700)-normal\.woff2$/],
   ['@fontsource/nunito', /^nunito-(latin|latin-ext)-(400|700)-normal\.woff2$/],
+  // police de la marque (nom « Awzid » de l'en-tête) : un seul fichier, Lexend 600 latin
+  ['@fontsource/lexend', /^lexend-latin-600-normal\.woff2$/],
 ];
 let n = 0;
 for (const [pkg, re] of wanted) {
@@ -25,5 +27,5 @@ for (const [pkg, re] of wanted) {
   const lic = join(dirname(require.resolve(`${pkg}/package.json`)), 'LICENSE');
   if (existsSync(lic)) copyFileSync(lic, join(out, `${pkg.split('/')[1]}.LICENSE.txt`));
 }
-if (n < 7) throw new Error(`polices manquantes (${n} fichiers copiés)`);
+if (n < 8) throw new Error(`polices manquantes (${n} fichiers copiés)`);
 console.log(`polices : ${n} fichiers copiés dans static/fonts`);

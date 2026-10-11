@@ -25,11 +25,11 @@ async function noHorizontalScroll(page: Page, url: string) {
   expect(sw, `${url} : la page défile horizontalement`).toBeLessThanOrEqual(cw);
 }
 
-test('adulte : thème « manuscrit », 5 entrées, accueil de premier lancement montré une seule fois', async ({
+test('adulte : une seule identité (clair), 5 entrées, accueil de premier lancement montré une seule fois', async ({
   page,
 }) => {
   await page.goto('/aujourdhui');
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'manuscrit');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'clair');
   await expect(page.locator('nav.tabs a')).toHaveCount(5);
   const hello = page.getByTestId('bienvenue');
   await expect(hello).toBeVisible();
@@ -54,16 +54,14 @@ test('mode sombre : aucune violation grave de contraste (axe-core) sur les écra
   await page.getByTestId('mode-affichage').click(); // auto → sombre
   await page.getByTestId('mode-affichage').click(); // sombre → clair
   await expect(page.locator('html')).toHaveAttribute('data-mode', 'clair');
-  // dernière page : l'espace Coran, palette « vert, blanc, or » (Coran épuré) en mode clair imposé
+  // 11/10/2026 : le mode clair imposé donne le papier de la marque (#fbf7ee), sur toutes les pages
   const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  expect(bg).toBe('rgb(246, 251, 247)');
-  // corrections du 06/10/2026 : « vert, blanc, or » = thème clair par défaut de TOUTE l'application adulte
+  expect(bg).toBe('rgb(251, 247, 238)');
   await page.goto('/plus');
   await page.locator('main h1').first().waitFor();
-  // palette posée côté client une fois le profil connu
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'verdure');
+  await expect(page.locator('html')).not.toHaveAttribute('data-palette', /.+/);
   expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe(
-    'rgb(246, 251, 247)',
+    'rgb(251, 247, 238)',
   );
 });
 
@@ -104,7 +102,7 @@ test('mouvement réduit : transitions neutralisées', async ({ page }) => {
 
 test.describe('famille', () => {
   test.use({ compte: 'parent' });
-  test('parent « clair » (5 entrées, A12), enfant « jardin » (5 grandes entrées, cibles ≥ 56 px)', async ({
+  test('parent « clair » (5 entrées, A12), enfant (5 grandes entrées, cibles ≥ 56 px)', async ({
     page,
   }) => {
     await page.goto('/profils');
@@ -113,7 +111,8 @@ test.describe('famille', () => {
     await expect(page.getByTestId('bienvenue')).toHaveAttribute('data-public', 'parent');
     await pickProfile(page, 'Yanis');
     await page.goto('/aujourdhui');
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'jardin');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'clair');
+    await expect(page.locator('html')).toHaveAttribute('data-public', 'enfant');
     await expect(page.locator('nav.tabs a')).toHaveCount(5);
     await expect(page.locator('nav.tabs a[data-tab="vivre"]')).toBeVisible();
     // consignes lues par l'adulte pour un enfant non lecteur

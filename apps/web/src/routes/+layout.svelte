@@ -21,7 +21,9 @@
   import { cachedMe, fetchMe, type Me } from '$lib/session';
   import { chargerFonctions } from '$lib/fonctions.svelte';
   import { cleDeChemin, envoyer, noterUsage, usagePour } from '$lib/usage';
-  import { activeNav, audienceOf, navFor, paletteOf, themeOf } from '$lib/ui/audience';
+  import { appliquerFond, lireFond, stockageLocal } from '$lib/theme/fond';
+  import { migrerThemesSupprimes } from '$lib/theme/migration';
+  import { activeNav, ancienThemeDuPublic, audienceOf, navFor } from '$lib/ui/audience';
   import Brand from '$lib/ui/Brand.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import { applyMode, nextMode, readMode, writeMode, type Mode } from '$lib/ui/mode';
@@ -40,8 +42,8 @@
   let Maj = $state<Component | null>(null);
 
   /**
-   * Lot 26 — public de l'écran : thème (jardin, nuit, manuscrit, clair) et navigation de 3 à 5 entrées.
-   * Le parent qui gère la famille, l'enseignant et l'administration ont le thème « clair et minimal ».
+   * Lot 26 — public de l'écran : navigation de 3 à 5 entrées et ergonomie (enfant : tailles plus grandes).
+   * Depuis le 11/10/2026 il n'y a plus qu'une identité (la marque, clair et sombre) pour tous les publics.
    */
   const audience = $derived(
     audienceOf({
@@ -71,12 +73,7 @@
 
   $effect(() => {
     const root = document.documentElement;
-    root.dataset.theme = themeOf(audience);
     root.dataset.public = audience;
-    // Coran épuré : palette « vert, blanc, or » par-dessus le thème (espace Coran des élèves)
-    const pal = paletteOf(audience, page.url.pathname);
-    if (pal) root.dataset.palette = pal;
-    else delete root.dataset.palette;
     // couleur de la barre du navigateur : celle de l'en-tête affiché
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta)
@@ -84,6 +81,20 @@
         'content',
         getComputedStyle(root).getPropertyValue('--header').trim() || '#15324a',
       );
+  });
+
+  // 11/10/2026 : migration silencieuse des anciens thèmes (une seule fois, quand le public de l'écran est connu)
+  let prete = $state(false);
+  let migre = false;
+  $effect(() => {
+    // attendre un profil actif : le public (donc l'ancien thème) en dépend, pas du compte encore en chargement
+    if (!prete || migre || !profile) return;
+    migre = true;
+    if (migrerThemesSupprimes(stockageLocal(), ancienThemeDuPublic(profile.kind))) {
+      mode = readMode();
+      applyMode(mode);
+      appliquerFond(lireFond());
+    }
   });
 
   function cycleMode() {
@@ -97,6 +108,7 @@
       void import('$lib/MajBandeau.svelte').then((m) => (Maj = m.default)).catch(() => {});
     mode = readMode();
     applyMode(mode);
+    appliquerFond(lireFond());
     online = navigator.onLine;
     const on = () => {
       online = true;
@@ -149,6 +161,7 @@
     usagePour(qui);
     void chargerFonctions(me ? (profile?.id ?? null) : null);
     noterUsage(cleDeChemin(page.url.pathname), qui);
+    prete = true;
   }
   // à chaque navigation : relire réglages, compte et profil (ils ont pu changer)
   $effect(() => {
@@ -219,13 +232,16 @@
       aria-label={t(`mode.${mode}`)}
       title={t(`mode.${mode}`)}
       data-testid="mode-affichage"
-      data-mode={mode}><Icon name={modeIcon} /></button
+      data-mode={mode}
+      ><Icon name={modeIcon} /><span class="ic-nom">{t('entete.nom_mode')}</span></button
     >
     <a
       class="icon-btn"
       href={resolve('/hors-ligne')}
       aria-label={t('entete.telechargements')}
-      title={t('entete.telechargements')}><Icon name="telecharger" /></a
+      title={t('entete.telechargements')}
+      data-testid="lien-telecharger"
+      ><Icon name="telecharger" /><span class="ic-nom">{t('entete.nom_telecharger')}</span></a
     >
     {#if me}
       <a
@@ -233,7 +249,8 @@
         href={resolve('/compte')}
         aria-label={t('entete.compte')}
         title={t('entete.compte')}
-        data-testid="lien-compte"><Icon name="personne" /></a
+        data-testid="lien-compte"
+        ><Icon name="personne" /><span class="ic-nom">{t('entete.nom_compte')}</span></a
       >
     {:else}
       <a class="login" href={resolve('/connexion')} data-testid="lien-connexion"
@@ -308,15 +325,26 @@
     white-space: nowrap;
   }
   .icon-btn {
-    display: inline-grid;
-    place-items: center;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
     min-width: 48px;
     min-height: 48px;
-    padding: 0;
+    padding: 2px 4px;
     border: 0;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-md);
     background: transparent;
     color: inherit;
+    text-decoration: none;
+  }
+  /* règle du client : chaque action importante a son nom écrit, lisible à 375 px */
+  .ic-nom {
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.15;
+    white-space: nowrap;
   }
   .icon-btn:hover {
     background: color-mix(in srgb, currentColor 10%, transparent);

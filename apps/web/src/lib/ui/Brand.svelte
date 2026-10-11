@@ -67,8 +67,9 @@
   }
   .word {
     color: var(--v-nom);
-    font-family: var(--font-title);
-    font-weight: 700;
+    /* police de la marque : Lexend 600, auto-hébergée (static/fonts) */
+    font-family: var(--font-brand);
+    font-weight: 600;
     letter-spacing: 0.06em;
   }
   .grand .word {

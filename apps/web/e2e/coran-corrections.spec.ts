@@ -403,8 +403,9 @@ test.describe('famille', () => {
   }, info) => {
     await pickProfile(page, 'Yanis');
     await page.goto('/coran/lecteur?page=604');
-    // 4. l'enfant garde le Jardin, y compris dans l'espace Coran (pas de palette verdure)
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'jardin');
+    // 4. une seule identité (11/10/2026) : l'enfant garde ses tailles, y compris dans l'espace Coran
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'clair');
+    await expect(page.locator('html')).toHaveAttribute('data-public', 'enfant');
     await expect(page.locator('html')).not.toHaveAttribute('data-palette', /.+/);
     await page.getByTestId('ouvrir-reglages-lecteur').click();
     const tiles = page.getByTestId('reglages-enfant');
@@ -448,17 +449,18 @@ test.describe('ado', () => {
     expect(r.status(), await r.text()).toBe(201);
     await page.goto('/coran/lecteur?page=604');
     await expect(page.locator('html')).toHaveAttribute('data-public', 'ado');
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'nuit');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'clair');
     await expect(page.locator('html')).not.toHaveAttribute('data-palette', /.+/);
   });
 });
-test('4. adulte : palette « vert, blanc, or » partout (thème clair par défaut)', async ({
+test('4. adulte : une seule identité partout, aucune palette ni thème supprimé', async ({
   page,
 }, info) => {
   for (const p of ['/aujourdhui', '/', '/quotidien', '/coran/lecteur?page=1']) {
     await page.goto(p);
     await expect(page.locator('html')).toHaveAttribute('data-public', 'adulte');
-    await expect(page.locator('html'), p).toHaveAttribute('data-palette', 'verdure');
+    await expect(page.locator('html'), p).toHaveAttribute('data-theme', 'clair');
+    await expect(page.locator('html'), p).not.toHaveAttribute('data-palette', /.+/);
   }
   await page.goto('/aujourdhui');
   await shot(page, 'theme-adulte', info.project.name);
