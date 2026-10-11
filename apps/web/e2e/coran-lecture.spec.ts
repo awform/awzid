@@ -14,6 +14,8 @@ import { expect, test } from './fixtures';
  * Captures : CORAN_LECTURE_CAPTURES=<dossier> (375 px, clair et sombre).
  */
 const CAP = process.env.CORAN_LECTURE_CAPTURES;
+/** suffixe des fichiers de captures (p. ex. « -v2 ») */
+const SFX = process.env.CORAN_LECTURE_SUFFIXE ?? '';
 const mobile = (name: string) => name.startsWith('mobile');
 const epure = (page: Page) =>
   page.evaluate(() => document.documentElement.hasAttribute('data-epure'));
@@ -187,6 +189,30 @@ test.describe('téléphone : muṣḥaf zoomable et lecture épurée', () => {
     await page.getByTestId('arreter-audio').click();
   });
 
+  test('barre audio juste au-dessus des onglets (ancrage mesuré) ; téléphone couché ≥ 900 px : une seule page pleine largeur', async ({
+    page,
+  }) => {
+    await page.goto('/coran/lecteur?page=604&vue=page');
+    await listen(page);
+    await page.getByTestId('arreter-audio').click();
+    const [bar, tabs] = await Promise.all([
+      page.getByTestId('mini-barre').boundingBox(),
+      page.locator('nav.tabs').boundingBox(),
+    ]);
+    // la barre audio n'est jamais mordue par la barre d'onglets
+    expect(bar!.y + bar!.height).toBeLessThanOrEqual(tabs!.y + 0.5);
+    // téléphone couché, large de 932 px : une page (pas la double page du bureau), sur toute la largeur
+    await page.setViewportSize({ width: 932, height: 430 });
+    await page.goto('/coran/lecteur?page=50&vue=page');
+    await ready(page);
+    await expect(page.getByTestId('mushaf-page')).toHaveCount(1);
+    const book = (await page.getByTestId('mushaf-livre').boundingBox())!;
+    expect(book.width).toBeGreaterThan(932 * 0.85);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+  });
+
   test('réglages : Lire, Écouter, Mémoriser en tête, « Avancé » replié, feuille ≤ 70 % de l’écran', async ({
     page,
   }) => {
@@ -216,10 +242,20 @@ test.describe('captures', () => {
     await page.setViewportSize({ width: 375, height: 812 });
     for (const scheme of ['light', 'dark'] as const) {
       const sfx = scheme === 'light' ? 'clair' : 'sombre';
-      const save = (n: string) => page.screenshot({ path: join(CAP!, `375-${sfx}-${n}.png`) });
+      const save = (n: string) =>
+        page.screenshot({ path: join(CAP!, `375-${sfx}-${n}${SFX}.png`) });
       await page.emulateMedia({ colorScheme: scheme });
       await page.goto('/coran/lecteur?page=604&vue=page');
       await ready(page);
+      // thème de l'application forcé (bouton « Thème » de l'en-tête : auto → clair → sombre)
+      const mode = scheme === 'light' ? 'clair' : 'sombre';
+      for (let i = 0; i < 3; i++) {
+        const b = page.getByTestId('mode-affichage');
+        if ((await b.getAttribute('data-mode')) === mode) break;
+        await b.click();
+      }
+      await expect(page.getByTestId('mode-affichage')).toHaveAttribute('data-mode', mode);
+      await expect(page.locator('html')).toHaveAttribute('data-mode', mode);
       await page.evaluate(() => document.fonts.ready);
       // zoom remis à 1 (réglage de l'appareil)
       if ((await zoom(page)) !== 1) await page.keyboard.press('0');

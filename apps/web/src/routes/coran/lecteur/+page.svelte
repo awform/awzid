@@ -398,7 +398,11 @@
   });
 
   onMount(() => {
-    const mq = window.matchMedia('(min-width: 900px)');
+    // grand écran : large ET (assez haut, ou vraie souris) — un téléphone couché (tactile, peu haut) garde une
+    // seule page sur toute la largeur, même au-delà de 900 px
+    const mq = window.matchMedia(
+      '(min-width: 900px) and (min-height: 561px), (min-width: 900px) and (hover: hover) and (pointer: fine)',
+    );
     narrow = !mq.matches;
     const on = () => (narrow = !mq.matches);
     mq.addEventListener('change', on);
@@ -1126,8 +1130,9 @@
   function chromeHeld(): boolean {
     const a = document.activeElement;
     // survol : seulement avec une vraie souris (au doigt, :hover reste collé après un toucher)
+    // focus du CLAVIER seulement (après un toucher ou un clic, le bouton garde le focus sans le montrer)
     return (
-      !!a?.closest?.(CHROME) ||
+      (!!a?.closest?.(CHROME) && a.matches(':focus-visible')) ||
       (window.matchMedia('(hover: hover)').matches &&
         !!document.querySelector('.cbar:hover, header.top:hover, nav.tabs:hover, .turn:hover'))
     );
@@ -1237,6 +1242,27 @@
       void wake?.release().catch(() => {});
       wake = null;
     };
+  });
+  /**
+   * Ancrage de la barre audio (téléphone) : MESURÉ — juste au-dessus de la barre d'onglets (sa hauteur réelle,
+   * enfant ou adulte, marge de sécurité comprise) ; la proposition « Écouter ici » et l'espace de fin au-dessus
+   * de la barre audio (sa hauteur réelle, une ou deux lignes).
+   */
+  let tabsH = $state(76);
+  let ecouteH = $state(0);
+  let ecouteEl = $state<HTMLElement | undefined>();
+  $effect(() => {
+    const tabs = document.querySelector<HTMLElement>('nav.tabs');
+    const el = ecouteEl;
+    const ro = new ResizeObserver(() => {
+      const fixed = tabs && getComputedStyle(tabs).position === 'fixed';
+      tabsH = fixed ? Math.ceil(tabs.getBoundingClientRect().height) : 0;
+      ecouteH = el && audioOn ? Math.ceil(el.getBoundingClientRect().height) : 0;
+    });
+    if (tabs) ro.observe(tabs);
+    if (el) ro.observe(el);
+    void audioOn;
+    return () => ro.disconnect();
   });
   type Sentinel = { release(): Promise<void>; addEventListener(t: 'release', f: () => void): void };
   let wake: Sentinel | null = null;
@@ -1537,6 +1563,8 @@
     class:audio-on={audioOn}
     class:epure={prefs.epure}
     style:--qz={TEXT_SCALE[prefs.size] ?? 1}
+    style:--bas={`${tabsH}px`}
+    style:--ecoute-h={`${ecouteH}px`}
     role="none"
     onpointerdown={longDown}
     onpointermove={longMove}
@@ -1629,7 +1657,7 @@
           ><Icon name="reglages" size={22} /><span>{t('cl.reglages')}</span></button
         >
       </div>
-      <div class="ecoute" class:on={audioOn} data-testid="mini-barre">
+      <div class="ecoute" class:on={audioOn} data-testid="mini-barre" bind:this={ecouteEl}>
         {#if basmalaMissing && audioOn}<p class="hint bsm-hint" data-testid="basmala-absente">
             <Bidi text={t('cl.basmala_absente')} />
           </p>{/if}
@@ -2323,7 +2351,8 @@
   .ecoute.on {
     position: fixed;
     inset-inline: 8px;
-    bottom: calc(76px + env(safe-area-inset-bottom));
+    /* juste au-dessus de la barre d'onglets, hauteur mesurée (marge de sécurité de l'écran comprise) */
+    bottom: calc(var(--bas, 76px) + 6px);
     z-index: 19;
     display: block;
     padding: 4px 6px;
@@ -2334,7 +2363,7 @@
     box-shadow: var(--shadow-float);
   }
   .spacer {
-    height: 112px;
+    height: calc(var(--ecoute-h, 100px) + 12px);
   }
   .bsm-hint {
     margin: 0 4px 2px;
@@ -2351,7 +2380,7 @@
     pointer-events: none;
   }
   .audio-on .prop-zone {
-    bottom: calc(180px + env(safe-area-inset-bottom));
+    bottom: calc(var(--bas, 76px) + var(--ecoute-h, 100px) + 14px);
   }
   .prop {
     display: flex;
@@ -2848,7 +2877,8 @@
    * téléphone, lecture épurée : la page prend toute la largeur (plus de colonnes de flèches) ; les flèches
    * deviennent de petites commandes au bord de l'écran, effacées avec les autres (glisser et bords suffisent)
    */
-  @media (max-width: 899px) {
+  @media (max-width: 899px),
+    (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
     .stage.epure {
       grid-template-columns: minmax(0, 1fr);
       grid-template-areas:
@@ -2880,12 +2910,6 @@
     :global(html[data-lecteur] main) {
       max-width: none;
       padding-inline: 8px;
-    }
-    .stage.epure {
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-areas:
-        'book'
-        'pos';
     }
   }
 </style>
