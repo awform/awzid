@@ -24,6 +24,9 @@ export function connect(url: string | undefined = process.env.DATABASE_URL, max 
 
 export async function runMigrations(db: Db): Promise<void> {
   await migrate(db, { migrationsFolder: MIGRATIONS_DIR });
+  // A2 : catalogue des récitateurs en ligne de Quran Foundation (métadonnées seulement, idempotent)
+  const { syncQfCatalogue } = await import('./audio/qf-catalogue.js');
+  await syncQfCatalogue(db);
 }
 
 /** Base de TEST uniquement : efface tout (schémas public et drizzle) avant de rejouer les migrations. */

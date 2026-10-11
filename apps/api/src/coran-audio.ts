@@ -19,6 +19,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, asc, eq, inArray, isNull, notLike, sql } from 'drizzle-orm';
 import {
   BEGINNER_RECITER,
+  qfRecitationId,
   RIWAYA_FR,
   relayByToken,
   retireReciter,
@@ -28,6 +29,7 @@ import {
 } from '@awform/db';
 import { isAdmin } from './auth/service.js';
 import { err, familyProfile, needTeacher, parentGate } from './guards.js';
+import { QfError, type QfAudioClient } from './coran-qf.js';
 
 /** riwāya des carnets de hifẓ : texte Tanzil de Ḥafṣ ʿan ʿĀṣim */
 export const CARNET_RIWAYA = 'hafs';
@@ -50,6 +52,7 @@ const fileUrl = (path: string) => `/api/v1/quran/audio/file/${path}`;
 const highlight = (riwaya: string) => (riwaya === CARNET_RIWAYA ? 'verset' : 'sans_surlignage');
 
 function publicReciter(r: Reciter, verses: number) {
+  const enLigne = r.source === 'qf';
   return {
     id: r.id,
     nameAr: r.nameAr,
@@ -67,9 +70,12 @@ function publicReciter(r: Reciter, verses: number) {
       archivedOn: r.licenseArchivedOn,
       text: r.licenseText,
     },
-    verses,
+    // A2 : récitateur en ligne (Quran Foundation) : pas de fichier chez nous, muṣḥaf complet annoncé
+    verses: enLigne ? r.expectedVerses : verses,
     surlignage: highlight(r.riwaya),
     conseilDebutant: r.id === BEGINNER_RECITER,
+    /** A2 : écoute en ligne seulement (Quran Foundation) : ni paquet hors ligne, ni relais */
+    enLigne,
   };
 }
 
@@ -81,6 +87,14 @@ function publicReciter(r: Reciter, verses: number) {
 export const showTestReciters = () => process.env.AWFORM_AUDIO_ESSAI === 'on';
 const hideTestReciters = () =>
   showTestReciters() ? undefined : notLike(t.quranReciter.id, 'essai-%');
+
+/**
+ * A2 : un récitateur EN LIGNE (source « qf ») n'est proposé que si l'API de Quran Foundation est configurée
+ * (identifiants du déploiement) ET que son environnement (prélancement, production) lui donne un identifiant.
+ */
+let qfClient: QfAudioClient | null = null;
+const visible = (r: Reciter) =>
+  r.source !== 'qf' || (qfClient !== null && qfRecitationId(r.id, qfClient.cfg.env) !== null);
 
 async function activeReciters(db: Db, ids?: string[]) {
   const rows = await db
@@ -97,9 +111,14 @@ async function activeReciters(db: Db, ids?: string[]) {
       ),
     )
     .orderBy(asc(t.quranReciter.id));
-  // conseil débutant en tête, puis ordre alphabétique
+  // conseil débutant en tête, puis ordre alphabétique ; récitateurs en ligne (A2) après ceux du Complexe
   return rows
-    .sort((a, b) => Number(b.r.id === BEGINNER_RECITER) - Number(a.r.id === BEGINNER_RECITER))
+    .filter((x) => visible(x.r))
+    .sort(
+      (a, b) =>
+        Number(b.r.id === BEGINNER_RECITER) - Number(a.r.id === BEGINNER_RECITER) ||
+        Number(a.r.source === 'qf') - Number(b.r.source === 'qf'),
+    )
     .map((x) => publicReciter(x.r, x.n));
 }
 
@@ -108,7 +127,7 @@ async function activeReciter(db: Db, id: string): Promise<Reciter | null> {
     .select()
     .from(t.quranReciter)
     .where(and(eq(t.quranReciter.id, id), eq(t.quranReciter.status, 'actif'), hideTestReciters()));
-  return r ?? null;
+  return r && visible(r) ? r : null;
 }
 
 async function suraTracks(db: Db, reciterId: string, sura: number) {
@@ -126,8 +145,54 @@ async function suraTracks(db: Db, reciterId: string, sura: number) {
     .orderBy(asc(t.quranTrack.aya));
 }
 
+/**
+ * A2 : pistes d'un récitateur EN LIGNE — adresses demandées à Quran Foundation (jeton côté serveur), fichiers
+ * lus directement sur leur réseau ; jamais de paquet hors ligne (wifiSeulement sans objet, octets inconnus).
+ */
+async function qfManifest(r: Reciter, sura: number) {
+  const id = qfClient ? qfRecitationId(r.id, qfClient.cfg.env) : null;
+  if (!qfClient || id === null) return null;
+  const tracks = await qfClient.suraTracks(id, sura);
+  const { createHash } = await import('node:crypto');
+  const surlignage = highlight(r.riwaya);
+  return {
+    format: 1 as const,
+    reciter: r.id,
+    riwaya: r.riwaya,
+    credit: r.credit,
+    sura,
+    hash: createHash('sha256')
+      .update(tracks.map((x) => `${x.aya}:${x.url}`).join('\n'))
+      .digest('hex'),
+    surlignage,
+    mode: 'versets' as const,
+    enLigne: true,
+    wifiSeulement: false,
+    bytes: 0,
+    durationMs: tracks.reduce((n, x) => n + x.durationMs, 0),
+    files: tracks.map((x) => ({
+      aya: x.aya,
+      url: x.url,
+      bytes: 0,
+      sha256: '',
+      durationMs: x.durationMs,
+      format: 'mp3',
+      surlignage,
+    })),
+  };
+}
+
+/** Réponse d'erreur de Quran Foundation (sourate absente : 404 ; service indisponible ou refus : 502). */
+function qfFail(reply: FastifyReply, e: unknown) {
+  if (!(e instanceof QfError)) throw e;
+  if (e.code === 'sourate_absente') return err(reply, 404, 'sourate_absente');
+  reply.log.warn({ qf: e.code, detail: e.message }, 'Quran Foundation');
+  return err(reply, 502, e.code);
+}
+
 /** Empreinte d'un paquet de sourate : celle de la suite de ses fichiers. */
 async function suraManifest(db: Db, r: Reciter, sura: number) {
+  if (r.source === 'qf') return qfManifest(r, sura);
   const tracks = await suraTracks(db, r.id, sura);
   if (tracks.length === 0) return null;
   const { createHash } = await import('node:crypto');
@@ -245,7 +310,13 @@ export function sendAudioFile(
   return reply.send(req.method === 'HEAD' ? '' : createReadStream(file));
 }
 
-export function registerCoranAudio(app: FastifyInstance, db: Db, audioDir: string | null): void {
+export function registerCoranAudio(
+  app: FastifyInstance,
+  db: Db,
+  audioDir: string | null,
+  qf: QfAudioClient | null = null,
+): void {
+  qfClient = qf;
   const needAdmin = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
     if (!isAdmin(req.auth)) return err(reply, 403, 'reserve_admin');
@@ -266,9 +337,16 @@ export function registerCoranAudio(app: FastifyInstance, db: Db, audioDir: strin
     async (req, reply) => {
       const r = await activeReciter(db, req.params.id);
       if (!r) return err(reply, 404, 'recitateur_indisponible');
-      const m = await suraManifest(db, r, req.params.sura);
+      // A2 : adresses de Quran Foundation seulement pour les comptes connectés (pas d'API ouverte)
+      if (r.source === 'qf' && !req.auth) return err(reply, 401, 'connexion_requise');
+      let m: Awaited<ReturnType<typeof suraManifest>>;
+      try {
+        m = await suraManifest(db, r, req.params.sura);
+      } catch (e) {
+        return qfFail(reply, e);
+      }
       if (!m) return err(reply, 404, 'sourate_absente');
-      reply.header('Cache-Control', LIST_CACHE);
+      reply.header('Cache-Control', r.source === 'qf' ? 'private, max-age=3600' : LIST_CACHE);
       return m;
     },
   );
@@ -280,6 +358,7 @@ export function registerCoranAudio(app: FastifyInstance, db: Db, audioDir: strin
     async (req, reply) => {
       const r = await activeReciter(db, req.params.id);
       if (!r) return err(reply, 404, 'recitateur_indisponible');
+      if (r.source === 'qf') return err(reply, 404, 'en_ligne_seulement');
       const rows = await db.execute<{
         sura: number;
         n: number;
@@ -316,6 +395,8 @@ export function registerCoranAudio(app: FastifyInstance, db: Db, audioDir: strin
     async (req, reply) => {
       const r = await activeReciter(db, req.params.id);
       if (!r) return err(reply, 404, 'recitateur_indisponible');
+      // A2 : aucun paquet hors ligne pour un récitateur en ligne (conditions de Quran Foundation)
+      if (r.source === 'qf') return err(reply, 404, 'en_ligne_seulement');
       const m = await suraManifest(db, r, req.params.sura);
       if (!m) return err(reply, 404, 'sourate_absente');
       reply.header('Cache-Control', LIST_CACHE);
@@ -435,8 +516,14 @@ export function registerCoranAudio(app: FastifyInstance, db: Db, audioDir: strin
       if (allowed && !allowed.has(r.id)) return err(reply, 403, 'recitateur_non_autorise');
       if (req.query.mode === 'memoriser' && r.riwaya !== CARNET_RIWAYA)
         return err(reply, 409, 'riwaya_differente_du_carnet', { riwayaCarnet: CARNET_RIWAYA });
-      const m = await suraManifest(db, r, req.params.sura);
+      let m: Awaited<ReturnType<typeof suraManifest>>;
+      try {
+        m = await suraManifest(db, r, req.params.sura);
+      } catch (e) {
+        return qfFail(reply, e);
+      }
       if (!m) return err(reply, 404, 'sourate_absente');
+      if (r.source === 'qf') reply.header('Cache-Control', 'private, max-age=3600');
       return m;
     },
   );
@@ -651,6 +738,17 @@ export function registerCoranAudio(app: FastifyInstance, db: Db, audioDir: strin
       if (!rel) return err(reply, 404, 'introuvable');
       const list = [...new Set(req.body.reciters)];
       if (!(await knownReciters(db, list))) return err(reply, 400, 'recitateur_inconnu');
+      // A2 : un récitateur en ligne ne se précharge pas (aucune copie permise)
+      const online = await db
+        .select({ id: t.quranReciter.id })
+        .from(t.quranReciter)
+        .where(
+          and(
+            inArray(t.quranReciter.id, list.length ? list : ['']),
+            eq(t.quranReciter.source, 'qf'),
+          ),
+        );
+      if (online.length) return err(reply, 400, 'recitateur_en_ligne');
       await db.transaction(async (tx) => {
         await tx.delete(t.relayReciter).where(eq(t.relayReciter.relayId, rel.id));
         if (list.length)

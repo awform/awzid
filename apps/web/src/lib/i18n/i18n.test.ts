@@ -196,7 +196,7 @@ describe('fonctions', () => {
         'loadStaffTexts',
       );
     // espaces de l'élève : chargés par leur mise en page, préchargés par le service worker, jamais en double
-    for (const p of ['quotidien', 'vivre']) {
+    for (const p of ['quotidien', 'vivre', 'coran']) {
       expect(readFileSync(join(SRC, 'routes', p, '+layout.ts'), 'utf8'), p).toContain(
         `loadTexts('${p}')`,
       );
@@ -213,6 +213,22 @@ describe('fonctions', () => {
       for (const k of Object.keys(staff)) if (src.includes(`'${k}'`)) used.push(`${f}: ${k}`);
     }
     expect(used).toEqual([]);
+    // corrections du lecteur : textes de l'espace Coran aussi chargés par /enseignant (récitateurs de la classe) ;
+    // aucun n'est utilisé hors de l'espace Coran (routes/coran, lib/quran)
+    expect(readFileSync(join(SRC, 'routes', 'enseignant', '+layout.ts'), 'utf8')).toContain(
+      "loadTexts('coran')",
+    );
+    const coran = JSON.parse(readFileSync(join(STATIC, 'fr-coran.json'), 'utf8')) as object;
+    expect(Object.keys(coran).length).toBeGreaterThan(200);
+    const outside = [...files(join(SRC, 'routes')), ...files(join(SRC, 'lib'))].filter(
+      (f) => !/[\\/](routes[\\/]coran|lib[\\/]quran)[\\/]/.test(f),
+    );
+    const horsCoran: string[] = [];
+    for (const f of outside) {
+      const src = readFileSync(f, 'utf8');
+      for (const k of Object.keys(coran)) if (src.includes(`'${k}'`)) horsCoran.push(`${f}: ${k}`);
+    }
+    expect(horsCoran).toEqual([]);
     // police du Coran : plus de préchargement sur toutes les pages
     expect(readFileSync(join(SRC, 'app.html'), 'utf8')).not.toContain('amiri-quran');
   });

@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { close, openDisplay, setTajwid } from './coran';
+import { close, EXACT_ON, expectVerse, openDisplay, setTajwid, verseOf } from './coran';
 import { expect, test } from './fixtures';
 
 /**
@@ -22,17 +22,20 @@ test('pages du Muṣḥaf : double page (ordinateur) ou une page, cadre, versets
 }, info) => {
   await page.goto('/coran/lecteur?page=1&vue=page');
   const pages = page.getByTestId('mushaf-page');
-  await expect(page.locator('[data-verse="1:7"]')).toBeVisible();
+  // page fluide : texte visible ; page exacte (A34) : texte Tanzil accessible, à l'identique
+  await expectVerse(page, '1:7');
   if (isMobile(info.project.name)) await expect(pages).toHaveCount(1);
   else {
     await expect(pages).toHaveCount(2);
-    await expect(page.locator('[data-verse="2:5"]')).toBeVisible();
+    await expectVerse(page, '2:5');
     const [r, l] = await pages.evaluateAll((els) => els.map((e) => e.getBoundingClientRect().x));
     expect(r!).toBeGreaterThan(l!);
   }
   await expect(pages.first().locator('svg.frame')).toHaveCount(1);
   await expect(pages.first().locator('svg.rosette')).toHaveCount(4);
-  await expect(page.locator('[data-page="1"] [data-verse]')).toHaveCount(7);
+  await expect(page.locator('[data-page="1"] :is([data-verse], [data-exact-verse])')).toHaveCount(
+    7,
+  );
   for (const id of ['mp-suiv', 'mp-prec']) {
     const b = await page.getByTestId(id).boundingBox();
     expect(b!.height, id).toBeGreaterThanOrEqual(44);
@@ -54,16 +57,21 @@ test('texte Tanzil identique dans les deux vues ; tajwid sans changer le texte ;
   await expect(page.locator('[data-verse="2:255"]')).toBeVisible();
   const versets = await page.locator('[data-verse="2:255"]').textContent();
   await page.goto('/coran/lecteur?s=2&a=255&vue=page');
-  const v = page.locator('[data-testid="mushaf-livre"] [data-verse="2:255"]');
-  await expect(v).toBeVisible();
-  expect(await v.textContent()).toBe(versets);
+  const livre = page.getByTestId('mushaf-livre');
+  await expectVerse(page, '2:255', livre);
+  // page fluide : même texte que la vue « versets » ; page exacte : texte Tanzil accessible (expectVerse)
+  if (!(await verseOf(livre, '2:255').getAttribute('data-exact-verse')))
+    expect(await verseOf(livre, '2:255').textContent()).toBe(versets);
   await expect(page.locator('[data-page="42"]')).toBeVisible();
-  await expect(page.locator('[data-aya="2:255"]')).toHaveClass(/\bon\b/);
+  await expect(page.locator('[data-aya="2:255"]').first()).toHaveClass(/\bon\b/);
   await openDisplay(page);
-  const warsh = page.getByTestId('choix-mushaf').locator('option[value="warsh"]');
+  const warsh = page.getByTestId('choix-mushaf').locator('label:has([data-mushaf="warsh"])');
   await expect(warsh).toContainText('Warsh ʿan Nāfiʿ');
-  await expect(page.getByTestId('choix-mushaf')).toHaveValue('hafs');
+  await expect(page.getByTestId('choix-mushaf')).toHaveAttribute('data-value', 'hafs');
+  // tajwid : sur notre muṣḥaf habituel (la page exacte n'a pas de couleurs) — comparaison sur la page fluide
+  if (EXACT_ON) await page.locator('label:has([data-style="fluide"])').click();
   await close(page);
+  await expect(page.locator('[data-page="42"]')).not.toHaveAttribute('data-exact', '1');
   const before = await verseTexts(page);
   await setTajwid(page, true);
   await close(page);
@@ -72,11 +80,16 @@ test('texte Tanzil identique dans les deux vues ; tajwid sans changer le texte ;
   await setTajwid(page, false);
   await close(page);
   await expect(page.locator('[data-testid="mushaf-livre"] .tj')).toHaveCount(0);
+  if (EXACT_ON) {
+    await openDisplay(page);
+    await page.locator('label:has([data-style="exact"])').click();
+    await close(page);
+  }
 });
 
 test('options : mémoriser (voile, voir), lecture seule, une page', async ({ page }, info) => {
   await page.goto('/coran/lecteur?page=1&vue=page');
-  await expect(page.locator('[data-verse="1:7"]')).toBeVisible();
+  await expectVerse(page, '1:7');
   await openDisplay(page);
   await page.locator('[data-mask="3"]').check({ force: true });
   await close(page);
@@ -89,9 +102,9 @@ test('options : mémoriser (voile, voir), lecture seule, une page', async ({ pag
   await page.locator('[data-mask="0"]').check({ force: true });
   await page.getByTestId('mp-lecture-seule').check();
   await close(page);
-  await page.locator('[data-aya="1:3"]').click({ force: true });
+  await page.locator('[data-aya="1:3"]').first().click({ force: true });
   await expect(page.getByTestId('menu-verset')).toBeHidden();
-  await expect(page.locator('[data-aya="1:3"]')).not.toHaveClass(/\bon\b/);
+  await expect(page.locator('[data-aya="1:3"]').first()).not.toHaveClass(/\bon\b/);
   await openDisplay(page);
   await page.getByTestId('mp-lecture-seule').uncheck();
   if (!isMobile(info.project.name)) {

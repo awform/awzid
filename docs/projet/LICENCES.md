@@ -117,3 +117,13 @@ modification. »
 | Copie | serveur seulement (`AWFORM_QF_MUSHAF_DIR` : `copie/`, `publie/`, `etat.json`) ; **jamais dans le dépôt** ; l'appareil ne garde que les pages consultées, revalidées au-delà de 7 jours |
 | Polices | `QCF_P001…604` + `QCF_BSML` du Complexe du Roi Fahd (édition 1405, `Data.zip` SHA-256 `7fe7a8719695c4dfb614cf7fb16af9d197729ae94bff347c30f804ac2fc7edb8`), conditions du Complexe (§ 1 de SOURCES_MUSHAF) : servies **telles quelles** (ni sous-ensemble ni conversion), gratuitement, depuis `AWFORM_QCF_DIR` (empreintes : `SHA256SUMS` écrit par `installer-polices.sh`) |
 | Crédit affiché | « Données de mise en page : Quran Foundation (Content Sync) — polices : Complexe du Roi Fahd » (sous la page ; à ajouter à « Garanties » lors de l'intégration) |
+
+## 9. Récitateurs en ligne — Quran Foundation (chantier A2)
+
+| Élément | Détail |
+|---|---|
+| Données | adresses des fichiers audio verset par verset (`/recitations/{id}/by_chapter/{sourate}`) de l’API de contenu de Quran Foundation, compte développeur du client (identifiants hors dépôt, `QF_CLIENT_ID` / `QF_CLIENT_SECRET`) |
+| Conditions | Developer Terms (mise à jour du 04/10/2026, lue le 06/10/2026) : https://api-docs.quran.foundation/legal/developer-terms/ — application payante permise, contenu dans l’application seulement, ni revente ni redistribution comme données, garde ≤ 1 semaine hors Content Sync, « audio URLs are distinct from the underlying recordings », compte actif et crédit visible (détail : `SOURCES_MUSHAF.md` § 8) |
+| Copie | **aucune** : réponses gardées 24 h en mémoire du serveur ; fichiers lus sur le réseau de QF (`media-src` limité à ses hôtes) ; pas de téléchargement hors ligne, pas de relais d’école |
+| Crédit affiché | « Récitation : <nom> — écoute en ligne fournie par Quran Foundation (quran.foundation) » sur chaque récitateur, étiquette « En ligne », page « Nos garanties » |
+

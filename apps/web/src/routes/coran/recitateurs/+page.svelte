@@ -17,6 +17,8 @@
   import RiwayaBadge from '$lib/quran/RiwayaBadge.svelte';
   import { fetchMe, type Me, type ProfileInfo } from '$lib/session';
   import EmptyState from '$lib/ui/EmptyState.svelte';
+  import Icon from '$lib/ui/Icon.svelte';
+  import { ecoutable, reseau } from '$lib/reseau.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import StatusMessage from '$lib/ui/StatusMessage.svelte';
 
@@ -24,6 +26,7 @@
    * Lot 27 — Mes récitateurs : riwāya, style, crédit et licence de chaque récitateur ; choix du récitateur
    * préféré (conseil aux débutants : Muḥammad Ayyūb, modifiable) ; sourates gardées sur l'appareil ;
    * pour le parent : liste des récitateurs permis à chaque enfant (code parent).
+   * A2 : récitateurs EN LIGNE (Quran Foundation) étiquetés « En ligne », désactivés hors connexion.
    */
   let profile = $state<ProfileInfo | null>(null);
   let me = $state<Me | null>(null);
@@ -123,7 +126,13 @@
 
   <ul class="reciters">
     {#each list as r (r.id)}
-      <li class="card rc" class:chosen={chosen === r.id} data-reciter={r.id}>
+      <li
+        class="card rc"
+        class:chosen={chosen === r.id}
+        class:indispo={!ecoutable(r)}
+        data-reciter={r.id}
+        data-en-ligne={r.enLigne ? '1' : undefined}
+      >
         <div class="head">
           <div>
             <h2><Bidi text={r.nameFr} /></h2>
@@ -131,12 +140,18 @@
           </div>
           {#if profile}
             {#if chosen === r.id}<span class="pill" data-testid="choisi">{t('ca.mon_choix')}</span
-              >{:else}<button type="button" onclick={() => choose(r.id)} data-testid="choisir"
-                >{t('ca.choisir')}</button
+              >{:else}<button
+                type="button"
+                onclick={() => choose(r.id)}
+                disabled={!ecoutable(r)}
+                data-testid="choisir">{t('ca.choisir')}</button
               >{/if}
           {/if}
         </div>
         <p class="badges">
+          {#if r.enLigne}<span class="pill net" data-testid="en-ligne" title={t('ca.en_ligne_aide')}
+              ><Icon name="reseau" size={16} /><Bidi text={t('ca.en_ligne')} /></span
+            >{/if}
           <RiwayaBadge riwaya={r.riwaya} label={r.riwayaFr} />
           {#if r.id === conseil}<span class="pill" data-testid="conseil">{t('ca.conseil')}</span
             >{/if}
@@ -144,6 +159,13 @@
           {#if r.speed}<span class="pill"><Bidi text={t(`ca.vitesse_${r.speed}`)} /></span>{/if}
           <span class="pill"><Bidi text={t('ca.versets', { n: r.verses })} /></span>
         </p>
+        {#if r.enLigne}<p
+            class="small credit"
+            class:warn={!reseau.enLigne}
+            data-testid={reseau.enLigne ? 'en-ligne-aide' : 'dispo-internet'}
+          >
+            <Bidi text={reseau.enLigne ? t('ca.en_ligne_aide') : t('ca.dispo_internet')} />
+          </p>{/if}
         <p class="muted small credit" data-testid="credit-recitateur"><Bidi text={r.credit} /></p>
         {#if r.creditAr}<p class="muted small credit" lang="ar" dir="rtl">
             <Bidi text={r.creditAr} base="ar" />
@@ -231,7 +253,7 @@
             {#each all as r (r.id)}
               <label class="check"
                 ><input type="checkbox" value={r.id} bind:group={allowed} data-permis={r.id} /><Bidi
-                  text={r.nameFr}
+                  text={r.enLigne ? t('ca.en_ligne_option', { nom: r.nameFr }) : r.nameFr}
                 /> — <Bidi text={r.riwayaFr} /></label
               >
             {/each}
@@ -272,6 +294,14 @@
   }
   .rc.chosen {
     border: 2px solid var(--primary);
+  }
+  .net {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .warn {
+    font-weight: 600;
   }
   .head {
     display: flex;
