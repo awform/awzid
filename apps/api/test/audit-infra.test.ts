@@ -139,7 +139,7 @@ describe.skipIf(process.platform === 'win32')(
       const caddy = readFileSync(join(PROD, 'Caddyfile'), 'utf8');
       expect(caddy).toMatch(/\(rediriger\) \{\s*redir https:\/\/\{host\}\{uri\} 308/);
       expect(caddy).toContain(
-        'http://{$SITE}, http://{$SITE_LAN:127.0.0.2} {\n\timport {$AWFORM_HTTP:servir}\n}',
+        'http://{$SITE}, http://{$SITE_LAN:127.0.0.2}, http://{$SITE_TS:127.0.0.3} {\n\timport {$AWFORM_HTTP:servir}\n}',
       );
       const deploy = readFileSync(join(PROD, 'deploy.sh'), 'utf8');
       expect(deploy).toContain('"$PROD/mode-env.sh" "$ENVF" "$PRODUCTION"');

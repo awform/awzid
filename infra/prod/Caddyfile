@@ -7,7 +7,8 @@
 {
 	admin off
 	# adresse IP : les navigateurs n'envoient pas de nom (SNI) ; certificat choisi par défaut
-	# (SITE_LAN : IP du PC sur le Wi-Fi, redirection de port ; voir application/TEST_APPAREILS.md)
+	# (SITE_LAN : IP du PC sur le Wi-Fi, redirection de port ; voir application/TEST_APPAREILS.md ;
+	# SITE_TS : adresse Tailscale 100.64.0.0/10 de la machine de démonstration, réseau privé)
 	default_sni {$DEFAULT_SNI:localhost}
 	# audit INF-6 : Caddy est en BORDURE — aucun mandataire amont de confiance ; l'en-tête X-Forwarded-For
 	# reçu d'un client est remplacé par sa vraie adresse (l'API ne fait confiance qu'à un saut : Caddy)
@@ -65,7 +66,7 @@
 (rediriger) {
 	redir https://{host}{uri} 308
 }
-http://{$SITE}, http://{$SITE_LAN:127.0.0.2} {
+http://{$SITE}, http://{$SITE_LAN:127.0.0.2}, http://{$SITE_TS:127.0.0.3} {
 	import {$AWFORM_HTTP:servir}
 }
 
@@ -74,7 +75,7 @@ http://localhost, http://127.0.0.1 {
 	import awform
 }
 
-https://{$SITE}, https://{$SITE_LAN:127.0.0.2} {
+https://{$SITE}, https://{$SITE_LAN:127.0.0.2}, https://{$SITE_TS:127.0.0.3} {
 	tls internal
 	header Strict-Transport-Security "max-age=31536000"
 	import awform

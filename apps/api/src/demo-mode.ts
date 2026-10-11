@@ -41,10 +41,13 @@ const DEMO_IDS: Record<string, { role: string; kind: Kind; profile?: string }> =
 export const PRIVATE_HOST =
   /^(localhost|127(\.\d{1,3}){3}|10(\.\d{1,3}){3}|192\.168(\.\d{1,3}){2}|172\.(1[6-9]|2\d|3[01])(\.\d{1,3}){2}|[a-z0-9-]+(\.[a-z0-9-]+)*\.(localhost|test|local|lan|home\.arpa))$/;
 
+/** Adresse Tailscale : plage CGNAT 100.64.0.0/10 (100.64.x.x à 100.127.x.x), réseau privé chiffré, non routable sur Internet. */
+export const TAILSCALE_HOST = /^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])(\.\d{1,3}){2}$/;
+
 /**
  * Garde-fou au démarrage (AWFORM_DEMO=1) : renvoie la raison du refus, ou null.
- * Démonstration acceptée seulement si TOUTES les adresses servies (SITE, SITE_LAN) sont locales (IP privée,
- * localhost, .test, .local, .lan, .home.arpa), sans domaine de relais public, et hors mode production
+ * Démonstration acceptée seulement si TOUTES les adresses servies (SITE, SITE_LAN, SITE_TS) sont locales (IP privée,
+ * localhost, .test, .local, .lan, .home.arpa ; SITE_TS : adresse Tailscale 100.64.0.0/10 seulement), sans domaine de relais public, et hors mode production
  * (COOKIE_SECURE=1, posé par deploy.sh --production). L'API n'a par ailleurs aucun port publié
  * (compose.yml) : elle n'est joignable que par le Caddy de la démonstration.
  */
@@ -54,6 +57,9 @@ export function demoGuard(env: NodeJS.ProcessEnv): string | null {
   if (!sites[0]) return 'SITE absent : impossible de vérifier que la démonstration reste locale';
   for (const s of sites.filter(Boolean))
     if (!PRIVATE_HOST.test(s)) return `adresse publique (${s}) : démonstration refusée`;
+  const ts = (env.SITE_TS ?? '').trim().toLowerCase();
+  if (ts && !TAILSCALE_HOST.test(ts))
+    return `adresse Tailscale invalide (${ts}) : démonstration refusée`;
   if ((env.RELAIS_DOMAINE ?? '').trim()) return 'domaine de relais public configuré';
   if (env.COOKIE_SECURE === undefined || env.COOKIE_SECURE === '1')
     return 'mode production (COOKIE_SECURE=1) : démonstration refusée';
