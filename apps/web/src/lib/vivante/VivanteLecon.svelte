@@ -4,6 +4,7 @@
   import { vivanteActive } from './reglage';
   import { fn } from '$lib/fonctions.svelte';
   import { noter } from '$lib/usage';
+  import { chargerModule } from '$lib/charger';
 
   /**
    * Chantiers A21 / A21b — point d'accroche des « leçons vivantes » dans la page de leçon. Quelques octets ici :
@@ -30,9 +31,11 @@
     noter('animations');
     let dead = false;
     let stop: (() => void) | undefined;
-    void import('./installer')
+    // F5 : nouvelles tentatives automatiques ; en cas d'échec, la leçon reste entière sans animation
+    void chargerModule(() => import('./installer'))
       .then((m) => m.installer(article, u, illus, audio))
-      .then((s) => (dead ? s() : (stop = s)));
+      .then((s) => (dead ? s() : (stop = s)))
+      .catch(() => {});
     return () => {
       dead = true;
       stop?.();

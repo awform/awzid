@@ -134,3 +134,5 @@ français des espaces Prières et Vivre l'islam sont dans `static/i18n/fr-quotid
 rares (offres, abonnement, inscription, certificats…) et de la fenêtre d'avis sont dans `static/i18n/fr-rares.json`
 (mêmes clés, hors de la coquille de l'élève).
 
+F5 (suite, 11/10/2026) : 1 texte ajouté (`module.connexion_necessaire` — « Connexion nécessaire pour cette fonction »,
+module chargé à la demande indisponible après les nouvelles tentatives), écrit par Claude dans les quatre langues, **à relire**.

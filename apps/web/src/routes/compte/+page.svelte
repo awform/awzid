@@ -5,6 +5,8 @@
   import Bidi from '$lib/Bidi.svelte';
   import { fn } from '$lib/fonctions.svelte';
   import { onMount } from 'svelte';
+  import { chargerModule } from '$lib/charger';
+  import ConnexionNecessaire from '$lib/ConnexionNecessaire.svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { setActiveProfile } from '$lib/attempts';
@@ -108,14 +110,18 @@
     N: typeof import('$lib/NotificationsReglages.svelte').default;
     V: typeof import('$lib/vivante/VivanteReglages.svelte').default;
   } | null>(null);
-  onMount(() => {
+  // nouvelles tentatives automatiques, puis « Connexion nécessaire » (le reste de la page reste utilisable)
+  let reglagesEchec = $state(false);
+  function chargerReglages() {
+    reglagesEchec = false;
     void Promise.all([
-      import('$lib/NotificationsReglages.svelte'),
-      import('$lib/vivante/VivanteReglages.svelte'),
+      chargerModule(() => import('$lib/NotificationsReglages.svelte')),
+      chargerModule(() => import('$lib/vivante/VivanteReglages.svelte')),
     ])
       .then(([n, v]) => (Reglages = { N: n.default, V: v.default }))
-      .catch(() => {});
-  });
+      .catch(() => (reglagesEchec = true));
+  }
+  onMount(chargerReglages);
   onMount(async () => {
     // F5 : réponse du serveur attendue ici (la mise en page ne l'attend plus)
     allowDrafts = await draftsAllowed();
@@ -264,7 +270,9 @@
     {#if Reglages}<Reglages.N parent={me.account.kind === 'parent'} />{/if}
   {/if}
 
-  {#if Reglages}<Reglages.V />{/if}
+  {#if Reglages}<Reglages.V />{:else if reglagesEchec}<section class="card">
+      <ConnexionNecessaire onretry={chargerReglages} />
+    </section>{/if}
 
   <section class="card">
     <h2>{t('compte.langue')}</h2>

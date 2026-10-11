@@ -2461,6 +2461,7 @@
   "cert.mme": "Ms",
   "avis.bouton": "Give feedback",
   "avis.hors_ligne": "You need the Internet to give feedback.",
+  "module.connexion_necessaire": "Internet connection needed for this feature",
   "fn.coupee": "This feature is not available at the moment.",
   "erreur.fonction_coupee": "This feature is not available at the moment.",
   "erreur.trop_d_avis": "Thank you! You have already sent several messages today: please try again tomorrow.",

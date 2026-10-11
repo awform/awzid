@@ -2461,6 +2461,7 @@
   "cert.mme": "Sra.",
   "avis.bouton": "Dar mi opinión",
   "avis.hors_ligne": "Se necesita Internet para dar tu opinión.",
+  "module.connexion_necessaire": "Se necesita conexión para esta función",
   "fn.coupee": "Esta función no está disponible por el momento.",
   "erreur.fonction_coupee": "Esta función no está disponible por el momento.",
   "erreur.trop_d_avis": "¡Gracias! Ya has enviado varias opiniones hoy: inténtalo mañana.",

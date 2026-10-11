@@ -2,6 +2,8 @@
   import type { Component } from 'svelte';
   import { t } from '$lib/i18n';
   import { fn } from '$lib/fonctions.svelte';
+  import { chargerModule } from '$lib/charger';
+  import ConnexionNecessaire from '$lib/ConnexionNecessaire.svelte';
 
   /**
    * F5 — « Donner mon avis » (élève, parent, enseignant) : petit lien discret ; la fenêtre (et sa capture
@@ -14,7 +16,8 @@
   async function ouvrir() {
     horsLigne = false;
     try {
-      Dialog ??= (await import('./AvisDialog.svelte')).default;
+      // F5 : nouvelles tentatives automatiques (réseau faible), puis « Connexion nécessaire »
+      Dialog ??= (await chargerModule(() => import('./AvisDialog.svelte'))).default;
       open = true;
     } catch {
       horsLigne = true;
@@ -27,7 +30,7 @@
     <button type="button" class="ghost" data-testid="avis-ouvrir" onclick={ouvrir}
       >{t('avis.bouton')}</button
     >
-    {#if horsLigne}<span class="muted" role="status">{t('avis.hors_ligne')}</span>{/if}
   </p>
+  {#if horsLigne}<ConnexionNecessaire onretry={ouvrir} />{/if}
   {#if Dialog && open}<Dialog onclose={() => (open = false)} />{/if}
 {/if}

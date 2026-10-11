@@ -1370,6 +1370,7 @@
   "classe.imprimer_pdf": "Imprimer ou enregistrer en PDF",
   "avis.bouton": "Donner mon avis",
   "avis.hors_ligne": "Il faut Internet pour donner son avis.",
+  "module.connexion_necessaire": "Connexion nécessaire pour cette fonction",
   "fn.coupee": "Cette fonction n'est pas disponible pour le moment.",
   "erreur.fonction_coupee": "Cette fonction n'est pas disponible pour le moment.",
   "erreur.trop_d_avis": "Merci ! Vous avez déjà envoyé plusieurs avis aujourd'hui : réessayez demain.",

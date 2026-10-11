@@ -6,6 +6,7 @@
   import { loadTexts, t } from '$lib/i18n';
   import { call, cachedMe } from '$lib/session';
   import { noter } from '$lib/usage';
+  import { chargerModule } from '$lib/charger';
 
   /**
    * F5 — « Donner mon avis » : catégorie, texte court (jamais pour un enfant : catégorie et image seulement),
@@ -57,7 +58,7 @@
     captureErr = false;
     if (!joindre) return;
     try {
-      const m = await import('./capture');
+      const m = await chargerModule(() => import('./capture'));
       image = await m.captureEcran();
       if (!image) captureErr = true;
     } catch {

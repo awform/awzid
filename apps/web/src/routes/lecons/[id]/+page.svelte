@@ -1,6 +1,8 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
-  import { onMount, setContext } from 'svelte';
+  import { onMount, setContext, untrack } from 'svelte';
+  import { chargerModule } from '$lib/charger';
+  import ConnexionNecessaire from '$lib/ConnexionNecessaire.svelte';
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
   import ArFr from '$lib/ArFr.svelte';
@@ -112,14 +114,20 @@
   let profileInfo: { id: string; kind: string; birthYear: number | null } | null = $state(null);
   // F5 : tuteur chargé À LA DEMANDE (il a besoin du réseau), seulement si l'interrupteur « tuteur » est ouvert
   let TutorPanel = $state<typeof import('$lib/TutorPanel.svelte').default | null>(null);
-  $effect(() => {
-    if (!fn('tuteur') || TutorPanel) return;
-    void import('$lib/TutorPanel.svelte')
+  // nouvelles tentatives automatiques, puis « Connexion nécessaire » à la place du tuteur (la leçon reste là)
+  let tuteurEchec = $state(false);
+  function chargerTuteur() {
+    tuteurEchec = false;
+    void chargerModule(() => import('$lib/TutorPanel.svelte'))
       .then((m) => {
         TutorPanel = m.default;
         noter('tuteur');
       })
-      .catch(() => {});
+      .catch(() => (tuteurEchec = true));
+  }
+  $effect(() => {
+    if (!fn('tuteur') || TutorPanel || untrack(() => tuteurEchec)) return;
+    untrack(chargerTuteur);
   });
   /** mots de la leçon (bouton « Je ne comprends pas le mot… » du tuteur) */
   const lessonWords = $derived(
@@ -668,7 +676,7 @@
       unitId={u.id}
       profile={profileInfo}
       words={lessonWords}
-    />{/if}
+    />{:else if tuteurEchec && fn('tuteur')}<ConnexionNecessaire onretry={chargerTuteur} />{/if}
 {/if}
 {#if suspendu !== 'unite'}<p class="sig-lecon" data-testid="signaler-lecon">
     <Signaler kind="lecon" excerpt={u.titleFr} />

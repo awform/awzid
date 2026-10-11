@@ -2461,6 +2461,7 @@
   "cert.mme": "Frau",
   "avis.bouton": "Feedback geben",
   "avis.hors_ligne": "Für Feedback ist Internet nötig.",
+  "module.connexion_necessaire": "Für diese Funktion ist eine Internetverbindung nötig",
   "fn.coupee": "Diese Funktion ist im Moment nicht verfügbar.",
   "erreur.fonction_coupee": "Diese Funktion ist im Moment nicht verfügbar.",
   "erreur.trop_d_avis": "Danke! Sie haben heute schon mehrere Rückmeldungen gesendet: bitte morgen erneut versuchen.",
