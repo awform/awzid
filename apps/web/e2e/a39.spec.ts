@@ -54,7 +54,7 @@ async function parentWith(req: APIRequestContext, pseudonym: string, age: number
       email: `${uniq('a39')}@e2e.test`,
       password: password(),
       country: 'FR',
-      consents: ['cgu'],
+      consents: ['cgu', 'donnee_religieuse_art9'],
     },
   });
   expect(s.status(), await s.text()).toBe(201);
@@ -65,7 +65,7 @@ async function parentWith(req: APIRequestContext, pseudonym: string, age: number
       birthYear: YEAR - 1 - age,
       levelCode: 'en1',
       password: password(),
-      consents: ['compte_suivi'],
+      consents: ['compte_suivi', 'donnee_religieuse_art9'],
     },
   });
   expect(p.status(), await p.text()).toBe(201);
@@ -84,6 +84,7 @@ async function signupSerein(page: Page): Promise<string> {
   await expect(choix.locator('[data-mode-choix="serein"]')).toBeChecked();
   await expect(choix.locator('[data-mode-choix="verification"]')).not.toBeChecked();
   await page.getByTestId('consent-cgu').check();
+  await page.getByTestId('consent-art9').check();
   await page.locator('form button[type="submit"]').click();
   await expect(page).not.toHaveURL(/\/inscription/);
   const me = (await (await page.request.get('/api/v1/auth/me')).json()) as {

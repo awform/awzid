@@ -135,6 +135,8 @@ export const API_GRANTS: Record<string, Right[]> = {
   reenrolment_offer: RIU,
   // A39 : mode d'évaluation (profil ou classe), historisé : une ligne se ferme (until), jamais effacée par l'API
   eval_mode: RIU,
+  // lot F3 : liens à usage unique envoyés par e-mail (vérification, réinitialisation, changement d'adresse)
+  account_link: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */

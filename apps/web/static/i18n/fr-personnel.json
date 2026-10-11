@@ -390,5 +390,6 @@
   "parc.niveau_maitre": "Niveau (décision du maître)",
   "parc.niveau_decide": "Niveau de {eleve} : {niveau}",
   "ser.classe_titre": "Façon d'avancer de la classe",
-  "ser.classe_libre": "Laisser le choix aux familles"
+  "ser.classe_libre": "Laisser le choix aux familles",
+  "etab.fiche_modele": "Modèle de fiche de consentement à imprimer"
 }

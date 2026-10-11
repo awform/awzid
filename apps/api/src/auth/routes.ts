@@ -26,9 +26,12 @@ import { decrypt, encrypt, hashSecret, newTotpSecret, verifySecret, verifyTotp }
 import { checkPassword, MAX_LENGTH } from './passwords.js';
 import {
   ageFromYear,
+  closedForAge,
   consentAge,
   countryRules,
   isCountry,
+  normRegion,
+  normTz,
   requiredAccountConsents,
   requiresMfa,
   TEXT_VERSION,
@@ -62,12 +65,17 @@ import {
   emailKey,
   err,
   OPTIONAL_CONSENTS,
+  REGION,
   SIGNUPS_PER_HOUR,
+  TZ,
   YEAR,
   type AuthKit,
 } from './common.js';
+import { missingConsents, registerConsents } from './accords.js';
 import { registerPrivacy } from './donnees.js';
 import { registerProfiles } from './profils.js';
+import { registerRecovery } from './recuperation.js';
+import { inactiveMailer, type Mailer } from '../mail/envoi.js';
 import { demoLogin } from '../demo-mode.js';
 
 declare module 'fastify' {
@@ -85,6 +93,10 @@ export interface AuthOptions {
   secretKey: Buffer | null;
   /** DÉMONSTRATION seulement (AWFORM_DEMO=1, garde-fou de démarrage) : identifiants courts (demo-mode.ts) */
   demoLogin?: boolean;
+  /** lot F3 : envoi des e-mails (vérification, mot de passe oublié) ; absent : désactivé */
+  mailer?: Mailer;
+  /** lot F3 : adresse publique du site (liens des e-mails) */
+  publicUrl?: string | null;
 }
 
 export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
@@ -166,6 +178,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       lien,
     }));
     const [local = '', domain = ''] = (a.email ?? '').split('@');
+    // lot F3 (revue E10) : accords nécessaires manquants (premier usage) — jamais en mode tablette
+    const accordsManquants = tablet ? [] : await missingConsents(db, accountId, a.kind);
     // lot F1 puis F2 (revue E2) : rôles multiples (plateforme, écoles), en plus du type du titulaire
     const roles = tablet ? [] : await accountRoles(db, accountId, a.kind);
     const ecoles = tablet
@@ -198,7 +212,13 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         totpEnabled: a.totpEnabled,
         hasPin: !!a.parentPinHash,
         createdAt: a.createdAt,
+        // lot F3 : adresse vérifiée, subdivision, fuseau, région d'hébergement des données
+        emailVerified: !!a.emailVerifiedAt,
+        region: a.region,
+        tz: a.tz,
+        dataRegion: a.dataRegion,
       },
+      accordsManquants,
       profiles,
       mfaRequired: requiresMfa(a.kind) || roles.some((r) => STAFF_SET.has(r)),
       mfaVerified,
@@ -238,6 +258,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       pseudonym?: string;
       consents: string[];
       evalMode?: 'verification' | 'serein';
+      region?: string | null;
+      tz?: string;
     };
   }>(
     '/api/v1/auth/signup',
@@ -258,6 +280,9 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             consents: { type: 'array', maxItems: 10, items: { type: 'string', maxLength: 40 } },
             // A39 : l'adulte choisit sa façon d'avancer (modifiable ensuite dans son compte)
             evalMode: { enum: ['verification', 'serein'] },
+            // lot F3 : subdivision (âge du consentement au Québec) et fuseau horaire de l'appareil
+            region: REGION,
+            tz: TZ,
           },
         },
       },
@@ -276,8 +301,14 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       if (!b.birthYear) return err(reply, 400, 'annee_naissance_requise');
       const age = ageFromYear(b.birthYear);
       if (b.kind === 'parent' && age < 18) return err(reply, 403, 'majorite_requise');
-      if (b.kind === 'adulte' && age < consentAge(b.country))
-        return err(reply, 403, 'age_parent_requis', { age: consentAge(b.country) });
+      // lot F3 (revue M9) : subdivision connue pour ce pays (sinon refus : âge du consentement en jeu)
+      const region = normRegion(b.country, b.region);
+      if (b.region && !region) return err(reply, 400, 'region_inconnue');
+      // lot F3 (revue G3) : États-Unis, moins de 13 ans : fermé au lancement (message clair)
+      if (closedForAge(b.country, age))
+        return err(reply, 403, 'ferme_moins_13', { age: 13, pays: b.country });
+      if (b.kind === 'adulte' && age < consentAge(b.country, region))
+        return err(reply, 403, 'age_parent_requis', { age: consentAge(b.country, region) });
       const missing = requiredAccountConsents(b.country).filter((c) => !b.consents.includes(c));
       if (missing.length) return err(reply, 400, 'consentement_requis', { missing });
       const exists = await db
@@ -295,6 +326,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
           country: b.country,
           locale: b.locale ?? 'fr',
           birthYear: b.kind === 'adulte' ? (b.birthYear ?? null) : null,
+          region,
+          tz: normTz(b.tz),
         })
         .returning({ id: t.account.id });
       if (!a) throw new Error('création du compte impossible');
@@ -305,7 +338,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
           requiredAccountConsents(b.country).includes(c as ConsentType) || OPTIONAL_CONSENTS.has(c),
       );
       // preuve : la règle du pays sous laquelle l'accord a été donné (loi et autorité, lot 17)
-      const rules = countryRules(b.country);
+      const rules = countryRules(b.country, region);
       await insertConsents(a.id, accepted, b.country, null, {
         loi: rules.law,
         autorite: rules.authority,
@@ -328,6 +361,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         if (b.evalMode && own) await setProfileEvalMode(db, own.id, b.evalMode, 'soi', a.id);
       }
       await audit(db, a.id, 'compte.creation', a.id, { kind: b.kind, country: b.country });
+      // lot F3 (revue M7) : lien de vérification de l'adresse (envoyé après la réponse)
+      kit.sendVerification?.(a.id, email, b.locale ?? 'fr');
       await setSession(reply, a.id, b.kind, false);
       return reply.code(201).send(await me(a.id, false));
     },
@@ -469,11 +504,6 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     },
   );
 
-  /** Réinitialisation par e-mail : nécessite un fournisseur d'e-mail (secret) → désactivée pour l'instant. */
-  app.post('/api/v1/auth/password-reset', async (_req, reply) =>
-    err(reply, 503, 'reinitialisation_desactivee'),
-  );
-
   // ---------------------------------------------------------------- second facteur (TOTP)
 
   const needSession = async (req: FastifyRequest, reply: FastifyReply) => {
@@ -558,6 +588,12 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   };
   registerProfiles(app, kit);
   registerPrivacy(app, kit);
+  // lot F3 : récupération du compte (e-mails), accords et réglages du compte
+  registerRecovery(app, kit, {
+    mailer: opts.mailer ?? inactiveMailer,
+    publicUrl: opts.publicUrl ?? null,
+  });
+  registerConsents(app, kit);
 
   // ---------------------------------------------------------------- enseignant (lot 4 : accès sécurisé seulement)
 

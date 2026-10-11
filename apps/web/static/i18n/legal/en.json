@@ -2,7 +2,7 @@
   "legal": {
     "mentions": {
       "titre": "Legal notice",
-      "maj": "29 September 2026 (draft)",
+      "maj": "6 October 2026 (draft, to be reviewed by a lawyer)",
       "sections": [
         {
           "titre": "Publisher",
@@ -25,12 +25,25 @@
             "Awzid books, lessons, illustrations, exercises and texts are protected; any reproduction beyond the personal or school use allowed by the terms of use is forbidden without written permission.",
             "Quranic text: Tanzil (tanzil.net), riwāya Ḥafṣ ʿan ʿĀṣim, reproduced exactly, without any change. Quran metadata (ajzāʾ, aḥzāb, pages of the Madinah Muṣḥaf): Tanzil.info, Creative Commons Attribution 3.0 licence."
           ]
+        },
+        {
+          "titre": "Contact and emails",
+          "paras": [
+            "Service emails (address verification, forgotten password, address change) are sent from no-reply@awzid.com, an address that does not receive replies. Sending provider: [email provider to be chosen, preferably in the European Union].",
+            "For any question or complaint: [contact address to be created, for example contact@awzid.com]. Content can also be reported in the app (“Report an error”)."
+          ]
+        },
+        {
+          "titre": "Status of these texts",
+          "paras": [
+            "The legal pages are structured drafts, written from the way the app actually works; they must be reviewed and approved by a lawyer before any public opening. [Legal review: to be done.]"
+          ]
         }
       ]
     },
     "cgu": {
       "titre": "Terms of use",
-      "maj": "29 September 2026 (draft)",
+      "maj": "6 October 2026 (draft, to be reviewed by a lawyer)",
       "sections": [
         {
           "titre": "Purpose",
@@ -48,6 +61,21 @@
           ]
         },
         {
+          "titre": "Age, country and consents",
+          "paras": [
+            "The digital age of consent depends on the country (and, in Canada, on the province: 14 in Quebec). Below that age, only a parent can create a child's profile.",
+            "United States: during the beta, Awzid is not open to children under 13 (neither through a parent nor through a school).",
+            "Using Awzid (Quran, hifẓ, Islamic sciences) can reveal religious beliefs: explicit consent is asked at sign-up, for each child profile, and from older accounts the first time they use the app. It can be withdrawn at any time; the account or profile is then paused."
+          ]
+        },
+        {
+          "titre": "Email address and account access",
+          "paras": [
+            "The email address is verified through a single-use link. If the password is forgotten, a link valid for 30 minutes is sent to the account address; the app gives the same answer whether or not the address is known.",
+            "An address change only takes effect after confirmation from the new address; the old address is informed."
+          ]
+        },
+        {
           "titre": "Religious content and tutor",
           "paras": [
             "The Quranic text shown comes only from the Tanzil reference text; no program writes or edits it. Hadiths are shown only when marked “verified” in the books’ register.",
@@ -59,13 +87,27 @@
           "titre": "Plans, payment, cancellation",
           "paras": [
             "A free plan lets you try the first lessons. Paid plans, their prices and duration are shown before purchase; only the adult can buy (parent code). No card details go through Awzid: payment is made with the chosen provider.",
-            "A subscription can be stopped at any time; rights last until the end of the paid period. [Right of withdrawal and refunds: to be completed according to the country and the provider.]"
+            "A subscription can be stopped at any time; rights last until the end of the paid period. [Right of withdrawal and refunds: to be completed according to the country and the provider.]",
+            "During the beta, the app is free: no payment is requested or recorded (see “Beta terms”)."
           ]
         },
         {
           "titre": "Liability and suspension",
           "paras": [
             "The app is provided with care but without any guarantee of uninterrupted service. An account may be suspended for use contrary to these terms or to the law, after informing its holder except in an emergency."
+          ]
+        },
+        {
+          "titre": "Account deletion",
+          "paras": [
+            "The holder can delete the account at any time from “My account”: access stops at once and the data is permanently erased within 30 days.",
+            "A subscription taken out in the App Store or on Google Play is not stopped by deleting the account: it must be cancelled in the store. The app reminds the holder of this before deletion."
+          ]
+        },
+        {
+          "titre": "Changes to these terms",
+          "paras": [
+            "Any significant change is announced in the app; if it affects a consent, a new consent is asked before continuing (dated version of the texts)."
           ]
         },
         {
@@ -78,7 +120,7 @@
     },
     "confidentialite": {
       "titre": "Privacy policy",
-      "maj": "29 September 2026 (draft)",
+      "maj": "6 October 2026 (draft, to be reviewed by a lawyer)",
       "sections": [
         {
           "titre": "Data controller",
@@ -95,7 +137,8 @@
             "Learning: exercise answers, progress, hifẓ, letter tracings, word cards, work days for teens and adults.",
             "Voice recordings: they stay on the device and are erased after 7 days; a family can choose to send one to the class teacher (revocable agreement, parent code for a child): encrypted, listened to by the teacher only, never used to train an artificial intelligence.",
             "School space: first name and initial of paper-class pupils, marks, recitations, homework; the full name is entered only when a certificate is issued.",
-            "Payment: plan, status and provider reference; never a card number."
+            "Payment: plan, status and provider reference; never a card number.",
+            "Account security: links sent by email (verification, forgotten password, address change) — only a fingerprint of the link is kept, with its purpose and date; time zone and, in Canada, province (age of consent)."
           ]
         },
         {
@@ -106,17 +149,32 @@
           ]
         },
         {
+          "titre": "Data revealing religious beliefs (GDPR, Article 9)",
+          "paras": [
+            "Learning the Quran, hifẓ or Islamic sciences with Awzid can reveal a religious belief. This data is processed on the basis of your explicit consent (Article 9(2)(a)), collected separately, dated, with the version of the text and proof of consent.",
+            "You can withdraw this consent at any time in “My account”: the account (or the profile concerned) is paused; nothing is erased until you ask for deletion, and you can export your data."
+          ]
+        },
+        {
+          "titre": "Automatic voice analysis",
+          "paras": [
+            "No automatic voice analysis by artificial intelligence exists today. If such a feature arrives, it will be optional, asked profile by profile on first use (separate consent, never pre-ticked) and can be withdrawn at any time."
+          ]
+        },
+        {
           "titre": "Children: GDPR, COPPA, Senegalese law no. 2008-12",
           "paras": [
             "GDPR (article 8): a child’s account is always opened and managed by a parent, whatever the age of digital consent in the country (15 in France).",
-            "United States (COPPA): for a child under 13, the parent’s consent is obtained before any collection; the parent can view, export and have their child’s data deleted, and withdraw their agreement at any time. [Method for verifying parental consent: to be validated.]",
-            "Senegal: processing complies with law no. 2008-12 of 25 January 2008 on the protection of personal data; [formalities with the Personal Data Protection Commission (CDP): to be completed]. Hosting outside Senegal (European Union) only takes place with the holder’s explicit agreement."
+            "United States (COPPA): during the beta, no profile of a child under 13 is created (closed at launch); verifiable parental consent using methods recognised by the FTC will be put in place before any opening. [Method to be validated by the lawyer.]",
+            "Senegal: processing complies with law no. 2008-12 of 25 January 2008 on the protection of personal data; [formalities with the Personal Data Protection Commission (CDP): to be completed]. Hosting outside Senegal (European Union) only takes place with the holder’s explicit agreement.",
+            "Canada: in Quebec (Law 25), consent from the person with parental authority is asked for a child under 14; elsewhere in Canada, under 13. United Kingdom: most protective settings by default (ICO Children's Code): notifications off, no trackers, no advertising. [To be confirmed by the lawyer.]"
           ]
         },
         {
           "titre": "Recipients and processors",
           "paras": [
-            "European hosting provider [to be appointed]; email service [to be appointed]; payment providers (Stripe, PayPal, mobile-money aggregator) only if you pay; artificial-intelligence provider (Anthropic) only if the tutor is turned on, with no name or address, under a pseudonym; the browser’s notification service (Google, Mozilla, Apple…) only if you turn notifications on — their content is encrypted and contains no names. No other transfer."
+            "European hosting provider [to be appointed]; email service [to be appointed]; payment providers (Stripe, PayPal, mobile-money aggregator) only if you pay; artificial-intelligence provider (Anthropic) only if the tutor is turned on, with no name or address, under a pseudonym; the browser’s notification service (Google, Mozilla, Apple…) only if you turn notifications on — their content is encrypted and contains no names. No other transfer.",
+            "Hosting region: each account and each school carries a data-region label (“EU” today: a single server, in the European Union). Transfers outside the Union (artificial intelligence provider in the United States, if the tutor is enabled) rely on the safeguards provided by the GDPR. [Standard contractual clauses or adequacy decision: to be checked.]"
           ]
         },
         {
@@ -124,13 +182,15 @@
           "paras": [
             "Deleted account: permanently erased within 30 days (encrypted backups: rolling 14 days).",
             "Tutor log: 12 months at most. Voice recordings: 7 days on the device; a recitation sent to the teacher: erased after the period set by the class (14 days by default, 30 at most), or as soon as the family deletes it.",
-            "School certificate register: number, displayed name, level, date and grade kept permanently (proof of a diploma); the pupil’s other data follows the periods above and the full document is reduced 30 days after the pupil leaves. [To be confirmed by the lawyer.]"
+            "School certificate register: number, displayed name, level, date and grade kept permanently (proof of a diploma); the pupil’s other data follows the periods above and the full document is reduced 30 days after the pupil leaves. [To be confirmed by the lawyer.]",
+            "Links sent by email: 30 minutes (forgotten password) or 24 hours (verification, address change), single use; erased with the account."
           ]
         },
         {
           "titre": "Your rights",
           "paras": [
-            "Access, rectification, erasure, portability (full export from “My account”), objection, restriction, withdrawal of an agreement at any time. You may complain to the CNIL (France) or the CDP (Senegal)."
+            "Access, rectification, erasure, portability (full export from “My account”), objection, restriction, withdrawal of an agreement at any time. You may complain to the CNIL (France) or the CDP (Senegal).",
+            "Complaints: to the data protection authority of your country (CNIL in France, CDP in Senegal, Office of the Privacy Commissioner in Canada and the Quebec access-to-information commission, ICO in the United Kingdom…)."
           ]
         },
         {
@@ -143,7 +203,7 @@
     },
     "cookies": {
       "titre": "Cookies and on-device storage",
-      "maj": "29 September 2026 (draft)",
+      "maj": "6 October 2026 (draft, to be reviewed by a lawyer)",
       "sections": [
         {
           "titre": "What we use",
@@ -163,6 +223,49 @@
           "paras": [
             "Cookies and storage strictly necessary for the service you ask for are exempt from consent (article 82 of the French Data Protection Act; CNIL guidelines). As nothing else is used, the app shows no banner. If a non-essential tracker were ever added, a banner (refusing as easy as accepting) would be required before anything is stored. [To be confirmed by the lawyer.]"
           ]
+        },
+        {
+          "titre": "Links received by email",
+          "paras": [
+            "Verification and reset links carry their code in the part of the address that is never sent to the server (after “#”); the page removes it from the address bar as soon as it opens. No cookie is added."
+          ]
+        }
+      ]
+    },
+    "beta": {
+      "titre": "Beta terms",
+      "maj": "6 October 2026 (draft, to be reviewed by a lawyer)",
+      "sections": [
+        {
+          "titre": "A free beta",
+          "paras": [
+            "The Awzid beta is free: no payment is requested, no card is stored and no subscription starts when the beta ends.",
+            "No commitment: you can stop at any time, without formalities."
+          ]
+        },
+        {
+          "titre": "What “beta” means",
+          "paras": [
+            "The app is being finished: features may change, be removed or have errors. The book contents remain the reference; content reported as wrong is corrected or hidden as quickly as possible.",
+            "Your feedback is valuable: “Report an error” in the lessons, or [beta contact address to be created]."
+          ]
+        },
+        {
+          "titre": "Your data during the beta",
+          "paras": [
+            "Your data is hosted in the European Union and protected as described in the privacy policy. It can be erased at any time: deleting the account, from “My account”, stops access at once and erases everything within 30 days.",
+            "You can also export all your data (JSON file) before leaving."
+          ]
+        },
+        {
+          "titre": "End of the beta",
+          "paras": [
+            "You will be told before the beta ends. You will then choose to keep your account (under the terms published at that time) or to delete it; nothing becomes paid without your explicit consent. [Beta length and notice period: to be set.]"
+          ]
+        },
+        {
+          "titre": "Status of this text",
+          "paras": ["Draft to be reviewed by a lawyer before public opening."]
         }
       ]
     }

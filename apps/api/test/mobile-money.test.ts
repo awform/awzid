@@ -34,7 +34,7 @@ describe.skipIf(!URL_)('mobile money simulé (awform_test)', () => {
         password: PW,
         country: 'SN',
         birthYear: YEAR - 30,
-        consents: ['cgu', 'transfert_hors_pays'],
+        consents: ['cgu', 'donnee_religieuse_art9', 'transfert_hors_pays'],
       },
     );
     if (su.statusCode !== 201) throw new Error(su.body);
