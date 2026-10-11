@@ -18,7 +18,7 @@ import {
   writePrefs,
   type Ref,
 } from './mushaf';
-import { ayaNumberAr, SURA_NAMES_AR, suraTitleAr } from './sura-names-ar';
+import { ayaNumberAr, MADANI, SURA_AYAS, SURA_NAMES_AR, suraTitleAr } from './sura-names-ar';
 
 /** Muṣḥaf par page — logique pure (références seulement ; le texte n'est jamais transformé). */
 // métadonnées d'ESSAI : 3 sourates de 5, 3 et 4 versets, 4 pages
@@ -58,6 +58,10 @@ describe('pages', () => {
   });
   it('bandeau et numéro de verset (ornements, hors texte coranique)', () => {
     expect(SURA_NAMES_AR).toHaveLength(114);
+    // D2 : liste des sourates (versets, mecquoise / médinoise)
+    expect(SURA_AYAS).toHaveLength(114);
+    expect(SURA_AYAS.reduce((s, n) => s + n, 0)).toBe(6236);
+    expect(MADANI.size).toBe(28);
     expect(suraTitleAr(1).startsWith('سورة ')).toBe(true);
     expect(ayaNumberAr(255)).toBe('۝٢٥٥');
   });
@@ -147,5 +151,16 @@ describe.runIf(existsSync(DATA) && existsSync(TEXT))('pages réelles (métadonn�
       .slice(0, 114)
       .map((m) => m[1]);
     expect(SURA_NAMES_AR).toEqual(names);
+  });
+  it('D2 : versets et lieu de révélation de chaque sourate = source Tanzil (liste des sourates)', () => {
+    const src = readFileSync(DATA, 'utf8');
+    const block = src.slice(src.indexOf('QuranData.Sura = ['));
+    const rows = [
+      ...block.matchAll(/\[\d+, (\d+), \d+, \d+, '[^']+', "[^"]*", '[^']*', '(Meccan|Medinan)'\]/g),
+    ];
+    expect(rows).toHaveLength(114);
+    expect(SURA_AYAS).toEqual(rows.map((m) => Number(m[1])));
+    expect(SURA_AYAS.reduce((s, n) => s + n, 0)).toBe(6236);
+    expect([...MADANI]).toEqual(rows.flatMap((m, i) => (m[2] === 'Medinan' ? [i + 1] : [])));
   });
 });

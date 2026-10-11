@@ -170,7 +170,7 @@ test.describe('enseignant et parent', () => {
     const text = await page.getByTestId('ens-message').textContent();
     const code = /([A-HJ-NP-Z2-9]{8})/.exec(text ?? '')![1]!;
 
-    await pp.goto('/compte');
+    await pp.goto('/compte?r=apprentissage');
     const block = pp.getByTestId('hifz-compte').locator('.hp').filter({ hasText: 'Amina' });
     await block.getByTestId('code-classe').fill(code);
     await block.getByTestId('consent-partage').check();

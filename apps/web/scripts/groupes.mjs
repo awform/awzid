@@ -27,6 +27,8 @@ export const RARE_ROUTES = [
   '/inscription',
   '/acces',
   '/errata',
+  // D2 : choix du récitateur, crédits et contrôle parental (le choix et la liste viennent du serveur)
+  '/coran/recitateurs',
 ];
 /** Modules chargés à la demande ET qui ont besoin du réseau (chemin du fichier source). */
 export const EN_LIGNE_MODULES = [
@@ -36,6 +38,9 @@ export const EN_LIGNE_MODULES = [
   /src\/lib\/avis\/capture\.ts$/,
   // A5 : « Réciter et vérifier » (le service d'écoute est sur le serveur) : panneau et bilans, à la demande
   /src\/lib\/ecoute\/(PanneauEcoute|ARevoirEcoute)\.svelte$/,
+  // D2 : rubriques de « Compte » qui écrivent sur le serveur (compte, sécurité, données, classe) et notifications
+  /src\/lib\/compte\/CompteEnLigne\.svelte$/,
+  /src\/lib\/NotificationsReglages\.svelte$/,
 ];
 
 const under = (r, prefixes) => prefixes.some((p) => r === p || r.startsWith(`${p}/`));

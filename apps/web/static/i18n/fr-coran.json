@@ -85,7 +85,6 @@
   "ca.versets": "{n} versets",
   "ca.licence_titre": "Licence et crédits",
   "ca.licence_archive": "Source : {source} ; licence archivée le {date}.",
-  "ca.licence_lien": "Voir la source",
   "ca.appareil_titre": "Sur cet appareil",
   "ca.appareil_vide": "Aucune sourate gardée pour l'écoute sans Internet.",
   "ca.appareil_total": "Place utilisée par l'audio : {taille}",
@@ -195,7 +194,6 @@
   "cl.ref_courte": "{sourate}, v. {a}",
   "cl.reglages_de": "Réglages d'écoute — {nom}",
   "cl.reglages_ecoute": "Réglages d'écoute",
-  "cl.reprendre": "Reprendre où j'en étais",
   "cl.retour_lecture": "← Retour à la lecture",
   "cl.signets": "Mes signets",
   "cl.sourate_prec": "Sourate précédente",
@@ -277,5 +275,16 @@
   "cl.pastille": "Verset {n}",
   "cl.pastille_basmala": "Basmala",
   "cl.pastille_ouvrir": "ouvrir le lecteur audio",
-  "cl.sources": "Sources"
+  "cl.sources": "Sources",
+  "cl.commencer_lecture": "Commencer la lecture",
+  "cl.continuer_lecture": "Continuer la lecture",
+  "cl.sourates": "Les sourates",
+  "cl.chercher_sourate": "Chercher une sourate (nom ou numéro)",
+  "cl.aucune_sourate": "Aucune sourate ne correspond.",
+  "cl.mecquoise": "mecquoise",
+  "cl.medinoise": "médinoise",
+  "cl.source_sourates": "Noms arabes, nombre de versets et lieu de révélation des sourates : métadonnées Tanzil (CC BY 3.0).",
+  "ca.ajouter_recitateur": "Ajouter un récitateur",
+  "ca.site_complexe": "Site du Complexe du Roi Fahd",
+  "ca.site_qf": "Quran Foundation"
 }

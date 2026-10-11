@@ -64,7 +64,7 @@ test.describe('adulte et enseignant', () => {
     const code = /([A-HJ-NP-Z2-9]{8})/.exec(
       (await tp.getByTestId('ens-message').textContent()) ?? '',
     )![1]!;
-    await page.goto('/compte');
+    await page.goto('/compte?r=apprentissage');
     const block = page.getByTestId('hifz-compte').locator('.hp').first();
     await block.getByTestId('code-classe').fill(code);
     await block.getByTestId('consent-partage').check();

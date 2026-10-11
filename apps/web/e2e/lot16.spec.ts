@@ -108,7 +108,7 @@ test.describe('parent', () => {
   test('notifications : tout désactivé par défaut ; enfants avec le code parent', async ({
     page,
   }) => {
-    await page.goto('/compte');
+    await page.goto('/compte?r=notifications');
     const n = page.getByTestId('notifications');
     await expect(n).toBeVisible();
     await expect(n.getByTestId('notif-devoirs')).not.toBeChecked();

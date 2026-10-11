@@ -94,7 +94,7 @@ test('mon compte : export de mes données puis suppression du compte', async ({ 
   const email = uniqueEmail('rgpd', info.project.name);
   await signup(page, 'adulte', email);
   await expect(page).toHaveURL(/\/$/);
-  await page.goto('/compte');
+  await page.goto('/compte?r=donnees');
   await expect(page.getByTestId('consentements')).toContainText('Conditions');
   const dl = page.waitForEvent('download');
   await page.getByTestId('exporter').click();
@@ -102,6 +102,8 @@ test('mon compte : export de mes données puis suppression du compte', async ({ 
   const data = JSON.parse(readFileSync(file, 'utf8')) as { compte: { email: string } };
   expect(data.compte.email).toBe(email);
 
+  // D2 : suppression en deux temps (le mot de passe n'est demandé qu'au second)
+  await page.getByTestId('supprimer-etape1').click();
   await page.locator('#delpw').fill(password());
   await page.getByTestId('supprimer-compte').click();
   await expect(page).toHaveURL(/\/connexion$/);

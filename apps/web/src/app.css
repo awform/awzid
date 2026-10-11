@@ -66,6 +66,8 @@
   --bande-3: #17805d;
   --bande-texte: #fbf7ee;
   --sur-or: #1e2b25;
+  /* D2 : motif étoilé fin des bandeaux (couvertures d'unité, en-têtes Coran / Vivre l'islam / Sciences) */
+  --motif-etoile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.16' stroke-width='1'%3E%3Crect x='14' y='14' width='16' height='16'/%3E%3Crect x='14' y='14' width='16' height='16' transform='rotate(45 22 22)'/%3E%3C/g%3E%3C/svg%3E");
   /* D1 : l'arbre de l'élève (« Grandir ») — couleurs du symbole, tronc brun chaud (formes ≥ 3:1 sur la carte) */
   --arbre-feuille: #1f9c73;
   --arbre-feuille-2: #17805d;
@@ -572,6 +574,103 @@ tbody tr:hover {
 [data-public='enfant'] .tile .tile-ic {
   width: 64px;
   height: 64px;
+}
+
+/* D1 / D2 : carte « Reprendre » (filet doré) et bouton doré « Continuer » (Arabe, Sciences, Coran) ; texte foncé
+   sur l'or (6:1) : l'or n'est jamais une couleur de texte */
+.carte-reprendre {
+  display: grid;
+  gap: 6px;
+  padding: var(--space-m);
+  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--gold);
+  box-shadow: var(--shadow-card);
+}
+a.dore,
+a.button.dore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 56px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--gold);
+  color: var(--sur-or);
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+}
+a.dore:hover {
+  filter: brightness(1.05);
+}
+
+/* D2 : listes de navigation (Plus, Compte) — icône + nom écrit + chevron, cibles de 56 px, cartes à coins 16 px */
+.nav-liste {
+  list-style: none;
+  margin: 0 0 var(--space-m);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.nav-liste > li + li {
+  border-top: 1px solid var(--line);
+}
+.nav-liste a,
+.nav-liste button {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--ink);
+  text-align: start;
+  text-decoration: none;
+  font-weight: 600;
+}
+.nav-liste a:hover,
+.nav-liste button:hover {
+  background: var(--primary-soft);
+}
+.nav-liste .ic {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.nav-liste .nom {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.nav-liste small {
+  color: var(--ink2);
+  font-weight: 400;
+}
+.nav-liste .chev {
+  color: var(--ink2);
+}
+.famille-titre {
+  margin: var(--space-l) 0 var(--space-s);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink2);
 }
 
 /* lien présenté comme un bouton : déjà stylé avec button ci-dessus */

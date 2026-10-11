@@ -93,9 +93,9 @@ test('hors ligne : bandeau explicite, puis disparition au retour du réseau', as
 test('mouvement réduit : transitions neutralisées', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/plus');
+  // D2 : « Plus » est une liste (plus de tuiles animées) ; on mesure un bouton animé de l'en-tête (transition globale)
   const d = await page
-    .locator('a.tile')
-    .first()
+    .getByTestId('mode-affichage')
     .evaluate((el) => parseFloat(getComputedStyle(el).transitionDuration));
   expect(d).toBeLessThan(0.01);
 });

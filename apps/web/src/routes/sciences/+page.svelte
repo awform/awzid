@@ -7,6 +7,7 @@
   import { onMount } from 'svelte';
   import { demoProfileFor } from '$lib/attempts';
   import EspaceNiveau from '$lib/parcours/EspaceNiveau.svelte';
+  import EnTete from '$lib/ui/EnTete.svelte';
   import type { ProfileInfo } from '$lib/session';
 
   /**
@@ -38,7 +39,13 @@
 
 <svelte:head><title>{t('app.nom')} — {t('onglets.sciences')}</title></svelte:head>
 
-<h1><Bidi text={profile ? t('parc.mes_sciences') : t('onglets.sciences')} /></h1>
+<!-- D2 : en-tête étoilé, titre calligraphié, décor (livres fermés) -->
+<EnTete
+  titre={profile ? t('parc.mes_sciences') : t('onglets.sciences')}
+  ar="الْعُلُومُ الشَّرْعِيَّةُ"
+  icon="livres"
+  teinte={3}
+/>
 <p class="muted"><Bidi text={t('sciences.intro')} /></p>
 {#if profile}
   <EspaceNiveau {profile} matiere="sciences" />
@@ -85,8 +92,9 @@
     gap: 8px 12px;
     padding: 12px 14px;
     margin: 8px 0;
-    border: 2px solid var(--line);
-    border-radius: 14px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--card);
     text-decoration: none;
     color: var(--ink);
   }

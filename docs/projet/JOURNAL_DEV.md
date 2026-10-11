@@ -8,6 +8,36 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 11/10/2026 — Lot D2 « Design V3 + agencement » : Coran, Vivre l'islam, Sciences, Plus, Compte, connexion
+
+Branche `design-d2-wip` (worktree `~/awform-d2`, depuis `main` b81ff1b), **non fusionnée** (captures relues par la
+DA avant fusion). Conception : `ux/AGENCEMENT.md` § 4, 6, 7, 8, 8 bis. Même vocabulaire que D1.
+
+1. **Coran (accueil)** : en-tête étoilé (`ui/EnTete.svelte` : bandeau émeraude, motif `--motif-etoile` partagé avec
+   les couvertures d'unité, filet doré, « الْقُرْآنُ الْكَرِيمُ » en Amiri sur sa ligne, étoile à 8 branches) ;
+   carte « Reprendre la lecture » (`.carte-reprendre` et `a.dore`, désormais globales et partagées avec l'Arabe) ;
+   accès Lire / Écouter / Mémoriser ; liste des 114 sourates (`quran/ListeSourates.svelte` : numéro dans l'étoile,
+   nom arabe Tanzil en Amiri, translittération, versets, mecquoise / médinoise — `SURA_AYAS`, `MADANI`, contrôlés
+   contre Tanzil) avec recherche (nom sans signes, ou numéro) ; textes longs et crédit Tanzil derrière « Informations ».
+2. **Récitateurs** : « Mes récitateurs » (mon choix, sourates gardées) / « Ajouter un récitateur » ; crédits, note
+   d'usage et licence derrière ⓘ « Licence et crédits » ; liens nommés « Site du Complexe du Roi Fahd »,
+   « Quran Foundation ». Page rare (choix et liste viennent du serveur).
+3. **Vivre l'islam / Sciences** : en-têtes calligraphiés (« حَيَاةُ الْمُسْلِمِ », « الْعُلُومُ الشَّرْعِيَّةُ ») ; cartes
+   par thème avec bandeau étoilé et objet en médaillon ; icônes de cercles redessinées en objets (fratrie : anneaux,
+   enfants : cerf-volant, parents : maison au cœur — plus aucune silhouette).
+4. **Plus** en familles (Apprendre plus, Pratiquer, Ma classe et mon suivi, Aide, Compte), icône + nom écrit
+   (`.nav-liste` globale) ; « Signaler un problème » et « Donner mon avis » dans Aide ; liens juridiques cachés à
+   l'enfant ; 1 000 mots, Madjaliss et Poésie : rien tant que leur page n'existe pas.
+5. **Compte** : sommaire en rubriques (`?r=`) — Mon profil, Connexion et sécurité, Notifications, Apprentissage,
+   Données et confidentialité (Abonnement masqué, `ABONNEMENT_OUVERT`) ; « Changer d'élève » en tête ; suppression
+   isolée en bas, en deux temps. Rubriques qui écrivent sur le serveur dans `compte/CompteEnLigne.svelte` (chargé à
+   la demande, groupe « en ligne ») ; la langue reste hors ligne.
+6. **Connexion / inscription** : bloc marque (symbole, nom, slogan, filet doré), formulaire centré, bouton 56 px ;
+   accords et case art. 9 inchangés.
+7. **Budget appareil élève** : 343,1 → 337,4 Ko (≤ 350). **Tests** : e2e `d2-design.spec.ts` (règles D1 étendues :
+   aucune icône sans nom, une action principale, Lexend, axe, 56 px enfant) ; adaptés : rubriques de compte
+   (`?r=`), suppression en deux temps, a37 (médaillon), lot26 (mouvement réduit), coran-epure, captures.
+
 ## 11/10/2026 — Lot D1 « Design V3 + agencement » : accueil, Arabe par unités, leçon par étapes, « Grandir »
 
 Branche `design-d1-wip` (worktree `~/awform-d1`, depuis `main` 2673d1c), **non fusionnée** (captures relues par la DA
