@@ -124,7 +124,7 @@ jobs:
         run: pnpm -r --no-bail --workspace-concurrency=1 test
       - name: Rapport de la batterie adverse (fournisseur simulé)
         run: node packages/tutor/dist/cli/eval.js --fournisseur simule --sortie tuteur-batterie.json
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: batterie-tuteur
@@ -154,7 +154,7 @@ jobs:
         run: infra/android/build-debug.sh
         env:
           AWFORM_ANDROID_URL: https://demo.awform.invalid
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: awform-debug-apk
           path: apps/android/android/app/build/outputs/apk/debug/app-debug.apk
