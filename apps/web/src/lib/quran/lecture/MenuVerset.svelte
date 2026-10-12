@@ -6,6 +6,7 @@
   import Icon from '$lib/ui/Icon.svelte';
   import { noteLines, translationInfo, type TranslatedVerse } from '../translation';
   import { enPaysage } from './paysage';
+  import { fondTouche } from './relais';
 
   /**
    * Coran épuré — PETIT MENU d'un verset (toucher un verset) : Écouter d'ici · Répéter ce verset · Traduction ·
@@ -114,7 +115,7 @@
   lang={localeInfo().code}
   dir={localeInfo().dir}
   onclose={close}
-  onclick={(e) => e.target === dlg && close()}
+  onclick={(e) => dlg && fondTouche(e, dlg, close)}
 >
   {#if at}
     {@const bsm = at.a === 0}
