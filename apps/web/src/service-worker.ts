@@ -7,9 +7,10 @@
  *  - coquille de l'application (JS, CSS, polices, icônes, page de démarrage) mise en cache à l'installation ;
  *  - toute navigation sans réseau reçoit la coquille : l'application monopage lit ensuite les paquets de
  *    niveau dans IndexedDB ;
- *  - nouvelle version : téléchargée en arrière-plan et appliquée au PROCHAIN démarrage (pas de skipWaiting
- *    automatique : jamais de changement au milieu d'une leçon) — ou quand l'élève touche « Mettre à jour » dans
- *    le bandeau de l'application (message SKIP_WAITING, voir `lib/maj.ts`, jamais pendant une leçon ou une écoute) ;
+ *  - nouvelle version : téléchargée en arrière-plan, puis appliquée quand l'élève touche « Mettre à jour », ou
+ *    seule au démarrage à froid ou après un délai, toujours sur un écran neutre (message SKIP_WAITING, voir
+ *    `lib/maj.ts`) ; à l'activation, tous les onglets sont prévenus et se rechargent (jamais au milieu d'une
+ *    leçon : l'onglet occupé garde les fichiers de la version précédente jusqu'à son retour à un écran neutre) ;
  *  - Background Sync « awform-sync » : renvoie la file des réponses quand le réseau revient, même page fermée.
  * Les réponses de l'API ne sont pas mises en cache ici (les paquets vivent dans IndexedDB).
  */
@@ -17,9 +18,15 @@ import { build, files, version } from '$service-worker';
 import { get } from '$lib/idb';
 import { flushQueue } from '$lib/sync-core';
 import { purgeOldRecordings } from '$lib/recordings';
+import { CACHE_RIWAYAT, cachesARetirer, PREFIXE_COQUILLE } from '$lib/maj-caches';
+
+// mêmes valeurs que `lib/maj.ts` (non importé ici : le worker reste léger)
+const MSG_SKIP = 'SKIP_WAITING';
+const MSG_VERSION = 'AWZID_VERSION';
+const MSG_ACTIVE = 'AWZID_ACTIVE';
 
 const sw = self as unknown as ServiceWorkerGlobalScope;
-const CACHE = `awform-shell-${version}`;
+const CACHE = `${PREFIXE_COQUILLE}${version}`;
 const SHELL = '/';
 // lot 25 : les catalogues de langues (/i18n/*.json) ne sont pas préchargés : seul celui qui sert est gardé
 const isCatalog = (p: string) => p.startsWith('/i18n/');
@@ -34,7 +41,7 @@ const isTraduction = (p: string) => p.startsWith('/traductions/');
 const isRiwaya = (p: string) => p.startsWith('/riwayat/');
 // … la police d'une riwāya, une fois chargée, est gardée (hors ligne ensuite) dans un cache à part, conservé
 // aux mises à jour (le nom du fichier change avec la version du Complexe)
-const RIWAYAT_CACHE = 'awzid-riwayat-polices';
+const RIWAYAT_CACHE = CACHE_RIWAYAT;
 // A37 : textes français des espaces de l'élève chargés par route (Prières, Vivre l'islam) : préchargés, eux
 const STUDENT_TEXTS = ['/i18n/fr-quotidien.json', '/i18n/fr-vivre.json', '/i18n/fr-coran.json'];
 const ASSETS = [
@@ -94,33 +101,30 @@ sw.addEventListener('install', (event) => {
   );
 });
 
-// « Mettre à jour » : seul message accepté, envoyé par l'application d'une page de ce site
+// Messages acceptés, envoyés par l'application d'une page de ce site (voir `lib/maj.ts`) :
+//  - « Mettre à jour » (ou application automatique sur un écran neutre) : le worker en attente prend la main ;
+//  - demande de version (canal de réponse) : chaque onglet sait si le worker actif est celui de sa version.
 sw.addEventListener('message', (event) => {
-  if ((event.data as { type?: string } | null)?.type === 'SKIP_WAITING') void sw.skipWaiting();
+  const type = (event.data as { type?: string } | null)?.type;
+  if (type === MSG_SKIP) void sw.skipWaiting();
+  else if (type === MSG_VERSION) event.ports[0]?.postMessage({ version });
 });
 
 sw.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) =>
-        Promise.all(
-          keys
-            // lot 27 : les sourates gardées par l'utilisateur survivent aux mises à jour
-            .filter(
-              (k) =>
-                k !== CACHE &&
-                k !== RIWAYAT_CACHE &&
-                !k.startsWith('awzid-coran-audio') &&
-                // A34 : pages et polices du Muṣḥaf exact consultées (gérées par l'application)
-                !k.startsWith('awzid-mushaf-exact'),
-            )
-            .map((k) => caches.delete(k)),
-        ),
-      )
+      // seuls des caches de FICHIERS sont retirés (jamais IndexedDB ni localStorage : signets, progression,
+      // réglages) ; la coquille précédente reste le temps qu'un onglet occupé revienne à un écran neutre ;
+      // lot 27, A34 : sourates, Muṣḥaf exact et polices gardés par l'utilisateur survivent aux mises à jour
+      .then((keys) => Promise.all(cachesARetirer(keys, CACHE).map((k) => caches.delete(k))))
       // enregistrements locaux de plus de 7 jours : effacés même si l'écran n'est jamais rouvert (MIN-16)
       .then(() => purgeOldRecordings().catch(() => 0))
       .then(() => sw.clients.claim())
+      // incident du 12/10/2026 : TOUS les onglets de l'origine sont prévenus (ils se rechargent sur un écran
+      // neutre), même ceux qui n'étaient pas contrôlés
+      .then(() => sw.clients.matchAll({ type: 'window', includeUncontrolled: true }))
+      .then((cs) => cs.forEach((c) => c.postMessage({ type: MSG_ACTIVE, version })))
       // D-A39 (5) : pages légales et aide (hors coquille) gardées dès la première ouverture, sans bloquer
       .then(() => void legalCopy()),
   );
@@ -166,10 +170,17 @@ sw.addEventListener('fetch', (event) => {
     );
     return;
   }
+  if (url.pathname.startsWith('/_app/immutable/') && !ASSETS.includes(url.pathname)) {
+    // fichier de la version PRÉCÉDENTE (onglet resté en leçon pendant la mise à jour) : son cache est encore là
+    event.respondWith(caches.match(url.pathname).then((r) => r ?? fetch(req)));
+    return;
+  }
   if (ASSETS.includes(url.pathname)) {
     // fichier non préchargé (personnel, pages rares, modules en ligne, leçons vivantes) : réseau, puis gardé dans le cache de cette version
+    // cherché dans le cache de CETTE version seulement : la coquille précédente, gardée un temps, a des fichiers
+    // de même nom (icônes, catalogues) qui ne doivent jamais revenir
     event.respondWith(
-      caches.match(url.pathname).then(
+      enCache(url.pathname).then(
         (r) =>
           r ??
           fetch(req).then(async (res) => {
@@ -188,20 +199,25 @@ sw.addEventListener('fetch', (event) => {
       get('units', unitId)
         .catch(() => undefined)
         .then(async (u) =>
-          u
-            ? Response.redirect(`/lecons/${unitId}`, 302)
-            : fetch(req).catch(async () => (await caches.match(SHELL)) ?? Response.error()),
+          u ? Response.redirect(`/lecons/${unitId}`, 302) : fetch(req).catch(coquille),
         ),
     );
     return;
   }
   if (req.mode === 'navigate') {
     // réseau d'abord (contenu à jour), coquille en cache si pas de réseau
-    event.respondWith(
-      fetch(req).catch(async () => (await caches.match(SHELL)) ?? Response.error()),
-    );
+    event.respondWith(fetch(req).catch(coquille));
   }
 });
+
+/** Fichier du cache de la version active (jamais celui d'une version précédente). */
+function enCache(p: string): Promise<Response | undefined> {
+  return caches.open(CACHE).then((c) => c.match(p));
+}
+/** Coquille de la version active, servie aux navigations sans réseau. */
+async function coquille(): Promise<Response> {
+  return (await enCache(SHELL)) ?? Response.error();
+}
 
 interface SyncEvent extends ExtendableEvent {
   tag: string;
