@@ -136,4 +136,10 @@
       border-radius: var(--radius-lg);
     }
   }
+  /* téléphone couché (12/10/2026) : 70 % de 412 px laissait trop peu de place ; 90 % de la hauteur visible */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .sheet {
+      max-height: 90dvh;
+    }
+  }
 </style>

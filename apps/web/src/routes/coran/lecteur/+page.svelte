@@ -27,6 +27,7 @@
   import RiwayaBadge from '$lib/quran/RiwayaBadge.svelte';
   import Feuille from '$lib/quran/lecture/Feuille.svelte';
   import MenuVerset from '$lib/quran/lecture/MenuVerset.svelte';
+  import { PAYSAGE_MQ } from '$lib/quran/lecture/paysage';
   import Reglages from '$lib/quran/lecture/Reglages.svelte';
   import { appliquerFond } from '$lib/theme/fond';
   import Selecteur from '$lib/quran/lecture/Selecteur.svelte';
@@ -106,11 +107,13 @@
   import Icon from '$lib/ui/Icon.svelte';
   import BoutonEcoute from '$lib/ecoute/BoutonEcoute.svelte';
   import {
+    alignRtl,
     clampVue,
     isDoubleTap,
     tapZone,
     toggleZoom,
     zoomAt,
+    zoomRtl,
     ZOOM_MIN,
     type Vue,
   } from '$lib/quran/zoom';
@@ -148,6 +151,8 @@
   let trads = $state<Record<number, TranslationSura | null>>({});
   let revealed = $state(new Set<string>());
   let narrow = $state(true);
+  /** téléphone couché (peu haut) : habillage compact, barre audio réduite à la pastille (12/10/2026) */
+  let paysage = $state(false);
   let noPages = $state(false);
   let ready = $state(false);
 
@@ -406,8 +411,16 @@
     narrow = !mq.matches;
     const on = () => (narrow = !mq.matches);
     mq.addEventListener('change', on);
+    // même requête que le CSS « paysage » (en-tête compact, onglets masqués, pastille d'écoute)
+    const mqp = window.matchMedia(PAYSAGE_MQ);
+    paysage = mqp.matches;
+    const onp = () => (paysage = mqp.matches);
+    mqp.addEventListener('change', onp);
     void init();
-    return () => mq.removeEventListener('change', on);
+    return () => {
+      mq.removeEventListener('change', on);
+      mqp.removeEventListener('change', onp);
+    };
   });
 
   async function init() {
@@ -912,23 +925,30 @@
     const f = frame();
     return clampVue({ z, x: f.w - f.w * z, y: 0 }, f.w, f.h);
   }
+  /** Milieu de la partie VISIBLE du cadre (coordonnées du cadre) : la ligne touchée y vient au double-toucher. */
+  function visibleMid(r: DOMRect): number {
+    const top = Math.max(r.top, 0);
+    const bottom = Math.min(r.bottom, window.innerHeight);
+    return bottom > top ? (top + bottom) / 2 - r.top : r.height / 2;
+  }
   function zoomToggleAt(cx: number, cy: number) {
     const r = bookEl?.getBoundingClientRect();
     if (!r || vue !== 'page') return;
     const f = frame();
-    setVue(toggleZoom(vz, cx - r.left, cy - r.top, f.w, f.h));
+    // double-toucher sur une ligne : zoom, ligne au centre de l'écran, vue calée sur son début (à droite)
+    setVue(toggleZoom(vz, cx - r.left, cy - r.top, f.w, f.h, visibleMid(r)));
   }
   function zoomBy(step: number) {
     const f = frame();
-    setVue(zoomAt(vz, vz.z + step, f.w / 2, f.h / 2, f.w, f.h));
+    setVue(zoomRtl(vz, vz.z + step, f.h / 2, f.w, f.h));
   }
-  // zoom changé dans les réglages (curseur) : appliqué au centre de la page
+  // zoom changé dans les réglages (curseur) : calé sur le début des lignes (à droite)
   $effect(() => {
     const z = prefs.zoom;
     untrack(() => {
       if (Math.abs(z - vz.z) < 0.01) return;
       const f = frame();
-      vz = z <= ZOOM_MIN ? { z: 1, x: 0, y: 0 } : zoomAt(vz, z, f.w / 2, f.h / 2, f.w, f.h);
+      vz = z <= ZOOM_MIN ? { z: 1, x: 0, y: 0 } : zoomRtl(vz, z, f.h / 2, f.w, f.h);
     });
   });
   // nouvelle page : même zoom, en haut à droite ; page entière si la vue est en versets
@@ -1023,7 +1043,9 @@
       // pincement fini quand tous les doigts sont levés (jamais un « glisser » au lever du premier doigt)
       if (e.touches.length) return;
       g = null;
-      setVue(vz.z <= ZOOM_MIN + 0.05 ? { z: 1, x: 0, y: 0 } : vz);
+      // fin du pincement : vue calée sur le début des lignes (à droite)
+      const f = frame();
+      setVue(vz.z <= ZOOM_MIN + 0.05 ? { z: 1, x: 0, y: 0 } : alignRtl(vz, f.w, f.h));
       return;
     }
     const kind = g.kind;
@@ -1152,6 +1174,9 @@
     armChrome();
   }
   function toggleChrome() {
+    // page zoomée au doigt (téléphone, commandes flottantes) : l'habillage reste masqué (essai du client,
+    // 12/10/2026 : il revenait par-dessus le texte agrandi) ; clavier : « Afficher les commandes » reste possible
+    if (hidden && zoomed && surcouche) return;
     if (hidden) showChrome();
     else if (prefs.epure) {
       if (chromeTimer) clearTimeout(chromeTimer);
@@ -1168,10 +1193,20 @@
         if (chromeTimer) clearTimeout(chromeTimer);
         chromeTimer = null;
       } else if (ready && !sheetOpen) {
-        if (quiet) chrome = false;
+        // page zoomée au doigt : le menu d'un verset refermé ne ramène pas l'habillage sur le texte agrandi
+        if (quiet || (zoomed && surcouche)) chrome = false;
         else showChrome();
       }
       quiet = false;
+    });
+  });
+  // zoom au doigt (pincement, double-toucher) : les commandes flottantes s'effacent tout de suite
+  $effect(() => {
+    if (!(zoomed && surcouche)) return;
+    untrack(() => {
+      if (chromeTimer) clearTimeout(chromeTimer);
+      chromeTimer = null;
+      chrome = false;
     });
   });
   $effect(() => {
@@ -1179,17 +1214,17 @@
     if (hidden) h.dataset.epure = '';
     else delete h.dataset.epure;
   });
-  // première fois que les commandes s'effacent (vue page, en haut de l'écran) : la page vient en haut
-  let scrolled = false;
+  /**
+   * ESSAI DU CLIENT (11/10/2026, Android 412 px) : cachées, l'en-tête et la barre du lecteur gardaient leur place
+   * (≈ 500 px de vide blanc au-dessus de la page). Téléphone et tablette, lecture épurée : en-tête et barre
+   * FLOTTENT au-dessus du texte (position fixe) ; la page commence en haut de l'écran, commandes cachées ou non.
+   */
+  const surcouche = $derived(narrow && prefs.epure);
   $effect(() => {
-    if (!hidden || scrolled || vue !== 'page') return;
-    scrolled = true;
-    untrack(() => {
-      if (window.scrollY > 8 || !bookEl) return;
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const top = bookEl.getBoundingClientRect().top + window.scrollY - 8;
-      window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
-    });
+    const h = document.documentElement;
+    if (surcouche) h.dataset.surcouche = '';
+    else delete h.dataset.surcouche;
+    return () => delete h.dataset.surcouche;
   });
   onMount(() => {
     const h = document.documentElement;
@@ -1211,8 +1246,10 @@
     const move = (e: PointerEvent) => {
       // souris : la bouger montre les commandes (comme un lecteur vidéo)
       // (sauf sur la pastille d'écoute : elle reste sous le pointeur jusqu'au clic)
+      // (téléphone et tablette, commandes flottantes : seulement au toucher, sinon elles couvriraient le texte visé)
       if (
         e.pointerType === 'mouse' &&
+        !surcouche &&
         (hidden || chromeTimer) &&
         !(e.target as Element | null)?.closest?.('.pastille')
       )
@@ -1249,17 +1286,23 @@
    * de la barre audio (sa hauteur réelle, une ou deux lignes).
    */
   let tabsH = $state(76);
+  let hautH = $state(60);
   let ecouteH = $state(0);
+  /** hauteur mesurée de la pastille d'écoute (marge de fin : elle ne couvre jamais le dernier verset) */
+  let pastilleH = $state(0);
   let ecouteEl = $state<HTMLElement | undefined>();
   $effect(() => {
     const tabs = document.querySelector<HTMLElement>('nav.tabs');
+    const top = document.querySelector<HTMLElement>('header.top');
     const el = ecouteEl;
     const ro = new ResizeObserver(() => {
       const fixed = tabs && getComputedStyle(tabs).position === 'fixed';
       tabsH = fixed ? Math.ceil(tabs.getBoundingClientRect().height) : 0;
+      hautH = top ? Math.ceil(top.getBoundingClientRect().height) : 60;
       ecouteH = el && audioOn ? Math.ceil(el.getBoundingClientRect().height) : 0;
     });
     if (tabs) ro.observe(tabs);
+    if (top) ro.observe(top);
     if (el) ro.observe(el);
     void audioOn;
     return () => ro.disconnect();
@@ -1552,6 +1595,46 @@
   {/if}
 {/snippet}
 
+{#snippet bandeaux()}
+  {#if notice}
+    <p class="avis" role="status" data-testid="avis-lecteur">
+      <Icon name="info" size={18} /><span><Bidi text={notice} /></span>
+    </p>
+  {/if}
+  {#if rwError || (isRw && rwFont === 'erreur')}<p class="hint" role="status">
+      <Bidi text={rwError ? t('rw.indisponible') : t('rw.police_erreur')} />
+    </p>{/if}
+  {#if guiding}
+    <p class="memo-line" data-testid="guidage">
+      <span data-testid="tour"
+        ><Bidi text={t('lecteur.tour', { n: gRound, total: guide.repeat })} /></span
+      >
+      {#if yourTurn}<strong role="status" data-testid="a-toi">{t('lecteur.a_toi')}</strong>{/if}
+      <button type="button" class="link" onclick={guideStop} data-testid="arreter"
+        >{t('lecteur.arreter')}</button
+      >
+    </p>
+  {/if}
+  {#if memo}
+    <p class="memo-line" data-testid="mode-memoriser">
+      <Icon name="masque" size={18} /><Bidi text={t(`ca.masque_${prefs.memo}`)} />
+      <button type="button" class="link" onclick={() => openReg('memoriser')}
+        >{t('cl.changer')}</button
+      >
+      <button type="button" class="link" onclick={() => setMemo(0)} data-testid="quitter-memoriser"
+        >{t('cl.quitter_memoriser')}</button
+      >
+      {#if profileId}
+        <!-- A5 : l'IA écoute la récitation (interrupteur « ecoute_ia », canal bêta) -->
+        <BoutonEcoute {profileId} kind={profKind} portion={range} memoriser />
+      {/if}
+    </p>
+  {/if}
+  {#if reciter && heard === null && playing && !highlight && pack?.mode !== 'sourate'}
+    <p class="hint" data-testid="sans-surlignage"><Bidi text={t('ca.sans_surlignage')} /></p>
+  {/if}
+{/snippet}
+
 <h1 class="sr-only">{t('lecteur.titre')}</h1>
 
 {#if noPages}
@@ -1562,9 +1645,12 @@
     class="lecture"
     class:audio-on={audioOn}
     class:epure={prefs.epure}
+    class:surcouche
     style:--qz={TEXT_SCALE[prefs.size] ?? 1}
     style:--bas={`${tabsH}px`}
+    style:--haut={`${hautH}px`}
     style:--ecoute-h={`${ecouteH}px`}
+    style:--pastille-h={`${pastilleH || 52}px`}
     role="none"
     onpointerdown={longDown}
     onpointermove={longMove}
@@ -1620,6 +1706,16 @@
         {#if isRw}<span class="rwbadge" data-testid="mp-riwaya-affichee"
             ><RiwayaBadge riwaya={rw} label={mushafChoice(rw).fr} /></span
           >{/if}
+        <!-- « Sources » (crédits du texte, de la mise en page, du tajwid) : seulement derrière ⓘ, à côté de la puce -->
+        <button
+          type="button"
+          class="tool info"
+          onclick={() => (infoOpen = true)}
+          aria-label={t('cl.sources')}
+          title={t('cl.sources')}
+          aria-haspopup="dialog"
+          data-testid="infos-texte"><Icon name="info" size={20} /></button
+        >
       </div>
       <div class="tools">
         {#if !audioOn}
@@ -1699,6 +1795,8 @@
           >
         {/if}
       </div>
+      <!-- téléphone, lecture épurée : avis et lignes de mode dans la barre flottante (aucune place au-dessus de la page) -->
+      {#if surcouche}<div class="bandeaux">{@render bandeaux()}</div>{/if}
     </nav>
     <!-- proposition après un changement d'emplacement : non bloquante, annoncée, disparaît d'elle-même -->
     <div class="prop-zone" role="status" aria-live="polite">
@@ -1745,46 +1843,7 @@
         </div>
       {/if}
     </div>
-    {#if notice}
-      <p class="avis" role="status" data-testid="avis-lecteur">
-        <Icon name="info" size={18} /><span><Bidi text={notice} /></span>
-      </p>
-    {/if}
-    {#if rwError || (isRw && rwFont === 'erreur')}<p class="hint" role="status">
-        <Bidi text={rwError ? t('rw.indisponible') : t('rw.police_erreur')} />
-      </p>{/if}
-    {#if guiding}
-      <p class="memo-line" data-testid="guidage">
-        <span data-testid="tour"
-          ><Bidi text={t('lecteur.tour', { n: gRound, total: guide.repeat })} /></span
-        >
-        {#if yourTurn}<strong role="status" data-testid="a-toi">{t('lecteur.a_toi')}</strong>{/if}
-        <button type="button" class="link" onclick={guideStop} data-testid="arreter"
-          >{t('lecteur.arreter')}</button
-        >
-      </p>
-    {/if}
-    {#if memo}
-      <p class="memo-line" data-testid="mode-memoriser">
-        <Icon name="masque" size={18} /><Bidi text={t(`ca.masque_${prefs.memo}`)} />
-        <button type="button" class="link" onclick={() => openReg('memoriser')}
-          >{t('cl.changer')}</button
-        >
-        <button
-          type="button"
-          class="link"
-          onclick={() => setMemo(0)}
-          data-testid="quitter-memoriser">{t('cl.quitter_memoriser')}</button
-        >
-        {#if profileId}
-          <!-- A5 : l'IA écoute la récitation (interrupteur « ecoute_ia », canal bêta) -->
-          <BoutonEcoute {profileId} kind={profKind} portion={range} memoriser />
-        {/if}
-      </p>
-    {/if}
-    {#if reciter && heard === null && playing && !highlight && pack?.mode !== 'sourate'}
-      <p class="hint" data-testid="sans-surlignage"><Bidi text={t('ca.sans_surlignage')} /></p>
-    {/if}
+    {#if !surcouche}{@render bandeaux()}{/if}
 
     {#if vue === 'page'}
       <div class="reader" class:withTrad={tradShown && !narrow} dir="ltr">
@@ -1801,7 +1860,7 @@
             {@render tradList(shownVerses)}
           </aside>
         {/if}
-        <div class="stage" class:epure={prefs.epure}>
+        <div class="stage" class:epure={prefs.epure} class:zoomed>
           <button
             type="button"
             class="turn next"
@@ -1908,22 +1967,13 @@
         {t('tj.indisponible')}
       </p>{/if}
 
-    <!-- 11/10/2026 : crédits (texte long) derrière ⓘ ; lus en entier par les lecteurs d'écran -->
-    <p class="credits" data-testid="credit-texte">
-      <span class="sr-only">{@render credit()}</span>
-      <button
-        type="button"
-        class="info"
-        onclick={() => (infoOpen = true)}
-        title={t('cl.infos')}
-        data-testid="infos-texte"
-        ><Icon name="info" size={18} /><span>{t('cl.sources')}</span></button
-      >
-    </p>
+    <!-- 11/10/2026 : crédits (texte long) derrière ⓘ (dans les commandes) ; lus en entier par les lecteurs d'écran -->
+    <p class="sr-only" data-testid="credit-texte">{@render credit()}</p>
     {#if audioOn}<div class="spacer" aria-hidden="true"></div>{/if}
-    {#if audioOn && hidden && reciter}
-      <!-- écoute, commandes cachées : pastille discrète (pause/lecture + verset) ; toucher le verset ouvre tout -->
-      <div class="pastille" data-testid="pastille-audio">
+    {#if audioOn && (hidden || paysage) && reciter}
+      <!-- écoute, commandes cachées : pastille discrète (pause/lecture + verset) ; toucher le verset ouvre tout ;
+           téléphone couché : toujours la pastille (aucune barre audio, le texte garde la hauteur) -->
+      <div class="pastille" data-testid="pastille-audio" bind:offsetHeight={pastilleH}>
         <button
           type="button"
           class="pj"
@@ -2362,8 +2412,16 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-float);
   }
+  /*
+   * espace de fin (pendant l'écoute) : la barre audio OU la pastille (12/10/2026, capture du client, page 1 :
+   * la pastille cachait le numéro de page) ne couvre jamais le dernier verset ni le numéro de page en bas :
+   * au moins la hauteur de la pastille + son écart au bas de l'écran (14 px) + 16 px
+   */
   .spacer {
-    height: calc(var(--ecoute-h, 100px) + 12px);
+    height: max(
+      calc(var(--ecoute-h, 100px) + 12px),
+      calc(var(--pastille-h, 52px) + 30px + env(safe-area-inset-bottom))
+    );
   }
   .bsm-hint {
     margin: 0 4px 2px;
@@ -2478,8 +2536,9 @@
       padding-inline-end: 6px;
       border-inline-end: 1px solid var(--mp-mint2);
     }
+    /* barre audio dans la barre du haut : seule la pastille (commandes cachées) peut couvrir le bas */
     .spacer {
-      display: none;
+      height: calc(var(--pastille-h, 52px) + 30px);
     }
   }
   .memo-line {
@@ -2574,23 +2633,14 @@
     width: auto;
     height: auto;
   }
-  :global(html[data-lecteur] header.top),
-  :global(html[data-lecteur] nav.tabs),
-  .cbar,
-  .turn {
-    transition:
-      opacity var(--motion) ease,
-      transform var(--motion) ease;
-  }
+  /*
+   * 12/10/2026 (essai du client, téléphone couché) : AUCUN fondu. Pendant le fondu, l'en-tête et la barre du
+   * lecteur restaient à demi visibles par-dessus les versets (fantôme « Awzid », « Réglages », « Traduction ») :
+   * ils sont désormais opaques ou absents, d'un coup.
+   */
   :global(html[data-epure] header.top),
-  :global(html[data-epure]) .cbar {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  :global(html[data-epure] nav.tabs) {
-    opacity: 0;
-    transform: translateY(6px);
-  }
+  :global(html[data-epure] nav.tabs),
+  :global(html[data-epure]) .cbar,
   :global(html[data-epure]) .turn {
     opacity: 0;
   }
@@ -2598,21 +2648,16 @@
   :global(html[data-epure][data-lecteur-tactile] header.top),
   :global(html[data-epure][data-lecteur-tactile] nav.tabs),
   :global(html[data-epure][data-lecteur-tactile]) .cbar,
-  :global(html[data-epure][data-lecteur-tactile]) .turn {
+  :global(html[data-epure][data-lecteur-tactile]) .turn,
+  :global(html[data-epure][data-surcouche] header.top),
+  :global(html[data-epure][data-surcouche]) .cbar,
+  :global(html[data-epure][data-surcouche]) .turn {
     pointer-events: none;
   }
-  @media (prefers-reduced-motion: reduce) {
-    :global(html[data-lecteur] header.top),
-    :global(html[data-lecteur] nav.tabs),
-    .cbar,
-    .turn {
-      transition: none;
-    }
-    :global(html[data-epure] header.top),
-    :global(html[data-epure] nav.tabs),
-    :global(html[data-epure]) .cbar {
-      transform: none;
-    }
+  /* commandes flottantes cachées : seules celles qui couvrent le HAUT du texte laissent passer la souris ; la
+     barre audio (en bas, comme avant) reste atteignable à la souris */
+  :global(html[data-epure][data-surcouche]:not([data-lecteur-tactile])) .cbar .ecoute {
+    pointer-events: auto;
   }
   /* pastille d'écoute (commandes cachées) */
   .pastille {
@@ -2800,28 +2845,10 @@
     justify-content: space-between;
     margin-top: 8px;
   }
-  .credits {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 4px 8px;
-    margin: var(--space-m) 0 0;
-    font-size: 0.8rem;
-    color: var(--mp-ink2);
-    text-align: center;
-  }
-  .info {
-    display: inline-grid;
-    place-items: center;
+  .tool.info {
+    flex: none;
     width: 44px;
-    height: 44px;
-    min-height: 44px;
     padding: 0;
-    color: var(--mp-green);
-    background: transparent;
-    border: 0;
-    border-radius: 50%;
   }
   .adab {
     padding-inline-start: 1.2em;
@@ -2904,12 +2931,134 @@
     :global(html[data-epure]) .stage.epure .turn {
       opacity: 0;
     }
+    /* page zoomée : les flèches (posées sur le texte) disparaissent ; glisser déplace la page, double-toucher
+       ou pincement la rend entière */
+    .stage.epure.zoomed .turn {
+      display: none;
+    }
+  }
+  /*
+   * téléphone et tablette, lecture épurée (essai du client, 11/10/2026) : en-tête et barre du lecteur FLOTTENT
+   * au-dessus du texte ; ils ne gardent aucune place, la page commence en haut de l'écran (cachés ou non)
+   */
+  :global(html[data-surcouche] header.top) {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+  }
+  :global(html[data-surcouche] main) {
+    padding-top: 0;
+  }
+  .surcouche .cbar {
+    position: fixed;
+    top: calc(var(--haut, 60px) + 4px);
+    inset-inline: 8px;
+  }
+  .surcouche .reader,
+  .surcouche .versets {
+    margin-top: 0;
+  }
+  .bandeaux {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .bandeaux > :global(:first-child) {
+    margin-top: 0;
   }
   /* paysage (téléphone couché) : la page prend toute la largeur de l'écran */
   @media (orientation: landscape) and (max-height: 560px) {
     :global(html[data-lecteur] main) {
       max-width: none;
       padding-inline: 8px;
+    }
+  }
+  /*
+   * TÉLÉPHONE COUCHÉ (essai du client, 12/10/2026, Xiaomi ≈ 915 × 412) : en-tête, bandeau doré, barre audio et
+   * onglets mangeaient presque toute la hauteur. Ici (même requête que PAYSAGE_MQ, lecture/paysage.ts) :
+   * en-tête compact sur UNE ligne (44 px, chaque bouton garde son nom écrit, à côté de l'icône), onglets du bas
+   * masqués (le logo ramène à l'accueil), emplacement replié en une puce, outils sur la même ligne, barre audio
+   * réduite à la pastille. Le texte garde ≥ 75 % de la hauteur, commandes montrées ; 100 % quand elles sont cachées.
+   */
+  @media (orientation: landscape) and (max-height: 500px) {
+    :global(html[data-lecteur] header.top) {
+      box-sizing: border-box;
+      height: 44px;
+      min-height: 0;
+      padding-block: 0;
+      gap: 6px;
+      flex-wrap: nowrap;
+    }
+    :global(html[data-lecteur] header.top .brand) {
+      min-height: 40px;
+    }
+    :global(html[data-lecteur] header.top .icon-btn) {
+      flex-direction: row;
+      gap: 6px;
+      min-height: 40px;
+      padding: 0 8px;
+    }
+    :global(html[data-lecteur] nav.tabs) {
+      display: none;
+    }
+    :global(html[data-lecteur] .app.with-tabs main) {
+      padding-bottom: 24px;
+    }
+    .cbar,
+    .surcouche .cbar {
+      top: calc(var(--haut, 44px) + 2px);
+      /* avis et lignes de mode (rares) passent dessous ; puce et outils restent sur une ligne */
+      flex-wrap: wrap;
+      gap: 4px 8px;
+      padding: 2px 6px;
+    }
+    .nav-zone {
+      flex: 1 1 auto;
+      justify-content: flex-start;
+    }
+    .puce {
+      display: inline-flex;
+      flex: 0 1 auto;
+      min-height: 40px;
+      padding-block: 2px;
+    }
+    /* sourate et emplacement sur la même ligne */
+    .puce .c {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .gold {
+      display: none;
+    }
+    .tools {
+      flex: none;
+      flex-wrap: nowrap;
+      gap: 4px;
+      padding-inline-end: 0;
+      border-inline-end: 0;
+    }
+    .tool {
+      min-height: 40px;
+    }
+    .ecouter-btn {
+      display: inline-flex;
+    }
+    /* barre audio : la pastille la remplace (le lecteur audio reste chargé, invisible) */
+    .ecoute,
+    .ecoute.on {
+      display: none;
+    }
+    /* fin de page : la pastille (8 px du bas) ne couvre jamais le dernier verset ni le numéro de page */
+    .spacer {
+      display: block;
+      height: calc(var(--pastille-h, 52px) + 24px + env(safe-area-inset-bottom));
+    }
+    .prop-zone,
+    .audio-on .prop-zone {
+      bottom: calc(68px + env(safe-area-inset-bottom));
+    }
+    .pastille {
+      bottom: calc(8px + env(safe-area-inset-bottom));
     }
   }
 </style>

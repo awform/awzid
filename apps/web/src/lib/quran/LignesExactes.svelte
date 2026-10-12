@@ -68,6 +68,48 @@
     return () => ro.disconnect();
   });
 
+  /**
+   * SURLIGNAGE DU VERSET (essai du client, 11/10/2026) : une seule bande douce et continue par verset (couleur
+   * claire de la marque, coins doux, même hauteur sur chaque ligne), dessinée SOUS les glyphes — plus une pastille
+   * par mot. Mesurée sur la mise en page (offset*, indépendant du zoom, simple mise à l'échelle).
+   */
+  const curKey = $derived(current ? `${current.s}:${current.a}` : '');
+  let bandes = $state<Array<{ t: number; l: number; w: number; h: number }>>([]);
+  $effect(() => {
+    const el = box;
+    const key = curKey;
+    void [size, lines];
+    if (!el || !key) {
+      bandes = [];
+      return;
+    }
+    const [s, a] = key.split(':');
+    const sel = a === '0' ? `.g[data-bsm="${s}"]` : `.g[data-aya="${key}"]`;
+    const measure = () => {
+      const out: Array<{ t: number; l: number; w: number; h: number }> = [];
+      for (const ligne of el.querySelectorAll<HTMLElement>(':scope > .ligne')) {
+        const gs = [...ligne.querySelectorAll<HTMLElement>(sel)];
+        if (!gs.length) continue;
+        const l = Math.min(...gs.map((g) => g.offsetLeft));
+        const r = Math.max(...gs.map((g) => g.offsetLeft + g.offsetWidth));
+        const h = ligne.offsetHeight * 0.8;
+        const pad = ligne.offsetHeight * 0.08;
+        out.push({
+          t: ligne.offsetTop + (ligne.offsetHeight - h) / 2,
+          l: l - pad,
+          w: r - l + 2 * pad,
+          h,
+        });
+      }
+      bandes = out;
+    };
+    measure();
+    void document.fonts?.ready.then(measure);
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  });
+
   const glyphOf = (s: number, a: number) =>
     box?.querySelector<HTMLElement>(`[data-aya="${s}:${a}"]`) ?? null;
   function choose(s: number, a: number, el: HTMLElement) {
@@ -100,6 +142,14 @@
   role="none"
 >
   <div class="lignes quran-text" class:centre={centered} bind:this={box} aria-hidden="true">
+    {#if bandes.length}<div class="surlignage" data-surlignage={curKey}>
+        {#each bandes as b, i (i)}<span
+            style:top="{b.t}px"
+            style:left="{b.l}px"
+            style:width="{b.w}px"
+            style:height="{b.h}px"
+          ></span>{/each}
+      </div>{/if}
     {#each lines as l (l.n)}
       {#if l.kind === 'texte'}
         <div class="ligne" style:font-family="'{family}'" style:font-size="{size}px">
@@ -188,6 +238,7 @@
     height: 100%;
   }
   .lignes {
+    position: relative;
     display: flex;
     flex-direction: column;
     direction: rtl;
@@ -220,16 +271,23 @@
   .g {
     border-radius: 6px;
     cursor: pointer;
-    transition: background-color var(--motion) ease;
   }
-  @media (hover: hover) {
-    .g:hover {
-      background: color-mix(in srgb, var(--mp-mark) 55%, transparent);
-    }
+  /* verset choisi ou entendu : UNE bande continue sous ses glyphes (aucune pastille par mot, aucun fond ailleurs) */
+  .surlignage {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
   }
-  .g.on {
+  .surlignage span {
+    position: absolute;
     background: var(--mp-mark);
-    box-shadow: 0 0 0 2px var(--mp-mark);
+    border-radius: 0.45em;
+    animation: bande-in var(--motion) ease-out;
+  }
+  @keyframes bande-in {
+    from {
+      opacity: 0;
+    }
   }
   .g.focus {
     outline: 2px solid var(--mp-green);

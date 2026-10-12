@@ -129,9 +129,10 @@ test.describe('téléphone : muṣḥaf zoomable et lecture épurée', () => {
     await expect.poll(() => zoom(page)).toBeGreaterThan(2);
     await pinch(page, 50, 400);
     expect(await zoom(page)).toBeLessThanOrEqual(3);
-    // zoomée : glisser DÉPLACE la page, ne la tourne pas
+    // zoomée : glisser DÉPLACE la page, ne la tourne pas (vue calée sur le début des lignes, à droite :
+    // glisser vers la droite montre la suite de la ligne, à gauche)
     const before = await page.getByTestId('zoom-page-cadre').getAttribute('style');
-    await drag(page, -140);
+    await drag(page, 140);
     await expect(page.locator('[data-page="50"]')).toBeVisible();
     await expect(page.locator('[data-page="51"]')).toHaveCount(0);
     expect(await page.getByTestId('zoom-page-cadre').getAttribute('style')).not.toBe(before);
@@ -142,7 +143,14 @@ test.describe('téléphone : muṣḥaf zoomable et lecture épurée', () => {
     await expect(page.locator('[data-page="51"]')).toBeVisible();
     // double-toucher : zoom confortable, puis page entière
     const box = (await page.getByTestId('mushaf-livre').boundingBox())!;
-    const [x, y] = [box.x + box.width / 2, box.y + Math.min(box.height / 2, 220)];
+    // milieu de la page (téléphone : la page commence en haut de l'écran, sous les commandes flottantes)
+    // dans l'ÉCRAN : la page fluide (par défaut, sans les données exactes) mesure ≈ 1 700 px de haut à 412 px ;
+    // son milieu tombait sous le bas de l'écran (toucher perdu, aucun zoom)
+    const vp = page.viewportSize()!;
+    const [x, y] = [
+      box.x + box.width / 2,
+      Math.min(box.y + Math.max(box.height / 2, 300), box.y + box.height - 20, vp.height / 2),
+    ];
     await page.touchscreen.tap(x, y);
     await page.touchscreen.tap(x, y);
     await expect.poll(() => zoom(page)).toBeCloseTo(1.8, 1);

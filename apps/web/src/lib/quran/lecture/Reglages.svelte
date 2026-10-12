@@ -393,6 +393,26 @@
 
 <section class="sec" id="reg-affichage" data-testid="affichage">
   <h3><Icon name="lire" size={20} />{t('cl.affichage')}</h3>
+  <!-- 11/10/2026 (essai du client) : raccourci « Grand texte » = vue par versets (le texte revient à la ligne),
+       texte agrandi ; la taille se règle juste en dessous. Un second appui revient à la page du muṣḥaf. -->
+  <button
+    type="button"
+    class="grand"
+    aria-pressed={prefs.vue === 'versets'}
+    onclick={() => {
+      if (prefs.vue === 'versets') prefs.vue = 'page';
+      else {
+        prefs.vue = 'versets';
+        if (prefs.size === 0) prefs.size = 1;
+      }
+    }}
+    data-testid="grand-texte"
+    ><Icon name="taille" size={22} /><span class="grand-t"
+      ><strong><Bidi text={t('cl.grand_texte')} /></strong><small
+        ><Bidi text={t('cl.grand_texte_aide')} /></small
+      ></span
+    ></button
+  >
   <div class="seg" role="radiogroup" aria-label={t('cl.vue')}>
     {#each VUES as v (v)}
       <label class:on={prefs.vue === v}
@@ -723,6 +743,36 @@
     align-items: center;
     gap: 8px;
     min-height: 44px;
+  }
+  /* raccourci « Grand texte » (vue par versets, texte agrandi) */
+  .grand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 56px;
+    margin: 0 0 10px;
+    padding: 8px 12px;
+    font: inherit;
+    text-align: start;
+    color: var(--mp-green);
+    background: var(--mp-mint);
+    border: 2px solid var(--mp-mint2);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+  }
+  .grand[aria-pressed='true'] {
+    color: var(--or-ink);
+    background: var(--or-soft);
+    border-color: var(--or-line);
+  }
+  .grand-t {
+    display: grid;
+    gap: 2px;
+  }
+  .grand-t small {
+    font-size: 0.82rem;
+    color: var(--mp-ink2);
   }
   .zoom {
     display: flex;

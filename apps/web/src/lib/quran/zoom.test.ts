@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
+  alignRtl,
   clampVue,
   clampZoom,
   isDoubleTap,
   tapZone,
   toggleZoom,
   zoomAt,
+  zoomRtl,
   ZOOM_CONFORT,
   ZOOM_MAX,
 } from './zoom';
@@ -32,6 +34,24 @@ describe('zoom de la page', () => {
     const a = toggleZoom({ z: 1, x: 0, y: 0 }, 0, 0, 300, 500);
     expect(a.z).toBe(ZOOM_CONFORT);
     expect(toggleZoom(a, 10, 10, 300, 500)).toEqual({ z: 1, x: 0, y: 0 });
+  });
+  it('double-toucher sur une ligne : zoom calé à DROITE (début de la ligne), ligne touchée au centre', () => {
+    // toucher à gauche de la page (x = 20) : la vue montre quand même le bord droit
+    const a = toggleZoom({ z: 1, x: 0, y: 0 }, 20, 300, 300, 500);
+    expect(a.x).toBe(300 - 300 * ZOOM_CONFORT);
+    // la ligne touchée (y = 300 de la page) est au milieu du cadre (250)
+    expect(300 * a.z + a.y).toBeCloseTo(250, 0);
+    // milieu de la partie VISIBLE donné par le lecteur
+    const b = toggleZoom({ z: 1, x: 0, y: 0 }, 20, 200, 300, 500, 150);
+    expect(200 * b.z + b.y).toBeCloseTo(150, 0);
+    // ligne du haut : jamais de bord vide (vue bornée)
+    expect(toggleZoom({ z: 1, x: 0, y: 0 }, 0, 10, 300, 500).y).toBe(0);
+  });
+  it('zoom (curseur, clavier, fin du pincement) calé sur le début de la ligne (à droite)', () => {
+    const v = zoomRtl({ z: 1, x: 0, y: 0 }, 2, 250, 300, 500);
+    expect(v).toEqual({ z: 2, x: -300, y: -250 });
+    expect(alignRtl({ z: 2, x: -40, y: -100 }, 300, 500)).toEqual({ z: 2, x: -300, y: -100 });
+    expect(alignRtl({ z: 1, x: 0, y: 0 }, 300, 500)).toEqual({ z: 1, x: 0, y: 0 });
   });
   it('toucher simple : bords pour tourner (gauche = suivante), milieu pour les commandes', () => {
     expect(tapZone(10, 400, false)).toBe('suivante');
