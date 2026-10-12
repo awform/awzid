@@ -43,6 +43,9 @@ export const EN_LIGNE_MODULES = [
   // D2 : rubriques de « Compte » qui écrivent sur le serveur (compte, sécurité, données, classe) et notifications
   /src\/lib\/compte\/CompteEnLigne\.svelte$/,
   /src\/lib\/NotificationsReglages\.svelte$/,
+  // Douas (phase 1) : écran de l'onglet, chargé à la demande avec ses données (première ouverture en ligne), gardé
+  // au premier usage (hors ligne ensuite)
+  /src\/lib\/douas\/DouasVue\.svelte$/,
 ];
 
 const under = (r, prefixes) => prefixes.some((p) => r === p || r.startsWith(`${p}/`));

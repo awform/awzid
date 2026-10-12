@@ -4,12 +4,13 @@
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
 
-  /** A37 — sous-onglets de « Vivre l'islam » : Bon comportement (en premier) · Prières · Adhkār. */
-  let { current }: { current: 'comportement' | 'prieres' | 'adhkar' } = $props();
+  /** A37 — sous-onglets de « Vivre l'islam » : Bon comportement (en premier) · Prières · Adhkār · Douas. */
+  let { current }: { current: 'comportement' | 'prieres' | 'adhkar' | 'douas' } = $props();
   const TABS = [
     { id: 'comportement', href: '/vivre', icon: 'etoile' },
     { id: 'prieres', href: '/quotidien', icon: 'minuterie' },
     { id: 'adhkar', href: '/quotidien/adhkar', icon: 'chapelet' },
+    { id: 'douas', href: '/vivre/douas', icon: 'lune' },
   ] as const;
 </script>
 
@@ -28,7 +29,7 @@
 <style>
   .vt {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
     margin: var(--space-s) 0 var(--space-m);
   }
@@ -59,16 +60,21 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  @media (max-width: 380px) {
+  @media (max-width: 560px) {
     .vt a {
       flex-direction: column;
       gap: 2px;
+      padding: 6px 2px;
       border-radius: var(--radius-lg);
       font-size: 0.8rem;
     }
+    /* quatre onglets : un mot long (« comportement ») se coupe plutôt que de sortir du bouton */
     .vt span {
+      max-width: 100%;
       white-space: normal;
       line-height: 1.15;
+      hyphens: auto;
+      overflow-wrap: anywhere;
     }
   }
 </style>
