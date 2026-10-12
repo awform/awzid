@@ -37,6 +37,11 @@ export interface AudioFile {
   durationMs: number;
   format: string;
   surlignage: Surlignage;
+  /**
+   * Hifẓ : minutages PAR MOT du verset (début de chaque mot, en ms) s'ils sont fournis par la source de la
+   * récitation ; absents aujourd'hui pour tous les récitateurs (« une partie du verset » est alors désactivée).
+   */
+  wordMs?: number[];
 }
 
 /** Pistes d'une sourate = manifeste du paquet hors ligne de cette sourate. */

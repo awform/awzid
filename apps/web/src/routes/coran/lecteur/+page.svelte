@@ -80,7 +80,7 @@
     setWifiOnly,
     wifiOnly,
   } from '$lib/quran/offline-audio';
-  import { canMemorize, HAFS, portionRange, type ChainStep } from '$lib/quran/player';
+  import { canMemorize, HAFS, portionRange, wordClip, type ChainStep } from '$lib/quran/player';
   import { loadReciters, loadTracks } from '$lib/quran/reciters';
   import type { RiwayaIndex } from '@awform/content/riwayat';
   import {
@@ -1487,6 +1487,13 @@
   }
   // —— lecture guidée mot à mot SANS SON (lot C1, gardée) : ≈ 1,6 mot par seconde à la vitesse 1 ——
   let guide = $state({ repeat: 3, pause: 3 });
+  // hifẓ : partie d'un long verset (minutages par mot du récitateur ; sinon désactivée dans les réglages)
+  let partie = $state<[number, number] | null>(null);
+  const clip = $derived.by(() => {
+    if (!partie || range.from !== range.to) return null;
+    const f = pack?.files.find((x) => x.aya === range.from);
+    return f ? wordClip(f.wordMs, f.durationMs, partie[0], partie[1]) : null;
+  });
   let word = $state<{ a: number; w: number } | null>(null);
   let guiding = $state(false);
   let gRound = $state(0);
@@ -1764,6 +1771,8 @@
             {pack}
             {queue}
             rate={prefs.rate}
+            silence={prefs.silence}
+            {clip}
             sleepMin={prefs.sleepMin}
             volume={prefs.volume}
             status={step
@@ -2018,6 +2027,7 @@
       bind:prefs
       bind:tjPrefs
       bind:tjData
+      bind:partie
       bind:guide
       {reciters}
       {reciterId}

@@ -40,6 +40,8 @@ export const API_GRANTS: Record<string, Right[]> = {
   attempt: RID,
   practice_event: RI,
   hifz_event: RI,
+  // hifẓ complet : carte des erreurs (marques par verset et par mot), ajout seul
+  hifz_mark: RI,
   billing_event: RI,
   audit_log: RI,
   tutor_log: RIU,

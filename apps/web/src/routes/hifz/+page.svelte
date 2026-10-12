@@ -40,6 +40,14 @@
   import { portionRange } from '$lib/quran/player';
   import { call, fetchMe, type Me } from '$lib/session';
   import VerseText from '$lib/VerseText.svelte';
+  import { OUTILS } from '$lib/hifz-outils/liste';
+  import {
+    fraicheur,
+    passagesMemorises,
+    urgentsDabord,
+    type Niveau,
+  } from '$lib/hifz-outils/outils';
+  import Pastille from '$lib/hifz-outils/Pastille.svelte';
 
   /**
    * Mon carnet de hifẓ (ARCHITECTURE_V2 § 2.4) : trois pistes chaque jour (nouveau, récent, ancien),
@@ -300,6 +308,15 @@
     a_reprendre: 'reprendre',
   };
   const Q: Quality[] = [3, 2, 1, 0];
+  // hifẓ complet : fraîcheur de chaque passage ; dans chaque piste (nouveau, récent, ancien), l'urgent d'abord
+  const niveaux = $derived.by((): Map<string, Niveau> => {
+    if (!view) return new Map();
+    const ps = passagesMemorises(view.state.parts.values(), view.parts);
+    return new Map(fraicheur(ps, view.events, today).map((f) => [f.key, f.niveau]));
+  });
+  const recents = $derived(view ? urgentsDabord(view.plan.recent, niveaux) : []);
+  const anciens = $derived(view ? urgentsDabord(view.plan.manzil, niveaux) : []);
+  const urgents = $derived([...niveaux.values()].filter((n) => n === 'urgent').length);
 </script>
 
 <svelte:head><title>{t('app.nom')} — {t('hifz.titre')}</title></svelte:head>
@@ -507,6 +524,20 @@
       >{/if}
   </section>
 
+  <!-- hifẓ complet : outils du carnet (test au hasard, points faibles, fraîcheur, deux rakʿa, écran enfant) -->
+  <nav class="card outils" aria-label={t('hz.outils')} data-testid="outils-hifz">
+    {#if urgents}<p class="warn small" data-testid="urgents-carnet">
+        <Bidi text={t('hz.urgents', { n: urgents })} />
+      </p>{/if}
+    <ul>
+      {#each OUTILS as o (o)}<li>
+          <a href={resolve('/hifz/[outil]', { outil: o })} data-testid={`outil-${o}`}
+            ><Bidi text={t(`hz.titre_${o}`)} /></a
+          >
+        </li>{/each}
+    </ul>
+  </nav>
+
   {#if askPin}
     <form class="card pin" onsubmit={checkPin}>
       <label for="pin">{t('profils.code_parent')}</label>
@@ -602,11 +633,12 @@
   <!-- ② récent -->
   <section class="card track" data-testid="piste-recent">
     <h2><span class="num">②</span> {t('hifz.recent')}</h2>
-    {#each view.plan.recent as it (it.key)}
+    {#each recents as it (it.key)}
       <article class="task" data-part={it.key}>
         <h3>
           <Bidi text={label(it.key)} />
           <span class="tag"><Bidi text={t('hifz.jplus', { n: it.step ?? 0 })} /></span>
+          <Pastille niveau={niveaux.get(it.key) ?? 'frais'} />
         </h3>
         <details bind:open={open[it.key]}>
           <summary>{t('hifz.voir_texte')}</summary>
@@ -626,10 +658,11 @@
   <!-- ③ ancien -->
   <section class="card track" data-testid="piste-ancien">
     <h2><span class="num">③</span> {t('hifz.ancien')}</h2>
-    {#each view.plan.manzil as it (it.key)}
+    {#each anciens as it (it.key)}
       <article class="task" data-part={it.key}>
         <h3>
           <Bidi text={label(it.key)} />
+          <Pastille niveau={niveaux.get(it.key) ?? 'frais'} />
           {#if it.fragile}<span class="tag fragile">{t('hifz.fragile')}</span>{/if}
         </h3>
         <details bind:open={open[it.key]}>
@@ -901,5 +934,18 @@
   }
   .parent {
     color: var(--teal);
+  }
+  .outils ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+  }
+  .outils a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
 </style>

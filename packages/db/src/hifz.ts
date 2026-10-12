@@ -246,6 +246,107 @@ export async function listHifzEvents(db: Db, profileId: string) {
     .orderBy(asc(t.hifzEvent.day), asc(t.hifzEvent.id));
 }
 
+// ---------------------------------------------------------------- carte des erreurs (hifẓ complet)
+
+export const MARK_KINDS = ['erreur', 'hesitation', 'oubli', 'juste'] as const;
+export const MARK_SOURCES = ['test', 'auto', 'parent'] as const;
+export type MarkKind = (typeof MARK_KINDS)[number];
+
+/** Marque posée par l'appareil de la famille (file hors ligne commune, type d'événement « hifz_marque »). */
+export interface HifzMarkInput {
+  id: string;
+  profileId: string;
+  day: string;
+  s: number;
+  a: number;
+  /** rang du mot dans le verset (0…) ; -1 : le verset entier */
+  k: number;
+  t: MarkKind;
+  src: (typeof MARK_SOURCES)[number];
+  deviceAt: string;
+}
+
+/** Enregistre des marques (idempotent ; verset contrôlé d'après le texte importé). */
+export async function recordHifzMarks(
+  db: Db,
+  marks: readonly HifzMarkInput[],
+): Promise<HifzRecordResult> {
+  const res: HifzRecordResult = { accepted: [], duplicates: [], rejected: [] };
+  const ayas = marks.length ? await ayaCounts(db) : undefined;
+  const int = (n: unknown, lo: number, hi: number) =>
+    Number.isInteger(n) && (n as number) >= lo && (n as number) <= hi;
+  for (const m of marks) {
+    const reject = (reason: string) => res.rejected.push({ id: String(m?.id ?? ''), reason });
+    if (!m || typeof m.id !== 'string' || !UUID.test(m.id) || !UUID.test(String(m.profileId))) {
+      reject('identifiant invalide');
+      continue;
+    }
+    const max = ayas?.get(Number(m.s)) ?? 286;
+    if (
+      !validDay(m.day) ||
+      !int(m.s, 1, 114) ||
+      !int(m.a, 1, max) ||
+      !int(m.k, -1, 300) ||
+      !(MARK_KINDS as readonly string[]).includes(String(m.t)) ||
+      !(MARK_SOURCES as readonly string[]).includes(String(m.src))
+    ) {
+      reject('marque invalide');
+      continue;
+    }
+    const deviceAt = deviceTime(m.deviceAt);
+    if (!deviceAt) {
+      reject('horodatage invalide');
+      continue;
+    }
+    const inserted = await isolated(() =>
+      db
+        .insert(t.hifzMark)
+        .values({
+          id: m.id,
+          profileId: m.profileId,
+          day: m.day,
+          sura: m.s,
+          aya: m.a,
+          word: m.k,
+          kind: m.t,
+          source: m.src,
+          deviceAt,
+        })
+        .onConflictDoNothing()
+        .returning({ id: t.hifzMark.id }),
+    );
+    if (inserted === REFUSED) reject('données invalides');
+    else if (inserted.length) res.accepted.push(m.id);
+    else {
+      const [x] = await db
+        .select({ p: t.hifzMark.profileId })
+        .from(t.hifzMark)
+        .where(eq(t.hifzMark.id, m.id));
+      if (x && x.p !== m.profileId)
+        res.rejected.push({ id: m.id, reason: 'identifiant déjà utilisé', code: CONFLICT });
+      else res.duplicates.push(m.id);
+    }
+  }
+  return res;
+}
+
+/** Marques d'un profil, dans l'ordre du journal (forme compacte de l'appareil). */
+export async function listHifzMarks(db: Db, profileId: string) {
+  return db
+    .select({
+      id: t.hifzMark.id,
+      day: t.hifzMark.day,
+      s: t.hifzMark.sura,
+      a: t.hifzMark.aya,
+      k: t.hifzMark.word,
+      t: t.hifzMark.kind,
+      src: t.hifzMark.source,
+    })
+    .from(t.hifzMark)
+    .where(eq(t.hifzMark.profileId, profileId))
+    .orderBy(asc(t.hifzMark.day), asc(t.hifzMark.deviceAt), asc(t.hifzMark.id));
+}
+
 // ---------------------------------------------------------------- classes
 
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sans I, O, 0, 1 (confusions)

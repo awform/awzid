@@ -849,6 +849,40 @@ export const hifzEvent = pgTable(
 );
 
 /**
+ * Hifẓ complet — CARTE DES ERREURS (journal immuable, ajout seul) : une ligne par marque posée sur un verset
+ * (word = -1) ou sur un mot (word = rang du mot dans le verset, 0…) : erreur, hésitation, oubli, ou « juste » (le
+ * verset a été récité sans faute : les marques plus anciennes de ce verset sont résolues). Aucun texte coranique
+ * n'est copié ici : seulement des positions. Les bilans de l'IA d'écoute (A5) restent sur l'appareil.
+ */
+export const hifzMark = pgTable(
+  'hifz_mark',
+  {
+    id: uuid('id').primaryKey(),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    /** jour de l'élève (AAAA-MM-JJ) */
+    day: text('day').notNull(),
+    sura: smallint('sura').notNull(),
+    aya: smallint('aya').notNull(),
+    /** rang du mot dans le verset (0…) ; -1 : le verset entier */
+    word: smallint('word').notNull(),
+    kind: text('kind').notNull(),
+    source: text('source').notNull(),
+    deviceAt: timestamp('device_at', { withTimezone: true }).notNull(),
+    serverAt: timestamp('server_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('hifz_mark_profile').on(t.profileId, t.sura, t.aya),
+    check('hifz_mark_sura', sql`${t.sura} BETWEEN 1 AND 114`),
+    check('hifz_mark_aya', sql`${t.aya} BETWEEN 1 AND 286`),
+    check('hifz_mark_word', sql`${t.word} BETWEEN -1 AND 300`),
+    check('hifz_mark_kind', sql`${t.kind} IN ('erreur', 'hesitation', 'oubli', 'juste')`),
+    check('hifz_mark_source', sql`${t.source} IN ('test', 'auto', 'parent')`),
+  ],
+);
+
+/**
  * Classe (lot 5) — lot F2 (revue E1) : la classe appartient à une ÉCOLE (`school_id`), ses enseignants sont dans
  * `class_teacher` (titulaire, suppléants). `teacher_account_id` = titulaire actuel (copie tenue par
  * `setClassTitular`), clé en RESTRICT : la suppression d'un compte d'enseignant passe d'abord par le transfert

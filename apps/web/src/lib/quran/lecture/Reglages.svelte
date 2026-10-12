@@ -8,7 +8,7 @@
   import { ecoutable, reseau } from '$lib/reseau.svelte';
   import { PRESETS, type PresetId, type Range } from '../lecture';
   import { FONDS, type MushafPrefs } from '../mushaf';
-  import { fmtDuration, isHafs, SLEEP_CHOICES } from '../player';
+  import { fmtDuration, isHafs, SILENCE_CHOICES, SLEEP_CHOICES } from '../player';
   import RiwayaBadge from '../RiwayaBadge.svelte';
   import { mushafChoice, MUSHAF_RIWAYAT, type MushafRiwaya } from '../riwayat';
   import type { TajwidPrefs, TajwidSura } from '../tajwid';
@@ -29,6 +29,7 @@
     tjPrefs = $bindable(),
     tjData = $bindable(null),
     guide = $bindable({ repeat: 3, pause: 3 }),
+    partie = $bindable(null),
     reciters,
     reciterId,
     conseil,
@@ -65,6 +66,8 @@
     tjData?: TajwidSura | null;
     /** lecture guidée mot à mot SANS SON (Ḥafṣ) : nombre de tours, pause « à toi » en secondes */
     guide?: { repeat: number; pause: number };
+    /** hifẓ : partie du verset choisi (mots de début et de fin, 1 = premier mot) ; null : verset entier */
+    partie?: [number, number] | null;
     reciters: Reciter[];
     reciterId: string | null;
     conseil: string | null;
@@ -102,6 +105,12 @@
   } = $props();
 
   const reciter = $derived(reciters.find((r) => r.id === reciterId) ?? null);
+  /** minutages par mot du verset choisi (un seul verset), s'ils existent pour ce récitateur */
+  const motsMs = $derived(
+    range.from === range.to
+      ? (pack?.files.find((f) => f.aya === range.from)?.wordMs ?? null)
+      : null,
+  );
   /** récitateurs : ceux de la riwāya du muṣḥaf affiché d'abord (la riwāya est écrite dans chaque ligne) */
   const sorted = $derived(
     [...reciters].sort((a, b) => Number(b.riwaya === rw) - Number(a.riwaya === rw)),
@@ -251,7 +260,52 @@
             >{/each}
         </select>
       </div>
+      <div class="field">
+        <label for="cl-silence">{t('cl.silence')}</label>
+        <select id="cl-silence" bind:value={prefs.silence} data-testid="silence">
+          {#each SILENCE_CHOICES as f (f)}<option value={f}
+              >{f ? t('cl.silence_n', { n: fmtNumber(f) }) : t('cl.sans_silence')}</option
+            >{/each}
+        </select>
+      </div>
     </div>
+    <!-- hifẓ : une partie d'un long verset, seulement avec les minutages par mot du récitateur (jamais devinés) -->
+    <fieldset class="partie" disabled={!motsMs} data-testid="partie-verset">
+      <legend>{t('cl.partie')}</legend>
+      {#if motsMs}
+        <div class="grid">
+          <div class="field">
+            <label for="cl-pde">{t('cl.partie_de')}</label>
+            <input
+              id="cl-pde"
+              type="number"
+              min="1"
+              max={motsMs.length}
+              value={partie?.[0] ?? 1}
+              onchange={(e) =>
+                (partie = [Number(e.currentTarget.value), partie?.[1] ?? motsMs!.length])}
+              data-testid="partie-de"
+            />
+          </div>
+          <div class="field">
+            <label for="cl-pa">{t('cl.partie_a')}</label>
+            <input
+              id="cl-pa"
+              type="number"
+              min="1"
+              max={motsMs.length}
+              value={partie?.[1] ?? motsMs.length}
+              onchange={(e) => (partie = [partie?.[0] ?? 1, Number(e.currentTarget.value)])}
+              data-testid="partie-a"
+            />
+          </div>
+        </div>
+      {:else}
+        <p class="muted small" data-testid="partie-indispo">
+          <Bidi text={t(range.from === range.to ? 'cl.partie_indispo' : 'cl.partie_un_verset')} />
+        </p>
+      {/if}
+    </fieldset>
     <label class="check"
       ><input type="checkbox" bind:checked={prefs.chain} data-testid="mode-enchainer" />
       <Bidi text={t('cl.enchainer')} /></label
@@ -628,6 +682,12 @@
 </section>
 
 <style>
+  .partie {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 4px 10px;
+    margin: 8px 0;
+  }
   /* sauts vers les sections (en tête du panneau, pas collants : rien ne recouvre les réglages) */
   .sauts {
     display: flex;

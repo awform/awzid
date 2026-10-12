@@ -93,6 +93,36 @@ export function clampRate(r: number): number {
   return Math.max(0.5, Math.min(1.5, Math.round((Number.isFinite(r) ? r : 1) * 4) / 4));
 }
 
+/**
+ * Hifẓ complet — silence après chaque verset pour le répéter après le récitateur : facteur de la durée du verset
+ * (0 : sans silence ; sinon AU MOINS la durée du verset, pour avoir le temps de le réciter).
+ */
+export const SILENCE_CHOICES = [0, 1, 1.5, 2] as const;
+
+/** Durée du silence (ms) après un verset de `durationMs` lu à la vitesse `rate`. */
+export function silenceMs(durationMs: number, factor: number, rate = 1): number {
+  if (!(factor > 0) || !(durationMs > 0)) return 0;
+  return Math.round((durationMs / clampRate(rate)) * Math.max(1, factor));
+}
+
+/**
+ * Une partie d'un long verset : du mot `from` au mot `to` (1 = premier mot), d'après les MINUTAGES PAR MOT du
+ * fichier (`wordMs[i]` = début du mot i+1, en ms). Sans minutages, ou bornes hors du verset : null (l'option
+ * est alors désactivée dans les réglages, jamais devinée).
+ */
+export function wordClip(
+  wordMs: readonly number[] | null | undefined,
+  durationMs: number,
+  from: number,
+  to: number,
+): { startMs: number; endMs: number } | null {
+  if (!wordMs?.length || !Number.isInteger(from) || !Number.isInteger(to)) return null;
+  if (from < 1 || to < from || to > wordMs.length) return null;
+  const startMs = wordMs[from - 1]!;
+  const endMs = to < wordMs.length ? wordMs[to]! : durationMs;
+  return endMs > startMs ? { startMs, endMs } : null;
+}
+
 /** Minuterie d'arrêt : minutes proposées (0 : sans minuterie). */
 export const SLEEP_CHOICES = [0, 5, 10, 15, 30, 45, 60] as const;
 

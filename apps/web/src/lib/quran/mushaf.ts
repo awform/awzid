@@ -208,6 +208,8 @@ export interface MushafPrefs {
   /** vitesse (0,5 à 1,5, hauteur conservée) et arrêt automatique (minutes, 0 : sans) */
   rate: number;
   sleepMin: number;
+  /** hifẓ : silence après chaque verset pour le répéter (facteur de sa durée : 0, 1, 1,5 ou 2) */
+  silence: number;
   /** mémoriser : « écouter, répéter, enchaîner » (chaque nouveau verset N fois, puis la plage M fois) */
   chain: boolean;
   repeatNew: number;
@@ -251,6 +253,7 @@ export const DEFAULT_PREFS: MushafPrefs = {
   showTrad: false,
   rate: 1,
   sleepMin: 0,
+  silence: 0,
   chain: false,
   repeatNew: 5,
   repeatChain: 2,
@@ -297,6 +300,7 @@ export function readPrefs(store: Pick<Storage, 'getItem'> | null = storage()): M
       sleepMin: (SLEEP as readonly number[]).includes(Number(raw.sleepMin))
         ? Number(raw.sleepMin)
         : 0,
+      silence: [0, 1, 1.5, 2].includes(Number(raw.silence)) ? Number(raw.silence) : 0,
       chain: raw.chain === true,
       repeatNew: clampInt(raw.repeatNew, 1, 20, 5),
       repeatChain: clampInt(raw.repeatChain, 0, 10, 2),

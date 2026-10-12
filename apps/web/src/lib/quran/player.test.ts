@@ -7,8 +7,46 @@ import {
   fmtDuration,
   listenQueue,
   portionRange,
+  SILENCE_CHOICES,
+  silenceMs,
   visibleWords,
+  wordClip,
 } from './player';
+
+describe('hifẓ complet — répétition fine', () => {
+  it('répéter un verset N fois, puis la plage M fois', () => {
+    expect(listenQueue({ from: 3, to: 4, repeatVerse: 3, repeatRange: 2 })).toEqual([
+      3, 3, 3, 4, 4, 4, 3, 3, 3, 4, 4, 4,
+    ]);
+  });
+  it('silence après chaque verset : au moins la durée du verset, à la vitesse choisie', () => {
+    expect(SILENCE_CHOICES).toEqual([0, 1, 1.5, 2]);
+    expect(silenceMs(4000, 0)).toBe(0);
+    expect(silenceMs(4000, 1)).toBe(4000);
+    expect(silenceMs(4000, 2)).toBe(8000);
+    // jamais moins que le verset (facteur < 1 relevé à 1)
+    expect(silenceMs(4000, 0.5)).toBe(4000);
+    // vitesse 0,5× et 0,75× : le verset dure plus longtemps, le silence aussi
+    expect(silenceMs(4000, 1, 0.5)).toBe(8000);
+    expect(silenceMs(3000, 1, 0.75)).toBe(4000);
+    expect(silenceMs(0, 1)).toBe(0);
+  });
+  it('vitesses 0,75× et 0,5× permises', () => {
+    expect(clampRate(0.75)).toBe(0.75);
+    expect(clampRate(0.5)).toBe(0.5);
+  });
+  it('partie d’un long verset : seulement avec les minutages par mot, jamais devinée', () => {
+    expect(wordClip(undefined, 9000, 1, 2)).toBeNull();
+    expect(wordClip([], 9000, 1, 2)).toBeNull();
+    const ms = [0, 800, 1500, 2600, 4000];
+    expect(wordClip(ms, 6000, 2, 3)).toEqual({ startMs: 800, endMs: 2600 });
+    // jusqu'au dernier mot : fin du fichier
+    expect(wordClip(ms, 6000, 4, 5)).toEqual({ startMs: 2600, endMs: 6000 });
+    expect(wordClip(ms, 6000, 0, 2)).toBeNull();
+    expect(wordClip(ms, 6000, 3, 2)).toBeNull();
+    expect(wordClip(ms, 6000, 2, 9)).toBeNull();
+  });
+});
 
 describe('lot 27 — logique de lecture de l’espace Coran', () => {
   it('écouter : répétition du verset et de la plage, bornée', () => {
