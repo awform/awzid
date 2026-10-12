@@ -43,6 +43,8 @@ const isRiwaya = (p: string) => p.startsWith('/riwayat/');
 // aux mises à jour (le nom du fichier change avec la version du Complexe)
 const RIWAYAT_CACHE = CACHE_RIWAYAT;
 // A37 : textes français des espaces de l'élève chargés par route (Prières, Vivre l'islam) : préchargés, eux
+// Douas : données chargées à la demande (`/douas/douas.json`), gardées sur l'appareil par l'onglet au premier usage
+const isDouas = (p: string) => p.startsWith('/douas/');
 const STUDENT_TEXTS = [
   '/i18n/fr-quotidien.json',
   '/i18n/fr-vivre.json',
@@ -57,7 +59,8 @@ const ASSETS = [
       (!isCatalog(f) || STUDENT_TEXTS.includes(f)) &&
       !isTajwid(f) &&
       !isTraduction(f) &&
-      !isRiwaya(f),
+      !isRiwaya(f) &&
+      !isDouas(f),
   ),
 ];
 

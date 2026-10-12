@@ -19,6 +19,7 @@ const CATALOGS: Record<string, Record<string, string>> = {
     ...read('../../../static/i18n/fr-ecoute.json'),
     ...read('../../../static/i18n/fr-coran.json'),
     ...read('../../../static/i18n/fr-hifz.json'),
+    ...read('../../../static/i18n/fr-douas.json'),
   },
   en: read('../../../static/i18n/en.json'),
   es: read('../../../static/i18n/es.json'),

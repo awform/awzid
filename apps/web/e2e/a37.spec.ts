@@ -152,6 +152,8 @@ test('navigation : « Vivre l’islam » à la place de « Prières », sous-ong
     'comportement',
     'prieres',
     'adhkar',
+    // Douas (phase 1) : 4e sous-onglet (e2e/douas.spec.ts)
+    'douas',
   ]);
   await expect(page.locator('[data-vivre-tab="comportement"]')).toHaveAttribute(
     'aria-current',

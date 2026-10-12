@@ -1,0 +1,292 @@
+{
+  "_lisezmoi": "Présentation française des douas (titres et moments accentués, sans arabe sur la ligne du français, sans nombre de répétitions absent du texte retenu), rubriques de l'écran, liste de l'enfant et notes décidées par le référent (DECISIONS_REFERENT_DOUAS.md). Le texte arabe n'est JAMAIS ici : il vient de douas_phase1.json (hadiths) ou de Tanzil (Coran), octet par octet, via scripts/douas.mjs.",
+  "edition": "phase1-2026-10-12",
+  "en_attente": ["DOU-ANG-08", "ECA-07"],
+  "rubriques": [
+    { "id": "maison_sommeil", "de": ["reveil_sommeil", "maison", "toilettes"] },
+    { "id": "repas", "de": ["repas"] },
+    { "id": "ablutions_mosquee", "de": ["ablutions", "mosquee"] },
+    { "id": "vetements", "de": ["habits"] },
+    { "id": "voyage", "de": ["voyage"] },
+    { "id": "pluie", "de": ["pluie_vent_tonnerre"] },
+    { "id": "maladie", "de": ["malade"] },
+    { "id": "epreuve", "de": ["angoisse_epreuve"] },
+    { "id": "parents", "de": ["parents"] },
+    { "id": "savoir", "de": ["savoir"] },
+    { "id": "repentir", "de": ["repentir_pardon"] },
+    { "id": "eternuement", "de": ["eternuement"] },
+    { "id": "coran", "de": ["coran"] }
+  ],
+  "enfant": [
+    "DOU-SOM-01",
+    "DOU-SOM-02",
+    "DOU-TOI-01",
+    "DOU-TOI-02",
+    "DOU-REP-01",
+    "DOU-REP-02",
+    "DOU-MAI-01",
+    "DOU-HAB-01",
+    "DOU-PLU-01",
+    "DOU-ETE-01",
+    "DOU-SAV-03",
+    "DOU-PRT-01"
+  ],
+  "douas": {
+    "DOU-SOM-01": {
+      "titre": "Au coucher : « En Ton nom, ô Allah, je meurs et je vis »",
+      "moment": "En se couchant pour dormir."
+    },
+    "DOU-SOM-02": {
+      "titre": "Au réveil : « Louange à Allah qui nous a rendu la vie »",
+      "moment": "Au réveil."
+    },
+    "DOU-SOM-03": {
+      "titre": "Au coucher : « En Ton nom, mon Seigneur, je pose mon flanc »",
+      "moment": "En se couchant, après avoir épousseté le lit."
+    },
+    "DOU-SOM-04": {
+      "titre": "Au coucher : « Ô Allah, je T'ai soumis mon visage »",
+      "moment": "En se couchant, après les ablutions, sur le côté droit ; dernière parole avant de dormir."
+    },
+    "DOU-SOM-05": {
+      "titre": "Au coucher : « Ô Allah, préserve-moi de Ton châtiment »",
+      "moment": "En se couchant, la main droite sous la joue."
+    },
+    "DOU-SOM-06": {
+      "titre": "Au réveil : « Louange à Allah qui m'a donné la santé »",
+      "moment": "Au réveil."
+    },
+    "DOU-SOM-07": { "titre": "Réveil pendant la nuit", "moment": "Quand on se réveille la nuit." },
+    "DOU-MAI-01": {
+      "titre": "En sortant de la maison : « Au nom d'Allah, je m'en remets à Allah »",
+      "moment": "En sortant de chez soi.",
+      "note": "Texte d'Abū Dāwūd (5095), jugé authentique par al-Albānī. Les spécialistes divergent : la voie d'at-Tirmidhī (3426) a été jugée faible par d'autres."
+    },
+    "DOU-MAI-02": {
+      "titre": "En sortant : « Ô Allah, je cherche refuge auprès de Toi contre l'égarement »",
+      "moment": "En sortant de chez soi."
+    },
+    "DOU-MAI-03": {
+      "titre": "En entrant à la maison : mentionner Allah",
+      "moment": "En entrant chez soi (et en mangeant)."
+    },
+    "DOU-TOI-01": {
+      "titre": "En entrant aux toilettes",
+      "moment": "Avant d'entrer aux toilettes.",
+      "note": "La basmala avant d'entrer est rapportée par at-Tirmidhī (606), jugée authentique par al-Albānī."
+    },
+    "DOU-TOI-02": {
+      "titre": "En sortant des toilettes : « Ton pardon »",
+      "moment": "En sortant des toilettes."
+    },
+    "DOU-REP-01": { "titre": "Avant de manger : « Au nom d'Allah »", "moment": "Avant de manger." },
+    "DOU-REP-02": {
+      "titre": "Si l'on a oublié de nommer Allah au début du repas",
+      "moment": "En cours de repas, si l'on a oublié au début."
+    },
+    "DOU-REP-03": {
+      "titre": "Après le repas : « Louange à Allah qui m'a nourri »",
+      "moment": "Après avoir mangé."
+    },
+    "DOU-REP-04": {
+      "titre": "Après le repas : « Louange abondante, bonne et bénie »",
+      "moment": "Quand on lève la nappe, à la fin du repas."
+    },
+    "DOU-REP-05": {
+      "titre": "Pour celui qui nous a invités à manger",
+      "moment": "Chez un hôte, après le repas."
+    },
+    "DOU-ABL-01": {
+      "titre": "Après les ablutions : les deux témoignages",
+      "moment": "Après avoir terminé les ablutions."
+    },
+    "DOU-ABL-02": {
+      "titre": "Ajout : « Ô Allah, fais de moi l'un de ceux qui se repentent »",
+      "moment": "Après les deux témoignages, à la fin des ablutions.",
+      "facultatif": true,
+      "note": "Rapporté par at-Tirmidhī ; jugé authentique par al-Albānī ; d'autres savants ont discuté sa chaîne."
+    },
+    "DOU-MOS-01": {
+      "titre": "En entrant et en sortant de la mosquée",
+      "moment": "Entrée : « ouvre-moi les portes de Ta miséricorde » ; sortie : « je Te demande de Ta grâce »."
+    },
+    "DOU-MOS-02": {
+      "titre": "En entrant à la mosquée : refuge contre Satan",
+      "moment": "En entrant à la mosquée."
+    },
+    "DOU-HAB-01": {
+      "titre": "En s'habillant : « Louange à Allah qui m'a vêtu »",
+      "moment": "En mettant un vêtement."
+    },
+    "DOU-HAB-02": {
+      "titre": "Vêtement neuf : « Ô Allah, à Toi la louange, c'est Toi qui m'en as vêtu »",
+      "moment": "En mettant un vêtement neuf (en le nommant : turban, chemise…)."
+    },
+    "DOU-VOY-01": {
+      "titre": "En montant sur sa monture (ou dans un véhicule)",
+      "moment": "En montant : la mention d'Allah le pied à l'étrier, la louange une fois installé, puis le verset, puis trois fois la louange et trois fois « Allah est le plus grand », puis la demande de pardon."
+    },
+    "DOU-VOY-02": {
+      "titre": "La doua du voyage (au départ)",
+      "moment": "En partant en voyage, une fois installé sur sa monture."
+    },
+    "DOU-VOY-03": {
+      "titre": "Au retour de voyage",
+      "moment": "Au retour : on redit la doua du voyage et on ajoute cette phrase."
+    },
+    "DOU-VOY-04": {
+      "titre": "En s'arrêtant dans un lieu",
+      "moment": "En faisant halte dans un endroit (voyage, hôtel…)."
+    },
+    "DOU-PLU-01": {
+      "titre": "Quand il pleut : « pluie abondante et utile »",
+      "moment": "En voyant la pluie."
+    },
+    "DOU-PLU-02": {
+      "titre": "Après la pluie : « Nous avons reçu la pluie par la grâce d'Allah »",
+      "moment": "Après la pluie."
+    },
+    "DOU-PLU-03": {
+      "titre": "Quand la pluie devient excessive",
+      "moment": "Quand on craint les dégâts d'une pluie trop forte."
+    },
+    "DOU-PLU-04": { "titre": "Quand le vent souffle fort", "moment": "Par vent violent." },
+    "DOU-PLU-05": {
+      "titre": "En entendant le tonnerre (parole d'un Compagnon)",
+      "moment": "En entendant le tonnerre : on cesse de parler et on dit cette phrase.",
+      "compagnon": "Parole du Compagnon ʿAbd Allāh ibn az-Zubayr, rapportée par l'imam Mālik dans le Muwaṭṭaʾ.",
+      "note": "Ce n'est pas une parole du Prophète : c'est la pratique d'un Compagnon, rapportée par l'imam Mālik dans le Muwaṭṭaʾ (et par al-Bukhārī dans al-Adab al-Mufrad, 723)."
+    },
+    "DOU-MAL-01": {
+      "titre": "En rendant visite à un malade : « Pas de mal, c'est une purification »",
+      "moment": "Auprès d'un malade."
+    },
+    "DOU-MAL-02": {
+      "titre": "Pour la guérison d'un malade : « Seigneur des hommes, ôte le mal »",
+      "moment": "Auprès d'un malade."
+    },
+    "DOU-MAL-03": {
+      "titre": "Pour la guérison d'un malade : « Je demande à Allah l'Immense… »",
+      "moment": "Auprès d'un malade."
+    },
+    "DOU-MAL-04": {
+      "titre": "Quand on a mal quelque part",
+      "moment": "La main posée sur l'endroit douloureux."
+    },
+    "DOU-ANG-01": {
+      "titre": "Dans la détresse",
+      "moment": "En cas d'angoisse ou de grande difficulté."
+    },
+    "DOU-ANG-02": { "titre": "La doua de Yūnus", "moment": "Dans toute difficulté." },
+    "DOU-ANG-03": {
+      "titre": "Doua de l'angoisse : « C'est Ta miséricorde que j'espère »",
+      "moment": "En cas d'angoisse."
+    },
+    "DOU-ANG-04": {
+      "titre": "Quand un malheur frappe",
+      "moment": "Lors d'une épreuve, d'un décès, d'une perte."
+    },
+    "DOU-ANG-05": {
+      "titre": "Contre le souci et la tristesse",
+      "moment": "À tout moment, notamment en cas de souci."
+    },
+    "DOU-ANG-06": {
+      "titre": "Dans la détresse : « Allah, Allah est mon Seigneur »",
+      "moment": "Dans la détresse."
+    },
+    "DOU-ANG-07": {
+      "titre": "« Ô Vivant, ô Subsistant, par Ta miséricorde j'implore secours »",
+      "moment": "Quand une affaire inquiète."
+    },
+    "DOU-SAV-01": {
+      "titre": "Après la prière de l'aube : « science utile, subsistance bonne, œuvre acceptée »",
+      "moment": "Après la salutation finale de la prière de l'aube."
+    },
+    "DOU-SAV-02": { "titre": "Refuge contre une science inutile", "moment": "À tout moment." },
+    "DOU-SAV-03": {
+      "titre": "« Seigneur, accrois-moi en science »",
+      "moment": "Avant d'étudier, à tout moment."
+    },
+    "DOU-PAR-01": {
+      "titre": "Le maître de la demande de pardon",
+      "moment": "Le matin et le soir."
+    },
+    "DOU-PAR-02": {
+      "titre": "Doua enseignée à Abū Bakr : « J'ai commis envers moi-même une grande injustice »",
+      "moment": "Dans la prière (avant la salutation finale) et à tout moment."
+    },
+    "DOU-PAR-03": {
+      "titre": "« Je demande pardon à Allah, le Vivant, le Subsistant »",
+      "moment": "À tout moment."
+    },
+    "DOU-PAR-04": {
+      "titre": "« Seigneur, pardonne-moi et accepte mon repentir »",
+      "moment": "Le Prophète la disait de nombreuses fois dans une même assemblée."
+    },
+    "DOU-PAR-05": {
+      "titre": "« Ô Allah, Tu es Celui qui efface, Tu aimes effacer »",
+      "moment": "Surtout pendant les nuits du Destin.",
+      "note": "Forme sans l'ajout courant du mot « généreux » : cet ajout n'est pas établi dans les manuscrits retenus par les spécialistes."
+    },
+    "DOU-ETE-01": {
+      "titre": "L'éternuement : ce que dit chacun",
+      "moment": "Celui qui éternue loue Allah ; celui qui l'entend lui répond ; puis le premier répond à son tour."
+    },
+    "DOU-COR-01": {
+      "titre": "« Seigneur, donne-nous belle part ici-bas et dans l'au-delà »",
+      "moment": "À tout moment ; la doua la plus fréquente du Prophète (al-Bukhārī 6389)."
+    },
+    "DOU-COR-02": {
+      "titre": "« Seigneur, ne nous charge pas au-delà de nos forces »",
+      "moment": "À tout moment ; fin de la sourate al-Baqara."
+    },
+    "DOU-COR-03": {
+      "titre": "« Seigneur, ne fais pas dévier nos cœurs »",
+      "moment": "À tout moment."
+    },
+    "DOU-COR-04": {
+      "titre": "Doua d'Adam et Ḥawwāʾ : « Seigneur, nous nous sommes fait du tort »",
+      "moment": "Pour se repentir."
+    },
+    "DOU-COR-05": {
+      "titre": "« Seigneur, donne-nous en nos épouses et nos descendants la joie des yeux »",
+      "moment": "Pour la famille."
+    },
+    "DOU-COR-06": {
+      "titre": "Doua de Mūsā : « Seigneur, ouvre-moi ma poitrine »",
+      "moment": "Avant de parler, d'étudier, d'un examen."
+    },
+    "DOU-COR-07": {
+      "titre": "Doua des gens de la caverne",
+      "moment": "Pour demander la bonne direction dans une affaire."
+    },
+    "DOU-COR-08": {
+      "titre": "« Seigneur, pardonne-nous ainsi qu'à nos frères qui nous ont précédés dans la foi »",
+      "moment": "Pour les croyants."
+    },
+    "DOU-COR-09": {
+      "titre": "Doua d'Ibrāhīm et Ismāʿīl : « Seigneur, accepte ceci de notre part »",
+      "moment": "Après une bonne œuvre."
+    },
+    "DOU-COR-10": {
+      "titre": "« Seigneur, pardonne et fais miséricorde »",
+      "moment": "À tout moment."
+    },
+    "DOU-PRT-01": {
+      "titre": "« Seigneur, fais-leur miséricorde comme ils m'ont élevé tout petit »",
+      "moment": "Pour ses parents, à tout moment."
+    },
+    "DOU-PRT-02": {
+      "titre": "Doua d'Ibrāhīm : « Seigneur, pardonne-moi ainsi qu'à mes parents »",
+      "moment": "Pour soi, ses parents et les croyants."
+    },
+    "DOU-PRT-03": {
+      "titre": "Doua de Nūḥ : « Seigneur, pardonne-moi, ainsi qu'à mes parents »",
+      "moment": "Pour ses parents et les croyants."
+    },
+    "DOU-PRT-04": {
+      "titre": "« Seigneur, inspire-moi de remercier Ton bienfait sur moi et sur mes parents »",
+      "moment": "Gratitude pour soi et ses parents."
+    }
+  }
+}
