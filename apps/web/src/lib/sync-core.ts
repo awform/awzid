@@ -21,8 +21,11 @@ export interface AttemptEvent {
   id: string;
   profileId: string;
   unitId: string;
-  /** « hifz » : événement du carnet de hifẓ (réponse = jour, part, résultat, source) ; « hifz_marque » : carte des erreurs */
-  eventType: 'reponse' | 'checklist' | 'hifz' | 'trace' | 'carte' | 'hifz_marque';
+  /**
+   * « hifz » : événement du carnet de hifẓ (réponse = jour, part, résultat, source) ; « hifz_marque » : carte des
+   * erreurs ; « madjlis » : séance de Madjaliss faite (journal de l'entraînement)
+   */
+  eventType: 'reponse' | 'checklist' | 'hifz' | 'trace' | 'carte' | 'hifz_marque' | 'madjlis';
   exerciseId?: string;
   exerciseHash?: string;
   itemIndex?: number;

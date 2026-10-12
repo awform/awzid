@@ -75,12 +75,15 @@ const staffBr = grpBr(groups.personnel);
 const raresBr = grpBr(groups.rares);
 const enLigneBr = grpBr(groups.enLigne);
 const vivBr = grpBr(vivList);
+// Madjaliss : pages de l'élève gardées au premier usage — déduites SEULEMENT si le service worker les exclut
+const swPremier = /'premierUsage'/.test(swSrc);
+const premierBr = swPremier ? grpBr(groups.premierUsage ?? []) : 0;
 // catalogues de textes PRÉCHARGÉS par le service worker (liste STUDENT_TEXTS) : comptés pour l'élève
 const studentTexts = [
   ...(/STUDENT_TEXTS\s*=\s*\[([^\]]*)\]/.exec(swSrc)?.[1] ?? '').matchAll(/'([^']+)'/g),
 ].map((m) => m[1]);
 const textsBr = sum(studentTexts, (p) => br(join(root, 'static', p)));
-const eleveCode = jsBr + cssBr - staffBr - raresBr - enLigneBr - vivBr;
+const eleveCode = jsBr + cssBr - staffBr - raresBr - enLigneBr - vivBr - premierBr;
 const eleveBr = eleveCode + textsBr;
 
 // JavaScript + CSS INITIAUX par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises
@@ -161,6 +164,7 @@ const lines = [
   `| Pages du personnel, NON préchargées (${groups.personnel.length} fichiers${swGroups ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(staffBr)} |`,
   `| Pages rares, en ligne seulement, NON préchargées (${groups.rares.length} fichiers) | ${ko(raresBr)} |`,
   `| Modules à la demande qui ont besoin du réseau, NON préchargés (${groups.enLigne.length} fichiers) | ${ko(enLigneBr)} |`,
+  `| Pages de l'élève gardées au premier usage (Madjaliss), NON préchargées (${(groups.premierUsage ?? []).length} fichiers${swPremier ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(grpBr(groups.premierUsage ?? []))} |`,
   `| Leçons vivantes, à la demande (${vivList.length} fichiers${swViv ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(vivBr)} (≤ ${ko(BUDGET_VIVANTE)}) |`,
   `| Total JS + CSS de toutes les pages (mesuré, non bloquant) | ${ko(jsBr + cssBr)} |`,
   `| dont CSS | ${ko(cssBr)} |`,

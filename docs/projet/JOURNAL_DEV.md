@@ -8,6 +8,38 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 12/10/2026 — Madjaliss (P3-1) : la rubrique et son premier texte, Mukhtaṣar al-Akhḍarī
+
+Branche `madjaliss-wip` (worktree `~/awform-madjaliss`, depuis `main` a053633), **non fusionnée**. Aucun texte
+religieux rédigé : texte, traduction, séances et mots difficiles viennent des seules données du référent
+(`packages/content/madjaliss-source/`, copie verbatim de `donnees-awzid/madjaliss`), mots du Coran de Tanzil.
+
+1. **Données** : `apps/web/scripts/madjaliss.mjs` construit `static/mutun/akhdari.json` (élève : 233 phrases,
+   44 séances) et `akhdari-enseignant.json` (variantes, vocalisations « à vérifier », mots au sens non établi) ;
+   chargés À LA DEMANDE, gardés dans IndexedDB au premier usage (hors ligne ensuite), jamais préchargés (le service
+   worker écarte `/mutun/`). Contrôle : `src/lib/madjaliss/madjaliss.test.ts` (fichiers à jour avec les sources).
+2. **Règles du référent (T5, T7)** : bandeau « Traduction Awzid — en cours de relecture savante » et rappel « Ce
+   n'est pas une fatwa… » sur toutes les pages ; statut `VALIDATION_HUMAINE_REQUISE` par phrase ; **AKH-0052**
+   absent des fichiers (ni arabe, ni traduction, ni son mot difficile propre) : « Passage présenté avec son
+   explication par l'enseignant — bientôt » ; **AKH-0015** (9:62, depuis « وَٱللَّهُ ») et **AKH-0132** (29:45) :
+   sous-chaînes EXACTES de Tanzil, police du Coran, entre ﴿﴾ ; sens de 9:62 : traduction de référence de
+   l'application (Rachid Maach), verset entier, signalé comme tel ; le brouillon « non publiable » n'est jamais
+   repris ; les notes du traducteur « sens à vérifier / non établi » (AKH-0023, 0024, 0068) sont retirées de la
+   traduction de l'élève et montrées au mode enseignant.
+3. **Écrans** (une seule page `/madjaliss/[[texte]]/[[n]]`, morceau « madjaliss » gardé au premier usage) :
+   liste par cycle (cycle conseillé selon le niveau, en premier ; autres textes « Bientôt », sans lien ; aperçu pour
+   un enfant), couvertures façon D1/D2 (bandeau, motif étoilé, titre Amiri) ; sommaire des 44 séances (✓ faite,
+   en cours, « Reprendre ») ; séance par étapes : Lire, Mots difficiles, Mémoriser (moteur du hifẓ : amorce,
+   masquage progressif, juste / hésitant / oublié, répétition ; emplacement « Écouter » masqué, aucune voix de
+   synthèse), Quiz (3 à 5 questions générées depuis les données : traduction, mot à compléter, sens d'un mot),
+   Fin (« Séance faite »). Attestation d'étude après les 44 séances (jamais « ijāza »). Mode enseignant (personnel).
+   Chapitres des règles et des lochies (séances 20 et 21) masqués pour un enfant.
+4. **Progression** : appareil (IndexedDB) et serveur par le journal de l'entraînement : migration
+   `0047_madjaliss` (genre « madjlis » de `practice_event`), file hors ligne commune, `GET /api/v1/profiles/:id/
+   madjaliss` (tous appareils). Textes : `static/i18n/fr-madjaliss.json` (+ en, es, de, ar).
+5. **Poids** : `scripts/groupes.mjs` (groupe « premierUsage »), `budget.mjs`, `vite.config.ts` (espace
+   « madjaliss » ; moteur pur du hifẓ `hifz-moteur` gardé hors du morceau commun).
+
 ## 12/10/2026 — Hifẓ complet : répétition fine, test au hasard, carte des erreurs, fraîcheur, 2 rakʿa, écran enfant
 
 Branche `hifz-complet-wip` (worktree `~/awform-hifz`, depuis `main` e42a059), **non fusionnée**. Complète les écrans

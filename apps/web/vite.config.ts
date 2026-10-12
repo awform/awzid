@@ -64,6 +64,14 @@ const A_PART: Record<string, string> = {
   scene: '(content/dist/scene|lib/Scene)',
   'hifz-outils': 'hifz-outils/(outils|liste|donnees|mutashabihat)',
 };
+/**
+ * Modules `A_PART` gardés à part MÊME s'ils servent à 3 pages ou plus (priorité au-dessus de « commun ») : le
+ * moteur PUR des outils du hifẓ (sans dépendance), réutilisé par la mémorisation des Madjaliss, ne doit pas
+ * peser sur toutes les pages (accueil, lecteur…).
+ */
+const A_PART_PRIORITAIRE: Record<string, string> = {
+  'hifz-moteur': 'hifz-outils/outils',
+};
 const pages = (dir: string) => new RegExp(`src/routes/${dir}/(.+/)?\\+page\\.svelte`);
 /** Un morceau par espace de l'élève : ses pages et les modules qu'elles sont seules à utiliser. */
 const ESPACES: Record<string, RegExp> = {
@@ -79,6 +87,10 @@ const ESPACES: Record<string, RegExp> = {
   activites: pages('activites'),
   famille: pages('(famille|profils)'),
   aide: pages('(plus|aide|legal)'),
+  // Madjaliss (P3-1) : UNE page (trois écrans) et ses modules, gardés au premier usage, jamais préchargés
+  // (`PREMIER_USAGE_ROUTES` de scripts/groupes.mjs). Une seule page : aucun module partagé par 3 pages, donc rien
+  // ne part dans le morceau commun préchargé.
+  madjaliss: /src\/(routes\/madjaliss\/(.+\/)?\+(page|layout)\.(svelte|ts)|lib\/madjaliss\/)/,
 };
 
 export default defineConfig({
@@ -97,6 +109,11 @@ export default defineConfig({
         // lourdes) et reports/budget-web.md.
         codeSplitting: {
           groups: [
+            ...Object.entries(A_PART_PRIORITAIRE).map(([name, m]) => ({
+              name,
+              test: new RegExp(`${m}\\.(svelte|ts|js)(\\?.*)?$`),
+              priority: 35,
+            })),
             { name: 'commun', minShareCount: 3, priority: 30 },
             ...Object.entries(A_PART).map(([name, m]) => ({
               name,

@@ -1,0 +1,467 @@
+{
+  "titre": "Découpage en séances (majālis) — pilote al-Akhḍarī",
+  "statut": "VALIDATION_HUMAINE_REQUISE",
+  "principe": "Séances de 5 à 15 minutes : lecture du texte arabe, traduction, mots difficiles. L'explication sera ajoutée plus tard (rien n'est rédigé ici). Durée estimée = lecture lente ×2 + traduction + mots ; à recaler sur l'enregistrement réel du lecteur.",
+  "a_confirmer": "Découpage proposé par Claude ; aucune source écrite de découpage traditionnel (daara, mahdara) n'a été trouvée. À comparer avec la pratique de 2 ou 3 maîtres.",
+  "seances": [
+    {
+      "id": "AKH-S01", "titre": "Ouverture et premières obligations", "phrases": ["AKH-0001", "AKH-0002", "AKH-0003", "AKH-0004"], "duree_min": 8,
+      "mots_difficiles": [
+        {"ar": "خَاتِم", "sens": "sceau, celui qui clôt (la lignée des prophètes)"},
+        {"ar": "الْمُكَلَّف", "sens": "la personne responsable devant la Loi"},
+        {"ar": "تَصْحِيح", "sens": "le fait de rendre correct"},
+        {"ar": "فَرْضُ عَيْنِهِ", "sens": "son obligation individuelle"},
+        {"ar": "حُدُود اللَّه", "sens": "les limites fixées par Allah"},
+        {"ar": "يَقِفُ عِنْدَ", "sens": "s'en tenir à, s'arrêter à"},
+        {"ar": "يَسْخَطُ", "sens": "s'irriter, être mécontent"}
+      ]
+    },
+    {
+      "id": "AKH-S02", "titre": "Le repentir", "phrases": ["AKH-0005", "AKH-0006"], "duree_min": 7,
+      "mots_difficiles": [
+        {"ar": "النَّدَم", "sens": "le regret"},
+        {"ar": "مُتَلَبِّسًا بِهَا", "sens": "en train de la commettre"},
+        {"ar": "يُؤَخِّر", "sens": "retarder"},
+        {"ar": "الشَّقَاء", "sens": "le malheur (éternel)"},
+        {"ar": "الْخِذْلَان", "sens": "l'abandon (privation de l'aide divine)"},
+        {"ar": "طَمْس الْبَصِيرَة", "sens": "l'aveuglement de la clairvoyance intérieure"}
+      ]
+    },
+    {
+      "id": "AKH-S03", "titre": "La langue, le regard et les membres", "phrases": ["AKH-0007", "AKH-0008", "AKH-0009", "AKH-0010"], "duree_min": 10,
+      "mots_difficiles": [
+        {"ar": "الْفَحْشَاء", "sens": "l'obscénité"},
+        {"ar": "أَيْمَانُ الطَّلَاقِ", "sens": "les serments de divorce (jurer par le divorce)"},
+        {"ar": "انْتِهَار", "sens": "le fait de rudoyer, de parler durement"},
+        {"ar": "فَاسِق", "sens": "pécheur notoire"},
+        {"ar": "هِجْرَان", "sens": "le fait de s'écarter de quelqu'un"},
+        {"ar": "جَوَارِح", "sens": "les membres (organes qui agissent)"},
+        {"ar": "الْمَعْرُوف / الْمُنْكَر", "sens": "le convenable / le blâmable"}
+      ]
+    },
+    {
+      "id": "AKH-S04", "titre": "Les interdits", "phrases": ["AKH-0011", "AKH-0012"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "الْغِيبَة", "sens": "la médisance"},
+        {"ar": "النَّمِيمَة", "sens": "le colportage de paroles pour semer la discorde"},
+        {"ar": "الْعُجْب", "sens": "l'autosatisfaction"},
+        {"ar": "الرِّيَاء / السُّمْعَة", "sens": "l'ostentation / la recherche de la renommée"},
+        {"ar": "رُؤْيَةُ الْفَضْلِ عَلَى الْغَيْرِ", "sens": "se croire supérieur à autrui"},
+        {"ar": "الْهَمْز / اللَّمْز", "sens": "dénigrer quelqu'un en sa présence / en son absence (selon la Hidāya)"},
+        {"ar": "الْعَبَث", "sens": "la futilité, le jeu vain"},
+        {"ar": "الْأَجْنَبِيَّة", "sens": "la femme étrangère à la famille proche"},
+        {"ar": "طِيبُ نَفْسٍ", "sens": "plein consentement"},
+        {"ar": "الْأَكْلُ بِالدِّينِ", "sens": "vivre de la piété qu'on affiche (selon la Hidāya)"}
+      ]
+    },
+    {
+      "id": "AKH-S05", "titre": "Fréquentations, savoir et invocation finale", "phrases": ["AKH-0013", "AKH-0014", "AKH-0015", "AKH-0016", "AKH-0017", "AKH-0018", "AKH-0019"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "صُحْبَة / مُجَالَسَة", "sens": "compagnie / le fait de s'asseoir avec"},
+        {"ar": "سُخْط", "sens": "colère, mécontentement"},
+        {"ar": "يَقْتَدِي بِ", "sens": "prendre pour modèle"},
+        {"ar": "الْمُفْلِسُون", "sens": "les faillis"},
+        {"ar": "حَسْرَة", "sens": "regret amer"},
+        {"ar": "شَفِيع", "sens": "intercesseur"}
+      ]
+    },
+    {
+      "id": "AKH-S06", "titre": "La purification et l'eau", "phrases": ["AKH-0020", "AKH-0021", "AKH-0022", "AKH-0023", "AKH-0024"], "duree_min": 10,
+      "mots_difficiles": [
+        {"ar": "حَدَث", "sens": "état d'impureté rituelle"},
+        {"ar": "خَبَث", "sens": "souillure"},
+        {"ar": "الطَّاهِرُ الْمُطَهِّرُ", "sens": "pure et purifiante"},
+        {"ar": "يُفَارِقُهُ غَالِبًا", "sens": "s'en sépare d'ordinaire"},
+        {"ar": "السَّمْن", "sens": "beurre clarifié"},
+        {"ar": "الدَّسَم", "sens": "matière grasse"},
+        {"ar": "الْوَذَح", "sens": "saleté collée à la laine des moutons (à vérifier)"},
+        {"ar": "الْحَمَأ", "sens": "boue noire"},
+        {"ar": "السَّبْخَة", "sens": "sol salin"},
+        {"ar": "الْخَزّ", "sens": "SENS NON ÉTABLI — à trancher par le comité"}
+      ]
+    },
+    {
+      "id": "AKH-S07", "titre": "La souillure sur le vêtement et dans la prière", "phrases": ["AKH-0025", "AKH-0026", "AKH-0027", "AKH-0028", "AKH-0029", "AKH-0030"], "duree_min": 9,
+      "mots_difficiles": [
+        {"ar": "تَعَيَّنَتْ", "sens": "est déterminée (son endroit est connu)"},
+        {"ar": "الْتَبَسَتْ", "sens": "est incertaine (son endroit est confus)"},
+        {"ar": "نَضَحَ", "sens": "asperger d'eau"},
+        {"ar": "قَطَعَ", "sens": "interrompre (la prière)"},
+        {"ar": "أَعَادَ فِي الْوَقْتِ", "sens": "recommencer dans le temps de la prière"}
+      ]
+    },
+    {
+      "id": "AKH-S08", "titre": "Les obligations des ablutions", "phrases": ["AKH-0031", "AKH-0032"], "duree_min": 7,
+      "mots_difficiles": [
+        {"ar": "فَرَائِض", "sens": "obligations"},
+        {"ar": "الْمِرْفَقَيْن", "sens": "les deux coudes"},
+        {"ar": "الْكَعْبَيْن", "sens": "les deux chevilles"},
+        {"ar": "الدَّلْك", "sens": "le frottement"},
+        {"ar": "الْفَوْر", "sens": "la continuité (enchaîner sans interruption longue)"}
+      ]
+    },
+    {
+      "id": "AKH-S09", "titre": "Les sunna des ablutions", "phrases": ["AKH-0033"], "duree_min": 8,
+      "mots_difficiles": [
+        {"ar": "الْكُوعَيْن", "sens": "les deux poignets"},
+        {"ar": "عِنْدَ الشُّرُوع", "sens": "au commencement"},
+        {"ar": "الْمَضْمَضَة", "sens": "rinçage de la bouche"},
+        {"ar": "الِاسْتِنْشَاق", "sens": "aspiration d'eau par le nez"},
+        {"ar": "الِاسْتِنْثَار", "sens": "expulsion de l'eau par le nez"},
+        {"ar": "رَدُّ مَسْحِ الرَّأْسِ", "sens": "ramener les mains en essuyant la tête"},
+        {"ar": "تَجْدِيدُ الْمَاءِ", "sens": "reprendre de l'eau neuve"}
+      ]
+    },
+    {
+      "id": "AKH-S10", "titre": "L'oubli dans les ablutions", "phrases": ["AKH-0034", "AKH-0035", "AKH-0036", "AKH-0037"], "duree_min": 10,
+      "mots_difficiles": [
+        {"ar": "بِالْقُرْبِ", "sens": "peu après"},
+        {"ar": "طَالَ", "sens": "s'est prolongé"},
+        {"ar": "لُمْعَة", "sens": "petite parcelle restée sèche"},
+        {"ar": "شَرَعَ فِي", "sens": "commencer"},
+        {"ar": "يُتِمّ", "sens": "achever"}
+      ]
+    },
+    {
+      "id": "AKH-S11", "titre": "Les actes méritoires et le takhlīl", "phrases": ["AKH-0038", "AKH-0039", "AKH-0040"], "duree_min": 11,
+      "mots_difficiles": [
+        {"ar": "فَضَائِل", "sens": "actes méritoires"},
+        {"ar": "التَّسْمِيَة", "sens": "dire « bismi-llāh »"},
+        {"ar": "السِّوَاك", "sens": "bâtonnet pour nettoyer les dents"},
+        {"ar": "الضَّرْبَة الْأُولَى", "sens": "le premier passage (d'eau)"},
+        {"ar": "مُقَدَّمُ الرَّأْسِ", "sens": "l'avant de la tête"},
+        {"ar": "الْعُضْو", "sens": "le membre"},
+        {"ar": "تَخْلِيل", "sens": "faire passer l'eau entre (les doigts, les poils)"},
+        {"ar": "اللِّحْيَة الْخَفِيفَة / الْكَثِيفَة", "sens": "barbe clairsemée / fournie"}
+      ]
+    },
+    {"id": "AKH-S12", "titre": "Ce qui annule les ablutions", "phrases": ["AKH-0041", "AKH-0042", "AKH-0043", "AKH-0044", "AKH-0045", "AKH-0046", "AKH-0047"], "duree_min": 11,
+      "mots_difficiles": [
+        {"ar": "نَوَاقِض", "sens": "annulatifs"},
+        {"ar": "أَحْدَاث / أَسْبَاب", "sens": "événements qui rompent la pureté / causes qui y mènent"},
+        {"ar": "الْمَذْي / الْوَدْي", "sens": "liquide prostatique / liquide épais après l'urine"},
+        {"ar": "الْإِغْمَاء", "sens": "l'évanouissement"},
+        {"ar": "اللَّذَّة", "sens": "le plaisir"},
+        {"ar": "بَاطِن الْكَفِّ", "sens": "l'intérieur de la paume"},
+        {"ar": "مُوَسْوَس", "sens": "atteint de doute obsessionnel (waswās)"},
+        {"ar": "الْأُنْثَيَيْن", "sens": "les testicules"}
+      ]
+    },
+    {"id": "AKH-S13", "titre": "Ce qui est interdit sans ablutions", "phrases": ["AKH-0048", "AKH-0049", "AKH-0050", "AKH-0051", "AKH-0052"], "duree_min": 9,
+      "mots_difficiles": [
+        {"ar": "الطَّوَاف", "sens": "la circumambulation autour de la Kaʿba"},
+        {"ar": "نُسْخَة / جِلْد", "sens": "exemplaire / reliure"},
+        {"ar": "لَوْح", "sens": "la tablette (de l'école coranique)"},
+        {"ar": "مُنَاوِل", "sens": "celui qui tend (l'objet)"},
+        {"ar": "وَالْعِيَاذُ بِاللَّهِ", "sens": "qu'Allah nous en préserve"}
+      ]
+    },
+    {"id": "AKH-S14", "titre": "Ce qui rend le grand lavage obligatoire", "phrases": ["AKH-0053", "AKH-0054", "AKH-0055", "AKH-0056", "AKH-0057"], "duree_min": 9,
+      "mots_difficiles": [
+        {"ar": "الْجَنَابَة", "sens": "impureté majeure (janāba)"},
+        {"ar": "النِّفَاس", "sens": "les lochies (sang après l'accouchement)"},
+        {"ar": "مُعْتَادَة", "sens": "habituelle"},
+        {"ar": "يَقَظَة", "sens": "l'état de veille"},
+        {"ar": "مَغِيب الْحَشَفَة", "sens": "la disparition du gland"},
+        {"ar": "يَابِس", "sens": "sec"}
+      ]
+    },
+    {"id": "AKH-S15", "titre": "Obligations, sunna et actes méritoires du grand lavage", "phrases": ["AKH-0058", "AKH-0059", "AKH-0060", "AKH-0061", "AKH-0062"], "duree_min": 11,
+      "mots_difficiles": [
+        {"ar": "الْعُمُوم", "sens": "la généralité (l'eau sur tout le corps)"},
+        {"ar": "صِمَاخ الْأُذُن", "sens": "le conduit de l'oreille"},
+        {"ar": "الثُّقْبَة", "sens": "l'orifice"},
+        {"ar": "صَفْحَة الْأُذُن", "sens": "le pavillon de l'oreille"},
+        {"ar": "تَثْلِيث", "sens": "faire trois fois"},
+        {"ar": "شِقّ", "sens": "côté, moitié (du corps)"}
+      ]
+    },
+    {"id": "AKH-S16", "titre": "L'oubli dans le grand lavage ; ce qui est interdit au junub", "phrases": ["AKH-0063", "AKH-0064", "AKH-0065", "AKH-0066", "AKH-0067", "AKH-0068"], "duree_min": 10,
+      "mots_difficiles": [
+        {"ar": "بَادَرَ", "sens": "se hâter"},
+        {"ar": "صَادَفَهُ", "sens": "l'a atteint (par coïncidence)"},
+        {"ar": "أَجْزَأَهُ", "sens": "cela lui suffit"},
+        {"ar": "الْجُنُب", "sens": "la personne en état de janāba"},
+        {"ar": "التَّعَوُّذ", "sens": "demander la protection d'Allah"},
+        {"ar": "الْآلَة", "sens": "l'ustensile (pour chauffer l'eau — à vérifier)"},
+        {"ar": "يَحْتَلِم", "sens": "avoir une pollution nocturne"}
+      ]
+    },
+    {"id": "AKH-S17", "titre": "Le tayammum : qui le fait et pour quoi", "phrases": ["AKH-0069", "AKH-0070", "AKH-0071", "AKH-0072"], "duree_min": 8,
+      "mots_difficiles": [
+        {"ar": "مَعْصِيَة", "sens": "acte de désobéissance"},
+        {"ar": "الْحَاضِر الصَّحِيح", "sens": "la personne à demeure et en bonne santé"},
+        {"ar": "الْجَنَازَة", "sens": "la prière funéraire"},
+        {"ar": "تَعَيَّنَتْ عَلَيْهِ", "sens": "lui incombe personnellement"}
+      ]
+    },
+    {"id": "AKH-S18", "titre": "Les obligations du tayammum et le sol", "phrases": ["AKH-0073", "AKH-0074", "AKH-0075", "AKH-0076"], "duree_min": 11,
+      "mots_difficiles": [
+        {"ar": "الصَّعِيد", "sens": "le sol (ce qui est à la surface de la terre)"},
+        {"ar": "ضَرْبَة الْأَرْضِ", "sens": "la frappe sur le sol"},
+        {"ar": "اتِّصَالُهُ بِالصَّلَاةِ", "sens": "son enchaînement avec la prière"},
+        {"ar": "الطُّوب", "sens": "la brique"},
+        {"ar": "الْخَضْخَاض", "sens": "la boue liquide"},
+        {"ar": "الْجِصّ الْمَطْبُوخ", "sens": "le plâtre cuit"},
+        {"ar": "الْحَصِير / الْحَشِيش", "sens": "la natte / l'herbe"},
+        {"ar": "رُخِّصَ", "sens": "il est permis par dispense"}
+      ]
+    },
+    {"id": "AKH-S19", "titre": "Sunna, actes méritoires et usage du tayammum", "phrases": ["AKH-0077", "AKH-0078", "AKH-0079", "AKH-0080", "AKH-0081", "AKH-0082", "AKH-0083", "AKH-0084"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "تَجْدِيد الصَّعِيد", "sens": "renouveler (frapper à nouveau) le sol"},
+        {"ar": "ظَاهِر الذِّرَاع / بَاطِنُهُ", "sens": "le dessus / le dessous de l'avant-bras"},
+        {"ar": "مُقَدَّم / مُؤَخَّر", "sens": "l'avant / l'arrière"},
+        {"ar": "النَّوَافِل", "sens": "les prières surérogatoires"},
+        {"ar": "الشَّفْع وَالْوِتْر", "sens": "le shafʿ et le witr (prières de la nuit)"}
+      ]
+    },
+    {"id": "AKH-S20", "titre": "Les menstrues", "phrases": ["AKH-0085", "AKH-0086", "AKH-0087", "AKH-0088", "AKH-0089", "AKH-0090", "AKH-0091", "AKH-0092"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "مُبْتَدَأَة", "sens": "celle qui a ses premières menstrues"},
+        {"ar": "مُعْتَادَة", "sens": "celle qui a une habitude établie"},
+        {"ar": "حَامِل", "sens": "femme enceinte"},
+        {"ar": "تَمَادَى", "sens": "se prolonger"},
+        {"ar": "لَفَّقَتْ", "sens": "elle additionne (les jours de sang)"},
+        {"ar": "السُّرَّة / الرُّكْبَة", "sens": "le nombril / le genou"}
+      ]
+    },
+    {"id": "AKH-S21", "titre": "Les lochies", "phrases": ["AKH-0093", "AKH-0094", "AKH-0095", "AKH-0096"], "duree_min": 7,
+      "mots_difficiles": [
+        {"ar": "مَنْع", "sens": "ce qui est interdit (pendant cet état)"},
+        {"ar": "الْوِلَادَة", "sens": "l'accouchement"},
+        {"ar": "عَاوَدَهَا", "sens": "lui revient"},
+        {"ar": "ضُمَّ إِلَى", "sens": "est joint à"}
+      ]
+    },
+    {"id": "AKH-S22", "titre": "Les temps de la prière", "phrases": ["AKH-0097", "AKH-0098", "AKH-0099", "AKH-0100", "AKH-0101", "AKH-0102", "AKH-0103", "AKH-0104"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "الْوَقْت الْمُخْتَار / الضَّرُورِيّ", "sens": "temps de choix / temps de nécessité"},
+        {"ar": "زَوَال الشَّمْسِ", "sens": "le déclin du soleil après le zénith"},
+        {"ar": "الْقَامَة", "sens": "hauteur d'un objet dressé"},
+        {"ar": "الِاصْفِرَار", "sens": "le jaunissement du soleil"},
+        {"ar": "الشَّفَق", "sens": "le crépuscule rouge"},
+        {"ar": "الْإِسْفَار", "sens": "la clarté du matin"},
+        {"ar": "الْقَضَاء", "sens": "le rattrapage"}
+      ]
+    },
+    {"id": "AKH-S23", "titre": "Les moments sans prière surérogatoire", "phrases": ["AKH-0105"], "duree_min": 7,
+      "mots_difficiles": [
+        {"ar": "ارْتِفَاع الشَّمْسِ", "sens": "l'élévation du soleil"},
+        {"ar": "الْوِرْد", "sens": "la part habituelle de prière nocturne"},
+        {"ar": "الْمِنْبَر", "sens": "la chaire"}
+      ]
+    },
+    {"id": "AKH-S24", "titre": "Les conditions de la prière et la ʿawra", "phrases": ["AKH-0106", "AKH-0107", "AKH-0108", "AKH-0109"], "duree_min": 9,
+      "mots_difficiles": [
+        {"ar": "شُرُوط", "sens": "conditions"},
+        {"ar": "سَتْر الْعَوْرَة", "sens": "couvrir les parties à couvrir"},
+        {"ar": "اسْتِقْبَال الْقِبْلَة", "sens": "se tourner vers la qibla"},
+        {"ar": "الْأَفْعَال الْكَثِيرَة", "sens": "les gestes nombreux"},
+        {"ar": "السَّرَاوِيل", "sens": "le pantalon"}
+      ]
+    },
+    {"id": "AKH-S25", "titre": "Cas particuliers : vêtement souillé, nudité, qibla", "phrases": ["AKH-0110", "AKH-0111", "AKH-0112", "AKH-0113", "AKH-0114"], "duree_min": 10,
+      "mots_difficiles": [
+        {"ar": "تَنَجَّسَ", "sens": "être souillé"},
+        {"ar": "عَصَى رَبَّهُ", "sens": "désobéir à son Seigneur"},
+        {"ar": "عُرْيَانًا", "sens": "nu"},
+        {"ar": "أَخْطَأَ الْقِبْلَةَ", "sens": "se tromper de qibla"},
+        {"ar": "الْفَائِتَة", "sens": "la prière manquée (qu'on rattrape)"}
+      ]
+    },
+    {"id": "AKH-S26", "titre": "Les obligations de la prière", "phrases": ["AKH-0115", "AKH-0116", "AKH-0117"], "duree_min": 9,
+      "mots_difficiles": [
+        {"ar": "الْمُعَيَّنَة", "sens": "déterminée (telle prière précise)"},
+        {"ar": "تَكْبِيرَة الْإِحْرَام", "sens": "le takbīr d'entrée"},
+        {"ar": "الِاعْتِدَال", "sens": "l'équilibre du corps redressé"},
+        {"ar": "الطُّمَأْنِينَة", "sens": "l'immobilité dans chaque posture"},
+        {"ar": "مُقَارَنَة", "sens": "le fait d'accompagner"}
+      ]
+    },
+    {"id": "AKH-S27", "titre": "Les sunna de la prière", "phrases": ["AKH-0118", "AKH-0119", "AKH-0120"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "الْإِقَامَة", "sens": "le second appel"},
+        {"ar": "السِّرّ / الْجَهْر", "sens": "la voix basse / la voix haute"},
+        {"ar": "التَّشَهُّدَان", "sens": "les deux tashahhud"},
+        {"ar": "الْمَأْمُوم", "sens": "celui qui suit l'imam"},
+        {"ar": "أَطْرَاف الْقَدَمَيْن", "sens": "les extrémités des pieds (orteils)"},
+        {"ar": "السُّتْرَة", "sens": "objet placé devant soi pendant la prière"},
+        {"ar": "غِلَظ رُمْح", "sens": "l'épaisseur d'une lance"},
+        {"ar": "مُشَوِّش", "sens": "qui distrait"}
+      ]
+    },
+    {"id": "AKH-S28", "titre": "Les actes méritoires de la prière", "phrases": ["AKH-0121", "AKH-0122", "AKH-0123", "AKH-0124"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "الْفَذّ", "sens": "celui qui prie seul"},
+        {"ar": "التَّأْمِين", "sens": "dire āmīn"},
+        {"ar": "التَّسْبِيح", "sens": "la glorification"},
+        {"ar": "الْهَيْئَة", "sens": "la position, la manière"},
+        {"ar": "الْقُنُوت", "sens": "invocation debout du ṣubḥ"},
+        {"ar": "التَّيَامُن", "sens": "se tourner vers la droite"},
+        {"ar": "السَّبَّابَة", "sens": "l'index"}
+      ]
+    },
+    {"id": "AKH-S29", "titre": "Ce qui est déconseillé dans la prière", "phrases": ["AKH-0125", "AKH-0126"], "duree_min": 8,
+      "mots_difficiles": [
+        {"ar": "الِالْتِفَات", "sens": "tourner la tête"},
+        {"ar": "تَغْمِيض الْعَيْنَيْن", "sens": "fermer les yeux"},
+        {"ar": "اقْتِرَان الرِّجْلَيْن", "sens": "joindre les pieds"},
+        {"ar": "جَيْب / كُمّ", "sens": "poche / manche"},
+        {"ar": "الْخُشُوع", "sens": "le recueillement"}
+      ]
+    },
+    {"id": "AKH-S30", "titre": "La lumière de la prière", "phrases": ["AKH-0127", "AKH-0128", "AKH-0129", "AKH-0130", "AKH-0131", "AKH-0132"], "duree_min": 10,
+      "mots_difficiles": [
+        {"ar": "الْخَاشِعُون", "sens": "ceux qui se recueillent"},
+        {"ar": "فَرِّغْ قَلْبَكَ", "sens": "vide ton cœur"},
+        {"ar": "مُرَاقَبَة", "sens": "conscience d'être vu (par Allah)"},
+        {"ar": "إِجْلَال / تَعْظِيم", "sens": "exaltation / glorification"},
+        {"ar": "يَطْمِسَ", "sens": "effacer, éteindre"},
+        {"ar": "خَيْرُ مُسْتَعَانٍ", "sens": "le meilleur à qui demander de l'aide"}
+      ]
+    },
+    {"id": "AKH-S31", "titre": "Les états de la prière obligatoire (le malade)", "phrases": ["AKH-0133", "AKH-0134", "AKH-0135", "AKH-0136", "AKH-0137", "AKH-0138", "AKH-0139", "AKH-0140"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "أَحْوَال مُرَتَّبَة", "sens": "états rangés dans un ordre"},
+        {"ar": "الْوُجُوب / الِاسْتِحْبَاب", "sens": "l'obligation / la recommandation"},
+        {"ar": "اسْتِنَاد", "sens": "appui"},
+        {"ar": "الْعَاجِز", "sens": "celui qui est incapable"},
+        {"ar": "جَنْب", "sens": "côté (du corps)"},
+        {"ar": "نِصْفُ أَجْرِ الْقَائِمِ", "sens": "la moitié de la récompense de celui qui prie debout"}
+      ]
+    },
+    {"id": "AKH-S32", "titre": "Le rattrapage des prières", "phrases": ["AKH-0141", "AKH-0142", "AKH-0143", "AKH-0144", "AKH-0145", "AKH-0146", "AKH-0147", "AKH-0148", "AKH-0149", "AKH-0150"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "الذِّمَّة", "sens": "ce dont on reste redevable"},
+        {"ar": "التَّفْرِيط / مُفَرِّط", "sens": "la négligence / négligent"},
+        {"ar": "حَضَرِيَّة / سَفَرِيَّة", "sens": "de résident / de voyage"},
+        {"ar": "الْحَاضِرَة", "sens": "la prière du moment"},
+        {"ar": "يَسِير الْفَوَائِت", "sens": "un petit nombre de prières manquées"},
+        {"ar": "مَعَ الذِّكْرِ", "sens": "quand on s'en souvient"},
+        {"ar": "الضُّحَى / قِيَام رَمَضَانَ", "sens": "la prière du matin / la prière nocturne de Ramaḍān"}
+      ]
+    },
+    {"id": "AKH-S33", "titre": "La prosternation de l'oubli : principes", "phrases": ["AKH-0151", "AKH-0152", "AKH-0153", "AKH-0154", "AKH-0155", "AKH-0156", "AKH-0157", "AKH-0158"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "السَّهْو", "sens": "l'oubli (dans la prière)"},
+        {"ar": "النُّقْصَان / الزِّيَادَة", "sens": "l'omission / l'ajout"},
+        {"ar": "الْقَبْلِيّ / الْبَعْدِيّ", "sens": "(prosternation) d'avant / d'après la salutation"},
+        {"ar": "بَطَلَ", "sens": "être annulé"},
+        {"ar": "لَا يُجْزِئُهُ", "sens": "ne lui suffit pas, ne remplace pas"}
+      ]
+    },
+    {"id": "AKH-S34", "titre": "L'oubli : voix, parole, ajout, doute", "phrases": ["AKH-0159", "AKH-0160", "AKH-0161", "AKH-0162", "AKH-0163", "AKH-0164", "AKH-0165", "AKH-0166"], "duree_min": 11,
+      "mots_difficiles": [
+        {"ar": "أَسَرَّ / جَهَرَ", "sens": "réciter à voix basse / à voix haute"},
+        {"ar": "سَاهِيًا", "sens": "par oubli"},
+        {"ar": "كَمَال الصَّلَاةِ", "sens": "l'achèvement de la prière"},
+        {"ar": "كَتَحَقُّقِهِ", "sens": "comme sa certitude (vaut certitude)"},
+        {"ar": "الْوَسْوَسَة", "sens": "le doute obsessionnel"}
+      ]
+    },
+    {"id": "AKH-S35", "titre": "L'oubli : qunūt, sourate, Fātiḥa répétée", "phrases": ["AKH-0167", "AKH-0168", "AKH-0169", "AKH-0170", "AKH-0171", "AKH-0172", "AKH-0173", "AKH-0174", "AKH-0175"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "عَمْدُهُ", "sens": "le fait de le faire exprès"},
+        {"ar": "الْأَخِيرَتَيْن", "sens": "les deux dernières (unités)"},
+        {"ar": "أَشَارَ", "sens": "faire un signe"},
+        {"ar": "كَرَّرَ", "sens": "répéter"},
+        {"ar": "فَالظَّاهِرُ الْبُطْلَانُ", "sens": "l'avis apparent est la nullité"},
+        {"ar": "انْحِنَاء", "sens": "le fait de se pencher"},
+        {"ar": "فَاتَ بِالرُّكُوعِ", "sens": "est passé avec l'inclinaison (trop tard)"}
+      ]
+    },
+    {"id": "AKH-S36", "titre": "Le rire, les pleurs et le cœur du croyant", "phrases": ["AKH-0176", "AKH-0177", "AKH-0178", "AKH-0179", "AKH-0180"], "duree_min": 9,
+      "mots_difficiles": [
+        {"ar": "غَافِل مُتَلَاعِب", "sens": "insouciant qui joue"},
+        {"ar": "أَعْرَضَ", "sens": "se détourner"},
+        {"ar": "يَرْتَعِد", "sens": "trembler"},
+        {"ar": "هَيْبَة", "sens": "révérence, crainte respectueuse"},
+        {"ar": "التَّبَسُّم", "sens": "le sourire"},
+        {"ar": "مُغْتَفَر", "sens": "pardonné, toléré"},
+        {"ar": "أَنْصَتَ", "sens": "écouter en silence"}
+      ]
+    },
+    {"id": "AKH-S37", "titre": "Se lever sans s'asseoir ; souffle, éternuement, bâillement", "phrases": ["AKH-0181", "AKH-0182", "AKH-0183", "AKH-0184", "AKH-0185", "AKH-0186", "AKH-0187", "AKH-0188"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "يُفَارِقُ الْأَرْضَ", "sens": "quitter le sol"},
+        {"ar": "تَمَادَى", "sens": "continuer"},
+        {"ar": "نَفَخَ", "sens": "souffler"},
+        {"ar": "عَطَسَ / شَمَّتَ", "sens": "éternuer / adresser le souhait à qui éternue"},
+        {"ar": "تَثَاءَبَ", "sens": "bâiller"},
+        {"ar": "يَنْفُثُ", "sens": "cracher légèrement"},
+        {"ar": "اسْتَدْبَرَ", "sens": "tourner le dos"},
+        {"ar": "عَاصٍ", "sens": "désobéissant"}
+      ]
+    },
+    {"id": "AKH-S38", "titre": "Erreurs de récitation, somnolence, raclement", "phrases": ["AKH-0189", "AKH-0190", "AKH-0191", "AKH-0192", "AKH-0193", "AKH-0194", "AKH-0195", "AKH-0196"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "غَلِطَ", "sens": "se tromper"},
+        {"ar": "نَعَسَ", "sens": "somnoler"},
+        {"ar": "أَنِين", "sens": "gémissement"},
+        {"ar": "التَّنَحْنُح", "sens": "se racler la gorge"},
+        {"ar": "الْإِفْهَام", "sens": "le fait de se faire comprendre"},
+        {"ar": "يَفْتَحُ عَلَيْهِ", "sens": "lui souffler la suite"},
+        {"ar": "جَالَ فِكْرُهُ", "sens": "sa pensée a erré"}
+      ]
+    },
+    {"id": "AKH-S39", "titre": "Petits incidents ; celui qui suit l'imam", "phrases": ["AKH-0197", "AKH-0198", "AKH-0199", "AKH-0200", "AKH-0201", "AKH-0202", "AKH-0203"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "الْمَاشِي بَيْنَ يَدَيْهِ", "sens": "celui qui passe devant lui"},
+        {"ar": "طَيَّة", "sens": "pli (du turban)"},
+        {"ar": "الْقَيْء / الْقَلْس", "sens": "le vomissement / la régurgitation"},
+        {"ar": "يَحْمِلُهُ الْإِمَامُ", "sens": "l'imam le prend en charge"},
+        {"ar": "زُوحِمَ", "sens": "être bousculé par la foule"},
+        {"ar": "طَمِعَ فِي إِدْرَاكِ", "sens": "espérer rejoindre"},
+        {"ar": "عَقْد الرُّكُوع", "sens": "l'inclinaison accomplie (sens précis à valider)"}
+      ]
+    },
+    {"id": "AKH-S40", "titre": "Le witr ; le retardataire", "phrases": ["AKH-0204", "AKH-0205", "AKH-0206", "AKH-0207", "AKH-0208", "AKH-0209"], "duree_min": 11,
+      "mots_difficiles": [
+        {"ar": "ثَانِيَة الشَّفْعِ", "sens": "la seconde unité du shafʿ"},
+        {"ar": "أَوْتَرَ", "sens": "faire le witr"},
+        {"ar": "الْمَسْبُوق", "sens": "le retardataire (qui a manqué le début)"},
+        {"ar": "أَدْرَكَ", "sens": "rejoindre, atteindre"},
+        {"ar": "تَرَتَّبَ عَلَيْهِ", "sens": "lui incombe (par suite de)"}
+      ]
+    },
+    {"id": "AKH-S41", "titre": "L'oubli d'un pilier", "phrases": ["AKH-0210", "AKH-0211", "AKH-0212", "AKH-0213", "AKH-0214"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "خَرَّ سَاجِدًا", "sens": "se laisser tomber en prosternation"},
+        {"ar": "أَلْغَى", "sens": "annuler, ne pas compter"},
+        {"ar": "بَانِيًا", "sens": "en complétant sur ce qui est fait"},
+        {"ar": "الْأُولَيَيْن", "sens": "les deux premières (unités)"},
+        {"ar": "لَمْ يَفُوتَا", "sens": "n'ont pas été perdus"},
+        {"ar": "شَاكًّا", "sens": "en doutant"}
+      ]
+    },
+    {"id": "AKH-S42", "titre": "L'oubli dans la prière surérogatoire", "phrases": ["AKH-0215", "AKH-0216", "AKH-0217", "AKH-0218", "AKH-0219", "AKH-0220", "AKH-0221"], "duree_min": 12,
+      "mots_difficiles": [
+        {"ar": "الْأَدَاء", "sens": "la prière accomplie en son temps"},
+        {"ar": "مَسَائِل", "sens": "cas"},
+        {"ar": "الْأَرْكَان", "sens": "les piliers"},
+        {"ar": "بِخِلَافِ", "sens": "à la différence de"},
+        {"ar": "أَبَدًا", "sens": "en tout temps"}
+      ]
+    },
+    {"id": "AKH-S43", "titre": "Quand l'imam se trompe (1)", "phrases": ["AKH-0222", "AKH-0223", "AKH-0224", "AKH-0225", "AKH-0226", "AKH-0227", "AKH-0228"], "duree_min": 11,
+      "mots_difficiles": [
+        {"ar": "تَنَهَّدَ", "sens": "soupirer"},
+        {"ar": "سَبَّحَ بِهِ", "sens": "lui dire « subḥāna llāh » pour l'avertir"},
+        {"ar": "فَاتْبَعْهُ", "sens": "suis-le"},
+        {"ar": "بَدَلًا مِنْ", "sens": "à la place de"},
+        {"ar": "يُتِمُّ بِكُمْ", "sens": "qui achève (la prière) avec vous"}
+      ]
+    },
+    {"id": "AKH-S44", "titre": "Quand l'imam se trompe (2) ; fin du livre", "phrases": ["AKH-0229", "AKH-0230", "AKH-0231", "AKH-0232", "AKH-0233"], "duree_min": 9,
+      "mots_difficiles": [
+        {"ar": "مُوجِبُهَا", "sens": "ce qui la rend due"},
+        {"ar": "صَدَّقَهُ", "sens": "le croire"},
+        {"ar": "عَدْلَيْن", "sens": "deux hommes intègres"},
+        {"ar": "يَقِين", "sens": "certitude"}
+      ]
+    }
+  ],
+  "duree_totale_estimee_min": 452,
+  "note_suite": "Séances AKH-S12 à AKH-S44 ajoutées le 12/10/2026 (cible 7 à 12 minutes). Durées estimées, à recaler sur l'enregistrement. Les « mots difficiles » reprennent le lexique commun ; l'explication n'est pas rédigée."
+}
