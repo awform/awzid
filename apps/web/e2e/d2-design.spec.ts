@@ -182,13 +182,20 @@ test('« Plus » rangé en familles, chaque entrée avec icône et nom', async (
     'Aide',
     'Compte',
   ]);
-  for (const href of ['/lectures', '/sciences', '/ecriture', '/revisions', '/hors-ligne'])
+  for (const href of [
+    '/lectures',
+    '/sciences',
+    '/madjaliss',
+    '/ecriture',
+    '/revisions',
+    '/hors-ligne',
+  ])
     await expect(page.locator(`[data-plus="${href}"]`)).toBeVisible();
   await expect(page.getByTestId('probleme-ouvrir')).toBeVisible();
   await expect(page.getByTestId('avis-ouvrir')).toBeVisible();
   await expect(page.locator('[data-plus="/garanties"]')).toBeVisible();
-  // pas d'entrée pour ce qui n'existe pas encore (Madjaliss, Poésie)
-  await expect(page.getByTestId('plus')).not.toContainText(/Madjaliss|Poésie/);
+  // pas d'entrée pour ce qui n'existe pas encore (Poésie) ; Madjaliss ouvert (P3-1)
+  await expect(page.getByTestId('plus')).not.toContainText(/Poésie/);
   await controle(page, 'plus-adulte');
 });
 
