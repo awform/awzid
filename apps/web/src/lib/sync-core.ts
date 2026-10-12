@@ -21,8 +21,8 @@ export interface AttemptEvent {
   id: string;
   profileId: string;
   unitId: string;
-  /** « hifz » : événement du carnet de hifẓ (réponse = jour, part, résultat, source) */
-  eventType: 'reponse' | 'checklist' | 'hifz' | 'trace' | 'carte';
+  /** « hifz » : événement du carnet de hifẓ (réponse = jour, part, résultat, source) ; « hifz_marque » : carte des erreurs */
+  eventType: 'reponse' | 'checklist' | 'hifz' | 'trace' | 'carte' | 'hifz_marque';
   exerciseId?: string;
   exerciseHash?: string;
   itemIndex?: number;

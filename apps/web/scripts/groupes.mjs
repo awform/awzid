@@ -38,6 +38,8 @@ export const EN_LIGNE_MODULES = [
   /src\/lib\/avis\/capture\.ts$/,
   // A5 : « Réciter et vérifier » (le service d'écoute est sur le serveur) : panneau et bilans, à la demande
   /src\/lib\/ecoute\/(PanneauEcoute|ARevoirEcoute)\.svelte$/,
+  // hifẓ complet : écran enfant (l'écoute du récitateur choisi par le parent a besoin du réseau), à la demande
+  /src\/lib\/hifz-outils\/Enfant\.svelte$/,
   // D2 : rubriques de « Compte » qui écrivent sur le serveur (compte, sécurité, données, classe) et notifications
   /src\/lib\/compte\/CompteEnLigne\.svelte$/,
   /src\/lib\/NotificationsReglages\.svelte$/,

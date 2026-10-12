@@ -178,6 +178,8 @@
     /^\/plus\/?$/.test(page.url.pathname) ||
       // lecteur du Coran (11/10/2026) : jamais de pied juridique sous la page du muṣḥaf, pour tous
       /^\/coran\/lecteur\/?$/.test(page.url.pathname) ||
+      // hifẓ : écran enfant (règle enfant : aucun lien juridique visible), quel que soit le profil
+      /^\/hifz\/enfant\/?$/.test(page.url.pathname) ||
       // élève (enfant, ado, adulte autonome : celui-ci n'a pas toujours de profil actif)
       (['enfant', 'ado', 'adulte'].includes(audience) &&
         (audience === 'enfant' || /^\/(aujourdhui|lecons\/[^/]+)?\/?$/.test(page.url.pathname))),

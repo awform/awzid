@@ -1764,6 +1764,7 @@
             {pack}
             {queue}
             rate={prefs.rate}
+            silence={prefs.silence}
             sleepMin={prefs.sleepMin}
             volume={prefs.volume}
             status={step

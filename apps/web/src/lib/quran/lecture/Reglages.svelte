@@ -8,7 +8,7 @@
   import { ecoutable, reseau } from '$lib/reseau.svelte';
   import { PRESETS, type PresetId, type Range } from '../lecture';
   import { FONDS, type MushafPrefs } from '../mushaf';
-  import { fmtDuration, isHafs, SLEEP_CHOICES } from '../player';
+  import { fmtDuration, isHafs, SILENCE_CHOICES, SLEEP_CHOICES } from '../player';
   import RiwayaBadge from '../RiwayaBadge.svelte';
   import { mushafChoice, MUSHAF_RIWAYAT, type MushafRiwaya } from '../riwayat';
   import type { TajwidPrefs, TajwidSura } from '../tajwid';
@@ -251,7 +251,23 @@
             >{/each}
         </select>
       </div>
+      <div class="field">
+        <label for="cl-silence">{t('cl.silence')}</label>
+        <select id="cl-silence" bind:value={prefs.silence} data-testid="silence">
+          {#each SILENCE_CHOICES as f (f)}<option value={f}
+              >{f ? t('cl.silence_n', { n: fmtNumber(f) }) : t('cl.sans_silence')}</option
+            >{/each}
+        </select>
+      </div>
     </div>
+    <!-- hifẓ : une partie d'un long verset, seulement avec les minutages PAR MOT du récitateur (jamais devinés).
+         Aucun récitateur n'en a : option désactivée et expliquée. Le lecteur sait déjà jouer une partie
+         (AudioPlayer `clip`, `wordClip`) ; le choix des mots (début, fin) viendra avec les minutages
+         (interface prête dans le commit 6efd7d9, retirée pour le budget de l'appareil). -->
+    <fieldset class="partie" disabled data-testid="partie-verset">
+      <legend>{t('cl.partie')}</legend>
+      <p class="muted small" data-testid="partie-indispo">{t('cl.partie_indispo')}</p>
+    </fieldset>
     <label class="check"
       ><input type="checkbox" bind:checked={prefs.chain} data-testid="mode-enchainer" />
       <Bidi text={t('cl.enchainer')} /></label
@@ -628,6 +644,12 @@
 </section>
 
 <style>
+  .partie {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 4px 10px;
+    margin: 8px 0;
+  }
   /* sauts vers les sections (en tête du panneau, pas collants : rien ne recouvre les réglages) */
   .sauts {
     display: flex;

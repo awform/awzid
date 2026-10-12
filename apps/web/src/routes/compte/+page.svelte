@@ -12,7 +12,7 @@
   import { getSettings } from '$lib/offline';
   import Icon from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
-  import { locale, LOCALES, t } from '$lib/i18n';
+  import { loadTexts, locale, LOCALES, t } from '$lib/i18n';
   import { kvGet, kvSet } from '$lib/idb';
   import { call, fetchMe, logout, type Me } from '$lib/session';
   import { flushQueue } from '$lib/sync-core';
@@ -70,15 +70,18 @@
     const p: Array<Promise<unknown>> = [];
     if (id && id !== 'notifications' && !EnLigne)
       p.push(
-        chargerModule(() => import('$lib/compte/CompteEnLigne.svelte')).then(
-          (m) => (EnLigne = m.default),
-        ),
+        // textes des modules en ligne : dans `fr-rares` (jamais préchargés, comme ces modules)
+        Promise.all([
+          chargerModule(() => import('$lib/compte/CompteEnLigne.svelte')),
+          loadTexts('rares'),
+        ]).then(([m]) => (EnLigne = m.default)),
       );
     if (id === 'notifications' && !Notif)
       p.push(
-        chargerModule(() => import('$lib/NotificationsReglages.svelte')).then(
-          (m) => (Notif = m.default),
-        ),
+        Promise.all([
+          chargerModule(() => import('$lib/NotificationsReglages.svelte')),
+          loadTexts('rares'),
+        ]).then(([m]) => (Notif = m.default)),
       );
     if (id === 'apprentissage' && !Reglages)
       p.push(

@@ -86,6 +86,8 @@ export const SPACE_CATALOGS = [
   'rares',
   // A5 : textes de « Réciter et vérifier » (canal bêta), chargés seulement quand la fonction est ouverte
   'ecoute',
+  // hifẓ complet (12/10/2026) : outils du carnet (`hz.*`), chargés par la mise en page `/hifz`
+  'hifz',
 ] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 export function loadTexts(

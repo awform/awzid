@@ -39,6 +39,48 @@ function vivanteALaDemande(): Plugin {
   };
 }
 
+/** Modules partagés entre un espace et d'autres pages : gardés dans leur propre morceau (voir `codeSplitting`). */
+const A_PART: Record<string, string> = {
+  BoutonEcoute: 'BoutonEcoute',
+  Recorder: 'lib/Recorder',
+  RecitationEnvoi: 'RecitationEnvoi',
+  VerseText: 'VerseText',
+  Pastille: 'Pastille',
+  MotsVerset: 'MotsVerset',
+  translation: 'quran/translation',
+  'partage-taille': 'partage-taille',
+  'sura-names-ar': 'sura-names-ar',
+  Lieu: 'quotidien/Lieu',
+  priere: 'quotidien/priere',
+  Arbre: 'ui/Arbre',
+  milestones: 'milestones',
+  ArFr: 'ArFr',
+  'svelte-index': 'svelte/src/index-client',
+  'svelte-reactivity': 'svelte/src/(reactivity|events)/[a-z-]+',
+  ReligionExercise:
+    'lib/(religion/ReligionExercise|CarnetPratique|FreeAnswerSend|freeAnswers|religion/check)',
+  Exercise: '(lib/Exercise|grading/dist/[a-z]+|i18n/content-text)',
+  'lecons-audio-offline': 'lecons-audio-offline',
+  scene: '(content/dist/scene|lib/Scene)',
+  'hifz-outils': 'hifz-outils/(outils|liste|donnees|mutashabihat)',
+};
+const pages = (dir: string) => new RegExp(`src/routes/${dir}/(.+/)?\\+page\\.svelte`);
+/** Un morceau par espace de l'élève : ses pages et les modules qu'elles sont seules à utiliser. */
+const ESPACES: Record<string, RegExp> = {
+  quotidien:
+    /src\/routes\/quotidien\/(.+\/)?\+page\.svelte|src\/lib\/quotidien\/(hijri|adhkar|Compteur|QiblaCarte|qibla)\./,
+  // l'écran enfant (`Enfant.svelte`, réseau nécessaire) reste à la demande, hors du morceau
+  hifz: /src\/routes\/hifz\/(\[outil\]\/)?\+page\.svelte|src\/lib\/hifz-outils\/(Fraicheur|mutashabihat|PointsFaibles|Priere|TestHasard)\./,
+  ecriture: pages('ecriture'),
+  suivi: pages('suivi'),
+  // pas le lecteur (page la plus lourde au premier chargement) ni les récitateurs (page rare)
+  coran: /src\/routes\/coran\/((ecouter|memoriser|mushaf)\/)?\+page\.svelte/,
+  lectures: pages('lectures'),
+  activites: pages('activites'),
+  famille: pages('(famille|profils)'),
+  aide: pages('(plus|aide|legal)'),
+};
+
 export default defineConfig({
   plugins: [sveltekit(), vivanteALaDemande()],
   build: {
@@ -47,7 +89,24 @@ export default defineConfig({
         // F5 : les modules partagés par au moins 3 pages vont dans UN morceau commun (au lieu de dizaines de
         // petits morceaux) : 11 fichiers au lieu de 51 pour ouvrir l'accueil (chaque fichier coûte un aller-retour
         // en 3G), et l'appareil d'un élève garde 21 Ko de moins (un gros fichier se compresse mieux)
-        codeSplitting: { groups: [{ name: 'commun', minShareCount: 3 }] },
+        // Allègement (12/10/2026) : chaque fichier est compressé À PART (Brotli), et chaque petit fichier coûte un
+        // dictionnaire de plus ; les pages d'un même ESPACE de l'élève vont donc dans UN morceau par espace
+        // (`ESPACES`). Les modules qu'un espace partage avec d'autres pages restent dans LEUR morceau (`A_PART`,
+        // priorité plus haute), sinon le morceau de l'espace les entraînerait (avec ses dépendances) et deviendrait
+        // un import des autres pages (lecteur, leçons, révisions…). Contrôle : `pnpm budget` (pages les plus
+        // lourdes) et reports/budget-web.md.
+        codeSplitting: {
+          groups: [
+            { name: 'commun', minShareCount: 3, priority: 30 },
+            ...Object.entries(A_PART).map(([name, m]) => ({
+              name,
+              // le module ET sa feuille de style (`…svelte?svelte&type=style&lang.css`)
+              test: new RegExp(`${m}\\.(svelte|ts|js)(\\?.*)?$`),
+              priority: 20,
+            })),
+            ...Object.entries(ESPACES).map(([name, test]) => ({ name, test, priority: 10 })),
+          ],
+        },
       },
     },
   },

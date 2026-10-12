@@ -10,10 +10,12 @@ import {
   listUnits,
   recordAttempts,
   recordHifzEvents,
+  recordHifzMarks,
   recordPractice,
   type AttemptInput,
   type Db,
   type HifzEventInput,
+  type HifzMarkInput,
   type PracticeInput,
 } from '@awform/db';
 import { ownsProfile } from './auth/routes.js';
@@ -66,6 +68,7 @@ export function registerProgress(app: FastifyInstance, db: Db, edition: Edition)
       const owned = new Map<string, boolean>();
       const allowed: AttemptInput[] = [];
       const hifz: HifzEventInput[] = [];
+      const marks: HifzMarkInput[] = [];
       const practice: PracticeInput[] = [];
       const refused: Array<{ id: string; reason: string; code?: string }> = [];
       for (const e of req.body.events) {
@@ -95,6 +98,10 @@ export function registerProgress(app: FastifyInstance, db: Db, edition: Edition)
             profileId: pid,
             deviceAt: e.deviceAt,
           } as HifzEventInput);
+        } else if ((e.eventType as string) === 'hifz_marque') {
+          // hifẓ complet : carte des erreurs (marques par verset et par mot), journal séparé
+          const r = (e.response ?? {}) as Partial<HifzMarkInput>;
+          marks.push({ ...r, id: e.id, profileId: pid, deviceAt: e.deviceAt } as HifzMarkInput);
         } else if ((e.eventType as string) === 'trace' || (e.eventType as string) === 'carte') {
           // entraînement (tracé, cartes de mots) : journal séparé, jamais de note
           const r = (e.response ?? {}) as Partial<PracticeInput>;
@@ -114,15 +121,18 @@ export function registerProgress(app: FastifyInstance, db: Db, edition: Edition)
       const pr = practice.length
         ? await recordPractice(db, practice)
         : { accepted: [], duplicates: [], rejected: [] };
+      const mk = marks.length
+        ? await recordHifzMarks(db, marks)
+        : { accepted: [], duplicates: [], rejected: [] };
       return {
         edition: ed.code,
         ...r,
         accepted: [
           ...r.accepted,
-          ...[...h.accepted, ...pr.accepted].map((id) => ({ id, correct: null })),
+          ...[...h.accepted, ...pr.accepted, ...mk.accepted].map((id) => ({ id, correct: null })),
         ],
-        duplicates: [...r.duplicates, ...h.duplicates, ...pr.duplicates],
-        rejected: [...r.rejected, ...h.rejected, ...pr.rejected, ...refused],
+        duplicates: [...r.duplicates, ...h.duplicates, ...pr.duplicates, ...mk.duplicates],
+        rejected: [...r.rejected, ...h.rejected, ...pr.rejected, ...mk.rejected, ...refused],
       };
     },
   );

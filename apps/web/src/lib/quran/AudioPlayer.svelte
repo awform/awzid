@@ -6,7 +6,7 @@
   import { fmtNumber, t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
   import { BASMALA } from './lecture';
-  import { clampRate, isHafs } from './player';
+  import { clampRate, isHafs, silenceMs } from './player';
   import { garderEcoute, playableUrl } from './offline-audio';
 
   /**
@@ -25,6 +25,7 @@
     volume = 1,
     status = '',
     basmala = null,
+    silence = 0,
     onaya,
     onindex,
     onend,
@@ -52,7 +53,18 @@
     /** ouvre le panneau « Réglages » du lecteur (à la section donnée : « ecoute », « recitateur ») */
     onsettings?: (section?: 'ecoute' | 'recitateur') => void;
     onvolume?: (v: number) => void;
+    /** hifẓ : silence après chaque verset (facteur de sa durée, 0 : sans) pour le répéter après le récitateur */
+    silence?: number;
   } = $props();
+  /** silence « à vous » en cours après un verset ; reprise au verset suivant après une pause pendant le silence */
+  let gap = $state(false);
+  let gapTimer: ReturnType<typeof setTimeout> | null = null;
+  let resumeNext = false;
+  function clearGap() {
+    if (gapTimer) clearTimeout(gapTimer);
+    gapTimer = null;
+    gap = false;
+  }
 
   let audio: HTMLAudioElement | undefined = $state();
   let idx = $state(0);
@@ -112,6 +124,8 @@
           : null
         : pack.files.find((x) => x.aya === queue[idx]);
     if (!f) return playAt(idx + 1);
+    clearGap();
+    resumeNext = false;
     error = '';
     if (lastUrl.startsWith('blob:')) URL.revokeObjectURL(lastUrl);
     lastUrl = await playableUrl(f.url);
@@ -146,6 +160,10 @@
   /** Pause (changement d'emplacement pendant la lecture) ; `resume` reprend au même endroit. */
   export function pause() {
     if (!audio || !playing) return;
+    if (gap) {
+      clearGap();
+      resumeNext = true;
+    }
     audio.pause();
     playing = false;
   }
@@ -155,15 +173,12 @@
 
   async function toggle() {
     if (!audio) return;
-    if (playing) {
-      audio.pause();
-      playing = false;
-      return;
-    }
+    if (playing) return pause();
     if (!started) {
       sleepUntil = sleepMin > 0 ? Date.now() + sleepMin * 60_000 : null;
       return playAt(idx);
     }
+    if (resumeNext) return playAt(idx + 1);
     try {
       await audio.play();
       playing = true;
@@ -182,13 +197,19 @@
     const f = pack?.files.find((x) => x.aya === queue[idx]);
     if (f && !reciter.enLigne && !lastUrl.startsWith('blob:')) void garderEcoute(f.url);
     if (sleepUntil && Date.now() >= sleepUntil) return finish('sommeil');
-    void playAt(idx + 1);
+    // hifẓ : silence « à vous » (au moins la durée du verset) avant le verset suivant
+    const ms = f && silence > 0 ? silenceMs(f.durationMs, silence, rate) : 0;
+    if (!ms) return void playAt(idx + 1);
+    gap = true;
+    gapTimer = setTimeout(() => void playAt(idx + 1), ms);
   }
   function finish(why: 'fin' | 'sommeil') {
     stop();
     onend?.(why);
   }
   export function stop() {
+    clearGap();
+    resumeNext = false;
     audio?.pause();
     playing = false;
     started = false;
@@ -198,6 +219,7 @@
     onindex?.(null);
   }
   onDestroy(() => {
+    clearGap();
     audio?.pause();
     if (lastUrl.startsWith('blob:')) URL.revokeObjectURL(lastUrl);
   });
@@ -286,6 +308,8 @@
           })}
         />{#if status}<span class="st" data-testid="etape">
             · <Bidi text={status} /></span
+          >{/if}{#if gap}<span class="st" data-testid="a-vous">
+            · {t('cl.a_vous')}</span
           >{/if}{:else}<Bidi text={t('ca.pret', { total: fmtNumber(total) })} />{/if}
     </p>
   </div>

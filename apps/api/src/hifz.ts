@@ -26,6 +26,7 @@ import {
   listClasses,
   listHifzBooks,
   listHifzEvents,
+  listHifzMarks,
   profileClasses,
   recordHifzEvents,
   savePlan,
@@ -179,6 +180,19 @@ export function registerHifz(app: FastifyInstance, db: Db, edition: Edition): vo
         events: await listHifzEvents(db, req.params.id),
         classes: await profileClasses(db, req.params.id),
       };
+    },
+  );
+
+  // hifẓ complet : carte des erreurs du profil (marques par verset et par mot ; écrites par la file hors ligne)
+  app.get<{ Params: { id: string } }>(
+    '/api/v1/hifz/profiles/:id/marques',
+    {
+      preHandler: needAuth,
+      schema: { params: { type: 'object', properties: { id: UUID_PARAM }, required: ['id'] } },
+    },
+    async (req, reply) => {
+      if (!(await canSee(req, req.params.id))) return err(reply, 404, 'introuvable');
+      return { marques: await listHifzMarks(db, req.params.id) };
     },
   );
 

@@ -8,6 +8,56 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 12/10/2026 — Hifẓ complet : répétition fine, test au hasard, carte des erreurs, fraîcheur, 2 rakʿa, écran enfant
+
+Branche `hifz-complet-wip` (worktree `~/awform-hifz`, depuis `main` e42a059), **non fusionnée**. Complète les écrans
+existants (`/hifz`, lecteur `/coran/lecteur`, A5) sans les réécrire. Aucun texte coranique ni contenu religieux
+ajouté : seulement des références (sourate, verset, rang du mot dans `texte.split(' ')`, comme A5).
+
+1. **Répétition fine** (lecteur, Réglages › Écoute) : verset N fois puis plage M fois (existant) ; **silence pour
+   répéter** après chaque verset (sans, 1×, 1,5×, 2× la durée du verset — jamais moins que le verset, allongé à
+   0,75× et 0,5×), « À vous de répéter » affiché pendant le silence (`AudioPlayer` : `silence`, `clip`, `simple`) ;
+   **partie d'un long verset** (mot de début, mot de fin) : seulement avec des minutages PAR MOT (`AudioFile.wordMs`,
+   `wordClip`) — aucun récitateur n'en a aujourd'hui : l'option est désactivée et le dit (jamais devinée).
+2. **Test au hasard** (`/hifz/test`) : verset tiré dans les passages mémorisés (sans répétition dans la séance),
+   amorce = premier tiers (1 à 5 mots), l'élève récite la suite (le verset et les 2 suivants) ; IA d'écoute A5 si
+   ouverte (panneau chargé à la demande ; ses mots à revoir sont surlignés sur la réponse) ; sinon (hors ligne,
+   refusée) auto-évaluation « juste / hésitant / oublié » ; l'élève touche les mots où il a buté.
+3. **Carte des erreurs** : migration `0046_hifz_marques` (table `hifz_mark`, journal en ajout seul, droits API
+   SELECT/INSERT), événement « hifz_marque » de la file hors ligne commune, `GET /api/v1/hifz/profiles/:id/marques`.
+   Une récitation « juste » résout les marques plus anciennes du verset. Les bilans de l'IA (A5) restent sur
+   l'appareil (non envoyés). « Mes points faibles » (`/hifz/points-faibles`) : surlignage discret des mots.
+4. **Fraîcheur** (`/hifz/fraicheur`) : par sourate et par passage, dernière révision réussie (q ≥ 2) et indicateur
+   écrit (frais < 7 j, à revoir ≥ 7 j, urgent ≥ 30 j ou dernière révision ratée — seuils à valider) ; dans le carnet,
+   pastilles et, dans chaque piste (nouveau, récent, ancien), l'urgent d'abord.
+5. **Mes 2 rakʿa** (`/hifz/priere`) : deux passages mémorisés (ou une partie), gardés sur l'appareil ; révision
+   juste avant (texte voilé, auto-évaluation enregistrée comme révision du carnet si la part est entière).
+6. **Mutashābihāt** : structure seulement (`hifz-outils/mutashabihat.ts`, liste VIDE, source savante obligatoire,
+   alerte « verset proche de… » prête dans le test et les points faibles).
+7. **Écran enfant** (`/hifz/enfant`) : deux réglages (passage, nombre de répétitions), lecteur simple (« Écouter »
+   écrit), silence pour répéter après le récitateur.
+
+**Retouches du pilote (DA et référent, même jour)** : basmala d’en-tête sur SA ligne dans le test (sauf al-Fātiḥa) ; bloc « Urgent à revoir » AVANT le nouveau (taʿāhud al-Qurʾān ; seuils 7 et 30 jours et 2 versets validés) ; 2 rakʿa : aucune règle affichée, emplacement vide réservé à la Risāla ; outils en tuiles secondaires (icône + nom), bandeau urgent → lien vers le bloc ; écran enfant : lecteur propre (icône à gauche du mot, 56 px), sans pied juridique, chargé à la demande (groupe « en ligne ») ; budget : choix des mots d’une partie de verset retiré de l’interface (reviendra avec les minutages), bornes des passages de prière retirées.
+
+Textes : `static/i18n/fr-hifz.json` (`hz.*`, chargé par `/hifz`, PRÉCHARGÉ par le service worker) et `cl.*` dans
+`fr-coran.json` ; EN/ES/DE/AR à relire. Tests : unitaires `hifz-outils/outils.test.ts`, `player.test.ts`
+(répétition fine) ; API `hifz-marques.test.ts` ; e2e `hifz-complet.spec.ts`, `hifz-complet-ia.spec.ts` (captures
+412×915 clair/sombre dans `captures-hifz/`).
+
+**Rebase sur `main` 5383bde (mises à jour fiables) et allègement** : service worker de `main` gardé, `fr-hifz.json`
+ajouté aux textes préchargés (`STUDENT_TEXTS`). Appareil élève après rebase : 351,1 Ko (> 350) ; après allègement :
+**343,2 Ko** (≤ 345), règle de mesure de `budget.mjs` inchangée, aucune fonction retirée. Chaque fichier étant
+compressé à part, les pages d'un même espace de l'élève vont dans UN morceau par espace (`vite.config.ts`,
+`ESPACES` : quotidien − 2,5 Ko, hifẓ − 1,8 Ko, écriture − 1,2 Ko, famille/profils − 0,7 Ko, suivi − 0,7 Ko,
+activités, lectures, aide, Coran) ; les modules partagés avec d'autres pages restent dans leur morceau (`A_PART`),
+pour que le lecteur, les leçons et les révisions n'importent pas un morceau d'espace (pages les plus lourdes :
+lecteur 145,9 Ko, leçons 143,5 Ko ; accueil 111,0 Ko). Textes des modules EN LIGNE (compte en ligne,
+notifications, tuteur ; 86 clés) passés de `fr.json` à `fr-rares.json` (chargés avec ces modules) ; composant mort
+`parcours/AccueilEleve.svelte` et ses 14 clés retirés (≈ − 1,3 Ko). Tuile « Mes 2 rakʿa » : icône de mosquée de
+l'onglet « Vivre l'islam » (`vivre` ; `mosquee` n'existait pas et retombait sur « info »).
+
+---
+
 ## 12/10/2026 — Mise à jour fiable de l'application ; signes de pause dans l'écoute IA
 
 Branche `maj-fiable-wip` (worktree `~/awform-maj`, depuis `main` e42a059). Incident du 12/10 : 23 onglets ouverts,
@@ -219,15 +269,14 @@ isolés (ports 3590/4590).
    affiché, **non bloquant**.
 2. **Allègement réel** — mesures avant (main 0f6e305) → après :
 
-   | Indicateur | Avant | Après |
-   |---|---|---|
-   | (a) Appareil d'un élève (JS + CSS + textes préchargés) | 356,8 Ko | **313,8 Ko** |
-   | (b) Première ouverture (`/`) | 111,0 Ko | **108,8 Ko** |
-   | (c) Ouverture en 3G simulée (médiane) | 3,02 s (au-delà du budget) | **1,9 s** |
-   | Fichiers téléchargés pour ouvrir l'accueil | 51 | 11 |
-   | Page la plus lourde (`/lecons/[id]`) | 138,7 Ko | 137,2 Ko |
-   | Total de toutes les pages (non bloquant) | 405,5 Ko | 391,7 Ko |
-
+   | Indicateur                                             | Avant                      | Après        |
+   | ------------------------------------------------------ | -------------------------- | ------------ |
+   | (a) Appareil d'un élève (JS + CSS + textes préchargés) | 356,8 Ko                   | **313,8 Ko** |
+   | (b) Première ouverture (`/`)                           | 111,0 Ko                   | **108,8 Ko** |
+   | (c) Ouverture en 3G simulée (médiane)                  | 3,02 s (au-delà du budget) | **1,9 s**    |
+   | Fichiers téléchargés pour ouvrir l'accueil             | 51                         | 11           |
+   | Page la plus lourde (`/lecons/[id]`)                   | 138,7 Ko                   | 137,2 Ko     |
+   | Total de toutes les pages (non bloquant)               | 405,5 Ko                   | 391,7 Ko     |
    - **Groupes non préchargés** (`scripts/groupes.mjs` remplace `personnel.mjs` → `groupes.json`, service worker) :
      personnel (`/enseignant`, `/admin`), **pages rares** utiles en ligne seulement (offres, abonnement, inscription,
      activation, certificats, protections du compte, réglages du tuteur, garanties, errata, démonstration) et
@@ -243,10 +292,11 @@ isolés (ports 3590/4590).
    - **Ouverture** : la langue n'attend plus `/api/v1/config` sauf si une langue en préparation peut s'afficher ;
      `fetchMe` regroupe les appels simultanés (3 requêtes → 1).
    - Hors ligne de l'élève vérifié en e2e : 19 espaces ouverts sans réseau, aucun fichier des groupes en cache.
+
 3. **Penser large** :
    - **Interrupteurs de fonctions** (registre `packages/school/src/fonctions.ts`, tables `feature_flag` et
-     `feature_rule`, migration `0042_f5_penser_large`, API `apps/api/src/f5.ts`, écran *Administration →
-     Fonctions*) : état de base ouvert / coupé / bêta et exceptions par rôle, âge, pays, école, canal ; la plus
+     `feature_rule`, migration `0042_f5_penser_large`, API `apps/api/src/f5.ts`, écran _Administration →
+     Fonctions_) : état de base ouvert / coupé / bêta et exceptions par rôle, âge, pays, école, canal ; la plus
      précise l'emporte, « couper » à égalité ; cache serveur 30 s, copie de l'appareil 5 min (hors ligne : dernière
      connue), valeur par défaut sûre du registre. Branchés : animations, Muṣḥaf exact, tuteur, Vivre l'islam,
      défis, certificats individuels, mode serein, avis (récitateurs en ligne : clé prête, branchée à la fusion
@@ -255,9 +305,9 @@ isolés (ports 3590/4590).
    - **« Donner mon avis »** (accueil de l'élève, Plus, compte, espace enseignant) : catégorie, texte ≤ 500 (aucun
      pour un enfant), image facultative de l'écran faite sur l'appareil (champs et pseudonyme masqués, interdite
      sur les pages qui montrent d'autres personnes), aperçu avant envoi ; 5 par compte et par jour, 300 par heure ;
-     file *Avis reçus* avec statut ; image effacée à 90 jours, avis à 12 mois (travailleur).
+     file _Avis reçus_ avec statut ; image effacée à 90 jours, avis à 12 mois (travailleur).
    - **Usage sans traceur** (`usage_day` ; empreintes et sels du jour effacés après 2 jours) : clés d'une liste
-     fermée, une fois par jour et par personne ; tableau *Usage* (personnes-jours, ouvertures, jamais utilisées,
+     fermée, une fois par jour et par personne ; tableau _Usage_ (personnes-jours, ouvertures, jamais utilisées,
      leçons où l'on abandonne, temps médian) ; **aucun chiffre sous 10 personnes**.
    - **Étiquette `avant-<lot>`** avant chaque fusion (`infra/outils/etiquette-avant-fusion.sh`) et procédure de
      retour arrière en 4 niveaux (EXPLOITATION § 11).
@@ -273,6 +323,7 @@ isolés (ports 3590/4590).
    hors ligne complet), `perf.spec.ts` réécrit, `a27.spec.ts` adapté. **Suite e2e complète (sous le verrou partagé) : 338 réussis, 45 ignorés, 13 échecs** — 6 tests de langue (la page Compte lisait le réglage « langues en préparation » avant la réponse du serveur, que la mise en page n'attend plus : corrigé, `lib/config.ts`) et 7 des leçons vivantes (l'animation se réinstallait à chaque relecture des interrupteurs : corrigé, valeur dérivée) ; les 5 fichiers concernés relancés : **53 réussis**, 1 intermittent connu (captures A21b, « carte vide », réussi deux fois de suite à la relance ; stabilisé sur `coran-corrections-wip`). Ouverture en 3G simulée : 1,9 s seule, 2,6 s pendant la suite complète (VM chargée par 4 agents).
 
 Décisions à prendre (D-F5) : voir DECISIONS_EN_ATTENTE.
+
 ## 06/10/2026 — Lot F3 : comptes de la bêta (revue d'architecture M7, E10, G3, G4, M8, M9, F7, F8)
 
 Branche `f3-comptes-wip` (worktree `~/awform-f3`, depuis `main` 0f6e305), base de tests unitaires propre
@@ -338,11 +389,11 @@ Décisions existantes conservées (mode serein, rôles F2, responsables).
 
 Décisions à prendre (D-F3) : voir DECISIONS_EN_ATTENTE.
 
-
 ## 06/10/2026 — Chantier A2 : récitateurs EN LIGNE (Quran Foundation)
 
 Branche `a2-en-ligne-wip` (worktree `~/awform-a2`, base de tests unitaires propre `awform_a2_test`), après la fusion
 des corrections du lecteur (main a5b13ca).
+
 - **Juridique** (`SOURCES_MUSHAF.md` § 8, `LICENCES.md` § 9 ; Developer Terms du 04/10/2026 lues le 06/10) : lecture
   en continu PERMISE dans l'application payante ; réponses gardées ≤ 1 semaine hors Content Sync (nous : 24 h en
   mémoire) ; « audio URLs are distinct from the underlying recordings » → AUCUNE copie des enregistrements (ni hors
@@ -421,6 +472,7 @@ Branche `coran-corrections-wip` (worktree `~/awform-corfix`, depuis `main` fd3ca
    « autre riwāya » et doublons retirés.
 7. Captures avant / après (puce, réglages adulte et enfant, thème adulte ; 375 px et bureau) :
    `reports/coran-corrections/` (hors dépôt), copiées sur le PC (`application/coran-corrections-captures/`).
+
 ## 06/10/2026 — Chantier A39 (suite) : décisions D-A39 appliquées
 
 Branche `a39b-certificat-wip` (depuis `main` 7785a3f).
@@ -458,8 +510,7 @@ Même branche `a37-vivre-islam-wip` (fusionnée une première fois dans `main` 1
 
 1. **Données des livres (B9) — leur format fait foi** (`~/awform-content/ids/akhlaq-SCHEMA-B9.md`) : import adapté,
    aucune demande de changement aux livres.
-   - **Index officiel** `data/akhlaq/index-adab.json` (567 rubriques : 476 `fiqh_adab` + adab 67, usra 9, muʿāmalāt
-     15) : il **remplace** le classement automatique (gardé en repli seulement, sans index) ; rubriques repérées par
+   - **Index officiel** `data/akhlaq/index-adab.json` (567 rubriques : 476 `fiqh_adab` + adab 67, usra 9, muʿāmalāt 15) : il **remplace** le classement automatique (gardé en repli seulement, sans index) ; rubriques repérées par
      leçon et titre, sinon par identifiant (`.adab` = bloc `fiqh_adab`, `.r<k>` = k-ième rubrique) ; fiches liées
      montrées sous la rubrique. Identifiants de cercles des livres (`autorites`, `espace_public`, `musulmans_avis`,
      `autres_religions`, `animaux_nature`, `numerique`…), libellés du client inchangés.
@@ -493,6 +544,7 @@ Même branche `a37-vivre-islam-wip` (fusionnée une première fois dans `main` 1
    `vi.retenir`, `vi.coran_ref`, `vi.en_bref` (5 langues, A_RELIRE.md) ; clés de cercles renommées.
 5. Tests (après fusion de `main` A39) : unitaires **1 613 réussis, 1 ignoré** ; e2e suite complète **339 réussis, 43 ignorés, 0 échec** (22,1 min ; `a37.spec.ts` 13, guide des parents compris) ; budget après fusion **409,5 Ko** ≤ 410, élève 349,1 Ko. Puis rubriques des **bilans** (révisions) de l'index montrées (libellé « bilan »), jamais celles des épreuves (sujets) : 528 rubriques montrées sur la démo (567 moins 19 d’épreuves et 20 bilans des enfants, dont la page n’a pas ce bloc). Vérification finale : unitaires 1 613 réussis, 1 ignoré ; e2e **337 réussis, 45 ignorés, 0 échec** (23,5 min) ; budget **409,6 Ko**, élève 349,2 Ko. (La VM s'est figée une heure pendant une vérification et a redémarré : vérification relancée en entier.). Captures 375 px (vraie fiche akh.f001 enfant/ado/adulte, f008 avec
    verset, guide des parents) : `application/a37-captures/`.
+
 ## 06/10/2026 — Chantier A39 : « MODE SEREIN » — l'évaluation ne doit jamais décourager (décision du client)
 
 Branche `a39-serein-wip` (worktree `~/awform-a39`, depuis `main` f9467cd, puis fusionnée avec `main` 147c5fc — A37),
@@ -517,7 +569,7 @@ base de tests `awform_a39_test`, e2e isolés.
 3. **API** (`apps/api/src/serein-a39.ts`) : `GET|PUT /profiles/:id/mode-evaluation` (adulte : lui-même ; mineur :
    le parent, **code parent** s'il existe — c'est ce qui distingue le parent du jeune sur un appareil partagé ; tablette
    de classe refusée), `POST|DELETE …/souhait` (l'ado propose ; le parent refuse avec son code), `GET
-   /profiles/:id/recapitulatif/:matiere`, `POST /profiles/:id/niveau-suivant/:matiere` (mode serein seulement,
+/profiles/:id/recapitulatif/:matiere`, `POST /profiles/:id/niveau-suivant/:matiere` (mode serein seulement,
    leçons faites ; refus « epreuve_requise » / « lecons_a_finir »), `POST /profiles/:id/choisir-niveau/:matiere`
    (mode serein), `GET|PUT /ecole/classes/:id/mode-evaluation` et `GET /ecole/classes/:id/notions-fragiles`
    (enseignant de la classe ou direction, second facteur). Inscription adulte : champ `evalMode`. Épreuve de passage :
@@ -657,6 +709,7 @@ Décisions à prendre (D-A37) : voir DECISIONS_EN_ATTENTE.
 ## 06/10/2026 — Chantier A34 : Muṣḥaf de Médine « à l'identique » — branchement dans le lecteur (mode partiel)
 
 Après la fusion de « Coran épuré » (main aea0b34), fusionnée dans `a34-mushaf-exact-wip` :
+
 - **Synchronisation réelle** (prélancement, par le chef de projet) : 6 488 lignes (1 fiche, 49 pages, 6 438 mots) ;
   ordre de lecture = `position_in_page` (`position_in_line` non fiable) ; **49/49 pages conformes** après la
   correction explicite `qf-2-181-fin` (`corrections.json`, validée par le référent ; signalement
@@ -684,7 +737,7 @@ attend le vrai fichier de lignes, généré par le chef de projet avec le secret
 - **Compatibilité police/codes** vérifiée en dessinant les polices officielles du Complexe (`QCF_P002` : U+FB51 =
   « الٓمٓ » = code_v1 de 2:1 mot 1) ; glyphes de `QCF_BSML` relevés (basmala, « سورة », 114 noms).
 - **Outil** `infra/outils/qf-lignes/` : `qf-lignes.mjs sync|verifier|inspecter` (jeton OAuth2 « client
-  credentials », amorçage puis synchronisation incrémentale, instantané, mutations ROW_*/RESOURCE_*, publication
+  credentials », amorçage puis synchronisation incrémentale, instantané, mutations ROW__/RESOURCE__, publication
   d'un bloc seulement si le contrôle est vide), `installer-polices.sh` (empreinte de `Data.zip`, 605 TTF tels quels,
   `SHA256SUMS`), lecteur `cmap` sans dépendance.
 - **Contrôle bloquant** (`mushaf-exact.ts`) : 604 pages, lignes 1-15 sans trou (texte + en-têtes + basmala, pages
@@ -842,10 +895,10 @@ Validé par le client après le pilote A21.
    - **règle du client « l'arabe a sa ligne »** : aucune traduction montrée si elle contient 3 mots arabes ou
      plus, ou une fin de phrase arabe (`frSeul`) ; l'arabe et le français sont toujours sur des lignes séparées
      dans tous les modèles (contrôlé par le test des 381 leçons et, à l'écran, par l'e2e qui mesure les lignes).
-   Couverture : **381 / 381 leçons animées** (en1 21/21, en2–en5 20/20, ado1–ado4 20/20, ad1–ad10 20/20),
-   1 769 animations. **Sans animation** : religion (re, ra) et lecture du Coran (qc) — voir « décisions » ; bilans
-   et examens (inchangé) ; à l'intérieur des leçons, les parties dont tous les textes sont écartés (Coran, adab,
-   textes longs, textes non préparés).
+     Couverture : **381 / 381 leçons animées** (en1 21/21, en2–en5 20/20, ado1–ado4 20/20, ad1–ad10 20/20),
+     1 769 animations. **Sans animation** : religion (re, ra) et lecture du Coran (qc) — voir « décisions » ; bilans
+     et examens (inchangé) ; à l'intérieur des leçons, les parties dont tous les textes sont écartés (Coran, adab,
+     textes longs, textes non préparés).
 2. **Activation partout par défaut** (`reglage.ts`) : interrupteur général gardé ; chaque niveau peut être
    désactivé (« Animations dans ces niveaux ») ; l'ancien réglage du pilote ne restreint plus rien. Page
    **`/demo/vivante`** : choix du livre puis de la leçon (liste des leçons du niveau), un exemple de chaque
@@ -895,6 +948,7 @@ du premier temps puis en pause. Nouvel e2e « aucune carte vivante vide ni recou
 texte visible dans la scène, boutons et scène non recouverts).
 
 ---
+
 ## 05/10/2026 — Chantier A27 (suite) : décisions D-A27 appliquées
 
 - Positionnement **adaptatif de 4 exercices par niveau** (examens des livres ; ceux du livre de l'élève d'abord, puis
@@ -955,7 +1009,7 @@ tests unitaires `awform_a27_test`, e2e isolés. Règle d'or : tout repose sur le
 6. **Ma classe** (`/ma-classe`) : classes et cercles, devoirs, épreuves, mémorisation, messages (famille).
 7. **Décisions D-F2** : (1) registre d'un élève parti depuis 3 ans anonymisé chaque nuit (`anonymizeSchoolArchives`,
    notes et copies gardées) — PROVISOIRE, juriste ; (2) le jeune demande son autonomie (`POST|DELETE
-   /profiles/:id/emancipation/demande`), le parent valide ou refuse (« Demandes à traiter »), de droit à 18 ans (code
+/profiles/:id/emancipation/demande`), le parent valide ou refuse (« Demandes à traiter »), de droit à 18 ans (code
    donné aussitôt) ; (5) à la clôture d'année, proposition de réinscription aux familles (`reenrolment_offer`),
    confirmée d'un geste ; (8) fils d'un enseignant parti gardés (`message_thread.teacher_account_id` SET NULL),
    « ancien enseignant » ; (9) pages du personnel hors du cache de l'élève ; (3) (4) (6) (10) déjà en place (F2).
@@ -1038,6 +1092,7 @@ Décisions à prendre (D-A21) : budget 375 Ko ; activer au-delà des pilotes (pa
 fiable avec la police : la syllabe entière s'illumine) ; dialogue des enfants sans bulle de personnage.
 
 ---
+
 ## 05/10/2026 — Lot F2 : école, rôles, niveaux (revue d'architecture E1, E2, E3, E4, E8)
 
 Branche `f2-ecole-wip` (worktree `~/awform-f2`, depuis `main` a29808a), base de tests unitaires propre
@@ -1125,14 +1180,14 @@ interface élève viendra avec A27.
    325 Ko : pas atteignable sans retirer des fonctions** ; piste réelle notée dans TACHES_TECHNIQUES (ne pas garder
    hors ligne les pages et textes du personnel sur l'appareil d'un élève).
 10. **Tests** : unitaires **1 436 réussis, 1 ignoré, 0 échec** (`pnpm test`, base `awform_f2_test`) dont api
-   `f2.test.ts` (11 : élève papier → profil → tablette → code → parent ; parent+enseignant même e-mail ; enseignant
-   supprimé → classes gardées puis transférées, purge définitive possible ; deux parents ; type recalculé et
-   émancipation ; niveaux par matière ; passage de fin d'année ; archivage ; mon parcours ; la direction d'une autre école ne voit ni classe ni école), db
-   `f2-reprise.test.ts` (6), web `icu.test.ts` (6) ; 4 tests adaptés à la nouvelle règle (lot13, lot18, lot19,
-   récital : archivées au lieu d'effacées) et MIN-2 respecté (âge au plus bas). e2e `f2.spec.ts` (5 parcours ×
-   téléphone et ordinateur : école → profil → parent, deux parents, parent+enseignant puis compte supprimé, émancipation,
-   niveaux + archives + parcours + clôture d'année dans une école propre au test) ; **suite e2e complète : 260 réussis,
-   22 ignorés, 0 échec** (15,6 min). Build, types, lint, budget verts.
+    `f2.test.ts` (11 : élève papier → profil → tablette → code → parent ; parent+enseignant même e-mail ; enseignant
+    supprimé → classes gardées puis transférées, purge définitive possible ; deux parents ; type recalculé et
+    émancipation ; niveaux par matière ; passage de fin d'année ; archivage ; mon parcours ; la direction d'une autre école ne voit ni classe ni école), db
+    `f2-reprise.test.ts` (6), web `icu.test.ts` (6) ; 4 tests adaptés à la nouvelle règle (lot13, lot18, lot19,
+    récital : archivées au lieu d'effacées) et MIN-2 respecté (âge au plus bas). e2e `f2.spec.ts` (5 parcours ×
+    téléphone et ordinateur : école → profil → parent, deux parents, parent+enseignant puis compte supprimé, émancipation,
+    niveaux + archives + parcours + clôture d'année dans une école propre au test) ; **suite e2e complète : 260 réussis,
+    22 ignorés, 0 échec** (15,6 min). Build, types, lint, budget verts.
 
 Décisions à prendre (D-F2) : voir DECISIONS_EN_ATTENTE.
 
@@ -1204,6 +1259,7 @@ dans `main`, démo redéployée. Base de tests unitaires propre au worktree (`aw
 
 Décisions à prendre (D-F1) : budget total 365 Ko ; durée de conservation des signalements ; titulaire du rôle
 référent ; export `ids/lignee.json` côté livres ; formulation « Selon l'école mālikite ».
+
 ## 05/10/2026 — Chantier A12 (suite) : décisions du chef de projet (D-A12) appliquées
 
 - **Navigation : cinq entrées au plus** (règle du lot 26 maintenue). Ados et adultes : Accueil, Arabe, Coran,
@@ -1344,6 +1400,7 @@ l'Arabie ; budget 360 Ko ; rappels application ouverte ; validation des 21 adhk�
   unitaires complètes vertes ; e2e a3 + lecons + horsligne + exercices + a11y : 37 passés.
 
 ---
+
 ## 05/10/2026 — Chantier A8 : muṣḥafs des riwāyāt (textes et polices officiels du Complexe)
 
 Branche `a8-wip` (depuis `main` 22fcdbf, worktree `~/awform-a8`, base e2e isolée). Ḥafṣ reste le texte Tanzil
@@ -1355,7 +1412,7 @@ as-Sūsī ʿan Abī ʿAmr, ad-Dūrī ʿan Abī ʿAmr, al-Bazzī ʿan Ibn Kathīr
    modification → polices servies **telles quelles** (TTF d'origine, pas de WOFF2 ni de sous-ensemble).
    `LICENCES.md` § 6.
 2. **Importeur** `packages/content/src/riwayat.ts` (pur) + `cli-riwayat.ts` (`pnpm --filter @awform/content
-   riwayat [--from ~/complexe-ressources/textes-riwayat] [--check]`) : JSON du Complexe lu tel quel (aucune NFC,
+riwayat [--from ~/complexe-ressources/textes-riwayat] [--check]`) : JSON du Complexe lu tel quel (aucune NFC,
    rien de retapé), empreintes SHA-256 du JSON et de la police contrôlées, source gardée en
    `riwayat-source/*.json.gz` (gzip du fichier d'origine), sortie `apps/web/static/riwayat/<riwāya>/NNN.json`
    (verset, page, juzʾ, texte) + `index.json` (comptes, débuts des 604 pages, juzʾ par page) + police.
@@ -1424,23 +1481,23 @@ Branche `a1-audio-wip` (depuis `main` 398cc4e), intégrée dans `main`, démo re
    Qālūn 6 214 ; `riwayaSuraVerses`) ; import partiel : une sourate écartée ne bloque plus. Catalogue : noms
    arabes exacts, crédit FR/AR « Récitation : <nom> — Complexe du Roi Fahd pour l'impression du Noble Coran,
    Médine », licence = texte arabe relevé en direct le 04/10/2026 (https://qurancomplex.gov.sa/quran-audios/)
-   + traduction de travail, « ne pas vendre l'audio » (migration 0028 : `credit_ar`, `usage_note`, affichés
-   dans Écouter et Mes récitateurs). `deploy.sh` : volume `audio` rendu au compte de l'outil (EACCES constaté).
+   - traduction de travail, « ne pas vendre l'audio » (migration 0028 : `credit_ar`, `usage_note`, affichés
+     dans Écouter et Mes récitateurs). `deploy.sh` : volume `audio` rendu au compte de l'outil (EACCES constaté).
 2. **Vérification** (`verifier`, base de la démo) et 3. **contrôle par ASR** (NVIDIA FastConformer arabe,
    CC-BY-4.0, image `awzid/asr-nemo`, `infra/outils/asr-controle/` ; 528 versets environ par récitation :
    premier et dernier de chaque sourate + 300 au hasard ; second passage « voisins » pour les lettres isolées) :
 
-   | Récitation | Versets | verifier | ASR (conformes) | Démo |
-   |---|---|---|---|---|
-   | ayyoub-hafs | 6 236 | OK | 528/528 | activé |
-   | muaiqly-hafs | 6 236 | OK (4 silences longs) | 528/528 | activé |
-   | huthify-hafs | 6 236 | OK (2 dossiers, 2 nommages) | 528/528 | activé |
-   | akhdar-hafs | 6 236 | OK | 528/528 | activé |
-   | huthify-shuba | 6 236 | OK | 528/528 | activé |
-   | juhani-duri | 6 218 | OK | 529/529 | activé |
-   | muhanna-hafs | 6 233 | BLOQUÉ (110 absente) | 523/527, 3 suspects | importé partiel (sans 42, 109, 110), non activé |
-   | sediki-susi | 6 217 | BLOQUÉ (67:31 absent) | 527/529, décalage 67:29-30 | importé partiel (sans 67), non activé |
-   | huthify-qalun | 6 214 + 1:8 | BLOQUÉ (1:8 hors muṣḥaf) | 525/528, décalage Fātiḥa | partiel à réimporter (sans 1), non activé |
+   | Récitation    | Versets     | verifier                    | ASR (conformes)            | Démo                                            |
+   | ------------- | ----------- | --------------------------- | -------------------------- | ----------------------------------------------- |
+   | ayyoub-hafs   | 6 236       | OK                          | 528/528                    | activé                                          |
+   | muaiqly-hafs  | 6 236       | OK (4 silences longs)       | 528/528                    | activé                                          |
+   | huthify-hafs  | 6 236       | OK (2 dossiers, 2 nommages) | 528/528                    | activé                                          |
+   | akhdar-hafs   | 6 236       | OK                          | 528/528                    | activé                                          |
+   | huthify-shuba | 6 236       | OK                          | 528/528                    | activé                                          |
+   | juhani-duri   | 6 218       | OK                          | 529/529                    | activé                                          |
+   | muhanna-hafs  | 6 233       | BLOQUÉ (110 absente)        | 523/527, 3 suspects        | importé partiel (sans 42, 109, 110), non activé |
+   | sediki-susi   | 6 217       | BLOQUÉ (67:31 absent)       | 527/529, décalage 67:29-30 | importé partiel (sans 67), non activé           |
+   | huthify-qalun | 6 214 + 1:8 | BLOQUÉ (1:8 hors muṣḥaf)    | 525/528, décalage Fātiḥa   | partiel à réimporter (sans 1), non activé       |
 
    Constats : al-Muhannā — dans le zip, le dossier « 110 An-Nasr » contient des fichiers nommés `10-109VVV` ;
    la décompression à plat a remplacé 109:1-3 par an-Naṣr (l'ASR entend « إذا جاء نصر الله » dans 109:1) ;
@@ -1448,16 +1505,17 @@ Branche `a1-audio-wip` (depuis `main` 398cc4e), intégrée dans `main`, démo re
    numérotée en 30 versets (le fichier 67:29 contient le verset 30 du texte du Complexe, 67:30 le 31) ; les
    6 330 fichiers sont complets dans cette numérotation (rien ne manque, 6 331 annoncés = un dossier).
    Qālūn : al-Fātiḥa en 8 fichiers (1 = basmala, 2-8 = versets 1-7).
-4. **Démo** : 6 récitations actives (6 236 ×5, 6 218) ; échantillons d'écoute (4 extraits par récitation,
+
+3. **Démo** : 6 récitations actives (6 236 ×5, 6 218) ; échantillons d'écoute (4 extraits par récitation,
    al-Fātiḥa assemblée sans ré-encodage) et `RAPPORT_CONTROLES_A1.txt` copiés dans
    `W\application\audio-coran-echantillons\`.
-5. **Interface** (démo, https et http) : Écouter (Ḥafṣ : surlignage du verset entendu ; ad-Dūrī : badge
+4. **Interface** (démo, https et http) : Écouter (Ḥafṣ : surlignage du verset entendu ; ad-Dūrī : badge
    « autre riwāya », pas de surlignage), crédit FR/AR et condition d'usage, sourate gardée hors ligne en https
    puis jouée depuis l'appareil (`blob:`), paquets des relais servis (`/packs`, 1,73 Go pour ad-Dūrī).
    **Défaut corrigé** : dans le Muṣḥaf page par page, le surlignage Ḥafṣ recalculait la file et coupait la
    lecture dès le premier verset (invisible avec les bips d'essai) → verset entendu distinct du début de plage ;
    e2e `a1.spec.ts`.
-6. Tests : `pnpm check` vert (unitaires 1 308 réussis, budget respecté), e2e 225 réussis, 20 ignorés.
+5. Tests : `pnpm check` vert (unitaires 1 308 réussis, budget respecté), e2e 225 réussis, 20 ignorés.
    Commits aaa075a, 1db77b9, fdcc18a (déploiement), e8034a1, ece3827 et ce journal.
 
 Décisions à prendre (client/référent) : muhanna-hafs (réextraction depuis le zip conservé, sourates 109/110
@@ -1496,8 +1554,8 @@ vérification finale sur le code de `main` 66d08a5 + les trois étapes).
      temporaires propres à chaque dossier (`playwright.config.ts`, inchangé en CI) ;
    - sélecteur ambigu (hors ligne, données économes) : `getByRole('status')` trouvait aussi l'indicateur de
      chargement → messages visés sans lui.
-   Preuve : **3 suites e2e complètes consécutives vertes** sur fe79a1a : 214 réussis, 20 ignorés, 0 échec
-   (11,9 / 12,0 / 12,0 min).
+     Preuve : **3 suites e2e complètes consécutives vertes** sur fe79a1a : 214 réussis, 20 ignorés, 0 échec
+     (11,9 / 12,0 / 12,0 min).
 3. **Traductions** (`finitions-traductions-wip`) : Claude relecteur natif PROVISOIRE (décision du client). Les
    1 773 textes en, es, de, ar relus en regard du français (y compris les 53 textes du Muṣḥaf page par page
    arrivés dans `main` pendant la relecture) : **252 corrigés** (anglais 62, espagnol 58, allemand 47, arabe 85) —
@@ -1628,11 +1686,11 @@ se mélangent (le français va de gauche à droite, l'arabe de droite à gauche)
   les tests ; `e2e/bidi.spec.ts` : chaque nœud de texte est d'une seule écriture et dans la bonne direction
   (11 cas réels) — **11/11 en échec sur `main`, 11/11 vert après**.
 - **Chiffres** (code fusionné avec `main` = lot 29 compris) : tests unitaires 1 289 réussis (dont 17 nouveaux)
-  + 1 ignoré ; e2e 212 réussis + 19 ignorés, 1 intermittent (lot 15, parent, vert à la relance 6/6 ; au
-  passage précédent, 3 autres intermittents — captures lot 3, accueil lot 26, récitateurs lot 27 — verts à la
-  relance 52/52) ; budget : page la plus lourde 130,0 → 131,9 Ko (≤ 150), toutes pages 269,4 → 274,3 Ko
-  (≤ 300). Intégré dans `main` (étiquette `avant-bidi` sur l'état précédent). Démonstration NON redéployée
-  (en attente de l'accord du client).
+  - 1 ignoré ; e2e 212 réussis + 19 ignorés, 1 intermittent (lot 15, parent, vert à la relance 6/6 ; au
+    passage précédent, 3 autres intermittents — captures lot 3, accueil lot 26, récitateurs lot 27 — verts à la
+    relance 52/52) ; budget : page la plus lourde 130,0 → 131,9 Ko (≤ 150), toutes pages 269,4 → 274,3 Ko
+    (≤ 300). Intégré dans `main` (étiquette `avant-bidi` sur l'état précédent). Démonstration NON redéployée
+    (en attente de l'accord du client).
 
 ---
 
@@ -1857,6 +1915,7 @@ visiteur, adulte, parent, enfant, ado, enseignant ; sombre ; 320 px ; hors ligne
 `DESIGN_CAPTURES=<dossier> npx playwright test design-v2`.
 Décisions : D25 (Nuit toujours sombre), D26 (comparaison avec la planche de référence, police de titre), D27
 (nom affiché et emblème).
+
 ## 04/10/2026 — Lot 27 : audio du Coran, partie SERVEUR (branche `lot27-api-wip`, depuis `main` caced1c)
 
 Décision du client : récitations du **Complexe du Roi Fahd**, hébergées chez nous (licence archivée le 30/07/2025 :
@@ -1871,9 +1930,9 @@ synthétiques sans son, MP3 de bips encodés par ffmpeg) — aucune récitation 
   texte, crédit ; statut `en_attente` / `actif` / `retire` avec date et motif obligatoires), `quran_track`
   (récitateur, sourate, verset, chemin relatif, durée, taille, SHA-256, format ; contraintes : durée et taille
   > 0, empreinte hexadécimale, chemin sans « .. »), `quran_audio_import` (état et rapport de chaque import,
-  même bloqué), `profile_reciter_pref`, `profile_reciter_rule` (liste du parent), `class_reciter_rule` (liste
-  de l'enseignant), `relay_reciter` (préchargement du relais). Droits de l'API : pistes et imports en lecture,
-  récitateur en lecture + retrait.
+  > même bloqué), `profile_reciter_pref`, `profile_reciter_rule` (liste du parent), `class_reciter_rule` (liste
+  > de l'enseignant), `relay_reciter` (préchargement du relais). Droits de l'API : pistes et imports en lecture,
+  > récitateur en lecture + retrait.
 - **Outil d'import** (`packages/db/src/audio/`, ligne de commande `coran-audio` : `catalogue`, `verifier`,
   `importer`, `activer`, `retirer`, `etat`) depuis un dossier local (zip « ayat » décompressé) : nommage
   configurable (`SSSVVV.mp3` par défaut), muṣḥaf complet ou partiel (`--sourates`) ; contrôles : manquants,
@@ -1983,7 +2042,7 @@ Commits : `e67b811` (schéma), `8555977` (import), `0496d43` (API), `4671426` (r
 
 - **Test de bout en bout** `infra/ci/test-relais.sh` (ajouté à la CI, job « images ») : central monté par le
   vrai `deploy.sh` (site `central.test`, HTTPS par l'autorité locale de Caddy), relais enregistré (`relais.js
-  creer`), installé par le vrai `infra/relais/install.sh` (fichiers seulement) et lancé par
+creer`), installé par le vrai `infra/relais/install.sh` (fichiers seulement) et lancé par
   `infra/relais/compose.yml`. Scénario : inscription et envois en ligne → **coupure du réseau** (entrée du
   central arrêtée) : leçon servie depuis la copie du relais, envois mis en file (réponse 202), lot répété par la
   tablette **fusionné** par le relais, lot qui en chevauche un autre → **coupure de courant** du relais
@@ -2093,18 +2152,19 @@ Commits : `e67b811` (schéma), `8555977` (import), `0496d43` (API), `4671426` (r
 - **Mesures** (conteneur cloud : 4 vCPU Intel Xeon 2,1 GHz, 15 Go, PostgreSQL 18.4 local, Node 24, API seule sur
   la même machine que le générateur de charge, journal des requêtes actif, contenu synthétique ; 15 s par route) :
 
-  | route | 20 utilisateurs : p50 / p95 (ms) | 100 utilisateurs : p50 / p95 (ms) |
-  |---|---|---|
-  | GET /health | 4,6 / 9,3 | 24 / 37,3 |
-  | GET /units/:id | 21,7 / 29,5 | 113,2 / 143,1 |
-  | GET /today/:id | 39,5 / 50 | 203,4 / 251,7 |
-  | POST /attempts (5 événements) | 29,2 / 45,8 | 152,4 / 184,8 |
-  | GET /famille/messages | 17,8 / 29,6 | 90,2 / 133,3 |
-  | POST /auth/login | 152,3 / 186,4 | 749 / **805,1** |
+  | route                         | 20 utilisateurs : p50 / p95 (ms) | 100 utilisateurs : p50 / p95 (ms) |
+  | ----------------------------- | -------------------------------- | --------------------------------- |
+  | GET /health                   | 4,6 / 9,3                        | 24 / 37,3                         |
+  | GET /units/:id                | 21,7 / 29,5                      | 113,2 / 143,1                     |
+  | GET /today/:id                | 39,5 / 50                        | 203,4 / 251,7                     |
+  | POST /attempts (5 événements) | 29,2 / 45,8                      | 152,4 / 184,8                     |
+  | GET /famille/messages         | 17,8 / 29,6                      | 90,2 / 133,3                      |
+  | POST /auth/login              | 152,3 / 186,4                    | 749 / **805,1**                   |
 
   Aucune erreur. Objectif tenu partout, sauf la connexion à 100 connexions SIMULTANÉES (argon2id, 19 Mio et
   2 passes, volontairement coûteux : ≈ 130 connexions/s sur 4 cœurs). Situation peu réaliste pour une école ;
   à refaire sur le serveur de production (même commande).
+
 - **RGAA** : grille `docs/projet/RGAA.md` (13 thématiques, état et preuve par critère ; « à vérifier » là où
   seul un audit manuel peut conclure). Défauts corrigés : **lien d'évitement** « Aller au contenu » (12.7,
   cinq langues), **focus visible** étendu aux champs, listes, `summary`, `[tabindex]` (10.7), **titre des
@@ -2143,7 +2203,7 @@ Commits : `e67b811` (schéma), `8555977` (import), `0496d43` (API), `4671426` (r
   d'inventer une leçon religieuse (interdit). Couverture : API `lot22.test.ts` (5), web `carnet.test.ts` ; e2e à
   écrire sur la VM avec les vrais livres (re1).
 - Commande : dans `apps/web`, `E2E_CHROMIUM=/opt/pw-browsers/chromium TEST_DATABASE_URL=… AWFORM_CONTENT_DIR=
-  <racine>/infra/ci/contenu-synthetique AWFORM_LEVELS=en1,ad1 npx playwright test e2e/suite-v1.spec.ts`.
+<racine>/infra/ci/contenu-synthetique AWFORM_LEVELS=en1,ad1 npx playwright test e2e/suite-v1.spec.ts`.
 - CI : `suite-v1-b` ajoutée aux branches vérifiées. Tests unitaires : 536 verts (inchangés).
 
 ---
@@ -2261,24 +2321,25 @@ Branche `suite-v1` créée depuis `corrections-audit` (laissée intacte, en atte
 
 ### Rectificatifs (audit CDC-1) — chaque chiffre suivi de la commande qui le produit
 
-| Affirmation antérieure | État vérifié le 29/09/2026 (branche `corrections-audit`) | Commande |
-|---|---|---|
-| « application ≈ 59 Ko de JavaScript » (lot 3) | faux depuis le lot 9 ; aujourd'hui **JavaScript initial de la page la plus lourde 103,2 Ko** (≤ 150), total de toutes les pages ≈ 232 Ko | `pnpm --filter @awform/web build && pnpm --filter @awform/web budget` |
-| « aucune normalisation (interdite par la CI) » | le contrôle ne pouvait pas échouer ; il échoue maintenant (QUA-1) | `bash infra/ci/garde-fous.sh` |
-| « la CI exécute la base et la batterie » | vrai depuis les corrections INF-1/INF-2 ; CI **entièrement verte** sur `corrections-audit` | GitHub Actions, branche `corrections-audit` |
-| « droits activés par `AWFORM_DROITS=on` » | vrai depuis PAY-4 (leçons et paquet hors ligne) | `apps/api/test/audit-pay4.test.ts` |
-| « réponses d'épreuve jamais sur l'appareil » | vrai depuis CON-1 / D7 | `apps/api/test/audit-con1.test.ts` |
-| « enregistrements effacés à 7 jours » | vrai depuis MIN-16 (démarrage, service worker) et OFF-3 (déconnexion) | `apps/web/src/lib/recordings.test.ts` |
-| « export complet » | vrai depuis MIN-6 (toutes les tables liées, découvertes depuis le schéma) | `apps/api/test/audit-rgpd.test.ts` |
-| « batterie : critères bloquants verts » | la batterie était circulaire ; depuis CON-8 : **1 147 cas**, oracle indépendant, 0 violation | `node packages/tutor/dist/cli/eval.js --fournisseur simule` |
-| « migrations 0000 → 0009 » | **0000 → 0021** (22 fichiers) | `ls packages/db/migrations/*.sql` |
-| « 1 110 messages anglais » | **1 303** clés, identiques en français | clés de `apps/web/src/lib/i18n/messages/en.json` |
-| « 832 tests automatiques » | invérifiable sans les livres ; sans les livres (conditions de la CI) : **488 verts, 37 sautés** | `pnpm -r --no-bail --workspace-concurrency=1 test` (avec `TEST_DATABASE_URL`) |
+| Affirmation antérieure                         | État vérifié le 29/09/2026 (branche `corrections-audit`)                                                                                 | Commande                                                                      |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| « application ≈ 59 Ko de JavaScript » (lot 3)  | faux depuis le lot 9 ; aujourd'hui **JavaScript initial de la page la plus lourde 103,2 Ko** (≤ 150), total de toutes les pages ≈ 232 Ko | `pnpm --filter @awform/web build && pnpm --filter @awform/web budget`         |
+| « aucune normalisation (interdite par la CI) » | le contrôle ne pouvait pas échouer ; il échoue maintenant (QUA-1)                                                                        | `bash infra/ci/garde-fous.sh`                                                 |
+| « la CI exécute la base et la batterie »       | vrai depuis les corrections INF-1/INF-2 ; CI **entièrement verte** sur `corrections-audit`                                               | GitHub Actions, branche `corrections-audit`                                   |
+| « droits activés par `AWFORM_DROITS=on` »      | vrai depuis PAY-4 (leçons et paquet hors ligne)                                                                                          | `apps/api/test/audit-pay4.test.ts`                                            |
+| « réponses d'épreuve jamais sur l'appareil »   | vrai depuis CON-1 / D7                                                                                                                   | `apps/api/test/audit-con1.test.ts`                                            |
+| « enregistrements effacés à 7 jours »          | vrai depuis MIN-16 (démarrage, service worker) et OFF-3 (déconnexion)                                                                    | `apps/web/src/lib/recordings.test.ts`                                         |
+| « export complet »                             | vrai depuis MIN-6 (toutes les tables liées, découvertes depuis le schéma)                                                                | `apps/api/test/audit-rgpd.test.ts`                                            |
+| « batterie : critères bloquants verts »        | la batterie était circulaire ; depuis CON-8 : **1 147 cas**, oracle indépendant, 0 violation                                             | `node packages/tutor/dist/cli/eval.js --fournisseur simule`                   |
+| « migrations 0000 → 0009 »                     | **0000 → 0021** (22 fichiers)                                                                                                            | `ls packages/db/migrations/*.sql`                                             |
+| « 1 110 messages anglais »                     | **1 303** clés, identiques en français                                                                                                   | clés de `apps/web/src/lib/i18n/messages/en.json`                              |
+| « 832 tests automatiques »                     | invérifiable sans les livres ; sans les livres (conditions de la CI) : **488 verts, 37 sautés**                                          | `pnpm -r --no-bail --workspace-concurrency=1 test` (avec `TEST_DATABASE_URL`) |
 
 Le brief d'audit (branche `audit-dossier`, non modifiée ici) reprend certaines de ces affirmations : **à corriger
 par le chef de projet** avant toute diffusion, avec ce tableau.
 
 ---
+
 ## 29/09/2026 — Corrections d'audit, blocs 1 à 10 (branche `corrections-audit`, partie de `lot21-wip`)
 
 Nouvelles fonctionnalités arrêtées ; chaque constat a son test (rouge avant, vert après) et son commit (identifiant en
@@ -2314,11 +2375,13 @@ tête du message) ; état détaillé : `docs/projet/CORRECTIONS_AUDIT.md`.
   (tests « livres réels » et Playwright, qui demandent `~/awform-content`). Build, typage, lint, garde-fous verts.
 
 ---
+
 ## 29/09/2026 — Lot 21 (V1-f) : PARTIEL — schéma de la messagerie encadrée et de la visio (branche `lot21-wip`)
 
 Arrêté sur décision du chef de projet (audit général : 9/20, 73 constats → corrections d'abord). Livré : migration `0018_messagerie_visio` — `message_thread` (fil privé enseignant ↔ famille, toujours à propos d'un élève inscrit), `message` (privé ou annonce, corps et pièce jointe prévus CHIFFRÉS AES-256-GCM, retrait par la modération), `message_read`, `message_report` (file de modération), `video_session` (lien externe, durée 10-240 min), `video_presence` ; droits de l'API dans `roles.ts` (le test « chaque table a des droits décidés » reste vert). **Non faits** : routes, chiffrement, pièces jointes, modération, conservation 12 mois, écrans, tests fonctionnels. `ECARTS.md` : V1-f « partiel ». Tests (conditions de la CI) : inchangés, verts.
 
 ---
+
 ## 29/09/2026 — Décisions D6, D7 et CI sur les branches de travail (branche `lot21-wip`)
 
 - **D7** : la projection ÉLÈVE des bilans et examens ne contient plus **aucun corrigé** (`studentProjection` applique la projection d'épreuve ; « relier » en colonnes gauche/droite décalées) ; l'entraînement sur un bilan recueille les réponses sans correction sur l'appareil (`ExamExercise`) et le serveur corrige item par item (`POST /api/v1/units/:id/corriger`, `gradeTraining` : juste/faux, jamais la bonne réponse) ; les réponses passent aussi par la file habituelle (progression) ; **l'examen** ne se passe qu'en épreuve notée. Prend effet au prochain import (l'empreinte d'édition inclut la version de l'application).
@@ -2329,6 +2392,7 @@ Arrêté sur décision du chef de projet (audit général : 9/20, 73 constats �
 - **Tests** : `d7.test.ts` 3, `exam.test.ts` +1, `lot19.test.ts` +1 et mis à jour (texte révélé en session, aucun corrigé hors épreuve, grille du livre). Conditions de la CI : **346 verts, 37 sautés**.
 
 ---
+
 ## 29/09/2026 — Lot 20 (V1-e) : certificats signés et vérifiables par QR (branche `lot20-wip`, partie de `lot19-wip`)
 
 - **Signature** (`apps/api/src/certsign.ts`) : Ed25519 ; la graine privée `AWFORM_CERT_SIGN_KEY` (« v1:<64 hex> », générée une fois par `deploy.sh`) n'existe que dans le **périmètre de l'API** (`env-scopes.conf`) ; clé publique et identifiant de clé publiés (`GET /api/v1/public/certificats/cle`) pour une vérification hors ligne. La signature porte sur les **champs du registre durable** (numéro, type, niveau ou passage, nom affiché, mention, date) : elle reste valide après la réduction du document à 30 jours.
@@ -2339,6 +2403,7 @@ Arrêté sur décision du chef de projet (audit général : 9/20, 73 constats �
 - **Tests** : `lot20.test.ts` **6** (Ed25519 : champ changé ou autre clé → invalide ; codes ; pose unique ; vérification ; même réponse inconnu/mauvais code ; registre modifié en base → signature invalide ; annulation et motif ; clé publique ; limite d'essais) ; web : QR (1) et page publique (2 : échappement, aucun script, bandeaux). Conditions de la CI : **341 verts, 37 sautés**. Build, typage, lint verts.
 
 ---
+
 ## 29/09/2026 — Lot 19 (V1-b) : épreuves notées — bilans /20, examens /100, textes non préparés, remédiation (branche `lot19-wip`, partie de `lot18-wip`)
 
 - **Notation serveur** (`packages/grading/src/exam.ts`, fonction pure) : la copie est corrigée avec les mêmes vérifications d'items que l'entraînement (`checkItem`), une réponse par item ; « chasse » / « contient » : +1 par case juste, −1 par case touchée à tort, plancher 0 (sinon tout toucher donnerait le maximum) ; réponses mal formées ignorées ; note sur le barème arrondie au demi-point ; **remédiation sous 8/20** ramené au barème. Règles provisoires : décision **D6**.
@@ -2350,6 +2415,7 @@ Arrêté sur décision du chef de projet (audit général : 9/20, 73 constats �
 - **Tests** : `exam.test.ts` 5 ; API `lot19.test.ts` **7** sur l'édition synthétique importée par le vrai importeur (ouverture et refus, projection sans réponse ni texte non préparé, mélange stable par élève, code parent, copie unique, correction 16/16 → 20/20, « tout toucher » → 0, partie de l'enseignant, cloisonnement enseignant/famille, note à la fermeture, remédiation et leçons à revoir, tableau de suivi, examen /100, départ de la classe). Conditions de la CI (`base-et-tuteur`, sans les livres) : **332 verts, 37 sautés**. Build, typage, lint verts. E2e : non exécutables ici.
 
 ---
+
 ## 29/09/2026 — Corrections d'audit INF-1 et INF-2 : CI verte sans les livres (branche `lot18-wip`, avant le lot 19)
 
 Demandé par le chef de projet d'après `docs/projet/AUDIT_GENERAL_2026-09-29.md` (branche `audit-dossier`).
@@ -2360,11 +2426,13 @@ Demandé par le chef de projet d'après `docs/projet/AUDIT_GENERAL_2026-09-29.md
 - Les 37 tests encore sautés en `base-et-tuteur` demandent les vrais livres (import réel en1/ad1/re1/ra1/ad2, registre, illustrations, modèles de certificats) : ils tournent sur la VM.
 
 ---
+
 ## 29/09/2026 — Lot 18 (V1-a) : correction par l'enseignant des réponses libres, mode projection (branche `lot18-wip`, partie de `lot17-wip`, session cloud)
 
 **Avant le lot** : `docs/projet/ECARTS.md` (chaque ligne V1 du §2.1 et chaque lot V1 du §6.2 : fait / partiel / manquant, avec la preuve) et `docs/projet/DECISIONS_EN_ATTENTE.md` (D1-D3 en attente ; D4 : budget de 150 Ko gardé, allègement au lot 24 ; D5 : dictée photographiée écartée).
 
 **(1) Réponses libres corrigées par l'enseignant** (CDC §2.1, ligne « Leçon interactive » V1) — exercices des livres sans corrigé automatique (`question`, `ouverte`) :
+
 - base : table `free_answer` (migration `0015_reponses_libres`) : une réponse par élève, classe, exercice et item (2 000 caractères), appréciation fermée `acquis | en_cours | a_reprendre` (aucune note chiffrée inventée), commentaire ≤ 600 caractères ; droits de l'API seulement (`roles.ts`) ; **effacée quand l'élève quitte la classe** (`leaveClass`) et avec le profil ; incluse dans l'**export RGPD** (`reponsesLibres`) ;
 - API (`apps/api/src/corrections.ts`) : famille — envoi (profil du compte, **code parent pour un enfant**, classe de l'élève, exercice ouvert de l'édition servie, item existant ; un nouvel envoi remplace le texte et remet la correction à zéro), lecture, suppression ; enseignant de la classe (second facteur) — liste « à corriger / corrigées » des élèves encore inscrits avec la **consigne telle que dans le livre**, correction journalisée ; un autre enseignant, un parent ou un élève parti : refusés ;
 - web : « Envoyer à mon enseignant » sous chaque exercice ouvert d'une leçon (si l'élève a une classe ; champ code parent pour un enfant ; correction affichée), onglet **« Corrections »** de l'espace école (`CorrectionsClasse.svelte`) ;
@@ -2377,6 +2445,7 @@ Demandé par le chef de projet d'après `docs/projet/AUDIT_GENERAL_2026-09-29.md
 **Tests** : API lot 18 : **6** (envoi et ses refus, cloisonnement enseignant/parent, correction, remplacement sans doublon, adulte et export RGPD, suppression et départ de la classe). Total session cloud : **263 verts, 90 sautés** (livres absents). Build, typage, lint verts. E2e non exécutables ici (import des livres obligatoire). Budget web : 210,5 Ko (décision D4 : traité au lot 24).
 
 ---
+
 ## 29/09/2026 — Lot 17 : consentement par pays, relais d'école hors Internet, synchronisation sûre (branche `lot17-wip`, session cloud, commits `f43e290` → fin de lot)
 
 Repris du commit « Lot 17 (en cours) » (relais `apps/relay`, routes `apps/api/src/relais.ts`, migration `0014_relais.sql`, idempotence des récitations) et terminé dans une session cloud (conteneur jetable, sans les livres).
@@ -2384,6 +2453,7 @@ Repris du commit « Lot 17 (en cours) » (relais `apps/relay`, routes `apps/api/
 **(1) Consentement par pays** (`apps/api/src/auth/policy.ts`, `countryRules`) : pour chaque pays, âge du consentement, accords obligatoires (titulaire, enfant < 13 ans / ≥ 13 ans), accord exprès au transfert hors du pays, **loi applicable et autorité de contrôle**. Entrées seulement quand la loi et l'autorité sont connues avec certitude (FR CNIL, BE APD, LU CNPD, CH nLPD/PFPDT, GB ICO, US COPPA/FTC, CA LPRPDE, **SN loi 2008-12 / CDP**, MA 09-08 / CNDP, TN 2004-63 / INPDP, DZ 18-07 / ANPDP, CI 2013-450 / ARTCI, ML 2013-015 / APDP) ; autres pays de l'UE : RGPD + « autorité de votre pays » ; ailleurs : mention générique (aucune autorité inventée). Tout est marqué `aValider` (juriste). Route publique `GET /api/v1/pays/:code/regles` ; l'inscription affiche la loi, l'autorité et l'âge sous lequel un parent crée le profil, et prend du serveur la nécessité de l'accord au transfert (calcul local en secours). **Preuve** : chaque accord donné à l'inscription garde la loi et l'autorité (`consent.evidence`). Sénégal : sans l'accord exprès au transfert, pas de compte (test).
 
 **(2) Relais d'école** — installation, HTTPS local, guides :
+
 - Serveur central : Caddy délivre « à la demande » un certificat pour `*.RELAIS_DOMAINE` **seulement** si l'API confirme un relais enregistré et actif (`on_demand_tls ask …/relais/tls-autorise`) ; service `certsrelais` (`infra/prod/relais-certs.sh`) qui copie **les seuls** certificats des relais (un niveau sous le domaine, noms stricts) vers un volume lu par l'API (droits 600) — l'API ne lit jamais le stockage de Caddy ni la clé du site principal ; service d'outils `relais` (`creer | revoquer | liste`, compte propriétaire) ; `deploy.sh --relais-domaine`.
 - Boîtier (`infra/relais/`) : `compose.yml` (relay, web → relay, Caddy), `Caddyfile` (HTTPS avec le certificat de l'école, aucune demande ACME, page d'état accessible par l'IP en HTTP), cible `relay` du Dockerfile, `install.sh` idempotent (jeton **jamais en argument** — clavier ou variable —, `relais.env`/`caddy.env` en 600, clé locale générée une seule fois et gardée, certificat provisoire, systemd au démarrage, **rechargement de Caddy à l'arrivée d'un certificat** par une unité `.path`, dnsmasq facultatif pour le DNS du Wi-Fi). Le relais écrit le certificat reçu de façon atomique.
 - `INSTALLATION.md` (équipe technique) et **`MODE_EMPLOI_DIRECTEUR.md`** (langage simple : à quoi il sert, où le mettre, rien à faire chaque jour, page d'état, que faire en cas de problème, ce qu'il ne faut jamais faire, vol ou perte).
@@ -2398,6 +2468,7 @@ Repris du commit « Lot 17 (en cours) » (relais `apps/relay`, routes `apps/api/
 **Écart signalé (préexistant)** : le budget de poids de la coquille web est **dépassé sur `main`** (JavaScript 204,2 Ko Brotli pour 150 Ko ; 205,6 Ko après ce lot, +1,4 Ko de messages) : l'étape « budget » de la CI échoue donc déjà. Non corrigé ici (le seuil n'a pas été touché) ; piste : charger à la demande les catalogues de langue et les écrans lourds, et mesurer la page d'entrée plutôt que la somme de toutes les pages.
 
 ---
+
 ## 29/09/2026 — Lot 16 : livres gelés, écoute des récitations, notifications, préparation Android (checkpoint `app-lot16`, commits `61a3362` → `d4be704`)
 
 **(1) Livres gelés** (ETAT.md) : en3, ad3, ado1, ado2, ra1, ra2, puis **ad4 et ra3 gelés pendant le lot** — synchronisés (`sync-content.ps1`), importés et publiés (355 unités, 2 619 exercices, 1 405 versets contrôlés, 0 erreur ; carnets de hifẓ E3/N3/N4 avec leurs livres) ; **plus aucun « aperçu »** (défauts de `import.js`, `deploy.sh`, e2e). Interface indépendante de la liste des livres : libellés « Enfants — niveau 3 », « Carnet Adultes N3 »… (`lib/levels.ts`), niveaux proposés à la création d'un profil et carnets du hifẓ lus dans l'édition.
@@ -2415,6 +2486,7 @@ Repris du commit « Lot 17 (en cours) » (relais `apps/relay`, routes `apps/api/
 **Tests** : **832** automatiques + **141 e2e** (1 sauté) verts ; lint, format, typage. Démo redéployée (`prod-58b5fcc4f4`, 14 livres publiés, clés générées, notifications et envoi ouverts).
 
 ---
+
 ## 29/09/2026 — Lot 15 : interface anglaise, FSRS, activités « racines » et « j'enseigne à mon parent » (checkpoint `app-lot15`, commits `1c27150` → `57e071a`)
 
 **(1) Anglais** : les 1 110 messages de l'interface existent en anglais (relus pour la cohérence : « hifẓ », « surah », « booklet », « progress check » pour les bilans — « review » était réservé aux révisions —, apostrophes et pluriels ICU) ; **pages légales en brouillon et aide traduites** (`lib/legal/content-en.ts`, test de parité : mêmes pages, sections, paragraphes, questions et mêmes « [à compléter] »). Langue marquée « à relire par un locuteur natif ». **Drapeau** : `GET /api/v1/config` → `AWFORM_LANGUES_PREPARATION` (« on » posé par `deploy.sh --demo` seulement, dans le périmètre de l'API) ; sans lui, l'option « langues en préparation » disparaît et une langue non relue déjà choisie retombe sur le français (`routes/+layout.ts`) — donc **jamais en production** tant que la traduction n'est pas relue. **Consignes des livres** : mécanisme seulement (`lib/i18n/content-text.ts`) — un champ `consigne_en` / `titre_en` livré plus tard dans le contenu sera choisi selon la langue, sinon le français est gardé et annoncé (`lang="fr"`) ; branché sur les exercices ; l'arabe étudié et le Coran ne passent jamais par ce mécanisme.
@@ -2422,6 +2494,7 @@ Repris du commit « Lot 17 (en cours) » (relais `apps/relay`, routes `apps/api/
 **(2) FSRS-5** pour les cartes de mots (`lib/fsrs.ts`) : difficulté, stabilité, rappel R(t) = (1 + 19/81·t/S)^−0,5, paramètres publiés par défaut, rétention visée 90 %, intervalle 1 à 365 jours ; deux réponses seulement (« je savais » = Good, « à revoir » = Again). **Migration** des états Leitner à la lecture (boîte → stabilité = intervalle de la boîte, échéance inchangée, réenregistrée). Les cartes échues passent d'abord par ordre d'échéance. Tests : formules, première réponse (3 jours / lendemain), intervalles croissants, oubli, retard, migration.
 
 **(3) Activités** (inspirées de l'étude comparative) :
+
 - **« Construire un mot à partir de sa racine »** (`/activites/racines`) : racine + schème du pluriel → quel mot ? Éléments **extraits** du livre gelé Adultes N2, leçon 12 (« les trois consonnes de la racine (ك ت ب، ب ي ت، ق ل م) », « Huit schèmes fréquents… », « ك ت ب + فُعُلٌ = كُتُبٌ ») : 4 éléments (كُتُبٌ، مَكَاتِبُ، بُيُوتٌ، أَقْلَامٌ), distracteurs pris dans la même liste du livre. **À l'import, chaque chaîne doit figurer mot pour mot dans la leçon source**, sinon l'élément est écarté et signalé (le test l'a prouvé : un distracteur mal saisi a été rejeté) ; racines de contexte coranique (ر ح م، ع ب د، ص ب ر) **exclues** car le registre ne vérifie pas les racines. Pas de hasard ni de note.
 - **« J'enseigne une lettre à mon parent »** (`/activites/enseigner`) : l'enfant choisit une lettre qu'il sait écrire seul (jalon existant), la montre, la nomme, la trace en l'air et dit un mot ; le parent coche ; **rien n'est enregistré ni envoyé** (vérifié en e2e : aucune requête d'écriture).
 - Liens sur « Aujourd'hui » (enfant ayant une lettre ; profils Adultes N2 et plus).
@@ -2433,6 +2506,7 @@ Repris du commit « Lot 17 (en cours) » (relais `apps/relay`, routes `apps/api/
 **Tests** : **820** automatiques + **133 e2e** (1 sauté) verts ; lint, format, typage. Démo redéployée (`prod-a6539078f3`, anglais autorisé).
 
 ---
+
 ## 29/09/2026 — Décisions du pilote et Lot 14 : comptes PostgreSQL séparés, préparation de l'audit et de la mise en production (checkpoint `app-lot14`, commits `fd77d34` → `7219aa7`)
 
 **Décisions du pilote appliquées** : (1) titre du certificat = titre du livre (déjà le cas) ; (2) **moyenne des bilans arrondie à l'unité avant le contrôle continu**, exactement comme l'exemple de `data/eval/regles.js` (72,5 → 73, CC 73,6, NF 73) — test ajouté ; (3) **registre des certificats** : numéro, nom affiché, niveau, date et mention conservés durablement (colonnes `holder_name`, `mention`, migration 0012) ; le document complet est réduit à ces champs **30 jours après le départ de l'élève** (tâche nocturne du travailleur, `purgeCertificateDocuments`) — marqué « à confirmer par le juriste » (code, page de confidentialité, AUDIT_BRIEF) ; (4) **attestation de hifẓ en arabe vocalisé** : formules reprises des modèles des livres quand elles existent (« تَشْهَدُ إِدَارَةُ… », « وَلَيْسَتْ هٰذِهِ الشَّهَادَةُ إِجَازَةً… »), passage en chiffres (« الْآيَاتِ مِنْ ١ إِلَى ٤ مِنَ السُّورَةِ رَقْمِ ١١٢ », aucun nom de sourate improvisé), aucun titre d'ijāza ; modèle marqué **VALIDATION_HUMAINE_REQUISE** (affiché à l'enseignant).
@@ -2440,6 +2514,7 @@ Repris du commit « Lot 17 (en cours) » (relais `apps/relay`, routes `apps/api/
 **Comptes PostgreSQL séparés** : `awform_api` (lecture seule du contenu et du Coran, journaux en ajout seul — réponses : ajout et effacement avec le profil —, écriture des données des comptes et de l'école, aucune DDL), `awform_worker` (suppression des comptes échus, journal du tuteur, réduction du registre, schéma pgboss qui lui appartient), propriétaire `awform` réservé aux outils (migrations, import, rôles, démonstration). `packages/db/src/roles.ts` (une ligne par table ; un test échoue si une table n'est pas classée), CLI `roles.js` rejouée à chaque déploiement ; `env-scopes.conf` accepte `VAR=SOURCE` : chaque service reçoit SON `DATABASE_URL`. Tests : `roles.test.ts` (matrice des droits, API et travailleur sous leur compte : DDL, retouche du Coran, modification du journal refusées ; tourne aussi en CI) ; **toute la suite e2e tourne désormais sous le compte api**. Démo : `awform_api` et `awform_worker` connectés, travailleur (pg-boss) démarré sous son compte. Deux pièges PostgreSQL 16+ réglés : un compte CREATEROLE non superutilisateur ne peut pas poser NOREPLICATION/NOBYPASSRLS sur un rôle existant, et doit « pouvoir devenir » le travailleur pour lui donner le schéma pgboss.
 
 **Préparation de l'audit et de la mise en production** :
+
 - **Pages légales en brouillon** (`/legal/mentions`, `/cgu`, `/confidentialite`, `/cookies`), rédigées d'après le fonctionnement réel du code : données minimisées, bases légales, enfants (RGPD art. 8, COPPA, loi sénégalaise n° 2008-12, CDP), sous-traitants prévus, durées, droits, sécurité ; informations du client entre crochets « [à compléter] » ; bandeau BROUILLON — à valider par un juriste. Français seulement (l'anglais l'indique).
 - **Pas de bannière de consentement** : un seul cookie (`awform_session`, HttpOnly, SameSite=Lax), stockage local nécessaire au hors ligne, aucun cookie tiers ni ressource externe → exemption (article 82 ; à confirmer par le juriste). Test e2e : aucune requête vers un autre site, un seul cookie.
 - **Aide / FAQ** (`/aide`), **pied de page** (aide, garanties, pages légales) sur tous les écrans.
@@ -2449,15 +2524,17 @@ Repris du commit « Lot 17 (en cours) » (relais `apps/relay`, routes `apps/api/
 **Tests** : **804** automatiques + **123 e2e** (1 sauté) verts ; lint, format, typage. Démo redéployée (édition `prod-bc8cb1c19c`).
 
 ---
+
 ## 29/09/2026 — Lot 13 : secrets par service, espace école pour la rentrée de l'école pilote (checkpoint `app-lot13`, commits `e4690fc` → `dffc1b6`)
 
 **(1) Secrets de l'API et du travailleur séparés** : `prod.env` reste la source unique (600) mais n'est plus monté dans aucun conteneur ; `infra/prod/env-split.sh` le découpe selon `env-scopes.conf` (un fichier par service, écriture atomique, 600) — API : base, clé de session, tuteur, paiements ; travailleur et outils (migration, import) : la base seulement ; base : son mot de passe ; Caddy : adresses ; web : rien. `compose.yml` n'utilise plus qu'`AWFORM_ENV_DIR`. **Test** `apps/api/test/env-scopes.test.ts` (6 cas, tourne en CI) : les variables lues par le code de l'API et du travailleur sont dans leur périmètre, aucun secret hors besoin, chaque service de `compose.yml` reçoit son fichier, `env-split.sh` ne transmet rien d'autre. **Sur la machine** : `env-check.sh` (noms des variables de chaque conteneur, jamais les valeurs) appelé par `deploy.sh` et `status.sh` → « périmètres des secrets : conformes » (API 2 secrets, travailleur 1, base 1, web 0, Caddy 0). `AUDIT_BRIEF.md` mis à jour (risque 1 clos, risque 17 ajouté, question 14).
 
 **(2) Espace école** (`/enseignant/classe/[id]`, bouton « Espace école » de chaque classe ; API `apps/api/src/school.ts` ; paquet `@awform/school`, sans dépendance, partagé API/navigateur ; migration 0011) :
+
 - **Classes et groupes** : réglages (livre suivi, établissement et ville — aussi en arabe —, année scolaire), groupes ; liste de classe = profils inscrits par leur parent (pseudonyme de la famille, non modifiable par l'école) + élèves **« classe papier »** saisis par l'enseignant (prénom + initiale, genre facultatif pour les textes, nom arabe facultatif ; aucune date de naissance).
 - **Devoirs** (leçon, passage de hifẓ, petit livre) avec **échéance**, pour la classe ou un groupe ; suivi automatique pour les élèves de l'application (leçon terminée, passage appris ou validé après la date du devoir), coches de l'enseignant pour tous (elles priment) ; côté famille : carte « Devoirs de la classe » sur « Aujourd'hui », **jamais de « retard » affiché à l'élève**.
 - **Tableau de suivi** : leçons terminées, bilans (%), examen, contrôle continu, **note finale et décision selon `data/eval/regles.js`** (NF = 60 % examen + 40 % CC arrondie au demi-point ; 80/70/60/40 ; examen ≥ 50 sinon validation conditionnelle), dernière récitation, devoirs faits / en retard. **Classe papier** : saisie des notes des bilans et de l'examen du livre papier (sur 20 ou 25 ; elles priment sur l'application), récitations et productions ; récitation de hifẓ d'un élève papier avec les relevés du barème (/20).
-- **Certificats de niveau** : modèles `niveau_enfants / adultes / ados / religion` de `data/eval/certificats.js` **lus tels quels** (importés par édition, table `eval_doc`, avec le référentiel des niveaux et les règles) ; variantes féminines arabes et françaises choisies selon le genre, chiffres arabes orientaux et mois de la charte, champs manquants signalés ; délivrables seulement si la décision le permet. **Attestation de hifẓ** pour une récitation validée « oui » : modèle de l'application, français seulement, **« elle n'est pas une ijāza »**, marqué *à valider* (version arabe à rédiger par le comité). **Registre** : numéro unique `AWF-EN1-2026-0001` / `AWF-HZ-…`, document figé à la délivrance.
+- **Certificats de niveau** : modèles `niveau_enfants / adultes / ados / religion` de `data/eval/certificats.js` **lus tels quels** (importés par édition, table `eval_doc`, avec le référentiel des niveaux et les règles) ; variantes féminines arabes et françaises choisies selon le genre, chiffres arabes orientaux et mois de la charte, champs manquants signalés ; délivrables seulement si la décision le permet. **Attestation de hifẓ** pour une récitation validée « oui » : modèle de l'application, français seulement, **« elle n'est pas une ijāza »**, marqué _à valider_ (version arabe à rédiger par le comité). **Registre** : numéro unique `AWF-EN1-2026-0001` / `AWF-HZ-…`, document figé à la délivrance.
 - **Export** : CSV (tableau, devoirs, registre ; « ; », BOM, virgule décimale, formules neutralisées) ; **PDF** par les pages imprimables (tableau A4 paysage, certificat A4 paysage français/arabe) et « Enregistrer au format PDF » du navigateur — vérifié en e2e par le moteur PDF de Chromium.
 - **Mineurs** : tout est réservé à l'enseignant propriétaire de la classe avec second facteur ; ni autre enseignant, ni administrateur, ni parent (test API sur chaque route) ; exports, saisies et certificats journalisés ; retirer un élève efface ses résultats, le registre garde le certificat (document figé).
 - Apparence : jetons du thème uniquement (aucune couleur en dur), pas de refonte. Démo : classe de l'enseignant réglée pour en1, trois élèves **fictifs** notés, deux devoirs.
@@ -2469,6 +2546,7 @@ Repris du commit « Lot 17 (en cours) » (relais `apps/relay`, routes `apps/api/
 **Tests** : **799** automatiques (dont `@awform/school` 15, API lot 13 : 7, périmètres des secrets : 6) + **109 e2e** (1 sauté) verts ; lint, format, typage. Démo redéployée (édition `prod-96f8ba57a7`).
 
 ---
+
 ## 29/09/2026 — Lot 12 : métadonnées officielles du Coran, tanwins du Muṣḥaf de Médine, corrections avant audit (checkpoint `app-lot12`, commits `7828efe` → fin de lot)
 
 **(1) Métadonnées Tanzil** (`W\coran\tanzil-quran-data.js`, Quran Metadata 1.0, CC BY 3.0, attribution affichée dans le lecteur) : synchronisées vers la VM (`sync-content.ps1`), lues **sans exécution** (`parseQuranData`, paires numériques seulement), contrôlées (`checkQuranData` : SHA-256 épinglé `9e9930c5…4ca4`, 114 sourates, 6 236 versets, 30 ajzāʾ, 240 quarts, 604 pages, 7 manāzil, ordre croissant, chaque juzʾ au quart i×8) ; erreur bloquante à l'import. Table `quran_division` (migration 0010), remplacée seulement si elle change. **Pages réelles du Muṣḥaf de Médine** pour le hifẓ (`buildMeta(tanzil, divisions)` : chaque page pèse 1, total 604 ; cache web `quranMeta.v2`) — effet visible : la première portion du rythme devient 1:1-4 (au lieu de l'estimation précédente), test e2e ajusté. **Jalons ḥizb et quarts de ḥizb** sur « Aujourd'hui ». Tests : 30 / 240 / 604 (contenu), API (Fātiḥa = 1 page, 2:1-5 = 1 page), jalons sur les 8 derniers quarts.
@@ -2480,9 +2558,11 @@ Repris du commit « Lot 17 (en cours) » (relais `apps/relay`, routes `apps/api/
 **Tests** : 770 automatiques + **103 e2e** verts (1 sauté). Démo redéployée (`DEMO_ACCES.md` : commande de remise à zéro avec `db.env`/`caddy.env`). Rapport client : lot 12, capture du lecteur (tanwins), deuxième copie hors ligne de la clé demandée.
 
 ---
+
 ## 29/09/2026 — Lot 11 : recommandations « à adopter tout de suite » de l'étude des plateformes, dossier d'audit (checkpoint `app-lot11`, commits `c871b8a` → `4ac5b95`)
 
 Apparence inchangée (jetons de thème ; direction artistique en attente du fondateur). Seules les recommandations qui ne dépendent ni du style ni d'une décision du client :
+
 - **(a) « Aujourd'hui »** (`/aujourdhui`, écran de démarrage de la PWA et lien du logo ; lien en tête de l'onglet Arabe) : séance du jour = portion de hifẓ (trois pistes, temps du moteur), leçon en cours (première leçon non terminée du niveau, API `GET /api/v1/today/:id`), 5 min de mots si des cartes sont dues ; **durée annoncée**. Les onglets restent.
 - **(b) Jalons de maîtrise** : lettres écrites seules (tracé réussi à l'étape 3), leçons terminées / maîtrisées, sourates complètes, ajzāʾ complets (bornes `JUZ_STARTS`) — jamais de points ni de classement. **Ḥizb et quarts de ḥizb : non calculés**, la table officielle des aḥzāb (métadonnées Tanzil) n'est pas dans la copie des livres ; aucune borne inventée — à ajouter côté contenu (`W\awform\coran`).
 - **(c) Régularité sans punition** : ados et adultes seulement — « N jours de travail cette semaine (objectif) », semaine du lundi au dimanche, objectif 3 à 6 jours et jours de repos choisis (table `profile_rhythm`, migration 0009) ; aucune série, aucune perte, aucune notification ; **rien pour les enfants** (API refuse le réglage, écran sans compteur).
@@ -2506,6 +2586,7 @@ Apparence inchangée (jetons de thème ; direction artistique en attente du fond
 **Démonstration multi-rôles (demande du fondateur)** : compte **administrateur** (second facteur) et **tableau de bord admin en lecture seule** (`/admin` : utilisateurs avec e-mails masqués, éditions, niveaux, questions du tuteur, alertes, abonnements, journal d'audit ; API `GET /api/v1/admin/overview`, réservée aux admins avec 2FA) ; profil **ado** Yanis (15 ans) ; les cinq rôles vérifiés par connexion réelle sur la démo (parent + 3 profils, adulte, enseignant 2FA, admin 2FA). Accès depuis le Wi-Fi : `deploy.sh --lan-ip` (certificat aussi pour l'IP Wi-Fi du PC, 192.168.1.106, vérifié avec l'autorité locale) ; redirection de port et pare-feu Windows à faire par le fondateur (commandes administrateur non exécutées) : guide `application/TEST_APPAREILS.md` (+ grille de 15 tests pour le téléphone d'entrée de gamme, et tout retirer). Identifiants dans `DEMO_ACCES.md` seulement.
 
 **Lot 10 — paiements** (`packages/billing`, ARCHITECTURE_V2 § 8 ter.3) :
+
 - **Formules** : gratuit (5 premières leçons par livre), découverte (14 jours, une fois, sans moyen de paiement), famille / adulte mensuel et annuel, **pass 3 mois** (mobile money, sans renouvellement), **licence école** (par élève et par an) ; **prix par zone et par devise** (F CFA, €, $) en un seul fichier, **à valider par le client**.
 - **Droits d'accès** indépendants du moyen de paiement (`entitlementOf`, `canOpenUnit`) ; licence d'école → élèves des classes de l'enseignant si places suffisantes. **Non appliqués au contenu** tant que le client n'a pas fixé l'offre gratuite (`AWFORM_DROITS=on`).
 - **Prestataires** (interface `PaymentProvider`) : **simulé** (page de paiement de l'application, événement signé HMAC), **Stripe** (Checkout hébergé ; vérification de signature des webhooks implémentée et testée ; création de session à valider avec le compte de test du client), **PayPal**, **mobile money par agrégateur** (Wave / Orange Money / Free Money via PayDunya, CinetPay ou PayTech), **Apple / Google** (squelettes) ; sans clé → non proposés. Routage : mobile money d'abord en Afrique de l'Ouest, carte et PayPal ailleurs.
@@ -2519,6 +2600,7 @@ Apparence inchangée (jetons de thème ; direction artistique en attente du fond
 ## 29/09/2026 — Lot 9 : socle des tuteurs IA, sans clé réelle (checkpoint `app-lot09`, commits `d4dfd5b` → `f89f7e7`)
 
 **Paquet `@awform/tutor`** (ARCHITECTURE_V2 § 1) :
+
 - **Orchestrateur** : politique (moins de 13 ans : boutons seulement ; pas de tuteur enfant entre 21 h et 7 h ; 300 caractères ; plafond de coût par élève et par mois : 1 $ enfant, 3 $ ado/adulte → tuteur local), **classifieur local** avant tout modèle (détresse, rencontre, injection, avis religieux, polémique, données personnelles, Coran, hadith, identité) → réponses types ; **local d'abord** (indice, « que dit ma leçon », mots : banque d'explications validées tirée de la projection élève des livres gelés, jamais le bloc Coran) ; appel au fournisseur (contexte en lecture seule) ; **filtre de sortie** ; rendu.
 - **Filtre de sortie** : schéma JSON strict ; `{{coran:s:a-b}}` → Tanzil octet par octet (basmala d'en-tête retirée, 20 versets au plus) ; détecteur de Coran hors référence (index des trigrammes « nus » du Tanzil, 3 mots) ; citation sans `{{registre:HAD_…}}` VERIFIE, numéro de hadith → bloqué ; avis religieux formulé, polémique, phonétique latine, données personnelles, identité humaine, émoji visage → bloqué ; enfant : aucun arabe hors leçon. Violation → réponse de repli locale.
 - **Rôles versionnés** (empreinte) : enfant Claude Haiku 4.5, ado/adulte Claude Sonnet 5 (décision de l'architecture ; surchargeables par variables d'environnement).
@@ -2537,6 +2619,7 @@ Apparence inchangée (jetons de thème ; direction artistique en attente du fond
 ## 29/09/2026 — Lot 8 : livres gelés, Sciences islamiques, bibliothèque des livrets, lecteur coranique C1 (checkpoint `app-lot08`, commits `a96189b` → `61d26eb`)
 
 **Livres importés (ids explicites, `application/ids`)** : GELÉS en1, ad1, en2, ad2, re1, re2 + carnets de hifẓ E1/N1/E2/N2 (défaut de `cli/import.js`, variable `AWFORM_LEVELS`). Livres en relecture (ra1, ra2) : option `--apercu` / `AWFORM_APERCU` → marqués « aperçu », **démonstration seulement** (`deploy.sh --demo` : `ra1,ra2` par défaut ; production : rien). Édition `prod-<empreinte>` = contenu + niveaux + aperçu + version. Contrôle en1…ra2 : 0 erreur bloquante, 15 avertissements.
+
 - **Écart signalé** : interlocuteur de dialogue hors charte (Sami, re2 l24) passé d'erreur bloquante à avertissement `interlocuteur_hors_charte` (personnage non dessiné : affiché sans portrait). À trancher côté livres.
 - **Hadiths** : `maskHadithNumbers` retire des projections élève tout numéro de hadith absent du registre en statut VERIFIE (1 numéro masqué dans l'édition de démonstration) ; clés `vh`/`controle` jamais envoyées.
 
@@ -2559,6 +2642,7 @@ Apparence inchangée (jetons de thème ; direction artistique en attente du fond
 **Décisions du pilote enregistrées** : (1) QR code en bas de la page d'ouverture de chaque leçon du livre de l'élève, 2 cm, mention « Écouter et réviser » (mise en page au passage en B5 ; ARCHITECTURE_V2 § 8 bis ter) ; (2) points de départ du tracé ajoutés à la liste de relecture humaine `application/A_RELIRE_ENSEIGNANT.md` (propositions gardées) ; (3) tableau rythme × tour à valider par l'école pilote, défauts gardés.
 
 **Production (sans compte externe)** — `infra/prod/` :
+
 - `Dockerfile` multi-cibles (api, worker, web ; `pnpm deploy --prod`), `compose.yml` (Caddy, web, api, worker, PostgreSQL 18 ; base non exposée ; journaux tournants ; `restart: unless-stopped`), `Caddyfile` (HTTP local, HTTPS par autorité interne avec `default_sni` pour l'adresse IP, en-têtes de sécurité ; CSP à nonce fournie par SvelteKit) ;
 - `apps/worker` : pg-boss 12 (purge RGPD à 3 h 15, battement toutes les 5 min) ;
 - `deploy.sh` idempotent (secrets générés sur la machine, migration, import `prod-<empreinte>` inchangé si même contenu, attente de santé, systemd au démarrage, sauvegarde nocturne, pare-feu 80/443 réseau local seulement, fumée) — relancé : « inchangé », « démonstration déjà présente » ;
@@ -2592,23 +2676,23 @@ Apparence inchangée (jetons de thème ; direction artistique en attente du fond
 
 **Décision du pilote** : la charge de fin de parcours dépend de la quantité mémorisée, pas du rythme. Réalisé : (1) temps affichés partout en fourchette « début → fin » (tableau des rythmes, plan du jour, ARCHITECTURE_V2 § 2.2, note `application/NOTE_CARNETS_HIFZ_TEMPS.md` pour les carnets papier) ; (2) tour de la roue réglable par l'enseignant (30, 45, 60 jours ; défaut 30 pour 3-4 ans, 45 pour 5-7 ans), charge recalculée et affichée (`/hifz`, `/enseignant`), migration `0004` (`hifz_plan.cycle_days`) ; (3) simulateur relancé pour chaque rythme × tour (`simulate()` dans `@awform/hifz`, texte Tanzil réel). Tableau À VALIDER par l'école pilote :
 
-| Rythme | Tour | Prévu début → fin | Simulé (régulier) début → fin | Durée régulier / irrégulier | Allègements (régulier) | Attente max (absences comprises) |
-|---|---|---|---|---|---|---|
-| 3 ans | 30 j (défaut) | 30 → 130 min | 27 → 122 min | 3,1 / 4,7 ans | 2 | 48 j |
-| 3 ans | 45 j | 30 → 97 min | 27 → 84 min | 3,1 / 4,8 ans | 5 | 64 j |
-| 3 ans | 60 j | 30 → 80 min | 27 → 76 min | 3,1 / 5,1 ans | 0 | 76 j |
-| 4 ans | 30 j (défaut) | 23 → 123 min | 25 → 110 min | 3,8 / 6,3 ans | 2 | 44 j |
-| 4 ans | 45 j | 23 → 90 min | 25 → 79 min | 3,8 / 6,6 ans | 3 | 61 j |
-| 4 ans | 60 j | 23 → 73 min | 25 → 66 min | 3,7 / 6,7 ans | 0 | 71 j |
-| 5 ans | 30 j | 18 → 118 min | 20 → 104 min | 5,0 / 7,9 ans | 0 | 41 j |
-| 5 ans | 45 j (défaut) | 18 → 85 min | 20 → 78 min | 5,1 / 8,2 ans | 17 | 66 j |
-| 5 ans | 60 j | 18 → 68 min | 20 → 63 min | 5,1 / 7,6 ans | 13 | 81 j |
-| 6 ans | 30 j | 15 → 115 min | 16 → 105 min | 6,0 / 10,0 ans | 6 | 45 j |
-| 6 ans | 45 j (défaut) | 15 → 82 min | 16 → 73 min | 6,1 / 10,1 ans | 15 | 63 j |
-| 6 ans | 60 j | 15 → 65 min | 16 → 61 min | 6,0 / 9,5 ans | 6 | 77 j |
-| 7 ans | 30 j | 13 → 113 min | 15 → 105 min | 6,8 / 11,1 ans | 9 | 49 j |
-| 7 ans | 45 j (défaut) | 13 → 80 min | 15 → 71 min | 6,9 / 11,3 ans | 18 | 64 j |
-| 7 ans | 60 j | 13 → 63 min | 15 → 59 min | 6,6 / 11,1 ans | 2 | 74 j |
+| Rythme | Tour          | Prévu début → fin | Simulé (régulier) début → fin | Durée régulier / irrégulier | Allègements (régulier) | Attente max (absences comprises) |
+| ------ | ------------- | ----------------- | ----------------------------- | --------------------------- | ---------------------- | -------------------------------- |
+| 3 ans  | 30 j (défaut) | 30 → 130 min      | 27 → 122 min                  | 3,1 / 4,7 ans               | 2                      | 48 j                             |
+| 3 ans  | 45 j          | 30 → 97 min       | 27 → 84 min                   | 3,1 / 4,8 ans               | 5                      | 64 j                             |
+| 3 ans  | 60 j          | 30 → 80 min       | 27 → 76 min                   | 3,1 / 5,1 ans               | 0                      | 76 j                             |
+| 4 ans  | 30 j (défaut) | 23 → 123 min      | 25 → 110 min                  | 3,8 / 6,3 ans               | 2                      | 44 j                             |
+| 4 ans  | 45 j          | 23 → 90 min       | 25 → 79 min                   | 3,8 / 6,6 ans               | 3                      | 61 j                             |
+| 4 ans  | 60 j          | 23 → 73 min       | 25 → 66 min                   | 3,7 / 6,7 ans               | 0                      | 71 j                             |
+| 5 ans  | 30 j          | 18 → 118 min      | 20 → 104 min                  | 5,0 / 7,9 ans               | 0                      | 41 j                             |
+| 5 ans  | 45 j (défaut) | 18 → 85 min       | 20 → 78 min                   | 5,1 / 8,2 ans               | 17                     | 66 j                             |
+| 5 ans  | 60 j          | 18 → 68 min       | 20 → 63 min                   | 5,1 / 7,6 ans               | 13                     | 81 j                             |
+| 6 ans  | 30 j          | 15 → 115 min      | 16 → 105 min                  | 6,0 / 10,0 ans              | 6                      | 45 j                             |
+| 6 ans  | 45 j (défaut) | 15 → 82 min       | 16 → 73 min                   | 6,1 / 10,1 ans              | 15                     | 63 j                             |
+| 6 ans  | 60 j          | 15 → 65 min       | 16 → 61 min                   | 6,0 / 9,5 ans               | 6                      | 77 j                             |
+| 7 ans  | 30 j          | 13 → 113 min      | 15 → 105 min                  | 6,8 / 11,1 ans              | 9                      | 49 j                             |
+| 7 ans  | 45 j (défaut) | 13 → 80 min       | 15 → 71 min                   | 6,9 / 11,3 ans              | 18                     | 64 j                             |
+| 7 ans  | 60 j          | 13 → 63 min       | 15 → 59 min                   | 6,6 / 11,1 ans              | 2                      | 74 j                             |
 
 Tests : simulateur 3 rythmes × 3 tours × 3 profils (budget tenu, aucune attente au-delà du tour sans alerte, fin de parcours atteinte) ; API (tour 30/45/60, refus de 50) ; e2e (fourchette affichée, changement de tour → charge recalculée). 653 tests + 58 e2e verts.
 
@@ -2633,6 +2717,7 @@ Tests : simulateur 3 rythmes × 3 tours × 3 profils (budget tenu, aucune attent
 **Intégration continue** (`.github/workflows/ci.yml`, sans aucun secret, `permissions: contents: read`) : installation figée, build, typecheck, lint, tests unitaires, budget de poids, interdiction de `.normalize(` et de tout `.env` suivi. Les tests qui demandent le contenu des livres ou PostgreSQL sont ignorés en CI (contenu hors dépôt) ; le bout en bout reste sur la VM.
 
 **Comptes (API, OWASP ASVS niveau 2 pour l'authentification)**
+
 - Types : **parent** (profils enfants **sans e-mail** : pseudonyme, **année** de naissance, avatar sans visage), **adulte** autonome (profil créé avec le compte), **enseignant** et **admin** (créés en ligne de commande : `node apps/api/dist/cli/staff.js`, mot de passe lu dans `AWFORM_STAFF_PASSWORD`, jamais en argument).
 - Mots de passe : argon2id (`node:crypto`, m = 19 MiB, t = 2, p = 1), 12 à 128 caractères, liste des mots de passe courants, aucune règle de composition, aucune normalisation ; message générique en cas d'échec ; verrouillage progressif (5 échecs → 1, 2, 4… ≤ 60 min) par compte et par adresse IP ; 20 inscriptions/h par IP.
 - Sessions : jeton aléatoire 256 bits, **empreinte SHA-256** seule en base, cookie `HttpOnly; SameSite=Lax; Secure`, 30 jours glissants (famille) / 12 h (enseignant, admin), révocation (déconnexion, partout, changement de mot de passe). Anti-CSRF : en-tête `x-awform: 1` exigé sur toute écriture.
@@ -2650,13 +2735,14 @@ Tests : simulateur 3 rythmes × 3 tours × 3 profils (budget tenu, aucune attent
 **Tests** : API 20, unitaires web 14, contenu 525, grading 44, db 10 ; **bout en bout 48/48** (mobile + bureau) avec comptes de test créés au lancement (mot de passe et clé tirés au hasard, adresses `.test`).
 
 **Écarts / à décider**
-| Sujet | État | Qui |
-|---|---|---|
-| Réinitialisation du mot de passe, vérification d'adresse | désactivées : il faut un fournisseur d'e-mail (clé à créer) | client |
-| COPPA « vérifiable » | méthode actuelle faible ; méthode FTC (paiement 0 €, tiers) avant ouverture US | lot P1 + juriste |
-| Déclaration CDP (Sénégal) | modèle à fournir, dépôt par le client | client |
-| Consignes et titres de livres en anglais | l'interface est traduite, pas encore le contenu pédagogique | vagues I1+ |
-| Bout en bout en CI | nécessite le contenu (hors dépôt) et PostgreSQL | plus tard (contenu de test synthétique) |
+
+| Sujet                                                    | État                                                                           | Qui                                     |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------- |
+| Réinitialisation du mot de passe, vérification d'adresse | désactivées : il faut un fournisseur d'e-mail (clé à créer)                    | client                                  |
+| COPPA « vérifiable »                                     | méthode actuelle faible ; méthode FTC (paiement 0 €, tiers) avant ouverture US | lot P1 + juriste                        |
+| Déclaration CDP (Sénégal)                                | modèle à fournir, dépôt par le client                                          | client                                  |
+| Consignes et titres de livres en anglais                 | l'interface est traduite, pas encore le contenu pédagogique                    | vagues I1+                              |
+| Bout en bout en CI                                       | nécessite le contenu (hors dépôt) et PostgreSQL                                | plus tard (contenu de test synthétique) |
 
 ---
 
@@ -2665,6 +2751,7 @@ Tests : simulateur 3 rythmes × 3 tours × 3 profils (budget tenu, aucune attent
 Référence : cahier §2.15, §4.3 et **ARCHITECTURE_V2 §3.2 à §3.4** (désormais référence avec le cahier).
 
 **Réalisé**
+
 1. **Paquets par niveau** (`GET /api/v1/packs`, `GET /api/v1/packs/:niveau`) : leçons en projection élève + identifiants/empreintes d'exercices + illustrations utilisées ; compressés une fois en **Brotli** (qualité 11), **ETag** (304 si l'appareil est à jour) ; le manifeste donne le poids compressé et l'empreinte de chaque leçon → **mise à jour différentielle** (seules les leçons modifiées sont retéléchargées ; paquet complet si plus de la moitié a changé).
 2. **Appareil** : IndexedDB (paquets, leçons, illustrations, file d'événements, réglages) ; application monopage (rendu sur l'appareil) ; les leçons se lisent d'abord sur l'appareil, sinon sur le réseau ; **service worker** : coquille en cache, navigation sans réseau servie par la coquille, nouvelle version appliquée au **prochain démarrage** (jamais au milieu d'une leçon), **Background Sync**.
 3. **Synchronisation différée sans conflit** : chaque réponse est rangée tout de suite dans IndexedDB (UUIDv7), envoyée par lots de 100 dans l'ordre, dès le retour du réseau (événement « online », réessai toutes les 5 s tant qu'il reste des réponses, ou service worker) ; doublons ignorés et états recalculés par le serveur ; refus définitifs retirés de la file ; badge « n réponses en attente ».
@@ -2691,6 +2778,7 @@ Référence : cahier §2.15, §4.3 et **ARCHITECTURE_V2 §3.2 à §3.4** (désor
 **Sauvegarde du dépôt (en attendant un dépôt distant)** : `application\backup-repo.ps1` → `git bundle --all` sur la VM, `git bundle verify`, copie contrôlée par SHA-256 dans `application\backups\` et `Documents\khadija\AWFORM-production\app-backups\`, rotation des 14 derniers ; restauration testée (`git clone` du bundle). Appel ajouté à la fin de `W\sauvegarde.ps1` (dans un try/catch : une VM éteinte ne fait pas échouer la sauvegarde des livres) ; script testé de bout en bout. À lancer à la fin de chaque lot.
 
 **Réalisé**
+
 1. **Import complet** : illustrations `illus\*.js` (1 096 retenues, ordre des pages des livres, `zz-sansvisage.js` en dernier) évaluées dans le bac à sable ; SVG **validé par liste blanche** (g, path, rect, circle, ellipse, polygon… ; aucun script, lien, texte, `url()`) ; les 12 personnages viennent obligatoirement de `zz-sansvisage.js` (sinon erreur bloquante). Contrôles par unité : personnages hors charte (scène, dialogue) = erreur ; illustration absente, translittération dans un champ élève, réponse visible dans un bilan = avertissement. Rapport d'import Markdown (`--rapport`). Table `illustration` (migration `0001`).
 2. **Projections** (une seule fonction chacune, testée sur les 51 unités) : élève (sans guide/`tr`/parents/dictées ; textes `non_prepare` et `phrases_masquees` ABSENTS ; bilans/examens sans traduction des versets ; examen/`sans_traduction` sans traduction de la lecture ; bilans Enfants réduits à lettres + « Je relis » + exercices, comme `lectureBilan`), parent, enseignant, **épreuve (aucune clé de corrigé ; `relier` en deux colonnes décalées)**, publique (QR).
 3. **Correction item par item** (`checkItem`, identique appareil/serveur) + **progression recalculée** (`computeUnitProgress` : score = 1er essai, meilleur score = points trouvés ; terminée = tous les points + auto-évaluation ; maîtrisée ≥ 80 %).
@@ -2713,18 +2801,18 @@ Référence : cahier §2.15, §4.3 et **ARCHITECTURE_V2 §3.2 à §3.4** (désor
 
 ### Lot 0 — socle de la VM (`infra/provision.sh`, idempotent, relancé 4 fois sans erreur)
 
-| Élément | Version / réglage |
-|---|---|
-| Système | Ubuntu 26.04.1 LTS, noyau 7.0, 8 vCPU, 28 Go, 98 Go disque ; mises à jour appliquées |
-| Outils | git, build-essential, curl, jq, unzip, rsync |
-| Node.js | **24.21.0** (LTS « Krypton », dépôt officiel NodeSource `node_24.x`) |
-| pnpm | **10.34.5** via corepack (figé dans `package.json` → `packageManager`) |
-| PostgreSQL | **18.6** (dépôts Ubuntu), écoute **127.0.0.1 seulement** ; rôle `awform` (sans superutilisateur) ; bases `awform_dev`, `awform_test` |
-| Docker | Engine **29.8.1** + compose **5.5.1** (dépôt officiel Docker `resolute`) ; `awzid` dans le groupe docker ; aucun conteneur |
-| Pare-feu ufw | actif ; entrant refusé par défaut ; **22/tcp** ouvert ; **5173, 4173, 3000** depuis **192.168.50.0/24 seulement** ; SSH vérifié après activation |
-| Fuseau / langue | Europe/Paris ; locale fr_FR.UTF-8 générée |
-| Tests navigateur | dépendances système Playwright (Chromium) |
-| Secrets de dev | générés localement dans `~/.config/awform/dev.env` (droits 600, hors dépôt) → `.env` (ignoré par git) par `infra/dev-env.sh` |
+| Élément          | Version / réglage                                                                                                                                |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Système          | Ubuntu 26.04.1 LTS, noyau 7.0, 8 vCPU, 28 Go, 98 Go disque ; mises à jour appliquées                                                             |
+| Outils           | git, build-essential, curl, jq, unzip, rsync                                                                                                     |
+| Node.js          | **24.21.0** (LTS « Krypton », dépôt officiel NodeSource `node_24.x`)                                                                             |
+| pnpm             | **10.34.5** via corepack (figé dans `package.json` → `packageManager`)                                                                           |
+| PostgreSQL       | **18.6** (dépôts Ubuntu), écoute **127.0.0.1 seulement** ; rôle `awform` (sans superutilisateur) ; bases `awform_dev`, `awform_test`             |
+| Docker           | Engine **29.8.1** + compose **5.5.1** (dépôt officiel Docker `resolute`) ; `awzid` dans le groupe docker ; aucun conteneur                       |
+| Pare-feu ufw     | actif ; entrant refusé par défaut ; **22/tcp** ouvert ; **5173, 4173, 3000** depuis **192.168.50.0/24 seulement** ; SSH vérifié après activation |
+| Fuseau / langue  | Europe/Paris ; locale fr_FR.UTF-8 générée                                                                                                        |
+| Tests navigateur | dépendances système Playwright (Chromium)                                                                                                        |
+| Secrets de dev   | générés localement dans `~/.config/awform/dev.env` (droits 600, hors dépôt) → `.env` (ignoré par git) par `infra/dev-env.sh`                     |
 
 ### Lot 1 — fondations du code
 
@@ -2737,16 +2825,16 @@ Référence : cahier §2.15, §4.3 et **ARCHITECTURE_V2 §3.2 à §3.4** (désor
 
 ### Résultats des vérifications (`pnpm check` + `pnpm e2e`)
 
-| Commande | Résultat |
-|---|---|
-| `pnpm -r build` | OK (5 paquets) |
-| `pnpm typecheck` (tsc + svelte-check) | 0 erreur, 0 avertissement |
-| `pnpm lint` (ESLint + Prettier) | OK |
-| tests `content` | 30/30 |
-| tests `grading` | 265/265 (dont 257 générés depuis en1 + ad1) |
-| tests `db` (PostgreSQL réel, aller-retour octet par octet fichiers → base → lecture) | 7/7 |
-| tests `api` | 5/5 |
-| e2e Playwright (Chromium mobile + bureau) | 4/4 : liste d'en1 (26 unités), leçon en1.l17 (RTL, Amiri Quran chargée, versets affichés = API = livres), exercice corrigé |
+| Commande                                                                             | Résultat                                                                                                                   |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm -r build`                                                                      | OK (5 paquets)                                                                                                             |
+| `pnpm typecheck` (tsc + svelte-check)                                                | 0 erreur, 0 avertissement                                                                                                  |
+| `pnpm lint` (ESLint + Prettier)                                                      | OK                                                                                                                         |
+| tests `content`                                                                      | 30/30                                                                                                                      |
+| tests `grading`                                                                      | 265/265 (dont 257 générés depuis en1 + ad1)                                                                                |
+| tests `db` (PostgreSQL réel, aller-retour octet par octet fichiers → base → lecture) | 7/7                                                                                                                        |
+| tests `api`                                                                          | 5/5                                                                                                                        |
+| e2e Playwright (Chromium mobile + bureau)                                            | 4/4 : liste d'en1 (26 unités), leçon en1.l17 (RTL, Amiri Quran chargée, versets affichés = API = livres), exercice corrigé |
 
 Aucun secret dans le dépôt ni dans l'historique (vérifié par recherche du mot de passe de dev) ; `.env` non suivi.
 
@@ -2763,29 +2851,32 @@ node packages/db/dist/cli/import.js --edition dev --publish
 pnpm dev:api    # 127.0.0.1:3000
 pnpm dev:web    # http://192.168.50.10:5173 depuis le PC
 ```
+
 Mise à jour du contenu depuis le PC : `.\infra\sync-content.ps1 -W "<W>"` (copie locale du script dans le dépôt).
 
 ### Écarts avec le cahier des charges (et pourquoi)
 
-| Cahier | Fait | Raison |
-|---|---|---|
-| Node.js 22 LTS | Node **24** LTS | LTS active en septembre 2026 ; 22 en maintenance |
-| PostgreSQL 16 | **18** | version des dépôts Ubuntu 26.04 ; `uuidv7()` natif |
-| `packages/content-schema`, `importer`, `correction`, `render` | `content` (types + import), `grading`, `db` | découpage plus simple pour le lot 1 ; `render` viendra au lot 2 |
-| Validation zod + OpenAPI | schémas JSON natifs de Fastify | suffisant pour 3 routes en lecture ; zod/OpenAPI avec les routes d'écriture (lots 3-4) |
-| @vite-pwa | service worker natif de SvelteKit | plus léger ; hors ligne complet au lot 3 |
-| TypeScript « récent » | 6.0 (pas 7.0) | typescript-eslint et SvelteKit ne supportent pas encore TS 7 |
-| Icônes PNG de la PWA | icône SVG seule | à produire avec la charte (installabilité Android à vérifier au lot 3) |
-| Tests générés sur les 4 316 exercices | 257 (en1 + ad1, périmètre MVP) | les autres niveaux entreront avec leurs lots |
-| `en1/l01.js` JSON strict | lu en bac à sable + avertissement | fichier historique non strict ; conversion à faire côté livres (non modifié) — **fait côté livres le 28/09** (awform\AUDIT_MVP_EN1.md, reprise 2) : relancer sync-content, l'avertissement doit disparaître |
+| Cahier                                                        | Fait                                        | Raison                                                                                                                                                                                                      |
+| ------------------------------------------------------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Node.js 22 LTS                                                | Node **24** LTS                             | LTS active en septembre 2026 ; 22 en maintenance                                                                                                                                                            |
+| PostgreSQL 16                                                 | **18**                                      | version des dépôts Ubuntu 26.04 ; `uuidv7()` natif                                                                                                                                                          |
+| `packages/content-schema`, `importer`, `correction`, `render` | `content` (types + import), `grading`, `db` | découpage plus simple pour le lot 1 ; `render` viendra au lot 2                                                                                                                                             |
+| Validation zod + OpenAPI                                      | schémas JSON natifs de Fastify              | suffisant pour 3 routes en lecture ; zod/OpenAPI avec les routes d'écriture (lots 3-4)                                                                                                                      |
+| @vite-pwa                                                     | service worker natif de SvelteKit           | plus léger ; hors ligne complet au lot 3                                                                                                                                                                    |
+| TypeScript « récent »                                         | 6.0 (pas 7.0)                               | typescript-eslint et SvelteKit ne supportent pas encore TS 7                                                                                                                                                |
+| Icônes PNG de la PWA                                          | icône SVG seule                             | à produire avec la charte (installabilité Android à vérifier au lot 3)                                                                                                                                      |
+| Tests générés sur les 4 316 exercices                         | 257 (en1 + ad1, périmètre MVP)              | les autres niveaux entreront avec leurs lots                                                                                                                                                                |
+| `en1/l01.js` JSON strict                                      | lu en bac à sable + avertissement           | fichier historique non strict ; conversion à faire côté livres (non modifié) — **fait côté livres le 28/09** (awform\AUDIT_MVP_EN1.md, reprise 2) : relancer sync-content, l'avertissement doit disparaître |
 
 Remarque : le registre coran.json porte parfois une **étape** (`TEXTE_ARABE_VERIFIE`) dans le champ `statut` ; importé tel quel.
 
 ### Questions au client (cahier §8.2) devenues utiles / bloquantes
+
 - **Q5 (identifiants d'exercices)** : non bloquant aujourd'hui (position + empreinte), mais à trancher **avant** que les élèves pilotes ne répondent (lot 3), sinon tout réordonnancement dans les livres rompra le lien réponses ↔ exercices.
 - **Q1 (nom, domaine)** : « Awzid » envisagé (ETAT 28/09) ; non bloquant pour le code (libellés centralisables), bloquant pour la recette R0 (serveur de recette, TLS).
 - **Q7 (hébergeur)** et compte de **dépôt de code distant** (§7.2, « avant L0 ») : le dépôt n'existe qu'en local sur la VM — **risque de perte** ; à créer par le client (je ne crée aucun compte).
 - Q4 (bêta sans audio) : conditionne le mode « l'adulte lit » (déjà prévu, non bloquant pour le lot 2).
 
 ### Prochain lot (lot 2 — lecteur de leçon, cahier L1/L2)
+
 Import complet de l'édition (illustrations `illus\*.js` assainies, `zz-sansvisage.js` en dernier, contrôles translittération / personnages / corrigés d'AUDIT_BILANS), projections enseignant / parent / épreuve, rapport d'import lisible ; rendu fidèle de tous les blocs (scènes sans visage, lecture, mots avec images, dialogue, Coran/tajwid, adab, bilans `lectureBilan`, textes non préparés) ; les 8 types interactifs (relier, chasse, contient, ordre en plus) ; enregistrement des tentatives ; tests visuels des signes coraniques rares.
