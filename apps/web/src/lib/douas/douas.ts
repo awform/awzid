@@ -20,9 +20,10 @@ export interface Doua {
   ar?: string;
   /** douas du Coran : texte Tanzil, jamais de voix de synthèse */
   coran?: Passage[];
-  reference: string;
-  degre: string;
-  juge_par: string;
+  /** panneau « Source » (table relue par le référent) : jamais de note interne du chercheur */
+  source: { recueil: string; degre?: string; juge?: string; lien?: string };
+  /** hadith qui cite un verset (formulation du narrateur gardée) : « contient un passage du Coran » */
+  coran_cite?: boolean;
   /** vide tant que la traduction n'est pas fournie (« Traduction en préparation ») */
   traduction: string;
   note?: string;

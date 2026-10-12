@@ -99,6 +99,27 @@ export function passage(ref, tanzil) {
 
 const sha256 = (b) => createHash('sha256').update(b).digest('hex');
 
+/**
+ * Marques du chercheur (décision du référent, ajout du 12/10) — SEULES exceptions à « chaîne exacte », listées
+ * par doua dans la présentation (`nettoyage`) : U+200F retirés ; « ... » → « … » (extrait d'un hadith plus long) ;
+ * « (×3) », « (×7) » retirés (le nombre est dit en français dans le moment). Rien d'autre n'est touché.
+ */
+export const NETTOYAGES = {
+  rlm: (t) => t.replace(/‏/g, ''),
+  points: (t) => t.replace(/\.\.\./g, '…'),
+  fois: (t) => t.replace(/ \(×\d+\)/g, ''),
+};
+function nettoyer(texte, ops, id) {
+  let t = texte;
+  for (const op of ops) {
+    const u = NETTOYAGES[op](t);
+    if (u === t) throw new Error(`nettoyage « ${op} » sans effet : ${id}`);
+    t = u;
+  }
+  if (/[‏×]|\.\.\./.test(t)) throw new Error(`marque du chercheur restée dans le texte : ${id}`);
+  return t;
+}
+
 export function construire({ tanzil = readTanzil() } = {}) {
   if (!tanzil) throw new Error(`Tanzil introuvable (${tanzilPath()}) : AWFORM_CONTENT_DIR ?`);
   const raw = readFileSync(SOURCE);
@@ -115,13 +136,24 @@ export function construire({ tanzil = readTanzil() } = {}) {
     if (!p) throw new Error(`présentation absente : ${x.id}`);
     const r = rubriqueDe.get(x.rubrique);
     if (!r) throw new Error(`rubrique inconnue : ${x.rubrique} (${x.id})`);
+    // panneau « Source » de l'élève : table relue (recueil, degré en français, savant), jamais les notes internes
+    const s = p.source;
+    if (!s?.recueil) throw new Error(`source absente : ${x.id}`);
+    const source = { recueil: s.recueil };
+    if (s.degre) source.degre = s.degre;
+    if (s.juge) source.juge = s.juge;
+    if (/^https:\/\/sunnah\.com\//.test(x.url_reference ?? '')) {
+      // le lien doit désigner le hadith du recueil affiché (même numéro)
+      const n = /\d+/.exec(s.recueil)?.[0];
+      if (!n || !new RegExp(`[:/]${n}[a-z]?$`).test(x.url_reference))
+        throw new Error(`lien ${x.url_reference} ≠ recueil « ${s.recueil} » (${x.id})`);
+      source.lien = x.url_reference;
+    }
     const d = {
       rubrique: r,
       titre: p.titre,
       moment: p.moment,
-      reference: x.reference,
-      degre: x.degre,
-      juge_par: x.juge_par,
+      source,
       // traduction : vide tant qu'aucune source publiée n'est retenue (« Traduction en préparation »)
       traduction: x.traduction_fr ?? '',
       // emplacement de l'audio HUMAIN futur (récitant, jamais de voix de synthèse) : rien pour l'instant
@@ -129,7 +161,7 @@ export function construire({ tanzil = readTanzil() } = {}) {
     };
     if (typeof x.texte_ar === 'string' && x.texte_ar) {
       if (/[A-Za-z]{4}/.test(x.texte_ar)) throw new Error(`texte arabe non copié : ${x.id}`);
-      d.ar = x.texte_ar;
+      d.ar = nettoyer(x.texte_ar, pres.nettoyage[x.id] ?? [], x.id);
     } else {
       if (!x.coran_ref) throw new Error(`ni texte ni verset : ${x.id}`);
       d.coran = passage(x.coran_ref, tanzil);
@@ -137,6 +169,8 @@ export function construire({ tanzil = readTanzil() } = {}) {
     if (p.note) d.note = p.note;
     if (p.compagnon) d.compagnon = p.compagnon;
     if (p.facultatif) d.facultatif = true;
+    // verset cité dans un hadith : formulation du narrateur gardée, signalée (jamais de voix de synthèse)
+    if (p.coran_cite) d.coran_cite = true;
     douas[x.id] = d;
     parRubrique[r].push(x.id);
   }

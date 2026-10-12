@@ -22,7 +22,6 @@
   "do.ajouter_favori": "Ajouter aux favoris",
   "do.retirer_favori": "Retirer des favoris",
   "do.source": "Source",
-  "do.reference": "Référence",
   "do.degre": "Degré",
   "do.juge_par": "Jugé par",
   "do.traduction_prep": "Traduction en préparation",
@@ -31,5 +30,8 @@
   "do.hors_ligne": "Hors ligne : douas gardées sur cet appareil.",
   "do.absentes_titre": "Douas indisponibles",
   "do.absentes_texte": "Ouvrez cet onglet une fois avec Internet : les douas seront ensuite gardées sur l'appareil.",
-  "do.enfant_titre": "Mes petites douas"
+  "do.enfant_titre": "Mes petites douas",
+  "do.recueil": "Recueil",
+  "do.voir_sunnah": "Voir sur sunnah.com",
+  "do.contient_coran": "Contient un passage du Coran"
 }

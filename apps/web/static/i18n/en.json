@@ -2962,7 +2962,6 @@
   "do.ajouter_favori": "Add to favourites",
   "do.retirer_favori": "Remove from favourites",
   "do.source": "Source",
-  "do.reference": "Reference",
   "do.degre": "Grade",
   "do.juge_par": "Graded by",
   "do.traduction_prep": "Translation in preparation",
@@ -2971,5 +2970,8 @@
   "do.hors_ligne": "Offline: duas kept on this device.",
   "do.absentes_titre": "Duas unavailable",
   "do.absentes_texte": "Open this tab once with Internet: the duas will then be kept on the device.",
-  "do.enfant_titre": "My little duas"
+  "do.enfant_titre": "My little duas",
+  "do.recueil": "Collection",
+  "do.voir_sunnah": "View on sunnah.com",
+  "do.contient_coran": "Contains a passage of the Quran"
 }

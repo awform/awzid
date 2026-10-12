@@ -28,6 +28,27 @@ const source = JSON.parse(rawSource.toString('utf8')) as {
 };
 const data = JSON.parse(readFileSync(at('../../../static/douas/douas.json'), 'utf8')) as DouasData;
 const EN_ATTENTE = ['DOU-ANG-08', 'ECA-07'];
+/**
+ * SEULES exceptions à « chaîne exacte » (décision du référent, ajout du 12/10) : marques du chercheur.
+ * rlm : U+200F retirés ; points : « ... » → « … » ; fois : « (×3) », « (×7) » retirés (dits dans le moment).
+ */
+const EXCEPTIONS: Record<string, Array<'rlm' | 'points' | 'fois'>> = {
+  'DOU-SOM-07': ['rlm', 'points'],
+  'DOU-MOS-01': ['rlm'],
+  'DOU-VOY-01': ['points', 'fois'],
+  'DOU-PLU-05': ['points'],
+  'DOU-MAL-04': ['points', 'fois'],
+  'DOU-ETE-01': ['points'],
+};
+function attenduDe(id: string, texte: string): string {
+  let t = texte;
+  for (const op of EXCEPTIONS[id] ?? []) {
+    if (op === 'rlm') t = t.split('‏').join('');
+    if (op === 'points') t = t.split('...').join('…');
+    if (op === 'fois') t = t.split(' (×3)').join('').split(' (×7)').join('');
+  }
+  return t;
+}
 const entries = Object.entries(data.douas);
 const bytes = (s: string) => Buffer.from(s, 'utf8').toString('hex');
 const decode = (h: string) =>
@@ -48,23 +69,44 @@ describe('douas : texte exact', () => {
     expect(entries.length).toBe(source.douas.length - 1);
   });
 
-  it('chaque hadith affiché est identique octet par octet au dossier (données et rendu)', () => {
+  it('chaque hadith affiché est identique octet par octet au dossier (données et rendu), sauf les 6 exceptions listées', () => {
     let n = 0;
     for (const [id, d] of entries) {
       const src = source.douas.find((x) => x.id === id);
       expect(src, id).toBeTruthy();
       if (!d.ar) continue;
-      expect(bytes(d.ar), id).toBe(bytes(src!.texte_ar!));
+      const attendu = attenduDe(id, src!.texte_ar!);
+      expect(bytes(d.ar), id).toBe(bytes(attendu));
+      // aucune marque du chercheur ne reste, nulle part
+      expect(/[‏×]|\.\.\./.test(d.ar), id).toBe(false);
       const html = render(DouaTexte, { props: { doua: d } }).body;
       // texte du paragraphe, balises d'isolement (<bdi>) ôtées : seul le texte compte
       const shown = [...html.matchAll(/data-douas-ar[^>]*>([\s\S]*?)<\/p>/g)].map((m) =>
         decode(m[1]!.replace(/<[^>]+>/g, '')),
       );
       expect(shown.length, id).toBe(1);
-      expect(bytes(shown[0]!), id).toBe(bytes(src!.texte_ar!));
+      expect(bytes(shown[0]!), id).toBe(bytes(attendu));
       n++;
     }
     expect(n).toBeGreaterThan(45);
+  });
+
+  it('exceptions : seulement les marques du chercheur retirées, rien d’autre', () => {
+    for (const [id, ops] of Object.entries(EXCEPTIONS)) {
+      const avant = source.douas.find((x) => x.id === id)!.texte_ar!;
+      const apres = data.douas[id]!.ar!;
+      expect(apres, id).not.toBe(avant);
+      // en retirant les mêmes marques des deux côtés, les mots sont identiques
+      const mots = (s: string) =>
+        s
+          .replace(/[‏]/g, '')
+          .replace(/\.\.\.|…/g, ' ')
+          .replace(/\(×\d+\)/g, ' ')
+          .split(/\s+/)
+          .filter(Boolean);
+      expect(mots(apres), id).toEqual(mots(avant));
+      expect(ops.length, id).toBeGreaterThan(0);
+    }
   });
 
   it('douas du Coran : texte Tanzil (sans voix de synthèse), rendu entre ﴿ ﴾', () => {
@@ -124,7 +166,9 @@ describe('douas : décisions du référent', () => {
     const r = inRubrique(data, 'ablutions_mosquee');
     expect(r.indexOf('DOU-ABL-02')).toBe(r.indexOf('DOU-ABL-01') + 1);
     expect(d('DOU-ABL-01').facultatif).toBeUndefined();
-    expect(d('DOU-ABL-02').note).toContain('at-Tirmidhī');
+    expect(d('DOU-ABL-02').source.recueil).toContain('at-Tirmidhī');
+    expect(d('DOU-ABL-02').source.juge).toBe('al-Albānī');
+    expect(d('DOU-ABL-02').note).toMatch(/discuté sa chaîne/);
   });
   it('2. DOU-MAI-01 retenue, divergence signalée derrière « Source »', () => {
     expect(d('DOU-MAI-01').note).toMatch(/divergent/);
@@ -145,12 +189,57 @@ describe('douas : décisions du référent', () => {
   it('6. tonnerre : parole d’un Compagnon, d’après le Muwaṭṭaʾ', () => {
     expect(d('DOU-PLU-05').compagnon).toMatch(/Compagnon.*Muwaṭṭaʾ/);
   });
-  it('8. aucun nombre de répétitions qui ne soit pas dans le texte retenu', () => {
+  it('8. un nombre de répétitions seulement là où il est dans le hadith (VOY-01, MAL-04), dit en français', () => {
     const nombre = /\b(\d+|deux|trois|quatre|sept|dix|cent)\s+fois\b|\d+\s*x\b|×/i;
-    for (const [id, x] of entries)
-      if (nombre.test(`${x.titre} ${x.moment}`)) expect(x.ar ?? '', id).toContain('×');
-    expect(`${d('DOU-SOM-05').titre} ${d('DOU-SOM-05').moment}`).not.toMatch(/fois/);
-    expect(`${d('DOU-MAL-03').titre} ${d('DOU-MAL-03').moment}`).not.toMatch(/fois|7/);
+    const avecNombre = entries
+      .filter(([, x]) => nombre.test(`${x.titre} ${x.moment}`))
+      .map(([id]) => id);
+    expect(avecNombre.sort()).toEqual(['DOU-MAL-04', 'DOU-VOY-01']);
+    expect(d('DOU-MAL-04').moment).toMatch(/trois fois.*sept fois/);
+    expect(d('DOU-VOY-01').moment).toMatch(/trois fois/);
+    for (const id of avecNombre)
+      expect(source.douas.find((x) => x.id === id)!.texte_ar, id).toContain('×');
+  });
+  it('titres : le moment seul, sans citation traduite ; pas de redite dans la ligne du moment', () => {
+    for (const [id, x] of entries) {
+      expect(/[«»“”]/.test(x.titre), `${id} : ${x.titre}`).toBe(false);
+      expect(x.titre).not.toMatch(/Compagnon/);
+      if (x.moment) expect(x.moment.startsWith(x.titre), id).toBe(false);
+    }
+  });
+  it('panneau Source : recueil, degré en français, savant ; aucune note interne ni URL brute', () => {
+    const DEGRES = /^(authentique|bon|parole d'un Compagnon — degré en cours de vérification)$/;
+    for (const [id, x] of entries) {
+      const s = x.source;
+      const textes = [s.recueil, s.degre ?? '', s.juge ?? '', x.note ?? '', x.compagnon ?? ''];
+      for (const t of textes) {
+        expect(t, id).not.toMatch(
+          /confirmer|recherche web|sunnah\.com|http|dorar|islamqa|sahih|da'if|hasan/i,
+        );
+        // accents : aucun nom de recueil ou de savant écrit sans ses signes
+        expect(t, id).not.toMatch(/\b(Bukhari|Tirmidhi|Abu Dawud|Albani|Majah|Muwatta)\b/);
+      }
+      // douas du Coran (la doua de Yūnus, texte coranique, a pour source le hadith d'at-Tirmidhī qui la recommande)
+      if (x.coran && id !== 'DOU-ANG-02') {
+        expect(s.recueil, id).toMatch(/^Coran \d+:\d+(-\d+)?$/);
+        expect(s.lien, id).toBeUndefined();
+      } else {
+        expect(s.degre, id).toMatch(DEGRES);
+        expect(s.lien, id).toMatch(/^https:\/\/sunnah\.com\/[a-z]+[:/]/);
+        // savant cité seulement hors al-Bukhārī et Muslim
+        if (/^(al-Bukhārī|Muslim) \d+/.test(s.recueil)) expect(s.juge, id).toBeUndefined();
+        else expect(s.juge ?? s.degre, id).toBeTruthy();
+      }
+    }
+  });
+  it('versets cités dans un hadith : formulation du narrateur, signalée', () => {
+    const cites = entries.filter(([, x]) => x.coran_cite).map(([id]) => id);
+    expect(cites.sort()).toEqual(['DOU-ANG-04', 'DOU-PLU-05', 'DOU-VOY-01', 'DOU-VOY-02']);
+    for (const id of cites) {
+      expect(d(id).ar, id).toBeTruthy();
+      expect(d(id).coran, id).toBeUndefined();
+      expect(d(id).audio, id).toBeNull();
+    }
   });
   it('aucune phrase arabe sur la ligne du français (titres, moments, notes)', () => {
     for (const [id, x] of entries)
@@ -173,7 +262,7 @@ describe('douas : version enfant', () => {
       expect(x.facultatif, id).toBeUndefined();
       const len = x.ar?.length ?? x.coran!.reduce((s, p) => s + p.text.length, 0);
       expect(len, id).toBeLessThanOrEqual(110);
-      if (x.ar) expect(x.degre, id).toMatch(/^(sahih|hasan)/);
+      if (x.ar) expect(x.source.degre, id).toMatch(/^(authentique|bon)$/);
     }
   });
 });

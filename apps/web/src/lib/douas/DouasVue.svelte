@@ -137,7 +137,10 @@
             >{/if}
           <DouaTexte doua={d} />
           <!-- audio humain futur (récitant) : `d.audio`, aucun bouton tant qu'il n'y en a pas -->
-          <p class="moment"><Bidi text={d.moment} /></p>
+          {#if d.coran_cite}<p class="cite muted" data-testid="douas-coran-cite">
+              {t('do.contient_coran')}
+            </p>{/if}
+          {#if d.moment}<p class="moment"><Bidi text={d.moment} /></p>{/if}
           {#if d.traduction}
             <p class="sens"><Bidi text={d.traduction} /></p>
           {:else}
@@ -168,15 +171,18 @@
           {#if ouverte === id}
             <dl class="source" id={`src-${id}`} data-testid="douas-source-detail">
               {#if d.compagnon}<dd class="compagnon"><Bidi text={d.compagnon} /></dd>{/if}
-              <dt>{t('do.reference')}</dt>
-              <dd><Bidi text={d.reference} /></dd>
-              {#if !d.coran}
-                <dt>{t('do.degre')}</dt>
-                <dd><Bidi text={d.degre} /></dd>
-                {#if d.juge_par}<dt>{t('do.juge_par')}</dt>
-                  <dd><Bidi text={d.juge_par} /></dd>{/if}
-              {/if}
+              <dt>{t('do.recueil')}</dt>
+              <dd><Bidi text={d.source.recueil} /></dd>
+              {#if d.source.degre}<dt>{t('do.degre')}</dt>
+                <dd><Bidi text={d.source.degre} /></dd>{/if}
+              {#if d.source.juge}<dt>{t('do.juge_par')}</dt>
+                <dd><Bidi text={d.source.juge} /></dd>{/if}
               {#if d.note}<dd class="note"><Bidi text={d.note} /></dd>{/if}
+              {#if d.source.lien}<dd class="lien">
+                  <a href={d.source.lien} target="_blank" rel="noopener noreferrer external"
+                    ><Bidi text={t('do.voir_sunnah')} /></a
+                  >
+                </dd>{/if}
             </dl>
           {/if}
         </li>
@@ -254,6 +260,15 @@
   }
   .sens {
     margin: 4px 0;
+  }
+  .cite {
+    margin: 0 0 4px;
+    font-size: 0.85rem;
+  }
+  .source .lien a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
   .actions {
     display: flex;

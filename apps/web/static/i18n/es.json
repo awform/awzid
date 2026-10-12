@@ -2962,7 +2962,6 @@
   "do.ajouter_favori": "Añadir a favoritos",
   "do.retirer_favori": "Quitar de favoritos",
   "do.source": "Fuente",
-  "do.reference": "Referencia",
   "do.degre": "Grado",
   "do.juge_par": "Juzgado por",
   "do.traduction_prep": "Traducción en preparación",
@@ -2971,5 +2970,8 @@
   "do.hors_ligne": "Sin conexión: duas guardadas en este dispositivo.",
   "do.absentes_titre": "Duas no disponibles",
   "do.absentes_texte": "Abre esta pestaña una vez con Internet: las duas se guardarán después en el dispositivo.",
-  "do.enfant_titre": "Mis pequeñas duas"
+  "do.enfant_titre": "Mis pequeñas duas",
+  "do.recueil": "Colección",
+  "do.voir_sunnah": "Ver en sunnah.com",
+  "do.contient_coran": "Contiene un pasaje del Corán"
 }

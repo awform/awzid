@@ -2962,7 +2962,6 @@
   "do.ajouter_favori": "إضافة إلى المفضلة",
   "do.retirer_favori": "إزالة من المفضلة",
   "do.source": "المصدر",
-  "do.reference": "المرجع",
   "do.degre": "الدرجة",
   "do.juge_par": "الحكم",
   "do.traduction_prep": "الترجمة قيد الإعداد",
@@ -2971,5 +2970,8 @@
   "do.hors_ligne": "دون اتصال: الأدعية محفوظة على هذا الجهاز.",
   "do.absentes_titre": "الأدعية غير متاحة",
   "do.absentes_texte": "افتح هذا القسم مرة واحدة مع الإنترنت، ثم تُحفظ الأدعية على الجهاز.",
-  "do.enfant_titre": "أدعيتي الصغيرة"
+  "do.enfant_titre": "أدعيتي الصغيرة",
+  "do.recueil": "المصدر",
+  "do.voir_sunnah": "عرض على sunnah.com",
+  "do.contient_coran": "يتضمن آية من القرآن"
 }

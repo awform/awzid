@@ -89,7 +89,8 @@ test('onglet Douas : à côté des autres, bandeau, rubriques, une rubrique exac
     const card = liste(page).locator(`[data-doua="${id}"]`);
     expect(await card.locator('[data-douas-ar]').textContent()).toBe(d.douas[id]!.ar);
     await expect(card.getByTestId('douas-traduction-prep')).toHaveText('Traduction en préparation');
-    await expect(card.locator('.moment')).not.toBeEmpty();
+    // titre = le moment seul, sans citation traduite
+    await expect(card.locator('h3')).not.toContainText('«');
   }
   // aucune voix : ni bouton d'écoute, ni élément audio
   await expect(page.locator('audio, [data-testid="ecouter"]')).toHaveCount(0);
@@ -125,8 +126,19 @@ test('source derrière « Source », ajout facultatif, tonnerre : parole d’un 
   await expect(btn).toHaveAttribute('aria-expanded', 'true');
   const detail = card.getByTestId('douas-source-detail');
   await expect(detail).toContainText('Muwaṭṭaʾ');
-  await expect(detail).toContainText('Référence');
+  await expect(detail).toContainText('Recueil');
   await expect(detail).toContainText('Degré');
+  await expect(detail).toContainText('degré en cours de vérification');
+  // aucun texte technique : pas d'URL brute, un lien « Voir sur sunnah.com »
+  await expect(detail).not.toContainText('http');
+  await expect(detail).not.toContainText(/confirmer|recherche web/);
+  await expect(detail.getByRole('link', { name: 'Voir sur sunnah.com' })).toHaveAttribute(
+    'href',
+    /^https:\/\/sunnah\.com\//,
+  );
+  // verset cité par le Compagnon : formulation gardée, signalée
+  await expect(card.getByTestId('douas-coran-cite')).toHaveText('Contient un passage du Coran');
+  await expect(card.locator('h3')).toHaveText('En entendant le tonnerre');
   await btn.click();
   await expect(card.getByTestId('douas-source-detail')).toHaveCount(0);
   await page.goto('/vivre/douas?r=ablutions_mosquee');
