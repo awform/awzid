@@ -125,10 +125,11 @@ test('source derrière « Source », ajout facultatif, tonnerre : parole d’un 
   await btn.click();
   await expect(btn).toHaveAttribute('aria-expanded', 'true');
   const detail = card.getByTestId('douas-source-detail');
-  await expect(detail).toContainText('Muwaṭṭaʾ');
-  await expect(detail).toContainText('Recueil');
-  await expect(detail).toContainText('Degré');
-  await expect(detail).toContainText('degré en cours de vérification');
+  // parole de Compagnon : qui l'a dite, qui la rapporte, et le lien ; aucun degré avant vérification
+  await expect(detail).toContainText(
+    "Parole du Compagnon ʿAbd Allāh ibn az-Zubayr, rapportée par l'imam Mālik dans le Muwaṭṭaʾ",
+  );
+  await expect(detail).not.toContainText('Degré');
   // aucun texte technique : pas d'URL brute, un lien « Voir sur sunnah.com »
   await expect(detail).not.toContainText('http');
   await expect(detail).not.toContainText(/confirmer|recherche web/);
@@ -142,6 +143,19 @@ test('source derrière « Source », ajout facultatif, tonnerre : parole d’un 
   await btn.click();
   await expect(card.getByTestId('douas-source-detail')).toHaveCount(0);
   await page.goto('/vivre/douas?r=ablutions_mosquee');
+  // mosquée : deux formules sur deux lignes, chacune précédée de son moment, dans la même carte
+  const mos = liste(page).locator('[data-doua="DOU-MOS-01"]');
+  await expect(mos.locator('[data-douas-ar]')).toHaveCount(2);
+  await expect(mos.locator('.ligne-moment')).toHaveText(['En entrant', 'En sortant']);
+  // un autre hadith : recueil, degré, savant
+  await liste(page)
+    .locator('[data-doua="DOU-ABL-02"]')
+    .getByRole('button', { name: 'Source' })
+    .click();
+  const abl = liste(page).locator('[data-doua="DOU-ABL-02"]').getByTestId('douas-source-detail');
+  await expect(abl).toContainText('Recueil');
+  await expect(abl).toContainText('authentique');
+  await expect(abl).toContainText('al-Albānī');
   await expect
     .poll(async () => (await ids(page)).slice(0, 2))
     .toEqual(['DOU-ABL-01', 'DOU-ABL-02']);

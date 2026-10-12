@@ -30,12 +30,14 @@ const data = JSON.parse(readFileSync(at('../../../static/douas/douas.json'), 'ut
 const EN_ATTENTE = ['DOU-ANG-08', 'ECA-07'];
 /**
  * SEULES exceptions à « chaîne exacte » (décision du référent, ajout du 12/10) : marques du chercheur.
- * rlm : U+200F retirés ; points : « ... » → « … » ; fois : « (×3) », « (×7) » retirés (dits dans le moment).
+ * rlm : U+200F retirés ; points : « ... » → « … » ; fois : « (×3) », « (×7) » retirés (dits dans le moment) ;
+ * ligne_point (MOS-01, deux formules) et ligne_etoile (VOY-01, deux versets) : le séparateur devient un saut de ligne.
  */
-const EXCEPTIONS: Record<string, Array<'rlm' | 'points' | 'fois'>> = {
+type Op = 'rlm' | 'points' | 'fois' | 'ligne_point' | 'ligne_etoile';
+const EXCEPTIONS: Record<string, Op[]> = {
   'DOU-SOM-07': ['rlm', 'points'],
-  'DOU-MOS-01': ['rlm'],
-  'DOU-VOY-01': ['points', 'fois'],
+  'DOU-MOS-01': ['rlm', 'ligne_point'],
+  'DOU-VOY-01': ['points', 'fois', 'ligne_etoile'],
   'DOU-PLU-05': ['points'],
   'DOU-MAL-04': ['points', 'fois'],
   'DOU-ETE-01': ['points'],
@@ -46,6 +48,8 @@ function attenduDe(id: string, texte: string): string {
     if (op === 'rlm') t = t.split('‏').join('');
     if (op === 'points') t = t.split('...').join('…');
     if (op === 'fois') t = t.split(' (×3)').join('').split(' (×7)').join('');
+    if (op === 'ligne_point') t = t.split(' . ').join('\n');
+    if (op === 'ligne_etoile') t = t.split(' * ').join('\n');
   }
   return t;
 }
@@ -78,14 +82,15 @@ describe('douas : texte exact', () => {
       const attendu = attenduDe(id, src!.texte_ar!);
       expect(bytes(d.ar), id).toBe(bytes(attendu));
       // aucune marque du chercheur ne reste, nulle part
-      expect(/[‏×]|\.\.\./.test(d.ar), id).toBe(false);
+      expect(/[‏×*]|\.\.\.| \. /.test(d.ar), id).toBe(false);
       const html = render(DouaTexte, { props: { doua: d } }).body;
       // texte du paragraphe, balises d'isolement (<bdi>) ôtées : seul le texte compte
       const shown = [...html.matchAll(/data-douas-ar[^>]*>([\s\S]*?)<\/p>/g)].map((m) =>
         decode(m[1]!.replace(/<[^>]+>/g, '')),
       );
-      expect(shown.length, id).toBe(1);
-      expect(bytes(shown[0]!), id).toBe(bytes(attendu));
+      // une ligne affichée par ligne du texte (deux formules de MOS-01, deux versets de VOY-01)
+      expect(shown.length, id).toBe(attendu.split('\n').length);
+      expect(bytes(shown.join('\n')), id).toBe(bytes(attendu));
       n++;
     }
     expect(n).toBeGreaterThan(45);
@@ -99,11 +104,11 @@ describe('douas : texte exact', () => {
       // en retirant les mêmes marques des deux côtés, les mots sont identiques
       const mots = (s: string) =>
         s
-          .replace(/[‏]/g, '')
+          .replace(/‏/g, '')
           .replace(/\.\.\.|…/g, ' ')
           .replace(/\(×\d+\)/g, ' ')
           .split(/\s+/)
-          .filter(Boolean);
+          .filter((w) => w && w !== '.' && w !== '*');
       expect(mots(apres), id).toEqual(mots(avant));
       expect(ops.length, id).toBeGreaterThan(0);
     }
@@ -208,7 +213,7 @@ describe('douas : décisions du référent', () => {
     }
   });
   it('panneau Source : recueil, degré en français, savant ; aucune note interne ni URL brute', () => {
-    const DEGRES = /^(authentique|bon|parole d'un Compagnon — degré en cours de vérification)$/;
+    const DEGRES = /^(authentique|bon)$/;
     for (const [id, x] of entries) {
       const s = x.source;
       const textes = [s.recueil, s.degre ?? '', s.juge ?? '', x.note ?? '', x.compagnon ?? ''];
@@ -223,6 +228,11 @@ describe('douas : décisions du référent', () => {
       if (x.coran && id !== 'DOU-ANG-02') {
         expect(s.recueil, id).toMatch(/^Coran \d+:\d+(-\d+)?$/);
         expect(s.lien, id).toBeUndefined();
+      } else if (x.compagnon) {
+        // parole de Compagnon : aucun degré avant vérification sur l'édition, seulement le lien
+        expect(s.degre, id).toBeUndefined();
+        expect(s.juge, id).toBeUndefined();
+        expect(s.lien, id).toMatch(/^https:\/\/sunnah\.com\//);
       } else {
         expect(s.degre, id).toMatch(DEGRES);
         expect(s.lien, id).toMatch(/^https:\/\/sunnah\.com\/[a-z]+[:/]/);

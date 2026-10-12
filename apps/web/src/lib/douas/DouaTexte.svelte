@@ -20,8 +20,11 @@
       >{/each}<span class="cr" aria-hidden="true">{CROCHETS.ferme}</span>
   </p>
 {:else if doua.ar}
-  <!-- <Bidi> découpe sans rien changer : les marques latines du chercheur (« (×3) ») restent lisibles -->
-  <p class="ar ar-long" lang="ar" dir="rtl" data-douas-ar><Bidi text={doua.ar} base="ar" /></p>
+  <!-- une ligne par formule ou par verset (saut de ligne du texte, décision du référent), avec son moment s'il y en a -->
+  {#each doua.ar.split('\n') as ligne, i (i)}
+    {#if doua.lignes?.[i]}<p class="ligne-moment"><Bidi text={doua.lignes[i]} /></p>{/if}
+    <p class="ar ar-long" lang="ar" dir="rtl" data-douas-ar><Bidi text={ligne} base="ar" /></p>
+  {/each}
 {/if}
 
 <style>
@@ -32,6 +35,12 @@
   /* plusieurs versets (20:25-28) : séparés à l'affichage seulement, aucun caractère ajouté au texte */
   .v + .v {
     margin-inline-start: 0.5em;
+  }
+  .ligne-moment {
+    margin: var(--space-s) 0 0;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.4;
   }
   .cr {
     margin-inline: 0.2em;

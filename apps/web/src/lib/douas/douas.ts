@@ -24,6 +24,8 @@ export interface Doua {
   source: { recueil: string; degre?: string; juge?: string; lien?: string };
   /** hadith qui cite un verset (formulation du narrateur gardée) : « contient un passage du Coran » */
   coran_cite?: boolean;
+  /** plusieurs formules dans une carte (lignes de `ar`) : moment de chacune (« En entrant », « En sortant ») */
+  lignes?: string[];
   /** vide tant que la traduction n'est pas fournie (« Traduction en préparation ») */
   traduction: string;
   note?: string;

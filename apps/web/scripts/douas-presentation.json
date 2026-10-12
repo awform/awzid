@@ -33,8 +33,8 @@
   ],
   "nettoyage": {
     "DOU-SOM-07": ["rlm", "points"],
-    "DOU-MOS-01": ["rlm"],
-    "DOU-VOY-01": ["points", "fois"],
+    "DOU-MOS-01": ["rlm", "ligne_point"],
+    "DOU-VOY-01": ["points", "fois", "ligne_etoile"],
     "DOU-PLU-05": ["points"],
     "DOU-MAL-04": ["points", "fois"],
     "DOU-ETE-01": ["points"]
@@ -145,7 +145,8 @@
     },
     "DOU-MOS-01": {
       "titre": "En entrant et en sortant de la mosquée",
-      "moment": "À l'entrée, la première phrase ; à la sortie, la seconde.",
+      "moment": "",
+      "lignes": ["En entrant", "En sortant"],
       "source": { "recueil": "Muslim 713", "degre": "authentique" }
     },
     "DOU-MOS-02": {
@@ -210,10 +211,7 @@
       "moment": "On cesse de parler et on dit cette phrase.",
       "coran_cite": true,
       "compagnon": "Parole du Compagnon ʿAbd Allāh ibn az-Zubayr, rapportée par l'imam Mālik dans le Muwaṭṭaʾ.",
-      "source": {
-        "recueil": "al-Adab al-Mufrad 723 (et le Muwaṭṭaʾ de l'imam Mālik)",
-        "degre": "parole d'un Compagnon — degré en cours de vérification"
-      }
+      "source": { "recueil": "al-Adab al-Mufrad 723 (et le Muwaṭṭaʾ de l'imam Mālik)" }
     },
     "DOU-MAL-01": {
       "titre": "En rendant visite à un malade",

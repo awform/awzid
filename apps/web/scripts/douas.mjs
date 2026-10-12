@@ -108,6 +108,9 @@ export const NETTOYAGES = {
   rlm: (t) => t.replace(/‏/g, ''),
   points: (t) => t.replace(/\.\.\./g, '…'),
   fois: (t) => t.replace(/ \(×\d+\)/g, ''),
+  // deux formules (MOS-01) ou deux versets (VOY-01) : le séparateur du chercheur devient un saut de ligne
+  ligne_point: (t) => t.replace(/ \. /g, '\n'),
+  ligne_etoile: (t) => t.replace(/ \* /g, '\n'),
 };
 function nettoyer(texte, ops, id) {
   let t = texte;
@@ -116,7 +119,8 @@ function nettoyer(texte, ops, id) {
     if (u === t) throw new Error(`nettoyage « ${op} » sans effet : ${id}`);
     t = u;
   }
-  if (/[‏×]|\.\.\./.test(t)) throw new Error(`marque du chercheur restée dans le texte : ${id}`);
+  if (/[‏×*]|\.\.\.| \. /.test(t))
+    throw new Error(`marque du chercheur restée dans le texte : ${id}`);
   return t;
 }
 
@@ -169,6 +173,12 @@ export function construire({ tanzil = readTanzil() } = {}) {
     if (p.note) d.note = p.note;
     if (p.compagnon) d.compagnon = p.compagnon;
     if (p.facultatif) d.facultatif = true;
+    // plusieurs formules dans une carte : moment de chaque ligne (autant que de lignes du texte)
+    if (p.lignes) {
+      if (!d.ar || d.ar.split('\n').length !== p.lignes.length)
+        throw new Error(`lignes ≠ formules : ${x.id}`);
+      d.lignes = p.lignes;
+    }
     // verset cité dans un hadith : formulation du narrateur gardée, signalée (jamais de voix de synthèse)
     if (p.coran_cite) d.coran_cite = true;
     douas[x.id] = d;

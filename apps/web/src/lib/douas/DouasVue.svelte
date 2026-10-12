@@ -171,13 +171,17 @@
           {#if ouverte === id}
             <dl class="source" id={`src-${id}`} data-testid="douas-source-detail">
               {#if d.compagnon}<dd class="compagnon"><Bidi text={d.compagnon} /></dd>{/if}
-              <dt>{t('do.recueil')}</dt>
-              <dd><Bidi text={d.source.recueil} /></dd>
-              {#if d.source.degre}<dt>{t('do.degre')}</dt>
-                <dd><Bidi text={d.source.degre} /></dd>{/if}
-              {#if d.source.juge}<dt>{t('do.juge_par')}</dt>
-                <dd><Bidi text={d.source.juge} /></dd>{/if}
-              {#if d.note}<dd class="note"><Bidi text={d.note} /></dd>{/if}
+              <!-- parole de Compagnon : seulement qui l'a dite et qui la rapporte, et le lien (le degré viendra
+                   après vérification sur l'édition) -->
+              {#if !d.compagnon}
+                <dt>{t('do.recueil')}</dt>
+                <dd><Bidi text={d.source.recueil} /></dd>
+                {#if d.source.degre}<dt>{t('do.degre')}</dt>
+                  <dd><Bidi text={d.source.degre} /></dd>{/if}
+                {#if d.source.juge}<dt>{t('do.juge_par')}</dt>
+                  <dd><Bidi text={d.source.juge} /></dd>{/if}
+                {#if d.note}<dd class="note"><Bidi text={d.note} /></dd>{/if}
+              {/if}
               {#if d.source.lien}<dd class="lien">
                   <a href={d.source.lien} target="_blank" rel="noopener noreferrer external"
                     ><Bidi text={t('do.voir_sunnah')} /></a

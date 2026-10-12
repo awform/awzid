@@ -39,10 +39,13 @@ Les 10 douas écartées par le dossier le restent : la doua du miroir (aucune do
 
 1. **Panneau « Source », version de l'élève** : le recueil et le numéro (lien « Voir sur sunnah.com », jamais d'URL brute dans le texte), le degré en français (« authentique », « bon », « parole d'un Compagnon »), le savant qui a jugé quand ce n'est ni al-Bukhārī ni Muslim. Les notes internes du chercheur (« à confirmer », « relevé via recherche web »…) ne sont jamais montrées. Un degré encore à confirmer s'affiche « degré en cours de vérification ». Table de correspondance relue ci-dessous (`apps/web/scripts/douas-presentation.json`, champ `source`).
 2. **Versets cités dans un hadith** (DOU-VOY-01, DOU-VOY-02, DOU-PLU-05, DOU-ANG-04) : la formulation du hadith est gardée telle que la source la rapporte (récit du narrateur), sans la remplacer par Tanzil ; jamais de voix de synthèse ; une note sous la doua : « Contient un passage du Coran ».
-3. **Marques du chercheur** : U+200F retirés ; « ... » remplacés par « … » (extrait d'un hadith plus long) ; « (×3) », « (×7) » retirés du texte arabe, le nombre étant dit en français dans le moment (« trois fois »), car il est dans le hadith. Ce sont les SEULES exceptions à « chaîne exacte », listées ci-dessous avec l'avant et l'après, et contrôlées par le test (`douas.test.ts`, liste explicite). DOU-ETE-01 (« ... » entre les trois paroles) a été ajoutée à la liste des cinq par cohérence : à confirmer par le référent.
+3. **Marques du chercheur** : U+200F retirés ; « ... » remplacés par « … » (extrait d'un hadith plus long) ; « (×3) », « (×7) » retirés du texte arabe, le nombre étant dit en français dans le moment (« trois fois »), car il est dans le hadith. Ce sont les SEULES exceptions à « chaîne exacte », listées ci-dessous avec l'avant et l'après, et contrôlées par le test (`douas.test.ts`, liste explicite). DOU-ETE-01 (« ... » entre les trois paroles) a été ajoutée à la liste des cinq par cohérence (validé, point 7).
 4. f2:143 (code TOTP dépendant de l'heure) est un e2e instable toléré.
 5. **Titres** (relecture du pilote) : le titre ne garde que le MOMENT (« Au coucher », « En entendant le tonnerre »…), sans citation traduite : le sens viendra avec les traductions validées.
 6. **Présentation** (relecture du pilote) : « (parole d'un Compagnon) » retiré du titre du tonnerre (la pastille le dit) ; la ligne du moment ne répète pas le titre, elle ne donne que la précision.
+7. **Dernières décisions avant la fusion** : DOU-ETE-01 acceptée comme 6e exception ; DOU-ABL-02 correct (authentique, al-Albānī).
+8. **DOU-MOS-01** : deux formules (entrée, sortie de la mosquée) — le « . » isolé est retiré et les deux formules sont affichées sur deux lignes, chacune précédée de son moment (« En entrant », « En sortant »), dans la même carte. **DOU-VOY-01** : le « * » entre les deux versets devient un saut de ligne. Exceptions notées ci-dessous.
+9. **Tonnerre (DOU-PLU-05)** : aucune ligne « degré » pour une parole de Compagnon ; le panneau n'affiche que « Parole du Compagnon ʿAbd Allāh ibn az-Zubayr, rapportée par l'imam Mālik dans le Muwaṭṭaʾ » et le lien. Le degré viendra après vérification sur l'édition.
 
 ### Table de correspondance du panneau « Source »
 
@@ -79,7 +82,7 @@ Les 10 douas écartées par le dossier le restent : la doua du miroir (aucune do
 | DOU-PLU-02 | al-Bukhārī 846 | authentique | — |
 | DOU-PLU-03 | al-Bukhārī 1013 | authentique | — |
 | DOU-PLU-04 | Muslim 899 | authentique | — |
-| DOU-PLU-05 | al-Adab al-Mufrad 723 (et le Muwaṭṭaʾ de l'imam Mālik) | parole d'un Compagnon — degré en cours de vérification | — |
+| DOU-PLU-05 | al-Adab al-Mufrad 723 (et le Muwaṭṭaʾ de l'imam Mālik) | — | — |
 | DOU-MAL-01 | al-Bukhārī 3616 | authentique | — |
 | DOU-MAL-02 | al-Bukhārī 5743 | authentique | — |
 | DOU-MAL-03 | Abū Dāwūd 3106 | authentique | al-Albānī |
@@ -120,12 +123,12 @@ Les 10 douas écartées par le dossier le restent : la doua du miroir (aucune do
 - **DOU-SOM-07** (U+200F retirés, « ... » → « … » ; 1 U+200F) :
   - avant : لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ، وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَىْءٍ قَدِيرٌ ... الْحَمْدُ لِلَّهِ، وَسُبْحَانَ اللَّهِ، وَلاَ إِلَهَ إِلاَّ اللَّهُ، وَاللَّهُ أَكْبَرُ، وَلاَ حَوْلَ وَلاَ قُوَّةَ إِلاَّ بِاللَّهِ ... اللَّهُمَّ اغْفِرْ لِي⟨U+200F⟩
   - après : لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ، وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَىْءٍ قَدِيرٌ … الْحَمْدُ لِلَّهِ، وَسُبْحَانَ اللَّهِ، وَلاَ إِلَهَ إِلاَّ اللَّهُ، وَاللَّهُ أَكْبَرُ، وَلاَ حَوْلَ وَلاَ قُوَّةَ إِلاَّ بِاللَّهِ … اللَّهُمَّ اغْفِرْ لِي
-- **DOU-MOS-01** (U+200F retirés ; 2 U+200F) :
+- **DOU-MOS-01** (U+200F retirés, « . » isolé → saut de ligne ; 2 U+200F) :
   - avant : اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ ⟨U+200F⟩.⟨U+200F⟩ وَإِذَا خَرَجَ فَلْيَقُلِ اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ
-  - après : اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ . وَإِذَا خَرَجَ فَلْيَقُلِ اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ
-- **DOU-VOY-01** (« ... » → « … », « (×n) » retirés) :
+  - après : اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ ⏎ وَإِذَا خَرَجَ فَلْيَقُلِ اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ (⏎ = saut de ligne)
+- **DOU-VOY-01** (« ... » → « … », « (×n) » retirés, « * » → saut de ligne) :
   - avant : بِسْمِ اللَّهِ ... الْحَمْدُ لِلَّهِ ... سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ * وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ ... الْحَمْدُ لِلَّهِ (×3) ... اللَّهُ أَكْبَرُ (×3) ... سُبْحَانَكَ إِنِّي ظَلَمْتُ نَفْسِي فَاغْفِرْ لِي فَإِنَّهُ لاَ يَغْفِرُ الذُّنُوبَ إِلاَّ أَنْتَ
-  - après : بِسْمِ اللَّهِ … الْحَمْدُ لِلَّهِ … سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ * وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ … الْحَمْدُ لِلَّهِ … اللَّهُ أَكْبَرُ … سُبْحَانَكَ إِنِّي ظَلَمْتُ نَفْسِي فَاغْفِرْ لِي فَإِنَّهُ لاَ يَغْفِرُ الذُّنُوبَ إِلاَّ أَنْتَ
+  - après : بِسْمِ اللَّهِ … الْحَمْدُ لِلَّهِ … سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ ⏎ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ … الْحَمْدُ لِلَّهِ … اللَّهُ أَكْبَرُ … سُبْحَانَكَ إِنِّي ظَلَمْتُ نَفْسِي فَاغْفِرْ لِي فَإِنَّهُ لاَ يَغْفِرُ الذُّنُوبَ إِلاَّ أَنْتَ (⏎ = saut de ligne)
 - **DOU-PLU-05** (« ... » → « … ») :
   - avant : سُبْحَانَ الَّذِي ... يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ وَالْمَلاَئِكَةُ مِنْ خِيفَتِهِ
   - après : سُبْحَانَ الَّذِي … يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ وَالْمَلاَئِكَةُ مِنْ خِيفَتِهِ
