@@ -742,6 +742,7 @@
   function longDown(e: PointerEvent) {
     longCancel();
     longFired = false;
+    if (relais) return;
     if (prefs.readOnly || guiding || !reciter || (e.pointerType === 'mouse' && e.button !== 0))
       return;
     const r = refOf(e.target);
@@ -1223,6 +1224,18 @@
   const sheetOpen = $derived(selOpen || regOpen || tradSheet || infoOpen || !!menuAt);
   const hidden = $derived.by(() => prefs.epure && ready && !chrome && !sheetOpen && !guiding);
   const CHROME = '.cbar, header.top, nav.tabs, .turn, .montrer';
+  /**
+   * TOUCHER EN ROUTE (essai du client, 12/10/2026, « Réglages n'est plus tactile ») : la barre s'efface d'un coup
+   * après 3 s ; un doigt parti vers « Réglages » juste avant arrivait sur le TEXTE dessous (menu du verset ouvert à
+   * la place, ou rien). Pendant GRACE_MS après l'effacement, un toucher à la place d'une commande de la barre la
+   * fait agir (et la barre revient) ; au-delà, le texte dessous redevient touchable (décision du 11/10/2026).
+   */
+  const GRACE_MS = 2000;
+  let hiddenAt = 0;
+  let relais: HTMLElement | null = null;
+  $effect(() => {
+    if (hidden) hiddenAt = performance.now();
+  });
   function chromeHeld(): boolean {
     const a = document.activeElement;
     // survol : seulement avec une vraie souris (au doigt, :hover reste collé après un toucher)
@@ -1316,7 +1329,34 @@
         },
       ];
       if ((e.target as Element | null)?.closest?.(CHROME)) showChrome();
+      relais = null;
+      if (touch && hidden && performance.now() - hiddenAt < GRACE_MS) {
+        const b = [...document.querySelectorAll<HTMLElement>('.cbar button')].find((x) => {
+          const r = x.getBoundingClientRect();
+          return (
+            r.width > 0 &&
+            e.clientX >= r.left &&
+            e.clientX <= r.right &&
+            e.clientY >= r.top &&
+            e.clientY <= r.bottom
+          );
+        });
+        if (b) {
+          relais = b;
+          showChrome();
+        }
+      }
     };
+    // le toucher visait une commande qui venait de s'effacer : elle agit (et pas le verset dessous)
+    const clic = (e: MouseEvent) => {
+      const b = relais;
+      if (!b) return;
+      relais = null;
+      e.stopPropagation();
+      e.preventDefault();
+      if (!b.matches(':disabled')) b.click();
+    };
+    const annule = () => (relais = null);
     const move = (e: PointerEvent) => {
       // souris : la bouger montre les commandes (comme un lecteur vidéo)
       // (sauf sur la pastille d'écoute : elle reste sous le pointeur jusqu'au clic)
@@ -1333,6 +1373,8 @@
       if ((e.target as Element | null)?.closest?.(CHROME)) showChrome();
     };
     window.addEventListener('pointerdown', down, true);
+    window.addEventListener('click', clic, true);
+    window.addEventListener('pointercancel', annule, true);
     window.addEventListener('pointermove', move, { passive: true });
     window.addEventListener('focusin', focus);
     // l'écran ne s'éteint pas pendant la lecture ou l'écoute (refusé ou absent : sans effet)
@@ -1343,6 +1385,8 @@
     document.addEventListener('visibilitychange', vis);
     return () => {
       window.removeEventListener('pointerdown', down, true);
+      window.removeEventListener('click', clic, true);
+      window.removeEventListener('pointercancel', annule, true);
       window.removeEventListener('pointermove', move);
       window.removeEventListener('focusin', focus);
       document.removeEventListener('visibilitychange', vis);
@@ -1745,7 +1789,7 @@
       data-testid="afficher-commandes"><Bidi text={t('cl.afficher_commandes')} /></button
     >
     <!-- barre unique : puce (téléphone) ou sélecteurs dorés (grand écran), outils, écoute -->
-    <nav class="cbar" aria-label={t('mp.commandes')} data-testid="barre-coran">
+    <nav class="cbar" aria-label={t('mp.commandes')} data-testid="barre-coran" data-relais>
       <div class="nav-zone">
         <button
           type="button"
@@ -1877,7 +1921,7 @@
     <!-- proposition après un changement d'emplacement : non bloquante, annoncée, disparaît d'elle-même -->
     <div class="prop-zone" role="status" aria-live="polite">
       {#if prop}
-        <div class="prop" bind:this={propEl} data-testid="proposition">
+        <div class="prop" bind:this={propEl} data-testid="proposition" data-relais>
           <button
             type="button"
             class="prop-play"
@@ -1909,7 +1953,8 @@
                       : `[data-testid="mushaf-livre"] [data-aya="${at.s}:${at.a}"]`,
                   ) ?? e.currentTarget;
                 hideProp();
-                pick(at.s, at.a, el);
+                // un BOUTON : le menu s'ouvre tout de suite (pas d'attente d'un double-toucher de zoom)
+                openPick(at.s, at.a, el);
               }}
               aria-label={t('cl.autres_actions')}
               title={t('cl.autres_actions')}
@@ -2054,7 +2099,7 @@
     {#if audioOn && (hidden || paysage) && reciter}
       <!-- écoute, commandes cachées : pastille discrète (pause/lecture + verset) ; toucher le verset ouvre tout ;
            téléphone couché : toujours la pastille (aucune barre audio, le texte garde la hauteur) -->
-      <div class="pastille" data-testid="pastille-audio" bind:offsetHeight={pastilleH}>
+      <div class="pastille" data-testid="pastille-audio" data-relais bind:offsetHeight={pastilleH}>
         <button
           type="button"
           class="pj"
