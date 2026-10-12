@@ -20,15 +20,31 @@ export function clampZoom(z: number): number {
   return Math.round(Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z)) * 100) / 100;
 }
 
-/** Garde la page dans son cadre : jamais de bord vide à l'intérieur du cadre (w × h). */
-export function clampVue(v: Vue, w: number, h: number): Vue {
+/** Partie VISIBLE du cadre (coordonnées du cadre) : l'écran peut n'en montrer qu'une partie. */
+export interface Fenetre {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
+/**
+ * Garde la page dans son cadre : jamais de bord vide à l'intérieur du cadre (w × h). Avec `win` (partie du
+ * cadre visible à l'écran) : les quatre bords de la page agrandie peuvent venir dans la partie VISIBLE (essai du
+ * client, 12/10/2026 : page plus haute que l'écran, le bas de la page et son numéro restaient hors d'atteinte).
+ */
+export function clampVue(v: Vue, w: number, h: number, win?: Fenetre): Vue {
   const z = clampZoom(v.z);
-  const minX = Math.min(0, w - w * z);
-  const minY = Math.min(0, h - h * z);
+  if (z <= ZOOM_MIN) return { z, x: 0, y: 0 };
+  const f = win ?? { top: 0, bottom: h, left: 0, right: w };
+  const maxX = Math.max(0, f.left);
+  const maxY = Math.max(0, f.top);
+  const minX = Math.min(0, Math.min(w, f.right) - w * z);
+  const minY = Math.min(0, Math.min(h, f.bottom) - h * z);
   return {
     z,
-    x: Math.round(Math.max(minX, Math.min(0, v.x)) * 10) / 10,
-    y: Math.round(Math.max(minY, Math.min(0, v.y)) * 10) / 10,
+    x: Math.round(Math.max(minX, Math.min(maxX, v.x)) * 10) / 10,
+    y: Math.round(Math.max(minY, Math.min(maxY, v.y)) * 10) / 10,
   };
 }
 

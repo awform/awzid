@@ -9,6 +9,7 @@
   import { verseRuns, type Run, type TajwidSura } from './tajwid';
   import { pauseGroups } from './pause';
   import TajwidRuns from './TajwidRuns.svelte';
+  import Hizb from './Hizb.svelte';
   import type { ExactPage } from './mushaf-exact';
   import { untrack } from 'svelte';
   import { chargerModule } from '$lib/charger';
@@ -243,7 +244,9 @@
                     >{#snippet mot(w: string, voile: boolean, runs: Run[] | null)}<span
                         class="w"
                         class:voile
-                        >{#if runs}<TajwidRuns {runs} />{:else}{tanwinDisplay(w)}{/if}</span
+                        >{#if w === '۞'}<Hizb sign={w} />{:else if runs}<TajwidRuns
+                            {runs}
+                          />{:else}{tanwinDisplay(w)}{/if}</span
                       >{/snippet}{#each pauseGroups(ws) as gr, gi (gi)}{sep(
                         gi,
                       )}{#if gr.length > 1}<span class="wg"
