@@ -3078,5 +3078,8 @@
   "mj.ens_variante": "Variante {id}:",
   "mj.ens_mots": "Dem Lehrer vorbehaltene Wörter",
   "mj.ens_motif_sens": "Bedeutung zu klären",
-  "mj.ens_motif_explication": "gehört zum Abschnitt mit Erklärung"
+  "mj.ens_motif_explication": "gehört zum Abschnitt mit Erklärung",
+  "mj.note": "Erläuterung:",
+  "mj.note_sources": "Quellen",
+  "mj.ens_traduction": "Übersetzungsentscheidung:"
 }

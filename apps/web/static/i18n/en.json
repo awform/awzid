@@ -3078,5 +3078,8 @@
   "mj.ens_variante": "Variant {id}:",
   "mj.ens_mots": "Words reserved for the teacher",
   "mj.ens_motif_sens": "meaning to establish",
-  "mj.ens_motif_explication": "linked to the passage presented with its explanation"
+  "mj.ens_motif_explication": "linked to the passage presented with its explanation",
+  "mj.note": "Explanation:",
+  "mj.note_sources": "Sources",
+  "mj.ens_traduction": "Translation choice:"
 }

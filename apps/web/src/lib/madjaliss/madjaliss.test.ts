@@ -60,10 +60,10 @@ describe('données construites (static/mutun)', () => {
       expect(typeof p.ar, s.id).toBe('string');
       expect(octets(p.ar as string), s.id).toBe(octets(s.ar));
     }
-    // citation intégrée par l'auteur (AKH-0132) : ses propres mots, à l'identique, autour des mots du Coran
-    const c = CITATIONS['AKH-0132'] as { auteur: string };
-    const [avant, , apres] = segments(de.get('AKH-0132')!);
-    expect(octets(`${avant as string}${c.auteur}${apres as string}`)).toBe(
+    // citation intégrée (AKH-0132, T7) : texte de l'auteur, puis les mots de Tanzil entre les ornements, à l'identique
+    const [avant, q, apres] = segments(de.get('AKH-0132')!);
+    const mots = (q as { q: string }).q;
+    expect(octets(`${avant as string}\u{FD3F}${mots}\u{FD3E}${apres as string}`)).toBe(
       octets(src.phrases.find((x) => x.id === 'AKH-0132')!.ar),
     );
   });

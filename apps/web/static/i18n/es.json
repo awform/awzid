@@ -3078,5 +3078,8 @@
   "mj.ens_variante": "Variante {id}:",
   "mj.ens_mots": "Palabras reservadas al profesor",
   "mj.ens_motif_sens": "sentido por establecer",
-  "mj.ens_motif_explication": "ligada al pasaje presentado con su explicación"
+  "mj.ens_motif_explication": "ligada al pasaje presentado con su explicación",
+  "mj.note": "Explicación:",
+  "mj.note_sources": "Fuentes",
+  "mj.ens_traduction": "Elección de traducción:"
 }

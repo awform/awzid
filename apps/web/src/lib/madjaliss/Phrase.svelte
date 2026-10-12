@@ -39,6 +39,21 @@
         <p class="sens-texte"><Bidi text={p.sens.texte} /></p>
       </div>
     {/if}
+    {#if p.note}
+      <div class="note" data-testid="note-explication">
+        <p class="note-titre"><Bidi text={t('mj.note')} /></p>
+        <p class="note-texte"><Bidi text={p.note.texte} /></p>
+        {#if p.note.sources?.length || p.note.ar?.length}
+          <details class="note-sources">
+            <summary><Bidi text={t('mj.note_sources')} /></summary>
+            {#each p.note.sources ?? [] as s, i (i)}<p class="src"><Bidi text={s} /></p>{/each}
+            {#each p.note.ar ?? [] as a, i (i)}<p class="cit" lang="ar" dir="rtl">
+                <Bidi text={a} base="ar" />
+              </p>{/each}
+          </details>
+        {/if}
+      </div>
+    {/if}
   {/if}
   {#if note}
     <div class="ens" data-testid="note-enseignant">
@@ -51,6 +66,13 @@
           {#each Object.entries(v).filter(([k]) => k !== 'id' && k !== 'phrase') as [k, x] (k)}<span
               class="var"><Bidi text={`${k} : ${x}`} /></span
             >{/each}
+        </p>{/each}
+      {#if note.traduction}<p data-testid="note-traduction">
+          <strong><Bidi text={t('mj.ens_traduction')} /></strong>
+          <Bidi text={note.traduction} />
+        </p>{/if}
+      {#each note.ar ?? [] as a, i (i)}<p class="cit" lang="ar" dir="rtl">
+          <Bidi text={a} base="ar" />
         </p>{/each}
     </div>
   {/if}
@@ -103,6 +125,31 @@
   }
   .sens-titre {
     font-weight: 600;
+  }
+  .note {
+    border-inline-start: 3px solid var(--line);
+    padding-inline-start: var(--space-s);
+    font-size: 0.88rem;
+    color: var(--ink2);
+  }
+  .note p {
+    margin: 2px 0 0;
+  }
+  .note-titre {
+    font-weight: 600;
+  }
+  .note-sources summary {
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .note-sources .src {
+    font-size: 0.82rem;
+  }
+  .cit {
+    display: block;
+    text-align: right;
+    line-height: 1.9;
+    font-size: var(--ar-size);
   }
   .reserve {
     display: flex;

@@ -97,5 +97,8 @@
   "mj.ens_variante": "Variante {id} :",
   "mj.ens_mots": "Mots réservés à l'enseignant",
   "mj.ens_motif_sens": "sens à établir",
-  "mj.ens_motif_explication": "lié au passage présenté avec son explication"
+  "mj.ens_motif_explication": "lié au passage présenté avec son explication",
+  "mj.note": "Explication :",
+  "mj.note_sources": "Sources",
+  "mj.ens_traduction": "Choix de traduction :"
 }
