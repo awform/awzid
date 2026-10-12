@@ -5,7 +5,7 @@ export const STATUT: 'VALIDATION_HUMAINE_REQUISE';
 export const AVEC_EXPLICATION: Set<string>;
 export const CITATIONS: Record<
   string,
-  { s: number; a: number; mots: [number, number]; remplace?: string; integre?: true }
+  { s: number; a: number; mots: [number, number]; sens?: true }
 >;
 export const SECTIONS_PUDEUR: Set<string>;
 export const SENS_A_VERIFIER: RegExp;

@@ -88,9 +88,9 @@ describe('AKH-0132 : segment coranique (T7)', () => {
 });
 
 describe('notes du référent', () => {
-  it('notes d’explication (AKH-0051, 0081, 0172) : sous la phrase, telles que la source les donne', () => {
+  it('notes d’explication (AKH-0051, 0060, 0081, 0162, 0172) : sous la phrase, telles que la source les donne', () => {
     const avec = matn.phrases.filter((p) => p.note).map((p) => p.id);
-    expect(avec).toEqual(['AKH-0051', 'AKH-0081', 'AKH-0172']);
+    expect(avec).toEqual(['AKH-0051', 'AKH-0060', 'AKH-0081', 'AKH-0162', 'AKH-0172']);
     for (const id of avec) {
       const n = srcFr.phrases.find((x) => x.id === id)!.note_explication!;
       const p = de.get(id)!;

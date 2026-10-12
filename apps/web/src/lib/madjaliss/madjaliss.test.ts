@@ -66,6 +66,17 @@ describe('données construites (static/mutun)', () => {
     expect(octets(`${avant as string}\u{FD3F}${mots}\u{FD3E}${apres as string}`)).toBe(
       octets(src.phrases.find((x) => x.id === 'AKH-0132')!.ar),
     );
+    // AKH-0015 (T7, 12/10) : la citation 9:62 est copiée de Tanzil dans la source, en fin de phrase, entre ﴿﴾
+    const [avant15, q15, ...reste] = segments(de.get('AKH-0015')!);
+    expect(reste).toHaveLength(0);
+    const s15 = src.phrases.find((x) => x.id === 'AKH-0015')! as Source & {
+      coran?: { texte: string; voix_de_synthese: boolean };
+    };
+    expect(octets(`${avant15 as string}\u{FD3F}${(q15 as { q: string }).q}\u{FD3E}`)).toBe(
+      octets(s15.ar),
+    );
+    expect(s15.coran?.texte).toBe((q15 as { q: string }).q);
+    expect(s15.coran?.voix_de_synthese).toBe(false);
   });
 
   it('mots du Coran cités : sous-chaînes EXACTES de Tanzil (AKH-0015 : 9:62, AKH-0132 : 29:45)', () => {
