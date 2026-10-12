@@ -8,6 +8,27 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 12/10/2026 — Madjaliss : décisions du référent sur la contre-vérification (al-Akhḍarī)
+
+Branche `madjaliss-cv-wip` (worktree `~/awform-madjaliss-cv`, depuis `main` 59efdd1).
+
+- Sources du référent copiées octet par octet (scp, empreintes SHA-256 contrôlées) dans
+  `packages/content/madjaliss-source/` : `akhdari/{texte_ar,traduction_fr,seances}.json`, `lexique_fiqh_commun.json`
+  (`DECISIONS_REFERENT_CONTRE_VERIF.md`, § 5). Traductions corrigées (AKH-0033, 0037, 0044 et la glose de S12, 0055,
+  0062, 0076, 0092, 0156, 0162, 0175, 0176, 0195, 0214), arabe AKH-0132 et AKH-0146, métadonnées 0016 et 0105.
+- AKH-0132 (T7) : les mots de 29:45 sont désormais dans la source, entre les ornements, avec un champ `coran`.
+  `scripts/madjaliss.mjs` vérifie qu'ils sont IDENTIQUES à Tanzil (sinon la construction échoue) et que la source
+  les exclut de la voix de synthèse ; ils restent un segment à part (police du Coran), hors mémorisation et quiz.
+  Toute autre phrase portant des ornements ou un champ `coran` non déclaré fait échouer la construction.
+- Garde de la voix de synthèse : `texteVoixSynthese` (`lib/madjaliss/donnees.ts`) ne rend jamais une phrase qui cite
+  le Coran ni un passage réservé ; la rubrique n'appelle toujours aucune voix de synthèse (test).
+- Notes d'explication (`note_explication` : AKH-0051 « Pour les familles », 0081, 0172) affichées sous la
+  traduction (« Explication : »), sources repliées, chaque citation arabe (`citations_ar`) sur sa propre ligne.
+  Notes de traduction (AKH-0055, 0092) et leurs citations : mode enseignant seulement. Références du hadith
+  (AKH-0016) : non affichées avant la relecture.
+- Tests : unitaires 1872 verts (1 sauté), dont `notes.test.ts` (7) ; e2e complet 558 verts, 134 sautés,
+  0 instable ; `e2e/madjaliss-notes.spec.ts` ajouté. Budget : appareil élève 346,7 Ko, page la plus lourde 147,8 Ko.
+
 ## 12/10/2026 — Lecteur 4 : « Réglages » de nouveau tactile (urgence) et retours du client
 
 Branche `lecteur4-wip` (worktree `~/awform-lecteur4`, depuis `main` a053633), **non fusionnée**.

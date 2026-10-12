@@ -8,7 +8,10 @@
 // Règles du référent appliquées (DECISIONS_REFERENT_TRADUCTION.md, T5 et T7) :
 //  - AKH-0052 ne part JAMAIS sans son explication : tant qu'elle n'est pas rédigée, ni son arabe ni sa traduction
 //    ne sont dans les fichiers (la page affiche « présenté avec son explication par l'enseignant — bientôt ») ;
-//  - les mots du Coran cités (AKH-0015 : 9:62 ; AKH-0132 : 29:45) sont des sous-chaînes EXACTES de Tanzil ;
+//  - les mots du Coran cités (AKH-0015 : 9:62 ; AKH-0132 : 29:45) sont des sous-chaînes EXACTES de Tanzil, livrées
+//    comme segments à part (jamais dans le texte mémorisé, questionné ni lu par une voix de synthèse) ;
+//  - les notes d'explication du référent (`note_explication`) vont à l'élève, sous la phrase ; les notes de
+//    traduction (`note_traduction` et leurs `citations_ar`) au mode enseignant seulement ;
 //  - le brouillon « non publiable » de la traduction n'est jamais repris.
 // Usage : node scripts/madjaliss.mjs (contrôlé par src/lib/madjaliss/donnees.test.ts : fichiers à jour).
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -29,11 +32,29 @@ export const AVEC_EXPLICATION = new Set(['AKH-0052']);
 /**
  * Mots du Coran cités par l'auteur : mots (indices de mots, bornes comprises) du verset Tanzil.
  *  - `remplace` : marque de l'emplacement dans la saisie (AKH-0015, citation balisée) ;
- *  - `auteur` : mots tels que l'auteur les a intégrés à sa phrase (AKH-0132, T7), remplacés par Tanzil.
+ *  - `integre` : mots de Tanzil déjà copiés (par script, octet par octet) dans la phrase de l'auteur, entre ﴿﴾,
+ *    avec un champ `coran` (AKH-0132, T7 appliqué le 12/10) : le script vérifie qu'ils sont IDENTIQUES à Tanzil
+ *    et que la source les exclut de la voix de synthèse (`voix_de_synthese: false`).
  */
 export const CITATIONS = {
   'AKH-0015': { s: 9, a: 62, mots: [4, 11], remplace: '﴿[TANZIL 9:62 — à insérer]﴾' },
-  'AKH-0132': { s: 29, a: 45, mots: [10, 13], auteur: 'تَنْهَى عَنِ الْفَحْشَاءِ وَالْمُنْكَرِ' },
+  'AKH-0132': { s: 29, a: 45, mots: [10, 13], integre: true },
+};
+
+/**
+ * Note d'explication du référent (`note_explication` : avis retenu, règle pour les familles), montrée à l'élève sous
+ * la phrase, avec ses sources et les citations arabes des commentaires (chacune sur sa ligne).
+ */
+const noteEleve = (n) => {
+  if (!n) return {};
+  if (typeof n.texte !== 'string' || !n.texte) throw new Error('note_explication sans texte');
+  return {
+    note: {
+      texte: n.texte,
+      ...(n.sources?.length ? { sources: n.sources } : {}),
+      ...(n.citations_ar?.length ? { ar: n.citations_ar } : {}),
+    },
+  };
 };
 
 /** Sections réservées aux ados et aux adultes (pudeur, PLAN_DIRECTEUR « Adapté à l'âge »). */
@@ -114,10 +135,13 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
       statut: STATUT,
       // détail réservé au mode enseignant ; l'élève voit le texte de base, jamais une question qui en dépend
       ...(p.a_verifier?.length ? { incertain: true } : {}),
+      ...noteEleve(f.note_explication),
     };
     if (!c) {
       if (/\[TANZIL|À INSÉRER/.test(p.ar) || /\[TRADUCTION/.test(f.fr))
         throw new Error(`emplacement non rempli ${p.id}`);
+      // mots du Coran hors de CITATIONS : jamais livrés comme texte de l'auteur (mémorisation, quiz, voix)
+      if (/[﴿﴾]/.test(p.ar) || p.coran) throw new Error(`citation coranique non déclarée ${p.id}`);
       const fr = TRANSLIT_A_PRECISER.reduce(
         (x, mot) => x.replace(avecNote(mot), MOT_A_PRECISER),
         f.fr,
@@ -139,11 +163,19 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
         sens: { ref: q.ref, texte: sens.texte, source: sens.cle },
       };
     }
-    const i = p.ar.indexOf(c.auteur);
-    if (i < 0 || p.ar.indexOf(c.auteur, i + 1) >= 0) throw new Error(`citation ${p.id}`);
+    // citation intégrée (T7) : le champ `coran` de la source doit désigner exactement ces mots de Tanzil
+    const k = p.coran;
+    if (!k || k.sourate !== c.s || k.verset !== c.a || k.texte !== q.q)
+      throw new Error(`coran ${p.id} : différent de Tanzil ${q.ref}`);
+    if (k.voix_de_synthese !== false)
+      throw new Error(`coran ${p.id} : voix de synthèse non exclue`);
+    const balise = `﴿${q.q}﴾`;
+    const i = p.ar.indexOf(balise);
+    if (i < 0 || p.ar.indexOf(balise, i + 1) >= 0 || /[﴿﴾]/.test(p.ar.replace(balise, '')))
+      throw new Error(`citation ${p.id}`);
     return {
       ...base,
-      ar: [p.ar.slice(0, i), q, p.ar.slice(i + c.auteur.length)],
+      ar: [p.ar.slice(0, i), q, p.ar.slice(i + balise.length)],
       fr: f.fr,
     };
   });
@@ -190,13 +222,20 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
     phrases: ar.phrases
       .map((p) => ({
         p,
+        f: frDe.get(p.id),
         note: (frDe.get(p.id)?.fr.match(NOTE_A_VERIFIER) ?? []).map((x) => x.trim()),
       }))
-      .filter(({ p, note }) => p.a_verifier?.length || p.variantes?.length || note.length)
-      .map(({ p, note }) => ({
+      .filter(
+        ({ p, f, note }) =>
+          p.a_verifier?.length || p.variantes?.length || note.length || f?.note_traduction,
+      )
+      .map(({ p, f, note }) => ({
         id: p.id,
         a_verifier: [...(p.a_verifier ?? []), ...note],
         variantes: (p.variantes ?? []).map((v) => variantes.get(v) ?? { id: v }),
+        // choix de traduction du référent (R-05, R-06) : précision pédagogique pour l'enseignant seulement
+        ...(f?.note_traduction ? { traduction: f.note_traduction } : {}),
+        ...(f?.note_traduction && f.citations_ar?.length ? { ar: f.citations_ar } : {}),
       })),
     mots: se.seances.flatMap((s, i) =>
       s.mots_difficiles

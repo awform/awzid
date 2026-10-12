@@ -3078,5 +3078,8 @@
   "mj.ens_variante": "فرق {id}:",
   "mj.ens_mots": "كلمات خاصة بالمعلم",
   "mj.ens_motif_sens": "معنى لم يثبت",
-  "mj.ens_motif_explication": "مرتبطة بالمقطع المقدَّم مع شرحه"
+  "mj.ens_motif_explication": "مرتبطة بالمقطع المقدَّم مع شرحه",
+  "mj.note": "شرح:",
+  "mj.note_sources": "المصادر",
+  "mj.ens_traduction": "اختيار الترجمة:"
 }

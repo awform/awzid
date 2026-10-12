@@ -23,6 +23,15 @@ export interface Phrase {
   explication?: true;
   /** vocalisation ou lecture à vérifier (détail en mode enseignant) : jamais une question « compléter » */
   incertain?: true;
+  /** note d'explication du référent (avis retenu, règle pour les familles), montrée sous la phrase */
+  note?: NoteExplication;
+}
+
+export interface NoteExplication {
+  texte: string;
+  sources?: string[];
+  /** citations arabes des commentaires, chacune affichée sur sa propre ligne */
+  ar?: string[];
 }
 
 export interface Mot {
@@ -59,6 +68,10 @@ export interface NotesEnseignant {
     id: string;
     a_verifier: string[];
     variantes: Array<Record<string, string>>;
+    /** choix de traduction du référent (précision pédagogique pour l'enseignant) */
+    traduction?: string;
+    /** citations arabes qui fondent ce choix */
+    ar?: string[];
   }>;
   mots: Array<{ n: number; ar: string; fr: string; motif: 'sens' | 'explication' }>;
 }
@@ -68,6 +81,15 @@ export const segments = (p: Phrase): Segment[] =>
 
 /** Texte arabe d'une phrase sans citation coranique (null sinon) : seul texte qui se masque ou se complète. */
 export const arSimple = (p: Phrase): string | null => (typeof p.ar === 'string' ? p.ar : null);
+
+/**
+ * GARDE de la voix de synthèse (T7) : seul texte qu'une voix de synthèse pourrait un jour lire. Jamais une phrase qui
+ * cite le Coran (segment Tanzil : le Coran n'est jamais lu par une machine), jamais un passage réservé à
+ * l'explication de l'enseignant ; null sinon. Aujourd'hui la rubrique n'a aucune voix de synthèse (enregistrements
+ * humains attendus) : tout futur branchement DOIT passer par ici.
+ */
+export const texteVoixSynthese = (p: Phrase): string | null =>
+  p.explication || /[﴿﴾]/.test(arSimple(p) ?? '﴿') ? null : arSimple(p);
 
 type Fetcher = (url: string) => Promise<Response>;
 const enCours = new Map<string, Promise<Matn | null>>();
