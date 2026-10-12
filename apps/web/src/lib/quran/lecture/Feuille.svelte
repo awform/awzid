@@ -3,6 +3,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import { localeInfo, t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
+  import { fondTouche } from './relais';
 
   /**
    * Coran épuré — FEUILLE (dialogue modal natif) : glisse du bas sur téléphone, panneau à droite sur grand
@@ -39,8 +40,9 @@
   dir={localeInfo().dir}
   onclose={() => (open = false)}
   onclick={(e) => {
-    // clic sur le fond (hors du contenu) : fermer
-    if (e.target === dlg) open = false;
+    // clic sur le fond (hors du contenu) : fermer ; sur une commande du lecteur visible au-dessus du fond
+    // (« Réglages », « Traduction », la puce…), elle agit aussi, d'un seul toucher (12/10/2026)
+    if (dlg) fondTouche(e, dlg, () => (open = false));
   }}
 >
   <div class="in">
