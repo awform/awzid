@@ -101,9 +101,7 @@
 </script>
 
 <!-- un mot Tanzil (tel quel ; tajwid en enveloppes ; voile du masquage) -->
-{#snippet mot(w: string, voile: boolean, runs: Run[] | null)}<span class="w" class:voile
-    >{#if runs}<TajwidRuns {runs} />{:else}{tanwinDisplay(w)}{/if}</span
-  >{/snippet}
+<!-- (déclaré DANS le texte coranique, classe quran-text : règle des gabarits) -->
 
 <article
   class="page"
@@ -242,8 +240,13 @@
                   onclick={(e) => !readOnly && onpick?.(g.s, a, e.currentTarget)}
                   onkeydown={(e) => key(e, g.s, a)}
                   ><span class="quran-text" data-verse={`${g.s}:${a}`}
-                    >{#each pauseGroups(ws) as gr, gi (gi)}{sep(gi)}{#if gr.length > 1}<span
-                          class="wg"
+                    >{#snippet mot(w: string, voile: boolean, runs: Run[] | null)}<span
+                        class="w"
+                        class:voile
+                        >{#if runs}<TajwidRuns {runs} />{:else}{tanwinDisplay(w)}{/if}</span
+                      >{/snippet}{#each pauseGroups(ws) as gr, gi (gi)}{sep(
+                        gi,
+                      )}{#if gr.length > 1}<span class="wg"
                           >{#each gr as i, k (i)}{sep(k)}{@render mot(
                               ws[i]!,
                               !vis[i],

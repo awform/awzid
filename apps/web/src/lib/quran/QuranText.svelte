@@ -80,15 +80,7 @@
 </script>
 
 <!-- un mot Tanzil (tel quel ; tajwid en enveloppes ; voile du masquage ; mot entendu) -->
-{#snippet mot(w: string, i: number, voile: boolean, on: boolean, runs: Run[] | null)}<span
-    class="w"
-    class:voile
-    class:on
-    data-w={i}
-    ><span class="t"
-      >{#if runs}<TajwidRuns {runs} />{:else}{tanwinDisplay(w)}{/if}</span
-    ></span
-  >{/snippet}
+<!-- (déclaré DANS le texte coranique, classe quran-text : règle des gabarits) -->
 
 <section
   class="mushaf"
@@ -146,8 +138,19 @@
       >
         {#if riwaya}<span class="quran-text rw-text" data-verse={`${v.s}:${v.a}`}>{v.text}</span
           >{:else}<span class="quran-text" data-verse={`${v.s}:${v.a}`}
-            >{#each pauseGroups(ws) as gr, gi (gi)}{gi > 0 ? ' ' : ''}{#if gr.length > 1}<span
-                  class="wg"
+            >{#snippet mot(
+              w: string,
+              i: number,
+              voile: boolean,
+              on: boolean,
+              runs: Run[] | null,
+            )}<span class="w" class:voile class:on data-w={i}
+                ><span class="t"
+                  >{#if runs}<TajwidRuns {runs} />{:else}{tanwinDisplay(w)}{/if}</span
+                ></span
+              >{/snippet}{#each pauseGroups(ws) as gr, gi (gi)}{gi > 0
+                ? ' '
+                : ''}{#if gr.length > 1}<span class="wg"
                   >{#each gr as i, k (i)}{k > 0 ? ' ' : ''}{@render mot(
                       ws[i]!,
                       i,

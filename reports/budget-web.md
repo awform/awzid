@@ -7,9 +7,9 @@ bloquant. Compression Brotli (qualité 11).
 | Indicateur | Mesure | Budget | Tenu |
 |---|---|---|---|
 | **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | 339.3 Ko | ≤ 350.0 Ko | oui |
-| **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (`/`) | 112.0 Ko | ≤ 150.0 Ko | oui |
-| **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | 1.85 s (élève, premier lancement ; relance 0.58 s ; mesuré le 2026-10-12) | < 3 s | oui |
-| Page la plus lourde au premier chargement (`/coran/lecteur`) | 146.5 Ko | ≤ 150.0 Ko | oui |
+| **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (`/`) | 112.1 Ko | ≤ 150.0 Ko | oui |
+| **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | 3.00 s (élève, premier lancement ; relance 1.58 s ; mesuré le 2026-10-12) | < 3 s | oui |
+| Page la plus lourde au premier chargement (`/coran/lecteur`) | 146.6 Ko | ≤ 150.0 Ko | oui |
 
 ## Détail
 
@@ -31,11 +31,11 @@ bloquant. Compression Brotli (qualité 11).
 
 | Page | JavaScript + CSS initiaux (Brotli) |
 |---|---|
-| `/coran/lecteur` | 146.5 Ko |
+| `/coran/lecteur` | 146.6 Ko |
 | `/lecons/[id]` | 143.7 Ko |
-| `/enseignant/classe/[id]` | 120.3 Ko |
-| `/lectures/[code]` | 117.0 Ko |
-| `/hifz` | 113.9 Ko |
-| `/` | 112.0 Ko |
-| `/vivre` | 111.6 Ko |
-| `/sciences` | 111.6 Ko |
+| `/enseignant/classe/[id]` | 120.4 Ko |
+| `/lectures/[code]` | 117.1 Ko |
+| `/hifz` | 114.0 Ko |
+| `/` | 112.1 Ko |
+| `/vivre` | 111.7 Ko |
+| `/sciences` | 111.7 Ko |
