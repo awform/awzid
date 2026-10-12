@@ -84,9 +84,7 @@ describe('Coran épuré — écran de lecture unique', () => {
 
   it('réglages de lecture relus avec des bornes (vue, vitesse, arrêt, volume, mémoriser)', () => {
     const st = mem();
-    // lot lecteur 4 (décision du client) : « Grand texte » par défaut
-    expect(readPrefs(st).vue).toBe('versets');
-    expect(readPrefs(st).size).toBe(1);
+    expect(readPrefs(st).vue).toBe('page');
     expect(readPrefs(st).showTrad).toBe(false);
     writePrefs(
       { ...readPrefs(st), vue: 'versets', rate: 3, sleepMin: 7, volume: 4, chain: true },
@@ -151,18 +149,16 @@ describe('Coran épuré — écran de lecture unique', () => {
     expect(shortName('Essai Ḥafṣ (bips)')).toBe('E. Ḥafṣ');
   });
 
-  it("lot lecteur 4 : « Grand texte » une fois sur un appareil ancien, puis le choix de l'élève est gardé", () => {
+  it("lot lecteur 4 : affichage par défaut d'un nouvel élève INCHANGÉ (page, taille normale, Médine)", () => {
+    const p = readPrefs(mem());
+    expect(p).toMatchObject({ vue: 'page', size: 0, style: 'exact', memo: 0, zoom: 1 });
+  });
+
+  it('lot lecteur 4 : un reste de zoom à peine au-dessus de 1 revient à la page entière', () => {
     const st = mem();
-    st.setItem(
-      'awzid.mushaf.v1',
-      JSON.stringify({ vue: 'page', size: 0, style: 'exact', zoom: 1.05 }),
-    );
-    const a = readPrefs(st);
-    expect(a).toMatchObject({ vue: 'versets', size: 1, affichage: 4, zoom: 1 });
-    // l'élève choisit la page exacte (Réglages › Avancé) : gardée ensuite
-    writePrefs({ ...a, vue: 'page', size: 0 }, st);
-    expect(readPrefs(st)).toMatchObject({ vue: 'page', size: 0 });
-    writePrefs({ ...a, zoom: 1.8 }, st);
+    st.setItem('awzid.mushaf.v1', JSON.stringify({ zoom: 1.05 }));
+    expect(readPrefs(st).zoom).toBe(1);
+    st.setItem('awzid.mushaf.v1', JSON.stringify({ zoom: 1.8 }));
     expect(readPrefs(st).zoom).toBe(1.8);
   });
 });

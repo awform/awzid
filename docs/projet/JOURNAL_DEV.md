@@ -8,13 +8,14 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
-## 12/10/2026 — Lecteur 4 : « Réglages » de nouveau tactile (urgence), « Grand texte » par défaut et retours du client
+## 12/10/2026 — Lecteur 4 : « Réglages » de nouveau tactile (urgence) et retours du client
 
 Branche `lecteur4-wip` (worktree `~/awform-lecteur4`, depuis `main` a053633), **non fusionnée**.
 
 **Priorité 0 — régression du client (Xiaomi 412 × 915, Chrome Android : « Réglages n'est plus tactile ni intuitif :
 dès que tu cliques, ça sort, ça fait rien »)**, commit c5ae5c5 (poussé seul, déployable seul). Reproduit au doigt
 (Playwright `hasTouch`, `touchscreen.tap`) :
+
 - une feuille ou le menu d'un verset ouvert (un toucher au milieu de la page tombe presque toujours sur un verset),
   toucher « Réglages » visible au-dessus du fond était pris pour un « toucher ailleurs » : la feuille se fermait,
   rien ne s'ouvrait. `lib/quran/lecture/relais.ts` : sur le fond, au-dessus d'une commande marquée `data-relais`
@@ -23,12 +24,12 @@ dès que tu cliques, ça sort, ça fait rien »)**, commit c5ae5c5 (poussé seul
 - la barre s'efface d'un coup après 3 s : le doigt parti vers « Réglages » tombait sur le texte dessous. Pendant 2 s
   après l'effacement, un toucher à la place d'une commande la fait agir ; au-delà, le texte reste touchable ;
 - « + » de la proposition : menu ouvert tout de suite (plus d'attente de double-toucher).
-E2E `coran-tactile.spec.ts` (13 tests au doigt).
+  E2E `coran-tactile.spec.ts` (13 tests au doigt).
 
 **Lot 4** (`~/donnees-awzid/LOT_LECTEUR_4.md`) :
-1. « Grand texte » (versets, texte agrandi) par défaut ; appareils existants basculés une fois
-   (`MushafPrefs.affichage`, `AFFICHAGE_V = 4`), ensuite le choix de l'élève (page exacte dans Réglages › Avancé)
-   est gardé ;
+
+1. affichage par défaut INCHANGÉ (précision du client : « laisse le mode normal par défaut ») — test e2e : un
+   nouvel élève a exactement l'affichage de main (page, taille normale, style Médine) ;
 2. « Mémoriser » garde l'affichage ; le quitter rétablit l'affichage, l'écoute et le muṣḥaf d'avant ;
 3. bouton « Grand texte » (nom écrit) dans la barre du lecteur, choix mémorisé ;
 4. bandeau « Mettre à jour » au premier plan (z-index 40 ; flottant au-dessus de l'en-tête et de la barre dans le
@@ -41,7 +42,7 @@ E2E `coran-tactile.spec.ts` (13 tests au doigt).
 10. micro : message selon la cause (adresse non sécurisée, refus avec la marche à suivre, aucun micro) —
     `causeMicro` (`lib/ecoute/ecoute.ts`) ;
 11. « ↻ N » : bouton nommé « N action(s) en attente d'envoi », explication au toucher.
-E2E `coran-lecteur4.spec.ts` ; unitaires : 401 (dont bascule « Grand texte », causes du micro).
+    E2E `coran-lecteur4.spec.ts` ; unitaires (défaut inchangé, reste de zoom, causes du micro).
 
 ## 12/10/2026 — Hifẓ complet : répétition fine, test au hasard, carte des erreurs, fraîcheur, 2 rakʿa, écran enfant
 

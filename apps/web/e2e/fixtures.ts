@@ -81,7 +81,7 @@ export async function loginTeacher(page: Page): Promise<void> {
   expect(r.status(), await r.text()).toBe(200);
 }
 
-export const test = base.extend<{ compte: Compte; parEtapes: boolean; grandTexte: boolean }>({
+export const test = base.extend<{ compte: Compte; parEtapes: boolean }>({
   compte: ['adulte', { option: true }],
   /**
    * D1 : une leçon s'affiche section par section. Les suites qui vérifient le CONTENU des leçons (exercices,
@@ -89,25 +89,7 @@ export const test = base.extend<{ compte: Compte; parEtapes: boolean; grandTexte
    * le parcours par étapes lui-même est vérifié par d1-design.spec.ts (`parEtapes: true`).
    */
   parEtapes: [false, { option: true }],
-  /**
-   * Lot lecteur 4 : le lecteur du Coran s'ouvre en « Grand texte » (versets) par défaut. Les suites écrites pour la
-   * page du muṣḥaf (zoom, page exacte, gestes…) gardent la page, comme l'élève qui l'a choisie dans Réglages ;
-   * le défaut lui-même est vérifié par coran-lecteur4.spec.ts (`grandTexte: true`).
-   */
-  grandTexte: [false, { option: true }],
-  page: async ({ page, compte, parEtapes, grandTexte }, use) => {
-    if (!grandTexte)
-      await page.addInitScript(() => {
-        try {
-          if (localStorage.getItem('awzid.mushaf.v1') === null)
-            localStorage.setItem(
-              'awzid.mushaf.v1',
-              JSON.stringify({ affichage: 4, vue: 'page', size: 0 }),
-            );
-        } catch {
-          /* stockage indisponible */
-        }
-      });
+  page: async ({ page, compte, parEtapes }, use) => {
     if (!parEtapes)
       await page.addInitScript(() => {
         try {

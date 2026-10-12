@@ -6,18 +6,18 @@ bloquant. Compression Brotli (qualité 11).
 
 | Indicateur | Mesure | Budget | Tenu |
 |---|---|---|---|
-| **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | 345.5 Ko | ≤ 350.0 Ko | oui |
-| **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (`/`) | 111.8 Ko | ≤ 150.0 Ko | oui |
-| **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | 2.00 s (élève, premier lancement ; relance 0.92 s ; mesuré le 2026-10-12) | < 3 s | oui |
-| Page la plus lourde au premier chargement (`/coran/lecteur`) | 147.6 Ko | ≤ 150.0 Ko | oui |
+| **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | 345.6 Ko | ≤ 350.0 Ko | oui |
+| **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (`/`) | 111.9 Ko | ≤ 150.0 Ko | oui |
+| **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | 1.95 s (élève, premier lancement ; relance 0.63 s ; mesuré le 2026-10-12) | < 3 s | oui |
+| Page la plus lourde au premier chargement (`/coran/lecteur`) | 147.7 Ko | ≤ 150.0 Ko | oui |
 
 ## Détail
 
 | Élément | Poids transféré |
 |---|---|
-| (a) dont JS + CSS de la coquille de l'élève | 334.3 Ko |
+| (a) dont JS + CSS de la coquille de l'élève | 334.5 Ko |
 | (a) dont textes préchargés (`/i18n/fr-quotidien.json`, `/i18n/fr-vivre.json`, `/i18n/fr-coran.json`, `/i18n/fr-hifz.json`) | 11.2 Ko |
-| Pages du personnel, NON préchargées (27 fichiers) | 48.3 Ko |
+| Pages du personnel, NON préchargées (27 fichiers) | 48.2 Ko |
 | Pages rares, en ligne seulement, NON préchargées (37 fichiers) | 27.1 Ko |
 | Modules à la demande qui ont besoin du réseau, NON préchargés (15 fichiers) | 24.9 Ko |
 | Leçons vivantes, à la demande (2 fichiers) | 12.8 Ko (≤ 20.0 Ko) |
@@ -31,11 +31,11 @@ bloquant. Compression Brotli (qualité 11).
 
 | Page | JavaScript + CSS initiaux (Brotli) |
 |---|---|
-| `/coran/lecteur` | 147.6 Ko |
+| `/coran/lecteur` | 147.7 Ko |
 | `/lecons/[id]` | 144.3 Ko |
-| `/hifz/[outil]` | 123.9 Ko |
-| `/hifz` | 123.7 Ko |
+| `/hifz/[outil]` | 124.0 Ko |
+| `/hifz` | 123.9 Ko |
 | `/enseignant/classe/[id]` | 120.1 Ko |
-| `/lectures` | 119.8 Ko |
-| `/lectures/[code]` | 119.8 Ko |
-| `/quotidien` | 118.6 Ko |
+| `/lectures` | 119.9 Ko |
+| `/lectures/[code]` | 119.9 Ko |
+| `/quotidien/qibla` | 118.7 Ko |
