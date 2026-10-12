@@ -214,13 +214,14 @@ describe('fonctions', () => {
     }
     expect(used).toEqual([]);
     // F5 : textes des pages RARES (en ligne seulement) : chargés par ces pages, jamais préchargés, jamais en double,
-    // utilisés seulement par ces pages, la fenêtre « Donner mon avis » et l'administration (qui les charge aussi)
+    // utilisés seulement par ces pages, la fenêtre « Donner mon avis », l'administration (qui les charge aussi) et
+    // les modules EN LIGNE chargés à la demande (compte, notifications, tuteur), qui les chargent avec eux
     const rares = JSON.parse(readFileSync(join(STATIC, 'fr-rares.json'), 'utf8')) as object;
     expect(Object.keys(rares).length).toBeGreaterThan(100);
     expect(Object.keys(rares).filter((k) => k in shell || k in staff)).toEqual([]);
     expect(sw).not.toContain('/i18n/fr-rares.json');
     const RARES =
-      /[\\/]routes[\\/](abonnement|offres|garanties|activation|certificats|compte[\\/]protections|compte[\\/]tuteur|demo|inscription|acces|errata|admin|enseignant)[\\/]|[\\/]lib[\\/](avis|admin)[\\/]/;
+      /[\\/]routes[\\/](abonnement|offres|garanties|activation|certificats|compte[\\/]protections|compte[\\/]tuteur|demo|inscription|acces|errata|admin|enseignant)[\\/]|[\\/]lib[\\/](avis|admin)[\\/]|[\\/]lib[\\/](compte[\\/]CompteEnLigne|TutorPanel|TutorSegments|NotificationsReglages)\.svelte$/;
     for (const p of ['abonnement', 'offres', 'inscription', 'certificats', 'compte/tuteur'])
       expect(readFileSync(join(SRC, 'routes', p, '+layout.ts'), 'utf8'), p).toContain(
         "loadTexts('rares')",

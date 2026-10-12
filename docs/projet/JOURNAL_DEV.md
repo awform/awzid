@@ -39,10 +39,22 @@ ajouté : seulement des références (sourate, verset, rang du mot dans `texte.s
 
 **Retouches du pilote (DA et référent, même jour)** : basmala d’en-tête sur SA ligne dans le test (sauf al-Fātiḥa) ; bloc « Urgent à revoir » AVANT le nouveau (taʿāhud al-Qurʾān ; seuils 7 et 30 jours et 2 versets validés) ; 2 rakʿa : aucune règle affichée, emplacement vide réservé à la Risāla ; outils en tuiles secondaires (icône + nom), bandeau urgent → lien vers le bloc ; écran enfant : lecteur propre (icône à gauche du mot, 56 px), sans pied juridique, chargé à la demande (groupe « en ligne ») ; budget : choix des mots d’une partie de verset retiré de l’interface (reviendra avec les minutages), bornes des passages de prière retirées.
 
-Textes : `static/i18n/fr-hifz.json` (`hz.*`, chargé par `/hifz`, gardé au premier usage) et `cl.*` dans
+Textes : `static/i18n/fr-hifz.json` (`hz.*`, chargé par `/hifz`, PRÉCHARGÉ par le service worker) et `cl.*` dans
 `fr-coran.json` ; EN/ES/DE/AR à relire. Tests : unitaires `hifz-outils/outils.test.ts`, `player.test.ts`
 (répétition fine) ; API `hifz-marques.test.ts` ; e2e `hifz-complet.spec.ts`, `hifz-complet-ia.spec.ts` (captures
 412×915 clair/sombre dans `captures-hifz/`).
+
+**Rebase sur `main` 5383bde (mises à jour fiables) et allègement** : service worker de `main` gardé, `fr-hifz.json`
+ajouté aux textes préchargés (`STUDENT_TEXTS`). Appareil élève après rebase : 351,1 Ko (> 350) ; après allègement :
+**343,2 Ko** (≤ 345), règle de mesure de `budget.mjs` inchangée, aucune fonction retirée. Chaque fichier étant
+compressé à part, les pages d'un même espace de l'élève vont dans UN morceau par espace (`vite.config.ts`,
+`ESPACES` : quotidien − 2,5 Ko, hifẓ − 1,8 Ko, écriture − 1,2 Ko, famille/profils − 0,7 Ko, suivi − 0,7 Ko,
+activités, lectures, aide, Coran) ; les modules partagés avec d'autres pages restent dans leur morceau (`A_PART`),
+pour que le lecteur, les leçons et les révisions n'importent pas un morceau d'espace (pages les plus lourdes :
+lecteur 145,9 Ko, leçons 143,5 Ko ; accueil 111,0 Ko). Textes des modules EN LIGNE (compte en ligne,
+notifications, tuteur ; 86 clés) passés de `fr.json` à `fr-rares.json` (chargés avec ces modules) ; composant mort
+`parcours/AccueilEleve.svelte` et ses 14 clés retirés (≈ − 1,3 Ko). Tuile « Mes 2 rakʿa » : icône de mosquée de
+l'onglet « Vivre l'islam » (`vivre` ; `mosquee` n'existait pas et retombait sur « info »).
 
 ---
 

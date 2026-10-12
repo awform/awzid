@@ -49,7 +49,8 @@
     test: 'question',
     'points-faibles': 'alerte',
     fraicheur: 'minuterie',
-    priere: 'mosquee',
+    // même icône que l'onglet « Vivre l'islam » (mosquée)
+    priere: 'vivre',
     enfant: 'etoile',
   };
 

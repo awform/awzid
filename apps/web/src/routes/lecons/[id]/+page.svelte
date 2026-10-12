@@ -22,7 +22,7 @@
   import Scene from '$lib/Scene.svelte';
   import Sprite from '$lib/Sprite.svelte';
   import { arabicSize, isQuranReadingLevel, unitLabel } from '$lib/api';
-  import { fmtNumber, t } from '$lib/i18n';
+  import { fmtNumber, loadTexts, t } from '$lib/i18n';
   import { demoProfileFor, enqueue, flush, onProgress } from '$lib/attempts';
   // A39 : note chiffrée seulement « avec vérification »
   import { showsScore } from '$lib/parcours/mode';
@@ -125,8 +125,9 @@
   let tuteurEchec = $state(false);
   function chargerTuteur() {
     tuteurEchec = false;
-    void chargerModule(() => import('$lib/TutorPanel.svelte'))
-      .then((m) => {
+    // textes du tuteur : dans `fr-rares` (en ligne seulement, comme le tuteur)
+    void Promise.all([chargerModule(() => import('$lib/TutorPanel.svelte')), loadTexts('rares')])
+      .then(([m]) => {
         TutorPanel = m.default;
         noter('tuteur');
       })
