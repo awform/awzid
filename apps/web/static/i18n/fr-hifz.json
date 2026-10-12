@@ -38,8 +38,6 @@
   "hz.rakaa_r1": "1re rakʿa",
   "hz.rakaa_r2": "2e rakʿa",
   "hz.choisir_passage": "Choisir un passage mémorisé",
-  "hz.du_verset": "du verset",
-  "hz.au_verset": "au verset",
   "hz.reviser_priere": "Réviser avant la prière",
   "hz.priere_consigne": "Récite le passage de mémoire ; touche un verset pour le voir.",
   "hz.priere_prete": "Tes deux passages sont révisés.",
@@ -48,5 +46,13 @@
   "hz.enfant_passage": "Mon passage",
   "hz.enfant_fois": "Combien de fois ?",
   "hz.n_fois": "{n} fois",
-  "hz.enfant_sans_audio": "L’écoute a besoin d’Internet (ou d’une sourate gardée sur l’appareil) et d’un récitateur choisi par ton parent."
+  "hz.enfant_sans_audio": "L’écoute a besoin d’Internet (ou d’une sourate gardée sur l’appareil) et d’un récitateur choisi par ton parent.",
+  "hz.urgent_titre": "Urgent à revoir",
+  "hz.voir_texte": "Voir le texte",
+  "hz.cacher_texte": "Cacher le texte",
+  "hz.ecouter": "Écouter",
+  "hz.pause": "Pause",
+  "hz.a_toi": "À toi de répéter",
+  "hz.enfant_position": "Verset {aya} · écoute {n} sur {total}",
+  "hz.enfant_pret": "{n, plural, one {# écoute prévue} other {# écoutes prévues}}"
 }

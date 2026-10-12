@@ -172,10 +172,12 @@ test('test au hasard sans réseau : auto-évaluation, marques envoyées au retou
   await page.waitForFunction(
     async () => (await navigator.serviceWorker.ready) && !!navigator.serviceWorker.controller,
   );
+  // tout ce que la page a demandé (textes, versets, marques) est arrivé et gardé avant la coupure
+  await page.waitForLoadState('networkidle');
   await context.setOffline(true);
   await page.reload();
   const t = page.getByTestId('test-hasard');
-  await expect(t).toHaveAttribute('data-verset', /^112:[1-4]$/);
+  await expect(t).toHaveAttribute('data-verset', /^112:[1-4]$/, { timeout: 15_000 });
   const ref = (await t.getAttribute('data-verset'))!;
   // hors ligne, pas d'IA d'écoute : « Voir la suite » est l'action principale
   await expect(page.getByTestId('reciter-verifier')).toHaveCount(0);
@@ -184,6 +186,8 @@ test('test au hasard sans réseau : auto-évaluation, marques envoyées au retou
   await page.locator('button[data-eval="oublie"]').click();
   await expect(page.getByTestId('test-note')).toBeVisible();
   await context.setOffline(false);
+  // la file de l'appareil se vide au retour du réseau
+  await expect(page.getByTestId('en-attente')).toHaveCount(0, { timeout: 30_000 });
   const [s, a] = ref.split(':').map(Number);
   await expect
     .poll(async () => (await marques(page, profileId)).map((m) => [m.s, m.a, m.k, m.t]), {
@@ -214,9 +218,25 @@ test('fraîcheur : frais, à revoir, urgent ; l’urgent d’abord dans la séan
   expect(await serious(page)).toEqual([]);
   await page.getByTestId('seance-du-jour').click();
   await expect(page).toHaveURL(/\/hifz$/);
-  await expect(page.getByTestId('urgents-carnet')).toBeVisible();
-  for (const o of ['test', 'points-faibles', 'fraicheur', 'priere', 'enfant'])
-    await expect(page.getByTestId(`outil-${o}`)).toBeVisible();
+  // « Urgent à revoir » AVANT le nouveau (préserver l'acquis) ; le bandeau y mène
+  await expect(page.getByTestId('urgents-carnet')).toHaveAttribute('href', '#urgent');
+  const urgent = page.getByTestId('piste-urgent');
+  await expect(urgent.locator('[data-part="1:1-7"]')).toBeVisible();
+  const avant = await page.evaluate(() => {
+    const u = document.querySelector('[data-testid="piste-urgent"]');
+    const n = document.querySelector('[data-testid="piste-nouveau"]');
+    return !!u && !!n && !!(u.compareDocumentPosition(n) & Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+  expect(avant).toBe(true);
+  // un passage urgent n'apparaît qu'une fois
+  await expect(page.locator('[data-part="1:1-7"]')).toHaveCount(1);
+  // outils : tuiles secondaires, icône et nom écrit
+  for (const o of ['test', 'points-faibles', 'fraicheur', 'priere', 'enfant']) {
+    const tuile = page.getByTestId(`outil-${o}`);
+    await expect(tuile).toBeVisible();
+    await expect(tuile.locator('svg')).toHaveCount(1);
+    await expect(tuile).not.toHaveClass(/primary/);
+  }
   // dans chaque piste, l'urgent d'abord : un passage urgent n'est jamais après un passage frais
   for (const piste of ['piste-recent', 'piste-ancien']) {
     const niveaux = await page
@@ -228,6 +248,42 @@ test('fraîcheur : frais, à revoir, urgent ; l’urgent d’abord dans la séan
       [...niveaux.map((n) => rang[n ?? 'frais'])].sort((x, y) => x! - y!),
     );
   }
+});
+
+test('basmala d’en-tête sur SA ligne (jamais collée au verset 1), sauf al-Fātiḥa où elle est le verset 1', async ({
+  page,
+}) => {
+  const { profileId } = await newAdult(page, 'hz-basmala');
+  await carnet(page, profileId, [
+    { part: '1:1-7', jours: 3 },
+    { part: '112:1-4', jours: 3 },
+  ]);
+  const tanzil1 = await tanzil(page, 112, 1);
+  const { basmala } = (await (await page.request.get('/api/v1/quran/meta')).json()) as {
+    basmala: string;
+  };
+  const nb = basmala.split(' ').length;
+  for (const vu of [false, true]) {
+    await page.goto('/hifz/test?verset=112:1');
+    if (vu) await page.getByTestId('voir-suite').click();
+    const v = page.locator('[data-mots="112:1"]');
+    const ligne = v.getByTestId('basmala-ligne');
+    await expect(ligne).toBeVisible();
+    // sur sa propre ligne, centrée, sans numéro ; le verset 1 sur la ligne suivante
+    await expect(ligne).toHaveCSS('text-align', 'center');
+    await expect(ligne.locator('.n')).toHaveCount(0);
+    await expect(ligne.locator('.mot')).toHaveCount(nb);
+    const lb = (await ligne.boundingBox())!;
+    const vb = (await v.locator('.ligne').boundingBox())!;
+    expect(vb.y).toBeGreaterThanOrEqual(lb.y + lb.height - 1);
+    // texte toujours exact (Tanzil octet par octet), basmala comprise
+    if (vu) expect(Buffer.from(await motsAffiches(page, '112:1'))).toEqual(Buffer.from(tanzil1));
+  }
+  // al-Fātiḥa (Ḥafṣ) : la basmala EST le verset 1, jamais détachée
+  await page.goto('/hifz/test?verset=1:1');
+  await page.getByTestId('voir-suite').click();
+  await expect(page.locator('[data-mots="1:1"]')).toBeVisible();
+  await expect(page.getByTestId('basmala-ligne')).toHaveCount(0);
 });
 
 test('2 rakʿa : deux passages mémorisés, gardés, révisés juste avant la prière', async ({
@@ -242,20 +298,25 @@ test('2 rakʿa : deux passages mémorisés, gardés, révisés juste avant la pr
   await expect(page.getByTestId('reviser-priere')).toBeDisabled();
   await page.getByTestId('priere-r1').selectOption('112:1-4');
   await page.getByTestId('priere-r2').selectOption('113:1-5');
-  await page.getByTestId('priere-r2-a').fill('3');
-  await page.getByTestId('priere-r2-a').blur();
   expect(await serious(page)).toEqual([]);
   // choix gardé sur l'appareil
   await page.reload();
   await expect(page.getByTestId('priere-r1')).toHaveValue('112:1-4');
-  await expect(page.getByTestId('priere-r2-a')).toHaveValue('3');
+  await expect(page.getByTestId('priere-r2')).toHaveValue('113:1-5');
   await page.getByTestId('reviser-priere').click();
   const rev = page.getByTestId('priere-revision');
   await expect(rev).toHaveAttribute('data-rakaa', '1');
-  await expect(rev.locator('button.verse.blur')).toHaveCount(4);
+  // texte voilé (récitation de mémoire), montré à la demande
+  await expect(rev.locator('[data-mots]')).toHaveCount(4);
+  await expect(rev.getByTestId('suite-cachee')).toHaveCount(4);
+  await rev.getByTestId('priere-voir').click();
+  await expect(rev.getByTestId('suite-cachee')).toHaveCount(0);
+  // emplacement de la règle de la prière : VIDE (viendra de la Risāla, avec sa source)
+  await expect(rev.getByTestId('priere-regle')).toBeEmpty();
   await rev.locator('button[data-eval="juste"]').click();
   await expect(rev).toHaveAttribute('data-rakaa', '2');
-  await expect(rev.locator('button.verse')).toHaveCount(3);
+  await expect(rev.locator('[data-mots]')).toHaveCount(5);
+  await expect(rev.getByTestId('suite-cachee')).toHaveCount(5);
   await rev.locator('button[data-eval="hesitant"]').click();
   await expect(page.getByTestId('priere-prete')).toBeVisible();
   await expect
@@ -273,7 +334,7 @@ test('2 rakʿa : deux passages mémorisés, gardés, révisés juste avant la pr
     .toEqual(
       expect.arrayContaining([
         ['112:1-4', 3],
-        ['113:1-3', 2],
+        ['113:1-5', 2],
       ]),
     );
 });
@@ -291,11 +352,28 @@ test('écran enfant : deux réglages seulement, le récitateur répète (jamais 
   const ikhlas = choix.locator('option', { hasText: '112:1-4' });
   await choix.selectOption((await ikhlas.getAttribute('value'))!);
   await page.getByTestId('enfant-fois').selectOption('2');
-  await expect(page.locator('[data-verse="112:1"]')).toBeVisible();
-  // chaque bouton du lecteur simple a un nom écrit ; ni volume ni réglages
+  await expect(page.locator('[data-mots="112:1"]')).toBeVisible();
+  // règle enfant : aucun lien juridique visible sur cet écran, quel que soit le profil
+  await expect(page.getByTestId('pied')).toHaveCount(0);
+  // le lecteur simple : « Écouter » écrit, icône À GAUCHE du mot, cible ≥ 56 px ; ni volume ni réglages
   const lecteur = page.getByTestId('enfant-lecteur');
+  // attendre la fin du chargement des pistes (lecteur prêt, ou message « sans audio »)
+  await page.waitForLoadState('networkidle');
+  await expect(
+    lecteur.getByTestId('jouer').or(lecteur.getByTestId('enfant-sans-audio')),
+  ).toBeVisible({ timeout: 15_000 });
   if (await lecteur.getByTestId('jouer').count()) {
-    await expect(lecteur.getByTestId('jouer')).toContainText('Écouter');
+    const jouer = lecteur.getByTestId('jouer');
+    await expect(jouer).toContainText('Écouter');
+    const [icone, bouton] = await jouer.evaluate((b) =>
+      [b.querySelector('svg')!, b].map((e) => e.getBoundingClientRect()),
+    );
+    // icône dans la moitié gauche, centrée verticalement (sur la même ligne que le mot)
+    expect(icone!.right).toBeLessThanOrEqual(bouton!.left + bouton!.width / 2);
+    expect(
+      Math.abs(icone!.top + icone!.height / 2 - (bouton!.top + bouton!.height / 2)),
+    ).toBeLessThan(6);
+    expect((await jouer.boundingBox())!.height).toBeGreaterThanOrEqual(56);
     await expect(lecteur.getByTestId('ouvrir-reglages')).toHaveCount(0);
     await expect(lecteur.getByTestId('position')).toContainText('8');
   } else await expect(lecteur.getByTestId('enfant-sans-audio')).toBeVisible();

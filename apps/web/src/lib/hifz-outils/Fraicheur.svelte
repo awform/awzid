@@ -5,7 +5,7 @@
   import { suraName } from '@awform/hifz';
   import { localIso } from '$lib/hifz';
   import { fmtDate, t } from '$lib/i18n';
-  import { chargerCarnet, libelle } from './donnees';
+  import { chargerCarnet } from './donnees';
   import { fraicheur, parSourate, SEUILS, type FraicheurSourate } from './outils';
   import Pastille from './Pastille.svelte';
 
@@ -53,31 +53,17 @@
               })}
             />{:else}{t('hz.jamais_revise')}{/if}
         </p>
-        {#if s.passages.length > 1}
-          <ul class="parts">
-            {#each s.passages as p (p.key)}
-              <li>
-                <Bidi text={p.ref.map(libelle).join(' ; ')} /> — <Pastille niveau={p.niveau} />
-              </li>
-            {/each}
-          </ul>
-        {/if}
       </li>
     {/each}
   </ul>
 {/if}
 
 <style>
-  .liste,
-  .parts {
+  .liste {
     list-style: none;
     padding: 0;
     display: grid;
     gap: 8px;
-  }
-  .parts {
-    gap: 4px;
-    font-size: 0.9rem;
   }
   .tete {
     display: flex;

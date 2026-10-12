@@ -294,8 +294,5 @@
   "cl.sans_silence": "Sans silence",
   "cl.a_vous": "À vous de répéter",
   "cl.partie": "Une partie du verset",
-  "cl.partie_de": "Du mot",
-  "cl.partie_a": "Au mot",
-  "cl.partie_indispo": "Option désactivée : ce récitateur n'a pas encore de minutage mot par mot. Le verset entier est répété.",
-  "cl.partie_un_verset": "Choisissez un seul verset (le même au début et à la fin) pour en répéter une partie."
+  "cl.partie_indispo": "Option désactivée : ce récitateur n'a pas encore de minutage mot par mot. Le verset entier est répété."
 }

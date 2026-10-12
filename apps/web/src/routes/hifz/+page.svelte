@@ -41,13 +41,17 @@
   import { call, fetchMe, type Me } from '$lib/session';
   import VerseText from '$lib/VerseText.svelte';
   import { OUTILS } from '$lib/hifz-outils/liste';
-  import {
-    fraicheur,
-    passagesMemorises,
-    urgentsDabord,
-    type Niveau,
-  } from '$lib/hifz-outils/outils';
+  import { fraicheur, passagesMemorises, type Niveau } from '$lib/hifz-outils/outils';
   import Pastille from '$lib/hifz-outils/Pastille.svelte';
+  import Icon from '$lib/ui/Icon.svelte';
+  /** icône de chaque outil (tuiles secondaires, nom toujours écrit) */
+  const ICONE_OUTIL: Record<(typeof OUTILS)[number], string> = {
+    test: 'question',
+    'points-faibles': 'alerte',
+    fraicheur: 'minuterie',
+    priere: 'mosquee',
+    enfant: 'etoile',
+  };
 
   /**
    * Mon carnet de hifẓ (ARCHITECTURE_V2 § 2.4) : trois pistes chaque jour (nouveau, récent, ancien),
@@ -151,6 +155,8 @@
     if (view.portion) next.portion = await versesFor(view.portion.refs);
     for (const it of [...view.plan.recent, ...view.plan.manzil])
       next[it.key] = await versesFor(view.parts.get(it.key)?.ref ?? []);
+    // passages urgents hors des pistes du jour
+    for (const k of urgentes) next[k] ??= await versesFor(view.parts.get(k)?.ref ?? []);
     texts = next;
   }
 
@@ -308,15 +314,20 @@
     a_reprendre: 'reprendre',
   };
   const Q: Quality[] = [3, 2, 1, 0];
-  // hifẓ complet : fraîcheur de chaque passage ; dans chaque piste (nouveau, récent, ancien), l'urgent d'abord
+  /**
+   * hifẓ complet (décision du référent, 12/10/2026) : « Urgent à revoir » AVANT le nouveau — on préserve d'abord
+   * l'acquis (taʿāhud al-Qurʾān) —, puis nouveau, récent, ancien ; un passage urgent n'est montré qu'une fois.
+   */
   const niveaux = $derived.by((): Map<string, Niveau> => {
     if (!view) return new Map();
     const ps = passagesMemorises(view.state.parts.values(), view.parts);
     return new Map(fraicheur(ps, view.events, today).map((f) => [f.key, f.niveau]));
   });
-  const recents = $derived(view ? urgentsDabord(view.plan.recent, niveaux) : []);
-  const anciens = $derived(view ? urgentsDabord(view.plan.manzil, niveaux) : []);
-  const urgents = $derived([...niveaux.values()].filter((n) => n === 'urgent').length);
+  const urgentes = $derived([...niveaux].filter(([, n]) => n === 'urgent').map(([k]) => k));
+  const pasUrgent = (it: { key: string }) => niveaux.get(it.key) !== 'urgent';
+  const recents = $derived(view ? view.plan.recent.filter(pasUrgent) : []);
+  const anciens = $derived(view ? view.plan.manzil.filter(pasUrgent) : []);
+  const urgents = $derived(urgentes.length);
 </script>
 
 <svelte:head><title>{t('app.nom')} — {t('hifz.titre')}</title></svelte:head>
@@ -525,14 +536,15 @@
   </section>
 
   <!-- hifẓ complet : outils du carnet (test au hasard, points faibles, fraîcheur, deux rakʿa, écran enfant) -->
-  <nav class="card outils" aria-label={t('hz.outils')} data-testid="outils-hifz">
-    {#if urgents}<p class="warn small" data-testid="urgents-carnet">
-        <Bidi text={t('hz.urgents', { n: urgents })} />
-      </p>{/if}
+  <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- ancre dans la page -->
+  {#if urgents}<a class="bandeau-urgent" href="#urgent" data-testid="urgents-carnet"
+      ><Bidi text={t('hz.urgents', { n: urgents })} /></a
+    >{/if}
+  <nav class="outils" aria-label={t('hz.outils')} data-testid="outils-hifz">
     <ul>
       {#each OUTILS as o (o)}<li>
-          <a href={resolve('/hifz/[outil]', { outil: o })} data-testid={`outil-${o}`}
-            ><Bidi text={t(`hz.titre_${o}`)} /></a
+          <a class="tuile" href={resolve('/hifz/[outil]', { outil: o })} data-testid={`outil-${o}`}
+            ><Icon name={ICONE_OUTIL[o]} size={24} /><Bidi text={t(`hz.titre_${o}`)} /></a
           >
         </li>{/each}
     </ul>
@@ -557,6 +569,36 @@
         >
         <button type="button" onclick={() => (editing = true)}>{t('hifz.autre_rythme')}</button>
       </div>
+    </section>
+  {/if}
+
+  <!-- une part à réviser (urgent, récent, ancien) : texte à la demande, résultat en 4 boutons -->
+  {#snippet revue(key: string, jplus: number | null, fragile: boolean)}
+    <article class="task" data-part={key}>
+      <h3>
+        <Bidi text={label(key)} />
+        {#if jplus !== null}<span class="tag"><Bidi text={t('hifz.jplus', { n: jplus })} /></span
+          >{/if}
+        <Pastille niveau={niveaux.get(key) ?? 'frais'} />
+        {#if fragile}<span class="tag fragile">{t('hifz.fragile')}</span>{/if}
+      </h3>
+      <details bind:open={open[key]}>
+        <summary>{t('hifz.voir_texte')}</summary>
+        <VerseText verses={texts[key] ?? []} {basmala} {masked} />
+      </details>
+      <div class="rate" role="group" aria-label={t('hifz.comment')}>
+        {#each Q as q (q)}<button type="button" onclick={() => rate(key, q)} data-q={q}
+            ><Bidi text={t(parentMode ? `hifz.p${q}` : `hifz.q${q}`)} /></button
+          >{/each}
+      </div>
+    </article>
+  {/snippet}
+
+  <!-- ⓪ urgent à revoir (avant le nouveau : préserver l'acquis) -->
+  {#if urgentes.length}
+    <section class="card track urgent" id="urgent" data-testid="piste-urgent">
+      <h2>{t('hz.urgent_titre')}</h2>
+      {#each urgentes as key (key)}{@render revue(key, null, false)}{/each}
     </section>
   {/if}
 
@@ -634,22 +676,7 @@
   <section class="card track" data-testid="piste-recent">
     <h2><span class="num">②</span> {t('hifz.recent')}</h2>
     {#each recents as it (it.key)}
-      <article class="task" data-part={it.key}>
-        <h3>
-          <Bidi text={label(it.key)} />
-          <span class="tag"><Bidi text={t('hifz.jplus', { n: it.step ?? 0 })} /></span>
-          <Pastille niveau={niveaux.get(it.key) ?? 'frais'} />
-        </h3>
-        <details bind:open={open[it.key]}>
-          <summary>{t('hifz.voir_texte')}</summary>
-          <VerseText verses={texts[it.key] ?? []} {basmala} {masked} />
-        </details>
-        <div class="rate" role="group" aria-label={t('hifz.comment')}>
-          {#each Q as q (q)}<button type="button" onclick={() => rate(it.key, q)} data-q={q}
-              ><Bidi text={t(parentMode ? `hifz.p${q}` : `hifz.q${q}`)} /></button
-            >{/each}
-        </div>
-      </article>
+      {@render revue(it.key, it.step ?? 0, false)}
     {:else}
       <p class="muted">{t('hifz.rien_recent')}</p>
     {/each}
@@ -659,22 +686,7 @@
   <section class="card track" data-testid="piste-ancien">
     <h2><span class="num">③</span> {t('hifz.ancien')}</h2>
     {#each anciens as it (it.key)}
-      <article class="task" data-part={it.key}>
-        <h3>
-          <Bidi text={label(it.key)} />
-          <Pastille niveau={niveaux.get(it.key) ?? 'frais'} />
-          {#if it.fragile}<span class="tag fragile">{t('hifz.fragile')}</span>{/if}
-        </h3>
-        <details bind:open={open[it.key]}>
-          <summary>{t('hifz.voir_texte')}</summary>
-          <VerseText verses={texts[it.key] ?? []} {basmala} {masked} />
-        </details>
-        <div class="rate" role="group" aria-label={t('hifz.comment')}>
-          {#each Q as q (q)}<button type="button" onclick={() => rate(it.key, q)} data-q={q}
-              ><Bidi text={t(parentMode ? `hifz.p${q}` : `hifz.q${q}`)} /></button
-            >{/each}
-        </div>
-      </article>
+      {@render revue(it.key, null, !!it.fragile)}
     {:else}
       <p class="muted">{t('hifz.rien_ancien')}</p>
     {/each}
@@ -935,17 +947,38 @@
   .parent {
     color: var(--teal);
   }
+  /* outils : grille de tuiles SECONDAIRES (2 colonnes sur téléphone), icône + nom écrit */
   .outils ul {
     list-style: none;
     padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 14px;
+    margin: 0 0 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
   }
-  .outils a {
-    display: inline-flex;
+  .tuile {
+    display: flex;
     align-items: center;
-    min-height: 44px;
+    gap: 8px;
+    min-height: 56px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--card, transparent);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .tuile:focus-visible {
+    outline: 3px solid var(--teal);
+  }
+  .bandeau-urgent {
+    display: block;
+    margin: 0 0 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--bad-bg);
+    color: var(--bad-ink);
+    font-weight: 700;
   }
 </style>

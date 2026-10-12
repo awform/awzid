@@ -26,8 +26,6 @@
     status = '',
     basmala = null,
     silence = 0,
-    clip = null,
-    simple = false,
     onaya,
     onindex,
     onend,
@@ -57,10 +55,6 @@
     onvolume?: (v: number) => void;
     /** hifẓ : silence après chaque verset (facteur de sa durée, 0 : sans) pour le répéter après le récitateur */
     silence?: number;
-    /** hifẓ : partie du verset à jouer (minutages par mot) ; null : verset entier */
-    clip?: { startMs: number; endMs: number } | null;
-    /** écran enfant : lecture, précédent, suivant, arrêt seulement ; « Écouter » écrit en toutes lettres */
-    simple?: boolean;
   } = $props();
   /** silence « à vous » en cours après un verset ; reprise au verset suivant après une pause pendant le silence */
   let gap = $state(false);
@@ -136,7 +130,6 @@
     if (lastUrl.startsWith('blob:')) URL.revokeObjectURL(lastUrl);
     lastUrl = await playableUrl(f.url);
     audio.src = lastUrl;
-    if (clip && f.aya !== BASMALA) audio.currentTime = clip.startMs / 1000;
     audio.playbackRate = clampRate(rate);
     audio.preservesPitch = true;
     try {
@@ -205,20 +198,10 @@
     if (f && !reciter.enLigne && !lastUrl.startsWith('blob:')) void garderEcoute(f.url);
     if (sleepUntil && Date.now() >= sleepUntil) return finish('sommeil');
     // hifẓ : silence « à vous » (au moins la durée du verset) avant le verset suivant
-    const ms =
-      f && silence > 0
-        ? silenceMs(clip ? clip.endMs - clip.startMs : f.durationMs, silence, rate)
-        : 0;
+    const ms = f && silence > 0 ? silenceMs(f.durationMs, silence, rate) : 0;
     if (!ms) return void playAt(idx + 1);
     gap = true;
     gapTimer = setTimeout(() => void playAt(idx + 1), ms);
-  }
-  /** fin de la partie choisie du verset (minutages par mot) : comme la fin du fichier */
-  function tick() {
-    if (clip && audio && playing && !gap && audio.currentTime * 1000 >= clip.endMs) {
-      audio.pause();
-      ended();
-    }
   }
   function finish(why: 'fin' | 'sommeil') {
     stop();
@@ -248,19 +231,19 @@
 </script>
 
 <div class="player" data-testid="lecteur-audio" data-reciter={reciter.id}>
-  <audio bind:this={audio} onended={ended} ontimeupdate={tick} preload="none"></audio>
-  {#if !simple}<button
-      type="button"
-      class="who"
-      onclick={() => onsettings?.('recitateur')}
-      title={reciter.nameFr}
-      aria-label={t('cl.reglages_de', { nom: reciter.nameFr })}
-      data-testid="mini-recitateur"
-      ><span class="nm"><Bidi text={reciter.nameFr} /></span>{#if !isHafs(reciter.riwaya)}<span
-          class="autre"
-          data-testid="mini-autre-riwaya"><Bidi text={reciter.riwayaFr} /></span
-        >{/if}</button
-    >{/if}
+  <audio bind:this={audio} onended={ended} preload="none"></audio>
+  <button
+    type="button"
+    class="who"
+    onclick={() => onsettings?.('recitateur')}
+    title={reciter.nameFr}
+    aria-label={t('cl.reglages_de', { nom: reciter.nameFr })}
+    data-testid="mini-recitateur"
+    ><span class="nm"><Bidi text={reciter.nameFr} /></span>{#if !isHafs(reciter.riwaya)}<span
+        class="autre"
+        data-testid="mini-autre-riwaya"><Bidi text={reciter.riwayaFr} /></span
+      >{/if}</button
+  >
   <div class="controls">
     <button
       type="button"
@@ -273,7 +256,6 @@
     <button
       type="button"
       class="play"
-      class:txt={simple}
       onclick={toggle}
       disabled={!pack || queue.length === 0}
       data-testid="jouer"
@@ -284,7 +266,7 @@
           name="lecture"
           filled
           size={22}
-        />{/if}{#if simple}<Bidi text={playing ? t('ca.pause') : t('ca.ecouter')} />{/if}</button
+        />{/if}</button
     >
     <button
       type="button"
@@ -331,26 +313,26 @@
           >{/if}{:else}<Bidi text={t('ca.pret', { total: fmtNumber(total) })} />{/if}
     </p>
   </div>
-  {#if !simple}<label class="vol" title={t('cl.volume')}
-      ><span class="sr">{t('cl.volume')}</span><Icon name="casque" size={18} /><input
-        type="range"
-        min="0"
-        max="1"
-        step="0.05"
-        value={volume}
-        oninput={(e) => onvolume?.(Number(e.currentTarget.value))}
-        data-testid="volume"
-      /></label
-    >
-    <button
-      type="button"
-      class="ic rep"
-      onclick={() => onsettings?.('ecoute')}
-      aria-label={t('cl.reglages_ecoute')}
-      title={t('cl.reglages_ecoute')}
-      aria-haspopup="dialog"
-      data-testid="ouvrir-reglages"><Icon name="repeter" size={20} /></button
-    >{/if}
+  <label class="vol" title={t('cl.volume')}
+    ><span class="sr">{t('cl.volume')}</span><Icon name="casque" size={18} /><input
+      type="range"
+      min="0"
+      max="1"
+      step="0.05"
+      value={volume}
+      oninput={(e) => onvolume?.(Number(e.currentTarget.value))}
+      data-testid="volume"
+    /></label
+  >
+  <button
+    type="button"
+    class="ic rep"
+    onclick={() => onsettings?.('ecoute')}
+    aria-label={t('cl.reglages_ecoute')}
+    title={t('cl.reglages_ecoute')}
+    aria-haspopup="dialog"
+    data-testid="ouvrir-reglages"><Icon name="repeter" size={20} /></button
+  >
   {#if error}<p class="error" role="alert"><Bidi text={error} /></p>{/if}
 </div>
 
@@ -361,13 +343,6 @@
     align-items: center;
     gap: 4px 8px;
     min-width: 0;
-  }
-  .play.txt {
-    width: auto;
-    gap: 6px;
-    padding: 0 16px;
-    border-radius: 999px;
-    font-weight: 700;
   }
   .who {
     display: inline-flex;

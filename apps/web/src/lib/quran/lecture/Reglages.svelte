@@ -29,7 +29,6 @@
     tjPrefs = $bindable(),
     tjData = $bindable(null),
     guide = $bindable({ repeat: 3, pause: 3 }),
-    partie = $bindable(null),
     reciters,
     reciterId,
     conseil,
@@ -66,8 +65,6 @@
     tjData?: TajwidSura | null;
     /** lecture guidée mot à mot SANS SON (Ḥafṣ) : nombre de tours, pause « à toi » en secondes */
     guide?: { repeat: number; pause: number };
-    /** hifẓ : partie du verset choisi (mots de début et de fin, 1 = premier mot) ; null : verset entier */
-    partie?: [number, number] | null;
     reciters: Reciter[];
     reciterId: string | null;
     conseil: string | null;
@@ -105,12 +102,6 @@
   } = $props();
 
   const reciter = $derived(reciters.find((r) => r.id === reciterId) ?? null);
-  /** minutages par mot du verset choisi (un seul verset), s'ils existent pour ce récitateur */
-  const motsMs = $derived(
-    range.from === range.to
-      ? (pack?.files.find((f) => f.aya === range.from)?.wordMs ?? null)
-      : null,
-  );
   /** récitateurs : ceux de la riwāya du muṣḥaf affiché d'abord (la riwāya est écrite dans chaque ligne) */
   const sorted = $derived(
     [...reciters].sort((a, b) => Number(b.riwaya === rw) - Number(a.riwaya === rw)),
@@ -269,42 +260,13 @@
         </select>
       </div>
     </div>
-    <!-- hifẓ : une partie d'un long verset, seulement avec les minutages par mot du récitateur (jamais devinés) -->
-    <fieldset class="partie" disabled={!motsMs} data-testid="partie-verset">
+    <!-- hifẓ : une partie d'un long verset, seulement avec les minutages PAR MOT du récitateur (jamais devinés).
+         Aucun récitateur n'en a : option désactivée et expliquée. Le lecteur sait déjà jouer une partie
+         (AudioPlayer `clip`, `wordClip`) ; le choix des mots (début, fin) viendra avec les minutages
+         (interface prête dans le commit 6efd7d9, retirée pour le budget de l'appareil). -->
+    <fieldset class="partie" disabled data-testid="partie-verset">
       <legend>{t('cl.partie')}</legend>
-      {#if motsMs}
-        <div class="grid">
-          <div class="field">
-            <label for="cl-pde">{t('cl.partie_de')}</label>
-            <input
-              id="cl-pde"
-              type="number"
-              min="1"
-              max={motsMs.length}
-              value={partie?.[0] ?? 1}
-              onchange={(e) =>
-                (partie = [Number(e.currentTarget.value), partie?.[1] ?? motsMs!.length])}
-              data-testid="partie-de"
-            />
-          </div>
-          <div class="field">
-            <label for="cl-pa">{t('cl.partie_a')}</label>
-            <input
-              id="cl-pa"
-              type="number"
-              min="1"
-              max={motsMs.length}
-              value={partie?.[1] ?? motsMs.length}
-              onchange={(e) => (partie = [partie?.[0] ?? 1, Number(e.currentTarget.value)])}
-              data-testid="partie-a"
-            />
-          </div>
-        </div>
-      {:else}
-        <p class="muted small" data-testid="partie-indispo">
-          <Bidi text={t(range.from === range.to ? 'cl.partie_indispo' : 'cl.partie_un_verset')} />
-        </p>
-      {/if}
+      <p class="muted small" data-testid="partie-indispo">{t('cl.partie_indispo')}</p>
     </fieldset>
     <label class="check"
       ><input type="checkbox" bind:checked={prefs.chain} data-testid="mode-enchainer" />

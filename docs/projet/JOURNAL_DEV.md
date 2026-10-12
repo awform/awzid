@@ -37,6 +37,8 @@ ajouté : seulement des références (sourate, verset, rang du mot dans `texte.s
 7. **Écran enfant** (`/hifz/enfant`) : deux réglages (passage, nombre de répétitions), lecteur simple (« Écouter »
    écrit), silence pour répéter après le récitateur.
 
+**Retouches du pilote (DA et référent, même jour)** : basmala d’en-tête sur SA ligne dans le test (sauf al-Fātiḥa) ; bloc « Urgent à revoir » AVANT le nouveau (taʿāhud al-Qurʾān ; seuils 7 et 30 jours et 2 versets validés) ; 2 rakʿa : aucune règle affichée, emplacement vide réservé à la Risāla ; outils en tuiles secondaires (icône + nom), bandeau urgent → lien vers le bloc ; écran enfant : lecteur propre (icône à gauche du mot, 56 px), sans pied juridique, chargé à la demande (groupe « en ligne ») ; budget : choix des mots d’une partie de verset retiré de l’interface (reviendra avec les minutages), bornes des passages de prière retirées.
+
 Textes : `static/i18n/fr-hifz.json` (`hz.*`, chargé par `/hifz`, gardé au premier usage) et `cl.*` dans
 `fr-coran.json` ; EN/ES/DE/AR à relire. Tests : unitaires `hifz-outils/outils.test.ts`, `player.test.ts`
 (répétition fine) ; API `hifz-marques.test.ts` ; e2e `hifz-complet.spec.ts`, `hifz-complet-ia.spec.ts` (captures

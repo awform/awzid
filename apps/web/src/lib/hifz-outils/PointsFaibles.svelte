@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import Bidi from '$lib/Bidi.svelte';
-  import { loadVerses } from '$lib/hifz';
+  import { loadMeta, loadVerses } from '$lib/hifz';
   import { fmtDate, t } from '$lib/i18n';
   import { libelle, marquesDe } from './donnees';
   import MotsVerset from './MotsVerset.svelte';
@@ -19,10 +19,12 @@
   let liste = $state<PointFaible[]>([]);
   let textes = $state<Record<string, string>>({});
   let charge = $state(false);
+  let basmala = $state('');
 
   onMount(async () => {
     liste = pointsFaibles(carteErreurs(await marquesDe(profileId))).slice(0, MAX);
     charge = true;
+    basmala = (await loadMeta())?.basmala ?? '';
     const next: Record<string, string> = {};
     for (const p of liste) {
       const [v] = await loadVerses(p.s, p.a, p.a);
@@ -56,7 +58,11 @@
           />
         </p>
         {#if textes[`${p.s}:${p.a}`]}
-          <MotsVerset v={{ s: p.s, a: p.a, text: textes[`${p.s}:${p.a}`]! }} mots={p.mots} />
+          <MotsVerset
+            v={{ s: p.s, a: p.a, text: textes[`${p.s}:${p.a}`]! }}
+            mots={p.mots}
+            {basmala}
+          />
         {/if}
         {#each prochesDe(p.s, p.a) as x (`${x.s}:${x.a}`)}
           <p class="small" role="note" data-testid="mutashabih">

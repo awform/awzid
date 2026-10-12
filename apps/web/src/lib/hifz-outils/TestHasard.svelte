@@ -76,19 +76,24 @@
     carte = carteErreurs(await marquesDe(profileId));
     charge = true;
     await suivant(page.url.searchParams.get('verset'));
+    // texte de TOUS les passages mémorisés gardé sur l'appareil : le test marche ensuite hors ligne
+    if (navigator.onLine) for (const r of plages) await loadVerses(r.s, r.from, r.to);
   });
 
   async function suivant(impose: string | null = null) {
-    q = tirageImpose(plages, impose) ?? tirer(plages, Math.random, deja);
     vu = false;
     fait = null;
     choix.clear();
     iaMots = new Map();
     versets = [];
-    if (!q) return;
-    deja.add(`${q.s}:${q.a}`);
-    depuis = new Date().toISOString();
-    versets = await loadVerses(q.s, q.a, q.to);
+    // hors ligne, un verset dont le texte n'est pas encore sur l'appareil est sauté (quelques essais)
+    for (let essai = 0; essai < 8 && !versets.length; essai++) {
+      q = (essai ? null : tirageImpose(plages, impose)) ?? tirer(plages, Math.random, deja);
+      if (!q) return;
+      deja.add(`${q.s}:${q.a}`);
+      depuis = new Date().toISOString();
+      versets = await loadVerses(q.s, q.a, q.to);
+    }
   }
 
   async function voir() {
@@ -161,7 +166,7 @@
     <h2><Bidi text={t('hz.test_question', { ref: libelle({ s: q.s, from: q.a, to: q.a }) })} /></h2>
     {#if !vu}
       <p class="muted">{t('hz.test_consigne')}</p>
-      <MotsVerset v={premier} {visibles} />
+      <MotsVerset v={premier} {visibles} {basmala} />
       <div class="row">
         {#if ia}<button
             type="button"
@@ -186,7 +191,12 @@
     {:else}
       <p class="muted small">{t('hz.marquer_mots')}</p>
       {#each versets as v (v.a)}
-        <MotsVerset {v} mots={motsDe(v)} onmot={fait ? undefined : (k) => marquer(v.a, k)} />
+        <MotsVerset
+          {v}
+          {basmala}
+          mots={motsDe(v)}
+          onmot={fait ? undefined : (k) => marquer(v.a, k)}
+        />
       {/each}
       {#each proches as p (`${p.s}:${p.a}`)}
         <p class="alerte" role="note" data-testid="mutashabih">

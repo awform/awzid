@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tanwinDisplay } from '@awform/content/text';
+  import { splitBasmala } from '@awform/hifz';
   import { fmtNumber, t } from '$lib/i18n';
 
   /**
@@ -12,8 +13,14 @@
     mots = new Map(),
     visibles = Infinity,
     onmot,
+    basmala = '',
+    grand = false,
   }: {
+    /** écran enfant : texte plus grand */
+    grand?: boolean;
     v: { s: number; a: number; text: string };
+    /** texte Tanzil de la basmala (méta du Coran) : détachée sur sa ligne en tête du verset 1 */
+    basmala?: string;
     /** rang du mot → marque (erreur, hésitation) */
     mots?: ReadonlyMap<number, 'erreur' | 'hesitation'>;
     /** nombre de mots montrés (amorce du test) ; les autres sont cachés */
@@ -23,22 +30,38 @@
   } = $props();
   const ESPACE = ' ';
   const words = $derived(v.text.split(' '));
+  /**
+   * Basmala d'en-tête du verset 1 (texte Tanzil) : sur SA ligne, centrée, sans numéro — elle ne fait pas partie du
+   * verset (sauf al-Fātiḥa en Ḥafṣ, où elle EST le verset 1 : `splitBasmala` ne la détache pas). Les rangs des mots
+   * restent ceux de `texte.split(' ')`.
+   */
+  const nb = $derived.by(() => {
+    const p = basmala ? splitBasmala(v.s, v.a, v.text, basmala) : null;
+    return p?.basmala ? p.basmala.split(' ').length : 0;
+  });
 </script>
 
-<p class="mv quran-text" lang="ar" dir="rtl" data-mots={`${v.s}:${v.a}`}>
-  {#each words.slice(0, visibles) as w, k (k)}
-    {#if onmot}<button
-        type="button"
-        class="mot {mots.get(k) ?? ''}"
-        aria-pressed={mots.has(k)}
-        onclick={() => onmot(k)}
-        data-k={k}>{tanwinDisplay(w)}</button
-      >{:else}<span class="mot {mots.get(k) ?? ''}" data-k={k}>{tanwinDisplay(w)}</span
-      >{/if}{ESPACE}
-  {/each}{#if visibles < words.length}<span class="suite" data-testid="suite-cachee"
-      >{t('hz.suite_cachee')}</span
-    >{ESPACE}{/if}<span class="n">{fmtNumber(v.a, { useGrouping: false })}</span>
-</p>
+<div class="mv quran-text" class:grand lang="ar" dir="rtl" data-mots={`${v.s}:${v.a}`}>
+  {#if nb}<p class="bsm" data-testid="basmala-ligne">
+      {#each words.slice(0, nb) as w, k (k)}<span class="mot" data-k={k}>{tanwinDisplay(w)}</span
+        >{ESPACE}{/each}
+    </p>{/if}
+  <p class="ligne">
+    {#each words.slice(nb, visibles) as w, i (i)}
+      {@const k = i + nb}
+      {#if onmot}<button
+          type="button"
+          class="mot {mots.get(k) ?? ''}"
+          aria-pressed={mots.has(k)}
+          onclick={() => onmot(k)}
+          data-k={k}>{tanwinDisplay(w)}</button
+        >{:else}<span class="mot {mots.get(k) ?? ''}" data-k={k}>{tanwinDisplay(w)}</span
+        >{/if}{ESPACE}
+    {/each}{#if visibles < words.length}<span class="suite" data-testid="suite-cachee"
+        >{t('hz.suite_cachee')}</span
+      >{ESPACE}{/if}<span class="n">{fmtNumber(v.a, { useGrouping: false })}</span>
+  </p>
+</div>
 
 <style>
   .mv {
@@ -47,8 +70,15 @@
     line-height: 2.3;
     margin: 0 0 6px;
   }
-  :global(.enfant) .mv {
+  :global(.enfant) .mv,
+  .grand {
     font-size: 1.9rem;
+  }
+  .mv p {
+    margin: 0;
+  }
+  .bsm {
+    text-align: center;
   }
   .mot {
     border-radius: 6px;
