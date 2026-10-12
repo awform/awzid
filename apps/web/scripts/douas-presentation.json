@@ -1,0 +1,401 @@
+{
+  "_lisezmoi": "Présentation française des douas, relue par le référent (DECISIONS_REFERENT_DOUAS.md, y compris l'ajout du 12/10). Titre = le MOMENT seul (aucune citation traduite tant que les traductions ne sont pas validées) ; « moment » = la précision seulement ; « source » = panneau de l'élève (recueil, degré en français, savant qui a jugé hors al-Bukhārī et Muslim), sans aucune note interne ; « nettoyage » = les seules exceptions à « chaîne exacte » (marques du chercheur). Le texte arabe n'est JAMAIS ici : il vient de douas_phase1.json (hadiths) ou de Tanzil (Coran), via scripts/douas.mjs.",
+  "edition": "phase1-2026-10-12",
+  "en_attente": ["DOU-ANG-08", "ECA-07"],
+  "rubriques": [
+    { "id": "maison_sommeil", "de": ["reveil_sommeil", "maison", "toilettes"] },
+    { "id": "repas", "de": ["repas"] },
+    { "id": "ablutions_mosquee", "de": ["ablutions", "mosquee"] },
+    { "id": "vetements", "de": ["habits"] },
+    { "id": "voyage", "de": ["voyage"] },
+    { "id": "pluie", "de": ["pluie_vent_tonnerre"] },
+    { "id": "maladie", "de": ["malade"] },
+    { "id": "epreuve", "de": ["angoisse_epreuve"] },
+    { "id": "parents", "de": ["parents"] },
+    { "id": "savoir", "de": ["savoir"] },
+    { "id": "repentir", "de": ["repentir_pardon"] },
+    { "id": "eternuement", "de": ["eternuement"] },
+    { "id": "coran", "de": ["coran"] }
+  ],
+  "enfant": [
+    "DOU-SOM-01",
+    "DOU-SOM-02",
+    "DOU-TOI-01",
+    "DOU-TOI-02",
+    "DOU-REP-01",
+    "DOU-REP-02",
+    "DOU-MAI-01",
+    "DOU-HAB-01",
+    "DOU-PLU-01",
+    "DOU-ETE-01",
+    "DOU-SAV-03",
+    "DOU-PRT-01"
+  ],
+  "nettoyage": {
+    "DOU-SOM-07": ["rlm", "points"],
+    "DOU-MOS-01": ["rlm", "ligne_point"],
+    "DOU-VOY-01": ["points", "fois", "ligne_etoile"],
+    "DOU-PLU-05": ["points"],
+    "DOU-MAL-04": ["points", "fois"],
+    "DOU-ETE-01": ["points"]
+  },
+  "douas": {
+    "DOU-SOM-01": {
+      "titre": "Au coucher",
+      "moment": "",
+      "source": { "recueil": "al-Bukhārī 6324", "degre": "authentique" }
+    },
+    "DOU-SOM-02": {
+      "titre": "Au réveil",
+      "moment": "",
+      "source": { "recueil": "al-Bukhārī 6324", "degre": "authentique" }
+    },
+    "DOU-SOM-03": {
+      "titre": "Au coucher",
+      "moment": "Après avoir épousseté le lit.",
+      "source": { "recueil": "al-Bukhārī 6320", "degre": "authentique" }
+    },
+    "DOU-SOM-04": {
+      "titre": "Au coucher",
+      "moment": "Après les ablutions, couché sur le côté droit ; dernière parole avant de dormir.",
+      "source": { "recueil": "al-Bukhārī 247", "degre": "authentique" }
+    },
+    "DOU-SOM-05": {
+      "titre": "Au coucher",
+      "moment": "La main droite sous la joue.",
+      "source": { "recueil": "Abū Dāwūd 5045", "degre": "authentique", "juge": "al-Albānī" }
+    },
+    "DOU-SOM-06": {
+      "titre": "Au réveil",
+      "moment": "",
+      "source": { "recueil": "at-Tirmidhī 3401", "degre": "bon", "juge": "at-Tirmidhī" }
+    },
+    "DOU-SOM-07": {
+      "titre": "En se réveillant la nuit",
+      "moment": "",
+      "source": { "recueil": "al-Bukhārī 1154", "degre": "authentique" }
+    },
+    "DOU-MAI-01": {
+      "titre": "En sortant de la maison",
+      "moment": "",
+      "source": { "recueil": "Abū Dāwūd 5095", "degre": "authentique", "juge": "al-Albānī" },
+      "note": "Les spécialistes divergent : la voie d'at-Tirmidhī (3426) a été jugée faible par d'autres."
+    },
+    "DOU-MAI-02": {
+      "titre": "En sortant de la maison",
+      "moment": "",
+      "source": { "recueil": "Abū Dāwūd 5094", "degre": "authentique", "juge": "al-Albānī" }
+    },
+    "DOU-MAI-03": {
+      "titre": "En entrant à la maison",
+      "moment": "On mentionne Allah en entrant (et en mangeant).",
+      "source": { "recueil": "Muslim 2018", "degre": "authentique" }
+    },
+    "DOU-TOI-01": {
+      "titre": "Avant d'entrer aux toilettes",
+      "moment": "",
+      "source": { "recueil": "al-Bukhārī 142", "degre": "authentique" },
+      "note": "La basmala avant d'entrer est rapportée par at-Tirmidhī (606), jugée authentique par al-Albānī."
+    },
+    "DOU-TOI-02": {
+      "titre": "En sortant des toilettes",
+      "moment": "",
+      "source": { "recueil": "Abū Dāwūd 30", "degre": "authentique", "juge": "al-Albānī" }
+    },
+    "DOU-REP-01": {
+      "titre": "Avant de manger",
+      "moment": "",
+      "source": { "recueil": "al-Bukhārī 5376", "degre": "authentique" }
+    },
+    "DOU-REP-02": {
+      "titre": "Si l'on a oublié de nommer Allah au début du repas",
+      "moment": "",
+      "source": { "recueil": "Abū Dāwūd 3767", "degre": "authentique", "juge": "al-Albānī" }
+    },
+    "DOU-REP-03": {
+      "titre": "Après le repas",
+      "moment": "",
+      "source": { "recueil": "Abū Dāwūd 4023", "degre": "bon", "juge": "al-Albānī" }
+    },
+    "DOU-REP-04": {
+      "titre": "À la fin du repas",
+      "moment": "Quand on lève la nappe.",
+      "source": { "recueil": "al-Bukhārī 5458", "degre": "authentique" }
+    },
+    "DOU-REP-05": {
+      "titre": "Chez un hôte, après le repas",
+      "moment": "Pour celui qui nous a invités à manger.",
+      "source": { "recueil": "Muslim 2042", "degre": "authentique" }
+    },
+    "DOU-ABL-01": {
+      "titre": "Après les ablutions",
+      "moment": "Les deux témoignages.",
+      "source": {
+        "recueil": "Abū Dāwūd 169 (et Muslim 234)",
+        "degre": "authentique",
+        "juge": "al-Albānī"
+      }
+    },
+    "DOU-ABL-02": {
+      "titre": "Après les ablutions",
+      "moment": "Après les deux témoignages.",
+      "facultatif": true,
+      "source": { "recueil": "at-Tirmidhī 55", "degre": "authentique", "juge": "al-Albānī" },
+      "note": "D'autres savants ont discuté sa chaîne."
+    },
+    "DOU-MOS-01": {
+      "titre": "En entrant et en sortant de la mosquée",
+      "moment": "",
+      "lignes": ["En entrant", "En sortant"],
+      "source": { "recueil": "Muslim 713", "degre": "authentique" }
+    },
+    "DOU-MOS-02": {
+      "titre": "En entrant à la mosquée",
+      "moment": "",
+      "source": { "recueil": "Abū Dāwūd 466", "degre": "authentique", "juge": "al-Albānī" }
+    },
+    "DOU-HAB-01": {
+      "titre": "En s'habillant",
+      "moment": "",
+      "source": { "recueil": "Abū Dāwūd 4023", "degre": "bon", "juge": "al-Albānī" }
+    },
+    "DOU-HAB-02": {
+      "titre": "En mettant un vêtement neuf",
+      "moment": "En le nommant (turban, chemise…).",
+      "source": { "recueil": "Abū Dāwūd 4020", "degre": "authentique", "juge": "al-Albānī" }
+    },
+    "DOU-VOY-01": {
+      "titre": "En montant sur sa monture (ou dans un véhicule)",
+      "moment": "La mention d'Allah le pied à l'étrier, la louange une fois installé, puis le verset, puis trois fois la louange et trois fois le takbīr, puis la demande de pardon.",
+      "coran_cite": true,
+      "source": { "recueil": "Abū Dāwūd 2602", "degre": "authentique", "juge": "al-Albānī" }
+    },
+    "DOU-VOY-02": {
+      "titre": "Au départ en voyage",
+      "moment": "Une fois installé sur sa monture.",
+      "coran_cite": true,
+      "source": { "recueil": "Muslim 1342", "degre": "authentique" }
+    },
+    "DOU-VOY-03": {
+      "titre": "Au retour de voyage",
+      "moment": "On redit la doua du voyage et on ajoute cette phrase.",
+      "source": { "recueil": "Muslim 1342 (et al-Bukhārī 1797)", "degre": "authentique" }
+    },
+    "DOU-VOY-04": {
+      "titre": "En faisant halte dans un lieu",
+      "moment": "En voyage, à l'hôtel…",
+      "source": { "recueil": "Muslim 2708", "degre": "authentique" }
+    },
+    "DOU-PLU-01": {
+      "titre": "En voyant la pluie",
+      "moment": "",
+      "source": { "recueil": "al-Bukhārī 1032", "degre": "authentique" }
+    },
+    "DOU-PLU-02": {
+      "titre": "Après la pluie",
+      "moment": "",
+      "source": { "recueil": "al-Bukhārī 846", "degre": "authentique" }
+    },
+    "DOU-PLU-03": {
+      "titre": "Quand la pluie devient excessive",
+      "moment": "Quand on craint les dégâts d'une pluie trop forte.",
+      "source": { "recueil": "al-Bukhārī 1013", "degre": "authentique" }
+    },
+    "DOU-PLU-04": {
+      "titre": "Quand le vent souffle fort",
+      "moment": "",
+      "source": { "recueil": "Muslim 899", "degre": "authentique" }
+    },
+    "DOU-PLU-05": {
+      "titre": "En entendant le tonnerre",
+      "moment": "On cesse de parler et on dit cette phrase.",
+      "coran_cite": true,
+      "compagnon": "Parole du Compagnon ʿAbd Allāh ibn az-Zubayr, rapportée par l'imam Mālik dans le Muwaṭṭaʾ.",
+      "source": { "recueil": "al-Adab al-Mufrad 723 (et le Muwaṭṭaʾ de l'imam Mālik)" }
+    },
+    "DOU-MAL-01": {
+      "titre": "En rendant visite à un malade",
+      "moment": "",
+      "source": { "recueil": "al-Bukhārī 3616", "degre": "authentique" }
+    },
+    "DOU-MAL-02": {
+      "titre": "Auprès d'un malade",
+      "moment": "Pour demander sa guérison.",
+      "source": { "recueil": "al-Bukhārī 5743", "degre": "authentique" }
+    },
+    "DOU-MAL-03": {
+      "titre": "Auprès d'un malade",
+      "moment": "Pour demander sa guérison.",
+      "source": { "recueil": "Abū Dāwūd 3106", "degre": "authentique", "juge": "al-Albānī" }
+    },
+    "DOU-MAL-04": {
+      "titre": "Quand on a mal quelque part",
+      "moment": "La main posée sur l'endroit douloureux : le nom d'Allah trois fois, puis la phrase sept fois.",
+      "source": { "recueil": "Muslim 2202", "degre": "authentique" }
+    },
+    "DOU-ANG-01": {
+      "titre": "Dans la détresse",
+      "moment": "En cas d'angoisse ou de grande difficulté.",
+      "source": { "recueil": "al-Bukhārī 6346", "degre": "authentique" }
+    },
+    "DOU-ANG-02": {
+      "titre": "Dans toute difficulté",
+      "moment": "La doua de Yūnus.",
+      "source": {
+        "recueil": "at-Tirmidhī 3505 (texte : Coran 21:87)",
+        "degre": "authentique",
+        "juge": "Zubayr ʿAlī Zaʾī (éd. Darussalam)"
+      }
+    },
+    "DOU-ANG-03": {
+      "titre": "Dans l'angoisse",
+      "moment": "",
+      "source": { "recueil": "Abū Dāwūd 5090", "degre": "bon", "juge": "al-Albānī" }
+    },
+    "DOU-ANG-04": {
+      "titre": "Quand un malheur frappe",
+      "moment": "Lors d'une épreuve, d'un décès, d'une perte.",
+      "coran_cite": true,
+      "source": { "recueil": "Muslim 918", "degre": "authentique" }
+    },
+    "DOU-ANG-05": {
+      "titre": "Contre le souci et la tristesse",
+      "moment": "À tout moment.",
+      "source": { "recueil": "al-Bukhārī 6369", "degre": "authentique" }
+    },
+    "DOU-ANG-06": {
+      "titre": "Dans la détresse",
+      "moment": "",
+      "source": { "recueil": "Abū Dāwūd 1525", "degre": "authentique", "juge": "al-Albānī" }
+    },
+    "DOU-ANG-07": {
+      "titre": "Quand une affaire inquiète",
+      "moment": "",
+      "source": {
+        "recueil": "at-Tirmidhī 3524",
+        "degre": "bon",
+        "juge": "Zubayr ʿAlī Zaʾī (éd. Darussalam)"
+      }
+    },
+    "DOU-SAV-01": {
+      "titre": "Après la prière de l'aube",
+      "moment": "Après la salutation finale.",
+      "source": {
+        "recueil": "Ibn Mājah 925",
+        "degre": "authentique",
+        "juge": "Zubayr ʿAlī Zaʾī (éd. Darussalam)"
+      }
+    },
+    "DOU-SAV-02": {
+      "titre": "Contre une science inutile",
+      "moment": "À tout moment.",
+      "source": { "recueil": "Muslim 2722", "degre": "authentique" }
+    },
+    "DOU-SAV-03": {
+      "titre": "Avant d'étudier",
+      "moment": "Et à tout moment.",
+      "source": { "recueil": "Coran 20:114" }
+    },
+    "DOU-PAR-01": {
+      "titre": "Le matin et le soir",
+      "moment": "Le maître de la demande de pardon.",
+      "source": { "recueil": "al-Bukhārī 6306", "degre": "authentique" }
+    },
+    "DOU-PAR-02": {
+      "titre": "Dans la prière, avant la salutation finale",
+      "moment": "Et à tout moment ; enseignée à Abū Bakr.",
+      "source": { "recueil": "al-Bukhārī 834", "degre": "authentique" }
+    },
+    "DOU-PAR-03": {
+      "titre": "Pour demander pardon",
+      "moment": "À tout moment.",
+      "source": { "recueil": "Abū Dāwūd 1517", "degre": "authentique", "juge": "al-Albānī" }
+    },
+    "DOU-PAR-04": {
+      "titre": "Pour demander pardon",
+      "moment": "Le Prophète la disait de nombreuses fois dans une même assemblée.",
+      "source": { "recueil": "Abū Dāwūd 1516", "degre": "authentique", "juge": "al-Albānī" }
+    },
+    "DOU-PAR-05": {
+      "titre": "Surtout pendant les nuits du Destin",
+      "moment": "",
+      "source": {
+        "recueil": "Ibn Mājah 3850",
+        "degre": "authentique",
+        "juge": "Zubayr ʿAlī Zaʾī (éd. Darussalam)"
+      },
+      "note": "Forme sans l'ajout courant du mot « généreux » : cet ajout n'est pas établi dans les manuscrits retenus par les spécialistes."
+    },
+    "DOU-ETE-01": {
+      "titre": "En éternuant",
+      "moment": "Celui qui éternue loue Allah ; celui qui l'entend lui répond ; puis le premier répond à son tour.",
+      "source": { "recueil": "al-Bukhārī 6224", "degre": "authentique" }
+    },
+    "DOU-COR-01": {
+      "titre": "À tout moment",
+      "moment": "La doua la plus fréquente du Prophète (al-Bukhārī 6389).",
+      "source": { "recueil": "Coran 2:201" }
+    },
+    "DOU-COR-02": {
+      "titre": "À tout moment",
+      "moment": "Fin de la sourate al-Baqara.",
+      "source": { "recueil": "Coran 2:286" }
+    },
+    "DOU-COR-03": { "titre": "À tout moment", "moment": "", "source": { "recueil": "Coran 3:8" } },
+    "DOU-COR-04": {
+      "titre": "Pour se repentir",
+      "moment": "La doua d'Adam et Ḥawwāʾ.",
+      "source": { "recueil": "Coran 7:23" }
+    },
+    "DOU-COR-05": {
+      "titre": "Pour la famille",
+      "moment": "",
+      "source": { "recueil": "Coran 25:74" }
+    },
+    "DOU-COR-06": {
+      "titre": "Avant de parler, d'étudier ou de passer un examen",
+      "moment": "La doua de Mūsā.",
+      "source": { "recueil": "Coran 20:25-28" }
+    },
+    "DOU-COR-07": {
+      "titre": "Pour demander la bonne direction dans une affaire",
+      "moment": "La doua des gens de la caverne.",
+      "source": { "recueil": "Coran 18:10" }
+    },
+    "DOU-COR-08": {
+      "titre": "Pour les croyants",
+      "moment": "",
+      "source": { "recueil": "Coran 59:10" }
+    },
+    "DOU-COR-09": {
+      "titre": "Après une bonne œuvre",
+      "moment": "La doua d'Ibrāhīm et d'Ismāʿīl.",
+      "source": { "recueil": "Coran 2:127" }
+    },
+    "DOU-COR-10": {
+      "titre": "À tout moment",
+      "moment": "",
+      "source": { "recueil": "Coran 23:118" }
+    },
+    "DOU-PRT-01": {
+      "titre": "Pour ses parents",
+      "moment": "À tout moment.",
+      "source": { "recueil": "Coran 17:24" }
+    },
+    "DOU-PRT-02": {
+      "titre": "Pour soi, ses parents et les croyants",
+      "moment": "La doua d'Ibrāhīm.",
+      "source": { "recueil": "Coran 14:41" }
+    },
+    "DOU-PRT-03": {
+      "titre": "Pour ses parents et les croyants",
+      "moment": "La doua de Nūḥ.",
+      "source": { "recueil": "Coran 71:28" }
+    },
+    "DOU-PRT-04": {
+      "titre": "Pour soi et ses parents, par gratitude",
+      "moment": "",
+      "source": { "recueil": "Coran 46:15" }
+    }
+  }
+}

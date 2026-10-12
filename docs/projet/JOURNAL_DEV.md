@@ -43,6 +43,28 @@ dès que tu cliques, ça sort, ça fait rien »)**, commit c5ae5c5 (poussé seul
     `causeMicro` (`lib/ecoute/ecoute.ts`) ;
 11. « ↻ N » : bouton nommé « N action(s) en attente d'envoi », explication au toucher.
     E2E `coran-lecteur4.spec.ts` ; unitaires (défaut inchangé, reste de zoom, causes du micro).
+## 12/10/2026 — Douas (phase 1) : onglet « Douas » de « Vivre l'islam »
+
+Branche `douas-wip` (worktree `~/awform-douas`, depuis `main` a053633), **non fusionnée**. Sources :
+`docs/projet/douas/` (`douas_phase1.json` du chercheur, `DECISIONS_REFERENT_DOUAS.md` qui fait loi, dossier).
+
+1. **Données à la demande** : `apps/web/scripts/douas.mjs` construit `static/douas/douas.json` (66 douas retenues :
+   les 10 écartées et DOU-ANG-08 / ECA-07 « en attente » ne sont jamais écrites). Hadiths : chaîne EXACTE du dossier
+   (aucune normalisation). Coran (16 : 15 douas du Coran + la doua de Yūnus) : sous-chaîne exacte du verset Tanzil
+   (`infra/ci/contenu`), le repère du chercheur ne sert qu'à trouver le début du passage. `--verifier` : fichier à jour.
+   Le service worker ne le précharge pas ; l'onglet le garde en IndexedDB au premier usage (hors ligne ensuite).
+2. **Présentation** (`scripts/douas-presentation.json`) : titres et moments accentués, sans arabe sur la ligne du
+   français ni nombre de répétitions absent du texte (MAL-03, PAR-04, VOY-02 corrigés) ; 13 rubriques ; notes du
+   référent (décisions 1 à 8 : ABL-02 ajout facultatif après la shahāda, MAI-01 divergence, basmala des toilettes,
+   PAR-05 sans « كَرِيمٌ », PLU-01 tel quel, tonnerre = parole d'un Compagnon d'après le Muwaṭṭaʾ, SOM-05 sans nombre).
+3. **Écran** `/vivre/douas` (`$lib/douas/DouasVue.svelte`, chargé à la demande, groupe « à la demande » de
+   `groupes.mjs`) : bandeau « Sources vérifiées — en cours de relecture savante », rubriques, arabe sur sa ligne,
+   moment, « Traduction en préparation », source et degré derrière « Source », favoris sur l'appareil (par élève).
+   Profil enfant : 12 douas courtes du quotidien, sans rubriques. Aucun audio (champ `audio` réservé à l'audio humain).
+   4e sous-onglet de `VivreTabs` ; textes `fr-douas.json` (+ en, es, de, ar), interrupteur « Vivre l'islam ».
+4. Tests : `src/lib/douas/douas.test.ts` (octet par octet, rendu compris ; écartées ; décisions) ; e2e
+   `e2e/douas.spec.ts` (onglet, rubrique, source, favoris, enfant, captures 412 × 915 dans `reports/douas/`).
+   Appareil de l'élève : 346,8 Ko (main : 346,1 Ko).
 
 ## 12/10/2026 — Hifẓ complet : répétition fine, test au hasard, carte des erreurs, fraîcheur, 2 rakʿa, écran enfant
 
