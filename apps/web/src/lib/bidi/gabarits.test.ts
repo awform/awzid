@@ -55,8 +55,9 @@ describe('gabarits : texte arabe toujours isolé (règle de lint)', () => {
     const coran = files.filter((f) => /^(lib\/quran|routes\/coran)\//.test(f));
     const exempt = coran.filter((f) => EXEMPT_FILES.some((re) => re.test(f)));
     expect(coran.length).toBeGreaterThanOrEqual(10);
-    expect(exempt).toEqual(['lib/quran/TajwidRuns.svelte']);
-    expect(EXEMPT_FILES).toHaveLength(4);
+    // ۞ (Hizb.svelte) : caractère du verset gardé tel quel sous son ornement (aucune marque d'isolement)
+    expect(exempt).toEqual(['lib/quran/Hizb.svelte', 'lib/quran/TajwidRuns.svelte']);
+    expect(EXEMPT_FILES).toHaveLength(5);
   });
 
   it('jamais de <Bidi>/<Ar> dans un texte coranique (classe quran-text), dans aucun gabarit', () => {

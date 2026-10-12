@@ -3168,7 +3168,7 @@
       transform: none;
     }
     .pastille .po {
-      min-height: 30px;
+      min-height: 44px;
       width: 100%;
       padding: 2px 0;
       font-size: 0.7rem;

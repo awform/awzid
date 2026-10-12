@@ -17,13 +17,15 @@ interface Node {
 }
 
 /** Fichiers exclus : les composants de rendu eux-mêmes, et le rendu du texte coranique (Tanzil octet par
- * octet, jamais découpé ni modifié : VerseText, morceaux colorés du tajwīd). Le reste de l'espace Coran
+ * octet, jamais découpé ni modifié : VerseText, morceaux colorés du tajwīd, ۞ sous son ornement). Le reste de l'espace Coran
  * (lib/quran, routes/coran) suit la règle commune depuis la fusion du lot 29. */
 export const EXEMPT_FILES = [
   /(^|\/)lib\/Ar\.svelte$/,
   /(^|\/)lib\/Bidi\.svelte$/,
   /(^|\/)lib\/VerseText\.svelte$/,
   /(^|\/)lib\/quran\/TajwidRuns\.svelte$/,
+  // ۞ masqué à l'écran, gardé dans le texte du verset (Tanzil octet par octet), sous un ornement
+  /(^|\/)lib\/quran\/Hizb\.svelte$/,
 ];
 
 /** Éléments où un composant ne peut pas s'insérer (texte brut seulement) ou qui ne sont pas affichés. */
