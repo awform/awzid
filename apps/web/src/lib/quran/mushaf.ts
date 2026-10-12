@@ -237,7 +237,15 @@ export interface MushafPrefs {
   zoom: number;
   /** lecture épurée (11/10/2026, par défaut) : commandes cachées après 3 s sans geste, un toucher les montre */
   epure: boolean;
+  /**
+   * Version de l'affichage par défaut déjà appliquée sur l'appareil (lot lecteur 4, décision du client du
+   * 12/10/2026 : « Grand texte » par défaut). Un appareil qui n'a pas encore la version 4 passe une fois en
+   * « Grand texte » ; ensuite le choix de l'élève (page exacte dans Réglages › Avancé) est gardé.
+   */
+  affichage: number;
 }
+/** lot lecteur 4 : « Grand texte » (versets, texte agrandi) par défaut, une fois, sur tous les appareils */
+export const AFFICHAGE_V = 4;
 export type Fond = 'ivoire' | 'sepia';
 export const FONDS: Fond[] = ['ivoire', 'sepia'];
 export const DEFAULT_PREFS: MushafPrefs = {
@@ -249,7 +257,8 @@ export const DEFAULT_PREFS: MushafPrefs = {
   repeatVerse: 1,
   repeatRange: 1,
   page: 1,
-  vue: 'page',
+  // « Grand texte » par défaut (décision du client, 12/10/2026) : versets, texte agrandi
+  vue: 'versets',
   showTrad: false,
   rate: 1,
   sleepMin: 0,
@@ -259,11 +268,12 @@ export const DEFAULT_PREFS: MushafPrefs = {
   repeatChain: 2,
   volume: 1,
   style: 'exact',
-  size: 0,
+  size: 1,
   navAuto: false,
   fond: 'ivoire',
   zoom: 1,
   epure: true,
+  affichage: AFFICHAGE_V,
 };
 /** Facteur de la taille du texte coranique (réglage « Taille du texte », « Plus grand » des enfants). */
 export const TEXT_SCALE = [1, 1.25, 1.5] as const;
@@ -284,6 +294,9 @@ export function readPrefs(store: Pick<Storage, 'getItem'> | null = storage()): M
     const raw = JSON.parse(store?.getItem(KEY) ?? '{}') as Partial<MushafPrefs>;
     const kind =
       MUSHAF_KINDS.find((k) => k.id === raw.kind && k.available)?.id ?? DEFAULT_PREFS.kind;
+    // appareil d'avant le lot lecteur 4 (ou neuf) : « Grand texte », une fois
+    const neuf = Number(raw.affichage) !== AFFICHAGE_V;
+    const size = clampInt(raw.size, 0, TEXT_SCALE.length - 1, DEFAULT_PREFS.size);
     return {
       kind,
       translation:
@@ -294,7 +307,7 @@ export function readPrefs(store: Pick<Storage, 'getItem'> | null = storage()): M
       repeatVerse: clampInt(raw.repeatVerse, 1, 20, 1),
       repeatRange: clampInt(raw.repeatRange, 1, 20, 1),
       page: clampInt(raw.page, 1, PAGE_COUNT, 1),
-      vue: raw.vue === 'versets' ? 'versets' : 'page',
+      vue: neuf || raw.vue === 'versets' ? 'versets' : 'page',
       showTrad: raw.showTrad === true,
       rate: [0.5, 0.75, 1, 1.25, 1.5].includes(Number(raw.rate)) ? Number(raw.rate) : 1,
       sleepMin: (SLEEP as readonly number[]).includes(Number(raw.sleepMin))
@@ -309,13 +322,16 @@ export function readPrefs(store: Pick<Storage, 'getItem'> | null = storage()): M
           ? Math.max(0, Math.min(1, Number(raw.volume)))
           : 1,
       style: raw.style === 'fluide' ? 'fluide' : 'exact',
-      size: clampInt(raw.size, 0, TEXT_SCALE.length - 1, 0),
+      size: neuf ? Math.max(1, size) : size,
       navAuto: raw.navAuto === true,
       fond: raw.fond === 'sepia' ? 'sepia' : 'ivoire',
-      zoom: Number.isFinite(Number(raw.zoom))
-        ? Math.max(1, Math.min(3, Math.round(Number(raw.zoom) * 100) / 100))
-        : 1,
+      // un reste de zoom à peine au-dessus de 1 (page coupée à gauche, lot lecteur 4) : page entière
+      zoom:
+        Number.isFinite(Number(raw.zoom)) && Number(raw.zoom) >= 1.15
+          ? Math.min(3, Math.round(Number(raw.zoom) * 100) / 100)
+          : 1,
       epure: raw.epure !== false,
+      affichage: AFFICHAGE_V,
     };
   } catch {
     return { ...DEFAULT_PREFS };

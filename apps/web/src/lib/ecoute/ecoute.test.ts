@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { comparer, motsAttendus, type MotEntendu } from '@awform/hifz';
 import { aRevoirDe, versetsARevoir, type Bilan } from './bilans';
-import { bilanDe } from './ecoute';
+import { bilanDe, causeMicro } from './ecoute';
 
 /** A5 — bilan de séance (appareil) : positions des mots à revoir, jamais l'audio ni les mots entendus. */
 const V = [
@@ -40,5 +40,18 @@ describe('A5 : bilan de séance', () => {
     // la plus récente d'abord : 1-2 revue sans erreur -> plus à revoir ; 3-4 à revoir ; « pas compris » ignoré
     const l = [b(1, 0), b(3, 2), b(1, 3), b(5, 4, true)];
     expect(aRevoirDe(l).map((x) => x.from)).toEqual([3]);
+  });
+});
+
+describe('lot lecteur 4 : cause précise du micro inaccessible', () => {
+  const ok = { secure: true, api: true };
+  it('adresse non sécurisée, refus, aucun micro, autre', () => {
+    expect(causeMicro(new Error('x'), { secure: false, api: false })).toBe('micro_https');
+    expect(causeMicro({ name: 'NotAllowedError' }, ok)).toBe('micro_refuse');
+    expect(causeMicro({ name: 'SecurityError' }, ok)).toBe('micro_refuse');
+    expect(causeMicro({ name: 'NotFoundError' }, ok)).toBe('micro_absent');
+    expect(causeMicro({ name: 'OverconstrainedError' }, ok)).toBe('micro_absent');
+    expect(causeMicro({ name: 'AbortError' }, ok)).toBe('micro');
+    expect(causeMicro(new TypeError('x'), { secure: true, api: false })).toBe('micro_https');
   });
 });

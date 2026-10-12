@@ -1120,7 +1120,9 @@
       g = null;
       // fin du pincement : vue calée sur le début des lignes (à droite)
       const f = frame();
-      setVue(vz.z <= ZOOM_MIN + 0.05 ? { z: 1, x: 0, y: 0 } : alignRtl(vz, f.w, f.h));
+      // lot lecteur 4 (pages 465 et 467 coupées à gauche) : un reste de zoom à peine au-dessus de 1 revient à
+      // la page entière, centrée
+      setVue(vz.z <= ZOOM_MIN + 0.15 ? { z: 1, x: 0, y: 0 } : alignRtl(vz, f.w, f.h));
       return;
     }
     const kind = g.kind;
@@ -1535,8 +1537,16 @@
   }
   /** Mémoriser : masquer peu à peu (texte de Ḥafṣ, récitateurs en Ḥafṣ ; portion du carnet proposée). */
   async function setMemo(level: number, fromCarnet = false) {
+    const quitte = prefs.memo > 0 && level <= 0;
     prefs.memo = Math.max(0, Math.min(3, level));
     revealed = new Set();
+    if (quitte && avantMemo) {
+      // quitter Mémoriser : l'état d'avant revient (affichage, écoute, muṣḥaf)
+      const a = avantMemo;
+      avantMemo = null;
+      Object.assign(prefs, a.p);
+      if (a.rw !== rw) await setRiwaya(a.rw);
+    }
     if (prefs.memo > 0) {
       if (rw !== HAFS) await setRiwaya(HAFS);
       if (reciter && !canMemorize(reciter)) reciterId = reciters[0]?.id ?? null;
@@ -1567,8 +1577,42 @@
     if (prefs.memo > 0) await setMemo(0);
     chrome = false;
   }
+  /**
+   * État d'avant « Mémoriser » (lot lecteur 4, décision du client) : Mémoriser garde l'affichage choisi (jamais
+   * de passage en page exacte) ; quitter Mémoriser rétablit l'écoute et le muṣḥaf d'avant, masquage retiré.
+   */
+  let avantMemo: {
+    p: Pick<
+      typeof prefs,
+      | 'vue'
+      | 'size'
+      | 'style'
+      | 'repeatVerse'
+      | 'repeatRange'
+      | 'chain'
+      | 'repeatNew'
+      | 'repeatChain'
+    >;
+    rw: MushafRiwaya;
+  } | null = null;
   /** Préréglage « Mémoriser » : masquage progressif et écoute « écouter, répéter, enchaîner ». */
   async function modeMemoriser() {
+    if (!memo) {
+      const {
+        vue: v,
+        size,
+        style,
+        repeatVerse,
+        repeatRange,
+        chain,
+        repeatNew,
+        repeatChain,
+      } = prefs;
+      avantMemo = {
+        p: { vue: v, size, style, repeatVerse, repeatRange, chain, repeatNew, repeatChain },
+        rw,
+      };
+    }
     applyPreset('memoriser');
     await setMemo(Math.max(1, prefs.memo));
     avOpen = true;
@@ -1579,6 +1623,17 @@
     const pr = PRESETS.find((x) => x.id === id)!;
     Object.assign(prefs, pr.set);
     range = presetRange(pr.portee, activeSura, posA, suraLen(activeSura));
+  }
+  /** « Grand texte » (versets, texte agrandi) ↔ page du muṣḥaf ; même geste que dans Réglages › Affichage */
+  async function toggleGrand() {
+    const at = cur ?? { s: activeSura, a: posA };
+    if (prefs.vue === 'versets') prefs.vue = 'page';
+    else {
+      prefs.vue = 'versets';
+      if (prefs.size === 0) prefs.size = 1;
+    }
+    await tick();
+    await goVerse(at.s, Math.max(1, at.a), false);
   }
   function toggleTrad() {
     if (isRw) return;
@@ -1862,6 +1917,15 @@
             ></button
           >
         {/if}
+        <!-- lot lecteur 4 : « Grand texte » toujours à portée, d'un toucher (mémorisé dans les réglages) -->
+        <button
+          type="button"
+          class="tool grand-btn"
+          aria-pressed={vue === 'versets'}
+          onclick={toggleGrand}
+          data-testid="barre-grand-texte"
+          ><Icon name="taille" size={22} /><span>{t('cl.grand_texte')}</span></button
+        >
         <!-- UN SEUL point d'entrée pour tous les réglages du lecteur : icône ET libellé, téléphone et bureau -->
         <button
           type="button"
@@ -2684,14 +2748,20 @@
       height: calc(var(--pastille-h, 52px) + 30px);
     }
   }
+  /* lot lecteur 4 : bandeau « Mémoriser » COMPACT (essai du client : le panneau du haut prenait trop de place) */
   .memo-line {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px 12px;
-    margin: 8px 0 0;
-    font-size: 0.9rem;
+    gap: 2px 8px;
+    margin: 4px 0 0;
+    font-size: 0.82rem;
+    line-height: 1.2;
     color: var(--mp-green);
+  }
+  .memo-line .link {
+    min-height: 44px;
+    padding-inline: 4px;
   }
   .hint {
     margin: 6px 0 0;
@@ -2803,10 +2873,12 @@
     pointer-events: auto;
   }
   /* pastille d'écoute (commandes cachées) */
+  /* lot lecteur 4 : rangée dans le COIN bas gauche en portrait aussi (comme en paysage), plus au milieu du texte */
   .pastille {
     position: fixed;
-    bottom: calc(14px + env(safe-area-inset-bottom));
-    inset-inline-start: 50%;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    left: calc(8px + env(safe-area-inset-left));
+    right: auto;
     z-index: 21;
     display: flex;
     align-items: center;
@@ -2816,10 +2888,6 @@
     border: 1px solid var(--or-line);
     border-radius: var(--radius-pill);
     box-shadow: var(--shadow-float);
-    transform: translateX(-50%);
-  }
-  :global([dir='rtl']) .pastille {
-    transform: translateX(50%);
   }
   .pastille .pj {
     display: inline-grid;

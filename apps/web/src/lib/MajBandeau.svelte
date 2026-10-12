@@ -159,6 +159,21 @@
     color: var(--ink);
     font-size: 0.95rem;
     border-bottom: 1px solid var(--line);
+    /* lot lecteur 4 : toujours au PREMIER PLAN (au-dessus de la barre du lecteur et de l'en-tête) */
+    position: relative;
+    z-index: 40;
+  }
+  /*
+   * lecteur du Coran (téléphone, commandes flottantes) : l'en-tête et la barre du lecteur sont fixés en haut ; le
+   * bandeau passait dessous (essai du client, 12/10/2026). Il flotte au-dessus d'eux, lisible et touchable.
+   */
+  :global(html[data-surcouche]) .maj {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 6px);
+    inset-inline: 8px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: var(--shadow-float);
   }
   .msg {
     font-weight: 600;
