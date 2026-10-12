@@ -27,6 +27,10 @@ apps/web/static/traductions/
 # A8 : textes des riwayat du Complexe generes (pnpm --filter @awform/content riwayat), recopies tels quels, controles par test
 apps/web/static/riwayat/
 
+# Douas : données générées (node apps/web/scripts/douas.mjs), texte arabe recopié tel quel, contrôlées par test
+apps/web/static/douas/
+docs/projet/douas/
+
 # A26b : scénarios « Je parle » générés (pnpm --filter @awform/content conversation), contrôlés par test
 packages/content/conversation/
 

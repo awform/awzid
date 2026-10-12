@@ -56,7 +56,8 @@ describe('TexteEcoute : signes de pause rattachés au mot précédent', () => {
   });
 
   it('texte rendu identique, octet par octet, à la source (espaces compris)', () => {
-    const texte = sansBalises(rendu()).replace(/\s*﴿1﴾\s*$/, '');
+    // numéro du verset en chiffres arabes dans l'étoile (lot lecteur 4)
+    const texte = sansBalises(rendu()).replace(/\s*١\s*$/, '');
     expect(Buffer.from(texte.trim(), 'utf8').equals(Buffer.from(SOURCE, 'utf8'))).toBe(true);
     // la source elle-même n'est pas touchée (ni NFC, ni espace retirée)
     expect(SOURCE.split(' ')).toHaveLength(7);

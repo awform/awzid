@@ -36,6 +36,8 @@
 
   let online = $state(true);
   let pending = $state(0);
+  /** explication de « ↻ N » (touchée) */
+  let attenteAide = $state(false);
   let storageFull = $state(false);
   let settings = $state<Settings | null>(null);
   let profile = $state<DevProfile | null>(null);
@@ -216,10 +218,18 @@
       </nav>
     {/if}
     <span class="spacer"></span>
-    {#if pending > 0}<span class="chip" data-testid="en-attente" title={t('entete.attente_titre')}
+    <!-- lot lecteur 4 : « ↻ N » a un nom clair et s'explique au toucher -->
+    {#if pending > 0}<button
+        type="button"
+        class="chip"
+        data-testid="en-attente"
+        aria-expanded={attenteAide}
+        aria-controls="attente-aide"
+        title={t('entete.attente_titre')}
+        onclick={() => (attenteAide = !attenteAide)}
         ><Icon name="rafraichir" size={16} /><span class="chip-n" aria-hidden="true"
           ><Bidi text={pending} /></span
-        ><span class="chip-t"><Bidi text={t('entete.attente', { n: pending })} /></span></span
+        ><span class="chip-t"><Bidi text={t('entete.attente', { n: pending })} /></span></button
       >{/if}
     {#if profile}
       <span class="who" data-testid="eleve-actif" data-prive><Bidi text={profile.pseudonym} /></span
@@ -267,6 +277,18 @@
   {/if}
   {#if storageFull}<p class="card bad" role="alert" data-testid="stockage-plein">
       {t('entete.stockage_plein')}
+    </p>{/if}
+  {#if pending > 0 && attenteAide}<p
+      class="attente-aide"
+      id="attente-aide"
+      role="status"
+      data-testid="en-attente-aide"
+    >
+      <strong><Bidi text={t('entete.attente', { n: pending })} /></strong>
+      <Bidi text={t('entete.attente_aide')} />
+      <button type="button" class="aide-x" onclick={() => (attenteAide = false)}
+        >{t('bienvenue.fermer')}</button
+      >
     </p>{/if}
   <!-- bêta-support : nouvelle version prête (jamais en pleine leçon ou écoute, ni hors ligne) -->
   {#if Maj}<Maj />{/if}
@@ -316,11 +338,39 @@
     flex: 1;
   }
   .chip {
+    min-height: 44px;
+    font: inherit;
     font-size: 0.8rem;
+    color: inherit;
+    background: transparent;
     border: 1px solid currentColor;
     border-radius: var(--radius-pill);
     padding: 2px 10px;
     white-space: nowrap;
+    cursor: pointer;
+  }
+  .attente-aide {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    margin: 0;
+    padding: 8px 16px;
+    font-size: 0.92rem;
+    color: var(--ink);
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  .aide-x {
+    min-height: 44px;
+    padding: 0 12px;
+    font: inherit;
+    font-weight: 700;
+    color: var(--primary);
+    background: transparent;
+    border: 0;
+    text-decoration: underline;
+    cursor: pointer;
   }
   /* D1 : le prénom n'est jamais tronqué (au besoin sur deux lignes) */
   .who {

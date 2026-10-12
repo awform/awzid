@@ -119,6 +119,27 @@ export async function micro(): Promise<MediaStream> {
     audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 },
   });
 }
+/**
+ * Cause PRÉCISE d'un micro inaccessible (lot lecteur 4, essai du client) : page non sécurisée (http : le
+ * navigateur refuse le micro), autorisation refusée, aucun micro, ou autre.
+ */
+export type CauseMicro = 'micro_https' | 'micro_refuse' | 'micro_absent' | 'micro';
+export function causeMicro(
+  e: unknown,
+  env: { secure: boolean; api: boolean } = {
+    secure: typeof window === 'undefined' || window.isSecureContext !== false,
+    api: typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia,
+  },
+): CauseMicro {
+  if (!env.secure) return 'micro_https';
+  const nom = (e as { name?: string } | null)?.name ?? '';
+  if (nom === 'NotAllowedError' || nom === 'PermissionDeniedError') return 'micro_refuse';
+  if (nom === 'SecurityError') return env.api ? 'micro_refuse' : 'micro_https';
+  if (nom === 'NotFoundError' || nom === 'DevicesNotFoundError' || nom === 'OverconstrainedError')
+    return 'micro_absent';
+  if (!env.api) return 'micro_https';
+  return 'micro';
+}
 export const coupe = (s: MediaStream | null) => s?.getTracks().forEach((tr) => tr.stop());
 
 // ------------------------------------------------------------------ suivi en direct

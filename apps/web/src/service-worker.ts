@@ -45,6 +45,8 @@ const RIWAYAT_CACHE = CACHE_RIWAYAT;
 // Madjaliss : textes (mutūn) chargés à la demande, gardés dans IndexedDB par l'application au premier usage
 const isMutun = (p: string) => p.startsWith('/mutun/');
 // A37 : textes français des espaces de l'élève chargés par route (Prières, Vivre l'islam) : préchargés, eux
+// Douas : données chargées à la demande (`/douas/douas.json`), gardées sur l'appareil par l'onglet au premier usage
+const isDouas = (p: string) => p.startsWith('/douas/');
 const STUDENT_TEXTS = [
   '/i18n/fr-quotidien.json',
   '/i18n/fr-vivre.json',
@@ -60,7 +62,8 @@ const ASSETS = [
       !isTajwid(f) &&
       !isTraduction(f) &&
       !isRiwaya(f) &&
-      !isMutun(f),
+      !isMutun(f) &&
+      !isDouas(f),
   ),
 ];
 

@@ -321,9 +321,11 @@
     stroke: var(--mp-gold);
     stroke-width: 1;
   }
+  /* lot lecteur 4 (essai du client, page 467 « سورة غافر ») : titre de sourate agrandi, lisible dans son cartouche */
   .titre {
     position: relative;
-    font-size: 0.85em;
+    font-size: 1.45em;
+    line-height: 1;
     color: var(--mp-on-band);
   }
   .sr {

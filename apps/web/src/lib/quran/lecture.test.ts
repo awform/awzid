@@ -148,4 +148,17 @@ describe('Coran épuré — écran de lecture unique', () => {
     expect(shortName('Ibrāhīm al-Akhḍar')).toBe('I. al-Akhḍar');
     expect(shortName('Essai Ḥafṣ (bips)')).toBe('E. Ḥafṣ');
   });
+
+  it("lot lecteur 4 : affichage par défaut d'un nouvel élève INCHANGÉ (page, taille normale, Médine)", () => {
+    const p = readPrefs(mem());
+    expect(p).toMatchObject({ vue: 'page', size: 0, style: 'exact', memo: 0, zoom: 1 });
+  });
+
+  it('lot lecteur 4 : un reste de zoom à peine au-dessus de 1 revient à la page entière', () => {
+    const st = mem();
+    st.setItem('awzid.mushaf.v1', JSON.stringify({ zoom: 1.05 }));
+    expect(readPrefs(st).zoom).toBe(1);
+    st.setItem('awzid.mushaf.v1', JSON.stringify({ zoom: 1.8 }));
+    expect(readPrefs(st).zoom).toBe(1.8);
+  });
 });

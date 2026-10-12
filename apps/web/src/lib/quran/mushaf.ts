@@ -312,9 +312,11 @@ export function readPrefs(store: Pick<Storage, 'getItem'> | null = storage()): M
       size: clampInt(raw.size, 0, TEXT_SCALE.length - 1, 0),
       navAuto: raw.navAuto === true,
       fond: raw.fond === 'sepia' ? 'sepia' : 'ivoire',
-      zoom: Number.isFinite(Number(raw.zoom))
-        ? Math.max(1, Math.min(3, Math.round(Number(raw.zoom) * 100) / 100))
-        : 1,
+      // un reste de zoom à peine au-dessus de 1 (pages 465 et 467 coupées à gauche, lot lecteur 4) : page entière
+      zoom:
+        Number.isFinite(Number(raw.zoom)) && Number(raw.zoom) >= 1.15
+          ? Math.min(3, Math.round(Number(raw.zoom) * 100) / 100)
+          : 1,
       epure: raw.epure !== false,
     };
   } catch {

@@ -118,9 +118,9 @@ describe('catalogues de messages', () => {
 
 describe('fonctions', () => {
   it('pluriels, repli et formats selon la locale', () => {
-    expect(t('entete.attente', { n: 1 })).toBe('1 réponse en attente');
+    expect(t('entete.attente', { n: 1 })).toBe("1 action en attente d'envoi");
     setLocale('en');
-    expect(t('entete.attente', { n: 2 })).toBe('2 answers waiting');
+    expect(t('entete.attente', { n: 2 })).toBe('2 actions waiting to be sent');
     expect(fmtBytes(2048)).toBe('2 kB');
     expect(t('cle.inexistante')).toBe('⟦cle.inexistante⟧');
   });

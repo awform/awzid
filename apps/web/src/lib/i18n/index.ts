@@ -90,6 +90,8 @@ export const SPACE_CATALOGS = [
   'hifz',
   // Madjaliss (P3-1) : textes de la rubrique (`mj.*`), chargés par la mise en page `/madjaliss`, jamais préchargés
   'madjaliss',
+  // Douas (phase 1) : textes de l'onglet (`do.*`), chargés par `/vivre/douas`, gardés au premier usage
+  'douas',
 ] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 export function loadTexts(
