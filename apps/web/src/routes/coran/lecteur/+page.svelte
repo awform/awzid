@@ -115,6 +115,7 @@
     zoomAt,
     zoomRtl,
     ZOOM_MIN,
+    type Fenetre,
     type Vue,
   } from '$lib/quran/zoom';
 
@@ -658,6 +659,57 @@
     return () => window.removeEventListener('pointerdown', off, true);
   });
   onDestroy(() => propTimer && clearTimeout(propTimer));
+  /**
+   * Place de la proposition (essai du client, 12/10/2026, 412 × 915 et 915 × 412 : elle couvrait la pastille
+   * « Verset N » et la ligne lue) : MESURÉE au-dessus de ce qui occupe le bas de l'écran à sa verticale (barre
+   * audio, onglets, pastille) ; si la ligne lue (verset surligné) passe dessous, la page défile pour la montrer
+   * au-dessus (un espace de fin, le temps de la proposition, rend ce défilement toujours possible).
+   */
+  let propBas = $state(84);
+  let propEspace = $state(0);
+  const visible = (el: Element) => {
+    for (let x: Element | null = el; x; x = x.parentElement) {
+      const cs = getComputedStyle(x);
+      if (cs.display === 'none' || cs.visibility === 'hidden' || Number(cs.opacity) === 0)
+        return false;
+    }
+    return true;
+  };
+  function placeProp() {
+    const el = propEl;
+    if (!el) return;
+    const H = window.innerHeight;
+    const pr = el.getBoundingClientRect();
+    let bas = 8;
+    for (const o of document.querySelectorAll('nav.tabs, .ecoute.on, .pastille')) {
+      const r = o.getBoundingClientRect();
+      // seulement ce qui occupe le BAS de l'écran (grand écran : la barre audio est en haut, dans la barre)
+      if (!r.height || r.top >= H || r.top < H / 2 || !visible(o)) continue;
+      if (r.left < pr.right && r.right > pr.left) bas = Math.max(bas, Math.ceil(H - r.top) + 8);
+    }
+    propBas = bas;
+    propEspace = Math.ceil(pr.height) + bas + 16;
+    // ligne lue : au-dessus de la proposition (pas pendant le zoom : la page agrandie ne défile pas)
+    if (zoomed) return;
+    const haut = H - bas - pr.height - 12;
+    let dessous = 0;
+    for (const l of document.querySelectorAll(
+      '[data-testid="mushaf-livre"] .on, [data-testid="texte-coran"] .aya.now, [data-testid="texte-coran"] .aya.sel',
+    ))
+      for (const r of l.getClientRects())
+        if (r.width > 1 && r.bottom > haut && r.top < H && r.left < pr.right && r.right > pr.left)
+          dessous = Math.max(dessous, r.bottom - haut);
+    if (dessous > 0) void tick().then(() => window.scrollBy({ top: Math.ceil(dessous) }));
+  }
+  $effect(() => {
+    void [prop, hidden, audioOn, paysage, pastilleH, ecouteH, tabsH];
+    if (!prop) {
+      propEspace = 0;
+      return;
+    }
+    const id = requestAnimationFrame(() => placeProp());
+    return () => cancelAnimationFrame(id);
+  });
   /** Fin de la file : la lecture simple continue à la sourate suivante (basmala comprise). */
   function onEnd(why: 'fin' | 'sommeil') {
     if (why !== 'fin' || memo) return;
@@ -912,12 +964,34 @@
   const doubleNow = () =>
     !!downs[0]?.touch && !!downs[1]?.touch && isDoubleTap(downs[0], downs[1]!);
   function frame() {
-    return { w: bookEl?.clientWidth || 1, h: bookEl?.clientHeight || 1 };
+    // dimensions exactes (fractionnaires) : arrondies, le bas de la page agrandie restait à 1 px hors de l'écran
+    const r = bookEl?.getBoundingClientRect();
+    return { w: r?.width || 1, h: r?.height || 1 };
+  }
+  /**
+   * Partie du cadre VISIBLE à l'écran (coordonnées du cadre), pastille d'écoute déduite si elle couvre la page :
+   * la page agrandie se déplace jusqu'à ses quatre bords dans cette partie (12/10/2026, essai du client).
+   */
+  function fenetre(): Fenetre | undefined {
+    const r = bookEl?.getBoundingClientRect();
+    if (!r) return undefined;
+    let bas = window.innerHeight;
+    const pe = document.querySelector('.pastille');
+    if (pe) {
+      const q = pe.getBoundingClientRect();
+      if (q.height && q.left < r.right && q.right > r.left) bas = Math.min(bas, q.top - 8);
+    }
+    return {
+      top: Math.max(r.top, 0) - r.top,
+      bottom: Math.min(r.bottom, bas) - r.top,
+      left: Math.max(r.left, 0) - r.left,
+      right: Math.min(r.right, window.innerWidth) - r.left,
+    };
   }
   /** Zoom et position ; `keep` : gardé dans les réglages (fin du geste). */
   function setVue(v: Vue, keep = true) {
     const f = frame();
-    vz = clampVue(v, f.w, f.h);
+    vz = clampVue(v, f.w, f.h, fenetre());
     if (keep) prefs.zoom = vz.z;
   }
   /** Position de départ d'une page zoomée : en haut, à DROITE (début de la ligne arabe). */
@@ -1651,6 +1725,7 @@
     style:--haut={`${hautH}px`}
     style:--ecoute-h={`${ecouteH}px`}
     style:--pastille-h={`${pastilleH || 52}px`}
+    style:--prop-bas={`${propBas}px`}
     role="none"
     onpointerdown={longDown}
     onpointermove={longMove}
@@ -1971,6 +2046,11 @@
     <!-- 11/10/2026 : crédits (texte long) derrière ⓘ (dans les commandes) ; lus en entier par les lecteurs d'écran -->
     <p class="sr-only" data-testid="credit-texte">{@render credit()}</p>
     {#if audioOn}<div class="spacer" aria-hidden="true"></div>{/if}
+    {#if prop && propEspace}<div
+        class="prop-espace"
+        style:height={`${propEspace}px`}
+        aria-hidden="true"
+      ></div>{/if}
     {#if audioOn && (hidden || paysage) && reciter}
       <!-- écoute, commandes cachées : pastille discrète (pause/lecture + verset) ; toucher le verset ouvre tout ;
            téléphone couché : toujours la pastille (aucune barre audio, le texte garde la hauteur) -->
@@ -2428,26 +2508,28 @@
     margin: 0 4px 2px;
     font-size: 0.78rem;
   }
-  /* proposition « Écouter ici » : en bas, au-dessus de la mini-barre, sans cacher le texte ni bloquer */
+  /*
+   * proposition « Écouter ici » : en bas, sur UNE ligne, au-dessus de ce qui occupe le bas de l'écran à sa
+   * verticale (barre audio, onglets, pastille : hauteur mesurée, --prop-bas), sans cacher le texte ni bloquer
+   */
   .prop-zone {
     position: fixed;
     inset-inline: 0;
-    bottom: calc(84px + env(safe-area-inset-bottom));
+    bottom: max(var(--prop-bas, 84px), calc(env(safe-area-inset-bottom) + 8px));
     z-index: 18;
     display: flex;
     justify-content: center;
+    padding-inline: 8px;
     pointer-events: none;
-  }
-  .audio-on .prop-zone {
-    bottom: calc(var(--bas, 76px) + var(--ecoute-h, 100px) + 14px);
   }
   .prop {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 6px;
-    max-width: calc(100vw - 24px);
-    padding: 6px;
+    gap: 4px;
+    min-width: 0;
+    max-width: 100%;
+    padding: 4px;
     background: var(--card);
     border: 1px solid var(--or-line);
     border-radius: var(--radius-pill);
@@ -2464,14 +2546,26 @@
   .prop-play,
   .prop-alt {
     display: inline-flex;
+    flex: 0 1 auto;
     align-items: center;
     gap: 6px;
+    min-width: 0;
     min-height: 44px;
-    padding: 0 14px;
+    padding: 2px 12px;
     font: inherit;
+    font-size: 0.92rem;
     font-weight: 800;
+    line-height: 1.15;
+    text-align: center;
     border-radius: var(--radius-pill);
     cursor: pointer;
+  }
+  /* « + » (autres actions du verset) : rond, jamais seul sur une autre ligne */
+  .prop-alt[data-testid='ici-actions'] {
+    flex: none;
+    justify-content: center;
+    width: 44px;
+    padding: 0;
   }
   .prop-play {
     color: var(--mp-on-band);
@@ -2488,13 +2582,16 @@
   :global([data-public='enfant']) .prop-play,
   :global([data-public='enfant']) .prop-alt {
     min-height: 56px;
-    padding: 0 20px;
-    font-size: 1.15rem;
+    padding: 2px 16px;
+    font-size: 1.05rem;
   }
-  @media (min-width: 900px) {
-    .prop-zone,
-    .audio-on .prop-zone {
-      bottom: 24px;
+  :global([data-public='enfant']) .prop-alt[data-testid='ici-actions'] {
+    width: 56px;
+    padding: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .prop {
+      animation: none;
     }
   }
   @media (min-width: 900px) {
@@ -3054,12 +3151,34 @@
       display: block;
       height: calc(var(--pastille-h, 52px) + 24px + env(safe-area-inset-bottom));
     }
-    .prop-zone,
-    .audio-on .prop-zone {
-      bottom: calc(68px + env(safe-area-inset-bottom));
-    }
-    .pastille {
+    /*
+     * pastille (essai du client, 12/10/2026 : au milieu, en bas, elle cachait des mots) : dans le coin bas
+     * gauche, compacte (lecture/pause sur « Verset N »), dans une marge RÉSERVÉE à gauche du texte
+     */
+    .pastille,
+    :global([dir='rtl']) .pastille {
+      left: calc(6px + env(safe-area-inset-left));
+      right: auto;
       bottom: calc(8px + env(safe-area-inset-bottom));
+      flex-direction: column;
+      gap: 0;
+      width: 52px;
+      padding: 3px;
+      border-radius: 26px;
+      transform: none;
+    }
+    .pastille .po {
+      min-height: 44px;
+      width: 100%;
+      padding: 2px 0;
+      font-size: 0.7rem;
+      line-height: 1.1;
+      white-space: normal;
+      text-align: center;
+    }
+    .audio-on .reader,
+    .audio-on .versets {
+      padding-left: calc(56px + env(safe-area-inset-left));
     }
   }
 </style>

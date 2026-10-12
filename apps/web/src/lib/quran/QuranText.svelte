@@ -7,6 +7,7 @@
   import { suraTitleAr } from './sura-names-ar';
   import { verseRuns, type Run, type TajwidSura } from './tajwid';
   import TajwidRuns from './TajwidRuns.svelte';
+  import Hizb from './Hizb.svelte';
   import type { TranslatedVerse } from './translation';
   import { pauseGroups } from './pause';
 
@@ -17,6 +18,8 @@
    * traduction du sens sous chaque verset (à part, jamais sur la ligne du texte arabe).
    */
   type Verse = { s: number; a: number; text: string };
+  /** ۞ début de ḥizb : ornement à l'affichage (Hizb.svelte), caractère gardé dans le texte */
+  const HIZB = '۞';
   let {
     sura,
     verses,
@@ -146,7 +149,9 @@
               runs: Run[] | null,
             )}<span class="w" class:voile class:on data-w={i}
                 ><span class="t"
-                  >{#if runs}<TajwidRuns {runs} />{:else}{tanwinDisplay(w)}{/if}</span
+                  >{#if w === HIZB}<Hizb sign={w} />{:else if runs}<TajwidRuns
+                      {runs}
+                    />{:else}{tanwinDisplay(w)}{/if}</span
                 ></span
               >{/snippet}{#each pauseGroups(ws) as gr, gi (gi)}{gi > 0
                 ? ' '

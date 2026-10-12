@@ -2,6 +2,7 @@
   import { tanwinDisplay } from '@awform/content/text';
   import { splitBasmala } from '@awform/hifz';
   import { fmtNumber } from '$lib/i18n';
+  import Hizb from '$lib/quran/Hizb.svelte';
 
   /**
    * Versets d'une portion, texte Tanzil AFFICHÉ TEL QUEL (police Amiri Quran). La basmala d'en-tête du
@@ -25,6 +26,8 @@
     shown = {};
   });
   const num = (a: number) => fmtNumber(a, { useGrouping: false });
+  /** ۞ début de ḥizb : ornement à l'affichage (Hizb.svelte), caractère gardé dans le texte (Tanzil intact) */
+  const HIZB = '\u06DE';
 </script>
 
 <!-- police du Coran préchargée seulement sur les écrans qui affichent des versets (audit PERF-1) ; ailleurs,
@@ -52,7 +55,11 @@
       class:blur={masked && !shown[`${v.s}:${v.a}`]}
       onclick={() => (shown[`${v.s}:${v.a}`] = !shown[`${v.s}:${v.a}`])}
       disabled={!masked}
-      ><span class="quran-text" data-verse={`${v.s}:${v.a}`}>{tanwinDisplay(parts.rest)}</span>
+      ><span class="quran-text" data-verse={`${v.s}:${v.a}`}
+        >{#each tanwinDisplay(parts.rest).split(HIZB) as morceau, i (i)}{#if i > 0}<Hizb
+              sign={HIZB}
+            />{/if}{morceau}{/each}</span
+      >
       <span class="n" aria-hidden="true">{num(v.a)}</span></button
     >
   {/each}

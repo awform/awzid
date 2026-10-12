@@ -67,4 +67,15 @@ describe('zoom de la page', () => {
     expect(isDoubleTap(a, { t: 1100, x: 200, y: 100 })).toBe(false);
     expect(isDoubleTap(null, a)).toBe(false);
   });
+  it('page plus haute que l’écran : les quatre bords atteignent la partie VISIBLE du cadre', () => {
+    // cadre 300 × 1000, seuls 0..400 visibles (écran) : le bas de la page agrandie remonte jusqu'à 400
+    const win = { top: 0, bottom: 400, left: 0, right: 300 };
+    expect(clampVue({ z: 2, x: 0, y: -9000 }, 300, 1000, win)).toEqual({ z: 2, x: 0, y: -1600 });
+    expect(clampVue({ z: 2, x: -9000, y: 0 }, 300, 1000, win)).toEqual({ z: 2, x: -300, y: 0 });
+    // cadre déjà défilé de 200 px : le haut de la page redescend jusqu'au haut de l'écran
+    const bas = { top: 200, bottom: 600, left: 0, right: 300 };
+    expect(clampVue({ z: 2, x: 0, y: 9000 }, 300, 1000, bas)).toEqual({ z: 2, x: 0, y: 200 });
+    // page entière : aucun décalage
+    expect(clampVue({ z: 1, x: 40, y: 40 }, 300, 1000, bas)).toEqual({ z: 1, x: 0, y: 0 });
+  });
 });
