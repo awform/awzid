@@ -536,7 +536,9 @@
   }
   .w.voile {
     color: transparent;
-    background: var(--mp-mint2);
+    /* lot lecteur 4 (essai du client) : un TRAIT discret sous la place du mot, plus de gros bloc gris */
+    background: linear-gradient(var(--or-line), var(--or-line)) center bottom 0.3em / 86% 2px
+      no-repeat;
     border-radius: 4px;
   }
   .folio {

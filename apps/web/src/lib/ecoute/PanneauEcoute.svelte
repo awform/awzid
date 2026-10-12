@@ -19,6 +19,7 @@
     coupe,
     donnerAccord,
     Enregistreur,
+    causeMicro,
     micro,
     verifier,
     type EtatDirect,
@@ -124,6 +125,9 @@
     audio_trop_long: 'ec.err_trop_long',
     audio_invalide: 'ec.err_audio',
     micro: 'ec.err_micro',
+    micro_https: 'ec.err_micro_https',
+    micro_refuse: 'ec.err_micro_refuse',
+    micro_absent: 'ec.err_micro_absent',
     trop_de_demandes: 'ec.err_quota',
     portion_invalide: 'ec.err_portion',
     reseau: 'ec.err_reseau',
@@ -159,8 +163,9 @@
     modeDirect = enDirect;
     try {
       flux = await micro();
-    } catch {
-      return void (erreur = message('micro'));
+    } catch (e) {
+      // lot lecteur 4 : message selon la cause (adresse non sécurisée, refus, aucun micro)
+      return void (erreur = message(causeMicro(e)));
     }
     rec = new Enregistreur();
     secondes = 0;

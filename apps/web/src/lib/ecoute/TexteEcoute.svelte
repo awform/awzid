@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { EtatMot } from '@awform/hifz';
+  import { t } from '$lib/i18n';
   import { pauseGroups } from '$lib/quran/pause';
 
   /**
@@ -25,6 +26,8 @@
     masque?: boolean;
   } = $props();
   const ESPACE = ' ';
+  /** lot lecteur 4 : numéro de verset en chiffres arabes (١٢٣) dans l'étoile, comme dans le lecteur */
+  const arNum = (n: number) => new Intl.NumberFormat('ar-EG', { useGrouping: false }).format(n);
 </script>
 
 <div class="texte quran-text" class:masque lang="ar" dir="rtl" data-testid="ecoute-texte">
@@ -51,12 +54,36 @@
               )}{/each}</span
           >{:else}{@render mot(v.s, v.a, ws[gr[0]!]!, gr[0]!)}{/if}{ESPACE}
       {/each}
-      <span class="num">﴿{v.a}﴾</span>
+      <span class="num" aria-label={t('ec.verset_n', { n: v.a })}>{arNum(v.a)}</span>
     </p>
   {/each}
 </div>
 
 <style>
+  /* numéro de verset dans une rosette verte (étoile à huit pointes), comme dans le lecteur */
+  .num {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 2.1em;
+    height: 2.1em;
+    margin-inline: 3px;
+    vertical-align: -0.1em;
+    font-size: 0.68em;
+    line-height: 1;
+    color: var(--mp-green);
+    white-space: nowrap;
+  }
+  .num::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--mp-green);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-20 -20 40 40'%3E%3Cg fill='none' stroke='%23000' stroke-linejoin='round'%3E%3Cpath stroke-width='2.4' d='M0-18L5.3-12.7H12.7V-5.3L18 0 12.7 5.3V12.7H5.3L0 18-5.3 12.7H-12.7V5.3L-18 0-12.7-5.3V-12.7H-5.3Z'/%3E%3C/g%3E%3C/svg%3E")
+      center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-20 -20 40 40'%3E%3Cg fill='none' stroke='%23000' stroke-linejoin='round'%3E%3Cpath stroke-width='2.4' d='M0-18L5.3-12.7H12.7V-5.3L18 0 12.7 5.3V12.7H5.3L0 18-5.3 12.7H-12.7V5.3L-18 0-12.7-5.3V-12.7H-5.3Z'/%3E%3C/g%3E%3C/svg%3E")
+      center / contain no-repeat;
+  }
   .texte {
     font-family: var(--font-quran);
     font-size: 1.6rem;
@@ -108,9 +135,5 @@
     font-family: var(--font-ui);
     font-weight: 700;
     padding: 0 3px;
-  }
-  .num {
-    font-size: 0.8em;
-    color: var(--ink2);
   }
 </style>
