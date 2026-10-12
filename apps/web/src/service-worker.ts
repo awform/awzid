@@ -42,6 +42,8 @@ const isRiwaya = (p: string) => p.startsWith('/riwayat/');
 // … la police d'une riwāya, une fois chargée, est gardée (hors ligne ensuite) dans un cache à part, conservé
 // aux mises à jour (le nom du fichier change avec la version du Complexe)
 const RIWAYAT_CACHE = CACHE_RIWAYAT;
+// Madjaliss : textes (mutūn) chargés à la demande, gardés dans IndexedDB par l'application au premier usage
+const isMutun = (p: string) => p.startsWith('/mutun/');
 // A37 : textes français des espaces de l'élève chargés par route (Prières, Vivre l'islam) : préchargés, eux
 // Douas : données chargées à la demande (`/douas/douas.json`), gardées sur l'appareil par l'onglet au premier usage
 const isDouas = (p: string) => p.startsWith('/douas/');
@@ -60,6 +62,7 @@ const ASSETS = [
       !isTajwid(f) &&
       !isTraduction(f) &&
       !isRiwaya(f) &&
+      !isMutun(f) &&
       !isDouas(f),
   ),
 ];
@@ -67,7 +70,8 @@ const ASSETS = [
 /**
  * A27 (décision D-F2 9), F5 : fichiers qui ne servent QU'AUX pages du personnel (enseignant, direction, admin),
  * aux pages RARES utiles en ligne seulement (offres, abonnement, inscription, certificats…) et aux modules chargés
- * à la demande qui ont besoin du réseau (Muṣḥaf exact, tuteur, avis) — listés à la construction
+ * à la demande qui ont besoin du réseau (Muṣḥaf exact, tuteur, avis) et aux pages de l'élève gardées AU PREMIER
+ * USAGE (Madjaliss : hors ligne après la première ouverture) — listés à la construction
  * (`groupes.json`, scripts/groupes.mjs) : jamais préchargés sur l'appareil d'un élève ; gardés au premier usage.
  * Liste absente : tout est préchargé, comme avant.
  */
@@ -77,7 +81,7 @@ async function horsEleve(): Promise<Set<string>> {
     if (!r.ok) return new Set();
     const j = (await r.json()) as Record<string, unknown>;
     return new Set(
-      ['personnel', 'rares', 'enLigne'].flatMap((g) =>
+      ['personnel', 'rares', 'enLigne', 'premierUsage'].flatMap((g) =>
         Array.isArray(j[g]) ? (j[g] as unknown[]).map(String) : [],
       ),
     );

@@ -1309,6 +1309,7 @@ export const classMember = pgTable(
 /**
  * Journal IMMUABLE de l'entraînement hors leçon : tracé guidé des lettres (« trace ») et révision des
  * mots en cartes (« carte »). Jamais de note : ok = tracé accepté / mot su. Sert au tableau de bord.
+ * Madjaliss (migration 0047) : « madjlis » = séance d'un texte faite (item « akhdari:12 », détails : quiz).
  */
 export const practiceEvent = pgTable(
   'practice_event',
@@ -1330,7 +1331,7 @@ export const practiceEvent = pgTable(
   },
   (t) => [
     index('practice_event_profile').on(t.profileId, t.day),
-    check('practice_event_kind', sql`${t.kind} IN ('trace', 'carte')`),
+    check('practice_event_kind', sql`${t.kind} IN ('trace', 'carte', 'madjlis')`),
   ],
 );
 

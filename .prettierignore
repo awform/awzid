@@ -33,3 +33,7 @@ docs/projet/douas/
 
 # A26b : scénarios « Je parle » générés (pnpm --filter @awform/content conversation), contrôlés par test
 packages/content/conversation/
+
+# Madjaliss : sources du référent recopiées VERBATIM, et textes générés (node apps/web/scripts/madjaliss.mjs), contrôlés par test
+packages/content/madjaliss-source/
+apps/web/static/mutun/

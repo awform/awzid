@@ -8,6 +8,7 @@ import {
   dashboard,
   levelProgress,
   listUnits,
+  madjalisFaites,
   recordAttempts,
   recordHifzEvents,
   recordHifzMarks,
@@ -102,14 +103,18 @@ export function registerProgress(app: FastifyInstance, db: Db, edition: Edition)
           // hifẓ complet : carte des erreurs (marques par verset et par mot), journal séparé
           const r = (e.response ?? {}) as Partial<HifzMarkInput>;
           marks.push({ ...r, id: e.id, profileId: pid, deviceAt: e.deviceAt } as HifzMarkInput);
-        } else if ((e.eventType as string) === 'trace' || (e.eventType as string) === 'carte') {
-          // entraînement (tracé, cartes de mots) : journal séparé, jamais de note
+        } else if (
+          (e.eventType as string) === 'trace' ||
+          (e.eventType as string) === 'carte' ||
+          (e.eventType as string) === 'madjlis'
+        ) {
+          // entraînement (tracé, cartes de mots, séances de Madjaliss) : journal séparé, jamais de note
           const r = (e.response ?? {}) as Partial<PracticeInput>;
           practice.push({
             ...r,
             id: e.id,
             profileId: pid,
-            kind: e.eventType as 'trace' | 'carte',
+            kind: e.eventType as PracticeInput['kind'],
             deviceAt: e.deviceAt,
           } as PracticeInput);
         } else allowed.push(e);
@@ -201,6 +206,29 @@ export function registerProgress(app: FastifyInstance, db: Db, edition: Edition)
       };
     },
   );
+  /**
+   * Madjaliss : séances faites par un profil du compte (tous appareils), pour compléter la progression gardée sur
+   * l'appareil. Écriture : file hors ligne commune (événement « madjlis »).
+   */
+  app.get<{ Params: { id: string } }>(
+    '/api/v1/profiles/:id/madjaliss',
+    {
+      schema: {
+        params: {
+          type: 'object',
+          properties: { id: { type: 'string', pattern: UUID } },
+          required: ['id'],
+        },
+      },
+    },
+    async (req, reply) => {
+      if (!req.auth) return reply.code(401).send({ error: { code: 'non_connecte' } });
+      if (!(await ownsProfile(db, req.auth, req.params.id)))
+        return reply.code(404).send(notFound('profil introuvable'));
+      return { faites: await madjalisFaites(db, req.params.id) };
+    },
+  );
+
   // ---------------------------------------------------------------- tableau de bord (parent, adulte)
 
   app.get<{ Params: { id: string }; Querystring: { today?: string } }>(

@@ -3,7 +3,9 @@
 //  - « rares » : pages rares, utiles EN LIGNE seulement (offres, abonnement, inscription, certificats, protections
 //    du compte, réglages du tuteur, garanties, errata, démonstration…) ;
 //  - « enLigne » : modules chargés À LA DEMANDE qui ont de toute façon besoin du réseau (Muṣḥaf exact, tuteur,
-//    « Donner mon avis » et sa capture d'écran).
+//    « Donner mon avis » et sa capture d'écran) ;
+//  - « premierUsage » : pages de l'ÉLÈVE facultatives et lourdes (Madjaliss), utilisables hors ligne APRÈS leur
+//    première ouverture (comme leurs textes, gardés dans IndexedDB) ; jamais préchargées.
 // Aucun de ces fichiers n'est préchargé sur l'appareil d'un élève : le service worker les garde au premier usage.
 // Un fichier atteint par une page de l'élève (imports statiques ou dynamiques, sauf les modules « enLigne ») n'est
 // JAMAIS dans un groupe : le hors ligne de l'élève reste complet. Liste écrite dans `groupes.json` à la racine du
@@ -30,6 +32,8 @@ export const RARE_ROUTES = [
   // D2 : choix du récitateur, crédits et contrôle parental (le choix et la liste viennent du serveur)
   '/coran/recitateurs',
 ];
+/** Pages de l'élève gardées au premier usage (hors ligne ensuite), jamais préchargées. */
+export const PREMIER_USAGE_ROUTES = ['/madjaliss'];
 /** Modules chargés à la demande ET qui ont besoin du réseau (chemin du fichier source). */
 export const EN_LIGNE_MODULES = [
   /src\/lib\/quran\/LignesExactes\.svelte$/,
@@ -99,16 +103,27 @@ export function groupFiles(root) {
   };
   const nodeKey = (n) => keyOf(`client-optimized/nodes/${n}.js`);
   const kindOf = (r) =>
-    under(r, STAFF_ROUTES) ? 'personnel' : under(r, RARE_ROUTES) ? 'rares' : 'eleve';
-  const nodes = { personnel: new Set(), rares: new Set(), eleve: new Set() };
-  const layouts = { personnel: new Set(), rares: new Set() };
+    under(r, STAFF_ROUTES)
+      ? 'personnel'
+      : under(r, RARE_ROUTES)
+        ? 'rares'
+        : under(r, PREMIER_USAGE_ROUTES)
+          ? 'premierUsage'
+          : 'eleve';
+  const nodes = {
+    personnel: new Set(),
+    rares: new Set(),
+    premierUsage: new Set(),
+    eleve: new Set(),
+  };
+  const layouts = { personnel: new Set(), rares: new Set(), premierUsage: new Set() };
   for (const r of routes) {
     const k = kindOf(r.route);
     nodes[k].add(r.nodes[r.nodes.length - 1]);
     for (const n of r.nodes.slice(0, -1)) (k === 'eleve' ? nodes.eleve : layouts[k]).add(n);
   }
   // une mise en page qui ne sert QU'À des pages d'un groupe (chargement de leurs textes) est à ce groupe
-  for (const g of ['personnel', 'rares'])
+  for (const g of ['personnel', 'rares', 'premierUsage'])
     for (const n of layouts[g]) if (!nodes.eleve.has(n)) nodes[g].add(n);
   const base = [
     keyOf('/@sveltejs/kit/src/runtime/client/entry.js'),
@@ -122,12 +137,14 @@ export function groupFiles(root) {
   const staff = closure([...nodes.personnel].map(nodeKey));
   const rares = closure([...nodes.rares].map(nodeKey));
   const enLigne = closure([...enLigneKeys]);
+  const premier = closure([...nodes.premierUsage].map(nodeKey), { stop: enLigneKeys });
   const pick = (set, ...minus) =>
     [...set].filter((f) => !eleve.has(f) && !minus.some((m) => m.has(f))).sort();
   return {
     personnel: pick(staff),
     rares: pick(rares, staff),
     enLigne: pick(enLigne, staff, rares),
+    premierUsage: pick(premier, staff, rares, enLigne),
   };
 }
 
@@ -143,6 +160,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   for (const dir of [join(root, '.svelte-kit', 'output', 'client'), join(root, 'build', 'client')])
     if (existsSync(dir)) writeFileSync(join(dir, 'groupes.json'), json);
   console.log(
-    `hors du préchargement de l'élève : personnel ${g.personnel.length}, pages rares ${g.rares.length}, en ligne ${g.enLigne.length} fichiers`,
+    `hors du préchargement de l'élève : personnel ${g.personnel.length}, pages rares ${g.rares.length}, en ligne ${g.enLigne.length}, au premier usage ${g.premierUsage.length} fichiers`,
   );
 }

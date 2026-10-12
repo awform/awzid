@@ -7,7 +7,7 @@
 
   /**
    * « Plus » (D2) : les espaces hors de la barre du bas, RANGÉS EN FAMILLES, chacun avec son icône et son nom écrit.
-   * Emplacements prévus dans « Apprendre plus » : 1 000 mots, Madjaliss et Poésie — ajoutés ici (une ligne
+   * Emplacements prévus dans « Apprendre plus » : 1 000 mots et Poésie (Madjaliss : ouvert) — ajoutés ici (une ligne
    * chacun) seulement quand leur page existera ; rien n'est affiché avant. Le pied juridique du layout est masqué ici (mêmes liens dans la famille Aide, sans doublon). Les liens juridiques ne sont pas montrés
    * à un enfant (`.juridique`). « Signaler un problème » et « Donner mon avis » s'ouvrent sur place.
    */
@@ -19,6 +19,8 @@
       liens: [
         { href: '/lectures', icon: 'lire', titre: 'onglets.lectures' },
         { href: '/sciences', icon: 'livres', titre: 'nav.sciences' },
+        // P3-1 : textes de référence mālikites étudiés en séances (pages et textes gardés au premier usage)
+        { href: '/madjaliss', icon: 'etoile', titre: 'plus.madjaliss' },
       ],
     },
     {

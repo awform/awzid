@@ -8,12 +8,14 @@ import type { Db } from './client.js';
 import * as t from './schema.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const KINDS = new Set(['trace', 'carte']);
+const KINDS = new Set(['trace', 'carte', 'madjlis']);
+/** Madjaliss : séance faite d'un texte (« akhdari:12 ») */
+const MADJLIS_ITEM = /^[a-z0-9-]{2,40}:\d{1,3}$/;
 
 export interface PracticeInput {
   id: string;
   profileId: string;
-  kind: 'trace' | 'carte';
+  kind: 'trace' | 'carte' | 'madjlis';
   item: string;
   ok: boolean;
   day: string;
@@ -49,7 +51,8 @@ export async function recordPractice(
       !deviceTime(e.deviceAt) ||
       hasNul(e.item) ||
       hasNul(e.details) ||
-      JSON.stringify(e.details ?? null).length > 2000
+      JSON.stringify(e.details ?? null).length > 2000 ||
+      (e.kind === 'madjlis' && !MADJLIS_ITEM.test(e.item))
     ) {
       res.rejected.push({ id: e.id, reason: 'événement invalide' });
       continue;
@@ -84,6 +87,25 @@ export async function recordPractice(
     }
   }
   return res;
+}
+
+/**
+ * Madjaliss : séances faites par un profil (« akhdari:12 »), tous appareils confondus. Le journal est en ajout
+ * seul : une séance faite le reste.
+ */
+export async function madjalisFaites(db: Db, profileId: string): Promise<string[]> {
+  const rows = await db
+    .selectDistinct({ item: t.practiceEvent.item })
+    .from(t.practiceEvent)
+    .where(
+      and(
+        eq(t.practiceEvent.profileId, profileId),
+        eq(t.practiceEvent.kind, 'madjlis'),
+        eq(t.practiceEvent.ok, true),
+      ),
+    )
+    .orderBy(asc(t.practiceEvent.item));
+  return rows.map((r) => r.item);
 }
 
 export interface DashboardDay {

@@ -88,6 +88,8 @@ export const SPACE_CATALOGS = [
   'ecoute',
   // hifẓ complet (12/10/2026) : outils du carnet (`hz.*`), chargés par la mise en page `/hifz`
   'hifz',
+  // Madjaliss (P3-1) : textes de la rubrique (`mj.*`), chargés par la mise en page `/madjaliss`, jamais préchargés
+  'madjaliss',
   // Douas (phase 1) : textes de l'onglet (`do.*`), chargés par `/vivre/douas`, gardés au premier usage
   'douas',
 ] as const;
