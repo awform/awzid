@@ -7,9 +7,9 @@ import { totp } from './totp';
 /**
  * Bêta-support :
  *  1. « Mettre à jour » : une nouvelle version du service worker (simulée par un second enregistrement du même
- *     script sous une autre adresse, comme le fait un nouveau déploiement) prête → bandeau discret ; jamais pendant
- *     une leçon ou une écoute, jamais hors ligne, jamais en boucle ; « Mettre à jour » = la nouvelle version prend
- *     la main et la page est rechargée ;
+ *     script sous une autre adresse, comme le fait un nouveau déploiement) prête → bandeau persistant ; jamais
+ *     pendant une leçon ou une écoute, jamais hors ligne, jamais en boucle ; « Mettre à jour » = la nouvelle version
+ *     prend la main et la page est rechargée (plusieurs onglets, application automatique : maj-fiable.spec.ts) ;
  *  2. « Signaler un problème » : formulaire (catégorie, description, image facultative), page et version jointes,
  *     enfant sans texte libre, file de l'administrateur avec statut, limite anti-abus.
  */
@@ -85,9 +85,9 @@ test.describe('« Mettre à jour »', () => {
     expect(await controleur(page)).not.toContain('v2');
     await page.evaluate(() => ((window as unknown as { __avant: number }).__avant = 1));
     await nouvelleVersion(page);
-    // la version n'est JAMAIS appliquée toute seule
+    // installée pendant la visite : pas appliquée toute seule avant le délai (voir aussi maj-fiable.spec.ts)
     await expect(bandeau(page)).toBeVisible();
-    await expect(bandeau(page)).toContainText('Une nouvelle version est prête');
+    await expect(bandeau(page)).toContainText('Nouvelle version disponible');
     expect(await controleur(page)).not.toContain('v2');
     // le nom de l'action est écrit sur le bouton
     await page.getByRole('button', { name: 'Mettre à jour' }).click();
@@ -111,12 +111,16 @@ test.describe('« Mettre à jour »', () => {
     await expect(bandeau(page)).toHaveCount(0);
   });
 
-  test('« Plus tard » range le bandeau', async ({ page }) => {
+  test('bandeau persistant : pas de « Plus tard », il reste d’un écran à l’autre', async ({
+    page,
+  }) => {
     await pageControlee(page, '/plus');
     await nouvelleVersion(page);
     await expect(bandeau(page)).toBeVisible();
-    await page.getByRole('button', { name: 'Plus tard' }).click();
-    await expect(bandeau(page)).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Plus tard' })).toHaveCount(0);
+    await page.getByTestId('accueil').click();
+    await expect(page).not.toHaveURL(/\/plus$/);
+    await expect(bandeau(page)).toBeVisible();
   });
 
   test('jamais pendant une leçon : il attend la fin, puis apparaît', async ({ page }) => {

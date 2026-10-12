@@ -8,6 +8,35 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 12/10/2026 — Mise à jour fiable de l'application ; signes de pause dans l'écoute IA
+
+Branche `maj-fiable-wip` (worktree `~/awform-maj`, depuis `main` e42a059). Incident du 12/10 : 23 onglets ouverts,
+le téléphone du client restait sur l'ANCIENNE version après un déploiement (le worker en attente ne s'active que
+lorsque tous les onglets sont fermés ; « Plus tard » le rangeait ; seul l'onglet touché se rechargeait).
+
+1. **Bandeau persistant** « Nouvelle version disponible — Mettre à jour » (plus de « Plus tard ») ; un toucher :
+   `skipWaiting`, puis `clients.claim` et message `AWZID_ACTIVE` à TOUS les onglets de l'origine (même non
+   contrôlés), plus `BroadcastChannel` « awzid-maj » ; chaque onglet compare la version du worker actif à la sienne
+   (`AWZID_VERSION`, canal de réponse) et se recharge (`lib/maj.ts`, `lib/MajBandeau.svelte`, `service-worker.ts`).
+2. **Sans geste** : application automatique au démarrage à froid (version déjà en attente) ou après 10 min, sur un
+   écran neutre et en ligne seulement ; jamais pendant une leçon, une épreuve, une révision, le hifẓ, le récital,
+   l'écriture, la mémorisation, une activité, une lecture guidée, une écoute audio ni le panneau « Réciter et
+   vérifier » (`lib/occupation.ts`) : l'onglet occupé attend un écran neutre. Garde anti-boucle de 2 min inchangée.
+3. **Vérification** au retour au premier plan (`visibilitychange`, au plus une par minute) et toutes les 30 min ;
+   relecture locale du worker en attente toutes les 10 s (onglets qui n'ont pas vu l'installation).
+4. **Sans perte** : seuls des caches de FICHIERS sont retirés (`lib/maj-caches.ts`) ; IndexedDB et localStorage
+   (signets, progression, réglages) jamais touchés ; la coquille PRÉCÉDENTE est gardée une version de plus pour
+   l'onglet resté en leçon (fichiers `/_app/immutable/` d'avant) ; navigations hors ligne et fichiers servis
+   depuis le cache de la version ACTIVE seulement.
+5. **Écoute IA** (`lib/ecoute/TexteEcoute.svelte`) : signes de pause U+06D6 à U+06DC rattachés au mot qui précède
+   (groupe insécable, `quran/pause.ts` comme le lecteur), à l'affichage seulement ; texte octet par octet identique.
+
+Tests : unitaires `maj.test.ts` (16), `TexteEcoute.test.ts` (3, rendu serveur : greffon Svelte ajouté à
+`vitest.config.ts`) ; e2e `maj-fiable.spec.ts` (déploiement simulé par un serveur intermédiaire : deux onglets
+passent à la nouvelle version au toucher du bandeau, données gardées ; application automatique à froid, onglet en
+révision rechargé seulement à son retour à un écran neutre) ; `beta-support.spec.ts` adapté (bandeau persistant).
+Budgets : appareil élève 339,3 Ko (≤ 350, +1,2 Ko), première ouverture 112,0 Ko (≤ 150).
+
 ## 11/10/2026 — Lot D2 « Design V3 + agencement » : Coran, Vivre l'islam, Sciences, Plus, Compte, connexion
 
 Branche `design-d2-wip` (worktree `~/awform-d2`, depuis `main` b81ff1b), **non fusionnée** (captures relues par la

@@ -8,6 +8,7 @@
   import { recordingAllowed, saveRecording } from '$lib/recordings';
   import { call } from '$lib/session';
   import { motsAttendus, type EtatMot, type MotAttendu, type ResultatEcoute } from '@awform/hifz';
+  import { occuper } from '$lib/occupation';
   import { garderBilan } from './bilans';
   import TexteEcoute from './TexteEcoute.svelte';
   import type { EtatEcoute } from './etat';
@@ -96,7 +97,15 @@
     att = motsAttendus(vs, meta?.basmala ?? '');
     etape = accord ? 'pret' : 'accord';
   });
-  onDestroy(arretTout);
+  // mise à jour de l'application : jamais appliquée ni rechargée tant que ce panneau est ouvert (lib/maj.ts)
+  let libererOccupation = () => {};
+  onMount(() => {
+    libererOccupation = occuper();
+  });
+  onDestroy(() => {
+    libererOccupation();
+    arretTout();
+  });
 
   function arretTout() {
     if (horloge) clearInterval(horloge);

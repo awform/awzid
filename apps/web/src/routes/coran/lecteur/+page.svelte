@@ -2989,12 +2989,12 @@
       flex-wrap: nowrap;
     }
     :global(html[data-lecteur] header.top .brand) {
-      min-height: 40px;
+      min-height: 44px;
     }
     :global(html[data-lecteur] header.top .icon-btn) {
       flex-direction: row;
       gap: 6px;
-      min-height: 40px;
+      min-height: 44px;
       padding: 0 8px;
     }
     :global(html[data-lecteur] nav.tabs) {
@@ -3018,7 +3018,7 @@
     .puce {
       display: inline-flex;
       flex: 0 1 auto;
-      min-height: 40px;
+      min-height: 44px;
       padding-block: 2px;
     }
     /* sourate et emplacement sur la même ligne */
@@ -3038,7 +3038,7 @@
       border-inline-end: 0;
     }
     .tool {
-      min-height: 40px;
+      min-height: 44px;
     }
     .ecouter-btn {
       display: inline-flex;

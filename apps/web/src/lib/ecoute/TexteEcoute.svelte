@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { EtatMot } from '@awform/hifz';
+  import { pauseGroups } from '$lib/quran/pause';
 
   /**
    * A5 — texte de la portion, MOT PAR MOT (Tanzil exact, jamais modifié), dans un conteneur `lang="ar"` : état de
@@ -27,15 +28,28 @@
 </script>
 
 <div class="texte quran-text" class:masque lang="ar" dir="rtl" data-testid="ecoute-texte">
+  <!-- un mot (Tanzil, tel quel) : déclaré DANS le texte coranique (règle des gabarits) -->
+  {#snippet mot(s: number, a: number, w: string, k: number)}{@const i = index.get(
+      `${s}:${a}:${k}`,
+    )}{@const e = i === undefined ? undefined : etats[i]}<span
+      class="mot {e ?? ''}"
+      class:courant={i !== undefined && i === courant}
+      data-etat={e}>{w}</span
+    >{#if i !== undefined && ajouts.has(i)}<span class="ajout" aria-hidden="true">+</span
+      >{/if}{/snippet}
   {#each versets as v (v.a)}
+    {@const ws = v.text.split(' ')}
     <p class="verset" class:saute={sautes.has(`${v.s}:${v.a}`)}>
-      {#each v.text.split(' ') as w, k (k)}
-        {@const i = index.get(`${v.s}:${v.a}:${k}`)}
-        {@const e = i === undefined ? undefined : etats[i]}
-        <span class="mot {e ?? ''}" class:courant={i !== undefined && i === courant} data-etat={e}
-          >{w}</span
-        >{#if i !== undefined && ajouts.has(i)}<span class="ajout" aria-hidden="true">+</span
-          >{/if}{ESPACE}
+      <!-- signes de pause (U+06D6 à U+06DC) rattachés au mot qui précède, à l'affichage seulement (pause.ts) -->
+      {#each pauseGroups(ws) as gr (gr[0])}
+        {#if gr.length > 1}<span class="wg" data-testid="ecoute-groupe"
+            >{#each gr as k, j (k)}{j > 0 ? ESPACE : ''}{@render mot(
+                v.s,
+                v.a,
+                ws[k]!,
+                k,
+              )}{/each}</span
+          >{:else}{@render mot(v.s, v.a, ws[gr[0]!]!, gr[0]!)}{/if}{ESPACE}
       {/each}
       <span class="num">﴿{v.a}﴾</span>
     </p>
@@ -58,6 +72,10 @@
   .verset.saute {
     background: var(--warn-bg);
     border-radius: 8px;
+  }
+  /* un mot et ses signes de pause : jamais coupés en fin de ligne */
+  .wg {
+    white-space: nowrap;
   }
   .mot {
     border-radius: 6px;

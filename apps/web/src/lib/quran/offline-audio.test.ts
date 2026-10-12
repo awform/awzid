@@ -7,10 +7,13 @@ import { describe, expect, it } from 'vitest';
  */
 describe('audio hors ligne et mise à jour de l’application', () => {
   it('le service worker garde le cache audio du Coran', () => {
+    // règle des caches retirés : `lib/maj-caches.ts`, appelée par le service worker
     const sw = readFileSync(new URL('../../service-worker.ts', import.meta.url), 'utf8');
+    const regle = readFileSync(new URL('../maj-caches.ts', import.meta.url), 'utf8');
     const audio = readFileSync(new URL('./offline-audio.ts', import.meta.url), 'utf8');
     const name = /const CACHE = '([^']+)'/.exec(audio)?.[1] ?? '';
     expect(name.startsWith('awzid-coran-audio')).toBe(true);
-    expect(sw).toMatch(/startsWith\('awzid-coran-audio'\)/);
+    expect(sw).toMatch(/cachesARetirer\(keys, CACHE\)/);
+    expect(regle).toMatch(/startsWith\('awzid-coran-audio'\)/);
   });
 });
