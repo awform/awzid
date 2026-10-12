@@ -42,6 +42,13 @@ export const SECTIONS_PUDEUR = new Set(['hayd', 'nifas']);
 export const SENS_A_VERIFIER = /à vérifier|NON ÉTABLI|comité/i;
 /** Note du traducteur entre crochets sur un sens à vérifier : retirée de la traduction de l'élève (enseignant). */
 export const NOTE_A_VERIFIER = /\s*\[[^\]]*(?:à vérifier|NON ÉTABLI|comité)[^\]]*\]/g;
+/**
+ * Mots seulement translittérés dont la note de sens est retirée : jamais une translittération sans explication
+ * chez l'élève (décision du référent, 12/10) ; le mot et sa note restent au mode enseignant.
+ */
+export const TRANSLIT_A_PRECISER = ['wadhaḥ', 'khazz'];
+export const MOT_A_PRECISER = "[mot au sens à préciser par l'enseignant]";
+const avecNote = (mot) => new RegExp(`${mot}${NOTE_A_VERIFIER.source}`, 'g');
 
 const lire = (p) => JSON.parse(readFileSync(p, 'utf8'));
 
@@ -111,7 +118,10 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
     if (!c) {
       if (/\[TANZIL|À INSÉRER/.test(p.ar) || /\[TRADUCTION/.test(f.fr))
         throw new Error(`emplacement non rempli ${p.id}`);
-      const fr = f.fr.replace(NOTE_A_VERIFIER, '');
+      const fr = TRANSLIT_A_PRECISER.reduce(
+        (x, mot) => x.replace(avecNote(mot), MOT_A_PRECISER),
+        f.fr,
+      ).replace(NOTE_A_VERIFIER, '');
       return { ...base, ...(fr !== f.fr ? { incertain: true } : {}), ar: p.ar, fr };
     }
     const q = { q: portion(lignes, c.s, c.a, c.mots), ref: `${c.s}:${c.a}` };

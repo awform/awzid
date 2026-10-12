@@ -7,15 +7,16 @@ import {
   AVEC_EXPLICATION,
   CITATIONS,
   construire,
+  MOT_A_PRECISER,
   SENS_A_VERIFIER,
   SORTIE,
   SOURCES,
   STATUT,
   tanzil,
 } from '../../../scripts/madjaliss.mjs';
-import { cycleConseille } from './cycles';
+import { CYCLES, cycleConseille } from './cycles';
 import { chargerMatn, segments, seancesPour, type Matn, type NotesEnseignant } from './donnees';
-import { apresEval, chargerMoteur, lireCarnet, masques, noter } from './memo';
+import { aMemoriser, apresEval, chargerMoteur, lireCarnet, masques, noter } from './memo';
 import { genererQuiz, motsACompleter, questionnable } from './quiz';
 import { lireProgres, marquerFaite, seanceEnCours, toutFait } from './progression';
 
@@ -115,6 +116,30 @@ describe('données construites (static/mutun)', () => {
     for (const s of src.phrases)
       if (s.a_verifier?.length && !AVEC_EXPLICATION.has(s.id))
         expect(de.get(s.id)!.incertain, s.id).toBe(true);
+  });
+
+  it('jamais une translittération sans explication : wadhaḥ et khazz remplacés chez l’élève', () => {
+    for (const id of ['AKH-0023', 'AKH-0024']) {
+      const fr = de.get(id)!.fr!;
+      expect(fr, id).toContain(MOT_A_PRECISER);
+      expect(fr, id).not.toMatch(/wadhaḥ|khazz/);
+    }
+    expect(brut).not.toMatch(/wadhaḥ|khazz/);
+    expect(notes.phrases.find((p) => p.id === 'AKH-0024')!.a_verifier.join(' ')).toMatch(
+      /NON ÉTABLI/,
+    );
+  });
+
+  it('mémorisation : le matn seulement (ni formule, ni basmala, ni titre, ni citation)', () => {
+    const s1 = matn.seances[0]!.phrases.map((id) => de.get(id)!);
+    expect(aMemoriser(s1).map((p) => p.id)).toEqual(['AKH-0002', 'AKH-0003', 'AKH-0004']);
+    const tout = aMemoriser(matn.phrases);
+    expect(tout.every((p) => p.t === 'texte' && typeof p.ar === 'string')).toBe(true);
+    expect(tout.map((p) => p.id)).not.toContain('AKH-0052');
+  });
+
+  it('titres arabes du cursus vocalisés', () => {
+    for (const x of CYCLES.flatMap((c) => c.textes)) expect(/[ً-ْ]/.test(x.ar), x.id).toBe(true);
   });
 
   it('chapitres des règles et des lochies : ados et adultes seulement', () => {
@@ -220,7 +245,13 @@ describe('cycles, progression et chargement', () => {
     });
     expect(cycleConseille(p('enfant', 'en3'))).toBeNull();
     expect(cycleConseille(p('ado', 'ado2'))).toBe(1);
+    expect(cycleConseille(p('ado', 'ado1'))).toBe(1);
     expect(cycleConseille(p('ado', 'ado3'))).toBe(2);
+    expect(cycleConseille(p('ado', 'ado4'))).toBe(2);
+    expect(cycleConseille(p('adulte', 'ad1'))).toBe(1);
+    expect(cycleConseille(p('adulte', 'ad4'))).toBe(2);
+    expect(cycleConseille(p('adulte', 'ad6'))).toBe(3);
+    expect(cycleConseille(p('adulte', 'ad8'))).toBe(4);
     expect(cycleConseille(p('adulte', 'ad3'))).toBe(1);
     expect(cycleConseille(p('adulte', 'ad5'))).toBe(2);
     expect(cycleConseille(p('adulte', 'ad7'))).toBe(3);

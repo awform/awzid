@@ -10,6 +10,8 @@ export const CITATIONS: Record<
 export const SECTIONS_PUDEUR: Set<string>;
 export const SENS_A_VERIFIER: RegExp;
 export const NOTE_A_VERIFIER: RegExp;
+export const TRANSLIT_A_PRECISER: string[];
+export const MOT_A_PRECISER: string;
 export function tanzil(): Map<string, string>;
 export function sensVerset(s: number, a: number): { texte: string; cle: string; version: string };
 export function portion(

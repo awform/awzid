@@ -13,6 +13,14 @@ export type { AutoEval };
 export type Moteur = typeof import('$lib/hifz-outils/outils');
 export const chargerMoteur = (): Promise<Moteur> => import('$lib/hifz-outils/outils');
 
+/**
+ * Phrases proposées à la mémorisation (décision du référent, 12/10) : le matn seulement (type « texte »), sans
+ * formule, basmala, titre ni citation, jamais un passage réservé ; jusqu'à la liste des passages choisis.
+ */
+export const aMemoriser = <P extends { t: string; ar?: unknown; explication?: true }>(
+  ps: readonly P[],
+) => ps.filter((p) => p.t === 'texte' && !p.explication && typeof p.ar === 'string');
+
 /** Paliers de masquage : 0 (tout visible) à 3 (tout masqué). */
 export const PALIERS = 4;
 

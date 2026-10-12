@@ -3,8 +3,9 @@
   import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
-  import { arSimple, chargerNotes, type Matn, type NotesEnseignant, type Seance } from './donnees';
+  import { chargerNotes, type Matn, type NotesEnseignant, type Seance } from './donnees';
   import Memoriser from './Memoriser.svelte';
+  import { aMemoriser } from './memo';
   import { lien } from './liens';
   import Phrase from './Phrase.svelte';
   import Quiz from './Quiz.svelte';
@@ -45,9 +46,7 @@
 
   const de = $derived(new Map(matn.phrases.map((p) => [p.id, p])));
   const phrases = $derived(seance.phrases.map((id) => de.get(id)).filter((p) => !!p));
-  const aMemoriser = $derived(
-    phrases.filter((p) => p.t !== 'titre' && !p.explication && arSimple(p) !== null),
-  );
+  const memo = $derived(aMemoriser(phrases));
   const questions = $derived(genererQuiz(matn, seance.n));
   const noteDe = $derived(new Map((notes?.phrases ?? []).map((x) => [x.id, x])));
   const motsReserves = $derived((notes?.mots ?? []).filter((m) => m.n === seance.n));
@@ -136,7 +135,7 @@
       </div>
     {/if}
   {:else if ETAPES[etape] === 'memo'}
-    <Memoriser phrases={aMemoriser} {pid} texte={matn.id} onfin={() => (memoFini = true)} />
+    <Memoriser phrases={memo} {pid} texte={matn.id} onfin={() => (memoFini = true)} />
   {:else if ETAPES[etape] === 'quiz'}
     <Quiz {questions} onfin={(bonnes, total) => (quizFini = { bonnes, total })} />
   {:else}

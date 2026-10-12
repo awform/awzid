@@ -54,7 +54,7 @@
   "mj.suivant": "Suivant : {nom}",
   "mj.precedent": "Retour",
   "mj.explication_bientot": "Passage présenté avec son explication par l'enseignant — bientôt",
-  "mj.sens_verset": "Sens du verset {ref} en entier (traduction de référence : {source})",
+  "mj.sens_verset": "Sens du verset entier :",
   "mj.mots_vide": "Pas de mot difficile dans cette séance.",
   "mj.memo_aide": "Lis la phrase, puis masque-la peu à peu et récite-la. Touche un mot caché pour le voir.",
   "mj.memo_phrase": "Phrase {i} sur {n}",

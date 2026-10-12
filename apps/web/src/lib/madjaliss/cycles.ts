@@ -8,7 +8,7 @@ export type Matiere = 'fiqh' | 'hadith' | 'langue' | 'tajwid' | 'fondements';
 
 export interface TexteCursus {
   id: string;
-  /** titre arabe (nom d'usage de l'ouvrage) */
+  /** titre arabe vocalisé (nom d'usage de l'ouvrage, validé par la direction artistique le 12/10) */
   ar: string;
   matiere: Matiere;
 }
@@ -17,35 +17,35 @@ export const CYCLES: ReadonlyArray<{ n: number; textes: readonly TexteCursus[] }
   {
     n: 1,
     textes: [
-      { id: 'akhdari', ar: 'مختصر الأخضري', matiere: 'fiqh' },
-      { id: 'ashmawiyya', ar: 'العشماوية', matiere: 'fiqh' },
-      { id: 'nawawi', ar: 'الأربعون النووية', matiere: 'hadith' },
-      { id: 'tuhfa', ar: 'تحفة الأطفال', matiere: 'tajwid' },
+      { id: 'akhdari', ar: 'مُخْتَصَرُ الْأَخْضَرِيِّ', matiere: 'fiqh' },
+      { id: 'ashmawiyya', ar: 'الْعَشْمَاوِيَّةُ', matiere: 'fiqh' },
+      { id: 'nawawi', ar: 'الْأَرْبَعُونَ النَّوَوِيَّةُ', matiere: 'hadith' },
+      { id: 'tuhfa', ar: 'تُحْفَةُ الْأَطْفَالِ', matiere: 'tajwid' },
     ],
   },
   {
     n: 2,
     textes: [
-      { id: 'ibn-ashir', ar: 'المرشد المعين', matiere: 'fiqh' },
-      { id: 'izziyya', ar: 'العزية', matiere: 'fiqh' },
-      { id: 'bayquniyya', ar: 'البيقونية', matiere: 'hadith' },
-      { id: 'ajurrumiyya', ar: 'الآجرومية', matiere: 'langue' },
+      { id: 'ibn-ashir', ar: 'الْمُرْشِدُ الْمُعِينُ', matiere: 'fiqh' },
+      { id: 'izziyya', ar: 'الْعِزِّيَّةُ', matiere: 'fiqh' },
+      { id: 'bayquniyya', ar: 'الْبَيْقُونِيَّةُ', matiere: 'hadith' },
+      { id: 'ajurrumiyya', ar: 'الْآجُرُّومِيَّةُ', matiere: 'langue' },
     ],
   },
   {
     n: 3,
     textes: [
-      { id: 'risala', ar: 'الرسالة', matiere: 'fiqh' },
-      { id: 'lamiyya', ar: 'لامية الأفعال', matiere: 'langue' },
-      { id: 'jazariyya', ar: 'الجزرية', matiere: 'tajwid' },
+      { id: 'risala', ar: 'الرِّسَالَةُ', matiere: 'fiqh' },
+      { id: 'lamiyya', ar: 'لَامِيَّةُ الْأَفْعَالِ', matiere: 'langue' },
+      { id: 'jazariyya', ar: 'الْجَزَرِيَّةُ', matiere: 'tajwid' },
     ],
   },
   {
     n: 4,
     textes: [
-      { id: 'khalil', ar: 'مختصر خليل', matiere: 'fiqh' },
-      { id: 'alfiyya', ar: 'ألفية ابن مالك', matiere: 'langue' },
-      { id: 'waraqat', ar: 'الورقات', matiere: 'fondements' },
+      { id: 'khalil', ar: 'مُخْتَصَرُ خَلِيلٍ', matiere: 'fiqh' },
+      { id: 'alfiyya', ar: 'أَلْفِيَّةُ ابْنِ مَالِكٍ', matiere: 'langue' },
+      { id: 'waraqat', ar: 'الْوَرَقَاتُ', matiere: 'fondements' },
     ],
   },
 ];

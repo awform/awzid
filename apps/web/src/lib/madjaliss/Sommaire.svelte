@@ -115,9 +115,6 @@
         </p>{/if}
       <p class="relu"><strong><Bidi text={t('mj.attestation_relecture')} /></strong></p>
       <p class="muted"><Bidi text={t('mj.attestation_note')} /></p>
-      <button type="button" onclick={() => window.print()}
-        ><Icon name="partager" /><Bidi text={t('mj.imprimer')} /></button
-      >
     </section>
   {/if}
 
@@ -242,12 +239,5 @@
     font-family: var(--font-ar-titre);
     font-weight: 700;
     font-size: 1.8rem;
-  }
-  @media print {
-    .seances,
-    .carte-reprendre,
-    .attestation button {
-      display: none;
-    }
   }
 </style>

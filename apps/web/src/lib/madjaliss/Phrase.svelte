@@ -35,12 +35,8 @@
     {#if p.fr}<p class="fr"><Bidi text={p.fr} /></p>{/if}
     {#if p.sens}
       <div class="sens" data-sens={p.sens.ref}>
-        <small class="muted"
-          ><Bidi
-            text={t('mj.sens_verset', { ref: p.sens.ref, source: t(`mp.trad_${p.sens.source}`) })}
-          /></small
-        >
-        <p><Bidi text={p.sens.texte} /></p>
+        <p class="sens-titre"><Bidi text={t('mj.sens_verset')} /></p>
+        <p class="sens-texte"><Bidi text={p.sens.texte} /></p>
       </div>
     {/if}
   {/if}
@@ -102,6 +98,11 @@
   }
   .sens p {
     margin: 2px 0 0;
+    font-size: 0.88rem;
+    color: var(--ink2);
+  }
+  .sens-titre {
+    font-weight: 600;
   }
   .reserve {
     display: flex;

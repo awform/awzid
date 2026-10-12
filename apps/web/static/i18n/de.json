@@ -2994,7 +2994,7 @@
   "mj.suivant": "Weiter: {nom}",
   "mj.precedent": "Zurück",
   "mj.explication_bientot": "Abschnitt, den der Lehrer mit seiner Erklärung vorstellt — bald verfügbar",
-  "mj.sens_verset": "Bedeutung des ganzen Verses {ref} (Referenzübersetzung: {source})",
+  "mj.sens_verset": "Bedeutung des ganzen Verses:",
   "mj.mots_vide": "Keine schwierigen Wörter in dieser Sitzung.",
   "mj.memo_aide": "Lies den Satz, verdecke ihn dann nach und nach und sage ihn auf. Tippe auf ein verdecktes Wort, um es zu sehen.",
   "mj.memo_phrase": "Satz {i} von {n}",

@@ -205,7 +205,13 @@ test('règles du référent : AKH-0052 jamais sans explication, mots du Coran de
   // AKH-0015 (séance 5) : 9:62 depuis Tanzil, et le sens du verset de la traduction de référence
   await page.goto('/madjaliss/akhdari/5');
   await expect(page.locator('[data-phrase="AKH-0015"] [data-coran="9:62"]')).toBeVisible();
-  await expect(page.locator('[data-sens="9:62"]')).toContainText('Rachid Maach');
+  // seule la portion citée en arabe ; dessous, « Sens du verset entier : » et la traduction, sur leur ligne
+  const p15 = page.locator('[data-phrase="AKH-0015"] [data-coran]');
+  await expect(p15).toHaveCount(1);
+  await expect(page.locator('[data-sens="9:62"] .sens-titre')).toHaveText(
+    'Sens du verset entier :',
+  );
+  await expect(page.locator('[data-sens="9:62"] .sens-texte')).toHaveCSS('display', 'block');
   await expect(page.locator('main')).not.toContainText('TANZIL');
 });
 
@@ -236,6 +242,8 @@ test('attestation d’étude quand les 44 séances sont faites (sans le mot ijā
   await expect(att).toContainText('44 séances');
   await expect(page.locator('main')).not.toContainText(/ij[aā]za/i);
   await expect(page.getByTestId('mj-reprendre')).toHaveCount(0);
+  // pas de bouton « Imprimer » (l'impression marche mal sur mobile)
+  await expect(att.locator('button')).toHaveCount(0);
 });
 
 test('captures 412×915, clair et sombre, des écrans Madjaliss', async ({ page }, info) => {
