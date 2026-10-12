@@ -281,7 +281,7 @@
     },
     {"id": "AKH-S27", "titre": "Les sunna de la prière", "phrases": ["AKH-0118", "AKH-0119", "AKH-0120"], "duree_min": 12,
       "mots_difficiles": [
-        {"ar": "الْإِقَامَة", "sens": "le second appel"},
+        {"ar": "الْإِقَامَة", "sens": "l'iqāma (second appel)"},
         {"ar": "السِّرّ / الْجَهْر", "sens": "la voix basse / la voix haute"},
         {"ar": "التَّشَهُّدَان", "sens": "les deux tashahhud"},
         {"ar": "الْمَأْمُوم", "sens": "celui qui suit l'imam"},
@@ -347,7 +347,7 @@
         {"ar": "السَّهْو", "sens": "l'oubli (dans la prière)"},
         {"ar": "النُّقْصَان / الزِّيَادَة", "sens": "l'omission / l'ajout"},
         {"ar": "الْقَبْلِيّ / الْبَعْدِيّ", "sens": "(prosternation) d'avant / d'après la salutation"},
-        {"ar": "بَطَلَ", "sens": "être annulé"},
+        {"ar": "بَطَلَ", "sens": "être nul (« sa prière est nulle »)"},
         {"ar": "لَا يُجْزِئُهُ", "sens": "ne lui suffit pas, ne remplace pas"}
       ]
     },
@@ -428,7 +428,7 @@
     {"id": "AKH-S41", "titre": "L'oubli d'un pilier", "phrases": ["AKH-0210", "AKH-0211", "AKH-0212", "AKH-0213", "AKH-0214"], "duree_min": 12,
       "mots_difficiles": [
         {"ar": "خَرَّ سَاجِدًا", "sens": "se laisser tomber en prosternation"},
-        {"ar": "أَلْغَى", "sens": "annuler, ne pas compter"},
+        {"ar": "أَلْغَى", "sens": "ne pas compter [l'unité]"},
         {"ar": "بَانِيًا", "sens": "en complétant sur ce qui est fait"},
         {"ar": "الْأُولَيَيْن", "sens": "les deux premières (unités)"},
         {"ar": "لَمْ يَفُوتَا", "sens": "n'ont pas été perdus"},

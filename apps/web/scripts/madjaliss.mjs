@@ -30,15 +30,15 @@ export const STATUT = 'VALIDATION_HUMAINE_REQUISE';
 export const AVEC_EXPLICATION = new Set(['AKH-0052']);
 
 /**
- * Mots du Coran cités par l'auteur : mots (indices de mots, bornes comprises) du verset Tanzil.
- *  - `remplace` : marque de l'emplacement dans la saisie (AKH-0015, citation balisée) ;
- *  - `integre` : mots de Tanzil déjà copiés (par script, octet par octet) dans la phrase de l'auteur, entre ﴿﴾,
- *    avec un champ `coran` (AKH-0132, T7 appliqué le 12/10) : le script vérifie qu'ils sont IDENTIQUES à Tanzil
- *    et que la source les exclut de la voix de synthèse (`voix_de_synthese: false`).
+ * Mots du Coran cités par l'auteur : mots (indices de mots, bornes comprises) du verset Tanzil, déjà copiés
+ * (par script, octet par octet) dans la phrase de l'auteur, entre ﴿﴾, avec un champ `coran` (T7, 12/10 :
+ * AKH-0132, puis AKH-0015) : le script vérifie qu'ils sont IDENTIQUES à Tanzil et que la source les exclut de la
+ * voix de synthèse (`voix_de_synthese: false`).
+ *  - `sens` : la phrase n'est que la citation ; le sens du verset entier (traduction de référence) est joint.
  */
 export const CITATIONS = {
-  'AKH-0015': { s: 9, a: 62, mots: [4, 11], remplace: '﴿[TANZIL 9:62 — à insérer]﴾' },
-  'AKH-0132': { s: 29, a: 45, mots: [10, 13], integre: true },
+  'AKH-0015': { s: 9, a: 62, mots: [4, 11], sens: true },
+  'AKH-0132': { s: 29, a: 45, mots: [10, 13] },
 };
 
 /**
@@ -137,9 +137,9 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
       ...(p.a_verifier?.length ? { incertain: true } : {}),
       ...noteEleve(f.note_explication),
     };
+    if (/\[TANZIL|À INSÉRER/.test(p.ar) || /\[TRADUCTION/.test(f.fr))
+      throw new Error(`emplacement non rempli ${p.id}`);
     if (!c) {
-      if (/\[TANZIL|À INSÉRER/.test(p.ar) || /\[TRADUCTION/.test(f.fr))
-        throw new Error(`emplacement non rempli ${p.id}`);
       // mots du Coran hors de CITATIONS : jamais livrés comme texte de l'auteur (mémorisation, quiz, voix)
       if (/[﴿﴾]/.test(p.ar) || p.coran) throw new Error(`citation coranique non déclarée ${p.id}`);
       const fr = TRANSLIT_A_PRECISER.reduce(
@@ -149,20 +149,6 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
       return { ...base, ...(fr !== f.fr ? { incertain: true } : {}), ar: p.ar, fr };
     }
     const q = { q: portion(lignes, c.s, c.a, c.mots), ref: `${c.s}:${c.a}` };
-    if (c.remplace) {
-      // citation balisée : le texte de l'auteur jusqu'à l'emplacement, puis les mots Tanzil
-      const i = p.ar.indexOf(c.remplace);
-      if (i < 0 || i + c.remplace.length !== p.ar.length) throw new Error(`emplacement ${p.id}`);
-      const j = f.fr.indexOf(' « [');
-      if (j < 0) throw new Error(`emplacement de la traduction ${p.id}`);
-      const sens = sensVerset(c.s, c.a);
-      return {
-        ...base,
-        ar: [p.ar.slice(0, i), q],
-        fr: f.fr.slice(0, j),
-        sens: { ref: q.ref, texte: sens.texte, source: sens.cle },
-      };
-    }
     // citation intégrée (T7) : le champ `coran` de la source doit désigner exactement ces mots de Tanzil
     const k = p.coran;
     if (!k || k.sourate !== c.s || k.verset !== c.a || k.texte !== q.q)
@@ -173,10 +159,13 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
     const i = p.ar.indexOf(balise);
     if (i < 0 || p.ar.indexOf(balise, i + 1) >= 0 || /[﴿﴾]/.test(p.ar.replace(balise, '')))
       throw new Error(`citation ${p.id}`);
+    const sens = c.sens ? sensVerset(c.s, c.a) : null;
     return {
       ...base,
-      ar: [p.ar.slice(0, i), q, p.ar.slice(i + balise.length)],
+      // segment vide (citation en fin de phrase) omis
+      ar: [p.ar.slice(0, i), q, p.ar.slice(i + balise.length)].filter((x) => x !== ''),
       fr: f.fr,
+      ...(sens ? { sens: { ref: q.ref, texte: sens.texte, source: sens.cle } } : {}),
     };
   });
 
