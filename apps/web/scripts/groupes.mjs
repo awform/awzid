@@ -29,6 +29,11 @@ export const RARE_ROUTES = [
   '/inscription',
   '/acces',
   '/errata',
+  // budget bêta : tableau de bord des parents et messagerie école-famille (données du serveur : en ligne seulement)
+  '/famille',
+  '/messages',
+  '/connexion',
+  '/ma-classe',
   // D2 : choix du récitateur, crédits et contrôle parental (le choix et la liste viennent du serveur)
   '/coran/recitateurs',
 ];
