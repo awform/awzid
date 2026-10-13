@@ -3,6 +3,8 @@
 Données de tiers utilisées par l'application, avec leur licence vérifiée (texte, adresse, date) et l'endroit où
 le crédit est affiché. Toute nouvelle donnée tierce est ajoutée ici AVANT d'entrer dans le dépôt.
 
+> **13/10/2026 — bêta fermée** : obligations de production (Quran Foundation, conditions mises à jour le 11/10/2026 ; polices ; audio ; Tanzil ; traductions), écarts et actions : `docs/projet/juridique/LICENCES_PRODUCTION.md`.
+
 ## 1. Tajwid en couleurs — annotations « quran-tajweed » (lot 29)
 
 | Élément | Valeur |

@@ -58,6 +58,9 @@ Lot F5 (branche `perf-penser-large-wip`) : mesure du poids (élève, première o
 pages rares et modules en ligne non préchargés (`apps/web/scripts/groupes.mjs`), interrupteurs de fonctions et canal
 bêta (`packages/school/src/fonctions.ts`, `apps/api/src/f5.ts`, `fn()` dans l'application), avis, usage sans
 traceur, étiquette `avant-<lot>` avant chaque fusion (EXPLOITATION § 11).
+Bêta fermée, volet juridique et support (branche `beta-legal-wip`, 13/10/2026) : textes provisoires (`apps/web/static/i18n/legal/`),
+dossiers `docs/projet/juridique/` (registre, AIPD, violation, guide CDP, licences en production, support et errata), pages `/beta` et
+`/errata`, erratum avec source (`POST /api/v1/admin/errata`).
 Tests : `apps/api/test/content.ts` (vrais livres, sinon contenu synthétique `infra/ci/contenu-synthetique`,
 généré par `infra/ci/synthetique/generer.mjs`, sans texte religieux) ; `helpers.ts` pour les nouveaux lots.
 État des lignes V1 : `docs/projet/ECARTS.md` ; décisions du client : `docs/projet/DECISIONS_EN_ATTENTE.md`.

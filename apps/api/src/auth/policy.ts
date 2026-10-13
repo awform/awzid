@@ -100,7 +100,7 @@ export function ageFromYear(birthYear: number, now = new Date()): number {
  * Version des textes d'information (changer la version impose un nouveau consentement). Lot F3 : CGU,
  * confidentialité et conditions de la bêta revues (brouillons à relire par le juriste).
  */
-export const TEXT_VERSION = '2026-10-06';
+export const TEXT_VERSION = '2026-10-13';
 
 export type ConsentType =
   | 'cgu' // conditions d'utilisation et politique de confidentialité

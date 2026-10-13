@@ -8,6 +8,38 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 13/10/2026 — Bêta fermée : volet juridique et support
+
+Branche `beta-legal-wip` (worktree `~/awform-beta-legal`, depuis `main` 4a101eb). Décision du client du 13/10 : « oui, prépare
+la bêta ». Textes marqués « provisoire — avant signature d'un juriste » et « en attente d'une seconde lecture juridique ».
+
+1. **Textes juridiques** (`static/i18n/legal/fr.json` source, `en.json`) : mentions (hébergeur GCP Paris, sources et crédits),
+   CGU (âges par pays, Sénégal 18 ans par prudence, relecture savante, usage permis), confidentialité (art. 9, mineurs,
+   voix et IA, sous-traitants dont Quran Foundation et Gemini/Vertex AI **prévu et désactivé**, durées, droits, violation 72 h /
+   24 h), cookies (clés de stockage local), conditions de la bêta, **nouveau** : conditions pour les invités, page
+   d'information de la bêta. `TEXT_VERSION` = `2026-10-13`. Articles de loi cités seulement s'ils ont été lus à la source
+   (RGPD 8, 9, 33, 35 ; loi sénégalaise 2008-12 : 4, 40, 41, 49, 58 à 69 ; LIL 82) — test `beta-legal.test.ts`.
+   Espagnol, allemand, arabe : non faits (voir `docs/projet/juridique/SUPPORT_ET_ERRATA.md` § 7).
+2. **Dossiers** `docs/projet/juridique/` : registre des traitements, AIPD (mineurs, données religieuses, voix/IA), durées,
+   procédure de violation, **guide CDP pour le client**, licences en production (Quran Foundation : Developer Terms du
+   11/10/2026 et modèle de politique de confidentialité ; tableau polices, audio, Tanzil, traductions), support et errata.
+3. **Application** : page publique `/beta` ; `/errata` (date, nature, source, édition, bouton de signalement) ; `/aide` à
+   25 questions, boutons « Signaler un problème » et « Signaler une erreur dans un texte religieux » (catégorie
+   préchoisie : `AvisBouton` `categorie`/`libelle`) ; `errata`, `beta` ouverts même si un accord manque (`GATE_FREE`).
+4. **API** : une correction d'un verset, hadith ou règle cite sa source (`source_requise`) ; `PATCH …/signalements/:id`
+   accepte `source` ; `POST /api/v1/admin/errata` (erratum direct, source obligatoire, journalisé). Clé `erreur.source_requise`
+   en 5 langues.
+5. **Tests** : `legal/beta-legal.test.ts` (11), `api/test/beta-errata.test.ts` (4), `e2e/beta-legal.spec.ts` (9 × 2 projets) ;
+   `lot14.spec.ts` ajusté (« PROVISOIRE »).
+6. **Contrôles** : construction et vérification de types (`--fail-on-warnings`) verts, ESLint vert ; unitaires : 1 887 verts,
+   1 sauté (deux délais dépassés sous forte charge de la VM, verts seuls) ; e2e complet : 710 tests, 576 verts, 134 sautés,
+   les 9 échecs de la première passe (a11y, a21b, a37, a5, coran-corrections, mushaf, perf — délais dépassés, charge de la VM à
+   13-15) tous verts à la relance (106 tests, 82 verts, 24 sautés) ; aucun test instable de la liste tolérée n'a échoué.
+   Budgets : appareil élève 347,8 Ko (≤ 350), page la plus lourde 148,2 Ko (≤ 150) ; les textes juridiques (46 Ko) sont
+   chargés à la demande.
+
+---
+
 ## 12/10/2026 — Madjaliss : décisions du référent sur la contre-vérification (al-Akhḍarī)
 
 Branche `madjaliss-cv-wip` (worktree `~/awform-madjaliss-cv`, depuis `main` 59efdd1).

@@ -13,6 +13,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { BLOCK_PATH, blockAt, blockFingerprint } from '@awform/content';
 import {
+  createErratum,
   createReport,
   currentEdition,
   decideReport,
@@ -170,6 +171,7 @@ export function registerSignalements(app: FastifyInstance, db: Db, edition: Edit
       decisionNote?: string;
       erratum?: string;
       fixedInEdition?: string;
+      source?: string;
     };
   }>(
     '/api/v1/admin/signalements/:id',
@@ -185,6 +187,7 @@ export function registerSignalements(app: FastifyInstance, db: Db, edition: Edit
             decisionNote: { type: 'string', maxLength: 1000 },
             erratum: { type: 'string', maxLength: 600 },
             fixedInEdition: { type: 'string', maxLength: 60 },
+            source: { type: 'string', maxLength: 120 },
           },
         },
       },
@@ -197,6 +200,46 @@ export function registerSignalements(app: FastifyInstance, db: Db, edition: Edit
         statut: req.body.status,
       });
       return { ok: true };
+    },
+  );
+
+  // ---------------------------------------------------------------- erratum direct (bêta fermée)
+
+  app.post<{
+    Body: {
+      targetKind: (typeof REPORT_KINDS)[number];
+      unitId?: string;
+      source: string;
+      erratum: string;
+      fixedInEdition?: string;
+    };
+  }>(
+    '/api/v1/admin/errata',
+    {
+      bodyLimit: 8 * 1024,
+      schema: {
+        body: {
+          type: 'object',
+          additionalProperties: false,
+          required: ['targetKind', 'source', 'erratum'],
+          properties: {
+            targetKind: { enum: [...REPORT_KINDS] },
+            unitId: { type: 'string', pattern: UNIT_ID },
+            source: { type: 'string', minLength: 1, maxLength: 120 },
+            erratum: { type: 'string', minLength: 1, maxLength: 600 },
+            fixedInEdition: { type: 'string', maxLength: 60 },
+          },
+        },
+      },
+    },
+    async (req, reply) => {
+      if (!(await reviewer(req, reply))) return reply;
+      const r = await createErratum(db, req.auth!.accountId, req.body);
+      if (!r.ok) return err(reply, r.code === 'lecon_inconnue' ? 404 : 400, r.code);
+      await audit(db, req.auth!.accountId, 'erratum.creation', r.id, {
+        targetKind: req.body.targetKind,
+      });
+      return reply.code(201).send({ id: r.id });
     },
   );
 

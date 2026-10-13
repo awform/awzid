@@ -8,7 +8,7 @@
   const LEGAL = legalPages();
   const FAQ = faq();
 
-  /** Aide (lot 14) : questions fréquentes ; textes dans $lib/legal/content.ts (français). */
+  /** Aide (lot 14, bêta fermée) : questions fréquentes, signalements, documents ; textes dans static/i18n/legal. */
 </script>
 
 <svelte:head><title>{t('app.nom')} — {t('aide.titre')}</title></svelte:head>
@@ -28,20 +28,29 @@
   </section>
 {/each}
 
+<!-- bêta-support : « Signaler un problème » et « Signaler une erreur dans un texte religieux » (en ligne) -->
+<section class="card" data-testid="aide-signaler">
+  <AvisBouton mode="probleme" />
+  <AvisBouton mode="probleme" categorie="religieux" libelle="aide.erreur_religieuse" />
+</section>
+
 <section class="card">
   <h2>{t('aide.documents')}</h2>
   <ul>
+    <li><a href={resolve('/beta')}><Bidi text={t('aide.beta')} /></a></li>
     {#each LEGAL_PAGES as k (k)}
-      <li><a href={resolve('/legal/[page]', { page: k })}><Bidi text={LEGAL[k].titre} /></a></li>
+      {#if k !== 'infobeta'}
+        <li><a href={resolve('/legal/[page]', { page: k })}><Bidi text={LEGAL[k].titre} /></a></li>
+      {/if}
     {/each}
     <li><a href={resolve('/garanties')}>{t('aide.garanties')}</a></li>
     <li><a href={resolve('/errata')}>{t('errata.titre')}</a></li>
+    <li>
+      <a href={resolve('/legal/[page]', { page: 'mentions' })} data-testid="aide-contact"
+        ><Bidi text={t('aide.contact')} /></a
+      >
+    </li>
   </ul>
-</section>
-
-<!-- bêta-support : « Signaler un problème » (chargé à la demande, en ligne) -->
-<section class="card">
-  <AvisBouton mode="probleme" />
 </section>
 
 <style>

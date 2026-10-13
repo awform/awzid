@@ -1164,7 +1164,7 @@
   "erreur.modele_absent": "No certificate template for this book.",
   "erreur.aucune_edition": "No published edition.",
   "legal.titre": "Legal information",
-  "legal.brouillon": "DRAFT — to be reviewed by a lawyer before public opening. English translation to be reviewed by a native speaker.",
+  "legal.brouillon": "PROVISIONAL — before a lawyer signs off; awaiting a second legal reading. English translation to be reviewed by a native speaker.",
   "legal.maj": "Updated: {date}",
   "legal.introuvable": "This page does not exist.",
   "aide.titre": "Help",
@@ -3081,5 +3081,12 @@
   "mj.ens_motif_explication": "linked to the passage presented with its explanation",
   "mj.note": "Explanation:",
   "mj.note_sources": "Sources",
-  "mj.ens_traduction": "Translation choice:"
+  "mj.ens_traduction": "Translation choice:",
+  "aide.erreur_religieuse": "Report an error in a religious text",
+  "aide.beta": "The Awzid beta",
+  "aide.contact": "Contact us",
+  "errata.source": "Source",
+  "errata.edition": "Edition",
+  "errata.comment": "Each religious correction is dated and cites its source. To report an error in a religious text, use the button below or \"Report an error\" under the text.",
+  "erreur.source_requise": "Give the source of the correction."
 }
