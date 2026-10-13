@@ -19,6 +19,9 @@
   import { purgeOldRecordings } from '$lib/recordings';
   import { remindersOn } from '$lib/quotidien/reglages';
   import { cachedMe, fetchMe, type Me } from '$lib/session';
+  // bêta : logique d'accès chargée À LA DEMANDE (en ligne seulement) : l'appareil de l'élève n'en porte pas le poids
+  import type * as ModAcces from '$lib/acces';
+  import type { AccesStatut } from '$lib/acces';
   import { chargerFonctions } from '$lib/fonctions.svelte';
   import { cleDeChemin, envoyer, noterUsage, usagePour } from '$lib/usage';
   import { appliquerFond, lireFond, stockageLocal } from '$lib/theme/fond';
@@ -46,6 +49,32 @@
   let lastActivity = Date.now();
   // bêta-support : bandeau « Mettre à jour », chargé après le démarrage (jamais dans le chargement initial)
   let Maj = $state<Component | null>(null);
+  // bêta fermée : état d'accès du site (mode fermé = page de maintenance) et bandeau « Version bêta » (fermable),
+  // chargé après le démarrage comme la mise à jour
+  let acces = $state<AccesStatut | null>(null);
+  let Acces = $state<typeof ModAcces | null>(null);
+  // premier relevé du compte et des réglages fait (avant : aucun écran de remplacement)
+  let prete = $state(false);
+  let Bandeau = $state<Component | null>(null);
+  const ferme = $derived(!!Acces && Acces.maintenance(acces, page.url.pathname));
+  // écran à la place de l'application : maintenance (mode fermé) ou accueil du visiteur (bêta sur invitation)
+  let Accueil = $state<Component<{ mode: 'ferme' | 'accueil' }> | null>(null);
+  const porte = $derived<'ferme' | 'accueil' | null>(
+    ferme
+      ? 'ferme'
+      : prete && !!Acces && Acces.accueilVisiteur(acces, !!me, page.url.pathname)
+        ? 'accueil'
+        : null,
+  );
+  $effect(() => {
+    if (porte && !Accueil)
+      void import('./inscription/AccueilBeta.svelte')
+        .then((m) => (Accueil = m.default as typeof Accueil))
+        .catch(() => {});
+  });
+  const bandeauCache = $derived(
+    /^\/(coran\/lecteur|hifz\/enfant)\/?$/.test(page.url.pathname) || ferme,
+  );
 
   /**
    * Lot 26 — public de l'écran : navigation de 3 à 5 entrées et ergonomie (enfant : tailles plus grandes).
@@ -76,6 +105,16 @@
     if (me?.accordsManquants?.length && !GATE_FREE.test(path))
       void goto(resolve('/acces/[[mode]]', { mode: 'accords' }));
   });
+  // bêta : adresse e-mail à vérifier avant d'utiliser le compte (réglage « vérification requise ») → page dédiée
+  $effect(() => {
+    const cible = Acces?.pageDeVerification(
+      acces,
+      me?.account.emailVerified,
+      me?.account.kind,
+      page.url.pathname,
+    );
+    if (cible) void goto(resolve('/acces/verification'));
+  });
   const showTabs = $derived(!NO_TABS.some((p) => page.url.pathname.startsWith(p)));
 
   $effect(() => {
@@ -91,7 +130,6 @@
   });
 
   // 11/10/2026 : migration silencieuse des anciens thèmes (une seule fois, quand le public de l'écran est connu)
-  let prete = $state(false);
   let migre = false;
   $effect(() => {
     // attendre le compte ou un profil actif : le public (donc l'ancien thème) en dépend (adulte autonome : pas de profil actif)
@@ -113,6 +151,21 @@
   onMount(() => {
     if ('serviceWorker' in navigator)
       void import('$lib/MajBandeau.svelte').then((m) => (Maj = m.default)).catch(() => {});
+    void import('$lib/acces')
+      .then(async (m) => {
+        Acces = m;
+        const s = await m.chargerStatut();
+        acces = s;
+        let stockage: Storage | null = null;
+        try {
+          stockage = localStorage;
+        } catch {
+          /* stockage indisponible */
+        }
+        if (m.bandeauAffiche(s, stockage))
+          void import('$lib/BandeauBeta.svelte').then((b) => (Bandeau = b.default)).catch(() => {});
+      })
+      .catch(() => {});
     mode = readMode();
     applyMode(mode);
     appliquerFond(lireFond());
@@ -293,9 +346,16 @@
     </p>{/if}
   <!-- bêta-support : nouvelle version prête (jamais en pleine leçon ou écoute, ni hors ligne) -->
   {#if Maj}<Maj />{/if}
+  <!-- bêta fermée : bandeau « Version bêta » (discret, fermable) -->
+  {#if Bandeau && !bandeauCache}<Bandeau />{/if}
 
   <main id="contenu" tabindex="-1">
-    {@render children()}
+    {#if porte}
+      <!-- bêta : maintenance (mode fermé) ou accueil du visiteur, chargés à la demande -->
+      {#if Accueil}<Accueil mode={porte} />{/if}
+    {:else}
+      {@render children()}
+    {/if}
     <!-- D1 : pas de liens juridiques sur l'accueil, l'Arabe et les leçons de l'élève, ni nulle part pour un enfant
          (ils restent dans « Plus », « Aide » et « Compte ») -->
     {#if !piedCache}

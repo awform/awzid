@@ -27,6 +27,7 @@ import {
   lessonStats,
   listBeta,
   listFeedback,
+  readAcces,
   readFlags,
   recordUsage,
   schema as t,
@@ -72,6 +73,9 @@ export async function contexteDe(
   });
 }
 
+/** Fonctions qui dépendent de la Quran Foundation (contenus servis ou mis en page par elle). */
+export const FONCTIONS_QF = ['recitateurs_en_ligne', 'mushaf_exact'] as const;
+
 export async function fonctionsDe(
   db: Db,
   req: FastifyRequest,
@@ -79,7 +83,12 @@ export async function fonctionsDe(
 ): Promise<{ fonctions: Record<FonctionCle, boolean>; canal: FlagContext['canal'] }> {
   const ctx = await contexteDe(db, req, profileId);
   const f = await readFlags(db);
-  return { fonctions: fonctionsPour(ctx, f.etats, f.regles), canal: ctx.canal };
+  const fonctions = fonctionsPour(ctx, f.etats, f.regles);
+  // Quran Foundation et profils d'enfants : tant que « qf_profils_enfants » vaut « off » (défaut), un profil d'enfant n'utilise
+  // ni les récitateurs en ligne ni le Muṣḥaf exact (accord écrit de la Quran Foundation attendu) ; ados et adultes inchangés
+  if (ctx.age === 'enfant' && (await readAcces(db)).qf_profils_enfants !== 'on')
+    for (const k of FONCTIONS_QF) fonctions[k] = false;
+  return { fonctions, canal: ctx.canal };
 }
 
 /**

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Awzid — état du service</title>
+    <style>
+      body {
+        margin: 0;
+        font:
+          18px/1.6 system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+        background: #f6f4ee;
+        color: #1b2a26;
+      }
+      main {
+        max-width: 36rem;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+      h1 {
+        font-size: 1.4rem;
+        margin: 0 0 1rem;
+      }
+      .etat {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.8rem 1rem;
+        border: 2px solid #b9c3bd;
+        border-radius: 12px;
+        background: #fff;
+        font-weight: 700;
+      }
+      .etat::before {
+        content: '';
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #8a948f;
+        flex: none;
+      }
+      .etat[data-etat='ok'] {
+        border-color: #1b7a4b;
+      }
+      .etat[data-etat='ok']::before {
+        background: #1b7a4b;
+      }
+      .etat[data-etat='degrade'],
+      .etat[data-etat='injoignable'] {
+        border-color: #b3261e;
+      }
+      .etat[data-etat='degrade']::before,
+      .etat[data-etat='injoignable']::before {
+        background: #b3261e;
+      }
+      dl {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 0.3rem 1rem;
+        margin: 1.2rem 0 0;
+      }
+      dt {
+        font-weight: 700;
+      }
+      dd {
+        margin: 0;
+      }
+      .discret {
+        color: #55645e;
+        font-size: 0.9rem;
+        margin-top: 1.5rem;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #13211d;
+          color: #e9efe9;
+        }
+        .etat {
+          background: #1b2c27;
+          border-color: #4b5d56;
+        }
+        .discret {
+          color: #a8b8b0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 id="titre">État du service Awzid</h1>
+      <p class="etat" id="etat" data-etat="inconnu" role="status" aria-live="polite">…</p>
+      <dl id="details"></dl>
+      <p class="discret" id="note"></p>
+    </main>
+    <script src="/etat.js"></script>
+  </body>
+</html>

@@ -15,4 +15,11 @@ curl -fsSI "$BASE/" | grep -qi 'content-security-policy' || fail "politique de s
 curl -fsSI "$BASE/" | grep -qi 'x-content-type-options: nosniff' || fail "en-têtes de sécurité"
 [ "$(curl -s -o /dev/null -w '%{http_code}' -X POST "$BASE/api/v1/auth/login" -H 'content-type: application/json' -d '{}')" = 403 ] \
   || fail "protection CSRF"
+# bêta fermée : invisible (robots.txt strict, en-tête noindex, aucun sitemap), sonde, page d'état, statut d'accès
+[ "$(curl -fsS "$BASE/robots.txt")" = "$(printf 'User-agent: *\nDisallow: /')" ] || fail "robots.txt strict"
+curl -fsSI "$BASE/" | grep -qi '^x-robots-tag: noindex' || fail "en-tête X-Robots-Tag"
+[ "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/sitemap.xml")" = 404 ] || fail "un sitemap est servi"
+curl -fsS "$BASE/healthz" | grep -q '"status":"ok"' || fail "sonde /healthz"
+curl -fsS "$BASE/etat" | grep -qi 'awzid' || fail "page d'état /etat"
+curl -fsS "$BASE/api/v1/acces/statut" | grep -q '"inscription"' || fail "statut d'accès"
 echo "fumée : ok ($BASE)"

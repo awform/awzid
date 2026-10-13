@@ -10,6 +10,8 @@ export const MAIL_KINDS = [
   'email_deja_utilise',
   'email_modifie',
   'mot_de_passe_modifie',
+  // bêta fermée : invitation personnelle (lien d'inscription)
+  'invitation',
 ] as const;
 export type MailKind = (typeof MAIL_KINDS)[number];
 export const MAIL_LOCALES = ['fr', 'en', 'es', 'de', 'ar'] as const;
@@ -71,6 +73,16 @@ const T: Record<Loc, Texts> = {
           'Si vous n’êtes pas à l’origine de ce changement, signalez-le sans attendre depuis la page « Aide » de l’application.',
         ],
       },
+      invitation: {
+        subject: 'Votre invitation à la bêta d’Awzid',
+        before: [
+          'Vous êtes invité(e) à essayer la version bêta d’Awzid, ouverte sur invitation seulement. Pour créer votre compte, ouvrez ce lien.',
+        ],
+        button: 'Créer mon compte',
+        after: [
+          'Cette invitation est personnelle : ne la transmettez pas. Si vous ne l’attendiez pas, ignorez ce message.',
+        ],
+      },
       mot_de_passe_modifie: {
         subject: 'Votre mot de passe a été modifié',
         before: [
@@ -130,6 +142,16 @@ const T: Record<Loc, Texts> = {
           'If you did not make this change, report it right away from the “Help” page of the app.',
         ],
       },
+      invitation: {
+        subject: 'Your invitation to the Awzid beta',
+        before: [
+          'You are invited to try the beta version of Awzid, which is open by invitation only. To create your account, open this link.',
+        ],
+        button: 'Create my account',
+        after: [
+          'This invitation is personal: please do not share it. If you were not expecting it, ignore this message.',
+        ],
+      },
       mot_de_passe_modifie: {
         subject: 'Your password was changed',
         before: [
@@ -185,6 +207,16 @@ const T: Record<Loc, Texts> = {
         ],
         after: [
           'Si no ha hecho este cambio, comuníquelo de inmediato desde la página «Ayuda» de la aplicación.',
+        ],
+      },
+      invitation: {
+        subject: 'Su invitación a la beta de Awzid',
+        before: [
+          'Está invitado/a a probar la versión beta de Awzid, abierta solo por invitación. Para crear su cuenta, abra este enlace.',
+        ],
+        button: 'Crear mi cuenta',
+        after: [
+          'Esta invitación es personal: no la comparta. Si no la esperaba, ignore este mensaje.',
         ],
       },
       mot_de_passe_modifie: {
@@ -247,6 +279,16 @@ const T: Record<Loc, Texts> = {
           'Falls Sie diese Änderung nicht vorgenommen haben, melden Sie es sofort über die Seite „Hilfe“ der App.',
         ],
       },
+      invitation: {
+        subject: 'Ihre Einladung zur Awzid-Beta',
+        before: [
+          'Sie sind eingeladen, die Beta-Version von Awzid auszuprobieren, die nur auf Einladung offen ist. Öffnen Sie diesen Link, um Ihr Konto zu erstellen.',
+        ],
+        button: 'Mein Konto erstellen',
+        after: [
+          'Diese Einladung ist persönlich: Bitte leiten Sie sie nicht weiter. Wenn Sie sie nicht erwartet haben, ignorieren Sie diese Nachricht.',
+        ],
+      },
       mot_de_passe_modifie: {
         subject: 'Ihr Passwort wurde geändert',
         before: [
@@ -297,6 +339,14 @@ const T: Record<Loc, Texts> = {
         subject: 'تغيّر عنوان حسابك',
         before: ['استُبدل للتو عنوان البريد الإلكتروني لحسابك في Awzid بالعنوان:'],
         after: ['إذا لم تكن صاحب هذا التغيير، فأبلغ عنه فورًا من صفحة «المساعدة» في التطبيق.'],
+      },
+      invitation: {
+        subject: 'دعوتك إلى النسخة التجريبية من Awzid',
+        before: [
+          'دُعيتَ إلى تجربة النسخة التجريبية من Awzid، وهي مفتوحة بالدعوة فقط. لإنشاء حسابك افتح هذا الرابط.',
+        ],
+        button: 'إنشاء حسابي',
+        after: ['هذه الدعوة شخصية، فلا تشاركها مع أحد. وإن لم تكن تنتظرها فتجاهل هذه الرسالة.'],
       },
       mot_de_passe_modifie: {
         subject: 'تغيّرت كلمة مرورك',

@@ -11,6 +11,7 @@
   import AvisAdmin from '$lib/admin/AvisAdmin.svelte';
   import ProblemesAdmin from '$lib/admin/ProblemesAdmin.svelte';
   import UsageAdmin from '$lib/admin/UsageAdmin.svelte';
+  import AccesAdmin from '$lib/admin/AccesAdmin.svelte';
 
   /**
    * Tableau de bord ADMINISTRATEUR minimal, en lecture seule : utilisateurs (e-mails masqués), éditions et
@@ -105,6 +106,8 @@
     </section>
   </div>
 
+  <!-- bêta fermée : invitations, liste d'attente, fermeture du site en une action -->
+  <AccesAdmin />
   <ContenuAdmin />
   <ModerationAdmin />
   <ActivationAdmin />

@@ -39,6 +39,8 @@ export const TZ = { type: 'string', maxLength: 64, pattern: '^[A-Za-z0-9_+\\-/]+
 /** Subdivision ISO 3166-2 (ex. CA-QC). */
 export const REGION = { type: ['string', 'null'], pattern: '^[A-Z]{2}-[A-Z0-9]{1,3}$' } as const;
 /** inscriptions par heure et par adresse IP (réglable pour les tests de bout en bout) */
+/** bêta fermée : essais de codes d'invitation refusés, par heure et par adresse IP, avant une pause */
+export const INVITATION_TRIES_PER_HOUR = Number(process.env.AWFORM_INVITATION_ESSAIS ?? 10) || 10;
 export const SIGNUPS_PER_HOUR = Number(process.env.AWFORM_SIGNUP_PER_HOUR ?? 20) || 20;
 export const AVATARS = ['etoile', 'lune', 'soleil', 'feuille', 'goutte', 'livre'];
 

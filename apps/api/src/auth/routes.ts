@@ -14,7 +14,13 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import {
   accountRoles,
+  attachInvitation,
   canActForProfile,
+  checkInvitation,
+  countComptes,
+  readAcces,
+  releaseInvitation,
+  reserveInvitation,
   grantAccountRole,
   schema as t,
   schoolsOf,
@@ -23,6 +29,7 @@ import {
   type Db,
 } from '@awform/db';
 import { decrypt, encrypt, hashSecret, newTotpSecret, verifySecret, verifyTotp } from './crypto.js';
+import { verifierJeton } from '../antibot.js';
 import { checkPassword, MAX_LENGTH } from './passwords.js';
 import {
   ageFromYear,
@@ -66,6 +73,7 @@ import {
   err,
   OPTIONAL_CONSENTS,
   REGION,
+  INVITATION_TRIES_PER_HOUR,
   SIGNUPS_PER_HOUR,
   TZ,
   YEAR,
@@ -116,7 +124,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   // (enseignant, administrateur) sans l'avoir vérifié n'a accès qu'à l'authentification et aux contenus
   // publics en lecture (au lieu d'une garde recopiée route par route, oubliée sur certaines)
   const MFA_FREE_READ =
-    /^\/api\/v1\/(health|config|levels|units|packs|quran|booklets|hifz\/books|pays|public|contenu\/errata|contenu\/suspensions)(\/|\?|$)/;
+    /^\/api\/v1\/(health|config|levels|units|packs|quran|booklets|hifz\/books|pays|public|contenu\/errata|contenu\/suspensions|acces\/statut)(\/|\?|$)/;
   app.addHook('preHandler', async (req, reply) => {
     const a = req.auth;
     if (!a || !requiresMfa(a.kind) || a.mfaVerified) return;
@@ -262,6 +270,9 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       evalMode?: 'verification' | 'serein';
       region?: string | null;
       tz?: string;
+      invitation?: string;
+      jeton?: string;
+      site_web?: string;
     };
   }>(
     '/api/v1/auth/signup',
@@ -285,18 +296,51 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             // lot F3 : subdivision (âge du consentement au Québec) et fuseau horaire de l'appareil
             region: REGION,
             tz: TZ,
+            // bêta fermée : code d'invitation (obligatoire en mode « invitation », contrôlé s'il est donné)
+            invitation: { type: 'string', minLength: 1, maxLength: 40 },
+            // anti-robots (réglage « antibot ») : jeton signé émis à l'ouverture de la page, champ piège caché
+            jeton: { type: 'string', maxLength: 100 },
+            site_web: { type: 'string', maxLength: 200 },
           },
         },
       },
     },
     async (req, reply) => {
       const b = req.body;
+      // bêta fermée : site fermé → aucune inscription ; mode « invitation » → code valable exigé
+      const acces = await readAcces(db);
+      if (acces.site === 'ferme') return err(reply, 503, 'acces_ferme');
+      if (acces.inscription === 'invitation' && !b.invitation)
+        return err(reply, 403, 'invitation_requise');
+      // anti-robots sans service tiers : champ piège vide, jeton signé ni trop récent (3 s) ni trop ancien (2 h)
+      if (acces.antibot === 'on') {
+        const verdict = b.site_web ? 'piege' : verifierJeton(opts.secretKey, b.jeton);
+        if (verdict !== 'ok') return err(reply, 400, 'antibot_echec', { raison: verdict });
+      }
+      // mode « ouvert » : toujours sous un PLAFOND de comptes ; plein, l'inscription libre passe en liste d'attente
+      // (une invitation valable reste acceptée)
+      if (
+        acces.inscription === 'ouverte' &&
+        !b.invitation &&
+        (await countComptes(db)) >= acces.plafond
+      )
+        return err(reply, 403, 'plafond_atteint');
       // audit MIN-15 : pays existant (ISO 3166-1) seulement
       if (!isCountry(b.country)) return err(reply, 400, 'pays_inconnu');
       const ipKey = `signup:${req.ip}`;
       if (await lockedUntil(db, ipKey)) return err(reply, 429, 'trop_de_demandes');
       await recordFailure(db, ipKey, SIGNUPS_PER_HOUR); // au plus 20 inscriptions par heure et par adresse, puis pause
       const email = b.email.trim().toLowerCase();
+      // contrôle (sans consommer) : un mauvais code est refusé tôt, avec une limite d'essais par adresse IP
+      if (b.invitation) {
+        const invKey = `invit:${req.ip}`;
+        if (await lockedUntil(db, invKey)) return err(reply, 429, 'trop_de_demandes');
+        const c = await checkInvitation(db, b.invitation, email);
+        if (!c.ok) {
+          await recordFailure(db, invKey, INVITATION_TRIES_PER_HOUR);
+          return err(reply, 403, c.raison);
+        }
+      }
       const pb = checkPassword(b.password, email);
       if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
       // audit MIN-3 : année de naissance obligatoire pour TOUT titulaire ; un parent doit être majeur
@@ -318,21 +362,36 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         .from(t.account)
         .where(eq(t.account.email, email));
       if (exists[0]) return err(reply, 409, 'email_indisponible');
-      const [a] = await db
-        .insert(t.account)
-        .values({
-          kind: b.kind,
-          email,
-          passwordHash: await hashSecret(b.password),
-          passwordChangedAt: new Date(),
-          country: b.country,
-          locale: b.locale ?? 'fr',
-          birthYear: b.kind === 'adulte' ? (b.birthYear ?? null) : null,
-          region,
-          tz: normTz(b.tz),
-        })
-        .returning({ id: t.account.id });
+      // bêta fermée : l'usage de l'invitation est RÉSERVÉ de façon atomique juste avant la création du compte
+      // (deux inscriptions simultanées ne peuvent pas dépasser le nombre d'usages) ; rendu si la création échoue
+      let invitationId: string | null = null;
+      if (b.invitation) {
+        const r = await reserveInvitation(db, b.invitation, email);
+        if (!r.ok) return err(reply, 403, r.raison);
+        invitationId = r.id;
+      }
+      let a: { id: string } | undefined;
+      try {
+        [a] = await db
+          .insert(t.account)
+          .values({
+            kind: b.kind,
+            email,
+            passwordHash: await hashSecret(b.password),
+            passwordChangedAt: new Date(),
+            country: b.country,
+            locale: b.locale ?? 'fr',
+            birthYear: b.kind === 'adulte' ? (b.birthYear ?? null) : null,
+            region,
+            tz: normTz(b.tz),
+          })
+          .returning({ id: t.account.id });
+      } catch (e) {
+        if (invitationId) await releaseInvitation(db, invitationId);
+        throw e;
+      }
       if (!a) throw new Error('création du compte impossible');
+      if (invitationId) await attachInvitation(db, invitationId, a.id);
       // lot F2 (revue E2) : rôle du titulaire (un même compte pourra recevoir ensuite d'autres rôles)
       await grantAccountRole(db, a.id, b.kind === 'parent' ? 'parent' : 'eleve_adulte');
       const accepted = b.consents.filter(
@@ -378,7 +437,11 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         if (b.evalMode && own && sereinOk)
           await setProfileEvalMode(db, own.id, b.evalMode, 'soi', a.id);
       }
-      await audit(db, a.id, 'compte.creation', a.id, { kind: b.kind, country: b.country });
+      await audit(db, a.id, 'compte.creation', a.id, {
+        kind: b.kind,
+        country: b.country,
+        ...(invitationId ? { invitation: invitationId } : {}),
+      });
       // lot F3 (revue M7) : lien de vérification de l'adresse (envoyé après la réponse)
       kit.sendVerification?.(a.id, email, b.locale ?? 'fr');
       await setSession(reply, a.id, b.kind, false);
@@ -419,6 +482,9 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const demo = opts.demoLogin ? await demoLogin(db, email, req.body.password) : null;
       if (demo) {
         await clearFailures(db, accKey);
+        // site fermé : la démonstration aussi (seul l'administrateur de démonstration passe)
+        if (demo.kind !== 'admin' && (await readAcces(db)).site === 'ferme')
+          return err(reply, 503, 'acces_ferme');
         await audit(db, demo.accountId, 'connexion.demo', demo.accountId);
         await setSession(reply, demo.accountId, demo.kind, true);
         return { ...(await me(demo.accountId, true)), profilDemo: demo.profileId };
@@ -437,9 +503,20 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         return err(reply, 401, 'identifiants_incorrects');
       }
       let mfa = false;
+      const rolesDuCompte = await accountRoles(db, a.id, a.kind);
+      // bêta fermée : site fermé → seuls les administrateurs se connectent (mot de passe déjà vérifié :
+      // aucune information sur l'existence d'un compte n'est donnée aux autres)
+      if (
+        (await readAcces(db)).site === 'ferme' &&
+        a.kind !== 'admin' &&
+        !rolesDuCompte.includes('admin')
+      ) {
+        await clearFailures(db, accKey);
+        return err(reply, 503, 'acces_ferme');
+      }
       // lot F2 : un compte famille qui a aussi un rôle de personnel (parent ET enseignant) donne son second
       // facteur à la connexion s'il l'a activé ; sans lui, seuls les espaces de la famille lui sont ouverts
-      const staffRoles = (await accountRoles(db, a.id, a.kind)).some((r) => STAFF_SET.has(r));
+      const staffRoles = rolesDuCompte.some((r) => STAFF_SET.has(r));
       if ((requiresMfa(a.kind) || staffRoles) && a.totpEnabled) {
         if (!req.body.totp) return err(reply, 401, 'totp_requis');
         if (!opts.secretKey) return err(reply, 503, 'deux_facteurs_indisponible');

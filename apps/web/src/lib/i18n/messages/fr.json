@@ -1386,5 +1386,9 @@
   "aide.erreur_religieuse": "Signaler une erreur dans un texte religieux",
   "aide.beta": "La bêta d'Awzid",
   "aide.contact": "Nous contacter",
-  "erreur.source_requise": "Indiquez la source de la correction."
+  "erreur.source_requise": "Indiquez la source de la correction.",
+  "bandeau.texte": "Version bêta — le contenu religieux est tranché par le référent selon l’école mālikite, sources citées, en attente d’une seconde lecture savante.",
+  "bandeau.fermer": "Fermer ce message",
+  "bandeau.aria": "Information sur la version bêta",
+  "erreur.acces_ferme": "Le service est momentanément fermé. Réessayez plus tard."
 }

@@ -81,7 +81,7 @@ describe('secrets : un périmètre par service (env-scopes.conf)', () => {
   const s = scopes();
 
   it('périmètres déclarés pour api, worker, outils, db, caddy', () => {
-    expect(Object.keys(s).sort()).toEqual(['api', 'caddy', 'db', 'outils', 'worker']);
+    expect(Object.keys(s).sort()).toEqual(['alerte', 'api', 'caddy', 'db', 'outils', 'worker']);
   });
 
   it('API : tout ce que lit le code est dans son périmètre', () => {

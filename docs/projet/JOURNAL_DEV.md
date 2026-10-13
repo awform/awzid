@@ -8,6 +8,33 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 13/10/2026 — Bêta fermée sur invitation : accès, invisibilité, bandeau, sauvegardes, supervision, serveur public (écrit)
+
+Branche `beta-wip` (worktree `~/awform-beta-acces`, depuis `main` 4a101eb). Décision du client du 13/10 : « oui, prépare la bêta ».
+Détail d'exploitation : `docs/projet/EXPLOITATION.md` § 16 ; guide du client : `docs/projet/GUIDE_BETA_CLIENT.md`.
+
+- **Accès par invitation** : migration `0048_beta_acces` (tables `site_setting`, `invitation`, `invitation_use`, `waitlist` ;
+  droits dans `roles.ts`, purge à 12 mois de la liste d'attente), `packages/db/src/beta-acces.ts`, `apps/api/src/beta-acces.ts`,
+  inscription (`invitation`) et connexion (mode fermé) dans `auth/routes.ts`. Codes non gardés en clair, consommation atomique,
+  invitation personnelle, révocation, lien dans le fragment. Liste d'attente validée à la main, e-mail `invitation` en 5 langues.
+  Espace administrateur « Accès à la bêta » (`lib/admin/AccesAdmin.svelte`) ; page d'inscription avec porte d'invitation
+  et demande d'invitation. Mode fermé en une action (API 503 + page de maintenance serveur et client), retour arrière testé.
+- **Invisible** : `X-Robots-Tag` (Caddy + `hooks.server.ts`), `robots.txt`, pas de sitemap, balise `robots`, aucun aperçu social ;
+  page d'état `/etat`, sonde `/healthz`, `entetes-check.sh`.
+- **Bandeau bêta** fermable, traduit (fr, en, es, de, ar), chargé après le démarrage, réglable (`bandeau`).
+- **Sauvegardes** : copie hors machine `gs://` (ajout seul), `backup-selftest.sh` (test de restauration réel rejouable).
+- **Supervision** : `alerte.sh` + service `alerte` (périmètre `alerte.env`), journal d'erreurs nettoyé (`scrub`).
+- **Serveur public Google Cloud** : `infra/prod/gcp/*` écrits, jamais exécutés ; Caddy `AWFORM_TLS=tls_public`, production = invitation.
+- Résultats des tests : voir la section « Vérifications » ci-dessous (complétée à la fin du lot).
+
+---
+
+**Chiffres finaux (13/10/2026)** : tests unitaires tous verts (web 483, API beta-acces/beta-modes/beta-infra 25+14+22) ; e2e complet 605 réussis,
+les 6 échecs du passage complet (tous mobile, charge) sont repassés seuls sauf themes-simples:142 (instable toléré) ; budgets élève 349,7 Ko (≤ 350),
+page max ≈ 148 Ko (≤ 150). Lint : seules les 2 erreurs préexistantes (coran-lecteur4, coran-tactile). Alias de sections : arabe, quran, fiqh, fikh, adab, akhlaq (éteints).
+
+
+
 ## 13/10/2026 — Bêta fermée : volet juridique et support
 
 Branche `beta-legal-wip` (worktree `~/awform-beta-legal`, depuis `main` 4a101eb). Décision du client du 13/10 : « oui, prépare

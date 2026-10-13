@@ -2855,3 +2855,94 @@ export const usageSalt = pgTable('usage_salt', {
   day: date('day').primaryKey(),
   salt: text('salt').notNull(),
 });
+
+// ================================================================ bêta fermée sur invitation
+
+/**
+ * Réglages du SITE (clé → valeur courte), posés par l'administrateur : « inscription » (ouverte | invitation) et
+ * « site » (ouvert | ferme). Absent = valeur par défaut de l'environnement (AWFORM_ACCES), voir `beta-acces.ts`.
+ */
+export const siteSetting = pgTable('site_setting', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedBy: uuid('updated_by').references(() => account.id, { onDelete: 'set null' }),
+});
+
+/**
+ * Invitation à s'inscrire (bêta fermée). Le code n'est JAMAIS gardé en clair : seule son empreinte (SHA-256 du
+ * code normalisé) l'est ; le code et le lien personnel ne sont montrés qu'une fois, à la création. Usage unique
+ * ou limité (`max_uses`), expiration, révocation, adresse facultative (invitation PERSONNELLE : seule cette
+ * adresse peut l'utiliser).
+ */
+export const invitation = pgTable(
+  'invitation',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    codeHash: text('code_hash').notNull().unique(),
+    /** quatre derniers caractères du code : reconnaître une invitation dans la liste sans la dévoiler */
+    codeEnd: text('code_end').notNull(),
+    label: text('label'),
+    /** adresse (minuscules) à laquelle l'invitation est réservée ; vide = quiconque a le code */
+    email: text('email'),
+    maxUses: integer('max_uses').notNull().default(1),
+    uses: integer('uses').notNull().default(0),
+    expiresAt: timestamp('expires_at', { withTimezone: true }),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
+    /** demande de la liste d'attente qui a donné cette invitation */
+    waitlistId: uuid('waitlist_id'),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('invitation_created').on(t.createdAt),
+    check('invitation_max_uses', sql`${t.maxUses} BETWEEN 1 AND 1000`),
+    check('invitation_uses', sql`${t.uses} >= 0 AND ${t.uses} <= ${t.maxUses}`),
+  ],
+);
+
+/** Qui s'est inscrit avec quelle invitation (le lien disparaît avec le compte). */
+export const invitationUse = pgTable(
+  'invitation_use',
+  {
+    invitationId: uuid('invitation_id')
+      .notNull()
+      .references(() => invitation.id, { onDelete: 'cascade' }),
+    accountId: uuid('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    usedAt: timestamp('used_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.invitationId, t.accountId] })],
+);
+
+/**
+ * Liste d'attente validée à la main : demandes d'invitation (adresse, prénom ou nom facultatif, mot court,
+ * langue), acceptées ou refusées par l'administrateur. Effacée après 12 mois (travailleur) ; la demande
+ * acceptée garde le lien vers son invitation.
+ */
+export const waitlist = pgTable(
+  'waitlist',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    email: text('email').notNull().unique(),
+    name: text('name'),
+    note: text('note'),
+    locale: text('locale').notNull().default('fr'),
+    status: text('status').notNull().default('en_attente'),
+    invitationId: uuid('invitation_id').references(() => invitation.id, { onDelete: 'set null' }),
+    decidedAt: timestamp('decided_at', { withTimezone: true }),
+    decidedBy: uuid('decided_by').references(() => account.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('waitlist_status').on(t.status, t.createdAt),
+    check('waitlist_status_check', sql`${t.status} IN ('en_attente', 'acceptee', 'refusee')`),
+    check('waitlist_note', sql`${t.note} IS NULL OR char_length(${t.note}) <= 500`),
+    check('waitlist_name', sql`${t.name} IS NULL OR char_length(${t.name}) <= 80`),
+  ],
+);

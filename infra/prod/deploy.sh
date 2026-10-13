@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Déploiement AWFORM (idempotent : peut être relancé à volonté).
-#   infra/prod/deploy.sh [--demo | --production] [--site 192.168.50.10] [--lan-ip 192.168.1.106] [--ts-ip 100.x.y.z] [--ts-name machine.tailnet.ts.net]
+#   infra/prod/deploy.sh [--demo | --production] [--site 192.168.50.10] [--lan-ip 192.168.1.106] [--alias www.exemple.org --alias app.exemple.org] [--ts-ip 100.x.y.z] [--ts-name machine.tailnet.ts.net]
 # --production (domaine public) : HTTP redirigé vers HTTPS, cookie toujours « Secure » (audit SEC-7) ;
 # sans lui : réseau local (HTTP servi sur l'adresse IP).
 # 1. secrets générés sur la machine (une seule fois) dans ~/.config/awform/prod.env (droits 600, hors dépôt) ;
@@ -20,6 +20,8 @@ DEMO=0
 PRODUCTION=0
 SITE="192.168.50.10"
 SITE_LAN=""
+ALIAS1=""
+ALIAS2=""
 SITE_TS=""
 SITE_TSNAME=""
 RELAIS_DOMAINE=""
@@ -31,6 +33,8 @@ while [ $# -gt 0 ]; do
     --site) SITE="$2"; shift ;;
     --lan) LAN="$2"; shift ;;
     --lan-ip) SITE_LAN="$2"; shift ;;
+    # noms qui redirigent (301) vers --site : --alias www.awzid.com --alias app.awzid.com (au plus deux)
+    --alias) if [ -z "$ALIAS1" ]; then ALIAS1="$2"; else ALIAS2="$2"; fi; shift ;;
     # adresse Tailscale (réseau privé, démonstration seulement) ; vide = rien
     --ts-ip) SITE_TS="$2"; shift ;;
     # nom Tailscale (MagicDNS, *.ts.net) servi en HTTPS avec un vrai certificat Let's Encrypt de Tailscale
@@ -63,6 +67,13 @@ grep -q '^SITE=' "$ENVF" && sed -i "s/^SITE=.*/SITE=$SITE/" "$ENVF"
 # accès depuis les appareils du Wi-Fi par le PC (redirection de port) : certificat aussi pour cette IP
 sed -i '/^SITE_LAN=/d;/^DEFAULT_SNI=/d' "$ENVF"
 if [ -n "$SITE_LAN" ]; then echo "SITE_LAN=$SITE_LAN" >> "$ENVF"; echo "DEFAULT_SNI=$SITE_LAN" >> "$ENVF"; else echo "DEFAULT_SNI=$SITE" >> "$ENVF"; fi
+sed -i '/^SITE_ALIAS_1=/d;/^SITE_ALIAS_2=/d' "$ENVF"
+for al in "$ALIAS1:SITE_ALIAS_1" "$ALIAS2:SITE_ALIAS_2"; do
+  nom="${al%%:*}"; cle="${al##*:}"
+  [ -n "$nom" ] || continue
+  case "$nom" in *[!a-z0-9.-]* | .* | *..*) echo "nom invalide : $nom"; exit 2 ;; esac
+  echo "$cle=$nom" >> "$ENVF"
+done
 sed -i '/^SITE_TS=/d' "$ENVF"
 if [ -n "$SITE_TS" ]; then
   case "$SITE_TS" in *[!0-9.]*) echo "adresse Tailscale invalide : $SITE_TS"; exit 2 ;; esac
@@ -78,6 +89,7 @@ else
   rm -f "$CONF/tsnet/ts.caddy"
 fi
 mkdir -p "$CONF/tsnet"
+mkdir -p "$CONF/alias"  # alias de sections (désactivés par défaut), voir alias-sections.sh
 if [ -n "$RELAIS_DOMAINE" ]; then
   case "$RELAIS_DOMAINE" in *[!a-z0-9.-]* | .* | *.) echo "domaine des relais invalide : $RELAIS_DOMAINE"; exit 2 ;; esac
   sed -i '/^RELAIS_DOMAINE=/d' "$ENVF"
@@ -185,7 +197,8 @@ mkdir -p "${AWFORM_QF_MUSHAF_SOURCE:-$HOME/awform-data/qf-mushaf-prod}" "${AWFOR
 # ---------------------------------------------------------------- 3. services
 "${DC[@]}" up -d --remove-orphans api worker web caddy
 if [ "$ECOUTE" = 1 ]; then
-  "${DC[@]}" --profile ecoute build ecoute
+  # (AWFORM_DEPLOY_BUILD=0 : image awzid/ecoute-ia:<version> déjà présente, ex. tirée d'Artifact Registry)
+  [ "${AWFORM_DEPLOY_BUILD:-1}" = 0 ] || "${DC[@]}" --profile ecoute build ecoute
   "${DC[@]}" --profile ecoute up -d ecoute
   for i in $(seq 1 40); do
     [ "$(docker inspect -f '{{.State.Health.Status}}' awform-ecoute-1 2>/dev/null)" = healthy ] && { echo "écoute : healthy"; break; }
@@ -260,14 +273,56 @@ Persistent=true
 [Install]
 WantedBy=timers.target
 EOF
+# supervision (alertes par e-mail, toutes les 15 minutes) : en production, ou dès que le responsable a réglé
+# AWFORM_ALERTE_A dans prod.env (la démonstration n'envoie rien tant qu'il n'est pas réglé)
+ALERTE=0
+if [ "$PRODUCTION" = 1 ] || grep -q '^AWFORM_ALERTE_A=' "$ENVF"; then
+  ALERTE=1
+  sudo tee /etc/systemd/system/awform-alerte.service >/dev/null <<EOF
+[Unit]
+Description=AWFORM — supervision et alertes par e-mail
+After=awform.service
+
+[Service]
+Type=oneshot
+User=$USER
+Environment=AWFORM_ENV_DIR=$AWFORM_ENV_DIR
+ExecStart=$PROD/alerte.sh
+EOF
+  sudo tee /etc/systemd/system/awform-alerte.timer >/dev/null <<EOF
+[Unit]
+Description=AWFORM — supervision toutes les 15 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+
+[Install]
+WantedBy=timers.target
+EOF
+fi
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker >/dev/null
 sudo systemctl enable awform.service awform-backup.timer >/dev/null
 sudo systemctl start awform-backup.timer
+if [ "$ALERTE" = 1 ]; then
+  sudo systemctl enable awform-alerte.timer >/dev/null
+  sudo systemctl start awform-alerte.timer
+fi
 
-# pare-feu : 80 et 443 depuis le réseau local seulement (SSH déjà autorisé)
-sudo ufw allow from "$LAN" to any port 80 proto tcp >/dev/null
-sudo ufw allow from "$LAN" to any port 443 proto tcp >/dev/null
+# pare-feu : 80 et 443 depuis le réseau local seulement (SSH déjà autorisé), ou publics en production ; serveur en nuage
+# sans ufw (Google Cloud) : pare-feu du fournisseur (infra/gcp/creer-ressources.sh, ouvrir-web.sh), rien à faire ici
+if command -v ufw >/dev/null; then
+  if [ "$PRODUCTION" = 1 ]; then
+    sudo ufw allow 80/tcp >/dev/null
+    sudo ufw allow 443/tcp >/dev/null
+  else
+    sudo ufw allow from "$LAN" to any port 80 proto tcp >/dev/null
+    sudo ufw allow from "$LAN" to any port 443 proto tcp >/dev/null
+  fi
+else
+  echo "ufw absent : pare-feu du fournisseur (aucune règle locale ajoutée)"
+fi
 fi
 
 # ---------------------------------------------------------------- 5. démonstration

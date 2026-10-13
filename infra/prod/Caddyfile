@@ -26,7 +26,32 @@
 		Referrer-Policy no-referrer
 		Permissions-Policy "camera=(), geolocation=(), payment=(), microphone=(self)"
 		Cross-Origin-Opener-Policy same-origin
+		X-Frame-Options DENY
+		# bêta fermée : invisible des moteurs de recherche et des archives (aussi posé par l'application)
+		X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
 		-Server
+	}
+	# aucun moteur de recherche (robots.txt strict), aucun sitemap
+	handle /robots.txt {
+		header Content-Type "text/plain; charset=utf-8"
+		respond <<TXT
+			User-agent: *
+			Disallow: /
+
+			TXT 200
+	}
+	@sitemap path /sitemap.xml /sitemap_index.xml
+	handle @sitemap {
+		respond "introuvable" 404
+	}
+	# sonde de disponibilité (réponse minimale, 503 si la base ne répond pas) et page d'état
+	handle /healthz {
+		rewrite * /healthz
+		reverse_proxy api:3000
+	}
+	handle /etat {
+		rewrite * /etat.html
+		reverse_proxy web:3000
 	}
 	@api path /api/*
 	handle @api {
@@ -79,11 +104,40 @@ http://localhost, http://127.0.0.1 {
 	import awform
 }
 
-https://{$SITE}, https://{$SITE_LAN:127.0.0.2}, https://{$SITE_TS:127.0.0.3} {
+# certificat : autorité INTERNE de Caddy (réseau local, démonstration) ou Let's Encrypt (serveur public :
+# AWFORM_TLS=tls_public, posé par deploy.sh --production ; le domaine doit pointer vers le serveur)
+(tls_interne) {
 	tls internal
-	header Strict-Transport-Security "max-age=31536000"
+}
+(tls_public) {
+	tls {
+		protocols tls1.2 tls1.3
+	}
+}
+# HSTS PRUDENT : durée courte au début (AWFORM_HSTS_SECONDES=300 posé par deploy.sh --production), à allonger quand tout
+# est vérifié (86400, puis 31536000) ; jamais « includeSubDomains » ni « preload » pendant la bêta
+https://{$SITE}, https://{$SITE_LAN:127.0.0.2}, https://{$SITE_TS:127.0.0.3} {
+	import {$AWFORM_TLS:tls_interne}
+	header Strict-Transport-Security "max-age={$AWFORM_HSTS_SECONDES:31536000}"
 	import awform
 }
+
+# NOM CANONIQUE : le site vit sur {$SITE} (ex. awzid.com) ; les autres noms (SITE_ALIAS_1, SITE_ALIAS_2 : ex. www.awzid.com et
+# app.awzid.com) redirigent en 301 vers lui, chemin et paramètres conservés. Caddy obtient un certificat Let's Encrypt
+# PAR NOM (chaque nom doit pointer vers le serveur). Sans alias réglé : adresses locales inertes, comme SITE_LAN.
+http://{$SITE_ALIAS_1:127.0.0.4}, http://{$SITE_ALIAS_2:127.0.0.5} {
+	redir https://{$SITE}{uri} 301
+}
+https://{$SITE_ALIAS_1:127.0.0.4}, https://{$SITE_ALIAS_2:127.0.0.5} {
+	import {$AWFORM_TLS:tls_interne}
+	header Strict-Transport-Security "max-age={$AWFORM_HSTS_SECONDES:31536000}"
+	header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
+	redir https://{$SITE}{uri} 301
+}
+
+# ALIAS DE SECTIONS (désactivés par défaut) : arabe → /, quran → /coran, fiqh et fikh → /madjaliss, adab et akhlaq → /vivre, en 301 vers
+# l'unique origine canonique ; fichier généré par infra/prod/alias-sections.sh (dossier vide = aucun alias, aucun certificat)
+import /etc/caddy/alias/*.caddy
 
 # Relais d'école (lot 17) : le sous-domaine d'une école (ex. ecole-dakar-01.relais.awzid.org) pointe
 # publiquement vers ce serveur ; hors de l'école, il sert donc l'application comme le site principal. Le

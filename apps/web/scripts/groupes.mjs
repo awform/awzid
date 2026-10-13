@@ -40,6 +40,10 @@ export const EN_LIGNE_MODULES = [
   /src\/lib\/TutorPanel\.svelte$/,
   /src\/lib\/avis\/AvisDialog\.svelte$/,
   /src\/lib\/avis\/capture\.ts$/,
+  // bêta fermée : bandeau « Version bêta » (affiché après la réponse du serveur : en ligne seulement)
+  /src\/lib\/(BandeauBeta\.svelte|acces\.ts)$/,
+  // bêta : maintenance et accueil du visiteur (affichés à la place de l'application, en ligne seulement)
+  /src\/routes\/inscription\/AccueilBeta\.svelte$/,
   // A5 : « Réciter et vérifier » (le service d'écoute est sur le serveur) : panneau et bilans, à la demande
   /src\/lib\/ecoute\/(PanneauEcoute|ARevoirEcoute)\.svelte$/,
   // hifẓ complet : écran enfant (l'écoute du récitateur choisi par le parent a besoin du réseau), à la demande

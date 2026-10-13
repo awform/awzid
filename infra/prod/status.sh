@@ -22,6 +22,11 @@ H="$(curl -fsS --max-time 5 http://127.0.0.1/api/v1/health 2>/dev/null)" || warn
 echo "${H:-}"
 echo "${H:-}" | grep -q '"status":"ok"' || warn "santé dégradée"
 
+echo "== accès (bêta fermée)"
+A="$(curl -fsS --max-time 5 http://127.0.0.1/api/v1/acces/statut 2>/dev/null || true)"
+echo "${A:-statut d'accès indisponible}"
+curl -fsS --max-time 5 http://127.0.0.1/healthz >/dev/null 2>&1 || warn "sonde /healthz en échec"
+
 echo "== sauvegarde"
 # lue dans le journal : dernière réussite, dernier échec, copie hors site, restauration testée (INF-7, INF-8)
 "$PROD/backup-status.sh" "$DEST" || BAD=1

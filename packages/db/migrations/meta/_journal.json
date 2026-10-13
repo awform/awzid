@@ -337,6 +337,13 @@
       "when": 1791804453237,
       "tag": "0047_madjaliss",
       "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1791868757833,
+      "tag": "0048_beta_acces",
+      "breakpoints": true
     }
   ]
 }
