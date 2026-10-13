@@ -21,7 +21,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 const ROOT = join(import.meta.dirname, '..', '..', '..');
 const PROD = join(ROOT, 'infra', 'prod');
-const GCP = join(PROD, 'gcp');
+const GCP = join(ROOT, 'infra', 'gcp');
 const dirs: string[] = [];
 afterEach(() => {
   for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
@@ -123,7 +123,7 @@ describe.skipIf(!posix)('alertes par e-mail (alerte.sh)', () => {
 });
 
 describe.skipIf(!posix || !hasGpg)('sauvegarde hors machine vers Google Cloud Storage', () => {
-  it('copie chaque fichier vers gs:// avec un nom explicite (gcloud storage cp) et journalise « hors-site ok »', () => {
+  it('copie la sauvegarde et son empreinte vers gs:// (gcloud storage cp, version testée sur le bucket réel) et journalise « hors-site ok »', () => {
     const h = tmp();
     const bin = join(h, 'bin');
     mkdirSync(bin);
@@ -138,12 +138,9 @@ describe.skipIf(!posix || !hasGpg)('sauvegarde hors machine vers Google Cloud St
     });
     expect(r.status, r.stderr).toBe(0);
     const calls = readFileSync(trace, 'utf8').trim().split('\n');
-    expect(calls).toHaveLength(2);
+    expect(calls).toHaveLength(1);
     expect(calls[0]).toMatch(
-      /^storage cp --quiet .*awform-\d{8}-\d{6}\.dump\.gpg gs:\/\/mon-compartiment\/awform-\d{8}-\d{6}\.dump\.gpg$/,
-    );
-    expect(calls[1]).toMatch(
-      /\.dump\.gpg\.sha256 gs:\/\/mon-compartiment\/awform-.*\.dump\.gpg\.sha256$/,
+      /^storage cp --quiet .*awform-\d{8}-\d{6}\.dump\.gpg .*\.dump\.gpg\.sha256 gs:\/\/mon-compartiment\/$/,
     );
     expect(readFileSync(join(h, 'awform-backups', 'backup.log'), 'utf8')).toMatch(/hors-site ok/);
     // gcloud en échec : « hors-site ÉCHEC » au journal, la sauvegarde locale reste bonne, l'état alerte
@@ -181,8 +178,8 @@ describe.skipIf(!posix || !hasGpg)('sauvegarde hors machine vers Google Cloud St
   });
   it('la clé de chiffrement ne quitte jamais le dépôt : aucun fichier de clé versionné, scripts sans clé en dur', () => {
     const ign = readFileSync(join(ROOT, '.gitignore'), 'utf8');
-    expect(ign).toMatch(/config\.env/);
-    for (const f of ['backup.sh', 'backup-selftest.sh', 'gcp/sauvegardes.sh']) {
+    expect(ign).toMatch(/^\.env$/m);
+    for (const f of ['backup.sh', 'backup-selftest.sh', '../gcp/creer-ressources.sh']) {
       const s = readFileSync(join(PROD, f), 'utf8');
       expect(s).not.toMatch(/BEGIN PGP PRIVATE KEY|passphrase +['"][^'"]+['"]/);
     }
@@ -235,99 +232,64 @@ describe.skipIf(!posix)('production : invitation, certificat public, invisibilit
 });
 
 describe.skipIf(!posix)(
-  'scripts Google Cloud : mode à blanc par défaut, rien n’est lancé sans --executer',
+  'serveur Google Cloud (infra/gcp, fusionné) : plafond de dépense en mode à blanc, web fermé par défaut',
   () => {
-    const scripts = [
-      'creer-serveur.sh',
-      'pare-feu.sh',
-      'sauvegardes.sh',
-      'budget.sh',
-      'dns.sh',
-      'envoyer.sh',
-    ];
     // PATH sans gcloud : si un script tentait de le lancer, le test échouerait
-    const env = {
-      PATH: '/usr/bin:/bin',
-      HOME: tmpdir(),
-      AWZID_GCP_CONFIG: join(GCP, 'config.env.exemple'),
-    };
-    it('chaque script est valide (bash -n) et affiche ses commandes sans les lancer', () => {
-      for (const s of scripts) {
-        expect(spawnSync('bash', ['-n', join(GCP, s)]).status, s).toBe(0);
-        const r = sh(join(GCP, s), env);
-        expect(r.status, `${s} : ${r.stderr}`).toBe(0);
-        if (s !== 'dns.sh') expect(r.stdout, s).toContain('MODE À BLANC');
-        expect(r.stdout + r.stderr, s).not.toMatch(/command not found/);
-      }
-      for (const f of ['startup.sh', 'lib.sh'])
-        expect(spawnSync('bash', ['-n', join(GCP, f)]).status, f).toBe(0);
-    });
-    it('le serveur est à Paris, avec adresse fixe, compte sans droit, SSH par IAP, disque et démarrage sécurisés', () => {
-      const c = sh(join(GCP, 'creer-serveur.sh'), env).stdout;
-      expect(c).toContain('--zone europe-west9-a');
-      expect(c).toContain('addresses create awzid-beta-ip');
-      expect(c).toMatch(/--shielded-secure-boot/);
-      expect(c).toMatch(/enable-oslogin=TRUE,block-project-ssh-keys=TRUE/);
-      expect(c).toMatch(/--deletion-protection/);
-      const p = sh(join(GCP, 'pare-feu.sh'), env).stdout;
-      expect(p).toContain('tcp:80,tcp:443');
-      expect(p).toContain('35.235.240.0/20');
-      expect(p).toContain('default-allow-ssh');
-      const b = sh(join(GCP, 'sauvegardes.sh'), env).stdout;
-      expect(b).toContain('--public-access-prevention');
-      expect(b).toContain('roles/storage.objectCreator');
-      expect(b).toContain('"age": 35');
-      expect(b).not.toContain('objectAdmin');
-    });
-    it('budget : alertes 50/90/100 %, prévision, disjoncteur ; DNS : A seulement pour la bêta', () => {
-      const b = sh(join(GCP, 'budget.sh'), env).stdout;
+    const env = { PATH: '/usr/bin:/bin', HOME: tmpdir(), GCLOUD: '/inexistant/gcloud' };
+    it('plafond-budget.sh : à blanc par défaut, affiche budget, sujet, rôle minimal et fonction ; rien n’est lancé', () => {
+      expect(spawnSync('bash', ['-n', join(GCP, 'plafond-budget.sh')]).status).toBe(0);
+      const r = sh(join(GCP, 'plafond-budget.sh'), env);
+      expect(r.status, r.stderr).toBe(0);
+      expect(r.stdout).toContain('MODE À BLANC');
+      expect(r.stdout).not.toMatch(/command not found|MODE RÉEL/);
       for (const m of [
-        'percent=0.5',
+        'billing budgets create',
+        '45EUR',
         'percent=0.9',
         'percent=1.0',
-        'forecasted-spend',
-        '10EUR',
-        '45EUR',
-        'functions deploy',
+        '--credit-types-treatment exclude-all-credits',
+        'pubsub topics create awzid-budget',
+        'compute.instances.stop',
+        'functions deploy awzid-disjoncteur',
+        'instances start awzid-beta',
       ])
-        expect(b).toContain(m);
-      const d = sh(join(GCP, 'dns.sh'), env).stdout;
-      expect(d).toMatch(/A +beta +ADRESSE-IP-DU-SERVEUR/);
-      expect(d).toContain('NE PAS créer');
+        expect(r.stdout, m).toContain(m);
+      // le rôle de la fonction ne permet ni de supprimer ni de créer une machine
+      expect(r.stdout).not.toMatch(/instances\.(delete|create)|roles\/(owner|editor)/);
     });
-    it('--executer exige une vraie configuration (config.env absent : refus, rien de lancé)', () => {
-      const r = sh(
-        join(GCP, 'creer-serveur.sh'),
-        { PATH: '/usr/bin:/bin', HOME: tmpdir(), AWZID_GCP_CONFIG: '/inexistant/config.env' },
-        '--executer',
-      );
+    it('--executer exige le compte de facturation (rien n’est lancé sans lui)', () => {
+      const r = sh(join(GCP, 'plafond-budget.sh'), env, '--executer');
       expect(r.status).toBe(2);
-      expect(r.stderr).toContain('config.env absent');
-      const x = sh(join(GCP, 'creer-serveur.sh'), env, '--executer');
-      expect(x.status).toBe(2);
-      expect(x.stderr).toMatch(/PROJECT_ID non rempli|gcloud/);
+      expect(r.stdout).toContain('BILLING_ACCOUNT à renseigner');
     });
-    it('le script de démarrage installe mises à jour automatiques, échange et pare-feu, sans aucun secret', () => {
-      const s = readFileSync(join(GCP, 'startup.sh'), 'utf8');
-      for (const m of [
-        'unattended-upgrades',
-        'Automatic-Reboot',
-        'swapfile',
-        'ufw --force enable',
-        'fail2ban',
-      ])
-        expect(s).toContain(m);
-      expect(s).not.toMatch(/(password|token|secret)\s*=|PRIVATE KEY/i);
+    it('le web reste fermé par défaut et l’ouverture exige un accord explicite (--oui)', () => {
+      const r = sh(join(GCP, 'ouvrir-web.sh'), env);
+      expect(r.status).toBe(2);
+      expect(r.stdout).toContain("rien n'a été changé");
+      const c = readFileSync(join(GCP, 'creer-ressources.sh'), 'utf8');
+      expect(c).toMatch(/awzid-allow-web[\s\S]*--disabled/);
+      expect(readFileSync(join(GCP, 'config.sh'), 'utf8')).not.toMatch(
+        /BEGIN PRIVATE|password|secret\s*=|api[_-]?key/i,
+      );
     });
     it('disjoncteur : arrête la machine seulement quand le coût réel atteint le budget', () => {
       const code = `
-import importlib.util,sys
+import importlib.util
 spec=importlib.util.spec_from_file_location('m','${join(GCP, 'disjoncteur', 'main.py')}')
 m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
 print(m.doit_arreter({'costAmount':4.9,'budgetAmount':10}), m.doit_arreter({'costAmount':10,'budgetAmount':10}), m.doit_arreter({'costAmount':12,'budgetAmount':10}), m.doit_arreter({'costAmount':3}))`;
       const r = spawnSync('python3', ['-c', code], { encoding: 'utf8' });
       if (r.error) return; // python3 absent : test ignoré
       expect(r.stdout.trim()).toBe('False True True False');
+    });
+    it('le guide du client ne demande plus d’acheter le domaine, d’activer la facturation ni de créer un compte Google Cloud', () => {
+      const g = readFileSync(join(ROOT, 'docs', 'projet', 'GUIDE_BETA_CLIENT.md'), 'utf8');
+      expect(g).not.toMatch(
+        /Acheter le nom de domaine|Créer un nouveau projet|Associer un compte de facturation/,
+      );
+      expect(g).toContain('app.awzid.com');
+      expect(g).toContain('34.163.24.96');
+      expect(g).toContain('ouvrir-web.sh');
     });
   },
 );

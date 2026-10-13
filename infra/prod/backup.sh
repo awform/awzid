@@ -10,7 +10,7 @@
 #  - copie HORS de la machine (audit INF-8) si AWFORM_BACKUP_HORS_SITE est réglé : dossier monté, « utilisateur@hôte:dossier »
 #    (rsync) ou « gs://compartiment[/dossier] » (Google Cloud Storage, via gcloud : le compte de service de la machine
 #    ne peut qu'AJOUTER des fichiers, jamais en effacer ni les modifier ; la rotation est faite par une règle de cycle
-#    de vie du compartiment, voir gcp/sauvegardes.sh) ; journalisée « hors-site ok » ou « hors-site ÉCHEC ».
+#    de vie du compartiment, voir infra/gcp/creer-ressources.sh) ; journalisée « hors-site ok » ou « hors-site ÉCHEC ».
 #  - clé publique ailleurs que dans ~/.config/awform : AWFORM_BACKUP_PUB (essai jetable, backup-selftest.sh).
 set -euo pipefail
 PROD="$(cd "$(dirname "$0")" && pwd)"
@@ -46,8 +46,8 @@ if [ -n "${AWFORM_BACKUP_HORS_SITE:-}" ]; then
   trap - ERR
   HS="$AWFORM_BACKUP_HORS_SITE"
   case "$HS" in
-    # Google Cloud Storage (ajout seul) : nom d'objet explicite, sans lister le compartiment
-    gs://*) copy() { local f; for f in "$@"; do gcloud storage cp --quiet "$f" "${HS%/}/$(basename "$f")" || return 1; done; } ;;
+    # Cloud Storage (serveur de bêta Google Cloud) : compte de service de la VM, droit « créer » seulement
+    gs://*) copy() { gcloud storage cp --quiet "$@" "$HS/"; } ;;
     *:*) copy() { rsync -a "$@" "$HS/"; } ;;          # autre machine (ssh)
     *) copy() { cp -p "$@" "$HS/"; } ;;              # dossier monté (disque externe, stockage réseau)
   esac

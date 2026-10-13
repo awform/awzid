@@ -1,238 +1,139 @@
 # Guide du client — ouvrir la bêta fermée d’Awzid
 
-*Pas à pas, en français simple. À chaque étape : **ce que vous faites** et **ce que je fais** (Claude). Rien n’est mis
-en ligne, aucun compte n’est créé, aucune dépense n’est lancée sans que vous l’ayez décidé ici.*
+*Pas à pas, en français simple. À chaque étape : **ce que vous faites** et **ce que je fais** (Claude). Règle générale : **vous**
+faites les connexions à vos comptes et les paiements ; **moi**, je n’exécute les commandes qu’une fois la connexion faite, et je ne
+crée aucune ressource payante et n’ouvre pas le site au public sans votre accord écrit dans la conversation.*
 
-## En bref
+## Où on en est (déjà fait, rien à refaire)
 
-- **La bêta est fermée** : personne ne peut s’inscrire sans un **code d’invitation** (usage unique ou limité,
-  avec date de fin, annulable). Le site est **invisible** (ni Google, ni aperçu sur les réseaux sociaux).
-- **Le serveur** sera chez Google Cloud, à **Paris**, avec le nom `beta.awzid.com`, en HTTPS.
-- **Les sauvegardes** sont chiffrées chaque nuit et copiées hors de la machine. **La clé qui les ouvre est à vous** : sans
-  elle, elles sont illisibles (étape 6).
-- **Un bouton « Fermer le site »** (espace administrateur) met une page de maintenance pour tout le monde sauf vous.
-- Temps pour vous : environ **2 heures** réparties sur quelques jours (le domaine peut prendre quelques heures à
-  « se propager »).
+- Compte Google Cloud, facturation (crédit ≈ 264 €, alerte à 10 € par mois) et domaine **awzid.com** : faits.
+- Serveur `awzid-beta` à **Paris** (e2-standard-2, 8 Go, `europe-west9-b`), adresse fixe **34.163.24.96**, réseau à part `awzid-net`.
+  Il est **privé** : le web (HTTP/HTTPS) est **fermé**, on n’y entre que par un tunnel sécurisé.
+- **Sauvegardes** chiffrées chaque nuit dans le bucket `awzid-sauvegardes-b7e41c` (30 jours), **restauration testée**
+  (`EXPLOITATION.md` § 15) ; alerte e-mail si le serveur tombe.
+- Dans l’application (cette bêta) : accès **par invitation**, trois modes commutables, plafond d’inscriptions, liste d’attente, vérification
+  de l’adresse, anti-robots, tableau de bord, bandeau « Version bêta », site invisible des moteurs de recherche, alertes par e-mail.
 
-### Le tableau des tâches
+## Ce qui reste avant l’ouverture
 
 | # | Étape | Vous | Moi (Claude) |
 |---|---|---|---|
-| 1 | Acheter le domaine `awzid.com` | achat, 2 réglages de sécurité | rien (je ne touche jamais au domaine) |
-| 2 | Google Cloud : projet, facturation, alerte à 10 € | 4 clics dans la console, connecter `gcloud` | scripts prêts (relus à blanc) |
-| 3 | Décider du coût et du plafond | choisir | je règle le plafond et l’alerte |
-| 4 | Créer le serveur | dire « feu vert » | je lance les scripts |
-| 5 | Ajouter l’enregistrement DNS | copier 1 ligne chez le registraire | je donne la ligne exacte et je vérifie |
-| 6 | Garder la clé de sauvegarde | copie sur clé USB, test mensuel | je prépare le test |
-| 7 | Service d’e-mail (invitations) | créer le compte, coller 1 mot de passe sur le serveur | je guide, sans voir le mot de passe |
-| 8 | Inviter un relecteur | 1 formulaire | je regarde que tout arrive |
+| 1 | Connecter `gcloud` | une connexion (2 minutes) | tout ce qui suit |
+| 2 | Enregistrement DNS `app.awzid.com` | 1 ligne chez le registraire | je la donne exacte et je vérifie |
+| 3 | E-mail (SMTP, SPF, DKIM, DMARC) | compte du service d’e-mail, 3-4 lignes DNS, mot de passe collé sur le serveur | je branche et j’essaie |
+| 4 | Comptes du personnel avec second facteur | choisir les mots de passe, scanner le code | je guide, je ne vois aucun mot de passe |
+| 5 | Clé privée de sauvegarde : 2 copies hors ligne | 2 clés USB rangées | test de restauration avec la vraie clé |
+| 6 | Audio Wavenet et Coran (13 Go) | accord pour la dépense | envoi par le bucket, import, contrôle |
+| 7 | Scan de sécurité (ZAP) et test de charge | rien | je les lance, je rapporte |
+| 8 | **Ouverture du web** | dire « ouvre » | `ouvrir-web.sh --oui` (réversible : `--fermer`) |
+| 9 | Inviter un premier relecteur | 1 formulaire | je vérifie que tout arrive |
 
 ---
 
-## Étape 1 — Acheter le nom de domaine `awzid.com`
+## Étape 1 — Connecter `gcloud` (vous)
 
-**Pourquoi** : c’est l’adresse du site (`beta.awzid.com`) et l’adresse d’où partiront les e-mails.
+**Pourquoi** : mes commandes Google Cloud passent par **votre** compte, que vous seul connectez. Je ne vois jamais votre mot de passe.
 
-**Ce que vous faites**
-1. Choisissez un **registraire** (le magasin de noms de domaine). Un européen est conseillé : Gandi, OVHcloud ou Scaleway.
-   Prix : environ **10 à 15 € par an** pour un `.com`.
-2. Cherchez `awzid.com`, ajoutez-le au panier. *Capture à voir : un champ de recherche, un résultat « disponible », un bouton
-   « Ajouter au panier ».*
-3. **Refusez** les options inutiles : hébergement web, boîtes e-mail, « protection premium », site tout fait. Gardez
-   seulement : *la protection des données personnelles du titulaire (WHOIS)*, souvent gratuite.
-4. Après l’achat, dans les réglages du domaine, activez **trois choses** :
-   - le **renouvellement automatique** (sinon le site disparaît un jour sans prévenir) ;
-   - le **verrouillage du transfert** (empêche qu’on vous vole le domaine) ;
-   - la **double authentification** sur votre compte chez le registraire (code sur le téléphone).
-5. Notez dans votre gestionnaire de mots de passe : l’adresse du registraire, votre identifiant, la date de renouvellement.
+**Ce que vous faites** : dans le terminal de la machine de développement, tapez `gcloud auth login --no-launch-browser`. Il affiche un lien :
+ouvrez-le sur votre PC, choisissez votre compte Google, autorisez, copiez le code affiché et collez-le dans le terminal.
+Vous pouvez retirer l’accès à tout moment : `gcloud auth revoke`.
 
-**Ce que je fais** : rien. Je ne me connecte jamais à votre registraire et je ne vous demande jamais votre mot de passe.
+**Ce que je fais ensuite** : `infra/gcp/serveur.sh ssh` (accès au serveur par le tunnel), contrôles `infra/gcp/verifier.sh`, déploiement
+des versions. Je ne crée aucune ressource payante sans vous le dire d’abord.
 
-**Vérifier** : en cherchant `awzid.com` sur le site du registraire, il apparaît dans « Mes domaines ».
+## Étape 2 — L’enregistrement DNS (vous, 5 minutes)
 
----
-
-## Étape 2 — Google Cloud : le projet, la facturation, l’alerte à 10 €
-
-Vous avez déjà un compte Google Cloud avec environ **264 € de crédit** (il expire début janvier 2027) et un budget de
-10 € par mois configuré. On va préparer le projet du serveur.
-
-**Ce que vous faites** (dans `console.cloud.google.com`, connecté avec votre compte Google)
-1. En haut de la page, cliquez sur le **sélecteur de projet** → **Nouveau projet**. Nom : `awzid-beta`. Cliquez **Créer**.
-   *Capture à voir : une fenêtre « Nouveau projet » avec le nom et un identifiant gris en dessous, du genre
-   `awzid-beta-123456`. **Notez cet identifiant** : c’est le `PROJECT_ID`.*
-2. Menu ☰ → **Facturation** → vérifiez que le projet `awzid-beta` est **lié à votre compte de facturation** (sinon : « Associer
-   un compte de facturation »). Le crédit s’applique tout seul.
-3. Toujours dans **Facturation** → **Budgets et alertes** → **Créer un budget** :
-   - Nom : `Alerte 10 EUR` ; Projets : `awzid-beta` ; Montant : **10 €** par mois ;
-   - Seuils : **50 %, 90 %, 100 %** ; cochez « E-mail aux administrateurs de la facturation ».
-   *C’est une alerte : elle prévient, elle n’arrête rien.* (Le plafond qui arrête vraiment la machine est mis en place à
-   l’étape 4 par mes scripts.)
-   Notez aussi l’**identifiant du compte de facturation** (forme `012345-6789AB-CDEF01`, en haut de la page Facturation).
-4. **Connecter l’outil `gcloud` pour moi** : sur la machine de développement (le terminal où je travaille), tapez
-   `gcloud auth login --no-launch-browser`. Il affiche un lien : ouvrez-le sur votre PC, choisissez votre compte Google,
-   autorisez, copiez le code affiché et collez-le dans le terminal. *Je ne vois jamais votre mot de passe Google ; seul le
-   droit d’agir sur le projet reste sur la machine, et vous pouvez le retirer à tout moment avec
-   `gcloud auth revoke`.*
-
-**Ce que je fais** : vous donne un fichier `config.env` à relire (projet, région Paris, nom de la machine, adresse
-d’alerte). Je lance d’abord chaque script **« à blanc »** (il affiche ce qu’il ferait sans rien créer) et vous montre le
-résultat.
-
-**Vérifier** : la console affiche le projet `awzid-beta` avec « Facturation : activée ».
-
----
-
-## Étape 3 — Le coût (estimation, à confirmer avec le calculateur de Google)
-
-Prix approximatifs **par mois**, région Paris, en euros, hors taxes (estimation du 13/10/2026 ; la vraie valeur est donnée
-par `cloud.google.com/products/calculator` — à vérifier avant de dire « feu vert ») :
-
-| Poste | Réglage proposé | Coût mensuel estimé |
-|---|---|---|
-| Machine virtuelle | `e2-small` (2 Go) — suffit pour une vingtaine d’invités | 14 à 16 € |
-| Même, plus confortable | `e2-medium` (4 Go) | 28 à 32 € |
-| Disque | 60 Go « équilibré » | 7 à 8 € |
-| Adresse IP fixe | 1 | 3 à 4 € |
-| Sauvegardes (Cloud Storage, 35 jours) | quelques Go | moins de 1 € |
-| Trafic sortant | quelques invités | 0 à 2 € |
-| **Total avec `e2-small`** | | **environ 26 à 31 €** |
-| **Total avec `e2-medium`** | | **environ 40 à 47 €** |
-| Domaine `awzid.com` | une fois par an | 10 à 15 € par **an** |
-
-À savoir, franchement :
-- **L’alerte à 10 € sonnera** dès les premiers jours du mois : un serveur seul coûte plus de 10 €. Le crédit de 264 €
-  couvre ces dépenses jusqu’à son expiration (début janvier 2027), soit environ 2,5 mois ≈ 70 à 80 € dépensés sur le crédit.
-  Après cela, c’est votre carte qui paie : à décider avant janvier.
-- Le **disque** de 60 Go suppose de ne mettre sur le serveur ni les 27 Go d’enregistrements du Coran de la machine de
-  développement, ni… tout le reste : pour la bêta, les récitateurs en ligne (déjà prévus) suffisent. Si vous voulez l’audio
-  complet sur le serveur, il faudra un disque de 100 à 150 Go (+ 6 à 12 € par mois).
-- Le **plafond** que je règle est un **filet de sécurité** : à 45 € de dépense réelle dans le mois (réglable), la machine
-  est **arrêtée** (pas supprimée, les données restent). Google met les coûts à jour avec quelques heures de retard : ce
-  n’est pas un arrêt à l’euro près.
-
-**Ce que vous faites** : choisissez (a) `e2-small` ou `e2-medium` ; (b) le montant du plafond (45 € par défaut) ; (c) si vous
-acceptez que l’alerte à 10 € sonne.
-**Ce que je fais** : j’écris ces choix dans `config.env` et je règle les budgets (`infra/prod/gcp/budget.sh`).
-
----
-
-## Étape 4 — Créer le serveur à Paris
-
-**Ce que vous faites** : relisez le résultat « à blanc » que je vous montre, puis dites **« feu vert serveur »** dans la
-conversation. Je n’agis pas avant ce mot.
-
-**Ce que je fais** (scripts dans `infra/prod/gcp/`, chacun relancable sans danger) :
-1. `budget.sh` — alerte à 10 €, plafond, arrêt automatique de la machine au plafond ;
-2. `sauvegardes.sh` — compartiment de sauvegardes en Belgique (autre région que Paris), accès interdit au public, la machine ne
-   peut qu’**ajouter** des fichiers, effacement automatique après 35 jours ;
-3. `pare-feu.sh` — ouvre seulement le web (80 et 443) ; la porte d’administration (SSH) n’est joignable que par le tunnel
-   sécurisé de Google ;
-4. `creer-serveur.sh` — la machine à Paris, disque chiffré, démarrage sécurisé, mises à jour de sécurité automatiques,
-   redémarrage de nuit à 4 h 30 si nécessaire ;
-5. `dns.sh` — vous donne l’adresse IP à mettre dans le DNS (étape 5) ;
-6. `envoyer.sh` — envoie l’application, les livres, et lance le déploiement en production.
-
-**Vérifier** : dans la console, **Compute Engine → Instances** : `awzid-beta`, zone `europe-west9-a`, coche verte.
-
----
-
-## Étape 5 — Ajouter l’enregistrement DNS
-
-**Pourquoi** : pour que `beta.awzid.com` mène à votre serveur.
-
-**Ce que vous faites** : chez le registraire, ouvrez **« Zone DNS »** (ou « DNS » → « Enregistrements ») de `awzid.com` →
-**Ajouter un enregistrement** :
+**Ce que vous faites** : chez le registraire de `awzid.com`, zone DNS → **Ajouter un enregistrement** :
 
 | Type | Nom (hôte) | Valeur | Durée (TTL) |
 |---|---|---|---|
-| `A` | `beta` | l’adresse IP que je vous donne (forme `34.xx.xx.xx`) | 300 |
+| `A` | `app` | `34.163.24.96` | 300 |
 
-*Capture à voir : un tableau d’enregistrements, un bouton « Ajouter », trois champs (type, nom, valeur).*
-**Ne créez rien d’autre** (pas de `www`, pas d’enregistrement pour `awzid.com` seul) : le site de la bêta doit rester
-invisible. Les enregistrements pour l’e-mail viennent à l’étape 7.
+*Capture à voir : un tableau d’enregistrements, un bouton « Ajouter », trois champs (type, nom, valeur).* Ne créez rien pour `awzid.com` seul
+ni pour `www` : le site doit rester invisible tant que la vitrine n’existe pas.
 
-**Ce que je fais** : je vous donne la ligne exacte (`infra/prod/gcp/dns.sh`) et je vérifie que `beta.awzid.com` répond.
-Le certificat HTTPS est obtenu tout seul par le serveur dès que l’adresse répond (quelques minutes).
+**Ce que je fais** : je vérifie que `app.awzid.com` pointe vers le serveur. Tant que le web est fermé (étape 8), l’adresse ne répond pas ;
+le certificat HTTPS (Let’s Encrypt) s’obtient seul à l’ouverture.
 
-**Vérifier** : sur votre PC, ouvrez `https://beta.awzid.com/etat` : une page « État du service Awzid » avec un point vert.
+## Étape 3 — Le service d’e-mail (vous crée le compte ; moi je branche)
 
----
-
-## Étape 6 — Garder la clé de sauvegarde (la plus importante de toutes)
-
-**Ce que c’est** : chaque nuit, la base (comptes, progression) est chiffrée avec une **clé publique** (elle reste sur le
-serveur : elle sait fermer, pas ouvrir) puis copiée hors de la machine. Pour la **rouvrir** en cas de catastrophe, il faut
-la **clé privée**. Elle est créée à l’installation, sortie du serveur, et **elle est à vous**.
-
-> **Sans la clé privée, toutes les sauvegardes sont du sable : personne, pas même moi, ne peut les rouvrir.**
-> Avec elle, quelqu’un qui a aussi accès aux fichiers de sauvegarde peut lire toutes les données. Il faut donc la garder
-> **en deux exemplaires, hors ligne, et la montrer à personne**.
+**Pourquoi** : invitations, vérification d’adresse, « mot de passe oublié », alertes. Sans lui, tout marche sauf ces envois (je vous donne
+alors les liens à transmettre à la main), et la vérification de l’adresse reste facultative.
 
 **Ce que vous faites**
-1. Après l’installation, lancez sur votre PC `infra\pc\recuperer-cle-sauvegarde.ps1` (je vous montre comment) : le fichier
-   `awform-sauvegardes-cle-privee-….asc` arrive dans `Documents\khadija\AWFORM-production\cles-sauvegarde\`, et la copie est
-   **effacée du serveur**. Le serveur le signale en alerte tant que ce n’est pas fait.
-2. **Copiez ce fichier sur une clé USB** (rangée à la maison, étiquetée « Awzid — clé de sauvegarde »). Une **deuxième** clé
-   USB chez une personne de confiance, ou dans un coffre. Ne l’envoyez **jamais** par e-mail, messagerie ou stockage en ligne
-   non chiffré.
-3. **Une fois par mois**, lancez `infra\pc\test-restauration.ps1` : il prouve que la clé ouvre bien la dernière sauvegarde (il
-   restaure dans une base temporaire, compare, efface). Le serveur vous alerte si le dernier test a plus de 35 jours.
+1. Créez un compte chez un service d’envoi (Brevo, Scaleway TEM ou Postmark) et **ajoutez le domaine `awzid.com`**.
+2. Il vous donne 3 ou 4 lignes DNS (**SPF, DKIM, DMARC**) : collez-les chez le registraire, au même endroit qu’à l’étape 2.
+3. Il vous donne un identifiant et un **mot de passe SMTP** : **ne me les envoyez pas**. Je vous donne la seule commande à taper sur le
+   serveur pour les coller dans son fichier secret (`~/.config/awform/prod.env`, droits réservés).
+4. Dites-moi quelle adresse reçoit les alertes (`AWFORM_ALERTE_A`).
 
-**Ce que je fais**
-- `infra/prod/backup.sh` : sauvegarde chiffrée chaque nuit à 2 h 30 (14 conservées sur la machine, 35 jours dans le
-  compartiment), journal, alerte si une nuit manque.
-- `infra/prod/backup-selftest.sh` : **test de restauration complet rejouable** (fait le 13/10/2026 sur la machine de
-  développement : voir le journal), sans toucher à votre clé.
-- Je ne lis, n’affiche ni ne copie jamais la clé privée.
+**Ce que je fais** : je branche (`AWFORM_MAIL=smtp`), j’envoie un e-mail d’essai (`infra/prod/alerte.sh --essai`) et je vérifie SPF/DKIM/DMARC.
+Ensuite le serveur vous écrit seul si quelque chose cloche (au plus une fois par 6 heures pour le même problème, puis « rétabli »).
 
-**Vérifier** : `test-restauration.ps1` se termine par « restauration : ok ».
+## Étape 4 — Les comptes du personnel avec second facteur (vous choisissez, je guide)
 
----
+Administrateur, enseignants, référent : leur compte exige un **second facteur** (code à 6 chiffres sur le téléphone).
 
-## Étape 7 — Le service d’e-mail (pour envoyer les invitations)
+**Ce que vous faites** : pour chaque personne, vous tapez vous-même le mot de passe dans le terminal du serveur quand je vous y invite
+(il n’apparaît pas à l’écran), puis à la première connexion vous scannez le code (application d’authentification) et gardez les codes de secours.
+**Ce que je fais** : je lance l’outil de création des comptes (`staff`) avec ce que vous avez saisi, sans jamais l’afficher ni le garder.
 
-**Pourquoi** : une invitation personnelle peut partir par e-mail depuis `no-reply@awzid.com`. Sans ce service, tout marche
-quand même : je vous donne le lien de chaque invitation et vous l’envoyez vous-même.
+## Étape 5 — La clé privée des sauvegardes : deux copies hors ligne (vous)
 
-**Ce que vous faites**
-1. Créez un compte chez un service d’envoi d’e-mails (Brevo, Scaleway TEM ou Postmark) et **ajoutez le domaine `awzid.com`**.
-2. Il vous donne 3 ou 4 lignes DNS (SPF, DKIM, DMARC) : collez-les chez le registraire, au même endroit qu’à l’étape 5.
-3. Il vous donne un **identifiant SMTP** et un **mot de passe SMTP** : **ne me les envoyez pas**. Je vous indiquerai la seule commande
-   à taper sur le serveur pour les coller dans son fichier secret (`~/.config/awform/prod.env`), droits réservés.
-4. Indiquez-moi l’**adresse e-mail qui recevra les alertes** (`AWFORM_ALERTE_A`) : la vôtre.
+Chaque nuit, la base est chiffrée avec une **clé publique** (elle reste sur le serveur : elle ferme, elle n’ouvre pas) puis copiée dans le
+bucket. Pour la **rouvrir** après une catastrophe, il faut la **clé privée** : **elle est à vous**.
 
-**Ce que je fais** : je branche le service (`AWFORM_MAIL=smtp`) et j’envoie un e-mail d’essai
-(`infra/prod/alerte.sh --essai`). Ensuite, le serveur vous écrit seul si quelque chose cloche (service arrêté, sauvegarde
-manquante, disque presque plein…), au plus une fois toutes les 6 heures pour le même problème, et vous écrit « rétabli »
-quand tout va mieux.
-
-**Vérifier** : l’e-mail d’essai arrive (regardez aussi les courriers indésirables).
-
----
-
-## Étape 8 — Inviter un relecteur
+> **Sans la clé privée, toutes les sauvegardes sont illisibles : personne, pas même moi, ne peut les rouvrir.**
+> Avec elle, quiconque a aussi les fichiers peut lire les données : gardez-la hors ligne, ne la montrez à personne.
 
 **Ce que vous faites**
-1. Ouvrez `https://beta.awzid.com/connexion` et connectez-vous avec le **compte administrateur** (je le crée avec vous au
-   terminal, mot de passe saisi par vous, sans que je le voie ; il demande un code à 6 chiffres sur le téléphone).
+1. La clé a déjà été sortie du serveur (voir `EXPLOITATION.md` § 15, point « Clé privée ») ; vérifiez qu’elle est dans le dossier prévu de votre PC.
+2. **Copiez-la sur deux clés USB** étiquetées « Awzid — clé de sauvegarde », rangées dans deux endroits différents. Jamais par e-mail,
+   messagerie ni stockage en ligne non chiffré.
+3. **Une fois par mois**, lancez `infra\pc\test-restauration.ps1` : il prouve que votre clé ouvre bien la dernière sauvegarde (restauration
+   dans une base temporaire, comparaison, effacement). Le serveur vous alerte si le dernier test a plus de 35 jours.
+
+**Ce que je fais** : `infra/prod/backup-selftest.sh` — test de restauration **complet et rejouable** avec une clé jetable (fait le 13/10/2026 :
+sauvegarde réelle, déchiffrement, restauration dans une base jetable, comparaison table par table : OK, 28 minutes) — et le test mensuel avec
+votre vraie clé quand vous me le demandez (la clé passe par votre terminal, je ne la vois pas).
+
+## Étape 6 — L’audio Wavenet et le Coran (13 Go) par le bucket
+
+**Ce que vous faites** : donner votre accord pour la dépense de la voix Wavenet (Text-to-Speech, facturée à l’usage : je vous donne le
+nombre de caractères et le prix estimé avant de lancer quoi que ce soit) et pour l’espace disque (le disque actuel de 50 Go suffit pour 13 Go
+de Coran + 1 Go de leçons ; au-delà je vous préviens).
+**Ce que je fais** : j’envoie les fichiers par un bucket (débit de votre connexion ≈ 200 Ko/s : prévoir plusieurs heures, en tâche de fond),
+je les importe avec les outils existants (`coran-audio`, `lecons-audio`, avec contrôle des fichiers) et je vérifie par un essai de lecture.
+
+## Étape 7 — Scan de sécurité et test de charge (moi)
+
+Je lance le scan OWASP ZAP (`docs/projet/ZAP.md`) et le test de charge (`infra/charge/`) sur le serveur **par le tunnel privé**, avant l’ouverture,
+et je vous rapporte les résultats en clair (quoi corriger, quoi accepter). Aucun coût : le trafic de test reste dans le serveur.
+
+## Étape 8 — Ouvrir le web (sur votre accord seulement)
+
+Quand les étapes 2 à 7 sont faites, vous me dites « ouvre ». Je lance `infra/gcp/ouvrir-web.sh --oui` (règle de pare-feu 80/443), je contrôle
+`https://app.awzid.com/healthz` et `infra/prod/entetes-check.sh`, et la bêta est **fermée sur invitation** (personne n’entre sans code).
+**Retour arrière immédiat** : `ouvrir-web.sh --fermer`, ou le bouton « Fermé » dans l’application.
+
+## Étape 9 — Inviter un relecteur
+
+1. Ouvrez `https://app.awzid.com/connexion` et connectez-vous avec le **compte administrateur** (second facteur).
 2. Menu → **Administration** → bloc **« Accès à la bêta »** → **Invitations** :
-   - *Nom ou note* : « Relecteur — Dr X » ;
-   - *Adresse e-mail* : celle du relecteur (**invitation personnelle** : seule cette adresse peut l’utiliser) ;
-   - *Valable* : 30 jours ; case **« Envoyer par e-mail »** cochée → **Créer l’invitation**.
-   *Capture à voir : un encadré avec un code du genre `AWZ-7K3QM-4TXPD` et un lien. **Ils ne seront plus affichés** : copiez-les
-   si l’e-mail n’est pas parti.*
-3. Le relecteur ouvre le lien, voit « Invitation reconnue », crée son compte. Il voit en haut le bandeau
-   « Version bêta — le contenu religieux est tranché par le référent selon l’école mālikite, sources citées, en attente
-   d’une seconde lecture savante » (il peut le fermer).
-4. Pour **annuler** une invitation : même bloc, bouton **Révoquer**.
+   - *Nom ou note* : « Relecteur — Dr X » ; *Adresse e-mail* : celle du relecteur (**invitation personnelle** : seule cette adresse peut
+     l’utiliser) ; *Valable* : 30 jours ; case **« Envoyer par e-mail »** cochée → **Créer l’invitation**.
+   *Capture à voir : un encadré avec un code du genre `AWZ-7K3QM-4TXPD` et un lien. **Ils ne seront plus affichés** : copiez-les si l’e-mail
+   n’est pas parti.*
+3. Le relecteur ouvre le lien, voit « Invitation reconnue », crée son compte (et vérifie son adresse). Il voit en haut le bandeau
+   « Version bêta — le contenu religieux est tranché par le référent selon l’école mālikite, sources citées, en attente d’une seconde
+   lecture savante » (il peut le fermer). Pour **annuler** une invitation : bouton **Révoquer**.
 
-Autres cas : un **code partagé** pour une classe (laisser l’adresse vide, mettre « Inscriptions permises » à 20, durée 14 jours) ;
-la **liste d’attente** (les personnes sans code demandent une invitation depuis la page d’inscription ; vous les voyez dans
-« Liste d’attente » et cliquez **Accepter et inviter** ou **Refuser**).
+Autres cas : un **code partagé** pour une classe (laisser l’adresse vide, « Inscriptions permises » à 20, durée 14 jours) ; la **liste
+d’attente** (les personnes sans code demandent une invitation ; vous cliquez **Accepter et inviter** ou **Refuser**).
 
-**Les trois modes d’accès, en un clic** (bloc « Accès à la bêta » → « Mode d’accès »), effet en quelques secondes, sans rien
-redéployer :
+### Les trois modes d’accès, en un clic
+
+Bloc « Accès à la bêta » → « Mode d’accès » (effet en quelques secondes, sans rien redéployer) :
 
 | Mode | Ce que voient les visiteurs |
 |---|---|
@@ -240,45 +141,59 @@ redéployer :
 | **Sur invitation** | il faut un code d’invitation pour créer un compte ; sinon, demande d’invitation (liste d’attente) |
 | **Ouvert (avec plafond)** | inscription libre jusqu’au **plafond de comptes** que vous fixez (200 au départ) ; une fois atteint, les nouvelles personnes passent **toutes seules en liste d’attente** |
 
-**Retour arrière** : cliquez simplement sur le mode d’avant. Rien n’est perdu (comptes, invitations, liste d’attente). Pour ouvrir
-davantage de places, **relevez le plafond** (champ « Plafond d’inscriptions », bouton « Enregistrer le plafond ») : l’inscription
-libre rouvre aussitôt. À utiliser « Fermé » si vous découvrez un problème grave pendant la bêta.
+**Retour arrière** : cliquez sur le mode d’avant. Rien n’est perdu (comptes, invitations, liste d’attente). Pour ouvrir plus de places,
+**relevez le plafond** (« Enregistrer le plafond ») : l’inscription libre rouvre aussitôt.
 
-**Tableau de bord** (en haut du même bloc) : nombre de comptes sur le plafond, nouveaux comptes (24 h, 7 jours), adresses non
-vérifiées, demandes en attente, **coût estimé du jour**, plafonds par utilisateur, et des **alertes** en clair (« plafond presque
-atteint », « demandes en attente », « le coût du jour dépasse le seuil », « l’envoi d’e-mails n’est pas réglé »…).
+**Tableau de bord** (en haut du même bloc) : comptes sur le plafond, nouveaux comptes (24 h, 7 jours), adresses non vérifiées, demandes en
+attente, **coût estimé du jour**, plafonds par utilisateur et **alertes** en clair.
 
-**Protections** (deux interrupteurs dans le même bloc) :
-- **Adresse e-mail à vérifier avant d’utiliser le compte** : la personne reçoit un lien ; tant qu’elle ne l’a pas ouvert, elle voit
-  une page « Vérifiez votre adresse e-mail » (renvoi du lien possible). Ne fonctionne que si le service d’e-mail (étape 7) est branché.
-- **Protection anti-robots de l’inscription** : sans service extérieur ni cookie (un jeton invisible, un délai de 3 secondes, un
-  champ piège). Si des robots passent malgré tout, deux options sont prêtes à étudier avec vous, **sans rien créer à votre place** :
-  ALTCHA (auto-hébergé, respecte la vie privée) ou Cloudflare Turnstile (plus efficace, mais service tiers : un compte à créer par vous).
+**Protections** : *adresse e-mail à vérifier avant d’utiliser le compte* (si le service d’e-mail est branché) et *protection anti-robots de
+l’inscription* (sans service extérieur : jeton invisible, délai de 3 secondes, champ piège). Si des robots passent malgré tout, deux options sont
+prêtes à étudier avec vous, **sans rien créer à votre place** : ALTCHA (auto-hébergé, respecte la vie privée) ou Cloudflare Turnstile (plus
+efficace, service tiers, un compte à créer par vous).
 
-**Plafonds par utilisateur** (tout ce qui coûte a une limite par personne) : tuteur IA (1 $ par mois pour un enfant, 3 $ pour un
-adolescent ou adulte, ensuite il répond sans modèle), écoute IA de la récitation (60 par heure), stockage des récitations
-(30 Mo par élève), avis et signalements (5 par jour). La synthèse vocale est préparée à l’avance : aucun coût par utilisateur.
-
-**Ce que je fais** : je vérifie avec vous que l’invitation arrive, que l’inscription marche une seule fois avec ce code, que
-la révocation et la fermeture fonctionnent.
+**Plafonds par utilisateur** (tout ce qui coûte a une limite par personne) : tuteur IA (1 $ par mois pour un enfant, 3 $ pour un adolescent
+ou adulte), écoute IA (60 par heure), stockage des récitations (30 Mo par élève), avis et signalements (5 par jour). La synthèse vocale est
+préparée à l’avance : aucun coût par utilisateur.
 
 ---
+
+## Le coût (estimation à vérifier avec le calculateur de Google)
+
+Prix approximatifs **par mois**, Paris, euros, hors taxes (estimation du 13/10/2026) :
+
+| Poste | Réglage actuel | Coût mensuel estimé |
+|---|---|---|
+| Machine virtuelle | `e2-standard-2` (2 vCPU, 8 Go) | 55 à 65 € |
+| Disque | 50 Go équilibré | 6 à 7 € |
+| Adresse IP fixe | 1 | 3 à 4 € |
+| Sauvegardes (bucket, 30 jours) | quelques Go | moins de 1 € |
+| Trafic sortant | quelques invités | 0 à 2 € |
+| **Total** | | **environ 65 à 80 €** |
+| Domaine `awzid.com` | une fois par an | déjà payé |
+
+À savoir, franchement :
+- **L’alerte à 10 € sonne déjà**, et le crédit de ≈ 264 € (expire début janvier 2027, soit ≈ 2,5 mois) couvre environ 180 à 200 € de dépenses :
+  après le 02/01/2027, c’est votre carte qui paie. Une machine plus petite (`e2-medium`, ≈ 30 €) est possible **sans l’écoute IA de la récitation**
+  (elle demande ≈ 3 Go de mémoire).
+- **Plafond (disjoncteur)** : `infra/gcp/plafond-budget.sh` (mode à blanc ; je ne l’exécute qu’avec votre accord) ajoute un plafond de
+  45 € qui **arrête la machine** (sans rien supprimer) quand le coût réel du mois l’atteint ; Google met les coûts à jour avec quelques heures
+  de retard : c’est un filet de sécurité, pas un arrêt à l’euro près. **À décider** : le montant du plafond, vu le coût normal ci-dessus.
 
 ## Ce qui peut mal tourner (et quoi faire)
 
 | Situation | Que faire |
 |---|---|
-| Un e-mail d’alerte arrive | Ne rien faire tout de suite : écrivez-moi l’objet du message. |
-| `beta.awzid.com` ne répond pas | Ouvrez `/etat` ; sinon dites-le moi. Console Google → Compute Engine : la machine est-elle « arrêtée » (plafond atteint) ? |
-| La machine a été arrêtée par le plafond | Regardez la facture (Facturation → Rapports). Si c’est normal, dites-le moi : je relance la machine (`gcloud compute instances start`). |
-| Vous avez perdu la clé de sauvegarde | Dites-le **tout de suite** : une nouvelle paire est créée et la prochaine sauvegarde est lisible ; les anciennes sont perdues. |
-| Un invité a envoyé son code à quelqu’un d’autre | Révoquez l’invitation (bouton) : les personnes déjà inscrites restent. |
-| Vous voulez tout arrêter d’un coup | **Fermer le site** (bouton). Pour arrêter aussi les frais : Google Cloud → Compute Engine → **Arrêter** la machine (le disque coûte encore ≈ 8 €/mois). |
+| Un e-mail d’alerte arrive | Ne rien faire tout de suite : envoyez-moi l’objet du message. |
+| `app.awzid.com` ne répond pas | Ouvrez `/etat` ; sinon dites-le moi. Console Google → Compute Engine : la machine est-elle « arrêtée » (plafond atteint) ? |
+| La machine a été arrêtée par le plafond | Regardez la facture (Facturation → Rapports). Si c’est normal, dites-le moi : je relance la machine. |
+| Vous avez perdu la clé de sauvegarde | Dites-le **tout de suite** : une nouvelle paire est créée, la prochaine sauvegarde est lisible ; les anciennes sont perdues. |
+| Un invité a transmis son code | Révoquez l’invitation (bouton) : les personnes déjà inscrites restent. |
+| Vous voulez tout arrêter d’un coup | Mode **Fermé** (bouton), ou `ouvrir-web.sh --fermer`. Pour arrêter aussi les frais : arrêter la machine dans la console (le disque coûte encore ≈ 7 €/mois). |
 
 ## Décisions que j’attends de vous
 
-1. `beta.awzid.com` convient-il comme adresse de la bêta ? (la vitrine `awzid.com` viendra plus tard)
-2. `e2-small` ou `e2-medium` ? Plafond à 45 € ? Alerte à 10 € laissée telle quelle ?
-3. Audio du Coran : récitateurs en ligne seulement (60 Go) ou copie complète (100 à 150 Go) ?
-4. Qui reçoit les e-mails d’alerte ?
-5. Quel service d’e-mail (Brevo, Scaleway TEM, Postmark) ?
+1. Taille de la machine (garder `e2-standard-2` avec l’écoute IA, ou réduire) et **montant du plafond** de dépense.
+2. Quel service d’e-mail (Brevo, Scaleway TEM, Postmark) et quelle adresse reçoit les alertes.
+3. Accord pour la voix Wavenet (après mon estimation chiffrée) et l’import de l’audio du Coran.
+4. Le jour où vous me dites « ouvre ».
