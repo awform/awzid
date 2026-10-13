@@ -1,0 +1,1555 @@
+{
+    "oeuvre": "al-Juwaynī, al-Waraqāt fī uṣūl al-fiqh",
+    "langue": "fr",
+    "traduction": "Traduction Awzid, faite depuis l'arabe (texte_ar.json, base : matn cité par Maḥallī, Ḥalabī 1342 H), projet non relu",
+    "mention_publique": "INTERDITE avant relecture : la mention « Traduction Awzid, relue par … » n'apparaît qu'après la relecture savante",
+    "statut_global": "EN_ATTENTE_SECONDE_LECTURE",
+    "ordre_de_travail": "dans l'ordre du texte (une seule passe, de l'introduction à l'ijtihād)",
+    "conventions": [
+        "Traduction proche du texte ; tout ajout de sens est entre crochets [ ]. Les définitions suivent le lexique_usul.json de ce madjlis ; le lexique commun (lexique_fiqh_commun.json) n'est pas modifié.",
+        "Aucune traduction existante n'a été ouverte (ni Dimyāṭī/Maḥallī en français, ni Karimi, ni Zaytuna).",
+        "Passages ambigus : rendus d'après Maḥallī (Ḥalabī 1342 H) et Ḥaṭṭāb, pages citées dans journal_traduction.md.",
+        "Les écarts du mashhūr mālikite ne sont jamais corrigés dans la traduction : ils figurent dans la note obligatoire (champ « note_ecart_malikite_fr »).",
+        "Versets : le texte arabe est celui de Tanzil ; le sens français est celui de la traduction de référence de l'application (Rachid Maach, QuranEnc, french_rashid v1.0.3), jamais une traduction de Claude.",
+        "« Allah » pour الله ; formule de salutation du Prophète rendue par ﷺ."
+    ],
+    "phrases": [
+        {
+            "id": "WRQ-0001",
+            "fr": "Au nom d'Allah, le Tout Miséricordieux, le Très Miséricordieux.",
+            "partie": "Introduction",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0002",
+            "fr": "Ensuite : voici de petites feuilles [{ar:0}] qui contiennent la connaissance de chapitres des fondements du fiqh. Cela [l'expression « fondements du fiqh »] se compose de deux éléments pris isolément.",
+            "partie": "Introduction",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Ensuite : voici de petites feuilles [waraqāt] qui contiennent la connaissance de chapitres des fondements du fiqh. Cela [l'expression « fondements du fiqh »] se compose de deux éléments pris isolément.",
+            "mots_ar": [
+                "وَرَقَاتٌ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0003",
+            "fr": "Le fondement [{ar:0}] : ce sur quoi autre chose est bâti.",
+            "partie": "Introduction",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le fondement [aṣl] : ce sur quoi autre chose est bâti.",
+            "mots_ar": [
+                "الْأَصْلُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0004",
+            "fr": "La branche [{ar:0}] : ce qui est bâti sur autre chose.",
+            "partie": "Introduction",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "La branche [farʿ] : ce qui est bâti sur autre chose.",
+            "mots_ar": [
+                "الْفَرْعُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0005",
+            "fr": "Le fiqh : la connaissance des statuts légaux dont la voie est l'effort de déduction [{ar:0}].",
+            "partie": "Introduction",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "ecart_malikite": "E-12",
+            "note_ecart_malikite_fr": "Écart de terminologie établi sur Khalīl, ad-Dardīr et ad-Dusūqī (vol. 1 p. 317 de l'édition Dār al-Fikr) : le witr est « sunna appuyée, la plus appuyée des sunan » (puis les deux fêtes, l'éclipse, la demande de pluie). Ne pas écrire « recommandé » seul pour le witr dans le livre mālikite.",
+            "fr_translit_interne": "Le fiqh : la connaissance des statuts légaux dont la voie est l'effort de déduction [ijtihād].",
+            "mots_ar": [
+                "الِاجْتِهَادُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0006",
+            "fr": "Les statuts sont sept : l'obligatoire, le recommandé, le permis, l'interdit, le déconseillé, le valide et le nul.",
+            "partie": "Les statuts",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "ecart_malikite": "E-16",
+            "note_ecart_malikite_fr": "Précision d'enseignement : le texte compte sept ; les livres mālikites comptent cinq statuts et traitent le valide et le nul à part (Ḥaṭṭāb, p. 60). Pas de désaccord de fond."
+        },
+        {
+            "id": "WRQ-0007",
+            "fr": "L'obligatoire : ce pour quoi l'on est récompensé si on l'accomplit et puni si on l'abandonne.",
+            "partie": "Les statuts",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0008",
+            "fr": "Le recommandé : ce pour quoi l'on est récompensé si on l'accomplit, sans être puni si on l'abandonne.",
+            "partie": "Les statuts",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0009",
+            "fr": "Le permis : ce pour quoi l'on n'est pas récompensé si on l'accomplit, ni puni si on l'abandonne.",
+            "partie": "Les statuts",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0010",
+            "fr": "L'interdit : ce pour quoi l'on est récompensé si on l'abandonne et puni si on l'accomplit.",
+            "partie": "Les statuts",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0011",
+            "fr": "Le déconseillé : ce pour quoi l'on est récompensé si on l'abandonne, sans être puni si on l'accomplit.",
+            "partie": "Les statuts",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0012",
+            "fr": "Le valide : ce à quoi se rattache l'effet [{ar:0}] et que l'on prend en compte [{ar:1}].",
+            "partie": "Les statuts",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le valide : ce à quoi se rattache l'effet [nufūdh] et que l'on prend en compte [iʿtidād].",
+            "mots_ar": [
+                "النُّفُوذُ",
+                "اعْتِدَاد"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0013",
+            "fr": "Le nul : ce à quoi ne se rattache pas l'effet et que l'on ne prend pas en compte.",
+            "partie": "Les statuts",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0014",
+            "fr": "Le fiqh est plus particulier que le savoir [{ar:0}].",
+            "partie": "Savoir, présomption, doute",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le fiqh est plus particulier que le savoir [ʿilm].",
+            "mots_ar": [
+                "الْعِلْمِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0015",
+            "fr": "Le savoir [{ar:0}] : la connaissance de l'objet connu tel qu'il est en réalité.",
+            "partie": "Savoir, présomption, doute",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le savoir [ʿilm] : la connaissance de l'objet connu tel qu'il est en réalité.",
+            "mots_ar": [
+                "الْعِلْمُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0016",
+            "fr": "L'ignorance [jahl] : se représenter une chose autrement qu'elle n'est en réalité.",
+            "partie": "Savoir, présomption, doute",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0017",
+            "fr": "Le savoir nécessaire : ce qui ne se produit pas par examen ni par recherche de preuve.",
+            "partie": "Savoir, présomption, doute",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0018",
+            "fr": "Quant au savoir acquis : c'est ce qui dépend de l'examen et de la recherche de preuve.",
+            "partie": "Savoir, présomption, doute",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0019",
+            "fr": "L'examen [{ar:0}] : c'est la réflexion sur l'état de ce qui est examiné.",
+            "partie": "Savoir, présomption, doute",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "L'examen [naẓar] : c'est la réflexion sur l'état de ce qui est examiné.",
+            "mots_ar": [
+                "النَّظَرُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0020",
+            "fr": "La recherche de preuve [{ar:0}] : la recherche d'une preuve.",
+            "partie": "Savoir, présomption, doute",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "La recherche de preuve [istidlāl] : la recherche d'une preuve.",
+            "mots_ar": [
+                "الِاسْتِدْلَالُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0021",
+            "fr": "La preuve [{ar:0}] : c'est ce qui guide vers l'objet recherché.",
+            "partie": "Savoir, présomption, doute",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "La preuve [dalīl] : c'est ce qui guide vers l'objet recherché.",
+            "mots_ar": [
+                "الدَّلِيلُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0022",
+            "fr": "La présomption [{ar:0}] : admettre deux possibilités dont l'une est plus manifeste que l'autre.",
+            "partie": "Savoir, présomption, doute",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "La présomption [ẓann] : admettre deux possibilités dont l'une est plus manifeste que l'autre.",
+            "mots_ar": [
+                "الظَّنُّ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0023",
+            "fr": "Le doute [shakk] : admettre deux possibilités sans qu'aucune ait de supériorité sur l'autre.",
+            "partie": "Savoir, présomption, doute",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0024",
+            "fr": "Les fondements du fiqh : ses voies, prises globalement, et la manière d'en tirer des preuves.",
+            "partie": "Les fondements et leurs chapitres",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0025",
+            "fr": "Les chapitres des fondements du fiqh : les parties du discours, l'ordre, la prohibition, le général et le particulier, l'énoncé global et l'éclairci, l'apparent et l'interprété, les actes, l'abrogeant et l'abrogé, le consensus, les rapports, l'analogie, l'interdiction et la permission [de principe], l'ordre de priorité des preuves, la qualité du mufti et de celui qui demande une fatwa, et les règles des mujtahids.",
+            "partie": "Les fondements et leurs chapitres",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0026",
+            "fr": "Le moins dont se compose le discours : deux noms, ou un nom et un verbe, ou un verbe et une particule, ou un nom et une particule.",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0027",
+            "fr": "Le discours se divise en : ordre et prohibition, rapport et demande d'information.",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0028",
+            "fr": "Il se divise aussi en : souhait, offre [{ar:0}] et serment.",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Il se divise aussi en : souhait, offre [ʿarḍ] et serment.",
+            "mots_ar": [
+                "عَرْضٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0029",
+            "fr": "Et sous un autre angle, il se divise en : sens propre [{ar:0}] et sens figuré [{ar:1}].",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Et sous un autre angle, il se divise en : sens propre [ḥaqīqa] et sens figuré [majāz].",
+            "mots_ar": [
+                "حَقِيقَةٍ",
+                "مَجَازٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0030",
+            "fr": "Le sens propre : ce qui est resté, dans l'emploi, sur ce pour quoi le mot a été posé. On a dit aussi : ce qui est employé dans ce qui a été convenu dans la conversation [{ar:0}].",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le sens propre : ce qui est resté, dans l'emploi, sur ce pour quoi le mot a été posé. On a dit aussi : ce qui est employé dans ce qui a été convenu dans la conversation [mukhāṭaba].",
+            "mots_ar": [
+                "الْمُخَاطَبَةِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0031",
+            "fr": "Le sens figuré : ce par quoi l'on est allé au-delà de ce pour quoi le mot a été posé.",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0032",
+            "fr": "Le sens propre est : linguistique, ou légal, ou d'usage.",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0033",
+            "fr": "Le sens figuré se fait : par ajout, ou par retrait, ou par transfert, ou par métaphore [{ar:0}].",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le sens figuré se fait : par ajout, ou par retrait, ou par transfert, ou par métaphore [istiʿāra].",
+            "mots_ar": [
+                "اسْتِعَارَةٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0034",
+            "fr": "Le sens figuré par ajout : par exemple la parole du Très-Haut : ﴿ … ﴾ [sens du verset entier : voir « sens_verset »] [la particule « comme » est ajoutée pour insister].",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "brouillon_non_publiable": "Le sens figuré par ajout : par exemple la parole du Très-Haut : ﴿ Rien n'est comme [le] semblable de Lui ﴾ [la particule « comme » est ajoutée pour insister].",
+            "sens_verset": "42:11 : sens du verset entier repris par script de la traduction de référence de l'application (Rachid Maach, QuranEnc, french_rashid, version 1.0.3), jamais retapé ; affiché sous la citation (« Sens du verset entier : »)",
+            "sens_verset_texte": [
+                {
+                    "verset": "42:11",
+                    "texte": "Créateur des cieux et de la terre, Il vous a donné des épouses de votre espèce et a mis à votre disposition des bestiaux, mâles et femelles. C’est ainsi qu’Il vous multiplie. Rien ne Lui est comparable, et Il entend tout et voit tout.",
+                    "notes": ""
+                }
+            ],
+            "note_versets": "Aucune traduction personnelle des versets (décision du référent, 13/10). L'ancien brouillon est conservé dans « brouillon_non_publiable » et n'est jamais affiché."
+        },
+        {
+            "id": "WRQ-0035",
+            "fr": "Le sens figuré par retrait : par exemple la parole du Très-Haut : ﴿ … ﴾ [sens du verset entier : voir « sens_verset »] [c'est-à-dire : ses habitants].",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "brouillon_non_publiable": "Le sens figuré par retrait : par exemple la parole du Très-Haut : ﴿ Et interroge la cité ﴾ [c'est-à-dire : ses habitants].",
+            "sens_verset": "12:82 : sens du verset entier repris par script de la traduction de référence de l'application (Rachid Maach, QuranEnc, french_rashid, version 1.0.3), jamais retapé ; affiché sous la citation (« Sens du verset entier : »)",
+            "sens_verset_texte": [
+                {
+                    "verset": "12:82",
+                    "texte": "Tu peux interroger les habitants de la cité où nous avons séjourné et la caravane dans laquelle nous sommes arrivés. Nous disons la vérité. »",
+                    "notes": ""
+                }
+            ],
+            "note_versets": "Aucune traduction personnelle des versets (décision du référent, 13/10). L'ancien brouillon est conservé dans « brouillon_non_publiable » et n'est jamais affiché."
+        },
+        {
+            "id": "WRQ-0036",
+            "fr": "Le sens figuré par transfert : comme « {ar:0} » pour ce qui sort de l'être humain.",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le sens figuré par transfert : comme « ghāʾiṭ » pour ce qui sort de l'être humain.",
+            "mots_ar": [
+                "الْغَائِطِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0037",
+            "fr": "Le sens figuré par métaphore : comme la parole du Très-Haut : ﴿ … ﴾ [sens du verset entier : voir « sens_verset »] [on lui prête une volonté, qui est propre au vivant].",
+            "partie": "Le discours",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "brouillon_non_publiable": "Le sens figuré par métaphore : comme la parole du Très-Haut : ﴿ un mur qui voulait s'écrouler ﴾ [on lui prête une volonté, qui est propre au vivant].",
+            "sens_verset": "18:77 : sens du verset entier repris par script de la traduction de référence de l'application (Rachid Maach, QuranEnc, french_rashid, version 1.0.3), jamais retapé ; affiché sous la citation (« Sens du verset entier : »)",
+            "sens_verset_texte": [
+                {
+                    "verset": "18:77",
+                    "texte": "Poursuivant leur route, Moïse et son compagnon arrivèrent dans une cité dont les habitants, auxquels les deux hommes réclamèrent à manger, leur refusèrent l’hospitalité. Là, ils trouvèrent un mur sur le point de s’écrouler que l’homme décida de redresser. Moïse lui fit remarquer : « Tu pourrais, si tu le voulais, réclamer un salaire pour ce travail. »",
+                    "notes": ""
+                }
+            ],
+            "note_versets": "Aucune traduction personnelle des versets (décision du référent, 13/10). L'ancien brouillon est conservé dans « brouillon_non_publiable » et n'est jamais affiché."
+        },
+        {
+            "id": "WRQ-0038",
+            "fr": "L'ordre [amr] : la demande d'un acte, par la parole, de la part de quelqu'un envers son inférieur, de manière obligatoire.",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0039",
+            "fr": "La forme qui l'indique est : « fais ! » [{ar:0}]. Lorsqu'elle est absolue, c'est-à-dire sans indice, elle se comprend comme obligation, sauf si une preuve montre que l'on vise la recommandation ou la permission : on la comprend alors ainsi.",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "La forme qui l'indique est : « fais ! » [ifʿal]. Lorsqu'elle est absolue, c'est-à-dire sans indice, elle se comprend comme obligation, sauf si une preuve montre que l'on vise la recommandation ou la permission : on la comprend alors ainsi.",
+            "mots_ar": [
+                "افْعَلْ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0040",
+            "fr": "Il [l'ordre] n'implique pas la répétition, selon l'avis correct, sauf si une preuve montre que la répétition est visée.",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0041",
+            "fr": "Il n'implique pas l'exécution immédiate.",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0042",
+            "fr": "L'ordre de réaliser un acte est un ordre de cet acte et de ce sans quoi l'acte ne peut s'accomplir ; ainsi l'ordre de prier est un ordre de se purifier, ce qui y conduit.",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0043",
+            "fr": "Et lorsque l'acte est accompli, celui qui avait reçu l'ordre est quitte de son engagement.",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0044",
+            "fr": "Entrent dans l'adresse d'Allah, le Très-Haut, les croyants ; l'étourdi, l'enfant et le dément n'entrent pas dans l'adresse.",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0045",
+            "fr": "Les mécréants [{ar:0}] sont concernés par les branches des lois révélées, et par ce sans quoi elles ne sont pas valides, à savoir l'islam, d'après la parole du Très-Haut : ﴿ … ﴾ [sens du verset entier : voir « sens_verset »] ﴿ … ﴾.",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "relecture_comite": true,
+            "niveau_min": "adulte",
+            "brouillon_non_publiable": "Les mécréants [kuffār] sont concernés par les branches des lois révélées, et par ce sans quoi elles ne sont pas valides, à savoir l'islam, d'après la parole du Très-Haut : ﴿ Qu'est-ce qui vous a menés en Saqar ? ﴾ ﴿ Ils diront : Nous n'étions pas de ceux qui priaient ﴾.",
+            "sens_verset": "74:42 ; 74:43 : sens du verset entier repris par script de la traduction de référence de l'application (Rachid Maach, QuranEnc, french_rashid, version 1.0.3), jamais retapé ; affiché sous la citation (« Sens du verset entier : »)",
+            "sens_verset_texte": [
+                {
+                    "verset": "74:42",
+                    "texte": "« Pour quelle raison êtes-vous entrés en Enfer ? »",
+                    "notes": ""
+                },
+                {
+                    "verset": "74:43",
+                    "texte": "Ils répondront : « Nous n’étions pas de ceux qui accomplissent la prière,",
+                    "notes": ""
+                }
+            ],
+            "note_versets": "Aucune traduction personnelle des versets (décision du référent, 13/10). L'ancien brouillon est conservé dans « brouillon_non_publiable » et n'est jamais affiché.",
+            "note_contexte_fr": "Contexte : il s'agit d'une question technique d'uṣūl : les lois détaillées (prière, jeûne, etc.) s'adressent-elles aussi à ceux qui n'ont pas la foi ? Maḥallī (p. 10) explique que l'adresse leur est faite pour qu'ils en soient comptables ; al-Ḥaṭṭāb (p. 85) précise : « selon l'avis juste » pour les branches, et « par l'islam, d'un commun accord » pour ce sans quoi elles ne sont pas valides. Le verset cité est reproduit avec le sens de la traduction de référence de l'application. Passage descriptif d'une doctrine d'école, sans application à des personnes ou à des communautés d'aujourd'hui.",
+            "fr_translit_interne": "Les mécréants [kuffār] sont concernés par les branches des lois révélées, et par ce sans quoi elles ne sont pas valides, à savoir l'islam, d'après la parole du Très-Haut : ﴿ … ﴾ [sens du verset entier : voir « sens_verset »] ﴿ … ﴾.",
+            "mots_ar": [
+                "الْكُفَّارُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0046",
+            "fr": "L'ordre d'une chose est prohibition de son contraire, et la prohibition d'une chose est ordre de son contraire.",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0047",
+            "fr": "La prohibition [nahy] : la demande d'abandon d'un acte, par la parole, de la part de quelqu'un envers son inférieur, de manière obligatoire.",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0048",
+            "fr": "La prohibition absolue indique, au regard de la Loi, l'invalidité [{ar:0}] de ce qui est prohibé.",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "ecart_malikite": "E-06",
+            "note_ecart_malikite_fr": "Accord : « l'avis le plus sûr chez les mālikites et les shāfiʿites » (Ḥaṭṭāb, p. 88). La phrase manque dans certains témoins du texte (V-06).",
+            "fr_translit_interne": "La prohibition absolue indique, au regard de la Loi, l'invalidité [fasād] de ce qui est prohibé.",
+            "mots_ar": [
+                "فَسَادِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0049",
+            "fr": "La forme de l'ordre se rencontre alors que l'on vise par elle la permission, ou la menace, ou l'égalisation, ou la création [« sois ! »].",
+            "partie": "L'ordre et la prohibition",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0050",
+            "fr": "Quant au général : c'est ce qui englobe deux choses ou davantage, comme tu dis : « j'ai comblé Zayd et Amr de dons », « j'ai comblé tous les gens de dons ».",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Quant au général : c'est ce qui englobe deux choses ou davantage, comme tu dis : « j'ai comblé Zayd et ʿAmr de dons », « j'ai comblé tous les gens de dons ».",
+            "mots_ar": [],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0051",
+            "fr": "Ses termes [ceux du général] sont quatre : le nom au singulier défini par « al » ;",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0052",
+            "fr": "le nom collectif défini par « al » ;",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0053",
+            "fr": "les noms indéterminés [{ar:0}], comme « {ar:1} » pour qui est doué de raison, « {ar:2} » pour ce qui n'en est pas doué, « {ar:3} » pour les deux, « {ar:4} » pour le lieu, « {ar:5} » pour le temps, « {ar:2} » dans l'interrogation, la condition et le reste ;",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "les noms indéterminés [mubhama], comme « man » pour qui est doué de raison, « mā » pour ce qui n'en est pas doué, « ayy » pour les deux, « ayna » pour le lieu, « matā » pour le temps, « mā » dans l'interrogation, la condition et le reste ;",
+            "mots_ar": [
+                "الْمُبْهَمَةُ",
+                "مَنْ",
+                "مَا",
+                "أَيٍّ",
+                "أَيْنَ",
+                "مَتَى"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0054",
+            "fr": "et « {ar:0} » devant les noms indéfinis.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "et « lā » devant les noms indéfinis.",
+            "mots_ar": [
+                "لَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0055",
+            "fr": "Le général est une des qualités de l'énoncé [{ar:0}] ; on ne peut prétendre à la généralité dans autre chose que lui, comme l'acte et ce qui en tient lieu.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le général est une des qualités de l'énoncé [nuṭq] ; on ne peut prétendre à la généralité dans autre chose que lui, comme l'acte et ce qui en tient lieu.",
+            "mots_ar": [
+                "النُّطْقِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0056",
+            "fr": "Le particulier [{ar:0}] s'oppose au général.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le particulier [khāṣṣ] s'oppose au général.",
+            "mots_ar": [
+                "الْخَاصُّ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0057",
+            "fr": "La spécification [{ar:0}] : la distinction d'une partie de l'ensemble ; elle se divise en liée et séparée.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "La spécification [takhṣīṣ] : la distinction d'une partie de l'ensemble ; elle se divise en liée et séparée.",
+            "mots_ar": [
+                "التَّخْصِيصُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0058",
+            "fr": "Le lié : l'exception, la condition et la restriction par un qualificatif.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0059",
+            "fr": "L'exception [{ar:0}] : sortir ce qui, sans elle, serait entré dans le discours.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "L'exception [istithnāʾ] : sortir ce qui, sans elle, serait entré dans le discours.",
+            "mots_ar": [
+                "الِاسْتِثْنَاءُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0060",
+            "fr": "L'exception n'est valable que si quelque chose reste de ce dont on excepte, et il est de sa condition qu'elle soit liée au discours.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0061",
+            "fr": "On peut placer l'excepté avant ce dont on excepte, et l'exception est permise à partir du même genre et d'un autre genre.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0062",
+            "fr": "La condition peut précéder ce qu'elle conditionne.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0063",
+            "fr": "Ce qui est restreint par un qualificatif : on y rapporte ce qui est absolu, comme l'esclave à affranchir [raqaba], restreint par la foi à certains endroits ; on rapporte alors l'absolu au restreint.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0064",
+            "fr": "On peut spécifier le Livre par le Livre, le Livre par la Sunna, la Sunna par le Livre, la Sunna par la Sunna, et l'énoncé par l'analogie.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0065",
+            "fr": "Et nous entendons par « énoncé » : la parole d'Allah, le Très-Haut, et la parole du Messager ﷺ.",
+            "partie": "Le général et le particulier",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0066",
+            "fr": "L'énoncé global [mujmal] : ce qui a besoin d'éclaircissement.",
+            "partie": "L'énoncé global, l'éclairci, l'apparent",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0067",
+            "fr": "L'éclaircissement [{ar:0}] : faire sortir une chose de la sphère de l'obscurité vers la sphère de l'éclat.",
+            "partie": "L'énoncé global, l'éclairci, l'apparent",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "L'éclaircissement [bayān] : faire sortir une chose de la sphère de l'obscurité vers la sphère de l'éclat.",
+            "mots_ar": [
+                "الْبَيَانُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0068",
+            "fr": "Le texte explicite [{ar:0}] : ce qui ne comporte qu'un seul sens. On a dit aussi : ce dont l'interprétation est la révélation même. Il dérive de « {ar:1} » de l'épousée, c'est-à-dire le siège.",
+            "partie": "L'énoncé global, l'éclairci, l'apparent",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le texte explicite [naṣṣ] : ce qui ne comporte qu'un seul sens. On a dit aussi : ce dont l'interprétation est la révélation même. Il dérive de « minaṣṣa » de l'épousée, c'est-à-dire le siège.",
+            "mots_ar": [
+                "النَّصُّ",
+                "مِنَصَّةِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0069",
+            "fr": "L'apparent [{ar:0}] : ce qui admet deux sens dont l'un est plus manifeste que l'autre.",
+            "partie": "L'énoncé global, l'éclairci, l'apparent",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "L'apparent [ẓāhir] : ce qui admet deux sens dont l'un est plus manifeste que l'autre.",
+            "mots_ar": [
+                "الظَّاهِرُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0070",
+            "fr": "L'apparent est interprété [{ar:0}] sur la base d'une preuve, et on le nomme alors « apparent par preuve ».",
+            "partie": "L'énoncé global, l'éclairci, l'apparent",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "L'apparent est interprété [yuʾawwal] sur la base d'une preuve, et on le nomme alors « apparent par preuve ».",
+            "mots_ar": [
+                "يُؤَوَّلُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0071",
+            "fr": "L'acte du détenteur de la Loi [le Prophète ﷺ] : il ne manque pas d'être soit fait en tant que rapprochement [d'Allah] et obéissance, soit autre chose.",
+            "partie": "Les actes du Prophète",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "relecture_comite": true
+        },
+        {
+            "id": "WRQ-0072",
+            "fr": "Si une preuve montre qu'il s'agit d'une particularité du Prophète, on le comprend comme particularité ; si aucune preuve ne montre cette particularité, on ne la lui réserve pas,",
+            "partie": "Les actes du Prophète",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "relecture_comite": true
+        },
+        {
+            "id": "WRQ-0073",
+            "fr": "car Allah, le Très-Haut, a dit : ﴿ … ﴾ [sens du verset entier : voir « sens_verset »] ; on le comprend donc comme obligatoire selon certains de nos compagnons [chaféites],",
+            "partie": "Les actes du Prophète",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "ecart_malikite": "E-05",
+            "note_ecart_malikite_fr": "Accord avec la première opinion citée. Ḥaṭṭāb (p. 100) : Mālik et la plupart de ses compagnons la retiennent ; p. 101 : pour la manière de l'acte, certains mālikites disent « recommandé ».",
+            "relecture_comite": true,
+            "brouillon_non_publiable": "car Allah, le Très-Haut, a dit : ﴿ Vous avez dans le Messager d'Allah un beau modèle ﴾ ; on le comprend donc comme obligatoire selon certains de nos compagnons [shāfiʿites],",
+            "sens_verset": "33:21 : sens du verset entier repris par script de la traduction de référence de l'application (Rachid Maach, QuranEnc, french_rashid, version 1.0.3), jamais retapé ; affiché sous la citation (« Sens du verset entier : »)",
+            "sens_verset_texte": [
+                {
+                    "verset": "33:21",
+                    "texte": "Vous avez un bel exemple à suivre dans le Messager d’Allah, exemple édifiant pour quiconque espère la récompense d’Allah ici-bas et dans l’au-delà, et invoque fréquemment Son nom.",
+                    "notes": ""
+                }
+            ],
+            "note_versets": "Aucune traduction personnelle des versets (décision du référent, 13/10). L'ancien brouillon est conservé dans « brouillon_non_publiable » et n'est jamais affiché.",
+            "fr_translit_interne": "car Allah, le Très-Haut, a dit : ﴿ … ﴾ [sens du verset entier : voir « sens_verset »] ; on le comprend donc comme obligatoire selon certains de nos compagnons [shāfiʿites],",
+            "mots_ar": [],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0074",
+            "fr": "tandis que certains d'entre nous disent : on le comprend comme recommandé, et d'autres : on s'abstient de trancher à son sujet.",
+            "partie": "Les actes du Prophète",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "relecture_comite": true
+        },
+        {
+            "id": "WRQ-0075",
+            "fr": "S'il n'était pas fait en tant que rapprochement et obéissance, on le comprend comme permis.",
+            "partie": "Les actes du Prophète",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0076",
+            "fr": "L'approbation du détenteur de la Loi à l'égard d'une parole équivaut à la parole du détenteur de la Loi, et son approbation d'un acte équivaut à son acte.",
+            "partie": "Les actes du Prophète",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0077",
+            "fr": "Ce qui a été fait à son époque, hors de son assemblée, et dont il a eu connaissance sans le désapprouver, a le même statut que ce qui a été fait dans son assemblée.",
+            "partie": "Les actes du Prophète",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0078",
+            "fr": "Quant à l'abrogation [naskh] : son sens est l'ôtement ; on dit : « le soleil a abrogé l'ombre », s'il l'a ôtée. On a dit aussi : son sens est le transfert, de leur parole : « j'ai transcrit ce qui est dans le livre », si tu l'as reporté avec la forme de son écriture.",
+            "partie": "L'abrogation",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0079",
+            "fr": "Sa définition [légale] : le discours qui indique la levée d'un statut établi par un discours antérieur, d'une manière telle que, sans lui, [le statut] serait demeuré établi, avec un décalage dans le temps par rapport à lui.",
+            "partie": "L'abrogation",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0080",
+            "fr": "On peut abroger la lettre [rasm] en laissant subsister le statut, abroger le statut en laissant subsister la lettre, et abroger les deux ensemble.",
+            "partie": "L'abrogation",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "ecart_malikite": "E-13",
+            "note_ecart_malikite_fr": "Écart de fond sur l'exemple, établi sur Dusūqī (vol. 2 p. 503 : « elle interdit même si c'est une gorgée ») et Nashr al-bunūd (t. 1 p. 289 : les dix tétées sont abrogées « dans la lettre et dans le statut » chez Mālik, dans la lettre seulement chez ash-Shāfiʿī). Le livre d'enseignement mālikite ne doit pas retenir « cinq tétées » (renvoi au madjlis de la Risāla). Hadith : voir `hadiths_cites_dans_les_commentaires`."
+        },
+        {
+            "id": "WRQ-0081",
+            "fr": "L'abrogation se divise en : avec substitut, sans substitut, vers plus rigoureux, vers plus léger.",
+            "partie": "L'abrogation",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0082",
+            "fr": "On peut abroger le Livre par le Livre, la Sunna par le Livre, la Sunna par la Sunna.",
+            "partie": "L'abrogation",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0083",
+            "fr": "[Variante de certaines copies seulement :] On ne peut pas abroger le Livre par la Sunna.",
+            "partie": "L'abrogation",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "ecart_malikite": "E-11",
+            "note_ecart_malikite_fr": "Mashhūr mālikite établi (Nashr al-bunūd, t. 1 p. 290-291 de l'édition numérisée de turath.io, qui commente Marāqī as-suʿūd) : le Livre peut être abrogé par la Sunna mutawātira (avis du plus grand nombre, et al-Bājī puis al-Qarāfī dans Tanqīḥ al-fuṣūl le disent avoir eu lieu) ; par une Sunna isolée, c'est permis mais non advenu. La variante « on ne peut pas abroger le Livre par la Sunna » de certaines copies s'entend de la Sunna non mutawātira (Ḥaṭṭāb, Qurrat al-ʿayn, p. 108). Le texte est traduit tel qu'il est écrit ; cette note l'accompagne toujours."
+        },
+        {
+            "id": "WRQ-0084",
+            "fr": "On peut abroger le massivement transmis [{ar:0}] par le massivement transmis, et l'isolé [{ar:1}] par l'isolé et par le massivement transmis ; on ne peut pas abroger le massivement transmis par l'isolé.",
+            "partie": "L'abrogation",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "fr_translit_interne": "On peut abroger le massivement transmis [mutawātir] par le massivement transmis, et l'isolé [āḥād] par l'isolé et par le massivement transmis ; on ne peut pas abroger le massivement transmis par l'isolé.",
+            "mots_ar": [
+                "الْمُتَوَاتِرِ",
+                "الْآحَادِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0085",
+            "fr": "Lorsque deux énoncés se contredisent, il ne se peut qu'ils ne soient pas : soit tous deux généraux, soit tous deux particuliers, soit l'un général et l'autre particulier, soit chacun général sous un aspect et particulier sous un autre.",
+            "partie": "La contradiction des énoncés",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0086",
+            "fr": "S'ils sont tous deux généraux : s'il est possible de les concilier, on les concilie ; s'il n'est pas possible de les concilier, on suspend son jugement à leur sujet si l'on ne connaît pas leur date ; si l'on connaît la date, l'antérieur est abrogé par le postérieur.",
+            "partie": "La contradiction des énoncés",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0087",
+            "fr": "Il en va de même s'ils sont tous deux particuliers.",
+            "partie": "La contradiction des énoncés",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0088",
+            "fr": "Si l'un est général et l'autre particulier, le général est spécifié par le particulier.",
+            "partie": "La contradiction des énoncés",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0089",
+            "fr": "Si chacun est général sous un aspect et particulier sous un autre, la généralité de chacun est spécifiée par la particularité de l'autre.",
+            "partie": "La contradiction des énoncés",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "ecart_malikite": "E-07",
+            "note_ecart_malikite_fr": "Écart d'application, non de règle. Ad-Dusūqī (vol. 1 p. 48, sur Khalīl et ad-Dardīr) : chez nous, il n'y a pas de différence entre l'arrivée de l'eau pure sur l'impureté et celle de l'impureté sur l'eau, que l'eau soit peu ou très abondante ; « ash-Shāfiʿī diffère pour le second cas » : si l'impureté arrive sur une eau de moins de deux qulla, elle la rend impure par le simple contact. Ne pas enseigner l'exemple des deux qulla comme règle de pureté ; renvoyer au madjlis de la pureté. Hadiths : voir `hadiths_cites_dans_les_commentaires` de cette phrase."
+        },
+        {
+            "id": "WRQ-0090",
+            "fr": "Quant au consensus [{ar:0}] : c'est l'accord des savants d'une époque sur le statut d'un événement nouveau.",
+            "partie": "Le consensus",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "ecart_malikite": "E-04",
+            "note_ecart_malikite_fr": "Écart par omission, établi sur source mālikite (Nashr al-bunūd, t. 2 p. 89 de l'édition numérisée) : chez Mālik, le consensus des gens de Médine est une preuve dans ce qui ne laisse pas de place à l'opinion ; certains mālikites le tiennent pour preuve en tout. Le texte d'al-Juwaynī ne le mentionne pas.",
+            "fr_translit_interne": "Quant au consensus [ijmāʿ] : c'est l'accord des savants d'une époque sur le statut d'un événement nouveau.",
+            "mots_ar": [
+                "الْإِجْمَاعُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0091",
+            "fr": "Nous entendons par « savants » : les juristes [{ar:0}], et par « événement » : l'événement relevant de la Loi.",
+            "partie": "Le consensus",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Nous entendons par « savants » : les juristes [fuqahāʾ], et par « événement » : l'événement relevant de la Loi.",
+            "mots_ar": [
+                "الْفُقَهَاءَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0092",
+            "fr": "Le consensus de cette communauté est une preuve, à l'exclusion des autres, d'après sa parole ﷺ : « Ma communauté ne s'accordera pas sur un égarement. »",
+            "partie": "Le consensus",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true
+        },
+        {
+            "id": "WRQ-0093",
+            "fr": "La Loi est venue avec la préservation [de l'erreur] de cette communauté.",
+            "partie": "Le consensus",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0094",
+            "fr": "Le consensus est une preuve contre l'époque suivante, et à toute époque où il a eu lieu.",
+            "partie": "Le consensus",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0095",
+            "fr": "On ne pose pas comme condition de sa valeur probante l'extinction de la génération.",
+            "partie": "Le consensus",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "ecart_malikite": "E-01",
+            "note_ecart_malikite_fr": "Accord avec le mashhūr mālikite. Nashr al-Bunūd (t. 2, p. 87) donne le même avis et renvoie à al-Qarāfī, Tanqīḥ al-fuṣūl."
+        },
+        {
+            "id": "WRQ-0096",
+            "fr": "Si l'on dit que l'extinction de la génération est une condition, on tient compte de l'avis de celui qui est né de leur vivant, a étudié le fiqh et est devenu apte à l'effort de déduction [{ar:0}] ; et il leur est permis, selon cet avis, de revenir sur ce statut.",
+            "partie": "Le consensus",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Si l'on dit que l'extinction de la génération est une condition, on tient compte de l'avis de celui qui est né de leur vivant, a étudié le fiqh et est devenu apte à l'ijtihād ; et il leur est permis, selon cet avis, de revenir sur ce statut.",
+            "mots_ar": [
+                "الِاجْتِهَادِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0097",
+            "fr": "Le consensus est valable par leur parole et par leur acte, par la parole de certains et l'acte de certains, avec diffusion de cette parole ou de cet acte et silence des autres à son égard.",
+            "partie": "Le consensus",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "ecart_malikite": "E-14",
+            "note_ecart_malikite_fr": "Pas d'avis unique à présenter comme mashhūr. Marāqī as-suʿūd (cité et commenté par Nashr al-bunūd, t. 2 p. 100-101 de l'édition numérisée de turath.io) dit que le désaccord sur le silence est « renommé » ; Ḥulūlū rapporte qu'al-Bāqillānī, mālikite, tient le consensus tacite pour ni consensus ni preuve ; Nashr s'étonne qu'al-Qarāfī, dans Tanqīḥ al-fuṣūl, ne rapporte aucun des avis comme celui de l'école : le texte d'al-Qarāfī lu (Sharḥ Tanqīḥ al-fuṣūl, vol. 1 p. 330, turath.io livre 21813) donne quatre avis (ash-Shāfiʿī et ar-Rāzī : ni consensus ni preuve ; al-Jubbāʾī : consensus et preuve après l'extinction de la génération ; Abū Hāshim : pas consensus mais preuve ; Ibn Abī Hurayra : selon que le juge est ou non l'auteur du jugement) sans en attribuer aucun à l'école mālikite. À enseigner comme question controversée chez les mālikites, avec les conditions de l'accord par le silence (absence de signe de désapprobation, délai de réflexion, question d'application, avant la fixation des écoles)."
+        },
+        {
+            "id": "WRQ-0098",
+            "fr": "La parole d'un seul Compagnon n'est pas une preuve contre un autre, selon l'avis nouveau [de l'imam ash-Shafii].",
+            "partie": "Le consensus",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "ecart_malikite": "E-02",
+            "note_ecart_malikite_fr": "Écart établi sur source mālikite (Nashr al-bunūd, t. 2 p. 263-264 de l'édition numérisée) : le mashhūr rapporté de Mālik est que la parole du Compagnon est une preuve à l'égard des mujtahids non Compagnons ; il existe aussi un avis de refus et un avis intermédiaire (al-Bājī : preuve si l'on ne connaît pas de contradicteur). Le texte traduit suit l'avis nouveau d'ash-Shāfiʿī. Le hadith « Mes Compagnons sont comme les étoiles » invoqué dans cette discussion est jugé inventé (mawḍūʿ) par al-Albānī (Silsila aḍ-ḍaʿīfa n° 58) et faible par Maḥallī (p. 19) : ne pas l'enseigner comme preuve.",
+            "fr_translit_interne": "La parole d'un seul Compagnon n'est pas une preuve contre un autre, selon l'avis nouveau [de l'imam ash-Shāfiʿī].",
+            "mots_ar": [],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0099",
+            "fr": "Quant aux rapports : le rapport [khabar] est ce que peuvent atteindre la véracité et le mensonge.",
+            "partie": "Les rapports",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0100",
+            "fr": "Le rapport se divise en : isolé [{ar:0}] et massivement transmis [{ar:1}].",
+            "partie": "Les rapports",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le rapport se divise en : isolé [āḥād] et massivement transmis [mutawātir].",
+            "mots_ar": [
+                "آحَادٍ",
+                "مُتَوَاتِرٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0101",
+            "fr": "Le massivement transmis : ce qui impose la science certaine ; c'est que le rapportent un groupe dont on ne peut concevoir qu'il se soit concerté pour mentir, de la part de gens semblables à eux,",
+            "partie": "Les rapports",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0102",
+            "fr": "et ainsi de suite jusqu'à parvenir à celui dont on rapporte [le fait], de sorte qu'à l'origine il repose sur une observation ou une audition, et non sur une déduction.",
+            "partie": "Les rapports",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0103",
+            "fr": "L'isolé : celui qui impose l'action sans imposer la science certaine.",
+            "partie": "Les rapports",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0104",
+            "fr": "Il se divise en deux : mursal et musnad. Le musnad : ce dont la chaîne est continue ; le mursal : ce dont la chaîne n'est pas continue.",
+            "partie": "Les rapports",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0105",
+            "fr": "Si [le {ar:0}] est de ceux d'autres que les Compagnons, il n'est pas une preuve, sauf les {ar:1} de Saïd ibn al-Musayyab : car on les a examinés et on les a trouvés avec chaîne continue [{ar:2}].",
+            "partie": "Les rapports",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "ecart_malikite": "E-03",
+            "note_ecart_malikite_fr": "Écart établi sur source mālikite (Nashr al-bunūd, t. 2 p. 62 de l'édition numérisée) : le mursal est une preuve chez Mālik (et Abū Ḥanīfa ; al-Qāḍī ʿIyāḍ : « c'est le mashhūr chez eux »), parce que le narrateur intègre ne supprime l'intermédiaire que s'il est intègre à ses yeux ; ash-Shāfiʿī et al-Bāqillānī le refusent. Le texte traduit donne l'avis d'ash-Shāfiʿī.",
+            "fr_translit_interne": "Si [le mursal] est de ceux d'autres que les Compagnons, il n'est pas une preuve, sauf les mursal de Saʿīd b. al-Musayyab : car on les a examinés et on les a trouvés avec chaîne continue [musnad].",
+            "mots_ar": [
+                "مُرْسَل",
+                "مَرَاسِيلَ",
+                "مُسْنَد"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0106",
+            "fr": "Le « {ar:0} » [transmission par « d'après »] entre dans la chaîne de transmission.",
+            "partie": "Les rapports",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le « ʿanʿana » [transmission par « d'après »] entre dans la chaîne de transmission.",
+            "mots_ar": [
+                "الْعَنْعَنَةُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0107",
+            "fr": "Lorsque le maître lit [et que l'élève écoute], il est permis au rapporteur de dire : « il m'a rapporté » [{ar:0}] ou « il m'a informé » [{ar:1}].",
+            "partie": "Les rapports",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Lorsque le maître lit [et que l'élève écoute], il est permis au rapporteur de dire : « il m'a rapporté » [ḥaddathanī] ou « il m'a informé » [akhbaranī].",
+            "mots_ar": [
+                "حَدَّثَنِي",
+                "أَخْبَرَنِي"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0108",
+            "fr": "S'il lit lui-même devant le maître, il dit : « il m'a informé », et ne dit pas : « il m'a rapporté ».",
+            "partie": "Les rapports",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "ecart_malikite": "E-10",
+            "note_ecart_malikite_fr": "Écart de terminologie de transmission. Le texte des Waraqāt réserve « akhbaranī » à la lecture de l'élève et interdit « ḥaddathanī » (position shāfiʿite). Mālik, lui, tient la lecture sur le maître pour équivalente à l'audition et admet les deux termes (al-Qāḍī ʿIyāḍ, Ikmāl al-muʿlim, t. 1 p. 186). Le point n'est pas enseigné comme règle mālikite sans cette note."
+        },
+        {
+            "id": "WRQ-0109",
+            "fr": "Si le maître lui a donné licence [{ar:0}] sans lecture, le rapporteur dit : « il m'a donné licence » ou « il m'a informé par licence ».",
+            "partie": "Les rapports",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Si le maître lui a donné licence [ijāza] sans lecture, le rapporteur dit : « il m'a donné licence » ou « il m'a informé par licence ».",
+            "mots_ar": [
+                "إِجَازَةً"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0110",
+            "fr": "Quant à l'analogie [{ar:0}] : c'est le renvoi du cas à traiter [{ar:1}] au cas de référence [{ar:2}] par une cause [{ar:3}] qui les réunit dans le statut.",
+            "partie": "L'analogie",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Quant à l'analogie [qiyās] : c'est le renvoi du cas à traiter [farʿ] au cas de référence [aṣl] par une cause [ʿilla] qui les réunit dans le statut.",
+            "mots_ar": [
+                "الْقِيَاسُ",
+                "الْفَرْعِ",
+                "الْأَصْلِ",
+                "عِلَّةٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0111",
+            "fr": "Elle se divise en trois espèces : analogie de cause, analogie d'indication, analogie de ressemblance.",
+            "partie": "L'analogie",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0112",
+            "fr": "L'analogie de cause : celle où la cause entraîne nécessairement le statut.",
+            "partie": "L'analogie",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0113",
+            "fr": "L'analogie d'indication : c'est la déduction à partir de l'un de deux semblables vers l'autre ; la cause y indique le statut sans l'imposer.",
+            "partie": "L'analogie",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0114",
+            "fr": "L'analogie de ressemblance : c'est le cas qui hésite entre deux cas de référence, et que l'on rattache à celui dont il est le plus proche par la ressemblance.",
+            "partie": "L'analogie",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0115",
+            "fr": "Il est de la condition du cas à traiter qu'il soit approprié au cas de référence dans ce qui les réunit pour le statut.",
+            "partie": "L'analogie",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0116",
+            "fr": "Il est de la condition du cas de référence que son statut soit établi par une preuve admise par les deux adversaires.",
+            "partie": "L'analogie",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0117",
+            "fr": "Il est de la condition de la cause qu'elle soit constante dans ses effets, de sorte qu'elle ne soit pas mise en défaut ni dans la lettre ni dans le sens.",
+            "partie": "L'analogie",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0118",
+            "fr": "Il est de la condition du statut qu'il suive la cause, dans la négation comme dans l'affirmation.",
+            "partie": "L'analogie",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0119",
+            "fr": "La cause est ce qui attire le statut, et le statut est ce qui est attiré par la cause.",
+            "partie": "L'analogie",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0120",
+            "fr": "Quant à l'interdiction et à la permission [de principe] : parmi les gens, il y a qui dit : toutes choses sont [par principe] interdites, sauf ce que la Loi a permis ; s'il ne se trouve dans la Loi rien qui indique la permission, on s'en tient au principe, qui est l'interdiction.",
+            "partie": "Interdiction, permission, continuité, priorité des preuves",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "ecart_malikite": "E-17",
+            "note_ecart_malikite_fr": "Écart de présentation. Le texte rapporte deux avis ; Ḥaṭṭāb retient la distinction (p. 127) : le nuisible est interdit, l'utile est permis. Maḥallī (p. 22) retient la même distinction."
+        },
+        {
+            "id": "WRQ-0121",
+            "fr": "Et parmi les gens, il y a qui dit le contraire : le principe, pour toutes choses, est la permission, sauf ce que la Loi a interdit [{ar:0}].",
+            "partie": "Interdiction, permission, continuité, priorité des preuves",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "ecart_malikite": "E-17",
+            "note_ecart_malikite_fr": "Écart de présentation. Le texte rapporte deux avis ; Ḥaṭṭāb retient la distinction (p. 127) : le nuisible est interdit, l'utile est permis. Maḥallī (p. 22) retient la même distinction.",
+            "fr_translit_interne": "Et parmi les gens, il y a qui dit le contraire : le principe, pour toutes choses, est la permission, sauf ce que la Loi a interdit [ḥaẓara].",
+            "mots_ar": [
+                "حَظَرَهُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0122",
+            "fr": "Le sens de la continuité de l'état antérieur [{ar:0} {ar:1}] : que l'on maintienne l'état originel en l'absence de preuve légale.",
+            "partie": "Interdiction, permission, continuité, priorité des preuves",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "ecart_malikite": "E-08",
+            "note_ecart_malikite_fr": "Accord : preuve chez les mālikites et les shāfiʿites (Ḥaṭṭāb, p. 128).",
+            "fr_translit_interne": "Le sens de la continuité de l'état antérieur [istiṣḥāb al-ḥāl] : que l'on maintienne l'état originel en l'absence de preuve légale.",
+            "mots_ar": [
+                "اسْتِصْحَابِ",
+                "الْحَالِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève."
+        },
+        {
+            "id": "WRQ-0123",
+            "fr": "Quant aux preuves : on donne priorité à la plus évidente sur la plus cachée, à celle qui impose la science certaine sur celle qui impose la présomption, à l'énoncé sur l'analogie, et à l'analogie évidente sur l'analogie cachée.",
+            "partie": "Interdiction, permission, continuité, priorité des preuves",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0124",
+            "fr": "S'il se trouve dans l'énoncé ce qui modifie l'état originel [on le suit] ; sinon, on s'en tient à la continuité de l'état antérieur.",
+            "partie": "Interdiction, permission, continuité, priorité des preuves",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "WRQ-0125",
+            "fr": "Il est de la condition du mufti qu'il connaisse le fiqh, dans les fondements et dans les branches, dans les divergences et dans l'école.",
+            "partie": "Le mufti, le {ar:0}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "partie_translit_interne": "Le mufti, le taqlīd",
+            "partie_mots_ar": [
+                "التَّقْلِيدُ"
+            ]
+        },
+        {
+            "id": "WRQ-0126",
+            "fr": "Et qu'il ait tous les outils de l'effort de déduction [{ar:0}], connaissant ce dont il a besoin pour déduire les statuts : la grammaire et la langue, la connaissance des transmetteurs, l'explication des versets portant sur les statuts et des rapports qui s'y rapportent.",
+            "partie": "Le mufti, le {ar:0}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Et qu'il ait tous les outils de l'ijtihād, connaissant ce dont il a besoin pour déduire les statuts : la grammaire et la langue, la connaissance des transmetteurs, l'explication des versets portant sur les statuts et des rapports qui s'y rapportent.",
+            "mots_ar": [
+                "الِاجْتِهَادِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
+            "partie_translit_interne": "Le mufti, le taqlīd",
+            "partie_mots_ar": [
+                "التَّقْلِيدُ"
+            ]
+        },
+        {
+            "id": "WRQ-0127",
+            "fr": "Il est de la condition de celui qui demande une fatwa qu'il soit de ceux qui suivent un avis [{ar:0}] ; il suit donc le mufti dans la fatwa.",
+            "partie": "Le mufti, le {ar:0}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Il est de la condition de celui qui demande une fatwa qu'il soit de ceux qui suivent un avis [taqlīd] ; il suit donc le mufti dans la fatwa.",
+            "mots_ar": [
+                "التَّقْلِيدِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
+            "partie_translit_interne": "Le mufti, le taqlīd",
+            "partie_mots_ar": [
+                "التَّقْلِيدُ"
+            ]
+        },
+        {
+            "id": "WRQ-0128",
+            "fr": "Et il n'est pas permis au savant [mujtahid] de suivre l'avis d'un autre.",
+            "partie": "Le mufti, le {ar:0}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "partie_translit_interne": "Le mufti, le taqlīd",
+            "partie_mots_ar": [
+                "التَّقْلِيدُ"
+            ]
+        },
+        {
+            "id": "WRQ-0129",
+            "fr": "Le {ar:0} : accepter la parole de celui qui parle sans [produire de] preuve. Selon cela, accepter la parole du Prophète ﷺ s'appelle {ar:1}.",
+            "partie": "Le mufti, le {ar:0}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "relecture_comite": true,
+            "niveau_min": "adulte",
+            "note_contexte_fr": "Contexte : ici « taqlīd » est un terme technique d'uṣūl : accepter une parole sans en connaître la preuve. Maḥallī (p. 23) rapporte le texte tel quel : accepter la parole du Prophète ﷺ « s'appelle taqlīd » ; al-Ḥaṭṭāb (p. 132) lit « ne s'appelle pas taqlīd » et en donne la raison : « il est obligatoire de prendre sa parole dans les statuts qu'il énonce, même si la preuve de ce statut n'est pas mentionnée ». Les phrases suivantes (0131 et 0132) distinguent selon que le Prophète ﷺ faisait ijtihād ou parlait par révélation. Il s'agit d'une question de vocabulaire technique, non d'une atteinte à l'autorité de la parole prophétique. Ne jamais afficher sans cette note.",
+            "fr_translit_interne": "Le taqlīd : accepter la parole de celui qui parle sans [produire de] preuve. Selon cela, accepter la parole du Prophète ﷺ s'appelle taqlīd.",
+            "mots_ar": [
+                "التَّقْلِيدُ",
+                "تَقْلِيدًا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
+            "partie_translit_interne": "Le mufti, le taqlīd",
+            "partie_mots_ar": [
+                "التَّقْلِيدُ"
+            ]
+        },
+        {
+            "id": "WRQ-0130",
+            "fr": "Et certains ont dit : le {ar:0} est d'accepter la parole de celui qui parle sans savoir d'où il la tient.",
+            "partie": "Le mufti, le {ar:0}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "niveau_min": "adulte",
+            "relecture_comite": true,
+            "fr_translit_interne": "Et certains ont dit : le taqlīd est d'accepter la parole de celui qui parle sans savoir d'où il la tient.",
+            "mots_ar": [
+                "التَّقْلِيدُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
+            "partie_translit_interne": "Le mufti, le taqlīd",
+            "partie_mots_ar": [
+                "التَّقْلِيدُ"
+            ]
+        },
+        {
+            "id": "WRQ-0131",
+            "fr": "Si nous disons que le Prophète ﷺ avait recours à l'analogie, il est possible d'appeler {ar:0} l'acceptation de sa parole.",
+            "partie": "Le mufti, le {ar:0}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "relecture_comite": true,
+            "niveau_min": "adulte",
+            "note_contexte_fr": "Contexte : suite du passage sur le taqlīd (phrase 0129). Al-Ḥaṭṭāb (p. 132) indique que la question de l'ijtihād du Prophète ﷺ est discutée et que l'avis juste est qu'il lui était permis et qu'il en a fait (avis retenu par Ibn al-Ḥājib et d'autres). À présenter avec la note de la phrase 0129.",
+            "fr_translit_interne": "Si nous disons que le Prophète ﷺ avait recours à l'analogie, il est possible d'appeler taqlīd l'acceptation de sa parole.",
+            "mots_ar": [
+                "تَقْلِيدًا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
+            "partie_translit_interne": "Le mufti, le taqlīd",
+            "partie_mots_ar": [
+                "التَّقْلِيدُ"
+            ]
+        },
+        {
+            "id": "WRQ-0132",
+            "fr": "Et si nous disons qu'il ne fait pas l'effort de déduction [{ar:0}] mais ne parle que d'après une révélation, l'acceptation de sa parole ne s'appelle pas {ar:1}.",
+            "partie": "Le mufti, le {ar:0}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "relecture_comite": true,
+            "niveau_min": "adulte",
+            "note_contexte_fr": "Contexte : suite du passage sur le taqlīd (phrase 0129) : si l'on retient que le Prophète ﷺ ne parlait que par révélation, accepter sa parole n'est pas du taqlīd, puisqu'elle s'appuie sur la révélation (Maḥallī p. 23 ; al-Ḥaṭṭāb p. 132). À présenter avec la note de la phrase 0129.",
+            "fr_translit_interne": "Et si nous disons qu'il ne fait pas d'ijtihād mais ne parle que d'après une révélation, l'acceptation de sa parole ne s'appelle pas taqlīd.",
+            "mots_ar": [
+                "يَجْتَهِدُ",
+                "تَقْلِيدًا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
+            "partie_translit_interne": "Le mufti, le taqlīd",
+            "partie_mots_ar": [
+                "التَّقْلِيدُ"
+            ]
+        },
+        {
+            "id": "WRQ-0133",
+            "fr": "Quant à l'effort de déduction [{ar:0}] : c'est l'effort poussé jusqu'au bout pour atteindre le but.",
+            "partie": "L'effort de déduction [{ar:0}]",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Quant à l'ijtihād : c'est l'effort poussé jusqu'au bout pour atteindre le but.",
+            "mots_ar": [
+                "الِاجْتِهَادُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
+            "partie_translit_interne": "L'ijtihād",
+            "partie_mots_ar": [
+                "الِاجْتِهَادُ"
+            ]
+        },
+        {
+            "id": "WRQ-0134",
+            "fr": "Le {ar:0}, s'il possède tous les outils de l'effort de déduction : s'il fait cet effort [{ar:1}] sur les branches et atteint [la vérité], il aura deux récompenses ; s'il fait cet effort [{ar:1}] et se trompe, il aura une seule récompense.",
+            "partie": "L'effort de déduction [{ar:0}]",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_translit_interne": "Le mujtahid, s'il possède tous les outils de l'ijtihād : s'il fait ijtihād sur les branches et atteint [la vérité], il aura deux récompenses ; s'il fait ijtihād et se trompe, il aura une seule récompense.",
+            "mots_ar": [
+                "الْمُجْتَهِدُ",
+                "اجْتَهَدَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
+            "partie_translit_interne": "L'ijtihād",
+            "partie_mots_ar": [
+                "الِاجْتِهَادُ"
+            ]
+        },
+        {
+            "id": "WRQ-0135",
+            "fr": "Et certains ont dit : tout {ar:0}, dans les branches, est dans le vrai [{ar:1}].",
+            "partie": "L'effort de déduction [{ar:0}]",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "ecart_malikite": "E-09",
+            "note_ecart_malikite_fr": "Accord avec l'avis que le texte retient (« pas tout mujtahid n'est dans le vrai ») : « il est rapporté de Mālik que celui qui est dans le vrai est un seul » (Ḥaṭṭāb, p. 135).",
+            "fr_translit_interne": "Et certains ont dit : tout mujtahid, dans les branches, est dans le vrai [muṣīb].",
+            "mots_ar": [
+                "مُجْتَهِدٍ",
+                "مُصِيبٌ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
+            "partie_translit_interne": "L'ijtihād",
+            "partie_mots_ar": [
+                "الِاجْتِهَادُ"
+            ]
+        },
+        {
+            "id": "WRQ-0136",
+            "fr": "Et il n'est pas permis de dire : tout {ar:0}, dans les fondements de la doctrine [{ar:1} {ar:2}], est dans le vrai, car cela mènerait à donner raison aux gens d'égarement : chrétiens, mages, mécréants et négateurs [{ar:3}].",
+            "partie": "L'effort de déduction [{ar:0}]",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "relecture_comite": true,
+            "niveau_min": "adulte",
+            "note_contexte_fr": "Contexte : le texte traite des « fondements de la doctrine » (uṣūl kalāmiyya) : on ne peut pas dire que tout mujtahid y soit dans le vrai, car cela donnerait raison à des doctrines contradictoires ; l'exemple donné par le commentaire est la doctrine chrétienne de la trinité (Maḥallī p. 24 ; al-Ḥaṭṭāb p. 135). Passage descriptif d'une doctrine d'école, sans application à des personnes ou à des communautés d'aujourd'hui ; niveau adulte.",
+            "fr_translit_interne": "Et il n'est pas permis de dire : tout mujtahid, dans les fondements de la doctrine [uṣūl kalāmiyya], est dans le vrai, car cela mènerait à donner raison aux gens d'égarement : chrétiens, mages, mécréants et négateurs [mulḥid].",
+            "mots_ar": [
+                "مُجْتَهِدٍ",
+                "الْأُصُولِ",
+                "الْكَلَامِيَّةِ",
+                "الْمُلْحِدِينَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
+            "partie_translit_interne": "L'ijtihād",
+            "partie_mots_ar": [
+                "الِاجْتِهَادُ"
+            ]
+        },
+        {
+            "id": "WRQ-0137",
+            "fr": "La preuve de ceux qui disent « tout {ar:0} dans les branches n'est pas dans le vrai » est la parole du Prophète ﷺ : « Celui qui fait l'effort de déduction [{ar:1}] et atteint [la vérité] aura deux récompenses ; celui qui fait cet effort [{ar:1}] et se trompe aura une seule récompense. »",
+            "partie": "L'effort de déduction [{ar:0}]",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "fr_translit_interne": "La preuve de ceux qui disent « tout mujtahid dans les branches n'est pas dans le vrai » est la parole du Prophète ﷺ : « Celui qui fait ijtihād et atteint [la vérité] aura deux récompenses ; celui qui fait ijtihād et se trompe aura une seule récompense. »",
+            "mots_ar": [
+                "مُجْتَهِدٍ",
+                "اجْتَهَدَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
+            "partie_translit_interne": "L'ijtihād",
+            "partie_mots_ar": [
+                "الِاجْتِهَادُ"
+            ]
+        },
+        {
+            "id": "WRQ-0138",
+            "fr": "Aspect de la preuve : le Prophète ﷺ a dit tantôt que le mujtahid se trompait, tantôt qu'il était dans le vrai.",
+            "partie": "L'effort de déduction [{ar:0}]",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "relecture_comite": true,
+            "partie_translit_interne": "L'ijtihād",
+            "partie_mots_ar": [
+                "الِاجْتِهَادُ"
+            ]
+        },
+        {
+            "id": "WRQ-0139",
+            "fr": "Et Allah, gloire à Lui, le Très-Haut, est plus élevé et plus savant.",
+            "partie": "L'effort de déduction [{ar:0}]",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "partie_translit_interne": "L'ijtihād",
+            "partie_mots_ar": [
+                "الِاجْتِهَادُ"
+            ]
+        }
+    ],
+    "notes_ecarts_malikites": [
+        {
+            "id": "E-01",
+            "statut": "accord",
+            "sujet": "L'extinction de la génération (inqirāḍ al-ʿaṣr) n'est pas une condition de la valeur probante du consensus",
+            "note_obligatoire_fr": "Accord avec le mashhūr mālikite. Nashr al-Bunūd (t. 2, p. 87) donne le même avis et renvoie à al-Qarāfī, Tanqīḥ al-fuṣūl."
+        },
+        {
+            "id": "E-02",
+            "statut": "ecart",
+            "sujet": "La parole d'un seul Compagnon (qawl aṣ-ṣaḥābī)",
+            "note_obligatoire_fr": "Écart établi sur source mālikite (Nashr al-bunūd, t. 2 p. 263-264 de l'édition numérisée) : le mashhūr rapporté de Mālik est que la parole du Compagnon est une preuve à l'égard des mujtahids non Compagnons ; il existe aussi un avis de refus et un avis intermédiaire (al-Bājī : preuve si l'on ne connaît pas de contradicteur). Le texte traduit suit l'avis nouveau d'ash-Shāfiʿī. Le hadith « Mes Compagnons sont comme les étoiles » invoqué dans cette discussion est jugé inventé (mawḍūʿ) par al-Albānī (Silsila aḍ-ḍaʿīfa n° 58) et faible par Maḥallī (p. 19) : ne pas l'enseigner comme preuve."
+        },
+        {
+            "id": "E-03",
+            "statut": "ecart",
+            "sujet": "Le hadith mursal des Successeurs (maraāsīl)",
+            "note_obligatoire_fr": "Écart établi sur source mālikite (Nashr al-bunūd, t. 2 p. 62 de l'édition numérisée) : le mursal est une preuve chez Mālik (et Abū Ḥanīfa ; al-Qāḍī ʿIyāḍ : « c'est le mashhūr chez eux »), parce que le narrateur intègre ne supprime l'intermédiaire que s'il est intègre à ses yeux ; ash-Shāfiʿī et al-Bāqillānī le refusent. Le texte traduit donne l'avis d'ash-Shāfiʿī."
+        },
+        {
+            "id": "E-04",
+            "statut": "ecart",
+            "sujet": "Le consensus des gens de Médine (ijmāʿ ahl al-Madīna), absent du texte",
+            "note_obligatoire_fr": "Écart par omission, établi sur source mālikite (Nashr al-bunūd, t. 2 p. 89 de l'édition numérisée) : chez Mālik, le consensus des gens de Médine est une preuve dans ce qui ne laisse pas de place à l'opinion ; certains mālikites le tiennent pour preuve en tout. Le texte d'al-Juwaynī ne le mentionne pas."
+        },
+        {
+            "id": "E-05",
+            "statut": "accord",
+            "sujet": "Les actes du Prophète dont le statut est inconnu",
+            "note_obligatoire_fr": "Accord avec la première opinion citée. Ḥaṭṭāb (p. 100) : Mālik et la plupart de ses compagnons la retiennent ; p. 101 : pour la manière de l'acte, certains mālikites disent « recommandé »."
+        },
+        {
+            "id": "E-06",
+            "statut": "accord",
+            "sujet": "La prohibition absolue indique l'invalidité de l'acte prohibé",
+            "note_obligatoire_fr": "Accord : « l'avis le plus sûr chez les mālikites et les shāfiʿites » (Ḥaṭṭāb, p. 88). La phrase manque dans certains témoins du texte (V-06)."
+        },
+        {
+            "id": "E-07",
+            "statut": "ecart",
+            "sujet": "Exemple de la contradiction des deux hadiths sur les deux qulla (eau de la grande jarre)",
+            "note_obligatoire_fr": "Écart d'application, non de règle. Ad-Dusūqī (vol. 1 p. 48, sur Khalīl et ad-Dardīr) : chez nous, il n'y a pas de différence entre l'arrivée de l'eau pure sur l'impureté et celle de l'impureté sur l'eau, que l'eau soit peu ou très abondante ; « ash-Shāfiʿī diffère pour le second cas » : si l'impureté arrive sur une eau de moins de deux qulla, elle la rend impure par le simple contact. Ne pas enseigner l'exemple des deux qulla comme règle de pureté ; renvoyer au madjlis de la pureté. Hadiths : voir `hadiths_cites_dans_les_commentaires` de cette phrase."
+        },
+        {
+            "id": "E-08",
+            "statut": "accord",
+            "sujet": "La continuité de l'état antérieur (istiṣḥāb al-ḥāl)",
+            "note_obligatoire_fr": "Accord : preuve chez les mālikites et les shāfiʿites (Ḥaṭṭāb, p. 128)."
+        },
+        {
+            "id": "E-09",
+            "statut": "accord",
+            "sujet": "Tout mujtahid est-il dans le vrai dans les branches ?",
+            "note_obligatoire_fr": "Accord avec l'avis que le texte retient (« pas tout mujtahid n'est dans le vrai ») : « il est rapporté de Mālik que celui qui est dans le vrai est un seul » (Ḥaṭṭāb, p. 135)."
+        },
+        {
+            "id": "E-10",
+            "statut": "etabli_mashhur",
+            "sujet": "« Il m'a rapporté » (ḥaddathanī) après une lecture faite par l'élève devant le maître",
+            "note_obligatoire_fr": "Écart de terminologie de transmission. Le texte des Waraqāt réserve « akhbaranī » à la lecture de l'élève et interdit « ḥaddathanī » (position shāfiʿite). Mālik, lui, tient la lecture sur le maître pour équivalente à l'audition et admet les deux termes (al-Qāḍī ʿIyāḍ, Ikmāl al-muʿlim, t. 1 p. 186). Le point n'est pas enseigné comme règle mālikite sans cette note."
+        },
+        {
+            "id": "E-11",
+            "statut": "etabli_mashhur",
+            "sujet": "Abroger le Livre par la Sunna",
+            "note_obligatoire_fr": "Mashhūr mālikite établi (Nashr al-bunūd, t. 1 p. 290-291 de l'édition numérisée de turath.io, qui commente Marāqī as-suʿūd) : le Livre peut être abrogé par la Sunna mutawātira (avis du plus grand nombre, et al-Bājī puis al-Qarāfī dans Tanqīḥ al-fuṣūl le disent avoir eu lieu) ; par une Sunna isolée, c'est permis mais non advenu. La variante « on ne peut pas abroger le Livre par la Sunna » de certaines copies s'entend de la Sunna non mutawātira (Ḥaṭṭāb, Qurrat al-ʿayn, p. 108). Le texte est traduit tel qu'il est écrit ; cette note l'accompagne toujours."
+        },
+        {
+            "id": "E-12",
+            "statut": "ecart",
+            "sujet": "« Le witr est recommandé » (exemple donné pour le fiqh)",
+            "note_obligatoire_fr": "Écart de terminologie établi sur Khalīl, ad-Dardīr et ad-Dusūqī (vol. 1 p. 317 de l'édition Dār al-Fikr) : le witr est « sunna appuyée, la plus appuyée des sunan » (puis les deux fêtes, l'éclipse, la demande de pluie). Ne pas écrire « recommandé » seul pour le witr dans le livre mālikite."
+        },
+        {
+            "id": "E-13",
+            "statut": "ecart",
+            "sujet": "Les dix tétées (ʿashr raḍaʿāt), exemple d'abrogation de la lettre et du statut",
+            "note_obligatoire_fr": "Écart de fond sur l'exemple, établi sur Dusūqī (vol. 2 p. 503 : « elle interdit même si c'est une gorgée ») et Nashr al-bunūd (t. 1 p. 289 : les dix tétées sont abrogées « dans la lettre et dans le statut » chez Mālik, dans la lettre seulement chez ash-Shāfiʿī). Le livre d'enseignement mālikite ne doit pas retenir « cinq tétées » (renvoi au madjlis de la Risāla). Hadith : voir `hadiths_cites_dans_les_commentaires`."
+        },
+        {
+            "id": "E-14",
+            "statut": "controverse_documentee",
+            "sujet": "Le consensus tacite (ijmāʿ sukūtī)",
+            "note_obligatoire_fr": "Pas d'avis unique à présenter comme mashhūr. Marāqī as-suʿūd (cité et commenté par Nashr al-bunūd, t. 2 p. 100-101 de l'édition numérisée de turath.io) dit que le désaccord sur le silence est « renommé » ; Ḥulūlū rapporte qu'al-Bāqillānī, mālikite, tient le consensus tacite pour ni consensus ni preuve ; Nashr s'étonne qu'al-Qarāfī, dans Tanqīḥ al-fuṣūl, ne rapporte aucun des avis comme celui de l'école : le texte d'al-Qarāfī lu (Sharḥ Tanqīḥ al-fuṣūl, vol. 1 p. 330, turath.io livre 21813) donne quatre avis (ash-Shāfiʿī et ar-Rāzī : ni consensus ni preuve ; al-Jubbāʾī : consensus et preuve après l'extinction de la génération ; Abū Hāshim : pas consensus mais preuve ; Ibn Abī Hurayra : selon que le juge est ou non l'auteur du jugement) sans en attribuer aucun à l'école mālikite. À enseigner comme question controversée chez les mālikites, avec les conditions de l'accord par le silence (absence de signe de désapprobation, délai de réflexion, question d'application, avant la fixation des écoles)."
+        },
+        {
+            "id": "E-16",
+            "statut": "accord",
+            "sujet": "Sept statuts ou cinq ?",
+            "note_obligatoire_fr": "Précision d'enseignement : le texte compte sept ; les livres mālikites comptent cinq statuts et traitent le valide et le nul à part (Ḥaṭṭāb, p. 60). Pas de désaccord de fond."
+        },
+        {
+            "id": "E-17",
+            "statut": "ecart",
+            "sujet": "Interdiction ou permission « de principe » avant la Loi",
+            "note_obligatoire_fr": "Écart de présentation. Le texte rapporte deux avis ; Ḥaṭṭāb retient la distinction (p. 127) : le nuisible est interdit, l'utile est permis. Maḥallī (p. 22) retient la même distinction."
+        }
+    ],
+    "revision": "2026-10-13 : première version ; 2026-10-13 : décisions du référent (versets, mashhūr, hadiths)"
+}

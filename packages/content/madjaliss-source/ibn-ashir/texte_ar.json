@@ -2,7 +2,7 @@
     "oeuvre":  "المرشد المعين على الضروري من علوم الدين",
     "auteur":  "عبد الواحد بن أحمد بن علي بن عاشر الأنصاري الأندلسي الفاسي (990-1040 H, d\u0027après la notice de la Bibliotheca Alexandrina reprise par Internet Archive ; à confirmer sur une source biographique)",
     "perimetre":  "Poème complet : 319 vers (IBA-0001 à IBA-0319) dans tous les témoins (Q 1904, F 1893, P, et le matn commenté par Mayyāra), dans le même ordre. Deux vers-titres (IBA-0006 et 0049). L\u0027auteur annonce 314 vers (IBA-0316) : IBA-0001 à 0314 font 314 vers ; les cinq vers de clôture (0315-0319) sont probablement hors compte (R-T1, déduction à confirmer). Parties : ouverture (1-5), croyance (6-48), principes (49-55), purification (56-100), prière (101-183), zakāt (184-212), jeûne (213-230), ḥajj (231-292), taṣawwuf (293-314), clôture (315-319).",
-    "statut":  "VALIDATION_HUMAINE_REQUISE",
+    "statut":  "EN_ATTENTE_SECONDE_LECTURE",
     "date_saisie":  "2026-10-12",
     "saisie_par":  "Claude (référent provisoire), d\u0027après les images du témoin P, lues vers par vers avec agrandissement ×1,7 à ×3 ; collation avec le manuscrit M pour IBA-0001 à 0055 et ponctuellement ensuite. Relecture humaine sur un exemplaire papier ou un témoin ancien exigée. Révision du 12/10/2026 (soir) : texte recollationné vers par vers sur Q (base) et, pour les points en débat, sur F ; comparaison automatique de chaque hémistiche avec le matn cité par Mayyāra (texte turath.io n° 14249 et OCR du scan archive.org feqhmaliki31) : 115 hémistiches sur 638 non retrouvés à l\u0027identique, examinés un par un (coupures et fautes de la version numérique, sauf les variantes consignées).",
     "temoins":  {

@@ -51,7 +51,13 @@ const PONCT = /[،؛:.!؟«»()،]+$/;
 
 /** Phrase utilisable en quiz : texte de l'auteur, traduit, sans citation ni passage réservé. */
 export const questionnable = (p: Phrase): boolean =>
-  (p.t === 'texte' || p.t === 'vers') && !p.explication && arSimple(p) !== null && !!p.fr;
+  (p.t === 'texte' || p.t === 'vers') &&
+  !p.explication &&
+  !p.q?.length &&
+  arSimple(p) !== null &&
+  !!p.fr &&
+  // le français garde ses mots arabes isolés {ar:K} : jamais proposé en choix de traduction
+  !p.ma?.length;
 
 /** Rangs des mots qu'on peut faire compléter : pas le premier, au moins 3 lettres, jamais le nom d'Allah. */
 export function motsACompleter(ar: string): number[] {

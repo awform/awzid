@@ -65,7 +65,13 @@
     },
     {
       "id": "JAZ-0008",
-      "fr": "de tout [mot] séparé ou joint, et du tāʾ de féminin qui n'était pas écrit [en tāʾ lié « ة », mais en tāʾ ouvert « ت »] dans [les exemplaires].",
+      "fr": "de tout [mot] séparé ou joint, et du tāʾ de féminin qui n'était pas écrit [en tāʾ lié « {ar:0} », mais en tāʾ ouvert « {ar:1} »] dans [les exemplaires].",
+      "fr_translit_interne": "de tout [mot] séparé ou joint, et du tāʾ de féminin qui n'était pas écrit [en tāʾ lié « ة », mais en tāʾ ouvert « ت »] dans [les exemplaires].",
+      "mots_ar": [
+        "ة",
+        "ت"
+      ],
+      "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
       "partie": "Ouverture",
       "statut": "EN_ATTENTE_SECONDE_LECTURE",
       "point_referent": true
@@ -478,7 +484,18 @@
     },
     {
       "id": "JAZ-0067",
-      "fr": "Fais la fusion avec son nasal dans « yūmin » [ي ن م و], sauf dans un [seul] mot, comme « dunyā » [et « ṣinwān », « qinwān », « bunyān »] : « ʿanwinū » [« titre-le »].",
+      "fr": "Fais la fusion avec son nasal dans « {ar:0} » [{ar:1}], sauf dans un [seul] mot, comme « {ar:2} » [et « {ar:3} », « {ar:4} », « {ar:5} »] : « {ar:6} » [« titre-le »].",
+      "fr_translit_interne": "Fais la fusion avec son nasal dans « yūmin » [ي ن م و], sauf dans un [seul] mot, comme « dunyā » [et « ṣinwān », « qinwān », « bunyān »] : « ʿanwinū » [« titre-le »].",
+      "mots_ar": [
+        "يُومِنُ",
+        "ي ن م و",
+        "دُنْيَا",
+        "صِنْوَانٌۭ",
+        "قِنْوَانٌۭ",
+        "بُنْيَٰنٌۭ",
+        "عَنْوَنُوا"
+      ],
+      "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le texte de la phrase, ou terme technique hors de la phrase). Aucune phonétique latine côté élève.",
       "partie": "Nūn sākin et tanwīn",
       "statut": "EN_ATTENTE_SECONDE_LECTURE",
       "point_referent": false

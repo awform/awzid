@@ -111,5 +111,11 @@
   "mj.code_visuel": "Code visuel de la grammaire",
   "mj.code_visuel_aide": "La fonction de chaque mot se lit à sa forme (soulignement et signe), jamais à sa couleur.",
   "mj.ens_publication": "Publication :",
-  "mj.ens_comite": "À relire par le comité :"
+  "mj.ens_comite": "À relire par le comité :",
+  "mj.note_malikite": "Note sur l'école mālikite :",
+  "mj.note_ecart": "Écart avec un commentateur :",
+  "mj.hadith_degre": "Degré :",
+  "mj.hadith_version": "Version du recueil :",
+  "mj.differe": "Publication différée : masquée aux invités de la bêta",
+  "mj.ens_differe": "Publication différée :"
 }

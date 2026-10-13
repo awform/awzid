@@ -18,13 +18,41 @@ export interface Sens {
   source: string;
 }
 
+/**
+ * Texte français avec ses mots arabes isolés : chaque marqueur `{ar:K}` est remplacé, à l'affichage, par le mot arabe
+ * n° K de `ma` (vocalisé, avec la police arabe : voir `avecArabe`). Jamais de phonétique latine côté élève.
+ */
+export interface Texte {
+  texte: string;
+  ma?: string[];
+}
+
 export interface NoteExplication {
   texte: string;
+  /** mots arabes des marqueurs `{ar:K}` de `texte` */
+  ma?: string[];
+  /** nature de la note : écart avec un commentateur, note de l'école mālikite, degré d'un hadith cité */
+  k?: 'ecart' | 'malikite' | 'degre';
   sources?: string[];
   /** citations arabes des commentaires, chacune affichée sur sa propre ligne */
   ar?: string[];
   /** versets cités par le commentateur (Tanzil), chacun sur sa ligne */
   q?: Array<{ q: string; ref: string }>;
+}
+
+/** Version du recueil d'un hadith, montrée SOUS le texte d'an-Nawawī (jamais à sa place), avec ses différences. */
+export interface VersionRecueil {
+  /** recueil, numéro du texte montré, tome et page de l'imprimé */
+  r: string;
+  ar: string;
+  d?: Texte[];
+}
+
+/** Hadith d'an-Nawawī : mention de takhrīj, degré (« authenticité discutée : … », juge nommé), versions du recueil. */
+export interface Hadith {
+  tk?: { ar: string; fr: Texte };
+  deg: Texte;
+  v?: VersionRecueil[];
 }
 
 export interface Ligne {
@@ -39,6 +67,12 @@ export interface Phrase {
   /** vers d'un poème : les deux hémistiches, chacun sur sa ligne */
   h?: [string, string];
   fr?: string;
+  /** mots arabes des marqueurs `{ar:K}` de `fr` */
+  ma?: string[];
+  /** versets cités dans le matn d'un hadith (Tanzil), chacun sur sa ligne : jamais lus par une voix de synthèse */
+  q?: Array<{ q: string; ref: string }>;
+  /** hadith d'an-Nawawī : takhrīj, degré, versions du recueil */
+  hadith?: Hadith;
   /** sens du ou des versets cités, dans la traduction de référence de l'application */
   sens?: Sens[];
   /** passage montré seulement avec son explication (T7) : ni arabe ni traduction tant qu'elle manque */
@@ -70,9 +104,13 @@ export interface Seance {
   n: number;
   id: string;
   titre: string;
+  /** mots arabes des marqueurs `{ar:K}` de `titre` */
+  tma?: string[];
   duree: number;
   phrases: string[];
   mots: Mot[];
+  /** PUBLICATION DIFFÉRÉE : masquée aux invités de la bêta (hors personnel et démonstration), voir `matnPour` */
+  differe?: true;
   /** règles et lochies : proposées aux ados et aux adultes seulement */
   pudeur?: true;
   /** réservée au niveau adulte */
@@ -113,6 +151,9 @@ export interface NotesEnseignant {
   decoupage: string;
   /** décision du référent sur la publication (séances à retenir) */
   publication?: string;
+  /** numéros des séances en publication différée, et la consigne affichée en mode enseignant */
+  differe?: number[];
+  consigne_differe?: string;
   /** séances à relire par le comité */
   comite?: Array<{ n: number; id: string; motif: string }>;
   phrases: Array<{
@@ -129,6 +170,10 @@ export interface NotesEnseignant {
   mots: Array<{ n: number; ar: string; fr: string; motif: 'sens' | 'explication' }>;
 }
 
+/** Le texte français avec ses mots arabes à la place des marqueurs `{ar:K}` (le composant `Bidi` les isole en arabe). */
+export const avecArabe = (texte: string, ma?: readonly string[]): string =>
+  ma?.length ? texte.replace(/\{ar:(\d+)\}/g, (m, k: string) => ma[Number(k)] ?? m) : texte;
+
 export const segments = (p: Phrase): Segment[] =>
   p.ar === undefined ? [] : typeof p.ar === 'string' ? [p.ar] : p.ar;
 
@@ -141,12 +186,18 @@ export const arSimple = (p: Phrase): string | null =>
 
 /**
  * GARDE de la voix de synthèse (T7) : seul texte qu'une voix de synthèse pourrait un jour lire. Jamais une phrase qui
- * cite le Coran (segment Tanzil : le Coran n'est jamais lu par une machine), jamais un passage réservé à
- * l'explication de l'enseignant ; null sinon. Aujourd'hui la rubrique n'a aucune voix de synthèse (enregistrements
- * humains attendus) : tout futur branchement DOIT passer par ici.
+ * cite le Coran (segment Tanzil, ou verset cité dans le matn d'un hadith : le Coran n'est jamais lu par une machine),
+ * jamais un passage réservé à l'explication de l'enseignant ; null sinon. Aujourd'hui la rubrique n'a aucune voix de
+ * synthèse (enregistrements humains attendus) : tout futur branchement DOIT passer par ici.
  */
 export const texteVoixSynthese = (p: Phrase): string | null =>
-  p.explication || /[﴿﴾]/.test(arSimple(p) ?? '﴿') || typeof p.ar === 'object' ? null : arSimple(p);
+  p.explication ||
+  p.q?.length ||
+  p.t === 'citation_coran' ||
+  /[﴿﴾]/.test(arSimple(p) ?? '﴿') ||
+  typeof p.ar === 'object'
+    ? null
+    : arSimple(p);
 
 type Fetcher = (url: string) => Promise<Response>;
 const enCours = new Map<string, Promise<Matn | null>>();
@@ -197,21 +248,35 @@ export const phraseDe = (m: Matn) => new Map(m.phrases.map((p) => [p.id, p]));
 export type Public = 'enfant' | 'ado' | 'adulte';
 
 /**
+ * Qui voit les séances en PUBLICATION DIFFÉRÉE : le personnel (mode enseignant) et la démonstration. Les invités de la
+ * bêta (ni personnel ni compte de démonstration) ne les voient pas, ni dans le sommaire ni par leur adresse directe.
+ * Les comptes de démonstration (`<rôle>-<tag>@demo.awform.test`, créés par `deploy.sh --demo` seulement) n'existent
+ * que sur une instance de démonstration. Sans compte connu : masqué.
+ */
+export const COMPTE_DEMO = /@demo\.awform\.test$/i;
+export const voitDiffere = (
+  me: { account: { email: string | null } } | null | undefined,
+  staff: boolean,
+): boolean => staff || COMPTE_DEMO.test(me?.account.email ?? '');
+
+/**
  * Le texte tel que le voit un profil (mécanisme des profils : `kind` enfant / ado / adulte) :
  *  - les chapitres des règles et des lochies (`pudeur`) : ados et adultes seulement ;
- *  - les séances et phrases `adulte` (niveau_min « adulte ») : adultes seulement, jamais aux enfants ni aux ados.
+ *  - les séances et phrases `adulte` (niveau_min « adulte ») : adultes seulement, jamais aux enfants ni aux ados ;
+ *  - les séances en publication différée (`differe`) : seulement si `differe` est vrai (personnel, démonstration).
  * Un profil inconnu (null) est traité comme un ado : jamais de contenu réservé aux adultes sans profil adulte.
  */
-export function matnPour(m: Matn, kind: Public | null): Matn {
+export function matnPour(m: Matn, kind: Public | null, differe = false): Matn {
   const adulte = kind === 'adulte';
   const enfant = kind === 'enfant';
   const cache = new Set(adulte ? [] : m.phrases.filter((p) => p.adulte).map((p) => p.id));
   const seances = m.seances
-    .filter((s) => (adulte || !s.adulte) && (!enfant || !s.pudeur))
+    .filter((s) => (adulte || !s.adulte) && (!enfant || !s.pudeur) && (differe || !s.differe))
     .map((s) => (adulte ? s : { ...s, phrases: s.phrases.filter((id) => !cache.has(id)) }));
   const vues = new Set(seances.flatMap((s) => s.phrases));
   return { ...m, phrases: m.phrases.filter((p) => vues.has(p.id)), seances };
 }
 
 /** Séances proposées à un profil (voir `matnPour`). */
-export const seancesPour = (m: Matn, kind: Public | null): Seance[] => matnPour(m, kind).seances;
+export const seancesPour = (m: Matn, kind: Public | null, differe = false): Seance[] =>
+  matnPour(m, kind, differe).seances;

@@ -2,7 +2,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
-  import { segments, type NotesEnseignant, type Phrase } from './donnees';
+  import { avecArabe, segments, type NotesEnseignant, type Phrase } from './donnees';
 
   /**
    * Une phrase du texte : l'arabe vocalisé SUR SA LIGNE (un vers : ses deux hémistiches, chacun sur sa ligne), la
@@ -46,7 +46,42 @@
               ><span class="orn" aria-hidden="true">﴾</span></span
             >{/if}{/each}{/if}
     </p>
-    {#if p.fr}<p class="fr"><Bidi text={p.fr} /></p>{/if}
+    {#if p.fr}<p class="fr"><Bidi text={avecArabe(p.fr, p.ma)} /></p>{/if}
+    {#each p.q ?? [] as q, i (i)}<p
+        class="cit coranique"
+        lang="ar"
+        dir="rtl"
+        data-testid="mj-verset-hadith"
+      >
+        <span class="orn" aria-hidden="true">﴿</span><span class="quran-text" data-coran={q.ref}
+          >{q.q}</span
+        ><span class="orn" aria-hidden="true">﴾</span>
+      </p>{/each}
+    {#if p.hadith}
+      <div class="hadith" data-testid="mj-hadith">
+        {#if p.hadith.tk}
+          <div class="tk" data-testid="mj-takhrij">
+            {#if p.hadith.tk.ar}<p class="cit" lang="ar" dir="rtl">
+                <Bidi text={p.hadith.tk.ar} base="ar" />
+              </p>{/if}
+            <p class="fr"><Bidi text={avecArabe(p.hadith.tk.fr.texte, p.hadith.tk.fr.ma)} /></p>
+          </div>
+        {/if}
+        <p class="deg" data-testid="mj-degre">
+          <strong><Bidi text={t('mj.hadith_degre')} /></strong>
+          <Bidi text={avecArabe(p.hadith.deg.texte, p.hadith.deg.ma)} />
+        </p>
+        {#each p.hadith.v ?? [] as v, i (i)}
+          <div class="version" data-testid="mj-version-recueil">
+            <p class="version-titre"><Bidi text={`${t('mj.hadith_version')} ${v.r}`} /></p>
+            <p class="cit" lang="ar" dir="rtl"><Bidi text={v.ar} base="ar" /></p>
+            {#each v.d ?? [] as d, j (j)}<p class="diff">
+                <Bidi text={avecArabe(d.texte, d.ma)} />
+              </p>{/each}
+          </div>
+        {/each}
+      </div>
+    {/if}
     {#each blocs as b (b.nom)}
       {#if b.lignes.length}
         <div class="lignes" data-testid={`mj-${b.nom}`}>
@@ -67,9 +102,21 @@
       </div>
     {/each}
     {#each p.notes ?? [] as n, k (k)}
-      <div class="note" data-testid="note-explication">
-        <p class="note-titre"><Bidi text={t('mj.note')} /></p>
-        <p class="note-texte"><Bidi text={n.texte} /></p>
+      <div class="note" data-testid="note-explication" data-genre={n.k ?? 'explication'}>
+        <p class="note-titre">
+          <Bidi
+            text={t(
+              n.k === 'malikite'
+                ? 'mj.note_malikite'
+                : n.k === 'ecart'
+                  ? 'mj.note_ecart'
+                  : n.k === 'degre'
+                    ? 'mj.hadith_degre'
+                    : 'mj.note',
+            )}
+          />
+        </p>
+        <p class="note-texte"><Bidi text={avecArabe(n.texte, n.ma)} /></p>
         {#each n.q ?? [] as q, i (i)}<p class="cit coranique" lang="ar" dir="rtl">
             <span class="orn" aria-hidden="true">﴿</span><span class="quran-text" data-coran={q.ref}
               >{q.q}</span
@@ -181,6 +228,23 @@
     font-weight: 600;
     font-size: 0.88rem;
     color: var(--ink2);
+  }
+  .hadith {
+    display: grid;
+    gap: 6px;
+    border-inline-start: 3px solid var(--line);
+    padding-inline-start: var(--space-s);
+    font-size: 0.9rem;
+    color: var(--ink2);
+  }
+  .hadith p {
+    margin: 0;
+  }
+  .version-titre {
+    font-weight: 600;
+  }
+  .diff {
+    font-size: 0.85rem;
   }
   .sens {
     border-inline-start: 3px solid var(--gold);

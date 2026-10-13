@@ -8,7 +8,7 @@
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import { ACTIFS } from './cycles';
-  import { chargerMatn, matnPour, type Matn } from './donnees';
+  import { chargerMatn, matnPour, voitDiffere, type Matn } from './donnees';
   import { lien } from './liens';
   import { lireProgres, type Progres } from './progression';
   import Seance from './Seance.svelte';
@@ -19,10 +19,12 @@
   let profil = $state<ProfileInfo | null>(null);
   let progres = $state<Progres | null>(null);
   let staff = $state(false);
+  // personnel et démonstration : voient aussi les séances en publication différée (jamais les invités de la bêta)
+  let differe = $state(false);
   let etat = $state<'charge' | 'pret' | 'absent'>('charge');
 
   // le texte tel que le voit ce profil : ni règles et lochies aux enfants, ni passages « adulte » aux enfants et ados
-  const vue = $derived(matn ? matnPour(matn, profil?.kind ?? null) : null);
+  const vue = $derived(matn ? matnPour(matn, profil?.kind ?? null, differe) : null);
   const seances = $derived(vue?.seances ?? []);
   const seance = $derived(seances.find((s) => s.n === n) ?? null);
   const suivante = $derived(seances.find((s) => s.n > n)?.n ?? null);
@@ -33,7 +35,9 @@
       return;
     }
     profil = await demoProfileFor('').catch(() => null);
-    staff = isStaff(await cachedMe().catch(() => null));
+    const me = await cachedMe().catch(() => null);
+    staff = isStaff(me);
+    differe = voitDiffere(me, staff);
     progres = await lireProgres(profil?.id ?? null, id);
     matn = await chargerMatn(id);
     etat = matn ? 'pret' : 'absent';

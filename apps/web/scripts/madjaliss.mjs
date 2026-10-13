@@ -33,10 +33,10 @@ const repo = join(web, '..', '..');
 export const SOURCES = join(repo, 'packages', 'content', 'madjaliss-source');
 export const SORTIE = join(web, 'static', 'mutun');
 export const STATUT = 'EN_ATTENTE_SECONDE_LECTURE';
-/** Libellés acceptés en entrée (migration : l'ancien libellé est encore dans al-Akhḍarī, al-ʿAshmāwiyya, Ibn ʿĀshir, al-ʿIzziyya). */
-export const STATUTS_ACCEPTES = new Set([STATUT, 'VALIDATION_HUMAINE_REQUISE']);
+/** Seul libellé accepté en entrée : l'ancien libellé a été remplacé dans toutes les sources (13/10/2026) et n'existe plus nulle part. */
+export const STATUTS_ACCEPTES = new Set([STATUT]);
 
-/** Textes intégrés, dans l'ordre de la rubrique (cycle 1 à 3 du plan directeur). */
+/** Textes intégrés (lots 2 et 3 : dix textes ; l'ordre d'affichage est celui des cycles, voir `cycles.ts`). */
 export const TEXTES = [
   'akhdari',
   'ashmawiyya',
@@ -45,7 +45,13 @@ export const TEXTES = [
   'izziyya',
   'ajurrumiyya',
   'jazariyya',
+  'bayquniyya',
+  'nawawi',
+  'waraqat',
 ];
+/** Dossier des sources quand il diffère de l'identifiant du texte (« Les Quarante hadiths » : `nawawi40`). */
+const DOSSIER = { nawawi: 'nawawi40' };
+export const dossier = (texte) => join(SOURCES, DOSSIER[texte] ?? texte);
 const PREFIXE_TEXTE = {
   AKH: 'akhdari',
   ASH: 'ashmawiyya',
@@ -54,7 +60,49 @@ const PREFIXE_TEXTE = {
   IZZ: 'izziyya',
   TUH: 'tuhfa',
   JAZ: 'jazariyya',
+  BAY: 'bayquniyya',
+  NAW: 'nawawi',
+  WRQ: 'waraqat',
 };
+/**
+ * PUBLICATION DIFFÉRÉE (décision du pilote, 13/10/2026) : séances que les invités de la bêta (ni personnel ni démo)
+ * ne voient pas encore ; visibles en mode enseignant et en démonstration. Ibn ʿĀshir : l'introduction et la
+ * croyance (IBA-S02 à S10) attendent la fin et le croisement de l'introduction et de la croyance de la Risāla.
+ * Contrôlé contre le `point_referent` de la source (la construction échoue si le référent change de consigne).
+ */
+export const DIFFERE = {
+  'ibn-ashir': {
+    seances: [
+      'IBA-S02',
+      'IBA-S03',
+      'IBA-S04',
+      'IBA-S05',
+      'IBA-S06',
+      'IBA-S07',
+      'IBA-S08',
+      'IBA-S09',
+      'IBA-S10',
+    ],
+    consigne: /croyance \(IBA-S02 à S10\)/,
+  },
+};
+
+/** Mots arabes isolés dans le français : marqueurs `{ar:K}` remplacés, à l'affichage, par le mot arabe n° K de `mots_ar`. */
+export const MARQUEUR = /\{ar:(\d+)\}/g;
+/** Lettres de translittération latine (ʿ ʾ ḥ ṣ ḍ ṭ ẓ ā ī ū…) : jamais dans l'arabe ni dans une phonétique côté élève. */
+export const TRANSLIT = /[ʿʾḥṣḍṭẓāīūṯḏġšḤṢḌṬẒĀĪŪ]/;
+
+/** Types de phrase de l'application ; les sources des Waraqāt disent « phrase », « basmala », « phrase_variante ». */
+const TYPES = new Set([
+  'texte',
+  'titre',
+  'formule',
+  'citation_coran',
+  'citation_hadith',
+  'vers',
+  'vers_titre',
+]);
+const TYPE_PHRASE = { phrase: 'texte', phrase_variante: 'texte', basmala: 'formule' };
 
 /** Phrases jamais montrées sans leur explication (T7) : retirées des fichiers tant qu'elle manque. */
 export const AVEC_EXPLICATION = new Set(['AKH-0052']);
@@ -81,6 +129,8 @@ const avecNote = (mot) => new RegExp(`${mot}${NOTE_A_VERIFIER.source}`, 'g');
 
 /** Emplacement du sens d'un verset dans la traduction : remplacé par […] (le sens du verset suit, tiré de la référence). */
 const EMPLACEMENT_SENS = /\[(?:TRADUCTION[^\]]*|[^\]]*traduction coranique de référence[^\]]*)\]/g;
+/** Waraqāt : le verset est remplacé dans le français par « ﴿ … ﴾ [sens du verset entier : voir « sens_verset »] ». */
+const CITATION_ELLIPSE = /﴿ … ﴾(?: \[sens du verset entier[^\]]*\])?/g;
 const EMPLACEMENT_RESTANT = /\[TANZIL|TRADUCTION DU|À INSÉRER|à insérer|À REPRENDRE/;
 
 /** Phrases de notes réservées au comité et au référent : jamais montrées à l'élève. */
@@ -117,6 +167,8 @@ export const PHRASE_INTERNE = new RegExp(
     '\\b(?:IBA|IZZ|ASH|AKH|AJR|TUH|JAZ|RIS)-\\d{4}\\b',
     'madjlis de la Risāla',
     'saisie numérique|lot ASH',
+    // noms de champs des sources (« voir `hadiths_cites_dans_les_commentaires` »)
+    '\\b[a-z]+_[a-z_]+\\b|`[^`]+`',
     'est (?:traduit|rendu)e? (?:littéralement|«)|[Tt]raduction (?:corrigée|rendue)|Crochet corrigé|abandonnée?\\b',
   ].join('|'),
 );
@@ -145,8 +197,48 @@ export const CHAMPS_INTERNES = [
   'a_enseigner',
   'note_traduction',
   'note_khafd_jarr',
+  // lot 3 : champs de travail des sources, jamais chez l'élève
+  'texte_avec_arabe_interne',
+  'mots_ar_note',
+  'partie_translit_interne',
+  'partie_mots_ar',
+  'titre_translit_interne',
+  'sens_translit_interne',
+  'intro_ar_base_numerique',
+  'takhrij_nawawi_ar_base_numerique',
+  'collation_voyelles',
+  'collation_1903',
+  'collation_ancienne_13_10',
+  'statut_vocalisation',
+  'decision_referent_13_10',
+  'rattachement_mashhur',
+  'point_referent',
+  'points_referent',
+  'note_sensible',
+  'passage_sensible',
+  'dans_nos_livres',
+  'sources_recueil',
+  'jugements',
+  'jugements_verifies_13_10',
+  'confirmations_turath_13_10',
+  'degre_affiche',
+  'degre_affiche_fr',
 ];
 
+/** Lettres arabes (hors ﷺ et ornements ﴿﴾) : une suite arabe dans un texte français devient un mot isolé `{ar:K}`. */
+const LETTRE_AR =
+  '\\u0600-\\u06FF\\u0750-\\u077F\\uFB50-\\uFD3D\\uFD40-\\uFDF9\\uFDFB-\\uFDFF\\uFE70-\\uFEFF';
+export const ARABE_LIGNE = new RegExp(`[${LETTRE_AR}]`);
+const SUITE_ARABE = new RegExp(`[${LETTRE_AR}]+(?:[ \\u00A0][${LETTRE_AR}]+)*`, 'g');
+/** Mots arabes isolés : toute suite arabe d'un texte français est remplacée par un marqueur (mots à la suite de ceux déjà là). */
+export function isoler(texte, mots = []) {
+  const out = [...mots];
+  const t = texte.replace(SUITE_ARABE, (m) => {
+    out.push(m);
+    return `{ar:${out.length - 1}}`;
+  });
+  return { texte: t, mots: out };
+}
 const lire = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const LATIN = /[A-Za-zʿʾḥṣḍṭẓāīūṯḏġš]/;
 
@@ -173,14 +265,44 @@ export function sensVerset(s, a) {
 }
 
 /** Phrases d'un texte_ar.json : `phrases` (prose) ou `vers` (poème). */
-const unitesAr = (ar) => ar.phrases ?? ar.vers;
-const idsSeance = (s) => s.phrases ?? s.vers;
+const unitesAr = (ar) => ar.phrases ?? ar.vers ?? ar.hadiths;
+const idsSeance = (s) => s.phrases ?? s.vers ?? s.hadith;
+
+/**
+ * Les Quarante hadiths : un hadith est une « phrase » dont l'arabe est le texte d'an-Nawawī (Būlāq 1321) :
+ * l'introduction (nom du Compagnon) puis le matn, tels que la source les coupe (`texte_complet_ar` dit s'il y a une
+ * espace entre les deux). La mention de takhrīj (recueil, degré) vient en dessous, jamais dans le texte appris.
+ */
+function uniteHadith(h) {
+  const complet = h.texte_complet_ar ?? '';
+  const colle = complet.startsWith(h.intro_ar) && complet[h.intro_ar.length] !== ' ';
+  const v = h.collation_1903?.voyelles_13_10_ter?.voyelle_a_confirmer ?? [];
+  return {
+    id: h.id,
+    type: h.coran?.length ? 'citation_hadith' : 'texte',
+    ar: h.intro_ar + (colle ? '' : ' ') + h.matn_ar,
+    a_verifier: v.map((x) => `${x.mot} : ${x.note} (lecture retenue : ${x.lecture_retenue})`),
+    hadith: h,
+  };
+}
+const frHadith = (f) => ({ ...f, fr: `${f.intro_fr} ${f.matn_fr}`.replace(/\s+/g, ' ').trim() });
+/** `voyelle_a_confirmer` : liste (Ājurrūmiyya, Jazariyya…) ou objet (Waraqāt : raison, lecture retenue). */
+const voyellesAConfirmer = (v) =>
+  !v
+    ? []
+    : Array.isArray(v)
+      ? v.map((x) =>
+          typeof x === 'string'
+            ? x
+            : `${x.mot} : ${x.motif ?? x.raison} (lecture retenue : ${x.lecture_retenue ?? x.retenu})`,
+        )
+      : [`${v.raison} (lecture retenue : ${v.lecture_retenue})`];
 
 /** Numéros des séances d'un texte : ordre de publication si le référent en fixe un, sinon l'ordre du fichier. */
 const ordres = new Map();
 export function ordreSeances(texte) {
   if (!ordres.has(texte)) {
-    const se = lire(join(SOURCES, texte, 'seances.json'));
+    const se = lire(join(dossier(texte), 'seances.json'));
     const liste = se.seances.map((s, i) => ({ s, i }));
     liste.sort(
       (a, b) =>
@@ -208,11 +330,14 @@ const ref = (cites) => {
  * consécutifs de `coran.segments`, tous sous-chaînes EXACTES de Tanzil ; sinon la construction échoue.
  */
 export function decouperCoran(id, arabe, coran, lignes) {
-  const segs = coran.segments ?? [
-    { sourate: coran.sourate, verset: coran.verset, texte: coran.texte },
-  ];
-  if (coran.voix_de_synthese !== false)
-    throw new Error(`coran ${id} : voix de synthèse non exclue`);
+  // `coran` : un objet (un segment, ou `segments`) ou, pour les Waraqāt, la liste des segments cités
+  const segs = Array.isArray(coran)
+    ? coran
+    : (coran.segments ?? [{ sourate: coran.sourate, verset: coran.verset, texte: coran.texte }]);
+  const sansVoix = Array.isArray(coran)
+    ? coran.every((s) => s.voix_de_synthese === false)
+    : coran.voix_de_synthese === false;
+  if (!sansVoix) throw new Error(`coran ${id} : voix de synthèse non exclue`);
   for (const s of segs) {
     const ligne = lignes.get(`${s.sourate}:${s.verset}`);
     if (!ligne || !s.texte || !ligne.includes(s.texte))
@@ -252,11 +377,15 @@ export const reparerApostrophes = (t) =>
   t.replace(/\b(d|l|n|s|m|t|c|j|qu|quelqu|lorsqu|puisqu) (?=[aeiouhàâéèêîôû])/g, "$1'");
 /** Sens d'un mot difficile sans renvoi au dossier interne (« (R-04) », « voir RAPPORT… »). */
 export const sensMotEleve = (s) =>
-  s.replace(/\s*\([^)]*(?:\bR-[A-Z0-9]+|RAPPORT)[^)]*\)/g, '').trim();
+  s
+    .replace(/\s*\([^)]*(?:\bR-[A-Z0-9]+|RAPPORT)[^)]*\)/g, '')
+    // phonétique latine du mot arabe entre parenthèses (« l'excellence (iḥsān) ») : jamais côté élève, le mot est en arabe
+    .replace(/\s*\(\s*[a-zʿʾ'’\- ]*[ḥṣḍṭẓāīūʿʾ][a-zḥṣḍṭẓāīūʿʾ'’\- ]*\)/g, '')
+    .trim();
 
 /** Retire d'une note les phrases internes (comité, référent, codes de décision…) ; '' si rien ne reste. */
 export function nettoyerNote(texte) {
-  const phrases = texte.split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ«(‹])/);
+  const phrases = texte.split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ«(‹{])/);
   return phrases
     .filter((p) => !PHRASE_INTERNE.test(p))
     .join(' ')
@@ -267,15 +396,40 @@ const sourceEleve = (s) =>
     ? null
     : s.replace(/,? copie par programme/, '').replace(/\s+\(\s*\)/g, '');
 
+/**
+ * Mots arabes isolés dans un texte français (schéma `{ar:K}` + `mots_ar`, 13/10/2026) : chaque marqueur renvoie à un
+ * mot arabe vocalisé de la liste ; l'élève reçoit le texte avec ses marqueurs et la liste (`ma`), affichés en arabe.
+ * La construction échoue si un marqueur n'a pas de mot, si un mot porte une lettre latine, ou si l'ancien texte
+ * (`texte_avec_arabe_interne`, relecteur seulement) n'est pas retrouvé exactement en remplaçant les marqueurs.
+ * Retourne la liste des mots à livrer ([] si le texte n'a aucun marqueur).
+ */
+export function motsArabes(id, texte, mots, ancien) {
+  const ks = [...texte.matchAll(MARQUEUR)].map((m) => Number(m[1]));
+  if (!ks.length) return [];
+  if (!Array.isArray(mots) || ks.some((k) => !mots[k]))
+    throw new Error(`${id} : marqueur {ar:K} sans mot arabe`);
+  for (const w of mots)
+    if (typeof w !== 'string' || !w || LATIN.test(w))
+      throw new Error(`${id} : mot arabe invalide « ${w} »`);
+  if (ancien !== undefined && expanser(texte, mots) !== ancien)
+    throw new Error(`${id} : le texte rétabli depuis mots_ar n'est pas l'ancien texte`);
+  return [...mots];
+}
+/** Texte avec ses marqueurs remplacés par les mots arabes (mode enseignant, contrôles). */
+export const expanser = (texte, mots) => texte.replace(MARQUEUR, (_, k) => mots?.[Number(k)] ?? '');
+
 /** Notes d'explication (`note_explication` : objet ou liste) destinées à l'élève, et ce qui reste au mode enseignant. */
-function notesEleve(n) {
+function notesEleve(n, id = '?') {
   if (!n) return { notes: [], interne: [] };
   const notes = [];
   const interne = [];
   for (const x of Array.isArray(n) ? n : [n]) {
     if (typeof x.texte !== 'string' || !x.texte) throw new Error('note_explication sans texte');
     const texte = nettoyerNote(x.texte);
-    if (texte !== x.texte) interne.push(x.texte);
+    if (texte !== x.texte) interne.push(expanser(x.texte, x.mots_ar));
+    const ma = motsArabes(`${id} (note)`, texte, x.mots_ar, undefined);
+    if (x.texte_avec_arabe_interne !== undefined)
+      motsArabes(`${id} (note)`, x.texte, x.mots_ar, x.texte_avec_arabe_interne);
     const src = [...(x.sources ?? []), ...(x.citations ?? []).map((c) => c.source).filter(Boolean)];
     const sources = [...new Set(src.map(sourceEleve).filter(Boolean))];
     // remarques d'éditeur entre crochets (français) dans une citation arabe : retirées de l'élève
@@ -286,11 +440,160 @@ function notesEleve(n) {
     if (!texte) continue;
     notes.push({
       texte,
+      ...(ma.length ? { ma } : {}),
       ...(sources.length ? { sources } : {}),
       ...(ar.length ? { ar } : {}),
     });
   }
   return { notes, interne };
+}
+
+/** Intitulé d'ouvrage sans l'identifiant de numérisation entre parenthèses (archive.org, turath, pagination du scan). */
+const ouvrageEleve = (s) => s.replace(/\s*\([^)]*\)\s*$/, '').trim();
+const sansCrochetsLatins = (c) => c.replace(/\s*\[[^\]]*[A-Za-z][^\]]*\]/g, '');
+
+/** Al-Bayqūniyya : définitions d'Ibn Ḥajar et d'Ibn aṣ-Ṣalāḥ, écart du poème (page de l'imprimé), les deux enseignés avec leur auteur. */
+function notesBayquniyya(f, ouvrageSalah) {
+  const notes = [];
+  for (const x of f.note_selon_ibn_hajar ?? []) {
+    const morceaux = [];
+    const sources = [];
+    for (const [nom, k] of [
+      ['Ibn Ḥajar', 'ibn_hajar'],
+      ['Ibn aṣ-Ṣalāḥ', 'ibn_as_salah'],
+    ]) {
+      const d = x[k];
+      if (!d?.definition_fr) continue;
+      // la définition commence parfois par le nom de l'auteur (« Ibn aṣ-Ṣalāḥ cite… ») : pas de répétition
+      const def = d.definition_fr.startsWith(`${nom} `)
+        ? d.definition_fr.replace(new RegExp(`^${nom}\\s*:?\\s*`), '')
+        : d.definition_fr;
+      morceaux.push(`Selon ${nom} : ${def.charAt(0).toUpperCase()}${def.slice(1)}`);
+      // dans la source, le champ `source` répète parfois la définition : l'ouvrage est alors celui des séances
+      const ouvrage =
+        d.source && d.source !== d.definition_fr ? ouvrageEleve(d.source) : ouvrageSalah;
+      if (ouvrage && d.page) sources.push(`${ouvrage}, p. ${d.page}`);
+    }
+    if (x.ecart_du_poeme) morceaux.push(`Écart du poème : ${x.ecart_du_poeme}`);
+    if (x.az_zurqani) morceaux.push(`az-Zurqānī : ${x.az_zurqani}`);
+    const t = nettoyerNote(morceaux.join(' '));
+    if (t) notes.push({ texte: t, ...(sources.length ? { sources } : {}), k: 'ecart' });
+  }
+  const m = f.munkar_deux_sens;
+  if (m) {
+    const t = nettoyerNote(
+      `Deux sens du même mot. Dans le poème : ${m.sens_du_poeme}. Selon Ibn Ḥajar : ${m.sens_d_ibn_hajar}. Chez les anciens : ${m.sens_des_anciens}.`,
+    );
+    if (t) notes.push({ texte: t, k: 'ecart' });
+  }
+  return notes;
+}
+
+const ENTITES = {
+  '&quot;': '"',
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&#39;': "'",
+  '&nbsp;': ' ',
+};
+export const entitesHtml = (s) => s.replace(/&(?:quot|amp|lt|gt|#39|nbsp);/g, (e) => ENTITES[e]);
+
+/** Libellé d'une version du recueil : recueil, numéro du texte montré, tome et page de l'imprimé. */
+function libelleVersion(v) {
+  const num = v.numero ?? v.numero_du_texte_le_plus_proche ?? v.numero_cite_par_nawawi;
+  const lieu = v.volume && v.page_imprimee ? ` (t. ${v.volume}, p. ${v.page_imprimee})` : '';
+  return `${v.recueil}${num != null ? ` n° ${num}` : ''}${lieu}`;
+}
+
+/**
+ * Un hadith d'an-Nawawī, sous le texte d'an-Nawawī : la mention de takhrīj (recueil et numéro, avec les autres récits
+ * qu'il ajoute), le degré (« authenticité discutée : … » avec le juge nommé quand il l'est), puis la version du recueil
+ * quand elle diffère (jamais à la place du texte d'an-Nawawī), avec ses différences.
+ */
+function blocHadith(h, f) {
+  /** texte français avec ses éventuels mots arabes isolés (`{ar:K}` + `ma`) */
+  const txt = (s) => {
+    const r = isoler(s);
+    return { texte: r.texte, ...(r.mots.length ? { ma: r.mots } : {}) };
+  };
+  // renvois de la source à ses propres champs (« voir version_recueil_affichee dans texte_ar.json ») : jamais chez l'élève
+  const sansChamps = (s) =>
+    s.replace(/\s*\((?:voir|cf\.)?[^()]*(?:[a-z]+_[a-z_]+|\.json)[^()]*\)/g, '');
+  const fr = sansChamps([f.takhrij_fr, f.autres_recits_fr].filter(Boolean).join(' '));
+  if (/[a-z]+_[a-z_]+|\.json/.test(fr)) throw new Error(`${h.id} : nom de champ dans le takhrīj`);
+  const out = {};
+  if (h.takhrij_nawawi_ar || fr) out.tk = { ar: h.takhrij_nawawi_ar ?? '', fr: txt(fr) };
+  const degre = f.degre_affiche_fr;
+  if (typeof degre !== 'string' || !degre) throw new Error(`${h.id} : degré manquant`);
+  // un hadith « discuté » dit « authenticité discutée » et nomme au moins un juge
+  if (
+    h.degre_affiche.discute !== /^authenticité discutée/.test(degre) ||
+    !h.degre_affiche.juges?.length
+  )
+    throw new Error(`${h.id} : degré affiché incohérent`);
+  out.deg = txt(degre);
+  const v = (h.version_recueil_affichee ?? []).map((x) => {
+    if (!x.texte_recueil_ar) throw new Error(`${h.id} : version du recueil sans texte`);
+    return {
+      r: libelleVersion(x),
+      // le texte de turath.io porte des entités HTML (&quot;) : seule réparation faite au texte du recueil
+      ar: entitesHtml(x.texte_recueil_ar),
+      ...(x.differences_avec_nawawi_fr?.length ? { d: x.differences_avec_nawawi_fr.map(txt) } : {}),
+    };
+  });
+  if (v.length) out.v = v;
+  return out;
+}
+
+/** Hadith : contexte sobre (passages sensibles), prudence, glose d'an-Nawawī, ordre des récits (alerte d'al-Bukhārī). */
+function notesHadith(h, f) {
+  const notes = [];
+  const ajouter = (texte, extra = {}) => {
+    const t = texte ? nettoyerNote(texte) : '';
+    if (t) notes.push({ texte: t, ...extra });
+  };
+  ajouter(f.note_contexte_fr);
+  ajouter(f.note_prudence_fr);
+  ajouter(f.glose_nawawi_fr, h.glose_nawawi_1903_ar ? { ar: [h.glose_nawawi_1903_ar] } : {});
+  ajouter(h.alerte_bukhari);
+  return notes;
+}
+
+/** Waraqāt : note obligatoire sur l'école mālikite (mashhūr) avec ses sources, contexte, jugements d'un hadith cité. */
+function notesWaraqat(p, f, ecarts) {
+  const notes = [];
+  if (f.note_ecart_malikite_fr) {
+    const e = ecarts.get(f.ecart_malikite);
+    const sources = [];
+    const ar = [];
+    for (const s of [...(e?.sources ?? []), ...(e?.mashhur_etabli?.sources ?? [])]) {
+      const ligne = `${ouvrageEleve(s.ouvrage)}, p. ${s.page}`;
+      if (!SOURCE_INTERNE.test(ligne) && !sources.includes(ligne)) sources.push(ligne);
+      if (s.extrait && !/\.\.\.|…/.test(s.extrait)) ar.push(sansCrochetsLatins(s.extrait));
+    }
+    const texte = nettoyerNote(f.note_ecart_malikite_fr);
+    if (texte)
+      notes.push({
+        texte,
+        ...(sources.length ? { sources } : {}),
+        ...(ar.length ? { ar: [...new Set(ar)] } : {}),
+        k: 'malikite',
+      });
+  }
+  if (f.note_contexte_fr) {
+    const texte = nettoyerNote(f.note_contexte_fr);
+    if (texte) notes.push({ texte });
+  }
+  const jug = (p.hadith?.references ?? []).filter(
+    (r) => r.jugement_explicite && !ARABE_LIGNE.test(r.jugement_explicite),
+  );
+  if (jug.length)
+    notes.push({
+      texte: `Degré : ${jug.map((r) => `${r.jugement_explicite} (${ouvrageEleve(r.ouvrage)}, ${r.numero})`).join(' ; ')}.`,
+      k: 'degre',
+    });
+  return notes;
 }
 
 /** Nom du style de soulignement (code visuel de la grammaire) d'après sa description. */
@@ -301,7 +604,7 @@ const STYLE = [
   [/tiret|coup/i, 'tirete'],
 ];
 function codeVisuel(texte) {
-  const c = lire(join(SOURCES, texte, 'code_visuel_grammaire.json'));
+  const c = lire(join(dossier(texte), 'code_visuel_grammaire.json'));
   if (!STATUTS_ACCEPTES.has(c.statut)) throw new Error('code visuel : statut');
   return {
     etats: c.etats.map((e) => {
@@ -320,7 +623,7 @@ function codeVisuel(texte) {
 
 /** Explications d'après al-Kafrāwī (Ājurrūmiyya) : une note sur la première phrase de chacune. */
 function explicationsKafrawi(texte, ordreIds, lignes) {
-  const e = lire(join(SOURCES, texte, 'explications_kafrawi.json'));
+  const e = lire(join(dossier(texte), 'explications_kafrawi.json'));
   if (!STATUTS_ACCEPTES.has(e.statut)) throw new Error('explications : statut');
   const parId = new Map();
   for (const x of e.explications) {
@@ -360,7 +663,7 @@ function explicationsKafrawi(texte, ordreIds, lignes) {
 }
 
 export function construire(texte = 'akhdari', lignes = tanzil()) {
-  const dir = join(SOURCES, texte);
+  const dir = dossier(texte);
   const ar = lire(join(dir, 'texte_ar.json'));
   const fr = lire(join(dir, 'traduction_fr.json'));
   const se = lire(join(dir, 'seances.json'));
@@ -372,8 +675,16 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
     const s = d.statut_global ?? d.statut;
     if (!STATUTS_ACCEPTES.has(s)) throw new Error(`${texte}/${nom} : statut ${s}`);
   }
-  const unites = unitesAr(ar);
-  const frDe = new Map(fr.phrases.map((p) => [p.id, p]));
+  const hadiths = ar.hadiths !== undefined;
+  const unites = hadiths ? ar.hadiths.map(uniteHadith) : unitesAr(ar);
+  const frDe = new Map(fr.phrases.map((p) => [p.id, hadiths ? frHadith(p) : p]));
+  const ecartsMalikites = new Map((ar.ecarts_malikites ?? []).map((e) => [e.id, e]));
+  // al-Bayqūniyya : ouvrage d'Ibn aṣ-Ṣalāḥ, tel que les séances le citent (« …, éd. …, 2002, p. 79 » → sans la page)
+  const ouvrageSalah = (se.seances ?? [])
+    .flatMap((s) => s.explications ?? [])
+    .map((e) => e.source ?? '')
+    .find((s) => /^Ibn aṣ-Ṣalāḥ, /.test(s))
+    ?.replace(/,\s*p\.[^,]*$/, '');
   const variantes = new Map((ar.variantes ?? []).map((v) => [v.id, v]));
   const seancesSrc = ordreSeances(texte);
   const dansSeance = new Set(seancesSrc.flatMap(idsSeance));
@@ -458,16 +769,13 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
     if (!f) throw new Error(`traduction manquante ${p.id}`);
     if (!STATUTS_ACCEPTES.has(f.statut)) throw new Error(`statut ${p.id} : ${f.statut}`);
     const verset = p.hemistiches !== undefined;
-    const t = p.type;
+    const t = TYPE_PHRASE[p.type] ?? p.type;
+    if (!TYPES.has(t)) throw new Error(`${p.id} : type inconnu « ${p.type} »`);
     const comite = [];
     // champs internes : mode enseignant seulement
     const aVerifier = [
       ...(p.a_verifier ?? []),
-      ...(p.voyelle_a_confirmer ?? []).map((v) =>
-        typeof v === 'string'
-          ? v
-          : `${v.mot} : ${v.motif ?? v.raison} (lecture retenue : ${v.lecture_retenue ?? v.retenu})`,
-      ),
+      ...voyellesAConfirmer(p.voyelle_a_confirmer),
       ...(voyelleJaz.get(p.id) ?? []).map(
         (v) => `${v.mot} : ${v.raison} (lecture retenue : ${v.retenu})`,
       ),
@@ -478,8 +786,15 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
       noterEns(p.id, { a_verifier: aVerifier });
       continue;
     }
-    const { notes: notesN, interne } = notesEleve(f.note_explication);
-    const notes = [...notesN, ...(explications.get(p.id) ?? []), ...(noteJaz.get(p.id) ?? [])];
+    const { notes: notesN, interne } = notesEleve(f.note_explication, p.id);
+    const notes = [
+      ...notesN,
+      ...(explications.get(p.id) ?? []),
+      ...(noteJaz.get(p.id) ?? []),
+      ...(texte === 'bayquniyya' ? notesBayquniyya(f, ouvrageSalah) : []),
+      ...(texte === 'waraqat' ? notesWaraqat(p, f, ecartsMalikites) : []),
+      ...(hadiths ? notesHadith(p.hadith, f) : []),
+    ];
     for (const x of interne) comite.push(x);
     const base = {
       id: p.id,
@@ -505,12 +820,30 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
     ).replace(NOTE_A_VERIFIER, '');
     if (sansNote !== f.fr) base.incertain = true;
     const aSens = new RegExp(EMPLACEMENT_SENS.source).test(sansNote) || !!f.sens_verset;
-    const frEleve = sansNote.replace(EMPLACEMENT_SENS, '[…]');
+    const frEleve = sansNote.replace(EMPLACEMENT_SENS, '[…]').replace(CITATION_ELLIPSE, '[…]');
     if (EMPLACEMENT_RESTANT.test(frEleve))
       throw new Error(`emplacement non rempli ${p.id} (traduction)`);
+    // mots arabes isolés du français (`{ar:K}` + `mots_ar`), vérifiés contre l'ancien texte quand il est fourni
+    const ma = motsArabes(p.id, frEleve, f.mots_ar, undefined);
 
     let corps;
-    if (verset) corps = { h: [...p.hemistiches], fr: frEleve };
+    if (hadiths) {
+      const h = p.hadith;
+      const q = (h.coran ?? []).map((c) => {
+        const [s, a] = c.ref.split(':');
+        const ligne = lignes.get(`${s}:${a}`);
+        if (c.voix_de_synthese !== false || !ligne || !ligne.includes(c.texte_tanzil))
+          throw new Error(`hadith ${p.id} : verset ${c.ref} différent de Tanzil`);
+        if (c.affichage !== `﴿${c.texte_tanzil}﴾`) throw new Error(`hadith ${p.id} : affichage`);
+        return { q: c.texte_tanzil, ref: c.ref };
+      });
+      corps = {
+        ar: p.ar,
+        fr: frEleve,
+        ...(q.length ? { q } : {}),
+        hadith: blocHadith(h, f),
+      };
+    } else if (verset) corps = { h: [...p.hemistiches], fr: frEleve };
     else if (p.coran) {
       const { morceaux, versets } = decouperCoran(p.id, p.ar, p.coran, lignes);
       corps = {
@@ -533,15 +866,28 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
     const ajout = {};
     if (f.liste?.length) ajout.liste = f.liste.map((x) => ({ ar: x.ar, fr: x.fr }));
     if (f.exemples?.length) ajout.exemples = f.exemples.map((x) => ({ ar: x.ar, fr: x.fr }));
-    phrases.push({ ...base, ...corps, ...ajout, ...(notes.length ? { notes } : {}) });
+    phrases.push({
+      ...base,
+      ...corps,
+      ...(ma.length ? { ma } : {}),
+      ...ajout,
+      ...(notes.length ? { notes } : {}),
+    });
 
     // mode enseignant
-    const trad = [f.note_traduction, f.note_khafd_jarr, typeof f.note === 'string' ? f.note : null]
+    const trad = [
+      f.note_traduction,
+      f.note_khafd_jarr,
+      typeof f.note === 'string' ? f.note : null,
+      f.note_az_zurqani,
+      f.renvoi_lexique,
+      ...(hadiths ? [...(p.hadith.points_referent ?? []), f.note_sensible] : []),
+    ]
       .filter(Boolean)
       .join(' / ');
     const nv = (p.variantes ?? []).map((v) => variantes.get(v) ?? { id: v });
     const note = (f.fr.match(NOTE_A_VERIFIER) ?? []).map((x) => x.trim());
-    const dec = f.decision_referent ?? null;
+    const dec = f.decision_referent ?? f.decision_referent_13_10 ?? null;
     if (aVerifier.length || note.length || nv.length || trad || dec || comite.length)
       noterEns(p.id, {
         a_verifier: [...aVerifier, ...note],
@@ -551,6 +897,24 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
         ...(comite.length ? { notes_internes: comite } : {}),
         ...(f.citations_ar?.length && trad ? { ar: f.citations_ar } : {}),
       });
+  }
+
+  // l'arabe est toujours sur sa ligne : toute suite arabe restée dans un texte français devient un mot isolé `{ar:K}`
+  for (const p of phrases) {
+    if (typeof p.fr === 'string') {
+      const r = isoler(p.fr, p.ma);
+      if (r.texte !== p.fr) {
+        p.fr = r.texte;
+        p.ma = r.mots;
+      }
+    }
+    for (const n of p.notes ?? []) {
+      const r = isoler(n.texte, n.ma);
+      if (r.texte !== n.texte) {
+        n.texte = r.texte;
+        n.ma = r.mots;
+      }
+    }
   }
 
   // contrôles : l'arabe ne porte aucune lettre latine
@@ -564,6 +928,11 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
       ...(p.exemples ?? []).map((x) => x.ar),
       ...(p.notes ?? []).flatMap((n) => [...(n.ar ?? []), ...(n.q ?? []).map((q) => q.q)]),
       ...(p.titre ? [p.titre] : []),
+      ...(p.ma ?? []),
+      ...(p.notes ?? []).flatMap((n) => n.ma ?? []),
+      ...(p.q ?? []).map((q) => q.q),
+      ...(p.hadith?.tk?.ar ? [p.hadith.tk.ar] : []),
+      ...(p.hadith?.v ?? []).map((v) => v.ar),
     ];
     for (const a of arabes)
       if (LATIN.test(a))
@@ -599,19 +968,33 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
     }
     return out;
   };
+  // publication différée (voir DIFFERE) : les séances existent dans la source et la consigne y est toujours écrite
+  const differe = new Set(DIFFERE[texte]?.seances ?? []);
+  if (differe.size) {
+    const d = DIFFERE[texte];
+    if (!d.consigne.test(se.point_referent ?? ''))
+      throw new Error(`${texte} : la consigne de publication différée a changé dans la source`);
+    for (const id of differe)
+      if (!seancesSrc.some((s) => s.id === id)) throw new Error(`${texte} : séance ${id} absente`);
+  }
   const seances = seancesSrc.map((s) => {
     const ids = idsSeance(s);
     const mots = s.mots_difficiles.filter((m) => !reserve(s, m));
     const renvois = renvoisDe(s);
     const toutAdulte =
       s.niveau_min === 'adulte' || (ids.length > 0 && ids.every((id) => adulte(id)));
+    // titre : mots arabes isolés (`{ar:K}` + `titre_mots_ar`), puis toute suite arabe restante devient un marqueur
+    const t0 = motsArabes(s.id, s.titre, s.titre_mots_ar, undefined);
+    const t1 = isoler(s.titre, t0);
     return {
       n: numeroDe.get(s.id),
       id: s.id,
-      titre: s.titre,
+      titre: t1.texte,
+      ...(t1.mots.length ? { tma: t1.mots } : {}),
       duree: s.duree_min,
       phrases: ids,
       mots: mots.map((m) => ({ ar: m.ar, fr: sensMotEleve(m.sens) })),
+      ...(differe.has(s.id) ? { differe: true } : {}),
       ...(ids.some((id) => SECTIONS_PUDEUR.has(section(id))) ? { pudeur: true } : {}),
       ...(toutAdulte ? { adulte: true } : {}),
       ...(s.facultatif === true ? { facultatif: true } : {}),
@@ -632,6 +1015,13 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
     statut: STATUT,
     decoupage: se.a_confirmer,
     ...(se.point_referent ? { publication: se.point_referent } : {}),
+    ...(differe.size
+      ? {
+          differe: seances.filter((s) => s.differe).map((s) => s.n),
+          consigne_differe:
+            'Publication différée : ces séances sont masquées aux invités de la bêta (hors personnel et démonstration) tant que la consigne du référent ci-dessus n’est pas levée.',
+        }
+      : {}),
     comite: seancesSrc
       .filter((s) => s.relecture_comite === true)
       .map((s) => ({ n: numeroDe.get(s.id), id: s.id, motif: s.motif_relecture ?? '' })),

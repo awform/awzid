@@ -8,6 +8,23 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 13/10/2026 — Madjaliss lot 3 : al-Bayqūniyya, les Quarante hadiths, al-Waraqāt, mise à jour des sept textes
+
+Branche `madjaliss-3-wip` (worktree `~/awform-madjaliss-3`, depuis `main` 9d8bc8a), démo privée seulement.
+
+- **Sources** du référent copiées octet par octet (scp d'une archive, SHA-256 contrôlés sur la VM) dans `packages/content/madjaliss-source/` : `bayquniyya/` (34 vers, 14 séances), `nawawi40/` (42 hadiths, 42 séances), `waraqat/` (139 phrases, 26 séances) ; mise à jour des sept textes déjà en ligne (statuts `EN_ATTENTE_SECONDE_LECTURE`, notes ajoutées, mots arabes isolés convertis) ; `lexique_fiqh_commun.json`. Lāmiyya, sīra, Risāla et Khalīl ne sont PAS intégrés.
+- **Données** (`scripts/madjaliss.mjs`, `static/mutun/<texte>.json`) : dix textes (`nawawi` ← dossier `nawawi40`). Un hadith est une « phrase » dont l'arabe est le texte d'an-Nawawī (Būlāq 1321 : introduction + matn), mémorisable ; sous lui la mention de takhrīj (arabe + français, avec les autres récits), le degré (`degre_affiche_fr` : « authenticité discutée : … » avec les juges nommés, vérifié contre `degre_affiche.discute`), les **versions du recueil** quand elles diffèrent (jamais à la place du texte, avec leurs différences : ordre des récits du hadith 4), les notes (contexte sobre, prudence, glose d'an-Nawawī, alerte d'al-Bukhārī) et les versets cités dans le matn (hadiths 10 et 29 : Tanzil sous-chaîne exacte, jamais lus par une voix de synthèse). Bayqūniyya : notes d'écart (Ibn Ḥajar / Ibn aṣ-Ṣalāḥ, page de l'imprimé, écart du poème), `munkar` aux deux sens. Waraqāt : note obligatoire de l'école mālikite (17 phrases, sources et extraits arabes), contexte, degré des hadiths cités ; versets en Tanzil avec le sens de la traduction de référence (« ﴿ … ﴾ » du français remplacé par […]).
+- **Mots arabes isolés** : schéma `{ar:K}` + `mots_ar` (champ `ma` chez l'élève ; `tma` pour un titre de séance), vérifié à la construction (marqueur sans mot, lettre latine dans un mot, texte rétabli ≠ `texte_avec_arabe_interne` : échec). Toute suite arabe restée dans un texte français devient un marqueur. Affichage : `avecArabe()` + le composant `Bidi` (arabe vocalisé, police arabe, mot isolé dans la ligne).
+- **Publication différée** : séances IBA-S02 à S10 (champ `differe`, contrôlé contre la consigne du référent) masquées aux invités de la bêta (ni personnel ni compte `@demo.awform.test`), dans le sommaire comme par l'adresse directe ; visibles en mode enseignant et en démonstration, avec la consigne (`consigne_differe`, `publication`). Masquage d'affichage, pas d'accès : les fichiers `/mutun/*.json` restent publics.
+- **Niveaux et passages réservés** : règles inchangées (`niveau_min: adulte` jamais aux enfants ni aux ados ; passages dont la note dit que le maître les présente : « Passage présenté avec son explication par l'enseignant — bientôt »). Aucune note des trois nouveaux textes ne le demande : aucun passage retenu.
+- **Champs internes** : liste blanche de champs ; `CHAMPS_INTERNES` étendue ; test sur les clés ET les valeurs ; ni nom de champ de source (`hadiths_cites_dans_les_commentaires`…) ni entité HTML (`&quot;` du texte turath.io, seule réparation faite au texte d'un recueil). Phonétique latine entre parenthèses des mots difficiles retirée (le mot est en arabe).
+- **Statut** : une seule mention (`mj.statut`) sous chaque texte et chaque séance ; l'ancien libellé n'est plus accepté en entrée ni nulle part (test sur les données, les fichiers de langue).
+- **Reste à convertir par le référent** : translittération latine dans le français affiché (termes techniques, titres de séances d'al-Bayqūniyya et des hadiths, degrés des hadiths) : plafonds mesurés par texte dans `textes.test.ts` (`PLAFOND_TRANSLIT`), à ne jamais relever ; seuls les noms propres sont exceptés.
+- **Poids** : rien au démarrage (le code et les données sont dans le morceau « madjaliss », au premier usage) : appareil élève 343,6 Ko (marge 6,4 Ko), page la plus lourde `/coran/lecteur` 148,2 Ko, comme avant ; Madjaliss (4 fichiers, non préchargés) 12,9 → 13,5 Ko.
+- Tests : voir les chiffres du déploiement ci-dessous.
+
+---
+
 ## 13/10/2026 — Madjaliss lot 2 : sept textes (al-ʿAshmāwiyya, Tuḥfa, Ibn ʿĀshir, al-ʿIzziyya, al-Ājurrūmiyya, al-Jazariyya) et mise à jour d'al-Akhḍarī
 
 Branche `madjaliss-2-wip` (worktree `~/awform-madjaliss-2`, depuis `main` af89435), démo privée seulement.

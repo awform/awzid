@@ -1,6 +1,6 @@
 {
   "titre": "Découpage en séances (majālis) — pilote al-Akhḍarī",
-  "statut": "VALIDATION_HUMAINE_REQUISE",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
   "principe": "Séances de 5 à 15 minutes : lecture du texte arabe, traduction, mots difficiles. L'explication sera ajoutée plus tard (rien n'est rédigé ici). Durée estimée = lecture lente ×2 + traduction + mots ; à recaler sur l'enregistrement réel du lecteur.",
   "a_confirmer": "Découpage proposé par Claude ; aucune source écrite de découpage traditionnel (daara, mahdara) n'a été trouvée. À comparer avec la pratique de 2 ou 3 maîtres.",
   "seances": [

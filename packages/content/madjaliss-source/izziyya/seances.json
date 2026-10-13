@@ -1,6 +1,6 @@
 {
   "titre": "Découpage en séances (majālis) — al-Muqaddima al-ʿIzziyya",
-  "statut": "VALIDATION_HUMAINE_REQUISE",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
   "principe": "Séances de 2 à 14 minutes (80 séances, 697 minutes estimées) : lecture du texte arabe, traduction, mots difficiles. Ce qui est identique ou proche d'al-Akhḍarī, d'al-ʿAshmāwiyya ou d'Ibn ʿĀshir n'est pas réexpliqué : la séance renvoie au madjlis correspondant (champ « renvois ») et ne commente que les différences (voir alignement_akhdari.json). Les apports propres (choses pures et impures, istinjāʾ et bienséances, pansement, khuff, adhān et iqāma, groupe et imamat, voyage et jonction, fêtes, éclipses, zakāt, retraite, sacrifice, égorgement, mariage, divorce, vente, successions, bienséances) sont traités en entier. Les notes « obligatoires » de traduction_fr.json s'affichent avec leur phrase. L'explication n'est pas rédigée ici.",
   "a_confirmer": "Découpage proposé par Claude ; à comparer avec la pratique de maîtres qui enseignent l'ʿIzziyya (Égypte, Maghreb, Afrique de l'Ouest). Durées estimées (lecture lente ×2 + traduction + mots), à recaler sur l'enregistrement. Séances détachées au niveau adulte, sans changer l'ordre du texte : IZZ-S12A, IZZ-S58A (rapports conjugaux) ; IZZ-S19A, IZZ-S53A, IZZ-S58B, IZZ-S65A, IZZ-S66A, IZZ-S67A (passages sensibles S1 à S6, relecture_comite, décision du 13/10).",
   "seances": [
