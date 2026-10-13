@@ -65,6 +65,13 @@ je contrôle le certificat de **chaque** nom (Let’s Encrypt, un certificat par
 `https://awzid.com/x?y=1`), les cookies, les liens des e-mails (`https://awzid.com/…`) et l’en-tête HSTS **court** (5 minutes au début ; je
 l’allonge à 1 jour puis à 1 an seulement quand tout est vérifié, sans `preload`). Tant que le web est fermé, rien ne répond : c’est voulu.
 
+### Plus tard, facultatif : les noms courts par section (désactivés pendant la bêta)
+
+Six noms courts peuvent mener à une section (redirection 301, le site reste sur `awzid.com`) : `arabe` → l’accueil, `quran` → Coran,
+`fiqh` et `fikh` → Madjaliss, `adab` et `akhlaq` → Vivre (comportement, douas). **Rien à faire maintenant** : ils sont éteints. Le jour où
+vous en voulez un, vous ajoutez chez OVH un `CNAME` `<nom>` → `awzid.com.` (un par nom), puis je l’active sans redéployer
+(`infra/prod/alias-sections.sh activer quran`) ; Caddy demande alors un certificat pour ce seul nom. Désactiver = `desactiver quran`.
+
 ## Étape 3 — Le service d’e-mail : le plus simple est celui d’OVH (vous crée la boîte ; moi je branche)
 
 **Pourquoi** : invitations, vérification d’adresse, « mot de passe oublié », alertes. Sans lui, tout marche sauf ces envois (je vous donne

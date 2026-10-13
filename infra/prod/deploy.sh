@@ -89,6 +89,7 @@ else
   rm -f "$CONF/tsnet/ts.caddy"
 fi
 mkdir -p "$CONF/tsnet"
+mkdir -p "$CONF/alias"  # alias de sections (désactivés par défaut), voir alias-sections.sh
 if [ -n "$RELAIS_DOMAINE" ]; then
   case "$RELAIS_DOMAINE" in *[!a-z0-9.-]* | .* | *.) echo "domaine des relais invalide : $RELAIS_DOMAINE"; exit 2 ;; esac
   sed -i '/^RELAIS_DOMAINE=/d' "$ENVF"

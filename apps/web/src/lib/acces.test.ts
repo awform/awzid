@@ -269,9 +269,10 @@ describe('mode fermé (côté serveur web)', () => {
     expect(langueDe('de-DE,de;q=0.9')).toBe('de');
   });
   it('les textes de la page serveur sont ceux du catalogue', () => {
-    const fr = JSON.parse(
-      readFileSync(join(SRC, 'lib', 'i18n', 'messages', 'fr.json'), 'utf8'),
-    ) as Record<string, string>;
+    const fr = JSON.parse(readFileSync(join(STATIC, 'i18n', 'fr-rares.json'), 'utf8')) as Record<
+      string,
+      string
+    >;
     const src = readFileSync(join(SRC, 'lib', 'server', 'acces-serveur.ts'), 'utf8');
     expect(src).toContain(fr['ferme.titre']);
     expect(src).toContain(fr['ferme.texte']);

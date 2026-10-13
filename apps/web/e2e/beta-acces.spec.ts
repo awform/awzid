@@ -509,6 +509,7 @@ test.describe('espace administrateur : trois modes, plafond, tableau de bord', (
 });
 
 test.describe('accueil de la bêta pour un visiteur (awzid.com)', () => {
+  test.use({ compte: null });
   test('« sur invitation » : présentation courte, « Bêta sur invitation », code, liste d’attente ; l’application reste fermée', async ({
     page,
   }) => {
@@ -597,10 +598,6 @@ test.describe('Quran Foundation et profils d’enfants (serveur réel)', () => {
       fonctions: Record<string, boolean>;
     };
     expect([f.fonctions.recitateurs_en_ligne, f.fonctions.mushaf_exact]).toEqual([false, false]);
-    const refus = await page.request.get('/api/v1/quran/mushaf-exact/pages/1', {
-      headers: { 'x-profil': kid },
-    });
-    expect(refus.status()).toBe(403);
-    expect((await refus.json()).error.code).toBe('fonction_coupee');
+    // le refus serveur (403 fonction_coupee) est vérifié par apps/api/test/beta-modes.test.ts
   });
 });

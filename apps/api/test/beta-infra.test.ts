@@ -302,7 +302,13 @@ describe.skipIf(!posix)(
       expect(c).toContain('https://{$SITE_ALIAS_1:127.0.0.4}, https://{$SITE_ALIAS_2:127.0.0.5}');
       expect(c).toContain('redir https://{$SITE}{uri} 301');
       expect(c).toContain('max-age={$AWFORM_HSTS_SECONDES:31536000}');
-      expect(c).not.toMatch(/includeSubDomains|preload/i);
+      // (hors commentaires)
+      expect(
+        c
+          .split('\n')
+          .filter((l) => !l.trim().startsWith('#'))
+          .join('\n'),
+      ).not.toMatch(/includeSubDomains|preload/i);
       const scopes = readFileSync(join(PROD, 'env-scopes.conf'), 'utf8');
       expect(scopes).toMatch(
         /^caddy:.*SITE_ALIAS_1.*SITE_ALIAS_2.*AWFORM_HSTS_SECONDES|^caddy:.*AWFORM_HSTS_SECONDES.*SITE_ALIAS_1/m,
@@ -341,5 +347,77 @@ describe.skipIf(!posix)(
       },
       90_000,
     );
+  },
+);
+
+describe.skipIf(!posix)(
+  'alias de sections (arabe, quran, fiqh, fikh, adab, akhlaq) : désactivés par défaut, un certificat par nom',
+  () => {
+    const run = (d: string, ...a: string[]) =>
+      sh(
+        join(PROD, 'alias-sections.sh'),
+        { PATH: process.env.PATH, AWFORM_ENV_DIR: d, AWFORM_ALIAS_SANS_RECHARGE: '1' },
+        ...a,
+      );
+    const dossier = () => {
+      const d = tmp();
+      writeFileSync(join(d, 'caddy.env'), 'SITE=awzid.com\n');
+      return d;
+    };
+    it('par défaut tout est désactivé ; activer / désactiver écrit seulement les noms choisis', () => {
+      const d = dossier();
+      const l0 = run(d, 'liste').stdout;
+      expect(l0.match(/désactivé/g)).toHaveLength(6);
+      expect(l0).not.toContain('ACTIF');
+      expect(run(d, 'activer', 'quran', 'adab').status).toBe(0);
+      const c = readFileSync(join(d, 'alias', 'sections.caddy'), 'utf8');
+      expect(c).toContain('https://quran.awzid.com {');
+      expect(c).toContain('redir https://{$SITE}/coran 301');
+      expect(c).toContain('https://adab.awzid.com {');
+      expect(c).toContain('redir https://{$SITE}/vivre 301');
+      expect(c).not.toMatch(/islam\.|vivre\.awzid/);
+      expect(c).not.toContain('fiqh.awzid.com');
+      // un seul nom par bloc, jamais de joker, jamais de cookie sur le domaine parent
+      expect(c).not.toMatch(/\*\.|Domain|Set-Cookie/i);
+      expect(run(d, 'activer', 'tous').status).toBe(0);
+      const t = readFileSync(join(d, 'alias', 'sections.caddy'), 'utf8');
+      for (const [n, ch] of [
+        ['arabe', '/'],
+        ['quran', '/coran'],
+        ['fiqh', '/madjaliss'],
+        ['fikh', '/madjaliss'],
+        ['adab', '/vivre'],
+        ['akhlaq', '/vivre'],
+      ])
+        (expect(t).toContain(`https://${n}.awzid.com {`),
+          expect(t).toContain(`redir https://{$SITE}${ch} 301`));
+      // retour arrière
+      expect(run(d, 'desactiver', 'fiqh', 'fikh').status).toBe(0);
+      expect(readFileSync(join(d, 'alias', 'sections.caddy'), 'utf8')).not.toContain(
+        'fiqh.awzid.com',
+      );
+      expect(run(d, 'desactiver', 'tous').status).toBe(0);
+      expect(readFileSync(join(d, 'alias', 'sections.caddy'), 'utf8')).not.toContain('https://');
+      expect(run(d, 'liste').stdout).not.toContain('ACTIF');
+    });
+    it('alias inconnu ou domaine invalide : refusé, rien n’est écrit', () => {
+      const d = dossier();
+      const r = run(d, 'activer', 'inconnu');
+      expect(r.status).toBe(2);
+      expect(r.stderr).toContain('alias inconnu');
+      writeFileSync(join(d, 'caddy.env'), 'SITE=evil.com; rm\n');
+      expect(run(d, 'liste').status).toBe(2);
+    });
+    it('les chemins visés existent dans l’application et le Caddyfile importe le dossier des alias', () => {
+      for (const r of ['coran', 'madjaliss', 'vivre'])
+        expect(existsSync(join(ROOT, 'apps', 'web', 'src', 'routes', r)), r).toBe(true);
+      expect(readFileSync(join(PROD, 'Caddyfile'), 'utf8')).toContain(
+        'import /etc/caddy/alias/*.caddy',
+      );
+      expect(readFileSync(join(PROD, 'compose.yml'), 'utf8')).toContain(
+        '/alias:/etc/caddy/alias:ro',
+      );
+      expect(readFileSync(join(PROD, 'deploy.sh'), 'utf8')).toContain('mkdir -p "$CONF/alias"');
+    });
   },
 );

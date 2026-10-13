@@ -9,16 +9,16 @@ bloquant. Compression Brotli (qualité 11).
 | **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | 349.7 Ko | ≤ 350.0 Ko | oui |
 | **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (`/`) | 113.2 Ko | ≤ 150.0 Ko | oui |
 | **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | 2.00 s (élève, premier lancement ; relance 0.99 s ; mesuré le 2026-10-13) | < 3 s | oui |
-| Page la plus lourde au premier chargement (`/coran/lecteur`) | 149.2 Ko | ≤ 150.0 Ko | oui |
+| Page la plus lourde au premier chargement (`/coran/lecteur`) | 149.1 Ko | ≤ 150.0 Ko | oui |
 
 ## Détail
 
 | Élément | Poids transféré |
 |---|---|
-| (a) dont JS + CSS de la coquille de l'élève | 338.6 Ko |
+| (a) dont JS + CSS de la coquille de l'élève | 338.5 Ko |
 | (a) dont textes préchargés (`/i18n/fr-quotidien.json`, `/i18n/fr-vivre.json`, `/i18n/fr-coran.json`, `/i18n/fr-hifz.json`) | 11.2 Ko |
-| Pages du personnel, NON préchargées (27 fichiers) | 51.1 Ko |
-| Pages rares, en ligne seulement, NON préchargées (39 fichiers) | 29.6 Ko |
+| Pages du personnel, NON préchargées (27 fichiers) | 51.2 Ko |
+| Pages rares, en ligne seulement, NON préchargées (39 fichiers) | 29.5 Ko |
 | Modules à la demande qui ont besoin du réseau, NON préchargés (21 fichiers) | 29.9 Ko |
 | Pages de l'élève gardées au premier usage (Madjaliss), NON préchargées (4 fichiers) | 11.4 Ko |
 | Leçons vivantes, à la demande (2 fichiers) | 12.8 Ko (≤ 20.0 Ko) |
@@ -32,11 +32,11 @@ bloquant. Compression Brotli (qualité 11).
 
 | Page | JavaScript + CSS initiaux (Brotli) |
 |---|---|
-| `/coran/lecteur` | 149.2 Ko |
+| `/coran/lecteur` | 149.1 Ko |
 | `/lecons/[id]` | 145.4 Ko |
 | `/hifz/[outil]` | 125.6 Ko |
 | `/hifz` | 125.5 Ko |
-| `/enseignant/classe/[id]` | 121.4 Ko |
+| `/enseignant/classe/[id]` | 121.5 Ko |
 | `/lectures` | 121.1 Ko |
 | `/lectures/[code]` | 121.1 Ko |
-| `/quotidien` | 120.1 Ko |
+| `/quotidien/adhkar` | 120.1 Ko |

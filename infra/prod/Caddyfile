@@ -135,6 +135,10 @@ https://{$SITE_ALIAS_1:127.0.0.4}, https://{$SITE_ALIAS_2:127.0.0.5} {
 	redir https://{$SITE}{uri} 301
 }
 
+# ALIAS DE SECTIONS (désactivés par défaut) : arabe → /, quran → /coran, fiqh et fikh → /madjaliss, adab et akhlaq → /vivre, en 301 vers
+# l'unique origine canonique ; fichier généré par infra/prod/alias-sections.sh (dossier vide = aucun alias, aucun certificat)
+import /etc/caddy/alias/*.caddy
+
 # Relais d'école (lot 17) : le sous-domaine d'une école (ex. ecole-dakar-01.relais.awzid.org) pointe
 # publiquement vers ce serveur ; hors de l'école, il sert donc l'application comme le site principal. Le
 # certificat obtenu ici est remis au relais (volume relais_certs, relais-certs.sh), qui le sert sur le Wi-Fi.
