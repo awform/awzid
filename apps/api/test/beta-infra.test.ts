@@ -388,9 +388,10 @@ describe.skipIf(!posix)(
         ['fikh', '/madjaliss'],
         ['adab', '/vivre'],
         ['akhlaq', '/vivre'],
-      ])
-        (expect(t).toContain(`https://${n}.awzid.com {`),
-          expect(t).toContain(`redir https://{$SITE}${ch} 301`));
+      ]) {
+        expect(t).toContain(`https://${n}.awzid.com {`);
+        expect(t).toContain(`redir https://{$SITE}${ch} 301`);
+      }
       // retour arrière
       expect(run(d, 'desactiver', 'fiqh', 'fikh').status).toBe(0);
       expect(readFileSync(join(d, 'alias', 'sections.caddy'), 'utf8')).not.toContain(
