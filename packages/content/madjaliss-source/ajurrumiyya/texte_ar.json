@@ -1,0 +1,2265 @@
+{
+ "oeuvre": "الْمُقَدِّمَةُ الْآجُرُّومِيَّةُ (متن الأجرومية) في قواعد علم العربية",
+ "auteur": "أبو عبد الله محمد بن محمد بن داود الصنهاجي، ابن آجروم (ت. 723 H / 1323), Fès",
+ "perimetre": "Texte complet du matn : 140 phrases (titres de chapitres compris) + 1 colophon de l'éditeur (hors matn) ; ouverture sans titre (le discours), puis 24 chapitres titrés (bāb) et 1 section (faṣl) tels que A1 les imprime (images 6 à 25).",
+ "statut": "EN_ATTENTE_SECONDE_LECTURE",
+ "date_saisie": "2026-10-13",
+ "saisie_par": "Claude (référent provisoire) : texte de base A1 lu page par page sur l'image (22 pages, n6 à n25), collationné par lecture des pages de la lithographie de Fès (F) et par les citations du matn dans al-Kafrāwī ; relecture humaine sur exemplaire papier exigée",
+ "temoins": {
+  "A1": {
+   "role": "texte de base",
+   "description": "متن الأجرومية في قواعد علم العربية",
+   "editeur": "Le Caire, Maṭbaʿat as-Saʿāda, « شهر المحرم سنة ١٣٢٤ هجرية » (colophon, image 25) : début 1324 H / mars 1906, sans commentaire, tirage de l'éditeur Muḥammad Amīn al-Khānjī et ses associés (annonce en fin de volume, image 26)",
+   "vocalisation": "très largement vocalisée (gros caractères) ; les voyelles absentes ou illisibles sur l'image sont complétées d'après l'usage et signalées en a_verifier",
+   "scan": "https://archive.org/details/AAlexandrina-141941 (Bibliotheca Alexandrina n° 141941 ; images n6 à n25 = matn, n26 à n27 = annonce)",
+   "pagination": "les numéros d'image sont ceux du scan (n6 = page imprimée 2 : basmala dans un cadre et début du texte ; page imprimée = image − 4) ; l'ouverture du texte n'a pas de titre",
+   "statut_juridique": "domaine public (1906 ; auteur mort en 1323)",
+   "notes_de_lecteur": "une note manuscrite d'un lecteur, en marge de l'image 14 (page 10), est ignorée : seul le texte imprimé fait foi"
+  },
+  "F": {
+   "role": "témoin de comparaison (tradition maghrébine, mālikite)",
+   "description": "al-Majmūʿa al-mubāraka (lithographie de Fès, al-ʿArabī al-Azraq, 1310 H / 1893), pièce « مقدمة ابن آجروم » qui se termine par une formule de fin (lecture partielle)",
+   "scan": "ACO princeton_aco004458, images 136 à 142 (pages 4 à 10 de la pièce) ; écriture maghribine non vocalisée, lue sur l'image",
+   "collation": "lecture des 7 pages ; points collationnés mot à mot : ouverture, cinq noms, liste des jussifs (avec « وإذا في الشعر خاصة »), liste de ظننت et sœurs (dix verbes dont سمعت), énumération des mansūbāt (« خمسة عشر »), particules du khafḍ, titres de chapitres. Aucune variante de mots relevée par rapport à A1 en dehors de l'orthographe ; la collation complète mot à mot n'a pas été faite (écriture dense)."
+  },
+  "K": {
+   "role": "arbitre : le matn tel que cité par al-Kafrāwī",
+   "description": "شرح العلامة الكفراوي على متن الأجرومية",
+   "scan": "archive.org AAlexandrina-069933 (al-Maṭbaʿa al-Khidīwiyya, 1282 H / 1865-66) ; la page imprimée = image − 2",
+   "collation": "matn cité (entre parenthèses) lu aux pp. 2, 4-9, 12, 14, 24, 27, 33, 45, 50, 52, 54-59, 82, 90-91, 96, 107, 109-110 (pages imprimées ; 22 pages sur environ 140, soit les passages à enjeu) : même texte que A1, sauf la remarque sur « وإذا في الشعر خاصة » (variante V-01). Le reste du commentaire n'a pas été lu — Complément du 13/10 : pages 43, 61-63, 76, 102-103, 106, 108, 130, 135-136 relues (même édition) : p. 76 (« المسند إليه »), p. 103 (« وتنكيره » absent du matn d'al-Kafrāwī), p. 106 (« وهو أربعة أقسام » sans « على »), p. 108 (ordre des manṣūbāt : خبر كان et اسم إن avant المفعول من أجله), p. 130 (« وجب الرفع ووجب تكرار لا »), p. 136 (le complément des quinze)."
+  },
+  "A2": {
+   "role": "témoin de comparaison, collationné le 13/10/2026 (titres des 24 bāb, premières phrases, passages d'exemples)",
+   "description": "al-Muqaddima al-Ājurrūmiyya, Alger, lithographie de Bastide, 1283 H / 1866 : texte arabe du livre de Bresnier (Djaroumiya, 2e éd.). Calligraphie maghribine, voyelles de lecture portées par l'imprimeur (non systématiques).",
+   "scan": "ACO columbia_aco003142 (images 10 à 30 = le matn) ; page imprimée = image − 8 (image 11 = p. 3)",
+   "collation": "Lu image par image (10 à 30). Titres : les 24 bāb d'A1 sont tous là, dans le même ordre ; A2 ajoute « باب الكلام » en ouverture et écrit « باب المعربات » là où A1 a « فصل ». Premières phrases des 24 bāb : 21 identiques à A1 (mêmes mots), 3 différentes (توكيد, منصوبات, لا : variantes V-10, V-04, V-12). Passages d'exemples : variantes V-05 à V-09, V-13 (exemples plus courts ou autrement ordonnés qu'en A1). Tout le reste est identique, à l'ordre de coordination près (V-15).",
+   "origine": "La note en cadre, à la marge de l'image 23 (page 15), est « l'observation du traducteur » imprimée par Bresnier (version française p. 25) : A2 est donc bien le texte arabe de Bresnier. Elle dit qu'en comptant on ne trouve que quatorze éléments (voir EXP-15).",
+   "statut_texte": "A2 est plus court et parfois remanié (exemples) : il ne fait pas foi contre A1 ; il sert à signaler les points à faire relire."
+  },
+  "D": {
+   "role": "commentaire de comparaison (ouvert le 13/10/2026)",
+   "description": "Aḥmad Zaynī Daḥlān, Sharḥ mukhtaṣar jiddan ʿalā matn al-Ājurrūmiyya",
+   "scan": "archive.org AAlexandrina-117912 (Dār al-Kutub al-ʿArabiyya al-Kubrā, 1328 H selon le catalogue ; page de titre à confirmer) ; pages lues : 20-21 (images n18-n19)",
+   "collation": "liste des manṣūbāt (matn en marge, p. 20) et phrase sur le détail des manṣūbāt : même treize éléments + le suiveur, dans l'ordre d'al-Kafrāwī"
+  },
+  "KH": {
+   "role": "commentaire de comparaison (ouvert le 13/10/2026)",
+   "description": "Khālid al-Azharī, Sharḥ al-Ājurrūmiyya",
+   "scan": "ACO princeton_aco004298 (al-Maṭbaʿa al-Maḥmūdiyya, 1315 H selon le dossier des sources ; page de titre non relue) ; pages lues : 24, 30, 31 (images 30, 36, 37)",
+   "collation": "liste des manṣūbāt (p. 31) : treize éléments dans l'ordre d'A1, puis deux éléments que l'auteur aurait omis, puis le suiveur"
+  },
+  "B": {
+   "role": "traduction de comparaison (domaine public), non recopiée",
+   "description": "L.-J. Bresnier, Djaroumiya, grammaire arabe élémentaire, Alger, 2e éd. 1866",
+   "scan": "archive.org AAlexandrina-144539 ; texte français lu par OCR (latin, fiable) et sur image aux pages à enjeu",
+   "collation": "comparée aux phrases à enjeu seulement (voir journal_traduction.md, section « Comparaison à Bresnier »)"
+  }
+ },
+ "conventions": [
+  "Le texte suit A1 mot pour mot. Les divergences de F ou de K sont notées en variantes (V-xx).",
+  "Orthographe normalisée à l'usage moderne (hamza de « المبتدإ » conservée comme en A1, alif maqṣūra, ي final pointé). La ponctuation (virgules, deux-points, points) est ajoutée : A1 ne sépare que par des astérisques ; les chapitres sont précédés de leur titre imprimé (type titre).",
+  "Le terme koufien « الخفض » (حروف الخفض, مخفوضات الأسماء) est gardé tel quel (décision DECISIONS_TUHFA_AJURRUMIYYA). A1 emploie aussi « الجار والمجرور » (AJR bāb al-mubtadaʾ) et « مجرور » (AJR istithnāʾ) : voir observations O-01.",
+  "Les titres de chapitres sont ceux d'A1 ; le texte s'ouvre sans titre (« الكلام »).",
+  "A1 écrit souvent l'alif de liaison avec un hamza (« وأضرب » pour « واضرب ») : normalisé ; les titres sont imprimés sans hamza (« باب الاعراب ») : écrits avec hamza.",
+  "Les chiffres de page cités (champ page_A1) sont les numéros imprimés d'A1 = image − 4 ; ceux d'al-Kafrāwī = image − 2.",
+  "Aucun verset n'est cité par l'auteur dans ce matn : le champ coran est donc absent. Les versets cités par al-Kafrāwī sont dans explications_kafrawi.json, copiés par script depuis coran/tanzil-uthmani.tsv.",
+  "Ce fichier est écrit par script uniquement (UTF-8 sans BOM, sans CR, sans normalisation), à partir des fichiers outils/saisie_A1_0*.txt."
+ ],
+ "chapitres": {
+  "kalam": "Le discours et ses trois parties",
+  "irab": "L'iʿrāb",
+  "alamat": "Les marques de l'iʿrāb",
+  "muarabat": "Les mots variables : par voyelles, par lettres",
+  "afal": "Les verbes",
+  "marfuat": "Les noms au nominatif",
+  "fail": "Le sujet",
+  "naib": "Le complément dont le sujet n'est pas nommé",
+  "mubtada": "Le thème et le prédicat",
+  "awamil": "Les régissants qui entrent sur le thème et le prédicat",
+  "nat": "L'épithète",
+  "atf": "La coordination",
+  "tawkid": "Le corroboratif",
+  "badal": "Le permutatif",
+  "mansubat": "Les noms à l'accusatif",
+  "mafulbih": "Le complément d'objet",
+  "masdar": "Le nom verbal",
+  "zarf": "Les compléments de temps et de lieu",
+  "hal": "Le complément d'état",
+  "tamyiz": "Le complément de spécification",
+  "istithna": "L'exception",
+  "la": "La négation générique",
+  "munada": "L'interpellé",
+  "ajlih": "Le complément de cause",
+  "maah": "Le complément d'accompagnement",
+  "makhfudat": "Les noms au génitif (khafḍ)",
+  "colophon": "Colophon de l'éditeur (hors matn)"
+ },
+ "variantes": [
+  {
+   "id": "V-01",
+   "portee": "liste des jussifs (bāb al-afʿāl)",
+   "A1": "… وَكَيْفَمَا، وَإِذَا فِي الشِّعْرِ خَاصَّةً (la liste est annoncée « ثمانية عشر »)",
+   "F": "même fin de liste (« … وكيفما وإذا في الشعر خاصة »)",
+   "K": "al-Kafrāwī p. 58 (image 60) : « ويوجد في بعض نسخ المتن زيادة (وإذا في الشعر خاصة) » ; p. 59 (image 61) : il en fait un jussif en plus des dix-huit, valable en poésie seulement (« ولا يجزم بها إلا في النظم دون النثر »). Sa liste de dix-huit s'arrête donc à « كيفما » (qu'il tient pour jussif chez les Koufiens, p. 58)",
+   "decision": "garder « وَإِذَا فِي الشِّعْرِ خَاصَّةً » comme en A1 et F ; l'explication précise que les dix-huit sont comptés sans elle"
+  },
+  {
+   "id": "V-02",
+   "portee": "bāb al-badal (badal al-ghalaṭ)",
+   "A1": "« ارذت » (coquille d'impression : ذ pour د)",
+   "F": "« أردت »",
+   "K": "al-Kafrāwī p. 107 (image 109) : « أردت »",
+   "decision": "lu « أَرَدْتَ » ; coquille d'A1 corrigée et signalée"
+  },
+  {
+   "id": "V-03",
+   "portee": "liste des jussifs (bāb al-afʿāl) — compte « dix-huit »",
+   "phrases": [
+    "AJR-0044"
+   ],
+   "A1": "… وحيثما، وكيفما، وإذا في الشعر خاصة (19 termes, en comptant لام الأمر والدعاء pour un)",
+   "F": "même fin de liste qu'A1",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), image 16 (p. 8) : imprimé « … وأنى وحيثما وإذا في الشعر » : sans كيفما et sans خاصة (18 termes, إذا compris) ; une main ajoute à la marge « وكيفما » et « خاصة »",
+   "K": "p. 58-59 : dix-huit avec كيفما (admis par les Koufiens), sans إذا (addition de certaines copies)",
+   "decision": "texte d'A1 gardé ; les quatre états de la liste (A1/F, A2 imprimé, A2 corrigé à la main, al-Kafrāwī) sont donnés dans EXP-11 : le chiffre « dix-huit » n'est exact qu'en retirant soit كيفما soit إذا"
+  },
+  {
+   "id": "V-04",
+   "portee": "ordre de l'énumération des manṣūbāt",
+   "phrases": [
+    "AJR-0092",
+    "AJR-0093"
+   ],
+   "A1": "… والمنادى، والمفعول من أجله، والمفعول معه، وخبر كان وأخواتها، واسم إن وأخواتها",
+   "F": "même ordre qu'A1 (image 140)",
+   "KH": "p. 31 : même ordre qu'A1",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), images 23-24 (p. 15-16) : … والمنادى وخبر كان وأخواتها واسم إن وأخواتها والمفعول من أجله والمفعول معه والتابع للمنصوب",
+   "K": "p. 108 (image 110) : même ordre qu'A2 (خبر كان et اسم إن avant من أجله et معه) ; Daḥlān p. 20 : même ordre qu'A2",
+   "decision": "ordre d'A1 gardé (A1, F et Khālid) ; le compte « quinze » ne dépend pas de l'ordre : voir EXP-15"
+  },
+  {
+   "id": "V-05",
+   "portee": "bāb al-fāʿil : exemples du sujet apparent",
+   "phrases": [
+    "AJR-0050"
+   ],
+   "A1": "vingt exemples : قام زيد … وقام الرجال … وقامت هند … وقامت الهندات … وقامت الهنود … وقام أخوك ويقوم أخوك، وقام غلامي ويقوم غلامي",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), image 17 (p. 9) : huit exemples seulement : قام زيد ويقوم زيد، الزيدان، الزيدون، أخوك ; sans الرجال, هند, الهندان, الهندات, الهنود, غلامي",
+   "K": "non vérifié sur ce passage",
+   "decision": "texte d'A1 gardé ; point à faire relire (A2 est plus court)"
+  },
+  {
+   "id": "V-06",
+   "portee": "les pronoms « douze » du fāʿil et du nāʾib al-fāʿil",
+   "phrases": [
+    "AJR-0051",
+    "AJR-0057"
+   ],
+   "A1": "douze formes : … وضرب، وضربت، وضربا، وضربوا، وضربن",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), images 17-18 (p. 9-10) : treize formes (ajoute وضربتا après وضربا) mais annonce « اثنا عشر »",
+   "K": "non vérifié",
+   "decision": "douze formes d'A1 gardées (le chiffre annoncé est respecté) ; à faire relire"
+  },
+  {
+   "id": "V-07",
+   "portee": "bāb nāʾib al-fāʿil : ordre des exemples du nom apparent",
+   "phrases": [
+    "AJR-0056"
+   ],
+   "A1": "ضرب زيد، ويضرب زيد، وأكرم عمرو، ويكرم عمرو",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), image 18 (p. 10) : ضرب زيد وأكرم عمرو ويضرب زيد ويكرم عمرو (passé puis présent)",
+   "decision": "ordre d'A1 gardé ; sans effet sur le sens"
+  },
+  {
+   "id": "V-08",
+   "portee": "khabar non simple : « الجار والمجرور »",
+   "phrases": [
+    "AJR-0066"
+   ],
+   "A1": "الجار والمجرور، والظرف، والفعل مع فاعله، والمبتدأ مع خبره",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), image 19 (p. 11) : « المجرور » seul (sans الجار)",
+   "decision": "texte d'A1 gardé (termes basriens : voir observation O-01)"
+  },
+  {
+   "id": "V-09",
+   "portee": "bāb al-ʿaṭf : exemples",
+   "phrases": [
+    "AJR-0084"
+   ],
+   "A1": "قام زيد وعمرو، ورأيت زيدا وعمرا، ومررت بزيد وعمرو، وزيد لم يقم ولم يقعد",
+   "F": "identique à A1 (image 140)",
+   "K": "p. 102 (image 104) : cite aussi « لم يقم ويقعد زيد » ",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), image 22 (p. 14) : le dernier exemple (le jussif) manque",
+   "decision": "texte d'A1 gardé (A1, F et al-Kafrāwī) ; l'omission d'A2 prive l'élève de l'exemple du jussif"
+  },
+  {
+   "id": "V-10",
+   "portee": "bāb at-tawkīd : « وتنكيره »",
+   "phrases": [
+    "AJR-0086"
+   ],
+   "A1": "في رفعه ونصبه وخفضه وتعريفه وتنكيره",
+   "F": "image 140 : « … وتعريفه وتنكيره » (même texte qu'A1)",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), image 22 (p. 14) : « … وتعريفه ويكون بألفاظ معلومة » : sans وتنكيره",
+   "K": "p. 103 (image 105) : le matn d'al-Kafrāwī n'a pas « وتنكيره » et il le justifie : « فلا يكون تابعا للنكرة … فلذلك لم يقل وتنكيره خلافا للكوفيين »",
+   "decision": "texte d'A1 et F gardé ; l'explication EXP-19 donne la position d'al-Kafrāwī (pas de tankīr pour le corroboratif, contre les Koufiens). Le livre ad6 (l23) omet وتنكيره comme al-Kafrāwī et A2 : à justifier (ecarts_terminologie_livres.md)"
+  },
+  {
+   "id": "V-11",
+   "portee": "bāb al-badal : « وهو أربعة أقسام »",
+   "phrases": [
+    "AJR-0090"
+   ],
+   "A1": "وهو أربعة أقسام (sans على) ; image 18",
+   "F": "image 140 : paraît porter « وهو على أربعة أقسام » (écriture dense, à re-vérifier)",
+   "K": "p. 106 (image 108) : le matn est analysé « (وهو) … (أربعة) خبر المبتدأ » : sans على",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), image 23 (p. 15) : « وهو على أربعة أقسام »",
+   "decision": "texte d'A1 gardé (A1 et al-Kafrāwī) ; ad6 l23 écrit « على أربعة » comme A2 et peut-être F : variante de lecture sans effet sur le sens"
+  },
+  {
+   "id": "V-12",
+   "portee": "bāb lā : « النكرات » et « والتنوين »",
+   "phrases": [
+    "AJR-0123",
+    "AJR-0124"
+   ],
+   "A1": "تنصب النكرات بغير تنوين … فإن لم تباشرها وجب الرفع ووجب تكرار لا",
+   "K": "p. 130 (image 132) : « وجب الرفع ووجب تكرار لا » : sans والتنوين",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), image 28 (p. 20) : « تنصب النكرة من غير تنوين » (singulier) et « وجب الرفع والتنوين ووجب تكرار لا »",
+   "decision": "texte d'A1 gardé (A1 et al-Kafrāwī)"
+  },
+  {
+   "id": "V-13",
+   "portee": "bāb al-istithnāʾ : premier exemple du nafy",
+   "phrases": [
+    "AJR-0118"
+   ],
+   "A1": "ما قام القوم إلا زيد، وإلا زيدا",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), image 27 (p. 19) : « ما قام أحد إلا زيد وإلا زيدا »",
+   "decision": "texte d'A1 gardé"
+  },
+  {
+   "id": "V-14",
+   "portee": "titres",
+   "phrases": [
+    "AJR-0001",
+    "AJR-0030"
+   ],
+   "A1": "ouverture sans titre ; « فصل » avant المعربات قسمان",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142), image 10 : « باب الكلام » ; image 14 (p. 6) : « باب المعربات » à la place de فصل (26 titres de bāb au lieu de 24 + فصل)",
+   "decision": "titres d'A1 gardés ; A2 montre que l'ouverture a aussi été titrée dans la tradition"
+  },
+  {
+   "id": "V-15",
+   "portee": "ordres de coordination et temps verbaux sans effet de sens",
+   "phrases": [
+    "AJR-0034",
+    "AJR-0036",
+    "AJR-0039",
+    "AJR-0108",
+    "AJR-0137"
+   ],
+   "A1": "ينصب / يخفض / يجزم (AJR-0034) ; وتنصب وتخفض (0036) ; وتنصب وتجزم (0039) ; وثم وهنا (0108) ; فأما المخفوض بالحرف (0137)",
+   "A2": "A2 (Alger 1283 H, ACO columbia_aco003142) : نصب / خفض / جزم (passé, p. 7) ; وتخفض وتنصب (p. 7) ; وتجزم وتنصب (p. 7) ; وهنا وثم (p. 18) ; فأما ما يخفض بالحرف (p. 22)",
+   "decision": "texte d'A1 gardé"
+  }
+ ],
+ "observations": [
+  {
+   "id": "O-01",
+   "texte": "Le matn emploie le terme koufien khafḍ (حروف الخفض, مخفوضات الأسماء, المخفوض), mais aussi les termes basriens « الجار والمجرور » (bāb al-mubtadaʾ, khabar non simple) et « مجرور » (bāb al-istithnāʾ). Al-Kafrāwī, p. 9 (image 11), le dit expressément : « والخفض عبارة الكوفيين والجر عبارة البصريين ». Décision du pilote : on garde khafḍ ; la traduction rend les deux termes par « génitif / au génitif ». Décision du référent (13/10) : le texte arabe garde son mot ; la traduction dit « génitif » pour les deux, avec une note qui indique le mot du texte (khafḍ chez Ibn Ājurrūm, école de Kūfa ; jarr chez Ibn Mālik, école de Baṣra) : champ « note_khafd_jarr » de traduction_fr.json.",
+   "phrases_liees": "voir les phrases portant l'observation"
+  },
+  {
+   "id": "O-02",
+   "texte": "Le texte annonce « الْمَنْصُوبَاتُ خَمْسَةَ عَشَرَ » (A1, F, al-Kafrāwī p. 107, A2) mais l'énumération donne treize éléments simples plus « le suiveur » (quatre sortes) : quatorze éléments. Décision du référent (13/10) : traduire tel quel. Al-Kafrāwī (p. 136), Daḥlān (p. 20) et Khālid al-Azharī (p. 31) sont cités dans EXP-15 : seul Khālid atteint quinze, en ajoutant deux éléments que l'auteur aurait omis (le prédicat de « mā » hijāzienne ; les deux compléments de ظنّ). La note marginale d'A2 (reprise de Bresnier) dit qu'on ne trouve que quatorze éléments. Le livre ad6 (l23) affirme que « le quinzième est la paire des compléments de ظنّ » : soutenu seulement en partie (voir ecarts_terminologie_livres.md).",
+   "phrases_liees": "voir la phrase portant l'observation"
+  },
+  {
+   "id": "O-03",
+   "texte": "Les jussifs : le texte annonce dix-huit (« ثَمَانِيَةَ عَشَرَ ») et nomme dix-neuf termes si l'on compte « إذا » (poésie). Les dix-huit sont : لم، لما، ألم، ألما، لام الأمر والدعاء، لا في النهي والدعاء، إن، ما، من، مهما، إذ ما، أي، متى، أيان، أين، أنى، حيثما، كيفما. Voir V-01.",
+   "phrases_liees": "voir la phrase portant l'observation"
+  },
+  {
+   "id": "O-04",
+   "texte": "Les cinq noms : « أبوك وأخوك وحموك وفوك وذو مال » (cinq, sans « هنوك »), dans A1, F et al-Kafrāwī p. 24 (image 26). Aucune variante.",
+   "phrases_liees": "voir la phrase portant l'observation"
+  },
+  {
+   "id": "O-05",
+   "texte": "ظننت et ses sœurs : dix verbes, « ظننت وحسبت وخلت وزعمت ورأيت وعلمت ووجدت واتخذت وجعلت وسمعت », dans A1, F et al-Kafrāwī p. 91 (image 93) ; سمعت n'est pas omis. Aucune variante.",
+   "phrases_liees": "voir la phrase portant l'observation"
+  }
+ ],
+ "phrases": [
+  {
+   "id": "AJR-0001",
+   "section": "kalam",
+   "type": "texte",
+   "ar": "الْكَلَامُ هُوَ اللَّفْظُ الْمُرَكَّبُ الْمُفِيدُ بِالْوَضْعِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "6",
+    "page_A1": "2"
+   },
+   "variantes": [
+    "V-14"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0002",
+   "section": "kalam",
+   "type": "texte",
+   "ar": "وَأَقْسَامُهُ ثَلَاثَةٌ: اسْمٌ، وَفِعْلٌ، وَحَرْفٌ جَاءَ لِمَعْنًى.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "6",
+    "page_A1": "2"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0003",
+   "section": "kalam",
+   "type": "texte",
+   "ar": "فَالِاسْمُ يُعْرَفُ بِالْخَفْضِ، وَالتَّنْوِينِ، وَدُخُولِ الْأَلِفِ وَاللَّامِ، وَحُرُوفِ الْخَفْضِ، وَهِيَ: مِنْ، وَإِلَى، وَعَنْ، وَعَلَى، وَفِي، وَرُبَّ، وَالْبَاءُ، وَالْكَافُ، وَاللَّامُ، وَحُرُوفِ الْقَسَمِ، وَهِيَ: الْوَاوُ، وَالْبَاءُ، وَالتَّاءُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "6",
+    "page_A1": "2"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0004",
+   "section": "kalam",
+   "type": "texte",
+   "ar": "وَالْفِعْلُ يُعْرَفُ بِقَدْ، وَالسِّينِ، وَسَوْفَ، وَتَاءِ التَّأْنِيثِ السَّاكِنَةِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "6",
+    "page_A1": "2"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0005",
+   "section": "kalam",
+   "type": "texte",
+   "ar": "وَالْحَرْفُ مَا لَا يَصْلُحُ مَعَهُ دَلِيلُ الِاسْمِ وَلَا دَلِيلُ الْفِعْلِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "6",
+    "page_A1": "2"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0006",
+   "section": "irab",
+   "type": "titre",
+   "ar": "بَابُ الْإِعْرَابِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "7",
+    "page_A1": "3"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0007",
+   "section": "irab",
+   "type": "texte",
+   "ar": "الْإِعْرَابُ هُوَ تَغْيِيرُ أَوَاخِرِ الْكَلِمِ لِاخْتِلَافِ الْعَوَامِلِ الدَّاخِلَةِ عَلَيْهَا لَفْظًا أَوْ تَقْدِيرًا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "7",
+    "page_A1": "3"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0008",
+   "section": "irab",
+   "type": "texte",
+   "ar": "وَأَقْسَامُهُ أَرْبَعَةٌ: رَفْعٌ، وَنَصْبٌ، وَخَفْضٌ، وَجَزْمٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "7",
+    "page_A1": "3"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0009",
+   "section": "irab",
+   "type": "texte",
+   "ar": "فَلِلْأَسْمَاءِ مِنْ ذَلِكَ الرَّفْعُ وَالنَّصْبُ وَالْخَفْضُ، وَلَا جَزْمَ فِيهَا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "7",
+    "page_A1": "3"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0010",
+   "section": "irab",
+   "type": "texte",
+   "ar": "وَلِلْأَفْعَالِ مِنْ ذَلِكَ الرَّفْعُ وَالنَّصْبُ وَالْجَزْمُ، وَلَا خَفْضَ فِيهَا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "7",
+    "page_A1": "3"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0011",
+   "section": "alamat",
+   "type": "titre",
+   "ar": "بَابُ مَعْرِفَةِ عَلَامَاتِ الْإِعْرَابِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "7",
+    "page_A1": "3"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0012",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "لِلرَّفْعِ أَرْبَعُ عَلَامَاتٍ: الضَّمَّةُ، وَالْوَاوُ، وَالْأَلِفُ، وَالنُّونُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "7",
+    "page_A1": "3"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0013",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "فَأَمَّا الضَّمَّةُ فَتَكُونُ عَلَامَةً لِلرَّفْعِ فِي أَرْبَعَةِ مَوَاضِعَ: فِي الِاسْمِ الْمُفْرَدِ، وَجَمْعِ التَّكْسِيرِ، وَجَمْعِ الْمُؤَنَّثِ السَّالِمِ، وَالْفِعْلِ الْمُضَارِعِ الَّذِي لَمْ يَتَّصِلْ بِآخِرِهِ شَيْءٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "7",
+    "page_A1": "3"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0014",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَأَمَّا الْوَاوُ فَتَكُونُ عَلَامَةً لِلرَّفْعِ فِي مَوْضِعَيْنِ: فِي جَمْعِ الْمُذَكَّرِ السَّالِمِ، وَفِي الْأَسْمَاءِ الْخَمْسَةِ، وَهِيَ: أَبُوكَ، وَأَخُوكَ، وَحَمُوكَ، وَفُوكَ، وَذُو مَالٍ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "7-8",
+    "page_A1": "3-4"
+   },
+   "variantes": [],
+   "a_verifier": [],
+   "observations": [
+    "O-04"
+   ]
+  },
+  {
+   "id": "AJR-0015",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَأَمَّا الْأَلِفُ فَتَكُونُ عَلَامَةً لِلرَّفْعِ فِي تَثْنِيَةِ الْأَسْمَاءِ خَاصَّةً.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "8",
+    "page_A1": "4"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0016",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَأَمَّا النُّونُ فَتَكُونُ عَلَامَةً لِلرَّفْعِ فِي الْفِعْلِ الْمُضَارِعِ إِذَا اتَّصَلَ بِهِ ضَمِيرُ تَثْنِيَةٍ، أَوْ ضَمِيرُ جَمْعٍ، أَوْ ضَمِيرُ الْمُؤَنَّثَةِ الْمُخَاطَبَةِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "8",
+    "page_A1": "4"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0017",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَلِلنَّصْبِ خَمْسُ عَلَامَاتٍ: الْفَتْحَةُ، وَالْأَلِفُ، وَالْكَسْرَةُ، وَالْيَاءُ، وَحَذْفُ النُّونِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "8",
+    "page_A1": "4"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0018",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "فَأَمَّا الْفَتْحَةُ فَتَكُونُ عَلَامَةً لِلنَّصْبِ فِي ثَلَاثَةِ مَوَاضِعَ: فِي الِاسْمِ الْمُفْرَدِ، وَجَمْعِ التَّكْسِيرِ، وَالْفِعْلِ الْمُضَارِعِ إِذَا دَخَلَ عَلَيْهِ نَاصِبٌ وَلَمْ يَتَّصِلْ بِآخِرِهِ شَيْءٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "8",
+    "page_A1": "4"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0019",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَأَمَّا الْأَلِفُ فَتَكُونُ عَلَامَةً لِلنَّصْبِ فِي الْأَسْمَاءِ الْخَمْسَةِ، نَحْوُ: رَأَيْتُ أَبَاكَ وَأَخَاكَ، وَمَا أَشْبَهَ ذَلِكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "8",
+    "page_A1": "4"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0020",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَأَمَّا الْكَسْرَةُ فَتَكُونُ عَلَامَةً لِلنَّصْبِ فِي جَمْعِ الْمُؤَنَّثِ السَّالِمِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "8",
+    "page_A1": "4"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0021",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَأَمَّا الْيَاءُ فَتَكُونُ عَلَامَةً لِلنَّصْبِ فِي التَّثْنِيَةِ وَالْجَمْعِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "8",
+    "page_A1": "4"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0022",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَأَمَّا حَذْفُ النُّونِ فَيَكُونُ عَلَامَةً لِلنَّصْبِ فِي الْأَفْعَالِ الْخَمْسَةِ الَّتِي رَفْعُهَا بِثَبَاتِ النُّونِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "8",
+    "page_A1": "4"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0023",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَلِلْخَفْضِ ثَلَاثُ عَلَامَاتٍ: الْكَسْرَةُ، وَالْيَاءُ، وَالْفَتْحَةُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "8",
+    "page_A1": "4"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0024",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "فَأَمَّا الْكَسْرَةُ فَتَكُونُ عَلَامَةً لِلْخَفْضِ فِي ثَلَاثَةِ مَوَاضِعَ: فِي الِاسْمِ الْمُفْرَدِ الْمُنْصَرِفِ، وَجَمْعِ التَّكْسِيرِ الْمُنْصَرِفِ، وَجَمْعِ الْمُؤَنَّثِ السَّالِمِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "8-9",
+    "page_A1": "4-5"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0025",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَأَمَّا الْيَاءُ فَتَكُونُ عَلَامَةً لِلْخَفْضِ فِي ثَلَاثَةِ مَوَاضِعَ: فِي الْأَسْمَاءِ الْخَمْسَةِ، وَفِي التَّثْنِيَةِ وَالْجَمْعِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "9",
+    "page_A1": "5"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0026",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَأَمَّا الْفَتْحَةُ فَتَكُونُ عَلَامَةً لِلْخَفْضِ فِي الِاسْمِ الَّذِي لَا يَنْصَرِفُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "9",
+    "page_A1": "5"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0027",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَلِلْجَزْمِ عَلَامَتَانِ: السُّكُونُ وَالْحَذْفُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "9",
+    "page_A1": "5"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0028",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "فَأَمَّا السُّكُونُ فَيَكُونُ عَلَامَةً لِلْجَزْمِ فِي الْفِعْلِ الْمُضَارِعِ الصَّحِيحِ الْآخِرِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "9",
+    "page_A1": "5"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0029",
+   "section": "alamat",
+   "type": "texte",
+   "ar": "وَأَمَّا الْحَذْفُ فَيَكُونُ عَلَامَةً لِلْجَزْمِ فِي الْفِعْلِ الْمُضَارِعِ الْمُعْتَلِّ الْآخِرِ، وَفِي الْأَفْعَالِ الْخَمْسَةِ الَّتِي رَفْعُهَا بِثَبَاتِ النُّونِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "9",
+    "page_A1": "5"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0030",
+   "section": "muarabat",
+   "type": "titre",
+   "ar": "فَصْلٌ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "9",
+    "page_A1": "5"
+   },
+   "variantes": [
+    "V-14"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0031",
+   "section": "muarabat",
+   "type": "texte",
+   "ar": "الْمُعْرَبَاتُ قِسْمَانِ: قِسْمٌ يُعْرَبُ بِالْحَرَكَاتِ، وَقِسْمٌ يُعْرَبُ بِالْحُرُوفِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "9",
+    "page_A1": "5"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0032",
+   "section": "muarabat",
+   "type": "texte",
+   "ar": "فَالَّذِي يُعْرَبُ بِالْحَرَكَاتِ أَرْبَعَةُ أَنْوَاعٍ: الِاسْمُ الْمُفْرَدُ، وَجَمْعُ التَّكْسِيرِ، وَجَمْعُ الْمُؤَنَّثِ السَّالِمُ، وَالْفِعْلُ الْمُضَارِعُ الَّذِي لَمْ يَتَّصِلْ بِآخِرِهِ شَيْءٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "9-10",
+    "page_A1": "5-6"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0033",
+   "section": "muarabat",
+   "type": "texte",
+   "ar": "وَكُلُّهَا تُرْفَعُ بِالضَّمَّةِ، وَتُنْصَبُ بِالْفَتْحَةِ، وَتُخْفَضُ بِالْكَسْرَةِ، وَتُجْزَمُ بِالسُّكُونِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "10",
+    "page_A1": "6"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0034",
+   "section": "muarabat",
+   "type": "texte",
+   "ar": "وَخَرَجَ عَنْ ذَلِكَ ثَلَاثَةُ أَشْيَاءَ: جَمْعُ الْمُؤَنَّثِ السَّالِمُ يُنْصَبُ بِالْكَسْرَةِ، وَالِاسْمُ الَّذِي لَا يَنْصَرِفُ يُخْفَضُ بِالْفَتْحَةِ، وَالْفِعْلُ الْمُضَارِعُ الْمُعْتَلُّ الْآخِرِ يُجْزَمُ بِحَذْفِ آخِرِهِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "10",
+    "page_A1": "6"
+   },
+   "variantes": [
+    "V-15"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0035",
+   "section": "muarabat",
+   "type": "texte",
+   "ar": "وَالَّذِي يُعْرَبُ بِالْحُرُوفِ أَرْبَعَةُ أَنْوَاعٍ: التَّثْنِيَةُ، وَجَمْعُ الْمُذَكَّرِ السَّالِمُ، وَالْأَسْمَاءُ الْخَمْسَةُ، وَالْأَفْعَالُ الْخَمْسَةُ، وَهِيَ: يَفْعَلَانِ، وَتَفْعَلَانِ، وَيَفْعَلُونَ، وَتَفْعَلُونَ، وَتَفْعَلِينَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "10",
+    "page_A1": "6"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0036",
+   "section": "muarabat",
+   "type": "texte",
+   "ar": "فَأَمَّا التَّثْنِيَةُ فَتُرْفَعُ بِالْأَلِفِ، وَتُنْصَبُ وَتُخْفَضُ بِالْيَاءِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "10",
+    "page_A1": "6"
+   },
+   "variantes": [
+    "V-15"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0037",
+   "section": "muarabat",
+   "type": "texte",
+   "ar": "وَأَمَّا جَمْعُ الْمُذَكَّرِ السَّالِمُ فَيُرْفَعُ بِالْوَاوِ، وَيُنْصَبُ وَيُخْفَضُ بِالْيَاءِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "10",
+    "page_A1": "6"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0038",
+   "section": "muarabat",
+   "type": "texte",
+   "ar": "وَأَمَّا الْأَسْمَاءُ الْخَمْسَةُ فَتُرْفَعُ بِالْوَاوِ، وَتُنْصَبُ بِالْأَلِفِ، وَتُخْفَضُ بِالْيَاءِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "10",
+    "page_A1": "6"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0039",
+   "section": "muarabat",
+   "type": "texte",
+   "ar": "وَأَمَّا الْأَفْعَالُ الْخَمْسَةُ فَتُرْفَعُ بِالنُّونِ، وَتُنْصَبُ وَتُجْزَمُ بِحَذْفِهَا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "10",
+    "page_A1": "6"
+   },
+   "variantes": [
+    "V-15"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0040",
+   "section": "afal",
+   "type": "titre",
+   "ar": "بَابُ الْأَفْعَالِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "11",
+    "page_A1": "7"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0041",
+   "section": "afal",
+   "type": "texte",
+   "ar": "الْأَفْعَالُ ثَلَاثَةٌ: مَاضٍ، وَمُضَارِعٌ، وَأَمْرٌ، نَحْوُ: ضَرَبَ، وَيَضْرِبُ، وَاضْرِبْ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "11",
+    "page_A1": "7"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0042",
+   "section": "afal",
+   "type": "texte",
+   "ar": "فَالْمَاضِي مَفْتُوحُ الْآخِرِ أَبَدًا، وَالْأَمْرُ مَجْزُومٌ أَبَدًا، وَالْمُضَارِعُ مَا كَانَ فِي أَوَّلِهِ إِحْدَى الزَّوَائِدِ الْأَرْبَعِ يَجْمَعُهَا قَوْلُكَ: أَنَيْتُ، وَهُوَ مَرْفُوعٌ أَبَدًا حَتَّى يَدْخُلَ عَلَيْهِ نَاصِبٌ أَوْ جَازِمٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "11",
+    "page_A1": "7"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0043",
+   "section": "afal",
+   "type": "texte",
+   "ar": "فَالنَّوَاصِبُ عَشَرَةٌ، وَهِيَ: أَنْ، وَلَنْ، وَإِذَنْ، وَكَيْ، وَلَامُ كَيْ، وَلَامُ الْجُحُودِ، وَحَتَّى، وَالْجَوَابُ بِالْفَاءِ، وَالْوَاوِ، وَأَوْ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "11",
+    "page_A1": "7"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0044",
+   "section": "afal",
+   "type": "texte",
+   "ar": "وَالْجَوَازِمُ ثَمَانِيَةَ عَشَرَ، وَهِيَ: لَمْ، وَلَمَّا، وَأَلَمْ، وَأَلَمَّا، وَلَامُ الْأَمْرِ وَالدُّعَاءِ، وَلَا فِي النَّهْيِ وَالدُّعَاءِ، وَإِنْ، وَمَا، وَمَنْ، وَمَهْمَا، وَإِذْ مَا، وَأَيُّ، وَمَتَى، وَأَيَّانَ، وَأَيْنَ، وَأَنَّى، وَحَيْثُمَا، وَكَيْفَمَا، وَإِذَا فِي الشِّعْرِ خَاصَّةً.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "11",
+    "page_A1": "7"
+   },
+   "variantes": [
+    "V-01",
+    "V-03"
+   ],
+   "a_verifier": [
+    "V-01 : « وإذا في الشعر خاصة » est dans A1 et F, mais al-Kafrāwī le tient pour une addition de certaines copies (p. 58-59) ; texte gardé"
+   ],
+   "observations": [
+    "O-03",
+    "O-03"
+   ]
+  },
+  {
+   "id": "AJR-0045",
+   "section": "marfuat",
+   "type": "titre",
+   "ar": "بَابُ مَرْفُوعَاتِ الْأَسْمَاءِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "12",
+    "page_A1": "8"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0046",
+   "section": "marfuat",
+   "type": "texte",
+   "ar": "الْمَرْفُوعَاتُ سَبْعَةٌ، وَهِيَ: الْفَاعِلُ، وَالْمَفْعُولُ الَّذِي لَمْ يُسَمَّ فَاعِلُهُ، وَالْمُبْتَدَأُ وَخَبَرُهُ، وَاسْمُ كَانَ وَأَخَوَاتِهَا، وَخَبَرُ إِنَّ وَأَخَوَاتِهَا، وَالتَّابِعُ لِلْمَرْفُوعِ، وَهُوَ أَرْبَعَةُ أَشْيَاءَ: النَّعْتُ، وَالْعَطْفُ، وَالتَّوْكِيدُ، وَالْبَدَلُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "12",
+    "page_A1": "8"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0047",
+   "section": "fail",
+   "type": "titre",
+   "ar": "بَابُ الْفَاعِلِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "12",
+    "page_A1": "8"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0048",
+   "section": "fail",
+   "type": "texte",
+   "ar": "الْفَاعِلُ هُوَ الِاسْمُ الْمَرْفُوعُ الْمَذْكُورُ قَبْلَهُ فِعْلُهُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "12",
+    "page_A1": "8"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0049",
+   "section": "fail",
+   "type": "texte",
+   "ar": "وَهُوَ عَلَى قِسْمَيْنِ: ظَاهِرٍ وَمُضْمَرٍ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "12",
+    "page_A1": "8"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0050",
+   "section": "fail",
+   "type": "texte",
+   "ar": "فَالظَّاهِرُ نَحْوُ قَوْلِكَ: قَامَ زَيْدٌ، وَيَقُومُ زَيْدٌ، وَقَامَ الزَّيْدَانِ، وَيَقُومُ الزَّيْدَانِ، وَقَامَ الزَّيْدُونَ، وَيَقُومُ الزَّيْدُونَ، وَقَامَ الرِّجَالُ، وَيَقُومُ الرِّجَالُ، وَقَامَتْ هِنْدٌ، وَتَقُومُ هِنْدٌ، وَقَامَتِ الْهِنْدَانِ، وَتَقُومُ الْهِنْدَانِ، وَقَامَتِ الْهِنْدَاتُ، وَتَقُومُ الْهِنْدَاتُ، وَقَامَتِ الْهُنُودُ، وَتَقُومُ الْهُنُودُ، وَقَامَ أَخُوكَ، وَيَقُومُ أَخُوكَ، وَقَامَ غُلَامِي، وَيَقُومُ غُلَامِي، وَمَا أَشْبَهَ ذَلِكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "12-13",
+    "page_A1": "8-9"
+   },
+   "variantes": [
+    "V-05"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0051",
+   "section": "fail",
+   "type": "texte",
+   "ar": "وَالْمُضْمَرُ اثْنَا عَشَرَ، نَحْوُ قَوْلِكَ: ضَرَبْتُ، وَضَرَبْنَا، وَضَرَبْتَ، وَضَرَبْتِ، وَضَرَبْتُمَا، وَضَرَبْتُمْ، وَضَرَبْتُنَّ، وَضَرَبَ، وَضَرَبَتْ، وَضَرَبَا، وَضَرَبُوا، وَضَرَبْنَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "13",
+    "page_A1": "9"
+   },
+   "variantes": [
+    "V-06"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0052",
+   "section": "naib",
+   "type": "titre",
+   "ar": "بَابُ الْمَفْعُولِ الَّذِي لَمْ يُسَمَّ فَاعِلُهُ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "13",
+    "page_A1": "9"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0053",
+   "section": "naib",
+   "type": "texte",
+   "ar": "وَهُوَ الِاسْمُ الْمَرْفُوعُ الَّذِي لَمْ يُذْكَرْ مَعَهُ فَاعِلُهُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "13",
+    "page_A1": "9"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0054",
+   "section": "naib",
+   "type": "texte",
+   "ar": "فَإِنْ كَانَ الْفِعْلُ مَاضِيًا ضُمَّ أَوَّلُهُ وَكُسِرَ مَا قَبْلَ آخِرِهِ، وَإِنْ كَانَ مُضَارِعًا ضُمَّ أَوَّلُهُ وَفُتِحَ مَا قَبْلَ آخِرِهِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "13",
+    "page_A1": "9"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0055",
+   "section": "naib",
+   "type": "texte",
+   "ar": "وَهُوَ عَلَى قِسْمَيْنِ: ظَاهِرٍ وَمُضْمَرٍ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "13",
+    "page_A1": "9"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0056",
+   "section": "naib",
+   "type": "texte",
+   "ar": "فَالظَّاهِرُ نَحْوُ قَوْلِكَ: ضُرِبَ زَيْدٌ، وَيُضْرَبُ زَيْدٌ، وَأُكْرِمَ عَمْرٌو، وَيُكْرَمُ عَمْرٌو.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "13",
+    "page_A1": "9"
+   },
+   "variantes": [
+    "V-07"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0057",
+   "section": "naib",
+   "type": "texte",
+   "ar": "وَالْمُضْمَرُ اثْنَا عَشَرَ، نَحْوُ قَوْلِكَ: ضُرِبْتُ، وَضُرِبْنَا، وَضُرِبْتَ، وَضُرِبْتِ، وَضُرِبْتُمَا، وَضُرِبْتُمْ، وَضُرِبْتُنَّ، وَضُرِبَ، وَضُرِبَتْ، وَضُرِبَا، وَضُرِبُوا، وَضُرِبْنَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "13",
+    "page_A1": "9"
+   },
+   "variantes": [
+    "V-06"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0058",
+   "section": "mubtada",
+   "type": "titre",
+   "ar": "بَابُ الْمُبْتَدَإِ وَالْخَبَرِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "14",
+    "page_A1": "10"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0059",
+   "section": "mubtada",
+   "type": "texte",
+   "ar": "الْمُبْتَدَأُ هُوَ الِاسْمُ الْمَرْفُوعُ الْعَارِي عَنِ الْعَوَامِلِ اللَّفْظِيَّةِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "14",
+    "page_A1": "10"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0060",
+   "section": "mubtada",
+   "type": "texte",
+   "ar": "وَالْخَبَرُ هُوَ الِاسْمُ الْمَرْفُوعُ الْمُسْنَدُ إِلَيْهِ، نَحْوُ قَوْلِكَ: زَيْدٌ قَائِمٌ، وَالزَّيْدَانِ قَائِمَانِ، وَالزَّيْدُونَ قَائِمُونَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "14",
+    "page_A1": "10"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0061",
+   "section": "mubtada",
+   "type": "texte",
+   "ar": "وَالْمُبْتَدَأُ قِسْمَانِ: ظَاهِرٌ وَمُضْمَرٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "14",
+    "page_A1": "10"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0062",
+   "section": "mubtada",
+   "type": "texte",
+   "ar": "فَالظَّاهِرُ مَا تَقَدَّمَ ذِكْرُهُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "14",
+    "page_A1": "10"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0063",
+   "section": "mubtada",
+   "type": "texte",
+   "ar": "وَالْمُضْمَرُ اثْنَا عَشَرَ، وَهِيَ: أَنَا، وَنَحْنُ، وَأَنْتَ، وَأَنْتِ، وَأَنْتُمَا، وَأَنْتُمْ، وَأَنْتُنَّ، وَهُوَ، وَهِيَ، وَهُمَا، وَهُمْ، وَهُنَّ، نَحْوُ قَوْلِكَ: أَنَا قَائِمٌ، وَنَحْنُ قَائِمُونَ، وَمَا أَشْبَهَ ذَلِكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "14",
+    "page_A1": "10"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0064",
+   "section": "mubtada",
+   "type": "texte",
+   "ar": "وَالْخَبَرُ قِسْمَانِ: مُفْرَدٌ وَغَيْرُ مُفْرَدٍ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "14",
+    "page_A1": "10"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0065",
+   "section": "mubtada",
+   "type": "texte",
+   "ar": "فَالْمُفْرَدُ نَحْوُ: زَيْدٌ قَائِمٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "14",
+    "page_A1": "10"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0066",
+   "section": "mubtada",
+   "type": "texte",
+   "ar": "وَغَيْرُ الْمُفْرَدِ أَرْبَعَةُ أَشْيَاءَ: الْجَارُّ وَالْمَجْرُورُ، وَالظَّرْفُ، وَالْفِعْلُ مَعَ فَاعِلِهِ، وَالْمُبْتَدَأُ مَعَ خَبَرِهِ، نَحْوُ قَوْلِكَ: زَيْدٌ فِي الدَّارِ، وَزَيْدٌ عِنْدَكَ، وَزَيْدٌ قَامَ أَبُوهُ، وَزَيْدٌ جَارِيَتُهُ ذَاهِبَةٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "14",
+    "page_A1": "10"
+   },
+   "variantes": [
+    "V-08"
+   ],
+   "a_verifier": [],
+   "observations": [
+    "O-01"
+   ]
+  },
+  {
+   "id": "AJR-0067",
+   "section": "awamil",
+   "type": "titre",
+   "ar": "بَابُ الْعَوَامِلِ الدَّاخِلَةِ عَلَى الْمُبْتَدَإِ وَالْخَبَرِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "15",
+    "page_A1": "11"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0068",
+   "section": "awamil",
+   "type": "texte",
+   "ar": "وَهِيَ ثَلَاثَةُ أَشْيَاءَ: كَانَ وَأَخَوَاتُهَا، وَإِنَّ وَأَخَوَاتُهَا، وَظَنَنْتُ وَأَخَوَاتُهَا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "15",
+    "page_A1": "11"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0069",
+   "section": "awamil",
+   "type": "texte",
+   "ar": "فَأَمَّا كَانَ وَأَخَوَاتُهَا فَإِنَّهَا تَرْفَعُ الِاسْمَ وَتَنْصِبُ الْخَبَرَ، وَهِيَ: كَانَ، وَأَمْسَى، وَأَصْبَحَ، وَأَضْحَى، وَظَلَّ، وَبَاتَ، وَصَارَ، وَلَيْسَ، وَمَا زَالَ، وَمَا انْفَكَّ، وَمَا فَتِئَ، وَمَا بَرِحَ، وَمَا دَامَ، وَمَا تَصَرَّفَ مِنْهَا، نَحْوُ: كَانَ وَيَكُونُ وَكُنْ، وَأَصْبَحَ وَيُصْبِحُ وَأَصْبِحْ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "15",
+    "page_A1": "11"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0070",
+   "section": "awamil",
+   "type": "texte",
+   "ar": "تَقُولُ: كَانَ زَيْدٌ قَائِمًا، وَلَيْسَ عَمْرٌو شَاخِصًا، وَمَا أَشْبَهَ ذَلِكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "15",
+    "page_A1": "11"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0071",
+   "section": "awamil",
+   "type": "texte",
+   "ar": "وَأَمَّا إِنَّ وَأَخَوَاتُهَا فَإِنَّهَا تَنْصِبُ الِاسْمَ وَتَرْفَعُ الْخَبَرَ، وَهِيَ: إِنَّ، وَأَنَّ، وَلَكِنَّ، وَكَأَنَّ، وَلَيْتَ، وَلَعَلَّ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "15",
+    "page_A1": "11"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0072",
+   "section": "awamil",
+   "type": "texte",
+   "ar": "تَقُولُ: إِنَّ زَيْدًا قَائِمٌ، وَلَيْتَ عَمْرًا شَاخِصٌ، وَمَا أَشْبَهَ ذَلِكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "15",
+    "page_A1": "11"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0073",
+   "section": "awamil",
+   "type": "texte",
+   "ar": "وَمَعْنَى إِنَّ وَأَنَّ: لِلتَّوْكِيدِ، وَلَكِنَّ: لِلِاسْتِدْرَاكِ، وَكَأَنَّ: لِلتَّشْبِيهِ، وَلَيْتَ: لِلتَّمَنِّي، وَلَعَلَّ: لِلتَّرَجِّي وَالتَّوَقُّعِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "15",
+    "page_A1": "11"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0074",
+   "section": "awamil",
+   "type": "texte",
+   "ar": "وَأَمَّا ظَنَنْتُ وَأَخَوَاتُهَا فَإِنَّهَا تَنْصِبُ الْمُبْتَدَأَ وَالْخَبَرَ عَلَى أَنَّهُمَا مَفْعُولَانِ لَهَا، وَهِيَ: ظَنَنْتُ، وَحَسِبْتُ، وَخِلْتُ، وَزَعَمْتُ، وَرَأَيْتُ، وَعَلِمْتُ، وَوَجَدْتُ، وَاتَّخَذْتُ، وَجَعَلْتُ، وَسَمِعْتُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "15-16",
+    "page_A1": "11-12"
+   },
+   "variantes": [],
+   "a_verifier": [],
+   "observations": [
+    "O-05"
+   ]
+  },
+  {
+   "id": "AJR-0075",
+   "section": "awamil",
+   "type": "texte",
+   "ar": "تَقُولُ: ظَنَنْتُ زَيْدًا مُنْطَلِقًا، وَخِلْتُ عَمْرًا شَاخِصًا، وَمَا أَشْبَهَ ذَلِكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "16",
+    "page_A1": "12"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0076",
+   "section": "nat",
+   "type": "titre",
+   "ar": "بَابُ النَّعْتِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "16",
+    "page_A1": "12"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0077",
+   "section": "nat",
+   "type": "texte",
+   "ar": "النَّعْتُ تَابِعٌ لِلْمَنْعُوتِ فِي رَفْعِهِ وَنَصْبِهِ وَخَفْضِهِ وَتَعْرِيفِهِ وَتَنْكِيرِهِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "16",
+    "page_A1": "12"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0078",
+   "section": "nat",
+   "type": "texte",
+   "ar": "تَقُولُ: قَامَ زَيْدٌ الْعَاقِلُ، وَرَأَيْتُ زَيْدًا الْعَاقِلَ، وَمَرَرْتُ بِزَيْدٍ الْعَاقِلِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "16",
+    "page_A1": "12"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0079",
+   "section": "nat",
+   "type": "texte",
+   "ar": "وَالْمَعْرِفَةُ خَمْسَةُ أَشْيَاءَ: الِاسْمُ الْمُضْمَرُ، نَحْوُ: أَنَا وَأَنْتَ؛ وَالِاسْمُ الْعَلَمُ، نَحْوُ: زَيْدٍ وَمَكَّةَ؛ وَالِاسْمُ الْمُبْهَمُ، نَحْوُ: هَذَا وَهَذِهِ وَهَؤُلَاءِ؛ وَالِاسْمُ الَّذِي فِيهِ الْأَلِفُ وَاللَّامُ، نَحْوُ: الرَّجُلِ وَالْغُلَامِ؛ وَمَا أُضِيفَ إِلَى وَاحِدٍ مِنْ هَذِهِ الْأَرْبَعَةِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "16",
+    "page_A1": "12"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0080",
+   "section": "nat",
+   "type": "texte",
+   "ar": "وَالنَّكِرَةُ كُلُّ اسْمٍ شَائِعٍ فِي جِنْسِهِ لَا يَخْتَصُّ بِهِ وَاحِدٌ دُونَ آخَرَ، وَتَقْرِيبُهُ كُلُّ مَا صَلَحَ دُخُولُ الْأَلِفِ وَاللَّامِ عَلَيْهِ، نَحْوُ: الرَّجُلِ وَالْفَرَسِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "16",
+    "page_A1": "12"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0081",
+   "section": "atf",
+   "type": "titre",
+   "ar": "بَابُ الْعَطْفِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "17",
+    "page_A1": "13"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0082",
+   "section": "atf",
+   "type": "texte",
+   "ar": "وَحُرُوفُ الْعَطْفِ عَشَرَةٌ، وَهِيَ: الْوَاوُ، وَالْفَاءُ، وَثُمَّ، وَأَوْ، وَأَمْ، وَإِمَّا، وَبَلْ، وَلَا، وَلَكِنْ، وَحَتَّى فِي بَعْضِ الْمَوَاضِعِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "17",
+    "page_A1": "13"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0083",
+   "section": "atf",
+   "type": "texte",
+   "ar": "فَإِنْ عَطَفْتَ بِهَا عَلَى مَرْفُوعٍ رَفَعْتَ، أَوْ عَلَى مَنْصُوبٍ نَصَبْتَ، أَوْ عَلَى مَخْفُوضٍ خَفَضْتَ، أَوْ عَلَى مَجْزُومٍ جَزَمْتَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "17",
+    "page_A1": "13"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0084",
+   "section": "atf",
+   "type": "texte",
+   "ar": "تَقُولُ: قَامَ زَيْدٌ وَعَمْرٌو، وَرَأَيْتُ زَيْدًا وَعَمْرًا، وَمَرَرْتُ بِزَيْدٍ وَعَمْرٍو، وَزَيْدٌ لَمْ يَقُمْ وَلَمْ يَقْعُدْ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "17",
+    "page_A1": "13"
+   },
+   "variantes": [
+    "V-09"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0085",
+   "section": "tawkid",
+   "type": "titre",
+   "ar": "بَابُ التَّوْكِيدِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "17",
+    "page_A1": "13"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0086",
+   "section": "tawkid",
+   "type": "texte",
+   "ar": "التَّوْكِيدُ تَابِعٌ لِلْمُؤَكَّدِ فِي رَفْعِهِ وَنَصْبِهِ وَخَفْضِهِ وَتَعْرِيفِهِ وَتَنْكِيرِهِ، وَيَكُونُ بِأَلْفَاظٍ مَعْلُومَةٍ، وَهِيَ: النَّفْسُ، وَالْعَيْنُ، وَكُلٌّ، وَأَجْمَعُ، وَتَوَابِعُ أَجْمَعَ، وَهِيَ: أَكْتَعُ، وَأَبْتَعُ، وَأَبْصَعُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "17",
+    "page_A1": "13"
+   },
+   "variantes": [
+    "V-10"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0087",
+   "section": "tawkid",
+   "type": "texte",
+   "ar": "تَقُولُ: قَامَ زَيْدٌ نَفْسُهُ، وَرَأَيْتُ الْقَوْمَ كُلَّهُمْ، وَمَرَرْتُ بِالْقَوْمِ أَجْمَعِينَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "17",
+    "page_A1": "13"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0088",
+   "section": "badal",
+   "type": "titre",
+   "ar": "بَابُ الْبَدَلِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "18",
+    "page_A1": "14"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0089",
+   "section": "badal",
+   "type": "texte",
+   "ar": "إِذَا أُبْدِلَ اسْمٌ مِنِ اسْمٍ، أَوْ فِعْلٌ مِنْ فِعْلٍ، تَبِعَهُ فِي جَمِيعِ إِعْرَابِهِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "18",
+    "page_A1": "14"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0090",
+   "section": "badal",
+   "type": "texte",
+   "ar": "وَهُوَ أَرْبَعَةُ أَقْسَامٍ: بَدَلُ الشَّيْءِ مِنَ الشَّيْءِ، وَبَدَلُ الْبَعْضِ مِنَ الْكُلِّ، وَبَدَلُ الِاشْتِمَالِ، وَبَدَلُ الْغَلَطِ، نَحْوُ قَوْلِكَ: قَامَ زَيْدٌ أَخُوكَ، وَأَكَلْتُ الرَّغِيفَ ثُلُثَهُ، وَنَفَعَنِي زَيْدٌ عِلْمُهُ، وَرَأَيْتُ زَيْدًا الْفَرَسَ، أَرَدْتَ أَنْ تَقُولَ: الْفَرَسَ، فَغَلِطْتَ، فَأَبْدَلْتَ زَيْدًا مِنْهُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "18",
+    "page_A1": "14"
+   },
+   "variantes": [
+    "V-02",
+    "V-11"
+   ],
+   "a_verifier": [
+    "V-02 : A1 imprime « ارذت » ; la voyelle du ت (« أَرَدْتَ », 2e personne) est la lecture d'après al-Kafrāwī p. 107",
+    "confirmé le 13/10 par A2 (image 23) : 2e personne"
+   ]
+  },
+  {
+   "id": "AJR-0091",
+   "section": "mansubat",
+   "type": "titre",
+   "ar": "بَابُ مَنْصُوبَاتِ الْأَسْمَاءِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "18",
+    "page_A1": "14"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0092",
+   "section": "mansubat",
+   "type": "texte",
+   "ar": "الْمَنْصُوبَاتُ خَمْسَةَ عَشَرَ، وَهِيَ: الْمَفْعُولُ بِهِ، وَالْمَصْدَرُ، وَظَرْفُ الزَّمَانِ، وَظَرْفُ الْمَكَانِ، وَالْحَالُ، وَالتَّمْيِيزُ، وَالْمُسْتَثْنَى، وَاسْمُ لَا، وَالْمُنَادَى، وَالْمَفْعُولُ مِنْ أَجْلِهِ، وَالْمَفْعُولُ مَعَهُ، وَخَبَرُ كَانَ وَأَخَوَاتِهَا، وَاسْمُ إِنَّ وَأَخَوَاتِهَا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "18",
+    "page_A1": "14"
+   },
+   "variantes": [
+    "V-04"
+   ],
+   "a_verifier": [],
+   "observations": [
+    "O-02"
+   ]
+  },
+  {
+   "id": "AJR-0093",
+   "section": "mansubat",
+   "type": "texte",
+   "ar": "وَالتَّابِعُ لِلْمَنْصُوبِ، وَهُوَ أَرْبَعَةُ أَشْيَاءَ: النَّعْتُ، وَالْعَطْفُ، وَالتَّوْكِيدُ، وَالْبَدَلُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "18",
+    "page_A1": "14"
+   },
+   "variantes": [
+    "V-04"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0094",
+   "section": "mafulbih",
+   "type": "titre",
+   "ar": "بَابُ الْمَفْعُولِ بِهِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "19",
+    "page_A1": "15"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0095",
+   "section": "mafulbih",
+   "type": "texte",
+   "ar": "وَهُوَ الِاسْمُ الْمَنْصُوبُ الَّذِي يَقَعُ بِهِ الْفِعْلُ، نَحْوُ قَوْلِكَ: ضَرَبْتُ زَيْدًا، وَرَكِبْتُ الْفَرَسَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "19",
+    "page_A1": "15"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0096",
+   "section": "mafulbih",
+   "type": "texte",
+   "ar": "وَهُوَ قِسْمَانِ: ظَاهِرٌ وَمُضْمَرٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "19",
+    "page_A1": "15"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0097",
+   "section": "mafulbih",
+   "type": "texte",
+   "ar": "فَالظَّاهِرُ مَا تَقَدَّمَ ذِكْرُهُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "19",
+    "page_A1": "15"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0098",
+   "section": "mafulbih",
+   "type": "texte",
+   "ar": "وَالْمُضْمَرُ قِسْمَانِ: مُتَّصِلٌ وَمُنْفَصِلٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "19",
+    "page_A1": "15"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0099",
+   "section": "mafulbih",
+   "type": "texte",
+   "ar": "فَالْمُتَّصِلُ اثْنَا عَشَرَ، وَهِيَ: ضَرَبَنِي، وَضَرَبَنَا، وَضَرَبَكَ، وَضَرَبَكِ، وَضَرَبَكُمَا، وَضَرَبَكُمْ، وَضَرَبَكُنَّ، وَضَرَبَهُ، وَضَرَبَهَا، وَضَرَبَهُمَا، وَضَرَبَهُمْ، وَضَرَبَهُنَّ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "19",
+    "page_A1": "15"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0100",
+   "section": "mafulbih",
+   "type": "texte",
+   "ar": "وَالْمُنْفَصِلُ اثْنَا عَشَرَ، وَهِيَ: إِيَّايَ، وَإِيَّانَا، وَإِيَّاكَ، وَإِيَّاكِ، وَإِيَّاكُمَا، وَإِيَّاكُمْ، وَإِيَّاكُنَّ، وَإِيَّاهُ، وَإِيَّاهَا، وَإِيَّاهُمَا، وَإِيَّاهُمْ، وَإِيَّاهُنَّ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "19",
+    "page_A1": "15"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0101",
+   "section": "masdar",
+   "type": "titre",
+   "ar": "بَابُ الْمَصْدَرِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "19",
+    "page_A1": "15"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0102",
+   "section": "masdar",
+   "type": "texte",
+   "ar": "الْمَصْدَرُ هُوَ الِاسْمُ الْمَنْصُوبُ الَّذِي يَجِيءُ ثَالِثًا فِي تَصْرِيفِ الْفِعْلِ، نَحْوُ: ضَرَبَ يَضْرِبُ ضَرْبًا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "19",
+    "page_A1": "15"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0103",
+   "section": "masdar",
+   "type": "texte",
+   "ar": "وَهُوَ قِسْمَانِ: لَفْظِيٌّ وَمَعْنَوِيٌّ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "19-20",
+    "page_A1": "15-16"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0104",
+   "section": "masdar",
+   "type": "texte",
+   "ar": "فَإِنْ وَافَقَ لَفْظُهُ لَفْظَ فِعْلِهِ فَهُوَ لَفْظِيٌّ، نَحْوُ: قَتَلْتُهُ قَتْلًا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "20",
+    "page_A1": "16"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0105",
+   "section": "masdar",
+   "type": "texte",
+   "ar": "وَإِنْ وَافَقَ مَعْنَاهُ مَعْنَى فِعْلِهِ دُونَ لَفْظِهِ فَهُوَ مَعْنَوِيٌّ، نَحْوُ: جَلَسْتُ قُعُودًا، وَقُمْتُ وُقُوفًا، وَمَا أَشْبَهَ ذَلِكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "20",
+    "page_A1": "16"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0106",
+   "section": "zarf",
+   "type": "titre",
+   "ar": "بَابُ ظَرْفِ الزَّمَانِ وَظَرْفِ الْمَكَانِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "20",
+    "page_A1": "16"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0107",
+   "section": "zarf",
+   "type": "texte",
+   "ar": "ظَرْفُ الزَّمَانِ هُوَ اسْمُ الزَّمَانِ الْمَنْصُوبُ بِتَقْدِيرِ فِي، نَحْوُ: الْيَوْمَ، وَاللَّيْلَةَ، وَغُدْوَةً، وَبُكْرَةً، وَسَحَرًا، وَغَدًا، وَعَتَمَةً، وَصَبَاحًا، وَمَسَاءً، وَأَبَدًا، وَأَمَدًا، وَحِينًا، وَمَا أَشْبَهَ ذَلِكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "20",
+    "page_A1": "16"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0108",
+   "section": "zarf",
+   "type": "texte",
+   "ar": "وَظَرْفُ الْمَكَانِ هُوَ اسْمُ الْمَكَانِ الْمَنْصُوبُ بِتَقْدِيرِ فِي، نَحْوُ: أَمَامَ، وَخَلْفَ، وَقُدَّامَ، وَوَرَاءَ، وَفَوْقَ، وَتَحْتَ، وَعِنْدَ، وَمَعَ، وَإِزَاءَ، وَحِذَاءَ، وَتِلْقَاءَ، وَثَمَّ، وَهُنَا، وَمَا أَشْبَهَ ذَلِكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "20",
+    "page_A1": "16"
+   },
+   "variantes": [
+    "V-15"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0109",
+   "section": "hal",
+   "type": "titre",
+   "ar": "بَابُ الْحَالِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "20",
+    "page_A1": "16"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0110",
+   "section": "hal",
+   "type": "texte",
+   "ar": "الْحَالُ هُوَ الِاسْمُ الْمَنْصُوبُ الْمُفَسِّرُ لِمَا انْبَهَمَ مِنَ الْهَيْئَاتِ، نَحْوُ قَوْلِكَ: جَاءَ زَيْدٌ رَاكِبًا، وَرَكِبْتُ الْفَرَسَ مُسْرَجًا، وَلَقِيتُ عَبْدَ اللَّهِ رَاكِبًا، وَمَا أَشْبَهَ ذَلِكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "20-21",
+    "page_A1": "16-17"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0111",
+   "section": "hal",
+   "type": "texte",
+   "ar": "وَلَا يَكُونُ الْحَالُ إِلَّا نَكِرَةً، وَلَا يَكُونُ إِلَّا بَعْدَ تَمَامِ الْكَلَامِ، وَلَا يَكُونُ صَاحِبُهَا إِلَّا مَعْرِفَةً.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "21",
+    "page_A1": "17"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0112",
+   "section": "tamyiz",
+   "type": "titre",
+   "ar": "بَابُ التَّمْيِيزِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "21",
+    "page_A1": "17"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0113",
+   "section": "tamyiz",
+   "type": "texte",
+   "ar": "التَّمْيِيزُ هُوَ الِاسْمُ الْمَنْصُوبُ الْمُفَسِّرُ لِمَا انْبَهَمَ مِنَ الذَّوَاتِ، نَحْوُ قَوْلِكَ: تَصَبَّبَ زَيْدٌ عَرَقًا، وَتَفَقَّأَ بَكْرٌ شَحْمًا، وَطَابَ مُحَمَّدٌ نَفْسًا، وَاشْتَرَيْتُ عِشْرِينَ غُلَامًا، وَمَلَكْتُ تِسْعِينَ نَعْجَةً، وَزَيْدٌ أَكْرَمُ مِنْكَ أَبًا، وَأَجْمَلُ مِنْكَ وَجْهًا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "21",
+    "page_A1": "17"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0114",
+   "section": "tamyiz",
+   "type": "texte",
+   "ar": "وَلَا يَكُونُ إِلَّا نَكِرَةً، وَلَا يَكُونُ إِلَّا بَعْدَ تَمَامِ الْكَلَامِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "21",
+    "page_A1": "17"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0115",
+   "section": "istithna",
+   "type": "titre",
+   "ar": "بَابُ الِاسْتِثْنَاءِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "21",
+    "page_A1": "17"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0116",
+   "section": "istithna",
+   "type": "texte",
+   "ar": "وَحُرُوفُ الِاسْتِثْنَاءِ ثَمَانِيَةٌ، وَهِيَ: إِلَّا، وَغَيْرُ، وَسِوَى، وَسُوَى، وَسَوَاءٌ، وَخَلَا، وَعَدَا، وَحَاشَا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "21-22",
+    "page_A1": "17-18"
+   },
+   "variantes": [],
+   "a_verifier": [
+    "voyelles de « سِوَى », « سُوَى », « سَوَاءٌ » (liste des particules de l'exception) : lecture d'A1 peu nette ; à confirmer sur papier",
+    "confirmé le 13/10 par A2 (image 27) : سِوًى, سُوًى, سَوَاءٌ"
+   ]
+  },
+  {
+   "id": "AJR-0117",
+   "section": "istithna",
+   "type": "texte",
+   "ar": "فَالْمُسْتَثْنَى بِإِلَّا يُنْصَبُ إِذَا كَانَ الْكَلَامُ تَامًّا مُوجَبًا، نَحْوُ: قَامَ الْقَوْمُ إِلَّا زَيْدًا، وَخَرَجَ النَّاسُ إِلَّا عَمْرًا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "22",
+    "page_A1": "18"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0118",
+   "section": "istithna",
+   "type": "texte",
+   "ar": "وَإِنْ كَانَ الْكَلَامُ مَنْفِيًّا تَامًّا جَازَ فِيهِ الْبَدَلُ وَالنَّصْبُ عَلَى الِاسْتِثْنَاءِ، نَحْوُ: مَا قَامَ الْقَوْمُ إِلَّا زَيْدٌ، وَإِلَّا زَيْدًا.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "22",
+    "page_A1": "18"
+   },
+   "variantes": [
+    "V-13"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0119",
+   "section": "istithna",
+   "type": "texte",
+   "ar": "وَإِنْ كَانَ الْكَلَامُ نَاقِصًا كَانَ عَلَى حَسَبِ الْعَوَامِلِ، نَحْوُ: مَا قَامَ إِلَّا زَيْدٌ، وَمَا ضَرَبْتُ إِلَّا زَيْدًا، وَمَا مَرَرْتُ إِلَّا بِزَيْدٍ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "22",
+    "page_A1": "18"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0120",
+   "section": "istithna",
+   "type": "texte",
+   "ar": "وَالْمُسْتَثْنَى بِغَيْرٍ وَسِوَى وَسُوَى وَسَوَاءٍ مَجْرُورٌ لَا غَيْرُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "22",
+    "page_A1": "18"
+   },
+   "variantes": [],
+   "a_verifier": [],
+   "observations": [
+    "O-01"
+   ]
+  },
+  {
+   "id": "AJR-0121",
+   "section": "istithna",
+   "type": "texte",
+   "ar": "وَالْمُسْتَثْنَى بِخَلَا وَعَدَا وَحَاشَا يَجُوزُ نَصْبُهُ وَجَرُّهُ، نَحْوُ: قَامَ الْقَوْمُ خَلَا زَيْدًا وَزَيْدٍ، وَعَدَا عَمْرًا وَعَمْرٍو، وَحَاشَا بَكْرًا وَبَكْرٍ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "22",
+    "page_A1": "18"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0122",
+   "section": "la",
+   "type": "titre",
+   "ar": "بَابُ لَا",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "22",
+    "page_A1": "18"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0123",
+   "section": "la",
+   "type": "texte",
+   "ar": "اعْلَمْ أَنَّ لَا تَنْصِبُ النَّكِرَاتِ بِغَيْرِ تَنْوِينٍ إِذَا بَاشَرَتِ النَّكِرَةَ وَلَمْ تَتَكَرَّرْ لَا، نَحْوُ: لَا رَجُلَ فِي الدَّارِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "22",
+    "page_A1": "18"
+   },
+   "variantes": [
+    "V-12"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0124",
+   "section": "la",
+   "type": "texte",
+   "ar": "فَإِنْ لَمْ تُبَاشِرْهَا وَجَبَ الرَّفْعُ وَوَجَبَ تَكْرَارُ لَا، نَحْوُ: لَا فِي الدَّارِ رَجُلٌ وَلَا امْرَأَةٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "22-23",
+    "page_A1": "18-19"
+   },
+   "variantes": [
+    "V-12"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0125",
+   "section": "la",
+   "type": "texte",
+   "ar": "فَإِنْ تَكَرَّرَتْ جَازَ إِعْمَالُهَا وَإِلْغَاؤُهَا، فَإِنْ شِئْتَ قُلْتَ: لَا رَجُلَ فِي الدَّارِ وَلَا امْرَأَةَ، وَإِنْ شِئْتَ قُلْتَ: لَا رَجُلٌ فِي الدَّارِ وَلَا امْرَأَةٌ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "23",
+    "page_A1": "19"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0126",
+   "section": "munada",
+   "type": "titre",
+   "ar": "بَابُ الْمُنَادَى",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "23",
+    "page_A1": "19"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0127",
+   "section": "munada",
+   "type": "texte",
+   "ar": "الْمُنَادَى خَمْسَةُ أَنْوَاعٍ: الْمُفْرَدُ الْعَلَمُ، وَالنَّكِرَةُ الْمَقْصُودَةُ، وَالنَّكِرَةُ غَيْرُ الْمَقْصُودَةِ، وَالْمُضَافُ، وَالْمُشَبَّهُ بِالْمُضَافِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "23",
+    "page_A1": "19"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0128",
+   "section": "munada",
+   "type": "texte",
+   "ar": "فَأَمَّا الْمُفْرَدُ الْعَلَمُ وَالنَّكِرَةُ الْمَقْصُودَةُ فَيُبْنَيَانِ عَلَى الضَّمِّ مِنْ غَيْرِ تَنْوِينٍ، نَحْوُ: يَا زَيْدُ، وَيَا رَجُلُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "23",
+    "page_A1": "19"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0129",
+   "section": "munada",
+   "type": "texte",
+   "ar": "وَالثَّلَاثَةُ الْبَاقِيَةُ مَنْصُوبَةٌ لَا غَيْرُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "23",
+    "page_A1": "19"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0130",
+   "section": "ajlih",
+   "type": "titre",
+   "ar": "بَابُ الْمَفْعُولِ مِنْ أَجْلِهِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "23",
+    "page_A1": "19"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0131",
+   "section": "ajlih",
+   "type": "texte",
+   "ar": "وَهُوَ الِاسْمُ الْمَنْصُوبُ الَّذِي يُذْكَرُ بَيَانًا لِسَبَبِ وُقُوعِ الْفِعْلِ، نَحْوُ قَوْلِكَ: قَامَ زَيْدٌ إِجْلَالًا لِعَمْرٍو، وَقَصَدْتُكَ ابْتِغَاءَ مَعْرُوفِكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "23-24",
+    "page_A1": "19-20"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0132",
+   "section": "maah",
+   "type": "titre",
+   "ar": "بَابُ الْمَفْعُولِ مَعَهُ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "24",
+    "page_A1": "20"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0133",
+   "section": "maah",
+   "type": "texte",
+   "ar": "وَهُوَ الِاسْمُ الْمَنْصُوبُ الَّذِي يُذْكَرُ لِبَيَانِ مَنْ فُعِلَ مَعَهُ الْفِعْلُ، نَحْوُ قَوْلِكَ: جَاءَ الْأَمِيرُ وَالْجَيْشَ، وَاسْتَوَى الْمَاءُ وَالْخَشَبَةَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "24",
+    "page_A1": "20"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0134",
+   "section": "maah",
+   "type": "texte",
+   "ar": "وَأَمَّا خَبَرُ كَانَ وَأَخَوَاتِهَا وَاسْمُ إِنَّ وَأَخَوَاتِهَا فَقَدْ تَقَدَّمَ ذِكْرُهُمَا فِي الْمَرْفُوعَاتِ، وَكَذَلِكَ التَّوَابِعُ فَقَدْ تَقَدَّمَتْ هُنَاكَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "24",
+    "page_A1": "20"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0135",
+   "section": "makhfudat",
+   "type": "titre",
+   "ar": "بَابُ مَخْفُوضَاتِ الْأَسْمَاءِ",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "24",
+    "page_A1": "20"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0136",
+   "section": "makhfudat",
+   "type": "texte",
+   "ar": "الْمَخْفُوضَاتُ ثَلَاثَةُ أَقْسَامٍ: مَخْفُوضٌ بِالْحَرْفِ، وَمَخْفُوضٌ بِالْإِضَافَةِ، وَتَابِعٌ لِلْمَخْفُوضِ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "24",
+    "page_A1": "20"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0137",
+   "section": "makhfudat",
+   "type": "texte",
+   "ar": "فَأَمَّا الْمَخْفُوضُ بِالْحَرْفِ فَهُوَ مَا يُخْفَضُ بِمِنْ، وَإِلَى، وَعَنْ، وَعَلَى، وَفِي، وَرُبَّ، وَالْبَاءِ، وَالْكَافِ، وَاللَّامِ، وَحُرُوفِ الْقَسَمِ، وَهِيَ: الْوَاوُ، وَالْبَاءُ، وَالتَّاءُ، وَبِوَاوِ رُبَّ، وَبِمُذْ وَمُنْذُ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "24-25",
+    "page_A1": "20-21"
+   },
+   "variantes": [
+    "V-15"
+   ],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0138",
+   "section": "makhfudat",
+   "type": "texte",
+   "ar": "وَأَمَّا مَا يُخْفَضُ بِالْإِضَافَةِ فَنَحْوُ قَوْلِكَ: غُلَامُ زَيْدٍ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "25",
+    "page_A1": "21"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0139",
+   "section": "makhfudat",
+   "type": "texte",
+   "ar": "وَهُوَ عَلَى قِسْمَيْنِ: مَا يُقَدَّرُ بِاللَّامِ، وَمَا يُقَدَّرُ بِمِنْ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "25",
+    "page_A1": "21"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0140",
+   "section": "makhfudat",
+   "type": "texte",
+   "ar": "فَالَّذِي يُقَدَّرُ بِاللَّامِ نَحْوُ: غُلَامُ زَيْدٍ، وَالَّذِي يُقَدَّرُ بِمِنْ نَحْوُ: ثَوْبُ خَزٍّ، وَبَابُ سَاجٍ، وَخَاتَمُ حَدِيدٍ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "25",
+    "page_A1": "21"
+   },
+   "variantes": [],
+   "a_verifier": []
+  },
+  {
+   "id": "AJR-0141",
+   "section": "colophon",
+   "type": "colophon_editeur",
+   "ar": "تَمَّ بِحَمْدِ اللَّهِ طَبْعُ مَتْنِ الْأَجْرُومِيَّةِ فِي شَهْرِ الْمُحَرَّمِ سَنَةَ ١٣٢٤ هِجْرِيَّةً، وَصَلَّى اللَّهُ عَلَى سَيِّدِنَا مُحَمَّدٍ النَّبِيِّ الْأُمِّيِّ وَعَلَى آلِهِ وَصَحْبِهِ وَسَلَّمَ.",
+   "source": {
+    "temoin": "A1",
+    "image_A1": "25",
+    "page_A1": "21"
+   },
+   "variantes": [],
+   "a_verifier": [],
+   "hors_matn": true
+  }
+ ],
+ "collation_A2": {
+  "date": "2026-10-13",
+  "temoin": "A2 (Alger 1283 H, ACO columbia_aco003142)",
+  "images": "10 à 30",
+  "titres": {
+   "bab_A1": 24,
+   "retrouves_dans_A2_meme_ordre": 24,
+   "titres_en_plus_ou_differents": [
+    "باب الكلام (ouverture, image 10)",
+    "باب المعربات pour فصل (image 14)"
+   ]
+  },
+  "premieres_phrases_des_24_bab": {
+   "identiques": 21,
+   "differentes": [
+    "AJR-0086 (V-10)",
+    "AJR-0092 (V-04)",
+    "AJR-0123 (V-12)"
+   ]
+  },
+  "passages_d_exemples": [
+   "V-05",
+   "V-06",
+   "V-07",
+   "V-09",
+   "V-13"
+  ],
+  "variantes_notees": [
+   "V-03",
+   "V-04",
+   "V-05",
+   "V-06",
+   "V-07",
+   "V-08",
+   "V-09",
+   "V-10",
+   "V-11",
+   "V-12",
+   "V-13",
+   "V-14",
+   "V-15"
+  ],
+  "conclusion": "Aucune variante n'impose de changer le texte d'A1 (base décidée le 12/10). Les points V-03, V-05, V-06, V-10 et V-12 sont à montrer au maître de la seconde lecture."
+ },
+ "vocalisation_confirmee": [
+  {
+   "phrase": "AJR-0090",
+   "mot": "أَرَدْتَ (2e personne)",
+   "temoin": "A2 (Alger 1283 H, ACO columbia_aco003142), image 23 : le ت porte la marque de la 2e personne, comme « فَغَلِطْتَ » ; Bresnier traduit « vous pensiez dire » ; al-Kafrāwī p. 107 : « أردت أن تقول »",
+   "resultat": "confirmé"
+  },
+  {
+   "phrase": "AJR-0116",
+   "mot": "سِوًى، سُوًى، سَوَاءٌ",
+   "temoin": "A2 (Alger 1283 H, ACO columbia_aco003142), image 27 : kasra (سِوى), ḍamma (سُوى), fatḥa (سَواء)",
+   "resultat": "confirmé"
+  },
+  {
+   "phrase": "AJR-0044",
+   "mot": "liste des jussifs",
+   "temoin": "point de texte, non de voyelle (V-03)",
+   "resultat": "voir V-03"
+  }
+ ]
+}

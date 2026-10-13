@@ -1,0 +1,1928 @@
+{
+    "titre":  "Découpage en séances (majālis) — Ibn ʿĀshir, al-Murshid al-Muʿīn",
+    "statut":  "VALIDATION_HUMAINE_REQUISE",
+    "principe":  "Séances de 5 à 16 minutes : lecture du texte arabe (vers par vers), traduction, mots difficiles. L\u0027explication sera ajoutée plus tard (rien n\u0027est rédigé ici). Durée estimée = 3 min + 1,2 min par vers + 0,5 min par mot ; à recaler sur l\u0027enregistrement réel du lecteur.",
+    "ordre":  "Les séances suivent l\u0027ordre du poème (ordre d\u0027apprentissage), et non l\u0027ordre de traduction (la croyance a été traduite en dernier).",
+    "a_confirmer":  "Découpage proposé par Claude, par blocs de 3 à 9 vers suivant les unités de sens et les vers que Mayyāra commente ensemble ; le dossier des sources parle de 5 à 10 vers par séance au Maroc [non vérifié]. À comparer avec la pratique de 2 ou 3 maîtres.",
+    "point_referent":  "La partie croyance (IBA-S02 à S10) ne doit pas être publiée avant la relecture des ʿibādāt (DECISIONS_REFERENT_MUTUN, règle 5) ; la partie taṣawwuf (S54 à S57) est publiée entière, selon le principe de fidélité au texte, sous réserve de la décision du référent (R-S2).",
+    "nombre_de_seances":  58,
+    "duree_totale_min":  693,
+    "seances":  [
+                    {
+                        "id":  "IBA-S01",
+                        "titre":  "Ouverture : l\u0027auteur, le but, les trois sciences",
+                        "vers":  [
+                                     "IBA-0001",
+                                     "IBA-0002",
+                                     "IBA-0003",
+                                     "IBA-0004",
+                                     "IBA-0005"
+                                 ],
+                        "duree_min":  11,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الْأُمِّيّ",
+                                                    "sens":  "l\u0027illettré (celui qui n\u0027a appris ni à lire ni à écrire)"
+                                                },
+                                                {
+                                                    "ar":  "عَقْد",
+                                                    "sens":  "la croyance (ce à quoi le cœur se noue)"
+                                                },
+                                                {
+                                                    "ar":  "السَّالِك",
+                                                    "sens":  "le cheminant (sur la voie spirituelle)"
+                                                },
+                                                {
+                                                    "ar":  "كَلَّفَنَا",
+                                                    "sens":  "Il nous a chargés, imposé"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S02",
+                        "titre":  "Le jugement rationnel et ses trois catégories",
+                        "vers":  [
+                                     "IBA-0006",
+                                     "IBA-0007",
+                                     "IBA-0008",
+                                     "IBA-0009",
+                                     "IBA-0010"
+                                 ],
+                        "duree_min":  11,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "قَضِيَّة",
+                                                    "sens":  "proposition"
+                                                },
+                                                {
+                                                    "ar":  "عَادَة / وَضْع",
+                                                    "sens":  "habitude / institution"
+                                                },
+                                                {
+                                                    "ar":  "الْوُجُوب / الِاسْتِحَالَة / الْجَوَاز",
+                                                    "sens":  "le nécessaire / l\u0027impossible / le possible"
+                                                },
+                                                {
+                                                    "ar":  "ضَرُورِيّ / نَظَرِيّ",
+                                                    "sens":  "évident / spéculatif"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S03",
+                        "titre":  "Le premier devoir ; les conditions de la responsabilité",
+                        "vers":  [
+                                     "IBA-0011",
+                                     "IBA-0012",
+                                     "IBA-0013",
+                                     "IBA-0014"
+                                 ],
+                        "duree_min":  10,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "مُمَكَّن مِنْ نَظَرٍ",
+                                                    "sens":  "qui a la possibilité de réfléchir"
+                                                },
+                                                {
+                                                    "ar":  "نَصَبَ الْآيَاتِ",
+                                                    "sens":  "a dressé les signes (les preuves)"
+                                                },
+                                                {
+                                                    "ar":  "تَكْلِيف",
+                                                    "sens":  "responsabilité devant la Loi"
+                                                },
+                                                {
+                                                    "ar":  "الْبُلُوغ",
+                                                    "sens":  "la puberté"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S04",
+                        "titre":  "Les attributs nécessaires à Allah",
+                        "vers":  [
+                                     "IBA-0015",
+                                     "IBA-0016",
+                                     "IBA-0017"
+                                 ],
+                        "duree_min":  9,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الْقِدَم",
+                                                    "sens":  "l\u0027éternité sans commencement"
+                                                },
+                                                {
+                                                    "ar":  "الْبَقَاء",
+                                                    "sens":  "la permanence sans fin"
+                                                },
+                                                {
+                                                    "ar":  "الْغِنَى الْمُطْلَق",
+                                                    "sens":  "l\u0027absence absolue de besoin"
+                                                },
+                                                {
+                                                    "ar":  "خُلْفُهُ لِخَلْقِهِ",
+                                                    "sens":  "Sa dissemblance d\u0027avec Ses créatures"
+                                                },
+                                                {
+                                                    "ar":  "وَحْدَة",
+                                                    "sens":  "unicité"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S05",
+                        "titre":  "Les impossibles et le possible",
+                        "vers":  [
+                                     "IBA-0018",
+                                     "IBA-0019",
+                                     "IBA-0020",
+                                     "IBA-0021"
+                                 ],
+                        "duree_min":  10,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الْحُدُوث",
+                                                    "sens":  "la nouveauté (avoir commencé d\u0027exister)"
+                                                },
+                                                {
+                                                    "ar":  "الِافْتِقَار",
+                                                    "sens":  "le besoin"
+                                                },
+                                                {
+                                                    "ar":  "كَرَاهَة",
+                                                    "sens":  "ici : la contrainte (contraire de la volonté)"
+                                                },
+                                                {
+                                                    "ar":  "صُمَات",
+                                                    "sens":  "le silence"
+                                                },
+                                                {
+                                                    "ar":  "الْمُمْكِنَات",
+                                                    "sens":  "les possibles"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S06",
+                        "titre":  "Les preuves : existence, nouveauté du monde, éternité",
+                        "vers":  [
+                                     "IBA-0022",
+                                     "IBA-0023",
+                                     "IBA-0024",
+                                     "IBA-0025",
+                                     "IBA-0026"
+                                 ],
+                        "duree_min":  11,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الصَّانِع",
+                                                    "sens":  "l\u0027artisan, l\u0027auteur"
+                                                },
+                                                {
+                                                    "ar":  "التَّسَاوِي / الرُّجْحَان",
+                                                    "sens":  "l\u0027égalité / la prépondérance"
+                                                },
+                                                {
+                                                    "ar":  "الْأَعْرَاض",
+                                                    "sens":  "les accidents"
+                                                },
+                                                {
+                                                    "ar":  "دَوْر / تَسَلْسُل",
+                                                    "sens":  "cercle vicieux / régression à l\u0027infini"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S07",
+                        "titre":  "Les preuves (suite) ; l\u0027ouïe, la vue, la parole",
+                        "vers":  [
+                                     "IBA-0027",
+                                     "IBA-0028",
+                                     "IBA-0029",
+                                     "IBA-0030",
+                                     "IBA-0031"
+                                 ],
+                        "duree_min":  10,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "التَّالِي / الْمُقَدَّم",
+                                                    "sens":  "le conséquent / l\u0027antécédent"
+                                                },
+                                                {
+                                                    "ar":  "بِالنَّقْلِ",
+                                                    "sens":  "par la Transmission"
+                                                },
+                                                {
+                                                    "ar":  "قَلْبُ الْحَقَائِقِ",
+                                                    "sens":  "l\u0027inversion des réalités"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S08",
+                        "titre":  "Ce qui est nécessaire, impossible et possible pour les envoyés",
+                        "vers":  [
+                                     "IBA-0032",
+                                     "IBA-0033",
+                                     "IBA-0034",
+                                     "IBA-0035",
+                                     "IBA-0036",
+                                     "IBA-0037",
+                                     "IBA-0038"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الصِّدْق / الْأَمَانَة / التَّبْلِيغ",
+                                                    "sens":  "la véracité / la fidélité / la transmission"
+                                                },
+                                                {
+                                                    "ar":  "مُعْجِزَات",
+                                                    "sens":  "miracles"
+                                                },
+                                                {
+                                                    "ar":  "بَرَّ",
+                                                    "sens":  "Il est véridique"
+                                                },
+                                                {
+                                                    "ar":  "تَسَلٍّ",
+                                                    "sens":  "consolation"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S09",
+                        "titre":  "L\u0027attestation de foi",
+                        "vers":  [
+                                     "IBA-0039",
+                                     "IBA-0040",
+                                     "IBA-0041"
+                                 ],
+                        "duree_min":  8,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "يَجْمَعُ",
+                                                    "sens":  "réunit"
+                                                },
+                                                {
+                                                    "ar":  "عَلَامَة",
+                                                    "sens":  "signe"
+                                                },
+                                                {
+                                                    "ar":  "الذُّخْر",
+                                                    "sens":  "le trésor (pour l\u0027au-delà)"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S10",
+                        "titre":  "L\u0027islam, la foi, l\u0027excellence",
+                        "vers":  [
+                                     "IBA-0042",
+                                     "IBA-0043",
+                                     "IBA-0044",
+                                     "IBA-0045",
+                                     "IBA-0046",
+                                     "IBA-0047",
+                                     "IBA-0048"
+                                 ],
+                        "duree_min":  14,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الْجَوَارِح",
+                                                    "sens":  "les membres"
+                                                },
+                                                {
+                                                    "ar":  "قَوَاعِد",
+                                                    "sens":  "fondements"
+                                                },
+                                                {
+                                                    "ar":  "جَزْم",
+                                                    "sens":  "adhésion ferme"
+                                                },
+                                                {
+                                                    "ar":  "الْإِحْسَان",
+                                                    "sens":  "l\u0027excellence"
+                                                },
+                                                {
+                                                    "ar":  "عُرًى",
+                                                    "sens":  "attaches"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S11",
+                        "titre":  "Les statuts légaux",
+                        "vers":  [
+                                     "IBA-0049",
+                                     "IBA-0050",
+                                     "IBA-0051",
+                                     "IBA-0052",
+                                     "IBA-0053",
+                                     "IBA-0054",
+                                     "IBA-0055"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "خِطَاب",
+                                                    "sens":  "discours"
+                                                },
+                                                {
+                                                    "ar":  "طَلَب / إِذْن / وَضْع",
+                                                    "sens":  "demande / permission / institution"
+                                                },
+                                                {
+                                                    "ar":  "فَرْض / نَدْب / كَرَاهَة / حَرَام / إِبَاحَة",
+                                                    "sens":  "obligation / recommandation / déconseillé / interdit / permission"
+                                                },
+                                                {
+                                                    "ar":  "كِفَايَة / عَيْن",
+                                                    "sens":  "de suffisance / individuelle"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S12",
+                        "titre":  "L\u0027eau avec laquelle on se purifie",
+                        "vers":  [
+                                     "IBA-0056",
+                                     "IBA-0057",
+                                     "IBA-0058"
+                                 ],
+                        "duree_min":  9,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "سَلِمَ",
+                                                    "sens":  "est resté exempt"
+                                                },
+                                                {
+                                                    "ar":  "طُرِحَ",
+                                                    "sens":  "est rejeté"
+                                                },
+                                                {
+                                                    "ar":  "مُغْرَة",
+                                                    "sens":  "ocre rouge"
+                                                },
+                                                {
+                                                    "ar":  "مُطْلَق",
+                                                    "sens":  "eau absolue"
+                                                },
+                                                {
+                                                    "ar":  "الذَّائِب",
+                                                    "sens":  "ce qui a fondu"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S13",
+                        "titre":  "Les obligations des ablutions",
+                        "vers":  [
+                                     "IBA-0059",
+                                     "IBA-0060",
+                                     "IBA-0061",
+                                     "IBA-0062",
+                                     "IBA-0063"
+                                 ],
+                        "duree_min":  12,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "دَلْك",
+                                                    "sens":  "frottement"
+                                                },
+                                                {
+                                                    "ar":  "فَوْر",
+                                                    "sens":  "continuité"
+                                                },
+                                                {
+                                                    "ar":  "مُفْتَرَض",
+                                                    "sens":  "ce qui est imposé"
+                                                },
+                                                {
+                                                    "ar":  "اسْتِبَاحَة",
+                                                    "sens":  "rendre permis"
+                                                },
+                                                {
+                                                    "ar":  "مَجْمَعُ الْأُذُنَيْنِ",
+                                                    "sens":  "la jonction des oreilles"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S14",
+                        "titre":  "Sunna et actes méritoires des ablutions",
+                        "vers":  [
+                                     "IBA-0064",
+                                     "IBA-0065",
+                                     "IBA-0066",
+                                     "IBA-0067",
+                                     "IBA-0068",
+                                     "IBA-0069"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "رَدُّ مَسْحِ الرَّأْسِ",
+                                                    "sens":  "ramener l\u0027essuyage de la tête"
+                                                },
+                                                {
+                                                    "ar":  "اسْتِنْثَار",
+                                                    "sens":  "expulsion de l\u0027eau par le nez"
+                                                },
+                                                {
+                                                    "ar":  "بُقْعَة",
+                                                    "sens":  "lieu"
+                                                },
+                                                {
+                                                    "ar":  "الشَّفْع وَالتَّثْلِيث",
+                                                    "sens":  "le deuxième et le troisième passage"
+                                                },
+                                                {
+                                                    "ar":  "الْمَيَامِن",
+                                                    "sens":  "le côté droit"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S15",
+                        "titre":  "Le déconseillé ; l\u0027oubli dans les ablutions",
+                        "vers":  [
+                                     "IBA-0070",
+                                     "IBA-0071",
+                                     "IBA-0072",
+                                     "IBA-0073"
+                                 ],
+                        "duree_min":  10,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الزَّيْد",
+                                                    "sens":  "l\u0027ajout"
+                                                },
+                                                {
+                                                    "ar":  "عَاجِزُ الْفَوْرِ",
+                                                    "sens":  "celui qui n\u0027a pu garder la continuité"
+                                                },
+                                                {
+                                                    "ar":  "يُبْس",
+                                                    "sens":  "séchage"
+                                                },
+                                                {
+                                                    "ar":  "بَنَى",
+                                                    "sens":  "compléter"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S16",
+                        "titre":  "Les annulatifs ; l\u0027istibrāʾ et l\u0027istijmār",
+                        "vers":  [
+                                     "IBA-0074",
+                                     "IBA-0075",
+                                     "IBA-0076",
+                                     "IBA-0077",
+                                     "IBA-0078",
+                                     "IBA-0079"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "سَلَس",
+                                                    "sens":  "incontinence"
+                                                },
+                                                {
+                                                    "ar":  "إِلْطَاف",
+                                                    "sens":  "introduction (de la main)"
+                                                },
+                                                {
+                                                    "ar":  "سَلْت / نَتْر",
+                                                    "sens":  "presser / tirer doucement"
+                                                },
+                                                {
+                                                    "ar":  "الشَّدّ",
+                                                    "sens":  "la pression forte"
+                                                },
+                                                {
+                                                    "ar":  "انْتَشَرَ",
+                                                    "sens":  "s\u0027est répandu"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S17",
+                        "titre":  "Le grand lavage : obligations, sunna, actes recommandés",
+                        "vers":  [
+                                     "IBA-0080",
+                                     "IBA-0081",
+                                     "IBA-0082",
+                                     "IBA-0083",
+                                     "IBA-0084",
+                                     "IBA-0085"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "يُحْتَضَرُ",
+                                                    "sens":  "dont on demande la présence"
+                                                },
+                                                {
+                                                    "ar":  "الرُّفْغ",
+                                                    "sens":  "le pli de l\u0027aine"
+                                                },
+                                                {
+                                                    "ar":  "الْمِنْدِيل",
+                                                    "sens":  "la serviette"
+                                                },
+                                                {
+                                                    "ar":  "التَّوْكِيل",
+                                                    "sens":  "charger quelqu\u0027un"
+                                                },
+                                                {
+                                                    "ar":  "ثَقْب",
+                                                    "sens":  "le trou (le conduit)"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S18",
+                        "titre":  "Le grand lavage : toucher, causes, interdits, oubli",
+                        "vers":  [
+                                     "IBA-0086",
+                                     "IBA-0087",
+                                     "IBA-0088",
+                                     "IBA-0089",
+                                     "IBA-0090"
+                                 ],
+                        "duree_min":  12,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "كُفَّ",
+                                                    "sens":  "abstiens-toi"
+                                                },
+                                                {
+                                                    "ar":  "مُوجِب",
+                                                    "sens":  "ce qui rend obligatoire"
+                                                },
+                                                {
+                                                    "ar":  "كَمْرَة",
+                                                    "sens":  "gland"
+                                                },
+                                                {
+                                                    "ar":  "اسْجَال",
+                                                    "sens":  "sans restriction"
+                                                },
+                                                {
+                                                    "ar":  "حَلَأَ",
+                                                    "sens":  "interdire"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S19",
+                        "titre":  "Le tayammum : cas, prières permises, obligations, temps",
+                        "vers":  [
+                                     "IBA-0091",
+                                     "IBA-0092",
+                                     "IBA-0093",
+                                     "IBA-0094",
+                                     "IBA-0095",
+                                     "IBA-0096"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "عَوِّضْ",
+                                                    "sens":  "remplace"
+                                                },
+                                                {
+                                                    "ar":  "ضُرّ",
+                                                    "sens":  "dommage"
+                                                },
+                                                {
+                                                    "ar":  "كُوع",
+                                                    "sens":  "poignet"
+                                                },
+                                                {
+                                                    "ar":  "صَعِيد",
+                                                    "sens":  "sol"
+                                                },
+                                                {
+                                                    "ar":  "آيِس / رَاجٍ / مُتَرَدِّد",
+                                                    "sens":  "désespéré / qui espère / hésitant"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S20",
+                        "titre":  "Le tayammum : sunna, annulation, reprise",
+                        "vers":  [
+                                     "IBA-0097",
+                                     "IBA-0098",
+                                     "IBA-0099",
+                                     "IBA-0100"
+                                 ],
+                        "duree_min":  10,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "ضَرْبَة",
+                                                    "sens":  "frappe"
+                                                },
+                                                {
+                                                    "ar":  "نَاقِض",
+                                                    "sens":  "annulatif"
+                                                },
+                                                {
+                                                    "ar":  "لِصّ",
+                                                    "sens":  "voleur"
+                                                },
+                                                {
+                                                    "ar":  "زَمِن",
+                                                    "sens":  "infirme"
+                                                },
+                                                {
+                                                    "ar":  "مُنَاوِل",
+                                                    "sens":  "qui tend (l\u0027eau)"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S21",
+                        "titre":  "Les obligations de la prière",
+                        "vers":  [
+                                     "IBA-0101",
+                                     "IBA-0102",
+                                     "IBA-0103",
+                                     "IBA-0104",
+                                     "IBA-0105",
+                                     "IBA-0106"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "مُقْتَفَرَة",
+                                                    "sens":  "suivies"
+                                                },
+                                                {
+                                                    "ar":  "تُرَامُ",
+                                                    "sens":  "visée"
+                                                },
+                                                {
+                                                    "ar":  "الْأُسُوس",
+                                                    "sens":  "les fondements"
+                                                },
+                                                {
+                                                    "ar":  "مُطْمَئِنّ",
+                                                    "sens":  "immobile"
+                                                },
+                                                {
+                                                    "ar":  "مُسْتَخْلَف",
+                                                    "sens":  "remplaçant"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S22",
+                        "titre":  "Les conditions de la prière ; menstrues et temps",
+                        "vers":  [
+                                     "IBA-0107",
+                                     "IBA-0108",
+                                     "IBA-0109",
+                                     "IBA-0110",
+                                     "IBA-0111",
+                                     "IBA-0112",
+                                     "IBA-0113"
+                                 ],
+                        "duree_min":  14,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الِاسْتِقْبَال",
+                                                    "sens":  "se tourner (vers la qibla)"
+                                                },
+                                                {
+                                                    "ar":  "تَفْرِيع",
+                                                    "sens":  "cas dérivés"
+                                                },
+                                                {
+                                                    "ar":  "الْغِطَا",
+                                                    "sens":  "le vêtement qui couvre"
+                                                },
+                                                {
+                                                    "ar":  "طَرَف",
+                                                    "sens":  "extrémité"
+                                                },
+                                                {
+                                                    "ar":  "النَّقَا",
+                                                    "sens":  "la cessation (du sang)"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S23",
+                        "titre":  "Les sunna de la prière (1)",
+                        "vers":  [
+                                     "IBA-0114",
+                                     "IBA-0115",
+                                     "IBA-0116",
+                                     "IBA-0117",
+                                     "IBA-0118"
+                                 ],
+                        "duree_min":  10,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الْوَاقِيَة",
+                                                    "sens":  "la Fātiḥa (« la protectrice »)"
+                                                },
+                                                {
+                                                    "ar":  "جَهْر / سِرّ",
+                                                    "sens":  "voix haute / voix basse"
+                                                },
+                                                {
+                                                    "ar":  "أُكِّدَ",
+                                                    "sens":  "est appuyé"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S24",
+                        "titre":  "Les sunna de la prière (2) ; l\u0027appel ; le raccourcissement",
+                        "vers":  [
+                                     "IBA-0119",
+                                     "IBA-0120",
+                                     "IBA-0121",
+                                     "IBA-0122",
+                                     "IBA-0123",
+                                     "IBA-0124",
+                                     "IBA-0125"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "إِنْصَات",
+                                                    "sens":  "se taire et écouter"
+                                                },
+                                                {
+                                                    "ar":  "سُتْرَة",
+                                                    "sens":  "sutra"
+                                                },
+                                                {
+                                                    "ar":  "بُرُد",
+                                                    "sens":  "burud (mesure de distance)"
+                                                },
+                                                {
+                                                    "ar":  "السُّكْنَى",
+                                                    "sens":  "les habitations"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S25",
+                        "titre":  "Les actes recommandés (1)",
+                        "vers":  [
+                                     "IBA-0126",
+                                     "IBA-0127",
+                                     "IBA-0128",
+                                     "IBA-0129",
+                                     "IBA-0130",
+                                     "IBA-0131"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "تَيَامُن",
+                                                    "sens":  "se tourner à droite"
+                                                },
+                                                {
+                                                    "ar":  "تَأْمِين",
+                                                    "sens":  "dire āmīn"
+                                                },
+                                                {
+                                                    "ar":  "سَدْل",
+                                                    "sens":  "laisser les bras le long du corps"
+                                                },
+                                                {
+                                                    "ar":  "سَبَّابَة",
+                                                    "sens":  "index"
+                                                },
+                                                {
+                                                    "ar":  "يُبْعِدُونَ",
+                                                    "sens":  "écartent"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S26",
+                        "titre":  "Les actes recommandés (2) ; les actes déconseillés",
+                        "vers":  [
+                                     "IBA-0132",
+                                     "IBA-0133",
+                                     "IBA-0134",
+                                     "IBA-0135",
+                                     "IBA-0136",
+                                     "IBA-0137"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "تَمْكِين",
+                                                    "sens":  "poser fermement"
+                                                },
+                                                {
+                                                    "ar":  "نَصْب",
+                                                    "sens":  "tenir droit"
+                                                },
+                                                {
+                                                    "ar":  "حَذْوَ",
+                                                    "sens":  "à hauteur de"
+                                                },
+                                                {
+                                                    "ar":  "تَوَسُّط",
+                                                    "sens":  "mesure moyenne"
+                                                },
+                                                {
+                                                    "ar":  "تَعَوُّذ",
+                                                    "sens":  "demande de protection"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S27",
+                        "titre":  "Les actes déconseillés (suite)",
+                        "vers":  [
+                                     "IBA-0138",
+                                     "IBA-0139",
+                                     "IBA-0140",
+                                     "IBA-0141"
+                                 ],
+                        "duree_min":  10,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "كَوْر",
+                                                    "sens":  "tour (du turban)"
+                                                },
+                                                {
+                                                    "ar":  "كُمّ",
+                                                    "sens":  "manche"
+                                                },
+                                                {
+                                                    "ar":  "عَبَث",
+                                                    "sens":  "jouer"
+                                                },
+                                                {
+                                                    "ar":  "تَشْبِيك",
+                                                    "sens":  "entrecroiser"
+                                                },
+                                                {
+                                                    "ar":  "تَخَصُّر",
+                                                    "sens":  "mains sur les hanches"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S28",
+                        "titre":  "Prière funéraire, sunna et prières surérogatoires",
+                        "vers":  [
+                                     "IBA-0142",
+                                     "IBA-0143",
+                                     "IBA-0144",
+                                     "IBA-0145",
+                                     "IBA-0146",
+                                     "IBA-0147"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "مَيْن",
+                                                    "sens":  "mensonge"
+                                                },
+                                                {
+                                                    "ar":  "كُسُوف",
+                                                    "sens":  "éclipse"
+                                                },
+                                                {
+                                                    "ar":  "اسْتِسْقَاء",
+                                                    "sens":  "demande de pluie"
+                                                },
+                                                {
+                                                    "ar":  "رَغِيبَة",
+                                                    "sens":  "prière encouragée"
+                                                },
+                                                {
+                                                    "ar":  "تَحِيَّة",
+                                                    "sens":  "salutation (de la mosquée)"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S29",
+                        "titre":  "La prosternation de l\u0027oubli",
+                        "vers":  [
+                                     "IBA-0148",
+                                     "IBA-0149",
+                                     "IBA-0150",
+                                     "IBA-0151",
+                                     "IBA-0152"
+                                 ],
+                        "duree_min":  12,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "أُكِّدَتْ",
+                                                    "sens":  "est appuyée"
+                                                },
+                                                {
+                                                    "ar":  "غَلِّبْ",
+                                                    "sens":  "fais prévaloir"
+                                                },
+                                                {
+                                                    "ar":  "اسْتَدْرِكْ",
+                                                    "sens":  "rattrape"
+                                                },
+                                                {
+                                                    "ar":  "يَحْمِلُ",
+                                                    "sens":  "porte, prend en charge"
+                                                },
+                                                {
+                                                    "ar":  "الْمُشْغِل",
+                                                    "sens":  "ce qui détourne"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S30",
+                        "titre":  "Ce qui annule la prière ; le pilier oublié",
+                        "vers":  [
+                                     "IBA-0153",
+                                     "IBA-0154",
+                                     "IBA-0155",
+                                     "IBA-0156",
+                                     "IBA-0157"
+                                 ],
+                        "duree_min":  12,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "قَهْقَهَة",
+                                                    "sens":  "éclat de rire"
+                                                },
+                                                {
+                                                    "ar":  "قَيْء",
+                                                    "sens":  "vomissement"
+                                                },
+                                                {
+                                                    "ar":  "بِفَصْلِ مَسْجِدٍ",
+                                                    "sens":  "en sortant de la mosquée"
+                                                },
+                                                {
+                                                    "ar":  "أَلْغِ",
+                                                    "sens":  "annule"
+                                                },
+                                                {
+                                                    "ar":  "يُحْرِمُ",
+                                                    "sens":  "entre en prière"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S31",
+                        "titre":  "Le doute ; la position assise médiane",
+                        "vers":  [
+                                     "IBA-0158",
+                                     "IBA-0159",
+                                     "IBA-0160"
+                                 ],
+                        "duree_min":  8,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الْيَقِين",
+                                                    "sens":  "la certitude"
+                                                },
+                                                {
+                                                    "ar":  "يَبِينُ",
+                                                    "sens":  "apparaît"
+                                                },
+                                                {
+                                                    "ar":  "الْوُسْطَى",
+                                                    "sens":  "la (position assise) médiane"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S32",
+                        "titre":  "Le vendredi ; la prière en groupe",
+                        "vers":  [
+                                     "IBA-0161",
+                                     "IBA-0162",
+                                     "IBA-0163",
+                                     "IBA-0164",
+                                     "IBA-0165",
+                                     "IBA-0166"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "جَامِع",
+                                                    "sens":  "mosquée cathédrale"
+                                                },
+                                                {
+                                                    "ar":  "انْعَذَرَ",
+                                                    "sens":  "avoir une excuse"
+                                                },
+                                                {
+                                                    "ar":  "فَرْسَخ",
+                                                    "sens":  "parasange"
+                                                },
+                                                {
+                                                    "ar":  "التَّهْجِير",
+                                                    "sens":  "partir tôt"
+                                                },
+                                                {
+                                                    "ar":  "رَسَتْ",
+                                                    "sens":  "s\u0027établit"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S33",
+                        "titre":  "L\u0027imamat",
+                        "vers":  [
+                                     "IBA-0167",
+                                     "IBA-0168",
+                                     "IBA-0169",
+                                     "IBA-0170",
+                                     "IBA-0171",
+                                     "IBA-0172",
+                                     "IBA-0173"
+                                 ],
+                        "duree_min":  14,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "لَحْن",
+                                                    "sens":  "faute de langue"
+                                                },
+                                                {
+                                                    "ar":  "الْقُرُوح",
+                                                    "sens":  "les plaies"
+                                                },
+                                                {
+                                                    "ar":  "الْأَسَاطِين",
+                                                    "sens":  "les piliers"
+                                                },
+                                                {
+                                                    "ar":  "رَاتِب",
+                                                    "sens":  "attitré"
+                                                },
+                                                {
+                                                    "ar":  "أَلْكَن",
+                                                    "sens":  "qui a un défaut d\u0027élocution"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S34",
+                        "titre":  "Suivre l\u0027imam ; le retardataire (1)",
+                        "vers":  [
+                                     "IBA-0174",
+                                     "IBA-0175",
+                                     "IBA-0176",
+                                     "IBA-0177",
+                                     "IBA-0178"
+                                 ],
+                        "duree_min":  11,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "اعْدِلْ",
+                                                    "sens":  "écarte-toi"
+                                                },
+                                                {
+                                                    "ar":  "الْمَسْبُوق",
+                                                    "sens":  "le retardataire"
+                                                },
+                                                {
+                                                    "ar":  "أَلْفَاهُ",
+                                                    "sens":  "l\u0027a trouvé"
+                                                },
+                                                {
+                                                    "ar":  "قَاضِيًا / بَانِيًا",
+                                                    "sens":  "en rattrapant / en complétant"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S35",
+                        "titre":  "Le retardataire (2) ; l\u0027imam qui sort de la prière",
+                        "vers":  [
+                                     "IBA-0179",
+                                     "IBA-0180",
+                                     "IBA-0181",
+                                     "IBA-0182",
+                                     "IBA-0183"
+                                 ],
+                        "duree_min":  11,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "قَيَّدُوا",
+                                                    "sens":  "ils ont restreint"
+                                                },
+                                                {
+                                                    "ar":  "مُنْجَلِي",
+                                                    "sens":  "clair"
+                                                },
+                                                {
+                                                    "ar":  "بَادَرَ",
+                                                    "sens":  "se hâter"
+                                                },
+                                                {
+                                                    "ar":  "مُؤْتَمّ",
+                                                    "sens":  "celui qui suit l\u0027imam"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S36",
+                        "titre":  "La zakāt : biens, années, minimum imposable",
+                        "vers":  [
+                                     "IBA-0184",
+                                     "IBA-0185",
+                                     "IBA-0186",
+                                     "IBA-0187",
+                                     "IBA-0188",
+                                     "IBA-0189"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الْعَيْن",
+                                                    "sens":  "l\u0027or et l\u0027argent"
+                                                },
+                                                {
+                                                    "ar":  "الْإِفْرَاك",
+                                                    "sens":  "le durcissement du grain"
+                                                },
+                                                {
+                                                    "ar":  "الْعُشُر",
+                                                    "sens":  "le dixième"
+                                                },
+                                                {
+                                                    "ar":  "أَوْسُق",
+                                                    "sens":  "awsuq (mesures)"
+                                                },
+                                                {
+                                                    "ar":  "نِصَاب",
+                                                    "sens":  "minimum imposable"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S37",
+                        "titre":  "Zakāt du commerce ; les chameaux (1)",
+                        "vers":  [
+                                     "IBA-0190",
+                                     "IBA-0191",
+                                     "IBA-0192",
+                                     "IBA-0193",
+                                     "IBA-0194",
+                                     "IBA-0195"
+                                 ],
+                        "duree_min":  12,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "التَّجْر",
+                                                    "sens":  "le commerce"
+                                                },
+                                                {
+                                                    "ar":  "أَدَارَ",
+                                                    "sens":  "faire tourner (son commerce)"
+                                                },
+                                                {
+                                                    "ar":  "احْتِكَار",
+                                                    "sens":  "stockage"
+                                                },
+                                                {
+                                                    "ar":  "جَذَعَة / بِنْت مَخَاض / بِنْت لَبُون / حِقَّة",
+                                                    "sens":  "âges des bêtes"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S38",
+                        "titre":  "Les chameaux (2) ; bovins et ovins",
+                        "vers":  [
+                                     "IBA-0196",
+                                     "IBA-0197",
+                                     "IBA-0198",
+                                     "IBA-0199",
+                                     "IBA-0200",
+                                     "IBA-0201",
+                                     "IBA-0202"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "افْتِيَات",
+                                                    "sens":  "décision (du collecteur)"
+                                                },
+                                                {
+                                                    "ar":  "تَبِيع / مُسِنَّة",
+                                                    "sens":  "âges des bovins"
+                                                },
+                                                {
+                                                    "ar":  "شَاة",
+                                                    "sens":  "mouton (une tête)"
+                                                },
+                                                {
+                                                    "ar":  "مِئِين",
+                                                    "sens":  "centaines"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S39",
+                        "titre":  "Profits et progéniture ; ce qui n\u0027est pas soumis ; réunion des espèces",
+                        "vers":  [
+                                     "IBA-0203",
+                                     "IBA-0204",
+                                     "IBA-0205",
+                                     "IBA-0206",
+                                     "IBA-0207",
+                                     "IBA-0208"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "نَسْل",
+                                                    "sens":  "progéniture"
+                                                },
+                                                {
+                                                    "ar":  "الطَّارِئ",
+                                                    "sens":  "ce qui survient"
+                                                },
+                                                {
+                                                    "ar":  "وَقَص",
+                                                    "sens":  "intervalle exempté"
+                                                },
+                                                {
+                                                    "ar":  "الْمُقْتَات",
+                                                    "sens":  "aliment de base"
+                                                },
+                                                {
+                                                    "ar":  "السُّلْت",
+                                                    "sens":  "sult (céréale)"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S40",
+                        "titre":  "Les bénéficiaires ; la zakāt de la rupture du jeûne",
+                        "vers":  [
+                                     "IBA-0209",
+                                     "IBA-0210",
+                                     "IBA-0211",
+                                     "IBA-0212"
+                                 ],
+                        "duree_min":  10,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "مَصْرِف",
+                                                    "sens":  "bénéficiaire"
+                                                },
+                                                {
+                                                    "ar":  "مُؤَلَّفُ الْقَلْبِ",
+                                                    "sens":  "celui dont le cœur est à gagner"
+                                                },
+                                                {
+                                                    "ar":  "مُرِيب",
+                                                    "sens":  "suspect"
+                                                },
+                                                {
+                                                    "ar":  "صَاع",
+                                                    "sens":  "ṣāʿ (mesure)"
+                                                },
+                                                {
+                                                    "ar":  "جُلّ",
+                                                    "sens":  "l\u0027essentiel"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S41",
+                        "titre":  "Le jeûne : obligatoire, recommandé, établissement du mois, obligations",
+                        "vers":  [
+                                     "IBA-0213",
+                                     "IBA-0214",
+                                     "IBA-0215",
+                                     "IBA-0216",
+                                     "IBA-0217",
+                                     "IBA-0218"
+                                 ],
+                        "duree_min":  12,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "أَحْرَى",
+                                                    "sens":  "plus encore"
+                                                },
+                                                {
+                                                    "ar":  "قُبَيْلًا",
+                                                    "sens":  "le (mois) d\u0027avant"
+                                                },
+                                                {
+                                                    "ar":  "الْمَعِد",
+                                                    "sens":  "l\u0027estomac"
+                                                },
+                                                {
+                                                    "ar":  "طُلُوعُ الْفَجْرِ",
+                                                    "sens":  "le lever de l\u0027aube"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S42",
+                        "titre":  "Empêchements ; actes déconseillés ; ce qui est pardonné",
+                        "vers":  [
+                                     "IBA-0219",
+                                     "IBA-0220",
+                                     "IBA-0221",
+                                     "IBA-0222",
+                                     "IBA-0223",
+                                     "IBA-0224"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "دَأْبًا",
+                                                    "sens":  "habituellement"
+                                                },
+                                                {
+                                                    "ar":  "هَذَر",
+                                                    "sens":  "bavardage"
+                                                },
+                                                {
+                                                    "ar":  "مُغْتَفَر",
+                                                    "sens":  "pardonné"
+                                                },
+                                                {
+                                                    "ar":  "إِصْبَاح",
+                                                    "sens":  "être au matin"
+                                                },
+                                                {
+                                                    "ar":  "سُحُور",
+                                                    "sens":  "repas de l\u0027aube"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S43",
+                        "titre":  "Rattrapage et expiation",
+                        "vers":  [
+                                     "IBA-0225",
+                                     "IBA-0226",
+                                     "IBA-0227",
+                                     "IBA-0228",
+                                     "IBA-0229",
+                                     "IBA-0230"
+                                 ],
+                        "duree_min":  12,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "كَفَّارَة",
+                                                    "sens":  "expiation"
+                                                },
+                                                {
+                                                    "ar":  "تَأَوُّل",
+                                                    "sens":  "interprétation"
+                                                },
+                                                {
+                                                    "ar":  "وِلَا",
+                                                    "sens":  "consécutivement"
+                                                },
+                                                {
+                                                    "ar":  "مُدّ",
+                                                    "sens":  "mudd (mesure)"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S44",
+                        "titre":  "Le ḥajj : obligation, piliers, obligations compensables",
+                        "vers":  [
+                                     "IBA-0231",
+                                     "IBA-0232",
+                                     "IBA-0233",
+                                     "IBA-0234",
+                                     "IBA-0235"
+                                 ],
+                        "duree_min":  12,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "أَرْكَان",
+                                                    "sens":  "piliers"
+                                                },
+                                                {
+                                                    "ar":  "تُجْبَر",
+                                                    "sens":  "être compensé"
+                                                },
+                                                {
+                                                    "ar":  "رَدَفَ",
+                                                    "sens":  "suivre"
+                                                },
+                                                {
+                                                    "ar":  "دَم",
+                                                    "sens":  "sacrifice compensatoire"
+                                                },
+                                                {
+                                                    "ar":  "مَبِيت",
+                                                    "sens":  "passer la nuit"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S45",
+                        "titre":  "Les mīqāt ; l\u0027ordre du ḥajj : Rābigh",
+                        "vers":  [
+                                     "IBA-0236",
+                                     "IBA-0237",
+                                     "IBA-0238",
+                                     "IBA-0239",
+                                     "IBA-0240"
+                                 ],
+                        "duree_min":  12,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "مِيقَات",
+                                                    "sens":  "lieu fixé pour l\u0027iḥrām"
+                                                },
+                                                {
+                                                    "ar":  "تَجَرُّد",
+                                                    "sens":  "se dépouiller"
+                                                },
+                                                {
+                                                    "ar":  "تَلْبِيَة",
+                                                    "sens":  "talbiya"
+                                                },
+                                                {
+                                                    "ar":  "تَوْفِيَة",
+                                                    "sens":  "compte complet"
+                                                },
+                                                {
+                                                    "ar":  "تَنَظَّفْ",
+                                                    "sens":  "nettoie-toi"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S46",
+                        "titre":  "L\u0027iḥrām ; arrivée à La Mecque",
+                        "vers":  [
+                                     "IBA-0241",
+                                     "IBA-0242",
+                                     "IBA-0243",
+                                     "IBA-0244",
+                                     "IBA-0245"
+                                 ],
+                        "duree_min":  11,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "أُزْرَة",
+                                                    "sens":  "izār"
+                                                },
+                                                {
+                                                    "ar":  "الْهَدْي",
+                                                    "sens":  "l\u0027offrande"
+                                                },
+                                                {
+                                                    "ar":  "دَنَتْ",
+                                                    "sens":  "est proche"
+                                                },
+                                                {
+                                                    "ar":  "الثَّنِيَّة",
+                                                    "sens":  "le col"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S47",
+                        "titre":  "La circumambulation",
+                        "vers":  [
+                                     "IBA-0246",
+                                     "IBA-0247",
+                                     "IBA-0248",
+                                     "IBA-0249",
+                                     "IBA-0250",
+                                     "IBA-0251",
+                                     "IBA-0252"
+                                 ],
+                        "duree_min":  14,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "اسْتَلِمْ",
+                                                    "sens":  "touche"
+                                                },
+                                                {
+                                                    "ar":  "يَسَرَ",
+                                                    "sens":  "placer à gauche"
+                                                },
+                                                {
+                                                    "ar":  "ارْمُلْ",
+                                                    "sens":  "fais le pas pressé"
+                                                },
+                                                {
+                                                    "ar":  "الْمَقَام",
+                                                    "sens":  "la Station"
+                                                },
+                                                {
+                                                    "ar":  "الْمُلْتَزَم",
+                                                    "sens":  "le Multazam"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S48",
+                        "titre":  "Le parcours entre aṣ-Ṣafā et al-Marwa ; le sermon du septième jour",
+                        "vers":  [
+                                     "IBA-0253",
+                                     "IBA-0254",
+                                     "IBA-0255",
+                                     "IBA-0256",
+                                     "IBA-0257",
+                                     "IBA-0258"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "هَلِّلْ",
+                                                    "sens":  "dis le tahlīl"
+                                                },
+                                                {
+                                                    "ar":  "خُبَّ",
+                                                    "sens":  "trotte"
+                                                },
+                                                {
+                                                    "ar":  "الْمَسِيل",
+                                                    "sens":  "le lit d\u0027écoulement"
+                                                },
+                                                {
+                                                    "ar":  "اعْتِرَاف",
+                                                    "sens":  "reconnaissance (des fautes)"
+                                                },
+                                                {
+                                                    "ar":  "الطُّهْرَانِ",
+                                                    "sens":  "les deux purifications"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S49",
+                        "titre":  "Minā, ʿArafa, Muzdalifa",
+                        "vers":  [
+                                     "IBA-0259",
+                                     "IBA-0260",
+                                     "IBA-0261",
+                                     "IBA-0262",
+                                     "IBA-0263",
+                                     "IBA-0264"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الْجَبَل",
+                                                    "sens":  "la montagne"
+                                                },
+                                                {
+                                                    "ar":  "مُبْتَهِل",
+                                                    "sens":  "implorant"
+                                                },
+                                                {
+                                                    "ar":  "هُنَيْهَة",
+                                                    "sens":  "un moment"
+                                                },
+                                                {
+                                                    "ar":  "انْفِرْ",
+                                                    "sens":  "pars en hâte"
+                                                },
+                                                {
+                                                    "ar":  "الْمَأْزِمَيْنِ",
+                                                    "sens":  "les deux défilés"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S50",
+                        "titre":  "Muzdalifa, la ʿAqaba, le jour du sacrifice",
+                        "vers":  [
+                                     "IBA-0265",
+                                     "IBA-0266",
+                                     "IBA-0267",
+                                     "IBA-0268",
+                                     "IBA-0269",
+                                     "IBA-0270"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "غَلِّسْ",
+                                                    "sens":  "pars dans l\u0027obscurité de l\u0027aube"
+                                                },
+                                                {
+                                                    "ar":  "الْإِسْفَار",
+                                                    "sens":  "la clarté"
+                                                },
+                                                {
+                                                    "ar":  "الْفُول",
+                                                    "sens":  "la fève"
+                                                },
+                                                {
+                                                    "ar":  "أَوْقَفْتَ",
+                                                    "sens":  "as tenu en station"
+                                                },
+                                                {
+                                                    "ar":  "تُفِتْ",
+                                                    "sens":  "laisser passer"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S51",
+                        "titre":  "La lapidation ; les interdits de l\u0027iḥrām (1)",
+                        "vers":  [
+                                     "IBA-0271",
+                                     "IBA-0272",
+                                     "IBA-0273",
+                                     "IBA-0274",
+                                     "IBA-0275",
+                                     "IBA-0276"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "جَمَرَات",
+                                                    "sens":  "stèles"
+                                                },
+                                                {
+                                                    "ar":  "حَصَيَات",
+                                                    "sens":  "cailloux"
+                                                },
+                                                {
+                                                    "ar":  "الْحِدَا",
+                                                    "sens":  "le milan"
+                                                },
+                                                {
+                                                    "ar":  "الْعَقُور",
+                                                    "sens":  "le mordeur"
+                                                },
+                                                {
+                                                    "ar":  "الْمُحِيط",
+                                                    "sens":  "ce qui enveloppe"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S52",
+                        "titre":  "Les interdits de l\u0027iḥrām (2)",
+                        "vers":  [
+                                     "IBA-0277",
+                                     "IBA-0278",
+                                     "IBA-0279",
+                                     "IBA-0280",
+                                     "IBA-0281",
+                                     "IBA-0282",
+                                     "IBA-0283"
+                                 ],
+                        "duree_min":  14,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "قُفَّاز",
+                                                    "sens":  "gants"
+                                                },
+                                                {
+                                                    "ar":  "الْفِدْيَة",
+                                                    "sens":  "la fidya"
+                                                },
+                                                {
+                                                    "ar":  "الْإِفَاضَة",
+                                                    "sens":  "l\u0027ifāḍa"
+                                                },
+                                                {
+                                                    "ar":  "الِاسْتِظْلَال",
+                                                    "sens":  "s\u0027abriter"
+                                                },
+                                                {
+                                                    "ar":  "شُقْدُف",
+                                                    "sens":  "palanquin"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S53",
+                        "titre":  "La ʿumra ; le séjour à La Mecque ; la visite ; le retour",
+                        "vers":  [
+                                     "IBA-0284",
+                                     "IBA-0285",
+                                     "IBA-0286",
+                                     "IBA-0287",
+                                     "IBA-0288",
+                                     "IBA-0289",
+                                     "IBA-0290",
+                                     "IBA-0291",
+                                     "IBA-0292"
+                                 ],
+                        "duree_min":  16,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "التَّنْعِيم",
+                                                    "sens":  "at-Tanʿīm"
+                                                },
+                                                {
+                                                    "ar":  "قَصِّرْ",
+                                                    "sens":  "raccourcis (les cheveux)"
+                                                },
+                                                {
+                                                    "ar":  "الْمُصْطَفَى",
+                                                    "sens":  "l\u0027Élu"
+                                                },
+                                                {
+                                                    "ar":  "الشَّفَاعَة",
+                                                    "sens":  "l\u0027intercession"
+                                                },
+                                                {
+                                                    "ar":  "الْأَوْبَة",
+                                                    "sens":  "le retour"
+                                                }
+                                            ],
+                        "relecture_comite":  true,
+                        "niveau_min":  "adulte",
+                        "motif_relecture":  "R-T7 : visite de la tombe du Prophète ﷺ et lieu d\u0027exaucement (IBA-0288 à 0290)"
+                    },
+                    {
+                        "id":  "IBA-S54",
+                        "titre":  "Le repentir ; la crainte pieuse et ses quatre parties",
+                        "vers":  [
+                                     "IBA-0293",
+                                     "IBA-0294",
+                                     "IBA-0295",
+                                     "IBA-0296",
+                                     "IBA-0297",
+                                     "IBA-0298"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "يُجْتَرَمُ",
+                                                    "sens":  "est commis"
+                                                },
+                                                {
+                                                    "ar":  "الْإِقْلَاع",
+                                                    "sens":  "le fait de cesser"
+                                                },
+                                                {
+                                                    "ar":  "الْإِصْرَار",
+                                                    "sens":  "la persistance"
+                                                },
+                                                {
+                                                    "ar":  "التَّقْوَى",
+                                                    "sens":  "la crainte pieuse"
+                                                },
+                                                {
+                                                    "ar":  "النَّمِيمَة",
+                                                    "sens":  "le colportage"
+                                                }
+                                            ]
+                    },
+                    {
+                        "id":  "IBA-S55",
+                        "titre":  "Garde du ventre et du sexe ; maladies du cœur",
+                        "vers":  [
+                                     "IBA-0299",
+                                     "IBA-0300",
+                                     "IBA-0301",
+                                     "IBA-0302",
+                                     "IBA-0303",
+                                     "IBA-0304"
+                                 ],
+                        "duree_min":  12,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "مَا شُبِّهَ",
+                                                    "sens":  "le douteux"
+                                                },
+                                                {
+                                                    "ar":  "الْبَطْش",
+                                                    "sens":  "l\u0027action de la main"
+                                                },
+                                                {
+                                                    "ar":  "الرِّيَاسَة",
+                                                    "sens":  "le pouvoir"
+                                                },
+                                                {
+                                                    "ar":  "الْعَاجِلَة",
+                                                    "sens":  "la vie immédiate"
+                                                }
+                                            ],
+                        "relecture_comite":  true,
+                        "niveau_min":  "adulte",
+                        "motif_relecture":  "R-S1 : « le Témoin » (IBA-0300)"
+                    },
+                    {
+                        "id":  "IBA-S56",
+                        "titre":  "Le maître ; l\u0027examen de soi ; le rappel",
+                        "vers":  [
+                                     "IBA-0305",
+                                     "IBA-0306",
+                                     "IBA-0307",
+                                     "IBA-0308",
+                                     "IBA-0309",
+                                     "IBA-0310"
+                                 ],
+                        "duree_min":  13,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الْمَسَالِك",
+                                                    "sens":  "les chemins"
+                                                },
+                                                {
+                                                    "ar":  "الْمَهَالِك",
+                                                    "sens":  "les perditions"
+                                                },
+                                                {
+                                                    "ar":  "الْقِسْطَاس",
+                                                    "sens":  "la balance juste"
+                                                },
+                                                {
+                                                    "ar":  "يُوَالِي",
+                                                    "sens":  "poursuivre sans relâche"
+                                                },
+                                                {
+                                                    "ar":  "لُبّ",
+                                                    "sens":  "le cœur"
+                                                }
+                                            ],
+                        "relecture_comite":  true,
+                        "niveau_min":  "adulte",
+                        "motif_relecture":  "R-S2 : le maître (IBA-0305, 0306)"
+                    },
+                    {
+                        "id":  "IBA-S57",
+                        "titre":  "Les stations ; la connaissance d\u0027Allah",
+                        "vers":  [
+                                     "IBA-0311",
+                                     "IBA-0312",
+                                     "IBA-0313",
+                                     "IBA-0314"
+                                 ],
+                        "duree_min":  10,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "زُهْد",
+                                                    "sens":  "renoncement"
+                                                },
+                                                {
+                                                    "ar":  "تَوَكُّل",
+                                                    "sens":  "confiance (en Allah)"
+                                                },
+                                                {
+                                                    "ar":  "رِضًا",
+                                                    "sens":  "agrément"
+                                                },
+                                                {
+                                                    "ar":  "عَارِف",
+                                                    "sens":  "connaissant"
+                                                },
+                                                {
+                                                    "ar":  "اجْتَبَى",
+                                                    "sens":  "a choisi"
+                                                }
+                                            ],
+                        "relecture_comite":  true,
+                        "niveau_min":  "adulte",
+                        "motif_relecture":  "R-S1 : « son Témoin », « la Présence du Très-Saint » (IBA-0312, 0314)"
+                    },
+                    {
+                        "id":  "IBA-S58",
+                        "titre":  "Clôture : le nombre de vers, le titre, l\u0027invocation",
+                        "vers":  [
+                                     "IBA-0315",
+                                     "IBA-0316",
+                                     "IBA-0317",
+                                     "IBA-0318",
+                                     "IBA-0319"
+                                 ],
+                        "duree_min":  11,
+                        "mots_difficiles":  [
+                                                {
+                                                    "ar":  "الْغَايَة",
+                                                    "sens":  "le but"
+                                                },
+                                                {
+                                                    "ar":  "عَدَّ الرُّسُلِ",
+                                                    "sens":  "le nombre des envoyés"
+                                                },
+                                                {
+                                                    "ar":  "الضَّرُورِيّ",
+                                                    "sens":  "l\u0027indispensable"
+                                                },
+                                                {
+                                                    "ar":  "بِجَاهِ",
+                                                    "sens":  "par le rang de"
+                                                }
+                                            ],
+                        "relecture_comite":  true,
+                        "niveau_min":  "adulte",
+                        "motif_relecture":  "R-T7 : demande « par le rang » du Prophète ﷺ (IBA-0318) ; compte des vers (R-T1)"
+                    }
+                ]
+}

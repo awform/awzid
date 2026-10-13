@@ -1,0 +1,2265 @@
+{
+  "oeuvre": "تحفة الأطفال والغلمان في تجويد القرآن",
+  "auteur": "سليمان بن حسين بن محمد الجمزوري (dit al-Afandī) ; poème achevé en 1198 H selon le vers 59 (date par le calcul abjad, vérifiée : 1198)",
+  "perimetre": "Poème complet : 61 vers (TUH-0001 à TUH-0061), annoncés par l'auteur au vers 59 (« nadd » = 61, vérifié par calcul) et par Fatḥ al-aqfāl (n49 : « wāḥid wa-sittūn baytan »). Aucune formule ajoutée ou retranchée. Parties : introduction (1-5), nūn sākin et tanwīn (6-16), nūn et mīm doublés (17), mīm sākin (18-23), lām (24-29), lettres identiques, voisines, sœurs (30-34), divisions du madd (35-41), règles du madd (42-47), madd lāzim (48-57), clôture (58-61).",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "date_saisie": "2026-10-13",
+  "saisie_par": "Claude (référent provisoire), d'après les images de T1 (Le Caire, 1306 H) lues vers par vers avec agrandissement ×2 à ×3, collationnées sur le matn cité dans Fatḥ al-aqfāl (T6, 1298 H). VOCALISATION : T1 et T6 sont presque sans voyelles ; à la demande du référent (R-T1), la vocalisation a été collationnée voyelle par voyelle, le 13/10/2026, sur T4 (Majmūʿ muhimmāt al-mutūn, al-Ḥalabī, 4e éd. 1369 H / 1949, pp. 212 à 216, images n215 à n219), lu à l'écran avec agrandissement de ×1,3 à ×2,9. Les marques que la résolution ne permet pas de trancher restent signalées « voyelle_a_confirmer » avec la lecture retenue. Rien n'est tiré de la mémoire pour le tracé des lettres. Seconde lecture par un lecteur du Coran : EN_ATTENTE_SECONDE_LECTURE.",
+  "decisions_referent": "DECISIONS_REFERENT_TUHFA.md (13/10/2026)",
+  "temoins": {
+    "T1": {
+      "role": "texte de base (domaine public)",
+      "description": "مجموع من مهمات المتون, section « متن تحفة الأطفال » p. 321 à 324 (images n334 à n337)",
+      "editeur": "al-Maṭbaʿa al-Khayriyya, Le Caire, 1306 H / 1889",
+      "scan": "https://archive.org/details/AAlexandrina-044950 (images n334 à n337, 1200 × 1822 px)",
+      "vocalisation": "quasi nulle (chadda, quelques signes de hamza) ; le texte est en lithographie manuscrite",
+      "droits": "ancienne édition du domaine public"
+    },
+    "T6": {
+      "role": "témoin de comparaison et commentaire de référence",
+      "description": "فتح الأقفال بشرح تحفة الأطفال d'al-Jamzūrī : le matn est cité vers par vers dans des cadres et copié en marge",
+      "editeur": "recueil avec la ḥāshiya de Daḥlān, al-Maṭbaʿa ash-Sharafiyya, 1298 H / 1881 (colophon n50 : début de jumādā l-ūlā 1298)",
+      "scan": "https://archive.org/details/AAlexandrina-123414 (images n36 à n50 = pages imprimées 33 à 47, 1358 × 2000 px affichés)",
+      "vocalisation": "quasi nulle",
+      "droits": "domaine public",
+      "remarque": "Numérotation imprimée : 41, 43, 43, 44 (le « 42 » est absent : images n45 et n46 portent toutes deux « 43 »). Les pages sont citées par image."
+    },
+    "T4": {
+      "role": "témoin vocalisé de collation (décision du référent R-T1)",
+      "description": "مجموع مهمات المتون (يشتمل على ستة وستين متنا في مختلف الفنون والعلوم), section « متون التجويد » : « ٢ تحفة الأطفال » (l'index du volume la place p. 212)",
+      "editeur": "Muṣṭafā al-Bābī al-Ḥalabī, Le Caire, 4e éd. 1369 H / 1949",
+      "scan": "https://archive.org/details/mohimmat_almtoon (« مجموع مهمات المتون ط الحلبي جودة عالية », 832 images ; la Tuḥfa : images n215 à n219). Autre exemplaire de la même édition : https://archive.org/details/1369_20220720 (texte océrisé inutilisable ; non utilisé)",
+      "pages": "n215 = p. 212 (vers 1-2) ; n216 = p. 213 (vers 3-17) ; n217 = p. 214 (vers 18-32) ; n218 = p. 215 (vers 33-47 ; page marquée par un décalque d'encre de la page voisine) ; n219 = p. 216 (vers 48-61)",
+      "vocalisation": "composition typographique avec voyelles, chadda et sukūn sur presque tous les mots ; quelques signes finaux peu lisibles à l'écran ; vocalisation d'éditeur, non autographe",
+      "droits": "édition de 1949 (plus de 70 ans) ; aucune licence indiquée sur archive.org ; statut à confirmer (SOURCES_TUHFA, § 8) ; seules les voyelles relevées sont reprises (collation) : ni le texte ni la mise en page ne sont reproduits"
+    }
+  },
+  "temoins_non_consultes": [
+    "1369_20220720 (second exemplaire de T4, archive.org) : texte océrisé inutilisable ; non utilisé",
+    "T5 (Beyrouth, 1902, ACO princeton_aco004634) et T2/T3 (autres tirages de 1287-1317 H) : non ouverts",
+    "Minḥat dhī al-jalāl d'aḍ-Ḍabbāʿ (m. 1961) : protégé jusqu'au 31/12/2031 ; hors chaîne de travail (D)",
+    "Édition d'az-Zuʿbī, OpenITI, Shamela : exclus (garde-fous). Wikisource : exclu comme source du texte du poème ; consulté seulement pour contrôler les durées du madd, la voie de Ḥafṣ et la fusion dans ash-Shāṭibiyya et an-Nashr (textes anciens)",
+    "Aucune traduction (française, anglaise ou autre) n'a été lue. ash-Shāṭibiyya et an-Nashr ont été consultés le 13/10/2026 (transcriptions de Wikisource arabe ; pagination imprimée d'an-Nashr non reproduite)"
+  ],
+  "conventions": [
+    "Un vers = une entrée ; les deux hémistiches sont dans « hemistiches » ; le champ « ar » les joint par « * ».",
+    "Le tracé des lettres est celui de T1, contrôlé sur T6 ; une divergence est consignée dans « variantes ». Rien n'est complété de mémoire.",
+    "VOCALISATION : collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) ; là où Fatḥ al-aqfāl indique un sukūn « pour la mesure », il est repris et signalé ; les marques non tranchées sont dans « voyelle_a_confirmer » avec la lecture retenue.",
+    "Fins de vers à la pause : sukūn quand la rime le demande (comme dans les poèmes déjà saisis).",
+    "Orthographe : hamza et alif normalisés comme dans akhdari et ibn-ashir (alif simple pour la hamzat al-waṣl).",
+    "Les titres de chapitres ne font pas partie des vers : ils sont dans « titres » et marqués comme ajouts d'éditeur.",
+    "Aucun verset n'est cité dans le poème. Les exemples coraniques (rattachement_regles.json) sont copiés par script depuis Tanzil, jamais lus par la voix de synthèse."
+  ],
+  "titres": [
+    {
+      "apres": "TUH-0005",
+      "ar": "أَحْكَامُ النُّونِ السَّاكِنَةِ وَالتَّنْوِينِ",
+      "source": "T1 p. 321 ; T6 n37",
+      "nature": "titre éditorial"
+    },
+    {
+      "apres": "TUH-0016",
+      "ar": "أَحْكَامُ النُّونِ وَالْمِيمِ الْمُشَدَّدَتَيْنِ",
+      "source": "T1 p. 322 (T6 : « الميم والنون »)",
+      "nature": "titre éditorial"
+    },
+    {
+      "apres": "TUH-0017",
+      "ar": "أَحْكَامُ الْمِيمِ السَّاكِنَةِ",
+      "source": "T1 p. 322 ; T6 n41",
+      "nature": "titre éditorial"
+    },
+    {
+      "apres": "TUH-0023",
+      "ar": "حُكْمُ لَامِ أَلْ وَلَامِ الْفِعْلِ",
+      "source": "T1 p. 322 (T6 : « أحكام »)",
+      "nature": "titre éditorial"
+    },
+    {
+      "apres": "TUH-0029",
+      "ar": "فِي الْمِثْلَيْنِ وَالْمُتَقَارِبَيْنِ وَالْمُتَجَانِسَيْنِ",
+      "source": "T1 p. 322",
+      "nature": "titre éditorial"
+    },
+    {
+      "apres": "TUH-0034",
+      "ar": "أَقْسَامُ الْمَدِّ",
+      "source": "T1 p. 322 ; T6 n44",
+      "nature": "titre éditorial"
+    },
+    {
+      "apres": "TUH-0041",
+      "ar": "أَحْكَامُ الْمَدِّ",
+      "source": "T1 p. 323 (T6 : « أحكام المد مع المهموز »)",
+      "nature": "titre éditorial"
+    },
+    {
+      "apres": "TUH-0047",
+      "ar": "أَقْسَامُ الْمَدِّ اللَّازِمِ",
+      "source": "T1 p. 323 ; T6 n44",
+      "nature": "titre éditorial"
+    }
+  ],
+  "vers": [
+    {
+      "id": "TUH-0001",
+      "n": 1,
+      "section": "introduction",
+      "type": "vers",
+      "hemistiches": [
+        "يَقُولُ رَاجِي رَحْمَةَ الْغَفُورِ",
+        "دَوْمًا سُلَيْمَانُ هُوَ الْجَمْزُورِي"
+      ],
+      "ar": "يَقُولُ رَاجِي رَحْمَةَ الْغَفُورِ * دَوْمًا سُلَيْمَانُ هُوَ الْجَمْزُورِي",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n215",
+          "page_imprimee": 212,
+          "lecture": "différence avec la proposition : « رَحْمَةَ » (fatḥa) au lieu de « رَحْمَةِ »"
+        },
+        "T6": {
+          "image": "n36",
+          "page_recueil": "33",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0002",
+      "n": 2,
+      "section": "introduction",
+      "type": "vers",
+      "hemistiches": [
+        "الْحَمْدُ لِلَّهِ مُصَلِّيًا عَلَى",
+        "مُحَمَّدٍ وَآلِهِ وَمَنْ تَلَا"
+      ],
+      "ar": "الْحَمْدُ لِلَّهِ مُصَلِّيًا عَلَى * مُحَمَّدٍ وَآلِهِ وَمَنْ تَلَا",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n215",
+          "page_imprimee": 212,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n36",
+          "page_recueil": "33",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0003",
+      "n": 3,
+      "section": "introduction",
+      "type": "vers",
+      "hemistiches": [
+        "وَبَعْدُ هَذَا النَّظْمُ لِلْمُرِيدِ",
+        "فِي النُّونِ وَالتَّنْوِينِ وَالْمُدُودِ"
+      ],
+      "ar": "وَبَعْدُ هَذَا النَّظْمُ لِلْمُرِيدِ * فِي النُّونِ وَالتَّنْوِينِ وَالْمُدُودِ",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "différence avec la proposition : « وَالْمُدُودِ » au lieu de « وَالْمَدُودِ »"
+        },
+        "T6": {
+          "image": "n37",
+          "page_recueil": "34",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0004",
+      "n": 4,
+      "section": "introduction",
+      "type": "vers",
+      "hemistiches": [
+        "سَمَّيْتُهُ بِتُحْفَةِ الْأَطْفَالِ",
+        "عَنْ شَيْخِنَا الْمِيهِيِّ ذِي الْكَمَالِ"
+      ],
+      "ar": "سَمَّيْتُهُ بِتُحْفَةِ الْأَطْفَالِ * عَنْ شَيْخِنَا الْمِيهِيِّ ذِي الْكَمَالِ",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n37",
+          "page_recueil": "34",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0005",
+      "n": 5,
+      "section": "introduction",
+      "type": "vers",
+      "hemistiches": [
+        "أَرْجُو بِهِ أَنْ يَنْفَعَ الطُّلَّابَا",
+        "وَالْأَجْرَ وَالْقَبُولَ وَالثَّوَابَا"
+      ],
+      "ar": "أَرْجُو بِهِ أَنْ يَنْفَعَ الطُّلَّابَا * وَالْأَجْرَ وَالْقَبُولَ وَالثَّوَابَا",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n37",
+          "page_recueil": "34",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0006",
+      "n": 6,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "لِلنُّونِ إِنْ تَسْكُنْ وَلِلتَّنْوِينِ",
+        "أَرْبَعُ أَحْكَامٍ فَخُذْ تَبْيِينِي"
+      ],
+      "ar": "لِلنُّونِ إِنْ تَسْكُنْ وَلِلتَّنْوِينِ * أَرْبَعُ أَحْكَامٍ فَخُذْ تَبْيِينِي",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n37",
+          "page_recueil": "34",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0007",
+      "n": 7,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "فَالْأَوَّلُ الْإِظْهَارُ قَبْلَ أَحْرُفِ",
+        "لِلْحَلْقِ سِتٌّ رُتِّبَتْ فَلْتَعْرِفِ"
+      ],
+      "ar": "فَالْأَوَّلُ الْإِظْهَارُ قَبْلَ أَحْرُفِ * لِلْحَلْقِ سِتٌّ رُتِّبَتْ فَلْتَعْرِفِ",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n38",
+          "page_recueil": "35",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0008",
+      "n": 8,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "هَمْزٌ فَهَاءٌ ثُمَّ عَيْنٌ حَاءُ",
+        "مُهْمَلَتَانِ ثُمَّ غَيْنٌ خَاءُ"
+      ],
+      "ar": "هَمْزٌ فَهَاءٌ ثُمَّ عَيْنٌ حَاءُ * مُهْمَلَتَانِ ثُمَّ غَيْنٌ خَاءُ",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n38",
+          "page_recueil": "35",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0009",
+      "n": 9,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "وَالثَّانِ إِدْغَامٌ بِسِتَّةٍ أَتَتْ",
+        "فِي يَرْمَلُونَ عِنْدَهُمْ قَدْ ثَبَتَتْ"
+      ],
+      "ar": "وَالثَّانِ إِدْغَامٌ بِسِتَّةٍ أَتَتْ * فِي يَرْمَلُونَ عِنْدَهُمْ قَدْ ثَبَتَتْ",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n38",
+          "page_recueil": "35",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0010",
+      "n": 10,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "لَكِنَّهَا قِسْمَانِ قِسْمٌ يُدْغَمَا",
+        "فِيهِ بِغُنَّةٍ بِيَنْمُو عُلِمَا"
+      ],
+      "ar": "لَكِنَّهَا قِسْمَانِ قِسْمٌ يُدْغَمَا * فِيهِ بِغُنَّةٍ بِيَنْمُو عُلِمَا",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n39",
+          "page_recueil": "36",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0011",
+      "n": 11,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "إِلَّا إِذَا كَانَ بِكِلْمَةٍ فَلَا",
+        "تُدْغِمْ كَدُنْيَا ثُمَّ صِنْوَانٌ تَلَا"
+      ],
+      "ar": "إِلَّا إِذَا كَانَ بِكِلْمَةٍ فَلَا * تُدْغِمْ كَدُنْيَا ثُمَّ صِنْوَانٌ تَلَا",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "différence : « بِكِلْمَةٍ » (kasra sur le kāf, sukūn sur le lām) au lieu de « بِكَلِمَةٍ »"
+        },
+        "T6": {
+          "image": "n39",
+          "page_recueil": "36",
+          "lecture": "variante, voir variantes"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [
+        "V-07"
+      ],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0012",
+      "n": 12,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "وَالثَّانِ إِدْغَامٌ بِغَيْرِ غُنَّهْ",
+        "فِي اللَّامِ وَالرَّا ثُمَّ كَرِّرَنْهْ"
+      ],
+      "ar": "وَالثَّانِ إِدْغَامٌ بِغَيْرِ غُنَّهْ * فِي اللَّامِ وَالرَّا ثُمَّ كَرِّرَنْهْ",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n39",
+          "page_recueil": "36",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0013",
+      "n": 13,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "وَالثَّالِثُ الْإِقْلَابُ عِنْدَ الْبَاءِ",
+        "مِيمًا بِغُنَّةٍ مَعَ الْإِخْفَاءِ"
+      ],
+      "ar": "وَالثَّالِثُ الْإِقْلَابُ عِنْدَ الْبَاءِ * مِيمًا بِغُنَّةٍ مَعَ الْإِخْفَاءِ",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n39",
+          "page_recueil": "36",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0014",
+      "n": 14,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "وَالرَّابِعُ الْإِخْفَاءُ عِنْدَ الْفَاضِلِ",
+        "مِنَ الْحُرُوفِ وَاجِبٌ لِلْفَاضِلِ"
+      ],
+      "ar": "وَالرَّابِعُ الْإِخْفَاءُ عِنْدَ الْفَاضِلِ * مِنَ الْحُرُوفِ وَاجِبٌ لِلْفَاضِلِ",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n40",
+          "page_recueil": "37",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0015",
+      "n": 15,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "فِي خَمْسَةٍ مِنْ بَعْدِ عَشْرٍ رَمْزُهَا",
+        "فِي كَلِمِ هَذَا الْبَيْتِ قَدْ ضَمَّنْتُهَا"
+      ],
+      "ar": "فِي خَمْسَةٍ مِنْ بَعْدِ عَشْرٍ رَمْزُهَا * فِي كَلِمِ هَذَا الْبَيْتِ قَدْ ضَمَّنْتُهَا",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n40",
+          "page_recueil": "37",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0016",
+      "n": 16,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "صِفْ ذَا ثَنَا كَمْ جَادَ شَخْصٌ قَدْ سَمَا",
+        "دُمْ طَيِّبًا زِدْ فِي تُقًى ضَعْ ظَالِمَا"
+      ],
+      "ar": "صِفْ ذَا ثَنَا كَمْ جَادَ شَخْصٌ قَدْ سَمَا * دُمْ طَيِّبًا زِدْ فِي تُقًى ضَعْ ظَالِمَا",
+      "source": {
+        "temoin": "T1",
+        "page": 321,
+        "image": "n334"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n40",
+          "page_recueil": "37",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0017",
+      "n": 17,
+      "section": "nun_mim_mushaddada",
+      "type": "vers",
+      "hemistiches": [
+        "وَغُنَّ مِيمًا ثُمَّ نُونًا شُدِّدَا",
+        "وَسَمِّ كُلًّا حَرْفَ غُنَّةٍ بَدَا"
+      ],
+      "ar": "وَغُنَّ مِيمًا ثُمَّ نُونًا شُدِّدَا * وَسَمِّ كُلًّا حَرْفَ غُنَّةٍ بَدَا",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n216",
+          "page_imprimee": 213,
+          "lecture": "différence : « وَغُنَّ » au lieu de « وَغَنِّنْ » (V-01)"
+        },
+        "T6": {
+          "image": "n41",
+          "page_recueil": "38",
+          "lecture": "variante, voir variantes"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [
+        "V-01"
+      ],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0018",
+      "n": 18,
+      "section": "mim_sakin",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْمِيمُ إِنْ تَسْكُنْ تَجِي قَبْلَ الْهِجَا",
+        "لَا أَلِفٍ لَيِّنَةٍ لِذِي الْحِجَا"
+      ],
+      "ar": "وَالْمِيمُ إِنْ تَسْكُنْ تَجِي قَبْلَ الْهِجَا * لَا أَلِفٍ لَيِّنَةٍ لِذِي الْحِجَا",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n41",
+          "page_recueil": "38",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0019",
+      "n": 19,
+      "section": "mim_sakin",
+      "type": "vers",
+      "hemistiches": [
+        "أَحْكَامُهَا ثَلَاثَةٌ لِمَنْ ضَبَطْ",
+        "إِخْفَاءٌ إِدْغَامٌ وَإِظْهَارٌ فَقَطْ"
+      ],
+      "ar": "أَحْكَامُهَا ثَلَاثَةٌ لِمَنْ ضَبَطْ * إِخْفَاءٌ إِدْغَامٌ وَإِظْهَارٌ فَقَطْ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n41",
+          "page_recueil": "38",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0020",
+      "n": 20,
+      "section": "mim_sakin",
+      "type": "vers",
+      "hemistiches": [
+        "فَالْأَوَّلُ الْإِخْفَاءُ عِنْدَ الْبَاءِ",
+        "وَسَمِّهِ الشَّفْوِي لِلْقُرَّاءِ"
+      ],
+      "ar": "فَالْأَوَّلُ الْإِخْفَاءُ عِنْدَ الْبَاءِ * وَسَمِّهِ الشَّفْوِي لِلْقُرَّاءِ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme ; « عِنْدَ » comme T1 (V-02)"
+        },
+        "T6": {
+          "image": "n41",
+          "page_recueil": "38",
+          "lecture": "variante, voir variantes"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [
+        "V-02"
+      ],
+      "voyelle_a_confirmer": [
+        {
+          "mot": "الشَّفْوِي",
+          "lecture_retenue": "الشَّفْوِي (sans signe sur la dernière lettre)",
+          "autre_lecture": "الشَّفْوِيْ (sukūn de pause)",
+          "motif": "le signe final n'est pas distinguable sur T4 à la résolution disponible ; sans effet sur le sens"
+        }
+      ],
+      "a_verifier": [
+        "الشَّفْوِي : lecture retenue الشَّفْوِي (sans signe sur la dernière lettre) ; autre lecture possible : الشَّفْوِيْ (sukūn de pause) ; le signe final n'est pas distinguable sur T4 à la résolution disponible ; sans effet sur le sens"
+      ]
+    },
+    {
+      "id": "TUH-0021",
+      "n": 21,
+      "section": "mim_sakin",
+      "type": "vers",
+      "hemistiches": [
+        "وَالثَّانِ إِدْغَامٌ بِمِثْلِهَا أَتَى",
+        "وَسَمِّ إِدْغَامًا صَغِيرًا يَا فَتَى"
+      ],
+      "ar": "وَالثَّانِ إِدْغَامٌ بِمِثْلِهَا أَتَى * وَسَمِّ إِدْغَامًا صَغِيرًا يَا فَتَى",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n42",
+          "page_recueil": "39",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0022",
+      "n": 22,
+      "section": "mim_sakin",
+      "type": "vers",
+      "hemistiches": [
+        "وَالثَّالِثُ الْإِظْهَارُ فِي الْبَقِيَّهْ",
+        "مِنْ أَحْرُفٍ وَسَمِّهَا شَفْوِيَّهْ"
+      ],
+      "ar": "وَالثَّالِثُ الْإِظْهَارُ فِي الْبَقِيَّهْ * مِنْ أَحْرُفٍ وَسَمِّهَا شَفْوِيَّهْ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n42",
+          "page_recueil": "39",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0023",
+      "n": 23,
+      "section": "mim_sakin",
+      "type": "vers",
+      "hemistiches": [
+        "وَاحْذَرْ لَدَى وَاوٍ وَفَا أَنْ تَخْتَفِي",
+        "لِقُرْبِهَا وَالِاتِّحَادِ فَاعْرِفِ"
+      ],
+      "ar": "وَاحْذَرْ لَدَى وَاوٍ وَفَا أَنْ تَخْتَفِي * لِقُرْبِهَا وَالِاتِّحَادِ فَاعْرِفِ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n42",
+          "page_recueil": "39",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0024",
+      "n": 24,
+      "section": "lam",
+      "type": "vers",
+      "hemistiches": [
+        "لِلَامِ أَلْ حَالَانِ قَبْلَ الْأَحْرُفِ",
+        "أُولَاهُمَا إِظْهَارُهَا فَلْتَعْرِفِ"
+      ],
+      "ar": "لِلَامِ أَلْ حَالَانِ قَبْلَ الْأَحْرُفِ * أُولَاهُمَا إِظْهَارُهَا فَلْتَعْرِفِ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n42",
+          "page_recueil": "39",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0025",
+      "n": 25,
+      "section": "lam",
+      "type": "vers",
+      "hemistiches": [
+        "قَبْلَ أَرْبَعٍ مَعَ عَشْرَةٍ خُذْ عِلْمَهُ",
+        "مِنِ ابْغِ حَجَّكَ وَخَفْ عَقِيمَهُ"
+      ],
+      "ar": "قَبْلَ أَرْبَعٍ مَعَ عَشْرَةٍ خُذْ عِلْمَهُ * مِنِ ابْغِ حَجَّكَ وَخَفْ عَقِيمَهُ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n42",
+          "page_recueil": "39",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [
+        {
+          "mot": "أَرْبَعٍ",
+          "lecture_retenue": "أَرْبَعٍ (tanwīn)",
+          "autre_lecture": "أَرْبَعِ (kasra seule, comme au vers 26)",
+          "motif": "tanwīn ou kasra seule : non distinguable sur T4"
+        }
+      ],
+      "a_verifier": [
+        "أَرْبَعٍ : lecture retenue أَرْبَعٍ (tanwīn) ; autre lecture possible : أَرْبَعِ (kasra seule, comme au vers 26) ; tanwīn ou kasra seule : non distinguable sur T4"
+      ]
+    },
+    {
+      "id": "TUH-0026",
+      "n": 26,
+      "section": "lam",
+      "type": "vers",
+      "hemistiches": [
+        "ثَانِيهِمَا إِدْغَامُهَا فِي أَرْبَعِ",
+        "وَعَشْرَةٍ أَيْضًا وَرَمْزُهَا فَعِ"
+      ],
+      "ar": "ثَانِيهِمَا إِدْغَامُهَا فِي أَرْبَعِ * وَعَشْرَةٍ أَيْضًا وَرَمْزُهَا فَعِ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "différence : « أَرْبَعِ » (kasra seule) au lieu de « أَرْبَعٍ »"
+        },
+        "T6": {
+          "image": "n43",
+          "page_recueil": "40",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [
+        {
+          "mot": "أَرْبَعِ",
+          "lecture_retenue": "أَرْبَعِ (kasra seule)",
+          "autre_lecture": "أَرْبَعٍ (tanwīn)",
+          "motif": "T4 : une seule marque sous le ʿayn, en fin d'hémistiche"
+        }
+      ],
+      "a_verifier": [
+        "أَرْبَعِ : lecture retenue أَرْبَعِ (kasra seule) ; autre lecture possible : أَرْبَعٍ (tanwīn) ; T4 : une seule marque sous le ʿayn, en fin d'hémistiche"
+      ]
+    },
+    {
+      "id": "TUH-0027",
+      "n": 27,
+      "section": "lam",
+      "type": "vers",
+      "hemistiches": [
+        "طِبْ ثُمَّ صِلْ رَحِمًا تَفُزْ ضِفْ ذَا نِعَمْ",
+        "دَعْ سُوءَ ظَنٍّ زُرْ شَرِيفًا لِلْكَرَمْ"
+      ],
+      "ar": "طِبْ ثُمَّ صِلْ رَحِمًا تَفُزْ ضِفْ ذَا نِعَمْ * دَعْ سُوءَ ظَنٍّ زُرْ شَرِيفًا لِلْكَرَمْ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n43",
+          "page_recueil": "40",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0028",
+      "n": 28,
+      "section": "lam",
+      "type": "vers",
+      "hemistiches": [
+        "وَاللَّامُ الْأُولَى سَمِّهَا قَمْرِيَّهْ",
+        "وَاللَّامُ الْأُخْرَى سَمِّهَا شَمْسِيَّهْ"
+      ],
+      "ar": "وَاللَّامُ الْأُولَى سَمِّهَا قَمْرِيَّهْ * وَاللَّامُ الْأُخْرَى سَمِّهَا شَمْسِيَّهْ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "différence : « وَاللَّامُ » (ḍamma) aux deux hémistiches au lieu de « وَاللَّامَ »"
+        },
+        "T6": {
+          "image": "n43",
+          "page_recueil": "40",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0029",
+      "n": 29,
+      "section": "lam",
+      "type": "vers",
+      "hemistiches": [
+        "وَأَظْهِرَنْ لَامَ فِعْلٍ مُطْلَقَا",
+        "فِي نَحْوِ قُلْ نَعَمْ وَقُلْنَا وَالْتَقَى"
+      ],
+      "ar": "وَأَظْهِرَنْ لَامَ فِعْلٍ مُطْلَقَا * فِي نَحْوِ قُلْ نَعَمْ وَقُلْنَا وَالْتَقَى",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n43",
+          "page_recueil": "40",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0030",
+      "n": 30,
+      "section": "mithlayn_mutaqaribayn_mutajanisayn",
+      "type": "vers",
+      "hemistiches": [
+        "إِنْ فِي الصِّفَاتِ وَالْمَخَارِجِ اتَّفَقْ",
+        "حَرْفَانِ فَالْمِثْلَانِ فِيهِمَا أَحَقّْ"
+      ],
+      "ar": "إِنْ فِي الصِّفَاتِ وَالْمَخَارِجِ اتَّفَقْ * حَرْفَانِ فَالْمِثْلَانِ فِيهِمَا أَحَقّْ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n43",
+          "page_recueil": "40",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0031",
+      "n": 31,
+      "section": "mithlayn_mutaqaribayn_mutajanisayn",
+      "type": "vers",
+      "hemistiches": [
+        "وَإِنْ يَكُونَا مَخْرَجًا تَقَارَبَا",
+        "وَفِي الصِّفَاتِ اخْتَلَفَا يُلَقَّبَا"
+      ],
+      "ar": "وَإِنْ يَكُونَا مَخْرَجًا تَقَارَبَا * وَفِي الصِّفَاتِ اخْتَلَفَا يُلَقَّبَا",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n44",
+          "page_recueil": "41",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0032",
+      "n": 32,
+      "section": "mithlayn_mutaqaribayn_mutajanisayn",
+      "type": "vers",
+      "hemistiches": [
+        "مُتَقَارِبَيْنِ أَوْ يَكُونَا اتَّفَقَا",
+        "فِي مَخْرَجٍ دُونَ الصِّفَاتِ حُقِّقَا"
+      ],
+      "ar": "مُتَقَارِبَيْنِ أَوْ يَكُونَا اتَّفَقَا * فِي مَخْرَجٍ دُونَ الصِّفَاتِ حُقِّقَا",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n217",
+          "page_imprimee": 214,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n44",
+          "page_recueil": "41",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0033",
+      "n": 33,
+      "section": "mithlayn_mutaqaribayn_mutajanisayn",
+      "type": "vers",
+      "hemistiches": [
+        "بِالْمُتَجَانِسَيْنِ ثُمَّ إِنْ سَكَنْ",
+        "أَوَّلُ كُلٍّ فَالصَّغِيرَ سَمِّيَنْ"
+      ],
+      "ar": "بِالْمُتَجَانِسَيْنِ ثُمَّ إِنْ سَكَنْ * أَوَّلُ كُلٍّ فَالصَّغِيرَ سَمِّيَنْ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n44",
+          "page_recueil": "41",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0034",
+      "n": 34,
+      "section": "mithlayn_mutaqaribayn_mutajanisayn",
+      "type": "vers",
+      "hemistiches": [
+        "أَوْ حُرِّكَ الْحَرْفَانِ فِي كُلٍّ فَقُلْ",
+        "كُلٌّ كَبِيرٌ وَافْهَمَنْهُ بِالْمُثُلْ"
+      ],
+      "ar": "أَوْ حُرِّكَ الْحَرْفَانِ فِي كُلٍّ فَقُلْ * كُلٌّ كَبِيرٌ وَافْهَمَنْهُ بِالْمُثُلْ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n44",
+          "page_recueil": "41",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0035",
+      "n": 35,
+      "section": "madd_aqsam",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْمَدُّ أَصْلِيٌّ وَفَرْعِيٌّ لَهُ",
+        "وَسَمِّ أَوَّلًا طَبِيعِيًّا وَهُوَ"
+      ],
+      "ar": "وَالْمَدُّ أَصْلِيٌّ وَفَرْعِيٌّ لَهُ * وَسَمِّ أَوَّلًا طَبِيعِيًّا وَهُوَ",
+      "source": {
+        "temoin": "T1",
+        "page": 322,
+        "image": "n335"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n45",
+          "page_recueil": "43 (1re occurrence)",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0036",
+      "n": 36,
+      "section": "madd_aqsam",
+      "type": "vers",
+      "hemistiches": [
+        "مَا لَا تَوَقُّفٌ لَهُ عَلَى سَبَبْ",
+        "وَلَا بِدُونِهِ الْحُرُوفُ تُجْتَلَبْ"
+      ],
+      "ar": "مَا لَا تَوَقُّفٌ لَهُ عَلَى سَبَبْ * وَلَا بِدُونِهِ الْحُرُوفُ تُجْتَلَبْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n45",
+          "page_recueil": "43 (1re occurrence)",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0037",
+      "n": 37,
+      "section": "madd_aqsam",
+      "type": "vers",
+      "hemistiches": [
+        "بَلْ أَيُّ حَرْفٍ غَيْرُ هَمْزٍ أَوْ سُكُونْ",
+        "جَا بَعْدَ مَدٍّ فَالطَّبِيعِيُّ يَكُونْ"
+      ],
+      "ar": "بَلْ أَيُّ حَرْفٍ غَيْرُ هَمْزٍ أَوْ سُكُونْ * جَا بَعْدَ مَدٍّ فَالطَّبِيعِيُّ يَكُونْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "différence : « غَيْرُ » au lieu de « غَيْرَ »"
+        },
+        "T6": {
+          "image": "n45",
+          "page_recueil": "43 (1re occurrence)",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [
+        {
+          "mot": "غَيْرُ",
+          "lecture_retenue": "غَيْرُ (ḍamma)",
+          "autre_lecture": "غَيْرَ (fatḥa) ou غَيْرِ (kasra)",
+          "motif": "T4 : ḍamma (le mot qualifie « أَيُّ ») ; marque petite"
+        }
+      ],
+      "a_verifier": [
+        "غَيْرُ : lecture retenue غَيْرُ (ḍamma) ; autre lecture possible : غَيْرَ (fatḥa) ou غَيْرِ (kasra) ; T4 : ḍamma (le mot qualifie « أَيُّ ») ; marque petite"
+      ]
+    },
+    {
+      "id": "TUH-0038",
+      "n": 38,
+      "section": "madd_aqsam",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْآخَرُ الْفَرْعِيُّ مَوْقُوفٌ عَلَى",
+        "سَبَبْ كَهَمْزٍ أَوْ سُكُونٍ مُسْجَلَا"
+      ],
+      "ar": "وَالْآخَرُ الْفَرْعِيُّ مَوْقُوفٌ عَلَى * سَبَبْ كَهَمْزٍ أَوْ سُكُونٍ مُسْجَلَا",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n45",
+          "page_recueil": "43 (1re occurrence)",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0039",
+      "n": 39,
+      "section": "madd_aqsam",
+      "type": "vers",
+      "hemistiches": [
+        "حُرُوفُهُ ثَلَاثَةٌ فَعِيهَا",
+        "مِنْ لَفْظِ وَايٍ وَهْيَ فِي نُوحِيهَا"
+      ],
+      "ar": "حُرُوفُهُ ثَلَاثَةٌ فَعِيهَا * مِنْ لَفْظِ وَايٍ وَهْيَ فِي نُوحِيهَا",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n45",
+          "page_recueil": "43 (1re occurrence)",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0040",
+      "n": 40,
+      "section": "madd_aqsam",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْكَسْرُ قَبْلَ الْيَا وَقَبْلَ الْوَاوِ ضَمّْ",
+        "شَرْطٌ وَفَتْحٌ قَبْلَ أَلْفِ يُلْتَزَمْ"
+      ],
+      "ar": "وَالْكَسْرُ قَبْلَ الْيَا وَقَبْلَ الْوَاوِ ضَمّْ * شَرْطٌ وَفَتْحٌ قَبْلَ أَلْفِ يُلْتَزَمْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "différence : « أَلْفِ » au lieu de « أَلْفٍ » ; « يُلْتَزَمْ » comme T1 (V-03)"
+        },
+        "T6": {
+          "image": "n45",
+          "page_recueil": "43 (1re occurrence)",
+          "lecture": "variante, voir variantes"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [
+        "V-03"
+      ],
+      "voyelle_a_confirmer": [
+        {
+          "mot": "أَلْفِ",
+          "lecture_retenue": "أَلْفِ (lām sākin, kasra)",
+          "autre_lecture": "أَلْفٍ (tanwīn)",
+          "motif": "T4 : une seule marque sous le fāʾ ; le sukūn du lām est aussi celui que Fatḥ al-aqfāl donne « pour la mesure »"
+        }
+      ],
+      "a_verifier": [
+        "أَلْفِ : lecture retenue أَلْفِ (lām sākin, kasra) ; autre lecture possible : أَلْفٍ (tanwīn) ; T4 : une seule marque sous le fāʾ ; le sukūn du lām est aussi celui que Fatḥ al-aqfāl donne « pour la mesure »"
+      ]
+    },
+    {
+      "id": "TUH-0041",
+      "n": 41,
+      "section": "madd_aqsam",
+      "type": "vers",
+      "hemistiches": [
+        "وَاللِّينُ مِنْهَا الْيَا وَوَاوٌ سَكَنَا",
+        "إِنِ انْفِتَاحٌ قَبْلَ كُلِّ أُعْلِنَا"
+      ],
+      "ar": "وَاللِّينُ مِنْهَا الْيَا وَوَاوٌ سَكَنَا * إِنِ انْفِتَاحٌ قَبْلَ كُلِّ أُعْلِنَا",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "différence : « وَاللِّينُ » au lieu de « وَاللَّيْنُ » ; « كُلِّ » au lieu de « كُلٍّ »"
+        },
+        "T6": {
+          "image": "n45",
+          "page_recueil": "43 (1re occurrence)",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [
+        {
+          "mot": "كُلِّ",
+          "lecture_retenue": "كُلِّ (kasra)",
+          "autre_lecture": "كُلٍّ (tanwīn)",
+          "motif": "T4 : une seule marque sous le lām"
+        }
+      ],
+      "a_verifier": [
+        "كُلِّ : lecture retenue كُلِّ (kasra) ; autre lecture possible : كُلٍّ (tanwīn) ; T4 : une seule marque sous le lām"
+      ]
+    },
+    {
+      "id": "TUH-0042",
+      "n": 42,
+      "section": "madd_ahkam",
+      "type": "vers",
+      "hemistiches": [
+        "لِلْمَدِّ أَحْكَامٌ ثَلَاثَةٌ تَدُومْ",
+        "وَهْيَ الْوُجُوبُ وَالْجَوَازُ وَاللُّزُومْ"
+      ],
+      "ar": "لِلْمَدِّ أَحْكَامٌ ثَلَاثَةٌ تَدُومْ * وَهْيَ الْوُجُوبُ وَالْجَوَازُ وَاللُّزُومْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n46",
+          "page_recueil": "43 (2e occurrence)",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0043",
+      "n": 43,
+      "section": "madd_ahkam",
+      "type": "vers",
+      "hemistiches": [
+        "فَوَاجِبٌ إِنْ جَاءَ هَمْزٌ بَعْدَ مَدّْ",
+        "فِي كِلْمَةٍ وَذَا بِمُتَّصِلْ يُعَدّْ"
+      ],
+      "ar": "فَوَاجِبٌ إِنْ جَاءَ هَمْزٌ بَعْدَ مَدّْ * فِي كِلْمَةٍ وَذَا بِمُتَّصِلْ يُعَدّْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "différence : « فِي كِلْمَةٍ » ; « يُمَدّْ » (T4) au lieu de « يُعَدّْ » (T1, T6) : V-09"
+        },
+        "T6": {
+          "image": "n46",
+          "page_recueil": "43 (2e occurrence)",
+          "lecture": "variante, voir variantes"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [
+        "V-09"
+      ],
+      "voyelle_a_confirmer": [
+        {
+          "mot": "بِمُتَّصِلْ",
+          "lecture_retenue": "بِمُتَّصِلْ (lām sākin « pour la mesure », Fatḥ al-aqfāl)",
+          "autre_lecture": "بِمُتَّصِلِ ou بِمُتَّصِلٍ",
+          "motif": "T4 : signe sous le lām (kasra ou tanwīn), sukūn non vu"
+        },
+        {
+          "mot": "يُعَدّْ",
+          "lecture_retenue": "يُعَدّْ (T1 et T6)",
+          "autre_lecture": "يُمَدّْ (T4) : variante V-09",
+          "motif": "deux lectures imprimées ; sens identique"
+        }
+      ],
+      "a_verifier": [
+        "بِمُتَّصِلْ : lecture retenue بِمُتَّصِلْ (lām sākin « pour la mesure », Fatḥ al-aqfāl) ; autre lecture possible : بِمُتَّصِلِ ou بِمُتَّصِلٍ ; T4 : signe sous le lām (kasra ou tanwīn), sukūn non vu",
+        "يُعَدّْ : lecture retenue يُعَدّْ (T1 et T6) ; autre lecture possible : يُمَدّْ (T4) : variante V-09 ; deux lectures imprimées ; sens identique"
+      ]
+    },
+    {
+      "id": "TUH-0044",
+      "n": 44,
+      "section": "madd_ahkam",
+      "type": "vers",
+      "hemistiches": [
+        "وَجَائِزٌ مَدٌّ وَقَصْرٌ إِنْ فُصِلْ",
+        "كُلٌّ بِكِلْمَةٍ وَهَذَا الْمُنْفَصِلْ"
+      ],
+      "ar": "وَجَائِزٌ مَدٌّ وَقَصْرٌ إِنْ فُصِلْ * كُلٌّ بِكِلْمَةٍ وَهَذَا الْمُنْفَصِلْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "différence : « بِكِلْمَةٍ » au lieu de « بِكَلِمَةٍ »"
+        },
+        "T6": {
+          "image": "n46",
+          "page_recueil": "43 (2e occurrence)",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0045",
+      "n": 45,
+      "section": "madd_ahkam",
+      "type": "vers",
+      "hemistiches": [
+        "وَمِثْلُ ذَا إِنْ عَرَضَ السُّكُونُ",
+        "وَقْفًا كَتَعْلَمُونَ نَسْتَعِينُ"
+      ],
+      "ar": "وَمِثْلُ ذَا إِنْ عَرَضَ السُّكُونُ * وَقْفًا كَتَعْلَمُونَ نَسْتَعِينُ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "différence : « نَسْتَعِينُ » (ḍamma) au lieu de « نَسْتَعِينْ »"
+        },
+        "T6": {
+          "image": "n46",
+          "page_recueil": "43 (2e occurrence)",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0046",
+      "n": 46,
+      "section": "madd_ahkam",
+      "type": "vers",
+      "hemistiches": [
+        "أَوْ قُدِّمَ الْهَمْزُ عَلَى الْمَدِّ وَذَا",
+        "بَدَلْ كَآمَنُوا وَإِيمَانًا خُذَا"
+      ],
+      "ar": "أَوْ قُدِّمَ الْهَمْزُ عَلَى الْمَدِّ وَذَا * بَدَلْ كَآمَنُوا وَإِيمَانًا خُذَا",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "conforme ; ordre « الْهَمْزُ عَلَى الْمَدِّ » comme T1 (V-04)"
+        },
+        "T6": {
+          "image": "n47",
+          "page_recueil": "44",
+          "lecture": "variante, voir variantes"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [
+        "V-04"
+      ],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0047",
+      "n": 47,
+      "section": "madd_ahkam",
+      "type": "vers",
+      "hemistiches": [
+        "وَلَازِمٌ إِنِ السُّكُونُ أَصْلَا",
+        "وَصْلًا وَوَقْفًا بَعْدَ مَدٍّ طُولَا"
+      ],
+      "ar": "وَلَازِمٌ إِنِ السُّكُونُ أَصْلَا * وَصْلًا وَوَقْفًا بَعْدَ مَدٍّ طُولَا",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n218",
+          "page_imprimee": 215,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n47",
+          "page_recueil": "44",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0048",
+      "n": 48,
+      "section": "madd_lazim",
+      "type": "vers",
+      "hemistiches": [
+        "أَقْسَامُ لَازِمٍ لَدَيْهِمْ أَرْبَعَهْ",
+        "وَتِلْكَ كِلْمِيٌّ وَحَرْفِيٌّ مَعَهْ"
+      ],
+      "ar": "أَقْسَامُ لَازِمٍ لَدَيْهِمْ أَرْبَعَهْ * وَتِلْكَ كِلْمِيٌّ وَحَرْفِيٌّ مَعَهْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "différence : « كِلْمِيٌّ » au lieu de « كَلِمِيٌّ »"
+        },
+        "T6": {
+          "image": "n47",
+          "page_recueil": "44",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [
+        {
+          "mot": "لَازِمٍ",
+          "lecture_retenue": "لَازِمٍ (tanwīn)",
+          "autre_lecture": "لَازِمِ (kasra seule)",
+          "motif": "T4 : marque sous le mīm peu lisible"
+        }
+      ],
+      "a_verifier": [
+        "لَازِمٍ : lecture retenue لَازِمٍ (tanwīn) ; autre lecture possible : لَازِمِ (kasra seule) ; T4 : marque sous le mīm peu lisible"
+      ]
+    },
+    {
+      "id": "TUH-0049",
+      "n": 49,
+      "section": "madd_lazim",
+      "type": "vers",
+      "hemistiches": [
+        "كِلَاهُمَا مُخَفَّفٌ مُثَقَّلُ",
+        "فَهَذِهِ أَرْبَعَةٌ تُفَصَّلُ"
+      ],
+      "ar": "كِلَاهُمَا مُخَفَّفٌ مُثَقَّلُ * فَهَذِهِ أَرْبَعَةٌ تُفَصَّلُ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "différence : « مُثَقَّلُ » et « تُفَصَّلُ » (ḍamma finale) au lieu du sukūn"
+        },
+        "T6": {
+          "image": "n47",
+          "page_recueil": "44",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0050",
+      "n": 50,
+      "section": "madd_lazim",
+      "type": "vers",
+      "hemistiches": [
+        "فَإِنْ بِكِلْمَةٍ سُكُونٌ اجْتَمَعْ",
+        "مَعْ حَرْفِ مَدٍّ فَهْوَ كِلْمِيٌّ وَقَعْ"
+      ],
+      "ar": "فَإِنْ بِكِلْمَةٍ سُكُونٌ اجْتَمَعْ * مَعْ حَرْفِ مَدٍّ فَهْوَ كِلْمِيٌّ وَقَعْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "différence : « بِكِلْمَةٍ », « مَعْ », « كِلْمِيٌّ »"
+        },
+        "T6": {
+          "image": "n47",
+          "page_recueil": "44",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0051",
+      "n": 51,
+      "section": "madd_lazim",
+      "type": "vers",
+      "hemistiches": [
+        "أَوْ فِي ثُلَاثِيِّ الْحُرُوفِ وُجِدَا",
+        "وَالْمَدُّ وَسْطَهُ فَحَرْفِيٌّ بَدَا"
+      ],
+      "ar": "أَوْ فِي ثُلَاثِيِّ الْحُرُوفِ وُجِدَا * وَالْمَدُّ وَسْطَهُ فَحَرْفِيٌّ بَدَا",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n47",
+          "page_recueil": "44",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0052",
+      "n": 52,
+      "section": "madd_lazim",
+      "type": "vers",
+      "hemistiches": [
+        "كِلَاهُمَا مُثَقَّلٌ إِنْ أُدْغِمَا",
+        "مُخَفَّفٌ كُلٌّ إِذَا لَمْ يُدْغَمَا"
+      ],
+      "ar": "كِلَاهُمَا مُثَقَّلٌ إِنْ أُدْغِمَا * مُخَفَّفٌ كُلٌّ إِذَا لَمْ يُدْغَمَا",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n47",
+          "page_recueil": "44",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0053",
+      "n": 53,
+      "section": "madd_lazim",
+      "type": "vers",
+      "hemistiches": [
+        "وَاللَّازِمُ الْحَرْفِيُّ أَوَّلَ السُّوَرْ",
+        "وُجُودُهُ وَفِي ثَمَانٍ انْحَصَرْ"
+      ],
+      "ar": "وَاللَّازِمُ الْحَرْفِيُّ أَوَّلَ السُّوَرْ * وُجُودُهُ وَفِي ثَمَانٍ انْحَصَرْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n48",
+          "page_recueil": "45",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0054",
+      "n": 54,
+      "section": "madd_lazim",
+      "type": "vers",
+      "hemistiches": [
+        "يَجْمَعُهَا حُرُوفُ كَمْ عَسَلْ نَقَصْ",
+        "وَعَيْنُ ذُو وَجْهَيْنِ وَالطُّولُ أَخَصّْ"
+      ],
+      "ar": "يَجْمَعُهَا حُرُوفُ كَمْ عَسَلْ نَقَصْ * وَعَيْنُ ذُو وَجْهَيْنِ وَالطُّولُ أَخَصّْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n48",
+          "page_recueil": "45",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [
+        {
+          "mot": "وَعَيْنُ",
+          "lecture_retenue": "وَعَيْنُ (ḍamma)",
+          "autre_lecture": "وَعَيْنٌ (tanwīn)",
+          "motif": "T4 : signe final peu lisible ; la vocalisation de « عين » varie selon les éditions (SOURCES_TUHFA, § 2)"
+        }
+      ],
+      "a_verifier": [
+        "وَعَيْنُ : lecture retenue وَعَيْنُ (ḍamma) ; autre lecture possible : وَعَيْنٌ (tanwīn) ; T4 : signe final peu lisible ; la vocalisation de « عين » varie selon les éditions (SOURCES_TUHFA, § 2)"
+      ]
+    },
+    {
+      "id": "TUH-0055",
+      "n": 55,
+      "section": "madd_lazim",
+      "type": "vers",
+      "hemistiches": [
+        "وَمَا سِوَى الْحَرْفِ الثُّلَاثِي لَا أَلِفْ",
+        "فَمُدَّهُ مَدًّا طَبِيعِيًّا أُلِفْ"
+      ],
+      "ar": "وَمَا سِوَى الْحَرْفِ الثُّلَاثِي لَا أَلِفْ * فَمُدَّهُ مَدًّا طَبِيعِيًّا أُلِفْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "différence : « الثُّلَاثِي » (yāʾ simple) au lieu de « الثُّلَاثِيِّ » ; comme T1 (V-08)"
+        },
+        "T6": {
+          "image": "n48",
+          "page_recueil": "45",
+          "lecture": "variante, voir variantes"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [
+        "V-08"
+      ],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0056",
+      "n": 56,
+      "section": "madd_lazim",
+      "type": "vers",
+      "hemistiches": [
+        "وَذَاكَ أَيْضًا فِي فَوَاتِحِ السُّوَرْ",
+        "فِي لَفْظِ حَيٍّ طَاهِرٍ قَدِ انْحَصَرْ"
+      ],
+      "ar": "وَذَاكَ أَيْضًا فِي فَوَاتِحِ السُّوَرْ * فِي لَفْظِ حَيٍّ طَاهِرٍ قَدِ انْحَصَرْ",
+      "source": {
+        "temoin": "T1",
+        "page": 323,
+        "image": "n336"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n48",
+          "page_recueil": "45",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0057",
+      "n": 57,
+      "section": "madd_lazim",
+      "type": "vers",
+      "hemistiches": [
+        "وَيَجْمَعُ الْفَوَاتِحَ الْأَرْبَعْ عَشَرْ",
+        "صِلْهُ سُحَيْرًا مَنْ قَطَعْكَ ذَا اشْتَهَرْ"
+      ],
+      "ar": "وَيَجْمَعُ الْفَوَاتِحَ الْأَرْبَعْ عَشَرْ * صِلْهُ سُحَيْرًا مَنْ قَطَعْكَ ذَا اشْتَهَرْ",
+      "source": {
+        "temoin": "T1",
+        "page": 324,
+        "image": "n337"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "conforme ; « صِلْهُ » comme T1 (V-05)"
+        },
+        "T6": {
+          "image": "n48",
+          "page_recueil": "45",
+          "lecture": "variante, voir variantes"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [
+        "V-05"
+      ],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0058",
+      "n": 58,
+      "section": "khatima",
+      "type": "vers",
+      "hemistiches": [
+        "وَتَمَّ ذَا النَّظْمُ بِحَمْدِ اللَّهِ",
+        "عَلَى تَمَامِهِ بِلَا تَنَاهِي"
+      ],
+      "ar": "وَتَمَّ ذَا النَّظْمُ بِحَمْدِ اللَّهِ * عَلَى تَمَامِهِ بِلَا تَنَاهِي",
+      "source": {
+        "temoin": "T1",
+        "page": 324,
+        "image": "n337"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n49",
+          "page_recueil": "46",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0059",
+      "n": 59,
+      "section": "khatima",
+      "type": "vers",
+      "hemistiches": [
+        "أَبْيَاتُهُ نَدٌّ بَدَا لِذِي النُّهَى",
+        "تَارِيخُهُ بُشْرَى لِمَنْ يُتْقِنُهَا"
+      ],
+      "ar": "أَبْيَاتُهُ نَدٌّ بَدَا لِذِي النُّهَى * تَارِيخُهُ بُشْرَى لِمَنْ يُتْقِنُهَا",
+      "source": {
+        "temoin": "T1",
+        "page": 324,
+        "image": "n337"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "conforme ; « لِمَنْ » comme T1 (V-06) ; « نَدٌّ » avec chadda"
+        },
+        "T6": {
+          "image": "n49",
+          "page_recueil": "46",
+          "lecture": "variante, voir variantes"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [
+        "V-06"
+      ],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0060",
+      "n": 60,
+      "section": "khatima",
+      "type": "vers",
+      "hemistiches": [
+        "ثُمَّ الصَّلَاةُ وَالسَّلَامُ أَبَدَا",
+        "عَلَى خِتَامِ الْأَنْبِيَاءِ أَحْمَدَا"
+      ],
+      "ar": "ثُمَّ الصَّلَاةُ وَالسَّلَامُ أَبَدَا * عَلَى خِتَامِ الْأَنْبِيَاءِ أَحْمَدَا",
+      "source": {
+        "temoin": "T1",
+        "page": 324,
+        "image": "n337"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n49",
+          "page_recueil": "46",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    },
+    {
+      "id": "TUH-0061",
+      "n": 61,
+      "section": "khatima",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْآلِ وَالصَّحْبِ وَكُلِّ تَابِعِ",
+        "وَكُلِّ قَارِئٍ وَكُلِّ سَامِعِ"
+      ],
+      "ar": "وَالْآلِ وَالصَّحْبِ وَكُلِّ تَابِعِ * وَكُلِّ قَارِئٍ وَكُلِّ سَامِعِ",
+      "source": {
+        "temoin": "T1",
+        "page": 324,
+        "image": "n337"
+      },
+      "collation": {
+        "T4": {
+          "image": "n219",
+          "page_imprimee": 216,
+          "lecture": "conforme (voyelles relevées sur l'image, mot par mot)"
+        },
+        "T6": {
+          "image": "n49",
+          "page_recueil": "46",
+          "lecture": "identique (matn cité dans le cadre du commentaire)"
+        }
+      },
+      "vocalisation": "collationnée voyelle par voyelle sur T4 (Ḥalabī, 1949) le 13/10/2026 ; T1 et T6 ne portent presque aucune voyelle",
+      "variantes": [],
+      "voyelle_a_confirmer": [],
+      "a_verifier": []
+    }
+  ],
+  "variantes": [
+    {
+      "id": "V-01",
+      "vers": "TUH-0017",
+      "T1": "وغن ميما ثم نونا شددا",
+      "T4": "وَغُنَّ مِيمًا ثُمَّ نُونًا شُدِّدَا",
+      "T6": "وغن ميما ثم نونا شددا (cadre et marge, n41) ; commentaire n41, p. 38 : « أي يجب عليك إظهار غنة الميم والنون حال تشديدهما »",
+      "nature": "voyelles du premier mot (même tracé consonantique sur les trois témoins)",
+      "portee": "faible sur le sens (impératif « donne la ghunna ») ; forte sur la vocalisation",
+      "retenu": "وَغُنَّ (ḍamma sur le ghayn, nūn doublé) : lecture de T4, appuyée par le commentaire de l'auteur (« yajibu ʿalayka iẓhāru ghunnat… », verbe tiré de ghunna) ; la forme « وَغَنِّنْ » proposée avant collation est abandonnée",
+      "decision": "R-T4 : tranché"
+    },
+    {
+      "id": "V-02",
+      "vers": "TUH-0020",
+      "T1": "فالأول الإخفاء عند الباء",
+      "T4": "فَالْأَوَّلُ الْإِخْفَاءُ عِنْدَ الْبَاءِ",
+      "T6": "فالأول الإخفاء قبل الباء (cadre et marge, n41)",
+      "nature": "préposition différente",
+      "portee": "nulle sur le sens",
+      "retenu": "عِنْدَ (T1 et T4 ; comme aux vers 13 et 14)",
+      "decision": "R-T2 : tranché"
+    },
+    {
+      "id": "V-03",
+      "vers": "TUH-0040",
+      "T1": "وفتح قبل ألف يلتزم",
+      "T4": "شَرْطٌ وَفَتْحٌ قَبْلَ أَلْفِ يُلْتَزَمْ",
+      "T6": "وفتح قبل ألف ملتزم (cadre, n45)",
+      "nature": "verbe passif / participe",
+      "portee": "faible",
+      "retenu": "يُلْتَزَمْ (T1 et T4)",
+      "decision": "R-T2 : tranché"
+    },
+    {
+      "id": "V-04",
+      "vers": "TUH-0046",
+      "T1": "أو قدم الهمز على المد وذا",
+      "T4": "أَوْ قُدِّمَ الْهَمْزُ عَلَى الْمَدِّ وَذَا",
+      "T6": "وقدم المد على المهموز (cadre) / على الهمز (marge), n47",
+      "nature": "ordre des termes inversé dans T6",
+      "portee": "forte si on lit T6 seul (le sens serait renversé) ; Fatḥ al-aqfāl explique « يتقدم الهمز على المد »",
+      "retenu": "T1 et T4 : la leçon de T6 est une faute d'impression, confirmée par le témoin vocalisé",
+      "decision": "R-T2 : tranché (T6 = faute d'impression)"
+    },
+    {
+      "id": "V-05",
+      "vers": "TUH-0057",
+      "T1": "صله سحيرا من قطعك ذا اشتهر",
+      "T4": "صِلْهُ سُحَيْرًا مَنْ قَطَعْكَ ذَا اشْتَهَرْ",
+      "T6": "صل سحيرا من قطعك ذا اشتهر (cadre et marge, n48)",
+      "nature": "ص ل ه / ص ل",
+      "portee": "moyenne : le mot mnémonique doit réunir les 14 lettres détachées ; « صله سحيرا من قطعك » les contient toutes (14 sur 14, contrôlé par script) ; avec « صل » le هاء manque",
+      "retenu": "صِلْهُ (T1 et T4)",
+      "decision": "R-T2 : tranché"
+    },
+    {
+      "id": "V-06",
+      "vers": "TUH-0059",
+      "T1": "تاريخه بشرى لمن يتقنها",
+      "T4": "تَارِيخُهُ بُشْرَى لِمَنْ يُتْقِنُهَا",
+      "T6": "تاريخه بشرى ان يتقنها (matn cité, n49) ; commentaire : « بشرى من يتقنها »",
+      "nature": "mots différents",
+      "portee": "forte pour le calcul de la date : « لمن » donne 512 + 120 + 566 = 1198 (date annoncée par Fatḥ al-aqfāl) ; « أن » donne 1129 et « من » 1168 (contrôlé par script)",
+      "retenu": "لِمَنْ (T1 et T4)",
+      "decision": "R-T5 : tranché (abjad 1198)"
+    },
+    {
+      "id": "V-07",
+      "vers": "TUH-0011",
+      "T1": "كدنيا ثم صنوان تلا",
+      "T4": "تُدْغِمْ كَدُنْيَا ثُمَّ صِنْوَانٌ تَلَا",
+      "T6": "commentaire (n39) : liste de quatre mots dont le quatrième est absent du Coran",
+      "nature": "quatrième mot du commentaire (hors matn)",
+      "portee": "le mot imprimé par T6 n'existe pas dans le Coran (contrôlé par script sur tout Tanzil) ; le mot attendu est « بُنْيَان » (61:4, exemple E-18)",
+      "retenu": "aucun changement du matn ; le mot erroné n'est pas repris ; note dans l'explication",
+      "decision": "R-T3 : tranché"
+    },
+    {
+      "id": "V-08",
+      "vers": "TUH-0055",
+      "T1": "وما سوى الحرف الثلاثي لا ألف",
+      "T4": "وَمَا سِوَى الْحَرْفِ الثُّلَاثِي لَا أَلِفْ",
+      "T6": "وما سوى الحرف الثان لا ألف (cadre et marge, n48) ; commentaire : « وغير الحرف الثاني من كل حرف هجاؤه على حرفين »",
+      "nature": "ثلاثي / ثان",
+      "portee": "moyenne : le sens (noms de lettres de trois lettres) et la mesure s'accordent avec « الثلاثي »",
+      "retenu": "T1 et T4 : « الثُّلَاثِي » (yāʾ simple)",
+      "decision": "R-T2 : tranché"
+    },
+    {
+      "id": "V-09",
+      "vers": "TUH-0043",
+      "T1": "وذا بمتصل يعد",
+      "T4": "وَذَا بِمُتَّصِلٍ يُمَدّْ",
+      "T6": "وذا بمتصل يعد (cadre, n46)",
+      "nature": "verbe : يُعَدّ (« est compté ») / يُمَدّ (« est allongé »)",
+      "portee": "faible sur le sens : dans les deux cas ce madd est dit « joint »",
+      "retenu": "يُعَدّْ (T1 et T6, commentaire de l'auteur) ; la lecture de T4 est consignée ; voyelle_a_confirmer",
+      "decision": "variante nouvelle relevée à la collation du 13/10/2026 : à soumettre à la seconde lecture"
+    }
+  ],
+  "date_revision": "2026-10-13"
+}

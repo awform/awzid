@@ -8,6 +8,19 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 13/10/2026 — Madjaliss lot 2 : sept textes (al-ʿAshmāwiyya, Tuḥfa, Ibn ʿĀshir, al-ʿIzziyya, al-Ājurrūmiyya, al-Jazariyya) et mise à jour d'al-Akhḍarī
+
+Branche `madjaliss-2-wip` (worktree `~/awform-madjaliss-2`, depuis `main` af89435), démo privée seulement.
+
+- Sources du référent copiées octet par octet (SHA-256 contrôlés) dans `packages/content/madjaliss-source/` ; Tanzil : `coran/tanzil-uthmani.tsv` (copie figée), sous-chaîne exacte vérifiée pour chaque verset cité (la construction échoue sinon).
+- `scripts/madjaliss.mjs` généralisé : format commun (phrases ou vers à deux hémistiches `h`, notes, sens des versets, listes et exemples, intertitres, niveaux adulte/pudeur, facultatif, renvois entre textes, code visuel de la grammaire, explications d'al-Kafrāwī). Liste blanche de champs : aucun champ interne (translit_interne, collation, décisions, relectures, a_verifier…) ne part chez l'élève ; phrases de notes internes (comité, référent, codes) et sources internes filtrées ; emplacements de traduction de verset remplacés par […] + sens du verset de la traduction de référence.
+- Passages « présentés par le maître » (al-ʿIzziyya, 10 phrases des séances sensibles à `relecture_comite`) : ni arabe ni traduction, mention « bientôt », comme AKH-0052.
+- Niveaux : `matnPour(profil)` — rien d'« adulte » pour enfants et ados, pudeur pour les enfants ; profil inconnu = ado.
+- Statut `EN_ATTENTE_SECONDE_LECTURE` (ancien libellé accepté en entrée) ; mention du client sous chaque texte.
+- Chargement à la demande par texte (`/mutun/<texte>.json`, gardé sur l'appareil) ; code ajouté dans le morceau « madjaliss » (non préchargé) : budget appareil élève inchangé (349,6 Ko).
+- Points à signaler au client : mots ou courtes expressions arabes dans la ligne française de 17 notes d'Ibn ʿĀshir, 2 d'al-ʿIzziyya, 2 vers de la Jazariyya ; translittérations latines dans les traductions du référent (conventions du texte) ; apostrophes réparées dans `note_eleve_fr` de la Jazariyya ; séances de croyance d'Ibn ʿĀshir (IBA-S02 à S10) à retenir avant toute ouverture publique (note du référent, dans le mode enseignant).
+- Tests : `textes.test.ts` (7 textes × 15), `notes.test.ts`, `madjaliss.test.ts`, `e2e/madjaliss-textes.spec.ts`.
+
 ## 13/10/2026 — Bêta fermée sur invitation : accès, invisibilité, bandeau, sauvegardes, supervision, serveur public (écrit)
 
 Branche `beta-wip` (worktree `~/awform-beta-acces`, depuis `main` 4a101eb). Décision du client du 13/10 : « oui, prépare la bêta ».

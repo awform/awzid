@@ -5,7 +5,6 @@ import 'fake-indexeddb/auto';
 import { describe, expect, it } from 'vitest';
 import {
   AVEC_EXPLICATION,
-  CITATIONS,
   construire,
   MOT_A_PRECISER,
   SENS_A_VERIFIER,
@@ -44,18 +43,19 @@ describe('données construites (static/mutun)', () => {
     expect(`${JSON.stringify(enseignant)}\n`).toBe(brutEns);
   });
 
-  it('233 phrases, 44 séances, chaque phrase au statut VALIDATION_HUMAINE_REQUISE', () => {
+  it('233 phrases, 44 séances, statut EN_ATTENTE_SECONDE_LECTURE (jamais « validation humaine requise »)', () => {
     expect(matn.phrases).toHaveLength(233);
     expect(matn.seances).toHaveLength(44);
     expect(matn.statut).toBe(STATUT);
-    for (const p of matn.phrases) expect(p.statut, p.id).toBe('VALIDATION_HUMAINE_REQUISE');
+    expect(STATUT).toBe('EN_ATTENTE_SECONDE_LECTURE');
+    expect(brut).not.toMatch(/VALIDATION_HUMAINE|validation humaine/i);
     const toutes = matn.seances.flatMap((s) => s.phrases);
     expect(new Set(toutes).size).toBe(233);
   });
 
   it('texte arabe de l’auteur INTACT, octet par octet (jamais normalisé)', () => {
     for (const s of src.phrases) {
-      if (AVEC_EXPLICATION.has(s.id) || s.id in CITATIONS) continue;
+      if (AVEC_EXPLICATION.has(s.id) || ['AKH-0015', 'AKH-0132'].includes(s.id)) continue;
       const p = de.get(s.id)!;
       expect(typeof p.ar, s.id).toBe('string');
       expect(octets(p.ar as string), s.id).toBe(octets(s.ar));
@@ -156,8 +156,9 @@ describe('données construites (static/mutun)', () => {
   it('chapitres des règles et des lochies : ados et adultes seulement', () => {
     const pudeur = matn.seances.filter((s) => s.pudeur).map((s) => s.n);
     expect(pudeur.length).toBeGreaterThan(0);
-    expect(seancesPour(matn, true).some((s) => s.pudeur)).toBe(false);
-    expect(seancesPour(matn, false)).toHaveLength(44);
+    expect(seancesPour(matn, 'enfant').some((s) => s.pudeur)).toBe(false);
+    expect(seancesPour(matn, 'ado')).toHaveLength(44);
+    expect(seancesPour(matn, 'adulte')).toHaveLength(44);
   });
 });
 

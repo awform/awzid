@@ -3,7 +3,14 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { construire, SORTIE, SOURCES, tanzil } from '../../../scripts/madjaliss.mjs';
+import {
+  construire,
+  nettoyerNote,
+  SORTIE,
+  SOURCE_INTERNE,
+  SOURCES,
+  tanzil,
+} from '../../../scripts/madjaliss.mjs';
 import { segments, texteVoixSynthese, type Matn, type NotesEnseignant } from './donnees';
 
 /**
@@ -88,17 +95,37 @@ describe('AKH-0132 : segment coranique (T7)', () => {
 });
 
 describe('notes du référent', () => {
-  it('notes d’explication (AKH-0051, 0060, 0081, 0162, 0172) : sous la phrase, telles que la source les donne', () => {
-    const avec = matn.phrases.filter((p) => p.note).map((p) => p.id);
-    expect(avec).toEqual(['AKH-0051', 'AKH-0060', 'AKH-0081', 'AKH-0162', 'AKH-0172']);
+  it('notes d’explication (AKH-0051, 0060, 0081, 0145, 0146, 0158, 0162, 0172) : sous la phrase, telles que la source les donne', () => {
+    const avec = matn.phrases.filter((p) => p.notes).map((p) => p.id);
+    expect(avec).toEqual([
+      'AKH-0051',
+      'AKH-0060',
+      'AKH-0081',
+      'AKH-0145',
+      'AKH-0146',
+      'AKH-0158',
+      'AKH-0162',
+      'AKH-0172',
+    ]);
     for (const id of avec) {
       const n = srcFr.phrases.find((x) => x.id === id)!.note_explication!;
-      const p = de.get(id)!;
-      expect(p.note!.texte).toBe(n.texte);
-      expect(p.note!.sources).toEqual(n.sources);
-      expect(p.note!.ar).toEqual(n.citations_ar);
+      const note = de.get(id)!.notes![0]!;
+      // le texte du référent, sans ses phrases internes (comité, codes de décision : nettoyerNote) ni ses sources internes
+      expect(note.texte).toBe(nettoyerNote(n.texte));
+      expect(note.sources ?? []).toEqual((n.sources ?? []).filter((s) => !SOURCE_INTERNE.test(s)));
+      expect(note.ar).toEqual(n.citations_ar);
     }
-    expect(de.get('AKH-0051')!.note!.texte.startsWith('Pour les familles.')).toBe(true);
+    expect(de.get('AKH-0051')!.notes![0]!.texte.startsWith('Pour les familles.')).toBe(true);
+  });
+
+  it('nouvelles notes AKH-0145, 0146, 0158 (13/10) : citations arabes sur leur ligne, décision interne absente', () => {
+    for (const id of ['AKH-0145', 'AKH-0146', 'AKH-0158']) {
+      const note = de.get(id)!.notes![0]!;
+      expect(note.ar!.length, id).toBeGreaterThanOrEqual(2);
+      expect(JSON.stringify(note), id).not.toMatch(/K32|RAPPORT_COMPLET|Décision du référent/);
+    }
+    expect(de.get('AKH-0145')!.notes![0]!.texte).toContain('quatre ou moins');
+    expect(de.get('AKH-0158')!.notes![0]!.sources).toHaveLength(1);
   });
 
   it('notes de traduction (AKH-0055, 0092) : mode enseignant seulement', () => {

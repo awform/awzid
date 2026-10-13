@@ -1,0 +1,1897 @@
+{
+  "titre": "Alignement Jazariyya (JAZ) ↔ Tuḥfat al-Aṭfāl (TUHFA) ↔ nos livres de tajwīd (qc1-qc3, hifz)",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "date": "2026-10-13",
+  "perimetre": "27 règles couvrant les 107 vers, avec, pour chacune : les vers de la Jazariyya, la page de l'imprimé M et la forme consonantique du vers, la page de la Ḥawāshī où le vers est cité (quand cette page a été lue), le renvoi aux vers de la Tuḥfa (numérotation provisoire), aux leçons de nos livres (data/qc2, data/qc3, data/hifz/tajwid.js, lus en lecture seule) et des exemples du Coran copiés de Tanzil par script.",
+  "sources": {
+    "JAZ": "texte_ar.json (ce dossier) ; M = Majmūʿ 1306 pp. 316-321 ; H = Ḥawāshī de Khālid al-Azharī, 1304 H (pages 10 à 35, voir SOURCES_JAZARIYYA.md)",
+    "TUHFA": "SOURCES_TUHFA.md § 2 et § 6 ; le texte_ar.json de la Tuḥfa n'existait pas à la date de ce fichier (lecture seule : rien n'a été modifié dans tuhfa/)",
+    "livres": "awform/data/qc2 (leçons l01-l21), awform/data/qc3 (l01-l19), awform/data/hifz/tajwid.js (fiches T1-T13) ; leçons repérées par leur titre et par leur texte (lecture seule)"
+  },
+  "recalage_tuhfa_13_10": "R-J8 : fait ; numérotation TUHFA.001-061 remplacée par TUH-0001 à TUH-0061 (tuhfa/texte_ar.json, 61 vers) après contrôle chapitre par chapitre ; aucun écart de numéro.",
+  "regle_lecture": "Notre référence : Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (muṣḥaf de Médine, D5). La Jazariyya est un poème écrit pour l'ensemble des lectures : tout point où elle mentionne une autre lecture est signalé dans « relation » et dans RAPPORT.md, sans jamais être présenté comme celui de l'élève. Couleurs du tajwīd réservées au Coran : aucune couleur n'est posée dans ces fichiers.",
+  "legende_relation": {
+    "identique": "même règle, même rang",
+    "complément": "même sujet ; l'un précise ce que l'autre ne dit pas",
+    "ÉCART": "la Jazariyya dit autre chose que nos livres pour Ḥafṣ-Shāṭibiyya",
+    "non couvert par nos livres": "sujet absent de qc1-qc3 et de hifz"
+  },
+  "notes_referent_13_10": [
+  {
+    "id": "R-J1",
+    "vers": [
+          "JAZ-0069",
+          "JAZ-0072"
+        ],
+    "sujet": "madd munfaṣil : « jāʾiz » et le raccourcissement (qaṣr)",
+    "traduction_choisie": "L'allongement (madd) est « nécessaire », « obligatoire » ou « permis » ; et [pour ce dernier], l'allongement ou le raccourcissement sont établis. [...] Est « permis » ce qui vient séparé (munfaṣil).",
+    "source_1": {
+            "ouvrage": "Khālid al-Azharī, al-Ḥawāshī al-azhariyya fī ḥall alfāẓ al-Muqaddima al-Jazariyya (Le Caire, 1304 H)",
+            "page": "p. 25 (image n27 d archive.org AAlexandrina-151183)",
+            "extrait": "(وجائز إذا أتى منفصلا ...) : « والقراء فيه على مراتب : فمنهم من لا يرى فيه إلا المد وهو ورش وحمزة وعاصم وابن عامر والكسائي ... ومنهم من لا يرى فيه إلا القصر وهو ابن كثير والسوسي » ; sur le madd muttaṣil : « ومنهم من قال مد مقدار ألفين ونصف وهذا ما أخذوا به لعاصم »"
+          },
+    "source_2": "al-Minaḥ al-fikriyya (Mullā ʿAlī al-Qārī) : même chapitre à relever sur le scan (OCR inutilisable), non extrait à ce jour",
+    "choix_hafs": "Ḥafṣ ʿan ʿĀṣim par ash-Shāṭibiyya : madd munfaṣil de 4 ou 5 temps, jamais de qaṣr (le qaṣr est, selon la Ḥawāshī, celui d Ibn Kathīr et d as-Sūsī). Même durée de 4 ou 5 temps que le muṣḥaf de Médine.",
+    "note_eleve_fr": "Le poème dit « permis » : pour le madd séparé, certaines lectures allongent, d autres raccourcissent. Toi, qui lis Ḥafṣ par ash-Shāṭibiyya, tu allonges de 4 ou 5 temps, comme dans le muṣḥaf de Médine ; choisis une durée et garde-la pendant toute la récitation. Même principe pour le madd dû à l arrêt (2, 4 ou 6 temps)."
+  },
+  {
+    "id": "R-J3",
+    "vers": [
+
+        ],
+    "sujet": "second commentaire retenu : authenticité établie",
+    "decision": "al-Minaḥ al-fikriyya ʿalā matn al-Jazariyya est de Mullā ʿAlī b. Sulṭān Muḥammad al-Qārī (page de titre lue, archive.org AAlexandrina-073006, al-Maṭbaʿa al-Maymaniyya, 1308 H : « كتاب المنح الفكرية على متن الجزرية / للعلامة ... ملا علي بن سلطان محمد القاري » ; la ligne suivante porte : « وبهامشه شرح العلامة شيخ الإسلام زكريا الأنصاري على مقدمة الجزرية أيضا »). L attribution du catalogue de la Bibliotheca Alexandrina à « Zakariyyā al-Anṣārī » vient de ce commentaire marginal (ad-Daqāʾiq al-muḥkama), imprimé en marge du même volume : le catalogue confond le texte principal et le commentaire de la marge.",
+    "retenu": "Second commentaire retenu : al-Minaḥ al-fikriyya de Mullā ʿAlī al-Qārī (auteur authentifié) ; ad-Daqāʾiq al-muḥkama de Zakariyyā al-Anṣārī est le commentaire marginal du même volume (autre témoin utilisable) ; aucune des deux ne remplace la Ḥawāshī pour les citations de pages, tant que leur OCR reste inutilisable."
+  },
+  {
+    "id": "R-J4a",
+    "vers": [
+          "JAZ-0003"
+        ],
+    "sujet": "« مع محبه »",
+    "traduction_choisie": "... sur celui qui enseigne la récitation du Coran, ainsi que sur celui qui l aime [le Coran].",
+    "source_1": {
+            "page": "Ḥawāshī p. 4 (image n6)",
+            "extrait": "« وقوله مع محبه أي محب القرآن فيشمل قوله مقرئ القرآن التابعي وغيره ويشمل قوله محب القرآن القاري وغيره »"
+          },
+    "source_2": "Minaḥ : à relever",
+    "choix_hafs": "sans objet (point de sens)"
+  },
+  {
+    "id": "R-J4b",
+    "vers": [
+          "JAZ-0008"
+        ],
+    "sujet": "« وتاء أنثى لم تكن تكتب بها »",
+    "traduction_choisie": "[le] tāʾ de féminin qui n était pas écrit [en tāʾ lié « ة », mais en tāʾ ouvert « ت »] dans [les exemplaires].",
+    "source_1": {
+            "page": "Ḥawāshī p. 5 (image n7)",
+            "extrait": "« ... أي لم تكن تكتب بها تاء مربوطة بل تكتب بتاء مجرورة »"
+          },
+    "source_2": "Minaḥ : à relever",
+    "choix_hafs": "sans objet (renvoie au chapitre du tracé, v. 94-100)"
+  },
+  {
+    "id": "R-J4c",
+    "vers": [
+          "JAZ-0042"
+        ],
+    "sujet": "conditions du tarqīq du rāʾ sākin",
+    "traduction_choisie": "[Rends le rāʾ fin] à condition qu il ne soit pas avant une lettre d élévation, et que la kasra soit originelle.",
+    "source_1": {
+            "page": "Ḥawāshī p. 14 (image n16)",
+            "extrait": "« ... شرط أن يكون قبلها كسرة لازمة وأن تكون الكسرة والراء في كلمة واحدة وأن لا يكون بعدها حرف استعلاء ... فقولنا كسرة لازمة احترازا عن الكسرة العارضة نحو ارجعوا »"
+          },
+    "source_2": "Minaḥ : à relever",
+    "choix_hafs": "identique pour Ḥafṣ (qc2.l14 : fin après kasra originelle dans le même mot, sans lettre d élévation après) ; cas de « فِرْقٍ » : voir R-J6a"
+  },
+  {
+    "id": "R-J4d",
+    "vers": [
+          "JAZ-0058"
+        ],
+    "sujet": "noms de sourates réduits à un mot (exceptions de « naẓar » et « ghayẓ »)",
+    "traduction_choisie": "Sauf [dans] « wayl » [= al-Muṭaffifīn], « hal » [= al-Insān] et « ūlā » [= la première sourate d al-Qiyāma] : « nāḍira » [ḍād] ; et [pour] « al-ghayẓ » [ẓāʾ], sauf [dans] ar-Raʿd et Hūd [ḍād] ; « qāṣira ».",
+    "source_1": {
+            "page": "Ḥawāshī p. 20 (image n22)",
+            "extrait": "« الأول من المستثنيات نضرة النعيم في المطففين ... وهل أتى نضرة وسرورا ... ثالثها وجوه يومئذ ناضرة في القيامة » ; « الغيظ بالظاء المشالة ... إلا غيض الماء في هود وما تغيض الأرحام في الرعد ... قصرت ظاؤهما وصارت ضادا »"
+          },
+    "source_2": "Minaḥ : à relever",
+    "choix_hafs": "les mots sont ceux du muṣḥaf de Médine (Tanzil : 83:24, 76:11, 75:22 ; 11:44 et 13:8 en ḍād) ; aucune règle propre à Ḥafṣ"
+  },
+  {
+    "id": "R-J4e",
+    "vers": [
+          "JAZ-0061"
+        ],
+    "sujet": "« واضطر مع وعظت مع أفضتم / وصف ها جباههم عليهم »",
+    "traduction_choisie": "« uḍṭurra » [ṭāʾ], avec « waʿaẓta » [ẓāʾ + tāʾ] et « afaḍtum » [ḍād + tāʾ] ; et dégage le hāʾ de « jibāhuhum » et le yāʾ de « ʿalayhim » [ṣalawāt].",
+    "source_1": {
+            "page": "Ḥawāshī p. 21 (image n23)",
+            "extrait": "« اشتمل كلامه على ثلاث مسائل : الأولى أن يبين الضاد المعجمة من الطاء المهملة من قوله فمن اضطر ؛ الثانية أن يبين الظاء المشالة من التاء من نحو أوعظت ؛ الثالثة أن يبين الضاد المعجمة من التاء من نحو فإذا أفضتم ... وصف ها جباههم عليهم أمر بتصفية الهاء ... وصفة الياء من نحو عليهم صلوات »"
+          },
+    "source_2": "Minaḥ : à relever",
+    "choix_hafs": "identique pour Ḥafṣ"
+  },
+  {
+    "id": "R-J4f",
+    "vers": [
+          "JAZ-0067"
+        ],
+    "sujet": "« عنونوا » et le nūn dans un même mot",
+    "traduction_choisie": "Fais la fusion avec son nasal dans « yūmin », sauf dans un mot [où nūn et lettre suivante sont dans la même parole], comme « dunyā » : « ʿanwinū » [= donne-leur ce titre : « ʿunwān »].",
+    "source_1": {
+            "page": "Ḥawāshī pp. 22-23 (images n24-n25), lu par le madjlis",
+            "extrait": "« صنوان ودنيا وبنيان وقنوان » ; jeu de mots avec « عنوان »"
+          },
+    "source_2": "Minaḥ : à relever",
+    "choix_hafs": "identique pour Ḥafṣ (Tuḥfa TUH-0011 : « دنيا ثم صنوان تلا »)"
+  },
+  {
+    "id": "R-J5",
+    "vers": [
+          "JAZ-0027"
+        ],
+    "sujet": "« من لم يجود القرآن آثم »",
+    "traduction_choisie": "celui qui ne perfectionne pas la récitation du Coran est pécheur [litt. « fautif »].",
+    "source_1": {
+            "page": "Ḥawāshī p. 11 (image n13)",
+            "extrait": "« ... والأخذ بالتجويد أي العمل به حتم أي واجب لازم لكل قارئ ... ومعناه من لم يراع قواعد التجويد في قراءته فهو عاص آثم بعصيانه »"
+          },
+    "source_2": "Minaḥ : à relever",
+    "choix_hafs": "ton aligné sur qc2.l01 (lue en lecture seule) : l erreur discrète « ne change pas le sens, mais le tajwid demande de l éviter » ; la leçon ne condamne personne.",
+    "note_eleve_fr": "Le poète emploie un mot très fort. Retiens-en le but : lire le Coran comme il nous a été transmis, de maître en élève. Celui qui apprend, s applique et corrige ses erreurs est sur le bon chemin ; le mot vise celui qui néglige volontairement de l apprendre. Personne, dans la classe, n a à juger quelqu un."
+  },
+  {
+    "id": "R-J6a",
+    "vers": [
+          "JAZ-0043"
+        ],
+    "sujet": "« فرق » (26:63)",
+    "traduction_choisie": "La divergence existe à propos de « firq », à cause de la kasra [qui s y trouve].",
+    "source_1": {
+            "page": "Ḥawāshī p. 15 (image n17)",
+            "extrait": "« اختلفوا في فرق ... فمنهم من رققها وهو مكي ومتابعوه ... ومنهم من فخمها وهو الداني »"
+          },
+    "source_2": "Minaḥ : à relever",
+    "choix_hafs": "conforme à qc2.l14 : les deux lectures sont admises, aucune n est exigée ; l élève suit son maître"
+  },
+  {
+    "id": "R-J6b",
+    "vers": [
+          "JAZ-0046"
+        ],
+    "sujet": "« نخلقكم » (77:20)",
+    "traduction_choisie": "et le désaccord est survenu au sujet de « nakhluqkum ».",
+    "source_1": {
+            "page": "Ḥawāshī p. 15 (image n17)",
+            "extrait": "« ... ألم نخلقكم ... فذهب مكي وغيره إلى إبقاء الصفة وذهب الداني ومن والاه إلى ذهابها »"
+          },
+    "source_2": "Minaḥ : à relever",
+    "choix_hafs": "NON TRANCHÉ par une source de référence lue directement : pour Ḥafṣ par ash-Shāṭibiyya, le texte de la voie (Ḥirz al-amānī) et un traité de Ḥafṣ (ex. al-Muṣaffā) sont à consulter ; en attendant : note d explication seulement, rien dans les livres, l élève suit son maître (idghām imparfait ou complet admis selon l école)"
+  },
+  {
+    "id": "R-J6c",
+    "vers": [
+          "JAZ-0050",
+          "JAZ-0051"
+        ],
+    "sujet": "exceptions à la fusion : « في يوم », « قالوا وهم », « قل نعم », « سبحه », « تزغ قلوب », « فالتقم »",
+    "traduction_choisie": "telle que dans traduction_fr.json (JAZ-0050, 0051)",
+    "source_1": {
+            "page": "Ḥawāshī pp. 16-17 (images n18-n19)",
+            "extrait": "« ... استثناء مما تقدم من القاعدة وهي أنه إذا كان أول المثلين أو المتجانسين ساكنا فإنه يدغم إلا إذا امتنع من ذلك مانع فإنه يظهر وذلك نحو في يوم كان ونحو قالوا وهم فيهما وعلة ذلك المحافظة على المد »"
+          },
+    "source_2": "Minaḥ : à relever",
+    "choix_hafs": "valable pour Ḥafṣ : clarté dans ces cas ; qc3.l01-02 enseignent les fusions sans cette liste : l ajouter au madjlis, pas aux livres"
+  },
+  {
+    "id": "R-J6d",
+    "vers": [
+          "JAZ-0059"
+        ],
+    "sujet": "« ظنين » (81:24)",
+    "traduction_choisie": "et pour « ẓanīn », la divergence est [bien] connue.",
+    "source_1": {
+            "page": "Ḥawāshī p. 20 (image n22)",
+            "extrait": "« ... وفي ظنين الخلاف سامي ... في التكوير قرأ قرأ أبو عمرو وابن كثير والكسائي بالظاء المشالة ... وقرأ نافع وابن عامر وعاصم وحمزة بالضاد المعجمة »"
+          },
+    "source_2": "Minaḥ : à relever",
+    "choix_hafs": "Ḥafṣ : « بِضَنِينٍ » avec ḍād (81:24, exemple Tanzil dans R11)"
+  },
+  {
+    "id": "R-J7",
+    "vers": [
+          "JAZ-0079",
+          "JAZ-0100"
+        ],
+    "sujet": "tracé du muṣḥaf : références au rasm de Médine",
+    "statut_recherche": "Abū Dāwud Sulaymān b. Najāḥ, Mukhtaṣar at-tabyīn li-hijāʾ at-tanzīl, et ad-Dānī, al-Muqniʿ fī maʿrifat marsūm maṣāḥif al-amṣār : textes non ouverts à ce jour (aucune édition ancienne libre repérée sur archive.org) ; les occurrences et références coraniques de chaque règle sont dans la Ḥawāshī pp. 28-33 (images n30-n35), lues pour ce passage.",
+    "niveau": "les 22 vers (JAZ-0079 à 0100) sont marqués niveau_min « adulte » et facultatif, placés dans les dernières séances (JAZ-S23 à S26, ordre de publication 28 à 31)"
+  }
+],
+  "regles": [
+    {
+      "regle": "JAZ-R01",
+      "sujet": "Les 17 points d'articulation",
+      "jazariyya": [
+        "JAZ-0009",
+        "JAZ-0010",
+        "JAZ-0011",
+        "JAZ-0012",
+        "JAZ-0013",
+        "JAZ-0014",
+        "JAZ-0015",
+        "JAZ-0016",
+        "JAZ-0017",
+        "JAZ-0018",
+        "JAZ-0019"
+      ],
+      "source_majmuʿ": {
+        "page": 316,
+        "extrait_consonantique": [
+          "JAZ-0009 : مخارج الحروف سبعة عشر * على الذي يختاره من اختبر",
+          "JAZ-0010 : فالف الجوف واختاها وهي * حروف مد للهواء تنتهي",
+          "JAZ-0011 : ثم لاقصى الحلق همز هاء * ثم لوسطه فعين حاء",
+          "JAZ-0012 : ادناه غين خاوها والقاف * اقصى اللسان فوق ثم الكاف",
+          "JAZ-0013 : اسفل والوسط فجيم الشين يا * والضاد من حافته اذ وليا",
+          "JAZ-0014 : الاضراس من ايسر او يمناها * واللام ادناها لمنتهاها",
+          "JAZ-0015 : والنون من طرفه تحت اجعلوا * والرا يدانيه لظهر ادخلوا",
+          "JAZ-0016 : والطاء والدال وتا منه ومن * عليا الثنايا والصفير مستكن",
+          "JAZ-0017 : منه ومن فوق الثنايا السفلى * والظاء والذال وثا للعليا",
+          "JAZ-0018 : من طرفيهما ومن بطن الشفه * فالفا مع اطراف الثنايا المشرفه",
+          "JAZ-0019 : للشفتين الواو باء ميم * وغنة مخرجها الخيشوم"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": null,
+        "extrait": null,
+        "nature": "pages non relues : aucun renvoi"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "la Tuḥfa ne traite pas des points d'articulation (SOURCES_TUHFA § 6)",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [
+          "l02",
+          "l03",
+          "l04"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T12"
+        ]
+      },
+      "relation": "complément",
+      "note_fr": "Les livres regroupent les points en 5 zones (cavité, gorge, langue, lèvres, nez) ; la Jazariyya les détaille en 17. Les ordres de présentation diffèrent mais les points sont les mêmes (à vérifier lettre par lettre par un relecteur).",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R02",
+      "sujet": "Les qualités des lettres (jahr, hams, shidda, istiʿlāʾ, iṭbāq…)",
+      "jazariyya": [
+        "JAZ-0020",
+        "JAZ-0021",
+        "JAZ-0022",
+        "JAZ-0023",
+        "JAZ-0024",
+        "JAZ-0025",
+        "JAZ-0026"
+      ],
+      "source_majmuʿ": {
+        "page": 317,
+        "extrait_consonantique": [
+          "JAZ-0020 : صفاتها جهر ورخو مستفل * منفتح مصمتة والضد قل",
+          "JAZ-0021 : مهموسها فحثه شخص سكت * شديدها لفظ اجد قط بكت",
+          "JAZ-0022 : وبين رخو والشديد لن عمر * وسبع علو خص ضغط قظ حصر",
+          "JAZ-0023 : وصاد ضاد طاء ظاء مطبقه * وفر من لب الحروف المذلقه",
+          "JAZ-0024 : صفيرها صاد وزاي سين * قلقلة قطب جد واللين",
+          "JAZ-0025 : واو وياء سكنا وانفتحا * قبلهما والانحراف صححا",
+          "JAZ-0026 : في اللام والرا وبتكرير جعل * وللتفشي الشين ضادا استطل"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          10
+        ],
+        "extrait": [
+          "JAZ-0020 : صفاتها جهر ورخو مستفل * منفتح مصمتة والضد قل",
+          "JAZ-0021 : مهموسها فحثه شخص سكت * شديدها لفظ اجد قط بكت",
+          "JAZ-0022 : وبين رخو والشديد لن عمر * وسبع علو خص ضغط قظ حصر",
+          "JAZ-0023 : وصاد ضاد طاء ظاء مطبقه * وفر من لب الحروف المذلقه",
+          "JAZ-0024 : صفيرها صاد وزاي سين * قلقلة قطب جد واللين",
+          "JAZ-0025 : واو وياء سكنا وانفتحا * قبلهما والانحراف صححا",
+          "JAZ-0026 : في اللام والرا وبتكرير جعل * وللتفشي الشين ضادا استطل"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [
+          "l04",
+          "l19"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T3",
+          "T12"
+        ]
+      },
+      "relation": "complément",
+      "note_fr": "Les livres n'enseignent pas toute la liste des qualités (jahr, hams, rakhāwa…) : ils retiennent le rebond, l'épaisseur, le son nasal. Écart de niveau : la Jazariyya va plus loin (cycle 3).",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿لَمْ يَلِدْ وَلَمْ يُولَدْ﴾",
+          "ref_fr": "al-Ikhlāṣ 112:3",
+          "ref": "112:3",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "rebond du dāl sans voyelle",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R03",
+      "sujet": "Le tajwīd est obligatoire ; sa définition",
+      "jazariyya": [
+        "JAZ-0027",
+        "JAZ-0028",
+        "JAZ-0029",
+        "JAZ-0030",
+        "JAZ-0031",
+        "JAZ-0032",
+        "JAZ-0033"
+      ],
+      "source_majmuʿ": {
+        "page": 317,
+        "extrait_consonantique": [
+          "JAZ-0027 : والاخذ بالتجويد حتم لازم * من لم يجود القران اثم",
+          "JAZ-0028 : لانه به الاله انزلا * وهكذا منه الينا وصلا",
+          "JAZ-0029 : وهو ايضا حلية التلاوة * وزينة الاداء والقراءة",
+          "JAZ-0030 : وهو اعطاء الحروف حقها * من صفة لها ومستحقها",
+          "JAZ-0031 : ورد كل واحد لاصله * واللفظ في نظيره كمثله",
+          "JAZ-0032 : مكملا من غير ما تكلف * باللطف في النطق بلا تعسف",
+          "JAZ-0033 : وليس بينه وبين تركه * الا رياضة امري بفكه"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          11,
+          12
+        ],
+        "extrait": [
+          "JAZ-0027 : والاخذ بالتجويد حتم لازم * من لم يجود القران اثم",
+          "JAZ-0028 : لانه به الاله انزلا * وهكذا منه الينا وصلا",
+          "JAZ-0029 : وهو ايضا حلية التلاوة * وزينة الاداء والقراءة",
+          "JAZ-0030 : وهو اعطاء الحروف حقها * من صفة لها ومستحقها",
+          "JAZ-0031 : ورد كل واحد لاصله * واللفظ في نظيره كمثله",
+          "JAZ-0032 : مكملا من غير ما تكلف * باللطف في النطق بلا تعسف",
+          "JAZ-0033 : وليس بينه وبين تركه * الا رياضة امري بفكه"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [
+          "l01"
+        ],
+        "qc3": [],
+        "hifz": []
+      },
+      "relation": "complément",
+      "note_fr": "qc2.l01 (« Pourquoi le tajwid ? ») ; point RÉFÉRENT R-J5 : le poème dit « آثم » (pécheur) : à exprimer avec la prudence du livre, qui parle de lecture correcte sans condamner l'élève.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R04",
+      "sujet": "Finesse des lettres d'abaissement ; alif et hamza",
+      "jazariyya": [
+        "JAZ-0034",
+        "JAZ-0035",
+        "JAZ-0036"
+      ],
+      "source_majmuʿ": {
+        "page": 317,
+        "extrait_consonantique": [
+          "JAZ-0034 : ورققن مستفلا من احرف * وحاذرن تفخيم لفظ الالف",
+          "JAZ-0035 : وهمز الحمد اعوذ اهدنا * الله ثم لام لله لنا",
+          "JAZ-0036 : وليتلطف وعلى الله ولا الض * والميم من مخمصة ومن مرض"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          12,
+          13
+        ],
+        "extrait": [
+          "JAZ-0034 : ورققن مستفلا من احرف * وحاذرن تفخيم لفظ الالف",
+          "JAZ-0035 : وهمز الحمد اعوذ اهدنا * الله ثم لام لله لنا",
+          "JAZ-0036 : وليتلطف وعلى الله ولا الض * والميم من مخمصة ومن مرض"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [
+          "l13",
+          "l19"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T5"
+        ]
+      },
+      "relation": "complément",
+      "note_fr": "Le livre qc2.l13 traite du lām du nom d'Allah ; le reste (hamza de « الحمد », mīm de « مخمصة ») est propre à la Jazariyya.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿هُوَ ٱللَّهُ أَحَدٌ﴾",
+          "ref_fr": "al-Ikhlāṣ 112:1",
+          "ref": "112:1",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "lām du nom d'Allah épais après ḍamma",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R05",
+      "sujet": "Force et sonorité du bāʾ et du jīm ; rebond ; ḥāʾ et sīn",
+      "jazariyya": [
+        "JAZ-0037",
+        "JAZ-0038",
+        "JAZ-0039",
+        "JAZ-0040"
+      ],
+      "source_majmuʿ": {
+        "page": 317,
+        "extrait_consonantique": [
+          "JAZ-0037 : وباء برق باطل بهم بذي * فاحرص على الشدة والجهر الذي",
+          "JAZ-0038 : فيها وفي الجيم كحب الصبر * وربوة اجتثت وحج الفجر",
+          "JAZ-0039 : وبينن مقلقلا ان سكنا * وان يكن في الوقف كان ابينا",
+          "JAZ-0040 : وحاء حصحص احطت الحق * وسين مستقيم يسطو يسقو"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          13
+        ],
+        "extrait": [
+          "JAZ-0037 : وباء برق باطل بهم بذي * فاحرص على الشدة والجهر الذي",
+          "JAZ-0038 : فيها وفي الجيم كحب الصبر * وربوة اجتثت وحج الفجر",
+          "JAZ-0039 : وبينن مقلقلا ان سكنا * وان يكن في الوقف كان ابينا",
+          "JAZ-0040 : وحاء حصحص احطت الحق * وسين مستقيم يسطو يسقو"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [
+          "l19"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T3"
+        ]
+      },
+      "relation": "complément",
+      "note_fr": "Le rebond : qc2.l19 et hifz T3 ; les degrés (petit, grand, plus fort) du livre ne sont pas dans le poème (« plus net à l'arrêt » seulement).",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿لَمْ يَلِدْ وَلَمْ يُولَدْ﴾",
+          "ref_fr": "al-Ikhlāṣ 112:3",
+          "ref": "112:3",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "rebond du dāl sans voyelle",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R06",
+      "sujet": "Le rāʾ : fin ou épais",
+      "jazariyya": [
+        "JAZ-0041",
+        "JAZ-0042",
+        "JAZ-0043"
+      ],
+      "source_majmuʿ": {
+        "page": 318,
+        "extrait_consonantique": [
+          "JAZ-0041 : ورقق الراء اذا ما كسرت * كذاك بعد الكسر حيث سكنت",
+          "JAZ-0042 : ان لم تكن من قبل حرف استعلا * او كانت الكسرة ليست اصلا",
+          "JAZ-0043 : والخلف في فرق لكسر يوجد * واخف تكريرا اذا تشدد"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          14,
+          15
+        ],
+        "extrait": [
+          "JAZ-0041 : ورقق الراء اذا ما كسرت * كذاك بعد الكسر حيث سكنت",
+          "JAZ-0042 : ان لم تكن من قبل حرف استعلا * او كانت الكسرة ليست اصلا",
+          "JAZ-0043 : والخلف في فرق لكسر يوجد * واخف تكريرا اذا تشدد"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [
+          "l14"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T9"
+        ]
+      },
+      "relation": "identique avec écart à signaler",
+      "note_fr": "qc2.l14 donne des règles plus détaillées (kasra ʿāriḍa, lettre d'élévation). Pour « فِرْقٍ » (v. 43) : le poème dit « اختلاف » ; qc2.l14 admet les deux lectures sans les exiger (R-J6).",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿مِن شَرِّ ٱلْوَسْوَاسِ﴾",
+          "ref_fr": "an-Nās 114:4",
+          "ref": "114:4",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "rāʾ avec kasra : fin",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R07",
+      "sujet": "Le lām du nom d'Allah : épais après fatḥa ou ḍamma",
+      "jazariyya": [
+        "JAZ-0044"
+      ],
+      "source_majmuʿ": {
+        "page": 318,
+        "extrait_consonantique": [
+          "JAZ-0044 : وفخم اللام من اسم الله * عن فتح او ضم كعبد الله"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          15
+        ],
+        "extrait": [
+          "JAZ-0044 : وفخم اللام من اسم الله * عن فتح او ضم كعبد الله"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa (la Tuḥfa traite du lām de l'article, TUH-0024-029)",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [
+          "l13"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T5"
+        ]
+      },
+      "relation": "identique",
+      "note_fr": "Poème : épaissir après fatḥa ou ḍamma (la finesse après kasra est sous-entendue ; Ḥawāshī p. 15, lue).",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿هُوَ ٱللَّهُ أَحَدٌ﴾",
+          "ref_fr": "al-Ikhlāṣ 112:1",
+          "ref": "112:1",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "lām du nom d'Allah épais après ḍamma",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R08",
+      "sujet": "Épaississement des lettres d'élévation ; iṭbāq ; « أحطت »",
+      "jazariyya": [
+        "JAZ-0045",
+        "JAZ-0046"
+      ],
+      "source_majmuʿ": {
+        "page": 318,
+        "extrait_consonantique": [
+          "JAZ-0045 : وحرف الاستعلاء فخم واخصصا * الاطباق اقوى نحو قال والعصا",
+          "JAZ-0046 : وبين الاطباق من احطت مع * بسطت والخلف بنخلقكم وقع"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          15
+        ],
+        "extrait": [
+          "JAZ-0045 : وحرف الاستعلاء فخم واخصصا * الاطباق اقوى نحو قال والعصا",
+          "JAZ-0046 : وبين الاطباق من احطت مع * بسطت والخلف بنخلقكم وقع"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [
+          "l19"
+        ],
+        "qc3": [
+          "l01"
+        ],
+        "hifz": [
+          "T12"
+        ]
+      },
+      "relation": "complément",
+      "note_fr": "« نخلقكم » (v. 46) : divergence (Makkī / ad-Dānī) exposée par la Ḥawāshī p. 15 ; nos livres ne la traitent pas (non trouvée). R-J6.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿أَلَمْ نَخْلُقكُّم﴾",
+          "ref_fr": "al-Mursalāt 77:20",
+          "ref": "77:20",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "qāf sans voyelle devant kāf (point RÉFÉRENT R-J6 : voir rapport)",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R09",
+      "sujet": "Garder le sukūn ; ouverture ; force du kāf et du tāʾ",
+      "jazariyya": [
+        "JAZ-0047",
+        "JAZ-0048",
+        "JAZ-0049"
+      ],
+      "source_majmuʿ": {
+        "page": 318,
+        "extrait_consonantique": [
+          "JAZ-0047 : واحرص على السكون في جعلنا * انعمت والمغضوب مع ضللنا",
+          "JAZ-0048 : وخلص انفتاح محذورا عسى * خوف اشتباهه بمحظورا عسى",
+          "JAZ-0049 : وراع شدة بكاف وبتا * كشرككم وتتوفى فتنتا"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          16
+        ],
+        "extrait": [
+          "JAZ-0047 : واحرص على السكون في جعلنا * انعمت والمغضوب مع ضللنا",
+          "JAZ-0048 : وخلص انفتاح محذورا عسى * خوف اشتباهه بمحظورا عسى",
+          "JAZ-0049 : وراع شدة بكاف وبتا * كشرككم وتتوفى فتنتا"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [
+          "l19"
+        ],
+        "qc3": [],
+        "hifz": []
+      },
+      "relation": "complément",
+      "note_fr": "Série d'avertissements de prononciation à l'adresse du lecteur (« جعلنا », « أنعمت », « المغضوب », « ضللنا »).",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿أَنْعَمْتَ عَلَيْهِمْ﴾",
+          "ref_fr": "al-Fātiḥa 1:7",
+          "ref": "1:7",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "nūn sans voyelle devant ع : clarté",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R10",
+      "sujet": "Fusion des lettres identiques, sœurs et voisines ; exceptions",
+      "jazariyya": [
+        "JAZ-0050",
+        "JAZ-0051"
+      ],
+      "source_majmuʿ": {
+        "page": 318,
+        "extrait_consonantique": [
+          "JAZ-0050 : واولي مثل وجنس ان سكن * ادغم كقل رب وبل لا وابن",
+          "JAZ-0051 : في يوم مع قالوا وهم وقل نعم * سبحه لا تزغ قلوب فالتقم"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          16
+        ],
+        "extrait": [
+          "JAZ-0050 : واولي مثل وجنس ان سكن * ادغم كقل رب وبل لا وابن",
+          "JAZ-0051 : في يوم مع قالوا وهم وقل نعم * سبحه لا تزغ قلوب فالتقم"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0030",
+          "TUH-0031",
+          "TUH-0032",
+          "TUH-0033",
+          "TUH-0034"
+        ],
+        "chapitre_fr": "lettres identiques, voisines et sœurs (mithlān, mutaqāribān, mutajānisān)",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [],
+        "qc3": [
+          "l01",
+          "l02"
+        ],
+        "hifz": [
+          "T13"
+        ]
+      },
+      "relation": "identique",
+      "note_fr": "La Tuḥfa (vers 30-34) et le livre qc3.l01 couvrent le même chapitre. Le poème énumère aussi les exceptions où la fusion n'a PAS lieu (« في يوم », « قالوا وهم », « قل نعم »…), à signaler au référent (R-J6) car qc3.l01-02 n'en donne pas la liste point par point.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿قَد تَّبَيَّنَ﴾",
+          "ref_fr": "al-Baqara 2:256",
+          "ref": "2:256",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "dāl sans voyelle devant tāʾ : fusion de lettres sœurs",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R11",
+      "sujet": "Ḍād et ẓāʾ : les distinguer ; liste des mots à ẓāʾ",
+      "jazariyya": [
+        "JAZ-0052",
+        "JAZ-0053",
+        "JAZ-0054",
+        "JAZ-0055",
+        "JAZ-0056",
+        "JAZ-0057",
+        "JAZ-0058",
+        "JAZ-0059",
+        "JAZ-0060",
+        "JAZ-0061"
+      ],
+      "source_majmuʿ": {
+        "page": "318-319",
+        "extrait_consonantique": [
+          "JAZ-0052 : والضاد باستطالة ومخرج * ميز من الظاء وكلها تجي",
+          "JAZ-0053 : في الظعن ظل الظهر عظم الحفظ * ايقظ وانظر عظم ظهر اللفظ",
+          "JAZ-0054 : ظاهر لظى شواظ كظم ظلما * اغلظ ظلام ظفر انتظر ظما",
+          "JAZ-0055 : اظفر ظنا كيف جا وعظ سوى * عضين ظل النحل زخرف سوا",
+          "JAZ-0056 : وظلت ظلتم وبروم ظلوا * كالحجر ظلت شعرا نظل",
+          "JAZ-0057 : يظللن محظورا مع المحتظر * وكنت فظا وجميع النظر",
+          "JAZ-0058 : الا بويل هل واولى ناضره * والغيظ لا الرعد وهود قاصره",
+          "JAZ-0059 : والحظ لا الحض على الطعام * وفي ظنين الخلاف سامي",
+          "JAZ-0060 : وان تلاقيا البيان لازم * انقض ظهرك يعض الظالم",
+          "JAZ-0061 : واضطر مع وعظت مع افضتم * وصف ها جباههم عليهم"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          17,
+          18,
+          19,
+          20,
+          21
+        ],
+        "extrait": [
+          "JAZ-0052 : والضاد باستطالة ومخرج * ميز من الظاء وكلها تجي",
+          "JAZ-0053 : في الظعن ظل الظهر عظم الحفظ * ايقظ وانظر عظم ظهر اللفظ",
+          "JAZ-0054 : ظاهر لظى شواظ كظم ظلما * اغلظ ظلام ظفر انتظر ظما",
+          "JAZ-0055 : اظفر ظنا كيف جا وعظ سوى * عضين ظل النحل زخرف سوا",
+          "JAZ-0056 : وظلت ظلتم وبروم ظلوا * كالحجر ظلت شعرا نظل",
+          "JAZ-0057 : يظللن محظورا مع المحتظر * وكنت فظا وجميع النظر",
+          "JAZ-0058 : الا بويل هل واولى ناضره * والغيظ لا الرعد وهود قاصره",
+          "JAZ-0059 : والحظ لا الحض على الطعام * وفي ظنين الخلاف سامي",
+          "JAZ-0060 : وان تلاقيا البيان لازم * انقض ظهرك يعض الظالم",
+          "JAZ-0061 : واضطر مع وعظت مع افضتم * وصف ها جباههم عليهم"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [
+          "l02",
+          "l03"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T12"
+        ]
+      },
+      "relation": "complément",
+      "note_fr": "T12 cite la paire ض/د et ظ/ذ pour le francophone ; la liste des mots à ẓāʾ n'est pas dans nos livres. « بضنين » (v. 59) : Ḥafṣ lit avec ḍād (la Ḥawāshī p. 20 le dit : Nāfiʿ, Ibn ʿĀmir, ʿĀṣim, Ḥamza), exemple Tanzil ci-dessous. R-J6.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿أَنقَضَ ظَهْرَكَ﴾",
+          "ref_fr": "ash-Sharḥ 94:3",
+          "ref": "94:3",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "ẓāʾ de « ظهرك » (rencontre ḍād/ẓāʾ : clarté)",
+          "voix_de_synthese": false
+        },
+        {
+          "coran": "﴿يَعَضُّ ٱلظَّالِمُ﴾",
+          "ref_fr": "al-Furqān 25:27",
+          "ref": "25:27",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "ḍād puis ẓāʾ : clarté",
+          "voix_de_synthese": false
+        },
+        {
+          "coran": "﴿بِضَنِينٍۢ﴾",
+          "ref_fr": "at-Takwīr 81:24",
+          "ref": "81:24",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "ḍād dans « بضنين » (Ḥafṣ ; autres lecteurs : ظنين)",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R12",
+      "sujet": "Son nasal sur nūn et mīm chaddés",
+      "jazariyya": [
+        "JAZ-0062"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0062 : واظهر الغنة من نون ومن * ميم اذا ما شددا واخفين"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          21
+        ],
+        "extrait": [
+          "JAZ-0062 : واظهر الغنة من نون ومن * ميم اذا ما شددا واخفين"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0017"
+        ],
+        "chapitre_fr": "le mīm et le nūn doublés (mushaddadatān)",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [
+          "l11"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T4"
+        ]
+      },
+      "relation": "identique",
+      "note_fr": "Poème : « أظهر الغنة من نون ومن ميم إذا ما شددا ».",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿إِنَّآ أَعْطَيْنَٰكَ﴾",
+          "ref_fr": "al-Kawthar 108:1",
+          "ref": "108:1",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "nūn doublé : son nasal",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R13",
+      "sujet": "Le mīm sans voyelle : trois règles",
+      "jazariyya": [
+        "JAZ-0062",
+        "JAZ-0063",
+        "JAZ-0064"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0062 : واظهر الغنة من نون ومن * ميم اذا ما شددا واخفين",
+          "JAZ-0063 : الميم ان تسكن بغنة لدى * باء على المختار من اهل الادا",
+          "JAZ-0064 : واظهرنها عند باقي الاحرف * واحذر لدى واو وفا ان تختفي"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          21
+        ],
+        "extrait": [
+          "JAZ-0062 : واظهر الغنة من نون ومن * ميم اذا ما شددا واخفين",
+          "JAZ-0063 : الميم ان تسكن بغنة لدى * باء على المختار من اهل الادا",
+          "JAZ-0064 : واظهرنها عند باقي الاحرف * واحذر لدى واو وفا ان تختفي"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0018",
+          "TUH-0019",
+          "TUH-0020",
+          "TUH-0021",
+          "TUH-0022",
+          "TUH-0023"
+        ],
+        "chapitre_fr": "règles du mīm sākin",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [
+          "l12"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T8"
+        ]
+      },
+      "relation": "identique",
+      "note_fr": "Poème : dissimulation labiale devant ب « على المختار » (avis retenu) ; iẓhār ailleurs ; vigilance devant و et ف (comme la Tuḥfa vers 22-23 et qc2.l12). Le poème ne nomme pas l'idghām shafawī (mīm devant mīm) dans ces vers : il est traité à JAZ-0050 (mithlayn).",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿تَرْمِيهِم بِحِجَارَةٍۢ﴾",
+          "ref_fr": "al-Fīl 105:4",
+          "ref": "105:4",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "mīm sans voyelle devant ب : dissimulation labiale",
+          "voix_de_synthese": false
+        },
+        {
+          "coran": "﴿أَطْعَمَهُم مِّن﴾",
+          "ref_fr": "Quraysh 106:4",
+          "ref": "106:4",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "mīm sans voyelle devant mīm : fusion",
+          "voix_de_synthese": false
+        },
+        {
+          "coran": "﴿عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ﴾",
+          "ref_fr": "al-Fātiḥa 1:7",
+          "ref": "1:7",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "mīm sans voyelle devant غ : clarté labiale",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R14",
+      "sujet": "Nūn sans voyelle et tanwīn : clarté devant les lettres de la gorge",
+      "jazariyya": [
+        "JAZ-0065",
+        "JAZ-0066"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0065 : وحكم تنوين ونون يلفى * اظهار ادغام وقلب اخفا",
+          "JAZ-0066 : فعند حرف الحلق اظهر وادغم * في اللام والرا لا بغنة لزم"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          21,
+          22
+        ],
+        "extrait": [
+          "JAZ-0065 : وحكم تنوين ونون يلفى * اظهار ادغام وقلب اخفا",
+          "JAZ-0066 : فعند حرف الحلق اظهر وادغم * في اللام والرا لا بغنة لزم"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0007",
+          "TUH-0008"
+        ],
+        "chapitre_fr": "iẓhār ḥalqī",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [
+          "l06"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T7"
+        ]
+      },
+      "relation": "identique",
+      "note_fr": "",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿أَنْعَمْتَ عَلَيْهِمْ﴾",
+          "ref_fr": "al-Fātiḥa 1:7",
+          "ref": "1:7",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "nūn sans voyelle devant ع : clarté",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R15",
+      "sujet": "Nūn sans voyelle et tanwīn : fusion sans son nasal (ل ر)",
+      "jazariyya": [
+        "JAZ-0066"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0066 : فعند حرف الحلق اظهر وادغم * في اللام والرا لا بغنة لزم"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          22
+        ],
+        "extrait": [
+          "JAZ-0066 : فعند حرف الحلق اظهر وادغم * في اللام والرا لا بغنة لزم"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0012"
+        ],
+        "chapitre_fr": "idghām sans ghunna",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [
+          "l07"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T7"
+        ]
+      },
+      "relation": "identique",
+      "note_fr": "",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿مِّن رَّبِّهِمْ﴾",
+          "ref_fr": "al-Baqara 2:5",
+          "ref": "2:5",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "nūn sans voyelle devant ر : fusion sans son nasal",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R16",
+      "sujet": "Nūn sans voyelle et tanwīn : fusion avec son nasal (ي ن م و) ; exception dans un même mot",
+      "jazariyya": [
+        "JAZ-0067"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0067 : وادغمن بغنة في يومن * الا بكلمة كدنيا عنونوا"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          22
+        ],
+        "extrait": [
+          "JAZ-0067 : وادغمن بغنة في يومن * الا بكلمة كدنيا عنونوا"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0009",
+          "TUH-0010",
+          "TUH-0011"
+        ],
+        "chapitre_fr": "idghām avec ghunna ; exception « dunyā, ṣinwān, bunyān, qinwān »",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [
+          "l07"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T7"
+        ]
+      },
+      "relation": "identique",
+      "note_fr": "Le poème donne l'exception par le mot « عنونوا » (jeu avec « عنوان »), la Tuḥfa par une liste (vers 11).",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿مَن يَقُولُ﴾",
+          "ref_fr": "al-Baqara 2:8",
+          "ref": "2:8",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "nūn sans voyelle devant ي : fusion avec son nasal",
+          "voix_de_synthese": false
+        },
+        {
+          "coran": "﴿ٱلدُّنْيَا﴾",
+          "ref_fr": "al-Baqara 2:85",
+          "ref": "2:85",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "nūn sans voyelle puis yāʾ dans un même mot : pas de fusion",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R17",
+      "sujet": "Nūn sans voyelle et tanwīn : conversion devant ب",
+      "jazariyya": [
+        "JAZ-0068"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0068 : والقلب عند البا بغنة كذا * الاخفا لدى باقي الحروف اخذا"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          23
+        ],
+        "extrait": [
+          "JAZ-0068 : والقلب عند البا بغنة كذا * الاخفا لدى باقي الحروف اخذا"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0013"
+        ],
+        "chapitre_fr": "iqlāb",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [
+          "l08"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T7"
+        ]
+      },
+      "relation": "identique",
+      "note_fr": "",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿مِنۢ بَعْدِ﴾",
+          "ref_fr": "al-Baqara 2:27",
+          "ref": "2:27",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "nūn sans voyelle devant ب : conversion en m",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R18",
+      "sujet": "Nūn sans voyelle et tanwīn : dissimulation devant les 15 autres lettres",
+      "jazariyya": [
+        "JAZ-0068"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0068 : والقلب عند البا بغنة كذا * الاخفا لدى باقي الحروف اخذا"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          23
+        ],
+        "extrait": [
+          "JAZ-0068 : والقلب عند البا بغنة كذا * الاخفا لدى باقي الحروف اخذا"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0014",
+          "TUH-0015",
+          "TUH-0016"
+        ],
+        "chapitre_fr": "ikhfāʾ",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [
+          "l09"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T7"
+        ]
+      },
+      "relation": "identique",
+      "note_fr": "La Jazariyya ne donne pas la liste des 15 lettres (la Tuḥfa le fait, vers 14-16).",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿نَسْتَعِينُ﴾",
+          "ref_fr": "al-Fātiḥa 1:5",
+          "ref": "1:5",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "nūn sans voyelle devant ت : dissimulation",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R19",
+      "sujet": "Madd lāzim (nécessaire)",
+      "jazariyya": [
+        "JAZ-0069",
+        "JAZ-0070"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0069 : والمد لازم وواجب اتى * وجايز وهو وقصر ثبتا",
+          "JAZ-0070 : فلازم ان جاء بعد حرف مد * ساكن حالين وبالطول يمد"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          24,
+          25
+        ],
+        "extrait": [
+          "JAZ-0069 : والمد لازم وواجب اتى * وجايز وهو وقصر ثبتا",
+          "JAZ-0070 : فلازم ان جاء بعد حرف مد * ساكن حالين وبالطول يمد"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0047",
+          "TUH-0048",
+          "TUH-0049",
+          "TUH-0050",
+          "TUH-0051",
+          "TUH-0052"
+        ],
+        "chapitre_fr": "divisions du madd lāzim",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [
+          "l18"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T6"
+        ]
+      },
+      "relation": "identique (la Jazariyya ne détaille pas les divisions)",
+      "note_fr": "6 temps en lecture suivie et à l'arrêt.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿ٱلْحَآقَّةُ﴾",
+          "ref_fr": "al-Ḥāqqa 69:1",
+          "ref": "69:1",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "allongement nécessaire (lettre doublée après le alif)",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R20",
+      "sujet": "Madd wājib muttaṣil",
+      "jazariyya": [
+        "JAZ-0069",
+        "JAZ-0070",
+        "JAZ-0071"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0069 : والمد لازم وواجب اتى * وجايز وهو وقصر ثبتا",
+          "JAZ-0070 : فلازم ان جاء بعد حرف مد * ساكن حالين وبالطول يمد",
+          "JAZ-0071 : وواجب ان جاء قبل همزة * متصلا ان جمعا بكلمه"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          24,
+          25
+        ],
+        "extrait": [
+          "JAZ-0069 : والمد لازم وواجب اتى * وجايز وهو وقصر ثبتا",
+          "JAZ-0070 : فلازم ان جاء بعد حرف مد * ساكن حالين وبالطول يمد",
+          "JAZ-0071 : وواجب ان جاء قبل همزة * متصلا ان جمعا بكلمه"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0042",
+          "TUH-0043"
+        ],
+        "chapitre_fr": "madd wājib muttaṣil",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [
+          "l17"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T6"
+        ]
+      },
+      "relation": "identique",
+      "note_fr": "La Ḥawāshī (p. 25, lue) rappelle que les lecteurs diffèrent sur la durée (« deux alifs et demi » pour ʿĀṣim) : nos livres : 4 ou 5 temps.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿إِذَا جَآءَ نَصْرُ﴾",
+          "ref_fr": "an-Naṣr 110:1",
+          "ref": "110:1",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "allongement joint : hamza dans le même mot",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R21",
+      "sujet": "Madd jāʾiz munfaṣil : « allongement ou raccourcissement »",
+      "jazariyya": [
+        "JAZ-0069",
+        "JAZ-0070",
+        "JAZ-0071",
+        "JAZ-0072"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0069 : والمد لازم وواجب اتى * وجايز وهو وقصر ثبتا",
+          "JAZ-0070 : فلازم ان جاء بعد حرف مد * ساكن حالين وبالطول يمد",
+          "JAZ-0071 : وواجب ان جاء قبل همزة * متصلا ان جمعا بكلمه",
+          "JAZ-0072 : وجايز اذا اتى منفصلا * او عرض السكون وقفا مسجلا"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          24,
+          25
+        ],
+        "extrait": [
+          "JAZ-0069 : والمد لازم وواجب اتى * وجايز وهو وقصر ثبتا",
+          "JAZ-0070 : فلازم ان جاء بعد حرف مد * ساكن حالين وبالطول يمد",
+          "JAZ-0071 : وواجب ان جاء قبل همزة * متصلا ان جمعا بكلمه",
+          "JAZ-0072 : وجايز اذا اتى منفصلا * او عرض السكون وقفا مسجلا"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0044"
+        ],
+        "chapitre_fr": "madd jāʾiz munfaṣil",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [
+          "l17"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T6"
+        ]
+      },
+      "relation": "ÉCART : le poème admet le raccourcissement (qaṣr) ; Ḥafṣ-Shāṭibiyya (notre référence) : 4 ou 5 temps, pas de qaṣr",
+      "note_fr": "R-J1. Même point signalé pour la Tuḥfa (SOURCES_TUHFA § 6, point 1). Dans l'explication, dire que la Jazariyya écrit pour l'ensemble des lectures.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim, voie d'ash-Shāṭibiyya : 4 ou 5 temps pour le madd séparé ; le raccourcissement (qaṣr) appartient à d'autres lectures ou voies, que la Jazariyya mentionne, et n'est pas celle de l'élève",
+      "exemples_coran": [
+        {
+          "coran": "﴿بِمَآ أُنزِلَ إِلَيْكَ﴾",
+          "ref_fr": "al-Baqara 2:4",
+          "ref": "2:4",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "allongement séparé : hamza au début du mot suivant",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R22",
+      "sujet": "Allongement dû à l'arrêt (ʿāriḍ li-s-sukūn)",
+      "jazariyya": [
+        "JAZ-0072"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0072 : وجايز اذا اتى منفصلا * او عرض السكون وقفا مسجلا"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          25
+        ],
+        "extrait": [
+          "JAZ-0072 : وجايز اذا اتى منفصلا * او عرض السكون وقفا مسجلا"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [
+          "TUH-0045"
+        ],
+        "chapitre_fr": "madd ʿāriḍ li-s-sukūn",
+        "statut": "numérotation recalée le 13/10/2026 sur tuhfa/texte_ar.json (TUH-0001 à TUH-0061) : chaque renvoi a été relu, les 61 identifiants correspondent aux chapitres cités"
+      },
+      "livres": {
+        "qc2": [
+          "l18"
+        ],
+        "qc3": [],
+        "hifz": [
+          "T10"
+        ]
+      },
+      "relation": "identique",
+      "note_fr": "2, 4 ou 6 temps, même durée dans toute la récitation (qc2.l18).",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿وَإِيَّاكَ نَسْتَعِينُ﴾",
+          "ref_fr": "al-Fātiḥa 1:5",
+          "ref": "1:5",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "allongement dû à l'arrêt (sur نستعين)",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R23",
+      "sujet": "Les arrêts et le départ : complet, suffisant, bon, laid",
+      "jazariyya": [
+        "JAZ-0073",
+        "JAZ-0074",
+        "JAZ-0075",
+        "JAZ-0076",
+        "JAZ-0077",
+        "JAZ-0078"
+      ],
+      "source_majmuʿ": {
+        "page": 319,
+        "extrait_consonantique": [
+          "JAZ-0073 : وبعد تجويدك للحروف * لا بد من معرفة الوقوف",
+          "JAZ-0074 : والابتداء وهي تقسم اذن * ثلاثة تام وكاف وحسن",
+          "JAZ-0075 : وهي لما تم فان لم يوجد * تعلق او كان معنى فابتدي",
+          "JAZ-0076 : فالتام فالكافي ولفظا فامنعن * الا رووس الاي جوز فالحسن",
+          "JAZ-0077 : وغير ما تم قبيح وله * الوقف مضطرا ويبدا قبله",
+          "JAZ-0078 : وليس في القران من وقف وجب * ولا حرام غير ما له سبب"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          26,
+          27
+        ],
+        "extrait": [
+          "JAZ-0073 : وبعد تجويدك للحروف * لا بد من معرفة الوقوف",
+          "JAZ-0074 : والابتداء وهي تقسم اذن * ثلاثة تام وكاف وحسن",
+          "JAZ-0075 : وهي لما تم فان لم يوجد * تعلق او كان معنى فابتدي",
+          "JAZ-0076 : فالتام فالكافي ولفظا فامنعن * الا رووس الاي جوز فالحسن",
+          "JAZ-0077 : وغير ما تم قبيح وله * الوقف مضطرا ويبدا قبله",
+          "JAZ-0078 : وليس في القران من وقف وجب * ولا حرام غير ما له سبب"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "la Tuḥfa ne traite pas des arrêts",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [],
+        "qc3": [
+          "l05",
+          "l07"
+        ],
+        "hifz": [
+          "T11"
+        ]
+      },
+      "relation": "complément",
+      "note_fr": "Les livres enseignent les signes d'arrêt du Muṣḥaf (م، ج، صلى، قلى، لا) ; le poème donne les catégories sur lesquelles reposent ces signes. Les signes sont des repères d'éditeurs : ne pas les confondre avec les catégories.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R24",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "sujet": "Tracé du Muṣḥaf : mots séparés et mots joints",
+      "jazariyya": [
+        "JAZ-0079",
+        "JAZ-0080",
+        "JAZ-0081",
+        "JAZ-0082",
+        "JAZ-0083",
+        "JAZ-0084",
+        "JAZ-0085",
+        "JAZ-0086",
+        "JAZ-0087",
+        "JAZ-0088",
+        "JAZ-0089",
+        "JAZ-0090",
+        "JAZ-0091",
+        "JAZ-0092",
+        "JAZ-0093"
+      ],
+      "source_majmuʿ": {
+        "page": "319-320",
+        "extrait_consonantique": [
+          "JAZ-0079 : واعرف لمقطوع وموصول وتا * في مصحف الامام فيما قد اتى",
+          "JAZ-0080 : فاقطع بعشر كلمات ان لا * مع ملجا ولا اله الا",
+          "JAZ-0081 : وتعبدوا ياسين ثاني هود لا * يشركن تشرك يدخلن تعلوا على",
+          "JAZ-0082 : ان لا يقولوا لا اقول ان ما * بالرعد والمفتوح صل وعن ما",
+          "JAZ-0083 : نهوا اقطعوا من ما ملكت روم النسا * خلف المنافقين ام من اسسا",
+          "JAZ-0084 : الانعام والمفتوح يدعون معا * وخلف الانفال ونحل وقعا",
+          "JAZ-0085 : فصلت النسا ذبح حيث ما * وان لم المفتوح كسر ان ما",
+          "JAZ-0086 : وكل ما سالتموه واختلف * ردوا كذا قل بيسما والوصل صف",
+          "JAZ-0087 : خلفتموني واشتروا في ما قطعا * اوحى افضتم اشتهت يبلو معا",
+          "JAZ-0088 : ثاني فعلن وقعت روم كلا * تنزيل شعرا وغير ذي صلا",
+          "JAZ-0089 : فاينما كالنحل صل ومختلف * في الشعرا الاحزاب والنسا وصف",
+          "JAZ-0090 : وصل فالم هود ان لن نجعلا * نجمع كيلا تحزنوا تاسوا على",
+          "JAZ-0091 : حج عليك حرج وقطعهم * عن من يشاء من تولى يوم هم",
+          "JAZ-0092 : ومال هذا والذين هولا * تحين في الامام صل وهلا",
+          "JAZ-0093 : ووزنوهم وكالوهم صل * كذا من ال وها ويا لا انفصل"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          28,
+          29
+        ],
+        "extrait": [
+          "JAZ-0079 : واعرف لمقطوع وموصول وتا * في مصحف الامام فيما قد اتى",
+          "JAZ-0080 : فاقطع بعشر كلمات ان لا * مع ملجا ولا اله الا",
+          "JAZ-0081 : وتعبدوا ياسين ثاني هود لا * يشركن تشرك يدخلن تعلوا على",
+          "JAZ-0082 : ان لا يقولوا لا اقول ان ما * بالرعد والمفتوح صل وعن ما",
+          "JAZ-0083 : نهوا اقطعوا من ما ملكت روم النسا * خلف المنافقين ام من اسسا",
+          "JAZ-0084 : الانعام والمفتوح يدعون معا * وخلف الانفال ونحل وقعا",
+          "JAZ-0085 : فصلت النسا ذبح حيث ما * وان لم المفتوح كسر انما",
+          "JAZ-0086 : وكل ما سالتموه واختلف * ردوا كذا قل بيسما والوصل صف",
+          "JAZ-0087 : خلفتموني واشتروا في ما قطعا * اوحى افضتم اشتهت يبلو معا",
+          "JAZ-0088 : ثاني فعلن وقعت روم كلا * تنزيل شعرا وغير ذي صلا",
+          "JAZ-0089 : فاينما كالنحل صل ومختلف * في الشعرا الاحزاب والنسا وصف",
+          "JAZ-0090 : وصل فالم هود ان لن نجعلا * نجمع كيلا تحزنوا تاسوا على",
+          "JAZ-0091 : حج عليك حرج وقطعهم * عن من يشاء من تولى يوم هم",
+          "JAZ-0092 : ومال هذا والذين هولا * تحين في الامام صل وهلا",
+          "JAZ-0093 : ووزنوهم وكالوهم صل * كذا من ال وها ويا لا انفصل"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [],
+        "qc3": [
+          "l04",
+          "l09"
+        ],
+        "hifz": []
+      },
+      "relation": "non couvert par nos livres",
+      "note_fr": "Recherche par mots-clés dans qc1-qc3 et hifz : seules qc3.l04 et qc3.l09 mentionnent le sujet, en passant (à relire). Le tracé que nous affichons est celui de Tanzil (Muṣḥaf de Médine) ; ne pas faire dépendre la lecture de l'élève de ces listes. R-J7.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿أَن لَّآ أَقُولَ﴾",
+          "ref_fr": "al-Aʿrāf 7:105",
+          "ref": "7:105",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "tracé : « أن » séparé de « لا »",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R25",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "sujet": "Tracé du Muṣḥaf : le tāʾ ouvert",
+      "jazariyya": [
+        "JAZ-0094",
+        "JAZ-0095",
+        "JAZ-0096",
+        "JAZ-0097",
+        "JAZ-0098",
+        "JAZ-0099",
+        "JAZ-0100"
+      ],
+      "source_majmuʿ": {
+        "page": 320,
+        "extrait_consonantique": [
+          "JAZ-0094 : ورحمت الزخرف بالتا زبره * الاعراف روم هود كاف البقره",
+          "JAZ-0095 : نعمتها ثلاث نحل ابرهم * معا اخيرات عقود الثان هم",
+          "JAZ-0096 : لقمان ثم فاطر كالطور * عمران لعنت بها والنور",
+          "JAZ-0097 : وامرات يوسف عمران القصص * تحريم معصيت بقد سمع يخص",
+          "JAZ-0098 : شجرت الدخان سنت فاطر * كلا والانفال وحرف غافر",
+          "JAZ-0099 : قرت عين جنت في وقعت * فطرت بقيت وابنت وكلمت",
+          "JAZ-0100 : اوسط الاعراف وكل ما اختلف * جمعا وفردا فيه بالتا عرف"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          32,
+          33
+        ],
+        "extrait": [
+          "JAZ-0094 : ورحمت الزخرف بالتا زبره * الاعراف روم هود كاف البقره",
+          "JAZ-0095 : نعمتها ثلاث نحل ابرهم * معا اخيرات عقود الثان هم",
+          "JAZ-0096 : لقمان ثم فاطر كالطور * عمران لعنت بها والنور",
+          "JAZ-0097 : وامرات يوسف عمران القصص * تحريم معصيت بقد سمع يخص",
+          "JAZ-0098 : شجرت الدخان سنت فاطر * كلا والانفال وحرف غافر",
+          "JAZ-0099 : قرت عين جنت في وقعت * فطرت بقيت وابنت وكلمت",
+          "JAZ-0100 : اوسط الاعراف وكل ما اختلف * جمعا وفردا فيه بالتا عرف"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [],
+        "qc3": [],
+        "hifz": []
+      },
+      "relation": "non couvert par nos livres",
+      "note_fr": "Aucun de nos livres de tajwīd ne traite du tāʾ ouvert/fermé. R-J7.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿رَحْمَتَ ٱللَّهِ﴾",
+          "ref_fr": "al-Baqara 2:218",
+          "ref": "2:218",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "tracé : tāʾ ouvert dans « رحمت »",
+          "voix_de_synthese": false
+        },
+        {
+          "coran": "﴿نِعْمَتَ ٱللَّهِ﴾",
+          "ref_fr": "Ibrāhīm 14:28",
+          "ref": "14:28",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "tracé : tāʾ ouvert dans « نعمت »",
+          "voix_de_synthese": false
+        },
+        {
+          "coran": "﴿شَجَرَتَ ٱلزَّقُّومِ﴾",
+          "ref_fr": "ad-Dukhān 44:43",
+          "ref": "44:43",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "tracé : tāʾ ouvert dans « شجرت »",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R26",
+      "sujet": "La hamzat al-waṣl : départ de la lecture",
+      "jazariyya": [
+        "JAZ-0101",
+        "JAZ-0102",
+        "JAZ-0103"
+      ],
+      "source_majmuʿ": {
+        "page": "320-321",
+        "extrait_consonantique": [
+          "JAZ-0101 : وابدا بهمز الوصل من فعل بضم * ان كان ثالث من الفعل يضم",
+          "JAZ-0102 : واكسره حال الكسر والفتح وفي * الاسماء غير اللام كسرها وفي",
+          "JAZ-0103 : ابن مع ابنت امري واثنين * وامراة واسم مع اثنتين"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          33
+        ],
+        "extrait": [
+          "JAZ-0101 : وابدا بهمز الوصل من فعل بضم * ان كان ثالث من الفعل يضم",
+          "JAZ-0102 : واكسره حال الكسر والفتح وفي * الاسماء غير اللام كسرها وفي",
+          "JAZ-0103 : ابن مع ابنت امري واثنين * وامراة واسم مع اثنتين"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "la Tuḥfa ne traite que de l'article « ال »",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [],
+        "qc3": [
+          "l03",
+          "l04"
+        ],
+        "hifz": []
+      },
+      "relation": "complément",
+      "note_fr": "qc3.l03 : « fatḥa, ḍamma ou kasra ? » ; les sept noms qui prennent la hamzat al-waṣl sont propres au poème.",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    },
+    {
+      "regle": "JAZ-R27",
+      "sujet": "Arrêt par le souffle de voyelle (rawm) et l'arrondi des lèvres (ishmām)",
+      "jazariyya": [
+        "JAZ-0104",
+        "JAZ-0105"
+      ],
+      "source_majmuʿ": {
+        "page": 321,
+        "extrait_consonantique": [
+          "JAZ-0104 : وحاذر الوقف بكل الحركه * الا اذا رمت فبعض حركه",
+          "JAZ-0105 : الا بفتح او بنصب واشم * اشارة بالضم في رفع وضم"
+        ],
+        "nature": "voyelles ôtées et hamzas normalisées en alif ; correspond à l'imprimé M (Majmūʿ 1306), sous réserve des hamzas"
+      },
+      "source_hawashi": {
+        "pages": [
+          35
+        ],
+        "extrait": [
+          "JAZ-0104 : وحاذر الوقف بكل الحركه * الا اذا رمت فبعض حركه",
+          "JAZ-0105 : الا بفتح او بنصب واشم * اشارة بالضم في رفع وضم"
+        ],
+        "nature": "matn cité entre parenthèses dans la Ḥawāshī aux pages indiquées (forme consonantique) ; commentaire de Khālid al-Azharī à ces pages"
+      },
+      "tuhfa": {
+        "ids": [],
+        "chapitre_fr": "hors Tuḥfa",
+        "statut": "hors Tuḥfa"
+      },
+      "livres": {
+        "qc2": [],
+        "qc3": [
+          "l05"
+        ],
+        "hifz": [
+          "T1"
+        ]
+      },
+      "relation": "identique avec réserve",
+      "note_fr": "qc3.l05 : le rawm est signalé au guide seulement ; l'ishmām est enseigné pour « تَأْمَنَّا » (12:11).",
+      "lecture_enseignee_fr": "Ḥafṣ ʿan ʿĀṣim par la voie d'ash-Shāṭibiyya (notre référence ; comme le muṣḥaf de Médine, D5)",
+      "exemples_coran": [
+        {
+          "coran": "﴿تَأْمَ۫نَّا﴾",
+          "ref_fr": "Yūsuf 12:11",
+          "ref": "12:11",
+          "source": "Tanzil quran-uthmani (copie par script)",
+          "role_fr": "arrondi des lèvres (ishmām) : signe du Muṣḥaf de Médine",
+          "voix_de_synthese": false
+        }
+      ],
+      "validation": "EN_ATTENTE_SECONDE_LECTURE"
+    }
+  ]
+}

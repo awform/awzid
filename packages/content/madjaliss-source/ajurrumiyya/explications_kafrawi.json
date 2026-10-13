@@ -1,0 +1,633 @@
+{
+ "titre": "Explications d'après al-Kafrāwī — al-Ājurrūmiyya",
+ "statut": "EN_ATTENTE_SECONDE_LECTURE",
+ "date": "2026-10-13",
+ "principe": "Chaque explication renvoie à un extrait d'al-Kafrāwī (page imprimée, numéro d'image du scan, extrait copié tel qu'imprimé, sans voyelles) ; le texte français est rédigé par Awzid, avec ses propres mots. Commentaire de référence : al-Kafrāwī. Daḥlān (Mukhtaṣar jiddan) et Khālid al-Azharī ont été ouverts le 13/10 pour les points litigieux (EXP-11, EXP-15) : leurs extraits sont dans les champs « dahlan » et « khalid ». At-Tuḥfa as-saniyya (protégée) n'a pas été utilisée. Les versets cités par al-Kafrāwī ne sont pas du matn : ils sont copiés depuis Tanzil, entre ﴿﴾, avec voix_de_synthese false.",
+ "couverture": "Ce lot ne couvre pas tout le matn : 19 explications, aux points où le matn demande un éclaircissement (définitions, comptes, variantes, termes). Les autres phrases sont couvertes par la traduction seule ; les séances renvoient à ce fichier quand une explication existe.",
+ "lecture_du_scan": "Pagination : la page imprimée = l'image du scan − 2. Les extraits ont été lus sur l'image (typographie ancienne, sans voyelles ; hamza souvent omise) et copiés tels qu'imprimés ; ils sont à reverifier sur papier (les chiffres de page ont été vérifiés sur l'image). Les extraits des 13/10 (Daḥlān, Khālid, A2) sont écrits en orthographe moderne, sans voyelles, mot pour mot ; ils sont à re-vérifier sur papier.",
+ "explications": [
+  {
+   "id": "EXP-01",
+   "phrases": [
+    "AJR-0001"
+   ],
+   "sujet": "Le discours : composé, utile, par convention",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 4,
+     "image_scan": 6,
+     "extrait_ar": "يعني أن تعريف الكلام عند النحويين هو اللفظ المركب الى آخره"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 4,
+     "image_scan": 6,
+     "extrait_ar": "والمفيد ما أفاد فائدة تامة يحسن السكوت من المتكلم عليها"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 4,
+     "image_scan": 6,
+     "extrait_ar": "وقوله بالوضع أي العربي وهو جعل اللفظ دليلا على المعنى"
+    }
+   ],
+   "explication_fr": "Pour al-Kafrāwī, la définition du matn est celle des grammairiens. Le « composé » est ce qui est fait d'au moins deux mots ; l'« utile » est ce qui apporte une information complète, de sorte que celui qui écoute n'attend rien de plus ; « par convention » veut dire : selon l'usage de la langue arabe, qui a posé tel énoncé comme signe de tel sens. Un mot isolé n'est donc pas un « discours » au sens des grammairiens, même s'il a un sens ; une langue étrangère non plus. Les linguistes (p. 5) emploient « discours » dans un sens plus large : tout ce qu'on dit, mot seul ou phrase."
+  },
+  {
+   "id": "EXP-02",
+   "phrases": [
+    "AJR-0002"
+   ],
+   "sujet": "Les trois parties : nom, verbe, particule",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 6,
+     "image_scan": 8,
+     "extrait_ar": "والثالث الحرف ومعناه لغة الطرف واصطلاحا كلمة دلت على معنى في غيرها"
+    }
+   ],
+   "explication_fr": "La particule (ḥarf) est définie par al-Kafrāwī comme un mot dont le sens n'existe que dans un autre mot : seule, elle ne dit rien de complet. Le nom et le verbe, eux, ont un sens en eux-mêmes ; le verbe y ajoute le temps (p. 6). C'est cette différence qui explique la liste de signes du verset suivant du matn : on distingue le nom, le verbe et la particule par ce que chacun accepte ou refuse."
+  },
+  {
+   "id": "EXP-03",
+   "phrases": [
+    "AJR-0003"
+   ],
+   "sujet": "Le khafḍ, le tanwīn et l'article comme signes du nom",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 7,
+     "image_scan": 9,
+     "extrait_ar": "والخفض معناه لغة ضد الرفع وهو التسفل واصطلاحا تغيير مخصوص علامته الكسرة وما ناب عنها"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 8,
+     "image_scan": 10,
+     "extrait_ar": "والتنوين على أربعة أقسام تنوين التمكين"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 7,
+     "image_scan": 9,
+     "extrait_ar": "وأل في الاسم للعهد الذكري كما في قوله تعالى"
+    }
+   ],
+   "coran": [
+    {
+     "segments": [
+      {
+       "sourate": 73,
+       "verset": 15,
+       "mots": "7-11",
+       "texte": "كَمَآ أَرْسَلْنَآ إِلَىٰ فِرْعَوْنَ رَسُولًۭا"
+      },
+      {
+       "sourate": 73,
+       "verset": 16,
+       "mots": "1-3",
+       "texte": "فَعَصَىٰ فِرْعَوْنُ ٱلرَّسُولَ"
+      }
+     ],
+     "ar": "﴿كَمَآ أَرْسَلْنَآ إِلَىٰ فِرْعَوْنَ رَسُولًۭا فَعَصَىٰ فِرْعَوْنُ ٱلرَّسُولَ﴾",
+     "source": "Tanzil quran-uthmani (Ḥafṣ), copie figée coran/tanzil-uthmani.tsv, copiée octet par octet par script",
+     "voix_de_synthese": false
+    }
+   ],
+   "explication_fr": "Le khafḍ est, dans la langue, le contraire de l'élévation (rafʿ) : c'est « abaisser » ; en grammaire, c'est un changement précis dont la marque est la kasra ou ce qui la remplace. Le nom seul peut le recevoir : c'est un signe du nom. Al-Kafrāwī distingue ensuite quatre sortes de tanwīn (p. 8), dont seule la première (celle des noms qui reçoivent pleinement les marques) est un signe du nom au sens du matn. À propos de l'article, il cite le verset ci-dessous comme exemple de l'article de rappel : « le Messager » est celui dont on vient de parler."
+  },
+  {
+   "id": "EXP-04",
+   "phrases": [
+    "AJR-0003",
+    "AJR-0136",
+    "AJR-0137"
+   ],
+   "sujet": "Khafḍ (koufien) et jarr (basrien)",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 9,
+     "image_scan": 11,
+     "extrait_ar": "والخفض عبارة الكوفيين والجر عبارة البصريين"
+    }
+   ],
+   "explication_fr": "Al-Kafrāwī le dit en une phrase : khafḍ est le mot des Koufiens et jarr celui des Basriens. Ibn Ājurrūm emploie surtout le premier (« les particules du khafḍ », « les noms mis au khafḍ »), mais il écrit aussi « le préposé et son génitif » (jārr wa-majrūr) dans le chapitre du thème et du prédicat, et « au génitif » (majrūr) dans le chapitre de l'exception. Notre décision (12/10) : on garde khafḍ dans le texte arabe et on rend les deux mots par « génitif ». Ibn Mālik, de l'école de Baṣra, dit « jarr » : le référent a décidé (13/10) de rendre les deux mots par « génitif », le texte arabe gardant son mot, avec une note qui indique le mot employé."
+  },
+  {
+   "id": "EXP-05",
+   "phrases": [
+    "AJR-0004"
+   ],
+   "sujet": "Les signes du verbe",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 12,
+     "image_scan": 14,
+     "extrait_ar": "العلامة الأولى قد الحرفية وتدخل على الماضي وتكون للتحقيق"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 12,
+     "image_scan": 14,
+     "extrait_ar": "والتنفيس معناه الزمن القريب والتسويف معناه الزمن البعيد"
+    }
+   ],
+   "explication_fr": "Qad accompagne le passé pour affirmer (« certes, il a… ») ou le présent pour rendre rare ou nombreux ; la lettre sīn et sawfa ne vont qu'avec le présent et le tournent vers l'avenir, proche pour le premier, éloigné pour le second. Le tā' du féminin avec sukūn ne se met que sur un passé. Aucun de ces signes ne convient au nom ni à la particule : c'est pourquoi ils servent à reconnaître le verbe."
+  },
+  {
+   "id": "EXP-06",
+   "phrases": [
+    "AJR-0007"
+   ],
+   "sujet": "Définition de l'iʿrāb",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 14,
+     "image_scan": 16,
+     "extrait_ar": "يعني أن الاعراب عند من يقول انه معنوي هو تغيير أحوال أواخر الكلم بسبب دخول العوامل المختلفة"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 14,
+     "image_scan": 16,
+     "extrait_ar": "ومعناه لغة البيان"
+    }
+   ],
+   "explication_fr": "Dans la langue, iʿrāb veut dire « rendre clair ». Dans la grammaire, al-Kafrāwī le présente d'abord selon ceux qui le tiennent pour un fait de sens : c'est le changement de l'état de la fin des mots selon le régissant qui entre sur eux. Exemple qu'il donne : le même mot, avant qu'un régissant entre sur lui, n'est ni au nominatif ni invariable ; dès qu'un verbe qui demande le rafʿ le précède, il passe au rafʿ, et s'il est précédé de « rāʾaytu », au naṣb. « Apparent ou supposé » : la marque peut être entendue, ou seulement sous-entendue (sur une lettre faible, par exemple)."
+  },
+  {
+   "id": "EXP-07",
+   "phrases": [
+    "AJR-0028",
+    "AJR-0029",
+    "AJR-0027"
+   ],
+   "sujet": "Le jazm et ses deux marques",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 33,
+     "image_scan": 35,
+     "extrait_ar": "والجزم معناه لغة القطع واصطلاحا قطع الحركة أو الحرف من الفعل المضارع لاجل الجازم"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 33,
+     "image_scan": 35,
+     "extrait_ar": "يعني أن للجزم علامتين علامة أصلية وهي السكون وعلامة فرعية وهي الحذف"
+    }
+   ],
+   "explication_fr": "Jazm veut dire « couper » : on coupe la voyelle finale (sukūn) ou la lettre finale (chute) du verbe au présent, à cause de l'élément qui met au jazm. Al-Kafrāwī nomme le sukūn « marque d'origine » et la chute « marque secondaire » : le sukūn est la règle, la chute le remplaçant. C'est ce vocabulaire (originel, secondaire) que reprend le livre ad6 pour la leçon 2."
+  },
+  {
+   "id": "EXP-08",
+   "phrases": [
+    "AJR-0014",
+    "AJR-0038"
+   ],
+   "sujet": "Les cinq noms : conditions",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 24,
+     "image_scan": 26,
+     "extrait_ar": "ويشترط كونها مفردة مكبرة مضافة اضافة لغير ياء المتكلم"
+    }
+   ],
+   "explication_fr": "Les cinq noms n'ont le wāw, l'alif et le yā' comme marques que s'ils sont au singulier, au grand (non diminutif) et annexés à un autre mot que le « moi » (yā' du locuteur). Ibn Ājurrūm n'énonce pas ces conditions : il les suppose remplies dans ses exemples (« ton père », « ton frère »…). Si le nom est au duel, c'est la marque du duel qui s'applique ; au pluriel brisé, la ḍamma ; diminutif ou séparé de l'annexion, la marque redevient la ḍamma, la fatḥa, la kasra. Le matn donne cinq noms, sans « hanūka » : voir observation O-04."
+  },
+  {
+   "id": "EXP-09",
+   "phrases": [
+    "AJR-0041",
+    "AJR-0042"
+   ],
+   "sujet": "Passé, présent et impératif",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 6,
+     "image_scan": 8,
+     "extrait_ar": "فان دل على حدث وقع وانقطع فهو الماضي نحو ضرب"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 6,
+     "image_scan": 8,
+     "extrait_ar": "وان دل على حدث في زمن يقبل الحال والاستقبال فهو المضارع نحو يضرب"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 6,
+     "image_scan": 8,
+     "extrait_ar": "وان دل على حدث يقبل الاستقبال فهو الامر نحو اضرب"
+    }
+   ],
+   "explication_fr": "Le verbe désigne un événement dans le temps. Si l'événement a eu lieu et s'est achevé, c'est le passé ; s'il est dans un temps qui admet le présent comme l'avenir, c'est le présent ; s'il est demandé et n'admet que l'avenir, c'est l'impératif. Le matn en tire les règles de forme : le passé a toujours la fatḥa finale, l'impératif est toujours jussif, le présent est indicatif tant qu'un nāṣib ou un jāzim n'entre pas."
+  },
+  {
+   "id": "EXP-10",
+   "phrases": [
+    "AJR-0043"
+   ],
+   "sujet": "Les dix éléments qui mettent au naṣb",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 45,
+     "image_scan": 47,
+     "extrait_ar": "عشرة أربعة تنصب بنفسها وستة بغيرها"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 50,
+     "image_scan": 52,
+     "extrait_ar": "ومثال جواب النفي قوله تعالى"
+    }
+   ],
+   "coran": [
+    {
+     "segments": [
+      {
+       "sourate": 35,
+       "verset": 36,
+       "mots": "6-9",
+       "texte": "لَا يُقْضَىٰ عَلَيْهِمْ فَيَمُوتُوا۟"
+      }
+     ],
+     "ar": "﴿لَا يُقْضَىٰ عَلَيْهِمْ فَيَمُوتُوا۟﴾",
+     "source": "Tanzil quran-uthmani (Ḥafṣ), copie figée coran/tanzil-uthmani.tsv, copiée octet par octet par script",
+     "voix_de_synthese": false
+    }
+   ],
+   "explication_fr": "Sur les dix éléments, quatre agissent par eux-mêmes (an, lan, idhan, kay) ; les six autres le font par un « an » sous-entendu, qui est le véritable agent du naṣb : lām de but, lām de dénégation, ḥattā, la réponse introduite par fā' ou par wāw, et aw. Pour la réponse à une négation, al-Kafrāwī cite le verset ci-dessous : après le fā' de conséquence, le verbe « mourir » est au subjonctif."
+  },
+  {
+   "id": "EXP-11",
+   "phrases": [
+    "AJR-0044"
+   ],
+   "sujet": "Les jussifs : liste, comptes et idhā",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 58,
+     "image_scan": 60,
+     "extrait_ar": "ويوجد في بعض نسخ المتن زيادة (واذا في الشعر خاصة)"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 59,
+     "image_scan": 61,
+     "extrait_ar": "ولا يجزم بها الا في النظم دون النثر"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 58,
+     "image_scan": 60,
+     "extrait_ar": "عند الكوفيين ومنعه البصريون ولم يوجد لها شاهد من كلام العرب"
+    }
+   ],
+   "coran": [
+    {
+     "segments": [
+      {
+       "sourate": 38,
+       "verset": 8,
+       "mots": "15-17",
+       "texte": "لَّمَّا يَذُوقُوا۟ عَذَابِ"
+      }
+     ],
+     "ar": "﴿لَّمَّا يَذُوقُوا۟ عَذَابِ﴾",
+     "source": "Tanzil quran-uthmani (Ḥafṣ), copie figée coran/tanzil-uthmani.tsv, copiée octet par octet par script",
+     "voix_de_synthese": false
+    },
+    {
+     "segments": [
+      {
+       "sourate": 94,
+       "verset": 1,
+       "mots": "5-8",
+       "texte": "أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ"
+      }
+     ],
+     "ar": "﴿أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ﴾",
+     "source": "Tanzil quran-uthmani (Ḥafṣ), copie figée coran/tanzil-uthmani.tsv, copiée octet par octet par script",
+     "voix_de_synthese": false
+    },
+    {
+     "segments": [
+      {
+       "sourate": 2,
+       "verset": 197,
+       "mots": "18-23",
+       "texte": "وَمَا تَفْعَلُوا۟ مِنْ خَيْرٍۢ يَعْلَمْهُ ٱللَّهُ"
+      }
+     ],
+     "ar": "﴿وَمَا تَفْعَلُوا۟ مِنْ خَيْرٍۢ يَعْلَمْهُ ٱللَّهُ﴾",
+     "source": "Tanzil quran-uthmani (Ḥafṣ), copie figée coran/tanzil-uthmani.tsv, copiée octet par octet par script",
+     "voix_de_synthese": false
+    },
+    {
+     "segments": [
+      {
+       "sourate": 4,
+       "verset": 123,
+       "mots": "8-12",
+       "texte": "مَن يَعْمَلْ سُوٓءًۭا يُجْزَ بِهِۦ"
+      }
+     ],
+     "ar": "﴿مَن يَعْمَلْ سُوٓءًۭا يُجْزَ بِهِۦ﴾",
+     "source": "Tanzil quran-uthmani (Ḥafṣ), copie figée coran/tanzil-uthmani.tsv, copiée octet par octet par script",
+     "voix_de_synthese": false
+    },
+    {
+     "segments": [
+      {
+       "sourate": 7,
+       "verset": 132,
+       "mots": "2-12",
+       "texte": "مَهْمَا تَأْتِنَا بِهِۦ مِنْ ءَايَةٍۢ لِّتَسْحَرَنَا بِهَا فَمَا نَحْنُ لَكَ بِمُؤْمِنِينَ"
+      }
+     ],
+     "ar": "﴿مَهْمَا تَأْتِنَا بِهِۦ مِنْ ءَايَةٍۢ لِّتَسْحَرَنَا بِهَا فَمَا نَحْنُ لَكَ بِمُؤْمِنِينَ﴾",
+     "source": "Tanzil quran-uthmani (Ḥafṣ), copie figée coran/tanzil-uthmani.tsv, copiée octet par octet par script",
+     "voix_de_synthese": false
+    },
+    {
+     "segments": [
+      {
+       "sourate": 17,
+       "verset": 110,
+       "mots": "8-13",
+       "texte": "أَيًّۭا مَّا تَدْعُوا۟ فَلَهُ ٱلْأَسْمَآءُ ٱلْحُسْنَىٰ"
+      }
+     ],
+     "ar": "﴿أَيًّۭا مَّا تَدْعُوا۟ فَلَهُ ٱلْأَسْمَآءُ ٱلْحُسْنَىٰ﴾",
+     "source": "Tanzil quran-uthmani (Ḥafṣ), copie figée coran/tanzil-uthmani.tsv, copiée octet par octet par script",
+     "voix_de_synthese": false
+    },
+    {
+     "segments": [
+      {
+       "sourate": 4,
+       "verset": 78,
+       "mots": "1-4",
+       "texte": "أَيْنَمَا تَكُونُوا۟ يُدْرِككُّمُ ٱلْمَوْتُ"
+      }
+     ],
+     "ar": "﴿أَيْنَمَا تَكُونُوا۟ يُدْرِككُّمُ ٱلْمَوْتُ﴾",
+     "source": "Tanzil quran-uthmani (Ḥafṣ), copie figée coran/tanzil-uthmani.tsv, copiée octet par octet par script",
+     "voix_de_synthese": false
+    }
+   ],
+   "explication_fr": "Al-Kafrāwī passe en revue les dix-huit éléments un à un, avec un exemple et l'analyse de chacun. Trois remarques. (1) Il compte dix-huit sans « idhā » : pour lui, « idhā en poésie seulement » est une addition que portent certaines copies du matn ; il explique qu'elle met au jazm « en vers seulement, jamais en prose ». Notre texte (A1 et la lithographie de Fès) la porte : variante V-01. (2) Il dit de « kayfamā » qu'elle met au jazm selon les Koufiens, que les Basriens le refusent, et qu'on n'en trouve pas d'exemple dans la parole des Arabes ; il en parle comme d'une forme de manuel (p. 58). (3) Il illustre les particules par des versets : lammā, alam, les conditionnels mā, man, mahmā, ayyun, aynamā (voir ci-dessous, copiés depuis Tanzil). Ces versets sont cités par le commentateur, pas par l'auteur. L'édition d'Alger (A2) imprime la liste sans « kayfamā » et sans « khāṣṣatan », avec « idhā fī sh-shiʿr » : dix-huit termes ; une main ajoute les deux mots à la marge. Les dix-huit s'obtiennent donc de deux façons : avec kayfamā et sans idhā (al-Kafrāwī), ou avec idhā et sans kayfamā (A2 imprimé). Le texte d'A1 et de F a les deux (dix-neuf).",
+   "alger_A2": [
+    {
+     "edition": "Matn imprimé à Alger, 1283 H (A2, scan ACO columbia_aco003142) — texte arabe de Bresnier",
+     "page_imprimee": 8,
+     "image_scan": 16,
+     "extrait_ar": "وأيان وأين وأنى وحيثما وإذا في الشعر"
+    }
+   ]
+  },
+  {
+   "id": "EXP-12",
+   "phrases": [
+    "AJR-0067",
+    "AJR-0068"
+   ],
+   "sujet": "Pourquoi « nawāsikh » (modificateurs)",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 82,
+     "image_scan": 84,
+     "extrait_ar": "يعني أن هذا الباب معقود للعوامل التي تدخل على المبتدا والخبر فتنسخ حكمهما ولذلك تسمى النواسخ"
+    }
+   ],
+   "explication_fr": "Ce chapitre traite des régissants qui entrent sur le thème et le prédicat et « abrogent » (naskh) leur règle d'origine : le thème et le prédicat étaient au nominatif ; après kāna, inna ou ẓanna, l'un ou l'autre change de cas. C'est pourquoi on les appelle nawāsikh, « abrogeants ». Le livre ad6 (leçon 7) les nomme « modificateurs » ; ici la traduction du titre garde « régissants qui entrent sur le thème et le prédicat », littéral."
+  },
+  {
+   "id": "EXP-13",
+   "phrases": [
+    "AJR-0074",
+    "AJR-0075"
+   ],
+   "sujet": "ẓanna et ses sœurs : dix verbes, dont samiʿtu",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 91,
+     "image_scan": 93,
+     "extrait_ar": "ثم ذكر من ذلك عشرة أفعال أربعة منها تفيد ترجيح وقوع المفعول الثاني وثلاثة منها تفيد تحقيق وقوعه واثنان منها يفيدان التصيير والانتقال من حالة الى حالة أخرى وواحد منها يفيد حصول النسبة في السمع"
+    }
+   ],
+   "explication_fr": "Al-Kafrāwī répartit les dix verbes en quatre classes selon le sens : quatre expriment la probabilité (ẓanantu, ḥasibtu, khiltu, zaʿamtu), trois la certitude, deux la transformation d'un état en un autre (ittakhadhtu, jaʿaltu) et un, samiʿtu, la perception par l'ouïe. Son matn contient donc bien samiʿtu : la discussion signalée dans le dossier des sources (certains éditeurs l'omettent) ne se pose pas pour notre texte, qui suit A1, F et al-Kafrāwī."
+  },
+  {
+   "id": "EXP-14",
+   "phrases": [
+    "AJR-0089",
+    "AJR-0090"
+   ],
+   "sujet": "Le permutatif d'erreur",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 107,
+     "image_scan": 109,
+     "extrait_ar": "وهذا مثال لبدل الغلط ويسمى بدل البداء وبدل النسيان وبدل الاضراب"
+    }
+   ],
+   "explication_fr": "Le permutatif d'erreur porte aussi les noms de « permutatif de l'idée qui vient » (badāʾ), « d'oubli » et « de rectification ». Al-Kafrāwī analyse l'exemple du matn : celui qui parle voulait dire « le cheval », il a dit « Zayd » par erreur, puis il a mis le bon mot à la place. Il note que le verbe « permuter » est ici pris au sens courant (remplacer) et non au sens technique de la grammaire. Dans l'exemple du matn, la seconde personne (« tu voulais… ») est celle du texte imprimé : variante V-02 (coquille d'A1)."
+  },
+  {
+   "id": "EXP-15",
+   "phrases": [
+    "AJR-0092",
+    "AJR-0093"
+   ],
+   "sujet": "Les « quinze » noms à l'accusatif : ce que disent al-Kafrāwī, Daḥlān et Khālid al-Azharī",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 107,
+     "image_scan": 109,
+     "extrait_ar": "المنصوبات مبتدأ خمسة عشر خبر مبني على الفتح في محل رفع"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 136,
+     "image_scan": 138,
+     "extrait_ar": "يعني أن المتمم للمنصوبات الخمسة عشر خبر كان وما تصرف منها ونظائرها في العمل"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 136,
+     "image_scan": 138,
+     "extrait_ar": "وكذلك التوابع للمنصوبات من النعت والعطف والتوكيد والبدل"
+    }
+   ],
+   "dahlan": [
+    {
+     "edition": "Daḥlān, Sharḥ mukhtaṣar jiddan ʿalā matn al-Ājurrūmiyya (scan archive.org AAlexandrina-117912 ; édition à confirmer sur la page de titre)",
+     "page_imprimee": 20,
+     "image_scan": "n18",
+     "extrait_ar": "المنصوبات خمسة عشر وهي المفعول به والمصدر وظرف الزمان وظرف المكان والحال والتمييز والمستثنى واسم لا والمنادى وخبر كان وأخواتها واسم إن وأخواتها والمفعول من أجله والمفعول معه والتابع للمنصوب وهو أربعة أشياء النعت والعطف والتوكيد والبدل"
+    },
+    {
+     "edition": "Daḥlān, Sharḥ mukhtaṣar jiddan ʿalā matn al-Ājurrūmiyya (scan archive.org AAlexandrina-117912 ; édition à confirmer sur la page de titre)",
+     "page_imprimee": 20,
+     "image_scan": "n18",
+     "extrait_ar": "لما ذكر المنصوبات إجمالا شرع يذكرها تفصيلا ولم يذكر في التفصيل خبر كان وأخواتها واسم إن وأخواتها والتوابع لتقدم ذكرها في المرفوعات"
+    }
+   ],
+   "khalid": [
+    {
+     "edition": "Khālid al-Azharī, Sharḥ al-Ājurrūmiyya (scan ACO princeton_aco004298 ; al-Maṭbaʿa al-Maḥmūdiyya, 1315 H selon le dossier des sources)",
+     "page_imprimee": 31,
+     "image_scan": 37,
+     "extrait_ar": "المنصوبات من الأسماء خمسة عشر منصوبا وهي على سبيل الإجمال والتعداد"
+    },
+    {
+     "edition": "Khālid al-Azharī, Sharḥ al-Ājurrūmiyya (scan ACO princeton_aco004298 ; al-Maṭbaʿa al-Maḥmūdiyya, 1315 H selon le dossier des sources)",
+     "page_imprimee": 31,
+     "image_scan": 37,
+     "extrait_ar": "وخبر ما الحجازية نحو ما هذا بشرا وقد أخل بذكره ومفعولا ظننت وأخواتها نحو ظننت زيدا قائما"
+    },
+    {
+     "edition": "Khālid al-Azharī, Sharḥ al-Ājurrūmiyya (scan ACO princeton_aco004298 ; al-Maṭbaʿa al-Maḥmūdiyya, 1315 H selon le dossier des sources)",
+     "page_imprimee": 31,
+     "image_scan": 37,
+     "extrait_ar": "وإنما أسقط ما تقدم ذكرهما في المرفوعات أولا لكونهما داخلين في قسم المفعول به"
+    }
+   ],
+   "alger_A2": [
+    {
+     "edition": "Matn imprimé à Alger, 1283 H (A2, scan ACO columbia_aco003142) — texte arabe de Bresnier",
+     "page_imprimee": 15,
+     "image_scan": 23,
+     "extrait_ar": "قال رافعه سقط واحد من الخمسة عشر فإن حصرتها تجدها أربعة عشر فقط وأما الخامس عشر فلم أره في النسخ أبدا فلعله في ظن المصنف ما الحجازية وهي ما النافية تنصب خبرها مثل ليس"
+    }
+   ],
+   "bresnier": [
+    {
+     "edition": "Bresnier, Djaroumiya, grammaire arabe élémentaire, Alger, 2e éd. 1866 (scan archive.org AAlexandrina-144539)",
+     "page_imprimee": 25,
+     "image_scan": "OCR",
+     "extrait_fr": "Observation du traducteur, en marge du texte arabe : « l'auteur a omis l'un des quinze noms annoncés ; en effet, si vous les comptez, vous n'en trouverez que quatorze »."
+    }
+   ],
+   "explication_fr": "Le matn annonce « quinze » noms à l'accusatif. Dans l'édition de base (A1) il en énumère treize, puis ajoute « le suiveur de l'accusatif », qui est de quatre sortes. Aucun des trois commentateurs ouverts ne pose « treize plus tant égale quinze » ; voici ce que chacun écrit, page par page. 1) Al-Kafrāwī commente la phrase telle quelle (p. 107 : « quinze » est le prédicat de « les accusatifs ») et énumère les mêmes éléments (p. 107-108). À la p. 136 il dit que ce qui complète les quinze accusatifs, c'est le prédicat de kāna et le nom de inna avec leurs analogues, puis les suiveurs. Il ne donne pas le total : on ne peut pas en tirer de décompte chiffré. 2) Daḥlān (p. 20) donne la même liste (treize éléments et le suiveur) et ne commente pas le chiffre ; il note seulement que, dans la reprise détaillée, l'auteur laisse de côté le prédicat de kāna, le nom de inna et les suiveurs, déjà dits parmi les nominatifs. 3) Khālid al-Azharī (p. 31) énumère les treize, puis écrit que l'auteur a « omis » le prédicat de « mā » hijāzienne (exemple : mā hādhā basharan) et les deux compléments de ẓanna et de ses sœurs (exemple : ẓanantu Zaydan qāʾiman) ; la phrase qui suit, sur ce que l'auteur a laissé de côté parce que déjà dit parmi les nominatifs ou compris dans le complément d'objet, est à confirmer sur papier. Si l'on ajoute ces deux éléments aux treize, on atteint quinze (ce calcul est le nôtre : Khālid ne l'écrit pas), le suiveur restant à part. 4) L'édition d'Alger (A2), reprise par Bresnier, porte à la marge une note du copiste : en comptant, on ne trouve que quatorze éléments ; le quinzième n'est dans aucun manuscrit ; peut-être est-ce « mā » hijāzienne, qui nie à la façon de laysa (il cite al-Ḥarīrī, Mulḥat al-iʿrāb). Pour le madjlis : le texte est traduit tel quel (« quinze ») et l'élève apprend que le compte de l'auteur n'est expliqué chiffres en main par aucun de ces trois commentaires ; la lecture de Khālid est la seule qui atteigne quinze. L'affirmation du livre ad6 (« le quinzième est la paire des compléments de ẓanna ») n'est donc soutenue qu'à moitié : elle omet le prédicat de « mā » hijāzienne, et sa source (un commentaire moderne) n'est pas dans notre chaîne ; à corriger dans ad6 l23 (ecarts_terminologie_livres.md)."
+  },
+  {
+   "id": "EXP-16",
+   "phrases": [
+    "AJR-0095"
+   ],
+   "sujet": "Le complément d'objet",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 110,
+     "image_scan": 112,
+     "extrait_ar": "المفعول به في اصطلاح النحاة هو الاسم الذي يقع عليه فعل الفاعل"
+    }
+   ],
+   "explication_fr": "Le complément d'objet est le nom sur lequel tombe l'acte du sujet : celui qui est frappé, monté, vu… Il peut être un être raisonnable (« Zayd ») ou non (« le cheval ») : la grammaire n'y fait pas de différence. Le mot « complément » (mafʿūl) vient d'un acte « fait » à quelqu'un ou à quelque chose."
+  },
+  {
+   "id": "EXP-17",
+   "phrases": [
+    "AJR-0060"
+   ],
+   "sujet": "« Attribué au thème » : le sens de al-musnad ilayhi dans la définition du prédicat",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 76,
+     "image_scan": 78,
+     "extrait_ar": "المسند نعت ثان للاسم ونعت المرفوع مرفوع إليه إلى حرف جر والهاء ضمير عائد على المبتدأ"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 76,
+     "image_scan": 78,
+     "extrait_ar": "يعني أن الخبر هو الاسم المرفوع المسند إلى المبتدأ نحو قائم من قولك زيد قائم"
+    }
+   ],
+   "bresnier": [
+    {
+     "edition": "Bresnier, Djaroumiya, grammaire arabe élémentaire, Alger, 2e éd. 1866 (scan archive.org AAlexandrina-144539)",
+     "page_imprimee": 15,
+     "image_scan": "OCR",
+     "extrait_fr": "Il définit le prédicat comme le mot au nominatif « sur lequel s'appuie » le sujet : lecture inverse, non retenue."
+    }
+   ],
+   "explication_fr": "Dans « le prédicat est le nom au nominatif… », le matn ajoute un participe qui qualifie le prédicat. Pour al-Kafrāwī (p. 76), le hāʾ de « ilayhi » renvoie au thème : le prédicat est « le nom au nominatif attribué au thème », comme « qāʾim » dans « Zayd est debout ». Équivalents retenus par le référent : al-musnad = « ce qu'on attribue » (le prédicat) et al-musnad ilayhi = « ce à quoi on attribue » (le thème). Ici l'expression n'est pas le terme technique du thème mais un adjectif du prédicat : on la rend donc « attribué au thème ». Le commentaire n'offre pas de meilleur équivalent. Bresnier comprend l'inverse (le sujet « s'appuie » sur le prédicat) : cette lecture n'est pas celle d'al-Kafrāwī."
+  },
+  {
+   "id": "EXP-18",
+   "phrases": [
+    "AJR-0046",
+    "AJR-0093",
+    "AJR-0136"
+   ],
+   "sujet": "Le suiveur (tābiʿ) : quatre sortes et leur ordre",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 61,
+     "image_scan": 63,
+     "extrait_ar": "يعني أن السابع من المرفوعات التابع للمرفوع وهو ينقسم أربعة أقسام"
+    },
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 62,
+     "image_scan": 64,
+     "extrait_ar": "وإذا اجتمعت هذه التوابع قدم النعت ثم عطف البيان ثم التوكيد ثم البدل ثم عطف النسق"
+    }
+   ],
+   "bresnier": [
+    {
+     "edition": "Bresnier, Djaroumiya, grammaire arabe élémentaire, Alger, 2e éd. 1866 (scan archive.org AAlexandrina-144539)",
+     "page_imprimee": 12,
+     "image_scan": "OCR",
+     "extrait_fr": "Bresnier rend tābiʿ par « l'appositif, ou mot dépendant d'un nom au nominatif » : formulation plus vague que « le suiveur »."
+    }
+   ],
+   "explication_fr": "Le septième des nominatifs est le suiveur du nominatif, qui se divise en quatre sortes : l'épithète, la coordination, le corroboratif et le permutatif (al-Kafrāwī p. 61). Quand plusieurs suiveurs se suivent, il donne l'ordre : l'épithète, puis l'explicatif (ʿaṭf al-bayān), le corroboratif, le permutatif, et la coordination par particule en dernier (p. 62). « Le suiveur » est donc retenu : il dit ce que fait le mot (il suit le mot précédent dans son iʿrāb) ; « le mot qui suit » (ad6) est une variante sans avantage."
+  },
+  {
+   "id": "EXP-19",
+   "phrases": [
+    "AJR-0086"
+   ],
+   "sujet": "Le corroboratif suit le défini : pourquoi al-Kafrāwī ne lit pas « et son indéfinition »",
+   "kafrawi": [
+    {
+     "edition": "al-Kafrāwī, Sharḥ ʿalā matn al-Ājurrūmiyya, al-Maṭbaʿa al-Khidīwiyya, 1282 H (scan archive.org AAlexandrina-069933)",
+     "page_imprimee": 103,
+     "image_scan": 105,
+     "extrait_ar": "يعني أن التوكيد يكون تابعا للمؤكد في تعريفه فلا يكون تابعا للنكرة لأن ألفاظ التوكيد كلها معارف فلا تتبع النكرات فلذلك لم يقل وتنكيره خلافا للكوفيين"
+    }
+   ],
+   "alger_A2": [
+    {
+     "edition": "Matn imprimé à Alger, 1283 H (A2, scan ACO columbia_aco003142) — texte arabe de Bresnier",
+     "page_imprimee": 14,
+     "image_scan": 22,
+     "extrait_ar": "التوكيد تابع للمؤكد في رفعه ونصبه وخفضه وتعريفه ويكون بألفاظ معلومة"
+    }
+   ],
+   "explication_fr": "L'édition de base (A1) et la lithographie de Fès disent que le corroboratif suit le corroboré dans son rafʿ, son naṣb, son khafḍ, sa détermination et son indétermination. Le matn d'al-Kafrāwī (p. 103) n'a pas « et son indétermination », et il en donne la raison : les mots du corroboratif sont tous définis, ils ne peuvent donc pas suivre un indéfini ; il précise que les Koufiens pensent autrement. L'édition d'Alger (A2) lit comme al-Kafrāwī. Le texte d'A1 est gardé et la divergence est signalée à la seconde lecture."
+  }
+ ]
+}

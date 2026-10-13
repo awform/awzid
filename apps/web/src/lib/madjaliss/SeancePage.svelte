@@ -8,7 +8,7 @@
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import { ACTIFS } from './cycles';
-  import { chargerMatn, seancesPour, type Matn } from './donnees';
+  import { chargerMatn, matnPour, type Matn } from './donnees';
   import { lien } from './liens';
   import { lireProgres, type Progres } from './progression';
   import Seance from './Seance.svelte';
@@ -21,7 +21,9 @@
   let staff = $state(false);
   let etat = $state<'charge' | 'pret' | 'absent'>('charge');
 
-  const seances = $derived(matn ? seancesPour(matn, profil?.kind === 'enfant') : []);
+  // le texte tel que le voit ce profil : ni règles et lochies aux enfants, ni passages « adulte » aux enfants et ados
+  const vue = $derived(matn ? matnPour(matn, profil?.kind ?? null) : null);
+  const seances = $derived(vue?.seances ?? []);
   const seance = $derived(seances.find((s) => s.n === n) ?? null);
   const suivante = $derived(seances.find((s) => s.n > n)?.n ?? null);
 
@@ -47,8 +49,17 @@
   <Loading />
 {:else if etat === 'absent'}
   <EmptyState title={t(ACTIFS.has(id) ? 'mj.horsligne' : 'mj.introuvable')} />
-{:else if matn && seance && progres}
-  <Seance {matn} {seance} pid={profil?.id ?? null} enseignant={staff} {suivante} {progres} />
+{:else if vue && seance && progres}
+  <Seance matn={vue} {seance} pid={profil?.id ?? null} enseignant={staff} {suivante} {progres} />
+  <p class="statut" data-testid="mj-statut"><Bidi text={t('mj.statut')} /></p>
 {:else}
   <EmptyState title={t('mj.introuvable')} />
 {/if}
+
+<style>
+  .statut {
+    margin: var(--space-m) 0 0;
+    color: var(--ink2);
+    font-size: 0.9rem;
+  }
+</style>

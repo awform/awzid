@@ -5,55 +5,87 @@
   import { segments, type NotesEnseignant, type Phrase } from './donnees';
 
   /**
-   * Une phrase du texte : l'arabe vocalisé SUR SA LIGNE, la traduction dessous. Les mots du Coran cités par
-   * l'auteur sont affichés tels que Tanzil les donne (police du Coran, entre ﴿﴾, jamais modifiés). Un passage
-   * réservé à l'explication de l'enseignant (T7) n'est jamais affiché : seulement la mention « bientôt ».
-   * Mode enseignant : vocalisations « à vérifier » et variantes des témoins, sous la phrase.
+   * Une phrase du texte : l'arabe vocalisé SUR SA LIGNE (un vers : ses deux hémistiches, chacun sur sa ligne), la
+   * traduction dessous, puis les listes et exemples (chacun sur sa ligne), le sens du verset cité et les notes
+   * d'explication. Les mots du Coran cités par l'auteur sont affichés tels que Tanzil les donne (police du Coran,
+   * entre ﴿﴾, jamais modifiés). Un passage réservé à l'explication de l'enseignant (T7) n'est jamais affiché :
+   * seulement la mention « bientôt ». Mode enseignant : vocalisations « à vérifier », variantes des témoins, choix de
+   * traduction, sous la phrase.
    */
-  let { p, note = null }: { p: Phrase; note?: NotesEnseignant['phrases'][number] | null } =
-    $props();
-  const titre = $derived(p.t === 'titre');
+  let {
+    p,
+    statut = '',
+    note = null,
+  }: { p: Phrase; statut?: string; note?: NotesEnseignant['phrases'][number] | null } = $props();
+  const titre = $derived(p.t === 'titre' || p.t === 'vers_titre');
+  const blocs = $derived([
+    { nom: 'liste', lignes: p.liste ?? [] },
+    { nom: 'exemples', lignes: p.exemples ?? [] },
+  ]);
 </script>
 
-<article class="phrase" class:titre data-phrase={p.id} data-statut={p.statut}>
+<article class="phrase" class:titre data-phrase={p.id} data-statut={statut}>
   {#if p.explication}
     <p class="reserve" data-testid="explication-bientot">
       <Icon name="info" size={20} /><Bidi text={t('mj.explication_bientot')} />
     </p>
   {:else}
-    <p class="ar matn" lang="ar" dir="rtl">
-      {#each segments(p) as s, i (i)}{#if typeof s === 'string'}<Bidi
-            text={s}
-            base="ar"
-          />{:else}<span class="coran"
-            ><span class="orn" aria-hidden="true">﴿</span><span
-              class="quran-text"
-              data-coran={s.ref}>{s.q}</span
-            ><span class="orn" aria-hidden="true">﴾</span></span
-          >{/if}{/each}
+    {#if p.titre}<p class="inter ar" lang="ar" dir="rtl" data-testid="mj-intertitre">
+        <Bidi text={p.titre} base="ar" />
+      </p>{/if}
+    <p class="ar matn" class:vers={!!p.h} lang="ar" dir="rtl">
+      {#if p.h}<span class="hem"><Bidi text={p.h[0]} base="ar" /></span><span class="hem"
+          ><Bidi text={p.h[1]} base="ar" /></span
+        >{:else}{#each segments(p) as s, i (i)}{#if typeof s === 'string'}<Bidi
+              text={s}
+              base="ar"
+            />{:else}<span class="coran"
+              ><span class="orn" aria-hidden="true">﴿</span><span
+                class="quran-text"
+                data-coran={s.ref}>{s.q}</span
+              ><span class="orn" aria-hidden="true">﴾</span></span
+            >{/if}{/each}{/if}
     </p>
     {#if p.fr}<p class="fr"><Bidi text={p.fr} /></p>{/if}
-    {#if p.sens}
-      <div class="sens" data-sens={p.sens.ref}>
-        <p class="sens-titre"><Bidi text={t('mj.sens_verset')} /></p>
-        <p class="sens-texte"><Bidi text={p.sens.texte} /></p>
+    {#each blocs as b (b.nom)}
+      {#if b.lignes.length}
+        <div class="lignes" data-testid={`mj-${b.nom}`}>
+          <p class="lignes-titre"><Bidi text={t(`mj.${b.nom}`)} /></p>
+          <ul>
+            {#each b.lignes as l, i (i)}<li>
+                <span class="ar" lang="ar" dir="rtl"><Bidi text={l.ar} base="ar" /></span>
+                <span class="fr"><Bidi text={l.fr} /></span>
+              </li>{/each}
+          </ul>
+        </div>
+      {/if}
+    {/each}
+    {#each p.sens ?? [] as s (s.ref)}
+      <div class="sens" data-sens={s.ref}>
+        <p class="sens-titre"><Bidi text={`${t('mj.sens_verset')} (${s.ref})`} /></p>
+        <p class="sens-texte"><Bidi text={s.texte} /></p>
       </div>
-    {/if}
-    {#if p.note}
+    {/each}
+    {#each p.notes ?? [] as n, k (k)}
       <div class="note" data-testid="note-explication">
         <p class="note-titre"><Bidi text={t('mj.note')} /></p>
-        <p class="note-texte"><Bidi text={p.note.texte} /></p>
-        {#if p.note.sources?.length || p.note.ar?.length}
+        <p class="note-texte"><Bidi text={n.texte} /></p>
+        {#each n.q ?? [] as q, i (i)}<p class="cit coranique" lang="ar" dir="rtl">
+            <span class="orn" aria-hidden="true">﴿</span><span class="quran-text" data-coran={q.ref}
+              >{q.q}</span
+            ><span class="orn" aria-hidden="true">﴾</span>
+          </p>{/each}
+        {#if n.sources?.length || n.ar?.length}
           <details class="note-sources">
             <summary><Bidi text={t('mj.note_sources')} /></summary>
-            {#each p.note.sources ?? [] as s, i (i)}<p class="src"><Bidi text={s} /></p>{/each}
-            {#each p.note.ar ?? [] as a, i (i)}<p class="cit" lang="ar" dir="rtl">
+            {#each n.sources ?? [] as s, i (i)}<p class="src"><Bidi text={s} /></p>{/each}
+            {#each n.ar ?? [] as a, i (i)}<p class="cit" lang="ar" dir="rtl">
                 <Bidi text={a} base="ar" />
               </p>{/each}
           </details>
         {/if}
       </div>
-    {/if}
+    {/each}
   {/if}
   {#if note}
     <div class="ens" data-testid="note-enseignant">
@@ -71,6 +103,7 @@
           <strong><Bidi text={t('mj.ens_traduction')} /></strong>
           <Bidi text={note.traduction} />
         </p>{/if}
+      {#each note.notes_internes ?? [] as a, i (i)}<p><Bidi text={a} /></p>{/each}
       {#each note.ar ?? [] as a, i (i)}<p class="cit" lang="ar" dir="rtl">
           <Bidi text={a} base="ar" />
         </p>{/each}
@@ -94,6 +127,19 @@
     text-align: right;
     line-height: 2.1;
   }
+  .hem {
+    display: block;
+  }
+  .vers .hem + .hem {
+    padding-inline-end: 2.5em;
+  }
+  .inter {
+    margin: var(--space-s) 0 0;
+    text-align: center;
+    font-family: var(--font-ar-titre);
+    font-weight: 700;
+    line-height: 2;
+  }
   .titre .matn {
     font-family: var(--font-ar-titre);
     font-weight: 700;
@@ -113,6 +159,28 @@
   }
   .fr {
     margin: 0;
+  }
+  .lignes ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .lignes li {
+    display: grid;
+    gap: 0;
+  }
+  .lignes li .ar {
+    display: block;
+    text-align: right;
+    line-height: 1.9;
+  }
+  .lignes-titre {
+    margin: 4px 0 2px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--ink2);
   }
   .sens {
     border-inline-start: 3px solid var(--gold);
@@ -150,6 +218,9 @@
     text-align: right;
     line-height: 1.9;
     font-size: var(--ar-size);
+  }
+  .coranique .quran-text {
+    font-size: calc(var(--ar-size) + 2px);
   }
   .reserve {
     display: flex;

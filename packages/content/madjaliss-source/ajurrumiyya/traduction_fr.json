@@ -1,0 +1,2765 @@
+{
+ "oeuvre": "al-Muqaddima al-Ājurrūmiyya — texte complet (141 lignes : titres compris, colophon de l'éditeur à part), traduit le 13/10/2026",
+ "langue": "fr",
+ "traduction": "Traduction Awzid, faite depuis l'arabe (texte_ar.json, témoin A1), projet non relu. Bresnier (1846, domaine public) n'a servi à aucune phrase de la première traduction ; le 13/10 la traduction a été comparée à Bresnier sur les phrases à enjeu (journal_traduction.md), sans qu'aucune formulation n'en soit reprise ; al-Kafrāwī sert aux explications (explications_kafrawi.json), pas à la traduction.",
+ "mention_publique": "INTERDITE avant relecture : la mention « Traduction Awzid, relue par … » n'apparaît qu'après la relecture savante",
+ "statut_global": "EN_ATTENTE_SECONDE_LECTURE",
+ "conventions": [
+  "Traduction proche du texte ; tout ajout de sens est entre crochets [ ].",
+  "L'arabe ne se mêle jamais à la ligne française : la ligne « fr » ne contient aucun caractère arabe. Chaque exemple du texte est sur sa propre ligne (champ « exemples » : {ar, fr}) ; les énumérations fermées (particules, verbes, pronoms) sont dans le champ « liste » : {ar, fr}. La ligne française renvoie à ces lignes (« comme dans les exemples ci-dessous »).",
+  "Lexique de grammaire unique : lexique_grammaire.json (terme arabe d'abord, puis un seul équivalent français). Les termes décidés le 12/10 : nominatif (مرفوع), génitif (مجرور/مخفوض), jussif (مجزوم), permutatif (بدل), complément de cause (مفعول لأجله), interpellé (منادى), invariable (مبني), prédicat (خبر), thème (مبتدأ), sujet (فاعل). Le terme koufien khafḍ est gardé dans le texte arabe.",
+  "Les gloses des listes (« liste ») et les exemples traduits sont de ce lot : ils servent à comprendre le mot, ils ne font pas partie du matn.",
+  "Aucun verset n'est cité dans le matn : aucune traduction coranique n'est insérée ici.",
+  "Les noms propres des exemples (Zayd, ʿAmr, Hind, Bakr…) sont translittérés en caractères latins dans la ligne française.",
+  "Le champ « termes » liste les clés du lexique employées dans la phrase.",
+  "Décisions du référent (13/10) : « flexion (iʿrāb) », « variable » (muʿrab) / « invariable » (mabnī), « le suiveur » (tābiʿ) retenus ; khafḍ et jarr rendus tous deux par « génitif », avec la note du champ « note_khafd_jarr » ; « المنصوبات خمسة عشر » traduit tel quel (EXP-15)."
+ ],
+ "phrases": [
+  {
+   "id": "AJR-0001",
+   "fr": "Le discours (kalām) est l'énoncé composé qui est utile par convention.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "kalam",
+    "lafz",
+    "murakkab",
+    "mufid",
+    "wad"
+   ]
+  },
+  {
+   "id": "AJR-0002",
+   "fr": "Ses parties sont trois : le nom, le verbe, et la particule qui vient pour un sens.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "ism",
+    "fil",
+    "harf"
+   ]
+  },
+  {
+   "id": "AJR-0003",
+   "fr": "Le nom se reconnaît à : le khafḍ (génitif) ; le tanwīn ; l'entrée de l'article défini (l'alif et le lām) ; les particules du génitif (khafḍ), qui sont celles de la première liste ci-dessous ; et les particules du serment, qui sont celles de la seconde liste.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "مِنْ",
+     "fr": "de, à partir de"
+    },
+    {
+     "ar": "إِلَى",
+     "fr": "vers, jusqu'à"
+    },
+    {
+     "ar": "عَنْ",
+     "fr": "loin de, au sujet de"
+    },
+    {
+     "ar": "عَلَى",
+     "fr": "sur"
+    },
+    {
+     "ar": "فِي",
+     "fr": "dans"
+    },
+    {
+     "ar": "رُبَّ",
+     "fr": "maint, il arrive que"
+    },
+    {
+     "ar": "الْبَاءُ",
+     "fr": "le bā' (par, avec)"
+    },
+    {
+     "ar": "الْكَافُ",
+     "fr": "le kāf (comme)"
+    },
+    {
+     "ar": "اللَّامُ",
+     "fr": "le lām (pour, à)"
+    },
+    {
+     "ar": "الْوَاوُ",
+     "fr": "le wāw du serment (par)"
+    },
+    {
+     "ar": "الْبَاءُ",
+     "fr": "le bā' du serment (par)"
+    },
+    {
+     "ar": "التَّاءُ",
+     "fr": "le tā' du serment (par)"
+    }
+   ],
+   "termes": [
+    "ism",
+    "khafd",
+    "tanwin"
+   ],
+   "note_traduction": "Première liste (particules du khafḍ) : neuf particules ; seconde liste (serment) : trois particules, dans l'ordre du texte.",
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0004",
+   "fr": "Le verbe se reconnaît à : qad ; la lettre sīn ; sawfa ; et le tā' du féminin portant un sukūn.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "قَدْ",
+     "fr": "déjà, peut-être"
+    },
+    {
+     "ar": "السِّينُ",
+     "fr": "la lettre sīn (futur proche)"
+    },
+    {
+     "ar": "سَوْفَ",
+     "fr": "futur plus éloigné"
+    },
+    {
+     "ar": "تَاءُ التَّأْنِيثِ السَّاكِنَةُ",
+     "fr": "le tā' du féminin avec sukūn"
+    }
+   ],
+   "termes": [
+    "fil",
+    "sukun"
+   ]
+  },
+  {
+   "id": "AJR-0005",
+   "fr": "La particule est ce avec quoi ne convient ni la marque du nom ni la marque du verbe.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "harf"
+   ]
+  },
+  {
+   "id": "AJR-0006",
+   "fr": "Chapitre de la flexion (iʿrāb)",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "irab"
+   ]
+  },
+  {
+   "id": "AJR-0007",
+   "fr": "L'iʿrāb est le changement des finales des mots, dû à la diversité des régissants qui entrent sur eux, [ce changement étant] apparent ou supposé.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "irab",
+    "amil"
+   ]
+  },
+  {
+   "id": "AJR-0008",
+   "fr": "Ses espèces sont quatre : le rafʿ (nominatif, indicatif), le naṣb (accusatif, subjonctif), le khafḍ (génitif) et le jazm (jussif).",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "rafa",
+    "nasb",
+    "khafd",
+    "jazm"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0009",
+   "fr": "Aux noms reviennent, parmi ces espèces, le rafʿ, le naṣb et le khafḍ [nominatif, accusatif, génitif] ; il n'y a pas de jazm en eux.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "rafa",
+    "nasb",
+    "khafd",
+    "jazm"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0010",
+   "fr": "Aux verbes reviennent, parmi ces espèces, le rafʿ, le naṣb et le jazm [indicatif, subjonctif, jussif] ; il n'y a pas de khafḍ en eux.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "rafa",
+    "nasb",
+    "khafd",
+    "jazm"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0011",
+   "fr": "Chapitre de la connaissance des marques de l'iʿrāb",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "irab",
+    "alama"
+   ]
+  },
+  {
+   "id": "AJR-0012",
+   "fr": "Le rafʿ a quatre marques : la ḍamma, le wāw, l'alif et le nūn.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "rafa",
+    "alama",
+    "damma"
+   ]
+  },
+  {
+   "id": "AJR-0013",
+   "fr": "La ḍamma est la marque du rafʿ en quatre cas : dans le nom singulier, dans le pluriel brisé, dans le pluriel féminin sain, et dans le verbe au présent auquel rien n'est attaché à la fin.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "damma",
+    "mufrad",
+    "taksir",
+    "muannath_salim",
+    "mudari"
+   ]
+  },
+  {
+   "id": "AJR-0014",
+   "fr": "Le wāw est la marque du rafʿ en deux cas : dans le pluriel masculin sain et dans les cinq noms, qui sont ceux de la liste ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "أَبُوكَ",
+     "fr": "ton père"
+    },
+    {
+     "ar": "أَخُوكَ",
+     "fr": "ton frère"
+    },
+    {
+     "ar": "حَمُوكَ",
+     "fr": "ton beau-parent (du côté de l'épouse)"
+    },
+    {
+     "ar": "فُوكَ",
+     "fr": "ta bouche"
+    },
+    {
+     "ar": "ذُو مَالٍ",
+     "fr": "possesseur de biens"
+    }
+   ],
+   "termes": [
+    "mudhakkar_salim",
+    "asma_khamsa"
+   ]
+  },
+  {
+   "id": "AJR-0015",
+   "fr": "L'alif est la marque du rafʿ uniquement dans le duel des noms.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "tathniya"
+   ]
+  },
+  {
+   "id": "AJR-0016",
+   "fr": "Le nūn est la marque du rafʿ dans le verbe au présent lorsqu'est attaché à lui un pronom de duel, ou un pronom de pluriel, ou le pronom de la deuxième personne du féminin singulier.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "mudari",
+    "mudmar"
+   ]
+  },
+  {
+   "id": "AJR-0017",
+   "fr": "Le naṣb a cinq marques : la fatḥa, l'alif, la kasra, le yā' et la chute du nūn.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "nasb",
+    "fatha",
+    "kasra",
+    "hadhf"
+   ]
+  },
+  {
+   "id": "AJR-0018",
+   "fr": "La fatḥa est la marque du naṣb en trois cas : dans le nom singulier, dans le pluriel brisé, et dans le verbe au présent lorsqu'un élément qui met au naṣb est entré sur lui et que rien n'est attaché à sa fin.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "fatha",
+    "mufrad",
+    "taksir",
+    "nasib"
+   ]
+  },
+  {
+   "id": "AJR-0019",
+   "fr": "L'alif est la marque du naṣb dans les cinq noms, par exemple [exemple], et ce qui leur ressemble.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "رَأَيْتُ أَبَاكَ وَأَخَاكَ",
+     "fr": "j'ai vu ton père et ton frère"
+    }
+   ],
+   "termes": [
+    "asma_khamsa"
+   ]
+  },
+  {
+   "id": "AJR-0020",
+   "fr": "La kasra est la marque du naṣb dans le pluriel féminin sain.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "kasra",
+    "muannath_salim"
+   ]
+  },
+  {
+   "id": "AJR-0021",
+   "fr": "Le yā' est la marque du naṣb dans le duel et dans le pluriel [masculin sain].",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "tathniya",
+    "mudhakkar_salim"
+   ],
+   "note_traduction": "« والجمع » : le pluriel masculin sain, d'après le chapitre suivant (AJR-0037)."
+  },
+  {
+   "id": "AJR-0022",
+   "fr": "La chute du nūn est la marque du naṣb dans les cinq verbes, dont le rafʿ se fait par le maintien du nūn.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "afal_khamsa",
+    "hadhf"
+   ]
+  },
+  {
+   "id": "AJR-0023",
+   "fr": "Le khafḍ a trois marques : la kasra, le yā' et la fatḥa.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "khafd",
+    "kasra",
+    "fatha"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0024",
+   "fr": "La kasra est la marque du khafḍ en trois cas : dans le nom singulier qui reçoit le tanwīn (munṣarif), dans le pluriel brisé qui reçoit le tanwīn, et dans le pluriel féminin sain.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "kasra",
+    "munsarif",
+    "mufrad",
+    "taksir",
+    "muannath_salim"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0025",
+   "fr": "Le yā' est la marque du khafḍ en trois cas : dans les cinq noms, dans le duel et dans le pluriel [masculin sain].",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "asma_khamsa",
+    "tathniya"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0026",
+   "fr": "La fatḥa est la marque du khafḍ dans le nom qui ne reçoit pas le tanwīn (diptote).",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "fatha",
+    "munsarif"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0027",
+   "fr": "Le jazm a deux marques : le sukūn et la chute.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "jazm",
+    "sukun",
+    "hadhf"
+   ]
+  },
+  {
+   "id": "AJR-0028",
+   "fr": "Le sukūn est la marque du jazm dans le verbe au présent dont la fin est une lettre saine.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "sukun",
+    "mudari"
+   ],
+   "note_traduction": "« الصحيح الآخر » : dont la dernière lettre n'est ni alif, ni wāw, ni yā' (al-Kafrāwī, p. 33)."
+  },
+  {
+   "id": "AJR-0029",
+   "fr": "La chute est la marque du jazm dans le verbe au présent dont la fin est une lettre faible, et dans les cinq verbes, dont le rafʿ se fait par le maintien du nūn.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "hadhf",
+    "afal_khamsa"
+   ]
+  },
+  {
+   "id": "AJR-0030",
+   "fr": "Section",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre"
+  },
+  {
+   "id": "AJR-0031",
+   "fr": "Les mots variables (muʿrabāt) sont de deux sortes : une sorte reçoit l'iʿrāb par les voyelles brèves, et une sorte le reçoit par les lettres.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "muarab",
+    "harakat"
+   ]
+  },
+  {
+   "id": "AJR-0032",
+   "fr": "Ce qui reçoit l'iʿrāb par les voyelles brèves est de quatre types : le nom singulier, le pluriel brisé, le pluriel féminin sain, et le verbe au présent auquel rien n'est attaché à la fin.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "mufrad",
+    "taksir",
+    "muannath_salim",
+    "mudari"
+   ]
+  },
+  {
+   "id": "AJR-0033",
+   "fr": "Tous se mettent au rafʿ par la ḍamma, au naṣb par la fatḥa, au khafḍ par la kasra et au jazm par le sukūn.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "rafa",
+    "nasb",
+    "khafd",
+    "jazm"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0034",
+   "fr": "Trois choses sortent de cette règle : le pluriel féminin sain se met au naṣb par la kasra ; le nom diptote se met au khafḍ par la fatḥa ; et le verbe au présent dont la fin est une lettre faible se met au jazm par la chute de sa lettre finale.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "muannath_salim",
+    "munsarif",
+    "mudari"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0035",
+   "fr": "Ce qui reçoit l'iʿrāb par les lettres est de quatre types : le duel, le pluriel masculin sain, les cinq noms et les cinq verbes, qui sont ceux de la liste ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "يَفْعَلَانِ",
+     "fr": "ils (deux) font"
+    },
+    {
+     "ar": "تَفْعَلَانِ",
+     "fr": "vous (deux) faites / elles (deux) font"
+    },
+    {
+     "ar": "يَفْعَلُونَ",
+     "fr": "ils font"
+    },
+    {
+     "ar": "تَفْعَلُونَ",
+     "fr": "vous faites"
+    },
+    {
+     "ar": "تَفْعَلِينَ",
+     "fr": "tu fais (féminin)"
+    }
+   ],
+   "termes": [
+    "tathniya",
+    "mudhakkar_salim",
+    "asma_khamsa",
+    "afal_khamsa"
+   ]
+  },
+  {
+   "id": "AJR-0036",
+   "fr": "Le duel se met au rafʿ par l'alif, et au naṣb et au khafḍ par le yā'.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "tathniya"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0037",
+   "fr": "Le pluriel masculin sain se met au rafʿ par le wāw, et au naṣb et au khafḍ par le yā'.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "mudhakkar_salim"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0038",
+   "fr": "Les cinq noms se mettent au rafʿ par le wāw, au naṣb par l'alif et au khafḍ par le yā'.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "asma_khamsa"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0039",
+   "fr": "Les cinq verbes se mettent au rafʿ par le nūn, et au naṣb et au jazm par sa chute.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "afal_khamsa"
+   ]
+  },
+  {
+   "id": "AJR-0040",
+   "fr": "Chapitre des verbes",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "fil"
+   ]
+  },
+  {
+   "id": "AJR-0041",
+   "fr": "Les verbes sont trois : le passé, le présent et l'impératif, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "ضَرَبَ",
+     "fr": "il a frappé (passé)"
+    },
+    {
+     "ar": "يَضْرِبُ",
+     "fr": "il frappe (présent)"
+    },
+    {
+     "ar": "اضْرِبْ",
+     "fr": "frappe ! (impératif)"
+    }
+   ],
+   "termes": [
+    "madi",
+    "mudari",
+    "amr"
+   ]
+  },
+  {
+   "id": "AJR-0042",
+   "fr": "Le passé est toujours terminé par la fatḥa ; l'impératif est toujours au jussif ; et le présent est ce qui porte à son début l'une des quatre lettres ajoutées, que réunit ton mot « anaytu ». Il est toujours au rafʿ (indicatif), jusqu'à ce que lui soit adjoint un élément qui met au naṣb ou au jazm.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "أ",
+     "fr": "préfixe de la 1re personne du singulier"
+    },
+    {
+     "ar": "ن",
+     "fr": "préfixe de la 1re personne du pluriel"
+    },
+    {
+     "ar": "ي",
+     "fr": "préfixe de la 3e personne"
+    },
+    {
+     "ar": "ت",
+     "fr": "préfixe de la 2e personne et de la 3e du féminin"
+    }
+   ],
+   "termes": [
+    "madi",
+    "amr",
+    "mudari",
+    "nasib"
+   ],
+   "note_traduction": "Mot mnémotechnique « أنيت » (a-n-y-t) : les quatre lettres du préfixe. Les gloses des lettres sont de ce lot (usage grammatical courant)."
+  },
+  {
+   "id": "AJR-0043",
+   "fr": "Les éléments qui mettent au naṣb sont dix, ceux de la liste ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "أَنْ",
+     "fr": "que (+ subjonctif)"
+    },
+    {
+     "ar": "لَنْ",
+     "fr": "ne… pas (futur)"
+    },
+    {
+     "ar": "إِذَنْ",
+     "fr": "alors, dans ce cas"
+    },
+    {
+     "ar": "كَيْ",
+     "fr": "afin que"
+    },
+    {
+     "ar": "لَامُ كَيْ",
+     "fr": "le lām de but (« pour que »)"
+    },
+    {
+     "ar": "لَامُ الْجُحُودِ",
+     "fr": "le lām de dénégation"
+    },
+    {
+     "ar": "حَتَّى",
+     "fr": "jusqu'à ce que"
+    },
+    {
+     "ar": "الْجَوَابُ بِالْفَاءِ",
+     "fr": "la réponse introduite par fā'"
+    },
+    {
+     "ar": "الْوَاوُ",
+     "fr": "et par wāw"
+    },
+    {
+     "ar": "أَوْ",
+     "fr": "aw"
+    }
+   ],
+   "termes": [
+    "nasib"
+   ],
+   "note_traduction": "« والجواب بالفاء والواو » est rendu littéralement ; les dix éléments sont, dans l'ordre : أن، لن، إذن، كي، لام كي، لام الجحود، حتى، الجواب بالفاء، الواو، أو (al-Kafrāwī p. 45 : dix, dont quatre agissent par eux-mêmes et six par un « an » sous-entendu)."
+  },
+  {
+   "id": "AJR-0044",
+   "fr": "Les éléments qui mettent au jazm sont dix-huit, ceux de la liste ci-dessous ; et [on ajoute] « idhā » en poésie seulement.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "لَمْ",
+     "fr": "ne… pas (passé)"
+    },
+    {
+     "ar": "لَمَّا",
+     "fr": "pas encore"
+    },
+    {
+     "ar": "أَلَمْ",
+     "fr": "n'a-t-il pas… ?"
+    },
+    {
+     "ar": "أَلَمَّا",
+     "fr": "pas encore… ?"
+    },
+    {
+     "ar": "لَامُ الْأَمْرِ وَالدُّعَاءِ",
+     "fr": "le lām de l'ordre et de l'invocation"
+    },
+    {
+     "ar": "لَا فِي النَّهْيِ وَالدُّعَاءِ",
+     "fr": "le lā de l'interdiction et de l'invocation"
+    },
+    {
+     "ar": "إِنْ",
+     "fr": "si"
+    },
+    {
+     "ar": "مَا",
+     "fr": "ce que (conditionnel)"
+    },
+    {
+     "ar": "مَنْ",
+     "fr": "quiconque"
+    },
+    {
+     "ar": "مَهْمَا",
+     "fr": "quoi que"
+    },
+    {
+     "ar": "إِذْ مَا",
+     "fr": "si (alors que)"
+    },
+    {
+     "ar": "أَيُّ",
+     "fr": "quel que soit"
+    },
+    {
+     "ar": "مَتَى",
+     "fr": "quand"
+    },
+    {
+     "ar": "أَيَّانَ",
+     "fr": "quand"
+    },
+    {
+     "ar": "أَيْنَ",
+     "fr": "où"
+    },
+    {
+     "ar": "أَنَّى",
+     "fr": "où, comment"
+    },
+    {
+     "ar": "حَيْثُمَا",
+     "fr": "où que"
+    },
+    {
+     "ar": "كَيْفَمَا",
+     "fr": "de quelque manière que"
+    },
+    {
+     "ar": "إِذَا",
+     "fr": "quand (poésie seulement)"
+    }
+   ],
+   "termes": [
+    "nasib",
+    "jazm"
+   ],
+   "note_traduction": "Dix-huit sans « إذا » (variante V-01, observation O-03) ; la liste donne les dix-neuf termes du texte. Les gloses en français sont de ce lot."
+  },
+  {
+   "id": "AJR-0045",
+   "fr": "Chapitre des noms au nominatif",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "marfuat"
+   ]
+  },
+  {
+   "id": "AJR-0046",
+   "fr": "Les noms au nominatif sont sept, qui sont : le sujet ; le complément dont le sujet n'est pas nommé ; le thème et son prédicat ; le nom de kāna et de ses sœurs ; le prédicat de inna et de ses sœurs ; et le suiveur d'un nominatif, qui est de quatre sortes : l'épithète, la coordination, le corroboratif et le permutatif.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "marfuat",
+    "fail",
+    "naib",
+    "mubtada",
+    "khabar",
+    "ism_kana",
+    "khabar_kana",
+    "tabi",
+    "nat",
+    "atf",
+    "tawkid",
+    "badal"
+   ]
+  },
+  {
+   "id": "AJR-0047",
+   "fr": "Chapitre du sujet",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "fail"
+   ]
+  },
+  {
+   "id": "AJR-0048",
+   "fr": "Le sujet est le nom au nominatif dont le verbe est mentionné avant lui.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "fail",
+    "rafa_nom"
+   ]
+  },
+  {
+   "id": "AJR-0049",
+   "fr": "Il est de deux sortes : le nom apparent et le pronom.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "zahir",
+    "mudmar"
+   ]
+  },
+  {
+   "id": "AJR-0050",
+   "fr": "L'apparent est, par exemple, ce que tu dis dans les exemples ci-dessous, et ce qui leur ressemble.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "قَامَ زَيْدٌ",
+     "fr": "Zayd s'est levé"
+    },
+    {
+     "ar": "يَقُومُ زَيْدٌ",
+     "fr": "Zayd se lève"
+    },
+    {
+     "ar": "قَامَ الزَّيْدَانِ",
+     "fr": "les deux Zayd se sont levés"
+    },
+    {
+     "ar": "يَقُومُ الزَّيْدَانِ",
+     "fr": "les deux Zayd se lèvent"
+    },
+    {
+     "ar": "قَامَ الزَّيْدُونَ",
+     "fr": "les Zayd se sont levés"
+    },
+    {
+     "ar": "يَقُومُ الزَّيْدُونَ",
+     "fr": "les Zayd se lèvent"
+    },
+    {
+     "ar": "قَامَ الرِّجَالُ",
+     "fr": "les hommes se sont levés"
+    },
+    {
+     "ar": "يَقُومُ الرِّجَالُ",
+     "fr": "les hommes se lèvent"
+    },
+    {
+     "ar": "قَامَتْ هِنْدٌ",
+     "fr": "Hind s'est levée"
+    },
+    {
+     "ar": "تَقُومُ هِنْدٌ",
+     "fr": "Hind se lève"
+    },
+    {
+     "ar": "قَامَتِ الْهِنْدَانِ",
+     "fr": "les deux Hind se sont levées"
+    },
+    {
+     "ar": "تَقُومُ الْهِنْدَانِ",
+     "fr": "les deux Hind se lèvent"
+    },
+    {
+     "ar": "قَامَتِ الْهِنْدَاتُ",
+     "fr": "les Hind se sont levées (pluriel sain)"
+    },
+    {
+     "ar": "تَقُومُ الْهِنْدَاتُ",
+     "fr": "les Hind se lèvent (pluriel sain)"
+    },
+    {
+     "ar": "قَامَتِ الْهُنُودُ",
+     "fr": "les Hind se sont levées (pluriel brisé)"
+    },
+    {
+     "ar": "تَقُومُ الْهُنُودُ",
+     "fr": "les Hind se lèvent (pluriel brisé)"
+    },
+    {
+     "ar": "قَامَ أَخُوكَ",
+     "fr": "ton frère s'est levé"
+    },
+    {
+     "ar": "يَقُومُ أَخُوكَ",
+     "fr": "ton frère se lève"
+    },
+    {
+     "ar": "قَامَ غُلَامِي",
+     "fr": "mon garçon s'est levé"
+    },
+    {
+     "ar": "يَقُومُ غُلَامِي",
+     "fr": "mon garçon se lève"
+    }
+   ],
+   "termes": [
+    "zahir"
+   ]
+  },
+  {
+   "id": "AJR-0051",
+   "fr": "Le pronom est de douze sortes, comme dans la liste ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "ضَرَبْتُ",
+     "fr": "j'ai frappé"
+    },
+    {
+     "ar": "ضَرَبْنَا",
+     "fr": "nous avons frappé"
+    },
+    {
+     "ar": "ضَرَبْتَ",
+     "fr": "tu as frappé (masculin)"
+    },
+    {
+     "ar": "ضَرَبْتِ",
+     "fr": "tu as frappé (féminin)"
+    },
+    {
+     "ar": "ضَرَبْتُمَا",
+     "fr": "vous (deux) avez frappé"
+    },
+    {
+     "ar": "ضَرَبْتُمْ",
+     "fr": "vous avez frappé (masculin)"
+    },
+    {
+     "ar": "ضَرَبْتُنَّ",
+     "fr": "vous avez frappé (féminin)"
+    },
+    {
+     "ar": "ضَرَبَ",
+     "fr": "il a frappé"
+    },
+    {
+     "ar": "ضَرَبَتْ",
+     "fr": "elle a frappé"
+    },
+    {
+     "ar": "ضَرَبَا",
+     "fr": "ils (deux) ont frappé"
+    },
+    {
+     "ar": "ضَرَبُوا",
+     "fr": "ils ont frappé"
+    },
+    {
+     "ar": "ضَرَبْنَ",
+     "fr": "elles ont frappé"
+    }
+   ],
+   "termes": [
+    "mudmar"
+   ]
+  },
+  {
+   "id": "AJR-0052",
+   "fr": "Chapitre du complément dont le sujet n'est pas nommé",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "naib"
+   ]
+  },
+  {
+   "id": "AJR-0053",
+   "fr": "C'est le nom au nominatif avec lequel son sujet n'est pas mentionné.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "naib",
+    "rafa_nom"
+   ]
+  },
+  {
+   "id": "AJR-0054",
+   "fr": "Si le verbe est au passé, son début prend la ḍamma et ce qui précède sa dernière lettre prend la kasra ; s'il est au présent, son début prend la ḍamma et ce qui précède sa dernière lettre prend la fatḥa.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "madi",
+    "mudari",
+    "damma",
+    "kasra",
+    "fatha"
+   ]
+  },
+  {
+   "id": "AJR-0055",
+   "fr": "Il est de deux sortes : le nom apparent et le pronom.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "zahir",
+    "mudmar"
+   ]
+  },
+  {
+   "id": "AJR-0056",
+   "fr": "L'apparent est, par exemple, ce que tu dis dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "ضُرِبَ زَيْدٌ",
+     "fr": "Zayd a été frappé"
+    },
+    {
+     "ar": "يُضْرَبُ زَيْدٌ",
+     "fr": "Zayd est frappé"
+    },
+    {
+     "ar": "أُكْرِمَ عَمْرٌو",
+     "fr": "ʿAmr a été honoré"
+    },
+    {
+     "ar": "يُكْرَمُ عَمْرٌو",
+     "fr": "ʿAmr est honoré"
+    }
+   ],
+   "termes": [
+    "zahir"
+   ]
+  },
+  {
+   "id": "AJR-0057",
+   "fr": "Le pronom est de douze sortes, comme dans la liste ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "ضُرِبْتُ",
+     "fr": "j'ai été frappé"
+    },
+    {
+     "ar": "ضُرِبْنَا",
+     "fr": "nous avons été frappés"
+    },
+    {
+     "ar": "ضُرِبْتَ",
+     "fr": "tu as été frappé (masculin)"
+    },
+    {
+     "ar": "ضُرِبْتِ",
+     "fr": "tu as été frappée"
+    },
+    {
+     "ar": "ضُرِبْتُمَا",
+     "fr": "vous (deux) avez été frappés"
+    },
+    {
+     "ar": "ضُرِبْتُمْ",
+     "fr": "vous avez été frappés"
+    },
+    {
+     "ar": "ضُرِبْتُنَّ",
+     "fr": "vous avez été frappées"
+    },
+    {
+     "ar": "ضُرِبَ",
+     "fr": "il a été frappé"
+    },
+    {
+     "ar": "ضُرِبَتْ",
+     "fr": "elle a été frappée"
+    },
+    {
+     "ar": "ضُرِبَا",
+     "fr": "ils (deux) ont été frappés"
+    },
+    {
+     "ar": "ضُرِبُوا",
+     "fr": "ils ont été frappés"
+    },
+    {
+     "ar": "ضُرِبْنَ",
+     "fr": "elles ont été frappées"
+    }
+   ],
+   "termes": [
+    "mudmar"
+   ]
+  },
+  {
+   "id": "AJR-0058",
+   "fr": "Chapitre du thème et du prédicat",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "mubtada",
+    "khabar"
+   ]
+  },
+  {
+   "id": "AJR-0059",
+   "fr": "Le thème est le nom au nominatif dénué des régissants exprimés.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "mubtada",
+    "amil"
+   ],
+   "note_traduction": "« العوامل اللفظية » : les régissants exprimés (verbes, particules), par opposition à l'inchoatif qui n'a pas de régissant exprimé."
+  },
+  {
+   "id": "AJR-0060",
+   "fr": "Le prédicat est le nom au nominatif qui est attribué au thème, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "زَيْدٌ قَائِمٌ",
+     "fr": "Zayd est debout"
+    },
+    {
+     "ar": "الزَّيْدَانِ قَائِمَانِ",
+     "fr": "les deux Zayd sont debout"
+    },
+    {
+     "ar": "الزَّيْدُونَ قَائِمُونَ",
+     "fr": "les Zayd sont debout"
+    }
+   ],
+   "termes": [
+    "khabar",
+    "musnad"
+   ],
+   "note_traduction": "« المسند إليه » : le hāʾ de « إليه » renvoie au thème (al-Kafrāwī p. 76, image 78 : « المسند إلى المبتدأ ») ; d'où « attribué au thème ». Ne pas confondre avec le terme technique al-musnad ilayhi (« ce à quoi on attribue », c'est-à-dire le thème) ; al-musnad (« ce qu'on attribue ») est le prédicat. Bresnier lit à l'inverse (« sur lequel s'appuie [le sujet] ») : lecture non retenue. Équivalents retenus (décision du référent, 13/10) : « ce à quoi on attribue » / « ce qu'on attribue »."
+  },
+  {
+   "id": "AJR-0061",
+   "fr": "Le thème est de deux sortes : le nom apparent et le pronom.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "mubtada",
+    "zahir",
+    "mudmar"
+   ]
+  },
+  {
+   "id": "AJR-0062",
+   "fr": "L'apparent est ce dont la mention a précédé.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "zahir"
+   ]
+  },
+  {
+   "id": "AJR-0063",
+   "fr": "Le pronom est de douze sortes, ceux de la liste ci-dessous, comme dans les exemples qui la suivent et ce qui leur ressemble.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "أَنَا قَائِمٌ",
+     "fr": "je suis debout"
+    },
+    {
+     "ar": "نَحْنُ قَائِمُونَ",
+     "fr": "nous sommes debout"
+    }
+   ],
+   "liste": [
+    {
+     "ar": "أَنَا",
+     "fr": "moi, je"
+    },
+    {
+     "ar": "نَحْنُ",
+     "fr": "nous"
+    },
+    {
+     "ar": "أَنْتَ",
+     "fr": "toi (masculin)"
+    },
+    {
+     "ar": "أَنْتِ",
+     "fr": "toi (féminin)"
+    },
+    {
+     "ar": "أَنْتُمَا",
+     "fr": "vous (deux)"
+    },
+    {
+     "ar": "أَنْتُمْ",
+     "fr": "vous (masculin)"
+    },
+    {
+     "ar": "أَنْتُنَّ",
+     "fr": "vous (féminin)"
+    },
+    {
+     "ar": "هُوَ",
+     "fr": "lui"
+    },
+    {
+     "ar": "هِيَ",
+     "fr": "elle"
+    },
+    {
+     "ar": "هُمَا",
+     "fr": "eux (deux)"
+    },
+    {
+     "ar": "هُمْ",
+     "fr": "eux"
+    },
+    {
+     "ar": "هُنَّ",
+     "fr": "elles"
+    }
+   ],
+   "termes": [
+    "mudmar"
+   ]
+  },
+  {
+   "id": "AJR-0064",
+   "fr": "Le prédicat est de deux sortes : le prédicat simple et le prédicat non simple.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "khabar"
+   ]
+  },
+  {
+   "id": "AJR-0065",
+   "fr": "Le simple est, par exemple, l'exemple ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "زَيْدٌ قَائِمٌ",
+     "fr": "Zayd est debout"
+    }
+   ],
+   "termes": [
+    "khabar"
+   ]
+  },
+  {
+   "id": "AJR-0066",
+   "fr": "Le non simple est de quatre sortes : la préposition avec le nom qu'elle met au génitif, le complément de temps ou de lieu, le verbe avec son sujet, et le thème avec son prédicat, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "زَيْدٌ فِي الدَّارِ",
+     "fr": "Zayd est dans la maison"
+    },
+    {
+     "ar": "زَيْدٌ عِنْدَكَ",
+     "fr": "Zayd est chez toi"
+    },
+    {
+     "ar": "زَيْدٌ قَامَ أَبُوهُ",
+     "fr": "Zayd : son père s'est levé"
+    },
+    {
+     "ar": "زَيْدٌ جَارِيَتُهُ ذَاهِبَةٌ",
+     "fr": "Zayd : sa servante est partie"
+    }
+   ],
+   "termes": [
+    "khabar",
+    "jar_majrur",
+    "zarf",
+    "fail",
+    "mubtada"
+   ],
+   "note_traduction": "« الجار والمجرور » : le texte emploie ici les termes basriens ; rendu « la préposition avec le nom qu'elle met au génitif » (observation O-01).",
+   "note_khafd_jarr": "Ici le texte arabe emploie le terme basrien (الجار والمجرور / مجرور) au lieu de « خفض » : la traduction dit « génitif » dans les deux cas (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9)."
+  },
+  {
+   "id": "AJR-0067",
+   "fr": "Chapitre des régissants qui entrent sur le thème et le prédicat",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "awamil"
+   ]
+  },
+  {
+   "id": "AJR-0068",
+   "fr": "Ils sont trois : kāna et ses sœurs, inna et ses sœurs, et ẓanna et ses sœurs.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "kana",
+    "inna",
+    "zanna"
+   ]
+  },
+  {
+   "id": "AJR-0069",
+   "fr": "Kāna et ses sœurs élèvent le nom au nominatif et mettent le prédicat à l'accusatif ; elles sont celles de la liste ci-dessous, et ce qui en dérive, comme dans les exemples qui la suivent.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "كَانَ وَيَكُونُ وَكُنْ",
+     "fr": "il fut, il est, sois !"
+    },
+    {
+     "ar": "أَصْبَحَ وَيُصْبِحُ وَأَصْبِحْ",
+     "fr": "il fut au matin, il est au matin, sois au matin !"
+    }
+   ],
+   "liste": [
+    {
+     "ar": "كَانَ",
+     "fr": "être"
+    },
+    {
+     "ar": "أَمْسَى",
+     "fr": "se trouver au soir, devenir"
+    },
+    {
+     "ar": "أَصْبَحَ",
+     "fr": "se trouver au matin, devenir"
+    },
+    {
+     "ar": "أَضْحَى",
+     "fr": "se trouver le matin avancé, devenir"
+    },
+    {
+     "ar": "ظَلَّ",
+     "fr": "rester (tout le jour)"
+    },
+    {
+     "ar": "بَاتَ",
+     "fr": "passer la nuit"
+    },
+    {
+     "ar": "صَارَ",
+     "fr": "devenir"
+    },
+    {
+     "ar": "لَيْسَ",
+     "fr": "ne pas être"
+    },
+    {
+     "ar": "مَا زَالَ",
+     "fr": "ne cesse pas"
+    },
+    {
+     "ar": "مَا انْفَكَّ",
+     "fr": "ne cesse pas"
+    },
+    {
+     "ar": "مَا فَتِئَ",
+     "fr": "ne cesse pas"
+    },
+    {
+     "ar": "مَا بَرِحَ",
+     "fr": "ne cesse pas"
+    },
+    {
+     "ar": "مَا دَامَ",
+     "fr": "tant que"
+    }
+   ],
+   "termes": [
+    "kana",
+    "rafa_nom",
+    "nasb_nom",
+    "ism_kana",
+    "khabar_kana"
+   ]
+  },
+  {
+   "id": "AJR-0070",
+   "fr": "Tu dis, par exemple, ce que donnent les exemples ci-dessous, et ce qui leur ressemble.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "كَانَ زَيْدٌ قَائِمًا",
+     "fr": "Zayd était debout"
+    },
+    {
+     "ar": "لَيْسَ عَمْرٌو شَاخِصًا",
+     "fr": "ʿAmr n'est pas en partance"
+    }
+   ],
+   "termes": [
+    "kana"
+   ]
+  },
+  {
+   "id": "AJR-0071",
+   "fr": "Quant à inna et ses sœurs, elles mettent le nom à l'accusatif et élèvent le prédicat au nominatif ; elles sont celles de la liste ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "إِنَّ",
+     "fr": "certes"
+    },
+    {
+     "ar": "أَنَّ",
+     "fr": "que (certes)"
+    },
+    {
+     "ar": "لَكِنَّ",
+     "fr": "mais"
+    },
+    {
+     "ar": "كَأَنَّ",
+     "fr": "comme si"
+    },
+    {
+     "ar": "لَيْتَ",
+     "fr": "si seulement"
+    },
+    {
+     "ar": "لَعَلَّ",
+     "fr": "peut-être"
+    }
+   ],
+   "termes": [
+    "inna",
+    "nasb_nom",
+    "rafa_nom",
+    "ism_kana",
+    "khabar_kana"
+   ]
+  },
+  {
+   "id": "AJR-0072",
+   "fr": "Tu dis, par exemple, ce que donnent les exemples ci-dessous, et ce qui leur ressemble.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "إِنَّ زَيْدًا قَائِمٌ",
+     "fr": "Zayd est assurément debout"
+    },
+    {
+     "ar": "لَيْتَ عَمْرًا شَاخِصٌ",
+     "fr": "si seulement ʿAmr était en partance"
+    }
+   ],
+   "termes": [
+    "inna"
+   ]
+  },
+  {
+   "id": "AJR-0073",
+   "fr": "Le sens de inna et de anna est l'affirmation renforcée ; celui de lākinna, la rectification ; celui de ka-anna, la comparaison ; celui de layta, le souhait ; celui de laʿalla, l'espoir et l'attente.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "inna"
+   ],
+   "note_traduction": "التوكيد « affirmation renforcée » ; الاستدراك « rectification » ; التشبيه « comparaison » ; التمني « souhait » ; الترجي والتوقع « espoir et attente »."
+  },
+  {
+   "id": "AJR-0074",
+   "fr": "Quant à ẓanna et ses sœurs, elles mettent à l'accusatif le thème et le prédicat, en tant qu'ils sont ses deux compléments ; elles sont dix, celles de la liste ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "ظَنَنْتُ",
+     "fr": "j'ai pensé"
+    },
+    {
+     "ar": "حَسِبْتُ",
+     "fr": "j'ai supposé"
+    },
+    {
+     "ar": "خِلْتُ",
+     "fr": "j'ai cru, j'ai imaginé"
+    },
+    {
+     "ar": "زَعَمْتُ",
+     "fr": "j'ai prétendu"
+    },
+    {
+     "ar": "رَأَيْتُ",
+     "fr": "j'ai estimé"
+    },
+    {
+     "ar": "عَلِمْتُ",
+     "fr": "j'ai su"
+    },
+    {
+     "ar": "وَجَدْتُ",
+     "fr": "j'ai trouvé [que]"
+    },
+    {
+     "ar": "اتَّخَذْتُ",
+     "fr": "j'ai pris pour"
+    },
+    {
+     "ar": "جَعَلْتُ",
+     "fr": "j'ai fait de"
+    },
+    {
+     "ar": "سَمِعْتُ",
+     "fr": "j'ai entendu"
+    }
+   ],
+   "termes": [
+    "zanna",
+    "mubtada",
+    "khabar",
+    "nasb_nom"
+   ],
+   "note_traduction": "Dix verbes, dont سمعت (observation O-05) ; gloses de ce lot, indicatives (sens complets dans le commentaire d'al-Kafrāwī, p. 91 : quatre pour la probabilité, trois pour la certitude, deux pour la transformation, un pour l'audition)."
+  },
+  {
+   "id": "AJR-0075",
+   "fr": "Tu dis, par exemple, ce que donnent les exemples ci-dessous, et ce qui leur ressemble.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "ظَنَنْتُ زَيْدًا مُنْطَلِقًا",
+     "fr": "j'ai pensé que Zayd partait"
+    },
+    {
+     "ar": "خِلْتُ عَمْرًا شَاخِصًا",
+     "fr": "j'ai cru ʿAmr en partance"
+    }
+   ],
+   "termes": [
+    "zanna"
+   ]
+  },
+  {
+   "id": "AJR-0076",
+   "fr": "Chapitre de l'épithète",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "nat"
+   ]
+  },
+  {
+   "id": "AJR-0077",
+   "fr": "L'épithète suit le qualifié dans son rafʿ, son naṣb, son khafḍ, sa détermination et son indétermination.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "nat",
+    "rafa",
+    "nasb",
+    "khafd",
+    "marifa"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0078",
+   "fr": "Tu dis, par exemple, ce que donnent les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "قَامَ زَيْدٌ الْعَاقِلُ",
+     "fr": "Zayd le sage s'est levé"
+    },
+    {
+     "ar": "رَأَيْتُ زَيْدًا الْعَاقِلَ",
+     "fr": "j'ai vu Zayd le sage"
+    },
+    {
+     "ar": "مَرَرْتُ بِزَيْدٍ الْعَاقِلِ",
+     "fr": "je suis passé près de Zayd le sage"
+    }
+   ],
+   "termes": [
+    "nat"
+   ]
+  },
+  {
+   "id": "AJR-0079",
+   "fr": "Le défini est de cinq sortes : le pronom, comme dans le premier exemple ci-dessous ; le nom propre, comme dans le deuxième ; le nom vague, comme dans le troisième ; le nom qui porte l'alif et le lām (l'article), comme dans le quatrième ; et ce qui est annexé à l'un de ces quatre.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "أَنَا وَأَنْتَ",
+     "fr": "moi et toi"
+    },
+    {
+     "ar": "زَيْدٍ وَمَكَّةَ",
+     "fr": "Zayd et La Mecque"
+    },
+    {
+     "ar": "هَذَا وَهَذِهِ وَهَؤُلَاءِ",
+     "fr": "celui-ci, celle-ci, ceux-ci"
+    },
+    {
+     "ar": "الرَّجُلِ وَالْغُلَامِ",
+     "fr": "l'homme et le garçon"
+    }
+   ],
+   "termes": [
+    "marifa",
+    "mudmar",
+    "idafa"
+   ]
+  },
+  {
+   "id": "AJR-0080",
+   "fr": "L'indéfini est tout nom répandu dans son genre, que ne particularise pas l'un plutôt que l'autre ; et pour s'en approcher : tout ce qui admet l'entrée de l'alif et du lām, comme dans l'exemple ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "الرَّجُلِ وَالْفَرَسِ",
+     "fr": "l'homme et le cheval"
+    }
+   ],
+   "termes": [
+    "marifa"
+   ]
+  },
+  {
+   "id": "AJR-0081",
+   "fr": "Chapitre de la coordination",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "atf"
+   ]
+  },
+  {
+   "id": "AJR-0082",
+   "fr": "Les particules de coordination sont dix, celles de la liste ci-dessous (la dernière, dans certains emplois).",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "الْوَاوُ",
+     "fr": "et"
+    },
+    {
+     "ar": "الْفَاءُ",
+     "fr": "et aussitôt"
+    },
+    {
+     "ar": "ثُمَّ",
+     "fr": "puis"
+    },
+    {
+     "ar": "أَوْ",
+     "fr": "ou"
+    },
+    {
+     "ar": "أَمْ",
+     "fr": "ou (alternative)"
+    },
+    {
+     "ar": "إِمَّا",
+     "fr": "soit"
+    },
+    {
+     "ar": "بَلْ",
+     "fr": "mais plutôt"
+    },
+    {
+     "ar": "لَا",
+     "fr": "et non"
+    },
+    {
+     "ar": "لَكِنْ",
+     "fr": "mais"
+    },
+    {
+     "ar": "حَتَّى",
+     "fr": "jusqu'à, même"
+    }
+   ],
+   "termes": [
+    "atf",
+    "harf"
+   ]
+  },
+  {
+   "id": "AJR-0083",
+   "fr": "Si tu coordonnes par elles sur un mot au nominatif, tu mets au nominatif ; sur un mot à l'accusatif, tu mets à l'accusatif ; sur un mot au génitif, tu mets au génitif ; sur un mot au jussif, tu mets au jussif.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "atf",
+    "rafa_nom",
+    "nasb_nom",
+    "khafd_nom",
+    "jazm_verbe"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0084",
+   "fr": "Tu dis, par exemple, ce que donnent les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "قَامَ زَيْدٌ وَعَمْرٌو",
+     "fr": "Zayd et ʿAmr se sont levés"
+    },
+    {
+     "ar": "رَأَيْتُ زَيْدًا وَعَمْرًا",
+     "fr": "j'ai vu Zayd et ʿAmr"
+    },
+    {
+     "ar": "مَرَرْتُ بِزَيْدٍ وَعَمْرٍو",
+     "fr": "je suis passé près de Zayd et de ʿAmr"
+    },
+    {
+     "ar": "زَيْدٌ لَمْ يَقُمْ وَلَمْ يَقْعُدْ",
+     "fr": "Zayd ne s'est pas levé et ne s'est pas assis"
+    }
+   ],
+   "termes": [
+    "atf"
+   ]
+  },
+  {
+   "id": "AJR-0085",
+   "fr": "Chapitre du corroboratif",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "tawkid"
+   ]
+  },
+  {
+   "id": "AJR-0086",
+   "fr": "Le corroboratif suit le mot corroboré dans son rafʿ, son naṣb, son khafḍ, sa détermination et son indétermination ; il se fait par des mots connus, qui sont ceux de la liste ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "النَّفْسُ",
+     "fr": "l'âme, soi-même"
+    },
+    {
+     "ar": "الْعَيْنُ",
+     "fr": "l'œil, en personne"
+    },
+    {
+     "ar": "كُلٌّ",
+     "fr": "tout"
+    },
+    {
+     "ar": "أَجْمَعُ",
+     "fr": "tout entier"
+    },
+    {
+     "ar": "أَكْتَعُ",
+     "fr": "suit « ajmaʿ »"
+    },
+    {
+     "ar": "أَبْتَعُ",
+     "fr": "suit « ajmaʿ »"
+    },
+    {
+     "ar": "أَبْصَعُ",
+     "fr": "suit « ajmaʿ »"
+    }
+   ],
+   "termes": [
+    "tawkid"
+   ],
+   "note_traduction": "Les suiveurs de « ajmaʿ » : le texte les nomme sans les définir ; ils renforcent « ajmaʿ ».",
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0087",
+   "fr": "Tu dis, par exemple, ce que donnent les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "قَامَ زَيْدٌ نَفْسُهُ",
+     "fr": "Zayd lui-même s'est levé"
+    },
+    {
+     "ar": "رَأَيْتُ الْقَوْمَ كُلَّهُمْ",
+     "fr": "j'ai vu les gens, tous"
+    },
+    {
+     "ar": "مَرَرْتُ بِالْقَوْمِ أَجْمَعِينَ",
+     "fr": "je suis passé près des gens, tous ensemble"
+    }
+   ],
+   "termes": [
+    "tawkid"
+   ]
+  },
+  {
+   "id": "AJR-0088",
+   "fr": "Chapitre du permutatif",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "badal"
+   ]
+  },
+  {
+   "id": "AJR-0089",
+   "fr": "Quand un nom est permuté avec un nom, ou un verbe avec un verbe, il le suit dans tout son iʿrāb.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "badal",
+    "irab"
+   ]
+  },
+  {
+   "id": "AJR-0090",
+   "fr": "Il est de quatre sortes : le permutatif de la chose avec la chose ; le permutatif de la partie avec le tout ; le permutatif d'inclusion ; et le permutatif d'erreur, comme dans les exemples ci-dessous. Dans le dernier, tu voulais dire le dernier mot de l'exemple, tu t'es trompé, et tu as permuté « Zayd » avec lui.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "قَامَ زَيْدٌ أَخُوكَ",
+     "fr": "Zayd, ton frère, s'est levé"
+    },
+    {
+     "ar": "أَكَلْتُ الرَّغِيفَ ثُلُثَهُ",
+     "fr": "j'ai mangé le pain, son tiers"
+    },
+    {
+     "ar": "نَفَعَنِي زَيْدٌ عِلْمُهُ",
+     "fr": "Zayd m'a été utile, son savoir"
+    },
+    {
+     "ar": "رَأَيْتُ زَيْدًا الْفَرَسَ",
+     "fr": "j'ai vu Zayd, le cheval"
+    }
+   ],
+   "termes": [
+    "badal"
+   ],
+   "note_traduction": "Dans le quatrième exemple, le texte précise que celui qui parle voulait dire « le cheval » et s'est trompé en disant « Zayd » d'abord (permutatif d'erreur) ; la phrase arabe correspondante est dans le texte d'AJR-0090."
+  },
+  {
+   "id": "AJR-0091",
+   "fr": "Chapitre des noms à l'accusatif",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "mansubat"
+   ]
+  },
+  {
+   "id": "AJR-0092",
+   "fr": "Les noms à l'accusatif sont quinze, qui sont : le complément d'objet ; le nom verbal ; le complément de temps ; le complément de lieu ; le complément d'état ; le complément de spécification ; l'excepté ; le nom de lā ; l'interpellé ; le complément de cause ; le complément d'accompagnement ; le prédicat de kāna et de ses sœurs ; et le nom de inna et de ses sœurs.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "mansubat",
+    "mafulbih",
+    "masdar",
+    "zarf",
+    "hal",
+    "tamyiz",
+    "mustathna",
+    "la_nafiya",
+    "munada",
+    "mafulajlih",
+    "maah",
+    "khabar_kana",
+    "ism_kana"
+   ],
+   "note_traduction": "Le texte annonce quinze et en énumère treize, plus le suiveur (AJR-0093) : traduit tel quel (décision du référent, 13/10). Le décompte tel que le donnent al-Kafrāwī, Daḥlān et Khālid al-Azharī, avec page et extrait, est dans EXP-15 ; observation O-02."
+  },
+  {
+   "id": "AJR-0093",
+   "fr": "Et le suiveur de ce qui est à l'accusatif, qui est de quatre sortes : l'épithète, la coordination, le corroboratif et le permutatif.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "tabi",
+    "nat",
+    "atf",
+    "tawkid",
+    "badal"
+   ]
+  },
+  {
+   "id": "AJR-0094",
+   "fr": "Chapitre du complément d'objet",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "mafulbih"
+   ]
+  },
+  {
+   "id": "AJR-0095",
+   "fr": "C'est le nom à l'accusatif sur lequel tombe le verbe, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "ضَرَبْتُ زَيْدًا",
+     "fr": "j'ai frappé Zayd"
+    },
+    {
+     "ar": "رَكِبْتُ الْفَرَسَ",
+     "fr": "j'ai monté le cheval"
+    }
+   ],
+   "termes": [
+    "mafulbih",
+    "nasb_nom"
+   ]
+  },
+  {
+   "id": "AJR-0096",
+   "fr": "Il est de deux sortes : le nom apparent et le pronom.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "zahir",
+    "mudmar"
+   ]
+  },
+  {
+   "id": "AJR-0097",
+   "fr": "L'apparent est ce dont la mention a précédé.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "zahir"
+   ]
+  },
+  {
+   "id": "AJR-0098",
+   "fr": "Le pronom est de deux sortes : attaché et détaché.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "mudmar",
+    "mutasil"
+   ]
+  },
+  {
+   "id": "AJR-0099",
+   "fr": "L'attaché est de douze sortes, celles de la liste ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "ضَرَبَنِي",
+     "fr": "il m'a frappé"
+    },
+    {
+     "ar": "ضَرَبَنَا",
+     "fr": "il nous a frappés"
+    },
+    {
+     "ar": "ضَرَبَكَ",
+     "fr": "il t'a frappé (masculin)"
+    },
+    {
+     "ar": "ضَرَبَكِ",
+     "fr": "il t'a frappée"
+    },
+    {
+     "ar": "ضَرَبَكُمَا",
+     "fr": "il vous a frappés (deux)"
+    },
+    {
+     "ar": "ضَرَبَكُمْ",
+     "fr": "il vous a frappés"
+    },
+    {
+     "ar": "ضَرَبَكُنَّ",
+     "fr": "il vous a frappées"
+    },
+    {
+     "ar": "ضَرَبَهُ",
+     "fr": "il l'a frappé"
+    },
+    {
+     "ar": "ضَرَبَهَا",
+     "fr": "il l'a frappée"
+    },
+    {
+     "ar": "ضَرَبَهُمَا",
+     "fr": "il les a frappés (deux)"
+    },
+    {
+     "ar": "ضَرَبَهُمْ",
+     "fr": "il les a frappés"
+    },
+    {
+     "ar": "ضَرَبَهُنَّ",
+     "fr": "il les a frappées"
+    }
+   ],
+   "termes": [
+    "mutasil"
+   ]
+  },
+  {
+   "id": "AJR-0100",
+   "fr": "Le détaché est de douze sortes, celles de la liste ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "إِيَّايَ",
+     "fr": "moi (comme complément)"
+    },
+    {
+     "ar": "إِيَّانَا",
+     "fr": "nous"
+    },
+    {
+     "ar": "إِيَّاكَ",
+     "fr": "toi (masculin)"
+    },
+    {
+     "ar": "إِيَّاكِ",
+     "fr": "toi (féminin)"
+    },
+    {
+     "ar": "إِيَّاكُمَا",
+     "fr": "vous (deux)"
+    },
+    {
+     "ar": "إِيَّاكُمْ",
+     "fr": "vous (masculin)"
+    },
+    {
+     "ar": "إِيَّاكُنَّ",
+     "fr": "vous (féminin)"
+    },
+    {
+     "ar": "إِيَّاهُ",
+     "fr": "lui"
+    },
+    {
+     "ar": "إِيَّاهَا",
+     "fr": "elle"
+    },
+    {
+     "ar": "إِيَّاهُمَا",
+     "fr": "eux (deux)"
+    },
+    {
+     "ar": "إِيَّاهُمْ",
+     "fr": "eux"
+    },
+    {
+     "ar": "إِيَّاهُنَّ",
+     "fr": "elles"
+    }
+   ],
+   "termes": [
+    "mutasil"
+   ]
+  },
+  {
+   "id": "AJR-0101",
+   "fr": "Chapitre du nom verbal",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "masdar"
+   ]
+  },
+  {
+   "id": "AJR-0102",
+   "fr": "Le nom verbal est le nom à l'accusatif qui vient en troisième dans la conjugaison du verbe, comme dans l'exemple ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "ضَرَبَ يَضْرِبُ ضَرْبًا",
+     "fr": "il a frappé, il frappe, l'action de frapper"
+    }
+   ],
+   "termes": [
+    "masdar",
+    "nasb_nom"
+   ]
+  },
+  {
+   "id": "AJR-0103",
+   "fr": "Il est de deux sortes : dans l'expression (lafẓī) et dans le sens (maʿnawī).",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "masdar"
+   ]
+  },
+  {
+   "id": "AJR-0104",
+   "fr": "Si son expression s'accorde avec l'expression de son verbe, il est lafẓī, comme dans l'exemple ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "قَتَلْتُهُ قَتْلًا",
+     "fr": "je l'ai tué d'un meurtre (je l'ai bel et bien tué)"
+    }
+   ],
+   "termes": [
+    "masdar"
+   ]
+  },
+  {
+   "id": "AJR-0105",
+   "fr": "Et si son sens s'accorde avec le sens de son verbe sans que son expression s'accorde, il est maʿnawī, comme dans les exemples ci-dessous, et ce qui leur ressemble.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "جَلَسْتُ قُعُودًا",
+     "fr": "je me suis assis, en position assise"
+    },
+    {
+     "ar": "قُمْتُ وُقُوفًا",
+     "fr": "je me suis levé, en station debout"
+    }
+   ],
+   "termes": [
+    "masdar"
+   ]
+  },
+  {
+   "id": "AJR-0106",
+   "fr": "Chapitre du complément de temps et du complément de lieu",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "zarf"
+   ]
+  },
+  {
+   "id": "AJR-0107",
+   "fr": "Le complément de temps est le nom du temps mis à l'accusatif par le sous-entendu de « dans » (fī), comme dans les mots de la liste ci-dessous, et ce qui leur ressemble.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "الْيَوْمَ",
+     "fr": "aujourd'hui, durant le jour"
+    },
+    {
+     "ar": "اللَّيْلَةَ",
+     "fr": "cette nuit"
+    },
+    {
+     "ar": "غُدْوَةً",
+     "fr": "le matin de bonne heure"
+    },
+    {
+     "ar": "بُكْرَةً",
+     "fr": "de bon matin"
+    },
+    {
+     "ar": "سَحَرًا",
+     "fr": "avant l'aube"
+    },
+    {
+     "ar": "غَدًا",
+     "fr": "demain"
+    },
+    {
+     "ar": "عَتَمَةً",
+     "fr": "à la nuit tombée"
+    },
+    {
+     "ar": "صَبَاحًا",
+     "fr": "le matin"
+    },
+    {
+     "ar": "مَسَاءً",
+     "fr": "le soir"
+    },
+    {
+     "ar": "أَبَدًا",
+     "fr": "toujours (à jamais)"
+    },
+    {
+     "ar": "أَمَدًا",
+     "fr": "pour un temps"
+    },
+    {
+     "ar": "حِينًا",
+     "fr": "pour un moment"
+    }
+   ],
+   "termes": [
+    "zarf",
+    "nasb_nom"
+   ]
+  },
+  {
+   "id": "AJR-0108",
+   "fr": "Le complément de lieu est le nom du lieu mis à l'accusatif par le sous-entendu de « dans » (fī), comme dans les mots de la liste ci-dessous, et ce qui leur ressemble.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "أَمَامَ",
+     "fr": "devant"
+    },
+    {
+     "ar": "خَلْفَ",
+     "fr": "derrière"
+    },
+    {
+     "ar": "قُدَّامَ",
+     "fr": "devant"
+    },
+    {
+     "ar": "وَرَاءَ",
+     "fr": "derrière"
+    },
+    {
+     "ar": "فَوْقَ",
+     "fr": "au-dessus"
+    },
+    {
+     "ar": "تَحْتَ",
+     "fr": "au-dessous"
+    },
+    {
+     "ar": "عِنْدَ",
+     "fr": "chez, auprès de"
+    },
+    {
+     "ar": "مَعَ",
+     "fr": "avec"
+    },
+    {
+     "ar": "إِزَاءَ",
+     "fr": "en face de"
+    },
+    {
+     "ar": "حِذَاءَ",
+     "fr": "à hauteur de, en face de"
+    },
+    {
+     "ar": "تِلْقَاءَ",
+     "fr": "du côté de, devant"
+    },
+    {
+     "ar": "ثَمَّ",
+     "fr": "là-bas"
+    },
+    {
+     "ar": "هُنَا",
+     "fr": "ici"
+    }
+   ],
+   "termes": [
+    "zarf",
+    "nasb_nom"
+   ]
+  },
+  {
+   "id": "AJR-0109",
+   "fr": "Chapitre du complément d'état",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "hal"
+   ]
+  },
+  {
+   "id": "AJR-0110",
+   "fr": "Le complément d'état est le nom à l'accusatif qui explicite ce qui est resté vague des manières d'être, comme dans les exemples ci-dessous, et ce qui leur ressemble.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "جَاءَ زَيْدٌ رَاكِبًا",
+     "fr": "Zayd est venu à cheval"
+    },
+    {
+     "ar": "رَكِبْتُ الْفَرَسَ مُسْرَجًا",
+     "fr": "j'ai monté le cheval sellé"
+    },
+    {
+     "ar": "لَقِيتُ عَبْدَ اللَّهِ رَاكِبًا",
+     "fr": "j'ai rencontré ʿAbd Allāh monté"
+    }
+   ],
+   "termes": [
+    "hal",
+    "nasb_nom"
+   ]
+  },
+  {
+   "id": "AJR-0111",
+   "fr": "Le complément d'état n'est qu'indéfini ; il ne vient qu'après l'achèvement de la phrase ; et son détenteur n'est que défini.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "hal",
+    "marifa"
+   ]
+  },
+  {
+   "id": "AJR-0112",
+   "fr": "Chapitre du complément de spécification",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "tamyiz"
+   ]
+  },
+  {
+   "id": "AJR-0113",
+   "fr": "Le complément de spécification est le nom à l'accusatif qui explicite ce qui est resté vague des êtres, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "تَصَبَّبَ زَيْدٌ عَرَقًا",
+     "fr": "Zayd a ruisselé de sueur"
+    },
+    {
+     "ar": "تَفَقَّأَ بَكْرٌ شَحْمًا",
+     "fr": "Bakr a éclaté de graisse"
+    },
+    {
+     "ar": "طَابَ مُحَمَّدٌ نَفْسًا",
+     "fr": "Muḥammad est de bon cœur"
+    },
+    {
+     "ar": "اشْتَرَيْتُ عِشْرِينَ غُلَامًا",
+     "fr": "j'ai acheté vingt garçons"
+    },
+    {
+     "ar": "مَلَكْتُ تِسْعِينَ نَعْجَةً",
+     "fr": "j'ai possédé quatre-vingt-dix brebis"
+    },
+    {
+     "ar": "زَيْدٌ أَكْرَمُ مِنْكَ أَبًا",
+     "fr": "Zayd est plus noble que toi par le père"
+    },
+    {
+     "ar": "أَجْمَلُ مِنْكَ وَجْهًا",
+     "fr": "plus beau que toi de visage"
+    }
+   ],
+   "termes": [
+    "tamyiz",
+    "nasb_nom"
+   ]
+  },
+  {
+   "id": "AJR-0114",
+   "fr": "Il n'est qu'indéfini, et il ne vient qu'après l'achèvement de la phrase.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "tamyiz",
+    "marifa"
+   ]
+  },
+  {
+   "id": "AJR-0115",
+   "fr": "Chapitre de l'exception",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "mustathna"
+   ]
+  },
+  {
+   "id": "AJR-0116",
+   "fr": "Les particules de l'exception sont huit, celles de la liste ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "إِلَّا",
+     "fr": "sauf"
+    },
+    {
+     "ar": "غَيْرُ",
+     "fr": "autre que"
+    },
+    {
+     "ar": "سِوَى",
+     "fr": "hormis"
+    },
+    {
+     "ar": "سُوَى",
+     "fr": "hormis (variante)"
+    },
+    {
+     "ar": "سَوَاءٌ",
+     "fr": "hormis (variante)"
+    },
+    {
+     "ar": "خَلَا",
+     "fr": "excepté"
+    },
+    {
+     "ar": "عَدَا",
+     "fr": "excepté"
+    },
+    {
+     "ar": "حَاشَا",
+     "fr": "à l'exception de"
+    }
+   ],
+   "termes": [
+    "mustathna"
+   ]
+  },
+  {
+   "id": "AJR-0117",
+   "fr": "L'excepté par illā est mis à l'accusatif lorsque le discours est complet et affirmatif, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "قَامَ الْقَوْمُ إِلَّا زَيْدًا",
+     "fr": "les gens se sont levés, sauf Zayd"
+    },
+    {
+     "ar": "خَرَجَ النَّاسُ إِلَّا عَمْرًا",
+     "fr": "les gens sont sortis, sauf ʿAmr"
+    }
+   ],
+   "termes": [
+    "mustathna",
+    "nasb_nom"
+   ]
+  },
+  {
+   "id": "AJR-0118",
+   "fr": "Et si le discours est négatif et complet, il est permis d'employer le permutatif ou l'accusatif d'exception, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "مَا قَامَ الْقَوْمُ إِلَّا زَيْدٌ",
+     "fr": "les gens ne se sont pas levés, sauf Zayd (au nominatif, permutatif)"
+    },
+    {
+     "ar": "وَإِلَّا زَيْدًا",
+     "fr": "ou : sauf Zayd (à l'accusatif)"
+    }
+   ],
+   "termes": [
+    "mustathna",
+    "badal"
+   ]
+  },
+  {
+   "id": "AJR-0119",
+   "fr": "Et si le discours est incomplet, [l'excepté] suit les régissants, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "مَا قَامَ إِلَّا زَيْدٌ",
+     "fr": "seul Zayd s'est levé"
+    },
+    {
+     "ar": "مَا ضَرَبْتُ إِلَّا زَيْدًا",
+     "fr": "je n'ai frappé que Zayd"
+    },
+    {
+     "ar": "مَا مَرَرْتُ إِلَّا بِزَيْدٍ",
+     "fr": "je ne suis passé que près de Zayd"
+    }
+   ],
+   "termes": [
+    "mustathna",
+    "amil"
+   ]
+  },
+  {
+   "id": "AJR-0120",
+   "fr": "Et l'excepté par ghayr, siwā, suwā et sawāʾ est au génitif, et non autrement.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "mustathna",
+    "khafd_nom"
+   ],
+   "note_traduction": "« مجرور » : terme basrien employé ici par le texte (observation O-01) ; rendu « au génitif ».",
+   "note_khafd_jarr": "Ici le texte arabe emploie le terme basrien (الجار والمجرور / مجرور) au lieu de « خفض » : la traduction dit « génitif » dans les deux cas (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9)."
+  },
+  {
+   "id": "AJR-0121",
+   "fr": "Et pour l'excepté par khalā, ʿadā et ḥāshā, l'accusatif et le génitif sont permis, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "قَامَ الْقَوْمُ خَلَا زَيْدًا وَزَيْدٍ",
+     "fr": "les gens se sont levés, sauf Zayd (accusatif ou génitif)"
+    },
+    {
+     "ar": "وَعَدَا عَمْرًا وَعَمْرٍو",
+     "fr": "et : excepté ʿAmr (accusatif ou génitif)"
+    },
+    {
+     "ar": "وَحَاشَا بَكْرًا وَبَكْرٍ",
+     "fr": "et : à l'exception de Bakr (accusatif ou génitif)"
+    }
+   ],
+   "termes": [
+    "mustathna"
+   ]
+  },
+  {
+   "id": "AJR-0122",
+   "fr": "Chapitre de lā",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "la_nafiya"
+   ]
+  },
+  {
+   "id": "AJR-0123",
+   "fr": "Sache que lā met à l'accusatif les indéfinis, sans tanwīn, lorsqu'elle touche directement l'indéfini et qu'elle n'est pas répétée, comme dans l'exemple ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "لَا رَجُلَ فِي الدَّارِ",
+     "fr": "il n'y a aucun homme dans la maison"
+    }
+   ],
+   "termes": [
+    "la_nafiya",
+    "nasb_nom",
+    "tanwin"
+   ]
+  },
+  {
+   "id": "AJR-0124",
+   "fr": "Si elle ne le touche pas directement, le rafʿ est obligatoire, ainsi que la répétition de lā, comme dans l'exemple ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "لَا فِي الدَّارِ رَجُلٌ وَلَا امْرَأَةٌ",
+     "fr": "ni dans la maison un homme, ni une femme"
+    }
+   ],
+   "termes": [
+    "la_nafiya",
+    "rafa"
+   ]
+  },
+  {
+   "id": "AJR-0125",
+   "fr": "Et si elle est répétée, il est permis de la faire agir ou de l'annuler : si tu veux, tu dis la première phrase ci-dessous ; et si tu veux, tu dis la seconde.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "لَا رَجُلَ فِي الدَّارِ وَلَا امْرَأَةَ",
+     "fr": "ni homme dans la maison, ni femme (lā agit)"
+    },
+    {
+     "ar": "لَا رَجُلٌ فِي الدَّارِ وَلَا امْرَأَةٌ",
+     "fr": "ni homme dans la maison, ni femme (lā est annulée)"
+    }
+   ],
+   "termes": [
+    "la_nafiya"
+   ]
+  },
+  {
+   "id": "AJR-0126",
+   "fr": "Chapitre de l'interpellé",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "munada"
+   ]
+  },
+  {
+   "id": "AJR-0127",
+   "fr": "L'interpellé est de cinq sortes : le nom propre simple ; l'indéfini visé ; l'indéfini non visé ; l'annexé ; et ce qui ressemble à l'annexé.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "munada",
+    "marifa",
+    "idafa"
+   ]
+  },
+  {
+   "id": "AJR-0128",
+   "fr": "Le nom propre simple et l'indéfini visé sont invariables : ils sont fixés sur la ḍamma, sans tanwīn, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "يَا زَيْدُ",
+     "fr": "ô Zayd !"
+    },
+    {
+     "ar": "يَا رَجُلُ",
+     "fr": "ô homme !"
+    }
+   ],
+   "termes": [
+    "munada",
+    "mabni",
+    "damma",
+    "tanwin"
+   ]
+  },
+  {
+   "id": "AJR-0129",
+   "fr": "Et les trois autres sont à l'accusatif, et non autrement.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "munada",
+    "nasb_nom"
+   ]
+  },
+  {
+   "id": "AJR-0130",
+   "fr": "Chapitre du complément de cause",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "mafulajlih"
+   ]
+  },
+  {
+   "id": "AJR-0131",
+   "fr": "C'est le nom à l'accusatif mentionné pour expliciter la cause de la survenue de l'action, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "قَامَ زَيْدٌ إِجْلَالًا لِعَمْرٍو",
+     "fr": "Zayd s'est levé par égard pour ʿAmr"
+    },
+    {
+     "ar": "قَصَدْتُكَ ابْتِغَاءَ مَعْرُوفِكَ",
+     "fr": "je me suis dirigé vers toi en recherchant ta bonté"
+    }
+   ],
+   "termes": [
+    "mafulajlih",
+    "nasb_nom"
+   ]
+  },
+  {
+   "id": "AJR-0132",
+   "fr": "Chapitre du complément d'accompagnement",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "maah"
+   ]
+  },
+  {
+   "id": "AJR-0133",
+   "fr": "C'est le nom à l'accusatif mentionné pour expliciter avec qui l'action a été faite, comme dans les exemples ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "جَاءَ الْأَمِيرُ وَالْجَيْشَ",
+     "fr": "l'émir est venu avec l'armée"
+    },
+    {
+     "ar": "اسْتَوَى الْمَاءُ وَالْخَشَبَةَ",
+     "fr": "l'eau s'est élevée au niveau du morceau de bois"
+    }
+   ],
+   "termes": [
+    "maah",
+    "nasb_nom"
+   ]
+  },
+  {
+   "id": "AJR-0134",
+   "fr": "Quant au prédicat de kāna et de ses sœurs et au nom de inna et de ses sœurs, leur mention a déjà précédé parmi les noms au nominatif ; de même les suiveurs : ils ont été traités là.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "khabar_kana",
+    "ism_kana",
+    "tabi"
+   ]
+  },
+  {
+   "id": "AJR-0135",
+   "fr": "Chapitre des noms au génitif (khafḍ)",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "titre",
+   "termes": [
+    "makhfudat",
+    "khafd"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0136",
+   "fr": "Les noms au génitif sont de trois sortes : ce qui est mis au génitif par une particule ; ce qui est mis au génitif par l'annexion ; et le suiveur de ce qui est au génitif.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "makhfudat",
+    "khafd_nom",
+    "harf",
+    "idafa",
+    "tabi"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0137",
+   "fr": "Ce qui est mis au génitif par une particule est ce qui est mis au génitif par les particules de la première liste ci-dessous ; par les particules du serment, qui sont celles de la deuxième liste ; par le wāw de rubba ; et par mudh et mundhu.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "liste": [
+    {
+     "ar": "مِنْ",
+     "fr": "de, à partir de"
+    },
+    {
+     "ar": "إِلَى",
+     "fr": "vers, jusqu'à"
+    },
+    {
+     "ar": "عَنْ",
+     "fr": "loin de, au sujet de"
+    },
+    {
+     "ar": "عَلَى",
+     "fr": "sur"
+    },
+    {
+     "ar": "فِي",
+     "fr": "dans"
+    },
+    {
+     "ar": "رُبَّ",
+     "fr": "maint, il arrive que"
+    },
+    {
+     "ar": "الْبَاءِ",
+     "fr": "le bā' (par, avec)"
+    },
+    {
+     "ar": "الْكَافِ",
+     "fr": "le kāf (comme)"
+    },
+    {
+     "ar": "اللَّامِ",
+     "fr": "le lām (pour, à)"
+    },
+    {
+     "ar": "الْوَاوُ",
+     "fr": "le wāw du serment"
+    },
+    {
+     "ar": "الْبَاءُ",
+     "fr": "le bā' du serment"
+    },
+    {
+     "ar": "التَّاءُ",
+     "fr": "le tā' du serment"
+    },
+    {
+     "ar": "وَاوِ رُبَّ",
+     "fr": "le wāw de rubba"
+    },
+    {
+     "ar": "مُذْ",
+     "fr": "depuis (temps)"
+    },
+    {
+     "ar": "مُنْذُ",
+     "fr": "depuis (temps)"
+    }
+   ],
+   "termes": [
+    "khafd_nom",
+    "harf"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0138",
+   "fr": "Ce qui est mis au génitif par l'annexion est, par exemple, l'exemple ci-dessous.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "غُلَامُ زَيْدٍ",
+     "fr": "le serviteur de Zayd"
+    }
+   ],
+   "termes": [
+    "idafa",
+    "khafd_nom"
+   ],
+   "note_khafd_jarr": "Le texte arabe de cette phrase dit « خفض » (Ibn Ājurrūm, école de Kūfa) ; le terme basrien est « جر » (Ibn Mālik, école de Baṣra). La traduction rend les deux par « génitif » (décision du référent, 13/10/2026 ; al-Kafrāwī p. 9 : « le khafḍ est le mot des Koufiens, le jarr celui des Basriens »)."
+  },
+  {
+   "id": "AJR-0139",
+   "fr": "Elle est de deux sortes : celle qui est sous-entendue avec lām, et celle qui est sous-entendue avec min.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "termes": [
+    "idafa"
+   ]
+  },
+  {
+   "id": "AJR-0140",
+   "fr": "Celle qui est sous-entendue avec lām, c'est l'exemple de la première ligne ci-dessous ; et celle qui est sous-entendue avec min, ce sont les exemples suivants.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "exemples": [
+    {
+     "ar": "غُلَامُ زَيْدٍ",
+     "fr": "le serviteur de Zayd [= le serviteur « pour » Zayd]"
+    },
+    {
+     "ar": "ثَوْبُ خَزٍّ",
+     "fr": "un vêtement de soie [= « en » soie]"
+    },
+    {
+     "ar": "بَابُ سَاجٍ",
+     "fr": "une porte de teck"
+    },
+    {
+     "ar": "خَاتَمُ حَدِيدٍ",
+     "fr": "une bague de fer"
+    }
+   ],
+   "termes": [
+    "idafa"
+   ]
+  },
+  {
+   "id": "AJR-0141",
+   "fr": "Fin, par la grâce d'Allah, de l'impression du texte de l'Ājurrūmiyya, au mois de Muḥarram de l'an 1324 de l'hégire. Qu'Allah prie sur notre maître Muḥammad, le Prophète illettré, sur sa famille et sur ses compagnons, et qu'Il les salue.",
+   "statut": "EN_ATTENTE_SECONDE_LECTURE",
+   "type": "colophon_editeur",
+   "note_traduction": "Colophon de l'éditeur (A1), hors matn : non attribué à Ibn Ājurrūm."
+  }
+ ]
+}

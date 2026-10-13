@@ -1,0 +1,811 @@
+{
+  "oeuvre": "Ibn al-Jazarī, al-Muqaddima al-Jazariyya",
+  "langue": "fr",
+  "traduction": "Traduction Awzid, faite depuis l'arabe (texte_ar.json : consonnes de M, Majmūʿ 1306 ; voyelles de Claude), commentaire de référence : la Ḥawāshī de Khālid al-Azharī (1304 H), projet non relu",
+  "mention_publique": "INTERDITE avant relecture : la mention « Traduction Awzid, relue par … » n'apparaît qu'après la relecture savante",
+  "statut_global": "EN_ATTENTE_SECONDE_LECTURE",
+  "conventions": [
+    "Poème didactique : on traduit le sens, pas la rime ni le mètre. Un vers = une phrase française (ou un segment, quand la phrase arabe court sur plusieurs vers : la ponctuation l'indique).",
+    "Traduction proche du texte. Tout ajout de sens est entre crochets [ ]. Les mots-repères (« khuṣṣa ḍaghṭin qiẓ »…) sont translittérés entre guillemets, avec leur sens entre crochets quand il est nécessaire.",
+    "Les termes de tajwīd suivent lexique_tajwid.json (vocabulaire de nos livres qc2, qc3 et hifz : « clarté », « fusion », « conversion », « dissimulation », « son nasal », « rebond », « allongement »). Aucune phonétique latine n'est destinée à l'élève : les translittérations du journal et de ces fichiers sont à l'usage des relecteurs.",
+    "« Allah » pour الله, comme dans les autres madjlis (choix à confirmer par le comité).",
+    "Les chapitres sur l'écriture du Muṣḥaf (JAZ-0079 à 0100) sont des listes de mots coraniques : la traduction est littérale et minimale ; l'explication viendra avec les relecteurs.",
+    "Aucune traduction existante n'a été lue. La Ḥawāshī (arabe, domaine public) a servi à comprendre les passages difficiles ; ses pages sont citées dans journal_traduction.md."
+  ],
+  "revision_13_10": "R-J4 : JAZ-0003, 0008, 0042, 0061 précisés d après la Ḥawāshī (pp. 4, 5, 14, 21) ; JAZ-0085 et JAZ-0089 corrigés d après le témoin vocalisé P (voir texte_ar.json, V-J10 et V-J13) ; JAZ-0079 à 0100 marqués niveau_min adulte, facultatif.",
+  "phrases": [
+    {
+      "id": "JAZ-0001",
+      "fr": "Dit celui qui espère le pardon d'un Seigneur qui entend [tout] : Muḥammad ibn al-Jazarī, le chaféite :",
+      "partie": "Ouverture",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0002",
+      "fr": "Louange à Allah ; qu'Allah prie sur Son Prophète et sur Son élu,",
+      "partie": "Ouverture",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0003",
+      "fr": "Muḥammad, sur sa famille, ses Compagnons, sur celui qui enseigne la récitation du Coran, ainsi que sur celui qui l'aime [le Coran].",
+      "partie": "Ouverture",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0004",
+      "fr": "Ensuite : ceci est une introduction, sur ce que le lecteur [du Coran] doit savoir.",
+      "partie": "Ouverture",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0005",
+      "fr": "Car il leur est obligatoire, de façon ferme, avant de commencer, de commencer par connaître :",
+      "partie": "Ouverture",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0006",
+      "fr": "les points d'articulation des lettres et leurs qualités, afin de prononcer dans la langue la plus éloquente,",
+      "partie": "Ouverture",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0007",
+      "fr": "[ceux qui] rendent exacts le tajwīd [la belle récitation] et les arrêts, ainsi que ce qui a été tracé dans les exemplaires du Coran,",
+      "partie": "Ouverture",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0008",
+      "fr": "de tout [mot] séparé ou joint, et du tāʾ de féminin qui n'était pas écrit [en tāʾ lié « ة », mais en tāʾ ouvert « ت »] dans [les exemplaires].",
+      "partie": "Ouverture",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0009",
+      "fr": "Les points d'articulation des lettres sont dix-sept, selon ce que retient celui qui a examiné [la question].",
+      "partie": "Points d'articulation",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0010",
+      "fr": "Le alif de la cavité et ses deux sœurs : ce sont des lettres d'allongement ; elles aboutissent à l'air.",
+      "partie": "Points d'articulation",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0011",
+      "fr": "Puis, pour le fond de la gorge : hamza et hāʾ ; puis, pour son milieu : ʿayn, ḥāʾ ;",
+      "partie": "Points d'articulation",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0012",
+      "fr": "le plus proche [de la bouche] : ghayn, khāʾ ; et le qāf : le fond de la langue, en haut ; puis le kāf,",
+      "partie": "Points d'articulation",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0013",
+      "fr": "en dessous ; et le milieu [de la langue] : jīm, shīn, yāʾ ; et le ḍād, du bord [de la langue], là où il touche",
+      "partie": "Points d'articulation",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0014",
+      "fr": "les molaires, du côté gauche ou du droit ; et le lām : son [bord] le plus proche, jusqu'à son extrémité.",
+      "partie": "Points d'articulation",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0015",
+      "fr": "Et le nūn : place-le sous l'extrémité [de la langue] ; et le rāʾ en est proche, entré vers le dos [de la langue].",
+      "partie": "Points d'articulation",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0016",
+      "fr": "Le ṭāʾ, le dāl et le tāʾ [sortent] de lui [le bout de la langue] et des incisives supérieures ; et les [lettres] sifflantes s'y logent,",
+      "partie": "Points d'articulation",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0017",
+      "fr": "[sortant] de lui et de au-dessus des incisives inférieures ; et le ẓāʾ, le dhāl et le thāʾ [sortent] des incisives supérieures,",
+      "partie": "Points d'articulation",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0018",
+      "fr": "[à partir] des extrémités des deux [la langue et ces incisives] ; et du ventre de la lèvre [inférieure] : le fāʾ, avec les extrémités des incisives supérieures, celles qui avancent.",
+      "partie": "Points d'articulation",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0019",
+      "fr": "Pour les deux lèvres : wāw, bāʾ, mīm ; et le son nasal (ghunna) : son point de sortie est le nez [le fond des fosses nasales].",
+      "partie": "Points d'articulation",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0020",
+      "fr": "Leurs qualités : sonorité (jahr), relâchement (rikhwa), abaissement (istifāl), ouverture (infitāḥ), fermeté (iṣmāt) ; et dis le contraire [de chacune].",
+      "partie": "Qualités",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0021",
+      "fr": "Les [lettres] « soufflées » (mahmūsa) : [les mots] « fa-ḥaththahu shakhṣ sakata » ; les [lettres] « fortes » (shadīda) : les mots « ajid qaṭ bakat ».",
+      "partie": "Qualités",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0022",
+      "fr": "Et entre le relâché et le fort : « lin ʿumar » ; et les sept [lettres] d'élévation (ʿulūw) : « khuṣṣa ḍaghṭin qiẓ » ; [leur nombre est] limité.",
+      "partie": "Qualités",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0023",
+      "fr": "Et ṣād, ḍād, ṭāʾ, ẓāʾ : [lettres] couvertes (muṭbaqa) ; et « fir min lubbi » [fāʾ rāʾ mīm nūn lām bāʾ] : les [lettres] « mudhlaqa » [de la pointe].",
+      "partie": "Qualités",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0024",
+      "fr": "Les [lettres] sifflantes (ṣafīr) : ṣād, zāy, sīn ; le rebond (qalqala) : « quṭbu jadd » ; et la douceur (līn) :",
+      "partie": "Qualités",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0025",
+      "fr": "[le] wāw et [le] yāʾ quand ils ont un sukūn et qu'une fatḥa précède chacun d'eux ; et l'inclinaison (inḥirāf) a été reconnue exacte",
+      "partie": "Qualités",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0026",
+      "fr": "dans le lām et le rāʾ ; et la répétition (takrīr) a été attribuée [au rāʾ] ; et pour l'étalement (tafashshī) : le shīn ; et pour l'allongement (istiṭāla) : le ḍād.",
+      "partie": "Qualités",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0027",
+      "fr": "Mettre en pratique le tajwīd est une obligation ferme et impérative : celui qui ne perfectionne pas la récitation du Coran est pécheur.",
+      "partie": "Le tajwīd",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0028",
+      "fr": "Car c'est avec lui qu'Allah l'a fait descendre, et c'est ainsi, de Lui, qu'il nous est parvenu.",
+      "partie": "Le tajwīd",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0029",
+      "fr": "Il est aussi la parure de la récitation, et l'ornement de la transmission orale (adāʾ) et de la lecture (qirāʾa).",
+      "partie": "Le tajwīd",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0030",
+      "fr": "Il consiste à donner aux lettres leur dû : ce qui leur revient en fait de qualité [propre] et ce qu'elles méritent [selon les circonstances],",
+      "partie": "Le tajwīd",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0031",
+      "fr": "à ramener chacune à son origine, et à prononcer [chaque lettre] dans son semblable comme dans [son] semblable [isolé],",
+      "partie": "Le tajwīd",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0032",
+      "fr": "[tout cela] mené à sa perfection, sans artifice, avec douceur dans la prononciation, sans excès.",
+      "partie": "Le tajwīd",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0033",
+      "fr": "Il n'y a, entre lui et son abandon, que l'exercice de l'homme avec sa mâchoire.",
+      "partie": "Le tajwīd",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0034",
+      "fr": "Rends fines les lettres d'abaissement (mustafila), et garde-toi d'épaissir la prononciation du alif.",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0035",
+      "fr": "[Rends fines] la hamza de « al-ḥamdu », de « aʿūdhu », de « ihdinā » ; [de] « Allāh » ; puis le lām de « li-llāh » et de « lanā » ;",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0036",
+      "fr": "[et rends fins] « wa-l-yatalaṭṭaf », « wa-ʿalā Llāh », « wa-lā aḍ- » [ḍāllīn] ; et le mīm de « makhmaṣa » et de « maraḍ » ;",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0037",
+      "fr": "et le bāʾ de « barq », « bāṭil », « bi-him », « bi-dhī » ; et veille à garder la force (shidda) et la sonorité (jahr) qui [sont]",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0038",
+      "fr": "en elle [le bāʾ] et dans le jīm : comme dans « ḥubb aṣ-ṣabr », « rabwa », « ujtuththat », « ḥajj al-fajr » ;",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0039",
+      "fr": "et rends distinct le rebond (qalqala) quand il a un sukūn, et plus encore s'il est à l'arrêt.",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0040",
+      "fr": "le ḥāʾ de « ḥaṣḥaṣa », « aḥaṭtu », « al-ḥaqq » ; et le sīn de « mustaqīm », « yasṭū », « yasqū » [avec leur terminaison nasalisée dans le Coran : « yasṭūna », « yasqūna »].",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0041",
+      "fr": "Rends le rāʾ fin quand il a une kasra, et de même quand il a un sukūn après une kasra,",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0042",
+      "fr": "à condition que [le rāʾ] ne soit pas placé avant une lettre d'élévation, et que la kasra ne soit pas une kasra non originelle [= la kasra doit être originelle].",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0043",
+      "fr": "La divergence existe à propos de « firq », à cause de la kasra [qui s'y trouve] ; et allège la répétition quand [le rāʾ] est doublé (chaddé).",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0044",
+      "fr": "Épaissis le lām du nom d'Allah après une fatḥa ou une ḍamma, comme dans « ʿabdu Llāh ».",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0045",
+      "fr": "Épaissis la lettre d'élévation et réserve [le plus fort] à l'iṭbāq : [la lettre couverte est] plus forte, comme dans « qāla » et « al-ʿaṣā ».",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0046",
+      "fr": "Rends distinct l'iṭbāq [du ṭāʾ] dans « aḥaṭtu » et « basaṭtu » ; et le désaccord est survenu au sujet de « nakhluqkum ».",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0047",
+      "fr": "Tiens à garder le sukūn [le silence de voyelle] dans « jaʿalnā », « anʿamta », « al-maghḍūb » et « ḍalalnā ».",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0048",
+      "fr": "Garde pure l'ouverture [= le caractère non couvert] de « maḥdhūrā » et de « ʿasā », de crainte de la confondre avec « maḥẓūrā » et « ʿaṣā ».",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0049",
+      "fr": "Veille à [conserver] la force (shidda) dans le kāf et le tāʾ, comme dans « shirkikum », « tatawaffā », « fitnatanā ».",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0050",
+      "fr": "Pour les deux premières [lettres] de deux [lettres] identiques ou du même organe, si [la première] a un sukūn, fais la fusion, comme dans « qul rabbi » et « bal lā » ; et rends [pourtant] distinct [dans les cas suivants] :",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0051",
+      "fr": "« fī yawm » avec « qālū wa-hum » ; et « qul naʿam », « sabbiḥhu », « lā tuzigh qulūb[anā] », « fa-ltaqama ».",
+      "partie": "Finesse, épaisseur, fusion des lettres identiques",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0052",
+      "fr": "Distingue le ḍād, par l'étirement et par le point de sortie, du ẓāʾ ; et toutes [les occurrences du ẓāʾ] se trouvent dans :",
+      "partie": "Ḍād et ẓāʾ",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0053",
+      "fr": "« aẓ-ẓaʿn », « ẓill », « aẓ-ẓuhr », « ʿaẓm », « al-ḥifẓ » ; « ayqiẓ », « unẓur », « ʿaẓm », « ẓahr », « al-lafẓ ».",
+      "partie": "Ḍād et ẓāʾ",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0054",
+      "fr": "« ẓāhir », « laẓā », « shuwāẓ », « kaẓm », « ẓalama » ; « aghliẓ », « ẓalām », « ẓufr », « intaẓir », « ẓamā ».",
+      "partie": "Ḍād et ẓāʾ",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0055",
+      "fr": "« aẓfara », « ẓannan » [et ses dérivés], « kayfa jāʾa » ; « waʿẓ » [et ses dérivés] sauf « ʿiḍīn » ; « ẓalla » d'an-Naḥl, d'az-Zukhruf [ces deux-là] pareillement.",
+      "partie": "Ḍād et ẓāʾ",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0056",
+      "fr": "« fa-ẓalta » [ou « wa-ẓalta »], « ẓaltum », « ẓallū » dans ar-Rūm, comme [dans] al-Ḥijr « ẓallū » [= « ẓallat »], ash-Shuʿarāʾ « naẓallu ».",
+      "partie": "Ḍād et ẓāʾ",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0057",
+      "fr": "« yaẓlalna », « maḥẓūran » avec « al-muḥtaẓir », « kunta faẓẓan », et la totalité de « an-naẓar ».",
+      "partie": "Ḍād et ẓāʾ",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0058",
+      "fr": "Sauf [les cas dans] « wayl » [al-Muṭaffifīn], « hal » [al-Insān] et « ūlā » [la première sourate d'al-Qiyāma] : « nāḍira » [avec ḍād] ; et [pour] « al-ghayẓ » [avec ẓāʾ], sauf [dans] ar-Raʿd et Hūd [avec ḍād] ; « qāṣira ».",
+      "partie": "Ḍād et ẓāʾ",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0059",
+      "fr": "Et « al-ḥaẓẓ » [avec ẓāʾ] et non « al-ḥaḍḍ » [l'incitation] « ʿalā ṭ-ṭaʿām » ; et pour « ẓanīn », la divergence est [bien] connue.",
+      "partie": "Ḍād et ẓāʾ",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0060",
+      "fr": "Et s'ils se rencontrent [ḍād et ẓāʾ], la clarté (bayān) est obligatoire : « anqaḍa ẓahraka », « yaʿaḍḍu aẓ-ẓālimu ».",
+      "partie": "Ḍād et ẓāʾ",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0061",
+      "fr": "« uḍṭurra », avec « waʿaẓta » et « afaḍtum » ; et dégage [= articule nettement] le hāʾ de « jibāhuhum » [9:35] et le yāʾ de « ʿalayhim » [ṣalawāt, 2:157].",
+      "partie": "Ḍād et ẓāʾ",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0062",
+      "fr": "Fais apparaître le son nasal (ghunna) du nūn et du mīm quand ils sont doublés (chaddés) ; et dissimule (ikhfāʾ)",
+      "partie": "Son nasal et mīm sākin",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0063",
+      "fr": "le mīm sans voyelle avec son nasal devant le bāʾ, selon l'avis retenu des gens de l'adāʾ [les maîtres de la transmission orale].",
+      "partie": "Son nasal et mīm sākin",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0064",
+      "fr": "Et fais-les apparaître nettement devant les autres lettres ; et garde-toi, devant le wāw et le fāʾ, qu'ils ne se dissimulent.",
+      "partie": "Son nasal et mīm sākin",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0065",
+      "fr": "Le statut du tanwīn et du nūn [sans voyelle] se rencontre sous quatre formes : clarté (iẓhār), fusion (idghām), conversion (qalb), dissimulation (ikhfāʾ).",
+      "partie": "Nūn sākin et tanwīn",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0066",
+      "fr": "Devant une lettre de la gorge, rends clair ; fais la fusion devant le lām et le rāʾ, sans son nasal : [c'est] obligatoire.",
+      "partie": "Nūn sākin et tanwīn",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0067",
+      "fr": "Fais la fusion avec son nasal dans « yūmin » [ي ن م و], sauf dans un [seul] mot, comme « dunyā » [et « ṣinwān », « qinwān », « bunyān »] : « ʿanwinū » [« titre-le »].",
+      "partie": "Nūn sākin et tanwīn",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0068",
+      "fr": "Et la conversion (qalb) devant le bāʾ, avec le son nasal ; de même, la dissimulation (ikhfāʾ) est prise devant le reste des lettres.",
+      "partie": "Nūn sākin et tanwīn",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0069",
+      "fr": "L'allongement (madd) est « nécessaire » (lāzim), « obligatoire » (wājib) ou « permis » (jāʾiz) ; et [pour ce dernier], l'allongement ou le raccourcissement (qaṣr) sont établis.",
+      "partie": "Madd",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0070",
+      "fr": "Est « nécessaire » ce qui, après une lettre d'allongement, comporte un [sukūn] stable à la liaison et à l'arrêt ; on l'allonge en pleine longueur (ṭūl).",
+      "partie": "Madd",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0071",
+      "fr": "Est « obligatoire » ce qui vient avant une hamza, lorsqu'ils sont réunis dans un mot [le madd muttaṣil].",
+      "partie": "Madd",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0072",
+      "fr": "Est « permis » ce qui vient séparé [munfaṣil], ou [lié à] un sukūn survenu à l'arrêt, [permis] sans restriction.",
+      "partie": "Madd",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0073",
+      "fr": "Après ton perfectionnement des lettres, il est indispensable de connaître les arrêts (wuqūf)",
+      "partie": "Arrêts",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0074",
+      "fr": "et le départ (ibtidāʾ) ; ils se divisent donc en trois : complet (tāmm), suffisant (kāfī) et bon (ḥasan).",
+      "partie": "Arrêts",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0075",
+      "fr": "[Ils] concernent ce qui est complet ; s'il n'y a pas de lien [avec ce qui suit], ou si le lien n'est que de sens, alors reprends [à partir de là].",
+      "partie": "Arrêts",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0076",
+      "fr": "Le complet, puis le suffisant ; et pour [le lien] de forme (lafẓan), interdis [l'arrêt], sauf aux fins de versets : permets-le ; puis le [simplement] bon.",
+      "partie": "Arrêts",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0077",
+      "fr": "Ce qui n'est pas complet est « laid » (qabīḥ) ; on n'y arrête que contraint, et l'on reprend [la lecture] en arrière de lui.",
+      "partie": "Arrêts",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0078",
+      "fr": "Il n'y a, dans le Coran, aucun arrêt obligatoire ni interdit, sauf celui qui a une cause.",
+      "partie": "Arrêts",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0079",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "Apprends [à reconnaître] les [mots] séparés, les [mots] joints et les tāʾ, [tels qu'ils sont] dans l'exemplaire de l'Imām [de ʿUthmān], selon ce qui nous est parvenu :",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0080",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "Sépare en dix mots « an lā », [dans les cas :] avec « malja' » et « lā ilāha illā » ;",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0081",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« taʿbudū » [Yā-Sīn], le deuxième de « Hūd », « lā yushrikna », « tushrik », « yadkhulanna », « taʿlū ʿalā »,",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0082",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« an lā yaqūlū » [al-Aʿrāf], « an lā aqūla » [al-Aʿrāf] ; « in mā » [en deux mots] dans ar-Raʿd, et [pour le même mot avec fatḥa] joins ; et « ʿan mā » :",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0083",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« nuhū » : sépare ; [de même] « min mā malakat » [ar-Rūm, an-Nisāʾ], [avec] divergence [pour] al-Munāfiqūn ; « am man assasa » :",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0084",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "[et] al-Anʿām ; [le mot] « yadʿūna » avec fatḥa, ensemble ; et la divergence [pour] al-Anfāl et an-Naḥl est survenue.",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0085",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "Fuṣṣilat, an-Nisāʾ, [aṣ-Ṣāffāt =] dhabḥ, « ḥaythu mā » ; et [pour] « in lam » ouvert, [et] « innamā » [en un seul mot] avec kasra [dans al-Anʿām].",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0086",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "Et « kull mā sa'altumūhu » [Ibrāhīm], divergence [: « ruddū » (an-Nisāʾ)] ; de même « bi'sa mā » [al-Baqara], et joins [le reste de la liste] :",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0087",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« khalaftumūnī » ; « ishtarū » dans « fī mā » [coupé] ; « ūḥiya » ; « afaḍtum », « ishtahat », « yablū » ensemble [les deux cas].",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0088",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« thānī », « fa'alna », « waqaʿat », « ar-Rūm » ; « kalā » [ensemble] ; « tanzīl », « ash-Shuʿarāʾ », et ce qui n'est pas de [leur] genre : joins.",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0089",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« fa-aynamā » [comme dans an-Naḥl], joins ; et divergence [pour] ash-Shuʿarāʾ, al-Aḥzāb et an-Nisāʾ ; et décris :",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0090",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "Et joins « fa-illam » [Hūd], « an lan najʿala », « najmaʿa », « kaylā taḥzanū », « taʾsaw ʿalā »,",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0091",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« ḥajj ʿalayka ḥaraj » ; leur coupure ; « ʿan man yashāʾu », « man tawallā », « yawm hum » ;",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0092",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "et « māli hādhā », « wa-lladhīna hā'ulā' » ; « tahīna » [dans l'Imām] : joins ; et « hallā ».",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0093",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "et « wazanūhum », « kālūhum » : joins ; de même « min al », « hā », « yā » : ne les sépare pas.",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0094",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« raḥmat » d'az-Zukhruf, avec le tāʾ [ouvert], « zubara » ; al-Aʿrāf, ar-Rūm, Hūd, [al-]Kāf [l'ouvrage de la sourate] al-Baqara ;",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0095",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« niʿmat » [dans] trois [lieux] ; an-Naḥl, Ibrāhīm, ensemble ; les dernières [occurrences] ; ʿUqūd [al-Māʾida] : le second [passage], celui qui est lié à « hum ».",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0096",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« Luqmān », puis « Fāṭir », comme [dans] aṭ-Ṭūr, « ʿImrān » ; « laʿnat » [dans] elle et an-Nūr ;",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0097",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« imraʾat » de Yūsuf, de ʿImrān, d'al-Qaṣaṣ ; at-Taḥrīm ; « maʿṣiyat » [avec] « qad samiʿa » : la particularité est spéciale [= une règle particulière].",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0098",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« shajarat » [ad-]Dukhān, « sunnat » [avec] Fāṭir, « kallā » [aussi], al-Anfāl, et la lettre de Ghāfir ;",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0099",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "« qurrat » [ʿayn], « jannat » [dans] « waqaʿat » ; « fiṭrat », « baqiyyat », « ibnat » et « kalimat » ;",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0100",
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "fr": "[le] milieu d'al-Aʿrāf ; et tout [mot] sur lequel on a divergé, [quand on le lit] au pluriel ou au singulier, on le reconnaît par le tāʾ [ouvert].",
+      "partie": "Écriture du Muṣḥaf",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0101",
+      "fr": "Commence [la lecture] par la hamza de liaison (hamzat al-waṣl) d'un verbe avec une ḍamma, si la troisième [lettre] du verbe prend une ḍamma.",
+      "partie": "Hamzat al-waṣl",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0102",
+      "fr": "Et mets-lui une kasra quand [la 3e a] une kasra ou une fatḥa ; et dans les noms, sauf dans « al », [mets] sa kasra, et dans :",
+      "partie": "Hamzat al-waṣl",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0103",
+      "fr": "« ibn », avec « ibnat », « imriʾ », « ithnayn », « imraʾa », « ism », avec « ithnatayn ».",
+      "partie": "Hamzat al-waṣl",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0104",
+      "fr": "Garde-toi de t'arrêter avec toute la voyelle, sauf si tu fais le rawm : [alors, on prononce] une partie de la voyelle,",
+      "partie": "Arrêt par rawm et ishmām",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0105",
+      "fr": "sauf [dans le cas d']une fatḥa ou d'un nasb ; et fais l'ishmām — le signe par la ḍamma — dans le rafʿ et la ḍamma.",
+      "partie": "Arrêt par rawm et ishmām",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": true
+    },
+    {
+      "id": "JAZ-0106",
+      "fr": "Mon poème, [cette] introduction, est achevé : de ma part, pour le lecteur du Coran, un présent [qui lui est offert].",
+      "partie": "Clôture",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "JAZ-0107",
+      "fr": "Et la louange à Allah est sa conclusion ; puis [viennent] ensuite la prière et la salutation [sur le Prophète].",
+      "partie": "Clôture",
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    }
+  ]
+}
