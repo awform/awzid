@@ -85,7 +85,10 @@ const ESPACES: Record<string, RegExp> = {
   coran: /src\/routes\/coran\/((ecouter|memoriser|mushaf)\/)?\+page\.svelte/,
   lectures: pages('lectures'),
   activites: pages('activites'),
-  famille: pages('(famille|profils)'),
+  famille: pages('famille'),
+  profils: pages('profils'),
+  messages: pages('messages'),
+  connexion: pages('(connexion|ma-classe)'),
   aide: pages('(plus|aide|legal)'),
   // Madjaliss (P3-1) : UNE page (trois écrans) et ses modules, gardés au premier usage, jamais préchargés
   // (`PREMIER_USAGE_ROUTES` de scripts/groupes.mjs). Une seule page : aucun module partagé par 3 pages, donc rien

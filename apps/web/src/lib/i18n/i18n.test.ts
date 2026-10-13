@@ -221,8 +221,18 @@ describe('fonctions', () => {
     expect(Object.keys(rares).filter((k) => k in shell || k in staff)).toEqual([]);
     expect(sw).not.toContain('/i18n/fr-rares.json');
     const RARES =
-      /[\\/]routes[\\/](abonnement|offres|garanties|activation|certificats|compte[\\/]protections|compte[\\/]tuteur|demo|inscription|acces|errata|admin|enseignant)[\\/]|[\\/]lib[\\/](avis|admin)[\\/]|[\\/]lib[\\/](compte[\\/]CompteEnLigne|TutorPanel|TutorSegments|NotificationsReglages)\.svelte$/;
-    for (const p of ['abonnement', 'offres', 'inscription', 'certificats', 'compte/tuteur'])
+      /[\\/]routes[\\/](abonnement|offres|garanties|activation|certificats|compte[\\/]protections|compte[\\/]tuteur|demo|inscription|acces|errata|admin|enseignant|famille|messages|connexion|ma-classe)[\\/]|[\\/]lib[\\/](avis|admin)[\\/]|[\\/]lib[\\/](compte[\\/]CompteEnLigne|TutorPanel|TutorSegments|NotificationsReglages)\.svelte$/;
+    for (const p of [
+      'abonnement',
+      'offres',
+      'inscription',
+      'certificats',
+      'compte/tuteur',
+      'famille',
+      'messages',
+      'connexion',
+      'ma-classe',
+    ])
       expect(readFileSync(join(SRC, 'routes', p, '+layout.ts'), 'utf8'), p).toContain(
         "loadTexts('rares')",
       );

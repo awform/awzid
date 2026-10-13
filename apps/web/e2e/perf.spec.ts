@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import type { BrowserContext, Page } from '@playwright/test';
 import { expect, test } from './fixtures';
@@ -6,7 +7,8 @@ import { expect, test } from './fixtures';
  * Lot F5 — indicateur (c) du budget : OUVERTURE EN 3G SIMULÉE sur un téléphone MOYEN (étude des plateformes,
  * rec. 7) : processeur ralenti ×4, réseau 150 ms et 1,6 Mbit/s (profil « mobile » de Lighthouse). Budget : < 3 s
  * pour la PREMIÈRE ouverture de l'élève (rien en cache : tout vient du réseau) et pour la relance (application
- * installée : coquille servie par le service worker). Médiane de 3 ouvertures à froid, chacune dans un contexte
+ * installée : coquille servie par le service worker). Médiane de 5 ouvertures à froid (la VM de test est partagée : une ouverture isolée varie de 2 à 4,5 s selon la charge, la médiane de 5 absorbe
+ * deux ouvertures perturbées ; voir docs/projet/PERF_BETA.md), chacune dans un contexte
  * neuf (même session). Octets réellement transférés notés par type (indicateur (b), vu du navigateur).
  * Mesures : reports/perf-3g.json (recopiées par budget.mjs dans reports/budget-web.md) et
  * test-results/perf-<projet>.json. À confirmer sur un vrai Tecno ou Itel (grille de TEST_APPAREILS.md).
@@ -48,7 +50,7 @@ test('ouverture < 3 s en 3G simulée (CPU ×4, 150 ms, 1,6 Mbit/s) : premier lan
   const opts = { ...info.project.use, storageState: state, baseURL: info.project.use.baseURL };
   const ouvertures: number[] = [];
   let octets: Record<string, number> = {};
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 5; i++) {
     const ctx = await browser.newContext(opts);
     const p = await ctx.newPage();
     const o = await throttle(ctx, p);
@@ -102,4 +104,21 @@ test('ouverture < 3 s en 3G simulée (CPU ×4, 150 ms, 1,6 Mbit/s) : premier lan
   expect(((octets.script ?? 0) + (octets.stylesheet ?? 0)) / 1024).toBeLessThan(150);
   expect(mesure.ouvertureMs).toBeLessThan(3000);
   expect(relance).toBeLessThan(3000);
+});
+
+/**
+ * Budget de poids (bêta) : l'appareil d'un élève ≤ 350 Ko AVEC une marge d'au moins 3 Ko (scripts/budget.mjs sort en
+ * erreur si la marge passe sous 3 Ko), première ouverture et page la plus lourde ≤ 150 Ko. Mesure sur la construction
+ * testée (sans réseau, déterministe).
+ */
+// eslint-disable-next-line no-empty-pattern -- Playwright exige un objet déstructuré en premier argument
+test('budget de poids : appareil élève ≤ 350 Ko avec 3 Ko de marge, pages ≤ 150 Ko', async ({}, info) => {
+  test.skip(!info.project.name.startsWith('mobile'), 'mesure faite une fois');
+  let sortie: string;
+  try {
+    sortie = execFileSync('node', ['scripts/budget.mjs'], { encoding: 'utf8' });
+  } catch (e) {
+    throw new Error(`budget dépassé : ${(e as { stderr?: string }).stderr ?? e}`, { cause: e });
+  }
+  expect(sortie).toContain('marge restante');
 });

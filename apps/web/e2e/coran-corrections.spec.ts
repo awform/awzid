@@ -75,7 +75,8 @@ const VERSES: [number, number][] = [
 
 test.describe('1. verset lu = verset touché (vraies récitations de la démo)', () => {
   test.skip(!DEMO?.length, 'démo absente (Docker, awform-db-1) : sauté');
-  test.describe.configure({ timeout: 300_000 });
+  // ~300 s mesurés sur la VM (récitateurs × versets × 2 actions, audio réel) : 600 s laissent une marge réelle
+  test.describe.configure({ timeout: 600_000 });
   const ids = (DEMO ?? []).map((r) => r.id);
   test.beforeAll(() => installDemoReciters(ids, SURAS));
   test.afterAll(() => removeDemoReciters(ids));
