@@ -4,7 +4,34 @@ export const SORTIE: string;
 export const STATUT: 'EN_ATTENTE_SECONDE_LECTURE';
 export const STATUTS_ACCEPTES: Set<string>;
 export const TEXTES: string[];
+export const PHRASE_INTERNE_RISALA: RegExp;
+export const LIEN_NUMERISATION: RegExp;
+export const TEXTES_LOT4: string[];
+export const TOUS_LES_TEXTES: string[];
+export const TAILLE_PARTIE: number;
+export const DIFFERE_CYCLE: Record<string, { cycle_min: number; consigne: RegExp }>;
 export const DIFFERE: Record<string, { seances: string[]; consigne: RegExp }>;
+export function departager(
+  eleve: {
+    id: string;
+    phrases: Array<{ id: string }>;
+    seances: Array<{ n: number; phrases: string[] }>;
+  },
+  taille?: number,
+): {
+  index: {
+    phrases: unknown[];
+    seances: Array<{ n: number; p: number }>;
+    parts: Array<{ n: number; version: string }>;
+  };
+  fichiers: Array<{
+    v: number;
+    id: string;
+    part: number;
+    version: string;
+    phrases: Array<{ id: string }>;
+  }>;
+};
 export const MARQUEUR: RegExp;
 export const TRANSLIT: RegExp;
 export const ARABE_LIGNE: RegExp;

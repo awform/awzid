@@ -88,10 +88,13 @@ export function genererQuiz(m: Matn, n: number, graine = n): Question[] {
       (s) => s.n !== n && Math.abs(s.n - n) <= ecart && (!s.pudeur || !!seance.pudeur),
     );
   const assez = (ss: Seance[]) =>
-    ss.flatMap((s) => s.phrases).filter((id) => questionnable(de.get(id)!)).length >= 6;
+    // grand texte (ar-Risāla) : seules les phrases de la partie chargée sont connues
+    ss.flatMap((s) => s.phrases).filter((id) => de.has(id) && questionnable(de.get(id)!)).length >=
+    6;
   const proches = [4, 8, 44, Infinity].map(voisines).find(assez) ?? voisines(Infinity);
   const ailleurs = proches
     .flatMap((s) => s.phrases)
+    .filter((id) => de.has(id))
     .map((id) => de.get(id)!)
     .filter((p) => questionnable(p));
 

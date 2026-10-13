@@ -8,7 +8,7 @@
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import { ACTIFS } from './cycles';
-  import { chargerMatn, matnPour, voitDiffere, type Matn } from './donnees';
+  import { chargerMatn, chargerPartie, matnPour, voitDiffere, type Matn } from './donnees';
   import { lien } from './liens';
   import { lireProgres, type Progres } from './progression';
   import Seance from './Seance.svelte';
@@ -40,6 +40,10 @@
     differe = voitDiffere(me, staff);
     progres = await lireProgres(profil?.id ?? null, id);
     matn = await chargerMatn(id);
+    // grand texte (ar-Risāla) : seules les phrases de la partie de cette séance sont chargées
+    // (seulement si la séance est visible pour ce profil : un invité de la bêta ne télécharge rien)
+    if (matn && matnPour(matn, profil?.kind ?? null, differe).seances.some((s) => s.n === n))
+      matn = await chargerPartie(matn, n);
     etat = matn ? 'pret' : 'absent';
   });
 </script>
