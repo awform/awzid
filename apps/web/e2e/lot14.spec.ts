@@ -5,13 +5,13 @@ import { expect, test } from './fixtures';
  * le pied de page, page d'erreur lisible, et AUCUN traceur : un seul cookie (session), aucune requête vers
  * un autre site — d'où l'absence de bannière de consentement.
  */
-test('pied de page : aide, garanties et pages légales en brouillon', async ({ page }) => {
+test('pied de page : aide, garanties et pages légales provisoires', async ({ page }) => {
   // D1 : plus de liens juridiques sur l'accueil de l'élève ; le pied de page reste ailleurs (Aide...) ; « Plus » range ces liens dans la famille Aide
   await page.goto('/aide');
   const pied = page.getByTestId('pied');
   await pied.getByRole('link', { name: 'Confidentialité' }).click();
   await expect(page.getByTestId('page-legale')).toContainText('Politique de confidentialité');
-  await expect(page.getByTestId('page-legale')).toContainText('BROUILLON');
+  await expect(page.getByTestId('page-legale')).toContainText('PROVISOIRE');
   await expect(page.getByTestId('page-legale')).toContainText('2008-12');
   await expect(page.getByTestId('page-legale')).toContainText('COPPA');
   for (const [lien, titre] of [

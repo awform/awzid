@@ -83,7 +83,8 @@
    * (`/acces/accords`)
    * au premier usage ; seules les pages du compte, légales et d'aide restent ouvertes. Fuseau du compte (M8).
    */
-  const GATE_FREE = /^\/(compte|legal|aide|connexion|inscription|acces|garanties)(\/|$)/;
+  const GATE_FREE =
+    /^\/(compte|legal|aide|connexion|inscription|acces|garanties|errata|beta)(\/|$)/;
   $effect(() => {
     setTimeZone(me?.account.tz);
     const path = page.url.pathname;
