@@ -57,18 +57,21 @@ test('Plus → Madjaliss : textes par cycle, cycle conseillé, « bientôt » sa
   await expect(
     page.locator('section[data-cycle="1"] [data-testid="cycle-conseille"]'),
   ).toBeVisible();
-  // les sept textes intégrés ont un lien ; les autres restent « Bientôt », sans lien
+  // les dix textes intégrés ont un lien ; les autres restent « Bientôt », sans lien
   for (const id of [
     'akhdari',
     'ashmawiyya',
+    'nawawi',
     'tuhfa',
     'ibn-ashir',
     'izziyya',
+    'bayquniyya',
     'ajurrumiyya',
     'jazariyya',
+    'waraqat',
   ])
     await expect(page.locator(`a[data-texte="${id}"]`)).toHaveAttribute('href', `/madjaliss/${id}`);
-  for (const id of ['nawawi', 'bayquniyya', 'risala', 'lamiyya', 'khalil', 'alfiyya', 'waraqat']) {
+  for (const id of ['risala', 'lamiyya', 'khalil', 'alfiyya']) {
     const x = page.locator(`[data-texte="${id}"]`);
     await expect(x).toContainText('Bientôt');
     await expect(x).not.toHaveAttribute('href', /.*/);

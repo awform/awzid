@@ -4,13 +4,13 @@
   import Bidi from '$lib/Bidi.svelte';
   import { demoProfileFor } from '$lib/attempts';
   import { fmtDate, t } from '$lib/i18n';
-  import type { ProfileInfo } from '$lib/session';
+  import { cachedMe, isStaff, type ProfileInfo } from '$lib/session';
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import EnTete from '$lib/ui/EnTete.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import { ACTIFS, texteDuCursus } from './cycles';
-  import { chargerMatn, matnPour, type Matn } from './donnees';
+  import { avecArabe, chargerMatn, matnPour, voitDiffere, type Matn } from './donnees';
   import { lien } from './liens';
   import {
     fusionnerServeur,
@@ -31,9 +31,11 @@
   let profil = $state<ProfileInfo | null>(null);
   let progres = $state<Progres>({ faites: [], ouverte: null });
   let etat = $state<'charge' | 'pret' | 'absent'>('charge');
+  // personnel et démonstration : voient aussi les séances en publication différée (jamais les invités de la bêta)
+  let differe = $state(false);
 
   // le texte tel que le voit ce profil : ni règles et lochies aux enfants, ni passages « adulte » aux enfants et ados
-  const vue = $derived(matn ? matnPour(matn, profil?.kind ?? null) : null);
+  const vue = $derived(matn ? matnPour(matn, profil?.kind ?? null, differe) : null);
   const seances = $derived(vue?.seances ?? []);
   const numeros = $derived(seances.map((s) => s.n));
   const enCours = $derived(seanceEnCours(progres, numeros));
@@ -53,6 +55,8 @@
       return;
     }
     profil = await demoProfileFor('').catch(() => null);
+    const me = await cachedMe().catch(() => null);
+    differe = voitDiffere(me, isStaff(me));
     const pid = profil?.id ?? null;
     progres = await lireProgres(pid, id);
     matn = await chargerMatn(id);
@@ -160,7 +164,10 @@
               ><Bidi text={t('mj.seance', { n: s.n })} />{#if s.facultatif}
                 — <Bidi text={t('mj.facultatif')} />{/if}</strong
             >
-            <Bidi text={s.titre} />
+            <Bidi text={avecArabe(s.titre, s.tma)} />
+            {#if s.differe}<small class="muted" data-testid="mj-differe">
+                — <Bidi text={t('mj.differe')} /></small
+              >{/if}
           </span>
           <small class="info">
             {#if fait}<Bidi text={t('mj.faite')} />{:else if s.n === enCours}<Bidi

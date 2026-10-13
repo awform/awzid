@@ -1,0 +1,1199 @@
+{
+  "titre": "Découpage en séances (majālis) — al-Bayqūniyya",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "principe": "Séances de 5 à 12 minutes : lecture du texte arabe (vers par vers), traduction, mots difficiles, explications. Durée estimée = 3 min + 1,2 min par vers + 0,5 min par mot ; à recaler sur l'enregistrement réel du lecteur.",
+  "cycle": 2,
+  "niveau_min": "cycle 2",
+  "explications_regle": "Les explications reprennent les définitions d'Ibn aṣ-Ṣalāḥ et d'Ibn Ḥajar, avec la page de l'imprimé ; elles sont paraphrasées, jamais générées librement. Là où le poème s'écarte d'un commentateur, l'écart est dit.",
+  "a_confirmer": "[13/10 ter : az-Zurqānī (Ajhūrī, 1324 H) relu sur l'image ; les 14 séances portent verification_az_zurqani (S02, S03, S13 au 13/10 bis ; S01, S04 à S12, S14 au 13/10 ter). Pages lues (image n = page imprimée) : 13-14, 17-31, 46-51, 56, 60, 63, 67, 71, 73-84, 86, 88, 90, 92, 94-95, 98, 100, 104, 106-108, 110-114, 116-117. Pages non lues : 1-12, 15-16, 32-45, 52-55, 57-59, 61-62, 64-66, 68-70, 72, 85, 87, 89, 91, 93, 96-97, 99, 101-103, 105, 109, 115, 118-122. Chaque séance est vérifiée sur les pages lues qui traitent de ses notions, pas sur tout le commentaire. Le second exemplaire (AAlexandrina-121255) n'a pas été ouvert.] Découpage proposé par Claude, par thèmes de 2 à 4 vers ; à comparer avec la pratique de maîtres.",
+  "point_referent": "R-S1 : az-Zurqānī lu sur toutes les notions des 14 séances (pages listées dans a_confirmer ; commentaire non lu en entier) ; R-S2 : écarts du poème avec Ibn Ḥajar : consignés, on enseigne les deux avec leur auteur (décision du référent) ; az-Zurqānī lit « فوق ما ثلاثة » comme « trois et plus » (S06) et note que la condition « en un même endroit » du muʿḍal n'est pas dans les mots du poème (S08) : consignés dans az_zurqani, sans trancher.",
+  "nombre_de_seances": 14,
+  "duree_totale_min": 106,
+  "seances": [
+    {
+      "id": "BAY-S01",
+      "titre": "Ouverture : la louange et le plan",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0001",
+        "BAY-0002"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "مُصَلِّيًا",
+          "sens": "priant [sur le Prophète] ; pour az-Zurqānī (p. 14), état « attendu » (ḥāl muntaẓira) : celui qui loue a l'intention de prier, car la langue, lieu de la prière, est occupée par la louange"
+        },
+        {
+          "ar": "عِدَّهْ",
+          "sens": "un certain nombre"
+        },
+        {
+          "ar": "حَدَّهْ",
+          "sens": "sa définition"
+        }
+      ],
+      "explications": [],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "13-14",
+          "extrait_lu_ar": "مصليا أي ناويا بالصلاة فهي حال منتظرة وذلك لاشتغال مورد الصلاة وهو اللسان بالحمد",
+          "constat": "Lu : « مُصَلِّيًا » est expliqué comme « ayant l'intention de prier » (état attendu), la langue étant occupée à la louange : le sens des mots difficiles est précisé en conséquence. Lu aussi (p. 13) : l'auteur n'a pas mis la basmala en vers, à la différence d'ash-Shāṭibī ; « أبدأ بالحمد » est un commencement relatif (iḍāfī) après la basmala. Le commentaire discute (p. 14) l'isolement de la prière sur le Prophète sans la salutation (karāha) et répond que « ṣalāt » peut comprendre la salutation ; non repris dans la séance. Les pages 15-16 (suite du vers 1) n'ont pas été lues."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "17-18",
+          "extrait_lu_ar": "العدة بالكسر الجماعة من الشيء ... وكل واحد أتى في النظم وحده أي مع حده",
+          "constat": "Lu : عِدَّهْ = un groupe (jamāʿa), le commentateur annonçant 34 (« أربعا وثلاثين ») ; « وَحَدَّهْ » est glosé « avec sa définition » (complément d'accompagnement). Conforme aux mots difficiles de la séance."
+        }
+      ],
+      "relecture_comite": false,
+      "verification_az_zurqani_13_10": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (122 images ; page imprimée = numéro de l'image)",
+          "page": "17-18",
+          "constat": "« عدة » : 34 ; « وكل واحد أتى » dans le poème, « وحده » : avec sa définition. Conforme à l'explication de la séance."
+        }
+      ]
+    },
+    {
+      "id": "BAY-S02",
+      "titre": "Le ṣaḥīḥ [authentique]",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0003",
+        "BAY-0004"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "يَشُذَّ",
+          "sens": "être irrégulier (shādh)"
+        },
+        {
+          "ar": "يُعَلْ",
+          "sens": "être entaché d'un défaut caché"
+        },
+        {
+          "ar": "عَدْلٌ",
+          "sens": "intègre"
+        },
+        {
+          "ar": "ضَابِطٌ",
+          "sens": "exact"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "ṣaḥīḥ",
+          "resume_fr": "Le hadith ṣaḥīḥ est le hadith musnad dont la chaîne est continue par la transmission d'un rapporteur intègre et exact d'un rapporteur intègre et exact, jusqu'au bout, et qui n'est ni shādh ni muʿallal. Ces conditions écartent le mursal, le munqaṭiʿ, le muʿḍal, le shādh, le hadith qui a un défaut grave et celui dont un rapporteur est critiqué.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 79"
+        },
+        {
+          "terme": "ṣaḥīḥ (portée)",
+          "resume_fr": "Dire « ṣaḥīḥ » signifie que la chaîne est continue et que les conditions sont réunies ; ce n'est pas affirmer que le hadith est certain en lui-même, ni qu'il fait l'objet de l'unanimité de la Communauté. Dire « non ṣaḥīḥ » ne veut pas dire qu'il est faux.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 80"
+        },
+        {
+          "terme": "ṣaḥīḥ li-dhātihi",
+          "resume_fr": "Ibn Ḥajar le définit comme le khabar al-āḥād rapporté par un ʿadl de plein ḍabṭ, de chaîne continue, ni muʿallal ni shādh.",
+          "source": "Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 58"
+        },
+        {
+          "terme": "ʿadl (az-Zurqānī)",
+          "resume_fr": "Pour az-Zurqānī, le ʿadl est celui qui possède une disposition qui le porte à rester fidèle à la piété (taqwā) et à la dignité (murūʾa) ; « ʿadl de la transmission » = musulman, sensé, pubère, indemne de la perversité (fisq) et de ce qui ruine la dignité. La taqwā désigne ici l'évitement des actes mauvais : association, perversité, innovation.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 19-20"
+        },
+        {
+          "terme": "ḍabṭ (az-Zurqānī)",
+          "resume_fr": "Le ḍabṭ de mémoire (ḍabṭ ṣadr) : retenir ce qu'on a entendu de façon à pouvoir se le rappeler quand on veut ; le ḍabṭ de livre (ḍabṭ kitāb) : garder son livre intact depuis qu'on y a entendu et corrigé, jusqu'à la transmission.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 20"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "19-20",
+          "extrait_lu_ar": "ملكة تحمله على ملازمة التقوى والمروءة ... ضابط صدرا أن يثبت ما سمعه بحيث يتمكن من استحضاره متى شاء",
+          "constat": "Les définitions de ʿadl et de ḍabṭ dans la séance (« intègre », « exact ») sont conformes ; précision ajoutée (explications)."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "25-26",
+          "extrait_lu_ar": "يقطع بالصحة فيما أسنداه ... وقال غيره لا يقطع",
+          "constat": "az-Zurqānī rapporte à cet endroit une divergence sur le caractère certain (qaṭʿ) ou probable (ẓann) des hadiths des deux Ṣaḥīḥ ; la séance ne la traite pas et ne la contredit pas. Je n'ai pas relevé de façon sûre la conclusion de l'auteur sur l'image : non consignée."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "26",
+          "extrait_lu_ar": "والحسن المعروف طرقا ... فالأقسام أربعة",
+          "constat": "Le commentaire annonce quatre espèces (ṣaḥīḥ et ḥasan, chacun li-dhātihi et li-ghayrihi), ce que la séance présuppose. Conforme."
+        }
+      ],
+      "relecture_comite": false
+    },
+    {
+      "id": "BAY-S03",
+      "titre": "Le ḥasan [bon] et le ḍaʿīf [faible]",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0005",
+        "BAY-0006"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "طُرْقًا",
+          "sens": "voies de transmission"
+        },
+        {
+          "ar": "رُتْبَةِ",
+          "sens": "rang"
+        },
+        {
+          "ar": "قَصُرْ",
+          "sens": "resté en deçà"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "ḥasan",
+          "resume_fr": "Le poème reprend la formule d'al-Khaṭṭābī : « ce dont l'origine est connue et dont les rapporteurs sont réputés ». At-Tirmidhī entend par ḥasan un hadith qui n'a pas de rapporteur accusé de mensonge, qui n'est pas shādh et qui est rapporté par plus d'une voie. Ibn aṣ-Ṣalāḥ trouve ces formules floues et distingue deux sortes de ḥasan.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 99-100"
+        },
+        {
+          "terme": "ḥasan li-dhātihi",
+          "resume_fr": "Si l'exactitude du rapporteur est plus légère, le hadith est ḥasan li-dhātihi ; il peut être renforcé par la multiplicité des voies.",
+          "source": "Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 58"
+        },
+        {
+          "terme": "ḍaʿīf",
+          "resume_fr": "Selon Ibn aṣ-Ṣalāḥ, le ḍaʿīf se divise selon les qualités de l'acceptable qui manquent ; la pire catégorie est celle où elles manquent toutes. Les espèces qui ont un nom propre sont : le mawḍūʿ, le maqlūb, le shādh, le muʿallal, le muḍṭarib, le mursal, le munqaṭiʿ et le muʿḍal.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 113"
+        },
+        {
+          "terme": "ḍaʿīf (cause du rejet)",
+          "resume_fr": "Ibn Ḥajar ramène le rejet à deux causes : une lacune dans la chaîne ou une critique visant un rapporteur.",
+          "source": "Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 80"
+        },
+        {
+          "terme": "ḥasan (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī rapporte la formule d'al-Khaṭṭābī (le ḥasan est ce dont l'origine/le lieu de sortie est connu et dont les rapporteurs sont réputés) et celle d'at-Tirmidhī (pas de rapporteur accusé de mensonge, pas de shudhūdh, rapporté par plus d'une voie) ; il note que le poème suit al-Khaṭṭābī, avec la précision que « réputés » s'entend d'une réputation moindre que celle des rapporteurs du ṣaḥīḥ. Il présente ensuite le ḥasan comme de deux sortes : li-dhātihi et li-ghayrihi ; ce dernier est faible en soi mais relevé par ce qui le soutient (voie concordante).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 28-31"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "28",
+          "extrait_lu_ar": "الحسن ما عرف مخرجه واشتهرت رجاله",
+          "constat": "Formule d'al-Khaṭṭābī lue ; conforme à la séance."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "28-29",
+          "extrait_lu_ar": "يروى من غير وجه",
+          "constat": "Condition d'at-Tirmidhī (« rapporté par plus d'une voie ») lue ; conforme à la séance."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "30-31",
+          "extrait_lu_ar": "الحسن قسمان ... المسمى بالحسن لغيره",
+          "constat": "Division du ḥasan en deux sortes lue ; la séance (ḥasan li-dhātihi, renforcement par les voies) est conforme ; entrée ajoutée pour li-ghayrihi."
+        }
+      ],
+      "relecture_comite": true
+    },
+    {
+      "id": "BAY-S04",
+      "titre": "Selon la source et la continuité : marfūʿ, maqṭūʿ, musnad, muttaṣil",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0007",
+        "BAY-0008",
+        "BAY-0009"
+      ],
+      "duree_min": 8,
+      "mots_difficiles": [
+        {
+          "ar": "أُضِيفَ",
+          "sens": "a été attribué"
+        },
+        {
+          "ar": "تَابِعٍ",
+          "sens": "Successeur"
+        },
+        {
+          "ar": "لَمْ يَبِنْ",
+          "sens": "n'est pas rompu"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "marfūʿ",
+          "resume_fr": "Le marfūʿ est ce qui est attribué au Messager d'Allah seul ; il comprend le continu, l'interrompu et le mursal.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 116"
+        },
+        {
+          "terme": "maqṭūʿ",
+          "resume_fr": "Le maqṭūʿ est ce qui vient des Successeurs, arrêté à eux, en paroles ou en actes ; il est distinct du munqaṭiʿ.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 119"
+        },
+        {
+          "terme": "musnad",
+          "resume_fr": "Ibn aṣ-Ṣalāḥ rapporte trois avis. Selon l'un, est musnad ce qui est attribué au Prophète même si la chaîne est interrompue (exemple : Mālik d'après az-Zuhrī d'après Ibn ʿAbbās, interrompu car az-Zuhrī n'a pas entendu Ibn ʿAbbās). Selon un autre, rapporté par Ibn ʿAbd al-Barr et retenu par al-Ḥākim, musnad ne s'applique qu'à ce qui est continu et remonte au Prophète. Le poème suit ce dernier avis.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 115"
+        },
+        {
+          "terme": "muttaṣil",
+          "resume_fr": "Aussi appelé mawṣūl : chaque rapporteur l'a entendu de celui qui est au-dessus de lui jusqu'au bout ; le mot s'applique au marfūʿ comme au mawqūf. Le poème écrit « jusqu'au Prophète », mais pour az-Zurqānī le muttaṣil est pris au sens général, jusqu'au Prophète ou jusqu'à un Compagnon (voir l'entrée az-Zurqānī ci-dessous).",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 116"
+        },
+        {
+          "terme": "marfūʿ (az-Zurqānī)",
+          "resume_fr": "Pour az-Zurqānī, le marfūʿ est tout ce qui est attribué au Prophète, en parole, en acte, en approbation (taqrīr) ou en description (waṣf), que la chaîne soit continue ou non : il comprend donc aussi le mursal, le munqaṭiʿ, le muʿḍal et le muʿallaq, mais non le mawqūf ni le maqṭūʿ ; il dit que c'est l'avis connu. Il rapporte l'avis d'al-Khaṭīb (n'est marfūʿ que ce que le Compagnon rapporte du Prophète, ce qui exclut les mursal des Successeurs) et la remarque d'Ibn Ḥajar : le propos d'al-Khaṭīb suit le cas le plus fréquent, car ce qui est attribué au Prophète l'est d'ordinaire par un Compagnon.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 46"
+        },
+        {
+          "terme": "maqṭūʿ (az-Zurqānī)",
+          "resume_fr": "Le maqṭūʿ est ce qui est attribué à un Successeur, en parole ou en acte, lorsque rien n'indique qu'il est marfūʿ ou mawqūf ; ceux qui viennent après les Successeurs y entrent aussi (Ibn Ḥajar, cité). az-Zurqānī rapporte d'az-Zarkashī que ranger le maqṭūʿ parmi les types de hadith est une grande largesse ; on lui applique pourtant ce qui vaut pour le mawqūf : ce qui n'a pas de place pour l'effort personnel (ijtihād) est tenu pour marfūʿ en statut, ce que soutient Ibn al-ʿArabī, qui y voit l'avis de Mālik (rapporté, non vérifié ailleurs).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 47"
+        },
+        {
+          "terme": "musnad (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī rapporte trois avis sur le musnad : celui d'al-Ḥākim, que suit le poème (chaîne continue du rapporteur jusqu'au Prophète) ; celui d'Ibn ʿAbd al-Barr (le musnad est le marfūʿ, les deux mots sont synonymes) ; celui d'al-Khaṭīb (continu jusqu'à son terme, y compris le mawqūf et le maqṭūʿ). Il note que le mot s'emploie surtout pour ce qui vient du Prophète, et qu'il désigne aussi un recueil (Musnad d'Aḥmad) ou la chaîne elle-même. Point à recontrôler : l'entrée précédente (d'après Ibn aṣ-Ṣalāḥ p. 115) attribue à Ibn ʿAbd al-Barr l'avis « continu et remontant au Prophète » ; chez az-Zurqānī, cet avis est celui d'al-Ḥākim, et Ibn ʿAbd al-Barr dit « marfūʿ, continu ou non ».",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 47-49"
+        },
+        {
+          "terme": "muttaṣil (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī lit le vers ainsi : la chaîne continue, que l'enchaînement aille jusqu'au Prophète ou s'arrête à un Compagnon (mawqūf sur lui) ; le muttaṣil est donc pris au sens général, et s'appelle aussi mawṣūl ou muʾtaṣil. Pour les propos des Successeurs, on ne dit pas « muttaṣil » sans précision, mais avec précision on peut dire « muttaṣil jusqu'à Saʿīd b. al-Musayyab » (al-ʿIrāqī, cité). Un hadith transmis par simple ijāza n'est pas dit muttaṣil. La condition de continuité écarte le mursal, le munqaṭiʿ, le muʿḍal, le muʿallaq et le muʿanʿan d'un mudallis tant que l'audition n'est pas établie.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 49"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "46",
+          "extrait_lu_ar": "المرفوع سواء اتصل إسناده أم لا فيدخل فيه المتصل والمرسل والمنقطع والمعضل والمعلق دون الموقوف والمقطوع هذا هو المشهور",
+          "constat": "Conforme à la séance (le marfūʿ est attribué au seul Prophète et comprend le continu, l'interrompu, le mursal) ; az-Zurqānī ajoute le muʿḍal et le muʿallaq, exclut le mawqūf et le maqṭūʿ, et rapporte l'avis plus strict d'al-Khaṭīb. Entrée ajoutée."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "47",
+          "extrait_lu_ar": "وما أضيف لتابع قولا أو فعلا هو المقطوع حيث خلا ذلك عن قرينة الرفع والوقف",
+          "constat": "Conforme (le maqṭūʿ vient des Successeurs, en parole ou en acte). Précisions ajoutées : absence d'indice de rafʿ ou de waqf ; remarque d'az-Zarkashī rapportée."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "47-48",
+          "extrait_lu_ar": "وفيه ثلاثة أقوال أحدها قول الحاكم أبي عبد الله هو المتصل الإسناد من راويه حتى المصطفى",
+          "constat": "Conforme : le poème (v. 8) suit l'avis d'al-Ḥākim. Trois avis rapportés ; une attribution de l'entrée Ibn aṣ-Ṣalāḥ est signalée à recontrôler (voir l'entrée az-Zurqānī)."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "49",
+          "extrait_lu_ar": "سواء كان اتصاله للمصطفى أو لصحابي موقوفا عليه ... ويقال له أيضا الموصول والمؤتصل",
+          "constat": "À corriger, corrigé : la séance disait que le poème ne vise le muttaṣil que pour le marfūʿ ; az-Zurqānī lit le muttaṣil au sens général (jusqu'au Prophète ou jusqu'à un Compagnon). Phrase de la séance remplacée, entrée ajoutée."
+        }
+      ],
+      "relecture_comite": true
+    },
+    {
+      "id": "BAY-S05",
+      "titre": "Le musalsal [enchaîné]",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0010",
+        "BAY-0011"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "مُسَلْسَل",
+          "sens": "enchaîné"
+        },
+        {
+          "ar": "أَنْبَأَنِي",
+          "sens": "m'a informé"
+        },
+        {
+          "ar": "تَبَسَّمَا",
+          "sens": "il sourit"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "musalsal",
+          "resume_fr": "Le tasalsul est la succession des rapporteurs de la chaîne, l'un après l'autre, sur une même manière ou un même état. Il peut porter sur la manière de transmettre (« j'ai entendu… », « Par Allah, il m'a informé… ») ou sur l'état ou les paroles des rapporteurs. Son enchaînement peut se rompre au milieu de la chaîne : c'est alors un défaut.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 378-380"
+        },
+        {
+          "terme": "musalsal (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī range le tasalsul parmi les qualités de la chaîne. Il distingue le tasalsul de parole (exemple du vers : « Par Allah, il m'a informé »), d'acte ou d'état (« il me l'a rapporté debout » ; « après m'avoir rapporté en souriant » ; autre exemple : Abū Hurayra dit que le Prophète lui a saisi la main en entrelaçant les doigts, et chaque rapporteur l'a fait à son élève) et leur réunion. Il rapporte d'Ibn aṣ-Ṣalāḥ que les meilleurs musalsal sont ceux qui prouvent l'audition directe et l'absence de tadlīs, mais que rares sont ceux qui n'ont aucune faiblesse dans leur description (non dans l'origine du hadith).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 50-51"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "50",
+          "extrait_lu_ar": "ولكن قلما يسلم المسلسل من ضعف يحصل في وصفه لا في أصل الحديث",
+          "constat": "Conforme : le tasalsul est une qualité de la chaîne ; az-Zurqānī rapporte d'Ibn aṣ-Ṣalāḥ que les meilleurs musalsal prouvent l'audition directe et l'absence de tadlīs, et que rares sont ceux qui n'ont aucune faiblesse dans leur description. Entrée ajoutée."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "51",
+          "extrait_lu_ar": "كذاك قد حدثنيه قائما ... أو بعد أن حدثني تبسما ... فإن القيام والتبسم وصف فعلي",
+          "constat": "Lu : les deux vers donnent un tasalsul de parole (« Par Allah, il m'a informé »), puis d'acte ou d'état (debout, en souriant) ; autre exemple d'acte : l'entrelacement des doigts (hadith d'Abū Hurayra). Conforme à la séance."
+        }
+      ],
+      "relecture_comite": false
+    },
+    {
+      "id": "BAY-S06",
+      "titre": "Nombre de rapporteurs, noms et hauteur : ʿazīz, mashhūr, muʿanʿan, mubham, ʿālī, nāzil",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0012",
+        "BAY-0013",
+        "BAY-0014"
+      ],
+      "duree_min": 9,
+      "mots_difficiles": [
+        {
+          "ar": "مَرْوِيّ",
+          "sens": "rapporté"
+        },
+        {
+          "ar": "كَرَمْ",
+          "sens": "Karam [nom propre pris en exemple]"
+        },
+        {
+          "ar": "يُسَمّْ",
+          "sens": "nommé"
+        },
+        {
+          "ar": "عَلَا",
+          "sens": "élevé"
+        },
+        {
+          "ar": "نَزَلَا",
+          "sens": "descendu"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "ʿazīz",
+          "resume_fr": "Pour Ibn Ḥajar, le ʿazīz est celui qui n'est pas rapporté par moins de deux à chaque niveau de la chaîne ; son nom vient de sa rareté ou de sa force. Le poème dit « deux ou trois » : sa formule est proche de celle d'Ibn Mandah, citée par Ibn aṣ-Ṣalāḥ (« deux ou trois » pour le ʿazīz).",
+          "source": "Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 47-50 ; Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 374"
+        },
+        {
+          "terme": "mashhūr",
+          "resume_fr": "Pour Ibn Ḥajar, le mashhūr est celui dont les voies sont limitées à plus de deux (trois ou plus), sans atteindre le tawātur. Le poème dit « plus de trois ». Ibn aṣ-Ṣalāḥ distingue le mashhūr authentique (« les actes ne valent que par les intentions ») du non authentique (« la recherche de la science est une obligation… »).",
+          "source": "Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 46-47 ; Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 370"
+        },
+        {
+          "terme": "muʿanʿan",
+          "resume_fr": "Les premiers l'ont classé parmi les interrompus ; l'avis suivi est qu'il est continu, à condition que la rencontre soit établie et que le rapporteur ne soit pas mudallis.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 139-140"
+        },
+        {
+          "terme": "mubham",
+          "resume_fr": "Hadith où figure une personne dont le nom n'est pas donné (« un homme », « une femme »).",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 479 ; Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 100"
+        },
+        {
+          "terme": "ʿālī / nāzil",
+          "resume_fr": "Ibn aṣ-Ṣalāḥ rappelle qu'une chaîne courte rapproche du Prophète et réduit les occasions d'erreur : plus il y a de rapporteurs, plus il y a de sources possibles de défaut.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 363-364"
+        },
+        {
+          "terme": "mashhūr (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī définit le mashhūr comme ce qui a des voies limitées à plus de deux, nommé ainsi pour sa notoriété ; certains juristes l'identifient au mustafīḍ, d'autres les distinguent (mustafīḍ : même nombre de rapporteurs au début et à la fin de la chaîne ; mashhūr : plus large). Il note que la formule d'Ibn Mandah (gharīb = un seul, ʿazīz = deux ou trois, mashhūr = un groupe) n'est pas explicite sur le mot du poème « فوق ما ثلاثه », entend « groupe » comme trois et plus, et propose de lire « fawq » comme avancé : « thalātha fawq » (trois et plus), comme dans Coran 4:11 (« fa-in kunna nisāʾan fawqa ithnatayn »). Un hadith peut être à la fois ʿazīz et mashhūr (exemple donné : « Nous sommes les derniers, les premiers au jour de la résurrection »). Être gharīb, ʿazīz ou mashhūr n'empêche ni l'authenticité ni la faiblesse.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 56"
+        },
+        {
+          "terme": "muʿanʿan (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī : l'avis retenu par la plupart des muḥaddithūn, juristes et uṣūliyyūn est que le muʿanʿan est continu, à condition que celui qui le transmet soit indemne de tadlīs et que sa rencontre avec celui dont il rapporte soit établie (al-Bukhārī, Ibn al-Madīnī) ; Muslim ne retient que la possibilité de rencontre : être du même temps suffit, même sans preuve d'une rencontre. Ibn aṣ-Ṣalāḥ cite aussi ceux qui exigent une longue fréquentation (as-Samʿānī), le fait d'être connu pour rapporter de lui (ad-Dānī) ou une rencontre nette (al-Qābisī). Selon un autre avis, le muʿanʿan est un mursal ou un munqaṭiʿ tant que la continuité n'est pas établie par une autre voie ; an-Nawawī le dit contraire à l'unanimité des anciens.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 60"
+        },
+        {
+          "terme": "mubham (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī distingue l'ibhām dans la chaîne (exemple : « Sufyān d'après un homme ») et dans le texte (exemple : la femme qui interroge le Prophète sur la façon de se laver après les règles, identifiée comme Asmāʾ, avec divergence sur sa filiation). Un rapporteur non nommé dans la chaîne fait rejeter le hadith ; dans le texte, l'ibhām ne le fait pas rejeter ; identifier la personne lève l'ignorance et peut montrer quel texte est postérieur (abrogation). Le sujet a fait l'objet d'ouvrages (al-Khaṭīb et d'autres).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 63"
+        },
+        {
+          "terme": "ʿālī / nāzil (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī compte cinq espèces de ʿuluww (hauteur de la chaîne), à chacune desquelles répond une espèce de nuzūl (descente) ; le nāzil est le contraire du ʿālī : celui dont les rapporteurs sont plus nombreux. Parmi les espèces lues : l'antériorité de la mort du maître (celui dont l'élève est mort plus tôt) et l'antériorité de l'audition. Il ajoute que la chaîne de transmission est un trait propre et excellent de cette communauté.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 67"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "56",
+          "extrait_lu_ar": "فإذا روى عنهم رجلان أو ثلاثة واشتركوا يسمى عزيزا فإذا روى الجماعة عنهم حديثا يسمى مشهورا ... إلا أن يجاب بأن لفظ فوق مقدمة من تأخير والأصل ثلاثة فوق",
+          "constat": "ʿazīz : formule d'Ibn Mandah (deux ou trois) citée, conforme. mashhūr : az-Zurqānī lit « فوق ما ثلاثة » en avançant « fawq » (« trois et plus ») pour l'accorder au sens courant ; la séance garde la lettre du vers (« plus de trois ») : précision ajoutée et champ az_zurqani renseigné. La définition propre du ʿazīz (p. 55) n'a pas été lue."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "60",
+          "extrait_lu_ar": "المعنعن ... متصل بشرط سلامة معنعنه من التدليس ويشترط ثبوت ملاقاته ... ومسلم لم يشترط الثاني",
+          "constat": "Conforme à la séance (continu si la rencontre est établie et si le rapporteur n'est pas mudallis) ; précision ajoutée : Muslim se contente de la contemporanéité ; avis divergents rapportés."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "63",
+          "extrait_lu_ar": "إذا كان في السند الذي هو الرجال فإن الحديث يرد وأما إذا كان في المتن فإنه لا يرد ... ومثال المبهم في الإسناد كسفيان عن رجل",
+          "constat": "La séance définit le mubham par « une personne dont le nom n'est pas donné » ; az-Zurqānī distingue l'ibhām dans la chaîne et dans le texte et en tire des conséquences : précision ajoutée."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "67",
+          "extrait_lu_ar": "وهو المعروف عندهم بالنازل وأقسامه خمسة أيضا فإن كل قسم من أقسام العلو يقابله قسم من أقسام النزول",
+          "constat": "Conforme à la séance ; précision ajoutée (cinq espèces de ʿuluww, chacune avec son contraire). Les pages 64-66 et 68-70 n'ont pas été lues."
+        }
+      ],
+      "relecture_comite": true,
+      "notes_selon_ibn_hajar": [
+        {
+          "intitule": "selon Ibn Ḥajar",
+          "ibn_hajar": {
+            "definition_fr": "Le ʿazīz est le hadith que ne rapportent pas moins de deux rapporteurs, à chaque niveau de la chaîne (« ne pas moins de deux de moins de deux »). Ibn Ḥajar : le nom vient de sa rareté ou de sa force (il vient aussi d'une autre voie) ; il n'est pas une condition du ṣaḥīḥ.",
+            "source": "Ibn Ḥajar al-ʿAsqalānī, Nuzhat an-naẓar fī tawḍīḥ Nukhbat al-fikar, éd. N. ad-Dīn ʿItr, 3ᵉ éd., Maṭbaʿat aṣ-Ṣabāḥ, Damas 1421/2000 (turath n° 1565, pagination imprimée)",
+            "page": "47-48 ; 50"
+          },
+          "ibn_as_salah": {
+            "definition_fr": "Ibn aṣ-Ṣalāḥ cite Ibn Mandah : le gharīb est ce que rapporte un seul, le ʿazīz ce que rapportent deux ou trois, le mashhūr ce que rapporte un groupe.",
+            "source": "Ibn aṣ-Ṣalāḥ cite Ibn Mandah : le gharīb est ce que rapporte un seul, le ʿazīz ce que rapportent deux ou trois, le mashhūr ce que rapporte un groupe.",
+            "page": "374"
+          },
+          "ecart_du_poeme": "Le poème dit « deux ou trois » : plus large que la définition d'Ibn Ḥajar (au moins deux à chaque niveau) ; il suit la formule rapportée par Ibn aṣ-Ṣalāḥ d'après Ibn Mandah.",
+          "az_zurqani": "az-Zurqānī (p. 56) cite la répartition d'Ibn Mandah : gharīb = un seul rapporteur ; ʿazīz = deux ou trois ; mashhūr = un groupe. Sa définition propre du ʿazīz (p. 55) n'a pas été lue.",
+          "regle": "Le poème est traduit fidèlement ; on enseigne les deux auteurs avec leur nom ; aucun choix à trancher entre eux (décision du référent, 13/10/2026)."
+        },
+        {
+          "intitule": "selon Ibn Ḥajar",
+          "ibn_hajar": {
+            "definition_fr": "Le mashhūr est le hadith qui a des voies de transmission en nombre limité, plus de deux, sans atteindre le tawātur ; le mot s'emploie aussi au sens de « célèbre sur les langues ».",
+            "source": "Ibn Ḥajar al-ʿAsqalānī, Nuzhat an-naẓar fī tawḍīḥ Nukhbat al-fikar, éd. N. ad-Dīn ʿItr, 3ᵉ éd., Maṭbaʿat aṣ-Ṣabāḥ, Damas 1421/2000 (turath n° 1565, pagination imprimée)",
+            "page": "46-47"
+          },
+          "ibn_as_salah": {
+            "definition_fr": "Ibn aṣ-Ṣalāḥ : le sens de la célébrité est connu ; il se divise en ṣaḥīḥ et non ṣaḥīḥ, en célèbre chez les gens du hadith et d'autres, ou chez les gens du hadith seuls ; il cite aussi la formule d'Ibn Mandah (un groupe).",
+            "source": "Ibn aṣ-Ṣalāḥ : le sens de la célébrité est connu ; il se divise en ṣaḥīḥ et non ṣaḥīḥ, en célèbre chez les gens du hadith et d'autres, ou chez les gens du hadith seuls ; il cite aussi la formule d'Ibn Mandah (un groupe).",
+            "page": "370-372 ; 374"
+          },
+          "ecart_du_poeme": "Le poème dit « plus de trois » (« فوق ما ثلاثه ») ; Ibn Ḥajar dit « plus de deux ».",
+          "az_zurqani": "az-Zurqānī (p. 56) définit le mashhūr comme « plus de deux » et lit le vers « فوق ما ثلاثه » comme « thalātha fawq » (trois et plus, avec « fawq » avancé), si bien que, pour lui, le poème ne s'écarte pas du sens courant. La lettre du vers (« au-dessus de trois ») reste celle de la traduction ; aucun choix tranché.",
+          "regle": "Le poème est traduit fidèlement ; on enseigne les deux auteurs avec leur nom ; aucun choix à trancher entre eux (décision du référent, 13/10/2026)."
+        }
+      ]
+    },
+    {
+      "id": "BAY-S07",
+      "titre": "Arrêt, omission, isolement : mawqūf, mursal, gharīb",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0015",
+        "BAY-0016"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "زُكِنْ",
+          "sens": "il est su"
+        },
+        {
+          "ar": "سَقَطْ",
+          "sens": "est tombé"
+        },
+        {
+          "ar": "فَقَطْ",
+          "sens": "seulement"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "mawqūf",
+          "resume_fr": "Le mawqūf est ce qui est rapporté des Compagnons (paroles, actes) et reste arrêté à eux sans atteindre le Messager d'Allah.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 117"
+        },
+        {
+          "terme": "mursal",
+          "resume_fr": "Cas qui ne fait pas de difficulté : le hadith d'un grand Successeur qui a rencontré des Compagnons et dit « Le Messager d'Allah a dit… ». Pour Ibn Ḥajar : ce dont la chute est à la fin de la chaîne, après le Successeur. Les juristes et certains muḥaddithūn donnent au mot un sens plus large (toute coupure).",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 126-128 ; Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 82"
+        },
+        {
+          "terme": "gharīb",
+          "resume_fr": "Le hadith dont s'est singularisé un seul rapporteur, quel que soit l'endroit de la chaîne où se trouve la singularité.",
+          "source": "Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 50 ; Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 374"
+        },
+        {
+          "terme": "mawqūf (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī rapporte qu'an-Nawawī dit que les muḥaddithūn emploient « athar » pour le mawqūf et pour le marfūʿ ; pour ce qui vient des Successeurs et de ceux d'après eux, on précise : « mawqūf sur Ṭāwūs ». Ce qui est attribué à un Compagnon est mawqūf là où l'avis personnel a une place ; là où l'ijtihād n'a manifestement pas de place, c'est du marfūʿ, même s'il est possible que le Compagnon l'ait pris des gens du Livre, par bonne opinion envers lui.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 71"
+        },
+        {
+          "terme": "mursal (az-Zurqānī)",
+          "resume_fr": "Pour az-Zurqānī, le mursal du poème est ce qu'un Successeur, petit ou grand, attribue au Prophète en omettant le Compagnon, explicitement ou par allusion ; le « grand » est celui dont l'essentiel des transmissions vient des Compagnons (Saʿīd b. al-Musayyab, Qays b. Abī Ḥāzim) ; c'est l'avis connu chez les muḥaddithūn, auquel s'en tient al-Ḥākim. Ibn Ḥajar le restreint à ce que le Successeur n'a pas entendu du Prophète (pour écarter celui qui l'a rencontré incroyant puis a entendu de lui). La plupart des gens du hadith tiennent le mursal pour faible et ne s'en servent pas comme preuve, à cause de l'inconnu omis (qui pourrait être un Successeur lui-même faible, et ainsi de suite). Il est renforcé (ʿiḍād) par un musnad venu d'une autre voie, par un autre mursal d'un autre cercle de maîtres, par la concordance avec l'avis d'un Compagnon, avec la fatwa de la plupart des savants, avec le raisonnement par analogie, avec la pratique d'un Compagnon ou des gens de l'époque.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 71, 73-74"
+        },
+        {
+          "terme": "gharīb (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī : le gharīb est ce qu'un seul rapporteur a transmis, seul pour tout le hadith (exemple : l'interdiction de la vente et du don du walāʾ, que seul ʿAbd Allāh b. Dīnār rapporte d'après Ibn ʿUmar) ou seul pour une partie (exemple : le hadith de la zakāt al-fiṭr, où l'on dit que Mālik s'est singularisé par un mot) ; il peut être authentique ou non. Il cite des paroles de prudence envers les gharāʾib : Mālik (« le pire du savoir est le gharīb ; le meilleur est le savoir manifeste que les gens ont transmis »), ʿAbd ar-Razzāq (« nous pensions que le gharīb était un bien ; c'est un mal »), Ibn Ḥanbal (« n'écrivez pas ces gharāʾib : ce sont des munkar et elles viennent surtout de faibles »). Citant Ibn Ḥajar (Sharḥ an-Nukhba), il note que gharīb et fard sont synonymes en langue et en terminologie ; les gens du métier emploient surtout « fard » pour la singularité à l'origine de la chaîne (fard muṭlaq) et « gharīb » pour la singularité en cours de chaîne (fard nisbī).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 56, 75-76"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "71",
+          "extrait_lu_ar": "ومحل كون ما أضيف للصحابي موقوفا حيث كان للرأي فيه مجال فإن لم يكن للاجتهاد فيه مجال ظاهر فهو مرفوع",
+          "constat": "Conforme à la séance (le mawqūf s'arrête au Compagnon) ; précision ajoutée sur la place de l'avis personnel."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "71, 73-74",
+          "extrait_lu_ar": "بأن رفعه التابعي إلى النبي صلى الله عليه وسلم صريحا أو كناية صغيرا ... أو كبيرا ... وهذا هو المشهور عند المحدثين ... وذهب أكثر أهل الحديث إلى أن المرسل ضعيف لا يحتج به للجهل بالساقط ... إذا اعتضد المرسل بمسند يجيء من وجه آخر",
+          "constat": "Conforme pour le Successeur et la chute du Compagnon ; imprécision corrigée : la séance parlait du « grand Successeur » seul ; az-Zurqānī dit petit ou grand. Ajouts : restriction d'Ibn Ḥajar, faiblesse du mursal pour la plupart et moyens de le renforcer."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "56, 75-76",
+          "extrait_lu_ar": "الغريب والفرد مترادفان لغة واصطلاحا ... وقل غريب ما روى راو فقط ... قال مالك شر العلم الغريب",
+          "constat": "Conforme à la séance (singularité d'un seul rapporteur, à n'importe quel endroit de la chaîne) ; ajouts : fard muṭlaq / fard nisbī, exemples, paroles de prudence."
+        }
+      ],
+      "relecture_comite": false
+    },
+    {
+      "id": "BAY-S08",
+      "titre": "Chaîne interrompue : munqaṭiʿ, muʿḍal, mudallas",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0017",
+        "BAY-0018"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "الْأَوْصَالِ",
+          "sens": "les jointures"
+        },
+        {
+          "ar": "مُنْقَطِعُ",
+          "sens": "interrompu"
+        },
+        {
+          "ar": "مُدَلَّسًا",
+          "sens": "dissimulé"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "munqaṭiʿ",
+          "resume_fr": "Ibn aṣ-Ṣalāḥ rapporte plusieurs avis sur la distinction entre munqaṭiʿ et mursal. Pour Ibn Ḥajar : lacune d'un seul rapporteur, ou de plusieurs en des endroits non consécutifs. Le poème emploie le mot dans un sens large.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 132 ; Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 84"
+        },
+        {
+          "terme": "muʿḍal",
+          "resume_fr": "Pour Ibn Ḥajar : chute de deux rapporteurs ou plus, consécutifs. Exemple chez Ibn aṣ-Ṣalāḥ : « Mālik dit : il m'est parvenu d'Abū Hurayra… ».",
+          "source": "Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 83 ; Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 137-138"
+        },
+        {
+          "terme": "munqaṭiʿ (az-Zurqānī)",
+          "resume_fr": "Au sens large, que prend le poème (« tout ce qui n'est pas continu »), le munqaṭiʿ comprend le mursal, le muʿḍal et le muʿallaq (avis d'Ibn ʿAbd al-Barr, suivi par al-Khaṭīb). Le sens connu (al-ʿIrāqī et d'autres) est plus strict : la chute d'un seul rapporteur avant le Compagnon, en un endroit quelconque de la chaîne, ou en plusieurs endroits pourvu qu'il n'en manque jamais plus d'un à chacun ; il exclut le muʿḍal (deux omis) et le mursal (le Compagnon lui-même omis). az-Zurqānī note que l'auteur s'est tenu à l'avis contraire au sens connu, parce qu'Ibn aṣ-Ṣalāḥ le juge plus proche et que des groupes de juristes l'ont suivi : le munqaṭiʿ s'oppose au muttaṣil et vaut donc pour un omis, plusieurs, ou ce qui est entre les deux. D'après Ibn aṣ-Ṣalāḥ, « mursal » s'emploie surtout pour ce que le Successeur rapporte du Prophète, « munqaṭiʿ » surtout pour ce que rapportent ceux d'après les Successeurs d'après les Compagnons (exemple : Mālik d'après Ibn ʿUmar).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 77"
+        },
+        {
+          "terme": "muʿḍal (az-Zurqānī)",
+          "resume_fr": "Le muʿḍal (à lire avec fatḥa sur le ḍād, de aʿḍalahu, « il l'a mis en peine ») est celui dont deux rapporteurs ou plus manquent en un même endroit de la chaîne (que ce soient le Compagnon et le Successeur, le Successeur et son suivant, ou deux autres) ; exemple : « Mālik dit : il m'est parvenu d'Abū Hurayra… ». az-Zurqānī note que la condition « en un même endroit » ne se comprend pas des mots du poème, qui aurait dû la signaler. Le muʿḍal est un nom propre à une espèce du munqaṭiʿ : tout muʿḍal est munqaṭiʿ, non l'inverse. Seconde espèce, selon Ibn aṣ-Ṣalāḥ : un suivant des Successeurs rapporte d'un Successeur un propos arrêté à lui (exemple : al-Aʿmash d'après ash-Shaʿbī) ; Ibn aṣ-Ṣalāḥ la juge bonne, car l'omission d'un seul, jointe à l'arrêt (waqf), revient à l'omission de deux (le Compagnon et le Prophète).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 77-79"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "77",
+          "extrait_lu_ar": "المنقطع ما سقط من رواته راو واحد قبل الصحابي في الموضع الواحد ... وخرج بالواحد المعضل وبما قبل الصحابي المرسل",
+          "constat": "Conforme à l'explication de la séance (Ibn Ḥajar : un seul omis ou plusieurs en des endroits non consécutifs) ; az-Zurqānī dit que le poème prend le sens large (Ibn aṣ-Ṣalāḥ), non le sens connu. Entrée ajoutée, champ az_zurqani renseigné."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "78",
+          "extrait_lu_ar": "المعضل لقب لنوع خاص من المنقطع فكل معضل منقطع ولا عكس ... لا يخفى أن هذا الشرط لا يفهم من النظم",
+          "constat": "Conforme (deux omis ou plus). az-Zurqānī précise « en un même endroit » et note que cette condition n'est pas dans les mots du poème : cohérent avec l'écart noté sur Ibn Ḥajar (omis consécutifs). Entrée ajoutée, champ az_zurqani renseigné."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "79",
+          "extrait_lu_ar": "لأن هذا الانقطاع بواحد مضموما إلى الوقف يشتمل على الانقطاع باثنين الصحابي والنبي",
+          "constat": "Seconde espèce de muʿḍal (suivant des Successeurs rapportant un propos arrêté à un Successeur) lue ; ajoutée à l'entrée."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "80",
+          "extrait_lu_ar": "وما أتى مدلسا بفتح اللام سمي بذلك لكون الراوي لم يسم من حدثه وأوهم سماعه الحديث ممن لم يحدثه به",
+          "constat": "Conforme au mot difficile « مُدَلَّسًا » (dissimulé) : la source est cachée et l'audition suggérée."
+        }
+      ],
+      "relecture_comite": true,
+      "notes_selon_ibn_hajar": [
+        {
+          "intitule": "selon Ibn Ḥajar",
+          "ibn_hajar": {
+            "definition_fr": "Il y a chute d'un seul rapporteur (ou de plus de deux), à condition qu'ils ne soient pas consécutifs ; pour Ibn Ḥajar le munqaṭiʿ est donc distinct des autres chutes (mursal, muʿḍal). Note d'éd. (ʿItr, p. 84 n. 1) : la majorité des gens du hadith entend par munqaṭiʿ toute chute, en un endroit quelconque ; il cite an-Nawawī.",
+            "source": "Ibn Ḥajar al-ʿAsqalānī, Nuzhat an-naẓar fī tawḍīḥ Nukhbat al-fikar, éd. N. ad-Dīn ʿItr, 3ᵉ éd., Maṭbaʿat aṣ-Ṣabāḥ, Damas 1421/2000 (turath n° 1565, pagination imprimée)",
+            "page": "83-84"
+          },
+          "ibn_as_salah": {
+            "definition_fr": "Ibn aṣ-Ṣalāḥ (nawʿ 10) rapporte plusieurs avis (al-Ḥākim, Ibn ʿAbd al-Barr…) ; celui qu'il juge le plus proche : le munqaṭiʿ est comme le mursal, tout ce dont la chaîne n'est pas continue ; dans l'usage, on l'emploie surtout pour ce que rapportent les gens au-dessous des Successeurs d'après les Compagnons.",
+            "source": "Ibn aṣ-Ṣalāḥ (nawʿ 10) rapporte plusieurs avis (al-Ḥākim, Ibn ʿAbd al-Barr…) ; celui qu'il juge le plus proche : le munqaṭiʿ est comme le mursal, tout ce dont la chaîne n'est pas continue ; dans l'usage, on l'emploie surtout pour ce que rapportent les gens au-dessous des Successeurs d'après les Compagnons.",
+            "page": "132-135"
+          },
+          "ecart_du_poeme": "Le poème (v. 17) : « tout ce qui n'est aucunement continu » = sens large, celui d'Ibn aṣ-Ṣalāḥ et de la majorité ; ce n'est pas la définition restreinte d'Ibn Ḥajar.",
+          "az_zurqani": "az-Zurqānī (p. 77) donne le sens connu (un seul omis avant le Compagnon) et dit que l'auteur du poème retient le sens large d'Ibn aṣ-Ṣalāḥ ; voir l'entrée « munqaṭiʿ (az-Zurqānī) ».",
+          "regle": "Le poème est traduit fidèlement ; on enseigne les deux auteurs avec leur nom ; aucun choix à trancher entre eux (décision du référent, 13/10/2026)."
+        },
+        {
+          "intitule": "selon Ibn Ḥajar",
+          "ibn_hajar": {
+            "definition_fr": "Si la chute est de deux rapporteurs ou plus, consécutifs, c'est le muʿḍal (exemple : Mālik rapportant de Muʿādh ; deux intermédiaires au moins).",
+            "source": "Ibn Ḥajar al-ʿAsqalānī, Nuzhat an-naẓar fī tawḍīḥ Nukhbat al-fikar, éd. N. ad-Dīn ʿItr, 3ᵉ éd., Maṭbaʿat aṣ-Ṣabāḥ, Damas 1421/2000 (turath n° 1565, pagination imprimée)",
+            "page": "83"
+          },
+          "ibn_as_salah": {
+            "definition_fr": "Ibn aṣ-Ṣalāḥ (nawʿ 11) : le muʿḍal est un nom propre à une espèce du munqaṭiʿ : tout muʿḍal est munqaṭiʿ, non l'inverse ; ce dont deux (ou plus) sont tombés ; il rapporte le « balaghanī » de Mālik (al-Sijzī) ; seconde espèce : le tābiʿ at-tābiʿī qui rapporte d'un Successeur un propos arrêté.",
+            "source": "Ibn aṣ-Ṣalāḥ (nawʿ 11) : le muʿḍal est un nom propre à une espèce du munqaṭiʿ : tout muʿḍal est munqaṭiʿ, non l'inverse ; ce dont deux (ou plus) sont tombés ; il rapporte le « balaghanī » de Mālik (al-Sijzī) ; seconde espèce : le tābiʿ at-tābiʿī qui rapporte d'un Successeur un propos arrêté.",
+            "page": "135-138"
+          },
+          "ecart_du_poeme": "Le poème (v. 18) dit seulement « deux omis », sans dire qu'ils sont consécutifs ; Ibn Ḥajar exige la succession.",
+          "az_zurqani": "az-Zurqānī (p. 78) : deux omis ou plus en un même endroit de la chaîne ; il remarque que cette condition n'est pas dans les mots du poème, ce qui confirme l'écart noté (le poème ne dit pas « consécutifs »).",
+          "regle": "Le poème est traduit fidèlement ; on enseigne les deux auteurs avec leur nom ; aucun choix à trancher entre eux (décision du référent, 13/10/2026)."
+        }
+      ]
+    },
+    {
+      "id": "BAY-S09",
+      "titre": "Les deux sortes de dissimulation (tadlīs)",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0019",
+        "BAY-0020"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "الْإِسْقَاطُ",
+          "sens": "l'omission"
+        },
+        {
+          "ar": "بِعَنْ",
+          "sens": "au moyen de « ʿan »"
+        },
+        {
+          "ar": "يَنْعَرِفْ",
+          "sens": "se fait reconnaître"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "tadlīs al-isnād",
+          "resume_fr": "Rapporter de quelqu'un que l'on a rencontré ce qu'on n'a pas entendu de lui, en laissant croire qu'on l'a entendu ; sans dire « il nous a rapporté », mais « ʿan… » ou « il a dit… ».",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 157 ; Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 85-86"
+        },
+        {
+          "terme": "tadlīs ash-shuyūkh",
+          "resume_fr": "Rapporter d'un maître ce qu'on a entendu de lui, mais en le nommant, le désignant par sa kunya, sa nisba ou une qualité sous laquelle il n'est pas connu, pour qu'on ne le reconnaisse pas. Le premier tadlīs est très déconseillé ; shuʿba était très sévère à son égard.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 158"
+        },
+        {
+          "terme": "tadlīs al-isnād (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī (d'après al-Bazzār et Ibn al-Qaṭṭān) : rapporter de quelqu'un que l'on a rencontré ce qu'on n'a pas entendu de lui, en laissant croire qu'on l'a entendu ; le poème l'exprime par l'omission du maître (digne de confiance mais jeune, ou faible) et par la transmission de plus haut avec une formule qui n'établit pas la continuité (« ʿan »), pour ne pas mentir. Ce n'est un tadlīs que si le mudallis était contemporain de celui dont il rapporte et l'a rencontré sans entendre de lui ; s'il rapporte de quelqu'un qu'il n'a pas rencontré avec un mot ambigu, ce n'est pas un tadlīs selon l'avis authentique et connu (c'est un mursal caché). Il retient cette condition de rencontre comme avis muʿtamad (comme l'explique Ibn Ḥajar, Sharḥ an-Nukhba) : les mukhaḍramūn (Abū ʿUthmān an-Nahdī, Qays b. Abī Ḥāzim), qui étaient du temps du Prophète, voient leurs hadiths d'après lui tenus pour mursal et non pour tadlīs. Le poème omet une troisième espèce de l'Alfiyya (tadlīs at-taswiya) ; al-Biqāʿī dit qu'il n'y a que deux espèces, la taswiya entrant dans les deux.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 80-81"
+        },
+        {
+          "terme": "tadlīs ash-shuyūkh (az-Zurqānī)",
+          "resume_fr": "Le maître est présenté sous un nom, une kunya, une nisba ou une qualité sous lesquels il n'est pas connu ; exemple (d'après Ibn aṣ-Ṣalāḥ) : Abū Bakr b. Mujāhid al-Muqriʾ disant « ʿAbd Allāh b. Abī ʿAbd Allāh » pour ʿAbd Allāh b. Abī Dāwūd as-Sijistānī. Ibn aṣ-Ṣalāḥ juge ce type plus léger que le premier ; la gravité varie selon le motif, et c'est interdit lorsqu'on cache ainsi un rapporteur faible (tromperie). Cela lèse aussi le maître dont on rapporte, qu'on ne reconnaît plus.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 83"
+        },
+        {
+          "terme": "règle du tadlīs (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī rapporte plusieurs positions sur les mudallis du premier type : leurs hadiths sont rejetés absolument ; acceptés absolument, comme le mursal chez qui s'en sert ; acceptés s'ils ne dissimulent que d'après des dignes de confiance (exemple : Sufyān b. ʿUyayna) ; et l'avis de la plupart des muḥaddithūn, juristes et uṣūliyyūn (ash-Shāfiʿī, Yaḥyā b. Maʿīn, Ibn al-Madīnī ; retenu par al-Khaṭīb et Ibn aṣ-Ṣalāḥ) : le détail. Si le digne de confiance dit clairement « j'ai entendu », « il nous a rapporté », « il nous a informés », on accepte ; s'il emploie un mot ambigu (« ʿan »), son hadith a le statut du mursal, car le tadlīs n'est pas un mensonge mais un embellissement de la chaîne et une forme d'imprécision. Ce que les Ṣaḥīḥayn rapportent de mudallis par « ʿan » est tenu pour établi par une autre voie (Ibn aṣ-Ṣalāḥ, an-Nawawī).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 82-83"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "80-81",
+          "extrait_lu_ar": "الأول تدليس الإسناد وهو كما قال البزار وابن القطان أن يروي عمن سمع منه ما لم يسمعه منه موهما أنه سمعه منه ... أما إذا روى عمن لم يدركه بلفظ موهم فليس بتدليس على الصحيح المشهور",
+          "constat": "Conforme à la séance (rapporter de quelqu'un que l'on a rencontré ce qu'on n'a pas entendu de lui) ; précision ajoutée : la rencontre est la condition retenue ; sans rencontre, c'est un mursal caché, non un tadlīs."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "82",
+          "extrait_lu_ar": "ومذهب أكثر المحدثين والفقهاء والأصوليين وهو قول الشافعي ويحيى بن معين وابن المديني ... التفصيل فإن صرح الثقة بالاتصال كسمعت وحدثنا وأخبرنا قبل وإن أتى بلفظ محتمل فحكمه حكم المرسل",
+          "constat": "Ajout (règle du tadlīs) ; non traité dans la séance ; compatible. Lu aussi : les trois espèces de l'Alfiyya (isnād, shuyūkh, taswiya), le poème n'en retenant que deux."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "83",
+          "extrait_lu_ar": "الثاني تدليس الشيوخ ... كقول أبي بكر بن مجاهد المقرئ حدثنا عبد الله بن أبي عبد الله يريد به عبد الله بن أبي داود السجستاني",
+          "constat": "Conforme à la séance (nommer le maître sous un nom, une kunya, une nisba ou une qualité sous lesquels il n'est pas connu) ; exemple et jugement d'Ibn aṣ-Ṣalāḥ ajoutés."
+        }
+      ],
+      "relecture_comite": false
+    },
+    {
+      "id": "BAY-S10",
+      "titre": "Irrégularité, inversion, singularité : shādh, maqlūb, fard",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0021",
+        "BAY-0022",
+        "BAY-0023"
+      ],
+      "duree_min": 8,
+      "mots_difficiles": [
+        {
+          "ar": "الْمَلَا",
+          "sens": "la foule"
+        },
+        {
+          "ar": "قِسْمَانِ",
+          "sens": "deux espèces"
+        },
+        {
+          "ar": "قَيَّدْتَهُ",
+          "sens": "tu l'as restreint"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "shādh",
+          "resume_fr": "Ibn Ḥajar : si un rapporteur acceptable contredit plus fiable que lui, ce qui est plus fiable est dit « maḥfūẓ » et son contraire « shādh ».",
+          "source": "Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 71-72"
+        },
+        {
+          "terme": "maqlūb",
+          "resume_fr": "Ibn aṣ-Ṣalāḥ donne l'exemple d'un hadith connu de Sālim placé sur Nāfiʿ pour le rendre rare, et l'épreuve faite à al-Bukhārī à Bagdad (cent hadiths dont textes et chaînes avaient été intervertis). Ibn Ḥajar y ajoute l'inversion de noms (Murra b. Kaʿb / Kaʿb b. Murra).",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 208 ; Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 94"
+        },
+        {
+          "terme": "fard",
+          "resume_fr": "Ibn aṣ-Ṣalāḥ range sous « afrād » les singularités limitées à une région ou à un groupe (« les gens de La Mecque seuls l'ont rapporté », « les Basriens d'après les Médinois »), qui ne signifient pas en soi la faiblesse.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 183-186"
+        },
+        {
+          "terme": "shādh (az-Zurqānī)",
+          "resume_fr": "Le poème définit le shādh comme ce que rapporte un digne de confiance en contredisant la foule des dignes de confiance (plus nombreux ou plus sûrs), selon ash-Shāfiʿī et un groupe de savants du Ḥijāz ; az-Zurqānī dit que c'est la définition retenue (muʿtamad), d'après Ibn Ḥajar (Sharḥ an-Nukhba), car le nombre l'emporte sur l'individu en matière de mémoire. Il rapporte des avis plus larges : al-Ḥākim (limité à la singularité d'un digne de confiance) et al-Khalīlī (le shādh n'a qu'une chaîne, rapporté par un digne de confiance ou non, avec ou sans contradiction : la singularité d'un digne de confiance fait suspendre le jugement, celle d'un autre est abandonnée). Il rapporte qu'on les réfute par des singularités authentiques de rapporteurs fiables, présentes dans les deux Ṣaḥīḥ : l'interdiction de vendre ou de donner le walāʾ (seul ʿAbd Allāh b. Dīnār d'après Ibn ʿUmar) et l'entrée à La Mecque avec le casque (seul Mālik d'après az-Zuhrī d'après Anas).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 84-86"
+        },
+        {
+          "terme": "maqlūb (az-Zurqānī)",
+          "resume_fr": "Le poème distingue deux espèces : remplacer un rapporteur par un autre de son rang pour rendre le hadith rare et rechercher, et donner la chaîne d'un hadith à un autre texte, souvent pour éprouver la mémoire du maître (qalb d'épreuve). az-Zurqānī donne comme premier exemple un hadith où Ḥammād b. ʿAmr an-Naṣībī (parmi les matrūk) a mis al-Aʿmash à la place de Suhayl b. Abī Ṣāliḥ, alors que le hadith d'Abū Hurayra (« Quand vous croisez les polythéistes en chemin, ne les saluez pas les premiers ») est connu par Suhayl d'après son père, comme dans Muslim. L'épreuve de la mémoire est discutée : al-ʿIrāqī en conteste la licéité, Ibn Ḥajar pose comme condition qu'elle ne se prolonge pas au-delà du besoin. Le qalb peut aussi être involontaire (inadvertance), ou porter sur le texte (rare), comme dans le hadith des sept que Dieu abrite de son ombre (la main gauche et la main droite interverties).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 88-90"
+        },
+        {
+          "terme": "fard (az-Zurqānī)",
+          "resume_fr": "Le fard du poème peut être restreint à un rapporteur digne de confiance, à un groupe ou à un pays (« seuls les gens de Basra l'ont rapporté »), ou à une transmission précise (« personne ne l'a rapporté d'après tel autre que tel »). Exemple de la dernière restriction : le hadith des Sunan d'après Ibn ʿUyayna, Wāʾil b. Dāwūd, son fils Bakr, az-Zuhrī, Anas, selon lequel le Prophète a donné un repas de noces pour Ṣafiyya avec du sawīq et des dattes ; Ibn Ṭāhir le dit gharīb. Exemple régional : le hadith des Basriens d'après les Médinois (Abū Zukayr d'après Hishām b. ʿUrwa), que le commentateur range parmi les shādh car il n'atteint ni le ṣaḥīḥ ni le ḥasan.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 92-93"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "84",
+          "extrait_lu_ar": "الشاذ كما قال الشافعي وجماعة من أهل الحجاز وهو المعتمد في تعريفه كما صرح به في شرح النخبة لأن العدد أولى بالحفظ من الواحد",
+          "constat": "Conforme à l'explication d'Ibn Ḥajar de la séance ; az-Zurqānī dit que cette définition (celle d'ash-Shāfiʿī) est la définition retenue et que « الملا » désigne le groupe des dignes de confiance. Entrée ajoutée."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "86",
+          "extrait_lu_ar": "وقال الخليلي عليه حفاظ الحديث إن الشاذ ما ليس له إلا إسناد واحد شذ به ثقة أو غير ثقة خالف أو لا فما انفرد به الثقة يتوقف فيه ولا يحتج به",
+          "constat": "Avis plus larges d'al-Khalīlī et d'al-Ḥākim lus, avec leur réfutation par les singularités authentiques des Ṣaḥīḥayn ; non traités dans la séance ; ajoutés."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "88",
+          "extrait_lu_ar": "إبدال راو براو ... مثاله حديث رواه عمرو بن خالد الواسطي عن حماد بن عمرو النصيبي عن الأعمش عن أبي صالح عن أبي هريرة مرفوعا إذا لقيتم المشركين في الطريق",
+          "constat": "Conforme à la séance (deux espèces de maqlūb : remplacement d'un rapporteur ; chaîne donnée à un autre texte) ; exemple d'az-Zurqānī ajouté (il diffère de ceux d'Ibn aṣ-Ṣalāḥ cités dans la séance)."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "90",
+          "extrait_lu_ar": "وأما المقلوب متنا وهو قليل فهو أن يعطى أحد الشيئين ما اشتهر للآخر كحديث أبي هريرة عند مسلم في السبعة الذين يظلهم الله",
+          "constat": "Lu : conditions de permission du qalb d'épreuve (al-ʿIrāqī, Ibn Ḥajar) ; qalb par inadvertance ; qalb dans le texte (rare). Ajouté."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "92-93",
+          "extrait_lu_ar": "أو قصر على رواية كقوله لم يروه عن فلان إلا فلان مثاله حديث أصحاب السنن الأربعة ... أولم على صفية بسويق وتمر ... وحديث أبي زكير لم يبلغ درجة الصحة ولا الحسن فهو شاذ",
+          "constat": "Conforme à la séance (fard restreint à une région, à un groupe ou à une transmission) ; az-Zurqānī range ici le hadith d'Abū Zukayr parmi les shādh, cohérent avec p. 110 (munkar). La première restriction (par un digne de confiance, p. 91) n'a pas été lue."
+        }
+      ],
+      "relecture_comite": false,
+      "verification_az_zurqani_13_10": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (122 images ; page imprimée = numéro de l'image)",
+          "page": "84",
+          "constat": "shādh : « فالشاذ كما قال الشافعي وجماعة من أهل الحجاز » = ce qu'un digne de confiance rapporte en contredisant plus fiable (explication de « ما يخالف ثقة فيه ») ; « الملا » = la foule, les gens dignes de confiance. Conforme (V-05)."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (122 images ; page imprimée = numéro de l'image)",
+          "page": "92",
+          "constat": "fard : « أو قصر على رواية » = « لم يروه عن فلان إلا فلان » ; exemple : hadith de Ṣafiyya (Ibn Ṭāhir : gharīb). Conforme, sens de qaṣr confirmé (R-T3)."
+        }
+      ]
+    },
+    {
+      "id": "BAY-S11",
+      "titre": "Défaut caché, fluctuation, interpolation, pairs : muʿallal, muḍṭarib, mudraj, mudabbaj",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0024",
+        "BAY-0025",
+        "BAY-0026",
+        "BAY-0027"
+      ],
+      "duree_min": 10,
+      "mots_difficiles": [
+        {
+          "ar": "غُمُوضٍ",
+          "sens": "obscurité"
+        },
+        {
+          "ar": "أُهَيْلِ الْفَنِّ",
+          "sens": "les gens de cet art"
+        },
+        {
+          "ar": "الْمُدْرَجَاتُ",
+          "sens": "les interpolations"
+        },
+        {
+          "ar": "قَرِينٍ",
+          "sens": "pair"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "muʿallal",
+          "resume_fr": "Le muʿallal est le hadith où l'on a découvert un défaut qui blesse son authenticité, alors que son apparence en est indemne ; on le découvre par la singularité du rapporteur, par la contradiction d'autrui et des indices. C'est l'un des domaines les plus fins de la science du hadith.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 187-188 ; Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 92"
+        },
+        {
+          "terme": "muḍṭarib",
+          "resume_fr": "Hadith dont la transmission diffère : les uns le rapportent d'une manière, les autres d'une manière contraire. On ne dit muḍṭarib que si les deux versions sont de force égale ; si l'une l'emporte, on suit la plus forte. La fluctuation est une cause de faiblesse.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 192-193"
+        },
+        {
+          "terme": "mudraj",
+          "resume_fr": "Ce qu'un rapporteur a ajouté de son propre propos au hadith, rapporté ensuite comme s'il en faisait partie ; il est dans le texte ou dans la chaîne ; son insertion délibérée n'est pas permise.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 195 et 200 ; Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 93-94"
+        },
+        {
+          "terme": "mudabbaj",
+          "resume_fr": "Si deux pairs (de même âge, ayant les mêmes maîtres) rapportent chacun de l'autre, c'est le mudabbaj, cas particulier de la « transmission entre pairs ».",
+          "source": "Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 118"
+        },
+        {
+          "terme": "muʿallal (az-Zurqānī)",
+          "resume_fr": "Le muʿallal est un hadith dont l'apparence est saine mais où l'on découvre, après examen, une cause cachée survenue après coup et qui le blesse ; on la découvre en réunissant les voies et en les examinant : singularité du rapporteur, contradiction par plus mémorisant, plus exact ou plus nombreux, avec des indices. Exemple d'az-Zurqānī : le hadith de l'expiation de l'assemblée (« Gloire à Toi, ô Allah, et louange… ») d'après Ibn Jurayj, Mūsā b. ʿUqba, Suhayl, son père, Abū Hurayra, qu'al-Bukhārī a jugé défectueux : c'est Mūsā b. Ismāʿīl qui l'a rapporté d'après Wuhayb, Suhayl, ʿAwn b. ʿAbd Allāh, et l'on ne connaît pas d'audition de Mūsā b. ʿUqba auprès de Suhayl. La cause peut être dans la chaîne ou dans le texte ; celle de la chaîne peut ne pas atteindre la validité du texte (exemple : « les deux parties à la vente ont le choix »), tandis qu'une cause dans le texte peut le blesser (exemple : la négation de la récitation de la basmala dans la prière, d'après Anas, que des rapporteurs ont tirée à tort de ses paroles ; le sujet touche à une divergence juridique, non traitée ici).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 94-95"
+        },
+        {
+          "terme": "muḍṭarib (az-Zurqānī)",
+          "resume_fr": "Le muḍṭarib est le hadith dont la chaîne ou le texte a été rapporté de façons différentes, contraires l'une à l'autre, sans qu'on puisse en préférer une ; c'est un type de muʿallal. Si l'une des versions l'emporte (rapporteurs plus mémorisants, plus nombreux, plus proches du maître, etc.), le hadith n'est pas muḍṭarib. Exemple de texte : « il y a dans le bien un droit autre que la zakāt » (at-Tirmidhī) et « il n'y a dans le bien de droit que la zakāt » (Ibn Mājah) ; az-Zurqānī note que l'exemple ne convient pas bien, la chaîne d'at-Tirmidhī contenant un faible, et qu'on peut concilier (droit obligatoire / droit recommandé).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 98-100"
+        },
+        {
+          "terme": "mudraj (az-Zurqānī)",
+          "resume_fr": "Le poème ne traite que de l'idrāj dans le texte, de trois sortes : à la fin du hadith, au milieu ou au début ; l'idrāj dans la chaîne compte quatre sortes et n'est pas traité par le poème. Ce sont des mots d'un rapporteur joints au texte sans coupure, dont on pourrait croire qu'ils en font partie ; causes : expliquer un mot rare, ou déduire de ce que le rapporteur a compris. Exemples : l'ajout d'Ibn Masʿūd à la formule du tashahhud (fin du hadith) ; « c'est-à-dire l'adoration pendant des nuits » ajouté au hadith d'az-Zuhrī d'après ʿĀʾisha sur le retrait à Ḥirāʾ (explication du mot taḥannuth) ; l'explication du mot shighār dans l'interdiction qui porte ce nom.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 100"
+        },
+        {
+          "terme": "mudabbaj (az-Zurqānī)",
+          "resume_fr": "Le mot vient de dībāja, « les deux joues », parce que les deux pairs se ressemblent et se font face. Deux pairs, qui tiennent des mêmes maîtres et sont le plus souvent du même âge (on se contente parfois de l'égalité dans la chaîne, malgré l'écart d'âge), rapportent chacun de l'autre, avec ou sans intermédiaire (exemples : Abū Hurayra et ʿĀʾisha ; Mālik et al-Awzāʿī ; Aḥmad et Ibn al-Madīnī). Le mudabbaj est plus particulier que la transmission entre pairs : tout mudabbaj est une transmission entre pairs, non l'inverse. Utilité : se garder de croire à une addition dans la chaîne.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 104"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "94-95",
+          "extrait_lu_ar": "حديث ظاهره السلامة اطلع فيه بعد التفتيش على قادح ... ويدرك العلة بعد جمع الطرق والفحص عنها بتفرد الراوي ومخالفة غيره له ممن هو أحفظ أو أضبط أو أكثر عددا مع قرائن تنضم ... كحديث البيعان بالخيار",
+          "constat": "Conforme à la séance (apparence saine, défaut découvert par la singularité, la contradiction et les indices) ; az-Zurqānī ajoute l'exemple de la kaffārat al-majlis et la cause dans la chaîne ou dans le texte. Entrée ajoutée."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "98",
+          "extrait_lu_ar": "فأما إذا ترجحت إحداهما بأن يكون رواتها أحفظ أو أكثر صحبة للمروي عنه أو غير ذلك من وجوه الترجيح فلا يكون الحديث مضطربا",
+          "constat": "Conforme à la séance (on ne dit muḍṭarib que si les versions sont de force égale)."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "100",
+          "extrait_lu_ar": "المدرج في متن الحديث ثلاثة أقسام مدرج في آخر الحديث ومدرج في أثنائه ومدرج في أوله ... وسببها تفسير غريب فيه أو استنباط مما فهمه من بعض رواته",
+          "constat": "Conforme à la séance (ajout d'un rapporteur au texte) ; précisions : le poème ne traite que de l'idrāj dans le texte, trois places, et causes (explication d'un mot rare, déduction). Entrée ajoutée."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "104",
+          "extrait_lu_ar": "مدبج بضم الميم وفتح الدال المهملة وتشديد الموحدة آخره جيم سمي بذلك أخذا من ديباجتي الوجه وهما الخدان لتساويهما وتقابلهما ... فكل مدبج أقران ولا عكس",
+          "constat": "Conforme à la séance (deux pairs rapportant chacun de l'autre) ; nuance : l'âge est « le plus souvent » le même, on se contente parfois de l'égalité dans la chaîne. Entrée ajoutée."
+        }
+      ],
+      "relecture_comite": false,
+      "verification_az_zurqani_13_10": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (122 images ; page imprimée = numéro de l'image)",
+          "page": "104",
+          "constat": "mudabbaj : deux pairs qui se rapportent l'un à l'autre ; « انتخه » : « اقصده » ; al-Mukhtār : انتخى = افتخر. Conforme (R-T3)."
+        }
+      ]
+    },
+    {
+      "id": "BAY-S12",
+      "titre": "Noms : muttafiq, muftariq, muʾtalif, mukhtalif",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0028",
+        "BAY-0029"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "لَفْظًا",
+          "sens": "prononciation"
+        },
+        {
+          "ar": "خَطًّا",
+          "sens": "graphie"
+        },
+        {
+          "ar": "فَاخْشَ",
+          "sens": "crains"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "muttafiq / muftariq",
+          "resume_fr": "Noms identiques par la prononciation et la graphie, mais portés par des personnes différentes (par exemple six hommes nommés al-Khalīl b. Aḥmad) ; source d'erreurs, même chez de grands savants.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 462-463"
+        },
+        {
+          "terme": "muʾtalif / mukhtalif",
+          "resume_fr": "Noms qui s'accordent par la forme écrite et diffèrent par la prononciation ; cette science est « grande » et celui qui l'ignore trébuche souvent.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 450"
+        },
+        {
+          "terme": "muttafiq / muftariq (az-Zurqānī)",
+          "resume_fr": "Ce sont les noms semblables par la prononciation et par l'écriture mais portés par des personnes distinctes ; az-Zurqānī compte huit espèces, selon l'accord ou non des noms, des noms des pères, des kunya et des nisba (exemples : al-Khalīl b. Aḥmad, six hommes ou plus ; Aḥmad b. Jaʿfar b. Ḥamdān, quatre contemporains ; Abū ʿImrān al-Jawnī, deux). Dit sans précision, « ʿAbd Allāh » désigne selon le lieu : Ibn az-Zubayr à La Mecque, Ibn ʿUmar à Médine, Ibn Masʿūd à Kūfa, Ibn ʿAbbās à Basra, Ibn al-Mubārak au Khurāsān, Ibn ʿAmr b. al-ʿĀṣ au Shām. Utilité : éviter de croire qu'une seule personne est plusieurs ; l'un des deux homonymes peut être digne de confiance et l'autre faible. Le poème donne l'impression de deux espèces ; le couple n'en forme qu'une.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 106-107"
+        },
+        {
+          "terme": "muʾtalif / mukhtalif (az-Zurqānī)",
+          "resume_fr": "Le muʾtalif est ce dont l'écriture est semblable et la prononciation différente (exemple : Sallām, avec ou sans tashdīd du lām : ʿAbd Allāh b. Salām, le Compagnon, est sans tashdīd), le mukhtalif étant son contraire ; c'est un art important, dont l'ignorance expose à l'erreur de lecture (taṣḥīf). Le raisonnement par analogie n'y a pas de place : on s'en tient à la transmission et à la mémorisation. Ont écrit sur ce sujet al-Ḥāfiẓ ʿAbd al-Ghanī b. Saʿīd et, en dernier, Ibn Ḥajar (Tabṣīr al-muntabih bi-taḥrīr al-mushtabih). Là encore, le poème donne l'impression de deux espèces ; le couple n'en forme qu'une.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, p. 107-108"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "106-107",
+          "extrait_lu_ar": "المتفق والمفترق ما اتفق لفظه وخطه وافترقت مسمياته ... كالخليل بن أحمد ستة رجال أو أكثر",
+          "constat": "Conforme à la séance (noms identiques par la prononciation et la graphie, personnes différentes ; six hommes nommés al-Khalīl b. Aḥmad) ; ajouts : huit espèces, exemple des ʿAbd Allāh, utilité."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "108",
+          "extrait_lu_ar": "المؤتلف ما اتفق خطه دون لفظه ... فاخش الغلط فيه فإنه فن مهم لا يدخله القياس",
+          "constat": "Conforme à la séance (même forme écrite, prononciation différente ; science importante où l'on trébuche) ; ajouts : ouvrages d'ʿAbd al-Ghanī b. Saʿīd et d'Ibn Ḥajar, exemple Sallām."
+        }
+      ],
+      "relecture_comite": false
+    },
+    {
+      "id": "BAY-S13",
+      "titre": "Les hadiths rejetés : munkar, matrūk, mawḍūʿ",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0030",
+        "BAY-0031",
+        "BAY-0032"
+      ],
+      "duree_min": 9,
+      "mots_difficiles": [
+        {
+          "ar": "غَدَا",
+          "sens": "est devenu"
+        },
+        {
+          "ar": "التَّفَرُّدَا",
+          "sens": "la singularité"
+        },
+        {
+          "ar": "الْمُخْتَلَقُ",
+          "sens": "inventé"
+        },
+        {
+          "ar": "الْمَصْنُوعُ",
+          "sens": "fabriqué"
+        }
+      ],
+      "explications": [
+        {
+          "terme": "munkar",
+          "resume_fr": "Pour Ibn Ḥajar : si la contradiction se fait avec un rapporteur faible, le plus sûr est dit « maʿrūf » et son contraire « munkar » ; entre shādh et munkar, il y a rapport de généralité et de particularité. La définition du poème (le fard d'un rapporteur dont la fiabilité ne porte pas la singularité) est un autre usage du mot.",
+          "source": "Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 72-73"
+        },
+        {
+          "terme": "matrūk",
+          "resume_fr": "Pour Ibn Ḥajar : le hadith rejeté parce que son rapporteur est accusé de mensonge. Le poème met l'accent sur la faiblesse unanime d'un rapporteur isolé.",
+          "source": "Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 91"
+        },
+        {
+          "terme": "mawḍūʿ",
+          "resume_fr": "Le hadith inventé et fabriqué ; c'est le pire des hadiths faibles ; il n'est permis à personne de le rapporter en connaissance de cause sans en indiquer la fabrication. Pour Ibn Ḥajar : critique du rapporteur pour mensonge sur le Prophète ; le jugement de fabrication se fait par présomption forte, non par certitude.",
+          "source": "Ibn aṣ-Ṣalāḥ, Maʿrifat anwāʿ ʿilm al-ḥadīth, éd. al-Hamīm / al-Faḥl, Dār al-Kutub al-ʿIlmiyya, 2002, p. 201 ; Ibn Ḥajar, Nuzhat an-naẓar, éd. ʿItr, 3ᵉ éd., Damas 2000, p. 89"
+        },
+        {
+          "terme": "munkar (az-Zurqānī)",
+          "resume_fr": "Pour az-Zurqānī, le poème appelle munkar le hadith fard d'un rapporteur dont la fiabilité ne porte pas la singularité (exemple : « Mangez le dattier frais avec les dattes sèches… », rapporté seul par Abū Zukayr, jugé munkar par an-Nasāʾī et Ibn aṣ-Ṣalāḥ). Il ajoute que l'auteur suit ici Ibn aṣ-Ṣalāḥ, pour qui munkar = shādh, alors que l'avis retenu (muʿtamad) les distingue, comme l'a dit Ibn Ḥajar : le shādh est la contradiction d'un digne de confiance par un plus fiable (ou la singularité d'un rapporteur de faible ḍabṭ), le munkar la contradiction d'un rapporteur mastūr ou faible non renforcé ; il y a entre eux généralité et particularité sous un angle. Contraire du munkar : maʿrūf.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, n110-n111"
+        },
+        {
+          "terme": "matrūk (az-Zurqānī)",
+          "resume_fr": "az-Zurqānī lit matrūk comme le hadith dont un seul rapporteur s'est singularisé et dont la faiblesse fait l'unanimité, à cause de son accusation de mensonge (le hadith n'est rapporté que par lui et contredit les règles connues, ou il est connu pour mentir dans ses propos), ou de perversité, d'étourderie ou de nombreuses méprises ; il est « comme le rejeté (radd) », c'est-à-dire comme le mawḍūʿ mais plus léger. Cette espèce n'est pas chez al-ʿIrāqī, d'autres l'ont ajoutée.",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, n111"
+        },
+        {
+          "terme": "mawḍūʿ (az-Zurqānī)",
+          "resume_fr": "Mawḍūʿ : le hadith mensonger sur le Prophète, forgé, inventé ; les trois mots du poème (kadhib, mukhtalaq, mawḍūʿ) sont rapprochés pour renforcer et inspirer l'aversion. az-Zurqānī note que le nom vient de l'abaissement de son rang, qu'il ne se corrige jamais, que l'on le reconnaît à l'aveu de son auteur ou à des indices, et rapporte les causes (hérésie, intérêt, désir de persuader, ignorance de certains dévots). Il cite le consensus : mentir sur le Prophète est un grand péché, et chercher à répandre de tels hadiths, même pour encourager ou effrayer, est interdit par consensus de ceux dont l'avis compte. Il discute si le mensonge sur un Compagnon ou un Successeur est appelé mawḍūʿ (l'implication de la définition : non).",
+          "source": "az-Zurqānī (Ajhūrī), Sharḥ al-Bayqūniyya, 1324 H, n112-n114"
+        }
+      ],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "110",
+          "extrait_lu_ar": "فهذا الحديث منكر ... والمعتمد أنهما متميزان كما قاله الحافظ ابن حجر",
+          "constat": "Lu : l'exemple d'Abū Zukayr, le rattachement du poème à Ibn aṣ-Ṣalāḥ (munkar = shādh) et l'avis retenu (distinction, Ibn Ḥajar). Correction apportée à la séance : l'explication du munkar est complétée par l'exemple et la position d'az-Zurqānī."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "111",
+          "extrait_lu_ar": "بين المنكر والشاذ عموما وخصوصا من وجه",
+          "constat": "Lu : généralité/particularité entre shādh et munkar ; conforme à la séance (Ibn Ḥajar)."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "111",
+          "extrait_lu_ar": "فهو كرد",
+          "constat": "Lu : le matrūk est comme le rejeté ; accusation de mensonge, perversité, étourderie ou nombreuses méprises. La phrase de la séance (« le poème met l'accent sur la faiblesse unanime d'un rapporteur isolé ») était incomplète : complétée."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "112-114",
+          "extrait_lu_ar": "للتأكيد ... وكل ذلك حرام بإجماع من يعتد به",
+          "constat": "Lu en vue d'ensemble : les trois mots du poème pour le mawḍūʿ ; causes de la fabrication ; interdiction par consensus. Conforme à la séance, qui est complétée. Les détails fins de ces pages (exemples nominatifs) n'ont pas été relus ligne par ligne."
+        }
+      ],
+      "relecture_comite": true,
+      "notes_selon_ibn_hajar": [
+        {
+          "intitule": "selon Ibn Ḥajar",
+          "ibn_hajar": {
+            "definition_fr": "Sens (a) : si la contradiction vient d'un rapporteur faible, le mieux établi est dit maʿrūf et son contraire munkar ; entre le shādh et le munkar il y a généralité et particularité (ils s'accordent sur la contradiction ; le shādh est rapporté par un thiqa ou ṣadūq, le munkar par un faible) ; « celui qui les assimile s'est trompé ». Note d'éd. (ʿItr, p. 72 n. 2) : beaucoup d'anciens appliquaient « munkar » à la seule singularité, même d'un thiqa.",
+            "source": "Ibn Ḥajar al-ʿAsqalānī, Nuzhat an-naẓar fī tawḍīḥ Nukhbat al-fikar, éd. N. ad-Dīn ʿItr, 3ᵉ éd., Maṭbaʿat aṣ-Ṣabāḥ, Damas 1421/2000 (turath n° 1565, pagination imprimée)",
+            "page": "72-73"
+          },
+          "ibn_as_salah": {
+            "definition_fr": "Sens (b) : Ibn aṣ-Ṣalāḥ range le munkar en deux espèces, comme le shādh : (1) le fard qui contredit ce que rapportent les thiqāt ; (2) le fard dont le rapporteur n'a pas la fiabilité ni l'exactitude qui permettraient d'admettre sa singularité (exemple : Abū Zukayr). Il cite d'abord al-Birdījī : le hadith qu'un homme rapporte seul.",
+            "source": "Sens (b) : Ibn aṣ-Ṣalāḥ range le munkar en deux espèces, comme le shādh : (1) le fard qui contredit ce que rapportent les thiqāt ; (2) le fard dont le rapporteur n'a pas la fiabilité ni l'exactitude qui permettraient d'admettre sa singularité (exemple : Abū Zukayr). Il cite d'abord al-Birdījī : le hadith qu'un homme rapporte seul.",
+            "page": "169-173"
+          },
+          "ecart_du_poeme": "Le poème (v. 30) prend le sens (b), seconde espèce : « le fard dont le rapporteur ne porte pas la singularité par sa fiabilité ». C'est UN seul terme, aux deux sens expliqués ; ce n'est pas la définition d'Ibn Ḥajar (a).",
+          "az_zurqani": null,
+          "regle": "Le poème est traduit fidèlement ; on enseigne les deux auteurs avec leur nom ; aucun choix à trancher entre eux (décision du référent, 13/10/2026)."
+        },
+        {
+          "intitule": "selon Ibn Ḥajar",
+          "ibn_hajar": {
+            "definition_fr": "Le deuxième rang du rejeté vient de l'accusation de mensonge portée contre le rapporteur : c'est le matrūk. Note d'éd. (ʿItr, p. 91 n. 4) : hadith rapporté par un accusé de mensonge, qu'on ne connaît que par lui, et qui est contraire aux règles connues.",
+            "source": "Ibn Ḥajar al-ʿAsqalānī, Nuzhat an-naẓar fī tawḍīḥ Nukhbat al-fikar, éd. N. ad-Dīn ʿItr, 3ᵉ éd., Maṭbaʿat aṣ-Ṣabāḥ, Damas 1421/2000 (turath n° 1565, pagination imprimée)",
+            "page": "91"
+          },
+          "ibn_as_salah": {
+            "definition_fr": "Ibn aṣ-Ṣalāḥ n'a pas de chapitre propre au matrūk. Il cite al-Khalīlī : ce qui vient d'un non-thiqa est « matrūk », non accepté (shādh) ; et, dans les degrés de la critique des rapporteurs (Ibn Abī Ḥātim) : « matrūk al-ḥadīth » ou « kadhdhāb » : son hadith est abandonné, non écrit.",
+            "source": "Ibn aṣ-Ṣalāḥ n'a pas de chapitre propre au matrūk. Il cite al-Khalīlī : ce qui vient d'un non-thiqa est « matrūk », non accepté (shādh) ; et, dans les degrés de la critique des rapporteurs (Ibn Abī Ḥātim) : « matrūk al-ḥadīth » ou « kadhdhāb » : son hadith est abandonné, non écrit.",
+            "page": "163 ; 245"
+          },
+          "ecart_du_poeme": "Le poème (v. 31) : ce par quoi un seul s'est singularisé et dont l'unanimité s'est faite sur la faiblesse : plus large que l'accusation de mensonge d'Ibn Ḥajar.",
+          "az_zurqani": null,
+          "regle": "Le poème est traduit fidèlement ; on enseigne les deux auteurs avec leur nom ; aucun choix à trancher entre eux (décision du référent, 13/10/2026)."
+        }
+      ]
+    },
+    {
+      "id": "BAY-S14",
+      "titre": "Clôture",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "vers": [
+        "BAY-0033",
+        "BAY-0034"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "الْمَكْنُونِ",
+          "sens": "caché, précieux"
+        },
+        {
+          "ar": "خُتِمَتْ",
+          "sens": "a été close"
+        }
+      ],
+      "explications": [],
+      "verification_az_zurqani": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "116",
+          "extrait_lu_ar": "وقد أتت هذه المنظومة كالجوهر المكنون سميتها منظومة البيقوني ... المكنون المستور منه لنفاسته وعزته",
+          "constat": "Conforme au mot difficile « الْمَكْنُونِ » (caché, précieux) : le joyau protégé à cause de sa valeur."
+        },
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (image n = page imprimée)",
+          "page": "117",
+          "extrait_lu_ar": "ثم بخير ختمت بنائه للمفعول ... أتت أبياتها فهي الصواب لأن أبياتها أربعة وثلاثون وأما أقسامها التي ذكرت فيها فاثنتان وثلاثون",
+          "constat": "Conforme au mot difficile « خُتِمَتْ » (a été close, verbe au passif) ; variante V-07 relue : la ḥāshiya tient la copie « أبياتها » pour exacte (34 vers, 32 espèces énumérées) ; pour la copie « أقسامها », elle répond que le compte est juste si l'on compte le mudallas pour deux et le maqlūb pour deux. Cohérent avec p. 17 ; texte du vers inchangé."
+        }
+      ],
+      "relecture_comite": false,
+      "verification_az_zurqani_13_10": [
+        {
+          "source": "az-Zurqānī, Sharḥ al-Bayqūniyya, avec la ḥāshiya de ʿAṭiyya al-Ajhūrī, al-Maṭbaʿa al-Khayriyya, 1324 H (1907) ; archive.org AAlexandrina-086946 (122 images ; page imprimée = numéro de l'image)",
+          "page": "17",
+          "constat": "v. 34 : « أقسامها » (copie commentée) ou « أبياتها » (autre copie) ; le compte de 34 est celui de l'auteur. Conforme (V-07)."
+        }
+      ]
+    }
+  ]
+}

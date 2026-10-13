@@ -1,0 +1,1113 @@
+{
+  "oeuvre": "المنظومة البيقونية في مصطلح الحديث",
+  "auteur": "عمر بن محمد بن فتوح البيقوني الدمشقي الشافعي (mort vers 1080 H d'après la notice de turath n° 8567 ; date à confirmer sur une source biographique)",
+  "perimetre": "Poème complet : 34 vers (BAY-0001 à BAY-0034), mètre rajaz. Le dernier vers annonce « au-delà de trente, quatre » : le compte de 34 est donc celui de l'auteur. T et W donnent aussi 34 vers, dans le même ordre.",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "date_saisie": "2026-10-13",
+  "saisie_par": "Claude (référent provisoire), saisie vocalisée complète, puis comparaison automatique du squelette consonantique avec T et W. Aucun fichier numérique n'a été copié : T et W n'ont servi qu'à la comparaison. Collation sur témoin ancien faite le 13/10/2026 (voir temoins H et Z) ; seconde lecture à faire sur la page imprimée en haute résolution.",
+  "temoins": {
+    "S": {
+      "role": "texte de base de travail (saisie Awzid)",
+      "description": "vers saisis et vocalisés par Claude ; conformes à T et W pour les consonnes, sauf fautes de T/W signalées (V-01 à V-04)"
+    },
+    "T": {
+      "role": "témoin de lecture (édition moderne, probablement sous droits pour sa mise en page)",
+      "description": "al-Manẓūma al-Bayqūniyya, Dār al-Mughnī, 1ʳᵉ éd. 1420/1999, 12 pages, pagination imprimée 7 à 12 (turath n° 8567) ; vocalisation partielle et fautes d'OCR (v. 21, 29)"
+    },
+    "W": {
+      "role": "témoin de lecture",
+      "description": "Wikisource arabe, « منظومة البيقوني في مصطلح الحديث », révision 435652 du 16/07/2023, source de la page : « inconnue » (catégorie « نصوص مجهولة المصدر »)"
+    },
+    "H": {
+      "role": "témoin de collation (vocalisé, imprimé) : mots et voyelles lus sur l'image",
+      "description": "al-Manẓūma al-Bayqūniyya dans le Majmūʿ muhimmāt al-mutūn, Muṣṭafā al-Bābī al-Ḥalabī, Le Caire, 4ᵉ éd. 1369/1950 ; archive.org mohimmat_almtoon ; poème aux images n123 à n126 (la table annonçait « المنظومة البيقونية »). OCR illisible : lu sur les images (1400 px). Édition de 1950 : sert à comparer ; aucune image n'est reproduite chez nous.",
+      "lecture": "34 vers lus (mots et voyelles) ; signes très fins (sukūn, shadda) non garantis à cette résolution"
+    },
+    "Z": {
+      "role": "témoin ancien du domaine public (matn cité dans le commentaire) : mots collationnés ; voyelles non données hors indications explicites du commentaire",
+      "description": "Ḥāshiyat ʿAṭiyya al-Ajhūrī ʿalā sharḥ Sayyidī Muḥammad az-Zurqānī ʿalā l-Manẓūma al-Bayqūniyya fī muṣṭalaḥ al-ḥadīth, al-Maṭbaʿa al-Khayriyya, Le Caire, 1324 H (1907) ; archive.org AAlexandrina-086946 ; 122 images ; le matn est cité par segments entre parenthèses en tête de chaque explication. Pages réellement lues le 13/10 : 17, 18, 84, 92, 104 (images lues une à une). Le reste du volume n'a pas été lu."
+    },
+    "Z2": {
+      "role": "second témoin ancien identifié, non lu",
+      "description": "Ḥāshiyat ash-Shaykh ʿAṭiyya al-Ajhūrī ʿalā sharḥ Muḥammad az-Zurqānī (muṣṭalaḥ), Maṭbaʿat Dār al-Kutub al-ʿArabiyya al-Kubrā, 1925 ; archive.org AAlexandrina-121255 ; 90 pages."
+    }
+  },
+  "temoins_non_consultes": [
+    "Majmūʿ muhimmāt al-mutūn (1287-1317 H, huit exemplaires archive.org AAlexandrina) : la Bayqūniyya n'y figure pas (recherche négative dans l'OCR, 13/10).",
+    "Ṭāhir al-Jazāʾirī (Tawjīh an-naẓar, etc.) : cherché sur archive.org ; la Bayqūniyya n'y est pas commentée par lui (aucun résultat) ; non utilisé.",
+    "AAlexandrina-121255 (1925) : identifié, non lu."
+  ],
+  "conventions": [
+    "Un vers = une entrée ; les deux hémistiches sont dans « hemistiches » ; le champ « ar » les joint par « * » (à remplacer par la mise en page de l'application).",
+    "Points RÉFÉRENT : R-T1 (aucun témoin ancien lu : recollationner), R-T2 (v. 21 « بِهِ »), R-T3 (v. 23 et 27, sens à fixer avec az-Zurqānī).",
+    "Aucun verset coranique dans ce texte : pas de champ « coran »."
+  ],
+  "vers": [
+    {
+      "id": "BAY-0001",
+      "n": 1,
+      "section": "ouverture",
+      "type": "vers",
+      "hemistiches": [
+        "أَبْدَأُ بِالْحَمْدِ مُصَلِّيًا عَلَى",
+        "مُحَمَّدٍ خَيْرِ نَبِيٍّ أُرْسِلَا"
+      ],
+      "ar": "أَبْدَأُ بِالْحَمْدِ مُصَلِّيًا عَلَى * مُحَمَّدٍ خَيْرِ نَبِيٍّ أُرْسِلَا",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [
+        "Vocalisation de « نَبِيٍّ أُرْسِلَا » : T écrit « نبيْ » (sukūn de pause), W « نَبِيٍّ » ; retenu : « نَبِيٍّ », comme W."
+      ],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0002",
+      "n": 2,
+      "section": "ouverture",
+      "type": "vers",
+      "hemistiches": [
+        "وَذِي مِنْ أَقْسَامِ الْحَدِيثِ عِدَّهْ",
+        "وَكُلُّ وَاحِدٍ أَتَى وَحَدَّهْ"
+      ],
+      "ar": "وَذِي مِنْ أَقْسَامِ الْحَدِيثِ عِدَّهْ * وَكُلُّ وَاحِدٍ أَتَى وَحَدَّهْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques sauf variante ci-contre",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [
+          "V-08"
+        ],
+        "note_az_zurqani": "Z p. 17-18 : « (قوله عدة) » : 34 ; « (وكل واحد أتى) في النظم (وحده) أي مع حده الشامل لرسمه »."
+      }
+    },
+    {
+      "id": "BAY-0003",
+      "n": 3,
+      "section": "trois_degres",
+      "type": "vers",
+      "hemistiches": [
+        "أَوَّلُهَا الصَّحِيحُ وَهْوَ مَا اتَّصَلْ",
+        "إِسْنَادُهُ وَلَمْ يَشُذَّ أَوْ يُعَلْ"
+      ],
+      "ar": "أَوَّلُهَا الصَّحِيحُ وَهْوَ مَا اتَّصَلْ * إِسْنَادُهُ وَلَمْ يَشُذَّ أَوْ يُعَلْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0004",
+      "n": 4,
+      "section": "trois_degres",
+      "type": "vers",
+      "hemistiches": [
+        "يَرْوِيهِ عَدْلٌ ضَابِطٌ عَنْ مِثْلِهِ",
+        "مُعْتَمَدٌ فِي ضَبْطِهِ وَنَقْلِهِ"
+      ],
+      "ar": "يَرْوِيهِ عَدْلٌ ضَابِطٌ عَنْ مِثْلِهِ * مُعْتَمَدٌ فِي ضَبْطِهِ وَنَقْلِهِ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0005",
+      "n": 5,
+      "section": "trois_degres",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْحَسَنُ الْمَعْرُوفُ طُرْقًا وَغَدَتْ",
+        "رِجَالُهُ لَا كَالصَّحِيحِ اشْتَهَرَتْ"
+      ],
+      "ar": "وَالْحَسَنُ الْمَعْرُوفُ طُرْقًا وَغَدَتْ * رِجَالُهُ لَا كَالصَّحِيحِ اشْتَهَرَتْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0006",
+      "n": 6,
+      "section": "trois_degres",
+      "type": "vers",
+      "hemistiches": [
+        "وَكُلُّ مَا عَنْ رُتْبَةِ الْحُسْنِ قَصُرْ",
+        "فَهْوَ الضَّعِيفُ وَهْوَ أَقْسَامًا كُثُرْ"
+      ],
+      "ar": "وَكُلُّ مَا عَنْ رُتْبَةِ الْحُسْنِ قَصُرْ * فَهْوَ الضَّعِيفُ وَهْوَ أَقْسَامًا كُثُرْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0007",
+      "n": 7,
+      "section": "selon_la_source_et_la_continuite",
+      "type": "vers",
+      "hemistiches": [
+        "وَمَا أُضِيفَ لِلنَّبِيِّ الْمَرْفُوعُ",
+        "وَمَا لِتَابِعٍ هُوَ الْمَقْطُوعُ"
+      ],
+      "ar": "وَمَا أُضِيفَ لِلنَّبِيِّ الْمَرْفُوعُ * وَمَا لِتَابِعٍ هُوَ الْمَقْطُوعُ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0008",
+      "n": 8,
+      "section": "selon_la_source_et_la_continuite",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْمُسْنَدُ الْمُتَّصِلُ الْإِسْنَادِ مِنْ",
+        "رَاوِيهِ حَتَّى الْمُصْطَفَى وَلَمْ يَبِنْ"
+      ],
+      "ar": "وَالْمُسْنَدُ الْمُتَّصِلُ الْإِسْنَادِ مِنْ * رَاوِيهِ حَتَّى الْمُصْطَفَى وَلَمْ يَبِنْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0009",
+      "n": 9,
+      "section": "selon_la_source_et_la_continuite",
+      "type": "vers",
+      "hemistiches": [
+        "وَمَا بِسَمْعِ كُلِّ رَاوٍ يَتَّصِلْ",
+        "إِسْنَادُهُ لِلْمُصْطَفَى فَالْمُتَّصِلْ"
+      ],
+      "ar": "وَمَا بِسَمْعِ كُلِّ رَاوٍ يَتَّصِلْ * إِسْنَادُهُ لِلْمُصْطَفَى فَالْمُتَّصِلْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0010",
+      "n": 10,
+      "section": "musalsal",
+      "type": "vers",
+      "hemistiches": [
+        "مُسَلْسَلٌ قُلْ مَا عَلَى وَصْفٍ أَتَى",
+        "مِثْلُ أَمَا وَاللهِ أَنْبَأَنِي الْفَتَى"
+      ],
+      "ar": "مُسَلْسَلٌ قُلْ مَا عَلَى وَصْفٍ أَتَى * مِثْلُ أَمَا وَاللهِ أَنْبَأَنِي الْفَتَى",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques sauf variante ci-contre",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [
+          "V-06"
+        ],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0011",
+      "n": 11,
+      "section": "musalsal",
+      "type": "vers",
+      "hemistiches": [
+        "كَذَاكَ قَدْ حَدَّثَنِيهِ قَائِمَا",
+        "أَوْ بَعْدَ أَنْ حَدَّثَنِي تَبَسَّمَا"
+      ],
+      "ar": "كَذَاكَ قَدْ حَدَّثَنِيهِ قَائِمَا * أَوْ بَعْدَ أَنْ حَدَّثَنِي تَبَسَّمَا",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0012",
+      "n": 12,
+      "section": "nombre_de_rapporteurs_et_noms",
+      "type": "vers",
+      "hemistiches": [
+        "عَزِيزُ مَرْوِيِّ اثْنَيْنِ أَوْ ثَلَاثَهْ",
+        "مَشْهُورُ مَرْوِيِّ فَوْقَ مَا ثَلَاثَهْ"
+      ],
+      "ar": "عَزِيزُ مَرْوِيِّ اثْنَيْنِ أَوْ ثَلَاثَهْ * مَشْهُورُ مَرْوِيِّ فَوْقَ مَا ثَلَاثَهْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0013",
+      "n": 13,
+      "section": "nombre_de_rapporteurs_et_noms",
+      "type": "vers",
+      "hemistiches": [
+        "مُعَنْعَنٌ كَعَنْ سَعِيدٍ عَنْ كَرَمْ",
+        "وَمُبْهَمٌ مَا فِيهِ رَاوٍ لَمْ يُسَمّْ"
+      ],
+      "ar": "مُعَنْعَنٌ كَعَنْ سَعِيدٍ عَنْ كَرَمْ * وَمُبْهَمٌ مَا فِيهِ رَاوٍ لَمْ يُسَمّْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0014",
+      "n": 14,
+      "section": "nombre_de_rapporteurs_et_noms",
+      "type": "vers",
+      "hemistiches": [
+        "وَكُلُّ مَا قَلَّتْ رِجَالُهُ عَلَا",
+        "وَضِدُّهُ ذَاكَ الَّذِي قَدْ نَزَلَا"
+      ],
+      "ar": "وَكُلُّ مَا قَلَّتْ رِجَالُهُ عَلَا * وَضِدُّهُ ذَاكَ الَّذِي قَدْ نَزَلَا",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0015",
+      "n": 15,
+      "section": "arret_et_isolement",
+      "type": "vers",
+      "hemistiches": [
+        "وَمَا أَضَفْتَهُ إِلَى الْأَصْحَابِ مِنْ",
+        "قَوْلٍ وَفِعْلٍ فَهْوَ مَوْقُوفٌ زُكِنْ"
+      ],
+      "ar": "وَمَا أَضَفْتَهُ إِلَى الْأَصْحَابِ مِنْ * قَوْلٍ وَفِعْلٍ فَهْوَ مَوْقُوفٌ زُكِنْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0016",
+      "n": 16,
+      "section": "arret_et_isolement",
+      "type": "vers",
+      "hemistiches": [
+        "وَمُرْسَلٌ مِنْهُ الصَّحَابِيُّ سَقَطْ",
+        "وَقُلْ غَرِيبٌ مَا رَوَى رَاوٍ فَقَطْ"
+      ],
+      "ar": "وَمُرْسَلٌ مِنْهُ الصَّحَابِيُّ سَقَطْ * وَقُلْ غَرِيبٌ مَا رَوَى رَاوٍ فَقَطْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0017",
+      "n": 17,
+      "section": "ruptures_de_chaine_et_tadlis",
+      "type": "vers",
+      "hemistiches": [
+        "وَكُلُّ مَا لَمْ يَتَّصِلْ بِحَالِ",
+        "إِسْنَادُهُ مُنْقَطِعُ الْأَوْصَالِ"
+      ],
+      "ar": "وَكُلُّ مَا لَمْ يَتَّصِلْ بِحَالِ * إِسْنَادُهُ مُنْقَطِعُ الْأَوْصَالِ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0018",
+      "n": 18,
+      "section": "ruptures_de_chaine_et_tadlis",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْمُعْضَلُ السَّاقِطُ مِنْهُ اثْنَانِ",
+        "وَمَا أَتَى مُدَلَّسًا نَوْعَانِ"
+      ],
+      "ar": "وَالْمُعْضَلُ السَّاقِطُ مِنْهُ اثْنَانِ * وَمَا أَتَى مُدَلَّسًا نَوْعَانِ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0019",
+      "n": 19,
+      "section": "ruptures_de_chaine_et_tadlis",
+      "type": "vers",
+      "hemistiches": [
+        "الْأَوَّلُ الْإِسْقَاطُ لِلشَّيْخِ وَأَنْ",
+        "يَنْقُلَ عَمَّنْ فَوْقَهُ بِعَنْ وَأَنْ"
+      ],
+      "ar": "الْأَوَّلُ الْإِسْقَاطُ لِلشَّيْخِ وَأَنْ * يَنْقُلَ عَمَّنْ فَوْقَهُ بِعَنْ وَأَنْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0020",
+      "n": 20,
+      "section": "ruptures_de_chaine_et_tadlis",
+      "type": "vers",
+      "hemistiches": [
+        "وَالثَّانِ لَا يُسْقِطُهُ لَكِنْ يَصِفْ",
+        "أَوْصَافَهُ بِمَا بِهِ لَا يَنْعَرِفْ"
+      ],
+      "ar": "وَالثَّانِ لَا يُسْقِطُهُ لَكِنْ يَصِفْ * أَوْصَافَهُ بِمَا بِهِ لَا يَنْعَرِفْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0021",
+      "n": 21,
+      "section": "irregularite_inversion_singularite",
+      "type": "vers",
+      "hemistiches": [
+        "وَمَا يُخَالِفْ ثِقَةٌ بِهِ الْمَلَا",
+        "فَالشَّاذُّ وَالْمَقْلُوبُ قِسْمَانِ تَلَا"
+      ],
+      "ar": "وَمَا يُخَالِفْ ثِقَةٌ بِهِ الْمَلَا * فَالشَّاذُّ وَالْمَقْلُوبُ قِسْمَانِ تَلَا",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": false,
+        "W": true
+      },
+      "variantes": [
+        "V-01",
+        "V-04"
+      ],
+      "a_verifier": [
+        "« بِهِ » (retenu : T et W) : à confirmer sur une édition ancienne ou sur az-Zurqānī ; la lecture « فِيهِ » est à écarter ou à confirmer, aucun témoin lu ne la porte.",
+        "RÉSOLU en grande partie le 13/10 : voir collation_ancienne_13_10 (az-Zurqānī lu aux pages indiquées)."
+      ],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques sauf variante ci-contre",
+        "variantes": [
+          "V-05"
+        ],
+        "note_az_zurqani": "Z p. 84 : « (الملا) بالإسكان للوزن أو لنية الوقف : أي الجماعة الثقات » ; explication : « ما يخالف راو ثقة فيه بزيادة أو نقص في السند أو المتن »."
+      }
+    },
+    {
+      "id": "BAY-0022",
+      "n": 22,
+      "section": "irregularite_inversion_singularite",
+      "type": "vers",
+      "hemistiches": [
+        "إِبْدَالُ رَاوٍ مَا بِرَاوٍ قِسْمُ",
+        "وَقَلْبُ إِسْنَادٍ لِمَتْنٍ قِسْمُ"
+      ],
+      "ar": "إِبْدَالُ رَاوٍ مَا بِرَاوٍ قِسْمُ * وَقَلْبُ إِسْنَادٍ لِمَتْنٍ قِسْمُ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0023",
+      "n": 23,
+      "section": "irregularite_inversion_singularite",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْفَرْدُ مَا قَيَّدْتَهُ بِثِقَةِ",
+        "أَوْ جَمْعٍ أَوْ قَصْرٍ عَلَى رِوَايَةِ"
+      ],
+      "ar": "وَالْفَرْدُ مَا قَيَّدْتَهُ بِثِقَةِ * أَوْ جَمْعٍ أَوْ قَصْرٍ عَلَى رِوَايَةِ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« أَوْ قَصْرٍ عَلَى رِوَايَةِ » : sens de قَصْر à fixer d'après az-Zurqānī (non lu).",
+        "RÉSOLU en grande partie le 13/10 : voir collation_ancienne_13_10 (az-Zurqānī lu aux pages indiquées)."
+      ],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": "Z p. 92 : « (أو قصر على رواية) كقوله لم يروه عن فلان إلا فلان » ; exemple du hadith de Ṣafiyya (Ibn Ṭāhir : gharīb)."
+      }
+    },
+    {
+      "id": "BAY-0024",
+      "n": 24,
+      "section": "defauts_caches_et_pairs",
+      "type": "vers",
+      "hemistiches": [
+        "وَمَا بِعِلَّةٍ غُمُوضٍ أَوْ خَفَا",
+        "مُعَلَّلٌ عِنْدَهُمُ قَدْ عُرِفَا"
+      ],
+      "ar": "وَمَا بِعِلَّةٍ غُمُوضٍ أَوْ خَفَا * مُعَلَّلٌ عِنْدَهُمُ قَدْ عُرِفَا",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0025",
+      "n": 25,
+      "section": "defauts_caches_et_pairs",
+      "type": "vers",
+      "hemistiches": [
+        "وَذُو اخْتِلَافِ سَنَدٍ أَوْ مَتْنِ",
+        "مُضْطَرِبٌ عِنْدَ أُهَيْلِ الْفَنِّ"
+      ],
+      "ar": "وَذُو اخْتِلَافِ سَنَدٍ أَوْ مَتْنِ * مُضْطَرِبٌ عِنْدَ أُهَيْلِ الْفَنِّ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0026",
+      "n": 26,
+      "section": "defauts_caches_et_pairs",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْمُدْرَجَاتُ فِي الْحَدِيثِ مَا أَتَتْ",
+        "مِنْ بَعْضِ أَلْفَاظِ الرُّوَاةِ اتَّصَلَتْ"
+      ],
+      "ar": "وَالْمُدْرَجَاتُ فِي الْحَدِيثِ مَا أَتَتْ * مِنْ بَعْضِ أَلْفَاظِ الرُّوَاةِ اتَّصَلَتْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0027",
+      "n": 27,
+      "section": "defauts_caches_et_pairs",
+      "type": "vers",
+      "hemistiches": [
+        "وَمَا رَوَى كُلُّ قَرِينٍ عَنْ أَخِهْ",
+        "مُدَبَّجٌ فَاعْرِفْهُ حَقًّا وَانْتَخِهْ"
+      ],
+      "ar": "وَمَا رَوَى كُلُّ قَرِينٍ عَنْ أَخِهْ * مُدَبَّجٌ فَاعْرِفْهُ حَقًّا وَانْتَخِهْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [
+        "V-02"
+      ],
+      "a_verifier": [
+        "« وَانْتَخِهْ » : sens du verbe à fixer d'après az-Zurqānī (non lu).",
+        "RÉSOLU en grande partie le 13/10 : voir collation_ancienne_13_10 (az-Zurqānī lu aux pages indiquées)."
+      ],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": "Z p. 104 : « (مدبج) … (فاعرفه حقا وانتخه) أي اقصده في رواية الأقران » ; « انتخى فلان علينا أي افتخر وتعظم » (al-Mukhtār)."
+      }
+    },
+    {
+      "id": "BAY-0028",
+      "n": 28,
+      "section": "noms_de_rapporteurs",
+      "type": "vers",
+      "hemistiches": [
+        "مُتَّفِقٌ لَفْظًا وَخَطًّا مُتَّفِقْ",
+        "وَضِدُّهُ فِيمَا ذَكَرْنَا الْمُفْتَرِقْ"
+      ],
+      "ar": "مُتَّفِقٌ لَفْظًا وَخَطًّا مُتَّفِقْ * وَضِدُّهُ فِيمَا ذَكَرْنَا الْمُفْتَرِقْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0029",
+      "n": 29,
+      "section": "noms_de_rapporteurs",
+      "type": "vers",
+      "hemistiches": [
+        "مُؤْتَلِفٌ مُتَّفِقُ الْخَطِّ فَقَطْ",
+        "وَضِدُّهُ مُخْتَلِفٌ فَاخْشَ الْغَلَطْ"
+      ],
+      "ar": "مُؤْتَلِفٌ مُتَّفِقُ الْخَطِّ فَقَطْ * وَضِدُّهُ مُخْتَلِفٌ فَاخْشَ الْغَلَطْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": false,
+        "W": false
+      },
+      "variantes": [
+        "V-03"
+      ],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0030",
+      "n": 30,
+      "section": "rejetes",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْمُنْكَرُ الْفَرْدُ بِهِ رَاوٍ غَدَا",
+        "تَعْدِيلُهُ لَا يَحْمِلُ التَّفَرُّدَا"
+      ],
+      "ar": "وَالْمُنْكَرُ الْفَرْدُ بِهِ رَاوٍ غَدَا * تَعْدِيلُهُ لَا يَحْمِلُ التَّفَرُّدَا",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0031",
+      "n": 31,
+      "section": "rejetes",
+      "type": "vers",
+      "hemistiches": [
+        "مَتْرُوكُهُ مَا وَاحِدٌ بِهِ انْفَرَدْ",
+        "وَأَجْمَعُوا لِضَعْفِهِ فَهْوَ كَرَدّْ"
+      ],
+      "ar": "مَتْرُوكُهُ مَا وَاحِدٌ بِهِ انْفَرَدْ * وَأَجْمَعُوا لِضَعْفِهِ فَهْوَ كَرَدّْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0032",
+      "n": 32,
+      "section": "rejetes",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْكَذِبُ الْمُخْتَلَقُ الْمَصْنُوعُ",
+        "عَلَى النَّبِيِّ فَذَلِكَ الْمَوْضُوعُ"
+      ],
+      "ar": "وَالْكَذِبُ الْمُخْتَلَقُ الْمَصْنُوعُ * عَلَى النَّبِيِّ فَذَلِكَ الْمَوْضُوعُ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0033",
+      "n": 33,
+      "section": "cloture",
+      "type": "vers",
+      "hemistiches": [
+        "وَقَدْ أَتَتْ كَالْجَوْهَرِ الْمَكْنُونِ",
+        "سَمَّيْتُهَا مَنْظُومَةَ الْبَيْقُونِي"
+      ],
+      "ar": "وَقَدْ أَتَتْ كَالْجَوْهَرِ الْمَكْنُونِ * سَمَّيْتُهَا مَنْظُومَةَ الْبَيْقُونِي",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques",
+        "variantes": [],
+        "note_az_zurqani": null
+      }
+    },
+    {
+      "id": "BAY-0034",
+      "n": 34,
+      "section": "cloture",
+      "type": "vers",
+      "hemistiches": [
+        "فَوْقَ الثَّلَاثِينَ بِأَرْبَعٍ أَتَتْ",
+        "أَقْسَامُهَا تَمَّتْ بِخَيْرٍ خُتِمَتْ"
+      ],
+      "ar": "فَوْقَ الثَّلَاثِينَ بِأَرْبَعٍ أَتَتْ * أَقْسَامُهَا تَمَّتْ بِخَيْرٍ خُتِمَتْ",
+      "source": {
+        "temoin": "S (saisie Awzid)",
+        "note_page": "T : pages imprimées 7 à 12 (turath n° 8567) ; page exacte du vers non relevée par vers"
+      },
+      "collation": "Squelette consonantique comparé par programme à T (turath 8567, éd. Dār al-Mughnī 1999) et W (Wikisource, oldid 435652)",
+      "squelette_conforme": {
+        "T": true,
+        "W": true
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "collation_ancienne_13_10": {
+        "H_1950": "mots et voyelles comparés sur l'image : identiques",
+        "Z_1907": "mots comparés : identiques sauf variante ci-contre",
+        "variantes": [
+          "V-07"
+        ],
+        "note_az_zurqani": "Z p. 17 : « أقسامها » dans la copie commentée ; « أبياتها » dans une autre."
+      }
+    }
+  ],
+  "variantes": [
+    {
+      "id": "V-01",
+      "vers": "BAY-0021",
+      "T": "وما يخلف ثِقَةٌ بِهِ الَملأ (faute de saisie : « يخلف »)",
+      "W": "= saisie",
+      "retenu": "وَمَا يُخَالِفْ ثِقَةٌ بِهِ الْمَلَا",
+      "nature": "faute de frappe de T",
+      "portee": "nulle"
+    },
+    {
+      "id": "V-02",
+      "vers": "BAY-0027",
+      "T": "مُدّبَّجٌ",
+      "W": "مُدّبَّجٌ",
+      "retenu": "مُدَبَّجٌ",
+      "nature": "place de la shadda (T et W portent la même faute) ; la racine est دبج",
+      "portee": "faible"
+    },
+    {
+      "id": "V-03",
+      "vers": "BAY-0029",
+      "T": "مُتَّقِقُ الخَطِّ",
+      "W": "مُتَّقِقُ الخَـطِّ",
+      "retenu": "مُتَّفِقُ الْخَطِّ",
+      "nature": "faute de saisie commune à T et W (« متقق » pour « متفق ») ; sens imposé par le vers 28 et par le commentaire d'Ibn aṣ-Ṣalāḥ (p. 450)",
+      "portee": "nulle"
+    },
+    {
+      "id": "V-04",
+      "vers": "BAY-0021",
+      "T": "« بِهِ الَملأ » (hamza de fin de mot)",
+      "W": "« بِهِ المَلاَ »",
+      "retenu": "« بِهِ الْمَلَا » (alif de rime, comme W)",
+      "nature": "orthographe de la rime",
+      "portee": "nulle"
+    },
+    {
+      "retenu": "بِهِ (S, T, W, H)",
+      "id": "V-05",
+      "portee": "faible",
+      "vers": "BAY-0021",
+      "nature": "variante de lecture (به / فيه) à relire sur la page ; sens inchangé : ce en quoi un digne de confiance contredit la foule",
+      "Z": "p. 84 : le commentaire explique « ما يخالف راو ثقة فيه بزيادة أو نقص في السند أو المتن » : il glose donc « فيه »",
+      "S": "بِهِ",
+      "H": "بِهِ"
+    },
+    {
+      "retenu": "أَنْبَأَنِي",
+      "id": "V-06",
+      "portee": "nulle",
+      "vers": "BAY-0010",
+      "nature": "orthographe (hamza facilitée) ; même mot",
+      "Z": "non relu",
+      "S": "أَنْبَأَنِي",
+      "H": "أَنْبَانِي (sans hamza)"
+    },
+    {
+      "retenu": "أَقْسَامُهَا",
+      "id": "V-07",
+      "portee": "faible (le compte de 34 reste celui du poème)",
+      "vers": "BAY-0034",
+      "nature": "variante de copie (أقسامها / أبياتها)",
+      "Z": "p. 17 : le commentateur lit « أقسامها » et note que, dans une autre copie, on a « أبياتها » ; il juge cela exact aussi",
+      "S": "أَقْسَامُهَا",
+      "H": "أَقْسَامُهَا (« خُتِمَتْ » entre parenthèses)"
+    },
+    {
+      "retenu": "وَحَدَّهْ (Z ; sens : avec sa définition)",
+      "id": "V-08",
+      "portee": "faible",
+      "vers": "BAY-0002",
+      "nature": "variante d'impression (H 1950) ; Z tranche pour « وحده »",
+      "Z": "p. 18 : « (وكل واحد أتى) في النظم (وحده) أي مع حده الشامل لرسمه »",
+      "S": "وَحَدَّهْ",
+      "H": "وَعَدَّهْ (lu : lettre initiale ع)"
+    }
+  ],
+  "date_revision": "13/10/2026 (décisions du référent : collation sur témoins anciens, az-Zurqānī ouvert)",
+  "resultat_collation_13_10": {
+    "vers_collationnes": 34,
+    "contre_H_1950": "les 34 vers lus sur les images n123-n125 (pages 120-122) : mots identiques à S ; voyelles identiques sur ce qui est lisible, avec deux écarts d'impression : v. 2 « وَعَدَّهْ » (S : « وَحَدَّهْ ») et v. 10 « أَنْبَانِي » sans hamza ; mise en page : « (مُحَمَّدٍ) » et « (خُتِمَتْ) » entre parenthèses",
+    "contre_Z_1907": "p. 17-18 (v. 1-2, 34), p. 84 (v. 21), p. 92 (v. 23), p. 104 (v. 27) lues : mots conformes à S, sauf V-05, V-07 et V-08 ; les autres vers n'ont pas été relus dans le commentaire",
+    "corrections_du_texte": "aucune : les variantes sont consignées sans modifier le texte retenu",
+    "r_t1": "RÉSOLU pour les mots (un témoin imprimé, H 1950, lu intégralement ; Z 1907 lu aux pages citées) ; les voyelles restent à relire en haute résolution",
+    "r_t2": "v. 21 : S, T, W et H portent « بِهِ » ; Z (p. 84) glose « ثقة فيه » (V-05) ; sens inchangé ; « بِهِ » conservé",
+    "r_t3": "v. 23 « قَصْرٍ عَلَى رِوَايَةِ » : Z p. 92 : « كقوله لم يروه عن فلان إلا فلان » ; v. 27 « وَانْتَخِهْ » : Z p. 104 : « اقصده » ; on cite aussi « sois-en fier » (انتخى = افتخر, d'après al-Mukhtār)"
+  }
+}

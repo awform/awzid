@@ -1,0 +1,2401 @@
+{
+  "titre": "Découpage en séances (majālis) — Quarante hadiths d'an-Nawawī",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "principe": "Une séance par hadith : lecture du texte arabe, traduction, mots difficiles, explications d'après Ibn Rajab (page citée), jugements. Durée estimée = 4 min + 1 min par 30 mots + 0,5 min par mot difficile, bornée entre 6 et 18 min ; à recaler sur l'enregistrement réel du lecteur.",
+  "cycles": {
+    "1": {
+      "hadiths": "1 à 14",
+      "seances": 14,
+      "duree_min": 107
+    },
+    "2": {
+      "hadiths": "15 à 28",
+      "seances": 14,
+      "duree_min": 110
+    },
+    "3": {
+      "hadiths": "29 à 42",
+      "seances": 14,
+      "duree_min": 110
+    }
+  },
+  "explications_regle": "Les explications sont des paraphrases fidèles d'Ibn Rajab (Jāmiʿ al-ʿulūm wa-l-ḥikam), avec la page de l'imprimé ; jamais générées librement. Aucun point n'est avancé sans sa page.",
+  "commentaires": {
+    "retenu": {
+      "auteur": "Ibn Rajab al-Ḥanbalī",
+      "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+      "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)"
+    },
+    "non_retenus": "Ibn Daqīq al-ʿĪd : l'édition accessible en ligne (Muʾassasat ar-Rayyān, 6ᵉ éd. 2003, turath n° 11244) mêle trois couches (texte d'an-Nawawī, commentaire, glose) et sa glose mentionne al-Bayqūnī (XVIIᵉ s.), postérieur à Ibn Daqīq : attribution à vérifier avant de l'utiliser ; an-Nawawī, Sharḥ Muslim (turath n° 1711) : identifié, non utilisé dans cette passe."
+  },
+  "a_confirmer": "Découpage proposé par Claude. Les explications des hadiths 1 à 42 sont limitées aux pages d'Ibn Rajab lues (début de chaque commentaire) ; les compléter par la suite de chaque commentaire et par an-Nawawī avant publication.",
+  "nombre_de_seances": 42,
+  "duree_totale_min": 327,
+  "seances": [
+    {
+      "id": "NAW-S01",
+      "titre": "Les actes valent par les intentions",
+      "cycle": 1,
+      "niveau_min": "cycle 1",
+      "hadith": [
+        "NAW-H01"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "هِجْرَتُهُ",
+          "sens": "émigration (hijra)"
+        },
+        {
+          "ar": "يَنْكِحُهَا",
+          "sens": "qu'il épouserait"
+        },
+        {
+          "ar": "نَوَى",
+          "sens": "avoir l'intention"
+        },
+        {
+          "ar": "يُصِيبُهَا",
+          "sens": "qu'il obtiendrait"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 59-60",
+          "point_fr": "Seul Yaḥyā b. Saʿīd al-Anṣārī l'a rapporté de Muḥammad b. Ibrāhīm at-Taymī, d'après ʿAlqama b. Waqqāṣ, d'après ʿUmar ; il n'a pas d'autre voie sûre (ʿAlī b. al-Madīnī, al-Khaṭṭābī). Ensuite un très grand nombre de rapporteurs l'ont transmis d'al-Anṣārī (on a dit plus de deux cents, ou sept cents)."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 61",
+          "point_fr": "Les savants sont d'accord sur son authenticité et l'ont reçu avec acceptation. Al-Bukhārī l'a placé en tête de son Ṣaḥīḥ comme préface : tout acte dont on ne vise pas la face d'Allah est vain. ʿAbd ar-Raḥmān b. Mahdī conseillait de l'ouvrir en tête de tout livre ; ash-Shāfiʿī : il vaut « un tiers de la science » et entre dans soixante-dix chapitres du fiqh."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 61-62",
+          "point_fr": "Selon Aḥmad, les fondements de l'islam reposent sur trois hadiths : celui-ci, celui de ʿĀʾisha (n° 5) et celui d'an-Nuʿmān b. Bashīr (n° 6)."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "Ibn Rajab",
+          "degre": "ṣaḥīḥ ; les savants sont d'accord sur son authenticité et l'ont reçu avec acceptation",
+          "page": "t. 1, p. 61"
+        }
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Le texte exact d'an-Nawawī (« …à Allah et à Son Messager… ») n'est pas celui du n° 1 de Bukhārī : voir ecarts (n° 54 et voisins)."
+      ],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 1 et Muslim, Ṣaḥīḥ n° 1907 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S02",
+      "titre": "Islam, foi, excellence : le hadith de Jibrīl",
+      "cycle": 1,
+      "niveau_min": "cycle 1",
+      "hadith": [
+        "NAW-H02"
+      ],
+      "duree_min": 13,
+      "mots_difficiles": [
+        {
+          "ar": "بَيَاضِ",
+          "sens": "blancheur"
+        },
+        {
+          "ar": "أَمَارَاتِهَا؟",
+          "sens": "ses signes"
+        },
+        {
+          "ar": "الْإِحْسَانِ",
+          "sens": "l'excellence (iḥsān)"
+        },
+        {
+          "ar": "الْعَالَةَ",
+          "sens": "les miséreux"
+        },
+        {
+          "ar": "رِعَاءَ",
+          "sens": "bergers"
+        },
+        {
+          "ar": "يَتَطَاوَلُونَ",
+          "sens": "rivaliser de hauteur"
+        },
+        {
+          "ar": "مَلِيًّا",
+          "sens": "un long moment"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 94",
+          "point_fr": "Muslim seul l'a rapporté (non al-Bukhārī), par Kahmas ← ʿAbd Allāh b. Buraida ← Yaḥyā b. Yaʿmar. Celui-ci raconte que le premier à parler du destin (qadar) à Baṣra fut Maʿbad al-Juhanī ; Ibn ʿUmar, interrogé, déclara s'être dégagé de ceux qui le nient puis rapporta ce hadith de son père ʿUmar."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 95",
+          "point_fr": "Chez Ibn Ḥibbān, le même hadith comporte des additions (par exemple dans la réponse sur l'islam le pèlerinage mineur et le grand lavage, et dans la réponse sur la foi la croyance au Paradis, au Feu et à la Balance)."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 95-96",
+          "point_fr": "Les deux Ṣaḥīḥ le rapportent aussi par Abū Hurayra, avec les signes de l'Heure, puis la récitation de Luqmān 31:34 (les cinq choses que seul Allah connaît)."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": true,
+      "points_referent": [
+        "Dialogue sur la foi, le destin : traduction littérale."
+      ],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 8 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)",
+      "note_contexte": "« Que la servante enfante sa maîtresse » : amat désigne une femme en condition servile. Ibn Rajab (t. 1, p. 136) comprend « sa maîtresse (rabbatuhā) » comme celle qui la possède et y voit l'annonce d'une époque de conquêtes et d'afflux de captifs ; il rapporte aussi une lecture où la fille, devenue maîtresse, achète sa mère sans le savoir. Le texte est traduit littéralement par « la servante enfante sa maîtresse ».",
+      "niveau_min_decide_13_10": "cycle 1"
+    },
+    {
+      "id": "NAW-S03",
+      "titre": "Les cinq piliers de l'islam",
+      "cycle": 1,
+      "niveau_min": "cycle 1",
+      "hadith": [
+        "NAW-H03"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "بُنِيَ",
+          "sens": "a été bâti"
+        },
+        {
+          "ar": "شَهَادَةِ",
+          "sens": "témoignage"
+        },
+        {
+          "ar": "وَإِقَامِ",
+          "sens": "accomplissement"
+        },
+        {
+          "ar": "وَإِيتَاءِ",
+          "sens": "acquittement"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 144",
+          "point_fr": "Les deux Ṣaḥīḥ le rapportent par ʿIkrima b. Khālid d'après Ibn ʿUmar ; Muslim a deux autres voies."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 145",
+          "point_fr": "Les cinq [actes] sont comparés aux piliers d'un édifice : sans eux il ne tient pas ; les autres traits de l'islam en sont le complément. Variante rapportée par Muslim : « sur le fait d'unifier Allah » ; al-Bukhārī cite en taʿlīq « la foi en Allah et en Son Messager »."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 8 et Muslim, Ṣaḥīḥ n° 16 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S04",
+      "titre": "La création, le terme et le destin",
+      "cycle": 1,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H04"
+      ],
+      "duree_min": 10,
+      "mots_difficiles": [
+        {
+          "ar": "نُطْفَةً",
+          "sens": "goutte (nuṭfa)"
+        },
+        {
+          "ar": "عَلَقَةً",
+          "sens": "adhérence (ʿalaqa)"
+        },
+        {
+          "ar": "مُضْغَةً",
+          "sens": "morceau de chair (muḍgha)"
+        },
+        {
+          "ar": "ذِرَاعٌ",
+          "sens": "coudée"
+        },
+        {
+          "ar": "وَشَقِيٍّ",
+          "sens": "malheureux"
+        },
+        {
+          "ar": "فَيَسْبِقُ",
+          "sens": "alors [ce qui est écrit] le devance"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 153",
+          "point_fr": "Ibn Rajab : hadith dont l'authenticité fait l'accord (muttafaq ʿalā ṣiḥḥatihi) et que la Communauté a reçu ; transmis par al-Aʿmash d'après Zayd b. Wahb d'après Ibn Masʿūd. Il rapporte aussi un récit de songe de Muḥammad b. Yazīd al-Asfāṭī, où le Prophète confirme avoir tenu ces paroles."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 154",
+          "point_fr": "Ibn Masʿūd explique « est rassemblée » : la goutte, déposée dans la matrice, se répand dans chaque cheveu et chaque ongle, demeure quarante jours, puis descend et devient adhérence."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "Ibn Rajab",
+          "degre": "ṣaḥīḥ, objet d'accord (muttafaq ʿalā ṣiḥḥatihi), reçu par la Communauté",
+          "page": "t. 1, p. 153"
+        }
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Étapes de la création et destin : traduction littérale."
+      ],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 3208 et Muslim, Ṣaḥīḥ n° 2643 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)",
+      "note_contexte": "Le hadith décrit les étapes de la formation de l'être humain puis l'inscription de son sort ; Ibn Rajab (t. 1, p. 153-154) le dit « objet d'accord quant à son authenticité, reçu par la Communauté » et rapporte l'explication d'Ibn Masʿūd de « est rassemblée ». Chez al-Bukhārī, la version la plus proche du texte d'an-Nawawī est le n° 7454 (voir la version du recueil affichée sous le texte).",
+      "niveau_min_decide_13_10": "cycle 2"
+    },
+    {
+      "id": "NAW-S05",
+      "titre": "Rejet de ce qui est introduit dans la religion",
+      "cycle": 1,
+      "niveau_min": "cycle 1",
+      "hadith": [
+        "NAW-H05"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "أَحْدَثَ",
+          "sens": "introduire"
+        },
+        {
+          "ar": "أَمْرِنَا",
+          "sens": "notre affaire (notre religion)"
+        },
+        {
+          "ar": "رَدٌّ",
+          "sens": "rejeté"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 176",
+          "point_fr": "Rapporté par les deux Ṣaḥīḥ d'après al-Qāsim b. Muḥammad, d'après sa tante ʿĀʾisha ; les termes diffèrent, le sens est proche. Ibn Rajab y voit un grand fondement de l'islam : une balance des actes dans leur apparence, comme « les actes ne valent que par les intentions » en est la balance dans leur intérieur."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 177",
+          "point_fr": "Par son sens explicite, tout acte qui n'est pas conforme à l'ordre d'Allah est rejeté ; par son sens inverse, tout acte conforme ne l'est pas. Par « notre ordre » il faut entendre sa religion et sa loi."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 177-178",
+          "point_fr": "Il distingue les cultes et les transactions. Qui se rapproche d'Allah par ce qu'Allah et Son Messager n'ont pas institué comme rapprochement voit son acte rejeté. Exemple : l'homme qui avait fait vœu de rester debout au soleil, sans s'asseoir ni s'abriter, que le Prophète fit asseoir et mettre à l'ombre, en lui faisant achever son jeûne."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": true,
+      "points_referent": [
+        "Texte d'an-Nawawī = Muslim n° 1718 (« ما ليس منه ») ; Bukhārī 2697 porte « ما ليس فيه »."
+      ],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 2697 et Muslim, Ṣaḥīḥ n° 1718 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S06",
+      "titre": "Le licite, l'interdit et le douteux",
+      "cycle": 1,
+      "niveau_min": "cycle 1",
+      "hadith": [
+        "NAW-H06"
+      ],
+      "duree_min": 10,
+      "mots_difficiles": [
+        {
+          "ar": "الْحَلَالَ",
+          "sens": "le licite"
+        },
+        {
+          "ar": "مُشْتَبِهَاتٌ",
+          "sens": "choses douteuses"
+        },
+        {
+          "ar": "اسْتَبْرَأَ",
+          "sens": "a mis à l'abri"
+        },
+        {
+          "ar": "وَعِرْضِهِ",
+          "sens": "son honneur"
+        },
+        {
+          "ar": "الْحِمَى",
+          "sens": "l'enclos réservé"
+        },
+        {
+          "ar": "يَرْتَعَ",
+          "sens": "faire paître"
+        },
+        {
+          "ar": "مُضْغَةً",
+          "sens": "morceau de chair"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 193",
+          "point_fr": "Ibn Rajab : hadith authentique, objet d'accord, rapporté par ash-Shaʿbī d'après an-Nuʿmān ; c'est le plus authentique de ceux du chapitre."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 194",
+          "point_fr": "Le licite pur est clair, l'interdit pur est clair ; entre les deux, il y a des choses qui prêtent à confusion pour beaucoup (par exemple ce qui est controversé entre les savants) ; ceux qui sont profondément enracinés dans la science, eux, ne s'y trompent pas."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 195",
+          "point_fr": "Aḥmad et Isḥāq expliquent les choses douteuses de la même manière. Ibn Rajab rappelle qu'Allah a tout expliqué dans le Coran (16:89) et a parachevé la religion (5:3)."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "Ibn Rajab",
+          "degre": "ṣaḥīḥ, objet d'accord ; le plus authentique du chapitre",
+          "page": "t. 1, p. 193"
+        }
+      ],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 52 et Muslim, Ṣaḥīḥ n° 1599 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S07",
+      "titre": "La religion est le conseil sincère",
+      "cycle": 1,
+      "niveau_min": "cycle 1",
+      "hadith": [
+        "NAW-H07"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "النَّصِيحَةُ",
+          "sens": "le conseil sincère (naṣīḥa)"
+        },
+        {
+          "ar": "وَلِأَئِمَّةِ",
+          "sens": "imams, dirigeants"
+        },
+        {
+          "ar": "وَعَامَّتِهِمْ",
+          "sens": "leur masse (le commun des musulmans)"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 215",
+          "point_fr": "Muslim seul, par Suhayl ← ʿAṭāʾ b. Yazīd ← Tamīm ad-Dārī. Il existe une autre chaîne par Abū Hurayra (chez at-Tirmidhī) ; certains jugent les deux justes, d'autres tiennent la seconde pour une erreur. Abū Dāwūd en fait l'un des hadiths autour desquels tourne le fiqh."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 216",
+          "point_fr": "Muḥammad b. Aslam aṭ-Ṭūsī en fait un quart de la religion. D'autres hadiths étendent le conseil sincère à tout musulman (Jarīr : « le conseil sincère à tout musulman »)."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 55 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S08",
+      "titre": "Les droits de l'islam",
+      "cycle": 1,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H08"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "أُمِرْتُ",
+          "sens": "il m'a été ordonné"
+        },
+        {
+          "ar": "عَصَمُوا",
+          "sens": "ont mis à l'abri"
+        },
+        {
+          "ar": "بِحَقِّ",
+          "sens": "pour un droit"
+        },
+        {
+          "ar": "وَحِسَابُهُمْ",
+          "sens": "leur compte"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 226",
+          "point_fr": "Les deux Ṣaḥīḥ le rapportent par Wāqid b. Muḥammad ← son père ← Ibn ʿUmar. Les mots « sauf pour un droit de l'islam » sont propres à al-Bukhārī, non à Muslim."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 226-227",
+          "point_fr": "Le sens est attesté sous d'autres formes : Anas chez al-Bukhārī ; Muʿādh chez Aḥmad ; Abū Hurayra dans les deux Ṣaḥīḥ (« jusqu'à ce qu'ils disent : il n'y a de divinité qu'Allah », sans mention de la prière ni de la zakāt)."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": true,
+      "points_referent": [
+        "Passage sensible (« combattre les gens ») : niveau et comité. Les mots « sauf pour un droit de l'islam » sont propres à al-Bukhārī (Ibn Rajab t.1 p.226)."
+      ],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 25 et Muslim, Ṣaḥīḥ n° 22 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)",
+      "note_contexte": "« J'ai reçu l'ordre de combattre les gens » : Ibn Rajab (t. 1, p. 226-227) relève que les mots « sauf pour un droit de l'islam » sont propres à al-Bukhārī, et rattache à ce hadith les versions d'Anas, de Muʿādh, d'Abū Hurayra et de Jābir (celle-ci avec Q 88:21-22 : « tu n'es pas pour eux un contraignant ») ; il explique (t. 1, p. 236) que les deux témoignages, la prière et la zakāt protègent le sang et les biens dans ce monde, le compte appartenant à Allah dans l'autre.",
+      "niveau_min_decide_13_10": "cycle 2"
+    },
+    {
+      "id": "NAW-S09",
+      "titre": "Faire ce qu'on peut, éviter les questions excessives",
+      "cycle": 1,
+      "niveau_min": "cycle 1",
+      "hadith": [
+        "NAW-H09"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "نَهَيْتُكُمْ",
+          "sens": "je vous ai interdit"
+        },
+        {
+          "ar": "فَاجْتَنِبُوهُ",
+          "sens": "évitez-le"
+        },
+        {
+          "ar": "اسْتَطَعْتُمْ",
+          "sens": "vous pouvez"
+        },
+        {
+          "ar": "كَثْرَةُ",
+          "sens": "multiplicité"
+        },
+        {
+          "ar": "مَسَائِلِهِمْ",
+          "sens": "leurs questions"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 238",
+          "point_fr": "Ce texte précis (« Ce que je vous ai interdit… ») est chez Muslim seul, par az-Zuhrī ← Saʿīd b. al-Musayyab et Abū Salama ← Abū Hurayra ; les deux Ṣaḥīḥ donnent par ailleurs, par Abū z-Zinād, « Laissez-moi tant que je vous laisse… »."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 238-239",
+          "point_fr": "Chez Muslim, l'occasion : le Prophète dit « Allah vous a prescrit le pèlerinage » ; un homme demanda « chaque année ? » ; il répondit « si je disais oui, ce serait obligatoire », puis prononça la phrase. Le verset 5:101 fut révélé à propos de ces questions."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": true,
+      "points_referent": [
+        "Texte d'an-Nawawī = Muslim n° 1337 (version d'az-Zuhrī) ; Bukhārī 7288 donne une autre formulation (« Laissez-moi… »)."
+      ],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 7288 et Muslim, Ṣaḥīḥ n° 1337 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S10",
+      "titre": "Allah est bon et n'accepte que le bon",
+      "cycle": 1,
+      "niveau_min": "cycle 1",
+      "hadith": [
+        "NAW-H10"
+      ],
+      "duree_min": 9,
+      "mots_difficiles": [
+        {
+          "ar": "طَيِّبٌ",
+          "sens": "bon, pur (ṭayyib)"
+        },
+        {
+          "ar": "أَشْعَثَ",
+          "sens": "aux cheveux en désordre"
+        },
+        {
+          "ar": "أَغْبَرَ",
+          "sens": "couvert de poussière"
+        },
+        {
+          "ar": "وَغُذِّيَ",
+          "sens": "a été nourri"
+        },
+        {
+          "ar": "يُسْتَجَابُ",
+          "sens": "sera exaucé"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 258",
+          "point_fr": "Muslim seul, par Fuḍayl b. Marzūq ← ʿAdī b. Thābit ← Abū Ḥāzim ← Abū Hurayra ; at-Tirmidhī : ḥasan gharīb. Fuḍayl est jugé digne de confiance d'un niveau moyen. « Bon » (ṭayyib) signifie pur : Allah est exempt de tout défaut."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 259",
+          "point_fr": "« N'accepte que ce qui est bon » : pour les aumônes, ce qui est licite ; plus largement, tout acte pur de ce qui le corrompt (ostentation, orgueil) et tout bien licite. Le mot se dit des actes, des paroles et des croyances."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": true,
+      "points_referent": [
+        "Deux versets cités dans le hadith : copiés de Tanzil."
+      ],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 1015 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S11",
+      "titre": "Laisse ce qui te met dans le doute",
+      "cycle": 1,
+      "niveau_min": "cycle 1",
+      "hadith": [
+        "NAW-H11"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "يُرِيبُك",
+          "sens": "te met dans le doute"
+        },
+        {
+          "ar": "سِبْطِ",
+          "sens": "petit-fils (par la fille)"
+        },
+        {
+          "ar": "وَرَيْحَانَتِهِ",
+          "sens": "sa fleur parfumée"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 278",
+          "point_fr": "Rapporté par Aḥmad, at-Tirmidhī, an-Nasāʾī, Ibn Ḥibbān et al-Ḥākim par Burayd b. Abī Maryam ← Abū l-Ḥawrāʾ ← al-Ḥasan ; at-Tirmidhī l'a déclaré ṣaḥīḥ. Abū l-Ḥawrāʾ est jugé digne de confiance par an-Nasāʾī et Ibn Ḥibbān, inconnu (majhūl) par al-Jūzajānī. Le hadith est un fragment d'un long hadith sur le qunūt du witr."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 279",
+          "point_fr": "Chez at-Tirmidhī, il est suivi de : « la véracité est quiétude, le mensonge est doute »."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "an-Nawawī (Arbaʿīn, mention de takhrīj)",
+          "degre": "ḥasan ṣaḥīḥ",
+          "page": null
+        }
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Numéro d'at-Tirmidhī : 2520 dans l'édition d'an-Nawawī, 2518 dans la base hadith-api."
+      ],
+      "degre_affiche": "an-Nawawī (citant at-Tirmidhī) : ḥasan ṣaḥīḥ ; dans l'édition d'al-Arnaʾūṭ at-Tirmidhī dit « ṣaḥīḥ » (n° 2687) ; an-Nasāʾī le rapporte aussi."
+    },
+    {
+      "id": "NAW-S12",
+      "titre": "Délaisser ce qui ne nous concerne pas",
+      "cycle": 1,
+      "niveau_min": "cycle 1",
+      "hadith": [
+        "NAW-H12"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "حُسْنِ",
+          "sens": "beauté"
+        },
+        {
+          "ar": "يَعْنِيهِ",
+          "sens": "le concerne"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 287",
+          "point_fr": "At-Tirmidhī le dit gharīb ; an-Nawawī le dit ḥasan parce que ses rapporteurs sont dignes de confiance. Qurra b. ʿAbd ar-Raḥmān est jugé digne de confiance par certains, faible par d'autres. Ibn ʿAbd al-Barr : conservé d'az-Zuhrī par cette chaîne."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 287-288",
+          "point_fr": "Mais la plupart des imams (Aḥmad, Ibn Maʿīn, al-Bukhārī, ad-Dāraquṭnī) disent qu'il n'est conservé que d'az-Zuhrī ← ʿAlī b. al-Ḥusayn, en mursal (Mālik le rapporte ainsi dans le Muwaṭṭaʾ) ; les faibles ont brouillé sa chaîne."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 288",
+          "point_fr": "Il est un grand fondement des bonnes manières. Ibn Abī Zayd al-Qayrawānī : l'ensemble des règles de bonne conduite découle de quatre hadiths (n° 15, 12, 16 et 13)."
+        }
+      ],
+      "jugements_a_retenir": [
+        "an-Nawawī : ḥasan (Arbaʿīn, mention de takhrīj du hadith 12)",
+        "at-Tirmidhī : gharīb ; le mursal (n° 2471) est « aṣaḥḥ » (at-Tirmidhī, al-Jāmiʿ al-kabīr, éd. Shuʿayb al-Arnaʾūṭ, Dār ar-Risāla al-ʿĀlamiyya, 1ʳᵉ éd. 1430/2009, turath n° 1363 (pagination imprimée), n° 2470-2471 ; t. 4, p. 354)",
+        "Ibn Rajab : at-Tirmidhī : gharīb ; an-Nawawī : ḥasan ; la plupart des imams (Aḥmad, Ibn Maʿīn, al-Bukhārī, ad-Dāraquṭnī) : seul le mursal est juste (Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée) ; t. 1, p. 287-288)",
+        "Shuʿayb al-Arnaʾūṭ : ḥasan li-ghayrihi (n° 2470) ; le mursal : rijāluhu thiqāt, mursal (at-Tirmidhī, al-Jāmiʿ al-kabīr, éd. Shuʿayb al-Arnaʾūṭ, Dār ar-Risāla al-ʿĀlamiyya, 1ʳᵉ éd. 1430/2009, turath n° 1363 (pagination imprimée), notes 2 et 3 ; t. 4, p. 354)",
+        "al-Albānī : ṣaḥīḥ (Ibn Mājah, Sunan, éd. M. F. ʿAbd al-Bāqī, ʿĪsā al-Bābī al-Ḥalabī (turath n° 1198 ; ترقيم موافق للمطبوع), avec glose d'al-Būṣīrī (Zawāʾid) et jugement d'al-Albānī cités dans l'édition numérique, n° 3976 ; t. 2, p. 1315)"
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Authenticité très discutée : voir jugements (Ibn Rajab t.1 p.287-288) ; numéro d'at-Tirmidhī : 2318 chez an-Nawawī (mursal), 2317 (Abū Hurayra)."
+      ],
+      "degre_affiche": "authenticité discutée : an-Nawawī le dit ḥasan ; at-Tirmidhī le dit gharīb et juge plus sûr le mursal d'az-Zuhrī ← ʿAlī b. al-Ḥusayn ; selon Ibn Rajab, la plupart des imams ne retiennent que le mursal ; al-Arnaʾūṭ : ḥasan li-ghayrihi ; al-Albānī : ṣaḥīḥ."
+    },
+    {
+      "id": "NAW-S13",
+      "titre": "Aimer pour son frère ce qu'on aime pour soi",
+      "cycle": 1,
+      "niveau_min": "cycle 1",
+      "hadith": [
+        "NAW-H13"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "يُؤْمِنُ",
+          "sens": "avoir la foi"
+        },
+        {
+          "ar": "يُحِبَّ",
+          "sens": "aimer"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 302",
+          "point_fr": "Les deux Ṣaḥīḥ, par Qatāda ← Anas ; chez Muslim : « pour son voisin ou pour son frère » (avec doute). Chez Aḥmad : « un serviteur n'atteint la réalité de la foi tant qu'il n'aime pas pour les gens ce qu'il aime pour lui-même » : la négation vise donc la perfection de la foi, non la foi elle-même."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 303",
+          "point_fr": "Les savants divergent sur l'auteur d'un grand péché : croyant à la foi diminuée, ou seulement musulman ? Deux avis, qui sont deux transmissions d'Aḥmad."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": true,
+      "points_referent": [
+        "« Ne croit pas » : négation de la perfection (Ibn Rajab t.1 p.302) ; traduit « n'a pas la foi » ; à valider."
+      ],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 13 et Muslim, Ṣaḥīḥ n° 45 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S14",
+      "titre": "Le sang du musulman est inviolable",
+      "cycle": 1,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H14"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "يَحِلُّ",
+          "sens": "est permis"
+        },
+        {
+          "ar": "الثَّيِّبُ",
+          "sens": "le non-vierge (marié)"
+        },
+        {
+          "ar": "الزَّانِي",
+          "sens": "l'adultère"
+        },
+        {
+          "ar": "الْمُفَارِقُ",
+          "sens": "qui se sépare"
+        },
+        {
+          "ar": "لِلْجَمَاعَةِ",
+          "sens": "de la communauté"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 311",
+          "point_fr": "Les deux Ṣaḥīḥ, par al-Aʿmash ← ʿAbd Allāh b. Murra ← Masrūq ← Ibn Masʿūd ; chez Muslim : « celui qui abandonne l'islam ». D'autres versions : ʿĀʾisha (Muslim), ʿUthmān (at-Tirmidhī, an-Nasāʾī, Ibn Māja) : mécréance après l'islam, adultère après mariage, meurtre."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 312",
+          "point_fr": "La mise à mort pour chacune de ces trois causes est admise entre les musulmans ; pour le non-vierge adultère, les musulmans sont unanimes sur la lapidation ; le Prophète lapida Māʿiz et la Ghāmidiyya."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": true,
+      "points_referent": [
+        "Passage entre crochets de l'édition numérique (addition de Muslim) ; peines légales : niveau et comité."
+      ],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 6878 et Muslim, Ṣaḥīḥ n° 1676 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)",
+      "note_contexte": "Le hadith énonce les trois cas où le sang d'un musulman est permis. Ibn Rajab (t. 1, p. 311-312) : la mise à mort pour chacune de ces trois causes est admise entre les musulmans ; pour le non-vierge adultère, les musulmans sont unanimes sur la lapidation (le Prophète a lapidé Māʿiz et la Ghāmidiyya). À propos de l'apostat, il précise (t. 1, p. 319) que la peine vise un état présent (l'abandon de sa religion et de la communauté), qui cesse s'il revient.",
+      "niveau_min_decide_13_10": "cycle 3"
+    },
+    {
+      "id": "NAW-S15",
+      "titre": "Parler bien, honorer son voisin et son hôte",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H15"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "لِيَصْمُتْ",
+          "sens": "qu'il se taise"
+        },
+        {
+          "ar": "جَارَهُ",
+          "sens": "son voisin"
+        },
+        {
+          "ar": "ضَيْفَهُ",
+          "sens": "son hôte"
+        },
+        {
+          "ar": "فَلْيُكْرِمْ",
+          "sens": "qu'il honore"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 332",
+          "point_fr": "Les deux Ṣaḥīḥ le rapportent par plusieurs voies d'Abū Hurayra, avec des variantes (« qu'il ne nuise pas à son voisin », « qu'il traite bien son hôte », « qu'il maintienne ses liens de parenté »)."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 333",
+          "point_fr": "Ces comportements sont rangés parmi les traits de la foi. Trois choses sont ordonnées au croyant : dire du bien ou se taire, honorer son hôte, honorer son voisin (ou ne pas lui nuire)."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": true,
+      "points_referent": [
+        "Texte exact = Muslim n° 47 ; Bukhārī 6018 porte « فلا يؤذ جاره »."
+      ],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 6018 et Muslim, Ṣaḥīḥ n° 47 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S16",
+      "titre": "Ne te mets pas en colère",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H16"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "أَوْصِنِي",
+          "sens": "fais-moi une recommandation"
+        },
+        {
+          "ar": "تَغْضَبْ",
+          "sens": "te mettre en colère"
+        },
+        {
+          "ar": "مِرَارًا",
+          "sens": "plusieurs fois"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 361",
+          "point_fr": "Al-Bukhārī seul, par Abū Ḥuṣayn ← Abū Ṣāliḥ ← Abū Hurayra. Muslim ne l'a pas pris parce que al-Aʿmash en a varié la chaîne (Abū Hurayra, Abū Saʿīd al-Khudrī — jugé juste par Ibn Maʿīn —, etc.)."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 362",
+          "point_fr": "Le Prophète répète « ne te mets pas en colère » : la colère est la somme du mal, et s'en garder la somme du bien."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "Ibn Rajab",
+          "degre": "al-Bukhārī seul ; al-Aʿmash a varié la chaîne",
+          "page": "t. 1, p. 361"
+        }
+      ],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 6116 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S17",
+      "titre": "L'excellence en toute chose",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H17"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "الْإِحْسَانَ",
+          "sens": "l'excellence (iḥsān)"
+        },
+        {
+          "ar": "الْقِتْلَةَ",
+          "sens": "la manière de tuer"
+        },
+        {
+          "ar": "الذِّبْحَةَ",
+          "sens": "la manière d'égorger"
+        },
+        {
+          "ar": "شَفْرَتَهُ",
+          "sens": "sa lame"
+        },
+        {
+          "ar": "وَلْيُرِحْ",
+          "sens": "qu'il épargne la souffrance"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 379",
+          "point_fr": "Muslim seul, par Abū Qilāba ← Abū l-Ashʿath aṣ-Ṣanʿānī ← Shaddād. Al-Bukhārī ne rapporte rien d'Abū l-Ashʿath, pourtant digne de confiance, ce qui explique son absence."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 380",
+          "point_fr": "« Allah a prescrit (kataba) » : le mot emporte l'obligation pour la plupart des juristes et des uṣūliyyūn ; la phrase se comprend « envers toute chose » ou « sur toute chose »."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 1955 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S18",
+      "titre": "Crains Allah où que tu sois",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H18"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "اتَّقِ",
+          "sens": "crains"
+        },
+        {
+          "ar": "وَأَتْبِعْ",
+          "sens": "fais suivre"
+        },
+        {
+          "ar": "تَمْحُهَا",
+          "sens": "l'effacera"
+        },
+        {
+          "ar": "وَخَالِقْ",
+          "sens": "comporte-toi"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 395",
+          "point_fr": "At-Tirmidhī, par Sufyān ath-Thawrī ← Ḥabīb b. Abī Thābit ← Maymūn b. Abī Shabīb ← Abū Dharr (et aussi Muʿādh) ; la chaîne est discutée, ad-Dāraquṭnī préfère le mursal. At-Tirmidhī l'a jugé ḥasan ; la mention « ṣaḥīḥ » de certaines copies est peu probable."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 395-396",
+          "point_fr": "Contre al-Ḥākim (« ṣaḥīḥ sur la condition des deux Shaykhs »), Ibn Rajab note que Maymūn n'a pas entendu de Compagnon avec certitude (al-Fallās, Abū Ḥātim)."
+        }
+      ],
+      "jugements_a_retenir": [
+        "an-Nawawī : ḥasan ; « dans certaines copies : ḥasan ṣaḥīḥ » (Arbaʿīn, takhrīj du hadith 18)",
+        "at-Tirmidhī : ḥasan (manuscrits) ; l'imprimé porte ḥasan ṣaḥīḥ (at-Tirmidhī, al-Jāmiʿ al-kabīr, éd. Shuʿayb al-Arnaʾūṭ, Dār ar-Risāla al-ʿĀlamiyya, 1ʳᵉ éd. 1430/2009, turath n° 1363 (pagination imprimée), n° 2102 ; t. 4, p. 93)",
+        "Ibn Rajab : ḥasan (at-Tirmidhī) ; la mention « ṣaḥīḥ » de certaines copies est éloignée ; chaîne discutée ; ad-Dāraquṭnī préfère le mursal (Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée) ; t. 1, p. 395-396)",
+        "Shuʿayb al-Arnaʾūṭ : ḥadīth ḥasan, comme l'a dit l'auteur ; la chaîne est interrompue entre Maymūn et Abū Dharr (at-Tirmidhī, al-Jāmiʿ al-kabīr, éd. Shuʿayb al-Arnaʾūṭ, Dār ar-Risāla al-ʿĀlamiyya, 1ʳᵉ éd. 1430/2009, turath n° 1363 (pagination imprimée), note 2 ; t. 4, p. 93)"
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Authenticité discutée (Ibn Rajab t.1 p.395-396)."
+      ],
+      "degre_affiche": "authenticité discutée : an-Nawawī et at-Tirmidhī : ḥasan (certaines copies : ḥasan ṣaḥīḥ, mention jugée éloignée par Ibn Rajab) ; chaîne : Maymūn b. Abī Shabīb n'a pas entendu d'Abū Dharr ; ad-Dāraquṭnī préfère le mursal."
+    },
+    {
+      "id": "NAW-S19",
+      "titre": "Préserve Allah, Il te préservera",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H19"
+      ],
+      "duree_min": 9,
+      "mots_difficiles": [
+        {
+          "ar": "غُلَامِ!",
+          "sens": "jeune garçon"
+        },
+        {
+          "ar": "تُجَاهَكَ",
+          "sens": "devant toi"
+        },
+        {
+          "ar": "اسْتَعَنْت",
+          "sens": "tu as cherché de l'aide"
+        },
+        {
+          "ar": "الْأَقْلَامُ",
+          "sens": "les plumes"
+        },
+        {
+          "ar": "الصُّحُفُ",
+          "sens": "les feuilles"
+        },
+        {
+          "ar": "وَجَفَّتْ",
+          "sens": "ont séché"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 459",
+          "point_fr": "At-Tirmidhī, par Ḥanash aṣ-Ṣanʿānī ← Ibn ʿAbbās ; ḥasan ṣaḥīḥ selon lui."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 460",
+          "point_fr": "La version longue que Nawawī attribue à « d'autres que at-Tirmidhī » est plus complète chez Aḥmad ; la formulation exacte qu'il cite est chez ʿAbd b. Ḥumayd, avec une chaîne faible (ʿAṭāʾ ← Ibn ʿAbbās), comme l'indique déjà Ibn aṣ-Ṣalāḥ."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "an-Nawawī (Arbaʿīn, mention de takhrīj)",
+          "degre": "ḥasan ṣaḥīḥ",
+          "page": null
+        },
+        {
+          "juge": "Ibn Rajab",
+          "degre": "at-Tirmidhī : ḥasan ṣaḥīḥ ; la version longue citée par an-Nawawī : chaîne faible (ʿAbd b. Ḥumayd)",
+          "page": "t. 1, p. 459-460"
+        }
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "La version longue « d'autres que at-Tirmidhī » : voir Ibn Rajab t.1 p.460."
+      ],
+      "degre_affiche": "an-Nawawī (citant at-Tirmidhī) : ḥasan ṣaḥīḥ ; al-Arnaʾūṭ : ṣaḥīḥ. La suite (« احفظ الله تجده أمامك… ») est donnée par an-Nawawī comme une autre version (rapportée par d'autres qu'at-Tirmidhī)."
+    },
+    {
+      "id": "NAW-S20",
+      "titre": "La pudeur",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H20"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "النُّبُوَّةِ",
+          "sens": "la prophétie"
+        },
+        {
+          "ar": "تَسْتَحِ",
+          "sens": "avoir de la pudeur"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 496",
+          "point_fr": "Al-Bukhārī seul, par Manṣūr ← Ribʿī b. Ḥirāsh ← Abū Masʿūd. Muslim ne l'a pas pris parce que d'autres le rapportent d'après Ḥudhayfa ; la plupart des huffāẓ (al-Bukhārī, Abū Zurʿa, ad-Dāraquṭnī) retiennent Abū Masʿūd."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 497",
+          "point_fr": "« De la parole de la première prophétie » : propos transmis des prophètes antérieurs. Pour « fais ce que tu veux », deux explications sont données ; l'une y voit non un ordre mais une menace (comme 41:40)."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "Ibn Rajab",
+          "degre": "al-Bukhārī seul ; la plupart des huffāẓ retiennent Abū Masʿūd",
+          "page": "t. 1, p. 496"
+        }
+      ],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 6120 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S21",
+      "titre": "Dis : j'ai cru en Allah, puis tiens-toi droit",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H21"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "اسْتَقِمْ",
+          "sens": "tiens-toi droit (istaqim)"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 506",
+          "point_fr": "Muslim, par Hishām b. ʿUrwa ← son père ← Sufyān b. ʿAbd Allāh ath-Thaqafī, Compagnon, gouverneur de Ṭāʾif pour ʿUmar."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 506-507",
+          "point_fr": "Variante chez Aḥmad, at-Tirmidhī et Ibn Māja : « Dis : mon Seigneur est Allah, puis tiens-toi droit » ; le Prophète montre sa langue comme ce qu'il faut craindre le plus."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 507",
+          "point_fr": "La formule est tirée de 41:30 et de 46:13."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 38 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S22",
+      "titre": "Prières, jeûne, licite et interdit",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H22"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "الْمَكْتُوبَاتِ",
+          "sens": "les prières prescrites"
+        },
+        {
+          "ar": "وَأَحْلَلْتُ",
+          "sens": "j'ai tenu pour licite"
+        },
+        {
+          "ar": "وَحَرَّمْتُ",
+          "sens": "j'ai tenu pour interdit"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 513",
+          "point_fr": "Muslim, par Abū z-Zubayr ← Jābir, avec en fin « par Allah, je n'ajouterai rien à cela » ; une autre voie nomme le questionneur an-Nuʿmān b. Qawqal."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 1, p. 513-514",
+          "point_fr": "« Tenir pour licite le licite » est expliqué de deux façons : le croire licite, ou l'accomplir ; le « licite » désigne ici ce qui n'est pas interdit (obligatoire, recommandé, permis)."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 15 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S23",
+      "titre": "La pureté, la louange et les œuvres",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H23"
+      ],
+      "duree_min": 9,
+      "mots_difficiles": [
+        {
+          "ar": "الطَّهُورُ",
+          "sens": "la purification"
+        },
+        {
+          "ar": "شَطْرُ",
+          "sens": "moitié"
+        },
+        {
+          "ar": "الْمِيزَانَ",
+          "sens": "la balance"
+        },
+        {
+          "ar": "بُرْهَانٌ",
+          "sens": "preuve"
+        },
+        {
+          "ar": "ضِيَاءٌ",
+          "sens": "clarté"
+        },
+        {
+          "ar": "يَغْدُو",
+          "sens": "se met en route au matin"
+        },
+        {
+          "ar": "مُوبِقُهَا",
+          "sens": "celui qui la perd"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 5",
+          "point_fr": "Muslim, par Yaḥyā b. Abī Kathīr ← Zayd b. Sallām ← Abū Sallām ← Abū Mālik. Ibn Maʿīn nie que Yaḥyā ait entendu de Zayd, Aḥmad l'affirme ; ici l'audition est explicite. Dans la plupart des copies de Muslim : « la patience est une clarté » ; dans certaines : « le jeûne est une clarté »."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 6",
+          "point_fr": "La voie d'an-Nasāʾī et d'Ibn Māja, par Muʿāwiya b. Sallām, ajoute ʿAbd ar-Raḥmān b. Ghanm entre Abū Sallām et Abū Mālik ; certains huffāẓ la préfèrent, ce qui rendrait la chaîne de Muslim interrompue. Chez Ibn Māja : « bien accomplir les ablutions est la moitié de la foi » ; chez at-Tirmidhī : « les ablutions »."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "Ibn Rajab",
+          "degre": "chaîne de Muslim discutée (audition de Yaḥyā b. Abī Kathīr ; voie d'Ibn Ghanm)",
+          "page": "t. 2, p. 5-6"
+        }
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Chaîne de Muslim discutée (Ibn Rajab t.2 p.5-6) ; « aṭ-ṭuhūr » : purification ou ablutions, à fixer."
+      ],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 223 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S24",
+      "titre": "Le hadith sacré de l'injustice interdite",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H24"
+      ],
+      "duree_min": 13,
+      "mots_difficiles": [
+        {
+          "ar": "الظُّلْمَ",
+          "sens": "l'injustice"
+        },
+        {
+          "ar": "مُحَرَّمًا",
+          "sens": "interdite"
+        },
+        {
+          "ar": "تَظَالَمُوا",
+          "sens": "vous opprimer mutuellement"
+        },
+        {
+          "ar": "عَارٍ",
+          "sens": "nu"
+        },
+        {
+          "ar": "صَعِيدٍ",
+          "sens": "terre, plaine"
+        },
+        {
+          "ar": "الْمِخْيَطُ",
+          "sens": "l'aiguille"
+        },
+        {
+          "ar": "أُحْصِيهَا",
+          "sens": "Je les comptabilise"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 32",
+          "point_fr": "Muslim, par Saʿīd b. ʿAbd al-ʿAzīz ← Rabīʿa b. Yazīd ← Abū Idrīs al-Khawlānī ← Abū Dharr ; à la fin, Abū Idrīs, lorsqu'il le rapportait, s'agenouillait."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 33",
+          "point_fr": "Muslim a une autre voie (Qatāda ← Abū Qilāba ← Abū Asmāʾ ar-Raḥabī ← Abū Dharr). Aḥmad, at-Tirmidhī et Ibn Māja ont une version par Shahr b. Ḥawshab ← Ibn Ghanm ← Abū Dharr."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": true,
+      "points_referent": [
+        "Hadith qudsī : formules sur Allah à valider."
+      ],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 2577 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)",
+      "note_contexte": "Hadith sacré (qudsī). « Je Me suis interdit l'injustice à Moi-même » : Ibn Rajab (t. 2, p. 34) explique qu'Allah S'est interdit l'injustice envers Ses serviteurs (cf. Q 50:29 ; Q 41:46) ; il cite l'avis d'Aḥmad : « c'est le hadith le plus noble des gens du Shām ». Traduction littérale des expressions sur Allah.",
+      "niveau_min_decide_13_10": "cycle 2"
+    },
+    {
+      "id": "NAW-S25",
+      "titre": "Toute bonne œuvre est une aumône",
+      "cycle": 2,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H25"
+      ],
+      "duree_min": 10,
+      "mots_difficiles": [
+        {
+          "ar": "الدُّثُورِ",
+          "sens": "les grandes richesses"
+        },
+        {
+          "ar": "بِفُضُولِ",
+          "sens": "du surplus"
+        },
+        {
+          "ar": "تَسْبِيحَةٍ",
+          "sens": "« Gloire à Allah »"
+        },
+        {
+          "ar": "تَهْلِيلَةٍ",
+          "sens": "« Il n'y a de divinité qu'Allah »"
+        },
+        {
+          "ar": "بُضْعِ",
+          "sens": "union conjugale"
+        },
+        {
+          "ar": "وِزْرٌ؟",
+          "sens": "péché"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 56",
+          "point_fr": "Muslim, par Yaḥyā b. Yaʿmar ← Abū l-Aswad ad-Dīlī ← Abū Dharr."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 56-57",
+          "point_fr": "Les Compagnons, par leur ardeur à faire le bien, s'affligeaient de ce qu'ils ne pouvaient accomplir ; les pauvres envièrent les riches pour l'aumône (« dithūr » = les biens) et le Prophète leur indiqua des aumônes à leur portée."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 57",
+          "point_fr": "Dans les deux Ṣaḥīḥ (Abū Hurayra), il leur enseigne de dire après chaque prière trente-trois fois « Gloire à Allah », « Louange à Allah » et « Allah est le plus grand »."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": true,
+      "points_referent": [
+        "Allusion à l'union conjugale : niveau et comité."
+      ],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 1006 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)",
+      "note_contexte": "Allusion à la relation conjugale licite (« dans l'intimité de l'un de vous »), qui devient aumône lorsqu'elle est accomplie dans le licite. Ibn Rajab (t. 2, p. 56-57) situe le hadith dans l'ardeur des Compagnons pauvres à égaler les riches par des œuvres à leur portée.",
+      "niveau_min_decide_13_10": "cycle 3"
+    },
+    {
+      "id": "NAW-S26",
+      "titre": "Les aumônes de chaque jour",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H26"
+      ],
+      "duree_min": 8,
+      "mots_difficiles": [
+        {
+          "ar": "سُلَامَى",
+          "sens": "articulation"
+        },
+        {
+          "ar": "تَعْدِلُ",
+          "sens": "rendre justice"
+        },
+        {
+          "ar": "مَتَاعَهُ",
+          "sens": "son bagage"
+        },
+        {
+          "ar": "وَتُمِيطُ",
+          "sens": "écarter"
+        },
+        {
+          "ar": "الْأَذَى",
+          "sens": "ce qui nuit"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 71",
+          "point_fr": "Les deux Ṣaḥīḥ, par Hammām b. Munabbih ← Abū Hurayra. Chez al-Bazzār : l'homme a trois cent soixante os ; à qui n'a rien à donner, le Prophète indique d'ordonner le convenable, d'écarter un os du chemin, d'aider un faible, ou de laisser les gens à l'abri de son mal."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 72",
+          "point_fr": "Chez Muslim (Abū Dharr) : « deux rakʿa du duḥā suffisent en place de tout cela »."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 2989 et Muslim, Ṣaḥīḥ n° 1009 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S27",
+      "titre": "La piété et le péché",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H27"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "الْبِرُّ",
+          "sens": "la piété (birr)"
+        },
+        {
+          "ar": "وَالْإِثْمُ",
+          "sens": "le péché (ithm)"
+        },
+        {
+          "ar": "حَاكَ",
+          "sens": "s'agiter"
+        },
+        {
+          "ar": "استفت",
+          "sens": "consulte"
+        },
+        {
+          "ar": "اطْمَأَنَّتْ",
+          "sens": "s'est apaisée"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 93",
+          "point_fr": "Le hadith d'an-Nawwās est chez Muslim seul (Muʿāwiya b. Ṣāliḥ ← ʿAbd ar-Raḥmān b. Jubayr b. Nufayr ← son père). Celui de Wābiṣa est chez Aḥmad, par Ḥammād b. Salama ← az-Zubayr b. ʿAbd as-Salām ← Ayyūb b. ʿAbd Allāh b. Mikraz ← Wābiṣa."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 94",
+          "point_fr": "Ibn Rajab relève dans la chaîne de Wābiṣa deux causes de faiblesse : la coupure entre az-Zubayr et Ayyūb, et la faiblesse d'az-Zubayr (ad-Dāraquṭnī : il rapporte des munkar). Il existe une autre voie chez Aḥmad. Le jugement « chaîne ḥasan » d'an-Nawawī est donc nuancé par Ibn Rajab."
+        }
+      ],
+      "jugements_a_retenir": [
+        "an-Nawawī : ḥasan ; chaîne ḥasan (Musnad d'Aḥmad 4/227 et d'ad-Dārimī 2/246) — pour la narration de Wābiṣa (Arbaʿīn, takhrīj du hadith 27)",
+        "Ibn Rajab : chaîne de Wābiṣa : deux causes de faiblesse (coupure et faiblesse d'az-Zubayr b. ʿAbd as-Salām) ; une autre voie chez Aḥmad (Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée) ; t. 2, p. 94)"
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "La seconde narration (Wābiṣa) est discutée (Ibn Rajab t.2 p.94)."
+      ],
+      "degre_affiche": "authenticité discutée (seconde narration, celle de Wābiṣa) : an-Nawawī : ḥasan, « chaîne ḥasan » ; Ibn Rajab : deux causes de faiblesse (coupure ; faiblesse d'az-Zubayr b. ʿAbd as-Salām), avec une autre voie chez Aḥmad. La première narration (an-Nawwās) est rapportée par Muslim (n° 2553)."
+    },
+    {
+      "id": "NAW-S28",
+      "titre": "La sunna et les califes bien guidés",
+      "cycle": 2,
+      "niveau_min": "cycle 2",
+      "hadith": [
+        "NAW-H28"
+      ],
+      "duree_min": 9,
+      "mots_difficiles": [
+        {
+          "ar": "وَعَظَنَا",
+          "sens": "nous exhorta"
+        },
+        {
+          "ar": "وَجِلَتْ",
+          "sens": "ont tremblé"
+        },
+        {
+          "ar": "وَذَرَفَتْ",
+          "sens": "ont coulé"
+        },
+        {
+          "ar": "بِالنَّوَاجِذِ",
+          "sens": "avec les molaires"
+        },
+        {
+          "ar": "وَمُحْدَثَاتِ",
+          "sens": "choses nouvelles"
+        },
+        {
+          "ar": "بِدْعَةٍ",
+          "sens": "innovation (bidʿa)"
+        },
+        {
+          "ar": "ضَلَالَةٌ",
+          "sens": "égarement"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 109",
+          "point_fr": "Aḥmad, Abū Dāwūd, at-Tirmidhī et Ibn Māja, par Thawr b. Yazīd ← Khālid b. Maʿdān ← ʿAbd ar-Raḥmān b. ʿAmr as-Sulamī (et Ḥujr b. Ḥujr chez Abū Dāwūd) ← al-ʿIrbāḍ. At-Tirmidhī : ḥasan ṣaḥīḥ ; Abū Nuʿaym : hadith jayyid, des meilleurs des gens du Shām."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 110",
+          "point_fr": "Contre al-Ḥākim, Ibn Rajab estime que le hadith n'est pas sur la condition d'al-Bukhārī et de Muslim, qui n'ont rien rapporté des deux rapporteurs concernés ; la chaîne est aussi divergente. Une addition (« le croyant est comme le chameau docile ») est jugée interpolée par des huffāẓ."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "an-Nawawī (Arbaʿīn, mention de takhrīj)",
+          "degre": "ḥasan ṣaḥīḥ",
+          "page": null
+        },
+        {
+          "juge": "Ibn Rajab",
+          "degre": "at-Tirmidhī : ḥasan ṣaḥīḥ ; Abū Nuʿaym : jayyid ; contre al-Ḥākim, pas sur la condition des deux Shaykhs",
+          "page": "t. 2, p. 109-110"
+        }
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Sunna des califes bien guidés et innovation : à valider."
+      ],
+      "degre_affiche": "an-Nawawī (citant at-Tirmidhī) : ḥasan ṣaḥīḥ ; al-Arnaʾūṭ : ṣaḥīḥ par ses voies et ses témoins ; Ibn Rajab : at-Tirmidhī ḥasan ṣaḥīḥ, Abū Nuʿaym jayyid, mais il n'est pas sur la condition des deux Shaykhs (contre al-Ḥākim).",
+      "note_contexte": "« Même si un serviteur (ʿabd) est mis à votre tête » : le terme ʿabd est rendu par « serviteur » ; il désigne ici un homme en condition servile (d'autres versions précisent « un ʿabd abyssin » : al-Bukhārī d'après Anas ; Muslim d'après Abū Dharr). Ibn Rajab (t. 2, p. 118) y voit l'une des choses que le Prophète a annoncées de l'avenir de sa Communauté et montre que cela ne contredit pas « les imams sont de Quraysh ».",
+      "niveau_min_decide_13_10": "cycle 2"
+    },
+    {
+      "id": "NAW-S29",
+      "titre": "Les portes du bien et la retenue de la langue",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H29"
+      ],
+      "duree_min": 13,
+      "mots_difficiles": [
+        {
+          "ar": "وَيُبَاعِدْنِي",
+          "sens": "m'éloigne"
+        },
+        {
+          "ar": "جُنَّةٌ",
+          "sens": "bouclier"
+        },
+        {
+          "ar": "وَذُرْوَةِ",
+          "sens": "sommet"
+        },
+        {
+          "ar": "سَنَامِهِ؟",
+          "sens": "sa bosse"
+        },
+        {
+          "ar": "وَعَمُودِهِ",
+          "sens": "son pilier"
+        },
+        {
+          "ar": "بِمَلَاكِ",
+          "sens": "ce qui tient ensemble"
+        },
+        {
+          "ar": "حَصَائِدُ",
+          "sens": "moissons"
+        },
+        {
+          "ar": "مَنَاخِرِهِمْ-",
+          "sens": "leurs narines"
+        },
+        {
+          "ar": "ثَكِلَتْك",
+          "sens": "que ta mère te perde"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 134-135",
+          "point_fr": "Aḥmad, at-Tirmidhī, an-Nasāʾī et Ibn Māja, par Maʿmar ← ʿĀṣim b. Abī n-Najūd ← Abū Wāʾil ← Muʿādh ; at-Tirmidhī : ḥasan ṣaḥīḥ."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 135",
+          "point_fr": "Ibn Rajab discute ce jugement sous deux angles : l'audition d'Abū Wāʾil de Muʿādh n'est pas établie ; une autre voie (Ḥammād b. Salama ← ʿĀṣim ← Shahr b. Ḥawshab ← Muʿādh) est jugée plus juste par ad-Dāraquṭnī, mais la transmission de Shahr d'après Muʿādh est certainement mursal."
+        }
+      ],
+      "jugements_a_retenir": [
+        "at-Tirmidhī : ḥasan ṣaḥīḥ (at-Tirmidhī, al-Jāmiʿ al-kabīr, éd. Shuʿayb al-Arnaʾūṭ, Dār ar-Risāla al-ʿĀlamiyya, 1ʳᵉ éd. 1430/2009, turath n° 1363 (pagination imprimée), n° 2804 ; t. 4, p. 567-568)",
+        "Ibn Rajab : l'audition d'Abū Wāʾil de Muʿādh n'est pas établie ; autre voie (Shahr) jugée plus juste par ad-Dāraquṭnī mais mursal (Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée) ; t. 2, p. 135)",
+        "Shuʿayb al-Arnaʾūṭ : ṣaḥīḥ bi-ṭuruqihi wa-shawāhidihi ; cette chaîne : munqaṭiʿ (at-Tirmidhī, al-Jāmiʿ al-kabīr, éd. Shuʿayb al-Arnaʾūṭ, Dār ar-Risāla al-ʿĀlamiyya, 1ʳᵉ éd. 1430/2009, turath n° 1363 (pagination imprimée), note 1 ; t. 4, p. 567-568)",
+        "al-Albānī : ṣaḥīḥ (Ibn Mājah, Sunan, éd. M. F. ʿAbd al-Bāqī, ʿĪsā al-Bābī al-Ḥalabī (turath n° 1198 ; ترقيم موافق للمطبوع), avec glose d'al-Būṣīrī (Zawāʾid) et jugement d'al-Albānī cités dans l'édition numérique, n° 3973 ; t. 2, p. 1314)"
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Authenticité discutée (Ibn Rajab t.2 p.135) ; jihād, retenue de la langue : à valider ; verset 32:16-17 copié de Tanzil."
+      ],
+      "degre_affiche": "authenticité discutée : at-Tirmidhī : ḥasan ṣaḥīḥ ; Ibn Rajab : l'audition d'Abū Wāʾil de Muʿādh n'est pas établie ; al-Arnaʾūṭ : ṣaḥīḥ par ses voies et ses témoins, mais cette chaîne est munqaṭiʿa ; al-Albānī : ṣaḥīḥ.",
+      "note_contexte": "« Le sommet de sa bosse est le jihād » : Ibn Rajab (t. 1, p. 152) précise que le jihād est ce qu'il y a de plus élevé dans la religion sans être l'un de ses piliers, parce qu'il est une obligation collective (farḍ kifāya) selon la majorité des savants et qu'il ne dure pas jusqu'à la fin des temps ; la version de Muʿādh est commentée en t. 2, p. 145-146.",
+      "niveau_min_decide_13_10": "cycle 3"
+    },
+    {
+      "id": "NAW-S30",
+      "titre": "Obligations, limites et interdits",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H30"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "فَرَائِضَ",
+          "sens": "obligations"
+        },
+        {
+          "ar": "حُدُودًا",
+          "sens": "limites"
+        },
+        {
+          "ar": "تَنْتَهِكُوهَا",
+          "sens": "violer"
+        },
+        {
+          "ar": "نِسْيَانٍ",
+          "sens": "oubli"
+        },
+        {
+          "ar": "تَبْحَثُوا",
+          "sens": "rechercher"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 150",
+          "point_fr": "Ad-Dāraquṭnī ; chaîne de Makḥūl ← Abū Thaʿlaba, avec deux défauts : Makḥūl n'a pas entendu d'Abū Thaʿlaba (Abū Mushir, Abū Nuʿaym) et on diverge sur l'élévation (marfūʿ) ou l'arrêt (mawqūf) ; ad-Dāraquṭnī préfère le marfūʿ. An-Nawawī l'a jugé ḥasan, comme as-Samʿānī avant lui."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 150-151",
+          "point_fr": "Le sens est attesté par un hadith d'Abū d-Dardāʾ (al-Ḥākim : chaîne ṣaḥīḥ ; al-Bazzār : chaîne acceptable)."
+        }
+      ],
+      "jugements_a_retenir": [
+        "an-Nawawī : ḥasan (Arbaʿīn, takhrīj du hadith 30 (ad-Dāraquṭnī, Sunan 4/184))",
+        "Ibn Rajab : deux défauts : Makḥūl n'a pas entendu d'Abū Thaʿlaba ; divergence marfūʿ/mawqūf (ad-Dāraquṭnī préfère le marfūʿ) ; an-Nawawī et as-Samʿānī : ḥasan (Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée) ; t. 2, p. 150)"
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Authenticité discutée (Ibn Rajab t.2 p.150)."
+      ],
+      "degre_affiche": "authenticité discutée : an-Nawawī (et as-Samʿānī) : ḥasan ; Ibn Rajab : deux défauts (Makḥūl n'a pas entendu d'Abū Thaʿlaba ; divergence marfūʿ/mawqūf, ad-Dāraquṭnī préférant le marfūʿ)."
+    },
+    {
+      "id": "NAW-S31",
+      "titre": "Le détachement de ce monde",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H31"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "ازْهَدْ",
+          "sens": "détache-toi (zuhd)"
+        },
+        {
+          "ar": "يُحِبَّك",
+          "sens": "t'aimera"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 174-175",
+          "point_fr": "Ibn Māja, par Khālid b. ʿAmr al-Qurashī ← Sufyān ath-Thawrī ← Abū Ḥāzim ← Sahl. Ibn Rajab conteste le « ḥasan » d'an-Nawawī : Khālid b. ʿAmr est « munkar al-ḥadīth » (Aḥmad, al-Bukhārī, Abū Zurʿa), « pas digne de confiance » (Aḥmad), « menteur » (Ibn Maʿīn), « abandonné » (Abū Ḥātim) ; Ṣāliḥ b. Muḥammad et Ibn ʿAdī l'accusent de forgerie."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 175",
+          "point_fr": "Selon al-ʿUqaylī, le hadith n'a pas d'origine par ath-Thawrī ; d'autres l'ont rapporté d'ath-Thawrī (Muḥammad b. Kathīr aṣ-Ṣanʿānī et d'autres), peut-être en l'ayant pris de Khālid."
+        }
+      ],
+      "jugements_a_retenir": [
+        "an-Nawawī : ḥasan, « par des chaînes ḥasana » (Arbaʿīn, takhrīj du hadith 31)",
+        "Ibn Rajab : le « ḥasan » d'an-Nawawī est contesté : Khālid b. ʿAmr al-Qurashī est munkar al-ḥadīth, « menteur » (Ibn Maʿīn), « abandonné » (Abū Ḥātim), accusé de forgerie (Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée) ; t. 2, p. 174-175)",
+        "al-Būṣīrī (Zawāʾid, cité par M. F. ʿAbd al-Bāqī) : Khālid b. ʿAmr : ḍaʿīf, avec accord sur sa faiblesse ; accusé de forgerie (Ibn Mājah, Sunan, éd. M. F. ʿAbd al-Bāqī, ʿĪsā al-Bābī al-Ḥalabī (turath n° 1198 ; ترقيم موافق للمطبوع), avec glose d'al-Būṣīrī (Zawāʾid) et jugement d'al-Albānī cités dans l'édition numérique, n° 4102 ; t. 2, p. 1373)",
+        "al-ʿUqaylī (cité dans la même glose) : ce hadith n'a pas d'origine par ath-Thawrī (Ibn Mājah, Sunan, éd. M. F. ʿAbd al-Bāqī, ʿĪsā al-Bābī al-Ḥalabī (turath n° 1198 ; ترقيم موافق للمطبوع), avec glose d'al-Būṣīrī (Zawāʾid) et jugement d'al-Albānī cités dans l'édition numérique, n° 4102 ; t. 2, p. 1373)",
+        "al-Albānī : ṣaḥīḥ (Ibn Mājah, Sunan, éd. M. F. ʿAbd al-Bāqī, ʿĪsā al-Bābī al-Ḥalabī (turath n° 1198 ; ترقيم موافق للمطبوع), avec glose d'al-Būṣīrī (Zawāʾid) et jugement d'al-Albānī cités dans l'édition numérique, n° 4102 ; t. 2, p. 1373)",
+        "Shuʿayb al-Arnaʾūṭ : ḍaʿīf jiddan (base hadith-api (champ grades), sur Ibn Mājah n° 4102)"
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Authenticité très discutée : le « ḥasan » d'an-Nawawī est contesté par Ibn Rajab (t.2 p.174-175) ; al-Albānī ṣaḥīḥ, al-Arnaʾūṭ très faible (miroir)."
+      ],
+      "degre_affiche": "authenticité discutée : an-Nawawī : ḥasan ; Ibn Rajab conteste ce « ḥasan » (un rapporteur, Khālid b. ʿAmr al-Qurashī, est accusé de mensonge et de forgerie) ; al-Albānī : ṣaḥīḥ ; al-Arnaʾūṭ : ḍaʿīf jiddan.",
+      "note_prudence": "Prudence : ce hadith est à présenter avec son degré contesté. Ibn Rajab (t. 2, p. 174-175) rejette le « ḥasan » d'an-Nawawī parce qu'un de ses rapporteurs, Khālid b. ʿAmr al-Qurashī, est accusé de mensonge et de forgerie (Ibn Maʿīn, Abū Ḥātim ; al-Būṣīrī) ; al-Albānī le juge ṣaḥīḥ, al-Arnaʾūṭ ḍaʿīf jiddan. Ne pas l'utiliser comme argument sans cette mention."
+    },
+    {
+      "id": "NAW-S32",
+      "titre": "Ni préjudice ni rendre préjudice",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H32"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "ضَرَرَ",
+          "sens": "préjudice"
+        },
+        {
+          "ar": "ضِرَارَ",
+          "sens": "rendre préjudice"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 207",
+          "point_fr": "Ibn Rajab : le hadith d'Abū Saʿīd n'est pas chez Ibn Māja, contrairement à ce que dit la mention d'an-Nawawī ; il est chez ad-Dāraquṭnī, al-Ḥākim et al-Bayhaqī, par ʿUthmān b. Muḥammad ← ad-Darāwardī ← ʿAmr b. Yaḥyā ← son père ← Abū Saʿīd. Al-Ḥākim : ṣaḥīḥ sur la condition de Muslim."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 208",
+          "point_fr": "Al-Bayhaqī : ʿUthmān en est seul. Mālik l'a rapporté en mursal dans le Muwaṭṭaʾ ; Ibn ʿAbd al-Barr : pas de divergence sur le mursal de Mālik, et aucune voie sûre jusqu'au Prophète. Chez Ibn Māja, la version est celle de ʿUbāda b. aṣ-Ṣāmit, d'une feuille interrompue ; Khālid b. Saʿd al-Andalusī : aucune version musnad n'est ṣaḥīḥ."
+        }
+      ],
+      "jugements_a_retenir": [
+        "an-Nawawī : ḥasan ; « il a des voies qui se renforcent les unes les autres » (Arbaʿīn, hadith 32)",
+        "Ibn Rajab : version d'Abū Saʿīd : mursal chez Mālik ; aucune version musnad n'est ṣaḥīḥ (Khālid b. Saʿd) ; al-Ḥākim : ṣaḥīḥ sur la condition de Muslim (Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée) ; t. 2, p. 207-208)",
+        "al-Būṣīrī (Zawāʾid, cité par M. F. ʿAbd al-Bāqī) : n° 2340 : chaîne de rapporteurs sûrs mais munqaṭiʿa ; n° 2341 : Jābir al-Juʿfī, accusé (Ibn Mājah, Sunan, éd. M. F. ʿAbd al-Bāqī, ʿĪsā al-Bābī al-Ḥalabī (turath n° 1198 ; ترقيم موافق للمطبوع), avec glose d'al-Būṣīrī (Zawāʾid) et jugement d'al-Albānī cités dans l'édition numérique, n° 2340-2341 ; t. 2, p. 784)",
+        "al-Albānī : n° 2340 : ṣaḥīḥ ; n° 2341 : ṣaḥīḥ li-ghayrihi (Ibn Mājah, Sunan, éd. M. F. ʿAbd al-Bāqī, ʿĪsā al-Bābī al-Ḥalabī (turath n° 1198 ; ترقيم موافق للمطبوع), avec glose d'al-Būṣīrī (Zawāʾid) et jugement d'al-Albānī cités dans l'édition numérique ; t. 2, p. 784)"
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Attribution à Ibn Māja de la version d'Abū Saʿīd contestée (Ibn Rajab t.2 p.207) ; mursal chez Mālik."
+      ],
+      "degre_affiche": "authenticité discutée : an-Nawawī : ḥasan, avec des voies qui se renforcent ; Ibn Rajab : la version d'Abū Saʿīd est mursal chez Mālik et aucune version musnad n'est ṣaḥīḥ ; al-Albānī : ṣaḥīḥ (2340) / ṣaḥīḥ li-ghayrihi (2341) ; al-Arnaʾūṭ : ṣaḥīḥ li-ghayrihi."
+    },
+    {
+      "id": "NAW-S33",
+      "titre": "La preuve et le serment",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H33"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "بِدَعْوَاهُمْ",
+          "sens": "selon leurs prétentions"
+        },
+        {
+          "ar": "الْبَيِّنَةَ",
+          "sens": "la preuve"
+        },
+        {
+          "ar": "الْمُدَّعِي",
+          "sens": "le demandeur"
+        },
+        {
+          "ar": "وَالْيَمِينَ",
+          "sens": "le serment"
+        },
+        {
+          "ar": "أَنْكَرَ",
+          "sens": "a nié"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 226",
+          "point_fr": "L'origine du hadith est dans les deux Ṣaḥīḥ (Ibn Jurayj ← Ibn Abī Mulayka ← Ibn ʿAbbās) : « …mais le serment incombe au défendeur ». Le texte donné par an-Nawawī (« la preuve incombe au demandeur ») est celui qu'Ibn aṣ-Ṣalāḥ rapporte dans les Aḥādīth kulliyya d'après al-Bayhaqī, avec une chaîne ḥasan."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 227",
+          "point_fr": "Variantes : chez al-Ismāʿīlī, « la preuve est au demandeur et le serment à celui à qui l'on demande » ; ash-Shāfiʿī : « la preuve incombe au demandeur », en doutant de la suite."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "an-Nawawī (Arbaʿīn, mention de takhrīj)",
+          "degre": "ḥasan",
+          "page": null
+        }
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Le texte d'an-Nawawī n'est pas celui des Ṣaḥīḥ (« …le serment incombe au défendeur ») ; il vient d'al-Bayhaqī."
+      ],
+      "degre_affiche": "an-Nawawī : ḥasan (rapporté par al-Bayhaqī et d'autres sous cette forme) ; une partie figure dans les deux Ṣaḥīḥ (Muslim n° 1711, al-Bukhārī n° 4552)."
+    },
+    {
+      "id": "NAW-S34",
+      "titre": "Changer le blâmable",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H34"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "مُنْكَرًا",
+          "sens": "un blâmable"
+        },
+        {
+          "ar": "فَلْيُغَيِّرْهُ",
+          "sens": "qu'il le change"
+        },
+        {
+          "ar": "أَضْعَفُ",
+          "sens": "le plus faible"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 243",
+          "point_fr": "Muslim, par Qays b. Muslim ← Ṭāriq b. Shihāb ← Abū Saʿīd. Abū Saʿīd le cite après avoir vu un homme reprendre Marwān, qui avait prononcé le sermon avant la prière de l'ʿĪd."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 49 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S35",
+      "titre": "Les droits du frère musulman",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H35"
+      ],
+      "duree_min": 9,
+      "mots_difficiles": [
+        {
+          "ar": "تَحَاسَدُوا",
+          "sens": "vous envier"
+        },
+        {
+          "ar": "تَنَاجَشُوا",
+          "sens": "surenchérir pour tromper (tanājush)"
+        },
+        {
+          "ar": "تَدَابَرُوا",
+          "sens": "vous tourner le dos"
+        },
+        {
+          "ar": "يَخْذُلُهُ",
+          "sens": "l'abandonne"
+        },
+        {
+          "ar": "يَحْقِرُهُ",
+          "sens": "le méprise"
+        },
+        {
+          "ar": "وَعِرْضُهُ",
+          "sens": "et son honneur"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 257",
+          "point_fr": "Muslim, par Abū Saʿīd, affranchi de ʿAbd Allāh b. ʿĀmir b. Kurayz, ← Abū Hurayra. Cet Abū Saʿīd, dont le nom n'est pas connu, est cité par Ibn Ḥibbān parmi les dignes de confiance, mais Ibn al-Madīnī le dit inconnu. Sufyān ath-Thawrī a fait une erreur de nom (« Saʿīd b. Yasār »), relevée par Aḥmad, Ibn Maʿīn et ad-Dāraquṭnī."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 258",
+          "point_fr": "Plusieurs parties existent par d'autres voies, et la première moitié (« Ne vous enviez pas… ») est dans les deux Ṣaḥīḥ par al-Aʿraj ← Abū Hurayra."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 2564 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S36",
+      "titre": "Faciliter, couvrir, apprendre",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H36"
+      ],
+      "duree_min": 12,
+      "mots_difficiles": [
+        {
+          "ar": "نَفَّسَ",
+          "sens": "a dissipé"
+        },
+        {
+          "ar": "كُرْبَةً",
+          "sens": "peine"
+        },
+        {
+          "ar": "يَسَّرَ",
+          "sens": "a facilité"
+        },
+        {
+          "ar": "مُعْسِرٍ",
+          "sens": "en difficulté"
+        },
+        {
+          "ar": "السَّكِينَةُ",
+          "sens": "la sérénité (sakīna)"
+        },
+        {
+          "ar": "وَغَشِيَتْهُمْ",
+          "sens": "les couvre"
+        },
+        {
+          "ar": "حَفَّتهُمُ",
+          "sens": "les entourent"
+        },
+        {
+          "ar": "أَبَطْأَ",
+          "sens": "a retardé"
+        },
+        {
+          "ar": "نَسَبُهُ",
+          "sens": "sa généalogie"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 284",
+          "point_fr": "Muslim, par al-Aʿmash ← Abū Ṣāliḥ ← Abū Hurayra. Des huffāẓ (Abū l-Faḍl al-Harawī, ad-Dāraquṭnī) lui reprochent cette voie : Asbāṭ b. Muḥammad le rapporte avec « on m'a rapporté d'Abū Ṣāliḥ », ce qui montre qu'al-Aʿmash ne l'a pas entendu directement."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 285",
+          "point_fr": "Des hadiths voisins se trouvent dans les deux Ṣaḥīḥ (Ibn ʿUmar : « celui qui est dans le besoin de son frère, Allah est dans son besoin… »)."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "Ibn Rajab",
+          "degre": "reproche d'ad-Dāraquṭnī et d'Abū l-Faḍl al-Harawī à Muslim : al-Aʿmash ne l'a pas entendu directement d'Abū Ṣāliḥ",
+          "page": "t. 2, p. 284"
+        }
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Reproche d'ad-Dāraquṭnī à Muslim (Ibn Rajab t.2 p.284)."
+      ],
+      "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 2699 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S37",
+      "titre": "Les bonnes et les mauvaises actions inscrites",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H37"
+      ],
+      "duree_min": 7,
+      "mots_difficiles": [
+        {
+          "ar": "هَمَّ",
+          "sens": "a projeté"
+        },
+        {
+          "ar": "ضِعْفٍ",
+          "sens": "multiplication"
+        },
+        {
+          "ar": "كَامِلَةً",
+          "sens": "complète"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 311",
+          "point_fr": "Les deux Ṣaḥīḥ, par al-Jaʿd Abū ʿUthmān ← Abū Rajāʾ al-ʿUṭāridī ← Ibn ʿAbbās. Dans une version de Muslim, la fin ajoute : « ou Allah l'a effacée, et ne périt auprès d'Allah que celui qui est voué à périr »."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 311-312",
+          "point_fr": "Des hadiths voisins sont dans les deux Ṣaḥīḥ (Abū Hurayra) : si le serviteur renonce au mal pour Allah, on lui inscrit une bonne action."
+        }
+      ],
+      "jugements_a_retenir": [],
+      "relecture_comite": false,
+      "points_referent": [],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 6491 et Muslim, Ṣaḥīḥ n° 131 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S38",
+      "titre": "Les alliés d'Allah et les œuvres surérogatoires",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H38"
+      ],
+      "duree_min": 9,
+      "mots_difficiles": [
+        {
+          "ar": "عَادَى",
+          "sens": "a témoigné de l'hostilité"
+        },
+        {
+          "ar": "وَلِيًّا",
+          "sens": "un allié (walī)"
+        },
+        {
+          "ar": "آذَنْتهُ",
+          "sens": "je lui ai déclaré"
+        },
+        {
+          "ar": "بِالنَّوَافِلِ",
+          "sens": "par les œuvres surérogatoires"
+        },
+        {
+          "ar": "يَبْطِشُ",
+          "sens": "saisit"
+        },
+        {
+          "ar": "اسْتَعَاذَنِي",
+          "sens": "a cherché refuge auprès de Moi"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 330",
+          "point_fr": "Al-Bukhārī seul parmi les auteurs des livres, par Ibn Karāma ← Khālid b. Makhlad ← Sulaymān b. Bilāl ← Sharīk b. ʿAbd Allāh ← ʿAṭāʾ ← Abū Hurayra. Ibn Rajab le range parmi les « gharāʾib » du Ṣaḥīḥ (Ibn Karāma en est seul de Khālid) ; la fin qu'a la version complète (« je n'hésite sur rien… comme sur l'âme du croyant ») est omise du texte d'an-Nawawī."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 331",
+          "point_fr": "D'autres voies (par exemple ʿĀʾisha, par ʿAbd al-Wāḥid b. Maymūn, jugé « munkar al-ḥadīth » par al-Bukhārī) ne sont pas exemptes de critique."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "Ibn Rajab",
+          "degre": "al-Bukhārī seul ; Ibn Rajab : l'un des gharāʾib du Ṣaḥīḥ",
+          "page": "t. 2, p. 330"
+        }
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Passage de croyance : traduction littérale, commentaire à valider (comité) ; Bukhārī seul ; fin de la version complète omise."
+      ],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 6502 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)",
+      "note_contexte": "« Je suis son ouïe… » : Ibn Rajab (t. 2, p. 345-347) explique que celui qui s'approche d'Allah par les obligations puis par les œuvres surérogatoires est élevé du degré de la foi à celui de l'excellence (iḥsān), de sorte que ses membres n'agissent que dans l'obéissance ; il écarte toute lecture d'incarnation (ḥulūl) ou d'union (ittiḥād), dont « Allah et Son Messager sont innocents ».",
+      "niveau_min_decide_13_10": "cycle 3"
+    },
+    {
+      "id": "NAW-S39",
+      "titre": "Allah passe sur l'erreur, l'oubli et la contrainte",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H39"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "تَجَاوَزَ",
+          "sens": "a passé sur"
+        },
+        {
+          "ar": "الْخَطَأَ",
+          "sens": "l'erreur"
+        },
+        {
+          "ar": "وَالنِّسْيَانَ",
+          "sens": "l'oubli"
+        },
+        {
+          "ar": "اسْتُكْرِهُوا",
+          "sens": "ont été contraints"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 361",
+          "point_fr": "Ibn Māja, par al-Awzāʿī ← ʿAṭāʾ ← Ibn ʿAbbās ; Ibn Ḥibbān et ad-Dāraquṭnī ajoutent ʿUbayd b. ʿUmayr ; al-Ḥākim : ṣaḥīḥ sur la condition des deux Shaykhs. Mais le hadith a un défaut : Aḥmad l'a très fortement rejeté (« on ne le rapporte que d'al-Ḥasan en mursal »)."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 362",
+          "point_fr": "Abū Ḥātim : ce sont des hadiths munkar, comme forgés ; al-Awzāʿī ne l'a pas entendu d'ʿAṭāʾ. Le mursal (ʿAṭāʾ : « il m'est parvenu que… ») est jugé plus proche."
+        }
+      ],
+      "jugements_a_retenir": [
+        "an-Nawawī : ḥasan (Arbaʿīn, takhrīj du hadith 39 (Ibn Mājah n° 2045 ; al-Bayhaqī))",
+        "Ibn Rajab : chaîne apparemment ṣaḥīḥ, mais défaut : Aḥmad le rejette fortement ; Abū Ḥātim : munkar ; le mursal est plus proche (Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée) ; t. 2, p. 361-362)",
+        "al-Būṣīrī (Zawāʾid, cité par M. F. ʿAbd al-Bāqī) : chaîne ṣaḥīḥ si elle est exempte d'interruption ; elle semble munqaṭiʿa (al-Walīd b. Muslim pratiquait le tadlīs) (Ibn Mājah, Sunan, éd. M. F. ʿAbd al-Bāqī, ʿĪsā al-Bābī al-Ḥalabī (turath n° 1198 ; ترقيم موافق للمطبوع), avec glose d'al-Būṣīrī (Zawāʾid) et jugement d'al-Albānī cités dans l'édition numérique, n° 2045 ; t. 1, p. 659)",
+        "al-Albānī : ṣaḥīḥ (Ibn Mājah, Sunan, éd. M. F. ʿAbd al-Bāqī, ʿĪsā al-Bābī al-Ḥalabī (turath n° 1198 ; ترقيم موافق للمطبوع), avec glose d'al-Būṣīrī (Zawāʾid) et jugement d'al-Albānī cités dans l'édition numérique, n° 2045 ; t. 1, p. 659)"
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Authenticité discutée (Ibn Rajab t.2 p.361-362) ; le texte d'an-Nawawī (« تجاوز ») n'est pas celui d'Ibn Māja (« وضع »)."
+      ],
+      "degre_affiche": "authenticité discutée : an-Nawawī : ḥasan ; Ibn Rajab : chaîne apparemment ṣaḥīḥ mais défaut caché (Aḥmad le rejette fortement ; Abū Ḥātim : munkar) et le mursal est plus proche ; al-Albānī et al-Arnaʾūṭ : ṣaḥīḥ."
+    },
+    {
+      "id": "NAW-S40",
+      "titre": "Sois dans ce monde comme un étranger",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H40"
+      ],
+      "duree_min": 8,
+      "mots_difficiles": [
+        {
+          "ar": "بِمَنْكِبِي",
+          "sens": "par mon épaule"
+        },
+        {
+          "ar": "غَرِيبٌ",
+          "sens": "étranger"
+        },
+        {
+          "ar": "عَابِرُ",
+          "sens": "de passage"
+        },
+        {
+          "ar": "صِحَّتِك",
+          "sens": "ta santé"
+        },
+        {
+          "ar": "لِمَرَضِك",
+          "sens": "ta maladie"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 376",
+          "point_fr": "Al-Bukhārī, par ʿAlī b. al-Madīnī ← aṭ-Ṭufāwī ← al-Aʿmash ← Mujāhid ← Ibn ʿUmar. Plusieurs huffāẓ (dont al-ʿUqaylī) contestent la formule « ḥaddathanī Mujāhid » : al-Aʿmash l'aurait entendu de Layth b. Abī Sulaym. Chez at-Tirmidhī, par Layth, une addition : « et compte-toi parmi les gens des tombes »."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 377",
+          "point_fr": "Ce hadith est un fondement de la brièveté de l'espoir : le croyant ne doit pas faire de ce monde une demeure, mais s'y tenir comme sur l'aile d'un voyage, en préparant son départ."
+        }
+      ],
+      "jugements_a_retenir": [
+        {
+          "juge": "Ibn Rajab",
+          "degre": "formule « ḥaddathanī Mujāhid » contestée par plusieurs huffāẓ (al-ʿUqaylī)",
+          "page": "t. 2, p. 376"
+        }
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Formule « ḥaddathanī Mujāhid » contestée (Ibn Rajab t.2 p.376)."
+      ],
+      "degre_affiche": "figure dans al-Bukhārī, Ṣaḥīḥ n° 6416 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)"
+    },
+    {
+      "id": "NAW-S41",
+      "titre": "Le désir soumis à ce que le Prophète a apporté",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H41"
+      ],
+      "duree_min": 6,
+      "mots_difficiles": [
+        {
+          "ar": "هَوَاهُ",
+          "sens": "son désir"
+        },
+        {
+          "ar": "تَبَعًا",
+          "sens": "conforme, soumis"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 393",
+          "point_fr": "Nawawī le dit ḥasan ṣaḥīḥ, avec une chaîne ṣaḥīḥ dans le livre « al-Ḥujja » de Naṣr b. Ibrāhīm al-Maqdisī. Abū Nuʿaym l'a aussi rapporté dans son Arbaʿīn."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 394",
+          "point_fr": "Ibn Rajab : « rendre ce hadith ṣaḥīḥ est très improbable » ; Nuʿaym b. Ḥammād en est seul. Digne de confiance pour certains (al-Bukhārī a rapporté de lui), il a été jugé faible à cause de ses nombreux munkar (Ibn Maʿīn, Abū Dāwūd, an-Nasāʾī)."
+        }
+      ],
+      "jugements_a_retenir": [
+        "an-Nawawī : « ḥadīth ṣaḥīḥ », chaîne ṣaḥīḥ (d'après « al-Ḥujja » de Naṣr al-Maqdisī) ; la base numérique porte « ḥasan ṣaḥīḥ » (Arbaʿīn, takhrīj du hadith 41)",
+        "Ibn Rajab : rendre ce hadith ṣaḥīḥ est « très improbable » (Nuʿaym b. Ḥammād seul) (Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée) ; t. 2, p. 394)"
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "Authenticité très discutée : « ṣaḥīḥ » d'an-Nawawī contesté (Ibn Rajab t.2 p.394) ; source (« al-Ḥujja ») non lue."
+      ],
+      "degre_affiche": "authenticité discutée : an-Nawawī (Būlāq 1321) : « ḥadīth ṣaḥīḥ », chaîne ṣaḥīḥ (d'après al-Ḥujja) — la base numérique porte « ḥasan ṣaḥīḥ » ; Ibn Rajab : qu'il soit ṣaḥīḥ est « très improbable » (Nuʿaym b. Ḥammād seul).",
+      "note_prudence": "Prudence : an-Nawawī donne ce hadith comme ṣaḥīḥ (Būlāq 1321 : « حديث صحيح »), avec une chaîne ṣaḥīḥ d'après « al-Ḥujja » (la base numérique écrit « ḥasan ṣaḥīḥ »), mais Ibn Rajab (t. 2, p. 394) juge très improbable qu'il soit ṣaḥīḥ. À présenter avec ces deux mentions ; ne pas affirmer son authenticité sans réserve."
+    },
+    {
+      "id": "NAW-S42",
+      "titre": "Le pardon d'Allah",
+      "cycle": 3,
+      "niveau_min": "cycle 3",
+      "hadith": [
+        "NAW-H42"
+      ],
+      "duree_min": 8,
+      "mots_difficiles": [
+        {
+          "ar": "عَنَانَ",
+          "sens": "nuages"
+        },
+        {
+          "ar": "بِقُرَابِ",
+          "sens": "presque la plénitude"
+        },
+        {
+          "ar": "مَغْفِرَةً",
+          "sens": "pardon"
+        },
+        {
+          "ar": "أُبَالِي",
+          "sens": "Je me soucie"
+        },
+        {
+          "ar": "وَرَجَوْتنِي",
+          "sens": "tu as espéré en Moi"
+        }
+      ],
+      "explications": [
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 400",
+          "point_fr": "At-Tirmidhī seul, par Kathīr b. Fāʾid ← Saʿīd b. ʿUbayd (al-Hunāʾī) ← Bakr b. ʿAbd Allāh al-Muzanī ← Anas ; il le dit ḥasan gharīb. Pour Ibn Rajab, la chaîne est « sans mal » (lā baʾs bihi). Ad-Dāraquṭnī : Kathīr en est seul pour le marfūʿ ; Salm b. Qutayba l'a arrêté à Anas."
+        },
+        {
+          "commentateur": "Ibn Rajab al-Ḥanbalī",
+          "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
+          "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
+          "page": "t. 2, p. 401",
+          "point_fr": "Des parties existent ailleurs : Muslim rapporte, d'Abū Dharr, « celui qui Me rencontre avec une terre pleine de fautes, sans rien M'associer, Je le rencontre avec autant de pardon »."
+        }
+      ],
+      "jugements_a_retenir": [
+        "an-Nawawī : ḥasan ṣaḥīḥ (Arbaʿīn, takhrīj du hadith 42)",
+        "at-Tirmidhī : ḥasan gharīb (tous les manuscrits d'al-Arnaʾūṭ) (at-Tirmidhī, al-Jāmiʿ al-kabīr, éd. Shuʿayb al-Arnaʾūṭ, Dār ar-Risāla al-ʿĀlamiyya, 1ʳᵉ éd. 1430/2009, turath n° 1363 (pagination imprimée), n° 3852 ; t. 6, p. 142-143)",
+        "Ibn Rajab : at-Tirmidhī : ḥasan gharīb ; chaîne « sans mal » ; ad-Dāraquṭnī : Kathīr seul pour le marfūʿ (Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée) ; t. 2, p. 400)",
+        "Shuʿayb al-Arnaʾūṭ : ḥasan li-ghayrihi ; chaîne ḍaʿīfa (état inconnu de Kathīr b. Fāʾid) ; témoin d'Abū Dharr chez Aḥmad : ḥasan (at-Tirmidhī, al-Jāmiʿ al-kabīr, éd. Shuʿayb al-Arnaʾūṭ, Dār ar-Risāla al-ʿĀlamiyya, 1ʳᵉ éd. 1430/2009, turath n° 1363 (pagination imprimée), note 1 ; t. 6, p. 142-143)"
+      ],
+      "relecture_comite": true,
+      "points_referent": [
+        "At-Tirmidhī : gharīb."
+      ],
+      "degre_affiche": "authenticité discutée : an-Nawawī : ḥasan ṣaḥīḥ ; at-Tirmidhī (manuscrits, éd. al-Arnaʾūṭ) et Ibn Rajab : ḥasan gharīb ; al-Arnaʾūṭ : ḥasan li-ghayrihi (chaîne ḍaʿīfa, avec un témoin d'Abū Dharr) ; al-Albānī : ṣaḥīḥ."
+    }
+  ]
+}

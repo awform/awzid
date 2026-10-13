@@ -3,7 +3,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
-  import { chargerNotes, type Matn, type NotesEnseignant, type Seance } from './donnees';
+  import { avecArabe, chargerNotes, type Matn, type NotesEnseignant, type Seance } from './donnees';
   import Memoriser from './Memoriser.svelte';
   import { aMemoriser } from './memo';
   import { lien } from './liens';
@@ -89,7 +89,10 @@
 
 <header class="tete">
   <p class="surtitre"><Bidi text={t('mj.seance', { n: seance.n })} /></p>
-  <h1><Bidi text={seance.titre} /></h1>
+  <h1><Bidi text={avecArabe(seance.titre, seance.tma)} /></h1>
+  {#if seance.differe}<p class="muted" data-testid="mj-differe">
+      <Bidi text={t('mj.differe')} />
+    </p>{/if}
 </header>
 
 <ol class="etapes" aria-label={t('mj.etapes_label')}>
@@ -221,6 +224,13 @@
     >
     {#if modeEns}<p class="muted">
         <Bidi text={t(notesErreur ? 'mj.ens_erreur' : 'mj.ens_aide')} />
+      </p>{/if}
+    {#if modeEns && seance.differe && notes?.consigne_differe}<p
+        class="muted"
+        data-testid="mj-ens-differe"
+      >
+        <strong><Bidi text={t('mj.ens_differe')} /></strong>
+        <Bidi text={notes.consigne_differe} />
       </p>{/if}
     {#if modeEns && notes?.publication}<p class="muted" data-testid="mj-ens-publication">
         <strong><Bidi text={t('mj.ens_publication')} /></strong>

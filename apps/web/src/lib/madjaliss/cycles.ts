@@ -59,6 +59,9 @@ export const ACTIFS: ReadonlySet<string> = new Set([
   'izziyya',
   'ajurrumiyya',
   'jazariyya',
+  'bayquniyya',
+  'nawawi',
+  'waraqat',
 ]);
 
 export const texteDuCursus = (id: string): TexteCursus | null =>

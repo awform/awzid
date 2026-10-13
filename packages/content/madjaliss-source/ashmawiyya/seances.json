@@ -1,6 +1,6 @@
 {
   "titre": "Découpage en séances (majālis) — al-ʿAshmāwiyya",
-  "statut": "VALIDATION_HUMAINE_REQUISE",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
   "principe": "Séances de 5 à 12 minutes : lecture du texte arabe, traduction, mots difficiles. Les phrases « identiques » à al-Akhḍarī ne sont pas réexpliquées : la séance renvoie au madjlis AKH-Sxx (champ « renvoi_akhdari ») et ne commente que les différences. Les apports propres (prières surérogatoires, ce qui annule la prière, imamat, vendredi, funérailles, jeûne) sont traités en entier. L'explication n'est pas rédigée ici.",
   "a_confirmer": "Découpage proposé par Claude ; à comparer avec la pratique de deux ou trois maîtres de daara ou de mahdara. Durées estimées (lecture lente ×2 + traduction + mots), à recaler sur l'enregistrement.",
   "seances": [

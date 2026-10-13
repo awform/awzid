@@ -4,11 +4,12 @@ import { fileURLToPath } from 'node:url';
 import AxeBuilder from '@axe-core/playwright';
 import type { APIRequestContext, Page } from '@playwright/test';
 import { expect, newAdult, password, test } from './fixtures';
+import { loginTeacher } from './enseignant';
 import { pickProfile } from './profil';
 
 /**
- * Madjaliss, lot 2 (13/10) : les sept textes (al-Akhḍarī, al-ʿAshmāwiyya, Tuḥfat al-Aṭfāl, Ibn ʿĀshir, al-ʿIzziyya,
- * al-Ājurrūmiyya, al-Jazariyya) dans la rubrique : sommaires, vers à deux hémistiches, mention de statut, niveaux
+ * Madjaliss, lots 2 et 3 (13/10) : les dix textes (al-Akhḍarī, al-ʿAshmāwiyya, Tuḥfat al-Aṭfāl, Ibn ʿĀshir, al-ʿIzziyya,
+ * al-Ājurrūmiyya, al-Jazariyya, al-Bayqūniyya, les Quarante hadiths, al-Waraqāt) dans la rubrique : sommaires, vers à deux hémistiches, mention de statut, niveaux
  * (aucun passage « adulte » pour un enfant ou un ado), passages « présentés par le maître », code visuel de la
  * grammaire, renvois, et AUCUN champ interne ni lettre de translittération latine dans l'arabe affiché à l'élève.
  */
@@ -26,6 +27,9 @@ const TEXTES = [
   'izziyya',
   'ajurrumiyya',
   'jazariyya',
+  'bayquniyya',
+  'nawawi',
+  'waraqat',
 ] as const;
 
 type Phrase = {
@@ -36,6 +40,7 @@ type Phrase = {
   fr?: string;
   explication?: true;
   adulte?: true;
+  hadith?: unknown;
   notes?: unknown[];
   titre?: string;
 };
@@ -44,6 +49,7 @@ type Seance = {
   id: string;
   phrases: string[];
   adulte?: true;
+  differe?: true;
   pudeur?: true;
   facultatif?: true;
   renvois?: Array<{ texte: string; n: number }>;
@@ -104,7 +110,7 @@ async function proprete(page: Page) {
   expect(INTERNE.test(texte), texte.match(INTERNE)?.[0]).toBe(false);
 }
 
-test('liste : les sept textes ouverts, rangés par cycle comme dans le plan directeur', async ({
+test('liste : les dix textes ouverts, rangés par cycle comme dans le plan directeur', async ({
   page,
 }) => {
   await newAdult(page, 'mjt-liste');
@@ -119,7 +125,7 @@ test('liste : les sept textes ouverts, rangés par cycle comme dans le plan dire
   expect(await ordre(3)).toEqual(['risala', 'lamiyya', 'jazariyya']);
   expect(await ordre(4)).toEqual(['khalil', 'alfiyya', 'waraqat']);
   for (const t of TEXTES) await expect(page.locator(`a[data-texte="${t}"]`)).toBeVisible();
-  for (const t of ['lamiyya', 'risala', 'khalil', 'waraqat', 'bayquniyya', 'nawawi']) {
+  for (const t of ['lamiyya', 'risala', 'khalil', 'alfiyya']) {
     await expect(page.locator(`[data-texte="${t}"]`)).toContainText('Bientôt');
     await expect(page.locator(`[data-texte="${t}"]`)).not.toHaveAttribute('href', /.*/);
   }
@@ -132,7 +138,10 @@ for (const t of TEXTES) {
     await newAdult(page, `mjt-${t}`);
     const m = donnees[t];
     await page.goto(`/madjaliss/${t}`);
-    await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(m.seances.length);
+    // (invité de la bêta : sans les séances en publication différée)
+    await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(
+      m.seances.filter((s) => !s.differe).length,
+    );
     await expect(page.getByTestId('mj-statut')).toHaveText(STATUT_FR);
     await expect(page.getByTestId('mj-relecture')).toBeVisible();
     // tous les textes : une seule mention de statut, jamais « validation humaine requise »
@@ -196,7 +205,7 @@ test('niveaux : aucun passage « adulte » pour un enfant ni un ado ; l’adulte
   for (const t of ['izziyya', 'jazariyya', 'ibn-ashir', 'ashmawiyya'] as const) {
     await page.goto(`/madjaliss/${t}`);
     await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(
-      donnees[t].seances.length,
+      donnees[t].seances.filter((s) => !s.differe).length,
     );
   }
   const iz = donnees.izziyya;
@@ -216,7 +225,7 @@ test('niveaux : aucun passage « adulte » pour un enfant ni un ado ; l’adulte
   for (const t of ['izziyya', 'jazariyya', 'ibn-ashir', 'ashmawiyya'] as const) {
     await page.goto(`/madjaliss/${t}`);
     await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(
-      donnees[t].seances.filter((s) => !s.adulte).length,
+      donnees[t].seances.filter((s) => !s.adulte && !s.differe).length,
     );
   }
   await page.goto(`/madjaliss/izziyya/${sensible.n}`);
@@ -397,11 +406,141 @@ test('le mode enseignant porte ce qui est interne ; l’élève ne le voit pas',
   for (const [t, n] of [
     ['tuhfa', 3],
     ['jazariyya', 1],
-    ['ibn-ashir', 5],
+    ['ibn-ashir', 12],
     ['izziyya', 12],
   ] as const) {
     await page.goto(`/madjaliss/${t}/${n}`);
     await expect(page.getByTestId('mj-mode-enseignant')).toHaveCount(0);
     await proprete(page);
   }
+});
+
+test('publication différée : un invité de la bêta ne voit pas IBA-S02 à S10 ; le personnel les voit avec la consigne', async ({
+  page,
+}) => {
+  await newAdult(page, 'mjt-differe');
+  const li = page.locator('[data-testid="mj-sommaire"] li');
+  await page.goto('/madjaliss/ibn-ashir');
+  await expect(li).toHaveCount(49);
+  for (const n of [2, 3, 4, 5, 6, 7, 8, 9, 10])
+    await expect(page.locator(`li[data-seance="${n}"]`)).toHaveCount(0);
+  await expect(page.locator('li[data-seance="11"]')).toHaveCount(1);
+  // adresse directe d'une séance différée : rien
+  await page.goto('/madjaliss/ibn-ashir/2');
+  await expect(page.getByTestId('mj-etape')).toHaveCount(0);
+  await expect(page.locator('main')).toContainText("Ce texte n'est pas encore disponible.");
+  await expect(page.getByTestId('mj-mode-enseignant')).toHaveCount(0);
+
+  // personnel : toutes les séances, la différée signalée, la consigne en mode enseignant
+  await page.context().clearCookies();
+  await loginTeacher(page);
+  // (l'espace enseignant rafraîchit le compte gardé sur l'appareil, comme une connexion faite par l'écran)
+  await page.goto('/enseignant');
+  await page.waitForLoadState('networkidle');
+  await page.goto('/madjaliss/ibn-ashir');
+  // (le personnel sans profil adulte ne voit pas les 5 séances « adulte » : 58 − 5, mais toutes les différées)
+  await expect(li).toHaveCount(donnees['ibn-ashir'].seances.filter((s) => !s.adulte).length);
+  await expect(page.locator('li[data-seance="2"] [data-testid="mj-differe"]')).toBeVisible();
+  await page.goto('/madjaliss/ibn-ashir/2');
+  await expect(page.getByTestId('mj-etape')).toHaveAttribute('data-etape', 'lire');
+  await expect(page.getByTestId('mj-differe')).toBeVisible();
+  await page.getByTestId('mj-mode-enseignant').check();
+  await expect(page.getByTestId('mj-ens-differe')).toContainText('masquées aux invités de la bêta');
+  await expect(page.getByTestId('mj-ens-publication')).toContainText('IBA-S02 à S10');
+});
+
+test('démonstration : un compte de démonstration voit aussi les séances différées', async ({
+  page,
+}) => {
+  const email = `mjt-demo-${Date.now()}-${Math.floor(Math.random() * 1e6)}@demo.awform.test`;
+  const r = await page.request.post('/api/v1/auth/signup', {
+    headers: H,
+    data: {
+      kind: 'adulte',
+      email,
+      password: password(),
+      country: 'FR',
+      locale: 'fr',
+      birthYear: 1988,
+      pseudonym: 'Demo',
+      consents: ['cgu', 'donnee_religieuse_art9'],
+    },
+  });
+  expect(r.status(), await r.text()).toBe(201);
+  await page.goto('/madjaliss/ibn-ashir');
+  await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(58);
+});
+
+test('Quarante hadiths : texte d’an-Nawawī, takhrīj, degré, version du recueil dessous, versets en Tanzil', async ({
+  page,
+}) => {
+  await newAdult(page, 'mjt-nawawi');
+  const m = donnees.nawawi;
+  const de = new Map(m.phrases.map((p) => [p.id, p]));
+  // hadith 4 : deux versions d'al-Bukhārī et Muslim, ordre des récits
+  await page.goto('/madjaliss/nawawi/4');
+  const h4 = page.locator('[data-phrase="NAW-H04"]');
+  await expect(h4.locator('p.matn')).toHaveCSS('display', 'block');
+  expect(octets(((await h4.locator('p.matn').textContent()) ?? '').trim())).toBe(
+    octets(de.get('NAW-H04')!.ar as string),
+  );
+  await expect(h4.getByTestId('mj-takhrij')).toBeVisible();
+  await expect(h4.getByTestId('mj-degre')).toContainText('Degré');
+  await expect(h4.getByTestId('mj-version-recueil')).toHaveCount(3);
+  await expect(h4.getByTestId('note-explication').last()).toContainText('n° 7454');
+  // la version du recueil vient APRÈS le texte d'an-Nawawī
+  const ordre = await h4.evaluate((el) => {
+    const a = el.querySelector('p.matn')!;
+    const v = el.querySelector('[data-testid="mj-version-recueil"]')!;
+    return a.compareDocumentPosition(v) & Node.DOCUMENT_POSITION_FOLLOWING;
+  });
+  expect(ordre).toBeTruthy();
+  // hadith 12 : authenticité discutée, juges nommés
+  const n12 = m.seances.find((s) => s.phrases.includes('NAW-H12'))!.n;
+  await page.goto(`/madjaliss/nawawi/${n12}`);
+  await expect(page.locator('[data-phrase="NAW-H12"] [data-testid="mj-degre"]')).toContainText(
+    'authenticité discutée',
+  );
+  // hadith 10 : deux versets (Tanzil) sur leur ligne, jamais de voix de synthèse
+  const n10 = m.seances.find((s) => s.phrases.includes('NAW-H10'))!.n;
+  await page.goto(`/madjaliss/nawawi/${n10}`);
+  await expect(
+    page.locator('[data-phrase="NAW-H10"] [data-testid="mj-verset-hadith"]'),
+  ).toHaveCount(2);
+  await expect(page.locator('[data-phrase="NAW-H10"] [data-coran="23:51"]')).toBeVisible();
+  await expect(page.getByTestId('mj-ecouter')).toHaveCount(0);
+  await proprete(page);
+  expect(await serious(page)).toEqual([]);
+});
+
+test('Bayqūniyya et Waraqāt : notes d’écart, note de l’école mālikite, mots arabes isolés en arabe', async ({
+  page,
+}) => {
+  await newAdult(page, 'mjt-bay-wrq');
+  const b = donnees.bayquniyya;
+  const nb = b.seances.find((s) => s.phrases.includes('BAY-0012'))!.n;
+  await page.goto(`/madjaliss/bayquniyya/${nb}`);
+  const ecart = page.locator('[data-phrase="BAY-0012"] [data-genre="ecart"]');
+  await expect(ecart.first()).toContainText('Selon Ibn Ḥajar');
+  await expect(ecart.first()).toContainText('Écart avec un commentateur');
+  await proprete(page);
+
+  const w = donnees.waraqat;
+  // phrase au mot arabe isolé : l'arabe est affiché en arabe, vocalisé, jamais le marqueur ni une phonétique
+  const n2 = w.seances.find((s) => s.phrases.includes('WRQ-0002'))!.n;
+  await page.goto(`/madjaliss/waraqat/${n2}`);
+  const fr = page.locator('[data-phrase="WRQ-0002"] p.fr');
+  await expect(fr.locator('bdi[lang="ar"]')).toHaveText('وَرَقَاتٌ');
+  expect(await fr.textContent()).not.toContain('{ar:');
+  // titre de séance avec un mot arabe isolé (S25)
+  await page.goto('/madjaliss/waraqat/25');
+  await expect(page.locator('main h1 bdi[lang="ar"]')).toHaveText('التَّقْلِيدُ');
+  // note de l'école mālikite (mashhūr) avec ses sources
+  const n5 = w.seances.find((s) => s.phrases.includes('WRQ-0005'))!.n;
+  await page.goto(`/madjaliss/waraqat/${n5}`);
+  const mal = page.locator('[data-phrase="WRQ-0005"] [data-genre="malikite"]');
+  await expect(mal).toContainText("Note sur l'école mālikite");
+  await expect(mal).toContainText('witr');
+  await proprete(page);
+  expect(await serious(page)).toEqual([]);
 });

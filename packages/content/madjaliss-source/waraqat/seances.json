@@ -1,0 +1,803 @@
+{
+    "titre": "Découpage en séances (majālis) : al-Waraqāt d'al-Juwaynī",
+    "statut": "EN_ATTENTE_SECONDE_LECTURE",
+    "principe": "Séances de 5 à 16 minutes : lecture du texte arabe phrase par phrase, traduction, mots difficiles. Chaque séance mentionne les écarts du mashhūr mālikite à afficher avec la note obligatoire. L'explication sera ajoutée plus tard à partir des extraits de Maḥallī et de Ḥaṭṭāb cités phrase par phrase (rien n'est rédigé ici). Durée estimée = 3 min + 1,2 min par phrase + 0,5 min par mot difficile, à recaler sur l'enregistrement réel.",
+    "ordre": "Les séances suivent l'ordre du texte (ordre d'apprentissage).",
+    "a_confirmer": "Découpage proposé par Claude, par blocs de sens (3 à 9 phrases). À comparer avec la pratique de deux ou trois maîtres. Cycle 4 (fondements du fiqh, école mālikite).",
+    "point_referent": "Les séances S11 (kuffār), S15 (actes du Prophète), S25 et S26 (taqlīd, ijtihād) sont à relecture par le comité (R-W6, R-W8).",
+    "nombre_de_seances": 26,
+    "duree_totale_min": 292,
+    "seances": [
+        {
+            "id": "WRQ-S01",
+            "titre": "Ouverture : le but et les deux parties du nom",
+            "phrases": [
+                "WRQ-0001",
+                "WRQ-0002"
+            ],
+            "duree_min": 7,
+            "mots_difficiles": [
+                {
+                    "ar": "وَرَقَاتٌ",
+                    "sens": "petites feuilles (le titre de l'ouvrage)"
+                },
+                {
+                    "ar": "أُصُولُ الْفِقْهِ",
+                    "sens": "fondements du fiqh"
+                },
+                {
+                    "ar": "جُزْءَيْنِ مُفْرَدَيْنِ",
+                    "sens": "deux éléments pris isolément"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S02",
+            "titre": "Le fondement, la branche et le fiqh",
+            "phrases": [
+                "WRQ-0003",
+                "WRQ-0004",
+                "WRQ-0005"
+            ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                {
+                    "ar": "الْأَصْلُ",
+                    "sens": "le fondement"
+                },
+                {
+                    "ar": "الْفَرْعُ",
+                    "sens": "la branche"
+                },
+                {
+                    "ar": "الِاجْتِهَادُ",
+                    "sens": "l'effort de déduction"
+                }
+            ],
+            "ecarts_malikites": [
+                "E-12"
+            ]
+        },
+        {
+            "id": "WRQ-S03",
+            "titre": "Les sept statuts : obligatoire, recommandé, permis, interdit",
+            "phrases": [
+                "WRQ-0006",
+                "WRQ-0007",
+                "WRQ-0008",
+                "WRQ-0009",
+                "WRQ-0010"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "الْأَحْكَامُ",
+                    "sens": "les statuts légaux"
+                },
+                {
+                    "ar": "يُثَابُ",
+                    "sens": "on est récompensé"
+                },
+                {
+                    "ar": "يُعَاقَبُ",
+                    "sens": "on est puni"
+                }
+            ],
+            "ecarts_malikites": [
+                "E-16"
+            ]
+        },
+        {
+            "id": "WRQ-S04",
+            "titre": "Le déconseillé, le valide, le nul",
+            "phrases": [
+                "WRQ-0011",
+                "WRQ-0012",
+                "WRQ-0013"
+            ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                {
+                    "ar": "الْمَكْرُوهُ",
+                    "sens": "le déconseillé"
+                },
+                {
+                    "ar": "النَّفُوذُ",
+                    "sens": "l'effet, la prise d'effet"
+                },
+                {
+                    "ar": "يُعْتَدُّ بِهِ",
+                    "sens": "il est pris en compte"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S05",
+            "titre": "Fiqh, savoir et ignorance",
+            "phrases": [
+                "WRQ-0014",
+                "WRQ-0015",
+                "WRQ-0016"
+            ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                {
+                    "ar": "الْعِلْمُ",
+                    "sens": "le savoir"
+                },
+                {
+                    "ar": "الْمَعْلُومِ",
+                    "sens": "l'objet connu"
+                },
+                {
+                    "ar": "الْجَهْلُ",
+                    "sens": "l'ignorance"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S06",
+            "titre": "Savoir nécessaire et acquis ; examen et preuve",
+            "phrases": [
+                "WRQ-0017",
+                "WRQ-0018",
+                "WRQ-0019",
+                "WRQ-0020",
+                "WRQ-0021"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "الضَّرُورِيُّ",
+                    "sens": "nécessaire, qui s'impose"
+                },
+                {
+                    "ar": "الْمُكْتَسَبُ",
+                    "sens": "acquis"
+                },
+                {
+                    "ar": "النَّظَرُ",
+                    "sens": "l'examen"
+                },
+                {
+                    "ar": "الدَّلِيلُ",
+                    "sens": "la preuve"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S07",
+            "titre": "Présomption, doute, fondements et chapitres",
+            "phrases": [
+                "WRQ-0022",
+                "WRQ-0023",
+                "WRQ-0024",
+                "WRQ-0025"
+            ],
+            "duree_min": 10,
+            "mots_difficiles": [
+                {
+                    "ar": "الظَّنُّ",
+                    "sens": "la présomption"
+                },
+                {
+                    "ar": "الشَّكُّ",
+                    "sens": "le doute"
+                },
+                {
+                    "ar": "الْإِجْمَالِ",
+                    "sens": "le global (sans détailler)"
+                },
+                {
+                    "ar": "أَبْوَابُ",
+                    "sens": "les chapitres"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S08",
+            "titre": "Les parties du discours",
+            "phrases": [
+                "WRQ-0026",
+                "WRQ-0027",
+                "WRQ-0028",
+                "WRQ-0029"
+            ],
+            "duree_min": 10,
+            "mots_difficiles": [
+                {
+                    "ar": "الْكَلَامُ",
+                    "sens": "le discours"
+                },
+                {
+                    "ar": "اسْتِخْبَارٍ",
+                    "sens": "demande d'information"
+                },
+                {
+                    "ar": "تَمَنٍّ",
+                    "sens": "souhait"
+                },
+                {
+                    "ar": "الْحَقِيقَةُ",
+                    "sens": "le sens propre"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S09",
+            "titre": "Sens propre et sens figuré",
+            "phrases": [
+                "WRQ-0030",
+                "WRQ-0031",
+                "WRQ-0032",
+                "WRQ-0033",
+                "WRQ-0034",
+                "WRQ-0035",
+                "WRQ-0036",
+                "WRQ-0037"
+            ],
+            "duree_min": 15,
+            "mots_difficiles": [
+                {
+                    "ar": "مَوْضُوعِهِ",
+                    "sens": "ce pour quoi le mot a été posé"
+                },
+                {
+                    "ar": "الْمَجَازُ",
+                    "sens": "le sens figuré"
+                },
+                {
+                    "ar": "اسْتِعَارَةٍ",
+                    "sens": "métaphore"
+                },
+                {
+                    "ar": "الْغَائِطِ",
+                    "sens": "le bas-fond, puis les selles",
+                    "sens_translit_interne": "« ghāʾiṭ » : le bas-fond, puis les selles"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S10",
+            "titre": "L'ordre",
+            "phrases": [
+                "WRQ-0038",
+                "WRQ-0039",
+                "WRQ-0040",
+                "WRQ-0041",
+                "WRQ-0042",
+                "WRQ-0043"
+            ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                {
+                    "ar": "الْأَمْرُ",
+                    "sens": "l'ordre"
+                },
+                {
+                    "ar": "اسْتِدْعَاءُ",
+                    "sens": "la demande"
+                },
+                {
+                    "ar": "الْعُهْدَةِ",
+                    "sens": "l'engagement"
+                },
+                {
+                    "ar": "الطَّهَارَةِ",
+                    "sens": "la purification"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S11",
+            "titre": "L'adresse et la prohibition",
+            "phrases": [
+                "WRQ-0044",
+                "WRQ-0045",
+                "WRQ-0046",
+                "WRQ-0047",
+                "WRQ-0048",
+                "WRQ-0049"
+            ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                {
+                    "ar": "خِطَابِ",
+                    "sens": "adresse"
+                },
+                {
+                    "ar": "مُخَاطَبُونَ",
+                    "sens": "concernés par l'adresse"
+                },
+                {
+                    "ar": "النَّهْيُ",
+                    "sens": "la prohibition"
+                },
+                {
+                    "ar": "فَسَادِ",
+                    "sens": "l'invalidité"
+                }
+            ],
+            "relecture_comite": true,
+            "niveau_min": "adulte",
+            "ecarts_malikites": [
+                "E-06"
+            ]
+        },
+        {
+            "id": "WRQ-S12",
+            "titre": "Le général",
+            "phrases": [
+                "WRQ-0050",
+                "WRQ-0051",
+                "WRQ-0052",
+                "WRQ-0053",
+                "WRQ-0054",
+                "WRQ-0055",
+                "WRQ-0056"
+            ],
+            "duree_min": 13,
+            "mots_difficiles": [
+                {
+                    "ar": "الْعَامُّ",
+                    "sens": "le général"
+                },
+                {
+                    "ar": "الْمُبْهَمَةُ",
+                    "sens": "indéterminés (les noms indéterminés)"
+                },
+                {
+                    "ar": "النُّطْقِ",
+                    "sens": "l'énoncé"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S13",
+            "titre": "La spécification",
+            "phrases": [
+                "WRQ-0057",
+                "WRQ-0058",
+                "WRQ-0059",
+                "WRQ-0060",
+                "WRQ-0061",
+                "WRQ-0062",
+                "WRQ-0063",
+                "WRQ-0064",
+                "WRQ-0065"
+            ],
+            "duree_min": 16,
+            "mots_difficiles": [
+                {
+                    "ar": "التَّخْصِيصُ",
+                    "sens": "la spécification"
+                },
+                {
+                    "ar": "الِاسْتِثْنَاءُ",
+                    "sens": "l'exception"
+                },
+                {
+                    "ar": "الْمُطْلَقُ",
+                    "sens": "l'absolu"
+                },
+                {
+                    "ar": "الْمُقَيَّدُ",
+                    "sens": "le restreint"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S14",
+            "titre": "Énoncé global, éclaircissement, texte explicite, apparent",
+            "phrases": [
+                "WRQ-0066",
+                "WRQ-0067",
+                "WRQ-0068",
+                "WRQ-0069",
+                "WRQ-0070"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "الْمُجْمَلُ",
+                    "sens": "l'énoncé global"
+                },
+                {
+                    "ar": "الْبَيَانُ",
+                    "sens": "l'éclaircissement"
+                },
+                {
+                    "ar": "النَّصُّ",
+                    "sens": "le texte explicite"
+                },
+                {
+                    "ar": "الظَّاهِرُ",
+                    "sens": "l'apparent"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S15",
+            "titre": "Les actes du Prophète",
+            "phrases": [
+                "WRQ-0071",
+                "WRQ-0072",
+                "WRQ-0073",
+                "WRQ-0074",
+                "WRQ-0075",
+                "WRQ-0076",
+                "WRQ-0077"
+            ],
+            "duree_min": 13,
+            "mots_difficiles": [
+                {
+                    "ar": "الْقُرْبَةِ",
+                    "sens": "le rapprochement [d'Allah]"
+                },
+                {
+                    "ar": "الِاخْتِصَاصِ",
+                    "sens": "la particularité"
+                },
+                {
+                    "ar": "إِقْرَارُ",
+                    "sens": "l'approbation"
+                }
+            ],
+            "relecture_comite": true,
+            "niveau_min": "cycle4_avance",
+            "ecarts_malikites": [
+                "E-05"
+            ]
+        },
+        {
+            "id": "WRQ-S16",
+            "titre": "L'abrogation",
+            "phrases": [
+                "WRQ-0078",
+                "WRQ-0079",
+                "WRQ-0080",
+                "WRQ-0081",
+                "WRQ-0082",
+                "WRQ-0083",
+                "WRQ-0084"
+            ],
+            "duree_min": 13,
+            "mots_difficiles": [
+                {
+                    "ar": "النَّسْخُ",
+                    "sens": "l'abrogation"
+                },
+                {
+                    "ar": "الرَّسْمِ",
+                    "sens": "la lettre [du texte]"
+                },
+                {
+                    "ar": "الْمُتَوَاتِرِ",
+                    "sens": "le massivement transmis"
+                },
+                {
+                    "ar": "الْآحَادِ",
+                    "sens": "l'isolé"
+                }
+            ],
+            "ecarts_malikites": [
+                "E-13",
+                "E-11"
+            ]
+        },
+        {
+            "id": "WRQ-S17",
+            "titre": "La contradiction entre deux énoncés",
+            "phrases": [
+                "WRQ-0085",
+                "WRQ-0086",
+                "WRQ-0087",
+                "WRQ-0088",
+                "WRQ-0089"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "تَعَارَضَ",
+                    "sens": "se contredire"
+                },
+                {
+                    "ar": "نُطْقَانِ",
+                    "sens": "deux énoncés"
+                },
+                {
+                    "ar": "يُنْسَخُ",
+                    "sens": "est abrogé"
+                }
+            ],
+            "ecarts_malikites": [
+                "E-07"
+            ]
+        },
+        {
+            "id": "WRQ-S18",
+            "titre": "Le consensus",
+            "phrases": [
+                "WRQ-0090",
+                "WRQ-0091",
+                "WRQ-0092",
+                "WRQ-0093",
+                "WRQ-0094",
+                "WRQ-0095",
+                "WRQ-0096",
+                "WRQ-0097",
+                "WRQ-0098"
+            ],
+            "duree_min": 16,
+            "mots_difficiles": [
+                {
+                    "ar": "الْإِجْمَاعُ",
+                    "sens": "le consensus"
+                },
+                {
+                    "ar": "عِصْمَةِ",
+                    "sens": "la préservation [de l'erreur]"
+                },
+                {
+                    "ar": "انْقِرَاضُ",
+                    "sens": "l'extinction [de la génération]"
+                },
+                {
+                    "ar": "سُكُوتِ",
+                    "sens": "le silence"
+                }
+            ],
+            "ecarts_malikites": [
+                "E-04",
+                "E-01",
+                "E-14",
+                "E-02"
+            ]
+        },
+        {
+            "id": "WRQ-S19",
+            "titre": "Les rapports : définition et transmission massive",
+            "phrases": [
+                "WRQ-0099",
+                "WRQ-0100",
+                "WRQ-0101",
+                "WRQ-0102",
+                "WRQ-0103",
+                "WRQ-0104"
+            ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                {
+                    "ar": "الْخَبَرُ",
+                    "sens": "le rapport"
+                },
+                {
+                    "ar": "الْمُتَوَاتِرُ",
+                    "sens": "le massivement transmis"
+                },
+                {
+                    "ar": "التَّوَاطُؤُ",
+                    "sens": "la concertation"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S20",
+            "titre": "Mursal, musnad et modes de transmission",
+            "phrases": [
+                "WRQ-0105",
+                "WRQ-0106",
+                "WRQ-0107",
+                "WRQ-0108",
+                "WRQ-0109"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "مُرْسَلٍ",
+                    "sens": "mursal (chaîne interrompue)"
+                },
+                {
+                    "ar": "مُسْنَدٍ",
+                    "sens": "musnad (chaîne continue)"
+                },
+                {
+                    "ar": "الْعَنْعَنَةُ",
+                    "sens": "la transmission par « d'après »"
+                },
+                {
+                    "ar": "إِجَازَةً",
+                    "sens": "licence de transmission"
+                }
+            ],
+            "ecarts_malikites": [
+                "E-03",
+                "E-10"
+            ]
+        },
+        {
+            "id": "WRQ-S21",
+            "titre": "L'analogie et ses trois espèces",
+            "phrases": [
+                "WRQ-0110",
+                "WRQ-0111",
+                "WRQ-0112",
+                "WRQ-0113",
+                "WRQ-0114"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "الْقِيَاسُ",
+                    "sens": "l'analogie"
+                },
+                {
+                    "ar": "الْعِلَّةِ",
+                    "sens": "la cause"
+                },
+                {
+                    "ar": "شَبَهٌ",
+                    "sens": "ressemblance"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S22",
+            "titre": "Les conditions de l'analogie",
+            "phrases": [
+                "WRQ-0115",
+                "WRQ-0116",
+                "WRQ-0117",
+                "WRQ-0118",
+                "WRQ-0119"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "الْفَرْعُ",
+                    "sens": "le cas à traiter"
+                },
+                {
+                    "ar": "الْأَصْلُ",
+                    "sens": "le cas de référence"
+                },
+                {
+                    "ar": "تَطَّرِدَ",
+                    "sens": "être constante"
+                },
+                {
+                    "ar": "تَنْتَقِضَ",
+                    "sens": "être mise en défaut"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S23",
+            "titre": "Interdiction ou permission de principe ; continuité ; priorité des preuves",
+            "phrases": [
+                "WRQ-0120",
+                "WRQ-0121",
+                "WRQ-0122",
+                "WRQ-0123",
+                "WRQ-0124"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "الْحَظْرُ",
+                    "sens": "l'interdiction [de principe]"
+                },
+                {
+                    "ar": "اسْتِصْحَابِ الْحَالِ",
+                    "sens": "la continuité de l'état antérieur"
+                },
+                {
+                    "ar": "الْجَلِيُّ",
+                    "sens": "l'évident"
+                }
+            ],
+            "ecarts_malikites": [
+                "E-17",
+                "E-08"
+            ]
+        },
+        {
+            "id": "WRQ-S24",
+            "titre": "Le mufti et celui qui demande une fatwa",
+            "phrases": [
+                "WRQ-0125",
+                "WRQ-0126",
+                "WRQ-0127",
+                "WRQ-0128"
+            ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                {
+                    "ar": "الْمُفْتِي",
+                    "sens": "le mufti"
+                },
+                {
+                    "ar": "اسْتِنْبَاطِ",
+                    "sens": "la déduction"
+                },
+                {
+                    "ar": "الْمُسْتَفْتِي",
+                    "sens": "celui qui demande une fatwa"
+                }
+            ]
+        },
+        {
+            "id": "WRQ-S25",
+            "titre": "Le {ar:0}",
+            "phrases": [
+                "WRQ-0129",
+                "WRQ-0130",
+                "WRQ-0131",
+                "WRQ-0132"
+            ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                {
+                    "ar": "التَّقْلِيدُ",
+                    "sens": "le fait d'adopter l'avis d'autrui sans preuve produite"
+                },
+                {
+                    "ar": "حُجَّةٍ",
+                    "sens": "preuve"
+                },
+                {
+                    "ar": "وَحْيٍ",
+                    "sens": "révélation"
+                }
+            ],
+            "relecture_comite": true,
+            "niveau_min": "adulte",
+            "titre_translit_interne": "Le taqlīd",
+            "titre_mots_ar": [
+                "التَّقْلِيدُ"
+            ]
+        },
+        {
+            "id": "WRQ-S26",
+            "titre": "L'effort de déduction [{ar:0}] et la justesse de celui qui le fait",
+            "phrases": [
+                "WRQ-0133",
+                "WRQ-0134",
+                "WRQ-0135",
+                "WRQ-0136",
+                "WRQ-0137",
+                "WRQ-0138",
+                "WRQ-0139"
+            ],
+            "duree_min": 13,
+            "mots_difficiles": [
+                {
+                    "ar": "الْمُجْتَهِدُ",
+                    "sens": "celui qui fait l'effort de déduction",
+                    "sens_translit_interne": "celui qui fait ijtihād"
+                },
+                {
+                    "ar": "مُصِيبٌ",
+                    "sens": "dans le vrai"
+                },
+                {
+                    "ar": "أَجْرَانِ",
+                    "sens": "deux récompenses"
+                },
+                {
+                    "ar": "تَصْوِيبِ",
+                    "sens": "le fait de donner raison"
+                }
+            ],
+            "relecture_comite": true,
+            "niveau_min": "adulte",
+            "ecarts_malikites": [
+                "E-09"
+            ],
+            "titre_translit_interne": "L'ijtihād et la justesse du mujtahid",
+            "titre_mots_ar": [
+                "الِاجْتِهَادُ"
+            ]
+        }
+    ]
+}

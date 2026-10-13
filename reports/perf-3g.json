@@ -1,13 +1,13 @@
 {
-  "ouvertureMs": 2081,
+  "ouvertureMs": 1837,
   "ouverturesMs": [
-    2883,
-    2591,
-    1934,
-    1898,
-    2081
+    1837,
+    1829,
+    1856,
+    1824,
+    1882
   ],
-  "relanceMs": 927,
+  "relanceMs": 624,
   "octetsPremiereOuvertureKo": {
     "document": 4.1,
     "stylesheet": 11.5,
