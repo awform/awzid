@@ -114,10 +114,25 @@ http://localhost, http://127.0.0.1 {
 		protocols tls1.2 tls1.3
 	}
 }
+# HSTS PRUDENT : durée courte au début (AWFORM_HSTS_SECONDES=300 posé par deploy.sh --production), à allonger quand tout
+# est vérifié (86400, puis 31536000) ; jamais « includeSubDomains » ni « preload » pendant la bêta
 https://{$SITE}, https://{$SITE_LAN:127.0.0.2}, https://{$SITE_TS:127.0.0.3} {
 	import {$AWFORM_TLS:tls_interne}
-	header Strict-Transport-Security "max-age=31536000"
+	header Strict-Transport-Security "max-age={$AWFORM_HSTS_SECONDES:31536000}"
 	import awform
+}
+
+# NOM CANONIQUE : le site vit sur {$SITE} (ex. awzid.com) ; les autres noms (SITE_ALIAS_1, SITE_ALIAS_2 : ex. www.awzid.com et
+# app.awzid.com) redirigent en 301 vers lui, chemin et paramètres conservés. Caddy obtient un certificat Let's Encrypt
+# PAR NOM (chaque nom doit pointer vers le serveur). Sans alias réglé : adresses locales inertes, comme SITE_LAN.
+http://{$SITE_ALIAS_1:127.0.0.4}, http://{$SITE_ALIAS_2:127.0.0.5} {
+	redir https://{$SITE}{uri} 301
+}
+https://{$SITE_ALIAS_1:127.0.0.4}, https://{$SITE_ALIAS_2:127.0.0.5} {
+	import {$AWFORM_TLS:tls_interne}
+	header Strict-Transport-Security "max-age={$AWFORM_HSTS_SECONDES:31536000}"
+	header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
+	redir https://{$SITE}{uri} 301
 }
 
 # Relais d'école (lot 17) : le sous-domaine d'une école (ex. ecole-dakar-01.relais.awzid.org) pointe

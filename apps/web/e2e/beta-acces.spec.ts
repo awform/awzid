@@ -501,3 +501,47 @@ test.describe('espace administrateur : trois modes, plafond, tableau de bord', (
     await adm.context().close();
   });
 });
+
+test.describe('accueil de la bêta pour un visiteur (awzid.com)', () => {
+  test('« sur invitation » : présentation courte, « Bêta sur invitation », code, liste d’attente ; l’application reste fermée', async ({
+    page,
+  }) => {
+    await statut(page, { mode: 'invitation', inscription: 'invitation' });
+    for (const chemin of ['/', '/lecons/en1.l01', '/coran/lecteur']) {
+      await page.goto(chemin);
+      await expect(page.getByTestId('accueil-visiteur')).toBeVisible();
+      await expect(page.getByTestId('accueil-beta')).toHaveText('Bêta sur invitation');
+    }
+    await expect(page.getByTestId('accueil-visiteur')).toContainText(/arabe/);
+    // aucune carte de livre n'est montrée au visiteur
+    await expect(page.getByTestId('level')).toHaveCount(0);
+    // « Demander une invitation » ouvre la liste d'attente
+    await page.getByTestId('accueil-demander').click();
+    await expect(page).toHaveURL(/\/inscription/);
+    await expect(page.getByTestId('liste-attente')).toBeVisible();
+    // « J'ai un code » mène à la saisie du code
+    await page.goto('/');
+    await page.getByTestId('accueil-code').click();
+    await expect(page.getByTestId('code-invitation')).toBeVisible();
+    // la connexion et les pages légales restent ouvertes
+    await page.goto('/connexion');
+    await expect(page.getByTestId('accueil-visiteur')).toHaveCount(0);
+    await page.goto('/legal/cgu');
+    await expect(page.getByTestId('accueil-visiteur')).toHaveCount(0);
+    // noindex aussi sur cet écran
+    await page.goto('/');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+  });
+
+  test('mode ouvert ou compte connecté : pas d’accueil de la bêta', async ({ page }) => {
+    await statut(page, { mode: 'ouvert', inscription: 'ouverte' });
+    await page.goto('/');
+    await expect(page.getByTestId('accueil-visiteur')).toHaveCount(0);
+    await page.unroute('**/api/v1/acces/statut');
+    await statut(page, { mode: 'invitation', inscription: 'invitation' });
+    const r = await signup(page, unique('conn'));
+    expect(r.status()).toBe(201);
+    await page.goto('/');
+    await expect(page.getByTestId('accueil-visiteur')).toHaveCount(0);
+  });
+});

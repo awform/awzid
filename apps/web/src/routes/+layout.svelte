@@ -19,13 +19,9 @@
   import { purgeOldRecordings } from '$lib/recordings';
   import { remindersOn } from '$lib/quotidien/reglages';
   import { cachedMe, fetchMe, type Me } from '$lib/session';
-  import {
-    bandeauAffiche,
-    chargerStatut,
-    maintenance,
-    pageDeVerification,
-    type AccesStatut,
-  } from '$lib/acces';
+  // bêta : logique d'accès chargée À LA DEMANDE (en ligne seulement) : l'appareil de l'élève n'en porte pas le poids
+  import type * as ModAcces from '$lib/acces';
+  import type { AccesStatut } from '$lib/acces';
   import { chargerFonctions } from '$lib/fonctions.svelte';
   import { cleDeChemin, envoyer, noterUsage, usagePour } from '$lib/usage';
   import { appliquerFond, lireFond, stockageLocal } from '$lib/theme/fond';
@@ -56,8 +52,24 @@
   // bêta fermée : état d'accès du site (mode fermé = page de maintenance) et bandeau « Version bêta » (fermable),
   // chargé après le démarrage comme la mise à jour
   let acces = $state<AccesStatut | null>(null);
+  let Acces = $state<typeof ModAcces | null>(null);
   let Bandeau = $state<Component | null>(null);
-  const ferme = $derived(maintenance(acces, page.url.pathname));
+  const ferme = $derived(!!Acces && Acces.maintenance(acces, page.url.pathname));
+  // écran à la place de l'application : maintenance (mode fermé) ou accueil du visiteur (bêta sur invitation)
+  let Accueil = $state<Component<{ mode: 'ferme' | 'accueil' }> | null>(null);
+  const porte = $derived<'ferme' | 'accueil' | null>(
+    ferme
+      ? 'ferme'
+      : prete && !!Acces && Acces.accueilVisiteur(acces, !!me, page.url.pathname)
+        ? 'accueil'
+        : null,
+  );
+  $effect(() => {
+    if (porte && !Accueil)
+      void import('./inscription/AccueilBeta.svelte')
+        .then((m) => (Accueil = m.default as typeof Accueil))
+        .catch(() => {});
+  });
   const bandeauCache = $derived(
     /^\/(coran\/lecteur|hifz\/enfant)\/?$/.test(page.url.pathname) || ferme,
   );
@@ -93,7 +105,7 @@
   });
   // bêta : adresse e-mail à vérifier avant d'utiliser le compte (réglage « vérification requise ») → page dédiée
   $effect(() => {
-    const cible = pageDeVerification(
+    const cible = Acces?.pageDeVerification(
       acces,
       me?.account.emailVerified,
       me?.account.kind,
@@ -138,17 +150,21 @@
   onMount(() => {
     if ('serviceWorker' in navigator)
       void import('$lib/MajBandeau.svelte').then((m) => (Maj = m.default)).catch(() => {});
-    void chargerStatut().then((s) => {
-      acces = s;
-      let stockage: Storage | null = null;
-      try {
-        stockage = localStorage;
-      } catch {
-        /* stockage indisponible */
-      }
-      if (bandeauAffiche(s, stockage))
-        void import('$lib/BandeauBeta.svelte').then((m) => (Bandeau = m.default)).catch(() => {});
-    });
+    void import('$lib/acces')
+      .then(async (m) => {
+        Acces = m;
+        const s = await m.chargerStatut();
+        acces = s;
+        let stockage: Storage | null = null;
+        try {
+          stockage = localStorage;
+        } catch {
+          /* stockage indisponible */
+        }
+        if (m.bandeauAffiche(s, stockage))
+          void import('$lib/BandeauBeta.svelte').then((b) => (Bandeau = b.default)).catch(() => {});
+      })
+      .catch(() => {});
     mode = readMode();
     applyMode(mode);
     appliquerFond(lireFond());
@@ -333,12 +349,9 @@
   {#if Bandeau && !bandeauCache}<Bandeau />{/if}
 
   <main id="contenu" tabindex="-1">
-    {#if ferme}
-      <!-- mode fermé : page de maintenance sobre (le serveur la sert aussi seul, voir hooks.server.ts) -->
-      <section class="card ferme" data-testid="maintenance" role="status">
-        <h1><Bidi text={t('ferme.titre')} /></h1>
-        <p><Bidi text={t('ferme.texte')} /></p>
-      </section>
+    {#if porte}
+      <!-- bêta : maintenance (mode fermé) ou accueil du visiteur, chargés à la demande -->
+      {#if Accueil}<Accueil mode={porte} />{/if}
     {:else}
       {@render children()}
     {/if}
@@ -360,11 +373,6 @@
 </div>
 
 <style>
-  .ferme {
-    max-width: 560px;
-    margin: 32px auto;
-    text-align: center;
-  }
   .top {
     display: flex;
     align-items: center;

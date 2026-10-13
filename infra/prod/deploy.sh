@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Déploiement AWFORM (idempotent : peut être relancé à volonté).
-#   infra/prod/deploy.sh [--demo | --production] [--site 192.168.50.10] [--lan-ip 192.168.1.106] [--ts-ip 100.x.y.z] [--ts-name machine.tailnet.ts.net]
+#   infra/prod/deploy.sh [--demo | --production] [--site 192.168.50.10] [--lan-ip 192.168.1.106] [--alias www.exemple.org --alias app.exemple.org] [--ts-ip 100.x.y.z] [--ts-name machine.tailnet.ts.net]
 # --production (domaine public) : HTTP redirigé vers HTTPS, cookie toujours « Secure » (audit SEC-7) ;
 # sans lui : réseau local (HTTP servi sur l'adresse IP).
 # 1. secrets générés sur la machine (une seule fois) dans ~/.config/awform/prod.env (droits 600, hors dépôt) ;
@@ -20,6 +20,8 @@ DEMO=0
 PRODUCTION=0
 SITE="192.168.50.10"
 SITE_LAN=""
+ALIAS1=""
+ALIAS2=""
 SITE_TS=""
 SITE_TSNAME=""
 RELAIS_DOMAINE=""
@@ -31,6 +33,8 @@ while [ $# -gt 0 ]; do
     --site) SITE="$2"; shift ;;
     --lan) LAN="$2"; shift ;;
     --lan-ip) SITE_LAN="$2"; shift ;;
+    # noms qui redirigent (301) vers --site : --alias www.awzid.com --alias app.awzid.com (au plus deux)
+    --alias) if [ -z "$ALIAS1" ]; then ALIAS1="$2"; else ALIAS2="$2"; fi; shift ;;
     # adresse Tailscale (réseau privé, démonstration seulement) ; vide = rien
     --ts-ip) SITE_TS="$2"; shift ;;
     # nom Tailscale (MagicDNS, *.ts.net) servi en HTTPS avec un vrai certificat Let's Encrypt de Tailscale
@@ -63,6 +67,13 @@ grep -q '^SITE=' "$ENVF" && sed -i "s/^SITE=.*/SITE=$SITE/" "$ENVF"
 # accès depuis les appareils du Wi-Fi par le PC (redirection de port) : certificat aussi pour cette IP
 sed -i '/^SITE_LAN=/d;/^DEFAULT_SNI=/d' "$ENVF"
 if [ -n "$SITE_LAN" ]; then echo "SITE_LAN=$SITE_LAN" >> "$ENVF"; echo "DEFAULT_SNI=$SITE_LAN" >> "$ENVF"; else echo "DEFAULT_SNI=$SITE" >> "$ENVF"; fi
+sed -i '/^SITE_ALIAS_1=/d;/^SITE_ALIAS_2=/d' "$ENVF"
+for al in "$ALIAS1:SITE_ALIAS_1" "$ALIAS2:SITE_ALIAS_2"; do
+  nom="${al%%:*}"; cle="${al##*:}"
+  [ -n "$nom" ] || continue
+  case "$nom" in *[!a-z0-9.-]* | .* | *..*) echo "nom invalide : $nom"; exit 2 ;; esac
+  echo "$cle=$nom" >> "$ENVF"
+done
 sed -i '/^SITE_TS=/d' "$ENVF"
 if [ -n "$SITE_TS" ]; then
   case "$SITE_TS" in *[!0-9.]*) echo "adresse Tailscale invalide : $SITE_TS"; exit 2 ;; esac

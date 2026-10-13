@@ -55,6 +55,12 @@ import { coutsDuJour, listePlafonds, tableauComptes } from './plafonds.js';
 
 /** Chemins de l'API qui restent joignables quand le site est fermé (le reste répond 503 aux non-administrateurs). */
 const OUVERT_FERME = /^\/api\/v1\/(health|acces\/(statut|jeton)|auth\/|admin\/|billing\/webhook\/)/;
+/**
+ * Contenu des livres, du Coran et des rubriques : FERMÉ aux visiteurs non connectés quand la bêta est « sur invitation »
+ * (les textes religieux n'ont pas encore la seconde lecture savante : pas d'accès anonyme).
+ */
+const CONTENU_FERME_AUX_ANONYMES =
+  /^\/api\/v1\/(levels|units|packs|booklets|quran|hifz\/books|vivre|lecons-audio|adhkar)(\/|\?|$)/;
 /** Chemins accessibles à un compte dont l'adresse n'est pas encore vérifiée. */
 const OUVERT_NON_VERIFIE =
   /^\/api\/v1\/(health|acces\/|auth\/|account\/email|admin\/|billing\/webhook\/|config|pays|public)/;
@@ -84,6 +90,14 @@ export function registerBetaAcces(
       void reply.header('Retry-After', '600');
       return err(reply, 503, 'acces_ferme');
     }
+    // bêta « sur invitation » : le contenu n'est pas servi aux visiteurs anonymes (l'application leur montre l'accueil de la bêta)
+    if (
+      acces.site === 'ouvert' &&
+      acces.inscription === 'invitation' &&
+      !req.auth &&
+      CONTENU_FERME_AUX_ANONYMES.test(req.url)
+    )
+      return err(reply, 401, 'connexion_requise');
     // vérification de l'adresse avant activation (familles et adultes seulement ; sans e-mail réglé, impossible)
     const a = req.auth;
     if (

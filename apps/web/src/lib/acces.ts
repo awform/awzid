@@ -84,3 +84,15 @@ export function pageDeVerification(
   if (genre !== 'parent' && genre !== 'adulte') return null;
   return OUVERTES_SI_NON_VERIFIE.test(path) ? null : '/acces/verification';
 }
+
+/** Pages ouvertes à un visiteur non connecté quand la bêta est « sur invitation » (le reste de l'application est fermé). */
+const ROUTES_VISITEUR = /^\/(connexion|inscription|acces|legal|aide|garanties|errata|etat)(\/|$)/;
+/**
+ * Bêta « sur invitation » : un visiteur non connecté ne voit que l'accueil de la bêta (présentation, code d'invitation, liste
+ * d'attente, connexion) ; l'application et son contenu restent fermés (le serveur refuse aussi l'API aux anonymes).
+ */
+export function accueilVisiteur(s: AccesStatut | null, connecte: boolean, path: string): boolean {
+  return (
+    s?.mode === 'invitation' && s.site === 'ouvert' && !connecte && !ROUTES_VISITEUR.test(path)
+  );
+}

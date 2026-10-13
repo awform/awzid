@@ -3205,5 +3205,11 @@
   "tab.al_attente": "Requests are waiting for an answer on the waiting list.",
   "tab.al_verifications_en_retard": "Several addresses have been unverified for more than 24 h.",
   "tab.al_courriel_inactif": "E-mail sending is not set up: invitations and verifications are not sent.",
-  "tab.al_cout_jour_eleve": "Today’s estimated cost is above the alert threshold."
+  "tab.al_cout_jour_eleve": "Today’s estimated cost is above the alert threshold.",
+  "acc.presentation": "Awzid guides you step by step to learn Arabic, read and memorise the Quran and discover the Islamic sciences, as a family or in class.",
+  "acc.beta": "Beta by invitation",
+  "acc.beta_texte": "The app is in a closed testing phase. To create an account you need an invitation code; without one, leave your address on the waiting list.",
+  "acc.code": "I have an invitation code",
+  "acc.demander": "Request an invitation",
+  "acc.connexion": "I already have an account: sign in"
 }

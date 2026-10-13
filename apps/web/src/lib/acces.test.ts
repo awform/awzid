@@ -11,6 +11,7 @@ import {
   bandeauFerme,
   CLE_BANDEAU,
   fermerBandeau,
+  accueilVisiteur,
   maintenance,
   ouverteSiFerme,
   pageDeVerification,
@@ -50,6 +51,66 @@ const statut = (p: Partial<AccesStatut> = {}): AccesStatut => ({
 });
 
 describe('trois modes, plafond, vérification de l’adresse (application)', () => {
+  it('accueil du visiteur : seulement en mode « sur invitation », hors connexion, inscription et pages légales', () => {
+    const inv = statut({ mode: 'invitation' });
+    expect(accueilVisiteur(inv, false, '/')).toBe(true);
+    expect(accueilVisiteur(inv, false, '/lecons/en1.l01')).toBe(true);
+    expect(accueilVisiteur(inv, false, '/coran/lecteur')).toBe(true);
+    for (const p of [
+      '/connexion',
+      '/inscription',
+      '/acces/verification',
+      '/legal/cgu',
+      '/aide',
+      '/etat',
+      '/errata',
+    ])
+      expect(accueilVisiteur(inv, false, p), p).toBe(false);
+    expect(accueilVisiteur(inv, true, '/')).toBe(false); // connecté
+    expect(accueilVisiteur(statut({ mode: 'ouvert' }), false, '/')).toBe(false);
+    expect(accueilVisiteur(statut({ mode: 'ferme', site: 'ferme' }), false, '/')).toBe(false); // la maintenance s'applique
+    expect(accueilVisiteur(null, false, '/')).toBe(false);
+  });
+  it('le poids de cette logique n’alourdit pas l’appareil de l’élève : modules chargés à la demande, en ligne seulement', () => {
+    const g = readFileSync(join(WEB, 'scripts', 'groupes.mjs'), 'utf8');
+    expect(g).toContain('BandeauBeta');
+    expect(g).toContain('acces\\.ts');
+    expect(g).toContain('AccueilBeta');
+    const layout = readFileSync(join(SRC, 'routes', '+layout.svelte'), 'utf8');
+    expect(layout).toContain("import('$lib/acces')");
+    expect(layout).toContain("import('./inscription/AccueilBeta.svelte')");
+    expect(layout).not.toMatch(/^\s*import \{[^}]*\} from '\$lib\/acces';/m);
+  });
+  it('l’accueil et la maintenance n’ont aucune phrase en dur et leurs textes existent dans les cinq langues', () => {
+    const comp = readFileSync(join(SRC, 'routes', 'inscription', 'AccueilBeta.svelte'), 'utf8');
+    for (const k of [
+      'acc.presentation',
+      'acc.beta',
+      'acc.beta_texte',
+      'acc.code',
+      'acc.demander',
+      'acc.connexion',
+      'ferme.titre',
+    ])
+      expect(comp, k).toContain(`'${k}'`);
+    for (const l of ['en', 'es', 'de', 'ar']) {
+      const m = JSON.parse(readFileSync(join(STATIC, 'i18n', `${l}.json`), 'utf8')) as Record<
+        string,
+        string
+      >;
+      for (const k of ['acc.presentation', 'acc.beta', 'acc.code', 'acc.demander', 'ferme.titre'])
+        expect(m[k], `${l} ${k}`).toBeTruthy();
+    }
+    const rares = JSON.parse(readFileSync(join(STATIC, 'i18n', 'fr-rares.json'), 'utf8')) as Record<
+      string,
+      string
+    >;
+    expect(rares['acc.beta']).toBe('Bêta sur invitation');
+    const shell = JSON.parse(
+      readFileSync(join(SRC, 'lib', 'i18n', 'messages', 'fr.json'), 'utf8'),
+    ) as Record<string, string>;
+    expect(shell['ferme.titre']).toBeUndefined(); // hors de la coquille de l'élève
+  });
   it('l’adresse à vérifier renvoie vers la page dédiée, sauf compte, aide et pages légales', () => {
     const r = statut({ verification: 'requise' });
     expect(pageDeVerification(r, false, 'adulte', '/')).toBe('/acces/verification');

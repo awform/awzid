@@ -3205,5 +3205,11 @@
   "tab.al_attente": "Hay solicitudes esperando respuesta en la lista de espera.",
   "tab.al_verifications_en_retard": "Varias direcciones llevan más de 24 h sin verificar.",
   "tab.al_courriel_inactif": "El envío de correos no está configurado: no salen invitaciones ni verificaciones.",
-  "tab.al_cout_jour_eleve": "El coste estimado de hoy supera el umbral de alerta."
+  "tab.al_cout_jour_eleve": "El coste estimado de hoy supera el umbral de alerta.",
+  "acc.presentation": "Awzid te acompaña paso a paso para aprender árabe, leer y memorizar el Corán y descubrir las ciencias islámicas, en familia o en clase.",
+  "acc.beta": "Beta por invitación",
+  "acc.beta_texte": "La aplicación está en fase de prueba cerrada. Para crear una cuenta hace falta un código de invitación; sin código, deje su dirección en la lista de espera.",
+  "acc.code": "Tengo un código de invitación",
+  "acc.demander": "Solicitar una invitación",
+  "acc.connexion": "Ya tengo una cuenta: iniciar sesión"
 }

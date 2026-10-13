@@ -17,6 +17,8 @@ if [ "$PRODUCTION" = 1 ]; then
   echo "COOKIE_SECURE=1" >> "$ENVF"
   echo "AWFORM_HTTP=rediriger" >> "$ENVF"
   echo "AWFORM_TLS=tls_public" >> "$ENVF"
+  # HSTS prudent au début (5 minutes) : à allonger plus tard en éditant prod.env puis en relançant deploy.sh
+  grep -q '^AWFORM_HSTS_SECONDES=' "$ENVF" || echo "AWFORM_HSTS_SECONDES=300" >> "$ENVF"
   # bêta fermée : par défaut, personne ne s'inscrit sans invitation (défaut de l'environnement ; l'administrateur
   # peut le changer ensuite dans l'application)
   grep -q '^AWFORM_ACCES=' "$ENVF" || echo "AWFORM_ACCES=invitation" >> "$ENVF"

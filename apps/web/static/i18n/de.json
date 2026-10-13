@@ -3205,5 +3205,11 @@
   "tab.al_attente": "Auf der Warteliste warten Anfragen auf eine Antwort.",
   "tab.al_verifications_en_retard": "Mehrere Adressen sind seit über 24 Std. unbestätigt.",
   "tab.al_courriel_inactif": "Der E-Mail-Versand ist nicht eingerichtet: Einladungen und Bestätigungen werden nicht gesendet.",
-  "tab.al_cout_jour_eleve": "Die geschätzten Kosten heute liegen über der Warnschwelle."
+  "tab.al_cout_jour_eleve": "Die geschätzten Kosten heute liegen über der Warnschwelle.",
+  "acc.presentation": "Awzid begleitet Sie Schritt für Schritt beim Arabischlernen, beim Lesen und Auswendiglernen des Korans und beim Entdecken der islamischen Wissenschaften, in der Familie oder im Unterricht.",
+  "acc.beta": "Beta auf Einladung",
+  "acc.beta_texte": "Die App befindet sich in einer geschlossenen Testphase. Zum Erstellen eines Kontos brauchen Sie einen Einladungscode; ohne Code tragen Sie sich in die Warteliste ein.",
+  "acc.code": "Ich habe einen Einladungscode",
+  "acc.demander": "Einladung anfordern",
+  "acc.connexion": "Ich habe schon ein Konto: anmelden"
 }

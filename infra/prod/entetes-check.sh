@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # CONTRÔLE DES EN-TÊTES DE SÉCURITÉ ET DE L'INVISIBILITÉ d'une adresse (lecture seule, rien n'est modifié) :
-#   infra/prod/entetes-check.sh https://beta.awzid.com     (ou http://127.0.0.1 sur la machine)
+#   infra/prod/entetes-check.sh https://awzid.com     (ou http://127.0.0.1 sur la machine)
 # Vérifie : politique de sécurité du contenu, nosniff, Referrer-Policy, interdiction des cadres, Permissions-Policy,
 # isolation d'origine, HSTS (en HTTPS), X-Robots-Tag « noindex », robots.txt strict, aucun sitemap, aucun en-tête
 # « Server », aucune balise d'aperçu social (Open Graph, Twitter) dans la page. Code de sortie 1 au premier écart.
 set -uo pipefail
-BASE="${1:?adresse à contrôler, ex. https://beta.awzid.com}"
+BASE="${1:?adresse à contrôler, ex. https://awzid.com}"
 BASE="${BASE%/}"
 BAD=0
 ok() { printf '  ok      %s\n' "$*"; }

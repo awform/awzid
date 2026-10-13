@@ -19,8 +19,8 @@ crée aucune ressource payante et n’ouvre pas le site au public sans votre acc
 | # | Étape | Vous | Moi (Claude) |
 |---|---|---|---|
 | 1 | Connecter `gcloud` | une connexion (2 minutes) | tout ce qui suit |
-| 2 | Enregistrement DNS `app.awzid.com` | 1 ligne chez le registraire | je la donne exacte et je vérifie |
-| 3 | E-mail (SMTP, SPF, DKIM, DMARC) | compte du service d’e-mail, 3-4 lignes DNS, mot de passe collé sur le serveur | je branche et j’essaie |
+| 2 | Enregistrements DNS chez OVH (`awzid.com`, `www`, `app`) | 3 entrées dans la zone DNS | je vérifie noms, certificats, redirections |
+| 3 | E-mail d’envoi (boîte OVH, SMTP) | créer la boîte, coller le mot de passe sur le serveur | je branche et j’essaie |
 | 4 | Comptes du personnel avec second facteur | choisir les mots de passe, scanner le code | je guide, je ne vois aucun mot de passe |
 | 5 | Clé privée de sauvegarde : 2 copies hors ligne | 2 clés USB rangées | test de restauration avec la vraie clé |
 | 6 | Audio Wavenet et Coran (13 Go) | accord pour la dépense | envoi par le bucket, import, contrôle |
@@ -41,34 +41,56 @@ Vous pouvez retirer l’accès à tout moment : `gcloud auth revoke`.
 **Ce que je fais ensuite** : `infra/gcp/serveur.sh ssh` (accès au serveur par le tunnel), contrôles `infra/gcp/verifier.sh`, déploiement
 des versions. Je ne crée aucune ressource payante sans vous le dire d’abord.
 
-## Étape 2 — L’enregistrement DNS (vous, 5 minutes)
+## Étape 2 — Les enregistrements DNS chez OVH (vous, 10 minutes)
 
-**Ce que vous faites** : chez le registraire de `awzid.com`, zone DNS → **Ajouter un enregistrement** :
+**Le nom de la bêta est `awzid.com`** (la racine). `www.awzid.com` et `app.awzid.com` mènent au même serveur mais **redirigent
+automatiquement (301) vers `awzid.com`** : un seul nom pour les cookies, les e-mails et les liens. L’adresse du serveur
+(**34.163.24.96**) est une **adresse IP statique déjà réservée** chez Google (`awzid-beta-ip`) : elle ne change pas, rien à réserver.
 
-| Type | Nom (hôte) | Valeur | Durée (TTL) |
+**Ce que vous faites** : dans l’espace OVH, `awzid.com` → **Zone DNS** → **Ajouter une entrée** (trois fois) :
+
+| Type | Sous-domaine | Cible | TTL |
 |---|---|---|---|
-| `A` | `app` | `34.163.24.96` | 300 |
+| `A` | *(vide, c’est-à-dire `@`)* | `34.163.24.96` | 300 |
+| `CNAME` | `www` | `awzid.com.` (avec le point final) | 300 |
+| `CNAME` | `app` | `awzid.com.` (avec le point final) | 300 |
 
-*Capture à voir : un tableau d’enregistrements, un bouton « Ajouter », trois champs (type, nom, valeur).* Ne créez rien pour `awzid.com` seul
-ni pour `www` : le site doit rester invisible tant que la vitrine n’existe pas.
+*Capture à voir : la liste des entrées de la zone, le bouton « Ajouter une entrée », puis un formulaire avec le type, le sous-domaine
+et la cible.* **Ne touchez à rien d’autre** : les entrées `MX` (courrier), le `SPF` (`TXT` qui commence par `v=spf1`) et le `TXT`
+`1|www.awzid.com` restent tels quels, car votre courrier est chez OVH. Si OVH propose de supprimer l’ancienne entrée `A` ou `CNAME`
+de `www` qui pointe vers l’hébergement OVH, remplacez-la (une seule entrée par nom).
 
-**Ce que je fais** : je vérifie que `app.awzid.com` pointe vers le serveur. Tant que le web est fermé (étape 8), l’adresse ne répond pas ;
-le certificat HTTPS (Let’s Encrypt) s’obtient seul à l’ouverture.
+**Ce que je fais** : quand c’est fait, je vérifie que les trois noms pointent vers le serveur (`nslookup`), puis, à l’ouverture (étape 8),
+je contrôle le certificat de **chaque** nom (Let’s Encrypt, un certificat par nom), la redirection (`https://www.awzid.com/x?y=1` →
+`https://awzid.com/x?y=1`), les cookies, les liens des e-mails (`https://awzid.com/…`) et l’en-tête HSTS **court** (5 minutes au début ; je
+l’allonge à 1 jour puis à 1 an seulement quand tout est vérifié, sans `preload`). Tant que le web est fermé, rien ne répond : c’est voulu.
 
-## Étape 3 — Le service d’e-mail (vous crée le compte ; moi je branche)
+## Étape 3 — Le service d’e-mail : le plus simple est celui d’OVH (vous crée la boîte ; moi je branche)
 
 **Pourquoi** : invitations, vérification d’adresse, « mot de passe oublié », alertes. Sans lui, tout marche sauf ces envois (je vous donne
 alors les liens à transmettre à la main), et la vérification de l’adresse reste facultative.
 
-**Ce que vous faites**
-1. Créez un compte chez un service d’envoi (Brevo, Scaleway TEM ou Postmark) et **ajoutez le domaine `awzid.com`**.
-2. Il vous donne 3 ou 4 lignes DNS (**SPF, DKIM, DMARC**) : collez-les chez le registraire, au même endroit qu’à l’étape 2.
-3. Il vous donne un identifiant et un **mot de passe SMTP** : **ne me les envoyez pas**. Je vous donne la seule commande à taper sur le
-   serveur pour les coller dans son fichier secret (`~/.config/awform/prod.env`, droits réservés).
-4. Dites-moi quelle adresse reçoit les alertes (`AWFORM_ALERTE_A`).
+**Pourquoi OVH** : votre courrier est déjà chez OVH et vos entrées `MX`, `SPF` et DKIM sont déjà là : **aucun changement DNS** n’est
+nécessaire, et le SPF existant n’est pas modifié. Un autre service (Brevo, Scaleway TEM, Postmark) demanderait de modifier le SPF : à éviter.
 
-**Ce que je fais** : je branche (`AWFORM_MAIL=smtp`), j’envoie un e-mail d’essai (`infra/prod/alerte.sh --essai`) et je vérifie SPF/DKIM/DMARC.
-Ensuite le serveur vous écrit seul si quelque chose cloche (au plus une fois par 6 heures pour le même problème, puis « rétabli »).
+**Ce que vous faites**
+1. Dans l’espace OVH, créez (ou choisissez) une **boîte e-mail** pour l’envoi, par exemple `no-reply@awzid.com`, et activez **DKIM** pour
+   le domaine si OVH le propose (une case à cocher, il ajoute lui-même ses entrées).
+2. Notez le serveur d’envoi (`ssl0.ovh.net` pour les boîtes OVH « MX Plan », port **465**, connexion chiffrée), l’identifiant (l’adresse complète)
+   et le **mot de passe de la boîte** : **ne me les envoyez pas**. Je vous donne la seule commande à taper sur le serveur pour les coller
+   dans son fichier secret (`~/.config/awform/prod.env`, droits réservés).
+3. Dites-moi quelle adresse reçoit les alertes (`AWFORM_ALERTE_A`).
+
+**Ce que je fais** : je branche (`AWFORM_MAIL=smtp`, expéditeur `Awzid <no-reply@awzid.com>`), j’envoie un e-mail d’essai
+(`infra/prod/alerte.sh --essai`) et je contrôle qu’il n’arrive pas en courrier indésirable. Ensuite le serveur vous écrit seul si quelque chose
+cloche (au plus une fois par 6 heures pour le même problème, puis « rétabli »).
+
+## Ce que voit un visiteur de `awzid.com`
+
+Tant que la bêta est **sur invitation**, quelqu’un qui n’est pas connecté voit **une page d’accueil courte** : une phrase de présentation, la
+mention **« Bêta sur invitation »**, les boutons « J’ai un code d’invitation » et « Demander une invitation » (liste d’attente) et « Me connecter ».
+**Aucun livre, aucune leçon, aucun verset** n’est montré ni servi à un visiteur anonyme (le serveur le refuse aussi). Toutes les pages restent
+invisibles des moteurs de recherche pendant la bêta (`noindex`, `robots.txt` « tout interdit », pas de sitemap, pas d’aperçu sur les réseaux sociaux).
 
 ## Étape 4 — Les comptes du personnel avec second facteur (vous choisissez, je guide)
 
@@ -113,12 +135,12 @@ et je vous rapporte les résultats en clair (quoi corriger, quoi accepter). Aucu
 ## Étape 8 — Ouvrir le web (sur votre accord seulement)
 
 Quand les étapes 2 à 7 sont faites, vous me dites « ouvre ». Je lance `infra/gcp/ouvrir-web.sh --oui` (règle de pare-feu 80/443), je contrôle
-`https://app.awzid.com/healthz` et `infra/prod/entetes-check.sh`, et la bêta est **fermée sur invitation** (personne n’entre sans code).
+`https://awzid.com/healthz` et `infra/prod/entetes-check.sh`, et la bêta est **fermée sur invitation** (personne n’entre sans code).
 **Retour arrière immédiat** : `ouvrir-web.sh --fermer`, ou le bouton « Fermé » dans l’application.
 
 ## Étape 9 — Inviter un relecteur
 
-1. Ouvrez `https://app.awzid.com/connexion` et connectez-vous avec le **compte administrateur** (second facteur).
+1. Ouvrez `https://awzid.com/connexion` et connectez-vous avec le **compte administrateur** (second facteur).
 2. Menu → **Administration** → bloc **« Accès à la bêta »** → **Invitations** :
    - *Nom ou note* : « Relecteur — Dr X » ; *Adresse e-mail* : celle du relecteur (**invitation personnelle** : seule cette adresse peut
      l’utiliser) ; *Valable* : 30 jours ; case **« Envoyer par e-mail »** cochée → **Créer l’invitation**.
@@ -185,7 +207,7 @@ Prix approximatifs **par mois**, Paris, euros, hors taxes (estimation du 13/10/2
 | Situation | Que faire |
 |---|---|
 | Un e-mail d’alerte arrive | Ne rien faire tout de suite : envoyez-moi l’objet du message. |
-| `app.awzid.com` ne répond pas | Ouvrez `/etat` ; sinon dites-le moi. Console Google → Compute Engine : la machine est-elle « arrêtée » (plafond atteint) ? |
+| `awzid.com` ne répond pas | Ouvrez `https://awzid.com/etat` ; sinon dites-le moi. Console Google → Compute Engine : la machine est-elle « arrêtée » (plafond atteint) ? |
 | La machine a été arrêtée par le plafond | Regardez la facture (Facturation → Rapports). Si c’est normal, dites-le moi : je relance la machine. |
 | Vous avez perdu la clé de sauvegarde | Dites-le **tout de suite** : une nouvelle paire est créée, la prochaine sauvegarde est lisible ; les anciennes sont perdues. |
 | Un invité a transmis son code | Révoquez l’invitation (bouton) : les personnes déjà inscrites restent. |
@@ -194,6 +216,6 @@ Prix approximatifs **par mois**, Paris, euros, hors taxes (estimation du 13/10/2
 ## Décisions que j’attends de vous
 
 1. Taille de la machine (garder `e2-standard-2` avec l’écoute IA, ou réduire) et **montant du plafond** de dépense.
-2. Quel service d’e-mail (Brevo, Scaleway TEM, Postmark) et quelle adresse reçoit les alertes.
+2. Quelle boîte OVH sert à l’envoi (`no-reply@awzid.com` ?) et quelle adresse reçoit les alertes.
 3. Accord pour la voix Wavenet (après mon estimation chiffrée) et l’import de l’audio du Coran.
 4. Le jour où vous me dites « ouvre ».

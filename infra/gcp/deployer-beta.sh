@@ -14,7 +14,9 @@ ROOT="$(cd "$GCP/../.." && pwd)"
 PROD="$ROOT/infra/prod"
 . "$GCP/config.sh"
 V="${AWFORM_VERSION:?AWFORM_VERSION attendu (ex. 31dc991)}"
-DOMAINE="${AWZID_DOMAINE:-app.awzid.com}"
+# nom canonique awzid.com (décision du client du 13/10) ; www.awzid.com et app.awzid.com redirigent en 301 vers lui
+DOMAINE="${AWZID_DOMAINE:-awzid.com}"
+ALIAS=(--alias "www.$DOMAINE" --alias "app.$DOMAINE")
 CONF="$HOME/.config/awform"
 umask 077
 mkdir -p "$CONF" "$ROOT/services/ecoute-ia"
@@ -59,7 +61,7 @@ for d in "$HOME/awform-content" "$HOME/lecons-audio" "$HOME/awform-data" "$HOME/
 done
 
 echo "== 3. déploiement (production)"
-AWFORM_DEPLOY_BUILD=0 AWFORM_VERSION="$V" "$PROD/deploy.sh" --production --site "$DOMAINE"
+AWFORM_DEPLOY_BUILD=0 AWFORM_VERSION="$V" "$PROD/deploy.sh" --production --site "$DOMAINE" "${ALIAS[@]}"
 
 echo "== 4. santé -> Cloud Monitoring (chaque minute)"
 sudo install -m 755 "$GCP/sante-metrique.sh" /usr/local/bin/awzid-sante-metrique

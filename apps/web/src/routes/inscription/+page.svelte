@@ -72,7 +72,8 @@
   }
   onMount(async () => {
     acces = await chargerStatut();
-    if (acces?.inscription === 'attente') demande = true;
+    // plafond atteint, ou lien « Demander une invitation » de l'accueil de la bêta (#attente) : la demande est déjà ouverte
+    if (acces?.inscription === 'attente' || location.hash === '#attente') demande = true;
     if (acces?.antibot === 'on') {
       const j = await call<{ jeton: string }>('GET', '/acces/jeton');
       jeton = j.ok && j.data ? j.data.jeton : '';

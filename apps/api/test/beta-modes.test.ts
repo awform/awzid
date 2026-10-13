@@ -145,6 +145,31 @@ describe.skipIf(!URL)('Bêta : trois modes, plafond, vérification, tableau (awf
     mail.sent.length = 0;
   });
 
+  it('bêta « sur invitation » : le contenu (livres, Coran) est fermé aux anonymes, ouvert aux connectés ; le mode ouvert le rend à tous', async () => {
+    const { P } = await (async () => {
+      const r = await signup(addr('cont'));
+      return { P: { cookie: cookieOf(r) } };
+    })();
+    await reglage({ mode: 'invitation' });
+    for (const u of [
+      '/api/v1/levels',
+      '/api/v1/units/x',
+      '/api/v1/packs',
+      '/api/v1/quran/1',
+      '/api/v1/vivre',
+    ]) {
+      const r = await c.req('GET', u);
+      expect(r.statusCode, u).toBe(401);
+      expect(r.json().error.code).toBe('connexion_requise');
+    }
+    // restent publics : santé, statut, pays, errata ; connecté : le contenu répond
+    expect((await c.req('GET', '/api/v1/health')).statusCode).toBe(200);
+    expect((await c.req('GET', '/api/v1/acces/statut')).statusCode).toBe(200);
+    expect((await c.req('GET', '/api/v1/levels', P)).statusCode).toBe(200);
+    await reglage({ mode: 'ouvert' });
+    expect((await c.req('GET', '/api/v1/levels')).statusCode).toBe(200);
+  });
+
   it('un seul réglage « mode » commute les trois modes, sans redéploiement, et se relit', async () => {
     expect(await statut()).toMatchObject({ mode: 'ouvert', inscription: 'ouverte' });
     expect((await reglage({ mode: 'invitation' })).json().acces).toMatchObject({

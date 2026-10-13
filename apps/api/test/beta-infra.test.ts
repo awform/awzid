@@ -293,3 +293,53 @@ print(m.doit_arreter({'costAmount':4.9,'budgetAmount':10}), m.doit_arreter({'cos
     });
   },
 );
+
+describe.skipIf(!posix)(
+  'nom canonique awzid.com : alias en 301, certificats par nom, HSTS prudent',
+  () => {
+    it('Caddyfile : alias → nom canonique, HSTS réglable (court au début), jamais includeSubDomains ni preload', () => {
+      const c = readFileSync(join(PROD, 'Caddyfile'), 'utf8');
+      expect(c).toContain('https://{$SITE_ALIAS_1:127.0.0.4}, https://{$SITE_ALIAS_2:127.0.0.5}');
+      expect(c).toContain('redir https://{$SITE}{uri} 301');
+      expect(c).toContain('max-age={$AWFORM_HSTS_SECONDES:31536000}');
+      expect(c).not.toMatch(/includeSubDomains|preload/i);
+      const scopes = readFileSync(join(PROD, 'env-scopes.conf'), 'utf8');
+      expect(scopes).toMatch(
+        /^caddy:.*SITE_ALIAS_1.*SITE_ALIAS_2.*AWFORM_HSTS_SECONDES|^caddy:.*AWFORM_HSTS_SECONDES.*SITE_ALIAS_1/m,
+      );
+    });
+    it('production : HSTS de 300 s au départ, adresse publique sur le nom canonique, déjà réglé = conservé', () => {
+      const d = tmp();
+      const f = join(d, 'prod.env');
+      writeFileSync(f, 'SITE=awzid.com\nCOOKIE_SECURE=auto\n');
+      const env = { PATH: process.env.PATH };
+      expect(sh(join(PROD, 'mode-env.sh'), env, f, '1').status).toBe(0);
+      let e = readFileSync(f, 'utf8');
+      expect(e).toMatch(/^AWFORM_HSTS_SECONDES=300$/m);
+      expect(e).toMatch(/^AWFORM_PUBLIC_URL=https:\/\/awzid\.com$/m);
+      // le client allonge la durée plus tard : le déploiement suivant ne la ramène pas à 300
+      e = e.replace('AWFORM_HSTS_SECONDES=300', 'AWFORM_HSTS_SECONDES=86400');
+      writeFileSync(f, e);
+      sh(join(PROD, 'mode-env.sh'), env, f, '1');
+      expect(readFileSync(f, 'utf8')).toMatch(/^AWFORM_HSTS_SECONDES=86400$/m);
+    });
+    it('deploy.sh accepte --alias (deux noms au plus) et le serveur de bêta utilise awzid.com + www + app', () => {
+      const dep = readFileSync(join(PROD, 'deploy.sh'), 'utf8');
+      expect(dep).toContain('--alias)');
+      expect(dep).toContain('SITE_ALIAS_1');
+      const gcp = readFileSync(join(GCP, 'deployer-beta.sh'), 'utf8');
+      expect(gcp).toContain('DOMAINE="${AWZID_DOMAINE:-awzid.com}"');
+      expect(gcp).toContain('--alias "www.$DOMAINE" --alias "app.$DOMAINE"');
+    });
+    const docker = spawnSync('docker', ['version'], { encoding: 'utf8' }).status === 0;
+    it.skipIf(!docker)(
+      'essai LOCAL de Caddy avec des noms de test (caddy-essai.sh) : alias 301, HSTS 300 s, noindex',
+      () => {
+        const r = sh(join(PROD, 'caddy-essai.sh'), process.env);
+        expect(r.stdout, r.stderr).toContain('Caddyfile : essai local OK');
+        expect(r.status).toBe(0);
+      },
+      90_000,
+    );
+  },
+);
