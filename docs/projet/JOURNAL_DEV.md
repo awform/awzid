@@ -21,7 +21,7 @@ Branche `madjaliss-3-wip` (worktree `~/awform-madjaliss-3`, depuis `main` 9d8bc8
 - **Statut** : une seule mention (`mj.statut`) sous chaque texte et chaque séance ; l'ancien libellé n'est plus accepté en entrée ni nulle part (test sur les données, les fichiers de langue).
 - **Reste à convertir par le référent** : translittération latine dans le français affiché (termes techniques, titres de séances d'al-Bayqūniyya et des hadiths, degrés des hadiths) : plafonds mesurés par texte dans `textes.test.ts` (`PLAFOND_TRANSLIT`), à ne jamais relever ; seuls les noms propres sont exceptés.
 - **Poids** : rien au démarrage (le code et les données sont dans le morceau « madjaliss », au premier usage) : appareil élève 343,6 Ko (marge 6,4 Ko), page la plus lourde `/coran/lecteur` 148,2 Ko, comme avant ; Madjaliss (4 fichiers, non préchargés) 12,9 → 13,5 Ko.
-- Tests : voir les chiffres du déploiement ci-dessous.
+- Tests : 648 tests unitaires du web verts (dont 194 pour la rubrique : `textes.test.ts` étendu aux dix textes, publication différée, hadiths, Bayqūniyya, Waraqāt, mots arabes, plafonds de translittération, statut) ; typecheck 0 erreur ; suite e2e COMPLÈTE : 655 réussis, 136 ignorés, 2 instables passés au second essai (a5:32, coran-lecture:120), 1 échec de lenteur sous charge (perf 3G : 3,5 s à trois travailleurs) repassé seul sur machine calme (1,84 s, relance 0,62 s) ; `pnpm lint` : 2 erreurs `no-empty-pattern` déjà présentes dans `coran-tactile.spec.ts` et un autre fichier e2e du Coran (non touchés).
 
 ---
 
