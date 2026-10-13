@@ -6,8 +6,8 @@ bloquant. Compression Brotli (qualité 11).
 
 | Indicateur | Mesure | Budget | Tenu |
 |---|---|---|---|
-| **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | 343.6 Ko | ≤ 350.0 Ko | oui |
-| (a) marge restante sous le budget de l'appareil élève | 6.4 Ko | ≥ 3.0 Ko | oui |
+| **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | 343.7 Ko | ≤ 350.0 Ko | oui |
+| (a) marge restante sous le budget de l'appareil élève | 6.3 Ko | ≥ 3.0 Ko | oui |
 | **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (`/`) | 112.3 Ko | ≤ 150.0 Ko | oui |
 | **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | 1.84 s (élève, premier lancement ; relance 0.62 s ; mesuré le 2026-10-13) | < 3 s | oui |
 | Page la plus lourde au premier chargement (`/coran/lecteur`) | 148.2 Ko | ≤ 150.0 Ko | oui |
@@ -21,9 +21,9 @@ bloquant. Compression Brotli (qualité 11).
 | Pages du personnel, NON préchargées (27 fichiers) | 51.2 Ko |
 | Pages rares, en ligne seulement, NON préchargées (51 fichiers) | 35.3 Ko |
 | Modules à la demande qui ont besoin du réseau, NON préchargés (21 fichiers) | 29.9 Ko |
-| Pages de l'élève gardées au premier usage (Madjaliss), NON préchargées (4 fichiers) | 13.5 Ko |
+| Pages de l'élève gardées au premier usage (Madjaliss), NON préchargées (4 fichiers) | 13.7 Ko |
 | Leçons vivantes, à la demande (2 fichiers) | 12.8 Ko (≤ 20.0 Ko) |
-| Total JS + CSS de toutes les pages (mesuré, non bloquant) | 475.2 Ko |
+| Total JS + CSS de toutes les pages (mesuré, non bloquant) | 475.4 Ko |
 | dont CSS | 51.5 Ko |
 | Service worker | 7.2 Ko |
 | Polices WOFF2 (une seule fois, déjà compressées) | 334.7 Ko (≤ 600.0 Ko) |
@@ -35,9 +35,9 @@ bloquant. Compression Brotli (qualité 11).
 |---|---|
 | `/coran/lecteur` | 148.2 Ko |
 | `/lecons/[id]` | 144.5 Ko |
-| `/hifz/[outil]` | 124.6 Ko |
-| `/hifz` | 124.5 Ko |
+| `/hifz/[outil]` | 124.7 Ko |
+| `/hifz` | 124.6 Ko |
 | `/enseignant/classe/[id]` | 120.5 Ko |
 | `/lectures/[code]` | 120.2 Ko |
 | `/lectures` | 120.2 Ko |
-| `/quotidien/adhkar` | 119.1 Ko |
+| `/quotidien/qibla` | 119.2 Ko |

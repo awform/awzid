@@ -4,10 +4,11 @@
   import Bidi from '$lib/Bidi.svelte';
   import { demoProfileFor } from '$lib/attempts';
   import { t } from '$lib/i18n';
-  import type { ProfileInfo } from '$lib/session';
+  import { cachedMe, isStaff, type ProfileInfo } from '$lib/session';
   import EnTete from '$lib/ui/EnTete.svelte';
   import Icon from '$lib/ui/Icon.svelte';
-  import { ACTIFS, CYCLES, cycleConseille } from './cycles';
+  import { ACTIFS, CYCLES, TOUT_DIFFERE, cycleConseille } from './cycles';
+  import { voitDiffere } from './donnees';
   import { lien } from './liens';
   import { lireProgres, type Progres } from './progression';
 
@@ -19,6 +20,8 @@
   let profil = $state<ProfileInfo | null>(null);
   let progres = $state<Record<string, Progres>>({});
   let pret = $state(false);
+  // personnel et démonstration : ouvrent aussi les textes entièrement en publication différée (ar-Risāla)
+  let differe = $state(false);
 
   const conseille = $derived(cycleConseille(profil));
   const enfant = $derived(profil?.kind === 'enfant');
@@ -30,6 +33,8 @@
 
   onMount(async () => {
     profil = await demoProfileFor('').catch(() => null);
+    const me = await cachedMe().catch(() => null);
+    differe = voitDiffere(me, isStaff(me));
     for (const id of ACTIFS) progres[id] = await lireProgres(profil?.id ?? null, id);
     pret = true;
   });
@@ -50,7 +55,7 @@
       </h2>
       <ul class="textes">
         {#each c.textes as x (x.id)}
-          {@const actif = ACTIFS.has(x.id)}
+          {@const actif = ACTIFS.has(x.id) && (differe || !TOUT_DIFFERE.has(x.id))}
           {@const faites = progres[x.id]?.faites.length ?? 0}
           <li>
             {#if actif}

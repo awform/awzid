@@ -119,6 +119,8 @@ export interface Seance {
   facultatif?: true;
   /** même sujet dans un autre texte (renvois du référent) */
   renvois?: Renvoi[];
+  /** grand texte (ar-Risāla) : n° du fichier de phrases `/mutun/<texte>-p<k>.json` où sont les phrases de cette séance */
+  p?: number;
 }
 
 /** Code visuel de la grammaire (Ājurrūmiyya) : soulignements et formes, aucune couleur du tajwīd. */
@@ -143,6 +145,17 @@ export interface Matn {
   code?: CodeVisuel;
   phrases: Phrase[];
   seances: Seance[];
+  /** grand texte (ar-Risāla) : le fichier du texte ne porte que le sommaire ; les phrases sont par parties, à la demande */
+  parts?: Array<{ n: number; version: string }>;
+}
+
+/** Fichier de phrases d'une partie d'un grand texte. */
+export interface PartieMatn {
+  v: number;
+  id: string;
+  part: number;
+  version: string;
+  phrases: Phrase[];
 }
 
 export interface NotesEnseignant {
@@ -231,6 +244,34 @@ async function charger(id: string, f: Fetcher): Promise<Matn | null> {
     return garde;
   }
   return reseau;
+}
+
+/**
+ * Grand texte (ar-Risāla) : ajoute au texte les phrases de la PARTIE qui porte la séance `n` (un seul fichier de
+ * quelques dizaines de Ko, jamais le texte entier). Copie de l'appareil si elle est à jour (hors ligne), sinon le
+ * réseau, gardé ensuite ; une copie périmée sert de repli sans réseau. Texte sans parties : rendu tel quel.
+ */
+export async function chargerPartie(
+  m: Matn,
+  n: number,
+  f: Fetcher = (u) => fetch(u),
+): Promise<Matn | null> {
+  const part = m.seances.find((s) => s.n === n)?.p;
+  const info = m.parts?.find((x) => x.n === part);
+  if (!m.parts || !part || !info) return m;
+  const cle = `mutun:${m.id}:p${part}`;
+  const garde = await kvGet<PartieMatn>(cle).catch(() => undefined);
+  let p: PartieMatn | null | undefined = garde?.version === info.version ? garde : null;
+  if (!p) {
+    p = await f(`/mutun/${encodeURIComponent(m.id)}-p${part}.json`)
+      .then((r) => (r.ok ? (r.json() as Promise<PartieMatn>) : null))
+      .catch(() => null);
+    if (p) await kvSet(cle, p).catch(() => {});
+    else p = garde; // pas de réseau : la copie de l'appareil, même ancienne
+  }
+  if (!p) return null;
+  const connues = new Set(m.phrases.map((x) => x.id));
+  return { ...m, phrases: [...m.phrases, ...p.phrases.filter((x) => !connues.has(x.id))] };
 }
 
 /** Notes du mode enseignant (en ligne seulement, jamais gardées sur l'appareil d'un élève). */

@@ -23,7 +23,7 @@
 //    est ignoré.
 // Statut : EN_ATTENTE_SECONDE_LECTURE (l'ancien libellé est accepté en entrée pendant la migration).
 // Usage : node scripts/madjaliss.mjs (contrôlé par src/lib/madjaliss/*.test.ts : fichiers à jour).
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -49,6 +49,21 @@ export const TEXTES = [
   'nawawi',
   'waraqat',
 ];
+/**
+ * Lot 4 : ar-Risāla (1 769 phrases, 164 séances). Source assemblée par `risala-assembler.mjs` ; construite à part des dix
+ * autres textes (les tests des dix textes ne bougent pas) ; servie en PLUSIEURS fichiers chargés à la demande
+ * (`static/mutun/risala.json` = sommaire, `risala-<partie>.json` = phrases d'un groupe de chapitres).
+ */
+export const TEXTES_LOT4 = ['risala'];
+export const TOUS_LES_TEXTES = [...TEXTES, ...TEXTES_LOT4];
+/**
+ * PUBLICATION DIFFÉRÉE PAR CYCLE (décision du pilote, 13/10/2026) : les séances dont le cycle est au moins `cycle_min`
+ * sont masquées aux invités de la bêta (visibles en mode enseignant et en démonstration). La Risāla est au cycle 3 du
+ * plan directeur : toutes ses séances. La consigne est contrôlée contre le `point_referent` de la source.
+ */
+export const DIFFERE_CYCLE = {
+  risala: { cycle_min: 3, consigne: /Publication différée de toute la Risāla/ },
+};
 /** Dossier des sources quand il diffère de l'identifiant du texte (« Les Quarante hadiths » : `nawawi40`). */
 const DOSSIER = { nawawi: 'nawawi40' };
 export const dossier = (texte) => join(SOURCES, DOSSIER[texte] ?? texte);
@@ -63,6 +78,7 @@ const PREFIXE_TEXTE = {
   BAY: 'bayquniyya',
   NAW: 'nawawi',
   WRQ: 'waraqat',
+  RIS: 'risala',
 };
 /**
  * PUBLICATION DIFFÉRÉE (décision du pilote, 13/10/2026) : séances que les invités de la bêta (ni personnel ni démo)
@@ -102,7 +118,12 @@ const TYPES = new Set([
   'vers',
   'vers_titre',
 ]);
-const TYPE_PHRASE = { phrase: 'texte', phrase_variante: 'texte', basmala: 'formule' };
+const TYPE_PHRASE = {
+  phrase: 'texte',
+  phrase_variante: 'texte',
+  basmala: 'formule',
+  contenu_hadith: 'texte',
+};
 
 /** Phrases jamais montrées sans leur explication (T7) : retirées des fichiers tant qu'elle manque. */
 export const AVEC_EXPLICATION = new Set(['AKH-0052']);
@@ -385,16 +406,37 @@ export const sensMotEleve = (s) =>
 
 /** Retire d'une note les phrases internes (comité, référent, codes de décision…) ; '' si rien ne reste. */
 export function nettoyerNote(texte) {
-  const phrases = texte.split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ«(‹{])/);
+  // ar-Risāla : renvois de travail à d'autres phrases (« (même passage que RIS-INT-0041) ») retirés avant le tri
+  const t = risala
+    ? texte
+        .replace(/\s*\((?:même passage que|voir|cf\.)\s*RIS-(?:INT-)?\d{4}[^)]*\)/g, '')
+        .replace(/\s*\([^()]*\bpar script\b[^()]*\)/g, '')
+    : texte;
+  const phrases = t.split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ«(‹{])/);
   return phrases
-    .filter((p) => !PHRASE_INTERNE.test(p))
+    .filter((p) => !PHRASE_INTERNE.test(p) && !(risala && PHRASE_INTERNE_RISALA.test(p)))
     .join(' ')
     .trim();
 }
+/**
+ * ar-Risāla (construction en cours) : phrases de notes qui parlent du travail du projet (« le projet n'y ajoute aucun
+ * résumé »), renvoient à une autre phrase par son identifiant (RIS-INT-0041, RIS-0714) ou aux témoins du manuscrit.
+ */
+export const PHRASE_INTERNE_RISALA =
+  /\bprojet\b|\bVariante V-\d+|\bpar script\b|\bRIS-(?:INT-)?\d{4}\b|\bSuite \d+|\btémoins? [A-C]\b|\bscan\b|à documenter|\bnon (?:établi|retrouvé) par/i;
+/** Intitulé d'ouvrage de la Risāla sans lien de numérisation ni date de lecture : « (turath.io, livre 21589) ». */
+export const LIEN_NUMERISATION =
+  /\s*\((?:[^()]*(?:turath\.io|shamela|archive\.org|QNL|ediscovery|unicef\.org|consulté le|lu le)[^()]*)\)/gi;
+let risala = false;
 const sourceEleve = (s) =>
-  SOURCE_INTERNE.test(s)
+  SOURCE_INTERNE.test(s) ||
+  (risala &&
+    (PHRASE_INTERNE_RISALA.test(s) ||
+      /\bchamp\b|\bimage \d+|\blue? sur l.image|\b[a-z]+_[A-Za-z]+\b/.test(s)))
     ? null
-    : s.replace(/,? copie par programme/, '').replace(/\s+\(\s*\)/g, '');
+    : (risala ? s.replace(LIEN_NUMERISATION, '').replace(/,?\s*lu le \d+\/\d+\/\d{4}/g, '') : s)
+        .replace(/,? copie par programme/, '')
+        .replace(/\s+\(\s*\)/g, '');
 
 /**
  * Mots arabes isolés dans un texte français (schéma `{ar:K}` + `mots_ar`, 13/10/2026) : chaque marqueur renvoie à un
@@ -436,7 +478,10 @@ function notesEleve(n, id = '?') {
     const ar = [
       ...(x.citations_ar ?? []),
       ...(x.citations ?? []).map((c) => c.ar).filter(Boolean),
-    ].map((c) => c.replace(/\s*\[[^\]]*[A-Za-z][^\]]*\]/g, ''));
+    ].map((c) =>
+      // remarques d'éditeur en français, entre crochets ou entre parenthèses (« (complète l'extrait de ١/٢٥) »)
+      c.replace(/\s*\[[^\]]*[A-Za-z][^\]]*\]/g, '').replace(/\s*\([^)]*[A-Za-z][^)]*\)/g, ''),
+    );
     if (!texte) continue;
     notes.push({
       texte,
@@ -596,6 +641,26 @@ function notesWaraqat(p, f, ecarts) {
   return notes;
 }
 
+/**
+ * ar-Risāla : contexte (esclavage, âge du mariage…), note légale, prudence.
+ * Les écarts au mashhūr (`ecart_mashhur`) sont ajoutés par l'appelant (genre « note sur l'école mālikite »).
+ */
+function notesRisala(p, f) {
+  const notes = [];
+  const ajouter = (texte, extra = {}) => {
+    const t = texte ? nettoyerNote(texte) : '';
+    if (t) notes.push({ texte: t, ...extra });
+  };
+  if (f.note_contexte) notes.push(...notesEleve(f.note_contexte, p.id).notes);
+  // note_legale : texte seul, ou note complète (texte et sources)
+  if (typeof f.note_legale === 'string') ajouter(f.note_legale);
+  else if (f.note_legale) notes.push(...notesEleve(f.note_legale, p.id).notes);
+  // « Prudence (référent provisoire, 13/10/2026) : … » : la mention interne est retirée, la prudence reste
+  ajouter(f.note_prudence?.replace(/\s*\(référent provisoire[^)]*\)/, ''));
+  // référence et jugement du hadith cité : notes de travail du référent (mots du projet, suites), mode enseignant seulement
+  return notes;
+}
+
 /** Nom du style de soulignement (code visuel de la grammaire) d'après sa description. */
 const STYLE = [
   [/plein/i, 'plein'],
@@ -662,7 +727,7 @@ function explicationsKafrawi(texte, ordreIds, lignes) {
   return parId;
 }
 
-export function construire(texte = 'akhdari', lignes = tanzil()) {
+function construireTexte(texte, lignes) {
   const dir = dossier(texte);
   const ar = lire(join(dir, 'texte_ar.json'));
   const fr = lire(join(dir, 'traduction_fr.json'));
@@ -787,8 +852,12 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
       continue;
     }
     const { notes: notesN, interne } = notesEleve(f.note_explication, p.id);
+    // ar-Risāla : une note de la phrase qui porte un écart au mashhūr est une « note sur l'école mālikite »
+    const notesBrutes =
+      texte === 'risala' && f.ecart_mashhur ? notesN.map((n) => ({ ...n, k: 'malikite' })) : notesN;
     const notes = [
-      ...notesN,
+      ...notesBrutes,
+      ...(texte === 'risala' ? notesRisala(p, f) : []),
       ...(explications.get(p.id) ?? []),
       ...(noteJaz.get(p.id) ?? []),
       ...(texte === 'bayquniyya' ? notesBayquniyya(f, ouvrageSalah) : []),
@@ -881,6 +950,18 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
       typeof f.note === 'string' ? f.note : null,
       f.note_az_zurqani,
       f.renvoi_lexique,
+      ...(texte === 'risala'
+        ? [
+            f.ecart_mashhur ? `Écart au mashhūr ${f.ecart_mashhur}` : null,
+            typeof f.coherence === 'string' ? f.coherence : null,
+            typeof f.point_surveille === 'string' ? f.point_surveille : null,
+            typeof f.point_a_verifier === 'string' ? f.point_a_verifier : null,
+            f.relecture_comite === true ? 'Relecture savante demandée' : null,
+            typeof p.hadith?.jugement === 'string'
+              ? `Jugement relevé : ${p.hadith.jugement}`
+              : null,
+          ]
+        : []),
       ...(hadiths ? [...(p.hadith.points_referent ?? []), f.note_sensible] : []),
     ]
       .filter(Boolean)
@@ -961,7 +1042,7 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
     const out = [];
     for (const r of ids) {
       const cible = PREFIXE_TEXTE[r.split('-')[0]];
-      if (!cible || cible === texte || !TEXTES.includes(cible)) continue;
+      if (!cible || cible === texte || !TOUS_LES_TEXTES.includes(cible)) continue;
       const n = ordreSeances(cible).findIndex((x) => x.id === r) + 1;
       if (!n) throw new Error(`renvoi inconnu : ${r}`);
       out.push({ texte: cible, n });
@@ -976,6 +1057,14 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
       throw new Error(`${texte} : la consigne de publication différée a changé dans la source`);
     for (const id of differe)
       if (!seancesSrc.some((s) => s.id === id)) throw new Error(`${texte} : séance ${id} absente`);
+  }
+  // publication différée par cycle (ar-Risāla : cycle 3)
+  const dc = DIFFERE_CYCLE[texte];
+  if (dc) {
+    if (!dc.consigne.test(se.point_referent ?? ''))
+      throw new Error(`${texte} : la consigne de publication différée a changé dans la source`);
+    for (const s of seancesSrc)
+      if (typeof s.cycle === 'number' && s.cycle >= dc.cycle_min) differe.add(s.id);
   }
   const seances = seancesSrc.map((s) => {
     const ids = idsSeance(s);
@@ -1043,13 +1132,71 @@ export function construire(texte = 'akhdari', lignes = tanzil()) {
   return { eleve, enseignant };
 }
 
+/** Construit les données de l'élève et de l'enseignant d'un texte (les filtres propres à la Risāla ne vivent que pendant l'appel). */
+export function construire(texte = 'akhdari', lignes = tanzil()) {
+  risala = texte === 'risala';
+  try {
+    return construireTexte(texte, lignes);
+  } finally {
+    risala = false;
+  }
+}
+
+/** Taille visée d'un fichier de phrases d'un grand texte (octets, avant compression) : une partie se charge en < 1 s en 3G. */
+export const TAILLE_PARTIE = 280_000;
+
+/**
+ * Grand texte (ar-Risāla) : le fichier `<texte>.json` ne porte que le sommaire (séances, sans phrases : chaque séance dit
+ * dans quelle partie `p` sont ses phrases) ; les phrases sont dans `<texte>-p<k>.json`, chacun chargé à la demande
+ * à l'ouverture d'une séance. Les séances se suivent : une partie = des séances consécutives, jamais coupée au milieu
+ * d'une séance. Le texte et le contenu des phrases sont ceux de `construire`, inchangés.
+ */
+export function departager(eleve, taille = TAILLE_PARTIE) {
+  const de = new Map(eleve.phrases.map((p) => [p.id, p]));
+  const groupes = [];
+  let cur = { seances: [], octets: 0 };
+  for (const s of eleve.seances) {
+    const o = Buffer.byteLength(JSON.stringify(s.phrases.map((id) => de.get(id)).filter(Boolean)));
+    if (cur.seances.length && cur.octets + o > taille) {
+      groupes.push(cur);
+      cur = { seances: [], octets: 0 };
+    }
+    cur.seances.push(s.n);
+    cur.octets += o;
+  }
+  groupes.push(cur);
+  const partieDe = new Map(groupes.flatMap((g, i) => g.seances.map((n) => [n, i + 1])));
+  const fichiers = groupes.map((g, i) => {
+    const phrases = eleve.seances
+      .filter((s) => g.seances.includes(s.n))
+      .flatMap((s) => s.phrases.map((id) => de.get(id)).filter(Boolean));
+    const version = createHash('sha256').update(JSON.stringify(phrases)).digest('hex').slice(0, 12);
+    return { v: 2, id: eleve.id, part: i + 1, version, phrases };
+  });
+  const index = {
+    ...eleve,
+    phrases: [],
+    seances: eleve.seances.map((s) => ({ ...s, p: partieDe.get(s.n) })),
+    parts: fichiers.map((f) => ({ n: f.part, version: f.version })),
+  };
+  return { index, fichiers };
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   mkdirSync(SORTIE, { recursive: true });
   const lignes = tanzil();
-  for (const texte of TEXTES) {
+  for (const texte of TOUS_LES_TEXTES) {
     const { eleve, enseignant } = construire(texte, lignes);
     const a = `${JSON.stringify(eleve)}\n`;
-    writeFileSync(join(SORTIE, `${texte}.json`), a);
+    if (TEXTES_LOT4.includes(texte)) {
+      const { index, fichiers } = departager(eleve);
+      // parties d'une construction précédente (le découpage peut changer) : retirées avant d'écrire les nouvelles
+      for (const f of readdirSync(SORTIE))
+        if (new RegExp(`^${texte}-p\\d+\\.json$`).test(f)) rmSync(join(SORTIE, f));
+      writeFileSync(join(SORTIE, `${texte}.json`), `${JSON.stringify(index)}\n`);
+      for (const f of fichiers)
+        writeFileSync(join(SORTIE, `${texte}-p${f.part}.json`), `${JSON.stringify(f)}\n`);
+    } else writeFileSync(join(SORTIE, `${texte}.json`), a);
     writeFileSync(join(SORTIE, `${texte}-enseignant.json`), `${JSON.stringify(enseignant)}\n`);
     console.log(
       `${texte} : ${eleve.phrases.length} phrases, ${eleve.seances.length} séances, ${Buffer.byteLength(a)} octets, version ${eleve.version}`,

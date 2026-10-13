@@ -74,6 +74,9 @@
   <Loading />
 {:else if etat === 'absent'}
   <EmptyState title={t(ACTIFS.has(id) ? 'mj.horsligne' : 'mj.introuvable')} />
+{:else if matn && numeros.length === 0}
+  <!-- texte entièrement en publication différée (ar-Risāla) pour un invité de la bêta -->
+  <EmptyState title={t('mj.bientot')} />
 {:else if matn}
   <section class="carte-reprendre" data-testid="mj-progres">
     <p class="compte">
