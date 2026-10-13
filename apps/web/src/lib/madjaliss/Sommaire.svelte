@@ -135,7 +135,7 @@
           <li data-style={e.style}>
             <span class="ex ar s-{e.style}" lang="ar" dir="rtl"><Bidi text={e.ar} base="ar" /></span
             >
-            <span class="signe" aria-hidden="true">{e.signe}</span>
+            <span class="signe" aria-hidden="true"><Bidi text={e.signe} /></span>
             <span class="gloss"><strong><Bidi text={e.cas} /></strong> <Bidi text={e.aide} /></span>
           </li>
         {/each}
