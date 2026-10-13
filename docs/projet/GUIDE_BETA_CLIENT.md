@@ -174,6 +174,10 @@ l’inscription* (sans service extérieur : jeton invisible, délai de 3 seconde
 prêtes à étudier avec vous, **sans rien créer à votre place** : ALTCHA (auto-hébergé, respecte la vie privée) ou Cloudflare Turnstile (plus
 efficace, service tiers, un compte à créer par vous).
 
+**Quran Foundation et enfants** : l’interrupteur « Profils d’enfants et fonctions de la Quran Foundation » est **désactivé** : les enfants n’ont ni
+récitateurs en ligne ni Muṣḥaf exact (les ados et adultes les gardent). Ne l’activez qu’après la réponse écrite de la Quran Foundation (modèle de
+message dans `docs/projet/juridique/LICENCES_PRODUCTION.md` § 1.3, à envoyer par vous).
+
 **Plafonds par utilisateur** (tout ce qui coûte a une limite par personne) : tuteur IA (1 $ par mois pour un enfant, 3 $ pour un adolescent
 ou adulte), écoute IA (60 par heure), stockage des récitations (30 Mo par élève), avis et signalements (5 par jour). La synthèse vocale est
 préparée à l’avance : aucun coût par utilisateur.

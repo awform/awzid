@@ -386,6 +386,7 @@ test.describe('espace administrateur : trois modes, plafond, tableau de bord', (
       plafond: 50,
       verification: 'souple',
       antibot: 'off',
+      qf_profils_enfants: 'off',
     };
     const envoyes: Array<Record<string, unknown>> = [];
     await adm.route('**/api/v1/admin/acces', async (route) => {
@@ -481,6 +482,11 @@ test.describe('espace administrateur : trois modes, plafond, tableau de bord', (
     await expect.poll(() => envoyes.at(-1)).toEqual({ verification: 'requise' });
     await adm.getByTestId('acces-basculer-antibot').click();
     await expect.poll(() => envoyes.at(-1)).toEqual({ antibot: 'on' });
+    // Quran Foundation et profils d'enfants : désactivé par défaut, activable (après accord écrit de la Quran Foundation)
+    await expect(adm.getByTestId('acces-qf-enfants')).toContainText('désactivée');
+    await adm.getByTestId('acces-basculer-qf-enfants').click();
+    await expect.poll(() => envoyes.at(-1)).toEqual({ qf_profils_enfants: 'on' });
+    await expect(adm.getByTestId('acces-qf-enfants')).toContainText('activée');
     await adm.context().close();
   });
 
@@ -543,5 +549,58 @@ test.describe('accueil de la bêta pour un visiteur (awzid.com)', () => {
     expect(r.status()).toBe(201);
     await page.goto('/');
     await expect(page.getByTestId('accueil-visiteur')).toHaveCount(0);
+  });
+});
+
+test.describe('Quran Foundation et profils d’enfants (serveur réel)', () => {
+  test('un enfant n’a ni récitateurs en ligne ni Muṣḥaf exact par défaut ; ados et adultes les gardent', async ({
+    page,
+  }) => {
+    const r = await signup(page, unique('qfp'));
+    expect(r.status()).toBe(201);
+    const moi = (await r.json()) as { profiles: Array<{ id: string }> };
+    const adulte = (await (
+      await page.request.get(`/api/v1/fonctions?profil=${moi.profiles[0]!.id}`)
+    ).json()) as {
+      fonctions: Record<string, boolean>;
+    };
+    expect([adulte.fonctions.recitateurs_en_ligne, adulte.fonctions.mushaf_exact]).toEqual([
+      true,
+      true,
+    ]);
+    // un parent crée un profil d'enfant
+    const p = await page.request.post('/api/v1/auth/signup', {
+      headers: H,
+      data: {
+        kind: 'parent',
+        email: unique('qfpar'),
+        password: password(),
+        country: 'FR',
+        consents: ['cgu', 'donnee_religieuse_art9'],
+        birthYear: new Date().getFullYear() - 38,
+      },
+    });
+    expect(p.status()).toBe(201);
+    const enfant = await page.request.post('/api/v1/profiles', {
+      headers: H,
+      data: {
+        pseudonym: 'Petit',
+        birthYear: new Date().getFullYear() - 8,
+        levelCode: 'en1',
+        password: password(),
+        consents: ['compte_suivi', 'donnee_religieuse_art9'],
+      },
+    });
+    expect(enfant.status(), await enfant.text()).toBe(201);
+    const kid = ((await enfant.json()) as { id: string }).id;
+    const f = (await (await page.request.get(`/api/v1/fonctions?profil=${kid}`)).json()) as {
+      fonctions: Record<string, boolean>;
+    };
+    expect([f.fonctions.recitateurs_en_ligne, f.fonctions.mushaf_exact]).toEqual([false, false]);
+    const refus = await page.request.get('/api/v1/quran/mushaf-exact/pages/1', {
+      headers: { 'x-profil': kid },
+    });
+    expect(refus.status()).toBe(403);
+    expect((await refus.json()).error.code).toBe('fonction_coupee');
   });
 });

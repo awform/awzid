@@ -37,9 +37,11 @@
         <a class="bouton primary" href={resolve('/inscription')} data-testid="accueil-code"
           ><Bidi text={t('acc.code')} /></a
         >
+        <!-- eslint-disable svelte/no-navigation-without-resolve -->
         <a class="bouton" href={resolve('/inscription') + '#attente'} data-testid="accueil-demander"
           ><Bidi text={t('acc.demander')} /></a
         >
+        <!-- eslint-enable svelte/no-navigation-without-resolve -->
       </p>
       <p>
         <a href={resolve('/connexion')} data-testid="accueil-connexion"

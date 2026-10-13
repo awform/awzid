@@ -23,6 +23,7 @@ export const SITE_MODES = ['ouvert', 'ferme'] as const;
 export const BANDEAU_MODES = ['on', 'off'] as const;
 export const VERIFICATION_MODES = ['requise', 'souple'] as const;
 export const ANTIBOT_MODES = ['on', 'off'] as const;
+export const QF_ENFANTS_MODES = ['on', 'off'] as const;
 /** TROIS modes commutables depuis l'espace administrateur : fermé, sur invitation, ouvert (avec plafond d'inscriptions). */
 export const MODES_ACCES = ['ferme', 'invitation', 'ouvert'] as const;
 export type InscriptionMode = (typeof INSCRIPTION_MODES)[number];
@@ -30,6 +31,7 @@ export type SiteMode = (typeof SITE_MODES)[number];
 export type BandeauMode = (typeof BANDEAU_MODES)[number];
 export type VerificationMode = (typeof VERIFICATION_MODES)[number];
 export type AntibotMode = (typeof ANTIBOT_MODES)[number];
+export type QfEnfantsMode = (typeof QF_ENFANTS_MODES)[number];
 export type ModeAcces = (typeof MODES_ACCES)[number];
 export interface AccesStatut {
   inscription: InscriptionMode;
@@ -45,6 +47,12 @@ export interface AccesStatut {
   verification: VerificationMode;
   /** protection anti-robots de l'inscription : jeton signé + délai minimal + champ piège (aucun service tiers) */
   antibot: AntibotMode;
+  /**
+   * Quran Foundation et PROFILS D'ENFANTS : tant que la valeur est « off » (défaut), les profils d'enfants n'utilisent pas les
+   * fonctions qui dépendent de la Quran Foundation (récitateurs en ligne, Muṣḥaf exact) ; ados et adultes ne changent pas.
+   * À passer à « on » seulement après l'accord écrit de la Quran Foundation (docs/projet/juridique/LICENCES_PRODUCTION.md § 1.3).
+   */
+  qf_profils_enfants: QfEnfantsMode;
 }
 
 /** Mode vu par l'administrateur : le site fermé l'emporte, puis l'inscription. */
@@ -72,6 +80,7 @@ export interface AccesDefaut {
   plafond?: string;
   verification?: string;
   antibot?: string;
+  qfEnfants?: string;
 }
 /** Plafond par défaut du mode ouvert (jamais absent : 200 comptes). */
 export const PLAFOND_DEFAUT = 200;
@@ -91,7 +100,9 @@ export function accesParDefaut(src: AccesDefaut = {}): AccesStatut {
     (src.verification ?? '').trim().toLowerCase() === 'requise' ? 'requise' : 'souple';
   const antibot: AntibotMode = (src.antibot ?? '').trim().toLowerCase() === 'on' ? 'on' : 'off';
   const plafond = nombre(src.plafond, PLAFOND_DEFAUT);
-  const base = { bandeau, plafond, verification, antibot };
+  const qf_profils_enfants: QfEnfantsMode =
+    (src.qfEnfants ?? '').trim().toLowerCase() === 'on' ? 'on' : 'off';
+  const base = { bandeau, plafond, verification, antibot, qf_profils_enfants };
   if (v === 'ferme') return { inscription: 'invitation', site: 'ferme', ...base };
   if (v === 'invitation') return { inscription: 'invitation', site: 'ouvert', ...base };
   return { inscription: 'ouverte', site: 'ouvert', ...base };
@@ -132,6 +143,11 @@ export async function readAcces(
         v.verification = r.value as VerificationMode;
       if (r.key === 'antibot' && (ANTIBOT_MODES as readonly string[]).includes(r.value))
         v.antibot = r.value as AntibotMode;
+      if (
+        r.key === 'qf_profils_enfants' &&
+        (QF_ENFANTS_MODES as readonly string[]).includes(r.value)
+      )
+        v.qf_profils_enfants = r.value as QfEnfantsMode;
       if (r.key === 'plafond') v.plafond = nombre(r.value, v.plafond);
     }
     accesCache = { at: now, v };

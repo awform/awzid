@@ -78,6 +78,7 @@ export function registerBetaAcces(
     plafond: process.env.AWFORM_PLAFOND_COMPTES,
     verification: process.env.AWFORM_VERIFICATION,
     antibot: process.env.AWFORM_ANTIBOT,
+    qfEnfants: process.env.AWFORM_QF_PROFILS_ENFANTS,
   });
   const courrielActif = opts.mailer.mode !== 'inactif';
 
@@ -274,6 +275,7 @@ export function registerBetaAcces(
       plafond?: number;
       verification?: string;
       antibot?: string;
+      qf_profils_enfants?: string;
     };
   }>(
     '/api/v1/admin/acces',
@@ -292,6 +294,7 @@ export function registerBetaAcces(
             plafond: { type: 'integer', minimum: 0, maximum: 1_000_000 },
             verification: { enum: ['requise', 'souple'] },
             antibot: { enum: ['on', 'off'] },
+            qf_profils_enfants: { enum: ['on', 'off'] },
           },
         },
       },

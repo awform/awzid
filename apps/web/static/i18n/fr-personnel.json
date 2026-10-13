@@ -560,5 +560,7 @@
   "tab.al_attente": "Des demandes attendent une réponse dans la liste d’attente.",
   "tab.al_verifications_en_retard": "Plusieurs adresses ne sont pas vérifiées depuis plus de 24 h.",
   "tab.al_courriel_inactif": "L’envoi d’e-mails n’est pas réglé : invitations et vérifications ne partent pas.",
-  "tab.al_cout_jour_eleve": "Le coût estimé du jour dépasse le seuil d’alerte."
+  "tab.al_cout_jour_eleve": "Le coût estimé du jour dépasse le seuil d’alerte.",
+  "acces.qf_enfants": "Profils d’enfants et fonctions de la Quran Foundation (récitateurs en ligne, Muṣḥaf exact)",
+  "acces.qf_enfants_aide": "Désactivé (par défaut) : les enfants n’utilisent pas ces fonctions ; les ados et les adultes ne changent pas. À activer seulement après l’accord écrit de la Quran Foundation."
 }

@@ -3211,5 +3211,7 @@
   "acc.beta_texte": "La aplicación está en fase de prueba cerrada. Para crear una cuenta hace falta un código de invitación; sin código, deje su dirección en la lista de espera.",
   "acc.code": "Tengo un código de invitación",
   "acc.demander": "Solicitar una invitación",
-  "acc.connexion": "Ya tengo una cuenta: iniciar sesión"
+  "acc.connexion": "Ya tengo una cuenta: iniciar sesión",
+  "acces.qf_enfants": "Perfiles de niños y funciones de la Quran Foundation (recitadores en línea, Mushaf exacto)",
+  "acces.qf_enfants_aide": "Desactivado (por defecto): los niños no usan estas funciones; los adolescentes y adultos no cambian. Actívelo solo tras el acuerdo escrito de la Quran Foundation."
 }

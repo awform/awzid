@@ -53,6 +53,8 @@
   // chargé après le démarrage comme la mise à jour
   let acces = $state<AccesStatut | null>(null);
   let Acces = $state<typeof ModAcces | null>(null);
+  // premier relevé du compte et des réglages fait (avant : aucun écran de remplacement)
+  let prete = $state(false);
   let Bandeau = $state<Component | null>(null);
   const ferme = $derived(!!Acces && Acces.maintenance(acces, page.url.pathname));
   // écran à la place de l'application : maintenance (mode fermé) ou accueil du visiteur (bêta sur invitation)
@@ -128,7 +130,6 @@
   });
 
   // 11/10/2026 : migration silencieuse des anciens thèmes (une seule fois, quand le public de l'écran est connu)
-  let prete = $state(false);
   let migre = false;
   $effect(() => {
     // attendre le compte ou un profil actif : le public (donc l'ancien thème) en dépend (adulte autonome : pas de profil actif)

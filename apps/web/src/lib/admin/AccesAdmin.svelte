@@ -25,6 +25,7 @@
     plafond: number;
     verification: 'requise' | 'souple';
     antibot: 'on' | 'off';
+    qf_profils_enfants: 'on' | 'off';
   }
   interface Invitation {
     id: string;
@@ -296,6 +297,21 @@
         data-testid="acces-basculer-antibot"><Bidi text={t('acces.changer')} /></button
       >
     </p>
+    <p class="ligne">
+      <strong><Bidi text={t('acces.qf_enfants')} /></strong> :
+      <span data-testid="acces-qf-enfants"
+        ><Bidi
+          text={acces.qf_profils_enfants === 'on' ? t('acces.active') : t('acces.desactive')}
+        /></span
+      >
+      <button
+        type="button"
+        onclick={() =>
+          regler({ qf_profils_enfants: acces?.qf_profils_enfants === 'on' ? 'off' : 'on' })}
+        data-testid="acces-basculer-qf-enfants"><Bidi text={t('acces.changer')} /></button
+      >
+    </p>
+    <p class="muted"><Bidi text={t('acces.qf_enfants_aide')} /></p>
     <p class="ligne">
       <strong><Bidi text={t('acces.bandeau')} /></strong> :
       <span data-testid="acces-bandeau"

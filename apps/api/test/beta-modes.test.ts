@@ -17,7 +17,7 @@ import { hashSecret, totpAt } from '../src/auth/crypto.js';
 import { emettreJeton, verifierJeton, ANTIBOT_MAX_MS, ANTIBOT_MIN_MS } from '../src/antibot.js';
 import { memoryMailer } from '../src/mail/envoi.js';
 import { listePlafonds, STOCKAGE_PAR_ELEVE_OCTETS } from '../src/plafonds.js';
-import { cookieOf, PW, setup, YEAR, type Ctx } from './helpers.js';
+import { child, cookieOf, parent, PW, setup, YEAR, type Ctx } from './helpers.js';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -168,6 +168,49 @@ describe.skipIf(!URL)('Bêta : trois modes, plafond, vérification, tableau (awf
     expect((await c.req('GET', '/api/v1/levels', P)).statusCode).toBe(200);
     await reglage({ mode: 'ouvert' });
     expect((await c.req('GET', '/api/v1/levels')).statusCode).toBe(200);
+  });
+
+  it('Quran Foundation et profils d’enfants : désactivé par défaut pour les enfants seulement, réglable, refus aussi côté serveur', async () => {
+    const { P } = await parent(c, addr('qf'));
+    const kid = await child(c, P, 'Petit', 8);
+    const teen = await child(c, P, 'Ado', 15);
+    const fonctions = async (pid?: string) =>
+      (await c.req('GET', `/api/v1/fonctions${pid ? `?profil=${pid}` : ''}`, P)).json()
+        .fonctions as Record<string, boolean>;
+    // défaut : « off »
+    expect((await c.req('GET', '/api/v1/admin/acces', A)).json().acces.qf_profils_enfants).toBe(
+      'off',
+    );
+    const e = await fonctions(kid);
+    expect([e.recitateurs_en_ligne, e.mushaf_exact]).toEqual([false, false]);
+    const a1 = await fonctions(teen);
+    expect([a1.recitateurs_en_ligne, a1.mushaf_exact]).toEqual([true, true]); // ados inchangés
+    const p0 = await fonctions();
+    expect([p0.recitateurs_en_ligne, p0.mushaf_exact]).toEqual([true, true]); // parent sans profil : inchangé
+    // le serveur refuse aussi (garde exigeFonction), pour l'enfant seulement
+    const refus = await c.req('GET', '/api/v1/quran/mushaf-exact/pages/1', {
+      ...P,
+      'x-profil': kid,
+    });
+    expect(refus.statusCode).toBe(403);
+    expect(refus.json().error).toMatchObject({ code: 'fonction_coupee', fonction: 'mushaf_exact' });
+    expect(
+      (await c.req('GET', '/api/v1/quran/mushaf-exact/pages/1', { ...P, 'x-profil': teen }))
+        .statusCode,
+    ).not.toBe(403);
+    // réglage depuis l'espace administrateur (effet immédiat), puis retour arrière
+    expect((await reglage({ qf_profils_enfants: 'on' })).json().acces.qf_profils_enfants).toBe(
+      'on',
+    );
+    const e2 = await fonctions(kid);
+    expect([e2.recitateurs_en_ligne, e2.mushaf_exact]).toEqual([true, true]);
+    expect(
+      (await c.req('GET', '/api/v1/quran/mushaf-exact/pages/1', { ...P, 'x-profil': kid }))
+        .statusCode,
+    ).not.toBe(403);
+    await reglage({ qf_profils_enfants: 'off' });
+    expect((await fonctions(kid)).mushaf_exact).toBe(false);
+    expect((await reglage({ qf_profils_enfants: 'peut-être' })).statusCode).toBe(400);
   });
 
   it('un seul réglage « mode » commute les trois modes, sans redéploiement, et se relit', async () => {

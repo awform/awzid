@@ -3211,5 +3211,7 @@
   "acc.beta_texte": "Die App befindet sich in einer geschlossenen Testphase. Zum Erstellen eines Kontos brauchen Sie einen Einladungscode; ohne Code tragen Sie sich in die Warteliste ein.",
   "acc.code": "Ich habe einen Einladungscode",
   "acc.demander": "Einladung anfordern",
-  "acc.connexion": "Ich habe schon ein Konto: anmelden"
+  "acc.connexion": "Ich habe schon ein Konto: anmelden",
+  "acces.qf_enfants": "Kinderprofile und Funktionen der Quran Foundation (Online-Rezitatoren, exakter Mushaf)",
+  "acces.qf_enfants_aide": "Aus (Standard): Kinder nutzen diese Funktionen nicht; Jugendliche und Erwachsene bleiben unverändert. Erst nach schriftlicher Zustimmung der Quran Foundation einschalten."
 }
