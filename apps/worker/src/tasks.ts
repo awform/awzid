@@ -7,6 +7,7 @@ import {
   purgeDeletedAccounts,
   purgeExpiredRecitations,
   purgeF5,
+  purgeListeAttente,
   purgeProblemes,
   purgeRetention,
   purgeTutorLog,
@@ -52,5 +53,7 @@ export async function nightlyPurge(db: Db, now = new Date()) {
     f5: await purgeF5(db, now),
     // bêta-support : captures des signalements (90 jours), signalements réglés (12 mois)
     problemes: await purgeProblemes(db, now),
+    // bêta fermée : demandes de la liste d'attente de plus de 12 mois
+    listeAttente: await purgeListeAttente(db, now),
   };
 }

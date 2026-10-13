@@ -12,5 +12,7 @@ export default defineConfig({
     testTimeout: 60_000,
     hookTimeout: 120_000,
     fileParallelism: false,
+    // bêta : les essais créent beaucoup de comptes ; le plafond d'inscriptions (200 par défaut) est testé à part
+    env: { AWFORM_PLAFOND_COMPTES: '1000000' },
   },
 });

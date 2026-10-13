@@ -26,7 +26,32 @@
 		Referrer-Policy no-referrer
 		Permissions-Policy "camera=(), geolocation=(), payment=(), microphone=(self)"
 		Cross-Origin-Opener-Policy same-origin
+		X-Frame-Options DENY
+		# bêta fermée : invisible des moteurs de recherche et des archives (aussi posé par l'application)
+		X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
 		-Server
+	}
+	# aucun moteur de recherche (robots.txt strict), aucun sitemap
+	handle /robots.txt {
+		header Content-Type "text/plain; charset=utf-8"
+		respond <<TXT
+			User-agent: *
+			Disallow: /
+
+			TXT 200
+	}
+	@sitemap path /sitemap.xml /sitemap_index.xml
+	handle @sitemap {
+		respond "introuvable" 404
+	}
+	# sonde de disponibilité (réponse minimale, 503 si la base ne répond pas) et page d'état
+	handle /healthz {
+		rewrite * /healthz
+		reverse_proxy api:3000
+	}
+	handle /etat {
+		rewrite * /etat.html
+		reverse_proxy web:3000
 	}
 	@api path /api/*
 	handle @api {
@@ -79,8 +104,18 @@ http://localhost, http://127.0.0.1 {
 	import awform
 }
 
-https://{$SITE}, https://{$SITE_LAN:127.0.0.2}, https://{$SITE_TS:127.0.0.3} {
+# certificat : autorité INTERNE de Caddy (réseau local, démonstration) ou Let's Encrypt (serveur public :
+# AWFORM_TLS=tls_public, posé par deploy.sh --production ; le domaine doit pointer vers le serveur)
+(tls_interne) {
 	tls internal
+}
+(tls_public) {
+	tls {
+		protocols tls1.2 tls1.3
+	}
+}
+https://{$SITE}, https://{$SITE_LAN:127.0.0.2}, https://{$SITE_TS:127.0.0.3} {
+	import {$AWFORM_TLS:tls_interne}
 	header Strict-Transport-Security "max-age=31536000"
 	import awform
 }

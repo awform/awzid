@@ -1,0 +1,468 @@
+/**
+ * Bêta : accès, invitations, liste d'attente, plafond d'inscriptions, vérification de l'adresse, anti-robots, tableau
+ * de bord (API) :
+ *  - PUBLIC : `GET /api/v1/acces/statut` (mode, inscription offerte, site, bandeau, vérification, anti-robots, plein ou
+ *    non), `GET /api/v1/acces/jeton` (jeton anti-robots), `POST /api/v1/acces/invitation` (contrôle d'un code SANS le
+ *    consommer), `POST /api/v1/acces/liste-attente` (demande d'invitation ; réponse toujours identique, limites anti-abus) ;
+ *  - ADMINISTRATEUR (second facteur) : `PUT /api/v1/admin/acces` (mode : `ferme` | `invitation` | `ouvert`, plafond
+ *    d'inscriptions, vérification de l'adresse, anti-robots, bandeau — effet en moins de 5 secondes, sans redéploiement),
+ *    invitations (création, liste, révocation, envoi par e-mail), liste d'attente (accepter, refuser) et
+ *    `GET /api/v1/admin/tableau` (comptes, plafond, coût estimé du jour, plafonds de consommation, alertes) ;
+ *  - TROIS MODES : « fermé » (page de maintenance pour tous sauf les administrateurs), « sur invitation » (code requis),
+ *    « ouvert » (inscription libre) TOUJOURS sous un plafond de comptes : plein, l'inscription libre passe seule en
+ *    LISTE D'ATTENTE (une invitation reste valable). Retour arrière : le mode précédent se remet en une action ;
+ *  - MODE FERMÉ : toute l'API répond 503 « acces_ferme » aux non-administrateurs (restent joignables : santé, statut,
+ *    jeton, connexion/déconnexion, administration, webhooks de paiement) ;
+ *  - VÉRIFICATION de l'adresse (réglage « requise », appliquée seulement si l'envoi d'e-mails est réglé) : tant que
+ *    l'adresse n'est pas vérifiée, l'API répond 403 « email_non_verifie » (sauf compte, vérification, administration).
+ * Le code d'une invitation n'est montré qu'à sa création (empreinte seule en base). Les journaux ne contiennent ni code
+ * ni adresse.
+ */
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { eq } from 'drizzle-orm';
+import {
+  addWaitlist,
+  checkInvitation,
+  countComptes,
+  countWaitlist,
+  createInvitation,
+  decideWaitlist,
+  getWaitlist,
+  inscriptionEffective,
+  listInvitations,
+  listWaitlist,
+  modeDe,
+  MODES_ACCES,
+  readAcces,
+  reglagesDuMode,
+  revokeInvitation,
+  schema as t,
+  setAcces,
+  setAccesDefaut,
+  WAITLIST_PER_HOUR_ALL,
+  WAITLIST_STATUS,
+  waitlistLastHour,
+  type AccesStatut,
+  type Db,
+} from '@awform/db';
+import { emettreJeton } from './antibot.js';
+import { EMAIL, INVITATION_TRIES_PER_HOUR } from './auth/common.js';
+import { audit, hasRole, lockedUntil, recordFailure } from './auth/service.js';
+import { err, UUID } from './guards.js';
+import type { Mailer } from './mail/envoi.js';
+import { renderMail } from './mail/modeles.js';
+import { coutsDuJour, listePlafonds, tableauComptes } from './plafonds.js';
+
+/** Chemins de l'API qui restent joignables quand le site est fermé (le reste répond 503 aux non-administrateurs). */
+const OUVERT_FERME = /^\/api\/v1\/(health|acces\/(statut|jeton)|auth\/|admin\/|billing\/webhook\/)/;
+/** Chemins accessibles à un compte dont l'adresse n'est pas encore vérifiée. */
+const OUVERT_NON_VERIFIE =
+  /^\/api\/v1\/(health|acces\/|auth\/|account\/email|admin\/|billing\/webhook\/|config|pays|public)/;
+
+export function registerBetaAcces(
+  app: FastifyInstance,
+  db: Db,
+  opts: { mailer: Mailer; publicUrl: string | null; secretKey?: Buffer | null },
+): void {
+  // défaut de l'environnement : AWFORM_ACCES = ouvert (défaut) | invitation | ferme ; AWFORM_BANDEAU = on | off ;
+  // AWFORM_PLAFOND_COMPTES (défaut 200) ; AWFORM_VERIFICATION = souple | requise ; AWFORM_ANTIBOT = off | on
+  setAccesDefaut({
+    acces: process.env.AWFORM_ACCES,
+    bandeau: process.env.AWFORM_BANDEAU,
+    plafond: process.env.AWFORM_PLAFOND_COMPTES,
+    verification: process.env.AWFORM_VERIFICATION,
+    antibot: process.env.AWFORM_ANTIBOT,
+  });
+  const courrielActif = opts.mailer.mode !== 'inactif';
+
+  // ---------------------------------------------------------------- mode fermé et adresse non vérifiée
+  const verifies = new Map<string, number>(); // comptes vérifiés (30 s de mémoire)
+  app.addHook('onRequest', async (req, reply) => {
+    if (!req.url.startsWith('/api/v1/')) return;
+    const acces = await readAcces(db);
+    if (acces.site === 'ferme' && !OUVERT_FERME.test(req.url) && !hasRole(req.auth, 'admin')) {
+      void reply.header('Retry-After', '600');
+      return err(reply, 503, 'acces_ferme');
+    }
+    // vérification de l'adresse avant activation (familles et adultes seulement ; sans e-mail réglé, impossible)
+    const a = req.auth;
+    if (
+      acces.verification === 'requise' &&
+      courrielActif &&
+      a &&
+      (a.kind === 'parent' || a.kind === 'adulte') &&
+      !hasRole(a, 'admin') &&
+      !a.tablet &&
+      !OUVERT_NON_VERIFIE.test(req.url)
+    ) {
+      const vu = verifies.get(a.accountId);
+      if (vu && Date.now() - vu < 30_000) return;
+      const [row] = await db
+        .select({ v: t.account.emailVerifiedAt })
+        .from(t.account)
+        .where(eq(t.account.id, a.accountId));
+      if (row?.v) {
+        verifies.set(a.accountId, Date.now());
+        return;
+      }
+      return err(reply, 403, 'email_non_verifie');
+    }
+  });
+
+  const needAdmin = async (req: FastifyRequest, reply: FastifyReply) => {
+    if (!req.auth) return err(reply, 401, 'non_connecte');
+    if (!hasRole(req.auth, 'admin')) return err(reply, 403, 'reserve_admin');
+    if (!req.auth.mfaVerified)
+      return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
+  };
+
+  const lienDe = (code: string): string | null =>
+    opts.publicUrl ? `${opts.publicUrl.replace(/\/+$/, '')}/inscription#code=${code}` : null;
+
+  /** Envoie l'invitation par e-mail (dans la langue de la personne) ; true si le message est parti. */
+  async function envoyer(to: string, code: string, locale: string): Promise<boolean> {
+    const link = lienDe(code);
+    if (!link || opts.mailer.mode === 'inactif') return false;
+    try {
+      await opts.mailer.send({
+        to,
+        kind: 'invitation',
+        ...renderMail('invitation', locale, { link }),
+      });
+      return true;
+    } catch (e) {
+      app.log.warn({ type: (e as Error).name }, 'envoi invitation en échec');
+      return false;
+    }
+  }
+
+  /** Vue publique de l'état d'accès (aucun nombre de comptes : seulement « plein » ou non). */
+  async function statutPublic(acces: AccesStatut) {
+    const comptes = acces.inscription === 'ouverte' ? await countComptes(db) : 0;
+    const effective = inscriptionEffective(acces, comptes);
+    return {
+      mode: modeDe(acces),
+      inscription: effective,
+      site: acces.site,
+      bandeau: acces.bandeau,
+      verification: acces.verification === 'requise' && courrielActif ? 'requise' : 'souple',
+      antibot: acces.antibot,
+    };
+  }
+
+  // ---------------------------------------------------------------- public
+
+  app.get('/api/v1/acces/statut', async (req) => {
+    const s = await statutPublic(await readAcces(db));
+    return {
+      ...s,
+      // permet à l'application d'ouvrir les pages à l'administrateur connecté quand le site est fermé
+      admin: hasRole(req.auth, 'admin'),
+    };
+  });
+
+  app.get('/api/v1/acces/jeton', async (_req, reply) => {
+    void reply.header('Cache-Control', 'no-store');
+    return { jeton: emettreJeton(opts.secretKey ?? null) };
+  });
+
+  app.post<{ Body: { code: string; email?: string } }>(
+    '/api/v1/acces/invitation',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['code'],
+          additionalProperties: false,
+          properties: {
+            code: { type: 'string', minLength: 1, maxLength: 40 },
+            email: { type: 'string', maxLength: 254 },
+          },
+        },
+      },
+    },
+    async (req, reply) => {
+      const key = `invit:${req.ip}`;
+      if (await lockedUntil(db, key)) return err(reply, 429, 'trop_de_demandes');
+      const r = await checkInvitation(db, req.body.code, req.body.email ?? null);
+      if (!r.ok) {
+        await recordFailure(db, key, INVITATION_TRIES_PER_HOUR);
+        return err(reply, 403, r.raison);
+      }
+      return { valide: true, personnelle: r.personnelle };
+    },
+  );
+
+  app.post<{
+    Body: { email: string; nom?: string; mot?: string; langue?: string; consentement: boolean };
+  }>(
+    '/api/v1/acces/liste-attente',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['email', 'consentement'],
+          additionalProperties: false,
+          properties: {
+            email: { type: 'string', maxLength: 254, pattern: EMAIL },
+            nom: { type: 'string', maxLength: 80 },
+            mot: { type: 'string', maxLength: 500 },
+            langue: { type: 'string', maxLength: 10 },
+            consentement: { type: 'boolean' },
+          },
+        },
+      },
+    },
+    async (req, reply) => {
+      // RGPD : l'adresse n'est gardée qu'avec l'accord de la personne, pour la seule gestion de la liste
+      if (req.body.consentement !== true) return err(reply, 400, 'consentement_requis');
+      const key = `attente:${req.ip}`;
+      if (await lockedUntil(db, key)) return err(reply, 429, 'trop_de_demandes');
+      await recordFailure(db, key, 10); // au plus 10 demandes par heure et par adresse IP
+      if ((await waitlistLastHour(db)) >= WAITLIST_PER_HOUR_ALL)
+        return err(reply, 429, 'trop_de_demandes');
+      const langue = ['fr', 'en', 'es', 'de', 'ar'].includes(req.body.langue ?? '')
+        ? req.body.langue
+        : 'fr';
+      await addWaitlist(db, {
+        email: req.body.email,
+        name: req.body.nom,
+        note: req.body.mot,
+        locale: langue,
+      });
+      // réponse identique que l'adresse soit nouvelle ou déjà dans la liste
+      return reply.code(202).send({ ok: true });
+    },
+  );
+
+  // ---------------------------------------------------------------- administrateur
+
+  app.get('/api/v1/admin/acces', { preHandler: needAdmin }, async () => {
+    const [acces, invitations, attente] = await Promise.all([
+      readAcces(db, { fresh: true }),
+      listInvitations(db),
+      countWaitlist(db),
+    ]);
+    return {
+      acces: { ...acces, mode: modeDe(acces) },
+      invitations,
+      attente,
+      courriel: opts.mailer.mode,
+    };
+  });
+
+  app.put<{
+    Body: {
+      mode?: string;
+      inscription?: string;
+      site?: string;
+      bandeau?: string;
+      plafond?: number;
+      verification?: string;
+      antibot?: string;
+    };
+  }>(
+    '/api/v1/admin/acces',
+    {
+      preHandler: needAdmin,
+      schema: {
+        body: {
+          type: 'object',
+          additionalProperties: false,
+          minProperties: 1,
+          properties: {
+            mode: { enum: [...MODES_ACCES] },
+            inscription: { enum: ['ouverte', 'invitation'] },
+            site: { enum: ['ouvert', 'ferme'] },
+            bandeau: { enum: ['on', 'off'] },
+            plafond: { type: 'integer', minimum: 0, maximum: 1_000_000 },
+            verification: { enum: ['requise', 'souple'] },
+            antibot: { enum: ['on', 'off'] },
+          },
+        },
+      },
+    },
+    async (req) => {
+      const { mode, ...autres } = req.body;
+      const patch = {
+        ...(mode ? reglagesDuMode(mode as (typeof MODES_ACCES)[number]) : {}),
+        ...autres,
+      } as Partial<AccesStatut>;
+      await setAcces(db, patch, req.auth!.accountId);
+      await audit(db, req.auth!.accountId, 'acces.reglage', null, req.body);
+      const acces = await readAcces(db, { fresh: true });
+      return { acces: { ...acces, mode: modeDe(acces) } };
+    },
+  );
+
+  app.get('/api/v1/admin/tableau', { preHandler: needAdmin }, async () => {
+    const acces = await readAcces(db, { fresh: true });
+    const [comptes, couts, attente] = await Promise.all([
+      tableauComptes(db),
+      coutsDuJour(db),
+      countWaitlist(db),
+    ]);
+    const invitations = (await listInvitations(db)).filter((i) => i.etat === 'active').length;
+    const pct = acces.plafond > 0 ? Math.round((comptes.total / acces.plafond) * 100) : 100;
+    const alertes: Array<{ code: string; niveau: 'info' | 'attention' | 'critique' }> = [];
+    if (acces.site === 'ferme') alertes.push({ code: 'site_ferme', niveau: 'info' });
+    if (acces.inscription === 'ouverte' && comptes.total >= acces.plafond)
+      alertes.push({ code: 'plafond_atteint', niveau: 'attention' });
+    else if (acces.inscription === 'ouverte' && pct >= 90)
+      alertes.push({ code: 'plafond_proche', niveau: 'attention' });
+    if ((attente.en_attente ?? 0) > 0) alertes.push({ code: 'attente', niveau: 'info' });
+    if (comptes.nonVerifiesEnRetard >= 5)
+      alertes.push({ code: 'verifications_en_retard', niveau: 'attention' });
+    if (!courrielActif && (acces.verification === 'requise' || invitations > 0))
+      alertes.push({ code: 'courriel_inactif', niveau: 'attention' });
+    if (couts.estimeJourEur >= couts.seuilAlerteEur)
+      alertes.push({ code: 'cout_jour_eleve', niveau: 'critique' });
+    return {
+      mode: modeDe(acces),
+      verification: acces.verification,
+      antibot: acces.antibot,
+      comptes: { ...comptes, plafond: acces.plafond, pourcentPlafond: pct },
+      attente: { enAttente: attente.en_attente ?? 0, invitationsActives: invitations },
+      couts,
+      plafonds: listePlafonds(),
+      alertes,
+    };
+  });
+
+  app.post<{
+    Body: {
+      libelle?: string;
+      adresse?: string;
+      max?: number;
+      jours?: number;
+      envoyer?: boolean;
+      langue?: string;
+    };
+  }>(
+    '/api/v1/admin/invitations',
+    {
+      preHandler: needAdmin,
+      schema: {
+        body: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            libelle: { type: 'string', maxLength: 80 },
+            adresse: { type: 'string', maxLength: 254, pattern: EMAIL },
+            max: { type: 'integer', minimum: 1, maximum: 1000 },
+            // 0 = sans expiration
+            jours: { type: 'integer', minimum: 0, maximum: 365 },
+            envoyer: { type: 'boolean' },
+            langue: { type: 'string', maxLength: 10 },
+          },
+        },
+      },
+    },
+    async (req, reply) => {
+      const b = req.body;
+      // une invitation personnelle (adresse) n'a qu'un usage
+      const max = b.adresse ? 1 : (b.max ?? 1);
+      const inv = await createInvitation(db, {
+        label: b.libelle,
+        email: b.adresse,
+        maxUses: max,
+        days: b.jours,
+        by: req.auth!.accountId,
+      });
+      await audit(db, req.auth!.accountId, 'invitation.creation', inv.id, {
+        max,
+        personnelle: !!b.adresse,
+      });
+      const envoye =
+        b.adresse && b.envoyer ? await envoyer(b.adresse, inv.code, b.langue ?? 'fr') : false;
+      return reply.code(201).send({
+        id: inv.id,
+        code: inv.code,
+        lien: lienDe(inv.code),
+        expireLe: inv.expiresAt,
+        envoye,
+      });
+    },
+  );
+
+  app.post<{ Params: { id: string } }>(
+    '/api/v1/admin/invitations/:id/revoquer',
+    {
+      preHandler: needAdmin,
+      schema: { params: { type: 'object', required: ['id'], properties: { id: UUID } } },
+    },
+    async (req, reply) => {
+      if (!(await revokeInvitation(db, req.params.id))) return err(reply, 404, 'introuvable');
+      await audit(db, req.auth!.accountId, 'invitation.revocation', req.params.id);
+      return { ok: true };
+    },
+  );
+
+  app.get<{ Querystring: { statut?: string } }>(
+    '/api/v1/admin/liste-attente',
+    {
+      preHandler: needAdmin,
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: { statut: { enum: [...WAITLIST_STATUS] } },
+          additionalProperties: false,
+        },
+      },
+    },
+    async (req) => ({ demandes: await listWaitlist(db, req.query.statut ?? null) }),
+  );
+
+  app.post<{ Params: { id: string }; Body: { jours?: number } }>(
+    '/api/v1/admin/liste-attente/:id/accepter',
+    {
+      preHandler: needAdmin,
+      schema: {
+        params: { type: 'object', required: ['id'], properties: { id: UUID } },
+        body: {
+          type: 'object',
+          additionalProperties: false,
+          properties: { jours: { type: 'integer', minimum: 0, maximum: 365 } },
+        },
+      },
+    },
+    async (req, reply) => {
+      const w = await getWaitlist(db, req.params.id);
+      if (!w) return err(reply, 404, 'introuvable');
+      if (w.status !== 'en_attente') return err(reply, 409, 'deja_traitee');
+      const inv = await createInvitation(db, {
+        label: w.name ?? 'liste d’attente',
+        email: w.email,
+        maxUses: 1,
+        days: req.body?.jours ?? 30,
+        by: req.auth!.accountId,
+        waitlistId: w.id,
+      });
+      if (!(await decideWaitlist(db, w.id, 'acceptee', req.auth!.accountId, inv.id)))
+        return err(reply, 409, 'deja_traitee');
+      await audit(db, req.auth!.accountId, 'attente.acceptation', w.id);
+      const envoye = await envoyer(w.email, inv.code, w.locale);
+      return {
+        id: inv.id,
+        code: inv.code,
+        lien: lienDe(inv.code),
+        expireLe: inv.expiresAt,
+        envoye,
+      };
+    },
+  );
+
+  app.post<{ Params: { id: string } }>(
+    '/api/v1/admin/liste-attente/:id/refuser',
+    {
+      preHandler: needAdmin,
+      schema: { params: { type: 'object', required: ['id'], properties: { id: UUID } } },
+    },
+    async (req, reply) => {
+      if (!(await decideWaitlist(db, req.params.id, 'refusee', req.auth!.accountId, null)))
+        return err(reply, 404, 'introuvable');
+      await audit(db, req.auth!.accountId, 'attente.refus', req.params.id);
+      return { ok: true };
+    },
+  );
+}

@@ -11,7 +11,7 @@ import { neededIllustrations } from './needed.js';
 import { registerAuth } from './auth/routes.js';
 import { mailerFromEnv, publicUrlFromEnv, type Mailer } from './mail/envoi.js';
 
-export { neededIllustrations };
+export { neededIllustrations, scrub };
 import { currentEdition, ping, setVerseSuraNames, type Db } from '@awform/db';
 import { suraName } from '@awform/hifz';
 import { registerHifz } from './hifz.js';
@@ -52,6 +52,8 @@ import { registerVivre } from './vivre.js';
 import { registerF5 } from './f5.js';
 import { registerSupport } from './support.js';
 import { registerVerification } from './verification.js';
+import { registerBetaAcces } from './beta-acces.js';
+import { scrub, UUID_ANY } from './scrub.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
 import type { RecitationKey } from '@awform/db';
 
@@ -101,7 +103,6 @@ export interface AppOptions {
  * Journaux (audit MIN-13) : chemin sans chaîne de requête, identifiants remplacés par « :id », adresse IP
  * tronquée (IPv4 : dernier octet à 0 ; IPv6 : trois premiers groupes). Aucun e-mail, aucun identifiant d'élève.
  */
-const UUID_ANY = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
 export function logSafeUrl(url: string): string {
   return (url.split('?')[0] ?? '').replace(UUID_ANY, ':id');
 }
@@ -116,6 +117,15 @@ export const logSerializers = {
     method: req.method,
     url: logSafeUrl(req.url ?? ''),
     remoteAddress: truncIp(req.ip),
+  }),
+  err: (e: { name?: string; message?: string; stack?: string; code?: string }) => ({
+    type: e?.name ?? 'Error',
+    code: e?.code,
+    message: scrub(String(e?.message ?? '')).slice(0, 400),
+    stack: scrub(String(e?.stack ?? ''))
+      .split('\n')
+      .slice(0, 8)
+      .join('\n'),
   }),
 };
 
@@ -158,14 +168,17 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   // lot F3 (revue M7) : e-mails (vérification, mot de passe oublié) — prestataire SMTP, boîte de démonstration
   const mailer =
     opts.mailer ?? mailerFromEnv(process.env, (m) => (opts.logger ? app.log.warn(m) : undefined));
+  const publicUrl = opts.publicUrl === undefined ? publicUrlFromEnv(process.env) : opts.publicUrl;
   registerAuth(app, {
     db,
     cookieSecure: opts.cookieSecure ?? true,
     secretKey: opts.secretKey ?? null,
     demoLogin: opts.demoLogin === true,
     mailer,
-    publicUrl: opts.publicUrl === undefined ? publicUrlFromEnv(process.env) : opts.publicUrl,
+    publicUrl,
   });
+  // bêta fermée sur invitation : mode fermé (après la lecture de la session), invitations, liste d'attente
+  registerBetaAcces(app, db, { mailer, publicUrl, secretKey: opts.secretKey ?? null });
 
   // en-têtes de sécurité de base (la CSP stricte est posée par SvelteKit / Caddy)
   app.addHook('onSend', async (_req, reply, payload) => {
@@ -253,6 +266,13 @@ export function buildApp(opts: AppOptions): FastifyInstance {
       ? (process.env.AWFORM_RELAIS_CERTS ?? null)
       : opts.relaisCertsDir,
   );
+
+  // sonde de disponibilité (Caddy : /healthz) : réponse minimale, sans donnée ; 503 si la base ne répond pas
+  app.get('/healthz', async (_req, reply) => {
+    const dbOk = await ping(db).catch(() => false);
+    void reply.header('Cache-Control', 'no-store');
+    return reply.code(dbOk ? 200 : 503).send({ status: dbOk ? 'ok' : 'degrade' });
+  });
 
   app.get('/api/v1/health', async () => {
     const dbOk = await ping(db).catch(() => false);

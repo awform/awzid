@@ -19,6 +19,13 @@
   import { purgeOldRecordings } from '$lib/recordings';
   import { remindersOn } from '$lib/quotidien/reglages';
   import { cachedMe, fetchMe, type Me } from '$lib/session';
+  import {
+    bandeauAffiche,
+    chargerStatut,
+    maintenance,
+    pageDeVerification,
+    type AccesStatut,
+  } from '$lib/acces';
   import { chargerFonctions } from '$lib/fonctions.svelte';
   import { cleDeChemin, envoyer, noterUsage, usagePour } from '$lib/usage';
   import { appliquerFond, lireFond, stockageLocal } from '$lib/theme/fond';
@@ -46,6 +53,14 @@
   let lastActivity = Date.now();
   // bêta-support : bandeau « Mettre à jour », chargé après le démarrage (jamais dans le chargement initial)
   let Maj = $state<Component | null>(null);
+  // bêta fermée : état d'accès du site (mode fermé = page de maintenance) et bandeau « Version bêta » (fermable),
+  // chargé après le démarrage comme la mise à jour
+  let acces = $state<AccesStatut | null>(null);
+  let Bandeau = $state<Component | null>(null);
+  const ferme = $derived(maintenance(acces, page.url.pathname));
+  const bandeauCache = $derived(
+    /^\/(coran\/lecteur|hifz\/enfant)\/?$/.test(page.url.pathname) || ferme,
+  );
 
   /**
    * Lot 26 — public de l'écran : navigation de 3 à 5 entrées et ergonomie (enfant : tailles plus grandes).
@@ -74,6 +89,16 @@
     const path = page.url.pathname;
     if (me?.accordsManquants?.length && !GATE_FREE.test(path))
       void goto(resolve('/acces/[[mode]]', { mode: 'accords' }));
+  });
+  // bêta : adresse e-mail à vérifier avant d'utiliser le compte (réglage « vérification requise ») → page dédiée
+  $effect(() => {
+    const cible = pageDeVerification(
+      acces,
+      me?.account.emailVerified,
+      me?.account.kind,
+      page.url.pathname,
+    );
+    if (cible) void goto(resolve('/acces/verification'));
   });
   const showTabs = $derived(!NO_TABS.some((p) => page.url.pathname.startsWith(p)));
 
@@ -112,6 +137,17 @@
   onMount(() => {
     if ('serviceWorker' in navigator)
       void import('$lib/MajBandeau.svelte').then((m) => (Maj = m.default)).catch(() => {});
+    void chargerStatut().then((s) => {
+      acces = s;
+      let stockage: Storage | null = null;
+      try {
+        stockage = localStorage;
+      } catch {
+        /* stockage indisponible */
+      }
+      if (bandeauAffiche(s, stockage))
+        void import('$lib/BandeauBeta.svelte').then((m) => (Bandeau = m.default)).catch(() => {});
+    });
     mode = readMode();
     applyMode(mode);
     appliquerFond(lireFond());
@@ -292,9 +328,19 @@
     </p>{/if}
   <!-- bêta-support : nouvelle version prête (jamais en pleine leçon ou écoute, ni hors ligne) -->
   {#if Maj}<Maj />{/if}
+  <!-- bêta fermée : bandeau « Version bêta » (discret, fermable) -->
+  {#if Bandeau && !bandeauCache}<Bandeau />{/if}
 
   <main id="contenu" tabindex="-1">
-    {@render children()}
+    {#if ferme}
+      <!-- mode fermé : page de maintenance sobre (le serveur la sert aussi seul, voir hooks.server.ts) -->
+      <section class="card ferme" data-testid="maintenance" role="status">
+        <h1><Bidi text={t('ferme.titre')} /></h1>
+        <p><Bidi text={t('ferme.texte')} /></p>
+      </section>
+    {:else}
+      {@render children()}
+    {/if}
     <!-- D1 : pas de liens juridiques sur l'accueil, l'Arabe et les leçons de l'élève, ni nulle part pour un enfant
          (ils restent dans « Plus », « Aide » et « Compte ») -->
     {#if !piedCache}
@@ -313,6 +359,11 @@
 </div>
 
 <style>
+  .ferme {
+    max-width: 560px;
+    margin: 32px auto;
+    text-align: center;
+  }
   .top {
     display: flex;
     align-items: center;

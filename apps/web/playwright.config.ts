@@ -136,7 +136,7 @@ export default defineConfig({
         // http local : cookie sans attribut Secure (en production : Secure, derrière HTTPS)
         COOKIE_SECURE: '0',
         // nombreux comptes de test créés depuis 127.0.0.1
-        AWFORM_SIGNUP_PER_HOUR: '200',
+        AWFORM_SIGNUP_PER_HOUR: '5000',
         // clé de chiffrement des seconds facteurs : tirée au hasard pour chaque lancement de test
         AWFORM_SECRET_KEY: E2E_KEY,
         // tuteur : fournisseur SIMULÉ (aucun appel à un vrai modèle en test)
@@ -163,6 +163,12 @@ export default defineConfig({
         // A5 : « Réciter et vérifier » ouvert pour les e2e, service d'écoute factice
         AWFORM_ECOUTE_IA: 'on',
         AWFORM_ECOUTE_URL: `http://127.0.0.1:${ECOUTE_PORT}`,
+        // bêta fermée : bandeau « Version bêta » masqué par défaut (les autres suites ne le voient pas ; il est testé par
+        // beta-acces.spec.ts avec un état simulé) ; nombreux essais de codes depuis 127.0.0.1
+        AWFORM_BANDEAU: 'off',
+        // plafond d'inscriptions du mode ouvert : très haut pour les essais (testé à part, apps/api/test/beta-modes.test.ts)
+        AWFORM_PLAFOND_COMPTES: '1000000',
+        AWFORM_INVITATION_ESSAIS: '500',
         // lot F3 : e-mails écrits dans la boîte de démonstration ; liens vers l'application de test
         AWFORM_MAIL: 'journal',
         AWFORM_MAIL_JOURNAL_DIR: process.env.E2E_MAIL_DIR,

@@ -7,5 +7,6 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   plugins: [svelte()],
   resolve: { alias: { $lib: fileURLToPath(new URL('./src/lib', import.meta.url)) } },
-  test: { include: ['src/**/*.test.ts'], environment: 'node' },
+  // délai élargi : l'analyse de tous les catalogues (≈ 14 000 messages) approche 5 s quand la machine est chargée
+  test: { include: ['src/**/*.test.ts'], environment: 'node', testTimeout: 30_000 },
 });

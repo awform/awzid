@@ -63,7 +63,9 @@ const ASSETS = [
       !isTraduction(f) &&
       !isRiwaya(f) &&
       !isMutun(f) &&
-      !isDouas(f),
+      !isDouas(f) &&
+      // bêta : page d'état du service (/etat.html), qui ne sert qu'en ligne
+      !f.startsWith('/etat.'),
   ),
 ];
 

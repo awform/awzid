@@ -95,6 +95,19 @@ services:
     profiles: [outils]
     logging: *logs
 
+  alerte:
+    # supervision : un e-mail d'alerte au responsable (AWFORM_ALERTE_A) par le service d'e-mail de l'API ; lancé par
+    # alerte.sh (awform-alerte.timer). Périmètre alerte.env : les seuls réglages SMTP, jamais la base ni les clés ;
+    # corps lu sur l'entrée standard, masqué (adresses, identifiants, jetons) avant l'envoi
+    image: awform/api:${AWFORM_VERSION:-local}
+    env_file: '${AWFORM_ENV_DIR:?AWFORM_ENV_DIR absent}/alerte.env'
+    environment: { AWFORM_MAIL_JOURNAL_DIR: /boite }
+    volumes: ['boite:/boite']
+    entrypoint: ['node', 'dist/cli/alerte.js']
+    restart: 'no'
+    profiles: [outils]
+    logging: *logs
+
   coran-audio:
     # audio du Coran (lot 27) : catalogue | verifier | importer | activer | retirer | etat
     # compte propriétaire ; fichiers reçus du Complexe (zip « ayat » décompressé) en lecture seule dans

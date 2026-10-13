@@ -260,14 +260,53 @@ Persistent=true
 [Install]
 WantedBy=timers.target
 EOF
+# supervision (alertes par e-mail, toutes les 15 minutes) : en production, ou dès que le responsable a réglé
+# AWFORM_ALERTE_A dans prod.env (la démonstration n'envoie rien tant qu'il n'est pas réglé)
+ALERTE=0
+if [ "$PRODUCTION" = 1 ] || grep -q '^AWFORM_ALERTE_A=' "$ENVF"; then
+  ALERTE=1
+  sudo tee /etc/systemd/system/awform-alerte.service >/dev/null <<EOF
+[Unit]
+Description=AWFORM — supervision et alertes par e-mail
+After=awform.service
+
+[Service]
+Type=oneshot
+User=$USER
+Environment=AWFORM_ENV_DIR=$AWFORM_ENV_DIR
+ExecStart=$PROD/alerte.sh
+EOF
+  sudo tee /etc/systemd/system/awform-alerte.timer >/dev/null <<EOF
+[Unit]
+Description=AWFORM — supervision toutes les 15 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+
+[Install]
+WantedBy=timers.target
+EOF
+fi
 sudo systemctl daemon-reload
 sudo systemctl enable --now docker >/dev/null
 sudo systemctl enable awform.service awform-backup.timer >/dev/null
 sudo systemctl start awform-backup.timer
+if [ "$ALERTE" = 1 ]; then
+  sudo systemctl enable awform-alerte.timer >/dev/null
+  sudo systemctl start awform-alerte.timer
+fi
 
 # pare-feu : 80 et 443 depuis le réseau local seulement (SSH déjà autorisé)
-sudo ufw allow from "$LAN" to any port 80 proto tcp >/dev/null
-sudo ufw allow from "$LAN" to any port 443 proto tcp >/dev/null
+if [ "$PRODUCTION" = 1 ]; then
+  # serveur public : 80 (certificat et redirection) et 443 ouverts à tous ; SSH reste autorisé par le pare-feu du
+  # nuage (gcp/pare-feu.sh : SSH par IAP seulement)
+  sudo ufw allow 80/tcp >/dev/null
+  sudo ufw allow 443/tcp >/dev/null
+else
+  sudo ufw allow from "$LAN" to any port 80 proto tcp >/dev/null
+  sudo ufw allow from "$LAN" to any port 443 proto tcp >/dev/null
+fi
 fi
 
 # ---------------------------------------------------------------- 5. démonstration

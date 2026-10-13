@@ -27,6 +27,7 @@ import {
 } from '@awform/db';
 import { note, qualityOf, type Counters } from '@awform/hifz';
 import { ownsProfile } from './auth/routes.js';
+import { STOCKAGE_PAR_ELEVE_OCTETS, stockageRecitations } from './plafonds.js';
 import { minorHolder, parentGate as guardParent } from './guards.js';
 import { audit, isTeacher, staffOnly } from './auth/service.js';
 import { lawEvidence, TEXT_VERSION } from './auth/policy.js';
@@ -160,6 +161,9 @@ export function registerRecitations(app: FastifyInstance, db: Db, key: Recitatio
       const classes = await profileClasses(db, p.id);
       if (!classes.some((c) => c.id === req.query.classe))
         return err(reply, 404, 'classe_inconnue');
+      // plafond de stockage par élève (bêta : tout ce qui coûte a un plafond par utilisateur)
+      if ((await stockageRecitations(db, p.id)) + req.body.length > STOCKAGE_PAR_ELEVE_OCTETS)
+        return err(reply, 413, 'quota_stockage');
       const [cls] = await db
         .select({ days: t.classGroup.recitationDays })
         .from(t.classGroup)

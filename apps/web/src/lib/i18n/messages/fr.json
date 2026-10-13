@@ -1382,5 +1382,11 @@
   "compte.d_notifications": "Rappels et messages",
   "compte.d_apprentissage": "Tuteur, voix, objectifs, classe",
   "compte.d_donnees": "Accords, export, suppression",
-  "compte.d_abonnement": "Formule et paiements"
+  "compte.d_abonnement": "Formule et paiements",
+  "bandeau.texte": "Version bêta — le contenu religieux est tranché par le référent selon l’école mālikite, sources citées, en attente d’une seconde lecture savante.",
+  "bandeau.fermer": "Fermer ce message",
+  "bandeau.aria": "Information sur la version bêta",
+  "ferme.titre": "Awzid est momentanément fermé",
+  "ferme.texte": "Nous faisons une pause pour améliorer l’application. Merci de votre patience : revenez un peu plus tard.",
+  "erreur.acces_ferme": "Le service est momentanément fermé. Réessayez plus tard."
 }

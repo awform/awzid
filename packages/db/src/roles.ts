@@ -149,6 +149,11 @@ export const API_GRANTS: Record<string, Right[]> = {
   usage_salt: ALL,
   // lot F3 : liens à usage unique envoyés par e-mail (vérification, réinitialisation, changement d'adresse)
   account_link: ALL,
+  // bêta fermée : réglages du site, invitations (jamais le code en clair), leurs usages, liste d'attente
+  site_setting: ALL,
+  invitation: ALL,
+  invitation_use: ALL,
+  waitlist: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */
@@ -180,6 +185,8 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
   feedback: ['DELETE'],
   // bêta-support : signalements réglés effacés après 12 mois
   problem_report: ['DELETE'],
+  // bêta fermée : demandes de la liste d'attente effacées après 12 mois
+  waitlist: ['DELETE'],
 };
 
 /** Droits par COLONNE du travailleur (ni pseudonyme ni année de naissance : seulement le lien au compte). */
@@ -198,6 +205,7 @@ export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
   usage_salt: ['day'],
   feedback: ['created_at', 'capture_type'],
   problem_report: ['created_at', 'capture_type', 'status'],
+  waitlist: ['created_at'],
 };
 
 /**

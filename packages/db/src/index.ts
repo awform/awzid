@@ -32,3 +32,4 @@ export * from './versets.js';
 export * from './vivre.js';
 export * from './fonctions.js';
 export * from './problemes.js';
+export * from './beta-acces.js';
