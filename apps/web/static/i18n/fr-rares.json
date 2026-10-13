@@ -366,5 +366,8 @@
   "notif.heure": "{h} h",
   "notif.enregistre": "Préférences enregistrées.",
   "compte.supprimer_etape2": "Dernière étape : saisissez votre mot de passe pour confirmer.",
-  "compte.supprimer_definitif": "Supprimer définitivement"
+  "compte.supprimer_definitif": "Supprimer définitivement",
+  "errata.source": "Source",
+  "errata.edition": "Édition",
+  "errata.comment": "Chaque correction religieuse est datée et cite sa source. Pour signaler une erreur dans un texte religieux, utilisez le bouton ci-dessous ou « Signaler une erreur » sous le texte."
 }

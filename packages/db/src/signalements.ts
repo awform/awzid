@@ -20,6 +20,8 @@ export const REPORT_REASONS = [
   'orthographe',
   'autre',
 ] as const;
+/** Natures de contenu dont l'erratum doit citer une source (texte religieux). */
+export const RELIGIOUS_KINDS = ['verset', 'hadith', 'fiqh'] as const;
 export const REPORT_STATUSES = ['recu', 'en_examen', 'corrige', 'rejete'] as const;
 export type ReportStatus = (typeof REPORT_STATUSES)[number];
 
@@ -122,13 +124,28 @@ const NEXT: Record<ReportStatus, readonly ReportStatus[]> = {
 
 export type DecisionOutcome =
   | { ok: true }
-  | { ok: false; code: 'introuvable' | 'transition_interdite' | 'motif_requis' | 'erratum_requis' };
+  | {
+      ok: false;
+      code:
+        | 'introuvable'
+        | 'transition_interdite'
+        | 'motif_requis'
+        | 'erratum_requis'
+        | 'source_requise';
+    };
 
 export async function decideReport(
   db: Db,
   id: string,
   by: string,
-  d: { status: ReportStatus; decisionNote?: string; erratum?: string; fixedInEdition?: string },
+  d: {
+    status: ReportStatus;
+    decisionNote?: string;
+    erratum?: string;
+    fixedInEdition?: string;
+    /** source de la correction (référence du verset, du hadith, du livre) : écrite dans `ref` */
+    source?: string;
+  },
 ): Promise<DecisionOutcome> {
   const cur = await reportById(db, id);
   if (!cur) return { ok: false, code: 'introuvable' };
@@ -137,18 +154,70 @@ export async function decideReport(
   if (d.status === 'rejete' && !clip(d.decisionNote, 1000))
     return { ok: false, code: 'motif_requis' };
   if (d.status === 'corrige' && !clip(d.erratum, 600)) return { ok: false, code: 'erratum_requis' };
+  // bêta fermée : une correction RELIGIEUSE publiée dans les errata cite toujours sa source
+  const source = clip(d.source, 120) ?? cur.ref;
+  if (d.status === 'corrige' && RELIGIOUS_KINDS.includes(cur.targetKind as never) && !source)
+    return { ok: false, code: 'source_requise' };
   await db
     .update(t.contentReport)
     .set({
       status: d.status,
       decisionNote: clip(d.decisionNote, 1000) ?? cur.decisionNote,
       erratum: clip(d.erratum, 600) ?? cur.erratum,
+      ref: source,
       fixedInEdition: clip(d.fixedInEdition, 60) ?? cur.fixedInEdition,
       handledBy: by,
       handledAt: new Date(),
     })
     .where(eq(t.contentReport.id, id));
   return { ok: true };
+}
+
+/**
+ * Bêta fermée : erratum créé DIRECTEMENT par le référent ou l'administrateur (correction trouvée sans signalement
+ * d'élève, ou à partir d'un signalement « Signaler un problème → point religieux » qui n'a pas de bloc de contenu).
+ * La source est obligatoire ; la ligne est déjà « corrigée » (visible dans les errata publics, datée).
+ */
+export async function createErratum(
+  db: Db,
+  by: string,
+  e: {
+    targetKind: (typeof REPORT_KINDS)[number];
+    unitId?: string | null;
+    source: string;
+    erratum: string;
+    fixedInEdition?: string | null;
+  },
+): Promise<
+  | { ok: true; id: string }
+  | { ok: false; code: 'source_requise' | 'erratum_requis' | 'lecon_inconnue' }
+> {
+  const source = clip(e.source, 120);
+  const erratum = clip(e.erratum, 600);
+  if (!source) return { ok: false, code: 'source_requise' };
+  if (!erratum) return { ok: false, code: 'erratum_requis' };
+  if (e.unitId) {
+    const [u] = await db.select({ id: t.unit.id }).from(t.unit).where(eq(t.unit.id, e.unitId));
+    if (!u) return { ok: false, code: 'lecon_inconnue' };
+  }
+  const [row] = await db
+    .insert(t.contentReport)
+    .values({
+      accountId: null,
+      editionId: null,
+      targetKind: e.targetKind,
+      unitId: e.unitId ?? null,
+      path: '',
+      ref: source,
+      reason: 'autre',
+      status: 'corrige',
+      erratum,
+      fixedInEdition: clip(e.fixedInEdition, 60),
+      handledBy: by,
+      handledAt: new Date(),
+    })
+    .returning({ id: t.contentReport.id });
+  return { ok: true, id: row!.id };
 }
 
 /** Errata publics : corrections faites à la suite d'un signalement (ni auteur, ni commentaire). */

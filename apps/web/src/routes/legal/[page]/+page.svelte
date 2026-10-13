@@ -3,16 +3,19 @@
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
+  import LegalDoc from '$lib/legal/LegalDoc.svelte';
   import { LEGAL_PAGES, type LegalKey } from '$lib/legal/content';
-  import { legalLang, legalPages } from '$lib/legal/pages';
+  import { legalPages } from '$lib/legal/pages';
   const LEGAL = legalPages();
 
-  /** Pages légales (lot 14) : BROUILLONS à valider par un juriste ; textes dans $lib/legal/content.ts. */
+  /**
+   * Pages légales (lot 14, bêta fermée 13/10/2026) : textes PROVISOIRES, en attente d'une seconde lecture
+   * juridique ; contenu dans static/i18n/legal/<langue>.json.
+   */
   const key = $derived(page.params.page as LegalKey);
-  const doc = $derived(LEGAL_PAGES.includes(key) ? LEGAL[key] : null);
 </script>
 
-<svelte:head><title>{t('app.nom')} — {doc?.titre ?? t('legal.titre')}</title></svelte:head>
+<svelte:head><title>{t('app.nom')} — {LEGAL[key]?.titre ?? t('legal.titre')}</title></svelte:head>
 
 <nav class="legalnav" aria-label={t('legal.titre')}>
   {#each LEGAL_PAGES as k (k)}
@@ -20,24 +23,11 @@
       ><Bidi text={LEGAL[k].titre} /></a
     >
   {/each}
+  <a href={resolve('/errata')}>{t('errata.titre')}</a>
   <a href={resolve('/aide')}>{t('aide.titre')}</a>
 </nav>
 
-{#if doc}
-  <article class="card" data-testid="page-legale" lang={legalLang()}>
-    <p class="brouillon" role="note">{t('legal.brouillon')}</p>
-    <h1><Bidi text={doc.titre} /></h1>
-    <p class="muted small"><Bidi text={t('legal.maj', { date: doc.maj })} /></p>
-    {#each doc.sections as s (s.titre)}
-      <section>
-        <h2><Bidi text={s.titre} /></h2>
-        {#each s.paras as p, i (i)}<p><Bidi text={p} /></p>{/each}
-      </section>
-    {/each}
-  </article>
-{:else}
-  <p class="card">{t('legal.introuvable')}</p>
-{/if}
+<LegalDoc cle={key} />
 
 <style>
   .legalnav {
@@ -48,19 +38,5 @@
   }
   .legalnav a[aria-current='page'] {
     font-weight: 700;
-  }
-  .brouillon {
-    background: var(--warn-bg);
-    color: var(--ink);
-    padding: 8px 12px;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
-  }
-  h2 {
-    font-size: 1.1rem;
-    margin-top: 16px;
-  }
-  .small {
-    font-size: 0.9rem;
   }
 </style>

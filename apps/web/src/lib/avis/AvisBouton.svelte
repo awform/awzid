@@ -11,12 +11,30 @@
    * F5 — « Donner mon avis » (élève, parent, enseignant) : petit lien discret ; la fenêtre (et sa capture
    * d'écran) n'est chargée qu'à l'ouverture, en ligne (jamais préchargée sur l'appareil de l'élève).
    * Bêta-support — `mode="probleme"` : « Signaler un problème » (même fenêtre, autres catégories, autre file).
+   * Bêta fermée (13/10/2026) — `categorie` : catégorie déjà choisie à l'ouverture (parcours « Signaler une erreur dans
+   * un texte religieux » : `religieux`) ; `libelle` : clé de texte du bouton, si autre que le nom du mode.
    */
   // D2 : `ligne` — entrée d'une liste de navigation (« Plus » : icône + nom écrit)
-  let { mode = 'avis', ligne = false }: { mode?: 'avis' | 'probleme'; ligne?: boolean } = $props();
-  let Dialog = $state<Component<{ onclose: () => void; mode?: 'avis' | 'probleme' }> | null>(null);
+  let {
+    mode = 'avis',
+    ligne = false,
+    categorie = '',
+    libelle = '',
+  }: {
+    mode?: 'avis' | 'probleme';
+    ligne?: boolean;
+    categorie?: string;
+    libelle?: string;
+  } = $props();
+  let Dialog = $state<Component<{
+    onclose: () => void;
+    mode?: 'avis' | 'probleme';
+    categorie?: string;
+  }> | null>(null);
   let open = $state(false);
   let horsLigne = $state(false);
+  const testid = $derived(`${mode}-ouvrir${categorie ? `-${categorie}` : ''}`);
+  const nom = $derived(libelle || `${mode}.bouton`);
 
   async function ouvrir() {
     horsLigne = false;
@@ -32,21 +50,21 @@
 
 {#if fn(mode === 'probleme' ? 'signaler' : 'avis') && ligne}
   <li>
-    <button type="button" data-testid="{mode}-ouvrir" onclick={ouvrir}
+    <button type="button" data-testid={testid} onclick={ouvrir}
       ><span class="ic"><Icon name={mode === 'probleme' ? 'alerte' : 'message'} /></span><span
-        class="nom"><Bidi text={t(`${mode}.bouton`)} /></span
+        class="nom"><Bidi text={t(nom)} /></span
       ></button
     >
     {#if horsLigne}<ConnexionNecessaire onretry={ouvrir} />{/if}
-    {#if Dialog && open}<Dialog {mode} onclose={() => (open = false)} />{/if}
+    {#if Dialog && open}<Dialog {mode} {categorie} onclose={() => (open = false)} />{/if}
   </li>
 {:else if fn(mode === 'probleme' ? 'signaler' : 'avis')}
   <p>
-    <button type="button" class="ghost" data-testid="{mode}-ouvrir" onclick={ouvrir}
+    <button type="button" class="ghost" data-testid={testid} onclick={ouvrir}
       >{#if mode === 'probleme'}<Icon name="question" size={20} />
-      {/if}<Bidi text={t(`${mode}.bouton`)} /></button
+      {/if}<Bidi text={t(nom)} /></button
     >
   </p>
   {#if horsLigne}<ConnexionNecessaire onretry={ouvrir} />{/if}
-  {#if Dialog && open}<Dialog {mode} onclose={() => (open = false)} />{/if}
+  {#if Dialog && open}<Dialog {mode} {categorie} onclose={() => (open = false)} />{/if}
 {/if}

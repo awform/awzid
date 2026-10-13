@@ -18,7 +18,11 @@
    * vérifier, autre) vers `/problemes` ; la page d'origine et la version sont jointes (version : par le serveur) ;
    * un enfant n'envoie que la catégorie (ni texte libre, ni image).
    */
-  let { onclose, mode = 'avis' }: { onclose: () => void; mode?: 'avis' | 'probleme' } = $props();
+  let {
+    onclose,
+    mode = 'avis',
+    categorie: categorieInitiale = '',
+  }: { onclose: () => void; mode?: 'avis' | 'probleme'; categorie?: string } = $props();
 
   const CATS_PAR_MODE = {
     avis: ['idee', 'probleme', 'difficile', 'aime', 'autre'],
@@ -38,7 +42,11 @@
   ];
   let dlg = $state<HTMLDialogElement | null>(null);
   let pret = $state(false);
-  let categorie = $state('');
+  // bêta fermée : catégorie déjà choisie (ex. « Signaler une erreur dans un texte religieux »), si elle existe pour ce mode
+  // svelte-ignore state_referenced_locally
+  let categorie = $state(
+    CATS_PAR_MODE[mode].includes(categorieInitiale as never) ? categorieInitiale : '',
+  );
   let texte = $state('');
   let joindre = $state(false);
   let image = $state<string | null>(null);

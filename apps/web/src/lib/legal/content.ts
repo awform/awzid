@@ -15,7 +15,15 @@ export interface LegalPage {
   sections: LegalSection[];
 }
 
-export const LEGAL_PAGES = ['mentions', 'cgu', 'confidentialite', 'cookies', 'beta'] as const;
+export const LEGAL_PAGES = [
+  'mentions',
+  'cgu',
+  'confidentialite',
+  'cookies',
+  'beta',
+  'invites',
+  'infobeta',
+] as const;
 export type LegalKey = (typeof LEGAL_PAGES)[number];
 
 export interface FaqItem {

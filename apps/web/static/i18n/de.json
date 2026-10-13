@@ -1164,7 +1164,7 @@
   "erreur.modele_absent": "Keine Zertifikatsvorlage für dieses Buch.",
   "erreur.aucune_edition": "Keine veröffentlichte Ausgabe.",
   "legal.titre": "Rechtliche Hinweise",
-  "legal.brouillon": "ENTWURF — vor der öffentlichen Eröffnung von einem Juristen zu prüfen.",
+  "legal.brouillon": "VORLÄUFIG — vor der Unterzeichnung durch einen Juristen; in Erwartung einer zweiten juristischen Prüfung.",
   "legal.maj": "Aktualisiert: {date}",
   "legal.introuvable": "Diese Seite existiert nicht.",
   "aide.titre": "Hilfe",
@@ -3081,5 +3081,12 @@
   "mj.ens_motif_explication": "gehört zum Abschnitt mit Erklärung",
   "mj.note": "Erläuterung:",
   "mj.note_sources": "Quellen",
-  "mj.ens_traduction": "Übersetzungsentscheidung:"
+  "mj.ens_traduction": "Übersetzungsentscheidung:",
+  "aide.erreur_religieuse": "Einen Fehler in einem religiösen Text melden",
+  "aide.beta": "Die Awzid-Beta",
+  "aide.contact": "Kontakt",
+  "errata.source": "Quelle",
+  "errata.edition": "Ausgabe",
+  "errata.comment": "Jede religiöse Korrektur ist datiert und nennt ihre Quelle. Um einen Fehler in einem religiösen Text zu melden, nutzen Sie die Schaltfläche unten oder „Fehler melden“ unter dem Text.",
+  "erreur.source_requise": "Geben Sie die Quelle der Korrektur an."
 }

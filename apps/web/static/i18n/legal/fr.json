@@ -2,53 +2,69 @@
   "legal": {
     "mentions": {
       "titre": "Mentions légales",
-      "maj": "6 octobre 2026 (brouillon, à relire par un juriste)",
+      "maj": "13 octobre 2026 (provisoire — avant signature d'un juriste ; en attente d'une seconde lecture juridique)",
       "sections": [
         {
           "titre": "Éditeur",
           "paras": [
-            "Awzid — [raison sociale, forme juridique, capital : à compléter].",
-            "Siège : [adresse à compléter]. Immatriculation : [RCS / SIREN ou NINEA : à compléter].",
-            "Directeur ou directrice de la publication : [nom à compléter].",
-            "Contact : [adresse électronique de contact à créer]."
+            "Awzid — [raison sociale, forme juridique, capital : à compléter par le client].",
+            "Siège : [adresse à compléter par le client]. Immatriculation : [RCS / SIREN ou NINEA : à compléter par le client].",
+            "Directeur ou directrice de la publication : [nom à compléter par le client].",
+            "Contact : [adresse électronique de contact : à créer par le client]."
           ]
         },
         {
           "titre": "Hébergement",
           "paras": [
-            "Hébergeur : [hébergeur européen à désigner — nom, adresse, téléphone]. Les données sont hébergées dans l'Union européenne."
+            "Hébergeur prévu pour la bêta : Google Cloud Platform, région de Paris (europe-west9) — [identité exacte de la société contractante et adresse, telles qu'elles figurent au contrat : à compléter par le client]. Les données des comptes sont hébergées dans l'Union européenne.",
+            "Pendant la bêta fermée, certains essais peuvent tourner sur un serveur de test d'Awzid, sans données de véritables utilisateurs."
           ]
         },
         {
           "titre": "Propriété intellectuelle",
           "paras": [
             "Les livres, leçons, illustrations, exercices et textes Awzid sont protégés ; toute reproduction hors de l'usage personnel ou scolaire prévu par les conditions d'utilisation est interdite sans autorisation écrite.",
-            "Texte coranique : Tanzil (tanzil.net), riwāya Ḥafṣ ʿan ʿĀṣim, reproduit à l’identique, sans aucune modification. Métadonnées du Coran (ajzāʾ, aḥzāb, pages du Muṣḥaf de Médine) : Tanzil.info, licence Creative Commons Attribution 3.0."
+            "Les œuvres de tiers ci-dessous restent la propriété de leurs auteurs et sont utilisées selon leurs licences ; les adresses des sources sont données ci-dessous."
+          ]
+        },
+        {
+          "titre": "Sources et crédits",
+          "paras": [
+            "Texte coranique : Tanzil Project (https://tanzil.net), riwāya Ḥafṣ ʿan ʿĀṣim, licence Creative Commons Attribution 3.0 : reproduit à l'identique, sans aucune modification, avec mention de la source et lien vers tanzil.net. Métadonnées du Coran (ajzāʾ, aḥzāb, pages du Muṣḥaf de Médine) : Tanzil.info, Creative Commons Attribution 3.0.",
+            "Traductions du sens : Rachid Maach (français, version 1.0.3) et Rowwad Translation Center (anglais, version 1.0.19), publiées par QuranEnc.com (https://quranenc.com) et reproduites sans modification, avec leurs notes.",
+            "Autres textes du Coran (riwāyāt) et polices du Muṣḥaf : Complexe du Roi Fahd pour l'impression du Noble Coran (Médine), polices livrées sans modification. Mise en page du Muṣḥaf de Médine et récitations « en ligne » : Quran Foundation (https://quran.foundation), en ligne seulement.",
+            "Tajwid en couleurs : annotations de Collin Fair (https://github.com/cpfair/quran-tajweed), licence Creative Commons Attribution 4.0, recalées sur le texte Tanzil. Polices : Amiri, Amiri Quran, Noto Naskh Arabic, Nunito et Lexend, sous licence SIL Open Font License 1.1, servies par Awzid. Horaires de prière : bibliothèque adhan-js (licence MIT). Reconnaissance de la parole : modèle NVIDIA STT Arabic FastConformer (licence CC BY 4.0), utilisé sans modification des poids. Voix de synthèse des leçons : Google Cloud Text-to-Speech."
           ]
         },
         {
           "titre": "Contact et e-mails",
           "paras": [
-            "Les e-mails de service (vérification de l'adresse, mot de passe oublié, changement d'adresse) sont envoyés depuis no-reply@awzid.com, une adresse qui ne reçoit pas de réponse. Prestataire d'envoi : [prestataire d'e-mail à désigner, de préférence dans l'Union européenne].",
-            "Pour toute question ou réclamation : [adresse de contact à créer, par exemple contact@awzid.com]. Un contenu peut aussi être signalé dans l'application (« Signaler une erreur »)."
+            "Les e-mails de service (vérification de l'adresse, mot de passe oublié, changement d'adresse) sont envoyés depuis no-reply@awzid.com, une adresse qui ne reçoit pas de réponse. Prestataire d'envoi : [prestataire d'e-mail à désigner par le client, de préférence dans l'Union européenne].",
+            "Pour toute question, demande sur vos données ou réclamation : [adresse de contact : à créer par le client, par exemple contact@awzid.com]. Une erreur dans un texte religieux ou dans l'application se signale aussi depuis l'application (« Signaler un problème », page Aide)."
+          ]
+        },
+        {
+          "titre": "Signaler un contenu illicite ou une erreur religieuse",
+          "paras": [
+            "Tout contenu manifestement illicite, ou toute erreur dans un texte religieux, peut être signalé depuis l'application ou à l'adresse de contact. Les corrections religieuses sont datées et publiées, avec leur source, dans la page « Errata »."
           ]
         },
         {
           "titre": "Statut de ces textes",
           "paras": [
-            "Les pages légales sont des brouillons structurés, rédigés d'après le fonctionnement réel de l'application ; elles doivent être relues et validées par un juriste avant toute ouverture publique. [Relecture juridique : à faire.]"
+            "Ces pages sont provisoires : elles ont été rédigées d'après le fonctionnement réel de l'application, par l'équipe technique, avant la signature d'un juriste. Elles sont en attente d'une seconde lecture juridique. Les passages entre crochets sont à compléter par le client."
           ]
         }
       ]
     },
     "cgu": {
       "titre": "Conditions générales d'utilisation",
-      "maj": "6 octobre 2026 (brouillon, à relire par un juriste)",
+      "maj": "13 octobre 2026 (provisoire — avant signature d'un juriste ; en attente d'une seconde lecture juridique)",
       "sections": [
         {
           "titre": "Objet",
           "paras": [
-            "Awzid est une application d'apprentissage de l'arabe, de mémorisation du Coran (hifẓ) et d'éducation religieuse de base, qui accompagne les livres Awzid. Les présentes conditions règlent son utilisation."
+            "Awzid est une application d'apprentissage de l'arabe, de mémorisation du Coran (hifẓ) et d'éducation religieuse de base, qui accompagne les livres Awzid. Les présentes conditions règlent son utilisation. Pendant la bêta fermée, elles s'appliquent avec les « Conditions de la bêta » et, pour les testeurs invités, les « Conditions pour les invités »."
           ]
         },
         {
@@ -57,15 +73,17 @@
             "Compte parent : réservé à un adulte ; il crée les profils de ses enfants (pseudonyme, année de naissance, niveau) et donne les accords nécessaires. Un enfant n'a jamais d'adresse électronique ni de compte à son nom.",
             "Compte adulte : pour un apprenant majeur. Un mineur ne peut pas ouvrir seul un compte adulte.",
             "Compte enseignant : ouvert par l'établissement, protégé par un second facteur. L'enseignant ne voit que les élèves inscrits dans sa classe par leur parent (code de classe et accord) ou saisis par l'école (classe papier).",
-            "Chacun garde son mot de passe secret ; le code parent protège les réglages et les achats."
+            "Chacun garde son mot de passe secret et ne partage pas son accès ; le code parent protège les réglages et les achats. Les informations données à l'inscription doivent être exactes."
           ]
         },
         {
-          "titre": "Âge, pays et accords",
+          "titre": "Âge, pays et accord des parents",
           "paras": [
-            "L'âge du consentement numérique dépend du pays (et, au Canada, de la province : 14 ans au Québec). En dessous de cet âge, seul un parent peut créer le profil d'un enfant.",
+            "L'âge à partir duquel une personne peut consentir seule dépend du pays (et, au Canada, de la province). Le règlement européen laisse chaque État le fixer entre 13 et 16 ans, 16 ans par défaut. Dans Awzid : 15 ans en France, 16 ans en Allemagne, 14 ans en Espagne, 13 ans au Royaume-Uni et aux États-Unis, 14 ans au Québec ; 16 ans pour un pays non listé. [Valeurs à confirmer par le juriste.]",
+            "Sénégal : par prudence, Awzid demande l'accord d'un parent ou tuteur pour toute personne de moins de 18 ans. [Âge à confirmer par le juriste : nous n'avons pas trouvé d'âge de consentement numérique dans la loi n° 2008-12.]",
+            "En dessous de l'âge du pays, seul un parent peut créer le profil d'un enfant et donner son accord ; Awzid fait des efforts raisonnables pour vérifier que c'est bien un adulte (compte parent avec adresse vérifiée, code parent, accord daté et conservé).",
             "États-Unis : pendant la bêta, Awzid n'est pas ouvert aux enfants de moins de 13 ans (ni par un parent, ni par une école).",
-            "L'usage d'Awzid (Coran, hifẓ, sciences islamiques) peut révéler des convictions religieuses : un accord explicite est demandé à l'inscription, pour chaque profil d'enfant, et aux comptes plus anciens à leur première utilisation. Il peut être retiré à tout moment ; le compte ou le profil est alors mis en pause."
+            "L'usage d'Awzid (Coran, hifẓ, sciences islamiques) peut révéler des convictions religieuses : un accord explicite, séparé des présentes conditions, est demandé à l'inscription, pour chaque profil d'enfant, et aux comptes plus anciens à leur première utilisation. Il peut être retiré à tout moment ; le compte ou le profil est alors mis en pause (voir la politique de confidentialité)."
           ]
         },
         {
@@ -76,25 +94,34 @@
           ]
         },
         {
-          "titre": "Contenus religieux et tuteur",
+          "titre": "Contenus religieux, relecture et corrections",
           "paras": [
             "Le texte coranique affiché vient uniquement du texte de référence Tanzil ; aucun programme ne l'écrit ni ne le retouche. Les hadiths ne sont montrés que s'ils sont marqués « vérifiés » dans le registre des livres.",
+            "Pendant la bêta, les contenus religieux dont la relecture savante n'est pas terminée portent la mention « en cours de relecture savante ». Ils sont fournis pour apprendre et ne remplacent ni un maître qualifié, ni une fatwa : en cas de doute, demandez à un savant ou à votre enseignant.",
+            "Toute erreur peut être signalée (« Signaler un problème » → « Un point religieux à vérifier », ou « Signaler une erreur » sous un verset, un hadith ou une règle). Chaque correction religieuse est datée et publiée, avec sa source, dans la page « Errata ».",
             "Le tuteur est un programme : il le dit, il n'émet aucun avis religieux et transmet les questions religieuses à l'enseignant. Il est désactivé par défaut pour les enfants et ne s'active qu'avec l'accord du parent, qui peut lire tout ce qu'il a dit.",
             "Les certificats et attestations délivrés par une école ne sont ni une ijāza, ni un diplôme d'État."
           ]
         },
         {
+          "titre": "Usage permis",
+          "paras": [
+            "L'application est destinée à un usage personnel, familial ou scolaire. Il est interdit de copier, d'extraire en masse ou de redistribuer les contenus (livres, leçons, audios, données de tiers), de contourner les protections techniques, de partager un code d'accès ou un compte, de perturber le service, ou de s'en servir pour diffuser un contenu illicite, haineux, ou qui dénature le Coran.",
+            "Les contenus de tiers (texte du Coran, traductions, récitations, polices) restent soumis à leurs licences : vous ne pouvez pas les modifier ni les revendre."
+          ]
+        },
+        {
           "titre": "Offres, paiement, résiliation",
           "paras": [
-            "Une offre gratuite permet d'essayer les premières leçons. Les formules payantes, leurs prix et leur durée sont indiqués avant l'achat ; seul l'adulte peut acheter (code parent). Aucune donnée de carte ne passe par Awzid : le paiement est fait chez le prestataire choisi.",
-            "L'abonnement peut être arrêté à tout moment ; les droits restent acquis jusqu'à la fin de la période payée. [Droit de rétractation, remboursement : à compléter selon le pays et le prestataire.]",
-            "Pendant la bêta, l'application est gratuite : aucun paiement n'est demandé ni enregistré (voir « Conditions de la bêta »)."
+            "Pendant la bêta, l'application est gratuite : aucun paiement n'est demandé ni enregistré (voir « Conditions de la bêta »).",
+            "Après la bêta, une offre gratuite permettra d'essayer les premières leçons. Les formules payantes, leurs prix et leur durée seront indiqués avant l'achat ; seul l'adulte pourra acheter (code parent). Aucune donnée de carte ne passe par Awzid : le paiement est fait chez le prestataire choisi.",
+            "L'abonnement pourra être arrêté à tout moment ; les droits restent acquis jusqu'à la fin de la période payée. [Droit de rétractation, remboursement : à compléter selon le pays et le prestataire.]"
           ]
         },
         {
           "titre": "Responsabilité et suspension",
           "paras": [
-            "L'application est fournie avec soin mais sans garantie d'absence d'interruption. Un compte peut être suspendu en cas d'usage contraire aux présentes conditions ou à la loi, après information de son titulaire sauf urgence."
+            "L'application est fournie avec soin mais sans garantie d'absence d'interruption ni d'erreur ; pendant la bêta, des erreurs sont attendues. Un compte peut être suspendu en cas d'usage contraire aux présentes conditions ou à la loi, après information de son titulaire sauf urgence."
           ]
         },
         {
@@ -120,108 +147,132 @@
     },
     "confidentialite": {
       "titre": "Politique de confidentialité",
-      "maj": "6 octobre 2026 (brouillon, à relire par un juriste)",
+      "maj": "13 octobre 2026 (provisoire — avant signature d'un juriste ; en attente d'une seconde lecture juridique)",
       "sections": [
         {
-          "titre": "Responsable du traitement",
+          "titre": "Responsable du traitement et contact",
           "paras": [
-            "[Raison sociale et adresse : à compléter]. Contact pour vos données : [adresse électronique à créer]. Délégué à la protection des données : [à désigner si nécessaire].",
-            "Pour une école qui utilise l'espace école (classe papier, résultats, certificats), l'école est responsable des données qu'elle saisit ; Awzid agit pour son compte (sous-traitant). [Contrat de sous-traitance à prévoir.]"
+            "[Raison sociale et adresse postale : à compléter par le client]. Contact pour vos données personnelles : [adresse électronique à créer par le client]. Nous répondons à toute demande sur vos données dans un délai de 30 jours. Délégué à la protection des données : [à désigner si nécessaire].",
+            "Pour une école qui utilise l'espace école (classe papier, résultats, certificats), l'école est responsable des données qu'elle saisit ; Awzid agit pour son compte (sous-traitant). [Contrat de sous-traitance à prévoir.]",
+            "Cette politique s'applique à toute l'application, y compris pendant la bêta fermée. Awzid utilise les contenus de Quran Foundation, l'organisation à l'origine de Quran.com et de QuranReflect (récitations en ligne, mise en page du Muṣḥaf) ; ces contenus ne contiennent aucune donnée sur vous, et aucun compte Quran.com n'est utilisé."
           ]
         },
         {
           "titre": "Données collectées (le strict nécessaire)",
           "paras": [
-            "Compte : adresse électronique et mot de passe (protégé, jamais lisible) de l'adulte ; pays ; langue.",
+            "Compte : adresse électronique et mot de passe (protégé, jamais lisible) de l'adulte ; pays ; langue ; fuseau horaire.",
             "Profil d'enfant : pseudonyme, année de naissance (jamais la date complète), niveau, avatar — aucun nom réel, aucune photo, aucune adresse.",
             "Apprentissage : réponses aux exercices, progression, hifẓ, tracés des lettres, cartes de mots, jours de travail des ados et adultes.",
             "Enregistrements de la voix : ils restent sur l'appareil et s'effacent après 7 jours ; une famille peut choisir d'en envoyer un à l'enseignant de la classe (accord retirable, code parent pour un enfant) : chiffré, écouté par lui seul, jamais utilisé pour entraîner une intelligence artificielle.",
             "Espace école : prénom et initiale des élèves de classe papier, notes des bilans, récitations, devoirs ; nom complet saisi seulement au moment d'un certificat.",
-            "Paiement : formule, statut et référence chez le prestataire ; jamais de numéro de carte.",
-            "Sécurité du compte : liens envoyés par e-mail (vérification, mot de passe oublié, changement d'adresse) — seule une empreinte du lien est gardée, avec son usage et sa date ; fuseau horaire et, au Canada, province (âge du consentement)."
+            "Paiement (après la bêta) : formule, statut et référence chez le prestataire ; jamais de numéro de carte.",
+            "Sécurité du compte : liens envoyés par e-mail (vérification, mot de passe oublié, changement d'adresse) — seule une empreinte du lien est gardée, avec son usage et sa date ; adresse IP et empreinte de l'adresse e-mail pendant 24 heures pour limiter les essais abusifs.",
+            "Signalements et avis : catégorie, description écrite par vous (500 caractères au plus), page où vous étiez (chemin seul), version de l'application, rôle et tranche d'âge (enfant, ado, adulte) ; image de l'écran seulement si vous la joignez, faite sur votre appareil, zones privées et champs de saisie masqués. Un enfant n'envoie que la catégorie. Aucun nom, aucune adresse e-mail dans le signalement.",
+            "Usage sans traceur : des totaux par jour d'espaces ou de fonctions utilisés, sans adresse de page, sans heure, sans identifiant d'appareil."
           ]
         },
         {
           "titre": "Finalités et bases légales",
           "paras": [
-            "Fournir le service demandé (exécution du contrat) ; accords spécifiques recueillis séparément, datés et retirables (consentement) : suivi par un enseignant, tuteur, hébergement en Europe pour le Sénégal ; sécurité et prévention des abus (intérêt légitime) ; obligations comptables (obligation légale).",
+            "Fournir le service demandé (exécution du contrat) ; accords spécifiques recueillis séparément, datés et retirables (consentement) : suivi par un enseignant, envoi d'une récitation, analyse de la voix, tuteur, hébergement hors du Sénégal pour les titulaires sénégalais, rappels ; sécurité, prévention des abus, traitement des signalements et amélioration du service (intérêt légitime) ; obligations comptables après la bêta (obligation légale).",
             "Aucune publicité, aucun profilage commercial, aucune revente de données, aucune personnalisation comportementale pour les enfants."
           ]
         },
         {
           "titre": "Données révélant une conviction religieuse (RGPD, article 9)",
           "paras": [
-            "Apprendre le Coran, le hifẓ ou les sciences islamiques avec Awzid peut révéler une conviction religieuse. Ces données sont traitées sur la base de votre consentement explicite (article 9, paragraphe 2, a), recueilli séparément, daté, avec la version du texte et la preuve de l'accord.",
+            "Apprendre le Coran, le hifẓ ou les sciences islamiques avec Awzid peut révéler une conviction religieuse, donnée d'une catégorie particulière. Elle est traitée sur la base de votre consentement explicite (article 9, paragraphe 2, point a, du RGPD), recueilli séparément des conditions d'utilisation, par une case non cochée d'avance, daté, avec la version du texte et la preuve de l'accord.",
+            "Au Sénégal, la loi n° 2008-12 range les opinions ou activités religieuses parmi les données sensibles (article 4) et interdit de les traiter sauf exceptions, dont le consentement exprès écrit (articles 40 et 41). Awzid recueille cet accord par écrit dans l'application.",
+            "Minimisation : Awzid ne demande jamais votre religion ; il ne garde que ce qui sert à apprendre (progression, réponses), sans analyse de croyances, sans profil, sans transmission à des tiers hors des sous-traitants listés ci-dessous. Pour un enfant, l'accord est donné par le parent, profil par profil.",
             "Vous pouvez retirer cet accord à tout moment dans « Mon compte » : le compte (ou le profil concerné) est mis en pause ; rien n'est effacé tant que vous ne demandez pas la suppression, et vous pouvez exporter vos données."
           ]
         },
         {
-          "titre": "Analyse automatique de la voix",
+          "titre": "Voix et analyse automatique par intelligence artificielle",
           "paras": [
-            "Aucune analyse automatique de la voix par une intelligence artificielle n'existe aujourd'hui. Si une telle fonction arrive, elle sera facultative, demandée profil par profil au premier usage (accord séparé, jamais coché d'avance) et retirable à tout moment."
+            "« Réciter et vérifier » (fonction de la bêta, réservée à certains testeurs) peut comparer votre récitation au texte du Coran, mot par mot, avec un modèle de reconnaissance de la parole qui tourne sur les serveurs d'Awzid : la voix est traitée en mémoire et n'est jamais conservée. Elle ne donne ni note ni avis de tajwīd. Elle exige un accord séparé, jamais coché d'avance et retirable ; pour un enfant, le code parent ; elle est refusée à un mineur inscrit seul.",
+            "Un tuteur d'intelligence artificielle (aide à la langue) est prévu mais désactivé pendant la bêta : aucune donnée n'est envoyée à un fournisseur d'IA aujourd'hui. S'il est activé plus tard, il utilisera Gemini (Google) par Vertex AI, sans nom ni adresse, avec un pseudonyme, et seulement avec votre accord ; cette politique sera alors mise à jour avant l'activation."
           ]
         },
         {
-          "titre": "Enfants : RGPD, COPPA, loi sénégalaise n° 2008-12",
+          "titre": "Enfants et âge du consentement",
           "paras": [
-            "RGPD (article 8) : le compte d'un enfant est toujours ouvert et géré par un parent, quel que soit l'âge du consentement numérique du pays (15 ans en France).",
-            "États-Unis (COPPA) : pendant la bêta, aucun profil d'enfant de moins de 13 ans n'est créé (fermeture au lancement) ; un consentement parental vérifiable selon les méthodes reconnues par la FTC sera mis en place avant toute ouverture. [Méthode à valider par le juriste.]",
-            "Sénégal : les traitements respectent la loi n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel ; [formalités auprès de la Commission de protection des données personnelles (CDP) : à accomplir]. L'hébergement hors du Sénégal (Union européenne) n'a lieu qu'avec l'accord explicite du titulaire.",
-            "Canada : au Québec (loi 25), le consentement du titulaire de l'autorité parentale est demandé pour un enfant de moins de 14 ans ; ailleurs au Canada, de moins de 13 ans. Royaume-Uni : réglages les plus protecteurs par défaut (Children's Code de l'ICO) : notifications coupées, aucun traceur, aucune publicité. [À confirmer par le juriste.]"
+            "RGPD (article 8) : lorsque le consentement est la base du traitement, un enfant sous l'âge fixé par son pays ne peut consentir seul ; le règlement fixe 16 ans et permet aux États de descendre jusqu'à 13 ans. Dans Awzid, le compte d'un enfant est toujours ouvert et géré par un parent, et nous faisons des efforts raisonnables pour vérifier que l'accord vient bien d'un parent.",
+            "Âges retenus : 15 ans en France, 16 ans en Allemagne, 14 ans en Espagne, 13 ans au Royaume-Uni et aux États-Unis, 14 ans au Québec, 16 ans par défaut. [À confirmer par le juriste.]",
+            "Sénégal : par prudence, tout mineur (moins de 18 ans) passe par un parent. Les traitements respectent la loi n° 2008-12 du 25 janvier 2008 ; [déclaration auprès de la Commission de protection des données personnelles (CDP) : à accomplir par le client avant l'ouverture aux utilisateurs sénégalais].",
+            "États-Unis (COPPA) : pendant la bêta, aucun profil d'enfant de moins de 13 ans n'est créé ; un consentement parental vérifiable sera mis en place avant toute ouverture. Canada : au Québec, le consentement du titulaire de l'autorité parentale est demandé sous 14 ans ; ailleurs au Canada, sous 13 ans. Royaume-Uni : réglages les plus protecteurs par défaut (notifications coupées, aucun traceur, aucune publicité). [À confirmer par le juriste.]",
+            "Pour les parents : vous voyez et pouvez effacer tout ce qui concerne votre enfant, depuis « Mon compte » et « Profils »."
           ]
         },
         {
           "titre": "Destinataires et sous-traitants",
           "paras": [
-            "Hébergeur européen [à désigner] ; service d'envoi d'e-mails [à désigner] ; prestataires de paiement (Stripe, PayPal, agrégateur de mobile money) seulement si vous payez ; fournisseur d'intelligence artificielle (Anthropic) seulement si le tuteur est activé, sans nom ni adresse, avec un pseudonyme ; service de notification du navigateur (Google, Mozilla, Apple…) seulement si vous activez les notifications — leur contenu est chiffré et ne contient aucun nom. Aucune autre transmission.",
-            "Région d'hébergement : chaque compte et chaque école portent une étiquette de région des données (« UE » aujourd'hui : un seul serveur, dans l'Union européenne). Les transferts hors de l'Union (fournisseur d'intelligence artificielle aux États-Unis, si le tuteur est activé) reposent sur les garanties prévues par le RGPD. [Clauses contractuelles types ou décision d'adéquation : à vérifier.]"
+            "Hébergeur : Google Cloud Platform, région de Paris (europe-west9) — [lien vers sa politique de confidentialité : à ajouter par le client]. Service d'envoi d'e-mails : [à désigner par le client, dans l'Union européenne de préférence]. Prestataires de paiement (Stripe, PayPal, agrégateur de mobile money), après la bêta et seulement si vous payez. Service de notification du navigateur (Google, Mozilla, Apple…), seulement si vous activez les notifications : le contenu est chiffré et ne contient aucun nom. Fournisseur d'IA (Google, Gemini par Vertex AI) : prévu, désactivé pendant la bêta. Des contrats de traitement des données sont conclus avec les sous-traitants qui l'exigent ; chacun doit respecter le Coran et les contenus islamiques (aucune utilisation qui les dénature). [À vérifier par le client.]",
+            "Quran Foundation (quran.foundation) : si vous choisissez un récitateur « en ligne », votre appareil charge les fichiers audio directement depuis les serveurs de Quran Foundation, qui voient alors l'adresse IP de l'appareil et les informations techniques d'une requête web ordinaire — jamais votre nom, votre compte ni votre profil. Vous pouvez ne pas utiliser ces récitateurs.",
+            "Région d'hébergement : chaque compte et chaque école portent une étiquette de région des données (« UE » aujourd'hui). Les transferts hors de l'Union (service de notification, fournisseur d'IA s'il est activé) reposent sur les garanties prévues par le RGPD (clauses contractuelles types ou décision d'adéquation). [À vérifier.] Pour un titulaire sénégalais, l'hébergement en France n'a lieu qu'avec son accord explicite ; l'article 49 de la loi n° 2008-12 prévoit aussi d'informer la CDP de tout transfert vers un pays tiers [déclaration à faire par le client]."
           ]
         },
         {
           "titre": "Durées de conservation",
           "paras": [
-            "Compte supprimé : effacement définitif sous 30 jours (sauvegardes chiffrées : 14 jours glissants).",
-            "Journal du tuteur : 12 mois au plus. Enregistrements vocaux : 7 jours sur l’appareil ; récitation envoyée à l’enseignant : effacée après la durée réglée par la classe (14 jours par défaut, 30 au plus), ou dès que la famille la supprime.",
-            "Registre des certificats de l'école : numéro, nom affiché, niveau, date et mention conservés durablement (preuve d'un diplôme) ; les autres données de l'élève suivent les durées ci-dessus et le document complet est réduit 30 jours après le départ de l'élève. [À confirmer par le juriste.]",
-            "Liens envoyés par e-mail : 30 minutes (mot de passe oublié) ou 24 heures (vérification, changement d'adresse), utilisables une seule fois ; effacés avec le compte."
+            "Compte supprimé : effacement définitif sous 30 jours ; sauvegardes chiffrées : 14 dernières, soit 14 jours glissants (donc entièrement purgées 14 jours après l'effacement).",
+            "Sessions : 30 jours après expiration. Verrous anti-essais : 24 heures. Liens envoyés par e-mail : 30 minutes (mot de passe oublié) ou 24 heures (vérification, changement d'adresse), utilisables une seule fois ; effacés avec le compte.",
+            "Journal du tuteur : 12 mois au plus. Questions et alertes du tuteur : 12 mois après traitement, 24 mois au plus. Journal d'audit de sécurité : 12 mois.",
+            "Enregistrements vocaux : 7 jours sur l'appareil ; récitation envoyée à l'enseignant : effacée après la durée réglée par la classe (14 jours par défaut, 30 au plus), ou dès que la famille la supprime. Analyse de la voix par l'IA : aucune conservation.",
+            "Signalements « Signaler un problème » : image de l'écran effacée après 90 jours ; signalement réglé effacé après 12 mois. Avis : 12 mois. Totaux d'usage : agrégats par jour, sans personne.",
+            "Preuves d'accord : durée du compte puis 5 ans (prescription) [à confirmer par le juriste]. Messages école ↔ famille : 12 mois après la fin de l'année scolaire.",
+            "Registre des certificats de l'école : numéro, nom affiché, niveau, date et mention conservés durablement (preuve d'un diplôme) ; les autres données de l'élève suivent les durées ci-dessus et le document complet est réduit 30 jours après le départ de l'élève. [À confirmer par le juriste.]"
           ]
         },
         {
           "titre": "Vos droits",
           "paras": [
-            "Accès, rectification, effacement, portabilité (export complet depuis « Mon compte »), opposition, limitation, retrait d'un accord à tout moment. Réclamation possible auprès de la CNIL (France) ou de la CDP (Sénégal).",
+            "Accès, rectification, effacement, portabilité (export complet en un fichier depuis « Mon compte »), opposition, limitation, retrait d'un accord à tout moment, et, au Sénégal, les droits d'information, d'accès, d'opposition, de rectification et de suppression prévus aux articles 58 à 69 de la loi n° 2008-12. Pour les exercer : « Mon compte », ou l'adresse de contact ci-dessus ; réponse sous 30 jours.",
             "Réclamation : auprès de l'autorité de protection des données de votre pays (CNIL en France, CDP au Sénégal, Commissariat à la protection de la vie privée au Canada et Commission d'accès à l'information au Québec, ICO au Royaume-Uni…)."
           ]
         },
         {
-          "titre": "Sécurité",
+          "titre": "Sécurité et violation de données",
           "paras": [
-            "Connexion chiffrée, mots de passe protégés (argon2id), second facteur pour les enseignants et l'administration, cloisonnement des comptes de la base de données, sauvegardes chiffrées dont la clé est conservée hors du serveur, journal des actions sensibles."
+            "Connexion chiffrée, mots de passe protégés (argon2id), second facteur pour les enseignants et l'administration, cloisonnement des comptes de la base de données, chiffrement des voix et des messages, sauvegardes chiffrées dont la clé est conservée hors du serveur, journal des actions sensibles, clés et secrets limités à chaque service et renouvelés régulièrement [cadence : à confirmer par le client].",
+            "En cas de violation de données susceptible de porter atteinte à vos droits, Awzid avertit l'autorité de protection compétente dans les meilleurs délais, si possible sous 72 heures (RGPD, article 33), et vous informe directement si le risque est élevé. Chaque violation est consignée, et tout incident de sécurité est pris en charge en moins de 24 heures (analyse et confinement)."
+          ]
+        },
+        {
+          "titre": "Modifications de cette politique",
+          "paras": [
+            "Toute modification importante est annoncée dans l'application (bandeau ou e-mail) avec la nouvelle date de mise à jour ; si elle touche un accord, un nouvel accord est demandé."
           ]
         }
       ]
     },
     "cookies": {
       "titre": "Cookies et stockage sur l’appareil",
-      "maj": "6 octobre 2026 (brouillon, à relire par un juriste)",
+      "maj": "13 octobre 2026 (provisoire — avant signature d'un juriste ; en attente d'une seconde lecture juridique)",
       "sections": [
         {
           "titre": "Ce que nous utilisons",
           "paras": [
             "Un seul cookie : « awform_session », qui garde votre connexion (strictement nécessaire, supprimé à la déconnexion ou à expiration).",
-            "Stockage sur l'appareil (IndexedDB « awform » et cache de l'application) : leçons téléchargées, réponses en attente d'envoi, réglages et enregistrements vocaux — pour que l'application fonctionne sans réseau."
+            "Stockage sur l'appareil : base locale « awform » et cache de l'application (leçons téléchargées, réponses en attente d'envoi, enregistrements vocaux de 7 jours) ; mémoire locale du navigateur pour vos réglages (mode clair ou sombre, taille et style du lecteur, tajwid en couleurs, riwāya choisie, séance en cours, copie des interrupteurs de fonctions, compteur d'usage du jour). Tout cela sert à ce que l'application fonctionne sans réseau et se souvienne de vos choix ; rien n'en est envoyé à une autre entreprise."
           ]
         },
         {
           "titre": "Ce que nous n’utilisons pas",
           "paras": [
-            "Aucun cookie tiers, aucun traceur publicitaire, aucune mesure d’audience, aucun bouton de réseau social, aucune police ou ressource chargée depuis un autre site."
+            "Aucun cookie tiers, aucun traceur publicitaire, aucune mesure d’audience d'une autre entreprise, aucun bouton de réseau social, aucune police ou ressource chargée depuis un autre site. Seule exception : si vous choisissez un récitateur « en ligne », les fichiers audio viennent des serveurs de Quran Foundation (voir la politique de confidentialité)."
           ]
         },
         {
           "titre": "Pourquoi aucune bannière de consentement",
           "paras": [
             "Les cookies et le stockage strictement nécessaires au service que vous demandez sont exemptés de consentement (article 82 de la loi Informatique et Libertés ; lignes directrices de la CNIL). N'utilisant rien d'autre, l'application n'affiche pas de bannière. Si un traceur non nécessaire devait un jour être ajouté, une bannière (refuser aussi simple qu'accepter) serait obligatoire avant tout dépôt. [À confirmer par le juriste.]"
+          ]
+        },
+        {
+          "titre": "Vider ces données",
+          "paras": [
+            "Vous pouvez tout effacer à tout moment depuis les réglages de votre navigateur (données du site). Vous serez déconnecté et les leçons téléchargées devront être retéléchargées."
           ]
         },
         {
@@ -234,12 +285,12 @@
     },
     "beta": {
       "titre": "Conditions de la bêta",
-      "maj": "6 octobre 2026 (brouillon, à relire par un juriste)",
+      "maj": "13 octobre 2026 (provisoire — avant signature d'un juriste ; en attente d'une seconde lecture juridique)",
       "sections": [
         {
-          "titre": "Une bêta gratuite",
+          "titre": "Une bêta gratuite et fermée",
           "paras": [
-            "La bêta d'Awzid est gratuite : aucun paiement n'est demandé, aucune carte n'est enregistrée et aucun abonnement ne démarre à la fin de la bêta.",
+            "La bêta d'Awzid est gratuite : aucun paiement n'est demandé, aucune carte n'est enregistrée et aucun abonnement ne démarre à la fin de la bêta. Elle est fermée : l'accès se fait sur invitation.",
             "Sans engagement : vous pouvez arrêter à tout moment, sans formalité."
           ]
         },
@@ -247,25 +298,113 @@
           "titre": "Ce que « bêta » veut dire",
           "paras": [
             "L'application est en cours de finition : des fonctions peuvent changer, être retirées ou connaître des erreurs. Les contenus des livres restent la référence ; un contenu signalé comme erroné est corrigé ou masqué au plus vite.",
-            "Vos retours sont précieux : « Signaler une erreur » dans les leçons, ou [adresse de contact de la bêta à créer]."
+            "Des contenus religieux peuvent porter la mention « en cours de relecture savante » : ils sont corrects à notre connaissance mais pas encore relus par les savants prévus. Ne vous en servez pas pour trancher une question de pratique.",
+            "Vos retours sont précieux : « Signaler un problème » dans la page Aide, ou [adresse de contact de la bêta : à créer par le client]."
           ]
         },
         {
           "titre": "Vos données pendant la bêta",
           "paras": [
             "Vos données sont hébergées dans l'Union européenne et protégées comme décrit dans la politique de confidentialité. Elles sont effaçables à tout moment : la suppression du compte, depuis « Mon compte », coupe l'accès aussitôt et efface tout sous 30 jours.",
-            "Vous pouvez aussi exporter toutes vos données (fichier JSON) avant de partir."
+            "Vous pouvez aussi exporter toutes vos données (fichier JSON) avant de partir.",
+            "En fin de bêta, les comptes de test peuvent être remis à zéro : un préavis vous est donné et vous pouvez exporter vos données."
           ]
         },
         {
           "titre": "Fin de la bêta",
           "paras": [
-            "Vous serez prévenu avant la fin de la bêta. Vous choisirez alors de garder votre compte (aux conditions publiées à ce moment-là) ou de le supprimer ; rien ne devient payant sans votre accord explicite. [Durée de la bêta et préavis : à fixer.]"
+            "Vous serez prévenu avant la fin de la bêta. Vous choisirez alors de garder votre compte (aux conditions publiées à ce moment-là) ou de le supprimer ; rien ne devient payant sans votre accord explicite. [Durée de la bêta et préavis : à fixer par le client.]"
           ]
         },
         {
           "titre": "Statut de ce texte",
-          "paras": ["Brouillon à relire par un juriste avant l'ouverture publique."]
+          "paras": [
+            "Texte provisoire, avant signature d'un juriste ; en attente d'une seconde lecture juridique."
+          ]
+        }
+      ]
+    },
+    "invites": {
+      "titre": "Conditions pour les invités de la bêta",
+      "maj": "13 octobre 2026 (provisoire — avant signature d'un juriste ; en attente d'une seconde lecture juridique)",
+      "sections": [
+        {
+          "titre": "Qui est concerné",
+          "paras": [
+            "Ces conditions s'adressent aux personnes invitées à tester Awzid pendant la bêta fermée (famille, élèves et enseignants de l'école pilote, relecteurs, amis du projet). Elles complètent les conditions d'utilisation, les conditions de la bêta et la politique de confidentialité."
+          ]
+        },
+        {
+          "titre": "Votre invitation",
+          "paras": [
+            "L'invitation (un code ou un lien) est personnelle : ne la transmettez pas, ne la publiez pas. Awzid peut la désactiver à tout moment, et vous pouvez y renoncer à tout moment.",
+            "Un adulte invité crée son compte lui-même. Pour un enfant, c'est le parent invité qui crée le profil et donne les accords ; aucun enfant ne s'inscrit seul."
+          ]
+        },
+        {
+          "titre": "Ce que nous attendons de vous",
+          "paras": [
+            "Utiliser l'application normalement, de bonne foi, et signaler ce qui ne va pas (bug, contenu à corriger, point religieux à vérifier) avec « Signaler un problème ». Ne pas écrire de nom, d'adresse ou de numéro de téléphone dans un signalement.",
+            "Ne pas copier, capturer en masse ni diffuser les contenus (livres, leçons, audios, Coran, traductions) en dehors de l'usage personnel ou familial. Ne pas chercher à contourner la sécurité ni à accéder aux données d'autrui ; si vous découvrez une faille, prévenez-nous plutôt que de l'utiliser.",
+            "Garder la confidentialité des fonctions encore en essai : elles peuvent changer ou disparaître avant l'ouverture publique."
+          ]
+        },
+        {
+          "titre": "Ce que nous nous engageons à faire",
+          "paras": [
+            "Protéger vos données comme décrit dans la politique de confidentialité, ne rien vous facturer, ne pas vous envoyer de publicité, lire chaque signalement, publier les corrections religieuses dans « Errata », et vous prévenir avant la fin de la bêta.",
+            "Vos signalements et retours peuvent servir à améliorer l'application ; Awzid n'en tire aucun droit sur vos données personnelles, qui restent les vôtres."
+          ]
+        },
+        {
+          "titre": "Suspension et fin",
+          "paras": [
+            "Awzid peut suspendre un accès en cas d'usage contraire à ces conditions, après information sauf urgence. Vous pouvez quitter la bêta à tout moment en supprimant votre compte depuis « Mon compte » (effacement sous 30 jours)."
+          ]
+        },
+        {
+          "titre": "Responsabilité",
+          "paras": [
+            "La bêta est fournie en l'état, sans garantie de disponibilité ni d'absence d'erreur ; ne vous y fiez pas comme unique outil d'apprentissage. [Limitation de responsabilité, droit applicable : à compléter par le juriste.]"
+          ]
+        }
+      ]
+    },
+    "infobeta": {
+      "titre": "La bêta d'Awzid",
+      "maj": "13 octobre 2026",
+      "sections": [
+        {
+          "titre": "Ce qu'est la bêta",
+          "paras": [
+            "La bêta fermée est une première version d'Awzid, confiée à un petit nombre d'invités (famille, école pilote, relecteurs) avant l'ouverture au public. Elle est gratuite, sans engagement, et vos données sont effaçables à tout moment.",
+            "Awzid apprend l'arabe, le Coran (lecture de Ḥafṣ, hifẓ, tajwid) et les bases des sciences islamiques (école mālikite), pour les enfants, les adolescents et les adultes, avec ou sans école."
+          ]
+        },
+        {
+          "titre": "Ce que nous testons",
+          "paras": [
+            "Le parcours complet : créer un compte, un profil d'enfant avec l'accord du parent, suivre les leçons du niveau, réviser, mémoriser (hifẓ), lire et écouter le Coran, utiliser l'application sans réseau.",
+            "La clarté des écrans pour les enfants et les familles, la lecture sur téléphone, la vitesse sur une connexion lente, et l'exactitude des contenus religieux.",
+            "Les fonctions en essai (réservées à certains testeurs) : « Je parle », « Réciter et vérifier ». Vos remarques sur elles sont particulièrement utiles."
+          ]
+        },
+        {
+          "titre": "Limites connues",
+          "paras": [
+            "Certains contenus religieux sont encore en cours de relecture savante et le sont signalés comme tels ; les corrections sont publiées dans la page « Errata ».",
+            "Les langues autres que le français sont en préparation (traductions de l'interface à relire) ; les textes juridiques sont provisoires.",
+            "Le tuteur d'intelligence artificielle est éteint ; le paiement est désactivé ; l'envoi d'e-mails (vérification, mot de passe oublié) dépend de la configuration de la bêta.",
+            "Des erreurs, lenteurs ou écrans maladroits sont possibles. Les données de test peuvent être remises à zéro à la fin de la bêta, avec préavis."
+          ]
+        },
+        {
+          "titre": "Comment signaler",
+          "paras": [
+            "Page Aide → « Signaler un problème » : choisissez une catégorie (quelque chose ne marche pas, un contenu à corriger, un point religieux à vérifier, autre) et décrivez en quelques mots, sans nom ni adresse. La page où vous êtes et la version de l'application sont jointes toutes seules ; une image de l'écran est possible si vous la choisissez. Un enfant choisit seulement la catégorie.",
+            "Pour une erreur dans un verset, un hadith ou une règle, utilisez « Signaler une erreur » sous le texte : il est examiné par le référent religieux, et la correction est publiée dans « Errata » avec sa source.",
+            "Une question ? Voir l'Aide (questions fréquentes) ou écrire à [adresse de contact de la bêta : à créer par le client]."
+          ]
         }
       ]
     }
@@ -285,32 +424,98 @@
         {
           "q": "L'application remplace-t-elle les livres ?",
           "r": "Non, elle les accompagne : mêmes leçons, mêmes exercices corrigés, mêmes carnets de hifẓ. Le QR code de chaque leçon ouvre la page correspondante."
+        },
+        {
+          "q": "Qu'est-ce que la bêta et que dois-je faire ?",
+          "r": "C'est une version d'essai, gratuite et sur invitation. Utilisez l'application normalement et signalez ce qui ne va pas (Aide → « Signaler un problème »). Voir la page « La bêta d'Awzid »."
         }
       ]
     },
     {
-      "titre": "Sans réseau",
+      "titre": "Compte et mot de passe",
       "items": [
+        {
+          "q": "J'ai oublié mon mot de passe. Que faire ?",
+          "r": "Sur l'écran de connexion, choisissez « Mot de passe oublié » : un lien valable 30 minutes est envoyé à l'adresse e-mail du compte (vérifiez les courriers indésirables). Le lien ne marche qu'une fois. Si rien n'arrive, demandez-en un nouveau ou écrivez à [adresse de contact : à créer par le client]."
+        },
+        {
+          "q": "Je n'ai pas reçu l'e-mail de vérification.",
+          "r": "Regardez dans les courriers indésirables, puis redemandez un lien depuis l'écran qui vous l'a proposé. Vérifiez aussi que l'adresse est écrite sans faute dans « Mon compte »."
+        },
+        {
+          "q": "Comment changer mon adresse e-mail ?",
+          "r": "Dans « Mon compte » : le changement n'a lieu qu'après confirmation depuis la nouvelle adresse, et l'ancienne adresse en est informée."
+        },
+        {
+          "q": "Comment exporter ou supprimer nos données ?",
+          "r": "Dans « Mon compte » : export complet en un fichier, suppression du compte (accès coupé aussitôt, effacement définitif sous 30 jours). Un abonnement pris dans l'App Store ou sur Google Play doit être arrêté dans la boutique."
+        }
+      ]
+    },
+    {
+      "titre": "Mise à jour et hors ligne",
+      "items": [
+        {
+          "q": "Comment mettre l'application à jour ?",
+          "r": "Quand une nouvelle version est prête, un bandeau « Nouvelle version disponible » apparaît : touchez « Mettre à jour ». Il n'apparaît jamais pendant une leçon ou une écoute. Si vous ne le voyez pas, fermez puis rouvrez l'application."
+        },
         {
           "q": "Peut-on travailler en mode avion ?",
           "r": "Oui. Téléchargez un niveau depuis « Téléchargements » ; les réponses partent seules au retour du réseau, sans rien perdre ni compter deux fois."
         },
         {
           "q": "L'application consomme-t-elle beaucoup de données ?",
-          "r": "Un niveau entier pèse moins de 150 Ko ; le mode « données économes » limite encore les téléchargements."
+          "r": "Un niveau entier pèse moins de 150 Ko ; le mode « données économes » limite encore les téléchargements. Les récitateurs « en ligne » ne se téléchargent pas et utilisent davantage de données."
+        },
+        {
+          "q": "L'application est indisponible, que faire ?",
+          "r": "Une page « service momentanément indisponible » s'affiche pendant une maintenance ; les leçons déjà téléchargées restent utilisables sans réseau. Si le problème dure, signalez-le dès que le réseau revient."
         }
       ]
     },
     {
-      "titre": "Coran et hifẓ",
+      "titre": "Enfants et famille",
+      "items": [
+        {
+          "q": "À partir de quel âge mon enfant peut-il avoir son propre compte ?",
+          "r": "Jamais seul : le compte d'un enfant est toujours créé et géré par un parent. Un adolescent peut ouvrir son propre compte à partir de l'âge fixé par son pays (15 ans en France) ; au Sénégal, par prudence, l'accord d'un parent est demandé jusqu'à 18 ans."
+        },
+        {
+          "q": "Pourquoi demandez-vous un accord « conviction religieuse » ?",
+          "r": "Apprendre le Coran peut révéler une conviction religieuse, une donnée particulièrement protégée. Nous demandons donc votre accord explicite, séparé des conditions. Vous pouvez le retirer dans « Mon compte » : le compte (ou le profil) est mis en pause, rien n'est effacé sans votre demande."
+        },
+        {
+          "q": "Un enfant peut-il parler à l'intelligence artificielle ou envoyer des messages ?",
+          "r": "Le tuteur d'IA est éteint pendant la bêta. Un enfant n'écrit pas de texte libre dans les signalements (il choisit une catégorie). Les messages école ↔ famille sont adressés à la famille."
+        },
+        {
+          "q": "Mon enfant est aux États-Unis. Peut-il s'inscrire ?",
+          "r": "Pas pendant la bêta s'il a moins de 13 ans : l'ouverture aux enfants américains attend un consentement parental vérifiable."
+        }
+      ]
+    },
+    {
+      "titre": "Contenus religieux",
       "items": [
         {
           "q": "D'où vient le texte du Coran ?",
-          "r": "Du texte de référence Tanzil (riwāya Ḥafṣ ʿan ʿĀṣim), comparé signe par signe à chaque import ; aucun programme ne l’écrit."
+          "r": "Du texte de référence Tanzil (riwāya Ḥafṣ ʿan ʿĀṣim), comparé signe par signe à chaque import ; aucun programme ne l'écrit."
+        },
+        {
+          "q": "Que veut dire « en cours de relecture savante » ?",
+          "r": "Le contenu est fourni pour apprendre mais n'a pas encore été relu par les savants prévus. Pour une question de pratique, demandez à votre enseignant ou à un savant. Les corrections sont publiées dans « Errata »."
+        },
+        {
+          "q": "J'ai trouvé une erreur dans un texte religieux (verset, hadith, règle). Comment la signaler ?",
+          "r": "Sous le texte, touchez « Signaler une erreur », ou allez dans Aide → « Signaler une erreur dans un texte religieux ». Dites en une phrase ce qui vous paraît faux (sans nom). Le référent examine chaque signalement ; si c'est confirmé, le contenu est corrigé (ou masqué en attendant) et la correction paraît datée et sourcée dans « Errata »."
+        },
+        {
+          "q": "Où voir les corrections déjà faites ?",
+          "r": "Dans la page publique « Errata » : chaque correction religieuse y est datée, avec sa référence et son édition. Elle est accessible sans compte."
         },
         {
           "q": "Qui valide une récitation ?",
-          "r": "L'enseignant, avec le barème des carnets (note sur 20). À la maison, le parent peut écouter avec son code parent."
+          "r": "L'enseignant, avec le barème des carnets (note sur 20). À la maison, le parent peut écouter avec son code parent. La fonction « Réciter et vérifier » (bêta) ne note jamais et ne juge pas le tajwid : seul le maître juge."
         }
       ]
     },
@@ -328,19 +533,15 @@
       ]
     },
     {
-      "titre": "Compte et données",
+      "titre": "Signaler un problème et nous contacter",
       "items": [
         {
-          "q": "Comment exporter ou supprimer nos données ?",
-          "r": "Dans « Mon compte » : export complet en un fichier, suppression du compte (effacement définitif sous 30 jours)."
+          "q": "Comment signaler un bug ou un écran confus ?",
+          "r": "Aide → « Signaler un problème » : catégorie, quelques mots, et si vous voulez une image de l'écran (faite sur votre appareil, zones privées masquées). La page et la version sont jointes toutes seules. Il faut être connecté et avoir du réseau."
         },
         {
-          "q": "J'ai oublié mon mot de passe.",
-          "r": "[Procédure de réinitialisation par e-mail : disponible à l'ouverture publique, avec le service d'e-mail.] En attendant, contactez l'école ou l'équipe Awzid."
-        },
-        {
-          "q": "L'application est indisponible, que faire ?",
-          "r": "Une page « service momentanément indisponible » s'affiche pendant une maintenance ; les leçons déjà téléchargées restent utilisables sans réseau."
+          "q": "Comment vous contacter pour une question ou une demande sur mes données ?",
+          "r": "Écrivez à [adresse de contact : à créer par le client]. Nous répondons dans un délai de 30 jours. Pour exporter ou effacer vos données, vous pouvez le faire vous-même dans « Mon compte »."
         }
       ]
     }

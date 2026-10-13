@@ -1164,7 +1164,7 @@
   "erreur.modele_absent": "No hay modelo de certificado para este libro.",
   "erreur.aucune_edition": "Ninguna edición publicada.",
   "legal.titre": "Información legal",
-  "legal.brouillon": "BORRADOR — debe revisarlo un jurista antes de la apertura al público.",
+  "legal.brouillon": "PROVISIONAL — antes de la firma de un jurista; a la espera de una segunda lectura jurídica.",
   "legal.maj": "Actualización: {date}",
   "legal.introuvable": "Esta página no existe.",
   "aide.titre": "Ayuda",
@@ -3081,5 +3081,12 @@
   "mj.ens_motif_explication": "ligada al pasaje presentado con su explicación",
   "mj.note": "Explicación:",
   "mj.note_sources": "Fuentes",
-  "mj.ens_traduction": "Elección de traducción:"
+  "mj.ens_traduction": "Elección de traducción:",
+  "aide.erreur_religieuse": "Señalar un error en un texto religioso",
+  "aide.beta": "La beta de Awzid",
+  "aide.contact": "Contacto",
+  "errata.source": "Fuente",
+  "errata.edition": "Edición",
+  "errata.comment": "Cada corrección religiosa lleva fecha y cita su fuente. Para señalar un error en un texto religioso, use el botón de abajo o «Señalar un error» bajo el texto.",
+  "erreur.source_requise": "Indique la fuente de la corrección."
 }
