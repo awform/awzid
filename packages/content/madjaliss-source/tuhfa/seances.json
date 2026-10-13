@@ -1,0 +1,681 @@
+{
+  "titre": "Découpage en séances (majālis) : Tuḥfat al-Aṭfāl",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "principe": "Séances de 5 à 15 minutes : lecture du texte arabe (vers par vers), traduction, mots difficiles. L'explication sera ajoutée plus tard (rien n'est rédigé ici). Durée estimée = 3 min + 1,2 min par vers + 0,5 min par mot ; à recaler sur l'enregistrement réel du lecteur (D : un lecteur de l'école enregistre le matn, avec cession de droits ; aucun enregistrement existant n'est réutilisable).",
+  "ordre": "Les séances suivent l'ordre du poème. Chaque séance renvoie aux règles de rattachement_regles.json.",
+  "a_confirmer": "Découpage proposé par Claude par unités de sens (3 à 5 vers) ; aucune source écrite de découpage traditionnel trouvée ; à comparer avec la pratique de 2 ou 3 maîtres de tajwīd.",
+  "decisions_referent": "Séances S14 et S15 (madd munfaṣil, vers 44) : l'explication précise que Ḥafṣ par la voie d'ash-Shāṭibiyya allonge de 4 ou 5 temps (D5, décision R-F1, vérifiée sur ash-Shāṭibiyya et an-Nashr). Séance S04 (vers 12, « karrirnah ») : le takrīr est une qualité du rāʾ qu'on évite de produire, un seul battement léger (décision R-F3). Les couleurs de tajwīd ne s'affichent que sur le Coran et le tajwīd, jamais sur le texte du poème.",
+  "nombre_de_seances": 18,
+  "duree_totale_min": 176,
+  "seances": [
+    {
+      "id": "TUH-S01",
+      "titre": "Ouverture : l'auteur, le titre, le but",
+      "vers": [
+        "TUH-0001",
+        "TUH-0002",
+        "TUH-0003",
+        "TUH-0004",
+        "TUH-0005"
+      ],
+      "duree_min": 13,
+      "regles": [],
+      "mots_difficiles": [
+        {
+          "ar": "رَاجِي",
+          "sens": "celui qui espère"
+        },
+        {
+          "ar": "الْغَفُور",
+          "sens": "le Très-Indulgent (Allah)"
+        },
+        {
+          "ar": "مُصَلِّيًا",
+          "sens": "en invoquant la prière [d'Allah] sur"
+        },
+        {
+          "ar": "الْمُرِيد",
+          "sens": "l'étudiant (celui qui désire apprendre)"
+        },
+        {
+          "ar": "الْمِيهِيّ",
+          "sens": "al-Mīhī, maître d'al-Jamzūrī"
+        },
+        {
+          "ar": "ذِي الْكَمَال",
+          "sens": "l'homme de la perfection"
+        },
+        {
+          "ar": "الطُّلَّاب",
+          "sens": "les étudiants"
+        },
+        {
+          "ar": "الثَّوَاب",
+          "sens": "le salaire [auprès d'Allah]"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S02",
+      "titre": "Le nūn sākin et le tanwīn : quatre règles ; la clarté",
+      "vers": [
+        "TUH-0006",
+        "TUH-0007",
+        "TUH-0008"
+      ],
+      "duree_min": 9,
+      "regles": [
+        "R-TUH-01",
+        "R-TUH-02"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "النُّون السَّاكِن",
+          "sens": "le nūn sans voyelle"
+        },
+        {
+          "ar": "التَّنْوِين",
+          "sens": "le nūn qui s'ajoute à la fin d'un nom, prononcé mais non écrit"
+        },
+        {
+          "ar": "الْإِظْهَار",
+          "sens": "la clarté (prononcer nettement)"
+        },
+        {
+          "ar": "أَحْرُف الْحَلْق",
+          "sens": "les lettres de la gorge"
+        },
+        {
+          "ar": "مُهْمَلَتَانِ",
+          "sens": "[deux lettres] sans point"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S03",
+      "titre": "La fusion avec son nasal ; l'exception du même mot",
+      "vers": [
+        "TUH-0009",
+        "TUH-0010",
+        "TUH-0011"
+      ],
+      "duree_min": 9,
+      "regles": [
+        "R-TUH-03",
+        "R-TUH-04"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "الْإِدْغَام",
+          "sens": "la fusion"
+        },
+        {
+          "ar": "يَرْمَلُون",
+          "sens": "mot qui réunit les six lettres de la fusion"
+        },
+        {
+          "ar": "الْغُنَّة",
+          "sens": "le son nasal"
+        },
+        {
+          "ar": "يَنْمُو",
+          "sens": "mot qui réunit les quatre lettres de la fusion avec son nasal"
+        },
+        {
+          "ar": "دُنْيَا / صِنْوَان",
+          "sens": "mots où le nūn et la lettre suivante sont dans un même mot : pas de fusion"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S04",
+      "titre": "Fusion sans son nasal ; conversion ; dissimulation",
+      "vers": [
+        "TUH-0012",
+        "TUH-0013",
+        "TUH-0014"
+      ],
+      "duree_min": 9,
+      "regles": [
+        "R-TUH-05",
+        "R-TUH-06",
+        "R-TUH-07",
+        "R-TUH-08"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "كَرِّرَنْهْ",
+          "sens": "« répète-le » (point sensible : voir RAPPORT, R-F3)"
+        },
+        {
+          "ar": "الْإِقْلَاب",
+          "sens": "la conversion (changement d'une lettre en une autre)"
+        },
+        {
+          "ar": "الْإِخْفَاء",
+          "sens": "la dissimulation"
+        },
+        {
+          "ar": "الْفَاضِل",
+          "sens": "le reste (et « l'accompli »)"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S05",
+      "titre": "Les quinze lettres de la dissimulation ; nūn et mīm doublés",
+      "vers": [
+        "TUH-0015",
+        "TUH-0016",
+        "TUH-0017"
+      ],
+      "duree_min": 9,
+      "regles": [
+        "R-TUH-08",
+        "R-TUH-09"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "رَمْزُهَا",
+          "sens": "leur code"
+        },
+        {
+          "ar": "ضَمَّنْتُهَا",
+          "sens": "je les ai incluses"
+        },
+        {
+          "ar": "شُدِّدَا",
+          "sens": "[ils] sont doublés (chaddés)"
+        },
+        {
+          "ar": "حَرْف غُنَّة",
+          "sens": "lettre de son nasal"
+        },
+        {
+          "ar": "تُقًى",
+          "sens": "la piété"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S06",
+      "titre": "Le mīm sākin : trois règles ; la dissimulation labiale",
+      "vers": [
+        "TUH-0018",
+        "TUH-0019",
+        "TUH-0020"
+      ],
+      "duree_min": 10,
+      "regles": [
+        "R-TUH-10"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "الْهِجَا",
+          "sens": "les lettres (de l'alphabet)"
+        },
+        {
+          "ar": "أَلِف لَيِّنَة",
+          "sens": "l'alif de prolongation"
+        },
+        {
+          "ar": "الْحِجَا",
+          "sens": "l'intelligence"
+        },
+        {
+          "ar": "ضَبَطَ",
+          "sens": "retenir avec exactitude"
+        },
+        {
+          "ar": "الشَّفْوِي",
+          "sens": "labial (des lèvres)"
+        },
+        {
+          "ar": "الْقُرَّاء",
+          "sens": "les lecteurs du Coran"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S07",
+      "titre": "Fusion du mīm, clarté labiale, vigilance devant wāw et fāʾ",
+      "vers": [
+        "TUH-0021",
+        "TUH-0022",
+        "TUH-0023"
+      ],
+      "duree_min": 9,
+      "regles": [
+        "R-TUH-11",
+        "R-TUH-12",
+        "R-TUH-13"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "بِمِثْلِهَا",
+          "sens": "avec son identique"
+        },
+        {
+          "ar": "صَغِير",
+          "sens": "mineur (voir vers 33)"
+        },
+        {
+          "ar": "الْبَقِيَّة",
+          "sens": "le reste"
+        },
+        {
+          "ar": "تَخْتَفِي",
+          "sens": "se dissimuler"
+        },
+        {
+          "ar": "الِاتِّحَاد",
+          "sens": "l'union (même point d'articulation)"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S08",
+      "titre": "Le lām de « al » : clarté et fusion",
+      "vers": [
+        "TUH-0024",
+        "TUH-0025",
+        "TUH-0026"
+      ],
+      "duree_min": 9,
+      "regles": [
+        "R-TUH-14"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "لَام أَلْ",
+          "sens": "le lām de l'article"
+        },
+        {
+          "ar": "حَالَانِ",
+          "sens": "deux cas"
+        },
+        {
+          "ar": "عَقِيمَه",
+          "sens": "sa stérilité"
+        },
+        {
+          "ar": "فَعِ",
+          "sens": "« retiens ! »"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S09",
+      "titre": "Lunaire et solaire ; le lām du verbe",
+      "vers": [
+        "TUH-0027",
+        "TUH-0028",
+        "TUH-0029"
+      ],
+      "duree_min": 9,
+      "regles": [
+        "R-TUH-14",
+        "R-TUH-15"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "قَمْرِيَّة",
+          "sens": "lunaire"
+        },
+        {
+          "ar": "شَمْسِيَّة",
+          "sens": "solaire"
+        },
+        {
+          "ar": "لَام فِعْل",
+          "sens": "le lām d'un verbe"
+        },
+        {
+          "ar": "مُطْلَقًا",
+          "sens": "dans tous les cas"
+        },
+        {
+          "ar": "شَرِيف",
+          "sens": "noble"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S10",
+      "titre": "Lettres identiques, voisines, sœurs",
+      "vers": [
+        "TUH-0030",
+        "TUH-0031",
+        "TUH-0032"
+      ],
+      "duree_min": 9,
+      "regles": [
+        "R-TUH-16"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "الصِّفَات",
+          "sens": "les qualités des lettres"
+        },
+        {
+          "ar": "الْمَخَارِج",
+          "sens": "les points d'articulation"
+        },
+        {
+          "ar": "الْمِثْلَانِ",
+          "sens": "les deux identiques"
+        },
+        {
+          "ar": "مُتَقَارِبَيْنِ",
+          "sens": "voisines"
+        },
+        {
+          "ar": "يُلَقَّبَا",
+          "sens": "[elles] reçoivent le nom"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S11",
+      "titre": "Mineur et majeur",
+      "vers": [
+        "TUH-0033",
+        "TUH-0034"
+      ],
+      "duree_min": 7,
+      "regles": [
+        "R-TUH-16",
+        "R-TUH-17"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "مُتَجَانِسَيْنِ",
+          "sens": "sœurs"
+        },
+        {
+          "ar": "صَغِير",
+          "sens": "mineur (la première lettre est sans voyelle)"
+        },
+        {
+          "ar": "كَبِير",
+          "sens": "majeur (les deux lettres ont une voyelle)"
+        },
+        {
+          "ar": "الْمُثُل",
+          "sens": "les exemples"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S12",
+      "titre": "L'allongement : fondamental et secondaire",
+      "vers": [
+        "TUH-0035",
+        "TUH-0036",
+        "TUH-0037",
+        "TUH-0038"
+      ],
+      "duree_min": 11,
+      "regles": [
+        "R-TUH-18",
+        "R-TUH-19"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "الْمَدّ",
+          "sens": "l'allongement"
+        },
+        {
+          "ar": "أَصْلِيّ / فَرْعِيّ",
+          "sens": "fondamental / secondaire"
+        },
+        {
+          "ar": "طَبِيعِيّ",
+          "sens": "naturel"
+        },
+        {
+          "ar": "سَبَب",
+          "sens": "cause"
+        },
+        {
+          "ar": "تُجْتَلَبْ",
+          "sens": "[elles] sont amenées (se réalisent)"
+        },
+        {
+          "ar": "مُسْجَل",
+          "sens": "établi"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S13",
+      "titre": "Les lettres du madd et les lettres douces",
+      "vers": [
+        "TUH-0039",
+        "TUH-0040",
+        "TUH-0041"
+      ],
+      "duree_min": 9,
+      "regles": [
+        "R-TUH-19"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "وَاي",
+          "sens": "mot qui réunit les trois lettres du madd"
+        },
+        {
+          "ar": "نُوحِيهَا",
+          "sens": "mot qui contient aussi ces trois lettres"
+        },
+        {
+          "ar": "اللَّيْن",
+          "sens": "le doux"
+        },
+        {
+          "ar": "انْفِتَاح",
+          "sens": "la fatḥa [placée avant]"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S14",
+      "titre": "Les statuts du madd : requis, permis ; joint et séparé",
+      "vers": [
+        "TUH-0042",
+        "TUH-0043",
+        "TUH-0044"
+      ],
+      "duree_min": 10,
+      "regles": [
+        "R-TUH-20",
+        "R-TUH-21"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "الْوُجُوب",
+          "sens": "le caractère requis"
+        },
+        {
+          "ar": "الْجَوَاز",
+          "sens": "le caractère permis"
+        },
+        {
+          "ar": "اللُّزُوم",
+          "sens": "le caractère obligatoire permanent"
+        },
+        {
+          "ar": "مُتَّصِل",
+          "sens": "joint (dans un même mot)"
+        },
+        {
+          "ar": "مُنْفَصِل",
+          "sens": "séparé (dans deux mots)"
+        },
+        {
+          "ar": "الْقَصْر",
+          "sens": "le raccourcissement"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S15",
+      "titre": "À l'arrêt, substitution, obligatoire permanent",
+      "vers": [
+        "TUH-0045",
+        "TUH-0046",
+        "TUH-0047"
+      ],
+      "duree_min": 9,
+      "regles": [
+        "R-TUH-22",
+        "R-TUH-23",
+        "R-TUH-24"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "عَرَضَ",
+          "sens": "survenir accidentellement"
+        },
+        {
+          "ar": "وَقْف",
+          "sens": "l'arrêt"
+        },
+        {
+          "ar": "بَدَل",
+          "sens": "substitution"
+        },
+        {
+          "ar": "لَازِم",
+          "sens": "obligatoire permanent"
+        },
+        {
+          "ar": "طُول",
+          "sens": "[allongement] long, prolongé"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S16",
+      "titre": "Les quatre catégories de l'obligatoire permanent",
+      "vers": [
+        "TUH-0048",
+        "TUH-0049",
+        "TUH-0050",
+        "TUH-0051",
+        "TUH-0052"
+      ],
+      "duree_min": 12,
+      "regles": [
+        "R-TUH-24"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "كَلِمِيّ",
+          "sens": "du mot"
+        },
+        {
+          "ar": "حَرْفِيّ",
+          "sens": "de la lettre"
+        },
+        {
+          "ar": "مُخَفَّف",
+          "sens": "léger"
+        },
+        {
+          "ar": "مُثَقَّل",
+          "sens": "lourd"
+        },
+        {
+          "ar": "ثُلَاثِيّ الْحُرُوف",
+          "sens": "[nom de lettre] de trois lettres"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S17",
+      "titre": "Les lettres détachées au début des sourates",
+      "vers": [
+        "TUH-0053",
+        "TUH-0054",
+        "TUH-0055",
+        "TUH-0056",
+        "TUH-0057"
+      ],
+      "duree_min": 12,
+      "regles": [
+        "R-TUH-25"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "الْفَوَاتِح",
+          "sens": "les lettres détachées du début des sourates"
+        },
+        {
+          "ar": "ثَمَان",
+          "sens": "huit"
+        },
+        {
+          "ar": "كَمْ عَسَلْ نَقَصْ",
+          "sens": "mots qui réunissent les huit lettres"
+        },
+        {
+          "ar": "الطُّول",
+          "sens": "le plus long"
+        },
+        {
+          "ar": "حَيٍّ طَاهِر",
+          "sens": "mots qui réunissent les lettres de 2 temps"
+        },
+        {
+          "ar": "سُحَيْرًا",
+          "sens": "à l'aube"
+        }
+      ]
+    },
+    {
+      "id": "TUH-S18",
+      "titre": "Clôture : achèvement, nombre de vers, date, prières",
+      "vers": [
+        "TUH-0058",
+        "TUH-0059",
+        "TUH-0060",
+        "TUH-0061"
+      ],
+      "duree_min": 11,
+      "regles": [
+        "R-TUH-26"
+      ],
+      "mots_difficiles": [
+        {
+          "ar": "تَنَاهِي",
+          "sens": "fin, limite"
+        },
+        {
+          "ar": "نَدٌّ",
+          "sens": "mot dont la valeur de lettres (abjad) est 61"
+        },
+        {
+          "ar": "ذِي النُّهَى",
+          "sens": "l'homme doué d'intelligence"
+        },
+        {
+          "ar": "تَارِيخ",
+          "sens": "la date"
+        },
+        {
+          "ar": "بُشْرَى",
+          "sens": "bonne nouvelle (valeur 512)"
+        },
+        {
+          "ar": "خِتَام",
+          "sens": "le sceau (le dernier)"
+        },
+        {
+          "ar": "تَابِع",
+          "sens": "suiveur"
+        }
+      ]
+    }
+  ]
+}

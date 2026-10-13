@@ -1,0 +1,535 @@
+{
+  "oeuvre": "al-Jamzūrī, Tuḥfat al-Aṭfāl wa-l-Ghilmān fī tajwīd al-Qurʾān",
+  "langue": "fr",
+  "traduction": "Traduction Awzid, faite depuis l'arabe (texte_ar.json, T1 contrôlé sur T6), projet non relu",
+  "mention_publique": "INTERDITE avant relecture : la mention « Traduction Awzid, relue par … » n'apparaît qu'après la relecture savante",
+  "statut_global": "EN_ATTENTE_SECONDE_LECTURE",
+  "conventions": [
+    "Poème didactique : on traduit le sens, pas la rime ni le mètre. Un vers = une phrase française (ou un segment, quand la phrase arabe court sur plusieurs vers ; la ponctuation l'indique).",
+    "Traduction proche du texte. Tout ajout de sens est entre crochets [ ]. Les chevilles de rime (« dawman », « bada », « ʿilimā »…) sont rendues sobrement ou signalées dans le journal.",
+    "Les termes techniques du tajwīd sont translittérés et glosés à leur première apparition ; ils suivent lexique_tajwid.json et, quand ils existent, les termes de nos livres (qc2, qc3, hifz) : clarté, fusion, conversion, dissimulation, son nasal, allongement, lourd/léger, lettres identiques/voisines/sœurs, lettres détachées.",
+    "Aucune traduction existante n'a été lue ; les passages ambigus sont traduits d'après Fatḥ al-aqfāl d'al-Jamzūrī (T6), cité par image et page dans journal_traduction.md.",
+    "« Allah » pour الله, comme dans les autres poèmes (choix à confirmer par le comité).",
+    "Madd munfaṣil (vers 44) : traduction fidèle (« allongement et raccourcissement permis ») ; la note précise que Ḥafṣ par la voie d'ash-Shāṭibiyya allonge de 4 ou 5 temps (D5, décision R-F1).",
+    "Termes arrêtés par le référent (13/10/2026) : wājib = « requis » ; lāzim = « obligatoire permanent » ; mithlān / mutaqāribān / mutajānisān = « lettres identiques / voisines / sœurs » ; fawātiḥ = « lettres détachées » ; al-fāḍil = « le reste »."
+  ],
+  "phrases": [
+    {
+      "id": "TUH-0001",
+      "fr": "Dit [celui qui] espère, sans cesse, la miséricorde du Très-Indulgent [Allah] : Sulaymān, qui est al-Jamzūrī.",
+      "section": "introduction",
+      "ordre_de_traduction": 1,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0002",
+      "fr": "Louange à Allah, en invoquant la prière [d'Allah] sur Muḥammad, sur sa famille et sur ceux qui [l']ont suivi.",
+      "section": "introduction",
+      "ordre_de_traduction": 2,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0003",
+      "fr": "Et après cela : ce poème, [composé] pour l'étudiant, [porte] sur le nūn, le tanwīn et les allongements (mudūd).",
+      "section": "introduction",
+      "ordre_de_traduction": 3,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0004",
+      "fr": "Je l'ai nommé « Tuḥfat al-Aṭfāl » [le Présent des enfants], [en le tenant] de notre maître al-Mīhī, l'homme de la perfection.",
+      "section": "introduction",
+      "ordre_de_traduction": 4,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0005",
+      "fr": "J'espère par lui qu'il profitera aux étudiants, et [j'espère] la récompense (al-ajr), l'acceptation (al-qabūl) et le salaire (ath-thawāb).",
+      "section": "introduction",
+      "ordre_de_traduction": 5,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0006",
+      "fr": "Le nūn, lorsqu'il est sans voyelle (sākin), ainsi que le tanwīn, ont quatre règles : prends donc mon explication.",
+      "section": "nun_sakin_tanwin",
+      "ordre_de_traduction": 6,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0007",
+      "fr": "La première est la clarté (iẓhār), devant des lettres de la gorge, au nombre de six, classées [dans un ordre] : sache-les donc.",
+      "section": "nun_sakin_tanwin",
+      "ordre_de_traduction": 7,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0008",
+      "fr": "[Ce sont] la hamza, puis le hāʾ, puis le ʿayn [et] le ḥāʾ, [tous deux] sans point, puis le ghayn [et] le khāʾ.",
+      "section": "nun_sakin_tanwin",
+      "ordre_de_traduction": 8,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0009",
+      "fr": "La deuxième est la fusion (idghām), devant six [lettres] venues [réunies] dans « yarmalūna » [yāʾ, rāʾ, mīm, lām, wāw, nūn] : chez eux [les maîtres de la lecture], cela est établi.",
+      "section": "nun_sakin_tanwin",
+      "ordre_de_traduction": 9,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0010",
+      "fr": "Mais elles sont de deux sortes : une sorte dans laquelle la fusion se fait avec le son nasal (ghunna), [lettres] connues par « yanmū ».",
+      "section": "nun_sakin_tanwin",
+      "ordre_de_traduction": 10,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0011",
+      "fr": "Sauf si [le nūn et la lettre] sont dans un même mot : alors tu ne fais pas la fusion, comme dans « dunyā », puis « ṣinwān » et ce qui suit [de même].",
+      "section": "nun_sakin_tanwin",
+      "ordre_de_traduction": 11,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "decision_referent": "R-T3 : on donne le mot réellement attendu d'après Tanzil et l'exemple conforme, sans reprendre l'erreur du commentaire.",
+      "note": "Fatḥ al-aqfāl (n39) : si le nūn et la lettre sont dans un même mot, il y a clarté, « pour que le mot ne soit pas confondu avec un mot doublé » (muḍāʿafa). Le commentaire de T6 énumère quatre mots, dont le quatrième est absent du Coran (contrôlé sur Tanzil) : il n'est pas repris. Le mot attendu est « bunyān » (61:4, exemple E-18 de rattachement_regles.json). Les quatre mots du Coran sont donc dunyā, ṣinwān, qinwān et bunyān."
+    },
+    {
+      "id": "TUH-0012",
+      "fr": "La deuxième [sorte] est la fusion sans son nasal, devant le lām et le rāʾ ; puis répète-le (karrirnah).",
+      "section": "nun_sakin_tanwin",
+      "ordre_de_traduction": 12,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "decision_referent": "R-F3 : traduction fidèle ; la note dit que le takrīr est une qualité qu'on évite de produire.",
+      "note": "« karrirnah » traduit littéralement. Le takrīr (la répétition) est le nom d'une qualité du rāʾ, qu'on évite de produire : un seul battement léger de la pointe de la langue, sans rāʾ roulé (Jazariyya, JAZ-0043 « وأخف تكريرا إذا تشدد », et Khālid al-Azharī, al-Ḥawāshī al-azhariyya, p. 15 ; Fatḥ al-aqfāl, n39 : « lākin idhā shuddida yajibu ikhfāʾu takrīrihi »). Aligné sur qc2 l14."
+    },
+    {
+      "id": "TUH-0013",
+      "fr": "La troisième est la conversion (iqlāb), devant le bāʾ : [le nūn devient] un mīm, avec son nasal, avec dissimulation (ikhfāʾ).",
+      "section": "nun_sakin_tanwin",
+      "ordre_de_traduction": 13,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0014",
+      "fr": "La quatrième est la dissimulation (ikhfāʾ), devant le reste (al-fāḍil) des lettres : [elle est] requise (wājib) pour [ce] reste.",
+      "section": "nun_sakin_tanwin",
+      "ordre_de_traduction": 14,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "decision_referent": "R-F6 (al-fāḍil = le reste) et R-F5 (wājib = requis).",
+      "note": "« al-fāḍil » = « le reste » (Fatḥ al-aqfāl, n40 : « al-bāqī »). Fatḥ glose aussi « al-kāmil » (l'accompli) : le jeu de mots avec « li-l-fāḍil » n'est pas rendu dans la traduction. « wājib » = « requis »."
+    },
+    {
+      "id": "TUH-0015",
+      "fr": "[Elle a lieu] devant cinq [lettres] après dix : leur code se trouve dans les mots de ce vers [le suivant], où je les ai incluses :",
+      "section": "nun_sakin_tanwin",
+      "ordre_de_traduction": 15,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0016",
+      "fr": "« Ṣif dhā thanā kam jāda shakhṣun qad samā, dum ṭayyiban zid fī tuqan ḍaʿ ẓālimā » : « Décris celui qui [mérite] la louange. Que d'hommes généreux se sont élevés ! Reste bon, accrois [ta] piété, écarte l'injuste. » [Mnémonique : les initiales de ces mots sont les quinze lettres.]",
+      "section": "nun_sakin_tanwin",
+      "ordre_de_traduction": 16,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0017",
+      "fr": "Prononce avec son nasal (ghunna) le mīm, puis le nūn, lorsqu'ils sont doublés (chaddés) ; et appelle chacun des deux « lettre de ghunna » : [cela] est apparu [= est évident].",
+      "section": "nun_mim_mushaddada",
+      "ordre_de_traduction": 17,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "decision_referent": "R-T4 : lecture appuyée par le témoin vocalisé et par le commentaire.",
+      "note": "Lecture retenue « وَغُنَّ » (ḍamma sur le ghayn, nūn chaddé), relevée sur T4 (Ḥalabī 1949, p. 213) et appuyée par Fatḥ al-aqfāl (n41, p. 38) : « أي يجب عليك إظهار غنة الميم والنون حال تشديدهما » (verbe tiré de « ghunna »). Fatḥ ajoute « ḥarf ghunna mushaddad » ou « ḥarf aghann mushaddad ». La forme « وَغَنِّنْ » proposée avant collation est abandonnée (V-01)."
+    },
+    {
+      "id": "TUH-0018",
+      "fr": "Le mīm, lorsqu'il est sans voyelle, vient devant les lettres [de l'alphabet], hormis l'alif de prolongation (lāyina), pour celui qui a de l'intelligence (dhū al-ḥijā).",
+      "section": "mim_sakin",
+      "ordre_de_traduction": 18,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0019",
+      "fr": "Ses règles sont trois, pour qui [les] retient : dissimulation, fusion et clarté, seulement.",
+      "section": "mim_sakin",
+      "ordre_de_traduction": 19,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0020",
+      "fr": "La première : la dissimulation devant le bāʾ ; nomme-la « labiale » (shafawī) chez les lecteurs.",
+      "section": "mim_sakin",
+      "ordre_de_traduction": 20,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "note": "T1 et T4 : « عِنْدَ » ; T6 : « قَبْلَ » (V-02, tranché : « عند »). Fatḥ n41 : « fa-yajibu ikhfāʾuhā ay maʿa l-ghunna… wa-hādhā huwa l-mukhtār ; wa-qīla bi-iẓhārihā, wa-qīla bi-idghāmihā »."
+    },
+    {
+      "id": "TUH-0021",
+      "fr": "La deuxième : la fusion avec son semblable [le mīm] ; nomme-la « fusion mineure » (ṣaghīr), ô jeune homme.",
+      "section": "mim_sakin",
+      "ordre_de_traduction": 21,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0022",
+      "fr": "La troisième : la clarté devant le reste des lettres ; nomme-la « labiale » (shafawiyya).",
+      "section": "mim_sakin",
+      "ordre_de_traduction": 22,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0023",
+      "fr": "Garde-toi, devant le wāw et le fāʾ, de la dissimulation, à cause de leur proximité [du fāʾ] et de l'union [en point d'articulation, du wāw] : sache-le.",
+      "section": "mim_sakin",
+      "ordre_de_traduction": 23,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0024",
+      "fr": "Le lām de « al » a deux cas devant les lettres : le premier est sa clarté ; sache-le donc.",
+      "section": "lam",
+      "ordre_de_traduction": 24,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "note": "Fatḥ n42 : « lām al-maʿrifa » ; deux cas devant les lettres ; premier : clarté, requise devant quatorze lettres."
+    },
+    {
+      "id": "TUH-0025",
+      "fr": "[C'est] devant quatorze [lettres] (quatre avec dix) ; prends-en la connaissance dans [la formule] « ibghi ḥajjaka wa-khaf ʿaqīmah » [Recherche ton pèlerinage et crains sa stérilité].",
+      "section": "lam",
+      "ordre_de_traduction": 25,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0026",
+      "fr": "Le second : sa fusion devant quatorze [lettres] (quatre et dix aussi) ; leur code est « fa-ʿi » [retiens-les].",
+      "section": "lam",
+      "ordre_de_traduction": 26,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0027",
+      "fr": "« Ṭib thumma ṣil raḥiman tafuz ḍif dhā niʿam, daʿ sūʾa ẓannin zur sharīfan lil-karam » : « Sois bon, puis entretiens la parenté : tu réussiras ; accueille celui qui a des bienfaits ; laisse la mauvaise pensée ; rends visite à un noble, pour [sa] générosité. » [Mnémonique : les initiales de ces mots sont les quatorze lettres.]",
+      "section": "lam",
+      "ordre_de_traduction": 27,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0028",
+      "fr": "Le premier lām, nomme-le « lunaire » (qamariyya) ; et l'autre lām, nomme-le « solaire » (shamsiyya).",
+      "section": "lam",
+      "ordre_de_traduction": 28,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "note": "T4 : « وَاللَّامُ الْأُولَى » et « وَاللَّامُ الْأُخْرَى » (ḍamma aux deux hémistiches) ; la proposition « وَاللَّامَ » est corrigée. Fatḥ n43 : « qamariyya » avec mīm sākin pour la mesure."
+    },
+    {
+      "id": "TUH-0029",
+      "fr": "Et prononce clairement le lām du verbe, dans tous les cas, comme dans « qul naʿam » [dis : oui], « qulnā » [nous avons dit] et « wa-ltaqā » [et ils se sont rencontrés].",
+      "section": "lam",
+      "ordre_de_traduction": 29,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "note": "Fatḥ al-aqfāl précise que si ce lām se trouve devant lām ou rāʾ, la fusion a lieu (« fa-in waqaʿat qablahumā adghamat »). Formulation de référence : le lām d'un verbe est clair devant toutes les lettres, sauf devant ل et ر où il se fond (R-L1) ; nos livres le disent déjà (qc2 l13, qc3 l02)."
+    },
+    {
+      "id": "TUH-0030",
+      "fr": "Si deux lettres s'accordent par les qualités (ṣifāt) et par les points d'articulation (makhārij), elles sont dites « lettres identiques » (al-mithlān) : elles y ont le plus de droit [à ce nom].",
+      "section": "mithlayn_mutaqaribayn_mutajanisayn",
+      "ordre_de_traduction": 30,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "note": "R-F4 : « lettres identiques », comme qc3 l01-l02."
+    },
+    {
+      "id": "TUH-0031",
+      "fr": "Et si les deux sont voisines par le point d'articulation et diffèrent par les qualités, on les nomme",
+      "section": "mithlayn_mutaqaribayn_mutajanisayn",
+      "ordre_de_traduction": 31,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0032",
+      "fr": "« lettres voisines » (mutaqāribayn) ; ou si elles s'accordent par un [même] point d'articulation, non par les qualités, [il est] établi",
+      "section": "mithlayn_mutaqaribayn_mutajanisayn",
+      "ordre_de_traduction": 32,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0033",
+      "fr": "[qu'elles sont dites] « lettres sœurs » (mutajānisayn). Puis, si la première de chacune [des trois paires] est sans voyelle, nomme[-le] « fusion mineure » (ṣaghīr) ;",
+      "section": "mithlayn_mutaqaribayn_mutajanisayn",
+      "ordre_de_traduction": 33,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0034",
+      "fr": "ou si les deux lettres ont une voyelle, dans chaque [cas], dis : « fusion majeure » (kabīr) pour chacun, et comprends-le au moyen des exemples (muthul).",
+      "section": "mithlayn_mutaqaribayn_mutajanisayn",
+      "ordre_de_traduction": 34,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "note": "R-F4 : « lettres identiques / voisines / sœurs », comme qc3 l01-l02. D'après an-Nashr, la fusion majeure (première lettre voyellée) est propre à Abū ʿAmr (et à Yaʿqūb) : ce n'est pas une pratique de Ḥafṣ (voir R-L2)."
+    },
+    {
+      "id": "TUH-0035",
+      "fr": "L'allongement (madd) est fondamental (aṣlī) et secondaire (farʿī) ; nomme le premier « naturel » (ṭabīʿī) : c'est celui",
+      "section": "madd_aqsam",
+      "ordre_de_traduction": 35,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0036",
+      "fr": "qui ne dépend d'aucune cause, et sans lequel les lettres [de prolongation] ne se réalisent pas :",
+      "section": "madd_aqsam",
+      "ordre_de_traduction": 36,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0037",
+      "fr": "mais [c'est] toute lettre, hormis hamza ou sukūn, venue après un allongement : alors le [madd] naturel a lieu.",
+      "section": "madd_aqsam",
+      "ordre_de_traduction": 37,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0038",
+      "fr": "L'autre, le secondaire, dépend d'une cause, comme une hamza ou un sukūn, [de façon] établie [= sans restriction].",
+      "section": "madd_aqsam",
+      "ordre_de_traduction": 38,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "note": "« musjalan » : lecture confirmée sur T4 (« مُسْجَلَا », p. 215). Sens « établi, sans restriction » d'après le « muṭlaqan » que donne Fatḥ al-aqfāl (n45). « sabab » : bāʾ sākin pour la mesure."
+    },
+    {
+      "id": "TUH-0039",
+      "fr": "Ses lettres sont trois : retiens-les dans le mot « wāy » ; elles sont [aussi] dans « nūḥīhā ».",
+      "section": "madd_aqsam",
+      "ordre_de_traduction": 39,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0040",
+      "fr": "La kasra avant le yāʾ et la ḍamma avant le wāw [sont] une condition, et la fatḥa avant l'alif est exigée.",
+      "section": "madd_aqsam",
+      "ordre_de_traduction": 40,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0041",
+      "fr": "Et le doux (līn), parmi elles, [ce sont] le yāʾ et le wāw devenus sans voyelle, si une fatḥa [placée] avant chacun est annoncée.",
+      "section": "madd_aqsam",
+      "ordre_de_traduction": 41,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0042",
+      "fr": "L'allongement a trois statuts qui demeurent : le requis (wujūb), le permis (jawāz) et l'obligatoire permanent (luzūm).",
+      "section": "madd_ahkam",
+      "ordre_de_traduction": 42,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "decision_referent": "R-F5 : « requis » et « obligatoire permanent ».",
+      "note": "wājib = « requis » ; lāzim = « obligatoire permanent » (R-F5). Dans nos livres les deux sont rendus « obligatoire » : la liste des occurrences est dans DECISIONS_REFERENT_TUHFA.md, § 6."
+    },
+    {
+      "id": "TUH-0043",
+      "fr": "Est requis (wājib) : si une hamza vient après un allongement dans un [même] mot ; on le compte [comme] « joint » (muttaṣil).",
+      "section": "madd_ahkam",
+      "ordre_de_traduction": 43,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "note": "T1 et T6 : « يُعَدّْ » (« est compté ») ; T4 : « يُمَدّْ » (« est allongé ») : nouvelle variante V-09, retenue « يُعَدّْ » avec « voyelle_a_confirmer ». Le sens est le même : ce madd est dit « joint » (muttaṣil). T4 : « فِي كِلْمَةٍ »."
+    },
+    {
+      "id": "TUH-0044",
+      "fr": "Et est permis (jāʾiz) : l'allongement (madd) et le raccourcissement (qaṣr), si [les deux] sont séparés, chacun dans un [autre] mot ; c'est le « séparé » (munfaṣil).",
+      "section": "madd_ahkam",
+      "ordre_de_traduction": 44,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "decision_referent": "R-F1 (D5) : traduction fidèle ; note : Ḥafṣ par la Shāṭibiyya, madd de 4 ou 5 temps.",
+      "note": "Traduction fidèle au vers. Notre référence est Ḥafṣ par la voie d'ash-Shāṭibiyya, comme le muṣḥaf de Médine (D5) : le madd séparé s'y fait de 4 ou 5 temps ; le qaṣr (2 temps) est le fait d'autres voies. Sources : an-Nashr (باب المد والقصر) attribue le qaṣr de Ḥafṣ à la seule voie de ʿAmr b. aṣ-Ṣabbāḥ, alors que la voie d'ash-Shāṭibiyya passe par ʿUbayd b. aṣ-Ṣabbāḥ (via al-Hāshimī) ; Fatḥ al-aqfāl (n46) : « Warsh, Ibn ʿĀmir, ʿĀṣim, Ḥamza et al-Kisāʾī le font sans divergence ». Le qaṣr n'est jamais présenté comme la lecture de l'élève."
+    },
+    {
+      "id": "TUH-0045",
+      "fr": "Il en va de même si un sukūn survient accidentellement, à l'arrêt, comme dans « taʿlamūn » [et] « nastaʿīn ».",
+      "section": "madd_ahkam",
+      "ordre_de_traduction": 45,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0046",
+      "fr": "Ou si la hamza précède l'allongement : c'est la « substitution » (badal), comme dans « āmanū » et « īmānan » : retiens[-le].",
+      "section": "madd_ahkam",
+      "ordre_de_traduction": 46,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "note": "T4 confirme l'ordre de T1 (« الْهَمْزُ عَلَى الْمَدِّ ») : l'ordre inversé de T6 est une faute d'impression (V-04)."
+    },
+    {
+      "id": "TUH-0047",
+      "fr": "Et [c'est] l'« obligatoire permanent » (lāzim) si le sukūn est originel, en liaison et à l'arrêt, après un allongement prolongé (ṭūl).",
+      "section": "madd_ahkam",
+      "ordre_de_traduction": 47,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0048",
+      "fr": "Les catégories de l'obligatoire permanent (lāzim), chez eux, sont quatre : celles-ci [sont] « du mot » (kalimī) et « de la lettre » (ḥarfī), avec lui [= chacune avec sa subdivision].",
+      "section": "madd_lazim",
+      "ordre_de_traduction": 48,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0049",
+      "fr": "Chacune [des deux est] légère (mukhaffaf) ou lourde (muthaqqal) : voilà quatre [catégories], elles sont détaillées.",
+      "section": "madd_lazim",
+      "ordre_de_traduction": 49,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0050",
+      "fr": "Si, dans un mot, un sukūn se rencontre avec une lettre de prolongation (madd), il est « du mot » (kalimī).",
+      "section": "madd_lazim",
+      "ordre_de_traduction": 50,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0051",
+      "fr": "Ou si [cela] se trouve dans [le nom d']une lettre de trois lettres dont l'allongement est au milieu, alors il est « de la lettre » (ḥarfī).",
+      "section": "madd_lazim",
+      "ordre_de_traduction": 51,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0052",
+      "fr": "Chacun des deux est lourd (muthaqqal) si [la lettre suivante] est fusionnée (idghām), léger (mukhaffaf) si elle ne l'est pas.",
+      "section": "madd_lazim",
+      "ordre_de_traduction": 52,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0053",
+      "fr": "L'obligatoire permanent « de la lettre » [se trouve] au début des sourates ; son existence se limite à huit [lettres].",
+      "section": "madd_lazim",
+      "ordre_de_traduction": 53,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0054",
+      "fr": "Elles sont réunies dans [les mots] « kam ʿasal naqaṣ » ; le ʿayn [admet] deux façons [d'être lu], la plus longue (ṭūl) étant la mieux connue.",
+      "section": "madd_lazim",
+      "ordre_de_traduction": 54,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "decision_referent": "R-F7 : rendu selon la glose de Fatḥ, avec citation.",
+      "note": "« aṭ-ṭūl akhaṣṣ » rendu selon la glose de Fatḥ al-aqfāl (n48, p. 45) : « fīhi wajhān ay ʿinda kull al-qurrāʾ wa-humā l-madd wa-t-tawassuṭ wa-lākin al-madd aʿraf ʿinda ahl al-adāʾ » (lecture sur l'image). Sens : de ces deux durées (6 ou 4 temps), la longue est la mieux connue des maîtres de la récitation. Cohérent avec nos livres (« ع : 4 ou 6 »)."
+    },
+    {
+      "id": "TUH-0055",
+      "fr": "Et ce qui est autre que la lettre de trois lettres — non l'alif — allonge-le d'un allongement naturel : [c'est] l'usage consacré.",
+      "section": "madd_lazim",
+      "ordre_de_traduction": 55,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "decision_referent": "R-T2 : variante tranchée.",
+      "note": "T1 et T4 : « الثُّلَاثِي » ; T6 : « الثَّان » (matn et commentaire) (V-08, tranché : T1 et T4, qui s'accordent avec le sens et la mesure)."
+    },
+    {
+      "id": "TUH-0056",
+      "fr": "Il en va de même, au début des sourates, pour [les lettres que renferme] le mot « ḥayy ṭāhir » : [cela] y est limité.",
+      "section": "madd_lazim",
+      "ordre_de_traduction": 56,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0057",
+      "fr": "Les quatorze lettres détachées [du début des sourates] sont réunies [dans] : « ṣilhu suḥayran man qaṭaʿaka » [rejoins-le à l'aube, [lui] qui t'a coupé [les liens]] : [la formule] est connue.",
+      "section": "madd_lazim",
+      "ordre_de_traduction": 57,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "note": "T1 et T4 : « صِلْهُ » ; T6 : « صِل » (V-05, tranché : « صله », seul mot qui réunit les quatorze lettres détachées ; contrôlé par script)."
+    },
+    {
+      "id": "TUH-0058",
+      "fr": "Et ce poème est achevé, par la louange d'Allah, dans sa complétude, sans limite.",
+      "section": "khatima",
+      "ordre_de_traduction": 58,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0059",
+      "fr": "Ses vers [valent] « nadd » [= 61 en valeur de lettres], [chose] apparue à l'homme doué d'intelligence ; sa date est « bushrā li-man yutqinuhā » [= 1198 de l'hégire] : bonne nouvelle à qui les maîtrise.",
+      "section": "khatima",
+      "ordre_de_traduction": 59,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false,
+      "decision_referent": "R-T5 : « li-man » retenu (abjad 1198).",
+      "note": "T1 et T4 : « لِمَنْ » ; T6 : « أَنْ » dans le matn cité et « مِنْ » dans le commentaire. Calcul abjad contrôlé par script : « لمن » donne 512 + 120 + 566 = 1198 (la date annoncée par Fatḥ al-aqfāl) ; « أن » donne 1129 et « من » 1168 (V-06)."
+    },
+    {
+      "id": "TUH-0060",
+      "fr": "Puis la prière et la paix, à jamais, sur le sceau des prophètes, Aḥmad,",
+      "section": "khatima",
+      "ordre_de_traduction": 60,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    },
+    {
+      "id": "TUH-0061",
+      "fr": "et sur la famille, les compagnons, tout suiveur, tout lecteur et tout auditeur.",
+      "section": "khatima",
+      "ordre_de_traduction": 61,
+      "statut": "EN_ATTENTE_SECONDE_LECTURE",
+      "point_referent": false
+    }
+  ],
+  "revision": "2026-10-13"
+}

@@ -57,19 +57,18 @@ test('Plus → Madjaliss : textes par cycle, cycle conseillé, « bientôt » sa
   await expect(
     page.locator('section[data-cycle="1"] [data-testid="cycle-conseille"]'),
   ).toBeVisible();
-  await expect(page.locator('a[data-texte="akhdari"]')).toHaveAttribute(
-    'href',
-    '/madjaliss/akhdari',
-  );
+  // les sept textes intégrés ont un lien ; les autres restent « Bientôt », sans lien
   for (const id of [
+    'akhdari',
     'ashmawiyya',
+    'tuhfa',
     'ibn-ashir',
     'izziyya',
-    'risala',
-    'khalil',
-    'tuhfa',
     'ajurrumiyya',
-  ]) {
+    'jazariyya',
+  ])
+    await expect(page.locator(`a[data-texte="${id}"]`)).toHaveAttribute('href', `/madjaliss/${id}`);
+  for (const id of ['nawawi', 'bayquniyya', 'risala', 'lamiyya', 'khalil', 'alfiyya', 'waraqat']) {
     const x = page.locator(`[data-texte="${id}"]`);
     await expect(x).toContainText('Bientôt');
     await expect(x).not.toHaveAttribute('href', /.*/);
@@ -97,7 +96,7 @@ test('séance complète : lire, mots difficiles, mémoriser, quiz, « Séance fa
   for (const id of s1.phrases) {
     const p = de.get(id)!;
     const el = page.locator(`[data-phrase="${id}"]`);
-    await expect(el).toHaveAttribute('data-statut', 'VALIDATION_HUMAINE_REQUISE');
+    await expect(el).toHaveAttribute('data-statut', 'EN_ATTENTE_SECONDE_LECTURE');
     const ar = await el.locator('p.matn').evaluate((n) => n.textContent ?? '');
     expect(Buffer.from(ar.trim()).toString('hex')).toBe(
       Buffer.from(p.ar as string).toString('hex'),
@@ -209,7 +208,7 @@ test('règles du référent : AKH-0052 jamais sans explication, mots du Coran de
   const p15 = page.locator('[data-phrase="AKH-0015"] [data-coran]');
   await expect(p15).toHaveCount(1);
   await expect(page.locator('[data-sens="9:62"] .sens-titre')).toHaveText(
-    'Sens du verset entier :',
+    'Sens du verset entier : (9:62)',
   );
   await expect(page.locator('[data-sens="9:62"] .sens-texte')).toHaveCSS('display', 'block');
   await expect(page.locator('main')).not.toContainText('TANZIL');

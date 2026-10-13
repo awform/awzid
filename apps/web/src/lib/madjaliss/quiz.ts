@@ -10,7 +10,7 @@
  * un titre ou une formule ; jamais de « compléter » dans une phrase dont la vocalisation est à vérifier.
  * Tirage déterministe (graine) : la même séance donne le même quiz, une nouvelle graine en donne un autre.
  */
-import { arSimple, type Matn, type Phrase } from './donnees';
+import { arSimple, type Matn, type Phrase, type Seance } from './donnees';
 
 export type Question =
   | { type: 'traduction'; phrase: string; ar: string; options: string[]; bonne: number }
@@ -51,7 +51,7 @@ const PONCT = /[،؛:.!؟«»()،]+$/;
 
 /** Phrase utilisable en quiz : texte de l'auteur, traduit, sans citation ni passage réservé. */
 export const questionnable = (p: Phrase): boolean =>
-  p.t === 'texte' && !p.explication && arSimple(p) !== null && !!p.fr;
+  (p.t === 'texte' || p.t === 'vers') && !p.explication && arSimple(p) !== null && !!p.fr;
 
 /** Rangs des mots qu'on peut faire compléter : pas le premier, au moins 3 lettres, jamais le nom d'Allah. */
 export function motsACompleter(ar: string): number[] {
@@ -81,11 +81,9 @@ export function genererQuiz(m: Matn, n: number, graine = n): Question[] {
     m.seances.filter(
       (s) => s.n !== n && Math.abs(s.n - n) <= ecart && (!s.pudeur || !!seance.pudeur),
     );
-  const proches = [4, 8, 44]
-    .map(voisines)
-    .find(
-      (ss) => ss.flatMap((s) => s.phrases).filter((id) => questionnable(de.get(id)!)).length >= 6,
-    )!;
+  const assez = (ss: Seance[]) =>
+    ss.flatMap((s) => s.phrases).filter((id) => questionnable(de.get(id)!)).length >= 6;
+  const proches = [4, 8, 44, Infinity].map(voisines).find(assez) ?? voisines(Infinity);
   const ailleurs = proches
     .flatMap((s) => s.phrases)
     .map((id) => de.get(id)!)

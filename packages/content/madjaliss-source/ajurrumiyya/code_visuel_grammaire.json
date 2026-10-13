@@ -1,0 +1,26 @@
+{
+  "titre": "Code visuel de la grammaire — sans aucune couleur du tajwīd",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "date": "2026-10-13",
+  "contexte": "Décision du pilote (12/10) : les couleurs du tajwīd (rouge = madd, vert = ghunna, bleu = tafkhīm et qalqala) sont réservées au Coran et au tajwīd. Le code actuel de la grammaire (ad4 à ad7 : rouge = rafʿ, bleu = naṣb, vert = jarr, or = jazm) doit donc changer.",
+  "principe": "Le sens est porté par la FORME (style de soulignement + petit signe), jamais par la couleur : le code se lit en noir et blanc, à l'impression, par un daltonien, et il ne peut jamais être confondu avec le tajwīd. Une seule teinte neutre (encre du texte) pour tout le soulignement ; aucune teinte rouge, verte ou bleue.",
+  "etats": [
+    { "cas": "rafʿ (nominatif ; indicatif)", "ar": "الرَّفْع", "soulignement": "trait plein continu", "signe": "▲", "mnemonique": "rafʿ = « élever » : la flèche monte" },
+    { "cas": "naṣb (accusatif ; subjonctif)", "ar": "النَّصْب", "soulignement": "trait double fin", "signe": "◆", "mnemonique": "naṣb = « dresser, fixer » : la forme est stable, posée" },
+    { "cas": "khafḍ (génitif)", "ar": "الْخَفْض", "soulignement": "trait ondulé", "signe": "▼", "mnemonique": "khafḍ = « abaisser » : la flèche descend" },
+    { "cas": "jazm (jussif)", "ar": "الْجَزْم", "soulignement": "trait tireté (coupé)", "signe": "‖", "mnemonique": "jazm = « couper » : le trait est coupé" }
+  ],
+  "marques_de_la_flexion": {
+    "regle": "Pour la marque elle-même (ḍamma, fatḥa, kasra, sukūn, wāw, alif, yā', nūn), on souligne la voyelle ou la lettre finale par le même style que le cas, mais en trait plus épais ; la chute (ḥadhf) est indiquée par un petit cercle ◌ à l'emplacement de la lettre tombée."
+  },
+  "regles_d_usage": [
+    "Le soulignement ne s'applique qu'à la finale du mot (la partie qui varie), pas à tout le mot.",
+    "Un mot invariable (mabnī) n'est pas souligné : il porte un petit signe ⌂ (« fixe »).",
+    "Dans un exercice d'analyse, la fonction (sujet, prédicat…) est écrite en toutes lettres, pas en couleur.",
+    "Aucun de ces signes ne doit jamais être placé sur un texte coranique affiché avec le code du tajwīd, et le code du tajwīd ne s'affiche jamais avec ces soulignements : on n'affiche jamais les deux codes en même temps sur le même texte.",
+    "Accessibilité : les quatre soulignements et les quatre signes sont tous distincts en noir et blanc ; ils sont annoncés par une description alternative (« finale au nominatif », « finale à l'accusatif », « finale au génitif », « finale au jussif »)."
+  ],
+  "teinte_facultative": "Si le client veut une teinte, la même pour les quatre états (par exemple un brun sépia), jamais une teinte par état.",
+  "a_appliquer_dans": "ad4 (book.js, l01.js), ad5 (book.js), ad6 (book.js, l02.js), ad7 (book.js) : phrases « code couleur » à remplacer, et figures éventuelles à redessiner. Rien n'est modifié dans ce lot.",
+  "point_referent": "Choix des formes à valider avec le directeur artistique (logo, charte) : le code ci-dessus est une proposition de principe, pas un dessin."
+}

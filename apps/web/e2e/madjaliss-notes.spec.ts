@@ -14,7 +14,7 @@ type Phrase = {
   id: string;
   ar?: string | Array<string | { q: string; ref: string }>;
   fr?: string;
-  note?: { texte: string; sources?: string[]; ar?: string[] };
+  notes?: Array<{ texte: string; sources?: string[]; ar?: string[] }>;
 };
 const matn = JSON.parse(
   readFileSync(
@@ -32,7 +32,7 @@ test('note d’explication sous AKH-0051 ; arabe des sources sur sa ligne ; AKH-
   const p51 = page.locator('[data-phrase="AKH-0051"]');
   const note = p51.getByTestId('note-explication');
   await expect(note).toBeVisible();
-  await expect(note.locator('.note-texte')).toHaveText(de.get('AKH-0051')!.note!.texte);
+  await expect(note.locator('.note-texte')).toHaveText(de.get('AKH-0051')!.notes![0]!.texte);
   await expect(note.locator('.note-titre')).toHaveText('Explication :');
   // la note vient APRÈS la traduction, jamais sur la ligne de l'arabe du texte
   const ordre = await p51.evaluate((n) => [...n.children].map((c) => c.className.split(' ')[0]));
@@ -41,7 +41,7 @@ test('note d’explication sous AKH-0051 ; arabe des sources sur sa ligne ; AKH-
   const cits = note.locator('p.cit');
   await expect(cits.first()).toBeHidden();
   await note.locator('summary').click();
-  await expect(cits).toHaveCount(de.get('AKH-0051')!.note!.ar!.length);
+  await expect(cits).toHaveCount(de.get('AKH-0051')!.notes![0]!.ar!.length);
   for (let i = 0; i < (await cits.count()); i++) {
     await expect(cits.nth(i)).toHaveCSS('display', 'block');
     await expect(cits.nth(i)).toHaveAttribute('dir', 'rtl');

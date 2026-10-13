@@ -1,0 +1,1000 @@
+{
+ "titre": "Découpage en séances (majālis) — al-Muqaddima al-Ājurrūmiyya",
+ "statut": "EN_ATTENTE_SECONDE_LECTURE",
+ "principe": "Séances courtes (3 à 8 minutes ; 32 séances, 190 minutes estimées) : lecture du texte arabe, traduction, mots difficiles ; l'explication (al-Kafrāwī) est liée par le champ « explications » quand elle existe. Le découpage suit les chapitres du matn ; aucune séance ne coupe un chapitre en dehors des plus longs. Les exemples et les listes sont affichés chacun sur sa ligne (jamais mêlés à la ligne française). Les renvois « ad6-lNN » désignent les leçons du livre ad6 qui enseignent le même chapitre (alignement_livres.json).",
+ "a_confirmer": "Découpage proposé par Claude ; à comparer avec la pratique de maîtres qui enseignent l'Ājurrūmiyya (Maghreb, Égypte, Afrique de l'Ouest). Durées estimées (lecture lente ×2 + traduction + mots), à recaler sur l'enregistrement. Le colophon de l'éditeur (AJR-0141) n'est dans aucune séance : il ne fait pas partie du matn.",
+ "duree_totale_min": 190,
+ "nombre_de_seances": 32,
+ "seances": [
+  {
+   "id": "AJR-S01",
+   "titre": "Le discours et ses trois parties",
+   "phrases": [
+    "AJR-0001",
+    "AJR-0002",
+    "AJR-0003",
+    "AJR-0004",
+    "AJR-0005"
+   ],
+   "duree_min": 7,
+   "renvois": [
+    "ad6-l01"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْكَلَام",
+     "sens": "le discours"
+    },
+    {
+     "ar": "اللَّفْظ",
+     "sens": "l'énoncé"
+    },
+    {
+     "ar": "الْمُفِيد",
+     "sens": "utile"
+    },
+    {
+     "ar": "الْوَضْع",
+     "sens": "la convention"
+    },
+    {
+     "ar": "دَلِيل",
+     "sens": "signe distinctif"
+    }
+   ],
+   "explications": [
+    "EXP-01",
+    "EXP-02",
+    "EXP-03",
+    "EXP-04",
+    "EXP-05"
+   ]
+  },
+  {
+   "id": "AJR-S02",
+   "titre": "Qu'est-ce que l'iʿrāb ?",
+   "phrases": [
+    "AJR-0006",
+    "AJR-0007",
+    "AJR-0008",
+    "AJR-0009",
+    "AJR-0010"
+   ],
+   "duree_min": 6,
+   "renvois": [
+    "ad6-l02"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْإِعْرَاب",
+     "sens": "la flexion"
+    },
+    {
+     "ar": "تَغْيِير",
+     "sens": "changement"
+    },
+    {
+     "ar": "أَوَاخِر الْكَلِم",
+     "sens": "les finales des mots"
+    },
+    {
+     "ar": "الْعَوَامِل",
+     "sens": "les régissants"
+    },
+    {
+     "ar": "تَقْدِيرًا",
+     "sens": "de façon supposée"
+    }
+   ],
+   "explications": [
+    "EXP-06"
+   ]
+  },
+  {
+   "id": "AJR-S03",
+   "titre": "Les marques du rafʿ",
+   "phrases": [
+    "AJR-0011",
+    "AJR-0012",
+    "AJR-0013",
+    "AJR-0014",
+    "AJR-0015",
+    "AJR-0016"
+   ],
+   "duree_min": 7,
+   "renvois": [
+    "ad6-l02"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "عَلَامَة",
+     "sens": "marque"
+    },
+    {
+     "ar": "الضَّمَّة",
+     "sens": "la ḍamma"
+    },
+    {
+     "ar": "جَمْع التَّكْسِير",
+     "sens": "le pluriel brisé"
+    },
+    {
+     "ar": "ضَمِير",
+     "sens": "pronom"
+    }
+   ],
+   "explications": [
+    "EXP-08"
+   ]
+  },
+  {
+   "id": "AJR-S04",
+   "titre": "Les marques du naṣb",
+   "phrases": [
+    "AJR-0017",
+    "AJR-0018",
+    "AJR-0019",
+    "AJR-0020",
+    "AJR-0021",
+    "AJR-0022"
+   ],
+   "duree_min": 7,
+   "renvois": [
+    "ad6-l02"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْفَتْحَة",
+     "sens": "la fatḥa"
+    },
+    {
+     "ar": "نَاصِب",
+     "sens": "élément qui met au naṣb"
+    },
+    {
+     "ar": "حَذْف النُّون",
+     "sens": "la chute du nūn"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S05",
+   "titre": "Les marques du khafḍ et du jazm",
+   "phrases": [
+    "AJR-0023",
+    "AJR-0024",
+    "AJR-0025",
+    "AJR-0026",
+    "AJR-0027",
+    "AJR-0028",
+    "AJR-0029"
+   ],
+   "duree_min": 7,
+   "renvois": [
+    "ad6-l02"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْخَفْض",
+     "sens": "le khafḍ (génitif)"
+    },
+    {
+     "ar": "الْمُنْصَرِف",
+     "sens": "qui reçoit le tanwīn"
+    },
+    {
+     "ar": "السُّكُون",
+     "sens": "le sukūn"
+    },
+    {
+     "ar": "الْمُعْتَلّ الْآخِر",
+     "sens": "dont la fin est une lettre faible"
+    }
+   ],
+   "explications": [
+    "EXP-07"
+   ]
+  },
+  {
+   "id": "AJR-S06",
+   "titre": "Les mots variables par les voyelles brèves",
+   "phrases": [
+    "AJR-0030",
+    "AJR-0031",
+    "AJR-0032",
+    "AJR-0033",
+    "AJR-0034"
+   ],
+   "duree_min": 6,
+   "renvois": [
+    "ad6-l02"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْمُعْرَبَات",
+     "sens": "les mots variables"
+    },
+    {
+     "ar": "الْحَرَكَات",
+     "sens": "les voyelles brèves"
+    },
+    {
+     "ar": "خَرَجَ عَنْ ذَلِكَ",
+     "sens": "font exception"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S07",
+   "titre": "Les mots variables par les lettres",
+   "phrases": [
+    "AJR-0035",
+    "AJR-0036",
+    "AJR-0037",
+    "AJR-0038",
+    "AJR-0039"
+   ],
+   "duree_min": 6,
+   "renvois": [
+    "ad6-l02"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْحُرُوف",
+     "sens": "les lettres"
+    },
+    {
+     "ar": "الْأَفْعَال الْخَمْسَة",
+     "sens": "les cinq verbes"
+    },
+    {
+     "ar": "الْأَسْمَاء الْخَمْسَة",
+     "sens": "les cinq noms"
+    }
+   ],
+   "explications": [
+    "EXP-08"
+   ]
+  },
+  {
+   "id": "AJR-S08",
+   "titre": "Les verbes : passé, présent, impératif",
+   "phrases": [
+    "AJR-0040",
+    "AJR-0041",
+    "AJR-0042"
+   ],
+   "duree_min": 6,
+   "renvois": [
+    "ad6-l03"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "مَاضٍ",
+     "sens": "passé"
+    },
+    {
+     "ar": "مُضَارِع",
+     "sens": "présent"
+    },
+    {
+     "ar": "أَمْر",
+     "sens": "impératif"
+    },
+    {
+     "ar": "الزَّوَائِد الْأَرْبَع",
+     "sens": "les quatre lettres ajoutées"
+    }
+   ],
+   "explications": [
+    "EXP-09"
+   ]
+  },
+  {
+   "id": "AJR-S09",
+   "titre": "Ce qui met au naṣb et au jazm",
+   "phrases": [
+    "AJR-0043",
+    "AJR-0044"
+   ],
+   "duree_min": 8,
+   "renvois": [
+    "ad6-l03"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "النَّوَاصِب",
+     "sens": "les éléments qui mettent au naṣb"
+    },
+    {
+     "ar": "الْجَوَازِم",
+     "sens": "les éléments qui mettent au jazm"
+    },
+    {
+     "ar": "الْجَوَاب",
+     "sens": "la réponse"
+    }
+   ],
+   "explications": [
+    "EXP-10",
+    "EXP-11"
+   ]
+  },
+  {
+   "id": "AJR-S10",
+   "titre": "Les sept noms au nominatif",
+   "phrases": [
+    "AJR-0045",
+    "AJR-0046"
+   ],
+   "duree_min": 3,
+   "renvois": [
+    "ad6-l04"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْمَرْفُوعَات",
+     "sens": "les noms au nominatif"
+    },
+    {
+     "ar": "التَّابِع",
+     "sens": "le suiveur"
+    }
+   ],
+   "explications": [
+    "EXP-18"
+   ]
+  },
+  {
+   "id": "AJR-S11",
+   "titre": "Le sujet",
+   "phrases": [
+    "AJR-0047",
+    "AJR-0048",
+    "AJR-0049",
+    "AJR-0050",
+    "AJR-0051"
+   ],
+   "duree_min": 8,
+   "renvois": [
+    "ad6-l04"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْفَاعِل",
+     "sens": "le sujet"
+    },
+    {
+     "ar": "ظَاهِر",
+     "sens": "apparent"
+    },
+    {
+     "ar": "مُضْمَر",
+     "sens": "pronom"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S12",
+   "titre": "Le complément dont le sujet n'est pas nommé",
+   "phrases": [
+    "AJR-0052",
+    "AJR-0053",
+    "AJR-0054",
+    "AJR-0055",
+    "AJR-0056",
+    "AJR-0057"
+   ],
+   "duree_min": 7,
+   "renvois": [
+    "ad6-l04"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "لَمْ يُسَمَّ فَاعِلُهُ",
+     "sens": "dont le sujet n'est pas nommé"
+    },
+    {
+     "ar": "ضُمَّ أَوَّلُهُ",
+     "sens": "son début prend la ḍamma"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S13",
+   "titre": "Le thème et le prédicat",
+   "phrases": [
+    "AJR-0058",
+    "AJR-0059",
+    "AJR-0060",
+    "AJR-0061",
+    "AJR-0062",
+    "AJR-0063"
+   ],
+   "duree_min": 7,
+   "renvois": [
+    "ad6-l06"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْمُبْتَدَأ",
+     "sens": "le thème"
+    },
+    {
+     "ar": "الْخَبَر",
+     "sens": "le prédicat"
+    },
+    {
+     "ar": "الْعَارِي",
+     "sens": "dénué de"
+    },
+    {
+     "ar": "الْمُسْنَد إِلَيْهِ",
+     "sens": "ce à quoi [le thème] est attribué"
+    }
+   ],
+   "explications": [
+    "EXP-17"
+   ]
+  },
+  {
+   "id": "AJR-S14",
+   "titre": "Les sortes de prédicat",
+   "phrases": [
+    "AJR-0064",
+    "AJR-0065",
+    "AJR-0066"
+   ],
+   "duree_min": 5,
+   "renvois": [
+    "ad6-l06"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "مُفْرَد",
+     "sens": "simple"
+    },
+    {
+     "ar": "الظَّرْف",
+     "sens": "le complément de temps ou de lieu"
+    },
+    {
+     "ar": "الْجَار وَالْمَجْرُور",
+     "sens": "le préposé et son génitif"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S15",
+   "titre": "Kāna et ses sœurs",
+   "phrases": [
+    "AJR-0067",
+    "AJR-0068",
+    "AJR-0069",
+    "AJR-0070"
+   ],
+   "duree_min": 6,
+   "renvois": [
+    "ad6-l07"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْعَوَامِل الدَّاخِلَة",
+     "sens": "les régissants qui entrent"
+    },
+    {
+     "ar": "كَانَ وَأَخَوَاتُهَا",
+     "sens": "kāna et ses sœurs"
+    },
+    {
+     "ar": "مَا تَصَرَّفَ مِنْهَا",
+     "sens": "ce qui en dérive"
+    }
+   ],
+   "explications": [
+    "EXP-12"
+   ]
+  },
+  {
+   "id": "AJR-S16",
+   "titre": "Inna et ses sœurs",
+   "phrases": [
+    "AJR-0071",
+    "AJR-0072",
+    "AJR-0073"
+   ],
+   "duree_min": 5,
+   "renvois": [
+    "ad6-l07"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "التَّوْكِيد",
+     "sens": "l'affirmation renforcée"
+    },
+    {
+     "ar": "الِاسْتِدْرَاك",
+     "sens": "la rectification"
+    },
+    {
+     "ar": "التَّرَجِّي",
+     "sens": "l'espoir"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S17",
+   "titre": "Ẓanna et ses sœurs",
+   "phrases": [
+    "AJR-0074",
+    "AJR-0075"
+   ],
+   "duree_min": 5,
+   "renvois": [
+    "ad6-l07"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "مَفْعُولَان",
+     "sens": "deux compléments"
+    },
+    {
+     "ar": "سَمِعْت",
+     "sens": "j'ai entendu"
+    }
+   ],
+   "explications": [
+    "EXP-13"
+   ]
+  },
+  {
+   "id": "AJR-S18",
+   "titre": "L'épithète ; le défini et l'indéfini",
+   "phrases": [
+    "AJR-0076",
+    "AJR-0077",
+    "AJR-0078",
+    "AJR-0079",
+    "AJR-0080"
+   ],
+   "duree_min": 7,
+   "renvois": [
+    "ad6-l08"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "النَّعْت",
+     "sens": "l'épithète"
+    },
+    {
+     "ar": "الْمَنْعُوت",
+     "sens": "le qualifié"
+    },
+    {
+     "ar": "الْمَعْرِفَة",
+     "sens": "le défini"
+    },
+    {
+     "ar": "النَّكِرَة",
+     "sens": "l'indéfini"
+    },
+    {
+     "ar": "الْمُبْهَم",
+     "sens": "le nom vague"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S19",
+   "titre": "La coordination",
+   "phrases": [
+    "AJR-0081",
+    "AJR-0082",
+    "AJR-0083",
+    "AJR-0084"
+   ],
+   "duree_min": 5,
+   "renvois": [
+    "ad6-l08"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "حُرُوف الْعَطْف",
+     "sens": "les particules de coordination"
+    },
+    {
+     "ar": "عَطَفْتَ",
+     "sens": "tu as coordonné"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S20",
+   "titre": "Le corroboratif",
+   "phrases": [
+    "AJR-0085",
+    "AJR-0086",
+    "AJR-0087"
+   ],
+   "duree_min": 4,
+   "renvois": [
+    "ad6-l09"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "التَّوْكِيد",
+     "sens": "le corroboratif"
+    },
+    {
+     "ar": "الْمُؤَكَّد",
+     "sens": "le mot corroboré"
+    },
+    {
+     "ar": "النَّفْس / الْعَيْن",
+     "sens": "soi-même / en personne"
+    }
+   ],
+   "explications": [
+    "EXP-19"
+   ]
+  },
+  {
+   "id": "AJR-S21",
+   "titre": "Le permutatif",
+   "phrases": [
+    "AJR-0088",
+    "AJR-0089",
+    "AJR-0090"
+   ],
+   "duree_min": 6,
+   "renvois": [
+    "ad6-l09"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْبَدَل",
+     "sens": "le permutatif"
+    },
+    {
+     "ar": "بَدَل الِاشْتِمَال",
+     "sens": "le permutatif d'inclusion"
+    },
+    {
+     "ar": "بَدَل الْغَلَط",
+     "sens": "le permutatif d'erreur"
+    }
+   ],
+   "explications": [
+    "EXP-14"
+   ]
+  },
+  {
+   "id": "AJR-S22",
+   "titre": "Les noms à l'accusatif",
+   "phrases": [
+    "AJR-0091",
+    "AJR-0092",
+    "AJR-0093"
+   ],
+   "duree_min": 4,
+   "renvois": [
+    "ad6-l11",
+    "ad6-l12"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْمَنْصُوبَات",
+     "sens": "les noms à l'accusatif"
+    },
+    {
+     "ar": "خَمْسَةَ عَشَرَ",
+     "sens": "quinze"
+    }
+   ],
+   "explications": [
+    "EXP-15"
+   ]
+  },
+  {
+   "id": "AJR-S23",
+   "titre": "Le complément d'objet",
+   "phrases": [
+    "AJR-0094",
+    "AJR-0095",
+    "AJR-0096",
+    "AJR-0097",
+    "AJR-0098",
+    "AJR-0099",
+    "AJR-0100"
+   ],
+   "duree_min": 7,
+   "renvois": [
+    "ad6-l11"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْمَفْعُول بِهِ",
+     "sens": "le complément d'objet"
+    },
+    {
+     "ar": "مُتَّصِل",
+     "sens": "attaché"
+    },
+    {
+     "ar": "مُنْفَصِل",
+     "sens": "détaché"
+    },
+    {
+     "ar": "إِيَّاك",
+     "sens": "toi (complément détaché)"
+    }
+   ],
+   "explications": [
+    "EXP-16"
+   ]
+  },
+  {
+   "id": "AJR-S24",
+   "titre": "Le nom verbal",
+   "phrases": [
+    "AJR-0101",
+    "AJR-0102",
+    "AJR-0103",
+    "AJR-0104",
+    "AJR-0105"
+   ],
+   "duree_min": 5,
+   "renvois": [
+    "ad6-l11"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْمَصْدَر",
+     "sens": "le nom verbal"
+    },
+    {
+     "ar": "لَفْظِيّ",
+     "sens": "dans l'expression"
+    },
+    {
+     "ar": "مَعْنَوِيّ",
+     "sens": "dans le sens"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S25",
+   "titre": "Les compléments de temps et de lieu",
+   "phrases": [
+    "AJR-0106",
+    "AJR-0107",
+    "AJR-0108"
+   ],
+   "duree_min": 6,
+   "renvois": [
+    "ad6-l11"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "ظَرْف الزَّمَان",
+     "sens": "le complément de temps"
+    },
+    {
+     "ar": "ظَرْف الْمَكَان",
+     "sens": "le complément de lieu"
+    },
+    {
+     "ar": "بِتَقْدِير فِي",
+     "sens": "par le sous-entendu de « fī »"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S26",
+   "titre": "Le complément d'état",
+   "phrases": [
+    "AJR-0109",
+    "AJR-0110",
+    "AJR-0111"
+   ],
+   "duree_min": 4,
+   "renvois": [
+    "ad6-l12"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْحَال",
+     "sens": "le complément d'état"
+    },
+    {
+     "ar": "الْهَيْئَات",
+     "sens": "les manières d'être"
+    },
+    {
+     "ar": "تَمَام الْكَلَام",
+     "sens": "l'achèvement de la phrase"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S27",
+   "titre": "Le complément de spécification",
+   "phrases": [
+    "AJR-0112",
+    "AJR-0113",
+    "AJR-0114"
+   ],
+   "duree_min": 5,
+   "renvois": [
+    "ad6-l12"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "التَّمْيِيز",
+     "sens": "le complément de spécification"
+    },
+    {
+     "ar": "الذَّوَات",
+     "sens": "les êtres"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S28",
+   "titre": "L'exception",
+   "phrases": [
+    "AJR-0115",
+    "AJR-0116",
+    "AJR-0117",
+    "AJR-0118",
+    "AJR-0119",
+    "AJR-0120",
+    "AJR-0121"
+   ],
+   "duree_min": 8,
+   "renvois": [
+    "ad6-l13"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الِاسْتِثْنَاء",
+     "sens": "l'exception"
+    },
+    {
+     "ar": "تَامّ مُوجَب",
+     "sens": "complet et affirmatif"
+    },
+    {
+     "ar": "نَاقِص",
+     "sens": "incomplet"
+    },
+    {
+     "ar": "حَسَب الْعَوَامِل",
+     "sens": "selon les régissants"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S29",
+   "titre": "La négation générique (lā)",
+   "phrases": [
+    "AJR-0122",
+    "AJR-0123",
+    "AJR-0124",
+    "AJR-0125"
+   ],
+   "duree_min": 5,
+   "renvois": [
+    "ad6-l13"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "بَاشَرَتِ النَّكِرَةَ",
+     "sens": "touche directement l'indéfini"
+    },
+    {
+     "ar": "تَكَرَّرَتْ",
+     "sens": "est répétée"
+    },
+    {
+     "ar": "إِعْمَالُهَا وَإِلْغَاؤُهَا",
+     "sens": "la faire agir ou l'annuler"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S30",
+   "titre": "L'interpellé",
+   "phrases": [
+    "AJR-0126",
+    "AJR-0127",
+    "AJR-0128",
+    "AJR-0129"
+   ],
+   "duree_min": 5,
+   "renvois": [
+    "ad6-l14"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْمُنَادَى",
+     "sens": "l'interpellé"
+    },
+    {
+     "ar": "النَّكِرَة الْمَقْصُودَة",
+     "sens": "l'indéfini visé"
+    },
+    {
+     "ar": "الْمُشَبَّه بِالْمُضَافِ",
+     "sens": "ce qui ressemble à l'annexé"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S31",
+   "titre": "Les compléments de cause et d'accompagnement",
+   "phrases": [
+    "AJR-0130",
+    "AJR-0131",
+    "AJR-0132",
+    "AJR-0133",
+    "AJR-0134"
+   ],
+   "duree_min": 5,
+   "renvois": [
+    "ad6-l12"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْمَفْعُول مِنْ أَجْلِهِ",
+     "sens": "le complément de cause"
+    },
+    {
+     "ar": "إِجْلَال",
+     "sens": "égard, respect"
+    },
+    {
+     "ar": "الْمَفْعُول مَعَهُ",
+     "sens": "le complément d'accompagnement"
+    }
+   ]
+  },
+  {
+   "id": "AJR-S32",
+   "titre": "Les noms au génitif (khafḍ)",
+   "phrases": [
+    "AJR-0135",
+    "AJR-0136",
+    "AJR-0137",
+    "AJR-0138",
+    "AJR-0139",
+    "AJR-0140"
+   ],
+   "duree_min": 8,
+   "renvois": [
+    "ad6-l16"
+   ],
+   "mots_difficiles": [
+    {
+     "ar": "الْمَخْفُوضَات",
+     "sens": "les noms au génitif"
+    },
+    {
+     "ar": "الْإِضَافَة",
+     "sens": "l'annexion"
+    },
+    {
+     "ar": "يُقَدَّر بِاللَّامِ / بِمِنْ",
+     "sens": "se sous-entend avec lām / min"
+    },
+    {
+     "ar": "حُرُوف الْقَسَم",
+     "sens": "les particules du serment"
+    }
+   ],
+   "explications": [
+    "EXP-04"
+   ]
+  }
+ ]
+}

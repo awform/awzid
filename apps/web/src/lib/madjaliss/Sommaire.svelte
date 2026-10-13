@@ -10,7 +10,7 @@
   import Icon from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import { ACTIFS, texteDuCursus } from './cycles';
-  import { chargerMatn, seancesPour, type Matn } from './donnees';
+  import { chargerMatn, matnPour, type Matn } from './donnees';
   import { lien } from './liens';
   import {
     fusionnerServeur,
@@ -32,10 +32,18 @@
   let progres = $state<Progres>({ faites: [], ouverte: null });
   let etat = $state<'charge' | 'pret' | 'absent'>('charge');
 
-  const seances = $derived(matn ? seancesPour(matn, profil?.kind === 'enfant') : []);
+  // le texte tel que le voit ce profil : ni règles et lochies aux enfants, ni passages « adulte » aux enfants et ados
+  const vue = $derived(matn ? matnPour(matn, profil?.kind ?? null) : null);
+  const seances = $derived(vue?.seances ?? []);
   const numeros = $derived(seances.map((s) => s.n));
   const enCours = $derived(seanceEnCours(progres, numeros));
-  const fini = $derived(toutFait(progres, numeros));
+  // les séances facultatives ne comptent pas pour l'attestation d'étude
+  const fini = $derived(
+    toutFait(
+      progres,
+      seances.filter((s) => !s.facultatif).map((s) => s.n),
+    ),
+  );
   const faites = $derived(new Set(progres.faites));
   const nomTexte = $derived(cursus ? t(`mj.t_${cursus.id.replace('-', '_')}`) : id);
 
@@ -118,6 +126,26 @@
     </section>
   {/if}
 
+  {#if vue?.code}
+    <details class="code-visuel" data-testid="mj-code-visuel">
+      <summary><Bidi text={t('mj.code_visuel')} /></summary>
+      <p class="muted"><Bidi text={t('mj.code_visuel_aide')} /></p>
+      <ul class="etats">
+        {#each vue.code.etats as e (e.cas)}
+          <li data-style={e.style}>
+            <span class="ex ar s-{e.style}" lang="ar" dir="rtl"><Bidi text={e.ar} base="ar" /></span
+            >
+            <span class="signe" aria-hidden="true">{e.signe}</span>
+            <span class="gloss"><strong><Bidi text={e.cas} /></strong> <Bidi text={e.aide} /></span>
+          </li>
+        {/each}
+      </ul>
+      <ul class="regles">
+        {#each vue.code.regles as r, i (i)}<li class="gloss"><Bidi text={r} /></li>{/each}
+      </ul>
+    </details>
+  {/if}
+
   <h2><Bidi text={t('mj.sommaire', { n: numeros.length })} /></h2>
   <ol class="seances" data-testid="mj-sommaire">
     {#each seances as s (s.n)}
@@ -128,7 +156,10 @@
             >{#if fait}<Icon name="coche" size={18} />{:else}<Bidi text={s.n} />{/if}</span
           >
           <span class="nom">
-            <strong><Bidi text={t('mj.seance', { n: s.n })} /></strong>
+            <strong
+              ><Bidi text={t('mj.seance', { n: s.n })} />{#if s.facultatif}
+                — <Bidi text={t('mj.facultatif')} />{/if}</strong
+            >
             <Bidi text={s.titre} />
           </span>
           <small class="info">
@@ -140,9 +171,75 @@
       </li>
     {/each}
   </ol>
+  <p class="statut" data-testid="mj-statut"><Bidi text={t('mj.statut')} /></p>
 {/if}
 
 <style>
+  .statut {
+    margin: var(--space-m) 0 0;
+    color: var(--ink2);
+    font-size: 0.9rem;
+  }
+  .code-visuel {
+    margin: 0 0 var(--space-m);
+    padding: var(--space-s) var(--space-m);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--card);
+  }
+  .code-visuel summary {
+    cursor: pointer;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+  }
+  .etats,
+  .regles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-s);
+  }
+  .etats li {
+    display: grid;
+    grid-template-columns: 8em 1.5em 1fr;
+    align-items: center;
+    gap: var(--space-s);
+  }
+  .regles {
+    margin-top: var(--space-s);
+    font-size: 0.88rem;
+    color: var(--ink2);
+  }
+  .ex {
+    text-align: center;
+    font-size: var(--ar-size);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.35em;
+    text-decoration-color: currentcolor;
+  }
+  .s-plein {
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+  }
+  .s-double {
+    text-decoration-line: underline;
+    text-decoration-style: double;
+  }
+  .s-ondule {
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+  }
+  .s-tirete {
+    text-decoration-line: underline;
+    text-decoration-style: dashed;
+  }
+  .signe {
+    text-align: center;
+    font-weight: 700;
+  }
   .carte-reprendre {
     margin-bottom: var(--space-m);
   }

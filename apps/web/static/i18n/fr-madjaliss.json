@@ -100,5 +100,16 @@
   "mj.ens_motif_explication": "lié au passage présenté avec son explication",
   "mj.note": "Explication :",
   "mj.note_sources": "Sources",
-  "mj.ens_traduction": "Choix de traduction :"
+  "mj.ens_traduction": "Choix de traduction :",
+  "mj.statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente d'une seconde lecture savante.",
+  "mj.liste": "Liste :",
+  "mj.exemples": "Exemples :",
+  "mj.voir_aussi": "Voir aussi :",
+  "mj.renvoi": "{texte}, séance {n}",
+  "mj.quiz_vide": "Pas de quiz pour cette séance.",
+  "mj.facultatif": "facultative",
+  "mj.code_visuel": "Code visuel de la grammaire",
+  "mj.code_visuel_aide": "La fonction de chaque mot se lit à sa forme (soulignement et signe), jamais à sa couleur.",
+  "mj.ens_publication": "Publication :",
+  "mj.ens_comite": "À relire par le comité :"
 }

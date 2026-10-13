@@ -1,0 +1,2691 @@
+{
+  "oeuvre": "المقدمة فيما يجب على قارئ القرآن أن يعلمه (المقدمة الجزرية)",
+  "auteur": "محمد بن محمد بن محمد ابن الجزري الشافعي (m. 833 H / 1429, d'après la tradition ; date non vérifiée dans les pages lues, qui ne donnent que « محمد بن الجزري الشافعي »)",
+  "perimetre": "Poème complet : 107 vers (JAZ-0001 à JAZ-0107), en rajaz, deux hémistiches par vers, dans l'ordre de l'imprimé. Chiffre de 107 obtenu en comptant les lignes de l'imprimé (Majmūʿ 1306, pp. 316-321) ; le poème ne l'annonce pas lui-même dans les pages lues (à confirmer). Parties : ouverture (1-8), points d'articulation (9-19), qualités (20-26), le tajwīd (27-33), finesse et épaisseur (34-51), ḍād et ẓāʾ (52-61), ghunna et mīm (62-64), nūn sākin et tanwīn (65-68), madd (69-72), arrêts (73-78), rasm (79-100), hamzat al-waṣl (101-103), arrêt par rawm et ishmām (104-105), clôture (106-107).",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "date_saisie": "2026-10-13",
+  "saisie_par": "Claude (référent provisoire). Consonnes : lues image par image sur l'imprimé M (6 pages), contrôlées sur la Ḥawāshī (pages relues, voir « source.page_hawashi »). VOYELLES : l'imprimé M n'est PAS vocalisé et la Ḥawāshī non plus ; les voyelles ont été apportées par Claude d'après la tradition connue du poème, non lues sur un témoin vocalisé. L'ensemble est donc à faire contrôler sur un témoin entièrement vocalisé avant toute publication (RAPPORT.md, R-J2).",
+  "temoins": {
+    "M": {
+      "role": "TEXTE DE BASE (consonnes)",
+      "description": "مجموع من مهمات المتون المستعملة من غالب الفنون (Majmūʿ min muhimmāt al-mutūn), « متن الجزرية » en tête, pp. 316-321 ; deux colonnes, un hémistiche par colonne, titres de chapitres entre accolades, sans voyelles",
+      "editeur": "المطبعة الخيرية (al-Maṭbaʿa al-Khayriyya), Le Caire",
+      "annee": "1306 H / 1889",
+      "exemplaire": "Bibliotheca Alexandrina, numérisé sur archive.org : AAlexandrina-044950 (images n329 à n334 = pp. 316 à 321 ; page = image - 13)",
+      "droits": "domaine public (imprimé de 1889 ; poème d'un auteur mort au XVe siècle)",
+      "lecture": "6 pages lues sur les images (1200 px de large) ; les 107 lignes comptées une à une"
+    },
+    "H": {
+      "role": "second témoin et commentaire de référence (consonnes ; commentaire)",
+      "description": "هذه الحواشي الأزهرية في حل ألفاظ المقدمة الجزرية (al-Ḥawāshī al-azhariyya fī ḥall alfāẓ al-Muqaddima al-Jazariyya) de Khālid al-Azharī (le colophon de la dernière page : « خالد الوقاد الأزهري », achevé le mercredi 8 rajab 887 H selon la lecture de l'image : à confirmer)",
+      "editeur": "المطبعة العامرة الشرفية (al-Maṭbaʿa al-ʿĀmira ash-Sharafiyya), Le Caire",
+      "annee": "1304 H / 1887",
+      "exemplaire": "Bibliotheca Alexandrina, archive.org : AAlexandrina-151183 (un second exemplaire : AAlexandrina-028176, non ouvert) ; pages lues : 10 à 35 (page = image - 2), le matn y est cité hémistiche par hémistiche entre parenthèses",
+      "droits": "domaine public",
+      "lecture": "images n12 à n31, n34, n35, n37 lues ; pages 1 à 9 (n3 à n11), 30-31 (n32-n33) et 34 (n36) ouvertes mais non exploitées ici"
+    }
+  },
+  "temoins_non_consultes": [
+    "al-Minaḥ al-fikriyya (Maṭbaʿat al-Maymaniyya, 1308 H : archive.org AAlexandrina-073006 et -147554) : le catalogue de la Bibliotheca Alexandrina l'attribue à « زكريا الأنصاري », ce qui est suspect (le titre est classiquement attribué à Mullā ʿAlī al-Qārī) ; non ouvert, non utilisé",
+    "Zakariyyā al-Anṣārī, ad-Daqāʾiq al-muḥkama ; Ṭāshköprīzāde ; Sharḥ d'Aḥmad ibn al-Jazarī (fils de l'auteur) ; Sharḥ d'Ibn al-Jazarī lui-même (Sharḥ at-Ṭayyiba aussi) : non trouvés en scan ancien dans les recherches faites (catalogue archive.org interrogé par titre), non utilisés",
+    "manuscrits anciens (BnF, British Library, Qatar Digital Library) : non cherchés",
+    "Wikisource arabe, Shamela, OpenITI : volontairement exclus (décision DECISIONS_REFERENT_MUTUN, règle 9)"
+  ],
+  "conventions": [
+    "Un vers = une entrée (JAZ-0001 à JAZ-0107) ; les deux hémistiches sont dans « hemistiches » ; le champ « ar » les joint par « * ».",
+    "VOCALISATION : voir « saisie_par » ; elle est de Claude et à contrôler entièrement. Les fins d'hémistiches portent le sukūn de pause (ex. مُقَدِّمَهْ) comme dans les éditions courantes ; le tasrīʿ (rime du premier hémistiche) est conservé.",
+    "Orthographe : hamza et alif de liaison écrits à la façon courante ; le mot « Allah » écrit « اللَّهِ » (lām, shadda, fatḥa), sans alif dagger.",
+    "Les titres de chapitres sont des ajouts d'éditeur (tableau « titres ») et ne comptent pas parmi les 107 vers.",
+    "Les mots coraniques du poème (listes des vers 47-61 et 79-100) sont cités tels que le poème les donne, pour la forme ; ils ne sont pas du texte coranique à afficher. Les exemples coraniques affichables sont dans alignement_tuhfa.json, copiés de Tanzil par script.",
+    "Aucune couleur de tajwīd n'est posée ici : elles sont réservées au Coran."
+  ],
+  "temoin_P": {
+  "sigle": "P",
+  "role": "TEMOIN VOCALISE ANCIEN (collation voyelle par voyelle, 13/10/2026)",
+  "description": "كتاب الجزرية / للشيخ محمد بن الجزري : manuscrit complet du poème (7 feuillets + 1), 17 lignes par page, rubriqué, voyelles partielles (les mots difficiles et les finales sont le plus souvent vocalisés, pas tous), signes de pause rouges entre hémistiches",
+  "institution": "Princeton University Library, Garrett collection, Islamic Manuscripts, Garrett no. 621H (notice 9963577163506421 ; Digital Scriptorium DS2830)",
+  "date": "début du XIXe siècle (non daté ; catalogue : 1800-1899)",
+  "acces": "manifeste IIIF https://figgy.princeton.edu/concern/scanned_resources/afd13451-2471-4546-a1af-ce5d5179f1d9/manifest ; ark http://arks.princeton.edu/ark:/88435/dcb85160028",
+  "droits": "Princeton : « Copyright not evaluated » (rightsstatements.org/vocab/CNE/1.0) ; manuscrit du XIXe siècle, domaine public de fait ; droits des images à confirmer avant toute reproduction ; aucune image n est reproduite dans nos fichiers",
+  "couverture": "feuillets 1b à 7b lus à 1500-2400 px ; les 107 vers sont tous lisibles ; la vocalisation n est PAS complète : un mot non vocalisé sur P reste une voyelle de Claude, marquée dans voyelle_a_confirmer",
+  "limite": "P est un seul témoin du XIXe siècle, de vocalisation inégale. Il supprime les erreurs de voyelle visibles et fournit des variantes ; il ne remplace pas un relecteur."
+},
+  "voyelle_a_confirmer": [
+  {
+    "vers": "JAZ-0007",
+    "mot": "رُسِمَ",
+    "raison": "P semble porter un yāʾ initial (يرسم) ; M et la Ḥawāshī (p. 5) citent « رسم » sans yāʾ",
+    "retenu": "رُسِمَ"
+  },
+  {
+    "vers": "JAZ-0015",
+    "mot": "أُدْخُلُوا",
+    "raison": "CORRIGÉ : « أَدْخُلُوا » (fatḥa sur la hamza) n est pas une forme possible ; P montre une damma sur la hamza (impératif, hamza de liaison)",
+    "retenu": "أُدْخُلُوا"
+  },
+  {
+    "vers": "JAZ-0027",
+    "mot": "آثِمُ",
+    "raison": "P : kasra sous le thā lisible ; signe sur l alif (madda ou hamza) peu net ; sens identique (pécheur)",
+    "retenu": "آثِمُ"
+  },
+  {
+    "vers": "JAZ-0035",
+    "mot": "وَهَمْزَ",
+    "raison": "P : voyelle du zāy peu lisible ; accusatif retenu (complément de « رَقِّقَنْ », v. 34)",
+    "retenu": "وَهَمْزَ"
+  },
+  {
+    "vers": "JAZ-0040",
+    "mot": "يَسْطُو يَسْقُو",
+    "raison": "P écrit « يسطوا يسقوا » (avec alif) ; M et H sans alif ; la Ḥawāshī (p. 14) explique « يسطون / يسقون » (nūn supprimé par le mètre)",
+    "retenu": "يَسْطُو يَسْقُو"
+  },
+  {
+    "vers": "JAZ-0043",
+    "mot": "تُشَدَّدُ",
+    "raison": "P : « يُشَدَّدُ » (yāʾ) ; M et H (p. 15 : « إذا أتت الراء مشددة ») : « تشدد » ; lecture M/H gardée",
+    "retenu": "تُشَدَّدُ"
+  },
+  {
+    "vers": "JAZ-0046",
+    "mot": "بِنَخْلُقْكُمْ",
+    "raison": "mot coranique cité ; P peu vocalisé ici ; voyelles tirées de 77:20 (mis en pause par le mètre)",
+    "retenu": "بِنَخْلُقْكُمْ"
+  },
+  {
+    "vers": "JAZ-0053",
+    "mot": "عَظْمِ",
+    "raison": "voyelle du ʿayn : signe sur P trop petit pour être tranché ; la Ḥawāshī (p. 17) glose « عظم » = « عظيم » (BAQARA 2:7) ; lecture de Claude gardée",
+    "retenu": "عَظْمِ"
+  },
+  {
+    "vers": "JAZ-0054",
+    "mot": "أَغْلِظْ",
+    "raison": "voyelles illisibles sur P à la résolution disponible ; deux lectures possibles : « اُغْلُظْ » (impératif de غَلُظَ, forme de 9:73 et 66:9) ou « أَغْلِظْ » (forme IV) ; lecture de Claude gardée, à trancher par un relecteur de matn",
+    "retenu": "أَغْلِظْ"
+  },
+  {
+    "vers": "JAZ-0055",
+    "mot": "سِوَى / سَوَا",
+    "raison": "P porte les deux mots ; « سِوَى » confirmé, « سَوَا » (rime) lu comme dans les éditions courantes",
+    "retenu": "سِوَى / سَوَا"
+  },
+  {
+    "vers": "JAZ-0056",
+    "mot": "نَظلّْ",
+    "raison": "« نَظَلّْ » = « نَظَلُّ » mis en pause : confirmé par P (shadda + sukūn) et la Ḥawāshī (p. 19)",
+    "retenu": "نَظلّْ"
+  },
+  {
+    "vers": "JAZ-0059",
+    "mot": "ظَنِينٍ",
+    "raison": "la Ḥawāshī (p. 20) cite les deux lectures (Abū ʿAmr, Ibn Kathīr, al-Kisāʾī : ẓāʾ ; Nāfiʿ, Ibn ʿĀmir, ʿĀṣim, Ḥamza : ḍād) ; le poème note la divergence ; mot cité avec ẓāʾ",
+    "retenu": "ظَنِينٍ"
+  },
+  {
+    "vers": "JAZ-0061",
+    "mot": "جِبَاهُهُمْ",
+    "raison": "9:35 ; confirmé par P",
+    "retenu": "جِبَاهُهُمْ"
+  },
+  {
+    "vers": "JAZ-0067",
+    "mot": "عَنْوَنُوا",
+    "raison": "P : « عنونوا », voyelles intérieures peu nettes ; sens fourni par la Ḥawāshī (p. 22-23, « العنوان »)",
+    "retenu": "عَنْوَنُوا"
+  },
+  {
+    "vers": "JAZ-0070",
+    "mot": "إِنْ",
+    "raison": "P semble écrire « أنْ جاء » ; M non vocalisé ; « إِنْ » (condition) gardé, même sens",
+    "retenu": "إِنْ"
+  },
+  {
+    "vers": "JAZ-0077",
+    "mot": "الْوَقْفُ",
+    "raison": "P : « يوقف » ; M : « الوقف » ; même sens ; lecture M gardée",
+    "retenu": "الْوَقْفُ"
+  },
+  {
+    "vers": "JAZ-0082",
+    "mot": "إِنْ مَا",
+    "raison": "P semble écrire « إمّا » en un mot (graphie du scribe) ; M et H : « إن ما » (ar-Raʿd 13:40) ; lecture M/H gardée",
+    "retenu": "إِنْ مَا"
+  },
+  {
+    "vers": "JAZ-0092",
+    "mot": "تَحِينَ",
+    "raison": "tāʾ de « لاتَ » joint à « حين » dans l Imām (38:3) ; confirmé par P, M et la Ḥawāshī (p. 31) ; second hémistiche : voir V-J11",
+    "retenu": "تَحِينَ"
+  },
+  {
+    "vers": "JAZ-0093",
+    "mot": "لَا انْفَصَلْ",
+    "raison": "M et la Ḥawāshī (p. 31 : « نهى عن فصل … ») : « لا انفصل » ; éditions modernes : « لا تفصل » ; la lecture de P n est pas tranchable à la résolution disponible ; lecture M/H gardée",
+    "retenu": "لَا انْفَصَلْ"
+  },
+  {
+    "vers": "JAZ-0094",
+    "mot": "زُبَرَهْ",
+    "raison": "mot-repère (23:53) ; voyelles de Claude confirmées par P",
+    "retenu": "زُبَرَهْ"
+  },
+  {
+    "vers": "JAZ-0099",
+    "mot": "ـتُ",
+    "raison": "tāʾ ouvert noté ـتُ ; confirmé par P",
+    "retenu": "ـتُ"
+  },
+  {
+    "vers": "JAZ-0106",
+    "mot": "تَقْدِمَهْ",
+    "raison": "P : kasra sous le dāl ; glose « تحفة وهدية » (Ḥawāshī p. 35)",
+    "retenu": "تَقْدِمَهْ"
+  }
+],
+  "titres": [
+    {
+      "apres": null,
+      "avant": "JAZ-0001",
+      "ar": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
+      "source": "Majmūʿ 1306 basmala, p. 316",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0008",
+      "avant": "JAZ-0009",
+      "ar": "بَابُ مَخَارِجِ الْحُرُوفِ",
+      "source": "Majmūʿ 1306 p. 316",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0019",
+      "avant": "JAZ-0020",
+      "ar": "بَابُ الصِّفَاتِ",
+      "source": "Majmūʿ 1306 p. 316",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0026",
+      "avant": "JAZ-0027",
+      "ar": "بَابُ التَّجْوِيدِ",
+      "source": "Majmūʿ 1306 p. 317",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0033",
+      "avant": "JAZ-0034",
+      "ar": "بَابُ التَّرْقِيقِ",
+      "source": "Majmūʿ 1306 p. 317",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0034",
+      "avant": "JAZ-0035",
+      "ar": "بَابُ اسْتِعْمَالِ الْحُرُوفِ",
+      "source": "Majmūʿ 1306 p. 317",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0040",
+      "avant": "JAZ-0041",
+      "ar": "بَابُ الرَّاءَاتِ",
+      "source": "Majmūʿ 1306 p. 318",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0043",
+      "avant": "JAZ-0044",
+      "ar": "بَابُ اللَّامَاتِ",
+      "source": "Majmūʿ 1306 p. 318",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0051",
+      "avant": "JAZ-0052",
+      "ar": "بَابُ الضَّادِ وَالظَّاءِ",
+      "source": "Majmūʿ 1306 p. 318",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0059",
+      "avant": "JAZ-0060",
+      "ar": "بَابُ التَّحْذِيرَاتِ",
+      "source": "Majmūʿ 1306 p. 318",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0064",
+      "avant": "JAZ-0065",
+      "ar": "بَابُ حُكْمِ التَّنْوِينِ وَالنُّونِ السَّاكِنَةِ",
+      "source": "Majmūʿ 1306 p. 319",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0068",
+      "avant": "JAZ-0069",
+      "ar": "بَابُ الْمَدَّاتِ",
+      "source": "Majmūʿ 1306 p. 319",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0072",
+      "avant": "JAZ-0073",
+      "ar": "بَابُ مَعْرِفَةِ الْوُقُوفِ",
+      "source": "Majmūʿ 1306 p. 319",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0078",
+      "avant": "JAZ-0079",
+      "ar": "بَابُ الْمَقْطُوعِ وَالْمَوْصُولِ وَحُكْمِ التَّاءِ",
+      "source": "Majmūʿ 1306 p. 319",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0093",
+      "avant": "JAZ-0094",
+      "ar": "بَابُ التَّاءَاتِ",
+      "source": "Majmūʿ 1306 p. 320",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    },
+    {
+      "apres": "JAZ-0100",
+      "avant": "JAZ-0101",
+      "ar": "بَابُ هَمَزَاتِ الْوَصْلِ",
+      "source": "Majmūʿ 1306 p. 320",
+      "nature": "titre d'éditeur de l'imprimé, hors compte des vers ; les titres varient d'une édition à l'autre"
+    }
+  ],
+  "vers": [
+    {
+      "id": "JAZ-0001",
+      "n": 1,
+      "section": "ouverture",
+      "type": "vers",
+      "hemistiches": [
+        "يَقُولُ رَاجِي عَفْوِ رَبٍّ سَامِعِ",
+        "مُحَمَّدُ بْنُ الْجَزَرِيِّ الشَّافِعِي"
+      ],
+      "ar": "يَقُولُ رَاجِي عَفْوِ رَبٍّ سَامِعِ * مُحَمَّدُ بْنُ الْجَزَرِيِّ الشَّافِعِي",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "3"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0002",
+      "n": 2,
+      "section": "ouverture",
+      "type": "vers",
+      "hemistiches": [
+        "الْحَمْدُ لِلَّهِ وَصَلَّى اللَّهُ",
+        "عَلَى نَبِيِّهِ وَمُصْطَفَاهُ"
+      ],
+      "ar": "الْحَمْدُ لِلَّهِ وَصَلَّى اللَّهُ * عَلَى نَبِيِّهِ وَمُصْطَفَاهُ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "3"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0003",
+      "n": 3,
+      "section": "ouverture",
+      "type": "vers",
+      "hemistiches": [
+        "مُحَمَّدٍ وَآلِهِ وَصَحْبِهِ",
+        "وَمُقْرِئِ الْقُرْآنِ مَعْ مُحِبِّهِ"
+      ],
+      "ar": "مُحَمَّدٍ وَآلِهِ وَصَحْبِهِ * وَمُقْرِئِ الْقُرْآنِ مَعْ مُحِبِّهِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "4"
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« مُحِبِّهِ » : le pronom renvoie-t-il au Prophète ou au Coran ? la voyelle est sûre, le sens reste à trancher (journal)."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0004",
+      "n": 4,
+      "section": "ouverture",
+      "type": "vers",
+      "hemistiches": [
+        "وَبَعْدُ إِنَّ هَذِهِ مُقَدِّمَهْ",
+        "فِيمَا عَلَى قَارِئِهِ أَنْ يَعْلَمَهْ"
+      ],
+      "ar": "وَبَعْدُ إِنَّ هَذِهِ مُقَدِّمَهْ * فِيمَا عَلَى قَارِئِهِ أَنْ يَعْلَمَهْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "4"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0005",
+      "n": 5,
+      "section": "ouverture",
+      "type": "vers",
+      "hemistiches": [
+        "إِذْ وَاجِبٌ عَلَيْهِمُ مُحَتَّمُ",
+        "قَبْلَ الشُّرُوعِ أَوَّلًا أَنْ يَعْلَمُوا"
+      ],
+      "ar": "إِذْ وَاجِبٌ عَلَيْهِمُ مُحَتَّمُ * قَبْلَ الشُّرُوعِ أَوَّلًا أَنْ يَعْلَمُوا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "4-5"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0006",
+      "n": 6,
+      "section": "ouverture",
+      "type": "vers",
+      "hemistiches": [
+        "مَخَارِجَ الْحُرُوفِ وَالصِّفَاتِ",
+        "لِيَلْفِظُوا بِأَفْصَحِ اللُّغَاتِ"
+      ],
+      "ar": "مَخَارِجَ الْحُرُوفِ وَالصِّفَاتِ * لِيَلْفِظُوا بِأَفْصَحِ اللُّغَاتِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "4-5"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0007",
+      "n": 7,
+      "section": "ouverture",
+      "type": "vers",
+      "hemistiches": [
+        "مُحَرِّرِي التَّجْوِيدِ وَالْمَوَاقِفِ",
+        "وَمَا الَّذِي رُسِمَ فِي الْمَصَاحِفِ"
+      ],
+      "ar": "مُحَرِّرِي التَّجْوِيدِ وَالْمَوَاقِفِ * وَمَا الَّذِي رُسِمَ فِي الْمَصَاحِفِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "5"
+      },
+      "variantes": [],
+      "a_verifier": [
+        "رُسِمَ (passif) : lecture de Claude ; l'imprimé n'est pas vocalisé."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0008",
+      "n": 8,
+      "section": "ouverture",
+      "type": "vers",
+      "hemistiches": [
+        "مِنْ كُلِّ مَقْطُوعٍ وَمَوْصُولٍ بِهَا",
+        "وَتَاءِ أُنْثَى لَمْ تَكُنْ تُكْتَبْ بِهَا"
+      ],
+      "ar": "مِنْ كُلِّ مَقْطُوعٍ وَمَوْصُولٍ بِهَا * وَتَاءِ أُنْثَى لَمْ تَكُنْ تُكْتَبْ بِهَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "5"
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« وَتَاءِ أُنْثَى لَمْ تَكُنْ تُكْتَبْ بِهَا » : sens à confirmer sur le commentaire (tāʾ de féminin écrit ت au lieu de ة)."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0009",
+      "n": 9,
+      "section": "makharij",
+      "type": "vers",
+      "hemistiches": [
+        "مَخَارِجُ الْحُرُوفِ سَبْعَةَ عَشَرْ",
+        "عَلَى الَّذِي يَخْتَارُهُ مَنِ اخْتَبَرْ"
+      ],
+      "ar": "مَخَارِجُ الْحُرُوفِ سَبْعَةَ عَشَرْ * عَلَى الَّذِي يَخْتَارُهُ مَنِ اخْتَبَرْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "5"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0010",
+      "n": 10,
+      "section": "makharij",
+      "type": "vers",
+      "hemistiches": [
+        "فَأَلِفُ الْجَوْفِ وَأُخْتَاهَا وَهِي",
+        "حُرُوفُ مَدٍّ لِلْهَوَاءِ تَنْتَهِي"
+      ],
+      "ar": "فَأَلِفُ الْجَوْفِ وَأُخْتَاهَا وَهِي * حُرُوفُ مَدٍّ لِلْهَوَاءِ تَنْتَهِي",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "6"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0011",
+      "n": 11,
+      "section": "makharij",
+      "type": "vers",
+      "hemistiches": [
+        "ثُمَّ لِأَقْصَى الْحَلْقِ هَمْزٌ هَاءُ",
+        "ثُمَّ لِوَسْطِهِ فَعَيْنٌ حَاءُ"
+      ],
+      "ar": "ثُمَّ لِأَقْصَى الْحَلْقِ هَمْزٌ هَاءُ * ثُمَّ لِوَسْطِهِ فَعَيْنٌ حَاءُ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "6"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0012",
+      "n": 12,
+      "section": "makharij",
+      "type": "vers",
+      "hemistiches": [
+        "أَدْنَاهُ غَيْنٌ خَاؤُهَا وَالْقَافُ",
+        "أَقْصَى اللِّسَانِ فَوْقُ ثُمَّ الْكَافُ"
+      ],
+      "ar": "أَدْنَاهُ غَيْنٌ خَاؤُهَا وَالْقَافُ * أَقْصَى اللِّسَانِ فَوْقُ ثُمَّ الْكَافُ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "6"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0013",
+      "n": 13,
+      "section": "makharij",
+      "type": "vers",
+      "hemistiches": [
+        "أَسْفَلُ وَالْوَسْطُ فَجِيمُ الشِّينُ يَا",
+        "وَالضَّادُ مِنْ حَافَتِهِ إِذْ وَلِيَا"
+      ],
+      "ar": "أَسْفَلُ وَالْوَسْطُ فَجِيمُ الشِّينُ يَا * وَالضَّادُ مِنْ حَافَتِهِ إِذْ وَلِيَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "6"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0014",
+      "n": 14,
+      "section": "makharij",
+      "type": "vers",
+      "hemistiches": [
+        "الْأَضْرَاسَ مِنْ أَيْسَرَ أَوْ يُمْنَاهَا",
+        "وَاللَّامُ أَدْنَاهَا لِمُنْتَهَاهَا"
+      ],
+      "ar": "الْأَضْرَاسَ مِنْ أَيْسَرَ أَوْ يُمْنَاهَا * وَاللَّامُ أَدْنَاهَا لِمُنْتَهَاهَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "6"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0015",
+      "n": 15,
+      "section": "makharij",
+      "type": "vers",
+      "hemistiches": [
+        "وَالنُّونُ مِنْ طَرَفِهِ تَحْتُ اجْعَلُوا",
+        "وَالرَّا يُدَانِيهِ لِظَهْرٍ أُدْخُلُوا"
+      ],
+      "ar": "وَالنُّونُ مِنْ طَرَفِهِ تَحْتُ اجْعَلُوا * وَالرَّا يُدَانِيهِ لِظَهْرٍ أُدْخُلُوا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "7"
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« أُدْخُلُوا » (impératif pluriel) lu d'après le sens ; une variante « أَدْخِلُوا » n'est pas exclue."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0016",
+      "n": 16,
+      "section": "makharij",
+      "type": "vers",
+      "hemistiches": [
+        "وَالطَّاءُ وَالدَّالُ وَتَا مِنْهُ وَمِنْ",
+        "عُلْيَا الثَّنَايَا وَالصَّفِيرُ مُسْتَكِنْ"
+      ],
+      "ar": "وَالطَّاءُ وَالدَّالُ وَتَا مِنْهُ وَمِنْ * عُلْيَا الثَّنَايَا وَالصَّفِيرُ مُسْتَكِنْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "7"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0017",
+      "n": 17,
+      "section": "makharij",
+      "type": "vers",
+      "hemistiches": [
+        "مِنْهُ وَمِنْ فَوْقِ الثَّنَايَا السُّفْلَى",
+        "وَالظَّاءُ وَالذَّالُ وَثَا لِلْعُلْيَا"
+      ],
+      "ar": "مِنْهُ وَمِنْ فَوْقِ الثَّنَايَا السُّفْلَى * وَالظَّاءُ وَالذَّالُ وَثَا لِلْعُلْيَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "7"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0018",
+      "n": 18,
+      "section": "makharij",
+      "type": "vers",
+      "hemistiches": [
+        "مِنْ طَرَفَيْهِمَا وَمِنْ بَطْنِ الشَّفَهْ",
+        "فَالْفَا مَعَ أَطْرَافِ الثَّنَايَا الْمُشْرِفَهْ"
+      ],
+      "ar": "مِنْ طَرَفَيْهِمَا وَمِنْ بَطْنِ الشَّفَهْ * فَالْفَا مَعَ أَطْرَافِ الثَّنَايَا الْمُشْرِفَهْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "7"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0019",
+      "n": 19,
+      "section": "makharij",
+      "type": "vers",
+      "hemistiches": [
+        "لِلشَّفَتَيْنِ الْوَاوُ بَاءٌ مِيمُ",
+        "وَغُنَّةٌ مَخْرَجُهَا الْخَيْشُومُ"
+      ],
+      "ar": "لِلشَّفَتَيْنِ الْوَاوُ بَاءٌ مِيمُ * وَغُنَّةٌ مَخْرَجُهَا الْخَيْشُومُ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 316,
+        "image": "n329",
+        "page_hawashi": "7"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0020",
+      "n": 20,
+      "section": "sifat",
+      "type": "vers",
+      "hemistiches": [
+        "صِفَاتُهَا جَهْرٌ وَرِخْوٌ مُسْتَفِلْ",
+        "مُنْفَتِحٌ مُصْمَتَةٌ وَالضِّدَّ قُلْ"
+      ],
+      "ar": "صِفَاتُهَا جَهْرٌ وَرِخْوٌ مُسْتَفِلْ * مُنْفَتِحٌ مُصْمَتَةٌ وَالضِّدَّ قُلْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": "8"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0021",
+      "n": 21,
+      "section": "sifat",
+      "type": "vers",
+      "hemistiches": [
+        "مَهْمُوسُهَا فَحَثَّهُ شَخْصٌ سَكَتْ",
+        "شَدِيدُهَا لَفْظُ أَجِدْ قَطٍ بَكَتْ"
+      ],
+      "ar": "مَهْمُوسُهَا فَحَثَّهُ شَخْصٌ سَكَتْ * شَدِيدُهَا لَفْظُ أَجِدْ قَطٍ بَكَتْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 10
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 10)"
+    },
+    {
+      "id": "JAZ-0022",
+      "n": 22,
+      "section": "sifat",
+      "type": "vers",
+      "hemistiches": [
+        "وَبَيْنَ رِخْوٍ وَالشَّدِيدِ لِنْ عُمَرْ",
+        "وَسَبْعُ عُلْوٍ خُصَّ ضَغْطٍ قِظْ حَصَرْ"
+      ],
+      "ar": "وَبَيْنَ رِخْوٍ وَالشَّدِيدِ لِنْ عُمَرْ * وَسَبْعُ عُلْوٍ خُصَّ ضَغْطٍ قِظْ حَصَرْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 10
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 10)"
+    },
+    {
+      "id": "JAZ-0023",
+      "n": 23,
+      "section": "sifat",
+      "type": "vers",
+      "hemistiches": [
+        "وَصَادُ ضَادٌ طَاءُ ظَاءٌ مُطْبَقَهْ",
+        "وَفِرَّ مِنْ لُبِّ الْحُرُوفِ الْمُذْلَقَهْ"
+      ],
+      "ar": "وَصَادُ ضَادٌ طَاءُ ظَاءٌ مُطْبَقَهْ * وَفِرَّ مِنْ لُبِّ الْحُرُوفِ الْمُذْلَقَهْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 10
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 10)"
+    },
+    {
+      "id": "JAZ-0024",
+      "n": 24,
+      "section": "sifat",
+      "type": "vers",
+      "hemistiches": [
+        "صَفِيرُهَا صَادٌ وَزَايٌ سِينُ",
+        "قَلْقَلَةٌ قُطْبُ جَدٍّ وَاللِّينُ"
+      ],
+      "ar": "صَفِيرُهَا صَادٌ وَزَايٌ سِينُ * قَلْقَلَةٌ قُطْبُ جَدٍّ وَاللِّينُ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 10
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 10)"
+    },
+    {
+      "id": "JAZ-0025",
+      "n": 25,
+      "section": "sifat",
+      "type": "vers",
+      "hemistiches": [
+        "وَاوٌ وَيَاءٌ سُكِّنَا وَانْفَتَحَا",
+        "قَبْلَهُمَا وَالِانْحِرَافُ صُحِّحَا"
+      ],
+      "ar": "وَاوٌ وَيَاءٌ سُكِّنَا وَانْفَتَحَا * قَبْلَهُمَا وَالِانْحِرَافُ صُحِّحَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 10
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 10)"
+    },
+    {
+      "id": "JAZ-0026",
+      "n": 26,
+      "section": "sifat",
+      "type": "vers",
+      "hemistiches": [
+        "فِي اللَّامِ وَالرَّا وَبِتَكْرِيرٍ جُعِلْ",
+        "وَلِلتَّفَشِّي الشِّينُ ضَادًا اسْتُطِلْ"
+      ],
+      "ar": "فِي اللَّامِ وَالرَّا وَبِتَكْرِيرٍ جُعِلْ * وَلِلتَّفَشِّي الشِّينُ ضَادًا اسْتُطِلْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 10
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 10)"
+    },
+    {
+      "id": "JAZ-0027",
+      "n": 27,
+      "section": "tajwid_definition",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْأَخْذُ بِالتَّجْوِيدِ حَتْمٌ لَازِمُ",
+        "مَنْ لَمْ يُجَوِّدِ الْقُرْآنَ آثِمُ"
+      ],
+      "ar": "وَالْأَخْذُ بِالتَّجْوِيدِ حَتْمٌ لَازِمُ * مَنْ لَمْ يُجَوِّدِ الْقُرْآنَ آثِمُ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 11
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 11)"
+    },
+    {
+      "id": "JAZ-0028",
+      "n": 28,
+      "section": "tajwid_definition",
+      "type": "vers",
+      "hemistiches": [
+        "لِأَنَّهُ بِهِ الْإِلَهُ أَنْزَلَا",
+        "وَهَكَذَا مِنْهُ إِلَيْنَا وَصَلَا"
+      ],
+      "ar": "لِأَنَّهُ بِهِ الْإِلَهُ أَنْزَلَا * وَهَكَذَا مِنْهُ إِلَيْنَا وَصَلَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 11
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 11)"
+    },
+    {
+      "id": "JAZ-0029",
+      "n": 29,
+      "section": "tajwid_definition",
+      "type": "vers",
+      "hemistiches": [
+        "وَهْوَ أَيْضًا حِلْيَةُ التِّلَاوَةِ",
+        "وَزِينَةُ الْأَدَاءِ وَالْقِرَاءَةِ"
+      ],
+      "ar": "وَهْوَ أَيْضًا حِلْيَةُ التِّلَاوَةِ * وَزِينَةُ الْأَدَاءِ وَالْقِرَاءَةِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 11
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 11)"
+    },
+    {
+      "id": "JAZ-0030",
+      "n": 30,
+      "section": "tajwid_definition",
+      "type": "vers",
+      "hemistiches": [
+        "وَهْوَ إِعْطَاءُ الْحُرُوفِ حَقَّهَا",
+        "مِنْ صِفَةٍ لَهَا وَمُسْتَحَقَّهَا"
+      ],
+      "ar": "وَهْوَ إِعْطَاءُ الْحُرُوفِ حَقَّهَا * مِنْ صِفَةٍ لَهَا وَمُسْتَحَقَّهَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 11
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 11)"
+    },
+    {
+      "id": "JAZ-0031",
+      "n": 31,
+      "section": "tajwid_definition",
+      "type": "vers",
+      "hemistiches": [
+        "وَرَدُّ كُلِّ وَاحِدٍ لِأَصْلِهِ",
+        "وَاللَّفْظُ فِي نَظِيرِهِ كَمِثْلِهِ"
+      ],
+      "ar": "وَرَدُّ كُلِّ وَاحِدٍ لِأَصْلِهِ * وَاللَّفْظُ فِي نَظِيرِهِ كَمِثْلِهِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 12
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 12)"
+    },
+    {
+      "id": "JAZ-0032",
+      "n": 32,
+      "section": "tajwid_definition",
+      "type": "vers",
+      "hemistiches": [
+        "مُكَمِّلًا مِنْ غَيْرِ مَا تَكَلُّفِ",
+        "بِاللُّطْفِ فِي النُّطْقِ بِلَا تَعَسُّفِ"
+      ],
+      "ar": "مُكَمِّلًا مِنْ غَيْرِ مَا تَكَلُّفِ * بِاللُّطْفِ فِي النُّطْقِ بِلَا تَعَسُّفِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 12
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 12)"
+    },
+    {
+      "id": "JAZ-0033",
+      "n": 33,
+      "section": "tajwid_definition",
+      "type": "vers",
+      "hemistiches": [
+        "وَلَيْسَ بَيْنَهُ وَبَيْنَ تَرْكِهِ",
+        "إِلَّا رِيَاضَةُ امْرِئٍ بِفَكِّهِ"
+      ],
+      "ar": "وَلَيْسَ بَيْنَهُ وَبَيْنَ تَرْكِهِ * إِلَّا رِيَاضَةُ امْرِئٍ بِفَكِّهِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 12
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 12)"
+    },
+    {
+      "id": "JAZ-0034",
+      "n": 34,
+      "section": "tarqiq",
+      "type": "vers",
+      "hemistiches": [
+        "وَرَقِّقَنْ مُسْتَفِلًا مِنْ أَحْرُفِ",
+        "وَحَاذِرَنْ تَفْخِيمَ لَفْظِ الْأَلِفِ"
+      ],
+      "ar": "وَرَقِّقَنْ مُسْتَفِلًا مِنْ أَحْرُفِ * وَحَاذِرَنْ تَفْخِيمَ لَفْظِ الْأَلِفِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 12
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 12)"
+    },
+    {
+      "id": "JAZ-0035",
+      "n": 35,
+      "section": "usage_des_lettres",
+      "type": "vers",
+      "hemistiches": [
+        "وَهَمْزَ الْحَمْدُ أَعُوذُ اهْدِنَا",
+        "اللَّهَ ثُمَّ لَامَ لِلَّهِ لَنَا"
+      ],
+      "ar": "وَهَمْزَ الْحَمْدُ أَعُوذُ اهْدِنَا * اللَّهَ ثُمَّ لَامَ لِلَّهِ لَنَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 12
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 12)"
+    },
+    {
+      "id": "JAZ-0036",
+      "n": 36,
+      "section": "usage_des_lettres",
+      "type": "vers",
+      "hemistiches": [
+        "وَلْيَتَلَطَّفْ وَعَلَى اللَّهِ وَلَا الضَّ",
+        "وَالْمِيمَ مِنْ مَخْمَصَةٍ وَمِنْ مَرَضْ"
+      ],
+      "ar": "وَلْيَتَلَطَّفْ وَعَلَى اللَّهِ وَلَا الضَّ * وَالْمِيمَ مِنْ مَخْمَصَةٍ وَمِنْ مَرَضْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 13
+      },
+      "variantes": [
+        "V-J05"
+      ],
+      "a_verifier": [
+        "« وَلَا الضَّ » : abréviation de « الضَّالِّينَ » imposée par le mètre ; l'imprimé écrit « ولا الض » en fin d'hémistiche."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 13)"
+    },
+    {
+      "id": "JAZ-0037",
+      "n": 37,
+      "section": "usage_des_lettres",
+      "type": "vers",
+      "hemistiches": [
+        "وَبَاءَ بَرْقٍ بَاطِلٍ بِهِمْ بِذِي",
+        "فَاحْرِصْ عَلَى الشِّدَّةِ وَالْجَهْرِ الَّذِي"
+      ],
+      "ar": "وَبَاءَ بَرْقٍ بَاطِلٍ بِهِمْ بِذِي * فَاحْرِصْ عَلَى الشِّدَّةِ وَالْجَهْرِ الَّذِي",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 13
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 13)"
+    },
+    {
+      "id": "JAZ-0038",
+      "n": 38,
+      "section": "usage_des_lettres",
+      "type": "vers",
+      "hemistiches": [
+        "فِيهَا وَفِي الْجِيمِ كَحُبِّ الصَّبْرِ",
+        "وَرَبْوَةٍ اجْتُثَّتْ وَحَجِّ الْفَجْرِ"
+      ],
+      "ar": "فِيهَا وَفِي الْجِيمِ كَحُبِّ الصَّبْرِ * وَرَبْوَةٍ اجْتُثَّتْ وَحَجِّ الْفَجْرِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 13
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 13)"
+    },
+    {
+      "id": "JAZ-0039",
+      "n": 39,
+      "section": "usage_des_lettres",
+      "type": "vers",
+      "hemistiches": [
+        "وَبَيِّنَنْ مُقَلْقَلًا إِنْ سَكَنَا",
+        "وَإِنْ يَكُنْ فِي الْوَقْفِ كَانَ أَبْيَنَا"
+      ],
+      "ar": "وَبَيِّنَنْ مُقَلْقَلًا إِنْ سَكَنَا * وَإِنْ يَكُنْ فِي الْوَقْفِ كَانَ أَبْيَنَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 13
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 13)"
+    },
+    {
+      "id": "JAZ-0040",
+      "n": 40,
+      "section": "usage_des_lettres",
+      "type": "vers",
+      "hemistiches": [
+        "وَحَاءَ حَصْحَصَ أَحَطتُ الْحَقْ",
+        "وَسِينَ مُسْتَقِيمٍ يَسْطُو يَسْقُو"
+      ],
+      "ar": "وَحَاءَ حَصْحَصَ أَحَطتُ الْحَقْ * وَسِينَ مُسْتَقِيمٍ يَسْطُو يَسْقُو",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 317,
+        "image": "n330",
+        "page_hawashi": 13
+      },
+      "variantes": [
+        "V-J06"
+      ],
+      "a_verifier": [
+        "« يَسْطُو يَسْقُو » : imprimé sans nūn final ; la Ḥawāshī (p. 14) cite « يَسْطُونَ » et « يَسْقُونَ » dans son commentaire. أَحَطتُ : forme du muṣḥaf (27:22)."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 13)"
+    },
+    {
+      "id": "JAZ-0041",
+      "n": 41,
+      "section": "ra",
+      "type": "vers",
+      "hemistiches": [
+        "وَرَقِّقِ الرَّاءَ إِذَا مَا كُسِرَتْ",
+        "كَذَاكَ بَعْدَ الْكَسْرِ حَيْثُ سَكَنَتْ"
+      ],
+      "ar": "وَرَقِّقِ الرَّاءَ إِذَا مَا كُسِرَتْ * كَذَاكَ بَعْدَ الْكَسْرِ حَيْثُ سَكَنَتْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 14
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 14)"
+    },
+    {
+      "id": "JAZ-0042",
+      "n": 42,
+      "section": "ra",
+      "type": "vers",
+      "hemistiches": [
+        "إِنْ لَمْ تَكُنْ مِنْ قَبْلِ حَرْفِ اسْتِعْلَا",
+        "أَوْ كَانَتِ الْكَسْرَةُ لَيْسَتْ أَصْلَا"
+      ],
+      "ar": "إِنْ لَمْ تَكُنْ مِنْ قَبْلِ حَرْفِ اسْتِعْلَا * أَوْ كَانَتِ الْكَسْرَةُ لَيْسَتْ أَصْلَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 14
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« إِنْ لَمْ تَكُنْ … أَوْ كَانَتِ الْكَسْرَةُ لَيْسَتْ أَصْلَا » : construction à confirmer ; la Ḥawāshī (p. 14) exige une kasra « لازمة »."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 14)"
+    },
+    {
+      "id": "JAZ-0043",
+      "n": 43,
+      "section": "ra",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْخُلْفُ فِي فِرْقٍ لِكَسْرٍ يُوجَدُ",
+        "وَأَخْفِ تَكْرِيرًا إِذَا تُشَدَّدُ"
+      ],
+      "ar": "وَالْخُلْفُ فِي فِرْقٍ لِكَسْرٍ يُوجَدُ * وَأَخْفِ تَكْرِيرًا إِذَا تُشَدَّدُ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 15
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 15)"
+    },
+    {
+      "id": "JAZ-0044",
+      "n": 44,
+      "section": "lam_tafkhim_idgham",
+      "type": "vers",
+      "hemistiches": [
+        "وَفَخِّمِ اللَّامَ مِنِ اسْمِ اللَّهِ",
+        "عَنْ فَتْحٍ أَوْ ضَمٍّ كَعَبْدُ اللَّهِ"
+      ],
+      "ar": "وَفَخِّمِ اللَّامَ مِنِ اسْمِ اللَّهِ * عَنْ فَتْحٍ أَوْ ضَمٍّ كَعَبْدُ اللَّهِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 15
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 15)"
+    },
+    {
+      "id": "JAZ-0045",
+      "n": 45,
+      "section": "lam_tafkhim_idgham",
+      "type": "vers",
+      "hemistiches": [
+        "وَحَرْفَ الِاسْتِعْلَاءِ فَخِّمْ وَاخْصُصَا",
+        "الْإِطْبَاقَ أَقْوَى نَحْوُ قَالَ وَالْعَصَا"
+      ],
+      "ar": "وَحَرْفَ الِاسْتِعْلَاءِ فَخِّمْ وَاخْصُصَا * الْإِطْبَاقَ أَقْوَى نَحْوُ قَالَ وَالْعَصَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 15
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 15)"
+    },
+    {
+      "id": "JAZ-0046",
+      "n": 46,
+      "section": "lam_tafkhim_idgham",
+      "type": "vers",
+      "hemistiches": [
+        "وَبَيِّنِ الْإِطْبَاقَ مِنْ أَحَطتُ مَعْ",
+        "بَسَطتَ وَالْخُلْفُ بِنَخْلُقْكُمْ وَقَعْ"
+      ],
+      "ar": "وَبَيِّنِ الْإِطْبَاقَ مِنْ أَحَطتُ مَعْ * بَسَطتَ وَالْخُلْفُ بِنَخْلُقْكُمْ وَقَعْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 15
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« بِنَخْلُقْكُمْ » : vocalisation du mot coranique faite par nous."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 15)"
+    },
+    {
+      "id": "JAZ-0047",
+      "n": 47,
+      "section": "lam_tafkhim_idgham",
+      "type": "vers",
+      "hemistiches": [
+        "وَاحْرِصْ عَلَى السُّكُونِ فِي جَعَلْنَا",
+        "أَنْعَمْتَ وَالْمَغْضُوبِ مَعْ ضَلَلْنَا"
+      ],
+      "ar": "وَاحْرِصْ عَلَى السُّكُونِ فِي جَعَلْنَا * أَنْعَمْتَ وَالْمَغْضُوبِ مَعْ ضَلَلْنَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 16
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 16)"
+    },
+    {
+      "id": "JAZ-0048",
+      "n": 48,
+      "section": "lam_tafkhim_idgham",
+      "type": "vers",
+      "hemistiches": [
+        "وَخَلِّصِ انْفِتَاحَ مَحْذُورًا عَسَى",
+        "خَوْفَ اشْتِبَاهِهِ بِمَحْظُورًا عَسَى"
+      ],
+      "ar": "وَخَلِّصِ انْفِتَاحَ مَحْذُورًا عَسَى * خَوْفَ اشْتِبَاهِهِ بِمَحْظُورًا عَسَى",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 16
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 16)"
+    },
+    {
+      "id": "JAZ-0049",
+      "n": 49,
+      "section": "lam_tafkhim_idgham",
+      "type": "vers",
+      "hemistiches": [
+        "وَرَاعِ شِدَّةً بِكَافٍ وَبِتَا",
+        "كَشِرْكِكُمْ وَتَتَوَفَّى فِتْنَتَا"
+      ],
+      "ar": "وَرَاعِ شِدَّةً بِكَافٍ وَبِتَا * كَشِرْكِكُمْ وَتَتَوَفَّى فِتْنَتَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 16
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 16)"
+    },
+    {
+      "id": "JAZ-0050",
+      "n": 50,
+      "section": "lam_tafkhim_idgham",
+      "type": "vers",
+      "hemistiches": [
+        "وَأَوَّلَيْ مِثْلٍ وَجِنْسٍ إِنْ سَكَنْ",
+        "أَدْغِمْ كَقُلْ رَبِّ وَبَلْ لَا وَأَبِنْ"
+      ],
+      "ar": "وَأَوَّلَيْ مِثْلٍ وَجِنْسٍ إِنْ سَكَنْ * أَدْغِمْ كَقُلْ رَبِّ وَبَلْ لَا وَأَبِنْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 16
+      },
+      "variantes": [
+        "V-J01"
+      ],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 16)"
+    },
+    {
+      "id": "JAZ-0051",
+      "n": 51,
+      "section": "lam_tafkhim_idgham",
+      "type": "vers",
+      "hemistiches": [
+        "فِي يَوْمٍ مَعْ قَالُوا وَهُمْ وَقُلْ نَعَمْ",
+        "سَبِّحْهُ لَا تُزِغْ قُلُوبَ فَالْتَقَمْ"
+      ],
+      "ar": "فِي يَوْمٍ مَعْ قَالُوا وَهُمْ وَقُلْ نَعَمْ * سَبِّحْهُ لَا تُزِغْ قُلُوبَ فَالْتَقَمْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 16
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 16)"
+    },
+    {
+      "id": "JAZ-0052",
+      "n": 52,
+      "section": "dad_za",
+      "type": "vers",
+      "hemistiches": [
+        "وَالضَّادَ بِاسْتِطَالَةٍ وَمَخْرَجِ",
+        "مَيِّزْ مِنَ الظَّاءِ وَكُلُّهَا تَجِي"
+      ],
+      "ar": "وَالضَّادَ بِاسْتِطَالَةٍ وَمَخْرَجِ * مَيِّزْ مِنَ الظَّاءِ وَكُلُّهَا تَجِي",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 17
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 17)"
+    },
+    {
+      "id": "JAZ-0053",
+      "n": 53,
+      "section": "dad_za",
+      "type": "vers",
+      "hemistiches": [
+        "فِي الظَّعْنِ ظِلِّ الظُّهْرِ عَظْمِ الْحِفْظِ",
+        "أَيْقِظْ وَانْظُرْ عَظْمِ ظَهْرِ اللَّفْظِ"
+      ],
+      "ar": "فِي الظَّعْنِ ظِلِّ الظُّهْرِ عَظْمِ الْحِفْظِ * أَيْقِظْ وَانْظُرْ عَظْمِ ظَهْرِ اللَّفْظِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 17
+      },
+      "variantes": [],
+      "a_verifier": [
+        "عَظْمِ : voyelle de la lettre ع à contrôler sur un témoin vocalisé."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 17)"
+    },
+    {
+      "id": "JAZ-0054",
+      "n": 54,
+      "section": "dad_za",
+      "type": "vers",
+      "hemistiches": [
+        "ظَاهِرْ لَظَى شَوَاظِ كَظْمٍ ظَلَمَا",
+        "أَغْلِظْ ظَلَامٍ ظُفْرٍ انْتَظِرْ ظَمَا"
+      ],
+      "ar": "ظَاهِرْ لَظَى شَوَاظِ كَظْمٍ ظَلَمَا * أَغْلِظْ ظَلَامٍ ظُفْرٍ انْتَظِرْ ظَمَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 18
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 18)"
+    },
+    {
+      "id": "JAZ-0055",
+      "n": 55,
+      "section": "dad_za",
+      "type": "vers",
+      "hemistiches": [
+        "أَظْفَرَ ظَنًّا كَيْفَ جَا وَعْظٍ سِوَى",
+        "عِضِينَ ظَلَّ النَّحْلِ زُخْرُفٍ سَوَا"
+      ],
+      "ar": "أَظْفَرَ ظَنًّا كَيْفَ جَا وَعْظٍ سِوَى * عِضِينَ ظَلَّ النَّحْلِ زُخْرُفٍ سَوَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 19
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« سِوَى » (fin du premier hémistiche) et « سَوَا » (rime) : voyelles de Claude."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 19)"
+    },
+    {
+      "id": "JAZ-0056",
+      "n": 56,
+      "section": "dad_za",
+      "type": "vers",
+      "hemistiches": [
+        "وَظَلْتَ ظَلْتُمْ وَبِرُومٍ ظَلُّوا",
+        "كَالْحِجْرِ ظَلَّتْ شُعَرَا نَظَلّْ"
+      ],
+      "ar": "وَظَلْتَ ظَلْتُمْ وَبِرُومٍ ظَلُّوا * كَالْحِجْرِ ظَلَّتْ شُعَرَا نَظَلّْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 19
+      },
+      "variantes": [
+        "V-J02"
+      ],
+      "a_verifier": [
+        "Lecture « وَظَلْتَ » (Majmūʿ) contre « فَظَلْتَ » (cité dans la Ḥawāshī, p. 19). « نَظَلّْ » = « نَظَلُّ » mis en pause."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 19)"
+    },
+    {
+      "id": "JAZ-0057",
+      "n": 57,
+      "section": "dad_za",
+      "type": "vers",
+      "hemistiches": [
+        "يَظْلَلْنَ مَحْظُورًا مَعَ الْمُحْتَظِرِ",
+        "وَكُنْتَ فَظًّا وَجَمِيعَ النَّظَرِ"
+      ],
+      "ar": "يَظْلَلْنَ مَحْظُورًا مَعَ الْمُحْتَظِرِ * وَكُنْتَ فَظًّا وَجَمِيعَ النَّظَرِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 19
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 19)"
+    },
+    {
+      "id": "JAZ-0058",
+      "n": 58,
+      "section": "dad_za",
+      "type": "vers",
+      "hemistiches": [
+        "إِلَّا بِوَيْلٍ هَلْ وَأُولَى نَاضِرَهْ",
+        "وَالْغَيْظِ لَا الرَّعْدِ وَهُودٍ قَاصِرَهْ"
+      ],
+      "ar": "إِلَّا بِوَيْلٍ هَلْ وَأُولَى نَاضِرَهْ * وَالْغَيْظِ لَا الرَّعْدِ وَهُودٍ قَاصِرَهْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 20
+      },
+      "variantes": [],
+      "a_verifier": [
+        "Vers difficile (noms de sourates réduits à un mot) : voir journal."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 20)"
+    },
+    {
+      "id": "JAZ-0059",
+      "n": 59,
+      "section": "dad_za",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْحَظِّ لَا الْحَضِّ عَلَى الطَّعَامِ",
+        "وَفِي ظَنِينٍ الْخِلَافُ سَامِي"
+      ],
+      "ar": "وَالْحَظِّ لَا الْحَضِّ عَلَى الطَّعَامِ * وَفِي ظَنِينٍ الْخِلَافُ سَامِي",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 20
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 20)"
+    },
+    {
+      "id": "JAZ-0060",
+      "n": 60,
+      "section": "avertissements_ghunna_mim",
+      "type": "vers",
+      "hemistiches": [
+        "وَإِنْ تَلَاقَيَا الْبَيَانُ لَازِمُ",
+        "أَنْقَضَ ظَهْرَكَ يَعَضُّ الظَّالِمُ"
+      ],
+      "ar": "وَإِنْ تَلَاقَيَا الْبَيَانُ لَازِمُ * أَنْقَضَ ظَهْرَكَ يَعَضُّ الظَّالِمُ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 318,
+        "image": "n331",
+        "page_hawashi": 20
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 20)"
+    },
+    {
+      "id": "JAZ-0061",
+      "n": 61,
+      "section": "avertissements_ghunna_mim",
+      "type": "vers",
+      "hemistiches": [
+        "وَاضْطُرَّ مَعْ وَعَظْتَ مَعْ أَفَضْتُمْ",
+        "وَصِفْ هَا جِبَاهُهُمْ عَلَيْهِمْ"
+      ],
+      "ar": "وَاضْطُرَّ مَعْ وَعَظْتَ مَعْ أَفَضْتُمْ * وَصِفْ هَا جِبَاهُهُمْ عَلَيْهِمْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 21
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« جِبَاهُهُمْ » : voyelle d'après 9:35 ; sens de « وَصِفْ هَا » à confirmer."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 21)"
+    },
+    {
+      "id": "JAZ-0062",
+      "n": 62,
+      "section": "avertissements_ghunna_mim",
+      "type": "vers",
+      "hemistiches": [
+        "وَأَظْهِرِ الْغُنَّةَ مِنْ نُونٍ وَمِنْ",
+        "مِيمٍ إِذَا مَا شُدِّدَا وَأَخْفِيَنْ"
+      ],
+      "ar": "وَأَظْهِرِ الْغُنَّةَ مِنْ نُونٍ وَمِنْ * مِيمٍ إِذَا مَا شُدِّدَا وَأَخْفِيَنْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 21
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 21)"
+    },
+    {
+      "id": "JAZ-0063",
+      "n": 63,
+      "section": "avertissements_ghunna_mim",
+      "type": "vers",
+      "hemistiches": [
+        "الْمِيمَ إِنْ تَسْكُنْ بِغُنَّةٍ لَدَى",
+        "بَاءٍ عَلَى الْمُخْتَارِ مِنْ أَهْلِ الْأَدَا"
+      ],
+      "ar": "الْمِيمَ إِنْ تَسْكُنْ بِغُنَّةٍ لَدَى * بَاءٍ عَلَى الْمُخْتَارِ مِنْ أَهْلِ الْأَدَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 21
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 21)"
+    },
+    {
+      "id": "JAZ-0064",
+      "n": 64,
+      "section": "avertissements_ghunna_mim",
+      "type": "vers",
+      "hemistiches": [
+        "وَأَظْهِرَنْهَا عِنْدَ بَاقِي الْأَحْرُفِ",
+        "وَاحْذَرْ لَدَى وَاوٍ وَفَا أَنْ تَخْتَفِي"
+      ],
+      "ar": "وَأَظْهِرَنْهَا عِنْدَ بَاقِي الْأَحْرُفِ * وَاحْذَرْ لَدَى وَاوٍ وَفَا أَنْ تَخْتَفِي",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 21
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 21)"
+    },
+    {
+      "id": "JAZ-0065",
+      "n": 65,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "وَحُكْمُ تَنْوِينٍ وَنُونٍ يُلْفَى",
+        "إِظْهَارٌ ادْغَامٌ وَقَلْبٌ إِخْفَا"
+      ],
+      "ar": "وَحُكْمُ تَنْوِينٍ وَنُونٍ يُلْفَى * إِظْهَارٌ ادْغَامٌ وَقَلْبٌ إِخْفَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 21
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 21)"
+    },
+    {
+      "id": "JAZ-0066",
+      "n": 66,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "فَعِنْدَ حَرْفِ الْحَلْقِ أَظْهِرْ وَادَّغِمْ",
+        "فِي اللَّامِ وَالرَّا لَا بِغُنَّةٍ لَزِمْ"
+      ],
+      "ar": "فَعِنْدَ حَرْفِ الْحَلْقِ أَظْهِرْ وَادَّغِمْ * فِي اللَّامِ وَالرَّا لَا بِغُنَّةٍ لَزِمْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 22
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 22)"
+    },
+    {
+      "id": "JAZ-0067",
+      "n": 67,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "وَأَدْغِمَنْ بِغُنَّةٍ فِي يُومِنُ",
+        "إِلَّا بِكِلْمَةٍ كَدُنْيَا عَنْوَنُوا"
+      ],
+      "ar": "وَأَدْغِمَنْ بِغُنَّةٍ فِي يُومِنُ * إِلَّا بِكِلْمَةٍ كَدُنْيَا عَنْوَنُوا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 22
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« عَنْوَنُوا » : lecture de Claude (jeu sur « عُنْوَان »), la Ḥawāshī (p. 23) l'explique par « العنوان »."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 22)"
+    },
+    {
+      "id": "JAZ-0068",
+      "n": 68,
+      "section": "nun_sakin_tanwin",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْقَلْبَ عِنْدَ الْبَا بِغُنَّةٍ كَذَا",
+        "الْإِخْفَا لَدَى بَاقِي الْحُرُوفِ أُخِذَا"
+      ],
+      "ar": "وَالْقَلْبَ عِنْدَ الْبَا بِغُنَّةٍ كَذَا * الْإِخْفَا لَدَى بَاقِي الْحُرُوفِ أُخِذَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 23
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 23)"
+    },
+    {
+      "id": "JAZ-0069",
+      "n": 69,
+      "section": "madd",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْمَدُّ لَازِمٌ وَوَاجِبٌ أَتَى",
+        "وَجَائِزٌ وَهْوَ وَقَصْرٌ ثَبَتَا"
+      ],
+      "ar": "وَالْمَدُّ لَازِمٌ وَوَاجِبٌ أَتَى * وَجَائِزٌ وَهْوَ وَقَصْرٌ ثَبَتَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 24
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 24)"
+    },
+    {
+      "id": "JAZ-0070",
+      "n": 70,
+      "section": "madd",
+      "type": "vers",
+      "hemistiches": [
+        "فَلَازِمٌ إِنْ جَاءَ بَعْدَ حَرْفِ مَدّْ",
+        "سَاكِنُ حَالَيْنِ وَبِالطُّولِ يُمَدّْ"
+      ],
+      "ar": "فَلَازِمٌ إِنْ جَاءَ بَعْدَ حَرْفِ مَدّْ * سَاكِنُ حَالَيْنِ وَبِالطُّولِ يُمَدّْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 25
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 25)"
+    },
+    {
+      "id": "JAZ-0071",
+      "n": 71,
+      "section": "madd",
+      "type": "vers",
+      "hemistiches": [
+        "وَوَاجِبٌ إِنْ جَاءَ قَبْلَ هَمْزَةٍ",
+        "مُتَّصِلًا إِنْ جُمِعَا بِكَلِمَهْ"
+      ],
+      "ar": "وَوَاجِبٌ إِنْ جَاءَ قَبْلَ هَمْزَةٍ * مُتَّصِلًا إِنْ جُمِعَا بِكَلِمَهْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 25
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 25)"
+    },
+    {
+      "id": "JAZ-0072",
+      "n": 72,
+      "section": "madd",
+      "type": "vers",
+      "hemistiches": [
+        "وَجَائِزٌ إِذَا أَتَى مُنْفَصِلَا",
+        "أَوْ عَرَضَ السُّكُونُ وَقْفًا مُسَجَّلَا"
+      ],
+      "ar": "وَجَائِزٌ إِذَا أَتَى مُنْفَصِلَا * أَوْ عَرَضَ السُّكُونُ وَقْفًا مُسَجَّلَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 25
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 25)"
+    },
+    {
+      "id": "JAZ-0073",
+      "n": 73,
+      "section": "waqf_ibtida",
+      "type": "vers",
+      "hemistiches": [
+        "وَبَعْدَ تَجْوِيدِكَ لِلْحُرُوفِ",
+        "لَا بُدَّ مِنْ مَعْرِفَةِ الْوُقُوفِ"
+      ],
+      "ar": "وَبَعْدَ تَجْوِيدِكَ لِلْحُرُوفِ * لَا بُدَّ مِنْ مَعْرِفَةِ الْوُقُوفِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 26
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 26)"
+    },
+    {
+      "id": "JAZ-0074",
+      "n": 74,
+      "section": "waqf_ibtida",
+      "type": "vers",
+      "hemistiches": [
+        "وَالِابْتِدَاءِ وَهْيَ تُقْسَمُ إِذَنْ",
+        "ثَلَاثَةٌ تَامٌّ وَكَافٍ وَحَسَنْ"
+      ],
+      "ar": "وَالِابْتِدَاءِ وَهْيَ تُقْسَمُ إِذَنْ * ثَلَاثَةٌ تَامٌّ وَكَافٍ وَحَسَنْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 26
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 26)"
+    },
+    {
+      "id": "JAZ-0075",
+      "n": 75,
+      "section": "waqf_ibtida",
+      "type": "vers",
+      "hemistiches": [
+        "وَهْيَ لِمَا تَمَّ فَإِنْ لَمْ يُوجَدِ",
+        "تَعَلُّقٌ أَوْ كَانَ مَعْنًى فَابْتَدِي"
+      ],
+      "ar": "وَهْيَ لِمَا تَمَّ فَإِنْ لَمْ يُوجَدِ * تَعَلُّقٌ أَوْ كَانَ مَعْنًى فَابْتَدِي",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 27
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 27)"
+    },
+    {
+      "id": "JAZ-0076",
+      "n": 76,
+      "section": "waqf_ibtida",
+      "type": "vers",
+      "hemistiches": [
+        "فَالتَّامُّ فَالْكَافِي وَلَفْظًا فَامْنَعَنْ",
+        "إِلَّا رُؤُوسَ الْآيِ جَوِّزْ فَالْحَسَنْ"
+      ],
+      "ar": "فَالتَّامُّ فَالْكَافِي وَلَفْظًا فَامْنَعَنْ * إِلَّا رُؤُوسَ الْآيِ جَوِّزْ فَالْحَسَنْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 27
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 27)"
+    },
+    {
+      "id": "JAZ-0077",
+      "n": 77,
+      "section": "waqf_ibtida",
+      "type": "vers",
+      "hemistiches": [
+        "وَغَيْرُ مَا تَمَّ قَبِيحٌ وَلَهُ",
+        "الْوَقْفُ مُضْطَرًّا وَيُبْدَا قَبْلَهُ"
+      ],
+      "ar": "وَغَيْرُ مَا تَمَّ قَبِيحٌ وَلَهُ * الْوَقْفُ مُضْطَرًّا وَيُبْدَا قَبْلَهُ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 27
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 27)"
+    },
+    {
+      "id": "JAZ-0078",
+      "n": 78,
+      "section": "waqf_ibtida",
+      "type": "vers",
+      "hemistiches": [
+        "وَلَيْسَ فِي الْقُرْآنِ مِنْ وَقْفٍ وَجَبْ",
+        "وَلَا حَرَامٌ غَيْرَ مَا لَهُ سَبَبْ"
+      ],
+      "ar": "وَلَيْسَ فِي الْقُرْآنِ مِنْ وَقْفٍ وَجَبْ * وَلَا حَرَامٌ غَيْرَ مَا لَهُ سَبَبْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 27
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 27)"
+    },
+    {
+      "id": "JAZ-0079",
+      "n": 79,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "وَاعْرِفْ لِمَقْطُوعٍ وَمَوْصُولٍ وَتَا",
+        "فِي مُصْحَفِ الْإِمَامِ فِيمَا قَدْ أَتَى"
+      ],
+      "ar": "وَاعْرِفْ لِمَقْطُوعٍ وَمَوْصُولٍ وَتَا * فِي مُصْحَفِ الْإِمَامِ فِيمَا قَدْ أَتَى",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 28
+      },
+      "variantes": [],
+      "a_verifier": [
+        "Début d'une liste de mots coraniques : toutes les voyelles des vers 79 à 100 sont à contrôler."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 28)"
+    },
+    {
+      "id": "JAZ-0080",
+      "n": 80,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "فَاقْطَعْ بِعَشْرِ كَلِمَاتٍ أَنْ لَا",
+        "مَعْ مَلْجَأٍ وَلَا إِلَهَ إِلَّا"
+      ],
+      "ar": "فَاقْطَعْ بِعَشْرِ كَلِمَاتٍ أَنْ لَا * مَعْ مَلْجَأٍ وَلَا إِلَهَ إِلَّا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 319,
+        "image": "n332",
+        "page_hawashi": 28
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 28)"
+    },
+    {
+      "id": "JAZ-0081",
+      "n": 81,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "وَتَعْبُدُوا يَاسِينَ ثَانِي هُودَ لَا",
+        "يُشْرِكْنَ تُشْرِكْ يَدْخُلَنْ تَعْلُوا عَلَى"
+      ],
+      "ar": "وَتَعْبُدُوا يَاسِينَ ثَانِي هُودَ لَا * يُشْرِكْنَ تُشْرِكْ يَدْخُلَنْ تَعْلُوا عَلَى",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 28
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 28)"
+    },
+    {
+      "id": "JAZ-0082",
+      "n": 82,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "أَنْ لَا يَقُولُوا لَا أَقُولَ إِنْ مَا",
+        "بِالرَّعْدِ وَالْمَفْتُوحَ صِلْ وَعَنْ مَا"
+      ],
+      "ar": "أَنْ لَا يَقُولُوا لَا أَقُولَ إِنْ مَا * بِالرَّعْدِ وَالْمَفْتُوحَ صِلْ وَعَنْ مَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 28
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 28)"
+    },
+    {
+      "id": "JAZ-0083",
+      "n": 83,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "نُهُوا اقْطَعُوا مِنْ مَا مَلَكَتْ رُومِ النِّسَا",
+        "خُلْفُ الْمُنَافِقِينَ أَمْ مَنْ أَسَّسَا"
+      ],
+      "ar": "نُهُوا اقْطَعُوا مِنْ مَا مَلَكَتْ رُومِ النِّسَا * خُلْفُ الْمُنَافِقِينَ أَمْ مَنْ أَسَّسَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 28
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 28)"
+    },
+    {
+      "id": "JAZ-0084",
+      "n": 84,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "الْأَنْعَامِ وَالْمَفْتُوحَ يَدْعُونَ مَعَا",
+        "وَخُلْفُ الْأَنْفَالِ وَنَحْلٍ وَقَعَا"
+      ],
+      "ar": "الْأَنْعَامِ وَالْمَفْتُوحَ يَدْعُونَ مَعَا * وَخُلْفُ الْأَنْفَالِ وَنَحْلٍ وَقَعَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 29
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 29)"
+    },
+    {
+      "id": "JAZ-0085",
+      "n": 85,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "فُصِّلَتِ النِّسَا ذَبْحٍ حَيْثُ مَا",
+        "وَإِنْ لَمْ الْمَفْتُوحَ كَسْرُ إِنَّمَا"
+      ],
+      "ar": "فُصِّلَتِ النِّسَا ذَبْحٍ حَيْثُ مَا * وَإِنْ لَمْ الْمَفْتُوحَ كَسْرُ إِنَّمَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 29
+      },
+      "variantes": [
+        "V-J03"
+      ],
+      "a_verifier": [
+        "« كَسْرُ إِنَّمَا » : l'imprimé a « كسران ما » (suite de lettres sans espace) ; lecture de Claude (voir V-J03)."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 29)"
+    },
+    {
+      "id": "JAZ-0086",
+      "n": 86,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "وَكُلِّ مَا سَأَلْتُمُوهُ وَاخْتُلِفْ",
+        "رُدُّوا كَذَا قُلْ بِئْسَمَا وَالْوَصْلَ صِفْ"
+      ],
+      "ar": "وَكُلِّ مَا سَأَلْتُمُوهُ وَاخْتُلِفْ * رُدُّوا كَذَا قُلْ بِئْسَمَا وَالْوَصْلَ صِفْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 29
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 29)"
+    },
+    {
+      "id": "JAZ-0087",
+      "n": 87,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "خَلَفْتُمُونِي وَاشْتَرَوْا فِي مَا قُطِعَا",
+        "أَوْحَى أَفَضْتُمْ اشْتَهَتْ يَبْلُو مَعَا"
+      ],
+      "ar": "خَلَفْتُمُونِي وَاشْتَرَوْا فِي مَا قُطِعَا * أَوْحَى أَفَضْتُمْ اشْتَهَتْ يَبْلُو مَعَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 29
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 29)"
+    },
+    {
+      "id": "JAZ-0088",
+      "n": 88,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "ثَانِي فَعَلْنَ وَقَعَتْ رُومِ كَلَا",
+        "تَنْزِيلِ شُعَرَا وَغَيْرِ ذِي صِلَا"
+      ],
+      "ar": "ثَانِي فَعَلْنَ وَقَعَتْ رُومِ كَلَا * تَنْزِيلِ شُعَرَا وَغَيْرِ ذِي صِلَا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 29
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 29)"
+    },
+    {
+      "id": "JAZ-0089",
+      "n": 89,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "فَأَيْنَمَا كَالنَّحْلِ صِلْ وَمُخْتَلِفْ",
+        "فِي الشُّعَرَا الْأَحْزَابِ وَالنِّسَا وَصِفْ"
+      ],
+      "ar": "فَأَيْنَمَا كَالنَّحْلِ صِلْ وَمُخْتَلِفْ * فِي الشُّعَرَا الْأَحْزَابِ وَالنِّسَا وَصِفْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": "30"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0090",
+      "n": 90,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "وَصِلْ فَإِلَّمْ هُودَ أَنْ لَنْ نَجْعَلَا",
+        "نَجْمَعَ كَيْلَا تَحْزَنُوا تَأْسَوْا عَلَى"
+      ],
+      "ar": "وَصِلْ فَإِلَّمْ هُودَ أَنْ لَنْ نَجْعَلَا * نَجْمَعَ كَيْلَا تَحْزَنُوا تَأْسَوْا عَلَى",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": "30"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0091",
+      "n": 91,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "حَجٍّ عَلَيْكَ حَرَجٌ وَقَطْعُهُمْ",
+        "عَنْ مَنْ يَشَاءُ مَنْ تَوَلَّى يَوْمَ هُمْ"
+      ],
+      "ar": "حَجٍّ عَلَيْكَ حَرَجٌ وَقَطْعُهُمْ * عَنْ مَنْ يَشَاءُ مَنْ تَوَلَّى يَوْمَ هُمْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": "30-31"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0092",
+      "n": 92,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "وَمَالِ هَذَا وَالَّذِينَ هَؤُلَا",
+        "تَحِينَ فِي الْإِمَامِ صِلْ وَهَلَّا"
+      ],
+      "ar": "وَمَالِ هَذَا وَالَّذِينَ هَؤُلَا * تَحِينَ فِي الْإِمَامِ صِلْ وَهَلَّا",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": "31"
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« تَحِينَ » : tāʾ de « لَاتَ » joint à « حِينَ » ; lecture de Claude."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0093",
+      "n": 93,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "maqtuʿ_mawsul",
+      "type": "vers",
+      "hemistiches": [
+        "وَوَزَنُوهُمْ وَكَالُوهُمْ صِلْ",
+        "كَذَا مِنَ الْ وَهَا وَيَا لَا انْفَصَلْ"
+      ],
+      "ar": "وَوَزَنُوهُمْ وَكَالُوهُمْ صِلْ * كَذَا مِنَ الْ وَهَا وَيَا لَا انْفَصَلْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": "31"
+      },
+      "variantes": [
+        "V-J04"
+      ],
+      "a_verifier": [
+        "Fin d'hémistiche « لَا انْفَصَلْ » : lecture de Claude d'après l'imprimé « لانفصل » ; une autre lecture (« لَا تَفْصِلِ ») n'est pas exclue (V-J04)."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0094",
+      "n": 94,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "ta_marbuta_ta_maftuha",
+      "type": "vers",
+      "hemistiches": [
+        "وَرَحْمَتُ الزُّخْرُفِ بِالتَّا زُبَرَهْ",
+        "الْأَعْرَافِ رُومٍ هُودَ كَافِ الْبَقَرَهْ"
+      ],
+      "ar": "وَرَحْمَتُ الزُّخْرُفِ بِالتَّا زُبَرَهْ * الْأَعْرَافِ رُومٍ هُودَ كَافِ الْبَقَرَهْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 32
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« زُبَرَهْ » : voyelles de Claude, mot-repère non expliqué dans les pages relues."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 32)"
+    },
+    {
+      "id": "JAZ-0095",
+      "n": 95,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "ta_marbuta_ta_maftuha",
+      "type": "vers",
+      "hemistiches": [
+        "نِعْمَتَهَا ثَلَاثُ نَحْلٍ إِبْرَهِمْ",
+        "مَعًا أَخِيرَاتُ عُقُودٍ الثَّانِ هُمْ"
+      ],
+      "ar": "نِعْمَتَهَا ثَلَاثُ نَحْلٍ إِبْرَهِمْ * مَعًا أَخِيرَاتُ عُقُودٍ الثَّانِ هُمْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 32
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 32)"
+    },
+    {
+      "id": "JAZ-0096",
+      "n": 96,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "ta_marbuta_ta_maftuha",
+      "type": "vers",
+      "hemistiches": [
+        "لُقْمَانَ ثُمَّ فَاطِرٍ كَالطُّورِ",
+        "عِمْرَانَ لَعْنَتَ بِهَا وَالنُّورِ"
+      ],
+      "ar": "لُقْمَانَ ثُمَّ فَاطِرٍ كَالطُّورِ * عِمْرَانَ لَعْنَتَ بِهَا وَالنُّورِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 32
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 32)"
+    },
+    {
+      "id": "JAZ-0097",
+      "n": 97,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "ta_marbuta_ta_maftuha",
+      "type": "vers",
+      "hemistiches": [
+        "وَامْرَأَتُ يُوسُفَ عِمْرَانَ الْقَصَصْ",
+        "تَحْرِيمَ مَعْصِيَتَ بِقَدْ سَمِعَ يَخُصْ"
+      ],
+      "ar": "وَامْرَأَتُ يُوسُفَ عِمْرَانَ الْقَصَصْ * تَحْرِيمَ مَعْصِيَتَ بِقَدْ سَمِعَ يَخُصْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 32
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 32)"
+    },
+    {
+      "id": "JAZ-0098",
+      "n": 98,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "ta_marbuta_ta_maftuha",
+      "type": "vers",
+      "hemistiches": [
+        "شَجَرَتَ الدُّخَانِ سُنَّتْ فَاطِرٍ",
+        "كَلَّا وَالْأَنْفَالِ وَحَرْفَ غَافِرٍ"
+      ],
+      "ar": "شَجَرَتَ الدُّخَانِ سُنَّتْ فَاطِرٍ * كَلَّا وَالْأَنْفَالِ وَحَرْفَ غَافِرٍ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 33
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 33)"
+    },
+    {
+      "id": "JAZ-0099",
+      "n": 99,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "ta_marbuta_ta_maftuha",
+      "type": "vers",
+      "hemistiches": [
+        "قُرَّتُ عَيْنٍ جَنَّتُ فِي وَقَعَتْ",
+        "فِطْرَتُ بَقِيَّتُ وَابْنَتُ وَكَلِمَتْ"
+      ],
+      "ar": "قُرَّتُ عَيْنٍ جَنَّتُ فِي وَقَعَتْ * فِطْرَتُ بَقِيَّتُ وَابْنَتُ وَكَلِمَتْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 33
+      },
+      "variantes": [],
+      "a_verifier": [
+        "Les mots « قُرَّتُ عَيْنٍ جَنَّتُ فِي… » : la finale en « ـتُ » représente le tāʾ ouvert ; voyelles de Claude."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 33)"
+    },
+    {
+      "id": "JAZ-0100",
+      "n": 100,
+      "niveau_min": "adulte",
+      "facultatif": true,
+      "section": "ta_marbuta_ta_maftuha",
+      "type": "vers",
+      "hemistiches": [
+        "أَوْسَطُ الْأَعْرَافِ وَكُلُّ مَا اخْتُلِفْ",
+        "جَمْعًا وَفَرْدًا فِيهِ بِالتَّا عُرِفْ"
+      ],
+      "ar": "أَوْسَطُ الْأَعْرَافِ وَكُلُّ مَا اخْتُلِفْ * جَمْعًا وَفَرْدًا فِيهِ بِالتَّا عُرِفْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 33
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 33)"
+    },
+    {
+      "id": "JAZ-0101",
+      "n": 101,
+      "section": "hamzat_al_wasl",
+      "type": "vers",
+      "hemistiches": [
+        "وَابْدَأْ بِهَمْزِ الْوَصْلِ مِنْ فِعْلٍ بِضَمّْ",
+        "إِنْ كَانَ ثَالِثٌ مِنَ الْفِعْلِ يُضَمّْ"
+      ],
+      "ar": "وَابْدَأْ بِهَمْزِ الْوَصْلِ مِنْ فِعْلٍ بِضَمّْ * إِنْ كَانَ ثَالِثٌ مِنَ الْفِعْلِ يُضَمّْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": 33
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 33)"
+    },
+    {
+      "id": "JAZ-0102",
+      "n": 102,
+      "section": "hamzat_al_wasl",
+      "type": "vers",
+      "hemistiches": [
+        "وَاكْسِرْهُ حَالَ الْكَسْرِ وَالْفَتْحِ وَفِي",
+        "الْأَسْمَاءِ غَيْرَ اللَّامِ كَسْرُهَا وَفِي"
+      ],
+      "ar": "وَاكْسِرْهُ حَالَ الْكَسْرِ وَالْفَتْحِ وَفِي * الْأَسْمَاءِ غَيْرَ اللَّامِ كَسْرُهَا وَفِي",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 320,
+        "image": "n333",
+        "page_hawashi": "30"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0103",
+      "n": 103,
+      "section": "hamzat_al_wasl",
+      "type": "vers",
+      "hemistiches": [
+        "ابْنٍ مَعَ ابْنَتِ امْرِئٍ وَاثْنَيْنِ",
+        "وَامْرَأَةٍ وَاسْمٍ مَعَ اثْنَتَيْنِ"
+      ],
+      "ar": "ابْنٍ مَعَ ابْنَتِ امْرِئٍ وَاثْنَيْنِ * وَامْرَأَةٍ وَاسْمٍ مَعَ اثْنَتَيْنِ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 321,
+        "image": "n334",
+        "page_hawashi": "34"
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« ابْنَتِ » : lecture de Claude."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0104",
+      "n": 104,
+      "section": "waqf_rawm_ishmam",
+      "type": "vers",
+      "hemistiches": [
+        "وَحَاذِرِ الْوَقْفَ بِكُلِّ الْحَرَكَهْ",
+        "إِلَّا إِذَا رُمْتَ فَبَعْضُ حَرَكَهْ"
+      ],
+      "ar": "وَحَاذِرِ الْوَقْفَ بِكُلِّ الْحَرَكَهْ * إِلَّا إِذَا رُمْتَ فَبَعْضُ حَرَكَهْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 321,
+        "image": "n334",
+        "page_hawashi": "34"
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; Ḥawāshī non relue pour ce vers"
+    },
+    {
+      "id": "JAZ-0105",
+      "n": 105,
+      "section": "waqf_rawm_ishmam",
+      "type": "vers",
+      "hemistiches": [
+        "إِلَّا بِفَتْحٍ أَوْ بِنَصْبٍ وَأَشِمّْ",
+        "إِشَارَةً بِالضَّمِّ فِي رَفْعٍ وَضَمّْ"
+      ],
+      "ar": "إِلَّا بِفَتْحٍ أَوْ بِنَصْبٍ وَأَشِمّْ * إِشَارَةً بِالضَّمِّ فِي رَفْعٍ وَضَمّْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 321,
+        "image": "n334",
+        "page_hawashi": 35
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 35)"
+    },
+    {
+      "id": "JAZ-0106",
+      "n": 106,
+      "section": "cloture",
+      "type": "vers",
+      "hemistiches": [
+        "وَقَدْ تَقَضَّى نَظْمِيَ الْمُقَدِّمَهْ",
+        "مِنِّي لِقَارِئِ الْقُرْآنِ تَقْدِمَهْ"
+      ],
+      "ar": "وَقَدْ تَقَضَّى نَظْمِيَ الْمُقَدِّمَهْ * مِنِّي لِقَارِئِ الْقُرْآنِ تَقْدِمَهْ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 321,
+        "image": "n334",
+        "page_hawashi": 35
+      },
+      "variantes": [],
+      "a_verifier": [
+        "« تَقْدِمَهْ » : voyelle de Claude ; la Ḥawāshī (p. 35) glose « تحفة وهدية »."
+      ],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 35)"
+    },
+    {
+      "id": "JAZ-0107",
+      "n": 107,
+      "section": "cloture",
+      "type": "vers",
+      "hemistiches": [
+        "وَالْحَمْدُ لِلَّهِ لَهَا خِتَامُ",
+        "ثُمَّ الصَّلَاةُ بَعْدُ وَالسَّلَامُ"
+      ],
+      "ar": "وَالْحَمْدُ لِلَّهِ لَهَا خِتَامُ * ثُمَّ الصَّلَاةُ بَعْدُ وَالسَّلَامُ",
+      "source": {
+        "temoin": "M (base imprimée sans voyelles, Majmūʿ 1306 H)",
+        "page": 321,
+        "image": "n334",
+        "page_hawashi": 35
+      },
+      "variantes": [],
+      "a_verifier": [],
+      "verification_13_10": "ductus lu sur M (image) ; vers retrouvé dans la Ḥawāshī (page 35)"
+    }
+  ],
+  "variantes": [
+    {
+      "id": "V-J01",
+      "vers": "JAZ-0050",
+      "M": "وابن (hémistiche 2, dernier mot)",
+      "H": "وابن (idem, Ḥawāshī p. 16)",
+      "retenu": "وَأَبِنْ",
+      "nature": "lecture des deux témoins non vocalisés « وابن » : lue « وَأَبِنْ » (impératif de أَبَانَ, « rends distinct »), seul sens possible avec « فِي يَوْمٍ مَعْ قَالُوا وَهُمْ ». La Ḥawāshī (p. 16) explique ces cas comme des exceptions à la règle de fusion.",
+      "etat": "vocalisation proposée par Claude, à valider"
+    },
+    {
+      "id": "V-J02",
+      "vers": "JAZ-0056",
+      "M": "وظلت ظلتم وبروم ظلوا",
+      "H": "فظلت ظلتم … (commentaire, p. 19)",
+      "retenu": "وَظَلْتَ (Majmūʿ)",
+      "nature": "variante de conjonction (و/ف) ; sans incidence sur la règle",
+      "etat": "garde la leçon du texte de base"
+    },
+    {
+      "id": "V-J03",
+      "vers": "JAZ-0085",
+      "M": "كسران ما",
+      "H": "كسران ما (p. 29 du commentaire, même séquence)",
+      "retenu": "كَسْرُ إِنَّمَا",
+      "nature": "séquence de lettres sans espace dans les deux témoins ; lue « كَسْرُ إِنَّمَا » (la kasra de « إنّ » : le cas d'« إنّ ما » avec kasra, al-Anʿām)",
+      "etat": "RÉSOLU le 13/10 par P : « إِنَّمَا » en un mot (voir V-J13)"
+    },
+    {
+      "id": "V-J04",
+      "vers": "JAZ-0093",
+      "M": "كذا من ال وها وياء لا انفصل (lecture de l'image, imprimé mal venu)",
+      "H": "non relu",
+      "retenu": "لَا انْفَصَلْ",
+      "nature": "dernier mot lu « انفصل » sur l'image ; une lecture « لا تفصل » reste possible",
+      "etat": "toujours ouvert : voir voyelle_a_confirmer (JAZ-0093), lecture M/H gardée"
+    },
+    {
+      "id": "V-J05",
+      "vers": "JAZ-0036",
+      "M": "ولا الض",
+      "H": "وعلى الله ولا الض (p. 13)",
+      "retenu": "وَلَا الضَّ",
+      "nature": "abréviation métrique de « الضَّالِّينَ »",
+      "etat": "identique dans les deux témoins"
+    },
+    {
+      "id": "V-J06",
+      "vers": "JAZ-0040",
+      "M": "يسطو يسقو",
+      "H": "يسطو يسقو (cité) ; commentaire : يسطون … يسقون (p. 14)",
+      "retenu": "يَسْطُو يَسْقُو",
+      "nature": "mots coraniques cités sans leur nūn final (contrainte du mètre)",
+      "etat": "identique dans les deux témoins"
+    },
+    {
+      "id": "V-J07",
+      "vers": "JAZ-0040",
+      "M": "يسطو يسقو",
+      "H": "idem",
+      "P": "يسطوا يسقوا",
+      "retenu": "M/H",
+      "nature": "alif final sur P ; sans incidence",
+      "etat": "variante consignée ; M/H gardés"
+    },
+    {
+      "id": "V-J08",
+      "vers": "JAZ-0043",
+      "M": "تشدد",
+      "H": "تشدد (p. 15)",
+      "P": "يشدد",
+      "retenu": "تُشَدَّدُ",
+      "nature": "sujet féminin (le rāʾ) contre masculin",
+      "etat": "M/H gardés"
+    },
+    {
+      "id": "V-J09",
+      "vers": "JAZ-0006",
+      "M": "ليلفظوا",
+      "H": "ليلفظوا (p. 4)",
+      "P": "لينطقوا",
+      "retenu": "لِيَلْفِظُوا",
+      "nature": "synonymes (prononcer) ; rime et mètre identiques",
+      "etat": "M/H gardés, variante consignée"
+    },
+    {
+      "id": "V-J10",
+      "vers": "JAZ-0089",
+      "M": "في الظلة الأحزاب والنسا وصف",
+      "H": "في الشعرا الأحزاب والنسا وصف (p. 30, avec l explication : trois emplacements, le premier « أينما كنتم تعبدون » dans ash-Shuʿarāʾ)",
+      "P": "في الشعرا الأحزاب والنسا وصف",
+      "retenu": "فِي الشُّعَرَا الْأَحْزَابِ وَالنِّسَا وَصِفْ",
+      "nature": "M : « الظلة » lu sur l imprimé (erreur de lecture ou d impression) ; deux témoins indépendants (H, P) et le sens imposent « الشعرا »",
+      "etat": "CORRIGÉ le 13/10 (texte, traduction, journal, alignement)"
+    },
+    {
+      "id": "V-J11",
+      "vers": "JAZ-0092",
+      "M": "وهلا",
+      "H": "وقيل لا (texte du commentaire, p. 31) ; la Ḥawāshī note « وفي بعض النسخ وهلا »",
+      "P": "وهلا",
+      "retenu": "وَهَلَّا",
+      "nature": "deux recensions du second hémistiche ; la Ḥawāshī explique « وقيل لا » = « on a dit : non » (avis de ceux qui séparent)",
+      "etat": "M/P gardés ; recension H consignée ; à trancher par un relecteur"
+    },
+    {
+      "id": "V-J12",
+      "vers": "JAZ-0103",
+      "M": "ابن مع ابنت امرئ واثنين",
+      "H": "idem (p. 34)",
+      "P": "ابنتِ (kasra) امرئٍ",
+      "retenu": "ابْنَتِ",
+      "nature": "« ابْنَتٍ » (tanwīn) ne se construit pas avec « امْرِئٍ » ; annexion « ابْنَتِ »",
+      "etat": "CORRIGÉ le 13/10"
+    },
+    {
+      "id": "V-J13",
+      "vers": "JAZ-0085",
+      "M": "كسر إنما (lu « كسران ما » sans espace)",
+      "H": "idem",
+      "P": "كسر إنما",
+      "retenu": "كَسْرُ إِنَّمَا",
+      "nature": "V-J03 résolu : « إنما » est UN mot dans P ; « إِنَّ مَا » en deux mots était une erreur de lecture",
+      "etat": "CORRIGÉ le 13/10"
+    },
+    {
+      "id": "V-J14",
+      "vers": "JAZ-0015",
+      "M": "ادخلوا",
+      "H": "—",
+      "P": "أُدْخُلُوا",
+      "retenu": "أُدْخُلُوا",
+      "nature": "« أَدْخُلُوا » corrigé en « أُدْخُلُوا »",
+      "etat": "CORRIGÉ le 13/10"
+    },
+    {
+      "id": "V-J15",
+      "vers": "après JAZ-0107 (hors compte)",
+      "M": "absent",
+      "H": "clôt sur le vers 107",
+      "P": "ajoute : « على النبي المصطفى وآلهِ / وصحبه وتابعي مَن والاهِ »",
+      "retenu": "non intégré (le poème reste à 107 vers)",
+      "nature": "vers de prière final présent dans de nombreuses copies, absent de M",
+      "etat": "consigné ; non intégré"
+    }
+  ],
+  "date_revision": "2026-10-13",
+  "revision_13_10_vocalisation": "collation sur le témoin P (Princeton Garrett 621H) ; corrections V-J10, V-J12, V-J13, V-J14 ; statut EN_ATTENTE_SECONDE_LECTURE"
+}

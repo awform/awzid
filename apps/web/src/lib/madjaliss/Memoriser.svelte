@@ -53,6 +53,8 @@
 
   const courante = $derived(file[0] ?? null);
   const mots = $derived(courante ? motsDe(arSimple(courante)!) : []);
+  /** un vers : le second hémistiche commence sur une nouvelle ligne */
+  const coupure = $derived(courante?.h ? motsDe(courante.h[0]).length : -1);
   const caches = $derived(moteur ? masques(mots.length, palier, moteur.amorce) : []);
   const toutMasque = $derived(palier >= PALIERS - 1);
 
@@ -89,7 +91,7 @@
           >{:else}<span class="mot"><Bidi text={w} base="ar" /></span>{/if}<Bidi
           text={i < mots.length - 1 ? ' ' : ''}
           base="ar"
-        />{/each}
+        />{#if i === coupure - 1}<br />{/if}{/each}
     </p>
     {#if audio}
       <!-- emplacement de l'enregistrement humain (aucun pour l'instant) -->

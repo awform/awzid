@@ -1,0 +1,820 @@
+{
+  "titre": "Découpage en séances (majālis) — Ibn al-Jazarī, al-Muqaddima al-Jazariyya",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "principe": "Séances de 5 à 16 minutes : lecture du texte arabe (vers par vers), traduction, mots difficiles. L'explication sera ajoutée plus tard (rien n'est rédigé ici). Durée estimée = 3 min + 1,2 min par vers + 0,5 min par mot ; à recaler sur l'enregistrement réel du lecteur. Les séances suivent l'ordre du poème.",
+  "a_confirmer": "Découpage proposé par Claude, par unités de sens (une famille de règles par séance, 2 à 7 vers). À comparer avec la pratique de deux ou trois maîtres de tajwīd (la Jazariyya s'enseigne souvent par chapitres entiers). Les séances du tracé du Muṣḥaf (JAZ-S23 à S26) sont des listes de mots et pourraient être regroupées.",
+  "point_referent": "Publication par niveau : la Jazariyya est du cycle 3 ; ses chapitres sur le rasm (JAZ-S23 à S26) et sur le raccourcissement du madd (JAZ-S21) demandent une décision du référent (RAPPORT.md, R-J1, R-J7). Aucune couleur de tajwīd n'est posée dans ces séances : elles sont réservées au Coran.",
+  "nombre_de_seances": 28,
+  "duree_totale_min": 256,
+  "seances": [
+          {
+            "id": "JAZ-S01",
+            "titre": "Ouverture : l'auteur, la louange, le but",
+            "vers": [
+                  "JAZ-0001",
+                  "JAZ-0002",
+                  "JAZ-0003",
+                  "JAZ-0004"
+                ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                        {
+                          "ar": "رَاجِي",
+                          "sens": "celui qui espère"
+                        },
+                        {
+                          "ar": "مُصْطَفَاهُ",
+                          "sens": "Son élu"
+                        },
+                        {
+                          "ar": "مُقَدِّمَة",
+                          "sens": "introduction"
+                        }
+                      ],
+            "ordre_publication": 1,
+            "groupe_publication": "1 base"
+          },
+          {
+            "id": "JAZ-S02",
+            "titre": "Ce que le lecteur doit savoir d'abord",
+            "vers": [
+                  "JAZ-0005",
+                  "JAZ-0006",
+                  "JAZ-0007",
+                  "JAZ-0008"
+                ],
+            "duree_min": 10,
+            "mots_difficiles": [
+                        {
+                          "ar": "مُحَتَّم",
+                          "sens": "obligatoire de façon ferme"
+                        },
+                        {
+                          "ar": "مَخَارِج",
+                          "sens": "points d'articulation"
+                        },
+                        {
+                          "ar": "مَقْطُوع / مَوْصُول",
+                          "sens": "[mot] séparé / [mot] joint (dans le tracé)"
+                        },
+                        {
+                          "ar": "الْمَصَاحِف",
+                          "sens": "les exemplaires du Coran"
+                        }
+                      ],
+            "ordre_publication": 2,
+            "groupe_publication": "1 base"
+          },
+          {
+            "id": "JAZ-S03",
+            "titre": "Les points d'articulation (1) : cavité, gorge, fond de la langue",
+            "vers": [
+                  "JAZ-0009",
+                  "JAZ-0010",
+                  "JAZ-0011",
+                  "JAZ-0012"
+                ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                        {
+                          "ar": "الْجَوْف",
+                          "sens": "la cavité (de la bouche et de la gorge)"
+                        },
+                        {
+                          "ar": "أَقْصَى الْحَلْق",
+                          "sens": "le fond de la gorge"
+                        },
+                        {
+                          "ar": "أَدْنَاهُ",
+                          "sens": "le plus proche [de la bouche]"
+                        }
+                      ],
+            "ordre_publication": 3,
+            "groupe_publication": "1 base"
+          },
+          {
+            "id": "JAZ-S04",
+            "titre": "Les points d'articulation (2) : milieu de la langue, ḍād, lām, nūn, rāʾ, ṭāʾ",
+            "vers": [
+                  "JAZ-0013",
+                  "JAZ-0014",
+                  "JAZ-0015",
+                  "JAZ-0016"
+                ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                        {
+                          "ar": "حَافَة",
+                          "sens": "le bord [de la langue]"
+                        },
+                        {
+                          "ar": "الْأَضْرَاس",
+                          "sens": "les molaires"
+                        },
+                        {
+                          "ar": "الثَّنَايَا",
+                          "sens": "les incisives"
+                        }
+                      ],
+            "ordre_publication": 4,
+            "groupe_publication": "1 base"
+          },
+          {
+            "id": "JAZ-S05",
+            "titre": "Les points d'articulation (3) : ẓāʾ, fāʾ, lèvres, nez",
+            "vers": [
+                  "JAZ-0017",
+                  "JAZ-0018",
+                  "JAZ-0019"
+                ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                        {
+                          "ar": "الشَّفَة",
+                          "sens": "la lèvre"
+                        },
+                        {
+                          "ar": "الْمُشْرِفَة",
+                          "sens": "[les incisives] qui avancent"
+                        },
+                        {
+                          "ar": "الْخَيْشُوم",
+                          "sens": "le fond des fosses nasales"
+                        }
+                      ],
+            "ordre_publication": 5,
+            "groupe_publication": "1 base"
+          },
+          {
+            "id": "JAZ-S06",
+            "titre": "Les qualités des lettres (1) : couples contraires et mots-repères",
+            "vers": [
+                  "JAZ-0020",
+                  "JAZ-0021",
+                  "JAZ-0022",
+                  "JAZ-0023"
+                ],
+            "duree_min": 10,
+            "mots_difficiles": [
+                        {
+                          "ar": "جَهْر",
+                          "sens": "sonorité"
+                        },
+                        {
+                          "ar": "رِخْو",
+                          "sens": "relâchement"
+                        },
+                        {
+                          "ar": "مُطْبَقَة",
+                          "sens": "[lettre] couverte"
+                        },
+                        {
+                          "ar": "الْمُذْلَقَة",
+                          "sens": "[lettres] de la pointe"
+                        }
+                      ],
+            "ordre_publication": 6,
+            "groupe_publication": "1 base"
+          },
+          {
+            "id": "JAZ-S07",
+            "titre": "Les qualités des lettres (2) : sifflement, rebond, douceur, inclinaison, répétition, étalement",
+            "vers": [
+                  "JAZ-0024",
+                  "JAZ-0025",
+                  "JAZ-0026"
+                ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                        {
+                          "ar": "صَفِير",
+                          "sens": "sifflement"
+                        },
+                        {
+                          "ar": "قَلْقَلَة",
+                          "sens": "rebond"
+                        },
+                        {
+                          "ar": "اللِّين",
+                          "sens": "douceur"
+                        },
+                        {
+                          "ar": "التَّفَشِّي",
+                          "sens": "étalement"
+                        }
+                      ],
+            "ordre_publication": 7,
+            "groupe_publication": "1 base"
+          },
+          {
+            "id": "JAZ-S08",
+            "titre": "Le tajwīd : une obligation, une parure, sa définition",
+            "vers": [
+                  "JAZ-0027",
+                  "JAZ-0028",
+                  "JAZ-0029",
+                  "JAZ-0030"
+                ],
+            "duree_min": 10,
+            "mots_difficiles": [
+                        {
+                          "ar": "حَتْم",
+                          "sens": "obligation ferme"
+                        },
+                        {
+                          "ar": "آثِم",
+                          "sens": "pécheur"
+                        },
+                        {
+                          "ar": "حِلْيَة",
+                          "sens": "parure"
+                        },
+                        {
+                          "ar": "الْأَدَاء",
+                          "sens": "la transmission orale"
+                        }
+                      ],
+            "ordre_publication": 11,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S09",
+            "titre": "Comment pratiquer le tajwīd : sans excès",
+            "vers": [
+                  "JAZ-0031",
+                  "JAZ-0032",
+                  "JAZ-0033"
+                ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                        {
+                          "ar": "تَكَلُّف",
+                          "sens": "artifice"
+                        },
+                        {
+                          "ar": "تَعَسُّف",
+                          "sens": "excès"
+                        },
+                        {
+                          "ar": "رِيَاضَة",
+                          "sens": "exercice"
+                        }
+                      ],
+            "ordre_publication": 12,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S10",
+            "titre": "Finesse et épaisseur (1) : le alif, la hamza, le lām",
+            "vers": [
+                  "JAZ-0034",
+                  "JAZ-0035",
+                  "JAZ-0036"
+                ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                        {
+                          "ar": "مُسْتَفِل",
+                          "sens": "[lettre] d'abaissement"
+                        },
+                        {
+                          "ar": "تَفْخِيم",
+                          "sens": "épaississement"
+                        },
+                        {
+                          "ar": "مَخْمَصَة",
+                          "sens": "famine"
+                        }
+                      ],
+            "ordre_publication": 13,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S11",
+            "titre": "Finesse et épaisseur (2) : bāʾ, jīm, rebond, ḥāʾ, sīn",
+            "vers": [
+                  "JAZ-0037",
+                  "JAZ-0038",
+                  "JAZ-0039",
+                  "JAZ-0040"
+                ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                        {
+                          "ar": "شِدَّة",
+                          "sens": "force"
+                        },
+                        {
+                          "ar": "رَبْوَة",
+                          "sens": "colline"
+                        },
+                        {
+                          "ar": "اجْتُثَّتْ",
+                          "sens": "a été arrachée"
+                        }
+                      ],
+            "ordre_publication": 14,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S12",
+            "titre": "Le rāʾ : fin ou épais",
+            "vers": [
+                  "JAZ-0041",
+                  "JAZ-0042",
+                  "JAZ-0043"
+                ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                        {
+                          "ar": "التَّرْقِيق",
+                          "sens": "amincissement"
+                        },
+                        {
+                          "ar": "الْكَسْرَة",
+                          "sens": "la kasra"
+                        },
+                        {
+                          "ar": "فِرْق",
+                          "sens": "pan [de montagne]"
+                        }
+                      ],
+            "ordre_publication": 15,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S13",
+            "titre": "Le lām du nom d'Allah ; les lettres d'élévation ; l'iṭbāq",
+            "vers": [
+                  "JAZ-0044",
+                  "JAZ-0045",
+                  "JAZ-0046"
+                ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                        {
+                          "ar": "الِاسْتِعْلَاء",
+                          "sens": "élévation"
+                        },
+                        {
+                          "ar": "الْإِطْبَاق",
+                          "sens": "couverture"
+                        },
+                        {
+                          "ar": "أَحَطتُ",
+                          "sens": "j'ai embrassé"
+                        }
+                      ],
+            "ordre_publication": 16,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S14",
+            "titre": "Garder le sukūn, l'ouverture et la force",
+            "vers": [
+                  "JAZ-0047",
+                  "JAZ-0048",
+                  "JAZ-0049"
+                ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                        {
+                          "ar": "السُّكُون",
+                          "sens": "le sukūn"
+                        },
+                        {
+                          "ar": "انْفِتَاح",
+                          "sens": "ouverture"
+                        },
+                        {
+                          "ar": "اشْتِبَاه",
+                          "sens": "confusion"
+                        }
+                      ],
+            "ordre_publication": 17,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S15",
+            "titre": "Fusion de lettres identiques ou sœurs, et ses exceptions",
+            "vers": [
+                  "JAZ-0050",
+                  "JAZ-0051"
+                ],
+            "duree_min": 7,
+            "mots_difficiles": [
+                        {
+                          "ar": "مِثْل",
+                          "sens": "lettre identique"
+                        },
+                        {
+                          "ar": "جِنْس",
+                          "sens": "lettre de même organe"
+                        },
+                        {
+                          "ar": "أَدْغِمْ",
+                          "sens": "fais la fusion"
+                        }
+                      ],
+            "ordre_publication": 18,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S16",
+            "titre": "Ḍād et ẓāʾ (1) : les différencier ; les mots à ẓāʾ",
+            "vers": [
+                  "JAZ-0052",
+                  "JAZ-0053",
+                  "JAZ-0054",
+                  "JAZ-0055"
+                ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                        {
+                          "ar": "اسْتِطَالَة",
+                          "sens": "étirement"
+                        },
+                        {
+                          "ar": "الظَّعْن",
+                          "sens": "le voyage"
+                        },
+                        {
+                          "ar": "أَيْقِظْ",
+                          "sens": "réveille"
+                        }
+                      ],
+            "ordre_publication": 19,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S17",
+            "titre": "Ḍād et ẓāʾ (2) : suite des mots à ẓāʾ et exceptions",
+            "vers": [
+                  "JAZ-0056",
+                  "JAZ-0057",
+                  "JAZ-0058",
+                  "JAZ-0059"
+                ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                        {
+                          "ar": "نَاضِرَة",
+                          "sens": "radieux"
+                        },
+                        {
+                          "ar": "الْغَيْظ",
+                          "sens": "la colère"
+                        },
+                        {
+                          "ar": "ظَنِين",
+                          "sens": "soupçonné / avare"
+                        }
+                      ],
+            "ordre_publication": 20,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S18",
+            "titre": "Quand ḍād et ẓāʾ se rencontrent ; quelques mots à ne pas déformer",
+            "vers": [
+                  "JAZ-0060",
+                  "JAZ-0061"
+                ],
+            "duree_min": 7,
+            "mots_difficiles": [
+                        {
+                          "ar": "الْبَيَان",
+                          "sens": "la clarté"
+                        },
+                        {
+                          "ar": "اضْطُرَّ",
+                          "sens": "il a été contraint"
+                        },
+                        {
+                          "ar": "أَفَضْتُمْ",
+                          "sens": "vous vous êtes lancés"
+                        }
+                      ],
+            "ordre_publication": 21,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S19",
+            "titre": "Le son nasal (ghunna) et le mīm sans voyelle",
+            "vers": [
+                  "JAZ-0062",
+                  "JAZ-0063",
+                  "JAZ-0064"
+                ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                        {
+                          "ar": "غُنَّة",
+                          "sens": "son nasal"
+                        },
+                        {
+                          "ar": "شُدِّدَا",
+                          "sens": "ils sont chaddés"
+                        },
+                        {
+                          "ar": "أَهْل الْأَدَاء",
+                          "sens": "les gens de la transmission orale"
+                        }
+                      ],
+            "ordre_publication": 9,
+            "groupe_publication": "1 base"
+          },
+          {
+            "id": "JAZ-S20",
+            "titre": "Le nūn sans voyelle et le tanwīn : les quatre règles",
+            "vers": [
+                  "JAZ-0065",
+                  "JAZ-0066",
+                  "JAZ-0067",
+                  "JAZ-0068"
+                ],
+            "duree_min": 10,
+            "mots_difficiles": [
+                        {
+                          "ar": "إِظْهَار",
+                          "sens": "clarté"
+                        },
+                        {
+                          "ar": "إِدْغَام",
+                          "sens": "fusion"
+                        },
+                        {
+                          "ar": "قَلْب",
+                          "sens": "conversion"
+                        },
+                        {
+                          "ar": "إِخْفَاء",
+                          "sens": "dissimulation"
+                        }
+                      ],
+            "ordre_publication": 8,
+            "groupe_publication": "1 base"
+          },
+          {
+            "id": "JAZ-S21",
+            "titre": "Le madd : nécessaire, obligatoire, permis",
+            "vers": [
+                  "JAZ-0069",
+                  "JAZ-0070",
+                  "JAZ-0071",
+                  "JAZ-0072"
+                ],
+            "duree_min": 10,
+            "mots_difficiles": [
+                        {
+                          "ar": "لَازِم",
+                          "sens": "nécessaire"
+                        },
+                        {
+                          "ar": "وَاجِب",
+                          "sens": "obligatoire"
+                        },
+                        {
+                          "ar": "جَائِز",
+                          "sens": "permis"
+                        },
+                        {
+                          "ar": "قَصْر",
+                          "sens": "raccourcissement"
+                        }
+                      ],
+            "ordre_publication": 10,
+            "groupe_publication": "1 base"
+          },
+          {
+            "id": "JAZ-S22",
+            "titre": "Les arrêts et le départ : complet, suffisant, bon, laid",
+            "vers": [
+                  "JAZ-0073",
+                  "JAZ-0074",
+                  "JAZ-0075",
+                  "JAZ-0076",
+                  "JAZ-0077",
+                  "JAZ-0078"
+                ],
+            "duree_min": 13,
+            "mots_difficiles": [
+                        {
+                          "ar": "الْوُقُوف",
+                          "sens": "les arrêts"
+                        },
+                        {
+                          "ar": "تَامّ",
+                          "sens": "complet"
+                        },
+                        {
+                          "ar": "كَافٍ",
+                          "sens": "suffisant"
+                        },
+                        {
+                          "ar": "حَسَن",
+                          "sens": "bon"
+                        },
+                        {
+                          "ar": "قَبِيح",
+                          "sens": "laid"
+                        }
+                      ],
+            "ordre_publication": 22,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S23",
+            "titre": "Le tracé du Muṣḥaf (1) : mots séparés et joints (début des listes)",
+            "vers": [
+                  "JAZ-0079",
+                  "JAZ-0080",
+                  "JAZ-0081",
+                  "JAZ-0082",
+                  "JAZ-0083"
+                ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                        {
+                          "ar": "مَقْطُوع",
+                          "sens": "séparé"
+                        },
+                        {
+                          "ar": "مَوْصُول",
+                          "sens": "joint"
+                        },
+                        {
+                          "ar": "مُصْحَف الْإِمَام",
+                          "sens": "l'exemplaire de l'Imām"
+                        }
+                      ],
+            "ordre_publication": 25,
+            "groupe_publication": "3 tracé du muṣḥaf",
+            "niveau_min": "adulte",
+            "facultatif": true
+          },
+          {
+            "id": "JAZ-S24",
+            "titre": "Le tracé du Muṣḥaf (2) : suite des listes",
+            "vers": [
+                  "JAZ-0084",
+                  "JAZ-0085",
+                  "JAZ-0086",
+                  "JAZ-0087",
+                  "JAZ-0088"
+                ],
+            "duree_min": 10,
+            "mots_difficiles": [
+                        {
+                          "ar": "الْمَفْتُوح",
+                          "sens": "[le mot] avec fatḥa"
+                        },
+                        {
+                          "ar": "خُلْف",
+                          "sens": "divergence"
+                        }
+                      ],
+            "ordre_publication": 26,
+            "groupe_publication": "3 tracé du muṣḥaf",
+            "niveau_min": "adulte",
+            "facultatif": true
+          },
+          {
+            "id": "JAZ-S25",
+            "titre": "Le tracé du Muṣḥaf (3) : fin des listes",
+            "vers": [
+                  "JAZ-0089",
+                  "JAZ-0090",
+                  "JAZ-0091",
+                  "JAZ-0092",
+                  "JAZ-0093"
+                ],
+            "duree_min": 10,
+            "mots_difficiles": [
+                        {
+                          "ar": "صِلْ",
+                          "sens": "joins"
+                        },
+                        {
+                          "ar": "صِفْ",
+                          "sens": "décris"
+                        }
+                      ],
+            "ordre_publication": 27,
+            "groupe_publication": "3 tracé du muṣḥaf",
+            "niveau_min": "adulte",
+            "facultatif": true
+          },
+          {
+            "id": "JAZ-S26",
+            "titre": "Le tāʾ ouvert ou fermé dans le tracé du Muṣḥaf",
+            "vers": [
+                  "JAZ-0094",
+                  "JAZ-0095",
+                  "JAZ-0096",
+                  "JAZ-0097",
+                  "JAZ-0098",
+                  "JAZ-0099",
+                  "JAZ-0100"
+                ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                        {
+                          "ar": "التَّاء",
+                          "sens": "le tāʾ ouvert"
+                        },
+                        {
+                          "ar": "جَمْعًا وَفَرْدًا",
+                          "sens": "au pluriel et au singulier"
+                        }
+                      ],
+            "ordre_publication": 28,
+            "groupe_publication": "3 tracé du muṣḥaf",
+            "niveau_min": "adulte",
+            "facultatif": true
+          },
+          {
+            "id": "JAZ-S27",
+            "titre": "La hamzat al-waṣl : départ de la lecture",
+            "vers": [
+                  "JAZ-0101",
+                  "JAZ-0102",
+                  "JAZ-0103"
+                ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                        {
+                          "ar": "هَمْزُ الْوَصْل",
+                          "sens": "hamza de liaison"
+                        },
+                        {
+                          "ar": "ابْن، ابْنَة…",
+                          "sens": "les sept noms"
+                        }
+                      ],
+            "ordre_publication": 23,
+            "groupe_publication": "2 reste du poème"
+          },
+          {
+            "id": "JAZ-S28",
+            "titre": "Arrêt par le souffle de voyelle (rawm) et l'arrondi des lèvres (ishmām) ; conclusion",
+            "vers": [
+                  "JAZ-0104",
+                  "JAZ-0105",
+                  "JAZ-0106",
+                  "JAZ-0107"
+                ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                        {
+                          "ar": "رَوْم",
+                          "sens": "souffle de voyelle"
+                        },
+                        {
+                          "ar": "إِشْمَام",
+                          "sens": "arrondi des lèvres"
+                        },
+                        {
+                          "ar": "خِتَام",
+                          "sens": "conclusion"
+                        }
+                      ],
+            "ordre_publication": 24,
+            "groupe_publication": "2 reste du poème"
+          }
+        ],
+  "ordre_publication_13_10": {
+                  "regle": "R-J9 : règles de base d abord (introduction, articulation, qualités, nūn sākin et tanwīn, mīm sākin, madd), puis le reste du poème (tajwīd, finesse et épaisseur, ḍād/ẓāʾ, arrêts, hamzat al-waṣl, rawm et ishmām, clôture), le tracé du muṣḥaf en dernier (R-J7 : niveau adulte, facultatif).",
+                  "ordre": [
+                         "JAZ-S01",
+                         "JAZ-S02",
+                         "JAZ-S03",
+                         "JAZ-S04",
+                         "JAZ-S05",
+                         "JAZ-S06",
+                         "JAZ-S07",
+                         "JAZ-S20",
+                         "JAZ-S19",
+                         "JAZ-S21",
+                         "JAZ-S08",
+                         "JAZ-S09",
+                         "JAZ-S10",
+                         "JAZ-S11",
+                         "JAZ-S12",
+                         "JAZ-S13",
+                         "JAZ-S14",
+                         "JAZ-S15",
+                         "JAZ-S16",
+                         "JAZ-S17",
+                         "JAZ-S18",
+                         "JAZ-S22",
+                         "JAZ-S27",
+                         "JAZ-S28",
+                         "JAZ-S23",
+                         "JAZ-S24",
+                         "JAZ-S25",
+                         "JAZ-S26"
+                       ],
+                  "ordre_du_poeme": "JAZ-S01 à JAZ-S28 (champ id) : l ordre de lecture du poème reste celui de la numérotation ; l ordre de publication est le champ ordre_publication"
+                }
+}

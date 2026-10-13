@@ -52,7 +52,11 @@
   const motsReserves = $derived((notes?.mots ?? []).filter((m) => m.n === seance.n));
   /** l'action « Suivant » n'est l'action principale que si l'étape n'en a pas d'autre en cours */
   const suivantPrincipal = $derived(
-    ETAPES[etape] === 'memo' ? memoFini : ETAPES[etape] === 'quiz' ? quizFini !== null : true,
+    ETAPES[etape] === 'memo'
+      ? memoFini
+      : ETAPES[etape] === 'quiz'
+        ? quizFini !== null || questions.length === 0
+        : true,
   );
 
   $effect(() => {
@@ -105,9 +109,22 @@
     <div class="texte" data-testid="mj-texte">
       {#each phrases as p (p.id)}<Phrase
           {p}
+          statut={matn.statut}
           note={modeEns ? (noteDe.get(p.id) ?? null) : null}
         />{/each}
     </div>
+    {#if seance.renvois?.length}
+      <p class="renvois" data-testid="mj-renvois">
+        <Bidi text={t('mj.voir_aussi')} />
+        {#each seance.renvois as r, i (i)}<a
+            href={resolve('/madjaliss/[[texte]]/[[n]]', lien(r.texte, r.n))}
+            data-renvoi={`${r.texte}/${r.n}`}
+            ><Bidi
+              text={t('mj.renvoi', { texte: t(`mj.t_${r.texte.replace('-', '_')}`), n: r.n })}
+            /></a
+          >{/each}
+      </p>
+    {/if}
   {:else if ETAPES[etape] === 'mots'}
     {#if seance.mots.length}
       <ul class="mots" data-testid="mj-mots">
@@ -137,7 +154,11 @@
   {:else if ETAPES[etape] === 'memo'}
     <Memoriser phrases={memo} {pid} texte={matn.id} onfin={() => (memoFini = true)} />
   {:else if ETAPES[etape] === 'quiz'}
-    <Quiz {questions} onfin={(bonnes, total) => (quizFini = { bonnes, total })} />
+    {#if questions.length}
+      <Quiz {questions} onfin={(bonnes, total) => (quizFini = { bonnes, total })} />
+    {:else}
+      <p class="muted" data-testid="mj-quiz-vide"><Bidi text={t('mj.quiz_vide')} /></p>
+    {/if}
   {:else}
     <div class="fin" data-testid="mj-fin">
       <p class="titre-fin"><Icon name="etoile" /><Bidi text={t('mj.fin_titre')} /></p>
@@ -201,6 +222,17 @@
     {#if modeEns}<p class="muted">
         <Bidi text={t(notesErreur ? 'mj.ens_erreur' : 'mj.ens_aide')} />
       </p>{/if}
+    {#if modeEns && notes?.publication}<p class="muted" data-testid="mj-ens-publication">
+        <strong><Bidi text={t('mj.ens_publication')} /></strong>
+        <Bidi text={notes.publication} />
+      </p>{/if}
+    {#each (notes?.comite ?? []).filter((c) => modeEns && c.n === seance.n) as c (c.id)}<p
+        class="muted"
+        data-testid="mj-ens-comite"
+      >
+        <strong><Bidi text={t('mj.ens_comite')} /></strong>
+        <Bidi text={c.motif} />
+      </p>{/each}
   </div>
 {/if}
 
@@ -278,6 +310,19 @@
   .mots .ar {
     display: block;
     text-align: right;
+  }
+  .renvois {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+    align-items: center;
+    margin: var(--space-m) 0 0;
+    font-size: 0.9rem;
+  }
+  .renvois a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
   .ens {
     margin-top: var(--space-m);

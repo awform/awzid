@@ -51,7 +51,15 @@ export const CYCLES: ReadonlyArray<{ n: number; textes: readonly TexteCursus[] }
 ];
 
 /** Textes ouverts (données présentes). */
-export const ACTIFS: ReadonlySet<string> = new Set(['akhdari']);
+export const ACTIFS: ReadonlySet<string> = new Set([
+  'akhdari',
+  'ashmawiyya',
+  'tuhfa',
+  'ibn-ashir',
+  'izziyya',
+  'ajurrumiyya',
+  'jazariyya',
+]);
 
 export const texteDuCursus = (id: string): TexteCursus | null =>
   CYCLES.flatMap((c) => c.textes).find((x) => x.id === id) ?? null;
