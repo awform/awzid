@@ -3140,7 +3140,7 @@
   "inv.attente_mot": "A few words about you (optional)",
   "inv.attente_consent": "I agree that my address is kept to manage this waiting list (deleted after 12 months).",
   "inv.attente_envoyer": "Send my request",
-  "inv.attente_ok": "Thank you. Your request is recorded. If a place is available, you will receive an invitation by e-mail.",
+  "inv.attente_ok": "Thank you. A confirmation e-mail has just been sent to you: click the link it contains to validate your request (please check your spam folder).",
   "erreur.invitation_requise": "An invitation code is required to create an account.",
   "erreur.invitation_inconnue": "This invitation code does not exist. Please check it.",
   "erreur.code_invalide": "This code is not in the right format (example: AWZ-ABCDE-FGHJK).",

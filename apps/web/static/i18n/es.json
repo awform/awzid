@@ -3140,7 +3140,7 @@
   "inv.attente_mot": "Unas palabras sobre usted (opcional)",
   "inv.attente_consent": "Acepto que se conserve mi dirección para gestionar esta lista de espera (se borra tras 12 meses).",
   "inv.attente_envoyer": "Enviar mi solicitud",
-  "inv.attente_ok": "Gracias. Su solicitud está registrada. Si hay una plaza disponible, recibirá una invitación por correo.",
+  "inv.attente_ok": "Gracias. Le hemos enviado un correo de confirmación: haga clic en el enlace que contiene para validar su solicitud (revise también el correo no deseado).",
   "erreur.invitation_requise": "Se necesita un código de invitación para crear una cuenta.",
   "erreur.invitation_inconnue": "Este código de invitación no existe. Compruébelo.",
   "erreur.code_invalide": "Este código no tiene el formato correcto (ejemplo: AWZ-ABCDE-FGHJK).",

@@ -2943,10 +2943,15 @@ export const waitlist = pgTable(
     invitationId: uuid('invitation_id').references(() => invitation.id, { onDelete: 'set null' }),
     decidedAt: timestamp('decided_at', { withTimezone: true }),
     decidedBy: uuid('decided_by').references(() => account.id, { onDelete: 'set null' }),
+    /** double consentement : date du clic sur le lien reçu par e-mail ; vide = non confirmée (effacée sous 7 jours) */
+    confirmedAt: timestamp('confirmed_at', { withTimezone: true }),
+    /** empreinte SHA-256 du jeton du lien de confirmation et de désinscription (le jeton n'est jamais gardé) */
+    tokenHash: text('token_hash'),
     createdAt: createdAt(),
   },
   (t) => [
     index('waitlist_status').on(t.status, t.createdAt),
+    index('waitlist_token').on(t.tokenHash),
     check('waitlist_status_check', sql`${t.status} IN ('en_attente', 'acceptee', 'refusee')`),
     check('waitlist_note', sql`${t.note} IS NULL OR char_length(${t.note}) <= 500`),
     check('waitlist_name', sql`${t.name} IS NULL OR char_length(${t.name}) <= 80`),

@@ -384,7 +384,7 @@
   "inv.attente_mot": "Un mot sur vous (facultatif)",
   "inv.attente_consent": "J’accepte que mon adresse soit gardée pour gérer cette liste d’attente (effacée après 12 mois).",
   "inv.attente_envoyer": "Envoyer ma demande",
-  "inv.attente_ok": "Merci. Votre demande est enregistrée. Si une place est disponible, vous recevrez une invitation par e-mail.",
+  "inv.attente_ok": "Merci. Un e-mail de confirmation vient de vous être envoyé : cliquez sur le lien qu’il contient pour valider votre demande (pensez à regarder dans vos courriers indésirables).",
   "erreur.invitation_requise": "Un code d’invitation est nécessaire pour créer un compte.",
   "erreur.invitation_inconnue": "Ce code d’invitation n’existe pas. Vérifiez-le.",
   "erreur.code_invalide": "Ce code n’a pas la bonne forme (exemple : AWZ-ABCDE-FGHJK).",

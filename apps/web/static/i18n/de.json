@@ -3140,7 +3140,7 @@
   "inv.attente_mot": "Ein paar Worte zu Ihnen (freiwillig)",
   "inv.attente_consent": "Ich bin damit einverstanden, dass meine Adresse zur Verwaltung dieser Warteliste gespeichert wird (Löschung nach 12 Monaten).",
   "inv.attente_envoyer": "Anfrage senden",
-  "inv.attente_ok": "Danke. Ihre Anfrage ist registriert. Wenn ein Platz frei ist, erhalten Sie eine Einladung per E-Mail.",
+  "inv.attente_ok": "Danke. Wir haben Ihnen eine Bestätigungs-E-Mail geschickt: Klicken Sie auf den enthaltenen Link, um Ihre Anfrage zu bestätigen (prüfen Sie bitte auch den Spam-Ordner).",
   "erreur.invitation_requise": "Zum Erstellen eines Kontos ist ein Einladungscode nötig.",
   "erreur.invitation_inconnue": "Diesen Einladungscode gibt es nicht. Bitte prüfen Sie ihn.",
   "erreur.code_invalide": "Dieser Code hat nicht das richtige Format (Beispiel: AWZ-ABCDE-FGHJK).",

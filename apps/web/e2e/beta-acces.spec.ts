@@ -1,4 +1,6 @@
 import { execFileSync } from 'node:child_process';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { Browser, Page, Route } from '@playwright/test';
 import { expect, password, test } from './fixtures';
 import { totp } from './totp';
@@ -168,6 +170,36 @@ test.describe('mode « invitation » et liste d’attente (écran)', () => {
     await page.getByTestId('attente-consentement').check();
     await page.getByTestId('attente-envoyer').click();
     await expect(page.getByTestId('attente-ok')).toBeVisible();
+    // double consentement : l'adresse n'est visible de l'administrateur qu'après le clic sur le lien de l'e-mail
+    // (boîte de démonstration : aucun envoi réel)
+    let jeton = '';
+    await expect
+      .poll(
+        () => {
+          const dir = process.env.E2E_MAIL_DIR!;
+          for (const f of readdirSync(dir)
+            .filter((x) => x.endsWith('.json'))
+            .sort()
+            .reverse()) {
+            const m = JSON.parse(readFileSync(join(dir, f), 'utf8'));
+            if (m.to === mail && m.kind === 'liste_attente') {
+              jeton = /#t=([\w-]+)/.exec(m.text)![1]!;
+              return true;
+            }
+          }
+          return false;
+        },
+        { timeout: 15_000 },
+      )
+      .toBe(true);
+    expect(
+      (
+        await page.request.post('/api/v1/acces/liste-attente/confirmer', {
+          headers: H,
+          data: { token: jeton },
+        })
+      ).status(),
+    ).toBe(200);
 
     // l'administrateur accepte : un code personnel est créé
     const adm = await admin(browser, 'att');

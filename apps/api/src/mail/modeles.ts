@@ -12,6 +12,8 @@ export const MAIL_KINDS = [
   'mot_de_passe_modifie',
   // bêta fermée : invitation personnelle (lien d'inscription)
   'invitation',
+  // liste d'attente (double consentement) : confirmation de l'adresse, avec lien de désinscription
+  'liste_attente',
 ] as const;
 export type MailKind = (typeof MAIL_KINDS)[number];
 export const MAIL_LOCALES = ['fr', 'en', 'es', 'de', 'ar'] as const;
@@ -21,7 +23,17 @@ interface Texts {
   hello: string;
   footer: string;
   fallback: string;
-  kinds: Record<MailKind, { subject: string; before: string[]; button?: string; after: string[] }>;
+  /** `liste_attente` n'existe qu'en français et en anglais (la page d'accueil) : les autres langues reprennent l'anglais */
+  kinds: Record<
+    Exclude<MailKind, 'liste_attente'>,
+    { subject: string; before: string[]; button?: string; after: string[] }
+  > &
+    Partial<
+      Record<
+        'liste_attente',
+        { subject: string; before: string[]; button?: string; after: string[] }
+      >
+    >;
 }
 
 const T: Record<Loc, Texts> = {
@@ -71,6 +83,17 @@ const T: Record<Loc, Texts> = {
         before: ['L’adresse e-mail de votre compte Awzid vient d’être remplacée par {email}.'],
         after: [
           'Si vous n’êtes pas à l’origine de ce changement, signalez-le sans attendre depuis la page « Aide » de l’application.',
+        ],
+      },
+      liste_attente: {
+        subject: 'Confirmez votre inscription à la liste d’attente d’Awzid',
+        before: [
+          'Vous avez demandé à rejoindre la liste d’attente de la bêta d’Awzid. Pour confirmer que cette adresse est bien la vôtre, ouvrez ce lien (valable 7 jours).',
+        ],
+        button: 'Confirmer mon inscription',
+        after: [
+          'Votre place n’est enregistrée qu’après cette confirmation. Si vous n’êtes pas à l’origine de cette demande, ignorez ce message : votre adresse sera effacée automatiquement sous 7 jours.',
+          'Pour vous désinscrire et effacer votre adresse dès maintenant : {unsub}',
         ],
       },
       invitation: {
@@ -140,6 +163,17 @@ const T: Record<Loc, Texts> = {
         before: ['The email address of your Awzid account has just been replaced by {email}.'],
         after: [
           'If you did not make this change, report it right away from the “Help” page of the app.',
+        ],
+      },
+      liste_attente: {
+        subject: 'Confirm your place on the Awzid waiting list',
+        before: [
+          'You asked to join the waiting list of the Awzid beta. To confirm that this address is yours, open this link (valid for 7 days).',
+        ],
+        button: 'Confirm my sign-up',
+        after: [
+          'Your place is only saved after this confirmation. If you did not make this request, ignore this message: your address will be deleted automatically within 7 days.',
+          'To unsubscribe and delete your address right now: {unsub}',
         ],
       },
       invitation: {
@@ -376,13 +410,14 @@ export interface RenderedMail {
 export function renderMail(
   kind: MailKind,
   locale: string,
-  vars: { link?: string; email?: string } = {},
+  vars: { link?: string; email?: string; unsub?: string } = {},
 ): RenderedMail {
   const loc: Loc = (MAIL_LOCALES as readonly string[]).includes(locale) ? (locale as Loc) : 'fr';
   const tx = T[loc];
-  const k = tx.kinds[kind];
+  const k = tx.kinds[kind] ?? T.en.kinds[kind]!;
   const rtl = loc === 'ar';
-  const fill = (s: string) => s.replace('{email}', vars.email ?? '');
+  const fill = (s: string) =>
+    s.replace('{email}', vars.email ?? '').replace('{unsub}', vars.unsub ?? '');
   const before = k.before.map(fill);
   const after = k.after.map(fill);
   const emailLine = rtl && kind === 'email_modifie' && vars.email ? [vars.email] : [];

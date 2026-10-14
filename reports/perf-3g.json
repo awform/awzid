@@ -1,22 +1,22 @@
 {
-  "ouvertureMs": 1888,
+  "ouvertureMs": 1813,
   "ouverturesMs": [
-    1816,
-    1888,
-    1993,
-    1914,
-    1838
+    1815,
+    1820,
+    1808,
+    1813,
+    1813
   ],
-  "relanceMs": 603,
+  "relanceMs": 561,
   "octetsPremiereOuvertureKo": {
     "document": 4.1,
     "stylesheet": 11.5,
-    "script": 106.1,
+    "script": 106,
     "fetch": 11.5,
     "font": 0,
     "image": 0
   },
-  "totalPremiereOuvertureKo": 133.2,
+  "totalPremiereOuvertureKo": 133.1,
   "cpu": 4,
   "reseau": "3G simulée : 150 ms, 1,6 Mbit/s descendant, 750 kbit/s montant",
   "date": "2026-10-14"

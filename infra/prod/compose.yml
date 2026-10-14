@@ -230,7 +230,13 @@ services:
     image: awform/web:${AWFORM_VERSION:-local}
     build: { context: ../.., dockerfile: infra/prod/Dockerfile, target: web }
     restart: unless-stopped
-    environment: { API_URL: 'http://api:3000' }
+    # page d'accueil publique (liste d'attente) : docs/projet/EXPLOITATION.md, § « Page d'accueil publique »
+    # (défauts prudents : automatique selon le mode d'accès, non indexable, français et anglais)
+    environment:
+      API_URL: 'http://api:3000'
+      ACCUEIL_PUBLIC: '${ACCUEIL_PUBLIC:-auto}'
+      ACCUEIL_INDEXABLE: '${ACCUEIL_INDEXABLE:-off}'
+      ACCUEIL_LANGUES: '${ACCUEIL_LANGUES:-fr,en}'
     depends_on: [api]
     logging: *logs
 

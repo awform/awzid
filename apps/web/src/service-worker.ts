@@ -65,7 +65,9 @@ const ASSETS = [
       !isMutun(f) &&
       !isDouas(f) &&
       // bêta : page d'état du service (/etat.html), qui ne sert qu'en ligne
-      !f.startsWith('/etat.'),
+      !f.startsWith('/etat.') &&
+      // page d'accueil publique (visiteurs sans compte) : jamais sur l'appareil de l'élève
+      !f.startsWith('/accueil.'),
   ),
 ];
 

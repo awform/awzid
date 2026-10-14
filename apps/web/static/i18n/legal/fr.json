@@ -160,6 +160,7 @@
         {
           "titre": "Données collectées (le strict nécessaire)",
           "paras": [
+            "Liste d'attente de la bêta (page d'accueil) : adresse électronique et langue de la page, gardées avec votre accord, uniquement pour gérer la liste d'attente et vous envoyer une invitation ; aucune lettre d'information, aucune publicité.",
             "Compte : adresse électronique et mot de passe (protégé, jamais lisible) de l'adulte ; pays ; langue ; fuseau horaire.",
             "Profil d'enfant : pseudonyme, année de naissance (jamais la date complète), niveau, avatar — aucun nom réel, aucune photo, aucune adresse.",
             "Apprentissage : réponses aux exercices, progression, hifẓ, tracés des lettres, cartes de mots, jours de travail des ados et adultes.",
@@ -174,6 +175,7 @@
         {
           "titre": "Finalités et bases légales",
           "paras": [
+            "Liste d'attente de la bêta : votre consentement (case à cocher sur la page d'accueil, confirmé par un lien envoyé à votre adresse), retirable à tout moment en écrivant à l'adresse de contact.",
             "Fournir le service demandé (exécution du contrat) ; accords spécifiques recueillis séparément, datés et retirables (consentement) : suivi par un enseignant, envoi d'une récitation, analyse de la voix, tuteur, hébergement hors du Sénégal pour les titulaires sénégalais, rappels ; sécurité, prévention des abus, traitement des signalements et amélioration du service (intérêt légitime) ; obligations comptables après la bêta (obligation légale).",
             "Aucune publicité, aucun profilage commercial, aucune revente de données, aucune personnalisation comportementale pour les enfants."
           ]
@@ -215,6 +217,7 @@
         {
           "titre": "Durées de conservation",
           "paras": [
+            "Liste d'attente de la bêta : 12 mois au plus après la demande (effacement automatique) ; 7 jours si l'adresse n'est jamais confirmée ; ou plus tôt sur demande écrite à l'adresse de contact. [À confirmer par le juriste.]",
             "Compte supprimé : effacement définitif sous 30 jours ; sauvegardes chiffrées : 14 dernières, soit 14 jours glissants (donc entièrement purgées 14 jours après l'effacement).",
             "Sessions : 30 jours après expiration. Verrous anti-essais : 24 heures. Liens envoyés par e-mail : 30 minutes (mot de passe oublié) ou 24 heures (vérification, changement d'adresse), utilisables une seule fois ; effacés avec le compte.",
             "Journal du tuteur : 12 mois au plus. Questions et alertes du tuteur : 12 mois après traitement, 24 mois au plus. Journal d'audit de sécurité : 12 mois.",
