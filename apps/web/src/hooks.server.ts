@@ -18,8 +18,11 @@ import {
   ROBOTS_TXT,
   type StatutSite,
 } from '$lib/server/acces-serveur';
+import { afficherAccueil, configAccueil, langueAccueil, reponseAccueil } from '$lib/server/accueil';
 
 const api = () => env.API_URL ?? 'http://127.0.0.1:3000';
+/** Page d'accueil publique (liste d'attente) : réglages lus à chaque requête (ACCUEIL_PUBLIC, ACCUEIL_INDEXABLE, ACCUEIL_LANGUES). */
+const accueil = () => configAccueil(env);
 
 async function lireStatut(cookie: string | null): Promise<StatutSite | null> {
   try {
@@ -42,9 +45,10 @@ async function statutSite(): Promise<StatutSite | null> {
   return v;
 }
 
-const securise = (r: Response): Response => {
+const securise = (r: Response, indexable = false): Response => {
   try {
-    r.headers.set('X-Robots-Tag', EN_TETE_ROBOTS);
+    // seule la page d'accueil publique peut être rendue indexable (ACCUEIL_INDEXABLE=on) ; tout le reste reste interdit
+    if (!indexable) r.headers.set('X-Robots-Tag', EN_TETE_ROBOTS);
     if (!r.headers.has('referrer-policy')) r.headers.set('Referrer-Policy', 'no-referrer');
     if (!r.headers.has('x-content-type-options'))
       r.headers.set('X-Content-Type-Options', 'nosniff');
@@ -84,6 +88,15 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
   }
 
+  // sans JavaScript, le formulaire de la page d'accueil arrive ici : rien n'est lu ni gardé, retour à la page
+  if (pathname === '/bienvenue' && event.request.method === 'POST')
+    return securise(
+      new Response(null, {
+        status: 303,
+        headers: { location: '/bienvenue', 'cache-control': 'no-store' },
+      }),
+    );
+
   const nav = estNavigation(event.request.method, event.request.headers.get('accept'), pathname);
   const base = nav ? await statutSite() : null;
   if (doitFermer(base, pathname, nav)) {
@@ -92,6 +105,25 @@ export const handle: Handle = async ({ event, resolve }) => {
     const perso = cookie ? await lireStatut(cookie) : null;
     if (doitFermer(perso ?? base, pathname, nav))
       return pageMaintenance(event.request.headers.get('accept-language'));
+  }
+  // page d'accueil publique : visiteur sans session sur « / » (bêta sur invitation) ou adresse /bienvenue
+  const lecture = event.request.method === 'GET' || event.request.method === 'HEAD';
+  if (nav || (lecture && pathname === '/bienvenue')) {
+    const cfg = accueil();
+    const cookie = event.request.headers.get('cookie');
+    const mode = cfg.public === 'off' ? null : ((await statutSite())?.mode ?? null);
+    if (afficherAccueil(cfg, pathname, cookie, mode))
+      return securise(
+        reponseAccueil({
+          cfg,
+          lang: langueAccueil(
+            event.url.searchParams.get('lang'),
+            event.request.headers.get('accept-language'),
+            cfg.langues,
+          ),
+        }),
+        cfg.indexable,
+      );
   }
   return securise(await resolve(event));
 };

@@ -315,7 +315,24 @@ describe.skipIf(!URL)('Bêta : trois modes, plafond, vérification, tableau (awf
     const piege = await signup(addr(), { jeton: j, site_web: 'http://spam.example' });
     expect(piege.json().error.raison).toBe('piege');
     expect((await signup(addr(), { jeton: j })).statusCode).toBe(201);
+    // la liste d'attente (page d'accueil publique) a les mêmes protections : jeton signé, délai minimal, champ piège
+    const att = (extra: Record<string, unknown> = {}) =>
+      c.req(
+        'POST',
+        '/api/v1/acces/liste-attente',
+        {},
+        { email: addr('att'), consentement: true, ...extra },
+      );
+    expect((await att()).json().error).toMatchObject({ code: 'antibot_echec', raison: 'absent' });
+    const jt = (await c.req('GET', '/api/v1/acces/jeton')).json().jeton as string;
+    expect((await att({ jeton: jt })).json().error.raison).toBe('trop_rapide');
+    await new Promise((r) => setTimeout(r, ANTIBOT_MIN_MS + 200));
+    expect((await att({ jeton: jt, site_web: 'http://spam.example' })).json().error.raison).toBe(
+      'piege',
+    );
+    expect((await att({ jeton: jt })).statusCode).toBe(202);
     await reglage({ antibot: 'off' });
+    expect((await att()).statusCode).toBe(202); // protection coupée : comme avant
     expect((await signup(addr())).statusCode).toBe(201);
   });
 

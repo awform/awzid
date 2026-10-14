@@ -150,6 +150,7 @@ describe.skipIf(!URL)(
         ['POST', '/api/v1/admin/invitations'],
         ['PUT', '/api/v1/admin/acces'],
         ['GET', '/api/v1/admin/liste-attente'],
+        ['DELETE', '/api/v1/admin/liste-attente/00000000-0000-4000-8000-000000000000'],
       ] as const)
         expect((await c.req(m, u, P, m === 'PUT' ? { site: 'ouvert' } : {})).statusCode).toBe(403);
       expect((await c.req('GET', '/api/v1/admin/acces', A)).statusCode).toBe(200);
@@ -381,9 +382,22 @@ describe.skipIf(!URL)(
         (await c.req('POST', `/api/v1/admin/liste-attente/${idRefus}/refuser`, A, {})).statusCode,
       ).toBe(404);
       const toutes = (await c.req('GET', '/api/v1/admin/liste-attente', A)).json()
-        .demandes as Array<{ adresse: string; statut: string }>;
+        .demandes as Array<{ id: string; adresse: string; statut: string }>;
       expect(toutes.find((d) => d.adresse === dest)?.statut).toBe('acceptee');
       expect(toutes.find((d) => d.adresse === refusee)?.statut).toBe('refusee');
+      // désinscription / droit à l'effacement : la demande disparaît ; une seconde fois, introuvable
+      const idEfface = toutes.find((d) => d.adresse === refusee)!.id;
+      expect((await c.req('DELETE', `/api/v1/admin/liste-attente/${idEfface}`, A)).statusCode).toBe(
+        200,
+      );
+      expect((await c.req('DELETE', `/api/v1/admin/liste-attente/${idEfface}`, A)).statusCode).toBe(
+        404,
+      );
+      const apres = (await c.req('GET', '/api/v1/admin/liste-attente', A)).json()
+        .demandes as Array<{
+        adresse: string;
+      }>;
+      expect(apres.some((d) => d.adresse === refusee)).toBe(false);
     });
 
     it('liste d’attente : limite par adresse IP et effacement après 12 mois', async () => {

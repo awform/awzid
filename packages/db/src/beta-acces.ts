@@ -527,6 +527,15 @@ export async function decideWaitlist(
   return r.length > 0;
 }
 
+/** Effacement d'une demande (droit à l'effacement / désinscription demandée par écrit) : vrai si elle existait. */
+export async function deleteWaitlist(db: Db, id: string): Promise<boolean> {
+  const r = await db
+    .delete(t.waitlist)
+    .where(eq(t.waitlist.id, id))
+    .returning({ id: t.waitlist.id });
+  return r.length > 0;
+}
+
 export async function countWaitlist(db: Db): Promise<Record<string, number>> {
   const rows = await db
     .select({ s: t.waitlist.status, n: sql<number>`count(*)::int` })

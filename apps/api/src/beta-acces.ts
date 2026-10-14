@@ -31,6 +31,7 @@ import {
   countWaitlist,
   createInvitation,
   decideWaitlist,
+  deleteWaitlist,
   getWaitlist,
   inscriptionEffective,
   listInvitations,
@@ -49,7 +50,7 @@ import {
   type AccesStatut,
   type Db,
 } from '@awform/db';
-import { emettreJeton } from './antibot.js';
+import { emettreJeton, verifierJeton } from './antibot.js';
 import { EMAIL, INVITATION_TRIES_PER_HOUR } from './auth/common.js';
 import { audit, hasRole, lockedUntil, recordFailure } from './auth/service.js';
 import { err, UUID } from './guards.js';
@@ -213,7 +214,15 @@ export function registerBetaAcces(
   );
 
   app.post<{
-    Body: { email: string; nom?: string; mot?: string; langue?: string; consentement: boolean };
+    Body: {
+      email: string;
+      nom?: string;
+      mot?: string;
+      langue?: string;
+      consentement: boolean;
+      jeton?: string;
+      site_web?: string;
+    };
   }>(
     '/api/v1/acces/liste-attente',
     {
@@ -228,6 +237,9 @@ export function registerBetaAcces(
             mot: { type: 'string', maxLength: 500 },
             langue: { type: 'string', maxLength: 10 },
             consentement: { type: 'boolean' },
+            // anti-robots (réglage « antibot »), comme l'inscription : jeton signé émis à l'ouverture + champ piège caché
+            jeton: { type: 'string', maxLength: 100 },
+            site_web: { type: 'string', maxLength: 200 },
           },
         },
       },
@@ -235,6 +247,13 @@ export function registerBetaAcces(
     async (req, reply) => {
       // RGPD : l'adresse n'est gardée qu'avec l'accord de la personne, pour la seule gestion de la liste
       if (req.body.consentement !== true) return err(reply, 400, 'consentement_requis');
+      // anti-robots sans service tiers : champ piège vide, jeton signé ni trop récent (3 s) ni trop ancien (2 h)
+      if ((await readAcces(db)).antibot === 'on') {
+        const verdict = req.body.site_web
+          ? 'piege'
+          : verifierJeton(opts.secretKey ?? null, req.body.jeton);
+        if (verdict !== 'ok') return err(reply, 400, 'antibot_echec', { raison: verdict });
+      }
       const key = `attente:${req.ip}`;
       if (await lockedUntil(db, key)) return err(reply, 429, 'trop_de_demandes');
       await recordFailure(db, key, 10); // au plus 10 demandes par heure et par adresse IP
@@ -516,6 +535,20 @@ export function registerBetaAcces(
         expireLe: inv.expiresAt,
         envoye,
       };
+    },
+  );
+
+  // désinscription / droit à l'effacement : la demande écrite à contact@ est exécutée ici (journal d'audit sans adresse)
+  app.delete<{ Params: { id: string } }>(
+    '/api/v1/admin/liste-attente/:id',
+    {
+      preHandler: needAdmin,
+      schema: { params: { type: 'object', required: ['id'], properties: { id: UUID } } },
+    },
+    async (req, reply) => {
+      if (!(await deleteWaitlist(db, req.params.id))) return err(reply, 404, 'introuvable');
+      await audit(db, req.auth!.accountId, 'attente.effacement', req.params.id);
+      return { ok: true };
     },
   );
 

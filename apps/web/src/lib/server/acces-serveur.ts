@@ -25,6 +25,8 @@ export function estNavigation(method: string, accept: string | null, pathname: s
 
 export interface StatutSite {
   site: 'ouvert' | 'ferme';
+  /** mode d'accès annoncé par l'API : ferme | invitation | ouvert */
+  mode?: string;
   admin?: boolean;
 }
 

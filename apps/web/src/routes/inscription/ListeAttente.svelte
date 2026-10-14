@@ -2,6 +2,8 @@
   import Bidi from '$lib/Bidi.svelte';
   import { locale, t } from '$lib/i18n';
   import { call } from '$lib/session';
+  import { onMount } from 'svelte';
+  import { chargerStatut } from '$lib/acces';
 
   /**
    * Bêta fermée : demande d'invitation (liste d'attente validée à la main). L'adresse n'est gardée qu'avec l'accord
@@ -14,6 +16,16 @@
   let busy = $state(false);
   let envoye = $state(false);
   let erreur = $state('');
+  /** anti-robots (réglage « antibot ») : jeton signé reçu à l'ouverture + champ piège que seul un robot remplit */
+  let jeton = $state('');
+  let piege = $state('');
+  async function nouveauJeton() {
+    const j = await call<{ jeton: string }>('GET', '/acces/jeton');
+    jeton = j.ok && j.data ? j.data.jeton : '';
+  }
+  onMount(async () => {
+    if ((await chargerStatut())?.antibot === 'on') await nouveauJeton();
+  });
 
   async function envoyer(e: SubmitEvent) {
     e.preventDefault();
@@ -25,10 +37,15 @@
       ...(mot.trim() ? { mot: mot.trim() } : {}),
       langue: locale(),
       consentement,
+      ...(jeton ? { jeton } : {}),
+      ...(piege ? { site_web: piege } : {}),
     });
     busy = false;
     if (r.ok) envoye = true;
-    else erreur = t(`erreur.${r.code ?? 'reseau'}`);
+    else {
+      erreur = t(`erreur.${r.code ?? 'reseau'}`);
+      if (r.code === 'antibot_echec') await nouveauJeton();
+    }
   }
 </script>
 
@@ -40,6 +57,10 @@
   {:else}
     <p><Bidi text={t('inv.attente_intro')} /></p>
     <form onsubmit={envoyer}>
+      <!-- champ piège anti-robots : invisible et hors du parcours au clavier -->
+      <div class="piege" aria-hidden="true">
+        <input name="site_web" type="text" tabindex="-1" autocomplete="off" bind:value={piege} />
+      </div>
       <label for="att-email"><Bidi text={t('inv.attente_email')} /></label>
       <input
         id="att-email"
@@ -92,6 +113,13 @@
     width: 24px;
     height: 24px;
     flex: none;
+  }
+  .piege {
+    position: absolute;
+    inset-inline-start: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
   .error {
     color: var(--bad-ink);

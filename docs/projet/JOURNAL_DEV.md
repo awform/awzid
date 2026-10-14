@@ -8,6 +8,17 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 14/10/2026 — Page d'accueil publique avec liste d'attente (branche `accueil-wip`, étiquette `avant-accueil`, NON fusionnée, rien de déployé)
+
+Accord du client (« Vas y »). Worktree `~/awform-accueil` (depuis `main` 845bac2).
+
+- **État des lieux** : un visiteur anonyme de la bêta « sur invitation » téléchargeait toute l'application (≈ 110 Ko) pour voir un écran court (`AccueilBeta.svelte`) puis `/inscription#attente` (`ListeAttente.svelte` : e-mail, prénom et mot facultatifs, case de consentement). API `POST /acces/liste-attente` : consentement obligatoire, 10 demandes par heure et par IP, 200 par heure au total, réponse identique que l'adresse existe ou non, effacement après 12 mois. **Anti-robots (jeton signé + champ piège) : seulement sur l'inscription, pas sur la liste d'attente. Vérification d'e-mail : seulement sur les comptes, aucune confirmation pour la liste d'attente.** Le texte de confidentialité ne parlait pas de la liste d'attente.
+- **Fait** : page servie par le serveur web (`lib/server/accueil.ts`, hook) à `/bienvenue` et sur `/` pour les visiteurs sans session en mode « sur invitation » ; ≈ 13 Ko de HTML, une police (Lexend 600, 15 Ko), un script de 3 Ko, aucun tiers, aucun cookie ni stockage, logo SVG de la marque, thème clair/sombre de la charte, FR/EN (`static/i18n/accueil/`). Réglages `ACCUEIL_PUBLIC` (auto/on/off), `ACCUEIL_INDEXABLE` (off par défaut), `ACCUEIL_LANGUES` (EXPLOITATION § 16.10, compose.yml). API : anti-robots étendu à la liste d'attente (l'écran de l'application envoie aussi le jeton), `DELETE /admin/liste-attente/:id` (effacement sur demande, audit). Texte juridique : paragraphes liste d'attente (FR/EN), registre et durées. Service worker : `/accueil.js` jamais préchargé.
+- **Tests** : `accueil.test.ts` (18), API `beta-acces` et `beta-modes` (33, dont anti-robots et effacement), web vitest 734 + 18, `e2e/accueil.spec.ts` (affichage, poids, absence de suivi, envoi réel, anti-robot, erreurs, langues, sombre, axe A/AA, clavier). Budgets : appareil élève 344,7 Ko (≤ 350, marge 5,3 ; 343,6 avant : +1,1 Ko dû au jeton et au champ piège de `ListeAttente`), première ouverture 112,3 Ko.
+- **Reste** : bouton d'effacement dans l'espace administrateur ; décision sur une confirmation par e-mail ; indexation (quatre gestes, EXPLOITATION § 16.10) ; texte à valider (`application/beta/PAGE_ACCUEIL_TEXTE.md`) ; captures dans `application/beta/captures-accueil/`.
+
+---
+
 ## 14/10/2026 — Déploiement de la version à jour (`main`, images 197efe3) sur le serveur de bêta `awzid-beta` — web FERMÉ
 
 Autorisation du client (14/10, « Oui » au déploiement sur le serveur de la bêta). Procédure suivie : `EXPLOITATION.md` § 15 « Mise à jour » (`pousser-images` → envoi de `infra/` → `deployer-beta.sh`). La branche `infra-gcp-wip` (929c561) est **déjà un ancêtre de `main`** : aucune fusion d'infra à faire. Étiquette de sécurité posée : `avant-deploiement-beta` (= `c2ae8f9`). `main` = `c2ae8f9` ; les images déployées sont celles de `197efe3` (`c2ae8f9` n'en diffère que par le journal).
