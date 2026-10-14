@@ -11,19 +11,26 @@
 set -uo pipefail
 PROD="$(cd "$(dirname "$0")" && pwd)"
 CTN="awzid-caddy-essai-$$"
+FAUX="awzid-caddy-faux-$$"
+NET="awzid-caddy-net-$$"
 BAD=0
 ok() { printf '  ok      %s\n' "$*"; }
 ko() { printf '  ÉCHEC   %s\n' "$*"; BAD=1; }
 ALIAS_DIR="$(mktemp -d)"
 cleanup() {
-  docker rm -f "$CTN" >/dev/null 2>&1 || true
+  docker rm -f "$CTN" "$FAUX" >/dev/null 2>&1 || true
+  docker network rm "$NET" >/dev/null 2>&1 || true
   find "$ALIAS_DIR" -delete 2>/dev/null || true
 }
 trap cleanup EXIT
 # alias de sections : DÉSACTIVÉS par défaut (dossier vide), activés plus bas par alias-sections.sh
 mkdir -p "$ALIAS_DIR/alias"
 echo "SITE=awzid.test" > "$ALIAS_DIR/caddy.env"
-docker run -d --name "$CTN" -p 127.0.0.1:18080:80 -p 127.0.0.1:18443:443 \
+# faux amont « web » et « api » (réponse fixe sur le port 3000) : les en-têtes de Caddy se contrôlent sur des réponses 200
+# (sur une erreur 502 de passerelle, la page de maintenance remplace la réponse et ses en-têtes)
+docker network create "$NET" >/dev/null 2>&1 || { echo "Docker indisponible"; exit 2; }
+docker run -d --name "$FAUX" --network "$NET" --network-alias web --network-alias api caddy:2 caddy respond --listen :3000 --body ok >/dev/null || { echo "Docker indisponible"; exit 2; }
+docker run -d --name "$CTN" --network "$NET" -p 127.0.0.1:18080:80 -p 127.0.0.1:18443:443 \
   -v "$PROD/Caddyfile:/etc/caddy/Caddyfile:ro" -v "$PROD/maintenance:/srv/maintenance:ro" \
   -v "$ALIAS_DIR/alias:/etc/caddy/alias:ro" \
   -e SITE=awzid.test -e SITE_ALIAS_1=www.awzid.test -e SITE_ALIAS_2=app.awzid.test \
@@ -64,6 +71,11 @@ echo "== invisibilité servie par Caddy"
 hdr https://awzid.test:18443/api/v1/health | grep -qi "^content-security-policy: default-src 'none'; frame-ancestors 'none'" && ok "api/* : CSP fermée" || ko "api/* : CSP absente"
 hdr https://awzid.test:18443/api | grep -qi "^content-security-policy: default-src 'none'; frame-ancestors 'none'" && ok "/api (racine) : CSP fermée" || ko "/api (racine) : CSP absente"
 hdr https://awzid.test:18443/documents/fiche-consentement-ecole.html | grep -qi "^content-security-policy: default-src 'none'.*frame-ancestors 'none'" && ok "documents/* : CSP stricte" || ko "documents/* : CSP absente"
+
+# Cross-Origin-Resource-Policy sur les fichiers statiques (ZAP 90004, R7 du 14/10/2026)
+for u in https://awzid.test:18443/robots.txt https://awzid.test:18443/favicon.svg https://awzid.test:18443/documents/fiche-consentement-ecole.html https://awzid.test:18443/api/v1/health; do
+  hdr "$u" | grep -qi '^cross-origin-resource-policy: same-origin' && ok "CORP same-origin : ${u#https://awzid.test:18443}" || ko "CORP absente : ${u#https://awzid.test:18443}"
+done
 
 echo "== alias de sections : désactivés par défaut (aucune redirection, aucun certificat)"
 [ "$(cod "https://quran.awzid.test:18443/")" != 301 ] && ok "quran.awzid.test non redirigé tant que l'alias est désactivé" || ko "alias actif par défaut"

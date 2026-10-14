@@ -207,8 +207,7 @@ Prix approximatifs **par mois**, Paris, euros, hors taxes (estimation du 13/10/2
 
 À savoir, franchement :
 - **Une seule alerte de budget : 80 € par mois** (réglée dans la console) ; le coût normal est d’environ 60 €, elle ne sonne donc qu’en cas de dérive. Le crédit de ≈ 264 € (expire début janvier 2027, soit ≈ 2,5 mois) couvre environ 180 à 200 € de dépenses :
-  après le 02/01/2027, c’est votre carte qui paie. Une machine plus petite (`e2-medium`, ≈ 30 €) est possible **sans l’écoute IA de la récitation**
-  (elle demande ≈ 3 Go de mémoire).
+  après le 02/01/2027, c’est votre carte qui paie. La machine **reste `e2-standard-2`** (votre décision du 14/10 : la première impression est la bonne) avec l’écoute IA ouverte, réglée pour deux processeurs (1,5 CPU, un calcul à la fois).
 - **Disjoncteur** : à l’alerte de 80 €, je coupe seulement les fonctions coûteuses (écoute IA, voix à la demande) avec le réglage
   `AWFORM_COUTS_COUPES=1` ; **la machine n’est jamais arrêtée** et rien n’est supprimé. Google met les coûts à jour avec quelques heures de
   retard : c’est un avertissement, pas un arrêt à l’euro près. `infra/gcp/plafond-budget.sh` (mode à blanc) ne sert qu’à recréer cette alerte unique.
@@ -226,7 +225,7 @@ Prix approximatifs **par mois**, Paris, euros, hors taxes (estimation du 13/10/2
 
 ## Décisions que j’attends de vous
 
-1. Taille de la machine (garder `e2-standard-2` avec l’écoute IA, ou réduire) et **montant du plafond** de dépense.
+1. ~~Taille de la machine~~ : tranché, `e2-standard-2` conservée. Reste le **montant du plafond** de dépense.
 2. Quelle boîte OVH sert à l’envoi (`no-reply@awzid.com` ?) et quelle adresse reçoit les alertes.
 3. Accord pour la voix Wavenet (après mon estimation chiffrée) et l’import de l’audio du Coran.
 4. Le jour où vous me dites « ouvre ».

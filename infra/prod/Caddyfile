@@ -26,6 +26,9 @@
 		Referrer-Policy no-referrer
 		Permissions-Policy "camera=(), geolocation=(), payment=(), microphone=(self)"
 		Cross-Origin-Opener-Policy same-origin
+		# fichiers statiques (ZAP 90004, R7 du 14/10/2026) : ressources servies à leur seule origine (l'application, le relais d'école
+		# et la démo chargent tout depuis leur propre nom ; aucun embarquement par un autre site)
+		Cross-Origin-Resource-Policy same-origin
 		X-Frame-Options DENY
 		# bêta fermée : invisible des moteurs de recherche et des archives (aussi posé par l'application)
 		X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"

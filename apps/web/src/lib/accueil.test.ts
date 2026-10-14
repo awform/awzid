@@ -79,7 +79,7 @@ describe('contenu de la page', () => {
 
   it('message principal, mention de la bêta, un seul bouton « Rejoindre la liste d’attente »', () => {
     expect(fr).toContain(
-      '<h1>Apprends l’arabe pas à pas, avec la méthode des écoles, sources citées.</h1>',
+      '<h1>Apprenez l’arabe pas à pas, avec la méthode des écoles, sources citées.</h1>',
     );
     expect(fr).toContain('Bêta fermée sur invitation');
     expect(fr.match(/<button/g)).toHaveLength(1);

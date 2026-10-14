@@ -28,7 +28,7 @@ Aucune commande créant une ressource payante n'a été exécutée pour ce docum
 | **Empreintes + cache long** : `/_app/immutable/*` est servi avec un nom haché (cache d'un an côté navigateur) ; l'élève qui revient ne retélécharge rien (relance en 0,8 s, service worker) | trafic de retour ≈ 0 ; 1 000 élèves × 134 Ko = 134 Mo/mois, soit < 0,02 € | **oui** |
 | **Budget appareil élève** ramené à 343,6 Ko, pages en ligne seulement non préchargées | −6 Ko par installation et par mise à jour (≈ −2 % de trafic de mise à jour) | **oui** (ce lot) |
 | Cache HTTP des fichiers non hachés (`/i18n/*.json`, polices : ETag + `max-age` court puis revalidation) | négligeable en coût (≈ 0,3 Mo/élève) ; confort hors ligne | reste |
-| **Dimensionnement de la VM** : sans l'écoute (fermée aux élèves en production) 1,4 Go suffisent. e2-medium (1 vCPU partagé, 4 Go) ≈ 25 € | **−26 €/mois** si l'écoute reste fermée ; à refaire passer en e2-standard-2 avant d'ouvrir l'écoute (arrêt ≈ 2 min) | reste (décision du client) |
+| **Dimensionnement de la VM** : DÉCIDÉ (client, 14/10, « la première impression est la bonne ») : la machine **reste e2-standard-2** (2 vCPU, 8 Go), l'écoute IA reste ouverte ; la piste d'une machine plus petite (e2-medium) est ABANDONNÉE, aucune économie n'est comptée dessus | 0 (≈ 51 €/mois conservés) | **décidé** |
 | Engagement 1 an sur la VM (remise ≈ 37 %) | −19 €/mois, mais engagement ferme : non recommandé avant la fin de la bêta | non |
 | **Audio sur bucket froid** : 13 Go du Coran + 0,9 Go de leçons. Standard ≈ 0,023 $/Go = ≈ 0,3 €/mois ; Nearline ≈ 0,17 € ; sur disque de la VM ≈ 1,5 €/mois | gain ≈ 1 €/mois seulement : le froid ne vaut pas sa latence ; garder Standard (accès régulier), cycle de vie seulement sur les sauvegardes (déjà 30 jours) | reste (bucket Standard à créer, pas de cycle froid) |
 | Trafic de l'audio : mettre en cache sur l'appareil (déjà fait, hors ligne) ; 1 000 élèves × 20 écoutes × 1,5 Mo ≈ 30 Go | ≈ 3,6 €/mois sans cache, ≈ 1 € avec cache appareil | **oui** (cache appareil) |
@@ -48,9 +48,23 @@ Aucune commande créant une ressource payante n'a été exécutée pour ce docum
 
 Anciens chiffres abandonnés (ne plus les citer comme seuils) : 10 €, 45 € (plafond qui arrêtait la machine) et 60 €.
 
+## 2 ter. Réglages de l'écoute IA sur 2 vCPU (lot 8, R1, 14/10/2026)
+
+Mesuré (rapport de charge du 14/10) : une analyse de 10 s coûte ≈ 3,5 secondes-cœur ; avec les anciens défauts (6 CPU, 3 fils, concurrence 2) elle
+écrasait l'API sur 2 vCPU (p95 ×10). L'écoute reste OUVERTE (décision du client) mais avec des valeurs sûres, sans coût supplémentaire :
+
+| Variable (`infra/prod/.env`, lue par Docker Compose) | Défaut | Rôle |
+|---|---|---|
+| `AWFORM_ECOUTE_CPUS` | **1,5** | plafond de CPU du conteneur d'écoute (0,5 CPU reste à Caddy, à l'API et à la base) |
+| `AWFORM_ECOUTE_THREADS` | **1** | fils par calcul |
+| `AWFORM_ECOUTE_CONCURRENCE` | **1** | un seul calcul à la fois (les autres attendent dans la file de 8, puis « réessaie dans un instant ») |
+
+Coût : aucun (même machine). Effet : une analyse plus longue (quelques secondes de plus) mais l'API et la connexion restent réactives. Sur une machine plus grande,
+remonter ces trois valeurs dans `.env` (voir `EXPLOITATION.md`, § 15).
+
 ## 3. Ce qui reste (reporté avant l'étape 2)
 
-1. Décision VM : e2-medium tant que l'écoute est fermée (−26 €/mois), e2-standard-2 à l'ouverture de l'écoute.
+1. ~~Décision VM~~ : tranchée le 14/10 par le client : **e2-standard-2 conservée** (écoute IA ouverte, première impression soignée) ; aucune piste e2-medium.
 2. ~~Alerte de budget~~ : faite, une seule alerte à 80 €/mois (réglée par le client) ; disjoncteur applicatif des fonctions coûteuses, jamais de la machine.
 3. Copie de l'audio dans un bucket Standard (13,9 Go ≈ 0,3 €/mois) plutôt que sur le disque (≈ 1,5 €/mois) :
    gain faible, utile surtout pour sortir l'audio de la VM.

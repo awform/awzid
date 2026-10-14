@@ -36,11 +36,11 @@ for i in awform/api awform/web awform/worker awform/outils-audio awzid/ecoute-ia
 done
 
 echo "== 2. réglages de la machine"
-# 2 vCPU / 8 Go : l'écoute (≈ 2,3 Go) borne à 2 CPU et 3 Go, une écoute à la fois
+# 2 vCPU / 8 Go (e2-standard-2) : l’écoute (≈ 2,3 Go) borne à 1,5 CPU, 3 Go et 1 fil, un calcul à la fois (laisse 0,5 CPU à Caddy, à l’API et à la base)
 cat > "$PROD/.env" <<EOF
-AWFORM_ECOUTE_CPUS=2
+AWFORM_ECOUTE_CPUS=1.5
 AWFORM_ECOUTE_MEM=3g
-AWFORM_ECOUTE_THREADS=2
+AWFORM_ECOUTE_THREADS=1
 AWFORM_ECOUTE_CONCURRENCE=1
 EOF
 MODELE="${AWFORM_MODELE_ECOUTE:-$HOME/modeles-ia/nvidia_stt_ar_fastconformer_hybrid_large_pcd_v1.0}"

@@ -29,7 +29,7 @@ test.describe('affichage', () => {
     expect(r?.status()).toBe(200);
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
     await expect(page.locator('h1')).toHaveText(
-      'Apprends l’arabe pas à pas, avec la méthode des écoles, sources citées.',
+      'Apprenez l’arabe pas à pas, avec la méthode des écoles, sources citées.',
     );
     await expect(page.getByText('Bêta fermée sur invitation').first()).toBeVisible();
     await expect(page.getByRole('button')).toHaveCount(1);

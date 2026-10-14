@@ -82,5 +82,5 @@ Parcours réalistes à paliers (5 à 400 utilisateurs simultanés), conteneurs a
 l'e2-standard-2. **Plateau ≈ 350 req/s** ; p95 < 500 ms jusqu'à ≈ 220 req/s (≈ 130 à 150 utilisateurs virtuels, soit
 ~ 1 000 élèves actifs en hypothèse) ; 0 erreur jusqu'à 400 UV. Goulot : processeur (PostgreSQL d'abord, ≈ 2 à 2,7 ms par
 requête ; puis l'API). Connexion : ≈ 45/s au plus (argon2id). **Écoute IA : ≈ 3,5 secondes-cœur par analyse de 10 s ;
-réglages par défaut (6 CPU, 3 fils, concurrence 2) à ne pas garder sur 2 vCPU** (p95 de l'API ×10 pendant une analyse).
+anciens réglages par défaut (6 CPU, 3 fils, concurrence 2) à ne pas garder sur 2 vCPU** (p95 de l'API ×10 pendant une analyse). **Corrigé au lot 8 (R1, 14/10) : défauts `AWFORM_ECOUTE_CPUS=1.5`, `AWFORM_ECOUTE_THREADS=1`, `AWFORM_ECOUTE_CONCURRENCE=1` (compose et déploiement de la bêta) ; l'écoute reste ouverte.**
 Détail, recommandations R1 à R10 : `application\beta\RAPPORT_CHARGE_SECURITE_14-10.md` ; outils `infra/charge/`.

@@ -197,8 +197,8 @@ services:
         MPLCONFIGDIR: /tmp,
         ECOUTE_NOM: nemo_rnnt,
         ECOUTE_MODELE: /model/stt_ar_fastconformer_hybrid_large_pcd_v1.0.nemo,
-        ECOUTE_CONCURRENCE: '${AWFORM_ECOUTE_CONCURRENCE:-2}',
-        ECOUTE_THREADS: '${AWFORM_ECOUTE_THREADS:-3}',
+        ECOUTE_CONCURRENCE: '${AWFORM_ECOUTE_CONCURRENCE:-1}',
+        ECOUTE_THREADS: '${AWFORM_ECOUTE_THREADS:-1}',
         ECOUTE_FILE: '8',
         ECOUTE_MAX_S: '300',
       }
@@ -207,8 +207,8 @@ services:
         '${AWFORM_MODELE_ECOUTE:-~/modeles-ia/nvidia_stt_ar_fastconformer_hybrid_large_pcd_v1.0}:/model:ro',
       ]
     # petite machine (serveur de bêta Google Cloud, 2 vCPU) : AWFORM_ECOUTE_CPUS / _MEM / _THREADS /
-    # _CONCURRENCE dans infra/prod/.env du serveur (lu par Docker Compose, hors dépôt) ; défaut : 6 CPU, 6 Go
-    cpus: ${AWFORM_ECOUTE_CPUS:-6}
+    # _CONCURRENCE dans infra/prod/.env du serveur (lu par Docker Compose, hors dépôt) ; défauts sûrs pour 2 vCPU : 1,5 CPU, 6 Go, 1 fil, 1 calcul
+    cpus: ${AWFORM_ECOUTE_CPUS:-1.5}
     mem_limit: ${AWFORM_ECOUTE_MEM:-6g}
     # « healthy » seulement quand le modèle est chargé (/sante -> pret) ; démarrage du modèle : 20 à 50 s
     healthcheck:
