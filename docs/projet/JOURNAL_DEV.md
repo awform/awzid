@@ -8,6 +8,30 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 14/10/2026 — Audio du Coran transféré sur le serveur de bêta `awzid-beta` (accord du client du 14/10) — web toujours FERMÉ
+
+**Résultat** : 9 récitateurs, **55 984 MP3, 13 105 739 013 octets (12,2 Gio)** dans le volume `awform_audio` du serveur, tous **actifs** (`coran-audio etat`). Vérification : le SHA-256 de chacun des 55 984 fichiers du volume du serveur est identique à celui du volume de la VM de dev (même liste triée, même condensat `9aacec61…`), 0 fichier hors `.mp3`. Aucun droit, aucun pare-feu (`awzid-allow-web` toujours désactivée), aucun compte, aucun `sudo` ; aucun redémarrage de conteneur (les 6 conteneurs tournaient depuis le déploiement, l'API lit le volume en lecture seule).
+
+**Méthode** (procédure documentée, EXPLOITATION §7, adaptée à la place disque) :
+- Source = `~/coran-audio-source` de la VM de dev. Seuls les fichiers nécessaires sont partis : ceux dont l'empreinte est celle d'un fichier du volume (pas de dossier `_backup*`, `_archives`, `_rapports`, ni les fichiers de sourate entière inutilisés — seuls la sourate 42 de Muhanna et la 67 de Sediki servent de repli). 29 lots de ≈ 500 Mo par récitateur + 1 lot complémentaire.
+- Flux `tar` dans le tunnel IAP (`gcloud compute ssh --tunnel-through-iap`), dans `~/coran-audio-source/.recu/<lot>` sur le serveur ; vérification `sha256sum -c` du lot et comptage, puis seulement déplacement (liens durs) vers `~/coran-audio-source/…` ; journal de reprise `done.lots`, relance automatique (10 essais), contrôle d'espace libre avant chaque lot (arrêt sous 15 Gio ; minimum constaté : 24 Gio).
+- Import par récitateur avec le service `coran-audio` : `importer --recitateur <id> <dossiers du plan COMPLEXE_IMPORT> --activer` (équivalent de `importer-valides` pour un seul récitateur, car la source entière + le volume ne tenaient pas ensemble dans les 36 Gio libres), après `catalogue --licence-url … --licence-texte …` (texte de licence identique à celui de la démo). Contrôles de l'outil : 0 bloquant ; puis contrôle SHA-256 du volume contre celui de la VM de dev, puis effacement de la source temporaire du récitateur.
+- Scripts et journal sur la VM de dev, hors dépôt : `~/transfert-coran/` (`plan.py`, `transfert2.sh`, `import.sh`, `guard.py`, `journal.log`, `done.lots`, manifestes `volume-dev.sha256`, `source-dev.sha256`).
+
+**Durée** : 11:56 → 21:57 (≈ 10 h) ; 3 à 4 flux IAP en parallèle (≈ 170-240 Kio/s chacun, ≈ 550 Kio/s cumulés au mieux) au lieu d'un seul (≈ 220 Kio/s).
+
+**Incidents** (aucun fichier tronqué laissé en place, tout vérifié) :
+1. Ordre des options de `tar` (échec immédiat, corrigé).
+2. Chien de garde trop strict (60 Kio/s) : un lot de 500 Mo tué à 99 % (≈ 45 min perdues) ; seuil ramené à 16 Kio/s. Une écriture bloquée ne le déclenchait pas (flux calé 2 h 20 puis 3 h) : version à fil séparé, flux calés relancés à la main.
+3. Script d'import : `docker compose run -T` lisait l'entrée standard du script (code de retour perdu) ; import déjà fait, relancé en mode vérification seule (`SKIP_IMPORT=1`) puis corrigé.
+4. **Qālūn bloqué par l'outil** (« rien n'a été copié ») : le fichier 1 d'al-Fātiḥa (basmala, annexe `01-001001-A01.mp3`) n'avait pas été envoyé (absent du volume, mais exigé par le contrôle de l'outil pour reconnaître la basmala). Envoyé en lot complémentaire, import refait : 6 214/6 214, 1 avertissement `basmala_fatiha` (même résultat que sur la démo).
+5. Muhanna : connexion SSH coupée (255) pendant l'import ; l'import était terminé (6 183/6 236 actif, sourate 42 en fichier entier, comme prévu) ; vérification refaite.
+6. Hors périmètre : en préparant les scripts j'ai écrasé quelques petits fichiers `a.sh` … `n.sh` du dossier temporaire de session (scratchpad) de la machine locale ; sans effet sur le dépôt.
+
+**Espace disque du serveur** : 24 Go libres sur 49 (`/dev/sda1`, 52 % utilisé). Image `alpine` tirée pour un contrôle, retirée. Dossier vide `~/coran-audio-source.vide-root` (root, vide) laissé tel quel, comme `~/lecons-audio.vide-root`.
+
+**Comment vérifier qu'un fichier est servi (sans compte)** : (a) `docker exec awform-api-1 sh -c 'ls /audio/ayyoub-hafs | head -n 1'` puis `head -c 3` du fichier (ID3) et `touch /audio/x` → « Read-only file system » (le volume est bien monté en lecture seule dans l'API) ; (b) `coran-audio etat` (9 × « actif ») ; (c) les routes du Coran répondent 401 à un anonyme (vérifié sur `/api/v1/quran/audio/reciters` ; santé 200) ; `GET /api/v1/quran/audio/file/<récitateur>/<fichier>` donnera 200/206 à un compte avec session : la vraie lecture se teste donc avec un compte de test (décision du client).
+
 ## 14/10/2026 — Lot 8 : fusion de la page d'accueil et de la sécurité/charge, corrections R1 R2 R7 R10, effacement de la liste d'attente, SMTP OVH préparé (démo privée)
 
 Branche `lot8-wip` (worktree `~/awform-lot8`, depuis `main` 845bac2 ; tag de sécurité `avant-lot8`), intégrée dans `main`, **démo seulement** redéployée (la bêta `awzid-beta` n'a PAS été touchée : le transfert d'audio du Coran y tournait ; pare-feu et DNS non modifiés, aucun compte réel, aucun e-mail réel).
