@@ -9,7 +9,7 @@ bloquant. Compression Brotli (qualité 11).
 | **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | 345.1 Ko | ≤ 350.0 Ko | oui |
 | (a) marge restante sous le budget de l'appareil élève | 4.9 Ko | ≥ 3.0 Ko | oui |
 | **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (`/`) | 112.4 Ko | ≤ 150.0 Ko | oui |
-| **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | 1.81 s (élève, premier lancement ; relance 0.56 s ; mesuré le 2026-10-14) | < 3 s | oui |
+| **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | 1.90 s (élève, premier lancement ; relance 1.10 s ; mesuré le 2026-10-14) | < 3 s | oui |
 | Page la plus lourde au premier chargement (`/coran/lecteur`) | 148.3 Ko | ≤ 150.0 Ko | oui |
 
 ## Détail
