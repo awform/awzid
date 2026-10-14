@@ -11,7 +11,12 @@
 //    directeur) : toutes en publication différée.
 //  - Renvois : séances des autres textes qui traitent du même sujet (alignement du référent), quand la phrase cible
 //    appartient à une séance.
-// Usage : node scripts/risala-assembler.mjs <dossier des 78 fichiers bruts du référent>
+//  - LOT 6 (14/10/2026) : le découpage PÉDAGOGIQUE du référent (264 séances, `seances.json` livré par le référent avec
+//    `cycle`, `niveau_min`, `differe`, `raison_differe` par séance) remplace le découpage mécanique : il est copié tel
+//    quel (SHA-256 contrôlé) et cet assembleur ne réécrit PLUS `seances.json` (sauf avec `--decoupage-mecanique`, pour
+//    retrouver l'ancien découpage de 164 séances). Il écrit seulement `texte_ar.json`, `traduction_fr.json` et les
+//    empreintes ; il vérifie en plus que le découpage du référent range chaque phrase dans exactement une séance.
+// Usage : node scripts/risala-assembler.mjs <dossier des 78 fichiers bruts du référent> [--decoupage-mecanique]
 // Empreintes des fichiers bruts : packages/content/madjaliss-source/risala/SOURCES_BRUTES.sha256
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -201,7 +206,15 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const { texteAr, traduction, sea } = assembler(brut);
   ecrire(join(SORTIE, 'texte_ar.json'), texteAr);
   ecrire(join(SORTIE, 'traduction_fr.json'), traduction);
-  ecrire(join(SORTIE, 'seances.json'), sea);
+  if (process.argv.includes('--decoupage-mecanique')) ecrire(join(SORTIE, 'seances.json'), sea);
+  else {
+    // découpage du référent (lot 6) : conservé tel quel ; chaque phrase doit être dans exactement une séance, dans l'ordre
+    const ref = lire(join(SORTIE, 'seances.json'));
+    const vues = ref.seances.flatMap((s) => s.phrases);
+    const ordre = texteAr.phrases.map((p) => p.id);
+    if (JSON.stringify(vues) !== JSON.stringify(ordre))
+      throw new Error('le découpage du référent ne range pas chaque phrase une fois, dans l’ordre');
+  }
   const sha = readdirSync(brut)
     .filter((f) => /\.json$/.test(f))
     .sort()
@@ -213,6 +226,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     );
   writeFileSync(join(SORTIE, 'SOURCES_BRUTES.sha256'), `${sha.join('\n')}\n`);
   console.log(
-    `${texteAr.phrases.length} phrases, ${sea.seances.length} séances, ${sea.duree_totale_min} min`,
+    `${texteAr.phrases.length} phrases (découpage mécanique : ${sea.seances.length} séances)`,
   );
 }

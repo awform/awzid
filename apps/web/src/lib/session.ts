@@ -19,6 +19,8 @@ export interface ProfileInfo {
 export interface Me {
   /** lot F2 (revue E2) : rôles du compte (plateforme et écoles), en plus du type du titulaire */
   roles?: string[];
+  /** lot 6 : membre du groupe « bêta fermée » avec le droit de voir le contenu différé de Madjaliss (calculé par l'API) */
+  betaDiffere?: boolean;
   ecoles?: Array<{ id: string; name: string; personal: boolean; roles: string[] }>;
   /** session de tablette de classe (compte de l'école) */
   tablette?: { classId: string; className: string; school: string } | null;

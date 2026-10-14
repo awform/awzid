@@ -874,6 +874,8 @@ function construireTexte(texte, lignes) {
   };
 
   const phrases = [];
+  /** versions complètes des vers masqués (marquées `nc`), pour le complément gardé */
+  const versNonConfirmes = [];
   for (const p of unites) {
     if (!dansSeance.has(p.id)) {
       if (!p.hors_matn) throw new Error(`phrase hors séance : ${p.id}`);
@@ -895,16 +897,17 @@ function construireTexte(texte, lignes) {
       ),
     ];
     const incertain = aVerifier.length > 0;
-    if (masques.has(p.id)) {
-      const l = masques.get(p.id);
-      phrases.push({ id: p.id, t, masque: true, ...(adulte(p.id) ? { adulte: true } : {}) });
+    // lot 6 : un vers masqué reste un emplacement `{id, t, masque}` dans le fichier PUBLIC ; sa version complète (marquée
+    // `nc`, « non confirmé ») est construite comme les autres vers mais va dans le complément GARDÉ, pour le groupe
+    // « bêta fermée » et le personnel (voir `separerDiffere`)
+    const masque = masques.get(p.id);
+    if (masque) {
       noterEns(p.id, {
-        a_verifier: [...aVerifier, `Lecture proposée : ${l.lecture_proposee}`],
-        decision: `Vers masqué à l'élève (${l.decision}) : ${l.raison_masquage}`,
+        a_verifier: [...aVerifier, `Lecture proposée : ${masque.lecture_proposee}`],
+        decision: `Vers masqué à l'élève (${masque.decision}) : ${masque.raison_masquage}`,
       });
-      continue;
     }
-    if (retenus.has(p.id)) {
+    if (retenus.has(p.id) && !masque) {
       phrases.push({ id: p.id, t, explication: true, ...(adulte(p.id) ? { adulte: true } : {}) });
       noterEns(p.id, { a_verifier: aVerifier });
       continue;
@@ -993,13 +996,19 @@ function construireTexte(texte, lignes) {
     const ajout = {};
     if (f.liste?.length) ajout.liste = f.liste.map((x) => ({ ar: x.ar, fr: x.fr }));
     if (f.exemples?.length) ajout.exemples = f.exemples.map((x) => ({ ar: x.ar, fr: x.fr }));
-    phrases.push({
+    const complete = {
       ...base,
       ...corps,
       ...(ma.length ? { ma } : {}),
       ...ajout,
       ...(notes.length ? { notes } : {}),
-    });
+    };
+    if (masque) {
+      phrases.push({ id: p.id, t, masque: true, ...(adulte(p.id) ? { adulte: true } : {}) });
+      versNonConfirmes.push({ ...complete, nc: true });
+      continue; // notes de l'enseignant déjà posées plus haut
+    }
+    phrases.push(complete);
 
     // mode enseignant
     const trad = [
@@ -1121,9 +1130,19 @@ function construireTexte(texte, lignes) {
   if (dc) {
     if (!dc.consigne.test(se.point_referent ?? ''))
       throw new Error(`${texte} : la consigne de publication différée a changé dans la source`);
+    // lot 6 : le découpage du référent (264 séances) porte `cycle`, `niveau_min` et `differe` PAR SÉANCE : une séance est
+    // différée si son cycle est au moins `cycle_min` OU si elle le dit (`differe: true`, croyance, voyelles incertaines…)
     for (const s of seancesSrc)
-      if (typeof s.cycle === 'number' && s.cycle >= dc.cycle_min) differe.add(s.id);
+      if ((typeof s.cycle === 'number' && s.cycle >= dc.cycle_min) || s.differe === true)
+        differe.add(s.id);
   }
+  // raison de la publication différée (`raison_differe` de la source) : montrée au groupe « bêta fermée » et au personnel
+  // seulement, donc jamais dans le fichier public (voir `departager`)
+  const raisons = new Map(
+    seancesSrc
+      .filter((s) => differe.has(s.id) && typeof s.raison_differe === 'string' && s.raison_differe)
+      .map((s) => [numeroDe.get(s.id), s.raison_differe]),
+  );
   const seances = seancesSrc.map((s) => {
     const ids = idsSeance(s);
     const mots = s.mots_difficiles.filter((m) => !reserve(s, m));
@@ -1139,6 +1158,8 @@ function construireTexte(texte, lignes) {
       titre: t1.texte,
       ...(t1.mots.length ? { tma: t1.mots } : {}),
       duree: s.duree_min,
+      // ar-Risāla : cycle de la séance (découpage du référent), pour le groupe et le personnel
+      ...(texte === 'risala' && typeof s.cycle === 'number' ? { c: s.cycle } : {}),
       phrases: ids,
       mots: mots.map((m) => ({ ar: m.ar, fr: sensMotEleve(m.sens) })),
       ...(differe.has(s.id) ? { differe: true } : {}),
@@ -1187,7 +1208,7 @@ function construireTexte(texte, lignes) {
         })),
     ),
   };
-  return { eleve, enseignant };
+  return { eleve, enseignant, raisons, versNonConfirmes };
 }
 
 /** Construit les données de l'élève et de l'enseignant d'un texte (les filtres propres à la Risāla ne vivent que pendant l'appel). */
@@ -1209,33 +1230,45 @@ export const TAILLE_PARTIE = 280_000;
  * à l'ouverture d'une séance. Les séances se suivent : une partie = des séances consécutives, jamais coupée au milieu
  * d'une séance. Le texte et le contenu des phrases sont ceux de `construire`, inchangés.
  */
-export function departager(eleve, taille = TAILLE_PARTIE) {
+export function departager(eleve, taille = TAILLE_PARTIE, raisons = new Map()) {
   const de = new Map(eleve.phrases.map((p) => [p.id, p]));
+  // lot 6 : DEUX suites de parties. Les séances ouvertes (non différées) ont leurs phrases dans des parties PUBLIQUES
+  // (`<texte>-o<k>.json`, dans `static/mutun`, lisibles par tous) ; les séances différées dans des parties GARDÉES
+  // (`<texte>-p<k>.json`, droit « différé » : personnel, démonstration, groupe « bêta fermée »). Une partie réunit des
+  // séances de même nature, dans l'ordre, jamais coupée au milieu d'une séance. Numéros uniques : gardées d'abord.
   const groupes = [];
-  let cur = { seances: [], octets: 0 };
-  for (const s of eleve.seances) {
-    const o = Buffer.byteLength(JSON.stringify(s.phrases.map((id) => de.get(id)).filter(Boolean)));
-    if (cur.seances.length && cur.octets + o > taille) {
-      groupes.push(cur);
-      cur = { seances: [], octets: 0 };
+  for (const pub of [false, true]) {
+    let cur = null;
+    for (const s of eleve.seances.filter((x) => !x.differe === pub)) {
+      const o = Buffer.byteLength(
+        JSON.stringify(s.phrases.map((id) => de.get(id)).filter(Boolean)),
+      );
+      if (!cur || (cur.seances.length && cur.octets + o > taille)) {
+        cur = { pub, seances: [], octets: 0 };
+        groupes.push(cur);
+      }
+      cur.seances.push(s.n);
+      cur.octets += o;
     }
-    cur.seances.push(s.n);
-    cur.octets += o;
   }
-  groupes.push(cur);
   const partieDe = new Map(groupes.flatMap((g, i) => g.seances.map((n) => [n, i + 1])));
   const fichiers = groupes.map((g, i) => {
     const phrases = eleve.seances
       .filter((s) => g.seances.includes(s.n))
       .flatMap((s) => s.phrases.map((id) => de.get(id)).filter(Boolean));
-    const version = createHash('sha256').update(JSON.stringify(phrases)).digest('hex').slice(0, 12);
-    return { v: 2, id: eleve.id, part: i + 1, version, phrases };
+    // raison de la publication différée : dans la partie GARDÉE seulement (jamais dans un fichier public)
+    const rd = Object.fromEntries(
+      g.seances.filter((n) => raisons.has(n)).map((n) => [n, raisons.get(n)]),
+    );
+    const corps = { phrases, ...(!g.pub && Object.keys(rd).length ? { raisons: rd } : {}) };
+    const version = createHash('sha256').update(JSON.stringify(corps)).digest('hex').slice(0, 12);
+    return { v: 2, id: eleve.id, part: i + 1, pub: g.pub, version, ...corps };
   });
   const index = {
     ...eleve,
     phrases: [],
     seances: eleve.seances.map((s) => ({ ...s, p: partieDe.get(s.n) })),
-    parts: fichiers.map((f) => ({ n: f.part, version: f.version })),
+    parts: fichiers.map((f) => ({ n: f.part, version: f.version, ...(f.pub ? { o: true } : {}) })),
   };
   return { index, fichiers };
 }
@@ -1260,15 +1293,17 @@ const empreinte = (x) => createHash('sha256').update(JSON.stringify(x)).digest('
  * (`differe.version`). Texte sans séance différée : rien n'est séparé. Un grand texte (Risāla) garde son sommaire public
  * (titres seuls) et ses parties de phrases gardées : voir `departager`.
  */
-export function separerDiffere(eleve) {
+export function separerDiffere(eleve, nonConfirmes = []) {
   const fermees = eleve.seances.filter((s) => s.differe);
-  if (!fermees.length) return { publique: eleve, differe: null };
+  if (!fermees.length && !nonConfirmes.length) return { publique: eleve, differe: null };
   const ouvertes = eleve.seances.filter((s) => !s.differe);
   const vues = new Set(ouvertes.flatMap((s) => s.phrases));
   const phrases = eleve.phrases.filter((p) => vues.has(p.id));
+  // lot 6 : les vers masqués (Lāmiyya) restent des emplacements dans le fichier public ; leur version complète, marquée
+  // `nc` (« non confirmé »), est dans le complément gardé et REMPLACE l'emplacement à la fusion (donnees.ts)
   const complement = {
     seances: fermees,
-    phrases: eleve.phrases.filter((p) => !vues.has(p.id)),
+    phrases: [...eleve.phrases.filter((p) => !vues.has(p.id)), ...nonConfirmes],
   };
   const differe = {
     v: 2,
@@ -1285,15 +1320,17 @@ export function separerDiffere(eleve) {
 
 /** Écrit tous les fichiers d'un texte : publics dans `static/mutun`, gardés dans `SORTIE_PROTEGEE` (voir plus haut). */
 export function ecrireTexte(texte, lignes = tanzil(), sortie = SORTIE, protegee = SORTIE_PROTEGEE) {
-  const { eleve, enseignant } = construire(texte, lignes);
+  const { eleve, enseignant, raisons, versNonConfirmes } = construire(texte, lignes);
   const ecrire = (dir, nom, x) => writeFileSync(join(dir, nom), `${JSON.stringify(x)}\n`);
   let publique;
   if (TEXTES_LOT4.includes(texte)) {
-    const { index, fichiers } = departager(eleve);
+    const { index, fichiers } = departager(eleve, TAILLE_PARTIE, raisons);
     publique = index;
-    for (const f of fichiers) ecrire(protegee, `${texte}-p${f.part}.json`, f);
+    for (const { pub, ...f } of fichiers)
+      if (pub) ecrire(sortie, `${texte}-o${f.part}.json`, f);
+      else ecrire(protegee, `${texte}-p${f.part}.json`, f);
   } else {
-    const s = separerDiffere(eleve);
+    const s = separerDiffere(eleve, versNonConfirmes);
     publique = s.publique;
     if (s.differe) ecrire(protegee, `${texte}-differe.json`, s.differe);
   }
@@ -1306,7 +1343,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   mkdirSync(SORTIE, { recursive: true });
   mkdirSync(SORTIE_PROTEGEE, { recursive: true });
   // fichiers gardés d'une construction précédente (ou d'avant le lot 5, quand ils étaient publics) : retirés
-  for (const f of readdirSync(SORTIE)) if (NOM_PROTEGE.test(f)) rmSync(join(SORTIE, f));
+  // parties PUBLIQUES d'un grand texte (`risala-o<k>.json`) d'une construction précédente : retirées aussi
+  for (const f of readdirSync(SORTIE))
+    if (NOM_PROTEGE.test(f) || /^[a-z-]+-o\d+\.json$/.test(f)) rmSync(join(SORTIE, f));
   for (const f of readdirSync(SORTIE_PROTEGEE))
     if (f.endsWith('.json')) rmSync(join(SORTIE_PROTEGEE, f));
   const lignes = tanzil();

@@ -4,7 +4,15 @@ import { describe, expect, it } from 'vitest';
 import { SORTIE_PROTEGEE } from '../../../scripts/madjaliss.mjs';
 import { voitDiffere as voitDiffereClient } from '../madjaliss/donnees';
 import { isStaff, type Me } from '../session';
-import { decider, droitExige, estPersonnel, voitDiffere, type CompteMutun } from './mutun-acces';
+import {
+  decider,
+  droitExige,
+  estMembreBeta,
+  estPersonnel,
+  ROLE_BETA,
+  voitDiffere,
+  type CompteMutun,
+} from './mutun-acces';
 
 /** Lot 5 : accès aux fichiers gardés de /mutun (écart n° 3 du contrôle pré-bêta). */
 const invite: CompteMutun = { account: { kind: 'parent', email: 'famille@exemple.org' } };
@@ -113,5 +121,75 @@ describe('fichiers du dossier gardé', () => {
       expect(decider(f, invite), f).toBe(403);
     }
     expect(join(SORTIE_PROTEGEE)).toContain(join('src', 'lib', 'server', 'mutun'));
+  });
+});
+
+describe('lot 6 : groupe « bêta fermée » (interrupteur beta_contenu_differe_visible)', () => {
+  const gardes = [
+    'ibn-ashir-differe.json',
+    'lamiyya-differe.json',
+    'risala-p1.json',
+    'risala-p11.json',
+  ];
+  const membre: CompteMutun = {
+    account: { kind: 'adulte', email: 'ami@exemple.org' },
+    roles: [ROLE_BETA, 'eleve_adulte'],
+    betaDiffere: true,
+    mfaRequired: false,
+    mfaVerified: true,
+  };
+
+  it('membre du groupe avec le droit : séances différées, Risāla, vers non confirmés (200) ; notes du référent (403)', () => {
+    expect(estMembreBeta(membre)).toBe(true);
+    for (const f of gardes) expect(decider(f, membre), f).toBe(200);
+    for (const f of [
+      'ibn-ashir-enseignant.json',
+      'risala-enseignant.json',
+      'lamiyya-enseignant.json',
+    ])
+      expect(decider(f, membre), f).toBe(403);
+  });
+
+  it('compte ordinaire non membre : 403 ; visiteur sans session : 401 (mêmes réponses qu’au lot 5)', () => {
+    for (const f of gardes) {
+      expect(decider(f, invite), f).toBe(403);
+      expect(decider(f, adulte), f).toBe(403);
+      expect(decider(f, null), f).toBe(401);
+    }
+  });
+
+  it('interrupteur éteint (betaDiffere faux) : le rôle seul ne donne rien, retour au comportement du lot 5', () => {
+    const eteint: CompteMutun = { ...membre, betaDiffere: false };
+    const sansIndication: CompteMutun = { ...membre, betaDiffere: undefined };
+    for (const me of [eteint, sansIndication]) {
+      expect(estMembreBeta(me)).toBe(false);
+      for (const f of gardes) expect(decider(f, me), f).toBe(403);
+    }
+  });
+
+  it('retrait du groupe (plus de rôle) : droit perdu aussitôt, même si l’indication traîne', () => {
+    const retire: CompteMutun = { ...membre, roles: ['eleve_adulte'] };
+    expect(estMembreBeta(retire)).toBe(false);
+    for (const f of gardes) expect(decider(f, retire), f).toBe(403);
+  });
+
+  it('second facteur exigé et non validé : aucun droit, même membre', () => {
+    const enAttente: CompteMutun = { ...membre, mfaRequired: true, mfaVerified: false };
+    expect(estMembreBeta(enAttente)).toBe(false);
+    for (const f of gardes) expect(decider(f, enAttente), f).toBe(403);
+  });
+
+  it('le droit est contrôlé avant l’existence du fichier : même réponse pour un fichier absent', () => {
+    expect(decider('inconnu-differe.json', invite)).toBe(403);
+    expect(decider('inconnu-differe.json', null)).toBe(401);
+    expect(decider('inconnu-differe.json', membre)).toBe(200); // l'existence est vérifiée ensuite (404 par la route)
+    expect(decider('risala.json', membre)).toBe(404); // ce n'est pas un fichier gardé
+  });
+
+  it('même décision que l’interface (voitDiffere de donnees.ts)', () => {
+    for (const c of [membre, { ...membre, betaDiffere: false }, { ...membre, roles: [] }, invite]) {
+      const me = { ...c, profiles: [] } as unknown as Me;
+      expect(voitDiffere(c)).toBe(voitDiffereClient(me, isStaff(me)));
+    }
   });
 });

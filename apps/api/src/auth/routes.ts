@@ -15,10 +15,14 @@ import { and, eq, isNull, sql } from 'drizzle-orm';
 import {
   accountRoles,
   attachInvitation,
+  attribuerGroupeBeta,
   canActForProfile,
   checkInvitation,
   countComptes,
+  flagContext,
+  invitationGroupe,
   readAcces,
+  ROLE_BETA_FERMEE,
   releaseInvitation,
   reserveInvitation,
   grantAccountRole,
@@ -28,6 +32,7 @@ import {
   visibleProfiles,
   type Db,
 } from '@awform/db';
+import type { EtatFonction } from '@awform/school';
 import { decrypt, encrypt, hashSecret, newTotpSecret, verifySecret, verifyTotp } from './crypto.js';
 import { verifierJeton } from '../antibot.js';
 import { checkPassword, MAX_LENGTH } from './passwords.js';
@@ -209,8 +214,30 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         .where(eq(t.classGroup.id, tablet.classId));
       tablette = { classId: tablet.classId, className: c?.name ?? '', school: c?.school ?? '' };
     }
+    // lot 6 : le groupe « bêta fermée » voit le contenu différé de Madjaliss quand l'interrupteur
+    // `beta_contenu_differe_visible` est allumé pour lui ; calculé ICI (jamais décidé par le navigateur), relu à chaque
+    // requête de la route des fichiers gardés : un retrait du groupe ou l'interrupteur éteint coupe le droit aussitôt
+    const mfaRequise = requiresMfa(a.kind) || roles.some((r) => STAFF_SET.has(r));
+    let betaDiffere = false;
+    if (!tablet && roles.includes(ROLE_BETA_FERMEE) && (!mfaRequise || mfaVerified)) {
+      const ctx = await flagContext(db, {
+        accountId,
+        accountKind: a.kind,
+        roles,
+        country: a.country,
+        profileId: null,
+      });
+      const f = await readFlags(db);
+      betaDiffere = fonctionActive(
+        'beta_contenu_differe_visible',
+        ctx,
+        f.etats['beta_contenu_differe_visible'] as EtatFonction | undefined,
+        f.regles.filter((r) => r.cle === 'beta_contenu_differe_visible'),
+      );
+    }
     return {
       roles,
+      betaDiffere,
       ecoles,
       tablette,
       account: {
@@ -230,7 +257,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       },
       accordsManquants,
       profiles,
-      mfaRequired: requiresMfa(a.kind) || roles.some((r) => STAFF_SET.has(r)),
+      mfaRequired: mfaRequise,
       mfaVerified,
     };
   };
@@ -392,6 +419,11 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       }
       if (!a) throw new Error('création du compte impossible');
       if (invitationId) await attachInvitation(db, invitationId, a.id);
+      // lot 6 : une invitation de groupe inscrit le compte dans le groupe « bêta fermée » (journalisé)
+      if (invitationId && (await invitationGroupe(db, invitationId)) === 'beta_fermee') {
+        await attribuerGroupeBeta(db, a.id);
+        await audit(db, a.id, 'groupe_beta.ajout_invitation', invitationId);
+      }
       // lot F2 (revue E2) : rôle du titulaire (un même compte pourra recevoir ensuite d'autres rôles)
       await grantAccountRole(db, a.id, b.kind === 'parent' ? 'parent' : 'eleve_adulte');
       const accepted = b.consents.filter(

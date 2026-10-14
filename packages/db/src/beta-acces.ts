@@ -231,7 +231,13 @@ export interface NewInvitation {
   days?: number;
   by: string | null;
   waitlistId?: string | null;
+  /** lot 6 : groupe attribué au compte qui s'inscrit avec cette invitation (« beta_fermee ») */
+  groupe?: GroupeInvitation | null;
 }
+
+/** Groupes attribuables par une invitation (lot 6) : le groupe « bêta fermée » (rôle `beta_fermee`). */
+export const GROUPES_INVITATION = ['beta_fermee'] as const;
+export type GroupeInvitation = (typeof GROUPES_INVITATION)[number];
 
 /** Crée une invitation ; renvoie le code EN CLAIR (à montrer une seule fois). */
 export async function createInvitation(
@@ -256,6 +262,7 @@ export async function createInvitation(
           expiresAt,
           createdBy: v.by,
           waitlistId: v.waitlistId ?? null,
+          groupe: v.groupe ?? null,
         })
         .returning({ id: t.invitation.id });
       return { id: r!.id, code, expiresAt };
@@ -372,7 +379,80 @@ export async function listInvitations(db: Db, limit = 200, now = new Date()) {
     creeeLe: r.createdAt,
     etat: invitationEtat(r, now),
     demande: r.waitlistId,
+    groupe: r.groupe,
   }));
+}
+
+/** Groupe attribué par une invitation (lot 6), ou null. */
+export async function invitationGroupe(db: Db, id: string): Promise<GroupeInvitation | null> {
+  const [r] = await db
+    .select({ groupe: t.invitation.groupe })
+    .from(t.invitation)
+    .where(eq(t.invitation.id, id));
+  return (GROUPES_INVITATION as readonly string[]).includes(r?.groupe ?? '')
+    ? (r!.groupe as GroupeInvitation)
+    : null;
+}
+
+// ------------------------------------------------------------------ groupe « bêta fermée » (lot 6)
+
+/** Rôle du groupe « bêta fermée » : voit le contenu différé de Madjaliss pendant la bêta fermée. */
+export const ROLE_BETA_FERMEE = 'beta_fermee' as const;
+
+/** Membres du groupe (adresse complète : écran de l'administrateur seulement), les plus récents d'abord. */
+export async function listGroupeBeta(db: Db, limit = 500) {
+  return db
+    .select({
+      id: t.account.id,
+      adresse: t.account.email,
+      depuis: t.accountRole.grantedAt,
+      par: t.accountRole.grantedBy,
+    })
+    .from(t.accountRole)
+    .innerJoin(t.account, eq(t.account.id, t.accountRole.accountId))
+    .where(and(eq(t.accountRole.role, ROLE_BETA_FERMEE), isNull(t.account.deletedAt)))
+    .orderBy(desc(t.accountRole.grantedAt))
+    .limit(limit);
+}
+
+/** Ajoute un compte au groupe par son adresse ; renvoie son identifiant, ou null si aucun compte n'a cette adresse. */
+export async function ajouterAuGroupeBeta(
+  db: Db,
+  email: string,
+  by: string | null,
+): Promise<{ id: string; dejaMembre: boolean } | null> {
+  const [a] = await db
+    .select({ id: t.account.id })
+    .from(t.account)
+    .where(and(eq(t.account.email, email.trim().toLowerCase()), isNull(t.account.deletedAt)));
+  if (!a) return null;
+  const r = await db
+    .insert(t.accountRole)
+    .values({ accountId: a.id, role: ROLE_BETA_FERMEE, grantedBy: by })
+    .onConflictDoNothing()
+    .returning({ id: t.accountRole.id });
+  return { id: a.id, dejaMembre: r.length === 0 };
+}
+
+/** Attribue le groupe à un compte (inscription avec une invitation de groupe). */
+export async function attribuerGroupeBeta(
+  db: Db,
+  accountId: string,
+  by: string | null = null,
+): Promise<void> {
+  await db
+    .insert(t.accountRole)
+    .values({ accountId, role: ROLE_BETA_FERMEE, grantedBy: by })
+    .onConflictDoNothing();
+}
+
+/** Retire un compte du groupe : le droit est perdu à la requête suivante (rôle lu dans la session à chaque appel). */
+export async function retirerDuGroupeBeta(db: Db, accountId: string): Promise<boolean> {
+  const r = await db
+    .delete(t.accountRole)
+    .where(and(eq(t.accountRole.accountId, accountId), eq(t.accountRole.role, ROLE_BETA_FERMEE)))
+    .returning({ id: t.accountRole.id });
+  return r.length > 0;
 }
 
 // ------------------------------------------------------------------ liste d'attente

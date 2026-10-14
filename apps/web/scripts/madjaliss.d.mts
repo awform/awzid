@@ -18,18 +18,22 @@ export function departager(
     seances: Array<{ n: number; phrases: string[] }>;
   },
   taille?: number,
+  raisons?: Map<number, string>,
 ): {
   index: {
     phrases: unknown[];
     seances: Array<{ n: number; p: number }>;
-    parts: Array<{ n: number; version: string }>;
+    parts: Array<{ n: number; version: string; o?: true }>;
   };
   fichiers: Array<{
     v: number;
     id: string;
     part: number;
+    /** partie PUBLIQUE (séances ouvertes, `-o<k>`) ou gardée (`-p<k>`) ; non écrit dans le fichier */
+    pub: boolean;
     version: string;
     phrases: Array<{ id: string }>;
+    raisons?: Record<string, string>;
   }>;
 };
 export const MARQUEUR: RegExp;
@@ -74,11 +78,21 @@ export interface TexteConstruit {
 export function construire(
   texte?: string,
   lignes?: Map<string, string>,
-): { eleve: TexteConstruit; enseignant: { version: string; [k: string]: unknown } };
+): {
+  eleve: TexteConstruit;
+  enseignant: { version: string; [k: string]: unknown };
+  /** raison de la publication différée, par numéro de séance (partie gardée seulement) */
+  raisons: Map<number, string>;
+  /** versions complètes des vers masqués (marquées `nc`), pour le complément gardé */
+  versNonConfirmes: Array<{ id: string; nc?: true; [k: string]: unknown }>;
+};
 /** Lot 5 : dossier des fichiers GARDÉS (servis après authentification, jamais dans static/). */
 export const SORTIE_PROTEGEE: string;
 export const NOM_PROTEGE: RegExp;
-export function separerDiffere(eleve: TexteConstruit): {
+export function separerDiffere(
+  eleve: TexteConstruit,
+  nonConfirmes?: Array<{ id: string; [k: string]: unknown }>,
+): {
   publique: TexteConstruit & { differe?: { version: string } };
   differe: {
     v: number;

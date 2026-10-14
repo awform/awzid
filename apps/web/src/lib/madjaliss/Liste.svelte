@@ -4,11 +4,12 @@
   import Bidi from '$lib/Bidi.svelte';
   import { demoProfileFor } from '$lib/attempts';
   import { t } from '$lib/i18n';
-  import { cachedMe, isStaff, type ProfileInfo } from '$lib/session';
+  import { isStaff, type ProfileInfo } from '$lib/session';
   import EnTete from '$lib/ui/EnTete.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import { ACTIFS, CYCLES, TOUT_DIFFERE, cycleConseille } from './cycles';
-  import { voitDiffere } from './donnees';
+  import BandeauRelecture from './BandeauRelecture.svelte';
+  import { compteActuel, membreBeta, oublierDiffere, voitDiffere } from './donnees';
   import { lien } from './liens';
   import { lireProgres, type Progres } from './progression';
 
@@ -22,6 +23,7 @@
   let pret = $state(false);
   // personnel et démonstration : ouvrent aussi les textes entièrement en publication différée (ar-Risāla)
   let differe = $state(false);
+  let groupe = $state(false);
 
   const conseille = $derived(cycleConseille(profil));
   const enfant = $derived(profil?.kind === 'enfant');
@@ -33,8 +35,10 @@
 
   onMount(async () => {
     profil = await demoProfileFor('').catch(() => null);
-    const me = await cachedMe().catch(() => null);
+    const me = await compteActuel();
     differe = voitDiffere(me, isStaff(me));
+    groupe = membreBeta(me);
+    if (!differe) void oublierDiffere();
     for (const id of ACTIFS) progres[id] = await lireProgres(profil?.id ?? null, id);
     pret = true;
   });
@@ -42,6 +46,7 @@
 
 <EnTete titre={t('mj.titre')} ar="مَجَالِسُ الْعِلْمِ" icon="" />
 <p class="muted"><Bidi text={t('mj.intro')} /></p>
+{#if groupe}<BandeauRelecture />{/if}
 {#if enfant}<p class="warnbox" data-testid="mj-enfant"><Bidi text={t('mj.enfant')} /></p>{/if}
 
 <div data-testid="madjaliss" data-pret={pret} data-conseille={conseille ?? ''}>

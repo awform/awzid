@@ -54,6 +54,7 @@ export const questionnable = (p: Phrase): boolean =>
   (p.t === 'texte' || p.t === 'vers') &&
   !p.explication &&
   !p.masque &&
+  !p.nc &&
   !p.q?.length &&
   arSimple(p) !== null &&
   !!p.fr &&

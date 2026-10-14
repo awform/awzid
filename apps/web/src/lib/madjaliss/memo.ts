@@ -18,7 +18,7 @@ export const chargerMoteur = (): Promise<Moteur> => import('$lib/hifz-outils/out
  * formule, basmala, titre ni citation, jamais un passage réservé ; jusqu'à la liste des passages choisis.
  */
 export const aMemoriser = <
-  P extends { t: string; ar?: unknown; h?: unknown; explication?: true; masque?: true },
+  P extends { t: string; ar?: unknown; h?: unknown; explication?: true; masque?: true; nc?: true },
 >(
   ps: readonly P[],
 ) =>
@@ -27,6 +27,7 @@ export const aMemoriser = <
       (p.t === 'texte' || p.t === 'vers') &&
       !p.explication &&
       !p.masque &&
+      !p.nc &&
       (typeof p.ar === 'string' || !!p.h),
   );
 

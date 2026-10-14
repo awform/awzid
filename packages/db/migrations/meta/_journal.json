@@ -344,6 +344,13 @@
       "when": 1791868757833,
       "tag": "0048_beta_acces",
       "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1791950592928,
+      "tag": "0049_beta_groupe",
+      "breakpoints": true
     }
   ]
 }

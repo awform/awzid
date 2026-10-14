@@ -54,6 +54,12 @@
               ><span class="orn" aria-hidden="true">﴾</span></span
             >{/if}{/each}{/if}
     </p>
+    {#if p.nc}
+      <!-- lot 6 : vers dont la lecture n'est pas confirmée, montré au groupe « bêta fermée » et au personnel seulement -->
+      <p class="reserve" data-testid="vers-nc">
+        <Icon name="info" size={20} /><Bidi text={t('mj.non_confirme')} />
+      </p>
+    {/if}
     {#if p.fr}<p class="fr"><Bidi text={avecArabe(p.fr, p.ma)} /></p>{/if}
     {#each p.q ?? [] as q, i (i)}<p
         class="cit coranique"

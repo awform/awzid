@@ -52,10 +52,12 @@ async function compteDemo(page: Page) {
   expect(r.status(), await r.text()).toBe(201);
 }
 
-test('le dossier gardé contient bien ce qu’on attend (13 notes, complément d’Ibn ʿĀshir, 12 parties de la Risāla)', () => {
+test('le dossier gardé contient bien ce qu’on attend (13 notes, compléments d’Ibn ʿĀshir et de la Lāmiyya, 11 parties de la Risāla)', () => {
   expect(NOTES.length).toBeGreaterThanOrEqual(12);
   expect(DIFFERES).toContain('ibn-ashir-differe.json');
-  expect(DIFFERES.filter((f) => /^risala-p\d+\.json$/.test(f))).toHaveLength(12);
+  // lot 6 : les trois vers non confirmés de la Lāmiyya sont dans un complément gardé
+  expect(DIFFERES).toContain('lamiyya-differe.json');
+  expect(DIFFERES.filter((f) => /^risala-p\d+\.json$/.test(f))).toHaveLength(11);
 });
 
 test('visiteur sans session : 401 sur TOUT fichier gardé, aucun octet du contenu', async ({
@@ -114,7 +116,9 @@ test('fichiers publics : ni séance différée d’Ibn ʿĀshir, ni phrase de la
   expect(ri.status()).toBe(200);
   const rj = (await ri.json()) as { phrases: unknown[]; seances: unknown[] };
   expect(rj.phrases).toEqual([]);
-  expect(rj.seances).toHaveLength(164);
+  expect(rj.seances).toHaveLength(264);
+  // lot 6 : les 43 séances ouvertes ont leurs phrases dans des parties publiques ; aucune séance différée n'y est
+  expect((rj.seances as Array<{ differe?: true }>).filter((s) => !s.differe)).toHaveLength(43);
 
   const la = await (await request.get('/mutun/lamiyya.json')).text();
   const lm = JSON.parse(la) as { phrases: Array<{ id: string; masque?: true; h?: string[] }> };
@@ -204,7 +208,7 @@ test('personnel : tout (200), notes de l’enseignant comprises', async ({ page 
     differe: number[];
     consigne_differe: string;
   };
-  expect(j.differe).toHaveLength(164);
+  expect(j.differe).toHaveLength(221);
   expect(j.consigne_differe).toContain('masquées aux invités de la bêta');
   const ia = (await (await page.request.get('/mutun/ibn-ashir-enseignant.json')).json()) as {
     publication: string;

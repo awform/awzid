@@ -114,3 +114,57 @@ describe('complément différé (Ibn ʿĀshir)', () => {
     expect(await kvGet(cleDiffere('risala', `:p${s.p}`))).toBeTruthy();
   });
 });
+
+describe('lot 6 : parties publiques de la Risāla, raisons, vers non confirmés', () => {
+  const index = lire<Matn>(SORTIE, 'risala.json');
+
+  it('séance OUVERTE : partie publique `-o<k>` (aucun droit demandé), séance différée : partie gardée `-p<k>`', async () => {
+    const ouverte = index.seances.find((s) => !s.differe)!;
+    const fermee = index.seances.find((s) => s.differe)!;
+    expect(index.parts!.find((p) => p.n === ouverte.p)!.o).toBe(true);
+    expect(index.parts!.find((p) => p.n === fermee.p)!.o).toBeUndefined();
+    const log: string[] = [];
+    const partie = lire<PartieMatn>(SORTIE, `risala-o${ouverte.p}.json`);
+    const m = await chargerPartie(index, ouverte.n, async (u) => {
+      log.push(u);
+      return reponse(partie);
+    });
+    expect(log).toEqual([`/mutun/risala-o${ouverte.p}.json`]);
+    for (const id of ouverte.phrases) expect(m!.phrases.some((p) => p.id === id)).toBe(true);
+    // 43 séances ouvertes au plus à l'étape publique, aucune de niveau adulte
+    expect(index.seances.filter((s) => !s.differe).length).toBeLessThanOrEqual(43);
+    expect(index.seances.filter((s) => !s.differe).some((s) => s.adulte)).toBe(false);
+    // une partie publique ne porte aucune phrase d'une séance différée ni de raison
+    const fermees = new Set(index.seances.filter((s) => s.differe).flatMap((s) => s.phrases));
+    expect(partie.phrases.some((p) => fermees.has(p.id))).toBe(false);
+    expect(JSON.stringify(partie)).not.toContain('raisons');
+  });
+
+  it('la raison de la publication différée vient de la partie gardée (jamais du fichier public)', async () => {
+    const fermee = index.seances.find((s) => s.differe)!;
+    expect(JSON.stringify(index)).not.toMatch(/"rd"|raisons|raison_differe/);
+    expect(fermee.rd).toBeUndefined();
+    const partie = lire<PartieMatn>(SORTIE_PROTEGEE, `risala-p${fermee.p}.json`);
+    expect(partie.raisons![fermee.n]).toBeTruthy();
+    const m = await chargerPartie(index, fermee.n, async () => reponse(partie));
+    expect(m!.seances.find((s) => s.n === fermee.n)!.rd).toBe(partie.raisons![fermee.n]);
+  });
+
+  it('Lāmiyya : le complément remplace les trois emplacements masqués par les vers non confirmés', () => {
+    const l = lire<Matn>(SORTIE, 'lamiyya.json');
+    const d = lire<PartieDifferee>(SORTIE_PROTEGEE, 'lamiyya-differe.json');
+    expect(l.phrases.filter((p) => p.masque)).toHaveLength(3);
+    const m = fusionnerDifferee(l, d);
+    expect(m.phrases).toHaveLength(l.phrases.length);
+    expect(m.phrases.filter((p) => p.masque)).toHaveLength(0);
+    expect(m.phrases.filter((p) => p.nc).map((p) => p.id)).toEqual([
+      'LAM-0045',
+      'LAM-0068',
+      'LAM-0096',
+    ]);
+    // l'ordre des vers ne change pas
+    expect(m.phrases.map((p) => p.id)).toEqual(l.phrases.map((p) => p.id));
+    // sans le complément (compte ordinaire) : emplacements masqués
+    expect(matnPour(l, 'adulte', false).phrases.filter((p) => p.masque)).toHaveLength(3);
+  });
+});

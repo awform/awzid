@@ -38,8 +38,9 @@ import {
 import { genererQuiz } from './quiz';
 
 /**
- * Lot 4 : ar-Risāla d'Ibn Abī Zayd al-Qayrawānī (1 769 phrases, 164 séances) — servie en fichiers séparés chargés à la
- * demande (`risala.json` = sommaire, `risala-p<k>.json` = phrases), jamais dans le paquet de départ. Mêmes garanties
+ * Lots 4 et 6 : ar-Risāla d'Ibn Abī Zayd al-Qayrawānī (1 769 phrases, 264 séances du référent depuis le lot 6) — servie en
+ * fichiers séparés chargés à la demande (`risala.json` = sommaire, `risala-o<k>.json` = phrases des séances ouvertes,
+ * `risala-p<k>.json` = phrases des séances différées, gardées), jamais dans le paquet de départ. Mêmes garanties
  * que les dix autres textes : arabe intact octet par octet, Coran identique à Tanzil et jamais lu par une voix de
  * synthèse, aucun champ ni mot interne chez l'élève, publication différée (cycle 3), niveau adulte masqué.
  */
@@ -64,7 +65,15 @@ const srcFr = lire<{
 const srcSe = lire<{
   statut: string;
   point_referent: string;
-  seances: Array<{ id: string; phrases: string[]; cycle: number; titre: string }>;
+  seances: Array<{
+    id: string;
+    phrases: string[];
+    cycle: number;
+    titre: string;
+    niveau_min: string;
+    differe?: boolean;
+    raison_differe?: string;
+  }>;
 }>(join(dir, 'seances.json'));
 
 const brutIndex = readFileSync(join(SORTIE, 'risala.json'), 'utf8');
@@ -72,37 +81,44 @@ const index = JSON.parse(brutIndex) as Matn;
 // lot 5 : notes de l'enseignant et parties de phrases sont des fichiers GARDÉS (servis après authentification)
 const brutEns = readFileSync(join(SORTIE_PROTEGEE, 'risala-enseignant.json'), 'utf8');
 const ens = JSON.parse(brutEns) as NotesEnseignant;
-const parties = (index.parts ?? []).map(
-  (p) =>
-    JSON.parse(readFileSync(join(SORTIE_PROTEGEE, `risala-p${p.n}.json`), 'utf8')) as PartieMatn,
-);
+// lot 6 : parties PUBLIQUES (`-o<k>`, séances ouvertes, dans static/mutun) et parties GARDÉES (`-p<k>`, séances différées)
+const fichierPartie = (p: { n: number; o?: true }) => ({
+  dir: p.o ? SORTIE : SORTIE_PROTEGEE,
+  nom: `risala-${p.o ? 'o' : 'p'}${p.n}.json`,
+});
+const parties = (index.parts ?? []).map((p) => {
+  const { dir, nom } = fichierPartie(p);
+  return JSON.parse(readFileSync(join(dir, nom), 'utf8')) as PartieMatn;
+});
 /** Le texte entier (index + toutes les parties), tel que le reconstitue l'application séance après séance. */
 const complet: Matn = { ...index, phrases: parties.flatMap((p) => p.phrases) };
 const de = new Map(complet.phrases.map((p) => [p.id, p]));
 
 describe('ar-Risāla : données construites', () => {
   it('à jour avec les sources (node scripts/madjaliss.mjs) : sommaire, parties et notes de l’enseignant', () => {
-    const { eleve, enseignant } = construire('risala', lignes);
-    const d = departager(eleve as Parameters<typeof departager>[0]);
+    const { eleve, enseignant, raisons } = construire('risala', lignes);
+    const d = departager(eleve as Parameters<typeof departager>[0], TAILLE_PARTIE, raisons);
     expect(`${JSON.stringify(d.index)}\n`).toBe(brutIndex);
     expect(d.fichiers).toHaveLength(parties.length);
-    d.fichiers.forEach((f, i) =>
-      expect(`${JSON.stringify(f)}\n`).toBe(
-        readFileSync(join(SORTIE_PROTEGEE, `risala-p${i + 1}.json`), 'utf8'),
-      ),
-    );
+    d.fichiers.forEach(({ pub, ...f }, i) => {
+      const { dir, nom } = fichierPartie({ n: i + 1, ...(pub ? { o: true as const } : {}) });
+      expect(`${JSON.stringify(f)}\n`).toBe(readFileSync(join(dir, nom), 'utf8'));
+    });
     expect(`${JSON.stringify(enseignant)}\n`).toBe(brutEns);
-    // aucun fichier de partie en trop dans le dossier gardé, et AUCUN dans static/mutun (public)
+    // aucun fichier de partie en trop : les parties GARDÉES dans le dossier gardé, les parties PUBLIQUES dans static/mutun
+    const gardees = (index.parts ?? []).filter((p) => !p.o).length;
+    const publiques = (index.parts ?? []).filter((p) => p.o).length;
+    expect(publiques).toBeGreaterThanOrEqual(1);
     expect(readdirSync(SORTIE_PROTEGEE).filter((f) => /^risala-p\d+\.json$/.test(f))).toHaveLength(
-      parties.length,
+      gardees,
     );
-    expect(readdirSync(SORTIE).filter((f) => /^risala/.test(f))).toEqual(['risala.json']);
+    expect(readdirSync(SORTIE).filter((f) => /^risala/.test(f))).toHaveLength(1 + publiques);
   });
 
-  it('1 769 phrases, 164 séances ; chaque phrase dans une séance une seule fois ; numéros 1…164', () => {
+  it('1 769 phrases, 264 séances du référent ; chaque phrase dans une séance une seule fois ; numéros 1…264', () => {
     expect(srcAr.phrases).toHaveLength(1769);
     expect(complet.phrases).toHaveLength(1769);
-    expect(index.seances).toHaveLength(164);
+    expect(index.seances).toHaveLength(264);
     const toutes = index.seances.flatMap((s) => s.phrases);
     expect(toutes).toHaveLength(1769);
     expect(new Set(toutes).size).toBe(1769);
@@ -114,8 +130,18 @@ describe('ar-Risāla : données construites', () => {
     // ordre du livre : les séances suivent l'ordre des phrases de la source
     expect(toutes).toEqual(srcAr.phrases.map((p) => p.id));
     expect(srcSe.seances.flatMap((s) => s.phrases)).toEqual(toutes);
-    expect(index.seances.every((s) => s.duree >= 4 && s.duree <= 12)).toBe(true);
-    expect(index.seances.every((s) => s.phrases.length >= 1 && s.phrases.length <= 12)).toBe(true);
+    expect(index.seances.every((s) => s.duree >= 4 && s.duree <= 20)).toBe(true);
+    expect(index.seances.every((s) => s.phrases.length >= 1 && s.phrases.length <= 10)).toBe(true);
+    // découpage du référent : cycle de chaque séance conservé (40 + 64 + 160)
+    const parCycle = [1, 2, 3].map((c) => index.seances.filter((s) => s.c === c).length);
+    expect(parCycle).toEqual([40, 64, 160]);
+    expect(index.seances.map((s) => s.c)).toEqual(srcSe.seances.map((s) => s.cycle));
+    // phrase 0433 (jizya) : détachée de la séance de zakāt de base, placée en fin de la séance de cycle 3 précédente
+    const s103 = srcSe.seances.find((s) => s.id === 'RIS-S103')!;
+    const s104 = srcSe.seances.find((s) => s.id === 'RIS-S104')!;
+    expect(s103.cycle).toBe(3);
+    expect(s103.phrases.at(-1)).toBe('RIS-0433');
+    expect(s104.phrases).toEqual(['RIS-0434', 'RIS-0435', 'RIS-0436']);
   });
 
   it('parties : chaque séance dans une seule partie, phrases de la séance toutes dans sa partie, poids bornés', () => {
@@ -130,7 +156,13 @@ describe('ar-Risāla : données construites', () => {
     expect(new Set(parties.flatMap((p) => p.phrases.map((x) => x.id))).size).toBe(1769);
     for (const [i, p] of parties.entries()) {
       expect(p.part).toBe(i + 1);
-      expect(index.parts![i]).toEqual({ n: i + 1, version: p.version });
+      expect(index.parts![i]).toMatchObject({ n: i + 1, version: p.version });
+      // une partie réunit des séances de même nature : toutes ouvertes (publique) ou toutes différées (gardée)
+      const siennes = index.seances.filter((s) => s.p === p.part);
+      expect(
+        siennes.every((s) => !s.differe === !!index.parts![i]!.o),
+        `partie ${p.part}`,
+      ).toBe(true);
       const o = Buffer.byteLength(JSON.stringify(p));
       // une partie dépasse la taille visée d'au plus une séance
       expect(o, `partie ${p.part}`).toBeLessThan(TAILLE_PARTIE + 60_000);
@@ -254,28 +286,48 @@ describe('ar-Risāla : données construites', () => {
 const PLAFOND_TRANSLIT = 2862;
 
 describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseignant', () => {
-  it('toutes les séances sont de cycle 3 et en publication différée ; consigne contrôlée contre la source', () => {
+  it('séances différées : cycle 3 OU `differe` du référent ; 43 séances ouvertes au plus à l’étape publique, toutes de cycle 1 ou 2', () => {
     expect(DIFFERE_CYCLE['risala']!.cycle_min).toBe(3);
     expect(srcSe.point_referent).toMatch(DIFFERE_CYCLE['risala']!.consigne);
-    expect(srcSe.seances.every((s) => s.cycle === 3)).toBe(true);
-    expect(index.seances.every((s) => s.differe === true)).toBe(true);
-    expect(TOUT_DIFFERE.has('risala')).toBe(true);
-    expect(ens.differe).toHaveLength(164);
+    const attendues = srcSe.seances.filter((s) => s.cycle >= 3 || s.differe === true);
+    expect(index.seances.filter((s) => s.differe).map((s) => s.id)).toEqual(
+      attendues.map((s) => s.id),
+    );
+    // toute séance différée a sa raison dans la source (affichée au groupe et au personnel)
+    for (const s of attendues) expect(s.raison_differe, s.id).toBeTruthy();
+    const ouvertes = index.seances.filter((s) => !s.differe);
+    expect(ouvertes.length).toBeLessThanOrEqual(43);
+    expect(ouvertes.length).toBe(43);
+    expect(ouvertes.every((s) => s.c === 1 || s.c === 2)).toBe(true);
+    // une séance ouverte : ni niveau adulte, ni phrase incertaine
+    expect(ouvertes.some((s) => s.adulte)).toBe(false);
+    for (const s of ouvertes)
+      for (const id of s.phrases) expect(de.get(id)!.incertain, `${s.id} ${id}`).toBeUndefined();
+    // la zakāt de base (RIS-S104) reste différée après le détachement de 0433 : la lever ferait 44 séances ouvertes
+    expect(index.seances.find((s) => s.id === 'RIS-S104')!.differe).toBe(true);
+    expect(ens.differe).toHaveLength(221);
     expect(ens.consigne_differe).toMatch(/masquées aux invités de la bêta/);
     expect(ens.publication).toMatch(/Publication différée de toute la Risāla/);
-    // risala est au cycle 3 du plan directeur et ouvert
+    // risala est au cycle 3 du plan directeur et ouvert ; plus « bientôt » pour tous (séances ouvertes)
     expect(CYCLES.find((c) => c.n === 3)!.textes.map((t) => t.id)).toContain('risala');
     expect(ACTIFS.has('risala')).toBe(true);
+    expect(TOUT_DIFFERE.has('risala')).toBe(false);
     expect(TEXTES_LOT4).toEqual(['risala']);
     expect(TEXTES).not.toContain('risala');
   });
 
-  it('un invité de la bêta ne voit aucune séance ni aucune phrase, quel que soit son profil', () => {
+  it('compte ordinaire : seulement les 43 séances ouvertes, jamais une phrase d’une séance différée', () => {
+    const fermees = new Set(index.seances.filter((s) => s.differe).flatMap((s) => s.phrases));
     for (const kind of ['adulte', 'ado', 'enfant', null] as const) {
       const v = matnPour(complet, kind);
-      expect(v.seances, String(kind)).toHaveLength(0);
-      expect(v.phrases, String(kind)).toHaveLength(0);
+      expect(v.seances.length, String(kind)).toBeLessThanOrEqual(43);
+      expect(
+        v.seances.every((s) => !s.differe),
+        String(kind),
+      ).toBe(true);
+      for (const p of v.phrases) expect(fermees.has(p.id), `${kind} ${p.id}`).toBe(false);
     }
+    expect(matnPour(complet, 'adulte').seances).toHaveLength(43);
     const invite = { account: { email: 'invite@exemple.org' } };
     expect(voitDiffere(invite, false)).toBe(false);
     expect(voitDiffere(null, false)).toBe(false);
@@ -283,17 +335,38 @@ describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseigna
     expect(voitDiffere({ account: { email: 'adulte-x7k@demo.awform.test' } }, false)).toBe(true);
   });
 
-  it('personnel et démonstration : toutes les séances ; passages « adulte » (niveau_min) jamais aux enfants ni aux ados', () => {
+  it('groupe « bêta fermée » : toutes les séances (rôle ET interrupteur) ; rôle seul, interrupteur seul ou retrait : rien', () => {
+    const membre = {
+      account: { email: 'ami@exemple.org' },
+      roles: ['beta_fermee'],
+      betaDiffere: true,
+    };
+    expect(voitDiffere(membre, false)).toBe(true);
+    expect(voitDiffere({ ...membre, betaDiffere: false }, false)).toBe(false); // interrupteur éteint
+    expect(voitDiffere({ ...membre, roles: [] }, false)).toBe(false); // sorti du groupe
+    expect(voitDiffere({ ...membre, betaDiffere: undefined }, false)).toBe(false);
+    expect(matnPour(complet, 'adulte', voitDiffere(membre, false)).seances).toHaveLength(264);
+    expect(
+      matnPour(complet, 'adulte', voitDiffere({ ...membre, roles: [] }, false)).seances,
+    ).toHaveLength(43);
+  });
+
+  it('personnel, démonstration et groupe : toutes les séances ; passages « adulte » jamais aux enfants ni aux ados, même membres', () => {
     const adultes = srcFr.phrases.filter((p) => p.niveau_min === 'adulte').map((p) => p.id);
     expect(adultes).toHaveLength(444);
-    expect(complet.phrases.filter((p) => p.adulte).map((p) => p.id)).toEqual(adultes);
-    expect(matnPour(complet, 'adulte', true).seances).toHaveLength(164);
+    // les 444 passages adultes de la source sont marqués ; une séance de niveau adulte rend adulte toutes ses phrases
+    const marquees = new Set(complet.phrases.filter((p) => p.adulte).map((p) => p.id));
+    for (const id of adultes) expect(marquees.has(id), id).toBe(true);
+    expect(matnPour(complet, 'adulte', true).seances).toHaveLength(264);
     for (const kind of ['ado', 'enfant', null] as const) {
       const v = matnPour(complet, kind, true);
       expect(v.phrases.some((p) => p.adulte)).toBe(false);
       for (const id of adultes) expect(v.phrases.some((p) => p.id === id)).toBe(false);
-      for (const s of v.seances) for (const id of s.phrases) expect(adultes).not.toContain(id);
-      expect(v.phrases.length).toBe(1769 - 444);
+      for (const s of v.seances) {
+        expect(s.adulte, s.id).toBeUndefined();
+        for (const id of s.phrases) expect(marquees.has(id), `${s.id} ${id}`).toBe(false);
+      }
+      expect(v.seances.length).toBeLessThan(264);
     }
     expect(matnPour(complet, 'adulte', true).phrases).toHaveLength(1769);
   });
@@ -306,7 +379,7 @@ describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseigna
       incertaines,
     );
     expect(ens.phrases.some((x) => /Écart au mashhūr E\d+/.test(x.traduction ?? ''))).toBe(true);
-    expect(ens.decoupage).toMatch(/Découpage mécanique/);
+    expect(ens.decoupage).toMatch(/Découpage proposé par Claude/);
   });
 
   it('quiz et mémorisation : une séance se travaille avec les seules phrases de sa partie', () => {
@@ -326,14 +399,18 @@ describe('ar-Risāla : chargement à la demande', () => {
       log.push(url);
       const f = url.replace('/mutun/', '');
       if (echec) return new Response('', { status: 503 });
-      return new Response(readFileSync(join(SORTIE_PROTEGEE, f), 'utf8'), { status: 200 });
+      // partie publique (`-o<k>`) dans static/mutun, partie gardée (`-p<k>`) dans le dossier gardé
+      const dir = /^risala-o\d+\.json$/.test(f) ? SORTIE : SORTIE_PROTEGEE;
+      return new Response(readFileSync(join(dir, f), 'utf8'), { status: 200 });
     };
 
   it('chargerPartie ne charge QUE le fichier de la séance ouverte, puis le garde sur l’appareil', async () => {
     const s = index.seances[100]!;
     const log: string[] = [];
     const m1 = await chargerPartie(index, s.n, serveur(log));
-    expect(log).toEqual([`/mutun/risala-p${s.p}.json`]);
+    expect(log).toEqual([
+      `/mutun/risala-${index.parts!.find((p) => p.n === s.p)!.o ? 'o' : 'p'}${s.p}.json`,
+    ]);
     const ids = new Set(m1!.phrases.map((p) => p.id));
     for (const id of s.phrases) expect(ids.has(id)).toBe(true);
     expect(m1!.phrases.length).toBeLessThan(1769);

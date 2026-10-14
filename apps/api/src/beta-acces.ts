@@ -22,7 +22,11 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { eq } from 'drizzle-orm';
 import {
   addWaitlist,
+  ajouterAuGroupeBeta,
   checkInvitation,
+  GROUPES_INVITATION,
+  listGroupeBeta,
+  retirerDuGroupeBeta,
   countComptes,
   countWaitlist,
   createInvitation,
@@ -354,6 +358,7 @@ export function registerBetaAcces(
       jours?: number;
       envoyer?: boolean;
       langue?: string;
+      groupe?: (typeof GROUPES_INVITATION)[number];
     };
   }>(
     '/api/v1/admin/invitations',
@@ -364,6 +369,8 @@ export function registerBetaAcces(
           type: 'object',
           additionalProperties: false,
           properties: {
+            // lot 6 : groupe attribué au compte qui s'inscrit avec cette invitation
+            groupe: { enum: [...GROUPES_INVITATION] },
             libelle: { type: 'string', maxLength: 80 },
             adresse: { type: 'string', maxLength: 254, pattern: EMAIL },
             max: { type: 'integer', minimum: 1, maximum: 1000 },
@@ -385,10 +392,12 @@ export function registerBetaAcces(
         maxUses: max,
         days: b.jours,
         by: req.auth!.accountId,
+        groupe: b.groupe ?? null,
       });
       await audit(db, req.auth!.accountId, 'invitation.creation', inv.id, {
         max,
         personnelle: !!b.adresse,
+        ...(b.groupe ? { groupe: b.groupe } : {}),
       });
       const envoye =
         b.adresse && b.envoyer ? await envoyer(b.adresse, inv.code, b.langue ?? 'fr') : false;
@@ -411,6 +420,47 @@ export function registerBetaAcces(
     async (req, reply) => {
       if (!(await revokeInvitation(db, req.params.id))) return err(reply, 404, 'introuvable');
       await audit(db, req.auth!.accountId, 'invitation.revocation', req.params.id);
+      return { ok: true };
+    },
+  );
+
+  // ---------------------------------------------------------------- groupe « bêta fermée » (lot 6)
+  // Les membres voient le contenu différé de Madjaliss (interrupteur `beta_contenu_differe_visible`). Ajout par adresse,
+  // retrait par identifiant (droit perdu aussitôt), chaque changement est journalisé. Administrateur, second facteur.
+  app.get('/api/v1/admin/groupe-beta', { preHandler: needAdmin }, async () => ({
+    membres: await listGroupeBeta(db),
+  }));
+
+  app.post<{ Body: { adresse: string } }>(
+    '/api/v1/admin/groupe-beta',
+    {
+      preHandler: needAdmin,
+      schema: {
+        body: {
+          type: 'object',
+          additionalProperties: false,
+          required: ['adresse'],
+          properties: { adresse: { type: 'string', maxLength: 254, pattern: EMAIL } },
+        },
+      },
+    },
+    async (req, reply) => {
+      const r = await ajouterAuGroupeBeta(db, req.body.adresse, req.auth!.accountId);
+      if (!r) return err(reply, 404, 'compte_inconnu');
+      if (!r.dejaMembre) await audit(db, req.auth!.accountId, 'groupe_beta.ajout', r.id);
+      return reply.code(r.dejaMembre ? 200 : 201).send({ id: r.id, dejaMembre: r.dejaMembre });
+    },
+  );
+
+  app.delete<{ Params: { id: string } }>(
+    '/api/v1/admin/groupe-beta/:id',
+    {
+      preHandler: needAdmin,
+      schema: { params: { type: 'object', required: ['id'], properties: { id: UUID } } },
+    },
+    async (req, reply) => {
+      if (!(await retirerDuGroupeBeta(db, req.params.id))) return err(reply, 404, 'introuvable');
+      await audit(db, req.auth!.accountId, 'groupe_beta.retrait', req.params.id);
       return { ok: true };
     },
   );

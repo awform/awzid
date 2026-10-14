@@ -144,7 +144,9 @@ test('liste : les dix textes ouverts, rangés par cycle comme dans le plan direc
   expect(await ordre(3)).toEqual(['risala', 'lamiyya', 'jazariyya']);
   expect(await ordre(4)).toEqual(['khalil', 'alfiyya', 'waraqat']);
   for (const t of TEXTES) await expect(page.locator(`a[data-texte="${t}"]`)).toBeVisible();
-  for (const t of ['risala', 'khalil', 'alfiyya']) {
+  // lot 6 : la Risāla s'ouvre (séances ouvertes) ; seuls khalil et alfiyya restent annoncés
+  await expect(page.locator('a[data-texte="risala"]')).toHaveAttribute('href', '/madjaliss/risala');
+  for (const t of ['khalil', 'alfiyya']) {
     await expect(page.locator(`[data-texte="${t}"]`)).toContainText('Bientôt');
     await expect(page.locator(`[data-texte="${t}"]`)).not.toHaveAttribute('href', /.*/);
   }

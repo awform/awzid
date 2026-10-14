@@ -4,11 +4,21 @@
   import Bidi from '$lib/Bidi.svelte';
   import { demoProfileFor } from '$lib/attempts';
   import { t } from '$lib/i18n';
-  import { cachedMe, isStaff, type ProfileInfo } from '$lib/session';
+  import { isStaff, type ProfileInfo } from '$lib/session';
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import { ACTIFS } from './cycles';
-  import { chargerMatn, chargerPartie, matnPour, voitDiffere, type Matn } from './donnees';
+  import BandeauRelecture from './BandeauRelecture.svelte';
+  import {
+    chargerMatn,
+    chargerPartie,
+    compteActuel,
+    matnPour,
+    membreBeta,
+    oublierDiffere,
+    voitDiffere,
+    type Matn,
+  } from './donnees';
   import { lien } from './liens';
   import { lireProgres, type Progres } from './progression';
   import Seance from './Seance.svelte';
@@ -21,6 +31,8 @@
   let staff = $state(false);
   // personnel et démonstration : voient aussi les séances en publication différée (jamais les invités de la bêta)
   let differe = $state(false);
+  // groupe "bêta fermée" : bandeau "Contenu en relecture : ne pas diffuser"
+  let groupe = $state(false);
   let etat = $state<'charge' | 'pret' | 'absent'>('charge');
 
   // le texte tel que le voit ce profil : ni règles et lochies aux enfants, ni passages « adulte » aux enfants et ados
@@ -35,9 +47,11 @@
       return;
     }
     profil = await demoProfileFor('').catch(() => null);
-    const me = await cachedMe().catch(() => null);
+    const me = await compteActuel();
     staff = isStaff(me);
     differe = voitDiffere(me, staff);
+    groupe = membreBeta(me);
+    if (!differe) void oublierDiffere();
     progres = await lireProgres(profil?.id ?? null, id);
     matn = await chargerMatn(id, undefined, differe);
     // grand texte (ar-Risāla) : seules les phrases de la partie de cette séance sont chargées
@@ -53,6 +67,7 @@
     ><Bidi text={t('mj.retour_sommaire')} /></a
   >
 </p>
+{#if groupe}<BandeauRelecture />{/if}
 {#if etat === 'charge'}
   <Loading />
 {:else if etat === 'absent'}

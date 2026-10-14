@@ -198,16 +198,18 @@ describe.each(TEXTES)('texte %s', (id) => {
   const de = new Map(matn.phrases.map((p) => [p.id, p]));
 
   it('données à jour avec les sources (node scripts/madjaliss.mjs)', () => {
-    const { eleve, enseignant } = construire(id, lignes);
-    const { publique, differe } = separerDiffere(eleve);
+    const { eleve, enseignant, versNonConfirmes } = construire(id, lignes);
+    const { publique, differe } = separerDiffere(eleve, versNonConfirmes);
     expect(`${JSON.stringify(publique)}\n`).toBe(brutPublic);
     expect(differe ? `${JSON.stringify(differe)}\n` : '').toBe(brutDiffere);
     expect(`${JSON.stringify(enseignant)}\n`).toBe(brutEns);
-    // le texte public et son complément gardé, réunis, redonnent EXACTEMENT le texte construit (mêmes phrases, mêmes séances)
+    // le texte public et son complément gardé, réunis, redonnent EXACTEMENT le texte construit (mêmes phrases, mêmes séances) ;
+    // lot 6 : seule différence, un vers masqué (Lāmiyya) est remplacé par sa version complète marquée `nc`
     const c = complet(id);
+    const nc = new Map(versNonConfirmes.map((p) => [p.id, p as unknown as Phrase]));
     expect(c.seances).toEqual(eleve.seances);
     expect(new Map(c.phrases.map((p) => [p.id, p]))).toEqual(
-      new Map(eleve.phrases.map((p) => [p.id, p])),
+      new Map(eleve.phrases.map((p) => [p.id, nc.get(p.id) ?? p])),
     );
     expect(c.phrases).toHaveLength(eleve.phrases.length);
   });
@@ -302,7 +304,7 @@ describe.each(TEXTES)('texte %s', (id) => {
     // garde : une phrase qui cite le Coran ou qui est réservée n'est JAMAIS donnée à une voix de synthèse
     for (const p of matn.phrases) {
       const v = texteVoixSynthese(p);
-      if (typeof p.ar === 'object' || p.explication || p.masque || p.q?.length)
+      if (typeof p.ar === 'object' || p.explication || p.masque || p.nc || p.q?.length)
         expect(v, p.id).toBeNull();
       else expect(v, p.id).toBe(arSimple(p));
       if (v) for (const c of cites) expect(v.includes(c.q), p.id).toBe(false);
@@ -929,8 +931,14 @@ describe('lot 5 : Quarante hadiths levés, Lāmiyya (trois vers masqués)', () =
     expect(x.seances).toHaveLength(23);
     expect(CYCLES.find((c) => c.n === 3)!.textes.map((t) => t.id)).toContain('lamiyya');
     expect(x.seances.some((s) => s.differe || s.adulte || s.pudeur)).toBe(false);
-    expect(x.differe).toBeUndefined();
-    expect(differeDe('lamiyya')).toBeNull();
+    // lot 6 : le fichier public annonce un complément gardé (les trois vers non confirmés), sans aucune séance différée
+    expect(publicDe('lamiyya').differe).toEqual({ version: differeDe('lamiyya')!.version });
+    expect(differeDe('lamiyya')!.seances).toEqual([]);
+    expect(differeDe('lamiyya')!.phrases.map((p) => p.id)).toEqual([
+      'LAM-0045',
+      'LAM-0068',
+      'LAM-0096',
+    ]);
   });
 
   it('Lāmiyya : vers 0045, 0068, 0096 masqués (champs de données) — ni arabe ni traduction dans aucun fichier de l’élève', () => {
@@ -949,7 +957,8 @@ describe('lot 5 : Quarante hadiths levés, Lāmiyya (trois vers masqués)', () =
       .map((v) => v.id);
     expect(masques).toEqual(['LAM-0045', 'LAM-0068', 'LAM-0096']);
     expect(se.levee_reserves_13_10.vers_a_masquer_a_l_eleve.map((v) => v.vers)).toEqual(masques);
-    const x = m('lamiyya');
+    // le texte PUBLIC (tel que le reçoit un compte ordinaire) : emplacements seulement
+    const x = publicDe('lamiyya');
     expect(x.phrases.filter((p) => p.masque).map((p) => p.id)).toEqual(masques);
     const publics = readFileSync(join(SORTIE, 'lamiyya.json'), 'utf8');
     const fr = lire<{ phrases: Array<{ id: string; fr: string }> }>(
@@ -991,6 +1000,34 @@ describe('lot 5 : Quarante hadiths levés, Lāmiyya (trois vers masqués)', () =
           matnPour(x, kind).phrases.find((q) => q.id === id)?.h,
           `${kind} ${id}`,
         ).toBeUndefined();
+  });
+
+  it('Lāmiyya, groupe « bêta fermée » : les trois vers sont montrés (nc, non confirmé) avec leur arabe de la source, jamais appris ni lu', () => {
+    const src = lire<{ vers: Array<{ id: string; hemistiches: string[] }> }>(
+      join(dossier('lamiyya'), 'texte_ar.json'),
+    ).vers;
+    const x = m('lamiyya');
+    const publics = readFileSync(join(SORTIE, 'lamiyya.json'), 'utf8');
+    for (const id of ['LAM-0045', 'LAM-0068', 'LAM-0096']) {
+      const p = x.phrases.find((q) => q.id === id)!;
+      expect(p.nc, id).toBe(true);
+      expect(p.masque, id).toBeUndefined();
+      expect(octets(p.h!.join(' * ')), id).toBe(
+        octets(src.find((q) => q.id === id)!.hemistiches.join(' * ')),
+      );
+      expect(p.fr, id).toBeTruthy();
+      // jamais mémorisé, questionné ni lu par une voix
+      expect(texteVoixSynthese(p), id).toBeNull();
+      expect(aMemoriser([p]), id).toHaveLength(0);
+      expect(
+        genererQuiz(matnPour(x, 'adulte'), x.seances.find((s) => s.phrases.includes(id))!.n).some(
+          (q) => 'phrase' in q && q.phrase === id,
+        ),
+        id,
+      ).toBe(false);
+      // et toujours absent du fichier public
+      for (const h of p.h!) expect(publics.includes(h), id).toBe(false);
+    }
   });
 
   it('Lāmiyya : les 13 vers levés sont affichés, avec la lecture corrigée de la source (octet par octet)', () => {
@@ -1036,7 +1073,12 @@ describe('lot 5 : fichiers gardés (écart n° 3 du contrôle pré-bêta du 13/1
 
   it('static/mutun ne contient QUE les fichiers publics : ni notes de l’enseignant, ni séances différées, ni parties de la Risāla', () => {
     const fichiers = readdirSync(SORTIE).sort();
-    expect(fichiers).toEqual(textes.map((id) => `${id}.json`).sort());
+    // lot 6 : + les parties PUBLIQUES de la Risāla (risala-o<k>.json, séances ouvertes seulement)
+    const publiques = fichiers.filter((f) => /^risala-o\d+\.json$/.test(f));
+    expect(publiques.length).toBeGreaterThanOrEqual(1);
+    expect(fichiers.filter((f) => !publiques.includes(f))).toEqual(
+      textes.map((id) => `${id}.json`).sort(),
+    );
     for (const f of fichiers) expect(NOM_PROTEGE.test(f), f).toBe(false);
   });
 
@@ -1044,9 +1086,12 @@ describe('lot 5 : fichiers gardés (écart n° 3 du contrôle pré-bêta du 13/1
     const gardes = readdirSync(SORTIE_PROTEGEE).sort();
     for (const id of textes) expect(gardes, id).toContain(`${id}-enseignant.json`);
     expect(gardes).toContain('ibn-ashir-differe.json');
-    expect(gardes.filter((f) => /^risala-p\d+\.json$/.test(f))).toHaveLength(12);
+    // lot 6 : + le complément de la Lāmiyya (vers non confirmés)
+    expect(gardes).toContain('lamiyya-differe.json');
+    const nParties = gardes.filter((f) => /^risala-p\d+\.json$/.test(f)).length;
+    expect(nParties).toBeGreaterThanOrEqual(8);
     // rien d'autre : aucun fichier perdu d'une construction précédente
-    expect(gardes).toHaveLength(textes.length + 1 + 12);
+    expect(gardes).toHaveLength(textes.length + 2 + nParties);
     for (const f of gardes) expect(NOM_PROTEGE.test(f), f).toBe(true);
   });
 
@@ -1088,7 +1133,14 @@ describe('lot 5 : fichiers gardés (écart n° 3 du contrôle pré-bêta du 13/1
     const total = parties.flatMap(
       (f) => lire<{ phrases: Phrase[] }>(join(SORTIE_PROTEGEE, f)).phrases,
     );
-    expect(total).toHaveLength(1769);
+    // lot 6 : les phrases des séances ouvertes sont dans des parties PUBLIQUES, les autres dans les parties gardées
+    const pubParts = readdirSync(SORTIE)
+      .filter((f) => /^risala-o\d+\.json$/.test(f))
+      .flatMap((f) => lire<{ phrases: Phrase[] }>(join(SORTIE, f)).phrases);
+    const idsOuverts = new Set(r.seances.filter((s) => !s.differe).flatMap((s) => s.phrases));
+    expect(new Set(pubParts.map((p) => p.id))).toEqual(idsOuverts);
+    expect(total.some((p) => idsOuverts.has(p.id))).toBe(false);
+    expect(total.length + pubParts.length).toBe(1769);
   });
 
   it('notes de l’enseignant : jamais dans un fichier public', () => {

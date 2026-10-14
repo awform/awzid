@@ -67,10 +67,12 @@ export const ACTIFS: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * Textes dont TOUTES les séances sont en publication différée (ar-Risāla : cycle 3, décision du 13/10/2026) : pour les
- * invités de la bêta ils restent annoncés « bientôt » ; le personnel et la démonstration les ouvrent.
+ * Textes dont TOUTES les séances sont en publication différée : pour les invités de la bêta ils restent annoncés
+ * « bientôt » ; le personnel, la démonstration et le groupe « bêta fermée » les ouvrent. Lot 6 : la Risāla n'y est plus
+ * (son découpage en 264 séances dit, séance par séance, celles qui sont différées : 43 sont publiables à l'étape
+ * publique) ; remettre `'risala'` ici la rendrait de nouveau « bientôt » pour tout le monde.
  */
-export const TOUT_DIFFERE: ReadonlySet<string> = new Set(['risala']);
+export const TOUT_DIFFERE: ReadonlySet<string> = new Set<string>([]);
 
 export const texteDuCursus = (id: string): TexteCursus | null =>
   CYCLES.flatMap((c) => c.textes).find((x) => x.id === id) ?? null;

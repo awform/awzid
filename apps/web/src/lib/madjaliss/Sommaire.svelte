@@ -4,13 +4,23 @@
   import Bidi from '$lib/Bidi.svelte';
   import { demoProfileFor } from '$lib/attempts';
   import { fmtDate, t } from '$lib/i18n';
-  import { cachedMe, isStaff, type ProfileInfo } from '$lib/session';
+  import { isStaff, type ProfileInfo } from '$lib/session';
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import EnTete from '$lib/ui/EnTete.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import { ACTIFS, texteDuCursus } from './cycles';
-  import { avecArabe, chargerMatn, matnPour, voitDiffere, type Matn } from './donnees';
+  import BandeauRelecture from './BandeauRelecture.svelte';
+  import {
+    avecArabe,
+    chargerMatn,
+    compteActuel,
+    matnPour,
+    membreBeta,
+    oublierDiffere,
+    voitDiffere,
+    type Matn,
+  } from './donnees';
   import { lien } from './liens';
   import {
     fusionnerServeur,
@@ -33,6 +43,8 @@
   let etat = $state<'charge' | 'pret' | 'absent'>('charge');
   // personnel et démonstration : voient aussi les séances en publication différée (jamais les invités de la bêta)
   let differe = $state(false);
+  // groupe "bêta fermée" : bandeau "Contenu en relecture : ne pas diffuser"
+  let groupe = $state(false);
 
   // le texte tel que le voit ce profil : ni règles et lochies aux enfants, ni passages « adulte » aux enfants et ados
   const vue = $derived(matn ? matnPour(matn, profil?.kind ?? null, differe) : null);
@@ -55,8 +67,10 @@
       return;
     }
     profil = await demoProfileFor('').catch(() => null);
-    const me = await cachedMe().catch(() => null);
+    const me = await compteActuel();
     differe = voitDiffere(me, isStaff(me));
+    groupe = membreBeta(me);
+    if (!differe) void oublierDiffere();
     const pid = profil?.id ?? null;
     progres = await lireProgres(pid, id);
     matn = await chargerMatn(id, undefined, differe);
@@ -66,6 +80,7 @@
 </script>
 
 {#if cursus}<EnTete titre={nomTexte} ar={cursus.ar} teinte={2} />{/if}
+{#if groupe}<BandeauRelecture />{/if}
 <p>
   <a href={resolve('/madjaliss/[[texte]]/[[n]]', lien())}><Bidi text={t('mj.retour_liste')} /></a>
 </p>

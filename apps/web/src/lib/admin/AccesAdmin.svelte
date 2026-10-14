@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { fmtDate, locale, t } from '$lib/i18n';
   import { call } from '$lib/session';
+  import GroupeBeta from './GroupeBeta.svelte';
 
   /**
    * Bêta — espace de l'administrateur (second facteur) :
@@ -37,6 +38,7 @@
     expireLe: string | null;
     etat: 'active' | 'expiree' | 'revoquee' | 'epuisee';
     creeeLe: string;
+    groupe?: string | null;
   }
   interface Demande {
     id: string;
@@ -85,6 +87,8 @@
   let max = $state(1);
   let jours = $state(30);
   let envoyer = $state(true);
+  // lot 6 : l'invitation inscrit le compte dans le groupe "bêta fermée"
+  let groupe = $state(false);
   let erreur = $state('');
   let copie = $state(false);
 
@@ -127,6 +131,7 @@
       ...(libelle.trim() ? { libelle: libelle.trim() } : {}),
       ...(adr ? { adresse: adr, envoyer, langue: locale() } : { max }),
       jours,
+      ...(groupe ? { groupe: 'beta_fermee' } : {}),
     });
     if (!r.ok || !r.data) {
       erreur = r.code ?? 'erreur';
@@ -350,6 +355,10 @@
     {/if}
     <label for="inv-jours"><Bidi text={t('acces.inv_jours')} /></label>
     <input id="inv-jours" type="number" min="0" max="365" bind:value={jours} />
+    <label class="check"
+      ><input type="checkbox" bind:checked={groupe} data-testid="inv-groupe" />
+      <span><Bidi text={t('gb.invitation')} /></span></label
+    >
     {#if erreur}<p class="error" role="alert"><Bidi text={erreur} /></p>{/if}
     <button type="submit" class="primary" data-testid="inv-creer"
       ><Bidi text={t('acces.inv_creer')} /></button
@@ -394,6 +403,8 @@
       <li class="muted"><Bidi text={t('acces.inv_aucune')} /></li>
     {/each}
   </ul>
+
+  <GroupeBeta />
 
   <h3>
     <Bidi text={t('acces.att_titre')} />

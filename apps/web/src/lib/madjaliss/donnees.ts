@@ -11,7 +11,8 @@
  * web exige une session avec le droit adapté (401 sans session, 403 sans le droit). Un invité de la bêta n'en
  * télécharge aucun, même par adresse directe.
  */
-import { kvGet, kvSet } from '$lib/idb';
+import { delMany, kvGet, kvKeys, kvSet } from '$lib/idb';
+import { cachedMe, fetchMe, type Me } from '$lib/session';
 
 /** Morceau du texte arabe : texte de l'auteur, ou mots du Coran cités (sous-chaîne exacte de Tanzil). */
 export type Segment = string | { q: string; ref: string };
@@ -86,6 +87,12 @@ export interface Phrase {
    * ni arabe ni traduction dans aucun fichier ; l'élève lit « vers en cours de vérification — bientôt »
    */
   masque?: true;
+  /**
+   * lot 6 : vers dont la lecture n'est PAS CONFIRMÉE, montré au groupe « bêta fermée » et au personnel seulement (il
+   * remplace l'emplacement `masque` à la fusion du complément gardé) avec la mention « non confirmé » ; jamais appris,
+   * questionné ni lu par une voix
+   */
+  nc?: true;
   /** vocalisation ou lecture à vérifier (détail en mode enseignant) : jamais une question « compléter » */
   incertain?: true;
   /** réservé au niveau adulte (ni enfants ni ados) */
@@ -128,8 +135,15 @@ export interface Seance {
   facultatif?: true;
   /** même sujet dans un autre texte (renvois du référent) */
   renvois?: Renvoi[];
-  /** grand texte (ar-Risāla) : n° du fichier de phrases `/mutun/<texte>-p<k>.json` où sont les phrases de cette séance */
+  /**
+   * grand texte (ar-Risāla) : n° du fichier de phrases où sont les phrases de cette séance : `/mutun/<texte>-o<k>.json`
+   * (partie PUBLIQUE, séance ouverte) ou `/mutun/<texte>-p<k>.json` (partie GARDÉE, séance différée), voir `Matn.parts`
+   */
   p?: number;
+  /** grand texte : cycle de la séance (1 à 3), d'après le découpage du référent */
+  c?: number;
+  /** raison de la publication différée, montrée au groupe « bêta fermée » et au personnel (venue de la partie gardée) */
+  rd?: string;
 }
 
 /** Code visuel de la grammaire (Ājurrūmiyya) : soulignements et formes, aucune couleur du tajwīd. */
@@ -155,7 +169,7 @@ export interface Matn {
   phrases: Phrase[];
   seances: Seance[];
   /** grand texte (ar-Risāla) : le fichier du texte ne porte que le sommaire ; les phrases sont par parties, à la demande */
-  parts?: Array<{ n: number; version: string }>;
+  parts?: Array<{ n: number; version: string; o?: true }>;
   /**
    * séances en PUBLICATION DIFFÉRÉE (Ibn ʿĀshir) : le fichier public ne les contient pas ; elles sont dans
    * `/mutun/<texte>-differe.json`, servi seulement au personnel et aux comptes de démonstration (session exigée)
@@ -173,13 +187,17 @@ export interface PartieDifferee {
   phrases: Phrase[];
 }
 
-/** Fichier de phrases d'une partie d'un grand texte (gardé : personnel et démonstration). */
+/**
+ * Fichier de phrases d'une partie d'un grand texte : PUBLIC (`-o<k>`, séances ouvertes) ou GARDÉ (`-p<k>` : personnel,
+ * démonstration, groupe « bêta fermée » ; il porte alors la raison de la publication différée de ses séances).
+ */
 export interface PartieMatn {
   v: number;
   id: string;
   part: number;
   version: string;
   phrases: Phrase[];
+  raisons?: Record<string, string>;
 }
 
 export interface NotesEnseignant {
@@ -230,6 +248,7 @@ export const arSimple = (p: Phrase): string | null =>
 export const texteVoixSynthese = (p: Phrase): string | null =>
   p.explication ||
   p.masque ||
+  p.nc ||
   p.q?.length ||
   p.t === 'citation_coran' ||
   /[﴿﴾]/.test(arSimple(p) ?? '﴿') ||
@@ -273,9 +292,14 @@ export function chargerMatn(
 export function fusionnerDifferee(m: Matn, d: PartieDifferee): Matn {
   const connues = new Set(m.phrases.map((x) => x.id));
   const vues = new Set(m.seances.map((s) => s.n));
+  // lot 6 : une version complète (vers non confirmé, `nc`) REMPLACE l'emplacement masqué du fichier public
+  const completes = new Map(d.phrases.filter((x) => x.nc).map((x) => [x.id, x]));
   return {
     ...m,
-    phrases: [...m.phrases, ...d.phrases.filter((x) => !connues.has(x.id))],
+    phrases: [
+      ...m.phrases.map((x) => (x.masque ? (completes.get(x.id) ?? x) : x)),
+      ...d.phrases.filter((x) => !connues.has(x.id)),
+    ],
     seances: [...m.seances, ...d.seances.filter((s) => !vues.has(s.n))].sort((a, b) => a.n - b.n),
   };
 }
@@ -334,12 +358,13 @@ export async function chargerPartie(
   const part = m.seances.find((s) => s.n === n)?.p;
   const info = m.parts?.find((x) => x.n === part);
   if (!m.parts || !part || !info) return m;
-  const cle = cleDiffere(m.id, `:p${part}`);
+  // partie PUBLIQUE (séances ouvertes, `-o<k>`) ou GARDÉE (séances différées, `-p<k>` : droit exigé par le serveur)
+  const cle = info.o ? `mutun:${m.id}:o${part}` : cleDiffere(m.id, `:p${part}`);
   const garde = await kvGet<PartieMatn>(cle).catch(() => undefined);
   let p: PartieMatn | null | undefined = garde?.version === info.version ? garde : null;
   if (!p) {
     let refuse = false;
-    p = await f(`/mutun/${encodeURIComponent(m.id)}-p${part}.json`)
+    p = await f(`/mutun/${encodeURIComponent(m.id)}-${info.o ? 'o' : 'p'}${part}.json`)
       .then((r) => {
         refuse = r.status === 401 || r.status === 403;
         return r.ok ? (r.json() as Promise<PartieMatn>) : null;
@@ -350,7 +375,14 @@ export async function chargerPartie(
   }
   if (!p) return null;
   const connues = new Set(m.phrases.map((x) => x.id));
-  return { ...m, phrases: [...m.phrases, ...p.phrases.filter((x) => !connues.has(x.id))] };
+  const raisons = p.raisons ?? {};
+  return {
+    ...m,
+    phrases: [...m.phrases, ...p.phrases.filter((x) => !connues.has(x.id))],
+    seances: Object.keys(raisons).length
+      ? m.seances.map((s) => (raisons[s.n] ? { ...s, rd: raisons[s.n] } : s))
+      : m.seances,
+  };
 }
 
 /** Notes du mode enseignant (en ligne seulement, jamais gardées sur l'appareil d'un élève). */
@@ -374,10 +406,17 @@ export type Public = 'enfant' | 'ado' | 'adulte';
  * que sur une instance de démonstration. Sans compte connu : masqué.
  */
 export const COMPTE_DEMO = /@demo\.awform\.test$/i;
-export const voitDiffere = (
-  me: { account: { email: string | null } } | null | undefined,
-  staff: boolean,
-): boolean => staff || COMPTE_DEMO.test(me?.account.email ?? '');
+/** Rôle du groupe « bêta fermée » (lot 6) : même nom que côté serveur (`ROLE_BETA` de mutun-acces.ts). */
+export const ROLE_BETA = 'beta_fermee';
+type CompteVu = { account: { email: string | null }; roles?: string[]; betaDiffere?: boolean };
+/**
+ * Membre du groupe « bêta fermée » avec le droit : rôle du compte ET `betaDiffere` calculé par l'API (interrupteur
+ * `beta_contenu_differe_visible`). Sert aussi au bandeau « Contenu en relecture : ne pas diffuser ».
+ */
+export const membreBeta = (me: CompteVu | null | undefined): boolean =>
+  !!me && me.betaDiffere === true && (me.roles ?? []).includes(ROLE_BETA);
+export const voitDiffere = (me: CompteVu | null | undefined, staff: boolean): boolean =>
+  staff || COMPTE_DEMO.test(me?.account.email ?? '') || membreBeta(me);
 
 /**
  * Le texte tel que le voit un profil (mécanisme des profils : `kind` enfant / ado / adulte) :
@@ -400,3 +439,22 @@ export function matnPour(m: Matn, kind: Public | null, differe = false): Matn {
 /** Séances proposées à un profil (voir `matnPour`). */
 export const seancesPour = (m: Matn, kind: Public | null, differe = false): Seance[] =>
   matnPour(m, kind, differe).seances;
+
+/**
+ * Compte vu par la rubrique : le RÉSEAU d'abord (un retrait du groupe « bêta fermée » ou l'interrupteur éteint prennent
+ * effet aussitôt), sinon la copie gardée sur l'appareil (hors ligne).
+ */
+export async function compteActuel(): Promise<Me | null> {
+  return (await fetchMe().catch(() => null)) ?? (await cachedMe().catch(() => null));
+}
+
+/**
+ * Sans le droit de voir le contenu différé : les copies gardées sur l'appareil (`madjaliss-differe:*`) sont effacées, un
+ * compte sorti du groupe ne garde rien (le serveur, lui, refuse déjà ses fichiers).
+ */
+export async function oublierDiffere(): Promise<void> {
+  const cles = (await kvKeys().catch(() => [] as string[])).filter((k) =>
+    k.startsWith('madjaliss-differe:'),
+  );
+  if (cles.length) await delMany('kv', cles).catch(() => {});
+}

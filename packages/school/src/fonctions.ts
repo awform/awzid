@@ -25,6 +25,7 @@ export const FONCTION_CLES = [
   'avis',
   'conversation',
   'signaler',
+  'beta_contenu_differe_visible',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -74,6 +75,13 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   conversation: { defaut: 'beta' },
   // bouton « Signaler un problème » (bêta-support)
   signaler: { defaut: 'on' },
+  // lot 6 (décision du client, 14/10/2026) : pendant la BÊTA FERMÉE, les comptes du groupe « bêta fermée » (créé par
+  // invitation, géré par l'administration) voient TOUT le contenu différé de Madjaliss (séances de croyance d'Ibn ʿĀshir,
+  // Risāla complète, vers non confirmés de la Lāmiyya) avec le bandeau « Contenu en relecture : ne pas diffuser ». Allumé
+  // par défaut en bêta fermée ; ÉTEINT = retour au comportement du lot 5 (aucun contenu différé pour les invités). À
+  // éteindre avant d'ouvrir la production. Ne donne jamais accès aux notes du référent (personnel seul), ni aux passages
+  // de niveau adulte pour un profil d'enfant ou d'ado.
+  beta_contenu_differe_visible: { defaut: 'on' },
 };
 
 /** Règle d'exception (valeurs contrôlées à l'écriture : rôles, âges, canaux ci-dessus). */

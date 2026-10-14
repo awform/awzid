@@ -2,10 +2,14 @@
  * Madjaliss — accès aux FICHIERS GARDÉS de `/mutun/` (lot 5, écart n° 3 du contrôle pré-bêta du 13/10/2026), sans
  * dépendance à SvelteKit (testé seul). Ces fichiers ne sont plus dans `static/` (servi sans authentification) :
  *  - `<texte>-enseignant.json` : notes de l'enseignant (décisions du référent, vocalisations à vérifier…) → PERSONNEL ;
- *  - `<texte>-differe.json` : séances en publication différée (Ibn ʿĀshir, séances de croyance) → PERSONNEL et DÉMONSTRATION ;
- *  - `risala-p<k>.json` : phrases de la Risāla (publication différée, cycle 3) → PERSONNEL et DÉMONSTRATION.
- * Un invité de la bêta (ni personnel ni compte de démonstration) et un visiteur sans session n'en reçoivent AUCUN, même
- * par adresse directe. MÊMES règles que l'interface (`isStaff` de session.ts, `voitDiffere` de madjaliss/donnees.ts).
+ *  - `<texte>-differe.json` : séances en publication différée (Ibn ʿĀshir, séances de croyance ; vers non confirmés de la
+ *    Lāmiyya) → PERSONNEL, DÉMONSTRATION et GROUPE « BÊTA FERMÉE » (lot 6) ;
+ *  - `risala-p<k>.json` : phrases des séances différées de la Risāla → mêmes droits.
+ * Un compte ordinaire (ni personnel, ni démonstration, ni membre du groupe « bêta fermée » quand l'interrupteur
+ * `beta_contenu_differe_visible` est allumé) et un visiteur sans session n'en reçoivent AUCUN, même par adresse
+ * directe. Le droit est lu à CHAQUE requête dans la session (retrait du groupe = perte immédiate) et contrôlé avant
+ * l'existence du fichier. Les notes `*-enseignant.json` restent au personnel SEUL (le groupe n'y a pas droit).
+ * MÊMES règles que l'interface (`isStaff` de session.ts, `voitDiffere` de madjaliss/donnees.ts).
  */
 
 /** Ce que la route lit du compte (réponse de `GET /api/v1/auth/me`). */
@@ -14,7 +18,15 @@ export interface CompteMutun {
   roles?: string[];
   mfaRequired?: boolean;
   mfaVerified?: boolean;
+  /**
+   * lot 6 : l'API dit que ce compte voit le contenu différé de la bêta fermée (membre du groupe `beta_fermee` ET
+   * interrupteur `beta_contenu_differe_visible` allumé). Contrôlé AVEC le rôle : l'un sans l'autre ne donne rien.
+   */
+  betaDiffere?: boolean;
 }
+
+/** Rôle du groupe « bêta fermée » (créé par invitation, géré par l'administration). */
+export const ROLE_BETA = 'beta_fermee';
 
 /** Comptes de démonstration (`<rôle>-<tag>@demo.awform.test`, créés par `deploy.sh --demo` seulement). */
 export const COMPTE_DEMO = /@demo\.awform\.test$/i;
@@ -41,9 +53,23 @@ export function estPersonnel(me: CompteMutun | null): boolean {
   );
 }
 
-/** Voit la publication différée : le personnel et les comptes de démonstration. */
+/**
+ * Membre du groupe « bêta fermée » AVEC le droit : rôle `beta_fermee` du compte ET `betaDiffere` calculé par l'API
+ * (interrupteur `beta_contenu_differe_visible`). Une session à moitié ouverte (second facteur exigé et non validé) : rien.
+ */
+export function estMembreBeta(me: CompteMutun | null): boolean {
+  if (!me?.account) return false;
+  if (me.mfaRequired && !me.mfaVerified) return false;
+  return me.betaDiffere === true && (me.roles ?? []).includes(ROLE_BETA);
+}
+
+/** Voit la publication différée : le personnel, les comptes de démonstration et le groupe « bêta fermée ». */
 export function voitDiffere(me: CompteMutun | null): boolean {
-  return estPersonnel(me) || (!!me?.account && COMPTE_DEMO.test(me.account.email ?? ''));
+  return (
+    estPersonnel(me) ||
+    (!!me?.account && COMPTE_DEMO.test(me.account.email ?? '')) ||
+    estMembreBeta(me)
+  );
 }
 
 /**

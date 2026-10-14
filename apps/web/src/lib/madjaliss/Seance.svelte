@@ -93,6 +93,11 @@
   {#if seance.differe}<p class="muted" data-testid="mj-differe">
       <Bidi text={t('mj.differe')} />
     </p>{/if}
+  <!-- lot 6 : raison de la publication différée (venue de la partie gardée : groupe "bêta fermée" et personnel) -->
+  {#if seance.differe && seance.rd}<p class="muted" data-testid="mj-raison-differe">
+      <strong><Bidi text={t('mj.raison_differe')} /></strong>
+      <span lang="fr"><Bidi text={seance.rd} /></span>
+    </p>{/if}
 </header>
 
 <ol class="etapes" aria-label={t('mj.etapes_label')}>

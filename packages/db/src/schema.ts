@@ -1894,6 +1894,9 @@ export const ACCOUNT_ROLES = [
   'moderateur',
   'support',
   'admin',
+  // lot 6 : groupe « bêta fermée » (créé par invitation, géré par l'administration) ; voit le contenu différé de Madjaliss
+  // tant que l'interrupteur `beta_contenu_differe_visible` est allumé ; ne donne AUCUN droit de personnel
+  'beta_fermee',
 ] as const;
 export type AccountRoleName = (typeof ACCOUNT_ROLES)[number];
 
@@ -1921,7 +1924,7 @@ export const accountRole = pgTable(
     unique('account_role_unique').on(t.accountId, t.role, t.schoolId, t.classId).nullsNotDistinct(),
     check(
       'account_role_role',
-      sql`${t.role} IN ('parent', 'eleve_adulte', 'enseignant', 'direction', 'secretariat', 'referent', 'moderateur', 'support', 'admin')`,
+      sql`${t.role} IN ('parent', 'eleve_adulte', 'enseignant', 'direction', 'secretariat', 'referent', 'moderateur', 'support', 'admin', 'beta_fermee')`,
     ),
   ],
 );
@@ -2894,10 +2897,13 @@ export const invitation = pgTable(
     createdBy: uuid('created_by').references(() => account.id, { onDelete: 'set null' }),
     /** demande de la liste d'attente qui a donné cette invitation */
     waitlistId: uuid('waitlist_id'),
+    /** lot 6 : groupe attribué au compte créé avec cette invitation (« beta_fermee »), vide = aucun */
+    groupe: text('groupe'),
     createdAt: createdAt(),
   },
   (t) => [
     index('invitation_created').on(t.createdAt),
+    check('invitation_groupe', sql`${t.groupe} IS NULL OR ${t.groupe} IN ('beta_fermee')`),
     check('invitation_max_uses', sql`${t.maxUses} BETWEEN 1 AND 1000`),
     check('invitation_uses', sql`${t.uses} >= 0 AND ${t.uses} <= ${t.maxUses}`),
   ],
