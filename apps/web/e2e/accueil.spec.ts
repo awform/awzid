@@ -1,5 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page, Request, Route } from '@playwright/test';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { brotliCompressSync } from 'node:zlib';
 import { expect, test } from './fixtures';
 
@@ -32,7 +34,7 @@ test.describe('affichage', () => {
     await expect(page.getByText('Bêta fermée sur invitation').first()).toBeVisible();
     await expect(page.getByRole('button')).toHaveCount(1);
     await expect(page.getByRole('button', { name: 'Rejoindre la liste d’attente' })).toBeVisible();
-    for (const mot of ['Finalité', 'Base légale', 'Durée', 'Destinataires', 'Tes droits'])
+    for (const mot of ['Finalité', 'Base légale', 'Durée', 'Destinataires', 'Vos droits'])
       await expect(page.getByText(mot).first()).toBeAttached();
     await expect(
       page.getByText('Texte provisoire, en attente d’une relecture juridique.'),
@@ -150,7 +152,7 @@ test.describe('formulaire (mécanisme existant de la liste d’attente)', () => 
   }) => {
     await ouvrir(page);
     const email = unique();
-    await page.getByLabel('Ton adresse e-mail').fill(email);
+    await page.getByLabel('Votre adresse e-mail').fill(email);
     await page.getByRole('checkbox').check();
     const req = page.waitForRequest((r) => r.url().includes('/api/v1/acces/liste-attente'));
     const rep = page.waitForResponse((r) => r.url().includes('/api/v1/acces/liste-attente'));
@@ -160,7 +162,7 @@ test.describe('formulaire (mécanisme existant de la liste d’attente)', () => 
     expect(String(corps.jeton)).toMatch(/^\d{10,16}\..+/);
     expect((await rep).status()).toBe(202);
     const etat = page.locator('#etat');
-    await expect(etat).toContainText('Ta demande est enregistrée');
+    await expect(etat).toContainText('e-mail de confirmation');
     await expect(etat).toBeFocused();
     await expect(page.getByRole('button')).toBeHidden();
   });
@@ -172,12 +174,12 @@ test.describe('formulaire (mécanisme existant de la liste d’attente)', () => 
     let envoyes = 0;
     page.on('request', (r) => r.url().includes('liste-attente') && envoyes++);
     await page.getByRole('button', { name: 'Rejoindre la liste d’attente' }).click();
-    await page.getByLabel('Ton adresse e-mail').fill('pas-une-adresse');
+    await page.getByLabel('Votre adresse e-mail').fill('pas-une-adresse');
     await page.getByRole('checkbox').check();
     await page.getByRole('button', { name: 'Rejoindre la liste d’attente' }).click();
     expect(
       await page
-        .getByLabel('Ton adresse e-mail')
+        .getByLabel('Votre adresse e-mail')
         .evaluate((e: HTMLInputElement) => e.validity.valid),
     ).toBe(false);
     await page.waitForTimeout(500);
@@ -194,7 +196,7 @@ test.describe('formulaire (mécanisme existant de la liste d’attente)', () => 
         json: { error: { code: 'antibot_echec', raison: 'piege' } },
       }),
     );
-    await page.getByLabel('Ton adresse e-mail').fill(unique());
+    await page.getByLabel('Votre adresse e-mail').fill(unique());
     await page.getByRole('checkbox').check();
     await page
       .locator('input[name=site_web]')
@@ -214,7 +216,7 @@ test.describe('formulaire (mécanisme existant de la liste d’attente)', () => 
     page,
   }) => {
     await ouvrir(page);
-    await page.getByLabel('Ton adresse e-mail').fill(unique());
+    await page.getByLabel('Votre adresse e-mail').fill(unique());
     await page.getByRole('checkbox').check();
     const cas: Array<[number, string, string]> = [
       [429, 'trop_de_demandes', 'Trop de demandes pour le moment'],
@@ -338,5 +340,114 @@ test.describe('langues, thème, accessibilité', () => {
       const b = await page.locator(sel).first().boundingBox();
       expect(b?.height, sel).toBeGreaterThanOrEqual(44);
     }
+  });
+});
+
+/** dernier e-mail de ce type reçu à cette adresse dans la boîte de démonstration (AWFORM_MAIL=journal : aucun envoi réel) */
+async function dernierMail(to: string, kind: string): Promise<{ subject: string; text: string }> {
+  const dir = process.env.E2E_MAIL_DIR!;
+  let trouve: { subject: string; text: string } | null = null;
+  await expect
+    .poll(
+      () => {
+        let fichiers: string[];
+        try {
+          fichiers = readdirSync(dir)
+            .filter((f) => f.endsWith('.json'))
+            .sort();
+        } catch {
+          return false;
+        }
+        for (const f of fichiers.reverse()) {
+          const m = JSON.parse(readFileSync(join(dir, f), 'utf8'));
+          if (m.to === to && m.kind === kind) {
+            trouve = m;
+            return true;
+          }
+        }
+        return false;
+      },
+      { timeout: 15_000 },
+    )
+    .toBe(true);
+  return trouve!;
+}
+
+test.describe('double consentement (e-mail de confirmation, désinscription)', () => {
+  test('inscription, e-mail (vouvoiement, lien de désinscription), confirmation puis désinscription par les liens', async ({
+    page,
+  }) => {
+    await ouvrir(page);
+    const email = unique();
+    await page.getByLabel('Votre adresse e-mail').fill(email);
+    await page.getByRole('checkbox').check();
+    await page.getByRole('button', { name: 'Rejoindre la liste d’attente' }).click();
+    await expect(page.locator('#etat')).toContainText(
+      'Votre place n’est enregistrée qu’après ce clic',
+      {
+        timeout: 15_000,
+      },
+    );
+    const m = await dernierMail(email, 'liste_attente');
+    expect(m.subject).toBe('Confirmez votre inscription à la liste d’attente d’Awzid');
+    expect(m.text).toContain('Vous avez demandé');
+    expect(m.text).toContain('Pour vous désinscrire');
+    const confirmer = /https?:\/\/\S+\/bienvenue\/confirmer\?lang=fr#t=[\w-]+/.exec(m.text)![0];
+    const desinscrire = /https?:\/\/\S+\/bienvenue\/desinscription\?lang=fr#t=[\w-]+/.exec(
+      m.text,
+    )![0];
+    // page du lien : un clic explicite est nécessaire (un robot de messagerie qui ouvre le lien ne confirme rien)
+    await page.goto(confirmer);
+    await expect(page.getByRole('heading', { name: 'Confirmer votre inscription' })).toBeVisible();
+    expect((await page.request.get(confirmer)).headers()['x-robots-tag']).toContain('noindex');
+    await page.getByRole('button', { name: 'Confirmer mon inscription' }).click();
+    await expect(page.locator('#etat')).toContainText('votre inscription est confirmée');
+    expect(page.url()).not.toContain('#t=');
+    // le même lien une seconde fois : « déjà confirmée »
+    await page.goto('about:blank');
+    await page.goto(confirmer);
+    await page.getByRole('button', { name: 'Confirmer mon inscription' }).click();
+    await expect(page.locator('#etat')).toContainText('déjà confirmée');
+    // désinscription : l'adresse est effacée ; le lien ne sert plus
+    await page.goto(desinscrire);
+    await expect(
+      page.getByRole('heading', { name: 'Se désinscrire de la liste d’attente' }),
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Me désinscrire et effacer mon adresse' }).click();
+    await expect(page.locator('#etat')).toContainText('votre adresse a été effacée');
+    await page.goto('about:blank');
+    await page.goto(desinscrire);
+    await page.getByRole('button', { name: 'Me désinscrire et effacer mon adresse' }).click();
+    await expect(page.locator('#etat')).toContainText('plus valable');
+  });
+
+  test('lien sans jeton ou inventé : message clair, rien ne se passe ; accessibilité de la page', async ({
+    page,
+  }) => {
+    await page.goto('/bienvenue/confirmer?lang=fr');
+    await expect(page.locator('#etat')).toContainText('plus valable');
+    await page.goto('/bienvenue/confirmer?lang=en#t=' + 'a'.repeat(43));
+    await page.getByRole('button', { name: 'Confirm my sign-up' }).click();
+    await expect(page.locator('#etat')).toContainText('no longer valid');
+    const r = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      .analyze();
+    expect(r.violations.map((v) => v.id)).toEqual([]);
+  });
+
+  test('le bloc « Ce que nous faisons de votre adresse » est un accordéon fermé, ouvrable au clavier', async ({
+    page,
+    isMobile,
+  }) => {
+    await ouvrir(page);
+    const d = page.locator('details.rgpd');
+    await expect(d).not.toHaveAttribute('open', '');
+    await expect(page.getByText('Finalité')).toBeHidden();
+    await d.locator('summary').focus();
+    await page.keyboard.press('Enter');
+    await expect(d).toHaveAttribute('open', '');
+    await expect(page.getByText('Finalité')).toBeVisible();
+    await expect(page.getByText('Texte provisoire, en attente')).toBeVisible();
+    void isMobile;
   });
 });

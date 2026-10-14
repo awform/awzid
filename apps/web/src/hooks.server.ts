@@ -89,7 +89,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   }
 
   // sans JavaScript, le formulaire de la page d'accueil arrive ici : rien n'est lu ni gardé, retour à la page
-  if (pathname === '/bienvenue' && event.request.method === 'POST')
+  if (pathname.startsWith('/bienvenue') && event.request.method === 'POST')
     return securise(
       new Response(null, {
         status: 303,
@@ -108,6 +108,23 @@ export const handle: Handle = async ({ event, resolve }) => {
   }
   // page d'accueil publique : visiteur sans session sur « / » (bêta sur invitation) ou adresse /bienvenue
   const lecture = event.request.method === 'GET' || event.request.method === 'HEAD';
+  // pages des liens reçus par e-mail (confirmation, désinscription) : toujours servies, jamais indexables
+  const lien =
+    lecture && (pathname === '/bienvenue/confirmer' || pathname === '/bienvenue/desinscription');
+  if (lien) {
+    const cfg = accueil();
+    return securise(
+      reponseAccueil({
+        cfg,
+        vue: pathname.endsWith('confirmer') ? 'confirmer' : 'desinscription',
+        lang: langueAccueil(
+          event.url.searchParams.get('lang'),
+          event.request.headers.get('accept-language'),
+          cfg.langues,
+        ),
+      }),
+    );
+  }
   if (nav || (lecture && pathname === '/bienvenue')) {
     const cfg = accueil();
     const cookie = event.request.headers.get('cookie');

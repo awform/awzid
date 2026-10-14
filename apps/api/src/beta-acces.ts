@@ -19,9 +19,13 @@
  * ni adresse.
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { randomBytes } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import {
-  addWaitlist,
+  confirmerAttente,
+  demanderAttente,
+  desinscrireAttente,
+  waitlistTokenHash,
   ajouterAuGroupeBeta,
   checkInvitation,
   GROUPES_INVITATION,
@@ -156,6 +160,24 @@ export function registerBetaAcces(
     }
   }
 
+  /** E-mail de confirmation de la liste d'attente (lien dans le fragment : jamais dans les journaux) ; rien sans e-mail réglé. */
+  async function envoyerConfirmationAttente(to: string, jeton: string, locale: string) {
+    if (!opts.publicUrl || opts.mailer.mode === 'inactif') return;
+    const base = opts.publicUrl.replace(/\/+$/, '');
+    try {
+      await opts.mailer.send({
+        to,
+        kind: 'liste_attente',
+        ...renderMail('liste_attente', locale, {
+          link: `${base}/bienvenue/confirmer?lang=${locale}#t=${jeton}`,
+          unsub: `${base}/bienvenue/desinscription?lang=${locale}#t=${jeton}`,
+        }),
+      });
+    } catch (e) {
+      app.log.warn({ type: (e as Error).name }, 'envoi confirmation liste d’attente en échec');
+    }
+  }
+
   /** Vue publique de l'état d'accès (aucun nombre de comptes : seulement « plein » ou non). */
   async function statutPublic(acces: AccesStatut) {
     const comptes = acces.inscription === 'ouverte' ? await countComptes(db) : 0;
@@ -262,14 +284,55 @@ export function registerBetaAcces(
       const langue = ['fr', 'en', 'es', 'de', 'ar'].includes(req.body.langue ?? '')
         ? req.body.langue
         : 'fr';
-      await addWaitlist(db, {
+      // double consentement : la demande n'est « confirmée » (et visible de l'administrateur) qu'après le clic sur le lien
+      // envoyé à l'adresse ; jeton aléatoire, seule son empreinte est gardée ; non confirmée, elle est effacée sous 7 jours
+      const jeton = randomBytes(32).toString('base64url');
+      const etat = await demanderAttente(db, {
         email: req.body.email,
         name: req.body.nom,
         note: req.body.mot,
         locale: langue,
+        tokenHash: waitlistTokenHash(jeton),
       });
+      if (etat !== 'existe')
+        void envoyerConfirmationAttente(req.body.email.trim().toLowerCase(), jeton, langue ?? 'fr');
       // réponse identique que l'adresse soit nouvelle ou déjà dans la liste
       return reply.code(202).send({ ok: true });
+    },
+  );
+
+  const BODY_JETON = {
+    type: 'object',
+    required: ['token'],
+    additionalProperties: false,
+    properties: { token: { type: 'string', minLength: 20, maxLength: 100 } },
+  } as const;
+  // confirmation (double consentement) et désinscription par les liens de l'e-mail ; essais limités par adresse IP
+  app.post<{ Body: { token: string } }>(
+    '/api/v1/acces/liste-attente/confirmer',
+    { schema: { body: BODY_JETON } },
+    async (req, reply) => {
+      const key = `attconf:${req.ip}`;
+      if (await lockedUntil(db, key)) return err(reply, 429, 'trop_de_demandes');
+      const r = await confirmerAttente(db, req.body.token);
+      if (r === 'invalide') {
+        await recordFailure(db, key, 20);
+        return err(reply, 400, 'lien_invalide');
+      }
+      return { etat: r };
+    },
+  );
+  app.post<{ Body: { token: string } }>(
+    '/api/v1/acces/liste-attente/desinscrire',
+    { schema: { body: BODY_JETON } },
+    async (req, reply) => {
+      const key = `attconf:${req.ip}`;
+      if (await lockedUntil(db, key)) return err(reply, 429, 'trop_de_demandes');
+      if (!(await desinscrireAttente(db, req.body.token))) {
+        await recordFailure(db, key, 20);
+        return err(reply, 400, 'lien_invalide');
+      }
+      return { ok: true };
     },
   );
 

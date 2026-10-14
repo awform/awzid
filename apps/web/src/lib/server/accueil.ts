@@ -134,9 +134,12 @@ button[disabled]{opacity:.7;cursor:progress}
 .etat.erreur{color:var(--erreur);font-weight:600}
 .etat.ok{font-weight:600;color:var(--titre)}
 .piege{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-.rgpd{margin-top:1rem;font-size:.9375rem;color:var(--doux)}
-.rgpd h3{font-size:1rem;margin-bottom:.5rem}
+.rgpd{margin-top:1rem;border-top:1px solid var(--filet);padding-top:.25rem;font-size:.9375rem;color:var(--doux)}
+.rgpd summary{cursor:pointer;display:flex;align-items:center;min-height:2.75rem;font-weight:600;color:var(--titre)}
+.rgpd[open] summary{margin-bottom:.25rem}
 .rgpd p{margin:.375rem 0}
+.lien{max-width:40rem;padding-top:2rem;padding-bottom:3rem}
+.lien h1{font-size:clamp(1.5rem,5vw,2rem);margin-bottom:1rem}
 .sans-js{color:var(--doux)}
 section.bloc{padding:2rem 0;border-top:1px solid var(--filet)}
 section.bloc>.conteneur>h2{font-size:1.5rem;margin-bottom:1.25rem}
@@ -159,7 +162,10 @@ footer p{margin:0}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 `;
 
+export type Vue = 'accueil' | 'confirmer' | 'desinscription';
 export interface OptionsPage {
+  /** page affichée : l'accueil, ou la page d'un lien reçu par e-mail (confirmation, désinscription) */
+  vue?: Vue;
   lang: string;
   cfg: ConfigAccueil;
 }
@@ -175,10 +181,17 @@ const messagesJs = (x: TextesAccueil) =>
     e_robot: x.e_robot,
     e_ferme: x.e_ferme,
     e_reseau: x.e_reseau,
+    deja: x.confirmer_deja,
+    confirmer_ok: x.confirmer_ok,
+    desinscr_ok: x.desinscr_ok,
+    invalide: x.lien_invalide,
+    attente: x.lien_attente,
   });
 
 /** HTML de la page (chaîne complète). */
-export function htmlAccueil({ lang, cfg }: OptionsPage): string {
+export function htmlAccueil({ lang, cfg: cfgBase, vue = 'accueil' }: OptionsPage): string {
+  // les pages de lien (e-mail) ne sont jamais indexables
+  const cfg = vue === 'accueil' ? cfgBase : { ...cfgBase, indexable: false };
   const x = CATALOGUES[lang] ?? fr;
   const l = lang in CATALOGUES ? lang : 'fr';
   const robots = cfg.indexable ? 'index, follow' : 'noindex, nofollow, noarchive';
@@ -202,30 +215,7 @@ export function htmlAccueil({ lang, cfg }: OptionsPage): string {
       { length: n },
       (_, i) => `<li>${esc(x[`${pre}_${i + 1}` as keyof TextesAccueil])}</li>`,
     ).join('');
-  return `<!doctype html>
-<html lang="${l}" dir="ltr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(x.titre)}</title>
-<meta name="description" content="${esc(x.description)}">
-<meta name="robots" content="${robots}">
-<meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#FBF7EE" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0D1A15" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<style>${CSS}</style>
-</head>
-<body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">${SYMBOLE}</svg>
-<a class="saut" href="#contenu">${esc(x.aller_contenu)}</a>
-<header>
-<div class="conteneur">
-<a class="logo" href="/" aria-label="Awzid"><svg aria-hidden="true" focusable="false"><use href="#s"/></svg><span><span class="marque">Awzid</span><span class="devise">${esc(x.devise)}</span></span></a>
-${langues}
-</div>
-</header>
-<main id="contenu">
+  const accueilMain = `<main id="contenu">
 <div class="conteneur heros">
 <div>
 <p class="pastille">${esc(x.pastille)}</p>
@@ -244,8 +234,8 @@ ${langues}
 <p id="etat" class="etat" role="status" aria-live="polite" tabindex="-1"></p>
 <noscript><p class="sans-js">${esc(x.sans_js)}</p></noscript>
 </form>
-<div class="rgpd">
-<h3>${esc(x.rgpd_titre)}</h3>
+<details class="rgpd">
+<summary>${esc(x.rgpd_titre)}</summary>
 <p>${esc(x.rgpd_resp)}</p>
 <p>${esc(x.rgpd_fin)}</p>
 <p>${esc(x.rgpd_base)}</p>
@@ -253,7 +243,7 @@ ${langues}
 <p>${esc(x.rgpd_dest)}</p>
 <p>${esc(x.rgpd_droits)}</p>
 <p>${esc(x.rgpd_prov)} <a href="/legal/confidentialite">${esc(x.rgpd_lien)}</a></p>
-</div>
+</details>
 </div>
 </div>
 <section class="bloc" aria-labelledby="forts"><div class="conteneur"><h2 id="forts">${esc(x.forts_titre)}</h2><ul class="grille">${forts}</ul></div></section>
@@ -262,7 +252,42 @@ ${langues}
 <div><h3>${esc(x.dispo_t)}</h3><ul>${liste('dispo', 5)}</ul></div>
 <div class="bientot"><h3>${esc(x.bientot_t)}</h3><ul>${liste('bientot', 5)}</ul></div>
 </div></div></section>
-</main>
+</main>`;
+  const action = vue === 'desinscription' ? 'desinscrire' : 'confirmer';
+  const lienMain = `<main id="contenu"><div class="conteneur lien"><div class="carte">
+<h1>${esc(vue === 'confirmer' ? x.confirmer_titre : x.desinscr_titre)}</h1>
+<p>${esc(vue === 'confirmer' ? x.confirmer_texte : x.desinscr_texte)}</p>
+<form id="lien" method="post" action="/bienvenue" data-action="${action}" data-msg="${esc(messagesJs(x))}">
+<button type="submit">${esc(vue === 'confirmer' ? x.confirmer_bouton : x.desinscr_bouton)}</button>
+<p id="etat" class="etat" role="status" aria-live="polite" tabindex="-1"></p>
+<noscript><p class="sans-js">${esc(x.sans_js)}</p></noscript>
+</form>
+<p><a href="/">${esc(x.retour)}</a></p>
+</div></div></main>`;
+  return `<!doctype html>
+<html lang="${l}" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(vue === 'accueil' ? x.titre : vue === 'confirmer' ? x.confirmer_titre : x.desinscr_titre)}</title>
+<meta name="description" content="${esc(x.description)}">
+<meta name="robots" content="${robots}">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FBF7EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1A15" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>${CSS}</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">${SYMBOLE}</svg>
+<a class="saut" href="#contenu">${esc(x.aller_contenu)}</a>
+<header>
+<div class="conteneur">
+<a class="logo" href="/" aria-label="Awzid"><svg aria-hidden="true" focusable="false"><use href="#s"/></svg><span><span class="marque">Awzid</span><span class="devise">${esc(x.devise)}</span></span></a>
+${langues}
+</div>
+</header>
+${vue === 'accueil' ? accueilMain : lienMain}
 <footer>
 <div class="conteneur">
 <ul>
@@ -293,6 +318,7 @@ export function reponseAccueil(opts: OptionsPage): Response {
     'referrer-policy': 'no-referrer',
     'content-language': opts.lang,
   };
-  if (!opts.cfg.indexable) headers['x-robots-tag'] = EN_TETE_ROBOTS;
+  if (!opts.cfg.indexable || (opts.vue ?? 'accueil') !== 'accueil')
+    headers['x-robots-tag'] = EN_TETE_ROBOTS;
   return new Response(htmlAccueil(opts), { status: 200, headers });
 }

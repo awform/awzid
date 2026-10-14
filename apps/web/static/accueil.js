@@ -2,6 +2,80 @@
    Sans suivi, sans cookie, sans bibliothèque. Le jeton anti-robots est signé par le serveur (3 s à 2 h de validité). */
 (function () {
   'use strict';
+  /* Pages des liens reçus par e-mail : le jeton est dans le fragment de l'adresse (#t=…), jamais envoyé au serveur web
+     ni gardé dans les journaux ; un clic explicite envoie la confirmation ou la désinscription à l'API. */
+  function gererLien(form) {
+    var M2 = {};
+    try {
+      M2 = JSON.parse(form.getAttribute('data-msg') || '{}');
+    } catch (e) {
+      M2 = {};
+    }
+    var etat2 = document.getElementById('etat');
+    var btn = form.querySelector('button');
+    var action = form.getAttribute('data-action');
+    var m = /(?:^|[#&])t=([\w-]+)/.exec(location.hash);
+    var jeton2 = m ? m[1] : '';
+    function dire2(texte, genre) {
+      etat2.textContent = texte;
+      etat2.className = 'etat ' + (genre || '');
+    }
+    if (!jeton2) {
+      btn.hidden = true;
+      dire2(M2.invalide, 'erreur');
+      return;
+    }
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      if (btn.disabled) return;
+      btn.disabled = true;
+      dire2(M2.attente || '', '');
+      fetch('/api/v1/acces/liste-attente/' + action, {
+        method: 'POST',
+        credentials: 'omit',
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json',
+          'x-awform': '1',
+        },
+        body: JSON.stringify({ token: jeton2 }),
+      })
+        .then(function (r) {
+          return r
+            .json()
+            .catch(function () {
+              return null;
+            })
+            .then(function (j) {
+              if (r.ok) {
+                btn.hidden = true;
+                history.replaceState(null, '', location.pathname + location.search);
+                dire2(
+                  action === 'desinscrire'
+                    ? M2.desinscr_ok
+                    : j && j.etat === 'deja'
+                      ? M2.deja
+                      : M2.confirmer_ok,
+                  'ok',
+                );
+                etat2.focus();
+                return;
+              }
+              btn.disabled = false;
+              if (r.status === 400) {
+                btn.hidden = true;
+                dire2(M2.invalide, 'erreur');
+              } else dire2(r.status === 429 ? M2.e_trop : M2.e_reseau, 'erreur');
+            });
+        })
+        .catch(function () {
+          btn.disabled = false;
+          dire2(M2.e_reseau, 'erreur');
+        });
+    });
+  }
+  var lienForm = document.getElementById('lien');
+  if (lienForm) return gererLien(lienForm);
   var f = document.getElementById('attente');
   if (!f) return;
   var M = {};

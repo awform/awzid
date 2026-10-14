@@ -12,7 +12,7 @@
  *    invitation personnelle est créée) ou refusée ; effacée après 12 mois.
  */
 import { createHash, randomInt } from 'node:crypto';
-import { and, asc, desc, eq, inArray, isNull, lt, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, isNotNull, isNull, sql } from 'drizzle-orm';
 import * as t from './schema.js';
 import type { Db } from './client.js';
 
@@ -478,6 +478,83 @@ export async function addWaitlist(
   return r.length ? 'cree' : 'existe';
 }
 
+/** Durée de validité du lien de confirmation, et délai d'effacement d'une adresse non confirmée. */
+export const WAITLIST_CONFIRM_DAYS = 7;
+export const waitlistTokenHash = (token: string): string =>
+  createHash('sha256').update(token).digest('hex');
+
+/**
+ * Demande avec double consentement : la ligne est créée NON confirmée, avec l'empreinte du jeton envoyé par e-mail.
+ * « cree » : nouvelle demande ; « renvoi » : adresse déjà demandée mais jamais confirmée (nouveau jeton, mêmes
+ * 7 jours depuis la première demande) ; « existe » : adresse déjà confirmée (rien n'est envoyé). La réponse publique
+ * reste la même dans les trois cas.
+ */
+export async function demanderAttente(
+  db: Db,
+  v: {
+    email: string;
+    name?: string | null;
+    note?: string | null;
+    locale?: string;
+    tokenHash: string;
+  },
+): Promise<'cree' | 'renvoi' | 'existe'> {
+  const email = v.email.trim().toLowerCase();
+  const r = await db
+    .insert(t.waitlist)
+    .values({
+      email,
+      name: v.name?.trim() || null,
+      note: v.note?.trim() || null,
+      locale: v.locale ?? 'fr',
+      tokenHash: v.tokenHash,
+    })
+    .onConflictDoNothing()
+    .returning({ id: t.waitlist.id });
+  if (r.length) return 'cree';
+  const u = await db
+    .update(t.waitlist)
+    .set({ tokenHash: v.tokenHash, locale: v.locale ?? 'fr' })
+    .where(and(eq(t.waitlist.email, email), isNull(t.waitlist.confirmedAt)))
+    .returning({ id: t.waitlist.id });
+  return u.length ? 'renvoi' : 'existe';
+}
+
+/** Clic sur le lien de confirmation : « confirmee », « deja » (déjà confirmée) ou « invalide » (inconnu ou expiré). */
+export async function confirmerAttente(
+  db: Db,
+  token: string,
+  now = new Date(),
+): Promise<'confirmee' | 'deja' | 'invalide'> {
+  const h = waitlistTokenHash(token);
+  const u = await db
+    .update(t.waitlist)
+    .set({ confirmedAt: now })
+    .where(
+      and(
+        eq(t.waitlist.tokenHash, h),
+        isNull(t.waitlist.confirmedAt),
+        sql`${t.waitlist.createdAt} > ${new Date(now.getTime() - WAITLIST_CONFIRM_DAYS * 86_400_000)}`,
+      ),
+    )
+    .returning({ id: t.waitlist.id });
+  if (u.length) return 'confirmee';
+  const [d] = await db
+    .select({ id: t.waitlist.id })
+    .from(t.waitlist)
+    .where(and(eq(t.waitlist.tokenHash, h), isNotNull(t.waitlist.confirmedAt)));
+  return d ? 'deja' : 'invalide';
+}
+
+/** Désinscription par le lien de l'e-mail : la demande est effacée (vrai si elle existait). */
+export async function desinscrireAttente(db: Db, token: string): Promise<boolean> {
+  const r = await db
+    .delete(t.waitlist)
+    .where(eq(t.waitlist.tokenHash, waitlistTokenHash(token)))
+    .returning({ id: t.waitlist.id });
+  return r.length > 0;
+}
+
 export async function waitlistLastHour(db: Db, now = new Date()): Promise<number> {
   const [r] = await db
     .select({ n: sql<number>`count(*)::int` })
@@ -487,24 +564,29 @@ export async function waitlistLastHour(db: Db, now = new Date()): Promise<number
 }
 
 export async function listWaitlist(db: Db, status: string | null, limit = 200) {
-  return db
-    .select({
-      id: t.waitlist.id,
-      adresse: t.waitlist.email,
-      nom: t.waitlist.name,
-      mot: t.waitlist.note,
-      langue: t.waitlist.locale,
-      statut: t.waitlist.status,
-      invitation: t.waitlist.invitationId,
-      creeeLe: t.waitlist.createdAt,
-      decideeLe: t.waitlist.decidedAt,
-    })
-    .from(t.waitlist)
-    .where(status ? eq(t.waitlist.status, status) : undefined)
-    .orderBy(
-      status === 'en_attente' || !status ? asc(t.waitlist.createdAt) : desc(t.waitlist.createdAt),
-    )
-    .limit(limit);
+  return (
+    db
+      .select({
+        id: t.waitlist.id,
+        adresse: t.waitlist.email,
+        nom: t.waitlist.name,
+        mot: t.waitlist.note,
+        langue: t.waitlist.locale,
+        statut: t.waitlist.status,
+        invitation: t.waitlist.invitationId,
+        creeeLe: t.waitlist.createdAt,
+        decideeLe: t.waitlist.decidedAt,
+      })
+      .from(t.waitlist)
+      // seules les adresses CONFIRMÉES par e-mail (double consentement) sont montrées à l'administrateur
+      .where(
+        and(isNotNull(t.waitlist.confirmedAt), status ? eq(t.waitlist.status, status) : undefined),
+      )
+      .orderBy(
+        status === 'en_attente' || !status ? asc(t.waitlist.createdAt) : desc(t.waitlist.createdAt),
+      )
+      .limit(limit)
+  );
 }
 
 export async function getWaitlist(db: Db, id: string) {
@@ -540,15 +622,17 @@ export async function countWaitlist(db: Db): Promise<Record<string, number>> {
   const rows = await db
     .select({ s: t.waitlist.status, n: sql<number>`count(*)::int` })
     .from(t.waitlist)
-    .where(inArray(t.waitlist.status, [...WAITLIST_STATUS]))
+    .where(and(isNotNull(t.waitlist.confirmedAt), inArray(t.waitlist.status, [...WAITLIST_STATUS])))
     .groupBy(t.waitlist.status);
   return Object.fromEntries(rows.map((r) => [r.s, r.n]));
 }
 
-/** Demandes de plus de 12 mois effacées. */
+/** Demandes de plus de 12 mois effacées, et adresses jamais confirmées après 7 jours. */
 export async function purgeListeAttente(db: Db, now = new Date()): Promise<number> {
   const r = await db
     .delete(t.waitlist)
-    .where(lt(t.waitlist.createdAt, new Date(now.getTime() - 365 * 86_400_000)));
+    .where(
+      sql`${t.waitlist.createdAt} < ${new Date(now.getTime() - 365 * 86_400_000)} OR (${t.waitlist.confirmedAt} IS NULL AND ${t.waitlist.createdAt} < ${new Date(now.getTime() - WAITLIST_CONFIRM_DAYS * 86_400_000)})`,
+    );
   return r.rowCount ?? 0;
 }

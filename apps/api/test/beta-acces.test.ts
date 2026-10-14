@@ -343,6 +343,14 @@ describe.skipIf(!URL)(
         {},
         { email: refusee, consentement: true },
       );
+      // double consentement : tant que l'adresse n'est pas confirmée par e-mail, l'administrateur ne la voit pas
+      const avant = (await c.req('GET', '/api/v1/admin/liste-attente?statut=en_attente', A)).json()
+        .demandes as Array<{ adresse: string }>;
+      expect(avant.some((d) => d.adresse === dest)).toBe(false);
+      await c.h.pool.query(
+        'update waitlist set confirmed_at = now() where email = any($1::text[])',
+        [[dest, refusee]],
+      );
       const liste = (await c.req('GET', '/api/v1/admin/liste-attente?statut=en_attente', A)).json()
         .demandes as Array<{
         id: string;
@@ -358,7 +366,7 @@ describe.skipIf(!URL)(
       expect(acc.statusCode).toBe(200);
       const inv = acc.json() as { code: string; envoye: boolean };
       expect(inv.envoye).toBe(true);
-      expect(mail.sent[0]).toMatchObject({
+      expect(mail.sent.find((m) => m.kind === 'invitation')).toMatchObject({
         to: dest,
         kind: 'invitation',
         subject: 'Su invitación a la beta de Awzid',
@@ -398,6 +406,85 @@ describe.skipIf(!URL)(
         adresse: string;
       }>;
       expect(apres.some((d) => d.adresse === refusee)).toBe(false);
+    });
+
+    it('liste d’attente : double consentement (e-mail de confirmation, lien, désinscription, effacement sous 7 jours)', async () => {
+      const dest = addr('dc');
+      mail.sent.length = 0;
+      const r = await c.req(
+        'POST',
+        '/api/v1/acces/liste-attente',
+        {},
+        { email: dest, langue: 'en', consentement: true },
+      );
+      expect(r.statusCode).toBe(202);
+      await new Promise((res) => setTimeout(res, 300));
+      const m = mail.sent.find((x) => x.to === dest && x.kind === 'liste_attente');
+      expect(m?.subject).toBe('Confirm your place on the Awzid waiting list');
+      const lien = /https:\/\/beta\.exemple\.org\/bienvenue\/confirmer\?lang=en#t=([\w-]+)/.exec(
+        m!.text,
+      );
+      const desinsc =
+        /https:\/\/beta\.exemple\.org\/bienvenue\/desinscription\?lang=en#t=([\w-]+)/.exec(m!.text);
+      expect(lien && desinsc).toBeTruthy();
+      const jeton = lien![1]!;
+      expect(desinsc![1]).toBe(jeton);
+      // seule l'empreinte du jeton est gardée
+      const ligne = (
+        await c.h.pool.query('select token_hash, confirmed_at from waitlist where email = $1', [
+          dest,
+        ])
+      ).rows[0] as { token_hash: string; confirmed_at: Date | null };
+      expect(ligne.confirmed_at).toBeNull();
+      expect(ligne.token_hash).toMatch(/^[0-9a-f]{64}$/);
+      expect(ligne.token_hash).not.toContain(jeton);
+      // lien inconnu : refusé ; lien bon : confirmé, puis « déjà confirmée » ; visible de l'administrateur seulement ensuite
+      const inconnu = await c.req(
+        'POST',
+        '/api/v1/acces/liste-attente/confirmer',
+        {},
+        { token: 'x'.repeat(43) },
+      );
+      expect(inconnu.statusCode).toBe(400);
+      expect(inconnu.json().error.code).toBe('lien_invalide');
+      const vue = async () =>
+        (
+          (await c.req('GET', '/api/v1/admin/liste-attente?statut=en_attente', A)).json()
+            .demandes as Array<{ adresse: string }>
+        ).some((d) => d.adresse === dest);
+      expect(await vue()).toBe(false);
+      expect(
+        (await c.req('POST', '/api/v1/acces/liste-attente/confirmer', {}, { token: jeton })).json(),
+      ).toEqual({ etat: 'confirmee' });
+      expect(
+        (await c.req('POST', '/api/v1/acces/liste-attente/confirmer', {}, { token: jeton })).json(),
+      ).toEqual({ etat: 'deja' });
+      expect(await vue()).toBe(true);
+      // désinscription par le lien de l'e-mail : la demande est effacée
+      expect(
+        (await c.req('POST', '/api/v1/acces/liste-attente/desinscrire', {}, { token: jeton }))
+          .statusCode,
+      ).toBe(200);
+      expect(
+        (await c.req('POST', '/api/v1/acces/liste-attente/desinscrire', {}, { token: jeton }))
+          .statusCode,
+      ).toBe(400);
+      expect(await vue()).toBe(false);
+      // non confirmée : effacée après 7 jours, et le lien expiré ne confirme plus
+      const vieux = addr('dc');
+      await c.req('POST', '/api/v1/acces/liste-attente', {}, { email: vieux, consentement: true });
+      const t2 = (await c.h.pool.query('select token_hash from waitlist where email = $1', [vieux]))
+        .rows[0].token_hash as string;
+      expect(t2).toBeTruthy();
+      await c.h.pool.query(
+        "update waitlist set created_at = now() - interval '8 days' where email = $1",
+        [vieux],
+      );
+      const n = await purgeListeAttente(c.h.db);
+      expect(n).toBeGreaterThanOrEqual(1);
+      expect(
+        (await c.h.pool.query('select 1 from waitlist where email = $1', [vieux])).rowCount,
+      ).toBe(0);
     });
 
     it('liste d’attente : limite par adresse IP et effacement après 12 mois', async () => {

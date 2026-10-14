@@ -405,6 +405,8 @@ describe.skipIf(!URL)('Bêta : trois modes, plafond, vérification, tableau (awf
       {},
       { email: addr('al'), consentement: true },
     );
+    // (double consentement : seule une adresse confirmée par e-mail compte dans le tableau)
+    await c.h.pool.query('update waitlist set confirmed_at = now() where confirmed_at is null');
     const att = (await c.req('GET', '/api/v1/admin/tableau', A)).json();
     expect(att.attente.enAttente).toBeGreaterThan(0);
     expect(att.alertes.map((a: { code: string }) => a.code)).toContain('attente');

@@ -175,7 +175,7 @@
         {
           "titre": "Purposes and legal bases",
           "paras": [
-            "Beta waiting list: your consent (the box on the home page), which you can withdraw at any time by writing to the contact address.",
+            "Beta waiting list: your consent (the box on the home page, confirmed by a link sent to your address), which you can withdraw at any time by writing to the contact address.",
             "Providing the requested service (performance of the contract); specific consents collected separately, dated and withdrawable (consent): follow-up by a teacher, sending a recitation, voice analysis, tutor, hosting outside Senegal for Senegalese holders, reminders; security, abuse prevention, handling of reports and improving the service (legitimate interest); accounting obligations after the beta (legal obligation).",
             "No advertising, no commercial profiling, no resale of data, no behavioural personalisation for children."
           ]
@@ -217,7 +217,7 @@
         {
           "titre": "Retention periods",
           "paras": [
-            "Beta waiting list: 12 months at most after the request (automatic deletion), or earlier on written request to the contact address. [To be confirmed by the lawyer.]",
+            "Beta waiting list: 12 months at most after the request (automatic deletion); 7 days if the address is never confirmed; or earlier on written request to the contact address. [To be confirmed by the lawyer.]",
             "Deleted account: permanent erasure within 30 days; encrypted backups: the last 14, i.e. 14 rolling days (so fully purged 14 days after erasure).",
             "Sessions: 30 days after expiry. Attempt locks: 24 hours. Links sent by e-mail: 30 minutes (forgotten password) or 24 hours (verification, address change), single use; erased with the account.",
             "Tutor log: 12 months at most. Tutor questions and alerts: 12 months after handling, 24 months at most. Security audit log: 12 months.",

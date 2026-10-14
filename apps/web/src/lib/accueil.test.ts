@@ -100,13 +100,43 @@ describe('contenu de la page', () => {
     expect(fr).toContain('<main id="contenu">');
   });
   it('mention RGPD : finalité, base légale, durée, destinataires, droits, contact, « provisoire », crochets non tranchés', () => {
-    for (const mot of ['Finalité', 'Base légale', 'Durée : 12 mois', 'Destinataires', 'Tes droits'])
+    for (const mot of ['Finalité', 'Base légale', 'Durée : 12 mois', 'Destinataires', 'Vos droits'])
       expect(fr).toContain(mot);
     expect(fr).toContain('contact@awzid.com');
     expect(fr).toContain('Texte provisoire, en attente d’une relecture juridique.');
     expect(fr).toContain('[raison sociale et adresse : à compléter par le client]');
     expect(en).toContain('Provisional text, awaiting legal review.');
     expect(en).toContain('contact@awzid.com');
+  });
+  it('vouvoiement sur la page publique (français) ; accordéon RGPD fermé par défaut ; paragraphe d’introduction court', () => {
+    const texte = fr.replace(/<style>[\s\S]*?<\/style>/, '').replace(/<[^>]+>/g, ' ');
+    expect(texte).not.toMatch(/(?<!\p{L})(tu|toi|ton|ta|tes)(?!\p{L})|(?<!\p{L})t’\p{L}/iu);
+    expect(texte).toMatch(/\bvotre\b/);
+    expect(fr).toContain('<details class="rgpd">');
+    expect(fr).not.toMatch(/<details[^>]* open/);
+    expect(fr).toContain('<summary>Ce que nous faisons de votre adresse</summary>');
+    expect(CATALOGUES.fr!.intro.length).toBeLessThan(160);
+    for (const v of Object.values(CATALOGUES.fr!))
+      expect(v).not.toMatch(/(?<!\p{L})(tu|ton|ta|tes)(?!\p{L})/iu);
+  });
+  it('pages des liens de l’e-mail : bouton explicite, jamais indexables, aucun jeton dans la page', () => {
+    for (const vue of ['confirmer', 'desinscription'] as const) {
+      const h = htmlAccueil({ lang: 'fr', cfg: configAccueil({ ACCUEIL_INDEXABLE: 'on' }), vue });
+      expect(h).toContain('<meta name="robots" content="noindex, nofollow, noarchive">');
+      expect(h.match(/<button/g)).toHaveLength(1);
+      expect(h).toContain('id="lien"');
+      expect(h).not.toMatch(/#t=|token/);
+      expect(
+        reponseAccueil({
+          lang: 'fr',
+          cfg: configAccueil({ ACCUEIL_INDEXABLE: 'on' }),
+          vue,
+        }).headers.get('x-robots-tag'),
+      ).toBe(EN_TETE_ROBOTS);
+    }
+    const js = readFileSync(join(STATIC, 'accueil.js'), 'utf8');
+    expect(js).toContain('/api/v1/acces/liste-attente/');
+    expect(js).toContain('location.hash');
   });
   it('pied de page : mentions légales, confidentialité, contact', () => {
     expect(fr).toContain('href="/legal/mentions"');
@@ -172,11 +202,11 @@ describe('indexation et sécurité', () => {
 });
 
 describe('poids et catalogues', () => {
-  it('page ≤ 20 Ko (≤ 8 Ko compressée), script ≤ 4 Ko, une seule police de la marque', () => {
+  it('page ≤ 20 Ko (≤ 8 Ko compressée), script ≤ 8 Ko, une seule police de la marque', () => {
     const h = Buffer.from(htmlAccueil({ lang: 'fr', cfg }));
     expect(h.length).toBeLessThan(20 * 1024);
     expect(gzipSync(h).length).toBeLessThan(8 * 1024);
-    expect(readFileSync(join(STATIC, 'accueil.js')).length).toBeLessThan(4 * 1024);
+    expect(readFileSync(join(STATIC, 'accueil.js')).length).toBeLessThan(8 * 1024);
     expect(
       readFileSync(join(STATIC, 'fonts', 'lexend-latin-600-normal.woff2')).length,
     ).toBeLessThan(20 * 1024);

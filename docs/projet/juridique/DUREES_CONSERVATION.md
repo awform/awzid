@@ -27,7 +27,7 @@
 | Paiements réussis | [durée comptable à fixer : 10 ans en France ?] — **désactivés en bêta** | — |
 | Paiements abandonnés | 30 jours | `purge.ts` |
 | Registre des certificats | durable (preuve d'un diplôme) [à valider] ; document complet réduit 30 jours après le départ de l'élève | `purge.ts` |
-| Liste d'attente de la bêta (adresse, langue, prénom et mot facultatifs de l'écran de l'application) | **12 mois** après la demande ; effacement plus tôt sur demande écrite (`DELETE /api/v1/admin/liste-attente/:id`) [à valider] | `tasks.ts` (`purgeListeAttente`) |
+| Liste d'attente de la bêta (adresse, langue, prénom et mot facultatifs de l'écran de l'application) | **12 mois** après la demande si l'adresse est confirmée par e-mail (double consentement) ; **7 jours** si elle n'est jamais confirmée ; effacement immédiat par le lien de désinscription ou sur demande écrite (`DELETE /api/v1/admin/liste-attente/:id`) [à valider] | `tasks.ts` (`purgeListeAttente`) |
 | Invitation à la bêta (code) | [à fixer avec le lot « invitation »] | branche `beta-wip` |
 
 **Exigence Quran Foundation** (modèle de politique de confidentialité) : suppression définitive sous 30 jours après
