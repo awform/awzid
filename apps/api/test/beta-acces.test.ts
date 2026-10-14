@@ -401,6 +401,14 @@ describe.skipIf(!URL)(
       expect((await c.req('DELETE', `/api/v1/admin/liste-attente/${idEfface}`, A)).statusCode).toBe(
         404,
       );
+      // journalisé : une ligne `attente.effacement` qui vise la demande, sans aucune adresse
+      const journal = await c.h.db
+        .select()
+        .from(t.auditLog)
+        .where(eq(t.auditLog.action, 'attente.effacement'));
+      const ligne = journal.find((j) => j.target === idEfface);
+      expect(ligne).toBeTruthy();
+      expect(JSON.stringify(ligne)).not.toContain(refusee);
       const apres = (await c.req('GET', '/api/v1/admin/liste-attente', A)).json()
         .demandes as Array<{
         adresse: string;

@@ -222,6 +222,66 @@ test.describe('mode « invitation » et liste d’attente (écran)', () => {
   });
 });
 
+test.describe('liste d’attente : effacement par l’administrateur (écran)', () => {
+  test('bouton « Effacer la demande » : confirmation, la demande disparaît, une seconde fois introuvable', async ({
+    browser,
+    page,
+  }) => {
+    await statut(page, { inscription: 'invitation' });
+    await page.goto('/inscription');
+    const mail = unique('effacer');
+    await page.getByRole('button', { name: /Demander une invitation/ }).click();
+    await page.getByTestId('attente-email').fill(mail);
+    await page.getByTestId('attente-consentement').check();
+    await page.getByTestId('attente-envoyer').click();
+    await expect(page.getByTestId('attente-ok')).toBeVisible();
+    let jeton = '';
+    await expect
+      .poll(
+        () => {
+          const dir = process.env.E2E_MAIL_DIR!;
+          for (const f of readdirSync(dir)
+            .filter((x) => x.endsWith('.json'))
+            .sort()
+            .reverse()) {
+            const m = JSON.parse(readFileSync(join(dir, f), 'utf8'));
+            if (m.to === mail && m.kind === 'liste_attente') {
+              jeton = /#t=([\w-]+)/.exec(m.text)![1]!;
+              return true;
+            }
+          }
+          return false;
+        },
+        { timeout: 15_000 },
+      )
+      .toBe(true);
+    expect(
+      (
+        await page.request.post('/api/v1/acces/liste-attente/confirmer', {
+          headers: H,
+          data: { token: jeton },
+        })
+      ).status(),
+    ).toBe(200);
+
+    const adm = await admin(browser, 'eff');
+    await adm.goto('/admin');
+    const ligne = adm.getByTestId('attente-demande').filter({ hasText: mail });
+    await expect(ligne).toBeVisible();
+    // refus de la confirmation : la demande reste
+    adm.once('dialog', (d) => d.dismiss());
+    await ligne.getByTestId('attente-effacer').click();
+    await expect(ligne).toBeVisible();
+    // confirmation : la demande est effacée
+    adm.once('dialog', (d) => d.accept());
+    await ligne.getByTestId('attente-effacer').click();
+    await expect(adm.getByTestId('attente-demande').filter({ hasText: mail })).toHaveCount(0);
+    const liste = await adm.request.get('/api/v1/admin/liste-attente');
+    expect(JSON.stringify(await liste.json())).not.toContain(mail);
+    await adm.context().close();
+  });
+});
+
 test.describe('mode fermé (écran)', () => {
   test('page de maintenance sobre ; la connexion reste ouverte ; l’administrateur passe', async ({
     page,

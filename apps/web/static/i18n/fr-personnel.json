@@ -531,6 +531,8 @@
   "acces.att_aucune": "Aucune demande en attente.",
   "acces.att_accepter": "Accepter et inviter",
   "acces.att_refuser": "Refuser",
+  "acces.att_effacer": "Effacer la demande",
+  "acces.att_confirmer_effacer": "Effacer définitivement cette demande de la liste d’attente ? L’adresse sera supprimée et cette action ne peut pas être annulée.",
   "acces.att_en_attente": "{n} en attente",
   "acces.inv_copier": "Copier le lien",
   "acces.mode": "Mode d’accès",

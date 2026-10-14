@@ -3185,6 +3185,8 @@
   "acces.att_aucune": "Keine Anfrage in Wartestellung.",
   "acces.att_accepter": "Annehmen und einladen",
   "acces.att_refuser": "Ablehnen",
+  "acces.att_effacer": "Anfrage löschen",
+  "acces.att_confirmer_effacer": "Diese Anfrage endgültig von der Warteliste löschen? Die Adresse wird gelöscht; das kann nicht rückgängig gemacht werden.",
   "acces.att_en_attente": "{n} wartend",
   "acces.inv_copier": "Link kopieren",
   "inv.exemple": "Beispiel: AWZ-ABCDE-FGHJK",

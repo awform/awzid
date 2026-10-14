@@ -3185,6 +3185,8 @@
   "acces.att_aucune": "Ninguna solicitud en espera.",
   "acces.att_accepter": "Aceptar e invitar",
   "acces.att_refuser": "Rechazar",
+  "acces.att_effacer": "Borrar la solicitud",
+  "acces.att_confirmer_effacer": "¿Borrar definitivamente esta solicitud de la lista de espera? La dirección se eliminará y no se podrá deshacer.",
   "acces.att_en_attente": "{n} en espera",
   "acces.inv_copier": "Copiar el enlace",
   "inv.exemple": "Ejemplo: AWZ-ABCDE-FGHJK",

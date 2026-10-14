@@ -83,13 +83,32 @@ nécessaire, et le SPF existant n’est pas modifié. Un autre service (Brevo, S
 **Ce que vous faites**
 1. Dans l’espace OVH, créez (ou choisissez) une **boîte e-mail** pour l’envoi, par exemple `no-reply@awzid.com`, et activez **DKIM** pour
    le domaine si OVH le propose (une case à cocher, il ajoute lui-même ses entrées).
-2. Notez le serveur d’envoi (`ssl0.ovh.net` pour les boîtes OVH « MX Plan », port **465**, connexion chiffrée), l’identifiant (l’adresse complète)
-   et le **mot de passe de la boîte** : **ne me les envoyez pas**. Je vous donne la seule commande à taper sur le serveur pour les coller
-   dans son fichier secret (`~/.config/awform/prod.env`, droits réservés).
-3. Dites-moi quelle adresse reçoit les alertes (`AWFORM_ALERTE_A`).
+2. Réglages d’envoi, **déjà prêts de mon côté** : serveur `smtp.mail.ovh.net`, port **587** (connexion chiffrée STARTTLS), expéditeur
+   et identifiant `no-reply@awzid.com`. Il ne manque que le **mot de passe de la boîte** : **ne me l’envoyez jamais** (ni par message, ni par e-mail).
+3. **Collez-le vous-même sur le serveur** (dix secondes). Dans PowerShell, sur votre PC :
+
+   ```
+   gcloud compute ssh awzid-beta --zone europe-west9-b --tunnel-through-iap
+   ```
+
+   puis, une fois connecté au serveur (le terminal change), tapez exactement :
+
+   ```
+   bash ~/awform-app/infra/prod/smtp-ovh.sh
+   ```
+
+   Le script demande l’identifiant (touche Entrée = `no-reply@awzid.com`), puis le mot de passe **deux fois** : **rien ne s’affiche pendant la saisie**,
+   c’est normal. Il écrit les réglages dans `~/.config/awform/prod.env` (droits 600, lisible par vous seul), relance l’API et affiche « OK ».
+   Le mot de passe n’est **jamais** une partie de la commande : il n’entre donc ni dans l’historique du terminal, ni dans la liste des processus,
+   ni dans un journal, et le script ne l’affiche pas. Il refuse un mot de passe qui contient `'`, `"`, `$`, une apostrophe inversée, `\`, `#` ou une
+   espace (mal lus par Docker) : changez-le alors dans l’espace OVH. Pour quitter le serveur : `exit`.
+4. Dites-moi quelle adresse reçoit les alertes (`AWFORM_ALERTE_A`).
+
+*Si vous vous êtes trompé* : relancez la même commande, elle remplace l’ancien mot de passe. *Pour retirer l’envoi* : supprimez les lignes
+`AWFORM_MAIL` et `AWFORM_SMTP_*` de `prod.env` (ou dites-le moi).
 
 **Ce que je fais** : je branche (`AWFORM_MAIL=smtp`, expéditeur `Awzid <no-reply@awzid.com>`), j’envoie un e-mail d’essai
-(`infra/prod/alerte.sh --essai`) et je contrôle qu’il n’arrive pas en courrier indésirable. Ensuite le serveur vous écrit seul si quelque chose
+(`infra/prod/alerte.sh --essai`, un seul message vers l’adresse d’alerte) et je contrôle qu’il n’arrive pas en courrier indésirable. Ensuite le serveur vous écrit seul si quelque chose
 cloche (au plus une fois par 6 heures pour le même problème, puis « rétabli »).
 
 ## Ce que voit un visiteur de `awzid.com`

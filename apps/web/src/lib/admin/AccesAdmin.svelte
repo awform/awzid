@@ -163,6 +163,12 @@
     await call('POST', `/admin/liste-attente/${id}/refuser`, {});
     await charger();
   }
+  /* droit a l'effacement : efface la demande (journal d'audit attente.effacement, sans adresse) */
+  async function effacer(id: string) {
+    if (!confirm(t('acces.att_confirmer_effacer'))) return;
+    await call('DELETE', `/admin/liste-attente/${id}`);
+    await charger();
+  }
 </script>
 
 <section class="card" data-testid="admin-acces">
@@ -428,6 +434,12 @@
           >
           <button type="button" class="ghost" onclick={() => refuser(d.id)}
             ><Bidi text={t('acces.att_refuser')} /></button
+          >
+          <button
+            type="button"
+            class="ghost"
+            onclick={() => effacer(d.id)}
+            data-testid="attente-effacer"><Bidi text={t('acces.att_effacer')} /></button
           >
         </p>
       </li>

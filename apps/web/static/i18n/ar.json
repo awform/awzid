@@ -3185,6 +3185,8 @@
   "acces.att_aucune": "لا توجد طلبات في الانتظار.",
   "acces.att_accepter": "قبول ودعوة",
   "acces.att_refuser": "رفض",
+  "acces.att_effacer": "محو الطلب",
+  "acces.att_confirmer_effacer": "هل تريد محو هذا الطلب نهائيًا من قائمة الانتظار؟ سيتم حذف العنوان ولا يمكن التراجع عن ذلك.",
   "acces.att_en_attente": "{n} في الانتظار",
   "acces.inv_copier": "??? ??????",
   "inv.exemple": "مثال: AWZ-ABCDE-FGHJK",

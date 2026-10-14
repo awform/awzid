@@ -3185,6 +3185,8 @@
   "acces.att_aucune": "No request waiting.",
   "acces.att_accepter": "Accept and invite",
   "acces.att_refuser": "Decline",
+  "acces.att_effacer": "Erase request",
+  "acces.att_confirmer_effacer": "Permanently erase this request from the waiting list? The address will be deleted and this cannot be undone.",
   "acces.att_en_attente": "{n} waiting",
   "acces.inv_copier": "Copy the link",
   "inv.exemple": "Example: AWZ-ABCDE-FGHJK",
