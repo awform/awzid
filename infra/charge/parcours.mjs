@@ -98,7 +98,7 @@ async function main() {
   /** Une requête mesurée. `ok` : statuts acceptés. Renvoie { s, buf, h } (jamais d'exception). */
   async function req(label, method, url, cookie = '', body, opts = {}) {
     const t = performance.now();
-    let s = 0;
+    let s;
     let buf = Buffer.alloc(0);
     let h = new Headers();
     try {

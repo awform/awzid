@@ -95,7 +95,9 @@ while (!stop) {
         cpuS: us / 1e6,
         memMo: Math.round(Number(cg(ids[n], 'memory.current')) / 1048576),
       };
-    } catch {}
+    } catch {
+      /* cgroup illisible : mesure ignorée */
+    }
   }
   const la = lire('/proc/loadavg').split(' ');
   appendFileSync(

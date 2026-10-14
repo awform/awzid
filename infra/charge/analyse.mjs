@@ -14,7 +14,6 @@ const ech = readFileSync(process.argv[3], 'utf8')
   .map((e) => ({ ...e, ms: Date.parse(e.t) }));
 const r1 = (x) => Math.round(x * 10) / 10;
 const r2 = (x) => Math.round(x * 100) / 100;
-const noms = ['caddy', 'web', 'api', 'db', 'worker', 'ecoute'];
 const lignes = [];
 const g = [];
 g.push(
