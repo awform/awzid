@@ -1,0 +1,93 @@
+{
+ "taille_mp3": 81984,
+ "sorties": [
+  {
+   "sessions": 1,
+   "requetes": 3,
+   "statuts": {
+    "200": 3
+   },
+   "p50": 1328,
+   "p95": 9111,
+   "max": 9111,
+   "debut": "2026-10-14T10:24:47.003Z",
+   "fin": "2026-10-14T10:24:58.303Z",
+   "exemple": [
+    "{\"resultat\":{\"statut\":\"pas_compris\",\"ecarts\":[],\"mots\":[\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\"]",
+    "{\"resultat\":{\"statut\":\"pas_compris\",\"ecarts\":[],\"mots\":[\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\"]"
+   ]
+  },
+  {
+   "sessions": 2,
+   "requetes": 6,
+   "statuts": {
+    "200": 6
+   },
+   "p50": 1308,
+   "p95": 1670,
+   "max": 1670,
+   "debut": "2026-10-14T10:25:08.406Z",
+   "fin": "2026-10-14T10:25:12.697Z",
+   "exemple": [
+    "{\"resultat\":{\"statut\":\"pas_compris\",\"ecarts\":[],\"mots\":[\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\"]",
+    "{\"resultat\":{\"statut\":\"pas_compris\",\"ecarts\":[],\"mots\":[\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\"]"
+   ]
+  },
+  {
+   "sessions": 4,
+   "requetes": 12,
+   "statuts": {
+    "200": 12
+   },
+   "p50": 2329,
+   "p95": 2461,
+   "max": 2461,
+   "debut": "2026-10-14T10:25:22.804Z",
+   "fin": "2026-10-14T10:25:29.884Z",
+   "exemple": [
+    "{\"resultat\":{\"statut\":\"pas_compris\",\"ecarts\":[],\"mots\":[\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\"]",
+    "{\"resultat\":{\"statut\":\"pas_compris\",\"ecarts\":[],\"mots\":[\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\"]"
+   ]
+  },
+  {
+   "direct": {
+    "demarrage": 200,
+    "ms": 7,
+    "morceaux": [
+     {
+      "s": 200,
+      "ms": 10
+     },
+     {
+      "s": 200,
+      "ms": 7
+     },
+     {
+      "s": 200,
+      "ms": 7
+     },
+     {
+      "s": 200,
+      "ms": 7
+     },
+     {
+      "s": 200,
+      "ms": 9
+     },
+     {
+      "s": 200,
+      "ms": 12
+     },
+     {
+      "s": 200,
+      "ms": 8
+     },
+     {
+      "s": 200,
+      "ms": 8
+     }
+    ]
+   }
+  }
+ ]
+}

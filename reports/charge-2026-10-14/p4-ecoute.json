@@ -1,0 +1,61 @@
+{
+ "taille_mp3": 81984,
+ "sorties": [
+  {
+   "sessions": 2,
+   "requetes": 6,
+   "statuts": {
+    "200": 6
+   },
+   "p50": 33049,
+   "p95": 36035,
+   "max": 36035,
+   "debut": "2026-10-14T10:30:03.064Z",
+   "fin": "2026-10-14T10:31:44.208Z",
+   "exemple": [
+    "{\"resultat\":{\"statut\":\"pas_compris\",\"ecarts\":[],\"mots\":[\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\"]",
+    "{\"resultat\":{\"statut\":\"pas_compris\",\"ecarts\":[],\"mots\":[\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\",\"non_recite\"]"
+   ]
+  },
+  {
+   "direct": {
+    "demarrage": 200,
+    "ms": 8,
+    "morceaux": [
+     {
+      "s": 200,
+      "ms": 6
+     },
+     {
+      "s": 200,
+      "ms": 6
+     },
+     {
+      "s": 200,
+      "ms": 6
+     },
+     {
+      "s": 200,
+      "ms": 6
+     },
+     {
+      "s": 200,
+      "ms": 7
+     },
+     {
+      "s": 200,
+      "ms": 6
+     },
+     {
+      "s": 200,
+      "ms": 7
+     },
+     {
+      "s": 200,
+      "ms": 7
+     }
+    ]
+   }
+  }
+ ]
+}

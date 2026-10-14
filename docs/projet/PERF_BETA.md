@@ -75,3 +75,12 @@ citées (≈ 2 Ko ; à vérifier une à une, certaines sont composées dynamique
 Refonte du premier écran (voir § 1 suite) ; cache HTTP avancé et empreintes pour les fichiers non hachés
 (`/i18n/*.json`, polices) ; stockage froid de l'audio ; dimensionnement de la VM à la charge mesurée ; retrait
 des clés de texte mortes ; chargement à la demande des réglages du lecteur (sans effet sur le budget hors ligne).
+
+## 5. Test de charge de la démonstration privée (14/10/2026)
+
+Parcours réalistes à paliers (5 à 400 utilisateurs simultanés), conteneurs applicatifs limités à 2 cœurs pour émuler
+l'e2-standard-2. **Plateau ≈ 350 req/s** ; p95 < 500 ms jusqu'à ≈ 220 req/s (≈ 130 à 150 utilisateurs virtuels, soit
+~ 1 000 élèves actifs en hypothèse) ; 0 erreur jusqu'à 400 UV. Goulot : processeur (PostgreSQL d'abord, ≈ 2 à 2,7 ms par
+requête ; puis l'API). Connexion : ≈ 45/s au plus (argon2id). **Écoute IA : ≈ 3,5 secondes-cœur par analyse de 10 s ;
+réglages par défaut (6 CPU, 3 fils, concurrence 2) à ne pas garder sur 2 vCPU** (p95 de l'API ×10 pendant une analyse).
+Détail, recommandations R1 à R10 : `application\beta\RAPPORT_CHARGE_SECURITE_14-10.md` ; outils `infra/charge/`.
