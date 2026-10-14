@@ -6,6 +6,10 @@
  * (`/mutun/<texte>-enseignant.json` : variantes, vocalisations « à vérifier », choix de traduction, passages à relire)
  * ne sont chargées qu'en mode enseignant, en ligne. Format commun aux textes en prose (phrases) et en vers
  * (deux hémistiches `h`).
+ * FICHIERS GARDÉS (lot 5) : notes de l'enseignant, séances en publication différée (`<texte>-differe.json`) et parties
+ * d'un grand texte (`risala-p<k>.json`) ne sont PAS des fichiers statiques : la route `/mutun/[fichier]` du serveur
+ * web exige une session avec le droit adapté (401 sans session, 403 sans le droit). Un invité de la bêta n'en
+ * télécharge aucun, même par adresse directe.
  */
 import { kvGet, kvSet } from '$lib/idb';
 
@@ -77,6 +81,11 @@ export interface Phrase {
   sens?: Sens[];
   /** passage montré seulement avec son explication (T7) : ni arabe ni traduction tant qu'elle manque */
   explication?: true;
+  /**
+   * vers MASQUÉ à l'élève (lecture de la voyelle non confirmée, lot 5 : Lāmiyya 0045, 0068, 0096) : l'identifiant seul,
+   * ni arabe ni traduction dans aucun fichier ; l'élève lit « vers en cours de vérification — bientôt »
+   */
+  masque?: true;
   /** vocalisation ou lecture à vérifier (détail en mode enseignant) : jamais une question « compléter » */
   incertain?: true;
   /** réservé au niveau adulte (ni enfants ni ados) */
@@ -147,9 +156,24 @@ export interface Matn {
   seances: Seance[];
   /** grand texte (ar-Risāla) : le fichier du texte ne porte que le sommaire ; les phrases sont par parties, à la demande */
   parts?: Array<{ n: number; version: string }>;
+  /**
+   * séances en PUBLICATION DIFFÉRÉE (Ibn ʿĀshir) : le fichier public ne les contient pas ; elles sont dans
+   * `/mutun/<texte>-differe.json`, servi seulement au personnel et aux comptes de démonstration (session exigée)
+   */
+  differe?: { version: string };
 }
 
-/** Fichier de phrases d'une partie d'un grand texte. */
+/** Complément gardé d'un texte : séances en publication différée et phrases qui ne sont que dans ces séances. */
+export interface PartieDifferee {
+  v: number;
+  id: string;
+  version: string;
+  statut: string;
+  seances: Seance[];
+  phrases: Phrase[];
+}
+
+/** Fichier de phrases d'une partie d'un grand texte (gardé : personnel et démonstration). */
 export interface PartieMatn {
   v: number;
   id: string;
@@ -205,6 +229,7 @@ export const arSimple = (p: Phrase): string | null =>
  */
 export const texteVoixSynthese = (p: Phrase): string | null =>
   p.explication ||
+  p.masque ||
   p.q?.length ||
   p.t === 'citation_coran' ||
   /[﴿﴾]/.test(arSimple(p) ?? '﴿') ||
@@ -216,16 +241,66 @@ type Fetcher = (url: string) => Promise<Response>;
 const enCours = new Map<string, Promise<Matn | null>>();
 
 /**
- * Texte d'un matn : copie de l'appareil si elle existe (affichage immédiat, hors ligne), mise à jour en arrière-plan
- * depuis le réseau ; sinon le réseau, gardé ensuite. null : jamais ouvert et pas de réseau.
+ * Clé de la copie gardée sur l'appareil d'un fichier DIFFÉRÉ (séances différées, parties d'un grand texte) : préfixe
+ * `madjaliss-differe:`, effacé à la déconnexion (`PERSONAL_KV` de session.ts) — un invité qui se connecte ensuite sur le
+ * même appareil n'y trouve rien.
  */
-export function chargerMatn(id: string, f: Fetcher = (u) => fetch(u)): Promise<Matn | null> {
-  let p = enCours.get(id);
+export const cleDiffere = (id: string, suite = '') => `madjaliss-differe:${id}${suite}`;
+
+/**
+ * Texte d'un matn : copie de l'appareil si elle existe (affichage immédiat, hors ligne), mise à jour en arrière-plan
+ * depuis le réseau ; sinon le réseau, gardé ensuite. null : jamais ouvert et pas de réseau. `differe` : le compte voit
+ * les séances en publication différée (personnel, démonstration) — le complément gardé est alors demandé au serveur
+ * (jamais pour un invité : aucun téléchargement).
+ */
+export function chargerMatn(
+  id: string,
+  f: Fetcher = (u) => fetch(u),
+  differe = false,
+): Promise<Matn | null> {
+  const cle = `${id}:${differe ? 'd' : 'p'}`;
+  let p = enCours.get(cle);
   if (!p) {
-    p = charger(id, f).finally(() => enCours.delete(id));
-    enCours.set(id, p);
+    p = charger(id, f)
+      .then((m) => (m && differe ? chargerDifferee(m, f) : m))
+      .finally(() => enCours.delete(cle));
+    enCours.set(cle, p);
   }
   return p;
+}
+
+/** Le texte public et son complément différé réunis (séances dans l'ordre, phrases du complément à la suite). */
+export function fusionnerDifferee(m: Matn, d: PartieDifferee): Matn {
+  const connues = new Set(m.phrases.map((x) => x.id));
+  const vues = new Set(m.seances.map((s) => s.n));
+  return {
+    ...m,
+    phrases: [...m.phrases, ...d.phrases.filter((x) => !connues.has(x.id))],
+    seances: [...m.seances, ...d.seances.filter((s) => !vues.has(s.n))].sort((a, b) => a.n - b.n),
+  };
+}
+
+/**
+ * Complément gardé d'un texte (`/mutun/<texte>-differe.json`, session avec droit exigée par le serveur : 401/403 sinon) :
+ * copie de l'appareil si elle est à jour, sinon le réseau, gardée ensuite. Sans réponse, le texte public seul.
+ */
+export async function chargerDifferee(m: Matn, f: Fetcher = (u) => fetch(u)): Promise<Matn> {
+  if (!m.differe) return m;
+  const cle = cleDiffere(m.id);
+  const garde = await kvGet<PartieDifferee>(cle).catch(() => undefined);
+  let d: PartieDifferee | null | undefined = garde?.version === m.differe.version ? garde : null;
+  if (!d) {
+    let refuse = false;
+    d = await f(`/mutun/${encodeURIComponent(m.id)}-differe.json`)
+      .then((r) => {
+        refuse = r.status === 401 || r.status === 403;
+        return r.ok ? (r.json() as Promise<PartieDifferee>) : null;
+      })
+      .catch(() => null);
+    if (d) await kvSet(cle, d).catch(() => {});
+    else if (!refuse) d = garde; // pas de réseau : la copie de l'appareil, même ancienne (droit retiré : rien)
+  }
+  return d ? fusionnerDifferee(m, d) : m;
 }
 
 async function charger(id: string, f: Fetcher): Promise<Matn | null> {
@@ -259,15 +334,19 @@ export async function chargerPartie(
   const part = m.seances.find((s) => s.n === n)?.p;
   const info = m.parts?.find((x) => x.n === part);
   if (!m.parts || !part || !info) return m;
-  const cle = `mutun:${m.id}:p${part}`;
+  const cle = cleDiffere(m.id, `:p${part}`);
   const garde = await kvGet<PartieMatn>(cle).catch(() => undefined);
   let p: PartieMatn | null | undefined = garde?.version === info.version ? garde : null;
   if (!p) {
+    let refuse = false;
     p = await f(`/mutun/${encodeURIComponent(m.id)}-p${part}.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<PartieMatn>) : null))
+      .then((r) => {
+        refuse = r.status === 401 || r.status === 403;
+        return r.ok ? (r.json() as Promise<PartieMatn>) : null;
+      })
       .catch(() => null);
     if (p) await kvSet(cle, p).catch(() => {});
-    else p = garde; // pas de réseau : la copie de l'appareil, même ancienne
+    else if (!refuse) p = garde; // pas de réseau : la copie de l'appareil, même ancienne (droit retiré : rien)
   }
   if (!p) return null;
   const connues = new Set(m.phrases.map((x) => x.id));

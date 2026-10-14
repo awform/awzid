@@ -30,6 +30,7 @@ const TEXTES = [
   'bayquniyya',
   'nawawi',
   'waraqat',
+  'lamiyya',
 ] as const;
 
 type Phrase = {
@@ -39,6 +40,7 @@ type Phrase = {
   h?: [string, string];
   fr?: string;
   explication?: true;
+  masque?: true;
   adulte?: true;
   hadith?: unknown;
   notes?: unknown[];
@@ -59,6 +61,23 @@ const dir = join(fileURLToPath(new URL('..', import.meta.url)), 'static', 'mutun
 const donnees = Object.fromEntries(
   TEXTES.map((t) => [t, JSON.parse(readFileSync(join(dir, `${t}.json`), 'utf8')) as Matn]),
 ) as Record<(typeof TEXTES)[number], Matn>;
+// lot 5 : les séances en publication différée d'Ibn ʿĀshir sont dans un fichier GARDÉ (servi après authentification) ;
+// `donnees` est le texte COMPLET, comme le voit le personnel
+{
+  const gardes = join(
+    fileURLToPath(new URL('..', import.meta.url)),
+    'src',
+    'lib',
+    'server',
+    'mutun',
+  );
+  const d = JSON.parse(readFileSync(join(gardes, 'ibn-ashir-differe.json'), 'utf8')) as Matn;
+  const m = donnees['ibn-ashir'];
+  donnees['ibn-ashir'] = {
+    phrases: [...m.phrases, ...d.phrases],
+    seances: [...m.seances, ...d.seances].sort((a, b) => a.n - b.n),
+  };
+}
 const octets = (s: string) => Buffer.from(s, 'utf8').toString('hex');
 const INTERNE =
   /translit|brouillon|a_verifier|collation|relecture_comite|decision_referent|voyelle_a_confirmer|VALIDATION_HUMAINE|validation humaine|comité|référent|seconde lecture/i;
@@ -125,7 +144,7 @@ test('liste : les dix textes ouverts, rangés par cycle comme dans le plan direc
   expect(await ordre(3)).toEqual(['risala', 'lamiyya', 'jazariyya']);
   expect(await ordre(4)).toEqual(['khalil', 'alfiyya', 'waraqat']);
   for (const t of TEXTES) await expect(page.locator(`a[data-texte="${t}"]`)).toBeVisible();
-  for (const t of ['lamiyya', 'risala', 'khalil', 'alfiyya']) {
+  for (const t of ['risala', 'khalil', 'alfiyya']) {
     await expect(page.locator(`[data-texte="${t}"]`)).toContainText('Bientôt');
     await expect(page.locator(`[data-texte="${t}"]`)).not.toHaveAttribute('href', /.*/);
   }
@@ -157,7 +176,7 @@ for (const t of TEXTES) {
       const p = de.get(id)!;
       const el = page.locator(`[data-phrase="${id}"]`);
       await expect(el).toHaveAttribute('data-statut', 'EN_ATTENTE_SECONDE_LECTURE');
-      if (p.explication) continue;
+      if (p.explication || p.masque) continue;
       const matn = el.locator('p.matn');
       await expect(matn).toHaveCSS('display', 'block');
       if (p.h) {
@@ -542,5 +561,46 @@ test('Bayqūniyya et Waraqāt : notes d’écart, note de l’école mālikite, 
   await expect(mal).toContainText("Note sur l'école mālikite");
   await expect(mal).toContainText('witr');
   await proprete(page);
+  expect(await serious(page)).toEqual([]);
+});
+
+test('Lāmiyya : trois vers masqués (0045, 0068, 0096) — « bientôt » à leur place, les autres vers s’affichent', async ({
+  page,
+}) => {
+  await newAdult(page, 'mjt-lamiyya');
+  const l = donnees.lamiyya;
+  // le sommaire d'un invité : les 23 séances (aucune publication différée)
+  await page.goto('/madjaliss/lamiyya');
+  await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(23);
+  for (const [id, s] of [
+    ['LAM-0045', 'LAM-S11'],
+    ['LAM-0068', 'LAM-S16'],
+    ['LAM-0096', 'LAM-S21'],
+  ] as const) {
+    const seance = l.seances.find((x) => x.id === s)!;
+    await page.goto(`/madjaliss/lamiyya/${seance.n}`);
+    await expect(page.getByTestId('mj-etape')).toHaveAttribute('data-etape', 'lire');
+    const masque = page.locator(`[data-phrase="${id}"]`);
+    await expect(masque.getByTestId('vers-masque')).toContainText('en cours de vérification');
+    // ni arabe ni traduction pour ce vers
+    await expect(masque.locator('p.matn')).toHaveCount(0);
+    await expect(masque.locator('p.fr')).toHaveCount(0);
+    // les autres vers de la séance s'affichent, deux hémistiches par vers
+    const autres = seance.phrases.filter((p) => p !== id);
+    await expect(page.locator('[data-phrase]')).toHaveCount(seance.phrases.length);
+    for (const p of autres.slice(0, 2)) {
+      const ph = l.phrases.find((q) => q.id === p)!;
+      const hem = page.locator(`[data-phrase="${p}"] p.matn .hem`);
+      await expect(hem).toHaveCount(2);
+      expect(octets(((await hem.nth(0).textContent()) ?? '').trim())).toBe(octets(ph.h![0]));
+    }
+    await proprete(page);
+  }
+  // deux intertitres de suite avant le vers 90 : l'un sous l'autre
+  const s90 = l.seances.find((x) => x.phrases.includes('LAM-0090'))!.n;
+  await page.goto(`/madjaliss/lamiyya/${s90}`);
+  await expect(
+    page.locator('[data-phrase="LAM-0090"] [data-testid="mj-intertitre"]'),
+  ).toContainText('اسْمِ الْمَصْدَرِ');
   expect(await serious(page)).toEqual([]);
 });

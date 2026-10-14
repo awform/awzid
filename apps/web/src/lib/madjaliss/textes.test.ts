@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -12,8 +12,11 @@ import {
   dossier,
   expanser,
   NOTE_RETIENT,
+  NOM_PROTEGE,
   PHRASE_INTERNE,
+  separerDiffere,
   SORTIE,
+  SORTIE_PROTEGEE,
   SOURCE_INTERNE,
   SOURCES,
   STATUT,
@@ -21,17 +24,20 @@ import {
   TEXTES,
   TRANSLIT,
   tanzil,
+  TOUS_LES_TEXTES,
 } from '../../../scripts/madjaliss.mjs';
 import { CYCLES } from './cycles';
 import {
   arSimple,
   avecArabe,
+  fusionnerDifferee,
   matnPour,
   segments,
   texteVoixSynthese,
   voitDiffere,
   type Matn,
   type NotesEnseignant,
+  type PartieDifferee,
   type Phrase,
 } from './donnees';
 import { aMemoriser } from './memo';
@@ -60,7 +66,24 @@ const ATTENDU: Record<string, [number, number]> = {
   bayquniyya: [34, 14],
   nawawi: [42, 42],
   waraqat: [139, 26],
+  lamiyya: [114, 23],
 };
+
+/**
+ * Lot 5 : les fichiers publics (`static/mutun`) et les fichiers GARDÉS (`src/lib/server/mutun`, servis seulement après
+ * authentification) d'un texte ; `complet` les réunit comme le fait l'application pour le personnel et la démonstration.
+ */
+const publicDe = (id: string) => lire<Matn>(join(SORTIE, `${id}.json`));
+const differeDe = (id: string): PartieDifferee | null =>
+  existsSync(join(SORTIE_PROTEGEE, `${id}-differe.json`))
+    ? lire<PartieDifferee>(join(SORTIE_PROTEGEE, `${id}-differe.json`))
+    : null;
+const complet = (id: string): Matn => {
+  const m = publicDe(id);
+  const d = differeDe(id);
+  return d ? fusionnerDifferee(m, d) : m;
+};
+const ensDe = (id: string) => lire<NotesEnseignant>(join(SORTIE_PROTEGEE, `${id}-enseignant.json`));
 
 type SrcCoran = { sourate: number; verset: number; texte: string; voix_de_synthese?: boolean };
 type SrcPhrase = {
@@ -106,6 +129,7 @@ const PLAFOND_TRANSLIT: Record<string, number> = {
   bayquniyya: 92,
   nawawi: 157,
   waraqat: 57,
+  lamiyya: 0,
 };
 
 type SrcNote = { texte: string; mots_ar?: string[]; texte_avec_arabe_interne?: string };
@@ -143,6 +167,7 @@ describe('ordre des textes dans la rubrique : par cycle, comme dans le plan dire
       'izziyya',
       'bayquniyya',
       'ajurrumiyya',
+      'lamiyya',
       'jazariyya',
       'waraqat',
     ]);
@@ -161,16 +186,30 @@ describe.each(TEXTES)('texte %s', (id) => {
     join(dir, 'traduction_fr.json'),
   );
   const se = lire<{ statut?: string; seances: SrcSeance[] }>(join(dir, 'seances.json'));
-  const brut = readFileSync(join(SORTIE, `${id}.json`), 'utf8');
-  const brutEns = readFileSync(join(SORTIE, `${id}-enseignant.json`), 'utf8');
-  const matn = JSON.parse(brut) as Matn;
+  // `brut` : tout ce que le texte de l'élève contient, fichiers publics et gardés (le texte complet, comme le voit le personnel)
+  const brutPublic = readFileSync(join(SORTIE, `${id}.json`), 'utf8');
+  const brutDiffere = existsSync(join(SORTIE_PROTEGEE, `${id}-differe.json`))
+    ? readFileSync(join(SORTIE_PROTEGEE, `${id}-differe.json`), 'utf8')
+    : '';
+  const brut = brutPublic + brutDiffere;
+  const brutEns = readFileSync(join(SORTIE_PROTEGEE, `${id}-enseignant.json`), 'utf8');
+  const matn = complet(id);
   const ens = JSON.parse(brutEns) as NotesEnseignant;
   const de = new Map(matn.phrases.map((p) => [p.id, p]));
 
   it('données à jour avec les sources (node scripts/madjaliss.mjs)', () => {
     const { eleve, enseignant } = construire(id, lignes);
-    expect(`${JSON.stringify(eleve)}\n`).toBe(brut);
+    const { publique, differe } = separerDiffere(eleve);
+    expect(`${JSON.stringify(publique)}\n`).toBe(brutPublic);
+    expect(differe ? `${JSON.stringify(differe)}\n` : '').toBe(brutDiffere);
     expect(`${JSON.stringify(enseignant)}\n`).toBe(brutEns);
+    // le texte public et son complément gardé, réunis, redonnent EXACTEMENT le texte construit (mêmes phrases, mêmes séances)
+    const c = complet(id);
+    expect(c.seances).toEqual(eleve.seances);
+    expect(new Map(c.phrases.map((p) => [p.id, p]))).toEqual(
+      new Map(eleve.phrases.map((p) => [p.id, p])),
+    );
+    expect(c.phrases).toHaveLength(eleve.phrases.length);
   });
 
   it('nombre de phrases et de séances ; chaque phrase dans une séance une seule fois', () => {
@@ -200,7 +239,7 @@ describe.each(TEXTES)('texte %s', (id) => {
     for (const s of unites) {
       const p = de.get(s.id);
       if (!p) continue; // colophon de l'éditeur : hors matn
-      if (p.explication) continue;
+      if (p.explication || p.masque) continue;
       n++;
       if (s.matn_ar !== undefined) {
         // hadith : introduction + matn d'an-Nawawī (Būlāq 1321), séparés au plus par une espace, octet par octet
@@ -263,7 +302,8 @@ describe.each(TEXTES)('texte %s', (id) => {
     // garde : une phrase qui cite le Coran ou qui est réservée n'est JAMAIS donnée à une voix de synthèse
     for (const p of matn.phrases) {
       const v = texteVoixSynthese(p);
-      if (typeof p.ar === 'object' || p.explication || p.q?.length) expect(v, p.id).toBeNull();
+      if (typeof p.ar === 'object' || p.explication || p.masque || p.q?.length)
+        expect(v, p.id).toBeNull();
       else expect(v, p.id).toBe(arSimple(p));
       if (v) for (const c of cites) expect(v.includes(c.q), p.id).toBe(false);
       // jamais pour un segment coranique ni un hadith qui cite le Coran
@@ -317,8 +357,11 @@ describe.each(TEXTES)('texte %s', (id) => {
           valeurs.push(o);
       } else if (Array.isArray(o)) o.forEach((x) => collecte(x, cle));
       else if (o && typeof o === 'object')
-        for (const [k, v] of Object.entries(o))
+        for (const [k, v] of Object.entries(o)) {
+          // glose dont l'ancienne forme (translittération) est identique au sens publié : même phrase française
+          if (k === 'sens_translit_interne' && v === (o as { sens?: unknown }).sens) continue;
           collecte(v, /relecture|decision/.test(cle) ? cle : k);
+        }
     };
     collecte(unites, '');
     collecte(fr.phrases, '');
@@ -533,7 +576,7 @@ describe.each(TEXTES)('texte %s', (id) => {
       for (const r of s.renvois ?? []) {
         expect(TEXTES).toContain(r.texte);
         expect(r.texte).not.toBe(id);
-        const autre = lire<Matn>(join(SORTIE, `${r.texte}.json`));
+        const autre = complet(r.texte);
         expect(
           autre.seances.some((x) => x.n === r.n),
           `${s.id} → ${r.texte}/${r.n}`,
@@ -546,15 +589,16 @@ describe.each(TEXTES)('texte %s', (id) => {
     for (const u of sources) {
       const enseigne = ens.phrases.some((x) => x.id === u.id) || de.get(u.id)?.explication;
       expect(enseigne, u.id).toBeTruthy();
-      if (de.has(u.id) && !de.get(u.id)!.explication)
+      // (un passage retenu ou un vers masqué n'affiche rien : l'incertitude reste au mode enseignant)
+      if (de.has(u.id) && !de.get(u.id)!.explication && !de.get(u.id)!.masque)
         expect(de.get(u.id)!.incertain, u.id).toBe(true);
     }
-    expect(ens.version).toBe(matn.version);
+    expect(ens.version).toBe(construire(id, lignes).eleve.version);
   });
 });
 
 describe('ajouts propres à chaque texte', () => {
-  const m = (id: string) => JSON.parse(readFileSync(join(SORTIE, `${id}.json`), 'utf8')) as Matn;
+  const m = complet;
 
   it('Ājurrūmiyya : code visuel sans aucune couleur (soulignés et formes), listes et exemples chacun sur sa ligne', () => {
     const a = m('ajurrumiyya');
@@ -607,9 +651,7 @@ describe('ajouts propres à chaque texte', () => {
       'IBA-S57',
       'IBA-S58',
     ]);
-    const e = JSON.parse(
-      readFileSync(join(SORTIE, 'ibn-ashir-enseignant.json'), 'utf8'),
-    ) as NotesEnseignant;
+    const e = ensDe('ibn-ashir');
     expect(e.publication).toMatch(/croyance .*IBA-S02 à S10/);
     expect(e.comite).toHaveLength(5);
   });
@@ -629,9 +671,8 @@ describe('ajouts propres à chaque texte', () => {
 });
 
 describe('lot 3 : publication différée, hadiths, Bayqūniyya, Waraqāt, mots arabes isolés, statut', () => {
-  const m = (id: string) => JSON.parse(readFileSync(join(SORTIE, `${id}.json`), 'utf8')) as Matn;
-  const ens = (id: string) =>
-    JSON.parse(readFileSync(join(SORTIE, `${id}-enseignant.json`), 'utf8')) as NotesEnseignant;
+  const m = complet;
+  const ens = ensDe;
 
   it('publication différée : IBA-S02 à S10 masquées aux invités de la bêta, vues du personnel et de la démonstration', () => {
     const x = m('ibn-ashir');
@@ -843,9 +884,221 @@ describe('lot 3 : publication différée, hadiths, Bayqūniyya, Waraqāt, mots a
         /VALIDATION_HUMAINE|validation humaine requise|À valider par un humain/i,
       );
     for (const id of TEXTES)
-      for (const f of [`${id}.json`, `${id}-enseignant.json`])
-        expect(readFileSync(join(SORTIE, f), 'utf8'), f).not.toMatch(/VALIDATION_HUMAINE/i);
+      for (const f of [join(SORTIE, `${id}.json`), join(SORTIE_PROTEGEE, `${id}-enseignant.json`)])
+        expect(readFileSync(f, 'utf8'), f).not.toMatch(/VALIDATION_HUMAINE/i);
     expect(STATUT).toBe('EN_ATTENTE_SECONDE_LECTURE');
     expect([...STATUTS_ACCEPTES]).toEqual([STATUT]);
+  });
+});
+
+describe('lot 5 : Quarante hadiths levés, Lāmiyya (trois vers masqués)', () => {
+  const m = complet;
+  const OCTETS_HADITHS = [27, 28, 29, 35, 36, 38, 40, 41];
+
+  it('hadiths 27, 28, 29, 35, 36, 38, 40, 41 : voyelles levées de la source, texte arabe octet par octet', () => {
+    const src = lire<{
+      hadiths: Array<{
+        id: string;
+        intro_ar: string;
+        matn_ar: string;
+        collation_1903?: { voyelles_13_10_ter?: { voyelle_a_confirmer?: unknown[] } };
+      }>;
+    }>(join(dossier('nawawi'), 'texte_ar.json')).hadiths;
+    const x = m('nawawi');
+    for (const n of OCTETS_HADITHS) {
+      const h = src.find((q) => q.id === `NAW-H${n}`)!;
+      const p = x.phrases.find((q) => q.id === `NAW-H${n}`)!;
+      expect(h.collation_1903?.voyelles_13_10_ter?.voyelle_a_confirmer, h.id).toEqual([]);
+      expect(p.incertain, h.id).toBeUndefined();
+      expect(
+        [`${h.intro_ar}${h.matn_ar}`, `${h.intro_ar} ${h.matn_ar}`].map(octets),
+        h.id,
+      ).toContain(octets(p.ar as string));
+    }
+    // hadith 36 : le mot « فِيمَا » est retiré (Būlāq 1321 ne l'a pas)
+    const h36 = x.phrases.find((q) => q.id === 'NAW-H36')!.ar as string;
+    expect(h36).not.toContain('فِيمَا');
+    expect(h36).toContain('بَيْنَهُمْ');
+    // ni cette ancienne lecture ni les voyelles fautives corrigées ne restent dans le texte publié
+    expect(JSON.stringify(x)).not.toContain('فِيمَا بَيْنَهُمْ');
+  });
+
+  it('Lāmiyya : 114 vers, 23 séances, cycle 3, sans publication différée ni niveau réservé', () => {
+    const x = m('lamiyya');
+    expect(x.phrases).toHaveLength(114);
+    expect(x.seances).toHaveLength(23);
+    expect(CYCLES.find((c) => c.n === 3)!.textes.map((t) => t.id)).toContain('lamiyya');
+    expect(x.seances.some((s) => s.differe || s.adulte || s.pudeur)).toBe(false);
+    expect(x.differe).toBeUndefined();
+    expect(differeDe('lamiyya')).toBeNull();
+  });
+
+  it('Lāmiyya : vers 0045, 0068, 0096 masqués (champs de données) — ni arabe ni traduction dans aucun fichier de l’élève', () => {
+    const src = lire<{
+      vers: Array<{
+        id: string;
+        hemistiches: string[];
+        levee_reserves_13_10?: { affichage_eleve: string; lecture_proposee?: string };
+      }>;
+    }>(join(dossier('lamiyya'), 'texte_ar.json')).vers;
+    const se = lire<{
+      levee_reserves_13_10: { vers_a_masquer_a_l_eleve: Array<{ vers: string }> };
+    }>(join(dossier('lamiyya'), 'seances.json'));
+    const masques = src
+      .filter((v) => v.levee_reserves_13_10?.affichage_eleve === 'masque')
+      .map((v) => v.id);
+    expect(masques).toEqual(['LAM-0045', 'LAM-0068', 'LAM-0096']);
+    expect(se.levee_reserves_13_10.vers_a_masquer_a_l_eleve.map((v) => v.vers)).toEqual(masques);
+    const x = m('lamiyya');
+    expect(x.phrases.filter((p) => p.masque).map((p) => p.id)).toEqual(masques);
+    const publics = readFileSync(join(SORTIE, 'lamiyya.json'), 'utf8');
+    const fr = lire<{ phrases: Array<{ id: string; fr: string }> }>(
+      join(dossier('lamiyya'), 'traduction_fr.json'),
+    ).phrases;
+    for (const id of masques) {
+      const p = x.phrases.find((q) => q.id === id)!;
+      expect(Object.keys(p).sort(), id).toEqual(['id', 'masque', 't']);
+      const v = src.find((q) => q.id === id)!;
+      for (const h of v.hemistiches) expect(publics.includes(h), `${id} : hémistiche`).toBe(false);
+      // le français du vers masqué n'est nulle part
+      const f = fr.find((q) => q.id === id)!.fr;
+      expect(publics.includes(JSON.stringify(f).slice(1, -1)), `${id} : français`).toBe(false);
+      expect(texteVoixSynthese(p), id).toBeNull();
+      expect(aMemoriser([p]), id).toHaveLength(0);
+      expect(
+        genererQuiz(matnPour(x, 'adulte'), x.seances.find((s) => s.phrases.includes(id))!.n).some(
+          (q) => 'phrase' in q && q.phrase === id,
+        ),
+        id,
+      ).toBe(false);
+    }
+    // les séances qui portent un vers masqué restent utilisables (S11, S16, S21) et leurs autres vers s'affichent
+    for (const [s, id] of [
+      ['LAM-S11', 'LAM-0045'],
+      ['LAM-S16', 'LAM-0068'],
+      ['LAM-S21', 'LAM-0096'],
+    ] as const) {
+      const sc = x.seances.find((q) => q.id === s)!;
+      expect(sc.phrases).toContain(id);
+      expect(
+        sc.phrases.filter((pid) => !x.phrases.find((q) => q.id === pid)!.masque).length,
+      ).toBeGreaterThan(1);
+    }
+    // enfants, ados, adultes : le vers masqué reste masqué pour tous
+    for (const kind of ['enfant', 'ado', 'adulte', null] as const)
+      for (const id of masques)
+        expect(
+          matnPour(x, kind).phrases.find((q) => q.id === id)?.h,
+          `${kind} ${id}`,
+        ).toBeUndefined();
+  });
+
+  it('Lāmiyya : les 13 vers levés sont affichés, avec la lecture corrigée de la source (octet par octet)', () => {
+    const LEVES = [
+      '0028',
+      '0032',
+      '0033',
+      '0044',
+      '0051',
+      '0052',
+      '0071',
+      '0079',
+      '0081',
+      '0082',
+      '0086',
+      '0090',
+      '0107',
+    ];
+    const src = lire<{
+      vers: Array<{
+        id: string;
+        hemistiches: string[];
+        levee_reserves_13_10?: { affichage_eleve: string };
+      }>;
+    }>(join(dossier('lamiyya'), 'texte_ar.json')).vers;
+    const x = m('lamiyya');
+    for (const n of LEVES) {
+      const id = `LAM-${n}`;
+      const v = src.find((q) => q.id === id)!;
+      expect(v.levee_reserves_13_10?.affichage_eleve, id).toBe('affichable');
+      const p = x.phrases.find((q) => q.id === id)!;
+      expect(p.masque, id).toBeUndefined();
+      expect(octets(p.h!.join(' * ')), id).toBe(octets(v.hemistiches.join(' * ')));
+      expect(p.fr, id).toBeTruthy();
+    }
+    // deux intertitres de suite avant le vers 90 : l'un sous l'autre
+    expect(x.phrases.find((p) => p.id === 'LAM-0090')!.titre).toContain('\n');
+  });
+});
+
+describe('lot 5 : fichiers gardés (écart n° 3 du contrôle pré-bêta du 13/10/2026)', () => {
+  const textes = [...TOUS_LES_TEXTES];
+
+  it('static/mutun ne contient QUE les fichiers publics : ni notes de l’enseignant, ni séances différées, ni parties de la Risāla', () => {
+    const fichiers = readdirSync(SORTIE).sort();
+    expect(fichiers).toEqual(textes.map((id) => `${id}.json`).sort());
+    for (const f of fichiers) expect(NOM_PROTEGE.test(f), f).toBe(false);
+  });
+
+  it('dossier gardé : notes de chaque texte, complément d’Ibn ʿĀshir, parties de la Risāla', () => {
+    const gardes = readdirSync(SORTIE_PROTEGEE).sort();
+    for (const id of textes) expect(gardes, id).toContain(`${id}-enseignant.json`);
+    expect(gardes).toContain('ibn-ashir-differe.json');
+    expect(gardes.filter((f) => /^risala-p\d+\.json$/.test(f))).toHaveLength(12);
+    // rien d'autre : aucun fichier perdu d'une construction précédente
+    expect(gardes).toHaveLength(textes.length + 1 + 12);
+    for (const f of gardes) expect(NOM_PROTEGE.test(f), f).toBe(true);
+  });
+
+  it('contenu différé : jamais dans un fichier public (ni phrases, ni arabe, ni traduction)', () => {
+    for (const id of textes) {
+      const brut = readFileSync(join(SORTIE, `${id}.json`), 'utf8');
+      const pub = JSON.parse(brut) as Matn;
+      const ouvertes = new Set(pub.seances.filter((s) => !s.differe).flatMap((s) => s.phrases));
+      for (const s of pub.seances.filter((q) => q.differe)) {
+        // le fichier public d'un texte à séances différées ne porte que leur sommaire (Risāla : titres, sans phrases)
+        expect(id, `${id} : séance différée dans un fichier public`).toBe('risala');
+        for (const pid of s.phrases)
+          if (!ouvertes.has(pid))
+            expect(
+              pub.phrases.some((p) => p.id === pid),
+              `${id} ${pid}`,
+            ).toBe(false);
+      }
+    }
+    // Ibn ʿĀshir : le fichier public n'a aucune des neuf séances, et le complément n'a aucune phrase du public
+    const pub = publicDe('ibn-ashir');
+    const d = differeDe('ibn-ashir')!;
+    expect(pub.seances.some((s) => s.differe)).toBe(false);
+    expect(pub.differe).toEqual({ version: d.version });
+    expect(d.seances.map((s) => s.id)).toEqual(DIFFERE['ibn-ashir']!.seances);
+    expect(d.seances.every((s) => s.differe)).toBe(true);
+    const ids = new Set(pub.phrases.map((p) => p.id));
+    for (const p of d.phrases) expect(ids.has(p.id), p.id).toBe(false);
+    const brutPublic = readFileSync(join(SORTIE, 'ibn-ashir.json'), 'utf8');
+    for (const p of d.phrases) {
+      const a = arSimple(p);
+      if (a) expect(brutPublic.includes(a), p.id).toBe(false);
+    }
+    for (const s of d.seances) expect(brutPublic.includes(s.id), s.id).toBe(false);
+    // Risāla : le sommaire public n'a AUCUNE phrase ; les 1 769 phrases sont dans les parties gardées
+    const r = publicDe('risala');
+    expect(r.phrases).toHaveLength(0);
+    const parties = readdirSync(SORTIE_PROTEGEE).filter((f) => /^risala-p\d+\.json$/.test(f));
+    const total = parties.flatMap(
+      (f) => lire<{ phrases: Phrase[] }>(join(SORTIE_PROTEGEE, f)).phrases,
+    );
+    expect(total).toHaveLength(1769);
+  });
+
+  it('notes de l’enseignant : jamais dans un fichier public', () => {
+    for (const id of textes) {
+      const ens = ensDe(id);
+      const brut = readFileSync(join(SORTIE, `${id}.json`), 'utf8');
+      expect(brut.includes('"decoupage"'), id).toBe(false);
+      expect(brut.includes('consigne_differe'), id).toBe(false);
+      if (ens.publication)
+        expect(brut.includes(JSON.stringify(ens.publication).slice(1, -1)), id).toBe(false);
+    }
   });
 });

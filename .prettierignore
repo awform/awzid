@@ -37,3 +37,6 @@ packages/content/conversation/
 # Madjaliss : sources du référent recopiées VERBATIM, et textes générés (node apps/web/scripts/madjaliss.mjs), contrôlés par test
 packages/content/madjaliss-source/
 apps/web/static/mutun/
+
+# Madjaliss lot 5 : fichiers gardés (notes de l enseignant, séances différées, parties de la Risāla), générés par apps/web/scripts/madjaliss.mjs
+apps/web/src/lib/server/mutun/

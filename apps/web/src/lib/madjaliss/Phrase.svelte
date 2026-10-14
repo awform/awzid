@@ -29,6 +29,14 @@
     <p class="reserve" data-testid="explication-bientot">
       <Icon name="info" size={20} /><Bidi text={t('mj.explication_bientot')} />
     </p>
+  {:else if p.masque}
+    <!-- vers dont la voyelle n'est pas confirmée : ni son arabe ni sa traduction ne sont dans les fichiers -->
+    {#if p.titre}<p class="inter ar" lang="ar" dir="rtl" data-testid="mj-intertitre">
+        <Bidi text={p.titre} base="ar" />
+      </p>{/if}
+    <p class="reserve" data-testid="vers-masque">
+      <Icon name="info" size={20} /><Bidi text={t('mj.vers_masque')} />
+    </p>
   {:else}
     {#if p.titre}<p class="inter ar" lang="ar" dir="rtl" data-testid="mj-intertitre">
         <Bidi text={p.titre} base="ar" />
@@ -186,6 +194,8 @@
     font-family: var(--font-ar-titre);
     font-weight: 700;
     line-height: 2;
+    /* deux intertitres de suite (Lāmiyya) : l'un sous l'autre */
+    white-space: pre-line;
   }
   .titre .matn {
     font-family: var(--font-ar-titre);

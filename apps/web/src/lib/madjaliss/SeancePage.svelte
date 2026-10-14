@@ -39,7 +39,7 @@
     staff = isStaff(me);
     differe = voitDiffere(me, staff);
     progres = await lireProgres(profil?.id ?? null, id);
-    matn = await chargerMatn(id);
+    matn = await chargerMatn(id, undefined, differe);
     // grand texte (ar-Risāla) : seules les phrases de la partie de cette séance sont chargées
     // (seulement si la séance est visible pour ce profil : un invité de la bêta ne télécharge rien)
     if (matn && matnPour(matn, profil?.kind ?? null, differe).seances.some((s) => s.n === n))

@@ -1,0 +1,2881 @@
+{
+    "oeuvre": "Ibn Mālik, Lāmiyyat al-afʿāl",
+    "langue": "fr",
+    "traduction": "Traduction Awzid, faite depuis l'arabe (texte_ar.json, saisi sur l'édition S, contrôlé sur F), projet non relu",
+    "mention_publique": "INTERDITE avant relecture : la mention « Traduction Awzid, relue par … » n'apparaît qu'après la relecture savante",
+    "statut_global": "EN_ATTENTE_SECONDE_LECTURE",
+    "ordre_de_travail": "dans l'ordre du poème, en une passe",
+    "conventions": [
+        "Poème didactique : on traduit le sens, pas la rime ni le mètre. Un vers = une phrase française (ou un segment).",
+        "Les verbes et schèmes cités sont donnés en arabe vocalisé, jamais translittérés en lettres latines : dans le français, un marqueur {ar:K} renvoie au mot n° K du champ mots_ar de la phrase (mots pris dans le vers) ; seuls des sens français sont écrits (« il a couru », « il est entré », « il a été avare »).",
+        "Tout ajout de sens est entre crochets [ ]. « Allah » pour الله.",
+        "Termes de grammaire d'après DECISIONS_TUHFA_AJURRUMIYYA.md : « au nominatif », « au génitif », « au jussif », « invariable », « le sujet » (fāʿil), « le thème », « le prédicat » ; en sarf : « verbe nu / augmenté », « trilitère / quadrilitère », « première, deuxième, troisième radicale », « passé », « présent », « impératif », « nom d'agent », « nom de patient », « nom d'action ».",
+        "13/10 (série c) : les gloses lexicales (champ « gloses ») viennent de l'apparat de l'édition critique ; le français de l'élève ne contient plus de translittération (marqueurs {ar:K}). Les anciens textes translittérés sont gardés dans les champs fr_translit_interne, sens_translit_interne, mot_translit_interne pour le relecteur seulement."
+    ],
+    "phrases": [
+        {
+            "id": "LAM-0001",
+            "fr": "Louange à Allah — je ne Lui cherche pas de substitut — une louange qui fasse atteindre, de Son agrément, l'espoir [le plus haut].",
+            "partie": "Ouverture",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "LAM-0002",
+            "fr": "Puis la prière sur le meilleur des êtres, et sur nos maîtres, sa famille et ses Compagnons, les hommes de mérite.",
+            "partie": "Ouverture",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "LAM-0003",
+            "fr": "Ensuite : le verbe — celui qui en maîtrise la flexion [{ar:0}] obtient de la langue les portes et les chemins [d'accès].",
+            "partie": "Ouverture",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Ensuite : le verbe — celui qui en maîtrise la flexion [taṣarruf] obtient de la langue les portes et les chemins [d'accès].",
+            "mots_ar": [
+                "تَصَرُّف"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0004",
+            "fr": "Prends donc un poème qui embrasse l'essentiel ; celui qui garde présents à l'esprit les [principes] d'ensemble [jumal] y rassemble les détails.",
+            "partie": "Ouverture",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "LAM-0005",
+            "fr": "Le verbe nu [{ar:0}] vient sur {ar:1}, ou {ar:2}, et [aussi] avec une deuxième radicale [{ar:3}] à {ar:4} [{ar:5}], ou sur {ar:6}.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "ar": "فَعْلَلَ",
+                    "sens": "schème du verbe quadrilitère nu",
+                    "sens_translit_interne": "schème du verbe quadrilitère nu"
+                },
+                {
+                    "ar": "فَعُلَ",
+                    "sens": "schème à deuxième radicale portant la {ar:7}",
+                    "sens_translit_interne": "schème à deuxième radicale ḍammée"
+                },
+                {
+                    "ar": "فَعَلَ",
+                    "sens": "schème à deuxième radicale portant la {ar:8}",
+                    "sens_translit_interne": "schème à deuxième radicale fatḥée"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Le verbe nu [mujarrad] vient sur faʿlala, ou faʿula, et [aussi] avec une deuxième radicale [ʿayn] à kasra [faʿila], ou sur faʿala.",
+            "mots_ar": [
+                "مُجَرَّد",
+                "فَعْلَلَ",
+                "فَعُلَ",
+                "عَيْن",
+                "كَسْرَة",
+                "فَعِلَ",
+                "فَعَلَ",
+                "ضَمَّة",
+                "فَتْحَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0006",
+            "fr": "Garde la {ar:0} [comme voyelle de la deuxième radicale] au présent de {ar:1}, et mets la {ar:2} à la place de la {ar:3} dans [le présent] formé à partir de {ar:4}.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Garde la ḍamma [comme voyelle de la deuxième radicale] au présent de faʿula, et mets la fatḥa à la place de la kasra dans [le présent] formé à partir de faʿila.",
+            "mots_ar": [
+                "ضَمَّة",
+                "فَعُلَ",
+                "فَتْحَة",
+                "كَسْرَة",
+                "فَعِلَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0007",
+            "fr": "Deux formes sont possibles [au présent] dans : {ar:0} ({ar:1}), avec {ar:2}, {ar:3}, {ar:4}, {ar:5}, {ar:6}, {ar:7} ({ar:8}), {ar:9} et {ar:10} [la {ar:11} est la forme de base, la {ar:12} la forme irrégulière].",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "« اوله » (le sens de « ceux-là en premier ») est incertain ; ce vers manque à la numérotation « additions » de S (coloré en rouge) mais est dans le témoin F : voir RAPPORT",
+            "fr_avant_13_10": "Deux formes sont possibles dans : ḥasiba, avec ghirtu, ḥarirtu, niʿima, baʾisa, yaʾisa — ceux-là en premier —, yabisa et wahila.",
+            "note_correction": "« اوله » : impératif de waliha, avec hamzat waṣl (at-Tilimsānī, p. 162 de l'éd. citée) ; « deux formes » : fatḥa par principe, kasra par irrégularité (Ibn an-Nāẓim, p. 29). La voyelle de « حَرْ » (S) contre « حِرْ » (éd. critique) reste à confirmer.",
+            "gloses": [
+                {
+                    "mot_ar": "حَسِبَ",
+                    "mot_translit_interne": "ḥasiba",
+                    "sens": "penser",
+                    "sens_translit_interne": "penser"
+                },
+                {
+                    "mot_ar": "وَغِرَ صَدْرُهُ",
+                    "mot_translit_interne": "waghira ṣadruhu",
+                    "sens": "sa poitrine a brûlé de colère",
+                    "sens_translit_interne": "sa poitrine a brûlé de colère"
+                },
+                {
+                    "mot_ar": "وَحِرَ صَدْرُهُ",
+                    "mot_translit_interne": "waḥira ṣadruhu",
+                    "sens": "sa poitrine s'est remplie de rancune",
+                    "sens_translit_interne": "sa poitrine s'est remplie de rancune"
+                },
+                {
+                    "mot_ar": "نَعِمَ",
+                    "mot_translit_interne": "naʿima",
+                    "sens": "jouir d'une vie agréable",
+                    "sens_translit_interne": "jouir d'une vie agréable"
+                },
+                {
+                    "mot_ar": "بَئِسَ",
+                    "mot_translit_interne": "baʾisa",
+                    "sens": "être dans une mauvaise situation",
+                    "sens_translit_interne": "être dans une mauvaise situation"
+                },
+                {
+                    "mot_ar": "وَلِهَ",
+                    "mot_translit_interne": "waliha",
+                    "sens": "éperdu de chagrin, ayant perdu la raison par la perte d'un être cher ou d'un bien",
+                    "sens_translit_interne": "éperdu de chagrin, ayant perdu la raison par la perte d'un être cher ou d'un bien"
+                },
+                {
+                    "mot_ar": "وَهِلَا",
+                    "mot_translit_interne": "wahila",
+                    "sens": "s'effrayer ; ou oublier ; ou s'inquiéter et perdre le jugement",
+                    "sens_translit_interne": "s'effrayer ; ou oublier ; ou s'inquiéter et perdre le jugement"
+                },
+                {
+                    "mot_ar": "يَئِسَ، يَبِسَ",
+                    "mot_translit_interne": "yaʾisa, yabisa",
+                    "sens": "non glosés dans l'apparat consulté",
+                    "sens_translit_interne": "non glosés dans l'apparat consulté"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Deux formes sont possibles [au présent] dans : iḥsib (ḥasiba), avec waghirta, waḥirta, inʿim, baʾista, yaʾista, iwlah (waliha), yabis et wahilā [la fatḥa est la forme de base, la kasra la forme irrégulière].",
+            "mots_ar": [
+                "احْسِبْ",
+                "حَسِبَ",
+                "وَغِرْتَ",
+                "وَحِرْتَ",
+                "انْعِمْ",
+                "بَئِسْتَ",
+                "يَئِسْتَ",
+                "اوْلَهْ",
+                "وَلِهَ",
+                "يَبِسْ",
+                "وَهِلَا",
+                "فَتْحَة",
+                "كَسْرَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0008",
+            "fr": "Réserve la {ar:0} seule [au présent] à ce qui vient de {ar:1}, {ar:2}, {ar:3}, {ar:4}, {ar:5}, avec {ar:6} — {ar:7} [mot de rime : sa fonction grammaticale est discutée (complément ou état), le sens d'ensemble reste le même].",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "« جُلَا » (dernier mot) à vérifier sur F ; variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_avant_13_10": "Réserve la kasra [au présent] à ce qui est de warītha, waliya, warima, wariʿa, wamiqa, avec wafiqa — [cas] clair.",
+            "note_correction": "Variante : « جلا » (S) ou « حلى » (éd. critique) ; al-Fakkūn (p. 253) discute les deux lectures ; à trancher par la seconde lecture.",
+            "gloses": [
+                {
+                    "mot_ar": "وَلِيَ الْأَمْرَ",
+                    "mot_translit_interne": "waliya al-amra",
+                    "sens": "avoir la charge de l'affaire ({ar:8})",
+                    "sens_translit_interne": "avoir la charge de l'affaire (wilāya)"
+                },
+                {
+                    "mot_ar": "وَلِيَ الشَّيْءَ",
+                    "mot_translit_interne": "waliya ash-shayʾa",
+                    "sens": "être proche de lui",
+                    "sens_translit_interne": "être proche de lui"
+                },
+                {
+                    "mot_ar": "وَرِمَ",
+                    "mot_translit_interne": "warima",
+                    "sens": "enfler (une plaie) ; {ar:9} : s'irriter",
+                    "sens_translit_interne": "enfler (une plaie) ; warima bi-anfihi : s'irriter"
+                },
+                {
+                    "mot_ar": "وَرِعَ",
+                    "mot_translit_interne": "wariʿa",
+                    "sens": "s'abstenir par scrupule des choses douteuses (au fond : retenue)",
+                    "sens_translit_interne": "s'abstenir par scrupule des choses douteuses (au fond : retenue)"
+                },
+                {
+                    "mot_ar": "وَمِقَ",
+                    "mot_translit_interne": "wamiqa",
+                    "sens": "aimer",
+                    "sens_translit_interne": "aimer"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Réserve la kasra seule [au présent] à ce qui vient de waritha, waliya, warima, wariʿta, wamiqta, avec wafiqta — [dernier mot : julā ou ḥulā selon les copies ; sens incertain].",
+            "mots_ar": [
+                "كَسْرَة",
+                "وَرِثَ",
+                "وَلِيَ",
+                "وَرِمْ",
+                "وَرِعْتَ",
+                "وَمِقْتَ",
+                "وَفِقْتَ",
+                "حُلَى",
+                "وِلَايَة",
+                "وَرِمَ بِأَنْفِهِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0009",
+            "fr": "[De même] {ar:0}, avec {ar:1} [dit] de la moelle : retiens-les ; et maintiens la {ar:2} comme voyelle de la deuxième radicale du présent qui suit [un passé] {ar:3}.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "وَرِيَ الْمُخُّ",
+                    "mot_translit_interne": "wariya al-mukhkh",
+                    "sens": "la moelle s'est remplie (signe d'embonpoint) ; {ar:4} : moelle des os",
+                    "sens_translit_interne": "la moelle s'est remplie (signe d'embonpoint) ; mukhkh : moelle des os"
+                },
+                {
+                    "mot_ar": "احْوِهَا",
+                    "mot_translit_interne": "iḥwihā",
+                    "sens": "rassemble-les à toi et retiens-les",
+                    "sens_translit_interne": "rassemble-les à toi et retiens-les"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "[De même] wathiqa, avec wariya [dit] de la moelle : retiens-les ; et maintiens la kasra comme voyelle de la deuxième radicale du présent qui suit [un passé] faʿila.",
+            "mots_ar": [
+                "وَثِقَ",
+                "وَرِيَ",
+                "كَسْرَة",
+                "فَعِلَ",
+                "الْمُخُّ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0010",
+            "fr": "[Cela vaut pour] celui dont la première radicale est un {ar:0}, ou dont la deuxième est un {ar:1}, ou [qui est] comme {ar:2} ; de même le [verbe] redoublé, lorsqu'il est intransitif, comme {ar:3} [et] {ar:4}.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "حَنَّ",
+                    "mot_translit_interne": "ḥanna",
+                    "sens": "avoir la nostalgie, désirer",
+                    "sens_translit_interne": "avoir la nostalgie, désirer"
+                },
+                {
+                    "mot_ar": "طَلَا",
+                    "mot_translit_interne": "ṭalā",
+                    "sens": "petit de la gazelle, de la brebis et des autres bêtes à sabot fendu",
+                    "sens_translit_interne": "petit de la gazelle, de la brebis et des autres bêtes à sabot fendu"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "[Cela vaut pour] celui dont la première radicale est un wāw, ou dont la deuxième est un yāʾ, ou [qui est] comme atā ; de même le [verbe] redoublé, lorsqu'il est intransitif, comme ḥanna [et] ṭalā.",
+            "mots_ar": [
+                "وَاو",
+                "يَاء",
+                "أَتَى",
+                "حَنَّ",
+                "طَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0011",
+            "fr": "Mets la {ar:0} à la deuxième radicale du [verbe] transitif ; la {ar:1} y est rare, de même que, pour l'intransitif, cette {ar:0} est seulement tolérée.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "fr_avant_13_10": "Mets la ḍamma à la deuxième radicale du [verbe] transitif ; la kasra y est rare, comme [l'est] la ḍamma admise pour l'intransitif.",
+            "note_correction": "Sens d'après al-Bijāʾī (p. 67-68) et Ibn an-Nāẓim (p. 35 : « kasra par règle, ḍamma par exception » pour le groupe voisin).",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Mets la ḍamma à la deuxième radicale du [verbe] transitif ; la kasra y est rare, de même que, pour l'intransitif, cette ḍamma est seulement tolérée.",
+            "mots_ar": [
+                "ضَمَّة",
+                "كَسْرَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0012",
+            "fr": "Le transitif prend la {ar:0} : {ar:1} ; et retiens ceci : deux formes pour {ar:2} et {ar:3}, [et pour] {ar:4} {ar:5}.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "هَرَّ الشَّيْءَ",
+                    "mot_translit_interne": "harra ash-shayʾa",
+                    "sens": "le détester",
+                    "sens_translit_interne": "le détester"
+                },
+                {
+                    "mot_ar": "شَدَّ الْمَتَاعَ",
+                    "mot_translit_interne": "shadda al-matāʿa",
+                    "sens": "le ficeler solidement",
+                    "sens_translit_interne": "le ficeler solidement"
+                },
+                {
+                    "mot_ar": "عَلَّهُ",
+                    "mot_translit_interne": "ʿalla",
+                    "sens": "on dit : il l'a abreuvé une seconde fois ({ar:5}) après la première ({ar:6})",
+                    "sens_translit_interne": "on dit : il l'a abreuvé une seconde fois (ʿalal) après la première (nahal)"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Le transitif prend la kasra : ḥabba-hu ; et retiens ceci : deux formes pour harra et shadda, [et pour] ʿalla-hu ʿalalan.",
+            "mots_ar": [
+                "كَسْرَة",
+                "حَبَّهُ",
+                "هَرَّ",
+                "شَدَّ",
+                "عَلَّهُ",
+                "عَلَلَا",
+                "نَهَل"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0013",
+            "fr": "{ar:0} (trancher) et {ar:1} (colporter) : mets-y aussi la {ar:2} lorsqu'ils sont intransitifs — comme dans « {ar:3} {ar:4} » (passe près de lui) — ainsi que pour {ar:5}, tel {ar:6} (quitter sa demeure).",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "fr_avant_13_10": "Batta, au sens de « trancher », et namma : mets-y aussi la ḍamma lorsqu'ils sont intransitifs — comme dans « umrur bihi » — ainsi que pour jalla, tel jalā.",
+            "note_correction": "Gloses : batta = trancher ; namma al-ḥadīth = le colporter pour semer la discorde ; jalla/jalā ʿan manzilihi = quitter sa demeure (Ṣiḥāḥ ; Ibn an-Nāẓim p. 33).",
+            "gloses": [
+                {
+                    "mot_ar": "بَتَّ",
+                    "mot_translit_interne": "batta",
+                    "sens": "trancher",
+                    "sens_translit_interne": "trancher"
+                },
+                {
+                    "mot_ar": "نَمَّ الْحَدِيثَ",
+                    "mot_translit_interne": "namma al-ḥadīth",
+                    "sens": "le colporter pour semer la discorde",
+                    "sens_translit_interne": "le colporter pour semer la discorde"
+                },
+                {
+                    "mot_ar": "جَلَّ / جَلَا عَنْ مَنْزِلِهِ",
+                    "mot_translit_interne": "jalla / jalā ʿan manzilihi",
+                    "sens": "quitter sa demeure",
+                    "sens_translit_interne": "quitter sa demeure"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "Batta (trancher) et namma (colporter) : mets-y aussi la ḍamma lorsqu'ils sont intransitifs — comme dans « umrur bihi » (passe près de lui) — ainsi que pour jalla, tel jalā (quitter sa demeure).",
+            "mots_ar": [
+                "بَتَّ",
+                "نَمَّ",
+                "ضَمَّة",
+                "امْرُرْ",
+                "بِهِ",
+                "جَلَّ",
+                "جَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0014",
+            "fr": "{ar:0}, {ar:1}, {ar:2}, {ar:3}, {ar:4} {ar:5}, {ar:6}, {ar:7}, {ar:8}, {ar:9} — c'est-à-dire {ar:10}.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "هَبَّتْ الرِّيحُ",
+                    "mot_translit_interne": "habbat ar-rīḥ",
+                    "sens": "le vent s'est levé",
+                    "sens_translit_interne": "le vent s'est levé"
+                },
+                {
+                    "mot_ar": "ذَرَّتْ الشَّمْسُ",
+                    "mot_translit_interne": "dharrat ash-shams",
+                    "sens": "le soleil s'est levé",
+                    "sens_translit_interne": "le soleil s'est levé"
+                },
+                {
+                    "mot_ar": "أَجَّتِ النَّارُ",
+                    "mot_translit_interne": "ajjat an-nār",
+                    "sens": "le feu a crépité ; {ar:2} {ar:11} : il s'est hâté",
+                    "sens_translit_interne": "le feu a crépité ; ajja ar-rajul : il s'est hâté"
+                },
+                {
+                    "mot_ar": "كَرَّ عَلَيْهِ",
+                    "mot_translit_interne": "karra ʿalayhi",
+                    "sens": "revenir sur lui",
+                    "sens_translit_interne": "revenir sur lui"
+                },
+                {
+                    "mot_ar": "هَمَّ بِالْأَمْرِ",
+                    "mot_translit_interne": "hamma bi-l-amr",
+                    "sens": "le projeter avec détermination",
+                    "sens_translit_interne": "le projeter avec détermination"
+                },
+                {
+                    "mot_ar": "زَمَّ بِأَنْفِهِ",
+                    "mot_translit_interne": "zamma bi-anfihi",
+                    "sens": "se montrer orgueilleux",
+                    "sens_translit_interne": "se montrer orgueilleux"
+                },
+                {
+                    "mot_ar": "سَحَّ",
+                    "mot_translit_interne": "saḥḥa",
+                    "sens": "(pluie, larmes) tomber en abondance",
+                    "sens_translit_interne": "(pluie, larmes) tomber en abondance"
+                },
+                {
+                    "mot_ar": "ذَمَلَا",
+                    "mot_translit_interne": "dhamal",
+                    "sens": "marcher d'un pas rapide et souple (à l'origine : marche des chameaux)",
+                    "sens_translit_interne": "marcher d'un pas rapide et souple (à l'origine : marche des chameaux)"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Habbat, dharrat, ajja, karra, hamma bihi, ʿamma, zamma, saḥḥa, malla — c'est-à-dire dhamala.",
+            "mots_ar": [
+                "هَبَّتْ",
+                "ذَرَّتْ",
+                "أَجَّ",
+                "كَرَّ",
+                "هَمَّ",
+                "بِهِ",
+                "عَمَّ",
+                "زَمَّ",
+                "سَحَّ",
+                "مَلَّ",
+                "ذَمَلَا",
+                "الرَّجُلُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0015",
+            "fr": "{ar:0}, au sens de « briller » et de « crier » [{ar:0} {ar:1} {ar:2}], {ar:3}, {ar:4}, et {ar:5} — c'est-à-dire {ar:6} [« il a couru »] —, {ar:7}, {ar:8}, {ar:9}, c'est-à-dire {ar:10} [« il est entré »].",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "أَلَّ السَّيْفُ",
+                    "mot_translit_interne": "alla as-sayf",
+                    "sens": "l'épée a brillé",
+                    "sens_translit_interne": "l'épée a brillé"
+                },
+                {
+                    "mot_ar": "أَلَّ الْمَرِيضُ",
+                    "mot_translit_interne": "alla al-marīḍ",
+                    "sens": "le malade a gémi",
+                    "sens_translit_interne": "le malade a gémi"
+                },
+                {
+                    "mot_ar": "أَبَّ",
+                    "mot_translit_interne": "abba",
+                    "sens": "se préparer à partir",
+                    "sens_translit_interne": "se préparer à partir"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Alla, au sens d'« briller » et de « crier » [alla lamʿan wa-ṣarkhan], shakka, abba, et shadda — c'est-à-dire ʿadā [« il a couru »] —, shaqqa, khashsha, ghalla, c'est-à-dire dakhala [« il est entré »].",
+            "mots_ar": [
+                "أَلَّ",
+                "لَمْعًا",
+                "وَصَرْخًا",
+                "شَكَّ",
+                "أَبَّ",
+                "شَدَّ",
+                "عَدَا",
+                "شَقَّ",
+                "خَشَّ",
+                "غَلَّ",
+                "دَخَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0016",
+            "fr": "{ar:0} [se dit d'un] peuple ; {ar:1} {ar:2} {ar:3} [la nuit l'a couvert] ; {ar:4} {ar:5} [la nuée a bruiné], {ar:6}, et {ar:7}, dont la forme de base est {ar:8}.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "قَشَّ الْقَوْمُ",
+                    "mot_translit_interne": "qashsha al-qawm",
+                    "sens": "leur situation s'est améliorée après la misère",
+                    "sens_translit_interne": "leur situation s'est améliorée après la misère"
+                },
+                {
+                    "mot_ar": "جَنَّ عَلَيْهِ اللَّيْلُ",
+                    "mot_translit_interne": "janna ʿalayhi al-layl",
+                    "sens": "la nuit l'a enveloppé de ténèbres",
+                    "sens_translit_interne": "la nuit l'a enveloppé de ténèbres"
+                },
+                {
+                    "mot_ar": "رَشَّ الْمُزْنُ",
+                    "mot_translit_interne": "rashsha al-muzn",
+                    "sens": "le nuage a plu ; {ar:9} : petite pluie",
+                    "sens_translit_interne": "le nuage a plu ; rashsh : petite pluie"
+                },
+                {
+                    "mot_ar": "طَشَّ",
+                    "mot_translit_interne": "ṭashsha",
+                    "sens": "il a plu légèrement, moins que le {ar:9}",
+                    "sens_translit_interne": "il a plu légèrement, moins que le rashsh"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Qashsha [se dit d'un] peuple ; janna ʿalayhi al-layl [la nuit l'a couvert] ; rashsha al-muzn [la nuée a bruiné], ṭashsha, et thalla, dont la forme de base est thalala.",
+            "mots_ar": [
+                "قَشَّ",
+                "جَنَّ",
+                "عَلَيْهِ",
+                "اللَّيْلُ",
+                "رَشَّ",
+                "الْمُزْنُ",
+                "طَشَّ",
+                "ثَلَّ",
+                "ثَلَلَا",
+                "رَشّ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0017",
+            "fr": "C'est-à-dire : {ar:0} (fienter [pour une bête à sabot]) ; {ar:1} {ar:2} (un sang est resté impuni) ; {ar:3} {ar:4} (le cheval a trotté) et {ar:3} {ar:5} (la plante s'est allongée) ; {ar:6} {ar:7} (un palmier a sorti ses spathes) ; {ar:8} {ar:9} (une chamelle a brouté seule), {ar:10} [mot non glosé dans l'apparat consulté].",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Plusieurs mots (« ونبت »، « بخلا ») à vérifier ; traduction mot à mot",
+            "fr_avant_13_10": "C'est-à-dire : rātha, ṭalla [dit d'un] sang, khabba [dit du] cheval ; kamma [dit d'un] palmier ; ʿassat, [dit d'une] chamelle, avec bakhila.",
+            "note_correction": "Gloses : Tahdhīb al-lugha, Ṣiḥāḥ, Ibn an-Nāẓim p. 35, Ibn Ḥamdūn p. 22.",
+            "gloses": [
+                {
+                    "mot_ar": "رَاثَ",
+                    "mot_translit_interne": "rātha",
+                    "sens": "fienter (bête à sabot)",
+                    "sens_translit_interne": "fienter (bête à sabot)"
+                },
+                {
+                    "mot_ar": "طَلَّ دَمُهُ",
+                    "mot_translit_interne": "ṭulla damuhu",
+                    "sens": "son sang a été rendu impuni",
+                    "sens_translit_interne": "son sang a été rendu impuni"
+                },
+                {
+                    "mot_ar": "خَبَّ الْحِصَانُ",
+                    "mot_translit_interne": "khabba al-ḥiṣān",
+                    "sens": "le cheval a trotté (sans galoper) ; {ar:3} {ar:11} : la plante s'est allongée",
+                    "sens_translit_interne": "le cheval a trotté (sans galoper) ; khabba an-nabāt : la plante s'est allongée"
+                },
+                {
+                    "mot_ar": "كَمَّ نَخْلٌ",
+                    "mot_translit_interne": "kamma nakhl",
+                    "sens": "le palmier a sorti ses spathes",
+                    "sens_translit_interne": "le palmier a sorti ses spathes"
+                },
+                {
+                    "mot_ar": "عَسَّتِ النَّاقَةُ",
+                    "mot_translit_interne": "ʿassat an-nāqa",
+                    "sens": "la chamelle a brouté seule",
+                    "sens_translit_interne": "la chamelle a brouté seule"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "C'est-à-dire : rātha (fienter [pour une bête à sabot]) ; ṭulla damun (un sang est resté impuni) ; khabba al-ḥiṣānu (le cheval a trotté) et khabba al-nabātu (la plante s'est allongée) ; kamma nakhlun (un palmier a sorti ses spathes) ; ʿassat nāqatun (une chamelle a brouté seule), bi-khalā [mot non glosé dans l'apparat consulté].",
+            "mots_ar": [
+                "رَاثَ",
+                "طَلَّ",
+                "دَمٌ",
+                "خَبَّ",
+                "الْحِصَانُ",
+                "نَبْتٌ",
+                "كَمَّ",
+                "نَخْلٌ",
+                "عَسَّتْ",
+                "نَاقَةٌ",
+                "بِخَلَا",
+                "النَّبَاتُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0018",
+            "fr": "{ar:0}, de même [la chamelle a brouté seule] ; retiens deux formes pour {ar:1} (se détourner), {ar:2} (devenir touffu), {ar:3} {ar:4} (la pierre dure est tombée) ; {ar:5} (la femme en deuil a délaissé la parure) ; {ar:6} (l'œil : ses larmes ont abondé) ; {ar:7} {ar:8} {ar:9} (s'est appliqué, celui qui a œuvré).",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "fr_avant_13_10": "Qassat, de même ; deux formes pour ṣadda, aththa, kharra ; al-ṣulb ḥaddat ; tharrat ; jadda, [de la racine de] ʿamila.",
+            "note_correction": "Lecture « الصلد » (et non « الصلب ») d'après la page de Rifāʿī 1319 H et l'éd. critique ; « حدت » : Ṣiḥāḥ p. 463 ; « ثرت العين » : Baḥraq p. 87 ; « جد من عمل » : Ibn Ḥamdūn p. 24 (« man » = sujet de jadda).",
+            "gloses": [
+                {
+                    "mot_ar": "قَسَّتْ",
+                    "mot_translit_interne": "qassat",
+                    "sens": "(chamelle) brouter seule",
+                    "sens_translit_interne": "(chamelle) brouter seule"
+                },
+                {
+                    "mot_ar": "صَدَّ عَنْ الشَّيْء",
+                    "mot_translit_interne": "ṣadda ʿan ash-shayʾ",
+                    "sens": "se détourner de la chose",
+                    "sens_translit_interne": "se détourner de la chose"
+                },
+                {
+                    "mot_ar": "أَثَّ",
+                    "mot_translit_interne": "aththa",
+                    "sens": "(cheveux, plantes) devenir touffu",
+                    "sens_translit_interne": "(cheveux, plantes) devenir touffu"
+                },
+                {
+                    "mot_ar": "خَرَّ الصَّلْدُ",
+                    "mot_translit_interne": "kharra aṣ-ṣald",
+                    "sens": "la pierre dure et lisse est tombée",
+                    "sens_translit_interne": "la pierre dure et lisse est tombée"
+                },
+                {
+                    "mot_ar": "حَدَّتْ الْمَرْأَةُ",
+                    "mot_translit_interne": "ḥaddat al-marʾa",
+                    "sens": "la femme a délaissé la parure à la mort de son mari",
+                    "sens_translit_interne": "la femme a délaissé la parure à la mort de son mari"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Qassat, de même [la chamelle a brouté seule] ; retiens deux formes pour ṣadda (se détourner), aththa (devenir touffu), kharra al-ṣaldu (la pierre dure est tombée) ; ḥaddat (la femme en deuil a délaissé la parure) ; tharrat (l'œil : ses larmes ont abondé) ; jadda man ʿamila (s'est appliqué, celui qui a œuvré).",
+            "mots_ar": [
+                "قَسَّتْ",
+                "صَدَّ",
+                "أَثَّ",
+                "خَرَّ",
+                "الصَّلْدُ",
+                "حَدَّتْ",
+                "ثَرَّتْ",
+                "جَدَّ",
+                "مِنْ",
+                "عَمِلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0019",
+            "fr": "{ar:0} et {ar:1} (la main s'est détachée à la coupure), {ar:2} (le lait a coulé en abondance), {ar:3} (l'eau a abondé), {ar:4} {ar:5} (le cheval s'est cabré), {ar:6} (il s'est présenté), {ar:7} (la vipère a soufflé et sifflé), {ar:8} (s'est écarté du groupe), {ar:9}, c'est-à-dire {ar:10} (il a été avare).",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Coupe mi-mot (« حَصَا|نٌ ») à vérifier ; variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "gloses": [
+                {
+                    "mot_ar": "تَرَّتْ / طَرَّتْ الْيَدُ",
+                    "mot_translit_interne": "tarrat / ṭarrat al-yad",
+                    "sens": "la main s'est détachée à la coupure",
+                    "sens_translit_interne": "la main s'est détachée à la coupure"
+                },
+                {
+                    "mot_ar": "دَرَّتِ النَّاقَةُ",
+                    "mot_translit_interne": "darrat an-nāqa",
+                    "sens": "le lait a coulé en abondance",
+                    "sens_translit_interne": "le lait a coulé en abondance"
+                },
+                {
+                    "mot_ar": "جَمَّ الْمَاءُ",
+                    "mot_translit_interne": "jamma al-māʾ",
+                    "sens": "l'eau a abondé",
+                    "sens_translit_interne": "l'eau a abondé"
+                },
+                {
+                    "mot_ar": "شَبَّ الْحِصَانُ",
+                    "mot_translit_interne": "shabba al-ḥiṣān",
+                    "sens": "le cheval s'est dressé sur ses pattes",
+                    "sens_translit_interne": "le cheval s'est dressé sur ses pattes"
+                },
+                {
+                    "mot_ar": "عَنَّ لَهُ",
+                    "mot_translit_interne": "ʿanna lahu",
+                    "sens": "il s'est présenté à lui",
+                    "sens_translit_interne": "il s'est présenté à lui"
+                },
+                {
+                    "mot_ar": "فَحَّتْ",
+                    "mot_translit_interne": "faḥḥat",
+                    "sens": "(vipère) souffler et siffler avec la bouche",
+                    "sens_translit_interne": "(vipère) souffler et siffler avec la bouche"
+                },
+                {
+                    "mot_ar": "شَذَّ",
+                    "mot_translit_interne": "shadhdha",
+                    "sens": "s'écarter de la masse",
+                    "sens_translit_interne": "s'écarter de la masse"
+                }
+            ],
+            "fr_avant_13_10": "Tharrat, ṭarrat, darrat, jamma, shabba, ḥaṣānun [?] ʿanna, faḥḥat, shadhdha, shaḥḥa, c'est-à-dire bakhila [« il a été avare »].",
+            "note_correction": "Première lettre « ت » dans l'éd. critique, « ث » dans S : variante, à confirmer (le vers 18 contient déjà « ثرت »). Gloses : al-ʿAyn, Ṣiḥāḥ, Ibn an-Nāẓim p. 35, Baḥraq p. 87-88.",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Tarrat et ṭarrat (la main s'est détachée à la coupure), darrat (le lait a coulé en abondance), jamma (l'eau a abondé), shabba ḥiṣānun (le cheval s'est cabré), ʿanna (il s'est présenté), faḥḥat (la vipère a soufflé et sifflé), shadhdha (s'est écarté du groupe), shaḥḥa, c'est-à-dire bakhila (il a été avare).",
+            "mots_ar": [
+                "تَرَّتْ",
+                "طَرَّتْ",
+                "دَرَّتْ",
+                "جَمَّ",
+                "شَبَّ",
+                "حِصَانٌ",
+                "عَنَّ",
+                "فَحَّتْ",
+                "شَذَّ",
+                "شَحَّ",
+                "بَخِلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0020",
+            "fr": "{ar:0} {ar:1}, {ar:2} {ar:3}, {ar:4} {ar:5} ; et le présent de [verbes de la forme] {ar:6}, si l'on l'a formé…",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "شَطَّتِ الدَّارُ",
+                    "mot_translit_interne": "shaṭṭat ad-dār",
+                    "sens": "la demeure s'est éloignée",
+                    "sens_translit_interne": "la demeure s'est éloignée"
+                },
+                {
+                    "mot_ar": "نَسَّ الْخُبْزُ / اللَّحْمُ",
+                    "mot_translit_interne": "nassa al-khubz / al-laḥm",
+                    "sens": "le pain et la viande sont devenus secs",
+                    "sens_translit_interne": "le pain et la viande sont devenus secs"
+                },
+                {
+                    "mot_ar": "حَرَّ النَّهَارُ",
+                    "mot_translit_interne": "ḥarra an-nahār",
+                    "sens": "le soleil du jour s'est échauffé",
+                    "sens_translit_interne": "le soleil du jour s'est échauffé"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Shaṭṭat al-dār, nassa al-shayʾ, ḥarra nahārun ; et le présent de [verbes de la forme] faʿaltu, si l'on l'a formé…",
+            "mots_ar": [
+                "شَطَّتِ",
+                "الدَّارُ",
+                "نَسَّ",
+                "الشَّيْءُ",
+                "حَرَّ",
+                "نَهَارٌ",
+                "فَعَلْتُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0021",
+            "fr": "[Quand] sa deuxième radicale est un {ar:0}, ou sa troisième, [le verbe] vient avec la deuxième radicale portant la {ar:1} ; cette règle a été largement donnée.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "[Quand] sa deuxième radicale est un wāw, ou sa troisième, [le verbe] vient avec la deuxième radicale ḍammée ; cette règle a été largement donnée.",
+            "mots_ar": [
+                "وَاو",
+                "ضَمَّة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0022",
+            "fr": "[Cela vaut] pour ce qui est [dit] pour l'emporter sur celui qui rivalise de gloire ({ar:0} {ar:1}), [verbe] qui n'a aucun motif imposant la {ar:2} de la deuxième radicale, tel {ar:3} (haïr).",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "« لِبَذٍّ » à vérifier",
+            "fr_avant_13_10": "[Cela vaut] pour ce qui est de [sens] « prétention à se vanter » [mufākhir], et qui n'a aucun motif imposant la kasra de la deuxième radicale, tel qalā.",
+            "note_correction": "Baḥraq p. 98 : « لبذ المفاخر » = pour l'emporter (badhdha) ; Ibn Ḥamdūn p. 26 ; autres lectures dans les copies (« لمبد », « لما يدل على فخر »).",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "[Cela vaut] pour ce qui est [dit] pour l'emporter sur celui qui rivalise de gloire (li-badhdh mufākhir), [verbe] qui n'a aucun motif imposant la kasra de la deuxième radicale, tel qalā (haïr).",
+            "mots_ar": [
+                "لِبَذٍّ",
+                "مُفَاخِرٍ",
+                "كَسْرَة",
+                "قَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0023",
+            "fr": "La {ar:0} [à la deuxième radicale du présent] de ce dont une lettre gutturale — autre que la première — [est radicale] : on la tient d'al-Kisaï pour ce genre [de verbes].",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "La fatḥa [à la deuxième radicale du présent] de ce dont une lettre gutturale — autre que la première — [est radicale] : on la tient d'al-Kisāʾī pour ce genre [de verbes].",
+            "mots_ar": [
+                "فَتْحَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0024",
+            "fr": "Dans les autres cas, chez [le verbe] guttural, répands la {ar:0}, d'un commun accord, comme [le présent] formé à partir de {ar:1}.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Lecture « فَتْحًا اشِعْ » (fin du premier hémistiche) à vérifier",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Dans les autres cas, chez [le verbe] guttural, répands la fatḥa, d'un commun accord, comme [le présent] formé à partir de saʾala.",
+            "mots_ar": [
+                "فَتْحَة",
+                "سَأَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0025",
+            "fr": "[Cela,] s'il n'est pas redoublé, et n'est pas connu pour [prendre] la {ar:0} ou la {ar:1}, comme {ar:2} ; et ce que tu as conjugué à partir de {ar:3}.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "[Cela,] s'il n'est pas redoublé, et n'est pas connu pour [prendre] la kasra ou la ḍamma, comme yabghī ; et ce que tu as conjugué à partir de dakhala.",
+            "mots_ar": [
+                "كَسْرَة",
+                "ضَمَّة",
+                "يَبْغِي",
+                "دَخَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0026",
+            "fr": "[Quant à] la deuxième radicale du présent de {ar:0}, lorsqu'elle est dépourvue de ce qui attire la {ar:1}, comme [le présent] formé à partir de {ar:2},",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "[Quant à] la deuxième radicale du présent de faʿaltu, lorsqu'elle est dépourvue de ce qui attire la fatḥa, comme [le présent] formé à partir de ʿatila,",
+            "mots_ar": [
+                "فَعَلْتُ",
+                "فَتْحَة",
+                "عَتِلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0027",
+            "fr": "alors mets la {ar:0} ou la {ar:1}, lorsque la détermination de l'une des deux est écartée, faute d'usage notoire ou de motif [qui l'imposerait].",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_avant_13_10": "mets-y la ḍamma ou la kasra, lorsque le choix de l'une des deux est écarté faute de notoriété ou de motif [qui l'imposerait].",
+            "note_correction": "Ordre « فاكسر أو اضمم » confirmé par la page de Rifāʿī 1319 H ; « اعتزلا » à la voix active (Ibn Ḥamdūn, p. 28) contre « اعتُزِلَا » (S).",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "alors mets la kasra ou la ḍamma, lorsque la détermination de l'une des deux est écartée, faute d'usage notoire ou de motif [qui l'imposerait].",
+            "mots_ar": [
+                "كَسْرَة",
+                "ضَمَّة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0028",
+            "fr": "Transfère à la première radicale du trilitère la voyelle de la deuxième radicale lorsqu'elle est affaiblie et que [le verbe] est joint au {ar:0} du pronom [sujet],",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Coupe des hémistiches non visible : proposée d'après le sens ; variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Transfère à la première radicale du trilitère la voyelle de la deuxième radicale lorsqu'elle est affaiblie et que [le verbe] est joint au tāʾ du pronom [sujet],",
+            "mots_ar": [
+                "تَاء"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0029",
+            "fr": "ou à son {ar:0} ; et si [la voyelle] est une {ar:1}, prends en échange celle qui est de même nature [homogène] que cette deuxième radicale, transférée.",
+            "partie": "Le verbe nu : schèmes et voyelles",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Coupe des hémistiches proposée d'après le sens",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "ou à son nūn ; et si [la voyelle] est une fatḥa, prends en échange celle qui est de même nature [homogène] que cette deuxième radicale, transférée.",
+            "mots_ar": [
+                "نُون",
+                "فَتْحَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0030",
+            "fr": "Le verbe vient avec l'augmentation, comme {ar:0}, avec {ar:1}, {ar:2}, {ar:3}, {ar:4}, {ar:5}.",
+            "partie": "Le verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "وَالَى",
+                    "mot_translit_interne": "wālā",
+                    "sens": "de {ar:6} (le contraire de l'inimitié), ou : suivre",
+                    "sens_translit_interne": "de muwālāt (le contraire de l'inimitié), ou : suivre"
+                },
+                {
+                    "mot_ar": "وَلَّى",
+                    "mot_translit_interne": "wallā",
+                    "sens": "de {ar:7} : tourner le dos ; ou : « je l'ai chargé de telle tâche »",
+                    "sens_translit_interne": "de tawallā : tourner le dos ; ou : « je l'ai chargé de telle tâche »"
+                },
+                {
+                    "mot_ar": "اسْتَقَامَ",
+                    "mot_translit_interne": "istaqāma",
+                    "sens": "peut-être le correspondant de {ar:8} ; ou : « je l'ai maintenu, affermi » ; ou : « je l'ai rendu droit » ; ou : demander à se tenir debout",
+                    "sens_translit_interne": "peut-être le correspondant de aqāma ; ou : « je l'ai maintenu, affermi » ; ou : « je l'ai rendu droit » ; ou : demander à se tenir debout"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Le verbe vient avec l'augmentation, comme aʿlama, avec wālā, wallā, istaqāma, iḥranjama, infaṣala.",
+            "mots_ar": [
+                "أَعْلَمَ",
+                "وَالَى",
+                "وَلَّى",
+                "اسْتَقَامَ",
+                "احْرَنْجَمَ",
+                "انْفَصَلَا",
+                "مُوَالَاة",
+                "تَوَلَّى",
+                "أَقَامَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0031",
+            "fr": "Et {ar:0} : avec un {ar:1} au milieu, en quatrième [lettre], et dépourvu [d'{ar:1}] ; et de même {ar:2}, {ar:3}.",
+            "partie": "Le verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "اهْبَيَّخَ",
+                    "mot_translit_interne": "ihbayyakha",
+                    "sens": "devenir gras",
+                    "sens_translit_interne": "devenir gras"
+                },
+                {
+                    "mot_ar": "اعْتَدَلَا",
+                    "mot_translit_interne": "iʿtadala",
+                    "sens": "j'ai mis telle chose en équilibre avec telle autre : il s'est équilibré",
+                    "sens_translit_interne": "j'ai mis telle chose en équilibre avec telle autre : il s'est équilibré"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "Et ifʿalla : avec un alif au milieu, en quatrième [lettre], ou dépourvu [d'alif] ; et de même ihbayyakha, iʿtadala.",
+            "mots_ar": [
+                "افْعَلَّ",
+                "أَلِف",
+                "اهْبَيَّخَ",
+                "اعْتَدَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0032",
+            "fr": "{ar:0}, {ar:1}, {ar:2}, {ar:3}, {ar:4} avec {ar:5}, {ar:6}, {ar:7}, {ar:8}.",
+            "partie": "Le verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Vers présent dans F (Fès) mais coloré comme addition dans S : voir RAPPORT",
+            "gloses": [
+                {
+                    "mot_ar": "تَدَحْرَجَ",
+                    "mot_translit_interne": "tadaḥraja",
+                    "sens": "correspondant de {ar:9} (rouler) ; {ar:10} : arrondi",
+                    "sens_translit_interne": "correspondant de daḥraja (rouler) ; mudaḥraj : arrondi"
+                },
+                {
+                    "mot_ar": "احْلَوْلَى الشَّرَابُ",
+                    "mot_translit_interne": "iḥlawlā ash-sharāb",
+                    "sens": "la boisson est devenue douce",
+                    "sens_translit_interne": "la boisson est devenue douce"
+                },
+                {
+                    "mot_ar": "اسْبَطَرَّ",
+                    "mot_translit_interne": "isbaṭarra",
+                    "sens": "(cheveux, etc.) devenir long",
+                    "sens_translit_interne": "(cheveux, etc.) devenir long"
+                },
+                {
+                    "mot_ar": "تَوَلَّى الْأَمْرُ",
+                    "mot_translit_interne": "tawallā al-amr",
+                    "sens": "s'y attacher",
+                    "sens_translit_interne": "s'y attacher"
+                },
+                {
+                    "mot_ar": "خَلْبَسَ قَلْبَهُ",
+                    "mot_translit_interne": "khalbasa qalbahu",
+                    "sens": "l'ensorceler et l'emporter (de {ar:11} : tromper)",
+                    "sens_translit_interne": "l'ensorceler et l'emporter (de khalaba : tromper)"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Tadaḥraja, ʿadhyaṭa, iḥlawlā, isbaṭarra, tawālā avec tawallā, khalbasa, sanbasa, ittaṣala.",
+            "mots_ar": [
+                "تَدَحْرَجَ",
+                "عَذْيَطَ",
+                "احْلَوْلَى",
+                "اسْبَطَرَّ",
+                "تَوَالَى",
+                "تَوَلَّى",
+                "خَلْبَسَ",
+                "سَنْبَسَ",
+                "اتَّصَلَ",
+                "دَحْرَجَ",
+                "مُدَحْرَج",
+                "خَلَبَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0033",
+            "fr": "{ar:0}, {ar:1}, {ar:2}, {ar:3}, {ar:4}, {ar:5}, {ar:6}, {ar:7}, {ar:8}.",
+            "partie": "Le verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Liste de verbes : sens non glosés dans le vers",
+            "gloses": [
+                {
+                    "mot_ar": "احْبَنْطَأَ",
+                    "mot_translit_interne": "iḥbanṭaʾa",
+                    "sens": "avoir le ventre enflé (comme {ar:9})",
+                    "sens_translit_interne": "avoir le ventre enflé (comme ḥabiṭa)"
+                },
+                {
+                    "mot_ar": "احْوَنْصَلَ الطَّائِرُ",
+                    "mot_translit_interne": "iḥwanṣala aṭ-ṭāʾir",
+                    "sens": "l'oiseau a replié sa patte et fait saillir son jabot ({ar:10})",
+                    "sens_translit_interne": "l'oiseau a replié sa patte et fait saillir son jabot (ḥawṣala)"
+                },
+                {
+                    "mot_ar": "تَمَسْكَنَ",
+                    "mot_translit_interne": "tamaskana",
+                    "sens": "se soumettre, s'abaisser",
+                    "sens_translit_interne": "se soumettre, s'abaisser"
+                },
+                {
+                    "mot_ar": "سَلْقَى",
+                    "mot_translit_interne": "salqā",
+                    "sens": "jeter quelqu'un sur le dos",
+                    "sens_translit_interne": "jeter quelqu'un sur le dos"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Iḥbanṭaʾa, iḥwanṣala, islanqā, tamaskana, salqā, qalnasat, jawrabat, harwalat, murtaḥilan.",
+            "mots_ar": [
+                "احْبَنْطَأَ",
+                "احْوَنْصَلَ",
+                "اسْلَنْقَى",
+                "تَمَسْكَنَ",
+                "سَلْقَى",
+                "قَلْنَسَتْ",
+                "جَوْرَبَتْ",
+                "هَرْوَلْتُ",
+                "مُرْتَحِلَا",
+                "حَبِطَ",
+                "حَوْصَلَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "levee_13_10": "Lecture du vers corrigée le 14/10 d'après des témoins cités (voir levee_reserves_13_10 de ce vers dans texte_ar.json) ; les mots arabes ci-dessus suivent la lecture corrigée."
+        },
+        {
+            "id": "LAM-0034",
+            "fr": "{ar:0}, {ar:1}, {ar:2}, {ar:3}, {ar:4}, {ar:5}, {ar:6}, {ar:7} {ar:8}.",
+            "partie": "Le verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "زَهْزَقْتَ",
+                    "mot_translit_interne": "zahzaqta",
+                    "sens": "tu as beaucoup ri",
+                    "sens_translit_interne": "tu as beaucoup ri"
+                },
+                {
+                    "mot_ar": "هَلْقَمْتَ الشَّيْءَ",
+                    "mot_translit_interne": "halqamta ash-shayʾ",
+                    "sens": "tu l'as avalé",
+                    "sens_translit_interne": "tu l'as avalé"
+                },
+                {
+                    "mot_ar": "رَهْمَسْتَ",
+                    "mot_translit_interne": "rahmasta",
+                    "sens": "tu l'as caché, enterré ({ar:9} : tombe)",
+                    "sens_translit_interne": "tu l'as caché, enterré (ramas : tombe)"
+                },
+                {
+                    "mot_ar": "اكْوَأَلَّ",
+                    "mot_translit_interne": "ikwaʾalla",
+                    "sens": "devenir court et ramassé",
+                    "sens_translit_interne": "devenir court et ramassé"
+                },
+                {
+                    "mot_ar": "تَرَهْشَفْتَ الشَّرَابَ",
+                    "mot_translit_interne": "tarahshafa ash-sharāb",
+                    "sens": "le siroter, l'aspirer",
+                    "sens_translit_interne": "le siroter, l'aspirer"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "Zahzaqta, halqamta, rahmasta, ikwaʾalla, tarahshafta, ijfaʾẓẓa, islahamma, qaṭrana al-jamala.",
+            "mots_ar": [
+                "زَهْزَقْتَ",
+                "هَلْقَمْتَ",
+                "رَهْمَسْتَ",
+                "اكْوَأَلَّ",
+                "تَرَهْشَفْتَ",
+                "اجْفَأَظَّ",
+                "اسْلَهَمَّ",
+                "قَطْرَنَ",
+                "الْجَمَلَا",
+                "الرَّمْس"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0035",
+            "fr": "{ar:0}, {ar:1}, {ar:2}, {ar:3}, puis {ar:4}, {ar:5}, {ar:6}, {ar:7}.",
+            "partie": "Le verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Coupe des hémistiches proposée d'après le sens ; variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "gloses": [
+                {
+                    "mot_ar": "تَرْمَسْتَ",
+                    "mot_translit_interne": "tarmasta",
+                    "sens": "te cacher d'une guerre ou d'un trouble",
+                    "sens_translit_interne": "te cacher d'une guerre ou d'un trouble"
+                },
+                {
+                    "mot_ar": "غَلْصَمَ",
+                    "mot_translit_interne": "ghalṣama",
+                    "sens": "trancher la gorge ({ar:8} : le haut de la gorge)",
+                    "sens_translit_interne": "trancher la gorge (ghalṣama : le haut de la gorge)"
+                },
+                {
+                    "mot_ar": "اهْرَمَّعَتْ",
+                    "mot_translit_interne": "ihramaʿa",
+                    "sens": "s'engager dans la marche ou la parole ; (larmes) couler ; de {ar:9} : se hâter",
+                    "sens_translit_interne": "s'engager dans la marche ou la parole ; (larmes) couler ; de ahraʿa : se hâter"
+                },
+                {
+                    "mot_ar": "اعْلَنْكَسَ",
+                    "mot_translit_interne": "iʿlankasa",
+                    "sens": "(cheveux) devenir très noirs et fournis",
+                    "sens_translit_interne": "(cheveux) devenir très noirs et fournis"
+                },
+                {
+                    "mot_ar": "ادْلَمَّسَ",
+                    "mot_translit_interne": "idlammasa",
+                    "sens": "(nuit) devenir très sombre",
+                    "sens_translit_interne": "(nuit) devenir très sombre"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Tarmasta, kaltabta, jalmaṭta, wa-ghalṣama, puis idhlammasa, ihrammaʿat, wa-iʿlankasa, untukhila.",
+            "mots_ar": [
+                "تَرْمَسْتَ",
+                "كَلْتَبْتَ",
+                "جَلْمَطْتَ",
+                "وَغَلْصَمَ",
+                "اذْلَمَّسَ",
+                "اهْرَمَّعَتْ",
+                "وَاعْلَنْكَسَ",
+                "انْتُخِلَا",
+                "غَلْصَمَة",
+                "أَهْرَعَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0036",
+            "fr": "{ar:0}, {ar:1}, {ar:2}, {ar:3}, {ar:4} ; mets-y la {ar:5} pour {ar:6}, et évite {ar:7}.",
+            "partie": "Le verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "اعْلَوَّطَ فَرَسَهُ",
+                    "mot_translit_interne": "iʿlawwaṭa farasahu",
+                    "sens": "s'accrocher à son cou et le monter ; {ar:8} {ar:9} : mon créancier s'est attaché à moi",
+                    "sens_translit_interne": "s'accrocher à son cou et le monter ; iʿlawwaṭanī gharīmī : mon créancier s'est attaché à moi"
+                },
+                {
+                    "mot_ar": "اعْثَوْجَجَتِ النَّاقَةُ",
+                    "mot_translit_interne": "iʿthawjajat an-nāqa",
+                    "sens": "la chamelle est devenue massive",
+                    "sens_translit_interne": "la chamelle est devenue massive"
+                },
+                {
+                    "mot_ar": "بَيْطَرْتَ",
+                    "mot_translit_interne": "bayṭarta",
+                    "sens": "tu as soigné la bête (art vétérinaire)",
+                    "sens_translit_interne": "tu as soigné la bête (art vétérinaire)"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "Iʿlawwaṭa, ighthawjajat, bayṭarta, sanbala, zamlaqa ; mets-y la ḍamma pour tasalqā, et évite khalala.",
+            "mots_ar": [
+                "وَاعْلَوَّطَ",
+                "اغْثَوْجَجَتْ",
+                "بَيْطَرْتَ",
+                "سَنْبَلَ",
+                "زَمْلَقَ",
+                "ضَمَّة",
+                "تَسَلْقَى",
+                "خَلَلَا",
+                "اعْلَوَّطَنِي",
+                "غَرِيمِي"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0037",
+            "fr": "Commence le présent par certaines [des lettres de] « {ar:0} » ; et la {ar:1} lui revient lorsqu'il est joint, de façon absolue, au quadrilitère.",
+            "partie": "Le présent",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "fr_avant_13_10": "Mets la fatḥa [à la préformante] du présent de certains [verbes], et la ḍamma lui revient lorsqu'elle est jointe, de façon absolue, au quadrilitère.",
+            "note_correction": "Verbe « افتتح » (F et Rifāʿī 1319 H, p. 30) : ce vers donne les préformantes du présent (n, ʾ, t, y).",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Commence le présent par certaines [des lettres de] « nāʾtī » ; et la ḍamma lui revient lorsqu'il est joint, de façon absolue, au quadrilitère.",
+            "mots_ar": [
+                "نَأْتِي",
+                "ضَمَّة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0038",
+            "fr": "Ouvre-la [la préformante] lorsqu'[elle] est jointe à autre chose, et permets la {ar:0} pour les [préformantes] autres que le {ar:1}, dans le présent [issu] de {ar:2}.",
+            "partie": "Le présent",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Ouvre-la [la préformante] lorsqu'[elle] est jointe à autre chose, et permets la kasra pour les [préformantes] autres que le yāʾ, dans le présent [issu] de faʿila.",
+            "mots_ar": [
+                "كَسْرَة",
+                "يَاء",
+                "فَعِلَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0039",
+            "fr": "Ou ce qui commence par une {ar:0}, ou dont le {ar:1} est ajouté, comme {ar:2} — cela est rapporté.",
+            "partie": "Le présent",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Ou ce qui commence par un hamzat al-waṣl, ou dont le tāʾ est ajouté, comme tazakkā — cela est rapporté.",
+            "mots_ar": [
+                "هَمْزَةُ الْوَصْلِ",
+                "تَاء",
+                "تَزَكَّى"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0040",
+            "fr": "[Cela vaut] pour le {ar:0} et pour les autres [lettres], si on l'a rattaché à {ar:1}, ou ce dont le {ar:2} est la première radicale, comme {ar:3}.",
+            "partie": "Le présent",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "أَبَى الشَّيْءَ",
+                    "mot_translit_interne": "abā ash-shayʾ",
+                    "sens": "le détester",
+                    "sens_translit_interne": "le détester"
+                },
+                {
+                    "mot_ar": "وَجِلَا",
+                    "mot_translit_interne": "wajila",
+                    "sens": "avoir peur",
+                    "sens_translit_interne": "avoir peur"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "[Cela vaut] pour le yāʾ et pour les autres [lettres], si on l'a rattaché à abā, ou ce dont le wāw est la première radicale, comme wajila.",
+            "mots_ar": [
+                "يَاء",
+                "أَبَى",
+                "وَاو",
+                "وَجِلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0041",
+            "fr": "Et la {ar:0} de ce qui précède la dernière [lettre] du présent, dans ce chapitre [du verbe augmenté], s'impose si son passé a été privé [{ar:1} : empêché] — la suite est au vers suivant —",
+            "partie": "Le présent",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Vers obscur : « حُظِلَا » et la portée de « آخِرِ مَا قَبْلَ الْمُضَارِعِ » à faire expliquer",
+            "fr_avant_13_10": "Et la kasra de la dernière [lettre] de ce qui précède le présent, dans ce chapitre, s'impose si son passé a été [ḥuẓila].",
+            "note_correction": "« حظل » = منع : at-Tilimsānī p. 304, Ṣiḥāḥ ; Rifāʿī 1319 H p. 31 : « ومعنى حظل منع ». Le chapitre visé est celui du verbe augmenté (at-Tilimsānī p. 316).",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Et la kasra de ce qui précède la dernière [lettre] du présent, dans ce chapitre [du verbe augmenté], s'impose si son passé a été privé [ḥuẓila : empêché] — la suite est au vers suivant —",
+            "mots_ar": [
+                "كَسْرَة",
+                "حُظِلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0042",
+            "fr": "de l'ajout du {ar:0} en première position ; et si [cet ajout] s'est produit pour lui, ouvre ce qui précède la dernière [lettre] par une {ar:1}, {ar:2} [à la suite, en continuité avec les voyelles {ar:1} qui précèdent].",
+            "partie": "Le présent",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Vers obscur : « بِوِلَا » à vérifier",
+            "fr_avant_13_10": "L'ajout du tāʾ en première position et, s'il se produit chez lui, [alors] ce qui précède la dernière [lettre], ouvre-le [bi-wilā].",
+            "note_correction": "Baḥraq p. 155 : « افتحنّه بفتحة تلي ما قبلها من الفتحات » ; al-Bijāʾī p. 126 : « الولاء : المتابعة بين الشيئين ». Sens d'ensemble des vers 41-42 : le passé du verbe augmenté qui n'a pas pris de tāʾ initial a sa pénultième du présent en kasra ; s'il en a pris une, la pénultième est ouverte.",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "de l'ajout du tāʾ en première position ; et si [cet ajout] s'est produit pour lui, ouvre ce qui précède la dernière [lettre] par une fatḥa, bi-wilāʾ [à la suite, en continuité avec les fatḥas qui précèdent].",
+            "mots_ar": [
+                "تَاء",
+                "فَتْحَة",
+                "بِوِلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0043",
+            "fr": "Si tu attribues le verbe au patient, mets-le avec la {ar:0} à la première [lettre], et mets la {ar:1} [à la première] lorsqu'il est lié à [un verbe dont] la deuxième radicale est affaiblie (vers suivant).",
+            "partie": "Le passif",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "fr_avant_13_10": "Si tu attribues le verbe au patient, mets-le avec la ḍamma à la première [lettre], et mets la kasra [à celle qui précède la dernière] lorsqu'il se lie.",
+            "note_correction": "Suite : v. 44 « بعين اعتل ». Ibn Ḥamdūn p. 29 : le mot juste serait « أُعِلَّتْ » (v. 28).",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Si tu attribues le verbe au patient, mets-le avec la ḍamma à la première [lettre], et mets la kasra [à la première] lorsqu'il est lié à [un verbe dont] la deuxième radicale est affaiblie (vers suivant).",
+            "mots_ar": [
+                "ضَمَّة",
+                "كَسْرَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0044",
+            "fr": "[Pour le verbe] dont la deuxième radicale est affaiblie, mets avant la dernière [lettre] une {ar:0} au passé et une {ar:1} dans ce qui n'est pas [le passé], qui [le] suit.",
+            "partie": "Le passif",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "[Pour le verbe] dont la deuxième radicale est affaiblie, mets avant la dernière [lettre] une kasra au passé et une fatḥa dans ce qui n'est pas [le passé], qui [le] suit.",
+            "mots_ar": [
+                "كَسْرَة",
+                "فَتْحَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0045",
+            "fr": "La troisième [lettre] de ce qui commence par une {ar:0}, mets-y la {ar:1} avec [la première] ; et avec le {ar:2} de la réciprocité [{ar:3}], mets la {ar:1} à celle qui la suit, de façon continue.",
+            "partie": "Le passif",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "La troisième [lettre] de ce qui commence par un hamzat al-waṣl, mets-y la ḍamma avec [la première] ; et avec le tāʾ de la réciprocité [muṭāwaʿa], mets la ḍamma à celle qui la suit, de façon continue.",
+            "mots_ar": [
+                "هَمْزَةُ الْوَصْلِ",
+                "ضَمَّة",
+                "تَاء",
+                "مُطَاوَعَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0046",
+            "fr": "Ce qui revient à la première [radicale] dans [un verbe] comme {ar:0}, donne-le à la troisième [lettre] de [verbes] comme {ar:1} et {ar:2}, tel {ar:3}, celui qui a été préféré.",
+            "partie": "Le passif",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_avant_13_10": "Ce qui, dans [un verbe] comme bāʿa, revient à la première [radicale], donne-le à la troisième [lettre], comme dans ikhtiyār et inqiyād, tel ukhtīra, celui qui a été préféré.",
+            "note_correction": "« اختار وانقاد » (Rifāʿī 1319 H p. 33 ; F) et non les noms d'action « اختيار وانقياد ».",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Ce qui revient à la première [radicale] dans [un verbe] comme bāʿa, donne-le à la troisième [lettre] de [verbes] comme ikhtāra et inqāda, tel ukhtīra, celui qui a été préféré.",
+            "mots_ar": [
+                "بَاعَ",
+                "اخْتَارَ",
+                "انْقَادَ",
+                "اخْتِيرَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0047",
+            "fr": "De {ar:0}, l'impératif est {ar:1} ; attribue-le aux autres [verbes], comme le présent au jussif, dont [la préformante] est retranchée.",
+            "partie": "L'impératif",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "De aʿfala, l'impératif est afʿil ; attribue-le aux autres [verbes], comme le présent au jussif, dont [la préformante] est retranchée.",
+            "mots_ar": [
+                "أَفْعَلَ",
+                "أَفْعِلْ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0048",
+            "fr": "Son début : avec une {ar:0} portant la {ar:1}, joins [-le], [s'il est] sans voyelle [{ar:2}], lié à ce qui est retranché.",
+            "partie": "L'impératif",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Son début : avec un hamzat al-waṣl kasrée, joins [-le], [s'il est] sans voyelle [sākin], lié à ce qui est retranché.",
+            "mots_ar": [
+                "هَمْزَةُ الْوَصْلِ",
+                "كَسْرَة",
+                "سَاكِن"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0049",
+            "fr": "La {ar:0} devant une {ar:1} obligatoire, mets-y la {ar:1} ; et pour {ar:2}, avec une {ar:3} mêlée d'un son de {ar:1} [{ar:4}], cela a été admis.",
+            "partie": "L'impératif",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Le hamza devant une ḍamma obligatoire, mets-y la ḍamma ; et pour ighzī, avec une kasra mêlée d'un son de ḍamma [ishmām], cela a été admis.",
+            "mots_ar": [
+                "هَمْزَة",
+                "ضَمَّة",
+                "اغْزِي",
+                "كَسْرَة",
+                "إِشْمَام"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0050",
+            "fr": "Est irrégulier, avec l'élision : mur, khudh, kul — et cela s'est répandu — ; [mais] u'mur [reste complet] ; et rare est la forme complète de khudh et kul.",
+            "partie": "L'impératif",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_avant_13_10": "Est irrégulier, avec l'élision : khudh, kul, mur — et cela s'est répandu — ; [mais] u'mur [reste complet] ; et rare est la forme complète de khudh et kul.",
+            "note_correction": "Ordre « مر وخذ وكل » d'après F."
+        },
+        {
+            "id": "LAM-0051",
+            "fr": "Le nom d'agent se fait sur le poids de {ar:0}, à partir du trilitère dont le [passé] n'a pas le poids {ar:1}.",
+            "partie": "Noms d'agent et de patient",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "Le nom d'agent se fait sur le poids de fāʿil, à partir du trilitère dont le [passé] n'a pas le poids faʿula.",
+            "mots_ar": [
+                "فَاعِل",
+                "فَعُلَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0052",
+            "fr": "Et à partir de lui on forme [aussi] sur [le modèle de] {ar:0} et {ar:1} ; il peut être {ar:2}, {ar:3} ou {ar:4}.",
+            "partie": "Noms d'agent et de patient",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Et à partir de lui on forme [aussi] sur [le modèle de] sahl et ẓarīf ; il peut être afʿal, faʿālan ou faʿila.",
+            "mots_ar": [
+                "سَهْلٍ",
+                "الظَّرِيفِ",
+                "أَفْعَلَ",
+                "فَعَالًا",
+                "فَعَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "levee_13_10": "Lecture du vers corrigée le 14/10 d'après des témoins cités (voir levee_reserves_13_10 de ce vers dans texte_ar.json) ; les mots arabes ci-dessus suivent la lecture corrigée."
+        },
+        {
+            "id": "LAM-0053",
+            "fr": "Comme {ar:0}, {ar:1}, {ar:2}, {ar:3}, {ar:4}, {ar:5}, et [ce qui] ressemble à {ar:6}.",
+            "partie": "Noms d'agent et de patient",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "الْفُرَاتِ",
+                    "mot_translit_interne": "furāt",
+                    "sens": "eau douce",
+                    "sens_translit_interne": "eau douce"
+                },
+                {
+                    "mot_ar": "عِفْرٍ",
+                    "mot_translit_interne": "ʿifr",
+                    "sens": "rusé, courageux (aussi {ar:7})",
+                    "sens_translit_interne": "rusé, courageux (aussi ʿifrīt)"
+                },
+                {
+                    "mot_ar": "الْحَصُورِ",
+                    "mot_translit_interne": "ḥaṣūr",
+                    "sens": "sans désir des femmes ; aussi : avare et de mauvais caractère",
+                    "sens_translit_interne": "sans désir des femmes ; aussi : avare et de mauvais caractère"
+                },
+                {
+                    "mot_ar": "غُمْرٍ",
+                    "mot_translit_interne": "ghumr",
+                    "sens": "inexpérimenté",
+                    "sens_translit_interne": "inexpérimenté"
+                },
+                {
+                    "mot_ar": "عَاقِرٍ",
+                    "mot_translit_interne": "ʿāqir",
+                    "sens": "stérile (femme au-delà de l'âge d'enfanter)",
+                    "sens_translit_interne": "stérile (femme au-delà de l'âge d'enfanter)"
+                },
+                {
+                    "mot_ar": "جُنُبٍ",
+                    "mot_translit_interne": "junub",
+                    "sens": "en état de {ar:8}",
+                    "sens_translit_interne": "en état de janāba"
+                },
+                {
+                    "mot_ar": "ثَمِلَا",
+                    "mot_translit_interne": "thamil",
+                    "sens": "ivre",
+                    "sens_translit_interne": "ivre"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "Comme al-furāt, ʿifr, al-ḥaṣūr, ghumr, ʿāqir, junub, et [ce qui] ressemble à thamil.",
+            "mots_ar": [
+                "الْفُرَاتِ",
+                "عِفْرٍ",
+                "الْحَصُورِ",
+                "غُمْرٍ",
+                "عَاقِرٍ",
+                "جُنُبٍ",
+                "ثَمِلَا",
+                "عِفْرِيت",
+                "جَنَابَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0054",
+            "fr": "On forme [aussi] à partir d'un intransitif de poids {ar:0}, sur son poids, comme {ar:1}, et [ce qui] ressemble à {ar:2}.",
+            "partie": "Noms d'agent et de patient",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "On forme [aussi] à partir d'un intransitif de poids faʿila, sur son poids, comme shajin, et [ce qui] ressemble à ʿajil.",
+            "mots_ar": [
+                "فَعِلَ",
+                "شَجٍ",
+                "عَجِلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0055",
+            "fr": "Ainsi {ar:0}, {ar:1}, {ar:2} ; puis [le schème] vient aussi comme {ar:3} (périssable), et comme [un mot] qui ressemble au singulier de {ar:4}.",
+            "partie": "Noms d'agent et de patient",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_avant_13_10": "Ainsi al-shaʾz, al-ashnab, al-jadhlān ; puis [le schème] vient comme faʿlān, et son semblable : le singulier de bukhalāʾ.",
+            "note_correction": "Gloses : shaʾz = terrain rude et pierreux ; ashnab = aux dents fines et aiguës ; jadhlān = joyeux ; fānin = périssable (apparat de l'éd. critique, Ṣiḥāḥ). Lecture « كفان » d'après F (n196) : à confirmer.",
+            "gloses": [
+                {
+                    "mot_ar": "الشَّأْزَ",
+                    "mot_translit_interne": "shaʾz",
+                    "sens": "terrain rude, plein de pierres",
+                    "sens_translit_interne": "terrain rude, plein de pierres"
+                },
+                {
+                    "mot_ar": "الْأَشْنَبَ",
+                    "mot_translit_interne": "ashnab",
+                    "sens": "aux dents fines et aiguës",
+                    "sens_translit_interne": "aux dents fines et aiguës"
+                },
+                {
+                    "mot_ar": "الْجَذْلَانَ",
+                    "mot_translit_interne": "jadhlān",
+                    "sens": "joyeux",
+                    "sens_translit_interne": "joyeux"
+                },
+                {
+                    "mot_ar": "فَانٍ",
+                    "mot_translit_interne": "fānin",
+                    "sens": "périssable (contraire de {ar:5})",
+                    "sens_translit_interne": "périssable (contraire de bāqin)"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Ainsi al-shaʾz, al-ashnab, al-jadhlān ; puis [le schème] vient aussi comme fānin (périssable), et comme [un mot] qui ressemble au singulier de bukhalāʾ.",
+            "mots_ar": [
+                "الشَّأْزَ",
+                "الْأَشْنَبَ",
+                "الْجَذْلَانَ",
+                "فَانٍ",
+                "الْبُخَلَا",
+                "بَاقٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0056",
+            "fr": "Par assimilation à un autre, selon une relation [{ar:0}], comme {ar:1}, {ar:2}, {ar:3}, dans la formation à partir de {ar:4}.",
+            "partie": "Noms d'agent et de patient",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "Par assimilation à un autre, selon une relation [nisba], comme khafīf, ṭayyib, ashīb, dans la formation à partir de faʿila.",
+            "mots_ar": [
+                "نِسْبَة",
+                "خَفِيفٍ",
+                "طَيِّبٍ",
+                "أَشِيبٍ",
+                "فَعَلَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0057",
+            "fr": "Et {ar:0} convient à tout [verbe], si l'on vise le caractère momentané [{ar:1}], comme « {ar:2} {ar:3} {ar:4} {ar:5} » (demain, celui-ci sera joyeux).",
+            "partie": "Noms d'agent et de patient",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Et fāʿil convient à tout [verbe], si l'on vise le caractère momentané [ḥudūth], comme « demain, celui-ci sera joyeux [jādhil] », jadhila.",
+            "mots_ar": [
+                "فَاعِل",
+                "حُدُوث",
+                "غَدًا",
+                "ذَا",
+                "جَاذِلٌ",
+                "جَذَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0058",
+            "fr": "Pour le nom d'agent d'un [verbe] autre que trilitère, viens avec le poids du présent, mais en transformant la première [lettre],",
+            "partie": "Noms d'agent et de patient",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "Pour le nom d'agent d'un [verbe] autre que trilitère, viens avec le poids du présent, mais avec une première [lettre] transformée,",
+            "mots_ar": [],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)"
+        },
+        {
+            "id": "LAM-0059",
+            "fr": "en {ar:0} que l'on vocalise par une {ar:1} ; et si [la lettre] qui précède la dernière reçoit la {ar:2}, il devient nom de patient ; et cela s'est réalisé.",
+            "partie": "Noms d'agent et de patient",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "en mīm que l'on vocalise par une ḍamma ; et si [la lettre] qui précède la dernière reçoit la fatḥa, il devient nom de patient ; et cela s'est réalisé.",
+            "mots_ar": [
+                "مِيمًا",
+                "ضَمَّة",
+                "فَتْحَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0060",
+            "fr": "À partir du trilitère, [on le forme] sur le poids {ar:0} ; et ce qui est venu comme {ar:1}, c'est ce dont on a dérogé,",
+            "partie": "Noms d'agent et de patient",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "À partir du trilitère, [on le forme] sur le poids mafʿūl ; et ce qui est venu comme faʿīl, c'est ce dont on a dérogé,",
+            "mots_ar": [
+                "مَفْعُول",
+                "فَعِيل"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0061",
+            "fr": "par lui, à la règle ; et ils se sont passés, par [des mots] comme {ar:0} et {ar:1} (var. {ar:2}), du poids {ar:3} ; et [ces substituts] n'ont pas la même action sur ce qui suit ({ar:4} {ar:5}).",
+            "partie": "Noms d'agent et de patient",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Fin du vers (« وَمَا عَمِلَا ») à vérifier",
+            "fr_avant_13_10": "par lui, à la règle ; et ils se sont passés, par [des mots] comme najā et al-nisy, du poids mafʿūl, et de ce qui a été fait [ʿamila].",
+            "note_correction": "Baḥraq p. 175 : « النجا » = ce qu'on a écorché (manjūw) ; la page de Rifāʿī 1319 H lit « النقض » (= manqūḍ), plusieurs copies « النسي » (= mansiyy) ; Ibn an-Nāẓim p. 59 : ces formes ne gouvernent pas comme le verbe.",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "par lui, à la règle ; et ils se sont passés, par [des mots] comme najā et al-niqḍ (var. al-nisy), du poids mafʿūl ; et [ces substituts] n'ont pas la même action sur ce qui suit (wa-mā ʿamilā).",
+            "mots_ar": [
+                "نَجَا",
+                "وَالنِّقْضِ",
+                "النِّسْيِ",
+                "مَفْعُول",
+                "وَمَا",
+                "عَمِلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0062",
+            "fr": "Pour les noms d'action, il y a des poids que j'expose ; pour le trilitère, ce que je présente est choisi [muntakhal].",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "« أَوْزَانٌ » est traduit « poids » (aucune restriction à deux) : à vérifier",
+            "fr_avant_13_10": "Pour les noms d'action, il y a deux poids que j'expose ; pour le trilitère, ce que je présente est choisi [muntakhal].",
+            "note_correction": "« منتخلا » : at-Tilimsānī p. 402 (vocalisation « منتخِلا » ou « منتخَلا » : choisi, épuré) ; Rifāʿī p. 43 : « منتحلا » avec ḥāʾ ou khāʾ. Reste ouvert."
+        },
+        {
+            "id": "LAM-0063",
+            "fr": "{ar:0}, {ar:1}, {ar:2}, ou avec le {ar:3} du féminin, ou lié à l'{ar:4} {ar:5}.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Faʿl, fiʿl, fuʿl, ou avec le tāʾ du féminin, ou lié à l'alif maqṣūra.",
+            "mots_ar": [
+                "فَعْلٌ",
+                "وَفِعْلٌ",
+                "وَفُعْلٌ",
+                "تَاء",
+                "أَلِف",
+                "مَقْصُورَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0064",
+            "fr": "{ar:0}, {ar:1}, {ar:2}, et comme {ar:3}, {ar:4}, {ar:5}, {ar:6} ; puis ajoute {ar:7}.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Faʿlān, fiʿlān, fuʿlān, et comme jalā, riḍā, hudā, ṣalāḥ ; puis ajoute faʿal.",
+            "mots_ar": [
+                "فَعْلَانُ",
+                "فِعْلَانُ",
+                "فُعْلَانٌ",
+                "جَلَا",
+                "رِضًى",
+                "هُدًى",
+                "صَلَاحٌ",
+                "فَعَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0065",
+            "fr": "[Pris] nus, ou avec le {ar:0} du féminin ; puis {ar:1}, et avec [l'{ar:2}] {ar:3} et le [schème] {ar:4} : cela a été admis.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "[Pris] nus, ou avec le tāʾ du féminin ; puis faʿāla, et avec [l'alif] maqṣūra et le [schème] faʿlāʾ : cela a été admis.",
+            "mots_ar": [
+                "تَاء",
+                "فَعَالَةٌ",
+                "أَلِف",
+                "مَقْصُورَة",
+                "الْفَعْلَاءُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0066",
+            "fr": "{ar:0} et {ar:1} : viens avec les deux, dépouillés du {ar:2}, et joins {ar:3} [à eux].",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "« وَالْفُعُولِ صِلَا » à vérifier ; variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_avant_13_10": "Faʿāla et fuʿāla : on les a faits venir tous deux dépouillés du tāʾ, ainsi que de fuʿūl ; joins-les [au reste].",
+            "note_correction": "« وجئ » (impératif) d'après l'éd. critique ; « والفعول » est un complément « avec » placé avant « صلا » (al-Bijāʾī p. 166). La graphie de S (« وجيء ») est une variante.",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Fiʿāla et fuʿāla : viens avec les deux, dépouillés du tāʾ, et joins fuʿūl [à eux].",
+            "mots_ar": [
+                "فِعَالَةٌ",
+                "فُعَالَةٌ",
+                "تَاء",
+                "الْفُعُولِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0067",
+            "fr": "Puis {ar:0}, et avec le {ar:1}, ces deux-là ; ainsi que {ar:2}, ou comme {ar:3}, et ce qui ressemble à {ar:4}.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_avant_13_10": "Puis faʿīl, avec le tāʾ [ces deux], ainsi que faʿalān, ou comme kaynūna, et son semblable, shughul.",
+            "note_correction": "« كبينونة » : F et Rifāʿī 1319 H (p. 39, « قوله كبينونة »).",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Puis faʿīl, et avec le tāʾ, ces deux-là ; ainsi que faʿalān, ou comme baynūna, et ce qui ressemble à shughl.",
+            "mots_ar": [
+                "الْفَعِيلَ",
+                "تَاء",
+                "فَعَلَان",
+                "بَيْنُونَةٍ",
+                "شُغُلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0068",
+            "fr": "{ar:0}, {ar:1} avec {ar:2} ; de même {ar:3}, {ar:4}, {ar:5}.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Fuʿlal, fuʿūl avec faʿāliya ; de même fuʿaylīya, fuʿlla, fuʿalā.",
+            "mots_ar": [
+                "فُعْلَلٌ",
+                "فَعُولٌ",
+                "فَعَالِيَةٍ",
+                "فُعَيْلِيَّةٌ",
+                "فُعُلَّةٌ",
+                "فَعَلَى"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "levee_13_10": "Lecture du vers corrigée le 14/10 d'après des témoins cités (voir levee_reserves_13_10 de ce vers dans texte_ar.json) ; les mots arabes ci-dessus suivent la lecture corrigée."
+        },
+        {
+            "id": "LAM-0069",
+            "fr": "Avec {ar:0}, {ar:1} avec {ar:2} ; de même {ar:3} ; et la {ar:4} a été rapportée.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Avec faʿalūt, fuʿullā avec fuʿalniya ; de même fuʿūliyya ; et la fatḥa a été rapportée.",
+            "mots_ar": [
+                "فَعَلُوتٍ",
+                "فُعُلَّى",
+                "فُعَلْنِيَةٍ",
+                "فُعُولِيَّةٌ",
+                "فَتْحَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0070",
+            "fr": "{ar:0}, {ar:1}, {ar:2}, et avec le {ar:3} du féminin en eux ; et la {ar:4}, rarement admise.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Mafʿal, mifʿal, mufʿal, et avec le tāʾ du féminin en eux ; et la ḍamma, rarement admise.",
+            "mots_ar": [
+                "مَفْعَلٌ",
+                "مَفْعِلٌ",
+                "مَفْعُلٌ",
+                "تَاء",
+                "ضَمَّة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0071",
+            "fr": "{ar:0} est la règle pour le transitif ; {ar:1} pour l'autre, sauf le verbe de bruit ({ar:2}) : pour celui-ci, {ar:3} est évident.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Faʿl est la règle pour le transitif ; fuʿūl pour l'autre, sauf faʿila [dit] d'un bruit : pour cela, fuʿāl est évident.",
+            "mots_ar": [
+                "فَعْلٌ",
+                "وَالْفُعُولُ",
+                "فِعْلِ",
+                "الْفُعَالُ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "levee_13_10": "Lecture du vers corrigée le 14/10 d'après des témoins cités (voir levee_reserves_13_10 de ce vers dans texte_ar.json) ; les mots arabes ci-dessus suivent la lecture corrigée."
+        },
+        {
+            "id": "LAM-0072",
+            "fr": "Ce que son nom d'action mérite, sur {ar:0}, [c'est {ar:1}], si [le verbe] n'est pas transitif : son être {ar:1}.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Ce que son nom d'action mérite, sur faʿila, [c'est faʿal], si [le verbe] n'est pas transitif : son être faʿal.",
+            "mots_ar": [
+                "فَعِلَ",
+                "فَعَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0073",
+            "fr": "Mesure {ar:0} ou {ar:1} pour {ar:2}, comme {ar:3} ; et ce qui est conforme à {ar:4}.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Mesure faʿāla ou fuʿūla pour faʿulta, comme shajāʿa ; et ce qui est conforme à sahula.",
+            "mots_ar": [
+                "فَعَالَةً",
+                "فُعُولَةً",
+                "فَعُلْتُ",
+                "الشَّجَاعَةِ",
+                "سَهُلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0074",
+            "fr": "Ce qui est autre que cela relève de l'audition ; {ar:0} est devenu fréquent pour le son, ainsi que pour la maladie douloureuse [{ar:1} {ar:2}] : — clair [est] —",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Fin du vers à faire expliquer",
+            "fr_avant_13_10": "Ce qui est autre que cela relève de l'audition ; faʿīl abonde pour le son, ainsi que pour la maladie… [mumiḍḍ] : jalā.",
+            "note_correction": "at-Tilimsānī p. 416 : « الداء » est le sujet, « جلا معناه » son prédicat (la phrase continue au vers 75) ; « الممض » = qui fait mal (Ṣiḥāḥ).",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Ce qui est autre que cela relève de l'audition ; faʿīl est devenu fréquent pour le son, ainsi que pour la maladie douloureuse [al-dāʾ al-mumiḍḍ] : — clair [est] —",
+            "mots_ar": [
+                "الْفَعِيلُ",
+                "الدَّاءُ",
+                "الْمُمِضُّ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0075",
+            "fr": "son sens : le poids {ar:0} ; qu'on le mesure ainsi ; et pour [ce qui exprime] la fuite [{ar:1}] ou comme la fuite, [on dit] par {ar:2} : clair.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "« بِالْفِعَالِ جَلَا » à vérifier",
+            "fr_avant_13_10": "Son sens [est] le poids fuʿāl : qu'on le mesure ; et pour firār ou comme firār, par fiʿāl : clair.",
+            "note_correction": "at-Tilimsānī p. 416 : « نار نوارا، نفر نفارا، أبى إباء، شرد شرادا » ; al-Bijāʾī p. 179-180.",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "son sens : le poids fuʿāl ; qu'on le mesure ainsi ; et pour [ce qui exprime] la fuite [firār] ou comme la fuite, [on dit] par fiʿāl : clair.",
+            "mots_ar": [
+                "فُعَالٍ",
+                "فِرَارٍ",
+                "الْفِعَالِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0076",
+            "fr": "{ar:0} pour des qualités ; {ar:1}, laisse-la pour un métier ou une charge [{ar:2}], et ne l'oublie pas [ce que je t'ai dit].",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "fr_avant_13_10": "Faʿāla pour des qualités ; fiʿāla, laisse-la pour une profession ou une charge [wilāya], et ne…",
+            "note_correction": "« ولا تهلا » : « ولا تنس ما ذكرته لك » (Tahdhīb al-lugha ; Baḥraq p. 188) ; wahila = oublier (cf. vers 7) ; Baḥraq (p. 52) : fiʿāla comme kataba kitāba, nasakha nisākha.",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Faʿāla pour des qualités ; fiʿāla, laisse-la pour un métier ou une charge [wilāya], et ne l'oublie pas [ce que je t'ai dit].",
+            "mots_ar": [
+                "فَعَالَةٌ",
+                "الْفِعَالَةُ",
+                "وِلَايَةٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0077",
+            "fr": "Pour l'unité d'acte : {ar:0} ; et {ar:1}, ils l'ont posée pour la manière, le plus souvent, comme {ar:2} {ar:3}.",
+            "partie": "Noms d'action du trilitère",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Pour l'unité d'acte : faʿla ; et fiʿla, ils l'ont posée pour la manière, le plus souvent, comme mishyat al-khuyalāʾ.",
+            "mots_ar": [
+                "فَعْلَةٌ",
+                "فِعْلَةٌ",
+                "مِشْيَةِ",
+                "الْخُيَلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0078",
+            "fr": "Avec la {ar:0} de la troisième [lettre] d'un [verbe à] {ar:1}, le nom d'action d'un [verbe de poids] {ar:2} l'a obtenue, avec l'allongement de [la lettre] que la dernière suit [la pénultième].",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "fr_avant_13_10": "Avec la kasra de la troisième [lettre] d'un hamzat al-waṣl, le nom d'action d'un [verbe de poids] fiʿl l'a obtenu, avec l'allongement de ce qui précède la dernière [lettre].",
+            "note_correction": "Baḥraq p. 190 : « مع مد الحرف الذي يتبعه الأخير، وهو ما قبل الأخير، مثل الثاء في امتثل » ; al-Bijāʾī p. 183-184.",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Avec la kasra de la troisième [lettre] d'un [verbe à] hamzat al-waṣl, le nom d'action d'un [verbe de poids] fiʿl l'a obtenue, avec l'allongement de [la lettre] que la dernière suit [la pénultième].",
+            "mots_ar": [
+                "كَسْرَة",
+                "هَمْزَةُ الْوَصْلِ",
+                "فِعْلٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0079",
+            "fr": "Mets la {ar:0} [à la lettre] d'un verbe auquel le {ar:1} a été ajouté en tête, et la {ar:2} à celle qui précède une lettre acceptant l'affaiblissement.",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Mets la ḍamma [à la lettre] d'un verbe auquel le tāʾ a été ajouté en tête, et la kasra à celle qui précède une lettre acceptant l'affaiblissement.",
+            "mots_ar": [
+                "ضَمَّة",
+                "تَاء",
+                "كَسْرَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0080",
+            "fr": "Pour {ar:0}, viens avec {ar:1} et {ar:2} ; et pour {ar:3}, mets-lui le {ar:4}, là où [la dernière] est libre.",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Pour faʿlala, viens avec fiʿlāl et faʿlala ; et pour faʿʿala, mets-lui le taf ʿīl, là où [la dernière] est libre.",
+            "mots_ar": [
+                "فَعْلَلَ",
+                "فِعْلَالٍ",
+                "فَعْلَلَةٍ",
+                "فَعِّلَ",
+                "التَّفْعِيلَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0081",
+            "fr": "[Pour le verbe] dont la {ar:0} est affaiblie, rends {ar:1} obligatoire à celui qui l'inclut ; pour le nu [de cette lettre], elle a parfois été donnée généreusement.",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "[Pour le verbe] dont la lām est affaiblie, tafʿila est obligatoire à celui qui l'inclut ; pour le nu [de cette lettre], elle a parfois été donnée généreusement.",
+            "mots_ar": [
+                "لَام",
+                "تَفْعِلَةً"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "levee_13_10": "Lecture du vers corrigée le 14/10 d'après des témoins cités (voir levee_reserves_13_10 de ce vers dans texte_ar.json) ; les mots arabes ci-dessus suivent la lecture corrigée."
+        },
+        {
+            "id": "LAM-0082",
+            "fr": "Et celui qui relie {ar:0} à {ar:1}, et {ar:2} à {ar:3} : loue-le pour ce qu'il a fait.",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Coupe des hémistiches à vérifier ; lecture « بِتِفِعَّالٍ تَفَعَّلَ » établie le 14/10 (voir levee_reserves_13_10 dans texte_ar.json)",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Et celui qui lie [le verbe] à tifʿāl, tafaʿʿul et fiʿʿāl, faʿʿala : loue-le pour ce qu'il a fait.",
+            "mots_ar": [
+                "تِفِعَّالٍ",
+                "تَفَعَّلَ",
+                "الْفِعَّالِ",
+                "فَعَّلَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "levee_13_10": "Lecture du vers corrigée le 14/10 d'après des témoins cités (voir levee_reserves_13_10 de ce vers dans texte_ar.json) ; les mots arabes ci-dessus suivent la lecture corrigée."
+        },
+        {
+            "id": "LAM-0083",
+            "fr": "Parfois on vient avec {ar:0} pour {ar:1}, dans l'intensité de l'acte, comme {ar:2}, et il a été posé.",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Parfois on vient avec tafʿāl pour faʿʿala, dans l'intensité de l'acte, comme tasyār, et il a été posé.",
+            "mots_ar": [
+                "تَفْعَالٍ",
+                "فَعَّلَ",
+                "تَسْيَارٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0084",
+            "fr": "Ce qui [vient] du trilitère : {ar:0}, pour l'intensité ; et de {ar:1} aussi, il se voit qu'il est substitué.",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Ce qui [vient] du trilitère : fiʿʿīlā, pour l'intensité ; et de tafāʿul aussi, il se voit qu'il est substitué.",
+            "mots_ar": [
+                "فِعِّيلَى",
+                "تَفَاعُلٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0085",
+            "fr": "Et pour {ar:0}, ils ont posé {ar:1} [comme nom d'action], qui se passe [des noms réguliers] sans que ce soit une règle constante ; connais donc les exemples.",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_avant_13_10": "Pour fuʿallila, ifʿalalla, ils l'ont posé, [pour dire] qu'[un verbe] se suffit à lui-même, non l'intransitivité ; connais donc les exemples.",
+            "note_correction": "Rifāʿī 1319 H p. 43 : « نيابة عن المصادر القياسية لا على سبيل اللزوم أي الاطراد » ; la forme « الفعليلة » (Rifāʿī, F) et non « الفعللة ».",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Et pour ifʿalalla, ils ont posé al-fuʿayliyla [comme nom d'action], qui se passe [des noms réguliers] sans que ce soit une règle constante ; connais donc les exemples.",
+            "mots_ar": [
+                "افْعَلَلَّ",
+                "الْفُعَلِّيلَةِ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0086",
+            "fr": "Pour {ar:0}, mets {ar:1} ou {ar:2} ; et {ar:3} s'est substitué aux deux : tiens-le pour admis.",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "Pour fāʿala, mets fiʿāl ou mufāʿala ; et faʿlala s'est substitué aux deux : tiens-le pour admis.",
+            "mots_ar": [
+                "فَاعَلَ",
+                "فِعَالًا",
+                "مُفَاعَلَةً",
+                "فِعْلَةٌ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "levee_13_10": "Lecture du vers corrigée le 14/10 d'après des témoins cités (voir levee_reserves_13_10 de ce vers dans texte_ar.json) ; les mots arabes ci-dessus suivent la lecture corrigée."
+        },
+        {
+            "id": "LAM-0087",
+            "fr": "[Dans le verbe] dont la deuxième radicale s'est affaiblie, {ar:0} issu de lui, et {ar:1}, [prennent] le {ar:2}, et une compensation s'y est produite.",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "[Dans le verbe] dont la deuxième radicale s'est affaiblie, l'ifʿāl issu de lui, et l'istifʿāl, [prennent] le tāʾ, et une compensation s'y est produite.",
+            "mots_ar": [
+                "الْإِفْعَالُ",
+                "الِاسْتِفْعَالُ",
+                "تَاء"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0088",
+            "fr": "À partir de ce qui est retranché ; et si tu y ajoutes autre chose, tu indiques par là l'unité [marra] à partir de ce qui a été employé.",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "LAM-0089",
+            "fr": "Quant à l'unité d'acte du nom d'action que tu lui attaches : [elle apparaît] par la mention de « {ar:0} », à qui comprend.",
+            "partie": "Noms d'action du verbe augmenté",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Quant à l'unité d'acte du nom d'action que tu lui attaches : [elle apparaît] par la mention de « wāḥida », à qui comprend.",
+            "mots_ar": [
+                "وَاحِدَةٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0090",
+            "fr": "À partir du trilitère dont le [présent] n'est pas {ar:0}, viens avec {ar:1}, pour un nom d'action ou pour ce dans quoi [l'acte] s'est produit [{ar:2}].",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "À partir du trilitère dont le [présent] n'est pas yafʿilu, viens avec mafʿal, pour un nom d'action ou pour ce dans quoi [l'acte] s'est produit [ʿumila].",
+            "mots_ar": [
+                "يَفْعِلُ",
+                "مَفْعَلٍ",
+                "عُمِلَا"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ],
+            "levee_13_10": "Lecture du vers corrigée le 14/10 d'après des témoins cités (voir levee_reserves_13_10 de ce vers dans texte_ar.json) ; les mots arabes ci-dessus suivent la lecture corrigée."
+        },
+        {
+            "id": "LAM-0091",
+            "fr": "De même [le nom] du [verbe] à {ar:0} faible, sans condition ; et quand la {ar:1} est un {ar:2}, [le nom] est obtenu avec la {ar:3}, sans condition.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_avant_13_10": "De même celui dont la lām est faible, absolument ; et si la fāʾ était un wāw, la kasra s'impose, absolument.",
+            "note_correction": "« بكسر » (Rifāʿī 1319 H p. 45).",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "De même [le nom] du [verbe] à lām faible, sans condition ; et quand la fāʾ est un wāw, [le nom] est obtenu avec la kasra, sans condition.",
+            "mots_ar": [
+                "لَام",
+                "فَاء",
+                "وَاو",
+                "كَسْرَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0092",
+            "fr": "Et le fait que la {ar:0} soit un {ar:1} n'a pas d'effet quand la {ar:2} est faible, comme {ar:3} ; observe donc la sincérité et la loyauté [{ar:4}].",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "fr_avant_13_10": "Et le fait que la fāʾ soit un wāw n'a pas d'effet quand la lām est affaiblie, comme mawlā, fāriʿ ṣidq, wilā.",
+            "note_correction": "Rifāʿī 1319 H p. 45 : « فارع صدق ولا أي كن حافظا لولائك صادقا » ; at-Tilimsānī p. 457 ; Baḥraq p. 203 (cas de mawqā, mawlā). L'ancienne lecture « fāriʿ ṣidq » était erronée : c'est un impératif.",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Et le fait que la fāʾ soit un wāw n'a pas d'effet quand la lām est faible, comme mawlā ; observe donc la sincérité et la loyauté [wilāʾ].",
+            "mots_ar": [
+                "فَاء",
+                "وَاو",
+                "لَام",
+                "مَوْلىً",
+                "وِلَاء"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0093",
+            "fr": "Dans le reste, ouvre sa deuxième radicale pour un nom d'action, et mets la kasra pour les autres ; est irrégulier ce qui s'est écarté de cela.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0094",
+            "fr": "{ar:0}, {ar:1}, {ar:2}, {ar:3}, {ar:4}, {ar:5}, {ar:6} des avares.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Orthographe vocalique de « مَطْلِعُ الْمَجْمَعُ » à vérifier",
+            "gloses": [
+                {
+                    "mot_ar": "مَظْلِمَةٌ",
+                    "mot_translit_interne": "maẓlima",
+                    "sens": "de {ar:7}",
+                    "sens_translit_interne": "de ẓalama"
+                },
+                {
+                    "mot_ar": "مَطْلِعُ",
+                    "mot_translit_interne": "maṭliʿ",
+                    "sens": "de {ar:8}",
+                    "sens_translit_interne": "de ṭalaʿa"
+                },
+                {
+                    "mot_ar": "الْمَجْمَعُ",
+                    "mot_translit_interne": "majmaʿ",
+                    "sens": "de {ar:9}",
+                    "sens_translit_interne": "de jamaʿa"
+                },
+                {
+                    "mot_ar": "مَحْمَدَةٌ",
+                    "mot_translit_interne": "maḥmada",
+                    "sens": "de {ar:10}",
+                    "sens_translit_interne": "de ḥamida"
+                },
+                {
+                    "mot_ar": "مَنْسِكٌ",
+                    "mot_translit_interne": "mansik",
+                    "sens": "de {ar:11} : adorer",
+                    "sens_translit_interne": "de nasaka : adorer"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Maẓlima, maṭliʿ, majmaʿ, maḥmada, madhamma, mansik, maḍinna des avares.",
+            "mots_ar": [
+                "مَظْلِمَةٌ",
+                "مَطْلِعُ",
+                "الْمَجْمَعُ",
+                "مَحْمَدَةٌ",
+                "مَذَمَّةٌ",
+                "مَنْسِكٌ",
+                "مَضِنَّةُ",
+                "ظَلَمَ",
+                "طَلَعَ",
+                "جَمَعَ",
+                "حَمِدَ",
+                "نَسَكَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0095",
+            "fr": "{ar:0}, {ar:1}, {ar:2}, {ar:3}, {ar:4}, {ar:5}, {ar:6} pour qui s'est installé.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "مَزَلَّةٌ",
+                    "mot_translit_interne": "mazalla",
+                    "sens": "terrain glissant, lieu de faux pas",
+                    "sens_translit_interne": "terrain glissant, lieu de faux pas"
+                },
+                {
+                    "mot_ar": "مَفْرِقٌ",
+                    "mot_translit_interne": "mafriq",
+                    "sens": "de {ar:7} ; {ar:1} {ar:8} : la raie des cheveux, milieu de la tête",
+                    "sens_translit_interne": "de faraqa ; mafriq ar-raʾs : la raie des cheveux, milieu de la tête"
+                },
+                {
+                    "mot_ar": "مَضَلَّةٌ",
+                    "mot_translit_interne": "maḍalla",
+                    "sens": "de {ar:9} (contraire de être bien guidé)",
+                    "sens_translit_interne": "de ḍalla (contraire de être bien guidé)"
+                },
+                {
+                    "mot_ar": "مَدَبُّ النَّمْلِ",
+                    "mot_translit_interne": "madabb an-naml",
+                    "sens": "là où marche la fourmi",
+                    "sens_translit_interne": "là où marche la fourmi"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Mazalla, mafriq, maḍalla, madabb, maḥshar, maskan, maḥall pour qui s'est installé.",
+            "mots_ar": [
+                "مَزَلَّةٌ",
+                "مَفْرِقٌ",
+                "مَضَلَّةٌ",
+                "مَدَبُّ",
+                "مَحْشَرٌ",
+                "مَسْكَنٌ",
+                "مَحَلُّ",
+                "فَرَقَ",
+                "الرَّأْسِ",
+                "ضَلَّ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0096",
+            "fr": "{ar:0}, et avec le {ar:1} aussi, puis {ar:2}, {ar:3} ; {ar:4} de {ar:5} et de {ar:6}.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "مَعْجِزٌ",
+                    "mot_translit_interne": "maʿjiz",
+                    "sens": "infinitif de {ar:7} : faiblesse",
+                    "sens_translit_interne": "infinitif de ʿajaza : faiblesse"
+                },
+                {
+                    "mot_ar": "مَهْلَكَةٌ",
+                    "mot_translit_interne": "mahlaka",
+                    "sens": "de {ar:8} : mourir ; le désert où l'on périt",
+                    "sens_translit_interne": "de halaka : mourir ; le désert où l'on périt"
+                },
+                {
+                    "mot_ar": "مَعْتَبَةٌ",
+                    "mot_translit_interne": "maʿtaba",
+                    "sens": "avoir un grief contre lui",
+                    "sens_translit_interne": "avoir un grief contre lui"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Maʿjiz, et avec le tāʾ aussi, puis mahlaka, maʿtaba ; mafʿil de ḍaʿa et de wajila.",
+            "mots_ar": [
+                "مَعْجِزٌ",
+                "تَاء",
+                "مَهْلَكَةٌ",
+                "مَعْتَبَةٌ",
+                "مَفْعِلٌ",
+                "ضَعَ",
+                "وَجِلَا",
+                "عَجَزَ",
+                "هَلَكَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0097",
+            "fr": "Avec ceux-ci, de {ar:0} et d'un [verbe comme] {ar:1} : le poids {ar:2}, {ar:3} ; chacun a deux formes admises.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "fr_avant_13_10": "Avec ceux-ci, de iḥsib et iḍrib, le poids mafʿala, mawqiʿa : chacun a deux formes admises.",
+            "note_correction": "« وضرب » d'après Rifāʿī 1319 H (p. 46) ; glose : maḍraba = la partie de l'épée par laquelle on frappe ; mawqiʿa = le lieu où se pose l'oiseau (apparat).",
+            "gloses": [
+                {
+                    "mot_ar": "مَضْرَبَة",
+                    "mot_translit_interne": "maḍraba",
+                    "sens": "la partie de l'épée par laquelle on frappe",
+                    "sens_translit_interne": "la partie de l'épée par laquelle on frappe"
+                },
+                {
+                    "mot_ar": "مَوْقَعَةٌ",
+                    "mot_translit_interne": "mawqiʿa",
+                    "sens": "le lieu où se pose l'oiseau",
+                    "sens_translit_interne": "le lieu où se pose l'oiseau"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Avec ceux-ci, de iḥsib et d'un [verbe comme] ḍarb : le poids mafʿala, mawqaʿa ; chacun a deux formes admises.",
+            "mots_ar": [
+                "احْسِبْ",
+                "ضَرْبٍ",
+                "مَفْعَلَةٍ",
+                "مَوْقَعَةٌ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0098",
+            "fr": "La {ar:0}, réserve-la à {ar:1}, {ar:2}, {ar:3}, {ar:4}, {ar:5}, {ar:6} {ar:7}.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "مَعْصِيَةٍ",
+                    "mot_translit_interne": "maʿṣiya",
+                    "sens": "contraire de l'obéissance",
+                    "sens_translit_interne": "contraire de l'obéissance"
+                },
+                {
+                    "mot_ar": "مَسْجِدٍ",
+                    "mot_translit_interne": "masjid",
+                    "sens": "de {ar:8} : se prosterner ; lieu de la prosternation",
+                    "sens_translit_interne": "de sajada : se prosterner ; lieu de la prosternation"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "La kasra, réserve-la à marfiq et maʿṣiya, masjid, makbir, maʾwā, ḥawā al-ibil.",
+            "mots_ar": [
+                "كَسْرَة",
+                "مَرْفِقٍ",
+                "مَعْصِيَةٍ",
+                "مَسْجِدٍ",
+                "مَكْبِرٍ",
+                "مَأْوٍ",
+                "حَوَى",
+                "الْإِبِلَا",
+                "سَجَدَ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0099",
+            "fr": "De {ar:0}, et {ar:1}, {ar:2}, {ar:3}, {ar:4} ; et de {ar:5}, {ar:6}, {ar:7} : {ar:8}, et relie.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "ائْوِ",
+                    "mot_translit_interne": "iʾwi",
+                    "sens": "de {ar:9} {ar:10} : s'attendrir",
+                    "sens_translit_interne": "de awā lahu : s'attendrir"
+                },
+                {
+                    "mot_ar": "اغْفِرْ",
+                    "mot_translit_interne": "ighfir",
+                    "sens": "de {ar:11} : couvrir, voiler ({ar:12})",
+                    "sens_translit_interne": "de ghafara : couvrir, voiler (maghfira)"
+                },
+                {
+                    "mot_ar": "اعْذِرْ",
+                    "mot_translit_interne": "ʿudhr",
+                    "sens": "de {ar:13} ; {ar:14} : excuse recevable",
+                    "sens_translit_interne": "de ʿadhara ; maʿdhira : excuse recevable"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "De ayw, et ighfir, iʿdhir, iḥmi, mafʿila ; et de razā, connais, suppose : manbit, et relie.",
+            "mots_ar": [
+                "ائْوِ",
+                "اغْفِرْ",
+                "اعْذِرْ",
+                "احْمِ",
+                "مَفْعِلَةً",
+                "رَزَأْ",
+                "اعْرِفِ",
+                "اظْنُنْ",
+                "مَنْبِتٍ",
+                "أَوَى",
+                "لَهُ",
+                "غَفَرَ",
+                "مَغْفِرَة",
+                "عَذَرَ",
+                "مَعْذِرَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0100",
+            "fr": "Avec {ar:0} : {ar:1}, avec {ar:2} et {ar:3}, {ar:4}, {ar:5} ; puis {ar:6} : {ar:7} et {ar:8} — [le tout] {ar:9} : passé au tamis, épuré.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "fr_avant_13_10": "Avec mafʿil : ishruq, avec ighrub et isqutan, rajaʿa, ijzur ; puis mafʿila : iqdur et ishruqan…",
+            "note_correction": "« نخلا » (F ; Rifāʿī 1319 H p. 47) et non « بخلا » ; at-Tilimsānī p. 470 : « غُربل وأُزيل لبسه » ; Rifāʿī p. 54 : « هُذِّب وصُفِّيَ ».",
+            "gloses": [
+                {
+                    "mot_ar": "اسْقُطَنْ",
+                    "mot_translit_interne": "isquṭan",
+                    "sens": "de {ar:10} ; {ar:11} : lieu de la chute ({ar:12} {ar:13} : lieu de naissance)",
+                    "sens_translit_interne": "de saqaṭa ; masqiṭ : lieu de la chute (masqiṭ ar-raʾs : lieu de naissance)"
+                },
+                {
+                    "mot_ar": "اجْزُرْ",
+                    "mot_translit_interne": "ijzur",
+                    "sens": "{ar:14} : lieu de l'abattage et du découpage",
+                    "sens_translit_interne": "majzir : lieu de l'abattage et du découpage"
+                },
+                {
+                    "mot_ar": "اقْدُرْ",
+                    "mot_translit_interne": "iqdur",
+                    "sens": "de {ar:15} {ar:16} : en être capable ; {ar:17} / {ar:18} / {ar:19} : pouvoir",
+                    "sens_translit_interne": "de qadira ʿalayhi : en être capable ; maqdara / maqdira / maqdura : pouvoir"
+                },
+                {
+                    "mot_ar": "نُخِلَا",
+                    "mot_translit_interne": "nukhila",
+                    "sens": "tamisé, épuré",
+                    "sens_translit_interne": "tamisé, épuré (at-Tilimsānī ; Rifāʿī p. 54)"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Avec mafʿil : ishruq, avec ighrub et isqutan, rajaʿa, ijzur ; puis mafʿala : iqdur et ishruqan — [le tout] nukhila : passé au tamis, épuré.",
+            "mots_ar": [
+                "مَفْعِلِ",
+                "اشْرُقْ",
+                "اغْرُبْ",
+                "اسْقُطَنْ",
+                "رَجَعَ",
+                "اجْزُرْ",
+                "مَفْعَلَةُ",
+                "اقْدُرْ",
+                "اشْرُقَنْ",
+                "نُخِلَا",
+                "سَقَطَ",
+                "مَسْقِط",
+                "مَسْقِطُ",
+                "الرَّأْسِ",
+                "مَجْزِر",
+                "قَدِرَ",
+                "عَلَيْهِ",
+                "مَقْدَرَة",
+                "مَقْدِرَة",
+                "مَقْدُرَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0101",
+            "fr": "{ar:0} et de {ar:1}, et ajoute le triple [{ar:2}] ; {ar:3} ; de même pour {ar:4}, le triple a été donné.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "اقْبِرْ",
+                    "mot_translit_interne": "iqbur",
+                    "sens": "enterrer ; {ar:5} / {ar:6} / {ar:7} : lieu de sépulture",
+                    "sens_translit_interne": "enterrer ; maqbara / maqbira / maqbura : lieu de sépulture"
+                },
+                {
+                    "mot_ar": "أَرَبٍ",
+                    "mot_translit_interne": "arab",
+                    "sens": "avoir besoin ; ou : devenir avisé",
+                    "sens_translit_interne": "avoir besoin ; ou : devenir avisé"
+                },
+                {
+                    "mot_ar": "مَهْلِكٍ",
+                    "mot_translit_interne": "mahlik",
+                    "sens": "perdition",
+                    "sens_translit_interne": "perdition"
+                },
+                {
+                    "mot_ar": "بُذِلَا",
+                    "mot_translit_interne": "budhila",
+                    "sens": "a été donné",
+                    "sens_translit_interne": "a été donné"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Aqbir et de arab, et ajoute le triple [tathlīth] ; irbaʿ-hā ; de même pour mahlik, le tathlīth a été donné.",
+            "mots_ar": [
+                "اقْبِرْ",
+                "أَرَبٍ",
+                "التَّثْلِيثُ",
+                "ارْبَعْهَا",
+                "مَهْلِكٍ",
+                "مَقْبَرَة",
+                "مَقْبِرَة",
+                "مَقْبُرَة"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0102",
+            "fr": "Comme le [verbe] sain dont la deuxième radicale est un {ar:0} ; et, selon l'avis de l'abstention, ne dépasse pas ce qui est rapporté.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Comme le [verbe] sain dont la deuxième radicale est un yāʾ ; et, selon l'avis de l'abstention, ne dépasse pas ce qui est rapporté.",
+            "mots_ar": [
+                "يَاء"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0103",
+            "fr": "Et comme le nom de patient d'un [verbe] non trilitère, forme à partir de lui ce qui est posé [pour le lieu et le temps] : {ar:0} ou {ar:1}.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": true,
+            "a_verifier": "Voyellation de « مَفْعَلٌ وَمِفْعَلٌ » à vérifier",
+            "fr_avant_13_10": "Et comme le nom de patient d'un [verbe] non trilitère, forme [ce nom] à partir de lui pour ce qui est mafʿal et mifʿal.",
+            "note_correction": "« أو » (Rifāʿī 1319 H p. 49) ; Baḥraq : le nom de lieu et de temps d'un verbe augmenté s'aligne sur son nom de patient ; la vocalisation exacte de « مَفْعِل » est à confirmer.",
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Et comme le nom de patient d'un [verbe] non trilitère, forme à partir de lui ce qui est posé [pour le lieu et le temps] : mafʿal ou mafʿil.",
+            "mots_ar": [
+                "مَفْعَلٌ",
+                "مَفْعِلٌ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0104",
+            "fr": "À partir du nom de ce dont [le lieu] abonde en choses, [on forme] le nom du lieu [sur] {ar:0}, comme {ar:1} {ar:2} ; l'[élément] ajouté est retranché.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "À partir du nom de ce dont [le lieu] abonde en choses, [on forme] le nom du lieu [sur] mafʿala, comme mithl masbaʿa ; l'[élément] ajouté est retranché.",
+            "mots_ar": [
+                "مَفْعَلَةٌ",
+                "مِثْلِ",
+                "مَسْبَعَةٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0105",
+            "fr": "À partir du verbe augmenté : comme {ar:0} et {ar:1} ; et {ar:2}, ils [l']ont écarté de cela ; dans ceci, elle est admise.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "À partir du verbe augmenté : comme mafʿāt et mufʿila ; et afʿalat, ils [l']ont écarté de cela ; dans ceci, elle est admise.",
+            "mots_ar": [
+                "مَفْعَاةٍ",
+                "مُفْعِلَةٍ",
+                "أَفْعَلَتْ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines.",
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0106",
+            "fr": "[Hors du] trilitère, ce modèle est exclu ; et parfois en vient une [forme] rare, qui a été admise.",
+            "partie": "Noms de lieu : {ar:0} et {ar:1}",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "partie_translit_interne": "Noms de lieu : mafʿal et mifʿal",
+            "partie_mots_ar": [
+                "مَفْعَل",
+                "مِفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-0107",
+            "fr": "Comme {ar:0}, {ar:1} et {ar:2} : à partir du trilitère, forme le nom de ce par quoi on agit.",
+            "partie": "Noms d'instrument",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json",
+            "fr_translit_interne": "Comme mifʿal, mifʿāl et mifʿala : à partir du trilitère, forme le nom de ce par quoi on agit.",
+            "mots_ar": [
+                "مِفْعَلٍ",
+                "مِفْعَالٍ",
+                "مِفْعَلَةٍ"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0108",
+            "fr": "Sont irréguliers : {ar:0}, {ar:1}, {ar:2}, {ar:3}, {ar:4}, et ce qui vient de {ar:5}.",
+            "partie": "Noms d'instrument",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "gloses": [
+                {
+                    "mot_ar": "الْمُدُقُّ",
+                    "mot_translit_interne": "muduqq",
+                    "sens": "récipient où l'on pile",
+                    "sens_translit_interne": "récipient où l'on pile"
+                },
+                {
+                    "mot_ar": "مُسْعُطٌ",
+                    "mot_translit_interne": "musʿuṭ",
+                    "sens": "récipient du {ar:6} (remède versé dans le nez)",
+                    "sens_translit_interne": "récipient du saʿūṭ (remède versé dans le nez)"
+                },
+                {
+                    "mot_ar": "مُكْحُلَةٌ",
+                    "mot_translit_interne": "mukḥula",
+                    "sens": "étui à khôl",
+                    "sens_translit_interne": "étui à khôl"
+                }
+            ],
+            "usage_eleve": "converti le 13/10 (série c) : marqueurs {ar:K} + mots_ar ; l'ancien texte à translittération est conservé dans fr_translit_interne (relecteur seulement)",
+            "fr_translit_interne": "Sont irréguliers : al-mudūqq, musʿuṭ, mukḥula, mudhun, munṣul, et ce qui vient de nakhala.",
+            "mots_ar": [
+                "الْمُدُقُّ",
+                "مُسْعُطٌ",
+                "مُكْحُلَةٌ",
+                "مُدْهُنٌ",
+                "مُنْصُلٌ",
+                "نَخَلَا",
+                "سَعُوط"
+            ],
+            "mots_ar_note": "Chaque marqueur {ar:K} du français renvoie au mot arabe vocalisé n° K de cette liste (mots pris dans le vers, ou terme technique / mot de glose hors du vers). Aucune phonétique latine côté élève : le français de l'élève ne contient plus de mot arabe en lettres latines."
+        },
+        {
+            "id": "LAM-0109",
+            "fr": "Et qui a eu l'intention d'un usage par eux, la kasra lui est permise en eux, sans se soucier de qui blâme.",
+            "partie": "Noms d'instrument",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "LAM-0110",
+            "fr": "J'ai tenu ce que je me proposais, arrivé au terme ; et louange à Allah, car ce que je visais est achevé.",
+            "partie": "Clôture",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "LAM-0111",
+            "fr": "Puis la prière et la salutation, qui l'accompagne, sur le Messager généreux, le dernier des envoyés,",
+            "partie": "Clôture",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "LAM-0112",
+            "fr": "sur sa famille, aux nobles visages, et ses Compagnons généreux, et ceux qui les ont suivis sur le chemin des nobles actions.",
+            "partie": "Clôture",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false,
+            "a_verifier": "variante de lecture entre S et l'édition critique : voir texte_ar.json"
+        },
+        {
+            "id": "LAM-0113",
+            "fr": "Et je demande à Allah, parmi les vêtements de Sa miséricorde, un voile bienséant qui couvre les fautes.",
+            "partie": "Clôture",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        },
+        {
+            "id": "LAM-0114",
+            "fr": "Et qu'Il me facilite un effort par lequel je sois joyeux, en sécurité, non pas morose ni craintif.",
+            "partie": "Clôture",
+            "statut": "EN_ATTENTE_SECONDE_LECTURE",
+            "point_referent": false
+        }
+    ],
+    "revision": "2026-10-13 : première version ; 2026-10-13 : décisions du référent (corrections, gloses) ; 2026-10-13 (série c) : lettres lues sur Rifāʿī, français sans phonétique latine"
+}

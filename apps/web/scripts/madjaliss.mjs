@@ -5,8 +5,12 @@
 //    destinée à l'élève de `alignement_tuhfa.json` ;
 //  - texte coranique cité : `coran/tanzil-uthmani.tsv` (copie figée de Tanzil, octet par octet, jamais retapé), sens du
 //    verset : traduction de référence de l'application (static/traductions/french_rashid).
-// Écrit static/mutun/<texte>.json (élève, chargé à la demande et gardé au premier usage) et
-// static/mutun/<texte>-enseignant.json (variantes, vocalisations « à vérifier », choix de traduction, passages à relire).
+// Écrit static/mutun/<texte>.json (élève, PUBLIC, chargé à la demande et gardé au premier usage) et, depuis le lot 5,
+// dans src/lib/server/mutun/ (fichiers GARDÉS, servis par la route /mutun/[fichier] seulement après authentification avec
+// le droit adapté — jamais dans static/) : <texte>-enseignant.json (variantes, vocalisations « à vérifier », choix de
+// traduction, passages à relire, consigne du référent), <texte>-differe.json (séances en publication différée : Ibn ʿĀshir
+// IBA-S02 à S10) et risala-p<k>.json (phrases de la Risāla). Les vers masqués à l'élève (Lāmiyya 0045, 0068, 0096) n'ont
+// ni arabe ni traduction dans aucun fichier public.
 // FORMAT COMMUN d'une séance (prose : phrases ; poème : vers à deux hémistiches `h`) :
 //  phrases[] : { id, t, ar | h | (ar en segments), fr, sens[], notes[], liste[], exemples[], titre, incertain, adulte,
 //                explication }, séances[] : { n, id, titre, duree, phrases[], mots[], pudeur, adulte, facultatif, renvois[] }.
@@ -48,6 +52,8 @@ export const TEXTES = [
   'bayquniyya',
   'nawawi',
   'waraqat',
+  // lot 5 : Lāmiyyat al-afʿāl d'Ibn Mālik (114 vers, 23 séances, cycle 3 ; trois vers masqués à l'élève)
+  'lamiyya',
 ];
 /**
  * Lot 4 : ar-Risāla (1 769 phrases, 164 séances). Source assemblée par `risala-assembler.mjs` ; construite à part des dix
@@ -79,6 +85,7 @@ const PREFIXE_TEXTE = {
   NAW: 'nawawi',
   WRQ: 'waraqat',
   RIS: 'risala',
+  LAM: 'lamiyya',
 };
 /**
  * PUBLICATION DIFFÉRÉE (décision du pilote, 13/10/2026) : séances que les invités de la bêta (ni personnel ni démo)
@@ -185,7 +192,7 @@ export const PHRASE_INTERNE = new RegExp(
     '\\bvariante V-\\d+|\\bobservation O-\\d+',
     '\\((?:\\d{1,2}/\\d{1,2})(?:[^)]*)\\)',
     'dans (?:toute )?l.application|fixées? pour toute',
-    '\\b(?:IBA|IZZ|ASH|AKH|AJR|TUH|JAZ|RIS)-\\d{4}\\b',
+    '\\b(?:IBA|IZZ|ASH|AKH|AJR|TUH|JAZ|RIS|LAM)-\\d{4}\\b',
     'madjlis de la Risāla',
     'saisie numérique|lot ASH',
     // noms de champs des sources (« voir `hadiths_cites_dans_les_commentaires` »)
@@ -283,6 +290,34 @@ export function sensVerset(s, a) {
   const row = j.t.find((r) => r[0] === a);
   if (!row) throw new Error(`sens introuvable ${s}:${a}`);
   return { texte: row[1], cle: j.key, version: j.version };
+}
+
+/**
+ * Vers MASQUÉS à l'élève (lot 5, Lāmiyya : 0045, 0068, 0096) d'après les champs de données du référent :
+ * `levee_reserves_13_10.affichage_eleve === 'masque'` dans `texte_ar.json` ET `vers_a_masquer_a_l_eleve` de
+ * `seances.json` (vers et séance) ; les deux listes doivent concorder, sinon la construction échoue. Le texte d'un vers
+ * masqué (arabe et traduction) n'est dans AUCUN fichier public : l'élève ne reçoit que son identifiant.
+ * Retourne Map(id → fiche de levée) ; vide pour un texte sans levée de réserves.
+ */
+export function versMasques(ar, se, seancesSrc) {
+  const parAr = new Map();
+  for (const v of ar.vers ?? []) {
+    const l = v.levee_reserves_13_10;
+    if (!l) continue;
+    if (l.affichage_eleve !== 'masque' && l.affichage_eleve !== 'affichable')
+      throw new Error(`${v.id} : affichage_eleve inconnu « ${l.affichage_eleve} »`);
+    if (l.affichage_eleve === 'masque') parAr.set(v.id, l);
+  }
+  const liste = se.levee_reserves_13_10?.vers_a_masquer_a_l_eleve ?? [];
+  const ids = liste.map((x) => x.vers).sort();
+  if (JSON.stringify([...parAr.keys()].sort()) !== JSON.stringify(ids))
+    throw new Error('vers masqués : texte_ar.json et seances.json ne concordent pas');
+  for (const x of liste) {
+    const s = seancesSrc.find((q) => q.id === x.seance);
+    if (!s || !idsSeance(s).includes(x.vers))
+      throw new Error(`${x.vers} : séance ${x.seance} incohérente`);
+  }
+  return parAr;
 }
 
 /** Phrases d'un texte_ar.json : `phrases` (prose) ou `vers` (poème). */
@@ -759,6 +794,16 @@ function construireTexte(texte, lignes) {
   // intertitres d'éditeur (poèmes) : avant le vers qui les suit
   const titres = new Map();
   for (const t of ar.titres ?? []) {
+    if (typeof t.apres_numero_S === 'number') {
+      // Lāmiyya : l'intertitre suit le vers n° S de l'édition S ; il se place avant le premier vers dont le n° S est supérieur
+      // (deux intertitres de suite : l'un sous l'autre, séparés par un saut de ligne)
+      const cible = unites.find(
+        (u) => typeof u.numero_S === 'number' && u.numero_S > t.apres_numero_S,
+      );
+      if (!cible) throw new Error(`titre sans vers : ${t.ar}`);
+      titres.set(cible.id, titres.has(cible.id) ? `${titres.get(cible.id)}\n${t.ar}` : t.ar);
+      continue;
+    }
     const i = t.avant
       ? unites.findIndex((u) => u.id === t.avant)
       : unites.findIndex((u) => u.id === t.apres) + 1;
@@ -783,6 +828,10 @@ function construireTexte(texte, lignes) {
       if (notes.some((t) => NOTE_RETIENT.test(t))) for (const id of ids) retenus.add(id);
     }
   }
+  // vers masqués d'après les champs de données (lot 5) : retenus comme les passages « présentés par le maître »,
+  // mais l'élève voit « vers en cours de vérification » (`masque`) et non « présenté par l'enseignant »
+  const masques = versMasques(ar, se, seancesSrc);
+  for (const id of masques.keys()) retenus.add(id);
 
   // niveau « adulte » : la phrase le dit, ou toutes les séances qui la portent le disent
   const seancesDe = new Map();
@@ -846,6 +895,15 @@ function construireTexte(texte, lignes) {
       ),
     ];
     const incertain = aVerifier.length > 0;
+    if (masques.has(p.id)) {
+      const l = masques.get(p.id);
+      phrases.push({ id: p.id, t, masque: true, ...(adulte(p.id) ? { adulte: true } : {}) });
+      noterEns(p.id, {
+        a_verifier: [...aVerifier, `Lecture proposée : ${l.lecture_proposee}`],
+        decision: `Vers masqué à l'élève (${l.decision}) : ${l.raison_masquage}`,
+      });
+      continue;
+    }
     if (retenus.has(p.id)) {
       phrases.push({ id: p.id, t, explication: true, ...(adulte(p.id) ? { adulte: true } : {}) });
       noterEns(p.id, { a_verifier: aVerifier });
@@ -1182,24 +1240,80 @@ export function departager(eleve, taille = TAILLE_PARTIE) {
   return { index, fichiers };
 }
 
+/**
+ * Fichiers GARDÉS (lot 5, écart n° 3 du contrôle pré-bêta) : jamais dans `static/` (servi sans authentification par le
+ * serveur de fichiers statiques), mais dans ce dossier lu par la route `/mutun/[fichier]` (`+server.ts`), qui exige une
+ * session avec le droit adapté : notes de l'enseignant (`<texte>-enseignant.json` : personnel), séances en publication
+ * différée (`<texte>-differe.json`) et parties de phrases d'un grand texte (`risala-p<k>.json`) : personnel et comptes de
+ * démonstration. Rien de ce dossier n'est téléchargé pour un invité de la bêta, même par adresse directe.
+ */
+export const SORTIE_PROTEGEE = join(web, 'src', 'lib', 'server', 'mutun');
+/** Noms de fichiers gardés (jamais dans `static/mutun`). */
+export const NOM_PROTEGE = /^[a-z-]+-(?:enseignant|differe|p\d+)\.json$/;
+
+const empreinte = (x) => createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 12);
+
+/**
+ * Publication différée (Ibn ʿĀshir : séances IBA-S02 à S10) : sépare le texte de l'élève en un fichier PUBLIC (séances
+ * ouvertes, phrases qui s'y trouvent) et un fichier DIFFÉRÉ (séances différées et phrases qui ne sont dans aucune séance
+ * ouverte), servi seulement au personnel et à la démonstration. Le fichier public dit seulement qu'un complément existe
+ * (`differe.version`). Texte sans séance différée : rien n'est séparé. Un grand texte (Risāla) garde son sommaire public
+ * (titres seuls) et ses parties de phrases gardées : voir `departager`.
+ */
+export function separerDiffere(eleve) {
+  const fermees = eleve.seances.filter((s) => s.differe);
+  if (!fermees.length) return { publique: eleve, differe: null };
+  const ouvertes = eleve.seances.filter((s) => !s.differe);
+  const vues = new Set(ouvertes.flatMap((s) => s.phrases));
+  const phrases = eleve.phrases.filter((p) => vues.has(p.id));
+  const complement = {
+    seances: fermees,
+    phrases: eleve.phrases.filter((p) => !vues.has(p.id)),
+  };
+  const differe = {
+    v: 2,
+    id: eleve.id,
+    version: empreinte(complement),
+    statut: STATUT,
+    ...complement,
+  };
+  const base = { ...eleve, phrases, seances: ouvertes, differe: { version: differe.version } };
+  const version = empreinte(Object.entries(base).filter(([k]) => k !== 'version'));
+  // mêmes clés, dans le même ordre (v, id, version, statut, oeuvre…) ; seule la version change
+  return { publique: { ...base, version }, differe };
+}
+
+/** Écrit tous les fichiers d'un texte : publics dans `static/mutun`, gardés dans `SORTIE_PROTEGEE` (voir plus haut). */
+export function ecrireTexte(texte, lignes = tanzil(), sortie = SORTIE, protegee = SORTIE_PROTEGEE) {
+  const { eleve, enseignant } = construire(texte, lignes);
+  const ecrire = (dir, nom, x) => writeFileSync(join(dir, nom), `${JSON.stringify(x)}\n`);
+  let publique;
+  if (TEXTES_LOT4.includes(texte)) {
+    const { index, fichiers } = departager(eleve);
+    publique = index;
+    for (const f of fichiers) ecrire(protegee, `${texte}-p${f.part}.json`, f);
+  } else {
+    const s = separerDiffere(eleve);
+    publique = s.publique;
+    if (s.differe) ecrire(protegee, `${texte}-differe.json`, s.differe);
+  }
+  ecrire(sortie, `${texte}.json`, publique);
+  ecrire(protegee, `${texte}-enseignant.json`, enseignant);
+  return { eleve, publique };
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   mkdirSync(SORTIE, { recursive: true });
+  mkdirSync(SORTIE_PROTEGEE, { recursive: true });
+  // fichiers gardés d'une construction précédente (ou d'avant le lot 5, quand ils étaient publics) : retirés
+  for (const f of readdirSync(SORTIE)) if (NOM_PROTEGE.test(f)) rmSync(join(SORTIE, f));
+  for (const f of readdirSync(SORTIE_PROTEGEE))
+    if (f.endsWith('.json')) rmSync(join(SORTIE_PROTEGEE, f));
   const lignes = tanzil();
   for (const texte of TOUS_LES_TEXTES) {
-    const { eleve, enseignant } = construire(texte, lignes);
-    const a = `${JSON.stringify(eleve)}\n`;
-    if (TEXTES_LOT4.includes(texte)) {
-      const { index, fichiers } = departager(eleve);
-      // parties d'une construction précédente (le découpage peut changer) : retirées avant d'écrire les nouvelles
-      for (const f of readdirSync(SORTIE))
-        if (new RegExp(`^${texte}-p\\d+\\.json$`).test(f)) rmSync(join(SORTIE, f));
-      writeFileSync(join(SORTIE, `${texte}.json`), `${JSON.stringify(index)}\n`);
-      for (const f of fichiers)
-        writeFileSync(join(SORTIE, `${texte}-p${f.part}.json`), `${JSON.stringify(f)}\n`);
-    } else writeFileSync(join(SORTIE, `${texte}.json`), a);
-    writeFileSync(join(SORTIE, `${texte}-enseignant.json`), `${JSON.stringify(enseignant)}\n`);
+    const { eleve, publique } = ecrireTexte(texte, lignes);
     console.log(
-      `${texte} : ${eleve.phrases.length} phrases, ${eleve.seances.length} séances, ${Buffer.byteLength(a)} octets, version ${eleve.version}`,
+      `${texte} : ${eleve.phrases.length} phrases, ${eleve.seances.length} séances, ${Buffer.byteLength(JSON.stringify(publique)) + 1} octets publics, version ${publique.version}`,
     );
   }
 }

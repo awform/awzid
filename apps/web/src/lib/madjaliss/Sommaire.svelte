@@ -59,7 +59,7 @@
     differe = voitDiffere(me, isStaff(me));
     const pid = profil?.id ?? null;
     progres = await lireProgres(pid, id);
-    matn = await chargerMatn(id);
+    matn = await chargerMatn(id, undefined, differe);
     etat = matn ? 'pret' : 'absent';
     progres = await fusionnerServeur(pid, id).catch(() => progres);
   });

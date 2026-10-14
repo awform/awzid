@@ -61,7 +61,42 @@ export function expanser(texte: string, mots?: readonly string[]): string;
 export function isoler(texte: string, mots?: readonly string[]): { texte: string; mots: string[] };
 export function entitesHtml(s: string): string;
 export function ordreSeances(texte: string): Array<{ id: string; [k: string]: unknown }>;
+/** Texte de l'élève tel que construit (avant séparation des fichiers publics et gardés). */
+export interface TexteConstruit {
+  v: number;
+  id: string;
+  version: string;
+  statut: string;
+  phrases: Array<{ id: string }>;
+  seances: Array<{ n: number; id: string; phrases: string[]; differe?: true }>;
+  [k: string]: unknown;
+}
 export function construire(
   texte?: string,
   lignes?: Map<string, string>,
-): { eleve: unknown; enseignant: unknown };
+): { eleve: TexteConstruit; enseignant: { version: string; [k: string]: unknown } };
+/** Lot 5 : dossier des fichiers GARDÉS (servis après authentification, jamais dans static/). */
+export const SORTIE_PROTEGEE: string;
+export const NOM_PROTEGE: RegExp;
+export function separerDiffere(eleve: TexteConstruit): {
+  publique: TexteConstruit & { differe?: { version: string } };
+  differe: {
+    v: number;
+    id: string;
+    version: string;
+    statut: string;
+    seances: unknown[];
+    phrases: unknown[];
+  } | null;
+};
+export function ecrireTexte(
+  texte: string,
+  lignes?: Map<string, string>,
+  sortie?: string,
+  protegee?: string,
+): { eleve: TexteConstruit; publique: unknown };
+export function versMasques(
+  ar: unknown,
+  se: unknown,
+  seancesSrc: unknown[],
+): Map<string, { decision: string; raison_masquage: string; lecture_proposee: string }>;

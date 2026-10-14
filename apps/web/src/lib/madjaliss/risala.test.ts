@@ -12,6 +12,7 @@ import {
   PHRASE_INTERNE,
   PHRASE_INTERNE_RISALA,
   SORTIE,
+  SORTIE_PROTEGEE,
   SOURCES,
   STATUT,
   TAILLE_PARTIE,
@@ -68,10 +69,12 @@ const srcSe = lire<{
 
 const brutIndex = readFileSync(join(SORTIE, 'risala.json'), 'utf8');
 const index = JSON.parse(brutIndex) as Matn;
-const brutEns = readFileSync(join(SORTIE, 'risala-enseignant.json'), 'utf8');
+// lot 5 : notes de l'enseignant et parties de phrases sont des fichiers GARDÉS (servis après authentification)
+const brutEns = readFileSync(join(SORTIE_PROTEGEE, 'risala-enseignant.json'), 'utf8');
 const ens = JSON.parse(brutEns) as NotesEnseignant;
 const parties = (index.parts ?? []).map(
-  (p) => JSON.parse(readFileSync(join(SORTIE, `risala-p${p.n}.json`), 'utf8')) as PartieMatn,
+  (p) =>
+    JSON.parse(readFileSync(join(SORTIE_PROTEGEE, `risala-p${p.n}.json`), 'utf8')) as PartieMatn,
 );
 /** Le texte entier (index + toutes les parties), tel que le reconstitue l'application séance après séance. */
 const complet: Matn = { ...index, phrases: parties.flatMap((p) => p.phrases) };
@@ -85,14 +88,15 @@ describe('ar-Risāla : données construites', () => {
     expect(d.fichiers).toHaveLength(parties.length);
     d.fichiers.forEach((f, i) =>
       expect(`${JSON.stringify(f)}\n`).toBe(
-        readFileSync(join(SORTIE, `risala-p${i + 1}.json`), 'utf8'),
+        readFileSync(join(SORTIE_PROTEGEE, `risala-p${i + 1}.json`), 'utf8'),
       ),
     );
     expect(`${JSON.stringify(enseignant)}\n`).toBe(brutEns);
-    // aucun fichier de partie en trop dans static/mutun
-    expect(readdirSync(SORTIE).filter((f) => /^risala-p\d+\.json$/.test(f))).toHaveLength(
+    // aucun fichier de partie en trop dans le dossier gardé, et AUCUN dans static/mutun (public)
+    expect(readdirSync(SORTIE_PROTEGEE).filter((f) => /^risala-p\d+\.json$/.test(f))).toHaveLength(
       parties.length,
     );
+    expect(readdirSync(SORTIE).filter((f) => /^risala/.test(f))).toEqual(['risala.json']);
   });
 
   it('1 769 phrases, 164 séances ; chaque phrase dans une séance une seule fois ; numéros 1…164', () => {
@@ -322,7 +326,7 @@ describe('ar-Risāla : chargement à la demande', () => {
       log.push(url);
       const f = url.replace('/mutun/', '');
       if (echec) return new Response('', { status: 503 });
-      return new Response(readFileSync(join(SORTIE, f), 'utf8'), { status: 200 });
+      return new Response(readFileSync(join(SORTIE_PROTEGEE, f), 'utf8'), { status: 200 });
     };
 
   it('chargerPartie ne charge QUE le fichier de la séance ouverte, puis le garde sur l’appareil', async () => {

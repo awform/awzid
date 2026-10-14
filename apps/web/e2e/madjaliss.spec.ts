@@ -69,9 +69,11 @@ test('Plus → Madjaliss : textes par cycle, cycle conseillé, « bientôt » sa
     'ajurrumiyya',
     'jazariyya',
     'waraqat',
+    // lot 5 : la Lāmiyya est ouverte (trois vers masqués à l'affichage)
+    'lamiyya',
   ])
     await expect(page.locator(`a[data-texte="${id}"]`)).toHaveAttribute('href', `/madjaliss/${id}`);
-  for (const id of ['risala', 'lamiyya', 'khalil', 'alfiyya']) {
+  for (const id of ['risala', 'khalil', 'alfiyya']) {
     const x = page.locator(`[data-texte="${id}"]`);
     await expect(x).toContainText('Bientôt');
     await expect(x).not.toHaveAttribute('href', /.*/);

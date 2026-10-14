@@ -17,12 +17,17 @@ export const chargerMoteur = (): Promise<Moteur> => import('$lib/hifz-outils/out
  * Phrases proposées à la mémorisation (décision du référent, 12/10) : le matn seulement (type « texte »), sans
  * formule, basmala, titre ni citation, jamais un passage réservé ; jusqu'à la liste des passages choisis.
  */
-export const aMemoriser = <P extends { t: string; ar?: unknown; h?: unknown; explication?: true }>(
+export const aMemoriser = <
+  P extends { t: string; ar?: unknown; h?: unknown; explication?: true; masque?: true },
+>(
   ps: readonly P[],
 ) =>
   ps.filter(
     (p) =>
-      (p.t === 'texte' || p.t === 'vers') && !p.explication && (typeof p.ar === 'string' || !!p.h),
+      (p.t === 'texte' || p.t === 'vers') &&
+      !p.explication &&
+      !p.masque &&
+      (typeof p.ar === 'string' || !!p.h),
   );
 
 /** Paliers de masquage : 0 (tout visible) à 3 (tout masqué). */

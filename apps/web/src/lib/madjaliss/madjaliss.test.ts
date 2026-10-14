@@ -9,6 +9,7 @@ import {
   MOT_A_PRECISER,
   SENS_A_VERIFIER,
   SORTIE,
+  SORTIE_PROTEGEE,
   SOURCES,
   STATUT,
   tanzil,
@@ -31,7 +32,7 @@ const srcFr = lire<{
 }>(join(SOURCES, 'akhdari', 'traduction_fr.json'));
 const brut = readFileSync(join(SORTIE, 'akhdari.json'), 'utf8');
 const matn = JSON.parse(brut) as Matn;
-const brutEns = readFileSync(join(SORTIE, 'akhdari-enseignant.json'), 'utf8');
+const brutEns = readFileSync(join(SORTIE_PROTEGEE, 'akhdari-enseignant.json'), 'utf8');
 const notes = JSON.parse(brutEns) as NotesEnseignant;
 const de = new Map(matn.phrases.map((p) => [p.id, p]));
 const octets = (s: string) => Buffer.from(s, 'utf8').toString('hex');

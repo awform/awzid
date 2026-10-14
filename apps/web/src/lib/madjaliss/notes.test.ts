@@ -7,6 +7,7 @@ import {
   construire,
   nettoyerNote,
   SORTIE,
+  SORTIE_PROTEGEE,
   SOURCE_INTERNE,
   SOURCES,
   tanzil,
@@ -38,7 +39,7 @@ const lire = <T>(p: string) => JSON.parse(readFileSync(p, 'utf8')) as T;
 const src = lire<SrcAr>(join(SOURCES, 'akhdari', 'texte_ar.json'));
 const srcFr = lire<SrcFr>(join(SOURCES, 'akhdari', 'traduction_fr.json'));
 const brut = readFileSync(join(SORTIE, 'akhdari.json'), 'utf8');
-const brutEns = readFileSync(join(SORTIE, 'akhdari-enseignant.json'), 'utf8');
+const brutEns = readFileSync(join(SORTIE_PROTEGEE, 'akhdari-enseignant.json'), 'utf8');
 const matn = JSON.parse(brut) as Matn;
 const notes = JSON.parse(brutEns) as NotesEnseignant;
 const de = new Map(matn.phrases.map((p) => [p.id, p]));

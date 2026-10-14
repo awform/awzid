@@ -63,6 +63,7 @@ export const ACTIFS: ReadonlySet<string> = new Set([
   'nawawi',
   'waraqat',
   'risala',
+  'lamiyya',
 ]);
 
 /**

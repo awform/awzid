@@ -1,0 +1,681 @@
+{
+    "titre": "Découpage en séances (majālis) : Lāmiyyat al-afʿāl d'Ibn Mālik (cycle 3)",
+    "statut": "EN_ATTENTE_SECONDE_LECTURE",
+    "principe": "Séances de 6 à 16 minutes : lecture du vers (deux hémistiches), traduction, verbes et schèmes glosés. L'explication sera ajoutée plus tard à partir de Baḥraq (rien n'est rédigé ici). Durée = 3 min + 1,2 min par vers + 0,5 min par mot difficile.",
+    "ordre": "Ordre du poème (ordre d'apprentissage).",
+    "a_confirmer": "Découpage proposé par Claude par blocs de sens (4 à 19 vers), à comparer avec la pratique de 2 ou 3 maîtres (daara, mahdara). Cycle 3, après al-Ājurrūmiyya.",
+    "point_referent": "Les séances sont longues là où le poème énumère des listes de verbes (S04, S05, S08) : à scinder avec l'avis d'un maître.",
+    "nombre_de_seances": 23,
+    "duree_totale_min": 242,
+    "seances": [
+        {
+            "id": "LAM-S01",
+            "titre": "Ouverture : louange, prière et but du poème",
+            "vers": [
+                "LAM-0001",
+                "LAM-0002",
+                "LAM-0003",
+                "LAM-0004"
+            ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                {
+                    "ar": "الْفِعْلُ",
+                    "sens": "le verbe"
+                },
+                {
+                    "ar": "تَصَرُّفُهُ",
+                    "sens": "sa flexion"
+                },
+                {
+                    "ar": "الْجُمَلُ",
+                    "sens": "les [principes] d'ensemble"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S02",
+            "titre": "Les schèmes du verbe nu",
+            "vers": [
+                "LAM-0005",
+                "LAM-0006"
+            ],
+            "duree_min": 7,
+            "mots_difficiles": [
+                {
+                    "ar": "فَعْلَلَ",
+                    "sens": "schème quadrilitère nu"
+                },
+                {
+                    "ar": "فَعُلَ",
+                    "sens": "schème à deuxième radicale portant la {ar:0}",
+                    "sens_translit_interne": "schème à deuxième radicale ḍammée",
+                    "sens_mots_ar": [
+                        "ضَمَّة"
+                    ]
+                },
+                {
+                    "ar": "الْمُضَارِعُ",
+                    "sens": "le présent"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S03",
+            "titre": "La voyelle du présent : {ar:0}, {ar:1}",
+            "vers": [
+                "LAM-0007",
+                "LAM-0008",
+                "LAM-0009",
+                "LAM-0010",
+                "LAM-0011"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "وَرِثَ",
+                    "sens": "hériter",
+                    "sens_translit_interne": "warītha"
+                },
+                {
+                    "ar": "الْمُضَاعَفُ",
+                    "sens": "le redoublé"
+                },
+                {
+                    "ar": "لَازِمٌ",
+                    "sens": "intransitif"
+                },
+                {
+                    "ar": "مُعَدَّاهُ",
+                    "sens": "son transitif"
+                }
+            ],
+            "titre_translit_interne": "La voyelle du présent : kasra, ḍamma",
+            "titre_mots_ar": [
+                "كَسْرَة",
+                "ضَمَّة"
+            ]
+        },
+        {
+            "id": "LAM-S04",
+            "titre": "Les verbes redoublés (1)",
+            "vers": [
+                "LAM-0012",
+                "LAM-0013",
+                "LAM-0014",
+                "LAM-0015"
+            ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                {
+                    "ar": "حَبَّهُ",
+                    "sens": "l'aimer",
+                    "sens_translit_interne": "ḥabba-hu"
+                },
+                {
+                    "ar": "شَدَّ",
+                    "sens": "il a couru"
+                },
+                {
+                    "ar": "غَلَّ",
+                    "sens": "il est entré"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S05",
+            "titre": "Les verbes redoublés (2)",
+            "vers": [
+                "LAM-0016",
+                "LAM-0017",
+                "LAM-0018",
+                "LAM-0019",
+                "LAM-0020"
+            ],
+            "duree_min": 10,
+            "mots_difficiles": [
+                {
+                    "ar": "رَشَّ الْمُزْنُ",
+                    "sens": "la nuée a bruiné"
+                },
+                {
+                    "ar": "ثَلَّ",
+                    "sens": "thalla"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S06",
+            "titre": "Gutturales et deuxième radicale à {ar:0}",
+            "vers": [
+                "LAM-0021",
+                "LAM-0022",
+                "LAM-0023",
+                "LAM-0024",
+                "LAM-0025"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "الْحَلْقِيُّ",
+                    "sens": "guttural"
+                },
+                {
+                    "ar": "الْكِسَائِيُّ",
+                    "sens": "al-Kisaï, grammairien de Koufa",
+                    "sens_translit_interne": "al-Kisāʾī"
+                },
+                {
+                    "ar": "لِبَذٍّ",
+                    "sens": "à vérifier"
+                }
+            ],
+            "titre_translit_interne": "Gutturales et deuxième radicale à ḍamma",
+            "titre_mots_ar": [
+                "ضَمَّة"
+            ]
+        },
+        {
+            "id": "LAM-S07",
+            "titre": "Choix de la voyelle ; transfert de voyelle",
+            "vers": [
+                "LAM-0026",
+                "LAM-0027",
+                "LAM-0028",
+                "LAM-0029"
+            ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                {
+                    "ar": "شَكْلُ عَيْنٍ",
+                    "sens": "la voyelle de la deuxième radicale"
+                },
+                {
+                    "ar": "مُجَانِسٌ",
+                    "sens": "de même nature"
+                },
+                {
+                    "ar": "اعْتَلَّتْ",
+                    "sens": "elle est affaiblie"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S08",
+            "titre": "Le verbe augmenté",
+            "vers": [
+                "LAM-0030",
+                "LAM-0031",
+                "LAM-0032"
+            ],
+            "duree_min": 8,
+            "mots_difficiles": [
+                {
+                    "ar": "أَعْلَمَ",
+                    "sens": "informer (verbe augmenté)",
+                    "sens_translit_interne": "aʿlama"
+                },
+                {
+                    "ar": "احْرَنْجَمَ",
+                    "sens": "se rassembler, se serrer (verbe augmenté)",
+                    "sens_translit_interne": "iḥranjama"
+                },
+                {
+                    "ar": "اهْبَيَّخَ",
+                    "sens": "ihbayyakha"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S09",
+            "titre": "Quadrilitères augmentés",
+            "vers": [
+                "LAM-0033",
+                "LAM-0034",
+                "LAM-0035",
+                "LAM-0036"
+            ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                {
+                    "ar": "احْبَنْطَأَ",
+                    "sens": "avoir le ventre enflé",
+                    "sens_translit_interne": "iḥbanṭaʾa"
+                },
+                {
+                    "ar": "اسْلَنْقَى",
+                    "sens": "se coucher sur le dos",
+                    "sens_translit_interne": "islanqā"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S10",
+            "titre": "Le présent",
+            "vers": [
+                "LAM-0037",
+                "LAM-0038",
+                "LAM-0039",
+                "LAM-0040",
+                "LAM-0041",
+                "LAM-0042"
+            ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                {
+                    "ar": "الرُّبَاعِيُّ",
+                    "sens": "le quadrilitère"
+                },
+                {
+                    "ar": "هَمْزُ الْوَصْلِ",
+                    "sens": "hamza de liaison : elle ne se prononce qu'en début d'énoncé",
+                    "sens_translit_interne": "hamzat al-waṣl"
+                },
+                {
+                    "ar": "افْتَحْ",
+                    "sens": "mets la {ar:0}",
+                    "sens_translit_interne": "mets la fatḥa",
+                    "sens_mots_ar": [
+                        "فَتْحَة"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "LAM-S11",
+            "titre": "Le passif",
+            "vers": [
+                "LAM-0043",
+                "LAM-0044",
+                "LAM-0045",
+                "LAM-0046"
+            ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                {
+                    "ar": "الْمَفْعُولُ",
+                    "sens": "le patient"
+                },
+                {
+                    "ar": "الْمُطَاوَعَةُ",
+                    "sens": "la réciprocité"
+                },
+                {
+                    "ar": "اكْسِرْ",
+                    "sens": "mets la kasra"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S12",
+            "titre": "L'impératif",
+            "vers": [
+                "LAM-0047",
+                "LAM-0048",
+                "LAM-0049",
+                "LAM-0050"
+            ],
+            "duree_min": 9,
+            "mots_difficiles": [
+                {
+                    "ar": "الْأَمْرُ",
+                    "sens": "l'impératif"
+                },
+                {
+                    "ar": "الْجَزْمُ",
+                    "sens": "le jussif"
+                },
+                {
+                    "ar": "إِشْمَامٌ",
+                    "sens": "{ar:0} mêlée d'un son de {ar:1}",
+                    "sens_translit_interne": "ishmām",
+                    "sens_mots_ar": [
+                        "كَسْرَة",
+                        "ضَمَّة"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "LAM-S13",
+            "titre": "Le nom d'agent (1)",
+            "vers": [
+                "LAM-0051",
+                "LAM-0052",
+                "LAM-0053",
+                "LAM-0054",
+                "LAM-0055",
+                "LAM-0056"
+            ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                {
+                    "ar": "فَاعِلٌ",
+                    "sens": "sujet / agent"
+                },
+                {
+                    "ar": "الثُّلَاثِيُّ",
+                    "sens": "le trilitère"
+                },
+                {
+                    "ar": "الظَّرِيفُ",
+                    "sens": "élégant, gracieux",
+                    "sens_translit_interne": "ẓarīf"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S14",
+            "titre": "Le nom d'agent (2) et le nom de patient",
+            "vers": [
+                "LAM-0057",
+                "LAM-0058",
+                "LAM-0059",
+                "LAM-0060",
+                "LAM-0061"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "الْحُدُوثُ",
+                    "sens": "le caractère momentané"
+                },
+                {
+                    "ar": "مَفْعُولٌ",
+                    "sens": "patient"
+                },
+                {
+                    "ar": "عُدِلَ",
+                    "sens": "on a dérogé"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S15",
+            "titre": "Noms d'action du trilitère (1)",
+            "vers": [
+                "LAM-0062",
+                "LAM-0063",
+                "LAM-0064",
+                "LAM-0065",
+                "LAM-0066",
+                "LAM-0067"
+            ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                {
+                    "ar": "الْمَصَادِرُ",
+                    "sens": "les noms d'action"
+                },
+                {
+                    "ar": "فَعْلٌ",
+                    "sens": "schème de nom d'action",
+                    "sens_translit_interne": "faʿl"
+                },
+                {
+                    "ar": "الْمَقْصُورُ",
+                    "sens": "{ar:0} {ar:1} (alif abrégé)",
+                    "sens_translit_interne": "maqṣūra",
+                    "sens_mots_ar": [
+                        "أَلِف",
+                        "مَقْصُورَة"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "LAM-S16",
+            "titre": "Noms d'action du trilitère (2)",
+            "vers": [
+                "LAM-0068",
+                "LAM-0069",
+                "LAM-0070",
+                "LAM-0071",
+                "LAM-0072"
+            ],
+            "duree_min": 10,
+            "mots_difficiles": [
+                {
+                    "ar": "فُعُولٌ",
+                    "sens": "schème de nom d'action",
+                    "sens_translit_interne": "fuʿūl"
+                },
+                {
+                    "ar": "الْمُعَدَّى",
+                    "sens": "le transitif"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S17",
+            "titre": "Noms d'action du trilitère (3) ; unité d'acte",
+            "vers": [
+                "LAM-0073",
+                "LAM-0074",
+                "LAM-0075",
+                "LAM-0076",
+                "LAM-0077"
+            ],
+            "duree_min": 11,
+            "mots_difficiles": [
+                {
+                    "ar": "فَعَالَةٌ",
+                    "sens": "schème de nom d'action",
+                    "sens_translit_interne": "faʿāla"
+                },
+                {
+                    "ar": "الْمَرَّةُ",
+                    "sens": "l'unité"
+                },
+                {
+                    "ar": "الْهَيْئَةُ",
+                    "sens": "la manière"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S18",
+            "titre": "Noms d'action du verbe augmenté (1)",
+            "vers": [
+                "LAM-0078",
+                "LAM-0079",
+                "LAM-0080",
+                "LAM-0081",
+                "LAM-0082",
+                "LAM-0083"
+            ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                {
+                    "ar": "تَفْعِلَةٌ",
+                    "sens": "schème de nom d'action",
+                    "sens_translit_interne": "tafʿila"
+                },
+                {
+                    "ar": "التَّفْعِيلُ",
+                    "sens": "schème de nom d'action du verbe à deuxième radicale redoublée",
+                    "sens_translit_interne": "taf ʿīl"
+                },
+                {
+                    "ar": "تَكْثِيرٌ",
+                    "sens": "l'intensité"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S19",
+            "titre": "Noms d'action du verbe augmenté (2)",
+            "vers": [
+                "LAM-0084",
+                "LAM-0085",
+                "LAM-0086",
+                "LAM-0087",
+                "LAM-0088",
+                "LAM-0089"
+            ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                {
+                    "ar": "الْإِفْعَالُ",
+                    "sens": "nom d'action du verbe de la forme IV",
+                    "sens_translit_interne": "ifʿāl"
+                },
+                {
+                    "ar": "الِاسْتِفْعَالُ",
+                    "sens": "nom d'action du verbe de la forme X",
+                    "sens_translit_interne": "istifʿāl"
+                },
+                {
+                    "ar": "تَعْوِيضٌ",
+                    "sens": "la compensation"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S20",
+            "titre": "Noms de lieu : {ar:0} (1)",
+            "vers": [
+                "LAM-0090",
+                "LAM-0091",
+                "LAM-0092",
+                "LAM-0093",
+                "LAM-0094",
+                "LAM-0095"
+            ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                {
+                    "ar": "مَفْعَلٌ",
+                    "sens": "nom de lieu, de temps ou d'action",
+                    "sens_translit_interne": "mafʿal"
+                },
+                {
+                    "ar": "مَحْشَرٌ",
+                    "sens": "lieu du rassemblement",
+                    "sens_translit_interne": "maḥshar"
+                },
+                {
+                    "ar": "مَنْسِكٌ",
+                    "sens": "mansik"
+                }
+            ],
+            "titre_translit_interne": "Noms de lieu : mafʿal (1)",
+            "titre_mots_ar": [
+                "مَفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-S21",
+            "titre": "Noms de lieu : {ar:0} (2)",
+            "vers": [
+                "LAM-0096",
+                "LAM-0097",
+                "LAM-0098",
+                "LAM-0099",
+                "LAM-0100",
+                "LAM-0101"
+            ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                {
+                    "ar": "مَفْعِلٌ",
+                    "sens": "nom de lieu, de temps ou d'action (à {ar:0})",
+                    "sens_translit_interne": "mafʿil",
+                    "sens_mots_ar": [
+                        "كَسْرَة"
+                    ]
+                },
+                {
+                    "ar": "مَسْجِدٌ",
+                    "sens": "masjid"
+                },
+                {
+                    "ar": "التَّثْلِيثُ",
+                    "sens": "les trois voyelles"
+                }
+            ],
+            "titre_translit_interne": "Noms de lieu : mafʿal (2)",
+            "titre_mots_ar": [
+                "مَفْعَل"
+            ]
+        },
+        {
+            "id": "LAM-S22",
+            "titre": "Noms de lieu : fin ; noms de patient non trilitères",
+            "vers": [
+                "LAM-0102",
+                "LAM-0103",
+                "LAM-0104",
+                "LAM-0105",
+                "LAM-0106",
+                "LAM-0107"
+            ],
+            "duree_min": 12,
+            "mots_difficiles": [
+                {
+                    "ar": "مَفْعَلَةٌ",
+                    "sens": "nom de lieu où une chose abonde",
+                    "sens_translit_interne": "mafʿala (lieu abondant)"
+                },
+                {
+                    "ar": "مِفْعَالٌ",
+                    "sens": "nom d'instrument",
+                    "sens_translit_interne": "mifʿāl"
+                },
+                {
+                    "ar": "نَادِرٌ",
+                    "sens": "rare"
+                }
+            ]
+        },
+        {
+            "id": "LAM-S23",
+            "titre": "Instruments et clôture",
+            "vers": [
+                "LAM-0108",
+                "LAM-0109",
+                "LAM-0110",
+                "LAM-0111",
+                "LAM-0112",
+                "LAM-0113",
+                "LAM-0114"
+            ],
+            "duree_min": 13,
+            "mots_difficiles": [
+                {
+                    "ar": "مُنْصُلٌ",
+                    "sens": "fer de lance, lame",
+                    "sens_translit_interne": "munṣul"
+                },
+                {
+                    "ar": "الْمُدُقُّ",
+                    "sens": "récipient où l'on pile",
+                    "sens_translit_interne": "al-mudūqq"
+                },
+                {
+                    "ar": "الْمَكْرُمَاتُ",
+                    "sens": "les nobles actions"
+                }
+            ]
+        }
+    ],
+    "levee_reserves_13_10": {
+        "date": "2026-10-14",
+        "vers_a_masquer_a_l_eleve": [
+            {
+                "vers": "LAM-0045",
+                "seance": "LAM-S11"
+            },
+            {
+                "vers": "LAM-0068",
+                "seance": "LAM-S16"
+            },
+            {
+                "vers": "LAM-0096",
+                "seance": "LAM-S21"
+            }
+        ],
+        "autres_vers_de_la_liste_des_16": "affichables : voir texte_ar.json > levee_reserves_13_10",
+        "note": "Les séances qui contiennent un vers masqué restent utilisables ; le vers masqué ne doit pas être affiché à l'élève tant que le point n'est pas tranché."
+    }
+}

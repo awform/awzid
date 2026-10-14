@@ -53,6 +53,7 @@ const PONCT = /[،؛:.!؟«»()،]+$/;
 export const questionnable = (p: Phrase): boolean =>
   (p.t === 'texte' || p.t === 'vers') &&
   !p.explication &&
+  !p.masque &&
   !p.q?.length &&
   arSimple(p) !== null &&
   !!p.fr &&

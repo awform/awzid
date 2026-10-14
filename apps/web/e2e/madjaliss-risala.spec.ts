@@ -16,6 +16,8 @@ const STATUT_FR =
   "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente d'une seconde lecture savante.";
 const H = { 'x-awform': '1' };
 const dir = join(fileURLToPath(new URL('..', import.meta.url)), 'static', 'mutun');
+// lot 5 : les parties de phrases sont des fichiers GARDÉS (servis après authentification, droit « démonstration » ou personnel)
+const gardes = join(fileURLToPath(new URL('..', import.meta.url)), 'src', 'lib', 'server', 'mutun');
 type Phrase = {
   id: string;
   ar?: string | Array<string | { q: string; ref: string }>;
@@ -35,7 +37,7 @@ type Index = {
 };
 const index = JSON.parse(readFileSync(join(dir, 'risala.json'), 'utf8')) as Index;
 const partie = (k: number) =>
-  JSON.parse(readFileSync(join(dir, `risala-p${k}.json`), 'utf8')) as { phrases: Phrase[] };
+  JSON.parse(readFileSync(join(gardes, `risala-p${k}.json`), 'utf8')) as { phrases: Phrase[] };
 const octets = (s: string) => Buffer.from(s, 'utf8').toString('hex');
 const PARTIE = /\/mutun\/risala-p\d+\.json$/;
 const INTERNE =
@@ -154,7 +156,7 @@ test('poids : sommaire léger, parties bornées, rien de la Risāla dans le paqu
   const idx = readFileSync(join(dir, 'risala.json'));
   expect(idx.length).toBeLessThan(80_000);
   for (const p of index.parts) {
-    const o = readFileSync(join(dir, `risala-p${p.n}.json`)).length;
+    const o = readFileSync(join(gardes, `risala-p${p.n}.json`)).length;
     expect(o, `partie ${p.n}`).toBeLessThan(340_000);
   }
   // 1) à l'accueil : aucune requête vers /mutun/, aucun texte de la Risāla dans le moindre fichier chargé
@@ -194,10 +196,9 @@ test('poids : sommaire léger, parties bornées, rien de la Risāla dans le paqu
 test('personnel : notes de l’enseignant de la Risāla servies à part (écarts au mashhūr, vocalisations à confirmer)', async ({
   request,
 }) => {
+  // lot 5 : fichier GARDÉ — un visiteur sans session n'en reçoit rien (le contrôle complet des droits est dans
+  // madjaliss-acces.spec.ts : anonyme 401, invité 403, démonstration, personnel 200)
   const r = await request.get('/mutun/risala-enseignant.json');
-  expect(r.status()).toBe(200);
-  const j = (await r.json()) as { differe: number[]; consigne_differe: string; phrases: unknown[] };
-  expect(j.differe).toHaveLength(164);
-  expect(j.consigne_differe).toContain('masquées aux invités de la bêta');
-  expect(j.phrases.length).toBeGreaterThan(300);
+  expect(r.status()).toBe(401);
+  expect(await r.text()).not.toContain('consigne_differe');
 });

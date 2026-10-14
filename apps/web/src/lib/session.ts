@@ -125,7 +125,7 @@ export async function cachedMe(): Promise<Me | null> {
 }
 
 /** Données PERSONNELLES laissées sur l'appareil par le compte : effacées à la déconnexion (audit OFF-3). */
-const PERSONAL_KV = /^(cards|recLocal|parcours|madjaliss|madjaliss-memo):/;
+const PERSONAL_KV = /^(cards|recLocal|parcours|madjaliss|madjaliss-memo|madjaliss-differe):/;
 
 /** Réponses pas encore envoyées (à dire avant de se déconnecter). */
 export async function unsentCount(): Promise<number> {
