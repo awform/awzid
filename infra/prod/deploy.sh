@@ -196,6 +196,17 @@ mkdir -p "${AWFORM_QF_MUSHAF_SOURCE:-$HOME/awform-data/qf-mushaf-prod}" "${AWFOR
 
 # ---------------------------------------------------------------- 3. services
 "${DC[@]}" up -d --remove-orphans api worker web caddy
+# le Caddyfile est monté comme FICHIER : un fichier remplacé (git merge, rsync) n'est pas vu par un conteneur déjà lancé
+# (lot 8 : en-têtes CORP absents après un déploiement) ; redémarrage du seul Caddy (≈ 2 s) s'il diffère de celui du dépôt
+CTN_CADDY="$("${DC[@]}" ps -q caddy 2>/dev/null | head -1)"
+if [ -n "$CTN_CADDY" ]; then
+  H_DEPOT="$(sha256sum "$PROD/Caddyfile" | cut -d' ' -f1)"
+  H_CTN="$(docker exec "$CTN_CADDY" sha256sum /etc/caddy/Caddyfile 2>/dev/null | cut -d' ' -f1 || true)"
+  if [ -n "$H_CTN" ] && [ "$H_CTN" != "$H_DEPOT" ]; then
+    echo "Caddyfile modifié : redémarrage de Caddy"
+    docker restart "$CTN_CADDY" >/dev/null
+  fi
+fi
 if [ "$ECOUTE" = 1 ]; then
   # (AWFORM_DEPLOY_BUILD=0 : image awzid/ecoute-ia:<version> déjà présente, ex. tirée d'Artifact Registry)
   [ "${AWFORM_DEPLOY_BUILD:-1}" = 0 ] || "${DC[@]}" --profile ecoute build ecoute
