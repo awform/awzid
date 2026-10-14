@@ -8,7 +8,7 @@ import { expect, newAdult, password, test } from './fixtures';
  * Madjaliss, lots 4 et 6 : ar-Risāla d'Ibn Abī Zayd al-Qayrawānī (1 769 phrases, 264 séances du référent) — servie en
  * fichiers séparés chargés à la demande (`/mutun/risala.json` = sommaire, `/mutun/risala-o<k>.json` = phrases des
  * séances ouvertes, `/mutun/risala-p<k>.json` = phrases des séances différées, gardées), jamais dans le paquet de
- * départ ; 43 séances sont publiables à l'étape publique (invités de la bêta), les 221 autres sont en publication
+ * départ ; 44 séances sont publiables à l'étape publique (invités de la bêta), les 220 autres sont en publication
  * différée (personnel, démonstration et groupe « bêta fermée » : tout).
  */
 test.use({ compte: null });
@@ -78,7 +78,7 @@ function phraseSimple(n: number) {
   return { s, p: p! };
 }
 
-test('invité de la bêta : la Risāla montre ses 43 séances ouvertes ; une séance différée reste introuvable, aucun fichier gardé', async ({
+test('invité de la bêta : la Risāla montre ses 44 séances ouvertes ; une séance différée reste introuvable, aucun fichier gardé', async ({
   page,
 }) => {
   await newAdult(page, 'ris-invite');
@@ -88,7 +88,7 @@ test('invité de la bêta : la Risāla montre ses 43 séances ouvertes ; une sé
   await expect(page.getByTestId('madjaliss')).toHaveAttribute('data-pret', 'true');
   await expect(page.locator('a[data-texte="risala"]')).toHaveAttribute('href', '/madjaliss/risala');
   await page.goto('/madjaliss/risala');
-  await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(43);
+  await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(44);
   await expect(page.locator('li[data-seance="1"]')).toHaveCount(0);
   await expect(page.getByTestId('mj-bandeau-relecture')).toHaveCount(0);
   // une séance ouverte s'ouvre : une seule partie PUBLIQUE est téléchargée

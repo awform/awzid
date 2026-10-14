@@ -1,7 +1,7 @@
 /**
  * Bêta fermée — exploitation : alertes par e-mail (alerte.sh), sauvegarde hors machine vers Google Cloud Storage
  * (faux gcloud), mode de production (invitation, certificat public), Caddyfile (noindex, robots, sonde, TLS),
- * scripts Google Cloud (mode à blanc : rien n'est lancé sans --executer), disjoncteur du budget.
+ * scripts Google Cloud (mode à blanc : rien n'est lancé sans --executer), alerte de budget.
  * Scripts réels, faux `docker`/`gcloud`/`status.sh`, HOME temporaire.
  */
 import { spawnSync } from 'node:child_process';
@@ -236,7 +236,7 @@ describe.skipIf(!posix)(
   () => {
     // PATH sans gcloud : si un script tentait de le lancer, le test échouerait
     const env = { PATH: '/usr/bin:/bin', HOME: tmpdir(), GCLOUD: '/inexistant/gcloud' };
-    it('plafond-budget.sh : à blanc par défaut, affiche budget, sujet, rôle minimal et fonction ; rien n’est lancé', () => {
+    it('plafond-budget.sh : à blanc par défaut ; UNE seule alerte à 80 €, aucun arrêt de machine, rien n’est lancé', () => {
       expect(spawnSync('bash', ['-n', join(GCP, 'plafond-budget.sh')]).status).toBe(0);
       const r = sh(join(GCP, 'plafond-budget.sh'), env);
       expect(r.status, r.stderr).toBe(0);
@@ -244,18 +244,24 @@ describe.skipIf(!posix)(
       expect(r.stdout).not.toMatch(/command not found|MODE RÉEL/);
       for (const m of [
         'billing budgets create',
-        '45EUR',
-        'percent=0.9',
+        '80EUR',
         'percent=1.0',
         '--credit-types-treatment exclude-all-credits',
-        'pubsub topics create awzid-budget',
-        'compute.instances.stop',
-        'functions deploy awzid-disjoncteur',
-        'instances start awzid-beta',
+        'AWFORM_COUTS_COUPES=1',
       ])
         expect(r.stdout, m).toContain(m);
-      // le rôle de la fonction ne permet ni de supprimer ni de créer une machine
-      expect(r.stdout).not.toMatch(/instances\.(delete|create)|roles\/(owner|editor)/);
+      // un seul budget, un seul seuil ; ni sujet, ni fonction, ni rôle, ni arrêt/suppression/création de machine
+      expect(r.stdout.match(/billing budgets create/g)).toHaveLength(1);
+      expect(r.stdout.match(/--threshold-rule/g)).toHaveLength(1);
+      expect(r.stdout).not.toMatch(
+        /45EUR|60EUR|10EUR|pubsub|functions deploy|iam roles|instances (stop|start|delete|create)|instances\.(stop|delete|create)/,
+      );
+      const src = readFileSync(join(GCP, 'plafond-budget.sh'), 'utf8');
+      expect(src.split('\n').filter((l) => !l.trim().startsWith('#'))).not.toContainEqual(
+        expect.stringMatching(/instances (stop|delete)|pubsub|functions/),
+      );
+      // l'ancien disjoncteur (fonction qui arrêtait la VM) n'existe plus
+      expect(existsSync(join(GCP, 'disjoncteur'))).toBe(false);
     });
     it('--executer exige le compte de facturation (rien n’est lancé sans lui)', () => {
       const r = sh(join(GCP, 'plafond-budget.sh'), env, '--executer');
@@ -271,16 +277,6 @@ describe.skipIf(!posix)(
       expect(readFileSync(join(GCP, 'config.sh'), 'utf8')).not.toMatch(
         /BEGIN PRIVATE|password|secret\s*=|api[_-]?key/i,
       );
-    });
-    it('disjoncteur : arrête la machine seulement quand le coût réel atteint le budget', () => {
-      const code = `
-import importlib.util
-spec=importlib.util.spec_from_file_location('m','${join(GCP, 'disjoncteur', 'main.py')}')
-m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
-print(m.doit_arreter({'costAmount':4.9,'budgetAmount':10}), m.doit_arreter({'costAmount':10,'budgetAmount':10}), m.doit_arreter({'costAmount':12,'budgetAmount':10}), m.doit_arreter({'costAmount':3}))`;
-      const r = spawnSync('python3', ['-c', code], { encoding: 'utf8' });
-      if (r.error) return; // python3 absent : test ignoré
-      expect(r.stdout.trim()).toBe('False True True False');
     });
     it('le guide du client ne demande plus d’acheter le domaine, d’activer la facturation ni de créer un compte Google Cloud', () => {
       const g = readFileSync(join(ROOT, 'docs', 'projet', 'GUIDE_BETA_CLIENT.md'), 'utf8');

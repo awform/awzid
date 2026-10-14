@@ -125,6 +125,7 @@ export function clientEcouteDepuisEnv(): ClientEcoute | null {
  */
 export type DecisionFonction = (req: FastifyRequest) => boolean | Promise<boolean>;
 export const decisionEcouteIaParDefaut: DecisionFonction = (req) => {
+  if (coutsCoupes()) return false;
   const v = process.env.AWFORM_ECOUTE_IA ?? 'off';
   if (v === 'on') return true;
   if (v !== 'beta' || !req.auth) return false;
@@ -133,6 +134,12 @@ export const decisionEcouteIaParDefaut: DecisionFonction = (req) => {
     .map((x) => x.trim())
     .includes(req.auth.accountId);
 };
+/**
+ * DISJONCTEUR DE COÛT (décision du référent, 14/10/2026) : AWFORM_COUTS_COUPES=1 coupe les fonctions COÛTEUSES (écoute IA ;
+ * la voix à la demande n'existe pas encore : audio pré-généré) et seulement elles. Il ne coupe JAMAIS la machine ni le
+ * reste de l'application. Posé à la main dans prod.env quand l'alerte unique de 80 € arrive ; retirer la ligne pour rouvrir.
+ */
+export const coutsCoupes = () => process.env.AWFORM_COUTS_COUPES === '1';
 /** Suivi en direct : sous-interrupteur (AWFORM_ECOUTE_DIRECT=off le coupe ; ouvert sinon quand ecoute_ia l'est). */
 export const directOuvert = () => (process.env.AWFORM_ECOUTE_DIRECT ?? 'on') !== 'off';
 

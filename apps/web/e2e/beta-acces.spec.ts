@@ -429,9 +429,9 @@ test.describe('espace administrateur : trois modes, plafond, tableau de bord', (
             tuteurQuestions: 12,
             stockageOctets: 5242880,
             recitationsAujourdhui: 3,
-            fixeJourEur: 1,
-            estimeJourEur: 2.38,
-            seuilAlerteEur: 3,
+            fixeJourEur: 2,
+            estimeJourEur: 3.38,
+            seuilAlerteEur: 4,
           },
           plafonds: [
             { cle: 'tuteur', valeur: '1 $ / mois' },
@@ -456,7 +456,7 @@ test.describe('espace administrateur : trois modes, plafond, tableau de bord', (
     await expect(modes).toHaveAttribute('data-mode', 'ouvert');
     // tableau de bord
     await expect(adm.getByTestId('tab-comptes')).toContainText('47 sur 50');
-    await expect(adm.getByTestId('tab-cout')).toContainText('2.38');
+    await expect(adm.getByTestId('tab-cout')).toContainText('3.38');
     await expect(
       adm.getByTestId('tab-alertes').locator('[data-code="plafond_proche"]'),
     ).toBeVisible();

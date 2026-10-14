@@ -71,7 +71,7 @@ test('Plus → Madjaliss : textes par cycle, cycle conseillé, « bientôt » sa
     'waraqat',
     // lot 5 : la Lāmiyya est ouverte (trois vers masqués à l'affichage)
     'lamiyya',
-    // lot 6 : la Risāla est ouverte (43 séances publiables à l'étape publique, les autres réservées au groupe et au personnel)
+    // lot 6 : la Risāla est ouverte (44 séances publiables à l'étape publique, les autres réservées au groupe et au personnel)
     'risala',
   ])
     await expect(page.locator(`a[data-texte="${id}"]`)).toHaveAttribute('href', `/madjaliss/${id}`);

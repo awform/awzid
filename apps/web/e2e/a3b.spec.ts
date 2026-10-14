@@ -15,14 +15,14 @@ test('A3 : lecture graduée ad1-01 — la page joue le bon fichier', async ({ pa
   const b = (await (await request.get('/api/v1/booklets/ad1-01')).json()) as {
     booklet: { pages: Array<{ ar: string }> };
   };
-  // lot 5 : la garde coranique V2 de l'audio régénéré a retiré de l'index certaines pages (ex. la page 1 d'ad1-01,
-  // « اسْمِي عَبْدُ اللَّهِ… ») : on teste la première page qui a un fichier dans le manifeste
+  // lot 7 : la page 1 d'ad1-01 (« اسْمِي عَبْدُ اللَّهِ… », écartée à tort au lot 5 par la garde coranique) a retrouvé son audio :
+  // on teste la première page qui a un fichier dans le manifeste, et ce doit être la page 1
   const niv = (await (await request.get('/api/v1/lecons-audio/niveaux/lect-ad1-01')).json()) as {
     fichiers: string[];
   };
   const pages = b.booklet.pages.map((p) => sha1(audioKey(p.ar.replace(/\|/g, ' '))));
   const k = pages.findIndex((s) => niv.fichiers.includes(s));
-  expect(k, 'au moins une page du livret a un fichier audio').toBeGreaterThanOrEqual(0);
+  expect(k, 'la page 1 du livret a son fichier audio (rétabli au lot 7)').toBe(0);
   const want = pages[k]!;
   const asked: string[] = [];
   page.on('request', (r) => {

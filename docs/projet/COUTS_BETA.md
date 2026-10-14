@@ -33,13 +33,25 @@ Aucune commande créant une ressource payante n'a été exécutée pour ce docum
 | **Audio sur bucket froid** : 13 Go du Coran + 0,9 Go de leçons. Standard ≈ 0,023 $/Go = ≈ 0,3 €/mois ; Nearline ≈ 0,17 € ; sur disque de la VM ≈ 1,5 €/mois | gain ≈ 1 €/mois seulement : le froid ne vaut pas sa latence ; garder Standard (accès régulier), cycle de vie seulement sur les sauvegardes (déjà 30 jours) | reste (bucket Standard à créer, pas de cycle froid) |
 | Trafic de l'audio : mettre en cache sur l'appareil (déjà fait, hors ligne) ; 1 000 élèves × 20 écoutes × 1,5 Mo ≈ 30 Go | ≈ 3,6 €/mois sans cache, ≈ 1 € avec cache appareil | **oui** (cache appareil) |
 | Écoute IA (récitation) sur CPU : 10 000 élèves ≈ 2 vCPU | ≈ 50 à 150 €/mois à cette échelle ; 0 € tant qu'elle est fermée | plafonnée |
-| **Plafonds de consommation** : plafond IA par élève (3 €), coût fixe/jour affiché en administration, quotas d'inscription du mode ouvert | borne la dépense IA ; pas de facture surprise | **oui** côté application |
-| **Alerte de budget Google** (50 %, 90 %, 100 % de 60 €/mois ; e-mail) : gratuite, mais crée une ressource de facturation | prévient avant épuisement du crédit | reste (à créer par le client ou avec son accord) |
+| **Plafonds de consommation** : plafond IA par élève (3 €), coût fixe/jour affiché en administration (2 €), quotas d'inscription du mode ouvert | borne la dépense IA ; pas de facture surprise | **oui** côté application |
+| **Alerte de budget Google UNIQUE : 80 €/mois** (e-mail) : gratuite ; réglée par le client dans la console (budget déjà en place) | prévient avant épuisement du crédit ; au-dessus du coût normal (≈ 60 €) donc elle ne sonne qu'en cas de dérive | **oui** (réglée) |
+| **Disjoncteur** : à l'alerte de 80 €, `AWFORM_COUTS_COUPES=1` coupe les fonctions coûteuses (écoute IA ; voix à la demande quand elle existera) ; **la machine n'est jamais arrêtée** | borne la dérive sans mettre le service hors ligne | **oui** côté application |
+
+## 2 bis. Seuils de coût (valeurs uniques, décision du référent du 14/10/2026)
+
+| Seuil | Valeur | Où |
+|---|---|---|
+| Coût normal | ≈ 60 €/mois, ≈ 2 €/jour | ce document, EXPLOITATION, guide du client, administration (`AWFORM_COUT_FIXE_JOUR_EUR`, 2 € par défaut) |
+| **Alerte Google (la seule)** | **80 €/mois** | console Google (budget réglé par le client) ; `infra/gcp/plafond-budget.sh` la recrée si besoin |
+| Alerte du jour dans l'administration | 4 € (2 € fixes + 2 € de variable ; `AWFORM_COUT_ALERTE_JOUR_EUR`) | espace administrateur |
+| Disjoncteur | à l'alerte de 80 € : fonctions coûteuses coupées à la main par `AWFORM_COUTS_COUPES=1` ; **jamais la machine** | `prod.env` |
+
+Anciens chiffres abandonnés (ne plus les citer comme seuils) : 10 €, 45 € (plafond qui arrêtait la machine) et 60 €.
 
 ## 3. Ce qui reste (reporté avant l'étape 2)
 
 1. Décision VM : e2-medium tant que l'écoute est fermée (−26 €/mois), e2-standard-2 à l'ouverture de l'écoute.
-2. Alerte de budget Google Cloud (gratuite) et plafond d'alerte à 60 €/mois.
+2. ~~Alerte de budget~~ : faite, une seule alerte à 80 €/mois (réglée par le client) ; disjoncteur applicatif des fonctions coûteuses, jamais de la machine.
 3. Copie de l'audio dans un bucket Standard (13,9 Go ≈ 0,3 €/mois) plutôt que sur le disque (≈ 1,5 €/mois) :
    gain faible, utile surtout pour sortir l'audio de la VM.
 4. En-têtes de cache des fichiers non hachés, après mesure sur le serveur public (Caddy).

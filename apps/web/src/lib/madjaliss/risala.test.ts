@@ -286,7 +286,7 @@ describe('ar-Risāla : données construites', () => {
 const PLAFOND_TRANSLIT = 2862;
 
 describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseignant', () => {
-  it('séances différées : cycle 3 OU `differe` du référent ; 43 séances ouvertes au plus à l’étape publique, toutes de cycle 1 ou 2', () => {
+  it('séances différées : cycle 3 OU `differe` du référent ; 44 séances ouvertes au plus à l’étape publique, toutes de cycle 1 ou 2', () => {
     expect(DIFFERE_CYCLE['risala']!.cycle_min).toBe(3);
     expect(srcSe.point_referent).toMatch(DIFFERE_CYCLE['risala']!.consigne);
     const attendues = srcSe.seances.filter((s) => s.cycle >= 3 || s.differe === true);
@@ -296,16 +296,17 @@ describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseigna
     // toute séance différée a sa raison dans la source (affichée au groupe et au personnel)
     for (const s of attendues) expect(s.raison_differe, s.id).toBeTruthy();
     const ouvertes = index.seances.filter((s) => !s.differe);
-    expect(ouvertes.length).toBeLessThanOrEqual(43);
-    expect(ouvertes.length).toBe(43);
+    expect(ouvertes.length).toBeLessThanOrEqual(44);
+    expect(ouvertes.length).toBe(44);
     expect(ouvertes.every((s) => s.c === 1 || s.c === 2)).toBe(true);
     // une séance ouverte : ni niveau adulte, ni phrase incertaine
     expect(ouvertes.some((s) => s.adulte)).toBe(false);
     for (const s of ouvertes)
       for (const id of s.phrases) expect(de.get(id)!.incertain, `${s.id} ${id}`).toBeUndefined();
-    // la zakāt de base (RIS-S104) reste différée après le détachement de 0433 : la lever ferait 44 séances ouvertes
-    expect(index.seances.find((s) => s.id === 'RIS-S104')!.differe).toBe(true);
-    expect(ens.differe).toHaveLength(221);
+    // la zakāt de base (RIS-S104) est ouverte (décision du référent du 14/10, 0433 déplacée) : trois phrases sûres, ni incertaines ni adultes
+    expect(index.seances.find((s) => s.id === 'RIS-S104')!.differe).toBeUndefined();
+    expect(index.seances.find((s) => s.id === 'RIS-S104')!.adulte).toBeUndefined();
+    expect(ens.differe).toHaveLength(220);
     expect(ens.consigne_differe).toMatch(/masquées aux invités de la bêta/);
     expect(ens.publication).toMatch(/Publication différée de toute la Risāla/);
     // risala est au cycle 3 du plan directeur et ouvert ; plus « bientôt » pour tous (séances ouvertes)
@@ -316,18 +317,18 @@ describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseigna
     expect(TEXTES).not.toContain('risala');
   });
 
-  it('compte ordinaire : seulement les 43 séances ouvertes, jamais une phrase d’une séance différée', () => {
+  it('compte ordinaire : seulement les 44 séances ouvertes, jamais une phrase d’une séance différée', () => {
     const fermees = new Set(index.seances.filter((s) => s.differe).flatMap((s) => s.phrases));
     for (const kind of ['adulte', 'ado', 'enfant', null] as const) {
       const v = matnPour(complet, kind);
-      expect(v.seances.length, String(kind)).toBeLessThanOrEqual(43);
+      expect(v.seances.length, String(kind)).toBeLessThanOrEqual(44);
       expect(
         v.seances.every((s) => !s.differe),
         String(kind),
       ).toBe(true);
       for (const p of v.phrases) expect(fermees.has(p.id), `${kind} ${p.id}`).toBe(false);
     }
-    expect(matnPour(complet, 'adulte').seances).toHaveLength(43);
+    expect(matnPour(complet, 'adulte').seances).toHaveLength(44);
     const invite = { account: { email: 'invite@exemple.org' } };
     expect(voitDiffere(invite, false)).toBe(false);
     expect(voitDiffere(null, false)).toBe(false);
@@ -348,7 +349,7 @@ describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseigna
     expect(matnPour(complet, 'adulte', voitDiffere(membre, false)).seances).toHaveLength(264);
     expect(
       matnPour(complet, 'adulte', voitDiffere({ ...membre, roles: [] }, false)).seances,
-    ).toHaveLength(43);
+    ).toHaveLength(44);
   });
 
   it('personnel, démonstration et groupe : toutes les séances ; passages « adulte » jamais aux enfants ni aux ados, même membres', () => {

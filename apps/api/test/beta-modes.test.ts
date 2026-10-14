@@ -365,8 +365,10 @@ describe.skipIf(!URL)('Bêta : trois modes, plafond, vérification, tableau (awf
     expect(d.comptes.parents + d.comptes.adultes).toBe(d.comptes.total);
     expect(d.comptes.plafond).toBe(20);
     expect(d.comptes.pourcentPlafond).toBeGreaterThan(0);
-    expect(d.couts).toMatchObject({ tuteurUsd: 0, tuteurQuestions: 0, fixeJourEur: 1 });
-    expect(d.couts.estimeJourEur).toBe(1);
+    expect(d.couts).toMatchObject({ tuteurUsd: 0, tuteurQuestions: 0, fixeJourEur: 2 });
+    expect(d.couts.estimeJourEur).toBe(2);
+    expect(d.couts.seuilAlerteEur).toBe(4);
+    expect(d.couts.fonctionsCoupees).toBe(false);
     expect(d.plafonds.map((p: { cle: string }) => p.cle)).toEqual([
       'tuteur',
       'ecoute',
@@ -416,8 +418,8 @@ describe.skipIf(!URL)('Bêta : trois modes, plafond, vérification, tableau (awf
     const d = (await c.req('GET', '/api/v1/admin/tableau', A)).json();
     expect(d.couts.tuteurUsd).toBe(4);
     expect(d.couts.tuteurQuestions).toBe(1);
-    // 1 € fixe + 4 $ × 0,92 = 4,68 € : au-dessus du seuil de 3 € par jour
-    expect(d.couts.estimeJourEur).toBe(4.68);
+    // 2 € fixes + 4 $ × 0,92 = 5,68 € : au-dessus du seuil de 4 € par jour
+    expect(d.couts.estimeJourEur).toBe(5.68);
     expect(d.alertes.map((a: { code: string }) => a.code)).toContain('cout_jour_eleve');
   });
 });

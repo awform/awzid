@@ -12,7 +12,7 @@
  */
 import { and, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
 import { schema as t, type Db } from '@awform/db';
-import { ECOUTE_PAR_HEURE } from './ecoute-ia.js';
+import { coutsCoupes, ECOUTE_PAR_HEURE } from './ecoute-ia.js';
 
 export const STOCKAGE_PAR_ELEVE_OCTETS =
   (Number(process.env.AWFORM_STOCKAGE_PAR_ELEVE_MO ?? 30) || 30) * 1_048_576;
@@ -92,6 +92,8 @@ export interface CoutsDuJour {
   fixeJourEur: number;
   estimeJourEur: number;
   seuilAlerteEur: number;
+  /** disjoncteur de coût : écoute IA coupée (AWFORM_COUTS_COUPES=1) ; la machine, jamais */
+  fonctionsCoupees: boolean;
 }
 export async function coutsDuJour(db: Db): Promise<CoutsDuJour> {
   const debut = DEBUT_JOUR();
@@ -109,9 +111,10 @@ export async function coutsDuJour(db: Db): Promise<CoutsDuJour> {
     })
     .from(t.recitationUpload);
   const tuteurUsd = Number(tu?.micros ?? 0) / 1_000_000;
-  // coût fixe du serveur par jour (machine, disque, adresse) : réglage de l'exploitation, ≈ 30 € / 30 j par défaut
-  const fixeJourEur = Number(process.env.AWFORM_COUT_FIXE_JOUR_EUR ?? 1) || 1;
-  const seuilAlerteEur = Number(process.env.AWFORM_COUT_ALERTE_JOUR_EUR ?? 3) || 3;
+  // coût fixe du serveur par jour (machine, disque, adresse) : réglage de l'exploitation, ≈ 60 € / 30 j = 2 € par défaut
+  // (COUTS_BETA.md) ; alerte du jour : ce coût fixe + 2 € de dépense variable (tuteur)
+  const fixeJourEur = Number(process.env.AWFORM_COUT_FIXE_JOUR_EUR ?? 2) || 2;
+  const seuilAlerteEur = Number(process.env.AWFORM_COUT_ALERTE_JOUR_EUR ?? 4) || 4;
   return {
     tuteurUsd,
     tuteurQuestions: tu?.n ?? 0,
@@ -120,5 +123,6 @@ export async function coutsDuJour(db: Db): Promise<CoutsDuJour> {
     fixeJourEur,
     estimeJourEur: Math.round((fixeJourEur + tuteurUsd * USD_EUR) * 100) / 100,
     seuilAlerteEur,
+    fonctionsCoupees: coutsCoupes(),
   };
 }

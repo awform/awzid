@@ -6,7 +6,7 @@ crée aucune ressource payante et n’ouvre pas le site au public sans votre acc
 
 ## Où on en est (déjà fait, rien à refaire)
 
-- Compte Google Cloud, facturation (crédit ≈ 264 €, alerte à 10 € par mois) et domaine **awzid.com** : faits.
+- Compte Google Cloud, facturation (crédit ≈ 264 €, alerte unique à 80 € par mois) et domaine **awzid.com** : faits.
 - Serveur `awzid-beta` à **Paris** (e2-standard-2, 8 Go, `europe-west9-b`), adresse fixe **34.163.24.96**, réseau à part `awzid-net`.
   Il est **privé** : le web (HTTP/HTTPS) est **fermé**, on n’y entre que par un tunnel sécurisé.
 - **Sauvegardes** chiffrées chaque nuit dans le bucket `awzid-sauvegardes-b7e41c` (30 jours), **restauration testée**
@@ -197,29 +197,29 @@ Prix approximatifs **par mois**, Paris, euros, hors taxes (estimation du 13/10/2
 
 | Poste | Réglage actuel | Coût mensuel estimé |
 |---|---|---|
-| Machine virtuelle | `e2-standard-2` (2 vCPU, 8 Go) | 55 à 65 € |
-| Disque | 50 Go équilibré | 6 à 7 € |
-| Adresse IP fixe | 1 | 3 à 4 € |
+| Machine virtuelle | `e2-standard-2` (2 vCPU, 8 Go) | ≈ 51 € |
+| Disque | 50 Go équilibré | ≈ 5 € |
+| Adresse IP fixe | 1 | ≈ 3,4 € |
 | Sauvegardes (bucket, 30 jours) | quelques Go | moins de 1 € |
 | Trafic sortant | quelques invités | 0 à 2 € |
-| **Total** | | **environ 65 à 80 €** |
+| **Total** | | **environ 60 €** (≈ 2 € par jour) |
 | Domaine `awzid.com` | une fois par an | déjà payé |
 
 À savoir, franchement :
-- **L’alerte à 10 € sonne déjà**, et le crédit de ≈ 264 € (expire début janvier 2027, soit ≈ 2,5 mois) couvre environ 180 à 200 € de dépenses :
+- **Une seule alerte de budget : 80 € par mois** (réglée dans la console) ; le coût normal est d’environ 60 €, elle ne sonne donc qu’en cas de dérive. Le crédit de ≈ 264 € (expire début janvier 2027, soit ≈ 2,5 mois) couvre environ 180 à 200 € de dépenses :
   après le 02/01/2027, c’est votre carte qui paie. Une machine plus petite (`e2-medium`, ≈ 30 €) est possible **sans l’écoute IA de la récitation**
   (elle demande ≈ 3 Go de mémoire).
-- **Plafond (disjoncteur)** : `infra/gcp/plafond-budget.sh` (mode à blanc ; je ne l’exécute qu’avec votre accord) ajoute un plafond de
-  45 € qui **arrête la machine** (sans rien supprimer) quand le coût réel du mois l’atteint ; Google met les coûts à jour avec quelques heures
-  de retard : c’est un filet de sécurité, pas un arrêt à l’euro près. **À décider** : le montant du plafond, vu le coût normal ci-dessus.
+- **Disjoncteur** : à l’alerte de 80 €, je coupe seulement les fonctions coûteuses (écoute IA, voix à la demande) avec le réglage
+  `AWFORM_COUTS_COUPES=1` ; **la machine n’est jamais arrêtée** et rien n’est supprimé. Google met les coûts à jour avec quelques heures de
+  retard : c’est un avertissement, pas un arrêt à l’euro près. `infra/gcp/plafond-budget.sh` (mode à blanc) ne sert qu’à recréer cette alerte unique.
 
 ## Ce qui peut mal tourner (et quoi faire)
 
 | Situation | Que faire |
 |---|---|
 | Un e-mail d’alerte arrive | Ne rien faire tout de suite : envoyez-moi l’objet du message. |
-| `awzid.com` ne répond pas | Ouvrez `https://awzid.com/etat` ; sinon dites-le moi. Console Google → Compute Engine : la machine est-elle « arrêtée » (plafond atteint) ? |
-| La machine a été arrêtée par le plafond | Regardez la facture (Facturation → Rapports). Si c’est normal, dites-le moi : je relance la machine. |
+| `awzid.com` ne répond pas | Ouvrez `https://awzid.com/etat` ; sinon dites-le moi. Console Google → Compute Engine : la machine est-elle « arrêtée » ? (Le budget n’arrête jamais la machine.) |
+| Alerte de budget à 80 € | La machine continue de tourner. Regardez la facture (Facturation → Rapports) et envoyez-moi l’objet du message : je coupe les fonctions coûteuses si la dérive est réelle. |
 | Vous avez perdu la clé de sauvegarde | Dites-le **tout de suite** : une nouvelle paire est créée, la prochaine sauvegarde est lisible ; les anciennes sont perdues. |
 | Un invité a transmis son code | Révoquez l’invitation (bouton) : les personnes déjà inscrites restent. |
 | Vous voulez tout arrêter d’un coup | Mode **Fermé** (bouton), ou `ouvrir-web.sh --fermer`. Pour arrêter aussi les frais : arrêter la machine dans la console (le disque coûte encore ≈ 7 €/mois). |

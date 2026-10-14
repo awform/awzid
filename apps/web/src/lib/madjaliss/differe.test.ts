@@ -131,8 +131,8 @@ describe('lot 6 : parties publiques de la Risāla, raisons, vers non confirmés'
     });
     expect(log).toEqual([`/mutun/risala-o${ouverte.p}.json`]);
     for (const id of ouverte.phrases) expect(m!.phrases.some((p) => p.id === id)).toBe(true);
-    // 43 séances ouvertes au plus à l'étape publique, aucune de niveau adulte
-    expect(index.seances.filter((s) => !s.differe).length).toBeLessThanOrEqual(43);
+    // 44 séances ouvertes au plus à l'étape publique, aucune de niveau adulte
+    expect(index.seances.filter((s) => !s.differe).length).toBeLessThanOrEqual(44);
     expect(index.seances.filter((s) => !s.differe).some((s) => s.adulte)).toBe(false);
     // une partie publique ne porte aucune phrase d'une séance différée ni de raison
     const fermees = new Set(index.seances.filter((s) => s.differe).flatMap((s) => s.phrases));
