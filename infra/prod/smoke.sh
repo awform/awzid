@@ -6,7 +6,9 @@ BASE="${1:-http://127.0.0.1}"
 fail() { echo "ÉCHEC : $*"; exit 1; }
 curl -fsS "$BASE/api/v1/health" | grep -q '"status":"ok"' || fail "santé de l'API"
 curl -fsS "$BASE/api/v1/health" | grep -q '"db":true' || fail "base de données"
-curl -fsS "$BASE/api/v1/levels" | grep -q '"en1"' || fail "édition publiée (niveaux)"
+# édition publiée : niveaux servis (démonstration, bêta ouverte) OU refusés aux anonymes avec « connexion_requise »
+# (bêta fermée sur invitation : l'édition est alors contrôlée par la santé et par un compte, pas par un anonyme)
+curl -sS "$BASE/api/v1/levels" | grep -qE '"en1"|"code":"connexion_requise"' || fail "édition publiée (niveaux)"
 curl -fsS "$BASE/" | grep -qi '<!doctype html' || fail "application web"
 QR="$(curl -fsS "$BASE/l/en1-05")"
 echo "$QR" | grep -q 'lecons/en1.l05' || fail "page du QR code"
