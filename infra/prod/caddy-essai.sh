@@ -60,6 +60,10 @@ done
 echo "== invisibilité servie par Caddy"
 [ "$(curl -sk "${R[@]}" https://awzid.test:18443/robots.txt)" = "$(printf 'User-agent: *\nDisallow: /')" ] && ok "robots.txt strict" || ko "robots.txt"
 [ "$(cod https://awzid.test:18443/sitemap.xml)" = 404 ] && ok "sitemap.xml : 404" || ko "sitemap servi"
+# documents statiques imprimables : politique de sécurité du contenu stricte posée par Caddy (ZAP 10038, 14/10/2026)
+hdr https://awzid.test:18443/api/v1/health | grep -qi "^content-security-policy: default-src 'none'; frame-ancestors 'none'" && ok "api/* : CSP fermée" || ko "api/* : CSP absente"
+hdr https://awzid.test:18443/api | grep -qi "^content-security-policy: default-src 'none'; frame-ancestors 'none'" && ok "/api (racine) : CSP fermée" || ko "/api (racine) : CSP absente"
+hdr https://awzid.test:18443/documents/fiche-consentement-ecole.html | grep -qi "^content-security-policy: default-src 'none'.*frame-ancestors 'none'" && ok "documents/* : CSP stricte" || ko "documents/* : CSP absente"
 
 echo "== alias de sections : désactivés par défaut (aucune redirection, aucun certificat)"
 [ "$(cod "https://quran.awzid.test:18443/")" != 301 ] && ok "quran.awzid.test non redirigé tant que l'alias est désactivé" || ko "alias actif par défaut"

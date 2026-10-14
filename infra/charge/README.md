@@ -36,3 +36,28 @@ synchronisation d'événements (`POST /attempts`, 5 événements par envoi), mes
 
 Voir `docs/projet/JOURNAL_DEV.md` (entrée « lot 24 ») : machine, contenu, résultats. À refaire sur le serveur
 de production avant l'ouverture (même commande, base de test à côté de la base réelle).
+
+## Parcours réalistes à paliers (14/10/2026) — démonstration privée seulement
+
+Outils sans dépendance (Node), pour une pile Docker Compose locale (la démonstration) atteinte par `http://127.0.0.1` ;
+**jamais la bêta ni une adresse externe** (garde-fou « local seulement » et récitants externes `qf-*` exclus).
+
+```bash
+# 1. comptes fictifs charge-<n>@demo.awform.test (mot de passe tiré au hasard dans ~/.awzid-charge/pw, jamais affiché)
+docker exec -i -e AWFORM_CHARGE_N=50 -e AWFORM_CHARGE_PW="$(cat ~/.awzid-charge/pw)" awform-api-1 \
+  node --input-type=module - < infra/charge/semis-comptes.mjs
+# 2. ressources (CPU machine, CPU/mémoire de chaque conteneur par cgroup, connexions PostgreSQL)
+node infra/charge/echantillon.mjs echant.jsonl 5 &
+# 3. paliers (parcours : connexion, accueil, leçon + audio, Madjaliss + groupe bêta, Coran, hifẓ, synchronisation)
+AWFORM_CHARGE_PALIERS=5,20,50,100 AWFORM_CHARGE_SECONDES=90 AWFORM_CHARGE_MONTEE=10 node infra/charge/parcours.mjs
+#    sans pause (saturation) : AWFORM_CHARGE_PENSEE_MS=0,0 ; rafale de connexions : AWFORM_CHARGE_SCENARIO=connexion
+# 4. tableaux Markdown (latences p50/p95/p99, erreurs, cœurs par conteneur, mémoire, connexions PG)
+node infra/charge/analyse.mjs charge-resultats.json echant.jsonl
+# 5. écoute IA (quelques sessions, MP3 de synthèse, jamais de voix humaine)
+node infra/charge/ecoute.mjs
+```
+
+Pour émuler un e2-standard-2 sur une machine plus grosse : limiter les conteneurs applicatifs à 2 cœurs
+(`docker update --cpuset-cpus 0-1 awform-{caddy,web,api,db,worker}-1`), lancer le générateur sur d'autres cœurs
+(`taskset -c 4-7 …`), puis tout remettre (`--cpuset-cpus 0-7`). Résultats et capacité estimée :
+`application\beta\RAPPORT_CHARGE_SECURITE_14-10.md` ; mesures brutes : `reports/charge-2026-10-14/`.

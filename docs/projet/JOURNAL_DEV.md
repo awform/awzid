@@ -21,6 +21,32 @@ Accord du client (« Vas y »). Worktree `~/awform-accueil` (depuis `main` 845ba
 
 ---
 
+## 14/10/2026 — Test de charge et scan de sécurité de la démo privée (branche `charge-securite-wip`, tag `avant-charge`)
+
+Accord du client (14/10). Cible : la démo privée de cette VM, par `http://127.0.0.1` seulement (images 197efe3) ; rien vers la
+bêta ni l'extérieur. Rapport complet : `application\beta\RAPPORT_CHARGE_SECURITE_14-10.md`. **Aucun code applicatif modifié.**
+
+- **Comptes fictifs** : 50 adultes `charge-<n>@demo.awform.test` (25 dans le groupe bêta) + 20 `limite-<n>` créés par les vraies routes
+  depuis le conteneur api (`infra/charge/semis-comptes.mjs`) ; mot de passe aléatoire hors dépôt, jamais affiché ; laissés dans la base.
+- **Charge** (`infra/charge/parcours.mjs`, `echantillon.mjs`, `analyse.mjs`, `ecoute.mjs`) : parcours connexion, accueil, leçon + audio,
+  Madjaliss (dont différé du groupe bêta), Coran, hifẓ, synchronisation. 8 cœurs : 5/20/50/100 UV → p95 18 à 22 ms, 0 erreur,
+  161 req/s. **2 cœurs (émulation e2-standard-2)** : 100 UV p95 26 ms ; 200 UV p95 730 ms ; 400 UV p95 3,4 s (0,3 % de délais) ;
+  plateau ≈ 350 req/s ; connexions ≈ 45/s (argon2id, 1,77 cœur de l'API). Goulot : processeur, PostgreSQL d'abord (requête
+  `exercise`/`exercise_version` de `GET /units/:id`, liste des récitants, niveaux : contenu immuable non mis en cache).
+  Mémoire, disque, connexions PG non limitants.
+- **Écoute IA** : ≈ 3,5 secondes-cœur par analyse de 10 s ; sur 2 cœurs avec 100 UV, 2 sessions : latence p50 16 s, p95 de toute
+  l'API ×10 ; bridée à 1 CPU : API p95 58 ms mais écoute 2× plus lente. À régler (`AWFORM_ECOUTE_CPUS/THREADS/CONCURRENCE`) avant l'ouverture.
+- **ZAP 2.17.0** (`infra/securite/zap-actif.sh`, nouveau) : passif + actif authentifié (adulte fictif) 12 min : 0 alerte réelle
+  moyenne/haute ; 2 « hautes » = faux positifs vérifiés (empreinte SHA-256 ≈ carte ; `eventType` à liste fermée) ; CSP absente
+  sur `/documents/*` et `/api` → corrigé dans `Caddyfile` (+ 3 contrôles dans `caddy-essai.sh`, essai local OK) ; CORP absente sur
+  les statiques → à décider. Droits entre comptes (16 routes), CSRF, verrou de compte (5 essais), plafond d'inscriptions (20/h) : conformes.
+- **Tests** : `apps/api/test/charge-parcours.test.ts` (6 verts) ; `beta-infra`, `audit-infra`, `charge` verts (33). `audit-inf6` ne se lance pas ici
+  faute du paquet `@awform/content` construit (idem sur `main`). Pas d'e2e : aucun code applicatif.
+- **Traces sur la démo** : `cpuset` des conteneurs rétabli (0-7), `--cpus 6` de l'écoute rétabli ; jeton de session de `charge-48` imprimé par
+  erreur → révoqué, journal expurgé ; fumée `smoke.sh` OK après coup. Image `zaproxy/zap-stable` laissée sur la VM.
+- **Non fusionné** dans `main` (Caddyfile + infra + test + docs) ; le `Caddyfile` corrigé n'est pas appliqué à la démo en cours.
+
+---
 ## 14/10/2026 — Déploiement de la version à jour (`main`, images 197efe3) sur le serveur de bêta `awzid-beta` — web FERMÉ
 
 Autorisation du client (14/10, « Oui » au déploiement sur le serveur de la bêta). Procédure suivie : `EXPLOITATION.md` § 15 « Mise à jour » (`pousser-images` → envoi de `infra/` → `deployer-beta.sh`). La branche `infra-gcp-wip` (929c561) est **déjà un ancêtre de `main`** : aucune fusion d'infra à faire. Étiquette de sécurité posée : `avant-deploiement-beta` (= `c2ae8f9`). `main` = `c2ae8f9` ; les images déployées sont celles de `197efe3` (`c2ae8f9` n'en diffère que par le journal).

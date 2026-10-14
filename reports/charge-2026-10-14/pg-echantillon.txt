@@ -1,0 +1,14 @@
+     82 select "exercise"."id", "exercise_version"."position", "exercise"."type", "exercise_version"."hash" from "exercise_version" inner join "exercise" on "
+     30 select "id", "name_ar", "name_fr", "riwaya", "speed", "style", "expected_verses", "license_source", "license_url", "license_archived_on", "license_tex
+     21 select "session"."account_id", "session"."mfa_verified", "session"."expires_at", "account"."kind", "account"."totp_enabled", "account"."country", "acc
+     21 select "school_member"."role" from "school_member" inner join "school" on "school"."id" = "school_member"."school_id" where ("school_member"."account_
+     21 select "level"."code", "level"."track", "level"."rank", "level"."title_fr", "level_version"."book"->>'code_fr', "level_version"."book"->>'niveau_fr', 
+     19 insert into "practice_event" ("id", "profile_id", "kind", "item", "ok", "day", "details", "device_at", "server_at") values ($1, $2, $3, $4, $5, $6, $7
+     10 select "unit"."id", "unit"."n", "unit"."kind", "unit_version"."num_lecon", "unit_version"."num_bilan", "unit_version"."title_ar", "unit_version"."titl
+      9 select "role" from "account_role" where "account_role"."account_id" = $1
+      4 select "level"."code", "level"."track", "level"."rank", "level"."subject_code", "level_version"."book"->>'titre_fr' from "level_version" inner join "l
+      4 select "id" from "profile" where ("profile"."id" = $1 and ("profile"."owner_account_id" = $2 or EXISTS (SELECT 1 FROM "profile_custodian" pc WHERE pc.
+      3 select "school"."id", "school"."name", "school"."name_ar", "school"."country", "school"."place", "school"."place_ar", "school"."tz", "school"."status"
+      3 select "id", "kind", "pseudonym", "birth_year", "avatar", "level_code", "owner_account_id", "created_at" from "profile" where ("profile"."owner_accoun
+      3 select "id", "code", "status" from "edition" where "edition"."status" = $1 limit $2
+      2 select "unit"."id", "unit"."level_code", "unit"."n", "unit"."kind", "unit_version"."num_lecon", "unit_version"."num_bilan", "unit_version"."title_ar",

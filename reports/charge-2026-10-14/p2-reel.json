@@ -1,0 +1,1309 @@
+{
+ "base": "http://127.0.0.1",
+ "date": "2026-10-14T10:14:10.740Z",
+ "paliers": [
+  {
+   "uv": 100,
+   "scenario": "parcours",
+   "debut": "2026-10-14T10:09:32.081Z",
+   "fin": "2026-10-14T10:10:32.082Z",
+   "duree": 60,
+   "global": {
+    "n": 9552,
+    "erreurs": 0,
+    "p50": 6.3,
+    "p95": 25.7,
+    "p99": 45.7,
+    "max": 220.9,
+    "rps": 159.2,
+    "tauxErreur": 0
+   },
+   "generateurCpuS": 10.1,
+   "routes": [
+    {
+     "route": "GET /quran/mushaf-exact/pages/:p",
+     "n": 945,
+     "erreurs": 0,
+     "p50": 5.1,
+     "p95": 11.2,
+     "p99": 22.7,
+     "max": 42.5,
+     "statuts": {
+      "200": 945
+     },
+     "rps": 15.7
+    },
+    {
+     "route": "GET audio de leçon (mp3)",
+     "n": 933,
+     "erreurs": 0,
+     "p50": 3.9,
+     "p95": 12.3,
+     "p99": 20.8,
+     "max": 33.2,
+     "statuts": {
+      "200": 933
+     },
+     "rps": 15.5
+    },
+    {
+     "route": "web /coran/mushaf (page)",
+     "n": 321,
+     "erreurs": 0,
+     "p50": 2.6,
+     "p95": 4.7,
+     "p99": 5.9,
+     "max": 7.2,
+     "statuts": {
+      "200": 321
+     },
+     "rps": 5.3
+    },
+    {
+     "route": "GET /quran/mushaf-exact",
+     "n": 321,
+     "erreurs": 0,
+     "p50": 4.1,
+     "p95": 10.9,
+     "p99": 15.5,
+     "max": 23.4,
+     "statuts": {
+      "200": 321
+     },
+     "rps": 5.3
+    },
+    {
+     "route": "GET /quran/audio/reciters",
+     "n": 321,
+     "erreurs": 0,
+     "p50": 11.6,
+     "p95": 21.3,
+     "p99": 29,
+     "max": 35.1,
+     "statuts": {
+      "200": 321
+     },
+     "rps": 5.3
+    },
+    {
+     "route": "web /madjaliss/:texte (page)",
+     "n": 318,
+     "erreurs": 0,
+     "p50": 2.6,
+     "p95": 5.4,
+     "p99": 8.5,
+     "max": 15.2,
+     "statuts": {
+      "200": 318
+     },
+     "rps": 5.3
+    },
+    {
+     "route": "GET /mutun/:texte.json",
+     "n": 318,
+     "erreurs": 0,
+     "p50": 4.1,
+     "p95": 9.6,
+     "p99": 17.5,
+     "max": 22.8,
+     "statuts": {
+      "200": 318
+     },
+     "rps": 5.3
+    },
+    {
+     "route": "GET /profiles/:id/madjaliss",
+     "n": 318,
+     "erreurs": 0,
+     "p50": 6.2,
+     "p95": 16.5,
+     "p99": 29.9,
+     "max": 35.5,
+     "statuts": {
+      "200": 318
+     },
+     "rps": 5.3
+    },
+    {
+     "route": "GET /mutun/:texte-differe.json (bêta)",
+     "n": 318,
+     "erreurs": 0,
+     "p50": 11.5,
+     "p95": 30.1,
+     "p99": 56.1,
+     "max": 63.7,
+     "statuts": {
+      "200": 318
+     },
+     "rps": 5.3
+    },
+    {
+     "route": "GET /levels/:code/units",
+     "n": 308,
+     "erreurs": 0,
+     "p50": 7.3,
+     "p95": 17.1,
+     "p99": 25.9,
+     "max": 34,
+     "statuts": {
+      "200": 308
+     },
+     "rps": 5.1
+    },
+    {
+     "route": "web /lecons/:id (page)",
+     "n": 308,
+     "erreurs": 0,
+     "p50": 2.3,
+     "p95": 4.5,
+     "p99": 6.9,
+     "max": 11.9,
+     "statuts": {
+      "200": 308
+     },
+     "rps": 5.1
+    },
+    {
+     "route": "GET /units/:id (leçon)",
+     "n": 308,
+     "erreurs": 0,
+     "p50": 25.3,
+     "p95": 50.8,
+     "p99": 112.1,
+     "max": 148.5,
+     "statuts": {
+      "200": 308
+     },
+     "rps": 5.1
+    },
+    {
+     "route": "GET /quran/audio/reciters/:id/suras/:n",
+     "n": 301,
+     "erreurs": 0,
+     "p50": 5.9,
+     "p95": 10.8,
+     "p99": 15.8,
+     "max": 32.2,
+     "statuts": {
+      "200": 301
+     },
+     "rps": 5
+    },
+    {
+     "route": "GET audio de verset (mp3)",
+     "n": 301,
+     "erreurs": 0,
+     "p50": 5.4,
+     "p95": 15,
+     "p99": 21.1,
+     "max": 220.9,
+     "statuts": {
+      "200": 301
+     },
+     "rps": 5
+    },
+    {
+     "route": "web /hifz (page)",
+     "n": 301,
+     "erreurs": 0,
+     "p50": 2.6,
+     "p95": 4.9,
+     "p99": 6,
+     "max": 12.9,
+     "statuts": {
+      "200": 301
+     },
+     "rps": 5
+    },
+    {
+     "route": "GET /hifz/books",
+     "n": 301,
+     "erreurs": 0,
+     "p50": 5,
+     "p95": 14,
+     "p99": 19.4,
+     "max": 30.6,
+     "statuts": {
+      "200": 301
+     },
+     "rps": 5
+    },
+    {
+     "route": "GET /hifz/profiles/:id",
+     "n": 301,
+     "erreurs": 0,
+     "p50": 6,
+     "p95": 16.3,
+     "p99": 22.8,
+     "max": 37.7,
+     "statuts": {
+      "200": 301
+     },
+     "rps": 5
+    },
+    {
+     "route": "POST /attempts (5 événements)",
+     "n": 300,
+     "erreurs": 0,
+     "p50": 13.7,
+     "p95": 27.8,
+     "p99": 47.5,
+     "max": 58.3,
+     "statuts": {
+      "200": 300
+     },
+     "rps": 5
+    },
+    {
+     "route": "GET /famille/messages",
+     "n": 300,
+     "erreurs": 0,
+     "p50": 5.1,
+     "p95": 14.7,
+     "p99": 24.4,
+     "max": 61.2,
+     "statuts": {
+      "200": 300
+     },
+     "rps": 5
+    },
+    {
+     "route": "GET /today/:id",
+     "n": 294,
+     "erreurs": 0,
+     "p50": 13.2,
+     "p95": 37.1,
+     "p99": 73.9,
+     "max": 89.5,
+     "statuts": {
+      "200": 294
+     },
+     "rps": 4.9
+    },
+    {
+     "route": "web / (page)",
+     "n": 293,
+     "erreurs": 0,
+     "p50": 3.3,
+     "p95": 6.2,
+     "p99": 8.7,
+     "max": 17.3,
+     "statuts": {
+      "200": 293
+     },
+     "rps": 4.9
+    },
+    {
+     "route": "GET /config",
+     "n": 293,
+     "erreurs": 0,
+     "p50": 7.7,
+     "p95": 14.4,
+     "p99": 22.6,
+     "max": 29.9,
+     "statuts": {
+      "200": 293
+     },
+     "rps": 4.9
+    },
+    {
+     "route": "GET /acces/statut",
+     "n": 293,
+     "erreurs": 0,
+     "p50": 9,
+     "p95": 17.6,
+     "p99": 26.1,
+     "max": 34.6,
+     "statuts": {
+      "200": 293
+     },
+     "rps": 4.9
+    },
+    {
+     "route": "GET /auth/me",
+     "n": 293,
+     "erreurs": 0,
+     "p50": 15.7,
+     "p95": 29.9,
+     "p99": 47.7,
+     "max": 57.4,
+     "statuts": {
+      "200": 293
+     },
+     "rps": 4.9
+    },
+    {
+     "route": "GET /fonctions",
+     "n": 293,
+     "erreurs": 0,
+     "p50": 11.6,
+     "p95": 25.5,
+     "p99": 35,
+     "max": 38.4,
+     "statuts": {
+      "200": 293
+     },
+     "rps": 4.9
+    },
+    {
+     "route": "GET /levels",
+     "n": 293,
+     "erreurs": 0,
+     "p50": 19.2,
+     "p95": 36.6,
+     "p99": 70.6,
+     "max": 76.8,
+     "statuts": {
+      "200": 293
+     },
+     "rps": 4.9
+    },
+    {
+     "route": "GET /profiles/:id/parcours",
+     "n": 293,
+     "erreurs": 0,
+     "p50": 11.5,
+     "p95": 32.9,
+     "p99": 58.5,
+     "max": 80.1,
+     "statuts": {
+      "200": 293
+     },
+     "rps": 4.9
+    },
+    {
+     "route": "POST /auth/login",
+     "n": 65,
+     "erreurs": 0,
+     "p50": 49.4,
+     "p95": 91.2,
+     "p99": 133.4,
+     "max": 133.4,
+     "statuts": {
+      "200": 65
+     },
+     "rps": 1.1
+    }
+   ],
+   "fenetres": [
+    {
+     "t": 0,
+     "rps": 129.1,
+     "erreurs": 0,
+     "p50": 5,
+     "p95": 15,
+     "p99": 25.4
+    },
+    {
+     "t": 10,
+     "rps": 189.4,
+     "erreurs": 0,
+     "p50": 7.9,
+     "p95": 28.4,
+     "p99": 49.6
+    },
+    {
+     "t": 20,
+     "rps": 132.8,
+     "erreurs": 0,
+     "p50": 5,
+     "p95": 17.2,
+     "p99": 29
+    },
+    {
+     "t": 30,
+     "rps": 184.1,
+     "erreurs": 0,
+     "p50": 8.4,
+     "p95": 33.3,
+     "p99": 70
+    },
+    {
+     "t": 40,
+     "rps": 135.5,
+     "erreurs": 0,
+     "p50": 5.1,
+     "p95": 16.9,
+     "p99": 26.5
+    },
+    {
+     "t": 50,
+     "rps": 184.3,
+     "erreurs": 0,
+     "p50": 7.7,
+     "p95": 28.9,
+     "p99": 47.7
+    }
+   ]
+  },
+  {
+   "uv": 200,
+   "scenario": "parcours",
+   "debut": "2026-10-14T10:11:09.934Z",
+   "fin": "2026-10-14T10:12:09.933Z",
+   "duree": 60,
+   "global": {
+    "n": 17167,
+    "erreurs": 0,
+    "p50": 19,
+    "p95": 729.5,
+    "p99": 1714,
+    "max": 3328.2,
+    "rps": 286.1,
+    "tauxErreur": 0
+   },
+   "generateurCpuS": 18.2,
+   "routes": [
+    {
+     "route": "GET /quran/mushaf-exact/pages/:p",
+     "n": 1727,
+     "erreurs": 0,
+     "p50": 10.5,
+     "p95": 306.3,
+     "p99": 578.2,
+     "max": 867,
+     "statuts": {
+      "200": 1727
+     },
+     "rps": 28.8
+    },
+    {
+     "route": "GET audio de leçon (mp3)",
+     "n": 1706,
+     "erreurs": 0,
+     "p50": 21,
+     "p95": 252.8,
+     "p99": 439,
+     "max": 554.4,
+     "statuts": {
+      "200": 1706
+     },
+     "rps": 28.4
+    },
+    {
+     "route": "GET /mutun/:texte-differe.json (bêta)",
+     "n": 603,
+     "erreurs": 0,
+     "p50": 49.3,
+     "p95": 1215.3,
+     "p99": 1719.2,
+     "max": 1785.4,
+     "statuts": {
+      "200": 603
+     },
+     "rps": 10.1
+    },
+    {
+     "route": "web /coran/mushaf (page)",
+     "n": 597,
+     "erreurs": 0,
+     "p50": 2.9,
+     "p95": 13.6,
+     "p99": 72.8,
+     "max": 89.3,
+     "statuts": {
+      "200": 597
+     },
+     "rps": 10
+    },
+    {
+     "route": "GET /quran/mushaf-exact",
+     "n": 597,
+     "erreurs": 0,
+     "p50": 9.1,
+     "p95": 235.1,
+     "p99": 342.8,
+     "max": 480,
+     "statuts": {
+      "200": 597
+     },
+     "rps": 10
+    },
+    {
+     "route": "GET /quran/audio/reciters",
+     "n": 597,
+     "erreurs": 0,
+     "p50": 26.3,
+     "p95": 351.3,
+     "p99": 524.2,
+     "max": 665,
+     "statuts": {
+      "200": 597
+     },
+     "rps": 10
+    },
+    {
+     "route": "GET /profiles/:id/madjaliss",
+     "n": 594,
+     "erreurs": 0,
+     "p50": 23,
+     "p95": 586.2,
+     "p99": 908.4,
+     "max": 959.9,
+     "statuts": {
+      "200": 594
+     },
+     "rps": 9.9
+    },
+    {
+     "route": "web /madjaliss/:texte (page)",
+     "n": 588,
+     "erreurs": 0,
+     "p50": 2.9,
+     "p95": 16.5,
+     "p99": 78.6,
+     "max": 169.6,
+     "statuts": {
+      "200": 588
+     },
+     "rps": 9.8
+    },
+    {
+     "route": "GET /mutun/:texte.json",
+     "n": 588,
+     "erreurs": 0,
+     "p50": 4.8,
+     "p95": 17.6,
+     "p99": 68.5,
+     "max": 185.1,
+     "statuts": {
+      "200": 588
+     },
+     "rps": 9.8
+    },
+    {
+     "route": "GET /units/:id (leçon)",
+     "n": 562,
+     "erreurs": 0,
+     "p50": 265.3,
+     "p95": 792.4,
+     "p99": 1280,
+     "max": 1490.7,
+     "statuts": {
+      "200": 562
+     },
+     "rps": 9.4
+    },
+    {
+     "route": "GET /levels/:code/units",
+     "n": 556,
+     "erreurs": 0,
+     "p50": 93.4,
+     "p95": 459.4,
+     "p99": 843.5,
+     "max": 1037.6,
+     "statuts": {
+      "200": 556
+     },
+     "rps": 9.3
+    },
+    {
+     "route": "web /lecons/:id (page)",
+     "n": 556,
+     "erreurs": 0,
+     "p50": 2.9,
+     "p95": 14,
+     "p99": 94,
+     "max": 191.2,
+     "statuts": {
+      "200": 556
+     },
+     "rps": 9.3
+    },
+    {
+     "route": "GET /today/:id",
+     "n": 555,
+     "erreurs": 0,
+     "p50": 484.2,
+     "p95": 2717.3,
+     "p99": 3252.9,
+     "max": 3328.2,
+     "statuts": {
+      "200": 555
+     },
+     "rps": 9.3
+    },
+    {
+     "route": "GET /profiles/:id/parcours",
+     "n": 553,
+     "erreurs": 0,
+     "p50": 339.5,
+     "p95": 1993.3,
+     "p99": 2301.4,
+     "max": 2472.6,
+     "statuts": {
+      "200": 553
+     },
+     "rps": 9.2
+    },
+    {
+     "route": "GET /auth/me",
+     "n": 534,
+     "erreurs": 0,
+     "p50": 255.5,
+     "p95": 1578.3,
+     "p99": 1720.1,
+     "max": 1765.4,
+     "statuts": {
+      "200": 534
+     },
+     "rps": 8.9
+    },
+    {
+     "route": "GET /quran/audio/reciters/:id/suras/:n",
+     "n": 525,
+     "erreurs": 0,
+     "p50": 10.4,
+     "p95": 141.9,
+     "p99": 331.7,
+     "max": 423.4,
+     "statuts": {
+      "200": 525
+     },
+     "rps": 8.8
+    },
+    {
+     "route": "GET audio de verset (mp3)",
+     "n": 525,
+     "erreurs": 0,
+     "p50": 11.5,
+     "p95": 122.3,
+     "p99": 229,
+     "max": 503.7,
+     "statuts": {
+      "200": 525
+     },
+     "rps": 8.8
+    },
+    {
+     "route": "GET /fonctions",
+     "n": 523,
+     "erreurs": 0,
+     "p50": 156.9,
+     "p95": 914.9,
+     "p99": 1142.6,
+     "max": 1186.3,
+     "statuts": {
+      "200": 523
+     },
+     "rps": 8.7
+    },
+    {
+     "route": "GET /levels",
+     "n": 521,
+     "erreurs": 0,
+     "p50": 178.1,
+     "p95": 798.5,
+     "p99": 958.8,
+     "max": 1057.5,
+     "statuts": {
+      "200": 521
+     },
+     "rps": 8.7
+    },
+    {
+     "route": "GET /acces/statut",
+     "n": 520,
+     "erreurs": 0,
+     "p50": 93.9,
+     "p95": 593.4,
+     "p99": 709.8,
+     "max": 755.9,
+     "statuts": {
+      "200": 520
+     },
+     "rps": 8.7
+    },
+    {
+     "route": "GET /config",
+     "n": 519,
+     "erreurs": 0,
+     "p50": 65.5,
+     "p95": 404.5,
+     "p99": 469.3,
+     "max": 520.6,
+     "statuts": {
+      "200": 519
+     },
+     "rps": 8.7
+    },
+    {
+     "route": "web / (page)",
+     "n": 511,
+     "erreurs": 0,
+     "p50": 4.3,
+     "p95": 36.1,
+     "p99": 98.3,
+     "max": 159.5,
+     "statuts": {
+      "200": 511
+     },
+     "rps": 8.5
+    },
+    {
+     "route": "web /hifz (page)",
+     "n": 498,
+     "erreurs": 0,
+     "p50": 3,
+     "p95": 16.4,
+     "p99": 54.2,
+     "max": 98.2,
+     "statuts": {
+      "200": 498
+     },
+     "rps": 8.3
+    },
+    {
+     "route": "GET /hifz/books",
+     "n": 497,
+     "erreurs": 0,
+     "p50": 11.9,
+     "p95": 241.1,
+     "p99": 444.8,
+     "max": 517.6,
+     "statuts": {
+      "200": 497
+     },
+     "rps": 8.3
+    },
+    {
+     "route": "GET /hifz/profiles/:id",
+     "n": 497,
+     "erreurs": 0,
+     "p50": 16.7,
+     "p95": 378.1,
+     "p99": 588.3,
+     "max": 797.2,
+     "statuts": {
+      "200": 497
+     },
+     "rps": 8.3
+    },
+    {
+     "route": "POST /attempts (5 événements)",
+     "n": 477,
+     "erreurs": 0,
+     "p50": 50.1,
+     "p95": 782.1,
+     "p99": 1199.3,
+     "max": 1343.1,
+     "statuts": {
+      "200": 477
+     },
+     "rps": 8
+    },
+    {
+     "route": "GET /famille/messages",
+     "n": 477,
+     "erreurs": 0,
+     "p50": 25,
+     "p95": 505.1,
+     "p99": 745.1,
+     "max": 912.4,
+     "statuts": {
+      "200": 477
+     },
+     "rps": 8
+    },
+    {
+     "route": "POST /auth/login",
+     "n": 164,
+     "erreurs": 0,
+     "p50": 792,
+     "p95": 3033.2,
+     "p99": 3119.8,
+     "max": 3163.1,
+     "statuts": {
+      "200": 164
+     },
+     "rps": 2.7
+    }
+   ],
+   "fenetres": [
+    {
+     "t": 0,
+     "rps": 275.8,
+     "erreurs": 0,
+     "p50": 52.6,
+     "p95": 1934.1,
+     "p99": 3008.3
+    },
+    {
+     "t": 10,
+     "rps": 272.3,
+     "erreurs": 0,
+     "p50": 10.7,
+     "p95": 108.2,
+     "p99": 223
+    },
+    {
+     "t": 20,
+     "rps": 293.1,
+     "erreurs": 0,
+     "p50": 197.3,
+     "p95": 809.2,
+     "p99": 1207.7
+    },
+    {
+     "t": 30,
+     "rps": 276.1,
+     "erreurs": 0,
+     "p50": 8.2,
+     "p95": 36.8,
+     "p99": 78.5
+    },
+    {
+     "t": 40,
+     "rps": 314.1,
+     "erreurs": 0,
+     "p50": 70.1,
+     "p95": 547.9,
+     "p99": 953.2
+    },
+    {
+     "t": 50,
+     "rps": 285.3,
+     "erreurs": 0,
+     "p50": 11.7,
+     "p95": 185.7,
+     "p99": 417.9
+    }
+   ]
+  },
+  {
+   "uv": 400,
+   "scenario": "parcours",
+   "debut": "2026-10-14T10:12:46.968Z",
+   "fin": "2026-10-14T10:13:46.967Z",
+   "duree": 60,
+   "global": {
+    "n": 21184,
+    "erreurs": 56,
+    "p50": 503.3,
+    "p95": 3428.9,
+    "p99": 6280,
+    "max": 7411.4,
+    "rps": 353.1,
+    "tauxErreur": 0.3
+   },
+   "generateurCpuS": 20.9,
+   "routes": [
+    {
+     "route": "GET audio de leçon (mp3)",
+     "n": 2389,
+     "erreurs": 0,
+     "p50": 428.2,
+     "p95": 913.7,
+     "p99": 1199.8,
+     "max": 1696.9,
+     "statuts": {
+      "200": 2389
+     },
+     "rps": 39.8
+    },
+    {
+     "route": "GET /quran/mushaf-exact/pages/:p",
+     "n": 1841,
+     "erreurs": 0,
+     "p50": 293.2,
+     "p95": 1525.6,
+     "p99": 1952.2,
+     "max": 2451.1,
+     "statuts": {
+      "200": 1841
+     },
+     "rps": 30.7
+    },
+    {
+     "route": "GET /units/:id (leçon)",
+     "n": 794,
+     "erreurs": 0,
+     "p50": 1932.4,
+     "p95": 2747.3,
+     "p99": 3100.6,
+     "max": 3993.1,
+     "statuts": {
+      "200": 794
+     },
+     "rps": 13.2
+    },
+    {
+     "route": "GET /levels/:code/units",
+     "n": 786,
+     "erreurs": 0,
+     "p50": 1036.5,
+     "p95": 1652.4,
+     "p99": 2272.7,
+     "max": 2546.8,
+     "statuts": {
+      "200": 786
+     },
+     "rps": 13.1
+    },
+    {
+     "route": "web /lecons/:id (page)",
+     "n": 786,
+     "erreurs": 0,
+     "p50": 2.9,
+     "p95": 12,
+     "p99": 42.3,
+     "max": 56.8,
+     "statuts": {
+      "200": 786
+     },
+     "rps": 13.1
+    },
+    {
+     "route": "GET /today/:id",
+     "n": 783,
+     "erreurs": 0,
+     "p50": 3495.9,
+     "p95": 6602.9,
+     "p99": 7134.1,
+     "max": 7411.4,
+     "statuts": {
+      "200": 783
+     },
+     "rps": 13.1
+    },
+    {
+     "route": "web /madjaliss/:texte (page)",
+     "n": 780,
+     "erreurs": 0,
+     "p50": 3.6,
+     "p95": 27.4,
+     "p99": 70.6,
+     "max": 105.2,
+     "statuts": {
+      "200": 780
+     },
+     "rps": 13
+    },
+    {
+     "route": "GET /mutun/:texte.json",
+     "n": 780,
+     "erreurs": 0,
+     "p50": 5.7,
+     "p95": 32.6,
+     "p99": 78.8,
+     "max": 99.3,
+     "statuts": {
+      "200": 780
+     },
+     "rps": 13
+    },
+    {
+     "route": "GET /profiles/:id/madjaliss",
+     "n": 780,
+     "erreurs": 0,
+     "p50": 545.5,
+     "p95": 1467.3,
+     "p99": 1866.5,
+     "max": 2256.4,
+     "statuts": {
+      "200": 780
+     },
+     "rps": 13
+    },
+    {
+     "route": "GET /mutun/:texte-differe.json (bêta)",
+     "n": 780,
+     "erreurs": 56,
+     "p50": 1097.4,
+     "p95": 2503.3,
+     "p99": 2509.9,
+     "max": 2673.1,
+     "statuts": {
+      "200": 724,
+      "401": 56
+     },
+     "rps": 13
+    },
+    {
+     "route": "GET /profiles/:id/parcours",
+     "n": 772,
+     "erreurs": 0,
+     "p50": 2419.2,
+     "p95": 4557.7,
+     "p99": 5535.5,
+     "max": 5868.6,
+     "statuts": {
+      "200": 772
+     },
+     "rps": 12.9
+    },
+    {
+     "route": "GET /auth/me",
+     "n": 740,
+     "erreurs": 0,
+     "p50": 2494.7,
+     "p95": 4127.7,
+     "p99": 4360,
+     "max": 4513.6,
+     "statuts": {
+      "200": 740
+     },
+     "rps": 12.3
+    },
+    {
+     "route": "web /coran/mushaf (page)",
+     "n": 722,
+     "erreurs": 0,
+     "p50": 3.3,
+     "p95": 36.5,
+     "p99": 153.9,
+     "max": 297.1,
+     "statuts": {
+      "200": 722
+     },
+     "rps": 12
+    },
+    {
+     "route": "GET /quran/mushaf-exact",
+     "n": 720,
+     "erreurs": 0,
+     "p50": 260.2,
+     "p95": 695.4,
+     "p99": 980.3,
+     "max": 1315.6,
+     "statuts": {
+      "200": 720
+     },
+     "rps": 12
+    },
+    {
+     "route": "GET /quran/audio/reciters",
+     "n": 719,
+     "erreurs": 0,
+     "p50": 432.8,
+     "p95": 1059.7,
+     "p99": 1367.1,
+     "max": 1756.4,
+     "statuts": {
+      "200": 719
+     },
+     "rps": 12
+    },
+    {
+     "route": "GET /fonctions",
+     "n": 714,
+     "erreurs": 0,
+     "p50": 1549,
+     "p95": 2638.9,
+     "p99": 3015.4,
+     "max": 3188.5,
+     "statuts": {
+      "200": 714
+     },
+     "rps": 11.9
+    },
+    {
+     "route": "GET /levels",
+     "n": 704,
+     "erreurs": 0,
+     "p50": 1279.2,
+     "p95": 2287.4,
+     "p99": 2532.7,
+     "max": 2572.1,
+     "statuts": {
+      "200": 704
+     },
+     "rps": 11.7
+    },
+    {
+     "route": "GET /acces/statut",
+     "n": 696,
+     "erreurs": 0,
+     "p50": 911.9,
+     "p95": 1765.1,
+     "p99": 1987.3,
+     "max": 2023.2,
+     "statuts": {
+      "200": 696
+     },
+     "rps": 11.6
+    },
+    {
+     "route": "GET /config",
+     "n": 684,
+     "erreurs": 0,
+     "p50": 615.4,
+     "p95": 1215.4,
+     "p99": 1424.6,
+     "max": 1690.2,
+     "statuts": {
+      "200": 684
+     },
+     "rps": 11.4
+    },
+    {
+     "route": "web / (page)",
+     "n": 668,
+     "erreurs": 0,
+     "p50": 4.1,
+     "p95": 20.1,
+     "p99": 48.6,
+     "max": 119.3,
+     "statuts": {
+      "200": 668
+     },
+     "rps": 11.1
+    },
+    {
+     "route": "GET /quran/audio/reciters/:id/suras/:n",
+     "n": 488,
+     "erreurs": 0,
+     "p50": 62.2,
+     "p95": 986,
+     "p99": 1304.2,
+     "max": 1374.2,
+     "statuts": {
+      "200": 488
+     },
+     "rps": 8.1
+    },
+    {
+     "route": "GET audio de verset (mp3)",
+     "n": 486,
+     "erreurs": 0,
+     "p50": 54.5,
+     "p95": 739.1,
+     "p99": 1003.8,
+     "max": 1360.9,
+     "statuts": {
+      "200": 486
+     },
+     "rps": 8.1
+    },
+    {
+     "route": "web /hifz (page)",
+     "n": 449,
+     "erreurs": 0,
+     "p50": 3.3,
+     "p95": 16,
+     "p99": 42.4,
+     "max": 123.2,
+     "statuts": {
+      "200": 449
+     },
+     "rps": 7.5
+    },
+    {
+     "route": "GET /hifz/books",
+     "n": 446,
+     "erreurs": 0,
+     "p50": 135.1,
+     "p95": 977.8,
+     "p99": 1232.8,
+     "max": 1308.7,
+     "statuts": {
+      "200": 446
+     },
+     "rps": 7.4
+    },
+    {
+     "route": "GET /hifz/profiles/:id",
+     "n": 446,
+     "erreurs": 0,
+     "p50": 199.5,
+     "p95": 1415.2,
+     "p99": 1721.6,
+     "max": 1861.8,
+     "statuts": {
+      "200": 446
+     },
+     "rps": 7.4
+    },
+    {
+     "route": "POST /attempts (5 événements)",
+     "n": 434,
+     "erreurs": 0,
+     "p50": 1194.6,
+     "p95": 3168.9,
+     "p99": 3963.4,
+     "max": 4209.6,
+     "statuts": {
+      "200": 434
+     },
+     "rps": 7.2
+    },
+    {
+     "route": "GET /famille/messages",
+     "n": 434,
+     "erreurs": 0,
+     "p50": 761.5,
+     "p95": 2746.7,
+     "p99": 3010.7,
+     "max": 3315,
+     "statuts": {
+      "200": 434
+     },
+     "rps": 7.2
+    },
+    {
+     "route": "POST /auth/login",
+     "n": 363,
+     "erreurs": 0,
+     "p50": 6195.8,
+     "p95": 6764.8,
+     "p99": 6842.3,
+     "max": 6901.6,
+     "statuts": {
+      "200": 363
+     },
+     "rps": 6.1
+    }
+   ],
+   "fenetres": [
+    {
+     "t": 0,
+     "rps": 324.2,
+     "erreurs": 3,
+     "p50": 1560.1,
+     "p95": 6376.4,
+     "p99": 6805.3
+    },
+    {
+     "t": 10,
+     "rps": 387.2,
+     "erreurs": 29,
+     "p50": 174,
+     "p95": 2364.2,
+     "p99": 2551.3
+    },
+    {
+     "t": 20,
+     "rps": 402,
+     "erreurs": 0,
+     "p50": 36.5,
+     "p95": 904.5,
+     "p99": 1525.5
+    },
+    {
+     "t": 30,
+     "rps": 319.5,
+     "erreurs": 10,
+     "p50": 775.8,
+     "p95": 2413.4,
+     "p99": 3129
+    },
+    {
+     "t": 40,
+     "rps": 297,
+     "erreurs": 8,
+     "p50": 1058.1,
+     "p95": 4547.6,
+     "p99": 5765.5
+    },
+    {
+     "t": 50,
+     "rps": 388.5,
+     "erreurs": 6,
+     "p50": 440.1,
+     "p95": 1892.1,
+     "p99": 2964.3
+    }
+   ]
+  }
+ ]
+}

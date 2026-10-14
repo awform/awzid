@@ -68,3 +68,26 @@ enseignant, avec un témoin qui prouve que le détecteur voit une violation).
 - L'instance utilisait des images construites avec une copie **locale** du Dockerfile (apt en HTTPS et
   certificat du mandataire du conteneur cloud, pour la construction seulement) ; le Dockerfile du dépôt n'est
   pas modifié. À refaire sur la VM avec les images de production (`deploy.sh` normal) et les vrais livres.
+
+## 14/10/2026 — passe sur la démonstration privée (images 197efe3, ZAP 2.17.0) : passif + actif authentifié
+
+Cible `http://127.0.0.1` seulement (Caddy de la démonstration). Détail et tri complet :
+`application\beta\RAPPORT_CHARGE_SECURITE_14-10.md` § 7.
+
+- Passif sans connexion, araignée AJAX (`infra/securite/zap.sh http://127.0.0.1 --ajax`) : 0 échec, 4 avertissements nouveaux.
+- **Actif authentifié, limité aux routes de l'application** (`infra/securite/zap-actif.sh`, compte fictif adulte, jeton
+  injecté par règle de remplacement avec l'en-tête `x-awform`, 44 requêtes d'amorçage, araignée classique 99 URLs +
+  AJAX 4 776 URLs, attaque active 11 min 53 s, 2 fils). Exclus : déconnexion, mot de passe, suppression de compte,
+  administration/personnel, écoute IA, audio et statiques.
+
+| Règle | Où | Verdict | Suite |
+|---|---|---|---|
+| 10038 CSP absente | `/documents/fiche-consentement-ecole.html` ; `/api` (racine) | réelle, faible | **corrigé** dans `infra/prod/Caddyfile` (CSP stricte sur `/documents/*`, fermée sur `/api` et `/api/*`) ; contrôlé par `caddy-essai.sh` et `apps/api/test/charge-parcours.test.ts` |
+| 10062 PII Disclosure (haute) | `/api/v1/packs` | **faux positif** | « numéro de carte » = morceau d'une empreinte SHA-256 qui passe Luhn |
+| 6 Path Traversal (haute, confiance basse) | `POST /api/v1/attempts`, `eventType` | **faux positif vérifié** | liste fermée de types ; `../../…` → 400 (20 caractères) ; jamais le système de fichiers |
+| 90004 Cross-Origin-Resource-Policy absente | statiques (CSS, `robots.txt`) | réelle, faible | à décider (l'API pose déjà `same-origin`) |
+| 10049, 10096, 120000, 10109, 10104, 10111 | | faux positifs / information | déjà ignorés ou voulus (cache long des fichiers à empreinte) |
+
+Limites : un seul rôle (adulte autonome) ; parent + enfant, enseignant (second facteur), école, administrateur à faire
+(`R8` du rapport). Un jeton de session du compte fictif a été imprimé par erreur : sessions révoquées, journal expurgé
+désormais par le script.

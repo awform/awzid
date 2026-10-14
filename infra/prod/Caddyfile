@@ -31,6 +31,14 @@
 		X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
 		-Server
 	}
+	# documents imprimables statiques (fiche de consentement : aucun script, une seule feuille de style de l'origine) :
+	# politique de sécurité du contenu stricte (scan ZAP du 14/10/2026, règle 10038 : ces fichiers statiques ne passent
+	# pas par la politique de l'application)
+	@documents path /documents/*
+	header @documents Content-Security-Policy "default-src 'none'; style-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+	# racine « /api » seule (réponse JSON du serveur web, pas de l'API) : même politique fermée que /api/*
+	@apiracine path /api
+	header @apiracine Content-Security-Policy "default-src 'none'; frame-ancestors 'none'"
 	# aucun moteur de recherche (robots.txt strict), aucun sitemap
 	handle /robots.txt {
 		header Content-Type "text/plain; charset=utf-8"
@@ -55,6 +63,9 @@
 	}
 	@api path /api/*
 	handle @api {
+		# l'API ne renvoie jamais de page HTML (JSON, audio, polices) : politique de sécurité du contenu fermée
+		# (scan ZAP du 14/10/2026, règle 10038 sur /api)
+		header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'"
 		reverse_proxy api:3000
 	}
 	handle {
