@@ -3100,6 +3100,7 @@
   "mj.ens_aide": "Vocalizaciones por verificar, variantes de las ediciones y palabras de sentido no establecido: nunca se muestran al alumno.",
   "mj.ens_erreur": "Las notas del profesor necesitan Internet.",
   "mj.ens_a_verifier": "Por verificar:",
+  "mj.ens_info": "Información:",
   "mj.ens_variante": "Variante {id}:",
   "mj.ens_mots": "Palabras reservadas al profesor",
   "mj.ens_motif_sens": "sentido por establecer",

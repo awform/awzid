@@ -3100,6 +3100,7 @@
   "mj.ens_aide": "Zu prüfende Vokalisierung, Varianten der Ausgaben und Wörter mit ungeklärter Bedeutung: dem Lernenden nie gezeigt.",
   "mj.ens_erreur": "Die Notizen des Lehrers brauchen Internet.",
   "mj.ens_a_verifier": "Zu prüfen:",
+  "mj.ens_info": "Hinweis:",
   "mj.ens_variante": "Variante {id}:",
   "mj.ens_mots": "Dem Lehrer vorbehaltene Wörter",
   "mj.ens_motif_sens": "Bedeutung zu klären",

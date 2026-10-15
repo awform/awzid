@@ -219,6 +219,8 @@ export interface NotesEnseignant {
   phrases: Array<{
     id: string;
     a_verifier: string[];
+    /** lot 10 : notes d'information du référent (`note_info`) : jamais un avertissement « incertain » */
+    info?: string[];
     variantes: Array<Record<string, string>>;
     /** choix de traduction du référent (précision pédagogique pour l'enseignant) */
     traduction?: string;

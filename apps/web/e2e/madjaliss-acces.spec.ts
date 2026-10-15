@@ -116,9 +116,9 @@ test('fichiers publics : ni séance différée d’Ibn ʿĀshir, ni phrase de la
   expect(ri.status()).toBe(200);
   const rj = (await ri.json()) as { phrases: unknown[]; seances: unknown[] };
   expect(rj.phrases).toEqual([]);
-  expect(rj.seances).toHaveLength(264);
-  // lot 6 : les 44 séances ouvertes ont leurs phrases dans des parties publiques ; aucune séance différée n'y est
-  expect((rj.seances as Array<{ differe?: true }>).filter((s) => !s.differe)).toHaveLength(44);
+  expect(rj.seances).toHaveLength(265);
+  // lot 6 : les 72 séances ouvertes (15/10) ont leurs phrases dans des parties publiques ; aucune séance différée n'y est
+  expect((rj.seances as Array<{ differe?: true }>).filter((s) => !s.differe)).toHaveLength(72);
 
   const la = await (await request.get('/mutun/lamiyya.json')).text();
   const lm = JSON.parse(la) as { phrases: Array<{ id: string; masque?: true; h?: string[] }> };
@@ -208,7 +208,7 @@ test('personnel : tout (200), notes de l’enseignant comprises', async ({ page 
     differe: number[];
     consigne_differe: string;
   };
-  expect(j.differe).toHaveLength(220);
+  expect(j.differe).toHaveLength(193);
   expect(j.consigne_differe).toContain('masquées aux invités de la bêta');
   const ia = (await (await page.request.get('/mutun/ibn-ashir-enseignant.json')).json()) as {
     publication: string;

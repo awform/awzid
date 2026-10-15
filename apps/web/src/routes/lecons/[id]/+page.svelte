@@ -1,5 +1,7 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
+  import BoutonTraduction from '$lib/BoutonTraduction.svelte';
+  import { memoriserTraduction, traductionVisible } from '$lib/traduction';
   import { onMount, setContext, untrack } from 'svelte';
   import { chargerModule } from '$lib/charger';
   import ConnexionNecessaire from '$lib/ConnexionNecessaire.svelte';
@@ -146,6 +148,19 @@
   );
   let progress: { status: string; score: number | null; bestScore: number | null } | null =
     $state(null);
+  /**
+   * lot 10 : bouton « Voir / Cacher la traduction » (décision du client du 15/10) : français affiché par défaut, choix
+   * mémorisé par profil. Il ne cache que la traduction des TEXTES et PHRASES arabes (texte de lecture, phrase vedette,
+   * dialogue, sens des versets, points d'adab) ; consignes, explications de grammaire, mots et lexique restent en
+   * français. Bilans et examens `sans_traduction` : la projection de l'élève a déjà retiré la traduction (pas de
+   * bouton, rien à montrer).
+   */
+  // valeur relue quand le profil change ; le bouton la remplace (dérivé modifiable)
+  let trad = $derived(traductionVisible(profileId));
+  function basculerTrad() {
+    trad = !trad;
+    memoriserTraduction(profileId, trad);
+  }
   onMount(() => {
     void demoProfileFor(u.levelCode).then(async (p) => {
       profileId = p?.id ?? null;
@@ -509,6 +524,7 @@
             <span><Bidi text={isEval ? t('lecon.je_relis') : t('lecon.je_lis')} /></span>
           </h2>
         {/if}
+        {@render boutonTrad(!R.non_prepare && (!!R.vedette?.fr || phrases.some((p) => !!p.fr)))}
         {#if R.syllabes?.length}
           <div class="syl" dir="rtl">
             {#each R.syllabes as s, i (i)}<span class="sylc"
@@ -540,7 +556,7 @@
             <div class="note">
               <ArFr
                 ar={R.vedette.ar}
-                fr={R.vedette.fr ? `« ${R.vedette.fr} »` : ''}
+                fr={R.vedette.fr && trad ? `« ${R.vedette.fr} »` : ''}
                 verset={vt}
                 {lettres}
                 stack
@@ -550,7 +566,13 @@
           {/if}
           {#each phrases as p, i (i)}
             <div class="phrase">
-              <ArFr ar={p.ar} fr={p.fr ?? ''} verset={p.verset_tanzil} {lettres} stack />
+              <ArFr
+                ar={p.ar}
+                fr={trad ? (p.fr ?? '') : ''}
+                verset={p.verset_tanzil}
+                {lettres}
+                stack
+              />
               {#if !p.verset_tanzil}<Ecouter text={p.ar} />{/if}
             </div>
           {/each}
@@ -960,6 +982,12 @@
   </section>
 {/snippet}
 
+{#snippet boutonTrad(utile: boolean)}
+  {#if utile}<p class="bascule-trad">
+      <BoutonTraduction visible={trad} onbasculer={basculerTrad} />
+    </p>{/if}
+{/snippet}
+
 {#snippet dlg()}
   <section class="blk">
     <h2>
@@ -969,6 +997,7 @@
     <p class="hint fr">
       <Bidi text={(dialogue?.consigne_fr as string) ?? t('lecon.dialogue_consigne')} />
     </p>
+    {@render boutonTrad((dialogue?.repliques ?? []).some((r) => !!r.fr))}
     {#if dialogue?.lieu}
       <Scene
         spec={{
@@ -992,7 +1021,7 @@
               {/if}<Bidi text={r.qui} />
             </div>
             <Ar text={r.ar} {lettres} /><Ecouter text={r.ar} />
-            {#if r.fr}<p class="fr"><Bidi text={r.fr} /></p>{/if}
+            {#if r.fr && trad}<p class="fr"><Bidi text={r.fr} /></p>{/if}
           </div>
         </div>
       {/each}
@@ -1018,6 +1047,7 @@
       <Ar text={Q?.titre_ar ?? 'مِنَ الْقُرْآنِ'} />
       <span><Bidi text={Q?.titre_fr ?? t('lecon.coran')} /></span>
     </h2>
+    {@render boutonTrad((Q?.versets ?? []).some((v) => !!v.fr && !masque(v) && !v.non_prepare))}
     {#each Q?.versets ?? [] as v, i (i)}
       {#if masque(v)}
         <p class="muted">{t('signal.suspendu_bloc')}</p>
@@ -1029,7 +1059,7 @@
       {:else}
         <div class="ayah" data-ref={v.ref_fr}>
           <Ar tag="p" quran text={v.ar} {lettres} />
-          {#if v.fr}<p class="fr sens"><Bidi text={v.fr} /></p>{/if}
+          {#if v.fr && trad}<p class="fr sens"><Bidi text={v.fr} /></p>{/if}
           <div class="cap">
             <span class="ref"><Bidi text={v.ref_fr ?? ''} /></span>
             {#if v.consigne_fr}<span class="fr">— <Bidi text={v.consigne_fr} /></span>{/if}
@@ -1083,10 +1113,17 @@
       <Ar text={fiqh?.titre_ar ?? 'آدَابِي'} />
       <span><Bidi text={fiqh?.titre_fr ?? t('lecon.adab')} /></span>
     </h2>
+    {@render boutonTrad((fiqh?.points ?? []).some((p) => !!p.fr && !!p.ar))}
     <ul>
       {#each fiqh?.points ?? [] as p, i (i)}<li class="pt">
           <!-- verset (texte Tanzil exact) : bloc de verset ; hadith, phrase : l'arabe sur sa ligne, le français dessous -->
-          <ArFr ar={p.ar ?? ''} fr={p.fr ?? ''} verset={p.verset_tanzil} stack />
+          <!-- lot 10 : un point sans arabe est une explication : toujours en français -->
+          <ArFr
+            ar={p.ar ?? ''}
+            fr={trad || !p.ar ? (p.fr ?? '') : ''}
+            verset={p.verset_tanzil}
+            stack
+          />
         </li>{/each}
     </ul>
     <!-- lot F1 (G2) : école juridique, étiquette posée à l'import (le texte du livre est inchangé) -->
@@ -1098,6 +1135,12 @@
 {/snippet}
 
 <style>
+  /* lot 10 : bouton « Voir / Cacher la traduction » */
+  .bascule-trad {
+    margin: 0 0 var(--space-s);
+    display: flex;
+    justify-content: flex-end;
+  }
   /* D1 : leçon section par section */
   .etapes-barre {
     position: sticky;

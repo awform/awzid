@@ -1,5 +1,8 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
+  import { activeProfile } from '$lib/attempts';
+  import BoutonTraduction from '$lib/BoutonTraduction.svelte';
+  import { memoriserTraduction, traductionVisible } from '$lib/traduction';
   import { onMount, setContext } from 'svelte';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
@@ -16,7 +19,8 @@
   import Sprite from '$lib/Sprite.svelte';
 
   /**
-   * Lecture d'un livret : couverture, pages une à une (texte arabe, traduction repliée, scène sans visage),
+   * Lecture d'un livret : couverture, pages une à une (texte arabe, traduction affichée par défaut et repliable,
+   * choix mémorisé par profil — lot 10), scène sans visage,
    * puis « je comprends » (questions), « mes mots » et le tampon « j'ai lu ce livre ».
    * Hors ligne si le livret est gardé sur l'appareil.
    */
@@ -24,7 +28,13 @@
   let pack = $state<BookletPack | null>(null);
   let loaded = $state(false);
   let p = $state(0);
-  let showFr = $state(false);
+  // lot 10 : traduction affichée par défaut, choix mémorisé par profil (`$lib/traduction`)
+  let pid: string | null = null;
+  let showFr = $state(traductionVisible(null));
+  function basculerTrad() {
+    showFr = !showFr;
+    memoriserTraduction(pid, showFr);
+  }
   let done = $state(false);
   setContext('illustrations', () => pack?.illustrations ?? {});
   // audio des lectures (A3) : fichiers du livret (niveau « lect-<code> » de l'index des livres)
@@ -39,6 +49,8 @@
   const LANG = new Set(['vrai_faux', 'relier', 'complete', 'ordre']);
 
   onMount(async () => {
+    pid = (await activeProfile().catch(() => null))?.id ?? null;
+    showFr = traductionVisible(pid);
     pack = await loadBooklet(page.params.code ?? '');
     loaded = true;
     if (pack) audio = await levelAudio(`lect-${pack.code}`);
@@ -81,13 +93,7 @@
         </div>
         <!-- la page entière, comme le bouton du moteur des livres (lignes jointes par une espace) -->
         <Ecouter text={pageAudioText(str(pg.ar))} label={t('audio.ecouter_page')} />
-        <button
-          type="button"
-          class="small"
-          onclick={() => (showFr = !showFr)}
-          data-testid="traduction"
-          ><Bidi text={showFr ? t('bib.cacher_traduction') : t('bib.voir_traduction')} /></button
-        >
+        {#if str(pg.fr)}<BoutonTraduction visible={showFr} onbasculer={basculerTrad} />{/if}
         {#if showFr}<p class="fr" data-testid="texte-fr"><Bidi text={str(pg.fr)} /></p>{/if}
       </section>
     {/if}
@@ -125,11 +131,8 @@
     {/if}
 
     <nav class="pager">
-      <button
-        type="button"
-        disabled={p === 0}
-        onclick={() => ((p = p - 1), (showFr = false))}
-        data-testid="precedent">{t('bib.precedent')}</button
+      <button type="button" disabled={p === 0} onclick={() => (p = p - 1)} data-testid="precedent"
+        >{t('bib.precedent')}</button
       >
       <span data-testid="numero"
         ><Bidi
@@ -144,7 +147,7 @@
         type="button"
         class="primary"
         disabled={p > pages.length}
-        onclick={() => ((p = p + 1), (showFr = false))}
+        onclick={() => (p = p + 1)}
         data-testid="suivant">{t('bib.suivant')}</button
       >
     </nav>

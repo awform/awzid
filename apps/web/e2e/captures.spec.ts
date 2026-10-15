@@ -241,7 +241,8 @@ test.describe('lot 8', () => {
     const code = await page.locator('[data-livret]').first().getAttribute('data-livret');
     await page.goto(`/lectures/${code}`);
     await page.getByTestId('suivant').click();
-    await page.getByTestId('traduction').click();
+    // lot 10 : traduction affichée par défaut
+    await page.getByTestId('texte-fr').waitFor();
     await shot('37-livret-page');
     await page.clock.install();
     await page.goto('/coran/lecteur?s=112&vue=versets');
