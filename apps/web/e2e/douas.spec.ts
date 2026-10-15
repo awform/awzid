@@ -4,7 +4,7 @@ import { expect, newAdult, password, test } from './fixtures';
 import { pickProfile } from './profil';
 
 /**
- * Douas (phases 1 et 2) — onglet « Douas » de « Vivre l'islam » (données `/douas/douas.json`, à la demande) :
+ * Douas (phases 1 à 3) — onglet « Douas » de « Vivre l'islam » (données `/douas/douas.json`, à la demande) :
  *  - phase 2 : groupes, fiche « Comment invoquer », renvois, sens en français, voix de synthèse provisoire pour
  *    les hadiths seulement (jamais un verset), voyage complet ;
  *  - l'onglet, à côté de Bon comportement, Prières et Adhkār ; bandeau « Sources vérifiées » ;
@@ -86,16 +86,20 @@ test('onglet Douas : à côté des autres, bandeau, rubriques, une rubrique exac
   await expect(page.getByTestId('douas-bandeau')).toHaveText(
     'Sources vérifiées — en cours de relecture savante',
   );
-  // 18 rubriques (phase 2), la fiche « Comment invoquer » et les favoris ; groupes du référent
+  // 23 rubriques (phase 3), les fiches « Comment invoquer » et « L'aumône », les favoris ; groupes du référent
   const chips = page.getByTestId('douas-rubriques').locator('button');
-  await expect(chips).toHaveCount(d.rubriques.length + 2);
-  expect(d.rubriques.length).toBe(18);
+  await expect(chips).toHaveCount(d.rubriques.length + 3);
+  expect(d.rubriques.length).toBe(23);
   await expect(page.getByTestId('douas-rubriques').locator('[data-groupe]')).toHaveText([
     'Au quotidien',
     'Moments de la vie',
+    "Le temps de l'année",
     'Les besoins',
     'Le Coran',
   ]);
+  // fiches : « Comment invoquer » en tête, « L'aumône » en fin de rangée
+  await expect(chips.nth(1)).toHaveAttribute('data-rubrique', 'invoquer');
+  await expect(chips.last()).toHaveAttribute('data-rubrique', 'sadaqa');
   // rubrique « Repas » : douas du dossier, dans l'ordre, texte arabe exact, moment, sens en français
   await page.locator('[data-rubrique="repas"]').click();
   await expect(page.locator('[data-rubrique="repas"]')).toHaveAttribute('aria-pressed', 'true');
@@ -190,6 +194,67 @@ test('phase 2 : fiche « Comment invoquer », renvois « Voir aussi », voyage c
   await expect(
     liste(page).locator('[data-doua="DOU-VOY-10"]').getByTestId('douas-ecouter'),
   ).toHaveCount(0);
+});
+
+test('phase 3 : naissance, décès, Ramadan, fêtes et ʿArafa, fiche « L’aumône », langue de l’invocation', async ({
+  page,
+}) => {
+  await newAdult(page, 'douas-phase3');
+  // naissance : aucune formule fixe du Prophète ; « À savoir » sourcé ; l'adhān avec son degré, non présenté comme sunna
+  await page.goto('/vivre/douas?r=naissance');
+  await expect(page.getByTestId('douas-titre-rubrique')).toHaveText('Naissance');
+  await expect(page.getByTestId('douas-groupe')).toHaveText('Moments de la vie');
+  await expect(page.getByTestId('douas-liste')).toHaveCount(0);
+  await expect(page.getByTestId('etat-vide')).toHaveCount(0);
+  const savoir = page.getByTestId('douas-a-savoir');
+  await expect(savoir).toContainText('taḥnīk');
+  await expect(savoir.getByRole('link', { name: 'al-Bukhārī 5467' })).toHaveAttribute(
+    'href',
+    'https://sunnah.com/bukhari:5467',
+  );
+  const non = page.getByTestId('douas-non-ajoute');
+  await expect(non.locator('h3')).toHaveText("Ce que nous n'ajoutons pas");
+  await expect(non).toContainText('pas comme une sunna établie');
+  await expect(non.getByRole('link', { name: 'at-Tirmidhī 1514' })).toBeVisible();
+  // décès : condoléances, Abū Salama (deux lignes), prière funéraire ; voix provisoire (hadiths)
+  await page.goto('/vivre/douas?r=deces');
+  await expect.poll(() => ids(page)).toEqual(['DOU-DEC-01', 'DOU-DEC-02', 'DOU-DEC-03']);
+  await expect(liste(page).locator('[data-doua="DOU-DEC-02"] [data-douas-ar]')).toHaveCount(2);
+  await expect(
+    page.getByTestId('douas-voir-aussi').locator('[data-renvoi="DOU-ANG-04"]'),
+  ).toBeVisible();
+  // Ramadan : rupture du jeûne (Abū Dāwūd 2357), « trente douas » non ajoutées, nuit du Destin par renvoi
+  await page.goto('/vivre/douas?r=ramadan');
+  await expect(page.getByTestId('douas-groupe')).toHaveText("Le temps de l'année");
+  await expect.poll(() => ids(page)).toEqual(['DOU-RAM-01']);
+  await expect(page.getByTestId('douas-non-ajoute')).toContainText('trente douas');
+  await page.getByTestId('douas-voir-aussi').locator('[data-renvoi="DOU-PAR-05"]').click();
+  await expect(page.locator('[data-rubrique="repentir"]')).toHaveAttribute('aria-pressed', 'true');
+  // fêtes : vœux des Compagnons présentés comme tels ; ʿArafa traité honnêtement
+  await page.goto('/vivre/douas?r=fetes');
+  const eid = liste(page).locator('[data-doua="DOU-EID-01"]');
+  await expect(eid.getByTestId('douas-compagnon')).toHaveText("Parole d'un Compagnon");
+  await eid.getByRole('button', { name: 'Source' }).click();
+  await expect(eid.getByTestId('douas-source-detail')).toContainText(
+    "Ce n'est pas une parole du Prophète",
+  );
+  await expect(page.getByTestId('douas-non-ajoute')).toContainText('mursal');
+  // fiche « L'aumône » : hadiths sourcés, renvoi vers la zakāt (Ibn ʿĀshir, fiqh mālikite)
+  await page.locator('[data-rubrique="sadaqa"]').click();
+  await expect(page.getByTestId('douas-titre-rubrique')).toHaveText("L'aumône (ṣadaqa)");
+  const fiche = page.getByTestId('douas-fiche');
+  await expect(fiche.getByRole('link', { name: 'Muslim 2588' })).toHaveAttribute(
+    'href',
+    'https://sunnah.com/muslim:2588',
+  );
+  await expect(fiche.locator('[data-renvoi-lecon]').first()).toHaveAttribute(
+    'href',
+    '/madjaliss/ibn-ashir/36',
+  );
+  // « Comment invoquer » : langue de l'invocation dans la prière, tranchée sur l'ouvrage (page lue)
+  await page.locator('[data-rubrique="invoquer"]').click();
+  await expect(page.getByTestId('douas-fiche')).toContainText('makrūh');
+  await expect(page.getByTestId('douas-fiche')).not.toContainText('en cours de vérification');
 });
 
 test('source derrière « Source », ajout facultatif, tonnerre : parole d’un Compagnon', async ({
@@ -302,6 +367,8 @@ test('captures 412 × 915 clair / sombre (adulte et enfant)', async ({ page }) =
   await shoot('adulte-maison-sommeil', '/vivre/douas');
   await shoot('adulte-pluie-source', '/vivre/douas?r=pluie', 'DOU-PLU-05');
   await shoot('adulte-coran', '/vivre/douas?r=coran');
+  // phase 3 : « À savoir » avant la doua, « Ce que nous n'ajoutons pas » après
+  await shoot('adulte-ramadan', '/vivre/douas?r=ramadan');
   await page.context().clearCookies();
   await parentWithChild(page.request, 'Sami');
   await pickProfile(page, 'Sami');

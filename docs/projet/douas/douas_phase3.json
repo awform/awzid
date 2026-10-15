@@ -1,0 +1,168 @@
+{
+  "meta": {
+    "titre": "Douas - phase 3 (dossier de recherche du référent)",
+    "date": "2026-10-15",
+    "statut_global": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente d'une seconde lecture savante.",
+    "methode": "Même méthode que la phase 2. Chaque texte arabe a été lu le 15/10/2026 sur sunnah.com ou dorar.net, ouverts dans un navigateur, et copié par script depuis la page (contenu du DOM, matn seul, découpé par mots, sans isnad) : aucun texte retapé, aucune normalisation (pas de NFC). Seuls les retours à la ligne et espaces multiples de la mise en page HTML sont ramenés à une espace. Le texte a été transmis en base64 (UTF-8) ou en échappements \\u ; son empreinte SHA-256 (UTF-8), calculée dans le navigateur sur la page source, est notée dans `sha256`, recontrôlée à l'écriture de ce fichier et à chaque construction (scripts/douas.mjs). Degrés : tels qu'affichés par la source (al-Albānī pour Abū Dāwūd ; Darussalam pour at-Tirmidhī ; dorar.net : savant et ouvrage cités). Rien de mémoire.",
+    "champs": "id, rubrique, type, texte_ar, sha256, coran_ref, source_texte_url, reference, url_reference, degre, juge_par, statut ; compagnon (parole ou pratique de Compagnon, présentée comme telle)"
+  },
+  "douas": [
+    {
+      "id": "DOU-MAR-01",
+      "rubrique": "mariage",
+      "type": "hadith",
+      "texte_ar": "بَارَكَ اللَّهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ",
+      "sha256": "77e04851960917366d34761a4f778b5770e83f75e0868a87c80c5a5a7974b633",
+      "coran_ref": null,
+      "source_texte_url": "https://sunnah.com/abudawud:2130",
+      "reference": "Abū Dāwūd 2130 (aussi at-Tirmidhī 1091)",
+      "url_reference": "https://sunnah.com/abudawud:2130",
+      "degre": "sahih",
+      "juge_par": "al-Albānī",
+      "statut": "RETENUE"
+    },
+    {
+      "id": "DOU-MAR-02",
+      "rubrique": "mariage",
+      "type": "hadith",
+      "texte_ar": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَهَا وَخَيْرَ مَا جَبَلْتَهَا عَلَيْهِ وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَمِنْ شَرِّ مَا جَبَلْتَهَا عَلَيْهِ",
+      "sha256": "183368b279711e34c2c34096d2ce488e511aa4a5c57e3148d493067e3cf908ae",
+      "coran_ref": null,
+      "source_texte_url": "https://sunnah.com/abudawud:2160",
+      "reference": "Abū Dāwūd 2160 (fin du hadith : même formule pour l'achat d'une monture)",
+      "url_reference": "https://sunnah.com/abudawud:2160",
+      "degre": "hasan",
+      "juge_par": "al-Albānī",
+      "statut": "RETENUE"
+    },
+    {
+      "id": "DOU-DEC-01",
+      "rubrique": "deces",
+      "type": "hadith",
+      "texte_ar": "إِنَّ لِلَّهِ مَا أَخَذَ وَلَهُ مَا أَعْطَى وَكُلٌّ عِنْدَهُ بِأَجَلٍ مُسَمًّى، فَلْتَصْبِرْ وَلْتَحْتَسِبْ",
+      "sha256": "a4106c560587ea30050e4b5d419ced5dda9cbb7841ec2db808b3e39c7f5f70bb",
+      "coran_ref": null,
+      "source_texte_url": "https://sunnah.com/bukhari:1284",
+      "reference": "al-Bukhārī 1284 (aussi Muslim 923)",
+      "url_reference": "https://sunnah.com/bukhari:1284",
+      "degre": "sahih",
+      "juge_par": "al-Bukhārī",
+      "statut": "RETENUE"
+    },
+    {
+      "id": "DOU-DEC-02",
+      "rubrique": "deces",
+      "type": "hadith",
+      "texte_ar": "اللَّهُمَّ اغْفِرْ لأَبِي سَلَمَةَ وَارْفَعْ دَرَجَتَهُ فِي الْمَهْدِيِّينَ وَاخْلُفْهُ فِي عَقِبِهِ فِي الْغَابِرِينَ وَاغْفِرْ لَنَا وَلَهُ يَا رَبَّ الْعَالَمِينَ وَافْسَحْ لَهُ فِي قَبْرِهِ ‏.‏ وَنَوِّرْ لَهُ فِيهِ",
+      "sha256": "0dbbbe4d0165adf6811a646136a05129fa6bba11d199c75203f00180a082fd91",
+      "coran_ref": null,
+      "source_texte_url": "https://sunnah.com/muslim:920a",
+      "reference": "Muslim 920a (numérotation de sunnah.com) : invocation pour Abū Salama, après lui avoir fermé les yeux",
+      "url_reference": "https://sunnah.com/muslim:920a",
+      "degre": "sahih",
+      "juge_par": "Muslim",
+      "statut": "RETENUE"
+    },
+    {
+      "id": "DOU-DEC-03",
+      "rubrique": "deces",
+      "type": "hadith",
+      "texte_ar": "اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ وَأَكْرِمْ نُزُلَهُ وَوَسِّعْ مُدْخَلَهُ وَاغْسِلْهُ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ وَنَقِّهِ مِنَ الْخَطَايَا كَمَا نَقَّيْتَ الثَّوْبَ الأَبْيَضَ مِنَ الدَّنَسِ وَأَبْدِلْهُ دَارًا خَيْرًا مِنْ دَارِهِ وَأَهْلاً خَيْرًا مِنْ أَهْلِهِ وَزَوْجًا خَيْرًا مِنْ زَوْجِهِ وَأَدْخِلْهُ الْجَنَّةَ وَأَعِذْهُ مِنْ عَذَابِ الْقَبْرِ أَوْ مِنْ عَذَابِ النَّارِ",
+      "sha256": "705030e9ea7d2bab6d7d13f83075f07b4f66e48484cbd8a164ffbbfb5af06cad",
+      "coran_ref": null,
+      "source_texte_url": "https://sunnah.com/muslim:963a",
+      "reference": "Muslim 963a (numérotation de sunnah.com) : prière funéraire",
+      "url_reference": "https://sunnah.com/muslim:963a",
+      "degre": "sahih",
+      "juge_par": "Muslim",
+      "statut": "RETENUE"
+    },
+    {
+      "id": "DOU-RAM-01",
+      "rubrique": "ramadan",
+      "type": "hadith",
+      "texte_ar": "ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الأَجْرُ إِنْ شَاءَ اللَّهُ",
+      "sha256": "f9612b53e6e9896add24e019bcdd1be69141a4405b799c1d327c8b6a24b8200d",
+      "coran_ref": null,
+      "source_texte_url": "https://sunnah.com/abudawud:2357",
+      "reference": "Abū Dāwūd 2357",
+      "url_reference": "https://sunnah.com/abudawud:2357",
+      "degre": "hasan",
+      "juge_par": "al-Albānī",
+      "statut": "RETENUE"
+    },
+    {
+      "id": "DOU-EID-01",
+      "rubrique": "fetes",
+      "type": "hadith",
+      "texte_ar": "تقبل اللهُ منَّا ومنكَ",
+      "sha256": "5966721f52ce2084d1a118427bdc15ca8ef836a7d2e22c8ad774d258f2056187",
+      "coran_ref": null,
+      "source_texte_url": "https://dorar.net/h/eksoiWAb",
+      "reference": "al-Maḥāmilī, Ṣalāt al-ʿīdayn 147, d'après Jubayr ibn Nufayr : pratique des Compagnons, texte de Fatḥ al-Bārī 2/517 via dorar.net",
+      "url_reference": "https://dorar.net/h/eksoiWAb",
+      "degre": "hasan",
+      "juge_par": "Ibn Ḥajar : chaîne bonne (Fatḥ al-Bārī 2/517, dorar.net/h/eksoiWAb) ; al-Albānī : chaîne authentique (Tamām al-minna 354, dorar.net/h/x9ONriNC). Ce n'est pas une parole du Prophète : la version attribuée au Prophète (Wāthila) est jugée très faible (al-Albānī, as-Silsila aḍ-ḍaʿīfa 5666) et « munkar » (Ibn ʿAdī).",
+      "statut": "RETENUE",
+      "compagnon": true
+    }
+  ],
+  "ecartees": [
+    {
+      "id": "EC3-01",
+      "texte_ar": "",
+      "reference": "Adhān dans l'oreille du nouveau-né (Abū Dāwūd 5105 ; at-Tirmidhī 1514)",
+      "url": "https://sunnah.com/abudawud:5105",
+      "raison": "Degré divergent. Lu le 15/10 : al-Albānī « bon » (sunnah.com, Abū Dāwūd 5105) ; at-Tirmidhī « ḥasan ṣaḥīḥ » ; Darussalam « faible » (at-Tirmidhī 1514) ; Ibn Ḥajar : « il repose sur ʿĀṣim ibn ʿUbayd Allāh, qui est faible » (at-Talkhīṣ al-ḥabīr 4/1501, dorar.net/h/9qjEIGiE) ; adh-Dhahabī le cite parmi les critiques de ʿĀṣim (Mīzān al-iʿtidāl 2/354). Toutes les voies passent par ce rapporteur : nous ne le présentons pas comme une sunna établie ; la divergence est dite dans la rubrique « Naissance »."
+    },
+    {
+      "id": "EC3-02",
+      "texte_ar": "",
+      "reference": "Adhān dans l'oreille droite et iqāma dans l'oreille gauche (al-Bayhaqī, Shuʿab al-īmān, d'après Ibn ʿAbbās)",
+      "url": "https://dorar.net/h/uGCUs0mJ",
+      "raison": "Shuʿayb al-Arnaʾūṭ : dans sa chaîne, al-Ḥasan ibn ʿAmr ibn Sayf as-Sadūsī est « abandonné », accusé de mensonge par ʿAlī ibn al-Madīnī et al-Bukhārī ; al-Bayhaqī : « dans sa chaîne, il y a de la faiblesse ». Écarté."
+    },
+    {
+      "id": "EC3-03",
+      "texte_ar": "",
+      "reference": "Formule fixe de félicitation pour une naissance attribuée au Prophète",
+      "url": "",
+      "raison": "Aucune formule fixe du Prophète n'a été trouvée avec une chaîne authentique ou bonne. Ce qui est établi : le Prophète a nommé l'enfant, fait le taḥnīk et invoqué pour lui la bénédiction (al-Bukhārī 5467). On invoque donc la bénédiction pour l'enfant, avec ses propres mots."
+    },
+    {
+      "id": "EC3-04",
+      "texte_ar": "",
+      "reference": "« اللهم لك صمت وعلى رزقك أفطرت » à la rupture du jeûne (Abū Dāwūd 2358)",
+      "url": "https://sunnah.com/abudawud:2358",
+      "raison": "Faible selon al-Albānī (sunnah.com) ; le rapporteur, Muʿādh ibn Zuhra, dit seulement que cela « lui est parvenu » (بَلَغَهُ). La formule authentique retenue est celle d'Abū Dāwūd 2357 (bon)."
+    },
+    {
+      "id": "EC3-05",
+      "texte_ar": "",
+      "reference": "« Trente douas, une pour chaque jour du Ramadan » (listes qui circulent)",
+      "url": "",
+      "raison": "Aucune de ces listes n'est rapportée du Prophète avec une chaîne authentique ou bonne : non ajoutées. Le Ramadan a ses douas sourcées (rupture du jeûne, nuit du Destin) ; pour le reste, on invoque avec les douas des autres rubriques et ses propres mots."
+    },
+    {
+      "id": "EC3-06",
+      "texte_ar": "",
+      "reference": "« تقبل الله منا ومنك » présenté comme un hadith du Prophète (récit de Wāthila ibn al-Asqaʿ)",
+      "url": "https://dorar.net/h/HdRFDZsy",
+      "raison": "Très faible selon al-Albānī (as-Silsila aḍ-ḍaʿīfa 5666) ; « munkar » selon Ibn ʿAdī (dorar.net/h/hNFjm7j6). Les vœux sont gardés comme pratique des Compagnons (DOU-EID-01), jamais comme parole du Prophète."
+    },
+    {
+      "id": "EC3-07",
+      "texte_ar": "",
+      "reference": "« La meilleure invocation est celle du jour de ʿArafa… » (at-Tirmidhī 3585 ; Muwaṭṭaʾ de l'imam Mālik)",
+      "url": "https://sunnah.com/tirmidhi:3585",
+      "raison": "Voie d'at-Tirmidhī : faible selon Darussalam ; at-Tirmidhī lui-même dit que Ḥammād ibn Abī Ḥumayd « n'est pas solide » ; Ibn Ḥajar : « dans sa chaîne, Ḥammād ibn Abī Ḥumayd, qui est faible » (at-Talkhīṣ al-ḥabīr 3/883, dorar.net/h/sZWNnXJd). Voie du Muwaṭṭaʾ : mursal (Ṭalḥa ibn ʿUbayd Allāh ibn Kurayz, un Successeur, la rapporte sans nommer de Compagnon), selon Ibn al-ʿArabī (ʿĀriḍat al-aḥwadhī 2/320, dorar.net/h/fhm9fmfQ), al-Baghawī et al-Bayhaqī. Non affiché comme parole établie du Prophète ; dit honnêtement dans la rubrique « Fêtes et ʿArafa ». La formule « لا إله إلا الله وحده لا شريك له… » reste authentique par d'autres hadiths (adhkār)."
+    },
+    {
+      "id": "EC3-08",
+      "texte_ar": "",
+      "reference": "Conclure l'invocation par la prière sur le Prophète (point ouvert de la phase 2)",
+      "url": "https://sunnah.com/tirmidhi:486",
+      "raison": "Aucune source authentique ou bonne lue sur la CONCLUSION. Lu le 15/10 : at-Tirmidhī 486 (parole de ʿUmar : l'invocation reste suspendue jusqu'à la prière sur le Prophète) : faible selon Darussalam ; « ne faites pas de moi comme la coupe du cavalier… au début, au milieu et à la fin de l'invocation » (Jābir) : « munkar » selon al-Albānī (as-Silsila aḍ-ḍaʿīfa 5783, dorar.net/h/GyeWMii5). Ce qui est établi (Abū Dāwūd 1481, authentique ; at-Tirmidhī 3477, bon) : louer Allah et prier sur le Prophète AVANT de demander. La fiche n'affiche donc rien sur la conclusion."
+    }
+  ]
+}

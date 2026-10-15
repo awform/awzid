@@ -10,7 +10,7 @@ import DouaTexte from './DouaTexte.svelte';
 import { CROCHETS, forChild, groupOf, inRubrique, type Doua, type DouasData } from './douas';
 
 /**
- * Douas (phases 1 et 2) : ce que l'onglet affiche est EXACTEMENT ce que le référent a retenu.
+ * Douas (phases 1 à 3) : ce que l'onglet affiche est EXACTEMENT ce que le référent a retenu.
  *  - texte arabe des hadiths : identique octet par octet au dossier (`douas_phase1.json`, `douas_phase2.json` dont
  *    chaque texte porte l'empreinte SHA-256 lue sur la source), rendu compris ;
  *  - douas du Coran : sous-chaîne exacte du verset Tanzil (copie verbatim du dépôt, infra/ci/contenu), rendu
@@ -33,8 +33,13 @@ type SrcDoua = {
 type Src = { douas: SrcDoua[]; ecartees: Array<{ id: string; texte_ar: string }> };
 const rawSource = readFileSync(at('../../../../../docs/projet/douas/douas_phase1.json'));
 const rawSource2 = readFileSync(at('../../../../../docs/projet/douas/douas_phase2.json'));
+const rawSource3 = readFileSync(at('../../../../../docs/projet/douas/douas_phase3.json'));
 const source = JSON.parse(rawSource.toString('utf8')) as Src;
+const source3 = JSON.parse(rawSource3.toString('utf8')) as Src;
+/** phases 2 et 3 : même format, même méthode (texte copié par script, empreinte lue sur la source) */
 const source2 = JSON.parse(rawSource2.toString('utf8')) as Src;
+source2.douas.push(...source3.douas);
+source2.ecartees.push(...source3.ecartees);
 const traductions = JSON.parse(
   readFileSync(at('../../../../../docs/projet/douas/traductions_fr.json'), 'utf8'),
 ) as { traductions: Record<string, { fr: string; origine: string }> };
@@ -65,6 +70,8 @@ const EXCEPTIONS: Record<string, Op[]> = {
   'DOU-MAL-04': ['points', 'fois'],
   'DOU-ETE-01': ['points'],
   'DOU-ANG-08': ['espace_virgule'],
+  // phase 3 : point de la source (U+200F . U+200F) au milieu de l'invocation pour Abū Salama → saut de ligne
+  'DOU-DEC-02': ['rlm', 'ligne_point'],
 };
 function attenduDe(id: string, texte: string): string {
   let t = texte;
@@ -95,15 +102,17 @@ const inner = (html: string, attr: string) =>
   [...html.matchAll(new RegExp(`${attr}(?:="[^"]*")?>([^<]*)<`, 'g'))].map((m) => decode(m[1]!));
 
 describe('douas : texte exact', () => {
-  it('données construites depuis CES dossiers (empreintes), 87 douas retenues', () => {
+  it('données construites depuis CES dossiers (empreintes), 94 douas retenues', () => {
     expect(data.source_sha256).toBe(createHash('sha256').update(rawSource).digest('hex'));
     expect(data.source2_sha256).toBe(createHash('sha256').update(rawSource2).digest('hex'));
+    expect(data.source3_sha256).toBe(createHash('sha256').update(rawSource3).digest('hex'));
     const phase1 = source.douas.filter((x) => !ids2.has(x.id) && !EN_ATTENTE.includes(x.id));
     expect(entries.length).toBe(phase1.length + source2.douas.length);
-    expect(entries.length).toBe(87);
+    expect(entries.length).toBe(94);
+    expect(source3.douas.length).toBe(7);
   });
 
-  it('phase 2 : chaque texte de hadith a l’empreinte SHA-256 lue sur la source (sunnah.com, dorar.net)', () => {
+  it('phases 2 et 3 : chaque texte de hadith a l’empreinte SHA-256 lue sur la source (sunnah.com, dorar.net)', () => {
     let n = 0;
     for (const x of source2.douas) {
       if (!x.texte_ar) {
@@ -112,11 +121,12 @@ describe('douas : texte exact', () => {
       }
       expect(sha('sha256', x.texte_ar), x.id).toBe(x.sha256);
       expect(x.url_reference, x.id).toMatch(
-        /^https:\/\/(sunnah\.com\/[a-z]+:\d+|dorar\.net\/h\/\w+)$/,
+        /^https:\/\/(sunnah\.com\/[a-z]+:\d+[a-z]?|dorar\.net\/h\/\w+)$/,
       );
       n++;
     }
-    expect(n).toBe(16);
+    // 16 en phase 2, 7 en phase 3
+    expect(n).toBe(23);
   });
 
   it('chaque hadith affiché est identique octet par octet au dossier (données et rendu), sauf les 7 exceptions listées', () => {
@@ -305,7 +315,7 @@ describe('douas : décisions du référent', () => {
         // parole de Compagnon : aucun degré avant vérification sur l'édition, seulement le lien
         expect(s.degre, id).toBeUndefined();
         expect(s.juge, id).toBeUndefined();
-        expect(s.lien, id).toMatch(/^https:\/\/sunnah\.com\//);
+        expect(s.lien, id).toMatch(/^https:\/\/(sunnah\.com\/|dorar\.net\/h\/)/);
       } else {
         expect(s.degre, id).toMatch(DEGRES);
         expect(s.lien, id).toMatch(/^https:\/\/(sunnah\.com\/[a-z]+[:/]|dorar\.net\/h\/)/);
@@ -364,8 +374,14 @@ describe('douas : voix de synthèse provisoire (hadiths seulement)', () => {
 });
 
 describe('douas : architecture de la phase 2', () => {
-  it('groupes : quotidien, moments de la vie, besoins, Coran ; chaque rubrique dans un seul groupe', () => {
-    expect(data.groupes!.map((g) => g.id)).toEqual(['quotidien', 'vie', 'besoins', 'coran']);
+  it('groupes : quotidien, moments de la vie, temps de l’année, besoins, Coran ; chaque rubrique dans un seul groupe', () => {
+    expect(data.groupes!.map((g) => g.id)).toEqual([
+      'quotidien',
+      'vie',
+      'annee',
+      'besoins',
+      'coran',
+    ]);
     expect(data.groupes!.flatMap((g) => g.rubriques)).toEqual(data.rubriques.map((r) => r.id));
     for (const r of [
       'subsistance',
@@ -395,16 +411,142 @@ describe('douas : architecture de la phase 2', () => {
     expect(adhkar).toBe(1);
     expect(JSON.stringify(data)).not.toContain('يَضُرُّ');
   });
-  it('fiche « Comment invoquer » : chaque point sourcé (hadith lu, lien), sauf la question en cours de vérification', () => {
+  it('fiche « Comment invoquer » : chaque point sourcé (hadith lu, ou ouvrage mālikite lu, avec la page)', () => {
     const f = data.fiches!.invoquer!;
     const points = f.sections.flatMap((s) => s.points);
     expect(points.length).toBeGreaterThan(8);
     for (const p of points) {
       expect(/[؀-ۿ]/.test(p.texte), p.texte).toBe(false);
-      if (!p.sources.length) expect(p.texte).toMatch(/en cours de vérification/);
+      expect(p.sources.length, p.texte).toBeGreaterThan(0);
       for (const s of p.sources)
-        expect(s.lien, s.recueil).toMatch(/^https:\/\/sunnah\.com\/[a-z]+:\d+$/);
+        expect(s.lien, s.recueil).toMatch(
+          /^https:\/\/(sunnah\.com\/[a-z]+:\d+|app\.turath\.io\/book\/\d+\?page=\d+)$/,
+        );
     }
+    // langue de l'invocation dans la prière : tranché sur ad-Dardīr et ad-Dusūqī (page lue), plus « en cours »
+    const langue = f.sections.find((s) => /autre langue/.test(s.titre))!.points[0]!;
+    expect(langue.texte).toMatch(/déconseille.*makrūh.*permis/);
+    expect(langue.sources[0]!.recueil).toMatch(/ad-Dardīr.*ad-Dusūqī.*1\/253/);
+    expect(JSON.stringify(f)).not.toMatch(/en cours de vérification/);
+    // conclure par la prière sur le Prophète : aucune source authentique ou bonne lue, rien d'affiché
+    expect(JSON.stringify(f)).not.toMatch(/conclu|terminer|finir par/i);
+    expect(source3.ecartees.find((e) => e.id === 'EC3-08')).toBeTruthy();
+  });
+});
+
+describe('douas : phase 3 (moments de la vie, temps de l’année, aumône)', () => {
+  const rub = (id: string) => data.rubriques.find((r) => r.id === id)!;
+  const tout = JSON.stringify(data);
+  const LIEN = /^https:\/\/(sunnah\.com\/[a-z]+:\d+[a-z]?|dorar\.net\/h\/\w+|app\.turath\.io\/)/;
+  it('rubriques : naissance, mariage, décès (vie) ; Ramadan, fêtes et ʿArafa (année)', () => {
+    expect(data.groupes!.find((g) => g.id === 'vie')!.rubriques).toEqual([
+      'voyage',
+      'maladie',
+      'naissance',
+      'mariage',
+      'deces',
+    ]);
+    expect(data.groupes!.find((g) => g.id === 'annee')!.rubriques).toEqual(['ramadan', 'fetes']);
+    expect(rub('mariage').douas).toEqual(['DOU-MAR-01', 'DOU-MAR-02']);
+    expect(rub('deces').douas).toEqual(['DOU-DEC-01', 'DOU-DEC-02', 'DOU-DEC-03']);
+    expect(rub('ramadan').douas).toEqual(['DOU-RAM-01']);
+    expect(rub('fetes').douas).toEqual(['DOU-EID-01']);
+    // naissance : aucune formule fixe du Prophète ; seulement des points sourcés
+    expect(rub('naissance').douas).toEqual([]);
+    expect(rub('naissance').a_savoir!.length).toBeGreaterThanOrEqual(2);
+  });
+  it('points « À savoir » et « Ce que nous n’ajoutons pas » : en français, sources lues avec lien', () => {
+    let n = 0;
+    for (const r of data.rubriques)
+      for (const [k, ps] of [
+        ['a_savoir', r.a_savoir ?? []],
+        ['non_ajoute', r.non_ajoute ?? []],
+      ] as const)
+        for (const p of ps) {
+          n++;
+          expect(/[؀-ۿ]/.test(p.texte), p.texte).toBe(false);
+          if (k === 'a_savoir') expect(p.sources.length, p.texte).toBeGreaterThan(0);
+          for (const s of p.sources) expect(s.lien, s.recueil).toMatch(LIEN);
+          // « À savoir » : seulement ce qui est authentique ou bon
+          if (k === 'a_savoir')
+            for (const s of p.sources) expect(s.degre, s.recueil).toMatch(/^(authentique|bon)$/);
+        }
+    expect(n).toBeGreaterThanOrEqual(15);
+  });
+  it('naissance : adhān dans l’oreille avec son degré exact et la divergence, jamais présenté comme sunna', () => {
+    const p = rub('naissance').non_ajoute!.find((x) => /adhān/.test(x.texte))!;
+    expect(p.texte).toMatch(/divergent/);
+    expect(p.texte).toMatch(/pas comme une sunna établie/);
+    expect(p.sources.map((s) => s.recueil)).toEqual([
+      'Abū Dāwūd 5105',
+      'at-Tirmidhī 1514',
+      'Ibn Ḥajar, at-Talkhīṣ al-ḥabīr 4/1501',
+    ]);
+    expect(p.sources.map((s) => s.degre)).toEqual(['bon', 'faible', 'faible']);
+    // taḥnīk et ʿaqīqa : hadiths authentiques seulement
+    const savoir = rub('naissance').a_savoir!.flatMap((x) => x.sources.map((s) => s.recueil));
+    expect(savoir).toEqual(['al-Bukhārī 5467', 'al-Bukhārī 5472', 'Abū Dāwūd 2838']);
+  });
+  it('mariage (Abū Dāwūd 2130), condoléances (al-Bukhārī 1284), rupture du jeûne (Abū Dāwūd 2357)', () => {
+    expect(data.douas['DOU-MAR-01']!.source).toMatchObject({
+      recueil: 'Abū Dāwūd 2130',
+      degre: 'authentique',
+      lien: 'https://sunnah.com/abudawud:2130',
+    });
+    expect(data.douas['DOU-DEC-01']!.source.lien).toBe('https://sunnah.com/bukhari:1284');
+    expect(data.douas['DOU-RAM-01']!.source).toMatchObject({ degre: 'bon', juge: 'al-Albānī' });
+    // la formule faible de la rupture du jeûne (Abū Dāwūd 2358) n'est pas affichée comme doua
+    expect(tout).not.toContain('صُمْتُ');
+    expect(tout).not.toContain('صمت');
+    // Abū Salama : deux lignes (point de la source), autant de lignes de sens
+    expect(data.douas['DOU-DEC-02']!.ar!.split('\n')).toHaveLength(2);
+    expect(data.douas['DOU-DEC-02']!.traduction.split('\n')).toHaveLength(2);
+  });
+  it('fêtes : vœux des Compagnons présentés comme tels, jamais comme hadith du Prophète', () => {
+    const e = data.douas['DOU-EID-01']!;
+    expect(e.compagnon).toMatch(/Compagnons/);
+    expect(e.compagnon).toMatch(/Ce n'est pas une parole du Prophète/);
+    expect(e.source.degre).toBeUndefined();
+    expect(e.source.lien).toBe('https://dorar.net/h/eksoiWAb');
+    const faible = rub('fetes')
+      .non_ajoute!.map((p) => p.texte)
+      .join(' ');
+    expect(faible).toMatch(/très faible/);
+  });
+  it('ʿArafa : at-Tirmidhī 3585 (faible) et le Muwaṭṭaʾ (mursal) traités honnêtement, pas de doua affichée', () => {
+    const p = rub('fetes').non_ajoute!.find((x) => /ʿArafa/.test(x.texte))!;
+    expect(p.texte).toMatch(/faible/);
+    expect(p.texte).toMatch(/mursal/);
+    expect(p.texte).toMatch(/pas comme une parole établie du Prophète/);
+    expect(p.sources.map((s) => s.degre)).toEqual(['faible', 'faible', 'mursal']);
+    // les mérites du jour de ʿArafa affichés : Muslim seulement
+    expect(rub('fetes').a_savoir!.flatMap((x) => x.sources.map((s) => s.recueil))).toEqual([
+      'Muslim 1348',
+      'Muslim 1162',
+    ]);
+  });
+  it('Ramadan : « trente douas » non ajoutées, nuit du Destin par renvoi (aucun doublon)', () => {
+    expect(rub('ramadan').non_ajoute!.some((p) => /trente douas/.test(p.texte))).toBe(true);
+    expect(rub('ramadan').voir_aussi).toEqual([{ doua: 'DOU-PAR-05' }]);
+    expect(data.douas['DOU-PAR-05']!.rubrique).toBe('repentir');
+  });
+  it('fiche « L’aumône » : hadiths authentiques ou bons seulement, renvois vers la zakāt des Madjaliss', () => {
+    const f = data.fiches!.sadaqa!;
+    expect(f.titre).toBe("L'aumône (ṣadaqa)");
+    const sources = f.sections.flatMap((s) => s.points.flatMap((p) => p.sources));
+    expect(sources.length).toBeGreaterThanOrEqual(8);
+    for (const s of sources) {
+      expect(s.degre, s.recueil).toMatch(/^(authentique|bon)$/);
+      expect(s.lien, s.recueil).toMatch(/^https:\/\/sunnah\.com\/[a-z]+:\d+$/);
+    }
+    for (const r of ['Muslim 2588', 'al-Bukhārī 1410', 'al-Bukhārī 1417', 'Muslim 1006'])
+      expect(sources.map((s) => s.recueil)).toContain(r);
+    expect(f.renvois!.map((r) => r.lien)).toEqual([
+      '/madjaliss/ibn-ashir/36',
+      '/madjaliss/ibn-ashir/40',
+    ]);
+    // la zakāt n'est pas réécrite : aucun taux ni minimum imposable dans la fiche
+    expect(JSON.stringify(f)).not.toMatch(/\d+\s*%|niṣāb|nisab|grammes/i);
   });
 });
 
