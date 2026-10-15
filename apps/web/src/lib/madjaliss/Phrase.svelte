@@ -175,6 +175,10 @@
           <strong><Bidi text={t('mj.ens_a_verifier')} /></strong>
           <Bidi text={a} />
         </p>{/each}
+      {#each note.info ?? [] as a, i (i)}<p data-testid="note-info">
+          <strong><Bidi text={t('mj.ens_info')} /></strong>
+          <Bidi text={a} />
+        </p>{/each}
       {#each note.variantes as v, i (i)}<p>
           <strong><Bidi text={t('mj.ens_variante', { id: v.id ?? '' })} /></strong>
           {#each Object.entries(v).filter(([k]) => k !== 'id' && k !== 'phrase') as [k, x] (k)}<span

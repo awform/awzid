@@ -52,11 +52,28 @@ const avec = servies.filter((x) => x.p.audio);
 const manifeste = lire<Manifeste>(AUDIO_MANIFESTE);
 
 describe('audio des Madjaliss : construction', () => {
-  it('1 328 phrases générées, toutes servies avec leur audio (texte identique à la génération)', () => {
+  it('1 483 phrases générées (1 328 le 14/10 + 155 de la Risāla le 15/10), toutes servies avec leur audio', () => {
     const n = Object.values(ix.textes).reduce((s, x) => s + Object.keys(x).length, 0);
-    expect(n).toBe(1328);
-    expect(avec.length).toBe(1328);
-    expect(Object.keys(manifeste.fichiers).length).toBe(1328);
+    expect(n).toBe(1483);
+    expect(Object.keys(ix.textes['risala']!)).toHaveLength(418);
+    expect(avec.length).toBe(1483);
+    expect(Object.keys(manifeste.fichiers).length).toBe(1483);
+  });
+
+  it('lot 10 : RIS-0014, 0032, 0098 (texte changé le 15/10) : audio du texte ACTUEL ; l’ancien texte n’aurait pas de bouton', () => {
+    const de = new Map(servies.map((x) => [x.p.id, x.p]));
+    for (const id of ['RIS-0014', 'RIS-0032', 'RIS-0098']) {
+      const p = de.get(id)!;
+      expect(p.audio, id).toBe(`risala/${id}.mp3`);
+      expect(sha1(texteLu(p)!), id).toBe(ix.textes['risala']![id]!.t);
+      // un index fait sur un autre texte (génération périmée) : pas de champ, donc pas de bouton
+      const perime = {
+        textes: { risala: { [id]: { ...ix.textes['risala']![id]!, t: sha1('ancien texte') } } },
+      };
+      expect(audioConstruction('risala', { ...p, audio: undefined }, perime), id).toBeNull();
+    }
+    // citations du Coran ouvertes le 15/10 (RIS-0183 = 2:201 depuis Tanzil, RIS-0392 = 24:59) : jamais d'audio
+    for (const id of ['RIS-0183', 'RIS-0392']) expect(de.get(id)!.audio, id).toBeUndefined();
   });
 
   it('chaque audio : SHA-1 du texte SERVI = celui de la génération ; chemin = <texte>/<id>.mp3', () => {

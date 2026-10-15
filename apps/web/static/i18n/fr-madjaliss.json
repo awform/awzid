@@ -95,6 +95,7 @@
   "mj.ens_aide": "Vocalisations à vérifier, variantes des éditions et mots au sens non établi : jamais montrés à l'élève.",
   "mj.ens_erreur": "Les notes de l'enseignant ont besoin d'Internet.",
   "mj.ens_a_verifier": "À vérifier :",
+  "mj.ens_info": "Information :",
   "mj.ens_variante": "Variante {id} :",
   "mj.ens_mots": "Mots réservés à l'enseignant",
   "mj.ens_motif_sens": "sens à établir",

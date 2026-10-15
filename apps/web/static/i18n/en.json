@@ -3100,6 +3100,7 @@
   "mj.ens_aide": "Vowelling to check, variants of the editions and words whose meaning is not established: never shown to the learner.",
   "mj.ens_erreur": "The teacher's notes need Internet.",
   "mj.ens_a_verifier": "To check:",
+  "mj.ens_info": "Information:",
   "mj.ens_variante": "Variant {id}:",
   "mj.ens_mots": "Words reserved for the teacher",
   "mj.ens_motif_sens": "meaning to establish",

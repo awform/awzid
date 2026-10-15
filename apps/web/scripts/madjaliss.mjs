@@ -449,6 +449,24 @@ export function decouperCoran(id, arabe, coran, lignes) {
     ? coran.every((s) => s.voix_de_synthese === false)
     : coran.voix_de_synthese === false;
   if (!sansVoix) throw new Error(`coran ${id} : voix de synthèse non exclue`);
+  // lot 10 (décision du référent du 15/10, RIS-0183 = 2:201) : invocation coranique citée EN ENTIER, sans ﴿﴾ ni
+  // `texte` dans la source : le verset s'affiche depuis Tanzil octet par octet (la ligne entière) ; la saisie `ar` du
+  // témoin n'est JAMAIS livrée (ni comme Coran, ni comme texte de l'auteur, ni à la voix de synthèse)
+  if (
+    !Array.isArray(coran) &&
+    !coran.segments &&
+    coran.texte === undefined &&
+    coran.portion === 'verset entier'
+  ) {
+    const ligne = lignes.get(`${coran.sourate}:${coran.verset}`);
+    if (!ligne)
+      throw new Error(`coran ${id} : verset ${coran.sourate}:${coran.verset} absent de Tanzil`);
+    if (/[﴿﴾]/.test(arabe)) throw new Error(`citation ${id} : verset entier et bloc ﴿﴾ à la fois`);
+    return {
+      morceaux: [{ q: ligne, ref: `${coran.sourate}:${coran.verset}` }],
+      versets: [{ sourate: coran.sourate, verset: coran.verset, texte: ligne }],
+    };
+  }
   for (const s of segs) {
     const ligne = lignes.get(`${s.sourate}:${s.verset}`);
     if (!ligne || !s.texte || !ligne.includes(s.texte))
@@ -1094,9 +1112,15 @@ function construireTexte(texte, lignes) {
     const nv = (p.variantes ?? []).map((v) => variantes.get(v) ?? { id: v });
     const note = (f.fr.match(NOTE_A_VERIFIER) ?? []).map((x) => x.trim());
     const dec = f.decision_referent ?? f.decision_referent_13_10 ?? null;
-    if (aVerifier.length || note.length || nv.length || trad || dec || comite.length)
+    // lot 10 : `note_info` (second passage du référent, 15/10) = note d'INFORMATION pour l'enseignant et les relecteurs ;
+    // elle ne rend jamais la phrase « incertaine » et ne bloque ni la publication ni l'audio
+    const info = Array.isArray(p.note_info)
+      ? p.note_info.filter((x) => typeof x === 'string' && x.trim())
+      : [];
+    if (aVerifier.length || note.length || nv.length || trad || dec || comite.length || info.length)
       noterEns(p.id, {
         a_verifier: [...aVerifier, ...note],
+        ...(info.length ? { info } : {}),
         variantes: nv,
         ...(trad ? { traduction: trad } : {}),
         ...(dec ? { decision: dec } : {}),
@@ -1253,7 +1277,12 @@ function construireTexte(texte, lignes) {
       .map((s) => ({ n: numeroDe.get(s.id), id: s.id, motif: s.motif_relecture ?? '' })),
     phrases: [...enseignantPhrases.values()].filter(
       (x) =>
-        x.a_verifier.length || x.variantes.length || x.traduction || x.decision || x.notes_internes,
+        x.a_verifier.length ||
+        x.variantes.length ||
+        x.traduction ||
+        x.decision ||
+        x.notes_internes ||
+        x.info?.length,
     ),
     mots: seancesSrc.flatMap((s) =>
       s.mots_difficiles
