@@ -54,7 +54,7 @@ export interface Rubrique {
   id: string;
   douas: string[];
   voir_aussi?: Renvoi[];
-  /** phase 3 : points sourcés affichés avant les douas (Naissance n'a que ceux-là) */
+  /** phase 3 : points sourcés affichés après les douas (Naissance n'a que ceux-là) */
   a_savoir?: FichePoint[];
   /** phase 3 : « Ce que nous n'ajoutons pas », avec la raison et la source lue */
   non_ajoute?: FichePoint[];

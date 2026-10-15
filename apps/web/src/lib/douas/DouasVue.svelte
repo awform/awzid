@@ -31,8 +31,8 @@
    * Phase 2 : groupes du référent (quotidien, moments de la vie, besoins, Coran), fiche « Comment invoquer », renvois
    * « Voir aussi » (sans dupliquer le texte), sens en français, voix de synthèse PROVISOIRE pour les hadiths seulement
    * (jamais un verset : `audio` est vide pour le Coran et pour les hadiths qui citent un verset).
-   * Phase 3 : groupe « Le temps de l'année », points « À savoir » avant les douas et « Ce que nous n'ajoutons pas »
-   * après (chacun avec sa source lue), fiche « L'aumône » en fin de rangée, avec renvois vers la zakāt des Madjaliss.
+   * Phase 3 : groupe « Le temps de l'année », points « À savoir » et « Ce que nous n'ajoutons pas »
+   * après les douas (chacun avec sa source lue), fiche « L'aumône » en fin de rangée, avec renvois vers la zakāt des Madjaliss.
    */
   let data = $state<DouasData | null>(null);
   let offline = $state(false);
@@ -144,8 +144,9 @@
                   href={src.lien}
                   target="_blank"
                   rel="noopener noreferrer external"><Bidi text={src.recueil} /></a
-                >{:else}<Bidi text={src.recueil} />{/if}{#if src.degre}
-                (<Bidi text={src.degre} />{#if src.juge}, <Bidi text={src.juge} />{/if}){/if}{/each}
+                >{:else}<Bidi text={src.recueil} />{/if}{#if src.degre}&#160;(<Bidi
+                  text={src.degre}
+                />{#if src.juge}, <Bidi text={src.juge} />{/if}){/if}{/each}
           </span>{/if}
       </li>
     {/each}
@@ -241,10 +242,6 @@
         </ul>{/if}
     </article>
   {:else}
-    {#if !enfant && rub?.a_savoir}<section class="card fiche" data-testid="douas-a-savoir">
-        <h3>{t('do.a_savoir')}</h3>
-        {@render points(rub.a_savoir)}
-      </section>{/if}
     {#if !liste.length}
       {#if rubrique === 'favoris'}<EmptyState
           icon="etoile"
@@ -321,6 +318,11 @@
         {/each}
       </ul>
     {/if}
+    <!-- la doua d'abord (contenu en héros), puis « À savoir », puis « Ce que nous n'ajoutons pas » -->
+    {#if !enfant && rub?.a_savoir}<section class="card fiche" data-testid="douas-a-savoir">
+        <h3>{t('do.a_savoir')}</h3>
+        {@render points(rub.a_savoir)}
+      </section>{/if}
     {#if !enfant && rub?.non_ajoute}<section class="card fiche" data-testid="douas-non-ajoute">
         <h3>{t('do.non_ajoute')}</h3>
         {@render points(rub.non_ajoute)}
