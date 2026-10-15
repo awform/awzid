@@ -140,6 +140,10 @@ export default defineConfig({
         COOKIE_SECURE: '0',
         // nombreux comptes de test créés depuis 127.0.0.1
         AWFORM_SIGNUP_PER_HOUR: '5000',
+        // lot 9 (R5) : les suites parallèles partagent les mêmes comptes de test (adulte@e2e.test…) et l'adresse
+        // 127.0.0.1, bien au-delà d'un usage humain : limite des lectures relevée ici (la limite par défaut, 60/300, est
+        // vérifiée par apps/api/test/lot9-limites.test.ts)
+        AWFORM_LIMITE_LECTURES: process.env.AWFORM_LIMITE_LECTURES ?? '1000/10000',
         // clé de chiffrement des seconds facteurs : tirée au hasard pour chaque lancement de test
         AWFORM_SECRET_KEY: E2E_KEY,
         // tuteur : fournisseur SIMULÉ (aucun appel à un vrai modèle en test)
