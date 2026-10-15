@@ -20,6 +20,7 @@
     loadFavorites,
     toggleFavorite,
     type DouasData,
+    type FichePoint,
   } from './douas';
 
   /**
@@ -30,6 +31,8 @@
    * Phase 2 : groupes du référent (quotidien, moments de la vie, besoins, Coran), fiche « Comment invoquer », renvois
    * « Voir aussi » (sans dupliquer le texte), sens en français, voix de synthèse PROVISOIRE pour les hadiths seulement
    * (jamais un verset : `audio` est vide pour le Coran et pour les hadiths qui citent un verset).
+   * Phase 3 : groupe « Le temps de l'année », points « À savoir » avant les douas et « Ce que nous n'ajoutons pas »
+   * après (chacun avec sa source lue), fiche « L'aumône » en fin de rangée, avec renvois vers la zakāt des Madjaliss.
    */
   let data = $state<DouasData | null>(null);
   let offline = $state(false);
@@ -42,17 +45,22 @@
   const enfant = $derived(profile?.kind === 'enfant');
   const rubrique = $derived(
     choix === 'favoris' ||
-      (choix === FICHE_INVOQUER && !!data?.fiches?.invoquer) ||
+      (choix && data?.fiches?.[choix]) ||
       data?.rubriques.some((r) => r.id === choix)
       ? choix
       : (data?.rubriques[0]?.id ?? null),
   );
+  /** fiche ouverte (« Comment invoquer », « L'aumône »), sinon null */
+  const fiche = $derived((rubrique && data?.fiches?.[rubrique]) || null);
+  /** fiches : « Comment invoquer » en tête de la rangée, les autres (« L'aumône ») en fin */
+  const fiches = $derived(Object.entries(data?.fiches ?? {}));
+  const rub = $derived(data?.rubriques.find((r) => r.id === rubrique) ?? null);
   const liste = $derived<string[]>(
     !data
       ? []
       : enfant
         ? forChild(data)
-        : rubrique === FICHE_INVOQUER
+        : fiche
           ? []
           : rubrique === 'favoris'
             ? favoris.filter((id) => data!.douas[id])
@@ -80,11 +88,8 @@
       ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   });
 
-  const voirAussi = $derived(
-    !data || enfant ? [] : (data.rubriques.find((r) => r.id === rubrique)?.voir_aussi ?? []),
-  );
+  const voirAussi = $derived(enfant ? [] : (rub?.voir_aussi ?? []));
   const groupe = $derived(data && rubrique ? groupOf(data, rubrique) : null);
-  const fiche = $derived(data?.fiches?.invoquer ?? null);
   /** rubriques par groupe (architecture du référent), sinon une seule liste */
   const blocs = $derived(
     !data
@@ -97,6 +102,7 @@
         : [{ id: null as string | null, rubriques: data.rubriques }],
   );
   const ADHKAR = '/quotidien/adhkar';
+  const MADJALISS = '/madjaliss';
   const lienSource = (l: string) =>
     l.startsWith('https://dorar.net/') ? t('do.voir_dorar') : t('do.voir_sunnah');
 
@@ -117,6 +123,33 @@
     favoris = await toggleFavorite(profile?.id ?? null, favoris, id);
   }
 </script>
+
+{#snippet pastilleFiche(id: string, titre: string)}<button
+    type="button"
+    class:on={rubrique === id}
+    aria-pressed={rubrique === id}
+    onclick={() => (choix = id)}
+    data-rubrique={id}><Bidi text={titre} /></button
+  >{/snippet}
+
+<!-- points sourcés (fiches, « À savoir », « Ce que nous n'ajoutons pas ») : le français, puis la source lue -->
+{#snippet points(ps: FichePoint[])}<ul>
+    {#each ps as p, i (i)}
+      <li>
+        <Bidi text={p.texte} />
+        {#if p.sources.length}<span class="fiche-src muted small">
+            {#each p.sources as src, j (j)}{#if j}
+                ;
+              {/if}{#if src.lien}<a
+                  href={src.lien}
+                  target="_blank"
+                  rel="noopener noreferrer external"><Bidi text={src.recueil} /></a
+                >{:else}<Bidi text={src.recueil} />{/if}{#if src.degre}
+                (<Bidi text={src.degre} />{#if src.juge}, <Bidi text={src.juge} />{/if}){/if}{/each}
+          </span>{/if}
+      </li>
+    {/each}
+  </ul>{/snippet}
 
 <p class="bandeau" role="note" data-testid="douas-bandeau">
   <Icon name="coche" size={18} />
@@ -150,13 +183,10 @@
         ><Icon name="etoile" size={18} />
         <Bidi text={t('do.favoris_n', { n: favoris.length })} /></button
       >
-      {#if fiche}<button
-          type="button"
-          class:on={rubrique === FICHE_INVOQUER}
-          aria-pressed={rubrique === FICHE_INVOQUER}
-          onclick={() => (choix = FICHE_INVOQUER)}
-          data-rubrique={FICHE_INVOQUER}><Bidi text={t('do.invoquer')} /></button
-        >{/if}
+      {#each fiches.filter(([id]) => id === FICHE_INVOQUER) as [id, f] (id)}{@render pastilleFiche(
+          id,
+          f.titre,
+        )}{/each}
       {#each blocs as b (b.id ?? '-')}
         {#if b.id}<span class="groupe" data-groupe={b.id}><Bidi text={t(`do.g.${b.id}`)} /></span
           >{/if}
@@ -170,6 +200,10 @@
           >
         {/each}
       {/each}
+      {#each fiches.filter(([id]) => id !== FICHE_INVOQUER) as [id, f] (id)}{@render pastilleFiche(
+          id,
+          f.titre,
+        )}{/each}
     </div>
     {#if groupe && rubrique !== 'favoris'}<p class="sur-titre muted" data-testid="douas-groupe">
         <Bidi text={t(`do.g.${groupe}`)} />
@@ -178,112 +212,121 @@
       <Bidi
         text={rubrique === 'favoris'
           ? t('do.favoris')
-          : rubrique === FICHE_INVOQUER
-            ? t('do.invoquer')
+          : fiche
+            ? fiche.titre
             : t(`do.r.${rubrique}`)}
       />
     </h2>
   {/if}
 
-  {#if !enfant && rubrique === FICHE_INVOQUER && fiche}
+  {#if !enfant && fiche}
     <article class="card fiche" data-testid="douas-fiche">
       <p><Bidi text={fiche.intro} /></p>
       {#each fiche.sections as s (s.titre)}
         <h3><Bidi text={s.titre} /></h3>
-        <ul>
-          {#each s.points as p, i (i)}
+        {@render points(s.points)}
+      {/each}
+      {#if fiche.renvois?.length}<ul class="renvois">
+          {#each fiche.renvois as v (v.lien)}
+            <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu ; lien vérifié par scripts/douas.mjs -->
             <li>
-              <Bidi text={p.texte} />
-              {#if p.sources.length}<span class="fiche-src muted small">
-                  {#each p.sources as src, j (j)}{#if j}
-                      ;
-                    {/if}{#if src.lien}<a
-                        href={src.lien}
-                        target="_blank"
-                        rel="noopener noreferrer external"><Bidi text={src.recueil} /></a
-                      >{:else}<Bidi text={src.recueil} />{/if}{#if src.degre}
-                      (<Bidi text={src.degre} />{#if src.juge}, <Bidi
-                          text={src.juge}
-                        />{/if}){/if}{/each}
-                </span>{/if}
+              <a
+                class="btn-ligne"
+                href={`${resolve('/madjaliss')}${v.lien.slice(MADJALISS.length)}`}
+                data-renvoi-lecon={v.lien}><Bidi text={v.titre} /></a
+              >
             </li>
+            <!-- eslint-enable svelte/no-navigation-without-resolve -->
           {/each}
-        </ul>
-      {/each}
+        </ul>{/if}
     </article>
-  {:else if !liste.length}
-    <EmptyState icon="etoile" title={t('do.favoris_vide_titre')} text={t('do.favoris_vide')} />
   {:else}
-    <ul class="liste" data-testid="douas-liste" data-enfant={enfant ? '1' : undefined}>
-      {#each liste as id (id)}
-        {@const d = data.douas[id]!}
-        {@const fav = favoris.includes(id)}
-        <li class="card doua" class:facultatif={d.facultatif} data-doua={id} tabindex="-1">
-          <h3><Bidi text={d.titre} /></h3>
-          {#if d.facultatif}<span class="pill">{t('do.facultatif')}</span>{/if}
-          {#if d.compagnon}<span class="pill" data-testid="douas-compagnon"
-              >{t('do.compagnon')}</span
-            >{/if}
-          <DouaTexte doua={d} />
-          <!-- voix de synthèse provisoire : hadiths seulement (jamais un verset ni un hadith qui en cite un) -->
-          {#if d.audio && !d.coran && !d.coran_cite}<DouaEcouter src={d.audio} {id} />{/if}
-          {#if d.coran_cite}<p class="cite muted" data-testid="douas-coran-cite">
-              {t('do.contient_coran')}
-            </p>{/if}
-          {#if d.moment}<p class="moment"><Bidi text={d.moment} /></p>{/if}
-          {#if d.traduction}
-            <p class="sens"><Bidi text={d.traduction} /></p>
-          {:else}
-            <p class="sens muted" data-testid="douas-traduction-prep">
-              {t('do.traduction_prep')}
-            </p>
-          {/if}
-          <div class="actions">
-            <button
-              type="button"
-              class="btn-ligne"
-              aria-expanded={ouverte === id}
-              aria-controls={`src-${id}`}
-              onclick={() => (ouverte = ouverte === id ? null : id)}
-              data-testid="douas-source"><Icon name="info" size={18} /> {t('do.source')}</button
-            >
-            <button
-              type="button"
-              class="btn-ligne"
-              class:on={fav}
-              aria-pressed={fav}
-              onclick={() => basculer(id)}
-              data-testid="douas-favori"
-              ><Icon name="etoile" size={18} filled={fav} />
-              <Bidi text={fav ? t('do.retirer_favori') : t('do.ajouter_favori')} /></button
-            >
-          </div>
-          {#if ouverte === id}
-            <dl class="source" id={`src-${id}`} data-testid="douas-source-detail">
-              {#if d.compagnon}<dd class="compagnon"><Bidi text={d.compagnon} /></dd>{/if}
-              <!-- parole de Compagnon : seulement qui l'a dite et qui la rapporte, et le lien (le degré viendra
+    {#if !enfant && rub?.a_savoir}<section class="card fiche" data-testid="douas-a-savoir">
+        <h3>{t('do.a_savoir')}</h3>
+        {@render points(rub.a_savoir)}
+      </section>{/if}
+    {#if !liste.length}
+      {#if rubrique === 'favoris'}<EmptyState
+          icon="etoile"
+          title={t('do.favoris_vide_titre')}
+          text={t('do.favoris_vide')}
+        />{/if}
+    {:else}
+      <ul class="liste" data-testid="douas-liste" data-enfant={enfant ? '1' : undefined}>
+        {#each liste as id (id)}
+          {@const d = data.douas[id]!}
+          {@const fav = favoris.includes(id)}
+          <li class="card doua" class:facultatif={d.facultatif} data-doua={id} tabindex="-1">
+            <h3><Bidi text={d.titre} /></h3>
+            {#if d.facultatif}<span class="pill">{t('do.facultatif')}</span>{/if}
+            {#if d.compagnon}<span class="pill" data-testid="douas-compagnon"
+                >{t('do.compagnon')}</span
+              >{/if}
+            <DouaTexte doua={d} />
+            <!-- voix de synthèse provisoire : hadiths seulement (jamais un verset ni un hadith qui en cite un) -->
+            {#if d.audio && !d.coran && !d.coran_cite}<DouaEcouter src={d.audio} {id} />{/if}
+            {#if d.coran_cite}<p class="cite muted" data-testid="douas-coran-cite">
+                {t('do.contient_coran')}
+              </p>{/if}
+            {#if d.moment}<p class="moment"><Bidi text={d.moment} /></p>{/if}
+            {#if d.traduction}
+              <p class="sens"><Bidi text={d.traduction} /></p>
+            {:else}
+              <p class="sens muted" data-testid="douas-traduction-prep">
+                {t('do.traduction_prep')}
+              </p>
+            {/if}
+            <div class="actions">
+              <button
+                type="button"
+                class="btn-ligne"
+                aria-expanded={ouverte === id}
+                aria-controls={`src-${id}`}
+                onclick={() => (ouverte = ouverte === id ? null : id)}
+                data-testid="douas-source"><Icon name="info" size={18} /> {t('do.source')}</button
+              >
+              <button
+                type="button"
+                class="btn-ligne"
+                class:on={fav}
+                aria-pressed={fav}
+                onclick={() => basculer(id)}
+                data-testid="douas-favori"
+                ><Icon name="etoile" size={18} filled={fav} />
+                <Bidi text={fav ? t('do.retirer_favori') : t('do.ajouter_favori')} /></button
+              >
+            </div>
+            {#if ouverte === id}
+              <dl class="source" id={`src-${id}`} data-testid="douas-source-detail">
+                {#if d.compagnon}<dd class="compagnon"><Bidi text={d.compagnon} /></dd>{/if}
+                <!-- parole de Compagnon : seulement qui l'a dite et qui la rapporte, et le lien (le degré viendra
                    après vérification sur l'édition) -->
-              {#if !d.compagnon}
-                <dt>{t('do.recueil')}</dt>
-                <dd><Bidi text={d.source.recueil} /></dd>
-                {#if d.source.degre}<dt>{t('do.degre')}</dt>
-                  <dd><Bidi text={d.source.degre} /></dd>{/if}
-                {#if d.source.juge}<dt>{t('do.juge_par')}</dt>
-                  <dd><Bidi text={d.source.juge} /></dd>{/if}
-                {#if d.note}<dd class="note"><Bidi text={d.note} /></dd>{/if}
-              {/if}
-              {#if d.source.lien}<dd class="lien">
-                  <a href={d.source.lien} target="_blank" rel="noopener noreferrer external"
-                    ><Bidi text={lienSource(d.source.lien)} /></a
-                  >
-                </dd>{/if}
-            </dl>
-          {/if}
-        </li>
-      {/each}
-    </ul>
+                {#if !d.compagnon}
+                  <dt>{t('do.recueil')}</dt>
+                  <dd><Bidi text={d.source.recueil} /></dd>
+                  {#if d.source.degre}<dt>{t('do.degre')}</dt>
+                    <dd><Bidi text={d.source.degre} /></dd>{/if}
+                  {#if d.source.juge}<dt>{t('do.juge_par')}</dt>
+                    <dd><Bidi text={d.source.juge} /></dd>{/if}
+                  {#if d.note}<dd class="note"><Bidi text={d.note} /></dd>{/if}
+                {/if}
+                {#if d.source.lien}<dd class="lien">
+                    <a href={d.source.lien} target="_blank" rel="noopener noreferrer external"
+                      ><Bidi text={lienSource(d.source.lien)} /></a
+                    >
+                  </dd>{/if}
+              </dl>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    {/if}
+    {#if !enfant && rub?.non_ajoute}<section class="card fiche" data-testid="douas-non-ajoute">
+        <h3>{t('do.non_ajoute')}</h3>
+        {@render points(rub.non_ajoute)}
+      </section>{/if}
   {/if}
-  {#if voirAussi.length && rubrique !== FICHE_INVOQUER}
+  {#if voirAussi.length}
     <section class="voir-aussi" data-testid="douas-voir-aussi">
       <h3>{t('do.voir_aussi')}</h3>
       <ul>
@@ -423,6 +466,11 @@
   }
   .fiche li {
     margin: 6px 0;
+  }
+  .fiche .renvois {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-s);
   }
   .fiche-src {
     display: block;

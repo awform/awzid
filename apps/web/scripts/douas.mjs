@@ -1,4 +1,4 @@
-// Douas (phases 1 et 2) — construit `static/douas/douas.json`, les données de l'onglet « Douas » de « Vivre l'islam »,
+// Douas (phases 1 à 3) — construit `static/douas/douas.json`, les données de l'onglet « Douas » de « Vivre l'islam »,
 // chargées À LA DEMANDE par l'application (jamais dans le code) et gardées sur l'appareil au premier usage.
 //
 // Sources (docs/projet/douas/) : `douas_phase1.json` (dossier du chercheur, 12/10), `douas_phase2.json` (dossier du
@@ -26,6 +26,8 @@ const web = join(dirname(fileURLToPath(import.meta.url)), '..');
 const repo = join(web, '..', '..');
 export const SOURCE = join(repo, 'docs', 'projet', 'douas', 'douas_phase1.json');
 export const SOURCE2 = join(repo, 'docs', 'projet', 'douas', 'douas_phase2.json');
+/** phase 3 (15/10) : même méthode que la phase 2 (texte copié par script, empreinte contrôlée) */
+export const SOURCE3 = join(repo, 'docs', 'projet', 'douas', 'douas_phase3.json');
 export const TRADUCTIONS = join(repo, 'docs', 'projet', 'douas', 'traductions_fr.json');
 export const PRESENTATION = join(web, 'scripts', 'douas-presentation.json');
 export const OUT = join(web, 'static', 'douas', 'douas.json');
@@ -135,6 +137,26 @@ function nettoyer(texte, ops, id) {
   return t;
 }
 
+/** Liens permis pour une source citée en français (hadith lu, jugement lu, ouvrage de fiqh lu). */
+const LIEN_SOURCE =
+  /^https:\/\/(sunnah\.com\/[a-z]+:\d+[a-z]?|dorar\.net\/h\/[A-Za-z0-9]+|app\.turath\.io\/book\/\d+\?page=\d+)$/;
+/**
+ * Points en français (fiches, « À savoir », « Ce que nous n'ajoutons pas ») : aucun mot arabe sur la ligne, chaque
+ * source avec un recueil et un lien lu. Un point sans source n'est permis que s'il dit ce que nous N'ajoutons PAS,
+ * ou qu'une question est encore en cours de vérification.
+ */
+function verifierPoints(points, ou, sansSourcePermis) {
+  if (!Array.isArray(points) || !points.length) throw new Error(`points absents : ${ou}`);
+  for (const p of points) {
+    if (!p.texte || /[؀-ۿ]/.test(p.texte))
+      throw new Error(`point invalide (arabe ou vide) : ${ou}`);
+    if (!p.sources.length && !sansSourcePermis) throw new Error(`point sans source : ${ou}`);
+    for (const s of p.sources)
+      if (!s.recueil || !LIEN_SOURCE.test(s.lien ?? '') || /[؀-ۿ]/.test(s.recueil))
+        throw new Error(`source invalide : ${ou} (${s.recueil})`);
+  }
+}
+
 /** Garde Coran du générateur (la garde complète V3 est rejouée par l'outillage audio avant toute synthèse). */
 // eslint-disable-next-line no-misleading-character-class -- marques coraniques isolées cherchées une à une
 const graphieCoranique = (t) => /[\uFD3E\uFD3F\u0671\u06D6-\u06ED]/.test(t);
@@ -151,8 +173,13 @@ export function construire({ tanzil = readTanzil(), audioDir = AUDIO_DIR } = {})
   if (!tanzil) throw new Error(`Tanzil introuvable (${tanzilPath()}) : AWFORM_CONTENT_DIR ?`);
   const raw = readFileSync(SOURCE);
   const raw2 = readFileSync(SOURCE2);
+  const raw3 = readFileSync(SOURCE3);
   const src = JSON.parse(raw.toString('utf8'));
+  // phases 2 et 3 : même format (rubrique de l'application, empreinte de la source)
   const src2 = JSON.parse(raw2.toString('utf8'));
+  const src3 = JSON.parse(raw3.toString('utf8'));
+  src2.douas = [...src2.douas, ...src3.douas];
+  src2.ecartees = [...src2.ecartees, ...src3.ecartees];
   const trad = JSON.parse(readFileSync(TRADUCTIONS, 'utf8')).traductions;
   const pres = JSON.parse(readFileSync(PRESENTATION, 'utf8'));
   const audio = lireAudio(audioDir);
@@ -261,7 +288,13 @@ export function construire({ tanzil = readTanzil(), audioDir = AUDIO_DIR } = {})
   }
   const rubriques = pres.rubriques.map((r) => {
     const o = { id: r.id, douas: parRubrique[r.id] };
-    if (!o.douas.length) throw new Error(`rubrique vide : ${r.id}`);
+    // phase 3 : une rubrique peut n'avoir que des points « À savoir » (Naissance : aucune formule fixe du Prophète)
+    if (!o.douas.length && !r.a_savoir?.length) throw new Error(`rubrique vide : ${r.id}`);
+    for (const k of ['a_savoir', 'non_ajoute']) {
+      if (!r[k]) continue;
+      verifierPoints(r[k], `${r.id}.${k}`, k === 'non_ajoute');
+      o[k] = r[k];
+    }
     if (r.voir_aussi) {
       for (const v of r.voir_aussi) {
         if (v.doua && (!douas[v.doua] || douas[v.doua].rubrique === r.id))
@@ -283,12 +316,23 @@ export function construire({ tanzil = readTanzil(), audioDir = AUDIO_DIR } = {})
     edition: pres.edition,
     source_sha256: sha256(raw),
     source2_sha256: sha256(raw2),
+    source3_sha256: sha256(raw3),
     groupes,
     rubriques,
     enfant: pres.enfant,
     douas,
   };
-  if (pres.fiches) out.fiches = pres.fiches;
+  if (pres.fiches) {
+    for (const [id, f] of Object.entries(pres.fiches)) {
+      if (!/^[a-z]+$/.test(id) || !f.titre || !f.intro) throw new Error(`fiche invalide : ${id}`);
+      for (const s of f.sections) verifierPoints(s.points, `fiche ${id}`, true);
+      // renvois internes seulement (leçons de fiqh des Madjaliss), jamais un texte recopié
+      for (const v of f.renvois ?? [])
+        if (!v.titre || !/^\/madjaliss\/[a-z-]+\/\d+$/.test(v.lien ?? ''))
+          throw new Error(`renvoi de fiche invalide : ${id}`);
+    }
+    out.fiches = pres.fiches;
+  }
   if (audio.index) out.audio = { mention: audio.index.mention, voix: audio.index.voix };
   return out;
 }

@@ -1,5 +1,5 @@
 /**
- * Douas (phases 1 et 2) — données de l'onglet « Douas » de « Vivre l'islam » : fichier statique `/douas/douas.json`
+ * Douas (phases 1 à 3) — données de l'onglet « Douas » de « Vivre l'islam » : fichier statique `/douas/douas.json`
  * (construit par scripts/douas.mjs depuis docs/projet/douas/ ; jamais dans le code), chargé À LA DEMANDE, gardé
  * sur l'appareil (IndexedDB) au premier usage pour le hors ligne. Favoris : sur l'appareil, par élève.
  * Le texte arabe est affiché tel quel : chaîne exacte du dossier (hadiths) ou de Tanzil (Coran).
@@ -47,6 +47,17 @@ export interface Fiche {
   titre: string;
   intro: string;
   sections: Array<{ titre: string; points: FichePoint[] }>;
+  /** phase 3 : renvois internes vers les leçons de fiqh (zakāt des Madjaliss), sans recopier le texte */
+  renvois?: Array<{ titre: string; lien: string }>;
+}
+export interface Rubrique {
+  id: string;
+  douas: string[];
+  voir_aussi?: Renvoi[];
+  /** phase 3 : points sourcés affichés avant les douas (Naissance n'a que ceux-là) */
+  a_savoir?: FichePoint[];
+  /** phase 3 : « Ce que nous n'ajoutons pas », avec la raison et la source lue */
+  non_ajoute?: FichePoint[];
 }
 export interface DouasData {
   v: number;
@@ -55,8 +66,10 @@ export interface DouasData {
   source2_sha256?: string;
   /** architecture du référent : quotidien, moments de la vie, besoins, Coran */
   groupes?: Array<{ id: string; rubriques: string[] }>;
-  rubriques: Array<{ id: string; douas: string[]; voir_aussi?: Renvoi[] }>;
-  fiches?: { invoquer?: Fiche };
+  source3_sha256?: string;
+  rubriques: Rubrique[];
+  /** fiches (pas des rubriques de douas) : « Comment invoquer » (en tête), « L'aumône » (en fin) */
+  fiches?: Record<string, Fiche>;
   audio?: { mention: string; voix: string };
   enfant: string[];
   douas: Record<string, Doua>;
