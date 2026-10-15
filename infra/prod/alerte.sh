@@ -12,6 +12,10 @@ set -uo pipefail
 PROD="$(cd "$(dirname "$0")" && pwd)"
 CONF="$HOME/.config/awform"
 export AWFORM_ENV_DIR="${AWFORM_ENV_DIR:-$CONF}"
+# Version des images en service : compose choisit l'image par AWFORM_VERSION (sinon « local », absente du serveur).
+if [ -z "${AWFORM_VERSION:-}" ] && [ -s "$CONF/version-en-service" ]; then
+  AWFORM_VERSION="$(cat "$CONF/version-en-service")"; export AWFORM_VERSION
+fi
 STATE_DIR="${AWFORM_ALERTE_DIR:-$HOME/.local/state/awform}"
 STATUS_CMD="${AWFORM_STATUS_CMD:-$PROD/status.sh}"
 RAPPEL_S="${AWFORM_ALERTE_RAPPEL_S:-21600}"
