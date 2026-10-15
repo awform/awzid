@@ -138,3 +138,13 @@ Les 10 douas écartées par le dossier le restent : la doua du miroir (aucune do
 - **DOU-ETE-01** (« ... » → « … ») :
   - avant : الْحَمْدُ لِلَّهِ ... يَرْحَمُكَ اللَّهُ ... يَهْدِيكُمُ اللَّهُ وَيُصْلِحُ بَالَكُمْ
   - après : الْحَمْدُ لِلَّهِ … يَرْحَمُكَ اللَّهُ … يَهْدِيكُمُ اللَّهُ وَيُصْلِحُ بَالَكُمْ
+
+## Phase 2 (15/10/2026)
+
+*Claude, référent provisoire. Statut : **tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente d'une seconde lecture savante.***
+
+- 21 douas ajoutées (`douas_phase2.json`), chaque texte copié par script depuis sunnah.com ou dorar.net, empreinte SHA-256 contrôlée par `scripts/douas.mjs`. DOU-ANG-08 (Aḥmad 3712) réintégrée : texte du Musnad (dorar.net), al-Albānī et Aḥmad Shākir : chaîne authentique ; divergence de Shuʿayb al-Arnaʾūṭ signalée. ECA-07 reste en attente.
+- Sens en français pour les 87 douas (`traductions_fr.json`) : traduits par Awzid depuis l'arabe ; quand la doua est enseignée dans les livres, traduction du livre reprise.
+- 7e exception à « chaîne exacte » : DOU-ANG-08, espace isolée avant une virgule arabe (mise en page de dorar.net) retirée.
+- Voix de synthèse provisoire pour les hadiths seulement (décision du client du 15/10) ; jamais un verset ni un hadith qui cite un verset ; garde Coran V3 rejouée.
+- Détail, écartées et raisons : `application\DOUAS_PHASE2_15-10.md` (copie de travail du référent) et `douas_phase2.json` (`ecartees`).

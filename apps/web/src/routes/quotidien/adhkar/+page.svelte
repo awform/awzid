@@ -2,6 +2,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
+  import { page } from '$app/state';
   import { suraName } from '@awform/hifz';
   import Ar from '$lib/Ar.svelte';
   import VerseText from '$lib/VerseText.svelte';
@@ -27,7 +28,12 @@
   let data = $state<AdhkarData | null>(null);
   let offline = $state(false);
   let loaded = $state(false);
-  let cat = $state<AdhkarCategory>(defaultCategory(new Date()));
+  // lien `?c=matin` (renvoi depuis les Douas) : ce moment ouvert ; sinon le moment proposé selon l'heure
+  const demande = page.url.searchParams.get('c');
+  let cat = $state<AdhkarCategory>(
+    (['matin', 'soir', 'apres_priere', 'adhan', 'coucher'] as const).find((c) => c === demande) ??
+      defaultCategory(new Date()),
+  );
   let verses = $state<Record<string, Verse[]>>({});
   let basmala = $state('');
   let free = $state<number | null>(33);

@@ -1,5 +1,5 @@
 /**
- * Douas (phase 1) — données de l'onglet « Douas » de « Vivre l'islam » : fichier statique `/douas/douas.json`
+ * Douas (phases 1 et 2) — données de l'onglet « Douas » de « Vivre l'islam » : fichier statique `/douas/douas.json`
  * (construit par scripts/douas.mjs depuis docs/projet/douas/ ; jamais dans le code), chargé À LA DEMANDE, gardé
  * sur l'appareil (IndexedDB) au premier usage pour le hors ligne. Favoris : sur l'appareil, par élève.
  * Le texte arabe est affiché tel quel : chaîne exacte du dossier (hadiths) ou de Tanzil (Coran).
@@ -21,31 +21,50 @@ export interface Doua {
   /** douas du Coran : texte Tanzil, jamais de voix de synthèse */
   coran?: Passage[];
   /** panneau « Source » (table relue par le référent) : jamais de note interne du chercheur */
+  /** lien : sunnah.com ou dorar.net (page du texte copié) */
   source: { recueil: string; degre?: string; juge?: string; lien?: string };
   /** hadith qui cite un verset (formulation du narrateur gardée) : « contient un passage du Coran » */
   coran_cite?: boolean;
   /** plusieurs formules dans une carte (lignes de `ar`) : moment de chacune (« En entrant », « En sortant ») */
   lignes?: string[];
-  /** vide tant que la traduction n'est pas fournie (« Traduction en préparation ») */
+  /** sens en français (traduit par Awzid depuis l'arabe, ou repris du livre) ; une ligne par formule */
   traduction: string;
   note?: string;
   /** parole d'un Compagnon (présentée comme telle) */
   compagnon?: string;
   /** ajout facultatif, affiché après la doua principale */
   facultatif?: boolean;
-  /** emplacement de l'audio HUMAIN futur (aucun pour l'instant, aucun bouton) */
+  /** voix de synthèse PROVISOIRE (hadiths seulement, jamais un verset) : chemin du MP3, sinon null */
   audio: string | null;
+}
+/** renvoi vers une doua d'une autre rubrique, ou vers les adhkār (sans dupliquer le texte) */
+export type Renvoi = { doua: string } | { adhkar: string; titre: string; lien: string };
+export interface FichePoint {
+  texte: string;
+  sources: Array<{ recueil: string; degre?: string; juge?: string; lien?: string }>;
+}
+export interface Fiche {
+  titre: string;
+  intro: string;
+  sections: Array<{ titre: string; points: FichePoint[] }>;
 }
 export interface DouasData {
   v: number;
   edition: string;
   source_sha256: string;
-  rubriques: Array<{ id: string; douas: string[] }>;
+  source2_sha256?: string;
+  /** architecture du référent : quotidien, moments de la vie, besoins, Coran */
+  groupes?: Array<{ id: string; rubriques: string[] }>;
+  rubriques: Array<{ id: string; douas: string[]; voir_aussi?: Renvoi[] }>;
+  fiches?: { invoquer?: Fiche };
+  audio?: { mention: string; voix: string };
   enfant: string[];
   douas: Record<string, Doua>;
 }
 
 const KV = 'douas.v1';
+/** pastille de la fiche « Comment invoquer » (pas une rubrique de douas) */
+export const FICHE_INVOQUER = 'invoquer';
 export const DOUAS_URL = '/douas/douas.json';
 
 /** Réseau d'abord (édition publiée), sinon la copie gardée sur l'appareil. */
@@ -69,6 +88,11 @@ export async function loadDouas(
 /** Douas d'une rubrique (ordre du dossier ; un ajout facultatif suit la doua principale). */
 export function inRubrique(data: DouasData, id: string): string[] {
   return data.rubriques.find((r) => r.id === id)?.douas.filter((d) => data.douas[d]) ?? [];
+}
+
+/** Groupe d'une rubrique (architecture du référent), null si les données n'en ont pas. */
+export function groupOf(data: DouasData, rubrique: string): string | null {
+  return data.groupes?.find((g) => g.rubriques.includes(rubrique))?.id ?? null;
 }
 
 /** Version enfant : seulement la liste courte du quotidien (champ `enfant` des données). */
