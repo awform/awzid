@@ -8,6 +8,40 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 15/10/2026 — Douas phase 3 : moments de la vie, temps de l'année, fiche « L'aumône » ; démo déployée (`main` 08a6f93)
+
+Branche `douas3-wip` (worktree `~/awform-douas3`, étiquette `avant-douas3` = 8771e45), rebasée sur `main` 45a791b après la fusion du lot 10 ; commits `7645d29`, `0054abd`, `ba076df`, fusion **08a6f93**, poussée sur GitHub. Détail et sources : `application\DOUAS_PHASE2_15-10.md`, section « Phase 3 ».
+
+- **Contenu** (tranché par le référent, école mālikite, en attente d'une seconde lecture savante) : **94 douas** (+7), **23 rubriques**, 5 groupes (nouveau : « Le temps de l'année »).
+  - Rubriques créées : Naissance, Mariage, Décès et condoléances, Ramadan, Fêtes et ʿArafa.
+  - 7 douas, texte copié par script depuis sunnah.com / dorar.net (base64, SHA-256 du navigateur recontrôlé) : Abū Dāwūd 2130, 2160, 2357 ; al-Bukhārī 1284 ; Muslim 920, 963 ; vœux de l'ʿĪd comme **pratique des Compagnons** (Fatḥ al-Bārī 2/517, chaîne bonne ; jamais comme hadith du Prophète).
+  - Blocs « À savoir » (hadiths authentiques ou bons seulement) et « Ce que nous n'ajoutons pas » (raison et degré lus) :
+    - adhān dans l'oreille : degré exact et divergence, non présenté comme sunna ;
+    - ʿArafa : at-Tirmidhī 3585 faible, Muwaṭṭaʾ mursal ;
+    - « trente douas du Ramadan » ;
+    - « اللهم لك صمت… » (faible).
+  - 8 écartées (EC3-01 à 08) dans `douas_phase3.json`.
+  - Fiche « L'aumône (ṣadaqa) » : 10 hadiths authentiques ou bons ; renvois vers la zakāt d'Ibn ʿĀshir (Madjaliss, séances 36 et 40), sans réécrire la zakāt.
+  - Points ouverts de la phase 2 :
+    - langue de l'invocation dans la prière **tranchée** : makrūh pour qui sait l'arabe, permis sinon et hors prière (ad-Dardīr / ad-Dusūqī 1/253, turath.io) ;
+    - conclusion par la prière sur le Prophète **non affichée** : aucune source authentique ou bonne lue (at-Tirmidhī 486 faible ; « coupe du cavalier » munkar).
+- **Code** :
+  - `scripts/douas.mjs` : 3e dossier ; points sourcés vérifiés (liens sunnah.com, dorar.net, turath.io) ; fiches générales ; renvois `/madjaliss/…` ; une rubrique peut n'avoir que des points.
+  - `DouasVue.svelte` : la doua d'abord, puis « À savoir » et « Ce que nous n'ajoutons pas » ; fiche « L'aumône » en fin de rangée.
+  - Libellés ajoutés en fr, en, ar, es et de.
+- **Audio provisoire** : 7 MP3 de plus (`gen-audio.ps1 -LotDouas`, garde Coran V3 : 0 refus, plafond 2 000, 1 195 caractères), 59 douas avec audio. Aucun verset. Aucune clé lue.
+- **Vérifications** :
+  - vitest web **772** ; douas 35 ;
+  - svelte-check 0 erreur ; eslint et prettier propres ;
+  - e2e `douas.spec.ts` 13 + 1 ignoré ;
+  - **e2e COMPLÈTE** sous `flock` (`--retries=1 --workers=3`, après rebase) : **747 réussis, 137 ignorés, 1 instable** (`a39:223`, passé au second essai) **et 1 échec**, `themes-simples:142`. Ce test est connu pour être instable ; il réussit relancé seul.
+  - Budget : appareil élève **345,8 Ko** (≤ 350, marge 4,2 ≥ 3 ; +0,2 Ko par rapport au lot 10) ; `douas.json` à la demande.
+- **Démo** : `AWFORM_ECOUTE=1 deploy.sh --demo …` OK (images 08a6f93, migrations à jour, fumée ok).
+  - `/douas/douas.json` 200 (80 087 octets), identique au dépôt : édition `phase3-2026-10-15`, 94 douas, 23 rubriques, fiches `invoquer` et `sadaqa`.
+  - MP3 DOU-RAM-01 : 200, `audio/mpeg`.
+  - `/vivre/douas?r=naissance` : 200.
+  - La bêta n'est pas mise à jour (lot ultérieur). Retour arrière : `git checkout avant-douas3`, puis `deploy.sh --demo`.
+
 ## 15/10/2026 — Lot 9 : audio des Madjaliss (fiqh, cycles 1-2), limites R5 et R6 ; démo et bêta `awzid-beta` déployées (`main` 9f49ae2)
 
 Branche `lot9` (worktree `~/awform-lot9`, depuis `main` aa04dde ; étiquette `avant-lot9` = aa04dde), commits `e4505cc` + `aa6a4b2`, fusionnée dans `main` (**9f49ae2**). Non touché : `infra/charge/purger-comptes-fictifs.sh` (modifié sans commit dans `~/awform-demo`).
