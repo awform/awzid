@@ -4,7 +4,9 @@ import { expect, newAdult, password, test } from './fixtures';
 import { pickProfile } from './profil';
 
 /**
- * Douas (phase 1) — onglet « Douas » de « Vivre l'islam » (données `/douas/douas.json`, à la demande) :
+ * Douas (phases 1 et 2) — onglet « Douas » de « Vivre l'islam » (données `/douas/douas.json`, à la demande) :
+ *  - phase 2 : groupes, fiche « Comment invoquer », renvois, sens en français, voix de synthèse provisoire pour
+ *    les hadiths seulement (jamais un verset), voyage complet ;
  *  - l'onglet, à côté de Bon comportement, Prières et Adhkār ; bandeau « Sources vérifiées » ;
  *  - une rubrique : l'arabe EXACT des données (le test unitaire le compare au dossier et à Tanzil), le moment,
  *    « Traduction en préparation » ; aucune doua écartée ni en attente ; aucun bouton d'écoute ;
@@ -20,7 +22,15 @@ const YEAR = new Date().getUTCFullYear();
 type Data = {
   rubriques: Array<{ id: string; douas: string[] }>;
   enfant: string[];
-  douas: Record<string, { ar?: string; coran?: Array<{ s: number; a: number }> }>;
+  douas: Record<
+    string,
+    {
+      ar?: string;
+      coran?: Array<{ s: number; a: number }>;
+      traduction?: string;
+      audio?: string | null;
+    }
+  >;
 };
 
 async function data(req: APIRequestContext): Promise<Data> {
@@ -76,40 +86,110 @@ test('onglet Douas : à côté des autres, bandeau, rubriques, une rubrique exac
   await expect(page.getByTestId('douas-bandeau')).toHaveText(
     'Sources vérifiées — en cours de relecture savante',
   );
-  // 13 rubriques du dossier + les favoris
+  // 18 rubriques (phase 2), la fiche « Comment invoquer » et les favoris ; groupes du référent
   const chips = page.getByTestId('douas-rubriques').locator('button');
-  await expect(chips).toHaveCount(14);
-  // rubrique « Repas » : douas du dossier, dans l'ordre, texte arabe exact, moment, traduction en préparation
+  await expect(chips).toHaveCount(d.rubriques.length + 2);
+  expect(d.rubriques.length).toBe(18);
+  await expect(page.getByTestId('douas-rubriques').locator('[data-groupe]')).toHaveText([
+    'Au quotidien',
+    'Moments de la vie',
+    'Les besoins',
+    'Le Coran',
+  ]);
+  // rubrique « Repas » : douas du dossier, dans l'ordre, texte arabe exact, moment, sens en français
   await page.locator('[data-rubrique="repas"]').click();
   await expect(page.locator('[data-rubrique="repas"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByTestId('douas-titre-rubrique')).toHaveText('Repas');
+  await expect(page.getByTestId('douas-groupe')).toHaveText('Au quotidien');
   const repas = d.rubriques.find((r) => r.id === 'repas')!.douas;
   await expect.poll(() => ids(page)).toEqual(repas);
   for (const id of repas) {
     const card = liste(page).locator(`[data-doua="${id}"]`);
     expect(await card.locator('[data-douas-ar]').textContent()).toBe(d.douas[id]!.ar);
-    await expect(card.getByTestId('douas-traduction-prep')).toHaveText('Traduction en préparation');
+    await expect(card.locator('.sens')).toHaveText(d.douas[id]!.traduction!);
+    await expect(card.getByTestId('douas-traduction-prep')).toHaveCount(0);
     // titre = le moment seul, sans citation traduite
     await expect(card.locator('h3')).not.toContainText('«');
+    // voix de synthèse provisoire (hadith) : bouton et mention, seulement si le fichier existe
+    const n = d.douas[id]!.audio ? 1 : 0;
+    await expect(card.getByTestId('douas-ecouter')).toHaveCount(n);
+    await expect(card.getByTestId('douas-voix-provisoire')).toHaveCount(n);
   }
-  // aucune voix : ni bouton d'écoute, ni élément audio
-  await expect(page.locator('audio, [data-testid="ecouter"]')).toHaveCount(0);
-  // douas du Coran : texte entre ﴿ ﴾, verset par verset (Tanzil)
+  await expect(liste(page).getByTestId('douas-ecouter').first()).toBeVisible();
+  await expect(liste(page).getByTestId('douas-voix-provisoire').first()).toHaveText(
+    'Voix de synthèse provisoire',
+  );
+  const mp3 = await liste(page).getByTestId('douas-ecouter').first().getAttribute('data-audio');
+  const r = await page.request.get(mp3!);
+  expect(r.status()).toBe(200);
+  expect((await r.body()).length).toBeGreaterThan(1000);
+  // douas du Coran : texte entre ﴿ ﴾, verset par verset (Tanzil), JAMAIS de voix de synthèse
   await page.locator('[data-rubrique="coran"]').click();
   const musa = liste(page).locator('[data-doua="DOU-COR-06"] [data-douas-coran]');
   await expect(musa).toContainText('﴿');
   await expect(musa.locator('[data-verset]')).toHaveCount(4);
+  await expect(
+    page.locator('audio, [data-testid="douas-ecouter"], [data-testid="ecouter"]'),
+  ).toHaveCount(0);
   // aucune doua écartée ou en attente, dans aucune rubrique
   const seen: string[] = [];
   for (const r of d.rubriques) {
     await page.locator(`[data-rubrique="${r.id}"]`).click();
     await expect.poll(() => ids(page)).toEqual(r.douas);
-    await expect(page.locator('[data-doua="DOU-ANG-08"], [data-doua^="ECA-"]')).toHaveCount(0);
+    await expect(page.locator('[data-doua^="ECA-"], [data-doua^="EC2-"]')).toHaveCount(0);
+    // aucun verset lu par la voix de synthèse
+    for (const id of r.douas)
+      if (d.douas[id]!.coran)
+        await expect(
+          liste(page).locator(`[data-doua="${id}"]`).getByTestId('douas-ecouter'),
+        ).toHaveCount(0);
     seen.push(...r.douas);
   }
   expect(seen.sort()).toEqual(Object.keys(d.douas).sort());
-  expect(seen).not.toContain('DOU-ANG-08');
-  expect(seen.filter((x) => x.startsWith('ECA-'))).toEqual([]);
+  expect(seen.filter((x) => x.startsWith('ECA-') || x.startsWith('EC2-'))).toEqual([]);
+});
+
+test('phase 2 : fiche « Comment invoquer », renvois « Voir aussi », voyage complet', async ({
+  page,
+}) => {
+  await newAdult(page, 'douas-phase2');
+  await page.goto('/vivre/douas?r=invoquer');
+  await expect(page.getByTestId('douas-titre-rubrique')).toHaveText('Comment invoquer');
+  const fiche = page.getByTestId('douas-fiche');
+  await expect(fiche).toContainText('Les moments propices');
+  await expect(fiche).toContainText('dernier tiers de la nuit');
+  await expect(fiche.getByRole('link', { name: 'at-Tirmidhī 3477' })).toHaveAttribute(
+    'href',
+    'https://sunnah.com/tirmidhi:3477',
+  );
+  await expect(page.getByTestId('douas-liste')).toHaveCount(0);
+  // renvoi vers une doua d'une autre rubrique : on y va, sans copie du texte
+  await page.goto('/vivre/douas?r=dette');
+  await expect(page.getByTestId('douas-groupe')).toHaveText('Les besoins');
+  await page.getByTestId('douas-voir-aussi').locator('[data-renvoi="DOU-ANG-05"]').click();
+  await expect(page.locator('[data-rubrique="epreuve"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(liste(page).locator('[data-doua="DOU-ANG-05"]')).toBeVisible();
+  // renvoi vers les adhkār du matin (« بسم الله الذي لا يضر… », trois fois)
+  const adhkar = page.getByTestId('douas-voir-aussi').locator('[data-renvoi-adhkar]');
+  await expect(adhkar).toHaveAttribute('href', '/quotidien/adhkar?c=matin');
+  await adhkar.click();
+  await page.waitForURL(/\/quotidien\/adhkar\?c=matin$/);
+  await expect(page.locator('[data-categorie="matin"]')).toHaveAttribute('aria-selected', 'true');
+  // voyage : adieux, départ, monture (véhicules), ville, retour, verset 11:41 sans voix
+  await page.goto('/vivre/douas?r=voyage');
+  await expect.poll(async () => (await ids(page)).length).toBe(10);
+  const v01 = liste(page).locator('[data-doua="DOU-VOY-01"]');
+  await v01.getByRole('button', { name: 'Source' }).click();
+  await expect(v01.getByTestId('douas-source-detail')).toContainText('voiture, avion, bateau');
+  const ville = liste(page).locator('[data-doua="DOU-VOY-08"]');
+  await ville.getByRole('button', { name: 'Source' }).click();
+  await expect(ville.getByTestId('douas-source-detail')).toContainText('bon');
+  await expect(
+    ville.getByTestId('douas-source-detail').getByRole('link', { name: 'Voir sur dorar.net' }),
+  ).toHaveAttribute('href', /^https:\/\/dorar\.net\/h\//);
+  await expect(
+    liste(page).locator('[data-doua="DOU-VOY-10"]').getByTestId('douas-ecouter'),
+  ).toHaveCount(0);
 });
 
 test('source derrière « Source », ajout facultatif, tonnerre : parole d’un Compagnon', async ({

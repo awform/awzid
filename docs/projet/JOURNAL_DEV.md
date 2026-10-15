@@ -8,6 +8,17 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 15/10/2026 — Douas, phase 2 (branche `douas2-wip`, étiquette `avant-douas2`)
+
+- **Contenu** : 87 douas (66 + 21), 18 rubriques en 4 groupes (Au quotidien, Moments de la vie, Les besoins, Le Coran), fiche « Comment invoquer » (étapes, bonnes manières, moments propices, empêchement, question de la langue « en cours de vérification »), renvois « Voir aussi » (dont la protection du matin et du soir « بسم الله الذي لا يضر… », déjà dans les adhkār via re3.l05 : renvoi vers `/quotidien/adhkar?c=matin`, texte non dupliqué). Nouvelles rubriques : subsistance et travail, dettes, maison et installation, guérison, apaisement du cœur ; « parents » devient « Parents et famille », « maladie » devient « Visite au malade » (MAL-02/03/04 rangées dans « Guérison »).
+- **Sources** : `docs/projet/douas/douas_phase2.json` — 16 hadiths copiés par script depuis sunnah.com / dorar.net (DOM de la page, aucune saisie, aucune NFC), empreinte SHA-256 de chaque texte vérifiée par `scripts/douas.mjs` ; 5 versets (Tanzil). 9 entrées écartées avec raison (marché, personne éprouvée, nouvelle lune, Abū Dāwūd 1555, 11:41 comme protection contre la noyade, « au moment de la pluie », at-Tirmidhī 3479, « douas pour un travail / un mariage », ʿArafa).
+- **Traductions** : `docs/projet/douas/traductions_fr.json`, 87 sens en français (repris des livres quand la doua y est enseignée, sinon traduits depuis l'arabe) ; plus aucun « Traduction en préparation ».
+- **Audio** : voix de synthèse PROVISOIRE (Google Wavenet-B, waqf) pour 52 hadiths, `apps/web/static/douas/audio/` (2,8 Mo, à la demande, jamais préchargés) ; aucun verset (21 douas du Coran, 4 hadiths qui citent un verset) et 10 hadiths refusés par la garde Coran V3 ; un fichier n'est servi que si le SHA-1 du texte affiché est celui du texte synthétisé. Bouton « Écouter » + mention « Voix de synthèse provisoire ». Outillage Windows : `awform\audio\douas\` (dq_preparer.ps1, dq_index.ps1), `gen-audio.ps1 -LotDouas` (WAQF.md § 13).
+- **Tests** : `douas.test.ts` 27 (empreintes, octets, Tanzil, audio jamais pour un verset, traductions, renvois, fiche, enfant) ; e2e `douas.spec.ts` 12 (dont la phase 2). Budget élève 345,4 Ko (≤ 350, marge 4,6) ; douas.json 63 Ko chargé à la demande.
+- Livrable : `application\DOUAS_PHASE2_15-10.md`.
+
+---
+
 ## 14/10/2026 (soir) — Déploiement du lot 8 (`main` 3390538) sur le serveur de bêta `awzid-beta` — web toujours FERMÉ
 
 Accord du client du 14/10 (mise à jour du serveur de bêta). Procédure : `EXPLOITATION.md` § 15 « Mise à jour ». Étiquette de sécurité : **`avant-lot8-beta` = `197efe3`** (images en service avant ; `c2ae8f9` n'en différait que par le journal).

@@ -1,6 +1,7 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import { activeProfile } from '$lib/attempts';
   import { t } from '$lib/i18n';
@@ -8,9 +9,12 @@
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
+  import DouaEcouter from './DouaEcouter.svelte';
   import DouaTexte from './DouaTexte.svelte';
   import {
+    FICHE_INVOQUER,
     forChild,
+    groupOf,
     inRubrique,
     loadDouas,
     loadFavorites,
@@ -23,7 +27,9 @@
    * référent seulement, classées par rubriques ; pour chacune, l'arabe vocalisé sur sa ligne, le moment où on la
    * dit, la traduction (« en préparation » tant qu'elle n'est pas fournie) ; source et degré derrière « Source » ;
    * favoris sur l'appareil. Profil enfant : seulement la liste courte du quotidien, sans rubriques.
-   * Aucun audio pour l'instant (l'audio humain futur aura sa place dans les données, `audio`).
+   * Phase 2 : groupes du référent (quotidien, moments de la vie, besoins, Coran), fiche « Comment invoquer », renvois
+   * « Voir aussi » (sans dupliquer le texte), sens en français, voix de synthèse PROVISOIRE pour les hadiths seulement
+   * (jamais un verset : `audio` est vide pour le Coran et pour les hadiths qui citent un verset).
    */
   let data = $state<DouasData | null>(null);
   let offline = $state(false);
@@ -35,7 +41,9 @@
 
   const enfant = $derived(profile?.kind === 'enfant');
   const rubrique = $derived(
-    choix === 'favoris' || data?.rubriques.some((r) => r.id === choix)
+    choix === 'favoris' ||
+      (choix === FICHE_INVOQUER && !!data?.fiches?.invoquer) ||
+      data?.rubriques.some((r) => r.id === choix)
       ? choix
       : (data?.rubriques[0]?.id ?? null),
   );
@@ -44,9 +52,11 @@
       ? []
       : enfant
         ? forChild(data)
-        : rubrique === 'favoris'
-          ? favoris.filter((id) => data!.douas[id])
-          : inRubrique(data, rubrique ?? ''),
+        : rubrique === FICHE_INVOQUER
+          ? []
+          : rubrique === 'favoris'
+            ? favoris.filter((id) => data!.douas[id])
+            : inRubrique(data, rubrique ?? ''),
   );
 
   onMount(async () => {
@@ -69,6 +79,39 @@
       ?.querySelector(`[data-rubrique="${r}"]`)
       ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   });
+
+  const voirAussi = $derived(
+    !data || enfant ? [] : (data.rubriques.find((r) => r.id === rubrique)?.voir_aussi ?? []),
+  );
+  const groupe = $derived(data && rubrique ? groupOf(data, rubrique) : null);
+  const fiche = $derived(data?.fiches?.invoquer ?? null);
+  /** rubriques par groupe (architecture du référent), sinon une seule liste */
+  const blocs = $derived(
+    !data
+      ? []
+      : data.groupes?.length
+        ? data.groupes.map((g) => ({
+            id: g.id as string | null,
+            rubriques: data!.rubriques.filter((r) => g.rubriques.includes(r.id)),
+          }))
+        : [{ id: null as string | null, rubriques: data.rubriques }],
+  );
+  const ADHKAR = '/quotidien/adhkar';
+  const lienSource = (l: string) =>
+    l.startsWith('https://dorar.net/') ? t('do.voir_dorar') : t('do.voir_sunnah');
+
+  /** « Voir aussi » : ouvre la rubrique de la doua et l'amène à l'écran */
+  async function allerA(id: string) {
+    const r = data?.douas[id]?.rubrique;
+    if (!r) return;
+    choix = r;
+    await tick();
+    const el = document.querySelector<HTMLElement>(
+      `[data-testid="douas-liste"] [data-doua="${id}"]`,
+    );
+    el?.scrollIntoView({ block: 'start' });
+    el?.focus({ preventScroll: true });
+  }
 
   async function basculer(id: string) {
     favoris = await toggleFavorite(profile?.id ?? null, favoris, id);
@@ -107,36 +150,83 @@
         ><Icon name="etoile" size={18} />
         <Bidi text={t('do.favoris_n', { n: favoris.length })} /></button
       >
-      {#each data.rubriques as r (r.id)}
-        <button
+      {#if fiche}<button
           type="button"
-          class:on={rubrique === r.id}
-          aria-pressed={rubrique === r.id}
-          onclick={() => (choix = r.id)}
-          data-rubrique={r.id}><Bidi text={t(`do.r.${r.id}`)} /></button
-        >
+          class:on={rubrique === FICHE_INVOQUER}
+          aria-pressed={rubrique === FICHE_INVOQUER}
+          onclick={() => (choix = FICHE_INVOQUER)}
+          data-rubrique={FICHE_INVOQUER}><Bidi text={t('do.invoquer')} /></button
+        >{/if}
+      {#each blocs as b (b.id ?? '-')}
+        {#if b.id}<span class="groupe" data-groupe={b.id}><Bidi text={t(`do.g.${b.id}`)} /></span
+          >{/if}
+        {#each b.rubriques as r (r.id)}
+          <button
+            type="button"
+            class:on={rubrique === r.id}
+            aria-pressed={rubrique === r.id}
+            onclick={() => (choix = r.id)}
+            data-rubrique={r.id}><Bidi text={t(`do.r.${r.id}`)} /></button
+          >
+        {/each}
       {/each}
     </div>
+    {#if groupe && rubrique !== 'favoris'}<p class="sur-titre muted" data-testid="douas-groupe">
+        <Bidi text={t(`do.g.${groupe}`)} />
+      </p>{/if}
     <h2 data-testid="douas-titre-rubrique">
-      <Bidi text={rubrique === 'favoris' ? t('do.favoris') : t(`do.r.${rubrique}`)} />
+      <Bidi
+        text={rubrique === 'favoris'
+          ? t('do.favoris')
+          : rubrique === FICHE_INVOQUER
+            ? t('do.invoquer')
+            : t(`do.r.${rubrique}`)}
+      />
     </h2>
   {/if}
 
-  {#if !liste.length}
+  {#if !enfant && rubrique === FICHE_INVOQUER && fiche}
+    <article class="card fiche" data-testid="douas-fiche">
+      <p><Bidi text={fiche.intro} /></p>
+      {#each fiche.sections as s (s.titre)}
+        <h3><Bidi text={s.titre} /></h3>
+        <ul>
+          {#each s.points as p, i (i)}
+            <li>
+              <Bidi text={p.texte} />
+              {#if p.sources.length}<span class="fiche-src muted small">
+                  {#each p.sources as src, j (j)}{#if j}
+                      ;
+                    {/if}{#if src.lien}<a
+                        href={src.lien}
+                        target="_blank"
+                        rel="noopener noreferrer external"><Bidi text={src.recueil} /></a
+                      >{:else}<Bidi text={src.recueil} />{/if}{#if src.degre}
+                      (<Bidi text={src.degre} />{#if src.juge}, <Bidi
+                          text={src.juge}
+                        />{/if}){/if}{/each}
+                </span>{/if}
+            </li>
+          {/each}
+        </ul>
+      {/each}
+    </article>
+  {:else if !liste.length}
     <EmptyState icon="etoile" title={t('do.favoris_vide_titre')} text={t('do.favoris_vide')} />
   {:else}
     <ul class="liste" data-testid="douas-liste" data-enfant={enfant ? '1' : undefined}>
       {#each liste as id (id)}
         {@const d = data.douas[id]!}
         {@const fav = favoris.includes(id)}
-        <li class="card doua" class:facultatif={d.facultatif} data-doua={id}>
+        <li class="card doua" class:facultatif={d.facultatif} data-doua={id} tabindex="-1">
           <h3><Bidi text={d.titre} /></h3>
           {#if d.facultatif}<span class="pill">{t('do.facultatif')}</span>{/if}
           {#if d.compagnon}<span class="pill" data-testid="douas-compagnon"
               >{t('do.compagnon')}</span
             >{/if}
           <DouaTexte doua={d} />
-          <!-- audio humain futur (récitant) : `d.audio`, aucun bouton tant qu'il n'y en a pas -->
+          <!-- voix de synthèse provisoire : hadiths seulement (jamais un verset ni un hadith qui en cite un) -->
+          {#if d.audio && !d.coran && !d.coran_cite}<DouaEcouter src={d.audio} {id} />{/if}
           {#if d.coran_cite}<p class="cite muted" data-testid="douas-coran-cite">
               {t('do.contient_coran')}
             </p>{/if}
@@ -184,7 +274,7 @@
               {/if}
               {#if d.source.lien}<dd class="lien">
                   <a href={d.source.lien} target="_blank" rel="noopener noreferrer external"
-                    ><Bidi text={t('do.voir_sunnah')} /></a
+                    ><Bidi text={lienSource(d.source.lien)} /></a
                   >
                 </dd>{/if}
             </dl>
@@ -192,6 +282,36 @@
         </li>
       {/each}
     </ul>
+  {/if}
+  {#if voirAussi.length && rubrique !== FICHE_INVOQUER}
+    <section class="voir-aussi" data-testid="douas-voir-aussi">
+      <h3>{t('do.voir_aussi')}</h3>
+      <ul>
+        {#each voirAussi as v, i (i)}
+          <li>
+            {#if 'doua' in v}
+              {@const cible = data.douas[v.doua]}
+              {#if cible}<button
+                  type="button"
+                  class="btn-ligne"
+                  data-renvoi={v.doua}
+                  onclick={() => allerA(v.doua)}
+                  ><Bidi text={`${cible.titre} — ${t(`do.r.${cible.rubrique}`)}`} /></button
+                >{/if}
+            {:else}
+              <!-- lien vérifié par scripts/douas.mjs : toujours /quotidien/adhkar, éventuellement ?c=… -->
+              <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu, suivi d'un paramètre -->
+              <a
+                class="btn-ligne"
+                href={`${resolve('/quotidien/adhkar')}${v.lien.slice(ADHKAR.length)}`}
+                data-renvoi-adhkar={v.adhkar}><Bidi text={v.titre} /></a
+              >
+              <!-- eslint-enable svelte/no-navigation-without-resolve -->
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    </section>
   {/if}
 {/if}
 
@@ -264,6 +384,57 @@
   }
   .sens {
     margin: 4px 0;
+    white-space: pre-line;
+  }
+  .groupe {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    padding: 0 2px 0 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--muted, inherit);
+    white-space: nowrap;
+  }
+  .sur-titre {
+    margin: var(--space-s) 0 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .sur-titre + h2 {
+    margin-top: 0;
+  }
+  .fiche h3,
+  .voir-aussi h3 {
+    margin: var(--space-s) 0 4px;
+    font-size: 1rem;
+  }
+  .fiche ul,
+  .voir-aussi ul {
+    margin: 0;
+    padding-inline-start: 1.2em;
+  }
+  .voir-aussi ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .fiche li {
+    margin: 6px 0;
+  }
+  .fiche-src {
+    display: block;
+  }
+  .fiche-src a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .voir-aussi .btn-ligne {
+    text-align: start;
+    text-decoration: none;
   }
   .cite {
     margin: 0 0 4px;
