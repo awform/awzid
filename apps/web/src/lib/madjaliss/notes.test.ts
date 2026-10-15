@@ -84,7 +84,7 @@ describe('AKH-0132 : segment coranique (T7)', () => {
     expect(texteVoixSynthese(de.get('AKH-0051')!)).toBe(de.get('AKH-0051')!.ar);
   });
 
-  it('la rubrique n’appelle aucune voix de synthèse (enregistrements humains seulement)', () => {
+  it('aucune synthèse vocale dans le navigateur : seulement les fichiers générés (fiqh des cycles 1-2, jamais le Coran)', () => {
     const dir = fileURLToPath(new URL('.', import.meta.url));
     for (const f of readdirSync(dir).filter(
       (x) => /\.(svelte|ts)$/.test(x) && !x.endsWith('.test.ts'),

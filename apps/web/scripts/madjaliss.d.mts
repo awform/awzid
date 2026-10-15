@@ -108,9 +108,49 @@ export function ecrireTexte(
   lignes?: Map<string, string>,
   sortie?: string,
   protegee?: string,
-): { eleve: TexteConstruit; publique: unknown };
+): {
+  eleve: TexteConstruit;
+  publique: unknown;
+  audio: Array<{ chemin: string; droit: 'public' | 'differe' }>;
+};
 export function versMasques(
   ar: unknown,
   se: unknown,
   seancesSrc: unknown[],
 ): Map<string, { decision: string; raison_masquage: string; lecture_proposee: string }>;
+/** Lot 9 : audio de synthèse des Madjaliss (index compact, manifeste des MP3 servis). */
+export interface IndexAudio {
+  genere?: string;
+  voix?: string;
+  statut?: string;
+  textes: Record<string, Record<string, { o: number; s: string; t: string; d: number; a?: true }>>;
+}
+export interface ManifesteAudio {
+  v: 1;
+  voix: string | null;
+  fichiers: Record<string, { o: number; e: string; d: 'public' | 'differe' }>;
+}
+export const AUDIO_INDEX: string;
+export const AUDIO_MANIFESTE: string;
+export function indexAudio(): IndexAudio;
+export function texteLu(x: { ar?: unknown; h?: unknown }): string | null;
+export function audioDe(
+  texte: string,
+  x: {
+    id: string;
+    t?: string;
+    ar?: unknown;
+    h?: unknown;
+    q?: unknown[];
+    explication?: unknown;
+    masque?: unknown;
+    nc?: unknown;
+    incertain?: unknown;
+    [k: string]: unknown;
+  },
+  ix?: IndexAudio,
+): string | null;
+export function manifesteAudio(
+  entrees: ReadonlyArray<{ chemin: string; droit: string }>,
+  ix?: IndexAudio,
+): ManifesteAudio;

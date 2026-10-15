@@ -73,6 +73,7 @@ const STAFF_SET = new Set<string>(STAFF_ROLES);
 
 import {
   COUNTRY,
+  ECHECS_CONNEXION_ADRESSE,
   EMAIL,
   emailKey,
   err,
@@ -505,6 +506,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       // depuis une autre adresse) ; l'essai est RÉSERVÉ atomiquement avant la vérification
       // audit MIN-7 : jamais l'adresse e-mail en clair dans la table des verrous
       const accKey = `login:${emailKey(email)}|${req.ip}`;
+      // lot 9 (R6) : le verrou qui compte est celui du COUPLE compte + adresse (5 échecs) ; le compteur de l'adresse
+      // SEULE n'est plus qu'un filet contre la pulvérisation de mots de passe (beaucoup de comptes depuis une adresse),
+      // assez haut pour qu'une classe derrière une même adresse ne soit jamais bloquée par les erreurs de ses élèves
+      // (30 élèves × 5 erreurs = 150 < 300 par heure) ; réglable : AWFORM_ECHECS_CONNEXION_ADRESSE
       const ipKey = `login-ip:${req.ip}`;
       const locked = (await lockedUntil(db, accKey)) ?? (await lockedUntil(db, ipKey));
       if (locked) return err(reply, 429, 'verrouille', { jusqua: locked.toISOString() });
@@ -528,7 +533,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const ok = await verifySecret(req.body.password, a?.passwordHash);
       if (!a || !ok) {
         await failAttempt(db, accKey);
-        await recordFailure(db, ipKey, 30);
+        await recordFailure(db, ipKey, ECHECS_CONNEXION_ADRESSE);
         await audit(db, a?.id ?? null, 'connexion.echec', null, {
           email: a ? undefined : 'inconnu',
         });

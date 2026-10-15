@@ -40,6 +40,15 @@ export const TZ = { type: 'string', maxLength: 64, pattern: '^[A-Za-z0-9_+\\-/]+
 export const REGION = { type: ['string', 'null'], pattern: '^[A-Z]{2}-[A-Z0-9]{1,3}$' } as const;
 /** inscriptions par heure et par adresse IP (réglable pour les tests de bout en bout) */
 /** bêta fermée : essais de codes d'invitation refusés, par heure et par adresse IP, avant une pause */
+/**
+ * Lot 9 (R6) : échecs de connexion par ADRESSE seule avant une pause (filet contre la pulvérisation de mots de passe) ;
+ * le verrou ordinaire est par couple compte + adresse (5 échecs). Défaut 300 par heure (avant : 30, qui pouvait bloquer
+ * toute une classe derrière une même adresse).
+ */
+export const ECHECS_CONNEXION_ADRESSE = (() => {
+  const n = Number(process.env.AWFORM_ECHECS_CONNEXION_ADRESSE);
+  return Number.isInteger(n) && n >= 10 ? n : 300;
+})();
 export const INVITATION_TRIES_PER_HOUR = Number(process.env.AWFORM_INVITATION_ESSAIS ?? 10) || 10;
 export const SIGNUPS_PER_HOUR = Number(process.env.AWFORM_SIGNUP_PER_HOUR ?? 20) || 20;
 export const AVATARS = ['etoile', 'lune', 'soleil', 'feuille', 'goutte', 'livre'];

@@ -2,6 +2,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
+  import { jouerAudio } from './audio';
   import { avecArabe, segments, type NotesEnseignant, type Phrase } from './donnees';
 
   /**
@@ -16,7 +17,14 @@
     p,
     statut = '',
     note = null,
-  }: { p: Phrase; statut?: string; note?: NotesEnseignant['phrases'][number] | null } = $props();
+    audio = null,
+  }: {
+    p: Phrase;
+    statut?: string;
+    note?: NotesEnseignant['phrases'][number] | null;
+    /** lot 9 : audio de la phrase pour ce profil (`audioDe`), ou null : pas de bouton */
+    audio?: string | null;
+  } = $props();
   const titre = $derived(p.t === 'titre' || p.t === 'vers_titre');
   const blocs = $derived([
     { nom: 'liste', lignes: p.liste ?? [] },
@@ -54,6 +62,19 @@
               ><span class="orn" aria-hidden="true">﴾</span></span
             >{/if}{/each}{/if}
     </p>
+    {#if audio}
+      <!-- lot 9 : voix de synthèse provisoire (fiqh des cycles 1 et 2 ; jamais le Coran) -->
+      <p class="ecoute">
+        <button
+          type="button"
+          class="ghost"
+          data-testid="mj-ecouter-lire"
+          data-audio={audio}
+          onclick={() => void jouerAudio(audio).catch(() => false)}
+          ><Icon name="oreille" size={18} /><Bidi text={t('audio.ecouter')} /></button
+        >
+      </p>
+    {/if}
     {#if p.nc}
       <!-- lot 6 : vers dont la lecture n'est pas confirmée, montré au groupe « bêta fermée » et au personnel seulement -->
       <p class="reserve" data-testid="vers-nc">
@@ -173,6 +194,9 @@
 </article>
 
 <style>
+  .ecoute {
+    margin: 0;
+  }
   .phrase {
     display: grid;
     gap: 4px;
