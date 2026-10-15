@@ -3,7 +3,15 @@
   import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
-  import { avecArabe, chargerNotes, type Matn, type NotesEnseignant, type Seance } from './donnees';
+  import { audioDe, garderAudio } from './audio';
+  import {
+    avecArabe,
+    chargerNotes,
+    type Matn,
+    type NotesEnseignant,
+    type Public,
+    type Seance,
+  } from './donnees';
   import Memoriser from './Memoriser.svelte';
   import { aMemoriser } from './memo';
   import { lien } from './liens';
@@ -24,6 +32,7 @@
     enseignant = false,
     suivante = null,
     progres,
+    kind = null,
   }: {
     matn: Matn;
     seance: Seance;
@@ -31,6 +40,8 @@
     enseignant?: boolean;
     suivante?: number | null;
     progres: Progres;
+    /** profil : l'audio d'une phrase « adulte » n'est proposé qu'à un adulte */
+    kind?: Public | null;
   } = $props();
 
   const ETAPES = ['lire', 'mots', 'memo', 'quiz', 'fin'] as const;
@@ -47,6 +58,13 @@
   const de = $derived(new Map(matn.phrases.map((p) => [p.id, p])));
   const phrases = $derived(seance.phrases.map((id) => de.get(id)).filter((p) => !!p));
   const memo = $derived(aMemoriser(phrases));
+  /** lot 9 : audio des phrases de la séance pour ce profil (voix de synthèse provisoire) */
+  const audios = $derived(phrases.map((p) => audioDe(p, kind)));
+  // séance ouverte : ses fichiers audio sont gardés sur l'appareil en arrière-plan (hors ligne ensuite, comme le texte)
+  $effect(() => {
+    const a = audios.filter((x): x is string => !!x);
+    void garderAudio(a);
+  });
   const questions = $derived(genererQuiz(matn, seance.n));
   const noteDe = $derived(new Map((notes?.phrases ?? []).map((x) => [x.id, x])));
   const motsReserves = $derived((notes?.mots ?? []).filter((m) => m.n === seance.n));
@@ -115,12 +133,16 @@
   <h2 class="sr"><Bidi text={t(`mj.etape_${ETAPES[etape]}`)} /></h2>
   {#if ETAPES[etape] === 'lire'}
     <div class="texte" data-testid="mj-texte">
-      {#each phrases as p (p.id)}<Phrase
+      {#each phrases as p, i (p.id)}<Phrase
           {p}
+          audio={audios[i] ?? null}
           statut={matn.statut}
           note={modeEns ? (noteDe.get(p.id) ?? null) : null}
         />{/each}
     </div>
+    {#if audios.some((a) => !!a)}
+      <p class="muted" data-testid="mj-audio-mention"><Bidi text={t('audio.mention')} /></p>
+    {/if}
     {#if seance.renvois?.length}
       <p class="renvois" data-testid="mj-renvois">
         <Bidi text={t('mj.voir_aussi')} />
@@ -160,7 +182,7 @@
       </div>
     {/if}
   {:else if ETAPES[etape] === 'memo'}
-    <Memoriser phrases={memo} {pid} texte={matn.id} onfin={() => (memoFini = true)} />
+    <Memoriser phrases={memo} {pid} texte={matn.id} {kind} onfin={() => (memoFini = true)} />
   {:else if ETAPES[etape] === 'quiz'}
     {#if questions.length}
       <Quiz {questions} onfin={(bonnes, total) => (quizFini = { bonnes, total })} />

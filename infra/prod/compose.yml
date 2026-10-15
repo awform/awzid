@@ -237,6 +237,10 @@ services:
       ACCUEIL_PUBLIC: '${ACCUEIL_PUBLIC:-auto}'
       ACCUEIL_INDEXABLE: '${ACCUEIL_INDEXABLE:-off}'
       ACCUEIL_LANGUES: '${ACCUEIL_LANGUES:-fr,en}'
+      # lot 9 : audio de synthèse des Madjaliss (MP3 hors dépôt, copiés dans ~/madjaliss-audio du serveur), servi par la
+      # route gardée /mutun/audio/ (session exigée) ; dossier absent ou vide = aucun audio (404), jamais d'erreur
+      MADJALISS_AUDIO_DIR: /madjaliss-audio
+    volumes: ['${AWFORM_MADJALISS_AUDIO_SOURCE:-~/madjaliss-audio}:/madjaliss-audio:ro']
     depends_on: [api]
     logging: *logs
 

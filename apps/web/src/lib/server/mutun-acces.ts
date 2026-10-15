@@ -82,3 +82,14 @@ export function decider(nom: string, me: CompteMutun | null): 200 | 401 | 403 | 
   if (!me?.account) return 401;
   return (droit === 'personnel' ? estPersonnel(me) : voitDiffere(me)) ? 200 : 403;
 }
+
+/**
+ * Lot 9 : AUDIO des Madjaliss (`/mutun/audio/<texte>/<id>.mp3`). Droit du manifeste : « public » = toute session ouverte
+ * (jamais un visiteur sans compte : 401), « differe » = mêmes droits que les séances différées (`voitDiffere`), 403 sinon ;
+ * une session à moitié ouverte (second facteur exigé et non validé) est traitée comme sans session ; droit inconnu : 403.
+ */
+export function deciderAudio(droit: string, me: CompteMutun | null): 200 | 401 | 403 {
+  if (!me?.account || (me.mfaRequired && !me.mfaVerified)) return 401;
+  if (droit === 'public') return 200;
+  return droit === 'differe' && voitDiffere(me) ? 200 : 403;
+}

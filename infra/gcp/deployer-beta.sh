@@ -55,7 +55,7 @@ echo "AWFORM_BACKUP_HORS_SITE=gs://$BUCKET/awform" > "$CONF/backup.env"
 
 # copies reçues par tar (droits d'origine, propriétaire = compte OS Login) : lisibles par les conteneurs
 # (utilisateur « node ») ; contenus publics, aucun secret
-for d in "$HOME/awform-content" "$HOME/lecons-audio" "$HOME/awform-data" "$HOME/modeles-ia"; do
+for d in "$HOME/awform-content" "$HOME/lecons-audio" "$HOME/madjaliss-audio" "$HOME/awform-data" "$HOME/modeles-ia"; do
   # (un dossier absent au premier déploiement est créé vide par Docker, au nom de root : ignoré)
   [ -d "$d" ] && [ -O "$d" ] && chmod -R a+rX "$d"
 done

@@ -363,7 +363,10 @@ test('versets cités : Tanzil entre ﴿﴾ avec le sens du verset (ʿAshmāwiyya
   await page.goto(`/madjaliss/izziyya/${n371}`);
   await expect(page.locator('[data-phrase="IZZ-0371"] [data-sens]')).toHaveCount(2);
   await expect(page.locator('[data-phrase="IZZ-0371"] [data-coran="23:5-6"]')).toBeVisible();
-  // jamais de bouton « Écouter » (aucune voix de synthèse)
+  // jamais de bouton « Écouter » sur une phrase qui cite le Coran (voix de synthèse : jamais le Coran)
+  await expect(
+    page.locator('[data-phrase="IZZ-0371"] [data-testid="mj-ecouter-lire"]'),
+  ).toHaveCount(0);
   await expect(page.getByTestId('mj-ecouter')).toHaveCount(0);
   await proprete(page);
 });
@@ -530,6 +533,7 @@ test('Quarante hadiths : texte d’an-Nawawī, takhrīj, degré, version du recu
   ).toHaveCount(2);
   await expect(page.locator('[data-phrase="NAW-H10"] [data-coran="23:51"]')).toBeVisible();
   await expect(page.getByTestId('mj-ecouter')).toHaveCount(0);
+  await expect(page.getByTestId('mj-ecouter-lire')).toHaveCount(0);
   await proprete(page);
   expect(await serious(page)).toEqual([]);
 });

@@ -118,10 +118,15 @@ test('séance complète : lire, mots difficiles, mémoriser, quiz, « Séance fa
   await expect(etape).toHaveAttribute('data-etape', 'mots');
   await expect(page.locator('[data-testid="mj-mots"] li')).toHaveCount(s1.mots.length);
 
-  // 3. Mémoriser : masquage progressif, mot caché révélé d'un toucher, auto-évaluation ; aucun bouton « Écouter »
+  // 3. Mémoriser : masquage progressif, mot caché révélé d'un toucher, auto-évaluation ; bouton « Écouter » seulement
+  // si la phrase en cours a un audio (lot 9 : voix de synthèse du fiqh, jamais le Coran ni une lecture incertaine)
   await page.getByTestId('mj-suivant').click();
   await expect(etape).toHaveAttribute('data-etape', 'memo');
-  await expect(page.getByTestId('mj-ecouter')).toHaveCount(0);
+  const enCours = (await page.locator('[data-memo]').getAttribute('data-memo'))!;
+  const audioEnCours = (de.get(enCours) as { audio?: string } | undefined)?.audio;
+  if (audioEnCours)
+    await expect(page.getByTestId('mj-ecouter')).toHaveAttribute('data-audio', audioEnCours);
+  else await expect(page.getByTestId('mj-ecouter')).toHaveCount(0);
   const memo = page.getByTestId('mj-memo');
   await page.getByTestId('mj-masquer').click();
   await expect(memo).toHaveAttribute('data-palier', '1');

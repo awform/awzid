@@ -59,6 +59,9 @@ const LECONS_DIR = join(tmpdir(), `awform-e2e-lecons${ISOLE ? `-${SUFFIX}` : ''}
 // lot F3 : boîte de DÉMONSTRATION des e-mails (aucun envoi réel), lue par les tests (f3.spec.ts)
 process.env.E2E_MAIL_DIR ??= join(tmpdir(), `awform-e2e-boite${ISOLE ? `-${SUFFIX}` : ''}`);
 if (existsSync(join(LECONS_SRC, 'index.js'))) process.env.E2E_LECONS_AUDIO = '1';
+// lot 9 : audio de synthèse des Madjaliss (MP3 générés le 14/10, hors dépôt) lu en place, en lecture seule
+const MJ_AUDIO_DIR = process.env.E2E_MADJALISS_AUDIO_DIR ?? join(homedir(), 'madjaliss-audio');
+if (existsSync(join(MJ_AUDIO_DIR, 'akhdari'))) process.env.E2E_MADJALISS_AUDIO = '1';
 // A34 : Muṣḥaf exact — SEULEMENT avec E2E_MUSHAF_EXACT=1 et la copie Content Sync du serveur (jamais dans le
 // dépôt) : les autres suites gardent la page fluide qu'elles vérifient
 // copie de production (604 pages) si elle est là, sinon celle du prélancement (49 pages)
@@ -184,7 +187,12 @@ export default defineConfig({
     {
       command: 'node build/index.js',
       url: `http://127.0.0.1:${WEB_PORT}`,
-      env: { HOST: '127.0.0.1', PORT: String(WEB_PORT), API_URL: `http://127.0.0.1:${API_PORT}` },
+      env: {
+        HOST: '127.0.0.1',
+        PORT: String(WEB_PORT),
+        API_URL: `http://127.0.0.1:${API_PORT}`,
+        MADJALISS_AUDIO_DIR: MJ_AUDIO_DIR,
+      },
       reuseExistingServer: false,
       timeout: 60_000,
     },

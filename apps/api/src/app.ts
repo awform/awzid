@@ -53,6 +53,7 @@ import { registerF5 } from './f5.js';
 import { registerSupport } from './support.js';
 import { registerVerification } from './verification.js';
 import { registerBetaAcces } from './beta-acces.js';
+import { registerLimiteLectures } from './limite-lectures.js';
 import { scrub, UUID_ANY } from './scrub.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
 import type { RecitationKey } from '@awform/db';
@@ -179,6 +180,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   });
   // bêta fermée sur invitation : mode fermé (après la lecture de la session), invitations, liste d'attente
   registerBetaAcces(app, db, { mailer, publicUrl, secretKey: opts.secretKey ?? null });
+  // lot 9 (R5) : limite globale des lectures, par compte connecté ou par adresse (AWFORM_LIMITE_LECTURES)
+  registerLimiteLectures(app, { mandataire: hops > 0 });
 
   // en-têtes de sécurité de base (la CSP stricte est posée par SvelteKit / Caddy)
   app.addHook('onSend', async (_req, reply, payload) => {

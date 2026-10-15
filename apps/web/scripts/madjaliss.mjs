@@ -26,6 +26,13 @@
 //    prévu (translit_interne, fr_translit_interne, matn_ar_base_numerique, collation*, decision_referent*, relecture_*…)
 //    est ignoré.
 // Statut : EN_ATTENTE_SECONDE_LECTURE (l'ancien libellé est accepté en entrée pendant la migration).
+// AUDIO (lot 9, décision du client des 13 et 14/10/2026 : voix de synthèse autorisée pour les textes de fiqh des cycles
+// 1 et 2, JAMAIS pour le Coran) : une phrase reçoit `audio` (« <texte>/<id>.mp3 ») seulement si l'index de la génération
+// (`madjaliss-source/audio_index.json`) a son fichier ET que le SHA-1 du texte lu (`ar`, ou les deux hémistiches joints
+// par « * ») est celui du texte SERVI (sinon l'audio est périmé : pas de bouton) ; jamais pour un passage réservé, un
+// vers masqué ou non confirmé, une lecture incertaine ni une phrase qui cite le Coran. Les fichiers sont servis par la
+// route gardée `/mutun/audio/<texte>/<id>.mp3` d'après le manifeste `src/lib/server/madjaliss-audio.json` écrit ici
+// (droit « public » : toute session ; « differe » : mêmes droits que les séances différées).
 // Usage : node scripts/madjaliss.mjs (contrôlé par src/lib/madjaliss/*.test.ts : fichiers à jour).
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -39,6 +46,54 @@ export const SORTIE = join(web, 'static', 'mutun');
 export const STATUT = 'EN_ATTENTE_SECONDE_LECTURE';
 /** Seul libellé accepté en entrée : l'ancien libellé a été remplacé dans toutes les sources (13/10/2026) et n'existe plus nulle part. */
 export const STATUTS_ACCEPTES = new Set([STATUT]);
+
+/** Lot 9 : index compact de l'audio de synthèse (voir `scripts/madjaliss-audio-index.mjs`). */
+export const AUDIO_INDEX = join(SOURCES, 'audio_index.json');
+/** Manifeste des MP3 servis (route gardée `/mutun/audio/[texte]/[fichier]`), jamais dans `static/`. */
+export const AUDIO_MANIFESTE = join(web, 'src', 'lib', 'server', 'madjaliss-audio.json');
+let indexAudioCache = null;
+/** Index de l'audio (vide si le fichier manque : aucune phrase n'a alors d'audio). */
+export function indexAudio() {
+  if (!indexAudioCache) {
+    try {
+      indexAudioCache = JSON.parse(readFileSync(AUDIO_INDEX, 'utf8'));
+    } catch {
+      indexAudioCache = { textes: {} };
+    }
+  }
+  return indexAudioCache;
+}
+const sha1 = (s) => createHash('sha1').update(s, 'utf8').digest('hex');
+/** Texte que lit l'audio d'une phrase servie : `ar` (chaîne), ou les deux hémistiches d'un vers joints par « * ». */
+export const texteLu = (x) =>
+  typeof x.ar === 'string' ? x.ar : Array.isArray(x.h) ? x.h.join(' * ') : null;
+/**
+ * Chemin de l'audio d'une phrase servie (« <texte>/<id>.mp3 »), ou null : pas de fichier, phrase exclue (passage
+ * réservé, vers masqué ou non confirmé, lecture incertaine, Coran) ou texte changé depuis la génération (SHA-1).
+ */
+export function audioDe(texte, x, ix = indexAudio()) {
+  const e = ix.textes?.[texte]?.[x.id];
+  if (!e) return null;
+  if (x.explication || x.masque || x.nc || x.incertain || x.q?.length || x.t === 'citation_coran')
+    return null;
+  const s = texteLu(x);
+  if (s === null || /[\uFD3E\uFD3F]/.test(s)) return null;
+  return sha1(s) === e.t ? `${texte}/${x.id}.mp3` : null;
+}
+/** Manifeste des MP3 servis : chemin → taille, empreinte (ETag), droit (« public » ou « differe »). */
+export function manifesteAudio(entrees, ix = indexAudio()) {
+  const fichiers = {};
+  for (const { chemin, droit } of [...entrees].sort((a, b) => (a.chemin < b.chemin ? -1 : 1))) {
+    const [texte, nom] = chemin.split('/');
+    const e = ix.textes[texte][nom.replace(/\.mp3$/, '')];
+    // une phrase à la fois publique et différée (jamais aujourd'hui) : le droit le plus strict l'emporte
+    if (fichiers[chemin]?.d === 'differe') continue;
+    fichiers[chemin] = { o: e.o, e: e.s.slice(0, 32), d: droit };
+  }
+  return { v: 1, voix: ix.voix ?? null, fichiers };
+}
+const avecAudio = (phrases, droit) =>
+  phrases.filter((p) => p.audio).map((p) => ({ chemin: p.audio, droit }));
 
 /** Textes intégrés (lots 2 et 3 : dix textes ; l'ordre d'affichage est celui des cycles, voir `cycles.ts`). */
 export const TEXTES = [
@@ -1008,6 +1063,9 @@ function construireTexte(texte, lignes) {
       versNonConfirmes.push({ ...complete, nc: true });
       continue; // notes de l'enseignant déjà posées plus haut
     }
+    // lot 9 : audio de synthèse (fiqh des cycles 1 et 2), seulement pour le texte servi tel que généré
+    const audio = audioDe(texte, complete);
+    if (audio) complete.audio = audio;
     phrases.push(complete);
 
     // mode enseignant
@@ -1323,20 +1381,25 @@ export function ecrireTexte(texte, lignes = tanzil(), sortie = SORTIE, protegee 
   const { eleve, enseignant, raisons, versNonConfirmes } = construire(texte, lignes);
   const ecrire = (dir, nom, x) => writeFileSync(join(dir, nom), `${JSON.stringify(x)}\n`);
   let publique;
+  const audio = [];
   if (TEXTES_LOT4.includes(texte)) {
     const { index, fichiers } = departager(eleve, TAILLE_PARTIE, raisons);
     publique = index;
-    for (const { pub, ...f } of fichiers)
+    for (const { pub, ...f } of fichiers) {
       if (pub) ecrire(sortie, `${texte}-o${f.part}.json`, f);
       else ecrire(protegee, `${texte}-p${f.part}.json`, f);
+      audio.push(...avecAudio(f.phrases, pub ? 'public' : 'differe'));
+    }
   } else {
     const s = separerDiffere(eleve, versNonConfirmes);
     publique = s.publique;
     if (s.differe) ecrire(protegee, `${texte}-differe.json`, s.differe);
+    audio.push(...avecAudio(publique.phrases, 'public'));
+    if (s.differe) audio.push(...avecAudio(s.differe.phrases, 'differe'));
   }
   ecrire(sortie, `${texte}.json`, publique);
   ecrire(protegee, `${texte}-enseignant.json`, enseignant);
-  return { eleve, publique };
+  return { eleve, publique, audio };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -1349,10 +1412,15 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   for (const f of readdirSync(SORTIE_PROTEGEE))
     if (f.endsWith('.json')) rmSync(join(SORTIE_PROTEGEE, f));
   const lignes = tanzil();
+  const audio = [];
   for (const texte of TOUS_LES_TEXTES) {
-    const { eleve, publique } = ecrireTexte(texte, lignes);
+    const { eleve, publique, audio: a } = ecrireTexte(texte, lignes);
+    audio.push(...a);
     console.log(
       `${texte} : ${eleve.phrases.length} phrases, ${eleve.seances.length} séances, ${Buffer.byteLength(JSON.stringify(publique)) + 1} octets publics, version ${publique.version}`,
     );
   }
+  const m = manifesteAudio(audio);
+  writeFileSync(AUDIO_MANIFESTE, `${JSON.stringify(m)}\n`);
+  console.log(`audio : ${Object.keys(m.fichiers).length} phrases avec un MP3 servi`);
 }

@@ -97,6 +97,11 @@ export interface Phrase {
   incertain?: true;
   /** réservé au niveau adulte (ni enfants ni ados) */
   adulte?: true;
+  /**
+   * lot 9 : audio de synthèse de la phrase (« <texte>/<id>.mp3 », servi par la route gardée `/mutun/audio/`) ; posé
+   * par la construction seulement si le texte servi est celui de la génération. Bouton : voir `audioDe` (audio.ts)
+   */
+  audio?: string;
   /** intertitre arabe de l'éditeur, avant ce vers */
   titre?: string;
   /** listes et exemples du matn (Ājurrūmiyya), chacun sur sa ligne */
@@ -240,10 +245,11 @@ export const arSimple = (p: Phrase): string | null =>
   typeof p.ar === 'string' ? p.ar : p.h ? p.h.join(' ') : null;
 
 /**
- * GARDE de la voix de synthèse (T7) : seul texte qu'une voix de synthèse pourrait un jour lire. Jamais une phrase qui
- * cite le Coran (segment Tanzil, ou verset cité dans le matn d'un hadith : le Coran n'est jamais lu par une machine),
- * jamais un passage réservé à l'explication de l'enseignant ; null sinon. Aujourd'hui la rubrique n'a aucune voix de
- * synthèse (enregistrements humains attendus) : tout futur branchement DOIT passer par ici.
+ * GARDE de la voix de synthèse (T7) : seul texte qu'une voix de synthèse peut lire. Règle (décision du client des 13 et
+ * 14/10/2026) : voix de synthèse AUTORISÉE pour les textes de fiqh des cycles 1 et 2, JAMAIS pour le Coran. Jamais une
+ * phrase qui cite le Coran (segment Tanzil, ou verset cité dans le matn d'un hadith : le Coran n'est jamais lu par une
+ * machine), jamais un passage réservé à l'explication de l'enseignant ni un vers masqué ou non confirmé ; null sinon.
+ * Tout branchement audio DOIT passer par ici (`audioDe` d'audio.ts) ; jamais de synthèse dans le navigateur.
  */
 export const texteVoixSynthese = (p: Phrase): string | null =>
   p.explication ||

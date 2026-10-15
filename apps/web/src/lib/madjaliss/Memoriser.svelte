@@ -4,7 +4,8 @@
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
-  import { arSimple, type Phrase } from './donnees';
+  import { audioDe, jouerAudio } from './audio';
+  import { arSimple, type Phrase, type Public } from './donnees';
   import {
     apresEval,
     chargerMoteur,
@@ -21,17 +22,21 @@
    * Mémoriser (moteur du hifẓ, chargé à l'ouverture de l'étape) : une phrase à la fois ; on la lit, puis on la
    * MASQUE PEU À PEU (« Masquer davantage ») et on la récite ; un mot caché se révèle d'un toucher. Tout masqué :
    * auto-évaluation juste / hésitant / oublié (notes du hifẓ ; « oublié » : la phrase revient en fin de séance).
-   * Pas de voix de synthèse : l'emplacement « Écouter » attend l'enregistrement humain (bouton masqué).
+   * « Écouter » (lot 9) : voix de synthèse PROVISOIRE des textes de fiqh des cycles 1 et 2 (décision du client des 13 et
+   * 14/10/2026 ; jamais pour le Coran) ; bouton seulement si la phrase a un audio que ce profil peut entendre (`audioDe`).
    */
   let {
     phrases,
     pid,
     texte,
+    kind = null,
     onfin,
   }: {
     phrases: Phrase[];
     pid: string | null;
     texte: string;
+    /** profil (enfant, ado, adulte) : l'audio d'une phrase « adulte » n'est jamais proposé aux autres */
+    kind?: Public | null;
     onfin: () => void;
   } = $props();
 
@@ -43,8 +48,6 @@
   // svelte-ignore state_referenced_locally
   const total = file.length;
   let faites = $state(0);
-  /** enregistrement humain de la phrase : aucun pour l'instant (jamais de voix de synthèse) */
-  const audio: string | null = null;
 
   let moteur = $state<Moteur | null>(null);
   onMount(() => {
@@ -52,6 +55,8 @@
   });
 
   const courante = $derived(file[0] ?? null);
+  /** audio de la phrase courante (voix de synthèse provisoire), ou null : pas de bouton */
+  const audio = $derived(courante ? audioDe(courante, kind) : null);
   const mots = $derived(courante ? motsDe(arSimple(courante)!) : []);
   /** un vers : le second hémistiche commence sur une nouvelle ligne */
   const coupure = $derived(courante?.h ? motsDe(courante.h[0]).length : -1);
@@ -94,10 +99,17 @@
         />{#if i === coupure - 1}<br />{/if}{/each}
     </p>
     {#if audio}
-      <!-- emplacement de l'enregistrement humain (aucun pour l'instant) -->
-      <button type="button" data-testid="mj-ecouter"
-        ><Icon name="oreille" /><Bidi text={t('mj.ecouter')} /></button
-      >
+      <!-- voix de synthèse provisoire, en attendant l'enregistrement humain -->
+      <p class="ecoute">
+        <button
+          type="button"
+          data-testid="mj-ecouter"
+          data-audio={audio}
+          onclick={() => void jouerAudio(audio).catch(() => false)}
+          ><Icon name="oreille" /><Bidi text={t('audio.ecouter')} /></button
+        >
+        <small class="muted"><Bidi text={t('audio.mention')} /></small>
+      </p>
     {/if}
     {#if !toutMasque}
       <div class="actions">
@@ -130,6 +142,13 @@
 </div>
 
 <style>
+  .ecoute {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-s);
+    margin: 0;
+  }
   .memo {
     display: grid;
     gap: var(--space-s);

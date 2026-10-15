@@ -73,7 +73,15 @@
 {:else if etat === 'absent'}
   <EmptyState title={t(ACTIFS.has(id) ? 'mj.horsligne' : 'mj.introuvable')} />
 {:else if vue && seance && progres}
-  <Seance matn={vue} {seance} pid={profil?.id ?? null} enseignant={staff} {suivante} {progres} />
+  <Seance
+    matn={vue}
+    {seance}
+    pid={profil?.id ?? null}
+    enseignant={staff}
+    {suivante}
+    {progres}
+    kind={profil?.kind ?? null}
+  />
   <p class="statut" data-testid="mj-statut"><Bidi text={t('mj.statut')} /></p>
 {:else}
   <EmptyState title={t('mj.introuvable')} />
