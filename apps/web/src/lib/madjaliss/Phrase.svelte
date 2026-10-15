@@ -18,12 +18,18 @@
     statut = '',
     note = null,
     audio = null,
+    traduction = true,
   }: {
     p: Phrase;
     statut?: string;
     note?: NotesEnseignant['phrases'][number] | null;
     /** lot 9 : audio de la phrase pour ce profil (`audioDe`), ou null : pas de bouton */
     audio?: string | null;
+    /**
+     * lot 10 : traduction des phrases arabes affichée (bouton « Voir / Cacher la traduction ») ; ne cache que la
+     * traduction (phrase, lignes de liste et d'exemples, sens du verset), jamais les notes d'explication
+     */
+    traduction?: boolean;
   } = $props();
   const titre = $derived(p.t === 'titre' || p.t === 'vers_titre');
   const blocs = $derived([
@@ -81,7 +87,9 @@
         <Icon name="info" size={20} /><Bidi text={t('mj.non_confirme')} />
       </p>
     {/if}
-    {#if p.fr}<p class="fr"><Bidi text={avecArabe(p.fr, p.ma)} /></p>{/if}
+    {#if p.fr && traduction}<p class="fr" data-testid="mj-fr">
+        <Bidi text={avecArabe(p.fr, p.ma)} />
+      </p>{/if}
     {#each p.q ?? [] as q, i (i)}<p
         class="cit coranique"
         lang="ar"
@@ -124,13 +132,13 @@
           <ul>
             {#each b.lignes as l, i (i)}<li>
                 <span class="ar" lang="ar" dir="rtl"><Bidi text={l.ar} base="ar" /></span>
-                <span class="fr"><Bidi text={l.fr} /></span>
+                {#if traduction}<span class="fr"><Bidi text={l.fr} /></span>{/if}
               </li>{/each}
           </ul>
         </div>
       {/if}
     {/each}
-    {#each p.sens ?? [] as s (s.ref)}
+    {#each traduction ? (p.sens ?? []) : [] as s (s.ref)}
       <div class="sens" data-sens={s.ref}>
         <p class="sens-titre"><Bidi text={`${t('mj.sens_verset')} (${s.ref})`} /></p>
         <p class="sens-texte"><Bidi text={s.texte} /></p>

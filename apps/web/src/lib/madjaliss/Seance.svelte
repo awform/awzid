@@ -3,6 +3,8 @@
   import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
+  import BoutonTraduction from '$lib/BoutonTraduction.svelte';
+  import { memoriserTraduction, traductionVisible } from '$lib/traduction';
   import { audioDe, garderAudio } from './audio';
   import {
     avecArabe,
@@ -54,6 +56,13 @@
   let modeEns = $state(false);
   let notes = $state<NotesEnseignant | null>(null);
   let notesErreur = $state(false);
+  // lot 10 : traduction affichée par défaut, choix mémorisé par profil ; le mode enseignant montre tout
+  // valeur relue quand le profil change ; le bouton la remplace (dérivé modifiable)
+  let trad = $derived(traductionVisible(pid));
+  function basculerTrad() {
+    trad = !trad;
+    memoriserTraduction(pid, trad);
+  }
 
   const de = $derived(new Map(matn.phrases.map((p) => [p.id, p])));
   const phrases = $derived(seance.phrases.map((id) => de.get(id)).filter((p) => !!p));
@@ -132,12 +141,16 @@
 <section class="corps" data-testid="mj-etape" data-etape={ETAPES[etape]}>
   <h2 class="sr"><Bidi text={t(`mj.etape_${ETAPES[etape]}`)} /></h2>
   {#if ETAPES[etape] === 'lire'}
-    <div class="texte" data-testid="mj-texte">
+    {#if !modeEns && phrases.some((p) => !!p.fr)}
+      <p class="bascule-trad"><BoutonTraduction visible={trad} onbasculer={basculerTrad} /></p>
+    {/if}
+    <div class="texte" data-testid="mj-texte" data-traduction={trad || modeEns ? '1' : '0'}>
       {#each phrases as p, i (p.id)}<Phrase
           {p}
           audio={audios[i] ?? null}
           statut={matn.statut}
           note={modeEns ? (noteDe.get(p.id) ?? null) : null}
+          traduction={trad || modeEns}
         />{/each}
     </div>
     {#if audios.some((a) => !!a)}
@@ -347,6 +360,11 @@
   .mots .ar {
     display: block;
     text-align: right;
+  }
+  .bascule-trad {
+    margin: 0 0 var(--space-s);
+    display: flex;
+    justify-content: flex-end;
   }
   .renvois {
     display: flex;

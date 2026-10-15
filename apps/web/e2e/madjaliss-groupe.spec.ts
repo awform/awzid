@@ -116,12 +116,13 @@ test('membre du groupe : tout le contenu différé avec le bandeau ; notes du r�
   await expect(page.getByTestId('mj-bandeau-relecture')).toBeVisible();
   await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(58);
   await page.goto('/madjaliss/risala');
-  await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(264);
+  await expect(page.locator('[data-testid="mj-sommaire"] li')).toHaveCount(265);
   // une séance différée de la Risāla (croyance, niveau adulte) : lue, avec la raison de la publication différée
-  await page.goto('/madjaliss/risala/20');
+  // (15/10 : la séance 20 est ouverte, ses voyelles ont été levées ; la séance 1, croyance, reste différée)
+  await page.goto('/madjaliss/risala/1');
   await expect(page.getByTestId('mj-etape')).toHaveAttribute('data-etape', 'lire');
   await expect(page.getByTestId('mj-bandeau-relecture')).toBeVisible();
-  await expect(page.getByTestId('mj-raison-differe')).toContainText('incertaines');
+  await expect(page.getByTestId('mj-raison-differe')).toContainText('Croyance');
   // Lāmiyya : le vers 0045 est montré, marqué « non confirmé » (séance 11), les deux autres aussi
   for (const [seance, id] of [
     [11, 'LAM-0045'],

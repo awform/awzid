@@ -98,6 +98,10 @@ test('Lectures : un livret lu à l’écran, tampon « j’ai lu », gardé puis
   await expect(page.getByTestId('livret')).toHaveAttribute('data-code', code);
   await page.getByTestId('suivant').click();
   await expect(page.getByTestId('numero')).toContainText('Page 1');
+  // lot 10 : traduction affichée par défaut ; le bouton la cache puis la remontre
+  await expect(page.getByTestId('texte-fr')).toBeVisible();
+  await page.getByTestId('traduction').click();
+  await expect(page.getByTestId('texte-fr')).toHaveCount(0);
   await page.getByTestId('traduction').click();
   await expect(page.getByTestId('texte-fr')).toBeVisible();
   while (await page.getByTestId('suivant').isEnabled()) await page.getByTestId('suivant').click();
