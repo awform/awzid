@@ -121,7 +121,7 @@
 <svelte:head><title>{t('app.nom')} — {t('auj.titre')}</title></svelte:head>
 
 <header class="hello">
-  <h1>{t('auj.titre')}</h1>
+  <h1 class="titre-page">{t('auj.titre')}</h1>
   {#if profile}<p class="muted" data-testid="bonjour">
       <Bidi text={t('auj.bonjour', { nom: profile.pseudonym })} />
     </p>{/if}
@@ -137,16 +137,20 @@
   </p>
 {:else if data}
   <section class="seance" data-testid="seance" aria-labelledby="seance-titre">
-    <div class="bandeau" aria-hidden="true"></div>
-    <div class="seance-corps">
+    <!-- refonte 16/10 : bandeau vert profond au motif étoilé, liseré doré, titre et durée dedans -->
+    <div class="bandeau">
       <h2 id="seance-titre">{t('auj.seance')}</h2>
       {#if plan.length}
         <p class="resume">
           <span class="duree" data-testid="duree"
             ><Bidi text={t('auj.duree', { n: minutes })} /></span
           >
-          <span class="muted"><Bidi text={plan.map((p) => t(NOM[p.k])).join(' · ')} /></span>
+          <span><Bidi text={plan.map((p) => t(NOM[p.k])).join(' · ')} /></span>
         </p>
+      {/if}
+    </div>
+    <div class="seance-corps">
+      {#if plan.length}
         <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu dans `plan` -->
         <a
           class="button primary go"
@@ -271,43 +275,50 @@
     margin-bottom: 0;
   }
   .hello p {
-    margin: 2px 0 var(--space-m);
+    margin: 10px 0 var(--space-l);
     font-size: 1.05rem;
   }
-  /* héros : bandeau émeraude, motif étoilé fin, filet doré */
+  /* héros : bandeau vert profond (mêmes couleurs en clair et en sombre), motif étoilé fin, liseré doré */
   .seance {
-    position: relative;
     overflow: hidden;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     background: var(--card);
     border: 1px solid var(--line);
     box-shadow: var(--shadow-card);
-    margin-bottom: var(--space-m);
+    margin-bottom: var(--space-l);
   }
   .bandeau {
-    height: 56px;
-    background-color: var(--primary);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 6l4 10 10 4-10 4-4 10-4-10-10-4 10-4z' fill='none' stroke='%23ffffff' stroke-opacity='.22' stroke-width='1'/%3E%3Crect x='13' y='13' width='14' height='14' transform='rotate(45 20 20)' fill='none' stroke='%23ffffff' stroke-opacity='.14' stroke-width='1'/%3E%3C/svg%3E");
-    border-bottom: 2px solid var(--gold);
-  }
-  .seance-corps {
-    padding: var(--space-m);
     display: grid;
-    gap: var(--space-s);
+    gap: 10px;
+    padding: 22px 20px 26px;
+    color: var(--bande-texte);
+    background: var(--motif-etoile) var(--bande-1);
+    box-shadow: inset 0 -4px 0 var(--gold);
   }
   .seance h2 {
     margin: 0;
+    color: inherit;
+    font-size: 1.45rem;
+  }
+  .seance-corps {
+    padding: 20px;
+    display: grid;
+    gap: var(--space-s);
   }
   .resume {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 10px;
-    align-items: baseline;
+    gap: 6px 12px;
+    align-items: center;
     margin: 0;
   }
+  /* durée : pastille dorée, texte foncé sur l'or (6:1) */
   .duree {
+    padding: 2px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--gold);
+    color: var(--sur-or);
     font-weight: 700;
-    color: var(--teal);
   }
   .go {
     display: flex;
@@ -316,7 +327,6 @@
     gap: 10px;
     min-height: 56px;
     font-size: 1.1rem;
-    border-radius: 12px;
   }
   .detail summary {
     min-height: 44px;
@@ -338,8 +348,8 @@
     align-items: center;
     gap: var(--space-s) var(--space-m);
     border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: var(--space-s) var(--space-m);
+    border-radius: var(--radius-md);
+    padding: 12px var(--space-m);
   }
   .steps li > :global(a) {
     grid-column: 1 / -1;
@@ -360,11 +370,12 @@
     display: flex;
     align-items: center;
     gap: var(--space-m);
-    min-height: 64px;
-    padding: var(--space-s) var(--space-m);
-    margin-bottom: var(--space-m);
-    border-radius: 16px;
+    min-height: 72px;
+    padding: 12px 20px;
+    margin-bottom: var(--space-l);
+    border-radius: var(--radius-lg);
     border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
     background: var(--card);
     color: var(--ink);
     text-decoration: none;

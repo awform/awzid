@@ -441,7 +441,7 @@
     <div class="etape" data-etape="decouvrir" hidden={!voir('decouvrir')}>
       <header class="ltitle">
         <p class="num"><Bidi text={unitLabel(u)} /> · <Bidi text={u.titleFr} /></p>
-        <h1 class="ar" lang="ar" dir="rtl">
+        <h1 class="ar titre-page" lang="ar" dir="rtl">
           <Ar text={L.titre_ar} {lettres} />
           {#if lettres.length && !isEval}<span class="fam"
               >{#each lettres as x, i (i)}<span class="c{i % 4}"><Bidi text={x.l} base="ar" /></span
@@ -1196,8 +1196,9 @@
     margin: 8px 0;
     padding: 8px;
     border: 1px solid var(--line);
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     background: var(--card);
+    box-shadow: var(--shadow-card);
   }
   .sommaire ol {
     list-style: none;
@@ -1270,10 +1271,11 @@
     gap: 8px;
     padding: 24px 16px;
     margin: 16px 0;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--line);
     border-top: 3px solid var(--gold);
     background: var(--card);
+    box-shadow: var(--shadow-card);
   }
   .fin h2 {
     border: 0;
@@ -1355,9 +1357,10 @@
     flex-wrap: wrap;
     gap: 4px 12px;
     align-items: baseline;
-    border-bottom: 2px solid var(--line);
-    padding-bottom: 4px;
-    margin: 28px 0 10px;
+    /* refonte 16/10 : petit liseré doré au lieu d'un trait gris */
+    background: linear-gradient(var(--gold), var(--gold)) no-repeat 0 100% / 2.5rem 3px;
+    padding-bottom: 8px;
+    margin: 32px 0 12px;
   }
   h3 {
     font-size: 1rem;
@@ -1518,8 +1521,9 @@
     flex-direction: column;
     align-items: center;
     background: var(--card);
-    border: 2px solid var(--line);
-    border-radius: 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
     padding: 8px;
     text-align: center;
   }

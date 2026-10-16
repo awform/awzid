@@ -26,7 +26,7 @@
     <p class="titre-ar" lang="ar" dir="rtl"><Bidi text={ar} base="ar" /></p>
   </div>
   <div class="pied">
-    <h1><Bidi text={titre} /></h1>
+    <h1 class="titre-page"><Bidi text={titre} /></h1>
     {@render action?.()}
   </div>
 </header>
@@ -34,22 +34,22 @@
 <style>
   .entete {
     border: 1px solid var(--line);
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
     background: var(--card);
     box-shadow: var(--shadow-card);
-    margin-bottom: var(--space-m);
+    margin-bottom: var(--space-l);
   }
   .bande {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    min-height: 84px;
-    padding: 8px 16px;
+    min-height: 92px;
+    padding: 12px 20px 16px;
     color: var(--bande-texte);
     background-image: var(--motif-etoile);
-    border-bottom: 2px solid var(--gold);
+    box-shadow: inset 0 -4px 0 var(--gold);
   }
   .objet {
     display: grid;
@@ -92,7 +92,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    padding: 10px 16px;
+    padding: 16px 20px;
   }
   .pied h1 {
     margin: 0;
