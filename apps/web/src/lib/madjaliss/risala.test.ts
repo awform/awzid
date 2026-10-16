@@ -424,7 +424,7 @@ describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseigna
   it('notes de l’enseignant : vocalisations à confirmer, écarts au mashhūr, relectures demandées', () => {
     expect(ens.version).toBe(index.version);
     const incertaines = complet.phrases.filter((p) => p.incertain).length;
-    expect(incertaines).toBe(259);
+    expect(incertaines).toBe(217); // 16/10 : 42 lectures levées par le référent (299 → 259 le 15/10)
     expect(ens.phrases.filter((x) => x.a_verifier.length).length).toBeGreaterThanOrEqual(
       incertaines,
     );
