@@ -48,7 +48,7 @@
   "erreur.totp_non_prepare": "Commence par configurer le second facteur.",
   "erreur.mfa_a_configurer": "Configure d'abord le second facteur de sécurité.",
   "erreur.deux_facteurs_indisponible": "Le second facteur n'est pas disponible sur ce serveur.",
-  "erreur.mot_de_passe_trop_court": "Le mot de passe doit faire au moins 12 caractères. Une phrase est idéale.",
+  "erreur.mot_de_passe_trop_court": "Mot de passe trop court : une petite phrase de 12 caractères ou plus, ou 8 caractères avec majuscule, minuscule et chiffre.",
   "erreur.mot_de_passe_trop_long": "Le mot de passe est trop long (128 caractères au plus).",
   "erreur.mot_de_passe_trop_courant": "Ce mot de passe est trop courant. Choisis une phrase personnelle.",
   "erreur.mot_de_passe_contient_email": "Le mot de passe ne doit pas contenir ton adresse.",

@@ -8,6 +8,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./mot-de-passe": {
+      "types": "./dist/mot-de-passe.d.ts",
+      "default": "./dist/mot-de-passe.js"
     }
   },
   "files": [

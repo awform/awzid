@@ -24,6 +24,8 @@ export const BANDEAU_MODES = ['on', 'off'] as const;
 export const VERIFICATION_MODES = ['requise', 'souple'] as const;
 export const ANTIBOT_MODES = ['on', 'off'] as const;
 export const QF_ENFANTS_MODES = ['on', 'off'] as const;
+/** lot 11 : groupe donné par l'acceptation d'une demande de liste d'attente (« aucun » à l'ouverture publique) */
+export const ATTENTE_GROUPE_MODES = ['beta_fermee', 'aucun'] as const;
 /** TROIS modes commutables depuis l'espace administrateur : fermé, sur invitation, ouvert (avec plafond d'inscriptions). */
 export const MODES_ACCES = ['ferme', 'invitation', 'ouvert'] as const;
 export type InscriptionMode = (typeof INSCRIPTION_MODES)[number];
@@ -32,6 +34,7 @@ export type BandeauMode = (typeof BANDEAU_MODES)[number];
 export type VerificationMode = (typeof VERIFICATION_MODES)[number];
 export type AntibotMode = (typeof ANTIBOT_MODES)[number];
 export type QfEnfantsMode = (typeof QF_ENFANTS_MODES)[number];
+export type AttenteGroupeMode = (typeof ATTENTE_GROUPE_MODES)[number];
 export type ModeAcces = (typeof MODES_ACCES)[number];
 export interface AccesStatut {
   inscription: InscriptionMode;
@@ -53,6 +56,12 @@ export interface AccesStatut {
    * À passer à « on » seulement après l'accord écrit de la Quran Foundation (docs/projet/juridique/LICENCES_PRODUCTION.md § 1.3).
    */
   qf_profils_enfants: QfEnfantsMode;
+  /**
+   * lot 11 : une demande de liste d'attente ACCEPTÉE pendant la bêta (inscription sur invitation) crée une invitation du
+   * groupe « bêta fermée » (`beta_fermee`, défaut) ; « aucun » la crée sans groupe (à poser à l'ouverture publique).
+   * En inscription ouverte, l'invitation acceptée n'a jamais de groupe.
+   */
+  attente_groupe: AttenteGroupeMode;
 }
 
 /** Mode vu par l'administrateur : le site fermé l'emporte, puis l'inscription. */
@@ -64,6 +73,17 @@ export function modeDe(a: Pick<AccesStatut, 'site' | 'inscription'>): ModeAcces 
 export function reglagesDuMode(mode: ModeAcces): Partial<AccesStatut> {
   if (mode === 'ferme') return { site: 'ferme' };
   return { site: 'ouvert', inscription: mode === 'invitation' ? 'invitation' : 'ouverte' };
+}
+/**
+ * lot 11 : groupe de l'invitation créée en ACCEPTANT une demande de liste d'attente — « bêta fermée » tant que
+ * l'inscription est sur invitation et que le réglage `attente_groupe` le demande (défaut) ; sinon aucun groupe.
+ */
+export function groupeAcceptation(
+  a: Pick<AccesStatut, 'inscription' | 'attente_groupe'>,
+): 'beta_fermee' | null {
+  return a.inscription === 'invitation' && a.attente_groupe === 'beta_fermee'
+    ? 'beta_fermee'
+    : null;
 }
 /** Inscription réellement offerte : « attente » quand le plafond du mode ouvert est atteint. */
 export function inscriptionEffective(
@@ -102,7 +122,8 @@ export function accesParDefaut(src: AccesDefaut = {}): AccesStatut {
   const plafond = nombre(src.plafond, PLAFOND_DEFAUT);
   const qf_profils_enfants: QfEnfantsMode =
     (src.qfEnfants ?? '').trim().toLowerCase() === 'on' ? 'on' : 'off';
-  const base = { bandeau, plafond, verification, antibot, qf_profils_enfants };
+  const attente_groupe: AttenteGroupeMode = 'beta_fermee';
+  const base = { bandeau, plafond, verification, antibot, qf_profils_enfants, attente_groupe };
   if (v === 'ferme') return { inscription: 'invitation', site: 'ferme', ...base };
   if (v === 'invitation') return { inscription: 'invitation', site: 'ouvert', ...base };
   return { inscription: 'ouverte', site: 'ouvert', ...base };
@@ -148,6 +169,11 @@ export async function readAcces(
         (QF_ENFANTS_MODES as readonly string[]).includes(r.value)
       )
         v.qf_profils_enfants = r.value as QfEnfantsMode;
+      if (
+        r.key === 'attente_groupe' &&
+        (ATTENTE_GROUPE_MODES as readonly string[]).includes(r.value)
+      )
+        v.attente_groupe = r.value as AttenteGroupeMode;
       if (r.key === 'plafond') v.plafond = nombre(r.value, v.plafond);
     }
     accesCache = { at: now, v };
@@ -367,6 +393,26 @@ export async function listInvitations(db: Db, limit = 200, now = new Date()) {
     .from(t.invitation)
     .orderBy(desc(t.invitation.createdAt))
     .limit(limit);
+  // lot 11 : comptes créés avec chaque invitation (date d'usage, appartenance au groupe), sans aucune adresse
+  const ids = rows.map((r) => r.id);
+  const usages = ids.length
+    ? await db
+        .select({
+          invitationId: t.invitationUse.invitationId,
+          usedAt: t.invitationUse.usedAt,
+          groupe: sql<boolean>`EXISTS (SELECT 1 FROM account_role ar WHERE ar.account_id = invitation_use.account_id AND ar.role = ${ROLE_BETA_FERMEE})`,
+        })
+        .from(t.invitationUse)
+        .where(inArray(t.invitationUse.invitationId, ids))
+    : [];
+  const parInvitation = new Map<string, { n: number; dernier: Date; groupe: number }>();
+  for (const u of usages) {
+    const p = parInvitation.get(u.invitationId) ?? { n: 0, dernier: u.usedAt, groupe: 0 };
+    p.n++;
+    if (u.usedAt > p.dernier) p.dernier = u.usedAt;
+    if (u.groupe) p.groupe++;
+    parInvitation.set(u.invitationId, p);
+  }
   return rows.map((r) => ({
     id: r.id,
     fin: r.codeEnd,
@@ -380,6 +426,10 @@ export async function listInvitations(db: Db, limit = 200, now = new Date()) {
     etat: invitationEtat(r, now),
     demande: r.waitlistId,
     groupe: r.groupe,
+    /** nombre de comptes créés avec l'invitation, date du dernier, et combien sont dans le groupe « bêta fermée » */
+    comptes: parInvitation.get(r.id)?.n ?? 0,
+    compteCreeLe: parInvitation.get(r.id)?.dernier ?? null,
+    comptesGroupe: parInvitation.get(r.id)?.groupe ?? 0,
   }));
 }
 

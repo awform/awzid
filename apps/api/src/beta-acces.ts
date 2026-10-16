@@ -22,6 +22,8 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { randomBytes } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import {
+  ATTENTE_GROUPE_MODES,
+  groupeAcceptation,
   confirmerAttente,
   demanderAttente,
   desinscrireAttente,
@@ -362,6 +364,7 @@ export function registerBetaAcces(
       verification?: string;
       antibot?: string;
       qf_profils_enfants?: string;
+      attente_groupe?: string;
     };
   }>(
     '/api/v1/admin/acces',
@@ -381,6 +384,8 @@ export function registerBetaAcces(
             verification: { enum: ['requise', 'souple'] },
             antibot: { enum: ['on', 'off'] },
             qf_profils_enfants: { enum: ['on', 'off'] },
+            // lot 11 : groupe des invitations créées en acceptant la liste d'attente pendant la bêta
+            attente_groupe: { enum: [...ATTENTE_GROUPE_MODES] },
           },
         },
       },
@@ -579,6 +584,8 @@ export function registerBetaAcces(
       const w = await getWaitlist(db, req.params.id);
       if (!w) return err(reply, 404, 'introuvable');
       if (w.status !== 'en_attente') return err(reply, 409, 'deja_traitee');
+      // lot 11 : pendant la bêta (inscription sur invitation), la personne acceptée entre dans le groupe « bêta fermée »
+      const groupe = groupeAcceptation(await readAcces(db, { fresh: true }));
       const inv = await createInvitation(db, {
         label: w.name ?? 'liste d’attente',
         email: w.email,
@@ -586,10 +593,17 @@ export function registerBetaAcces(
         days: req.body?.jours ?? 30,
         by: req.auth!.accountId,
         waitlistId: w.id,
+        groupe,
       });
       if (!(await decideWaitlist(db, w.id, 'acceptee', req.auth!.accountId, inv.id)))
         return err(reply, 409, 'deja_traitee');
-      await audit(db, req.auth!.accountId, 'attente.acceptation', w.id);
+      await audit(
+        db,
+        req.auth!.accountId,
+        'attente.acceptation',
+        w.id,
+        groupe ? { groupe } : undefined,
+      );
       const envoye = await envoyer(w.email, inv.code, w.locale);
       return {
         id: inv.id,

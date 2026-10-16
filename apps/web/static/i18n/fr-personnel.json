@@ -479,7 +479,7 @@
   "gb.retirer": "Retirer",
   "gb.aucun": "Aucun membre pour l'instant.",
   "gb.invitation": "Inscrire le compte dans le groupe « bêta fermée »",
-  "gb.compte_inconnu": "Aucun compte n'utilise cette adresse.",
+  "gb.compte_inconnu": "Aucun compte avec cette adresse pour l’instant : la personne doit d’abord s’inscrire.",
   "gb.erreur": "Le changement n'a pas pu être fait.",
   "probadm.titre": "Problèmes signalés",
   "probadm.filtre": "Statut",
@@ -574,5 +574,12 @@
   "tab.al_courriel_inactif": "L’envoi d’e-mails n’est pas réglé : invitations et vérifications ne partent pas.",
   "tab.al_cout_jour_eleve": "Le coût estimé du jour dépasse le seuil d’alerte.",
   "acces.qf_enfants": "Profils d’enfants et fonctions de la Quran Foundation (récitateurs en ligne, Muṣḥaf exact)",
+  "acces.attente_groupe": "Liste d’attente acceptée → groupe « bêta fermée »",
+  "acces.attente_groupe_aide": "Pendant la bêta (inscription sur invitation), une demande acceptée crée une invitation du groupe « bêta fermée ». À désactiver à l’ouverture publique.",
+  "acces.inv_compte_cree": "Compte créé le {date}",
+  "acces.inv_comptes_crees": "{n} comptes créés, le dernier le {date}",
+  "acces.inv_dans_groupe": "dans le groupe « bêta fermée »",
+  "acces.inv_hors_groupe": "hors du groupe « bêta fermée »",
+  "acces.inv_comptes_groupe": "{n} dans le groupe « bêta fermée »",
   "acces.qf_enfants_aide": "Désactivé (par défaut) : les enfants n’utilisent pas ces fonctions ; les ados et les adultes ne changent pas. À activer seulement après l’accord écrit de la Quran Foundation."
 }

@@ -73,6 +73,7 @@ test('inscription : lien de vérification reçu dans la boîte de démonstration
   await page.getByTestId('type-parent').check();
   await page.locator('#email').fill(email);
   await page.locator('#password').fill(password());
+  await page.locator('#password-confirmer').fill(password());
   await page.locator('#birthYear').fill('1986');
   // l'accord « article 9 » est obligatoire et jamais coché d'avance
   await expect(page.getByTestId('consent-art9')).not.toBeChecked();
@@ -114,6 +115,7 @@ test('mot de passe oublié de bout en bout (boîte de démonstration), lien à u
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Nouveau mot de passe');
   const NEW = `nouvelle phrase de passe ${info.project.name}`;
   await page.locator('#password').fill(NEW);
+  await page.locator('#password-confirmer').fill(NEW);
   await page.getByTestId('acces-valider').click();
   await expect(page.getByTestId('acces-message')).toContainText('Mot de passe changé');
   await page.getByRole('link', { name: 'Aller à la connexion' }).click();
@@ -125,6 +127,7 @@ test('mot de passe oublié de bout en bout (boîte de démonstration), lien à u
   await lastMail(email, 'mot_de_passe_modifie');
   await page.goto(link);
   await page.locator('#password').fill('encore une autre phrase');
+  await page.locator('#password-confirmer').fill('encore une autre phrase');
   await page.getByTestId('acces-valider').click();
   await expect(page.getByTestId('acces-erreur')).toContainText('plus valable');
 });

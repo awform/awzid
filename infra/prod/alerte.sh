@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # ALERTES SIMPLES PAR E-MAIL (lancé toutes les 15 minutes par awform-alerte.timer, ou à la main) :
-#   infra/prod/alerte.sh            lance status.sh ; s'il signale une alerte, envoie UN e-mail au responsable
+#   infra/prod/alerte.sh            lance status.sh ; s'il signale une alerte, envoie un e-mail à chaque responsable
 #   infra/prod/alerte.sh --essai    envoie un e-mail d'essai (vérifier que le courrier arrive)
 # Règles : un e-mail à la première alerte, puis un rappel toutes les 6 h tant que la même alerte dure (ou aussitôt si
 # elle change), puis un e-mail « rétabli » au retour à la normale. Aucun e-mail si tout va bien.
 # Le message est envoyé par le service d'e-mail de l'API (compose : service « alerte », périmètre api.env) à
-# AWFORM_ALERTE_A (dans prod.env). Le corps ne contient que des états (services, sauvegardes, disque), jamais de
+# AWFORM_ALERTE_A (dans prod.env : une adresse, ou plusieurs séparées par des virgules, un envoi par adresse). Le corps ne contient que des états (services, sauvegardes, disque), jamais de
 # donnée personnelle. Sans e-mail réglé, l'alerte est seulement écrite dans ~/.local/state/awform/alerte.log.
 # Essais : AWFORM_STATUS_CMD remplace status.sh ; AWFORM_ALERTE_DIR change le dossier d'état.
 set -uo pipefail

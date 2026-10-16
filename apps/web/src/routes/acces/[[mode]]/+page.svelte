@@ -22,6 +22,11 @@
   let token = '';
   let email = $state('');
   let password = $state('');
+  /** lot 11 : nouveau mot de passe et confirmation identiques (réinitialisation) */
+  let mdpIdentiques = $state(true);
+  // lot 11 : champ du nouveau mot de passe chargé À LA DEMANDE (partagé par 3 pages rares : statique, il irait dans le
+  // morceau commun préchargé sur l'appareil de l'élève)
+  const champMdp = import('$lib/compte/ChampMotDePasse.svelte');
   let done = $state(false);
   let msg = $state('');
   let bad = $state(false);
@@ -94,6 +99,7 @@
 
   async function submit(e: SubmitEvent) {
     e.preventDefault();
+    if (mode === 'reinit' && !mdpIdentiques) return fail('mots_de_passe_differents');
     busy = true;
     bad = false;
     const r =
@@ -152,17 +158,19 @@
           required
           bind:value={email}
         />
+      {:else if mode === 'reinit'}
+        {#await champMdp then { default: ChampMotDePasse }}
+          <ChampMotDePasse bind:value={password} bind:identiques={mdpIdentiques} />
+        {/await}
       {:else}
         <label for="password"><Bidi text={champ} /></label>
         <input
           id="password"
           type="password"
-          autocomplete={mode === 'accords' ? 'current-password' : 'new-password'}
-          minlength={mode === 'accords' ? undefined : 12}
+          autocomplete="current-password"
           required
           bind:value={password}
         />
-        {#if mode === 'reinit'}<p class="muted small">{t('inscription.mdp_aide')}</p>{/if}
       {/if}
       {#if bad}<p class="error" role="alert" data-testid="acces-erreur"><Bidi text={msg} /></p>{/if}
       <button type="submit" class="primary" disabled={busy} data-testid="acces-valider"

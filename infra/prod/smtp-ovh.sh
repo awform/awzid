@@ -54,4 +54,4 @@ if [ "${AWFORM_SMTP_REDEMARRER:-1}" = 1 ] && [ -n "$V" ] && command -v docker >/
 else
   echo "API non relancée automatiquement : relancez le déploiement pour prendre le réglage en compte."
 fi
-echo "Prochaine étape : bash $HERE/alerte.sh --essai   (envoie UN e-mail d'essai à AWFORM_ALERTE_A)."
+echo "Prochaine étape : bash $HERE/alerte.sh --essai   (envoie un e-mail d'essai à chaque adresse de AWFORM_ALERTE_A)."

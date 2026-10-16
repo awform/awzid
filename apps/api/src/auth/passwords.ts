@@ -1,33 +1,41 @@
 /**
- * Politique des mots de passe (OWASP ASVS 5.0 V6.2) : au moins 12 caractères, jusqu'à 128, tous les
- * caractères admis (espaces, lettres accentuées, arabe), AUCUNE règle de composition imposée, refus des
- * mots de passe courants ou contenant l'adresse e-mail. (Pas de normalisation Unicode : règle du projet.)
+ * Politique des mots de passe (OWASP ASVS 5.0 V6.2, décision du client du 16/10/2026). La règle elle-même est dans
+ * `@awform/school` (`mot-de-passe.ts`), partagée avec l'indicateur de l'application :
+ *  - familles et adultes : 12 caractères ou plus (une phrase), OU 8 caractères ou plus avec 3 types sur 4
+ *    (minuscule, majuscule, chiffre, symbole) ;
+ *  - personnel (admin, enseignant, rôles de plateforme) : 12 caractères au moins, et second facteur ;
+ *  - toujours : 128 caractères au plus, ni mot de passe courant, ni adresse e-mail dedans.
  */
-export const MIN_LENGTH = 12;
-export const MAX_LENGTH = 128;
+import { and, eq, inArray } from 'drizzle-orm';
+import { schema as t, type Db } from '@awform/db';
+import { MDP_MAX, MDP_MIN_PHRASE } from '@awform/school/mot-de-passe';
+import { requiresMfa } from './policy.js';
+import { STAFF_ROLES } from './service.js';
 
-const COMMON = new Set(
-  `123456789012 1234567890123 azertyuiop12 azertyuiopqs qwertyuiop12 motdepasse12 motdepasse123
-  password1234 password12345 passwordpassword 000000000000 111111111111 123123123123 abcdefghijkl
-  azerty123456 qwerty123456 iloveyou1234 bismillah123 bismillah1234 soleil123456 bonjour12345
-  marseille123 football1234 administrator changemenow1 welcome12345 letmein12345 motdepasse00
-  awform123456 awzid1234567 azertyazerty qwertyqwerty 1q2w3e4r5t6y 1qaz2wsx3edc aaaaaaaaaaaa
-  allahuakbar1 alhamdulillah subhanallah1 mashallah123 inchallah123 senegal12345 dakar1234567
-  france123456 paris1234567 motdepasse!! password!!!! 12345678910! azertyuiop!!`
-    .split(/\s+/)
-    .filter(Boolean),
-);
+export {
+  checkPassword,
+  type ProblemeMotDePasse as PasswordProblem,
+  type OptionsMotDePasse,
+} from '@awform/school/mot-de-passe';
 
-export type PasswordProblem = 'trop_court' | 'trop_long' | 'trop_courant' | 'contient_email';
+/** Longueur minimale du PERSONNEL (et de la voie « phrase » des familles). */
+export const MIN_LENGTH = MDP_MIN_PHRASE;
+export const MAX_LENGTH = MDP_MAX;
 
-export function checkPassword(pw: string, email = ''): PasswordProblem | null {
-  const chars = [...pw].length;
-  if (chars < MIN_LENGTH) return 'trop_court';
-  if (chars > MAX_LENGTH) return 'trop_long';
-  const low = pw.toLowerCase();
-  if (COMMON.has(low) || /^(.)\1+$/.test(pw) || /^(0123456789|123456789)+/.test(pw))
-    return 'trop_courant';
-  const local = email.toLowerCase().split('@')[0] ?? '';
-  if (local.length >= 4 && low.includes(local)) return 'contient_email';
-  return null;
+/** Compte du personnel : type enseignant ou admin, ou un rôle de personnel (règle de 12 caractères). */
+export async function estPersonnel(db: Db, accountId: string | null | undefined): Promise<boolean> {
+  if (!accountId) return false;
+  const [a] = await db
+    .select({ kind: t.account.kind })
+    .from(t.account)
+    .where(eq(t.account.id, accountId));
+  if (a && requiresMfa(a.kind)) return true;
+  const r = await db
+    .select({ role: t.accountRole.role })
+    .from(t.accountRole)
+    .where(
+      and(eq(t.accountRole.accountId, accountId), inArray(t.accountRole.role, [...STAFF_ROLES])),
+    )
+    .limit(1);
+  return r.length > 0;
 }

@@ -46,6 +46,11 @@
   let consents: Consent[] = $state([]);
   let pinForm = $state({ pin: '', password: '' });
   let pwForm = $state({ current: '', next: '' });
+  /** lot 11 : nouveau mot de passe et confirmation identiques */
+  let mdpIdentiques = $state(true);
+  // lot 11 : champ du nouveau mot de passe chargé À LA DEMANDE (partagé par 3 pages rares : statique, il irait dans le
+  // morceau commun préchargé sur l'appareil de l'élève)
+  const champMdp = import('./ChampMotDePasse.svelte');
   let delPassword = $state('');
   let delChild: { id: string; password: string } | null = $state(null);
   let totp: { secret: string; uri: string } | null = $state(null);
@@ -146,6 +151,7 @@
   }
   async function changePw(e: SubmitEvent) {
     e.preventDefault();
+    if (!mdpIdentiques) return fail('mots_de_passe_differents');
     const r = await call('POST', '/auth/password', pwForm);
     if (r.ok) {
       say(t('compte.mdp_ok'));
@@ -366,15 +372,15 @@
         required
         bind:value={pwForm.current}
       />
-      <label for="next">{t('compte.mdp_nouveau')}</label>
-      <input
-        id="next"
-        type="password"
-        autocomplete="new-password"
-        minlength="12"
-        required
-        bind:value={pwForm.next}
-      />
+      {#await champMdp then { default: ChampMotDePasse }}
+        <ChampMotDePasse
+          id="next"
+          label={t('compte.mdp_nouveau')}
+          bind:value={pwForm.next}
+          bind:identiques={mdpIdentiques}
+          personnel={me.mfaRequired}
+        />
+      {/await}
       <button type="submit">{t('compte.changer_mdp')}</button>
     </form>
     {#if me.mfaRequired}

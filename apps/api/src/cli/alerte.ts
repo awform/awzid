@@ -1,20 +1,29 @@
 #!/usr/bin/env node
 /**
- * Alerte par e-mail (supervision) — envoie UN message à l'adresse du responsable, avec le service d'e-mail de
- * l'API (mêmes réglages SMTP, même périmètre de secrets : api.env) :
+ * Alerte par e-mail (supervision) — envoie le message à CHAQUE destinataire, avec le service d'e-mail de l'API (mêmes
+ * réglages SMTP, même périmètre de secrets : api.env) :
  *   <état du service> | node dist/cli/alerte.js "Objet de l'alerte"
- * L'adresse du destinataire est AWFORM_ALERTE_A (aucun secret). Le corps vient de l'entrée standard (au plus 8 Ko) :
- * états des services, âge de la dernière sauvegarde, disque… jamais de donnée personnelle (adresses, identifiants et
- * jetons éventuels sont masqués avant l'envoi). Code de sortie 0 si le message est parti (ou écrit dans la boîte
- * de démonstration), 2 si aucun destinataire ou aucun service d'e-mail n'est réglé, 1 en cas d'échec d'envoi.
+ * Destinataires : AWFORM_ALERTE_A (aucun secret), une adresse ou PLUSIEURS séparées par des virgules
+ * (ex. `contact@awzid.com,awzid21@gmail.com`, lot 11). Chaque adresse est validée : une seule invalide, rien ne part
+ * (message clair). Un envoi par adresse ; un échec sur une adresse n'empêche pas les autres. Le corps vient de l'entrée
+ * standard (au plus 8 Ko) : états des services, âge de la dernière sauvegarde, disque… jamais de donnée personnelle
+ * (adresses, identifiants et jetons éventuels sont masqués avant l'envoi). Code de sortie 0 si le message est parti
+ * vers TOUS les destinataires (ou écrit dans la boîte de démonstration), 2 si aucun destinataire, une adresse invalide
+ * ou aucun service d'e-mail réglé, 1 si au moins un envoi a échoué.
  */
 import { scrub } from '../scrub.js';
 import { mailerFromEnv } from '../mail/envoi.js';
+import { envoyerAChacun, lireDestinataires } from '../mail/alerte-destinataires.js';
 
-const to = (process.env.AWFORM_ALERTE_A ?? '').trim();
+const dest = lireDestinataires(process.env.AWFORM_ALERTE_A);
 const subject = (process.argv[2] ?? 'alerte').slice(0, 120);
-if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) {
-  console.error('AWFORM_ALERTE_A absent ou invalide : aucune alerte envoyée');
+if (!dest.ok) {
+  console.error(
+    dest.raison === 'absent'
+      ? 'AWFORM_ALERTE_A absent : aucune alerte envoyée'
+      : `AWFORM_ALERTE_A : adresse(s) invalide(s) : ${dest.invalides.join(', ')} — aucune alerte envoyée ` +
+          '(séparer les adresses par des virgules, ex. contact@awzid.com,awzid21@gmail.com)',
+  );
   process.exit(2);
 }
 const mailer = mailerFromEnv(process.env, (m) => console.error(m));
@@ -31,16 +40,12 @@ for await (const c of process.stdin) {
 }
 const corps = scrub(Buffer.concat(chunks).toString('utf8'));
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-try {
-  await mailer.send({
-    to,
-    kind: 'alerte',
-    subject: `[Awzid] ${scrub(subject)}`,
-    text: `${corps}\n\n—\nAlerte automatique de la supervision d'Awzid.\n`,
-    html: `<pre style="font:14px/1.4 monospace;white-space:pre-wrap">${esc(corps)}</pre>`,
-  });
-  console.log('alerte envoyée');
-} catch (e) {
-  console.error(`envoi impossible : ${scrub(String((e as Error).message))}`);
-  process.exit(1);
-}
+const r = await envoyerAChacun(mailer, dest.adresses, {
+  kind: 'alerte',
+  subject: `[Awzid] ${scrub(subject)}`,
+  text: `${corps}\n\n—\nAlerte automatique de la supervision d'Awzid.\n`,
+  html: `<pre style="font:14px/1.4 monospace;white-space:pre-wrap">${esc(corps)}</pre>`,
+});
+for (const e of r.echecs) console.error(`envoi impossible vers ${e.adresse} : ${scrub(e.erreur)}`);
+console.log(`alerte envoyée à ${r.parties.length} destinataire(s) sur ${dest.adresses.length}`);
+if (r.echecs.length) process.exit(1);

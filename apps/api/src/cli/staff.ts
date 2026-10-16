@@ -62,7 +62,7 @@ try {
   } else {
     const password = process.env.AWFORM_STAFF_PASSWORD ?? '';
     if (kind !== 'enseignant' && kind !== 'admin') throw new Error('--kind enseignant|admin');
-    const pb = checkPassword(password, email);
+    const pb = checkPassword(password, email, { personnel: true });
     if (pb) throw new Error(`AWFORM_STAFF_PASSWORD refusé : ${pb}`);
     if (acc) {
       console.log('Compte déjà existant (inchangé).');
