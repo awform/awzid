@@ -77,6 +77,7 @@ async function signupSerein(page: Page): Promise<string> {
   await page.getByTestId('type-adulte').check();
   await page.locator('#email').fill(`${uniq('a39-serein')}@e2e.test`);
   await page.locator('#password').fill(password());
+  await page.locator('#password-confirmer').fill(password());
   await page.locator('#birthYear').fill('1988');
   const choix = page.getByTestId('mode-inscription');
   await expect(choix).toContainText('Mode serein');

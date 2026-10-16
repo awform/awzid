@@ -435,6 +435,7 @@ test.describe('plafond, liste d’attente automatique, anti-robots, vérificatio
     await piege.fill('http://spam.example', { force: true });
     await page.locator('#email').fill(unique('bot'));
     await page.locator('#password').fill('une phrase de passe assez longue 2026');
+    await page.locator('#password-confirmer').fill('une phrase de passe assez longue 2026');
     await page.locator('#birthYear').fill('1990');
     await page.getByTestId('consent-cgu').check();
     await page.getByTestId('consent-art9').check();

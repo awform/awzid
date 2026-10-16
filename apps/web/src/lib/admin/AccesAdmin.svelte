@@ -27,6 +27,8 @@
     verification: 'requise' | 'souple';
     antibot: 'on' | 'off';
     qf_profils_enfants: 'on' | 'off';
+    /** lot 11 : groupe donné en acceptant la liste d'attente pendant la bêta */
+    attente_groupe?: 'beta_fermee' | 'aucun';
   }
   interface Invitation {
     id: string;
@@ -39,6 +41,10 @@
     etat: 'active' | 'expiree' | 'revoquee' | 'epuisee';
     creeeLe: string;
     groupe?: string | null;
+    /** lot 11 : comptes créés avec l'invitation (sans adresse) */
+    comptes?: number;
+    compteCreeLe?: string | null;
+    comptesGroupe?: number;
   }
   interface Demande {
     id: string;
@@ -324,6 +330,21 @@
     </p>
     <p class="muted"><Bidi text={t('acces.qf_enfants_aide')} /></p>
     <p class="ligne">
+      <strong><Bidi text={t('acces.attente_groupe')} /></strong> :
+      <span data-testid="acces-attente-groupe"
+        ><Bidi
+          text={acces.attente_groupe === 'aucun' ? t('acces.desactive') : t('acces.active')}
+        /></span
+      >
+      <button
+        type="button"
+        onclick={() =>
+          regler({ attente_groupe: acces?.attente_groupe === 'aucun' ? 'beta_fermee' : 'aucun' })}
+        data-testid="acces-basculer-attente-groupe"><Bidi text={t('acces.changer')} /></button
+      >
+    </p>
+    <p class="muted"><Bidi text={t('acces.attente_groupe_aide')} /></p>
+    <p class="ligne">
       <strong><Bidi text={t('acces.bandeau')} /></strong> :
       <span data-testid="acces-bandeau"
         ><Bidi
@@ -399,6 +420,21 @@
           · <span class="muted"><Bidi text={t('acces.inv_fin', { fin: i.fin })} /></span>
           {#if i.expireLe}<span class="muted"> · {fmtDate(i.expireLe)}</span>{/if}
         </p>
+        {#if i.comptes && i.compteCreeLe}<p class="muted small" data-testid="inv-comptes">
+            <Bidi
+              text={i.comptes === 1
+                ? t('acces.inv_compte_cree', { date: fmtDate(i.compteCreeLe) })
+                : t('acces.inv_comptes_crees', { n: i.comptes, date: fmtDate(i.compteCreeLe) })}
+            />
+            ·
+            <Bidi
+              text={i.comptes === 1
+                ? i.comptesGroupe
+                  ? t('acces.inv_dans_groupe')
+                  : t('acces.inv_hors_groupe')
+                : t('acces.inv_comptes_groupe', { n: i.comptesGroupe ?? 0 })}
+            />
+          </p>{/if}
         {#if i.etat === 'active'}
           <button type="button" class="ghost" onclick={() => revoquer(i.id)}
             ><Bidi text={t('acces.inv_revoquer')} /></button

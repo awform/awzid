@@ -19,6 +19,11 @@
   let kind: 'parent' | 'adulte' = $state('parent');
   let email = $state('');
   let password = $state('');
+  /** lot 11 : mot de passe et confirmation identiques */
+  let mdpIdentiques = $state(true);
+  // lot 11 : champ du nouveau mot de passe chargé À LA DEMANDE (partagé par 3 pages rares : statique, il irait dans le
+  // morceau commun préchargé sur l'appareil de l'élève)
+  const champMdp = import('$lib/compte/ChampMotDePasse.svelte');
   let country = $state('FR');
   let birthYear: number | undefined = $state(undefined);
   let pseudonym = $state('');
@@ -110,6 +115,10 @@
 
   async function submit(e: SubmitEvent) {
     e.preventDefault();
+    if (!mdpIdentiques) {
+      error = t('erreur.mots_de_passe_differents');
+      return;
+    }
     busy = true;
     error = '';
     const consents = [
@@ -252,16 +261,9 @@
 
     <label for="email">{t('champ.email')}</label>
     <input id="email" type="email" autocomplete="email" required bind:value={email} />
-    <label for="password">{t('champ.mot_de_passe')}</label>
-    <input
-      id="password"
-      type="password"
-      autocomplete="new-password"
-      required
-      minlength="12"
-      bind:value={password}
-    />
-    <p class="muted small">{t('inscription.mdp_aide')}</p>
+    {#await champMdp then { default: ChampMotDePasse }}
+      <ChampMotDePasse bind:value={password} bind:identiques={mdpIdentiques} {email} />
+    {/await}
 
     <label for="country">{t('champ.pays')}</label>
     <select id="country" bind:value={country} onchange={() => (region = '')}>

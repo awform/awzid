@@ -35,7 +35,7 @@ import {
 import type { EtatFonction } from '@awform/school';
 import { decrypt, encrypt, hashSecret, newTotpSecret, verifySecret, verifyTotp } from './crypto.js';
 import { verifierJeton } from '../antibot.js';
-import { checkPassword, MAX_LENGTH } from './passwords.js';
+import { checkPassword, estPersonnel, MAX_LENGTH } from './passwords.js';
 import {
   ageFromYear,
   closedForAge,
@@ -624,7 +624,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const [a] = await db.select().from(t.account).where(eq(t.account.id, req.auth!.accountId));
       if (!a) return err(reply, 401, 'mot_de_passe_incorrect');
       if (!(await passwordOk(reply, a, req.body.current))) return reply;
-      const pb = checkPassword(req.body.next, a.email ?? '');
+      // lot 11 : règle des familles (8 caractères et 3 types, ou phrase de 12) ; personnel : 12 caractères au moins
+      const pb = checkPassword(req.body.next, a.email ?? '', {
+        personnel: await estPersonnel(db, a.id),
+      });
       if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
       await db
         .update(t.account)

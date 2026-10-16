@@ -96,7 +96,7 @@ services:
     logging: *logs
 
   alerte:
-    # supervision : un e-mail d'alerte au responsable (AWFORM_ALERTE_A) par le service d'e-mail de l'API ; lancé par
+    # supervision : un e-mail d'alerte à chaque responsable (AWFORM_ALERTE_A, adresses séparées par des virgules) par le service d'e-mail de l'API ; lancé par
     # alerte.sh (awform-alerte.timer). Périmètre alerte.env : les seuls réglages SMTP, jamais la base ni les clés ;
     # corps lu sur l'entrée standard, masqué (adresses, identifiants, jetons) avant l'envoi
     image: awform/api:${AWFORM_VERSION:-local}

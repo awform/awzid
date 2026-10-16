@@ -24,6 +24,7 @@ async function signup(
   await page.getByTestId(`type-${kind}`).check();
   await page.locator('#email').fill(email);
   await page.locator('#password').fill(password());
+  await page.locator('#password-confirmer').fill(password());
   if (opts.country) await page.locator('#country').selectOption(opts.country);
   // audit MIN-3 : année de naissance demandée à tout titulaire
   await page
