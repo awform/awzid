@@ -36,11 +36,11 @@ Branche `lot11-wip` (worktree `~/wt/lot11`, depuis `main` d80e742), commit `a593
 - **D. Alertes** : `AWFORM_ALERTE_A` accepte plusieurs adresses séparées par des virgules (`apps/api/src/mail/alerte-destinataires.ts`) : chaque adresse
   validée (une invalide → rien ne part, code 2, message qui la nomme), un envoi par adresse, un échec n'empêche pas les autres (code 1). En-têtes de
   `alerte.sh`, `smtp-ovh.sh`, `compose.yml`, EXPLOITATION § 16.4, fiche 11 du guide.
-- **Tests** : unitaires **2 303** réussis (+ 1 ignoré) : api 499 (dont `lot11.test.ts` 6, `alerte-destinataires.test.ts` 6), web 772, school 28 (dont
+- **Tests** : unitaires **2 307** réussis (+ 1 ignoré) : api 503 (dont `beta-mdp-lot11.test.ts` 6, `alerte-destinataires.test.ts` 6), web 772, school 28 (dont
   `mot-de-passe.test.ts` 10 : 7/8/11/12 caractères, 2 contre 3 types, personnel, indicateur = règle), autres paquets inchangés. e2e complet (verrou) :
   **740 réussis, 137 ignorés, 3 échecs** : `themes-simples:142` et `lot29:42` (connus, tolérés) et `d2-design:241` (bouton « œil » sans texte écrit :
-  corrigé, puis d2-design, lot11, f3, comptes, a39, beta-acces relancés : 79 réussis, 7 ignorés). Nouveau `e2e/lot11.spec.ts` ; confirmations ajoutées
-  dans f3, comptes, a39, beta-acces. Budget élève **345,7 Ko** (marge 4,3 ≥ 3 ; `main` : 345,8), première ouverture 112,5 Ko, `/coran/lecteur` 148,3 Ko.
+  corrigé, puis d2-design, lot11, f3, comptes, a39, beta-acces relancés : 79 réussis, 7 ignorés). Nouveau `e2e/mot-de-passe.spec.ts` ; confirmations ajoutées
+  dans f3, comptes, a39, beta-acces. (Correctif : les anciens `test/lot11.test.ts` et `e2e/lot11.spec.ts` du lot 11 d'origine, écrasés par erreur dans le premier commit, sont restaurés ; relancés avec les nouveaux : 10 + 10 réussis.) Budget élève **345,7 Ko** (marge 4,3 ≥ 3 ; `main` : 345,8), première ouverture 112,5 Ko, `/coran/lecteur` 148,3 Ko.
   svelte-check 0 ; prettier propre ; eslint : 2 erreurs **préexistantes** (`e2e/coran-lecteur4.spec.ts:22`, `e2e/coran-tactile.spec.ts:16`,
   `no-empty-pattern`) ; shellcheck 0.11 : `status.sh` a un avertissement préexistant.
 
