@@ -39,9 +39,10 @@ Branche `inscription-wip` (worktree `~/wt/inscription`, depuis `main` 534dc93), 
 - **Tests** : `pnpm lint` propre ; svelte-check 0 ; unitaires de tout le dépôt (verrou) **tous verts** (web 773) ;
   nouveau `e2e/inscription-etapes.spec.ts` (validation, retour sans perte, annonce, données envoyées, axe AA clair et sombre à chaque
   étape et sur l'erreur, 375 px sans débordement, cibles ≥ 44 px, maquettes) ; aide commune `e2e/inscription.ts` (comptes, f3, a39,
-  beta-acces, captures). **E2E complet** (flock, `--retries=1 --workers=3`, sur 285175f) : **757 réussis, 139 ignorés, 2 échecs connus
-  tolérés** (lot13:11, lot29:42), 4 instables (beta-support:138, captures:15 « Target crashed » hors inscription, f5-reseau:181,
-  themes-simples:142). Après la mention de relecture : specs concernées relancées (beta-acces, madjaliss ×4, douas, accueil, beta-legal,
+  beta-acces, captures). **E2E complet** (flock, `--retries=1 --workers=3`, sur 285175f) : **757 réussis, 139 ignorés, 2 échecs** : `themes-simples:142` (connu, toléré) et `captures:15` mobile (capture pleine page de la
+  leçon `/lecons/en1.l01` refusée par Chromium, « Target crashed » puis « Unable to capture screenshot » en relance seule : page non
+  touchée par cette branche ; la partie inscription de `captures.spec.ts`, « lot 4 », passe) ; 4 instables réussis en relance
+  (lot13:11, lot29:42, beta-support:138, f5-reseau:181). Après la mention de relecture : specs concernées relancées (beta-acces, madjaliss ×4, douas, accueil, beta-legal,
   lot11, lot14, inscription-etapes) : **204 réussis, 6 ignorés, 0 échec**.
 - **Captures** (`~/wt/inscription/maquettes/`, non versionnées ; serveur de test du worktree sur 127.0.0.1:4260, démo non touchée) :
   `inscription-{ordi,mobile}-{1-identifiants,1-erreur,2-profil,3-accords}[-sombre].png` (1440×900 et 390×844 ×2, clair et sombre).
