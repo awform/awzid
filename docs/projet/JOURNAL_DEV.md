@@ -8,6 +8,44 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 16/10/2026 — Lot 11 : bêta fermée (liste d'attente → groupe, comptes créés), mots de passe des familles, autonomie du client (menu, guide de survie), alertes à plusieurs destinataires
+
+Branche `lot11-wip` (worktree `~/wt/lot11`, depuis `main` d80e742), commit `a593fe5`. Non fusionnée, non déployée (ni démo ni bêta).
+
+- **A. Bêta fermée** :
+  - `POST /api/v1/admin/liste-attente/:id/accepter` crée l'invitation avec `groupe = 'beta_fermee'` tant que l'inscription est **sur invitation** ;
+    nouveau réglage d'accès `attente_groupe` = `beta_fermee` (défaut) | `aucun` (à poser à l'ouverture publique), dans `site_setting`, réglable
+    par `PUT /api/v1/admin/acces` et dans l'espace admin (« Liste d'attente acceptée → groupe « bêta fermée » »). Décision pure `groupeAcceptation`
+    (`packages/db/src/beta-acces.ts`) ; l'audit `attente.acceptation` porte le groupe.
+  - Liste des invitations : `comptes`, `compteCreeLe` (depuis `invitation_use`), `comptesGroupe` ; l'admin voit « Compte créé le … · dans / hors du
+    groupe « bêta fermée » » (aucune adresse de plus).
+  - Ajout manuel au groupe sans compte : « Aucun compte avec cette adresse pour l'instant : la personne doit d'abord s'inscrire » (5 langues).
+- **B. Mots de passe (décision du 16/10)** : règle UNIQUE dans `packages/school/src/mot-de-passe.ts` (export `@awform/school/mot-de-passe`, partagé
+  API + application) : familles et adultes = (≥ 8 caractères ET 3 types sur 4) OU ≥ 12 caractères ; personnel (type enseignant/admin, rôle de
+  personnel, `cli/staff`) = 12 caractères (`estPersonnel`, changement et réinitialisation). Contrôles gardés (courants, répétitions, suites, adresse,
+  128 max) ; liste des mots de passe courants complétée (8-11 caractères). Nouveau refus `mot_de_passe_trop_simple`. Lettre sans casse (arabe) =
+  minuscule ; ḥarakāt ignorées.
+  - Web : `ChampMotDePasse.svelte` (inscription, réinitialisation, changement dans le compte) : bouton « œil » (aria-pressed, nom accessible, texte
+    visible « Afficher »), « Confirmer le mot de passe » (refus clair si différent), consigne du client, indicateur rouge/orange/vert = `forceMotDePasse`
+    (même fonction que le serveur). Chargé **à la demande** (partagé par 3 pages rares, il serait sinon parti dans le morceau commun préchargé : +4,6 Ko
+    mesurés). Aucune refonte visuelle.
+- **C. Autonomie du client** : `infra/prod/awzid-menu.sh` (état = `status.sh`, sauvegardes = `backup-status.sh`, redémarrage = `systemctl restart
+  awform.service`, retour à une version encore présente = `AWFORM_VERSION=<v> infra/gcp/deployer-beta.sh` (sauvegarde, santé, `version-en-service`
+  et service systemd à jour), fermer/rouvrir = explication de l'espace admin ; confirmation o/N ; shellcheck propre). `docs/exploitation/GUIDE_SURVIE.md`
+  (11 fiches, aucun secret).
+- **D. Alertes** : `AWFORM_ALERTE_A` accepte plusieurs adresses séparées par des virgules (`apps/api/src/mail/alerte-destinataires.ts`) : chaque adresse
+  validée (une invalide → rien ne part, code 2, message qui la nomme), un envoi par adresse, un échec n'empêche pas les autres (code 1). En-têtes de
+  `alerte.sh`, `smtp-ovh.sh`, `compose.yml`, EXPLOITATION § 16.4, fiche 11 du guide.
+- **Tests** : unitaires **2 303** réussis (+ 1 ignoré) : api 499 (dont `lot11.test.ts` 6, `alerte-destinataires.test.ts` 6), web 772, school 28 (dont
+  `mot-de-passe.test.ts` 10 : 7/8/11/12 caractères, 2 contre 3 types, personnel, indicateur = règle), autres paquets inchangés. e2e complet (verrou) :
+  **740 réussis, 137 ignorés, 3 échecs** : `themes-simples:142` et `lot29:42` (connus, tolérés) et `d2-design:241` (bouton « œil » sans texte écrit :
+  corrigé, puis d2-design, lot11, f3, comptes, a39, beta-acces relancés : 79 réussis, 7 ignorés). Nouveau `e2e/lot11.spec.ts` ; confirmations ajoutées
+  dans f3, comptes, a39, beta-acces. Budget élève **345,7 Ko** (marge 4,3 ≥ 3 ; `main` : 345,8), première ouverture 112,5 Ko, `/coran/lecteur` 148,3 Ko.
+  svelte-check 0 ; prettier propre ; eslint : 2 erreurs **préexistantes** (`e2e/coran-lecteur4.spec.ts:22`, `e2e/coran-tactile.spec.ts:16`,
+  `no-empty-pattern`) ; shellcheck 0.11 : `status.sh` a un avertissement préexistant.
+
+---
+
 ## 15/10/2026 — Lot 10 : Risāla du 15/10 (72 séances publiables), audio Madjaliss 1 483 MP3, bouton « Voir / Cacher la traduction » ; démo et bêta `awzid-beta` déployées (`main` 45a791b)
 
 Branche `lot10-wip` (worktree `~/awform-lot10`, depuis `main` 8771e45 ; étiquette `avant-lot10` = 8771e45), commits `9a6d9c2` (A), `d28a731` (B), `b808de9` (rapports), fusionnée dans `main` (**45a791b**, poussée). Non touchés : `infra/charge/purger-comptes-fictifs.sh` (modifié sans commit dans `~/awform-demo`), `docs/projet/douas/`, `apps/web/static/douas/` (chantier parallèle des douas).
