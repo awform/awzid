@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import type { APIRequestContext, Page } from '@playwright/test';
 import { loginTeacher } from './enseignant';
 import { expect, password, test } from './fixtures';
+import { etapeAccords, etapeIdentifiants, etapeProfil, ouvrirInscription } from './inscription';
 import { pickProfile } from './profil';
 
 /**
@@ -73,20 +74,17 @@ async function parentWith(req: APIRequestContext, pseudonym: string, age: number
 }
 
 async function signupSerein(page: Page): Promise<string> {
-  await page.goto('/inscription');
+  await ouvrirInscription(page);
+  await etapeIdentifiants(page, `${uniq('a39-serein')}@e2e.test`);
+  // étape « Votre profil » : l'adulte choisit sa façon d'avancer
   await page.getByTestId('type-adulte').check();
-  await page.locator('#email').fill(`${uniq('a39-serein')}@e2e.test`);
-  await page.locator('#password').fill(password());
-  await page.locator('#password-confirmer').fill(password());
-  await page.locator('#birthYear').fill('1988');
   const choix = page.getByTestId('mode-inscription');
   await expect(choix).toContainText('Mode serein');
   // D-A39 : « Mode serein » présélectionné, « Avec vérification » au choix sur le même écran
   await expect(choix.locator('[data-mode-choix="serein"]')).toBeChecked();
   await expect(choix.locator('[data-mode-choix="verification"]')).not.toBeChecked();
-  await page.getByTestId('consent-cgu').check();
-  await page.getByTestId('consent-art9').check();
-  await page.locator('form button[type="submit"]').click();
+  await etapeProfil(page, { kind: 'adulte', annee: 1988 });
+  await etapeAccords(page);
   await expect(page).not.toHaveURL(/\/inscription/);
   const me = (await (await page.request.get('/api/v1/auth/me')).json()) as {
     profiles: Array<{ id: string }>;

@@ -11,6 +11,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Page } from '@playwright/test';
 import { expect, password, test } from './fixtures';
+import { etapeAccords, etapeIdentifiants, etapeProfil, ouvrirInscription } from './inscription';
 
 const YEAR = new Date().getFullYear();
 const ART9 = 'donnee_religieuse_art9';
@@ -69,17 +70,12 @@ test('inscription : lien de vérification reçu dans la boîte de démonstration
   page,
 }, info) => {
   const email = mail('verif', info.project.name);
-  await page.goto('/inscription');
-  await page.getByTestId('type-parent').check();
-  await page.locator('#email').fill(email);
-  await page.locator('#password').fill(password());
-  await page.locator('#password-confirmer').fill(password());
-  await page.locator('#birthYear').fill('1986');
+  await ouvrirInscription(page);
+  await etapeIdentifiants(page, email);
+  await etapeProfil(page, { kind: 'parent', annee: 1986 });
   // l'accord « article 9 » est obligatoire et jamais coché d'avance
   await expect(page.getByTestId('consent-art9')).not.toBeChecked();
-  await page.getByTestId('consent-cgu').check();
-  await page.getByTestId('consent-art9').check();
-  await page.getByRole('button', { name: 'Créer mon compte' }).click();
+  await etapeAccords(page);
   await expect(page).toHaveURL(/\/profils$/);
   await page.goto('/compte?r=profil');
   await expect(page.getByTestId('email-statut')).toContainText('pas encore vérifiée');

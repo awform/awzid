@@ -10,21 +10,30 @@
    *  - consigne courte et indicateur rouge / orange / vert qui applique EXACTEMENT la règle du serveur
    *    (`@awform/school`, mot-de-passe.ts : la même fonction contrôle l'API).
    * Pas de refonte visuelle (elle viendra avec les maquettes validées) : les champs restent ceux du formulaire.
+   * Inscription en étapes (16/10/2026) : `niveau` (lié, lecture seule) donne le verdict de la règle à la page, qui
+   * valide l'étape sans importer la règle une seconde fois ; `erreur` et `erreurConfirmation` (facultatifs) affichent
+   * le refus de l'étape SOUS le champ concerné (aria-invalid, aria-describedby). La règle ne change pas.
    */
   let {
     value = $bindable(''),
     identiques = $bindable(),
+    niveau = $bindable(),
     id = 'password',
     label = '',
     email = '',
     personnel = false,
+    erreur = '',
+    erreurConfirmation = '',
   }: {
     value?: string;
     identiques?: boolean;
+    niveau?: ReturnType<typeof forceMotDePasse>;
     id?: string;
     label?: string;
     email?: string;
     personnel?: boolean;
+    erreur?: string;
+    erreurConfirmation?: string;
   } = $props();
 
   let confirmation = $state('');
@@ -34,6 +43,9 @@
   $effect(() => {
     const egaux = value === confirmation;
     if (identiques !== egaux) identiques = egaux;
+  });
+  $effect(() => {
+    if (niveau !== force) niveau = force;
   });
   // formulaire remis à zéro par la page (changement réussi) : la confirmation suit
   $effect(() => {
@@ -51,7 +63,8 @@
     spellcheck="false"
     required
     bind:value
-    aria-describedby="{id}-aide {id}-force"
+    aria-invalid={erreur ? true : undefined}
+    aria-describedby="{erreur ? `${id}-erreur ` : ''}{id}-aide {id}-force"
   />
   <button
     type="button"
@@ -76,6 +89,9 @@
     <Bidi text={t('mdp.voir')} />
   </button>
 </div>
+{#if erreur}<p id="{id}-erreur" class="error small" data-testid="mdp-erreur">
+    <Bidi text={erreur} />
+  </p>{/if}
 <p id="{id}-aide" class="muted small">
   <Bidi text={t(personnel ? 'mdp.consigne_personnel' : 'mdp.consigne')} />
 </p>
@@ -101,11 +117,18 @@
   spellcheck="false"
   required
   bind:value={confirmation}
-  aria-invalid={ecart}
+  aria-invalid={ecart || !!erreurConfirmation}
+  aria-describedby={!ecart && erreurConfirmation ? `${id}-confirmer-erreur` : undefined}
   data-testid="mdp-confirmer"
 />
 {#if ecart}<p class="error small" role="alert" data-testid="mdp-differents">
     <Bidi text={t('mdp.differents')} />
+  </p>{:else if erreurConfirmation}<p
+    id="{id}-confirmer-erreur"
+    class="error small"
+    data-testid="mdp-confirmer-erreur"
+  >
+    <Bidi text={erreurConfirmation} />
   </p>{/if}
 
 <style>

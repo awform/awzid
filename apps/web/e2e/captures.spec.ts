@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { openDisplay } from './coran';
 import { expect, newAdult, PARENT_PIN, password, test } from './fixtures';
 import { loginTeacher } from './enseignant';
+import { etapeIdentifiants, ouvrirInscription } from './inscription';
 import { solveExercise, unitData } from './solve';
 
 /**
@@ -132,7 +133,9 @@ test.describe('compte parent', () => {
     await shot('21-mon-compte', true);
     await page.goto('/connexion');
     await shot('22-connexion');
-    await page.goto('/inscription');
+    // inscription en trois étapes : le pays se choisit à l'étape « Votre profil »
+    await ouvrirInscription(page);
+    await etapeIdentifiants(page, 'capture-senegal@e2e.test');
     await page.locator('#country').selectOption('SN');
     await shot('23-inscription-senegal', true);
     await page.goto('/compte?r=profil');
