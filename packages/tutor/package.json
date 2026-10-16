@@ -21,7 +21,7 @@
     "eval": "node dist/cli/eval.js"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.129.0",
+    "@anthropic-ai/sdk": "^0.131.0",
     "@awform/hifz": "workspace:*"
   },
   "devDependencies": {
