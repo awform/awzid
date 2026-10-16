@@ -1,13 +1,13 @@
 {
   "ouvertureMs": 1804,
   "ouverturesMs": [
-    1804,
-    1804,
     1801,
-    1808,
-    1810
+    1804,
+    1804,
+    1804,
+    1798
   ],
-  "relanceMs": 546,
+  "relanceMs": 547,
   "octetsPremiereOuvertureKo": {
     "document": 4.1,
     "stylesheet": 11.5,

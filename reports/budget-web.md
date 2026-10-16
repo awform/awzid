@@ -16,10 +16,10 @@ bloquant. Compression Brotli (qualité 11).
 
 | Élément | Poids transféré |
 |---|---|
-| (a) dont JS + CSS de la coquille de l'élève | 334.6 Ko |
+| (a) dont JS + CSS de la coquille de l'élève | 334.5 Ko |
 | (a) dont textes préchargés (`/i18n/fr-quotidien.json`, `/i18n/fr-vivre.json`, `/i18n/fr-coran.json`, `/i18n/fr-hifz.json`) | 11.2 Ko |
-| Pages du personnel, NON préchargées (27 fichiers) | 51.8 Ko |
-| Pages rares, en ligne seulement, NON préchargées (53 fichiers) | 37.9 Ko |
+| Pages du personnel, NON préchargées (27 fichiers) | 51.9 Ko |
+| Pages rares, en ligne seulement, NON préchargées (53 fichiers) | 38.0 Ko |
 | Modules à la demande qui ont besoin du réseau, NON préchargés (21 fichiers) | 32.3 Ko |
 | Pages de l'élève gardées au premier usage (Madjaliss), NON préchargées (4 fichiers) | 15.2 Ko |
 | Leçons vivantes, à la demande (2 fichiers) | 12.8 Ko (≤ 20.0 Ko) |
@@ -35,9 +35,9 @@ bloquant. Compression Brotli (qualité 11).
 |---|---|
 | `/coran/lecteur` | 148.3 Ko |
 | `/lecons/[id]` | 145.1 Ko |
-| `/hifz/[outil]` | 124.9 Ko |
-| `/hifz` | 124.8 Ko |
+| `/hifz/[outil]` | 124.8 Ko |
+| `/hifz` | 124.7 Ko |
 | `/enseignant/classe/[id]` | 120.7 Ko |
-| `/lectures` | 120.6 Ko |
-| `/lectures/[code]` | 120.6 Ko |
-| `/quotidien` | 119.4 Ko |
+| `/lectures/[code]` | 120.5 Ko |
+| `/lectures` | 120.5 Ko |
+| `/quotidien` | 119.3 Ko |

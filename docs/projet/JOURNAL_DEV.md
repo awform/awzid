@@ -8,6 +8,17 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 16/10/2026 — Fusion dans main : lot 11 + page d'accueil
+
+- `lot11-wip` (bêta fermée, mots de passe, menu awzid, alertes) puis `accueil-wip` (nouvelle page d'accueil) fusionnés dans main
+  (`--no-ff`). Seul conflit : ce journal (deux entrées gardées). Correctifs préexistants en commit séparé : `no-empty-pattern`
+  (coran-lecteur4, coran-tactile) et avertissement shellcheck de `status.sh` (apostrophe dans un `${A:-…}`), sans changement de comportement.
+- Vérifié : lint, build, svelte-check, shellcheck (avertissements) propres ; unitaires tous verts ; e2e 752 réussis, 137 ignorés, 1 échec
+  connu (lot29:42). Budget : appareil élève 345,7 Ko (marge 4,3 Ko), première ouverture 112,5 Ko, page la plus lourde 148,3 Ko, 3G 1,80 s.
+  Rien déployé.
+
+---
+
 ## 16/10/2026 — Lot 11 : bêta fermée (liste d'attente → groupe, comptes créés), mots de passe des familles, autonomie du client (menu, guide de survie), alertes à plusieurs destinataires
 
 Branche `lot11-wip` (worktree `~/wt/lot11`, depuis `main` d80e742), commit `a593fe5`. Non fusionnée, non déployée (ni démo ni bêta).
