@@ -10,7 +10,7 @@
   --line: #ddd3bd;
   --teal: #0b6e4f;
   --navy: #084c38;
-  --header: #ffffff;
+  --header: #fbf7ee;
   --on-header: #084c38;
   --good: #1f9d6b;
   --soft: #e4efe8;
@@ -90,11 +90,11 @@
   --space-m: 16px;
   --space-l: 24px;
   --space-xl: 40px;
-  --radius-sm: 8px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
   --radius-pill: 999px;
-  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.05), 0 10px 30px -12px rgba(8, 76, 56, 0.18);
   --shadow-float: 0 8px 24px rgba(16, 24, 40, 0.12);
   --motion-fast: 120ms;
   --motion: 220ms;

@@ -139,8 +139,16 @@ h2,
 h3 {
   font-family: var(--font-title);
   line-height: 1.25;
-  color: var(--ink);
+  color: var(--navy);
   text-wrap: balance;
+}
+/* titre d'un écran : petit filet doré dessous (comme les titres de l'accueil public) */
+.titre-page {
+  padding-bottom: 12px;
+  background: linear-gradient(var(--gold), var(--gold)) no-repeat 0 100% / 3rem 4px;
+}
+.titre-page:dir(rtl) {
+  background-position: 100% 100%;
 }
 h1 {
   font-size: var(--title-size);
@@ -354,7 +362,8 @@ a.button.primary {
   background: var(--primary);
   border-color: var(--primary);
   color: var(--on-primary);
-  box-shadow: var(--shadow-card);
+  font-family: var(--font-title);
+  box-shadow: 0 8px 20px -10px rgba(8, 76, 56, 0.55);
 }
 button.primary:hover,
 a.button.primary:hover {
@@ -432,7 +441,7 @@ summary {
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-  padding: var(--space-m) var(--space-m);
+  padding: 20px;
   margin: var(--space-m) 0;
 }
 .card h2,
@@ -582,7 +591,7 @@ tbody tr:hover {
   display: grid;
   gap: 6px;
   padding: var(--space-m);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--card);
   border: 1px solid var(--line);
   border-top: 3px solid var(--gold);
@@ -597,7 +606,7 @@ a.button.dore {
   width: 100%;
   min-height: 56px;
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--gold);
   color: var(--sur-or);
   font-weight: 700;
@@ -614,7 +623,7 @@ a.dore:hover {
   margin: 0 0 var(--space-m);
   padding: 0;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--card);
   box-shadow: var(--shadow-card);
   overflow: hidden;

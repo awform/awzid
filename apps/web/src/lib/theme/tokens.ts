@@ -169,7 +169,8 @@ export const THEMES: Record<ThemeName, Theme> = {
       line: '#ddd3bd',
       teal: '#0b6e4f',
       navy: '#084c38',
-      header: '#ffffff',
+      // en-tête sur le fond crème, comme l'accueil public
+      header: '#fbf7ee',
       'on-header': '#084c38',
       good: '#1f9d6b',
       soft: '#e4efe8',
@@ -239,9 +240,10 @@ export const THEMES: Record<ThemeName, Theme> = {
     polices: POLICES,
     tailles: { base: '17px', arabe: '26px', interligne: '1.55', titre: '1.75rem', cible: '48px' },
     espaces: ESPACES,
-    rayons: { petit: '8px', moyen: '10px', grand: '14px', pilule: '999px' },
+    // refonte de l'intérieur (16/10/2026), alignée sur l'accueil public : cartes très arrondies, ombre douce verte
+    rayons: { petit: '10px', moyen: '14px', grand: '20px', pilule: '999px' },
     ombres: {
-      carte: '0 1px 2px rgba(16, 24, 40, 0.06)',
+      carte: '0 1px 2px rgba(16, 24, 40, 0.05), 0 10px 30px -12px rgba(8, 76, 56, 0.18)',
       flottante: '0 8px 24px rgba(16, 24, 40, 0.12)',
     },
     mouvement: MOUVEMENT,

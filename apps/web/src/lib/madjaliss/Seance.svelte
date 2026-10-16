@@ -116,7 +116,7 @@
 
 <header class="tete">
   <p class="surtitre"><Bidi text={t('mj.seance', { n: seance.n })} /></p>
-  <h1><Bidi text={avecArabe(seance.titre, seance.tma)} /></h1>
+  <h1 class="titre-page"><Bidi text={avecArabe(seance.titre, seance.tma)} /></h1>
   {#if seance.differe}<p class="muted" data-testid="mj-differe">
       <Bidi text={t('mj.differe')} />
     </p>{/if}
@@ -288,13 +288,19 @@
 
 <style>
   .tete h1 {
-    margin: 0;
-    font-size: 1.4rem;
+    margin: 8px 0 0;
+    font-size: 1.5rem;
   }
+  /* refonte 16/10 : numéro de séance en pastille dorée */
   .surtitre {
+    display: inline-block;
     margin: 0;
-    color: var(--ink2);
-    font-weight: 600;
+    padding: 2px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--or-soft);
+    color: var(--or-ink);
+    font-weight: 700;
+    font-size: 0.9rem;
   }
   .etapes {
     list-style: none;
@@ -338,7 +344,7 @@
     color: var(--on-primary);
   }
   .corps {
-    padding: var(--space-m);
+    padding: 20px;
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     background: var(--card);

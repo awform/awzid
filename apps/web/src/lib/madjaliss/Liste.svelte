@@ -115,7 +115,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
-    margin: var(--space-m) 0 var(--space-s);
+    margin: var(--space-l) 0 var(--space-m);
   }
   .textes {
     list-style: none;
@@ -123,12 +123,12 @@
     margin: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-    gap: var(--space-s);
+    gap: var(--space-m);
   }
   .couv {
     display: grid;
     border: 1px solid var(--line);
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
     background: var(--card);
     color: var(--ink);
@@ -142,11 +142,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 76px;
-    padding: 6px 16px;
+    min-height: 84px;
+    padding: 6px 16px 10px;
     color: var(--bande-texte);
     background-image: var(--motif-etoile);
-    border-bottom: 2px solid var(--gold);
+    box-shadow: inset 0 -4px 0 var(--gold);
   }
   .b1 {
     background-color: var(--bande-1);
@@ -171,8 +171,8 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 16px;
-    min-height: 56px;
+    padding: 12px 20px;
+    min-height: 64px;
   }
   .nom {
     display: grid;
