@@ -19,6 +19,7 @@ test.use({
   hasTouch: true,
   isMobile: true,
 });
+// eslint-disable-next-line no-empty-pattern -- Playwright exige un objet déstructuré en premier argument
 test.beforeEach(({}, info) => {
   test.skip(!info.project.name.startsWith('mobile'), 'téléphone');
 });

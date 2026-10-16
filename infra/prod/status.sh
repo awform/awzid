@@ -24,7 +24,8 @@ echo "${H:-}" | grep -q '"status":"ok"' || warn "santé dégradée"
 
 echo "== accès (bêta fermée)"
 A="$(curl -fsS --max-time 5 http://127.0.0.1/api/v1/acces/statut 2>/dev/null || true)"
-echo "${A:-statut d'accès indisponible}"
+INDISPO="statut d'accès indisponible"
+echo "${A:-$INDISPO}"
 curl -fsS --max-time 5 http://127.0.0.1/healthz >/dev/null 2>&1 || warn "sonde /healthz en échec"
 
 echo "== sauvegarde"

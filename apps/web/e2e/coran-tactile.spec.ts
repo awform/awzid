@@ -13,6 +13,7 @@ import { expect, test } from './fixtures';
  * Pour chaque commande : ouvrir, rester ouvert (au-delà des 3 s de l'effacement), choisir, fermer.
  */
 test.use({ viewport: { width: 412, height: 915 }, hasTouch: true, isMobile: true });
+// eslint-disable-next-line no-empty-pattern -- Playwright exige un objet déstructuré en premier argument
 test.beforeEach(({}, info) => {
   test.skip(!info.project.name.startsWith('mobile'), 'téléphone');
 });
