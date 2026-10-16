@@ -1099,7 +1099,7 @@ function construireTexte(texte, lignes) {
             typeof f.coherence === 'string' ? f.coherence : null,
             typeof f.point_surveille === 'string' ? f.point_surveille : null,
             typeof f.point_a_verifier === 'string' ? f.point_a_verifier : null,
-            f.relecture_comite === true ? 'Relecture savante demandée' : null,
+            f.relecture_comite === true ? 'Relecture demandée' : null,
             typeof p.hadith?.jugement === 'string'
               ? `Jugement relevé : ${p.hadith.jugement}`
               : null,
