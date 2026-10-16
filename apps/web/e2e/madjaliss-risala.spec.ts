@@ -14,7 +14,7 @@ import { expect, newAdult, password, test } from './fixtures';
 test.use({ compte: null });
 
 const STATUT_FR =
-  "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente d'une seconde lecture savante.";
+  "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.";
 const H = { 'x-awform': '1' };
 const dir = join(fileURLToPath(new URL('..', import.meta.url)), 'static', 'mutun');
 // lot 5 : les parties de phrases sont des fichiers GARDÉS (servis après authentification, droit « démonstration » ou personnel)

@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Browser, Page, Route } from '@playwright/test';
 import { expect, password, test } from './fixtures';
+import { remplirInscription } from './inscription';
 import { totp } from './totp';
 
 /**
@@ -156,12 +157,12 @@ test.describe('mode « invitation » et liste d’attente (écran)', () => {
     await statut(page, { inscription: 'invitation' });
     await page.goto('/inscription');
     await expect(page.getByTestId('porte-invitation')).toBeVisible();
-    await expect(page.getByTestId('type-parent')).toHaveCount(0);
+    await expect(page.getByTestId('inscription-form')).toHaveCount(0);
     // mauvais code
     await page.getByTestId('code-invitation').fill('AWZ-22222-33333');
     await page.getByRole('button', { name: /Vérifier le code/ }).click();
     await expect(page.getByTestId('erreur-code')).toContainText(/n’existe pas/);
-    await expect(page.getByTestId('type-parent')).toHaveCount(0);
+    await expect(page.getByTestId('inscription-form')).toHaveCount(0);
 
     // demande d'invitation
     const mail = unique('attente');
@@ -214,7 +215,7 @@ test.describe('mode « invitation » et liste d’attente (écran)', () => {
     await page.getByTestId('code-invitation').fill(code.toLowerCase());
     await page.getByRole('button', { name: /Vérifier le code/ }).click();
     await expect(page.getByTestId('invitation-reconnue')).toContainText(/personnelle/);
-    await expect(page.getByTestId('type-parent')).toBeVisible();
+    await expect(page.getByTestId('inscription-form')).toBeVisible();
     // une autre adresse n'entre pas avec ce code, la bonne oui
     expect((await signup(page, unique('autre'), code)).status()).toBe(403);
     expect((await signup(page, mail, code)).status()).toBe(201);
@@ -313,7 +314,7 @@ test.describe('bandeau « Version bêta »', () => {
     await expect(b).toBeVisible();
     await expect(b).toContainText('Version bêta');
     await expect(b).toContainText('école mālikite');
-    await expect(b).toContainText('seconde lecture savante');
+    await expect(b).toContainText('en attente de relecture');
     expect((await b.innerText()).toLowerCase()).not.toContain('validation humaine');
     // discret : au plus 3 lignes de petit texte
     const box = (await b.boundingBox())!;
@@ -396,12 +397,12 @@ test.describe('plafond, liste d’attente automatique, anti-robots, vérificatio
     await expect(page.getByTestId('porte-invitation')).toContainText(/complètes pour le moment/);
     // la demande d'invitation est déjà ouverte
     await expect(page.getByTestId('liste-attente')).toBeVisible();
-    await expect(page.getByTestId('type-parent')).toHaveCount(0);
+    await expect(page.getByTestId('inscription-form')).toHaveCount(0);
     // ouvert avec de la place : le formulaire libre
     await page.unroute('**/api/v1/acces/statut');
     await statut(page, { mode: 'ouvert', inscription: 'ouverte' });
     await page.goto('/inscription');
-    await expect(page.getByTestId('type-parent')).toBeVisible();
+    await expect(page.getByTestId('inscription-form')).toBeVisible();
     await expect(page.getByTestId('porte-invitation')).toHaveCount(0);
   });
 
@@ -423,7 +424,7 @@ test.describe('plafond, liste d’attente automatique, anti-robots, vérificatio
       });
     });
     await page.goto('/inscription');
-    await expect(page.getByTestId('type-parent')).toBeVisible();
+    await expect(page.getByTestId('inscription-form')).toBeVisible();
     await expect.poll(() => jetonDemande).toBeGreaterThan(0);
     // le champ piège ne se voit pas et ne reçoit pas le focus au clavier
     const piege = page.getByTestId('piege');
@@ -433,13 +434,11 @@ test.describe('plafond, liste d’attente automatique, anti-robots, vérificatio
     expect(box === null || box.x < 0 || box.width <= 1).toBe(true);
     // un robot le remplit : la demande part avec le champ et le jeton, le serveur (simulé) la refuse
     await piege.fill('http://spam.example', { force: true });
-    await page.locator('#email').fill(unique('bot'));
-    await page.locator('#password').fill('une phrase de passe assez longue 2026');
-    await page.locator('#password-confirmer').fill('une phrase de passe assez longue 2026');
-    await page.locator('#birthYear').fill('1990');
-    await page.getByTestId('consent-cgu').check();
-    await page.getByTestId('consent-art9').check();
-    await page.locator('form button[type="submit"]').click();
+    await remplirInscription(page, {
+      email: unique('bot'),
+      motDePasse: 'une phrase de passe assez longue 2026',
+      annee: 1990,
+    });
     await expect(page.getByTestId('erreur')).toContainText(/anti-robot/);
     expect(corps).toMatchObject({ jeton: '1800000000000.abc', site_web: 'http://spam.example' });
   });

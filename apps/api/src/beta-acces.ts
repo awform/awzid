@@ -68,7 +68,7 @@ import { coutsDuJour, listePlafonds, tableauComptes } from './plafonds.js';
 const OUVERT_FERME = /^\/api\/v1\/(health|acces\/(statut|jeton)|auth\/|admin\/|billing\/webhook\/)/;
 /**
  * Contenu des livres, du Coran et des rubriques : FERMÉ aux visiteurs non connectés quand la bêta est « sur invitation »
- * (les textes religieux n'ont pas encore la seconde lecture savante : pas d'accès anonyme).
+ * (les textes religieux sont encore en attente de relecture : pas d'accès anonyme).
  */
 const CONTENU_FERME_AUX_ANONYMES =
   /^\/api\/v1\/(levels|units|packs|booklets|quran|hifz\/books|vivre|lecons-audio|adhkar)(\/|\?|$)/;

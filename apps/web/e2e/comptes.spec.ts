@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import type { Page } from '@playwright/test';
 import { EMAILS, expect, password, test } from './fixtures';
+import { etapeIdentifiants, etapeProfil, inscrire, ouvrirInscription } from './inscription';
 import { solveExercise, unitData } from './solve';
 
 /**
@@ -20,20 +21,8 @@ async function signup(
   email: string,
   opts: { birthYear?: number; country?: string } = {},
 ) {
-  await page.goto('/inscription');
-  await page.getByTestId(`type-${kind}`).check();
-  await page.locator('#email').fill(email);
-  await page.locator('#password').fill(password());
-  await page.locator('#password-confirmer').fill(password());
-  if (opts.country) await page.locator('#country').selectOption(opts.country);
-  // audit MIN-3 : année de naissance demandée à tout titulaire
-  await page
-    .locator('#birthYear')
-    .fill(String(opts.birthYear ?? (kind === 'parent' ? 1985 : 1990)));
-  await page.getByTestId('consent-cgu').check();
-  await page.getByTestId('consent-art9').check();
-  if (opts.country === 'SN') await page.getByTestId('consent-transfert').check();
-  await page.getByRole('button', { name: 'Créer mon compte' }).click();
+  // inscription en trois étapes (aide commune) ; audit MIN-3 : année de naissance demandée à tout titulaire
+  await inscrire(page, { kind, email, pays: opts.country, annee: opts.birthYear });
 }
 
 test('parent : inscription, profil enfant avec consentement, réponses enregistrées', async ({
@@ -67,9 +56,14 @@ test('adulte : âge du consentement numérique vérifié ; Sénégal : consentem
 }, info) => {
   await signup(page, 'adulte', uniqueEmail('jeune', info.project.name), { birthYear: YEAR - 12 });
   await expect(page.getByTestId('erreur')).toContainText('Avant 15 ans');
-  await page.goto('/inscription');
+  // l'accord de transfert n'est demandé que si le pays l'exige (étape des accords)
+  await ouvrirInscription(page);
+  await etapeIdentifiants(page, uniqueEmail('fr', info.project.name));
+  await etapeProfil(page, { kind: 'adulte' });
   await expect(page.getByTestId('consent-transfert')).toHaveCount(0);
+  await page.getByTestId('etape-retour').click();
   await page.locator('#country').selectOption('SN');
+  await page.getByTestId('etape-suivante').click();
   await expect(page.getByTestId('consent-transfert')).toBeVisible();
   await signup(page, 'adulte', uniqueEmail('sn', info.project.name), {
     birthYear: 1985,

@@ -2,25 +2,45 @@
   import { fn } from '$lib/fonctions.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import Brand from '$lib/ui/Brand.svelte';
+  import type { ForceMotDePasse } from '@awform/school/mot-de-passe';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { setActiveProfile } from '$lib/attempts';
   import { COUNTRIES, countryName, needsTransferConsent } from '$lib/countries';
   import { locale, t } from '$lib/i18n';
   import { call, fetchMe, type Me } from '$lib/session';
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { chargerStatut, type AccesStatut } from '$lib/acces';
   import ListeAttente from './ListeAttente.svelte';
 
   /**
    * Inscription d'un PARENT (il créera ensuite les profils de ses enfants, sans e-mail) ou d'un ADULTE
    * autonome. Consentements séparés, jamais cochés d'avance ; données hébergées dans l'Union européenne.
+   *
+   * Refonte du 16/10/2026 (page d'entrée publique : vouvoiement, charte de la page d'accueil) : deux colonnes sur
+   * ordinateur (panneau vert de la marque + carte du formulaire), une seule sur téléphone (panneau réduit à un
+   * en-tête). Le formulaire est en TROIS ÉTAPES — (1) identifiants, (2) profil, (3) accords — dans un seul <form> :
+   * les étapes non affichées sont cachées (`hidden`), jamais retirées, donc rien n'est perdu en revenant (ni la
+   * confirmation du mot de passe, gardée par son composant). Chaque étape est validée avant la suivante (message
+   * sous le champ, résumé annoncé, focus sur le premier champ à corriger) ; le changement d'étape est annoncé
+   * (aria-live) et le focus va sur le titre de l'étape. L'envoi final est INCHANGÉ : même appel, mêmes données,
+   * mêmes accords, même anti-robots ; une erreur du serveur ramène à l'étape du champ concerné.
    */
+  type Etape = 1 | 2 | 3;
+  let etape = $state<Etape>(1);
+  /** texte annoncé par la région aria-live au changement d'étape */
+  let annonce = $state('');
+  /** erreurs de l'étape affichée, par identifiant de champ */
+  let erreurs = $state<Record<string, string>>({});
+  const nbErreurs = $derived(Object.keys(erreurs).length);
+
   let kind: 'parent' | 'adulte' = $state('parent');
   let email = $state('');
   let password = $state('');
   /** lot 11 : mot de passe et confirmation identiques */
   let mdpIdentiques = $state(true);
+  /** verdict de la règle du mot de passe (donné par le champ : même fonction que le serveur) */
+  let niveauMdp = $state<ForceMotDePasse | undefined>(undefined);
   // lot 11 : champ du nouveau mot de passe chargé À LA DEMANDE (partagé par 3 pages rares : statique, il irait dans le
   // morceau commun préchargé sur l'appareil de l'élève)
   const champMdp = import('$lib/compte/ChampMotDePasse.svelte');
@@ -113,12 +133,105 @@
   const current = $derived(rules?.country === country ? rules : null);
   const transferNeeded = $derived(current?.transferConsent ?? needsTransferConsent(country));
 
-  async function submit(e: SubmitEvent) {
+  /** champs de chaque étape, dans l'ordre de l'écran (focus sur le premier à corriger) */
+  const CHAMPS: Record<Etape, string[]> = {
+    1: ['email', 'password', 'password-confirmer'],
+    2: ['region', 'birthYear'],
+    3: ['cgu', 'art9', 'transfert'],
+  };
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  function valider(n: Etape): Record<string, string> {
+    const e: Record<string, string> = {};
+    if (n === 1) {
+      const m = email.trim();
+      if (!m) e.email = t('ins.err_email_vide');
+      else if (!EMAIL.test(m)) e.email = t('ins.err_email');
+      if (!password) e.password = t('ins.err_mdp_vide');
+      else if (niveauMdp === 'refuse') e.password = t('ins.err_mdp');
+      else if (!mdpIdentiques) e['password-confirmer'] = t('ins.err_confirmer');
+    } else if (n === 2) {
+      const an = Number(birthYear);
+      if (!birthYear || !Number.isInteger(an) || an < 1900 || an > new Date().getFullYear())
+        e.birthYear = t('ins.err_annee');
+      if (current?.regions?.length && !region) e.region = t('ins.err_region');
+    } else {
+      if (!cgu) e.cgu = t('ins.err_accord');
+      if (!art9) e.art9 = t('ins.err_accord');
+      if (transferNeeded && !transfert) e.transfert = t('ins.err_accord');
+    }
+    return e;
+  }
+  /** le champ est corrigé : son message disparaît */
+  function effacer(id: string) {
+    if (erreurs[id] === undefined) return;
+    const reste = { ...erreurs };
+    delete reste[id];
+    erreurs = reste;
+  }
+  // mot de passe ou confirmation retouchés : leurs messages disparaissent (la règle est revue au « Continuer »)
+  let mdpVu = '';
+  $effect(() => {
+    if (password !== mdpVu) {
+      mdpVu = password;
+      effacer('password');
+      effacer('password-confirmer');
+    }
+    if (mdpIdentiques) effacer('password-confirmer');
+  });
+  /** attributs d'accessibilité d'un champ validé */
+  const invalide = (id: string) => (erreurs[id] ? true : undefined);
+  const decrit = (id: string, aide = '') =>
+    [erreurs[id] ? `${id}-erreur` : '', aide].filter(Boolean).join(' ') || undefined;
+
+  async function aller(n: Etape) {
+    etape = n;
+    erreurs = {};
+    error = '';
+    annonce = t('ins.annonce', { n, titre: t(`ins.e${n}`) });
+    await tick();
+    document.getElementById(`etape-${n}-t`)?.focus();
+  }
+  async function avancer(e: SubmitEvent) {
     e.preventDefault();
-    if (!mdpIdentiques) {
-      error = t('erreur.mots_de_passe_differents');
+    if (busy) return;
+    const trouvees = valider(etape);
+    erreurs = trouvees;
+    error = '';
+    if (Object.keys(trouvees).length) {
+      await tick();
+      const id = CHAMPS[etape].find((c) => trouvees[c]);
+      if (id) document.getElementById(id)?.focus();
       return;
     }
+    if (etape < 3) await aller((etape + 1) as Etape);
+    else await envoyer();
+  }
+
+  /** refus du serveur → étape du champ concerné (les autres restent sur les accords) */
+  const ETAPE_DU_REFUS: Record<string, Etape> = {
+    email_indisponible: 1,
+    invitation_autre_adresse: 1,
+    pays_inconnu: 2,
+    annee_naissance_requise: 2,
+    majorite_requise: 2,
+    region_inconnue: 2,
+    ferme_moins_13: 2,
+    age_parent_requis: 2,
+  };
+  /** messages du serveur écrits au « tu » dans l'application : leur version au « vous » pour cette page publique */
+  const VOUS = new Set([
+    'email_indisponible',
+    'age_parent_requis',
+    'annee_naissance_requise',
+    'consentement_requis',
+    'mot_de_passe_trop_simple',
+    'mot_de_passe_trop_courant',
+    'mot_de_passe_contient_email',
+    'reseau',
+    'trop_de_demandes',
+  ]);
+
+  async function envoyer() {
     busy = true;
     error = '';
     const consents = [
@@ -145,7 +258,13 @@
     });
     busy = false;
     if (!r.ok) {
-      error = t(`erreur.${r.code ?? 'reseau'}`, { age: (r.error?.age as number) ?? 15 });
+      const c = r.code ?? 'reseau';
+      const message = t(VOUS.has(c) ? `ins.erreur.${c}` : `erreur.${c}`, {
+        age: (r.error?.age as number) ?? 15,
+      });
+      const cible = c.startsWith('mot_de_passe_') ? 1 : (ETAPE_DU_REFUS[c] ?? 3);
+      if (cible !== etape) await aller(cible);
+      error = message;
       // plafond atteint pendant la saisie : on passe à la liste d'attente ; jeton trop récent : nouveau jeton
       if (r.code === 'plafond_atteint') acces = await chargerStatut(true);
       if (r.code === 'antibot_echec' && acces?.antibot === 'on') {
@@ -164,260 +283,877 @@
 
 <svelte:head><title>{t('app.nom')} — {t('inscription.titre')}</title></svelte:head>
 
-<!-- D2 : bloc marque sobre (comme la connexion), puis le formulaire en trois temps : qui, identifiants, accords -->
-<div class="accueil-marque" data-testid="inscription-marque">
-  <Brand slogan surPage size={48} />
-</div>
-<h1>{t('inscription.titre')}</h1>
-{#if porteFermee}
-  <!-- bêta fermée : code d'invitation, ou demande d'invitation (liste d'attente validée à la main) -->
-  <section class="card form" data-testid="porte-invitation">
-    <h2><Bidi text={t('inv.titre')} /></h2>
-    <p>
-      <Bidi text={t(acces?.inscription === 'attente' ? 'inv.complet' : 'inv.intro')} />
-    </p>
-    <form
-      class="porte"
-      onsubmit={(e) => {
-        e.preventDefault();
-        void verifierCode();
-      }}
+{#snippet coche()}
+  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+    ><path d="m5 12.5 4.5 4.5L19 7.5" /></svg
+  >
+{/snippet}
+{#snippet erreurDe(id: string)}
+  {#if erreurs[id]}<p id="{id}-erreur" class="champ-erreur" data-testid="erreur-{id}">
+      <Bidi text={erreurs[id]} />
+    </p>{/if}
+{/snippet}
+
+<div class="inscription">
+  <!-- panneau de la marque : symbole officiel (fichier de la marque, non redessiné) sur disque crème, promesse,
+       trois garanties ; réduit à un en-tête sur téléphone -->
+  <aside class="panneau" data-testid="inscription-marque">
+    <svg class="motif" aria-hidden="true" focusable="false"
+      ><defs
+        ><pattern id="ins-motif" width="44" height="44" patternUnits="userSpaceOnUse"
+          ><g fill="none" stroke="#FFFFFF" stroke-opacity=".1"
+            ><rect x="14" y="14" width="16" height="16" /><rect
+              x="14"
+              y="14"
+              width="16"
+              height="16"
+              transform="rotate(45 22 22)"
+            /></g
+          ></pattern
+        ></defs
+      ><rect width="100%" height="100%" fill="url(#ins-motif)" /></svg
     >
-      <label for="code-invitation"><Bidi text={t('inv.code')} /></label>
-      <input
-        id="code-invitation"
-        autocomplete="off"
-        autocapitalize="characters"
-        spellcheck="false"
-        dir="ltr"
-        aria-describedby="code-exemple"
-        required
-        bind:value={code}
-        data-testid="code-invitation"
-      />
-      <p class="muted small" id="code-exemple"><Bidi text={t('inv.exemple')} /></p>
-      {#if codeErreur}<p class="error" role="alert" data-testid="erreur-code">
-          <Bidi text={codeErreur} />
-        </p>{/if}
-      <button type="submit" class="primary go" disabled={codeBusy}
-        ><Bidi text={t('inv.verifier')} /></button
-      >
-    </form>
-    <p class="muted">
-      <Bidi text={t('inv.sans_code')} />
-      <button
-        type="button"
-        class="lien"
-        onclick={() => (demande = !demande)}
-        aria-expanded={demande}><Bidi text={t('inv.demander')} /></button
-      >
-    </p>
-    {#if demande}<ListeAttente />{/if}
-  </section>
-{:else}
-  {#if codeOk}
-    <p class="card ok" role="status" data-testid="invitation-reconnue">
-      <Bidi text={t('inv.reconnue')} />
-      {#if codePerso}<br /><Bidi text={t('inv.perso')} />{/if}
-    </p>
-  {/if}
-  <form class="card form" onsubmit={submit}>
-    <!-- champ piège anti-robots : invisible et hors du parcours au clavier, seul un robot le remplit -->
-    <div class="piege" aria-hidden="true">
-      <input
-        name="site_web"
-        type="text"
-        tabindex="-1"
-        autocomplete="off"
-        bind:value={piege}
-        data-testid="piege"
-      />
-    </div>
-    <fieldset>
-      <legend>{t('inscription.qui')}</legend>
-      <label class="radio"
-        ><input
-          type="radio"
-          name="kind"
-          value="parent"
-          bind:group={kind}
-          data-testid="type-parent"
-        />
-        <span><strong>{t('inscription.parent')}</strong> — {t('inscription.parent_aide')}</span
-        ></label
-      >
-      <label class="radio"
-        ><input
-          type="radio"
-          name="kind"
-          value="adulte"
-          bind:group={kind}
-          data-testid="type-adulte"
-        />
-        <span><strong>{t('inscription.adulte')}</strong> — {t('inscription.adulte_aide')}</span
-        ></label
-      >
-    </fieldset>
-
-    <label for="email">{t('champ.email')}</label>
-    <input id="email" type="email" autocomplete="email" required bind:value={email} />
-    {#await champMdp then { default: ChampMotDePasse }}
-      <ChampMotDePasse bind:value={password} bind:identiques={mdpIdentiques} {email} />
-    {/await}
-
-    <label for="country">{t('champ.pays')}</label>
-    <select id="country" bind:value={country} onchange={() => (region = '')}>
-      {#each COUNTRIES as c (c)}<option value={c}>{countryName(c)}</option>{/each}
-    </select>
-    {#if current?.regions?.length}
-      <label for="region">{t('inscription.region')}</label>
-      <select id="region" bind:value={region} required data-testid="region">
-        <option value=""></option>
-        {#each current.regions as r (r)}<option value={r}>{t(`region.${r}`)}</option>{/each}
-      </select>
-    {/if}
-
-    {#if current}
-      <p class="muted small" data-testid="loi-pays">
-        <Bidi
-          text={t('inscription.loi_pays', {
-            pays: countryName(country),
-            loi: t(`pays.loi.${current.law}`),
-            autorite: t(`pays.autorite.${current.authority}`),
-          })}
-        />
-        <Bidi text={t('inscription.loi_mineurs', { age: current.consentAge })} />
-        {#if current.closedUnder}<Bidi text={t('inscription.ferme_moins_13')} />{/if}
-      </p>
-    {/if}
-
-    <!-- audit MIN-3 : année de naissance demandée à tout titulaire (un parent doit être majeur) -->
-    <label for="birthYear">{t('champ.annee_naissance')}</label>
-    <input id="birthYear" type="number" min="1900" max="2100" required bind:value={birthYear} />
-    <p class="muted small">{t('inscription.annee_aide')}</p>
-    {#if kind === 'adulte'}
-      <label for="pseudonym">{t('champ.pseudonyme')}</label>
-      <input id="pseudonym" maxlength="40" bind:value={pseudonym} />
-      <fieldset data-testid="mode-inscription">
-        <legend>{t('ser.titre')}</legend>
-        {#each modesInscription as m (m)}
-          <label class="radio"
-            ><input
-              type="radio"
-              name="evalMode"
-              value={m}
-              bind:group={evalMode}
-              data-mode-choix={m}
-            />
-            <span
-              ><strong><Bidi text={t(`ser.m_${m}`)} /></strong> — <Bidi
-                text={t(`ser.a_${m}`)}
-              /></span
-            ></label
-          >
+    <!-- marque officielle (symbole pour fond foncé + nom + devise) : le même composant que l'en-tête et la
+         connexion — le garder ici le laisse aussi dans le morceau commun (sinon il partirait avec la connexion) -->
+    <div class="marque-panneau"><Brand slogan surPage size={44} /></div>
+    <div class="panneau-texte">
+      <p class="promesse"><Bidi text={t('ins.promesse')} /></p>
+      <p class="sous-promesse"><Bidi text={t('ins.sous_promesse')} /></p>
+      <ul class="points">
+        {#each [1, 2, 3] as n (n)}
+          <li><span class="puce">{@render coche()}</span><Bidi text={t(`ins.point_${n}`)} /></li>
         {/each}
-        <p class="muted small">{t('ser.modifiable')}</p>
-      </fieldset>
-    {/if}
+      </ul>
+    </div>
+  </aside>
 
-    <fieldset>
-      <legend>{t('inscription.consentements')}</legend>
-      <label class="check"
-        ><input id="cgu" type="checkbox" bind:checked={cgu} required data-testid="consent-cgu" />
-        <span>{t('consent.cgu')}</span></label
-      >
-      <label class="check"
-        ><input id="art9" type="checkbox" bind:checked={art9} required data-testid="consent-art9" />
-        <span><Bidi text={t('consent.donnee_religieuse_art9')} /></span></label
-      >
-      {#if transferNeeded}
-        <label class="check"
-          ><input
-            id="transfert"
-            type="checkbox"
-            bind:checked={transfert}
-            required
-            data-testid="consent-transfert"
-          />
-          <span
-            ><Bidi text={t('consent.transfert_hors_pays', { pays: countryName(country) })} /></span
-          ></label
+  <section class="carte" aria-labelledby="titre-inscription">
+    <h1 id="titre-inscription">{t('inscription.titre')}</h1>
+    {#if porteFermee}
+      <!-- bêta fermée : code d'invitation, ou demande d'invitation (liste d'attente validée à la main) -->
+      <div class="porte-bloc" data-testid="porte-invitation">
+        <h2><Bidi text={t('inv.titre')} /></h2>
+        <p class="aide">
+          <Bidi text={t(acces?.inscription === 'attente' ? 'inv.complet' : 'inv.intro')} />
+        </p>
+        <form
+          class="porte"
+          onsubmit={(e) => {
+            e.preventDefault();
+            void verifierCode();
+          }}
         >
+          <div class="champ">
+            <label for="code-invitation"><Bidi text={t('inv.code')} /></label>
+            <input
+              id="code-invitation"
+              class="code"
+              autocomplete="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              dir="ltr"
+              aria-describedby="code-exemple"
+              required
+              bind:value={code}
+              data-testid="code-invitation"
+            />
+            <p class="aide" id="code-exemple"><Bidi text={t('inv.exemple')} /></p>
+          </div>
+          {#if codeErreur}<p class="alerte" role="alert" data-testid="erreur-code">
+              <Bidi text={codeErreur} />
+            </p>{/if}
+          <button type="submit" class="primary suivant" disabled={codeBusy}
+            ><Bidi text={t('inv.verifier')} /></button
+          >
+        </form>
+        <p class="sans-code">
+          <Bidi text={t('inv.sans_code')} />
+          <button
+            type="button"
+            class="lien"
+            onclick={() => (demande = !demande)}
+            aria-expanded={demande}><Bidi text={t('inv.demander')} /></button
+          >
+        </p>
+        {#if demande}<ListeAttente />{/if}
+      </div>
+    {:else}
+      {#if codeOk}
+        <div class="invitation" role="status" data-testid="invitation-reconnue">
+          <span class="pastille">{@render coche()}<Bidi text={t('ins.invitation_ok')} /></span>
+          {#if codePerso}<p class="aide"><Bidi text={t('inv.perso')} /></p>{/if}
+        </div>
       {/if}
-      <label class="check"
-        ><input id="rappels" type="checkbox" bind:checked={rappels} />
-        <span>{t('consent.rappels')} <em class="muted">({t('commun.facultatif')})</em></span></label
-      >
-    </fieldset>
 
-    {#if error}<p class="error" role="alert" data-testid="erreur"><Bidi text={error} /></p>{/if}
-    <button type="submit" class="primary go" disabled={busy}>{t('inscription.bouton')}</button>
-  </form>
-{/if}
-<p class="deja">
-  {t('inscription.deja')} <a href={resolve('/connexion')}>{t('connexion.titre')}</a>
-</p>
+      <!-- avancement : « Étape n sur 3 » écrit, trois segments, l'étape en cours marquée (aria-current) -->
+      <div class="avancement">
+        <p class="etape-n" data-testid="etape-n"><Bidi text={t('ins.etape', { n: etape })} /></p>
+        <ol aria-label={t('ins.avancement')}>
+          {#each [1, 2, 3] as n (n)}
+            <li
+              class:fait={n < etape}
+              class:actuelle={n === etape}
+              aria-current={n === etape ? 'step' : undefined}
+            >
+              <span class="trait" aria-hidden="true"></span>
+              <span class="lib"><Bidi text={t(`ins.e${n}_court`)} /></span>
+            </li>
+          {/each}
+        </ol>
+      </div>
+      <p class="sr" aria-live="polite" data-testid="annonce-etape"><Bidi text={annonce} /></p>
+
+      <form
+        class="form"
+        novalidate
+        onsubmit={avancer}
+        data-testid="inscription-form"
+        data-etape={etape}
+      >
+        <!-- champ piège anti-robots : invisible et hors du parcours au clavier, seul un robot le remplit -->
+        <div class="piege" aria-hidden="true">
+          <input
+            name="site_web"
+            type="text"
+            tabindex="-1"
+            autocomplete="off"
+            bind:value={piege}
+            data-testid="piege"
+          />
+        </div>
+
+        {#if nbErreurs}<p class="alerte" role="alert" data-testid="erreurs-etape">
+            <Bidi text={t('ins.err_resume', { n: nbErreurs })} />
+          </p>{/if}
+        {#if error}<p class="alerte" role="alert" data-testid="erreur">
+            <Bidi text={error} />
+          </p>{/if}
+
+        <!-- ÉTAPE 1 : identifiants -->
+        <section
+          class="etape"
+          hidden={etape !== 1}
+          data-testid="etape-1"
+          aria-labelledby="etape-1-t"
+        >
+          <h2 id="etape-1-t" tabindex="-1">{t('ins.e1')}</h2>
+          <div class="champ">
+            <label for="email">{t('champ.email')}</label>
+            <input
+              id="email"
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+              autocapitalize="none"
+              spellcheck="false"
+              required
+              bind:value={email}
+              oninput={() => effacer('email')}
+              aria-invalid={invalide('email')}
+              aria-describedby={decrit('email', 'email-aide')}
+            />
+            {@render erreurDe('email')}
+            <p class="aide" id="email-aide"><Bidi text={t('ins.email_aide')} /></p>
+          </div>
+          {#await champMdp then { default: ChampMotDePasse }}
+            <div class="champ mdp-bloc">
+              <ChampMotDePasse
+                bind:value={password}
+                bind:identiques={mdpIdentiques}
+                bind:niveau={niveauMdp}
+                {email}
+                erreur={erreurs.password ?? ''}
+                erreurConfirmation={erreurs['password-confirmer'] ?? ''}
+              />
+            </div>
+          {/await}
+        </section>
+
+        <!-- ÉTAPE 2 : profil (qui, pays et règles du pays, année, pseudonyme et façon d'avancer de l'adulte) -->
+        <section
+          class="etape"
+          hidden={etape !== 2}
+          data-testid="etape-2"
+          aria-labelledby="etape-2-t"
+        >
+          <h2 id="etape-2-t" tabindex="-1">{t('ins.e2')}</h2>
+          <fieldset class="choix">
+            <legend>{t('inscription.qui')}</legend>
+            <label class="option"
+              ><input
+                type="radio"
+                name="kind"
+                value="parent"
+                bind:group={kind}
+                data-testid="type-parent"
+              />
+              <span class="option-txt"
+                ><strong>{t('inscription.parent')}</strong>
+                <span class="option-aide">{t('inscription.parent_aide')}</span></span
+              ></label
+            >
+            <label class="option"
+              ><input
+                type="radio"
+                name="kind"
+                value="adulte"
+                bind:group={kind}
+                data-testid="type-adulte"
+              />
+              <span class="option-txt"
+                ><strong>{t('inscription.adulte')}</strong>
+                <span class="option-aide">{t('inscription.adulte_aide')}</span></span
+              ></label
+            >
+          </fieldset>
+
+          <div class="champ">
+            <label for="country">{t('champ.pays')}</label>
+            <select
+              id="country"
+              bind:value={country}
+              onchange={() => {
+                region = '';
+                effacer('region');
+              }}
+            >
+              {#each COUNTRIES as c (c)}<option value={c}>{countryName(c)}</option>{/each}
+            </select>
+          </div>
+          {#if current?.regions?.length}
+            <div class="champ">
+              <label for="region">{t('inscription.region')}</label>
+              <select
+                id="region"
+                bind:value={region}
+                required
+                data-testid="region"
+                onchange={() => effacer('region')}
+                aria-invalid={invalide('region')}
+                aria-describedby={decrit('region')}
+              >
+                <option value=""></option>
+                {#each current.regions as r (r)}<option value={r}>{t(`region.${r}`)}</option>{/each}
+              </select>
+              {@render erreurDe('region')}
+            </div>
+          {/if}
+
+          {#if current}
+            <p class="note" data-testid="loi-pays">
+              <Bidi
+                text={t('inscription.loi_pays', {
+                  pays: countryName(country),
+                  loi: t(`pays.loi.${current.law}`),
+                  autorite: t(`pays.autorite.${current.authority}`),
+                })}
+              />
+              <Bidi text={t('inscription.loi_mineurs', { age: current.consentAge })} />
+              {#if current.closedUnder}<Bidi text={t('inscription.ferme_moins_13')} />{/if}
+            </p>
+          {/if}
+
+          <!-- audit MIN-3 : année de naissance demandée à tout titulaire (un parent doit être majeur) -->
+          <div class="champ">
+            <label for="birthYear">{t('champ.annee_naissance')}</label>
+            <input
+              id="birthYear"
+              class="annee"
+              type="number"
+              inputmode="numeric"
+              min="1900"
+              max="2100"
+              required
+              bind:value={birthYear}
+              oninput={() => effacer('birthYear')}
+              aria-invalid={invalide('birthYear')}
+              aria-describedby={decrit('birthYear', 'annee-aide')}
+            />
+            {@render erreurDe('birthYear')}
+            <p class="aide" id="annee-aide">{t('inscription.annee_aide')}</p>
+          </div>
+          {#if kind === 'adulte'}
+            <div class="champ">
+              <label for="pseudonym"
+                >{t('champ.pseudonyme')}
+                <span class="facultatif">({t('commun.facultatif')})</span></label
+              >
+              <input id="pseudonym" maxlength="40" autocomplete="nickname" bind:value={pseudonym} />
+            </div>
+            <fieldset class="choix" data-testid="mode-inscription">
+              <legend>{t('ser.titre')}</legend>
+              {#each modesInscription as m (m)}
+                <label class="option"
+                  ><input
+                    type="radio"
+                    name="evalMode"
+                    value={m}
+                    bind:group={evalMode}
+                    data-mode-choix={m}
+                  />
+                  <span class="option-txt"
+                    ><strong><Bidi text={t(`ser.m_${m}`)} /></strong>
+                    <span class="option-aide"><Bidi text={t(`ser.a_${m}`)} /></span></span
+                  ></label
+                >
+              {/each}
+              <p class="aide">{t('ser.modifiable')}</p>
+            </fieldset>
+          {/if}
+        </section>
+
+        <!-- ÉTAPE 3 : accords — les obligatoires ensemble (textes complets en lien), les facultatifs repliés -->
+        <section
+          class="etape"
+          hidden={etape !== 3}
+          data-testid="etape-3"
+          aria-labelledby="etape-3-t"
+        >
+          <h2 id="etape-3-t" tabindex="-1">{t('ins.e3')}</h2>
+          <fieldset class="accords">
+            <legend>{t('ins.accords_requis')}</legend>
+            <p class="aide">{t('ins.accords_aide')}</p>
+            <div class="accord">
+              <label class="coche"
+                ><input
+                  id="cgu"
+                  type="checkbox"
+                  bind:checked={cgu}
+                  required
+                  data-testid="consent-cgu"
+                  onchange={() => effacer('cgu')}
+                  aria-invalid={invalide('cgu')}
+                  aria-describedby={decrit('cgu')}
+                />
+                <span>{t('consent.cgu')}</span></label
+              >
+              {@render erreurDe('cgu')}
+            </div>
+            <div class="accord">
+              <label class="coche"
+                ><input
+                  id="art9"
+                  type="checkbox"
+                  bind:checked={art9}
+                  required
+                  data-testid="consent-art9"
+                  onchange={() => effacer('art9')}
+                  aria-invalid={invalide('art9')}
+                  aria-describedby={decrit('art9')}
+                />
+                <span><Bidi text={t('consent.donnee_religieuse_art9')} /></span></label
+              >
+              {@render erreurDe('art9')}
+            </div>
+            {#if transferNeeded}
+              <div class="accord">
+                <label class="coche"
+                  ><input
+                    id="transfert"
+                    type="checkbox"
+                    bind:checked={transfert}
+                    required
+                    data-testid="consent-transfert"
+                    onchange={() => effacer('transfert')}
+                    aria-invalid={invalide('transfert')}
+                    aria-describedby={decrit('transfert')}
+                  />
+                  <span
+                    ><Bidi
+                      text={t('consent.transfert_hors_pays', { pays: countryName(country) })}
+                    /></span
+                  ></label
+                >
+                {@render erreurDe('transfert')}
+              </div>
+            {/if}
+            <p class="liens">
+              <span>{t('ins.lire')}</span>
+              <a
+                href={resolve('/legal/[page]', { page: 'cgu' })}
+                target="_blank"
+                rel="noopener"
+                data-testid="lien-cgu"
+                >{t('pied.cgu')}<span class="sr">{t('ins.nouvel_onglet')}</span></a
+              >
+              <a
+                href={resolve('/legal/[page]', { page: 'confidentialite' })}
+                target="_blank"
+                rel="noopener"
+                data-testid="lien-confidentialite"
+                >{t('pied.confidentialite')}<span class="sr">{t('ins.nouvel_onglet')}</span></a
+              >
+            </p>
+          </fieldset>
+          <details class="options" data-testid="options-facultatives">
+            <summary>{t('ins.options')}</summary>
+            <label class="coche"
+              ><input
+                id="rappels"
+                type="checkbox"
+                bind:checked={rappels}
+                data-testid="consent-rappels"
+              />
+              <span
+                >{t('consent.rappels')}
+                <em class="facultatif">({t('commun.facultatif')})</em></span
+              ></label
+            >
+          </details>
+        </section>
+
+        <div class="actions">
+          {#if etape > 1}
+            <button
+              type="button"
+              class="retour"
+              data-testid="etape-retour"
+              disabled={busy}
+              onclick={() => aller((etape - 1) as Etape)}
+              ><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+                ><path d="M14.5 6 8.5 12l6 6" /></svg
+              >{t('ins.retour')}</button
+            >
+          {/if}
+          <button type="submit" class="primary suivant" disabled={busy} data-testid="etape-suivante"
+            ><Bidi text={etape < 3 ? t('ins.continuer') : t('inscription.bouton')} /></button
+          >
+        </div>
+      </form>
+    {/if}
+    <p class="deja">
+      {t('inscription.deja')} <a href={resolve('/connexion')}>{t('connexion.titre')}</a>
+    </p>
+  </section>
+</div>
 
 <style>
-  .accueil-marque {
+  /* charte de la page d'accueil publique : crème, vert profond, or ; Lexend (titres), Nunito (texte) ; les couleurs
+     viennent des jetons du thème (clair et sombre) */
+  .inscription {
     display: grid;
-    justify-items: center;
-    gap: 12px;
-    margin: 12px 0 4px;
+    gap: 16px;
+    margin-top: 4px;
   }
-  .accueil-marque::after {
-    content: '';
-    width: 72px;
-    height: 2px;
-    border-radius: 2px;
-    background: var(--gold);
+  .panneau {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 18px 18px;
+    border-radius: 22px;
+    background: var(--mp-band);
+    color: var(--mp-on-band);
+    box-shadow:
+      inset 0 -4px 0 var(--gold),
+      var(--shadow-float);
+  }
+  /* symbole de la marque pour fond foncé, nom et devise en crème (l'or n'est jamais une couleur de texte) */
+  .marque-panneau {
+    /* téléphone : la marque est déjà dans l'en-tête de l'application, le panneau ne garde que la promesse */
+    display: none;
+    --mp-clair: none;
+    --mp-sombre: block;
+    --mp-nom: var(--mp-on-band);
+    --mp-slogan: var(--mp-on-band);
+  }
+  .motif {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .promesse {
+    margin: 0;
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  .sous-promesse,
+  .points {
+    display: none;
+  }
+  .carte {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 20px 16px 16px;
+    box-shadow:
+      0 1px 2px rgba(16, 24, 40, 0.05),
+      0 10px 30px -12px rgba(8, 76, 56, 0.18);
+    min-width: 0;
   }
   h1 {
-    text-align: center;
-    font-size: 1.4rem;
+    margin: 0 0 12px;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    color: var(--navy);
   }
-  .form {
+  h2 {
+    margin: 0 0 4px;
+    font-size: 1.2rem;
+    color: var(--navy);
+  }
+  h2:focus {
+    outline: none;
+  }
+  h2:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+  /* avancement */
+  .avancement {
+    margin: 4px 0 16px;
+  }
+  .etape-n {
+    margin: 0 0 8px;
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--ink2);
+  }
+  .avancement ol {
     display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    max-width: 560px;
-    margin-inline: auto;
-    border-radius: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
-  .go {
-    min-height: 56px;
-    font-size: 1.05rem;
+  .avancement li {
+    display: grid;
+    gap: 6px;
   }
-  .deja {
-    text-align: center;
+  .trait {
+    display: block;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--line);
   }
-  .form input:not([type='checkbox']):not([type='radio']),
-  .form select {
-    font: inherit;
-    min-height: 48px;
-    padding: 6px 10px;
-    border: 2px solid var(--line);
-    border-radius: 10px;
+  .fait .trait,
+  .actuelle .trait {
+    background: var(--primary);
+  }
+  .lib {
+    font-size: 0.85rem;
+    color: var(--ink2);
+  }
+  .actuelle .lib {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  /* formulaire */
+  .form,
+  .etape,
+  .porte {
+    display: grid;
+    gap: 16px;
+  }
+  .etape[hidden] {
+    display: none;
+  }
+  .champ {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+  }
+  .champ label,
+  legend {
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--navy);
+  }
+  .carte :global(input:not([type='checkbox']):not([type='radio'])),
+  .carte :global(select) {
+    width: 100%;
+    min-height: 50px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    background: var(--paper);
+    box-sizing: border-box;
+  }
+  .carte :global(input[aria-invalid='true']),
+  .carte :global(select[aria-invalid='true']) {
+    border-color: var(--bad-ink);
+  }
+  .carte .annee {
+    max-width: 10rem;
+  }
+  .code {
+    letter-spacing: 0.06em;
+  }
+  /* champ du mot de passe (composant partagé) : mêmes espacements que les autres champs */
+  .mdp-bloc :global(label) {
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--navy);
+  }
+  .mdp-bloc :global(label:not(:first-child)) {
+    margin-top: 10px;
+  }
+  .mdp-bloc :global(.oeil) {
+    border-radius: 12px;
+    min-height: 50px;
+  }
+  .aide,
+  .mdp-bloc :global(.muted.small) {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ink2);
+  }
+  .champ-erreur,
+  .mdp-bloc :global(.error.small) {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--bad-ink);
+  }
+  .champ-erreur::before,
+  .mdp-bloc :global(.error.small)::before {
+    content: '';
+    flex: none;
+    width: 4px;
+    border-radius: 2px;
+    background: var(--bad-ink);
+  }
+  .alerte {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--bad-bg);
+    color: var(--bad-ink);
+    font-weight: 700;
+  }
+  .note {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink2);
+    font-size: 0.9rem;
+  }
+  .facultatif {
+    font-family: var(--font-ui);
+    font-weight: 400;
+    font-style: normal;
+    color: var(--ink2);
   }
   fieldset {
-    border: 2px solid var(--line);
-    border-radius: 12px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .choix {
     display: grid;
-    gap: 8px;
-  }
-  .radio,
-  .check {
-    display: flex;
     gap: 10px;
-    align-items: flex-start;
   }
-  .radio input,
-  .check input {
+  .choix legend {
+    margin-bottom: 8px;
+    padding: 0;
+  }
+  .option {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    min-height: 44px;
+    padding: 14px 16px;
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    background: var(--card);
+    cursor: pointer;
+    transition: border-color var(--motion-fast) ease;
+  }
+  .option:hover {
+    border-color: var(--ink2);
+  }
+  .option:has(input:checked) {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
+  .option input,
+  .coche input {
+    flex: none;
     width: 24px;
     height: 24px;
+    margin: 0;
+  }
+  .option-txt {
+    display: grid;
+    gap: 2px;
+  }
+  .option-txt strong {
+    font-family: var(--font-title);
+    font-weight: 600;
+  }
+  .option-aide {
+    display: block;
+    color: var(--ink2);
+    font-size: 0.92rem;
+  }
+  .option-aide::first-letter {
+    text-transform: uppercase;
+  }
+  .accords {
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+    border: 2px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+  }
+  .accords legend {
+    float: left;
+    width: 100%;
+    padding: 0;
+  }
+  .accord {
+    display: grid;
+    gap: 6px;
+  }
+  .coche {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    min-height: 44px;
+    cursor: pointer;
+  }
+  .liens {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 16px;
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--ink2);
+  }
+  .liens span {
+    flex-basis: 100%;
+  }
+  .liens a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 700;
+  }
+  .options {
+    border-top: 1px solid var(--line);
+    padding-top: 4px;
+  }
+  .options summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    cursor: pointer;
+    font-family: var(--font-title);
+    font-weight: 600;
+    color: var(--navy);
+  }
+  /* chevron (le marqueur natif disparaît avec display: flex) : vers la droite fermé, vers le bas ouvert */
+  .options summary::before {
+    content: '';
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-right: 2.5px solid currentColor;
+    border-bottom: 2.5px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform var(--motion-fast) ease;
+  }
+  .options[open] summary::before {
+    transform: rotate(45deg);
+  }
+  .options .coche {
+    margin-top: 8px;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .suivant {
+    flex: 1;
+    min-height: 54px;
+    border-radius: 14px;
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 1.05rem;
+    box-shadow: 0 8px 20px -10px rgba(8, 76, 56, 0.55);
+  }
+  .retour {
+    flex: none;
+    min-height: 54px;
+    padding: 0 16px 0 10px;
+    border-radius: 14px;
+  }
+  .ico {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
     flex: none;
   }
-  .error {
-    color: var(--bad-ink);
+  .invitation {
+    display: grid;
+    gap: 6px;
+    margin: 0 0 12px;
+  }
+  .pastille {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px 4px 8px;
+    border-radius: 999px;
+    background: var(--ok-bg);
+    color: var(--ok-ink);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .pastille .ico {
+    width: 18px;
+    height: 18px;
+  }
+  .sans-code {
+    margin: 4px 0 0;
+  }
+  .lien {
+    background: none;
+    border: 0;
+    padding: 0;
+    min-height: 44px;
+    color: var(--teal);
+    text-decoration: underline;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .deja {
+    margin: 20px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  .deja a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-weight: 700;
   }
   .piege {
@@ -427,35 +1163,89 @@
     height: 1px;
     overflow: hidden;
   }
-  .porte {
-    display: grid;
-    gap: 8px;
-  }
-  .porte input {
-    font: inherit;
-    min-height: 48px;
-    padding: 6px 10px;
-    border: 2px solid var(--line);
-    border-radius: 10px;
-    letter-spacing: 0.06em;
-  }
-  .ok {
-    max-width: 560px;
-    margin-inline: auto;
-    background: var(--primary-soft);
-  }
-  .lien {
-    background: none;
-    border: 0;
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
     padding: 0;
-    min-height: 44px;
-    color: var(--link, inherit);
-    text-decoration: underline;
-    font: inherit;
-    cursor: pointer;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
   }
-  .small {
-    font-size: 0.9rem;
-    margin: 0;
+  /* ordinateur : deux colonnes, panneau de la marque complet à gauche */
+  @media (min-width: 52rem) {
+    .marque-panneau {
+      display: block;
+    }
+    .inscription {
+      grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+      gap: 24px;
+      align-items: start;
+      margin-top: 12px;
+    }
+    .panneau {
+      position: sticky;
+      top: 16px;
+      gap: 28px;
+      min-height: 34rem;
+      padding: 32px 32px 40px;
+      border-radius: 28px;
+    }
+    .panneau-texte {
+      display: grid;
+      gap: 16px;
+      margin-top: auto;
+    }
+    .promesse {
+      font-size: 1.65rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+    .sous-promesse {
+      display: block;
+      margin: 0;
+      opacity: 0.95;
+    }
+    .points {
+      display: grid;
+      gap: 10px;
+      margin: 8px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .points li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+    .puce {
+      display: grid;
+      place-items: center;
+      flex: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: rgba(251, 247, 238, 0.14);
+      color: var(--gold);
+    }
+    .puce .ico {
+      width: 18px;
+      height: 18px;
+    }
+    .carte {
+      padding: 32px 32px 24px;
+      border-radius: 28px;
+    }
+    h1 {
+      font-size: 1.9rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .option {
+      transition: none;
+    }
   }
 </style>

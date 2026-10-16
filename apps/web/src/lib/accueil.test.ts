@@ -118,7 +118,7 @@ describe('contenu de la page', () => {
       'Vos données protégées',
     ]);
     expect(fr).toContain('école malékite');
-    expect(fr).toContain('relecture par des savants');
+    expect(fr).toContain('en cours de relecture');
     expect(fr).toContain('hébergées en France');
     // ordre des titres : h1 puis h2, jamais de h3 avant le premier h2 ni de niveau sauté
     const niveaux = [...fr.matchAll(/<h([1-6])/g)].map((m) => Number(m[1]));

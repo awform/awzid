@@ -84,7 +84,7 @@ test('onglet Douas : à côté des autres, bandeau, rubriques, une rubrique exac
   await page.waitForURL(/\/vivre\/douas$/);
   await expect(page.locator('[data-vivre-tab="douas"]')).toHaveAttribute('aria-current', 'page');
   await expect(page.getByTestId('douas-bandeau')).toHaveText(
-    'Sources vérifiées — en cours de relecture savante',
+    'Sources vérifiées — en cours de relecture',
   );
   // 23 rubriques (phase 3), les fiches « Comment invoquer » et « L'aumône », les favoris ; groupes du référent
   const chips = page.getByTestId('douas-rubriques').locator('button');

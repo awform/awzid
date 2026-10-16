@@ -113,6 +113,7 @@ Textes `cl.*` ajoutés par Claude dans les quatre langues, **à relire** : puce 
 (`cl.riwaya_desc_*`, `cl.riwaya_recitateurs`, `cl.riwaya_sans_recitateur`), taille du texte (`cl.taille*`),
 avis du lecteur (`cl.avis_*`), tuiles des enfants (`cl.k_*`), `cl.en_ligne`. Retirés (plus d'état « autre riwāya ») : `ca.autre_riwaya_texte`,
 `rw.autre_texte`, `rw.voir_texte`.
+
 ## A37 « Vivre l'islam » (06/10/2026)
 
 Les 74 textes `vi.*` (onglet Bon comportement : sous-onglets, défi de la semaine, 18 cercles, 9 lieux, 5 statuts
@@ -136,6 +137,7 @@ rares (offres, abonnement, inscription, certificats…) et de la fenêtre d'avis
 
 F5 (suite, 11/10/2026) : 1 texte ajouté (`module.connexion_necessaire` — « Connexion nécessaire pour cette fonction »,
 module chargé à la demande indisponible après les nouvelles tentatives), écrit par Claude dans les quatre langues, **à relire**.
+
 ## F3 « Comptes de la bêta » (06/10/2026)
 
 Textes ajoutés (traduits par Claude, relecteur provisoire, **à relire** avec le reste) : accès au compte et accords
@@ -151,3 +153,10 @@ du Canada `region.CA-*` ; erreurs `erreur.ferme_moins_13`, `erreur.region_inconn
 à relire de la même façon ; en arabe, l'adresse et le lien sont toujours sur leur propre ligne.
 
 - Démo par niveau : `niveau.bientot` et `niveau.bientot_texte` (en, de, es, ar) traduits par Claude lors de la fusion, à faire relire.
+
+## Inscription en trois étapes (16/10/2026) — brouillons à relire
+
+Les 41 textes `ins.*` de la page d'inscription refaite (panneau de la marque, étapes, messages de validation, refus
+du serveur au « vous ») sont traduits par Claude en **brouillon** dans les quatre langues (anglais, espagnol, allemand,
+arabe au pluriel de politesse), arguments ICU identiques (`{n}`, `{titre}`, `{age}`, pluriel de `ins.err_resume`) ;
+**relecture humaine à faire** avec le reste de la langue.
