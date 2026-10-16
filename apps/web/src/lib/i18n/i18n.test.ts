@@ -114,6 +114,16 @@ describe('catalogues de messages', () => {
     }
     expect(found).toEqual([]);
   });
+  it("carte de bienvenue de l'élève : tutoiement (enfant, ado, adulte), jamais « vous/votre/vos »", () => {
+    const fr = JSON.parse(
+      readFileSync(join(SRC, 'lib', 'i18n', 'messages', 'fr.json'), 'utf8'),
+    ) as Record<string, string>;
+    const cles = Object.keys(fr).filter((k) => /^bienvenue\.(enfant|ado|adulte)\./.test(k));
+    expect(cles.length).toBeGreaterThanOrEqual(12);
+    for (const k of cles) expect(fr[k], k).not.toMatch(/(?<!\p{L})(vous|votre|vos)(?!\p{L})/iu);
+    expect(fr['bienvenue.adulte.1']).toContain('ta séance du jour');
+    expect(fr['bienvenue.adulte.3']).toContain('tes jalons');
+  });
 });
 
 describe('fonctions', () => {
