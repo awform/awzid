@@ -29,11 +29,24 @@ test.describe('affichage', () => {
     expect(r?.status()).toBe(200);
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
     await expect(page.locator('h1')).toHaveText(
-      'Apprenez l’arabe pas à pas, avec la méthode des écoles, sources citées.',
+      'Apprendre l’arabe, le Coran et les bases de la religion, pas à pas, en famille',
     );
     await expect(page.getByText('Bêta fermée sur invitation').first()).toBeVisible();
+    // en-tête : « Se connecter » ; héros : un appel principal vers le formulaire, un lien secondaire
+    await expect(
+      page.locator('header').getByRole('link', { name: 'Se connecter' }),
+    ).toHaveAttribute('href', '/connexion');
+    await expect(page.locator('a.btn')).toHaveCount(1);
+    await expect(page.getByRole('link', { name: 'Demander une invitation' })).toHaveAttribute(
+      'href',
+      '#inviter',
+    );
+    await expect(page.getByRole('link', { name: 'J’ai déjà une invitation' })).toHaveAttribute(
+      'href',
+      '/inscription',
+    );
     await expect(page.getByRole('button')).toHaveCount(1);
-    await expect(page.getByRole('button', { name: 'Rejoindre la liste d’attente' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Demander une invitation' })).toBeVisible();
     for (const mot of ['Finalité', 'Base légale', 'Durée', 'Destinataires', 'Vos droits'])
       await expect(page.getByText(mot).first()).toBeAttached();
     await expect(
@@ -52,10 +65,30 @@ test.describe('affichage', () => {
       'href',
       'mailto:contact@awzid.com',
     );
-    // les quatre points forts, cinq lignes « disponible », cinq « bientôt »
-    await expect(page.locator('.grille li')).toHaveCount(4);
-    await expect(page.locator('.etats ul').first().locator('li')).toHaveCount(5);
-    await expect(page.locator('.etats .bientot li')).toHaveCount(5);
+    // trois univers, quatre publics, trois étapes, trois engagements ; un seul h1, sections titrées
+    const section = (nom: string) => page.getByRole('region', { name: nom });
+    await expect(section('Trois univers pour grandir').locator('h3')).toHaveText([
+      'Arabe',
+      'Coran',
+      'Vivre l’islam',
+    ]);
+    await expect(section('Pour qui ?').locator('h3')).toHaveText([
+      'Parents et enfants',
+      'Adolescents',
+      'Adultes',
+      'Écoles et mosquées',
+    ]);
+    await expect(section('Comment ça marche').locator('li')).toHaveCount(3);
+    await expect(section('Un cadre de confiance').locator('h3')).toHaveCount(3);
+    await expect(page.locator('h1')).toHaveCount(1);
+  });
+
+  test('« Demander une invitation » mène au formulaire de liste d’attente', async ({ page }) => {
+    await ouvrir(page);
+    await page.getByRole('link', { name: 'Demander une invitation' }).click();
+    await expect(page).toHaveURL(/#inviter$/);
+    await expect(page.getByLabel('Votre adresse e-mail')).toBeInViewport();
+    await expect(page.getByRole('button', { name: 'Demander une invitation' })).toBeInViewport();
   });
 
   test('aucun suivi : ni cookie, ni ressource tierce, ni stockage ; non indexable par défaut', async ({
@@ -114,8 +147,8 @@ test.describe('affichage', () => {
       `[accueil] poids (Brotli) : ${(total / 1024).toFixed(1)} Ko — ${tailles.map((t) => `${t.url} ${(t.octets / 1024).toFixed(1)}`).join(', ')}`,
     );
     expect(total).toBeLessThan(150 * 1024);
-    // en pratique : bien moins (un document, un script, une police, un jeton)
-    expect(total).toBeLessThan(40 * 1024);
+    // en pratique : bien moins (un document, un script, deux polices de la charte, un jeton) : < 60 Ko
+    expect(total).toBeLessThan(60 * 1024);
   });
 
   test('« / » reste l’application pour un visiteur tant que le site n’est pas « sur invitation »', async ({
@@ -156,7 +189,7 @@ test.describe('formulaire (mécanisme existant de la liste d’attente)', () => 
     await page.getByRole('checkbox').check();
     const req = page.waitForRequest((r) => r.url().includes('/api/v1/acces/liste-attente'));
     const rep = page.waitForResponse((r) => r.url().includes('/api/v1/acces/liste-attente'));
-    await page.getByRole('button', { name: 'Rejoindre la liste d’attente' }).click();
+    await page.getByRole('button', { name: 'Demander une invitation' }).click();
     const corps = (await req).postDataJSON() as Record<string, unknown>;
     expect(corps).toMatchObject({ email, langue: 'fr', consentement: true, site_web: '' });
     expect(String(corps.jeton)).toMatch(/^\d{10,16}\..+/);
@@ -173,10 +206,10 @@ test.describe('formulaire (mécanisme existant de la liste d’attente)', () => 
     await ouvrir(page);
     let envoyes = 0;
     page.on('request', (r) => r.url().includes('liste-attente') && envoyes++);
-    await page.getByRole('button', { name: 'Rejoindre la liste d’attente' }).click();
+    await page.getByRole('button', { name: 'Demander une invitation' }).click();
     await page.getByLabel('Votre adresse e-mail').fill('pas-une-adresse');
     await page.getByRole('checkbox').check();
-    await page.getByRole('button', { name: 'Rejoindre la liste d’attente' }).click();
+    await page.getByRole('button', { name: 'Demander une invitation' }).click();
     expect(
       await page
         .getByLabel('Votre adresse e-mail')
@@ -203,13 +236,13 @@ test.describe('formulaire (mécanisme existant de la liste d’attente)', () => 
       .evaluate((e: HTMLInputElement) => (e.value = 'http://spam.example'));
     const req = page.waitForRequest((r) => r.url().includes('/api/v1/acces/liste-attente'));
     const jetons = page.waitForRequest((r) => r.url().includes('/api/v1/acces/jeton'));
-    await page.getByRole('button', { name: 'Rejoindre la liste d’attente' }).click();
+    await page.getByRole('button', { name: 'Demander une invitation' }).click();
     expect(((await req).postDataJSON() as { site_web: string }).site_web).toBe(
       'http://spam.example',
     );
     await expect(page.locator('#etat')).toContainText('La vérification automatique n’a pas abouti');
     await jetons;
-    await expect(page.getByRole('button', { name: 'Rejoindre la liste d’attente' })).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Demander une invitation' })).toBeEnabled();
   });
 
   test('trop de demandes, service fermé, réseau coupé : messages clairs, le bouton revient', async ({
@@ -226,16 +259,14 @@ test.describe('formulaire (mécanisme existant de la liste d’attente)', () => 
       await page.route('**/api/v1/acces/liste-attente', (route: Route) =>
         route.fulfill({ status, json: { error: { code } } }),
       );
-      await page.getByRole('button', { name: 'Rejoindre la liste d’attente' }).click();
+      await page.getByRole('button', { name: 'Demander une invitation' }).click();
       await expect(page.locator('#etat')).toContainText(texte, { timeout: 15_000 });
       await expect(page.locator('#etat')).toHaveClass(/erreur/);
-      await expect(
-        page.getByRole('button', { name: 'Rejoindre la liste d’attente' }),
-      ).toBeEnabled();
+      await expect(page.getByRole('button', { name: 'Demander une invitation' })).toBeEnabled();
       await page.unroute('**/api/v1/acces/liste-attente');
     }
     await page.route('**/api/v1/acces/liste-attente', (route: Route) => route.abort());
-    await page.getByRole('button', { name: 'Rejoindre la liste d’attente' }).click();
+    await page.getByRole('button', { name: 'Demander une invitation' }).click();
     await expect(page.locator('#etat')).toContainText('Pas de connexion', { timeout: 15_000 });
   });
 });
@@ -249,9 +280,9 @@ test.describe('langues, thème, accessibilité', () => {
     await ouvrir(page, `${URL_PAGE}?lang=en`);
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await expect(page.locator('h1')).toHaveText(
-      'Learn Arabic step by step, with the classroom method, sources cited.',
+      'Learn Arabic, the Quran and the basics of the religion, step by step, as a family',
     );
-    await expect(page.getByRole('button', { name: 'Join the waiting list' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Request an invitation' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Français' })).toHaveAttribute('hreflang', 'fr');
     const ctx = await browser.newContext({ baseURL, locale: 'en-GB' });
     const p = await ctx.newPage();
@@ -302,7 +333,7 @@ test.describe('langues, thème, accessibilité', () => {
       ).toEqual([]);
     });
 
-  test('clavier : lien d’évitement, puis langues, champ, case et bouton ; focus visible ; envoi par Entrée', async ({
+  test('clavier : lien d’évitement, langue, « Se connecter », appel principal vers le formulaire, champ, case et bouton ; focus visible', async ({
     page,
     isMobile,
   }) => {
@@ -316,8 +347,16 @@ test.describe('langues, thème, accessibilité', () => {
     await page.keyboard.press('Tab');
     expect(await focus()).toBe('a:#contenu');
     await page.keyboard.press('Tab'); // logo
-    await page.keyboard.press('Tab'); // Français
-    await page.keyboard.press('Tab'); // English
+    await page.keyboard.press('Tab');
+    expect(await focus()).toBe('a:?lang=en'); // seule l'autre langue est proposée
+    await page.keyboard.press('Tab');
+    expect(await focus()).toBe('a:/connexion');
+    await page.keyboard.press('Tab');
+    expect(await focus()).toBe('a:#inviter');
+    // l'appel principal, activé au clavier, amène au formulaire
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Tab');
+    expect(await focus()).toBe('a:/inscription'); // « Créer votre compte » (code déjà reçu)
     await page.keyboard.press('Tab');
     expect(await focus()).toBe('input:email');
     const contour = await page.evaluate(
@@ -336,7 +375,15 @@ test.describe('langues, thème, accessibilité', () => {
     await page.keyboard.press('Tab');
     const boite = await page.getByRole('link', { name: 'Aller au contenu' }).boundingBox();
     expect(boite?.x).toBeGreaterThanOrEqual(0);
-    for (const sel of ['button', 'input[type=email]', 'nav.langues a', 'footer a']) {
+    for (const sel of [
+      'button',
+      'input[type=email]',
+      'nav.langues a',
+      'a.connexion',
+      'a.btn',
+      'a.secondaire',
+      'footer a',
+    ]) {
       const b = await page.locator(sel).first().boundingBox();
       expect(b?.height, sel).toBeGreaterThanOrEqual(44);
     }
@@ -381,7 +428,7 @@ test.describe('double consentement (e-mail de confirmation, désinscription)', (
     const email = unique();
     await page.getByLabel('Votre adresse e-mail').fill(email);
     await page.getByRole('checkbox').check();
-    await page.getByRole('button', { name: 'Rejoindre la liste d’attente' }).click();
+    await page.getByRole('button', { name: 'Demander une invitation' }).click();
     await expect(page.locator('#etat')).toContainText(
       'Votre place n’est enregistrée qu’après ce clic',
       {
