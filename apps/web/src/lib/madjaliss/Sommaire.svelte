@@ -33,7 +33,7 @@
   /**
    * Madjaliss — sommaire d'un texte : ses séances (titre, durée), la progression (✓ faite, séance en cours) et
    * l'action principale « Reprendre ». Quand toutes les séances sont faites : l'ATTESTATION D'ÉTUDE (jamais une
-   * ijāza), avec la mention « contenu en cours de relecture savante ».
+   * ijāza), avec la mention « contenu en cours de relecture ».
    */
   let { id }: { id: string } = $props();
   const cursus = $derived(texteDuCursus(id));

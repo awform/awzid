@@ -177,7 +177,7 @@ describe('bandeau « Version bêta »', () => {
       readFileSync(join(SRC, 'lib', 'i18n', 'messages', 'fr.json'), 'utf8'),
     ) as Record<string, string>;
     expect(fr['bandeau.texte']).toBe(
-      'Version bêta — le contenu religieux est tranché par le référent selon l’école mālikite, sources citées, en attente d’une seconde lecture savante.',
+      'Version bêta — le contenu religieux est tranché par le référent selon l’école mālikite, sources citées, en attente de relecture.',
     );
     const textes = [fr['bandeau.texte']!];
     for (const l of ['en', 'es', 'de', 'ar']) {

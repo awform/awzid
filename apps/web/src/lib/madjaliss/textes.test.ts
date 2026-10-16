@@ -874,7 +874,7 @@ describe('lot 3 : publication différée, hadiths, Bayqūniyya, Waraqāt, mots a
 
   it('mention de statut : texte unique du client partout, ancien libellé nulle part', () => {
     const MENTION =
-      "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente d'une seconde lecture savante.";
+      "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.";
     const i18n = fileURLToPath(new URL('../../../static/i18n/', import.meta.url));
     expect(lire<Record<string, string>>(join(i18n, 'fr-madjaliss.json'))['mj.statut']).toBe(
       MENTION,

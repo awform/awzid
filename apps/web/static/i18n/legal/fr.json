@@ -97,7 +97,7 @@
           "titre": "Contenus religieux, relecture et corrections",
           "paras": [
             "Le texte coranique affiché vient uniquement du texte de référence Tanzil ; aucun programme ne l'écrit ni ne le retouche. Les hadiths ne sont montrés que s'ils sont marqués « vérifiés » dans le registre des livres.",
-            "Pendant la bêta, les contenus religieux dont la relecture savante n'est pas terminée portent la mention « en cours de relecture savante ». Ils sont fournis pour apprendre et ne remplacent ni un maître qualifié, ni une fatwa : en cas de doute, demandez à un savant ou à votre enseignant.",
+            "Pendant la bêta, les contenus religieux dont la relecture n'est pas terminée portent la mention « en cours de relecture ». Ils sont fournis pour apprendre et ne remplacent ni un maître qualifié, ni une fatwa : en cas de doute, demandez à un savant ou à votre enseignant.",
             "Toute erreur peut être signalée (« Signaler un problème » → « Un point religieux à vérifier », ou « Signaler une erreur » sous un verset, un hadith ou une règle). Chaque correction religieuse est datée et publiée, avec sa source, dans la page « Errata ».",
             "Le tuteur est un programme : il le dit, il n'émet aucun avis religieux et transmet les questions religieuses à l'enseignant. Il est désactivé par défaut pour les enfants et ne s'active qu'avec l'accord du parent, qui peut lire tout ce qu'il a dit.",
             "Les certificats et attestations délivrés par une école ne sont ni une ijāza, ni un diplôme d'État."
@@ -301,7 +301,7 @@
           "titre": "Ce que « bêta » veut dire",
           "paras": [
             "L'application est en cours de finition : des fonctions peuvent changer, être retirées ou connaître des erreurs. Les contenus des livres restent la référence ; un contenu signalé comme erroné est corrigé ou masqué au plus vite.",
-            "Des contenus religieux peuvent porter la mention « en cours de relecture savante » : ils sont corrects à notre connaissance mais pas encore relus par les savants prévus. Ne vous en servez pas pour trancher une question de pratique.",
+            "Des contenus religieux peuvent porter la mention « en cours de relecture » : ils sont corrects à notre connaissance mais pas encore relus. Ne vous en servez pas pour trancher une question de pratique.",
             "Vos retours sont précieux : « Signaler un problème » dans la page Aide, ou [adresse de contact de la bêta : à créer par le client]."
           ]
         },
@@ -395,7 +395,7 @@
         {
           "titre": "Limites connues",
           "paras": [
-            "Certains contenus religieux sont encore en cours de relecture savante et le sont signalés comme tels ; les corrections sont publiées dans la page « Errata ».",
+            "Certains contenus religieux sont encore en cours de relecture et sont signalés comme tels ; les corrections sont publiées dans la page « Errata ».",
             "Les langues autres que le français sont en préparation (traductions de l'interface à relire) ; les textes juridiques sont provisoires.",
             "Le tuteur d'intelligence artificielle est éteint ; le paiement est désactivé ; l'envoi d'e-mails (vérification, mot de passe oublié) dépend de la configuration de la bêta.",
             "Des erreurs, lenteurs ou écrans maladroits sont possibles. Les données de test peuvent être remises à zéro à la fin de la bêta, avec préavis."
@@ -505,8 +505,8 @@
           "r": "Du texte de référence Tanzil (riwāya Ḥafṣ ʿan ʿĀṣim), comparé signe par signe à chaque import ; aucun programme ne l'écrit."
         },
         {
-          "q": "Que veut dire « en cours de relecture savante » ?",
-          "r": "Le contenu est fourni pour apprendre mais n'a pas encore été relu par les savants prévus. Pour une question de pratique, demandez à votre enseignant ou à un savant. Les corrections sont publiées dans « Errata »."
+          "q": "Que veut dire « en cours de relecture » ?",
+          "r": "Le contenu est fourni pour apprendre mais n'a pas encore été relu. Pour une question de pratique, demandez à votre enseignant ou à un savant. Les corrections sont publiées dans « Errata »."
         },
         {
           "q": "J'ai trouvé une erreur dans un texte religieux (verset, hadith, règle). Comment la signaler ?",

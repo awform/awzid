@@ -306,13 +306,13 @@ describe('cycles, progression et chargement', () => {
       fileURLToPath(new URL('../../../static/i18n/fr-madjaliss.json', import.meta.url)),
     );
     expect(JSON.stringify(fr)).not.toMatch(/ij[aā]za/i);
-    expect(fr['mj.bandeau']).toBe('Traduction Awzid — en cours de relecture savante');
+    expect(fr['mj.bandeau']).toBe('Traduction Awzid — en cours de relecture');
     expect(fr['mj.fatwa']).toBe(
       "Ce n'est pas une fatwa : pour un cas personnel, interroge un savant ou l'imam.",
     );
     expect(fr['mj.explication_bientot']).toBe(
       "Passage présenté avec son explication par l'enseignant — bientôt",
     );
-    expect(fr['mj.attestation_relecture']).toMatch(/en cours de relecture savante/);
+    expect(fr['mj.attestation_relecture']).toMatch(/^Contenu en cours de relecture\.$/);
   });
 });

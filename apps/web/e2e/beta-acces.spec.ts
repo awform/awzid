@@ -314,7 +314,7 @@ test.describe('bandeau « Version bêta »', () => {
     await expect(b).toBeVisible();
     await expect(b).toContainText('Version bêta');
     await expect(b).toContainText('école mālikite');
-    await expect(b).toContainText('seconde lecture savante');
+    await expect(b).toContainText('en attente de relecture');
     expect((await b.innerText()).toLowerCase()).not.toContain('validation humaine');
     // discret : au plus 3 lignes de petit texte
     const box = (await b.boundingBox())!;

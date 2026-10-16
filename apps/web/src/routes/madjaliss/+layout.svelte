@@ -6,7 +6,7 @@
 
   /**
    * Madjaliss — règles du référent sur TOUTES les pages de la rubrique : bandeau « Traduction Awzid — en cours de
-   * relecture savante » (aucune mention de relecteur avant la relecture) et, en bas de page, le rappel que ce
+   * relecture » (aucune mention de relecteur avant la relecture) et, en bas de page, le rappel que ce
    * n'est pas une fatwa.
    */
   let { children }: { children: Snippet } = $props();

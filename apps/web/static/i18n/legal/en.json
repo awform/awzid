@@ -97,7 +97,7 @@
           "titre": "Religious content, review and corrections",
           "paras": [
             "The Quran text shown comes only from the Tanzil reference text; no program writes or edits it. Hadiths are only shown if they are marked \"verified\" in the books' register.",
-            "During the beta, religious content whose scholarly review is not finished carries the mention \"scholarly review in progress\". It is provided for learning and replaces neither a qualified teacher nor a fatwa: if in doubt, ask a scholar or your teacher.",
+            "During the beta, religious content whose review is not finished carries the mention \"review in progress\". It is provided for learning and replaces neither a qualified teacher nor a fatwa: if in doubt, ask a scholar or your teacher.",
             "Any error can be reported (\"Report a problem\" → \"A religious point to check\", or \"Report an error\" under a verse, hadith or rule). Each religious correction is dated and published, with its source, on the \"Errata\" page.",
             "The tutor is a program: it says so, gives no religious opinion and forwards religious questions to the teacher. It is off by default for children and only turns on with the parent's consent; the parent can read everything it said.",
             "Certificates and attestations issued by a school are neither an ijāza nor a state diploma."
@@ -301,7 +301,7 @@
           "titre": "What \"beta\" means",
           "paras": [
             "The application is being finished: features may change, be removed or contain errors. The books' content remains the reference; content reported as wrong is corrected or hidden as soon as possible.",
-            "Some religious content may carry the mention \"scholarly review in progress\": it is correct to our knowledge but not yet reviewed by the scholars planned. Do not use it to settle a question of practice.",
+            "Some religious content may carry the mention \"review in progress\": it is correct to our knowledge but not yet reviewed. Do not use it to settle a question of practice.",
             "Your feedback is valuable: \"Report a problem\" on the Help page, or [beta contact address: to be created by the client]."
           ]
         },
@@ -393,7 +393,7 @@
         {
           "titre": "Known limits",
           "paras": [
-            "Some religious content is still under scholarly review and is marked as such; corrections are published on the \"Errata\" page.",
+            "Some religious content is still under review and is marked as such; corrections are published on the \"Errata\" page.",
             "Languages other than French are in preparation (interface translations to be reviewed); the legal texts are provisional.",
             "The artificial intelligence tutor is off; payment is disabled; sending e-mails (verification, forgotten password) depends on the beta configuration.",
             "Errors, slowness or awkward screens are possible. Test data may be reset at the end of the beta, with notice."
@@ -503,8 +503,8 @@
           "r": "From the Tanzil reference text (riwāya Ḥafṣ ʿan ʿĀṣim), compared sign by sign at each import; no program writes it."
         },
         {
-          "q": "What does \"scholarly review in progress\" mean?",
-          "r": "The content is provided for learning but has not yet been reviewed by the scholars planned. For a question of practice, ask your teacher or a scholar. Corrections are published in \"Errata\"."
+          "q": "What does \"review in progress\" mean?",
+          "r": "The content is provided for learning but has not yet been reviewed. For a question of practice, ask your teacher or a scholar. Corrections are published in \"Errata\"."
         },
         {
           "q": "I found an error in a religious text (verse, hadith, rule). How do I report it?",

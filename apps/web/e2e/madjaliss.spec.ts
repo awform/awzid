@@ -25,7 +25,7 @@ const matn = JSON.parse(
   ),
 ) as Matn;
 const de = new Map(matn.phrases.map((p) => [p.id, p]));
-const BANDEAU = 'Traduction Awzid — en cours de relecture savante';
+const BANDEAU = 'Traduction Awzid — en cours de relecture';
 const FATWA = "Ce n'est pas une fatwa : pour un cas personnel, interroge un savant ou l'imam.";
 
 const serious = async (page: Page) =>
@@ -249,7 +249,7 @@ test('attestation d’étude quand les 44 séances sont faites (sans le mot ijā
   const att = page.getByTestId('mj-attestation');
   await expect(att).toBeVisible();
   await expect(att).toContainText("Attestation d'étude");
-  await expect(att).toContainText('Contenu en cours de relecture savante.');
+  await expect(att).toContainText('Contenu en cours de relecture.');
   await expect(att).toContainText('44 séances');
   await expect(page.locator('main')).not.toContainText(/ij[aā]za/i);
   await expect(page.getByTestId('mj-reprendre')).toHaveCount(0);
