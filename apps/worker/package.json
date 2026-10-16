@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@awform/db": "workspace:*",
-    "pg-boss": "^12.35.0",
+    "pg-boss": "^12.35.1",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
