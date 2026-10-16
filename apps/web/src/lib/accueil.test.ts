@@ -77,15 +77,57 @@ describe('contenu de la page', () => {
   const fr = htmlAccueil({ lang: 'fr', cfg });
   const en = htmlAccueil({ lang: 'en', cfg });
 
-  it('message principal, mention de la bêta, un seul bouton « Rejoindre la liste d’attente »', () => {
+  it('promesse, mention de la bêta, un seul appel à l’action (vers le formulaire), un seul bouton', () => {
     expect(fr).toContain(
-      '<h1>Apprenez l’arabe pas à pas, avec la méthode des écoles, sources citées.</h1>',
+      '<h1 id="titre">Apprendre l’arabe, le Coran et les bases de la religion, pas à pas, en famille</h1>',
     );
     expect(fr).toContain('Bêta fermée sur invitation');
     expect(fr.match(/<button/g)).toHaveLength(1);
-    expect(fr).toContain('Rejoindre la liste d’attente</button>');
-    expect(en).toContain('<button type="submit">Join the waiting list</button>');
+    expect(fr).toContain('<button type="submit">Demander une invitation</button>');
+    expect(en).toContain('<button type="submit">Request an invitation</button>');
     expect(fr.match(/<h1/g)).toHaveLength(1);
+    // un seul appel principal (classe « btn »), qui descend au formulaire ; lien secondaire vers la saisie du code
+    expect(fr.match(/class="btn"/g)).toHaveLength(1);
+    expect(fr).toContain('<a class="btn" href="#inviter">Demander une invitation</a>');
+    expect(fr).toContain('<a class="secondaire" href="/inscription">J’ai déjà une invitation</a>');
+    expect(fr).toContain('id="inviter"');
+    // en-tête : « Se connecter »
+    expect(fr).toMatch(
+      /<header>[\s\S]*<a class="connexion" href="\/connexion">Se connecter<\/a>[\s\S]*<\/header>/,
+    );
+  });
+  it('structure : trois univers, quatre publics, trois étapes, trois engagements ; titres hiérarchisés', () => {
+    const titres = (bloc: string) =>
+      [
+        ...(fr.match(new RegExp(`aria-labelledby="${bloc}"[\\s\\S]*?</section>`)) ?? [
+          '',
+        ])[0].matchAll(/<h3>([^<]+)<\/h3>/g),
+      ].map((m) => m[1]);
+    expect(titres('univers')).toEqual(['Arabe', 'Coran', 'Vivre l’islam']);
+    expect(titres('pour-qui')).toEqual([
+      'Parents et enfants',
+      'Adolescents',
+      'Adultes',
+      'Écoles et mosquées',
+    ]);
+    expect(titres('etapes')).toHaveLength(3);
+    expect(fr).toContain('De 10 à 20 minutes');
+    expect(titres('confiance')).toEqual([
+      'Un contenu sérieux',
+      'Sans publicité',
+      'Vos données protégées',
+    ]);
+    expect(fr).toContain('école malékite');
+    expect(fr).toContain('relecture par des savants');
+    expect(fr).toContain('hébergées en France');
+    // ordre des titres : h1 puis h2, jamais de h3 avant le premier h2 ni de niveau sauté
+    const niveaux = [...fr.matchAll(/<h([1-6])/g)].map((m) => Number(m[1]));
+    expect(niveaux[0]).toBe(1);
+    for (let i = 1; i < niveaux.length; i++)
+      expect(niveaux[i]! - niveaux[i - 1]!).toBeLessThanOrEqual(1);
+    // icônes et motif : SVG en ligne seulement
+    expect(fr.match(/<svg class="ico"/g)!.length).toBeGreaterThanOrEqual(13);
+    expect(fr).toContain('<pattern id="m"');
   });
   it('langue de la page, sens d’écriture, étiquettes de formulaire, champ piège caché', () => {
     expect(fr).toContain('<html lang="fr" dir="ltr">');
@@ -158,11 +200,10 @@ describe('contenu de la page', () => {
       expect(html).not.toMatch(/<img/i);
     }
   });
-  it('ce qui existe / bientôt : cinq lignes chacune, sans date', () => {
-    expect(fr.match(/<li>Des leçons d’arabe par niveau/g)).toHaveLength(1);
-    expect(
-      (fr.match(/<div class="bientot">[\s\S]*?<\/ul>/) ?? [''])[0].match(/<li>/g),
-    ).toHaveLength(5);
+  it('le sélecteur de langue ne propose que les autres langues, avec leur nom complet', () => {
+    expect(fr).toContain('<a href="?lang=en" lang="en" hreflang="en" aria-label="English"');
+    expect(fr).not.toContain('hreflang="fr"');
+    expect(en).toContain('aria-label="Français"');
   });
 });
 
@@ -202,14 +243,15 @@ describe('indexation et sécurité', () => {
 });
 
 describe('poids et catalogues', () => {
-  it('page ≤ 20 Ko (≤ 8 Ko compressée), script ≤ 8 Ko, une seule police de la marque', () => {
+  it('page ≤ 32 Ko (≤ 10 Ko compressée), script ≤ 8 Ko, deux polices de la charte seulement (≤ 20 Ko chacune)', () => {
     const h = Buffer.from(htmlAccueil({ lang: 'fr', cfg }));
-    expect(h.length).toBeLessThan(20 * 1024);
-    expect(gzipSync(h).length).toBeLessThan(8 * 1024);
+    expect(h.length).toBeLessThan(32 * 1024);
+    expect(gzipSync(h).length).toBeLessThan(10 * 1024);
     expect(readFileSync(join(STATIC, 'accueil.js')).length).toBeLessThan(8 * 1024);
-    expect(
-      readFileSync(join(STATIC, 'fonts', 'lexend-latin-600-normal.woff2')).length,
-    ).toBeLessThan(20 * 1024);
+    const polices = [...h.toString().matchAll(/url\(\/fonts\/([^)]+)\)/g)].map((m) => m[1]!);
+    expect(polices).toEqual(['lexend-latin-600-normal.woff2', 'nunito-latin-400-normal.woff2']);
+    for (const p of polices)
+      expect(readFileSync(join(STATIC, 'fonts', p)).length, p).toBeLessThan(20 * 1024);
   });
   it('FR et EN : mêmes clés, aucune valeur vide, mêmes liens (contact, crochets)', () => {
     const fr = CATALOGUES.fr!;
