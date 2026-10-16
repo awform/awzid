@@ -8,6 +8,48 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 16/10/2026 — Inscription refaite (deux colonnes, trois étapes) + mention « en attente de relecture » — branche `inscription-wip`, NON fusionnée, NON déployée
+
+Branche `inscription-wip` (worktree `~/wt/inscription`, depuis `main` 534dc93), commits `285175f` (inscription) et `0a645f8` (mention de relecture).
+
+- **Inscription** (`routes/inscription/+page.svelte`, demande du client : « moche, comme un Google Doc ») : charte de l'accueil public
+  (vert profond, or, crème, Lexend / Nunito, coins arrondis, ombres douces, motif étoilé discret), **vouvoiement** (page publique).
+  Ordinateur : panneau vert à gauche (marque officielle pour fond foncé via `Brand`, promesse, 3 garanties) + carte du formulaire ;
+  téléphone : une colonne, panneau réduit à la promesse (la marque est déjà dans l'en-tête).
+  - **3 étapes** dans un seul `<form>` (étapes cachées, jamais retirées : rien n'est perdu au « Retour », confirmation du mot de passe
+    comprise) : (1) adresse + mot de passe (`ChampMotDePasse` : œil, confirmation, consigne, indicateur ; règle inchangée) ;
+    (2) qui (parent / adulte), pays + province, note de la loi du pays, année, pseudonyme et mode de l'adulte (champs inchangés) ;
+    (3) accords obligatoires groupés (CGU, article 9, transfert si le pays l'exige) avec liens vers les textes complets (nouvel onglet),
+    rappels repliés dans « Options ». Un seul bouton principal par écran ; « Étape n sur 3 » + 3 segments (aria-current) ;
+    annonce aria-live et focus sur le titre de l'étape ; validation de chaque étape (message sous le champ, aria-invalid, résumé
+    annoncé, focus sur le premier champ) ; refus du serveur ramené à l'étape du champ (adresse → 1, âge/année/région → 2), messages
+    au « vous » (`ins.erreur.*`). **Envoi inchangé** : même appel, mêmes données, accords, jeton anti-robots, champ piège, vérification d'adresse.
+  - « Invitation reconnue » discret (pastille) ; porte d'invitation et liste d'attente restylées ; `AccueilBeta.svelte` refait
+    (bandeau vert, symbole sur disque crème, une action principale, « vous accompagne »).
+  - `ChampMotDePasse` : `niveau` lié (verdict de la même règle, sans l'importer une 2e fois) et messages `erreur` / `erreurConfirmation`
+    facultatifs ; « mdp.force_refuse » rendu neutre (« voir la consigne ci-dessus ») pour servir aux deux registres.
+  - i18n : 41 clés `ins.*` en français ; anglais, espagnol, allemand, arabe en **brouillon** (`A_RELIRE.md`).
+  - **Poids** : garder `Brand` dans la page est nécessaire — sans lui, `Brand` ne sert plus qu'à 2 pages, quitte le morceau commun et
+    part avec la connexion (mesuré : première ouverture +3,6 Ko, `/coran/lecteur` 151,9 > 150). Budget final : appareil élève
+    **345,9 Ko** (marge 4,1 ≥ 3 ; main 345,7), première ouverture **112,6 Ko**, page la plus lourde `/coran/lecteur` 148,4 Ko.
+- **Mention de relecture** (décision du client du 16/10) : « en attente d'une seconde lecture savante » / « en relecture par des
+  savants » → « en attente de relecture » / « en cours de relecture » : bandeau « Version bêta » (5 langues), Madjaliss (bandeau,
+  attestation, statut), douas, pages légales et aide (fr, en ; coquille « et le sont signalés » corrigée), accueil public (fr, en),
+  commentaires. Données de contenu religieux et `docs/` non touchés ; « Contenu en relecture : ne pas diffuser » inchangé.
+- **Tests** : `pnpm lint` propre ; svelte-check 0 ; unitaires de tout le dépôt (verrou) **tous verts** (web 773) ;
+  nouveau `e2e/inscription-etapes.spec.ts` (validation, retour sans perte, annonce, données envoyées, axe AA clair et sombre à chaque
+  étape et sur l'erreur, 375 px sans débordement, cibles ≥ 44 px, maquettes) ; aide commune `e2e/inscription.ts` (comptes, f3, a39,
+  beta-acces, captures). **E2E complet** (flock, `--retries=1 --workers=3`, sur 285175f) : **757 réussis, 139 ignorés, 2 échecs connus
+  tolérés** (lot13:11, lot29:42), 4 instables (beta-support:138, captures:15 « Target crashed » hors inscription, f5-reseau:181,
+  themes-simples:142). Après la mention de relecture : specs concernées relancées (beta-acces, madjaliss ×4, douas, accueil, beta-legal,
+  lot11, lot14, inscription-etapes) : **204 réussis, 6 ignorés, 0 échec**.
+- **Captures** (`~/wt/inscription/maquettes/`, non versionnées ; serveur de test du worktree sur 127.0.0.1:4260, démo non touchée) :
+  `inscription-{ordi,mobile}-{1-identifiants,1-erreur,2-profil,3-accords}[-sombre].png` (1440×900 et 390×844 ×2, clair et sombre).
+- **Écart** : le libellé du mode enseignant « Relecture savante demandée » (généré par `scripts/madjaliss.mjs` dans les données des
+  mutūn) n'est pas changé (données de contenu) : à trancher.
+
+---
+
 ## 16/10/2026 — Fusion dans main : lot 11 + page d'accueil
 
 - `lot11-wip` (bêta fermée, mots de passe, menu awzid, alertes) puis `accueil-wip` (nouvelle page d'accueil) fusionnés dans main
