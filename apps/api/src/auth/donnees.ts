@@ -211,6 +211,7 @@ export function registerPrivacy(app: FastifyInstance, kit: AuthKit): void {
         // lot F3 : adresse vérifiée le, subdivision, fuseau horaire, région d'hébergement des données
         emailVerifieLe: a?.emailVerifiedAt ?? null,
         region: a?.region ?? null,
+        provenance: a?.source ?? null,
         fuseauHoraire: a?.tz ?? null,
         regionDesDonnees: a?.dataRegion,
       },

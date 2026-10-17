@@ -79,6 +79,14 @@
     };
     plafonds: Array<{ cle: string; valeur: string }>;
     alertes: Array<{ code: string; niveau: string }>;
+    /** « Origine des demandes » : agrégats par provenance (?src= des affiches), sans adresse */
+    origines?: Array<{
+      source: string | null;
+      demandes30j: number;
+      demandes: number;
+      inscriptions30j: number;
+      inscriptions: number;
+    }>;
   }
 
   const MODES: Mode[] = ['ferme', 'invitation', 'ouvert'];
@@ -242,6 +250,39 @@
           <li class="muted"><Bidi text={t('tab.aucune_alerte')} /></li>
         {/each}
       </ul>
+      <h3 id="tab-origines-titre"><Bidi text={t('tab.origines')} /></h3>
+      {#if tableau.origines?.length}
+        <div class="defile">
+          <table class="origines" aria-labelledby="tab-origines-titre" data-testid="tab-origines">
+            <thead>
+              <tr>
+                <th scope="col"><Bidi text={t('tab.or_source')} /></th>
+                <th scope="col"><Bidi text={t('tab.or_demandes_30j')} /></th>
+                <th scope="col"><Bidi text={t('tab.or_demandes')} /></th>
+                <th scope="col"><Bidi text={t('tab.or_inscriptions_30j')} /></th>
+                <th scope="col"><Bidi text={t('tab.or_inscriptions')} /></th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each tableau.origines as o (o.source ?? '')}
+                <tr data-source={o.source ?? ''}>
+                  <th scope="row"
+                    >{#if o.source}<code dir="ltr"><Bidi text={o.source} /></code>{:else}<span
+                        class="muted"><Bidi text={t('tab.or_aucune')} /></span
+                      >{/if}</th
+                  >
+                  <td><Bidi text={String(o.demandes30j)} /></td>
+                  <td><Bidi text={String(o.demandes)} /></td>
+                  <td><Bidi text={String(o.inscriptions30j)} /></td>
+                  <td><Bidi text={String(o.inscriptions)} /></td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
+      {:else}
+        <p class="muted"><Bidi text={t('tab.or_vide')} /></p>
+      {/if}
     </div>
   {/if}
 
@@ -566,6 +607,23 @@
     list-style: none;
     padding: 0;
     margin: 0;
+  }
+  .defile {
+    overflow-x: auto;
+  }
+  .origines {
+    border-collapse: collapse;
+    min-width: 100%;
+  }
+  .origines th,
+  .origines td {
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--line);
+    text-align: start;
+  }
+  .origines td {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
   }
   .alertes li {
     padding: 6px 8px;

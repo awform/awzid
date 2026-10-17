@@ -507,6 +507,81 @@ export async function retirerDuGroupeBeta(db: Db, accountId: string): Promise<bo
 
 // ------------------------------------------------------------------ liste d'attente
 
+/**
+ * Provenance d'une demande ou d'une inscription : code court de l'adresse des affiches (`?src=affiche`,
+ * `?src=mosquee-xxx`). Validation stricte, sans transformation ; toute autre valeur est IGNORÉE (null).
+ */
+export const SOURCE_RE = /^[a-z0-9-]{1,40}$/;
+export function normSource(v: unknown): string | null {
+  return typeof v === 'string' && SOURCE_RE.test(v) ? v : null;
+}
+
+/** Provenance de la demande de liste d'attente qui a donné cette invitation (compte venu par le lien de l'e-mail). */
+export async function sourceDeLInvitation(db: Db, invitationId: string): Promise<string | null> {
+  const [r] = await db
+    .select({ s: t.waitlist.source })
+    .from(t.waitlist)
+    .innerJoin(t.invitation, eq(t.invitation.waitlistId, t.waitlist.id))
+    .where(eq(t.invitation.id, invitationId))
+    .limit(1);
+  return r?.s ?? null;
+}
+
+export interface OrigineLigne {
+  /** null : arrivée sans code de provenance */
+  source: string | null;
+  demandes30j: number;
+  demandes: number;
+  inscriptions30j: number;
+  inscriptions: number;
+}
+
+/**
+ * « Origine des demandes » (espace administrateur) : nombre de demandes CONFIRMÉES de la liste d'attente et de
+ * comptes créés, par provenance, sur 30 jours et au total (dans la durée de conservation). Agrégats seuls, sans adresse.
+ */
+export async function originesDemandes(db: Db, now = new Date()): Promise<OrigineLigne[]> {
+  const depuis = new Date(now.getTime() - 30 * 86_400_000);
+  const [att, cpt] = await Promise.all([
+    db
+      .select({
+        s: t.waitlist.source,
+        n: sql<number>`count(*)::int`,
+        n30: sql<number>`(count(*) FILTER (WHERE ${t.waitlist.createdAt} >= ${depuis}))::int`,
+      })
+      .from(t.waitlist)
+      .where(isNotNull(t.waitlist.confirmedAt))
+      .groupBy(t.waitlist.source),
+    db
+      .select({
+        s: t.account.source,
+        n: sql<number>`count(*)::int`,
+        n30: sql<number>`(count(*) FILTER (WHERE ${t.account.createdAt} >= ${depuis}))::int`,
+      })
+      .from(t.account)
+      .where(and(isNull(t.account.deletedAt), inArray(t.account.kind, ['parent', 'adulte'])))
+      .groupBy(t.account.source),
+  ]);
+  const m = new Map<string | null, OrigineLigne>();
+  const ligne = (s: string | null) => {
+    let l = m.get(s);
+    if (!l) {
+      l = { source: s, demandes30j: 0, demandes: 0, inscriptions30j: 0, inscriptions: 0 };
+      m.set(s, l);
+    }
+    return l;
+  };
+  for (const r of att) Object.assign(ligne(r.s), { demandes: r.n, demandes30j: r.n30 });
+  for (const r of cpt) Object.assign(ligne(r.s), { inscriptions: r.n, inscriptions30j: r.n30 });
+  // les provenances nommées d'abord (les plus fréquentes en tête), « sans provenance » à la fin
+  return [...m.values()].sort(
+    (a, b) =>
+      Number(a.source === null) - Number(b.source === null) ||
+      b.demandes + b.inscriptions - (a.demandes + a.inscriptions) ||
+      String(a.source).localeCompare(String(b.source)),
+  );
+}
+
 export const WAITLIST_STATUS = ['en_attente', 'acceptee', 'refusee'] as const;
 export const WAITLIST_PER_HOUR_ALL = 200;
 
@@ -547,6 +622,8 @@ export async function demanderAttente(
     note?: string | null;
     locale?: string;
     tokenHash: string;
+    /** provenance (?src=) ; gardée seulement à la PREMIÈRE demande, jamais réécrite par un renvoi */
+    source?: string | null;
   },
 ): Promise<'cree' | 'renvoi' | 'existe'> {
   const email = v.email.trim().toLowerCase();
@@ -558,6 +635,7 @@ export async function demanderAttente(
       note: v.note?.trim() || null,
       locale: v.locale ?? 'fr',
       tokenHash: v.tokenHash,
+      source: normSource(v.source),
     })
     .onConflictDoNothing()
     .returning({ id: t.waitlist.id });

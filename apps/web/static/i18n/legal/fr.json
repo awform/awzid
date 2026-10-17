@@ -161,6 +161,7 @@
           "titre": "Données collectées (le strict nécessaire)",
           "paras": [
             "Liste d'attente de la bêta (page d'accueil) : adresse électronique et langue de la page, gardées avec votre accord, uniquement pour gérer la liste d'attente et vous envoyer une invitation ; aucune lettre d'information, aucune publicité.",
+            "Provenance de la demande : si vous arrivez par le code QR d'une affiche (ou d'un autre support), nous enregistrons ce repère (par exemple « affiche ») avec votre demande ou votre inscription, pour mesurer l'efficacité de notre communication ; il n'est lu qu'en totaux, sans cookie ni traceur, et rien d'autre n'est gardé.",
             "Compte : adresse électronique et mot de passe (protégé, jamais lisible) de l'adulte ; pays ; langue ; fuseau horaire.",
             "Profil d'enfant : pseudonyme, année de naissance (jamais la date complète), niveau, avatar — aucun nom réel, aucune photo, aucune adresse.",
             "Apprentissage : réponses aux exercices, progression, hifẓ, tracés des lettres, cartes de mots, jours de travail des ados et adultes.",

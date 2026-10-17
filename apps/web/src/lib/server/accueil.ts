@@ -70,6 +70,16 @@ export function langueAccueil(
   return permises.includes('fr') ? 'fr' : (permises[0] ?? 'fr');
 }
 
+/**
+ * Provenance de la visite : code court de l'adresse des affiches (`?src=affiche`, `?src=mosquee-xxx`). Validation
+ * stricte (même règle que l'API et la base) ; toute autre valeur est ignorée. Elle n'est ni un cookie ni un traceur :
+ * un champ caché du formulaire, recopié par /accueil.js dans le stockage de SESSION du navigateur (effacé à la
+ * fermeture de l'onglet) pour suivre le visiteur jusqu'à /inscription, puis envoyé avec la demande ou l'inscription.
+ */
+export function sourceAccueil(param: string | null): string | null {
+  return param && /^[a-z0-9-]{1,40}$/.test(param) ? param : null;
+}
+
 /** Un visiteur « sans session » n'a pas le cookie de session (il n'est pas connecté). */
 export function sansSession(cookie: string | null): boolean {
   return !new RegExp(`(?:^|;\\s*)${COOKIE_SESSION}=`).test(cookie ?? '');
@@ -268,6 +278,8 @@ export interface OptionsPage {
   vue?: Vue;
   lang: string;
   cfg: ConfigAccueil;
+  /** provenance validée (sourceAccueil) ; absente : rien n'est ajouté à la page */
+  src?: string | null;
 }
 
 /** Textes envoyés au script du formulaire (messages d'erreur, pas de contenu libre). */
@@ -289,7 +301,8 @@ const messagesJs = (x: TextesAccueil) =>
   });
 
 /** HTML de la page (chaîne complète). */
-export function htmlAccueil({ lang, cfg: cfgBase, vue = 'accueil' }: OptionsPage): string {
+export function htmlAccueil({ lang, cfg: cfgBase, vue = 'accueil', src }: OptionsPage): string {
+  const source = sourceAccueil(src ?? null);
   // les pages de lien (e-mail) ne sont jamais indexables
   const cfg = vue === 'accueil' ? cfgBase : { ...cfgBase, indexable: false };
   const x = CATALOGUES[lang] ?? fr;
@@ -376,6 +389,7 @@ export function htmlAccueil({ lang, cfg: cfgBase, vue = 'accueil' }: OptionsPage
 <h3 id="form-titre">${tx('form_titre')}</h3>
 <form id="attente" method="post" action="/bienvenue" aria-labelledby="form-titre" data-lang="${l}" data-msg="${esc(messagesJs(x))}">
 <label class="champ" for="email">${tx('email')}<input id="email" name="email" type="email" inputmode="email" autocomplete="email" required maxlength="254"></label>
+${source ? `<input type="hidden" name="src" value="${source}">` : ''}
 <div class="piege" aria-hidden="true"><label>Site web<input name="site_web" type="text" tabindex="-1" autocomplete="off"></label></div>
 <label class="coche"><input id="consent" name="consentement" type="checkbox" required><span>${tx('consent')}</span></label>
 <button type="submit">${tx('bouton')}</button>

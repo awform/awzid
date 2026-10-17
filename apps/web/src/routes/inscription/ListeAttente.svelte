@@ -4,6 +4,7 @@
   import { call } from '$lib/session';
   import { onMount } from 'svelte';
   import { chargerStatut } from '$lib/acces';
+  import { retenirSource } from '$lib/provenance';
 
   /**
    * Bêta fermée : demande d'invitation (liste d'attente validée à la main). L'adresse n'est gardée qu'avec l'accord
@@ -23,7 +24,9 @@
     const j = await call<{ jeton: string }>('GET', '/acces/jeton');
     jeton = j.ok && j.data ? j.data.jeton : '';
   }
+  let source: string | null = null;
   onMount(async () => {
+    source = retenirSource(new URLSearchParams(location.search));
     if ((await chargerStatut())?.antibot === 'on') await nouveauJeton();
   });
 
@@ -39,6 +42,8 @@
       consentement,
       ...(jeton ? { jeton } : {}),
       ...(piege ? { site_web: piege } : {}),
+      // provenance des affiches (?src=), retenue pour la session de l'onglet
+      ...(source ? { src: source } : {}),
     });
     busy = false;
     if (r.ok) envoye = true;

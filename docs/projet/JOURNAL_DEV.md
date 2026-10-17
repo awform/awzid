@@ -8,6 +8,21 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 17/10/2026 — Provenance des demandes (`?src=` des affiches) : liste d'attente, inscription, tableau admin (branche `src-wip`)
+
+Les affiches portent un code QR vers `https://awzid.com/?src=<code>` (`affiche`, plus tard `mosquee-xxx`). L'application enregistre cette provenance, sans autre donnée personnelle.
+
+- **Règle unique** : `^[a-z0-9-]{1,40}$`, sans transformation ; toute autre valeur est ignorée (null), la demande passe quand même. Même règle dans la page d'accueil (`sourceAccueil`), l'application (`$lib/provenance.ts`), l'API (`normSource`, `@awform/db`) et la base (contraintes `CHECK`).
+- **Page d'accueil publique** (`hooks.server.ts`, `lib/server/accueil.ts`) : `?src=` valide → champ caché `src` dans le formulaire ; `/accueil.js` le recopie dans le stockage de SESSION de l'onglet (clé `awzid_src`, effacée à la fermeture ; ni cookie ni traceur) et l'envoie avec la demande. Il survit au changement de langue (`?lang=`, qui perd l'adresse) et au passage vers `/inscription`.
+- **Application** : la mise en page racine retient `?src=` (module chargé à la demande, seulement si l'adresse en porte une : rien pour l'élève) ; l'inscription et la liste d'attente de `/inscription` l'envoient (`src`).
+- **API + base** : migration **0051_provenance** (ajouts seuls, retour arrière en tête du fichier) : colonne `source` (texte, facultative, contrainte au format) sur `waitlist` et `account`. Demande : provenance gardée à la PREMIÈRE demande, jamais réécrite par un renvoi. Inscription : provenance de la navigation, sinon celle de la demande de liste d'attente qui a donné l'invitation (`sourceDeLInvitation`). Aucune adresse IP stockée en plus. Droits : `roles.ts` annoté (API : `account`, `waitlist` déjà `ALL` ; travailleur : aucun besoin). Export RGPD du compte : champ `provenance`.
+- **Espace admin** (`AccesAdmin.svelte`, données dans `GET /api/v1/admin/tableau` → `origines`) : tableau « Origine des demandes » — par provenance, demandes CONFIRMÉES (30 j, total) et comptes parent/adulte non supprimés (30 j, total) ; « Sans provenance » en dernier ; aucune adresse. **Seuil d'anonymat non appliqué** : la règle existante (moins de 10) protège des personnes-jours d'usage ; ici ce sont des totaux de demandes, et l'administrateur voit déjà chaque demande nominativement — masquer sous 10 rendrait la mesure inutile au début (une affiche à 4 demandes).
+- **Confidentialité** : paragraphe ajouté (FR et EN, même place) dans « Données collectées » ; finalité du bloc RGPD de la page d'accueil (FR, EN) complétée (« et, si vous venez d'une affiche, sa provenance… »).
+- **Tests** : web `accueil.test.ts` (+3 : validation, champ caché, stockage de session seulement), API `beta-acces.test.ts` (+1 : demande, renvoi, valeurs invalides, inscription, héritage par l'invitation, contrainte en base, agrégats sans adresse), e2e `accueil.spec.ts` (+2), `beta-acces.spec.ts` (+1 inscription, tableau admin simulé).
+- **Vérifications** (sous `flock`) : build, typecheck (svelte-check 0 erreur), prettier et eslint propres (fichiers touchés) ; vitest web **777/777**, API sans base 152 verts, db 19 verts. Budgets : appareil élève **346,5 Ko** (marge 3,5 ≥ 3), première ouverture **112,8 Ko**, page la plus lourde `/coran/lecteur` **148,6 Ko**. **Non lancés** : tests API sur base et e2e ciblés (`accueil`, `beta-acces`) — `TEST_DATABASE_URL` absent de la session de l'agent ; à lancer avant fusion.
+
+---
+
 ## 16/10/2026 — Fusion `design-wip` (refonte visuelle de l'intérieur) + carte de bienvenue tutoyée ; déploiement de `main` 79893ce : démo et bêta `awzid-beta`
 
 Accord du client (« mets tout ceci en ligne aujourd'hui »). Même procédure que le déploiement de 8d1ad18 (entrée suivante). Pare-feu et DNS **non touchés** ; aucun compte créé, aucun e-mail, aucun secret lu, `prod.env` non modifié. Non touché : `infra/charge/purger-comptes-fictifs.sh` (modifié sans commit dans `~/awform-demo`).

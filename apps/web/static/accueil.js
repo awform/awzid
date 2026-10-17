@@ -78,6 +78,18 @@
   if (lienForm) return gererLien(lienForm);
   var f = document.getElementById('attente');
   if (!f) return;
+  /* Provenance (?src= des affiches, validée par le serveur dans un champ caché) : gardée dans le stockage de SESSION
+     de l'onglet (ni cookie ni traceur, effacé à la fermeture) pour la retrouver après un changement de langue ou sur
+     /inscription ; envoyée avec la demande. */
+  var SRC_RE = /^[a-z0-9-]{1,40}$/;
+  var source = f.elements['src'] ? f.elements['src'].value : '';
+  try {
+    if (SRC_RE.test(source)) sessionStorage.setItem('awzid_src', source);
+    else source = sessionStorage.getItem('awzid_src') || '';
+  } catch (e) {
+    /* stockage indisponible : le champ caché suffit */
+  }
+  if (!SRC_RE.test(source)) source = '';
   var M = {};
   try {
     M = JSON.parse(f.getAttribute('data-msg') || '{}');
@@ -148,13 +160,18 @@
             accept: 'application/json',
             'x-awform': '1',
           },
-          body: JSON.stringify({
-            email: f.elements['email'].value.trim(),
-            langue: f.getAttribute('data-lang') || 'fr',
-            consentement: f.elements['consentement'].checked === true,
-            jeton: jeton,
-            site_web: piege,
-          }),
+          body: JSON.stringify(
+            Object.assign(
+              {
+                email: f.elements['email'].value.trim(),
+                langue: f.getAttribute('data-lang') || 'fr',
+                consentement: f.elements['consentement'].checked === true,
+                jeton: jeton,
+                site_web: piege,
+              },
+              source ? { src: source } : {},
+            ),
+          ),
         });
       })
       .then(function (r) {

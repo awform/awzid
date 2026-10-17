@@ -66,7 +66,7 @@
   "sans_js": "This page needs JavaScript to send the form. Without it, write to us at contact@awzid.com.",
   "rgpd_titre": "What we do with your address",
   "rgpd_resp": "Data controller: [company name and postal address: to be completed by the client].",
-  "rgpd_fin": "Purpose: to manage the waiting list and send you an invitation. We keep your address and the language of this page, nothing else: no newsletter, no advertising, no tracking.",
+  "rgpd_fin": "Purpose: to manage the waiting list and send you an invitation. We keep your address, the language of this page and, if you came from a poster, where you came from (to measure how well our communication works), nothing else: no newsletter, no advertising, no tracking.",
   "rgpd_base": "Legal basis: your consent (the box above), confirmed by a link sent to your address.",
   "rgpd_duree": "Retention: 12 months at most, then automatic deletion, or earlier on request. An address that is not confirmed is deleted within 7 days.",
   "rgpd_dest": "Recipients: the Awzid team only. Data is hosted in the European Union, in Paris.",

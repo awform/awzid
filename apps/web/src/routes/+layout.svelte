@@ -149,6 +149,11 @@
   }
 
   onMount(() => {
+    // provenance des affiches (?src=) retenue pour la session de l'onglet, chargée seulement si l'adresse en porte une
+    if (page.url.searchParams.has('src'))
+      void import('$lib/provenance')
+        .then((m) => m.retenirSource(page.url.searchParams))
+        .catch(() => {});
     if ('serviceWorker' in navigator)
       void import('$lib/MajBandeau.svelte').then((m) => (Maj = m.default)).catch(() => {});
     void import('$lib/acces')

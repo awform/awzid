@@ -475,9 +475,15 @@ export const account = pgTable(
      * l'Union européenne). Étiquette posée dès maintenant pour qu'un hébergement local futur reste possible.
      */
     dataRegion: text('data_region').notNull().default('eu'),
+    /**
+     * Provenance de l'inscription (code court de l'adresse ?src=, ex. « affiche », « mosquee-xxx ») : mesure de
+     * l'efficacité de la communication, en agrégat seulement ; ni cookie ni traceur, aucune autre donnée.
+     */
+    source: text('source'),
   },
   (t) => [
     uniqueIndex('account_email').on(t.email),
+    check('account_source', sql`${t.source} IS NULL OR ${t.source} ~ '^[a-z0-9-]{1,40}$'`),
     check('account_region', sql`${t.region} IS NULL OR ${t.region} ~ '^[A-Z]{2}-[A-Z0-9]{1,3}$'`),
     check('account_data_region', sql`${t.dataRegion} ~ '^[a-z]{2,10}$'`),
     check(
@@ -2947,10 +2953,13 @@ export const waitlist = pgTable(
     confirmedAt: timestamp('confirmed_at', { withTimezone: true }),
     /** empreinte SHA-256 du jeton du lien de confirmation et de désinscription (le jeton n'est jamais gardé) */
     tokenHash: text('token_hash'),
+    /** provenance de la demande (code court de l'adresse ?src=, ex. « affiche ») : agrégats seulement */
+    source: text('source'),
     createdAt: createdAt(),
   },
   (t) => [
     index('waitlist_status').on(t.status, t.createdAt),
+    check('waitlist_source', sql`${t.source} IS NULL OR ${t.source} ~ '^[a-z0-9-]{1,40}$'`),
     index('waitlist_token').on(t.tokenHash),
     check('waitlist_status_check', sql`${t.status} IN ('en_attente', 'acceptee', 'refusee')`),
     check('waitlist_note', sql`${t.note} IS NULL OR char_length(${t.note}) <= 500`),

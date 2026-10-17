@@ -25,6 +25,8 @@ import {
   ROLE_BETA_FERMEE,
   releaseInvitation,
   reserveInvitation,
+  normSource,
+  sourceDeLInvitation,
   grantAccountRole,
   schema as t,
   schoolsOf,
@@ -301,6 +303,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       invitation?: string;
       jeton?: string;
       site_web?: string;
+      src?: string;
     };
   }>(
     '/api/v1/auth/signup',
@@ -329,6 +332,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             // anti-robots (réglage « antibot ») : jeton signé émis à l'ouverture de la page, champ piège caché
             jeton: { type: 'string', maxLength: 100 },
             site_web: { type: 'string', maxLength: 200 },
+            // provenance (?src= des affiches) : gardée si elle est valide (^[a-z0-9-]{1,40}$), ignorée sinon
+            src: { type: 'string', maxLength: 200 },
           },
         },
       },
@@ -398,6 +403,9 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         if (!r.ok) return err(reply, 403, r.raison);
         invitationId = r.id;
       }
+      // provenance : celle de la navigation (?src=), sinon celle de la demande de liste d'attente qui a donné l'invitation
+      const source =
+        normSource(b.src) ?? (invitationId ? await sourceDeLInvitation(db, invitationId) : null);
       let a: { id: string } | undefined;
       try {
         [a] = await db
@@ -412,6 +420,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             birthYear: b.kind === 'adulte' ? (b.birthYear ?? null) : null,
             region,
             tz: normTz(b.tz),
+            source,
           })
           .returning({ id: t.account.id });
       } catch (e) {

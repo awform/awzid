@@ -18,7 +18,13 @@ import {
   ROBOTS_TXT,
   type StatutSite,
 } from '$lib/server/acces-serveur';
-import { afficherAccueil, configAccueil, langueAccueil, reponseAccueil } from '$lib/server/accueil';
+import {
+  afficherAccueil,
+  configAccueil,
+  langueAccueil,
+  reponseAccueil,
+  sourceAccueil,
+} from '$lib/server/accueil';
 
 const api = () => env.API_URL ?? 'http://127.0.0.1:3000';
 /** Page d'accueil publique (liste d'attente) : réglages lus à chaque requête (ACCUEIL_PUBLIC, ACCUEIL_INDEXABLE, ACCUEIL_LANGUES). */
@@ -138,6 +144,8 @@ export const handle: Handle = async ({ event, resolve }) => {
             event.request.headers.get('accept-language'),
             cfg.langues,
           ),
+          // provenance des affiches (?src=affiche) : validée, mise dans un champ caché, jamais dans un cookie
+          src: sourceAccueil(event.url.searchParams.get('src')),
         }),
         cfg.indexable,
       );
