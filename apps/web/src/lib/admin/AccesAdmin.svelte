@@ -4,6 +4,7 @@
   import { fmtDate, locale, t } from '$lib/i18n';
   import { call } from '$lib/session';
   import GroupeBeta from './GroupeBeta.svelte';
+  import TelephoneAdmin from './TelephoneAdmin.svelte';
 
   /**
    * Bêta — espace de l'administrateur (second facteur) :
@@ -35,6 +36,9 @@
     fin: string;
     libelle: string | null;
     adresse: string | null;
+    /** 18/10/2026 : invitation personnelle par numéro (forme masquée), inscription assistée (type préparé) */
+    numero?: string | null;
+    assistee?: string | null;
     max: number;
     usages: number;
     expireLe: string | null;
@@ -48,7 +52,8 @@
   }
   interface Demande {
     id: string;
-    adresse: string;
+    adresse: string | null;
+    numero?: string | null;
     nom: string | null;
     mot: string | null;
     langue: string;
@@ -59,6 +64,8 @@
     lien: string | null;
     envoye: boolean;
     expireLe: string | null;
+    /** invitation par numéro : WhatsApp ouvert sur la conversation de la personne, message pré-rempli (gratuit) */
+    lienWhatsapp?: string | null;
   }
   interface Tableau {
     comptes: {
@@ -95,6 +102,10 @@
   let envoyer = $state(true);
   // lot 6 : l'invitation inscrit le compte dans le groupe "bêta fermée"
   let groupe = $state(false);
+  // 18/10/2026 : inscription assistée (compte préparé pour une famille : type et pays)
+  let assistee = $state(false);
+  let assisteeKind = $state<'parent' | 'adulte'>('parent');
+  let assisteePays = $state('SN');
   let erreur = $state('');
   let copie = $state(false);
 
@@ -133,10 +144,17 @@
     cree = null;
     copie = false;
     const adr = adresse.trim();
+    // une saisie sans « @ » est un numéro (invitation personnelle par WhatsApp)
+    const estNumero = !!adr && !adr.includes('@');
     const r = await call<Cree>('POST', '/admin/invitations', {
       ...(libelle.trim() ? { libelle: libelle.trim() } : {}),
-      ...(adr ? { adresse: adr, envoyer, langue: locale() } : { max }),
-      jours,
+      ...(adr
+        ? { [estNumero ? 'numero' : 'adresse']: adr, envoyer, langue: locale() }
+        : assistee
+          ? {}
+          : { max }),
+      ...(assistee ? { assistee: assisteeKind, pays: assisteePays } : {}),
+      jours: assistee ? Math.min(jours || 7, 7) : jours,
       ...(groupe ? { groupe: 'beta_fermee' } : {}),
     });
     if (!r.ok || !r.data) {
@@ -176,6 +194,10 @@
     await charger();
   }
 </script>
+
+<!-- eslint-disable svelte/no-navigation-without-resolve -- liens externes (WhatsApp) ou routes de l'API (redirection vers Google) -->
+
+<!-- eslint-disable svelte/no-navigation-without-resolve -- lien externe (WhatsApp, invitation par numéro) -->
 
 <section class="card" data-testid="admin-acces">
   <h2><Bidi text={t('acces.titre')} /></h2>
@@ -366,7 +388,7 @@
     <label for="inv-adresse"><Bidi text={t('acces.inv_adresse')} /></label>
     <input
       id="inv-adresse"
-      type="email"
+      type="text"
       maxlength="254"
       bind:value={adresse}
       data-testid="inv-adresse"
@@ -379,6 +401,20 @@
         ><input type="checkbox" bind:checked={envoyer} />
         <span><Bidi text={t('acces.inv_envoyer')} /></span></label
       >
+    {/if}
+    <label class="check"
+      ><input type="checkbox" bind:checked={assistee} data-testid="inv-assistee" />
+      <span><Bidi text={t('tel.adm_assistee')} /></span></label
+    >
+    {#if assistee}
+      <p class="muted"><Bidi text={t('tel.adm_assistee_aide')} /></p>
+      <label for="inv-assistee-type"><Bidi text={t('tel.adm_assistee_type')} /></label>
+      <select id="inv-assistee-type" bind:value={assisteeKind} data-testid="inv-assistee-type">
+        <option value="parent">{t('inscription.parent')}</option>
+        <option value="adulte">{t('inscription.adulte')}</option>
+      </select>
+      <label for="inv-assistee-pays"><Bidi text={t('champ.pays')} /></label>
+      <input id="inv-assistee-pays" maxlength="2" bind:value={assisteePays} />
     {/if}
     <label for="inv-jours"><Bidi text={t('acces.inv_jours')} /></label>
     <input id="inv-jours" type="number" min="0" max="365" bind:value={jours} />
@@ -404,6 +440,15 @@
           ><Bidi text={copie ? '✓' : ''} /> <Bidi text={t('acces.inv_copier')} /></button
         >
       </p>
+      {#if cree.lienWhatsapp}<p>
+          <a
+            class="button"
+            href={cree.lienWhatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="inv-whatsapp"><Bidi text={t('tel.adm_ouvrir_wa')} /></a
+          >
+        </p>{/if}
       <p class="muted">
         <Bidi text={cree.envoye ? t('acces.inv_envoyee') : t('acces.inv_non_envoyee')} />
       </p>
@@ -414,7 +459,8 @@
     {#each invitations as i (i.id)}
       <li class="card" data-etat={i.etat}>
         <p>
-          <strong><Bidi text={i.libelle ?? i.adresse ?? '—'} /></strong>
+          <strong><Bidi text={i.libelle ?? i.adresse ?? i.numero ?? '—'} /></strong>
+          {#if i.assistee}· <Bidi text={t('tel.adm_assistee_badge')} />{/if}
           · <Bidi text={t(`acces.inv_etat_${i.etat}`)} /> ·
           <Bidi text={t('acces.inv_usages', { n: i.usages, max: i.max })} />
           · <span class="muted"><Bidi text={t('acces.inv_fin', { fin: i.fin })} /></span>
@@ -446,6 +492,8 @@
     {/each}
   </ul>
 
+  <TelephoneAdmin />
+
   <GroupeBeta />
 
   <h3>
@@ -456,7 +504,7 @@
     {#each attente as d (d.id)}
       <li class="card" data-testid="attente-demande">
         <p>
-          <strong><Bidi text={d.adresse} /></strong>
+          <strong><Bidi text={d.adresse ?? d.numero ?? ''} /></strong>
           {#if d.nom}
             · <Bidi text={d.nom} />{/if} · <span class="muted">{fmtDate(d.creeeLe)}</span>
         </p>

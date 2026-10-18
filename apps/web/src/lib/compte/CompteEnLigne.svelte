@@ -336,8 +336,14 @@
     </section>
   {/if}
 {:else if rub === 'securite'}
+  {#if me.account.kind === 'parent' || me.account.kind === 'adulte'}
+    <!-- 18/10/2026 : numéro WhatsApp, codes de récupération, liaison Google (chargés à la demande) -->
+    {#await import('$lib/identites/CompteIdentites.svelte') then { default: CompteIdentites }}
+      <CompteIdentites {me} {say} {fail} reload={relire} />
+    {/await}
+  {/if}
   <section class="card">
-    {#if me.account.email}
+    {#if me.account.email || me.account.kind === 'parent' || me.account.kind === 'adulte'}
       <h2>{t('compte.email_titre')}</h2>
       <p class="muted small">{t('compte.email_aide')}</p>
       <form class="form" onsubmit={changeEmail} data-testid="changer-email">

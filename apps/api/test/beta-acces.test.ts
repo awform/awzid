@@ -137,6 +137,11 @@ describe.skipIf(!URL)(
         verification: 'souple',
         antibot: 'off',
         admin: false,
+        // 18/10/2026 : Google et numéro WhatsApp éteints par défaut
+        google: false,
+        telephone: false,
+        telephoneEnvoi: false,
+        telephoneManuel: false,
       });
       expect((await signup(addr())).statusCode).toBe(201);
     });

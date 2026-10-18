@@ -49,6 +49,10 @@ const API_PORT = Number(process.env.E2E_API_PORT ?? 3100);
 const WEB_PORT = Number(process.env.E2E_WEB_PORT ?? 4180);
 // A5 : service d'écoute FACTICE (e2e/ecoute-essai.mjs : aucun modèle, rien n'est gardé)
 const ECOUTE_PORT = Number(process.env.E2E_ECOUTE_PORT ?? API_PORT + 11);
+// 18/10/2026 : FAUX fournisseur OpenID (e2e/oidc-essai.mjs) à la place de Google ; boîte de démonstration WhatsApp
+const OIDC_PORT = Number(process.env.E2E_OIDC_PORT ?? API_PORT + 12);
+process.env.E2E_OIDC_URL = `http://127.0.0.1:${OIDC_PORT}`;
+process.env.E2E_WA_DIR ??= join(tmpdir(), `awform-e2e-whatsapp${ISOLE ? `-${SUFFIX}` : ''}`);
 process.env.E2E_KEY ??= randomBytes(32).toString('hex');
 const E2E_KEY = process.env.E2E_KEY;
 // lot 27 : stockage de l'audio d'ESSAI (bips non coraniques) servi par l'API de test
@@ -119,6 +123,12 @@ export default defineConfig({
   ],
   webServer: [
     {
+      command: `node e2e/oidc-essai.mjs ${OIDC_PORT}`,
+      url: `http://127.0.0.1:${OIDC_PORT}/sante`,
+      reuseExistingServer: false,
+      timeout: 30_000,
+    },
+    {
       command: `node e2e/ecoute-essai.mjs ${ECOUTE_PORT}`,
       url: `http://127.0.0.1:${ECOUTE_PORT}/sante`,
       reuseExistingServer: false,
@@ -180,13 +190,28 @@ export default defineConfig({
         AWFORM_MAIL: 'journal',
         AWFORM_MAIL_JOURNAL_DIR: process.env.E2E_MAIL_DIR,
         AWFORM_PUBLIC_URL: `http://127.0.0.1:${WEB_PORT}`,
+        // 18/10/2026 : « Continuer avec Google » contre le FAUX fournisseur local (jamais Google en test) ; numéro WhatsApp en
+        // mode SIMULÉ (simulateur à la place du webhook de Meta, messages sortants dans la boîte de démonstration),
+        // validation manuelle et secours payant allumés pour être testés (identites.spec.ts)
+        AWFORM_GOOGLE: 'on',
+        AWFORM_GOOGLE_CLIENT_ID: 'e2e-client',
+        AWFORM_GOOGLE_CLIENT_SECRET: 'e2e-secret',
+        AWFORM_GOOGLE_ESSAI_URL: `http://127.0.0.1:${OIDC_PORT}`,
+        AWFORM_TELEPHONE: 'on',
+        AWFORM_WHATSAPP: 'simule',
+        AWFORM_WHATSAPP_NUMERO: '+221700000000',
+        AWFORM_WHATSAPP_JOURNAL_DIR: process.env.E2E_WA_DIR,
+        AWFORM_TELEPHONE_MANUEL: 'on',
+        AWFORM_TELEPHONE_ENVOI: 'on',
+        AWFORM_TELEPHONE_PAR_IP: '500',
         // comptes de démonstration par niveau (demo-niveaux.spec.ts) : connexion simplifiée, réseau local ;
         // SEULEMENT avec E2E_DEMO=1 (les autres suites tournent comme en production)
         ...(process.env.E2E_DEMO === '1' ? { AWFORM_DEMO: '1', SITE: '127.0.0.1' } : {}),
         ...(EXACT ? { AWFORM_QF_MUSHAF_DIR: QF_DIR, AWFORM_QCF_DIR: QCF_DIR } : {}),
       },
       reuseExistingServer: false,
-      timeout: 120_000,
+      // import de l'édition et rôles : jusqu'à 2 minutes ; plus quand la VM partagée est chargée (vidéos, autres suites)
+      timeout: 300_000,
     },
     {
       command: 'node build/index.js',

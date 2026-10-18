@@ -38,6 +38,10 @@ export interface Me {
     region?: string | null;
     tz?: string | null;
     dataRegion?: string;
+    /** 18/10/2026 : numéro WhatsApp (forme masquée), liaison Google, mot de passe défini */
+    telephone?: string | null;
+    google?: boolean;
+    motDePasse?: boolean;
   };
   /** lot F3 (revue E10) : accords nécessaires manquants — page « Accords » au premier usage */
   accordsManquants?: Array<{ type: string; profileId: string | null; pseudonym: string | null }>;

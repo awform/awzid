@@ -44,6 +44,7 @@ describe.skipIf(!URL_)('purge de la nuit', () => {
         'problemes',
         'recitationsEffacees',
         'verrous',
+        'verificationsNumero',
       ].sort(),
     );
     expect(n.conservation).toMatchObject({ journal: 0, sessions: 0 });

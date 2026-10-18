@@ -173,6 +173,16 @@
           ]
         },
         {
+          "titre": "WhatsApp number and sign-in with Google",
+          "paras": [
+            "WhatsApp number (optional, instead of an email address if you prefer): it identifies you, lets us check that it belongs to you and helps you recover your account. It is encrypted in our database, never shown in full in the administration area (only the country code and the last digits) and never used for advertising. One number matches one family or adult account; a child has no account by number.",
+            "Verification: you send, yourself, from WhatsApp, a message containing a code to Awzid's number. This message goes through WhatsApp (Meta Platforms Ireland Limited), which passes it to our server with your number; during the beta, a team member may also read it on Awzid's phone to confirm your number. If sending a code by Awzid is enabled (fallback), that code is sent to you by WhatsApp. WhatsApp processes these messages under its own privacy policy.",
+            "Retention: the number is kept as long as the account exists and erased as soon as account deletion is requested; verifications (encrypted number, code fingerprint) are erased after 72 hours; recovery codes are only kept as fingerprints, until used or replaced. After a long time without signing in (180 days), the number is verified again, since an unused number may be reassigned by the operator.",
+            "Sign-in with Google (optional): if you choose “Continue with Google”, Google only sends us an account identifier, your verified email address and your name; we receive neither your Google password nor your contacts, and no Google script is loaded on our pages. The link is kept as long as the account exists; you can remove it from “Account”, and it is erased with the account. Google processes the sign-in under its own privacy policy.",
+            "These data are included in your data export (“Account”, “My data”)."
+          ]
+        },
+        {
           "titre": "Purposes and legal bases",
           "paras": [
             "Beta waiting list: your consent (the box on the home page, confirmed by a link sent to your address), which you can withdraw at any time by writing to the contact address.",

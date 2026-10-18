@@ -173,6 +173,16 @@
           ]
         },
         {
+          "titre": "Numéro WhatsApp et connexion avec Google",
+          "paras": [
+            "Numéro WhatsApp (facultatif, au choix à la place de l'adresse e-mail) : il sert à vous identifier, à vérifier qu'il vous appartient et à retrouver votre compte. Il est chiffré dans notre base, n'apparaît jamais en entier dans l'espace d'administration (seuls l'indicatif et les derniers chiffres) et ne sert jamais à de la publicité. Un numéro correspond à un seul compte famille ou adulte ; un enfant n'a pas de compte par numéro.",
+            "Vérification : vous envoyez vous-même, depuis WhatsApp, un message contenant un code au numéro d'Awzid. Ce message passe par WhatsApp (Meta Platforms Ireland Limited), qui le transmet à notre serveur avec votre numéro ; pendant la bêta, un membre de l'équipe peut aussi le lire sur le téléphone d'Awzid pour valider votre numéro. Si l'envoi d'un code par Awzid est activé (secours), ce code vous est envoyé par WhatsApp. WhatsApp traite ces messages selon sa propre politique de confidentialité.",
+            "Conservation : le numéro est gardé tant que le compte existe et effacé dès la demande de suppression du compte ; les vérifications (numéro chiffré, empreinte du code) sont effacées après 72 heures ; les codes de récupération ne sont gardés que sous forme d'empreinte, jusqu'à leur usage ou leur remplacement. Sans connexion pendant longtemps (180 jours), le numéro est vérifié à nouveau, car un numéro inutilisé peut être réattribué par l'opérateur.",
+            "Connexion avec Google (facultative) : si vous choisissez « Continuer avec Google », Google nous transmet seulement un identifiant de compte, votre adresse e-mail vérifiée et votre nom ; nous ne recevons ni votre mot de passe Google ni vos contacts, et aucun script de Google n'est chargé sur nos pages. La liaison est gardée tant que le compte existe ; vous pouvez la retirer depuis « Compte », et elle est effacée avec le compte. Google traite la connexion selon sa propre politique de confidentialité.",
+            "Ces données figurent dans l'export de vos données (« Compte », « Mes données »)."
+          ]
+        },
+        {
           "titre": "Finalités et bases légales",
           "paras": [
             "Liste d'attente de la bêta : votre consentement (case à cocher sur la page d'accueil, confirmé par un lien envoyé à votre adresse), retirable à tout moment en écrivant à l'adresse de contact.",

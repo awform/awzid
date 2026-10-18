@@ -53,6 +53,14 @@ import { registerF5 } from './f5.js';
 import { registerSupport } from './support.js';
 import { registerVerification } from './verification.js';
 import { registerBetaAcces } from './beta-acces.js';
+import {
+  googleFromEnv,
+  telephoneFromEnv,
+  type ConfigGoogle,
+  type ConfigTelephone,
+} from './identites/config.js';
+import { expediteurDepuis, type Expediteur } from './identites/expediteur.js';
+import type { Fetch } from './identites/oidc.js';
 import { registerLimiteLectures } from './limite-lectures.js';
 import { scrub, UUID_ANY } from './scrub.js';
 import { certSignerFromEnv, type CertSigner } from './certsign.js';
@@ -98,6 +106,14 @@ export interface AppOptions {
   mailer?: Mailer;
   /** lot F3 : adresse publique du site pour les liens des e-mails (tests) ; sinon AWFORM_PUBLIC_URL ou SITE */
   publicUrl?: string | null;
+  /** 18/10/2026 : numéro WhatsApp (tests) ; sinon AWFORM_TELEPHONE, AWFORM_WHATSAPP_* ; null : inactif */
+  telephone?: ConfigTelephone | null;
+  /** expéditeur des messages WhatsApp (tests : en mémoire) ; sinon d'après la configuration */
+  expediteurTel?: Expediteur;
+  /** 18/10/2026 : « Continuer avec Google » (tests) ; sinon AWFORM_GOOGLE_* ; null : inactif */
+  google?: ConfigGoogle | null;
+  /** tests : appels HTTP vers le fournisseur OpenID */
+  googleFetch?: Fetch;
 }
 
 /**
@@ -163,6 +179,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   app.addHook('onRequest', async (req, reply) => {
     // exception : webhooks signés des prestataires de paiement (signature vérifiée, aucun cookie)
     if (req.url.startsWith('/api/v1/billing/webhook/')) return;
+    // 18/10/2026 : webhook signé de WhatsApp Cloud API (signature X-Hub-Signature-256 vérifiée, aucun cookie)
+    if (req.url === '/api/v1/tel/webhook') return;
     if (req.method !== 'GET' && req.method !== 'HEAD' && req.headers['x-awform'] !== '1')
       return reply.code(403).send({ error: { code: 'csrf' } });
   });
@@ -170,6 +188,25 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   const mailer =
     opts.mailer ?? mailerFromEnv(process.env, (m) => (opts.logger ? app.log.warn(m) : undefined));
   const publicUrl = opts.publicUrl === undefined ? publicUrlFromEnv(process.env) : opts.publicUrl;
+  // 18/10/2026 : identités — numéro WhatsApp et « Continuer avec Google », chacun derrière son interrupteur
+  const avertir = (m: string) => (opts.logger ? app.log.warn(m) : undefined);
+  const telCfg =
+    opts.telephone === undefined
+      ? telephoneFromEnv(process.env, opts.secretKey ?? null, avertir)
+      : opts.telephone;
+  const telephone =
+    telCfg && opts.secretKey
+      ? {
+          db,
+          key: opts.secretKey,
+          cfg: telCfg,
+          expediteur: opts.expediteurTel ?? expediteurDepuis(telCfg),
+        }
+      : null;
+  const google =
+    opts.google === undefined
+      ? googleFromEnv(process.env, publicUrl, opts.secretKey ?? null, avertir)
+      : opts.google;
   registerAuth(app, {
     db,
     cookieSecure: opts.cookieSecure ?? true,
@@ -177,9 +214,18 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     demoLogin: opts.demoLogin === true,
     mailer,
     publicUrl,
+    telephone,
+    google,
+    googleFetch: opts.googleFetch,
   });
   // bêta fermée sur invitation : mode fermé (après la lecture de la session), invitations, liste d'attente
-  registerBetaAcces(app, db, { mailer, publicUrl, secretKey: opts.secretKey ?? null });
+  registerBetaAcces(app, db, {
+    mailer,
+    publicUrl,
+    secretKey: opts.secretKey ?? null,
+    telephone: telephone?.cfg.actif ? telephone : null,
+    google: !!google?.actif,
+  });
   // lot 9 (R5) : limite globale des lectures, par compte connecté ou par adresse (AWFORM_LIMITE_LECTURES)
   registerLimiteLectures(app, { mandataire: hops > 0 });
 

@@ -101,6 +101,17 @@ export async function purgeAuthThrottle(db: Db, now = new Date(), hours = 24): P
   return gone.length;
 }
 
+/**
+ * 18/10/2026 : vérifications de numéro (numéro chiffré, empreintes du code) effacées 72 h après leur création (la
+ * validation manuelle de la bêta laisse 48 h) ; les limites par numéro et le plafond du jour sont comptés avant.
+ */
+export async function purgePhoneChallenges(db: Db, now = new Date(), hours = 72): Promise<number> {
+  const r = await db
+    .delete(t.phoneChallenge)
+    .where(lt(t.phoneChallenge.createdAt, new Date(now.getTime() - hours * 3600_000)));
+  return r.rowCount ?? 0;
+}
+
 const DAY = 86400_000;
 
 /**

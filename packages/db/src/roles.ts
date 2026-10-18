@@ -154,6 +154,11 @@ export const API_GRANTS: Record<string, Right[]> = {
   invitation: ALL,
   invitation_use: ALL,
   waitlist: ALL,
+  // 18/10/2026 : inscription par numéro WhatsApp (vérifications du numéro, codes de récupération) et identités
+  // externes (« Continuer avec Google ») ; tout part avec le compte (clés étrangères en cascade)
+  phone_challenge: ALL,
+  recovery_code: ALL,
+  account_identity: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */
@@ -187,6 +192,8 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
   problem_report: ['DELETE'],
   // bêta fermée : demandes de la liste d'attente effacées après 12 mois
   waitlist: ['DELETE'],
+  // 18/10/2026 : vérifications de numéro effacées après 24 h (elles contiennent le numéro chiffré)
+  phone_challenge: ['DELETE'],
 };
 
 /** Droits par COLONNE du travailleur (ni pseudonyme ni année de naissance : seulement le lien au compte). */
@@ -206,6 +213,7 @@ export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
   feedback: ['created_at', 'capture_type'],
   problem_report: ['created_at', 'capture_type', 'status'],
   waitlist: ['created_at'],
+  phone_challenge: ['created_at'],
 };
 
 /**

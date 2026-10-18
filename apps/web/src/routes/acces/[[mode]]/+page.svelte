@@ -33,6 +33,10 @@
   let busy = $state(false);
   let mailOn = $state(true);
   let me = $state<Me | null>(null);
+  /** 18/10/2026 : mot de passe oublié sans e-mail — par le numéro WhatsApp ou par un code de récupération */
+  let voie = $state<'email' | 'whatsapp' | 'code'>('email');
+  let telephone = $state(false);
+  let envoiTel = $state(false);
   const missing = $derived(me?.accordsManquants ?? []);
   const titre = $derived(
     t(
@@ -90,6 +94,12 @@
     } else if (mode === 'oubli') {
       const c = await call<{ email?: boolean }>('GET', '/config');
       mailOn = !(c.ok && c.data?.email === false);
+      const s = await call<{ telephone?: boolean; telephoneEnvoi?: boolean }>(
+        'GET',
+        '/acces/statut',
+      );
+      telephone = s.data?.telephone === true;
+      envoiTel = s.data?.telephoneEnvoi === true;
     } else if (mode === 'accords') {
       me = await fetchMe();
       if (!me) await goto(resolve('/connexion'));
@@ -141,12 +151,35 @@
     </ul>
     <p class="muted small"><Bidi text={t('consent.donnee_religieuse_art9')} /></p>
   {:else if mode === 'oubli' && !done}
+    <div class="voies" role="group" aria-label={t('id.oubli_voies')} data-testid="oubli-voies">
+      <button type="button" aria-pressed={voie === 'email'} onclick={() => (voie = 'email')}
+        ><Bidi text={t('id.voie_email')} /></button
+      >
+      {#if telephone}<button
+          type="button"
+          aria-pressed={voie === 'whatsapp'}
+          onclick={() => (voie = 'whatsapp')}
+          data-testid="voie-whatsapp"><Bidi text={t('id.voie_whatsapp')} /></button
+        >{/if}
+      <button
+        type="button"
+        aria-pressed={voie === 'code'}
+        onclick={() => (voie = 'code')}
+        data-testid="voie-code"><Bidi text={t('id.voie_code')} /></button
+      >
+    </div>
+  {/if}
+  {#if mode === 'oubli' && !done && voie !== 'email'}
+    {#await import('$lib/identites/OubliTelephone.svelte') then { default: OubliTelephone }}
+      <OubliTelephone {voie} envoi={envoiTel} />
+    {/await}
+  {:else if mode === 'oubli' && !done}
     {#if !mailOn}<p class="warnbox" role="note">
         <Bidi text={t('acces.email_indisponible')} />
       </p>{/if}
     <p><Bidi text={t('acces.oubli_aide')} /></p>
   {/if}
-  {#if (mode === 'oubli' || mode === 'reinit' || mode === 'accords') && !done}
+  {#if ((mode === 'oubli' && voie === 'email') || mode === 'reinit' || mode === 'accords') && !done}
     <form class="form" onsubmit={submit}>
       {#if mode === 'oubli'}
         <label for="email">{t('champ.email')}</label>
@@ -203,6 +236,20 @@
     display: grid;
     gap: 8px;
     max-width: 460px;
+  }
+  .voies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .voies button {
+    min-height: 44px;
+  }
+  .voies button[aria-pressed='true'] {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    font-weight: 700;
   }
   .small {
     font-size: 0.9rem;

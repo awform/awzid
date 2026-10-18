@@ -59,6 +59,8 @@ export const EN_LIGNE_MODULES = [
   // Douas (phase 1) : écran de l'onglet, chargé à la demande avec ses données (première ouverture en ligne), gardé
   // au premier usage (hors ligne ensuite)
   /src\/lib\/douas\/DouasVue\.svelte$/,
+  // 18/10/2026 : identités (Google, numéro WhatsApp, codes de récupération) : écrans en ligne, à la demande
+  /src\/lib\/identites\/[A-Za-z]+\.svelte$/,
 ];
 
 const under = (r, prefixes) => prefixes.some((p) => r === p || r.startsWith(`${p}/`));

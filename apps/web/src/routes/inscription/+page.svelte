@@ -26,6 +26,25 @@
    * (aria-live) et le focus va sur le titre de l'étape. L'envoi final est INCHANGÉ : même appel, mêmes données,
    * mêmes accords, même anti-robots ; une erreur du serveur ramène à l'étape du champ concerné.
    */
+  /*
+   * 18/10/2026 — trois façons d'entrer à l'étape 1, dans cet ordre, chacune derrière son interrupteur (statut public) :
+   * « Continuer avec Google », « Avec mon numéro WhatsApp » (vérification inversée, codes de récupération montrés
+   * après la création), « Avec mon adresse e-mail » (formulaire ci-dessous, toujours offert). Les écrans propres au
+   * numéro et à Google sont chargés À LA DEMANDE ($lib/identites). Inscription ASSISTÉE : une invitation préparée par
+   * un administrateur fixe le type de compte, le pays et le numéro ; la personne choisit Google ou un mot de passe.
+   */
+  type Mode = 'email' | 'telephone' | 'google';
+  let mode = $state<Mode>('email');
+  let verifTel = $state<{ id: string; jeton: string; e164: string } | null>(null);
+  let googleIdent = $state<{ email: string; nom: string | null } | null>(null);
+  let assistee = $state<{
+    kind: 'parent' | 'adulte';
+    pays: string | null;
+    numero: string | null;
+  } | null>(null);
+  let codesSecours = $state<string[] | null>(null);
+  let messageGoogle = $state('');
+  const CLE_CODE = 'awzid.inscription.code';
   type Etape = 1 | 2 | 3;
   let etape = $state<Etape>(1);
   /** texte annoncé par la région aria-live au changement d'étape */
@@ -87,16 +106,65 @@
   async function verifierCode() {
     codeBusy = true;
     codeErreur = '';
-    const r = await call<{ valide: boolean; personnelle: boolean }>('POST', '/acces/invitation', {
+    const r = await call<{
+      valide: boolean;
+      personnelle: boolean;
+      assistee?: { kind: 'parent' | 'adulte'; pays: string | null; numero: string | null };
+    }>('POST', '/acces/invitation', {
       code: code.trim(),
     });
     codeBusy = false;
     codeOk = r.ok && r.data?.valide === true;
     codePerso = codeOk && r.data?.personnelle === true;
     if (!codeOk) codeErreur = t(`erreur.${r.code ?? 'reseau'}`);
+    // inscription assistée : type et pays préparés (non modifiables), numéro repris sur le compte
+    assistee = codeOk ? (r.data?.assistee ?? null) : null;
+    if (assistee) {
+      kind = assistee.kind;
+      if (assistee.pays) country = assistee.pays;
+    }
+  }
+  /** avant de partir chez Google : le code d'invitation est gardé pour le retour (onglet seulement) */
+  function avantGoogle() {
+    try {
+      if (codeOk) sessionStorage.setItem(CLE_CODE, code.trim());
+    } catch {
+      /* sans stockage : le code sera redemandé */
+    }
+  }
+  /** retour de Google : identité vérifiée en attente (cookie chiffré côté serveur) */
+  async function retourGoogle(params: URLSearchParams) {
+    const g = params.get('google');
+    if (!g) return;
+    history.replaceState(null, '', location.pathname + location.hash);
+    if (g !== '1') {
+      messageGoogle = t(`id.google_${g}`);
+      return;
+    }
+    const r = await call<{ email: string; nom: string | null }>('GET', '/auth/google/inscription');
+    if (r.ok && r.data) {
+      googleIdent = r.data;
+      mode = 'google';
+    } else messageGoogle = t('id.google_expire');
+    try {
+      const c = sessionStorage.getItem(CLE_CODE);
+      sessionStorage.removeItem(CLE_CODE);
+      if (c && !code) {
+        code = c;
+        await verifierCode();
+      }
+    } catch {
+      /* rien */
+    }
+  }
+  async function annulerGoogle() {
+    await call('DELETE', '/auth/google/inscription');
+    googleIdent = null;
+    mode = 'email';
   }
   onMount(async () => {
     acces = await chargerStatut();
+    if (acces?.google) await retourGoogle(new URLSearchParams(location.search));
     // plafond atteint, ou lien « Demander une invitation » de l'accueil de la bêta (#attente) : la demande est déjà ouverte
     if (acces?.inscription === 'attente' || location.hash === '#attente') demande = true;
     if (acces?.antibot === 'on') {
@@ -135,14 +203,20 @@
 
   /** champs de chaque étape, dans l'ordre de l'écran (focus sur le premier à corriger) */
   const CHAMPS: Record<Etape, string[]> = {
-    1: ['email', 'password', 'password-confirmer'],
+    1: ['email', 'telephone', 'password', 'password-confirmer'],
     2: ['region', 'birthYear'],
     3: ['cgu', 'art9', 'transfert'],
   };
   const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   function valider(n: Etape): Record<string, string> {
     const e: Record<string, string> = {};
-    if (n === 1) {
+    if (n === 1 && (mode === 'google' || mode === 'telephone' || assistee?.numero)) {
+      // Google : mot de passe facultatif ; numéro : vérification réussie exigée (sauf numéro préparé)
+      if (mode === 'telephone' && !verifTel) e.telephone = t('id.err_verifier');
+      if (mode !== 'google' && !password) e.password = t('ins.err_mdp_vide');
+      else if (password && niveauMdp === 'refuse') e.password = t('ins.err_mdp');
+      else if (password && !mdpIdentiques) e['password-confirmer'] = t('ins.err_confirmer');
+    } else if (n === 1) {
       const m = email.trim();
       if (!m) e.email = t('ins.err_email_vide');
       else if (!EMAIL.test(m)) e.email = t('ins.err_email');
@@ -210,6 +284,12 @@
   /** refus du serveur → étape du champ concerné (les autres restent sur les accords) */
   const ETAPE_DU_REFUS: Record<string, Etape> = {
     email_indisponible: 1,
+    telephone_indisponible: 1,
+    verification_invalide: 1,
+    google_expire: 1,
+    identifiant_requis: 1,
+    mot_de_passe_requis: 1,
+    google_majeur_requis: 2,
     invitation_autre_adresse: 1,
     pays_inconnu: 2,
     annee_naissance_requise: 2,
@@ -229,6 +309,14 @@
     'mot_de_passe_contient_email',
     'reseau',
     'trop_de_demandes',
+    // 18/10/2026 : numéro WhatsApp et Google
+    'telephone_indisponible',
+    'verification_invalide',
+    'google_expire',
+    'google_majeur_requis',
+    'identifiant_requis',
+    'mot_de_passe_requis',
+    'telephone_inactif',
   ]);
 
   async function envoyer() {
@@ -240,10 +328,16 @@
       transferNeeded && transfert && 'transfert_hors_pays',
       rappels && 'rappels',
     ].filter(Boolean) as string[];
-    const r = await call<Me>('POST', '/auth/signup', {
+    const r = await call<Me & { codesSecours?: string[] }>('POST', '/auth/signup', {
       kind,
-      email,
-      password,
+      ...(mode === 'google' && googleIdent
+        ? { google: true }
+        : mode === 'telephone' && verifTel
+          ? { defi: { id: verifTel.id, jeton: verifTel.jeton } }
+          : assistee?.numero
+            ? {}
+            : { email }),
+      ...(password ? { password } : {}),
       country,
       locale: locale(),
       consents,
@@ -273,10 +367,21 @@
       }
       return;
     }
+    // numéro : codes de récupération montrés UNE fois avant d'entrer dans l'application
+    if (r.data?.codesSecours?.length) {
+      codesSecours = r.data.codesSecours;
+      await tick();
+      document.getElementById('codes-titre')?.focus();
+      return;
+    }
+    await entrer();
+  }
+  async function entrer() {
     const me = await fetchMe();
     if (me?.profiles.length === 1) await setActiveProfile(me.profiles[0] ?? null);
-    // adresse e-mail à vérifier avant d'utiliser le compte
-    if (acces?.verification === 'requise') await goto(resolve('/acces/verification'));
+    // adresse e-mail à vérifier avant d'utiliser le compte (un compte par numéro ou Google est déjà vérifié)
+    if (acces?.verification === 'requise' && me?.account.emailVerified === false)
+      await goto(resolve('/acces/verification'));
     else await goto(resolve(kind === 'parent' ? '/profils' : '/'));
   }
 </script>
@@ -329,7 +434,11 @@
 
   <section class="carte" aria-labelledby="titre-inscription">
     <h1 id="titre-inscription">{t('inscription.titre')}</h1>
-    {#if porteFermee}
+    {#if codesSecours}
+      {#await import('$lib/identites/CodesSecours.svelte') then { default: CodesSecours }}
+        <CodesSecours codes={codesSecours} onfini={entrer} />
+      {/await}
+    {:else if porteFermee}
       <!-- bêta fermée : code d'invitation, ou demande d'invitation (liste d'attente validée à la main) -->
       <div class="porte-bloc" data-testid="porte-invitation">
         <h2><Bidi text={t('inv.titre')} /></h2>
@@ -437,36 +546,108 @@
           aria-labelledby="etape-1-t"
         >
           <h2 id="etape-1-t" tabindex="-1">{t('ins.e1')}</h2>
-          <div class="champ">
-            <label for="email">{t('champ.email')}</label>
-            <input
-              id="email"
-              type="email"
-              inputmode="email"
-              autocomplete="email"
-              autocapitalize="none"
-              spellcheck="false"
-              required
-              bind:value={email}
-              oninput={() => effacer('email')}
-              aria-invalid={invalide('email')}
-              aria-describedby={decrit('email', 'email-aide')}
-            />
-            {@render erreurDe('email')}
-            <p class="aide" id="email-aide"><Bidi text={t('ins.email_aide')} /></p>
-          </div>
-          {#await champMdp then { default: ChampMotDePasse }}
-            <div class="champ mdp-bloc">
-              <ChampMotDePasse
-                bind:value={password}
-                bind:identiques={mdpIdentiques}
-                bind:niveau={niveauMdp}
-                {email}
-                erreur={erreurs.password ?? ''}
-                erreurConfirmation={erreurs['password-confirmer'] ?? ''}
-              />
+          {#if messageGoogle}<p class="alerte" role="alert" data-testid="message-google">
+              <Bidi text={messageGoogle} />
+            </p>{/if}
+          {#if mode === 'google' && googleIdent}
+            <!-- identité Google vérifiée : adresse tenue pour vérifiée, mot de passe facultatif -->
+            <div class="note" data-testid="google-identite">
+              <Bidi text={t('id.google_compte', { email: googleIdent.email })} />
+              <button type="button" class="lien" onclick={annulerGoogle}
+                ><Bidi text={t('id.autre_methode')} /></button
+              >
             </div>
-          {/await}
+            <p class="aide"><Bidi text={t('id.mdp_facultatif')} /></p>
+          {:else if assistee?.numero}
+            <!-- inscription assistée : numéro préparé par l'équipe ; Google ou un mot de passe -->
+            <div class="note" data-testid="assistee-numero">
+              <Bidi text={t('id.assistee_numero', { numero: assistee.numero })} />
+            </div>
+            {#if acces?.google}
+              {#await import('$lib/identites/ChoixEntree.svelte') then { default: ChoixEntree }}
+                <ChoixEntree
+                  google
+                  telephone={false}
+                  intent="inscription"
+                  onTelephone={() => {}}
+                  onGoogle={avantGoogle}
+                  titreEmail={t('id.ou_mot_de_passe')}
+                />
+              {/await}
+            {/if}
+          {:else if mode === 'telephone'}
+            {#await import('$lib/identites/VerifTelephone.svelte') then { default: VerifTelephone }}
+              <div id="telephone" tabindex="-1" class="champ">
+                <VerifTelephone
+                  objet="inscription"
+                  pays={country}
+                  jetonAntibot={jeton}
+                  envoi={acces?.telephoneEnvoi === true}
+                  onverifie={(v) => {
+                    verifTel = v;
+                    effacer('telephone');
+                  }}
+                />
+                {@render erreurDe('telephone')}
+              </div>
+            {/await}
+            <button
+              type="button"
+              class="lien"
+              onclick={() => {
+                mode = 'email';
+                verifTel = null;
+              }}
+              data-testid="autre-methode"><Bidi text={t('id.autre_methode')} /></button
+            >
+          {:else}
+            {#if acces?.google || acces?.telephone}
+              {#await import('$lib/identites/ChoixEntree.svelte') then { default: ChoixEntree }}
+                <ChoixEntree
+                  google={acces?.google === true}
+                  telephone={acces?.telephone === true}
+                  intent="inscription"
+                  onTelephone={() => {
+                    mode = 'telephone';
+                    erreurs = {};
+                  }}
+                  onGoogle={avantGoogle}
+                />
+              {/await}
+            {/if}
+            <div class="champ">
+              <label for="email">{t('champ.email')}</label>
+              <input
+                id="email"
+                type="email"
+                inputmode="email"
+                autocomplete="email"
+                autocapitalize="none"
+                spellcheck="false"
+                required
+                bind:value={email}
+                oninput={() => effacer('email')}
+                aria-invalid={invalide('email')}
+                aria-describedby={decrit('email', 'email-aide')}
+              />
+              {@render erreurDe('email')}
+              <p class="aide" id="email-aide"><Bidi text={t('ins.email_aide')} /></p>
+            </div>
+          {/if}
+          {#if mode !== 'telephone' || verifTel}
+            {#await champMdp then { default: ChampMotDePasse }}
+              <div class="champ mdp-bloc">
+                <ChampMotDePasse
+                  bind:value={password}
+                  bind:identiques={mdpIdentiques}
+                  bind:niveau={niveauMdp}
+                  email={mode === 'email' && !assistee?.numero ? email : ''}
+                  erreur={erreurs.password ?? ''}
+                  erreurConfirmation={erreurs['password-confirmer'] ?? ''}
+                />
+              </div>
+            {/await}
+          {/if}
         </section>
 
         <!-- ÉTAPE 2 : profil (qui, pays et règles du pays, année, pseudonyme et façon d'avancer de l'adulte) -->
@@ -485,6 +666,7 @@
                 name="kind"
                 value="parent"
                 bind:group={kind}
+                disabled={!!assistee}
                 data-testid="type-parent"
               />
               <span class="option-txt"
@@ -498,6 +680,7 @@
                 name="kind"
                 value="adulte"
                 bind:group={kind}
+                disabled={!!assistee}
                 data-testid="type-adulte"
               />
               <span class="option-txt"
@@ -512,6 +695,7 @@
             <select
               id="country"
               bind:value={country}
+              disabled={!!assistee?.pays}
               onchange={() => {
                 region = '';
                 effacer('region');

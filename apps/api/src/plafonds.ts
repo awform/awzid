@@ -68,8 +68,9 @@ export async function tableauComptes(db: Db): Promise<TableauComptes> {
       adultes: sql<number>`count(*) filter (where ${t.account.kind} = 'adulte')::int`,
       h24: sql<number>`count(*) filter (where ${t.account.createdAt} >= ${j(86_400_000)})::int`,
       j7: sql<number>`count(*) filter (where ${t.account.createdAt} >= ${j(7 * 86_400_000)})::int`,
-      nv: sql<number>`count(*) filter (where ${t.account.emailVerifiedAt} is null)::int`,
-      nvr: sql<number>`count(*) filter (where ${t.account.emailVerifiedAt} is null and ${t.account.createdAt} < ${j(86_400_000)})::int`,
+      // 18/10/2026 : un compte ouvert par numéro (sans adresse) est vérifié par son numéro
+      nv: sql<number>`count(*) filter (where ${t.account.emailVerifiedAt} is null and not (${t.account.email} is null and ${t.account.phoneVerifiedAt} is not null))::int`,
+      nvr: sql<number>`count(*) filter (where ${t.account.emailVerifiedAt} is null and not (${t.account.email} is null and ${t.account.phoneVerifiedAt} is not null) and ${t.account.createdAt} < ${j(86_400_000)})::int`,
     })
     .from(t.account)
     .where(base);
