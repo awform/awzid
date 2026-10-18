@@ -9,6 +9,25 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 18/10/2026 — Préparation de la mise en ligne de la bêta : fusion de `tel-wip`, `fix-tournage-wip` et `src-wip`, livres audités, Madjaliss, audio ; NON déployé
+
+Demande du client (mise en ligne de la bêta). Périmètre : jusqu'au SHA prêt ; **`awzid-beta` non touché** (ni gcloud, ni `deployer-beta.sh`), démo de la VM non redéployée. Aucun compte réel, aucun e-mail, aucun secret lu. Non touché : `infra/charge/purger-comptes-fictifs.sh` (modifié sans commit dans `~/awform-demo`).
+
+- **Fusions** (une à la fois, étiquettes `avant-tel`, `avant-fix-tournage`, `avant-src` envoyées vers origin) :
+  - `tel-wip` (`e873abd`) : sans conflit ; 6 captures de maquettes versées sous `apps/web/C:UsersAbdoulaye/` retirées (`72f8632`).
+  - `fix-tournage-wip` (`06d9c69`) : sans conflit.
+  - `src-wip` (`48927d3`) : conflits avec tel résolus en gardant les deux ajouts (routes d'inscription, schéma du compte) ; migration de la provenance **renumérotée `0052_provenance`** (mêmes instructions SQL, snapshot régénéré par drizzle-kit). Test de src jamais lancé sur une base corrigé (`2b1a4db` : l'acceptation d'une demande répond 200, pas 201).
+- **Budget de poids** (`8d981b6`) : avec les trois branches, marge de l'appareil élève 2,1 Ko (< 3). Cause : « Aujourd'hui » partage `EpreuvesCarte` et `$lib/devoirs` avec « Ma classe » ; ces modules partaient dans le morceau de l'espace « connexion », que la page de l'élève importait en entier (page de connexion, entrées Google et WhatsApp, ~4 Ko). Deux morceaux propres (`A_PART`) : **345,0 Ko, marge 5,0 Ko**, première ouverture 113,1 Ko, page la plus lourde 148,9 Ko, 3G 1,81 s. Nouveau test `e2e/identites-a-la-demande.spec.ts`.
+- **Livres** : `awform\data` (source de vérité, audit du 18/10) copiés dans `~/awform-content` par `sync-content.ps1` (1 182 fichiers ; ancienne copie `~/awform-content.avant-18-10`) ; contrôle des 31 niveaux : 3 825 versets identiques à Tanzil, 0 erreur bloquante. Scénarios « Je parle » régénérés (474, 0 écart).
+- **Madjaliss** (`03bd7ba`, `667286d`) : sources du référent (cycles 1-2 audités, shadda→voyelle), Risāla réassemblée (78 fichiers bruts, `seances.json` du référent : 265 séances, 72 publiables), index audio réindexé. ʿIzziyya : mots translittérés ajoutés le 18/10 dans les notes d'IZZ-0138, IZZ-0188, IZZ-0358 convertis en `{ar:K}` (arabe recopié par programme du texte de la ʿIzziyya et du lexique commun ; noun, damma, fatha francisés) : 469 mots pour un plafond de 473 ; même modification dans la source Windows. MP3 IZZ-0437, JAZ-0026, JAZ-0048, JAZ-0072 régénérés (garde Coran : 0 refus) : **1 483 phrases servies**. Tests : Risāla 0 phrase incertaine (levée des notes du 18/10), `note_info` 98.
+- **Audio des leçons** (`gen-audio.ps1 -Extraire -Waqf`) : **30 MP3 nouveaux** (ad3 l23 Ḥalīma, ad4 l12 réplique de l'imam, ad6-ad9, en3, en5, ra1-ra4, re2, re3) ; index 16 189 entrées. Le générateur ignore désormais les textes vides ou faits de points de suspension (le MP3 de « … », ad7/ad8, retiré). **Exception documentée** : ra1 l05 `MATN_RIS_b01_1` reste sans audio (garde Coran, décision du 14/10). Copie VM : `~/lecons-audio` (anciennes versions : `~/lecons-audio.avant-18-10/`).
+- **Vérifications** (sous `flock`) : build, typecheck, lint : 0 erreur ; unitaires **2 347 réussis, 1 ignoré** (`beta-infra` « essai local de Caddy » a échoué une fois dans la suite complète et passe seul : 21/21). e2e COMPLÈTE (`--retries=1 --workers=3`, 22 min) : **789 réussis, 145 ignorés, 1 échec, 3 instables** ; échec : `lot29:42` (axe, mode sombre), préexistant et toléré depuis le 13/10, échoue aussi seul ; instables passés au second essai : `f5-reseau:181`, `maj-fiable:198`, `madjaliss-textes:442`.
+- **Captures** (`W\application\beta\captures_18-10\`, harnais e2e de la VM, vrais livres) : Al-Ikhlāṣ 112:4 dans les adhkār du matin en Amiri Quran (fin `064C 06E2` : tanwīn puis petit mīm, rendu vérifié) ; bilan ad1.l11 ; Risāla séance 20 ; inscription et connexion **interrupteurs éteints** (e-mail seul, ni Google ni WhatsApp) et allumés (essai).
+- **Migrations nouvelles pour la bêta** : `0051_identites`, `0052_provenance` : ajouts seuls (expand), l'API précédente tourne sur la base migrée ; retour manuel en tête de chaque fichier (0051 : supprime les demandes sans adresse e-mail avant de remettre `waitlist.email NOT NULL`).
+- **À envoyer sur le serveur** : images de la version ; `infra/prod`, `infra/gcp` ; `~/awform-content` (manifeste changé) ; `~/lecons-audio/index.js`, `liste.csv` et les 30 MP3 nouveaux ; `~/madjaliss-audio/index_madjaliss.json` et les 4 MP3 refaits. Puis `AWFORM_VERSION=<sha> bash ~/awform-app/infra/gcp/deployer-beta.sh` (EXPLOITATION § 15 « Mise à jour »).
+
+---
+
 ## 18/10/2026 — Correction des défauts repérés au tournage (branche `fix-tournage-wip`, depuis `main` 7b0d5cd)
 
 Liste : `application\beta\BUGS_APPLI_18-10.md`. Rien fusionné dans `main`, rien déployé. Aucun secret lu, aucun compte réel.
