@@ -809,10 +809,11 @@ describe('lot 3 : publication différée, hadiths, Bayqūniyya, Waraqāt, mots a
       lire<{ phrases: Array<{ id: string; note_explication?: SrcNote | SrcNote[] }> }>(
         join(dossier(id), 'traduction_fr.json'),
       ).phrases;
-    // Ibn ʿĀshir : 24 notes, ʿIzziyya : 4 notes
+    // Ibn ʿĀshir : 24 notes, ʿIzziyya : 7 notes (18/10 : + IZZ-0138, IZZ-0188, IZZ-0358, mots translittérés de l'audit
+    // final convertis par décision du référent)
     for (const [id, n] of [
       ['ibn-ashir', 24],
-      ['izziyya', 4],
+      ['izziyya', 7],
     ] as const) {
       const avec = lireFr(id).filter((p) =>
         [p.note_explication ?? []].flat().some((x) => x.mots_ar),

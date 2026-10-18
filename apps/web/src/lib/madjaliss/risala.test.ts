@@ -424,7 +424,9 @@ describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseigna
   it('notes de l’enseignant : vocalisations à confirmer, écarts au mashhūr, relectures demandées', () => {
     expect(ens.version).toBe(index.version);
     const incertaines = complet.phrases.filter((p) => p.incertain).length;
-    expect(incertaines).toBe(217); // 16/10 : 42 lectures levées par le référent (299 → 259 le 15/10)
+    // 18/10 : levée de toutes les notes de lecture restantes par le référent (cycle 3 : 214/214) ; avant :
+    // 217 le 16/10 (42 lectures levées), 259 le 15/10, 299 au départ
+    expect(incertaines).toBe(0);
     expect(ens.phrases.filter((x) => x.a_verifier.length).length).toBeGreaterThanOrEqual(
       incertaines,
     );
@@ -434,8 +436,12 @@ describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseigna
 
   it('lot 10 : `note_info` = note d’information de l’enseignant, jamais « à vérifier » ni « incertaine »', () => {
     const avecInfo = srcAr.phrases.filter((p) => p.note_info?.length);
-    expect(avecInfo.map((p) => p.id).sort()).toEqual(
-      [
+    // 18/10 : la levée des notes du cycle 3 a fait de 84 notes de lecture des notes d'information : 98 en tout ;
+    // les 14 du lot 10 restent
+    const ids = avecInfo.map((p) => p.id);
+    expect(ids).toHaveLength(98);
+    expect(ids).toEqual(
+      expect.arrayContaining([
         'RIS-0053',
         'RIS-0064',
         'RIS-0101',
@@ -450,7 +456,7 @@ describe('ar-Risāla : publication différée (cycle 3), niveau adulte, enseigna
         'RIS-0727',
         'RIS-0741',
         'RIS-0755',
-      ].sort(),
+      ]),
     );
     const notesEns = new Map(ens.phrases.map((x) => [x.id, x]));
     for (const s of avecInfo) {
