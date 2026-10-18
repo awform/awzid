@@ -117,7 +117,15 @@ export default defineConfig({
               test: new RegExp(`${m}\\.(svelte|ts|js)(\\?.*)?$`),
               priority: 35,
             })),
-            { name: 'commun', minShareCount: 3, priority: 30 },
+            {
+              name: 'commun',
+              minShareCount: 3,
+              priority: 30,
+              // 18/10/2026 : les écrans d'entrée (Google, numéro WhatsApp, codes de récupération) et les règles des numéros
+              // servent à plusieurs pages RARES (inscription, connexion, accès, compte) : jamais dans le morceau commun
+              // préchargé sur l'appareil de l'élève, ils restent chargés à la demande
+              test: (id: string) => !/lib\/identites\/|school\/dist\/telephone/.test(id),
+            },
             ...Object.entries(A_PART).map(([name, m]) => ({
               name,
               // le module ET sa feuille de style (`…svelte?svelte&type=style&lang.css`)

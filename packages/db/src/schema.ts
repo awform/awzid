@@ -475,9 +475,21 @@ export const account = pgTable(
      * l'Union européenne). Étiquette posée dès maintenant pour qu'un hébergement local futur reste possible.
      */
     dataRegion: text('data_region').notNull().default('eu'),
+    /**
+     * Inscription par numéro WhatsApp (18/10/2026) : numéro E.164 CHIFFRÉ au repos (AES-256-GCM, clé du serveur) ;
+     * `phone_hash` = HMAC-SHA-256 du numéro (clé du serveur) pour l'unicité et la recherche, jamais le numéro en clair.
+     */
+    phoneEnc: text('phone_enc'),
+    phoneHash: text('phone_hash'),
+    /** numéro vérifié (message WhatsApp reçu de ce numéro, ou code reçu) ; revérifié après une longue absence */
+    phoneVerifiedAt: timestamp('phone_verified_at', { withTimezone: true }),
+    /** dernière connexion réussie (revérification du numéro après une longue absence : numéros recyclés) */
+    lastLoginAt: timestamp('last_login_at', { withTimezone: true }),
   },
   (t) => [
     uniqueIndex('account_email').on(t.email),
+    uniqueIndex('account_phone').on(t.phoneHash),
+    check('account_phone_pair', sql`(${t.phoneHash} IS NULL) = (${t.phoneEnc} IS NULL)`),
     check('account_region', sql`${t.region} IS NULL OR ${t.region} ~ '^[A-Z]{2}-[A-Z0-9]{1,3}$'`),
     check('account_data_region', sql`${t.dataRegion} ~ '^[a-z]{2,10}$'`),
     check(
@@ -699,6 +711,111 @@ export const accountToken = pgTable(
       'account_link_purpose',
       sql`${t.purpose} IN ('verification_email', 'reinitialisation', 'changement_email')`,
     ),
+  ],
+);
+
+/**
+ * Vérification d'un NUMÉRO (18/10/2026). Deux canaux :
+ *  - « entrant » (défaut, gratuit) : la personne ENVOIE depuis son WhatsApp un message pré-rempli « AWZID <code> » à
+ *    Awzid ; le webhook compare le numéro de l'expéditeur et le code, puis valide ;
+ *  - « sortant » (secours payant, éteint par défaut) : un code à 6 chiffres est ENVOYÉ au numéro et ressaisi.
+ * Code et jeton de la page HACHÉS (HMAC, clé du serveur) ; 10 minutes ; 3 essais (sortant) ; usage unique
+ * (`consumed_at`). Numéro chiffré (`phone_enc`) et empreinte (`phone_hash`) comme sur le compte. Effacé après 72 h.
+ * Validation MANUELLE (bêta, AWFORM_TELEPHONE_MANUEL=on) : l'administrateur compare le code reçu et valide (48 h).
+ */
+export const PHONE_CHALLENGE_PURPOSES = [
+  'inscription',
+  'reinitialisation',
+  'reverification',
+  'ajout_numero',
+  'liste_attente',
+] as const;
+export const phoneChallenge = pgTable(
+  'phone_challenge',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    purpose: text('purpose', { enum: PHONE_CHALLENGE_PURPOSES }).notNull(),
+    channel: text('channel', { enum: ['entrant', 'sortant'] }).notNull(),
+    phoneHash: text('phone_hash').notNull(),
+    phoneEnc: text('phone_enc').notNull(),
+    /** compte concerné quand il est connu (ajout d'un numéro, revérification) ; jamais déduit du numéro */
+    accountId: uuid('account_id').references(() => account.id, { onDelete: 'cascade' }),
+    codeHash: text('code_hash').notNull(),
+    /**
+     * VALIDATION MANUELLE (bêta, sans Meta) : code attendu CHIFFRÉ, montré au seul administrateur qui compare avec le
+     * message reçu sur le WhatsApp Business d'Awzid ; null pour le canal « sortant » (le code n'est jamais relisible)
+     */
+    codeEnc: text('code_enc'),
+    /** validé à la main par un administrateur (journal d'audit) ; refusé : expiré aussitôt */
+    validatedBy: uuid('validated_by').references(() => account.id, { onDelete: 'set null' }),
+    /** jeton de la page qui attend la validation (seule son empreinte) */
+    pollHash: text('poll_hash').notNull(),
+    attempts: integer('attempts').notNull().default(0),
+    sends: integer('sends').notNull().default(0),
+    lastSentAt: timestamp('last_sent_at', { withTimezone: true }),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    validatedAt: timestamp('validated_at', { withTimezone: true }),
+    consumedAt: timestamp('consumed_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('phone_challenge_phone').on(t.phoneHash, t.createdAt),
+    index('phone_challenge_code').on(t.codeHash),
+    check(
+      'phone_challenge_purpose',
+      sql`${t.purpose} IN ('inscription', 'reinitialisation', 'reverification', 'ajout_numero', 'liste_attente')`,
+    ),
+    check('phone_challenge_channel', sql`${t.channel} IN ('entrant', 'sortant')`),
+  ],
+);
+
+/**
+ * Codes de RÉCUPÉRATION (gratuits, sans aucun envoi) : 8 codes à usage unique remis à l'inscription par numéro (à
+ * recopier sur papier), régénérables depuis le compte ; seule l'empreinte (HMAC, clé du serveur) est gardée.
+ */
+export const recoveryCode = pgTable(
+  'recovery_code',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    accountId: uuid('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    codeHash: text('code_hash').notNull(),
+    usedAt: timestamp('used_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [index('recovery_code_account').on(t.accountId)],
+);
+
+/**
+ * Identités EXTERNES liées à un compte (18/10/2026 : « Continuer avec Google », OpenID Connect). `subject` =
+ * identifiant stable chez le fournisseur (`sub`), `email` = adresse vérifiée transmise (export RGPD). Une identité
+ * ne sert qu'à un compte, un compte n'a qu'une identité par fournisseur ; effacée avec le compte.
+ */
+export const accountIdentity = pgTable(
+  'account_identity',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    accountId: uuid('account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    provider: text('provider', { enum: ['google'] }).notNull(),
+    subject: text('subject').notNull(),
+    email: text('email'),
+    name: text('name'),
+    createdAt: createdAt(),
+    lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('account_identity_subject').on(t.provider, t.subject),
+    uniqueIndex('account_identity_account').on(t.accountId, t.provider),
+    check('account_identity_provider', sql`${t.provider} IN ('google')`),
   ],
 );
 
@@ -2899,10 +3016,24 @@ export const invitation = pgTable(
     waitlistId: uuid('waitlist_id'),
     /** lot 6 : groupe attribué au compte créé avec cette invitation (« beta_fermee »), vide = aucun */
     groupe: text('groupe'),
+    /** 18/10/2026 : invitation PERSONNELLE par numéro (empreinte HMAC) et sa forme masquée (liste de l'administrateur) */
+    phoneHash: text('phone_hash'),
+    phoneMask: text('phone_mask'),
+    /**
+     * INSCRIPTION ASSISTÉE (18/10/2026) : un administrateur prépare le compte d'une famille — type (parent | adulte),
+     * pays, et numéro CHIFFRÉ (repris sur le compte à l'activation) ; lien personnel à usage unique, 7 jours.
+     */
+    phoneEnc: text('phone_enc'),
+    assistedKind: text('assisted_kind'),
+    assistedCountry: text('assisted_country'),
     createdAt: createdAt(),
   },
   (t) => [
     index('invitation_created').on(t.createdAt),
+    check(
+      'invitation_assisted_kind',
+      sql`${t.assistedKind} IS NULL OR ${t.assistedKind} IN ('parent', 'adulte')`,
+    ),
     check('invitation_groupe', sql`${t.groupe} IS NULL OR ${t.groupe} IN ('beta_fermee')`),
     check('invitation_max_uses', sql`${t.maxUses} BETWEEN 1 AND 1000`),
     check('invitation_uses', sql`${t.uses} >= 0 AND ${t.uses} <= ${t.maxUses}`),
@@ -2935,7 +3066,12 @@ export const waitlist = pgTable(
     id: uuid('id')
       .primaryKey()
       .default(sql`uuidv7()`),
-    email: text('email').notNull().unique(),
+    /** adresse (minuscules) OU numéro (18/10/2026) : l'un des deux au moins */
+    email: text('email').unique(),
+    /** numéro chiffré, empreinte (unicité), forme masquée (liste de l'administrateur) */
+    phoneEnc: text('phone_enc'),
+    phoneHash: text('phone_hash').unique(),
+    phoneMask: text('phone_mask'),
     name: text('name'),
     note: text('note'),
     locale: text('locale').notNull().default('fr'),
@@ -2955,5 +3091,6 @@ export const waitlist = pgTable(
     check('waitlist_status_check', sql`${t.status} IN ('en_attente', 'acceptee', 'refusee')`),
     check('waitlist_note', sql`${t.note} IS NULL OR char_length(${t.note}) <= 500`),
     check('waitlist_name', sql`${t.name} IS NULL OR char_length(${t.name}) <= 80`),
+    check('waitlist_contact', sql`${t.email} IS NOT NULL OR ${t.phoneHash} IS NOT NULL`),
   ],
 );

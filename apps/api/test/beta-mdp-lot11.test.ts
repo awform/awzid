@@ -139,6 +139,9 @@ describe.skipIf(!URL)(
           'id',
           'libelle',
           'max',
+          // 18/10/2026 : invitation par numéro (forme masquée) et inscription assistée (type préparé)
+          'numero',
+          'assistee',
           'revoqueeLe',
           'usages',
         ].sort(),

@@ -19,6 +19,11 @@ export interface AccesStatut {
   verification: 'requise' | 'souple';
   antibot: 'on' | 'off';
   admin: boolean;
+  /** 18/10/2026 : façons d'entrer offertes (interrupteurs du serveur) */
+  google?: boolean;
+  telephone?: boolean;
+  telephoneEnvoi?: boolean;
+  telephoneManuel?: boolean;
 }
 
 let courant: Promise<AccesStatut | null> | null = null;

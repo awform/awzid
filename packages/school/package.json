@@ -12,6 +12,10 @@
     "./mot-de-passe": {
       "types": "./dist/mot-de-passe.d.ts",
       "default": "./dist/mot-de-passe.js"
+    },
+    "./telephone": {
+      "types": "./dist/telephone.d.ts",
+      "default": "./dist/telephone.js"
     }
   },
   "files": [

@@ -15,6 +15,7 @@ import {
 } from '@awform/db';
 import { countryRules, COUNTRY_CODE, isCountry } from './policy.js';
 import { audit, clearCookie, revokeAll } from './service.js';
+import { dechiffrer } from '../identites/cles.js';
 
 import { err, OPTIONAL_CONSENTS, WITHDRAWABLE_CONSENTS, type AuthKit } from './common.js';
 
@@ -213,6 +214,22 @@ export function registerPrivacy(app: FastifyInstance, kit: AuthKit): void {
         region: a?.region ?? null,
         fuseauHoraire: a?.tz ?? null,
         regionDesDonnees: a?.dataRegion,
+        // 18/10/2026 : numéro WhatsApp (en clair dans l'export : c'est le vôtre), vérifié le ; liaison Google
+        telephone: dechiffrer(kit.cle ?? null, a?.phoneEnc),
+        telephoneVerifieLe: a?.phoneVerifiedAt ?? null,
+        derniereConnexion: a?.lastLoginAt ?? null,
+        google:
+          (
+            await db
+              .select({
+                email: t.accountIdentity.email,
+                nom: t.accountIdentity.name,
+                lieeLe: t.accountIdentity.createdAt,
+                utiliseeLe: t.accountIdentity.lastUsedAt,
+              })
+              .from(t.accountIdentity)
+              .where(eq(t.accountIdentity.accountId, id))
+          )[0] ?? null,
       },
       profils: profiles,
       consentements: consents,
@@ -265,12 +282,17 @@ export function registerPrivacy(app: FastifyInstance, kit: AuthKit): void {
       // les 30 jours qui précèdent l'effacement définitif)
       await db
         .update(t.account)
-        .set({ deletedAt: new Date(), email: null })
+        // 18/10/2026 : le numéro aussi (chiffré et empreinte) : réinscription possible, rien à retrouver
+        .set({ deletedAt: new Date(), email: null, phoneEnc: null, phoneHash: null })
         .where(eq(t.account.id, a.id));
       await withdrawAccount(db, a.id);
       await revokeAll(db, a.id);
       // lot F3 : plus aucun lien envoyé par e-mail ne vaut (réinitialisation, vérification)
       await db.delete(t.accountToken).where(eq(t.accountToken.accountId, a.id));
+      // 18/10/2026 : liaison Google, codes de récupération et vérifications de numéro effacés aussitôt
+      await db.delete(t.accountIdentity).where(eq(t.accountIdentity.accountId, a.id));
+      await db.delete(t.recoveryCode).where(eq(t.recoveryCode.accountId, a.id));
+      await db.delete(t.phoneChallenge).where(eq(t.phoneChallenge.accountId, a.id));
       await audit(db, a.id, 'compte.suppression_demandee');
       reply.header('Set-Cookie', clearCookie(secureFor(req)));
       return { ok: true, effacementDefinitif: new Date(Date.now() + 30 * 86400_000).toISOString() };

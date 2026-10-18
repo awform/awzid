@@ -26,6 +26,12 @@ const SECRETS = new Set([
   'attachmentIv',
   'p256dh',
   'auth',
+  // 18/10/2026 : numéro chiffré et empreintes (le numéro EN CLAIR est donné dans « compte » de l'export), codes
+  'phoneEnc',
+  'phoneHash',
+  'codeHash',
+  'pollHash',
+  'codeEnc',
 ]);
 
 /** colonnes « auteur d'une action sur autrui » : n'identifient pas la personne concernée */

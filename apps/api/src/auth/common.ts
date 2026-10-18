@@ -81,4 +81,6 @@ export interface AuthKit {
   setSession: (reply: FastifyReply, accountId: string, kind: string, mfa: boolean) => Promise<void>;
   /** lot F3 : envoi (après la réponse) du lien de vérification de l'adresse ; posé par registerRecovery */
   sendVerification?: (accountId: string, email: string, locale: string) => void;
+  /** 18/10/2026 : clé du serveur (numéros chiffrés : export RGPD) */
+  cle?: Buffer | null;
 }

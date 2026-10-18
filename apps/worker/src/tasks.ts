@@ -8,6 +8,7 @@ import {
   purgeExpiredRecitations,
   purgeF5,
   purgeListeAttente,
+  purgePhoneChallenges,
   purgeProblemes,
   purgeRetention,
   purgeTutorLog,
@@ -55,5 +56,7 @@ export async function nightlyPurge(db: Db, now = new Date()) {
     problemes: await purgeProblemes(db, now),
     // bêta fermée : demandes de la liste d'attente de plus de 12 mois
     listeAttente: await purgeListeAttente(db, now),
+    // 18/10/2026 : vérifications de numéro (numéro chiffré, empreintes des codes) : 72 h
+    verificationsNumero: await purgePhoneChallenges(db, now),
   };
 }

@@ -38,6 +38,8 @@ import {
   createInvitation,
   decideWaitlist,
   deleteWaitlist,
+  demanderAttenteTelephone,
+  invitationAssistee,
   getWaitlist,
   inscriptionEffective,
   listInvitations,
@@ -63,6 +65,10 @@ import { err, UUID } from './guards.js';
 import type { Mailer } from './mail/envoi.js';
 import { renderMail } from './mail/modeles.js';
 import { coutsDuJour, listePlafonds, tableauComptes } from './plafonds.js';
+import { lienWhatsapp, masquerTelephone, normaliserTelephone } from '@awform/school/telephone';
+import { dechiffrer, phoneHashOf, chiffrer } from './identites/cles.js';
+import { consommerDefi, enAttenteManuelle, envoisDuJour, type CtxTel } from './identites/defis.js';
+import { DEFI_SCHEMA } from './identites/routes-telephone.js';
 
 /** Chemins de l'API qui restent joignables quand le site est fermé (le reste répond 503 aux non-administrateurs). */
 const OUVERT_FERME = /^\/api\/v1\/(health|acces\/(statut|jeton)|auth\/|admin\/|billing\/webhook\/)/;
@@ -74,12 +80,20 @@ const CONTENU_FERME_AUX_ANONYMES =
   /^\/api\/v1\/(levels|units|packs|booklets|quran|hifz\/books|vivre|lecons-audio|adhkar)(\/|\?|$)/;
 /** Chemins accessibles à un compte dont l'adresse n'est pas encore vérifiée. */
 const OUVERT_NON_VERIFIE =
-  /^\/api\/v1\/(health|acces\/|auth\/|account\/email|admin\/|billing\/webhook\/|config|pays|public)/;
+  /^\/api\/v1\/(health|acces\/|auth\/|account\/(email|telephone|codes-secours)|tel\/|admin\/|billing\/webhook\/|config|pays|public)/;
 
 export function registerBetaAcces(
   app: FastifyInstance,
   db: Db,
-  opts: { mailer: Mailer; publicUrl: string | null; secretKey?: Buffer | null },
+  opts: {
+    mailer: Mailer;
+    publicUrl: string | null;
+    secretKey?: Buffer | null;
+    /** 18/10/2026 : numéro WhatsApp actif (liste d'attente et invitations par numéro) ; null : inactif */
+    telephone?: CtxTel | null;
+    /** 18/10/2026 : « Continuer avec Google » configuré */
+    google?: boolean;
+  },
 ): void {
   // défaut de l'environnement : AWFORM_ACCES = ouvert (défaut) | invitation | ferme ; AWFORM_BANDEAU = on | off ;
   // AWFORM_PLAFOND_COMPTES (défaut 200) ; AWFORM_VERIFICATION = souple | requise ; AWFORM_ANTIBOT = off | on
@@ -92,6 +106,21 @@ export function registerBetaAcces(
     qfEnfants: process.env.AWFORM_QF_PROFILS_ENFANTS,
   });
   const courrielActif = opts.mailer.mode !== 'inactif';
+  const tel = opts.telephone?.cfg.actif ? opts.telephone : null;
+  /** message d'invitation à envoyer soi-même par WhatsApp (lien « wa.me » gratuit, ouvert par l'administrateur) */
+  const lienWa = (e164: string, lien: string | null, locale: string) =>
+    lien ? lienWhatsapp(e164, renderMail('invitation', locale, { link: lien }).text) : null;
+  async function envoyerWhatsapp(e164: string, code: string, locale: string): Promise<boolean> {
+    const link = lienDe(code);
+    if (!link || !tel?.cfg.envoi) return false;
+    try {
+      await tel.expediteur.send({ to: e164, kind: 'invitation', link, locale });
+      return true;
+    } catch {
+      app.log.warn('envoi WhatsApp de l’invitation en échec');
+      return false;
+    }
+  }
 
   // ---------------------------------------------------------------- mode fermé et adresse non vérifiée
   const verifies = new Map<string, number>(); // comptes vérifiés (30 s de mémoire)
@@ -124,10 +153,15 @@ export function registerBetaAcces(
       const vu = verifies.get(a.accountId);
       if (vu && Date.now() - vu < 30_000) return;
       const [row] = await db
-        .select({ v: t.account.emailVerifiedAt })
+        .select({
+          v: t.account.emailVerifiedAt,
+          tel: t.account.phoneVerifiedAt,
+          email: t.account.email,
+        })
         .from(t.account)
         .where(eq(t.account.id, a.accountId));
-      if (row?.v) {
+      // 18/10/2026 : un compte ouvert par numéro (sans adresse) est vérifié par son numéro
+      if (row?.v || (row && !row.email && row.tel)) {
         verifies.set(a.accountId, Date.now());
         return;
       }
@@ -191,6 +225,11 @@ export function registerBetaAcces(
       bandeau: acces.bandeau,
       verification: acces.verification === 'requise' && courrielActif ? 'requise' : 'souple',
       antibot: acces.antibot,
+      // 18/10/2026 : façons d'entrer offertes (chacune derrière son interrupteur ; l'e-mail toujours)
+      google: !!opts.google,
+      telephone: !!tel,
+      telephoneEnvoi: !!tel?.cfg.envoi,
+      telephoneManuel: !!tel?.cfg.manuel,
     };
   }
 
@@ -233,13 +272,28 @@ export function registerBetaAcces(
         await recordFailure(db, key, INVITATION_TRIES_PER_HOUR);
         return err(reply, 403, r.raison);
       }
-      return { valide: true, personnelle: r.personnelle };
+      // inscription ASSISTÉE : type de compte, pays et numéro (masqué) préparés par l'administrateur
+      const a = await invitationAssistee(db, req.body.code);
+      return {
+        valide: true,
+        personnelle: r.personnelle,
+        ...(a
+          ? {
+              assistee: {
+                kind: a.kind,
+                pays: a.country,
+                numero: masquerTelephone(dechiffrer(opts.secretKey ?? null, a.phoneEnc)),
+              },
+            }
+          : {}),
+      };
     },
   );
 
   app.post<{
     Body: {
-      email: string;
+      email?: string;
+      defi?: { id: string; jeton: string };
       nom?: string;
       mot?: string;
       langue?: string;
@@ -253,10 +307,12 @@ export function registerBetaAcces(
       schema: {
         body: {
           type: 'object',
-          required: ['email', 'consentement'],
+          required: ['consentement'],
           additionalProperties: false,
           properties: {
             email: { type: 'string', maxLength: 254, pattern: EMAIL },
+            // 18/10/2026 : OU un numéro WhatsApp vérifié (le message envoyé vaut double consentement)
+            defi: DEFI_SCHEMA,
             nom: { type: 'string', maxLength: 80 },
             mot: { type: 'string', maxLength: 500 },
             langue: { type: 'string', maxLength: 10 },
@@ -286,18 +342,34 @@ export function registerBetaAcces(
       const langue = ['fr', 'en', 'es', 'de', 'ar'].includes(req.body.langue ?? '')
         ? req.body.langue
         : 'fr';
+      if (!!req.body.email === !!req.body.defi) return err(reply, 400, 'identifiant_requis');
+      if (req.body.defi) {
+        if (!tel) return err(reply, 404, 'telephone_inactif');
+        const v = await consommerDefi(tel, req.body.defi, 'liste_attente');
+        if (!v) return err(reply, 400, 'verification_invalide');
+        await demanderAttenteTelephone(db, {
+          phoneHash: v.phoneHash,
+          phoneEnc: v.phoneEnc,
+          phoneMask: masquerTelephone(v.e164) ?? '',
+          name: req.body.nom,
+          note: req.body.mot,
+          locale: langue,
+        });
+        return reply.code(202).send({ ok: true });
+      }
+      const email = req.body.email!;
       // double consentement : la demande n'est « confirmée » (et visible de l'administrateur) qu'après le clic sur le lien
       // envoyé à l'adresse ; jeton aléatoire, seule son empreinte est gardée ; non confirmée, elle est effacée sous 7 jours
       const jeton = randomBytes(32).toString('base64url');
       const etat = await demanderAttente(db, {
-        email: req.body.email,
+        email,
         name: req.body.nom,
         note: req.body.mot,
         locale: langue,
         tokenHash: waitlistTokenHash(jeton),
       });
       if (etat !== 'existe')
-        void envoyerConfirmationAttente(req.body.email.trim().toLowerCase(), jeton, langue ?? 'fr');
+        void envoyerConfirmationAttente(email.trim().toLowerCase(), jeton, langue ?? 'fr');
       // réponse identique que l'adresse soit nouvelle ou déjà dans la liste
       return reply.code(202).send({ ok: true });
     },
@@ -425,7 +497,22 @@ export function registerBetaAcces(
       alertes.push({ code: 'courriel_inactif', niveau: 'attention' });
     if (couts.estimeJourEur >= couts.seuilAlerteEur)
       alertes.push({ code: 'cout_jour_eleve', niveau: 'critique' });
+    // 18/10/2026 : envois WhatsApp PAYANTS du jour (secours) sous leur plafond ; numéros à valider à la main
+    const telephone = tel
+      ? {
+          envoisJour: await envoisDuJour(db),
+          plafondJour: tel.cfg.plafondJour,
+          envoi: tel.cfg.envoi,
+          aValider: tel.cfg.manuel ? (await enAttenteManuelle(tel)).length : 0,
+        }
+      : null;
+    if (telephone?.envoi && telephone.envoisJour >= telephone.plafondJour)
+      alertes.push({ code: 'tel_plafond_atteint', niveau: 'critique' });
+    else if (telephone?.envoi && telephone.envoisJour >= telephone.plafondJour * 0.8)
+      alertes.push({ code: 'tel_plafond_proche', niveau: 'attention' });
+    if ((telephone?.aValider ?? 0) > 0) alertes.push({ code: 'tel_a_valider', niveau: 'info' });
     return {
+      telephone,
       mode: modeDe(acces),
       verification: acces.verification,
       antibot: acces.antibot,
@@ -446,6 +533,9 @@ export function registerBetaAcces(
       envoyer?: boolean;
       langue?: string;
       groupe?: (typeof GROUPES_INVITATION)[number];
+      numero?: string;
+      pays?: string;
+      assistee?: 'parent' | 'adulte';
     };
   }>(
     '/api/v1/admin/invitations',
@@ -456,6 +546,11 @@ export function registerBetaAcces(
           type: 'object',
           additionalProperties: false,
           properties: {
+            // 18/10/2026 : invitation personnelle par NUMÉRO (sans indicatif : lu dans « pays », défaut Sénégal)
+            numero: { type: 'string', maxLength: 32 },
+            pays: { type: 'string', pattern: '^[A-Z]{2}$' },
+            // INSCRIPTION ASSISTÉE : l'administrateur prépare le compte (type ; pays ci-dessus), lien de 7 jours
+            assistee: { enum: ['parent', 'adulte'] },
             // lot 6 : groupe attribué au compte qui s'inscrit avec cette invitation
             groupe: { enum: [...GROUPES_INVITATION] },
             libelle: { type: 'string', maxLength: 80 },
@@ -471,29 +566,55 @@ export function registerBetaAcces(
     },
     async (req, reply) => {
       const b = req.body;
-      // une invitation personnelle (adresse) n'a qu'un usage
-      const max = b.adresse ? 1 : (b.max ?? 1);
+      if (b.adresse && b.numero) return err(reply, 400, 'identifiant_multiple');
+      let e164: string | null = null;
+      let paysNumero: string | null = null;
+      if (b.numero) {
+        if (!opts.secretKey) return err(reply, 503, 'telephone_inactif');
+        const n = normaliserTelephone(b.numero, b.pays ?? 'SN');
+        if (!n.ok) return err(reply, 400, `numero_${n.raison}`);
+        e164 = n.e164;
+        paysNumero = n.pays;
+      }
+      // une invitation personnelle (adresse ou numéro) ou assistée n'a qu'un usage
+      const personnelle = !!b.adresse || !!e164;
+      const max = personnelle || b.assistee ? 1 : (b.max ?? 1);
       const inv = await createInvitation(db, {
         label: b.libelle,
         email: b.adresse,
         maxUses: max,
-        days: b.jours,
+        // inscription assistée : lien personnel de 7 jours (sauf durée choisie plus courte)
+        days: b.assistee ? Math.min(b.jours || 7, 7) : b.jours,
         by: req.auth!.accountId,
         groupe: b.groupe ?? null,
+        phoneHash: e164 ? phoneHashOf(opts.secretKey!, e164) : null,
+        phoneMask: e164 ? masquerTelephone(e164) : null,
+        phoneEnc: e164 && b.assistee ? chiffrer(opts.secretKey!, e164) : null,
+        assistedKind: b.assistee ?? null,
+        assistedCountry: b.assistee ? (b.pays ?? paysNumero) : null,
       });
       await audit(db, req.auth!.accountId, 'invitation.creation', inv.id, {
         max,
-        personnelle: !!b.adresse,
+        personnelle,
+        ...(e164 ? { numero: true } : {}),
+        ...(b.assistee ? { assistee: b.assistee } : {}),
         ...(b.groupe ? { groupe: b.groupe } : {}),
       });
+      const langue = b.langue ?? 'fr';
       const envoye =
-        b.adresse && b.envoyer ? await envoyer(b.adresse, inv.code, b.langue ?? 'fr') : false;
+        b.adresse && b.envoyer
+          ? await envoyer(b.adresse, inv.code, langue)
+          : e164 && b.envoyer
+            ? await envoyerWhatsapp(e164, inv.code, langue)
+            : false;
       return reply.code(201).send({
         id: inv.id,
         code: inv.code,
         lien: lienDe(inv.code),
         expireLe: inv.expiresAt,
         envoye,
+        // gratuit : l'administrateur ouvre WhatsApp sur la conversation de la personne, message pré-rempli
+        ...(e164 ? { lienWhatsapp: lienWa(e164, lienDe(inv.code), langue) } : {}),
       });
     },
   );
@@ -594,6 +715,9 @@ export function registerBetaAcces(
         by: req.auth!.accountId,
         waitlistId: w.id,
         groupe,
+        // 18/10/2026 : demande par numéro → invitation personnelle par ce numéro
+        phoneHash: w.phoneHash,
+        phoneMask: w.phoneMask,
       });
       if (!(await decideWaitlist(db, w.id, 'acceptee', req.auth!.accountId, inv.id)))
         return err(reply, 409, 'deja_traitee');
@@ -604,13 +728,19 @@ export function registerBetaAcces(
         w.id,
         groupe ? { groupe } : undefined,
       );
-      const envoye = await envoyer(w.email, inv.code, w.locale);
+      const e164 = dechiffrer(opts.secretKey ?? null, w.phoneEnc);
+      const envoye = w.email
+        ? await envoyer(w.email, inv.code, w.locale)
+        : e164
+          ? await envoyerWhatsapp(e164, inv.code, w.locale)
+          : false;
       return {
         id: inv.id,
         code: inv.code,
         lien: lienDe(inv.code),
         expireLe: inv.expiresAt,
         envoye,
+        ...(e164 ? { lienWhatsapp: lienWa(e164, lienDe(inv.code), w.locale) } : {}),
       };
     },
   );

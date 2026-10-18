@@ -259,6 +259,13 @@ export interface NewInvitation {
   waitlistId?: string | null;
   /** lot 6 : groupe attribué au compte qui s'inscrit avec cette invitation (« beta_fermee ») */
   groupe?: GroupeInvitation | null;
+  /** 18/10/2026 : invitation personnelle par NUMÉRO (empreinte HMAC calculée par l'API) et forme masquée */
+  phoneHash?: string | null;
+  phoneMask?: string | null;
+  /** inscription assistée : numéro chiffré (repris sur le compte), type et pays préparés par l'administrateur */
+  phoneEnc?: string | null;
+  assistedKind?: 'parent' | 'adulte' | null;
+  assistedCountry?: string | null;
 }
 
 /** Groupes attribuables par une invitation (lot 6) : le groupe « bêta fermée » (rôle `beta_fermee`). */
@@ -289,6 +296,11 @@ export async function createInvitation(
           createdBy: v.by,
           waitlistId: v.waitlistId ?? null,
           groupe: v.groupe ?? null,
+          phoneHash: v.phoneHash ?? null,
+          phoneMask: v.phoneHash ? (v.phoneMask ?? null) : null,
+          phoneEnc: v.phoneHash ? (v.phoneEnc ?? null) : null,
+          assistedKind: v.assistedKind ?? null,
+          assistedCountry: v.assistedKind ? (v.assistedCountry ?? null) : null,
         })
         .returning({ id: t.invitation.id });
       return { id: r!.id, code, expiresAt };
@@ -308,12 +320,17 @@ export type RefusInvitation =
   | 'invitation_epuisee'
   | 'invitation_autre_adresse';
 
-/** Contrôle SANS consommer (page d'inscription : « invitation reconnue »). */
+/**
+ * Contrôle SANS consommer (page d'inscription : « invitation reconnue »). `email` et `phoneHash` : identifiant de
+ * la personne qui s'inscrit (tous deux null : simple contrôle du code, avant la saisie). Une invitation personnelle
+ * (adresse OU numéro) n'est valable que pour cet identifiant-là.
+ */
 export async function checkInvitation(
   db: Db,
   code: string,
   email: string | null,
   now = new Date(),
+  phoneHash: string | null = null,
 ): Promise<
   | { ok: true; id: string; personnelle: boolean; restant: number }
   | { ok: false; raison: RefusInvitation }
@@ -329,9 +346,17 @@ export async function checkInvitation(
   if (etat === 'revoquee') return { ok: false, raison: 'invitation_revoquee' };
   if (etat === 'expiree') return { ok: false, raison: 'invitation_expiree' };
   if (etat === 'epuisee') return { ok: false, raison: 'invitation_epuisee' };
-  if (r.email && email !== null && r.email !== email.trim().toLowerCase())
+  const identifie = email !== null || phoneHash !== null;
+  if (r.email && identifie && r.email !== (email ?? '').trim().toLowerCase())
     return { ok: false, raison: 'invitation_autre_adresse' };
-  return { ok: true, id: r.id, personnelle: !!r.email, restant: r.maxUses - r.uses };
+  if (r.phoneHash && identifie && r.phoneHash !== phoneHash)
+    return { ok: false, raison: 'invitation_autre_adresse' };
+  return {
+    ok: true,
+    id: r.id,
+    personnelle: !!r.email || !!r.phoneHash,
+    restant: r.maxUses - r.uses,
+  };
 }
 
 /**
@@ -341,12 +366,13 @@ export async function checkInvitation(
 export async function reserveInvitation(
   db: Db,
   code: string,
-  email: string,
+  email: string | null,
   now = new Date(),
+  phoneHash: string | null = null,
 ): Promise<{ ok: true; id: string } | { ok: false; raison: RefusInvitation }> {
   const norm = normalizeCode(code);
   if (!norm) return { ok: false, raison: 'code_invalide' };
-  const mail = email.trim().toLowerCase();
+  const mail = email === null ? null : email.trim().toLowerCase();
   const won = await db
     .update(t.invitation)
     .set({ uses: sql`${t.invitation.uses} + 1` })
@@ -357,13 +383,43 @@ export async function reserveInvitation(
         sql`(${t.invitation.expiresAt} IS NULL OR ${t.invitation.expiresAt} > ${now})`,
         sql`${t.invitation.uses} < ${t.invitation.maxUses}`,
         sql`(${t.invitation.email} IS NULL OR ${t.invitation.email} = ${mail})`,
+        sql`(${t.invitation.phoneHash} IS NULL OR ${t.invitation.phoneHash} = ${phoneHash})`,
       ),
     )
     .returning({ id: t.invitation.id });
   if (won[0]) return { ok: true, id: won[0].id };
   // refus : on dit pourquoi (aucune information sensible, le code a déjà été saisi par l'appelant)
-  const c = await checkInvitation(db, code, mail, now);
+  const c = await checkInvitation(db, code, mail ?? (phoneHash ? null : ''), now, phoneHash);
   return { ok: false, raison: c.ok ? 'invitation_inconnue' : c.raison };
+}
+
+/**
+ * INSCRIPTION ASSISTÉE (18/10/2026) : ce que l'administrateur a préparé sur une invitation encore valable (type de
+ * compte, pays, numéro chiffré et son empreinte), ou null (invitation ordinaire, inconnue ou plus valable).
+ */
+export async function invitationAssistee(
+  db: Db,
+  code: string,
+  now = new Date(),
+): Promise<{
+  kind: 'parent' | 'adulte';
+  country: string | null;
+  phoneHash: string | null;
+  phoneEnc: string | null;
+} | null> {
+  const norm = normalizeCode(code);
+  if (!norm) return null;
+  const [r] = await db
+    .select()
+    .from(t.invitation)
+    .where(eq(t.invitation.codeHash, invitationHash(norm)));
+  if (!r || !r.assistedKind || invitationEtat(r, now) !== 'active') return null;
+  return {
+    kind: r.assistedKind as 'parent' | 'adulte',
+    country: r.assistedCountry,
+    phoneHash: r.phoneHash,
+    phoneEnc: r.phoneEnc,
+  };
 }
 
 /** Rend l'usage réservé (création du compte échouée après la réservation). */
@@ -418,6 +474,10 @@ export async function listInvitations(db: Db, limit = 200, now = new Date()) {
     fin: r.codeEnd,
     libelle: r.label,
     adresse: r.email,
+    /** invitation personnelle par numéro : forme MASQUÉE seulement */
+    numero: r.phoneMask,
+    /** inscription assistée : type de compte préparé (parent | adulte), sinon null */
+    assistee: r.assistedKind,
     max: r.maxUses,
     usages: r.uses,
     expireLe: r.expiresAt,
@@ -570,6 +630,39 @@ export async function demanderAttente(
   return u.length ? 'renvoi' : 'existe';
 }
 
+/**
+ * 18/10/2026 : demande par NUMÉRO. Le numéro vient d'être VÉRIFIÉ (message WhatsApp reçu de ce numéro) : c'est le
+ * double consentement, la demande est confirmée aussitôt. « existe » : numéro déjà dans la liste (réponse identique).
+ */
+export async function demanderAttenteTelephone(
+  db: Db,
+  v: {
+    phoneHash: string;
+    phoneEnc: string;
+    phoneMask: string;
+    name?: string | null;
+    note?: string | null;
+    locale?: string;
+  },
+  now = new Date(),
+): Promise<'cree' | 'existe'> {
+  const r = await db
+    .insert(t.waitlist)
+    .values({
+      email: null,
+      phoneHash: v.phoneHash,
+      phoneEnc: v.phoneEnc,
+      phoneMask: v.phoneMask,
+      name: v.name?.trim() || null,
+      note: v.note?.trim() || null,
+      locale: v.locale ?? 'fr',
+      confirmedAt: now,
+    })
+    .onConflictDoNothing()
+    .returning({ id: t.waitlist.id });
+  return r.length ? 'cree' : 'existe';
+}
+
 /** Clic sur le lien de confirmation : « confirmee », « deja » (déjà confirmée) ou « invalide » (inconnu ou expiré). */
 export async function confirmerAttente(
   db: Db,
@@ -619,6 +712,8 @@ export async function listWaitlist(db: Db, status: string | null, limit = 200) {
       .select({
         id: t.waitlist.id,
         adresse: t.waitlist.email,
+        // demande par numéro : forme MASQUÉE seulement (le numéro chiffré ne sert qu'à l'invitation)
+        numero: t.waitlist.phoneMask,
         nom: t.waitlist.name,
         mot: t.waitlist.note,
         langue: t.waitlist.locale,

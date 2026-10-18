@@ -20,6 +20,7 @@ import {
   checkInvitation,
   countComptes,
   flagContext,
+  invitationAssistee,
   invitationGroupe,
   readAcces,
   ROLE_BETA_FERMEE,
@@ -93,6 +94,24 @@ import { registerProfiles } from './profils.js';
 import { registerRecovery } from './recuperation.js';
 import { inactiveMailer, type Mailer } from '../mail/envoi.js';
 import { demoLogin } from '../demo-mode.js';
+import {
+  masquerTelephone,
+  normaliserTelephone,
+  ressembleTelephone,
+} from '@awform/school/telephone';
+import type { ConfigGoogle } from '../identites/config.js';
+import { dechiffrer, phoneHashOf } from '../identites/cles.js';
+import { consommerDefi, type CtxTel } from '../identites/defis.js';
+import {
+  finInscriptionGoogle,
+  inscriptionGoogle,
+  lierGoogle,
+  registerGoogle,
+} from '../identites/google.js';
+import type { Fetch } from '../identites/oidc.js';
+import { DEFI_SCHEMA, registerTelephone } from '../identites/routes-telephone.js';
+import { genererCodesSecours } from '../identites/secours.js';
+import { renderMail } from '../mail/modeles.js';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -113,10 +132,18 @@ export interface AuthOptions {
   mailer?: Mailer;
   /** lot F3 : adresse publique du site (liens des e-mails) */
   publicUrl?: string | null;
+  /** 18/10/2026 : numéro WhatsApp (vérifications, expéditeur) ; null : inactif */
+  telephone?: CtxTel | null;
+  /** 18/10/2026 : « Continuer avec Google » ; null : inactif */
+  google?: ConfigGoogle | null;
+  /** tests : appels HTTP vers le fournisseur OpenID (jeton, clés publiques) */
+  googleFetch?: Fetch;
 }
 
 export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   const { db } = opts;
+  const telCtx = opts.telephone?.cfg.actif ? opts.telephone : null;
+  const googleCfg = opts.google?.actif ? opts.google : null;
   const secureFor = (req: FastifyRequest) =>
     opts.cookieSecure === 'auto' ? req.protocol === 'https' : opts.cookieSecure;
   app.decorateRequest('auth', null);
@@ -250,8 +277,19 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         totpEnabled: a.totpEnabled,
         hasPin: !!a.parentPinHash,
         createdAt: a.createdAt,
-        // lot F3 : adresse vérifiée, subdivision, fuseau, région d'hébergement des données
-        emailVerified: !!a.emailVerifiedAt,
+        // lot F3 : adresse vérifiée, subdivision, fuseau, région d'hébergement des données ; 18/10/2026 : un compte
+        // ouvert par numéro (sans adresse) est vérifié par son numéro
+        emailVerified: !!a.emailVerifiedAt || (!a.email && !!a.phoneVerifiedAt),
+        // 18/10/2026 : numéro (forme masquée), liaison Google, mot de passe défini ou non
+        telephone: masquerTelephone(dechiffrer(opts.secretKey, a.phoneEnc)),
+        google: !!(
+          await db
+            .select({ id: t.accountIdentity.id })
+            .from(t.accountIdentity)
+            .where(eq(t.accountIdentity.accountId, a.id))
+            .limit(1)
+        )[0],
+        motDePasse: !!a.passwordHash,
         region: a.region,
         tz: a.tz,
         dataRegion: a.dataRegion,
@@ -288,8 +326,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
   app.post<{
     Body: {
       kind: 'parent' | 'adulte';
-      email: string;
-      password: string;
+      email?: string;
+      password?: string;
       country: string;
       locale?: string;
       birthYear?: number;
@@ -301,6 +339,10 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       invitation?: string;
       jeton?: string;
       site_web?: string;
+      /** 18/10/2026 : inscription par numéro WhatsApp — vérification réussie du numéro */
+      defi?: { id: string; jeton: string };
+      /** 18/10/2026 : inscription avec l'identité Google vérifiée (cookie chiffré posé par le retour de Google) */
+      google?: boolean;
     };
   }>(
     '/api/v1/auth/signup',
@@ -308,7 +350,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       schema: {
         body: {
           type: 'object',
-          required: ['kind', 'email', 'password', 'country', 'consents'],
+          required: ['kind', 'country', 'consents'],
           additionalProperties: false,
           properties: {
             kind: { enum: ['parent', 'adulte'] },
@@ -329,6 +371,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             // anti-robots (réglage « antibot ») : jeton signé émis à l'ouverture de la page, champ piège caché
             jeton: { type: 'string', maxLength: 100 },
             site_web: { type: 'string', maxLength: 200 },
+            defi: DEFI_SCHEMA,
+            google: { type: 'boolean' },
           },
         },
       },
@@ -353,48 +397,97 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         (await countComptes(db)) >= acces.plafond
       )
         return err(reply, 403, 'plafond_atteint');
+      // 18/10/2026 : inscription ASSISTÉE (invitation préparée par un administrateur : type, pays, numéro)
+      const assistee = b.invitation ? await invitationAssistee(db, b.invitation) : null;
+      const country = assistee?.country ?? b.country;
+      const kind = assistee?.kind ?? b.kind;
       // audit MIN-15 : pays existant (ISO 3166-1) seulement
-      if (!isCountry(b.country)) return err(reply, 400, 'pays_inconnu');
+      if (!isCountry(country)) return err(reply, 400, 'pays_inconnu');
+      // UN identifiant : e-mail, numéro WhatsApp vérifié (ou préparé par l'administrateur), ou identité Google
+      const g = b.google ? inscriptionGoogle(opts.secretKey, req) : null;
+      if (b.google && (!googleCfg?.actif || !g)) return err(reply, 400, 'google_expire');
+      // numéro préparé par l'administrateur (inscription assistée) : repris sur le compte, quel que soit le choix
+      const parTelephone = !!b.defi || !!assistee?.phoneHash;
+      if ([!!b.email, !!b.defi, !!b.google].filter(Boolean).length > 1)
+        return err(reply, 400, 'identifiant_multiple');
+      if (b.defi && !telCtx?.cfg.actif) return err(reply, 403, 'telephone_inactif');
+      if (!b.email && !g && !parTelephone) return err(reply, 400, 'identifiant_requis');
       const ipKey = `signup:${req.ip}`;
       if (await lockedUntil(db, ipKey)) return err(reply, 429, 'trop_de_demandes');
       await recordFailure(db, ipKey, SIGNUPS_PER_HOUR); // au plus 20 inscriptions par heure et par adresse, puis pause
-      const email = b.email.trim().toLowerCase();
+      const email = g ? g.email : (b.email?.trim().toLowerCase() ?? null);
       // contrôle (sans consommer) : un mauvais code est refusé tôt, avec une limite d'essais par adresse IP
       if (b.invitation) {
         const invKey = `invit:${req.ip}`;
         if (await lockedUntil(db, invKey)) return err(reply, 429, 'trop_de_demandes');
-        const c = await checkInvitation(db, b.invitation, email);
+        const c = await checkInvitation(
+          db,
+          b.invitation,
+          email,
+          new Date(),
+          b.defi ? null : (assistee?.phoneHash ?? null),
+        );
         if (!c.ok) {
           await recordFailure(db, invKey, INVITATION_TRIES_PER_HOUR);
           return err(reply, 403, c.raison);
         }
       }
-      const pb = checkPassword(b.password, email);
-      if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
+      // mot de passe : toujours, sauf avec Google (facultatif) ; règle du lot 11
+      if (!b.password && !g) return err(reply, 400, 'mot_de_passe_requis');
+      if (b.password) {
+        const pb = checkPassword(b.password, email ?? '');
+        if (pb) return err(reply, 400, `mot_de_passe_${pb}`);
+      }
       // audit MIN-3 : année de naissance obligatoire pour TOUT titulaire ; un parent doit être majeur
       if (!b.birthYear) return err(reply, 400, 'annee_naissance_requise');
       const age = ageFromYear(b.birthYear);
-      if (b.kind === 'parent' && age < 18) return err(reply, 403, 'majorite_requise');
+      if (kind === 'parent' && age < 18) return err(reply, 403, 'majorite_requise');
+      // Google : jamais pour un enfant ni un adolescent (titulaire majeur)
+      if (g && age < 18) return err(reply, 403, 'google_majeur_requis');
       // lot F3 (revue M9) : subdivision connue pour ce pays (sinon refus : âge du consentement en jeu)
-      const region = normRegion(b.country, b.region);
+      const region = normRegion(country, b.region);
       if (b.region && !region) return err(reply, 400, 'region_inconnue');
       // lot F3 (revue G3) : États-Unis, moins de 13 ans : fermé au lancement (message clair)
-      if (closedForAge(b.country, age))
-        return err(reply, 403, 'ferme_moins_13', { age: 13, pays: b.country });
-      if (b.kind === 'adulte' && age < consentAge(b.country, region))
-        return err(reply, 403, 'age_parent_requis', { age: consentAge(b.country, region) });
-      const missing = requiredAccountConsents(b.country).filter((c) => !b.consents.includes(c));
+      if (closedForAge(country, age))
+        return err(reply, 403, 'ferme_moins_13', { age: 13, pays: country });
+      if (kind === 'adulte' && age < consentAge(country, region))
+        return err(reply, 403, 'age_parent_requis', { age: consentAge(country, region) });
+      const missing = requiredAccountConsents(country).filter((c) => !b.consents.includes(c));
       if (missing.length) return err(reply, 400, 'consentement_requis', { missing });
-      const exists = await db
-        .select({ id: t.account.id })
-        .from(t.account)
-        .where(eq(t.account.email, email));
-      if (exists[0]) return err(reply, 409, 'email_indisponible');
+      if (email) {
+        const exists = await db
+          .select({ id: t.account.id })
+          .from(t.account)
+          .where(eq(t.account.email, email));
+        if (exists[0]) return err(reply, 409, 'email_indisponible');
+      }
+      // numéro : la vérification réussie est UTILISÉE ici (après tous les autres contrôles) ; l'unicité n'est dite
+      // qu'à qui a prouvé le numéro (aucune énumération possible)
+      let tel: { phoneHash: string; phoneEnc: string } | null = null;
+      if (b.defi) {
+        const v = await consommerDefi(telCtx!, b.defi, 'inscription');
+        if (!v) return err(reply, 400, 'verification_invalide');
+        tel = v;
+      } else if (assistee?.phoneHash && assistee.phoneEnc)
+        tel = { phoneHash: assistee.phoneHash, phoneEnc: assistee.phoneEnc };
+      if (tel) {
+        const [pris] = await db
+          .select({ id: t.account.id })
+          .from(t.account)
+          .where(eq(t.account.phoneHash, tel.phoneHash));
+        if (pris) return err(reply, 409, 'telephone_indisponible');
+      }
       // bêta fermée : l'usage de l'invitation est RÉSERVÉ de façon atomique juste avant la création du compte
       // (deux inscriptions simultanées ne peuvent pas dépasser le nombre d'usages) ; rendu si la création échoue
       let invitationId: string | null = null;
       if (b.invitation) {
-        const r = await reserveInvitation(db, b.invitation, email);
+        const r = await reserveInvitation(
+          db,
+          b.invitation,
+          email,
+          new Date(),
+          tel?.phoneHash ?? null,
+        );
         if (!r.ok) return err(reply, 403, r.raison);
         invitationId = r.id;
       }
@@ -403,15 +496,21 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         [a] = await db
           .insert(t.account)
           .values({
-            kind: b.kind,
+            kind,
             email,
-            passwordHash: await hashSecret(b.password),
-            passwordChangedAt: new Date(),
-            country: b.country,
+            passwordHash: b.password ? await hashSecret(b.password) : null,
+            passwordChangedAt: b.password ? new Date() : null,
+            country,
             locale: b.locale ?? 'fr',
-            birthYear: b.kind === 'adulte' ? (b.birthYear ?? null) : null,
+            birthYear: kind === 'adulte' ? (b.birthYear ?? null) : null,
             region,
             tz: normTz(b.tz),
+            // Google : adresse vérifiée par Google (email_verified) ; numéro : prouvé (ou préparé par l'administrateur)
+            emailVerifiedAt: g ? new Date() : null,
+            phoneEnc: tel?.phoneEnc ?? null,
+            phoneHash: tel?.phoneHash ?? null,
+            phoneVerifiedAt: tel ? new Date() : null,
+            lastLoginAt: new Date(),
           })
           .returning({ id: t.account.id });
       } catch (e) {
@@ -426,20 +525,20 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         await audit(db, a.id, 'groupe_beta.ajout_invitation', invitationId);
       }
       // lot F2 (revue E2) : rôle du titulaire (un même compte pourra recevoir ensuite d'autres rôles)
-      await grantAccountRole(db, a.id, b.kind === 'parent' ? 'parent' : 'eleve_adulte');
+      await grantAccountRole(db, a.id, kind === 'parent' ? 'parent' : 'eleve_adulte');
       const accepted = b.consents.filter(
         (c) =>
-          requiredAccountConsents(b.country).includes(c as ConsentType) || OPTIONAL_CONSENTS.has(c),
+          requiredAccountConsents(country).includes(c as ConsentType) || OPTIONAL_CONSENTS.has(c),
       );
       // preuve : la règle du pays sous laquelle l'accord a été donné (loi et autorité, lot 17)
-      const rules = countryRules(b.country, region);
-      await insertConsents(a.id, accepted, b.country, null, {
+      const rules = countryRules(country, region);
+      await insertConsents(a.id, accepted, country, null, {
         loi: rules.law,
         autorite: rules.authority,
         // audit MIN-3 : le parent déclare être majeur (année de naissance contrôlée)
-        ...(b.kind === 'parent' ? { majoriteDeclaree: true } : {}),
+        ...(kind === 'parent' ? { majoriteDeclaree: true } : {}),
       });
-      if (b.kind === 'adulte') {
+      if (kind === 'adulte') {
         const [own] = await db
           .insert(t.profile)
           .values({
@@ -460,7 +559,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             {
               roles: ['eleve'],
               age: 'adulte',
-              pays: b.country ?? null,
+              pays: country ?? null,
               ecoles: [],
               canal: 'production',
             },
@@ -470,21 +569,41 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         if (b.evalMode && own && sereinOk)
           await setProfileEvalMode(db, own.id, b.evalMode, 'soi', a.id);
       }
+      // Google : liaison enregistrée, l'identité en attente est effacée
+      if (g) {
+        await lierGoogle(db, a.id, g);
+        reply.header('Set-Cookie', finInscriptionGoogle(secureFor(req)));
+      }
+      // numéro : 8 codes de récupération (montrés une fois, « à recopier sur papier »)
+      const codesSecours =
+        tel && opts.secretKey ? await genererCodesSecours(db, opts.secretKey, a.id) : null;
       await audit(db, a.id, 'compte.creation', a.id, {
-        kind: b.kind,
-        country: b.country,
+        kind,
+        country,
+        via: g ? 'google' : tel ? 'telephone' : 'email',
+        ...(assistee ? { assistee: true } : {}),
         ...(invitationId ? { invitation: invitationId } : {}),
       });
       // lot F3 (revue M7) : lien de vérification de l'adresse (envoyé après la réponse)
-      kit.sendVerification?.(a.id, email, b.locale ?? 'fr');
-      await setSession(reply, a.id, b.kind, false);
-      return reply.code(201).send(await me(a.id, false));
+      if (email && !g) kit.sendVerification?.(a.id, email, b.locale ?? 'fr');
+      await setSession(reply, a.id, kind, false);
+      return reply
+        .code(201)
+        .send({ ...(await me(a.id, false)), ...(codesSecours ? { codesSecours } : {}) });
     },
   );
 
   // ---------------------------------------------------------------- connexion
 
-  app.post<{ Body: { email: string; password: string; totp?: string } }>(
+  app.post<{
+    Body: {
+      email: string;
+      password: string;
+      totp?: string;
+      pays?: string;
+      defi?: { id: string; jeton: string };
+    };
+  }>(
     '/api/v1/auth/login',
     {
       schema: {
@@ -493,15 +612,27 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
           required: ['email', 'password'],
           additionalProperties: false,
           properties: {
+            // « e-mail ou numéro » (18/10/2026) : le même champ
             email: { type: 'string', maxLength: 254 },
             password: { type: 'string', maxLength: MAX_LENGTH * 4 },
             totp: { type: 'string', maxLength: 8 },
+            // numéro écrit sans indicatif : lu dans ce pays (défaut : Sénégal)
+            pays: { type: 'string', pattern: COUNTRY },
+            // revérification du numéro après une longue absence (numéros recyclés)
+            defi: DEFI_SCHEMA,
           },
         },
       },
     },
     async (req, reply) => {
-      const email = req.body.email.trim().toLowerCase();
+      // identifiant : adresse e-mail, ou numéro (forme E.164 ; sans indicatif : pays donné, sinon Sénégal)
+      const saisi = req.body.email.trim();
+      const numero =
+        ressembleTelephone(saisi) && opts.secretKey
+          ? normaliserTelephone(saisi, req.body.pays ?? 'SN')
+          : null;
+      const e164 = numero?.ok ? numero.e164 : null;
+      const email = e164 ?? saisi.toLowerCase();
       // audit SEC-2 : verrou par couple compte + adresse (personne ne peut verrouiller le compte d'autrui
       // depuis une autre adresse) ; l'essai est RÉSERVÉ atomiquement avant la vérification
       // audit MIN-7 : jamais l'adresse e-mail en clair dans la table des verrous
@@ -529,7 +660,14 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       const [a] = await db
         .select()
         .from(t.account)
-        .where(and(eq(t.account.email, email), isNull(t.account.deletedAt)));
+        .where(
+          and(
+            e164
+              ? eq(t.account.phoneHash, phoneHashOf(opts.secretKey!, e164))
+              : eq(t.account.email, email),
+            isNull(t.account.deletedAt),
+          ),
+        );
       const ok = await verifySecret(req.body.password, a?.passwordHash);
       if (!a || !ok) {
         await failAttempt(db, accKey);
@@ -580,6 +718,26 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         mfa = true;
       }
       await clearFailures(db, accKey);
+      // 18/10/2026 : connexion PAR NUMÉRO après une longue absence → le numéro est revérifié (un numéro inutilisé
+      // peut avoir été réattribué par l'opérateur) ; la page refait une vérification puis renvoie la connexion
+      if (e164 && a.phoneHash && telCtx) {
+        const dernier = Math.max(
+          a.lastLoginAt?.getTime() ?? 0,
+          a.phoneVerifiedAt?.getTime() ?? 0,
+          a.createdAt.getTime(),
+        );
+        if (Date.now() - dernier > telCtx.cfg.reverifJours * 86_400_000) {
+          if (!req.body.defi) return err(reply, 403, 'reverification_requise');
+          const v = await consommerDefi(telCtx, req.body.defi, 'reverification');
+          if (!v || v.phoneHash !== a.phoneHash) return err(reply, 400, 'verification_invalide');
+          await db
+            .update(t.account)
+            .set({ phoneVerifiedAt: new Date() })
+            .where(eq(t.account.id, a.id));
+          await audit(db, a.id, 'telephone.reverification', a.id);
+        }
+      }
+      await db.update(t.account).set({ lastLoginAt: new Date() }).where(eq(t.account.id, a.id));
       await audit(db, a.id, 'connexion.reussie', a.id);
       await setSession(reply, a.id, a.kind, mfa);
       return me(a.id, mfa);
@@ -720,6 +878,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     secureFor,
     me,
     setSession,
+    cle: opts.secretKey,
   };
   registerProfiles(app, kit);
   registerPrivacy(app, kit);
@@ -729,6 +888,27 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     publicUrl: opts.publicUrl ?? null,
   });
   registerConsents(app, kit);
+  // 18/10/2026 : numéro WhatsApp (vérification inversée, validation manuelle, codes de récupération) et Google
+  registerTelephone(app, kit, telCtx, {
+    key: opts.secretKey,
+    notifierMdp: (to, locale) => {
+      const m = opts.mailer;
+      if (!m || m.mode === 'inactif') return;
+      void m
+        .send({
+          to,
+          kind: 'mot_de_passe_modifie',
+          ...renderMail('mot_de_passe_modifie', locale, {}),
+        })
+        .catch(() => {});
+    },
+  });
+  if (opts.google)
+    registerGoogle(app, kit, {
+      cfg: opts.google,
+      key: opts.secretKey,
+      fetchImpl: opts.googleFetch,
+    });
 
   // ---------------------------------------------------------------- enseignant (lot 4 : accès sécurisé seulement)
 

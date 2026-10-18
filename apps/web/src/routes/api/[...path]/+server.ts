@@ -19,7 +19,15 @@ const FORWARD = [
   // code parent (envoi d'une récitation, notifications des enfants : lot 16)
   'x-parent-pin',
 ];
-const BACK = ['content-type', 'set-cookie', 'etag', 'content-disposition', 'cache-control'];
+// 18/10/2026 : « location » (redirections de la connexion avec Google)
+const BACK = [
+  'content-type',
+  'set-cookie',
+  'etag',
+  'content-disposition',
+  'cache-control',
+  'location',
+];
 
 const handler: RequestHandler = async ({ params, url, request, fetch, getClientAddress }) => {
   if (!/^v1\/[A-Za-z0-9._/-]+$/.test(params.path) || params.path.includes('..'))
