@@ -15,11 +15,40 @@ import {
   langueAccueil,
   reponseAccueil,
   sansSession,
+  sourceAccueil,
 } from './server/accueil';
 import { EN_TETE_ROBOTS } from './server/acces-serveur';
+import { sourceValide } from './provenance';
 
 const STATIC = join(__dirname, '..', '..', 'static');
 const cfg = configAccueil({});
+
+describe('provenance des affiches (?src=)', () => {
+  it('validation stricte ^[a-z0-9-]{1,40}$, toute autre valeur ignorée (page, application)', () => {
+    for (const f of [sourceAccueil, sourceValide]) {
+      expect(f('affiche')).toBe('affiche');
+      expect(f('mosquee-dakar-2')).toBe('mosquee-dakar-2');
+      expect(f('x'.repeat(40))).toBe('x'.repeat(40));
+      for (const m of ['', 'Affiche', 'a b', 'a_b', 'é', '"><script>', 'x'.repeat(41), null])
+        expect(f(m)).toBeNull();
+    }
+  });
+  it('valide : un champ caché dans le formulaire ; absente ou invalide : rien', () => {
+    const h = htmlAccueil({ lang: 'fr', cfg, src: 'affiche' });
+    expect(h).toContain('<input type="hidden" name="src" value="affiche">');
+    expect(htmlAccueil({ lang: 'fr', cfg })).not.toContain('name="src"');
+    expect(htmlAccueil({ lang: 'fr', cfg, src: '"><b>' })).not.toContain('name="src"');
+    // jamais de cookie posé par la page
+    const r = reponseAccueil({ lang: 'fr', cfg, src: 'affiche' });
+    expect(r.headers.get('set-cookie')).toBeNull();
+  });
+  it('le script garde la provenance dans le stockage de SESSION seulement et l’envoie avec la demande', () => {
+    const js = readFileSync(join(STATIC, 'accueil.js'), 'utf8');
+    expect(js).toContain("sessionStorage.setItem('awzid_src'");
+    expect(js).not.toMatch(/localStorage|document\.cookie/);
+    expect(js).toContain('src: source');
+  });
+});
 
 describe('réglages', () => {
   it('défauts prudents : automatique, non indexable, français et anglais', () => {
@@ -270,6 +299,10 @@ describe('poids et catalogues', () => {
     expect(js).toContain('consentement');
     expect(js).toContain('site_web');
     expect(js).toContain("'x-awform': '1'");
-    expect(js).not.toMatch(/localStorage|sessionStorage|document\.cookie|analytics|gtag|fbq/);
+    expect(js).not.toMatch(/localStorage|document\.cookie|analytics|gtag|fbq/);
+    // seul usage du stockage : la provenance des affiches, dans le stockage de SESSION de l'onglet
+    expect(js.match(/sessionStorage\.\w+\('[^']*'/g)?.every((x) => x.includes("'awzid_src'"))).toBe(
+      true,
+    );
   });
 });

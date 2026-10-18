@@ -26,6 +26,8 @@ import {
   ROLE_BETA_FERMEE,
   releaseInvitation,
   reserveInvitation,
+  normSource,
+  sourceDeLInvitation,
   grantAccountRole,
   schema as t,
   schoolsOf,
@@ -343,6 +345,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
       defi?: { id: string; jeton: string };
       /** 18/10/2026 : inscription avec l'identité Google vérifiée (cookie chiffré posé par le retour de Google) */
       google?: boolean;
+      src?: string;
     };
   }>(
     '/api/v1/auth/signup',
@@ -373,6 +376,8 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             site_web: { type: 'string', maxLength: 200 },
             defi: DEFI_SCHEMA,
             google: { type: 'boolean' },
+            // provenance (?src= des affiches) : gardée si elle est valide (^[a-z0-9-]{1,40}$), ignorée sinon
+            src: { type: 'string', maxLength: 200 },
           },
         },
       },
@@ -491,6 +496,9 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         if (!r.ok) return err(reply, 403, r.raison);
         invitationId = r.id;
       }
+      // provenance : celle de la navigation (?src=), sinon celle de la demande de liste d'attente qui a donné l'invitation
+      const source =
+        normSource(b.src) ?? (invitationId ? await sourceDeLInvitation(db, invitationId) : null);
       let a: { id: string } | undefined;
       try {
         [a] = await db
@@ -511,6 +519,7 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
             phoneHash: tel?.phoneHash ?? null,
             phoneVerifiedAt: tel ? new Date() : null,
             lastLoginAt: new Date(),
+            source,
           })
           .returning({ id: t.account.id });
       } catch (e) {

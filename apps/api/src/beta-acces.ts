@@ -46,6 +46,8 @@ import {
   listWaitlist,
   modeDe,
   MODES_ACCES,
+  normSource,
+  originesDemandes,
   readAcces,
   reglagesDuMode,
   revokeInvitation,
@@ -300,6 +302,7 @@ export function registerBetaAcces(
       consentement: boolean;
       jeton?: string;
       site_web?: string;
+      src?: string;
     };
   }>(
     '/api/v1/acces/liste-attente',
@@ -320,6 +323,8 @@ export function registerBetaAcces(
             // anti-robots (réglage « antibot »), comme l'inscription : jeton signé émis à l'ouverture + champ piège caché
             jeton: { type: 'string', maxLength: 100 },
             site_web: { type: 'string', maxLength: 200 },
+            // provenance (?src= des affiches) : gardée si elle est valide (^[a-z0-9-]{1,40}$), ignorée sinon
+            src: { type: 'string', maxLength: 200 },
           },
         },
       },
@@ -367,6 +372,7 @@ export function registerBetaAcces(
         note: req.body.mot,
         locale: langue,
         tokenHash: waitlistTokenHash(jeton),
+        source: normSource(req.body.src),
       });
       if (etat !== 'existe')
         void envoyerConfirmationAttente(email.trim().toLowerCase(), jeton, langue ?? 'fr');
@@ -521,6 +527,8 @@ export function registerBetaAcces(
       couts,
       plafonds: listePlafonds(),
       alertes,
+      // « Origine des demandes » : agrégats par provenance (?src=), sans adresse
+      origines: await originesDemandes(db),
     };
   });
 

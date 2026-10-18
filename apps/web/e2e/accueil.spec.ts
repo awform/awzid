@@ -200,6 +200,43 @@ test.describe('formulaire (mécanisme existant de la liste d’attente)', () => 
     await expect(page.getByRole('button')).toBeHidden();
   });
 
+  test('provenance des affiches (?src=) : champ caché, gardée pour l’onglet (même après ?lang=), envoyée ; sans cookie', async ({
+    page,
+    context,
+  }) => {
+    // réponse simulée : ne pas consommer la limite de demandes par adresse IP du serveur de test
+    await page.route('**/api/v1/acces/liste-attente', (route: Route) =>
+      route.fulfill({ status: 202, json: { ok: true } }),
+    );
+    await ouvrir(page, `${URL_PAGE}?src=affiche-e2e`);
+    await expect(page.locator('#attente input[type=hidden][name=src]')).toHaveValue('affiche-e2e');
+    // le changement de langue perd l'adresse ?src= : le stockage de session de l'onglet la garde
+    await ouvrir(page, `${URL_PAGE}?lang=en`);
+    await expect(page.locator('input[name=src]')).toHaveCount(0);
+    expect(await page.evaluate(() => sessionStorage.getItem('awzid_src'))).toBe('affiche-e2e');
+    const email = unique();
+    await page.locator('#email').fill(email);
+    await page.locator('#consent').check();
+    const req = page.waitForRequest((r) => r.url().includes('/api/v1/acces/liste-attente'));
+    await page.locator('#attente button[type=submit]').click();
+    expect((await req).postDataJSON()).toMatchObject({ email, src: 'affiche-e2e' });
+    expect(await context.cookies()).toEqual([]);
+  });
+
+  test('provenance invalide : ignorée, rien n’est gardé ni envoyé', async ({ page }) => {
+    await page.route('**/api/v1/acces/liste-attente', (route: Route) =>
+      route.fulfill({ status: 202, json: { ok: true } }),
+    );
+    await ouvrir(page, `${URL_PAGE}?src=${encodeURIComponent('"><b>x')}`);
+    await expect(page.locator('input[name=src]')).toHaveCount(0);
+    expect(await page.evaluate(() => sessionStorage.length)).toBe(0);
+    await page.getByLabel('Votre adresse e-mail').fill(unique());
+    await page.getByRole('checkbox').check();
+    const req = page.waitForRequest((r) => r.url().includes('/api/v1/acces/liste-attente'));
+    await page.getByRole('button', { name: 'Demander une invitation' }).click();
+    expect((await req).postDataJSON()).not.toHaveProperty('src');
+  });
+
   test('sans le consentement ou avec une adresse invalide : rien n’est envoyé', async ({
     page,
   }) => {

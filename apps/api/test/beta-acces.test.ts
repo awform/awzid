@@ -313,6 +313,77 @@ describe.skipIf(!URL)(
       expect(last).toBe(429);
     });
 
+    it('provenance (?src=) : gardée sur la demande et le compte, valeur invalide ignorée, agrégats sans adresse', async () => {
+      await reglage({ inscription: 'ouverte', site: 'ouvert' });
+      const src = async (email: string) =>
+        (await c.h.pool.query('select source from waitlist where email = $1', [email])).rows[0]
+          ?.source as string | null;
+      const d1 = addr('src');
+      const att = (email: string, s?: string) =>
+        c.req(
+          'POST',
+          '/api/v1/acces/liste-attente',
+          {},
+          { email, consentement: true, ...(s !== undefined ? { src: s } : {}) },
+        );
+      expect((await att(d1, 'affiche-test')).statusCode).toBe(202);
+      expect(await src(d1)).toBe('affiche-test');
+      // un renvoi (adresse non confirmée) ne réécrit pas la provenance de la première demande
+      expect((await att(d1, 'autre')).statusCode).toBe(202);
+      expect(await src(d1)).toBe('affiche-test');
+      // validation stricte : majuscules, caractères interdits, trop long → ignoré (la demande passe quand même)
+      for (const mauvais of ['Affiche', 'affiche!', 'a b', 'x'.repeat(41), '']) {
+        const d = addr('src');
+        expect((await att(d, mauvais)).statusCode).toBe(202);
+        expect(await src(d)).toBeNull();
+      }
+      // inscription directe avec provenance ; inscription invalide → null
+      const e1 = addr('srcins');
+      expect((await signup(e1, undefined, { src: 'mosquee-test' })).statusCode).toBe(201);
+      const e2 = addr('srcins');
+      expect((await signup(e2, undefined, { src: 'Mosquee' })).statusCode).toBe(201);
+      const comptes = await c.h.pool.query(
+        'select email, source from account where email = any($1::text[])',
+        [[e1, e2]],
+      );
+      const parAdresse = Object.fromEntries(comptes.rows.map((r) => [r.email, r.source]));
+      expect(parAdresse[e1]).toBe('mosquee-test');
+      expect(parAdresse[e2]).toBeNull();
+      // compte venu par l'invitation d'une demande acceptée : il hérite de la provenance de la demande
+      await c.h.pool.query('update waitlist set confirmed_at = now() where email = $1', [d1]);
+      const [dem] = (await c.h.pool.query('select id from waitlist where email = $1', [d1])).rows;
+      const acc = await c.req('POST', `/api/v1/admin/liste-attente/${dem.id}/accepter`, A, {});
+      expect(acc.statusCode).toBe(201);
+      expect((await signup(d1, acc.json().code)).statusCode).toBe(201);
+      const [herite] = (await c.h.pool.query('select source from account where email = $1', [d1]))
+        .rows;
+      expect(herite.source).toBe('affiche-test');
+      // la base refuse toute valeur hors règle, même écrite directement
+      await expect(
+        c.h.pool.query("update account set source = 'A B' where email = $1", [e1]),
+      ).rejects.toThrow();
+      // tableau de l'administrateur : nombres par provenance, sans aucune adresse
+      const tab = await c.req('GET', '/api/v1/admin/tableau', A);
+      expect(tab.statusCode).toBe(200);
+      const origines = tab.json().origines as Array<{
+        source: string | null;
+        demandes30j: number;
+        demandes: number;
+        inscriptions30j: number;
+        inscriptions: number;
+      }>;
+      const aff = origines.find((o) => o.source === 'affiche-test');
+      expect(aff).toMatchObject({ demandes: 1, demandes30j: 1, inscriptions: 1 });
+      expect(origines.find((o) => o.source === 'mosquee-test')).toMatchObject({
+        demandes: 0,
+        inscriptions: 1,
+        inscriptions30j: 1,
+      });
+      // « sans provenance » en dernier
+      expect(origines.at(-1)?.source ?? null).toBeNull();
+      expect(JSON.stringify(origines)).not.toContain('@');
+    });
+
     it('liste d’attente : demande avec consentement, réponse identique, acceptation et refus', async () => {
       const dest = addr('att');
       const body = {

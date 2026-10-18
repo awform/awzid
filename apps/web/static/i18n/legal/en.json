@@ -161,6 +161,7 @@
           "titre": "Data collected (only what is necessary)",
           "paras": [
             "Beta waiting list (home page): e-mail address and the language of the page, kept with your agreement, only to manage the waiting list and send you an invitation; no newsletter, no advertising.",
+            "Where your request comes from: if you arrive through the QR code on a poster (or another medium), we record that marker (for example \"affiche\", poster) with your request or sign-up, to measure how well our communication works; it is only read as totals, with no cookie or tracker, and nothing else is kept.",
             "Account: e-mail address and password (protected, never readable) of the adult; country; language; time zone.",
             "Child profile: nickname, year of birth (never the full date), level, avatar — no real name, no photo, no address.",
             "Learning: exercise answers, progress, hifẓ, letter tracings, word cards, working days of teens and adults.",

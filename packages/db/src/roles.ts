@@ -45,7 +45,8 @@ export const API_GRANTS: Record<string, Right[]> = {
   billing_event: RI,
   audit_log: RI,
   tutor_log: RIU,
-  // données des comptes et de l'école
+  // données des comptes et de l'école (account.source, migration 0051 : provenance ?src= de l'inscription, écrite
+  // par l'API à la création, lue en agrégats seulement ; le travailleur n'en a aucun besoin)
   account: ALL,
   profile: ALL,
   guardianship: ALL,
@@ -150,6 +151,7 @@ export const API_GRANTS: Record<string, Right[]> = {
   // lot F3 : liens à usage unique envoyés par e-mail (vérification, réinitialisation, changement d'adresse)
   account_link: ALL,
   // bêta fermée : réglages du site, invitations (jamais le code en clair), leurs usages, liste d'attente
+  // (waitlist.source, migration 0051 : provenance ?src= de la demande, agrégats seulement ; aucune adresse IP)
   site_setting: ALL,
   invitation: ALL,
   invitation_use: ALL,

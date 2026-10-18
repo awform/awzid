@@ -443,6 +443,35 @@ test.describe('plafond, liste d’attente automatique, anti-robots, vérificatio
     expect(corps).toMatchObject({ jeton: '1800000000000.abc', site_web: 'http://spam.example' });
   });
 
+  test('provenance des affiches : ?src= retenu pour l’onglet et envoyé avec l’inscription, sans cookie', async ({
+    page,
+    context,
+  }) => {
+    let corps: Record<string, unknown> | null = null;
+    await page.route('**/api/v1/auth/signup', (route) => {
+      corps = route.request().postDataJSON() as Record<string, unknown>;
+      return route.fulfill({ status: 429, json: { error: { code: 'trop_de_demandes' } } });
+    });
+    // arrivée par le code QR sur une autre page, puis l'inscription sans ?src= : la provenance suit dans l'onglet
+    await page.goto('/connexion?src=affiche-e2e');
+    await expect
+      .poll(() => page.evaluate(() => sessionStorage.getItem('awzid_src')))
+      .toBe('affiche-e2e');
+    await page.goto('/inscription');
+    await expect(page.getByTestId('inscription-form')).toBeVisible();
+    await remplirInscription(page, {
+      email: unique('src'),
+      motDePasse: 'une phrase de passe assez longue 2026',
+      annee: 1990,
+    });
+    await expect.poll(() => corps).not.toBeNull();
+    expect(corps).toMatchObject({ src: 'affiche-e2e' });
+    // valeur invalide : ignorée (la précédente, valide, reste celle de l'onglet)
+    await page.goto('/inscription?src=Pas%20valide');
+    expect(await page.evaluate(() => sessionStorage.getItem('awzid_src'))).toBe('affiche-e2e');
+    expect((await context.cookies()).filter((c) => /src/i.test(c.name))).toEqual([]);
+  });
+
   test('adresse à vérifier : le compte est renvoyé vers la page de vérification, qui renvoie le lien', async ({
     page,
   }) => {
@@ -539,6 +568,16 @@ test.describe('espace administrateur : trois modes, plafond, tableau de bord', (
                   { code: 'attente', niveau: 'info' },
                 ]
               : [],
+          origines: [
+            {
+              source: 'affiche',
+              demandes30j: 7,
+              demandes: 31,
+              inscriptions30j: 2,
+              inscriptions: 9,
+            },
+            { source: null, demandes30j: 1, demandes: 4, inscriptions30j: 5, inscriptions: 38 },
+          ],
         },
       }),
     );
@@ -552,6 +591,16 @@ test.describe('espace administrateur : trois modes, plafond, tableau de bord', (
     await expect(
       adm.getByTestId('tab-alertes').locator('[data-code="plafond_proche"]'),
     ).toBeVisible();
+    // « Origine des demandes » : nombres par provenance (30 jours, total), sans adresse
+    const origines = adm.getByTestId('tab-origines');
+    await expect(origines.locator('tr[data-source="affiche"] td')).toHaveText([
+      '7',
+      '31',
+      '2',
+      '9',
+    ]);
+    await expect(origines.locator('tr[data-source=""] th')).toContainText('Sans provenance');
+    await expect(origines).not.toContainText('@');
     // « sur invitation » en un clic
     await adm.getByTestId('mode-invitation').check();
     await expect(modes).toHaveAttribute('data-mode', 'invitation');

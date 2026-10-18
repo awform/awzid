@@ -66,7 +66,7 @@
   "sans_js": "Cette page a besoin de JavaScript pour envoyer le formulaire. Sans lui, écrivez-nous à contact@awzid.com.",
   "rgpd_titre": "Ce que nous faisons de votre adresse",
   "rgpd_resp": "Responsable du traitement : [raison sociale et adresse : à compléter par le client].",
-  "rgpd_fin": "Finalité : gérer la liste d’attente et vous envoyer une invitation. Nous gardons votre adresse et la langue de cette page, rien d’autre : ni lettre d’information, ni publicité, ni suivi.",
+  "rgpd_fin": "Finalité : gérer la liste d’attente et vous envoyer une invitation. Nous gardons votre adresse, la langue de cette page et, si vous venez d’une affiche, sa provenance (pour mesurer l’efficacité de notre communication), rien d’autre : ni lettre d’information, ni publicité, ni suivi.",
   "rgpd_base": "Base légale : votre consentement (la case à cocher ci-dessus), confirmé par un lien envoyé à votre adresse.",
   "rgpd_duree": "Durée : 12 mois au plus, puis effacement automatique, ou plus tôt sur votre demande. Une adresse non confirmée est effacée sous 7 jours.",
   "rgpd_dest": "Destinataires : l’équipe d’Awzid seulement. Données hébergées dans l’Union européenne, à Paris.",

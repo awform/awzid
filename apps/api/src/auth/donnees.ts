@@ -212,6 +212,7 @@ export function registerPrivacy(app: FastifyInstance, kit: AuthKit): void {
         // lot F3 : adresse vérifiée le, subdivision, fuseau horaire, région d'hébergement des données
         emailVerifieLe: a?.emailVerifiedAt ?? null,
         region: a?.region ?? null,
+        provenance: a?.source ?? null,
         fuseauHoraire: a?.tz ?? null,
         regionDesDonnees: a?.dataRegion,
         // 18/10/2026 : numéro WhatsApp (en clair dans l'export : c'est le vôtre), vérifié le ; liaison Google

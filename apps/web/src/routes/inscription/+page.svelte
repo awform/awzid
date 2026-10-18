@@ -12,6 +12,7 @@
   import { onMount, tick } from 'svelte';
   import { chargerStatut, type AccesStatut } from '$lib/acces';
   import ListeAttente from './ListeAttente.svelte';
+  import { retenirSource } from '$lib/provenance';
 
   /**
    * Inscription d'un PARENT (il créera ensuite les profils de ses enfants, sans e-mail) ou d'un ADULTE
@@ -162,7 +163,10 @@
     googleIdent = null;
     mode = 'email';
   }
+  /** provenance (?src= des affiches, retenue pour la session de l'onglet) envoyée avec l'inscription */
+  let source: string | null = null;
   onMount(async () => {
+    source = retenirSource(new URLSearchParams(location.search));
     acces = await chargerStatut();
     if (acces?.google) await retourGoogle(new URLSearchParams(location.search));
     // plafond atteint, ou lien « Demander une invitation » de l'accueil de la bêta (#attente) : la demande est déjà ouverte
@@ -349,6 +353,7 @@
       ...(codeOk ? { invitation: code.trim() } : {}),
       ...(jeton ? { jeton } : {}),
       ...(piege ? { site_web: piege } : {}),
+      ...(source ? { src: source } : {}),
     });
     busy = false;
     if (!r.ok) {
