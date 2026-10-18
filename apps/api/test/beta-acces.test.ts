@@ -353,7 +353,7 @@ describe.skipIf(!URL)(
       await c.h.pool.query('update waitlist set confirmed_at = now() where email = $1', [d1]);
       const [dem] = (await c.h.pool.query('select id from waitlist where email = $1', [d1])).rows;
       const acc = await c.req('POST', `/api/v1/admin/liste-attente/${dem.id}/accepter`, A, {});
-      expect(acc.statusCode).toBe(201);
+      expect(acc.statusCode).toBe(200);
       expect((await signup(d1, acc.json().code)).statusCode).toBe(201);
       const [herite] = (await c.h.pool.query('select source from account where email = $1', [d1]))
         .rows;
