@@ -118,7 +118,7 @@
   "mj.note_ecart": "Écart avec un commentateur :",
   "mj.hadith_degre": "Degré :",
   "mj.hadith_version": "Version du recueil :",
-  "mj.differe": "Publication différée : masquée aux invités de la bêta",
+  "mj.differe": "Publication différée : visible pendant la bêta",
   "mj.beta_relecture": "Contenu en relecture : ne pas diffuser",
   "mj.non_confirme": "Non confirmé : la lecture de ce vers n'est pas encore confirmée par le référent.",
   "mj.raison_differe": "Raison de la publication différée :",

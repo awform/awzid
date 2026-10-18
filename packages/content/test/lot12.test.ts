@@ -6,6 +6,7 @@ import {
   loadTanzil,
   parseQuranData,
   tanwinDisplay,
+  tanwinMushaf,
   tanwinUndo,
   TANZIL_QURAN_DATA_SHA256,
 } from '../src/index.js';
@@ -14,25 +15,28 @@ const CONTENT = process.env.AWFORM_CONTENT_DIR ?? join(process.env.HOME ?? '', '
 const QD = join(CONTENT, 'coran', 'tanzil-quran-data.js');
 const TSV = join(CONTENT, 'coran', 'tanzil-uthmani.tsv');
 
-describe('tanwins du Muṣḥaf de Médine (affichage seulement)', () => {
+describe('tanwins du Muṣḥaf de Médine (transformation disponible, désactivée à l’affichage)', () => {
+  it('affichage = Tanzil octet pour octet (Al-Ikhlāṣ 4 : ٌۢ intact)', () => {
+    for (const x of ['أَحَدٌۢ', 'بًۭ', 'بٍۢ', 'بٌۢ', 'بٍۭ']) expect(tanwinDisplay(x)).toBe(x);
+  });
   it('fusion / dissimulation → tanwin décalé U+08F0-08F2', () => {
-    expect(tanwinDisplay('بًۭ')).toBe('بࣰ');
-    expect(tanwinDisplay('بٌۭ')).toBe('بࣱ');
-    expect(tanwinDisplay('بٍۢ')).toBe('بࣲ');
+    expect(tanwinMushaf('بًۭ')).toBe('بࣰ');
+    expect(tanwinMushaf('بٌۭ')).toBe('بࣱ');
+    expect(tanwinMushaf('بٍۢ')).toBe('بࣲ');
   });
   it('conversion (iqlāb) → une seule voyelle + petite mīm', () => {
-    expect(tanwinDisplay('بًۢ')).toBe('بَۢ');
-    expect(tanwinDisplay('بٌۢ')).toBe('بُۢ');
-    expect(tanwinDisplay('بٍۭ')).toBe('بِۭ');
+    expect(tanwinMushaf('بًۢ')).toBe('بَۢ');
+    expect(tanwinMushaf('بٌۢ')).toBe('بُۢ');
+    expect(tanwinMushaf('بٍۭ')).toBe('بِۭ');
   });
   it('crochet de couleur entre le tanwin et la mīm : conservé à sa place', () => {
-    expect(tanwinDisplay('[بً]ۭ')).toBe('[بࣰ]');
-    expect(tanwinDisplay('[بً]ۢ')).toBe('[بَ]ۢ');
+    expect(tanwinMushaf('[بً]ۭ')).toBe('[بࣰ]');
+    expect(tanwinMushaf('[بً]ۢ')).toBe('[بَ]ۢ');
   });
   it('rien d’autre ne change ; inversion exacte', () => {
     const s = 'بً بٌ ۢ بَ';
-    expect(tanwinDisplay(s)).toBe(s);
-    for (const x of ['بًۭ', 'بٍۢ', 'بٌۢ', 'بٍۭ']) expect(tanwinUndo(tanwinDisplay(x))).toBe(x);
+    expect(tanwinMushaf(s)).toBe(s);
+    for (const x of ['بًۭ', 'بٍۢ', 'بٌۢ', 'بٍۭ']) expect(tanwinUndo(tanwinMushaf(x))).toBe(x);
   });
   it.skipIf(!existsSync(TSV))(
     'sur les 6 236 versets du Tanzil : inversion exacte, plus aucune suite tanwin + mīm',
@@ -40,7 +44,7 @@ describe('tanwins du Muṣḥaf de Médine (affichage seulement)', () => {
       const tanzil = loadTanzil(readFileSync(TSV, 'utf8'));
       let changed = 0;
       for (const v of tanzil.values()) {
-        const d = tanwinDisplay(v);
+        const d = tanwinMushaf(v);
         if (d !== v) changed++;
         expect(tanwinUndo(d)).toBe(v);
         expect(/[ً-ٍ][ۭۢ]/.test(d)).toBe(false);

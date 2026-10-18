@@ -29,7 +29,7 @@ test('A3 : lecture graduée ad1-01 — la page joue le bon fichier', async ({ pa
     if (r.url().includes('/lecons-audio/fichiers/')) asked.push(r.url());
   });
   await page.goto('/lectures/ad1-01');
-  await expect(page.getByTestId('audio-credit')).toContainText('Voix de synthèse (provisoire)');
+  await expect(page.getByTestId('audio-credit')).not.toContainText(/synthèse|provisoire/i);
   for (let i = 0; i <= k; i++) await page.getByTestId('suivant').click();
   const btn = page.locator(`section.page[data-page="${k + 1}"]`).getByTestId('ecouter');
   await expect(btn).toBeVisible();

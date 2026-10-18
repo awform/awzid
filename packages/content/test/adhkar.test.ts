@@ -10,7 +10,7 @@ import {
   parseVerseRef,
   readPick,
 } from '../src/adhkar.js';
-import { canonicalCollection, loadTanzil, parseDataFile } from '../src/index.js';
+import { canonicalCollection, loadTanzil, parseDataFile, tanwinDisplay } from '../src/index.js';
 import { CONTENT_DIR, HAS_CONTENT } from './helpers.js';
 
 const TSV = join(CONTENT_DIR, 'coran', 'tanzil-uthmani.tsv');
@@ -113,6 +113,35 @@ describe('A12 — sélection des adhkār (aucun texte, seulement des chemins dan
       expect(rep('tasbih-33').dua!.moment_fr).toMatch(/33/);
       expect(rep('istighfar-apres-salam').dua!.moment_fr).toMatch(/3 fois/);
       expect(rep('trois-sourates-matin-soir').recitation!.note_fr).toMatch(/trois fois/);
+    },
+  );
+
+  it.skipIf(!HAS_CONTENT)(
+    'tournage 18/10 : versets des adhkār affichés = Tanzil octet pour octet (Al-Ikhlāṣ 4 : tanwin ٌ + ۢ intact)',
+    async () => {
+      const set = await buildAdhkar(readLesson);
+      const tanzil = loadTanzil(readFileSync(TSV, 'utf8'));
+      const bytes = (x: string) => Buffer.from(x, 'utf8').toString('hex');
+      let vus = 0;
+      for (const c of set.categories)
+        for (const it of c.items) {
+          for (const r of it.recitation?.refs ?? [])
+            for (let a = r.from; a <= r.to; a++) {
+              const v = tanzil.get(`${r.s}:${a}`)!;
+              expect(v, `${r.s}:${a} absent de Tanzil`).toBeTruthy();
+              // ce que l'écran affiche (tanwinDisplay) est le verset Tanzil, sans un octet de différence
+              expect(bytes(tanwinDisplay(v)), `${r.s}:${a}`).toBe(bytes(v));
+              vus++;
+            }
+          if (it.dua?.coranique) expect(bytes(tanwinDisplay(it.dua.ar))).toBe(bytes(it.dua.ar));
+        }
+      expect(vus).toBeGreaterThan(5);
+      const ikhlas4 = tanzil.get('112:4')!;
+      // « أَحَدٌۢ » : dammatan (U+064C) suivi de la petite mīm haute (U+06E2), jamais une simple ḍamma
+      expect(tanwinDisplay(ikhlas4).endsWith('\u0623\u064E\u062D\u064E\u062F\u064C\u06E2')).toBe(
+        true,
+      );
+      expect(tanwinDisplay(ikhlas4)).not.toContain('\u062F\u064F\u06E2');
     },
   );
 });

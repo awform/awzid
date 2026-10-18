@@ -41,6 +41,20 @@ export async function listLevels(db: Db, editionId: string) {
     .orderBy(asc(t.level.track), asc(t.level.rank));
 }
 
+/** Titres français de quelques unités (leçons) de l'édition : « unitId → titre », pour afficher un titre humain. */
+export async function unitTitles(
+  db: Db,
+  editionId: string,
+  unitIds: string[],
+): Promise<Map<string, string | null>> {
+  if (!unitIds.length) return new Map();
+  const rows = await db
+    .select({ id: t.unitVersion.unitId, titleFr: t.unitVersion.titleFr })
+    .from(t.unitVersion)
+    .where(and(eq(t.unitVersion.editionId, editionId), inArray(t.unitVersion.unitId, unitIds)));
+  return new Map(rows.map((r) => [r.id, r.titleFr]));
+}
+
 export async function listUnits(db: Db, editionId: string, levelCode: string) {
   return db
     .select({

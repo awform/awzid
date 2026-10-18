@@ -81,7 +81,19 @@ const TANWIN_MAP: Record<string, string> = {
 };
 const TANWIN_RE = /([\u064B-\u064D])([[\]]?)([\u06E2\u06ED])/g;
 
+/**
+ * Texte coranique tel qu'affiché : IDENTIQUE à Tanzil, octet pour octet (décision du 18/10/2026, tournage :
+ * « أَحَدُۢ » était affiché au lieu de « أَحَدٌۢ » en Al-Ikhlāṣ 4). Tous les écrans passent par cette fonction : pour
+ * revenir à l'écriture du Muṣḥaf de Médine, il suffit de lui faire appeler `tanwinMushaf` (sur décision explicite du
+ * client). La transformation reste exportée mais n'est plus embarquée dans l'application tant qu'elle n'est pas
+ * appelée (poids du paquet de l'élève).
+ */
 export function tanwinDisplay(s: string): string {
+  return s;
+}
+
+/** Écriture du Muṣḥaf de Médine (tanwin décalé, conversion = voyelle + petite mīm) : non utilisée à l'affichage. */
+export function tanwinMushaf(s: string): string {
   return s.replace(TANWIN_RE, (_m, t: string, br: string, mim: string) => {
     const r = TANWIN_MAP[t + mim]!;
     return r.length === 1 ? r + br : r[0] + br + r[1];

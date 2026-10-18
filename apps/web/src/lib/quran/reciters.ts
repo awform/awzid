@@ -29,6 +29,19 @@ async function gardee<T>(cle: string, r: ApiResult<T>): Promise<ApiResult<T>> {
   return d ? { ok: true, status: 200, data: d, code: null, error: null } : r;
 }
 
+/**
+ * Nom affiché d'un récitateur : si la liste contient un homonyme d'une autre riwāya (ʿAlī al-Ḥudhayfī lit en Ḥafṣ,
+ * Shuʿba et Qālūn), la riwāya est ajoutée pour que deux cartes ne paraissent jamais identiques.
+ */
+export function nomRecitateur(
+  r: { id: string; nameFr: string; riwayaFr: string },
+  list: ReadonlyArray<{ id: string; nameFr: string }>,
+): string {
+  return list.some((x) => x.id !== r.id && x.nameFr === r.nameFr)
+    ? `${r.nameFr} — ${r.riwayaFr}`
+    : r.nameFr;
+}
+
 export interface ReciterChoice {
   list: Reciter[];
   /** récitateur conseillé aux débutants (Muḥammad Ayyūb), s'il est disponible */

@@ -8,7 +8,7 @@
 import { createHash } from 'node:crypto';
 import type { FastifyInstance } from 'fastify';
 import { buildAdhkar } from '@awform/content/adhkar';
-import { getUnitForStudent, type Db } from '@awform/db';
+import { getUnitForStudent, unitTitles, type Db } from '@awform/db';
 import { notFound, type Edition } from './routes-common.js';
 
 export function registerQuotidien(app: FastifyInstance, db: Db, edition: Edition): void {
@@ -21,7 +21,15 @@ export function registerQuotidien(app: FastifyInstance, db: Db, edition: Edition
       const set = await buildAdhkar(
         async (unit) => (await getUnitForStudent(db, ed.id, unit))?.lesson ?? null,
       );
-      const body = JSON.stringify({ edition: ed.code, ...set });
+      // titre humain de la leçon d'origine (jamais l'identifiant brut « re1.l23 » à l'écran)
+      const titres = await unitTitles(db, ed.id, [
+        ...new Set(set.categories.flatMap((c) => c.items.map((i) => i.unit))),
+      ]);
+      const categories = set.categories.map((c) => ({
+        ...c,
+        items: c.items.map((i) => ({ ...i, unitTitleFr: titres.get(i.unit) ?? null })),
+      }));
+      const body = JSON.stringify({ edition: ed.code, ...set, categories });
       memo = {
         edition: ed.id,
         etag: `"${createHash('sha256').update(body).digest('hex').slice(0, 32)}"`,

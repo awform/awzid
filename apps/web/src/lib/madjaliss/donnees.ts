@@ -130,7 +130,7 @@ export interface Seance {
   duree: number;
   phrases: string[];
   mots: Mot[];
-  /** PUBLICATION DIFFÉRÉE : masquée aux invités de la bêta (hors personnel et démonstration), voir `matnPour` */
+  /** PUBLICATION DIFFÉRÉE : visible au personnel, à la démonstration et aux invités connectés de la bêta (interrupteur `beta_contenu_differe_visible`), voir `matnPour` */
   differe?: true;
   /** règles et lochies : proposées aux ados et aux adultes seulement */
   pudeur?: true;

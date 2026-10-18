@@ -20,6 +20,10 @@ export function levelParts(code: string): { track: string; n: number } | null {
   return track ? { track, n: Number(m[2]) } : null;
 }
 
+/** Tri naturel des codes de niveau (ad1, ad2, ad10, ado1… et non ad1, ad10, ad2). */
+export const compareNiveaux = (a: string, b: string): number =>
+  a.localeCompare(b, 'fr', { numeric: true });
+
 export function levelLabel(code: string): string {
   const p = levelParts(code);
   return p ? t('niveau.nom', { filiere: t(`niveau.filiere_${p.track}`), n: p.n }) : code;

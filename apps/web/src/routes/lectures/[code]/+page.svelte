@@ -74,8 +74,8 @@
     <header>
       <h1><Ar text={str(B.titre_ar)} /><Ecouter text={str(B.titre_ar)} small /></h1>
       <p class="sub"><Bidi text={str(B.titre_fr)} /></p>
-      {#if audio}<p class="muted small" data-testid="audio-credit">
-          <Bidi text={[t('audio.mention'), ...audio.credits].join(' · ')} />
+      {#if audio?.credits.length}<p class="muted small" data-testid="audio-credit">
+          <Bidi text={audio.credits.join(' · ')} />
         </p>{/if}
     </header>
 

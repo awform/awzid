@@ -757,7 +757,11 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
     return { ok: true };
   });
 
-  app.get('/api/v1/auth/me', async (req, reply) => {
+  app.get<{ Querystring: { doux?: string } }>('/api/v1/auth/me', async (req, reply) => {
+    // `?doux=1` : l'application demande « qui suis-je ? » dès l'ouverture, souvent sans session (visiteur, page de
+    // connexion). Réponse 200 « anonyme » au lieu de 401, pour ne pas semer d'erreurs rouges dans la console du
+    // navigateur. Sans ce paramètre, le comportement historique (401) est inchangé.
+    if (!req.auth && req.query.doux === '1') return { anonyme: true };
     if (!req.auth) return err(reply, 401, 'non_connecte');
     return me(req.auth.accountId, req.auth.mfaVerified, req.auth.tablet);
   });

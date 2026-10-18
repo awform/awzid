@@ -62,6 +62,8 @@ describe.skipIf(!url)('A12 — /api/v1/adhkar', () => {
       'tahlil-100',
     ]);
     expect(after.items[0]!.dua).toMatchObject({ ar: 'essai 1', fr: "Sens d'essai 1" });
+    // titre humain de la leçon d'origine (jamais « re3.l21 » à l'écran)
+    expect((after.items[0] as { unitTitleFr?: string }).unitTitleFr).toBe('Unité 21');
     expect(after.items[0]!.repetitions).toBe(3);
     expect(after.items[2]!.repetitions).toBe(33);
     const coucher = b.categories.find((x) => x.id === 'coucher')!;
@@ -80,5 +82,12 @@ describe.skipIf(!url)('A12 — /api/v1/adhkar', () => {
     expect(r.headers['set-cookie']).toBeUndefined();
     const r2 = await c.req('GET', '/api/v1/adhkar', { 'if-none-match': String(r.headers.etag) });
     expect(r2.statusCode).toBe(304);
+  });
+
+  it('tournage 18/10 (point 9) : « qui suis-je ? » sans session = 401 par défaut, 200 « anonyme » avec ?doux=1', async () => {
+    expect((await c.req('GET', '/api/v1/auth/me')).statusCode).toBe(401);
+    const r = await c.req('GET', '/api/v1/auth/me?doux=1');
+    expect(r.statusCode).toBe(200);
+    expect(r.json()).toEqual({ anonyme: true });
   });
 });
