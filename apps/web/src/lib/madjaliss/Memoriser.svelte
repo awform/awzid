@@ -108,7 +108,6 @@
           onclick={() => void jouerAudio(audio).catch(() => false)}
           ><Icon name="oreille" /><Bidi text={t('audio.ecouter')} /></button
         >
-        <small class="muted"><Bidi text={t('audio.mention')} /></small>
       </p>
     {/if}
     {#if !toutMasque}

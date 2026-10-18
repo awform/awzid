@@ -849,9 +849,9 @@
   >
     <Signaler kind="lecon" excerpt={u.titleFr} />
   </p>{/if}
-{#if audio?.fichiers.size}
+{#if audio?.fichiers.size && audio.credits.length}
   <p class="audio-credit fr" data-testid="audio-credit">
-    <Bidi text={[t('audio.mention'), ...audio.credits].join(' · ')} />
+    <Bidi text={audio.credits.join(' · ')} />
   </p>
 {/if}
 

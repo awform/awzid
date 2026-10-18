@@ -6,6 +6,26 @@ Checkpoint : `awform\checkpoints\app-lot01.json`.
 
 Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) — `git push origin main` à la fin de chaque étape, en plus de `backup-repo.ps1`.
 
+
+---
+
+## 18/10/2026 — Correction des défauts repérés au tournage (branche `fix-tournage-wip`, depuis `main` 7b0d5cd)
+
+Liste : `application\beta\BUGS_APPLI_18-10.md`. Rien fusionné dans `main`, rien déployé. Aucun secret lu, aucun compte réel.
+
+- **1 (bloquant, Coran)** : cause = l'écriture « Muṣḥaf de Médine » de `tanwinDisplay` (`packages/content/src/text.ts`), qui transformait à l'affichage le tanwin + petite mīm (ٌۢ → ُۢ, et tanwin décalé U+08F0-08F2). Les données (livres, Tanzil) étaient justes. `tanwinDisplay` est maintenant l'identité : le Coran est affiché Tanzil octet pour octet partout ; la transformation reste exportée (`tanwinMushaf`) mais n'est plus embarquée. Tests : `packages/content/test/adhkar.test.ts` (tous les versets des adhkār et duas coraniques = Tanzil, 112:4 se termine par U+064C U+06E2), `lot12.test.ts`, e2e `tournage.spec.ts` (les 5 moments des adhkār sur l'écran) et `lot12.spec.ts`. Douas : `douas.test.ts` compare déjà au Tanzil.
+- **2** : mention « Voix de synthèse (provisoire) » retirée partout (clés `audio.mention` et `do.voix_provisoire` supprimées des 6 catalogues ; Écouter, Mémoriser, Séance, leçons, lectures, Douas). Les crédits sonores restent seuls quand il y en a.
+- **3** : « Parcours de hifẓ : 7 ans » (durée du parcours, pas l'âge) ; pluriels justes (`1 passage commencé sur 30`).
+- **4** : plus d'identifiant brut dans les devoirs (« Leçon : <titre> ») ; l'API `/profiles/:id/devoirs` renvoie `titleFr` (leçon et petit livre) ; adhkār : « Voir la leçon : <titre> » (`unitTitleFr`). Un profil adulte ne voit plus une leçon des filières enfants, ados ou religion des enfants (et inversement pour un enfant) : `apps/web/src/lib/devoirs.ts`. La requête serveur était déjà par profil.
+- **5** : Risāla : le libellé disait « masquée aux invités » alors que le lecteur voyait la séance ; il dit « visible pendant la bêta ». Interrupteur `beta_contenu_differe_visible` (défaut allumé) et chemin « Commencer la séance 1 » vérifiés (e2e).
+- **6** : consignes « L'enseignant(e) dit… » → « L'audio dit… » (`lib/consigne.ts`) ; « Pour l'adulte : texte à lire… » → « Lire le texte ».
+- **7** : récitateurs homonymes (ʿAlī al-Ḥudhayfī en Ḥafṣ, Shuʿba, Qālūn) : la riwāya est ajoutée au nom. « Mes récitateurs » montrait le choix du profil dans une autre riwāya que celle du lecteur.
+- **8** : tri naturel des niveaux (`compareNiveaux`).
+- **9** : `GET /auth/me?doux=1` répond 200 `{anonyme:true}` sans session (le 401 historique reste sans paramètre) ; l'application l'utilise : plus de 401 rouge à l'ouverture de la page de connexion.
+- **10** : aucun champ `tr` dans les données servies (test sur tous les JSON publics) ; la projection élève le retire des leçons.
+- **11 (bouton « Installer Awzid »)** : fait puis retiré : il fait passer la marge du budget de l'appareil élève sous 3 Ko (3,0 Ko avec les autres corrections, contre 4,2 Ko sur `main`). À reprendre quand de la place sera faite.
+- **Vérifications** : build, typecheck, lint : 0 erreur. Unitaires : 2 322 réussis (1 ignoré). E2E : suite complète 770 réussis / 141 ignorés / 5 échecs attendus (lot12 et lot13 adaptés, budget de poids), puis relance de 336 tests concernés après correction : tous verts (un test de mise à jour, `maj-fiable`, a échoué une fois sous charge et passe seul). Budget : marge 3,0 Ko.
+
 ---
 
 ## 16/10/2026 — Fusion `design-wip` (refonte visuelle de l'intérieur) + carte de bienvenue tutoyée ; déploiement de `main` 79893ce : démo et bêta `awzid-beta`

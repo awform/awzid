@@ -148,7 +148,11 @@
             <Compteur target={it.repetitions} compact />
           {/if}
           <a class="lecon" href={resolve('/lecons/[id]', { id: it.unit })}
-            ><Bidi text={t('qt.voir_lecon', { lecon: it.unit })} /></a
+            ><Bidi
+              text={it.unitTitleFr
+                ? t('qt.voir_lecon', { lecon: it.unitTitleFr })
+                : t('qt.voir_lecon_seule')}
+            /></a
           >
         </div>
       </li>

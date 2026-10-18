@@ -153,9 +153,6 @@
           traduction={trad || modeEns}
         />{/each}
     </div>
-    {#if audios.some((a) => !!a)}
-      <p class="muted" data-testid="mj-audio-mention"><Bidi text={t('audio.mention')} /></p>
-    {/if}
     {#if seance.renvois?.length}
       <p class="renvois" data-testid="mj-renvois">
         <Bidi text={t('mj.voir_aussi')} />

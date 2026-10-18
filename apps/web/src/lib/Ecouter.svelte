@@ -36,7 +36,6 @@
       data-testid="ecouter"
       data-audio={id}
       aria-label={label ?? t('audio.ecouter')}
-      title={t('audio.mention')}
       onclick={() => play(false)}
       ><svg viewBox="0 0 24 24" aria-hidden="true"
         ><path d="M3 9h4l5-4v14l-5-4H3z" fill="currentColor" /><path

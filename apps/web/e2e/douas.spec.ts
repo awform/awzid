@@ -117,12 +117,10 @@ test('onglet Douas : à côté des autres, bandeau, rubriques, une rubrique exac
     // voix de synthèse provisoire (hadith) : bouton et mention, seulement si le fichier existe
     const n = d.douas[id]!.audio ? 1 : 0;
     await expect(card.getByTestId('douas-ecouter')).toHaveCount(n);
-    await expect(card.getByTestId('douas-voix-provisoire')).toHaveCount(n);
+    await expect(card.getByTestId('douas-voix-provisoire')).toHaveCount(0);
   }
   await expect(liste(page).getByTestId('douas-ecouter').first()).toBeVisible();
-  await expect(liste(page).getByTestId('douas-voix-provisoire').first()).toHaveText(
-    'Voix de synthèse provisoire',
-  );
+  await expect(liste(page).getByText(/synthèse|provisoire/i)).toHaveCount(0);
   const mp3 = await liste(page).getByTestId('douas-ecouter').first().getAttribute('data-audio');
   const r = await page.request.get(mp3!);
   expect(r.status()).toBe(200);

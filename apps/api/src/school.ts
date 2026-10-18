@@ -28,6 +28,7 @@ import {
   hifzEventsOf,
   levelInfo,
   listAssignments,
+  listBooklets,
   listGroups,
   listLevels,
   listPupils,
@@ -41,6 +42,7 @@ import {
   setMark,
   teacherClass,
   teacherPupil,
+  unitTitles,
   updateClassSettings,
   updatePupil,
   type AssignmentRow,
@@ -801,6 +803,13 @@ export function registerSchool(
       );
       const day = today();
       const view = { profileId: req.params.id } as PupilView;
+      // titre humain des leçons données en devoir (jamais l'identifiant brut à l'écran)
+      const ed = await edition();
+      const titres = ed ? await unitTitles(db, ed.id, [...new Set(units)]) : new Map();
+      const livrets =
+        ed && rows.some((r) => r.a.kind === 'lecture')
+          ? new Map((await listBooklets(db, ed.id)).map((b) => [b.code, b.titreFr]))
+          : new Map();
       return {
         devoirs: rows.map((r) => {
           const mk = marks.find((m) => m.assignmentId === r.a.id && m.pupilId === r.pupilId);
@@ -811,6 +820,12 @@ export function registerSchool(
             kind: r.a.kind,
             target: r.a.target,
             label: r.a.kind === 'hifz' ? partLabel(r.a.target) : r.a.target,
+            titleFr:
+              (r.a.kind === 'lecon'
+                ? titres.get(r.a.target)
+                : r.a.kind === 'lecture'
+                  ? livrets.get(r.a.target)
+                  : null) ?? null,
             dueDay: r.a.dueDay,
             note: r.a.note,
             done,

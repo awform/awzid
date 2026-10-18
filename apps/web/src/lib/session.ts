@@ -110,7 +110,12 @@ export function fetchMe(): Promise<Me | null> {
 }
 
 async function fetchMeOnce(): Promise<Me | null> {
-  const r = await call<Me>('GET', '/auth/me');
+  // `doux=1` : visiteur sans session = réponse 200 « anonyme » (et non 401 rouge dans la console)
+  const r = await call<Me & { anonyme?: true }>('GET', '/auth/me?doux=1');
+  if (r.ok && r.data?.anonyme) {
+    await kvSet('me', null).catch(() => {});
+    return null;
+  }
   if (r.ok && r.data) {
     await kvSet('me', r.data).catch(() => {});
     return r.data;

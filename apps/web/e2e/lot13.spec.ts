@@ -110,10 +110,15 @@ test('espace école : de la classe papier au certificat imprimé', async ({
     data: { code: cls.joinCode, consent: true },
   });
   expect(j.status(), await j.text()).toBe(201);
+  // l'API famille donne un titre humain à la leçon donnée en devoir ; l'identifiant n'est jamais affiché
+  const dv = await fam.request.get(`/api/v1/profiles/${profileId}/devoirs`);
+  const devoirs = (await dv.json()).devoirs as Array<{ target: string; titleFr: string | null }>;
+  expect(devoirs.find((d) => d.target === 'en1.l01')?.titleFr).toMatch(/\S/);
+  expect(JSON.stringify(devoirs)).not.toContain('Awa');
+  // tournage du 18/10/2026 : un profil ADULTE ne voit pas, sur « Aujourd'hui », une leçon de la filière enfants
   await fam.goto('/aujourdhui');
-  await expect(fam.getByTestId('devoirs')).toContainText('en1.l01');
-  // la famille ne voit que ses devoirs : aucune donnée des autres élèves
-  await expect(fam.getByTestId('devoirs')).not.toContainText('Awa');
+  await expect(fam.getByTestId('devoirs')).toHaveCount(0);
+  await expect(fam.locator('main')).not.toContainText('en1.l01');
   // et n'a pas accès à l'espace école
   const denied = await fam.request.get(`/api/v1/ecole/classes/${cls.id}/tableau`);
   expect(denied.status()).toBe(403);

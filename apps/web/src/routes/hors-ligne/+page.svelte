@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { compareNiveaux } from '$lib/levels';
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import Loading from '$lib/ui/Loading.svelte';
@@ -89,7 +90,7 @@
 
   const rows = $derived.by(() => {
     const levels = new Set([...manifest.map((m) => m.level), ...local.map((l) => l.level)]);
-    return [...levels].sort().map((level) => {
+    return [...levels].sort(compareNiveaux).map((level) => {
       const m = manifest.find((x) => x.level === level);
       const l = local.find((x) => x.level === level);
       const state = !l ? 'absent' : !m ? 'local' : l.hash === m.hash ? 'a_jour' : 'maj';

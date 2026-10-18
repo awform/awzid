@@ -37,7 +37,7 @@ test('A3 : exercice « écoute » d’en1 — le bouton joue le bon fichier', as
   await btn.click();
   expect([200, 206]).toContain((await res).status());
   await expect(item.getByTestId('ecouter-lent')).toBeVisible();
-  await expect(page.getByTestId('audio-credit')).toContainText('Voix de synthèse (provisoire)');
+  await expect(page.getByTestId('audio-credit')).not.toContainText(/synthèse|provisoire/i);
   await expect(page.getByTestId('audio-credit')).toContainText('Google Cloud Text-to-Speech');
 });
 

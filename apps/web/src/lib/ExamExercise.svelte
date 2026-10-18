@@ -2,6 +2,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import Ar from './Ar.svelte';
   import Illus from './Illus.svelte';
+  import { consigneAppli } from '$lib/consigne';
   import { t } from './i18n';
 
   /**
@@ -39,7 +40,9 @@
 
 <section class="ex" data-type={type}>
   <h3><Bidi text={t('epreuve.exercice', { n })} /></h3>
-  {#if str(ex.consigne_fr)}<p class="consigne"><Bidi text={str(ex.consigne_fr)} /></p>{/if}
+  {#if str(ex.consigne_fr)}<p class="consigne">
+      <Bidi text={consigneAppli(str(ex.consigne_fr))} />
+    </p>{/if}
   {#if type === 'premiere_lettre' || type === 'ecoute' || type === 'complete' || type === 'qcm'}
     {#each arr(ex.items) as it, k (k)}
       <div class="item">

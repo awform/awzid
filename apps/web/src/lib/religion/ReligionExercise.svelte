@@ -3,6 +3,7 @@
   import { resolve } from '$app/paths';
   import Ar from '$lib/Ar.svelte';
   import Illus from '$lib/Illus.svelte';
+  import { consigneAppli } from '$lib/consigne';
   import { t } from '$lib/i18n';
   import FreeAnswerSend from '$lib/FreeAnswerSend.svelte';
   import CarnetPratique from '$lib/CarnetPratique.svelte';
@@ -72,7 +73,9 @@
     {#if str(ex.titre_ar)}<Ar text={str(ex.titre_ar)} />{/if}
     <span><Bidi text={str(ex.titre_fr)} /></span>
   </h3>
-  {#if str(ex.consigne_fr)}<p class="consigne"><Bidi text={str(ex.consigne_fr)} /></p>{/if}
+  {#if str(ex.consigne_fr)}<p class="consigne">
+      <Bidi text={consigneAppli(str(ex.consigne_fr))} />
+    </p>{/if}
 
   {#if type === 'qcm' || type === 'cas' || type === 'ecoute'}
     {#each items as it, i (i)}

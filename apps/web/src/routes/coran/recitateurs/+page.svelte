@@ -13,7 +13,7 @@
   } from '$lib/coran-audio';
   import { fmtBytes, fmtDate, fmtNumber, t } from '$lib/i18n';
   import { purgeReciters, removeSura, savedSuras, type SavedSura } from '$lib/quran/offline-audio';
-  import { loadReciters } from '$lib/quran/reciters';
+  import { loadReciters, nomRecitateur } from '$lib/quran/reciters';
   import RiwayaBadge from '$lib/quran/RiwayaBadge.svelte';
   import { fetchMe, type Me, type ProfileInfo } from '$lib/session';
   import EmptyState from '$lib/ui/EmptyState.svelte';
@@ -75,7 +75,8 @@
     const r = await setPreference(profile.id, id);
     if (r.ok) {
       chosen = id;
-      info = t('ca.choisi', { nom: list.find((x) => x.id === id)?.nameFr ?? id });
+      const choisi = list.find((x) => x.id === id);
+      info = t('ca.choisi', { nom: choisi ? nomRecitateur(choisi, list) : id });
     }
   }
   async function drop(s: SavedSura) {
@@ -150,7 +151,7 @@
     >
       <div class="head">
         <div>
-          <h3><Bidi text={r.nameFr} /></h3>
+          <h3><Bidi text={nomRecitateur(r, list)} /></h3>
           <p class="ar" lang="ar" dir="rtl"><Bidi text={r.nameAr} base="ar" /></p>
         </div>
         {#if profile}

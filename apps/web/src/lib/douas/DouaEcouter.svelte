@@ -3,7 +3,7 @@
 
   /**
    * Douas (phase 2) — bouton « Écouter » d'une doua tirée d'un hadith : voix de synthèse PROVISOIRE (décision du
-   * client du 15/10/2026), avec la mention discrète « Voix de synthèse provisoire ». Jamais pour un verset : le
+   * client du 15/10/2026), sans aucune mention « provisoire » (décision du 18/10/2026). Jamais pour un verset : le
    * fichier n'existe que pour les hadiths (garde Coran à la génération et dans scripts/douas.mjs) et ce composant
    * n'est rendu que si `src` est fourni. Aucune lecture automatique ; un seul son à la fois.
    */
@@ -54,7 +54,6 @@
         stroke-linecap="round"
       /></svg
     ><span>{t('do.ecouter')}</span></button
-  ><span class="mention muted" data-testid="douas-voix-provisoire">{t('do.voix_provisoire')}</span
   ></span
 >
 
@@ -92,8 +91,5 @@
   .spk:focus-visible {
     outline: 3px solid var(--gold);
     outline-offset: 2px;
-  }
-  .mention {
-    font-size: 0.8rem;
   }
 </style>

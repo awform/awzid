@@ -2,10 +2,12 @@
  * A12 — adhkār tirés des livres (route publique /api/v1/adhkar) : gardés sur l'appareil (IndexedDB) pour le
  * hors ligne ; les versets des récitations (Tanzil) sont gardés par loadVerses comme dans l'espace Coran.
  */
-import type { AdhkarCategory, AdhkarItem } from '@awform/content/adhkar';
+import type { AdhkarCategory, AdhkarItem as BaseItem } from '@awform/content/adhkar';
 import { kvGet, kvSet } from '$lib/idb';
 
-export type { AdhkarCategory, AdhkarItem };
+export type { AdhkarCategory };
+/** Sélection des livres + titre humain de la leçon d'origine (ajouté par l'API). */
+export type AdhkarItem = BaseItem & { unitTitleFr?: string | null };
 export interface AdhkarData {
   edition: string;
   categories: Array<{ id: AdhkarCategory; items: AdhkarItem[] }>;

@@ -7,6 +7,7 @@
   import { fmtDate, t } from '$lib/i18n';
   import { levelLabel } from '$lib/levels';
   import { accueil, type Accueil } from '$lib/parcours/parcours';
+  import { devoirConvient, libelleDevoir } from '$lib/devoirs';
   import { call, cachedMe, type ProfileInfo } from '$lib/session';
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Icon from '$lib/ui/Icon.svelte';
@@ -22,6 +23,7 @@
     kind: string;
     target: string;
     label: string;
+    titleFr?: string | null;
     dueDay: string;
     note: string | null;
     done: boolean;
@@ -37,7 +39,7 @@
       const r = await accueil(profile.id);
       if (r.ok) a = r.data;
       const d = await call<{ devoirs: Devoir[] }>('GET', `/profiles/${profile.id}/devoirs`);
-      devoirs = d.ok ? (d.data?.devoirs ?? []) : [];
+      devoirs = d.ok ? (d.data?.devoirs ?? []).filter((x) => devoirConvient(profile?.kind, x)) : [];
       const me = await cachedMe();
       family =
         me?.account.kind === 'parent' ||
@@ -84,13 +86,11 @@
       {#each devoirs as d (d.id)}
         <li data-fait={d.done}>
           {#if d.kind === 'lecon'}<a href={resolve('/lecons/[id]', { id: d.target })}
-              ><Bidi text={t('auj.devoir_lecon', { id: d.target })} /></a
+              ><Bidi text={libelleDevoir(d)} /></a
             >{:else if d.kind === 'lecture'}<a
               href={resolve('/lectures/[code]', { code: d.target })}
-              ><Bidi text={t('auj.devoir_lecture', { code: d.target })} /></a
-            >{:else}<a href={resolve('/hifz')}
-              ><Bidi text={t('auj.devoir_hifz', { passage: d.label })} /></a
-            >{/if}
+              ><Bidi text={libelleDevoir(d)} /></a
+            >{:else}<a href={resolve('/hifz')}><Bidi text={libelleDevoir(d)} /></a>{/if}
           <span class="muted small"
             >· <Bidi
               text={t('auj.pour_le', { date: fmtDate(d.dueDay, { dateStyle: 'medium' }) })}

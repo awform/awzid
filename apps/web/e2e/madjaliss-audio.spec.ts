@@ -119,7 +119,8 @@ test('adulte : bouton « Écouter » seulement pour les phrases avec audio, MP3 
     await expect(page.locator(`[data-phrase="${id}"] [data-testid="mj-ecouter-lire"]`)).toHaveCount(
       0,
     );
-  await expect(page.getByTestId('mj-audio-mention')).toHaveText('Voix de synthèse (provisoire)');
+  await expect(page.getByTestId('mj-audio-mention')).toHaveCount(0);
+  await expect(page.getByText(/synthèse|provisoire/i)).toHaveCount(0);
 
   // fichier servi au compte connecté, avec Range ; 401 sans session ; 404 hors manifeste
   const chemin = deA.get(s1.phrases.find((id) => deA.get(id)!.audio)!)!.audio!;

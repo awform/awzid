@@ -14,6 +14,7 @@
   import Ecouter from './Ecouter.svelte';
   import Illus from './Illus.svelte';
   import { contentText } from './i18n/content-text';
+  import { consigneAppli } from '$lib/consigne';
   import { t } from './i18n';
 
   /**
@@ -120,7 +121,9 @@
       <Ar text={titleAr} /><Ecouter text={titleAr} small />
       <span class="fr"><Bidi text={titleFr} /></span>
     </h3>
-    {#if consigne}<p class="consigne" lang={consigne.lang}><Bidi text={consigne.text} /></p>{/if}
+    {#if consigne}<p class="consigne" lang={consigne.lang}>
+        <Bidi text={consigneAppli(consigne.text)} />
+      </p>{/if}
     {#if lang}<p class="score" aria-live="polite">
         ★ <Bidi text={score} /> / <Bidi text={total} /><Bidi
           text={score === total && total ? t('exo.bravo_suffixe') : ''}
@@ -208,7 +211,7 @@
           <!-- A3 : la question se fait entendre (fichier du livre) ; sans fichier, l'adulte la lit -->
           <Ecouter text={it.dit} label={t('audio.ecouter_question', { n: i + 1 })} />
           <details class="adulte">
-            <summary>{t('exo.pour_adulte')}</summary>
+            <summary>{t('exo.lire_texte')}</summary>
             <Ar text={it.dit} />
           </details>
           <div class="opts" dir="rtl">

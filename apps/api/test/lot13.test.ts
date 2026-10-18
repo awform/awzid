@@ -251,6 +251,14 @@ describe.skipIf(!READY)('lot 13 — espace école (awform_test)', () => {
       'en1.l01',
     ]);
     expect(fam.devoirs.find((x: { target: string }) => x.target === 'en1.l01').done).toBe(true);
+    // titre humain de la leçon et du petit livre donnés en devoir (jamais « en1.l01 » ni « en1-01 » seuls à l'écran)
+    expect(fam.devoirs.find((x: { target: string }) => x.target === 'en1.l01').titleFr).toMatch(
+      /\S/,
+    );
+    expect(fam.devoirs.find((x: { target: string }) => x.target === 'en1-01').titleFr).toBe(
+      'Voici ma maison',
+    );
+    expect(fam.devoirs.find((x: { target: string }) => x.target === '112:1-4').titleFr).toBeNull();
     expect(JSON.stringify(fam)).not.toContain('Awa');
     expect((await req('GET', `/api/v1/profiles/${child}/devoirs`, otherParent)).statusCode).toBe(
       404,
