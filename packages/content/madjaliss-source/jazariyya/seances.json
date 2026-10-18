@@ -27,7 +27,7 @@
                           "sens": "Son élu"
                         },
                         {
-                          "ar": "مُقَدِّمَة",
+                          "ar": "مُقَدِّمَة",
                           "sens": "introduction"
                         }
                       ],
@@ -46,7 +46,7 @@
             "duree_min": 10,
             "mots_difficiles": [
                         {
-                          "ar": "مُحَتَّم",
+                          "ar": "مُحَتَّم",
                           "sens": "obligatoire de façon ferme"
                         },
                         {
@@ -94,7 +94,7 @@
           },
           {
             "id": "JAZ-S04",
-            "titre": "Les points d'articulation (2) : milieu de la langue, ḍād, lām, nūn, rāʾ, ṭāʾ",
+            "titre": "Les points d'articulation (2) : milieu de la langue, {ar:0}, {ar:1}, {ar:2}, {ar:3}, {ar:4}", "titre_translit_interne": "Les points d'articulation (2) : milieu de la langue, ḍād, lām, nūn, rāʾ, ṭāʾ", "titre_mots_ar": ["ض", "ل", "ن", "ر", "ط"],
             "vers": [
                   "JAZ-0013",
                   "JAZ-0014",
@@ -112,7 +112,7 @@
                           "sens": "les molaires"
                         },
                         {
-                          "ar": "الثَّنَايَا",
+                          "ar": "الثَّنَايَا",
                           "sens": "les incisives"
                         }
                       ],
@@ -121,7 +121,7 @@
           },
           {
             "id": "JAZ-S05",
-            "titre": "Les points d'articulation (3) : ẓāʾ, fāʾ, lèvres, nez",
+            "titre": "Les points d'articulation (3) : {ar:0}, {ar:1}, lèvres, nez", "titre_translit_interne": "Les points d'articulation (3) : ẓāʾ, fāʾ, lèvres, nez", "titre_mots_ar": ["ظ", "ف"],
             "vers": [
                   "JAZ-0017",
                   "JAZ-0018",
@@ -130,7 +130,7 @@
             "duree_min": 8,
             "mots_difficiles": [
                         {
-                          "ar": "الشَّفَة",
+                          "ar": "الشَّفَة",
                           "sens": "la lèvre"
                         },
                         {
@@ -195,11 +195,11 @@
                           "sens": "rebond"
                         },
                         {
-                          "ar": "اللِّين",
+                          "ar": "اللِّين",
                           "sens": "douceur"
                         },
                         {
-                          "ar": "التَّفَشِّي",
+                          "ar": "التَّفَشِّي",
                           "sens": "étalement"
                         }
                       ],
@@ -208,7 +208,7 @@
           },
           {
             "id": "JAZ-S08",
-            "titre": "Le tajwīd : une obligation, une parure, sa définition",
+            "titre": "Le tajwid : une obligation, une parure, sa définition", "titre_translit_interne": "Le tajwīd : une obligation, une parure, sa définition",
             "vers": [
                   "JAZ-0027",
                   "JAZ-0028",
@@ -239,7 +239,7 @@
           },
           {
             "id": "JAZ-S09",
-            "titre": "Comment pratiquer le tajwīd : sans excès",
+            "titre": "Comment pratiquer le tajwid : sans excès", "titre_translit_interne": "Comment pratiquer le tajwīd : sans excès",
             "vers": [
                   "JAZ-0031",
                   "JAZ-0032",
@@ -248,11 +248,11 @@
             "duree_min": 8,
             "mots_difficiles": [
                         {
-                          "ar": "تَكَلُّف",
+                          "ar": "تَكَلُّف",
                           "sens": "artifice"
                         },
                         {
-                          "ar": "تَعَسُّف",
+                          "ar": "تَعَسُّف",
                           "sens": "excès"
                         },
                         {
@@ -265,7 +265,7 @@
           },
           {
             "id": "JAZ-S10",
-            "titre": "Finesse et épaisseur (1) : le alif, la hamza, le lām",
+            "titre": "Finesse et épaisseur (1) : le alif, la hamza, le {ar:0}", "titre_translit_interne": "Finesse et épaisseur (1) : le alif, la hamza, le lām", "titre_mots_ar": ["ل"],
             "vers": [
                   "JAZ-0034",
                   "JAZ-0035",
@@ -291,7 +291,7 @@
           },
           {
             "id": "JAZ-S11",
-            "titre": "Finesse et épaisseur (2) : bāʾ, jīm, rebond, ḥāʾ, sīn",
+            "titre": "Finesse et épaisseur (2) : {ar:0}, {ar:1}, rebond, {ar:2}, {ar:3}", "titre_translit_interne": "Finesse et épaisseur (2) : bāʾ, jīm, rebond, ḥāʾ, sīn", "titre_mots_ar": ["ب", "ج", "ح", "س"],
             "vers": [
                   "JAZ-0037",
                   "JAZ-0038",
@@ -301,7 +301,7 @@
             "duree_min": 9,
             "mots_difficiles": [
                         {
-                          "ar": "شِدَّة",
+                          "ar": "شِدَّة",
                           "sens": "force"
                         },
                         {
@@ -309,7 +309,7 @@
                           "sens": "colline"
                         },
                         {
-                          "ar": "اجْتُثَّتْ",
+                          "ar": "اجْتُثَّتْ",
                           "sens": "a été arrachée"
                         }
                       ],
@@ -318,7 +318,7 @@
           },
           {
             "id": "JAZ-S12",
-            "titre": "Le rāʾ : fin ou épais",
+            "titre": "Le {ar:0} : fin ou épais", "titre_translit_interne": "Le rāʾ : fin ou épais", "titre_mots_ar": ["ر"],
             "vers": [
                   "JAZ-0041",
                   "JAZ-0042",
@@ -327,7 +327,7 @@
             "duree_min": 8,
             "mots_difficiles": [
                         {
-                          "ar": "التَّرْقِيق",
+                          "ar": "التَّرْقِيق",
                           "sens": "amincissement"
                         },
                         {
@@ -344,7 +344,7 @@
           },
           {
             "id": "JAZ-S13",
-            "titre": "Le lām du nom d'Allah ; les lettres d'élévation ; l'iṭbāq",
+            "titre": "Le {ar:0} du nom d'Allah ; les lettres d'élévation ; la couverture", "titre_translit_interne": "Le lām du nom d'Allah ; les lettres d'élévation ; l'iṭbāq", "titre_mots_ar": ["ل"],
             "vers": [
                   "JAZ-0044",
                   "JAZ-0045",
@@ -370,7 +370,7 @@
           },
           {
             "id": "JAZ-S14",
-            "titre": "Garder le sukūn, l'ouverture et la force",
+            "titre": "Garder le soukoun, l'ouverture et la force", "titre_translit_interne": "Garder le sukūn, l'ouverture et la force",
             "vers": [
                   "JAZ-0047",
                   "JAZ-0048",
@@ -379,8 +379,8 @@
             "duree_min": 8,
             "mots_difficiles": [
                         {
-                          "ar": "السُّكُون",
-                          "sens": "le sukūn"
+                          "ar": "السُّكُون",
+                          "sens": "le soukoun", "sens_translit_interne": "le sukūn"
                         },
                         {
                           "ar": "انْفِتَاح",
@@ -421,7 +421,7 @@
           },
           {
             "id": "JAZ-S16",
-            "titre": "Ḍād et ẓāʾ (1) : les différencier ; les mots à ẓāʾ",
+            "titre": "{ar:0} et {ar:1} (1) : les différencier ; les mots à {ar:1}", "titre_translit_interne": "Ḍād et ẓāʾ (1) : les différencier ; les mots à ẓāʾ", "titre_mots_ar": ["ض", "ظ"],
             "vers": [
                   "JAZ-0052",
                   "JAZ-0053",
@@ -435,7 +435,7 @@
                           "sens": "étirement"
                         },
                         {
-                          "ar": "الظَّعْن",
+                          "ar": "الظَّعْن",
                           "sens": "le voyage"
                         },
                         {
@@ -448,7 +448,7 @@
           },
           {
             "id": "JAZ-S17",
-            "titre": "Ḍād et ẓāʾ (2) : suite des mots à ẓāʾ et exceptions",
+            "titre": "{ar:0} et {ar:1} (2) : suite des mots à {ar:1} et exceptions", "titre_translit_interne": "Ḍād et ẓāʾ (2) : suite des mots à ẓāʾ et exceptions", "titre_mots_ar": ["ض", "ظ"],
             "vers": [
                   "JAZ-0056",
                   "JAZ-0057",
@@ -467,7 +467,7 @@
                         },
                         {
                           "ar": "ظَنِين",
-                          "sens": "soupçonné / avare"
+                          "sens": "soupçonné (selon une autre lecture) ; dans la lecture de Hafs, que nous suivons : avare (81:24)", "sens_translit_interne": "soupçonné (écrit avec ẓāʾ) ; Ḥafṣ lit avec ḍād « ḍanīn » : avare (81:24)"
                         }
                       ],
             "ordre_publication": 20,
@@ -475,7 +475,7 @@
           },
           {
             "id": "JAZ-S18",
-            "titre": "Quand ḍād et ẓāʾ se rencontrent ; quelques mots à ne pas déformer",
+            "titre": "Quand {ar:0} et {ar:1} se rencontrent ; quelques mots à ne pas déformer", "titre_translit_interne": "Quand ḍād et ẓāʾ se rencontrent ; quelques mots à ne pas déformer", "titre_mots_ar": ["ض", "ظ"],
             "vers": [
                   "JAZ-0060",
                   "JAZ-0061"
@@ -487,7 +487,7 @@
                           "sens": "la clarté"
                         },
                         {
-                          "ar": "اضْطُرَّ",
+                          "ar": "اضْطُرَّ",
                           "sens": "il a été contraint"
                         },
                         {
@@ -500,7 +500,7 @@
           },
           {
             "id": "JAZ-S19",
-            "titre": "Le son nasal (ghunna) et le mīm sans voyelle",
+            "titre": "Le son nasal et le {ar:0} sans voyelle", "titre_translit_interne": "Le son nasal (ghunna) et le mīm sans voyelle", "titre_mots_ar": ["م"],
             "vers": [
                   "JAZ-0062",
                   "JAZ-0063",
@@ -509,11 +509,11 @@
             "duree_min": 8,
             "mots_difficiles": [
                         {
-                          "ar": "غُنَّة",
+                          "ar": "غُنَّة",
                           "sens": "son nasal"
                         },
                         {
-                          "ar": "شُدِّدَا",
+                          "ar": "شُدِّدَا",
                           "sens": "ils sont chaddés"
                         },
                         {
@@ -526,7 +526,7 @@
           },
           {
             "id": "JAZ-S20",
-            "titre": "Le nūn sans voyelle et le tanwīn : les quatre règles",
+            "titre": "Le {ar:0} sans voyelle et le tanwin : les quatre règles", "titre_translit_interne": "Le nūn sans voyelle et le tanwīn : les quatre règles", "titre_mots_ar": ["ن"],
             "vers": [
                   "JAZ-0065",
                   "JAZ-0066",
@@ -557,7 +557,7 @@
           },
           {
             "id": "JAZ-S21",
-            "titre": "Le madd : nécessaire, obligatoire, permis",
+            "titre": "L'allongement : obligatoire permanent, requis, permis", "titre_translit_interne": "Le madd : obligatoire permanent, requis, permis", "audit_final_18_10": {"date": "2026-10-18", "decision": "R-F5 : « nécessaire » et « obligatoire » seul proscrits pour lāzim / wājib.", "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.", "avant_titre": "Le madd : nécessaire, obligatoire, permis", "sources": ["awform/GLOSSAIRE_TERMES.md, section « Règle : madd, rāʾ et arrêt » (R-F5, R-L5)"]},
             "vers": [
                   "JAZ-0069",
                   "JAZ-0070",
@@ -568,11 +568,11 @@
             "mots_difficiles": [
                         {
                           "ar": "لَازِم",
-                          "sens": "nécessaire"
+                          "sens": "obligatoire permanent (6 temps)"
                         },
                         {
                           "ar": "وَاجِب",
-                          "sens": "obligatoire"
+                          "sens": "requis (allongement requis, joint : 4 ou 5 temps)"
                         },
                         {
                           "ar": "جَائِز",
@@ -625,7 +625,7 @@
           },
           {
             "id": "JAZ-S23",
-            "titre": "Le tracé du Muṣḥaf (1) : mots séparés et joints (début des listes)",
+            "titre": "Le tracé de l'exemplaire du Coran (1) : mots séparés et joints (début des listes)", "titre_translit_interne": "Le tracé du Muṣḥaf (1) : mots séparés et joints (début des listes)",
             "vers": [
                   "JAZ-0079",
                   "JAZ-0080",
@@ -655,7 +655,7 @@
           },
           {
             "id": "JAZ-S24",
-            "titre": "Le tracé du Muṣḥaf (2) : suite des listes",
+            "titre": "Le tracé de l'exemplaire du Coran (2) : suite des listes", "titre_translit_interne": "Le tracé du Muṣḥaf (2) : suite des listes",
             "vers": [
                   "JAZ-0084",
                   "JAZ-0085",
@@ -667,7 +667,7 @@
             "mots_difficiles": [
                         {
                           "ar": "الْمَفْتُوح",
-                          "sens": "[le mot] avec fatḥa"
+                          "sens": "[le mot] avec fatha", "sens_translit_interne": "[le mot] avec fatḥa"
                         },
                         {
                           "ar": "خُلْف",
@@ -681,7 +681,7 @@
           },
           {
             "id": "JAZ-S25",
-            "titre": "Le tracé du Muṣḥaf (3) : fin des listes",
+            "titre": "Le tracé de l'exemplaire du Coran (3) : fin des listes", "titre_translit_interne": "Le tracé du Muṣḥaf (3) : fin des listes",
             "vers": [
                   "JAZ-0089",
                   "JAZ-0090",
@@ -707,7 +707,7 @@
           },
           {
             "id": "JAZ-S26",
-            "titre": "Le tāʾ ouvert ou fermé dans le tracé du Muṣḥaf",
+            "titre": "Le ta ouvert ou fermé dans le tracé de l'exemplaire du Coran", "titre_translit_interne": "Le tāʾ ouvert ou fermé dans le tracé du Muṣḥaf",
             "vers": [
                   "JAZ-0094",
                   "JAZ-0095",
@@ -720,8 +720,8 @@
             "duree_min": 12,
             "mots_difficiles": [
                         {
-                          "ar": "التَّاء",
-                          "sens": "le tāʾ ouvert"
+                          "ar": "التَّاء",
+                          "sens": "le ta ouvert", "sens_translit_interne": "le tāʾ ouvert"
                         },
                         {
                           "ar": "جَمْعًا وَفَرْدًا",
@@ -735,7 +735,7 @@
           },
           {
             "id": "JAZ-S27",
-            "titre": "La hamzat al-waṣl : départ de la lecture",
+            "titre": "L'alif de liaison : départ de la lecture", "titre_translit_interne": "La hamzat al-waṣl : départ de la lecture",
             "vers": [
                   "JAZ-0101",
                   "JAZ-0102",
@@ -745,7 +745,7 @@
             "mots_difficiles": [
                         {
                           "ar": "هَمْزُ الْوَصْل",
-                          "sens": "hamza de liaison"
+                          "sens": "alif de liaison", "sens_translit_interne": "alif de liaison (hamzat al-waṣl)"
                         },
                         {
                           "ar": "ابْن، ابْنَة…",
@@ -757,7 +757,7 @@
           },
           {
             "id": "JAZ-S28",
-            "titre": "Arrêt par le souffle de voyelle (rawm) et l'arrondi des lèvres (ishmām) ; conclusion",
+            "titre": "Arrêt par le souffle de voyelle et l'arrondi des lèvres ; conclusion", "titre_translit_interne": "Arrêt par le souffle de voyelle (rawm) et l'arrondi des lèvres (ishmām) ; conclusion",
             "vers": [
                   "JAZ-0104",
                   "JAZ-0105",

@@ -831,7 +831,7 @@
                     },
                     {
                         "id":  "IBA-0062",
-                        "fr":  "L\u0027obligation englobe la jonction des oreilles, englobe les coudes et les chevilles.",
+                        "fr":  "L\u0027obligation [du lavage du visage] englobe [tout l\u0027espace] d\u0027une oreille à l\u0027autre ; elle englobe les coudes et les chevilles.", "audit_final_18_10": {"date": "2026-10-18", "decision": "« مَجْمَعَ الْأُذْنَيْنِ » : Mayyāra explique le vers par la limite du visage en largeur, « d\u0027une oreille à l\u0027autre » (Ibn al-Ḥājib), avis retenu par Ibn ʿĀshir parce qu\u0027il est le mashhūr. « La jonction des oreilles » était obscur ; crochet explicatif ajouté.", "statut": "Tranché par le référent selon l\u0027école mālikite (mashhūr), sources citées. En attente de relecture.", "fr_avant": "L\u0027obligation englobe la jonction des oreilles, englobe les coudes et les chevilles.", "sources": ["Mayyāra, ad-Durr ath-Thamīn, vol. 1, p. 156 (turath.io, livre 14249, page 152, lue le 18/10/2026)"], "citations_ar": ["ميارة، الدر الثمين والمورد المعين ١/١٥٦: ومن الأذن إلى الأذن وقيل من العذار إلى العذار وقيل بالأول في نقي الخد والثانى في ذى الشعر وانفرد عبد الوهاب بأن مابينهما سنة اهـ التوضيح والذقن مجتمع اللحيين وبسبب قولنا الشعر المعتاد يغسل الأغم ما على جبهته من الشعر ولا يغسل الأصلع ما انحسر عنه الشعر من الرأس اهـ فأشار بقوله والوجه من منبت الخ إلى حد الوجه طولا وبقوله ومن الأذن إلى الأذن إلى حده عرضا وإلى حده عرضا أشار الناظم بقوله (والفرض عم) مجمع الأذنين والله أعلم واعتمد الناظم هذا الحد دون غيره كما حكى ابن الحاجب بعده لكونه هو المشهور"]},
                         "partie":  "Principes et purification (IBA-0049 à 0100)",
                         "ordre_de_traduction":  1,
                         "statut":  "EN_ATTENTE_SECONDE_LECTURE",
@@ -2235,7 +2235,7 @@
                     },
                     {
                         "id":  "IBA-0213",
-                        "fr":  "Le jeûne du mois de Ramadan est obligatoire. En rajab et en shaʿbān, le jeûne est recommandé,",
+                        "fr":  "Le jeûne du mois de Ramaḍān est obligatoire. En Rajab et en Shaʿbān, le jeûne est recommandé,", "audit_final_18_10": {"date": "2026-10-18", "decision": "Harmonisation : « Ramaḍān » et noms de mois avec majuscule, comme dans les autres textes.", "statut": "Tranché par le référent selon l\u0027école mālikite (mashhūr), sources citées. En attente de relecture.", "fr_avant": "Le jeûne du mois de Ramadan est obligatoire. En rajab et en shaʿbān, le jeûne est recommandé,"},
                         "partie":  "Jeûne (IBA-0213 à 0230)",
                         "ordre_de_traduction":  4,
                         "statut":  "EN_ATTENTE_SECONDE_LECTURE",
@@ -2243,7 +2243,7 @@
                     },
                     {
                         "id":  "IBA-0214",
-                        "fr":  "de même les neuf [premiers jours] de dhū al-ḥijja, et plus encore le dernier [d\u0027entre eux] ; de même al-muḥarram, et plus encore le dixième.",
+                        "fr":  "de même les neuf [premiers jours] de Dhū l-Ḥijja, et plus encore le dernier [d\u0027entre eux] ; de même al-Muḥarram, et plus encore le dixième.", "audit_final_18_10": {"date": "2026-10-18", "decision": "Harmonisation des noms de mois (majuscule, « Dhū l-Ḥijja »).", "statut": "Tranché par le référent selon l\u0027école mālikite (mashhūr), sources citées. En attente de relecture.", "fr_avant": "de même les neuf [premiers jours] de dhū al-ḥijja, et plus encore le dernier [d\u0027entre eux] ; de même al-muḥarram, et plus encore le dixième."},
                         "partie":  "Jeûne (IBA-0213 à 0230)",
                         "ordre_de_traduction":  4,
                         "statut":  "EN_ATTENTE_SECONDE_LECTURE",
@@ -2331,7 +2331,7 @@
                     },
                     {
                         "id":  "IBA-0225",
-                        "fr":  "Celui qui rompt [le jeûne] obligatoire le rattrape, et qu\u0027il y ajoute l\u0027expiation, en Ramadan, s\u0027il l\u0027a fait exprès,",
+                        "fr":  "Celui qui rompt [le jeûne] obligatoire le rattrape, et qu\u0027il y ajoute l\u0027expiation, en Ramaḍān, s\u0027il l\u0027a fait exprès,", "audit_final_18_10": {"date": "2026-10-18", "decision": "Harmonisation : « Ramaḍān ».", "statut": "Tranché par le référent selon l\u0027école mālikite (mashhūr), sources citées. En attente de relecture.", "fr_avant": "Celui qui rompt [le jeûne] obligatoire le rattrape, et qu\u0027il y ajoute l\u0027expiation, en Ramadan, s\u0027il l\u0027a fait exprès,"},
                         "partie":  "Jeûne (IBA-0213 à 0230)",
                         "ordre_de_traduction":  4,
                         "statut":  "EN_ATTENTE_SECONDE_LECTURE",
@@ -2531,7 +2531,7 @@
                     },
                     {
                         "id":  "IBA-0250",
-                        "fr":  "Si tu ne peux atteindre la Pierre, touche-la de la main et pose [celle-ci] sur la bouche ; dis le takbīr : tu suivras [la Sunna].",
+                        "fr":  "Si tu ne peux atteindre la Pierre [pour la baiser], touche-la de la main et pose [celle-ci] sur la bouche ; dis le takbīr : tu suivras [la Sunna].", "audit_final_18_10": {"date": "2026-10-18", "decision": "Le français disait « si tu ne peux atteindre la Pierre, touche-la de la main » (contradictoire). Mayyāra : « s\u0027il est empêché par la foule de la baiser, il la touche de la main, puis pose celle-ci sur la bouche » ; d\u0027où le crochet.", "statut": "Tranché par le référent selon l\u0027école mālikite (mashhūr), sources citées. En attente de relecture.", "fr_avant": "Si tu ne peux atteindre la Pierre, touche-la de la main et pose [celle-ci] sur la bouche ; dis le takbīr : tu suivras [la Sunna].", "sources": ["Mayyāra, ad-Durr ath-Thamīn, p. 511 (turath.io, livre 14249, page 505, lue le 18/10/2026)"]},
                         "partie":  "Ḥajj (IBA-0231 à 0292)",
                         "ordre_de_traduction":  5,
                         "statut":  "EN_ATTENTE_SECONDE_LECTURE",

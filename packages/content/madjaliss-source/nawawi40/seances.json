@@ -163,7 +163,7 @@
         "Dialogue sur la foi, le destin : traduction littérale."
       ],
       "degre_affiche": "figure dans Muslim, Ṣaḥīḥ n° 8 ; an-Nawawī : « les deux Ṣaḥīḥ sont les plus authentiques des livres composés » (Arbaʿīn, hadith 1)",
-      "note_contexte": "« Que la servante enfante sa maîtresse » : amat désigne une femme en condition servile. Ibn Rajab (t. 1, p. 136) comprend « sa maîtresse (rabbatuhā) » comme celle qui la possède et y voit l'annonce d'une époque de conquêtes et d'afflux de captifs ; il rapporte aussi une lecture où la fille, devenue maîtresse, achète sa mère sans le savoir. Le texte est traduit littéralement par « la servante enfante sa maîtresse ».",
+      "note_contexte": "« Que la servante enfante sa maîtresse » : amat désigne une femme en condition servile. Ibn Rajab (t. 1, p. 136-137) comprend « sa maîtresse (rabbatahā) » comme celle qui la possède et y voit l'annonce d'une époque de conquêtes et d'afflux de captifs ; il rapporte aussi une lecture où la fille, devenue maîtresse, achète sa mère sans le savoir. Le texte est traduit littéralement par « la servante enfante sa maîtresse ».", "audit_final_18_10": {"date": "2026-10-18", "decision": "La lecture « la fille, devenue maîtresse, achète sa mère sans le savoir » est à la p. 137 (« فتشتريها البنت وتستخدمها جاهلة بأنها أمها »), non à la p. 136 ; « rabbatuhā » (nominatif) est harmonisé avec « rabbatahā » du texte traduit (complément de « تلد »).", "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.", "avant_note_contexte": "« Que la servante enfante sa maîtresse » : amat désigne une femme en condition servile. Ibn Rajab (t. 1, p. 136) comprend « sa maîtresse (rabbatuhā) » comme celle qui la possède et y voit l'annonce d'une époque de conquêtes et d'afflux de captifs ; il rapporte aussi une lecture où la fille, devenue maîtresse, achète sa mère sans le savoir. Le texte est traduit littéralement par « la servante enfante sa maîtresse ».", "sources": ["Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. al-Arnaʾūṭ/Bājis, ar-Risāla 1417/1997 (turath 4268), t. 1 p. 136-137, lue le 18/10/2026"]},
       "niveau_min_decide_13_10": "cycle 1"
     },
     {
@@ -241,7 +241,7 @@
           "sens": "coudée"
         },
         {
-          "ar": "وَشَقِيٍّ",
+          "ar": "وَشَقِيٌّ",
           "sens": "malheureux"
         },
         {
@@ -579,7 +579,7 @@
           "sens": "couvert de poussière"
         },
         {
-          "ar": "وَغُذِّيَ",
+          "ar": "وَغُذِيَ",
           "sens": "a été nourri"
         },
         {
@@ -658,7 +658,7 @@
       ],
       "relecture_comite": true,
       "points_referent": [
-        "Numéro d'at-Tirmidhī : 2520 dans l'édition d'an-Nawawī, 2518 dans la base hadith-api."
+        "Numéro d'at-Tirmidhī : 2518 (éd. Ḥalabī dite « Shākir », t. 4 p. 668) = 2687 (éd. al-Arnaʾūṭ, t. 4 p. 490-491) ; le « 2520 » de l'édition numérique de l'Arbaʿīn est fautif et ne vient pas d'an-Nawawī (aucun numéro dans l'éd. Dār al-Minhāj, p. 63)."
       ],
       "degre_affiche": "an-Nawawī (citant at-Tirmidhī) : ḥasan ṣaḥīḥ ; dans l'édition d'al-Arnaʾūṭ at-Tirmidhī dit « ṣaḥīḥ » (n° 2687) ; an-Nasāʾī le rapporte aussi."
     },
@@ -713,7 +713,7 @@
       ],
       "relecture_comite": true,
       "points_referent": [
-        "Authenticité très discutée : voir jugements (Ibn Rajab t.1 p.287-288) ; numéro d'at-Tirmidhī : 2318 chez an-Nawawī (mursal), 2317 (Abū Hurayra)."
+        "Authenticité très discutée : voir jugements (Ibn Rajab t.1 p.287-288) ; numéro d'at-Tirmidhī du texte cité par an-Nawawī (Abū Hurayra) : 2317 (éd. Ḥalabī, t. 4 p. 558) = 2470 (éd. al-Arnaʾūṭ) ; 2318 / 2471 = le mursal de ʿAlī b. Ḥusayn. Ibn Mājah : 3976."
       ],
       "degre_affiche": "authenticité discutée : an-Nawawī le dit ḥasan ; at-Tirmidhī le dit gharīb et juge plus sûr le mursal d'az-Zuhrī ← ʿAlī b. al-Ḥusayn ; selon Ibn Rajab, la plupart des imams ne retiennent que le mursal ; al-Arnaʾūṭ : ḥasan li-ghayrihi ; al-Albānī : ṣaḥīḥ."
     },
@@ -1336,7 +1336,7 @@
           "commentateur": "Ibn Rajab al-Ḥanbalī",
           "ouvrage": "Jāmiʿ al-ʿulūm wa-l-ḥikam fī sharḥ khamsīn ḥadīthan min jawāmiʿ al-kalim",
           "edition": "éd. Shuʿayb al-Arnaʾūṭ et Ibrāhīm Bājis, Muʾassasat ar-Risāla, Beyrouth, 7ᵉ éd. 1417/1997 (turath n° 4268, pagination imprimée)",
-          "page": "t. 2, p. 32",
+          "page": "t. 2, p. 33",
           "point_fr": "Muslim, par Saʿīd b. ʿAbd al-ʿAzīz ← Rabīʿa b. Yazīd ← Abū Idrīs al-Khawlānī ← Abū Dharr ; à la fin, Abū Idrīs, lorsqu'il le rapportait, s'agenouillait."
         },
         {
@@ -1498,7 +1498,7 @@
           "sens": "s'agiter"
         },
         {
-          "ar": "استفت",
+          "ar": "اسْتَفْتِ",
           "sens": "consulte"
         },
         {
@@ -1604,7 +1604,7 @@
         "Sunna des califes bien guidés et innovation : à valider."
       ],
       "degre_affiche": "an-Nawawī (citant at-Tirmidhī) : ḥasan ṣaḥīḥ ; al-Arnaʾūṭ : ṣaḥīḥ par ses voies et ses témoins ; Ibn Rajab : at-Tirmidhī ḥasan ṣaḥīḥ, Abū Nuʿaym jayyid, mais il n'est pas sur la condition des deux Shaykhs (contre al-Ḥākim).",
-      "note_contexte": "« Même si un serviteur (ʿabd) est mis à votre tête » : le terme ʿabd est rendu par « serviteur » ; il désigne ici un homme en condition servile (d'autres versions précisent « un ʿabd abyssin » : al-Bukhārī d'après Anas ; Muslim d'après Abū Dharr). Ibn Rajab (t. 2, p. 118) y voit l'une des choses que le Prophète a annoncées de l'avenir de sa Communauté et montre que cela ne contredit pas « les imams sont de Quraysh ».",
+      "note_contexte": "« Même si un serviteur (ʿabd) est mis à votre tête » : le terme ʿabd est rendu par « serviteur » ; il désigne ici un homme en condition servile (d'autres versions précisent « un ʿabd abyssin » : al-Bukhārī d'après Anas ; Muslim d'après Abū Dharr). Ibn Rajab (t. 2, p. 118-119) y voit l'une des choses que le Prophète a annoncées de l'avenir de sa Communauté et montre que cela ne contredit pas « les imams sont de Quraysh ».", "audit_final_18_10": {"date": "2026-10-18", "decision": "Les versions d'Anas (al-Bukhārī) et d'Abū Dharr (Muslim) et la réponse à « les imams sont de Quraysh » sont à la p. 119 ; la p. 118 ne contient que le début (« هذا مما تكاثرت به الروايات… مما اطلع عليه النبي من أمر أمته بعده »).", "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.", "avant_note_contexte": "« Même si un serviteur (ʿabd) est mis à votre tête » : le terme ʿabd est rendu par « serviteur » ; il désigne ici un homme en condition servile (d'autres versions précisent « un ʿabd abyssin » : al-Bukhārī d'après Anas ; Muslim d'après Abū Dharr). Ibn Rajab (t. 2, p. 118) y voit l'une des choses que le Prophète a annoncées de l'avenir de sa Communauté et montre que cela ne contredit pas « les imams sont de Quraysh ».", "sources": ["Ibn Rajab, Jāmiʿ al-ʿulūm wa-l-ḥikam, éd. al-Arnaʾūṭ/Bājis, ar-Risāla 1417/1997 (turath 4268), t. 2 p. 118-119, lue le 18/10/2026"]},
       "niveau_min_decide_13_10": "cycle 2"
     },
     {
