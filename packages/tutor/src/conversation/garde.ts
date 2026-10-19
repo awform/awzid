@@ -26,9 +26,10 @@ import {
   VERDICT,
   VERDICT_WORDS,
 } from '../filter.js';
-import type { FilterEvent } from '../types.js';
+import type { Audience, FilterEvent } from '../types.js';
 import { ENCOURAGEMENTS_AR } from './prompt.js';
-import type { ConvBrouillon, MotNiveau } from './types.js';
+import { sujetSensible, sujetSensibleSortie, type SujetSensible } from './sujets.js';
+import type { ConvBrouillon, ConvSortieFournisseur, MotNiveau, Replique } from './types.js';
 
 /**
  * Jugements religieux en arabe (forme nue). « واجب » et « فرض » n'y sont PAS : ce sont aussi « devoir (scolaire) » dans
@@ -37,7 +38,7 @@ import type { ConvBrouillon, MotNiveau } from './types.js';
 const AVIS_AR = / (ال|و|ف)?(حرام|حلال|مكروه|مستحب|يجوز|محرم|فتوي|فتوى) /;
 
 export type EntreeCategorie =
-  'normal' | 'religion' | 'protection' | 'injection' | 'hors_sujet' | 'perso';
+  'normal' | 'religion' | 'protection' | 'injection' | 'hors_sujet' | 'perso' | SujetSensible;
 
 /**
  * Questions religieuses dites ou écrites EN ARABE (le classifieur commun couvre le français et l'anglais), cherchées
@@ -49,17 +50,49 @@ const RELIGION_AR =
 const RELIGION_FR =
   /\b(tafsir|tafs[iî]r|fiqh|fikh|coran|quran|sourate|verset|ablution|wudu|priere|salat|ramadan|zakat|hajj|invocation|dou?a|prophete|sunna|religion|religieu)/;
 
-export function classerEntree(texte: string): EntreeCategorie {
-  const c = classify(texte);
-  if (c === 'detresse' || c === 'rencontre') return 'protection';
-  if (c === 'injection') return 'injection';
-  if (c === 'avis_religieux' || c === 'hadith' || c === 'coran_texte') return 'religion';
-  if (c === 'polemique') return 'hors_sujet';
+/**
+ * Marques religieuses SANS ambiguïté : elles l'emportent sur un sujet sensible (« l'alcool est-il haram ? » →
+ * religion). Les tournures d'avis plus vagues du classifieur commun (« est-ce que je peux », « interdit »,
+ * « obligatoire »…) cèdent devant un sujet sensible repéré (« est-ce que je peux investir en bourse ? » → conseil).
+ */
+const RELIGION_FORTE =
+  /\b(haram|halal|fatwa|islam|musulman|religi|allah|dieu|prophete|imam|mosquee|madhh?ab|makrou?h|mustahab|wajib)/;
+
+/**
+ * Catégorie de ce que l'élève a écrit ou dit, AVANT tout appel au modèle. `audience` : les ados ont une règle plus
+ * stricte pour les contenus inconvenants (sujets.ts).
+ */
+export function classerEntree(texte: string, audience: Audience = 'adulte'): EntreeCategorie {
+  // l'arabe est classé AUSSI en forme nue : « أُرِيدُ أَنْ أَمُوتَ » ou « حَدِيثًا », vocalisés, ne passent plus
+  const cs = [classify(texte)];
+  if (hasArabic(texte)) cs.push(classify(bareWords(texte).join(' ')));
+  const a = (x: string) => cs.includes(x as (typeof cs)[number]);
+  if (a('detresse') || a('rencontre')) return 'protection';
+  if (a('injection')) return 'injection';
+  if (a('hadith') || a('coran_texte')) return 'religion';
+  const c = a('avis_religieux') ? 'avis_religieux' : cs[0]!;
+  const plie = fold(texte);
+  const religionAr = RELIGION_AR.test(` ${bareWords(texte).join(' ')} `);
+  const sensible = sujetSensible(texte, audience);
+  if (c === 'avis_religieux')
+    return sensible && !RELIGION_FORTE.test(plie) && !religionAr ? sensible : 'religion';
+  if (c === 'polemique') return sensible ?? 'hors_sujet';
+  if (religionAr || RELIGION_FR.test(plie)) return 'religion';
+  if (sensible) return sensible;
   if (c === 'donnees_perso') return 'perso';
-  if (RELIGION_AR.test(` ${bareWords(texte).join(' ')} `) || RELIGION_FR.test(fold(texte)))
-    return 'religion';
   return 'normal';
 }
+
+/** Catégories qui, repérées sur ce que l'élève a dit (voix), remplacent la réponse par un renvoi. */
+export const RENVOIS_ENTREE: readonly EntreeCategorie[] = [
+  'protection',
+  'injection',
+  'perso',
+  'hors_sujet',
+  'politique',
+  'inconvenant',
+  'conseil',
+];
 
 const MAX_AR = 400;
 const MAX_FR = 600;
@@ -127,6 +160,9 @@ export function filtrerSortie(raw: unknown, index: QuranIndex): ResultatFiltre {
   if (CITATION.test(frPlie) || CITATION.test(arNu) || COLLECTION_NUMBER.test(fr))
     bloque('citation');
   if (POLEMIC_OUT.test(frPlie)) bloque('polemique');
+  // 20/10/2026 : politique et actualité, contenus inconvenants, conseils médicaux, juridiques ou financiers
+  const sensible = sujetSensibleSortie(fr, ar);
+  if (sensible) bloque('sujet_sensible', sensible);
   if (PERSONAL.test(frPlie)) bloque('donnees_perso');
   if (HUMAN.test(frPlie)) bloque('humain');
   if (new RegExp(FACE_EMOJI.source, 'u').test(fr + ar)) bloque('emoji');
@@ -143,6 +179,92 @@ export function voixPermise(texteAr: string, index: QuranIndex): boolean {
   return (
     !!texteAr && hasArabic(texteAr) && !contientCoran(texteAr, index) && !/[A-Za-z]/.test(texteAr)
   );
+}
+
+// ------------------------------------------------------------------ issue d'un tour (API et batterie de contrôle)
+
+export type Renvoi = EntreeCategorie | 'coran';
+
+export interface IssueTour {
+  route: 'conversation' | 'conversation_repli';
+  /** renvoi à afficher à la place d'une réponse (religion, Coran, protection, sujet sensible…), ou null */
+  redir: Renvoi | null;
+  /** réponse montrée à l'élève (celle du modèle si elle a tout passé ; sinon, repli : réplique du livre) */
+  reponse: { ar: string; fr: string } | null;
+  correction: ConvBrouillon['correction'];
+  transcription: string;
+  /** sujet déclaré par le modèle (null : pas de brouillon valide) */
+  sujet: ConvBrouillon['sujet'] | null;
+  filtre: FilterEvent[];
+  repli: boolean;
+  /** mots de la réponse hors des mots déjà vus (contrôle de niveau) */
+  horsNiveau: string[];
+  /** nombre de mots de la réponse comptés pour le contrôle de niveau */
+  motsReponse: number;
+}
+
+/**
+ * Ce que l'application fait de la sortie du modèle — UNE seule règle, partagée par l'API (POST …/libre) et par la
+ * batterie de contrôle (cli/batterie-conversation) : ce que la batterie note est exactement ce que l'élève verrait.
+ */
+export function issueDuTour(
+  out: Pick<ConvSortieFournisseur, 'status' | 'brouillon' | 'detail'>,
+  o: {
+    index: QuranIndex;
+    audio: boolean;
+    audience: Audience;
+    mots: readonly MotNiveau[];
+    dialogue: readonly Replique[];
+  },
+): IssueTour {
+  const r: IssueTour = {
+    route: 'conversation',
+    redir: null,
+    reponse: null,
+    correction: null,
+    transcription: '',
+    sujet: null,
+    filtre: [],
+    repli: false,
+    horsNiveau: [],
+    motsReponse: 0,
+  };
+  if (out.status !== 'ok') {
+    r.filtre = [{ step: 'fournisseur', action: 'bloque', detail: out.detail ?? out.status }];
+    r.route = 'conversation_repli';
+  } else {
+    const f = filtrerSortie(out.brouillon, o.index);
+    r.filtre = f.events;
+    const br = f.brouillon;
+    r.sujet = br?.sujet ?? null;
+    const dit = br?.transcription_ar ?? '';
+    const cat = br && o.audio ? classerEntree(dit, o.audience) : 'normal';
+    const sensibleModele: SujetSensible | null =
+      br && br.sujet === 'autre' ? sujetSensibleSortie(br.reponse_fr, br.reponse_ar) : null;
+    if (br && (f.coranEleve || contientCoran(dit, o.index))) r.redir = 'coran';
+    else if (br && (br.sujet === 'religion' || cat === 'religion')) r.redir = 'religion';
+    else if (br && RENVOIS_ENTREE.includes(cat)) r.redir = cat;
+    // le modèle a refusé un sujet sensible (« sujet » = autre, réponse qui le nomme) : renvoi poli de l'application
+    else if (sensibleModele) r.redir = sensibleModele;
+    else if (f.ok && br) {
+      r.reponse = { ar: br.reponse_ar, fr: br.reponse_fr };
+      r.correction = br.correction;
+      r.transcription = br.transcription_ar;
+      r.horsNiveau = motsHorsNiveau(br.reponse_ar, formesNiveau(o.mots));
+      r.motsReponse = bareWords(br.reponse_ar).filter(
+        (w) => w.length >= 2 && !OUTILS.has(w),
+      ).length;
+      r.filtre.push({ step: 'niveau', action: 'ok', detail: `${r.horsNiveau.length} hors liste` });
+    } else r.route = 'conversation_repli';
+    if (r.redir) r.transcription = dit;
+  }
+  // repli sûr : une réplique du DIALOGUE DU LIVRE (jamais un texte inventé)
+  if (r.route === 'conversation_repli') {
+    r.repli = true;
+    const d = o.dialogue[0];
+    r.reponse = d ? { ar: d.ar, fr: d.fr ?? '' } : null;
+  }
+  return r;
 }
 
 // ------------------------------------------------------------------ niveau (fidélité au programme)

@@ -1,6 +1,7 @@
 export * from './types.js';
 export * from './prompt.js';
 export * from './garde.js';
+export * from './sujets.js';
 export * from './guidee.js';
 export * from './budget.js';
 export * from './google.js';

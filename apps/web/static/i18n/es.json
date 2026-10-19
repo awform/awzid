@@ -3589,5 +3589,8 @@
   "tab.p_tuteur_ia": "Tutor de conversación",
   "tab.al_tuteur_ia_50": "Tutor de conversación: 50 % del límite mensual gastado.",
   "tab.al_tuteur_ia_80": "Tutor de conversación: 80 % del límite mensual gastado.",
-  "tab.al_tuteur_ia_100": "Tutor de conversación: límite mensual alcanzado, conversación libre cortada."
+  "tab.al_tuteur_ia_100": "Tutor de conversación: límite mensual alcanzado, conversación libre cortada.",
+  "tuia.politique": "No hablo de política ni de actualidad. Hablemos mejor de tu lección: describe la escena del diálogo o cuéntame tu día.",
+  "tuia.inconvenant": "Este tema no es adecuado aquí. Elijamos otro: la escena de tu lección, tu familia o tu día.",
+  "tuia.conseil": "No doy consejos médicos, jurídicos ni financieros: pregunta a un profesional. Volvamos a tu lección: háblame de la escena del diálogo."
 }

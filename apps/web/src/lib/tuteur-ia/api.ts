@@ -34,7 +34,17 @@ export interface ReponseLibre {
   lu: boolean;
   repli?: boolean;
   simule?: boolean;
-  redirection?: 'religion' | 'coran' | 'protection' | 'injection' | 'hors_sujet' | 'perso';
+  redirection?:
+    | 'religion'
+    | 'coran'
+    | 'protection'
+    | 'injection'
+    | 'hors_sujet'
+    | 'perso'
+    // 20/10/2026 : sujets hors périmètre (refus poli, autre sujet proposé)
+    | 'politique'
+    | 'inconvenant'
+    | 'conseil';
   aide?: string;
   minutesRestantes?: number;
 }

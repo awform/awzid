@@ -326,6 +326,51 @@ describe.skipIf(!URL)('tuteur IA de conversation (simulé)', () => {
     expect(r.json()).toMatchObject({ redirection: 'religion', reponse_ar: '' });
   });
 
+  it('20/10 : politique, contenu inconvenant, conseil — refus poli AVANT l’appel, aucune dépense', async () => {
+    const avant = espion.appels;
+    const n = (await depenses()).length;
+    for (const [q, c] of [
+      ['Que penses-tu des élections présidentielles ?', 'politique'],
+      ['مَا رَأْيُكَ فِي الْحَرْبِ؟', 'politique'],
+      ['Où acheter de l’alcool ?', 'inconvenant'],
+      ['Quel médicament dois-je prendre ?', 'conseil'],
+      ['أُرِيدُ اسْتِثْمَارَ مَالِي فِي الْبُورْصَةِ', 'conseil'],
+    ]) {
+      const r = await libre(adulte, A, { texte: q! });
+      expect(r.statusCode).toBe(200);
+      expect(r.json(), q).toMatchObject({ redirection: c, reponse_ar: '', audio: null });
+    }
+    expect(espion.appels).toBe(avant);
+    expect(await depenses()).toHaveLength(n);
+  });
+
+  it('20/10 : sujet sensible DIT (voix) ou réponse du modèle qui en parle → renvoi ou repli, jamais montré', async () => {
+    const voix = {
+      audio: { mime: 'audio/webm', b64: Buffer.from('xx').toString('base64'), secondes: 3 },
+    };
+    espion.prochain = {
+      transcription_ar: 'أَيْنَ أَشْتَرِي الْخَمْرَ؟',
+      reponse_ar: 'هٰذَا سُوقٌ.',
+      reponse_fr: 'C’est un marché.',
+      correction: null,
+      sujet: 'langue',
+    };
+    expect((await libre(adulte, A, voix)).json()).toMatchObject({
+      redirection: 'inconvenant',
+      reponse_ar: '',
+    });
+    espion.prochain = {
+      transcription_ar: '',
+      reponse_ar: 'هٰذَا سُوقٌ.',
+      reponse_fr: 'Prenez du paracétamol.',
+      correction: null,
+      sujet: 'langue',
+    };
+    const r = await libre(adulte, A, { texte: 'هٰذَا سُوقٌ' });
+    expect(r.json().repli).toBe(true);
+    expect(r.json().reponse_fr).not.toContain('paracétamol');
+  });
+
   it('enfant : étage 2 refusé AVANT tout appel ; niveau 1 refusé', async () => {
     const avant = espion.appels;
     expect(

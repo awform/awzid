@@ -306,6 +306,31 @@ const T = [
     'Bleiben wir bei der Lektion: Sprechen wir über die Szene des Dialogs.',
     'لِنَبْقَ مَعَ الدَّرْسِ وَنَتَحَدَّثْ عَنْ مَشْهَدِ الْحِوَارِ.',
   ],
+  // 20/10/2026 : sujets hors périmètre — refus poli, puis un autre sujet proposé
+  [
+    'tuia.politique',
+    'Je ne parle pas de politique ni d’actualité. Parlons plutôt de ta leçon : décris la scène du dialogue, ou raconte ta journée.',
+    'I don’t talk about politics or the news. Let’s talk about your lesson instead: describe the dialogue scene, or tell me about your day.',
+    'No hablo de política ni de actualidad. Hablemos mejor de tu lección: describe la escena del diálogo o cuéntame tu día.',
+    'Über Politik und Nachrichten spreche ich nicht. Sprechen wir lieber über deine Lektion: Beschreibe die Szene des Dialogs oder erzähl von deinem Tag.',
+    'لَا أَتَحَدَّثُ عَنِ السِّيَاسَةِ وَلَا عَنِ الْأَخْبَارِ. لِنَتَحَدَّثْ عَنْ دَرْسِكَ: صِفْ مَشْهَدَ الْحِوَارِ، أَوْ حَدِّثْنِي عَنْ يَوْمِكَ.',
+  ],
+  [
+    'tuia.inconvenant',
+    'Ce sujet ne convient pas ici. Choisissons-en un autre : la scène de ta leçon, ta famille ou ta journée.',
+    'This topic isn’t suitable here. Let’s choose another one: your lesson’s scene, your family or your day.',
+    'Este tema no es adecuado aquí. Elijamos otro: la escena de tu lección, tu familia o tu día.',
+    'Dieses Thema passt hier nicht. Wählen wir ein anderes: die Szene deiner Lektion, deine Familie oder deinen Tag.',
+    'هٰذَا الْمَوْضُوعُ لَا يُنَاسِبُ هُنَا. لِنَخْتَرْ مَوْضُوعًا آخَرَ: مَشْهَدَ دَرْسِكَ، أَوْ أُسْرَتَكَ، أَوْ يَوْمَكَ.',
+  ],
+  [
+    'tuia.conseil',
+    'Je ne donne pas de conseil médical, juridique ou financier : demande à un professionnel. Revenons à ta leçon : parle-moi de la scène du dialogue.',
+    'I don’t give medical, legal or financial advice: ask a professional. Let’s go back to your lesson: tell me about the dialogue scene.',
+    'No doy consejos médicos, jurídicos ni financieros: pregunta a un profesional. Volvamos a tu lección: háblame de la escena del diálogo.',
+    'Ich gebe keine medizinischen, rechtlichen oder finanziellen Ratschläge: Frag eine Fachperson. Zurück zu deiner Lektion: Erzähl mir von der Szene des Dialogs.',
+    'لَا أُعْطِي نَصَائِحَ طِبِّيَّةً أَوْ قَانُونِيَّةً أَوْ مَالِيَّةً: اسْأَلْ مُخْتَصًّا. لِنَعُدْ إِلَى دَرْسِكَ: حَدِّثْنِي عَنْ مَشْهَدِ الْحِوَارِ.',
+  ],
   [
     'tuia.protection',
     'Merci de l’avoir dit. Parle tout de suite à un adulte de confiance. Tu peux aussi appeler le {tel}.',

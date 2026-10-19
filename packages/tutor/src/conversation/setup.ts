@@ -7,7 +7,7 @@
  *              AWFORM_VERTEX_PROJET est donné, AWFORM_VERTEX_LIEU est un lieu de l'UE (défaut « eu »),
  *              le modèle (AWFORM_TUTEUR_VERTEX_MODELE, défaut gemini-3.8-flash) a un tarif connu (plafonds),
  *              AWFORM_TUTEUR_VERTEX_CONTROLE vaut l'empreinte de l'invite (PROMPT_VERSION) validée par la batterie de
- *              contrôle (30 situations à l'aveugle) ; sinon repli sur « local » et motif visible.
+ *              contrôle (cli/batterie-conversation, TUTEUR_IA.md § 9) ; sinon repli sur « local » et motif visible.
  *   (claude) le tuteur des leçons seul ; la conversation reste à l'étage 1.
  * Aucun secret : le jeton vient du serveur de métadonnées de la VM (compte emprunté : AWFORM_VERTEX_COMPTE).
  */
