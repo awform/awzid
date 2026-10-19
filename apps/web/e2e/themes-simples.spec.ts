@@ -169,6 +169,9 @@ test('exercice : « presque, réessaie » en attention (jamais en rouge), réuss
   // une réussite montre ✓ et le mot « Juste »
   await page.goto('/lecons/en1.l03');
   const premier = page.locator('section.ex .quiz .q').first();
+  // la page doit être affichée avant d'énumérer les choix (`all()` n'attend pas) : depuis le découpage du catalogue
+  // français (19/10/2026), la mise en page racine attend aussi les textes de l'espace « Arabe »
+  await premier.locator('.opts button').first().waitFor();
   for (const b of await premier.locator('.opts button').all()) {
     if ((await premier.locator('.juste').count()) > 0) break;
     await b.click();
