@@ -36,15 +36,12 @@ import {
 import {
   classerEntree,
   comparerReplique,
-  contientCoran,
   coutMaxTour,
   coutMicros,
   decider,
-  filtrerSortie,
-  formesNiveau,
   helpline,
+  issueDuTour,
   motsEcrits,
-  motsHorsNiveau,
   plafondsDepuisEnv,
   PROMPT_VERSION,
   QuranIndex,
@@ -487,9 +484,10 @@ export function registerTuteurIa(
           costMicros: o.cout ?? 0,
         });
 
-      // 1. texte écrit : classé AVANT le modèle (religion, détresse, injection…) — aucun appel, aucun coût
+      // 1. texte écrit : classé AVANT le modèle (religion, détresse, injection, politique, contenu inconvenant —
+      //    règle plus stricte pour les ados —, conseil médical, juridique ou financier) — aucun appel, aucun coût
       if (b.texte) {
-        const cat = classerEntree(b.texte);
+        const cat = classerEntree(b.texte, w.audience);
         if (cat !== 'normal') return await redirection(cat, b.texte);
       }
 
@@ -550,64 +548,35 @@ export function registerTuteurIa(
       const audioBuf = b.audio ? Buffer.from(b.audio.b64, 'base64') : null;
       const adresse: Adresse = b.adresse ?? 'tu';
       const t0 = Date.now();
-      const out = await fournisseur.repondre(systemPrompt(g.ctx, adresse, b.genre ?? 'x'), {
-        audience: w.audience,
-        adresse,
-        genre: b.genre ?? 'x',
-        contexte: g.ctx,
-        historique: (b.historique ?? []).slice(-HISTORIQUE_MAX),
-        ...(b.texte ? { texte: b.texte } : {}),
-        ...(audioBuf
-          ? { audio: { mime: b.audio!.mime, data: audioBuf, secondes: b.audio!.secondes } }
-          : {}),
-      });
+      const out = await fournisseur.repondre(
+        systemPrompt(g.ctx, adresse, b.genre ?? 'x', w.audience),
+        {
+          audience: w.audience,
+          adresse,
+          genre: b.genre ?? 'x',
+          contexte: g.ctx,
+          historique: (b.historique ?? []).slice(-HISTORIQUE_MAX),
+          ...(b.texte ? { texte: b.texte } : {}),
+          ...(audioBuf
+            ? { audio: { mime: b.audio!.mime, data: audioBuf, secondes: b.audio!.secondes } }
+            : {}),
+        },
+      );
       audioBuf?.fill(0);
       const msModele = Date.now() - t0;
 
       const idx = await index();
       const usage = out.usage;
-      let filtre: FilterEvent[];
-      let reponse: { ar: string; fr: string } | null = null;
-      let correction: { dit: string; correct: string; explication_fr: string } | null = null;
-      let transcription = '';
-      let redir: string | null = null;
-      let route = 'conversation';
-      if (out.status !== 'ok') {
-        filtre = [{ step: 'fournisseur', action: 'bloque', detail: out.detail ?? out.status }];
-        route = 'conversation_repli';
-      } else {
-        const f = filtrerSortie(out.brouillon, idx);
-        filtre = f.events;
-        const br = f.brouillon;
-        if (br && (f.coranEleve || contientCoran(br.transcription_ar, idx))) redir = 'coran';
-        else if (
-          br &&
-          (br.sujet === 'religion' ||
-            (b.audio && classerEntree(br.transcription_ar) === 'religion'))
-        )
-          redir = 'religion';
-        else if (
-          br &&
-          b.audio &&
-          ['protection', 'injection', 'perso', 'hors_sujet'].includes(
-            classerEntree(br.transcription_ar),
-          )
-        )
-          redir = classerEntree(br.transcription_ar);
-        else if (f.ok && br) {
-          reponse = { ar: br.reponse_ar, fr: br.reponse_fr };
-          correction = br.correction;
-          transcription = br.transcription_ar;
-          const hors = motsHorsNiveau(br.reponse_ar, formesNiveau(g.ctx.mots));
-          filtre.push({ step: 'niveau', action: 'ok', detail: `${hors.length} hors liste` });
-        } else route = 'conversation_repli';
-      }
-      // repli sûr : la réplique suivante du DIALOGUE DU LIVRE (jamais un texte inventé)
-      const repli = route === 'conversation_repli';
-      if (repli) {
-        const r = g.ctx.dialogue[0];
-        reponse = r ? { ar: r.ar, fr: r.fr ?? '' } : null;
-      }
+      // issue du tour : MÊME règle que la batterie de contrôle (filtre de sortie, renvois, repli sur le livre)
+      const issue = issueDuTour(out, {
+        index: idx,
+        audio: !!b.audio,
+        audience: w.audience,
+        mots: g.ctx.mots,
+        dialogue: g.ctx.dialogue,
+      });
+      const filtre: FilterEvent[] = issue.filtre;
+      const { reponse, correction, transcription, redir, route, repli } = issue;
 
       // 4. voix : jamais de Coran (décision 7), jamais une redirection
       let audio: { mime: string; b64: string } | null = null;

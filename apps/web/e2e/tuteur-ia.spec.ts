@@ -139,6 +139,13 @@ test('conversation libre (texte) : réponse du livre, voix simulée, refus relig
   await expect(renvoi).toHaveAttribute('data-redirection', 'religion');
   await expect(renvoi).toContainText('Je ne réponds pas aux questions de religion');
   await expect(renvoi.getByRole('link')).toHaveCount(3);
+  // 20/10/2026 : politique et actualité — refus poli SANS appel, un autre sujet proposé
+  await page.getByTestId('tuia-saisie').fill('Que penses-tu des élections présidentielles ?');
+  await page.getByTestId('tuia-envoyer').click();
+  const politique = page.getByTestId('tuia-renvoi').last();
+  await expect(politique).toHaveAttribute('data-redirection', 'politique');
+  await expect(politique).toContainText('Je ne parle pas de politique');
+  await expect(politique).toContainText('Parlons plutôt de ta leçon');
   // une phrase en arabe : réponse (dialogue du livre en mode simulé), minutes restantes
   const s = (await (
     await page.request.get(`/api/v1/tuteur-ia/${pid}/scenario/ad2.l01`)
@@ -151,14 +158,18 @@ test('conversation libre (texte) : réponse du livre, voix simulée, refus relig
     .ar.replace(/[[\]]/g, '');
   await page.getByTestId('tuia-saisie').fill(bonne);
   await page.getByTestId('tuia-envoyer').click();
-  await expect(fil.locator('li[data-de="tuteur"]')).toHaveCount(3);
+  await expect(fil.locator('li[data-de="tuteur"]')).toHaveCount(4);
   await expect(page.getByTestId('tuia-minutes')).toContainText('minute');
   await capture(page, 'tuteur-libre');
   // côté serveur : la question religieuse n'a coûté aucun appel (une seule dépense, celle de la phrase arabe)
   const j = (await (await page.request.get(`/api/v1/tutor/${pid}/journal`)).json()) as {
     journal: Array<{ route: string }>;
   };
-  expect(j.journal.map((x) => x.route).sort()).toEqual(['conversation', 'conversation_religion']);
+  expect(j.journal.map((x) => x.route).sort()).toEqual([
+    'conversation',
+    'conversation_recadrage',
+    'conversation_religion',
+  ]);
 });
 
 test('enfant : conversation libre refusée par le serveur (dialogue guidé seul)', async ({

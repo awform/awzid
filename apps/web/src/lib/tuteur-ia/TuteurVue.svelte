@@ -423,7 +423,13 @@
                         ? t('tuia.coran')
                         : m.redirection === 'protection'
                           ? t('tuia.protection', { tel: m.aide ?? '' })
-                          : t('tuia.recadrage')}
+                          : m.redirection === 'politique'
+                            ? t('tuia.politique')
+                            : m.redirection === 'inconvenant'
+                              ? t('tuia.inconvenant')
+                              : m.redirection === 'conseil'
+                                ? t('tuia.conseil')
+                                : t('tuia.recadrage')}
                   />
                 </p>
                 {#if m.redirection === 'religion'}

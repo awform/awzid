@@ -3589,5 +3589,8 @@
   "tab.p_tuteur_ia": "Gesprächstutor",
   "tab.al_tuteur_ia_50": "Gesprächstutor: 50 % des Monatsbudgets ausgegeben.",
   "tab.al_tuteur_ia_80": "Gesprächstutor: 80 % des Monatsbudgets ausgegeben.",
-  "tab.al_tuteur_ia_100": "Gesprächstutor: Monatsbudget erreicht, freies Gespräch abgeschaltet."
+  "tab.al_tuteur_ia_100": "Gesprächstutor: Monatsbudget erreicht, freies Gespräch abgeschaltet.",
+  "tuia.politique": "Über Politik und Nachrichten spreche ich nicht. Sprechen wir lieber über deine Lektion: Beschreibe die Szene des Dialogs oder erzähl von deinem Tag.",
+  "tuia.inconvenant": "Dieses Thema passt hier nicht. Wählen wir ein anderes: die Szene deiner Lektion, deine Familie oder deinen Tag.",
+  "tuia.conseil": "Ich gebe keine medizinischen, rechtlichen oder finanziellen Ratschläge: Frag eine Fachperson. Zurück zu deiner Lektion: Erzähl mir von der Szene des Dialogs."
 }

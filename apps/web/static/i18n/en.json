@@ -3589,5 +3589,8 @@
   "tab.p_tuteur_ia": "Conversation tutor",
   "tab.al_tuteur_ia_50": "Conversation tutor: 50% of the monthly cap spent.",
   "tab.al_tuteur_ia_80": "Conversation tutor: 80% of the monthly cap spent.",
-  "tab.al_tuteur_ia_100": "Conversation tutor: monthly cap reached, free conversation cut off."
+  "tab.al_tuteur_ia_100": "Conversation tutor: monthly cap reached, free conversation cut off.",
+  "tuia.politique": "I don’t talk about politics or the news. Let’s talk about your lesson instead: describe the dialogue scene, or tell me about your day.",
+  "tuia.inconvenant": "This topic isn’t suitable here. Let’s choose another one: your lesson’s scene, your family or your day.",
+  "tuia.conseil": "I don’t give medical, legal or financial advice: ask a professional. Let’s go back to your lesson: tell me about the dialogue scene."
 }

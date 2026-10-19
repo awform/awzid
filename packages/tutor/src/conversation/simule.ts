@@ -7,6 +7,7 @@
  */
 import { bareWords } from '../arabic.js';
 import { BORNES } from './budget.js';
+import { classerEntree } from './garde.js';
 import { comparerReplique, motsEcrits } from './guidee.js';
 import type { ConvEntree, ConvFournisseur, ConvSortieFournisseur, Synthese } from './types.js';
 
@@ -21,6 +22,30 @@ export class ConversationSimulee implements ConvFournisseur {
     if (e.audio) {
       const brut = e.audio.data.toString('utf8');
       dit = brut.startsWith('SIMULE:') ? brut.slice(7) : (d[1]?.ar ?? d[0]?.ar ?? '');
+    }
+    // modèle OBÉISSANT aux règles de l'invite (pour la batterie de contrôle en mode simulé) : sujet hors périmètre →
+    // « religion » ou « autre », aucune réponse sur le fond, retour à la scène de la leçon
+    const cat = classerEntree(dit, e.audience);
+    if (cat !== 'normal') {
+      const scene = d[0] ?? { ar: 'مَا هٰذَا؟', fr: 'Qu’est-ce que c’est ?' };
+      return {
+        status: 'ok',
+        brouillon: {
+          transcription_ar: e.audio ? dit : '',
+          sujet: cat === 'religion' ? 'religion' : 'autre',
+          correction: null,
+          reponse_ar: scene.ar,
+          reponse_fr:
+            cat === 'protection'
+              ? 'Parle tout de suite à un adulte de confiance.'
+              : `Restons sur la leçon. ${scene.fr ?? ''}`.trim(),
+        },
+        usage: {
+          texte: Math.min(BORNES.texteMax, Math.ceil(systeme.length / 3)),
+          audio: 0,
+          sortie: 80,
+        },
+      };
     }
     // réplique du dialogue la plus proche de ce qu'a dit l'élève
     let best = -1;

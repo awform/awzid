@@ -18,7 +18,8 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "eval": "node dist/cli/eval.js"
+    "eval": "node dist/cli/eval.js",
+    "batterie-conversation": "node dist/cli/batterie-conversation.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.129.0",
