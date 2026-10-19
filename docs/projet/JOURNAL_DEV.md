@@ -9,6 +9,54 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 19/10/2026 (suite) — Catalogue français découpé par espaces ; refonte v4 et tuteur IA fusionnés dans `main` ; NON déployé
+
+Décision du chef de projet : option A (limites inchangées : marge de l'appareil élève ≥ 3 Ko, `/coran/lecteur` ≤ 150 Ko). Accord du client pour fusionner ensuite le tuteur. Rien déployé, `awzid-beta` non touché. Non touchés : `infra/charge/purger-comptes-fictifs.sh` (modifié sans commit dans `~/awform-demo`), les autres worktrees et branches.
+
+- **Découpage du catalogue français** (`d251498`, branche `fusion-lecteur-refonte-wip`) : la coquille (`messages/fr.json`, morceau commun) passe de **1 333 à 377 clés** (6,9 Ko Brotli). La répartition est calculée sur le graphe réel des modules (imports statiques et dynamiques, page par page) :
+  - `fr-arabe` (471 clés : accueil, leçons, lectures, sciences, niveaux, révisions, écriture, épreuves…) et `fr-suivi` (156 : aujourd'hui, suivi, plus, profils, hors ligne, aide) sont nouveaux et préchargés. Ils sont chargés par la mise en page racine selon `lib/i18n/espaces.ts` (`+layout.ts` puis `onNavigate`). Une table plutôt qu'une mise en page par dossier : 19 mises en page coûtaient 5,3 Ko sur l'appareil.
+  - `fr-hifz`, `fr-coran` et `fr-acces` (/compte) reçoivent les textes propres à leur espace.
+  - `fr-erreurs` (147 messages renvoyés par le serveur) est chargé par `call` (lib/session.ts) et par l'écoute à la réception d'une réponse en erreur, jamais préchargé. Les codes produits par l'appareil (`reseau`…) restent dans la coquille.
+  - `fr-rares` reçoit la messagerie, les contenus d'administration, les certificats et le tuteur (Claude).
+  - Les textes du lecteur des leçons vivantes sont **embarqués** dans son morceau (`lib/vivante/textes-fr.json`, `ajouterTextes`), donc gardés hors ligne avec lui.
+  - Les autres langues (un fichier par langue, déjà hors de la coquille) sont inchangées.
+- **Test `lib/i18n/couverture.test.ts`** : pour chaque page, toute clé citée par un module atteint est dans la coquille ou dans un catalogue chargé sur le chemin. Côté serveur, seule la coquille est permise. Une clé appartient à un seul catalogue, et les messages d'erreur ne sont jamais cités littéralement.
+  - Il a trouvé **14 manques préexistants** : 13 messages d'erreur rangés dans `fr-rares`/`fr-personnel` mais affichés partout, et `tj.fermer`. Ils sont remontés dans la coquille.
+  - Pendant la fusion du tuteur, il a trouvé `tuia.ouvrir`, utilisée par deux espaces : elle reste dans la coquille.
+- **Correctifs** :
+  - `PanneauEcoute` détectait un message absent par « ⟦ » (comme `chargerV4`) : il utilise maintenant `texteExiste`.
+  - e2e `themes-simples:142` énumérait les choix avant l'affichage (`1590c80`).
+- **Poids** :
+
+  | Indicateur | lecteur + refonte | découpé (`9db50a5`) | + tuteur (final) |
+  |---|---|---|---|
+  | `/coran/lecteur` | 150,1 Ko ✗ | 135,7 Ko | **135,8 Ko** |
+  | marge de l'appareil élève | 3,9 Ko | 4,3 Ko | **4,1 Ko** |
+  | première ouverture `/` | 113,9 Ko | 99,4 Ko | 99,5 Ko |
+
+- **Fusions dans `main`** :
+  - `9db50a5` (`fusion-lecteur-refonte-wip`, poussé) ;
+  - `6a93c57` (`tuteur-ia-wip` 20c9768), fusionné en gardant tout :
+    - catalogues ar/de/en/es/fr-personnel fusionnés à trois par clé ;
+    - `SPACE_CATALOGS` avec `tuteur` ;
+    - interrupteurs `conversation`, `design_v4` et `tuteur_ia` hors « publié » ;
+    - la ligne de plafond du tableau de bord bêta (test `beta-acces` « trois modes, plafond, tableau de bord » : 6 plafonds) passe sans retouche ;
+    - migration `0053_tuteur_ia` sans collision.
+- **Tests** :
+  - **`9db50a5`** :
+    - build, typecheck, eslint, prettier et budget passent ;
+    - unitaires verts ;
+    - e2e complète : 831 réussis, 150 ignorés, 1 échec (`themes-simples:142`, corrigé, puis 10/10).
+  - **`6a93c57`** :
+    - build, typecheck, eslint, prettier et budget passent ;
+    - unitaires : web 834, tuteur (`packages/tutor`) 113, API 532 + 1 échec `beta-infra` « essai LOCAL de Caddy ». Cet échec est un instable préexistant : contrôle d'en-tête tiré au hasard, il échoue aussi sur 61060e7 ;
+    - e2e complète (25 min) : **836 réussis, 150 ignorés, 0 échec, 2 instables** passés au second essai (`f5-reseau:144`, qui passe seul 7/7, et `madjaliss-textes:442`) ;
+    - `tuteur-ia.spec.ts` (mode simulé) : 6/6 ;
+    - 3G : 1,96 s.
+- **Environnement** : une régénération de `~/lecons-audio` (19/10 15:31) a écrit une entrée incohérente : la clé ne correspond pas à l'empreinte `1a5bc416…`. L'import e2e la refuse (code 2). Les e2e de cette fusion ont donc tourné avec `AWFORM_LECONS_AUDIO_SOURCE=~/fus-lecons-audio`, une copie en liens symboliques dont l'index exclut cette seule entrée. `~/lecons-audio` n'a pas été modifié. **À corriger à la source avant la prochaine suite e2e**.
+
+---
+
 ## 19/10/2026 — File de fusion : `lecteur-audio-wip` FUSIONNÉE et poussée ; `refonte-wip` BLOQUÉE par le budget de poids (non poussée)
 
 Départ : `main` 61060e7 (inchangé depuis la création des deux branches). Rien déployé, `awzid-beta` non touché. Non touché : `infra/charge/purger-comptes-fictifs.sh` (modifié sans commit dans `~/awform-demo`), les autres worktrees et branches.
