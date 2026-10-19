@@ -26,8 +26,10 @@ for (const [pkg, re] of wanted) {
     copyFileSync(join(dir, f), join(out, f));
     n++;
   }
+  // SIL OFL 1.1 : chaque police est servie avec sa mention de copyright et le texte de sa licence (jamais sans)
   const lic = join(dirname(require.resolve(`${pkg}/package.json`)), 'LICENSE');
-  if (existsSync(lic)) copyFileSync(lic, join(out, `${pkg.split('/')[1]}.LICENSE.txt`));
+  if (!existsSync(lic)) throw new Error(`licence absente pour ${pkg}`);
+  copyFileSync(lic, join(out, `${pkg.split('/')[1]}.LICENSE.txt`));
 }
 if (n < 8) throw new Error(`polices manquantes (${n} fichiers copiés)`);
 console.log(`polices : ${n} fichiers copiés dans static/fonts`);

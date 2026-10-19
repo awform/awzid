@@ -71,6 +71,11 @@ describe('vidéos vivantes : l’arabe sur sa propre ligne', () => {
     expect(h).toContain(`<bdi class="lt" lang="ar" dir="rtl">${ba}</bdi>`);
     expect(h).not.toContain('class="ar');
   });
+  it('entre parenthèses, le mot arabe garde ses parenthèses sur sa ligne (aucune parenthèse orpheline)', () => {
+    expect(frH(`Le Coran imprimé (${mot}) : même texte`)).toBe(
+      `<div class="frh"><span class="fr">Le Coran imprimé </span><span class="ar l" lang="ar" dir="rtl">(${mot})</span><span class="fr"> : même texte</span></div>`,
+    );
+  });
   it('un mot ou une phrase arabe passe sur sa propre ligne, le français autour reste entier', () => {
     const h = frH(`un exemple : ${mot} et la suite`);
     expect(h).toBe(
@@ -84,27 +89,33 @@ describe('vidéos vivantes : tracés des lettres', () => {
     expect(traits).toEqual(JSON.parse(contenu()));
   });
   it('seules les formes validées par le référent sont tracées ; les autres restent complètes', () => {
-    // décision du référent (19/10/2026, 2ᵉ passe) : statuts « sur », « probable », « divergent » tracés ; « insuffisant » non
-    expect(STATUTS_VALIDES).toEqual(['sur', 'probable', 'divergent']);
+    // décision du référent (19/10/2026, données v3) : « sur », « sur (dérivé) », « probable », « divergent » tracés
+    expect(STATUTS_VALIDES).toEqual(['sur', 'sur (dérivé)', 'probable', 'divergent']);
     const j = source();
+    expect(j.version).toBe(3);
     const formes = ['isolee', 'debut', 'milieu', 'fin'];
     let n = 0;
+    let total = 0;
     for (const [l, def] of Object.entries(j.lettres))
       formes.forEach((f, i) => {
         const ref = def.formes[f];
         const x = ref ? forme(j, ref, f) : undefined;
         const t = traits[l]![i];
         if (t) n++;
+        if (x) total++;
         // le statut reste lisible dans le fichier servi (plus tard : n'afficher que les formes « sur »)
         expect(t?.s, `${l} ${f}`).toBe(
           x && STATUTS_VALIDES.includes(x.statut) ? x.statut : undefined,
         );
       });
-    expect(n).toBeGreaterThanOrEqual(100);
-    // ـلا après liaison (« insuffisant ») : montré complet, en attendant la vidéo d'un enseignant
+    // v3 : toutes les formes sont tracées, aucune « insuffisant » (119 formes distinctes dans SENS_DES_TRAITS.md ;
+    // ici, une entrée par lettre et par forme, alias compris : دـ = د…)
+    expect(total).toBeGreaterThanOrEqual(119);
+    expect(n).toBe(total);
+    // ـلا après liaison : « sur (dérivé) » en v3
     const lamalif = c(0x644, 0x627);
     expect(traits[lamalif]![0]?.s).toBe('sur');
-    expect(traits[lamalif]![3]).toBeNull();
+    expect(traits[lamalif]![3]?.s).toBe('sur (dérivé)');
     // ع au milieu et à la fin : sens horaire (2ᵉ passe) ; لا : deux traits ; كـ : le corps d'abord, la barre ensuite
     expect(traits[lamalif]![0]!.t).toHaveLength(2);
     const kaf = traits[c(0x643)]![1]!.t;

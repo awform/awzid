@@ -1,19 +1,252 @@
 # Sens et ordre des traits des lettres arabes (naskh scolaire, au stylo)
 
 Dossier de recherche pour les vidéos vivantes du livre Adultes niveau 1 (ad1), et base du futur cahier d'écriture complet.
-Date : 19/10/2026. Statut : **2ᵉ passe faite** ; reste la relecture par un enseignant d'écriture (voir §2P.6).
-Données réutilisables pour l'animation : `traits_lettres.json` (même dossier, version 2, champ `statut` par forme).
+Date : 19/10/2026. Statut : **3ᵉ passe faite**, sans film d'enseignant. Restent 11 formes `probable` et 3 `divergent`, qui iront aux relecteurs du niveau (voir §3P.8).
+Données réutilisables pour l'animation : `traits_lettres.json` (même dossier, **version 3**, champ `statut` par forme).
 
 Public visé : adultes débutants qui écrivent **au stylo**. Le dossier privilégie donc l'usage scolaire au stylo. La calligraphie au calame n'est citée que pour expliquer les écarts.
 
 **Organisation du fichier**
 
-- §2P : la **2ᵉ passe**, qui fait foi. Elle donne le statut de chaque forme et corrige la 1ʳᵉ passe.
-- §0 à §6 : l'**historique de la 1ʳᵉ passe**, conservé. Les points corrigés y sont signalés par « ⟶ 2ᵉ passe ».
+- §3P : la **3ᵉ passe**, qui **fait foi**. Elle donne le statut final de chaque forme, retire _Mastering Arabic Script_ comme source et contient la section « Licences et droits » (§3P.9).
+- §2P : la 2ᵉ passe, conservée comme historique. Ses statuts sont remplacés par ceux du §3P.
+- §0 à §6 : l'historique de la 1ʳᵉ passe, conservé. Les points corrigés y sont signalés par « ⟶ 2ᵉ passe ».
 
 ---
 
-## 2P. Deuxième passe (19/10/2026, après-midi)
+## 3P. Troisième passe (19/10/2026, soir) — fait foi
+
+### 3P.1 Objectif et méthode
+
+**Objectif** : atteindre le statut `sur` en autonomie, sans faire filmer d'enseignant, et sans aucun risque juridique.
+
+**Trois voies mènent au statut `sur`** :
+
+1. deux sources indépendantes concordent ;
+2. un manuel scolaire officiel et une autre source concordent ;
+3. une déduction documentée, notée `sur (dérivé)`.
+
+**Conditions de la déduction (voie 3)** — toutes obligatoires :
+
+1. Chaque élément utilisé est lui-même `sur`.
+2. La règle de liaison utilisée est sourcée et `sur` (règles du JSON, champ `regles`).
+3. Aucune source ne dit le contraire.
+4. **Boucles** : le sens d'une boucle n'est jamais déduit d'une autre position. Il doit être établi dans la même position, c'est-à-dire avec la même entrée dans la boucle.
+   - On ne passe **jamais** d'une forme isolée ou initiale (boucle commencée stylo posé) à une forme liée (boucle atteinte par la liaison).
+   - Entre milieu et fin, on l'admet seulement si la boucle est entrée au même point, se ferme avant que les deux formes divergent, et si une source décrit explicitement la forme visée.
+5. La chaîne de déduction est écrite en entier (§3P.4).
+
+**Consultation** : en ligne uniquement. Les pages ont été lues dans le lecteur d'archive.org ou affichées comme images de page dans le navigateur. Les pages web ont été lues directement. Aucune protection n'a été contournée.
+
+- **Incident à signaler** : le lien PDF du tableau de M. Sakkal (sakkal.com) a ouvert une **fenêtre d'enregistrement** côté utilisateur. Il faut l'annuler. Je ne l'ai pas relancé et je n'ai rien enregistré.
+- Deux sites officiels sont restés inaccessibles depuis notre poste (connexion refusée) : la plateforme saoudienne « عين » (ien.edu.sa) et le Centre national jordanien des curricula (nccd.gov.jo).
+
+### 3P.2 Sources nouvelles ou réexaminées
+
+| Code                         | Référence                                                                                                                                                                                                                                                                                                                                                                               | Nature                     | Accès (lecture en ligne)                                                                                                                        | Ce qu'elle apporte                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PAL** (référence corrigée) | État de Palestine, ministère de l'Éducation et de l'Enseignement supérieur, Centre des curricula, _كراسة الخط العربي للصف الأول الأساسي_. Enseignement décidé à partir de l'année 2000/2001. « Édition expérimentale révisée » de 2011 (1432 H). Équipe nationale coordonnée par ʿĪsā Abū Shamsiyya ; ʿUmar Muslim rapporteur. Droits réservés au ministère et au Centre des curricula. | **Manuel officiel**, naskh | Copie miroir archive.org, notice `general-00006` ; page de crédits n2. La 2ᵉ passe donnait 2009 et « O. Muslim, coordination » : c'est corrigé. | Pages lues en plus : p. 12 (س : formes initiale et isolée, flèches 1 à 4), p. 13 (ط isolée, flèches 1 à 3), p. 15 (ص et ش : initiales et isolées). **Inventaire** : le cahier ne fléche que les formes isolées et initiales, plus quelques formes finales (ـر, ـة, ـه, ـم, ع) et ـهـ. Il ne fléche pas لا et ne numérote pas les points.                                                                                                                                            |
+| **SA1428** (nouvelle)        | Royaume d'Arabie saoudite, ministère de l'Éducation, _القراءة والكتابة والأناشيد_, 1ʳᵉ année primaire, 1ᵉʳ semestre, 1428 H (2007). La 4ᵉ de couverture porte la mention « قررت وزارة التربية والتعليم تدريس هذا الكتاب وطبعه على نفقتها ».                                                                                                                                             | **Manuel officiel**, naskh | Copie miroir archive.org, notice `1428_20230908`                                                                                                | Chaque leçon a une case de traçage avec flèches numérotées, pour la **forme isolée seulement**. Lu : p. 105, ش (1 à 3 : une descente sur chaque dent ; 4 : cuvette vers la gauche ; 5 : remontée). Lu : p. 123, م isolée (1 : haut de la boucle de gauche à droite ; 2 : bas de droite à gauche, donc **horaire** ; 3 : queue vers le bas). Lettres du semestre : أ د ذ ر ز / ط ظ و / ب ت ث ي / ج ح خ / س ش ص ض / ف ق ك ل م ن. Le 2ᵉ semestre (ع غ ه…) n'a pas été trouvé en ligne. |
+| **BSE** (réexaminée)         | Brevet US 8 615 131 B2 (déjà cité)                                                                                                                                                                                                                                                                                                                                                      | Usage réel observé         | patents.google.com                                                                                                                              | Le texte range **kāf, ṭāʾ et lām-alif** parmi les lettres « that attach to the letter body » ; ces traits sont des « delayed strokes ». C'est une 2ᵉ source indépendante pour **لا en deux traits**. Elle confirme aussi la barre de ك et la hampe de ط tracées après le corps.                                                                                                                                                                                                     |
+| **HAR** (réexaminée)         | Muhammad Haroon, rgb Publications (Inde), _كتابنا الخط العربي_                                                                                                                                                                                                                                                                                                                          | Cahier d'écriture          | archive.org, déposé par le compte de l'éditeur                                                                                                  | Page de droits : « Copyright: Free. Provided no addition or deletion to the original file. » La consultation et la citation comme référence ne posent aucune difficulté.                                                                                                                                                                                                                                                                                                            |
+
+**Sources consultées mais non retenues**
+
+- Égypte, ministère de l'Éducation, _اللغة العربية_, 1ʳᵉ primaire, 2025 (archive `2025-1-compressed`) : lettres en pointillés à repasser, **sans flèches** (p. 21, ب).
+- Arabie saoudite, _لغتي_, 1ʳᵉ primaire, 1444 H (archive `1st-grade-00011`) : lettres à colorier, sans flèches (p. 128, ن).
+- Arabie saoudite, _تعليم القراءة والكتابة_, filles, 1419 H (archive `1419_20230908`) : pointillés sans flèches.
+- Al-Azhar, _الخط العربي_, 4ᵉ primaire (archive `4_20260428`) : écriture ruqʿa, sans flèches.
+- Arabie saoudite, _العربية للناشئين_ (1983, archive `hm4405`) : aucune page fléchée trouvée dans les pages vues.
+- Algérie, livre de 1ʳᵉ année et cahiers d'activités : pas de flèches dans le livre ; les cahiers en ligne sont des projets d'enseignants.
+- _كراسة لغتي_ (archive `1st-grade-00014`) : cahier d'un enseignant, non officiel.
+- F. A. Rice, _The Classical Arabic Writing System_ (1966) : prêt avec compte seulement, non consulté.
+- H. Ali, _How to Write the Arabic Alphabet Letters_ (CC BY-NC-ND) : téléchargement seulement, non consulté.
+- FSI, _Modern Written Arabic_ (domaine public) : suppose l'écriture déjà acquise.
+- Sakkal : le PDF déclenche un téléchargement ; les images du site sur لا n'ont pas de flèches.
+- Wikimedia Commons et arabic.fi : rien sur le sens des traits.
+
+### 3P.3 _Mastering Arabic Script_ (MAS) retiré
+
+La copie en ligne consultée en 2ᵉ passe était probablement non autorisée. **MAS n'est plus une source.** Sa référence et son lien de consultation ont été retirés du dossier et du JSON. Chaque fait qui s'appuyait sur MAS a été revu :
+
+| Fait                                         | Sources en 2ᵉ passe           | Remplacement en 3ᵉ passe                                                                                    | Statut v3                         |
+| -------------------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| ـعـ et ـع (et ـغـ ـغ) en sens horaire        | MAS, PAL (AB décrit la forme) | **Aucune** autre source sur le sens. AB décrit la forme (pointe à gauche, côté droit arrondi), pas le sens. | **probable** (PAL seul), 4 formes |
+| لا en deux traits                            | AB, MAS                       | AB + **BSE**                                                                                                | sur                               |
+| ـطـ ـظـ                                      | AB, MAS                       | AB explicite + déduction depuis ـط (AB, SK)                                                                 | sur (dérivé)                      |
+| طـ et ـط                                     | AB, SK, MAS                   | AB, SK                                                                                                      | sur                               |
+| ط isolée                                     | AB, SK, HAR, MAS              | AB, SK, HAR + **PAL p. 13** (1 haut de gauche à droite, 2 base de droite à gauche, 3 hampe)                 | sur                               |
+| ه isolée, horaire                            | MAS, PAL, AB (pour ة)         | PAL + AB : AB donne explicitement le sens pour ة seule, qui a exactement la forme de ه seule                | sur                               |
+| ـجـ et ـج : la liaison arrive par le haut    | AB, SK, MAS                   | AB (« from the line up and then over ») + SK (« from above »)                                               | sur                               |
+| ل au milieu et à la fin : montée puis retour | AB, SK, MAS                   | AB, SK                                                                                                      | sur                               |
+| إ, ؤ : support d'abord, hamza ensuite        | AB, MAS                       | AB + PAL (ئـ), par la règle `hamza_sur_support`                                                             | sur                               |
+| Barre de ك après le mot                      | AB, MAS, BSE                  | AB, BSE                                                                                                     | divergent (inchangé)              |
+| ج, ف, و, م, ا, هـ, ة, ء, أ                   | MAS en surnombre              | les autres sources suffisent                                                                                | sur                               |
+
+**Piste légale pour récupérer ces faits** : acheter un exemplaire de MAS (Palgrave Macmillan, ISBN 9781403941107). Une fois le livre acquis légalement, on pourra revérifier dans cet exemplaire ـعـ, ـع, et sans doute ـفـ et ـو, puis le citer de nouveau. Rien ne doit être repris de la copie non autorisée.
+
+### 3P.4 Les formes à consolider, une par une
+
+| Forme                | v2          | v3               | Preuve ou chaîne de déduction                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| -------------------- | ----------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| سـ et شـ (début)     | probable    | **sur**          | SK + **PAL** (manuel officiel). PAL p. 12 pour سـ : 1 descente de la 1ʳᵉ dent, 2 et 3 vers la gauche sous les dents suivantes, 4 filée. PAL p. 15 pour شـ : mêmes flèches.                                                                                                                                                                                                                                                                                                                                                                                         |
+| ـسـ et ـشـ (milieu)  | probable    | **sur (dérivé)** | 1) ـس (sur : SK, AB) = liaison, trois dents, cuvette. 2) Au milieu, le début est le même, et la filée remplace la cuvette (règle « un groupe lié = un seul geste », sur). 3) Les dents ne sont pas des boucles. 4) SA1428 p. 105 confirme une descente sur chaque dent. 5) Aucune source contraire : SK lève la plume au calame, c'est une technique d'outil, pas un autre sens.                                                                                                                                                                                   |
+| ـي (fin)             | probable    | **sur (dérivé)** | 1) ي seule (sur : AB, HAR, PAL) : crochet, cuvette ouverte vers le haut, remontée de la queue. 2) ـي = liaison (règle, sur), petite montée puis retour (règle des dents et des hampes atteintes par une liaison, sur : AB, SK), puis la même cuvette. 3) Pas de boucle. 4) AB décrit explicitement la forme finale.                                                                                                                                                                                                                                                |
+| ـى (fin)             | probable    | **sur (dérivé)** | ـي ci-dessus, sans points. AB : « exactly like final ي, except that it has no dots ».                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ـئ (fin)             | probable    | **sur (dérivé)** | ـى (sur, dérivé) + hamza tracée après le support (règle `hamza_sur_support`, sur : AB, PAL ئـ ; BSE traits différés).                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ـك (fin)             | probable    | **sur (dérivé)** | 1) Entrée : liaison, montée de la hampe, retour sur le même trait = ـل (sur : AB, SK). 2) Base et crochet = ك seule (sur : AB, HAR, PAL). 3) Petit signe après le corps (ك seule, sur ; BSE : traits attachés différés). 4) Pas de boucle. 5) AB décrit explicitement ـك.                                                                                                                                                                                                                                                                                          |
+| آ (isolée et finale) | probable    | **sur (dérivé)** | 1) ا et ـا (sur). 2) Madda après le corps (règle des marques, sur : AB, BSE, HAR, PAL). 3) Trait ouvert, tracé de droite à gauche (règle du sens, sur). 4) Pas de boucle. 5) AB décrit la forme (« a slightly wavy line just above »).                                                                                                                                                                                                                                                                                                                             |
+| ـلا (après liaison)  | insuffisant | **sur (dérivé)** | 1) Liaison qui atteint une hampe : montée puis retour (règle des hampes, sur : AB, SK). 2) لا = deux traits, le lām d'abord, l'alif ensuite (sur : AB + BSE). 3) Le retour du lām suit l'oblique jusqu'au coin, comme le 1ᵉʳ trait de لا seule. 4) On lève le stylo, puis l'alif de haut en bas. 5) Pas de boucle ; aucune source contraire. Le livre l07, qui disait « d'un seul mouvement », est une consigne interne, pas une source.                                                                                                                           |
+| ـمـ (milieu)         | probable    | **sur (dérivé)** | 1) ـم (sur : AB + PAL p. 2) : la liaison entre dans la boucle par le haut, boucle antihoraire, puis queue. 2) Au milieu, l'entrée et la boucle sont identiques. La boucle est fermée avant que les deux formes divergent (filée au lieu de la queue). 3) AB décrit explicitement ـمـ (« loop down from the connecting segment »). Condition 4 remplie : même position, celle d'une boucle atteinte par la liaison.                                                                                                                                                 |
+| ـصـ ـص (et ـضـ ـض)   | probable    | **sur (dérivé)** | 1) ـط (sur : AB, SK) établit la boucle commune à ص et ط quand elle est atteinte par la liaison : la liaison file sur la ligne jusqu'au départ gauche de la boucle, puis la boucle est horaire. 2) C'est la même boucle : PAL donne les mêmes flèches 1-2 pour ط (p. 13) et pour ص (p. 15). 3) La dent et la cuvette de ص sont sur (ص seule). 4) AB décrit explicitement ـصـ et ـص (« draw the connecting segment to the loop's starting point, then follow the independent steps »). Déduction d'une lettre à l'autre pour une même boucle : signalée comme telle. |
+| ـطـ ـظـ              | sur         | **sur (dérivé)** | MAS est retiré. ـط (AB, SK) + même entrée, boucle fermée avant la sortie + AB explicite pour la forme médiane.                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ـعـ ـع ـغـ ـغ        | sur         | **probable**     | MAS est retiré ; reste PAL seul pour le sens horaire. AB est compatible pour la forme, mais muet sur le sens. On garde le tracé PAL.                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ـفـ ـف ـقـ ـق        | probable    | probable         | AB seul. Aucun manuel officiel consulté ne montre ces formes. La déduction est interdite : la boucle de tête n'est `sur` que stylo posé (isolée, initiale).                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ـو et ـؤ             | probable    | probable         | AB seul (« the joining segment leads into the beginning point of the loop »). Même raison.                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ـهـ à deux boucles   | probable    | probable         | PAL seul. Aucune autre source ne décrit cette forme imprimée.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+
+### 3P.5 Formes divergentes : recommandations
+
+1. **مـ au début : sens de la boucle**
+   - Horaire : AB (forme principale), SK. MAS est retiré.
+   - Antihoraire : PAL (manuel officiel). AB l'admet aussi.
+   - **Autres manuels officiels examinés** :
+     - SA1428 trace م **isolée** en sens horaire (p. 123). Il ne fléche pas la forme initiale.
+     - Le manuel égyptien de 2025 et _لغتي_ (1444) n'ont aucune flèche.
+     - Aucun 2ᵉ manuel officiel ne montre donc مـ en sens antihoraire. Rien n'indique que ce sens soit l'usage scolaire majoritaire.
+   - **Recommandation inchangée : horaire.**
+     - C'est le même geste que م isolée, que les **deux** manuels officiels tracent en sens horaire (PAL p. 2, SA1428 p. 123), comme AB, HAR et SK.
+     - Une seule source (PAL) trace l'initiale en sens antihoraire.
+     - Le guide de l'enseignant accepte les deux sens.
+   - **Ce qui ferait changer la recommandation** : un 2ᵉ manuel officiel qui trace مـ en sens antihoraire.
+2. **كـ et ـكـ : place de la barre**
+   - Barre après le mot : AB, et BSE, qui range explicitement kāf parmi les traits différés, « usually drawn last in a handwritten word ».
+   - Barre d'abord : SK (calame), PAL (lettre seule).
+   - **Recommandation inchangée : le corps d'abord, la barre après le mot.** C'est la même règle que pour les points, et c'est l'usage réel des scripteurs. L'autre ordre est toléré.
+3. **Ordre des points de ث ش**
+   - PAL (pages de ث et ش) et SA1428 (p. 105) ne numérotent pas les points. Aucune source n'existe.
+   - On garde la convention « de droite à gauche ; pour 3 points, la rangée du bas puis le sommet ».
+   - Statut `insuffisant`, enjeu faible.
+
+### 3P.6 Décompte final
+
+| Ensemble                | sur    | sur (dérivé) | probable | divergent | insuffisant | Total   |
+| ----------------------- | ------ | ------------ | -------- | --------- | ----------- | ------- |
+| 28 lettres (100 formes) | 76     | 11           | 10       | 3         | 0           | 100     |
+| Formes spéciales (19)   | 13     | 5            | 1        | 0         | 0           | 19      |
+| **Total**               | **89** | **16**       | **11**   | **3**     | **0**       | **119** |
+
+**Bilan des 23 formes à consolider** :
+
+- 16 sont devenues `sur` : سـ et شـ par source directe, 14 par déduction.
+- 7 restent `probable` : ـفـ ـف ـقـ ـق ـو ـؤ ـهـ.
+- Le retrait de MAS fait **redescendre 4 formes** à `probable` : ـعـ ـع ـغـ ـغ.
+- ـطـ et ـظـ passent de `sur` à `sur (dérivé)`.
+
+### 3P.7 Tableau complet : statut de chaque forme (fait foi)
+
+Lecture : `sur*` = `sur (dérivé)`. Entre parenthèses, les sources. **Gras** = statut autre que `sur` ou `sur*`.
+
+| Lettre | Isolée                             | Début                             | Milieu                           | Fin                      |
+| ------ | ---------------------------------- | --------------------------------- | -------------------------------- | ------------------------ |
+| ب ت ث  | sur (SK, AB, HAR)                  | sur (SK, AB)                      | sur (SK, AB)                     | sur (SK, AB)             |
+| ن      | sur (SK, AB, HAR)                  | sur (SK, AB, PAL)                 | sur (SK, AB)                     | sur (AB, SK)             |
+| ي      | sur (AB, HAR, PAL)                 | sur (SK, AB)                      | sur (SK, AB)                     | sur* (ي seule + liaison) |
+| ج ح خ  | sur (SK, AB, HAR, PAL)             | sur (SK, AB, PAL)                 | sur (AB, SK)                     | sur (AB, SK)             |
+| د ذ    | sur (AB, SK, HAR)                  | = isolée                          | = fin                            | sur (AB, SK)             |
+| ر ز    | sur (AB, SK, HAR, PAL)             | = isolée                          | = fin                            | sur (AB, SK, PAL)        |
+| س ش    | sur (SK, AB, HAR, PAL, SA1428)     | sur (SK, PAL)                     | sur* (ـس + filée)                | sur (SK, AB)             |
+| ص ض    | sur (AB, SK, HAR, E3, PAL)         | sur (AB, SK, PAL)                 | sur* (boucle de ـط)              | sur* (boucle de ـط)      |
+| ط ظ    | sur (AB, SK, HAR, PAL)             | sur (AB, SK)                      | sur* (ـط)                        | sur (AB, SK)             |
+| ع غ    | sur (AB, SK, HAR, PAL)             | sur (AB, SK, PAL)                 | **probable** (PAL)               | **probable** (PAL)       |
+| ف      | sur (AB, HAR, SK)                  | sur (AB, PAL)                     | **probable** (AB)                | **probable** (AB)        |
+| ق      | sur (AB, HAR, PAL, SK)             | sur (AB, PAL)                     | **probable** (AB)                | **probable** (AB)        |
+| ك      | sur (AB, HAR, PAL)                 | **divergent** (place de la barre) | **divergent** (idem)             | sur* (ـل + ك seule)      |
+| ل      | sur (AB, SK, HAR)                  | sur (AB, SK, PAL)                 | sur (AB, SK)                     | sur (AB, SK)             |
+| م      | sur (AB, HAR, PAL, SA1428, SK)     | **divergent** (sens de la boucle) | sur* (ـم)                        | sur (AB, PAL)            |
+| ه      | sur (PAL, AB pour ة)               | sur (AB, HAR, PAL)                | **probable** (PAL, deux boucles) | sur (AB, PAL)            |
+| و      | sur (AB, HAR, PAL)                 | = isolée                          | = fin                            | **probable** (AB)        |
+| ا      | sur (AB, SK, PAL)                  | = isolée                          | = fin                            | sur (AB, SK)             |
+| ء      | sur (AB, PAL)                      | —                                 | —                                | —                        |
+| أ إ    | sur (support puis hamza : AB, PAL) | = isolée                          | = fin                            | sur                      |
+| ؤ      | sur (و + hamza)                    | = isolée                          | = fin                            | **probable** (ـو : AB)   |
+| ئ      | sur (ى + hamza)                    | sur (AB, PAL)                     | sur (AB, PAL)                    | sur* (ـى + hamza)        |
+| آ      | sur* (ا + madda)                   | = isolée                          | = fin                            | sur* (ـا + madda)        |
+| ة      | sur (AB, PAL)                      | —                                 | —                                | sur (AB, PAL)            |
+| ى      | sur (AB + ي de HAR et PAL)         | —                                 | —                                | sur* (ـي sans points)    |
+| لا     | sur, en deux traits (AB, BSE)      | —                                 | —                                | sur* (ـل + لا)           |
+
+### 3P.8 Ce qui reste non établi, et comment avancer sans film
+
+**Formes non établies**
+
+- **11 `probable`** :
+  - ـفـ ـف ـقـ ـق ـو ـؤ : AB seul ;
+  - ـهـ : PAL seul ;
+  - ـعـ ـع ـغـ ـغ : PAL seul.
+- **3 `divergent`** : مـ, كـ, ـكـ. La recommandation est tranchée, l'autre usage est toléré.
+- **Ordre des points** de ث ش : convention, sans source.
+
+**Pour l'animation** : on garde les tracés actuels de ces formes. Ils suivent la seule source explicite et aucune source ne les contredit. Le JSON les signale par leur `statut`.
+
+**Plan autonome, sans film** :
+
+1. Acheter _Mastering Arabic Script_ (exemplaire légal), puis revérifier ـعـ, ـع, ـفـ et ـو. Ces formes repasseraient à `sur` si l'exemplaire confirme.
+2. Acheter _Alif Baa_ (Georgetown University Press, 3ᵉ éd.). On aura ainsi une copie légale de référence (voir §3P.9).
+3. Surveiller une copie en ligne du 2ᵉ semestre de SA1428 (ع غ ه) et du nouveau cahier palestinien.
+4. Les relecteurs du niveau 1 valident en dernier filet les 11 formes `probable` et les 3 `divergent`, comme le prévoit la relecture par niveau.
+
+La proposition de faire filmer des enseignants (§2P.6) est **abandonnée** à la demande du client.
+
+### 3P.9 Licences et droits
+
+**1. Ce que l'on reprend des sources**
+
+- Le sens et l'ordre des traits sont des **faits et des conventions d'écriture**. Ils ne sont pas protégés : on peut les reprendre.
+- **Aucune image tierce n'est reprise** : ni page, ni flèche, ni mise en page, ni dessin de lettre d'un manuel.
+- Les sources ne sont citées **qu'à titre de références**, avec auteur, titre et page.
+- Les citations restent courtes (une ligne au plus), servent l'analyse et indiquent leur source.
+- Si ce dossier est un jour publié, il faudra raccourcir encore les citations en anglais de la 1ʳᵉ passe.
+
+**2. Nos tracés et la police Noto Naskh Arabic**
+
+- Nos tracés sont **dessinés par nous**. Ce sont des points de passage et des trajectoires de plume, recalés à la main sur l'aspect de **Noto Naskh Arabic**. Aucun contour de glyphe n'est copié dans nos fichiers de données.
+- Noto Naskh Arabic : « Copyright 2022 The Noto Project Authors (https://github.com/notofonts/arabic) », sous licence **SIL Open Font License 1.1**. **Aucun nom de police réservé** n'est déclaré (vérifié dans le fichier `OFL.txt` du dépôt Google Fonts).
+- **Obligations de l'OFL** :
+  1. Si l'on **distribue les fichiers de police** (application, site, relais d'école), il faut joindre la mention de copyright et le texte de la licence (fichier séparé ou métadonnées lisibles).
+  2. On ne vend pas la police seule. La joindre à notre logiciel est permis.
+  3. Une police modifiée reste sous OFL. On n'utilise pas le nom des auteurs pour la promouvoir.
+  4. Les **documents** produits avec la police (vidéos, images, PDF, pages) **ne sont pas soumis** à ces obligations : la licence le dit expressément.
+- **Crédit recommandé**, même si les documents n'y obligent pas, dans « À propos » et le générique des vidéos : « Police Noto Naskh Arabic © 2022 The Noto Project Authors, licence SIL Open Font License 1.1. »
+- **Point à corriger avant toute diffusion** :
+  - le dossier `fonts/` contient 6 fichiers woff2 sans leur fichier de licence : Noto Naskh Arabic 400 et 700, Amiri, Lexend, Nunito 400 et 700 ;
+  - toutes ces polices sont sous OFL ;
+  - il faut ajouter, pour chacune, son fichier `OFL.txt` avec sa ligne de copyright.
+
+**3. Statut juridique des sources**
+
+| Source | Statut de la copie consultée                                                                   | Usage permis                                                           |
+| ------ | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| PAL    | Copie miroir d'un manuel officiel distribué par le ministère ; droits réservés au ministère    | Référence factuelle seulement                                          |
+| SA1428 | Copie miroir d'un manuel officiel imprimé aux frais du ministère                               | Référence factuelle seulement                                          |
+| HAR    | Distribution gratuite autorisée par l'auteur, déposée par l'éditeur                            | Référence sans réserve                                                 |
+| AB     | Texte lu sur un serveur du Middlebury College ; l'autorisation de l'éditeur n'est pas vérifiée | Faits seulement ; acheter le livre pour avoir une copie légale         |
+| SK     | Site de l'auteur                                                                               | Référence                                                              |
+| BSE    | Brevet publié                                                                                  | Référence                                                              |
+| E3     | Article public                                                                                 | Corroboration seulement                                                |
+| MAS    | Copie probablement non autorisée                                                               | **Retiré.** On ne le réutilisera qu'après achat d'un exemplaire légal. |
+
+**4. Limite** : cette analyse est une précaution de chef de projet, pas une consultation juridique. Si le comité le souhaite, un juriste peut relire les crédits avant la publication.
+
+---
+
+## 2P. Deuxième passe (19/10/2026, après-midi) — historique
+
+> ⟶ 3ᵉ passe : cette section n'est plus qu'un historique.
+>
+> - Les statuts qui font foi sont au §3P.7.
+> - _Mastering Arabic Script_ (MAS) est **retiré** comme source (§3P.3). Ses mentions ci-dessous sont gardées pour la traçabilité, mais aucun fait n'en dépend plus.
+> - La référence de PAL est corrigée au §3P.2.
 
 ### 2P.1 Statuts
 
@@ -28,12 +261,12 @@ L'unité de compte est la **forme distincte** : 4 formes pour une lettre qui s'a
 
 ### 2P.2 Nouvelles sources
 
-| Code    | Référence                                                                                                                                                                                                                                                                                                                                                                      | Nature                                                                                                    | Accès                                                                                                                     | Ce qu'elle apporte                                                                                                                                                                                                                                                         | Fiabilité                                                                                                                                                                                                                                                                                                                                                               |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **PAL** | État de Palestine, ministère de l'Éducation et de l'Enseignement supérieur, Centre des curricula. _كراسة تعليم الخط العربي_, 1ʳᵉ année de base. Auteurs : O. Muslim (coordination), F. Ghawadra, M. Halas, A. al-Khatib. Préface datée de 2009 (date lue sur l'image, à revérifier). Lecteur archive.org, notice `general-00006` : `https://archive.org/details/general-00006` | **Manuel scolaire officiel**, naskh                                                                       | Pages lues une par une dans le lecteur en ligne, flèches agrandies. On distingue la pointe de la flèche de son empennage. | Flèches numérotées sur les formes de chaque page. Pages vues : م (début, isolée, fin), ة (isolée, fin), ج (début, isolée), ع (début, milieu, fin, isolée), ء et ئـ, و, ي (isolée), ق (début, isolée), ك (début, isolée), ه (début, **milieu à deux boucles**, isolée, fin) | **Haute** : seule source officielle trouvée. La résolution est moyenne, mais toutes les flèches retenues étaient lisibles.                                                                                                                                                                                                                                              |
-| **MAS** | Jane Wightwick et Mahmoud Gaafar, _Mastering Arabic Script: A Guide to Handwriting_, Palgrave Macmillan, 2005. Lecteur et texte intégral archive.org, notice `mastering-arabic-script-a-guide-to-handwriting`                                                                                                                                                                  | Méthode pour adultes non arabophones. Elle enseigne l'écriture courante (ruqʿa) en la comparant au naskh. | Texte lu ; pages 30, 34-35, 40-41, 55, 58-59, 72-73 et 78-79 vues en image                                                | Consignes explicites de sens : م, ه, ط, ص, ع (milieu), ج, hamza, ك, لا. Voir §2P.4.                                                                                                                                                                                        | **Haute** pour le sens des boucles. Moyenne pour la forme, car le ruqʿa diffère parfois du naskh (ي, ـهـ, ك). **Attention** : la copie en ligne porte le filigrane d'un site tiers (uz-translations.net). C'est probablement une mise en ligne non autorisée. Je n'en tire que des faits et de courtes citations. Il faut acheter le livre pour le garder en référence. |
-| **HAR** | Haroonica, _كتابنا الخط العربي : الكتاب الأول – لصف روضة الأطفال_ (2016, notice archive.org `bk-27-r2`) et _الكتاب الثاني_ (`bk-13-r2`)                                                                                                                                                                                                                                        | Cahiers d'écriture pour enfants, naskh. Éditeur indépendant des précédents.                               | Lecteur archive.org ; toutes les pages de lettres vues                                                                    | Lettres **isolées** avec flèches numérotées : 1, 2, 3… puis les points                                                                                                                                                                                                     | **Moyenne à haute**. Les flèches sont nettes et cohérentes, mais l'éditeur n'est pas une institution.                                                                                                                                                                                                                                                                   |
-| **AB+** | Alif Baa, passages non exploités en 1ʳᵉ passe : unité 6 (ف au milieu, لا, ك) et unité 5 (ع)                                                                                                                                                                                                                                                                                    | Même source qu'AB                                                                                         | Texte en ligne, Middlebury                                                                                                | ف au milieu : « Start from the connecting segment and loop up to your left and back around to the line »                                                                                                                                                                   | Ce n'est **pas** une source indépendante d'AB.                                                                                                                                                                                                                                                                                                                          |
+| Code    | Référence                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Nature                                                                                                    | Accès                                                                                                                     | Ce qu'elle apporte                                                                                                                                                                                                                                                         | Fiabilité                                                                                                                                                                                                                                                                                                                                    |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PAL** | État de Palestine, ministère de l'Éducation et de l'Enseignement supérieur, Centre des curricula. _كراسة تعليم الخط العربي_, 1ʳᵉ année de base. Auteurs : O. Muslim (coordination), F. Ghawadra, M. Halas, A. al-Khatib. Préface datée de 2009 (date lue sur l'image, à revérifier). ⟶ 3ᵉ passe : la référence est corrigée d'après la page de crédits (édition révisée de 2011, §3P.2). Lecteur archive.org, notice `general-00006` : `https://archive.org/details/general-00006` | **Manuel scolaire officiel**, naskh                                                                       | Pages lues une par une dans le lecteur en ligne, flèches agrandies. On distingue la pointe de la flèche de son empennage. | Flèches numérotées sur les formes de chaque page. Pages vues : م (début, isolée, fin), ة (isolée, fin), ج (début, isolée), ع (début, milieu, fin, isolée), ء et ئـ, و, ي (isolée), ق (début, isolée), ك (début, isolée), ه (début, **milieu à deux boucles**, isolée, fin) | **Haute** : seule source officielle trouvée. La résolution est moyenne, mais toutes les flèches retenues étaient lisibles.                                                                                                                                                                                                                   |
+| **MAS** | Jane Wightwick et Mahmoud Gaafar, _Mastering Arabic Script: A Guide to Handwriting_, Palgrave Macmillan, 2005, ISBN 9781403941107. **Retiré en 3ᵉ passe** (§3P.3) : la copie consultée en ligne était probablement non autorisée ; son lien a été supprimé.                                                                                                                                                                                                                        | Méthode pour adultes non arabophones. Elle enseigne l'écriture courante (ruqʿa) en la comparant au naskh. | Texte lu ; pages 30, 34-35, 40-41, 55, 58-59, 72-73 et 78-79 vues en image                                                | Consignes explicites de sens : م, ه, ط, ص, ع (milieu), ج, hamza, ك, لا. Voir §2P.4.                                                                                                                                                                                        | **Haute** pour le sens des boucles. Moyenne pour la forme, car le ruqʿa diffère parfois du naskh (ي, ـهـ, ك). **Attention** : la copie en ligne portait le filigrane d'un site tiers. C'était probablement une mise en ligne non autorisée. ⟶ 3ᵉ passe : plus aucun fait n'en dépend. Il faut acheter le livre avant de le citer de nouveau. |
+| **HAR** | Haroonica, _كتابنا الخط العربي : الكتاب الأول – لصف روضة الأطفال_ (2016, notice archive.org `bk-27-r2`) et _الكتاب الثاني_ (`bk-13-r2`)                                                                                                                                                                                                                                                                                                                                            | Cahiers d'écriture pour enfants, naskh. Éditeur indépendant des précédents.                               | Lecteur archive.org ; toutes les pages de lettres vues                                                                    | Lettres **isolées** avec flèches numérotées : 1, 2, 3… puis les points                                                                                                                                                                                                     | **Moyenne à haute**. Les flèches sont nettes et cohérentes, mais l'éditeur n'est pas une institution.                                                                                                                                                                                                                                        |
+| **AB+** | Alif Baa, passages non exploités en 1ʳᵉ passe : unité 6 (ف au milieu, لا, ك) et unité 5 (ع)                                                                                                                                                                                                                                                                                                                                                                                        | Même source qu'AB                                                                                         | Texte en ligne, Middlebury                                                                                                | ف au milieu : « Start from the connecting segment and loop up to your left and back around to the line »                                                                                                                                                                   | Ce n'est **pas** une source indépendante d'AB.                                                                                                                                                                                                                                                                                               |
 
 **Sources vérifiées mais non retenues, ou non accessibles**
 
@@ -129,7 +362,7 @@ En 1ʳᵉ passe, seuls les grands principes étaient solides. Désormais, **tout
   - la madda de آ, isolée et finale (AB).
 - **À trancher par le référent** : les 3 formes `divergent` (§2P.5).
 
-**Proposition : faire filmer un enseignant d'écriture de l'école**, la main seulement. Une demi-journée suffit.
+**Proposition : faire filmer un enseignant d'écriture de l'école**, la main seulement. Une demi-journée suffit. ⟶ 3ᵉ passe : **proposition abandonnée** à la demande du client ; voir le plan autonome au §3P.8.
 
 1. **Qui** : deux enseignants, filmés séparément et sans voir notre tableau, pour obtenir deux témoignages indépendants.
 2. **Matériel** : un téléphone fixé sur un support, à la verticale, environ 40 cm au-dessus de la feuille, en 1080p à 60 images par seconde. Une feuille blanche lignée, un feutre noir de 0,8 mm, une bonne lumière sans ombre de la main.

@@ -364,8 +364,8 @@
 .vv .forme {
   display: grid;
   justify-items: center;
-  min-width: 3.9rem;
-  padding: 0.2rem 0.3rem 0.35rem;
+  min-width: 3.3rem;
+  padding: 0.2rem 0.25rem 0.35rem;
   border-radius: 0.9rem;
   background: var(--or-voile);
   border: 1px solid var(--bord);

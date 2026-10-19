@@ -44,7 +44,10 @@ export interface OuvrirOptions {
 
 const c = String.fromCharCode;
 const AR = `${c(0x600)}-${c(0x6ff)}`;
-const RUN = new RegExp(`([${AR}][${AR}\\s.]*)`);
+// passage arabe d'un texte français ; entre parenthèses ou guillemets, ceux-ci l'accompagnent sur sa ligne
+const RUN = new RegExp(
+  `(\\(\\s?[${AR}][${AR}\\s.]*\\s?\\)|«\\s?[${AR}][${AR}\\s.]*\\s?»|[${AR}][${AR}\\s.]*)`,
+);
 const LETTRE = new RegExp(`[${c(0x621)}-${c(0x64a)}]`, 'g');
 const TATWEEL = c(0x640);
 const ALIF = c(0x627);
@@ -98,7 +101,8 @@ export function frH(s: string, cls = 'fr'): string {
   return `<div class="frh">${out}</div>`;
 }
 
-let lecteur: Lecteur | null = null;
+/** fermeture du lecteur ouvert (un seul à la fois) */
+let fermerOuvert: (() => void) | null = null;
 
 /** Ouvre le lecteur plein écran (un seul à la fois), après ses textes (catalogue `fr-video`, à la demande). */
 export async function ouvrir(o: OuvrirOptions): Promise<void> {
@@ -114,139 +118,142 @@ export async function ouvrir(o: OuvrirOptions): Promise<void> {
       document.head.append(st);
     });
   }
-  lecteur?.fermer();
-  lecteur = new Lecteur(o);
+  fermerOuvert?.();
+  fermerOuvert = creer(o);
 }
 
-class Lecteur {
-  o: OuvrirOptions;
-  v: VideoLecon;
-  root: HTMLElement;
-  stage: HTMLElement;
-  zone!: HTMLElement;
-  band!: HTMLElement;
-  kind = '';
-  mode: VideoMode = 'longue';
-  lettre = 0;
-  scenes: Scene[] = [];
-  i = 0;
-  jeton = 0;
-  pause = true;
-  debut = false;
-  vitesse = 1;
-  audio: HTMLAudioElement | null = null;
-  seul: HTMLAudioElement | null = null;
-  score = { ok: 0, n: 0 };
-  retour: Element | null;
-  cle: string;
+/**
+ * Le lecteur (fermeture : état et fonctions locales, que le minifieur raccourcit). Rend la fonction qui le ferme.
+ */
+function creer(opt: OuvrirOptions): () => void {
+  let vid: VideoLecon;
+  let root: HTMLElement;
+  let stage: HTMLElement;
+  let zone: HTMLElement;
+  let band: HTMLElement;
+  let kind = '';
+  let titreCarte = '';
+  let modeChoisi: VideoMode = 'longue';
+  let lettreChoisie = 0;
+  let scenes: Scene[] = [];
+  let idx = 0;
+  let jeton = 0;
+  let pause = true;
+  let debut = false;
+  let vitesse = 1;
+  let audio: HTMLAudioElement | null = null;
+  let seul: HTMLAudioElement | null = null;
+  let score = { ok: 0, n: 0 };
+  let retour: Element | null;
+  let cle: string;
 
-  constructor(o: OuvrirOptions) {
-    this.o = o;
-    this.retour = document.activeElement;
-    this.cle = `awzid.vv.${o.unit.id}`;
-    const la = o.audio;
-    this.v = buildVideo(o.unit.lesson, {
-      unitId: o.unit.id,
+  // —— initialisation (ancien constructeur) ——
+  const init = () => {
+    retour = document.activeElement;
+    cle = `awzid.vv.${opt.unit.id}`;
+    const la = opt.audio;
+    vid = buildVideo(opt.unit.lesson, {
+      unitId: opt.unit.id,
       hasAudio: (s) => !!audioIdFor(s, la),
-      images: Object.keys(o.illus),
+      images: Object.keys(opt.illus),
       audioList: la ? [...la.fichiers] : [],
     });
     stopLessonAudio();
     document.dispatchEvent(new Event('awzid-son'));
-    const r = (this.root = h('div', 'vv'));
+    const r = (root = h('div', 'vv'));
     r.setAttribute('role', 'dialog');
     r.setAttribute('aria-modal', 'true');
     r.setAttribute('aria-label', t('vv.titre'));
     r.dataset.testid = 'vv';
-    r.classList.toggle('sans-trad', !traductionVisible(o.profileId));
+    r.classList.toggle('sans-trad', !traductionVisible(opt.profileId));
     r.innerHTML = `<div class="vv-l"><header class="vv-t"><div class="tt"><span class="k"></span><b class="s"></b></div><button class="ib fermer" data-k="fermer" aria-label="${esc(t('vv.fermer'))}">✕</button></header><div class="seg" aria-hidden="true"></div><section class="vv-sc" aria-live="polite"></section><nav class="vv-cmd"><div class="rang"><button class="ib" data-k="prec" aria-label="${esc(t('vv.prec'))}"><svg viewBox="0 0 24 24"><path d="M6 5v14M18 6l-8 6 8 6z"/></svg></button><button class="ib lire" data-k="lire"></button><button class="ib" data-k="suiv" aria-label="${esc(t('vv.suiv'))}"><svg viewBox="0 0 24 24"><path d="M18 5v14M6 6l8 6-8 6z"/></svg></button><span class="temps"></span></div><div class="rang"><button class="puce" data-k="vitesse"></button><button class="puce" data-k="trad" data-testid="vv-trad"></button></div></nav></div>`;
-    this.stage = r.querySelector('.vv-sc')!;
+    stage = r.querySelector('.vv-sc')!;
     document.body.append(r);
     document.documentElement.classList.add('vv-ouvert');
-    r.addEventListener('click', (e) => this.clic(e));
-    r.addEventListener('keydown', (e) => this.clavier(e));
-    this.majBoutons();
-    this.depart();
+    r.addEventListener('click', (e) => clic(e));
+    r.addEventListener('keydown', (e) => clavier(e));
+    majBoutons();
+    depart();
     r.querySelector<HTMLElement>('.fermer')!.focus();
-  }
+  };
 
   // ———————————————————————————————— commandes ————————————————————————————————
-  clic(e: MouseEvent) {
+  function clic(e: MouseEvent) {
     const b = (e.target as Element).closest<HTMLElement>('[data-k],[data-dire]');
     if (!b) return;
-    if (b.dataset.dire !== undefined) return this.ecouter(b.dataset.dire);
+    if (b.dataset.dire !== undefined) return ecouter(b.dataset.dire);
     switch (b.dataset.k) {
       case 'fermer':
-        return this.fermer();
+        return fermer();
       case 'lire':
-        return this.basculer();
+        return basculer();
       case 'prec':
-        return this.debut ? void this.jouer(this.i - 1) : undefined;
+        return debut ? void jouer(idx - 1) : undefined;
       case 'suiv':
-        return this.debut ? void this.jouer(this.i + 1) : undefined;
+        return debut ? void jouer(idx + 1) : undefined;
       case 'vitesse': {
         const V = [0.75, 1, 1.25];
-        this.vitesse = V[(V.indexOf(this.vitesse) + 1) % 3]!;
-        if (this.audio) this.audio.playbackRate = this.vitesse;
-        return this.majBoutons();
+        vitesse = V[(V.indexOf(vitesse) + 1) % 3]!;
+        if (audio) audio.playbackRate = vitesse;
+        return majBoutons();
       }
       case 'trad': {
-        const sans = this.root.classList.toggle('sans-trad');
-        memoriserTraduction(this.o.profileId, !sans);
-        return this.majBoutons();
+        const sans = root.classList.toggle('sans-trad');
+        memoriserTraduction(opt.profileId, !sans);
+        return majBoutons();
       }
     }
   }
-  clavier(e: KeyboardEvent) {
-    if (e.key === 'Escape') return this.fermer();
+  function clavier(e: KeyboardEvent) {
+    if (e.key === 'Escape') return fermer();
     if ((e.target as Element).closest('button')) return;
     if (e.key === ' ') {
       e.preventDefault();
-      this.basculer();
+      basculer();
     }
-    if (this.debut && e.key === 'ArrowRight') void this.jouer(this.i + 1);
-    if (this.debut && e.key === 'ArrowLeft') void this.jouer(this.i - 1);
+    if (debut && e.key === 'ArrowRight') void jouer(idx + 1);
+    if (debut && e.key === 'ArrowLeft') void jouer(idx - 1);
   }
-  basculer() {
-    if (!this.debut) return;
-    this.pause = !this.pause;
-    if (this.audio) void (this.pause ? this.audio.pause() : this.audio.play().catch(() => {}));
-    this.majBoutons();
+  function basculer() {
+    if (!debut) return;
+    pause = !pause;
+    if (audio) void (pause ? audio.pause() : audio.play().catch(() => {}));
+    majBoutons();
   }
-  majBoutons() {
-    const q = (k: string) => this.root.querySelector<HTMLElement>(`[data-k="${k}"]`)!;
+  function majBoutons() {
+    const q = (k: string) => root.querySelector<HTMLElement>(`[data-k="${k}"]`)!;
     const l = q('lire');
-    l.innerHTML = this.pause
+    l.innerHTML = pause
       ? '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'
       : '<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
-    l.setAttribute('aria-label', t(this.pause ? 'vv.lecture' : 'vv.pause'));
-    l.toggleAttribute('disabled', !this.debut);
-    q('vitesse').textContent = t('vv.vitesse', { v: String(this.vitesse).replace('.', ',') });
-    const sans = this.root.classList.contains('sans-trad');
+    l.setAttribute('aria-label', t(pause ? 'vv.lecture' : 'vv.pause'));
+    l.toggleAttribute('disabled', !debut);
+    q('vitesse').textContent = t('vv.vitesse', { v: String(vitesse).replace('.', ',') });
+    const sans = root.classList.contains('sans-trad');
     q('trad').textContent = t(sans ? 'bib.voir_traduction' : 'bib.cacher_traduction');
     q('trad').setAttribute('aria-pressed', String(sans));
-    this.root.toggleAttribute('data-pause', this.pause && this.debut);
+    root.toggleAttribute('data-pause', pause && debut);
   }
-  fermer() {
-    this.jeton++;
-    this.audio?.pause();
-    this.seul?.pause();
-    this.root.remove();
+  function fermer() {
+    jeton++;
+    audio?.pause();
+    seul?.pause();
+    root.remove();
     document.documentElement.classList.remove('vv-ouvert');
-    if (lecteur === this) lecteur = null;
-    (this.retour as HTMLElement | null)?.focus?.();
+    if (fermerOuvert === fermer) fermerOuvert = null;
+    (retour as HTMLElement | null)?.focus?.();
   }
 
   // ———————————————————————————————— temps et voix ————————————————————————————————
   /** progression de 0 à 1 sur `ms` (vitesse, pause), coupée si la scène change */
-  prog(ms: number, f?: (p: number) => void): Promise<void> {
-    const j = this.jeton;
+  function prog(ms: number, f?: (p: number) => void): Promise<void> {
+    const j = jeton;
     return new Promise((ok, ko) => {
       let fait = 0;
       let t0 = performance.now();
       const tick = (x: number) => {
-        if (j !== this.jeton) return ko(new Coupe());
-        if (!this.pause) fait += (x - t0) * this.vitesse;
+        if (j !== jeton) return ko(new Coupe());
+        if (!pause) fait += (x - t0) * vitesse;
         t0 = x;
         f?.(Math.min(1, fait / ms));
         if (fait >= ms) return ok();
@@ -255,57 +262,57 @@ class Lecteur {
       requestAnimationFrame(tick);
     });
   }
-  att = (ms: number) => this.prog(ms);
+  const att = (ms: number) => prog(ms);
   /** une suite d'une scène quittée s'arrête (après toute attente qui n'est pas un minuteur de `prog`) */
-  vivant(j: number) {
-    if (j !== this.jeton) throw new Coupe();
+  function vivant(j: number) {
+    if (j !== jeton) throw new Coupe();
   }
   /** joue le fichier audio du texte s'il existe (copie de l'appareil d'abord) ; sinon un court silence */
-  async dire(x: T | undefined, el?: Element | null): Promise<void> {
-    const id = x?.son ? audioIdFor(x.ar, this.o.audio) : null;
+  async function dire(x: T | undefined, el?: Element | null): Promise<void> {
+    const id = x?.son ? audioIdFor(x.ar, opt.audio) : null;
     el?.classList.add('joue');
     try {
-      if (!id) return await this.att(700);
-      const j = this.jeton;
+      if (!id) return await att(700);
+      const j = jeton;
       const s = await leconsSource(id).catch(() => null);
       // scène changée pendant l'attente : cette suite s'arrête (sinon elle continuerait dans la scène suivante)
-      this.vivant(j);
-      if (!s) return await this.att(700);
+      vivant(j);
+      if (!s) return await att(700);
       await new Promise<void>((ok) => {
         const a = new Audio(s.url);
         a.preservesPitch = true;
-        a.playbackRate = this.vitesse;
-        this.audio = a;
+        a.playbackRate = vitesse;
+        audio = a;
         let fini = false;
         const fin = () => {
           if (fini) return;
           fini = true;
-          this.audio = null;
+          audio = null;
           s.liberer?.();
           ok();
         };
         a.onended = a.onerror = fin;
         // connexion coupée ou lecture refusée : la scène continue en silence
-        setTimeout(() => !this.pause && a.currentTime === 0 && fin(), 2500);
-        if (!this.pause) a.play().catch(fin);
+        setTimeout(() => !pause && a.currentTime === 0 && fin(), 2500);
+        if (!pause) a.play().catch(fin);
         const garde = () =>
-          j !== this.jeton ? (a.pause(), fin()) : fini || requestAnimationFrame(garde);
+          j !== jeton ? (a.pause(), fin()) : fini || requestAnimationFrame(garde);
         requestAnimationFrame(garde);
       });
-      this.vivant(j);
-      await this.att(250);
+      vivant(j);
+      await att(250);
     } finally {
       el?.classList.remove('joue');
     }
   }
   /** toucher un mot : on l'entend, sans arrêter la scène */
-  ecouter(ar: string) {
-    const id = audioIdFor(ar, this.o.audio);
+  function ecouter(ar: string) {
+    const id = audioIdFor(ar, opt.audio);
     if (!id) return;
-    this.seul?.pause();
+    seul?.pause();
     void leconsSource(id).then((s) => {
-      const a = (this.seul = new Audio(s.url));
-      a.playbackRate = this.vitesse;
+      const a = (seul = new Audio(s.url));
+      a.playbackRate = vitesse;
       a.preservesPitch = true;
       a.onended = () => s.liberer?.();
       void a.play().catch(() => {});
@@ -313,32 +320,32 @@ class Lecteur {
   }
 
   // ———————————————————————————————— départ, modes, scènes ————————————————————————————————
-  depart() {
-    this.debut = false;
-    this.pause = true;
-    this.jeton++;
-    this.majBoutons();
-    this.tete(t('vv.choisir'), '');
-    this.root.querySelector('.seg')!.innerHTML = '';
-    const L = this.o.unit.lesson as { titre_fr?: string };
-    const s = this.stage;
+  function depart() {
+    debut = false;
+    pause = true;
+    jeton++;
+    majBoutons();
+    tete(t('vv.choisir'), '');
+    root.querySelector('.seg')!.innerHTML = '';
+    const L = opt.unit.lesson as { titre_fr?: string };
+    const s = stage;
     s.innerHTML = '';
     const d = h('div', 'vv-dep');
     d.innerHTML = `${L.titre_fr ? frH(L.titre_fr, 'h') : ''}<div class="filet"><i></i></div>`;
     let rep: { m?: VideoMode; l?: number; i?: number; s?: string } = {};
     try {
-      rep = JSON.parse(localStorage.getItem(this.cle) ?? '{}') ?? {};
+      rep = JSON.parse(localStorage.getItem(cle) ?? '{}') ?? {};
     } catch {
       /* navigation privée */
     }
-    if (rep.s === this.v.source.slice(0, 12) && rep.m && this.v.modes.includes(rep.m) && rep.i) {
+    if (rep.s === vid.source.slice(0, 12) && rep.m && vid.modes.includes(rep.m) && rep.i) {
       const b = h('button', 'bouton or', esc(t('vv.reprendre', { n: rep.i + 1 })));
       b.dataset.testid = 'vv-reprendre';
-      b.onclick = () => this.lancer(rep.m!, rep.l ?? 0, rep.i);
+      b.onclick = () => lancer(rep.m!, rep.l ?? 0, rep.i);
       d.append(b);
     }
-    for (const m of this.v.modes) {
-      const ms = m === 'lettre' ? dureeMode(this.v, m, 0) : dureeMode(this.v, m);
+    for (const m of vid.modes) {
+      const ms = m === 'lettre' ? dureeMode(vid, m, 0) : dureeMode(vid, m);
       const dur =
         m === 'quiz'
           ? ''
@@ -351,115 +358,123 @@ class Lecteur {
         `<b>${esc(t(`vv.mode_${m}`))}</b><span>${esc(t(`vv.mode_${m}_d`))}${dur ? ` · ${esc(dur)}` : ''}</span>`,
       );
       b.dataset.mode = m;
-      b.onclick = () =>
-        m === 'lettre' && this.v.lettres.length > 1 ? this.choixLettre() : this.lancer(m, 0);
+      b.onclick = () => (m === 'lettre' && vid.lettres.length > 1 ? choixLettre() : lancer(m, 0));
       d.append(b);
     }
     s.append(d);
   }
-  choixLettre() {
+  function choixLettre() {
     const d = h('div', 'vv-dep', `<p class="consigne">${esc(t('vv.quelle_lettre'))}</p>`);
     const r = h('div', 'rangee');
-    this.v.lettres.forEach((x, k) => {
+    vid.lettres.forEach((x, k) => {
       const b = h('button', 'tuile', arH(x.l, 'g'));
-      b.onclick = () => this.lancer('lettre', k);
+      b.onclick = () => lancer('lettre', k);
       r.append(b);
     });
     d.append(r);
-    this.stage.replaceChildren(d);
+    stage.replaceChildren(d);
   }
-  lancer(m: VideoMode, lettre: number, i = 0) {
-    this.mode = m;
-    this.lettre = lettre;
-    this.scenes = scenesDuMode(this.v, m, lettre);
-    this.score = { ok: 0, n: 0 };
-    this.debut = true;
-    this.pause = false;
-    this.majBoutons();
-    void this.jouer(i);
+  function lancer(m: VideoMode, lettre: number, i = 0) {
+    modeChoisi = m;
+    lettreChoisie = lettre;
+    scenes = scenesDuMode(vid, m, lettre);
+    score = { ok: 0, n: 0 };
+    debut = true;
+    pause = false;
+    majBoutons();
+    void jouer(i);
   }
-  tete(s: string, k: string) {
-    this.root.querySelector('.vv-t .s')!.innerHTML = frH(s, 'x');
-    this.root.querySelector('.vv-t .k')!.textContent = k;
+  function tete(s: string, k: string) {
+    root.querySelector('.vv-t .s')!.innerHTML = frH(s, 'x');
+    root.querySelector('.vv-t .k')!.textContent = k;
   }
-  titre(sc: Scene): string {
+  function titreDe(sc: Scene): string {
     const x = sc.titre;
     return 'fr' in x ? x.fr : t(x.cle, { n: x.n, total: x.total });
   }
-  async jouer(i: number): Promise<void> {
+  async function jouer(i: number): Promise<void> {
     if (i < 0) i = 0;
-    if (i >= this.scenes.length) return this.fin();
-    this.i = i;
-    const j = ++this.jeton;
-    this.audio?.pause();
-    const sc = this.scenes[i]!;
-    this.tete(this.titre(sc), t(`vv.mode_${this.mode}`));
-    this.root.querySelector('.seg')!.innerHTML = this.scenes
+    if (i >= scenes.length) return fin();
+    idx = i;
+    const j = ++jeton;
+    audio?.pause();
+    const sc = scenes[i]!;
+    // titre du livre avec un mot arabe : l'en-tête garde un libellé court, le titre entier va dans la carte
+    const titre = titreDe(sc);
+    const long = frH(titre).includes('ar l');
+    const court: Record<string, string> = {
+      notion: 'vv.notion',
+      quiz: 'vv.quiz',
+      dialogue: 'vv.dialogue',
+    };
+    titreCarte = long ? titre : '';
+    tete(long ? t(court[sc.part] ?? 'vv.titre') : titre, t(`vv.mode_${modeChoisi}`));
+    root.querySelector('.seg')!.innerHTML = scenes
       .map((_, k) => `<i class="${k < i ? 'fait' : k === i ? 'ici' : ''}"></i>`)
       .join('');
-    this.root.querySelector('.temps')!.textContent = t('vv.scene', {
+    root.querySelector('.temps')!.textContent = t('vv.scene', {
       n: i + 1,
-      total: this.scenes.length,
+      total: scenes.length,
     });
     try {
       localStorage.setItem(
-        this.cle,
-        JSON.stringify({ m: this.mode, l: this.lettre, i, s: this.v.source.slice(0, 12) }),
+        cle,
+        JSON.stringify({ m: modeChoisi, l: lettreChoisie, i, s: vid.source.slice(0, 12) }),
       );
     } catch {
       /* navigation privée */
     }
-    this.stage.innerHTML = '';
-    this.stage.dataset.scene = sc.id;
+    stage.innerHTML = '';
+    stage.dataset.scene = sc.id;
     const tr = sc.temps.find((x) => x.k === 'trace');
     const fam = tr?.k === 'trace' ? famille(tr.l) : undefined;
-    if (fam) this.stage.style.setProperty('--fam', fam);
-    else this.stage.style.removeProperty('--fam');
-    this.zone = h('div', sc.part === 'lettres' ? 'vv-c lt' : 'vv-c');
+    if (fam) stage.style.setProperty('--fam', fam);
+    else stage.style.removeProperty('--fam');
+    zone = h('div', sc.part === 'lettres' ? 'vv-c lt' : 'vv-c');
     // bandeau vert de consigne, en bas de la carte (comme les vidéos du livre)
-    this.band = h('p', 'bandeau');
-    this.band.dataset.testid = 'vv-bandeau';
-    this.stage.append(this.zone, this.band);
+    band = h('p', 'bandeau');
+    band.dataset.testid = 'vv-bandeau';
+    stage.append(zone, band);
     try {
       for (const x of sc.temps) {
-        await this.temps(x, sc);
-        this.vivant(j);
+        await temps(x, sc);
+        vivant(j);
       }
-      await this.att(600);
-      if (j === this.jeton) void this.jouer(i + 1);
+      await att(600);
+      if (j === jeton) void jouer(i + 1);
     } catch (e) {
       if (!(e instanceof Coupe)) throw e;
     }
   }
-  fin() {
-    this.jeton++;
-    this.pause = true;
-    this.debut = false;
-    this.majBoutons();
+  function fin() {
+    jeton++;
+    pause = true;
+    debut = false;
+    majBoutons();
     const d = h('div', 'vv-dep', `<p class="h">${esc(t('vv.fin'))}</p>`);
     d.dataset.testid = 'vv-fin';
-    if (this.score.n) d.append(h('p', 'score', esc(t('vv.score', this.score))));
+    if (score.n) d.append(h('p', 'score', esc(t('vv.score', score))));
     const b1 = h('button', 'bouton', esc(t('vv.revoir')));
-    b1.onclick = () => this.lancer(this.mode, this.lettre);
+    b1.onclick = () => lancer(modeChoisi, lettreChoisie);
     const b2 = h('button', 'bouton clair', esc(t('vv.autre')));
-    b2.onclick = () => this.depart();
+    b2.onclick = () => depart();
     d.append(b1, b2);
-    this.stage.replaceChildren(d);
+    stage.replaceChildren(d);
   }
 
   /** ajoute un élément à la scène ; si elle déborde, les éléments précédents laissent la place */
-  ajoute(html: string | HTMLElement, neuf = false): HTMLElement {
-    const z = this.zone;
+  function ajoute(html: string | HTMLElement, neuf = false): HTMLElement {
+    const z = zone;
     if (neuf) z.replaceChildren();
     const e = typeof html === 'string' ? h('div', 'bloc', html) : html;
-    e.classList.add('apparait', `b-${this.kind}`);
+    e.classList.add('apparait', `b-${kind}`);
     z.append(e);
-    this.tasse(e);
+    tasse(e);
     return e;
   }
   /** la scène déborde : les éléments placés avant `e` laissent la place (jamais de texte coupé) */
-  tasse(e: Element) {
-    const z = this.zone;
+  function tasse(e: Element) {
+    const z = zone;
     const deborde = () => z.scrollHeight > z.clientHeight + 2;
     // d'abord les éléments secondaires (la grande lettre et son nom restent le plus longtemps)
     for (let c = z.firstElementChild; c && c !== e && deborde();) {
@@ -470,39 +485,39 @@ class Lecteur {
     while (deborde() && z.firstElementChild && z.firstElementChild !== e)
       z.firstElementChild.remove();
   }
-  tuile(x: T, cls = ''): string {
+  function tuile(x: T, cls = ''): string {
     return x.son
       ? `<button class="tuile ${cls}" data-dire="${esc(x.ar)}">${arH(x.ar)}</button>`
       : `<span class="tuile ${cls}">${arH(x.ar)}</span>`;
   }
-  img(k?: string, cls = 'illu'): string {
-    const d = k ? this.o.illus[k] : undefined;
+  function img(k?: string, cls = 'illu'): string {
+    const d = k ? opt.illus[k] : undefined;
     return d
       ? `<svg class="${cls}" viewBox="${esc(d.viewBox)}" aria-hidden="true"><use href="#i-${esc(k!)}"/></svg>`
       : '';
   }
-  fr(s?: string, toujours = false): string {
+  function fr(s?: string, toujours = false): string {
     return s ? frH(s, toujours ? 'fr toujours' : 'fr') : '';
   }
   /** consigne de l'interface : écrite dans le bandeau vert (rien d'essentiel seulement à l'oral) */
-  consigne(cle: string) {
-    if (this.band) this.band.textContent = t(cle);
+  function consigne(cle: string) {
+    if (band) band.textContent = t(cle);
     return '';
   }
 
   /** « À toi ! » : anneau doré qui se vide pendant que l'élève parle, puis la correction (audio du livre) */
-  async aToi(cle: string, ms: number, puis: T[] = []) {
-    this.consigne(cle);
-    const d = this.ajoute(anneau('', `<b>${esc(t('vv.a_toi'))}</b>`));
+  async function aToi(cle: string, ms: number, puis: T[] = []) {
+    consigne(cle);
+    const d = ajoute(anneau('', `<b>${esc(t('vv.a_toi'))}</b>`));
     const o = d.querySelector<SVGElement>('.or')!;
-    await this.prog(ms, (p) => (o.style.strokeDashoffset = String(264 * p)));
+    await prog(ms, (p) => (o.style.strokeDashoffset = String(264 * p)));
     d.remove();
-    for (const x of puis) await this.dire(x);
+    for (const x of puis) await dire(x);
   }
   /** attend une réponse (ou le délai : la réponse est alors montrée) */
-  reponse<R>(ms = 12_000): { p: Promise<R | null>; dire: (r: R) => void } {
+  function reponse<R>(ms = 12_000): { p: Promise<R | null>; dire: (r: R) => void } {
     let dire: (r: R) => void = () => {};
-    const d = this.ajoute(anneau('petit', ''));
+    const d = ajoute(anneau('petit', ''));
     const o = d.querySelector<SVGElement>('.or')!;
     const p = new Promise<R | null>((ok, ko) => {
       let fini = false;
@@ -513,69 +528,69 @@ class Lecteur {
         ok(r);
       };
       dire = fin;
-      this.prog(ms, (x) => {
+      prog(ms, (x) => {
         if (!fini) o.style.strokeDashoffset = String(264 * x);
       }).then(() => fin(null), ko);
     });
     return { p, dire };
   }
-  noter(ok: boolean) {
-    this.score.n++;
-    if (ok) this.score.ok++;
+  function noter(ok: boolean) {
+    score.n++;
+    if (ok) score.ok++;
   }
-  retourTexte(r: unknown, ok: boolean) {
-    this.ajoute(
+  function retourTexte(r: unknown, ok: boolean) {
+    ajoute(
       `<p class="retour ${ok ? 'ok' : 'ko'}">${esc(t(r === null ? 'vv.reponse' : ok ? 'vv.bravo' : 'vv.presque'))}</p>`,
     );
   }
 
   // ———————————————————————————————— les temps ————————————————————————————————
-  async temps(x: Temps, sc: Scene): Promise<void> {
+  async function temps(x: Temps, sc: Scene): Promise<void> {
     const lettres = sc.part === 'lettres';
-    this.kind = x.k;
+    kind = x.k;
     switch (x.k) {
       case 'titre': {
-        const e = this.ajoute(
+        const e = ajoute(
           `${x.fr ? frH(x.fr, 'h') : ''}${x.ar ? arH(x.ar, 'titre') : ''}<div class="filet"><i></i></div><div class="rangee"></div>`,
           true,
         );
         const r = e.querySelector('.rangee')!;
         for (const l of x.tableau ?? []) {
           r.append(h('span', 'apparait', arH(l.ar, 'g')));
-          await this.att(450);
+          await att(450);
         }
-        return this.att(x.ms - 450 * (x.tableau?.length ?? 0));
+        return att(x.ms - 450 * (x.tableau?.length ?? 0));
       }
       case 'bulle': {
         const cote = x.cote === undefined ? '' : x.cote ? 'g' : 'd';
-        const e = this.ajoute(
-          `<div class="bulle ${cote}">${x.qui ? arH(x.qui, 'qui') : ''}${x.lignes.map((l) => arH(l.ar)).join('')}${this.fr(x.fr)}</div>`,
+        const e = ajoute(
+          `<div class="bulle ${cote}">${x.qui ? arH(x.qui, 'qui') : ''}${x.lignes.map((l) => arH(l.ar)).join('')}${fr(x.fr)}</div>`,
         );
-        for (const l of x.lignes) await this.dire(l, e.firstElementChild);
-        return this.att(x.ms * 0.5);
+        for (const l of x.lignes) await dire(l, e.firstElementChild);
+        return att(x.ms * 0.5);
       }
       case 'objectif':
-        this.ajoute(`<div class="carte">${x.ar ? arH(x.ar.ar) : ''}${this.fr(x.fr, true)}</div>`);
-        return this.att(x.ms);
+        ajoute(`<div class="carte">${x.ar ? arH(x.ar.ar) : ''}${fr(x.fr, true)}</div>`);
+        return att(x.ms);
       case 'trace': {
-        const e = this.ajoute('<div class="trace-h"></div>', true);
-        const trace = await this.tracer(e.firstElementChild as HTMLElement, x.l, x.l, 0, 6.5);
+        const e = ajoute('<div class="trace-h"></div>', true);
+        const trace = await tracer(e.firstElementChild as HTMLElement, x.l, x.l, 0, 6.5);
         // source des tracés, en petit au bas de la scène (seulement si la forme a été tracée)
-        if (trace) this.zone.append(h('p', 'src b-src', esc(t('vv.traits_source'))));
-        return this.att(600);
+        if (trace) zone.append(h('p', 'src b-src', esc(t('vv.traits_source'))));
+        return att(600);
       }
       case 'nom': {
-        const e = this.ajoute(`${this.consigne(x.consigne.cle)}${this.tuile(x.nom, 'nom')}`);
-        await this.dire(x.nom, e.querySelector('.tuile'));
-        return this.att(x.ms * 0.4);
+        const e = ajoute(`${consigne(x.consigne.cle)}${tuile(x.nom, 'nom')}`);
+        await dire(x.nom, e.querySelector('.tuile'));
+        return att(x.ms * 0.4);
       }
       case 'points':
-        this.ajoute(`${x.ar ? arH(x.ar, 'points') : ''}${this.fr(x.fr, true)}`);
-        return this.att(x.ms);
+        ajoute(`${x.ar ? arH(x.ar, 'points') : ''}${fr(x.fr, true)}`);
+        return att(x.ms);
       case 'formes': {
         const lab = ['vv.isolee', 'vv.debut', 'vv.milieu', 'vv.fin_mot'];
         const l = sc.temps.find((y) => y.k === 'trace');
-        const e = this.ajoute('<div class="formes"></div>');
+        const e = ajoute('<div class="formes"></div>');
         const r = e.firstElementChild!;
         for (let k = 0; k < x.formes.length; k++) {
           const f = h(
@@ -585,109 +600,102 @@ class Lecteur {
           );
           r.append(f);
           if (l?.k === 'trace')
-            await this.tracer(f.firstElementChild as HTMLElement, x.formes[k]!, l.l, k, 2.6);
+            await tracer(f.firstElementChild as HTMLElement, x.formes[k]!, l.l, k, 2.2);
           else f.firstElementChild!.innerHTML = arH(x.formes[k]!);
-          await this.att(400);
+          await att(400);
         }
-        return this.att(1200);
+        return att(1200);
       }
       case 'rangee': {
-        const e = this.ajoute(
-          `${x.consigne ? this.consigne(x.consigne.cle) : ''}<div class="rangee">${x.items.map((y) => this.tuile(y)).join('')}</div>`,
+        const e = ajoute(
+          `${x.consigne ? consigne(x.consigne.cle) : ''}<div class="rangee">${x.items.map((y) => tuile(y)).join('')}</div>`,
           !lettres,
         );
         const tu = [...e.querySelectorAll('.tuile')];
-        if (x.aToi) await this.aToi('vv.a_toi', x.aToi);
-        for (let k = 0; k < x.items.length; k++) await this.dire(x.items[k], tu[k]);
-        return this.att(400);
+        if (x.aToi) await aToi('vv.a_toi', x.aToi);
+        for (let k = 0; k < x.items.length; k++) await dire(x.items[k], tu[k]);
+        return att(400);
       }
       case 'joindre': {
-        const e = this.ajoute(
+        const e = ajoute(
           `<div class="joindre">${x.morceaux.map((m) => `<span>${arH(m.ar)}</span>`).join('')}</div>`,
         );
         const j = e.firstElementChild!;
-        for (let k = 0; k < x.morceaux.length; k++) await this.dire(x.morceaux[k], j.children[k]);
-        await this.att(400);
+        for (let k = 0; k < x.morceaux.length; k++) await dire(x.morceaux[k], j.children[k]);
+        await att(400);
         j.classList.add('serre');
-        await this.att(1000);
-        e.innerHTML = `${this.tuile(x.mot, 'mot')}${this.fr(x.fr)}`;
-        await this.dire(x.mot, e.firstElementChild);
-        return this.att(1200);
+        await att(1000);
+        e.innerHTML = `${tuile(x.mot, 'mot')}${fr(x.fr)}`;
+        await dire(x.mot, e.firstElementChild);
+        return att(1200);
       }
       case 'texte': {
-        const e = this.ajoute(`${this.tuile(x.ar, `t${x.taille}`)}${this.fr(x.fr)}`);
-        await this.dire(x.ar, e.firstElementChild);
-        return this.att(x.ms * 0.35);
+        const e = ajoute(`${tuile(x.ar, `t${x.taille}`)}${fr(x.fr)}`);
+        await dire(x.ar, e.firstElementChild);
+        return att(x.ms * 0.35);
       }
       case 'inter': {
-        const e = this.ajoute(
+        const e = ajoute(
           `<div class="inter" dir="rtl">${x.ar.map((a, k) => `<span>${arH(a.ar)}<span class="fr">${esc(x.fr[k] ?? '')}</span></span>`).join('')}</div>`,
         );
         const sp = e.firstElementChild!.children;
-        for (let k = 0; k < x.ar.length; k++) await this.dire(x.ar[k], sp[k]);
-        return this.att(x.ms * 0.4);
+        for (let k = 0; k < x.ar.length; k++) await dire(x.ar[k], sp[k]);
+        return att(x.ms * 0.4);
       }
       case 'mot': {
-        const e = this.ajoute(
-          `${this.img(x.img)}${this.tuile(x.ar, 'mot')}${this.fr(x.fr)}`,
-          !lettres,
-        );
-        await this.att(300);
-        await this.dire(x.ar, e.querySelector('.tuile'));
-        return this.att(x.ms * 0.4);
+        const e = ajoute(`${img(x.img)}${tuile(x.ar, 'mot')}${fr(x.fr)}`, !lettres);
+        await att(300);
+        await dire(x.ar, e.querySelector('.tuile'));
+        return att(x.ms * 0.4);
       }
       case 'grille':
-        this.ajoute(
-          `${this.consigne('vv.touche')}<div class="grille">${x.items.map((y) => (y.ar.son ? `<button class="tuile" data-dire="${esc(y.ar.ar)}">` : '<span class="tuile">') + this.img(y.img, '') + arH(y.ar.ar) + (y.ar.son ? '</button>' : '</span>')).join('')}</div>`,
+        ajoute(
+          `${consigne('vv.touche')}<div class="grille">${x.items.map((y) => (y.ar.son ? `<button class="tuile" data-dire="${esc(y.ar.ar)}">` : '<span class="tuile">') + img(y.img, '') + arH(y.ar.ar) + (y.ar.son ? '</button>' : '</span>')).join('')}</div>`,
           true,
         );
-        return this.att(x.ms);
+        return att(x.ms);
       case 'regle': {
-        const e = this.ajoute(
+        const e = ajoute(
           `<div class="carte">${x.titre_ar ? arH(x.titre_ar, 'titre') : ''}${x.titre_fr ? frH(x.titre_fr, 'h') : ''}${x.signe ? arH(x.signe, 'g') : ''}</div>`,
         );
         const cte = e.firstElementChild!;
         for (const a of x.ar ?? []) {
           cte.append(h('div', 'apparait', arH(a.ar, 'l')));
-          this.tasse(e);
-          await this.att(1400);
+          tasse(e);
+          await att(1400);
         }
         for (const f of x.fr ?? []) {
           cte.append(h('div', 'apparait', frH(f, 'fr toujours')));
-          this.tasse(e);
-          await this.att(1200 + 40 * f.length);
+          tasse(e);
+          await att(1200 + 40 * f.length);
         }
-        return this.att(800);
+        return att(800);
       }
       case 'fr':
-        this.ajoute(`<div class="carte">${frH(x.fr, 'fr toujours')}</div>`);
-        return this.att(x.ms);
+        ajoute(`<div class="carte">${frH(x.fr, 'fr toujours')}</div>`);
+        return att(x.ms);
       case 'lettres': {
-        const e = this.ajoute('<div class="grille lettres"></div>', true);
+        const e = ajoute('<div class="grille lettres"></div>', true);
         for (const y of x.items) {
-          const d = h(
-            'div',
-            'apparait',
-            `${arH(y.l, 'g')}${y.nom ? this.tuile(y.nom, 'nom') : ''}`,
-          );
+          const d = h('div', 'apparait', `${arH(y.l, 'g')}${y.nom ? tuile(y.nom, 'nom') : ''}`);
           e.firstElementChild!.append(d);
-          if (y.nom) await this.dire(y.nom, d.querySelector('.tuile'));
-          await this.att(y.nom ? 500 : 600);
+          if (y.nom) await dire(y.nom, d.querySelector('.tuile'));
+          await att(y.nom ? 500 : 600);
         }
-        return this.att(800);
+        return att(800);
       }
       case 'aToi':
-        return this.aToi(x.consigne.cle, x.ms - 1300 * (x.puis?.length ?? 0), x.puis);
+        return aToi(x.consigne.cle, x.ms - 1300 * (x.puis?.length ?? 0), x.puis);
       case 'q':
-        return this.question(x.q, sc.jouable === true, `${x.i + 1} / ${x.n}`);
+        return question(x.q, sc.jouable === true, `${x.i + 1} / ${x.n}`);
       case 'jouer':
-        return this.jouerScene(x.repliques);
+        return jouerScene(x.repliques);
     }
   }
 
   // ———————————————————————————————— exercices du livre ————————————————————————————————
-  async question(q: Question, jouable: boolean, rang: string): Promise<void> {
-    this.ajoute(`<p class="k">${esc(rang)}</p>`, true);
+  async function question(q: Question, jouable: boolean, rang: string): Promise<void> {
+    ajoute(`${titreCarte ? frH(titreCarte, 'h') : ''}<p class="k">${esc(rang)}</p>`, true);
     const opts = (xs: string[], cls = '') =>
       `<div class="options ${cls}">${xs.map((o, k) => `<button class="opt" data-o="${k}">${RUN.test(o) ? arH(o) : `<span class="fr toujours">${esc(o)}</span>`}</button>`).join('')}</div>`;
     const choix = async (
@@ -699,15 +707,15 @@ class Lecteur {
       const bs = [...e.querySelectorAll<HTMLButtonElement>('.opt')];
       if (!jouable || bon === undefined) {
         bs.forEach((b) => (b.disabled = true));
-        await this.aToi(bon === undefined ? 'vv.epreuve' : 'vv.a_toi', 5000);
+        await aToi(bon === undefined ? 'vv.epreuve' : 'vv.a_toi', 5000);
         if (bon !== undefined) {
           bs[xs.indexOf(bon)]?.classList.add('bon');
-          this.ajoute(`<p class="retour">${esc(t('vv.sans_son'))}</p>`);
+          ajoute(`<p class="retour">${esc(t('vv.sans_son'))}</p>`);
           await apres?.();
         }
-        return this.att(1500);
+        return att(1500);
       }
-      const r = this.reponse<string>();
+      const r = reponse<string>();
       bs.forEach((b) => (b.onclick = () => r.dire(xs[+b.dataset.o!]!)));
       const v = await r.p;
       bs.forEach((b, k) => {
@@ -715,34 +723,34 @@ class Lecteur {
         if (xs[k] === bon) b.classList.add('bon');
         else if (xs[k] === v) b.classList.add('faux');
       });
-      this.noter(v === bon);
-      this.retourTexte(v, v === bon);
+      noter(v === bon);
+      retourTexte(v, v === bon);
       await apres?.();
-      return this.att(900);
+      return att(900);
     };
     switch (q.k) {
       case 'ecoute': {
-        const e = this.ajoute(
+        const e = ajoute(
           `${q.dit?.son ? `<button class="ecoute" data-dire="${esc(q.dit.ar)}">▶ ${esc(t('vv.reecouter'))}</button>` : ''}${opts(q.options)}`,
         );
-        if (q.dit?.son && jouable) await this.dire(q.dit);
-        return choix(e, q.options, q.dit?.ar, () => this.dire(q.dit));
+        if (q.dit?.son && jouable) await dire(q.dit);
+        return choix(e, q.options, q.dit?.ar, () => dire(q.dit));
       }
       case 'premiere': {
-        const e = this.ajoute(
-          `${this.img(q.img)}<div class="trou" dir="rtl"><span class="case"></span>${arH(q.suite, 'suite')}</div>${this.fr(q.fr, true)}${opts(q.options)}`,
+        const e = ajoute(
+          `${img(q.img)}<div class="trou" dir="rtl"><span class="case"></span>${arH(q.suite, 'suite')}</div>${fr(q.fr, true)}${opts(q.options)}`,
         );
         return choix(e, q.options, q.reponse, async () => {
           if (q.reponse) e.querySelector('.case')!.innerHTML = arH(q.reponse);
           if (q.mot) {
-            const m = this.ajoute(this.tuile(q.mot, 'mot'));
-            await this.dire(q.mot, m.firstElementChild);
+            const m = ajoute(tuile(q.mot, 'mot'));
+            await dire(q.mot, m.firstElementChild);
           }
         });
       }
       case 'complete': {
-        const e = this.ajoute(
-          `<div class="trou" dir="rtl">${q.avant ? (RUN.test(q.avant) ? arH(q.avant, 'suite') : esc(q.avant)) : ''}<span class="case"></span>${q.apres ? arH(q.apres, 'suite') : ''}</div>${this.fr(q.fr, true)}${opts(q.options)}`,
+        const e = ajoute(
+          `<div class="trou" dir="rtl">${q.avant ? (RUN.test(q.avant) ? arH(q.avant, 'suite') : esc(q.avant)) : ''}<span class="case"></span>${q.apres ? arH(q.apres, 'suite') : ''}</div>${fr(q.fr, true)}${opts(q.options)}`,
         );
         return choix(e, q.options, q.reponse, async () => {
           if (q.reponse)
@@ -750,33 +758,33 @@ class Lecteur {
               ? arH(q.reponse)
               : esc(q.reponse);
           if (q.mot) {
-            const m = this.ajoute(this.tuile(q.mot, 'mot'));
-            await this.dire(q.mot, m.firstElementChild);
+            const m = ajoute(tuile(q.mot, 'mot'));
+            await dire(q.mot, m.firstElementChild);
           }
         });
       }
       case 'vf': {
-        const e = this.ajoute(
-          `${this.img(q.img)}${this.tuile(q.ar, 'tm')}${this.fr(q.fr, true)}<div class="options"><button class="opt" data-o="0">${esc(t('vv.vrai'))}</button><button class="opt" data-o="1">${esc(t('vv.faux'))}</button></div>`,
+        const e = ajoute(
+          `${img(q.img)}${tuile(q.ar, 'tm')}${fr(q.fr, true)}<div class="options"><button class="opt" data-o="0">${esc(t('vv.vrai'))}</button><button class="opt" data-o="1">${esc(t('vv.faux'))}</button></div>`,
         );
-        await this.dire(q.ar, e.querySelector('.tuile'));
+        await dire(q.ar, e.querySelector('.tuile'));
         const xs = [t('vv.vrai'), t('vv.faux')];
         return choix(e, xs, q.vrai === undefined ? undefined : xs[q.vrai ? 0 : 1], async () => {
           if (q.correction) {
-            const m = this.ajoute(this.tuile(q.correction, 'tm'));
-            await this.dire(q.correction, m.firstElementChild);
+            const m = ajoute(tuile(q.correction, 'tm'));
+            await dire(q.correction, m.firstElementChild);
           }
         });
       }
       case 'chasse': {
-        const e = this.ajoute(
+        const e = ajoute(
           `<p class="score">0 / ${q.grille.filter((l) => l === q.cible).length}</p><div class="grille g6">${q.grille.map((l, k) => `<button class="opt" data-o="${k}">${arH(l)}</button>`).join('')}</div>`,
         );
         const total = q.grille.filter((l) => l === q.cible).length;
         const bs = [...e.querySelectorAll<HTMLButtonElement>('.opt')];
         let trouve = 0;
         let erreurs = 0;
-        const r = this.reponse<boolean>(20_000);
+        const r = reponse<boolean>(20_000);
         bs.forEach((b, k) => {
           b.onclick = () => {
             if (q.grille[k] !== q.cible) return (erreurs++, b.classList.add('faux'));
@@ -790,27 +798,25 @@ class Lecteur {
         bs.forEach(
           (b, k) => ((b.disabled = true), q.grille[k] === q.cible && b.classList.add('bon')),
         );
-        this.noter(v === true && !erreurs);
-        this.ajoute(
-          `<p class="retour ${v ? 'ok' : 'ko'}">${esc(t('vv.il_y_en_a', { n: total }))}</p>`,
-        );
-        return this.att(2000);
+        noter(v === true && !erreurs);
+        ajoute(`<p class="retour ${v ? 'ok' : 'ko'}">${esc(t('vv.il_y_en_a', { n: total }))}</p>`);
+        return att(2000);
       }
       case 'contient': {
-        const e = this.ajoute(
+        const e = ajoute(
           `${arH(q.cible, 'g')}<div class="grille g4">${q.mots.map((m, k) => `<button class="opt" data-o="${k}" aria-pressed="false">${arH(m.ar.ar)}</button>`).join('')}</div>${jouable ? `<button class="bouton" data-v>${esc(t('vv.verifier'))}</button>` : ''}`,
         );
         const bs = [...e.querySelectorAll<HTMLButtonElement>('.opt')];
         if (!jouable) {
           bs.forEach((b) => (b.disabled = true));
-          return this.aToi('vv.epreuve', 6000);
+          return aToi('vv.epreuve', 6000);
         }
         bs.forEach(
           (b) =>
             (b.onclick = () =>
               b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'))),
         );
-        const r = this.reponse<boolean>(20_000);
+        const r = reponse<boolean>(20_000);
         e.querySelector<HTMLElement>('[data-v]')!.onclick = () => r.dire(true);
         await r.p;
         let ok = true;
@@ -822,37 +828,37 @@ class Lecteur {
           if (pris !== !!q.mots[k]!.oui) ok = false;
         });
         e.querySelector('[data-v]')?.remove();
-        this.noter(ok);
-        if (q.oui_fr) this.ajoute(this.fr(q.oui_fr, true));
-        this.retourTexte(true, ok);
-        for (const [k, m] of q.mots.entries()) if (m.oui) await this.dire(m.ar, bs[k]);
-        return this.att(900);
+        noter(ok);
+        if (q.oui_fr) ajoute(fr(q.oui_fr, true));
+        retourTexte(true, ok);
+        for (const [k, m] of q.mots.entries()) if (m.oui) await dire(m.ar, bs[k]);
+        return att(900);
       }
       case 'relier': {
         // colonne de droite décalée (comme l'épreuve du livre) : l'élève touche un mot puis son sens
         const n = q.items.length;
         const dec = Math.max(1, Math.floor(n / 2)) % Math.max(1, n);
         const droite = q.droite ?? q.items.map((_, k) => q.items[(k + dec) % n]!);
-        const e = this.ajoute(
-          `<div class="relier"><div>${q.items.map((x, k) => `<button class="opt" data-g="${k}">${arH(x.ar.ar)}</button>`).join('')}</div><div>${droite.map((x, k) => `<button class="opt" data-d="${k}">${this.img(x.img, 'mini')}${x.fr ? `<span class="fr toujours">${esc(x.fr)}</span>` : ''}</button>`).join('')}</div></div>`,
+        const e = ajoute(
+          `<div class="relier"><div>${q.items.map((x, k) => `<button class="opt" data-g="${k}">${arH(x.ar.ar)}</button>`).join('')}</div><div>${droite.map((x, k) => `<button class="opt" data-d="${k}">${img(x.img, 'mini')}${x.fr ? `<span class="fr toujours">${esc(x.fr)}</span>` : ''}</button>`).join('')}</div></div>`,
         );
         const G = [...e.querySelectorAll<HTMLButtonElement>('[data-g]')];
         const D = [...e.querySelectorAll<HTMLButtonElement>('[data-d]')];
         if (!jouable || q.droite) {
           [...G, ...D].forEach((b) => (b.disabled = true));
-          return this.aToi('vv.epreuve', 8000);
+          return aToi('vv.epreuve', 8000);
         }
         let sel = -1;
         let reste = n;
         let erreurs = 0;
-        const r = this.reponse<boolean>(10_000 + 4000 * n);
+        const r = reponse<boolean>(10_000 + 4000 * n);
         G.forEach(
           (b, k) =>
             (b.onclick = () => (
               G.forEach((x) => x.classList.remove('sel')),
               b.classList.add('sel'),
               (sel = k),
-              void this.dire(q.items[k]!.ar)
+              void dire(q.items[k]!.ar)
             )),
         );
         D.forEach((b, k) => {
@@ -881,12 +887,12 @@ class Lecteur {
           ),
         );
         G.forEach((b) => ((b.disabled = true), b.classList.add('bon')));
-        this.noter(v === true && !erreurs);
-        this.retourTexte(v, v === true && !erreurs);
-        return this.att(2500);
+        noter(v === true && !erreurs);
+        retourTexte(v, v === true && !erreurs);
+        return att(2500);
       }
       case 'ordre': {
-        const e = this.ajoute(
+        const e = ajoute(
           `<div class="ligne-rep" dir="rtl"></div><div class="options">${q.mots.map((m, k) => `<button class="opt" data-o="${k}">${RUN.test(m) ? arH(m) : esc(m)}</button>`).join('')}</div>`,
         );
         const rep = e.firstElementChild!;
@@ -894,20 +900,20 @@ class Lecteur {
         const fin = async (ok: boolean | null) => {
           bs.forEach((b) => (b.disabled = true));
           if (q.phrase) {
-            rep.innerHTML = this.tuile(q.phrase, 'tm');
-            await this.dire(q.phrase, rep.firstElementChild);
+            rep.innerHTML = tuile(q.phrase, 'tm');
+            await dire(q.phrase, rep.firstElementChild);
           }
-          if (q.fr) this.ajoute(this.fr(q.fr));
-          if (ok !== null) this.retourTexte(ok, ok);
+          if (q.fr) ajoute(fr(q.fr));
+          if (ok !== null) retourTexte(ok, ok);
         };
         if (!jouable || !q.ordre) {
           bs.forEach((b) => (b.disabled = true));
-          await this.aToi(q.ordre ? 'vv.a_toi' : 'vv.epreuve', 6000);
+          await aToi(q.ordre ? 'vv.a_toi' : 'vv.epreuve', 6000);
           if (q.phrase) await fin(null);
-          return this.att(1500);
+          return att(1500);
         }
         const pris: number[] = [];
-        const r = this.reponse<boolean>(8000 + 3000 * q.mots.length);
+        const r = reponse<boolean>(8000 + 3000 * q.mots.length);
         bs.forEach((b, k) => {
           b.onclick = () => {
             b.disabled = true;
@@ -920,18 +926,20 @@ class Lecteur {
           };
         });
         const v = await r.p;
-        this.noter(v === true);
+        noter(v === true);
         await fin(v);
-        return this.att(1200);
+        return att(1200);
       }
     }
   }
 
   /** « À toi de jouer la scène ! » : l'élève choisit un rôle, l'appli joue les autres (audio du livre) */
-  async jouerScene(rs: Array<{ qui: string; qui_ar: string; ar: T; fr?: string }>): Promise<void> {
+  async function jouerScene(
+    rs: Array<{ qui: string; qui_ar: string; ar: T; fr?: string }>,
+  ): Promise<void> {
     const roles = [...new Map(rs.map((r) => [r.qui, r.qui_ar])).entries()];
     for (;;) {
-      const e = this.ajoute(
+      const e = ajoute(
         `<p class="h">${esc(t('vv.jouer'))}</p><p class="fr toujours">${esc(t('vv.choisis_role'))}</p><div class="roles"></div>`,
         true,
       );
@@ -942,26 +950,26 @@ class Lecteur {
           b.onclick = () => ok(qui);
           box.append(b);
         }
-        if (this.o.tuteur) {
+        if (opt.tuteur) {
           const b = h('button', 'bouton', esc(t('vv.tuteur')));
-          b.onclick = () => this.o.tuteur!({ unitId: this.o.unit.id });
+          b.onclick = () => opt.tuteur!({ unitId: opt.unit.id });
           box.append(b);
         }
       });
-      const j = this.jeton;
-      const moi = await Promise.race([choix, this.prog(3_600_000).then(() => '')]);
-      if (j !== this.jeton || !moi) return;
-      this.zone.replaceChildren();
+      const j = jeton;
+      const moi = await Promise.race([choix, prog(3_600_000).then(() => '')]);
+      if (j !== jeton || !moi) return;
+      zone.replaceChildren();
       for (const r of rs) {
-        const b = this.ajoute(
-          `<div class="bulle ${r.qui === moi ? 'd' : 'g'}">${arH(r.qui_ar, 'qui')}${arH(r.ar.ar)}${this.fr(r.fr)}</div>`,
+        const b = ajoute(
+          `<div class="bulle ${r.qui === moi ? 'd' : 'g'}">${arH(r.qui_ar, 'qui')}${arH(r.ar.ar)}${fr(r.fr)}</div>`,
         );
-        if (r.qui === moi) await this.aToi('vv.dis_replique', 5000);
-        else await this.dire(r.ar, b.firstElementChild);
-        await this.att(400);
+        if (r.qui === moi) await aToi('vv.dis_replique', 5000);
+        else await dire(r.ar, b.firstElementChild);
+        await att(400);
       }
-      this.ajoute(`<p class="retour ok">${esc(t('vv.rejouer'))}</p>`);
-      await this.att(1800);
+      ajoute(`<p class="retour ok">${esc(t('vv.rejouer'))}</p>`);
+      await att(1800);
     }
   }
 
@@ -972,20 +980,26 @@ class Lecteur {
    * recalés sur le contour réel de la forme (boîte d'encre mesurée, liaisons retirées). Sinon : la lettre complète,
    * sans animation de traits. Renvoie vrai si la forme a été tracée.
    */
-  async tracer(host: HTMLElement, s: string, l: string, f: number, rem: number): Promise<boolean> {
-    const j = this.jeton;
+  async function tracer(
+    host: HTMLElement,
+    s: string,
+    l: string,
+    f: number,
+    rem: number,
+  ): Promise<boolean> {
+    const j = jeton;
     const traits = (await chargerTraits())[l]?.[f]?.t;
     const F = rem * (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16);
     const font = `700 ${F}px ${NASKH}`;
     await document.fonts.load(font, s).catch(() => undefined);
-    this.vivant(j);
+    vivant(j);
     const ctx = document.createElement('canvas').getContext('2d');
     if (!ctx) return false;
     ctx.font = font;
     ctx.direction = 'rtl';
     ctx.textAlign = 'center';
     const m = ctx.measureText(s);
-    const W = Math.max(F * 0.9, m.width + F * 0.5);
+    const W = Math.max(F * 0.8, m.width + F * 0.3);
     const H = F * 1.6;
     const B = F * 1.0;
     // police en attributs SVG (dans un attribut style, les guillemets du nom de police fermeraient l'attribut)
@@ -1033,7 +1047,7 @@ class Lecteur {
       num.textContent = String(n + 1);
       // numéros d'ordre sur la grande lettre seulement (illisibles dans les vignettes des formes)
       if (F >= 60) svg.append(num);
-      await this.prog(Math.max(900, L * 9), (q) => {
+      await prog(Math.max(900, L * 9), (q) => {
         path.style.strokeDashoffset = String(L * (1 - q));
         const o = path.getPointAtLength(L * q);
         plume.setAttribute('cx', String(o.x));
@@ -1044,7 +1058,9 @@ class Lecteur {
     plume.remove();
     plein.removeAttribute('mask');
     plein.classList.add('apparait');
-    await this.att(500);
+    await att(500);
     return true;
   }
+  init();
+  return fermer;
 }

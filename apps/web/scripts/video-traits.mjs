@@ -1,9 +1,10 @@
 // Vidéos vivantes — tracé des lettres : écrit `static/video/traits.json` depuis `docs/ecriture/traits_lettres.json`
 // (recherche sourcée, 2ᵉ passe : Alif Baa, Georgetown University Press ; tableau naskh de M. Sakkal ; voir
-// docs/ecriture/SENS_DES_TRAITS.md, § 2P qui fait foi) et la DÉCISION du référent (19/10/2026, mise à jour) :
-//  - VALIDÉES : toutes les formes de statut « sur », « probable » et « divergent » ; pour « divergent », la
-//    variante `recommandee` (مـ au début : sens horaire ; كـ et ـكـ : le corps d'abord, la barre le mot fini) ;
-//  - NON VALIDÉE : la forme « insuffisant » (ـلا après liaison) : montrée complète, sans animation.
+// docs/ecriture/SENS_DES_TRAITS.md, § 3P qui fait foi) et la DÉCISION du référent (19/10/2026, données v3) :
+//  - VALIDÉES : toutes les formes de statut « sur », « sur (dérivé) », « probable » et « divergent » (119 formes) ;
+//    pour « divergent », la variante `recommandee` (مـ au début : sens horaire ; كـ et ـكـ : le corps d'abord, la
+//    barre le mot fini) ;
+//  - une forme d'un autre statut (« insuffisant ») serait montrée complète, sans animation.
 // Le statut reste écrit dans le fichier servi (`s`), pour pouvoir n'afficher plus tard que les formes « sur ».
 // Relancer `node scripts/video-traits.mjs` après toute nouvelle version des données, puis `pnpm test`.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -15,8 +16,11 @@ const src = join(root, '..', '..', 'docs', 'ecriture', 'traits_lettres.json');
 const out = join(root, 'static', 'video', 'traits.json');
 const FORMES = ['isolee', 'debut', 'milieu', 'fin'];
 
-/** Décision du référent : statuts dont le tracé est montré. */
-export const STATUTS_VALIDES = ['sur', 'probable', 'divergent'];
+/**
+ * Décision du référent (19/10/2026, v3 des données, § 3P de SENS_DES_TRAITS.md) : statuts dont le tracé est montré
+ * (les 119 formes de la v3) ; toute forme d'un autre statut (« insuffisant ») reste montrée complète, sans tracé.
+ */
+export const STATUTS_VALIDES = ['sur', 'sur (dérivé)', 'probable', 'divergent'];
 
 /**
  * Décision du référent : un aller-retour (dent au milieu, hampe atteinte par une liaison) se superpose EXACTEMENT.
