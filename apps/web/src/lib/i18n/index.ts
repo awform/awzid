@@ -179,6 +179,12 @@ export function setStrictKeys(on: boolean): void {
 }
 const manques = new Set<string>();
 export const clesManquantes = () => [...manques];
+/**
+ * Le texte existe-t-il (langue courante ou français) ? Sans effet de bord, contrairement à `t` qui, en production,
+ * note la clé manquante et recharge les catalogues : sert à vérifier qu'un espace de textes a bien été chargé.
+ */
+export const texteExiste = (key: string) =>
+  CATALOG[current]?.[key] !== undefined || CATALOG[FALLBACK]?.[key] !== undefined;
 let enCours: Promise<void> | null = null;
 let dernierEssai = 0;
 
