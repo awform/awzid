@@ -10,6 +10,8 @@
   import { demarrerSeance, type EtapeSeance } from '$lib/seance';
   import { devoirConvient, libelleDevoir } from '$lib/devoirs';
   import { call, type ProfileInfo } from '$lib/session';
+  import { chargerV4, type EcransV4 } from '$lib/design';
+  import { fn } from '$lib/fonctions.svelte';
   import EpreuvesCarte from '$lib/EpreuvesCarte.svelte';
   import EmptyState from '$lib/ui/EmptyState.svelte';
   import Icon from '$lib/ui/Icon.svelte';
@@ -75,6 +77,14 @@
 
   onMount(load);
 
+  // refonte 19/10 (interrupteur « design_v4 ») : écran v4 chargé à la demande ; impossible → ancien design
+  let V4 = $state<EcransV4['AujourdhuiV4'] | null>(null);
+  let v4Echec = $state(false);
+  const v4 = $derived(fn('design_v4') && !v4Echec);
+  $effect(() => {
+    if (v4 && !V4) void chargerV4().then((m) => (m ? (V4 = m.AujourdhuiV4) : (v4Echec = true)));
+  });
+
   async function load() {
     failed = null;
     loaded = false;
@@ -125,12 +135,12 @@
 
 <svelte:head><title>{t('app.nom')} — {t('auj.titre')}</title></svelte:head>
 
-<header class="hello">
-  <h1 class="titre-page">{t('auj.titre')}</h1>
-  {#if profile}<p class="muted" data-testid="bonjour">
-      <Bidi text={t('auj.bonjour', { nom: profile.pseudonym })} />
-    </p>{/if}
-</header>
+{#if !v4}<header class="hello">
+    <h1 class="titre-page">{t('auj.titre')}</h1>
+    {#if profile}<p class="muted" data-testid="bonjour">
+        <Bidi text={t('auj.bonjour', { nom: profile.pseudonym })} />
+      </p>{/if}
+  </header>{:else}<h1 class="sr">{t('auj.titre')}</h1>{/if}
 
 {#if !loaded}
   <Loading lines={3} />
@@ -141,134 +151,150 @@
     {t('auj.sans_profil')} <a href={resolve('/profils')}>{t('auj.choisir_profil')}</a>
   </p>
 {:else if data}
-  <section class="seance" data-testid="seance" aria-labelledby="seance-titre">
-    <!-- refonte 16/10 : bandeau vert profond au motif étoilé, liseré doré, titre et durée dedans -->
-    <div class="bandeau">
-      <h2 id="seance-titre">{t('auj.seance')}</h2>
-      {#if plan.length}
-        <p class="resume">
-          <span class="duree" data-testid="duree"
-            ><Bidi text={t('auj.duree', { n: minutes })} /></span
-          >
-          <span><Bidi text={plan.map((p) => t(NOM[p.k])).join(' · ')} /></span>
-        </p>
-      {/if}
-    </div>
-    <div class="seance-corps">
-      {#if plan.length}
-        <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu dans `plan` -->
-        <a
-          class="button primary go"
-          href={plan[0]!.href}
-          onclick={commencer}
-          data-testid="commencer-seance"
-          data-etape={plan[0]!.k}
-          data-cible={data.lecon && plan[0]!.k === 'lecon' ? data.lecon.id : ''}
-          ><Icon name="fleche" size={22} /><span>{t('auj.commencer_seance')}</span></a
-        >
-        <!-- eslint-enable svelte/no-navigation-without-resolve -->
-        <details class="detail">
-          <summary>{t('auj.voir_etapes')}</summary>
-          <ol class="steps">
-            {#each plan as p (p.k)}
-              <li data-step={p.k}>
-                <span class="step-ic"><Icon name={ICONE[p.k]} /></span>
-                <div class="step-body">
-                  <strong><Bidi text={t(NOM[p.k])} /></strong> ·
-                  <Bidi
-                    text={t('auj.minutes', {
-                      n:
-                        p.k === 'lecon'
-                          ? LESSON_MIN
-                          : p.k === 'mots'
-                            ? WORDS_MIN
-                            : (hifz?.minutes ?? 0),
-                    })}
-                  />
-                  <p class="muted small">
-                    {#if p.k === 'lecon'}<Bidi text={data.lecon?.titleFr ?? ''} />
-                    {:else if p.k === 'mots'}<Bidi text={t('auj.mots_dus', { n: due })} />
-                    {:else if hifz}{#if hifz.nouveau}<Bidi
-                          text={t('auj.hifz_nouveau', { portion: hifz.nouveau })}
-                        /> ·{/if}
-                      <Bidi
-                        text={t('auj.hifz_revisions', { recent: hifz.recent, ancien: hifz.ancien })}
-                      />{/if}
-                  </p>
-                </div>
-                <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu dans `plan` -->
-                <a
-                  class="button"
-                  href={p.href}
-                  data-testid={p.k === 'lecon' ? 'aller-lecon' : undefined}>{t('auj.commencer')}</a
-                >
-                <!-- eslint-enable svelte/no-navigation-without-resolve -->
-              </li>
-            {/each}
-          </ol>
-        </details>
-      {:else}
-        <EmptyState icon="coche" title={t('auj.vide_titre')} text={t('auj.vide_texte')}>
-          <a class="button" href={resolve('/lectures')}>{t('onglets.lectures')}</a>
-        </EmptyState>
-        <p class="sr">{t('auj.rien')}</p>
-      {/if}
-    </div>
-  </section>
-
-  {#if devoirs.length}
-    <section class="card" data-testid="devoirs">
-      <h2>{t('auj.devoirs')}</h2>
-      <ul class="devoirs">
-        {#each devoirs as d (d.id)}
-          <li data-devoir={d.target}>
-            {#if d.kind === 'lecon'}<a href={resolve('/lecons/[id]', { id: d.target })}
-                ><Bidi text={libelleDevoir(d)} /></a
-              >{:else if d.kind === 'lecture'}<a
-                href={resolve('/lectures/[code]', { code: d.target })}
-                ><Bidi text={libelleDevoir(d)} /></a
-              >{:else}<a href={resolve('/hifz')}><Bidi text={libelleDevoir(d)} /></a>{/if}
-            <span class="muted small"
-              >· <Bidi
-                text={t('auj.pour_le', { date: fmtDate(d.dueDay, { dateStyle: 'medium' }) })}
-              /> · <Bidi text={d.classe} /></span
+  {#if v4}
+    {#if V4}<V4
+        {profile}
+        {data}
+        {plan}
+        {minutes}
+        {hifz}
+        devoirs={devoirs.map((d) => ({ ...d, libelle: libelleDevoir(d) }))}
+        oncommencer={commencer}
+      />{:else}<Loading lines={3} />{/if}
+  {:else}
+    <section class="seance" data-testid="seance" aria-labelledby="seance-titre">
+      <!-- refonte 16/10 : bandeau vert profond au motif étoilé, liseré doré, titre et durée dedans -->
+      <div class="bandeau">
+        <h2 id="seance-titre">{t('auj.seance')}</h2>
+        {#if plan.length}
+          <p class="resume">
+            <span class="duree" data-testid="duree"
+              ><Bidi text={t('auj.duree', { n: minutes })} /></span
             >
-            {#if d.note}<p class="small"><Bidi text={d.note} /></p>{/if}
-          </li>
-        {/each}
-      </ul>
+            <span><Bidi text={plan.map((p) => t(NOM[p.k])).join(' · ')} /></span>
+          </p>
+        {/if}
+      </div>
+      <div class="seance-corps">
+        {#if plan.length}
+          <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu dans `plan` -->
+          <a
+            class="button primary go"
+            href={plan[0]!.href}
+            onclick={commencer}
+            data-testid="commencer-seance"
+            data-etape={plan[0]!.k}
+            data-cible={data.lecon && plan[0]!.k === 'lecon' ? data.lecon.id : ''}
+            ><Icon name="fleche" size={22} /><span>{t('auj.commencer_seance')}</span></a
+          >
+          <!-- eslint-enable svelte/no-navigation-without-resolve -->
+          <details class="detail">
+            <summary>{t('auj.voir_etapes')}</summary>
+            <ol class="steps">
+              {#each plan as p (p.k)}
+                <li data-step={p.k}>
+                  <span class="step-ic"><Icon name={ICONE[p.k]} /></span>
+                  <div class="step-body">
+                    <strong><Bidi text={t(NOM[p.k])} /></strong> ·
+                    <Bidi
+                      text={t('auj.minutes', {
+                        n:
+                          p.k === 'lecon'
+                            ? LESSON_MIN
+                            : p.k === 'mots'
+                              ? WORDS_MIN
+                              : (hifz?.minutes ?? 0),
+                      })}
+                    />
+                    <p class="muted small">
+                      {#if p.k === 'lecon'}<Bidi text={data.lecon?.titleFr ?? ''} />
+                      {:else if p.k === 'mots'}<Bidi text={t('auj.mots_dus', { n: due })} />
+                      {:else if hifz}{#if hifz.nouveau}<Bidi
+                            text={t('auj.hifz_nouveau', { portion: hifz.nouveau })}
+                          /> ·{/if}
+                        <Bidi
+                          text={t('auj.hifz_revisions', {
+                            recent: hifz.recent,
+                            ancien: hifz.ancien,
+                          })}
+                        />{/if}
+                    </p>
+                  </div>
+                  <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu dans `plan` -->
+                  <a
+                    class="button"
+                    href={p.href}
+                    data-testid={p.k === 'lecon' ? 'aller-lecon' : undefined}
+                    >{t('auj.commencer')}</a
+                  >
+                  <!-- eslint-enable svelte/no-navigation-without-resolve -->
+                </li>
+              {/each}
+            </ol>
+          </details>
+        {:else}
+          <EmptyState icon="coche" title={t('auj.vide_titre')} text={t('auj.vide_texte')}>
+            <a class="button" href={resolve('/lectures')}>{t('onglets.lectures')}</a>
+          </EmptyState>
+          <p class="sr">{t('auj.rien')}</p>
+        {/if}
+      </div>
     </section>
+
+    {#if devoirs.length}
+      <section class="card" data-testid="devoirs">
+        <h2>{t('auj.devoirs')}</h2>
+        <ul class="devoirs">
+          {#each devoirs as d (d.id)}
+            <li data-devoir={d.target}>
+              {#if d.kind === 'lecon'}<a href={resolve('/lecons/[id]', { id: d.target })}
+                  ><Bidi text={libelleDevoir(d)} /></a
+                >{:else if d.kind === 'lecture'}<a
+                  href={resolve('/lectures/[code]', { code: d.target })}
+                  ><Bidi text={libelleDevoir(d)} /></a
+                >{:else}<a href={resolve('/hifz')}><Bidi text={libelleDevoir(d)} /></a>{/if}
+              <span class="muted small"
+                >· <Bidi
+                  text={t('auj.pour_le', { date: fmtDate(d.dueDay, { dateStyle: 'medium' }) })}
+                /> · <Bidi text={d.classe} /></span
+              >
+              {#if d.note}<p class="small"><Bidi text={d.note} /></p>{/if}
+            </li>
+          {/each}
+        </ul>
+      </section>
+    {/if}
   {/if}
 
   <EpreuvesCarte profileId={profile.id} />
 
   <!-- « Ma semaine » en une ligne : un toucher ouvre « Mon suivi » (semaine, arbre, jalons, rapport) -->
-  <a class="semaine" href={resolve('/suivi')} data-testid="ma-semaine">
-    <span class="sem-ic"><Icon name="courbe" /></span>
-    <span class="sem-txt">
-      <strong>{t('auj.semaine')}</strong>
-      {#if data.regularite && !data.serein}
-        <small
-          ><Bidi
-            text={t('auj.semaine_ligne', {
-              n: data.regularite.joursActifs,
-              objectif: data.regularite.objectif,
-            })}
-          /></small
-        >
-      {:else if data.serein}
-        <small><Bidi text={t('ser.semaine', { n: data.leconsSemaine ?? 0 })} /></small>
-      {:else}
-        <small>{t('auj.vers_suivi')}</small>
-      {/if}
-    </span>
-    {#if data.regularite}
-      <span class="points" aria-hidden="true">
-        {#each data.regularite.semaine as d (d.day)}<span class:on={d.actif}></span>{/each}
+  {#if !v4}<a class="semaine" href={resolve('/suivi')} data-testid="ma-semaine">
+      <span class="sem-ic"><Icon name="courbe" /></span>
+      <span class="sem-txt">
+        <strong>{t('auj.semaine')}</strong>
+        {#if data.regularite && !data.serein}
+          <small
+            ><Bidi
+              text={t('auj.semaine_ligne', {
+                n: data.regularite.joursActifs,
+                objectif: data.regularite.objectif,
+              })}
+            /></small
+          >
+        {:else if data.serein}
+          <small><Bidi text={t('ser.semaine', { n: data.leconsSemaine ?? 0 })} /></small>
+        {:else}
+          <small>{t('auj.vers_suivi')}</small>
+        {/if}
       </span>
-    {/if}
-    <span class="chev" aria-hidden="true"><Icon name="chevron" size={20} /></span>
-  </a>
+      {#if data.regularite}
+        <span class="points" aria-hidden="true">
+          {#each data.regularite.semaine as d (d.day)}<span class:on={d.actif}></span>{/each}
+        </span>
+      {/if}
+      <span class="chev" aria-hidden="true"><Icon name="chevron" size={20} /></span>
+    </a>{/if}
 
   <Onboarding audience={profile.kind} />
 {/if}

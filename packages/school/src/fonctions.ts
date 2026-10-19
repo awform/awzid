@@ -26,6 +26,7 @@ export const FONCTION_CLES = [
   'conversation',
   'signaler',
   'beta_contenu_differe_visible',
+  'design_v4',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -49,6 +50,8 @@ export type Canal = 'beta' | 'production';
 export interface DefFonction {
   /** état de base quand l'administrateur n'a rien réglé (valeur par défaut sûre) */
   defaut: EtatFonction;
+  /** état de base sur la DÉMONSTRATION (API lancée avec AWFORM_DEMO=1), s'il diffère */
+  demo?: EtatFonction;
 }
 
 /** Registre : ajouter une fonction = une ligne ici (+ ses libellés `fn.<clé>` en 5 langues). */
@@ -82,7 +85,22 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // éteindre avant d'ouvrir la production. Ne donne jamais accès aux notes du référent (personnel seul), ni aux passages
   // de niveau adulte pour un profil d'enfant ou d'ado.
   beta_contenu_differe_visible: { defaut: 'on' },
+  // refonte « manuscrit enluminé moderne » (19/10/2026), étape 1 : Aujourd'hui et Mes activités. Coupée par défaut
+  // (production, bêta), ALLUMÉE par défaut sur la démonstration ; l'administrateur la règle sans redéploiement et
+  // l'ancien design reste entier quand elle est coupée.
+  design_v4: { defaut: 'off', demo: 'on' },
 };
+
+/** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */
+export function etatsAvecDemo(
+  etats: Partial<Record<string, EtatFonction>>,
+  demo: boolean,
+): Partial<Record<string, EtatFonction>> {
+  if (!demo) return etats;
+  const base: Partial<Record<string, EtatFonction>> = {};
+  for (const k of FONCTION_CLES) if (FONCTIONS[k].demo) base[k] = FONCTIONS[k].demo;
+  return { ...base, ...etats };
+}
 
 /** Règle d'exception (valeurs contrôlées à l'écriture : rôles, âges, canaux ci-dessus). */
 export interface RegleFonction {

@@ -111,6 +111,8 @@ export const SPACE_CATALOGS = [
   'douas',
   // lecteur audio des phrases (19/10/2026) : textes `lec.*`, chargés avec le lecteur au premier appui sur « Écouter »
   'lecteur',
+  // refonte 19/10 (interrupteur `design_v4`) : textes des écrans v4 (`v4.*`), chargés avec eux (`$lib/design`)
+  'design',
 ] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 /** espaces dont les textes ont été demandés (pour les recharger si une clé manque) */

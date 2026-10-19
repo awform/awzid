@@ -83,6 +83,7 @@ const A_PART: Record<string, string> = {
   // alors en entier (page de connexion, Google, numéro WhatsApp) : ~4 Ko sur l'appareil de l'élève
   devoirs: 'lib/devoirs',
   EpreuvesCarte: 'lib/EpreuvesCarte',
+  cards: 'src/lib/cards',
 };
 /**
  * Modules `A_PART` gardés à part MÊME s'ils servent à 3 pages ou plus (priorité au-dessus de « commun ») : le
@@ -144,7 +145,10 @@ export default defineConfig({
               // 18/10/2026 : les écrans d'entrée (Google, numéro WhatsApp, codes de récupération) et les règles des numéros
               // servent à plusieurs pages RARES (inscription, connexion, accès, compte) : jamais dans le morceau commun
               // préchargé sur l'appareil de l'élève, ils restent chargés à la demande
-              test: (id: string) => !/lib\/identites\/|school\/dist\/telephone/.test(id),
+              // 19/10/2026 : les cartes de mots (« Aujourd'hui », « Réviser mes mots », écrans v4 de la refonte) restent dans
+              // leur morceau (`A_PART`) : dans le morceau commun, elles pèseraient sur toutes les pages (lecteur…)
+              test: (id: string) =>
+                !/lib\/identites\/|school\/dist\/telephone|src\/lib\/cards\.ts/.test(id),
             },
             ...Object.entries(A_PART).map(([name, m]) => ({
               name,
