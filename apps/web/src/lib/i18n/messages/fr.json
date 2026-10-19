@@ -374,5 +374,6 @@
   "erreur.mot_de_passe_trop_simple": "Mot de passe trop simple : avec moins de 12 caractères, mélange majuscule, minuscule et chiffre (ou un symbole). Le plus simple : une petite phrase de 12 caractères ou plus.",
   "erreur.mots_de_passe_differents": "Les deux mots de passe ne sont pas identiques : vérifie-les.",
   "erreur.plafond_atteint": "Les inscriptions libres sont complètes pour le moment. Demandez une invitation : nous vous écrirons dès qu’une place se libère.",
-  "tj.fermer": "Fermer"
+  "tj.fermer": "Fermer",
+  "tuia.ouvrir": "Parler avec le tuteur"
 }

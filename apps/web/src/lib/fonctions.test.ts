@@ -32,13 +32,15 @@ describe('F5 — interrupteurs gardés sur l’appareil', () => {
   it('sans copie : valeurs sûres du registre (fonctions publiées ouvertes)', () => {
     const d = decisionDe(null);
     expect(Object.keys(d).sort()).toEqual([...FONCTION_CLES].sort());
-    // A26b : « conversation » en essai (canal bêta) ; refonte 19/10 : « design_v4 » coupé hors démonstration (l'ancien
-    // design reste celui de l'appareil sans réseau) ; toutes les autres sont publiées
+    // A26b : « conversation » et le tuteur IA de conversation (19/10/2026) en essai (canal bêta) ; refonte 19/10 :
+    // « design_v4 » coupé hors démonstration (l'ancien design reste celui de l'appareil sans réseau) ; toutes les
+    // autres sont publiées
     expect(
       Object.entries(d)
         .filter(([, v]) => v !== true)
-        .map(([k]) => k),
-    ).toEqual(['conversation', 'design_v4']);
+        .map(([k]) => k)
+        .sort(),
+    ).toEqual(['conversation', 'design_v4', 'tuteur_ia']);
   });
 
   it('copie par personne : décision du serveur, hors ligne comprise ; clé inconnue → défaut', () => {

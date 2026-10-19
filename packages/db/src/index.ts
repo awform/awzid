@@ -9,6 +9,7 @@ export * from './hifz.js';
 export * from './practice.js';
 export * from './booklets.js';
 export * from './tutor.js';
+export * from './tuteur-ia.js';
 export * from './school.js';
 export * from './roles.js';
 export * from './recitations.js';

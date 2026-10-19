@@ -115,13 +115,16 @@ export const SPACE_CATALOGS = [
   'design',
   // 19/10/2026 : catalogue français de base découpé par espaces (la coquille garde les textes communs) :
   // « Arabe » (accueil, leçons, lectures, sciences, révisions, écriture, épreuves…) et « Aujourd'hui et suivi »
-  // (aujourd'hui, suivi, plus, profils, hors ligne, aide), chargés par leurs mises en page, préchargés
+  // (aujourd'hui, suivi, plus, profils, hors ligne, aide), chargés par la mise en page racine
+  // (lib/i18n/espaces.ts), préchargés
   'arabe',
   'suivi',
   // messages d'erreur RENVOYÉS PAR LE SERVEUR (`erreur.<code>`) : chargés à la réception d'une réponse en erreur
   // (`call`, lib/session.ts), donc toujours en ligne ; jamais préchargés. Les codes produits par l'appareil
   // lui-même (« reseau »…) restent dans la coquille.
   'erreurs',
+  // 19/10/2026 : tuteur IA de conversation (`tuia.*`), chargés par la page `/tuteur`, jamais préchargés
+  'tuteur',
 ] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 /** espaces dont les textes ont été demandés (pour les recharger si une clé manque) */

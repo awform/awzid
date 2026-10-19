@@ -144,12 +144,21 @@ export async function openTutorAlerts(db: Db) {
   return db.select().from(t.tutorAlert).where(isNull(t.tutorAlert.handledAt));
 }
 
-/** Purge : journal du tuteur au-delà de 12 mois (ARCHITECTURE_V2 § 1.6). */
+/** Durée de conservation des échanges du tuteur de CONVERSATION (TUTEUR_IA.md § 8) : 90 jours, 12 mois s'ils sont signalés. */
+export const CONVERSATION_JOURS = 90;
+
+/**
+ * Purge : journal du tuteur au-delà de 12 mois (ARCHITECTURE_V2 § 1.6) ; échanges du tuteur de conversation
+ * (`role_id` « tuteur_conversation ») au-delà de 90 jours, sauf s'ils ont été signalés (12 mois).
+ */
 export async function purgeTutorLog(db: Db, now = new Date()): Promise<number> {
   const limit = new Date(now.getTime() - 365 * 24 * 3600 * 1000);
+  const conv = new Date(now.getTime() - CONVERSATION_JOURS * 24 * 3600 * 1000);
   const r = await db
     .delete(t.tutorLog)
-    .where(sql`${t.tutorLog.createdAt} < ${limit}`)
+    .where(
+      sql`${t.tutorLog.createdAt} < ${limit} OR (${t.tutorLog.roleId} = 'tuteur_conversation' AND ${t.tutorLog.reportedAt} IS NULL AND ${t.tutorLog.createdAt} < ${conv})`,
+    )
     .returning({ id: t.tutorLog.id });
   return r.length;
 }

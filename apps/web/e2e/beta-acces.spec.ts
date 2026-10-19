@@ -642,7 +642,8 @@ test.describe('espace administrateur : trois modes, plafond, tableau de bord', (
     };
     expect(d.comptes.total).toBeGreaterThan(0);
     expect(d.comptes.plafond).toBeGreaterThan(0);
-    expect(d.plafonds).toHaveLength(5);
+    // 19/10/2026 : + tuteur de conversation
+    expect(d.plafonds).toHaveLength(6);
     const a = await adm.request.get('/api/v1/admin/acces');
     expect((await a.json()).acces.mode).toBe('ouvert');
     await adm.context().close();

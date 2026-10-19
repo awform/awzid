@@ -1550,6 +1550,47 @@ export const tutorAlert = pgTable('tutor_alert', {
   createdAt: createdAt(),
 });
 
+/**
+ * Tuteur de CONVERSATION (19/10/2026, TUTEUR_IA.md) : registre de la DÉPENSE (micro-euros) et du temps de parole, une
+ * ligne par échange avec le modèle. Sert aux plafonds (élève par jour, global par jour et par mois) : la ligne est
+ * d'abord une RÉSERVATION au coût maximal du tour (« reserve »), puis le coût réel (« fait ») ou zéro (« annule »).
+ * Aucun texte, aucune voix ; le profil passe à NULL s'il est effacé (la dépense du mois reste comptée).
+ */
+export const tutorSpend = pgTable(
+  'tutor_spend',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    profileId: uuid('profile_id').references(() => profile.id, { onDelete: 'set null' }),
+    secondes: integer('secondes').notNull().default(0),
+    costMicros: integer('cost_micros').notNull(),
+    statut: text('statut').notNull().default('reserve'),
+    /** « simule » ou « vertex » : la dépense simulée ne se mêle jamais à la réelle dans les tableaux */
+    fournisseur: text('fournisseur').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('tutor_spend_at').on(t.createdAt),
+    index('tutor_spend_profile').on(t.profileId, t.createdAt),
+    check('tutor_spend_statut', sql`${t.statut} IN ('reserve', 'fait', 'annule')`),
+    check('tutor_spend_cost', sql`${t.costMicros} >= 0`),
+  ],
+);
+
+/** Seuils d'alerte de dépense franchis (une ligne par mois et par seuil : l'alerte ne part qu'une fois). */
+export const tutorBudgetAlert = pgTable(
+  'tutor_budget_alert',
+  {
+    mois: text('mois').notNull(),
+    seuil: integer('seuil').notNull(),
+    depenseMicros: integer('depense_micros').notNull(),
+    plafondMicros: integer('plafond_micros').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [primaryKey({ columns: [t.mois, t.seuil] })],
+);
+
 // ================================================================ paiements (lot 10)
 
 /**

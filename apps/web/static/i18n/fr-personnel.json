@@ -610,5 +610,10 @@
   "tab.al_tel_plafond_atteint": "Plafond quotidien d’envois WhatsApp payants atteint : plus aucun code n’est envoyé aujourd’hui.",
   "tab.al_tel_plafond_proche": "Envois WhatsApp payants du jour proches du plafond (80 %).",
   "tab.al_tel_a_valider": "Des numéros attendent une validation manuelle.",
-  "fn.design_v4": "Nouveau design (refonte du 19/10 : Aujourd'hui, Mes activités)"
+  "fn.design_v4": "Nouveau design (refonte du 19/10 : Aujourd'hui, Mes activités)",
+  "fn.tuteur_ia": "Tuteur IA de conversation (dialogue guidé, conversation libre)",
+  "tab.p_tuteur_ia": "Tuteur de conversation",
+  "tab.al_tuteur_ia_50": "Tuteur de conversation : 50 % du plafond du mois dépensés.",
+  "tab.al_tuteur_ia_80": "Tuteur de conversation : 80 % du plafond du mois dépensés.",
+  "tab.al_tuteur_ia_100": "Tuteur de conversation : plafond du mois atteint, conversation libre coupée."
 }
