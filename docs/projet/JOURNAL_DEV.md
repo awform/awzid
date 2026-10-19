@@ -9,6 +9,40 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 20/10/2026 — Tuteur de conversation : sujets refusés et batterie de contrôle (branche `tuteur-batterie-wip`, fusionnée) ; NON déployé
+
+Décisions du chef de projet. Rien déployé, `awzid-beta` non touché, aucun appel réel à Vertex (mode simulé seulement). `~/lecons-audio` non modifié.
+
+- **Sujets refusés** (règles annoncées au client), même principe que la religion :
+  - politique et actualité qui divise ;
+  - contenus inconvenants (règle plus stricte pour les ados : aucune allusion amoureuse) ;
+  - conseils médicaux, juridiques et financiers.
+- **Où ils sont arrêtés** :
+  - garde d'entrée `classerEntree(texte, public)` + `sujets.ts` : refus poli **avant l'appel**, sans coût ;
+  - transcription (voix) ;
+  - invite (règles 3 à 5, public) ;
+  - filtre de sortie (`sujet_sensible`) ;
+  - renvois polis `tuia.politique`, `tuia.inconvenant`, `tuia.conseil`, avec un autre sujet proposé.
+- **Corrections au passage** : l'arabe vocalisé est aussi classé en forme nue. « أُرِيدُ أَنْ أَمُوتَ » (détresse) et « حَدِيثًا » (hadith) passaient la garde d'entrée.
+- **Règle unique `issueDuTour`**, partagée par l'API et la batterie : ce que la batterie note est ce que l'élève verrait.
+- **`PROMPT_VERSION` : `7e79e074f9ee`.** L'ancienne valeur, `39fd49228b78`, n'est plus valable.
+- **Batterie de contrôle** (`packages/tutor/src/cli/batterie-conversation.ts`, `conversation/batterie.ts`) :
+  - 47 situations : les 30 du § 9, 15 pièges des sujets refusés en français et en arabe, 2 faux positifs ;
+  - contextes fixes tirés des livres (ad2 l22, ado2 l13) ; voix des leçons pour l'oral ;
+  - rapport JSON et MD : empreinte, note, motif, latence, coût réel ;
+  - **arrêt net** si « dépensé + pire cas > 1 € » ;
+  - `--simule` : 47/47 en local, 0 €.
+  - Serveur : `bash ~/awform-app/infra/gcp/tuteur-batterie.sh`. Il lance l'image de l'API en service et emprunte `awzid-tuteur` sans clé ; rapports dans `~/tuteur-batterie/`.
+- **Tests** :
+  - build, typecheck, eslint, prettier : 0 erreur ;
+  - contrôle de poids : marge 4,2 Ko, `/coran/lecteur` 135,8 Ko ;
+  - unitaires : `packages/tutor` 153 (+38), web 834, API 534 + 1 échec `beta-infra` « essai LOCAL de Caddy » (instable préexistant) ;
+  - e2e complète (34,5 min, charge de la VM 43 à 53 sur 8 cœurs) : 835 réussis, 150 ignorés, 2 instables passés au second essai (`coran-lecture:120`, `madjaliss-risala:81`), 1 échec `perf:42` (3G 3,4 s sous cette charge). Relancé seul : réussi (2,78 s) ;
+  - `tuteur-ia.spec.ts` (simulé, avec le refus « politique ») : réussi.
+  - Les e2e ont tourné avec la copie filtrée `~/fus-lecons-audio` (entrée incohérente de `~/lecons-audio`, 19/10 15:31).
+
+---
+
 ## 19/10/2026 (suite) — Catalogue français découpé par espaces ; refonte v4 et tuteur IA fusionnés dans `main` ; NON déployé
 
 Décision du chef de projet : option A (limites inchangées : marge de l'appareil élève ≥ 3 Ko, `/coran/lecteur` ≤ 150 Ko). Accord du client pour fusionner ensuite le tuteur. Rien déployé, `awzid-beta` non touché. Non touchés : `infra/charge/purger-comptes-fictifs.sh` (modifié sans commit dans `~/awform-demo`), les autres worktrees et branches.
