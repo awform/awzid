@@ -33,6 +33,7 @@ import {
   looksQuranic,
   quranCorpus,
   quranRuns,
+  sayText,
   skeleton,
 } from '../src/audio-cle.js';
 import { loadTanzil, parseDataFile, studentProjection } from '../src/index.js';
@@ -294,6 +295,30 @@ describe.skipIf(!HAS_CONTENT)('vidéos vivantes : les 25 unités d’Adultes 1',
         ).toBe(false);
         if (tanzil) expect(cite(s), `voix sur une citation du Coran : ${s}`).toBe(false);
       }
+      // contexte coranique : aucune voix sur un morceau (même un mot) d'un passage coranique cité par la lecture de
+      // l'unité (Fātiḥa mot à mot, sourates 112 à 114…)
+      if (tanzil) {
+        const norme = (x: string) =>
+          ` ${sayText(unmark(x))
+            .replace(/[|.,:;!?«»"()…—–=+←،؛؟]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()} `;
+        const passages = strings((L as { lecture?: unknown }).lecture)
+          .filter((s) => looksQuranic(s) || cite(s))
+          .map(norme);
+        // tous les textes qui POURRAIENT être dits (comme si chaque fichier audio existait), hors dialogue (formules
+        // de salutation : jamais un contexte coranique)
+        const tout = buildVideo(L, { unitId: f, hasAudio: () => true, images: imagesDe(L) });
+        const dits = videoVoix({
+          ...tout,
+          scenes: tout.scenes.filter((s) => s.part !== 'dialogue' && s.part !== 'jouer'),
+        });
+        for (const s of dits)
+          expect(
+            passages.some((p) => p.includes(norme(s))),
+            `voix sur un morceau de passage coranique : ${s}`,
+          ).toBe(false);
+      }
       // « À toi de jouer la scène ! » : à la fin de la version longue quand le dialogue a au moins deux rôles
       const longue = scenesDuMode(v, 'longue');
       if (v.scenes.some((s) => s.id === 'jouer')) expect(longue.at(-1)!.id).toBe('jouer');
@@ -305,9 +330,13 @@ describe.skipIf(!HAS_CONTENT)('vidéos vivantes : les 25 unités d’Adultes 1',
     () => {
       const flagged = new Set<string>();
       for (const f of FILES) {
-        const L = studentProjection(raw(f), LIVRE);
+        const L = studentProjection(raw(f), LIVRE) as Record<string, unknown>;
         const v = buildVideo(L, { unitId: f, hasAudio: () => true, garde: new Set() });
         for (const s of videoVoix(v)) if (cite(s)) flagged.add(gardeVideoKey(s));
+        // et TOUTES les chaînes de la lecture (même dites morceau par morceau, « mot à mot ») : un passage coranique
+        // cité par la leçon met ses morceaux en contexte coranique (aucune voix sur eux non plus)
+        for (const s of strings((L as { lecture?: unknown }).lecture))
+          if (cite(s)) flagged.add(gardeVideoKey(s));
       }
       const want = [...flagged].sort().join(' ');
       if (process.env.VIDEO_GARDE === 'ecrire') {
