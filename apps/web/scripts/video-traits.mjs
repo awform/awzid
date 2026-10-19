@@ -1,8 +1,11 @@
 // Vidéos vivantes — tracé des lettres : écrit `static/video/traits.json` depuis `docs/ecriture/traits_lettres.json`
-// (recherche sourcée : Alif Baa, Georgetown University Press ; tableau naskh de M. Sakkal) et la DÉCISION du référent
-// (19/10/2026) ci-dessous. Seules les formes VALIDÉES sont écrites : une forme absente n'est jamais animée (la lettre
-// est montrée complète, sans tracé). Pour valider une forme : l'ajouter à `VALIDES`, relancer
-// `node scripts/video-traits.mjs`, puis `pnpm test` (le test compare le fichier à cette source).
+// (recherche sourcée, 2ᵉ passe : Alif Baa, Georgetown University Press ; tableau naskh de M. Sakkal ; voir
+// docs/ecriture/SENS_DES_TRAITS.md, § 2P qui fait foi) et la DÉCISION du référent (19/10/2026, mise à jour) :
+//  - VALIDÉES : toutes les formes de statut « sur », « probable » et « divergent » ; pour « divergent », la
+//    variante `recommandee` (مـ au début : sens horaire ; كـ et ـكـ : le corps d'abord, la barre le mot fini) ;
+//  - NON VALIDÉE : la forme « insuffisant » (ـلا après liaison) : montrée complète, sans animation.
+// Le statut reste écrit dans le fichier servi (`s`), pour pouvoir n'afficher plus tard que les formes « sur ».
+// Relancer `node scripts/video-traits.mjs` après toute nouvelle version des données, puis `pnpm test`.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,32 +14,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = join(root, '..', '..', 'docs', 'ecriture', 'traits_lettres.json');
 const out = join(root, 'static', 'video', 'traits.json');
 const FORMES = ['isolee', 'debut', 'milieu', 'fin'];
-const c = (...x) => String.fromCharCode(...x);
 
-/** Décision du référent (19/10/2026) : formes validées (consensus fort) ; tout le reste reste non validé. */
-export const VALIDES = {
-  [c(0x628)]: FORMES, // bā'
-  [c(0x62a)]: FORMES, // tā'
-  [c(0x62b)]: FORMES, // thā'
-  [c(0x646)]: FORMES, // nūn : début, milieu ; seule et finale
-  [c(0x64a)]: ['debut', 'milieu'], // yā'
-  [c(0x62f)]: FORMES, // dāl
-  [c(0x630)]: FORMES, // dhāl
-  [c(0x631)]: ['isolee'], // rā' seule
-  [c(0x632)]: ['isolee'], // zāy seule
-  [c(0x635)]: FORMES, // ṣād
-  [c(0x636)]: FORMES, // ḍād
-  [c(0x637)]: FORMES, // ṭā'
-  [c(0x638)]: FORMES, // ẓā'
-  [c(0x644)]: FORMES, // lām
-  [c(0x627)]: FORMES, // alif
-  [c(0x639)]: ['debut'], // ʿayn : la tête, au début
-  [c(0x63a)]: ['debut'], // ghayn : la tête, au début
-  [c(0x623)]: FORMES, // alif hamza dessus
-  [c(0x625)]: FORMES, // alif hamza dessous
-  [c(0x622)]: FORMES, // alif madda
-  [c(0x626)]: ['debut', 'milieu'], // hamza sur yā' (dent)
-};
+/** Décision du référent : statuts dont le tracé est montré. */
+export const STATUTS_VALIDES = ['sur', 'probable', 'divergent'];
 
 /**
  * Décision du référent : un aller-retour (dent au milieu, hampe atteinte par une liaison) se superpose EXACTEMENT.
@@ -55,26 +35,39 @@ export function superposer(t) {
   return p;
 }
 
+/** Données sources (version, statuts) */
+export const source = () => JSON.parse(readFileSync(src, 'utf8'));
+
+/** Forme de la famille désignée par une lettre (« dent », « dal.isolee »…), ou undefined. */
+export function forme(j, ref, f) {
+  const [fam, sous] = ref.split('.');
+  return j.familles[fam]?.[sous ?? f];
+}
+
+/** Par lettre : [isolée, début, milieu, fin], chaque forme { s: statut, t: traits } si validée, sinon null. */
 export function traits() {
-  const j = JSON.parse(readFileSync(src, 'utf8'));
+  const j = source();
   const res = {};
-  for (const [l, formes] of Object.entries(VALIDES)) {
-    const def = j.lettres[l];
-    if (!def)
-      throw new Error(`lettre absente de traits_lettres.json : ${l.codePointAt(0).toString(16)}`);
+  for (const [l, def] of Object.entries(j.lettres)) {
     res[l] = FORMES.map((f) => {
-      if (!formes.includes(f) || !def.formes[f]) return null;
-      const [fam, sous] = def.formes[f].split('.');
-      const forme = j.familles[fam]?.[sous ?? f];
-      if (!forme?.traits) throw new Error(`tracé absent : ${fam}.${sous ?? f}`);
-      return forme.traits
-        .slice()
-        .sort((a, b) => a.n - b.n)
-        .map((t) =>
-          superposer(t)
-            .flat()
-            .map((v) => Math.round(v * 100)),
-        );
+      const ref = def.formes[f];
+      if (!ref) return null;
+      const x = forme(j, ref, f);
+      if (!x) throw new Error(`tracé absent : ${ref} (${f})`);
+      if (!STATUTS_VALIDES.includes(x.statut)) return null;
+      const tr = x.variantes ? x.variantes[x.recommandee]?.traits : x.traits;
+      if (!tr) throw new Error(`variante recommandée absente : ${ref} (${f})`);
+      return {
+        s: x.statut,
+        t: tr
+          .slice()
+          .sort((a, b) => a.n - b.n)
+          .map((t) =>
+            superposer(t)
+              .flat()
+              .map((v) => Math.round(v * 100)),
+          ),
+      };
     });
   }
   return res;
@@ -82,12 +75,12 @@ export function traits() {
 
 /**
  * Fichier servi à la demande (`/video/traits.json`, chargé au premier tracé, gardé au téléchargement d'un niveau) :
- * par lettre, [isolée, début, milieu, fin] ; chaque forme validée = ses traits dans l'ordre (points de passage x, y
- * en centièmes : x de 0 = bord gauche à 100 = bord droit, y de 0 = ligne de base à 100 = hauteur de l'alif) ; null :
- * forme non validée, montrée complète sans animation. Les marques (points, hamza, madda) viennent après le corps.
+ * par lettre, [isolée, début, milieu, fin] ; chaque forme validée = { s: statut, t: ses traits dans l'ordre (points
+ * de passage x, y en centièmes : x de 0 = bord gauche à 100 = bord droit, y de 0 = ligne de base à 100 = hauteur de
+ * l'alif) } ; null : forme non validée, montrée complète sans animation. Les marques viennent après le corps.
  */
 export const contenu = () =>
-  `${JSON.stringify({ _: 'GÉNÉRÉ par scripts/video-traits.mjs (docs/ecriture/traits_lettres.json et décision du référent du 19/10/2026) : ne pas modifier à la main', ...traits() })}\n`;
+  `${JSON.stringify({ _: `GÉNÉRÉ par scripts/video-traits.mjs (docs/ecriture/traits_lettres.json v${source().version} et décision du référent du 19/10/2026) : ne pas modifier à la main`, ...traits() })}\n`;
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   mkdirSync(dirname(out), { recursive: true });

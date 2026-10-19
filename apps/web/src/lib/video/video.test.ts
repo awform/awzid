@@ -13,7 +13,13 @@ import {
   type ContexteFonction,
 } from '@awform/school';
 import { VIDEO_NIVEAUX } from '@awform/content/video-niveaux';
-import { contenu, superposer, VALIDES } from '../../../scripts/video-traits.mjs';
+import {
+  STATUTS_VALIDES,
+  contenu,
+  forme,
+  source,
+  superposer,
+} from '../../../scripts/video-traits.mjs';
 import { frH } from './lecteur';
 
 const c = String.fromCharCode;
@@ -22,7 +28,7 @@ const traits = JSON.parse(
     fileURLToPath(new URL('../../../static/video/traits.json', import.meta.url)),
     'utf8',
   ),
-) as Record<string, Array<number[][] | null>>;
+) as Record<string, Array<{ s: string; t: number[][] } | null>>;
 
 describe('vidéos vivantes : interrupteur « video_vivante »', () => {
   const ctx: ContexteFonction = {
@@ -78,28 +84,32 @@ describe('vidéos vivantes : tracés des lettres', () => {
     expect(traits).toEqual(JSON.parse(contenu()));
   });
   it('seules les formes validées par le référent sont tracées ; les autres restent complètes', () => {
-    const lettres = Object.keys(traits).filter((k) => k !== '_');
-    expect(lettres.sort()).toEqual(Object.keys(VALIDES).sort());
+    // décision du référent (19/10/2026, 2ᵉ passe) : statuts « sur », « probable », « divergent » tracés ; « insuffisant » non
+    expect(STATUTS_VALIDES).toEqual(['sur', 'probable', 'divergent']);
+    const j = source();
     const formes = ['isolee', 'debut', 'milieu', 'fin'];
-    // une forme tracée est toujours une forme validée (une forme validée absente du livre, ex. إ au milieu : rien)
     let n = 0;
-    for (const l of lettres)
-      traits[l]!.forEach((f, i) => {
-        if (f) n++;
-        if (f) expect(VALIDES[l], `${l} ${formes[i]}`).toContain(formes[i]);
-        else if (l !== c(0x625)) expect(VALIDES[l], `${l} ${formes[i]}`).not.toContain(formes[i]);
+    for (const [l, def] of Object.entries(j.lettres))
+      formes.forEach((f, i) => {
+        const ref = def.formes[f];
+        const x = ref ? forme(j, ref, f) : undefined;
+        const t = traits[l]![i];
+        if (t) n++;
+        // le statut reste lisible dans le fichier servi (plus tard : n'afficher que les formes « sur »)
+        expect(t?.s, `${l} ${f}`).toBe(
+          x && STATUTS_VALIDES.includes(x.statut) ? x.statut : undefined,
+        );
       });
-    expect(n).toBeGreaterThanOrEqual(60);
-    // non validées : boucles de و ف ق, م, ي et ى seules, ة, ء, ج ح خ, ع au milieu et à la fin, ه, لا, ك, س ش
-    for (const k of [
-      0x648, 0x641, 0x642, 0x645, 0x649, 0x629, 0x621, 0x62c, 0x62d, 0x62e, 0x647, 0x643, 0x633,
-      0x634,
-    ])
-      expect(traits[c(k)], k.toString(16)).toBeUndefined();
-    expect(traits[c(0x64a)]![0]).toBeNull();
-    expect(traits[c(0x64a)]![3]).toBeNull();
-    expect(traits[c(0x639)]!.map((f) => !!f)).toEqual([false, true, false, false]);
-    expect(traits[c(0x631)]!.map((f) => !!f)).toEqual([true, false, false, false]);
+    expect(n).toBeGreaterThanOrEqual(100);
+    // ـلا après liaison (« insuffisant ») : montré complet, en attendant la vidéo d'un enseignant
+    const lamalif = c(0x644, 0x627);
+    expect(traits[lamalif]![0]?.s).toBe('sur');
+    expect(traits[lamalif]![3]).toBeNull();
+    // ع au milieu et à la fin : sens horaire (2ᵉ passe) ; لا : deux traits ; كـ : le corps d'abord, la barre ensuite
+    expect(traits[lamalif]![0]!.t).toHaveLength(2);
+    const kaf = traits[c(0x643)]![1]!.t;
+    expect(kaf).toHaveLength(2);
+    expect(kaf[1]!.slice(0, 2)).toEqual([98, 98]);
   });
   it('au milieu du mot, la dent fait un aller-retour superposé exactement', () => {
     const p = superposer({

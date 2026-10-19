@@ -20,10 +20,12 @@ import {
 import { audioIdFor, leconsSource, stopLessonAudio, type LevelAudio } from '$lib/lecons-audio';
 import { loadTexts, t } from '$lib/i18n';
 import { memoriserTraduction, traductionVisible } from '$lib/traduction';
-import './lecteur.css';
+// feuille du lecteur reliée à l'ouverture (fichier du site : CSP « style-src 'self' ») ; un `import './lecteur.css'`
+// la ferait relier par la page de leçon (SvelteKit relie les feuilles des imports dynamiques), même sans vidéo
+import feuille from './lecteur.css?url';
 
 /** tracés validés par le référent (`/video/traits.json`, généré par scripts/video-traits.mjs), chargés au premier tracé */
-type Traits = Record<string, Array<number[][] | null>>;
+type Traits = Record<string, Array<{ s: string; t: number[][] } | null>>;
 let traitsP: Promise<Traits> | null = null;
 const chargerTraits = () =>
   (traitsP ??= fetch('/video/traits.json')
@@ -98,6 +100,17 @@ let lecteur: Lecteur | null = null;
 /** Ouvre le lecteur plein écran (un seul à la fois), après ses textes (catalogue `fr-video`, à la demande). */
 export async function ouvrir(o: OuvrirOptions): Promise<void> {
   await loadTexts('video');
+  if (!document.getElementById('vv-feuille')) {
+    const st = document.createElement('link');
+    st.id = 'vv-feuille';
+    st.rel = 'stylesheet';
+    st.href = feuille;
+    await new Promise((ok) => {
+      st.onload = st.onerror = ok;
+      setTimeout(ok, 4000);
+      document.head.append(st);
+    });
+  }
   lecteur?.fermer();
   lecteur = new Lecteur(o);
 }
@@ -936,7 +949,7 @@ class Lecteur {
    * sans animation de traits. Renvoie vrai si la forme a été tracée.
    */
   async tracer(host: HTMLElement, s: string, l: string, f: number, rem: number): Promise<boolean> {
-    const traits = (await chargerTraits())[l]?.[f];
+    const traits = (await chargerTraits())[l]?.[f]?.t;
     const F = rem * (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16);
     const font = `700 ${F}px ${NASKH}`;
     await document.fonts.load(font, s).catch(() => undefined);

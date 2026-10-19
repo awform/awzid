@@ -1,7 +1,25 @@
 {
-  "version": 1,
+  "version": 2,
   "date": "2026-10-19",
-  "statut": "indicatif — à trancher par le référent ; voir SENS_DES_TRAITS.md",
+  "statut": "2e passe faite — reste à faire valider par un enseignant d'écriture (voir SENS_DES_TRAITS.md, §2P)",
+  "historique": [
+    {
+      "version": 1,
+      "date": "2026-10-19",
+      "resume": "1re passe : Alif Baa (AB) + tableau naskh de Sakkal (SK) + brevet BSE ; champ consensus fort/partiel/douteux"
+    },
+    {
+      "version": 2,
+      "date": "2026-10-19",
+      "resume": "2e passe : + Mastering Arabic Script (MAS), cahiers Haroonica (HAR), cahier officiel palestinien de 1re année (PAL), passages AB supplémentaires ; ajout du champ statut par forme ; corrections : ـعـ/ـع en sens horaire (et non antihoraire), لا en deux traits, ـهـ à deux boucles décrit, مـ et كـ/ـكـ classés divergents"
+    }
+  ],
+  "statut_definitions": {
+    "sur": "au moins 2 sources indépendantes concordantes, ou 1 manuel scolaire officiel + 1 autre source",
+    "probable": "1 source fiable explicite, aucune contradiction",
+    "divergent": "des sources s'opposent ; le champ recommandation donne l'option retenue et pourquoi",
+    "insuffisant": "aucune source explicite pour cette forme ; tracé déduit, à faire valider (ajouté en 2e passe pour ne rien laisser passer pour sûr)"
+  },
   "repere": {
     "x": "0 = bord gauche de la forme, 1 = bord droit (l'écriture progresse vers x décroissant)",
     "y": "0 = ligne de base ; 1 = hauteur de l'alif ; négatif = sous la ligne",
@@ -11,17 +29,22 @@
     "sens_boucle": "horaire / antihoraire, vu par le lecteur"
   },
   "sources": {
-    "AB": "Brustad, Al-Batal, Al-Tonsi, Alif Baa, Georgetown University Press (texte en ligne, Middlebury College)",
-    "SK": "Mamoun Sakkal, Arabic Alphabet Chart in Naskh Style: With Teaching Notes, 2016, sakkal.com",
-    "BSE": "Biadsy, El-Sana, Saabni, US 8 615 131 B2, Online Arabic handwriting recognition",
+    "AB": "Brustad, Al-Batal, Al-Tonsi, Alif Baa, Georgetown University Press (texte en ligne, Middlebury College) — méthode universitaire, stylo",
+    "SK": "Mamoun Sakkal, Arabic Alphabet Chart in Naskh Style: With Teaching Notes, 2016, sakkal.com — naskh au calame",
+    "BSE": "Biadsy, El-Sana, Saabni, US 8 615 131 B2, Online Arabic handwriting recognition — usage réel (traits différés)",
+    "MAS": "Jane Wightwick & Mahmoud Gaafar, Mastering Arabic Script: A Guide to Handwriting, Palgrave Macmillan, 2005 — écriture courante (ruqʿa) comparée au naskh ; lue dans le lecteur archive.org (copie au filigrane uz-translations.net, probablement non autorisée : faits seulement)",
+    "HAR": "Haroonica, كتابنا الخط العربي : الكتاب الأول – لصف روضة الأطفال (archive.org bk-27-r2, 2016) et الكتاب الثاني (bk-13-r2) — cahiers naskh, lettres isolées avec flèches numérotées",
+    "PAL": "État de Palestine, ministère de l'Éducation et de l'Enseignement supérieur, Centre des curricula, كراسة تعليم الخط العربي, 1re année de base (O. Muslim coord., F. Ghawadra, M. Halas, A. al-Khatib) — archive.org general-00006 — manuel scolaire officiel, naskh, flèches numérotées par forme",
     "LIVRE": "ad1, ecriture.conseil_fr"
   },
   "regles": {
-    "sens": "droite vers gauche ; un groupe de lettres attachées = un seul geste (AB)",
-    "marques": "points, barre de ك, hampe de ط ظ, hamza, madda : après le corps ; dans un mot, après le squelette du mot entier, de droite à gauche ; puis voyelles et signes (AB, BSE)",
-    "hampes": "de haut en bas quand elles commencent un trait ; montée puis retour sur le même trait quand on y arrive par une liaison ; ـا monte et s'arrête (AB, SK)",
-    "dents": "début : départ au sommet de la dent ; milieu : montée et retour (SK, AB)",
-    "points_ordre": "convention non sourcée : de droite à gauche ; pour 3 points, rangée du bas puis sommet"
+    "sens": "droite vers gauche ; un groupe de lettres attachées = un seul geste (AB, MAS) — sur",
+    "marques": "points, barre de ك, hampe de ط ظ, hamza, madda : après le corps ; dans un mot, après le squelette du mot entier, de droite à gauche ; puis voyelles et signes (AB, MAS p. 3, 42, 50, 66, 68 ; BSE ; HAR et PAL : points et hamza numérotés en dernier) — sur",
+    "hampes": "de haut en bas quand elles commencent un trait ; montée puis retour sur le même trait quand on y arrive par une liaison (AB, SK, MAS unité 12 pour ل) ; ـا monte et s'arrête (AB, SK) — sur",
+    "dents": "début : départ au sommet de la dent ; milieu : montée et retour (SK, AB) — sur",
+    "points_ordre": "convention non sourcée : de droite à gauche ; pour 3 points, rangée du bas puis sommet — insuffisant (enjeu faible)",
+    "hamza_sur_support": "support d'abord, hamza ensuite (AB, MAS p. 42 et 43, PAL ئـ) — sur",
+    "barre_de_kaf": "divergent : AB et MAS (et BSE, usage réel) posent la barre après le mot ; SK (calame) et PAL (cahier officiel, lettre seule) la tracent en premier. Recommandation : corps puis barre après le squelette du mot ; l'autre ordre est toléré"
   },
   "familles": {
     "dent": {
@@ -41,7 +64,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["SK", "AB"]
+        "statut": "sur",
+        "sources": ["SK", "AB", "HAR"]
       },
       "debut": {
         "traits": [
@@ -57,6 +81,7 @@
           }
         ],
         "consensus": "fort",
+        "statut": "sur",
         "sources": ["SK", "AB"]
       },
       "milieu": {
@@ -75,6 +100,7 @@
           }
         ],
         "consensus": "fort",
+        "statut": "sur",
         "sources": ["SK", "AB"]
       },
       "fin": {
@@ -96,7 +122,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["SK"]
+        "statut": "sur",
+        "sources": ["SK", "AB"]
       }
     },
     "nun": {
@@ -118,7 +145,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["SK", "AB"]
+        "statut": "sur",
+        "sources": ["SK", "AB", "HAR"]
       },
       "fin": {
         "traits": [
@@ -141,6 +169,7 @@
           }
         ],
         "consensus": "fort",
+        "statut": "sur",
         "sources": ["AB", "SK"]
       }
     },
@@ -164,9 +193,10 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["AB", "LIVRE"],
-        "note": "fin de queue à recaler sur la police (le livre dit « revient vers la droite »)"
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "HAR", "PAL"],
+        "note": "HAR : 1 crochet du haut de droite à gauche, 2 retour vers la droite, 3 cuvette qui remonte à gauche, 4 points ; PAL : mêmes flèches 1-2. La pointe de la queue remonte et s'incline légèrement vers la droite (HAR) : compatible avec le livre l15"
       },
       "fin": {
         "traits": [
@@ -187,6 +217,7 @@
           }
         ],
         "consensus": "partiel",
+        "statut": "probable",
         "sources": ["AB"]
       }
     },
@@ -209,9 +240,10 @@
             "sens_boucle": "antihoraire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["SK", "AB"],
-        "note": "trait du haut de gauche à droite, puis retour en diagonale"
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["SK", "AB", "HAR", "PAL", "MAS"],
+        "note": "trait du haut de gauche à droite, puis retour en diagonale, puis cuvette vers la droite (HAR 1-2-3, PAL 1-2) ; MAS (ruqʿa) : départ un peu au-dessus de la ligne, « loop round clockwise », p. 30"
       },
       "debut": {
         "traits": [
@@ -228,8 +260,9 @@
             ]
           }
         ],
-        "consensus": "partiel",
-        "sources": ["SK", "AB"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["SK", "AB", "PAL"]
       },
       "milieu": {
         "traits": [
@@ -247,9 +280,10 @@
             ]
           }
         ],
-        "consensus": "douteux",
-        "sources": ["AB", "SK"],
-        "note": "liaison par le haut attestée ; détail du geste proposé"
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "SK", "MAS"],
+        "note": "la lettre précédente finit en hauteur ; la liaison atteint l'extrémité DROITE du trait du haut (flèche de MAS p. 79), qu'on parcourt de droite à gauche, puis diagonale"
       },
       "fin": {
         "traits": [
@@ -270,9 +304,10 @@
             "sens_boucle": "antihoraire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["AB"],
-        "note": "AB : « from the line up and then over »"
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "SK", "MAS"],
+        "note": "AB : « from the line up and then over » ; MAS p. 79 : même arrivée par le haut à droite"
       }
     },
     "dal": {
@@ -292,7 +327,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK"],
+        "statut": "sur",
+        "sources": ["AB", "SK", "HAR"],
         "lever": true
       },
       "fin": {
@@ -313,6 +349,7 @@
           }
         ],
         "consensus": "fort",
+        "statut": "sur",
         "sources": ["AB", "SK"],
         "lever": true
       }
@@ -333,7 +370,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK"],
+        "statut": "sur",
+        "sources": ["AB", "SK", "HAR"],
         "lever": true
       },
       "fin": {
@@ -353,7 +391,8 @@
             "retours": [[2, 3]]
           }
         ],
-        "consensus": "partiel",
+        "consensus": "fort",
+        "statut": "sur",
         "sources": ["AB", "SK"],
         "lever": true
       }
@@ -387,8 +426,9 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["SK", "AB"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["SK", "AB", "HAR"]
       },
       "debut": {
         "traits": [
@@ -413,6 +453,7 @@
           }
         ],
         "consensus": "partiel",
+        "statut": "probable",
         "sources": ["SK"]
       },
       "milieu": {
@@ -441,6 +482,7 @@
           }
         ],
         "consensus": "partiel",
+        "statut": "probable",
         "sources": ["SK"]
       },
       "fin": {
@@ -474,7 +516,8 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "partiel",
+        "consensus": "fort",
+        "statut": "sur",
         "sources": ["SK", "AB"]
       }
     },
@@ -504,7 +547,9 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK"]
+        "statut": "sur",
+        "sources": ["AB", "SK", "HAR", "MAS"],
+        "note": "MAS p. 48 : « start the loop on the left, in the centre of the letter » ; HAR : 1 boucle par-dessus vers la droite, 2 retour en bas vers la gauche, 3 cuvette"
       },
       "debut": {
         "traits": [
@@ -527,7 +572,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK"]
+        "statut": "sur",
+        "sources": ["AB", "SK", "MAS"]
       },
       "milieu": {
         "traits": [
@@ -553,7 +599,8 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "fort",
+        "consensus": "partiel",
+        "statut": "probable",
         "sources": ["AB"]
       },
       "fin": {
@@ -584,7 +631,8 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "fort",
+        "consensus": "partiel",
+        "statut": "probable",
         "sources": ["AB"]
       }
     },
@@ -617,7 +665,9 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK"]
+        "statut": "sur",
+        "sources": ["AB", "SK", "HAR", "MAS"],
+        "note": "MAS p. 68 : « form the loop at the bottom first in a clockwise direction, and then add the vertical stroke downwards » ; HAR : 1 boucle, 2 base, 3 hampe, 4 point"
       },
       "debut": {
         "traits": [
@@ -645,7 +695,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK"]
+        "statut": "sur",
+        "sources": ["AB", "SK", "MAS"]
       },
       "milieu": {
         "traits": [
@@ -674,7 +725,9 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB"]
+        "statut": "sur",
+        "sources": ["AB", "MAS"],
+        "note": "MAS unité 15 : après une liaison, « loop back over the line before continuing » ; hampe et point après le mot (unité 15)"
       },
       "fin": {
         "traits": [
@@ -705,7 +758,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK"]
+        "statut": "sur",
+        "sources": ["AB", "SK", "MAS"]
       }
     },
     "ayn": {
@@ -730,7 +784,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK", "LIVRE"]
+        "statut": "sur",
+        "sources": ["AB", "SK", "HAR", "PAL", "LIVRE"]
       },
       "debut": {
         "traits": [
@@ -750,7 +805,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK", "LIVRE"]
+        "statut": "sur",
+        "sources": ["AB", "SK", "PAL", "LIVRE"]
       },
       "milieu": {
         "traits": [
@@ -759,18 +815,20 @@
             "type": "corps",
             "pts": [
               [1.0, 0.0],
-              [0.78, 0.04],
-              [0.72, 0.34],
-              [0.55, 0.4],
-              [0.38, 0.36],
-              [0.55, 0.04],
+              [0.85, 0.03],
+              [0.42, 0.38],
+              [0.7, 0.42],
+              [0.8, 0.32],
+              [0.55, 0.05],
               [0.0, 0.0]
             ],
-            "sens_boucle": "antihoraire"
+            "sens_boucle": "horaire"
           }
         ],
-        "consensus": "douteux",
-        "sources": ["AB"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["MAS", "PAL", "AB"],
+        "note": "CORRIGÉ en 2e passe (la 1re passe proposait antihoraire). MAS p. 72 : « Joining from the right you need to curve up slightly, then loop back to the right before continuing curving down again to the left » ; PAL : 1 montée vers le haut-gauche, 2 haut de gauche à droite, 3 descente vers la gauche. AB décrit la forme (pointe à gauche, côté droit arrondi, boucle ouverte), compatible"
       },
       "fin": {
         "traits": [
@@ -779,21 +837,23 @@
             "type": "corps",
             "pts": [
               [1.0, 0.0],
-              [0.82, 0.04],
-              [0.76, 0.34],
-              [0.58, 0.4],
-              [0.42, 0.36],
-              [0.55, 0.06],
-              [0.3, -0.08],
-              [0.24, -0.34],
+              [0.88, 0.03],
+              [0.48, 0.4],
+              [0.76, 0.44],
+              [0.86, 0.34],
+              [0.58, 0.06],
+              [0.3, -0.1],
+              [0.24, -0.36],
               [0.48, -0.48],
               [0.95, -0.5]
             ],
-            "sens_boucle": "antihoraire"
+            "sens_boucle": "horaire (petite boucle) puis antihoraire (cuvette)"
           }
         ],
-        "consensus": "douteux",
-        "sources": ["AB"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["MAS", "PAL", "AB"],
+        "note": "CORRIGÉ en 2e passe ; PAL : 1 montée, 2 haut de gauche à droite, 3 descente dans la cuvette"
       }
     },
     "fa": {
@@ -817,8 +877,10 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["AB", "SK"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "HAR", "MAS", "SK"],
+        "note": "HAR : 1 montée côté gauche de la tête, 2 descente côté droit, 3 ligne, 4 crochet, 5 point ; MAS p. 58 : ف = corps de ب + tête de و"
       },
       "debut": {
         "traits": [
@@ -838,8 +900,10 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["AB", "SK"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "PAL"],
+        "note": "PAL (قـ, même tête) : 1 montée côté gauche, 2 descente côté droit puis liaison"
       },
       "milieu": {
         "traits": [
@@ -859,9 +923,10 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "douteux",
+        "consensus": "partiel",
+        "statut": "probable",
         "sources": ["AB"],
-        "note": "déduit d'AB (la liaison entre au départ de la boucle)"
+        "note": "AB unité 6 : « Start from the connecting segment and loop up to your left and back around to the line and into the connecting segment » (passage trouvé en 2e passe)"
       },
       "fin": {
         "traits": [
@@ -883,8 +948,10 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "douteux",
-        "sources": ["AB"]
+        "consensus": "partiel",
+        "statut": "probable",
+        "sources": ["AB"],
+        "note": "AB : la forme finale « combines the shape of the medial position with the tail of the independent »"
       }
     },
     "qaf": {
@@ -909,8 +976,9 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["AB", "SK"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "HAR", "PAL", "SK"]
       },
       "fin": {
         "traits": [
@@ -933,7 +1001,8 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "douteux",
+        "consensus": "partiel",
+        "statut": "probable",
         "sources": ["AB"]
       }
     },
@@ -965,61 +1034,126 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB"]
+        "statut": "sur",
+        "sources": ["AB", "HAR", "PAL"],
+        "note": "HAR : 1 hampe, 2 base, 3-5 petit signe ; PAL : 1 hampe, 2 base, 3 signe"
       },
       "debut": {
-        "traits": [
-          {
-            "n": 1,
-            "type": "corps",
-            "pts": [
-              [0.45, 0.55],
-              [0.62, 0.25],
-              [0.65, 0.06],
-              [0.5, 0.0],
-              [0.0, 0.0]
-            ]
-          },
-          {
-            "n": 2,
-            "type": "barre",
-            "pts": [
-              [0.98, 0.98],
-              [0.45, 0.55]
+        "variantes": {
+          "corps_puis_barre": {
+            "traits": [
+              {
+                "n": 1,
+                "type": "corps",
+                "pts": [
+                  [0.45, 0.55],
+                  [0.62, 0.25],
+                  [0.65, 0.06],
+                  [0.5, 0.0],
+                  [0.0, 0.0]
+                ]
+              },
+              {
+                "n": 2,
+                "type": "barre",
+                "pts": [
+                  [0.98, 0.98],
+                  [0.45, 0.55]
+                ],
+                "apres": "mot"
+              }
             ],
-            "apres": "mot"
+            "sources": ["AB", "MAS", "BSE"]
+          },
+          "barre_puis_corps": {
+            "traits": [
+              {
+                "n": 1,
+                "type": "barre",
+                "pts": [
+                  [0.98, 0.98],
+                  [0.45, 0.55]
+                ]
+              },
+              {
+                "n": 2,
+                "type": "corps",
+                "pts": [
+                  [0.62, 0.4],
+                  [0.65, 0.06],
+                  [0.5, 0.0],
+                  [0.0, 0.0]
+                ]
+              }
+            ],
+            "sources": ["SK", "PAL"]
           }
-        ],
-        "consensus": "partiel",
-        "sources": ["AB", "SK"],
-        "note": "SK (calame) trace la barre en premier ; au stylo, AB la trace après le mot"
+        },
+        "recommandee": "corps_puis_barre",
+        "recommandation": "adultes au stylo : barre après le squelette du mot, comme les points (AB, MAS p. 66, usage réel BSE) ; l'ordre inverse des cahiers d'enfants (PAL) et du calame (SK) est toléré",
+        "consensus": "divergent",
+        "statut": "divergent",
+        "sources": ["AB", "MAS", "SK", "PAL"]
       },
       "milieu": {
-        "traits": [
-          {
-            "n": 1,
-            "type": "corps",
-            "pts": [
-              [1.0, 0.0],
-              [0.7, 0.02],
-              [0.5, 0.55],
-              [0.68, 0.06],
-              [0.0, 0.0]
+        "variantes": {
+          "corps_puis_barre": {
+            "traits": [
+              {
+                "n": 1,
+                "type": "corps",
+                "pts": [
+                  [1.0, 0.0],
+                  [0.7, 0.02],
+                  [0.5, 0.55],
+                  [0.68, 0.06],
+                  [0.0, 0.0]
+                ],
+                "retours": [[2, 3]]
+              },
+              {
+                "n": 2,
+                "type": "barre",
+                "pts": [
+                  [0.98, 0.98],
+                  [0.5, 0.55]
+                ],
+                "apres": "mot"
+              }
             ],
-            "retours": [[2, 3]]
+            "sources": ["AB", "MAS"]
           },
-          {
-            "n": 2,
-            "type": "barre",
-            "pts": [
-              [0.98, 0.98],
-              [0.5, 0.55]
+          "barre_puis_corps": {
+            "traits": [
+              {
+                "n": 1,
+                "type": "barre",
+                "pts": [
+                  [0.98, 0.98],
+                  [0.5, 0.55]
+                ]
+              },
+              {
+                "n": 2,
+                "type": "corps",
+                "pts": [
+                  [1.0, 0.0],
+                  [0.7, 0.02],
+                  [0.5, 0.55],
+                  [0.68, 0.06],
+                  [0.0, 0.0]
+                ],
+                "retours": [[2, 3]]
+              }
             ],
-            "apres": "mot"
+            "sources": ["SK"]
           }
-        ],
-        "consensus": "partiel",
-        "sources": ["AB"]
+        },
+        "recommandee": "corps_puis_barre",
+        "recommandation": "comme au début",
+        "consensus": "divergent",
+        "statut": "divergent",
+        "sources": ["AB", "MAS", "SK"]
       },
       "fin": {
         "traits": [
@@ -1051,6 +1185,7 @@
           }
         ],
         "consensus": "partiel",
+        "statut": "probable",
         "sources": ["AB"]
       }
     },
@@ -1073,7 +1208,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK"]
+        "statut": "sur",
+        "sources": ["AB", "SK", "HAR"]
       },
       "debut": {
         "traits": [
@@ -1089,6 +1225,7 @@
           }
         ],
         "consensus": "fort",
+        "statut": "sur",
         "sources": ["AB", "SK"]
       },
       "milieu": {
@@ -1107,7 +1244,9 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK"]
+        "statut": "sur",
+        "sources": ["AB", "SK", "MAS"],
+        "note": "MAS unité 12 : « take your pen to the top of the medial and final lām first, before returning down the same path »"
       },
       "fin": {
         "traits": [
@@ -1130,7 +1269,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK"]
+        "statut": "sur",
+        "sources": ["AB", "SK", "MAS"]
       }
     },
     "mim": {
@@ -1153,29 +1293,56 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["AB", "SK"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "MAS", "HAR", "PAL", "SK"]
       },
       "debut": {
-        "traits": [
-          {
-            "n": 1,
-            "type": "corps",
-            "pts": [
-              [0.55, 0.04],
-              [0.58, 0.26],
-              [0.76, 0.34],
-              [0.94, 0.2],
-              [0.84, 0.03],
-              [0.55, 0.02],
-              [0.0, 0.0]
+        "variantes": {
+          "horaire": {
+            "traits": [
+              {
+                "n": 1,
+                "type": "corps",
+                "pts": [
+                  [0.55, 0.04],
+                  [0.58, 0.26],
+                  [0.76, 0.34],
+                  [0.94, 0.2],
+                  [0.84, 0.03],
+                  [0.55, 0.02],
+                  [0.0, 0.0]
+                ],
+                "sens_boucle": "horaire"
+              }
             ],
-            "sens_boucle": "horaire"
+            "sources": ["AB", "MAS", "SK"]
+          },
+          "antihoraire": {
+            "traits": [
+              {
+                "n": 1,
+                "type": "corps",
+                "pts": [
+                  [0.55, 0.02],
+                  [0.85, 0.03],
+                  [0.95, 0.2],
+                  [0.78, 0.34],
+                  [0.58, 0.24],
+                  [0.55, 0.04],
+                  [0.0, 0.0]
+                ],
+                "sens_boucle": "antihoraire"
+              }
+            ],
+            "sources": ["PAL", "AB"]
           }
-        ],
-        "consensus": "partiel",
-        "sources": ["AB", "SK"],
-        "note": "AB admet aussi le sens inverse"
+        },
+        "recommandee": "horaire",
+        "recommandation": "même geste que م seule (une seule boucle à apprendre) ; enseigné par AB (forme principale), MAS p. 41 (« tight clockwise circle ») et SK ; PAL (cahier officiel) part par-dessous en sens inverse, ce qu'AB admet aussi : les deux sont corrects",
+        "consensus": "divergent",
+        "statut": "divergent",
+        "sources": ["AB", "MAS", "SK", "PAL"]
       },
       "milieu": {
         "traits": [
@@ -1197,7 +1364,9 @@
           }
         ],
         "consensus": "partiel",
-        "sources": ["AB"]
+        "statut": "probable",
+        "sources": ["AB"],
+        "note": "PAL ne montre pas la forme médiane, mais sa forme finale a la même entrée et le même sens"
       },
       "fin": {
         "traits": [
@@ -1219,8 +1388,10 @@
             "sens_boucle": "antihoraire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["AB"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "PAL"],
+        "note": "PAL : 1 liaison de droite à gauche, 2 boucle par le bas de gauche à droite (antihoraire), 3 queue vers le bas"
       }
     },
     "ha": {
@@ -1241,8 +1412,10 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "douteux",
-        "sources": ["AB"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["MAS", "PAL", "AB"],
+        "note": "MAS p. 34 : « making sure you move your pen clockwise », départ en haut à droite ; PAL : 1 par-dessus vers la droite, 2 par-dessous vers la gauche ; AB : même geste pour ة. Sert aussi pour ة après une lettre non liante"
       },
       "debut": {
         "traits": [
@@ -1262,8 +1435,10 @@
             ]
           }
         ],
-        "consensus": "partiel",
-        "sources": ["AB"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "MAS", "HAR", "PAL"],
+        "note": "grande boucle en sens horaire, petite boucle intérieure, sortie à gauche (HAR 1-5, PAL 1-3, MAS p. 35)"
       },
       "milieu": {
         "traits": [
@@ -1272,20 +1447,24 @@
             "type": "corps",
             "pts": [
               [1.0, 0.0],
-              [0.65, 0.04],
-              [0.45, 0.4],
-              [0.6, 0.45],
-              [0.55, 0.05],
-              [0.5, -0.25],
+              [0.55, 0.0],
+              [0.58, -0.2],
+              [0.48, -0.32],
               [0.38, -0.2],
-              [0.42, 0.0],
+              [0.45, 0.0],
+              [0.42, 0.25],
+              [0.52, 0.38],
+              [0.62, 0.25],
+              [0.5, 0.02],
               [0.0, 0.0]
-            ]
+            ],
+            "sens_boucle": "horaire (boucle basse puis boucle haute)"
           }
         ],
-        "consensus": "douteux",
-        "sources": [],
-        "note": "forme imprimée à deux boucles : geste non décrit par les sources ; à dessiner sur la police et à faire valider"
+        "consensus": "partiel",
+        "statut": "probable",
+        "sources": ["PAL"],
+        "note": "forme imprimée à deux boucles du cahier : PAL 1 liaison jusqu'au centre, 2 boucle sous la ligne (côté droit vers le bas, puis vers la gauche, remontée), 3 boucle au-dessus de la ligne (côté gauche vers le haut, puis vers la droite, redescente), 4 sortie à gauche. Points de passage à recaler sur la police"
       },
       "fin": {
         "traits": [
@@ -1304,8 +1483,10 @@
             "sens_boucle": "antihoraire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["AB"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "PAL"],
+        "note": "PAL (ـه et ـة) : 1 montée du côté droit, 2 descente du côté gauche ; sert aussi pour ـة"
       }
     },
     "alif": {
@@ -1321,7 +1502,8 @@
           }
         ],
         "consensus": "fort",
-        "sources": ["AB", "SK"],
+        "statut": "sur",
+        "sources": ["AB", "SK", "MAS", "PAL"],
         "lever": true
       },
       "fin": {
@@ -1337,6 +1519,7 @@
           }
         ],
         "consensus": "fort",
+        "statut": "sur",
         "sources": ["AB", "SK"],
         "lever": true
       }
@@ -1361,9 +1544,11 @@
             "sens_boucle": "horaire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["AB", "SK"],
-        "lever": true
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "HAR", "PAL", "MAS"],
+        "lever": true,
+        "note": "HAR et PAL : 1 montée du côté gauche de la tête, 2 descente du côté droit, 3 queue ; MAS p. 21 : départ à droite de la tête"
       },
       "fin": {
         "traits": [
@@ -1385,6 +1570,7 @@
           }
         ],
         "consensus": "partiel",
+        "statut": "probable",
         "sources": ["AB"],
         "lever": true
       }
@@ -1406,29 +1592,15 @@
             "sens_boucle": "antihoraire"
           }
         ],
-        "consensus": "partiel",
-        "sources": ["AB", "LIVRE"]
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "PAL", "LIVRE"],
+        "note": "PAL : 1 « c » depuis le haut à droite, 2 trait de base vers le bas et la gauche"
       }
     },
     "lamalif": {
       "isolee": {
         "variantes": {
-          "un_mouvement": {
-            "traits": [
-              {
-                "n": 1,
-                "type": "corps",
-                "pts": [
-                  [0.8, 1.0],
-                  [0.7, 0.55],
-                  [0.5, 0.05],
-                  [0.4, 0.02],
-                  [0.2, 1.0]
-                ]
-              }
-            ],
-            "sources": ["LIVRE"]
-          },
           "deux_traits": {
             "traits": [
               {
@@ -1448,10 +1620,31 @@
                 ]
               }
             ],
-            "sources": ["AB"]
+            "sources": ["AB", "MAS"]
+          },
+          "un_mouvement": {
+            "traits": [
+              {
+                "n": 1,
+                "type": "corps",
+                "pts": [
+                  [0.8, 1.0],
+                  [0.7, 0.55],
+                  [0.5, 0.05],
+                  [0.4, 0.02],
+                  [0.2, 1.0]
+                ]
+              }
+            ],
+            "sources": [],
+            "note": "non sourcé (seul le livre l07 le dit)"
           }
         },
-        "consensus": "divergent"
+        "recommandee": "deux_traits",
+        "consensus": "fort",
+        "statut": "sur",
+        "sources": ["AB", "MAS"],
+        "note": "AB unité 6 : « When you reach the line, pick up your pen and make a slanted alif stroke into the corner » ; MAS p. 55 : 1 trait courbe de droite, 2 trait de l'alif. Aucune source pour le seul mouvement"
       },
       "fin": {
         "traits": [
@@ -1462,14 +1655,23 @@
               [1.0, 0.0],
               [0.85, 0.02],
               [0.8, 1.0],
-              [0.5, 0.04],
-              [0.2, 1.0]
+              [0.45, 0.04]
+            ]
+          },
+          {
+            "n": 2,
+            "type": "alif",
+            "pts": [
+              [0.15, 1.0],
+              [0.42, 0.04]
             ]
           }
         ],
         "consensus": "douteux",
+        "statut": "insuffisant",
         "sources": [],
-        "lever": true
+        "lever": true,
+        "note": "déduit : montée du lām sur la liaison (règle des hampes), redescente oblique jusqu'au coin, lever, alif de haut en bas. Aucune source ne décrit ـلا"
       }
     }
   },
@@ -1624,38 +1826,62 @@
     "أ": {
       "lecon": "l08",
       "formes": { "isolee": "alif", "debut": "alif.isolee", "milieu": "alif.fin", "fin": "alif" },
-      "marques": [{ "type": "hamza", "nombre": 1, "place": "dessus" }]
+      "marques": [{ "type": "hamza", "nombre": 1, "place": "dessus" }],
+      "statut_marque": "sur (AB, MAS p. 42, PAL)"
     },
     "إ": {
       "lecon": "l08",
       "formes": { "isolee": "alif", "debut": "alif.isolee", "fin": "alif" },
-      "marques": [{ "type": "hamza", "nombre": 1, "place": "dessous" }]
+      "marques": [{ "type": "hamza", "nombre": 1, "place": "dessous" }],
+      "statut_marque": "sur (AB, MAS p. 42)"
     },
     "ة": {
       "lecon": "l15",
       "formes": { "isolee": "ha.isolee", "fin": "ha.fin" },
-      "marques": [{ "type": "point", "nombre": 2, "place": "dessus" }]
+      "marques": [{ "type": "point", "nombre": 2, "place": "dessus" }],
+      "note": "ة après lettre non liante : sur (AB, PAL, MAS p. 37) ; après liaison : sur (AB, PAL)"
     },
-    "ى": { "lecon": "l15", "formes": { "isolee": "ya", "fin": "ya" }, "marques": [] },
+    "ى": {
+      "lecon": "l15",
+      "formes": { "isolee": "ya", "fin": "ya" },
+      "marques": [],
+      "note": "isolée : sur (AB « exactly like final ي, except that it has no dots » + tracé de ي seule attesté par HAR et PAL) ; finale : probable (AB)"
+    },
     "ؤ": {
       "lecon": "l16",
       "formes": { "isolee": "waw", "debut": "waw.isolee", "milieu": "waw.fin", "fin": "waw" },
-      "marques": [{ "type": "hamza", "nombre": 1, "place": "dessus" }]
+      "marques": [{ "type": "hamza", "nombre": 1, "place": "dessus" }],
+      "statut_marque": "sur (support puis hamza : AB, MAS p. 43)"
     },
     "ئ": {
       "lecon": "l16",
       "formes": { "isolee": "ya", "debut": "dent", "milieu": "dent", "fin": "ya" },
       "marques": [{ "type": "hamza", "nombre": 1, "place": "dessus" }],
-      "note": "jamais de points"
+      "note": "jamais de points ; PAL (ئـ) : 1 dent, 2 base, 3-4 hamza",
+      "statut_marque": "sur (AB, PAL)"
     },
     "آ": {
       "lecon": "l16",
       "formes": { "isolee": "alif", "debut": "alif.isolee", "milieu": "alif.fin", "fin": "alif" },
-      "marques": [{ "type": "madda", "nombre": 1, "place": "dessus" }]
+      "marques": [{ "type": "madda", "nombre": 1, "place": "dessus" }],
+      "statut_marque": "probable (AB seule)"
     }
   },
   "ordre_des_marques": {
-    "lettre_seule": "après le corps",
-    "dans_un_mot": "après le squelette du mot entier, de droite à gauche ; puis voyelles, chadda, soukoun, tanwin"
+    "lettre_seule": "après le corps (sur : AB, MAS, HAR, PAL)",
+    "dans_un_mot": "après le squelette du mot entier, de droite à gauche ; puis voyelles, chadda, soukoun, tanwin (sur : AB, MAS p. 50 et 66, BSE)"
+  },
+  "statuts_resume": {
+    "unite": "forme distincte d'une lettre (4 formes pour les lettres liantes, 2 pour ا د ذ ر ز و), plus les formes spéciales",
+    "28_lettres": { "sur": 80, "probable": 17, "divergent": 3, "insuffisant": 0, "total": 100 },
+    "formes_speciales": {
+      "sur": 13,
+      "probable": 5,
+      "divergent": 0,
+      "insuffisant": 1,
+      "total": 19,
+      "detail": "ء ; أ إ (2 formes chacune) ; ؤ (2) ; ئ (4) ; آ (2) ; ة (2) ; ى (2) ; لا (2)"
+    },
+    "total": { "sur": 93, "probable": 22, "divergent": 3, "insuffisant": 1, "total": 119 }
   }
 }

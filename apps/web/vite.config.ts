@@ -52,11 +52,17 @@ function aLaDemande(nom: string, VIV: RegExp): Plugin {
       for (const c of chunks) if (!viv.has(c.fileName)) for (const i of c.imports) viv.delete(i);
       const files = chunks
         .filter((c) => viv.has(c.fileName))
-        .flatMap((c) => [
-          c.fileName,
-          ...((c as { viteMetadata?: { importedCss?: Set<string> } }).viteMetadata?.importedCss ??
-            []),
-        ]);
+        .flatMap((c) => {
+          const meta = (
+            c as { viteMetadata?: { importedCss?: Set<string>; importedAssets?: Set<string> } }
+          ).viteMetadata;
+          // feuilles importées, et feuilles reliées à la demande (`…css?url`, vidéos vivantes)
+          return [
+            c.fileName,
+            ...(meta?.importedCss ?? []),
+            ...[...(meta?.importedAssets ?? [])].filter((f) => f.endsWith('.css')),
+          ];
+        });
       this.emitFile({
         type: 'asset',
         fileName: `_app/${nom}.json`,
