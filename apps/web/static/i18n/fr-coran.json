@@ -294,5 +294,7 @@
   "cl.sans_silence": "Sans silence",
   "cl.a_vous": "À vous de répéter",
   "cl.partie": "Une partie du verset",
-  "cl.partie_indispo": "Option désactivée : ce récitateur n'a pas encore de minutage mot par mot. Le verset entier est répété."
+  "cl.partie_indispo": "Option désactivée : ce récitateur n'a pas encore de minutage mot par mot. Le verset entier est répété.",
+  "ca.recul": "Reculer de {s} secondes",
+  "ca.avance": "Avancer de {s} secondes"
 }

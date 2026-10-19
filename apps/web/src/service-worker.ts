@@ -30,8 +30,12 @@ const CACHE = `${PREFIXE_COQUILLE}${version}`;
 const SHELL = '/';
 // lot 25 : les catalogues de langues (/i18n/*.json) ne sont pas préchargés : seul celui qui sert est gardé
 const isCatalog = (p: string) => p.startsWith('/i18n/');
+// 19/10/2026 : les catalogues sont demandés sous `/i18n/<version>/…` (voir `catalogUrl` dans lib/i18n) : cette version
+// ne sert et ne garde QUE les catalogues de sa version, et une version précédente du worker, qui cherche dans son
+// cache par adresse, ne retrouve jamais un ancien catalogue pour le nouveau code
+const vers = (p: string) => p.replace('/i18n/', `/i18n/${version}/`);
 // A37/A39 : textes légaux hors coquille, copiés après l'activation (voir legalCopy)
-const LEGAL = ['/i18n/legal/fr.json', '/i18n/legal/en.json'];
+const LEGAL = ['/i18n/legal/fr.json', '/i18n/legal/en.json'].map(vers);
 // lot 29 : les annotations du tajwid (une par sourate) ne sont pas préchargées : chargées à la demande et
 // gardées dans IndexedDB par l'application (hors ligne ensuite)
 const isTajwid = (p: string) => p.startsWith('/tajwid/');
@@ -58,7 +62,7 @@ const ASSETS = [
   ...files.filter(
     (f) =>
       !f.endsWith('.txt') &&
-      (!isCatalog(f) || STUDENT_TEXTS.includes(f)) &&
+      !isCatalog(f) &&
       !isTajwid(f) &&
       !isTraduction(f) &&
       !isRiwaya(f) &&
@@ -69,6 +73,8 @@ const ASSETS = [
       // page d'accueil publique (visiteurs sans compte) : jamais sur l'appareil de l'élève
       !f.startsWith('/accueil.'),
   ),
+  // textes préchargés de l'élève : ceux de CETTE version (copiés sous /i18n/<version>/ à la construction)
+  ...STUDENT_TEXTS.map(vers),
 ];
 
 /**
@@ -98,14 +104,21 @@ async function horsEleve(): Promise<Set<string>> {
  * A21b : code des leçons vivantes (générateurs, lecteur, modèles ; liste écrite à la construction par
  * vite.config.ts) — pas dans la coquille ; gardé dans le cache de cette version au premier usage ou au
  * téléchargement d'un niveau d'arabe (voir le traitement des fichiers non préchargés plus bas).
+ * 19/10/2026 : même traitement pour le LECTEUR AUDIO (`/_app/lecteur.json`), chargé au premier appui sur « Écouter »
+ * et gardé avec l'audio d'un niveau téléchargé ; il ne pèse donc pas sur l'appareil de l'élève avant son premier usage.
  */
 async function vivante(): Promise<Set<string>> {
-  try {
-    const r = await fetch('/_app/vivante.json', { cache: 'no-store' });
-    return new Set(r.ok ? ((await r.json()) as string[]).map(String) : []);
-  } catch {
-    return new Set();
-  }
+  const listes = await Promise.all(
+    ['/_app/vivante.json', '/_app/lecteur.json'].map(async (u) => {
+      try {
+        const r = await fetch(u, { cache: 'no-store' });
+        return r.ok ? ((await r.json()) as string[]).map(String) : [];
+      } catch {
+        return [];
+      }
+    }),
+  );
+  return new Set(listes.flat());
 }
 
 sw.addEventListener('install', (event) => {

@@ -4,7 +4,7 @@
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
-  import { audioDe, jouerAudio } from './audio';
+  import { audioDe, ecouter } from './audio';
   import { arSimple, type Phrase, type Public } from './donnees';
   import {
     apresEval,
@@ -105,7 +105,8 @@
           type="button"
           data-testid="mj-ecouter"
           data-audio={audio}
-          onclick={() => void jouerAudio(audio).catch(() => false)}
+          data-lecteur="m"
+          onclick={(e) => void ecouter(e.currentTarget).catch(() => undefined)}
           ><Icon name="oreille" /><Bidi text={t('audio.ecouter')} /></button
         >
       </p>

@@ -236,8 +236,9 @@ test('hors ligne de l’élève complet ; pages rares et du personnel jamais pr�
   });
   const exclus = [...g.personnel!, ...g.rares!, ...g.enLigne!];
   expect(cached.filter((p) => exclus.includes(p))).toEqual([]);
-  expect(cached).toContain('/i18n/fr-quotidien.json');
-  expect(cached).not.toContain('/i18n/fr-rares.json');
+  // catalogues versionnés (/i18n/<version>/…) : ceux de l'élève sont préchargés, ceux des pages rares jamais
+  expect(cached.some((p) => /^\/i18n\/[^/]+\/fr-quotidien\.json$/.test(p))).toBe(true);
+  expect(cached.some((p) => /^\/i18n\/(?:[^/]+\/)?fr-rares\.json$/.test(p))).toBe(false);
 
   // sans réseau : chaque espace de l'élève s'ouvre (aucune page d'erreur)
   await context.setOffline(true);

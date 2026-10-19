@@ -190,7 +190,8 @@ describe('fonctions', () => {
     );
     expect(statics).toEqual(['fr']);
     // lot 25 : catalogues hors du paquet JavaScript (fichiers statiques), jamais préchargés par le service worker
-    expect(src).toContain('fetch(`/i18n/${code}.json`)');
+    expect(src).toContain('fetch(catalogUrl(code))');
+    expect(src).toContain('`/i18n/${encodeURIComponent(version)}/`');
     for (const l of LOCALES.filter((x) => x.code !== 'fr'))
       expect(statSync(join(STATIC, `${l.code}.json`)).isFile(), l.code).toBe(true);
     const sw = readFileSync(join(SRC, 'service-worker.ts'), 'utf8');

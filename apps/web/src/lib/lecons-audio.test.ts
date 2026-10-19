@@ -39,7 +39,7 @@ describe('A3 — boutons « écouter » des leçons', () => {
     expect(recitationQuery(undefined)).toBeNull();
   });
 
-  it('lecture lente à 0,8', () => expect(SLOW_RATE).toBe(0.8));
+  it('lecture lente à 0,75 (la plus basse vitesse du lecteur)', () => expect(SLOW_RATE).toBe(0.75));
 
   it('lecture graduée : la page entière, lignes jointes (clé du moteur des livres)', () => {
     const page = 'فِي السُّوقِ تَمْرٌ. | السُّوقُ قَرِيبٌ.';

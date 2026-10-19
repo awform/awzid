@@ -13,6 +13,7 @@
 // lot F2 : formateur ICU minimal à la place d'intl-messageformat (même résultat, contrôlé par icu.test.ts)
 import { formatIcu } from './icu';
 import fr from './messages/fr.json';
+import { revision } from './revision.svelte';
 
 export type Messages = Record<string, string>;
 
@@ -42,8 +43,24 @@ export const LOCALES: readonly LocaleInfo[] = [
  */
 const CATALOG: Record<string, Messages> = { fr };
 export type CatalogFetcher = (code: string) => Promise<Messages>;
+
+/**
+ * 19/10/2026 — UNE version de l'application charge TOUJOURS le catalogue qui lui correspond. Les catalogues sont
+ * demandés sous `/i18n/<version>/<nom>.json` (copie faite à la construction, `scripts/catalogues.mjs`) : l'adresse
+ * change à chaque version, donc ni le service worker d'une version précédente (qui cherche dans son cache par
+ * adresse), ni le cache HTTP ne peuvent répondre avec un ancien catalogue au nouveau code (incident du 19/10 :
+ * clés brutes `⟦id.google⟧` sur un téléphone resté sur l'ancienne version). Sans version (développement, tests) :
+ * adresse simple. La version est donnée par `hooks.client.ts` (`$app/environment`).
+ */
+let catalogBase = '/i18n/';
+export function setCatalogVersion(version: string | null | undefined): void {
+  catalogBase = version ? `/i18n/${encodeURIComponent(version)}/` : '/i18n/';
+}
+/** Adresse d'un catalogue (« en », « fr-rares », « legal/fr »). */
+export const catalogUrl = (name: string) => `${catalogBase}${name}.json`;
+
 const fetchCatalog: CatalogFetcher = async (code) => {
-  const r = await fetch(`/i18n/${code}.json`);
+  const r = await fetch(catalogUrl(code));
   if (!r.ok) throw new Error(`catalogue ${code} : ${r.status}`);
   return (await r.json()) as Messages;
 };
@@ -92,12 +109,17 @@ export const SPACE_CATALOGS = [
   'madjaliss',
   // Douas (phase 1) : textes de l'onglet (`do.*`), chargés par `/vivre/douas`, gardés au premier usage
   'douas',
+  // lecteur audio des phrases (19/10/2026) : textes `lec.*`, chargés avec le lecteur au premier appui sur « Écouter »
+  'lecteur',
 ] as const;
 const loadedTexts = new Map<string, Promise<void>>();
+/** espaces dont les textes ont été demandés (pour les recharger si une clé manque) */
+const demandes = new Set<string>();
 export function loadTexts(
   name: (typeof SPACE_CATALOGS)[number],
   fetcher: CatalogFetcher = fetchCatalog,
 ): Promise<void> {
+  demandes.add(name);
   let p = loadedTexts.get(name);
   if (!p) {
     p = fetcher(`fr-${name}`)
@@ -142,10 +164,57 @@ export function detectLocale(preferred: readonly string[] = [], includeDrafts = 
   return FALLBACK;
 }
 
-/** Message traduit ; repli sur le français, puis sur la clé (signalée) si le message manque. */
+/**
+ * Clé manquante. Développement et tests (`strict`, par défaut) : la clé est montrée entre ⟦ ⟧ pour qu'on la voie.
+ * Production (`hooks.client.ts`) : JAMAIS une clé brute devant l'élève — le texte français par défaut est cherché
+ * (le catalogue français contient tous les espaces chargés), à défaut le texte reste vide le temps de recharger les
+ * catalogues de l'application (une fois), puis s'affiche en français sans recharger la page. Les clés manquantes sont
+ * gardées (`clesManquantes()`, `window.__awzidManques`) pour les tests et le diagnostic.
+ */
+let strict = true;
+export function setStrictKeys(on: boolean): void {
+  strict = on;
+}
+const manques = new Set<string>();
+export const clesManquantes = () => [...manques];
+let enCours: Promise<void> | null = null;
+let dernierEssai = 0;
+
+/**
+ * Recharge les catalogues français — ceux déjà demandés ET tous les autres espaces, car la clé manquante peut appartenir à un espace que la page n'a pas chargé — (adresse de CETTE version) ; les textes frais l'emportent et les
+ * écrans affichés se mettent à jour. Une seule récupération à la fois ; automatique au plus toutes les 30 secondes
+ * (hors ligne, une clé manquante ne déclenche pas une rafale de demandes).
+ */
+export function guerir(fetcher: CatalogFetcher = fetchCatalog): Promise<void> {
+  if (enCours) return enCours;
+  dernierEssai = Date.now();
+  enCours = Promise.all(
+    [...new Set([...demandes, ...SPACE_CATALOGS])].map((n) =>
+      fetcher(`fr-${n}`)
+        .then((m) => void Object.assign(CATALOG.fr!, m))
+        .catch(() => undefined),
+    ),
+  ).then(() => {
+    revision.n += 1;
+    enCours = null;
+  });
+  return enCours;
+}
+
+function clePerdue(key: string): string {
+  manques.add(key);
+  if (typeof window !== 'undefined')
+    (window as unknown as { __awzidManques?: string[] }).__awzidManques = [...manques];
+  if (strict) return `⟦${key}⟧`;
+  if (typeof fetch !== 'undefined' && Date.now() - dernierEssai > 30_000) void guerir();
+  return '';
+}
+
+/** Message traduit ; repli sur le français, puis (voir ci-dessus) si le message manque. */
 export function t(key: string, values?: Record<string, unknown>): string {
+  void revision.n; // une fois les textes rechargés, les écrans déjà affichés se mettent à jour
   const msg = CATALOG[current]?.[key] ?? CATALOG[FALLBACK]?.[key];
-  if (msg === undefined) return `⟦${key}⟧`;
+  if (msg === undefined) return clePerdue(key);
   // lot F2 : formateur ICU minimal (arguments, pluriels), identique à intl-messageformat sur nos catalogues
   return formatIcu(msg, current, values ?? {});
 }
