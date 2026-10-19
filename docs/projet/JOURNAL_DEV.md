@@ -9,6 +9,33 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 19/10/2026 — File de fusion : `lecteur-audio-wip` FUSIONNÉE et poussée ; `refonte-wip` BLOQUÉE par le budget de poids (non poussée)
+
+Départ : `main` 61060e7 (inchangé depuis la création des deux branches). Rien déployé, `awzid-beta` non touché. Non touché : `infra/charge/purger-comptes-fictifs.sh` (modifié sans commit dans `~/awform-demo`), les autres worktrees et branches.
+
+- **1. `lecteur-audio-wip`** (de9bfc6) → **`6000003`** (fusion `--no-ff`, sans conflit), poussée vers origin. Étiquette locale `avant-lecteur-audio` = 61060e7.
+  - build, typecheck, eslint, prettier : 0 erreur. Budget : appareil élève 346,2 Ko, **marge 3,8 Ko** ; `/coran/lecteur` **149,5 Ko** ; première ouverture 113,3 Ko.
+  - Unitaires : 2 378 réussis, 1 ignoré, 1 échec `beta-infra` « essai LOCAL de Caddy » — instable préexistant : échoue aussi 2 fois sur 2 sur 61060e7 (contrôle tiré au hasard : CSP de `api/*`, `/api`, `documents/*`, CORP), passe à la relance (VM chargée, charge 12-15 sur 8 cœurs).
+  - e2e COMPLÈTE (`flock`, `--retries=1 --workers=3`, 25,9 min) : **824 réussis, 148 ignorés, 0 échec, 0 instable**.
+- **2. `refonte-wip`** (6088375) → fusion **`570040e`** + correctif **`b51a6fb`**, gardés sur la branche locale **`fusion-lecteur-refonte-wip`** ; `main` laissé à 6000003.
+  - Conflits résolus en gardant les deux : `SPACE_CATALOGS` (« lecteur » et « design ») ; catalogues ar, de, en, es (fusion à trois par clé : `lec.*`, `ca.*` et `v4.*`, `fn.design_v4`) ; journal ; rapport de budget. `vite.config.ts` et `budget.mjs` : fusion automatique (exclusion de `cards` du morceau commun + lecteur à la demande). `fr-design.json` est copié sous `/i18n/<version>/` par `scripts/catalogues.mjs` (vérifié).
+  - Conflits de sens trouvés par les tests : (a) e2e refonte-v4 « repli » bloquait `**/i18n/fr-design.json`, adresse devenue `/i18n/<version>/fr-design.json` → expression régulière (dans 570040e) ; (b) `chargerV4` détectait les textes absents par `t(…).startsWith('⟦')`, or en production `t` rend désormais un texte vide → l'écran v4 s'affichait sans textes au lieu de l'ancien design ; nouvelle fonction `texteExiste` (b51a6fb). Après correctif : refonte-v4 + catalogues-version 10 réussis, 2 ignorés.
+  - build, typecheck, eslint, prettier : 0 erreur ; unitaires **2 389 réussis, 1 ignoré**. e2e complète NON lancée (budget bloquant).
+  - **Budget dépassé** : `/coran/lecteur` **150,1 Ko** (> 150), marge appareil élève 3,9 Ko. Cause : la refonte sort `cards.ts` du morceau commun, mais `fsrs.ts` (importé par les seules cartes, désormais 3 importeurs) y entre (+2,9 Ko rendus, sur toutes les pages) ; s'ajoute le code du lecteur dans `lib/i18n` (+1,2 Ko rendus).
+  - Correctifs essayés (constructions complètes, `pnpm budget`) ; chaque découpage coûte à l'appareil de l'élève (petits fichiers moins bien compressés, noms d'exports du morceau commun réattribués) :
+
+    | Essai | `/coran/lecteur` | Marge appareil |
+    |---|---|---|
+    | aucun | 150,1 Ko ✗ | 3,9 Ko |
+    | `fsrs` avec `cards` (hors commun) | 149,6–149,7 Ko | 3,0 Ko, puis < 3,0 sur 2 constructions ✗ |
+    | menu du verset à la demande | 148,8 Ko | 2,6 Ko ✗ |
+    | panneau Réglages du lecteur à la demande | 143,7 Ko | 1,1 Ko ✗ |
+    | `ExamExercise` hors commun | 152,2 Ko ✗ | 0,3 Ko ✗ |
+
+  - **À décider** : pas de correctif propre tenant les deux limites ; aucune limite relevée. Voir le compte rendu au chef de projet (pistes : catalogue français de base `messages/fr.json`, 79 Ko rendus dans le morceau commun ; ou arbitrage d'une limite).
+
+---
+
 ## 19/10/2026 — Lecteur audio des phrases et correctif des clés brutes `⟦id.google⟧` (branche `lecteur-audio-wip`, depuis `main` 61060e7)
 
 Rien fusionné dans `main`, rien déployé, serveur public non touché. Aucun secret lu, aucun compte réel (comptes de test seulement).
