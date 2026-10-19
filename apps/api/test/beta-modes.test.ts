@@ -392,7 +392,10 @@ describe.skipIf(!URL)('Bêta : trois modes, plafond, vérification, tableau (awf
       'voix',
       'stockage',
       'avis',
+      // 19/10/2026 : tuteur de conversation (dépense du mois, plafonds réglables, changement daté)
+      'tuteur_ia',
     ]);
+    expect(d.tuteurIa).toMatchObject({ plafondMoisEur: 10, seuils: [] });
     // 90 % du plafond et plus : alerte « plafond_proche » ; plein : « plafond_atteint »
     expect(d.alertes.map((a: { code: string }) => a.code)).toContain('plafond_proche');
     await signup(addr('t'));

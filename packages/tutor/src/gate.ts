@@ -89,6 +89,9 @@ export function setupTutor(env: NodeJS.ProcessEnv = process.env): TutorSetup {
   const mf = modelFor(env);
   if (mode === 'simule') return { mode, provider: new SimulatedProvider(), modelFor: mf };
   if (mode === 'local') return { mode, provider: null, modelFor: mf };
+  // 19/10/2026 : « vertex » sert le tuteur de CONVERSATION (conversation/setup.ts) ; le tuteur des leçons reste
+  // alors local (banque d'explications validées), sans modèle
+  if (env.AWFORM_TUTEUR === 'vertex') return { mode: 'local', provider: null, modelFor: mf };
   if (mode !== 'claude') return { mode: 'off', provider: null, modelFor: mf };
   if (!env.ANTHROPIC_API_KEY)
     return { mode: 'local', provider: null, blocked: 'claude_bloque_cle_absente', modelFor: mf };

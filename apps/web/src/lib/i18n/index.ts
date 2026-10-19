@@ -92,6 +92,8 @@ export const SPACE_CATALOGS = [
   'madjaliss',
   // Douas (phase 1) : textes de l'onglet (`do.*`), chargés par `/vivre/douas`, gardés au premier usage
   'douas',
+  // 19/10/2026 : tuteur IA de conversation (`tuia.*`), chargés par la page `/tuteur`, jamais préchargés
+  'tuteur',
 ] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 export function loadTexts(

@@ -36,6 +36,8 @@ export const RARE_ROUTES = [
   '/ma-classe',
   // D2 : choix du récitateur, crédits et contrôle parental (le choix et la liste viennent du serveur)
   '/coran/recitateurs',
+  // 19/10/2026 : tuteur IA de conversation (écoute et modèle sur le serveur : en ligne seulement)
+  '/tuteur',
 ];
 /** Pages de l'élève gardées au premier usage (hors ligne ensuite), jamais préchargées. */
 export const PREMIER_USAGE_ROUTES = ['/madjaliss'];
@@ -61,6 +63,8 @@ export const EN_LIGNE_MODULES = [
   /src\/lib\/douas\/DouasVue\.svelte$/,
   // 18/10/2026 : identités (Google, numéro WhatsApp, codes de récupération) : écrans en ligne, à la demande
   /src\/lib\/identites\/[A-Za-z]+\.svelte$/,
+  // 19/10/2026 : écran du tuteur IA de conversation (micro, API), à la demande
+  /src\/lib\/tuteur-ia\/TuteurVue\.svelte$/,
 ];
 
 const under = (r, prefixes) => prefixes.some((p) => r === p || r.startsWith(`${p}/`));

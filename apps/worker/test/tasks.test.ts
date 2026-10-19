@@ -38,6 +38,7 @@ describe.skipIf(!URL_)('purge de la nuit', () => {
         'certificatsReduits',
         'comptes',
         'conservation',
+        'depenseTuteur',
         'f5',
         'journalTuteur',
         'listeAttente',

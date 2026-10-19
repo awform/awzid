@@ -18,6 +18,7 @@ export const FONCTION_CLES = [
   'recitateurs_en_ligne',
   'mushaf_exact',
   'tuteur',
+  'tuteur_ia',
   'vivre_islam',
   'vivre_defi',
   'certificats',
@@ -61,6 +62,9 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   mushaf_exact: { defaut: 'on' },
   // tuteur (lot 9) : panneau des leçons, questions à l'enseignant
   tuteur: { defaut: 'on' },
+  // tuteur IA de conversation (19/10/2026, TUTEUR_IA.md) : dialogue guidé (écoute locale) et conversation libre (Gemini) ;
+  // canal bêta d'abord ; l'API exige en plus AWFORM_TUTEUR, l'âge, le niveau et l'accord parental
+  tuteur_ia: { defaut: 'beta' },
   // onglet « Vivre l'islam » (A37)
   vivre_islam: { defaut: 'on' },
   // défis des fiches « Vivre l'islam »

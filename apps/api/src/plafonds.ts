@@ -11,7 +11,8 @@
  *     3 Mo au plus et effacée sous 30 jours ; avis et signalements : 5 par jour et par compte, captures 400 Ko, 90 jours.
  */
 import { and, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
-import { schema as t, type Db } from '@awform/db';
+import { etatDepense, moisCle, schema as t, seuilsDuMois, type Db } from '@awform/db';
+import { plafondsDepuisEnv } from '@awform/tutor';
 import { coutsCoupes, ECOUTE_PAR_HEURE } from './ecoute-ia.js';
 
 export const STOCKAGE_PAR_ELEVE_OCTETS =
@@ -125,5 +126,44 @@ export async function coutsDuJour(db: Db): Promise<CoutsDuJour> {
     estimeJourEur: Math.round((fixeJourEur + tuteurUsd * USD_EUR) * 100) / 100,
     seuilAlerteEur,
     fonctionsCoupees: coutsCoupes(),
+  };
+}
+
+/**
+ * Tuteur de CONVERSATION (19/10/2026) : dépense du mois et du jour, plafonds (réglables par l'environnement, avec
+ * changement daté), seuils d'alerte franchis (50, 80, 100 % par défaut) — pour le tableau de bord de l'administrateur.
+ * La coupure est automatique (l'API refuse avant l'appel) ; ces alertes s'ajoutent à celles du budget Google Cloud.
+ */
+export async function budgetTuteurIa(db: Db, now = new Date()) {
+  const p = plafondsDepuisEnv(process.env, now);
+  const fournisseur = process.env.AWFORM_TUTEUR === 'vertex' ? 'vertex' : 'simule';
+  const d = await etatDepense(db, null, fournisseur, now);
+  const seuils = (await seuilsDuMois(db, moisCle(now))).map((s) => s.seuil);
+  const eur = (m: number) => Math.round(m / 10_000) / 100;
+  const haut = Math.max(0, ...seuils);
+  const alertes: Array<{ code: string; niveau: 'info' | 'attention' | 'critique' }> =
+    haut >= 100
+      ? [{ code: 'tuteur_ia_100', niveau: 'critique' }]
+      : haut >= 80
+        ? [{ code: 'tuteur_ia_80', niveau: 'attention' }]
+        : haut >= 50
+          ? [{ code: 'tuteur_ia_50', niveau: 'info' }]
+          : [];
+  return {
+    resume: {
+      fournisseur,
+      moisEur: eur(d.moisMicros),
+      jourEur: eur(d.jourMicros),
+      plafondMoisEur: p.moisEur,
+      plafondJourEur: eur(p.jourMicros),
+      minutesEleveJour: Math.round(p.eleveSecondesJour / 60),
+      changement: p.changement ?? null,
+      seuils,
+    },
+    plafond: {
+      cle: 'tuteur_ia',
+      valeur: `${eur(d.moisMicros)} € / ${p.moisEur} € ce mois-ci, ${eur(p.jourMicros)} € / jour, ${Math.round(p.eleveSecondesJour / 60)} min / élève / jour${p.changement ? ` (${p.changement.eur} € / mois à partir du ${p.changement.date})` : ''}`,
+    } satisfies PlafondInfo,
+    alertes,
   };
 }

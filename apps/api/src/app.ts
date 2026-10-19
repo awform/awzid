@@ -39,6 +39,7 @@ import { registerLeconsAudio } from './lecons-audio.js';
 import { registerMushafExact } from './mushaf-exact.js';
 import { registerContent } from './contenu.js';
 import { registerConversation } from './conversation.js';
+import { registerTuteurIa, type OptionsTuteurIa } from './tuteur-ia.js';
 import { registerQuotidien } from './quotidien.js';
 import { notFound } from './routes-common.js';
 import { registerProgress } from './progression.js';
@@ -78,6 +79,8 @@ export interface AppOptions {
   secretKey?: Buffer | null;
   /** tuteur (tests) ; sinon AWFORM_TUTEUR */
   tutor?: TutorSetup;
+  /** tuteur de conversation (tests : fournisseur, écoute, environnement des plafonds) ; sinon AWFORM_TUTEUR */
+  tuteurIa?: OptionsTuteurIa;
   /** clé de chiffrement des récitations envoyées (tests) ; sinon AWFORM_RECITATION_KEY ; null : envoi fermé */
   recitationKey?: RecitationKey | null;
   /** clé de chiffrement des messages (tests) ; sinon AWFORM_MESSAGE_KEY ; null : messagerie fermée */
@@ -337,6 +340,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerContent(app, db, edition, rights);
   // A26b : scénarios « Je parle » (droits des leçons, parcours, interrupteur `conversation`)
   registerConversation(app, db, edition, rights);
+  // 19/10/2026 : tuteur IA de conversation (étage 1 guidé et local, étage 2 libre avec Gemini ; TUTEUR_IA.md)
+  registerTuteurIa(app, db, edition, rights, opts.tuteurIa);
   // A12 : adhkār des livres (espace « Au quotidien »), public et sans donnée de l'utilisateur
   registerQuotidien(app, db, edition);
   registerProgress(app, db, edition);

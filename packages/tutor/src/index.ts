@@ -12,3 +12,4 @@ export { SimulatedProvider, HostileProvider } from './providers/simule.js';
 export { ClaudeProvider } from './providers/claude.js';
 export { FIXTURE, generateCases, type EvalCase, type Family } from './evals/cases.js';
 export { runBattery, batteryMarkdown, type BatteryResult, type Criterion } from './evals/run.js';
+export * from './conversation/index.js';

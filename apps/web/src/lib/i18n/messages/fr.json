@@ -1331,5 +1331,6 @@
   "bandeau.texte": "Version bêta — le contenu religieux est tranché par le référent selon l’école mālikite, sources citées, en attente de relecture.",
   "bandeau.fermer": "Fermer ce message",
   "bandeau.aria": "Information sur la version bêta",
-  "erreur.acces_ferme": "Le service est momentanément fermé. Réessayez plus tard."
+  "erreur.acces_ferme": "Le service est momentanément fermé. Réessayez plus tard.",
+  "tuia.ouvrir": "Parler avec le tuteur"
 }

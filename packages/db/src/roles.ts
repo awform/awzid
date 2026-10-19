@@ -161,6 +161,10 @@ export const API_GRANTS: Record<string, Right[]> = {
   phone_challenge: ALL,
   recovery_code: ALL,
   account_identity: ALL,
+  // 19/10/2026 : tuteur de conversation — registre de dépense (réservation puis solde ; jamais effacé par l'API)
+  // et seuils d'alerte franchis (ajout seul)
+  tutor_spend: RIU,
+  tutor_budget_alert: RI,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */
@@ -196,6 +200,9 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
   waitlist: ['DELETE'],
   // 18/10/2026 : vérifications de numéro effacées après 24 h (elles contiennent le numéro chiffré)
   phone_challenge: ['DELETE'],
+  // 19/10/2026 : tuteur de conversation — registre de dépense et alertes effacés après 400 jours
+  tutor_spend: ['DELETE'],
+  tutor_budget_alert: ['DELETE'],
 };
 
 /** Droits par COLONNE du travailleur (ni pseudonyme ni année de naissance : seulement le lien au compte). */
@@ -216,6 +223,8 @@ export const WORKER_COLUMN_GRANTS: Record<string, string[]> = {
   problem_report: ['created_at', 'capture_type', 'status'],
   waitlist: ['created_at'],
   phone_challenge: ['created_at'],
+  tutor_spend: ['created_at'],
+  tutor_budget_alert: ['created_at'],
 };
 
 /**

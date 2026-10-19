@@ -12,6 +12,7 @@ import {
   purgeProblemes,
   purgeRetention,
   purgeTutorLog,
+  purgeTuteurDepense,
   type Db,
 } from '@awform/db';
 
@@ -58,5 +59,8 @@ export async function nightlyPurge(db: Db, now = new Date()) {
     listeAttente: await purgeListeAttente(db, now),
     // 18/10/2026 : vérifications de numéro (numéro chiffré, empreintes des codes) : 72 h
     verificationsNumero: await purgePhoneChallenges(db, now),
+    // 19/10/2026 : tuteur de conversation — registre de dépense et seuils d'alerte : 400 jours (échanges : 90 jours,
+    // dans journalTuteur)
+    depenseTuteur: await purgeTuteurDepense(db, now),
   };
 }

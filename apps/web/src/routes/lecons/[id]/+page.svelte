@@ -1038,6 +1038,12 @@
         unitId={u.id}
         {profileId}
       />{/if}
+    <!-- 19/10/2026 : tuteur IA de conversation (page en ligne, chargée à la demande) -->
+    {#if !isEval && profileId && fn('tuteur_ia') && aUnScenario(u.id)}<p class="tuia-lien">
+        <a href={resolve('/tuteur/[unit]', { unit: u.id })} data-testid="tuia-ouvrir"
+          >{t('tuia.ouvrir')}</a
+        >
+      </p>{/if}
   </section>
 {/snippet}
 

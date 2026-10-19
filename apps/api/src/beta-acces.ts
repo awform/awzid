@@ -66,7 +66,7 @@ import { audit, hasRole, lockedUntil, recordFailure } from './auth/service.js';
 import { err, UUID } from './guards.js';
 import type { Mailer } from './mail/envoi.js';
 import { renderMail } from './mail/modeles.js';
-import { coutsDuJour, listePlafonds, tableauComptes } from './plafonds.js';
+import { budgetTuteurIa, coutsDuJour, listePlafonds, tableauComptes } from './plafonds.js';
 import { lienWhatsapp, masquerTelephone, normaliserTelephone } from '@awform/school/telephone';
 import { dechiffrer, phoneHashOf, chiffrer } from './identites/cles.js';
 import { consommerDefi, enAttenteManuelle, envoisDuJour, type CtxTel } from './identites/defis.js';
@@ -517,7 +517,11 @@ export function registerBetaAcces(
     else if (telephone?.envoi && telephone.envoisJour >= telephone.plafondJour * 0.8)
       alertes.push({ code: 'tel_plafond_proche', niveau: 'attention' });
     if ((telephone?.aValider ?? 0) > 0) alertes.push({ code: 'tel_a_valider', niveau: 'info' });
+    // 19/10/2026 : tuteur de conversation — dépense, plafonds réglables, seuils franchis (50 / 80 / 100 %)
+    const tuteurIa = await budgetTuteurIa(db);
+    alertes.push(...tuteurIa.alertes);
     return {
+      tuteurIa: tuteurIa.resume,
       telephone,
       mode: modeDe(acces),
       verification: acces.verification,
@@ -525,7 +529,7 @@ export function registerBetaAcces(
       comptes: { ...comptes, plafond: acces.plafond, pourcentPlafond: pct },
       attente: { enAttente: attente.en_attente ?? 0, invitationsActives: invitations },
       couts,
-      plafonds: listePlafonds(),
+      plafonds: [...listePlafonds(), tuteurIa.plafond],
       alertes,
       // « Origine des demandes » : agrégats par provenance (?src=), sans adresse
       origines: await originesDemandes(db),

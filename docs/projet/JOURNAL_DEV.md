@@ -9,6 +9,54 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 19/10/2026 — Tuteur IA de conversation : architecture et prototype SIMULÉ (branche `tuteur-ia-wip`, depuis `main` 61060e7) ; NON fusionné, NON déployé
+
+Feu vert du client du 19/10 (« excellent résultat, limite comme Praktika »). Document de référence : `docs/projet/TUTEUR_IA.md`
+(architecture, coûts vérifiés en ligne le 19/10, plafonds, actions du client, risques). **Aucun appel réel** à Vertex AI ni
+à la synthèse vocale (API Vertex non activée : action du client), aucun secret lu, aucun compte réel, serveur public non touché.
+
+- **Trois étages, le local d'abord.** Étage 1 « dialogue guidé » : dialogue de la leçon, voix du partenaire = MP3 des leçons,
+  réplique de l'élève écoutée par `ecoute-ia` et comparée au livre (juste / à revoir / « réessaie », jamais un mot accusé à
+  tort), aucun modèle de langage ; seul mode des enfants. Étage 2 « conversation libre » : Gemini sur Vertex AI (multirégion
+  `eu`, seule à garantir le traitement dans l'UE ; Paris ne propose pas ces modèles), ados avec accord parental `tuteur_ia`
+  vérifié AVANT tout appel, adultes, à partir du niveau 2. Étage 3 (révision religion et Madjaliss sur nos contenus audités,
+  recherche locale, citations) : décrit seulement.
+- **Cœur** `packages/tutor/src/conversation/` : invite versionnée (`PROMPT_VERSION` 39fd49228b78 : fuṣḥā vocalisé, mots du
+  niveau, correction douce, refus religieux, jamais de Coran) ; gardes d'entrée (avis, tafsīr, hadith, Coran en français,
+  anglais et arabe sous forme nue) et de sortie (jugements, citations, trigrammes du Tanzil, phonétique, données
+  personnelles, émoji) ; voix JAMAIS sur un texte coranique ; contrôle de niveau journalisé ; plafonds réglables et tarifs
+  datés ; clients Vertex (`generateContent`, réponse JSON, réflexion minimale, étiquettes) et TTS (`eu-texttospeech`,
+  `ar-XA-Wavenet-B`) avec `fetch` injectable ; jeton par serveur de métadonnées puis EMPRUNT du compte `awzid-tuteur`
+  (aucune clé) ; mise en service verrouillée (`AWFORM_TUTEUR=vertex` exige projet, lieu UE, modèle tarifé et empreinte de
+  l'invite validée par la batterie de contrôle).
+- **Plafonds sans redéploiement** : `AWFORM_TUTEUR_PLAFOND_MOIS=30`, `AWFORM_TUTEUR_PLAFOND_APRES=2027-01-02:10` (crédit
+  Google jusqu'au 2/01/2027, puis 10 €), jour = 10 % du mois, alertes 50/80/100 %, 20 min et 120 échanges par élève et
+  par jour ; **réservation du pire cas** (≈ 0,012 €) sous verrou global : aucun dépassement possible ; disjoncteur
+  `AWFORM_COUTS_COUPES` ; tableau de bord de l'administrateur (dépense, seuils, alertes `tuteur_ia_50/80/100`).
+- **API** `apps/api/src/tuteur-ia.ts` : `GET /api/v1/tuteur-ia/:id/etat`, `GET …/scenario/:unit`, `POST …/guidee`,
+  `POST …/libre`. **Base** : migration `0053_tuteur_ia` (`tutor_spend`, `tutor_budget_alert`), droits des comptes API et
+  travailleur, purges (échanges de conversation **90 jours** au lieu de 12 mois, sauf signalés ; registre 400 jours).
+  Interrupteur F5 `tuteur_ia` (état de base « beta »).
+- **Écran** `/tuteur/<leçon>` (page rare, module chargé à la demande) : symbole de la marque, onde animée (réduite si
+  « moins d'animations »), cartes ivoire, vert et or, aucun visage ; dialogue guidé, conversation libre, micro, mode texte de
+  secours, traduction Voir/Cacher, renvois religion (leçon, Madjaliss, référent), minutes restantes, réglages discrets
+  (genre grammatical, vouvoiement). Accroche « Parler avec le tuteur » sous le dialogue de la leçon. Textes `fr-tuteur`
+  (EN, ES, DE, AR en préparation).
+- **Mesure de l'IA locale** (VM, réglage de la bêta 1,5 CPU / 1 fil / 1 calcul, 60 répliques des livres, voix des leçons) :
+  calcul **0,61 s** par réplique (90 % : 0,82 s), mots reconnus 93,6 % ; ≈ 15 élèves simultanés à l'étage 1 sur la bêta
+  (≈ 30 avec 2 calculs). Script `services/ecoute-ia/eval/repliques.mjs`.
+- **Coûts** (tarifs UE vérifiés le 19/10) : gemini-3.8-flash ≈ 0,020 €/min jusqu'au 31/12 (30 € ≈ 1 500 min), puis
+  0,039 €/min ; gemini-3.5-flash-lite ≈ 0,010 €/min (10 € ≈ 1 000 min). Gemini 2.5 retiré le 20/10/2026 : non utilisé.
+- **Tests** : `packages/tutor/test/conversation.test.ts` (39), `apps/api/test/tuteur-ia.test.ts` (12, base réelle), e2e
+  `apps/web/e2e/tuteur-ia.spec.ts` ; tests ajustés : `fonctions.test.ts` (2 fonctions en bêta), `beta-modes.test.ts`
+  (plafond du tuteur), `tasks.test.ts` (purge). **Résultats** (VM, sous `flock`) : build, typecheck, lint : 0 erreur ; unitaires **2 398 réussis, 1 ignoré** ; budget de l'appareil élève : **marge 4,9 Ko** (≥ 3) ; e2e COMPLÈTE (`--retries=1 --workers=3`, 22 min) : **793 réussis, 145 ignorés, 2 échecs** = `beta-acces:634` (nombre de plafonds du tableau, 5 → 6 avec le tuteur : test corrigé, puis repassé vert avec `tuteur-ia.spec.ts` : 46/46) ; 4 instables passés au second essai, déjà connus (`maj-fiable:198`, `themes-simples:142`, `f2:229`, `lot29:42`) ; `tuteur-ia.spec.ts` après les dernières retouches de l'écran : **6/6** (mobile et bureau).
+- **Captures** : `W\application\design\captures_tuteur\` (375 px, clair et sombre).
+- **Reste** (TUTEUR_IA.md § 9-10) : actions du client dans la console (API Vertex et IAM Credentials, compte `awzid-tuteur`
+  sans clé, emprunt par `awzid-beta-sa`, budget 30 € à 50/80/100 %), puis batterie de contrôle (30 situations) avec le vrai
+  modèle, fusion, déploiement, variables de `prod.env`.
+
+---
+
 ## 18/10/2026 — Préparation de la mise en ligne de la bêta : fusion de `tel-wip`, `fix-tournage-wip` et `src-wip`, livres audités, Madjaliss, audio ; NON déployé
 
 Demande du client (mise en ligne de la bêta). Périmètre : jusqu'au SHA prêt ; **`awzid-beta` non touché** (ni gcloud, ni `deployer-beta.sh`), démo de la VM non redéployée. Aucun compte réel, aucun e-mail, aucun secret lu. Non touché : `infra/charge/purger-comptes-fictifs.sh` (modifié sans commit dans `~/awform-demo`).
