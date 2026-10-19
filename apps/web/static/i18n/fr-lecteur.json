@@ -1,0 +1,21 @@
+{
+  "lec.nom": "Lecteur audio",
+  "lec.fermer": "Fermer le lecteur",
+  "lec.lecture": "Lire",
+  "lec.pause": "Mettre en pause",
+  "lec.recul": "Reculer de {s} secondes",
+  "lec.avance": "Avancer de {s} secondes",
+  "lec.precedente": "Phrase précédente",
+  "lec.suivante": "Phrase suivante",
+  "lec.progression": "Position dans l’audio",
+  "lec.temps": "{t} sur {d}",
+  "lec.boucle": "Répéter la phrase en boucle",
+  "lec.boucle_aide": "Répéter la phrase en boucle (arrêt après {max} répétitions)",
+  "lec.repetition": "Répétition {n} sur {max}",
+  "lec.continu": "Lecture continue",
+  "lec.continu_aide": "Enchaîner toutes les phrases de la page",
+  "lec.vitesse": "Vitesse de lecture",
+  "lec.vitesse_x": "Vitesse {v}×",
+  "lec.position": "Phrase {n} sur {total}",
+  "lec.erreur": "Cet audio n’est pas disponible pour le moment."
+}

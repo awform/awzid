@@ -4,6 +4,7 @@
  * commun à deux niveaux n'est gardé qu'une fois et n'est retiré qu'avec le dernier niveau qui l'emploie.
  */
 import { delMany, get, kvGet, kvKeys, kvSet, putRaw } from './idb';
+import { catalogUrl } from './i18n';
 import { addBytes } from './offline';
 import { AUDIO_API, audioKvKey, forgetLevelAudio, type LevelAudioJson } from './lecons-audio';
 
@@ -60,6 +61,12 @@ export async function downloadLevelAudio(
   };
   await Promise.all([worker(), worker(), worker(), worker()]);
   await addBytes(octets);
+  // le lecteur audio (chargé à la demande) et ses textes sont demandés une fois pour que le service worker les garde :
+  // l'audio téléchargé s'écoute avec ses commandes hors ligne, même si le lecteur n'a jamais été ouvert
+  await fetchFn('/_app/lecteur.json')
+    .then((l) => (l.ok ? (l.json() as Promise<string[]>) : []))
+    .then((l) => Promise.all([...l, catalogUrl('fr-lecteur')].map((f) => fetchFn(f))))
+    .catch(() => undefined);
   // liste écrite EN DERNIER : le niveau n'est « avec l'audio » que si tout est là
   await kvSet(audioKvKey(level), j);
   forgetLevelAudio(level);

@@ -1,29 +1,33 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { t } from './i18n';
-  import { AUDIO_CTX, audioIdFor, playLessonAudio, type LevelAudio } from './lecons-audio';
+  import { AUDIO_CTX, audioIdFor, leconsSource, SLOW_RATE, type LevelAudio } from './lecons-audio';
 
   /**
    * Bouton « écouter » d'un texte arabe de la leçon (A3) : présent SEULEMENT si le fichier du texte existe
    * (jamais de synthèse du navigateur, jamais sur un texte coranique) ; gros bouton (48 px au moins),
-   * second bouton « lentement » (0,8, même hauteur de voix) ; aucune lecture automatique.
+   * second bouton « lentement » (0,75, même hauteur de voix) ; aucune lecture automatique.
+   * Le lecteur (pause, recul, avance, phrase précédente et suivante, boucle, vitesse, lecture continue) est chargé
+   * à la demande au premier appui, jamais avant : `$lib/lecteur/ouvrir`.
    */
   let { text, label, small = false }: { text: string; label?: string; small?: boolean } = $props();
 
   const audio = getContext<(() => LevelAudio | null) | undefined>(AUDIO_CTX);
   const id = $derived(audioIdFor(text, audio?.() ?? null));
-  let playing = $state(false);
+  let bouton: HTMLButtonElement | undefined = $state();
 
-  async function play(slow: boolean) {
-    if (!id) return;
-    playing = true;
+  async function play(lent: boolean) {
+    if (!id || !bouton) return;
     try {
-      const a = await playLessonAudio(id, slow);
-      const end = () => (playing = false);
-      a.addEventListener('ended', end, { once: true });
-      a.addEventListener('pause', end, { once: true });
+      const { ouvrir } = await import('./lecteur/ouvrir');
+      await ouvrir({
+        declencheur: bouton,
+        type: 'l',
+        resoudre: leconsSource,
+        vitesse: lent ? SLOW_RATE : undefined,
+      });
     } catch {
-      playing = false;
+      /* fichier ou lecteur indisponible : le bouton reste utilisable */
     }
   }
 </script>
@@ -32,9 +36,10 @@
     ><button
       type="button"
       class="spk"
-      class:playing
       data-testid="ecouter"
       data-audio={id}
+      data-lecteur="l"
+      bind:this={bouton}
       aria-label={label ?? t('audio.ecouter')}
       onclick={() => play(false)}
       ><svg viewBox="0 0 24 24" aria-hidden="true"
@@ -89,7 +94,8 @@
     width: 26px;
     height: 26px;
   }
-  .spk.playing {
+  /* la classe « playing » est posée par le lecteur pendant la lecture de cette phrase */
+  .spk:global(.playing) {
     background: var(--teal);
     color: var(--card);
   }

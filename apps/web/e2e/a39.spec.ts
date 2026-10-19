@@ -175,9 +175,18 @@ test('D-A39 : pages légales gardées dès la première ouverture, lisibles hors
   await page.goto('/');
   await page.evaluate(() => navigator.serviceWorker.ready);
   await expect
-    .poll(() => page.evaluate(async () => !!(await caches.match('/i18n/legal/fr.json'))), {
-      timeout: 20_000,
-    })
+    .poll(
+      () =>
+        page.evaluate(async () => {
+          for (const k of await caches.keys())
+            for (const r of await (await caches.open(k)).keys())
+              if (/^\/i18n\/[^/]+\/legal\/fr\.json$/.test(new URL(r.url).pathname)) return true;
+          return false;
+        }),
+      {
+        timeout: 20_000,
+      },
+    )
     .toBe(true);
   await context.setOffline(true);
   await page.goto('/legal/cgu').catch(() => {});

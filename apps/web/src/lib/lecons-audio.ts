@@ -9,8 +9,8 @@ import { get, kvGet } from './idb';
 
 export const AUDIO_CTX = 'lecons-audio';
 export const AUDIO_API = '/api/v1/lecons-audio';
-/** lecture lente : 0,8, hauteur de la voix conservée (preservesPitch) */
-export const SLOW_RATE = 0.8;
+/** lecture lente : 0,75 (la plus basse vitesse du lecteur), hauteur de la voix conservée (preservesPitch) */
+export const SLOW_RATE = 0.75;
 
 export interface LevelAudioJson {
   niveau: string;
@@ -73,12 +73,21 @@ export function stopLessonAudio(): void {
   current = null;
 }
 
-/** Joue le fichier (copie de l'appareil d'abord) ; un seul son à la fois. */
+/** Source du fichier d'un texte : copie de l'appareil d'abord (IndexedDB), sinon le réseau (lecteur et animations). */
+export async function leconsSource(id: string): Promise<{ url: string; liberer?: () => void }> {
+  const stored = await get<{ id: string; blob: Blob }>('audio', id).catch(() => undefined);
+  if (!stored) return { url: `${AUDIO_API}/fichiers/${id}.mp3` };
+  const url = URL.createObjectURL(stored.blob);
+  return { url, liberer: () => URL.revokeObjectURL(url) };
+}
+
+/** Joue le fichier (copie de l'appareil d'abord) ; un seul son à la fois (le lecteur se met en pause). */
 export async function playLessonAudio(id: string, slow: boolean): Promise<HTMLAudioElement> {
   stopLessonAudio();
-  const stored = await get<{ id: string; blob: Blob }>('audio', id).catch(() => undefined);
-  const url = stored ? URL.createObjectURL(stored.blob) : undefined;
-  const a = new Audio(url ?? `${AUDIO_API}/fichiers/${id}.mp3`);
+  document.dispatchEvent(new Event('awzid-son'));
+  const s = await leconsSource(id);
+  const url = s.liberer ? s.url : undefined;
+  const a = new Audio(s.url);
   a.preservesPitch = true;
   a.defaultPlaybackRate = a.playbackRate = slow ? SLOW_RATE : 1;
   current = { a, url };

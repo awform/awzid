@@ -9,6 +9,9 @@
   import { clampRate, isHafs, silenceMs } from './player';
   import { garderEcoute, playableUrl } from './offline-audio';
 
+  /** reculer / avancer : 5 secondes, comme le lecteur des phrases (`lib/lecteur`) */
+  const SAUT_S = 5;
+
   /**
    * Lecteur audio de l'espace Coran — Coran épuré (06/10/2026) : UNE barre discrète (récitateur abrégé,
    * précédent, lecture/pause, suivant, arrêt, progression fine, volume, icône des réglages d'écoute). Joue une
@@ -186,6 +189,12 @@
       error = t('ca.erreur_lecture');
     }
   }
+  /** Reculer / avancer de quelques secondes dans le verset en cours (même geste que le lecteur des phrases). */
+  function saut(s: number) {
+    if (!audio || !started) return;
+    const fin = Number.isFinite(audio.duration) ? audio.duration : Infinity;
+    audio.currentTime = Math.max(0, Math.min(audio.currentTime + s, fin));
+  }
   async function go(i: number) {
     if (i < 0 || i >= queue.length) return;
     sleepUntil ??= sleepMin > 0 ? Date.now() + sleepMin * 60_000 : null;
@@ -255,6 +264,18 @@
     >
     <button
       type="button"
+      class="ic saut"
+      onclick={() => saut(-SAUT_S)}
+      disabled={!started}
+      aria-label={t('ca.recul', { s: fmtNumber(SAUT_S) })}
+      title={t('ca.recul', { s: fmtNumber(SAUT_S) })}
+      data-testid="recul-5"
+      ><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"
+        ><path d="M12 5a7 7 0 1 1-6.7 5M4 4.5v6h6" /><text x="12" y="16" class="n">5</text></svg
+      ></button
+    >
+    <button
+      type="button"
       class="play"
       onclick={toggle}
       disabled={!pack || queue.length === 0}
@@ -267,6 +288,18 @@
           filled
           size={22}
         />{/if}</button
+    >
+    <button
+      type="button"
+      class="ic saut"
+      onclick={() => saut(SAUT_S)}
+      disabled={!started}
+      aria-label={t('ca.avance', { s: fmtNumber(SAUT_S) })}
+      title={t('ca.avance', { s: fmtNumber(SAUT_S) })}
+      data-testid="avance-5"
+      ><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"
+        ><path d="M12 5a7 7 0 1 0 6.7 5M20 4.5v6h-6" /><text x="12" y="16" class="n">5</text></svg
+      ></button
     >
     <button
       type="button"
@@ -423,7 +456,20 @@
   :global([dir='rtl']) .flip {
     transform: none;
   }
-  :global([dir='rtl']) .controls > .ic:not(.stop) :global(svg) {
+  .saut svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .saut svg .n {
+    fill: currentColor;
+    stroke: none;
+    font: 700 8px var(--font-ui, sans-serif);
+    text-anchor: middle;
+  }
+  :global([dir='rtl']) .controls > .ic:not(.stop, .saut) :global(svg) {
     transform: scaleX(-1);
   }
   .sq {

@@ -2,7 +2,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
-  import { jouerAudio } from './audio';
+  import { ecouter } from './audio';
   import { avecArabe, segments, type NotesEnseignant, type Phrase } from './donnees';
 
   /**
@@ -76,7 +76,8 @@
           class="ghost"
           data-testid="mj-ecouter-lire"
           data-audio={audio}
-          onclick={() => void jouerAudio(audio).catch(() => false)}
+          data-lecteur="m"
+          onclick={(e) => void ecouter(e.currentTarget).catch(() => undefined)}
           ><Icon name="oreille" size={18} /><Bidi text={t('audio.ecouter')} /></button
         >
       </p>

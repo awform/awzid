@@ -8,10 +8,25 @@ import { defineConfig, type Plugin } from 'vite';
  * depuis `$lib/vivante`, et leurs CSS) dans `/_app/vivante.json`, lue par le service worker et par le budget.
  */
 function vivanteALaDemande(): Plugin {
-  const VIV =
-    /[\\/](lib[\\/]vivante[\\/](installer\.ts|Motion\.svelte|ModelesPlus\.svelte)|content[\\/](dist|src)[\\/]vivante(-garde)?\.[jt]s)/;
+  return aLaDemande(
+    'vivante',
+    /[\\/](lib[\\/]vivante[\\/](installer\.ts|Motion\.svelte|ModelesPlus\.svelte)|content[\\/](dist|src)[\\/]vivante(-garde)?\.[jt]s)/,
+  );
+}
+
+/**
+ * 19/10/2026 — le LECTEUR AUDIO des phrases (`lib/lecteur/`) suit la même règle : chargé par import dynamique au
+ * premier appui sur « Écouter », jamais préchargé (ni compté dans l'appareil de l'élève avant son premier usage) ;
+ * liste de ses fichiers dans `/_app/lecteur.json` (lue par le service worker, le budget et le téléchargement de
+ * l'audio d'un niveau, qui le garde pour le hors ligne).
+ */
+function lecteurALaDemande(): Plugin {
+  return aLaDemande('lecteur', /[\\/]lib[\\/]lecteur[\\/]/);
+}
+
+function aLaDemande(nom: string, VIV: RegExp): Plugin {
   return {
-    name: 'awzid-vivante-a-la-demande',
+    name: `awzid-${nom}-a-la-demande`,
     apply: 'build',
     generateBundle(options, bundle) {
       if (!/[\\/]client$/.test(options.dir ?? '')) return;
@@ -32,7 +47,7 @@ function vivanteALaDemande(): Plugin {
         ]);
       this.emitFile({
         type: 'asset',
-        fileName: '_app/vivante.json',
+        fileName: `_app/${nom}.json`,
         source: JSON.stringify(files.map((f) => `/${f}`)),
       });
     },
@@ -102,7 +117,7 @@ const ESPACES: Record<string, RegExp> = {
 };
 
 export default defineConfig({
-  plugins: [sveltekit(), vivanteALaDemande()],
+  plugins: [sveltekit(), vivanteALaDemande(), lecteurALaDemande()],
   build: {
     rolldownOptions: {
       output: {

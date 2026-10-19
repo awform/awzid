@@ -29,10 +29,12 @@ async function deploiementSimule(baseURL: string) {
   const serveur = http.createServer((req, res) => {
     const chemin = new URL(req.url ?? '/', 'http://x').pathname;
     const modifie = actif && VERSIONNES.has(chemin);
+    // catalogues versionnés (/i18n/<version>/…) : la « nouvelle » version est servie par les fichiers de l'ancienne
+    const url = (req.url ?? '/').replace(`/i18n/${nouvelle}/`, `/i18n/${ancienne}/`);
     const headers = { ...req.headers, host: cible.host };
     if (modifie) delete headers['accept-encoding'];
     const amont = http.request(
-      { host: cible.hostname, port: cible.port, path: req.url, method: req.method, headers },
+      { host: cible.hostname, port: cible.port, path: url, method: req.method, headers },
       (rep) => {
         if (!modifie) {
           res.writeHead(rep.statusCode ?? 502, rep.headers);

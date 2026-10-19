@@ -8,42 +8,29 @@
    * n'est rendu que si `src` est fourni. Aucune lecture automatique ; un seul son à la fois.
    */
   let { src, id }: { src: string; id: string } = $props();
-  let playing = $state(false);
-  let audio: HTMLAudioElement | null = null;
+  let bouton: HTMLButtonElement | undefined = $state();
 
-  function toggle() {
-    if (playing && audio) {
-      audio.pause();
-      return;
+  /** Le lecteur (pause, recul, avance, vitesse…) est chargé à la demande, au premier appui. */
+  async function toggle() {
+    if (!bouton) return;
+    try {
+      const { ouvrir } = await import('$lib/lecteur/ouvrir');
+      await ouvrir({ declencheur: bouton, type: 'd', resoudre: async (ref) => ({ url: ref }) });
+    } catch {
+      /* fichier ou lecteur indisponible */
     }
-    document.dispatchEvent(new CustomEvent('douas-audio', { detail: id }));
-    audio ??= new Audio(src);
-    audio.currentTime = 0;
-    playing = true;
-    audio.onended = audio.onpause = () => (playing = false);
-    audio.play().catch(() => (playing = false));
   }
-
-  $effect(() => {
-    const stop = (e: Event) => {
-      if ((e as CustomEvent<string>).detail !== id) audio?.pause();
-    };
-    document.addEventListener('douas-audio', stop);
-    return () => {
-      document.removeEventListener('douas-audio', stop);
-      audio?.pause();
-    };
-  });
 </script>
 
 <span class="ecouter" dir="ltr"
   ><button
     type="button"
     class="spk"
-    class:playing
-    aria-pressed={playing}
     data-testid="douas-ecouter"
     data-audio={src}
+    data-lecteur="d"
+    data-doua-id={id}
+    bind:this={bouton}
     onclick={toggle}
     ><svg viewBox="0 0 24 24" aria-hidden="true"
       ><path d="M3 9h4l5-4v14l-5-4H3z" fill="currentColor" /><path
@@ -84,7 +71,7 @@
     width: 24px;
     height: 24px;
   }
-  .spk.playing {
+  .spk:global(.playing) {
     background: var(--teal);
     color: var(--card);
   }

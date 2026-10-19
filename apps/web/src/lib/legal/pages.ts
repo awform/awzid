@@ -7,13 +7,13 @@
  * qu'aux pages « Mentions, CGU, confidentialité, cookies » et « Aide », jamais à l'apprentissage ; le service worker
  * les garde au premier usage (catalogues `/i18n/`). Sans réseau ni copie : titres seuls.
  */
-import { locale, t } from '$lib/i18n';
+import { catalogUrl, locale, t } from '$lib/i18n';
 import { LEGAL_PAGES, type LegalKey, type LegalPage, type LegalTexts } from './content';
 
 const texts: Partial<Record<'fr' | 'en', LegalTexts>> = {};
 
 const get = (fetcher: typeof fetch, lang: 'fr' | 'en') =>
-  fetcher(`/i18n/legal/${lang}.json`)
+  fetcher(catalogUrl(`legal/${lang}`))
     .then((r) => (r.ok ? (r.json() as Promise<LegalTexts>) : undefined))
     .catch(() => undefined);
 

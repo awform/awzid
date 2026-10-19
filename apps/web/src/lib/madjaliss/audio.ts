@@ -51,14 +51,33 @@ export function arreterAudio(): void {
   courant = null;
 }
 
-/** Joue la phrase (copie de l'appareil d'abord) ; false si le fichier est introuvable (hors ligne, droit retiré). */
-export async function jouerAudio(chemin: string): Promise<boolean> {
-  arreterAudio();
+/**
+ * Source de la phrase (copie de l'appareil d'abord, sinon le réseau, puis gardée) ; null si le fichier est
+ * introuvable (hors ligne, droit retiré). Sert au lecteur audio.
+ */
+export async function mjSource(
+  chemin: string,
+): Promise<{ url: string; liberer: () => void } | null> {
   const garde = await get<{ id: string; blob: Blob }>('audio', cle(chemin)).catch(() => undefined);
   const blob =
     garde?.blob instanceof Blob ? garde.blob : await telecharger(chemin).catch(() => null);
-  if (!blob) return false;
+  if (!blob) return null;
   const url = URL.createObjectURL(blob);
+  return { url, liberer: () => URL.revokeObjectURL(url) };
+}
+
+/** Appui sur « Écouter » : ouvre le lecteur (chargé à la demande) et joue cette phrase. */
+export async function ecouter(declencheur: HTMLElement): Promise<void> {
+  const { ouvrir } = await import('$lib/lecteur/ouvrir');
+  await ouvrir({ declencheur, type: 'm', resoudre: mjSource });
+}
+
+/** Joue la phrase sans le lecteur ; false si le fichier est introuvable (hors ligne, droit retiré). */
+export async function jouerAudio(chemin: string): Promise<boolean> {
+  arreterAudio();
+  const s = await mjSource(chemin);
+  if (!s) return false;
+  const url = s.url;
   const a = new Audio(url);
   courant = { a, url };
   a.addEventListener('ended', () => {
