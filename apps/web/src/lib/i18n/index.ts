@@ -92,6 +92,8 @@ export const SPACE_CATALOGS = [
   'madjaliss',
   // Douas (phase 1) : textes de l'onglet (`do.*`), chargés par `/vivre/douas`, gardés au premier usage
   'douas',
+  // refonte 19/10 (interrupteur `design_v4`) : textes des écrans v4 (`v4.*`), chargés avec eux (`$lib/design`)
+  'design',
 ] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 export function loadTexts(

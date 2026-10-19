@@ -4,6 +4,17 @@
   import { resolve } from '$app/paths';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
+  import Loading from '$lib/ui/Loading.svelte';
+  import { chargerV4, type EcransV4 } from '$lib/design';
+  import { fn } from '$lib/fonctions.svelte';
+
+  // refonte 19/10 (interrupteur « design_v4 ») : « Mes activités » chargé à la demande ; impossible → ancien « Plus »
+  let V4 = $state<EcransV4['ActivitesV4'] | null>(null);
+  let v4Echec = $state(false);
+  const v4 = $derived(fn('design_v4') && !v4Echec);
+  $effect(() => {
+    if (v4 && !V4) void chargerV4().then((m) => (m ? (V4 = m.ActivitesV4) : (v4Echec = true)));
+  });
 
   /**
    * « Plus » (D2) : les espaces hors de la barre du bas, RANGÉS EN FAMILLES, chacun avec son icône et son nom écrit.
@@ -70,25 +81,29 @@
 
 <svelte:head><title>{t('app.nom')} — {t('plus.titre')}</title></svelte:head>
 
-<h1>{t('plus.titre')}</h1>
-<div data-testid="plus">
-  {#each FAMILLES as f (f.id)}
-    <h2 class="famille-titre" data-famille={f.id}><Bidi text={t(f.titre)} /></h2>
-    <ul class="nav-liste">
-      {#each f.liens as x, i (x.href)}
-        <li class:juridique={x.juridique}>
-          <a href={resolve(x.href as '/')} data-plus={x.href}
-            ><span class="ic"><Icon name={x.icon} /></span><span class="nom"
-              ><Bidi text={t(x.titre)} /></span
-            ><span class="chev"><Icon name="chevron" size={20} /></span></a
-          >
-        </li>
-        <!-- F5 : « Signaler un problème » et « Donner mon avis » (fenêtre chargée à la demande, en ligne) -->
-        {#if f.avis && i === 0}<AvisBouton mode="probleme" ligne /><AvisBouton ligne />{/if}
-      {/each}
-    </ul>
-  {/each}
-</div>
+{#if v4}
+  {#if V4}<V4 />{:else}<Loading lines={4} />{/if}
+{:else}
+  <h1>{t('plus.titre')}</h1>
+  <div data-testid="plus">
+    {#each FAMILLES as f (f.id)}
+      <h2 class="famille-titre" data-famille={f.id}><Bidi text={t(f.titre)} /></h2>
+      <ul class="nav-liste">
+        {#each f.liens as x, i (x.href)}
+          <li class:juridique={x.juridique}>
+            <a href={resolve(x.href as '/')} data-plus={x.href}
+              ><span class="ic"><Icon name={x.icon} /></span><span class="nom"
+                ><Bidi text={t(x.titre)} /></span
+              ><span class="chev"><Icon name="chevron" size={20} /></span></a
+            >
+          </li>
+          <!-- F5 : « Signaler un problème » et « Donner mon avis » (fenêtre chargée à la demande, en ligne) -->
+          {#if f.avis && i === 0}<AvisBouton mode="probleme" ligne /><AvisBouton ligne />{/if}
+        {/each}
+      </ul>
+    {/each}
+  </div>
+{/if}
 
 <style>
   :global([data-public='enfant']) .juridique {

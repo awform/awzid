@@ -41,6 +41,7 @@ import {
 import {
   AGES_FONCTION,
   ETATS_FONCTION,
+  etatsAvecDemo,
   FONCTION_CLES,
   FONCTIONS,
   fonctionsPour,
@@ -76,6 +77,9 @@ export async function contexteDe(
 /** Fonctions qui dépendent de la Quran Foundation (contenus servis ou mis en page par elle). */
 export const FONCTIONS_QF = ['recitateurs_en_ligne', 'mushaf_exact'] as const;
 
+/** Démonstration (AWFORM_DEMO=1, réseau local seulement : demo-mode.ts) : états de base propres (`FONCTIONS[cle].demo`). */
+export const enDemo = (env: NodeJS.ProcessEnv = process.env) => env.AWFORM_DEMO === '1';
+
 export async function fonctionsDe(
   db: Db,
   req: FastifyRequest,
@@ -83,7 +87,7 @@ export async function fonctionsDe(
 ): Promise<{ fonctions: Record<FonctionCle, boolean>; canal: FlagContext['canal'] }> {
   const ctx = await contexteDe(db, req, profileId);
   const f = await readFlags(db);
-  const fonctions = fonctionsPour(ctx, f.etats, f.regles);
+  const fonctions = fonctionsPour(ctx, etatsAvecDemo(f.etats, enDemo()), f.regles);
   // Quran Foundation et profils d'enfants : tant que « qf_profils_enfants » vaut « off » (défaut), un profil d'enfant n'utilise
   // ni les récitateurs en ligne ni le Muṣḥaf exact (accord écrit de la Quran Foundation attendu) ; ados et adultes inchangés
   if (ctx.age === 'enfant' && (await readAcces(db)).qf_profils_enfants !== 'on')
@@ -177,7 +181,7 @@ export function registerF5(app: FastifyInstance, db: Db, version: string): void 
     return {
       fonctions: FONCTION_CLES.map((cle) => ({
         cle,
-        defaut: FONCTIONS[cle].defaut,
+        defaut: (enDemo() && FONCTIONS[cle].demo) || FONCTIONS[cle].defaut,
         etat: f.etats[cle] ?? null,
         regles: f.regles.filter((r) => r.cle === cle),
       })),
@@ -362,7 +366,7 @@ export function registerF5(app: FastifyInstance, db: Db, version: string): void 
       const pid = await profilDe(db, req, req.body.profil);
       const ctx = await contexteDe(db, req, pid);
       const f = await readFlags(db);
-      if (!fonctionsPour(ctx, f.etats, f.regles).avis)
+      if (!fonctionsPour(ctx, etatsAvecDemo(f.etats, enDemo()), f.regles).avis)
         return err(reply, 403, 'fonction_coupee', { fonction: 'avis' });
       const n = await feedbackRecent(db, req.auth.accountId);
       if (n.compte >= FEEDBACK_PER_DAY || n.tous >= FEEDBACK_PER_HOUR_ALL)

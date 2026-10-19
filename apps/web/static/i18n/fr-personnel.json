@@ -610,5 +610,6 @@
   "tel.adm_ouvrir_wa": "Ouvrir WhatsApp avec ce message",
   "tab.al_tel_plafond_atteint": "Plafond quotidien d’envois WhatsApp payants atteint : plus aucun code n’est envoyé aujourd’hui.",
   "tab.al_tel_plafond_proche": "Envois WhatsApp payants du jour proches du plafond (80 %).",
-  "tab.al_tel_a_valider": "Des numéros attendent une validation manuelle."
+  "tab.al_tel_a_valider": "Des numéros attendent une validation manuelle.",
+  "fn.design_v4": "Nouveau design (refonte du 19/10 : Aujourd'hui, Mes activités)"
 }

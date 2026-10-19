@@ -39,6 +39,12 @@ export const RARE_ROUTES = [
 ];
 /** Pages de l'élève gardées au premier usage (hors ligne ensuite), jamais préchargées. */
 export const PREMIER_USAGE_ROUTES = ['/madjaliss'];
+/**
+ * Modules de l'élève chargés À LA DEMANDE et gardés au premier usage (hors ligne ensuite), jamais préchargés :
+ * écrans de la refonte du 19/10/2026 (interrupteur `design_v4`) — sans eux (hors ligne avant le premier usage),
+ * l'ancien design, qui reste dans la coquille, s'affiche.
+ */
+export const PREMIER_USAGE_MODULES = [/src\/lib\/v4\/ecrans\.ts$/];
 /** Modules chargés à la demande ET qui ont besoin du réseau (chemin du fichier source). */
 export const EN_LIGNE_MODULES = [
   /src\/lib\/quran\/LignesExactes\.svelte$/,
@@ -96,6 +102,13 @@ export function groupFiles(root) {
       .filter(([k, e]) => e.isDynamicEntry && EN_LIGNE_MODULES.some((re) => re.test(e.src ?? k)))
       .map(([k]) => k),
   );
+  const premierKeys = new Set(
+    Object.entries(manifest)
+      .filter(
+        ([k, e]) => e.isDynamicEntry && PREMIER_USAGE_MODULES.some((re) => re.test(e.src ?? k)),
+      )
+      .map(([k]) => k),
+  );
   // imports statiques et dynamiques — sauf ceux de l'application elle-même (app.js charge TOUS les nœuds à la
   // demande : les suivre rendrait chaque page « partagée ») et, si demandé, les modules « en ligne »
   const closure = (keys, { out = new Set(), dynamic = true, stop = new Set() } = {}) => {
@@ -143,12 +156,14 @@ export function groupFiles(root) {
   // tout ce que l'élève peut atteindre sans réseau (modules « en ligne » exclus)
   const eleve = closure([...nodes.eleve].map(nodeKey), {
     out: closure(base, { dynamic: false }),
-    stop: enLigneKeys,
+    stop: new Set([...enLigneKeys, ...premierKeys]),
   });
   const staff = closure([...nodes.personnel].map(nodeKey));
   const rares = closure([...nodes.rares].map(nodeKey));
   const enLigne = closure([...enLigneKeys]);
-  const premier = closure([...nodes.premierUsage].map(nodeKey), { stop: enLigneKeys });
+  const premier = closure([...[...nodes.premierUsage].map(nodeKey), ...premierKeys], {
+    stop: enLigneKeys,
+  });
   const pick = (set, ...minus) =>
     [...set].filter((f) => !eleve.has(f) && !minus.some((m) => m.has(f))).sort();
   return {
