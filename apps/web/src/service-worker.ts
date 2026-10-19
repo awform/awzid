@@ -56,6 +56,9 @@ const STUDENT_TEXTS = [
   '/i18n/fr-vivre.json',
   '/i18n/fr-coran.json',
   '/i18n/fr-hifz.json',
+  // 19/10/2026 : catalogue français découpé par espaces (voir SPACE_CATALOGS dans lib/i18n)
+  '/i18n/fr-arabe.json',
+  '/i18n/fr-suivi.json',
 ];
 const ASSETS = [
   ...build,

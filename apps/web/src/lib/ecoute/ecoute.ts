@@ -11,6 +11,7 @@
  *  - BILAN de séance (versets récités, mots à revoir) gardé sur l'appareil (20 derniers), repris par le carnet.
  * Jamais de note, jamais de tajwīd, jamais « valide » : seul le maître juge.
  */
+import { loadTexts } from '$lib/i18n';
 import { call } from '$lib/session';
 import type { Bilan } from './bilans';
 import {
@@ -75,7 +76,11 @@ export async function verifier(
     );
     const j = (await r.json().catch(() => null)) as
       (Verification & { error?: { code?: string } }) | null;
-    if (!r.ok || !j) return { ok: false, code: j?.error?.code ?? 'reseau' };
+    if (!r.ok || !j) {
+      // message de l'erreur renvoyée (catalogue `fr-erreurs`), chargé avant l'affichage
+      if (j?.error?.code) await loadTexts('erreurs');
+      return { ok: false, code: j?.error?.code ?? 'reseau' };
+    }
     return { ok: true, v: j };
   } catch {
     return { ok: false, code: 'reseau' };

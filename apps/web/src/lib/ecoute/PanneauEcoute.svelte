@@ -3,7 +3,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import RecitationEnvoi from '$lib/RecitationEnvoi.svelte';
   import { loadMeta, loadVerses } from '$lib/hifz';
-  import { loadTexts, t } from '$lib/i18n';
+  import { loadTexts, t, texteExiste } from '$lib/i18n';
   import Feuille from '$lib/quran/lecture/Feuille.svelte';
   import { recordingAllowed, saveRecording } from '$lib/recordings';
   import { call } from '$lib/session';
@@ -135,8 +135,8 @@
   };
   function message(code: string): string {
     if (MESSAGES[code]) return t(MESSAGES[code]!);
-    const m = t(`erreur.${code}`);
-    return m.startsWith('⟦') ? t('ec.err_reseau') : m;
+    // pas `startsWith('⟦')` : en production, une clé manquante rend un texte vide (lib/i18n)
+    return texteExiste(`erreur.${code}`) ? t(`erreur.${code}`) : t('ec.err_reseau');
   }
 
   async function accepter() {

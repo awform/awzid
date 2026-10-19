@@ -113,6 +113,15 @@ export const SPACE_CATALOGS = [
   'lecteur',
   // refonte 19/10 (interrupteur `design_v4`) : textes des écrans v4 (`v4.*`), chargés avec eux (`$lib/design`)
   'design',
+  // 19/10/2026 : catalogue français de base découpé par espaces (la coquille garde les textes communs) :
+  // « Arabe » (accueil, leçons, lectures, sciences, révisions, écriture, épreuves…) et « Aujourd'hui et suivi »
+  // (aujourd'hui, suivi, plus, profils, hors ligne, aide), chargés par leurs mises en page, préchargés
+  'arabe',
+  'suivi',
+  // messages d'erreur RENVOYÉS PAR LE SERVEUR (`erreur.<code>`) : chargés à la réception d'une réponse en erreur
+  // (`call`, lib/session.ts), donc toujours en ligne ; jamais préchargés. Les codes produits par l'appareil
+  // lui-même (« reseau »…) restent dans la coquille.
+  'erreurs',
 ] as const;
 const loadedTexts = new Map<string, Promise<void>>();
 /** espaces dont les textes ont été demandés (pour les recharger si une clé manque) */
@@ -134,6 +143,13 @@ export function loadTexts(
     loadedTexts.set(name, p);
   }
   return p;
+}
+/**
+ * 19/10/2026 : textes français EMBARQUÉS dans le morceau d'un module chargé à la demande (ex. leçons vivantes :
+ * `lib/vivante/textes-fr.json`) : ils voyagent avec leur code (gardé hors ligne avec lui), sans catalogue à part.
+ */
+export function ajouterTextes(m: Messages): void {
+  for (const [k, v] of Object.entries(m)) CATALOG.fr![k] ??= v;
 }
 export const loadStaffTexts = (fetcher: CatalogFetcher = fetchCatalog) =>
   loadTexts('personnel', fetcher);

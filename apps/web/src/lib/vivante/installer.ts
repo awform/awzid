@@ -8,6 +8,11 @@ import { mount, unmount } from 'svelte';
 import { buildVivante, type VivSlot } from '@awform/content/vivante';
 import { audioIdFor, levelAudio, type LevelAudio } from '$lib/lecons-audio';
 import Motion from './Motion.svelte';
+import { ajouterTextes } from '$lib/i18n';
+import textesFr from './textes-fr.json';
+
+// 19/10/2026 : textes français du lecteur des leçons vivantes, embarqués dans ce morceau (chargé à la demande)
+ajouterTextes(textesFr);
 
 /** partie de la page (section du lecteur de leçon) qui précède chaque animation */
 const ANCHORS: Record<Exclude<VivSlot, 'fin'>, string> = {

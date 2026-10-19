@@ -434,7 +434,6 @@
   "fn.certificats": "Certificats individuels",
   "fn.mode_serein": "Mode serein",
   "fn.avis": "Bouton « Donner mon avis »",
-  "erreur.regle_sans_critere": "Choisissez au moins un critère (rôle, âge, pays, école ou canal).",
   "beta.titre": "Canal bêta",
   "beta.aide": "Les comptes et écoles du canal bêta voient les fonctions en essai (état « Canal bêta seulement »).",
   "beta.compte_n": "Aujourd'hui : {n} comptes et {p} profils.",

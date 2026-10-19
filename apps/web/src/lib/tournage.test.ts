@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { consigneAppli } from './consigne';
 import { devoirConvient, libelleDevoir } from './devoirs';
-import { t } from './i18n';
+import { loadTexts, t } from './i18n';
 import { compareNiveaux } from './levels';
 import { nomRecitateur } from './quran/reciters';
 
@@ -109,7 +109,11 @@ describe('point 6 : consignes du livre adaptées à l’appli', () => {
       'Je lis la liste que le professeur écrit.',
     );
   });
-  it('plus de « Pour l’adulte » dans l’exercice d’écoute', () => {
+  it('plus de « Pour l’adulte » dans l’exercice d’écoute', async () => {
+    // 19/10/2026 : texte de l'espace « Arabe » (catalogue français découpé)
+    await loadTexts('arabe', async (c) =>
+      JSON.parse(readFileSync(join(STATIC, 'i18n', `${c}.json`), 'utf8')),
+    );
     expect(t('exo.lire_texte')).toBe('Lire le texte');
     expect(t('exo.pour_adulte')).toMatch(/⟦/);
   });

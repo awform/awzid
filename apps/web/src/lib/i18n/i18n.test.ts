@@ -5,6 +5,7 @@ import IntlMessageFormat from 'intl-messageformat';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   _catalogForTests,
+  ajouterTextes,
   detectLocale,
   fmtBytes,
   loadLocale,
@@ -44,6 +45,8 @@ beforeAll(async () => {
   for (const l of LOCALES) await loadLocale(l.code, fromDisk);
   // A37 : textes français du personnel (fichier statique) ajoutés au catalogue français, comme sur leurs pages
   for (const n of SPACE_CATALOGS) await loadTexts(n, fromDisk);
+  // 19/10/2026 : textes embarqués dans un module chargé à la demande (leçons vivantes)
+  ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'vivante', 'textes-fr.json'), 'utf8')));
 });
 afterEach(() => setLocale('fr'));
 
@@ -232,7 +235,7 @@ describe('fonctions', () => {
     expect(Object.keys(rares).filter((k) => k in shell || k in staff)).toEqual([]);
     expect(sw).not.toContain('/i18n/fr-rares.json');
     const RARES =
-      /[\\/]routes[\\/](abonnement|offres|garanties|activation|certificats|compte[\\/]protections|compte[\\/]tuteur|demo|inscription|acces|errata|admin|enseignant|famille|messages|connexion|ma-classe)[\\/]|[\\/]lib[\\/](avis|admin|identites)[\\/]|[\\/]lib[\\/](compte[\\/]CompteEnLigne|compte[\\/]ChampMotDePasse|TutorPanel|TutorSegments|NotificationsReglages)\.svelte$/;
+      /[\\/]routes[\\/](abonnement|offres|garanties|activation|certificats|compte[\\/]protections|compte[\\/]tuteur|demo|inscription|acces|errata|admin|enseignant|famille|messages|connexion|ma-classe)[\\/]|[\\/]lib[\\/](avis|admin|identites)[\\/]|[\\/]lib[\\/](compte[\\/]CompteEnLigne|compte[\\/]ChampMotDePasse|TutorPanel|TutorSegments|NotificationsReglages|MessagerieClasse|ContenuAdmin|CertificatDoc)\.svelte$/;
     for (const p of [
       'abonnement',
       'offres',
