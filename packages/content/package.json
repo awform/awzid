@@ -72,6 +72,10 @@
     "./conversation": {
       "types": "./dist/conversation.d.ts",
       "default": "./dist/conversation.js"
+    },
+    "./video": {
+      "types": "./dist/video.d.ts",
+      "default": "./dist/video.js"
     }
   },
   "bin": {
