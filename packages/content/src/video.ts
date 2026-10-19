@@ -397,7 +397,10 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   const S = obj(L.scene);
   {
     const temps: Temps[] = [];
-    const tableau = (str(S.tableau) ?? '').split(' ').filter(Boolean);
+    // tableau des lettres de la scène, sauf s'il répète le titre arabe (leçon 1 : les mêmes cinq lettres)
+    const t0 = (str(S.tableau) ?? '').split(' ').filter(Boolean);
+    const titreAr = unmark(str(L.titre_ar) ?? '').replace(/\s+/g, '');
+    const tableau = t0.join('') === titreAr ? [] : t0;
     temps.push({
       k: 'titre',
       ms: MS.titre + tableau.length * MS.tableauItem,

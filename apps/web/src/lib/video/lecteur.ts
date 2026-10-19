@@ -75,6 +75,9 @@ function h(tag: string, cls = '', html = ''): HTMLElement {
   if (html) e.innerHTML = html;
   return e;
 }
+/** anneau doré qui se vide (« À toi ! », temps de réponse) */
+const anneau = (cls: string, centre: string) =>
+  `<div class="atoi"><div class="anneau ${cls}"><svg viewBox="0 0 100 100"><circle class="fd" cx="50" cy="50" r="42"/><circle class="or" cx="50" cy="50" r="42"/></svg>${centre}</div></div>`;
 const arH = (s: string, cls = '') => `<span class="ar ${cls}" lang="ar" dir="rtl">${esc(s)}</span>`;
 /** texte français du livre : un passage arabe (2 lettres ou plus) passe sur sa propre ligne ; une lettre reste */
 export function frH(s: string, cls = 'fr'): string {
@@ -253,6 +256,10 @@ class Lecteur {
     });
   }
   att = (ms: number) => this.prog(ms);
+  /** une suite d'une scène quittée s'arrête (après toute attente qui n'est pas un minuteur de `prog`) */
+  vivant(j: number) {
+    if (j !== this.jeton) throw new Coupe();
+  }
   /** joue le fichier audio du texte s'il existe (copie de l'appareil d'abord) ; sinon un court silence */
   async dire(x: T | undefined, el?: Element | null): Promise<void> {
     const id = x?.son ? audioIdFor(x.ar, this.o.audio) : null;
@@ -261,6 +268,8 @@ class Lecteur {
       if (!id) return await this.att(700);
       const j = this.jeton;
       const s = await leconsSource(id).catch(() => null);
+      // scène changée pendant l'attente : cette suite s'arrête (sinon elle continuerait dans la scène suivante)
+      this.vivant(j);
       if (!s) return await this.att(700);
       await new Promise<void>((ok) => {
         const a = new Audio(s.url);
@@ -283,6 +292,7 @@ class Lecteur {
           j !== this.jeton ? (a.pause(), fin()) : fini || requestAnimationFrame(garde);
         requestAnimationFrame(garde);
       });
+      this.vivant(j);
       await this.att(250);
     } finally {
       el?.classList.remove('joue');
@@ -411,7 +421,10 @@ class Lecteur {
     this.band.dataset.testid = 'vv-bandeau';
     this.stage.append(this.zone, this.band);
     try {
-      for (const x of sc.temps) await this.temps(x, sc);
+      for (const x of sc.temps) {
+        await this.temps(x, sc);
+        this.vivant(j);
+      }
       await this.att(600);
       if (j === this.jeton) void this.jouer(i + 1);
     } catch (e) {
@@ -441,9 +454,21 @@ class Lecteur {
     const e = typeof html === 'string' ? h('div', 'bloc', html) : html;
     e.classList.add('apparait', `b-${this.kind}`);
     z.append(e);
-    while (z.scrollHeight > z.clientHeight + 2 && z.firstElementChild !== e)
-      z.firstElementChild!.remove();
+    this.tasse(e);
     return e;
+  }
+  /** la scène déborde : les éléments placés avant `e` laissent la place (jamais de texte coupé) */
+  tasse(e: Element) {
+    const z = this.zone;
+    const deborde = () => z.scrollHeight > z.clientHeight + 2;
+    // d'abord les éléments secondaires (la grande lettre et son nom restent le plus longtemps)
+    for (let c = z.firstElementChild; c && c !== e && deborde();) {
+      const n = c.nextElementSibling;
+      if (!c.matches('.b-trace,.b-nom')) c.remove();
+      c = n;
+    }
+    while (deborde() && z.firstElementChild && z.firstElementChild !== e)
+      z.firstElementChild.remove();
   }
   tuile(x: T, cls = ''): string {
     return x.son
@@ -468,9 +493,7 @@ class Lecteur {
   /** « À toi ! » : anneau doré qui se vide pendant que l'élève parle, puis la correction (audio du livre) */
   async aToi(cle: string, ms: number, puis: T[] = []) {
     this.consigne(cle);
-    const d = this.ajoute(
-      `<div class="atoi"><div class="anneau"><svg viewBox="0 0 100 100"><circle class="fd" cx="50" cy="50" r="42"/><circle class="or" cx="50" cy="50" r="42"/></svg><b>${esc(t('vv.a_toi'))}</b></div></div>`,
-    );
+    const d = this.ajoute(anneau('', `<b>${esc(t('vv.a_toi'))}</b>`));
     const o = d.querySelector<SVGElement>('.or')!;
     await this.prog(ms, (p) => (o.style.strokeDashoffset = String(264 * p)));
     d.remove();
@@ -479,9 +502,7 @@ class Lecteur {
   /** attend une réponse (ou le délai : la réponse est alors montrée) */
   reponse<R>(ms = 12_000): { p: Promise<R | null>; dire: (r: R) => void } {
     let dire: (r: R) => void = () => {};
-    const d = this.ajoute(
-      '<div class="atoi"><div class="anneau petit"><svg viewBox="0 0 100 100"><circle class="fd" cx="50" cy="50" r="42"/><circle class="or" cx="50" cy="50" r="42"/></svg></div></div>',
-    );
+    const d = this.ajoute(anneau('petit', ''));
     const o = d.querySelector<SVGElement>('.or')!;
     const p = new Promise<R | null>((ok, ko) => {
       let fini = false;
@@ -538,8 +559,9 @@ class Lecteur {
         return this.att(x.ms);
       case 'trace': {
         const e = this.ajoute('<div class="trace-h"></div>', true);
-        const trace = await this.tracer(e.firstElementChild as HTMLElement, x.l, x.l, 0, 8.5);
-        if (trace) e.append(h('p', 'src', esc(t('vv.traits_source'))));
+        const trace = await this.tracer(e.firstElementChild as HTMLElement, x.l, x.l, 0, 6.5);
+        // source des tracés, en petit au bas de la scène (seulement si la forme a été tracée)
+        if (trace) this.zone.append(h('p', 'src b-src', esc(t('vv.traits_source'))));
         return this.att(600);
       }
       case 'nom': {
@@ -627,10 +649,12 @@ class Lecteur {
         const cte = e.firstElementChild!;
         for (const a of x.ar ?? []) {
           cte.append(h('div', 'apparait', arH(a.ar, 'l')));
+          this.tasse(e);
           await this.att(1400);
         }
         for (const f of x.fr ?? []) {
           cte.append(h('div', 'apparait', frH(f, 'fr toujours')));
+          this.tasse(e);
           await this.att(1200 + 40 * f.length);
         }
         return this.att(800);
@@ -949,10 +973,12 @@ class Lecteur {
    * sans animation de traits. Renvoie vrai si la forme a été tracée.
    */
   async tracer(host: HTMLElement, s: string, l: string, f: number, rem: number): Promise<boolean> {
+    const j = this.jeton;
     const traits = (await chargerTraits())[l]?.[f]?.t;
     const F = rem * (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16);
     const font = `700 ${F}px ${NASKH}`;
     await document.fonts.load(font, s).catch(() => undefined);
+    this.vivant(j);
     const ctx = document.createElement('canvas').getContext('2d');
     if (!ctx) return false;
     ctx.font = font;
@@ -962,8 +988,9 @@ class Lecteur {
     const W = Math.max(F * 0.9, m.width + F * 0.5);
     const H = F * 1.6;
     const B = F * 1.0;
-    const txt = (cls: string, extra = '') =>
-      `<text class="${cls}" x="${W / 2}" y="${B}" text-anchor="middle" direction="rtl" style="font:${font}"${extra}>${esc(s)}</text>`;
+    // police en attributs SVG (dans un attribut style, les guillemets du nom de police fermeraient l'attribut)
+    const txt = (cls: string) =>
+      `<text class="${cls}" x="${W / 2}" y="${B}" text-anchor="middle" direction="rtl" font-family="Noto Naskh Arabic, serif" font-weight="700" font-size="${F}">${esc(s)}</text>`;
     host.innerHTML = `<svg class="trace" viewBox="0 0 ${W} ${H}" style="width:${W / 16}rem" role="img" aria-label="${esc(s)}">${traits ? txt('fantome') : ''}${txt('plein')}</svg>`;
     if (!traits) return false;
     const svg = host.firstElementChild as SVGSVGElement;
@@ -1004,7 +1031,8 @@ class Lecteur {
       num.setAttribute('y', String(+y0! - F * 0.1));
       num.setAttribute('font-size', String(F * 0.16));
       num.textContent = String(n + 1);
-      svg.append(num);
+      // numéros d'ordre sur la grande lettre seulement (illisibles dans les vignettes des formes)
+      if (F >= 60) svg.append(num);
       await this.prog(Math.max(900, L * 9), (q) => {
         path.style.strokeDashoffset = String(L * (1 - q));
         const o = path.getPointAtLength(L * q);

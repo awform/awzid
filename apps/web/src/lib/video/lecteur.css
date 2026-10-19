@@ -142,8 +142,7 @@
   text-transform: uppercase;
   color: var(--doux);
 }
-.vv-t .s .x,
-.vv-t .s .ar {
+.vv-t .s span {
   font:
     700 0.95rem/1.3 'Nunito',
     sans-serif;
@@ -226,11 +225,31 @@
 .vv-c > * {
   max-width: 100%;
 }
+/* jamais de texte coupé : centrage « sûr » (le haut reste visible) et défilement en dernier recours */
+.vv-c {
+  overflow-y: auto;
+  justify-content: safe center;
+}
+.vv .bloc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.vv .src {
+  grid-row: 99;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+.vv-c.lt .illu {
+  width: 4.5rem;
+  height: 4.5rem;
+}
 /* scène d'une lettre : la grande lettre et son nom à droite, le repère à gauche */
 .vv-c.lt {
   display: grid;
   grid-template-columns: 1fr auto;
-  align-content: center;
+  align-content: safe center;
   justify-items: center;
   column-gap: 0.6rem;
 }
@@ -297,11 +316,9 @@
   padding: 0.4rem 0.8rem 0.6rem;
 }
 .vv .src {
-  font-size: 0.75rem;
   color: var(--doux);
   text-align: center;
   margin: 0.2rem 0 0;
-  max-width: 18rem;
 }
 /* ———— lettre, tracé ———— */
 .vv svg.trace {
@@ -514,17 +531,6 @@
     600 0.95rem 'Lexend',
     sans-serif;
   color: var(--profond);
-}
-.vv .micro {
-  font:
-    700 0.85rem 'Nunito',
-    sans-serif;
-  color: var(--profond);
-  background: var(--vert);
-  color: var(--sur-vert);
-  border-radius: 0.6rem;
-  padding: 0.3rem 0.8rem;
-  text-align: center;
 }
 /* ———— exercices ———— */
 .vv .options {
