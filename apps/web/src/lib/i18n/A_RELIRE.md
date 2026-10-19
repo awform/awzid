@@ -167,3 +167,11 @@ Les 38 textes `v4.*` des écrans « Aujourd'hui » et « Mes activités » (inte
 `static/i18n/fr-design.json` (hors de la coquille, chargés avec les écrans) et traduits par Claude en **brouillon** dans
 les quatre langues, arguments ICU identiques ; de même `fn.design_v4` (écran de l'administrateur, `fr-personnel.json`).
 **Relecture humaine à faire** avec le reste de la langue.
+
+Vidéos vivantes (19/10/2026) : 83 textes `vv.*` (lecteur plein écran des vidéos vivantes : modes, commandes,
+consignes « À toi ! », exercices, « À toi de jouer la scène ! », source des tracés) et `fn.video_vivante` traduits
+par Claude, relecteur provisoire, en **brouillon** dans les quatre langues en préparation — à relire avec le reste.
+Le français est embarqué avec le lecteur (`lib/video/textes-fr.json`, sauf `vv.voir` dans `fr-arabe`). Choix à
+vérifier : l'élève est TUTOYÉ (décision du client pour les vidéos vivantes), y compris en arabe (singulier) ;
+« bilan » rendu comme ailleurs (« Review test », « Evaluación », « Lernkontrolle », « التقييم ») ; les noms
+d'ouvrages cités (Alif Baa) restent en lettres latines.

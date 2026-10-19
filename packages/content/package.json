@@ -76,6 +76,10 @@
     "./video": {
       "types": "./dist/video.d.ts",
       "default": "./dist/video.js"
+    },
+    "./video-niveaux": {
+      "types": "./dist/video-niveaux.d.ts",
+      "default": "./dist/video-niveaux.js"
     }
   },
   "bin": {

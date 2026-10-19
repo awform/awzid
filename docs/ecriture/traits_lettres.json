@@ -1,0 +1,1661 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "statut": "indicatif — à trancher par le référent ; voir SENS_DES_TRAITS.md",
+  "repere": {
+    "x": "0 = bord gauche de la forme, 1 = bord droit (l'écriture progresse vers x décroissant)",
+    "y": "0 = ligne de base ; 1 = hauteur de l'alif ; négatif = sous la ligne",
+    "liaison": "une forme liée à droite commence en [1,0] ; une forme qui se lie à gauche finit en [0,0]",
+    "pts": "points de passage dans l'ordre du geste ; à recaler sur les contours de Noto Naskh Arabic 700 (comme le prototype de ب)",
+    "retours": "paires d'indices [i,j] : le segment pts[i]→pts[j] repasse sur le trait qui vient d'être tracé (aller-retour d'une dent ou d'une hampe)",
+    "sens_boucle": "horaire / antihoraire, vu par le lecteur"
+  },
+  "sources": {
+    "AB": "Brustad, Al-Batal, Al-Tonsi, Alif Baa, Georgetown University Press (texte en ligne, Middlebury College)",
+    "SK": "Mamoun Sakkal, Arabic Alphabet Chart in Naskh Style: With Teaching Notes, 2016, sakkal.com",
+    "BSE": "Biadsy, El-Sana, Saabni, US 8 615 131 B2, Online Arabic handwriting recognition",
+    "LIVRE": "ad1, ecriture.conseil_fr"
+  },
+  "regles": {
+    "sens": "droite vers gauche ; un groupe de lettres attachées = un seul geste (AB)",
+    "marques": "points, barre de ك, hampe de ط ظ, hamza, madda : après le corps ; dans un mot, après le squelette du mot entier, de droite à gauche ; puis voyelles et signes (AB, BSE)",
+    "hampes": "de haut en bas quand elles commencent un trait ; montée puis retour sur le même trait quand on y arrive par une liaison ; ـا monte et s'arrête (AB, SK)",
+    "dents": "début : départ au sommet de la dent ; milieu : montée et retour (SK, AB)",
+    "points_ordre": "convention non sourcée : de droite à gauche ; pour 3 points, rangée du bas puis sommet"
+  },
+  "familles": {
+    "dent": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.93, 0.4],
+              [0.95, 0.12],
+              [0.85, 0.02],
+              [0.5, 0.0],
+              [0.15, 0.03],
+              [0.04, 0.3]
+            ]
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["SK", "AB"]
+      },
+      "debut": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.8, 0.4],
+              [0.83, 0.12],
+              [0.6, 0.01],
+              [0.0, 0.0]
+            ]
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["SK", "AB"]
+      },
+      "milieu": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.55, 0.01],
+              [0.52, 0.4],
+              [0.52, 0.05],
+              [0.0, 0.0]
+            ],
+            "retours": [[2, 3]]
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["SK", "AB"]
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.92, 0.01],
+              [0.9, 0.4],
+              [0.9, 0.1],
+              [0.8, 0.02],
+              [0.5, 0.0],
+              [0.15, 0.03],
+              [0.04, 0.3]
+            ],
+            "retours": [[2, 3]]
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["SK"]
+      }
+    },
+    "nun": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.8, 0.4],
+              [0.85, 0.1],
+              [0.78, -0.22],
+              [0.5, -0.32],
+              [0.2, -0.25],
+              [0.08, -0.05],
+              [0.1, 0.15]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["SK", "AB"]
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.84, 0.01],
+              [0.82, 0.38],
+              [0.82, 0.08],
+              [0.76, -0.22],
+              [0.48, -0.32],
+              [0.2, -0.25],
+              [0.08, -0.05],
+              [0.1, 0.15]
+            ],
+            "retours": [[2, 3]],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"]
+      }
+    },
+    "ya": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.78, 0.42],
+              [0.62, 0.32],
+              [0.66, 0.15],
+              [0.85, 0.05],
+              [0.8, -0.18],
+              [0.55, -0.3],
+              [0.25, -0.3],
+              [0.08, -0.18],
+              [0.06, 0.02]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB", "LIVRE"],
+        "note": "fin de queue à recaler sur la police (le livre dit « revient vers la droite »)"
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.88, 0.0],
+              [0.83, 0.1],
+              [0.86, -0.02],
+              [0.78, -0.2],
+              [0.5, -0.3],
+              [0.22, -0.3],
+              [0.08, -0.18],
+              [0.06, 0.02]
+            ]
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB"]
+      }
+    },
+    "jim": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.3, 0.6],
+              [0.4, 0.66],
+              [0.88, 0.66],
+              [0.55, 0.38],
+              [0.3, 0.1],
+              [0.22, -0.2],
+              [0.38, -0.45],
+              [0.95, -0.5]
+            ],
+            "sens_boucle": "antihoraire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["SK", "AB"],
+        "note": "trait du haut de gauche à droite, puis retour en diagonale"
+      },
+      "debut": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.3, 0.55],
+              [0.4, 0.6],
+              [0.92, 0.6],
+              [0.5, 0.2],
+              [0.25, 0.02],
+              [0.0, 0.0]
+            ]
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["SK", "AB"]
+      },
+      "milieu": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.95, 0.35],
+              [0.85, 0.58],
+              [0.35, 0.6],
+              [0.2, 0.3],
+              [0.1, 0.03],
+              [0.0, 0.0]
+            ]
+          }
+        ],
+        "consensus": "douteux",
+        "sources": ["AB", "SK"],
+        "note": "liaison par le haut attestée ; détail du geste proposé"
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.95, 0.35],
+              [0.85, 0.6],
+              [0.4, 0.62],
+              [0.25, 0.35],
+              [0.18, 0.0],
+              [0.2, -0.28],
+              [0.4, -0.47],
+              [0.95, -0.5]
+            ],
+            "sens_boucle": "antihoraire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB"],
+        "note": "AB : « from the line up and then over »"
+      }
+    },
+    "dal": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.4, 0.62],
+              [0.62, 0.35],
+              [0.85, 0.08],
+              [0.78, 0.0],
+              [0.15, 0.0],
+              [0.05, 0.1]
+            ]
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"],
+        "lever": true
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.85, 0.02],
+              [0.45, 0.6],
+              [0.85, 0.06],
+              [0.78, 0.0],
+              [0.15, 0.0],
+              [0.05, 0.1]
+            ],
+            "retours": [[2, 3]]
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"],
+        "lever": true
+      }
+    },
+    "ra": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.85, 0.3],
+              [0.88, 0.1],
+              [0.7, -0.22],
+              [0.35, -0.42],
+              [0.0, -0.46]
+            ]
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"],
+        "lever": true
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.88, 0.04],
+              [0.85, 0.28],
+              [0.86, 0.08],
+              [0.7, -0.22],
+              [0.35, -0.42],
+              [0.0, -0.46]
+            ],
+            "retours": [[2, 3]]
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB", "SK"],
+        "lever": true
+      }
+    },
+    "sin": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.97, 0.28],
+              [0.96, 0.04],
+              [0.86, 0.02],
+              [0.83, 0.28],
+              [0.83, 0.04],
+              [0.72, 0.02],
+              [0.69, 0.28],
+              [0.69, 0.04],
+              [0.6, 0.02],
+              [0.55, -0.2],
+              [0.35, -0.32],
+              [0.12, -0.25],
+              [0.04, -0.05],
+              [0.05, 0.12]
+            ],
+            "retours": [
+              [3, 4],
+              [6, 7]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["SK", "AB"]
+      },
+      "debut": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.97, 0.28],
+              [0.96, 0.04],
+              [0.78, 0.02],
+              [0.74, 0.28],
+              [0.74, 0.04],
+              [0.52, 0.02],
+              [0.48, 0.28],
+              [0.48, 0.04],
+              [0.0, 0.0]
+            ],
+            "retours": [
+              [3, 4],
+              [6, 7]
+            ]
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["SK"]
+      },
+      "milieu": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.9, 0.02],
+              [0.88, 0.28],
+              [0.88, 0.04],
+              [0.66, 0.02],
+              [0.63, 0.28],
+              [0.63, 0.04],
+              [0.42, 0.02],
+              [0.39, 0.28],
+              [0.39, 0.04],
+              [0.0, 0.0]
+            ],
+            "retours": [
+              [2, 3],
+              [5, 6],
+              [8, 9]
+            ]
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["SK"]
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.95, 0.02],
+              [0.93, 0.28],
+              [0.93, 0.04],
+              [0.84, 0.02],
+              [0.81, 0.28],
+              [0.81, 0.04],
+              [0.71, 0.02],
+              [0.68, 0.28],
+              [0.68, 0.04],
+              [0.6, 0.02],
+              [0.55, -0.2],
+              [0.35, -0.32],
+              [0.12, -0.25],
+              [0.04, -0.05],
+              [0.05, 0.12]
+            ],
+            "retours": [
+              [2, 3],
+              [5, 6],
+              [8, 9]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["SK", "AB"]
+      }
+    },
+    "sad": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.62, 0.04],
+              [0.66, 0.24],
+              [0.82, 0.34],
+              [0.97, 0.22],
+              [0.9, 0.04],
+              [0.62, 0.02],
+              [0.58, 0.24],
+              [0.57, 0.04],
+              [0.52, -0.18],
+              [0.32, -0.32],
+              [0.1, -0.25],
+              [0.03, -0.05],
+              [0.05, 0.12]
+            ],
+            "retours": [[6, 7]],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"]
+      },
+      "debut": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.45, 0.04],
+              [0.5, 0.26],
+              [0.72, 0.36],
+              [0.95, 0.22],
+              [0.85, 0.03],
+              [0.45, 0.02],
+              [0.4, 0.24],
+              [0.39, 0.04],
+              [0.0, 0.0]
+            ],
+            "retours": [[6, 7]],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"]
+      },
+      "milieu": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.45, 0.02],
+              [0.5, 0.26],
+              [0.72, 0.36],
+              [0.93, 0.22],
+              [0.85, 0.03],
+              [0.45, 0.02],
+              [0.4, 0.24],
+              [0.39, 0.04],
+              [0.0, 0.0]
+            ],
+            "retours": [
+              [5, 6],
+              [7, 8]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB"]
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.62, 0.02],
+              [0.66, 0.24],
+              [0.82, 0.34],
+              [0.95, 0.22],
+              [0.88, 0.04],
+              [0.62, 0.02],
+              [0.58, 0.24],
+              [0.57, 0.04],
+              [0.52, -0.18],
+              [0.32, -0.32],
+              [0.1, -0.25],
+              [0.03, -0.05],
+              [0.05, 0.12]
+            ],
+            "retours": [
+              [5, 6],
+              [7, 8]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB"]
+      }
+    },
+    "ta": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.35, 0.04],
+              [0.42, 0.26],
+              [0.68, 0.36],
+              [0.95, 0.2],
+              [0.85, 0.02],
+              [0.35, 0.0],
+              [0.05, 0.0],
+              [0.0, 0.06]
+            ],
+            "sens_boucle": "horaire"
+          },
+          {
+            "n": 2,
+            "type": "hampe",
+            "pts": [
+              [0.36, 1.0],
+              [0.34, 0.06]
+            ],
+            "apres": "lettre"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"]
+      },
+      "debut": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.35, 0.04],
+              [0.42, 0.26],
+              [0.68, 0.36],
+              [0.95, 0.2],
+              [0.85, 0.02],
+              [0.0, 0.0]
+            ],
+            "sens_boucle": "horaire"
+          },
+          {
+            "n": 2,
+            "type": "hampe",
+            "pts": [
+              [0.36, 1.0],
+              [0.34, 0.06]
+            ],
+            "apres": "mot"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"]
+      },
+      "milieu": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.35, 0.02],
+              [0.42, 0.26],
+              [0.68, 0.36],
+              [0.93, 0.2],
+              [0.85, 0.02],
+              [0.0, 0.0]
+            ],
+            "sens_boucle": "horaire"
+          },
+          {
+            "n": 2,
+            "type": "hampe",
+            "pts": [
+              [0.36, 1.0],
+              [0.34, 0.06]
+            ],
+            "apres": "mot"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB"]
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.4, 0.02],
+              [0.46, 0.26],
+              [0.7, 0.36],
+              [0.93, 0.2],
+              [0.85, 0.02],
+              [0.4, 0.0],
+              [0.05, 0.0],
+              [0.0, 0.06]
+            ],
+            "sens_boucle": "horaire"
+          },
+          {
+            "n": 2,
+            "type": "hampe",
+            "pts": [
+              [0.41, 1.0],
+              [0.39, 0.06]
+            ],
+            "apres": "mot"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"]
+      }
+    },
+    "ayn": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.85, 0.6],
+              [0.65, 0.66],
+              [0.5, 0.55],
+              [0.55, 0.38],
+              [0.82, 0.32],
+              [0.45, 0.18],
+              [0.22, -0.08],
+              [0.26, -0.36],
+              [0.5, -0.48],
+              [0.95, -0.5]
+            ],
+            "sens_boucle": "antihoraire"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK", "LIVRE"]
+      },
+      "debut": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.88, 0.5],
+              [0.66, 0.56],
+              [0.5, 0.42],
+              [0.58, 0.18],
+              [0.85, 0.06],
+              [0.55, 0.0],
+              [0.0, 0.0]
+            ],
+            "sens_boucle": "antihoraire"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK", "LIVRE"]
+      },
+      "milieu": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.78, 0.04],
+              [0.72, 0.34],
+              [0.55, 0.4],
+              [0.38, 0.36],
+              [0.55, 0.04],
+              [0.0, 0.0]
+            ],
+            "sens_boucle": "antihoraire"
+          }
+        ],
+        "consensus": "douteux",
+        "sources": ["AB"]
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.82, 0.04],
+              [0.76, 0.34],
+              [0.58, 0.4],
+              [0.42, 0.36],
+              [0.55, 0.06],
+              [0.3, -0.08],
+              [0.24, -0.34],
+              [0.48, -0.48],
+              [0.95, -0.5]
+            ],
+            "sens_boucle": "antihoraire"
+          }
+        ],
+        "consensus": "douteux",
+        "sources": ["AB"]
+      }
+    },
+    "fa": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.92, 0.24],
+              [0.8, 0.22],
+              [0.74, 0.34],
+              [0.82, 0.46],
+              [0.94, 0.38],
+              [0.93, 0.14],
+              [0.84, 0.02],
+              [0.45, 0.0],
+              [0.12, 0.03],
+              [0.04, 0.24]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB", "SK"]
+      },
+      "debut": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.85, 0.24],
+              [0.7, 0.22],
+              [0.64, 0.36],
+              [0.76, 0.48],
+              [0.88, 0.38],
+              [0.86, 0.12],
+              [0.7, 0.01],
+              [0.0, 0.0]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB", "SK"]
+      },
+      "milieu": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.62, 0.02],
+              [0.52, 0.16],
+              [0.58, 0.4],
+              [0.75, 0.44],
+              [0.8, 0.2],
+              [0.66, 0.03],
+              [0.0, 0.0]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "douteux",
+        "sources": ["AB"],
+        "note": "déduit d'AB (la liaison entre au départ de la boucle)"
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.85, 0.02],
+              [0.76, 0.16],
+              [0.8, 0.4],
+              [0.94, 0.42],
+              [0.97, 0.2],
+              [0.88, 0.03],
+              [0.45, 0.0],
+              [0.12, 0.03],
+              [0.04, 0.24]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "douteux",
+        "sources": ["AB"]
+      }
+    },
+    "qaf": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.88, 0.28],
+              [0.74, 0.26],
+              [0.68, 0.4],
+              [0.78, 0.54],
+              [0.92, 0.46],
+              [0.92, 0.2],
+              [0.85, -0.15],
+              [0.58, -0.36],
+              [0.25, -0.32],
+              [0.08, -0.12],
+              [0.08, 0.1]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB", "SK"]
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.85, 0.02],
+              [0.72, 0.16],
+              [0.76, 0.4],
+              [0.9, 0.44],
+              [0.94, 0.2],
+              [0.88, -0.1],
+              [0.62, -0.34],
+              [0.28, -0.32],
+              [0.08, -0.12],
+              [0.08, 0.1]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "douteux",
+        "sources": ["AB"]
+      }
+    },
+    "kaf": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.86, 1.0],
+              [0.86, 0.1],
+              [0.78, 0.0],
+              [0.15, 0.0],
+              [0.06, 0.1]
+            ]
+          },
+          {
+            "n": 2,
+            "type": "signe",
+            "pts": [
+              [0.58, 0.48],
+              [0.46, 0.52],
+              [0.44, 0.4],
+              [0.58, 0.32],
+              [0.44, 0.24]
+            ],
+            "apres": "lettre"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB"]
+      },
+      "debut": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.45, 0.55],
+              [0.62, 0.25],
+              [0.65, 0.06],
+              [0.5, 0.0],
+              [0.0, 0.0]
+            ]
+          },
+          {
+            "n": 2,
+            "type": "barre",
+            "pts": [
+              [0.98, 0.98],
+              [0.45, 0.55]
+            ],
+            "apres": "mot"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB", "SK"],
+        "note": "SK (calame) trace la barre en premier ; au stylo, AB la trace après le mot"
+      },
+      "milieu": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.7, 0.02],
+              [0.5, 0.55],
+              [0.68, 0.06],
+              [0.0, 0.0]
+            ],
+            "retours": [[2, 3]]
+          },
+          {
+            "n": 2,
+            "type": "barre",
+            "pts": [
+              [0.98, 0.98],
+              [0.5, 0.55]
+            ],
+            "apres": "mot"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB"]
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.88, 0.02],
+              [0.86, 1.0],
+              [0.86, 0.1],
+              [0.78, 0.0],
+              [0.15, 0.0],
+              [0.06, 0.1]
+            ],
+            "retours": [[2, 3]]
+          },
+          {
+            "n": 2,
+            "type": "signe",
+            "pts": [
+              [0.58, 0.48],
+              [0.46, 0.52],
+              [0.44, 0.4],
+              [0.58, 0.32],
+              [0.44, 0.24]
+            ],
+            "apres": "mot"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB"]
+      }
+    },
+    "lam": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.75, 1.0],
+              [0.75, 0.05],
+              [0.72, -0.22],
+              [0.45, -0.34],
+              [0.15, -0.25],
+              [0.06, -0.05],
+              [0.08, 0.14]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"]
+      },
+      "debut": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.7, 1.0],
+              [0.7, 0.08],
+              [0.55, 0.0],
+              [0.0, 0.0]
+            ]
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"]
+      },
+      "milieu": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.62, 0.02],
+              [0.6, 1.0],
+              [0.6, 0.04],
+              [0.0, 0.0]
+            ],
+            "retours": [[2, 3]]
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"]
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.82, 0.02],
+              [0.78, 1.0],
+              [0.78, 0.05],
+              [0.74, -0.22],
+              [0.45, -0.34],
+              [0.15, -0.25],
+              [0.06, -0.05],
+              [0.08, 0.14]
+            ],
+            "retours": [[2, 3]],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"]
+      }
+    },
+    "mim": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.62, 0.04],
+              [0.64, 0.24],
+              [0.8, 0.32],
+              [0.95, 0.2],
+              [0.88, 0.03],
+              [0.62, 0.02],
+              [0.4, 0.02],
+              [0.38, -0.1],
+              [0.38, -0.55]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB", "SK"]
+      },
+      "debut": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.55, 0.04],
+              [0.58, 0.26],
+              [0.76, 0.34],
+              [0.94, 0.2],
+              [0.84, 0.03],
+              [0.55, 0.02],
+              [0.0, 0.0]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB", "SK"],
+        "note": "AB admet aussi le sens inverse"
+      },
+      "milieu": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.15],
+              [0.62, 0.18],
+              [0.48, 0.1],
+              [0.52, -0.05],
+              [0.7, -0.06],
+              [0.76, 0.08],
+              [0.62, 0.18],
+              [0.4, 0.06],
+              [0.0, 0.0]
+            ],
+            "sens_boucle": "antihoraire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB"]
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.15],
+              [0.68, 0.2],
+              [0.55, 0.1],
+              [0.6, -0.04],
+              [0.78, -0.02],
+              [0.8, 0.14],
+              [0.66, 0.2],
+              [0.55, 0.1],
+              [0.5, -0.1],
+              [0.5, -0.55]
+            ],
+            "sens_boucle": "antihoraire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB"]
+      }
+    },
+    "ha": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.5, 0.5],
+              [0.8, 0.42],
+              [0.85, 0.15],
+              [0.55, 0.0],
+              [0.2, 0.12],
+              [0.25, 0.4],
+              [0.5, 0.5]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "douteux",
+        "sources": ["AB"]
+      },
+      "debut": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.3, 0.1],
+              [0.55, 0.62],
+              [0.82, 0.5],
+              [0.85, 0.2],
+              [0.6, 0.06],
+              [0.45, 0.22],
+              [0.55, 0.32],
+              [0.4, 0.06],
+              [0.0, 0.0]
+            ]
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB"]
+      },
+      "milieu": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.65, 0.04],
+              [0.45, 0.4],
+              [0.6, 0.45],
+              [0.55, 0.05],
+              [0.5, -0.25],
+              [0.38, -0.2],
+              [0.42, 0.0],
+              [0.0, 0.0]
+            ]
+          }
+        ],
+        "consensus": "douteux",
+        "sources": [],
+        "note": "forme imprimée à deux boucles : geste non décrit par les sources ; à dessiner sur la police et à faire valider"
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.82, 0.06],
+              [0.72, 0.45],
+              [0.4, 0.42],
+              [0.2, 0.15],
+              [0.4, 0.0],
+              [0.75, 0.06]
+            ],
+            "sens_boucle": "antihoraire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB"]
+      }
+    },
+    "alif": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.5, 1.0],
+              [0.5, 0.0]
+            ]
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"],
+        "lever": true
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.6, 0.02],
+              [0.55, 1.0]
+            ]
+          }
+        ],
+        "consensus": "fort",
+        "sources": ["AB", "SK"],
+        "lever": true
+      }
+    },
+    "waw": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.8, 0.08],
+              [0.6, 0.1],
+              [0.52, 0.28],
+              [0.62, 0.42],
+              [0.8, 0.36],
+              [0.85, 0.1],
+              [0.8, -0.18],
+              [0.55, -0.38],
+              [0.15, -0.45]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB", "SK"],
+        "lever": true
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.6, 0.04],
+              [0.52, 0.24],
+              [0.62, 0.4],
+              [0.8, 0.34],
+              [0.84, 0.08],
+              [0.78, -0.18],
+              [0.55, -0.38],
+              [0.15, -0.45]
+            ],
+            "sens_boucle": "horaire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB"],
+        "lever": true
+      }
+    },
+    "hamza": {
+      "isolee": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [0.8, 0.62],
+              [0.5, 0.66],
+              [0.4, 0.5],
+              [0.55, 0.36],
+              [0.85, 0.34],
+              [0.2, 0.12]
+            ],
+            "sens_boucle": "antihoraire"
+          }
+        ],
+        "consensus": "partiel",
+        "sources": ["AB", "LIVRE"]
+      }
+    },
+    "lamalif": {
+      "isolee": {
+        "variantes": {
+          "un_mouvement": {
+            "traits": [
+              {
+                "n": 1,
+                "type": "corps",
+                "pts": [
+                  [0.8, 1.0],
+                  [0.7, 0.55],
+                  [0.5, 0.05],
+                  [0.4, 0.02],
+                  [0.2, 1.0]
+                ]
+              }
+            ],
+            "sources": ["LIVRE"]
+          },
+          "deux_traits": {
+            "traits": [
+              {
+                "n": 1,
+                "type": "corps",
+                "pts": [
+                  [0.8, 1.0],
+                  [0.45, 0.02]
+                ]
+              },
+              {
+                "n": 2,
+                "type": "alif",
+                "pts": [
+                  [0.15, 1.0],
+                  [0.42, 0.04]
+                ]
+              }
+            ],
+            "sources": ["AB"]
+          }
+        },
+        "consensus": "divergent"
+      },
+      "fin": {
+        "traits": [
+          {
+            "n": 1,
+            "type": "corps",
+            "pts": [
+              [1.0, 0.0],
+              [0.85, 0.02],
+              [0.8, 1.0],
+              [0.5, 0.04],
+              [0.2, 1.0]
+            ]
+          }
+        ],
+        "consensus": "douteux",
+        "sources": [],
+        "lever": true
+      }
+    }
+  },
+  "lettres": {
+    "ب": {
+      "lecon": "l01",
+      "formes": { "isolee": "dent", "debut": "dent", "milieu": "dent", "fin": "dent" },
+      "marques": [{ "type": "point", "nombre": 1, "place": "dessous" }]
+    },
+    "ت": {
+      "lecon": "l01",
+      "formes": { "isolee": "dent", "debut": "dent", "milieu": "dent", "fin": "dent" },
+      "marques": [{ "type": "point", "nombre": 2, "place": "dessus" }]
+    },
+    "ث": {
+      "lecon": "l01",
+      "formes": { "isolee": "dent", "debut": "dent", "milieu": "dent", "fin": "dent" },
+      "marques": [{ "type": "point", "nombre": 3, "place": "dessus" }]
+    },
+    "ن": {
+      "lecon": "l01",
+      "formes": { "isolee": "nun", "debut": "dent", "milieu": "dent", "fin": "nun" },
+      "marques": [{ "type": "point", "nombre": 1, "place": "dessus" }]
+    },
+    "ي": {
+      "lecon": "l01",
+      "formes": { "isolee": "ya", "debut": "dent", "milieu": "dent", "fin": "ya" },
+      "marques": [{ "type": "point", "nombre": 2, "place": "dessous" }]
+    },
+    "ج": {
+      "lecon": "l02",
+      "formes": { "isolee": "jim", "debut": "jim", "milieu": "jim", "fin": "jim" },
+      "marques": [{ "type": "point", "nombre": 1, "place": "dans_le_crochet" }]
+    },
+    "ح": {
+      "lecon": "l02",
+      "formes": { "isolee": "jim", "debut": "jim", "milieu": "jim", "fin": "jim" },
+      "marques": []
+    },
+    "خ": {
+      "lecon": "l02",
+      "formes": { "isolee": "jim", "debut": "jim", "milieu": "jim", "fin": "jim" },
+      "marques": [{ "type": "point", "nombre": 1, "place": "dessus" }]
+    },
+    "د": {
+      "lecon": "l02",
+      "formes": { "isolee": "dal", "debut": "dal.isolee", "milieu": "dal.fin", "fin": "dal" },
+      "marques": []
+    },
+    "ذ": {
+      "lecon": "l02",
+      "formes": { "isolee": "dal", "debut": "dal.isolee", "milieu": "dal.fin", "fin": "dal" },
+      "marques": [{ "type": "point", "nombre": 1, "place": "dessus" }]
+    },
+    "ر": {
+      "lecon": "l03",
+      "formes": { "isolee": "ra", "debut": "ra.isolee", "milieu": "ra.fin", "fin": "ra" },
+      "marques": []
+    },
+    "ز": {
+      "lecon": "l03",
+      "formes": { "isolee": "ra", "debut": "ra.isolee", "milieu": "ra.fin", "fin": "ra" },
+      "marques": [{ "type": "point", "nombre": 1, "place": "dessus" }]
+    },
+    "س": {
+      "lecon": "l03",
+      "formes": { "isolee": "sin", "debut": "sin", "milieu": "sin", "fin": "sin" },
+      "marques": []
+    },
+    "ش": {
+      "lecon": "l03",
+      "formes": { "isolee": "sin", "debut": "sin", "milieu": "sin", "fin": "sin" },
+      "marques": [{ "type": "point", "nombre": 3, "place": "dessus" }]
+    },
+    "ص": {
+      "lecon": "l04",
+      "formes": { "isolee": "sad", "debut": "sad", "milieu": "sad", "fin": "sad" },
+      "marques": []
+    },
+    "ض": {
+      "lecon": "l04",
+      "formes": { "isolee": "sad", "debut": "sad", "milieu": "sad", "fin": "sad" },
+      "marques": [{ "type": "point", "nombre": 1, "place": "dessus" }]
+    },
+    "ط": {
+      "lecon": "l04",
+      "formes": { "isolee": "ta", "debut": "ta", "milieu": "ta", "fin": "ta" },
+      "marques": []
+    },
+    "ظ": {
+      "lecon": "l04",
+      "formes": { "isolee": "ta", "debut": "ta", "milieu": "ta", "fin": "ta" },
+      "marques": [{ "type": "point", "nombre": 1, "place": "dessus_a_droite_de_la_hampe" }]
+    },
+    "ع": {
+      "lecon": "l06",
+      "formes": { "isolee": "ayn", "debut": "ayn", "milieu": "ayn", "fin": "ayn" },
+      "marques": []
+    },
+    "غ": {
+      "lecon": "l06",
+      "formes": { "isolee": "ayn", "debut": "ayn", "milieu": "ayn", "fin": "ayn" },
+      "marques": [{ "type": "point", "nombre": 1, "place": "dessus" }]
+    },
+    "ف": {
+      "lecon": "l06",
+      "formes": { "isolee": "fa", "debut": "fa", "milieu": "fa", "fin": "fa" },
+      "marques": [{ "type": "point", "nombre": 1, "place": "dessus" }]
+    },
+    "ق": {
+      "lecon": "l06",
+      "formes": { "isolee": "qaf", "debut": "fa", "milieu": "fa", "fin": "qaf" },
+      "marques": [{ "type": "point", "nombre": 2, "place": "dessus" }]
+    },
+    "ك": {
+      "lecon": "l07",
+      "formes": { "isolee": "kaf", "debut": "kaf", "milieu": "kaf", "fin": "kaf" },
+      "marques": []
+    },
+    "ل": {
+      "lecon": "l07",
+      "formes": { "isolee": "lam", "debut": "lam", "milieu": "lam", "fin": "lam" },
+      "marques": []
+    },
+    "م": {
+      "lecon": "l07",
+      "formes": { "isolee": "mim", "debut": "mim", "milieu": "mim", "fin": "mim" },
+      "marques": []
+    },
+    "ه": {
+      "lecon": "l07",
+      "formes": { "isolee": "ha", "debut": "ha", "milieu": "ha", "fin": "ha" },
+      "marques": []
+    },
+    "لا": { "lecon": "l07", "formes": { "isolee": "lamalif", "fin": "lamalif" }, "marques": [] },
+    "ا": {
+      "lecon": "l08",
+      "formes": { "isolee": "alif", "debut": "alif.isolee", "milieu": "alif.fin", "fin": "alif" },
+      "marques": []
+    },
+    "و": {
+      "lecon": "l08",
+      "formes": { "isolee": "waw", "debut": "waw.isolee", "milieu": "waw.fin", "fin": "waw" },
+      "marques": []
+    },
+    "ء": {
+      "lecon": "l08",
+      "formes": { "isolee": "hamza" },
+      "marques": [],
+      "note": "tracée après le reste du mot"
+    },
+    "أ": {
+      "lecon": "l08",
+      "formes": { "isolee": "alif", "debut": "alif.isolee", "milieu": "alif.fin", "fin": "alif" },
+      "marques": [{ "type": "hamza", "nombre": 1, "place": "dessus" }]
+    },
+    "إ": {
+      "lecon": "l08",
+      "formes": { "isolee": "alif", "debut": "alif.isolee", "fin": "alif" },
+      "marques": [{ "type": "hamza", "nombre": 1, "place": "dessous" }]
+    },
+    "ة": {
+      "lecon": "l15",
+      "formes": { "isolee": "ha.isolee", "fin": "ha.fin" },
+      "marques": [{ "type": "point", "nombre": 2, "place": "dessus" }]
+    },
+    "ى": { "lecon": "l15", "formes": { "isolee": "ya", "fin": "ya" }, "marques": [] },
+    "ؤ": {
+      "lecon": "l16",
+      "formes": { "isolee": "waw", "debut": "waw.isolee", "milieu": "waw.fin", "fin": "waw" },
+      "marques": [{ "type": "hamza", "nombre": 1, "place": "dessus" }]
+    },
+    "ئ": {
+      "lecon": "l16",
+      "formes": { "isolee": "ya", "debut": "dent", "milieu": "dent", "fin": "ya" },
+      "marques": [{ "type": "hamza", "nombre": 1, "place": "dessus" }],
+      "note": "jamais de points"
+    },
+    "آ": {
+      "lecon": "l16",
+      "formes": { "isolee": "alif", "debut": "alif.isolee", "milieu": "alif.fin", "fin": "alif" },
+      "marques": [{ "type": "madda", "nombre": 1, "place": "dessus" }]
+    }
+  },
+  "ordre_des_marques": {
+    "lettre_seule": "après le corps",
+    "dans_un_mot": "après le squelette du mot entier, de droite à gauche ; puis voyelles, chadda, soukoun, tanwin"
+  }
+}

@@ -109,10 +109,11 @@ async function horsEleve(): Promise<Set<string>> {
  * téléchargement d'un niveau d'arabe (voir le traitement des fichiers non préchargés plus bas).
  * 19/10/2026 : même traitement pour le LECTEUR AUDIO (`/_app/lecteur.json`), chargé au premier appui sur « Écouter »
  * et gardé avec l'audio d'un niveau téléchargé ; il ne pèse donc pas sur l'appareil de l'élève avant son premier usage.
+ * Vidéos vivantes (`/_app/video.json`) : même traitement (premier appui sur « Voir en vidéo », niveau téléchargé).
  */
 async function vivante(): Promise<Set<string>> {
   const listes = await Promise.all(
-    ['/_app/vivante.json', '/_app/lecteur.json'].map(async (u) => {
+    ['/_app/vivante.json', '/_app/lecteur.json', '/_app/video.json'].map(async (u) => {
       try {
         const r = await fetch(u, { cache: 'no-store' });
         return r.ok ? ((await r.json()) as string[]).map(String) : [];
@@ -121,7 +122,8 @@ async function vivante(): Promise<Set<string>> {
       }
     }),
   );
-  return new Set(listes.flat());
+  // tracés des lettres des vidéos vivantes : chargés au premier tracé (gardés ensuite), jamais préchargés
+  return new Set([...listes.flat(), '/video/traits.json']);
 }
 
 sw.addEventListener('install', (event) => {

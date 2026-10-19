@@ -1,0 +1,816 @@
+/* Vidéos vivantes — lecteur plein écran (chargé à la demande). Même univers que les vidéos du livre 1 (charte
+   CHARTE_VIDEO_LIVRE-1.md : fond ivoire, carte à filet doré, arcs verts dans les coins, grande lettre, anneau doré
+   « À toi ! », bandeau vert de consigne, couleur fixe par famille de lettres) et jetons de la refonte v4. Mode
+   sombre : les jetons de thème de l'application (même palette que la charte et la refonte v4 : ivoire #fbf7ee,
+   carte #f2ebda, vert #0b6e4f, or #c9a227…), qui se déclinent d'eux-mêmes en sombre, contrastes AA contrôlés par
+   tokens.test.ts. Tailles en rem (taille du texte du téléphone). L'or n'est jamais une couleur de texte. */
+.vv {
+  --fond: var(--paper);
+  --carte: var(--surface);
+  --carte-2: var(--sand);
+  --bord: var(--line);
+  --vert: var(--primary);
+  --profond: var(--navy);
+  --voile: var(--primary-soft);
+  --or: var(--gold);
+  --or-voile: var(--or-soft);
+  --texte: var(--ink);
+  --doux: var(--ink2);
+  --ok: var(--ok-ink);
+  --non: var(--bad-ink);
+  --sur-vert: var(--on-primary);
+  --fam: #0b6e4f;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow: auto;
+  background: var(--fond);
+  color: var(--texte);
+  font:
+    400 1rem/1.5 'Nunito',
+    'Segoe UI',
+    sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+:root[data-mode='sombre'] .vv .vv-sc {
+  --famc: color-mix(in srgb, var(--fam) 40%, #f1ead6);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode]) .vv .vv-sc {
+    --famc: color-mix(in srgb, var(--fam) 40%, #f1ead6);
+  }
+}
+.vv .bandeau {
+  position: relative;
+  z-index: 2;
+  margin: 0 1rem 1rem;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.75rem;
+  background: #084c38;
+  color: #fbf7ee;
+  display: grid;
+  place-items: center;
+}
+.vv .bandeau:empty {
+  visibility: hidden;
+}
+:root.vv-ouvert {
+  overflow: hidden;
+}
+.vv button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.vv .ar {
+  font-family: 'Noto Naskh Arabic', serif;
+  direction: rtl;
+  unicode-bidi: isolate;
+  display: block;
+  text-align: center;
+  line-height: 1.9;
+  font-size: 1.75rem;
+}
+.vv .ar.g {
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: var(--famc);
+  line-height: 1.6;
+}
+.vv .ar.titre {
+  font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--profond);
+}
+.vv .ar.l {
+  font-size: 1.45rem;
+}
+.vv bdi.lt {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-weight: 700;
+  color: var(--profond);
+}
+.vv .fr {
+  display: block;
+  text-align: center;
+  color: var(--doux);
+}
+.vv.sans-trad .fr:not(.toujours) {
+  visibility: hidden;
+}
+.vv .h {
+  display: block;
+  font:
+    600 1.15rem/1.35 'Lexend',
+    'Segoe UI',
+    sans-serif;
+  color: var(--profond);
+  text-align: center;
+  margin: 0;
+}
+.vv .frh {
+  display: grid;
+  justify-items: center;
+}
+/* ———— cadre ———— */
+.vv-l {
+  max-width: 30rem;
+  min-height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1rem 0;
+}
+.vv-t {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+}
+.vv-t .tt {
+  flex: 1;
+  min-width: 0;
+}
+.vv-t .k {
+  display: block;
+  font:
+    600 0.7rem/1.2 'Lexend',
+    sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--doux);
+}
+.vv-t .s .x,
+.vv-t .s .ar {
+  font:
+    700 0.95rem/1.3 'Nunito',
+    sans-serif;
+  color: var(--profond);
+  text-align: start;
+}
+.vv-t .s .frh {
+  justify-items: start;
+}
+.vv-t .s .ar {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+.vv .seg {
+  display: flex;
+  gap: 3px;
+  margin: 0.3rem 0 0.6rem;
+}
+.vv .seg i {
+  flex: 1;
+  height: 5px;
+  border-radius: 99px;
+  background: var(--bord);
+}
+.vv .seg i.fait {
+  background: var(--vert);
+}
+.vv .seg i.ici {
+  background: var(--or);
+}
+.vv-sc {
+  /* couleur de la famille de la lettre (scène d'une lettre), éclaircie en mode sombre */
+  --famc: var(--fam);
+  position: relative;
+  flex: 1;
+  min-height: 28rem;
+  border-radius: 1.75rem;
+  background: var(--carte);
+  border: 2px solid var(--or);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+/* arcs verts dans les coins, filet d'or */
+.vv-sc::before,
+.vv-sc::after {
+  content: '';
+  position: absolute;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  background: var(--vert);
+  box-shadow:
+    0 0 0 0.45rem var(--carte),
+    0 0 0 0.55rem var(--or);
+  pointer-events: none;
+}
+.vv-sc::before {
+  left: -3.6rem;
+  top: -3.6rem;
+}
+.vv-sc::after {
+  right: -3.6rem;
+  bottom: -3.6rem;
+}
+.vv-c {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 1.6rem 1.1rem 1.4rem;
+  overflow: hidden;
+  max-height: 34rem;
+}
+.vv-c > * {
+  max-width: 100%;
+}
+/* scène d'une lettre : la grande lettre et son nom à droite, le repère à gauche */
+.vv-c.lt {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-content: center;
+  justify-items: center;
+  column-gap: 0.6rem;
+}
+.vv-c.lt > * {
+  grid-column: 1 / -1;
+}
+.vv-c.lt > .b-trace {
+  grid-column: 2;
+  grid-row: 1;
+}
+.vv-c.lt > .b-nom {
+  grid-column: 2;
+  grid-row: 2;
+}
+.vv-c.lt > .b-points {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+.vv .consigne,
+.vv .bandeau {
+  font:
+    700 0.95rem/1.35 'Nunito',
+    sans-serif;
+  text-align: center;
+}
+.vv .consigne {
+  color: var(--profond);
+  margin: 0;
+}
+.vv .k {
+  font:
+    600 0.7rem 'Lexend',
+    sans-serif;
+  letter-spacing: 0.14em;
+  color: var(--doux);
+  margin: 0;
+}
+.vv .filet {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 0.4rem 0;
+}
+.vv .filet::before,
+.vv .filet::after {
+  content: '';
+  height: 1px;
+  width: 3.5rem;
+  background: var(--or);
+}
+.vv .filet i {
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1.5px solid var(--or);
+  transform: rotate(45deg);
+}
+.vv .carte {
+  width: 100%;
+  border-radius: 1rem;
+  background: var(--carte-2);
+  border: 1px solid var(--bord);
+  padding: 0.4rem 0.8rem 0.6rem;
+}
+.vv .src {
+  font-size: 0.75rem;
+  color: var(--doux);
+  text-align: center;
+  margin: 0.2rem 0 0;
+  max-width: 18rem;
+}
+/* ———— lettre, tracé ———— */
+.vv svg.trace {
+  display: block;
+  max-width: 100%;
+  overflow: visible;
+}
+.vv svg.trace .plein {
+  fill: var(--famc);
+}
+.vv svg.trace .fantome {
+  fill: var(--famc);
+  opacity: 0.16;
+}
+.vv svg.trace .masque {
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.vv svg.trace .plume {
+  fill: var(--or);
+  stroke: var(--carte);
+  stroke-width: 2;
+}
+.vv svg.trace .num {
+  fill: var(--profond);
+  font:
+    700 1rem 'Lexend',
+    sans-serif;
+}
+.vv .points {
+  font-size: 1.3rem;
+  color: var(--doux);
+}
+.vv .formes {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.vv .forme {
+  display: grid;
+  justify-items: center;
+  min-width: 3.9rem;
+  padding: 0.2rem 0.3rem 0.35rem;
+  border-radius: 0.9rem;
+  background: var(--or-voile);
+  border: 1px solid var(--bord);
+}
+.vv .forme .ar {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--famc);
+}
+.vv .forme span:not(.ar) {
+  font:
+    700 0.75rem 'Nunito',
+    sans-serif;
+  color: var(--doux);
+}
+/* ———— tuiles touchables ———— */
+.vv .tuile {
+  display: inline-grid;
+  place-items: center;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  padding: 0 0.7rem;
+  border-radius: 0.9rem;
+  border: 1px solid var(--bord);
+  background: var(--carte-2);
+  transition:
+    background 0.25s,
+    transform 0.25s;
+}
+.vv .tuile.nom .ar {
+  font-size: 1.9rem;
+}
+.vv .tuile.mot .ar,
+.vv .tuile.tg .ar {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+.vv .tuile.tp .ar {
+  font-size: 1.3rem;
+  line-height: 1.8;
+}
+.vv .tuile.tm .ar {
+  font-size: 1.75rem;
+}
+.vv .tuile.joue {
+  background: var(--or-voile);
+  border-color: var(--or);
+  transform: scale(1.06);
+}
+.vv .rangee {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+}
+.vv .illu {
+  width: 7rem;
+  height: 7rem;
+}
+.vv .grille {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.35rem;
+  width: 100%;
+  direction: rtl;
+}
+.vv .grille .tuile {
+  padding: 0.2rem;
+  min-width: 0;
+}
+.vv .grille .tuile svg {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+.vv .grille .tuile .ar {
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+.vv .grille.lettres {
+  grid-template-columns: repeat(3, 1fr);
+}
+.vv .grille.g6 {
+  grid-template-columns: repeat(6, 1fr);
+}
+.vv .grille.g4 {
+  grid-template-columns: repeat(3, 1fr);
+}
+.vv .joindre {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  gap: 1rem;
+  transition:
+    gap 0.8s ease,
+    opacity 0.3s 0.8s;
+}
+.vv .joindre .ar {
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--profond);
+}
+.vv .joindre.serre {
+  gap: 0;
+  opacity: 0;
+}
+.vv .inter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3rem 0.6rem;
+}
+.vv .inter > span {
+  display: grid;
+  justify-items: center;
+  border-bottom: 1px solid var(--or);
+}
+.vv .inter .ar {
+  font-size: 1.45rem;
+}
+.vv .inter .fr {
+  font-size: 0.8rem;
+  direction: ltr;
+}
+/* ———— « À toi ! » ———— */
+.vv .atoi {
+  display: grid;
+  justify-items: center;
+  gap: 0.2rem;
+}
+.vv .anneau {
+  position: relative;
+  width: 5.5rem;
+  height: 5.5rem;
+}
+.vv .anneau.petit {
+  width: 3rem;
+  height: 3rem;
+}
+.vv .anneau svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.vv .anneau circle {
+  fill: none;
+  stroke-width: 8;
+}
+.vv .anneau .fd {
+  stroke: var(--bord);
+}
+.vv .anneau .or {
+  stroke: var(--or);
+  stroke-linecap: round;
+  stroke-dasharray: 264;
+}
+.vv .anneau b {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font:
+    600 0.95rem 'Lexend',
+    sans-serif;
+  color: var(--profond);
+}
+.vv .micro {
+  font:
+    700 0.85rem 'Nunito',
+    sans-serif;
+  color: var(--profond);
+  background: var(--vert);
+  color: var(--sur-vert);
+  border-radius: 0.6rem;
+  padding: 0.3rem 0.8rem;
+  text-align: center;
+}
+/* ———— exercices ———— */
+.vv .options {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.vv .opt {
+  min-width: 3.5rem;
+  min-height: 3rem;
+  border-radius: 0.9rem;
+  border: 1.5px solid var(--bord);
+  background: var(--carte-2);
+  display: grid;
+  place-items: center;
+  padding: 0 0.6rem;
+}
+.vv .opt .ar {
+  font-size: 1.6rem;
+  line-height: 1.6;
+}
+.vv .opt[aria-pressed='true'],
+.vv .opt.sel {
+  border-color: var(--or);
+  background: var(--or-voile);
+}
+.vv .opt.bon {
+  background: var(--vert);
+  border-color: var(--vert);
+  color: var(--sur-vert);
+}
+.vv .opt.bon .ar,
+.vv .opt.bon .fr {
+  color: var(--sur-vert);
+}
+.vv .opt.faux {
+  border-color: var(--non);
+}
+.vv .opt:disabled {
+  cursor: default;
+}
+.vv .trou {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+}
+.vv .trou .case {
+  min-width: 3rem;
+  min-height: 3.2rem;
+  border: 2px dashed var(--or);
+  border-radius: 0.7rem;
+  display: grid;
+  place-items: center;
+}
+.vv .trou .ar.suite {
+  font-size: 2.1rem;
+}
+.vv .relier {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  width: 100%;
+}
+.vv .relier > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.vv .relier .fr {
+  font-size: 0.85rem;
+}
+.vv .mini {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+.vv .ligne-rep {
+  min-height: 3.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3rem;
+  border-bottom: 2px dashed var(--or);
+  width: 100%;
+}
+.vv .retour {
+  font:
+    700 0.95rem 'Nunito',
+    sans-serif;
+  text-align: center;
+  margin: 0.2rem 0 0;
+  color: var(--profond);
+}
+.vv .retour.ok {
+  color: var(--ok);
+}
+.vv .retour.ko {
+  color: var(--non);
+}
+.vv .ecoute {
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  border-radius: 99px;
+  border: 0;
+  background: var(--vert);
+  color: var(--sur-vert);
+  font-weight: 700;
+}
+.vv .score {
+  font:
+    600 0.85rem 'Lexend',
+    sans-serif;
+  color: var(--doux);
+}
+/* ———— dialogue : bulles, aucun personnage ———— */
+.vv .bulle {
+  width: 88%;
+  border-radius: 1.1rem;
+  padding: 0.3rem 0.9rem 0.5rem;
+  background: var(--voile);
+  border: 1px solid var(--bord);
+}
+.vv .bulle.d {
+  align-self: flex-end;
+}
+.vv .bulle.g {
+  align-self: flex-start;
+  background: var(--or-voile);
+}
+.vv .bulle .ar {
+  font-size: 1.3rem;
+  text-align: right;
+  line-height: 1.75;
+}
+.vv .bulle .ar.qui {
+  font-size: 0.85rem;
+  color: var(--doux);
+}
+.vv .bulle .fr {
+  text-align: left;
+  font-size: 0.9rem;
+}
+.vv .roles {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+}
+/* ———— départ, fin, commandes ———— */
+.vv-dep {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: grid;
+  align-content: center;
+  gap: 0.55rem;
+  padding: 2rem 1.2rem;
+}
+.vv .mode {
+  display: grid;
+  text-align: start;
+  gap: 0.1rem;
+  min-height: 3.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  border: 1.5px solid var(--bord);
+  background: var(--carte-2);
+}
+.vv .mode b {
+  color: var(--profond);
+}
+.vv .mode span {
+  font-size: 0.85rem;
+  color: var(--doux);
+}
+.vv .bouton {
+  min-height: 3rem;
+  padding: 0 1.2rem;
+  border-radius: 1rem;
+  border: 0;
+  background: var(--vert);
+  color: var(--sur-vert);
+  font-weight: 700;
+}
+.vv .bouton.or {
+  background: var(--or);
+  color: #1e2b25;
+}
+.vv .bouton.clair {
+  background: var(--carte-2);
+  color: var(--profond);
+  border: 1.5px solid var(--bord);
+}
+.vv-cmd {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.6rem 0 0.8rem;
+  background: linear-gradient(transparent, var(--fond) 25%);
+}
+.vv .rang {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+.vv .ib {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--bord);
+  background: var(--carte-2);
+  display: grid;
+  place-items: center;
+  color: var(--profond);
+}
+.vv .ib svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  fill: currentColor;
+}
+.vv .ib path {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.vv .ib.lire {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: var(--vert);
+  border-color: var(--vert);
+  color: var(--sur-vert);
+}
+.vv .ib:disabled {
+  opacity: 0.45;
+}
+.vv .puce {
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--bord);
+  background: var(--carte-2);
+  color: var(--profond);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.vv .temps {
+  font:
+    700 0.75rem 'Nunito',
+    sans-serif;
+  color: var(--doux);
+  min-width: 4.5rem;
+  text-align: center;
+}
+.vv :focus-visible {
+  outline: 3px solid var(--or);
+  outline-offset: 2px;
+}
+.vv .apparait {
+  animation: vv-app 0.45s ease both;
+}
+@keyframes vv-app {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.vv[data-pause] .vv-sc * {
+  animation-play-state: paused !important;
+}
+/* animations réduites : fondus seulement (le tracé d'une lettre reste : c'est le contenu) */
+@media (prefers-reduced-motion: reduce) {
+  .vv .apparait {
+    animation: vv-fondu 0.3s ease both;
+  }
+  .vv .tuile.joue {
+    transform: none;
+  }
+  .vv .joindre {
+    transition: none;
+  }
+}
+@keyframes vv-fondu {
+  from {
+    opacity: 0;
+  }
+}

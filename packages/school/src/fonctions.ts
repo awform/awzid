@@ -28,6 +28,7 @@ export const FONCTION_CLES = [
   'signaler',
   'beta_contenu_differe_visible',
   'design_v4',
+  'video_vivante',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -93,6 +94,10 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // (production, bêta), ALLUMÉE par défaut sur la démonstration ; l'administrateur la règle sans redéploiement et
   // l'ancien design reste entier quand elle est coupée.
   design_v4: { defaut: 'off', demo: 'on' },
+  // vidéos vivantes (19/10/2026) : bouton « Voir en vidéo » des unités d'Adultes 1 et lecteur plein écran chargé à la
+  // demande. Coupées par défaut (production, bêta), ALLUMÉES sur la démonstration ; indépendantes de `design_v4` et
+  // des animations : couper l'interrupteur laisse la leçon entière, sans vidéo.
+  video_vivante: { defaut: 'off', demo: 'on' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

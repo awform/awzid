@@ -113,6 +113,9 @@ export const SPACE_CATALOGS = [
   'lecteur',
   // refonte 19/10 (interrupteur `design_v4`) : textes des écrans v4 (`v4.*`), chargés avec eux (`$lib/design`)
   'design',
+  // vidéos vivantes (19/10/2026) : textes du lecteur plein écran (`vv.*`), chargés avec lui au premier appui sur
+  // « Voir en vidéo », gardés au téléchargement d'un niveau qui a des vidéos
+  'video',
   // 19/10/2026 : catalogue français de base découpé par espaces (la coquille garde les textes communs) :
   // « Arabe » (accueil, leçons, lectures, sciences, révisions, écriture, épreuves…) et « Aujourd'hui et suivi »
   // (aujourd'hui, suivi, plus, profils, hors ligne, aide), chargés par la mise en page racine

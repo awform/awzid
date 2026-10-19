@@ -29,7 +29,7 @@ import { VIDEO_GARDE } from './video-garde.js';
 export type VideoMode = 'lettre' | 'courte' | 'longue' | 'quiz' | 'revision';
 export const VIDEO_MODES: readonly VideoMode[] = ['lettre', 'courte', 'longue', 'quiz', 'revision'];
 /** niveaux dont la garde coranique de la vidéo est calculée (test « garde vidéo à jour ») : seuls proposés */
-export const VIDEO_NIVEAUX: readonly string[] = ['ad1'];
+export { VIDEO_NIVEAUX } from './video-niveaux.js';
 
 /** texte arabe du livre (affiché sans crochets) ; `son` : son fichier audio existe et peut être joué */
 export interface T {
