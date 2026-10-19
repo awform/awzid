@@ -7,6 +7,9 @@
   import { chargerModule } from '$lib/charger';
   import { t } from '$lib/i18n';
   import { noter } from '$lib/usage';
+  import { aUnScenario } from '$lib/conversation/scenario';
+  import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import { VIDEO_NIVEAUX } from '@awform/content/video-niveaux';
 
   /**
@@ -39,7 +42,12 @@
         audio?.() ?? levelAudio(unit.levelCode).catch(() => null),
       ]);
       noter('video_vivante');
-      await m.ouvrir({ unit, illus: illus?.() ?? {}, audio: la, profileId });
+      // jonction avec la conversation guidée du tuteur IA (si ouverte pour cette unité) ; sans elle, rien ne change
+      const tuteur =
+        profileId && fn('tuteur_ia') && aUnScenario(unit.id)
+          ? () => void goto(resolve('/tuteur/[unit]', { unit: unit.id }))
+          : undefined;
+      await m.ouvrir({ unit, illus: illus?.() ?? {}, audio: la, profileId, tuteur });
     } catch {
       echec = true;
     } finally {

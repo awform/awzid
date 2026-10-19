@@ -952,7 +952,10 @@ function creer(opt: OuvrirOptions): () => void {
         }
         if (opt.tuteur) {
           const b = h('button', 'bouton', esc(t('vv.tuteur')));
-          b.onclick = () => opt.tuteur!({ unitId: opt.unit.id });
+          b.onclick = () => {
+            fermer();
+            opt.tuteur!({ unitId: opt.unit.id });
+          };
           box.append(b);
         }
       });
