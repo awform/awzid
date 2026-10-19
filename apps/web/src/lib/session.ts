@@ -3,6 +3,7 @@
  * informations du compte gardées pour le hors ligne (sans aucun secret), profil actif.
  */
 import { clearStore, delMany, kvGet, kvKeys, kvSet } from './idb';
+import { loadTexts } from './i18n';
 import { flushQueue, pendingCount } from './sync-core';
 
 export interface ProfileInfo {
@@ -91,6 +92,8 @@ export async function call<T>(
     const json = (await r.json().catch(() => null)) as
       (T & { error?: Record<string, unknown> }) | null;
     const err = json?.error ?? null;
+    // 19/10/2026 : message de l'erreur renvoyée (`erreur.<code>`, catalogue `fr-erreurs`) chargé avant le retour
+    if (!r.ok && err?.code) await loadTexts('erreurs');
     return {
       ok: r.ok,
       status: r.status,

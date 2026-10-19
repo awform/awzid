@@ -2,7 +2,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import '../app.css';
   import { onMount, type Component } from 'svelte';
-  import { goto } from '$app/navigation';
+  import { goto, onNavigate } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import {
@@ -14,11 +14,13 @@
     startSync,
     type DevProfile,
   } from '$lib/attempts';
-  import { setTimeZone, t } from '$lib/i18n';
+  import { loadTexts, setTimeZone, t } from '$lib/i18n';
+  import { textesDeRoute } from '$lib/i18n/espaces';
   import { getSettings, type Settings } from '$lib/offline';
   import { purgeOldRecordings } from '$lib/recordings';
   import { remindersOn } from '$lib/quotidien/reglages';
   import { cachedMe, fetchMe, type Me } from '$lib/session';
+
   // bêta : logique d'accès chargée À LA DEMANDE (en ligne seulement) : l'appareil de l'élève n'en porte pas le poids
   import type * as ModAcces from '$lib/acces';
   import type { AccesStatut } from '$lib/acces';
@@ -30,6 +32,13 @@
   import Brand from '$lib/ui/Brand.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import { applyMode, nextMode, readMode, writeMode, type Mode } from '$lib/ui/mode';
+
+  // 19/10/2026 : textes de l'espace de la page suivante (catalogue français découpé, lib/i18n/espaces.ts), chargés
+  // avant l'affichage ; le premier chargement passe par +layout.ts
+  onNavigate((n) => {
+    const espace = textesDeRoute(n.to?.route.id);
+    if (espace) return loadTexts(espace);
+  });
 
   let { children } = $props();
 

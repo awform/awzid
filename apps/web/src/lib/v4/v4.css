@@ -1,0 +1,276 @@
+/* Refonte « manuscrit enluminé moderne » (19/10/2026), étape 1 — jetons et composants communs (maquettes
+   application/design/maquettes_refonte_19-10, commun.css). Tout est sous `.v4` : l'ancien design n'est jamais touché.
+   Chargé avec les écrans v4 (à la demande, gardé au premier usage). L'or n'est JAMAIS une couleur de texte sur
+   l'ivoire ; contrastes AA contrôlés par donnees.test.ts. */
+.v4 {
+  --v4-carte: #fffdf8;
+  --v4-carte-2: #f4eddc;
+  --v4-bord: #e6dcc4;
+  --v4-vert: #0b6e4f;
+  --v4-vert-clair: #1f9c73;
+  --v4-vert-voile: #e3efe8;
+  --v4-or: #c9a227;
+  --v4-or-voile: #f6ebc8;
+  --v4-sur-or: #1e2b25;
+  --v4-texte: #1e2b25;
+  --v4-doux: #4a5a52;
+  --v4-titre: #084c38;
+  --v4-lien: #0b6e4f;
+  --v4-bandeau: #0b6e4f;
+  --v4-bandeau-2: #084c38;
+  --v4-sur-bandeau: #fbf7ee;
+  --v4-sur-bandeau-doux: #d5e6dc;
+  --v4-picto-or: #084c38;
+  --v4-ombre: 0 1px 2px rgba(8, 76, 56, 0.06), 0 6px 18px rgba(8, 76, 56, 0.07);
+  --v4-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cg fill='none' stroke='%23fff' stroke-opacity='.13'%3E%3Crect x='14' y='14' width='16' height='16'/%3E%3Crect x='14' y='14' width='16' height='16' transform='rotate(45 22 22)'/%3E%3C/g%3E%3C/svg%3E");
+  color: var(--v4-texte);
+}
+:root[data-mode='sombre'] .v4 {
+  --v4-carte: #14261f;
+  --v4-carte-2: #1a2f27;
+  --v4-bord: #26413a;
+  --v4-vert: #17805d;
+  --v4-vert-clair: #5cc79c;
+  --v4-vert-voile: #173a2e;
+  --v4-or: #d9b54a;
+  --v4-or-voile: #3a3418;
+  --v4-texte: #e8dfc8;
+  --v4-doux: #b4c2ba;
+  --v4-titre: #e8dfc8;
+  --v4-lien: #5cc79c;
+  --v4-bandeau: #10382b;
+  --v4-bandeau-2: #0b2a20;
+  --v4-sur-bandeau: #f1ead6;
+  --v4-sur-bandeau-doux: #b9cfc3;
+  --v4-picto-or: #d9b54a;
+  --v4-ombre: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode]) .v4 {
+    --v4-carte: #14261f;
+    --v4-carte-2: #1a2f27;
+    --v4-bord: #26413a;
+    --v4-vert: #17805d;
+    --v4-vert-clair: #5cc79c;
+    --v4-vert-voile: #173a2e;
+    --v4-or: #d9b54a;
+    --v4-or-voile: #3a3418;
+    --v4-texte: #e8dfc8;
+    --v4-doux: #b4c2ba;
+    --v4-titre: #e8dfc8;
+    --v4-lien: #5cc79c;
+    --v4-bandeau: #10382b;
+    --v4-bandeau-2: #0b2a20;
+    --v4-sur-bandeau: #f1ead6;
+    --v4-sur-bandeau-doux: #b9cfc3;
+    --v4-picto-or: #d9b54a;
+    --v4-ombre: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 22px rgba(0, 0, 0, 0.25);
+  }
+}
+.v4 h1,
+.v4 h2,
+.v4 h3 {
+  font-family: var(--font-title);
+  font-weight: 600;
+  color: var(--v4-titre);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.v4 p {
+  margin: 0;
+}
+.v4 a {
+  text-decoration: none;
+  color: inherit;
+}
+.v4 .doux {
+  color: var(--v4-doux);
+}
+.v4 .petit {
+  font-size: 0.9rem;
+}
+
+/* panneau vert (héros) : motif étoilé, arc doré dans le coin, cadre doré fin */
+.v4-bandeau {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  padding: 24px 22px 22px;
+  background: var(--v4-motif), linear-gradient(160deg, var(--v4-bandeau), var(--v4-bandeau-2));
+  color: var(--v4-sur-bandeau);
+}
+.v4-bandeau::before {
+  content: '';
+  position: absolute;
+  inset-inline-end: -96px;
+  top: -96px;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  border: 2px solid var(--v4-or);
+  opacity: 0.85;
+  pointer-events: none;
+}
+.v4-bandeau h1,
+.v4-bandeau h2,
+.v4-bandeau h3 {
+  color: var(--v4-sur-bandeau);
+}
+.v4-bandeau .sur {
+  font: 600 0.75rem/1 var(--font-title);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--v4-sur-bandeau-doux);
+}
+.v4-bandeau p {
+  color: var(--v4-sur-bandeau-doux);
+}
+/* cadre de frontispice : filet d'or très fin à l'intérieur */
+.v4-cadre {
+  outline: 1px solid rgba(201, 162, 39, 0.6);
+  outline-offset: -8px;
+}
+/* carte ivoire ; variante « arc vert » des vidéos dans le coin */
+.v4-carte {
+  display: block;
+  background: var(--v4-carte);
+  border: 1px solid var(--v4-bord);
+  border-radius: 20px;
+  box-shadow: var(--v4-ombre);
+  padding: 18px;
+  color: var(--v4-texte);
+}
+.v4-arc {
+  position: relative;
+  overflow: hidden;
+  padding-inline-end: 64px;
+}
+.v4-arc::before,
+.v4-arc::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.v4-arc::before {
+  inset-inline-end: -46px;
+  bottom: -46px;
+  width: 92px;
+  height: 92px;
+  background: var(--v4-vert);
+}
+.v4-arc::after {
+  inset-inline-end: -60px;
+  bottom: -60px;
+  width: 120px;
+  height: 120px;
+  border: 1.5px solid var(--v4-or);
+}
+.v4-pile {
+  display: grid;
+  gap: 12px;
+}
+.v4-ligne {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+}
+.v4-ligne .txt {
+  flex: 1;
+  min-width: 0;
+}
+.v4-ligne h3 {
+  font-size: 1rem;
+}
+.v4-picto {
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  background: var(--v4-vert-voile);
+  color: var(--v4-lien);
+}
+.v4-picto.or {
+  background: var(--v4-or-voile);
+  color: var(--v4-picto-or);
+}
+.v4-chev {
+  color: var(--v4-doux);
+  flex: none;
+}
+:root[dir='rtl'] .v4-chev {
+  transform: scaleX(-1);
+}
+/* boutons : 52 px (principal), 44 px au moins ; `.v4 .v4-btn` : plus précis que `.v4 a` (texte foncé sur l'or) */
+.v4 .v4-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 22px;
+  border-radius: 16px;
+  border: 0;
+  font: 700 1.05rem var(--font-ui);
+  background: var(--v4-or);
+  color: var(--v4-sur-or);
+}
+.v4-rond {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: none;
+  background: var(--v4-vert);
+  color: #fbf7ee;
+}
+.v4-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font: 700 0.78rem var(--font-ui);
+  background: var(--v4-or-voile);
+  color: var(--v4-titre);
+}
+/* progression */
+.v4-barre {
+  height: 8px;
+  border-radius: 99px;
+  background: var(--v4-carte-2);
+  overflow: hidden;
+}
+.v4-barre > i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--v4-or);
+}
+/* jalon : encadré or pâle et rosette */
+.v4-jalon {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: var(--v4-or-voile);
+  border: 1px solid rgba(201, 162, 39, 0.45);
+}
+.v4-jalon h3 {
+  font-size: 1rem;
+}
+.v4-rosette {
+  color: var(--v4-or);
+  flex: none;
+}
+.v4-focus:focus-visible,
+.v4 a:focus-visible,
+.v4 button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}

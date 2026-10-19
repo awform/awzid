@@ -160,3 +160,10 @@ Les 41 textes `ins.*` de la page d'inscription refaite (panneau de la marque, é
 du serveur au « vous ») sont traduits par Claude en **brouillon** dans les quatre langues (anglais, espagnol, allemand,
 arabe au pluriel de politesse), arguments ICU identiques (`{n}`, `{titre}`, `{age}`, pluriel de `ins.err_resume`) ;
 **relecture humaine à faire** avec le reste de la langue.
+
+## Refonte « manuscrit enluminé moderne », étape 1 (19/10/2026) — brouillons à relire
+
+Les 38 textes `v4.*` des écrans « Aujourd'hui » et « Mes activités » (interrupteur `design_v4`) sont en français dans
+`static/i18n/fr-design.json` (hors de la coquille, chargés avec les écrans) et traduits par Claude en **brouillon** dans
+les quatre langues, arguments ICU identiques ; de même `fn.design_v4` (écran de l'administrateur, `fr-personnel.json`).
+**Relecture humaine à faire** avec le reste de la langue.
