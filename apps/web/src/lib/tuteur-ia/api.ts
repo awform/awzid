@@ -46,6 +46,8 @@ export interface ReponseLibre {
     | 'inconvenant'
     | 'conseil';
   aide?: string;
+  /** motif d'une redirection « protection » (rencontre avec un inconnu, ou détresse) */
+  protection?: 'rencontre' | 'detresse';
   minutesRestantes?: number;
 }
 export interface Audio {

@@ -151,6 +151,56 @@ const RENCONTRE = R([
   'your number',
   'your address',
   'where do you live',
+  // 20/10/2026 : arabe, en forme NUE (voyelles retirées, أ → ا, ة → ه)
+  'يريد ان (يقابلني|يلتقي بي|يلتقي معي|يلقاني|يراني)',
+  'يقابلني وحدي',
+  'اقابله وحدي',
+  'اقابلها وحدي',
+]);
+/**
+ * Rencontre avec un INCONNU (souvent d'internet) : un lieu ou un intermédiaire inconnu ET une rencontre, dans la même
+ * phrase (« quelqu'un d'internet m'a donné rendez-vous », « شَخْصٌ مِنَ الْإِنْتَرْنِتِ … نَلْتَقِي »). Les deux sont
+ * exigés : « internet » seul ou « rendez-vous chez le médecin » (leçons) ne déclenchent rien.
+ */
+const INCONNU = R([
+  'internet',
+  'en ligne',
+  'online',
+  'inconnue?',
+  'reseaux? sociaux?',
+  'jeu en ligne',
+  'sur (snap|insta|tiktok|discord|whatsapp|telegram)',
+  'stranger',
+  'انترنت',
+  'انترنيت',
+  'النت( |$)',
+  'غريب',
+  'لا اعرفه',
+  'لا اعرفها',
+]);
+const RDV = R([
+  'rencontr',
+  'rendez.vous',
+  'me voir',
+  'te voir',
+  'nous voir',
+  'se voir',
+  'retrouv',
+  'rejoindre',
+  'me chercher',
+  'chez (lui|elle)',
+  'seule?\\b',
+  '\\bmeet',
+  'يقابل',
+  'اقابل',
+  'نتقابل',
+  'يلتقي',
+  'التقي',
+  'نلتقي',
+  'لقاء',
+  'موعد',
+  'يراني',
+  'وحدي',
 ]);
 const INJECTION = R([
   'ignore (tes|les|toutes|vos|ces)',
@@ -434,7 +484,7 @@ export function classify(text: string): Category {
   const k = compact(t);
   // détresse : on préfère un faux positif (un adulte relit) à un appel à l'aide manqué
   if (DETRESSE.test(t) || DETRESSE_COMPACT.test(k)) return 'detresse';
-  if (RENCONTRE.test(t)) return 'rencontre';
+  if (RENCONTRE.test(t) || (INCONNU.test(t) && RDV.test(t))) return 'rencontre';
   if (INJECTION.test(t) || INJECTION_COMPACT.test(k)) return 'injection';
   if (EXTREMISME.test(t)) return 'polemique';
   if (AVIS.test(t)) return 'avis_religieux';

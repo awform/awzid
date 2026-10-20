@@ -41,9 +41,21 @@ class Espion implements ConvFournisseur {
   readonly modele = 'gemini-3.8-flash';
   appels = 0;
   prochain: object | null = null;
+  /** 20/10/2026 : panne du fournisseur, telle que la batterie réelle l'a vue (Vertex : HTTP 400) */
+  panne = false;
   private readonly sim = new ConversationSimulee();
   async repondre(s: string, e: ConvEntree) {
     this.appels++;
+    if (this.panne) {
+      this.panne = false;
+      return {
+        status: 'erreur' as const,
+        brouillon: null,
+        usage: { texte: 0, audio: 0, sortie: 0 },
+        detail: 'api_400',
+        message: 'INVALID_ARGUMENT : Request contains an invalid argument.',
+      };
+    }
     if (this.prochain) {
       const b = this.prochain;
       this.prochain = null;
@@ -369,6 +381,54 @@ describe.skipIf(!URL)('tuteur IA de conversation (simulé)', () => {
     const r = await libre(adulte, A, { texte: 'هٰذَا سُوقٌ' });
     expect(r.json().repli).toBe(true);
     expect(r.json().reponse_fr).not.toContain('paracétamol');
+  });
+
+  it('20/10 : rencontre avec un inconnu d’internet (français, arabe) → protection AVANT l’appel, alerte « rencontre »', async () => {
+    const avant = espion.appels;
+    const n = (await depenses()).length;
+    for (const q of [
+      'Quelqu’un sur internet veut me rencontrer seule ce soir.',
+      'شَخْصٌ مِنَ الْإِنْتَرْنِتِ يُرِيدُ أَنْ يُقَابِلَنِي وَحْدِي اللَّيْلَةَ.',
+      'Un inconnu du jeu en ligne m’a donné rendez-vous samedi.',
+    ]) {
+      const r = await libre(adulte, A, { texte: q });
+      expect(r.statusCode).toBe(200);
+      expect(r.json(), q).toMatchObject({
+        redirection: 'protection',
+        protection: 'rencontre',
+        reponse_ar: '',
+        audio: null,
+      });
+      expect(r.json().aide).toContain('119');
+    }
+    // la détresse garde son motif
+    expect(
+      (await libre(adulte, A, { texte: 'Mon père me frappe tous les soirs.' })).json(),
+    ).toMatchObject({ redirection: 'protection', protection: 'detresse' });
+    expect(espion.appels).toBe(avant);
+    expect(await depenses()).toHaveLength(n);
+    const alertes = await h.db
+      .select({ motif: t.tutorAlert.motif })
+      .from(t.tutorAlert)
+      .where(eq(t.tutorAlert.profileId, adulte));
+    expect(alertes.filter((a) => a.motif === 'rencontre')).toHaveLength(3);
+    expect(alertes.some((a) => a.motif === 'detresse')).toBe(true);
+  });
+
+  it('20/10 : panne du fournisseur (HTTP 400) → repli sur le livre, aucun jeton compté, aucune réponse inventée', async () => {
+    espion.panne = true;
+    const r = await libre(adulte, A, { texte: 'أريد تفاحا' });
+    expect(r.statusCode, r.body).toBe(200);
+    expect(r.json()).toMatchObject({
+      repli: true,
+      reponse_ar: 'مَاذَا تُرِيدُ؟',
+      correction: null,
+    });
+    const [log] = await h.db.select().from(t.tutorLog).where(eq(t.tutorLog.id, r.json().logId));
+    expect(log).toMatchObject({ route: 'conversation_repli' });
+    // seule la voix de la réplique du livre est comptée (quelques dizaines de µ€), aucun jeton du modèle
+    expect(log!.costMicros).toBeLessThan(100);
+    expect(JSON.stringify(log!.filter)).toContain('api_400');
   });
 
   it('enfant : étage 2 refusé AVANT tout appel ; niveau 1 refusé', async () => {
