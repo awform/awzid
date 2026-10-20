@@ -41,7 +41,7 @@ describe('F5 — interrupteurs gardés sur l’appareil', () => {
         .filter(([, v]) => v !== true)
         .map(([k]) => k)
         .sort(),
-    ).toEqual(['conversation', 'design_v4', 'tuteur_ia', 'video_vivante']);
+    ).toEqual(['cahier_lecture', 'conversation', 'design_v4', 'tuteur_ia', 'video_vivante']);
   });
 
   it('copie par personne : décision du serveur, hors ligne comprise ; clé inconnue → défaut', () => {

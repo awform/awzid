@@ -51,6 +51,9 @@ const isMutun = (p: string) => p.startsWith('/mutun/');
 // A37 : textes français des espaces de l'élève chargés par route (Prières, Vivre l'islam) : préchargés, eux
 // Douas : données chargées à la demande (`/douas/douas.json`), gardées sur l'appareil par l'onglet au premier usage
 const isDouas = (p: string) => p.startsWith('/douas/');
+// Cahier de lecture (20/10/2026) : pages du cahier chargées à la demande, gardées dans IndexedDB par l'application
+// (première ouverture, téléchargement du niveau)
+const isCahier = (p: string) => p.startsWith('/cahier-data/');
 const STUDENT_TEXTS = [
   '/i18n/fr-quotidien.json',
   '/i18n/fr-vivre.json',
@@ -71,6 +74,7 @@ const ASSETS = [
       !isRiwaya(f) &&
       !isMutun(f) &&
       !isDouas(f) &&
+      !isCahier(f) &&
       // bêta : page d'état du service (/etat.html), qui ne sert qu'en ligne
       !f.startsWith('/etat.') &&
       // page d'accueil publique (visiteurs sans compte) : jamais sur l'appareil de l'élève
@@ -110,17 +114,20 @@ async function horsEleve(): Promise<Set<string>> {
  * 19/10/2026 : même traitement pour le LECTEUR AUDIO (`/_app/lecteur.json`), chargé au premier appui sur « Écouter »
  * et gardé avec l'audio d'un niveau téléchargé ; il ne pèse donc pas sur l'appareil de l'élève avant son premier usage.
  * Vidéos vivantes (`/_app/video.json`) : même traitement (premier appui sur « Voir en vidéo », niveau téléchargé).
+ * Cahier de lecture (`/_app/cahier.json`, 20/10/2026) : même traitement (première ouverture, niveau téléchargé).
  */
 async function vivante(): Promise<Set<string>> {
   const listes = await Promise.all(
-    ['/_app/vivante.json', '/_app/lecteur.json', '/_app/video.json'].map(async (u) => {
-      try {
-        const r = await fetch(u, { cache: 'no-store' });
-        return r.ok ? ((await r.json()) as string[]).map(String) : [];
-      } catch {
-        return [];
-      }
-    }),
+    ['/_app/vivante.json', '/_app/lecteur.json', '/_app/video.json', '/_app/cahier.json'].map(
+      async (u) => {
+        try {
+          const r = await fetch(u, { cache: 'no-store' });
+          return r.ok ? ((await r.json()) as string[]).map(String) : [];
+        } catch {
+          return [];
+        }
+      },
+    ),
   );
   // tracés des lettres des vidéos vivantes : chargés au premier tracé (gardés ensuite), jamais préchargés
   return new Set([...listes.flat(), '/video/traits.json']);

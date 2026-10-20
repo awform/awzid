@@ -180,3 +180,12 @@ Vidéos vivantes, livres de la phrase (20/10/2026, Adultes 2) : 8 textes `vv.*` 
 `vv.lexique`, `vv.vedette_phrase`, `vv.repete`, `vv.mode_courte_p`) traduits par Claude en **brouillon** dans les
 quatre langues en préparation (tutoiement ; « phrase vedette » rendue « key sentence », « frase clave », « Schlüsselsatz »,
 « الجملة المحورية »). À relire avec le reste.
+
+
+Cahier de lecture d'Adultes 1 (20/10/2026) : 77 textes `cahier.*` (sommaire, page, 6 cases « avec le
+modèle » et « seul », lecture guidée, minutes de lecture, bilans à froid et rattrapage, atelier « je compose le mot », pont
+vers le Coran) et `fn.cahier_lecture` traduits par Claude, relecteur provisoire, en **brouillon** dans les quatre langues
+en préparation — à relire avec le reste. Le français est embarqué avec le cahier (`lib/cahier/textes-fr.json`), sauf les
+4 textes de l'accès et de la page du jour (`fr-arabe`). Choix à vérifier : l'élève est TUTOYÉ (y compris en arabe,
+singulier) ; « bilan » rendu comme ailleurs (« review test », « evaluación », « Lernkontrolle », « تقييم ») ; noms des
+signes en transcription (fatḥa, sukūn…) comme dans les livres ; le texte arabe du cahier lui-même n'est jamais traduit.
