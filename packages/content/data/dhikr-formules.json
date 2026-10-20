@@ -51,7 +51,12 @@
     { "ar": "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ", "fr": "ḥawqala", "categorie": "hawqala" },
     {
       "ar": "بِسْمِ اللَّهِ",
-      "fr": "Basmala dite avant d'agir (la Basmala complète, tête de sourate, reste du Coran)",
+      "fr": "Basmala dite avant d'agir",
+      "categorie": "basmala"
+    },
+    {
+      "ar": "بِسْمِ اللَّهِ الرَّحْمٰنِ الرَّحِيمِ",
+      "fr": "Basmala complète dite avant d'agir, suivie d'autre chose que le Coran (début de lettre, salut…) ; seule (verset 1:1), en tête de sourate ou suivie d'un verset, elle reste du Coran (décision du référent, 20/10/2026)",
       "categorie": "basmala"
     },
     {
@@ -131,6 +136,11 @@
       "ar": "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ، أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا أَنْتَ، أَسْتَغْفِرُكَ وَأَتُوبُ إِلَيْكَ",
       "fr": "kaffārat al-majlis, dite en quittant une assemblée (hifẓ, adab ; religion re3, unités l25 à l27)",
       "categorie": "kaffara"
+    },
+    {
+      "ar": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
+      "fr": "isti'ādha : demande de protection, dite dans la colère et ailleurs (décision du référent, 20/10/2026) ; avant une récitation, elle accompagne le Coran sans en faire partie",
+      "categorie": "istiadha"
     }
   ]
 }

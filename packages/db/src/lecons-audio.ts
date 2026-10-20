@@ -9,7 +9,9 @@
  * Coran (4 mots consécutifs ou plus du texte Tanzil, hors formules de dhikr de la liste blanche
  * `data/dhikr-formules.json`), ni un texte présenté comme Coran quelle que soit sa longueur (graphie du Muṣḥaf,
  * référence de verset, verset entier, partie Coran ou citation référencée des livres) ; une formule de la liste
- * (mā shāʾa Allāh, kaffārat al-majlis…), seule ou dans une phrase qui ne cite pas le Coran, est importée.
+ * (mā shāʾa Allāh, kaffārat al-majlis, isti‘ādha, Basmala dite avant d'agir…), seule ou dans une phrase qui ne
+ * cite pas le Coran, est importée, comme un hadith ou un athar identifié qui reprend une expression du Coran sans
+ * en réciter un verset entier.
  * Le Coran ne s'écoute que dans les récitations du Complexe. Un fichier déjà en place et identique n'est pas
  * recopié ; un fichier qui n'est plus dans l'index est retiré. Le manifeste est écrit en dernier (remplacement
  * atomique).
