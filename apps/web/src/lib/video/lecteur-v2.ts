@@ -1311,7 +1311,8 @@ function creer(opt: OuvrirOptions): () => void {
       }
       case 'contient': {
         const e = ajoute(
-          `${arH(q.cible, 'g')}<div class="grille g4">${q.mots.map((m, k) => `<button class="opt" data-o="${k}" aria-pressed="false">${choixH(m.ar.ar)}</button>`).join('')}</div>${jouable ? `<button class="bouton" data-v>${esc(t('vv.verifier'))}</button>` : ''}`,
+          // une règle de plusieurs mots (« نْ / تَنْوِينٌ + 15 حَرْفًا ») tient sur une ligne : la grille garde sa place
+          `${arH(q.cible, /\s/.test(q.cible.trim()) ? 'g cible' : 'g')}<div class="grille g4">${q.mots.map((m, k) => `<button class="opt" data-o="${k}" aria-pressed="false">${choixH(m.ar.ar)}</button>`).join('')}</div>${jouable ? `<button class="bouton" data-v>${esc(t('vv.verifier'))}</button>` : ''}`,
         );
         const bs = [...e.querySelectorAll<HTMLButtonElement>('.opt')];
         if (!jouable) {

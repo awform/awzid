@@ -89,6 +89,9 @@
   color: var(--famc);
   line-height: 1.6;
 }
+.vv .ar.g.cible {
+  font-size: 2rem;
+}
 .vv .ar.titre {
   font-family: 'Amiri', 'Noto Naskh Arabic', serif;
   font-weight: 700;

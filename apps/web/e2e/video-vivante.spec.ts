@@ -634,6 +634,8 @@ test.describe('v2 allumée (video_vivante et video_v2, exception par pays)', () 
           (window as unknown as { __vv: JV }).__vv.zoom.splice(0),
         );
         await fermer(page);
+        // écrit au fil des unités (une longue série interrompue garde ses mesures)
+        writeFileSync(join(dir, 'controle-360.json'), JSON.stringify(reductions, null, 1));
         // 2. captures, horloge réelle
         await vite(1);
         await page.getByTestId('voir-video').click();
@@ -776,15 +778,22 @@ async function planchesV2(page: Page, dir: string) {
           .join('')}</div>`;
       })
       .join('');
-    const p = await page.context().newPage();
-    await p.setViewportSize({ width: 3000, height: 1000 });
+    // contexte à 1 pixel par pixel CSS : l'émulation du téléphone (×2,6) ferait une image de 40 Mpx et tomber l'onglet
+    const ctx = await page
+      .context()
+      .browser()!
+      .newContext({
+        viewport: { width: 3300, height: 1000 },
+        deviceScaleFactor: 1,
+      });
+    const p = await ctx.newPage();
     await p.setContent(
-      `<!doctype html><meta charset="utf-8"><style>body{margin:16px;background:#efe7d6;font:14px sans-serif;color:#084c38}h1{font-size:22px;margin:0 0 8px}h2{margin:12px 0 4px;font-size:16px}.r{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}figure{margin:0}img{width:150px;display:block;border-radius:8px}figcaption{font-size:9px;width:150px;overflow:hidden;white-space:nowrap}</style><h1>Awzid · Vidéos vivantes v2 · ${lot[0]} à ${lot.at(-1)} (360 px, clair puis sombre)</h1>${lignes}`,
+      `<!doctype html><meta charset="utf-8"><style>body{margin:16px;background:#efe7d6;font:14px sans-serif;color:#084c38}h1{font-size:22px;margin:0 0 8px}h2{margin:12px 0 4px;font-size:16px}.r{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}figure{margin:0}img{width:180px;display:block;border-radius:8px}figcaption{font-size:10px;width:180px;overflow:hidden;white-space:nowrap}</style><h1>Awzid · Vidéos vivantes v2 · ${lot[0]} à ${lot.at(-1)} (360 px, clair puis sombre)</h1>${lignes}`,
     );
     const fp = join(dir, `PLANCHE_V2_${lot[0]}-${lot.at(-1)}.png`);
-    await p.screenshot({ path: fp, fullPage: true, scale: 'css' });
+    await p.screenshot({ path: fp, fullPage: true });
     expect(await p.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(7000);
-    await p.close();
+    await ctx.close();
   }
   rmSync(mini, { recursive: true, force: true });
 }
