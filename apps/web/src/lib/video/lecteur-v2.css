@@ -1304,6 +1304,17 @@
   .vv .reps {
     max-width: 17rem;
   }
+  /* « où y a-t-il… ? » (8 mots) : cases plus serrées, l'arabe garde sa taille */
+  .vv .grille.g4 .opt {
+    min-height: 2.5rem;
+  }
+  .vv .grille.g4 .opt .ar {
+    line-height: 1.35;
+  }
+  .vv .grille.g4 .opt .fr {
+    font-size: 0.78rem;
+    line-height: 1.15;
+  }
 }
 /* animations réduites : fondus seulement (le tracé d'une lettre reste : c'est le contenu) */
 @media (prefers-reduced-motion: reduce) {

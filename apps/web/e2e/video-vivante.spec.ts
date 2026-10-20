@@ -599,6 +599,8 @@ test.describe('v2 allumée (video_vivante et video_v2, exception par pays)', () 
       'dialogue',
       'jouer',
       'recap',
+      // scènes précises en plus (VIDEO_V2_SCENES=q-ex4,…), pour revoir une mise en page
+      ...(process.env.VIDEO_V2_SCENES ?? '').split(',').filter(Boolean),
     ];
     for (const livre of LIVRES_V2)
       for (let n = 1; n <= 25; n++) {
@@ -695,7 +697,8 @@ test.describe('v2 allumée (video_vivante et video_v2, exception par pays)', () 
         const vus = new Set<string>();
         for (let i = 0; i < 60; i++) {
           const id = (await scene(page)) ?? '';
-          const cle = CLES.find((c) => (c === 'q-' ? id.startsWith('q-') : c === id));
+          const cle =
+            CLES.find((c) => c === id) ?? CLES.find((c) => c === 'q-' && id.startsWith('q-'));
           if (cle && !vus.has(cle)) {
             vus.add(cle);
             await page.waitForTimeout(cle === 'lettre-1' ? 12_000 : cle === 'notion' ? 6000 : 4000);
