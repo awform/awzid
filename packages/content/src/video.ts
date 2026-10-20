@@ -45,6 +45,8 @@ export { VIDEO_NIVEAUX } from './video-niveaux.js';
 export interface T {
   ar: string;
   son?: 1;
+  /** texte de la clé audio quand il diffère de l'affichage (bulle dont les lignes « | » sont dites d'un trait) */
+  dit?: string;
 }
 /** texte d'interface : clé du catalogue `vv.*` et ses paramètres (aucun texte écrit ici) */
 export interface Cle {
@@ -65,6 +67,8 @@ export type Question =
       reponse?: string;
       mot?: T;
       fr?: string;
+      /** la bonne réponse, dite après la correction */
+      bonne?: T;
     }
   | {
       k: 'contient';
@@ -91,40 +95,44 @@ export type Question =
       reponse?: string;
       fr?: string;
       mot?: T;
+      bonne?: T;
     };
 
 /** temps d'une scène, joués dans l'ordre ; `ms` : durée minimale (le son, plus long, l'allonge) */
-export type Temps = { ms: number } & (
-  | { k: 'titre'; fr?: string; ar?: string; tableau?: T[] }
-  | { k: 'bulle'; lignes: T[]; fr?: string; qui?: string; cote?: 0 | 1 }
-  | { k: 'objectif'; ar?: T; fr?: string }
-  /** grande lettre (tracé seulement si ses traits sont validés, côté lecteur) */
-  | { k: 'trace'; l: string }
-  | { k: 'nom'; nom: T; consigne: Cle }
-  | { k: 'points'; ar?: string; fr?: string }
-  | { k: 'formes'; formes: string[] }
-  | { k: 'rangee'; items: T[]; consigne?: Cle; aToi?: number }
-  | { k: 'joindre'; morceaux: T[]; mot: T; fr?: string }
-  | { k: 'texte'; ar: T; fr?: string; taille: 'g' | 'm' | 'p' }
-  /** mot à mot du livre : morceaux coupés à « | » (arabe et français, même nombre) */
-  | { k: 'inter'; ar: T[]; fr: string[] }
-  | { k: 'mot'; ar: T; fr?: string; img?: string }
-  | { k: 'grille'; items: Array<{ ar: T; img?: string }> }
-  | { k: 'regle'; titre_ar?: string; titre_fr?: string; signe?: string; ar?: T[]; fr?: string[] }
-  /** texte français du livre (consigne, conseil) toujours visible */
-  | { k: 'fr'; fr: string }
-  | { k: 'lettres'; items: Array<{ l: string; nom?: T }> }
-  | { k: 'aToi'; consigne: Cle; puis?: T[] }
-  | { k: 'q'; q: Question; i: number; n: number }
-  | { k: 'jouer'; repliques: Array<{ qui: string; qui_ar: string; ar: T; fr?: string }> }
-  /**
-   * liste de mots ou d'expressions du livre, une ligne chacun (mots-clés de lecture, lexique ; demain : tableaux de
-   * conjugaison, vers d'un poème…) ; `dits` : morceaux dits un à un quand la ligne entière n'a pas de fichier audio
-   */
-  | { k: 'cles'; items: Ligne[] }
-  /** « À retenir » de grammaire : la règle du livre (français), puis son exemple arabe sur sa ligne */
-  | { k: 'retenir'; fr?: string; ar?: T }
-);
+export type Temps = { ms: number } &
+  /** `noms` : noms des lettres du titre ou du tableau, dits l'un après l'autre */
+  (
+    | { k: 'titre'; fr?: string; ar?: T; tableau?: T[]; noms?: T[] }
+    /** `dit` : la bulle entière, dite d'un trait quand ses lignes n'ont pas chacune leur fichier */
+    | { k: 'bulle'; lignes: T[]; dit?: T; fr?: string; qui?: string; cote?: 0 | 1 }
+    | { k: 'objectif'; ar?: T; fr?: string }
+    /** grande lettre (tracé seulement si ses traits sont validés, côté lecteur) */
+    | { k: 'trace'; l: string }
+    | { k: 'nom'; nom: T; consigne: Cle }
+    | { k: 'points'; ar?: T; fr?: string }
+    | { k: 'formes'; formes: string[] }
+    | { k: 'rangee'; items: T[]; consigne?: Cle; aToi?: number }
+    | { k: 'joindre'; morceaux: T[]; mot: T; fr?: string }
+    | { k: 'texte'; ar: T; fr?: string; taille: 'g' | 'm' | 'p' }
+    /** mot à mot du livre : morceaux coupés à « | » (arabe et français, même nombre) */
+    | { k: 'inter'; ar: T[]; fr: string[] }
+    | { k: 'mot'; ar: T; fr?: string; img?: string }
+    | { k: 'grille'; items: Array<{ ar: T; img?: string }> }
+    | { k: 'regle'; titre_ar?: T; titre_fr?: string; signe?: string; ar?: T[]; fr?: string[] }
+    /** texte français du livre (consigne, conseil) toujours visible */
+    | { k: 'fr'; fr: string }
+    | { k: 'lettres'; items: Array<{ l: string; nom?: T }> }
+    | { k: 'aToi'; consigne: Cle; puis?: T[] }
+    | { k: 'q'; q: Question; i: number; n: number }
+    | { k: 'jouer'; repliques: Array<{ qui: string; qui_ar: string; ar: T; fr?: string }> }
+    /**
+     * liste de mots ou d'expressions du livre, une ligne chacun (mots-clés de lecture, lexique ; demain : tableaux de
+     * conjugaison, vers d'un poème…) ; `dits` : morceaux dits un à un quand la ligne entière n'a pas de fichier audio
+     */
+    | { k: 'cles'; items: Ligne[] }
+    /** « À retenir » de grammaire : la règle du livre (français), puis son exemple arabe sur sa ligne */
+    | { k: 'retenir'; fr?: string; ar?: T }
+  );
 /** ligne d'une liste du livre : texte arabe (avec parfois un mot français du livre), morceaux dits, sens */
 export interface Ligne {
   ar: T;
@@ -158,6 +166,11 @@ export interface Scene {
   jouable?: true;
   /** rang de la lettre (mode « par lettre ») */
   lettre?: number;
+  /**
+   * textes affichés de la scène qui ont un fichier audio : le lecteur les dit si rien d'autre ne l'a été (règle du
+   * client : aucune scène muette quand un texte affiché a sa voix ; choix d'un exercice, lettres d'une grille…)
+   */
+  voix?: T[];
 }
 
 export interface Signalement {
@@ -425,7 +438,16 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
     return { ar: unmark(s) };
   };
   /** texte arabe du livre seulement affiché (titres, repères, morceaux d'explication : le livre ne les fait pas écouter) */
-  const affiche = (s: string): T => ({ ar: unmark(s) });
+  /**
+   * Règle du client (20/10/2026) : tout texte arabe affiché qui a un fichier audio est dit au moins une fois dans sa
+   * scène. Une bulle aux lignes « | » est aussi cherchée d'un trait (lignes jointes par une espace).
+   */
+  const parle = (s: string, holder: Obj | null = null): T => {
+    const x = t(s, holder);
+    if (x.son || !s.includes('|')) return x;
+    const joint = s.replace(/\s*\|\s*/g, ' ');
+    return t(joint, holder).son ? { ar: x.ar, son: 1, dit: joint } : x;
+  };
 
   const banned = new Set(PERSONAS);
   for (const k of arr(obj(L.scene).persos)) if (typeof k === 'string') banned.add(k);
@@ -464,21 +486,32 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
     const t0 = (str(S.tableau) ?? '').split(' ').filter(Boolean);
     const titreAr = unmark(str(L.titre_ar) ?? '').replace(/\s+/g, '');
     const tableau = t0.join('') === titreAr ? [] : t0;
+    // lettres du titre ou du tableau : leur nom (livre, `lettres`), dit l'un après l'autre
+    const lt = arr(L.lettres).map(obj);
+    const noms = (tableau.length ? tableau : unmark(str(L.titre_ar) ?? '').split(/\s+/))
+      .map((l) => lt.find((x) => x.l === l && str(x.nom_ar)))
+      .filter((x): x is Obj => !!x)
+      .map((x) => t(x.nom_ar as string, x));
     temps.push({
       k: 'titre',
       ms: MS.titre + tableau.length * MS.tableauItem,
       ...(str(L.titre_fr) ? { fr: L.titre_fr as string } : {}),
-      ...(str(L.titre_ar) ? { ar: unmark(L.titre_ar as string) } : {}),
-      ...(tableau.length ? { tableau: tableau.map(affiche) } : {}),
+      ...(str(L.titre_ar) ? { ar: t(L.titre_ar as string, L) } : {}),
+      ...(tableau.length ? { tableau: tableau.map((x) => t(x, S)) } : {}),
+      ...(noms.length ? { noms } : {}),
     });
     const lignes = (str(S.bulle_ar) ?? '').split('|').filter((x) => x.trim());
-    if (lignes.length)
+    if (lignes.length) {
+      const ls = lignes.map((x) => t(x.trim(), S));
+      const tout = parle(S.bulle_ar as string, S);
       temps.push({
         k: 'bulle',
         ms: MS.bulleLigne * lignes.length + (str(S.bulle_fr) ? MS.fr : 0),
-        lignes: lignes.map(affiche),
+        lignes: ls,
+        ...(!ls.every((x) => x.son) && tout.son ? { dit: tout } : {}),
         ...(str(S.bulle_fr) && !sansTrad ? { fr: S.bulle_fr as string } : {}),
       });
+    }
     add({
       id: 'ouverture',
       part: 'ouverture',
@@ -500,7 +533,7 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
       .map((o): Temps => ({
         k: 'objectif',
         ms: MS.objectif,
-        ...(str(o.ar) ? { ar: affiche(o.ar as string) } : {}),
+        ...(str(o.ar) ? { ar: t(o.ar as string, o) } : {}),
         ...(str(o.fr) ? { fr: o.fr as string } : {}),
       })),
   });
@@ -524,7 +557,7 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
       temps.push({
         k: 'points',
         ms: MS.points,
-        ...(str(x.points_ar) ? { ar: x.points_ar as string } : {}),
+        ...(str(x.points_ar) ? { ar: t(x.points_ar as string, x) } : {}),
         ...(str(x.points_fr) ? { fr: x.points_fr as string } : {}),
       });
     const formes = strs(x.formes);
@@ -633,15 +666,15 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
         k: 'titre',
         ms: MS.titre,
         ...(str(L.decouvre_fr) ? { fr: L.decouvre_fr as string } : {}),
-        ...(str(L.decouvre_ar) ? { ar: L.decouvre_ar as string } : {}),
+        ...(str(L.decouvre_ar) ? { ar: t(L.decouvre_ar as string, L) } : {}),
       });
     temps.push({
       k: 'regle',
       ms: 2500 + 1600 * pieces.length + fr.reduce((s, x) => s + 1200 + 45 * x.length, 0),
-      ...(str(N.titre_ar) ? { titre_ar: N.titre_ar as string } : {}),
+      ...(str(N.titre_ar) ? { titre_ar: t(N.titre_ar as string, N) } : {}),
       ...(str(N.titre_fr) ? { titre_fr: N.titre_fr as string } : {}),
       ...(str(N.signe) ? { signe: N.signe as string } : {}),
-      ...(pieces.length ? { ar: pieces.map(affiche) } : {}),
+      ...(pieces.length ? { ar: pieces.map((x) => t(x, N)) } : {}),
       ...(fr.length ? { fr } : {}),
     });
     add({
@@ -914,7 +947,7 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
       });
     }
     for (const p of (str(dlg.note_ar) ?? '').split(SEP).filter((x) => x.trim()))
-      temps.push({ k: 'texte', ar: affiche(p.trim()), taille: 'p', ms: 3500 });
+      temps.push({ k: 'texte', ar: t(p.trim(), dlg), taille: 'p', ms: 3500 });
     // explication du livre sous le dialogue
     if (str(dlg.note_fr)) temps.push(note(dlg.note_fr as string));
     add({
@@ -952,7 +985,7 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
             .map((r): Temps => ({
               k: 'regle',
               ms: 2600 + (str(r.fr) ? 30 * (r.fr as string).length : 0),
-              ...(str(r.ar) ? { ar: [affiche(r.ar as string)] } : {}),
+              ...(str(r.ar) ? { ar: [t(r.ar as string, r)] } : {}),
               ...(str(r.fr) ? { fr: [r.fr as string] } : {}),
             }))
         : nouvelles.map((x): Temps => ({
@@ -960,8 +993,8 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
             ms: 2600 + (str(x.points_fr) ? 30 * (x.points_fr as string).length : 0),
             signe: x.l as string,
             ar: [
-              affiche(x.nom_ar as string),
-              ...(str(x.points_ar) ? [affiche(x.points_ar as string)] : []),
+              t(x.nom_ar as string, x),
+              ...(str(x.points_ar) ? [t(x.points_ar as string, x)] : []),
             ],
             ...(str(x.points_fr) ? { fr: [x.points_fr as string] } : {}),
           })),
@@ -1001,6 +1034,42 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   if (!scenes.some((s) => s.id !== 'ouverture' && s.modes.includes('revision')))
     for (const s of scenes) s.modes = s.modes.filter((m) => m !== 'revision');
 
+  // voix de secours de chaque scène (textes arabes affichés, garde appliquée, fichier présent), huit au plus
+  const SANS_VOIX = new Set([
+    'k',
+    'ms',
+    'fr',
+    'titre_fr',
+    'oui_fr',
+    'non_fr',
+    'img',
+    'cle',
+    'qui',
+    'qui_ar',
+  ]);
+  for (const s of scenes) {
+    const vus = new Set<string>();
+    const voix: T[] = [];
+    const walk = (y: unknown): void => {
+      if (typeof y === 'string') {
+        if (ARABIC.test(y) && !LATIN.test(y) && !vus.has(y) && voix.length < 8) {
+          vus.add(y);
+          // jamais un texte que la garde a déjà gardé muet avec son bloc (référence de verset, contexte…)
+          const u = unmark(y);
+          if (
+            !signalements.some((x) => unmark(x.texte) === u) &&
+            !raison(y, null, true) &&
+            hasAudio(y)
+          )
+            voix.push({ ar: u, son: 1 });
+        }
+      } else if (Array.isArray(y)) y.forEach(walk);
+      else if (y && typeof y === 'object')
+        for (const [k, z] of Object.entries(y)) if (!SANS_VOIX.has(k)) walk(z);
+    };
+    walk(s.temps);
+    if (voix.length) s.voix = voix;
+  }
   const modes = VIDEO_MODES.filter((m) => scenes.some((s) => s.modes.includes(m)));
   const source = sha1Hex(
     JSON.stringify(lessonRaw ?? null) + '\n' + [...(opts.audioList ?? [])].sort().join(','),
@@ -1126,7 +1195,7 @@ function questions(
           suite: it.suite as string,
           options: strs(it.options),
           ...(str(it.reponse) && strs(it.options).includes(it.reponse as string)
-            ? { reponse: it.reponse as string }
+            ? { reponse: it.reponse as string, bonne: t(it.reponse as string, it) }
             : {}),
           ...(str(it.mot) ? { mot: t(it.mot as string, it) } : {}),
           ...im(it),
@@ -1217,6 +1286,7 @@ function questions(
             apres,
             options: strs(it.options),
             ...(rep ? { reponse: rep } : {}),
+            ...(rep && ARABIC.test(rep) && !LATIN.test(rep) ? { bonne: t(rep, it) } : {}),
             ...(entier && tous.has(entier) ? { mot: t(entier, it) } : {}),
             ...fr(it),
           };
@@ -1339,6 +1409,7 @@ export function videoStrings(v: VideoLecon): { ar: string[]; fr: string[]; cles:
   const A = (s?: string | T) => {
     if (s === undefined) return;
     ar.push(typeof s === 'string' ? s : s.ar);
+    if (typeof s !== 'string' && s.dit) ar.push(s.dit);
   };
   const F = (s?: string) => s !== undefined && fr.push(s);
   const C = (c?: Cle | { fr: string }) => {
@@ -1348,15 +1419,18 @@ export function videoStrings(v: VideoLecon): { ar: string[]; fr: string[]; cles:
   };
   for (const s of v.scenes) {
     C(s.titre);
+    s.voix?.forEach(A);
     for (const x of s.temps) {
       switch (x.k) {
         case 'titre':
           F(x.fr);
           A(x.ar);
           x.tableau?.forEach(A);
+          x.noms?.forEach(A);
           break;
         case 'bulle':
           x.lignes.forEach(A);
+          A(x.dit);
           F(x.fr);
           A(x.qui);
           break;
@@ -1454,6 +1528,7 @@ export function videoStrings(v: VideoLecon): { ar: string[]; fr: string[]; cles:
               q.options.forEach(A);
               A(q.reponse);
               A(q.mot);
+              A(q.bonne);
               F(q.fr);
               break;
             case 'contient':
@@ -1481,6 +1556,7 @@ export function videoStrings(v: VideoLecon): { ar: string[]; fr: string[]; cles:
               if (q.apres) AF(q.apres);
               q.options.forEach(AF);
               A(q.mot);
+              A(q.bonne);
               F(q.fr);
               break;
           }

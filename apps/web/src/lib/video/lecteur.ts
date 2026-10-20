@@ -76,7 +76,7 @@ const famille = (l: string) => FAMILLES.find(([cs]) => cs.includes(l.charCodeAt(
  * Journal de TEST (fabrication des MP4 d'essai, e2e/video-mp4.spec.ts) : sons joués (fichier, instant) et question en
  * cours. Il n'existe que si un test le crée avant l'ouverture (`window.__vv`) : rien n'est noté en usage normal.
  */
-type Journal = { sons: Array<[string, number]>; q?: Question };
+type Journal = { sons: Array<[string, number]>; scenes?: Array<[string, number]>; q?: Question };
 const journal = () => (globalThis as { __vv?: Journal }).__vv;
 
 class Coupe extends Error {}
@@ -103,7 +103,7 @@ export function frH(s: string, cls = 'fr'): string {
   for (const p of s.split(RUN)) {
     if (!p) continue;
     if (!RUN.test(p)) buf += esc(p);
-    else if ((p.match(LETTRE) ?? []).length <= 1)
+    else if (isolees(p))
       buf += `<bdi class="lt" lang="ar" dir="rtl">${esc(p.trim())}</bdi>${/\s$/.test(p) ? ' ' : ''}`;
     else {
       if (!vide(fl())) out += `<span class="${cls}">${fl()}</span>`;
@@ -123,6 +123,24 @@ const choixH = (o: string) =>
     : RUN.test(o)
       ? arH(o)
       : `<span class="fr toujours">${esc(o)}</span>`;
+
+/** lettres isolées citées (une lettre par morceau, lām-alif compté une fois : « ك ل م ه », « لا ») : dans la phrase */
+const LAMALIF = new RegExp(`${c(0x644)}[${c(0x622, 0x623, 0x625, 0x627)}]`, 'g');
+const isolees = (p: string) =>
+  p
+    .trim()
+    .split(/\s+/)
+    .every((m) => (m.replace(LAMALIF, c(0x644)).match(LETTRE) ?? []).length <= 1);
+/** titre du livre qui commence par des lettres citées : « Les lettres ك ل م ه, la ligature لا… » */
+const titreH = (s: string) => {
+  const m = RUN.exec(s);
+  return frH(
+    m?.index === 0 && isolees(m[0]) && m[0].trim().includes(' ')
+      ? `${t('vv.les_lettres')} ${s}`
+      : s,
+    'h',
+  );
+};
 
 /** fermeture du lecteur ouvert (un seul à la fois) */
 let fermerOuvert: (() => void) | null = null;
@@ -167,6 +185,8 @@ function creer(opt: OuvrirOptions): () => void {
   let audio: HTMLAudioElement | null = null;
   let seul: HTMLAudioElement | null = null;
   let score = { ok: 0, n: 0 };
+  /** sons réellement joués (une scène sans aucun son dit ses textes de secours) */
+  let nSons = 0;
   let retour: Element | null;
   let cle: string;
 
@@ -292,10 +312,10 @@ function creer(opt: OuvrirOptions): () => void {
   }
   /** joue le fichier audio du texte s'il existe (copie de l'appareil d'abord) ; sinon un court silence */
   async function dire(x: T | undefined, el?: Element | null): Promise<void> {
-    const id = x?.son ? audioIdFor(x.ar, opt.audio) : null;
+    const id = x?.son ? audioIdFor(x.dit ?? x.ar, opt.audio) : null;
     el?.classList.add('joue');
     try {
-      if (!id) return await att(700);
+      if (!id) return await att(400);
       const j = jeton;
       const s = await leconsSource(id).catch(() => null);
       // scène changée pendant l'attente : cette suite s'arrête (sinon elle continuerait dans la scène suivante)
@@ -315,7 +335,7 @@ function creer(opt: OuvrirOptions): () => void {
           ok();
         };
         a.onended = a.onerror = fin;
-        a.onplaying = () => journal()?.sons.push([id, Date.now()]);
+        a.onplaying = () => (nSons++, journal()?.sons.push([id, Date.now()]));
         // connexion coupée ou lecture refusée : la scène continue en silence
         setTimeout(() => !pause && a.currentTime === 0 && fin(), 2500);
         if (!pause) a.play().catch(fin);
@@ -355,7 +375,7 @@ function creer(opt: OuvrirOptions): () => void {
     const s = stage;
     s.innerHTML = '';
     const d = h('div', 'vv-dep');
-    d.innerHTML = `${L.titre_fr ? frH(L.titre_fr, 'h') : ''}<div class="filet"><i></i></div>`;
+    d.innerHTML = `${L.titre_fr ? titreH(L.titre_fr) : ''}<div class="filet"><i></i></div>`;
     let rep: { m?: VideoMode; l?: number; i?: number; s?: string } = {};
     try {
       rep = JSON.parse(localStorage.getItem(cle) ?? '{}') ?? {};
@@ -452,6 +472,7 @@ function creer(opt: OuvrirOptions): () => void {
     }
     stage.innerHTML = '';
     stage.dataset.scene = sc.id;
+    journal()?.scenes?.push([sc.id, Date.now()]);
     const tr = sc.temps.find((x) => x.k === 'trace');
     const fam = tr?.k === 'trace' ? famille(tr.l) : undefined;
     if (fam) stage.style.setProperty('--fam', fam);
@@ -462,10 +483,13 @@ function creer(opt: OuvrirOptions): () => void {
     band.dataset.testid = 'vv-bandeau';
     stage.append(zone, band);
     try {
+      const n0 = nSons;
       for (const x of sc.temps) {
         await temps(x, sc);
         vivant(j);
       }
+      // aucune scène muette quand un texte affiché a sa voix : les textes de secours sont dits
+      if (nSons === n0) for (const v of sc.voix ?? []) await dire(v);
       await att(600);
       if (j === jeton) void jouer(i + 1);
     } catch (e) {
@@ -594,7 +618,7 @@ function creer(opt: OuvrirOptions): () => void {
     switch (x.k) {
       case 'titre': {
         const e = ajoute(
-          `${x.fr ? frH(x.fr, 'h') : ''}${x.ar ? arH(x.ar, 'titre') : ''}<div class="filet"><i></i></div><div class="rangee"></div>`,
+          `${x.fr ? titreH(x.fr) : ''}${x.ar ? arH(x.ar.ar, 'titre') : ''}<div class="filet"><i></i></div><div class="rangee"></div>`,
           true,
         );
         const r = e.querySelector('.rangee')!;
@@ -602,19 +626,24 @@ function creer(opt: OuvrirOptions): () => void {
           r.append(h('span', 'apparait', arH(l.ar, 'g')));
           await att(450);
         }
-        return att(x.ms - 450 * (x.tableau?.length ?? 0));
+        // voix dès l'ouverture : noms des lettres l'un après l'autre, sinon le titre arabe et les mots du tableau
+        const vs = (x.noms ?? [x.ar, ...(x.tableau ?? [])]).filter((v) => v?.son);
+        for (const v of vs) await dire(v);
+        return att(vs.length ? 1200 : x.ms - 450 * (x.tableau?.length ?? 0));
       }
       case 'bulle': {
         const cote = x.cote === undefined ? '' : x.cote ? 'g' : 'd';
         const e = ajoute(
           `<div class="bulle ${cote}">${x.qui ? arH(x.qui, 'qui') : ''}${x.lignes.map((l) => arH(l.ar)).join('')}${fr(x.fr)}</div>`,
         );
-        for (const l of x.lignes) await dire(l, e.firstElementChild);
+        if (x.dit) await dire(x.dit, e.firstElementChild);
+        else for (const l of x.lignes) await dire(l, e.firstElementChild);
         return att(x.ms * 0.5);
       }
       case 'objectif':
         ajoute(`<div class="carte">${x.ar ? arH(x.ar.ar) : ''}${fr(x.fr, true)}</div>`);
-        return att(x.ms);
+        if (x.ar?.son) await dire(x.ar);
+        return att(x.ar?.son ? 1500 : x.ms);
       case 'trace': {
         const e = ajoute('<div class="trace-h"></div>', true);
         const trace = await tracer(e.firstElementChild as HTMLElement, x.l, x.l, 0, 6.5);
@@ -628,7 +657,8 @@ function creer(opt: OuvrirOptions): () => void {
         return att(x.ms * 0.4);
       }
       case 'points':
-        ajoute(`${x.ar ? arH(x.ar, 'points') : ''}${fr(x.fr, true)}`);
+        ajoute(`${x.ar ? arH(x.ar.ar, 'points') : ''}${fr(x.fr, true)}`);
+        if (x.ar?.son) await dire(x.ar);
         return att(x.ms);
       case 'formes': {
         const lab = ['vv.isolee', 'vv.debut', 'vv.milieu', 'vv.fin_mot'];
@@ -699,13 +729,16 @@ function creer(opt: OuvrirOptions): () => void {
         return att(x.ms);
       case 'regle': {
         const e = ajoute(
-          `<div class="carte">${x.titre_ar ? arH(x.titre_ar, 'titre') : ''}${x.titre_fr ? frH(x.titre_fr, 'h') : ''}${x.signe ? arH(x.signe, 'g') : ''}</div>`,
+          `<div class="carte">${x.titre_ar ? arH(x.titre_ar.ar, 'titre') : ''}${x.titre_fr ? frH(x.titre_fr, 'h') : ''}${x.signe ? arH(x.signe, 'g') : ''}</div>`,
         );
         const cte = e.firstElementChild!;
+        if (x.titre_ar?.son) await dire(x.titre_ar);
         for (const a of x.ar ?? []) {
-          cte.append(h('div', 'apparait', arH(a.ar, 'l')));
+          const d = h('div', 'apparait', arH(a.ar, 'l'));
+          cte.append(d);
           tasse(e);
-          await defile(1400);
+          if (a.son) await dire(a, d);
+          await defile(a.son ? 500 : 1400);
         }
         for (const f of x.fr ?? []) {
           cte.append(h('div', 'apparait', frH(f, 'fr toujours')));
@@ -814,7 +847,7 @@ function creer(opt: OuvrirOptions): () => void {
           if (q.mot) {
             const m = ajoute(tuile(q.mot, 'mot'));
             await dire(q.mot, m.firstElementChild);
-          }
+          } else if (q.bonne?.son) await dire(q.bonne, e.querySelector('.case'));
         });
       }
       case 'complete': {
@@ -832,7 +865,7 @@ function creer(opt: OuvrirOptions): () => void {
           if (q.mot) {
             const m = ajoute(tuile(q.mot, 'mot'));
             await dire(q.mot, m.firstElementChild);
-          }
+          } else if (q.bonne?.son) await dire(q.bonne, e.querySelector('.case'));
         });
       }
       case 'vf': {
@@ -961,7 +994,8 @@ function creer(opt: OuvrirOptions): () => void {
         G.forEach((b) => ((b.disabled = true), b.classList.add('bon')));
         noter(v === true && !erreurs);
         retourTexte(v, v === true && !erreurs);
-        return att(2500);
+        for (const [k, it] of q.items.entries()) if (it.ar.son) await dire(it.ar, G[k]);
+        return att(1500);
       }
       case 'ordre': {
         const e = ajoute(

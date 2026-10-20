@@ -81,6 +81,15 @@ describe('vidéos vivantes : l’arabe sur sa propre ligne', () => {
       `<div class="frh"><span class="fr">Lettres </span><span class="ar l" lang="ar" dir="rtl">${mot}</span><span class="fr">la ligature</span></div>`,
     );
   });
+  it('lettres isolées citées (ك ل م ه, la ligature لا) : restent dans la phrase française', () => {
+    const k = [0x643, 0x644, 0x645, 0x647].map((x) => c(x)).join(' ');
+    const la = c(0x644, 0x627);
+    const h = frH(`${k}, la ligature ${la} et le nom d'Allah`);
+    expect(h).not.toContain('class="ar');
+    expect(h).toContain(
+      `<bdi class="lt" lang="ar" dir="rtl">${k}</bdi>, la ligature <bdi class="lt" lang="ar" dir="rtl">${la}</bdi>`,
+    );
+  });
   it('parenthèse fermante orpheline après une ligne arabe : retirée', () => {
     expect(frH(`un monde (pluriel : ${mot})`)).toBe(
       `<div class="frh"><span class="fr">un monde (pluriel : </span><span class="ar l" lang="ar" dir="rtl">${mot}</span></div>`,

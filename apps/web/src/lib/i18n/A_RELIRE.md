@@ -176,7 +176,7 @@ vérifier : l'élève est TUTOYÉ (décision du client pour les vidéos vivantes
 « bilan » rendu comme ailleurs (« Review test », « Evaluación », « Lernkontrolle », « التقييم ») ; les noms
 d'ouvrages cités (Alif Baa) restent en lettres latines.
 
-Vidéos vivantes, livres de la phrase (20/10/2026, Adultes 2) : 7 textes `vv.*` de plus (`vv.retenir`, `vv.motscles`, `vv.lis_phrase`,
+Vidéos vivantes, livres de la phrase (20/10/2026, Adultes 2) : 8 textes `vv.*` de plus (`vv.retenir`, `vv.motscles`, `vv.lis_phrase`, `vv.les_lettres`,
 `vv.lexique`, `vv.vedette_phrase`, `vv.repete`, `vv.mode_courte_p`) traduits par Claude en **brouillon** dans les
 quatre langues en préparation (tutoiement ; « phrase vedette » rendue « key sentence », « frase clave », « Schlüsselsatz »,
 « الجملة المحورية »). À relire avec le reste.

@@ -25,6 +25,7 @@ import {
   scenesDuMode,
   videoStrings,
   videoVoix,
+  type Temps,
   type VideoLecon,
 } from '../src/video.js';
 import { VIDEO_GARDE, VIDEO_RECITATION } from '../src/video-garde.js';
@@ -207,6 +208,92 @@ const versetsEntiers = new Set<string>();
 }
 /** texte de la lecture présenté comme récitation : graphie du Muṣḥaf, ou un ou plusieurs versets entiers */
 const recitation = (s: string) => looksQuranic(s) || versetsEntiers.has(skeleton(unmark(s)));
+
+/** textes que le lecteur dit d'office dans un temps (miroir de `apps/web/src/lib/video/lecteur.ts`) */
+type TT = { ar: string; son?: 1 } | undefined;
+function joues(x: Temps): TT[] {
+  const o: TT[] = [];
+  const S = (y: TT) => void (y?.son && o.push(y));
+  switch (x.k) {
+    case 'titre':
+      (x.noms ?? [x.ar, ...(x.tableau ?? [])]).forEach(S);
+      break;
+    case 'bulle':
+      if (x.dit) S(x.dit);
+      else x.lignes.forEach(S);
+      break;
+    case 'objectif':
+    case 'points':
+    case 'texte':
+    case 'mot':
+    case 'retenir':
+      S(x.ar);
+      break;
+    case 'nom':
+      S(x.nom);
+      break;
+    case 'rangee':
+      x.items.forEach(S);
+      break;
+    case 'joindre':
+      x.morceaux.forEach(S);
+      S(x.mot);
+      break;
+    case 'inter':
+      x.ar.forEach(S);
+      break;
+    case 'regle':
+      S(x.titre_ar);
+      (x.ar ?? []).forEach(S);
+      break;
+    case 'lettres':
+      x.items.forEach((i) => S(i.nom));
+      break;
+    case 'aToi':
+      (x.puis ?? []).forEach(S);
+      break;
+    case 'cles':
+      x.items.forEach((l) => (l.ar.son ? S(l.ar) : (l.dits ?? []).forEach(S)));
+      break;
+    case 'q': {
+      const q = x.q;
+      if (q.k === 'ecoute') S(q.dit);
+      if (q.k === 'premiere' || q.k === 'complete') S(q.mot ?? q.bonne);
+      if (q.k === 'vf') {
+        S(q.ar);
+        S(q.correction);
+      }
+      if (q.k === 'ordre') S(q.phrase);
+      if (q.k === 'contient') q.mots.filter((m) => m.oui).forEach((m) => S(m.ar));
+      if (q.k === 'relier' && !q.droite) q.items.forEach((i) => S(i.ar));
+      break;
+    }
+  }
+  return o;
+}
+/**
+ * Scènes sans aucun son joué (hors « À toi ! » seul, scène « jouer » à choix, textes gardés) : `nonDit`, un texte affiché
+ * a un fichier mais n'est pas dit (doit être vide) ; `sansAudio`, aucun texte de la scène n'a de fichier (rapport).
+ */
+function scenesMuettes(v: VideoLecon, hasA: (s: string) => boolean) {
+  const garde = new Set(v.signalements.map((x) => unmark(x.texte)));
+  const nonDit: string[] = [];
+  const sansAudio: string[] = [];
+  for (const m of v.modes)
+    for (const s of m === 'lettre'
+      ? v.lettres.flatMap((_, i) => scenesDuMode(v, m, i))
+      : scenesDuMode(v, m)) {
+      if (s.temps.every((x) => x.k === 'aToi' || x.k === 'jouer')) continue;
+      if (s.voix?.length || s.temps.some((x) => joues(x).length)) continue;
+      const ar = strings(s.temps).filter((x) => /[ء-ي]/.test(x) && !/[A-Za-z]/.test(x));
+      if (ar.length && ar.every((x) => garde.has(x))) continue;
+      const avecSon = ar.filter((x) => !garde.has(x) && hasA(x));
+      (avecSon.length ? nonDit : sansAudio).push(
+        `${m} ${s.id}${avecSon.length ? ` : ${avecSon[0]}` : ''}`,
+      );
+    }
+  return { nonDit, sansAudio };
+}
 
 const videos = new Map<string, { v: VideoLecon; L: Record<string, unknown> }>();
 const video = (livre: string, f: string) => {
@@ -541,6 +628,8 @@ for (const LIVRE of LIVRES)
               `voix sur un morceau de passage coranique : ${s}`,
             ).toBe(false);
         }
+        // aucune scène muette quand un texte affiché a son fichier audio (règle du client, 20/10/2026), dans chaque mode
+        expect(scenesMuettes(v, hasAudioDe(LIVRE)).nonDit).toEqual([]);
         // « À toi de jouer la scène ! » : à la fin de la version longue quand le dialogue a au moins deux rôles
         const longue = scenesDuMode(v, 'longue');
         if (v.scenes.some((s) => s.id === 'jouer')) expect(longue.at(-1)!.id).toBe('jouer');
@@ -566,6 +655,15 @@ for (const LIVRE of LIVRES)
             `| ${f.slice(0, 3)} | ${v.type}${v.numero ? ` ${v.numero}` : ''} | ${v.modes.join(', ')} | ${v.scenes.length} | ${min(dureeMode(v, 'longue'))} | ${v.modes.includes('courte') ? min(dureeMode(v, 'courte')) : '—'} | ${scenesDuMode(v, 'quiz').length} | ${v.signalements.length} | ${v.sansSon.filter((x) => ['lettres', 'lecture', 'mots', 'dialogue', 'resume'].includes(x.part)).length} / ${v.sansSon.length} |`,
           );
           details.push(`## ${f.slice(0, 3)}`, '');
+          const mu = scenesMuettes(v, hasAudioDe(LIVRE));
+          if (mu.sansAudio.length) {
+            details.push(
+              'Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :',
+              '',
+            );
+            for (const x of mu.sansAudio) details.push(`- ${x}`);
+            details.push('');
+          }
           if (v.signalements.length) {
             details.push('Textes gardés sans voix :', '');
             for (const s of v.signalements) details.push(`- ${s.raison} : ${s.texte}`);
