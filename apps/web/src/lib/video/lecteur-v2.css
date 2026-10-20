@@ -832,15 +832,19 @@
   flex-direction: row-reverse;
   justify-content: center;
   gap: 1rem;
-  transition: opacity 0.3s 0.8s;
+  transition:
+    gap 0.8s var(--ease),
+    opacity 0.3s 0.8s;
 }
 .vv .joindre .ar {
   font-size: 2.6rem;
   font-weight: 700;
   color: var(--profond);
 }
+/* les lettres se rapprochent puis le mot entier les remplace (une pause ne laisse jamais la carte vide) */
 .vv .joindre.serre {
-  opacity: 0;
+  gap: 0;
+  opacity: 0.35;
 }
 .vv .inter {
   display: flex;

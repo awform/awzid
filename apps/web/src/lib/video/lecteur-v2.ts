@@ -125,7 +125,8 @@ export function frH(s: string, cls = 'fr'): string {
       : x;
   for (const p of s.split(RUN)) {
     if (!p) continue;
-    if (!RUN.test(p)) buf += esc(p);
+    // V2 — typographie française : « et » ne finissent jamais seuls une ligne, ni ? ! : ; ne la commencent
+    if (!RUN.test(p)) buf += esc(p.replace(/« /g, '« ').replace(/ ([»?!:;])/g, ' $1'));
     else if (isolees(p))
       buf += `<bdi class="lt" lang="ar" dir="rtl">${esc(p.trim())}</bdi>${/\s$/.test(p) ? ' ' : ''}`;
     else {
