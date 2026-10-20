@@ -30,8 +30,9 @@ import {
 } from '../src/video.js';
 import { VIDEO_GARDE, VIDEO_RECITATION } from '../src/video-garde.js';
 import { VIDEO_NIVEAUX } from '../src/video-niveaux.js';
-import { DHIKR, contientDhikr, horsDhikr, motsDhikr, sansVoyelles } from '../src/dhikr.js';
-import { audioFileId, looksQuranic, quranRuns, sayText, skeleton } from '../src/audio-cle.js';
+import { DHIKR, contientDhikr, horsDhikr, sansVoyelles } from '../src/dhikr.js';
+import { audioFileId, looksQuranic, sayText, skeleton } from '../src/audio-cle.js';
+import { BASMALA_COMPLETE, citeCoran, gardeCoran, recitationCoran } from '../src/garde-coran.js';
 import { loadTanzil, parseDataFile, studentProjection } from '../src/index.js';
 import { CONTENT_DIR, HAS_CONTENT } from './helpers.js';
 
@@ -167,47 +168,17 @@ function citationsAvecRef(L: unknown): Set<string> {
   walk(L);
   return out;
 }
-const runs4 = tanzil ? quranRuns(verses, 4) : new Set<string>();
 /**
- * Citation du Coran (règle du référent du 20/10/2026) : 4 mots consécutifs du Coran ou plus (Tanzil sans voyelles,
- * versets enchaînés), sauf si ces 4 mots sont tous dans une formule de dhikr de la liste blanche.
+ * Garde coranique de la voix (règle du référent du 20/10/2026) : MÊME code que l'import des audios des leçons
+ * (`src/garde-coran.ts`) — citation à partir de 4 mots consécutifs du Coran hors formules de dhikr, textes de récitation.
  */
-function cite(s: string): boolean {
-  const t = unmark(s);
-  const w = motsDhikr(t).flatMap((m) =>
-    skeleton(t.slice(m.a, m.b))
-      .split(' ')
-      .filter(Boolean)
-      .map((k) => ({ k, f: m.f })),
-  );
-  for (let i = 0; i + 4 <= w.length; i++) {
-    const win = w.slice(i, i + 4);
-    if (!win.every((x) => x.f) && runs4.has(win.map((x) => x.k).join(' '))) return true;
-  }
-  return false;
-}
-/** squelette de la Basmala complète (1:1) */
-const BASMALA_COMPLETE = skeleton(
-  String.fromCharCode(
-    ...[0x628, 0x633, 0x645, 0x20, 0x627, 0x644, 0x644, 0x647, 0x20, 0x627, 0x644, 0x631],
-    ...[0x62d, 0x645, 0x646, 0x20, 0x627, 0x644, 0x631, 0x62d, 0x64a, 0x645],
-  ),
-);
-/** squelettes d'un à huit versets consécutifs (deux mots au moins) : texte présenté comme récitation */
-const versetsEntiers = new Set<string>();
-{
-  // le texte Tanzil met la Basmala en tête du premier verset des sourates : un verset entier se compare sans elle
-  const sk = verses
-    .map(skeleton)
-    .map((x) => (x.startsWith(`${BASMALA_COMPLETE} `) ? x.slice(BASMALA_COMPLETE.length + 1) : x));
-  for (let i = 0; i < sk.length; i++)
-    for (let j = i, acc = ''; j < Math.min(sk.length, i + 8); j++) {
-      acc = acc ? `${acc} ${sk[j]}` : sk[j]!;
-      if (acc.includes(' ')) versetsEntiers.add(acc);
-    }
-}
+const GARDE_CORAN = tanzil
+  ? gardeCoran(verses)
+  : { suites: new Set<string>(), versets: new Set<string>(), extraits: '' };
+const cite = (s: string) => citeCoran(s, GARDE_CORAN);
+const versetsEntiers = GARDE_CORAN.versets;
 /** texte de la lecture présenté comme récitation : graphie du Muṣḥaf, ou un ou plusieurs versets entiers */
-const recitation = (s: string) => looksQuranic(s) || versetsEntiers.has(skeleton(unmark(s)));
+const recitation = (s: string) => recitationCoran(s, GARDE_CORAN);
 
 /** textes que le lecteur dit d'office dans un temps (miroir de `apps/web/src/lib/video/lecteur.ts`) */
 type TT = { ar: string; son?: 1 } | undefined;
