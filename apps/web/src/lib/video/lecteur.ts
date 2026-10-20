@@ -49,7 +49,8 @@ const AR = `${c(0x600)}-${c(0x6ff)}`;
 const RUN = new RegExp(
   `(\\(\\s?[${AR}][${AR}\\s.]*\\s?\\)|«\\s?[${AR}][${AR}\\s.]*\\s?»|[${AR}](?:\\s[/·←]\\s(?=[${AR}])|[${AR}\\s.])*)`,
 );
-const LETTRE = new RegExp(`[${c(0x621)}-${c(0x64a)}]`, 'g');
+// lettres (le tatweel U+0640 n'en est pas une : une terminaison citée « ـْتُ » reste dans la phrase)
+const LETTRE = new RegExp(`[${c(0x621)}-${c(0x63f)}${c(0x641)}-${c(0x64a)}]`, 'g');
 const LATIN = /[A-Za-z]/;
 const TATWEEL = c(0x640);
 const ALIF = c(0x627);
@@ -112,6 +113,14 @@ export function frH(s: string, cls = 'fr'): string {
   if (reste.replace(/[\s.,;:]/g, '')) out += `<span class="${cls}">${reste}</span>`;
   return `<div class="frh">${out}</div>`;
 }
+
+/** choix d'un exercice : arabe ; français ; ou français du livre avec de l'arabe (chacun sur sa ligne) */
+const choixH = (o: string) =>
+  LATIN.test(o)
+    ? frH(o, 'fr toujours')
+    : RUN.test(o)
+      ? arH(o)
+      : `<span class="fr toujours">${esc(o)}</span>`;
 
 /** fermeture du lecteur ouvert (un seul à la fois) */
 let fermerOuvert: (() => void) | null = null;
@@ -746,7 +755,7 @@ function creer(opt: OuvrirOptions): () => void {
     if (J) J.q = q;
     ajoute(`${titreCarte ? frH(titreCarte, 'h') : ''}<p class="k">${esc(rang)}</p>`, true);
     const opts = (xs: string[], cls = '') =>
-      `<div class="options ${cls}">${xs.map((o, k) => `<button class="opt" data-o="${k}">${RUN.test(o) ? arH(o) : `<span class="fr toujours">${esc(o)}</span>`}</button>`).join('')}</div>`;
+      `<div class="options ${cls}">${xs.map((o, k) => `<button class="opt" data-o="${k}">${choixH(o)}</button>`).join('')}</div>`;
     const choix = async (
       e: HTMLElement,
       xs: string[],
@@ -945,7 +954,7 @@ function creer(opt: OuvrirOptions): () => void {
       }
       case 'ordre': {
         const e = ajoute(
-          `<div class="ligne-rep" dir="rtl"></div><div class="options">${q.mots.map((m, k) => `<button class="opt" data-o="${k}">${RUN.test(m) ? arH(m) : esc(m)}</button>`).join('')}</div>`,
+          `<div class="ligne-rep" dir="rtl"></div><div class="options">${q.mots.map((m, k) => `<button class="opt" data-o="${k}">${choixH(m)}</button>`).join('')}</div>`,
         );
         const rep = e.firstElementChild!;
         const bs = [...e.querySelectorAll<HTMLButtonElement>('.opt')];
@@ -970,9 +979,7 @@ function creer(opt: OuvrirOptions): () => void {
           b.onclick = () => {
             b.disabled = true;
             pris.push(k);
-            rep.append(
-              h('span', 'tuile', RUN.test(q.mots[k]!) ? arH(q.mots[k]!) : esc(q.mots[k]!)),
-            );
+            rep.append(h('span', 'tuile', choixH(q.mots[k]!)));
             if (pris.length === q.mots.length)
               r.dire(pris.every((x, i) => q.mots[x] === q.mots[q.ordre![i]!]));
           };
