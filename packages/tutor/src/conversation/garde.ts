@@ -247,10 +247,17 @@ export function issueDuTour(
     motsReponse: 0,
   };
   if (out.status !== 'ok') {
-    r.filtre = [{ step: 'fournisseur', action: 'bloque', detail: out.detail ?? out.status }];
-    r.route = 'conversation_repli';
-    // « refus » : la sécurité du fournisseur a bloqué (garde-fou) ; « erreur » : panne
+    // « refus » : la sécurité du fournisseur a bloqué (garde-fou) ; « erreur » : PANNE, rien n'a été jugé (20/10/2026 :
+    // la batterie réelle notait « fournisseur:bloque:api_400 », lu à tort comme un blocage)
     r.repliTechnique = out.status === 'erreur';
+    r.filtre = [
+      {
+        step: r.repliTechnique ? 'panne_fournisseur' : 'fournisseur',
+        action: 'bloque',
+        detail: out.detail ?? out.status,
+      },
+    ];
+    r.route = 'conversation_repli';
   } else {
     const f = filtrerSortie(out.brouillon, o.index);
     r.filtre = f.events;

@@ -443,6 +443,87 @@ describe('Vertex AI et TTS (fetch SIMULÉ, aucun appel réel)', () => {
     expect(r.usage).toEqual({ texte: 4200, audio: 0, sortie: 102 });
   });
 
+  /**
+   * Valeurs d'énumération du document de découverte de Vertex AI v1 (aiplatform.googleapis.com/$discovery/rest,
+   * relevé le 20/10/2026) : la requête n'envoie QUE des valeurs connues de l'API (sinon HTTP 400 sur tout appel).
+   */
+  const ENUMS_V1 = {
+    thinkingLevel: ['THINKING_LEVEL_UNSPECIFIED', 'LOW', 'MEDIUM', 'HIGH', 'MINIMAL'],
+    category: [
+      'HARM_CATEGORY_HATE_SPEECH',
+      'HARM_CATEGORY_DANGEROUS_CONTENT',
+      'HARM_CATEGORY_HARASSMENT',
+      'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+      'HARM_CATEGORY_CIVIC_INTEGRITY',
+    ],
+    threshold: [
+      'BLOCK_LOW_AND_ABOVE',
+      'BLOCK_MEDIUM_AND_ABOVE',
+      'BLOCK_ONLY_HIGH',
+      'BLOCK_NONE',
+      'OFF',
+    ],
+    type: ['STRING', 'NUMBER', 'INTEGER', 'BOOLEAN', 'ARRAY', 'OBJECT', 'NULL'],
+  };
+  it('requête conforme au document de découverte v1 (énumérations en MAJUSCULES, connues de l’API)', () => {
+    for (const reflexion of [undefined, 'minimal', 'MINIMAL', 'low']) {
+      const c = corpsVertex('S', entree(), reflexion) as {
+        generationConfig: { thinkingConfig?: { thinkingLevel: string }; responseSchema: object };
+        safetySettings: Array<{ category: string; threshold: string }>;
+      };
+      expect(ENUMS_V1.thinkingLevel, String(reflexion)).toContain(
+        c.generationConfig.thinkingConfig!.thinkingLevel,
+      );
+      for (const s of c.safetySettings) {
+        expect(ENUMS_V1.category).toContain(s.category);
+        expect(ENUMS_V1.threshold).toContain(s.threshold);
+      }
+      const types = JSON.stringify(c.generationConfig.responseSchema).match(/"type":"[^"]+"/g)!;
+      for (const t of types) expect(ENUMS_V1.type).toContain(t.slice(8, -1));
+    }
+    // la valeur de la batterie du 19/10 (« minimal » en minuscules) n'est plus jamais envoyée telle quelle
+    expect(JSON.stringify(corpsVertex('S', entree(), 'minimal'))).not.toContain('"minimal"');
+  });
+
+  it('réponse COMPLÈTE de gemini-3.8-flash (forme v1 : signature de réflexion, notes de sécurité, version) lue', async () => {
+    const { f } = faux(() => ({
+      candidates: [
+        {
+          content: {
+            role: 'model',
+            parts: [{ text: JSON.stringify(ok()), thoughtSignature: 'CiQBjz1rX2V4ZW1wbGU=' }],
+          },
+          finishReason: 'STOP',
+          avgLogprobs: -0.21,
+          safetyRatings: [
+            {
+              category: 'HARM_CATEGORY_HATE_SPEECH',
+              probability: 'NEGLIGIBLE',
+              severity: 'HARM_SEVERITY_NEGLIGIBLE',
+            },
+          ],
+        },
+      ],
+      usageMetadata: {
+        promptTokenCount: 4512,
+        candidatesTokenCount: 96,
+        totalTokenCount: 4630,
+        thoughtsTokenCount: 22,
+        trafficType: 'ON_DEMAND',
+        promptTokensDetails: [{ modality: 'TEXT', tokenCount: 4512 }],
+        candidatesTokensDetails: [{ modality: 'TEXT', tokenCount: 96 }],
+      },
+      modelVersion: 'gemini-3.8-flash',
+      createTime: '2026-10-20T08:00:00.000000Z',
+      responseId: 'abc123',
+    }));
+    const r = await vertex(f).repondre('S', entree());
+    expect(r.status).toBe('ok');
+    expect(r.message).toBeUndefined();
+    expect(validerBrouillon(r.brouillon)?.reponse_ar).toBe('هٰذَا تُفَّاحٌ جَمِيلٌ.');
+    expect(r.usage).toEqual({ texte: 4512, audio: 0, sortie: 118 });
+  });
+
   it('réponse vide ou JSON illisible : PANNE (« erreur »), jamais un brouillon nul laissé au filtre', async () => {
     const vide = faux(() => ({ candidates: [{ content: { parts: [] }, finishReason: 'STOP' }] }));
     expect(await vertex(vide.f).repondre('S', entree())).toMatchObject({

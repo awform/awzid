@@ -11,7 +11,7 @@
  *    métadonnées ; si `compte` est donné, il l'échange (IAM Credentials) contre un jeton court du compte de service
  *    dédié au tuteur (droits minimaux), qu'il est seul à pouvoir emprunter.
  */
-import { CONV_SCHEMA } from './prompt.js';
+import { CONV_SCHEMA, REGLAGES_GENERATION } from './prompt.js';
 import type { ConvEntree, ConvFournisseur, ConvSortieFournisseur, Synthese } from './types.js';
 
 export type Fetch = typeof fetch;
@@ -88,12 +88,10 @@ export function urlVertex(o: Pick<OptionsVertex, 'projet' | 'lieu' | 'modele'>):
   return `https://${hote}/v1/projects/${encodeURIComponent(o.projet)}/locations/${o.lieu}/publishers/google/models/${encodeURIComponent(o.modele)}:generateContent`;
 }
 
-const SECURITE = [
-  'HARM_CATEGORY_HARASSMENT',
-  'HARM_CATEGORY_HATE_SPEECH',
-  'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-  'HARM_CATEGORY_DANGEROUS_CONTENT',
-].map((category) => ({ category, threshold: 'BLOCK_LOW_AND_ABOVE' }));
+const SECURITE = REGLAGES_GENERATION.securite.categories.map((category) => ({
+  category,
+  threshold: REGLAGES_GENERATION.securite.seuil,
+}));
 
 /**
  * Niveaux de réflexion de Vertex (`GenerationConfig.ThinkingConfig.thinkingLevel`) : valeurs d'énumération EN
@@ -108,7 +106,11 @@ export function niveauReflexion(reflexion: string | undefined): string | null {
 }
 
 /** Corps de la requête generateContent (exporté pour les tests : aucune donnée personnelle, pas de profil). */
-export function corpsVertex(systeme: string, e: ConvEntree, reflexion = 'minimal'): object {
+export function corpsVertex(
+  systeme: string,
+  e: ConvEntree,
+  reflexion: string = REGLAGES_GENERATION.reflexion,
+): object {
   const niveau = niveauReflexion(reflexion);
   const echapper = (s: string) =>
     s.replace(/[<>&]/g, (c) => (c === '<' ? '&lt;' : c === '>' ? '&gt;' : '&amp;'));
@@ -135,8 +137,8 @@ export function corpsVertex(systeme: string, e: ConvEntree, reflexion = 'minimal
     generationConfig: {
       responseMimeType: 'application/json',
       responseSchema: CONV_SCHEMA,
-      maxOutputTokens: 1024,
-      temperature: 0.6,
+      maxOutputTokens: REGLAGES_GENERATION.maxOutputTokens,
+      temperature: REGLAGES_GENERATION.temperature,
       ...(niveau ? { thinkingConfig: { thinkingLevel: niveau } } : {}),
     },
     safetySettings: SECURITE,
@@ -245,7 +247,9 @@ export class VertexConversation implements ConvFournisseur {
     let r: Response;
     let avertissement: string | undefined;
     try {
-      const reflexion = this.sansReflexion ? '' : (this.o.reflexion ?? 'minimal');
+      const reflexion = this.sansReflexion
+        ? ''
+        : (this.o.reflexion ?? REGLAGES_GENERATION.reflexion);
       r = await this.envoyer(systeme, e, reflexion);
       // 20/10/2026 : une requête refusée (400) n'est pas facturée ; si c'est le réglage de réflexion que le modèle
       // refuse, UN nouvel essai sans ce réglage (et plus jamais ensuite pour ce fournisseur)
