@@ -113,31 +113,45 @@ export const arW = (s: string, cls = '') =>
     .map((p) => (!/[ء-ي]/.test(p) ? esc(p) : `<span class="w">${esc(p)}</span>`))
     .join('')}</span>`;
 /** V2 — typographie française : « et » ne finissent jamais seuls une ligne, ni ? ! : ; ne la commencent */
-const typo = (s: string) => s.replace(/« /g, '« ').replace(/ ([»?!:;])/g, ' $1');
+const typo = (s: string) => s.replace(/« /g, '«\u00a0').replace(/ ([»?!:;])/g, '\u00a0$1');
 /** texte français du livre : un passage arabe passe sur sa propre ligne ; une lettre (ou une suite de lettres isolées) reste */
 export function frH(s: string, cls = 'fr'): string {
   let out = '';
   let buf = '';
   // après une ligne arabe, la ponctuation qui la suivait ne commence pas la ligne française (« , la ligature »)
-  const fl = () => (out ? buf.replace(/^\s*(?:[)\]»]\s*[,;.?!]?|[,;.?!])\s*/, '') : buf);
+  const fl = () =>
+    out
+      ? buf.replace(/^\s*(?:[)\]»]\s*[,;:.?!]?|[,;:.?!])\s*/, (m) => {
+          if (m.includes(')') && orph) orph--;
+          return '';
+        })
+      : buf;
   const vide = (x: string) => !x.replace(/[\s.,;:)\]»]/g, '');
   // V2 — parenthèse ouverte avant une ligne arabe (sa fermante, après la ligne, est déjà retirée) : retirée aussi
+  let orph = 0;
   const ouv = (x: string) =>
     (x.match(/\(/g) ?? []).length > (x.match(/\)/g) ?? []).length
-      ? x.replace(/\((?=[^()]*$)/, '')
+      ? (orph++, x.replace(/\((?=[^()]*$)/, ''))
       : x;
+  // … et sa fermante plus loin (« (premier nom sans ال ni tanwin, second nom au génitif) ») : retirée aussi
+  const ferme = (x: string) => {
+    let d = 0;
+    return x.replace(/[()]/g, (c) =>
+      c === '(' ? (d++, c) : d ? (d--, c) : orph ? (orph--, '') : c,
+    );
+  };
   for (const p of s.split(RUN)) {
     if (!p) continue;
     if (!RUN.test(p)) buf += esc(typo(p));
     else if (isolees(p))
       buf += `<bdi class="lt" lang="ar" dir="rtl">${esc(p.trim())}</bdi>${/\s$/.test(p) ? ' ' : ''}`;
     else {
-      if (!vide(fl())) out += `<span class="${cls}">${ouv(fl())}</span>`;
+      if (!vide(fl())) out += `<span class="${cls}">${ouv(ferme(fl()))}</span>`;
       buf = '';
       out += arH(p.trim(), 'l');
     }
   }
-  const reste = fl();
+  const reste = ferme(fl());
   if (!vide(reste)) out += `<span class="${cls}">${reste}</span>`;
   return `<div class="frh">${out}</div>`;
 }
@@ -148,13 +162,22 @@ const choixH = (o: string) =>
     : RUN.test(o)
       ? arH(o)
       : `<span class="fr toujours">${esc(o)}</span>`;
-/** lettres isolées citées (une lettre par morceau, lām-alif compté une fois : « ك ل م ه », « لا ») : dans la phrase */
-const LAMALIF = new RegExp(`${c(0x644)}[${c(0x622, 0x623, 0x625, 0x627)}]`, 'g');
+/**
+ * lettres isolées citées (une lettre par morceau, lām-alif compté une fois : « ك ل م ه », « لا » ; V2 : l'article
+ * cité seul, « ال », sans voyelle) : dans la phrase
+ */
+const LAMALIF = new RegExp(
+  `${c(0x644)}[${c(0x64b, 0x64c, 0x64d, 0x64e, 0x64f, 0x650, 0x651, 0x652)}]*[${c(0x622, 0x623, 0x625, 0x627)}]`,
+  'g',
+);
 const isolees = (p: string) =>
   p
     .trim()
     .split(/\s+/)
-    .every((m) => (m.replace(LAMALIF, c(0x644)).match(LETTRE) ?? []).length <= 1);
+    .every(
+      (m) =>
+        m === c(0x627, 0x644) || (m.replace(LAMALIF, c(0x644)).match(LETTRE) ?? []).length <= 1,
+    );
 /** titre du livre qui commence par des lettres citées : « Les lettres ك ل م ه, la ligature لا… » */
 const titreH = (s: string, cls = 'h') => {
   const m = RUN.exec(s);
@@ -405,6 +428,14 @@ function creer(opt: OuvrirOptions): () => void {
    * joue le fichier audio du texte s'il existe ; V2 : surligne le texte au rythme de la voix (mot par mot au prorata
    * des lettres ; un seul mot : un filet doré se remplit) ; sinon une courte attente
    */
+  /** fait défiler la scène (et elle seule) juste assez pour montrer l'élément */
+  function voir(e: Element) {
+    const z = zone;
+    const a = z.getBoundingClientRect();
+    const b = e.getBoundingClientRect();
+    if (b.bottom > a.bottom) z.scrollTop += b.bottom - a.bottom + 8;
+    else if (b.top < a.top) z.scrollTop -= a.top - b.top + 8;
+  }
   async function dire(x: T | undefined, el?: Element | null): Promise<void> {
     const id = x?.son ? audioIdFor(x.dit ?? x.ar, opt.audio) : null;
     el?.classList.add('joue');
@@ -447,7 +478,10 @@ function creer(opt: OuvrirOptions): () => void {
           let acc = 0;
           const pos = p * tot;
           ws.forEach((w, k) => {
-            w.classList.toggle('on', pos >= acc && (pos < acc + poids[k]! || k === ws.length - 1));
+            const on = pos >= acc && (pos < acc + poids[k]! || k === ws.length - 1);
+            // un texte plus haut que la scène suit la voix : le mot dit reste visible
+            if (on && !w.classList.contains('on')) voir(w);
+            w.classList.toggle('on', on);
             acc += poids[k]!;
           });
         };
@@ -603,6 +637,8 @@ function creer(opt: OuvrirOptions): () => void {
   async function intertitre(k: number) {
     const o = h('div', 'ov inter-ch');
     o.innerHTML = `<p class="kk">${esc(t('vv.chapitre', { n: k + 1, total: chaps.length }))}</p><p class="nm">${esc(nomChap(chaps[k]!.c))}</p><div class="filet"><i></i></div>`;
+    // le sous-titre de la scène précédente ne reste pas sous l'intertitre
+    st('');
     stage.append(o);
     journal()?.ch?.push([nomChap(chaps[k]!.c), Date.now()]);
     await att(1050);
@@ -674,6 +710,7 @@ function creer(opt: OuvrirOptions): () => void {
     score = { ok: 0, n: 0 };
     const j = ++jeton;
     stage.replaceChildren(h('div', 'vv-dep', `<p class="k">${esc(t('vv.chargement'))}</p>`));
+    stage.scrollTop = 0;
     // durées réelles des sons (rythme et barre), puis le carton d'ouverture d'un enregistrement
     await precharger(scenes);
     if (rec?.attente) await rec.attente;
@@ -752,6 +789,8 @@ function creer(opt: OuvrirOptions): () => void {
       /* navigation privée */
     }
     stage.innerHTML = '';
+    // une carte décalée (focus clavier sur un choix hors de vue, au départ) revient en haut : rien n'est rogné
+    stage.scrollTop = 0;
     stage.dataset.scene = sc.id;
     journal()?.scenes?.push([sc.id, Date.now()]);
     const tr = sc.temps.find((x) => x.k === 'trace');
@@ -837,10 +876,12 @@ function creer(opt: OuvrirOptions): () => void {
       c.remove();
     // V2 — toujours trop haut : l'élément se réduit (0,9 … 0,6), sauf un texte à lire (règle, note), qui défile
     const el = e as HTMLElement;
-    if (!el.matches('.b-regle,.b-fr,.b-retenir,.b-cles'))
+    if (!el.matches('.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif'))
       for (let k = 0.9; deborde() && k > 0.55; k -= 0.05) {
         el.style.zoom = String(k);
-        journal()?.zoom?.push(`${stage.dataset.scene} ${el.className} ${k.toFixed(2)}`);
+        journal()?.zoom?.push(
+          `${stage.dataset.scene} ${el.className} ${k.toFixed(2)} ${el.textContent?.slice(0, 40)} (${z.clientHeight} px)`,
+        );
       }
   }
   /** temps de lecture ; un texte plus haut que la scène y défile lentement jusqu'à sa fin (jamais de texte caché) */
@@ -884,7 +925,10 @@ function creer(opt: OuvrirOptions): () => void {
   async function aToi(cle: string, ms: number, puis: T[] = [], reperes: HTMLElement[] = []) {
     if (band) {
       band.classList.add('a-toi');
-      band.innerHTML = `<span class="mn"><svg viewBox="0 0 100 100"><circle class="fd" cx="50" cy="50" r="42"/><circle class="or" cx="50" cy="50" r="42"/></svg><b></b></span><span><strong>${esc(t('vv.a_toi'))}</strong> ${esc(t(cle))}</span>`;
+      // « À toi ! » une seule fois, même quand la consigne commence déjà par lui (« À toi ! La correction… »)
+      const p = t('vv.a_toi');
+      const tx = t(cle);
+      band.innerHTML = `<span class="mn"><svg viewBox="0 0 100 100"><circle class="fd" cx="50" cy="50" r="42"/><circle class="or" cx="50" cy="50" r="42"/></svg><b></b></span><span><strong>${esc(p)}</strong> ${esc(tx.startsWith(p) ? tx.slice(p.length).trim() : tx)}</span>`;
     }
     const o = band?.querySelector<SVGElement>('.or');
     const sec = band?.querySelector('b');
@@ -980,7 +1024,7 @@ function creer(opt: OuvrirOptions): () => void {
       case 'objectif':
         ajoute(`<div class="carte">${x.ar ? arH(x.ar.ar) : ''}${fr(x.fr, true)}</div>`);
         if (x.ar?.son) await dire(x.ar);
-        return att(x.ar?.son ? 1500 : x.ms);
+        return defile(x.ar?.son ? 1500 : x.ms);
       case 'trace': {
         const e = ajoute('<div class="trace-h"></div>', true);
         const trace = await tracer(e.firstElementChild as HTMLElement, x.l, x.l, 0, 6.5);
@@ -1045,7 +1089,8 @@ function creer(opt: OuvrirOptions): () => void {
         st(x.fr);
         await att(300);
         await dire(x.ar, e.firstElementChild);
-        return att(lecture(x.fr));
+        // une phrase plus haute que la scène y défile jusqu'à sa fin (jamais réduite, jamais cachée)
+        return defile(lecture(x.fr));
       }
       case 'inter': {
         const e = ajoute(
@@ -1125,7 +1170,11 @@ function creer(opt: OuvrirOptions): () => void {
       case 'lettres': {
         // V2 — grille des lettres (couleur de famille) ; la lettre dite grandit doucement
         consigne('vv.ecoute_noms');
-        const e = ajoute(`<div class="lgr n${Math.min(6, x.items.length)}"></div>`, true);
+        const nl = x.items.length;
+        const e = ajoute(
+          `<div class="lgr n${Math.min(6, nl)}${nl > 12 ? ' n18' : nl > 6 ? ' n12' : ''}"></div>`,
+          true,
+        );
         for (const y of x.items) {
           const fam = famille(y.l);
           const d = h(
@@ -1257,7 +1306,9 @@ function creer(opt: OuvrirOptions): () => void {
       }
       case 'complete': {
         // une indication en français du livre a sa propre ligne, au-dessus de la ligne arabe
-        const ar = (s: string) => (s && RUN.test(s) ? arH(s, 'suite') : '');
+        // une longue phrase (formule d'invocation) prend la taille d'une phrase, pas celle d'un mot
+        const ar = (s: string) =>
+          s && RUN.test(s) ? arH(s, s.length > 30 ? 'suite lg' : 'suite') : '';
         const lat = (s: string) => (s && !RUN.test(s) ? fr(s, true) : '');
         const e = ajoute(
           `${lat(q.avant)}${lat(q.apres)}<div class="trou" dir="rtl">${ar(q.avant)}<span class="case"></span>${ar(q.apres)}</div>${fr(q.fr, true)}${opts(q.options)}`,

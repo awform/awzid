@@ -108,6 +108,15 @@ describe('vidéos vivantes v2 : interrupteur « video_v2 », surlignage, animati
     expect([...arW(deux).matchAll(/class="w"/g)].length).toBe(2);
     expect(arW(deux).replace(/<[^>]+>/g, '')).toBe(deux);
   });
+  it('l’article cité seul (« ال ») reste dans la phrase, comme une lettre citée', () => {
+    const h = frH2(`Leçons 10 à 14 : tanwin, chadda, ${c(0x627, 0x644)}, hamza`);
+    expect(h).not.toContain('class="ar');
+    expect(h).toContain(`<bdi class="lt" lang="ar" dir="rtl">${c(0x627, 0x644)}</bdi>`);
+    // « وَ + لَا : et ne… pas » : lām-alif voyellé compté comme une lettre, tout reste sur une ligne
+    expect(frH2(`${c(0x648, 0x64e)} + ${c(0x644, 0x64e, 0x627)} : et ne… pas`)).not.toContain(
+      'class="ar',
+    );
+  });
   it('typographie française : guillemets et ? ! : ; jamais seuls en début ou fin de ligne', () => {
     const h = frH2('La famille de la « dent » et les voyelles : qui parle ?');
     expect(h).toContain('« dent »');
@@ -121,6 +130,14 @@ describe('vidéos vivantes v2 : interrupteur « video_v2 », surlignage, animati
     expect(h).toContain("Les voyelles longues l'allongement naturel,");
     // une parenthèse fermée avant la ligne arabe reste
     expect(frH2(`le mot (au pluriel) ${md}`, 'h')).toContain('(au pluriel)');
+    // ouverte avant la ligne arabe, fermée plus loin : les deux partent
+    const al = c(0x627, 0x644, 0x643, 0x62a, 0x627, 0x628);
+    const h2 = frH2(`former l'annexion (premier nom sans ${al} ni tanwin, au génitif) et la suite`);
+    expect(h2.replace(/<span class="ar[^>]*>[^<]*<\/span>/g, '')).not.toMatch(/[()]/);
+    // « (arabe) : la suite » : ni parenthèse ni deux-points en tête de ligne
+    const h3 = frH2(`L'annexion (${al}) : le complément du nom`);
+    expect(h3).toContain('>le complément du nom<');
+    expect(h3.replace(/<span class="ar[^>]*>[^<]*<\/span>/g, '')).not.toMatch(/[()]/);
   });
   it('arabe sur sa propre ligne, comme la v1', () => {
     const mot = `${c(0x628, 0x64e, 0x64a, 0x652, 0x62a, 0x64c)}`;

@@ -573,6 +573,27 @@
 .vv .lgr.n6 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+/* lettres revues d'un bilan (7 à 18) : plus de colonnes, tout tient sans réduction */
+.vv .lgr.n12 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--e2);
+}
+.vv .lgr.n18 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--e2);
+}
+.vv .lgr.n12 .lc,
+.vv .lgr.n18 .lc {
+  padding: var(--e1) 0 var(--e2);
+}
+.vv .lgr.n12 .gl .ar,
+.vv .lgr.n18 .gl .ar {
+  font-size: 2.8rem;
+}
+.vv .lgr.n12 .tuile.nom .ar,
+.vv .lgr.n18 .tuile.nom .ar {
+  font-size: 1.2rem;
+}
 .vv .lc {
   display: grid;
   justify-items: center;
@@ -1049,6 +1070,10 @@
 .vv .trou .ar.suite {
   font-size: 2.1rem;
 }
+.vv .trou .ar.suite.lg {
+  font-size: 1.6rem;
+  line-height: 1.7;
+}
 .vv .relier {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1144,9 +1169,13 @@
   z-index: 1;
   flex: 1;
   display: grid;
-  align-content: center;
+  align-content: start;
+  align-content: safe center;
   gap: var(--e3);
   padding: 2rem 1.2rem;
+  /* téléphone de faible hauteur : la liste des modes défile (« Révision » toujours atteignable au doigt) */
+  min-height: 0;
+  overflow-y: auto;
 }
 .vv-dep.fin .h {
   font-size: 1.35rem;
@@ -1258,7 +1287,8 @@
     opacity: 0;
   }
 }
-.vv[data-pause] .vv-sc * {
+/* en pause, le tracé et les minuteurs s'arrêtent ; une entrée déjà commencée finit d'apparaître (jamais de carte vide) */
+.vv[data-pause] .vv-sc *:not(.apparait, .illu) {
   animation-play-state: paused !important;
 }
 /* récapitulatif : l'élément redit s'allume */
@@ -1307,6 +1337,21 @@
   }
   .vv .reps {
     max-width: 17rem;
+  }
+  /* « vrai ou faux » d'une longue phrase : interligne resserré (les voyelles restent dégagées), taille gardée */
+  .vv .b-q .tuile.tm .ar {
+    line-height: 1.65;
+  }
+  .vv .b-q .opt {
+    min-height: 2.75rem;
+  }
+  /* grille des mots (9 images et plus) : images plus petites, l'arabe garde sa taille */
+  .vv .grille .tuile svg {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+  .vv .grille .tuile .ar {
+    line-height: 1.4;
   }
   /* « où y a-t-il… ? » (8 mots) : cases plus serrées, l'arabe garde sa taille */
   .vv .grille.g4 .opt {

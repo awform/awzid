@@ -686,9 +686,13 @@
   z-index: 1;
   flex: 1;
   display: grid;
-  align-content: center;
+  align-content: start;
+  align-content: safe center;
   gap: 0.55rem;
   padding: 2rem 1.2rem;
+  /* téléphone de faible hauteur : la liste des modes défile (« Révision » toujours atteignable au doigt) */
+  min-height: 0;
+  overflow-y: auto;
 }
 .vv .mode {
   display: grid;
