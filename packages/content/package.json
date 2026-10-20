@@ -80,6 +80,10 @@
     "./video-niveaux": {
       "types": "./dist/video-niveaux.d.ts",
       "default": "./dist/video-niveaux.js"
+    },
+    "./dhikr": {
+      "types": "./dist/dhikr.d.ts",
+      "default": "./dist/dhikr.js"
     }
   },
   "bin": {

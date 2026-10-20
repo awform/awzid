@@ -16,15 +16,19 @@
  *  - aucune phonétique latine (les champs `tr` ne sont jamais lus) ; rien des parties « Coran » ni
  *    « fiqh/adab » ; aucun personnage (illustrations d'objets seulement) ;
  *  - VOIX : seulement le fichier audio EXISTANT du texte (clé du moteur des livres), jamais une synthèse faite
- *    ici ; et jamais de voix sur un texte coranique : signes du Muṣḥaf, citation du Coran relevée contre Tanzil
- *    (extrait de 3 mots ou suite de 4 mots, liste `video-garde.ts`), garde des leçons vivantes, morceau d'un
- *    passage coranique cité par la leçon elle-même (Fātiḥa mot à mot…), texte des parties Coran et fiqh ;
- *  - BASMALA : jouée seulement si les données la marquent « formule de dhikr » (`dhikr: true` sur le bloc) ;
- *    sans marque, aucun son, et le texte est signalé (`signalements`) : on n'invente pas de marquage.
+ *    ici. Garde coranique (décisions du référent du 20/10/2026) : jamais de voix à partir de 4 mots consécutifs du
+ *    Coran (Tanzil sans voyelles, hors formules de dhikr : liste `video-garde.ts`) ; en dessous, la voix est permise
+ *    (mot de vocabulaire, mot vedette, exemple de grammaire), SAUF pour ce qui est présenté comme Coran : graphie
+ *    du Muṣḥaf, référence de verset, Basmala complète (tête de sourate), texte des parties Coran, et morceau d'une
+ *    sourate ou d'un verset que l'unité présente comme RÉCITATION (verset entier dans la lecture : Fātiḥa mot à
+ *    mot, sourates 112 à 114…) ; textes des parties fiqh/adab (hadiths…) sans voix ;
+ *  - DHIKR : les formules de la liste blanche (`dhikr.ts`, données `data/dhikr-formules.json`) sont des adhkār,
+ *    pas de la tilāwa : sonorisées, seules ou dans une phrase, sauf dans ce qui est présenté comme Coran ; le
+ *    marquage `dhikr: true` d'un bloc reste valable (voix permise malgré la garde de Tanzil).
  */
 import { audioFileId, looksQuranic, sayText, sha1Hex, skeleton } from './audio-cle.js';
-import { GARDE } from './vivante-garde.js';
-import { VIDEO_GARDE } from './video-garde.js';
+import { horsDhikr } from './dhikr.js';
+import { VIDEO_GARDE, VIDEO_RECITATION } from './video-garde.js';
 
 export type VideoMode = 'lettre' | 'courte' | 'longue' | 'quiz' | 'revision';
 export const VIDEO_MODES: readonly VideoMode[] = ['lettre', 'courte', 'longue', 'quiz', 'revision'];
@@ -169,6 +173,8 @@ export interface VideoOptions {
   audioList?: readonly string[];
   /** garde coranique de la vidéo (tests : liste recalculée) ; par défaut `video-garde.ts` */
   garde?: ReadonlySet<string>;
+  /** textes de la lecture présentés comme récitation (versets entiers) ; par défaut `video-garde.ts` */
+  recitation?: ReadonlySet<string>;
 }
 
 // ———————————————————————————— durées (ms), lecture lente d'un adulte débutant ————————————————————————————
@@ -212,8 +218,13 @@ const SEP = /\s+[|/●•·—–]\s+/;
 const PONCT = new RegExp(`[|.,:;!?«»"()…—–=+←${cls(0x60c, 0x61b, 0x61f)}]`, 'g');
 /** citation entre crochets ornés du Coran (U+FD3E, U+FD3F) */
 const ORNE = new RegExp(`[${cls(0xfd3e, 0xfd3f)}]`);
-/** squelette de la Basmala : bā', sīn, mīm, espace, lām, lām, hā' (alifs effacés par `skeleton`) */
-const BASMALA = ch(0x628, 0x633, 0x645, 0x20, 0x644, 0x644, 0x647);
+/** squelette de la Basmala complète (1:1, tête de sourate), alifs effacés par `skeleton` */
+const BASMALA = ch(
+  ...[0x628, 0x633, 0x645, 0x20, 0x644, 0x644, 0x647, 0x20],
+  ...[0x644, 0x631, 0x62d, 0x645, 0x646, 0x20, 0x644, 0x631, 0x62d, 0x64a, 0x645],
+);
+/** référence de verset (« 49:10 », « 112:1-4 ») portée par le bloc du texte */
+const VERSET = /\d{1,3}\s*:\s*\d{1,3}/;
 
 type Obj = Record<string, unknown>;
 const str = (x: unknown): string | undefined =>
@@ -260,8 +271,8 @@ export const CONSEIL_MASQUE: ReadonlySet<string> = new Set(['ad1.l02', 'ad1.l04'
 
 /** clé courte d'un texte pour les gardes (8 premiers chiffres hexadécimaux de sa clé audio) */
 export const gardeVideoKey = (s: string) => (audioFileId(s) ?? '').slice(0, 8);
-const GARDE_VIV = new Set(GARDE.split(' '));
 const GARDE_VID = new Set(VIDEO_GARDE.split(' ').filter(Boolean));
+const RECIT_VID = new Set(VIDEO_RECITATION.split(' ').filter(Boolean));
 
 /** Ordre des morceaux d'un exercice « ordre » qui redonne la phrase du livre (espaces ignorés) ; null sinon. */
 export function ordreDe(mots: readonly string[], phrase: string): number[] | null {
@@ -303,6 +314,7 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   const L = obj(lessonRaw);
   const hasAudio = opts.hasAudio ?? (() => false);
   const garde = opts.garde ?? GARDE_VID;
+  const recit = opts.recitation ?? RECIT_VID;
   const images = opts.images ? new Set(opts.images) : null;
   const type: VideoLecon['type'] =
     L.type === 'bilan' ? 'bilan' : L.type === 'examen' ? 'examen' : 'lecon';
@@ -312,26 +324,27 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   /** partie en cours de génération (audit des audios manquants) */
   let ici: VideoPart = 'ouverture';
 
-  // —— textes sacrés de la leçon : parties Coran et fiqh/adab (jamais affichés ici, jamais dits ailleurs)
-  const sacres = [...allStr(L.coran), ...allStr(L.fiqh_adab)]
-    .filter((s) => ARABIC.test(s))
-    .map((s) => unmark(s).trim());
+  // —— textes des parties Coran et fiqh/adab de la leçon (jamais affichés ici, jamais dits ailleurs)
+  const textes = (x: unknown) =>
+    allStr(x)
+      .filter((s) => ARABIC.test(s))
+      .map((s) => unmark(s).trim());
+  // partie Coran : les textes arabes (une explication en français qui cite une formule n'est pas un verset)
+  const sacresCoran = textes(L.coran).filter((s) => !/[A-Za-z]/.test(s));
+  const sacresFiqh = textes(L.fiqh_adab);
   // comme les leçons vivantes : un mot isolé (« puis », « ne… pas ») n'est pas une citation ; deux mots ou plus le sont
-  const sacre = (s: string) => {
+  const dans = (liste: string[], s: string) => {
     const u = unmark(s).trim();
     const n = nWords(u);
     return (
       n >= 2 &&
-      sacres.some((t) => t === u || (n >= 3 && t.includes(u)) || (nWords(t) >= 3 && u.includes(t)))
+      liste.some((t) => t === u || (n >= 3 && t.includes(u)) || (nWords(t) >= 3 && u.includes(t)))
     );
   };
-  /** citation coranique d'après les signes du Muṣḥaf et les listes tenues contre Tanzil */
-  const coranique = (s: string) =>
-    looksQuranic(s) ||
-    ORNE.test(s) ||
-    garde.has(gardeVideoKey(s)) ||
-    GARDE_VIV.has(gardeVideoKey(s));
-  // —— passages coraniques cités par la LEÇON elle-même (lecture) : leurs morceaux sont en contexte coranique
+  /** présenté comme Coran par sa forme : graphie du Muṣḥaf, crochets ornés */
+  const coranique = (s: string) => looksQuranic(s) || ORNE.test(s);
+  // —— sourates et versets que la LEÇON présente comme récitation (lecture : verset entier, graphie du Muṣḥaf) : leurs
+  // morceaux ne sont jamais enchaînés en voix de synthèse (on reconstituerait le verset)
   const R = obj(L.lecture);
   const lectureStr = [
     ...arr(R.syllabes).map((s) => obj(s).ar),
@@ -352,7 +365,7 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   };
   marque(R);
   const passages = lectureStr
-    .filter((s) => !dhikrs.has(s) && coranique(s))
+    .filter((s) => !dhikrs.has(s) && (coranique(s) || recit.has(gardeVideoKey(s))))
     .map((s) => ` ${motsDe(s)} `)
     .filter((p) => p.trim());
   const contexte = (s: string) => {
@@ -362,13 +375,15 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
 
   /** raison de garder un texte sans voix (null : la voix est permise) */
   const raison = (s: string, holder: Obj | null, ctx: boolean): Signalement['raison'] | null => {
-    // formule de dhikr marquée par les données (`dhikr: true` : Basmala avant d'agir, shahāda dite seule) : la garde
-    // des citations (Tanzil, 4 mots) et celle de la Basmala ne s'appliquent pas ; la graphie du Muṣḥaf, les parties
-    // Coran et fiqh, et le contexte coranique de l'unité, si
+    // présenté comme Coran (graphie du Muṣḥaf, référence de verset sur le bloc) : jamais, même une formule de dhikr
+    if (coranique(s) || VERSET.test(String(holder?.ref ?? holder?.ref_fr ?? ''))) return 'coran';
+    // formule de dhikr marquée par les données (`dhikr: true`) : la garde de Tanzil et de la Basmala ne s'applique pas
     const dhikr = holder?.dhikr === true;
-    if (dhikr ? looksQuranic(s) || ORNE.test(s) : coranique(s)) return 'coran';
-    if (skeleton(s).includes(BASMALA) && !dhikr) return 'basmala';
-    if (sacre(s)) return 'sacre';
+    // 4 mots consécutifs du Coran ou plus, hors formules de la liste blanche (liste tenue contre Tanzil)
+    if (!dhikr && garde.has(gardeVideoKey(s))) return 'coran';
+    if (!dhikr && skeleton(s).includes(BASMALA)) return 'basmala';
+    // texte des parties Coran (même une formule) ; des parties fiqh/adab (hadith…), hors formules de la liste
+    if (dans(sacresCoran, s) || horsDhikr(s).some((x) => dans(sacresFiqh, x))) return 'sacre';
     if (ctx && contexte(s)) return 'contexte';
     return null;
   };

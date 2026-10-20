@@ -26,17 +26,9 @@ import {
   videoVoix,
   type VideoLecon,
 } from '../src/video.js';
-import { VIDEO_GARDE } from '../src/video-garde.js';
-import {
-  audioFileId,
-  containsQuranRun,
-  isQuranExcerpt,
-  looksQuranic,
-  quranCorpus,
-  quranRuns,
-  sayText,
-  skeleton,
-} from '../src/audio-cle.js';
+import { VIDEO_GARDE, VIDEO_RECITATION } from '../src/video-garde.js';
+import { DHIKR, contientDhikr, horsDhikr, motsDhikr, sansVoyelles } from '../src/dhikr.js';
+import { audioFileId, looksQuranic, quranRuns, sayText, skeleton } from '../src/audio-cle.js';
 import { loadTanzil, parseDataFile, studentProjection } from '../src/index.js';
 import { CONTENT_DIR, HAS_CONTENT } from './helpers.js';
 
@@ -119,9 +111,47 @@ const imagesDe = (L: Record<string, unknown>) =>
 
 const tanzil = existsSync(TSV) ? loadTanzil(readFileSync(TSV, 'utf8')) : null;
 const verses = tanzil ? [...tanzil.values()] : [];
-const corpus = tanzil ? quranCorpus(verses) : '';
 const runs4 = tanzil ? quranRuns(verses, 4) : new Set<string>();
-const cite = (s: string) => isQuranExcerpt(s, corpus) || containsQuranRun(s, runs4, 4);
+/**
+ * Citation du Coran (règle du référent du 20/10/2026) : 4 mots consécutifs du Coran ou plus (Tanzil sans voyelles,
+ * versets enchaînés), sauf si ces 4 mots sont tous dans une formule de dhikr de la liste blanche.
+ */
+function cite(s: string): boolean {
+  const t = unmark(s);
+  const w = motsDhikr(t).flatMap((m) =>
+    skeleton(t.slice(m.a, m.b))
+      .split(' ')
+      .filter(Boolean)
+      .map((k) => ({ k, f: m.f })),
+  );
+  for (let i = 0; i + 4 <= w.length; i++) {
+    const win = w.slice(i, i + 4);
+    if (!win.every((x) => x.f) && runs4.has(win.map((x) => x.k).join(' '))) return true;
+  }
+  return false;
+}
+/** squelette de la Basmala complète (1:1) */
+const BASMALA_COMPLETE = skeleton(
+  String.fromCharCode(
+    ...[0x628, 0x633, 0x645, 0x20, 0x627, 0x644, 0x644, 0x647, 0x20, 0x627, 0x644, 0x631],
+    ...[0x62d, 0x645, 0x646, 0x20, 0x627, 0x644, 0x631, 0x62d, 0x64a, 0x645],
+  ),
+);
+/** squelettes d'un à huit versets consécutifs (deux mots au moins) : texte présenté comme récitation */
+const versetsEntiers = new Set<string>();
+{
+  // le texte Tanzil met la Basmala en tête du premier verset des sourates : un verset entier se compare sans elle
+  const sk = verses
+    .map(skeleton)
+    .map((x) => (x.startsWith(`${BASMALA_COMPLETE} `) ? x.slice(BASMALA_COMPLETE.length + 1) : x));
+  for (let i = 0; i < sk.length; i++)
+    for (let j = i, acc = ''; j < Math.min(sk.length, i + 8); j++) {
+      acc = acc ? `${acc} ${sk[j]}` : sk[j]!;
+      if (acc.includes(' ')) versetsEntiers.add(acc);
+    }
+}
+/** texte de la lecture présenté comme récitation : graphie du Muṣḥaf, ou un ou plusieurs versets entiers */
+const recitation = (s: string) => looksQuranic(s) || versetsEntiers.has(skeleton(unmark(s)));
 
 const videos = new Map<string, { v: VideoLecon; L: Record<string, unknown> }>();
 const video = (f: string) => {
@@ -168,29 +198,81 @@ describe('vidéos vivantes : outils', () => {
   });
 });
 
-describe('vidéos vivantes : garde coranique et Basmala', () => {
+describe('vidéos vivantes : garde coranique et formules de dhikr', () => {
   const c = String.fromCharCode;
   // بِسْمِ اللَّهِ (codes : la source des tests n'écrit pas non plus le texte)
   const bismi = c(0x628, 0x650, 0x633, 0x652, 0x645, 0x650);
   const allahi = c(0x627, 0x644, 0x644, 0x651, 0x64e, 0x647, 0x650);
   const basmala = `${bismi} ${allahi}`;
-  const lecon = (phrase: Record<string, unknown>) => ({
+  // الرَّحْمٰنِ الرَّحِيمِ : avec elles, la Basmala complète (1:1, tête de sourate)
+  const rahman = c(0x627, 0x644, 0x631, 0x651, 0x64e, 0x62d, 0x652, 0x645, 0x670, 0x646, 0x650);
+  const rahim = c(0x627, 0x644, 0x631, 0x651, 0x64e, 0x62d, 0x650, 0x64a, 0x645, 0x650);
+  const complete = `${basmala} ${rahman} ${rahim}`;
+  // أَقُولُ : (phrase qui contient la formule)
+  const aqulu = c(0x623, 0x64e, 0x642, 0x64f, 0x648, 0x644, 0x64f);
+  const lecon = (phrase: Record<string, unknown>, extra: Record<string, unknown> = {}) => ({
     type: 'lecon',
     lecture: { phrases: [phrase] },
+    ...extra,
   });
-  const voix = (L: unknown) =>
-    videoVoix(buildVideo(L, { unitId: 't', hasAudio: () => true, garde: new Set() }));
-  it('Basmala sans marque « formule de dhikr » : aucune voix, et signalée', () => {
-    const v = buildVideo(lecon({ ar: basmala }), {
-      unitId: 't',
-      hasAudio: () => true,
-      garde: new Set(),
-    });
-    expect(videoVoix(v)).not.toContain(basmala);
-    expect(v.signalements).toEqual([{ texte: basmala, raison: 'basmala' }]);
+  const voix = (L: unknown, garde = new Set<string>(), recitation = new Set<string>()) =>
+    videoVoix(buildVideo(L, { unitId: 't', hasAudio: () => true, garde, recitation }));
+  it('liste blanche : la forme sans voyelles du code suit le fichier de données relu', () => {
+    const data = JSON.parse(
+      readFileSync(new URL('../data/dhikr-formules.json', import.meta.url), 'utf8'),
+    ) as { formules: Array<{ ar: string }> };
+    const want = data.formules
+      .map((f) =>
+        sansVoyelles(f.ar)
+          .replace(/[^ء-ي]+/g, ' ')
+          .trim(),
+      )
+      .join('|');
+    if (process.env.DHIKR === 'ecrire') {
+      const p = new URL('../src/dhikr.ts', import.meta.url);
+      writeFileSync(
+        p,
+        readFileSync(p, 'utf8').replace(
+          /export const DHIKR =\n {2}'[^']*';/,
+          `export const DHIKR =\n  '${want}';`,
+        ),
+      );
+      return;
+    }
+    expect(DHIKR, 'DHIKR=ecrire').toBe(want);
+    expect(data.formules.length).toBeGreaterThan(20);
   });
-  it('Basmala marquée « formule de dhikr » (dhikr: true) : voix permise', () => {
-    expect(voix(lecon({ ar: basmala, dhikr: true }))).toContain(basmala);
+  it('formule trouvée mot pour mot sans voyelles, aussi après و ou ف collé ; jamais au milieu d’un mot', () => {
+    expect(contientDhikr(basmala)).toBe(true);
+    expect(contientDhikr(`${aqulu}: ${basmala}`)).toBe(true);
+    expect(contientDhikr(`${c(0x648, 0x64e)}${basmala}`)).toBe(true);
+    // « بسم » seul, ou « اللَّهِ » seul : pas une formule
+    expect(contientDhikr(bismi)).toBe(false);
+    expect(contientDhikr(`${bismi}${c(0x643)} ${allahi}`)).toBe(false);
+    expect(horsDhikr(`${aqulu}: ${basmala}`)).toEqual([aqulu]);
+    expect(horsDhikr(basmala)).toEqual([]);
+  });
+  it('formule de la liste (Basmala dite avant d’agir), seule ou dans une phrase : sonorisée, sans marque', () => {
+    expect(voix(lecon({ ar: basmala }))).toContain(basmala);
+    expect(voix(lecon({ ar: `${aqulu}: ${basmala}` }))).toContain(`${aqulu}: ${basmala}`);
+  });
+  it('Basmala complète (tête de sourate, 1:1) : muette, sauf marque « formule de dhikr » des données', () => {
+    const v = buildVideo(lecon({ ar: complete }), { unitId: 't', hasAudio: () => true });
+    expect(videoVoix(v)).toEqual([]);
+    expect(v.signalements[0]?.raison).toBe('basmala');
+    expect(voix(lecon({ ar: complete, dhikr: true }))).toContain(complete);
+  });
+  it('formule présentée comme Coran : muette (graphie du Muṣḥaf, référence de verset, partie Coran, récitation)', () => {
+    const uthmani = `${bismi} ${c(0x671, 0x644, 0x644, 0x651, 0x64e, 0x647, 0x650)}`;
+    expect(voix(lecon({ ar: uthmani }))).toEqual([]);
+    expect(voix(lecon({ ar: uthmani, dhikr: true }))).toEqual([]);
+    expect(voix(lecon({ ar: basmala, ref: '27:30' }))).toEqual([]);
+    expect(
+      voix(lecon({ ar: `${basmala} ${rahman}` }, { coran: { versets: [{ ar: complete }] } })),
+    ).toEqual([]);
+    // la lecture présente la Basmala complète comme récitation : ses morceaux, même la formule, restent muets
+    const L = { type: 'lecon', lecture: { phrases: [{ ar: complete }], ligne: [basmala] } };
+    expect(voix(L, new Set(), new Set([gardeVideoKey(complete)]))).toEqual([]);
   });
   it('contexte coranique (graphie du Muṣḥaf) : jamais de voix, même marquée', () => {
     const uthmani = `${bismi} ${c(0x671, 0x644, 0x644, 0x651, 0x64e, 0x647, 0x650)}`;
@@ -236,6 +318,62 @@ describe('vidéos vivantes : garde coranique et Basmala', () => {
     );
     expect(videoStrings(v).ar).not.toContain(basmala);
   });
+  it('moins de 4 mots, hors récitation : voix permise (mot d’une sourate employé comme vocabulaire)', () => {
+    const w = c(0x623, 0x64e, 0x62d, 0x64e, 0x62f, 0x64c);
+    expect(voix({ type: 'lecon', lecture: { vedette: { ar: w } } })).toContain(w);
+    // le même mot, morceau d'un verset que la lecture présente comme récitation : muet
+    const verset = `${c(0x642, 0x64f, 0x644, 0x652)} ${c(0x647, 0x64f, 0x648, 0x64e)} ${allahi} ${w}`;
+    const L = { type: 'lecon', lecture: { phrases: [{ ar: verset }], ligne: [w] } };
+    expect(voix(L, new Set([gardeVideoKey(verset)]), new Set([gardeVideoKey(verset)]))).toEqual([]);
+  });
+  it('partie fiqh/adab : un hadith reste muet, la formule seule de la même phrase ne l’excuse pas', () => {
+    const hadith = `${c(0x645, 0x64e, 0x627)} ${c(0x646, 0x64e, 0x642, 0x64e, 0x635, 0x64e, 0x62a, 0x652)} ${c(0x635, 0x64e, 0x62f, 0x64e, 0x642, 0x64e, 0x629, 0x64c)}`;
+    const fiqh = { fiqh_adab: { points: [{ ar: hadith }] } };
+    expect(voix(lecon({ ar: `${basmala}، ${hadith}` }, fiqh))).toEqual([]);
+    // la formule seule, même si la partie fiqh la cite : sonorisée (adhkār de la prière)
+    expect(voix(lecon({ ar: basmala }, { fiqh_adab: { points: [{ ar: basmala }] } }))).toContain(
+      basmala,
+    );
+  });
+  it.skipIf(!tanzil)(
+    'citation : 4 mots du Coran hors formule (muette) ; les 4 mots d’une formule seule ne comptent pas',
+    () => {
+      // لَا إِلٰهَ إِلَّا اللَّهُ (37:35, 47:19) : formule de la liste
+      const tahlil = [
+        c(0x644, 0x64e, 0x627),
+        c(0x625, 0x650, 0x644, 0x670, 0x647, 0x64e),
+        c(0x625, 0x650, 0x644, 0x651, 0x64e, 0x627),
+        c(0x627, 0x644, 0x644, 0x651, 0x64e, 0x647, 0x64f),
+      ].join(' ');
+      expect(contientDhikr(tahlil)).toBe(true);
+      expect(cite(tahlil)).toBe(false);
+      // الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ (1:2) : la formule « الْحَمْدُ لِلَّهِ » ne couvre pas les 4 mots
+      const hamd = [
+        c(0x627, 0x644, 0x652, 0x62d, 0x64e, 0x645, 0x652, 0x62f, 0x64f),
+        c(0x644, 0x650, 0x644, 0x651, 0x64e, 0x647, 0x650),
+        c(0x631, 0x64e, 0x628, 0x651, 0x650),
+        c(
+          0x627,
+          0x644,
+          0x652,
+          0x639,
+          0x64e,
+          0x627,
+          0x644,
+          0x64e,
+          0x645,
+          0x650,
+          0x64a,
+          0x646,
+          0x64e,
+        ),
+      ].join(' ');
+      expect(cite(hamd)).toBe(true);
+      expect(recitation(hamd)).toBe(true);
+      // 3 mots d'un verset (vocabulaire, exemple) : permis
+      expect(cite(hamd.split(' ').slice(1).join(' '))).toBe(false);
+    },
+  );
 });
 
 describe.skipIf(!HAS_CONTENT)('vidéos vivantes : les 25 unités d’Adultes 1', () => {
@@ -300,7 +438,7 @@ describe.skipIf(!HAS_CONTENT)('vidéos vivantes : les 25 unités d’Adultes 1',
       walk(raw(f));
       for (const s of [...ar, ...fr]) expect(tr.has(s), `phonétique : ${s}`).toBe(false);
       expect(JSON.stringify(v)).not.toMatch(/"tr"/);
-      // garde : aucune voix sur un texte coranique (Muṣḥaf, Tanzil 3 mots / 4 mots suivis, Basmala)
+      // garde : aucune voix sur un texte coranique (Muṣḥaf, 4 mots du Coran hors formules, Basmala complète)
       // formules de dhikr marquées par les données (`dhikr: true`) : voix permise malgré les gardes Basmala et Tanzil
       const dhikrs = new Set<string>();
       const marque = (x: unknown): void => {
@@ -315,16 +453,11 @@ describe.skipIf(!HAS_CONTENT)('vidéos vivantes : les 25 unités d’Adultes 1',
       for (const s of videoVoix(v)) {
         expect(looksQuranic(s), s).toBe(false);
         if (dhikrs.has(s)) continue;
-        expect(
-          skeleton(s).includes(
-            skeleton(String.fromCharCode(0x628, 0x633, 0x645, 0x20, 0x627, 0x644, 0x644, 0x647)),
-          ),
-          s,
-        ).toBe(false);
+        expect(skeleton(s).includes(BASMALA_COMPLETE), s).toBe(false);
         if (tanzil) expect(cite(s), `voix sur une citation du Coran : ${s}`).toBe(false);
       }
-      // contexte coranique : aucune voix sur un morceau (même un mot) d'un passage coranique cité par la lecture de
-      // l'unité (Fātiḥa mot à mot, sourates 112 à 114…)
+      // récitation : aucune voix sur un morceau (même un mot, même une formule) d'une sourate ou d'un verset que la
+      // lecture de l'unité présente comme récitation (Fātiḥa mot à mot, sourates 112 à 114…)
       if (tanzil) {
         const norme = (x: string) =>
           ` ${sayText(unmark(x))
@@ -332,7 +465,7 @@ describe.skipIf(!HAS_CONTENT)('vidéos vivantes : les 25 unités d’Adultes 1',
             .replace(/\s+/g, ' ')
             .trim()} `;
         const passages = strings((L as { lecture?: unknown }).lecture)
-          .filter((s) => looksQuranic(s) || cite(s))
+          .filter(recitation)
           .map(norme);
         // tous les textes qui POURRAIENT être dits (comme si chaque fichier audio existait), hors dialogue (formules
         // de salutation : jamais un contexte coranique)
@@ -354,33 +487,45 @@ describe.skipIf(!HAS_CONTENT)('vidéos vivantes : les 25 unités d’Adultes 1',
   }
 
   it.skipIf(!tanzil)(
-    'garde vidéo à jour : toute citation du Coran (Tanzil) que la vidéo pourrait dire est écartée',
+    'garde vidéo à jour : citations du Coran (4 mots, hors formules) et textes de récitation de la lecture',
     () => {
       const flagged = new Set<string>();
+      const recit = new Set<string>();
       for (const f of FILES) {
         const L = studentProjection(raw(f), LIVRE) as Record<string, unknown>;
-        const v = buildVideo(L, { unitId: f, hasAudio: () => true, garde: new Set() });
+        const v = buildVideo(L, {
+          unitId: f,
+          hasAudio: () => true,
+          garde: new Set(),
+          recitation: new Set(),
+        });
         for (const s of videoVoix(v)) if (cite(s)) flagged.add(gardeVideoKey(s));
-        // et TOUTES les chaînes de la lecture (même dites morceau par morceau, « mot à mot ») : un passage coranique
-        // cité par la leçon met ses morceaux en contexte coranique (aucune voix sur eux non plus)
-        for (const s of strings((L as { lecture?: unknown }).lecture))
+        // et TOUTES les chaînes de la lecture ; celles qui présentent un ou plusieurs versets entiers sont des textes de
+        // récitation : leurs morceaux (« mot à mot ») n'ont jamais de voix
+        for (const s of strings((L as { lecture?: unknown }).lecture)) {
           if (cite(s)) flagged.add(gardeVideoKey(s));
+          if (!looksQuranic(s) && versetsEntiers.has(skeleton(unmark(s))))
+            recit.add(gardeVideoKey(s));
+        }
       }
       const want = [...flagged].sort().join(' ');
+      const wantR = [...recit].sort().join(' ');
       if (process.env.VIDEO_GARDE === 'ecrire') {
         const p = new URL('../src/video-garde.ts', import.meta.url);
         writeFileSync(
           p,
-          readFileSync(p, 'utf8').replace(
-            /export const VIDEO_GARDE = [^;]*;/,
-            `export const VIDEO_GARDE =\n  '${want}';`,
-          ),
+          readFileSync(p, 'utf8')
+            .replace(/export const VIDEO_GARDE =[^;]*;/, `export const VIDEO_GARDE =\n  '${want}';`)
+            .replace(
+              /export const VIDEO_RECITATION =[^;]*;/,
+              `export const VIDEO_RECITATION =\n  '${wantR}';`,
+            ),
         );
         return;
       }
-      expect(VIDEO_GARDE.split(' ').filter(Boolean).sort().join(' '), 'VIDEO_GARDE=ecrire').toBe(
-        want,
-      );
+      const tri = (x: string) => x.split(' ').filter(Boolean).sort().join(' ');
+      expect(tri(VIDEO_GARDE), 'VIDEO_GARDE=ecrire').toBe(want);
+      expect(tri(VIDEO_RECITATION), 'VIDEO_GARDE=ecrire').toBe(wantR);
     },
     300_000,
   );

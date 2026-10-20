@@ -60,6 +60,8 @@ const AUDIO_DIR = join(tmpdir(), `awform-e2e-audio${ISOLE ? `-${SUFFIX}` : ''}`)
 // A3 : audio des leçons d'en1 (fichiers réels des livres) importé depuis ~/lecons-audio s'il est là
 const LECONS_SRC = process.env.AWFORM_LECONS_AUDIO_SOURCE ?? join(homedir(), 'lecons-audio');
 const LECONS_DIR = join(tmpdir(), `awform-e2e-lecons${ISOLE ? `-${SUFFIX}` : ''}`);
+// niveaux dont l'audio des leçons est importé (MP4 d'essai des vidéos vivantes : E2E_LECONS_NIVEAUX=en1,ad1)
+const LECONS_NIVEAUX = process.env.E2E_LECONS_NIVEAUX ?? 'en1,lect-ad1-01';
 // lot F3 : boîte de DÉMONSTRATION des e-mails (aucun envoi réel), lue par les tests (f3.spec.ts)
 process.env.E2E_MAIL_DIR ??= join(tmpdir(), `awform-e2e-boite${ISOLE ? `-${SUFFIX}` : ''}`);
 if (existsSync(join(LECONS_SRC, 'index.js'))) process.env.E2E_LECONS_AUDIO = '1';
@@ -137,7 +139,7 @@ export default defineConfig({
     {
       // base de TEST remise à zéro, édition « e2e » importée ; comptes créés par globalSetup
       // puis comptes PostgreSQL séparés ; l'API tourne sous le compte « api » (droits minimaux)
-      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node e2e/audio-essai.mjs ${AUDIO_DIR} && node ../../packages/db/dist/cli/lecons-audio.js importer --test --si-present --niveaux en1,lect-ad1-01 --source ${LECONS_SRC} --stockage ${LECONS_DIR} && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
+      command: `node ../../packages/db/dist/cli/import.js --test --reset --edition e2e --publish && node e2e/audio-essai.mjs ${AUDIO_DIR} && node ../../packages/db/dist/cli/lecons-audio.js importer --test --si-present --niveaux ${LECONS_NIVEAUX} --source ${LECONS_SRC} --stockage ${LECONS_DIR} && node ../../packages/db/dist/cli/roles.js --test && node ../api/dist/server.js`,
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
       env: {
         DATABASE_URL: API_DB,

@@ -69,6 +69,13 @@ const FAMILLES: Array<[number[], string]> = [
 ];
 const famille = (l: string) => FAMILLES.find(([cs]) => cs.includes(l.charCodeAt(0)))?.[1];
 
+/**
+ * Journal de TEST (fabrication des MP4 d'essai, e2e/video-mp4.spec.ts) : sons joués (fichier, instant) et question en
+ * cours. Il n'existe que si un test le crée avant l'ouverture (`window.__vv`) : rien n'est noté en usage normal.
+ */
+type Journal = { sons: Array<[string, number]>; q?: Question };
+const journal = () => (globalThis as { __vv?: Journal }).__vv;
+
 class Coupe extends Error {}
 const esc = (s: string) =>
   s.replace(/[&<>"]/g, (x) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[x]!);
@@ -292,6 +299,7 @@ function creer(opt: OuvrirOptions): () => void {
           ok();
         };
         a.onended = a.onerror = fin;
+        a.onplaying = () => journal()?.sons.push([id, Date.now()]);
         // connexion coupée ou lecture refusée : la scène continue en silence
         setTimeout(() => !pause && a.currentTime === 0 && fin(), 2500);
         if (!pause) a.play().catch(fin);
@@ -695,6 +703,8 @@ function creer(opt: OuvrirOptions): () => void {
 
   // ———————————————————————————————— exercices du livre ————————————————————————————————
   async function question(q: Question, jouable: boolean, rang: string): Promise<void> {
+    const J = journal();
+    if (J) J.q = q;
     ajoute(`${titreCarte ? frH(titreCarte, 'h') : ''}<p class="k">${esc(rang)}</p>`, true);
     const opts = (xs: string[], cls = '') =>
       `<div class="options ${cls}">${xs.map((o, k) => `<button class="opt" data-o="${k}">${RUN.test(o) ? arH(o) : `<span class="fr toujours">${esc(o)}</span>`}</button>`).join('')}</div>`;
