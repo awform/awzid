@@ -45,8 +45,9 @@ export interface OuvrirOptions {
 const c = String.fromCharCode;
 const AR = `${c(0x600)}-${c(0x6ff)}`;
 // passage arabe d'un texte français ; entre parenthèses ou guillemets, ceux-ci l'accompagnent sur sa ligne
+// (deux formes arabes séparées par « / », « · » ou « ← » restent sur la même ligne : les deux terminaisons du duel)
 const RUN = new RegExp(
-  `(\\(\\s?[${AR}][${AR}\\s.]*\\s?\\)|«\\s?[${AR}][${AR}\\s.]*\\s?»|[${AR}][${AR}\\s.]*)`,
+  `(\\(\\s?[${AR}][${AR}\\s.]*\\s?\\)|«\\s?[${AR}][${AR}\\s.]*\\s?»|[${AR}](?:\\s[/·←]\\s(?=[${AR}])|[${AR}\\s.])*)`,
 );
 const LETTRE = new RegExp(`[${c(0x621)}-${c(0x64a)}]`, 'g');
 const LATIN = /[A-Za-z]/;
@@ -95,7 +96,7 @@ export function frH(s: string, cls = 'fr'): string {
   let out = '';
   let buf = '';
   // après une ligne arabe, la ponctuation qui la suivait ne commence pas la ligne française (« , la ligature »)
-  const fl = () => (out ? buf.replace(/^\s*[,;.]\s*/, '') : buf);
+  const fl = () => (out ? buf.replace(/^\s*[,;.?!]\s*/, '') : buf);
   for (const p of s.split(RUN)) {
     if (!p) continue;
     if (!RUN.test(p)) buf += esc(p);
@@ -107,7 +108,8 @@ export function frH(s: string, cls = 'fr'): string {
       out += arH(p.trim(), 'l');
     }
   }
-  if (buf.replace(/[\s.,;:]/g, '')) out += `<span class="${cls}">${fl()}</span>`;
+  const reste = fl();
+  if (reste.replace(/[\s.,;:]/g, '')) out += `<span class="${cls}">${reste}</span>`;
   return `<div class="frh">${out}</div>`;
 }
 
@@ -497,6 +499,14 @@ function creer(opt: OuvrirOptions): () => void {
     }
     while (deborde() && z.firstElementChild && z.firstElementChild !== e)
       z.firstElementChild.remove();
+    // un bloc seul plus haut que la scène (règle longue, explication des livres de la phrase) : ses premiers morceaux
+    // laissent la place aux suivants
+    for (
+      let c = e.querySelector('.carte > .apparait');
+      c?.nextElementSibling && deborde();
+      c = e.querySelector('.carte > .apparait')
+    )
+      c.remove();
   }
   function tuile(x: T, cls = ''): string {
     return x.son

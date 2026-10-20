@@ -81,6 +81,12 @@ describe('vidéos vivantes : l’arabe sur sa propre ligne', () => {
       `<div class="frh"><span class="fr">Lettres </span><span class="ar l" lang="ar" dir="rtl">${mot}</span><span class="fr">la ligature</span></div>`,
     );
   });
+  it('deux formes arabes séparées par « / » restent sur la même ligne ; « ? » orphelin retiré', () => {
+    const fin = c(0x640, 0x64e, 0x627, 0x646, 0x650);
+    expect(frH(`Le duel : ${fin} / ${mot} ?`)).toBe(
+      `<div class="frh"><span class="fr">Le duel : </span><span class="ar l" lang="ar" dir="rtl">${fin} / ${mot}</span></div>`,
+    );
+  });
   it('un mot ou une phrase arabe passe sur sa propre ligne, le français autour reste entier', () => {
     const h = frH(`un exemple : ${mot} et la suite`);
     expect(h).toBe(

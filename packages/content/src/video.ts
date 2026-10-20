@@ -667,6 +667,11 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
     const dits = morceaux.length > 1 ? morceaux.map((x) => t(x, holder)).filter((x) => x.son) : [];
     return { ar, ...(dits.length ? { dits } : {}), ...(fr ? { fr } : {}) };
   };
+  /** note explicative du livre (vedette, dialogue) : phrase par phrase, comme une règle (jamais de texte coupé) */
+  const note = (fr: string): Temps => {
+    const ps = phrasesFr(fr);
+    return { k: 'regle', fr: ps, ms: 2500 + ps.reduce((n, x) => n + 1200 + 40 * x.length, 0) };
+  };
   /** liste de lignes du livre en scènes de quatre lignes au plus */
   const liste = (xs: Obj[]): Temps[] =>
     groupes(xs, 4).map((g): Temps => ({
@@ -751,18 +756,14 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
         ];
     temps.push({
       k: 'aToi',
-      consigne: { cle: phrase ? 'vv.repete' : 'vv.lis_mot' },
+      // sans voix (fichier absent, garde) : l'élève lit la phrase, il n'y a rien à écouter
+      consigne: { cle: phrase ? (t(ar, V).son ? 'vv.repete' : 'vv.lis_phrase') : 'vv.lis_mot' },
       puis: [t(ar, V)],
       ms: MS.aToi + 1800,
     });
     if (phrase) vedettePhrase = temps.map((x) => ({ ...x }));
     // explication du livre (sous la vedette)
-    if (str(V.note_fr))
-      temps.push({
-        k: 'fr',
-        fr: V.note_fr as string,
-        ms: MS.fr + 35 * (V.note_fr as string).length,
-      });
+    if (str(V.note_fr)) temps.push(note(V.note_fr as string));
     add({
       id: 'vedette',
       part: 'lecture',
@@ -912,12 +913,7 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
     for (const p of (str(dlg.note_ar) ?? '').split(SEP).filter((x) => x.trim()))
       temps.push({ k: 'texte', ar: affiche(p.trim()), taille: 'p', ms: 3500 });
     // explication du livre sous le dialogue
-    if (str(dlg.note_fr))
-      temps.push({
-        k: 'fr',
-        fr: dlg.note_fr as string,
-        ms: MS.fr + 35 * (dlg.note_fr as string).length,
-      });
+    if (str(dlg.note_fr)) temps.push(note(dlg.note_fr as string));
     add({
       id: 'dialogue',
       part: 'dialogue',

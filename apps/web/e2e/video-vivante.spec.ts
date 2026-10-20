@@ -363,7 +363,12 @@ test.describe('interrupteur ALLUMÉ (exception par pays, sans redéploiement)', 
       await p.setContent(
         `<!doctype html><meta charset="utf-8"><style>body{margin:16px;background:#efe7d6;font:14px sans-serif;color:#084c38}h1{font-size:22px;margin:0 0 8px}h2{margin:14px 0 4px;font-size:16px}.r{display:flex;gap:6px;margin-bottom:6px}figure{margin:0}img{width:180px;display:block;border-radius:8px}figcaption{font-size:9px;width:180px;overflow:hidden;white-space:nowrap}</style><h1>Awzid · Vidéos vivantes · ${LIVRE} · unités ${us[0]} à ${us.at(-1)} (390 px, clair puis sombre)</h1>${lignes}`,
       );
-      await p.screenshot({ path: join(dir, `PLANCHE_${us[0]}-${us.at(-1)}.png`), fullPage: true });
+      // pixels CSS (planche de 7 000 px de haut au plus, contrôlée)
+      const fp = join(dir, `PLANCHE_${us[0]}-${us.at(-1)}.png`);
+      await p.screenshot({ path: fp, fullPage: true, scale: 'css' });
+      expect(await p.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
+        7000,
+      );
       await p.close();
     }
     writeFileSync(join(dir, 'captures.json'), JSON.stringify(planche, null, 1));
