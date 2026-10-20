@@ -517,6 +517,15 @@ function creer(opt: OuvrirOptions): () => void {
     )
       c.remove();
   }
+  /** temps de lecture ; un texte plus haut que la scène y défile lentement jusqu'à sa fin (jamais de texte caché) */
+  function defile(ms: number): Promise<void> {
+    const z = zone;
+    const de = z.scrollTop;
+    return prog(ms, (p) => {
+      const fin = z.scrollHeight - z.clientHeight;
+      if (fin > de) z.scrollTop = de + (fin - de) * Math.min(1, p * 1.25);
+    });
+  }
   function tuile(x: T, cls = ''): string {
     return x.son
       ? `<button class="tuile ${cls}" data-dire="${esc(x.ar)}">${arH(x.ar)}</button>`
@@ -694,18 +703,18 @@ function creer(opt: OuvrirOptions): () => void {
         for (const a of x.ar ?? []) {
           cte.append(h('div', 'apparait', arH(a.ar, 'l')));
           tasse(e);
-          await att(1400);
+          await defile(1400);
         }
         for (const f of x.fr ?? []) {
           cte.append(h('div', 'apparait', frH(f, 'fr toujours')));
           tasse(e);
-          await att(1200 + 40 * f.length);
+          await defile(1200 + 40 * f.length);
         }
         return att(800);
       }
       case 'fr':
         ajoute(`<div class="carte">${frH(x.fr, 'fr toujours')}</div>`);
-        return att(x.ms);
+        return defile(x.ms);
       case 'lettres': {
         const e = ajoute('<div class="grille lettres"></div>', true);
         for (const y of x.items) {
@@ -738,7 +747,7 @@ function creer(opt: OuvrirOptions): () => void {
           `<div class="carte">${x.fr ? frH(x.fr, 'fr toujours') : ''}${x.ar ? tuile(x.ar, 'tm') : ''}</div>`,
           true,
         );
-        await att(1200 + 40 * (x.fr?.length ?? 0));
+        await defile(1200 + 40 * (x.fr?.length ?? 0));
         if (x.ar) await dire(x.ar, e.querySelector('.tuile'));
         return att(1500);
       }
