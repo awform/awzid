@@ -21,6 +21,8 @@ const PAYS = 'LU';
 const CAPTURES = process.env.VIDEO_CAPTURES;
 /** niveau des captures (Adultes 1 par défaut ; VIDEO_CAPTURES_LIVRE=ad2…) */
 const LIVRE = process.env.VIDEO_CAPTURES_LIVRE ?? 'ad1';
+/** unités à capturer (toutes par défaut ; VIDEO_CAPTURES_UNITES=l21,l22…) */
+const UNITES = (process.env.VIDEO_CAPTURES_UNITES ?? '').split(',').filter(Boolean);
 
 async function admin(browser: Browser): Promise<Page> {
   const email = `admin-vv-${test.info().project.name}-${Date.now()}@e2e.test`;
@@ -308,6 +310,7 @@ test.describe('interrupteur ALLUMÉ (exception par pays, sans redéploiement)', 
     const planche: Record<string, string[]> = {};
     for (let n = 1; n <= 25; n++) {
       const u = `l${String(n).padStart(2, '0')}`;
+      if (UNITES.length && !UNITES.includes(u)) continue;
       await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' });
       await ouvrir(page, `${LIVRE}.${u}`);
       const fichiers: string[] = [];
@@ -346,6 +349,7 @@ test.describe('interrupteur ALLUMÉ (exception par pays, sans redéploiement)', 
     // une planche par groupe de 5 unités : une ligne claire et une ligne sombre par unité
     for (let g = 0; g < 5; g++) {
       const us = Object.keys(planche).slice(g * 5, g * 5 + 5);
+      if (!us.length) continue;
       const img = (f: string) =>
         `<figure><img src="data:image/png;base64,${readFileSync(f).toString('base64')}"><figcaption>${f.split('/').pop()!.replace('.png', '')}</figcaption></figure>`;
       const lignes = us

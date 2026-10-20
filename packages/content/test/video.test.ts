@@ -382,14 +382,13 @@ describe('vidéos vivantes : garde coranique et formules de dhikr', () => {
     const L = { type: 'lecon', lecture: { phrases: [{ ar: verset }], ligne: [w] } };
     expect(voix(L, new Set([gardeVideoKey(verset)]), new Set([gardeVideoKey(verset)]))).toEqual([]);
   });
-  it('partie fiqh/adab : un hadith reste muet, la formule seule de la même phrase ne l’excuse pas', () => {
+  it('partie fiqh/adab : un hadith ou une phrase d’adab est sonore (pas du Coran) ; un verset de la partie Coran est muet', () => {
     const hadith = `${c(0x645, 0x64e, 0x627)} ${c(0x646, 0x64e, 0x642, 0x64e, 0x635, 0x64e, 0x62a, 0x652)} ${c(0x635, 0x64e, 0x62f, 0x64e, 0x642, 0x64e, 0x629, 0x64c)}`;
     const fiqh = { fiqh_adab: { points: [{ ar: hadith }] } };
-    expect(voix(lecon({ ar: `${basmala}، ${hadith}` }, fiqh))).toEqual([]);
-    // la formule seule, même si la partie fiqh la cite : sonorisée (adhkār de la prière)
-    expect(voix(lecon({ ar: basmala }, { fiqh_adab: { points: [{ ar: basmala }] } }))).toContain(
-      basmala,
-    );
+    expect(voix(lecon({ ar: hadith }, fiqh))).toContain(hadith);
+    expect(voix(lecon({ ar: `${basmala}، ${hadith}` }, fiqh))).toContain(`${basmala}، ${hadith}`);
+    // le même texte donné comme verset dans la partie Coran : muet
+    expect(voix(lecon({ ar: hadith }, { coran: { versets: [{ ar: hadith }] } }))).toEqual([]);
   });
   it.skipIf(!tanzil)(
     'citation : 4 mots du Coran hors formule (muette) ; les 4 mots d’une formule seule ne comptent pas',

@@ -28,13 +28,12 @@
  *    (mot de vocabulaire, mot vedette, exemple de grammaire), SAUF pour ce qui est présenté comme Coran : graphie
  *    du Muṣḥaf, référence de verset, Basmala complète (tête de sourate), texte des parties Coran, et morceau d'une
  *    sourate ou d'un verset que l'unité présente comme RÉCITATION (verset entier dans la lecture : Fātiḥa mot à
- *    mot, sourates 112 à 114…) ; textes des parties fiqh/adab (hadiths…) sans voix ;
+ *    mot, sourates 112 à 114…) ; un hadith ou une phrase d'adab n'est pas du Coran : voix permise ;
  *  - DHIKR : les formules de la liste blanche (`dhikr.ts`, données `data/dhikr-formules.json`) sont des adhkār,
  *    pas de la tilāwa : sonorisées, seules ou dans une phrase, sauf dans ce qui est présenté comme Coran ; le
  *    marquage `dhikr: true` d'un bloc reste valable (voix permise malgré la garde de Tanzil).
  */
 import { audioFileId, looksQuranic, sayText, sha1Hex, skeleton } from './audio-cle.js';
-import { horsDhikr } from './dhikr.js';
 import { VIDEO_GARDE, VIDEO_RECITATION } from './video-garde.js';
 
 export type VideoMode = 'lettre' | 'courte' | 'longue' | 'quiz' | 'revision';
@@ -347,14 +346,18 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   /** partie en cours de génération (audit des audios manquants) */
   let ici: VideoPart = 'ouverture';
 
-  // —— textes des parties Coran et fiqh/adab de la leçon (jamais affichés ici, jamais dits ailleurs)
+  // —— versets de la partie Coran de la leçon (jamais affichés ici, jamais dits ailleurs)
   const textes = (x: unknown) =>
     allStr(x)
       .filter((s) => ARABIC.test(s))
       .map((s) => unmark(s).trim());
-  // partie Coran : les textes arabes (une explication en français qui cite une formule n'est pas un verset)
-  const sacresCoran = textes(L.coran).filter((s) => !/[A-Za-z]/.test(s));
-  const sacresFiqh = textes(L.fiqh_adab);
+  // textes arabes des versets (une explication en français qui cite une formule n'est pas un verset). Décision du
+  // référent du 20/10 : un hadith ou une phrase d'adab n'est pas du Coran (voix permise) ; restent muets les versets de
+  // la partie Coran, les suites de 4 mots du Coran et les citations référencées
+  const sacresCoran = [
+    ...textes(obj(L.coran).versets).filter((s) => !/[A-Za-z]/.test(s)),
+    ...textes(L.coran).filter((s) => looksQuranic(s) && !/[A-Za-z]/.test(s)),
+  ];
   // comme les leçons vivantes : un mot isolé (« puis », « ne… pas ») n'est pas une citation ; deux mots ou plus le sont
   const dans = (liste: string[], s: string) => {
     const u = unmark(s).trim();
@@ -406,7 +409,7 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
     if (!dhikr && garde.has(gardeVideoKey(s))) return 'coran';
     if (!dhikr && skeleton(s).includes(BASMALA)) return 'basmala';
     // texte des parties Coran (même une formule) ; des parties fiqh/adab (hadith…), hors formules de la liste
-    if (dans(sacresCoran, s) || horsDhikr(s).some((x) => dans(sacresFiqh, x))) return 'sacre';
+    if (dans(sacresCoran, s)) return 'sacre';
     if (ctx && contexte(s)) return 'contexte';
     return null;
   };

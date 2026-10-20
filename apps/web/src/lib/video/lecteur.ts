@@ -97,20 +97,22 @@ export function frH(s: string, cls = 'fr'): string {
   let out = '';
   let buf = '';
   // après une ligne arabe, la ponctuation qui la suivait ne commence pas la ligne française (« , la ligature »)
-  const fl = () => (out ? buf.replace(/^\s*[,;.?!]\s*/, '') : buf);
+  const fl = () => (out ? buf.replace(/^\s*(?:[)\]»]\s*[,;.?!]?|[,;.?!])\s*/, '') : buf);
+  // morceau français fait seulement de ponctuation (« ) » restée après une ligne arabe) : rien à montrer
+  const vide = (x: string) => !x.replace(/[\s.,;:)\]»]/g, '');
   for (const p of s.split(RUN)) {
     if (!p) continue;
     if (!RUN.test(p)) buf += esc(p);
     else if ((p.match(LETTRE) ?? []).length <= 1)
       buf += `<bdi class="lt" lang="ar" dir="rtl">${esc(p.trim())}</bdi>${/\s$/.test(p) ? ' ' : ''}`;
     else {
-      if (buf.trim()) out += `<span class="${cls}">${fl()}</span>`;
+      if (!vide(fl())) out += `<span class="${cls}">${fl()}</span>`;
       buf = '';
       out += arH(p.trim(), 'l');
     }
   }
   const reste = fl();
-  if (reste.replace(/[\s.,;:]/g, '')) out += `<span class="${cls}">${reste}</span>`;
+  if (!vide(reste)) out += `<span class="${cls}">${reste}</span>`;
   return `<div class="frh">${out}</div>`;
 }
 

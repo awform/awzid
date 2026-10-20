@@ -81,6 +81,11 @@ describe('vidéos vivantes : l’arabe sur sa propre ligne', () => {
       `<div class="frh"><span class="fr">Lettres </span><span class="ar l" lang="ar" dir="rtl">${mot}</span><span class="fr">la ligature</span></div>`,
     );
   });
+  it('parenthèse fermante orpheline après une ligne arabe : retirée', () => {
+    expect(frH(`un monde (pluriel : ${mot})`)).toBe(
+      `<div class="frh"><span class="fr">un monde (pluriel : </span><span class="ar l" lang="ar" dir="rtl">${mot}</span></div>`,
+    );
+  });
   it('une terminaison citée avec tatweel (une seule lettre) reste dans la phrase', () => {
     const tu = c(0x640, 0x652, 0x62a, 0x64f);
     expect(frH(`base + ${tu} je`)).not.toContain('class="ar');
