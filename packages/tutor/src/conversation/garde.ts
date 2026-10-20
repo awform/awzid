@@ -83,6 +83,17 @@ export function classerEntree(texte: string, audience: Audience = 'adulte'): Ent
   return 'normal';
 }
 
+/**
+ * Motif d'une catégorie « protection » : RENCONTRE (un inconnu, souvent d'internet, veut voir l'élève ou obtenir ses
+ * coordonnées) ou DÉTRESSE (violence subie, idées noires). Il choisit le message (rencontre : « n'y va jamais
+ * seul(e) ») et le motif de l'alerte. La détresse l'emporte (appel à l'aide jamais manqué).
+ */
+export function motifProtection(texte: string): 'rencontre' | 'detresse' {
+  const cs = [classify(texte)];
+  if (hasArabic(texte)) cs.push(classify(bareWords(texte).join(' ')));
+  return cs.includes('rencontre') && !cs.includes('detresse') ? 'rencontre' : 'detresse';
+}
+
 /** Catégories qui, repérées sur ce que l'élève a dit (voix), remplacent la réponse par un renvoi. */
 export const RENVOIS_ENTREE: readonly EntreeCategorie[] = [
   'protection',
@@ -197,6 +208,11 @@ export interface IssueTour {
   sujet: ConvBrouillon['sujet'] | null;
   filtre: FilterEvent[];
   repli: boolean;
+  /**
+   * repli dû à une PANNE (erreur de l'API, réponse vide ou JSON illisible, hors schéma), et non à un garde-fou :
+   * l'élève voit la réplique du livre, mais rien n'a été jugé (20/10/2026 : à distinguer dans la batterie)
+   */
+  repliTechnique: boolean;
   /** mots de la réponse hors des mots déjà vus (contrôle de niveau) */
   horsNiveau: string[];
   /** nombre de mots de la réponse comptés pour le contrôle de niveau */
@@ -226,16 +242,28 @@ export function issueDuTour(
     sujet: null,
     filtre: [],
     repli: false,
+    repliTechnique: false,
     horsNiveau: [],
     motsReponse: 0,
   };
   if (out.status !== 'ok') {
-    r.filtre = [{ step: 'fournisseur', action: 'bloque', detail: out.detail ?? out.status }];
+    // « refus » : la sécurité du fournisseur a bloqué (garde-fou) ; « erreur » : PANNE, rien n'a été jugé (20/10/2026 :
+    // la batterie réelle notait « fournisseur:bloque:api_400 », lu à tort comme un blocage)
+    r.repliTechnique = out.status === 'erreur';
+    r.filtre = [
+      {
+        step: r.repliTechnique ? 'panne_fournisseur' : 'fournisseur',
+        action: 'bloque',
+        detail: out.detail ?? out.status,
+      },
+    ];
     r.route = 'conversation_repli';
   } else {
     const f = filtrerSortie(out.brouillon, o.index);
     r.filtre = f.events;
     const br = f.brouillon;
+    // brouillon hors schéma (champ manquant, en trop, trop long) : réponse illisible, donc panne
+    if (!br) r.repliTechnique = true;
     r.sujet = br?.sujet ?? null;
     const dit = br?.transcription_ar ?? '';
     const cat = br && o.audio ? classerEntree(dit, o.audience) : 'normal';

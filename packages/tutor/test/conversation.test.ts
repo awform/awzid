@@ -17,8 +17,11 @@ import {
   formesNiveau,
   GoogleTts,
   jetonGoogle,
+  lireBrouillon,
+  messageErreurGoogle,
   motsEcrits,
   motsHorsNiveau,
+  niveauReflexion,
   plafondsDepuisEnv,
   PROMPT_VERSION,
   QuranIndex,
@@ -275,9 +278,10 @@ describe('Vertex AI et TTS (fetch SIMULÉ, aucun appel réel)', () => {
       never
     >;
     expect(JSON.stringify(c)).toContain('&lt;/ecrit_par_l_eleve&gt;');
+    // valeur d'énumération de l'API v1 (document de découverte) : en MAJUSCULES
     expect(c.generationConfig).toMatchObject({
       responseMimeType: 'application/json',
-      thinkingConfig: { thinkingLevel: 'minimal' },
+      thinkingConfig: { thinkingLevel: 'MINIMAL' },
     });
     expect(c.labels).toEqual({ app: 'awzid', fonction: 'tuteur-conversation' });
     const a = corpsVertex(
@@ -340,6 +344,202 @@ describe('Vertex AI et TTS (fetch SIMULÉ, aucun appel réel)', () => {
       ).detail,
     ).toBe('limite_de_debit');
     expect(usageVertex(undefined)).toEqual({ texte: 0, audio: 0, sortie: 0 });
+  });
+
+  // ---- 20/10/2026 : batterie RÉELLE (gemini-3.8-flash, Vertex « eu ») — 31 appels sur 31 refusés en HTTP 400, sans
+  // jeton facturé ; le corps de l'erreur était jeté, et le repli passait pour un refus du modèle
+  const vertex = (f: typeof fetch, reflexion?: string) =>
+    new VertexConversation({
+      projet: 'p-1x',
+      lieu: 'eu',
+      modele: 'gemini-3.8-flash',
+      jeton: jetonFixe,
+      fetch: f,
+      ...(reflexion !== undefined ? { reflexion } : {}),
+    });
+  const ERREUR_400 = {
+    error: {
+      code: 400,
+      message:
+        'Invalid value at \'generation_config.thinking_config.thinking_level\' (type.googleapis.com/google.cloud.aiplatform.v1.GenerationConfig.ThinkingConfig.ThinkingLevel), "minimal"',
+      status: 'INVALID_ARGUMENT',
+    },
+  };
+
+  it('réglage de réflexion normalisé (MINIMAL…) ; valeur inconnue ou vide : non envoyée', () => {
+    expect(niveauReflexion('minimal')).toBe('MINIMAL');
+    expect(niveauReflexion(' High ')).toBe('HIGH');
+    expect(niveauReflexion('')).toBeNull();
+    expect(niveauReflexion('max')).toBeNull();
+    const c = corpsVertex('S', entree(), '') as { generationConfig: object };
+    expect(c.generationConfig).not.toHaveProperty('thinkingConfig');
+  });
+
+  it('HTTP 400 (comme la batterie réelle) : erreur « api_400 », message de Google gardé, aucun jeton compté', async () => {
+    const { f, appels } = faux(
+      () => ({ error: { ...ERREUR_400.error, message: 'Request contains an invalid argument.' } }),
+      400,
+    );
+    const r = await vertex(f).repondre('S', entree());
+    expect(r).toMatchObject({
+      status: 'erreur',
+      brouillon: null,
+      detail: 'api_400',
+      message: 'INVALID_ARGUMENT : Request contains an invalid argument.',
+      usage: { texte: 0, audio: 0, sortie: 0 },
+    });
+    expect(appels).toHaveLength(1); // sans rapport avec la réflexion : pas de nouvel essai
+    // corps vide ou non JSON : statut seul
+    const vide = faux(() => ({}), 400);
+    expect((await vertex(vide.f).repondre('S', entree())).detail).toBe('api_400');
+    expect(messageErreurGoogle('<html>Bad Request</html>')).toBe('<html>Bad Request</html>');
+  });
+
+  it('400 sur le réglage de réflexion : UN nouvel essai sans ce réglage, puis plus jamais envoyé', async () => {
+    const corps: Array<{ generationConfig: Record<string, unknown> }> = [];
+    const f = (async (_url: string, init?: RequestInit) => {
+      const b = JSON.parse(String(init!.body)) as { generationConfig: Record<string, unknown> };
+      corps.push(b);
+      return b.generationConfig.thinkingConfig
+        ? new Response(JSON.stringify(ERREUR_400), { status: 400 })
+        : new Response(
+            JSON.stringify({
+              candidates: [
+                { content: { parts: [{ text: JSON.stringify(ok()) }] }, finishReason: 'STOP' },
+              ],
+            }),
+          );
+    }) as unknown as typeof fetch;
+    const v = vertex(f);
+    const r = await v.repondre('S', entree());
+    expect(r.status).toBe('ok');
+    expect(r.message).toContain('reflexion_ignoree');
+    expect(r.message).toContain('thinking_level');
+    expect(corps).toHaveLength(2);
+    expect(corps[1]!.generationConfig).not.toHaveProperty('thinkingConfig');
+    expect((await v.repondre('S', entree())).status).toBe('ok');
+    expect(corps).toHaveLength(3);
+    expect(corps[2]!.generationConfig).not.toHaveProperty('thinkingConfig');
+  });
+
+  it('sortie de modèle « thinking » : parties de réflexion écartées, clôture ```json tolérée', async () => {
+    const { f } = faux(() => ({
+      candidates: [
+        {
+          content: {
+            parts: [
+              { text: 'Je réfléchis…', thought: true },
+              { text: '```json\n' + JSON.stringify(ok()) + '\n```', thoughtSignature: 'c2ln' },
+            ],
+          },
+          finishReason: 'STOP',
+        },
+      ],
+      usageMetadata: { promptTokenCount: 4200, candidatesTokenCount: 90, thoughtsTokenCount: 12 },
+    }));
+    const r = await vertex(f).repondre('S', entree());
+    expect(r.status).toBe('ok');
+    expect(validerBrouillon(r.brouillon)?.reponse_ar).toBe('هٰذَا تُفَّاحٌ جَمِيلٌ.');
+    expect(r.usage).toEqual({ texte: 4200, audio: 0, sortie: 102 });
+  });
+
+  /**
+   * Valeurs d'énumération du document de découverte de Vertex AI v1 (aiplatform.googleapis.com/$discovery/rest,
+   * relevé le 20/10/2026) : la requête n'envoie QUE des valeurs connues de l'API (sinon HTTP 400 sur tout appel).
+   */
+  const ENUMS_V1 = {
+    thinkingLevel: ['THINKING_LEVEL_UNSPECIFIED', 'LOW', 'MEDIUM', 'HIGH', 'MINIMAL'],
+    category: [
+      'HARM_CATEGORY_HATE_SPEECH',
+      'HARM_CATEGORY_DANGEROUS_CONTENT',
+      'HARM_CATEGORY_HARASSMENT',
+      'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+      'HARM_CATEGORY_CIVIC_INTEGRITY',
+    ],
+    threshold: [
+      'BLOCK_LOW_AND_ABOVE',
+      'BLOCK_MEDIUM_AND_ABOVE',
+      'BLOCK_ONLY_HIGH',
+      'BLOCK_NONE',
+      'OFF',
+    ],
+    type: ['STRING', 'NUMBER', 'INTEGER', 'BOOLEAN', 'ARRAY', 'OBJECT', 'NULL'],
+  };
+  it('requête conforme au document de découverte v1 (énumérations en MAJUSCULES, connues de l’API)', () => {
+    for (const reflexion of [undefined, 'minimal', 'MINIMAL', 'low']) {
+      const c = corpsVertex('S', entree(), reflexion) as {
+        generationConfig: { thinkingConfig?: { thinkingLevel: string }; responseSchema: object };
+        safetySettings: Array<{ category: string; threshold: string }>;
+      };
+      expect(ENUMS_V1.thinkingLevel, String(reflexion)).toContain(
+        c.generationConfig.thinkingConfig!.thinkingLevel,
+      );
+      for (const s of c.safetySettings) {
+        expect(ENUMS_V1.category).toContain(s.category);
+        expect(ENUMS_V1.threshold).toContain(s.threshold);
+      }
+      const types = JSON.stringify(c.generationConfig.responseSchema).match(/"type":"[^"]+"/g)!;
+      for (const t of types) expect(ENUMS_V1.type).toContain(t.slice(8, -1));
+    }
+    // la valeur de la batterie du 19/10 (« minimal » en minuscules) n'est plus jamais envoyée telle quelle
+    expect(JSON.stringify(corpsVertex('S', entree(), 'minimal'))).not.toContain('"minimal"');
+  });
+
+  it('réponse COMPLÈTE de gemini-3.8-flash (forme v1 : signature de réflexion, notes de sécurité, version) lue', async () => {
+    const { f } = faux(() => ({
+      candidates: [
+        {
+          content: {
+            role: 'model',
+            parts: [{ text: JSON.stringify(ok()), thoughtSignature: 'CiQBjz1rX2V4ZW1wbGU=' }],
+          },
+          finishReason: 'STOP',
+          avgLogprobs: -0.21,
+          safetyRatings: [
+            {
+              category: 'HARM_CATEGORY_HATE_SPEECH',
+              probability: 'NEGLIGIBLE',
+              severity: 'HARM_SEVERITY_NEGLIGIBLE',
+            },
+          ],
+        },
+      ],
+      usageMetadata: {
+        promptTokenCount: 4512,
+        candidatesTokenCount: 96,
+        totalTokenCount: 4630,
+        thoughtsTokenCount: 22,
+        trafficType: 'ON_DEMAND',
+        promptTokensDetails: [{ modality: 'TEXT', tokenCount: 4512 }],
+        candidatesTokensDetails: [{ modality: 'TEXT', tokenCount: 96 }],
+      },
+      modelVersion: 'gemini-3.8-flash',
+      createTime: '2026-10-20T08:00:00.000000Z',
+      responseId: 'abc123',
+    }));
+    const r = await vertex(f).repondre('S', entree());
+    expect(r.status).toBe('ok');
+    expect(r.message).toBeUndefined();
+    expect(validerBrouillon(r.brouillon)?.reponse_ar).toBe('هٰذَا تُفَّاحٌ جَمِيلٌ.');
+    expect(r.usage).toEqual({ texte: 4512, audio: 0, sortie: 118 });
+  });
+
+  it('réponse vide ou JSON illisible : PANNE (« erreur »), jamais un brouillon nul laissé au filtre', async () => {
+    const vide = faux(() => ({ candidates: [{ content: { parts: [] }, finishReason: 'STOP' }] }));
+    expect(await vertex(vide.f).repondre('S', entree())).toMatchObject({
+      status: 'erreur',
+      detail: 'json_illisible:STOP',
+    });
+    const texte = faux(() => ({
+      candidates: [{ content: { parts: [{ text: 'مَرْحَبًا' }] }, finishReason: 'STOP' }],
+    }));
+    expect((await vertex(texte.f).repondre('S', entree())).status).toBe('erreur');
+    const rien = faux(() => ({}));
+    expect((await vertex(rien.f).repondre('S', entree())).detail).toBe('reponse_vide');
+    expect(lireBrouillon([{ text: '{"a":1}' }])).toEqual({ a: 1 });
+    // un refus de sécurité reste un REFUS (garde-fou du fournisseur), pas une panne
+    const armure = faux(() => ({ candidates: [{ finishReason: 'MODEL_ARMOR' }] }));
+    expect((await vertex(armure.f).repondre('S', entree())).status).toBe('refus');
   });
 
   it('jeton : serveur de métadonnées puis emprunt du compte du tuteur (mis en cache)', async () => {

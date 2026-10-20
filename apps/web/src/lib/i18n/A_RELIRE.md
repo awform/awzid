@@ -191,3 +191,11 @@ vérifier : « Practise » (anglais britannique, comme ailleurs), « الجزء 
 désigne aussi la classe), impératifs arabes au masculin singulier (اكتشف، اقرأ، افهم، تدرّب، تذكّر) comme les autres
 consignes. Les cartons des MP4 des réseaux (« Continuez dans l'appli Awzid ») VOUVOIENT et restent hors des catalogues
 de l'application (`e2e/video-mp4.spec.ts`, français seulement pour l'instant).
+
+Cahier de lecture d'Adultes 1 (20/10/2026) : 77 textes `cahier.*` (sommaire, page, 6 cases « avec le
+modèle » et « seul », lecture guidée, minutes de lecture, bilans à froid et rattrapage, atelier « je compose le mot », pont
+vers le Coran) et `fn.cahier_lecture` traduits par Claude, relecteur provisoire, en **brouillon** dans les quatre langues
+en préparation — à relire avec le reste. Le français est embarqué avec le cahier (`lib/cahier/textes-fr.json`), sauf les
+4 textes de l'accès et de la page du jour (`fr-arabe`). Choix à vérifier : l'élève est TUTOYÉ (y compris en arabe,
+singulier) ; « bilan » rendu comme ailleurs (« review test », « evaluación », « Lernkontrolle », « تقييم ») ; noms des
+signes en transcription (fatḥa, sukūn…) comme dans les livres ; le texte arabe du cahier lui-même n'est jamais traduit.

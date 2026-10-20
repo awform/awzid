@@ -53,6 +53,11 @@ const BUDGET_LECTEUR = 12 * 1024;
  * v1 17,4 Ko (générateur devenu un morceau commun aux deux lecteurs).
  */
 const BUDGET_VIDEO = 22 * 1024;
+/**
+ * cahier de lecture (20/10/2026) : sommaire, pages, lecture guidée, minutes, bilans, atelier ; chargé à la première
+ * ouverture du cahier, jamais préchargé (garde dédiée ; les gardes de l'appareil et des pages restent celles ci-dessous)
+ */
+const BUDGET_CAHIER = 24 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 const BUDGET_RIWAYA_FONT = 1024 * 1024;
 /** page d'accueil de l'élève (« Mon arabe », onglet Arabe ; la première qu'il ouvre) */
@@ -109,6 +114,17 @@ const vidList = (() => {
   }
 })();
 const swVid = /video\.json/.test(swSrc);
+// 20/10/2026 : cahier de lecture, chargé à la première ouverture (vite.config.ts : cahierALaDemande)
+const cahList = (() => {
+  try {
+    return JSON.parse(readFileSync(join(client, '_app', 'cahier.json'), 'utf8')).map((f) =>
+      f.slice(1),
+    );
+  } catch {
+    return [];
+  }
+})();
+const swCah = /cahier\.json/.test(swSrc);
 const grpBr = (list) => sum(list, (f) => br(join(client, f)));
 const staffBr = grpBr(groups.personnel);
 const raresBr = grpBr(groups.rares);
@@ -116,15 +132,19 @@ const enLigneBr = grpBr(groups.enLigne);
 const vivBr = grpBr(vivList);
 const lecBr = grpBr(lecList);
 const vidBr = grpBr(vidList);
+const cahBr = grpBr(cahList);
 // Madjaliss : pages de l'élève gardées au premier usage — déduites SEULEMENT si le service worker les exclut
 const swPremier = /'premierUsage'/.test(swSrc);
-const premierBr = swPremier ? grpBr(groups.premierUsage ?? []) : 0;
+const premierBr = swPremier
+  ? grpBr((groups.premierUsage ?? []).filter((f) => !cahList.includes(f)))
+  : 0;
 // catalogues de textes PRÉCHARGÉS par le service worker (liste STUDENT_TEXTS) : comptés pour l'élève
 const studentTexts = [
   ...(/STUDENT_TEXTS\s*=\s*\[([^\]]*)\]/.exec(swSrc)?.[1] ?? '').matchAll(/'([^']+)'/g),
 ].map((m) => m[1]);
 const textsBr = sum(studentTexts, (p) => br(join(root, 'static', p)));
-const eleveCode = jsBr + cssBr - staffBr - raresBr - enLigneBr - vivBr - lecBr - vidBr - premierBr;
+const eleveCode =
+  jsBr + cssBr - staffBr - raresBr - enLigneBr - vivBr - lecBr - vidBr - cahBr - premierBr;
 const eleveBr = eleveCode + textsBr;
 
 // JavaScript + CSS INITIAUX par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises
@@ -230,6 +250,7 @@ const lines = [
   `| Vidéos vivantes, à la demande au premier appui sur « Voir en vidéo » : lecteur v2 et générateur (${vidV2.length} fichiers${swVid ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(vidV2Br)} (≤ ${ko(BUDGET_VIDEO)}) |`,
   `| Vidéos vivantes : lecteur v1 et générateur (interrupteur \`video_v2\` coupé ; ${vidV1.length} fichiers) | ${ko(vidV1Br)} (≤ ${ko(BUDGET_VIDEO)}) |`,
   `| Vidéos vivantes : tous les fichiers du groupe (deux lecteurs, jamais chargés ensemble) | ${ko(vidBr)} |`,
+  `| Cahier de lecture, à la demande à la première ouverture (${cahList.length} fichiers${swCah ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(cahBr)} (≤ ${ko(BUDGET_CAHIER)}) |`,
   `| Total JS + CSS de toutes les pages (mesuré, non bloquant) | ${ko(jsBr + cssBr)} |`,
   `| dont CSS | ${ko(cssBr)} |`,
   `| Service worker | ${ko(swBr)} |`,
@@ -262,6 +283,7 @@ const fails = [
     !swVid || !vidV1.length || !vidV2.length || vidPire > BUDGET_VIDEO,
     'vidéos vivantes (à la demande)',
   ],
+  [!swCah || !cahList.length || cahBr > BUDGET_CAHIER, 'cahier (à la demande)'],
 ].filter(([bad]) => bad);
 if (fails.length) {
   console.error(`Budget dépassé : ${fails.map(([, w]) => w).join(', ')}`);

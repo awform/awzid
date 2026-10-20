@@ -11,6 +11,8 @@ import type { UnitDetail } from './api';
 import { delMany, get, getAll, getAllByIndex, kvGet, kvSet, put, putMany } from './idb';
 import { catalogUrl, t } from './i18n';
 import { VIDEO_NIVEAUX } from '@awform/content/video-niveaux';
+import { CAHIER_NIVEAUX } from './cahier-pages';
+import { fn } from './fonctions.svelte';
 
 export type Illustrations = Record<string, { viewBox: string; svg: string }>;
 
@@ -313,6 +315,8 @@ export { fmtBytes as formatBytes } from './i18n';
  * niveau « sur l'appareil » ; une erreur n'empêche jamais le téléchargement).
  */
 async function gardeVivante(level: string): Promise<void> {
+  // cahier de lecture (20/10/2026) : son code (liste /_app/cahier.json) et ses pages (IndexedDB) gardés avec le niveau
+  if (CAHIER_NIVEAUX.includes(level) && fn('cahier_lecture')) await gardeCahier(level);
   // vidéos vivantes (19/10/2026) : le lecteur des niveaux qui en ont est gardé aussi (vidéo hors ligne)
   if (VIDEO_NIVEAUX.includes(level))
     await fetch('/_app/video.json')
@@ -334,4 +338,18 @@ async function gardeVivante(level: string): Promise<void> {
     .then((r) => (r.ok ? (r.json() as Promise<string[]>) : []))
     .then((l) => Promise.all(l.map((f) => fetch(f))))
     .catch(() => undefined);
+}
+
+/** Cahier de lecture (20/10/2026) : code (à la demande) et pages du cahier d'un niveau gardés pour le hors ligne. */
+async function gardeCahier(level: string): Promise<void> {
+  await fetch('/_app/cahier.json')
+    .then((r) => (r.ok ? (r.json() as Promise<string[]>) : []))
+    .then((l) => Promise.all(l.map((f) => fetch(f))))
+    .catch(() => undefined);
+  try {
+    const r = await fetch(`/cahier-data/${encodeURIComponent(level)}.json`, { cache: 'no-cache' });
+    if (r.ok) await kvSet(`cahier-data:${level}`, await r.json());
+  } catch {
+    /* réseau coupé : le cahier sera gardé à sa première ouverture */
+  }
 }

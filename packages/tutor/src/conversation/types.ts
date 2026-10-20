@@ -89,6 +89,8 @@ export interface ConvSortieFournisseur {
   brouillon: unknown;
   usage: ConvUsage;
   detail?: string;
+  /** message technique du fournisseur (erreur de l'API, réglage ignoré), borné ; jamais montré à l'élève */
+  message?: string;
 }
 
 /** Fournisseur de conversation (Gemini sur Vertex, ou simulé). Ne connaît ni la base ni les plafonds. */

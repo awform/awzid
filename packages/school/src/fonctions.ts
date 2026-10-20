@@ -30,6 +30,7 @@ export const FONCTION_CLES = [
   'design_v4',
   'video_vivante',
   'video_v2',
+  'cahier_lecture',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -103,6 +104,11 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // récapitulatif (lecteur `video/lecteur-v2`, chargé à la demande). Coupées en production et en bêta, ALLUMÉES sur la
   // démonstration ; coupé : le lecteur v1, inchangé. N'agit que si `video_vivante` est ouvert.
   video_v2: { defaut: 'off', demo: 'on' },
+  // Cahier de lecture d'Adultes 1 (20/10/2026) : accès « Cahier de lecture » du niveau, page du jour à côté de la leçon,
+  // lecture guidée, minutes, bilans à froid, atelier, pont vers le Coran (récitation stockée), chargé à la demande.
+  // Coupé par défaut (production, bêta), ALLUMÉ sur la démonstration ; couper l'interrupteur laisse le niveau et les
+  // leçons entiers, sans cahier.
+  cahier_lecture: { defaut: 'off', demo: 'on' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

@@ -23,7 +23,10 @@ const json = (p: string) => JSON.parse(lire(p)) as Record<string, string>;
 
 const coquille = json(join(SRC, 'lib', 'i18n', 'messages', 'fr.json'));
 /** textes embarqués dans le morceau d'un module chargé à la demande (`ajouterTextes`) */
-const EMBARQUES = [join(SRC, 'lib', 'vivante', 'textes-fr.json')];
+const EMBARQUES = [
+  join(SRC, 'lib', 'vivante', 'textes-fr.json'),
+  join(SRC, 'lib', 'cahier', 'textes-fr.json'),
+];
 const catalogues: Record<string, Record<string, string>> = Object.fromEntries([
   ...SPACE_CATALOGS.map((n) => [n, json(join(STATIC, `fr-${n}.json`))]),
   ...EMBARQUES.map((p) => [p, json(p)]),

@@ -33,6 +33,7 @@
   import Signaler, { SIGNAL_CTX } from '$lib/Signaler.svelte';
   import VivanteLecon from '$lib/vivante/VivanteLecon.svelte';
   import VideoBouton from '$lib/VideoBouton.svelte';
+  import { CAHIER_UNITES } from '$lib/cahier-pages';
   import JeParleBouton from '$lib/conversation/JeParleBouton.svelte';
   import { aUnScenario } from '$lib/conversation/scenario';
   import { localIso } from '$lib/hifz';
@@ -460,6 +461,17 @@
           </p>{/if}
         <!-- vidéos vivantes (interrupteur « video_vivante ») : le lecteur est chargé au premier appui -->
         <VideoBouton unit={u} {profileId} />
+        {#if fn('cahier_lecture') && CAHIER_UNITES.includes(u.id)}
+          <!-- cahier de lecture (interrupteur « cahier_lecture ») : la page du jour de cette leçon, choisie par le cahier -->
+          <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu, suivi de l'unité -->
+          <a
+            class="button cahier-lien"
+            data-testid="cahier-lien"
+            href={`${resolve('/cahier/[niveau]', { niveau: u.levelCode })}?u=${u.id}`}
+            ><Bidi text={t('cahier.page_du_jour')} /></a
+          >
+          <!-- eslint-enable svelte/no-navigation-without-resolve -->
+        {/if}
       </header>
 
       {#if isEval && lettres.length}

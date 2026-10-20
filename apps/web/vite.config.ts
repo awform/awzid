@@ -36,6 +36,14 @@ function videoALaDemande(): Plugin {
   );
 }
 
+/**
+ * 20/10/2026 — CAHIER DE LECTURE (`lib/cahier/` et sa page `/cahier/[niveau]`) : chargé à la première ouverture, jamais
+ * préchargé ; liste dans `/_app/cahier.json` (service worker, budget : garde dédiée ; gardé au téléchargement du niveau).
+ */
+function cahierALaDemande(): Plugin {
+  return aLaDemande('cahier', /[\\/](lib[\\/]cahier[\\/]|routes[\\/]cahier[\\/])/);
+}
+
 function aLaDemande(nom: string, VIV: RegExp): Plugin {
   return {
     name: `awzid-${nom}-a-la-demande`,
@@ -136,7 +144,13 @@ const ESPACES: Record<string, RegExp> = {
 };
 
 export default defineConfig({
-  plugins: [sveltekit(), vivanteALaDemande(), lecteurALaDemande(), videoALaDemande()],
+  plugins: [
+    sveltekit(),
+    vivanteALaDemande(),
+    lecteurALaDemande(),
+    videoALaDemande(),
+    cahierALaDemande(),
+  ],
   build: {
     rolldownOptions: {
       output: {
