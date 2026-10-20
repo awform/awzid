@@ -9,6 +9,19 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 20/10/2026 — Vidéos vivantes d'Adultes 1 fusionnées dans `main` (formules de dhikr sonorisées, garde coranique à 4 mots, outil des MP4 d'essai) ; NON déployé
+
+Branche `video-vivante-wip` (rebasée sur `main` 41dce78), fusionnée sans avance rapide. Rien déployé, `awzid-beta` non touché ; audio non touché (`~/lecons-audio`, `awform\audio`) ; `infra/charge/purger-comptes-fictifs.sh` (modifié sans commit dans `~/awform-demo`) non touché.
+
+- **Décisions du référent du 20/10, appliquées avant la fusion** (`f754d3d`) :
+  - **liste blanche des formules de dhikr** : `packages/content/data/dhikr-formules.json` (32 formules relues : tahlīl, shahāda, tasbīḥ, taḥmīd, takbīr, istighfār, ḥawqala, Basmala dite avant d'agir, ṣalawāt, tashahhud, adhkār de la prière, invocations du livre). Comparaison sur le texte sans voyelles (`packages/content/src/dhikr.ts`, forme générée et vérifiée par le test `DHIKR=ecrire`). **Même fichier pour la génération des audios** ;
+  - **garde coranique** : voix interdite à partir de **4 mots consécutifs du Coran** (Tanzil sans voyelles, hors formules) ; permise en dessous (mot de vocabulaire, mot vedette, exemple) ; jamais de voix, même pour une formule, sur ce qui est présenté comme Coran : graphie du Muṣḥaf, référence de verset portée par le bloc, Basmala complète (tête de sourate), texte des parties Coran, morceaux d'une sourate ou d'un verset présenté comme **récitation** (verset entier dans la lecture : `VIDEO_RECITATION`, Fātiḥa mot à mot en l23, sourates 112 à 114 en l24) ;
+  - effet sur les 25 unités : **9 textes redeviennent sonorisables**, dont **4 avec un fichier audio existant** (l11 Basmala avant d'ouvrir le livre, l14 ḥawqala, l15 formule de la prosternation, l24 tashahhud) ; 5 attendent leur fichier (l13 رَبِّي، إِنَّ، إِنَّ رَبِّي قَرِيبٌ ; l18 بِاسْمِ، بِاسْمِ رَبِّكَ الَّذِي) ; **1 devient muet** : l24 الصَّمَدُ (112:2, présenté en récitation).
+- **Outil des MP4 d'essai** : journal de TEST des sons joués dans le lecteur (`window.__vv`, absent en usage normal : fichier, instant), `apps/web/e2e/video-mp4.spec.ts` (`VIDEO_MP4=<dossier>`), niveaux d'audio importés par l'e2e réglables (`E2E_LECONS_NIVEAUX`, défaut inchangé).
+- **Tests** : build, typecheck, eslint, prettier : 0 erreur ; unitaires **2 539 réussis, 0 échec**, 2 ignorés ; content `video.test.ts` 43 ; web `video.test.ts` 9 ; **e2e complète** (`flock`, `--retries=1 --workers=3`, 22,4 min, audio `~/fus-lecons-audio`) : **844 réussis, 158 ignorés, 0 échec, 2 instables** passés au second essai (`lecteur:267` boucle, `madjaliss-textes:442` publication différée), **relancés seuls : 4 sur 4**.
+- **Poids** (Brotli) : appareil élève 346,1 Ko, **marge 3,9 Ko** (≥ 3) ; `/coran/lecteur` 136,1 Ko (≤ 150) ; vidéos vivantes **15,8 Ko** (≤ 18) ; accueil 99,7 Ko.
+
+---
 ## 19/10/2026 — Vidéos vivantes : le livre Adultes 1 joué comme une vidéo (25 unités, 5 modes), branche `video-vivante-wip`
 
 Départ : `main` 1785f17 ; reprise (rebase) sur `main` 41dce78 (refonte v4, catalogue français découpé, tuteur IA et sa batterie). Rien fusionné ni déployé. Maquette validée : `application/design/videos_vivantes/` (concept, prototype de la leçon 1) ; charte des MP4 du livre 1 (`Desktop/Awzid_reseaux/Videos_Livre-1_Adultes/CHARTE_VIDEO_LIVRE-1.md`).
