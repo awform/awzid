@@ -85,5 +85,15 @@
   "vv.tuteur": "Conversation guidée",
   "vv.traits_source": "Sens et ordre des traits : Alif Baa (Brustad, Al-Batal, Al-Tonsi, Georgetown University Press) et tableau naskh de M. Sakkal.",
   "vv.trait": "Trait {n}",
-  "vv.marques": "Les points et les signes"
+  "vv.marques": "Les points et les signes",
+  "vv.ch_decouvrir": "Découvrir",
+  "vv.ch_lire": "Lire",
+  "vv.ch_comprendre": "Comprendre",
+  "vv.ch_entrainer": "S'entraîner",
+  "vv.ch_retenir": "Retenir",
+  "vv.programme": "Au programme",
+  "vv.chapitre": "Chapitre {n} sur {total}",
+  "vv.vu": "Ce que tu as vu",
+  "vv.ecoute_noms": "Écoute le nom de chaque lettre",
+  "vv.ecoute_mot": "Écoute et regarde"
 }

@@ -21,6 +21,7 @@ import {
   superposer,
 } from '../../../scripts/video-traits.mjs';
 import { frH } from './lecteur';
+import { arW, frH as frH2 } from './lecteur-v2';
 
 const c = String.fromCharCode;
 const traits = JSON.parse(
@@ -60,6 +61,103 @@ describe('vidéos vivantes : interrupteur « video_vivante »', () => {
   });
   it('proposé seulement pour les niveaux dont la garde vidéo est calculée (Adultes 1 et 2)', () => {
     expect(VIDEO_NIVEAUX).toEqual(['ad1', 'ad2']);
+  });
+});
+
+describe('vidéos vivantes v2 : interrupteur « video_v2 », surlignage, animations, textes', () => {
+  const ctx: ContexteFonction = {
+    roles: ['eleve'],
+    age: 'adulte',
+    pays: 'FR',
+    ecoles: [],
+    canal: 'beta',
+  };
+  const lire = (p: string) => readFileSync(fileURLToPath(new URL(p, import.meta.url)), 'utf8');
+  it('coupé en production et en bêta, allumé sur la démonstration, réglable par l’administrateur', () => {
+    expect(FONCTIONS.video_v2).toEqual({ defaut: 'off', demo: 'on' });
+    expect(fonctionsParDefaut().video_v2).toBe(false);
+    expect(fonctionsParDefaut('beta').video_v2).toBe(false);
+    expect(
+      fonctionsPour({ ...ctx, canal: 'production' }, etatsAvecDemo({}, false), []).video_v2,
+    ).toBe(false);
+    expect(fonctionsPour(ctx, etatsAvecDemo({}, false), []).video_v2).toBe(false);
+    expect(fonctionsPour(ctx, etatsAvecDemo({}, true), []).video_v2).toBe(true);
+    expect(fonctionsPour(ctx, etatsAvecDemo({ video_v2: 'off' }, true), []).video_v2).toBe(false);
+    expect(fonctionsPour(ctx, {}, [{ cle: 'video_v2', effet: 'on', pays: 'FR' }]).video_v2).toBe(
+      true,
+    );
+  });
+  it('coupé : le bouton charge le lecteur v1 (inchangé) ; allumé : le lecteur v2 ; jamais les deux', () => {
+    const b = lire('../VideoBouton.svelte');
+    expect(b).toMatch(
+      /fn\('video_v2'\)\s*\?\s*chargerModule\(\(\) => import\('\$lib\/video\/lecteur-v2'\)\)\s*:\s*chargerModule\(\(\) => import\('\$lib\/video\/lecteur'\)\)/,
+    );
+  });
+  it('surlignage : découpe aux espaces SEULEMENT (aucune liaison de lettres touchée, texte rendu octet pour octet)', () => {
+    const ph = `${c(0x628, 0x650, 0x633, 0x652, 0x645, 0x650)} ${c(0x627, 0x644, 0x644, 0x651, 0x64e, 0x647, 0x650)}  ${c(0x644, 0x627)}`;
+    const h = arW(ph);
+    const mots = [...h.matchAll(/<span class="w">([^<]*)<\/span>/g)].map((m) => m[1]!);
+    expect(mots).toEqual(ph.split(/\s+/));
+    for (const m of mots) expect(m).not.toMatch(/\s/);
+    // les espaces d'origine restent entre les mots : le texte affiché est exactement celui du livre
+    expect(h.replace(/<[^>]+>/g, '')).toBe(ph);
+    // un mot seul : un seul morceau (son filet doré se remplit)
+    expect([...arW(c(0x645, 0x64e, 0x627, 0x621)).matchAll(/class="w"/g)].length).toBe(1);
+  });
+  it('arabe sur sa propre ligne, comme la v1', () => {
+    const mot = `${c(0x628, 0x64e, 0x64a, 0x652, 0x62a, 0x64c)}`;
+    expect(frH2(`le mot ${mot} veut dire maison`)).toBe(frH(`le mot ${mot} veut dire maison`));
+  });
+  it('animations sur transform et opacity seulement ; animations réduites : fondus seuls', () => {
+    const css = lire('./lecteur-v2.css').replace(/\/\*[\s\S]*?\*\//g, '');
+    // transitions : chaque propriété animée est transform ou opacity
+    for (const m of css.matchAll(/transition:\s*([^;]+);/g))
+      for (const part of m[1]!.split(','))
+        expect(['transform', 'opacity'], m[0]).toContain(part.trim().split(/\s+/)[0]);
+    // images clés : seulement transform et opacity
+    const cles = [...css.matchAll(/@keyframes\s+([\w-]+)\s*\{((?:[^{}]*\{[^{}]*\})*)\s*\}/g)];
+    expect(cles.length).toBeGreaterThan(3);
+    for (const [, nom, corps] of cles)
+      for (const d of corps!.matchAll(/([\w-]+)\s*:/g))
+        expect(['transform', 'opacity'], `${nom} : ${d[1]}`).toContain(d[1]);
+    // aucune propriété de mise en page animée par le lecteur (largeur, hauteur, marges, position)
+    const ts = lire('./lecteur-v2.ts');
+    expect(ts).not.toMatch(/style\.(width|height|left|top|margin|padding)\s*=/);
+    // animations réduites : fondus seuls (ni glissement, ni zoom, ni filet qui se déroule)
+    const reduit = css.slice(css.lastIndexOf('@media (prefers-reduced-motion: reduce)'));
+    expect(reduit).toMatch(/animation: vv-fondu/);
+    expect(reduit).toMatch(/\.vv \.lc\.joue \.gl \.ar[\s\S]*transform: none/);
+    expect(reduit).toMatch(/\.vv \.filet::before[\s\S]*animation: none/);
+  });
+  it('textes de la v2 (chapitres, sommaire, intertitres, récapitulatif) : français et brouillons en, es, de, ar', () => {
+    const fr = JSON.parse(lire('../../../static/i18n/fr-video.json')) as Record<string, string>;
+    const cles = [
+      'vv.ch_decouvrir',
+      'vv.ch_lire',
+      'vv.ch_comprendre',
+      'vv.ch_entrainer',
+      'vv.ch_retenir',
+      'vv.programme',
+      'vv.chapitre',
+      'vv.vu',
+      'vv.ecoute_noms',
+      'vv.ecoute_mot',
+    ];
+    for (const k of cles) expect(fr[k], k).toBeTruthy();
+    for (const l of ['en', 'es', 'de', 'ar']) {
+      const j = JSON.parse(lire(`../../../static/i18n/${l}.json`)) as Record<string, string>;
+      for (const k of cles) expect(j[k], `${l} ${k}`).toBeTruthy();
+      expect(j['fn.video_v2'], l).toBeTruthy();
+    }
+    expect(fr['vv.chapitre']).toBe('Chapitre {n} sur {total}');
+    // tutoiement dans l'application
+    expect(fr['vv.vu']).toBe('Ce que tu as vu');
+    // toutes les clés employées par le lecteur v2 existent en français
+    const ts = lire('./lecteur-v2.ts');
+    const utilisees = new Set(
+      [...ts.matchAll(/'(vv\.[a-z_]+)'/g)].map((m) => m[1]!).filter((k) => !k.endsWith('_')),
+    );
+    for (const k of utilisees) expect(fr[k], k).toBeTruthy();
   });
 });
 

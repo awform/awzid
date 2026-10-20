@@ -3594,6 +3594,7 @@
   "tuia.inconvenant": "Este tema no es adecuado aquí. Elijamos otro: la escena de tu lección, tu familia o tu día.",
   "tuia.conseil": "No doy consejos médicos, jurídicos ni financieros: pregunta a un profesional. Volvamos a tu lección: háblame de la escena del diálogo.",
   "fn.video_vivante": "Vídeos vivos (la lección se reproduce como un vídeo, Adultos nivel 1)",
+  "fn.video_v2": "Vídeos vivos v2 (capítulos, subtítulos, ritmo de la voz, resumen)",
   "vv.voir": "Ver en vídeo",
   "vv.titre": "Vídeo de la lección",
   "vv.fermer": "Cerrar el vídeo",
@@ -3681,5 +3682,15 @@
   "vv.tuteur": "Conversación guiada",
   "vv.traits_source": "Sentido y orden de los trazos: Alif Baa (Brustad, Al-Batal, Al-Tonsi, Georgetown University Press) y tabla naskh de M. Sakkal.",
   "vv.trait": "Trazo {n}",
-  "vv.marques": "Los puntos y los signos"
+  "vv.marques": "Los puntos y los signos",
+  "vv.ch_decouvrir": "Descubrir",
+  "vv.ch_lire": "Leer",
+  "vv.ch_comprendre": "Comprender",
+  "vv.ch_entrainer": "Practicar",
+  "vv.ch_retenir": "Recordar",
+  "vv.programme": "En esta lección",
+  "vv.chapitre": "Capítulo {n} de {total}",
+  "vv.vu": "Lo que has visto",
+  "vv.ecoute_noms": "Escucha el nombre de cada letra",
+  "vv.ecoute_mot": "Escucha y mira"
 }

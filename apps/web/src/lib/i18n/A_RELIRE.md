@@ -180,3 +180,14 @@ Vidéos vivantes, livres de la phrase (20/10/2026, Adultes 2) : 8 textes `vv.*` 
 `vv.lexique`, `vv.vedette_phrase`, `vv.repete`, `vv.mode_courte_p`) traduits par Claude en **brouillon** dans les
 quatre langues en préparation (tutoiement ; « phrase vedette » rendue « key sentence », « frase clave », « Schlüsselsatz »,
 « الجملة المحورية »). À relire avec le reste.
+
+Vidéos vivantes v2 (20/10/2026, interrupteur `video_v2`) : 10 textes `vv.*` de plus, dans l'espace `video`
+(`fr-video.json`, brouillons dans `en`, `es`, `de`, `ar`) : les 5 chapitres (`vv.ch_decouvrir` « Découvrir »,
+`vv.ch_lire` « Lire », `vv.ch_comprendre` « Comprendre », `vv.ch_entrainer` « S'entraîner », `vv.ch_retenir`
+« Retenir »), `vv.programme` (sommaire « Au programme »), `vv.chapitre` (« Chapitre {n} sur {total} »), `vv.vu`
+(récapitulatif « Ce que tu as vu »), `vv.ecoute_noms` et `vv.ecoute_mot` (consignes), et `fn.video_v2` (libellé de
+l'interrupteur). Traduits par Claude en **brouillon** (tutoiement de l'application, singulier en arabe). Choix à
+vérifier : « Practise » (anglais britannique, comme ailleurs), « الجزء » pour « chapitre » (et non « الفصل », qui
+désigne aussi la classe), impératifs arabes au masculin singulier (اكتشف، اقرأ، افهم، تدرّب، تذكّر) comme les autres
+consignes. Les cartons des MP4 des réseaux (« Continuez dans l'appli Awzid ») VOUVOIENT et restent hors des catalogues
+de l'application (`e2e/video-mp4.spec.ts`, français seulement pour l'instant).

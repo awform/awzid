@@ -29,6 +29,7 @@ export const FONCTION_CLES = [
   'beta_contenu_differe_visible',
   'design_v4',
   'video_vivante',
+  'video_v2',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -98,6 +99,10 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // demande. Coupées par défaut (production, bêta), ALLUMÉES sur la démonstration ; indépendantes de `design_v4` et
   // des animations : couper l'interrupteur laisse la leçon entière, sans vidéo.
   video_vivante: { defaut: 'off', demo: 'on' },
+  // vidéos vivantes v2 (20/10/2026, maquette validée) : chapitres, sommaire, sous-titres, rythme de la voix,
+  // récapitulatif (lecteur `video/lecteur-v2`, chargé à la demande). Coupées en production et en bêta, ALLUMÉES sur la
+  // démonstration ; coupé : le lecteur v1, inchangé. N'agit que si `video_vivante` est ouvert.
+  video_v2: { defaut: 'off', demo: 'on' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

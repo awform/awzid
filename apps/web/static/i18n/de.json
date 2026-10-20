@@ -3594,6 +3594,7 @@
   "tuia.inconvenant": "Dieses Thema passt hier nicht. Wählen wir ein anderes: die Szene deiner Lektion, deine Familie oder deinen Tag.",
   "tuia.conseil": "Ich gebe keine medizinischen, rechtlichen oder finanziellen Ratschläge: Frag eine Fachperson. Zurück zu deiner Lektion: Erzähl mir von der Szene des Dialogs.",
   "fn.video_vivante": "Lebendige Videos (Lektion als Video abgespielt, Erwachsene Stufe 1)",
+  "fn.video_v2": "Lebendige Videos v2 (Kapitel, Untertitel, Rhythmus der Stimme, Zusammenfassung)",
   "vv.voir": "Als Video ansehen",
   "vv.titre": "Video der Lektion",
   "vv.fermer": "Video schließen",
@@ -3681,5 +3682,15 @@
   "vv.tuteur": "Geführtes Gespräch",
   "vv.traits_source": "Richtung und Reihenfolge der Striche: Alif Baa (Brustad, Al-Batal, Al-Tonsi, Georgetown University Press) und Naskh-Tafel von M. Sakkal.",
   "vv.trait": "Strich {n}",
-  "vv.marques": "Die Punkte und Zeichen"
+  "vv.marques": "Die Punkte und Zeichen",
+  "vv.ch_decouvrir": "Entdecken",
+  "vv.ch_lire": "Lesen",
+  "vv.ch_comprendre": "Verstehen",
+  "vv.ch_entrainer": "Üben",
+  "vv.ch_retenir": "Merken",
+  "vv.programme": "In dieser Lektion",
+  "vv.chapitre": "Kapitel {n} von {total}",
+  "vv.vu": "Das hast du gesehen",
+  "vv.ecoute_noms": "Hör dir den Namen jedes Buchstabens an",
+  "vv.ecoute_mot": "Hör zu und schau hin"
 }
