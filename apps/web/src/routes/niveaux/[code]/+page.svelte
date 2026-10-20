@@ -7,6 +7,8 @@
   import { demoProfileFor, type DevProfile } from '$lib/attempts';
   import { downloadPack, getSettings } from '$lib/offline';
   import { t } from '$lib/i18n';
+  import { fn } from '$lib/fonctions.svelte';
+  import { CAHIER_NIVEAUX } from '$lib/cahier-pages';
   import { accessFor, espace, matiereOf, type Acces } from '$lib/parcours/parcours';
   let { data } = $props();
 
@@ -80,6 +82,17 @@
     <a class="button primary" href={resolve('/')}>{t('parc.vers_mon_niveau')}</a>
   </section>
 {/if}
+{#if acces !== 'ferme' && fn('cahier_lecture') && CAHIER_NIVEAUX.includes(data.level)}
+  <!-- cahier de lecture (interrupteur « cahier_lecture ») : chargé à la demande par sa page -->
+  <a
+    class="cahier-acces"
+    data-testid="cahier-acces"
+    href={resolve('/cahier/[niveau]', { niveau: data.level })}
+    ><span class="t"><Bidi text={t('cahier.titre')} /></span><span class="s"
+      ><Bidi text={t('cahier.acces_sous')} /></span
+    ></a
+  >
+{/if}
 {#if acces !== 'ferme'}
   <ol class="units" style="--ar-size: {arabicSize(data.level)}px">
     {#each data.units as u (u.id)}
@@ -113,6 +126,25 @@
 {/if}
 
 <style>
+  .cahier-acces {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 10px 0 4px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 2px solid var(--or-line, var(--gold));
+    background: linear-gradient(160deg, var(--bande-1, #0b6e4f), var(--bande-2, #084c38));
+    color: var(--bande-texte, #fbf7ee);
+    text-decoration: none;
+  }
+  .cahier-acces .t {
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+  .cahier-acces .s {
+    font-size: 0.85rem;
+  }
   .units {
     list-style: none;
     padding: 0;

@@ -40,3 +40,8 @@ apps/web/static/mutun/
 
 # Madjaliss lot 5 : fichiers gardés (notes de l enseignant, séances différées, parties de la Risāla), générés par apps/web/scripts/madjaliss.mjs
 apps/web/src/lib/server/mutun/
+
+# Cahier de lecture : source unique recopiée VERBATIM (générateur du cahier), et pages de l'application générées
+# (node apps/web/scripts/cahier-donnees.mjs), texte arabe recopié tel quel, contrôlées par test
+packages/content/data/cahier/
+apps/web/static/cahier-data/
