@@ -58,8 +58,8 @@ describe('vidéos vivantes : interrupteur « video_vivante »', () => {
       true,
     );
   });
-  it('proposé seulement pour les niveaux dont la garde vidéo est calculée (Adultes 1)', () => {
-    expect(VIDEO_NIVEAUX).toEqual(['ad1']);
+  it('proposé seulement pour les niveaux dont la garde vidéo est calculée (Adultes 1 et 2)', () => {
+    expect(VIDEO_NIVEAUX).toEqual(['ad1', 'ad2']);
   });
 });
 
@@ -74,6 +74,35 @@ describe('vidéos vivantes : l’arabe sur sa propre ligne', () => {
   it('entre parenthèses, le mot arabe garde ses parenthèses sur sa ligne (aucune parenthèse orpheline)', () => {
     expect(frH(`Le Coran imprimé (${mot}) : même texte`)).toBe(
       `<div class="frh"><span class="fr">Le Coran imprimé </span><span class="ar l" lang="ar" dir="rtl">(${mot})</span><span class="fr"> : même texte</span></div>`,
+    );
+  });
+  it('après une ligne arabe, la ligne française ne commence pas par sa virgule', () => {
+    expect(frH(`Lettres ${mot}, la ligature`)).toBe(
+      `<div class="frh"><span class="fr">Lettres </span><span class="ar l" lang="ar" dir="rtl">${mot}</span><span class="fr">la ligature</span></div>`,
+    );
+  });
+  it('lettres isolées citées (ك ل م ه, la ligature لا) : restent dans la phrase française', () => {
+    const k = [0x643, 0x644, 0x645, 0x647].map((x) => c(x)).join(' ');
+    const la = c(0x644, 0x627);
+    const h = frH(`${k}, la ligature ${la} et le nom d'Allah`);
+    expect(h).not.toContain('class="ar');
+    expect(h).toContain(
+      `<bdi class="lt" lang="ar" dir="rtl">${k}</bdi>, la ligature <bdi class="lt" lang="ar" dir="rtl">${la}</bdi>`,
+    );
+  });
+  it('parenthèse fermante orpheline après une ligne arabe : retirée', () => {
+    expect(frH(`un monde (pluriel : ${mot})`)).toBe(
+      `<div class="frh"><span class="fr">un monde (pluriel : </span><span class="ar l" lang="ar" dir="rtl">${mot}</span></div>`,
+    );
+  });
+  it('une terminaison citée avec tatweel (une seule lettre) reste dans la phrase', () => {
+    const tu = c(0x640, 0x652, 0x62a, 0x64f);
+    expect(frH(`base + ${tu} je`)).not.toContain('class="ar');
+  });
+  it('deux formes arabes séparées par « / » restent sur la même ligne ; « ? » orphelin retiré', () => {
+    const fin = c(0x640, 0x64e, 0x627, 0x646, 0x650);
+    expect(frH(`Le duel : ${fin} / ${mot} ?`)).toBe(
+      `<div class="frh"><span class="fr">Le duel : </span><span class="ar l" lang="ar" dir="rtl">${fin} / ${mot}</span></div>`,
     );
   });
   it('un mot ou une phrase arabe passe sur sa propre ligne, le français autour reste entier', () => {

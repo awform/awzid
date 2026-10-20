@@ -45,10 +45,13 @@ export interface OuvrirOptions {
 const c = String.fromCharCode;
 const AR = `${c(0x600)}-${c(0x6ff)}`;
 // passage arabe d'un texte français ; entre parenthèses ou guillemets, ceux-ci l'accompagnent sur sa ligne
+// (deux formes arabes séparées par « / », « · » ou « ← » restent sur la même ligne : les deux terminaisons du duel)
 const RUN = new RegExp(
-  `(\\(\\s?[${AR}][${AR}\\s.]*\\s?\\)|«\\s?[${AR}][${AR}\\s.]*\\s?»|[${AR}][${AR}\\s.]*)`,
+  `(\\(\\s?[${AR}][${AR}\\s.]*\\s?\\)|«\\s?[${AR}][${AR}\\s.]*\\s?»|[${AR}](?:\\s[/·←]\\s(?=[${AR}])|[${AR}\\s.])*)`,
 );
-const LETTRE = new RegExp(`[${c(0x621)}-${c(0x64a)}]`, 'g');
+// lettres (le tatweel U+0640 n'en est pas une : une terminaison citée « ـْتُ » reste dans la phrase)
+const LETTRE = new RegExp(`[${c(0x621)}-${c(0x63f)}${c(0x641)}-${c(0x64a)}]`, 'g');
+const LATIN = /[A-Za-z]/;
 const TATWEEL = c(0x640);
 const ALIF = c(0x627);
 const NASKH = '"Noto Naskh Arabic"';
@@ -73,7 +76,7 @@ const famille = (l: string) => FAMILLES.find(([cs]) => cs.includes(l.charCodeAt(
  * Journal de TEST (fabrication des MP4 d'essai, e2e/video-mp4.spec.ts) : sons joués (fichier, instant) et question en
  * cours. Il n'existe que si un test le crée avant l'ouverture (`window.__vv`) : rien n'est noté en usage normal.
  */
-type Journal = { sons: Array<[string, number]>; q?: Question };
+type Journal = { sons: Array<[string, number]>; scenes?: Array<[string, number]>; q?: Question };
 const journal = () => (globalThis as { __vv?: Journal }).__vv;
 
 class Coupe extends Error {}
@@ -93,20 +96,51 @@ const arH = (s: string, cls = '') => `<span class="ar ${cls}" lang="ar" dir="rtl
 export function frH(s: string, cls = 'fr'): string {
   let out = '';
   let buf = '';
+  // après une ligne arabe, la ponctuation qui la suivait ne commence pas la ligne française (« , la ligature »)
+  const fl = () => (out ? buf.replace(/^\s*(?:[)\]»]\s*[,;.?!]?|[,;.?!])\s*/, '') : buf);
+  // morceau français fait seulement de ponctuation (« ) » restée après une ligne arabe) : rien à montrer
+  const vide = (x: string) => !x.replace(/[\s.,;:)\]»]/g, '');
   for (const p of s.split(RUN)) {
     if (!p) continue;
     if (!RUN.test(p)) buf += esc(p);
-    else if ((p.match(LETTRE) ?? []).length <= 1)
+    else if (isolees(p))
       buf += `<bdi class="lt" lang="ar" dir="rtl">${esc(p.trim())}</bdi>${/\s$/.test(p) ? ' ' : ''}`;
     else {
-      if (buf.trim()) out += `<span class="${cls}">${buf}</span>`;
+      if (!vide(fl())) out += `<span class="${cls}">${fl()}</span>`;
       buf = '';
       out += arH(p.trim(), 'l');
     }
   }
-  if (buf.replace(/[\s.,;:]/g, '')) out += `<span class="${cls}">${buf}</span>`;
+  const reste = fl();
+  if (!vide(reste)) out += `<span class="${cls}">${reste}</span>`;
   return `<div class="frh">${out}</div>`;
 }
+
+/** choix d'un exercice : arabe ; français ; ou français du livre avec de l'arabe (chacun sur sa ligne) */
+const choixH = (o: string) =>
+  LATIN.test(o)
+    ? frH(o, 'fr toujours')
+    : RUN.test(o)
+      ? arH(o)
+      : `<span class="fr toujours">${esc(o)}</span>`;
+
+/** lettres isolées citées (une lettre par morceau, lām-alif compté une fois : « ك ل م ه », « لا ») : dans la phrase */
+const LAMALIF = new RegExp(`${c(0x644)}[${c(0x622, 0x623, 0x625, 0x627)}]`, 'g');
+const isolees = (p: string) =>
+  p
+    .trim()
+    .split(/\s+/)
+    .every((m) => (m.replace(LAMALIF, c(0x644)).match(LETTRE) ?? []).length <= 1);
+/** titre du livre qui commence par des lettres citées : « Les lettres ك ل م ه, la ligature لا… » */
+const titreH = (s: string) => {
+  const m = RUN.exec(s);
+  return frH(
+    m?.index === 0 && isolees(m[0]) && m[0].trim().includes(' ')
+      ? `${t('vv.les_lettres')} ${s}`
+      : s,
+    'h',
+  );
+};
 
 /** fermeture du lecteur ouvert (un seul à la fois) */
 let fermerOuvert: (() => void) | null = null;
@@ -151,6 +185,8 @@ function creer(opt: OuvrirOptions): () => void {
   let audio: HTMLAudioElement | null = null;
   let seul: HTMLAudioElement | null = null;
   let score = { ok: 0, n: 0 };
+  /** sons réellement joués (une scène sans aucun son dit ses textes de secours) */
+  let nSons = 0;
   let retour: Element | null;
   let cle: string;
 
@@ -276,10 +312,10 @@ function creer(opt: OuvrirOptions): () => void {
   }
   /** joue le fichier audio du texte s'il existe (copie de l'appareil d'abord) ; sinon un court silence */
   async function dire(x: T | undefined, el?: Element | null): Promise<void> {
-    const id = x?.son ? audioIdFor(x.ar, opt.audio) : null;
+    const id = x?.son ? audioIdFor(x.dit ?? x.ar, opt.audio) : null;
     el?.classList.add('joue');
     try {
-      if (!id) return await att(700);
+      if (!id) return await att(400);
       const j = jeton;
       const s = await leconsSource(id).catch(() => null);
       // scène changée pendant l'attente : cette suite s'arrête (sinon elle continuerait dans la scène suivante)
@@ -299,7 +335,7 @@ function creer(opt: OuvrirOptions): () => void {
           ok();
         };
         a.onended = a.onerror = fin;
-        a.onplaying = () => journal()?.sons.push([id, Date.now()]);
+        a.onplaying = () => (nSons++, journal()?.sons.push([id, Date.now()]));
         // connexion coupée ou lecture refusée : la scène continue en silence
         setTimeout(() => !pause && a.currentTime === 0 && fin(), 2500);
         if (!pause) a.play().catch(fin);
@@ -339,7 +375,7 @@ function creer(opt: OuvrirOptions): () => void {
     const s = stage;
     s.innerHTML = '';
     const d = h('div', 'vv-dep');
-    d.innerHTML = `${L.titre_fr ? frH(L.titre_fr, 'h') : ''}<div class="filet"><i></i></div>`;
+    d.innerHTML = `${L.titre_fr ? titreH(L.titre_fr) : ''}<div class="filet"><i></i></div>`;
     let rep: { m?: VideoMode; l?: number; i?: number; s?: string } = {};
     try {
       rep = JSON.parse(localStorage.getItem(cle) ?? '{}') ?? {};
@@ -360,10 +396,12 @@ function creer(opt: OuvrirOptions): () => void {
           : ms < 90_000
             ? t('vv.duree_s', { s: Math.round(ms / 10_000) * 10 })
             : t('vv.duree', { m: Math.round(ms / 60_000) });
+      // version courte d'un livre de la phrase : phrase vedette, mots et dialogue
+      const p = m === 'courte' && vid.scenes.some((s) => s.id === 'courte-vedette');
       const b = h(
         'button',
         'mode',
-        `<b>${esc(t(`vv.mode_${m}`))}</b><span>${esc(t(`vv.mode_${m}_d`))}${dur ? ` · ${esc(dur)}` : ''}</span>`,
+        `<b>${esc(t(`vv.mode_${m}`))}</b><span>${esc(t(p ? 'vv.mode_courte_p' : `vv.mode_${m}_d`))}${dur ? ` · ${esc(dur)}` : ''}</span>`,
       );
       b.dataset.mode = m;
       b.onclick = () => (m === 'lettre' && vid.lettres.length > 1 ? choixLettre() : lancer(m, 0));
@@ -434,6 +472,7 @@ function creer(opt: OuvrirOptions): () => void {
     }
     stage.innerHTML = '';
     stage.dataset.scene = sc.id;
+    journal()?.scenes?.push([sc.id, Date.now()]);
     const tr = sc.temps.find((x) => x.k === 'trace');
     const fam = tr?.k === 'trace' ? famille(tr.l) : undefined;
     if (fam) stage.style.setProperty('--fam', fam);
@@ -444,10 +483,13 @@ function creer(opt: OuvrirOptions): () => void {
     band.dataset.testid = 'vv-bandeau';
     stage.append(zone, band);
     try {
+      const n0 = nSons;
       for (const x of sc.temps) {
         await temps(x, sc);
         vivant(j);
       }
+      // aucune scène muette quand un texte affiché a sa voix : les textes de secours sont dits
+      if (nSons === n0) for (const v of sc.voix ?? []) await dire(v);
       await att(600);
       if (j === jeton) void jouer(i + 1);
     } catch (e) {
@@ -492,6 +534,23 @@ function creer(opt: OuvrirOptions): () => void {
     }
     while (deborde() && z.firstElementChild && z.firstElementChild !== e)
       z.firstElementChild.remove();
+    // un bloc seul plus haut que la scène (règle longue, explication des livres de la phrase) : ses premiers morceaux
+    // laissent la place aux suivants
+    for (
+      let c = e.querySelector('.carte > .apparait');
+      c?.nextElementSibling && deborde();
+      c = e.querySelector('.carte > .apparait')
+    )
+      c.remove();
+  }
+  /** temps de lecture ; un texte plus haut que la scène y défile lentement jusqu'à sa fin (jamais de texte caché) */
+  function defile(ms: number): Promise<void> {
+    const z = zone;
+    const de = z.scrollTop;
+    return prog(ms, (p) => {
+      const fin = z.scrollHeight - z.clientHeight;
+      if (fin > de) z.scrollTop = de + (fin - de) * Math.min(1, p * 1.25);
+    });
   }
   function tuile(x: T, cls = ''): string {
     return x.son
@@ -559,7 +618,7 @@ function creer(opt: OuvrirOptions): () => void {
     switch (x.k) {
       case 'titre': {
         const e = ajoute(
-          `${x.fr ? frH(x.fr, 'h') : ''}${x.ar ? arH(x.ar, 'titre') : ''}<div class="filet"><i></i></div><div class="rangee"></div>`,
+          `${x.fr ? titreH(x.fr) : ''}${x.ar ? arH(x.ar.ar, 'titre') : ''}<div class="filet"><i></i></div><div class="rangee"></div>`,
           true,
         );
         const r = e.querySelector('.rangee')!;
@@ -567,19 +626,24 @@ function creer(opt: OuvrirOptions): () => void {
           r.append(h('span', 'apparait', arH(l.ar, 'g')));
           await att(450);
         }
-        return att(x.ms - 450 * (x.tableau?.length ?? 0));
+        // voix dès l'ouverture : noms des lettres l'un après l'autre, sinon le titre arabe et les mots du tableau
+        const vs = (x.noms ?? [x.ar, ...(x.tableau ?? [])]).filter((v) => v?.son);
+        for (const v of vs) await dire(v);
+        return att(vs.length ? 1200 : x.ms - 450 * (x.tableau?.length ?? 0));
       }
       case 'bulle': {
         const cote = x.cote === undefined ? '' : x.cote ? 'g' : 'd';
         const e = ajoute(
           `<div class="bulle ${cote}">${x.qui ? arH(x.qui, 'qui') : ''}${x.lignes.map((l) => arH(l.ar)).join('')}${fr(x.fr)}</div>`,
         );
-        for (const l of x.lignes) await dire(l, e.firstElementChild);
+        if (x.dit) await dire(x.dit, e.firstElementChild);
+        else for (const l of x.lignes) await dire(l, e.firstElementChild);
         return att(x.ms * 0.5);
       }
       case 'objectif':
         ajoute(`<div class="carte">${x.ar ? arH(x.ar.ar) : ''}${fr(x.fr, true)}</div>`);
-        return att(x.ms);
+        if (x.ar?.son) await dire(x.ar);
+        return att(x.ar?.son ? 1500 : x.ms);
       case 'trace': {
         const e = ajoute('<div class="trace-h"></div>', true);
         const trace = await tracer(e.firstElementChild as HTMLElement, x.l, x.l, 0, 6.5);
@@ -593,7 +657,8 @@ function creer(opt: OuvrirOptions): () => void {
         return att(x.ms * 0.4);
       }
       case 'points':
-        ajoute(`${x.ar ? arH(x.ar, 'points') : ''}${fr(x.fr, true)}`);
+        ajoute(`${x.ar ? arH(x.ar.ar, 'points') : ''}${fr(x.fr, true)}`);
+        if (x.ar?.son) await dire(x.ar);
         return att(x.ms);
       case 'formes': {
         const lab = ['vv.isolee', 'vv.debut', 'vv.milieu', 'vv.fin_mot'];
@@ -664,24 +729,27 @@ function creer(opt: OuvrirOptions): () => void {
         return att(x.ms);
       case 'regle': {
         const e = ajoute(
-          `<div class="carte">${x.titre_ar ? arH(x.titre_ar, 'titre') : ''}${x.titre_fr ? frH(x.titre_fr, 'h') : ''}${x.signe ? arH(x.signe, 'g') : ''}</div>`,
+          `<div class="carte">${x.titre_ar ? arH(x.titre_ar.ar, 'titre') : ''}${x.titre_fr ? frH(x.titre_fr, 'h') : ''}${x.signe ? arH(x.signe, 'g') : ''}</div>`,
         );
         const cte = e.firstElementChild!;
+        if (x.titre_ar?.son) await dire(x.titre_ar);
         for (const a of x.ar ?? []) {
-          cte.append(h('div', 'apparait', arH(a.ar, 'l')));
+          const d = h('div', 'apparait', arH(a.ar, 'l'));
+          cte.append(d);
           tasse(e);
-          await att(1400);
+          if (a.son) await dire(a, d);
+          await defile(a.son ? 500 : 1400);
         }
         for (const f of x.fr ?? []) {
           cte.append(h('div', 'apparait', frH(f, 'fr toujours')));
           tasse(e);
-          await att(1200 + 40 * f.length);
+          await defile(1200 + 40 * f.length);
         }
         return att(800);
       }
       case 'fr':
         ajoute(`<div class="carte">${frH(x.fr, 'fr toujours')}</div>`);
-        return att(x.ms);
+        return defile(x.ms);
       case 'lettres': {
         const e = ajoute('<div class="grille lettres"></div>', true);
         for (const y of x.items) {
@@ -694,6 +762,30 @@ function creer(opt: OuvrirOptions): () => void {
       }
       case 'aToi':
         return aToi(x.consigne.cle, x.ms - 1300 * (x.puis?.length ?? 0), x.puis);
+      case 'cles': {
+        // une ligne par mot ou expression du livre (arabe sur sa ligne, sens en dessous), dite à son tour
+        const e = ajoute(
+          `${consigne('vv.ecoute_lis')}<div class="cles">${x.items.map((l) => `<div class="carte">${LATIN.test(l.ar.ar) ? frH(l.ar.ar, 'fr toujours') : tuile(l.ar, 'tm')}${fr(l.fr)}</div>`).join('')}</div>`,
+          true,
+        );
+        const cs = e.querySelectorAll('.carte');
+        for (const [k, l] of x.items.entries()) {
+          const c = cs[k]?.querySelector('.tuile') ?? cs[k];
+          if (l.ar.son) await dire(l.ar, c);
+          else for (const d of l.dits ?? []) await dire(d, c);
+          await att(700);
+        }
+        return att(800);
+      }
+      case 'retenir': {
+        const e = ajoute(
+          `<div class="carte">${x.fr ? frH(x.fr, 'fr toujours') : ''}${x.ar ? tuile(x.ar, 'tm') : ''}</div>`,
+          true,
+        );
+        await defile(1200 + 40 * (x.fr?.length ?? 0));
+        if (x.ar) await dire(x.ar, e.querySelector('.tuile'));
+        return att(1500);
+      }
       case 'q':
         return question(x.q, sc.jouable === true, `${x.i + 1} / ${x.n}`);
       case 'jouer':
@@ -707,7 +799,7 @@ function creer(opt: OuvrirOptions): () => void {
     if (J) J.q = q;
     ajoute(`${titreCarte ? frH(titreCarte, 'h') : ''}<p class="k">${esc(rang)}</p>`, true);
     const opts = (xs: string[], cls = '') =>
-      `<div class="options ${cls}">${xs.map((o, k) => `<button class="opt" data-o="${k}">${RUN.test(o) ? arH(o) : `<span class="fr toujours">${esc(o)}</span>`}</button>`).join('')}</div>`;
+      `<div class="options ${cls}">${xs.map((o, k) => `<button class="opt" data-o="${k}">${choixH(o)}</button>`).join('')}</div>`;
     const choix = async (
       e: HTMLElement,
       xs: string[],
@@ -755,12 +847,15 @@ function creer(opt: OuvrirOptions): () => void {
           if (q.mot) {
             const m = ajoute(tuile(q.mot, 'mot'));
             await dire(q.mot, m.firstElementChild);
-          }
+          } else if (q.bonne?.son) await dire(q.bonne, e.querySelector('.case'));
         });
       }
       case 'complete': {
+        // une indication en français du livre (« vous (des femmes) : ») a sa propre ligne, au-dessus de la ligne arabe
+        const ar = (s: string) => (s && RUN.test(s) ? arH(s, 'suite') : '');
+        const lat = (s: string) => (s && !RUN.test(s) ? fr(s, true) : '');
         const e = ajoute(
-          `<div class="trou" dir="rtl">${q.avant ? (RUN.test(q.avant) ? arH(q.avant, 'suite') : esc(q.avant)) : ''}<span class="case"></span>${q.apres ? arH(q.apres, 'suite') : ''}</div>${fr(q.fr, true)}${opts(q.options)}`,
+          `${lat(q.avant)}${lat(q.apres)}<div class="trou" dir="rtl">${ar(q.avant)}<span class="case"></span>${ar(q.apres)}</div>${fr(q.fr, true)}${opts(q.options)}`,
         );
         return choix(e, q.options, q.reponse, async () => {
           if (q.reponse)
@@ -770,7 +865,7 @@ function creer(opt: OuvrirOptions): () => void {
           if (q.mot) {
             const m = ajoute(tuile(q.mot, 'mot'));
             await dire(q.mot, m.firstElementChild);
-          }
+          } else if (q.bonne?.son) await dire(q.bonne, e.querySelector('.case'));
         });
       }
       case 'vf': {
@@ -850,7 +945,7 @@ function creer(opt: OuvrirOptions): () => void {
         const dec = Math.max(1, Math.floor(n / 2)) % Math.max(1, n);
         const droite = q.droite ?? q.items.map((_, k) => q.items[(k + dec) % n]!);
         const e = ajoute(
-          `<div class="relier"><div>${q.items.map((x, k) => `<button class="opt" data-g="${k}">${arH(x.ar.ar)}</button>`).join('')}</div><div>${droite.map((x, k) => `<button class="opt" data-d="${k}">${img(x.img, 'mini')}${x.fr ? `<span class="fr toujours">${esc(x.fr)}</span>` : ''}</button>`).join('')}</div></div>`,
+          `<div class="relier"><div>${q.items.map((x, k) => `<button class="opt" data-g="${k}">${arH(x.ar.ar)}</button>`).join('')}</div><div>${droite.map((x, k) => `<button class="opt" data-d="${k}">${img(x.img, 'mini')}${x.fr ? frH(x.fr, 'fr toujours') : ''}</button>`).join('')}</div></div>`,
         );
         const G = [...e.querySelectorAll<HTMLButtonElement>('[data-g]')];
         const D = [...e.querySelectorAll<HTMLButtonElement>('[data-d]')];
@@ -899,11 +994,12 @@ function creer(opt: OuvrirOptions): () => void {
         G.forEach((b) => ((b.disabled = true), b.classList.add('bon')));
         noter(v === true && !erreurs);
         retourTexte(v, v === true && !erreurs);
-        return att(2500);
+        for (const [k, it] of q.items.entries()) if (it.ar.son) await dire(it.ar, G[k]);
+        return att(1500);
       }
       case 'ordre': {
         const e = ajoute(
-          `<div class="ligne-rep" dir="rtl"></div><div class="options">${q.mots.map((m, k) => `<button class="opt" data-o="${k}">${RUN.test(m) ? arH(m) : esc(m)}</button>`).join('')}</div>`,
+          `<div class="ligne-rep" dir="rtl"></div><div class="options">${q.mots.map((m, k) => `<button class="opt" data-o="${k}">${choixH(m)}</button>`).join('')}</div>`,
         );
         const rep = e.firstElementChild!;
         const bs = [...e.querySelectorAll<HTMLButtonElement>('.opt')];
@@ -928,9 +1024,7 @@ function creer(opt: OuvrirOptions): () => void {
           b.onclick = () => {
             b.disabled = true;
             pris.push(k);
-            rep.append(
-              h('span', 'tuile', RUN.test(q.mots[k]!) ? arH(q.mots[k]!) : esc(q.mots[k]!)),
-            );
+            rep.append(h('span', 'tuile', choixH(q.mots[k]!)));
             if (pris.length === q.mots.length)
               r.dire(pris.every((x, i) => q.mots[x] === q.mots[q.ordre![i]!]));
           };

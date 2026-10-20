@@ -188,7 +188,7 @@ test.describe('vidéos vivantes : MP4 d’essai', () => {
       });
       const page = await ctx.newPage();
       await page.addInitScript(() => {
-        (window as unknown as { __vv: unknown }).__vv = { sons: [] };
+        (window as unknown as { __vv: unknown }).__vv = { sons: [], scenes: [] };
         try {
           localStorage.setItem('awzid.lecon.tout', '1');
         } catch {
@@ -230,9 +230,19 @@ test.describe('vidéos vivantes : MP4 d’essai', () => {
       await page.waitForTimeout(2500);
       const t1 = await page.evaluate(() => Date.now());
       await cdp.send('Page.stopScreencast');
-      const sons = await page.evaluate(
-        () => (window as unknown as { __vv: { sons: Array<[string, number]> } }).__vv.sons,
+      const { sons, scenes } = await page.evaluate(
+        () =>
+          (
+            window as unknown as {
+              __vv: { sons: Array<[string, number]>; scenes: Array<[string, number]> };
+            }
+          ).__vv,
       );
+      // scènes jouées sans aucun son (journal du lecteur) : l'objectif est zéro, hors scènes sans fichier audio
+      const muettes = scenes
+        .map(([id, a], k) => ({ id, a, b: scenes[k + 1]?.[1] ?? t1 }))
+        .filter((s) => !sons.some(([, t]) => t >= s.a && t < s.b))
+        .map((s) => s.id);
       await ctx.close();
 
       // —— images : du départ à la fin (chaque image dure jusqu'à la suivante), 30 images/s
@@ -312,6 +322,8 @@ test.describe('vidéos vivantes : MP4 d’essai', () => {
               present: existsSync(join(SRC, `${id}.mp3`)),
             })),
             absents: absents.length,
+            scenes: scenes.map(([id, t]) => ({ id, a_s: Math.round(t - td) / 1000 })),
+            scenes_sans_son: muettes,
           },
           null,
           1,

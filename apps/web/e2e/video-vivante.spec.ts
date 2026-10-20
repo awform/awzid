@@ -19,6 +19,10 @@ import { totp } from './totp';
 const H = { 'x-awform': '1' };
 const PAYS = 'LU';
 const CAPTURES = process.env.VIDEO_CAPTURES;
+/** niveau des captures (Adultes 1 par défaut ; VIDEO_CAPTURES_LIVRE=ad2…) */
+const LIVRE = process.env.VIDEO_CAPTURES_LIVRE ?? 'ad1';
+/** unités à capturer (toutes par défaut ; VIDEO_CAPTURES_UNITES=l21,l22…) */
+const UNITES = (process.env.VIDEO_CAPTURES_UNITES ?? '').split(',').filter(Boolean);
 
 async function admin(browser: Browser): Promise<Page> {
   const email = `admin-vv-${test.info().project.name}-${Date.now()}@e2e.test`;
@@ -256,6 +260,32 @@ test.describe('interrupteur ALLUMÉ (exception par pays, sans redéploiement)', 
     await cibles(page);
   });
 
+  test('Adultes 2, leçon 1 : sans « par lettre », phrase vedette en tête de la courte, mots-clés, « À retenir »', async ({
+    page,
+  }) => {
+    await ouvrir(page, 'ad2.l01');
+    expect(await modes(page)).toEqual(['courte', 'longue', 'quiz', 'revision']);
+    await page.locator('.vv .mode[data-mode="courte"]').click();
+    expect(await scene(page)).toBe('ouverture');
+    await page.locator('.vv [data-k="suiv"]').click();
+    expect(await scene(page)).toBe('courte-vedette');
+    await fermer(page);
+    await page.getByTestId('voir-video').click();
+    await page.locator('.vv .mode[data-mode="longue"]').click();
+    const vus: string[] = [];
+    for (let i = 0; i < 40 && !vus.includes('recap'); i++) {
+      const id = (await scene(page)) ?? '';
+      vus.push(id);
+      if (id === 'motscles') await expect(page.locator('.vv .cles .carte').first()).toBeVisible();
+      if (id === 'recap') await expect(page.locator('.vv .carte .fr').first()).toBeVisible();
+      await page.locator('.vv [data-k="suiv"]').click();
+    }
+    expect(vus).toEqual(
+      expect.arrayContaining(['motscles', 'vedette', 'lexique', 'dialogue', 'recap']),
+    );
+    await cibles(page);
+  });
+
   test('captures 390 px des 25 unités (clair et sombre) et planches', async ({ page }) => {
     test.skip(!CAPTURES, 'VIDEO_CAPTURES non défini');
     test.setTimeout(3_600_000);
@@ -267,10 +297,12 @@ test.describe('interrupteur ALLUMÉ (exception par pays, sans redéploiement)', 
       'rappel-lettres',
       'notion',
       'syllabes',
+      'motscles',
       'ligne',
       'vedette',
       'phrases',
       'mots',
+      'lexique',
       'q-',
       'dialogue',
       'recap',
@@ -278,8 +310,9 @@ test.describe('interrupteur ALLUMÉ (exception par pays, sans redéploiement)', 
     const planche: Record<string, string[]> = {};
     for (let n = 1; n <= 25; n++) {
       const u = `l${String(n).padStart(2, '0')}`;
+      if (UNITES.length && !UNITES.includes(u)) continue;
       await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' });
-      await ouvrir(page, `ad1.${u}`);
+      await ouvrir(page, `${LIVRE}.${u}`);
       const fichiers: string[] = [];
       const prendre = async (nom: string) => {
         for (const m of ['light', 'dark'] as const) {
@@ -316,6 +349,7 @@ test.describe('interrupteur ALLUMÉ (exception par pays, sans redéploiement)', 
     // une planche par groupe de 5 unités : une ligne claire et une ligne sombre par unité
     for (let g = 0; g < 5; g++) {
       const us = Object.keys(planche).slice(g * 5, g * 5 + 5);
+      if (!us.length) continue;
       const img = (f: string) =>
         `<figure><img src="data:image/png;base64,${readFileSync(f).toString('base64')}"><figcaption>${f.split('/').pop()!.replace('.png', '')}</figcaption></figure>`;
       const lignes = us
@@ -331,9 +365,14 @@ test.describe('interrupteur ALLUMÉ (exception par pays, sans redéploiement)', 
       const p = await page.context().newPage();
       await p.setViewportSize({ width: 2400, height: 1000 });
       await p.setContent(
-        `<!doctype html><meta charset="utf-8"><style>body{margin:16px;background:#efe7d6;font:14px sans-serif;color:#084c38}h1{font-size:22px;margin:0 0 8px}h2{margin:14px 0 4px;font-size:16px}.r{display:flex;gap:6px;margin-bottom:6px}figure{margin:0}img{width:180px;display:block;border-radius:8px}figcaption{font-size:9px;width:180px;overflow:hidden;white-space:nowrap}</style><h1>Awzid · Vidéos vivantes · Adultes 1 · unités ${us[0]} à ${us.at(-1)} (390 px, clair puis sombre)</h1>${lignes}`,
+        `<!doctype html><meta charset="utf-8"><style>body{margin:16px;background:#efe7d6;font:14px sans-serif;color:#084c38}h1{font-size:22px;margin:0 0 8px}h2{margin:14px 0 4px;font-size:16px}.r{display:flex;gap:6px;margin-bottom:6px}figure{margin:0}img{width:180px;display:block;border-radius:8px}figcaption{font-size:9px;width:180px;overflow:hidden;white-space:nowrap}</style><h1>Awzid · Vidéos vivantes · ${LIVRE} · unités ${us[0]} à ${us.at(-1)} (390 px, clair puis sombre)</h1>${lignes}`,
       );
-      await p.screenshot({ path: join(dir, `PLANCHE_${us[0]}-${us.at(-1)}.png`), fullPage: true });
+      // pixels CSS (planche de 7 000 px de haut au plus, contrôlée)
+      const fp = join(dir, `PLANCHE_${us[0]}-${us.at(-1)}.png`);
+      await p.screenshot({ path: fp, fullPage: true, scale: 'css' });
+      expect(await p.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
+        7000,
+      );
       await p.close();
     }
     writeFileSync(join(dir, 'captures.json'), JSON.stringify(planche, null, 1));
