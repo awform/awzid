@@ -9,6 +9,29 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 20/10/2026 (suite) — Vidéos vivantes : le livre Adultes 2 (branche `video-vivante-ad2-wip`, NON fusionnée)
+
+Départ : `main` 6904b8b. Rien fusionné ni déployé ; audio non touché. Le client fusionnera.
+
+- **Générateur générique** (`packages/content/src/video.ts`) : les scènes viennent des CHAMPS du livre, jamais du niveau, pour servir aux niveaux suivants sans réécriture. Nouveaux temps : `cles` (liste de lignes du livre : arabe sur sa ligne, sens dessous ; ligne dite entière, sinon morceau par morceau quand les morceaux ont un fichier) et `retenir` (règle française puis exemple arabe).
+- **Les 4 formats proposés pour le livre 2**, devenus des scènes :
+  - **dialogue** : bulles une à une avec l'audio du livre, ligne-modèle, **note du livre phrase par phrase**, puis « À toi de jouer la scène ! » ;
+  - **phrase vedette** (vedette de deux mots ou plus) : écoute, traduction, « Écoute, puis répète la phrase » (« Lis la phrase à voix haute » si elle est muette), note du livre ; elle **ouvre la version courte** (puis les mots, puis le dialogue si la durée le permet : 1 à 2 min) ;
+  - **« À retenir » de grammaire** (`retiens`, unité sans lettre nouvelle) : règle puis exemple, dit s'il a un fichier ;
+  - **mots-clés de lecture** : `lecture.syllabes` quand la moitié au moins des entrées comptent 3 lettres ou plus (article non compté) ; les syllabes d'Adultes 1 restent des syllabes (l01 à l20), ses listes de mots (l21, l23, l24) deviennent des mots-clés.
+- **Adultes 1** profite des mêmes scènes (note du livre sous la vedette et le dialogue, « À retenir » dans ses leçons sans lettre nouvelle, mots-clés en l21, l23, l24) ; ses tests passent, ses captures n'ont pas été refaites.
+- Aussi : **lexique** du livre (12 unités), « par lettre » absent sans lettre nouvelle (25 unités sur 25), quiz = exercices à corrigé (lecons : 5 à 7 ; bilans et examen : épreuve sans corrigé).
+- **Garde** : citation présentée par sa **référence de verset** (bloc qui cite « 49:10 », texte de deux mots ou plus lu dans ce verset) muette : vedettes l11 (49:10) et l23 (110:3) ; un mot isolé (أَحَدٌ) reste du vocabulaire. Versets Tanzil **remis dans l'ordre du Muṣḥaf** pour les suites de 4 mots et les versets entiers (le fichier n'est pas trié). Textes gardés sans voix dans ad2 : l11 (2), l15 hadith (2), l19 formule d'istiʾdhān citée dans la partie adab, l23 (4).
+- **Lecteur** : indication française d'un « compléter » sur sa propre ligne ; sens d'un « relier » avec l'arabe sur sa ligne ; deux formes arabes séparées par « / », « · » ou « ← » sur une seule ligne ; ponctuation orpheline après une ligne arabe retirée ; une règle plus haute que la scène laisse partir ses premiers morceaux, et un texte encore plus haut que la scène y défile lentement (plus de texte coupé). 7 textes `vv.*` (fr + brouillons en, es, de, ar, A_RELIRE.md).
+- `VIDEO_NIVEAUX` = ad1, ad2 (garde calculée sur les deux livres).
+- **À prévoir pour les niveaux suivants** (Adultes 3 à 10, enfants, ados, religion, cahiers) : textes longs (`lecture.paragraphes` : déjà joués phrase par phrase ; au-delà de 12 s, prévoir un défilement), poésie (vers séparés par « … » : à ajouter aux séparateurs de `cles`), tableaux de conjugaison (temps `cles` : une ligne par personne), règles de grammaire longues (temps `regle` progressif), nouveaux types d'exercices (aujourd'hui ignorés : ajouter un cas à `questions()` et au lecteur).
+- **Captures** : `application/design/videos_vivantes/captures_livre2/` — 540 captures 390 px (clair et sombre, moments clés des 25 unités : modes, ouverture, « Je découvre », mots-clés, ligne, phrase vedette, phrases, mots, lexique, exercice, dialogue, « À retenir ») et 5 planches de 2 400 × 4 263 px (≤ 7 000), relues. Corrigé pendant la relecture : règle longue coupée en bas de carte, notes longues, « / » seul sur sa ligne, « ? » et « , » orphelins, terminaisons avec tatweel sorties de la phrase, choix d'exercice français + arabe sur une seule ligne, « Écoute » sur une vedette muette.
+- **Tests** : build, typecheck, eslint, prettier : 0 erreur ; unitaires **2 569 réussis, 0 échec**, 3 ignorés ; content `video.test.ts` 71 (25 unités × 2 niveaux, formats du livre 2, garde) ; web vidéo et i18n 48 ; **e2e complète** (22 min) : **846 réussis, 158 ignorés, 0 échec, 2 instables** (`f5-reseau:181`, `lot16:12`) **relancés seuls : 4 sur 4** ; `video-vivante.spec.ts` (dont ad2.l01 et les captures) : 6 sur 6.
+- **Poids** : appareil élève 346,0 Ko, **marge 4,0 Ko** ; `/coran/lecteur` 136,0 Ko ; vidéos vivantes **16,6 Ko** (≤ 18) ; accueil 99,6 Ko.
+- **Audio** : aucune vedette d'Adultes 2 n'a encore son fichier dans l'application (« Lis la phrase à voix haute » en attendant) ; textes à écouter sans fichier par unité : `reports/video-vivante-ad2.md` (`VIDEO_AUDIT=1`).
+
+---
+
 ## 20/10/2026 — Vidéos vivantes d'Adultes 1 fusionnées dans `main` (formules de dhikr sonorisées, garde coranique à 4 mots, outil des MP4 d'essai) ; NON déployé
 
 Branche `video-vivante-wip` (rebasée sur `main` 41dce78), fusionnée sans avance rapide. Rien déployé, `awzid-beta` non touché ; audio non touché (`~/lecons-audio`, `awform\audio`) ; `infra/charge/purger-comptes-fictifs.sh` (modifié sans commit dans `~/awform-demo`) non touché.
