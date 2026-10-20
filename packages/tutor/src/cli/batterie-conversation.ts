@@ -4,7 +4,7 @@
  *
  *   node dist/cli/batterie-conversation.js --simule [--sortie BASE]
  *   node dist/cli/batterie-conversation.js --confirmer [--sortie BASE] [--plafond-eur 1]
- *        [--projet P] [--lieu eu] [--compte awzid-tuteur@…] [--modele gemini-3.8-flash] [--reflexion minimal]
+ *        [--projet P] [--lieu eu] [--compte awzid-tuteur@…] [--modele gemini-3.8-flash] [--reflexion low]
  *
  * Réel (défaut) : Gemini sur Vertex AI (UE) et voix Google Cloud TTS, jeton du serveur de MÉTADONNÉES de la VM
  * échangé contre celui du compte emprunté (AUCUNE clé) — donc à lancer SUR le serveur bêta. Valeurs par défaut lues
@@ -64,12 +64,14 @@ else {
       `La batterie appelle le vrai modèle (${modele}, ≈ 30 appels et quelques voix, quelques centimes ; arrêt net à ${plafondEur} €). Relancez avec --confirmer.`,
     );
   const jeton = jetonGoogle({ compte });
+  const reflexion = arg('--reflexion') || env.AWFORM_TUTEUR_VERTEX_REFLEXION;
   fournisseur = new VertexConversation({
     projet,
     lieu: lieu as (typeof LIEUX_UE)[number],
     modele,
     jeton,
-    reflexion: arg('--reflexion') ?? env.AWFORM_TUTEUR_VERTEX_REFLEXION ?? 'minimal',
+    // défaut : REGLAGES_GENERATION.reflexion (« LOW », celui de l'API et de l'empreinte)
+    ...(reflexion ? { reflexion } : {}),
   });
   voix = new GoogleTts({ jeton, voix: env.AWFORM_TUTEUR_VOIX || 'ar-XA-Wavenet-B' });
 }
