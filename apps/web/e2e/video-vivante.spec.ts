@@ -657,6 +657,7 @@ test.describe('v2 allumée (video_vivante et video_v2, exception par pays)', () 
           await expect(page.locator('.vv .inter-ch')).toBeVisible();
           await page.waitForTimeout(500);
           await moment('03-intertitre');
+          await expect.poll(() => scene(page), { timeout: 10_000 }).not.toBe('ouverture');
           for (let i = 0; i < 12; i++) {
             const id = (await scene(page)) ?? '';
             if (id === 'courte-lettres') {

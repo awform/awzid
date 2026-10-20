@@ -389,6 +389,14 @@ test.describe('vidéos vivantes v2 : MP4 pour les réseaux', () => {
             __fin?: number;
           };
           const carton = document.querySelector<HTMLElement>('.carton.debut')!;
+          // journal neuf : rien du repérage (sommaire, sons) ne passe dans le film
+          (W as unknown as { __vv: unknown }).__vv = {
+            sons: [],
+            scenes: [],
+            st: [],
+            ch: [],
+            zoom: [],
+          };
           W.__vvRec = {
             mode,
             attente: new Promise<void>((ok) =>
