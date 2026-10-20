@@ -1,0 +1,456 @@
+/* Vidéos vivantes v2 — feuille des MP4 (e2e/video-mp4.spec.ts), HORS de l'application (0 Ko pour l'élève) :
+   enregistrement sans commandes, cadre plein, cartons d'ouverture et de fin, trois formats tirés de la même scène
+   (vertical 9:16, horizontal 16:9, carré 1:1) et zones de sécurité des réseaux. Règle commune à TikTok, Reels et
+   Shorts pour le 9:16 (décision du 20/10/2026) : aucun texte dans les 12 % du haut, les 25 % du bas (légende, son,
+   barre), la colonne des boutons à droite (13 %) ni le bord gauche (6 %) ; le bas ne porte que le décor. */
+.vv[data-rec] .vv-cmd,
+.vv[data-rec] .fermer {
+  display: none;
+}
+.vv[data-rec] .vv-l {
+  max-width: none;
+  height: 100%;
+}
+/* ———— enregistrement : cadre plein, cartons ———— */
+body.rec {
+  overflow: hidden;
+}
+:root[data-format] .vv[data-rec] .vv-sc {
+  min-height: 0;
+}
+:root[data-format] .vv[data-rec] .vv-c {
+  max-height: none;
+}
+:root[data-format] .vv[data-rec] .st .x {
+  font-size: 1.12rem;
+}
+/* 9:16 (432 × 768 px CSS, ×2,5) : zones de sécurité communes à TikTok, Reels et Shorts — haut 12 % (230 px), bas 25 %
+   (480 px : légende, son, barre), droite 13 % (140 px : colonne des boutons), gauche 6 % (65 px) sur 1080 × 1920 :
+   aucun texte dessous ; le bas ne porte que le décor */
+:root[data-format='9x16'] .vv[data-rec] .vv-l {
+  padding: 92px 56px 192px 26px;
+}
+:root[data-format='9x16'] .vv[data-rec]::after {
+  content: '';
+  position: fixed;
+  right: -110px;
+  bottom: -110px;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow:
+    0 0 0 9px var(--paper),
+    0 0 0 11px var(--gold);
+}
+:root[data-format='9x16'] .vv[data-rec]::before {
+  content: '';
+  position: fixed;
+  left: 26px;
+  bottom: 120px;
+  width: 64px;
+  height: 64px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 56'%3E%3Cpath d='M28 4l7 17 17 7-17 7-7 17-7-17-17-7 17-7z' fill='none' stroke='%23c9a227' stroke-width='1.5'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  opacity: 0.7;
+}
+:root[data-format='9x16'] .vv[data-rec] .vv-t {
+  min-height: 2.25rem;
+}
+:root[data-format='9x16'] .vv[data-rec] .barre {
+  margin: 6px 0 8px;
+}
+:root[data-format='9x16'] .vv[data-rec] .sc-h {
+  margin-top: 10px;
+}
+:root[data-format='9x16'] .vv[data-rec] .st {
+  margin: 0 10px 12px;
+  min-height: 2.5rem;
+}
+:root[data-format='9x16'] .vv .lgr,
+:root[data-format='1x1'] .vv .lgr {
+  gap: 6px;
+}
+:root[data-format='9x16'] .vv .lc .gl .ar {
+  font-size: 2.6rem;
+}
+:root[data-format='9x16'] .vv .tuile.nom .ar {
+  font-size: 1.3rem;
+}
+:root[data-format='9x16'] .vv .illu {
+  width: 5.25rem;
+  height: 5.25rem;
+}
+:root[data-format='9x16'] .vv .tuile.mot .ar,
+:root[data-format='9x16'] .vv .tuile.tg .ar {
+  font-size: 2.5rem;
+}
+:root[data-format='9x16'] .vv .bl-l .ar.g {
+  font-size: 2rem;
+}
+:root[data-format='9x16'] .vv .bl-v .ar {
+  font-size: 1.6rem;
+}
+:root[data-format='9x16'] .vv .bl-m svg {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+:root[data-format='9x16'] .vv .bil {
+  gap: 6px;
+}
+/* 1:1 (540 × 540, ×2) et 16:9 (960 × 540, ×2) : marges de 5 % au moins */
+:root[data-format='1x1'] .vv[data-rec] .vv-l {
+  padding: 22px 34px 24px;
+}
+:root[data-format='16x9'] .vv[data-rec] .vv-l {
+  padding: 24px 64px 28px;
+}
+:root[data-format='1x1'] .vv[data-rec] .vv-sc,
+:root[data-format='16x9'] .vv[data-rec] .vv-sc {
+  border-radius: 1.5rem;
+}
+:root[data-format='16x9'] .vv .b-mot {
+  flex-direction: row;
+  gap: 2.5rem;
+}
+:root[data-format='16x9'] .vv .b-mot .cpt {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+:root[data-format='16x9'] .vv .b-mot {
+  position: relative;
+  width: 100%;
+  justify-content: center;
+}
+:root[data-format='16x9'] .vv .lgr,
+:root[data-format='1x1'] .vv .lgr,
+:root[data-format='9x16'] .vv .lgr {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+:root[data-format='16x9'] .vv .lgr {
+  /* une seule rangée de lettres : le format est bas */
+  grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
+  max-width: 46rem;
+}
+:root[data-format='16x9'] .vv .reps {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  max-width: 40rem;
+}
+:root[data-format='16x9'] .vv .bl-m {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  max-width: 48rem;
+}
+:root[data-format='1x1'] .vv .illu {
+  width: 5rem;
+  height: 5rem;
+}
+:root[data-format='1x1'] .vv .tuile.mot .ar {
+  font-size: 2.6rem;
+}
+:root[data-format='1x1'] .vv .reps {
+  max-width: 19rem;
+}
+:root[data-format='1x1'] .vv .bl-m svg {
+  width: 1.9rem;
+  height: 1.9rem;
+}
+.carton {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  transition: opacity 300ms ease;
+}
+.carton::before,
+.carton::after {
+  content: '';
+  position: absolute;
+  width: 46vmin;
+  height: 46vmin;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow:
+    0 0 0 2.2vmin var(--paper),
+    0 0 0 2.7vmin var(--gold);
+}
+.carton::before {
+  left: -23vmin;
+  top: -23vmin;
+}
+.carton::after {
+  right: -23vmin;
+  bottom: -23vmin;
+}
+.carton.sort {
+  opacity: 0;
+}
+.carton .cb {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 0 40px;
+  text-align: center;
+  animation: vv-in 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.carton .logo svg {
+  width: 150px;
+  height: auto;
+  display: block;
+}
+.carton .logo svg > rect {
+  fill: transparent;
+}
+.carton .kk {
+  margin: 4px 0 0;
+  font:
+    600 13px 'Lexend',
+    sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+.carton .lec {
+  margin: 0;
+  font:
+    600 30px/1.2 'Lexend',
+    sans-serif;
+  color: var(--navy);
+}
+.carton .ti {
+  font:
+    700 19px/1.4 'Nunito',
+    sans-serif;
+  color: var(--ink);
+}
+.carton .ti .h {
+  display: block;
+}
+.carton .ti .ar {
+  display: block;
+  font:
+    700 26px/1.8 'Noto Naskh Arabic',
+    serif;
+  direction: rtl;
+  color: var(--navy);
+}
+.carton .ti bdi.lt {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-weight: 700;
+  color: var(--navy);
+}
+.carton .frh {
+  display: grid;
+  justify-items: center;
+  max-width: 300px;
+}
+.carton .url {
+  margin: 8px 0 0;
+  padding: 6px 22px;
+  border-radius: 99px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font:
+    600 22px 'Lexend',
+    sans-serif;
+}
+.carton .filet {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+.carton .filet::before,
+.carton .filet::after {
+  content: '';
+  height: 1px;
+  width: 56px;
+  background: var(--gold);
+}
+.carton .filet i {
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--gold);
+  transform: rotate(45deg);
+}
+:root[data-format='9x16'] .carton {
+  align-items: start;
+}
+:root[data-format='9x16'] .carton .cb {
+  margin: 130px 56px 0 26px;
+}
+
+:root[data-format='1x1'] .carton .logo svg {
+  width: 120px;
+}
+/* zones des plateformes (contrôle) : jamais de texte dessous */
+.zones {
+  position: fixed;
+  inset: 0;
+  z-index: 2500;
+  pointer-events: none;
+}
+.zones i {
+  position: absolute;
+  background: rgba(229, 72, 77, 0.22);
+  outline: 1px dashed rgba(229, 72, 77, 0.8);
+}
+.z9x16 .zh {
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 92px;
+}
+.z9x16 .zb {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 192px;
+}
+.z9x16 .zd {
+  right: 0;
+  top: 92px;
+  bottom: 192px;
+  width: 56px;
+}
+.z9x16 .zg {
+  left: 0;
+  top: 92px;
+  bottom: 192px;
+  width: 26px;
+}
+.z1x1 .zh,
+.z16x9 .zh {
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 5%;
+}
+.z1x1 .zb,
+.z16x9 .zb {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5%;
+}
+.z1x1 .zd,
+.z16x9 .zd {
+  right: 0;
+  top: 5%;
+  bottom: 5%;
+  width: 5%;
+}
+.z1x1 .zg,
+.z16x9 .zg {
+  left: 0;
+  top: 5%;
+  bottom: 5%;
+  width: 5%;
+}
+
+/* 16:9 : tout un peu plus grand (écran d'ordinateur ou de télévision) */
+:root[data-format='16x9'] {
+  font-size: 21px;
+}
+:root[data-format='16x9'] .vv[data-rec] .vv-l {
+  padding: 22px 56px 24px;
+}
+:root[data-format='16x9'] .vv .illu {
+  width: 4.75rem;
+  height: 4.75rem;
+}
+
+:root[data-format='16x9'] .vv .lc .gl .ar {
+  font-size: 2.8rem;
+}
+:root[data-format='16x9'] .vv .tuile.nom .ar {
+  font-size: 1.4rem;
+}
+:root[data-format='16x9'] .vv .tuile.tg .ar,
+:root[data-format='16x9'] .vv .tuile.mot .ar {
+  font-size: 2.6rem;
+}
+:root[data-format='16x9'] .vv .bl-l .ar.g {
+  font-size: 2.8rem;
+}
+:root[data-format='16x9'] .vv .bl-v .ar {
+  font-size: 2.2rem;
+}
+:root[data-format='16x9'] .vv .bl-m svg {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+:root[data-format='16x9'] .vv .bl-m .ar {
+  font-size: 1.15rem;
+}
+:root[data-format='16x9'] .vv .bil {
+  gap: 0.5rem;
+}
+:root[data-format='16x9'] .carton .logo svg {
+  width: 190px;
+}
+:root[data-format='16x9'] .carton .kk {
+  font-size: 17px;
+}
+:root[data-format='16x9'] .carton .lec {
+  font-size: 40px;
+}
+:root[data-format='16x9'] .carton .ti {
+  font-size: 24px;
+}
+:root[data-format='16x9'] .carton .frh {
+  max-width: 520px;
+}
+:root[data-format='16x9'] .carton .url {
+  font-size: 28px;
+}
+/* récapitulatif sur 2 colonnes (formats bas) : lettres et mot vedette à droite, mots à gauche ; jamais réduit */
+:root[data-format='16x9'] .vv .bil,
+:root[data-format='1x1'] .vv .bil {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 1.25rem;
+  direction: rtl;
+}
+:root[data-format='16x9'] .vv .bl-l,
+:root[data-format='1x1'] .vv .bl-l {
+  grid-column: 1;
+  grid-row: 1;
+  /* la grille est en rtl : l'ordre du livre (première lettre à droite) reste juste */
+  flex-direction: row;
+}
+:root[data-format='16x9'] .vv .bl-v,
+:root[data-format='1x1'] .vv .bl-v {
+  grid-column: 1;
+  grid-row: 2;
+}
+:root[data-format='16x9'] .vv .bl-m,
+:root[data-format='1x1'] .vv .bl-m {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: none;
+}
+:root[data-format='1x1'] .vv .bl-m .ar {
+  font-size: 1.4rem;
+}
+
+:root[data-format='1x1'] .vv .bl-m svg {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+:root[data-format='1x1'] .vv .bl-l .ar.g {
+  font-size: 2.2rem;
+}
+:root[data-format='16x9'] .vv .h.titre-l {
+  font-size: 1.2rem;
+  max-width: 34rem;
+}
+:root[data-format='16x9'] .vv .ar.titre {
+  font-size: 1.35rem;
+  line-height: 1.6;
+}

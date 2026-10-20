@@ -9,7 +9,9 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  CHAPITRES,
   CONSEIL_MASQUE,
+  chapitreDe,
   COURTE_MAX_MS,
   COURTE_MIN_MS,
   LETTRE_MAX_MS,
@@ -231,6 +233,12 @@ function joues(x: Temps): TT[] {
     case 'cles':
       x.items.forEach((l) => (l.ar.son ? S(l.ar) : (l.dits ?? []).forEach(S)));
       break;
+    // V2 (lecteur-v2.ts) : lettres et vedette redites ; les mots illustrés reviennent par leur image (rappel muet)
+    case 'bilan':
+      x.lettres.forEach(S);
+      S(x.vedette);
+      x.mots.filter((m) => !m.img).forEach((m) => S(m.ar));
+      break;
     case 'q': {
       const q = x.q;
       if (q.k === 'ecoute') S(q.dit);
@@ -272,8 +280,9 @@ function scenesMuettes(v: VideoLecon, hasA: (s: string) => boolean) {
 }
 
 const videos = new Map<string, { v: VideoLecon; L: Record<string, unknown> }>();
-const video = (livre: string, f: string) => {
-  const k = `${livre}/${f}`;
+/** vidéo d'une unité, comme l'application ; `v2` : interrupteur `video_v2` allumé */
+const video = (livre: string, f: string, v2 = false) => {
+  const k = `${livre}/${f}/${v2}`;
   if (!videos.has(k)) {
     const L = studentProjection(raw(livre, f), livre) as Record<string, unknown>;
     const a = audios.get(livre) ?? null;
@@ -282,6 +291,7 @@ const video = (livre: string, f: string) => {
       hasAudio: hasAudioDe(livre),
       images: imagesDe(L),
       audioList: a ? [...a] : [],
+      ...(v2 ? { v2: true } : {}),
     });
     videos.set(k, { v, L });
   }
@@ -609,6 +619,69 @@ for (const LIVRE of LIVRES)
         // « À toi de jouer la scène ! » : à la fin de la version longue quand le dialogue a au moins deux rôles
         const longue = scenesDuMode(v, 'longue');
         if (v.scenes.some((s) => s.id === 'jouer')) expect(longue.at(-1)!.id).toBe('jouer');
+      });
+
+      it(`${f} : v2 — fidélité, garde inchangée (rien de dit en plus), chapitres dans l'ordre, récapitulatif, aucune scène muette`, () => {
+        const { v: v1, L } = video(LIVRE, f);
+        const { v } = video(LIVRE, f, true);
+        // mêmes modes que la v1 ; chaque scène de la v1 est dans la v2 (seul l'ordre peut changer), plus le récapitulatif
+        expect(v.modes).toEqual(v1.modes);
+        expect(v.scenes.map((s) => s.id).sort()).toEqual(
+          [
+            ...v1.scenes.map((s) => s.id),
+            ...(v.scenes.some((s) => s.id === 'recap-courte') ? ['recap-courte'] : []),
+          ].sort(),
+        );
+        // fidélité : chaque chaîne affichée ou dite vient du livre, octet pour octet
+        const book = strings(sansParties(L));
+        const { ar, fr, cles } = videoStrings(v);
+        for (const s of ar) expect(fromBook(s, book), `arabe hors du livre : ${s}`).toBe(true);
+        for (const s of fr) expect(frFromBook(s, book), `français hors du livre : ${s}`).toBe(true);
+        for (const k of cles) expect(k).toMatch(/^vv\.[a-z_]+$/);
+        // garde coranique INCHANGÉE : aucun texte dit en v2 qui ne l'était pas en v1 (même projection, mêmes audios)
+        const dits1 = new Set(videoVoix(v1));
+        for (const s of videoVoix(v)) expect(dits1.has(s), `dit en plus en v2 : ${s}`).toBe(true);
+        expect(v.signalements).toEqual(v1.signalements);
+        // chapitres : chaque scène en a un, dans l'ordre de la liste fixe, dans chaque mode ; « Retenir » en dernier
+        for (const s of v.scenes) expect(CHAPITRES).toContain(s.chapitre);
+        for (const m of v.modes) {
+          const scs =
+            m === 'lettre'
+              ? v.lettres.flatMap((_, i) => scenesDuMode(v, m, i))
+              : scenesDuMode(v, m);
+          const rangs = scs.map((s) => CHAPITRES.indexOf(s.chapitre!));
+          if (m !== 'lettre')
+            rangs.forEach((r, i) =>
+              expect(r, `${m} ${scs[i]!.id}`).toBeGreaterThanOrEqual(rangs[i - 1] ?? 0),
+            );
+          if (scs.some((s) => s.chapitre === 'retenir'))
+            expect(scs.at(-1)!.chapitre, m).toBe('retenir');
+        }
+        expect(chapitreDe({ id: 'courte-mots', part: 'resume' })).toBe('comprendre');
+        // version courte : ordre du livre (lettres et vedette, puis la lecture, puis les mots), récapitulatif à la fin
+        if (v.modes.includes('courte')) {
+          const c = scenesDuMode(v, 'courte');
+          const ids = c.map((s) => s.id);
+          const im = ids.indexOf('courte-mots');
+          if (im >= 0)
+            for (const id of ['courte-lettres', 'courte-vedette', 'vedette', 'phrases', 'ligne'])
+              if (ids.includes(id)) expect(ids.indexOf(id), id).toBeLessThan(im);
+          const r = c.find((s) => s.id === 'recap-courte');
+          if (r) {
+            expect(c.at(-1)!.id).toBe('recap-courte');
+            // il ne reprend que des textes déjà montrés par la version courte (mêmes objets : voix déjà décidée)
+            const avant = new Set(
+              strings(c.filter((s) => s !== r).map((s) => s.temps)).map((s) => s),
+            );
+            for (const s of strings(r.temps).filter((x) => /[ء-ي]/.test(x)))
+              expect(avant.has(s), `récapitulatif : ${s}`).toBe(true);
+          }
+        }
+        // aucune scène muette quand un texte affiché a son fichier audio, dans chaque mode
+        expect(scenesMuettes(v, hasAudioDe(LIVRE)).nonDit).toEqual([]);
+        // durées toujours dans les bornes (l'estimation du lecteur suit ensuite les audios réels)
+        if (v.modes.includes('courte'))
+          expect(dureeMode(v, 'courte')).toBeLessThanOrEqual(COURTE_MAX_MS + 3000);
       });
     }
 

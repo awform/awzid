@@ -45,8 +45,14 @@ const BUDGET_LECTEUR = 12 * 1024;
  * Garde relevée de 15 à 18 Ko (décision du chef de projet, 20/10/2026) : le lecteur n'est chargé qu'au premier appui
  * sur « Voir en vidéo », il n'a aucun effet sur les autres pages ni sur l'appareil de l'élève avant son premier usage
  * (les gardes de l'appareil et des pages restent celles ci-dessous) ; mesure au 20/10 : 14,8 Ko.
+ * Garde portée de 18 à 22 Ko pour la V2 (décision du chef de projet, 20/10/2026, après une passe d'optimisation :
+ * courbe d'animation commune, règles fusionnées, styles des MP4 sortis de l'application) : chapitres, sommaire,
+ * sous-titres, surlignage, minuteur et récapitulatif. Même justification : chargé seulement au premier appui sur
+ * « Voir en vidéo », 0 Ko sur les autres pages et sur l'appareil avant ce premier appui. Mesure PAR LECTEUR (interrupteur
+ * `video_v2`) : un appareil ne charge que l'un des deux, avec le générateur commun ; mesure au 20/10 : v2 21,2 Ko,
+ * v1 17,4 Ko (générateur devenu un morceau commun aux deux lecteurs).
  */
-const BUDGET_VIDEO = 18 * 1024;
+const BUDGET_VIDEO = 22 * 1024;
 /**
  * cahier de lecture (20/10/2026) : sommaire, pages, lecture guidée, minutes, bilans, atelier ; chargé à la première
  * ouverture du cahier, jamais préchargé (garde dédiée ; les gardes de l'appareil et des pages restent celles ci-dessous)
@@ -164,6 +170,24 @@ function closure(keys) {
   return [...out];
 }
 const keyOf = (suffix) => Object.keys(manifest).find((k) => k.endsWith(suffix));
+// vidéos vivantes : ce que charge UN appareil au premier appui (lecteur v1 OU v2, générateur commun, feuille)
+const vidDe = (cle) => {
+  const out = new Set();
+  const visit = (k) => {
+    const e = manifest[k];
+    if (!e || !vidList.includes(e.file) || out.has(e.file)) return;
+    out.add(e.file);
+    for (const f of [...(e.css ?? []), ...(e.assets ?? [])]) if (vidList.includes(f)) out.add(f);
+    for (const i of e.imports ?? []) visit(i);
+  };
+  visit(keyOf(cle));
+  return [...out];
+};
+const vidV1 = vidDe('src/lib/video/lecteur.ts');
+const vidV2 = vidDe('src/lib/video/lecteur-v2.ts');
+const vidV1Br = grpBr(vidV1);
+const vidV2Br = grpBr(vidV2);
+const vidPire = Math.max(vidV1Br, vidV2Br);
 const base = [
   keyOf('/@sveltejs/kit/src/runtime/client/entry.js'),
   keyOf('client-optimized/app.js'),
@@ -223,7 +247,9 @@ const lines = [
   `| Pages de l'élève gardées au premier usage (Madjaliss), NON préchargées (${(groups.premierUsage ?? []).length} fichiers${swPremier ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(grpBr(groups.premierUsage ?? []))} |`,
   `| Leçons vivantes, à la demande (${vivList.length} fichiers${swViv ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(vivBr)} (≤ ${ko(BUDGET_VIVANTE)}) |`,
   `| Lecteur audio des phrases, à la demande au premier appui sur « Écouter » (${lecList.length} fichiers${swLec ? '' : ' — service worker NE L’EXCLUT PAS'}) | ${ko(lecBr)} (≤ ${ko(BUDGET_LECTEUR)}) |`,
-  `| Vidéos vivantes (lecteur et générateur), à la demande au premier appui sur « Voir en vidéo » (${vidList.length} fichiers${swVid ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(vidBr)} (≤ ${ko(BUDGET_VIDEO)}) |`,
+  `| Vidéos vivantes, à la demande au premier appui sur « Voir en vidéo » : lecteur v2 et générateur (${vidV2.length} fichiers${swVid ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(vidV2Br)} (≤ ${ko(BUDGET_VIDEO)}) |`,
+  `| Vidéos vivantes : lecteur v1 et générateur (interrupteur \`video_v2\` coupé ; ${vidV1.length} fichiers) | ${ko(vidV1Br)} (≤ ${ko(BUDGET_VIDEO)}) |`,
+  `| Vidéos vivantes : tous les fichiers du groupe (deux lecteurs, jamais chargés ensemble) | ${ko(vidBr)} |`,
   `| Cahier de lecture, à la demande à la première ouverture (${cahList.length} fichiers${swCah ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(cahBr)} (≤ ${ko(BUDGET_CAHIER)}) |`,
   `| Total JS + CSS de toutes les pages (mesuré, non bloquant) | ${ko(jsBr + cssBr)} |`,
   `| dont CSS | ${ko(cssBr)} |`,
@@ -253,7 +279,10 @@ const fails = [
   [!swGroups || !swViv, 'service worker : groupes non exclus'],
   [!vivList.length || vivBr > BUDGET_VIVANTE, 'leçons vivantes'],
   [!swLec || !lecList.length || lecBr > BUDGET_LECTEUR, 'lecteur audio (à la demande)'],
-  [!swVid || !vidList.length || vidBr > BUDGET_VIDEO, 'vidéos vivantes (à la demande)'],
+  [
+    !swVid || !vidV1.length || !vidV2.length || vidPire > BUDGET_VIDEO,
+    'vidéos vivantes (à la demande)',
+  ],
   [!swCah || !cahList.length || cahBr > BUDGET_CAHIER, 'cahier (à la demande)'],
 ].filter(([bad]) => bad);
 if (fails.length) {

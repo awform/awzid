@@ -34,14 +34,20 @@ describe('F5 — interrupteurs gardés sur l’appareil', () => {
     expect(Object.keys(d).sort()).toEqual([...FONCTION_CLES].sort());
     // A26b : « conversation » et le tuteur IA de conversation (19/10/2026) en essai (canal bêta) ; refonte 19/10 :
     // « design_v4 » coupé hors démonstration (l'ancien design reste celui de l'appareil sans réseau) ; vidéos vivantes
-    // (19/10) : coupées hors démonstration ; toutes les
-    // autres sont publiées
+    // (19/10) et leur v2 (20/10) : coupées hors démonstration ; toutes les autres sont publiées
     expect(
       Object.entries(d)
         .filter(([, v]) => v !== true)
         .map(([k]) => k)
         .sort(),
-    ).toEqual(['cahier_lecture', 'conversation', 'design_v4', 'tuteur_ia', 'video_vivante']);
+    ).toEqual([
+      'cahier_lecture',
+      'conversation',
+      'design_v4',
+      'tuteur_ia',
+      'video_v2',
+      'video_vivante',
+    ]);
   });
 
   it('copie par personne : décision du serveur, hors ligne comprise ; clé inconnue → défaut', () => {

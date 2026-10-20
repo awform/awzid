@@ -29,6 +29,7 @@ export const FONCTION_CLES = [
   'beta_contenu_differe_visible',
   'design_v4',
   'video_vivante',
+  'video_v2',
   'cahier_lecture',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
@@ -99,6 +100,10 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // demande. Coupées par défaut (production, bêta), ALLUMÉES sur la démonstration ; indépendantes de `design_v4` et
   // des animations : couper l'interrupteur laisse la leçon entière, sans vidéo.
   video_vivante: { defaut: 'off', demo: 'on' },
+  // vidéos vivantes v2 (20/10/2026, maquette validée) : chapitres, sommaire, sous-titres, rythme de la voix,
+  // récapitulatif (lecteur `video/lecteur-v2`, chargé à la demande). Coupées en production et en bêta, ALLUMÉES sur la
+  // démonstration ; coupé : le lecteur v1, inchangé. N'agit que si `video_vivante` est ouvert.
+  video_v2: { defaut: 'off', demo: 'on' },
   // Cahier de lecture d'Adultes 1 (20/10/2026) : accès « Cahier de lecture » du niveau, page du jour à côté de la leçon,
   // lecture guidée, minutes, bilans à froid, atelier, pont vers le Coran (récitation stockée), chargé à la demande.
   // Coupé par défaut (production, bêta), ALLUMÉ sur la démonstration ; couper l'interrupteur laisse le niveau et les

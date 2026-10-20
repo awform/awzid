@@ -32,9 +32,49 @@
  *  - DHIKR : les formules de la liste blanche (`dhikr.ts`, données `data/dhikr-formules.json`) sont des adhkār,
  *    pas de la tilāwa : sonorisées, seules ou dans une phrase, sauf dans ce qui est présenté comme Coran ; le
  *    marquage `dhikr: true` d'un bloc reste valable (voix permise malgré la garde de Tanzil).
+ *
+ * V2 (20/10/2026, maquette validée ; option `v2`, interrupteur `video_v2` côté application) : chaque scène reçoit son
+ * CHAPITRE (liste fixe `CHAPITRES`, ordre du livre), la version courte suit l'ordre du livre (mots après la phrase ou
+ * le mot vedette), « Je retiens » passe après « À toi de jouer la scène ! » (« Retenir » toujours en dernier) et la
+ * version courte finit par un RÉCAPITULATIF (`bilan`) fait des seuls textes qu'elle a montrés (mêmes objets : voix et
+ * garde déjà décidées, rien de nouveau n'est affiché ni dit). Sans l'option : scènes de la v1, inchangées.
  */
 import { audioFileId, looksQuranic, sayText, sha1Hex, skeleton } from './audio-cle.js';
 import { VIDEO_GARDE, VIDEO_RECITATION } from './video-garde.js';
+
+/**
+ * V2 — chapitres : liste FIXE (titres traduits `vv.ch_*`), dans l'ordre du livre ; chaque scène en reçoit un selon sa
+ * partie. Aucun contenu inventé : un chapitre ne fait que regrouper des scènes existantes.
+ */
+export type Chapitre = 'decouvrir' | 'lire' | 'comprendre' | 'entrainer' | 'retenir';
+export const CHAPITRES: readonly Chapitre[] = [
+  'decouvrir',
+  'lire',
+  'comprendre',
+  'entrainer',
+  'retenir',
+];
+const CHAPITRE_DE: Partial<Record<string, Chapitre>> = {
+  ouverture: 'decouvrir',
+  objectifs: 'decouvrir',
+  lettres: 'lire',
+  rappel: 'lire',
+  ecriture: 'lire',
+  notion: 'lire',
+  lecture: 'lire',
+  mots: 'comprendre',
+  quiz: 'entrainer',
+  dialogue: 'entrainer',
+  jouer: 'entrainer',
+  recap: 'retenir',
+};
+/** chapitre d'une scène (version courte : lettres et phrase vedette se lisent, les mots se comprennent) */
+export const chapitreDe = (s: { id: string; part: string }): Chapitre =>
+  s.id === 'courte-lettres' || s.id === 'courte-vedette'
+    ? 'lire'
+    : s.id === 'courte-mots'
+      ? 'comprendre'
+      : (CHAPITRE_DE[s.part] ?? 'decouvrir');
 
 export type VideoMode = 'lettre' | 'courte' | 'longue' | 'quiz' | 'revision';
 export const VIDEO_MODES: readonly VideoMode[] = ['lettre', 'courte', 'longue', 'quiz', 'revision'];
@@ -132,6 +172,8 @@ export type Temps = { ms: number } &
     | { k: 'cles'; items: Ligne[] }
     /** « À retenir » de grammaire : la règle du livre (français), puis son exemple arabe sur sa ligne */
     | { k: 'retenir'; fr?: string; ar?: T }
+    /** V2 — récapitulatif final : ce que la vidéo a montré (mêmes objets ; ce qui a un audio est redit) */
+    | { k: 'bilan'; lettres: T[]; vedette?: T; mots: Array<{ ar: T; img?: string }> }
   );
 /** ligne d'une liste du livre : texte arabe (avec parfois un mot français du livre), morceaux dits, sens */
 export interface Ligne {
@@ -171,6 +213,8 @@ export interface Scene {
    * client : aucune scène muette quand un texte affiché a sa voix ; choix d'un exercice, lettres d'une grille…)
    */
   voix?: T[];
+  /** V2 — chapitre de la scène (liste fixe `CHAPITRES`) */
+  chapitre?: Chapitre;
 }
 
 export interface Signalement {
@@ -207,6 +251,11 @@ export interface VideoOptions {
   garde?: ReadonlySet<string>;
   /** textes de la lecture présentés comme récitation (versets entiers) ; par défaut `video-garde.ts` */
   recitation?: ReadonlySet<string>;
+  /**
+   * V2 (interrupteur `video_v2`) : chapitres, ordre du livre dans la version courte, « Retenir » en dernier,
+   * récapitulatif final. Absent : scènes de la v1, inchangées.
+   */
+  v2?: boolean;
 }
 
 // ———————————————————————————— durées (ms), lecture lente d'un adulte débutant ————————————————————————————
@@ -1025,7 +1074,7 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   // 12. VERSION COURTE (1 à 2 min) : les lettres (nom), puis les mots ; à défaut, le mot vedette et les phrases ; livres
   // de la phrase : la phrase vedette, les mots, puis le dialogue
   ici = 'resume';
-  courte(scenes, nouvelles, motsOk, t, img, vedettePhrase);
+  courte(scenes, nouvelles, motsOk, t, img, vedettePhrase, opts.v2);
   // 13. RÉVISION d'une leçon (décision du 20/10/2026) : « Je retiens » et ce que le livre y reprend des leçons
   // précédentes (texte du livre qui renvoie à une leçon antérieure, ou « rappel »)
   if (!revue)
@@ -1033,6 +1082,43 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   // l'ouverture n'entre dans la révision que si le livre y reprend quelque chose
   if (!scenes.some((s) => s.id !== 'ouverture' && s.modes.includes('revision')))
     for (const s of scenes) s.modes = s.modes.filter((m) => m !== 'revision');
+
+  if (opts.v2) {
+    // 14. V2 — « Retenir » toujours en dernier : « Je retiens » passe après « À toi de jouer la scène ! »
+    const ir = scenes.findIndex((s) => s.id === 'recap');
+    if (ir >= 0 && scenes.slice(ir + 1).some((s) => s.part === 'jouer'))
+      scenes.push(...scenes.splice(ir, 1));
+    // 15. V2 — récapitulatif final de la version courte : ce qu'elle a montré (lettres, vedette, mots), MÊMES objets T
+    // (voix et garde déjà décidées) : rien de nouveau n'est affiché ni dit
+    const lettresVues: T[] = [];
+    const motsVus: Array<{ ar: T; img?: string }> = [];
+    let vedetteVue: T | undefined;
+    for (const s of scenes.filter((x) => x.modes.includes('courte')))
+      for (const x of s.temps) {
+        if (x.k === 'lettres') for (const i of x.items) lettresVues.push(t(i.l));
+        if (x.k === 'mot') motsVus.push({ ar: x.ar, ...(x.img ? { img: x.img } : {}) });
+        if ((s.id === 'vedette' || s.id === 'courte-vedette') && !vedetteVue)
+          if (x.k === 'texte') vedetteVue = x.ar;
+          else if (x.k === 'joindre') vedetteVue = x.mot;
+      }
+    if (lettresVues.length || motsVus.length || vedetteVue)
+      scenes.push({
+        id: 'recap-courte',
+        part: 'recap',
+        titre: { cle: 'vv.vu' },
+        modes: ['courte'],
+        temps: [
+          {
+            k: 'bilan',
+            lettres: lettresVues,
+            ...(vedetteVue ? { vedette: vedetteVue } : {}),
+            mots: motsVus,
+            ms: 2500,
+          },
+        ],
+      });
+    for (const s of scenes) s.chapitre = chapitreDe(s);
+  }
 
   // voix de secours de chaque scène (textes arabes affichés, garde appliquée, fichier présent), huit au plus
   const SANS_VOIX = new Set([
@@ -1304,6 +1390,7 @@ function courte(
   t: Tf,
   img: (k: unknown) => string | undefined,
   vedette: Temps[] | null,
+  v2 = false,
 ): void {
   const ouv = scenes.find((s) => s.id === 'ouverture');
   let total = ouv ? duree(ouv) : 0;
@@ -1380,9 +1467,15 @@ function courte(
     for (const s of scenes) s.modes = s.modes.filter((m) => m !== 'courte');
     return;
   }
-  // après l'ouverture et avant la lecture
+  // après l'ouverture et avant la lecture ; V2 : ordre du livre, les mots à la place des mots (après la lecture)
+  const debut = v2 ? ajout.filter((s) => s.id !== 'courte-mots') : ajout;
   const at = scenes.findIndex((s) => s.part !== 'ouverture' && s.part !== 'objectifs');
-  scenes.splice(at < 0 ? scenes.length : at, 0, ...ajout);
+  scenes.splice(at < 0 ? scenes.length : at, 0, ...debut);
+  if (!v2) return;
+  const am = scenes.findIndex((s) =>
+    ['mots', 'quiz', 'dialogue', 'recap', 'jouer'].includes(s.part),
+  );
+  scenes.splice(am < 0 ? scenes.length : am, 0, ...ajout.filter((s) => s.id === 'courte-mots'));
 }
 
 /** Durée prévue d'une scène (ms) ; les questions comptent `MS.question` chacune. */
@@ -1499,6 +1592,11 @@ export function videoStrings(v: VideoLecon): { ar: string[]; fr: string[]; cles:
             A(r.ar);
             F(r.fr);
           }
+          break;
+        case 'bilan':
+          x.lettres.forEach(A);
+          A(x.vedette);
+          x.mots.forEach((m) => A(m.ar));
           break;
         case 'cles':
           for (const l of x.items) {

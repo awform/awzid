@@ -37,8 +37,11 @@
     charge = true;
     echec = false;
     try {
+      // v2 (chapitres, sous-titres, rythme de la voix) derrière `video_v2` ; coupé : la v1, inchangée
       const [m, la] = await Promise.all([
-        chargerModule(() => import('$lib/video/lecteur')),
+        fn('video_v2')
+          ? chargerModule(() => import('$lib/video/lecteur-v2'))
+          : chargerModule(() => import('$lib/video/lecteur')),
         audio?.() ?? levelAudio(unit.levelCode).catch(() => null),
       ]);
       noter('video_vivante');
