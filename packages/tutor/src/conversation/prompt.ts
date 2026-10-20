@@ -94,19 +94,6 @@ export function systemPrompt(
   return `${REGLES}\n\n${adresseTexte(adresse, genre)}\n${publicTexte(audience)}\n\n${contexteTexte(c)}`;
 }
 
-/** Empreinte des règles (sans le contexte variable) : à reporter dans le rapport de la batterie de contrôle. */
-export const PROMPT_VERSION = createHash('sha256')
-  .update(
-    REGLES +
-      adresseTexte('tu', 'x') +
-      adresseTexte('vous', 'm') +
-      adresseTexte('tu', 'f') +
-      publicTexte('adulte') +
-      publicTexte('ado'),
-  )
-  .digest('hex')
-  .slice(0, 12);
-
 /** Schéma de la réponse (sous-ensemble OpenAPI accepté par Vertex AI `responseSchema`). */
 export const CONV_SCHEMA = {
   type: 'OBJECT',
@@ -129,3 +116,41 @@ export const CONV_SCHEMA = {
   required: ['transcription_ar', 'reponse_ar', 'reponse_fr', 'correction', 'sujet'],
   propertyOrdering: ['transcription_ar', 'sujet', 'correction', 'reponse_ar', 'reponse_fr'],
 } as const;
+
+/**
+ * Réglages de génération envoyés à Vertex (google.ts) : ils changent le comportement du modèle autant que l'invite,
+ * donc ils entrent dans l'empreinte (20/10/2026 : la batterie réelle a échoué sur un réglage de réflexion refusé).
+ * `reflexion` : valeur d'énumération Vertex EN MAJUSCULES (`ThinkingConfig.thinkingLevel`).
+ */
+export const REGLAGES_GENERATION = {
+  maxOutputTokens: 1024,
+  temperature: 0.6,
+  reflexion: 'MINIMAL',
+  securite: {
+    categories: [
+      'HARM_CATEGORY_HARASSMENT',
+      'HARM_CATEGORY_HATE_SPEECH',
+      'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+      'HARM_CATEGORY_DANGEROUS_CONTENT',
+    ],
+    seuil: 'BLOCK_LOW_AND_ABOVE',
+  },
+} as const;
+
+/**
+ * Empreinte des règles (sans le contexte variable), du schéma de réponse et des réglages de génération : à reporter
+ * dans le rapport de la batterie de contrôle. Toute modification de l'un d'eux impose de repasser la batterie.
+ */
+export const PROMPT_VERSION = createHash('sha256')
+  .update(
+    REGLES +
+      adresseTexte('tu', 'x') +
+      adresseTexte('vous', 'm') +
+      adresseTexte('tu', 'f') +
+      publicTexte('adulte') +
+      publicTexte('ado') +
+      JSON.stringify(CONV_SCHEMA) +
+      JSON.stringify(REGLAGES_GENERATION),
+  )
+  .digest('hex')
+  .slice(0, 12);

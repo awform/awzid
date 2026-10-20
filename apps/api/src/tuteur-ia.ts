@@ -41,6 +41,7 @@ import {
   decider,
   helpline,
   issueDuTour,
+  motifProtection,
   motsEcrits,
   plafondsDepuisEnv,
   PROMPT_VERSION,
@@ -507,12 +508,14 @@ export function registerTuteurIa(
           filtre: [{ step: 'entree', action: 'bloque', detail: cat }],
           ...(question ? { question } : {}),
         });
-        if (cat === 'protection')
-          await createTutorAlert(db, { profileId: g!.p.id, logId, motif: 'detresse' });
+        // 20/10/2026 : rencontre avec un inconnu (internet) ou détresse — message et alerte propres à chacune
+        const protection = cat === 'protection' ? motifProtection(question ?? '') : null;
+        if (protection)
+          await createTutorAlert(db, { profileId: g!.p.id, logId, motif: protection });
         return {
           logId,
           redirection: cat,
-          ...(cat === 'protection' ? { aide: helpline(w.pays) } : {}),
+          ...(protection ? { aide: helpline(w.pays), protection } : {}),
           reponse_ar: '',
           reponse_fr: '',
           correction: null,
@@ -577,6 +580,17 @@ export function registerTuteurIa(
       });
       const filtre: FilterEvent[] = issue.filtre;
       const { reponse, correction, transcription, redir, route, repli } = issue;
+      // 20/10/2026 : une PANNE du fournisseur (requête refusée, réponse vide ou illisible) se voit dans les journaux
+      // du serveur, avec le message technique de Google (jamais la phrase de l'élève)
+      if (issue.repliTechnique || out.message)
+        app.log.warn({
+          evenement: issue.repliTechnique
+            ? 'tuteur_ia_erreur_fournisseur'
+            : 'tuteur_ia_avertissement',
+          statut: out.status,
+          detail: out.detail,
+          message: out.message,
+        });
 
       // 4. voix : jamais de Coran (décision 7), jamais une redirection
       let audio: { mime: string; b64: string } | null = null;

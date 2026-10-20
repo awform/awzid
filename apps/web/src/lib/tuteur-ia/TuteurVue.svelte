@@ -49,6 +49,7 @@
     audio?: ReponseLibre['audio'];
     redirection?: ReponseLibre['redirection'];
     aide?: string;
+    protection?: ReponseLibre['protection'];
     repli?: boolean;
   }
 
@@ -231,6 +232,7 @@
         audio: d.audio,
         ...(d.redirection ? { redirection: d.redirection } : {}),
         ...(d.aide ? { aide: d.aide } : {}),
+        ...(d.protection ? { protection: d.protection } : {}),
         ...(d.repli ? { repli: true } : {}),
       },
     ];
@@ -422,7 +424,12 @@
                       : m.redirection === 'coran'
                         ? t('tuia.coran')
                         : m.redirection === 'protection'
-                          ? t('tuia.protection', { tel: m.aide ?? '' })
+                          ? t(
+                              m.protection === 'rencontre'
+                                ? 'tuia.protection_rencontre'
+                                : 'tuia.protection',
+                              { tel: m.aide ?? '' },
+                            )
                           : m.redirection === 'politique'
                             ? t('tuia.politique')
                             : m.redirection === 'inconvenant'
