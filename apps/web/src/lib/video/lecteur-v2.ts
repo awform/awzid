@@ -637,8 +637,9 @@ function creer(opt: OuvrirOptions): () => void {
   async function intertitre(k: number) {
     const o = h('div', 'ov inter-ch');
     o.innerHTML = `<p class="kk">${esc(t('vv.chapitre', { n: k + 1, total: chaps.length }))}</p><p class="nm">${esc(nomChap(chaps[k]!.c))}</p><div class="filet"><i></i></div>`;
-    // le sous-titre de la scène précédente ne reste pas sous l'intertitre
-    st('');
+    // le sous-titre de la scène précédente ne reste pas sous l'intertitre (aucune scène encore : « suivant » pendant
+    // le sommaire)
+    if (sous) st('');
     stage.append(o);
     journal()?.ch?.push([nomChap(chaps[k]!.c), Date.now()]);
     await att(1050);
