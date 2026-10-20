@@ -688,6 +688,8 @@
   display: grid;
   align-content: start;
   align-content: safe center;
+  /* chaque choix garde sa hauteur : c'est la liste qui défile */
+  grid-auto-rows: max-content;
   gap: 0.55rem;
   padding: 2rem 1.2rem;
   /* téléphone de faible hauteur : la liste des modes défile (« Révision » toujours atteignable au doigt) */
