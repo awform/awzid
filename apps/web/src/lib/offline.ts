@@ -9,7 +9,8 @@
  */
 import type { UnitDetail } from './api';
 import { delMany, get, getAll, getAllByIndex, kvGet, kvSet, put, putMany } from './idb';
-import { t } from './i18n';
+import { catalogUrl, t } from './i18n';
+import { VIDEO_NIVEAUX } from '@awform/content/video-niveaux';
 
 export type Illustrations = Record<string, { viewBox: string; svg: string }>;
 
@@ -312,6 +313,14 @@ export { fmtBytes as formatBytes } from './i18n';
  * niveau « sur l'appareil » ; une erreur n'empêche jamais le téléchargement).
  */
 async function gardeVivante(level: string): Promise<void> {
+  // vidéos vivantes (19/10/2026) : le lecteur des niveaux qui en ont est gardé aussi (vidéo hors ligne)
+  if (VIDEO_NIVEAUX.includes(level))
+    await fetch('/_app/video.json')
+      .then((r) => (r.ok ? (r.json() as Promise<string[]>) : []))
+      .then((l) =>
+        Promise.all([...l, catalogUrl('fr-video'), '/video/traits.json'].map((f) => fetch(f))),
+      )
+      .catch(() => undefined);
   try {
     const r = JSON.parse(localStorage.getItem('awzid.vivante') ?? '{}') as {
       on?: boolean;

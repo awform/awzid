@@ -40,6 +40,13 @@ const BUDGET_3G_MS = 3000;
 const BUDGET_VIVANTE = 20 * 1024;
 /** lecteur audio des phrases, chargé à la demande (jamais préchargé) */
 const BUDGET_LECTEUR = 12 * 1024;
+/**
+ * vidéos vivantes (19/10/2026) : lecteur plein écran et générateur, chargés à la demande (jamais préchargés).
+ * Garde relevée de 15 à 18 Ko (décision du chef de projet, 20/10/2026) : le lecteur n'est chargé qu'au premier appui
+ * sur « Voir en vidéo », il n'a aucun effet sur les autres pages ni sur l'appareil de l'élève avant son premier usage
+ * (les gardes de l'appareil et des pages restent celles ci-dessous) ; mesure au 20/10 : 14,8 Ko.
+ */
+const BUDGET_VIDEO = 18 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 const BUDGET_RIWAYA_FONT = 1024 * 1024;
 /** page d'accueil de l'élève (« Mon arabe », onglet Arabe ; la première qu'il ouvre) */
@@ -85,12 +92,24 @@ const lecList = (() => {
   }
 })();
 const swLec = /lecteur\.json/.test(swSrc);
+// 19/10/2026 : vidéos vivantes, chargées au premier appui sur « Voir en vidéo » (vite.config.ts : videoALaDemande)
+const vidList = (() => {
+  try {
+    return JSON.parse(readFileSync(join(client, '_app', 'video.json'), 'utf8')).map((f) =>
+      f.slice(1),
+    );
+  } catch {
+    return [];
+  }
+})();
+const swVid = /video\.json/.test(swSrc);
 const grpBr = (list) => sum(list, (f) => br(join(client, f)));
 const staffBr = grpBr(groups.personnel);
 const raresBr = grpBr(groups.rares);
 const enLigneBr = grpBr(groups.enLigne);
 const vivBr = grpBr(vivList);
 const lecBr = grpBr(lecList);
+const vidBr = grpBr(vidList);
 // Madjaliss : pages de l'élève gardées au premier usage — déduites SEULEMENT si le service worker les exclut
 const swPremier = /'premierUsage'/.test(swSrc);
 const premierBr = swPremier ? grpBr(groups.premierUsage ?? []) : 0;
@@ -99,7 +118,7 @@ const studentTexts = [
   ...(/STUDENT_TEXTS\s*=\s*\[([^\]]*)\]/.exec(swSrc)?.[1] ?? '').matchAll(/'([^']+)'/g),
 ].map((m) => m[1]);
 const textsBr = sum(studentTexts, (p) => br(join(root, 'static', p)));
-const eleveCode = jsBr + cssBr - staffBr - raresBr - enLigneBr - vivBr - lecBr - premierBr;
+const eleveCode = jsBr + cssBr - staffBr - raresBr - enLigneBr - vivBr - lecBr - vidBr - premierBr;
 const eleveBr = eleveCode + textsBr;
 
 // JavaScript + CSS INITIAUX par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises
@@ -184,6 +203,7 @@ const lines = [
   `| Pages de l'élève gardées au premier usage (Madjaliss), NON préchargées (${(groups.premierUsage ?? []).length} fichiers${swPremier ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(grpBr(groups.premierUsage ?? []))} |`,
   `| Leçons vivantes, à la demande (${vivList.length} fichiers${swViv ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(vivBr)} (≤ ${ko(BUDGET_VIVANTE)}) |`,
   `| Lecteur audio des phrases, à la demande au premier appui sur « Écouter » (${lecList.length} fichiers${swLec ? '' : ' — service worker NE L’EXCLUT PAS'}) | ${ko(lecBr)} (≤ ${ko(BUDGET_LECTEUR)}) |`,
+  `| Vidéos vivantes (lecteur et générateur), à la demande au premier appui sur « Voir en vidéo » (${vidList.length} fichiers${swVid ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(vidBr)} (≤ ${ko(BUDGET_VIDEO)}) |`,
   `| Total JS + CSS de toutes les pages (mesuré, non bloquant) | ${ko(jsBr + cssBr)} |`,
   `| dont CSS | ${ko(cssBr)} |`,
   `| Service worker | ${ko(swBr)} |`,
@@ -212,6 +232,7 @@ const fails = [
   [!swGroups || !swViv, 'service worker : groupes non exclus'],
   [!vivList.length || vivBr > BUDGET_VIVANTE, 'leçons vivantes'],
   [!swLec || !lecList.length || lecBr > BUDGET_LECTEUR, 'lecteur audio (à la demande)'],
+  [!swVid || !vidList.length || vidBr > BUDGET_VIDEO, 'vidéos vivantes (à la demande)'],
 ].filter(([bad]) => bad);
 if (fails.length) {
   console.error(`Budget dépassé : ${fails.map(([, w]) => w).join(', ')}`);

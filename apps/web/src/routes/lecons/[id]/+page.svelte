@@ -32,6 +32,7 @@
   import { personaKey, type SceneSpec } from '@awform/content/scene';
   import Signaler, { SIGNAL_CTX } from '$lib/Signaler.svelte';
   import VivanteLecon from '$lib/vivante/VivanteLecon.svelte';
+  import VideoBouton from '$lib/VideoBouton.svelte';
   import JeParleBouton from '$lib/conversation/JeParleBouton.svelte';
   import { aUnScenario } from '$lib/conversation/scenario';
   import { localIso } from '$lib/hifz';
@@ -457,6 +458,8 @@
                 : ''}
             />
           </p>{/if}
+        <!-- vidéos vivantes (interrupteur « video_vivante ») : le lecteur est chargé au premier appui -->
+        <VideoBouton unit={u} {profileId} />
       </header>
 
       {#if isEval && lettres.length}

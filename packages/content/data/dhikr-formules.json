@@ -1,0 +1,131 @@
+{
+  "_description": "Liste blanche des formules de dhikr (décision du référent, 20/10/2026) : ce sont des adhkār, pas de la tilāwa ; la voix de synthèse les lit. Une phrase égale à une formule, ou qui en contient une sans être une citation coranique (4 mots consécutifs du Coran ou plus, hors formule), est sonorisée. Jamais de voix, même pour une formule de la liste, dans ce qui est présenté comme Coran : graphie du Muṣḥaf, parties coran/versets, référence de verset, sourate ou verset présenté comme récitation (mot à mot, tête de sourate), contexte de récitation ou de hifẓ. Fichier relu ; partagé avec la génération des audios (gen-audio.ps1).",
+  "_comparaison": "Texte sans voyelles, mot pour mot : retirer U+064B à U+065F, U+0670 (alif suscrit), U+0640 (tatweel) et U+06D6 à U+06ED ; remplacer أ إ آ ٱ par ا, ى par ي, ة par ه ; mots = suites de lettres arabes (toute autre chose sépare). Une formule est trouvée quand ses mots se suivent dans le texte ; le premier mot peut porter و ou ف collé (وَالْحَمْدُ لِلَّهِ).",
+  "_version": "2026-10-20",
+  "formules": [
+    {
+      "ar": "لَا إِلٰهَ إِلَّا اللَّهُ",
+      "fr": "il n'y a de divinité qu'Allah (tahlīl)",
+      "categorie": "tahlil"
+    },
+    {
+      "ar": "لَا إِلٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
+      "fr": "tahlīl complet",
+      "categorie": "tahlil"
+    },
+    {
+      "ar": "أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللَّهُ",
+      "fr": "shahāda (première partie)",
+      "categorie": "shahada"
+    },
+    {
+      "ar": "أَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+      "fr": "shahāda (seconde partie, tashahhud)",
+      "categorie": "shahada"
+    },
+    {
+      "ar": "أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ",
+      "fr": "shahāda (seconde partie)",
+      "categorie": "shahada"
+    },
+    { "ar": "مَا شَاءَ اللَّهُ", "fr": "ce qu'Allah a voulu", "categorie": "formule" },
+    { "ar": "إِنْ شَاءَ اللَّهُ", "fr": "si Allah le veut", "categorie": "formule" },
+    { "ar": "سُبْحَانَ اللَّهِ", "fr": "gloire à Allah (tasbīḥ)", "categorie": "tasbih" },
+    {
+      "ar": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+      "fr": "gloire et louange à Allah",
+      "categorie": "tasbih"
+    },
+    { "ar": "الْحَمْدُ لِلَّهِ", "fr": "louange à Allah (taḥmīd)", "categorie": "tahmid" },
+    {
+      "ar": "الْحَمْدُ لِلَّهِ عَلَى السَّلَامَةِ",
+      "fr": "louange à Allah pour ton retour sain et sauf",
+      "categorie": "tahmid"
+    },
+    { "ar": "اللَّهُ أَكْبَرُ", "fr": "Allah est le plus grand (takbīr)", "categorie": "takbir" },
+    {
+      "ar": "أَسْتَغْفِرُ اللَّهَ",
+      "fr": "je demande pardon à Allah (istighfār)",
+      "categorie": "istighfar"
+    },
+    { "ar": "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ", "fr": "ḥawqala", "categorie": "hawqala" },
+    {
+      "ar": "بِسْمِ اللَّهِ",
+      "fr": "Basmala dite avant d'agir (la Basmala complète, tête de sourate, reste du Coran)",
+      "categorie": "basmala"
+    },
+    {
+      "ar": "صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ",
+      "fr": "ṣalāt sur le Prophète",
+      "categorie": "salawat"
+    },
+    {
+      "ar": "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ",
+      "fr": "ṣalāt sur le Prophète",
+      "categorie": "salawat"
+    },
+    {
+      "ar": "التَّحِيَّاتُ لِلَّهِ، الزَّاكِيَاتُ لِلَّهِ، الطَّيِّبَاتُ الصَّلَوَاتُ لِلَّهِ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللَّهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+      "fr": "tashahhud (version de l'imam Mālik, livre Adultes 1, unité l24, leçon 20)",
+      "categorie": "tashahhud"
+    },
+    { "ar": "سُبْحَانَ رَبِّيَ الْعَظِيمِ", "fr": "inclinaison (rukūʿ)", "categorie": "priere" },
+    { "ar": "سُبْحَانَ رَبِّيَ الْأَعْلَى", "fr": "prosternation (sujūd)", "categorie": "priere" },
+    { "ar": "سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ", "fr": "en se redressant", "categorie": "priere" },
+    {
+      "ar": "رَبَّنَا وَلَكَ الْحَمْدُ",
+      "fr": "debout, après le redressement",
+      "categorie": "priere"
+    },
+    {
+      "ar": "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ",
+      "fr": "salut final (taslīm)",
+      "categorie": "priere"
+    },
+    {
+      "ar": "اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
+      "fr": "après la prière",
+      "categorie": "apres_priere"
+    },
+    {
+      "ar": "جَزَاكَ اللَّهُ خَيْرًا",
+      "fr": "qu'Allah te récompense en bien (aussi جَزَاكِ)",
+      "categorie": "invocation"
+    },
+    {
+      "ar": "جَزَاكُمُ اللَّهُ خَيْرًا",
+      "fr": "qu'Allah vous récompense en bien",
+      "categorie": "invocation"
+    },
+    {
+      "ar": "جَزَاكُمَا اللَّهُ خَيْرًا",
+      "fr": "qu'Allah vous récompense en bien (à deux)",
+      "categorie": "invocation"
+    },
+    {
+      "ar": "بَارَكَ اللَّهُ",
+      "fr": "qu'Allah bénisse (بَارَكَ اللَّهُ فِيكَ، لَكَ…)",
+      "categorie": "invocation"
+    },
+    {
+      "ar": "تَقَبَّلَ اللَّهُ مِنَّا وَمِنْكُمْ",
+      "fr": "souhait de l'Aïd",
+      "categorie": "invocation"
+    },
+    {
+      "ar": "تَقَبَّلَ اللَّهُ مِنْكَ",
+      "fr": "qu'Allah accepte de toi",
+      "categorie": "invocation"
+    },
+    {
+      "ar": "شَفَانَا اللَّهُ جَمِيعًا",
+      "fr": "qu'Allah nous guérisse tous",
+      "categorie": "invocation"
+    },
+    {
+      "ar": "اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا",
+      "fr": "invocation (livre Adultes 2, unité l23, leçon 19)",
+      "categorie": "invocation"
+    }
+  ]
+}

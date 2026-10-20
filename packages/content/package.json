@@ -72,6 +72,18 @@
     "./conversation": {
       "types": "./dist/conversation.d.ts",
       "default": "./dist/conversation.js"
+    },
+    "./video": {
+      "types": "./dist/video.d.ts",
+      "default": "./dist/video.js"
+    },
+    "./video-niveaux": {
+      "types": "./dist/video-niveaux.d.ts",
+      "default": "./dist/video-niveaux.js"
+    },
+    "./dhikr": {
+      "types": "./dist/dhikr.d.ts",
+      "default": "./dist/dhikr.js"
     }
   },
   "bin": {

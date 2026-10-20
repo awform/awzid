@@ -24,6 +24,18 @@ function lecteurALaDemande(): Plugin {
   return aLaDemande('lecteur', /[\\/]lib[\\/]lecteur[\\/]/);
 }
 
+/**
+ * 19/10/2026 — VIDÉOS VIVANTES (`lib/video/` : lecteur plein écran, tracés validés, textes ; et le générateur
+ * `buildVideo` de packages/content) : chargées au premier appui sur « Voir en vidéo », jamais préchargées ; liste dans
+ * `/_app/video.json` (service worker, budget : garde dédiée de 15 Ko ; gardées au téléchargement d'un niveau d'arabe).
+ */
+function videoALaDemande(): Plugin {
+  return aLaDemande(
+    'video',
+    /[\\/](lib[\\/]video[\\/]|content[\\/](dist|src)[\\/]video(-garde)?\.[jt]s)/,
+  );
+}
+
 function aLaDemande(nom: string, VIV: RegExp): Plugin {
   return {
     name: `awzid-${nom}-a-la-demande`,
@@ -40,11 +52,17 @@ function aLaDemande(nom: string, VIV: RegExp): Plugin {
       for (const c of chunks) if (!viv.has(c.fileName)) for (const i of c.imports) viv.delete(i);
       const files = chunks
         .filter((c) => viv.has(c.fileName))
-        .flatMap((c) => [
-          c.fileName,
-          ...((c as { viteMetadata?: { importedCss?: Set<string> } }).viteMetadata?.importedCss ??
-            []),
-        ]);
+        .flatMap((c) => {
+          const meta = (
+            c as { viteMetadata?: { importedCss?: Set<string>; importedAssets?: Set<string> } }
+          ).viteMetadata;
+          // feuilles importées, et feuilles reliées à la demande (`…css?url`, vidéos vivantes)
+          return [
+            c.fileName,
+            ...(meta?.importedCss ?? []),
+            ...[...(meta?.importedAssets ?? [])].filter((f) => f.endsWith('.css')),
+          ];
+        });
       this.emitFile({
         type: 'asset',
         fileName: `_app/${nom}.json`,
@@ -118,7 +136,7 @@ const ESPACES: Record<string, RegExp> = {
 };
 
 export default defineConfig({
-  plugins: [sveltekit(), vivanteALaDemande(), lecteurALaDemande()],
+  plugins: [sveltekit(), vivanteALaDemande(), lecteurALaDemande(), videoALaDemande()],
   build: {
     rolldownOptions: {
       output: {
