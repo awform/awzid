@@ -77,10 +77,34 @@ describe.skipIf(!tanzil)('garde coranique de la voix (Tanzil)', () => {
     expect(refusVoix(`قُلْ: ${a}، وَاجْلِسْ.`, g)).toBeNull();
   });
 
+  it('« أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ » (entrée nominative) : voix permise ; 113:2 seul ou récité : refusé', () => {
+    const f = formule('istiadha', 1);
+    expect(quatreMots(f)).toBe(true);
+    expect(refusVoix(f, g)).toBeNull();
+    // le hadith (Muslim) qui la contient
+    expect(
+      refusVoix(
+        `مَنْ نَزَلَ مَنْزِلًا ثُمَّ قَالَ: ${f}، لَمْ يَضُرَّهُ شَيْءٌ حَتَّى يَرْتَحِلَ مِنْ مَنْزِلِهِ ذٰلِكَ`,
+        g,
+      ),
+    ).toBeNull();
+    // 113:2 seul (verset entier) : refusé, même s'il fait partie de la formule
+    const v2 = mots('113:2').join(' ');
+    expect(skeleton(f).endsWith(skeleton(v2))).toBe(true);
+    expect(refusVoix(v2, g)).toBe('coran');
+    // récitation d'Al-Falaq (113:1 sans sa Basmala, puis 113:2) : refusée
+    const falaq = `${mots('113:1').slice(4).join(' ')} ${v2}`;
+    expect(refusVoix(falaq, g)).not.toBeNull();
+    // le seuil général ne bouge pas : 4 mots du Coran hors formule restent une citation
+    expect(refusVoix(`${mots('2:255').slice(3, 7).join(' ')}`, g)).toBe('citation');
+  });
+
   it('Basmala complète : suivie d’un salut (début de lettre), voix permise ; seule ou en tête de sourate, refusée', () => {
     const b = formule('basmala', 1);
     expect(skeleton(b)).toBe(skeleton(audioKey(tanzil!.get('1:1')!)));
     expect(refusVoix(`${b}. ${salut()}. كَيْفَ حَالُكِ؟`, g)).toBeNull();
+    // citée en tafsir (décision du référent) : pas une récitation, voix permise
+    expect(refusVoix(`كَلِمَةُ التَّقْوَى عِنْدَ ابْنِ عَبَّاسٍ هِيَ «${b}».`, g)).toBeNull();
     // seule : verset entier (1:1)
     expect(refusVoix(b, g)).toBe('coran');
     // en tête de sourate : la Basmala puis le début du verset (112:1, texte Tanzil sans sa Basmala)
