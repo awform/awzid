@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 import type { Browser, Page } from '@playwright/test';
@@ -407,7 +407,15 @@ const LIVRES_V2 = (process.env.VIDEO_V2_LIVRES ?? 'ad1,ad2').split(',').filter(B
 async function suivante(page: Page) {
   const s0 = await scene(page);
   await page.locator('.vv [data-k="suiv"]').click();
-  await expect.poll(() => scene(page), { timeout: 10_000 }).not.toBe(s0);
+  // une autre scène, ou la fin de la vidéo (dernière scène)
+  await expect
+    .poll(
+      async () => (await page.getByTestId('vv-fin').isVisible()) || (await scene(page)) !== s0,
+      {
+        timeout: 10_000,
+      },
+    )
+    .toBe(true);
 }
 async function jusqua(page: Page, id: string) {
   for (let i = 0; i < 40 && (await scene(page)) !== id; i++) await suivante(page);
@@ -708,36 +716,72 @@ test.describe('v2 allumée (video_vivante et video_v2, exception par pays)', () 
         planche[u] = fichiers;
       }
     writeFileSync(join(dir, 'controle-360.json'), JSON.stringify(reductions, null, 1));
-    // planches : 5 unités chacune, une ligne claire et une ligne sombre par unité, 7 000 px de haut au plus
-    const us = Object.keys(planche);
-    for (let g = 0; g * 5 < us.length; g++) {
-      const lot = us.slice(g * 5, g * 5 + 5);
-      const img = (f: string) =>
-        `<figure><img src="data:image/png;base64,${readFileSync(f).toString('base64')}"><figcaption>${f.split('/').pop()!.replace('.png', '')}</figcaption></figure>`;
-      const lignes = lot
-        .map(
-          (u) =>
-            `<h2>${u}</h2><div class="r">${planche[u]!.filter((f) => f.endsWith('clair.png'))
-              .map(img)
-              .join('')}</div><div class="r">${planche[u]!.filter((f) => f.endsWith('sombre.png'))
-              .map(img)
-              .join('')}</div>`,
-        )
-        .join('');
-      const p = await page.context().newPage();
-      await p.setViewportSize({ width: 3000, height: 1000 });
-      await p.setContent(
-        `<!doctype html><meta charset="utf-8"><style>body{margin:16px;background:#efe7d6;font:14px sans-serif;color:#084c38}h1{font-size:22px;margin:0 0 8px}h2{margin:12px 0 4px;font-size:16px}.r{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}figure{margin:0}img{width:150px;display:block;border-radius:8px}figcaption{font-size:9px;width:150px;overflow:hidden;white-space:nowrap}</style><h1>Awzid · Vidéos vivantes v2 · ${lot[0]} à ${lot.at(-1)} (360 px, clair puis sombre)</h1>${lignes}`,
-      );
-      const fp = join(dir, `PLANCHE_V2_${lot[0]}-${lot.at(-1)}.png`);
-      await p.screenshot({ path: fp, fullPage: true, scale: 'css' });
-      expect(await p.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
-        7000,
-      );
-      await p.close();
-    }
     writeFileSync(join(dir, 'captures.json'), JSON.stringify(planche, null, 1));
+    await planchesV2(page, dir);
     // aucune réduction de taille sur un téléphone de 360 px
     expect(Object.entries(reductions).filter(([, z]) => z.length)).toEqual([]);
   });
+
+  test('planches v2 d’un dossier de captures déjà fait (VIDEO_V2_PLANCHES)', async ({ page }) => {
+    test.skip(!V2_PLANCHES, 'VIDEO_V2_PLANCHES non défini');
+    test.skip(test.info().project.name !== 'mobile-chromium', 'une seule série');
+    test.setTimeout(1_800_000);
+    for (const d of V2_PLANCHES!.split(',')) await planchesV2(page, d);
+  });
 });
+
+/** refaire les planches d'un dossier de captures v2 (sans refaire les captures) */
+const V2_PLANCHES = process.env.VIDEO_V2_PLANCHES;
+/**
+ * Planches des captures v2 : 5 unités chacune, une ligne claire et une ligne sombre par unité, 7 000 px de haut au
+ * plus. Vignettes réduites d'abord (ffmpeg) : des centaines de captures pleine taille feraient tomber l'onglet.
+ */
+async function planchesV2(page: Page, dir: string) {
+  const mini = join(dir, '_mini');
+  mkdirSync(mini, { recursive: true });
+  const fichiers = readdirSync(dir)
+    .filter((f) => f.endsWith('.png') && !f.startsWith('PLANCHE'))
+    .sort();
+  const us = [...new Set(fichiers.map((f) => f.split('_')[0]!))];
+  const vignette = (f: string) => {
+    const m = join(mini, f.replace('.png', '.jpg'));
+    execFileSync('ffmpeg', [
+      '-y',
+      '-loglevel',
+      'error',
+      '-i',
+      join(dir, f),
+      '-vf',
+      'scale=300:-1',
+      '-q:v',
+      '4',
+      m,
+    ]);
+    return `<figure><img src="data:image/jpeg;base64,${readFileSync(m).toString('base64')}"><figcaption>${f.replace('.png', '')}</figcaption></figure>`;
+  };
+  for (let g = 0; g * 5 < us.length; g++) {
+    const lot = us.slice(g * 5, g * 5 + 5);
+    const lignes = lot
+      .map((u) => {
+        const de = fichiers.filter((f) => f.startsWith(`${u}_`));
+        return `<h2>${u}</h2><div class="r">${de
+          .filter((f) => f.endsWith('clair.png'))
+          .map(vignette)
+          .join('')}</div><div class="r">${de
+          .filter((f) => f.endsWith('sombre.png'))
+          .map(vignette)
+          .join('')}</div>`;
+      })
+      .join('');
+    const p = await page.context().newPage();
+    await p.setViewportSize({ width: 3000, height: 1000 });
+    await p.setContent(
+      `<!doctype html><meta charset="utf-8"><style>body{margin:16px;background:#efe7d6;font:14px sans-serif;color:#084c38}h1{font-size:22px;margin:0 0 8px}h2{margin:12px 0 4px;font-size:16px}.r{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}figure{margin:0}img{width:150px;display:block;border-radius:8px}figcaption{font-size:9px;width:150px;overflow:hidden;white-space:nowrap}</style><h1>Awzid · Vidéos vivantes v2 · ${lot[0]} à ${lot.at(-1)} (360 px, clair puis sombre)</h1>${lignes}`,
+    );
+    const fp = join(dir, `PLANCHE_V2_${lot[0]}-${lot.at(-1)}.png`);
+    await p.screenshot({ path: fp, fullPage: true, scale: 'css' });
+    expect(await p.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(7000);
+    await p.close();
+  }
+  rmSync(mini, { recursive: true, force: true });
+}

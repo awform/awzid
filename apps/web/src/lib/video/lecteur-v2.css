@@ -137,7 +137,10 @@
 .vv-l {
   box-sizing: border-box;
   max-width: 30rem;
-  min-height: 100%;
+  /* tout tient dans l'écran (la carte se règle sur la place restante : rien sous les commandes) ; un écran de moins
+     de 32 rem de haut fait défiler la page */
+  height: 100%;
+  min-height: 32rem;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -217,7 +220,7 @@
   --famc: var(--fam);
   position: relative;
   flex: 1;
-  min-height: 26rem;
+  min-height: 0;
   border-radius: 1.75rem;
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cpath d='M28 16l3.5 8.5L40 28l-8.5 3.5L28 40l-3.5-8.5L16 28l8.5-3.5z' fill='none' stroke='%23c9a227' stroke-opacity='.16'/%3E%3C/svg%3E")
@@ -339,6 +342,7 @@
   gap: var(--e2);
   padding: var(--e3) var(--e4) var(--e4);
   overflow-y: auto;
+  min-height: 0;
   max-height: 34rem;
   /* un texte qui défile s'efface doucement aux bords au lieu d'être tranché */
   -webkit-mask-image: linear-gradient(
@@ -1279,6 +1283,27 @@
   display: grid;
   justify-items: center;
   gap: 0.3rem;
+}
+/* téléphone de faible hauteur (360 × 740…) : l'image d'un mot et les marges se resserrent, l'arabe garde sa taille
+   (aucune réduction du contenu) */
+@media (max-height: 820px) {
+  .vv .sc-h {
+    margin-top: var(--e2);
+  }
+  .vv .cs {
+    margin-top: var(--e1);
+  }
+  .vv .b-mot .illu {
+    width: 6rem;
+    height: 6rem;
+  }
+  .vv-c {
+    gap: var(--e1);
+    padding-top: var(--e2);
+  }
+  .vv .reps {
+    max-width: 17rem;
+  }
 }
 /* animations réduites : fondus seulement (le tracé d'une lettre reste : c'est le contenu) */
 @media (prefers-reduced-motion: reduce) {
