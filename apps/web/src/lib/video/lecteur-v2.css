@@ -1345,6 +1345,13 @@
   .vv .b-q .opt {
     min-height: 2.75rem;
   }
+  .vv .b-q .ar.l,
+  .vv .b-q .opt .ar {
+    line-height: 1.45;
+  }
+  .vv .b-q .options {
+    gap: 0.35rem;
+  }
   /* grille des mots (9 images et plus) : images plus petites, l'arabe garde sa taille */
   .vv .grille .tuile svg {
     width: 2.25rem;
