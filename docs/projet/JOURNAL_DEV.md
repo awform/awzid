@@ -9,6 +9,19 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 20/10/2026 (suite) — Liste blanche : « أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ » (entrée nominative), fusion de `dhikr-nazala-wip` dans `main` ; NON déployé
+
+Départ : `main` 4c55144. Rien déployé ; `~/lecons-audio` lu seulement.
+
+> **⚠ LISTE BLANCHE MODIFIÉE** (`packages/content/data/dhikr-formules.json`, lue aussi par `gen-audio.ps1`) : ajout de **« أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ »** (catégorie `istiadha`, 36 formules) ; `DHIKR` régénéré. Agents de la génération des audios (Gemini) et des vidéos v2 (`video-v2-wip`) : reprendre la liste de `main`.
+
+- **Décisions du référent** : le hadith « مَنْ نَزَلَ مَنْزِلًا… » (Muslim, ṣaḥīḥ) est sonorisé par une **entrée nominative** de la formule COMPLÈTE ; le seuil général (4 mots, verset entier dans un hadith) ne bouge pas : **113:2 seul** (verset entier) **ou récité** (Al-Falaq) **reste refusé** (tests). L'athar de Muʿādh (ra2) reste refusé (marquage à venir par le processus des livres, tri Codex en cours sur ra2). La Basmala citée en tafsir est acceptée (test).
+- `hadith-garde.ts` régénéré (le hadith n'est plus une citation : une empreinte en moins) ; `VIDEO_GARDE` recalculée : inchangée.
+- **Import de contrôle** (`~/lecons-audio`, 17 886 entrées) : **avant 6 refusés, après 5** (17 881 importés, 0 absent, 0 illisible, 0 incohérent) ; accepté désormais : « مَنْ نَزَلَ مَنْزِلًا… » ; restent refusés : les 4 récits et l'athar de Muʿādh.
+- **Vérifications** (sous `flock`) : build, typecheck, eslint, prettier : 0 erreur ; unitaires **2 587 réussis, 3 ignorés, 0 échec** ; poids : marge 4,0 Ko ; **e2e complète** (`--retries=1 --workers=3`, 39,4 min, VM chargée : charge moyenne ≈ 30 par les autres agents) : 846 réussis, 158 ignorés, 1 instable (`lecteur:417` mobile), **1 échec de chronométrage** `perf.spec.ts:42` (ouverture < 3 s en 3G simulée) ; les deux **réussis relancés seuls** (2/2). Rien de l'application web ne change : le web n'importe ni `dhikr.ts`, ni `hadith-garde.ts`, ni `garde-coran.ts`, et `VIDEO_GARDE` est identique.
+
+---
+
 ## 20/10/2026 (suite) — Garde coranique commune : décisions du référent (isti'ādha, Basmala avant d'agir, hadiths, alifs), fusion de `garde-referent-wip` dans `main` ; NON déployé
 
 Départ : `main` 2fd0b21. Rien déployé ; `~/lecons-audio` lu seulement (import de contrôle vers un stockage jetable, supprimé ensuite).
