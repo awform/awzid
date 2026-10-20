@@ -19,6 +19,7 @@ AR_HOTE="$REGION-docker.pkg.dev"
 AR="$AR_HOTE/$PROJET/$AR_DEPOT"
 BUCKET=awzid-sauvegardes-b7e41c
 RETENTION_JOURS=30
+CORAN_BUCKET=awzid-coran-audio-b7e41c   # copie hors site de l audio du Coran (europe-west1, Coldline, sans cycle de vie)
 ALERTE_EMAIL=awzid21@gmail.com
 LABELS=app=awzid
 gc() { "$G" --project "$PROJET" --quiet "$@"; }
