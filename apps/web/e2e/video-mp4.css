@@ -129,7 +129,9 @@ body.rec {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 :root[data-format='16x9'] .vv .lgr {
-  max-width: 40rem;
+  /* une seule rangée de lettres : le format est bas */
+  grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
+  max-width: 46rem;
 }
 :root[data-format='16x9'] .vv .reps {
   grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -352,7 +354,7 @@ body.rec {
 
 /* 16:9 : tout un peu plus grand (écran d'ordinateur ou de télévision) */
 :root[data-format='16x9'] {
-  font-size: 23px;
+  font-size: 21px;
 }
 :root[data-format='16x9'] .vv[data-rec] .vv-l {
   padding: 22px 56px 24px;
@@ -446,6 +448,7 @@ body.rec {
 }
 :root[data-format='16x9'] .vv .h.titre-l {
   font-size: 1.2rem;
+  max-width: 34rem;
 }
 :root[data-format='16x9'] .vv .ar.titre {
   font-size: 1.35rem;
