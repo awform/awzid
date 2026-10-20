@@ -9,6 +9,27 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 20/10/2026 (soir) — Cahier de lecture d'Adultes 1 dans l'application (interrupteur `cahier_lecture`), audio du cahier, fusion de `cahier-lecture-wip` dans `main` ; NON déployé
+
+Départ : `main` 93e2559. Rien déployé. Source : `application/design/cahier_lecture_ad1/` (validée par le client : « ça me plaît beaucoup »).
+
+- **Interrupteur `cahier_lecture`** (registre) : coupé en production et en bêta, allumé sur la démonstration ; libellé `fn.cahier_lecture` (5 langues). Couper l'interrupteur laisse le niveau et les leçons entiers.
+- **Accès** : carte « Cahier de lecture » dans le niveau ad1 ; dans chaque leçon d'ad1 qui a des pages, lien « la page du jour » (`/cahier/ad1?u=ad1.lNN`) : le cahier ouvre la première page de cette leçon qui n'est pas faite (concordance du cahier). Sommaire par parties (121 pages du parcours, 11 de rattrapage), « Continuer », pages « à lire après la leçon N » signalées (non bloquées : testeurs).
+- **Pages** (`lib/cahier/`, charte du prototype sur les jetons du thème, clair et sombre) : grilles de 15 cases, tableaux, mots, paires, lettres séparées puis liées, groupes, phrases, textes suivis, muṣḥaf, sourates. Chaque case, mot, ligne se touche pour l'entendre. Arabe affiché tel quel (aucune normalisation, chadda puis voyelle), sur sa propre ligne de case ; aucune phonétique latine ; textes tutoyés.
+- **Lecture guidée** : la case s'allume, son fichier joue, pause de 1,5 fois sa durée, case suivante ; à la fin, une case « avec le modèle » se coche. **6 cases** (3 avec le modèle, 3 seul, « J'ai lu seul ») **mémorisées** sur l'appareil (IndexedDB, par profil).
+- **Minutes de lecture** chronométrées (60 s, éléments justes, repères provisoires, historique) ; **lecture chronométrée** des textes (mots justes par minute) ; minute de texte n°4 : historique des textes.
+- **Bilans à froid** et épreuve finale : lecture une fois, sans modèle ; l'élève touche les mots manqués ; résultat (seuil du cahier, 90 %), **renvoi aux pages de rattrapage** des mots manqués ; l'audio n'est donné qu'après l'essai.
+- **Atelier « je compose le mot »** (28 grilles) au toucher et au clavier (flèches, 1 à 7, Entrée, Espace), mot entier puis syllabes.
+- **Pont vers le Coran** : muṣḥaf, lettres isolées, sourates en **récitation stockée de Muḥammad Ayyūb** (verset par verset, copie de l'appareil d'abord) ; un élément récité ne passe JAMAIS par les fichiers de synthèse ; la Basmala citée en tête d'une lettre (garde du générateur) est récitée (1:1).
+- **Chargement à la demande** : plugin `cahierALaDemande` (`/_app/cahier.json`), service worker (jamais préchargé ; `/cahier-data/` hors coquille), **garde de poids dédiée** dans `budget.mjs` (24 Ko) ; hors ligne : code et pages gardés au téléchargement du niveau (`offline.ts`).
+- **Données** : `packages/content/data/cahier/ad1.json` (copie exacte de la source) et `ad1.audio.json` → `apps/web/static/cahier-data/ad1.json` et `src/lib/cahier-pages.ts` (`node apps/web/scripts/cahier-donnees.mjs`) ; exclus de Prettier (recopie verbatim), contrôlés par test.
+- **Textes** : français embarqué (`lib/cahier/textes-fr.json`) + 4 textes dans `fr-arabe` ; brouillons en/es/de/ar ; `A_RELIRE.md`.
+- **Audio du cahier** (VM : `~/lecons-audio` ; PC : `Documents\Awzid\awform\audio`, même index que la bascule Gemini, verrou `.verrou_index`) : voir le compte rendu de la mission (essai comparé des syllabes : **Wavenet-B** retenu ; mots et textes : Gemini Charon, repli Chirp 3 HD). Archive : `/tmp/maj-audio-cahier-ad1.tgz` (+ `.liste`, `.sha256`). **À mettre en ligne AVANT (ou avec) les archives Gemini suivantes** (leur `index.js` cite les fichiers du cahier).
+- **Vérifications** : build, typecheck, eslint, prettier : 0 erreur ; unitaires web **867 réussis** (dont `cahier.test.ts` : 22) ; poids : appareil de l'élève 346,8 Ko (marge 3,2 Ko ≥ 3), cahier 14,3 Ko (≤ 24), `/coran/lecteur` 135,9 Ko (≤ 150) ; e2e `cahier.spec.ts` **9/9** (interrupteur coupé, accès et page du jour, lecture guidée et 6 cases, minute et bilan, atelier, Coran, hors ligne, AA clair et sombre, captures) ; e2e complète : (`--retries=1 --workers=3`, 26,7 min, VM partagée) 842 réussis, 160 ignorés, 15 instables, 7 échecs de charge (a21b:195, captures, beta-acces:227, beta-legal:157, f5:172, hifz:145) **tous réussis à la relance** (`--workers=1` : 37/37) : **0 échec réel**.
+- Captures 390 px (8 écrans, clair et sombre) et planche : `application/design/cahier_lecture_ad1/captures_app/`.
+
+---
+
 ## 20/10/2026 (suite) — Liste blanche : « أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ » (entrée nominative), fusion de `dhikr-nazala-wip` dans `main` ; NON déployé
 
 Départ : `main` 4c55144. Rien déployé ; `~/lecons-audio` lu seulement.

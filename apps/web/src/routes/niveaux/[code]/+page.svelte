@@ -134,8 +134,8 @@
     padding: 12px 16px;
     border-radius: 14px;
     border: 2px solid var(--or-line, var(--gold));
-    background: linear-gradient(160deg, var(--bande-1, #0b6e4f), var(--bande-2, #084c38));
-    color: var(--bande-texte, #fbf7ee);
+    background: linear-gradient(160deg, var(--bande-1), var(--bande-2));
+    color: var(--bande-texte);
     text-decoration: none;
   }
   .cahier-acces .t {

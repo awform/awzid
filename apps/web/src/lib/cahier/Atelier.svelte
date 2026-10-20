@@ -117,7 +117,9 @@
           aria-current={j === actif ? 'true' : undefined}
           data-lettre={j}
           onclick={() => (actif = j)}
-          ><span class="ar" lang="ar" dir="rtl">{lettreComposee(m, j, cs)}</span></button
+          ><span class="ar" lang="ar" dir="rtl"
+            ><Bidi text={lettreComposee(m, j, cs)} base="ar" /></span
+          ></button
         >
         {#if !c.choix}<span class="prol"><Bidi text={t('cahier.atelier_prolongation')} /></span
           >{/if}
@@ -132,8 +134,8 @@
         aria-pressed={cs[actif] === s.k}
         data-signe={s.k}
         onclick={() => choisir(s.k)}
-        ><span class="ar" lang="ar" dir="rtl">{CERCLE + s.m}</span><span
-          >{n + 1} · <Bidi text={t(cleSigne(s.k))} /></span
+        ><span class="ar" lang="ar" dir="rtl"><Bidi text={CERCLE + s.m} base="ar" /></span><span
+          ><Bidi text={`${n + 1} · ${t(cleSigne(s.k))}`} /></span
         ></button
       >
     {/each}
@@ -160,11 +162,11 @@
       <p>
         <Bidi text={retour === 'juste' ? t('cahier.atelier_juste') : t('cahier.atelier_faux')} />
       </p>
-      <p class="solution ar" lang="ar" dir="rtl">{m.solution}</p>
+      <p class="solution ar" lang="ar" dir="rtl"><Bidi text={m.solution} base="ar" /></p>
       <div class="syllabes" dir="rtl">
         {#each m.syllabes as s, k (k)}
           <button type="button" class="bouton syl" onclick={() => ecouterSyllabe(s)}
-            ><span class="ar" lang="ar" dir="rtl">{s}</span></button
+            ><span class="ar" lang="ar" dir="rtl"><Bidi text={s} base="ar" /></span></button
           >
         {/each}
       </div>
@@ -218,7 +220,7 @@
   }
   .case.actif {
     border-color: var(--gold);
-    box-shadow: 0 0 0 3px var(--or-soft, #fbf1d3);
+    box-shadow: 0 0 0 3px var(--or-soft);
   }
   .case.fixe {
     background: var(--surface, var(--card));
@@ -276,7 +278,7 @@
   }
   .bouton.plein {
     background: var(--primary);
-    color: var(--on-primary, #fff);
+    color: var(--on-primary);
   }
   .case:focus-visible,
   .signe:focus-visible,

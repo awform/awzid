@@ -65,7 +65,9 @@
   {#if mode !== 'lecture'}
     {#if etat === 'pret'}
       <button type="button" class="bouton plein" data-testid="mesure-demarrer" onclick={demarrer}
-        >{mode === 'minute' ? t('cahier.minute_demarrer') : t('cahier.chrono_demarrer')}</button
+        ><Bidi
+          text={mode === 'minute' ? t('cahier.minute_demarrer') : t('cahier.chrono_demarrer')}
+        /></button
       >
     {:else if etat === 'en_cours'}
       <p class="chrono" role="timer" aria-live="off">
@@ -162,7 +164,7 @@
   }
   .bouton.plein {
     background: var(--primary);
-    color: var(--on-primary, #fff);
+    color: var(--on-primary);
   }
   .chrono {
     font: 700 1.6rem var(--font-title);

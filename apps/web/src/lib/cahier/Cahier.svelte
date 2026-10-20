@@ -169,7 +169,7 @@
                 class:avenir={avenir(p)}
                 data-page={p.id}
               >
-                <span class="num">{p.num}</span>
+                <span class="num"><Bidi text={p.num} /></span>
                 <span class="titre"><Bidi text={p.titre} /></span>
                 <span class="etat"
                   >{#if pageFaite(progres, p.id)}<Bidi
@@ -196,7 +196,7 @@
                 class:faite={pageFaite(progres, p.id)}
                 data-page={p.id}
               >
-                <span class="num">{p.num}</span>
+                <span class="num"><Bidi text={p.num} /></span>
                 <span class="titre"><Bidi text={p.titre} /></span>
                 <span class="etat"><Bidi text={apres(p)} /></span>
               </a>
@@ -212,11 +212,11 @@
   /* charte du prototype validé (vert, ivoire, or) sur les jetons du thème : clair et sombre suivent l'application ;
      lettre étudiée en rouge (couleur des lettres du livre), lettres muettes en gris (contraste AA, texte arabe large) */
   .cahier {
-    --cah-cible: var(--c0, #e5484d);
-    --cah-muet: var(--tj-muet, #5b626c);
-    --cah-or: var(--or-line, #c99a2e);
+    --cah-cible: var(--c0);
+    --cah-muet: var(--tj-muet);
+    --cah-or: var(--or-line);
     --cah-carte: var(--card);
-    --cah-papier: var(--paper, #fbf7ee);
+    --cah-papier: var(--paper);
     max-width: 52rem;
     margin: 0 auto;
   }
@@ -232,8 +232,8 @@
   .bandeau {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(160deg, var(--bande-1, #0b6e4f), var(--bande-2, #084c38));
-    color: var(--bande-texte, #fbf7ee);
+    background: linear-gradient(160deg, var(--bande-1), var(--bande-2));
+    color: var(--bande-texte);
     border-radius: var(--radius-lg, 20px);
     padding: 1.1rem 1.25rem 1rem;
     margin-bottom: 0.75rem;
@@ -281,7 +281,7 @@
   }
   .bouton.plein {
     background: var(--primary);
-    color: var(--on-primary, #fff);
+    color: var(--on-primary);
   }
   .partie h2 {
     display: flex;

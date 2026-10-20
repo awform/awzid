@@ -239,6 +239,8 @@
     if (pos < e.ar.length) out.push({ t: e.ar.slice(pos), c: '' });
     return out;
   }
+  /** virgule arabe (U+060C) entre les mots manqués */
+  const SEP_AR = String.fromCharCode(0x60c) + ' ';
   const classeBloc = (b: Bloc) =>
     b.type === 'mots' && b.el.length > 12
       ? 'mots serres'
@@ -247,8 +249,15 @@
         : b.type;
 </script>
 
-{#snippet arabe(e: El)}{#each morceaux(e) as m, i (i)}{#if m.c}<span class="c-{m.c}">{m.t}</span
-      >{:else}{m.t}{/if}{/each}{/snippet}
+<!-- arabe tel qu'écrit, découpé seulement pour la couleur ; texte coranique (muṣḥaf) rendu brut dans quran-text -->
+{#snippet arabe(e: El)}{#if e.a === 'q'}<span class="ar quran-text" lang="ar" dir="rtl"
+      >{#each morceaux(e) as m, i (i)}{#if m.c}<span class="c-{m.c}">{m.t}</span
+          >{:else}{m.t}{/if}{/each}</span
+    >{:else}<span class="ar" lang="ar" dir="rtl"
+      >{#each morceaux(e) as m, i (i)}{#if m.c}<span class="c-{m.c}"
+            ><Bidi text={m.t} base="ar" /></span
+          >{:else}<Bidi text={m.t} base="ar" />{/if}{/each}</span
+    >{/if}{/snippet}
 
 {#snippet element(cle: string, e: El, cls = 'el')}
   <button
@@ -262,12 +271,12 @@
       ? manques.includes(rangMot[cle]!)
       : undefined}
     onclick={() => ecouter(cle, e)}
-    ><span class="ar" lang="ar" dir="rtl">{@render arabe(e)}</span>{#if e.d && !bilan}<span
-        class="tag"><Bidi text={e.d} /></span
+    >{@render arabe(e)}{#if e.d && !bilan}<span class="tag"><Bidi text={e.d} /></span
       >{/if}{#if bilan && rangMot[cle] !== undefined && manques.includes(rangMot[cle]!)}<span
         class="tag"><Bidi text={t('cahier.bilan_rate')} /></span
       >{/if}{#if e.lecon}<span class="tag"><Bidi text={e.lecon} /></span
-      >{/if}{#if e.ref && e.a === 'q' && !e.sep}<span class="ref">{e.ref}</span>{/if}</button
+      >{/if}{#if e.ref && e.a === 'q' && !e.sep}<span class="ref"><Bidi text={e.ref} /></span
+      >{/if}</button
   >
 {/snippet}
 
@@ -284,7 +293,7 @@
       >
     </p>
     <h1><Bidi text={page.titre} /></h1>
-    <p class="numero">{t('cahier.page', { n: page.num })}</p>
+    <p class="numero"><Bidi text={t('cahier.page', { n: page.num })} /></p>
   </header>
   {#if avenir}<p class="avertissement">
       <Bidi text={t('cahier.avenir', { lecon: page.lecon ?? '' })} />
@@ -328,7 +337,7 @@
               class="bouton plein"
               data-testid="lire-modele"
               onclick={lireAvecModele}
-              >{coran ? t('cahier.coran_ecouter') : t('cahier.lire_modele')}</button
+              ><Bidi text={coran ? t('cahier.coran_ecouter') : t('cahier.lire_modele')} /></button
             >
           {/if}
           <button
@@ -338,7 +347,9 @@
             onclick={() => cocherSuivante(1)}>{t('cahier.lire_seul')}</button
           >
         </div>
-        <p class="etat-cases">{t('cahier.lectures', { n: cases.filter(Boolean).length })}</p>
+        <p class="etat-cases">
+          <Bidi text={t('cahier.lectures', { n: cases.filter(Boolean).length })} />
+        </p>
         {#if message}<p class="message" role="status"><Bidi text={message} /></p>{/if}
       {/if}
     </section>
@@ -362,7 +373,7 @@
         <div class="grille">
           {#each b.el as r, ri (ri)}
             {@const rang = r as Rang}
-            <div class="lib"><b>{ri + 1}</b><Bidi text={rang.titre ?? ''} /></div>
+            <div class="lib"><b><Bidi text={ri + 1} /></b><Bidi text={rang.titre ?? ''} /></div>
             <div class="cellules-grille">
               {#if rang.el.length}
                 {#each rang.el as e, ci (ci)}{@render element(
@@ -382,7 +393,7 @@
           {#each b.el as r, ri (ri)}
             {@const rang = r as Rang}
             <div class="ligne-table">
-              <span class="let" lang="ar" dir="rtl">{rang.lettre}</span>
+              <span class="let" lang="ar" dir="rtl"><Bidi text={rang.lettre} base="ar" /></span>
               {#each rang.el as e, ci (ci)}{@render element(
                   `${bi}.${ri}.${ci}`,
                   e,
@@ -513,7 +524,9 @@
                     })}
                   /></a
                 >
-                <span class="ar" lang="ar" dir="rtl">{r.mots.join('، ')}</span>
+                <span class="ar" lang="ar" dir="rtl"
+                  ><Bidi text={r.mots.join(SEP_AR)} base="ar" /></span
+                >
               </li>
             {/each}
           </ul>
@@ -588,8 +601,8 @@
   .bandeau {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(160deg, var(--bande-1, #0b6e4f), var(--bande-2, #084c38));
-    color: var(--bande-texte, #fbf7ee);
+    background: linear-gradient(160deg, var(--bande-1), var(--bande-2));
+    color: var(--bande-texte);
     border-radius: var(--radius-lg, 20px);
     padding: 1rem 1.25rem 0.9rem;
   }
@@ -601,7 +614,7 @@
     width: 130px;
     height: 130px;
     border-radius: 50%;
-    border: 2px solid var(--gold, #c9a227);
+    border: 2px solid var(--gold);
     opacity: 0.8;
   }
   .bandeau::after {
@@ -624,8 +637,8 @@
     text-transform: uppercase;
   }
   .puce {
-    background: var(--gold, #c9a227);
-    color: var(--sur-or, #1e2b25);
+    background: var(--gold);
+    color: var(--sur-or);
     border-radius: 999px;
     padding: 0.2rem 0.6rem;
     letter-spacing: 0.03em;
@@ -702,7 +715,7 @@
     border-color: var(--primary);
   }
   .case[aria-pressed='true'] svg {
-    stroke: var(--on-primary, #fff);
+    stroke: var(--on-primary);
   }
   .actions {
     display: flex;
@@ -733,7 +746,7 @@
   }
   .bouton.plein {
     background: var(--primary);
-    color: var(--on-primary, #fff);
+    color: var(--on-primary);
   }
   .bloc {
     margin: 1rem 0 0;
@@ -803,9 +816,9 @@
     direction: ltr;
   }
   .el.actif {
-    border-color: var(--gold, #c9a227);
-    background: var(--or-soft, #fbf1d3);
-    box-shadow: 0 0 0 3px var(--gold, #c9a227);
+    border-color: var(--gold);
+    background: var(--or-soft);
+    box-shadow: 0 0 0 3px var(--gold);
   }
   .el.rate {
     border-color: var(--bad-ink);
@@ -899,7 +912,7 @@
     display: grid;
     place-items: center;
     background: var(--primary);
-    color: var(--on-primary, #fff);
+    color: var(--on-primary);
     border-radius: 9px;
     font: 700 1.3rem var(--font-ar);
   }
