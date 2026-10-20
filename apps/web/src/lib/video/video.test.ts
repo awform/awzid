@@ -58,8 +58,8 @@ describe('vidéos vivantes : interrupteur « video_vivante »', () => {
       true,
     );
   });
-  it('proposé seulement pour les niveaux dont la garde vidéo est calculée (Adultes 1)', () => {
-    expect(VIDEO_NIVEAUX).toEqual(['ad1']);
+  it('proposé seulement pour les niveaux dont la garde vidéo est calculée (Adultes 1 et 2)', () => {
+    expect(VIDEO_NIVEAUX).toEqual(['ad1', 'ad2']);
   });
 });
 
@@ -74,6 +74,11 @@ describe('vidéos vivantes : l’arabe sur sa propre ligne', () => {
   it('entre parenthèses, le mot arabe garde ses parenthèses sur sa ligne (aucune parenthèse orpheline)', () => {
     expect(frH(`Le Coran imprimé (${mot}) : même texte`)).toBe(
       `<div class="frh"><span class="fr">Le Coran imprimé </span><span class="ar l" lang="ar" dir="rtl">(${mot})</span><span class="fr"> : même texte</span></div>`,
+    );
+  });
+  it('après une ligne arabe, la ligne française ne commence pas par sa virgule', () => {
+    expect(frH(`Lettres ${mot}, la ligature`)).toBe(
+      `<div class="frh"><span class="fr">Lettres </span><span class="ar l" lang="ar" dir="rtl">${mot}</span><span class="fr">la ligature</span></div>`,
     );
   });
   it('un mot ou une phrase arabe passe sur sa propre ligne, le français autour reste entier', () => {

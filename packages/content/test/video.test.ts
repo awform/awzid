@@ -1,8 +1,8 @@
 /**
- * Vidéos vivantes (19/10/2026) : générateur de scènes `buildVideo` sur les 25 unités d'Adultes 1 (projection
+ * Vidéos vivantes (19/10/2026) : générateur de scènes `buildVideo` sur les 25 unités de chaque niveau proposé (Adultes 1, Adultes 2… ; projection
  * élève, comme l'application) — fidélité octet pour octet, modes, durées, garde coranique et Basmala, audit
  * des audios. `VIDEO_GARDE=ecrire` régénère `src/video-garde.ts` ; `VIDEO_AUDIT=1` écrit
- * `reports/video-vivante-ad1.md` (tableau des unités, audios manquants, textes gardés sans voix).
+ * `reports/video-vivante-<niveau>.md` (tableau des unités, audios manquants, textes gardés sans voix).
  */
 import { existsSync, readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs';
 import { homedir } from 'node:os';
@@ -19,6 +19,7 @@ import {
   dureeMode,
   gardeVideoKey,
   motExemple,
+  motsCles,
   ordreDe,
   phrasesFr,
   scenesDuMode,
@@ -27,48 +28,56 @@ import {
   type VideoLecon,
 } from '../src/video.js';
 import { VIDEO_GARDE, VIDEO_RECITATION } from '../src/video-garde.js';
+import { VIDEO_NIVEAUX } from '../src/video-niveaux.js';
 import { DHIKR, contientDhikr, horsDhikr, motsDhikr, sansVoyelles } from '../src/dhikr.js';
 import { audioFileId, looksQuranic, quranRuns, sayText, skeleton } from '../src/audio-cle.js';
 import { loadTanzil, parseDataFile, studentProjection } from '../src/index.js';
 import { CONTENT_DIR, HAS_CONTENT } from './helpers.js';
 
-const LIVRE = 'ad1';
-const DIR = join(CONTENT_DIR, 'data', LIVRE);
-const FILES = existsSync(DIR)
-  ? readdirSync(DIR)
-      .filter((f) => /^l\d+\.js$/.test(f))
-      .sort()
-  : [];
+/** niveaux proposés (garde calculée) : Adultes 1, Adultes 2… */
+const LIVRES = [...VIDEO_NIVEAUX];
+const fichiers = (livre: string) => {
+  const d = join(CONTENT_DIR, 'data', livre);
+  return existsSync(d)
+    ? readdirSync(d)
+        .filter((f) => /^l\d+\.js$/.test(f))
+        .sort()
+    : [];
+};
 const TSV = join(CONTENT_DIR, 'coran', 'tanzil-uthmani.tsv');
 /** marque d'ordre des octets en tête de la liste (écrite par PowerShell) */
 const BOM = new RegExp(`^${String.fromCharCode(0xfeff)}`);
 /** liste des fichiers audio des leçons (import `lecons-audio`) : sha1;voix;source;statut;caracteres;niveaux;texte */
 const LISTE = process.env.AWFORM_LECONS_AUDIO_LISTE ?? join(homedir(), 'lecons-audio', 'liste.csv');
-const audioAd1 = existsSync(LISTE)
-  ? new Set(
-      readFileSync(LISTE, 'utf8')
-        .split('\n')
-        .slice(1)
-        .map((l) => l.split(';'))
-        .filter((c) => (c[5] ?? '').split(' ').includes(LIVRE))
-        .map((c) => c[0]!.replace(BOM, '')),
-    )
+const lignesListe = existsSync(LISTE)
+  ? readFileSync(LISTE, 'utf8')
+      .split('\n')
+      .slice(1)
+      .map((l) => l.split(';'))
   : null;
+/** fichiers audio d'un niveau */
+const audioDe = (livre: string) =>
+  lignesListe
+    ? new Set(
+        lignesListe
+          .filter((c) => (c[5] ?? '').split(' ').includes(livre))
+          .map((c) => c[0]!.replace(BOM, '')),
+      )
+    : null;
+const audios = new Map(LIVRES.map((l) => [l, audioDe(l)]));
 /** tous les fichiers de la liste, tous niveaux (audit : texte enregistré pour un autre niveau) */
-const tousFichiers = existsSync(LISTE)
-  ? new Set(
-      readFileSync(LISTE, 'utf8')
-        .split('\n')
-        .slice(1)
-        .map((l) => l.split(';')[0]!.replace(BOM, '')),
-    )
-  : new Set<string>();
+const tousFichiers = new Set((lignesListe ?? []).map((c) => c[0]!.replace(BOM, '')));
 /** comme l'application (`audioIdFor`) : fichier du niveau, jamais pour un texte aux signes du Muṣḥaf */
-const hasAudio = (s: string) =>
-  audioAd1 ? !looksQuranic(s) && audioAd1.has(audioFileId(s) ?? '') : true;
+const hasAudioDe = (livre: string) => {
+  const a = audios.get(livre) ?? null;
+  return (s: string) => (a ? !looksQuranic(s) && a.has(audioFileId(s) ?? '') : true);
+};
 
-const raw = (f: string) =>
-  parseDataFile(readFileSync(join(DIR, f), 'utf8'), f).value as Record<string, unknown>;
+const raw = (livre: string, f: string) =>
+  parseDataFile(readFileSync(join(CONTENT_DIR, 'data', livre, f), 'utf8'), f).value as Record<
+    string,
+    unknown
+  >;
 const strings = (v: unknown, out: string[] = []): string[] => {
   if (typeof v === 'string') out.push(v);
   else if (Array.isArray(v)) v.forEach((x) => strings(x, out));
@@ -110,7 +119,53 @@ const imagesDe = (L: Record<string, unknown>) =>
   new Set(strings([L.mots, L.exercices]).filter((s) => /^[a-z_]+$/.test(s)));
 
 const tanzil = existsSync(TSV) ? loadTanzil(readFileSync(TSV, 'utf8')) : null;
-const verses = tanzil ? [...tanzil.values()] : [];
+// versets dans l'ordre du Muṣḥaf (le fichier Tanzil n'est pas trié) : suites de mots et versets enchaînés justes
+const cleVerset = (k: string) => k.split(':').map(Number) as [number, number];
+const verses = tanzil
+  ? [...tanzil.entries()]
+      .sort(([a], [b]) => {
+        const [x, y] = cleVerset(a);
+        const [u, v] = cleVerset(b);
+        return x - u || y - v;
+      })
+      .map(([, v]) => v)
+  : [];
+/**
+ * Texte présenté comme citation du Coran par sa référence : le bloc du livre porte une référence de verset (champ
+ * `ref`, sens ou note : « 49:10 ») et son texte arabe, de deux mots ou plus, se lit dans ce verset (Tanzil sans
+ * voyelles). Un mot isolé (أَحَدٌ, « dernier mot d'Al-Ikhlāṣ ») reste du vocabulaire.
+ */
+const REF = /(\d{1,3})\s*:\s*(\d{1,3})(?:\s*[-–]\s*(\d{1,3}))?/g;
+function citationsAvecRef(L: unknown): Set<string> {
+  const out = new Set<string>();
+  const walk = (x: unknown): void => {
+    if (Array.isArray(x)) return x.forEach(walk);
+    if (!x || typeof x !== 'object') return;
+    const o = x as Record<string, unknown>;
+    const ar = typeof o.ar === 'string' ? unmark(o.ar) : '';
+    const notes = ['ref', 'ref_fr', 'fr', 'note_fr']
+      .map((k) => o[k])
+      .filter((v): v is string => typeof v === 'string')
+      .join(' ');
+    if (tanzil && ar && ar.trim().split(/\s+/).length >= 2)
+      for (const m of notes.matchAll(REF)) {
+        const s = Number(m[1]);
+        const a = Number(m[2]);
+        const b = Number(m[3] ?? m[2]);
+        const texte = Array.from(
+          { length: Math.max(0, b - a) + 1 },
+          (_, i) => tanzil.get(`${s}:${a + i}`) ?? '',
+        )
+          .map(skeleton)
+          .join(' ');
+        const k = skeleton(ar);
+        if (k && ` ${texte} `.includes(` ${k} `)) out.add(o.ar as string);
+      }
+    Object.values(o).forEach(walk);
+  };
+  walk(L);
+  return out;
+}
 const runs4 = tanzil ? quranRuns(verses, 4) : new Set<string>();
 /**
  * Citation du Coran (règle du référent du 20/10/2026) : 4 mots consécutifs du Coran ou plus (Tanzil sans voyelles,
@@ -154,20 +209,21 @@ const versetsEntiers = new Set<string>();
 const recitation = (s: string) => looksQuranic(s) || versetsEntiers.has(skeleton(unmark(s)));
 
 const videos = new Map<string, { v: VideoLecon; L: Record<string, unknown> }>();
-const video = (f: string) => {
-  if (!videos.has(f)) {
-    const L = studentProjection(raw(f), LIVRE) as Record<string, unknown>;
+const video = (livre: string, f: string) => {
+  const k = `${livre}/${f}`;
+  if (!videos.has(k)) {
+    const L = studentProjection(raw(livre, f), livre) as Record<string, unknown>;
+    const a = audios.get(livre) ?? null;
     const v = buildVideo(L, {
-      unitId: `${LIVRE}.${f.slice(0, 3)}`,
-      hasAudio,
+      unitId: `${livre}.${f.slice(0, 3)}`,
+      hasAudio: hasAudioDe(livre),
       images: imagesDe(L),
-      audioList: audioAd1 ? [...audioAd1] : [],
+      audioList: a ? [...a] : [],
     });
-    videos.set(f, { v, L });
+    videos.set(k, { v, L });
   }
-  return videos.get(f)!;
+  return videos.get(k)!;
 };
-
 describe('vidéos vivantes : outils', () => {
   it('ordre : retrouve l’ordre des morceaux qui redonne la phrase du livre (espaces ignorés)', () => {
     expect(ordreDe(['c', 'a', 'b'], 'abc')).toEqual([1, 2, 0]);
@@ -376,138 +432,245 @@ describe('vidéos vivantes : garde coranique et formules de dhikr', () => {
   );
 });
 
-describe.skipIf(!HAS_CONTENT)('vidéos vivantes : les 25 unités d’Adultes 1', () => {
-  it('25 unités (20 leçons, 4 bilans, 1 examen)', () => {
-    expect(FILES.length).toBe(25);
-    const types = FILES.map((f) => video(f).v.type);
-    expect(types.filter((t) => t === 'lecon').length).toBe(20);
-    expect(types.filter((t) => t !== 'lecon').length).toBe(5);
+for (const LIVRE of LIVRES)
+  describe.skipIf(!HAS_CONTENT)(`vidéos vivantes : les 25 unités de ${LIVRE}`, () => {
+    const FILES = fichiers(LIVRE);
+    it('25 unités (20 leçons, 4 bilans, 1 examen)', () => {
+      expect(FILES.length).toBe(25);
+      const types = FILES.map((f) => video(LIVRE, f).v.type);
+      expect(types.filter((t) => t === 'lecon').length).toBe(20);
+      expect(types.filter((t) => t !== 'lecon').length).toBe(5);
+    });
+
+    for (const f of FILES) {
+      it(`${f} : modes proposés non vides, fidélité au livre, durées, garde`, () => {
+        const { v, L } = video(LIVRE, f);
+        // modes : au moins la version longue ; aucun mode proposé sans scène ; aucune scène d'un mode non proposé
+        expect(v.modes).toContain('longue');
+        // révision dans toutes les unités (décision du 20/10/2026) : bilans, examen et leçons (« Je retiens »…)
+        expect(v.modes).toContain('revision');
+        if (v.type === 'lecon')
+          expect(scenesDuMode(v, 'revision').map((s) => s.id)).toContain('recap');
+        // conseil d'écriture contredisant les tracés validés : masqué (l02, l04, l07)
+        const ecr = v.scenes.find((s) => s.id === 'ecriture');
+        if (ecr && CONSEIL_MASQUE.has(v.unitId))
+          expect(ecr.temps.some((x) => x.k === 'fr')).toBe(false);
+        for (const m of v.modes) expect(scenesDuMode(v, m).length).toBeGreaterThan(0);
+        for (const s of v.scenes) for (const m of s.modes) expect(v.modes).toContain(m);
+        for (const m of VIDEO_MODES)
+          if (!v.modes.includes(m)) expect(v.scenes.some((s) => s.modes.includes(m))).toBe(false);
+        // « par lettre » : seulement les leçons qui présentent des lettres nouvelles ; jamais dans un bilan
+        const nouvelles = ((L.lettres as Array<Record<string, unknown>>) ?? []).filter(
+          (x) => x.nom_ar,
+        );
+        expect(v.modes.includes('lettre')).toBe(nouvelles.length > 0);
+        if (v.type !== 'lecon') expect(v.modes).not.toContain('lettre');
+        expect(v.lettres.length).toBe(nouvelles.length);
+        v.lettres.forEach((_, i) => {
+          const ms = dureeMode(v, 'lettre', i);
+          expect(ms, `lettre ${i + 1}`).toBeGreaterThanOrEqual(LETTRE_MIN_MS);
+          expect(ms, `lettre ${i + 1}`).toBeLessThanOrEqual(LETTRE_MAX_MS);
+        });
+        if (v.modes.includes('courte')) {
+          expect(dureeMode(v, 'courte')).toBeGreaterThanOrEqual(COURTE_MIN_MS);
+          expect(dureeMode(v, 'courte')).toBeLessThanOrEqual(COURTE_MAX_MS);
+        }
+        // quiz : seulement des exercices jouables (corrigé présent) ; bilans et examen : aucun corrigé (D7)
+        for (const s of scenesDuMode(v, 'quiz')) expect(s.jouable).toBe(true);
+        // fidélité : chaque chaîne affichée ou dite vient du livre, octet pour octet (aucune normalisation)
+        const book = strings(sansParties(L));
+        const { ar, fr, cles } = videoStrings(v);
+        for (const s of ar) expect(fromBook(s, book), `arabe hors du livre : ${s}`).toBe(true);
+        for (const s of fr) expect(frFromBook(s, book), `français hors du livre : ${s}`).toBe(true);
+        for (const k of cles) expect(k).toMatch(/^vv\.[a-z_]+$/);
+        // aucune phonétique latine : aucune valeur d'un champ `tr` du livre (absent de la projection élève)
+        const tr = new Set<string>();
+        const walk = (x: unknown): void => {
+          if (Array.isArray(x)) x.forEach(walk);
+          else if (x && typeof x === 'object')
+            for (const [k, y] of Object.entries(x)) {
+              if (k === 'tr' && typeof y === 'string') tr.add(y);
+              else walk(y);
+            }
+        };
+        walk(raw(LIVRE, f));
+        for (const s of [...ar, ...fr]) expect(tr.has(s), `phonétique : ${s}`).toBe(false);
+        expect(JSON.stringify(v)).not.toMatch(/"tr"/);
+        // garde : aucune voix sur un texte coranique (Muṣḥaf, 4 mots du Coran hors formules, Basmala complète)
+        // formules de dhikr marquées par les données (`dhikr: true`) : voix permise malgré les gardes Basmala et Tanzil
+        const dhikrs = new Set<string>();
+        const marque = (x: unknown): void => {
+          if (Array.isArray(x)) x.forEach(marque);
+          else if (x && typeof x === 'object') {
+            const o = x as Record<string, unknown>;
+            if (o.dhikr === true) strings(o).forEach((s) => dhikrs.add(unmark(s)));
+            Object.values(o).forEach(marque);
+          }
+        };
+        marque(sansParties(L));
+        for (const s of videoVoix(v)) {
+          expect(looksQuranic(s), s).toBe(false);
+          if (dhikrs.has(s)) continue;
+          expect(skeleton(s).includes(BASMALA_COMPLETE), s).toBe(false);
+          if (tanzil) expect(cite(s), `voix sur une citation du Coran : ${s}`).toBe(false);
+        }
+        const refs = new Set([...citationsAvecRef(sansParties(L))].map(unmark));
+        for (const s of videoVoix(v))
+          expect(refs.has(s), `voix sur une citation avec référence : ${s}`).toBe(false);
+        // récitation : aucune voix sur un morceau (même un mot, même une formule) d'une sourate ou d'un verset que la
+        // lecture de l'unité présente comme récitation (Fātiḥa mot à mot, sourates 112 à 114…)
+        if (tanzil) {
+          const norme = (x: string) =>
+            ` ${sayText(unmark(x))
+              .replace(/[|.,:;!?«»"()…—–=+←،؛؟]/g, ' ')
+              .replace(/\s+/g, ' ')
+              .trim()} `;
+          const passages = strings((L as { lecture?: unknown }).lecture)
+            .filter((x) => !/[A-Za-z]/.test(x))
+            .filter(recitation)
+            .map(norme);
+          // tous les textes qui POURRAIENT être dits (comme si chaque fichier audio existait), hors dialogue (formules
+          // de salutation : jamais un contexte coranique)
+          const tout = buildVideo(L, { unitId: f, hasAudio: () => true, images: imagesDe(L) });
+          const dits = videoVoix({
+            ...tout,
+            scenes: tout.scenes.filter((s) => s.part !== 'dialogue' && s.part !== 'jouer'),
+          });
+          for (const s of dits)
+            expect(
+              passages.some((p) => p.includes(norme(s))),
+              `voix sur un morceau de passage coranique : ${s}`,
+            ).toBe(false);
+        }
+        // « À toi de jouer la scène ! » : à la fin de la version longue quand le dialogue a au moins deux rôles
+        const longue = scenesDuMode(v, 'longue');
+        if (v.scenes.some((s) => s.id === 'jouer')) expect(longue.at(-1)!.id).toBe('jouer');
+      });
+    }
+
+    it.skipIf(!process.env.VIDEO_AUDIT)(
+      'audit : tableau des unités, audios manquants, textes gardés',
+      () => {
+        const lignes = [
+          `# Vidéos vivantes — ${LIVRE} (audit généré par \`VIDEO_AUDIT=1\`)`,
+          '',
+          `Audio : ${audios.get(LIVRE) ? `${audios.get(LIVRE)!.size} fichiers du niveau (${LISTE})` : 'liste absente'}.`,
+          '',
+          '| Unité | Type | Modes | Scènes | Longue | Courte | Quiz (exercices) | Gardés sans voix | Sans audio (à écouter / tous) |',
+          '|---|---|---|---|---|---|---|---|---|',
+        ];
+        const details: string[] = [];
+        for (const f of FILES) {
+          const { v } = video(LIVRE, f);
+          const min = (ms: number) => `${Math.round(ms / 1000)} s`;
+          lignes.push(
+            `| ${f.slice(0, 3)} | ${v.type}${v.numero ? ` ${v.numero}` : ''} | ${v.modes.join(', ')} | ${v.scenes.length} | ${min(dureeMode(v, 'longue'))} | ${v.modes.includes('courte') ? min(dureeMode(v, 'courte')) : '—'} | ${scenesDuMode(v, 'quiz').length} | ${v.signalements.length} | ${v.sansSon.filter((x) => ['lettres', 'lecture', 'mots', 'dialogue', 'resume'].includes(x.part)).length} / ${v.sansSon.length} |`,
+          );
+          details.push(`## ${f.slice(0, 3)}`, '');
+          if (v.signalements.length) {
+            details.push('Textes gardés sans voix :', '');
+            for (const s of v.signalements) details.push(`- ${s.raison} : ${s.texte}`);
+            details.push('');
+          }
+          // essentiels : ce que le livre fait écouter (noms, syllabes, lecture, mots, dialogue) ; les autres sont des
+          // mots d'exercices ou du cahier, rarement enregistrés
+          const ESSENTIEL = new Set(['lettres', 'lecture', 'mots', 'dialogue', 'resume']);
+          for (const [titre, liste] of [
+            [
+              'Textes à écouter du livre sans fichier audio (affichés en silence)',
+              v.sansSon.filter((x) => ESSENTIEL.has(x.part)),
+            ],
+            [
+              'Mots d’exercices et du cahier sans fichier audio',
+              v.sansSon.filter((x) => !ESSENTIEL.has(x.part)),
+            ],
+          ] as const) {
+            if (!liste.length) continue;
+            details.push(`${titre} :`, '');
+            for (const s of liste)
+              details.push(
+                `- ${s.part} : ${s.texte}${tousFichiers.has(audioFileId(s.texte) ?? '') ? ' (fichier présent pour un autre niveau)' : ''}`,
+              );
+            details.push('');
+          }
+        }
+        const out = join(import.meta.dirname, '..', '..', '..', 'reports');
+        mkdirSync(out, { recursive: true });
+        writeFileSync(
+          join(out, `video-vivante-${LIVRE}.md`),
+          [...lignes, '', ...details].join('\n') + '\n',
+        );
+      },
+    );
   });
 
-  for (const f of FILES) {
-    it(`${f} : modes proposés non vides, fidélité au livre, durées, garde`, () => {
-      const { v, L } = video(f);
-      // modes : au moins la version longue ; aucun mode proposé sans scène ; aucune scène d'un mode non proposé
-      expect(v.modes).toContain('longue');
-      // révision dans toutes les unités (décision du 20/10/2026) : bilans, examen et leçons (« Je retiens »…)
-      expect(v.modes).toContain('revision');
-      if (v.type === 'lecon')
-        expect(scenesDuMode(v, 'revision').map((s) => s.id)).toContain('recap');
-      // conseil d'écriture contredisant les tracés validés : masqué (l02, l04, l07)
-      const ecr = v.scenes.find((s) => s.id === 'ecriture');
-      if (ecr && CONSEIL_MASQUE.has(v.unitId))
-        expect(ecr.temps.some((x) => x.k === 'fr')).toBe(false);
-      for (const m of v.modes) expect(scenesDuMode(v, m).length).toBeGreaterThan(0);
-      for (const s of v.scenes) for (const m of s.modes) expect(v.modes).toContain(m);
-      for (const m of VIDEO_MODES)
-        if (!v.modes.includes(m)) expect(v.scenes.some((s) => s.modes.includes(m))).toBe(false);
-      // « par lettre » : seulement les leçons qui présentent des lettres nouvelles ; jamais dans un bilan
-      const nouvelles = ((L.lettres as Array<Record<string, unknown>>) ?? []).filter(
-        (x) => x.nom_ar,
+describe.skipIf(!HAS_CONTENT || !LIVRES.includes('ad2'))(
+  'vidéos vivantes : formats des livres de la phrase',
+  () => {
+    it('Adultes 2, leçon 1 : mots-clés, phrase vedette (au début de la courte), dialogue, « À retenir », lexique', () => {
+      const { v } = video('ad2', 'l01.js');
+      expect(v.modes).not.toContain('lettre');
+      expect(v.scenes.map((s) => s.id)).toEqual(
+        expect.arrayContaining(['motscles', 'vedette', 'lexique', 'dialogue', 'recap', 'jouer']),
       );
-      expect(v.modes.includes('lettre')).toBe(nouvelles.length > 0);
-      if (v.type !== 'lecon') expect(v.modes).not.toContain('lettre');
-      expect(v.lettres.length).toBe(nouvelles.length);
-      v.lettres.forEach((_, i) => {
-        const ms = dureeMode(v, 'lettre', i);
-        expect(ms, `lettre ${i + 1}`).toBeGreaterThanOrEqual(LETTRE_MIN_MS);
-        expect(ms, `lettre ${i + 1}`).toBeLessThanOrEqual(LETTRE_MAX_MS);
-      });
-      if (v.modes.includes('courte')) {
-        expect(dureeMode(v, 'courte')).toBeGreaterThanOrEqual(COURTE_MIN_MS);
-        expect(dureeMode(v, 'courte')).toBeLessThanOrEqual(COURTE_MAX_MS);
-      }
-      // quiz : seulement des exercices jouables (corrigé présent) ; bilans et examen : aucun corrigé (D7)
-      for (const s of scenesDuMode(v, 'quiz')) expect(s.jouable).toBe(true);
-      // fidélité : chaque chaîne affichée ou dite vient du livre, octet pour octet (aucune normalisation)
-      const book = strings(sansParties(L));
-      const { ar, fr, cles } = videoStrings(v);
-      for (const s of ar) expect(fromBook(s, book), `arabe hors du livre : ${s}`).toBe(true);
-      for (const s of fr) expect(frFromBook(s, book), `français hors du livre : ${s}`).toBe(true);
-      for (const k of cles) expect(k).toMatch(/^vv\.[a-z_]+$/);
-      // aucune phonétique latine : aucune valeur d'un champ `tr` du livre (absent de la projection élève)
-      const tr = new Set<string>();
-      const walk = (x: unknown): void => {
-        if (Array.isArray(x)) x.forEach(walk);
-        else if (x && typeof x === 'object')
-          for (const [k, y] of Object.entries(x)) {
-            if (k === 'tr' && typeof y === 'string') tr.add(y);
-            else walk(y);
-          }
-      };
-      walk(raw(f));
-      for (const s of [...ar, ...fr]) expect(tr.has(s), `phonétique : ${s}`).toBe(false);
-      expect(JSON.stringify(v)).not.toMatch(/"tr"/);
-      // garde : aucune voix sur un texte coranique (Muṣḥaf, 4 mots du Coran hors formules, Basmala complète)
-      // formules de dhikr marquées par les données (`dhikr: true`) : voix permise malgré les gardes Basmala et Tanzil
-      const dhikrs = new Set<string>();
-      const marque = (x: unknown): void => {
-        if (Array.isArray(x)) x.forEach(marque);
-        else if (x && typeof x === 'object') {
-          const o = x as Record<string, unknown>;
-          if (o.dhikr === true) strings(o).forEach((s) => dhikrs.add(unmark(s)));
-          Object.values(o).forEach(marque);
-        }
-      };
-      marque(sansParties(L));
-      for (const s of videoVoix(v)) {
-        expect(looksQuranic(s), s).toBe(false);
-        if (dhikrs.has(s)) continue;
-        expect(skeleton(s).includes(BASMALA_COMPLETE), s).toBe(false);
-        if (tanzil) expect(cite(s), `voix sur une citation du Coran : ${s}`).toBe(false);
-      }
-      // récitation : aucune voix sur un morceau (même un mot, même une formule) d'une sourate ou d'un verset que la
-      // lecture de l'unité présente comme récitation (Fātiḥa mot à mot, sourates 112 à 114…)
-      if (tanzil) {
-        const norme = (x: string) =>
-          ` ${sayText(unmark(x))
-            .replace(/[|.,:;!?«»"()…—–=+←،؛؟]/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim()} `;
-        const passages = strings((L as { lecture?: unknown }).lecture)
-          .filter(recitation)
-          .map(norme);
-        // tous les textes qui POURRAIENT être dits (comme si chaque fichier audio existait), hors dialogue (formules
-        // de salutation : jamais un contexte coranique)
-        const tout = buildVideo(L, { unitId: f, hasAudio: () => true, images: imagesDe(L) });
-        const dits = videoVoix({
-          ...tout,
-          scenes: tout.scenes.filter((s) => s.part !== 'dialogue' && s.part !== 'jouer'),
-        });
-        for (const s of dits)
-          expect(
-            passages.some((p) => p.includes(norme(s))),
-            `voix sur un morceau de passage coranique : ${s}`,
-          ).toBe(false);
-      }
-      // « À toi de jouer la scène ! » : à la fin de la version longue quand le dialogue a au moins deux rôles
-      const longue = scenesDuMode(v, 'longue');
-      if (v.scenes.some((s) => s.id === 'jouer')) expect(longue.at(-1)!.id).toBe('jouer');
+      expect(
+        scenesDuMode(v, 'courte')
+          .map((s) => s.id)
+          .slice(0, 3),
+      ).toEqual(['ouverture', 'courte-vedette', 'courte-mots']);
+      expect(v.scenes.find((s) => s.id === 'vedette')!.titre).toEqual({ cle: 'vv.vedette_phrase' });
+      expect(v.scenes.find((s) => s.id === 'recap')!.titre).toEqual({ cle: 'vv.retenir' });
+      expect(v.scenes.find((s) => s.id === 'recap')!.temps.every((x) => x.k === 'retenir')).toBe(
+        true,
+      );
     });
-  }
-
+    it('mots-clés seulement pour une liste de mots ; les syllabes d’Adultes 1 restent des syllabes', () => {
+      for (const f of fichiers('ad2')) {
+        const { v, L } = video('ad2', f);
+        if ((L.lecture as { syllabes?: unknown[] } | undefined)?.syllabes?.length)
+          expect(
+            v.scenes.some((s) => s.id === 'motscles'),
+            f,
+          ).toBe(true);
+        expect(
+          v.scenes.some((s) => s.id === 'syllabes'),
+          f,
+        ).toBe(false);
+      }
+      for (const u of ['l01', 'l09', 'l10', 'l13', 'l14', 'l18', 'l19', 'l20'])
+        expect(
+          video('ad1', `${u}.js`).v.scenes.some((s) => s.id === 'syllabes'),
+          u,
+        ).toBe(true);
+      expect(motsCles([])).toBe(false);
+    });
+  },
+);
+describe.skipIf(!HAS_CONTENT)('vidéos vivantes : garde de tous les niveaux proposés', () => {
   it.skipIf(!tanzil)(
     'garde vidéo à jour : citations du Coran (4 mots, hors formules) et textes de récitation de la lecture',
     () => {
       const flagged = new Set<string>();
       const recit = new Set<string>();
-      for (const f of FILES) {
-        const L = studentProjection(raw(f), LIVRE) as Record<string, unknown>;
-        const v = buildVideo(L, {
-          unitId: f,
-          hasAudio: () => true,
-          garde: new Set(),
-          recitation: new Set(),
-        });
-        for (const s of videoVoix(v)) if (cite(s)) flagged.add(gardeVideoKey(s));
-        // et TOUTES les chaînes de la lecture ; celles qui présentent un ou plusieurs versets entiers sont des textes de
-        // récitation : leurs morceaux (« mot à mot ») n'ont jamais de voix
-        for (const s of strings((L as { lecture?: unknown }).lecture)) {
-          if (cite(s)) flagged.add(gardeVideoKey(s));
-          if (!looksQuranic(s) && versetsEntiers.has(skeleton(unmark(s))))
-            recit.add(gardeVideoKey(s));
+      for (const LIVRE of LIVRES)
+        for (const f of fichiers(LIVRE)) {
+          const L = studentProjection(raw(LIVRE, f), LIVRE) as Record<string, unknown>;
+          const v = buildVideo(L, {
+            unitId: f,
+            hasAudio: () => true,
+            garde: new Set(),
+            recitation: new Set(),
+          });
+          for (const s of videoVoix(v)) if (cite(s)) flagged.add(gardeVideoKey(s));
+          for (const s of citationsAvecRef(sansParties(L))) flagged.add(gardeVideoKey(s));
+          // et TOUTES les chaînes de la lecture ; celles qui présentent un ou plusieurs versets entiers sont des textes de
+          // récitation : leurs morceaux (« mot à mot ») n'ont jamais de voix
+          for (const s of strings((L as { lecture?: unknown }).lecture)) {
+            if (cite(s)) flagged.add(gardeVideoKey(s));
+            if (!looksQuranic(s) && versetsEntiers.has(skeleton(unmark(s))))
+              recit.add(gardeVideoKey(s));
+          }
         }
-      }
       const want = [...flagged].sort().join(' ');
       const wantR = [...recit].sort().join(' ');
       if (process.env.VIDEO_GARDE === 'ecrire') {
@@ -528,60 +691,5 @@ describe.skipIf(!HAS_CONTENT)('vidéos vivantes : les 25 unités d’Adultes 1',
       expect(tri(VIDEO_RECITATION), 'VIDEO_GARDE=ecrire').toBe(wantR);
     },
     300_000,
-  );
-
-  it.skipIf(!process.env.VIDEO_AUDIT)(
-    'audit : tableau des unités, audios manquants, textes gardés',
-    () => {
-      const lignes = [
-        '# Vidéos vivantes — Adultes niveau 1 (audit généré par `VIDEO_AUDIT=1`)',
-        '',
-        `Audio : ${audioAd1 ? `${audioAd1.size} fichiers du niveau (${LISTE})` : 'liste absente'}.`,
-        '',
-        '| Unité | Type | Modes | Scènes | Longue | Courte | Quiz (exercices) | Gardés sans voix | Sans audio (à écouter / tous) |',
-        '|---|---|---|---|---|---|---|---|---|',
-      ];
-      const details: string[] = [];
-      for (const f of FILES) {
-        const { v } = video(f);
-        const min = (ms: number) => `${Math.round(ms / 1000)} s`;
-        lignes.push(
-          `| ${f.slice(0, 3)} | ${v.type}${v.numero ? ` ${v.numero}` : ''} | ${v.modes.join(', ')} | ${v.scenes.length} | ${min(dureeMode(v, 'longue'))} | ${v.modes.includes('courte') ? min(dureeMode(v, 'courte')) : '—'} | ${scenesDuMode(v, 'quiz').length} | ${v.signalements.length} | ${v.sansSon.filter((x) => ['lettres', 'lecture', 'mots', 'dialogue', 'resume'].includes(x.part)).length} / ${v.sansSon.length} |`,
-        );
-        details.push(`## ${f.slice(0, 3)}`, '');
-        if (v.signalements.length) {
-          details.push('Textes gardés sans voix :', '');
-          for (const s of v.signalements) details.push(`- ${s.raison} : ${s.texte}`);
-          details.push('');
-        }
-        // essentiels : ce que le livre fait écouter (noms, syllabes, lecture, mots, dialogue) ; les autres sont des
-        // mots d'exercices ou du cahier, rarement enregistrés
-        const ESSENTIEL = new Set(['lettres', 'lecture', 'mots', 'dialogue', 'resume']);
-        for (const [titre, liste] of [
-          [
-            'Textes à écouter du livre sans fichier audio (affichés en silence)',
-            v.sansSon.filter((x) => ESSENTIEL.has(x.part)),
-          ],
-          [
-            'Mots d’exercices et du cahier sans fichier audio',
-            v.sansSon.filter((x) => !ESSENTIEL.has(x.part)),
-          ],
-        ] as const) {
-          if (!liste.length) continue;
-          details.push(`${titre} :`, '');
-          for (const s of liste)
-            details.push(
-              `- ${s.part} : ${s.texte}${tousFichiers.has(audioFileId(s.texte) ?? '') ? ' (fichier présent pour un autre niveau)' : ''}`,
-            );
-          details.push('');
-        }
-      }
-      const out = join(import.meta.dirname, '..', '..', '..', 'reports');
-      mkdirSync(out, { recursive: true });
-      writeFileSync(
-        join(out, 'video-vivante-ad1.md'),
-        [...lignes, '', ...details].join('\n') + '\n',
-      );
-    },
   );
 });

@@ -49,6 +49,7 @@ const RUN = new RegExp(
   `(\\(\\s?[${AR}][${AR}\\s.]*\\s?\\)|«\\s?[${AR}][${AR}\\s.]*\\s?»|[${AR}][${AR}\\s.]*)`,
 );
 const LETTRE = new RegExp(`[${c(0x621)}-${c(0x64a)}]`, 'g');
+const LATIN = /[A-Za-z]/;
 const TATWEEL = c(0x640);
 const ALIF = c(0x627);
 const NASKH = '"Noto Naskh Arabic"';
@@ -93,18 +94,20 @@ const arH = (s: string, cls = '') => `<span class="ar ${cls}" lang="ar" dir="rtl
 export function frH(s: string, cls = 'fr'): string {
   let out = '';
   let buf = '';
+  // après une ligne arabe, la ponctuation qui la suivait ne commence pas la ligne française (« , la ligature »)
+  const fl = () => (out ? buf.replace(/^\s*[,;.]\s*/, '') : buf);
   for (const p of s.split(RUN)) {
     if (!p) continue;
     if (!RUN.test(p)) buf += esc(p);
     else if ((p.match(LETTRE) ?? []).length <= 1)
       buf += `<bdi class="lt" lang="ar" dir="rtl">${esc(p.trim())}</bdi>${/\s$/.test(p) ? ' ' : ''}`;
     else {
-      if (buf.trim()) out += `<span class="${cls}">${buf}</span>`;
+      if (buf.trim()) out += `<span class="${cls}">${fl()}</span>`;
       buf = '';
       out += arH(p.trim(), 'l');
     }
   }
-  if (buf.replace(/[\s.,;:]/g, '')) out += `<span class="${cls}">${buf}</span>`;
+  if (buf.replace(/[\s.,;:]/g, '')) out += `<span class="${cls}">${fl()}</span>`;
   return `<div class="frh">${out}</div>`;
 }
 
@@ -360,10 +363,12 @@ function creer(opt: OuvrirOptions): () => void {
           : ms < 90_000
             ? t('vv.duree_s', { s: Math.round(ms / 10_000) * 10 })
             : t('vv.duree', { m: Math.round(ms / 60_000) });
+      // version courte d'un livre de la phrase : phrase vedette, mots et dialogue
+      const p = m === 'courte' && vid.scenes.some((s) => s.id === 'courte-vedette');
       const b = h(
         'button',
         'mode',
-        `<b>${esc(t(`vv.mode_${m}`))}</b><span>${esc(t(`vv.mode_${m}_d`))}${dur ? ` · ${esc(dur)}` : ''}</span>`,
+        `<b>${esc(t(`vv.mode_${m}`))}</b><span>${esc(t(p ? 'vv.mode_courte_p' : `vv.mode_${m}_d`))}${dur ? ` · ${esc(dur)}` : ''}</span>`,
       );
       b.dataset.mode = m;
       b.onclick = () => (m === 'lettre' && vid.lettres.length > 1 ? choixLettre() : lancer(m, 0));
@@ -694,6 +699,30 @@ function creer(opt: OuvrirOptions): () => void {
       }
       case 'aToi':
         return aToi(x.consigne.cle, x.ms - 1300 * (x.puis?.length ?? 0), x.puis);
+      case 'cles': {
+        // une ligne par mot ou expression du livre (arabe sur sa ligne, sens en dessous), dite à son tour
+        const e = ajoute(
+          `${consigne('vv.ecoute_lis')}<div class="cles">${x.items.map((l) => `<div class="carte">${LATIN.test(l.ar.ar) ? frH(l.ar.ar, 'fr toujours') : tuile(l.ar, 'tm')}${fr(l.fr)}</div>`).join('')}</div>`,
+          true,
+        );
+        const cs = e.querySelectorAll('.carte');
+        for (const [k, l] of x.items.entries()) {
+          const c = cs[k]?.querySelector('.tuile') ?? cs[k];
+          if (l.ar.son) await dire(l.ar, c);
+          else for (const d of l.dits ?? []) await dire(d, c);
+          await att(700);
+        }
+        return att(800);
+      }
+      case 'retenir': {
+        const e = ajoute(
+          `<div class="carte">${x.fr ? frH(x.fr, 'fr toujours') : ''}${x.ar ? tuile(x.ar, 'tm') : ''}</div>`,
+          true,
+        );
+        await att(1200 + 40 * (x.fr?.length ?? 0));
+        if (x.ar) await dire(x.ar, e.querySelector('.tuile'));
+        return att(1500);
+      }
       case 'q':
         return question(x.q, sc.jouable === true, `${x.i + 1} / ${x.n}`);
       case 'jouer':
@@ -759,8 +788,11 @@ function creer(opt: OuvrirOptions): () => void {
         });
       }
       case 'complete': {
+        // une indication en français du livre (« vous (des femmes) : ») a sa propre ligne, au-dessus de la ligne arabe
+        const ar = (s: string) => (s && RUN.test(s) ? arH(s, 'suite') : '');
+        const lat = (s: string) => (s && !RUN.test(s) ? fr(s, true) : '');
         const e = ajoute(
-          `<div class="trou" dir="rtl">${q.avant ? (RUN.test(q.avant) ? arH(q.avant, 'suite') : esc(q.avant)) : ''}<span class="case"></span>${q.apres ? arH(q.apres, 'suite') : ''}</div>${fr(q.fr, true)}${opts(q.options)}`,
+          `${lat(q.avant)}${lat(q.apres)}<div class="trou" dir="rtl">${ar(q.avant)}<span class="case"></span>${ar(q.apres)}</div>${fr(q.fr, true)}${opts(q.options)}`,
         );
         return choix(e, q.options, q.reponse, async () => {
           if (q.reponse)
@@ -850,7 +882,7 @@ function creer(opt: OuvrirOptions): () => void {
         const dec = Math.max(1, Math.floor(n / 2)) % Math.max(1, n);
         const droite = q.droite ?? q.items.map((_, k) => q.items[(k + dec) % n]!);
         const e = ajoute(
-          `<div class="relier"><div>${q.items.map((x, k) => `<button class="opt" data-g="${k}">${arH(x.ar.ar)}</button>`).join('')}</div><div>${droite.map((x, k) => `<button class="opt" data-d="${k}">${img(x.img, 'mini')}${x.fr ? `<span class="fr toujours">${esc(x.fr)}</span>` : ''}</button>`).join('')}</div></div>`,
+          `<div class="relier"><div>${q.items.map((x, k) => `<button class="opt" data-g="${k}">${arH(x.ar.ar)}</button>`).join('')}</div><div>${droite.map((x, k) => `<button class="opt" data-d="${k}">${img(x.img, 'mini')}${x.fr ? frH(x.fr, 'fr toujours') : ''}</button>`).join('')}</div></div>`,
         );
         const G = [...e.querySelectorAll<HTMLButtonElement>('[data-g]')];
         const D = [...e.querySelectorAll<HTMLButtonElement>('[data-d]')];

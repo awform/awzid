@@ -9,6 +9,6 @@
  *    de leurs morceaux n'est dit (on ne reconstitue pas le verset mot à mot).
  */
 export const VIDEO_GARDE =
-  '0c914ae2 0f1a7d47 2202689e 2738dfb8 364e1709 3b260a12 523ff02e 6abd3651 6edd5424 a0080601 a298a31d ba27962d d04b79a3';
+  '0c914ae2 0f1a7d47 2202689e 2738dfb8 364e1709 3956e7b0 3b260a12 523ff02e 6abd3651 6edd5424 884d08dc a0080601 a298a31d a38f906b ba27962d c886394a d04b79a3 f92021f1';
 export const VIDEO_RECITATION =
   '0c914ae2 0f1a7d47 12c19e47 2202689e 364e1709 3b260a12 5887410f 6abd3651 6edd5424 7533c9bc ab4322a2 ba27962d d04b79a3 dbba3005';

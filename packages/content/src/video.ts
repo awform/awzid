@@ -7,6 +7,13 @@
  * `buildVideo(leçon, options)` produit UNE liste de scènes ; les cinq MODES (par lettre, courte, longue, quiz,
  * révision) en sont des FILTRES (étiquettes `modes` de chaque scène). Un mode sans scène n'est pas proposé.
  *
+ * Générique (tout le cursus, 20/10/2026) : les scènes viennent des CHAMPS du livre, jamais du niveau. Livres des
+ * lettres (Adultes 1) : lettres, syllabes, mot vedette. Livres de la phrase (Adultes 2 et suivants, sans lettre
+ * nouvelle) : mots-clés de lecture (`lecture.syllabes` faite de mots), phrase vedette (en tête de la version courte),
+ * lexique, dialogue et sa note, « À retenir » de grammaire (`retiens` : règle puis exemple). Temps extensibles pour
+ * les niveaux suivants : `cles` (liste de lignes du livre : mots-clés, lexique, demain tableaux de conjugaison ou vers
+ * d'un poème), `retenir` (règle et exemple), `inter` (mot à mot), `texte` (textes longs, phrase par phrase).
+ *
  * Règles (vérifiées par `test/video.test.ts` sur les 25 unités d'Adultes 1, projection élève) :
  *  - AUCUN texte n'est écrit ici : chaque chaîne affichée ou dite est une chaîne du livre, recopiée telle quelle
  *    (crochets de balisage retirés), ou un morceau d'une chaîne du livre coupé à un séparateur du livre (« | »,
@@ -111,7 +118,20 @@ export type Temps = { ms: number } & (
   | { k: 'aToi'; consigne: Cle; puis?: T[] }
   | { k: 'q'; q: Question; i: number; n: number }
   | { k: 'jouer'; repliques: Array<{ qui: string; qui_ar: string; ar: T; fr?: string }> }
+  /**
+   * liste de mots ou d'expressions du livre, une ligne chacun (mots-clés de lecture, lexique ; demain : tableaux de
+   * conjugaison, vers d'un poème…) ; `dits` : morceaux dits un à un quand la ligne entière n'a pas de fichier audio
+   */
+  | { k: 'cles'; items: Ligne[] }
+  /** « À retenir » de grammaire : la règle du livre (français), puis son exemple arabe sur sa ligne */
+  | { k: 'retenir'; fr?: string; ar?: T }
 );
+/** ligne d'une liste du livre : texte arabe (avec parfois un mot français du livre), morceaux dits, sens */
+export interface Ligne {
+  ar: T;
+  dits?: T[];
+  fr?: string;
+}
 
 export type VideoPart =
   | 'ouverture'
@@ -214,6 +234,9 @@ const LETTER = new RegExp(`[${cls([0x621, 0x64a], 0x671)}]`);
 const NON_LETTRE = new RegExp(`[^${cls([0x621, 0x64a], 0x671)}]`, 'g');
 /** séparateurs du livre entre deux morceaux d'une même ligne */
 const SEP = /\s+[|/●•·—–]\s+/;
+/** séparateurs d'une ligne de liste (mots-clés, lexique) : ceux du livre, flèches, « = », « + », « : », jīm (pluriel) */
+const DECOUPE = new RegExp(`\\s+(?:[|/●•·—–←→=+:]|${ch(0x62c)})\\s+`);
+const LATIN = /[A-Za-z]/;
 /** ponctuation retirée pour comparer des suites de mots (jamais affichée) : latine et arabe (U+060C, U+061B, U+061F) */
 const PONCT = new RegExp(`[|.,:;!?«»"()…—–=+←${cls(0x60c, 0x61b, 0x61f)}]`, 'g');
 /** citation entre crochets ornés du Coran (U+FD3E, U+FD3F) */
@@ -629,7 +652,43 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
 
   // 6. LECTURE : syllabes (écoute), ligne (« À toi ! » puis correction), mot vedette, phrases
   ici = 'lecture';
-  if (syllabes.length)
+  /**
+   * ligne d'une liste du livre : affichée entière ; dite entière si son fichier audio existe, sinon morceau par
+   * morceau (coupée aux séparateurs du livre) quand les morceaux en ont un
+   */
+  const ligne = (s: string, holder: Obj | null, fr?: string): Ligne => {
+    const ar = t(s, holder);
+    const morceaux = ar.son
+      ? []
+      : s
+          .split(DECOUPE)
+          .map((x) => x.trim())
+          .filter((x) => ARABIC.test(x) && !LATIN.test(x));
+    const dits = morceaux.length > 1 ? morceaux.map((x) => t(x, holder)).filter((x) => x.son) : [];
+    return { ar, ...(dits.length ? { dits } : {}), ...(fr ? { fr } : {}) };
+  };
+  /** liste de lignes du livre en scènes de quatre lignes au plus */
+  const liste = (xs: Obj[]): Temps[] =>
+    groupes(xs, 4).map((g): Temps => ({
+      k: 'cles',
+      items: g.map((x) =>
+        ligne(x.ar as string, x, !sansTrad && str(x.fr) ? (x.fr as string) : undefined),
+      ),
+      ms: 1500 + 2600 * g.length,
+    }));
+  const syl = arr(R.syllabes)
+    .map(obj)
+    .filter((x) => str(x.ar));
+  // livres de la phrase (Adultes 2…) : la « syllabe » du livre est un mot ou une expression clé de la leçon
+  if (syl.length && motsCles(syllabes))
+    add({
+      id: 'motscles',
+      part: 'lecture',
+      titre: { cle: 'vv.motscles' },
+      modes: ['longue'],
+      temps: liste(syl),
+    });
+  else if (syllabes.length)
     add({
       id: 'syllabes',
       part: 'lecture',
@@ -663,29 +722,54 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
     });
   }
   const V = obj(R.vedette);
+  /** phrase vedette (deux mots ou plus) : écoute, traduction, « À toi de répéter » (aussi au début de la courte) */
+  let vedettePhrase: Temps[] | null = null;
   if (str(V.ar)) {
     const ar = V.ar as string;
     const m = balises(ar);
     const fr = !sansTrad && str(V.fr) ? (V.fr as string) : undefined;
-    const temps: Temps[] =
-      m.length >= 2 && m.join('') === unmark(ar)
-        ? [
-            {
-              k: 'joindre',
-              morceaux: m.map((x) => t(x)),
-              mot: t(ar, V),
-              ms: MS.joindre + MS.joindreItem * m.length,
-              ...(fr ? { fr } : {}),
-            },
-          ]
-        : [{ k: 'texte', ar: t(ar, V), taille: 'g', ms: 5000, ...(fr ? { fr } : {}) }];
+    const joint = m.length >= 2 && m.join('') === unmark(ar);
+    const phrase = !joint && nWords(unmark(ar)) >= 2;
+    const temps: Temps[] = joint
+      ? [
+          {
+            k: 'joindre',
+            morceaux: m.map((x) => t(x)),
+            mot: t(ar, V),
+            ms: MS.joindre + MS.joindreItem * m.length,
+            ...(fr ? { fr } : {}),
+          },
+        ]
+      : [
+          {
+            k: 'texte',
+            ar: t(ar, V),
+            taille: phrase ? 'm' : 'g',
+            ms: 5000,
+            ...(fr ? { fr } : {}),
+          },
+        ];
     temps.push({
       k: 'aToi',
-      consigne: { cle: 'vv.lis_mot' },
+      consigne: { cle: phrase ? 'vv.repete' : 'vv.lis_mot' },
       puis: [t(ar, V)],
       ms: MS.aToi + 1800,
     });
-    add({ id: 'vedette', part: 'lecture', titre: { cle: 'vv.vedette' }, modes: ['longue'], temps });
+    if (phrase) vedettePhrase = temps.map((x) => ({ ...x }));
+    // explication du livre (sous la vedette)
+    if (str(V.note_fr))
+      temps.push({
+        k: 'fr',
+        fr: V.note_fr as string,
+        ms: MS.fr + 35 * (V.note_fr as string).length,
+      });
+    add({
+      id: 'vedette',
+      part: 'lecture',
+      titre: { cle: phrase ? 'vv.vedette_phrase' : 'vv.vedette' },
+      modes: ['longue'],
+      temps,
+    });
   }
   const phrases = [...arr(R.phrases), ...arr(R.paragraphes)].map((p) =>
     typeof p === 'string' ? { ar: p } : obj(p),
@@ -765,6 +849,18 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
       temps,
     });
   }
+  // lexique du livre (mots en plus, avec leur sens)
+  const lexique = arr(L.lexique)
+    .map(obj)
+    .filter((x) => str(x.ar));
+  if (lexique.length)
+    add({
+      id: 'lexique',
+      part: 'mots',
+      titre: { cle: 'vv.lexique' },
+      modes: revue ? ['longue', 'revision'] : ['longue'],
+      temps: liste(lexique),
+    });
 
   // 8. EXERCICES du livre (livre de lecture, puis cahier), dans l'ordre du livre
   const exos = arr(L.exercices).map(obj);
@@ -815,6 +911,13 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
     }
     for (const p of (str(dlg.note_ar) ?? '').split(SEP).filter((x) => x.trim()))
       temps.push({ k: 'texte', ar: affiche(p.trim()), taille: 'p', ms: 3500 });
+    // explication du livre sous le dialogue
+    if (str(dlg.note_fr))
+      temps.push({
+        k: 'fr',
+        fr: dlg.note_fr as string,
+        ms: MS.fr + 35 * (dlg.note_fr as string).length,
+      });
     add({
       id: 'dialogue',
       part: 'dialogue',
@@ -826,31 +929,43 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
 
   // 10. JE RETIENS (récapitulatif et score du quiz) ; sans « je retiens » dans le livre, les lettres de la leçon et
   // leur repère (comme les leçons vivantes)
+  // unité sans lettre nouvelle (livres de la phrase) : « À retenir » de grammaire, la règle puis son exemple arabe
+  ici = 'recap';
   const retiens = arr(L.retiens).map(obj);
+  const grammaire = !nouvelles.length && retiens.some((r) => str(r.fr));
   add({
     id: 'recap',
     part: 'recap',
-    titre: { cle: 'vv.recap' },
+    titre: { cle: grammaire ? 'vv.retenir' : 'vv.recap' },
     modes: ['longue'],
-    temps: retiens.length
+    temps: grammaire
       ? retiens
           .filter((r) => str(r.ar) || str(r.fr))
           .map((r): Temps => ({
-            k: 'regle',
-            ms: 2600 + (str(r.fr) ? 30 * (r.fr as string).length : 0),
-            ...(str(r.ar) ? { ar: [affiche(r.ar as string)] } : {}),
-            ...(str(r.fr) ? { fr: [r.fr as string] } : {}),
+            k: 'retenir',
+            ms: 3000 + (str(r.fr) ? 35 * (r.fr as string).length : 0),
+            ...(str(r.fr) ? { fr: r.fr as string } : {}),
+            ...(str(r.ar) ? { ar: t(r.ar as string, r) } : {}),
           }))
-      : nouvelles.map((x): Temps => ({
-          k: 'regle',
-          ms: 2600 + (str(x.points_fr) ? 30 * (x.points_fr as string).length : 0),
-          signe: x.l as string,
-          ar: [
-            affiche(x.nom_ar as string),
-            ...(str(x.points_ar) ? [affiche(x.points_ar as string)] : []),
-          ],
-          ...(str(x.points_fr) ? { fr: [x.points_fr as string] } : {}),
-        })),
+      : retiens.length
+        ? retiens
+            .filter((r) => str(r.ar) || str(r.fr))
+            .map((r): Temps => ({
+              k: 'regle',
+              ms: 2600 + (str(r.fr) ? 30 * (r.fr as string).length : 0),
+              ...(str(r.ar) ? { ar: [affiche(r.ar as string)] } : {}),
+              ...(str(r.fr) ? { fr: [r.fr as string] } : {}),
+            }))
+        : nouvelles.map((x): Temps => ({
+            k: 'regle',
+            ms: 2600 + (str(x.points_fr) ? 30 * (x.points_fr as string).length : 0),
+            signe: x.l as string,
+            ar: [
+              affiche(x.nom_ar as string),
+              ...(str(x.points_ar) ? [affiche(x.points_ar as string)] : []),
+            ],
+            ...(str(x.points_fr) ? { fr: [x.points_fr as string] } : {}),
+          })),
   });
 
   // 11. « À toi de jouer la scène ! » : l'élève choisit un rôle, l'appli joue les autres (audio du livre)
@@ -875,9 +990,10 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
       ],
     });
 
-  // 12. VERSION COURTE (1 à 2 min) : les lettres (nom), puis les mots ; à défaut, le mot vedette et les phrases
+  // 12. VERSION COURTE (1 à 2 min) : les lettres (nom), puis les mots ; à défaut, le mot vedette et les phrases ; livres
+  // de la phrase : la phrase vedette, les mots, puis le dialogue
   ici = 'resume';
-  courte(scenes, nouvelles, motsOk, t, img);
+  courte(scenes, nouvelles, motsOk, t, img, vedettePhrase);
   // 13. RÉVISION d'une leçon (décision du 20/10/2026) : « Je retiens » et ce que le livre y reprend des leçons
   // précédentes (texte du livre qui renvoie à une leçon antérieure, ou « rappel »)
   if (!revue)
@@ -935,6 +1051,18 @@ function decouper(lg: string): string[] {
   const syllabe = (p: string) =>
     /^\[[^\]]+\]$/.test(p) || unmark(p).replace(NON_LETTRE, '').length === 1;
   return parts.length > 1 && parts.every(syllabe) ? parts : [lg];
+}
+
+/**
+ * Liste « syllabes » du livre faite de mots ou d'expressions (livres de la phrase : pronoms, démonstratifs, nombres,
+ * verbes…) : la moitié au moins de ses entrées comptent trois lettres ou plus (article de tête non compté).
+ */
+export function motsCles(xs: readonly string[]): boolean {
+  const n = (s: string) =>
+    unmark(s)
+      .replace(new RegExp(`^${ch(0x627, 0x644)}`), '')
+      .replace(NON_LETTRE, '').length;
+  return xs.length > 0 && xs.filter((s) => n(s) >= 3).length * 2 >= xs.length;
 }
 
 /** groupes de n éléments, dans l'ordre */
@@ -1106,11 +1234,23 @@ function courte(
   mots: Obj[],
   t: Tf,
   img: (k: unknown) => string | undefined,
+  vedette: Temps[] | null,
 ): void {
   const ouv = scenes.find((s) => s.id === 'ouverture');
   let total = ouv ? duree(ouv) : 0;
   const ajout: Scene[] = [];
   const fin = { k: 'aToi' as const, consigne: { cle: 'vv.nomme' }, ms: MS.aToi + 1500 };
+  // sans lettre nouvelle : la phrase vedette du livre ouvre la version courte (« phrase vedette du jour »)
+  if (!nouvelles.length && vedette) {
+    ajout.push({
+      id: 'courte-vedette',
+      part: 'resume',
+      titre: { cle: 'vv.vedette_phrase' },
+      modes: ['courte'],
+      temps: vedette,
+    });
+    total += vedette.reduce((s, x) => s + x.ms, 0);
+  }
   if (nouvelles.length) {
     const temps: Temps[] = [
       {
@@ -1155,9 +1295,12 @@ function courte(
       total += ms;
     }
   }
-  // moins d'une minute : le mot vedette et les phrases du livre complètent (dans l'ordre), sans dépasser 2 min
+  // moins d'une minute : le mot vedette et les phrases du livre complètent (dans l'ordre), sans dépasser 2 min ; livres
+  // de la phrase : le dialogue d'abord (le cœur oral du niveau)
   if (total < COURTE_MIN_MS)
-    for (const id of ['vedette', 'phrases', 'ligne']) {
+    for (const id of !nouvelles.length && vedette
+      ? ['dialogue', 'phrases', 'ligne']
+      : ['vedette', 'phrases', 'ligne']) {
       const s = scenes.find((x) => x.id === id);
       if (!s || total >= COURTE_MIN_MS || total + duree(s) > COURTE_MAX_MS) continue;
       s.modes.push('courte');
@@ -1283,6 +1426,17 @@ export function videoStrings(v: VideoLecon): { ar: string[]; fr: string[]; cles:
             A(r.ar);
             F(r.fr);
           }
+          break;
+        case 'cles':
+          for (const l of x.items) {
+            A(l.ar);
+            l.dits?.forEach(A);
+            F(l.fr);
+          }
+          break;
+        case 'retenir':
+          F(x.fr);
+          A(x.ar);
           break;
         case 'q': {
           const q = x.q;

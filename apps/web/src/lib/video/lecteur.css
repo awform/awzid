@@ -820,3 +820,16 @@
     opacity: 0;
   }
 }
+
+/* ———— listes du livre (mots-clés, lexique), « À retenir » (livres de la phrase) ———— */
+.vv .cles {
+  display: grid;
+  gap: 0.4rem;
+  width: 100%;
+}
+.vv .cles .carte,
+.vv .b-retenir .carte {
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+}
