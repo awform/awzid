@@ -4,11 +4,15 @@
  * (volume « audio_lecons », lecture seule pour l'API).
  *
  * Contrôles : clé = `audioKey` du moteur des livres et nom du fichier = SHA-1 de la clé ; fichier présent,
- * MP3 lisible et durée non nulle ; GARDE CORANIQUE : un texte qui est un extrait du Coran (signes du Muṣḥaf,
- * ou au moins 3 mots retrouvés dans le texte Tanzil) ou qui en cite au moins 5 mots consécutifs (hadith,
- * invocation) n'est JAMAIS importé — le Coran ne s'écoute que dans
- * les récitations du Complexe. Un fichier déjà en place et identique n'est pas recopié ; un fichier qui n'est
- * plus dans l'index est retiré. Le manifeste est écrit en dernier (remplacement atomique).
+ * MP3 lisible et durée non nulle ; GARDE CORANIQUE : la MÊME règle que les vidéos vivantes (`refusVoix`,
+ * `@awform/content/garde-coran`, décisions du référent du 20/10/2026) — n'est JAMAIS importé un texte qui cite le
+ * Coran (4 mots consécutifs ou plus du texte Tanzil, hors formules de dhikr de la liste blanche
+ * `data/dhikr-formules.json`), ni un texte présenté comme Coran quelle que soit sa longueur (graphie du Muṣḥaf,
+ * référence de verset, verset entier, partie Coran ou citation référencée des livres) ; une formule de la liste
+ * (mā shāʾa Allāh, kaffārat al-majlis…), seule ou dans une phrase qui ne cite pas le Coran, est importée.
+ * Le Coran ne s'écoute que dans les récitations du Complexe. Un fichier déjà en place et identique n'est pas
+ * recopié ; un fichier qui n'est plus dans l'index est retiré. Le manifeste est écrit en dernier (remplacement
+ * atomique).
  */
 import { createHash } from 'node:crypto';
 import {
@@ -23,15 +27,8 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { join } from 'node:path';
-import {
-  audioKey,
-  containsQuranRun,
-  isQuranExcerpt,
-  looksQuranic,
-  quranCorpus,
-  quranRuns,
-  sha1Hex,
-} from '@awform/content/audio-cle';
+import { audioKey, sha1Hex } from '@awform/content/audio-cle';
+import { gardeCoran, refusVoix } from '@awform/content/garde-coran';
 import { probeMp3 } from './audio/probe.js';
 
 export const LECONS_AUDIO_MANIFEST = 'manifeste.json';
@@ -118,8 +115,7 @@ export function importLeconsAudio(o: {
 }): LeconsAudioReport {
   if (o.verses.length === 0) throw new Error('texte du Coran absent : garde coranique impossible');
   const { index, info } = readBooksAudioIndex(readFileSync(join(o.source, 'index.js'), 'utf8'));
-  const corpus = quranCorpus(o.verses);
-  const runs = quranRuns(o.verses);
+  const garde = gardeCoran(o.verses);
   const before = readLeconsManifest(o.dest);
   mkdirSync(o.dest, { recursive: true });
   const want = o.niveaux?.length ? new Set(o.niveaux) : null;
@@ -153,7 +149,7 @@ export function importLeconsAudio(o: {
       r.horsNiveaux++;
       continue;
     }
-    if (looksQuranic(key) || isQuranExcerpt(key, corpus) || containsQuranRun(key, runs)) {
+    if (refusVoix(key, garde)) {
       coraniques.push(sha);
       continue;
     }

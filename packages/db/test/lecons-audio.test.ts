@@ -20,39 +20,49 @@ const VERSES = ['قَالَ ٱلْوَلَدُ ذَهَبْتُ إِلَى ٱل�
 const T = {
   bab: 'بَابٌ',
   phrase: 'هٰذَا بَيْتٌ كَبِيرٌ',
-  extrait: 'ذَهَبْتُ إِلَى الْمَدْرَسَةِ',
+  // 4 mots consécutifs d'un verset (fictif) : citation
+  extrait: 'الْوَلَدُ ذَهَبْتُ إِلَى الْمَدْرَسَةِ',
   absent: 'قَلَمٌ',
   vide: 'كِتَابٌ',
   ado: 'سَيَّارَةٌ',
 };
 const key = (s: string) => s.replace('ٰ', ''); // clés déjà normalisées (alif suscrit retiré)
 
-function source(dir: string) {
+/** dossier source du moteur des livres : `index.js` (clé → fichier, informations) et un MP3 par texte présent */
+function source(
+  dir: string,
+  textes: ReadonlyArray<[string, string, string?]>,
+  absents: string[] = [],
+) {
   mkdirSync(dir, { recursive: true });
   const idx: Record<string, string> = {};
   const inf: Record<string, object> = {};
-  const add = (s: string, niv: string, src = 'tts-google-wavenet-a') => {
+  for (const [s, niv, src = 'tts-google-wavenet-a'] of textes) {
     const k = key(s);
     idx[k] = `audio/${audioFileId(k)}.mp3`;
     inf[k] = { src, statut: 'provisoire', niv };
-  };
-  add(T.bab, 'ad1 ado1 en1');
-  add(T.phrase, 'en1');
-  add(T.extrait, 'en2');
-  add(T.absent, 'en1');
-  add(T.vide, 'en1');
-  add(T.ado, 'ado1', 'tts-google-wavenet-b');
+    if (!absents.includes(s)) writeFileSync(join(dir, `${audioFileId(k)}.mp3`), mp3(40));
+  }
   const js = `window.AW=window.AW||{};\nAW.audioIndex=${JSON.stringify(idx, null, 0).replace(/,"/g, ',\n"')}\n;\nAW.audioInfo=${JSON.stringify(inf).replace(/,"/g, ',\n"')}\n;\n`;
   writeFileSync(join(dir, 'index.js'), js.replace(/}\n;/g, '\n};'));
-  for (const s of [T.bab, T.phrase, T.extrait, T.ado])
-    writeFileSync(join(dir, `${audioFileId(s)}.mp3`), mp3(40));
-  writeFileSync(join(dir, `${audioFileId(T.vide)}.mp3`), Buffer.alloc(0));
 }
 
 describe('A3 — import de l’audio des leçons', () => {
   const src = join(root, 'src');
   const dest = join(root, 'dest');
-  source(src);
+  source(
+    src,
+    [
+      [T.bab, 'ad1 ado1 en1'],
+      [T.phrase, 'en1'],
+      [T.extrait, 'en2'],
+      [T.absent, 'en1'],
+      [T.vide, 'en1'],
+      [T.ado, 'ado1', 'tts-google-wavenet-b'],
+    ],
+    [T.absent],
+  );
+  writeFileSync(join(src, `${audioFileId(T.vide)}.mp3`), Buffer.alloc(0));
 
   it('contrôle (présent, durée non nulle), garde coranique, crédit, niveaux', () => {
     const r = importLeconsAudio({ source: src, dest, verses: VERSES });
@@ -94,5 +104,71 @@ describe('A3 — import de l’audio des leçons', () => {
 
   it('refuse d’importer sans le texte du Coran (garde impossible)', () => {
     expect(() => importLeconsAudio({ source: src, dest, verses: [] })).toThrow(/garde/);
+  });
+});
+
+describe('A3 — garde coranique de l’import : même règle que les vidéos vivantes (référent, 20/10/2026)', () => {
+  // versets FICTIFS qui contiennent des formules de la liste blanche et des mots de leçons (aucun texte coranique) :
+  // sans la liste, « مَا شَاءَ اللَّهُ » (extrait de 3 mots) et la kaffāra (5 mots consécutifs) seraient refusés
+  const VERSETS = [
+    'قَالَ ٱلْوَلَدُ ذَهَبْتُ إِلَى ٱلْمَدْرَسَةِ',
+    'فَقُلْتُمْ مَا شَاءَ ٱللَّهُ كَانَ',
+    'فَنَادَوْا أَنْ لَا إِلَٰهَ إِلَّا أَنْتَ يَا رَبَّنَا',
+    'كِتَابٌ جَدِيدٌ',
+  ];
+  const G = {
+    machaallah: 'مَا شَاءَ اللَّهُ',
+    machaallahPhrase: 'مَا شَاءَ اللَّهُ! رَسْمٌ جَمِيلٌ.',
+    kaffara:
+      'سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ، أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا أَنْتَ، أَسْتَغْفِرُكَ وَأَتُوبُ إِلَيْكَ',
+    // 4 mots consécutifs (fictifs) du Coran, seuls ou dans une phrase : refusés
+    quatre: 'الْوَلَدُ ذَهَبْتُ إِلَى الْمَدْرَسَةِ',
+    quatrePhrase: 'قَالَتْ أُمِّي: الْوَلَدُ ذَهَبْتُ إِلَى الْمَدْرَسَةِ صَبَاحًا.',
+    // la formule ne couvre pas les 4 mots : « فقلتم » + formule est une citation
+    formuleCitee: 'فَقُلْتُمْ مَا شَاءَ اللَّهُ',
+    // 3 mots d'un verset : permis (en dessous de 4 mots)
+    trois: 'ذَهَبْتُ إِلَى الْمَدْرَسَةِ',
+    // citation référencée et verset entier : présentés comme Coran, quelle que soit la longueur
+    reference: 'ذَهَبْتُ إِلَى الْمَدْرَسَةِ (1:1)',
+    referenceFormule: 'مَا شَاءَ اللَّهُ ﴿٢:٣﴾',
+    verset: 'كِتَابٌ جَدِيدٌ',
+    // un mot isolé (vocabulaire) : permis ; une phrase qui cite une référence sans recopier le verset : permise
+    mot: 'الْمَدْرَسَةِ',
+    paragraphe: 'هٰذَا بَيْتٌ كَبِيرٌ، كَمَا فِي الْآيَةِ (1:1).',
+  };
+  const src = join(root, 'garde-src');
+  const dest = join(root, 'garde-dest');
+  source(
+    src,
+    Object.values(G).map((s) => [s, 'ad1'] as [string, string]),
+  );
+  const r = importLeconsAudio({ source: src, dest, verses: VERSETS });
+  const m = readLeconsManifest(dest)!;
+  const importe = (s: string) => Boolean(m.fichiers[audioFileId(key(s))!]);
+  const refuse = (s: string) => m.coraniques.includes(audioFileId(key(s))!);
+
+  it('« مَا شَاءَ اللَّهُ » et la kaffārat al-majlis (liste blanche) sont importés, seuls ou dans une phrase', () => {
+    for (const s of [G.machaallah, G.machaallahPhrase, G.kaffara]) {
+      expect(importe(s), s).toBe(true);
+      expect(refuse(s), s).toBe(false);
+    }
+  });
+
+  it('une suite de 4 mots du Coran est refusée, seule ou dans une phrase, même autour d’une formule', () => {
+    for (const s of [G.quatre, G.quatrePhrase, G.formuleCitee]) {
+      expect(refuse(s), s).toBe(true);
+      expect(importe(s), s).toBe(false);
+      expect(readdirSync(dest)).not.toContain(`${audioFileId(key(s))}.mp3`);
+    }
+  });
+
+  it('une citation référencée ou un verset entier est refusé, même court, même pour une formule', () => {
+    for (const s of [G.reference, G.referenceFormule, G.verset]) expect(refuse(s), s).toBe(true);
+  });
+
+  it('un mot isolé, 3 mots d’un verset, une phrase qui cite une référence sont acceptés', () => {
+    for (const s of [G.mot, G.trois, G.paragraphe]) expect(importe(s), s).toBe(true);
+    expect(r.coraniques).toBe(6);
+    expect(r.importes).toBe(6);
   });
 });

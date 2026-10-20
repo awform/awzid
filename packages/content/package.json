@@ -33,6 +33,10 @@
       "types": "./dist/audio-cle.d.ts",
       "default": "./dist/audio-cle.js"
     },
+    "./garde-coran": {
+      "types": "./dist/garde-coran.d.ts",
+      "default": "./dist/garde-coran.js"
+    },
     "./riwayat": {
       "types": "./dist/riwayat.d.ts",
       "default": "./dist/riwayat.js"

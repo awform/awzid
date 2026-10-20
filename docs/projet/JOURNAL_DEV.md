@@ -9,6 +9,26 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 20/10/2026 (suite) — Import des audios des leçons : même garde coranique que les vidéos vivantes, fusion de `import-dhikr-wip` dans `main` ; NON déployé
+
+Départ : `main` f3df65b. Rien déployé ; `~/lecons-audio` lu seulement (import de contrôle vers un stockage jetable, supprimé ensuite).
+
+- **Problème** : l'import (`packages/db/src/lecons-audio.ts`) avait sa propre garde : extrait de **3 mots** du Coran, ou suite de 5 mots citée, sans la liste blanche des formules de dhikr. « مَا شَاءَ اللَّهُ » et la kaffārat al-majlis étaient refusés alors que le référent a décidé de les sonoriser.
+- **Une seule règle** : `packages/content/src/garde-coran.ts` (export `@awform/content/garde-coran`), reprise telle quelle du calcul de la garde des vidéos vivantes (`video.test.ts` n'a plus de copie locale) :
+  - `citeCoran` : refus à partir de **4 mots consécutifs** du Coran (Tanzil sans voyelles, versets enchaînés), sauf si ces 4 mots sont tous dans une formule de la liste blanche (`dhikr.ts`) ;
+  - présenté comme Coran, quelle que soit la longueur et même pour une formule : graphie du Muṣḥaf, verset(s) entier(s) de deux mots ou plus, citation référencée (référence de verset dans le texte et mots lus dans le Coran ; parenthèses ornées toujours), empreintes `VIDEO_GARDE`/`VIDEO_RECITATION` des livres (partie Coran, citations référencées, lecture d'un verset) ;
+  - `refusVoix(texte, garde)` → `coran` | `citation` | null ; l'import l'applique à chaque clé de l'index.
+- **Liste blanche** (`data/dhikr-formules.json`) : ajout de la **kaffārat al-majlis** (catégorie `kaffara`, décision du référent) ; `DHIKR` régénéré (`DHIKR=ecrire`) ; `VIDEO_GARDE` inchangée (recalculée : identique).
+- **Import de contrôle** (`~/lecons-audio`, 17 886 entrées, versets de la base) : **avant 10 refusés, après 28 refusés** (17 858 importés, 0 absent, 0 illisible, 0 incohérent).
+  - désormais acceptés (4) : « مَا شَاءَ اللَّهُ », « إِنْ شَاءَ اللَّهُ » (×2), la kaffāra ; et 2 extraits de 3 mots (« اثْنَا عَشَرَ شَهْرًا », « رَبِّ زِدْنِي عِلْمًا ») ;
+  - toujours refusés (4) : les hadiths « مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ… » ;
+  - nouvellement refusés (24) par la règle des 4 mots : l'isti'ādha « أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ » seule ou dans une phrase (7, hors liste blanche), hadiths et athar qui reprennent 4 mots du Coran (9), récits qui paraphrasent un verset (4), Basmala complète suivie d'un salut (1), et 3 faux positifs « قَالَتْ: مَا شَاءَ اللَّهُ » (×2) et « فَقَالَ: الحمد لله الذي… » (le squelette sans alif confond قالت/قلت, 18:39, et فقال/فقل, 23:28) — même résultat dans les vidéos (règle commune).
+- **Tests** : `garde-coran.test.ts` (Tanzil réel : formules acceptées, 4 mots refusés, 3 mots et mot isolé permis, référence et verset entier refusés) ; `lecons-audio.test.ts` (versets fictifs : « مَا شَاءَ اللَّهُ » et la kaffāra importés, seuls ou dans une phrase ; 4 mots refusés, seuls, dans une phrase ou collés à une formule ; citation référencée et verset entier refusés ; mot isolé, 3 mots et phrase qui cite une référence acceptés).
+- **Vérifications** (sous `flock`) : build, typecheck, eslint, prettier : 0 erreur ; unitaires **2 579 réussis, 3 ignorés, 0 échec** ; poids : appareil élève 346,1 Ko, **marge 3,9 Ko** (≥ 3) ; **e2e complète** (`--retries=1 --workers=3`, 22,9 min) : **846 réussis, 158 ignorés, 0 échec, 2 instables** (`madjaliss-textes:442` réussi seul ; `lot29:42`, contraste d'un élément actif en sombre, échoue aussi seul sur `main` f3df65b : instabilité préexistante, sans lien).
+- **À décider** : ajouter l'isti'ādha à la liste blanche (adhkār de la colère et avant la lecture) ; traiter les faux positifs « قال/قالت + formule » (squelette sans alif).
+
+---
+
 ## 20/10/2026 (suite) — Vidéos vivantes : le livre Adultes 2, aucune scène muette, fusion de `video-vivante-ad2-wip` dans `main` ; NON déployé
 
 Départ : `main` 6904b8b. Rien déployé ; audio non touché (constat seulement, depuis `~/lecons-audio`).
