@@ -108,9 +108,12 @@ const arH = (s: string, cls = '') => `<span class="ar ${cls}" lang="ar" dir="rtl
 /** V2 — texte arabe découpé en mots (aux espaces seulement : les liaisons ne traversent jamais une espace) */
 export const arW = (s: string, cls = '') =>
   `<span class="ar ${cls}" lang="ar" dir="rtl">${s
+    // un morceau sans lettre (« / » de « طَالِبٌ / طُلَّابٌ », chiffres) ne s'allume pas : ce n'est pas un mot dit
     .split(/(\s+)/)
-    .map((p) => (!p ? '' : /^\s+$/.test(p) ? p : `<span class="w">${esc(p)}</span>`))
+    .map((p) => (!/[ء-ي]/.test(p) ? esc(p) : `<span class="w">${esc(p)}</span>`))
     .join('')}</span>`;
+/** V2 — typographie française : « et » ne finissent jamais seuls une ligne, ni ? ! : ; ne la commencent */
+const typo = (s: string) => s.replace(/« /g, '« ').replace(/ ([»?!:;])/g, ' $1');
 /** texte français du livre : un passage arabe passe sur sa propre ligne ; une lettre (ou une suite de lettres isolées) reste */
 export function frH(s: string, cls = 'fr'): string {
   let out = '';
@@ -125,8 +128,7 @@ export function frH(s: string, cls = 'fr'): string {
       : x;
   for (const p of s.split(RUN)) {
     if (!p) continue;
-    // V2 — typographie française : « et » ne finissent jamais seuls une ligne, ni ? ! : ; ne la commencent
-    if (!RUN.test(p)) buf += esc(p.replace(/« /g, '« ').replace(/ ([»?!:;])/g, ' $1'));
+    if (!RUN.test(p)) buf += esc(typo(p));
     else if (isolees(p))
       buf += `<bdi class="lt" lang="ar" dir="rtl">${esc(p.trim())}</bdi>${/\s$/.test(p) ? ' ' : ''}`;
     else {
@@ -757,7 +759,7 @@ function creer(opt: OuvrirOptions): () => void {
     if (fam) stage.style.setProperty('--fam', fam);
     else stage.style.removeProperty('--fam');
     // V2 — en-tête de carte (titre de la scène), pastille de consigne, zone, sous-titre
-    const tc = h('p', 'sc-h', esc(titreCourt(sc)));
+    const tc = h('p', 'sc-h', esc(typo(titreCourt(sc))));
     band = h('p', 'cs');
     band.dataset.testid = 'vv-bandeau';
     zone = h('div', sc.part === 'lettres' ? 'vv-c lt entre' : 'vv-c entre');

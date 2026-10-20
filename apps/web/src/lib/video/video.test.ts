@@ -103,6 +103,16 @@ describe('vidéos vivantes v2 : interrupteur « video_v2 », surlignage, animati
     expect(h.replace(/<[^>]+>/g, '')).toBe(ph);
     // un mot seul : un seul morceau (son filet doré se remplit)
     expect([...arW(c(0x645, 0x64e, 0x627, 0x621)).matchAll(/class="w"/g)].length).toBe(1);
+    // « طَالِبٌ / طُلَّابٌ » : deux mots allumés, la barre jamais ; texte toujours identique
+    const deux = `${c(0x637, 0x627, 0x644, 0x650, 0x628)} / ${c(0x637, 0x64f, 0x644, 0x651, 0x627, 0x628)}`;
+    expect([...arW(deux).matchAll(/class="w"/g)].length).toBe(2);
+    expect(arW(deux).replace(/<[^>]+>/g, '')).toBe(deux);
+  });
+  it('typographie française : guillemets et ? ! : ; jamais seuls en début ou fin de ligne', () => {
+    const h = frH2('La famille de la « dent » et les voyelles : qui parle ?');
+    expect(h).toContain('« dent »');
+    expect(h).toContain('voyelles :');
+    expect(h).toContain('parle ?');
   });
   it('parenthèse ouverte avant une ligne arabe et fermée après : aucune parenthèse orpheline', () => {
     const md = c(0x627, 0x644, 0x652, 0x645, 0x64e, 0x62f, 0x651, 0x64f);
