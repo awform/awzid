@@ -121,11 +121,20 @@ export const CONV_SCHEMA = {
  * Réglages de génération envoyés à Vertex (google.ts) : ils changent le comportement du modèle autant que l'invite,
  * donc ils entrent dans l'empreinte (20/10/2026 : la batterie réelle a échoué sur un réglage de réflexion refusé).
  * `reflexion` : valeur d'énumération Vertex EN MAJUSCULES (`ThinkingConfig.thinkingLevel`).
+ *
+ * 21/10/2026, après la 2e batterie réelle (ÉCHEC, 23 replis techniques sur 31 appels) :
+ *  - `LOW` : niveau le plus bas ACCEPTÉ par gemini-3.8-flash (page du modèle sur Vertex : « The supported values for
+ *    3.8 Flash are LOW, MEDIUM (default), and HIGH » ; « MINIMAL is not available for 3.8 Flash », que Vertex refuse
+ *    en 400). Le repli « sans réglage » tombait sur MEDIUM (défaut du modèle) : ≈ 9,5 s par tour. `thinkingBudget`
+ *    n'est PAS employé : « deprecated for Gemini 3 and later models », source de 400 intermittents (page Thinking).
+ *  - `maxOutputTokens` 4096 : la RÉFLEXION est décomptée de ce budget (rapport réel : 18 réponses coupées à
+ *    1006-1010 jetons « sortie + réflexion » pour un plafond de 1024). La réponse JSON elle-même tient en 150 à
+ *    400 jetons ; 4096 laisse une large marge sans changer la latence (le modèle s'arrête à la fin du JSON).
  */
 export const REGLAGES_GENERATION = {
-  maxOutputTokens: 1024,
+  maxOutputTokens: 4096,
   temperature: 0.6,
-  reflexion: 'MINIMAL',
+  reflexion: 'LOW',
   securite: {
     categories: [
       'HARM_CATEGORY_HARASSMENT',

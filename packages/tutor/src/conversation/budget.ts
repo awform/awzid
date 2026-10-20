@@ -17,6 +17,7 @@
  * reste sous les plafonds. Le coût réel (plus petit) remplace ensuite la réservation.
  * Les montants sont en MICRO-EUROS (1 € = 1 000 000).
  */
+import { REGLAGES_GENERATION } from './prompt.js';
 
 export interface Plafonds {
   moisMicros: number;
@@ -101,8 +102,8 @@ export const BORNES = {
   texteMax: 7000,
   /** 20 s × 32 jetons/s, arrondi */
   audioMax: 700,
-  /** réponse (maxOutputTokens) ; la réflexion est réglée au minimum et comptée dedans */
-  sortieMax: 1024,
+  /** réponse (maxOutputTokens, prompt.ts) : la réflexion est comptée DEDANS (rapport réel du 20/10/2026) */
+  sortieMax: REGLAGES_GENERATION.maxOutputTokens,
   voixCaracteresMax: 400,
 };
 

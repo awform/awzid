@@ -3,7 +3,9 @@
  * (comparaison à la réplique du livre), plafonds réglables (changement daté, réservation du pire cas, seuils),
  * clients Google (fetch SIMULÉ : aucun appel réel), mise en service.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import type { RapportBatterie } from '../src/conversation/batterie.js';
 import {
   BORNES,
   classerEntree,
@@ -13,6 +15,8 @@ import {
   coutMaxTour,
   coutMicros,
   decider,
+  DELAI_APPEL_MS,
+  DELAI_NOUVEL_ESSAI_MS,
   filtrerSortie,
   formesNiveau,
   GoogleTts,
@@ -21,8 +25,13 @@ import {
   messageErreurGoogle,
   motsEcrits,
   motsHorsNiveau,
+  natureErreurReseau,
+  niveauDeRepli,
   niveauReflexion,
+  noteMaxTokens,
+  PAUSE_NOUVEL_ESSAI_MS,
   plafondsDepuisEnv,
+  REGLAGES_GENERATION,
   PROMPT_VERSION,
   QuranIndex,
   secondesTour,
@@ -281,7 +290,9 @@ describe('Vertex AI et TTS (fetch SIMULÉ, aucun appel réel)', () => {
     // valeur d'énumération de l'API v1 (document de découverte) : en MAJUSCULES
     expect(c.generationConfig).toMatchObject({
       responseMimeType: 'application/json',
-      thinkingConfig: { thinkingLevel: 'MINIMAL' },
+      // 21/10/2026 : LOW, le plus bas accepté par gemini-3.8-flash ; plafond 4096 (la réflexion est comptée dedans)
+      thinkingConfig: { thinkingLevel: 'LOW' },
+      maxOutputTokens: 4096,
     });
     expect(c.labels).toEqual({ app: 'awzid', fonction: 'tuteur-conversation' });
     const a = corpsVertex(
@@ -395,13 +406,15 @@ describe('Vertex AI et TTS (fetch SIMULÉ, aucun appel réel)', () => {
     expect(messageErreurGoogle('<html>Bad Request</html>')).toBe('<html>Bad Request</html>');
   });
 
-  it('400 sur le réglage de réflexion : UN nouvel essai sans ce réglage, puis plus jamais envoyé', async () => {
-    const corps: Array<{ generationConfig: Record<string, unknown> }> = [];
+  /** Faux Vertex qui refuse certains niveaux de réflexion (400) et répond aux autres ; garde chaque corps envoyé. */
+  const fauxNiveaux = (refuses: string[], erreur: (niveau: string) => object) => {
+    const corps: Array<{ generationConfig: { thinkingConfig?: { thinkingLevel: string } } }> = [];
     const f = (async (_url: string, init?: RequestInit) => {
-      const b = JSON.parse(String(init!.body)) as { generationConfig: Record<string, unknown> };
+      const b = JSON.parse(String(init!.body)) as (typeof corps)[number];
       corps.push(b);
-      return b.generationConfig.thinkingConfig
-        ? new Response(JSON.stringify(ERREUR_400), { status: 400 })
+      const n = b.generationConfig.thinkingConfig?.thinkingLevel;
+      return n && refuses.includes(n)
+        ? new Response(JSON.stringify(erreur(n)), { status: 400 })
         : new Response(
             JSON.stringify({
               candidates: [
@@ -410,16 +423,173 @@ describe('Vertex AI et TTS (fetch SIMULÉ, aucun appel réel)', () => {
             }),
           );
     }) as unknown as typeof fetch;
-    const v = vertex(f);
+    return { f, corps };
+  };
+  /** Erreur EXACTE de Vertex dans la batterie réelle du 20/10/2026 (rapport JSON, « messageFournisseur »). */
+  const ERREUR_NIVEAU = (n: string) => ({
+    error: {
+      code: 400,
+      message: `Thinking level is unsupported: THINKING_LEVEL_${n}`,
+      status: 'INVALID_ARGUMENT',
+    },
+  });
+
+  it('niveau refusé (« Thinking level is unsupported: THINKING_LEVEL_MINIMAL ») : un cran au-dessus (LOW), retenu', async () => {
+    const { f, corps } = fauxNiveaux(['MINIMAL'], ERREUR_NIVEAU);
+    const v = vertex(f, 'minimal');
     const r = await v.repondre('S', entree());
     expect(r.status).toBe('ok');
-    expect(r.message).toContain('reflexion_ignoree');
-    expect(r.message).toContain('thinking_level');
-    expect(corps).toHaveLength(2);
-    expect(corps[1]!.generationConfig).not.toHaveProperty('thinkingConfig');
-    expect((await v.repondre('S', entree())).status).toBe('ok');
+    expect(r.message).toContain('reflexion_refusee MINIMAL -> LOW');
+    expect(r.message).toContain('THINKING_LEVEL_MINIMAL');
+    expect(corps.map((c) => c.generationConfig.thinkingConfig?.thinkingLevel)).toEqual([
+      'MINIMAL',
+      'LOW',
+    ]);
+    // JAMAIS « sans réglage » (défaut MEDIUM du modèle : ≈ 9,5 s par tour le 20/10) ; LOW est retenu ensuite
+    const r2 = await v.repondre('S', entree());
+    expect(r2).toMatchObject({ status: 'ok' });
+    expect(r2.message).toBeUndefined();
     expect(corps).toHaveLength(3);
-    expect(corps[2]!.generationConfig).not.toHaveProperty('thinkingConfig');
+    expect(corps[2]!.generationConfig.thinkingConfig).toEqual({ thinkingLevel: 'LOW' });
+  });
+
+  it('LOW aussi refusé (autre modèle) : dernier recours sans réglage ; ancien message (thinking_level) reconnu', async () => {
+    const { f, corps } = fauxNiveaux(['MINIMAL', 'LOW'], () => ERREUR_400);
+    const v = vertex(f, 'MINIMAL');
+    const r = await v.repondre('S', entree());
+    expect(r.status).toBe('ok');
+    expect(r.message).toContain('reflexion_refusee LOW -> reglage_du_modele');
+    expect(r.message).toContain('thinking_level');
+    expect(corps.map((c) => c.generationConfig.thinkingConfig?.thinkingLevel)).toEqual([
+      'MINIMAL',
+      'LOW',
+      undefined,
+    ]);
+    // le niveau par défaut (LOW) n'est refusé qu'une fois : aucune boucle
+    const { f: f2, corps: c2 } = fauxNiveaux(['LOW'], ERREUR_NIVEAU);
+    expect((await vertex(f2).repondre('S', entree())).status).toBe('ok');
+    expect(c2).toHaveLength(2);
+  });
+
+  /** Faux fetch qui joue une suite de réactions (exception ou réponse), puis répond normalement. */
+  const fauxSuite = (suite: Array<Error | number>) => {
+    const appels: number[] = [];
+    const f = (async (_url: string, init?: RequestInit) => {
+      appels.push(appels.length);
+      const x = suite[appels.length - 1];
+      expect(init?.signal).toBeDefined(); // délai toujours borné
+      if (x instanceof Error) throw x;
+      if (typeof x === 'number')
+        return new Response(
+          JSON.stringify({
+            error: {
+              code: x,
+              status: 'UNAVAILABLE',
+              message: 'The service is currently unavailable.',
+            },
+          }),
+          { status: x },
+        );
+      return new Response(
+        JSON.stringify({
+          candidates: [
+            { content: { parts: [{ text: JSON.stringify(ok()) }] }, finishReason: 'STOP' },
+          ],
+        }),
+      );
+    }) as unknown as typeof fetch;
+    const v = new VertexConversation({
+      projet: 'p-1x',
+      lieu: 'eu',
+      modele: 'gemini-3.8-flash',
+      jeton: jetonFixe,
+      fetch: f,
+      pauseNouvelEssaiMs: 0,
+    });
+    return { v, appels };
+  };
+  const delaiDepasse = () =>
+    Object.assign(new Error('The operation was aborted due to timeout'), { name: 'TimeoutError' });
+
+  it('panne réseau ou délai dépassé : UN nouvel essai court, noté ; deux pannes : « reseau »', async () => {
+    const a = fauxSuite([delaiDepasse()]);
+    const r = await a.v.repondre('S', entree());
+    expect(r.status).toBe('ok');
+    expect(r.message).toBe('nouvel_essai apres delai_depasse');
+    expect(a.appels).toHaveLength(2);
+
+    const b = fauxSuite([new TypeError('fetch failed'), new TypeError('fetch failed')]);
+    const r2 = await b.v.repondre('S', entree());
+    expect(r2).toMatchObject({ status: 'erreur', detail: 'reseau' });
+    expect(r2.message).toBe('nouvel_essai apres reseau ; reseau');
+    expect(b.appels).toHaveLength(2); // jamais plus d'UN nouvel essai
+
+    // 503 passager : un nouvel essai ; 429 (débit) et 400 : aucun
+    const c = fauxSuite([503]);
+    const r3 = await c.v.repondre('S', entree());
+    expect(r3.status).toBe('ok');
+    expect(r3.message).toContain('nouvel_essai apres api_503');
+    expect(c.appels).toHaveLength(2);
+    const d = fauxSuite([429]);
+    expect((await d.v.repondre('S', entree())).detail).toBe('limite_de_debit');
+    expect(d.appels).toHaveLength(1);
+    const e = fauxSuite([503, 503]);
+    expect(await e.v.repondre('S', entree())).toMatchObject({
+      status: 'erreur',
+      detail: 'api_503',
+    });
+    expect(e.appels).toHaveLength(2);
+  });
+
+  it('délais : premier envoi court, nouvel essai plus court ; pire cas ≈ l’ancien délai unique de 15 s', () => {
+    expect(DELAI_APPEL_MS).toBeLessThan(15_000);
+    expect(DELAI_NOUVEL_ESSAI_MS).toBeLessThanOrEqual(DELAI_APPEL_MS);
+    expect(DELAI_APPEL_MS + PAUSE_NOUVEL_ESSAI_MS + DELAI_NOUVEL_ESSAI_MS).toBeLessThanOrEqual(
+      15_500,
+    );
+    expect(natureErreurReseau(delaiDepasse())).toBe('delai_depasse');
+    expect(natureErreurReseau(new TypeError('fetch failed'))).toBe('reseau');
+  });
+
+  it('jeton indisponible (métadonnées, emprunt) : pas de nouvel essai, détail gardé', async () => {
+    let n = 0;
+    const v = new VertexConversation({
+      projet: 'p-1x',
+      lieu: 'eu',
+      modele: 'm',
+      jeton: {
+        obtenir: async () => {
+          n++;
+          throw new Error('emprunt_403');
+        },
+      },
+      fetch: (async () => new Response('{}')) as unknown as typeof fetch,
+      pauseNouvelEssaiMs: 0,
+    });
+    expect(await v.repondre('S', entree())).toMatchObject({
+      status: 'erreur',
+      detail: 'emprunt_403',
+    });
+    expect(n).toBe(1);
+  });
+
+  it('réponse coupée (MAX_TOKENS) : erreur « max_tokens », journal clair (réponse, réflexion, plafond, niveau)', async () => {
+    const { f } = faux(() => ({
+      candidates: [
+        {
+          content: { parts: [{ text: '{"transcription_ar": "", "sujet": "lan' }] },
+          finishReason: 'MAX_TOKENS',
+        },
+      ],
+      usageMetadata: { promptTokenCount: 5144, candidatesTokenCount: 60, thoughtsTokenCount: 4036 },
+    }));
+    const r = await vertex(f).repondre('S', entree());
+    expect(r).toMatchObject({ status: 'erreur', brouillon: null, detail: 'max_tokens' });
+    expect(r.usage.sortie).toBe(4096);
+    expect(r.message).toBe(
+      'max_tokens : réponse coupée à 4096 jetons (réponse 60, réflexion 4036) pour un plafond maxOutputTokens de 4096 ; réflexion LOW',
+    );
+    expect(noteMaxTokens(undefined, '')).toContain('réflexion du modèle');
   });
 
   it('sortie de modèle « thinking » : parties de réflexion écartées, clôture ```json tolérée', async () => {
@@ -604,5 +774,91 @@ describe('mise en service', () => {
     expect(r.usage.texte).toBeGreaterThan(0);
     const c = await new ConversationSimulee().repondre('SYS', entree({ texte: 'أريد تفاح كثير' }));
     expect(validerBrouillon(c.brouillon)!.correction?.correct).toBe('أُرِيدُ تُفَّاحًا.');
+  });
+});
+
+/**
+ * LE RAPPORT JSON RÉEL du 20/10/2026 (22 h 03 UTC, PROMPT_VERSION 85bd446fa7b5), copié tel quel du serveur : 31 appels,
+ * 23 replis techniques. Il fixe la mesure des correctifs du 21/10 (réflexion LOW, plafond de sortie, nouvel essai).
+ */
+describe('batterie réelle du 20/10/2026 (fixture) : réponses coupées, délais dépassés, MINIMAL refusé', () => {
+  const REEL = JSON.parse(
+    readFileSync(new URL('./fixtures/batterie-reelle-2026-10-20.json', import.meta.url), 'utf8'),
+  ) as RapportBatterie;
+  const jouees = REEL.situations.filter((s) => s.appel);
+  const coupees = jouees.filter((s) => s.statutFournisseur === 'erreur (max_tokens)');
+  const reseau = jouees.filter((s) => s.statutFournisseur === 'erreur (reseau)');
+
+  it('rapport réel : 19 réponses coupées au plafond de 1024 (réflexion comprise), 4 délais de 15 s dépassés', () => {
+    expect(REEL).toMatchObject({
+      promptVersion: '85bd446fa7b5',
+      modele: 'gemini-3.8-flash',
+      reel: true,
+      appels: 31,
+      reussi: false,
+      issues: { garde_fou: 19, repli_technique: 23, reponse_normale: 7 },
+    });
+    expect(coupees).toHaveLength(19);
+    // « sortie » = réponse + réflexion : toutes collées au plafond de 1024 → la réflexion mangeait le budget
+    for (const s of coupees) {
+      expect(s.usage!.sortie, s.id).toBeGreaterThanOrEqual(1000);
+      expect(s.usage!.sortie, s.id).toBeLessThanOrEqual(1024);
+    }
+    expect(reseau).toHaveLength(4);
+    for (const s of reseau) expect(s.latenceMs!, s.id).toBeGreaterThanOrEqual(15_000);
+    // le premier appel : MINIMAL refusé, puis repli SANS réglage (réflexion MEDIUM par défaut, lente)
+    expect(jouees.filter((s) => s.messageFournisseur).map((s) => s.messageFournisseur)).toEqual([
+      'reflexion_ignoree : INVALID_ARGUMENT : Thinking level is unsupported: THINKING_LEVEL_MINIMAL',
+    ]);
+    // même les réponses abouties prenaient 4,7 à 10,7 s : la réflexion par défaut est trop lente pour un tuteur
+    const reussies = jouees.filter((s) => s.statutFournisseur === 'ok');
+    expect(Math.min(...reussies.map((s) => s.latenceMs!))).toBeGreaterThan(2_500);
+  });
+
+  it('correctifs à la mesure du rapport : LOW, plafond 4096 (≥ 4 × le pire relevé), délai plus court + 1 nouvel essai', () => {
+    const pire = Math.max(...jouees.map((s) => s.usage?.sortie ?? 0));
+    expect(pire).toBeLessThanOrEqual(1024);
+    expect(REGLAGES_GENERATION.maxOutputTokens).toBeGreaterThanOrEqual(4 * pire);
+    expect(BORNES.sortieMax).toBe(REGLAGES_GENERATION.maxOutputTokens); // la réservation suit le plafond
+    expect(REGLAGES_GENERATION.reflexion).toBe('LOW');
+    expect(niveauDeRepli('MINIMAL')).toBe('LOW');
+    expect(niveauDeRepli('LOW')).toBe('');
+    // un délai dépassé est repéré avant 15 s et rejoué une fois
+    expect(DELAI_APPEL_MS).toBeLessThan(Math.min(...reseau.map((s) => s.latenceMs!)));
+    // la réservation du pire cas reste de l'ordre de 3 centimes par tour
+    expect(coutMaxTour(tarifDe('gemini-3.8-flash', new Date('2026-10-21'))!, 1)).toBeLessThan(
+      30_000,
+    );
+  });
+
+  it('rejoue une réponse coupée du rapport : la note du journal dit la part de la réflexion', async () => {
+    const s = coupees[0]!;
+    const f = (async () =>
+      new Response(
+        JSON.stringify({
+          candidates: [
+            {
+              content: { parts: [{ text: '{"transcription_ar": "' }] },
+              finishReason: 'MAX_TOKENS',
+            },
+          ],
+          usageMetadata: {
+            promptTokenCount: s.usage!.texte + s.usage!.audio,
+            candidatesTokenCount: 7,
+            thoughtsTokenCount: s.usage!.sortie - 7,
+          },
+        }),
+      )) as unknown as typeof fetch;
+    const v = new VertexConversation({
+      projet: 'p-1x',
+      lieu: 'eu',
+      modele: 'gemini-3.8-flash',
+      jeton: { obtenir: async () => 'j' },
+      fetch: f,
+    });
+    const r = await v.repondre('S', entree());
+    expect(r).toMatchObject({ status: 'erreur', detail: 'max_tokens' });
+    expect(r.message).toContain(`réflexion ${s.usage!.sortie - 7})`);
+    expect(r.message).toContain('plafond maxOutputTokens de 4096');
   });
 });

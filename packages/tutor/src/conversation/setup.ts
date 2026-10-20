@@ -73,7 +73,10 @@ export function setupConversation(env: NodeJS.ProcessEnv = process.env, f?: Fetc
       modele,
       jeton,
       ...(f ? { fetch: f } : {}),
-      reflexion: env.AWFORM_TUTEUR_VERTEX_REFLEXION ?? 'minimal',
+      // vide : REGLAGES_GENERATION.reflexion (« LOW », 21/10/2026 ; MINIMAL est refusé par gemini-3.8-flash)
+      ...(env.AWFORM_TUTEUR_VERTEX_REFLEXION
+        ? { reflexion: env.AWFORM_TUTEUR_VERTEX_REFLEXION }
+        : {}),
     }),
     synthese:
       env.AWFORM_TUTEUR_VOIX === 'off'

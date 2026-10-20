@@ -92,7 +92,7 @@ possible avant qu'elle soit entendue. Elle ne respecte donc pas les décisions 2
 | Étape | Estimation | Comment la tenir |
 |---|---|---|
 | envoi de 5 s d'Opus (≈ 20 Ko) | 0,1-0,3 s | audio compressé dans le navigateur |
-| Gemini 3.8 Flash, ≈ 4 500 jetons d'entrée, réflexion « minimal », ≈ 200 jetons de sortie | 0,9-1,6 s | invite stable : le cache implicite de Vertex accélère les tours suivants ; sortie courte (deux phrases) ; `thinkingLevel: MINIMAL` (valeur d'énumération en majuscules ; refusée : un nouvel essai sans ce réglage) |
+| Gemini 3.8 Flash, ≈ 5 100 jetons d'entrée, réflexion `LOW`, ≈ 70-220 jetons de sortie | **mesuré le 21/10 : 1,7-8 s, médiane ≈ 3 s** | `thinkingLevel: LOW`, le plus bas accepté par 3.8 Flash (MINIMAL refusé en 400 ; s'il l'est quand même, un cran au-dessus, jamais « sans réglage » = MEDIUM, ≈ 9,5 s) ; sur les tours simples, **0 jeton de réflexion** : la latence restante vient du point de terminaison, pas de la réflexion (`thinkingBudget: 0` mesuré : pas plus rapide) |
 | filtres | < 10 ms | déterministes |
 | TTS WaveNet, ≈ 70 caractères | 0,2-0,4 s | point de terminaison UE |
 | **total** | **≈ 1,3-2,3 s** | à mesurer à la mise en service (événement `latence` journalisé à chaque échange) |
@@ -316,10 +316,10 @@ l'étage 1 seul est ouvert et le motif s'affiche (`vertex_bloque_*`).
 - `AWFORM_VERTEX_PROJET` est renseigné.
 - Le lieu fait partie de l'UE (`eu` par défaut).
 - Le modèle a un tarif connu, ce qui permet de calculer les plafonds.
-- `AWFORM_TUTEUR_VERTEX_CONTROLE` est égal à `PROMPT_VERSION` (depuis le 20/10/2026 au soir : **`85bd446fa7b5`** ;
-  `7e79e074f9ee` et `39fd49228b78` ne sont plus valables). L'empreinte couvre les règles de l'invite, le schéma de
-  réponse et les réglages de génération (`REGLAGES_GENERATION` : réflexion `MINIMAL`, température, sortie maximale,
-  seuils de sécurité). Claude l'écrit dans `prod.env` après une **batterie de contrôle** RÉUSSIE avec le vrai modèle.
+- `AWFORM_TUTEUR_VERTEX_CONTROLE` est égal à `PROMPT_VERSION` (depuis le 21/10/2026 : **`1995ffd11f34`** ;
+  `85bd446fa7b5`, `7e79e074f9ee` et `39fd49228b78` ne sont plus valables). L'empreinte couvre les règles de l'invite,
+  le schéma de réponse et les réglages de génération (`REGLAGES_GENERATION` : réflexion `LOW`, température, sortie
+  maximale 4096 jetons réflexion comprise, seuils de sécurité). Claude l'écrit dans `prod.env` après une **batterie de contrôle** RÉUSSIE avec le vrai modèle.
 
 ### Sujets refusés (règles annoncées au client)
 
@@ -410,6 +410,20 @@ réglage de réflexion envoyé en minuscules (`thinkingLevel: "minimal"`) alors 
 d'énumération en majuscules (`MINIMAL`, document de découverte relevé le 20/10). Corrigé (valeur normalisée ; si
 Vertex refuse encore ce réglage, un nouvel essai sans lui, et le message de Google dans le rapport). Le rapport réel est
 gardé dans `packages/tutor/test/fixtures/` et renoté par les tests : 0 réussite sur les 31 appels.
+
+**Batterie réelle du 20/10/2026 (ÉCHEC, 25/49, `85bd446fa7b5`)** : 23 replis techniques, médiane 9,5 s. Causes : (1)
+gemini-3.8-flash **refuse `MINIMAL`** (« Thinking level is unsupported: THINKING_LEVEL_MINIMAL » ; page du modèle sur
+Vertex : niveaux `LOW`, `MEDIUM` par défaut, `HIGH`) ; le repli « sans réglage » laissait le modèle réfléchir en
+`MEDIUM` ; (2) cette réflexion est **décomptée de `maxOutputTokens`** : 19 réponses coupées à 1006-1010 jetons pour un
+plafond de 1024 (`MAX_TOKENS`) ; (3) 4 délais de 15 s dépassés. Corrigé le 21/10 : réflexion `LOW` (si un niveau est
+refusé : un cran au-dessus, retenu ; « sans réglage » en tout dernier recours), `maxOutputTokens` 4096 (la réservation
+du pire cas suit : ≈ 2,5 centimes par tour), réponse coupée journalisée en clair (jetons de réponse et de réflexion,
+plafond, niveau), **un seul nouvel essai** après une panne passagère (réseau, délai dépassé, 500/502/503/504 ; jamais
+429 ni 4xx) : premier envoi 9 s, pause 0,4 s, nouvel essai 6 s. `thinkingBudget` n'est pas employé (« deprecated for
+Gemini 3 and later models », 400 intermittents). Rapport en fixture (`batterie-reelle-2026-10-20.json`), lu par les
+tests. **Mini-essai réel** (21/10, code de la branche sur l'image en service, 14 appels dont 9 de comparaison LOW / thinkingBudget 0, 0,07 €) : 0 réponse coupée,
+0 jeton de réflexion sur les tours simples, réponses lisibles (correction d'accord juste, injection refusée, question
+religieuse refusée par la sécurité), latence 1,7-8 s (médiane ≈ 3 s), un délai dépassé rattrapé par le nouvel essai.
 
 ---
 
@@ -538,7 +552,7 @@ pour les pointes (90 % à 0,82 s, file de 8) et pour « Réciter et vérifier »
 | Voix mal reconnue (accent, bruit, enfant) | aucun mot accusé à tort (doute, « réessaie ») ; mode texte toujours là |
 | Injection de consignes (« ignore tes règles ») | texte de l'élève balisé et échappé ; classifieur d'entrée ; règles non négociables dans l'invite ; filtre de sortie |
 | Coupure de Vertex ou erreur 429 | repli sur une réplique du livre ; l'étage 1 continue ; le coût éventuel reste compté |
-| Réponse « parfaite » trop longue ou trop riche | deux phrases au plus ; 1 024 jetons de sortie au plus ; réflexion minimale |
+| Réponse « parfaite » trop longue ou trop riche | deux phrases au plus (invite) ; 4 096 jetons de sortie au plus, réflexion comprise ; réflexion `LOW` |
 | Fuite de secret | aucune clé : emprunt du compte par la VM ; variables non secrètes (`env-scopes.conf`) |
 
 ---

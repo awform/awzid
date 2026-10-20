@@ -77,10 +77,25 @@ export interface OptionsVertex {
   modele: string;
   jeton: Jeton;
   fetch?: Fetch;
-  /** « minimal » par défaut (réponses courtes, latence basse) ; vide : réglage du modèle */
+  /** REGLAGES_GENERATION.reflexion (« LOW ») par défaut ; vide : réglage du modèle */
   reflexion?: string;
+  /** délai du premier envoi (défaut DELAI_APPEL_MS) */
   delaiMs?: number;
+  /** délai du nouvel essai après une panne passagère (défaut DELAI_NOUVEL_ESSAI_MS) */
+  delaiNouvelEssaiMs?: number;
+  /** pause avant le nouvel essai (défaut PAUSE_NOUVEL_ESSAI_MS ; 0 dans les tests) */
+  pauseNouvelEssaiMs?: number;
 }
+
+/**
+ * Délais (21/10/2026). Avec la réflexion `LOW`, un tour attendu prend 1 à 3 s. Une panne PASSAGÈRE (réseau, délai
+ * dépassé, HTTP 500/502/503/504) a droit à UN nouvel essai court, après une petite pause : au pire 9 + 0,4 + 6 s,
+ * soit à peine plus que l'ancien délai unique de 15 s. Jamais de nouvel essai sur 429 (débit) ni sur 4xx.
+ */
+export const DELAI_APPEL_MS = 9_000;
+export const DELAI_NOUVEL_ESSAI_MS = 6_000;
+export const PAUSE_NOUVEL_ESSAI_MS = 400;
+const STATUTS_PASSAGERS = [500, 502, 503, 504];
 
 export function urlVertex(o: Pick<OptionsVertex, 'projet' | 'lieu' | 'modele'>): string {
   const hote =
@@ -96,7 +111,7 @@ const SECURITE = REGLAGES_GENERATION.securite.categories.map((category) => ({
 /**
  * Niveaux de réflexion de Vertex (`GenerationConfig.ThinkingConfig.thinkingLevel`) : valeurs d'énumération EN
  * MAJUSCULES, telles que les publie le document de découverte de l'API v1 (vérifié le 20/10/2026). Le réglage
- * (« minimal », variable AWFORM_TUTEUR_VERTEX_REFLEXION) est normalisé ; une valeur inconnue n'est pas envoyée
+ * (« low », variable AWFORM_TUTEUR_VERTEX_REFLEXION) est normalisé ; une valeur inconnue n'est pas envoyée
  * (réglage du modèle) plutôt que de faire refuser TOUTES les requêtes.
  */
 export const NIVEAUX_REFLEXION = ['MINIMAL', 'LOW', 'MEDIUM', 'HIGH'] as const;
@@ -104,6 +119,17 @@ export function niveauReflexion(reflexion: string | undefined): string | null {
   const r = (reflexion ?? '').trim().toUpperCase();
   return (NIVEAUX_REFLEXION as readonly string[]).includes(r) ? r : null;
 }
+
+/**
+ * Niveau essayé quand Vertex REFUSE un niveau (400 « Thinking level is unsupported ») : on monte d'un seul cran vers
+ * le niveau le plus bas encore court (MINIMAL → LOW), puis, en dernier recours, plus de réglage (défaut du modèle,
+ * MEDIUM pour gemini-3.8-flash : lent). 20/10/2026 : le repli direct « sans réglage » coûtait ≈ 9,5 s par tour.
+ */
+export function niveauDeRepli(niveau: string | null): string {
+  return niveau === 'MINIMAL' ? 'LOW' : '';
+}
+
+const pause = (ms: number) => new Promise((ok) => setTimeout(ok, ms));
 
 /** Corps de la requête generateContent (exporté pour les tests : aucune donnée personnelle, pas de profil). */
 export function corpsVertex(
@@ -147,7 +173,7 @@ export function corpsVertex(
   };
 }
 
-interface ReponseVertex {
+export interface ReponseVertex {
   candidates?: Array<{
     content?: { parts?: Array<{ text?: string; thought?: boolean }> };
     finishReason?: string;
@@ -225,54 +251,98 @@ export class VertexConversation implements ConvFournisseur {
   readonly name = 'vertex';
   readonly real = true;
   readonly modele: string;
-  /** le modèle a refusé le réglage de réflexion (400) : il n'est plus envoyé (repli sur le réglage du modèle) */
-  private sansReflexion = false;
+  /**
+   * Niveau de réflexion retenu après un refus de Vertex (400 sur le réglage) : null tant qu'aucun refus ; '' = plus
+   * de réglage (défaut du modèle). Gardé pour la vie du fournisseur (une requête refusée n'est pas facturée).
+   */
+  private reflexionRetenue: string | null = null;
   constructor(private readonly o: OptionsVertex) {
     if (!(LIEUX_UE as readonly string[]).includes(o.lieu)) throw new Error('lieu_hors_ue');
     this.modele = o.modele;
   }
 
-  private async envoyer(systeme: string, e: ConvEntree, reflexion: string): Promise<Response> {
+  private async envoyer(
+    systeme: string,
+    e: ConvEntree,
+    reflexion: string,
+    delaiMs: number,
+  ): Promise<Response> {
     const jeton = await this.o.jeton.obtenir();
     return (this.o.fetch ?? fetch)(urlVertex(this.o), {
       method: 'POST',
       headers: { authorization: `Bearer ${jeton}`, 'content-type': 'application/json' },
       body: JSON.stringify(corpsVertex(systeme, e, reflexion)),
-      signal: AbortSignal.timeout(this.o.delaiMs ?? 15_000),
+      signal: AbortSignal.timeout(delaiMs),
     });
+  }
+
+  /**
+   * Un envoi, et UN SEUL nouvel essai court après une panne passagère (réseau, délai dépassé, HTTP 5xx passager),
+   * après une petite pause. Le jeton (métadonnées, emprunt) n'est pas réessayé : c'est une erreur de configuration.
+   */
+  private async envoyerAvecNouvelEssai(
+    systeme: string,
+    e: ConvEntree,
+    reflexion: string,
+    notes: string[],
+  ): Promise<Response> {
+    try {
+      const r = await this.envoyer(systeme, e, reflexion, this.o.delaiMs ?? DELAI_APPEL_MS);
+      if (!STATUTS_PASSAGERS.includes(r.status)) return r;
+      const m = messageErreurGoogle(await r.text().catch(() => ''));
+      notes.push(`nouvel_essai apres api_${r.status}${m ? ` (${m.slice(0, 120)})` : ''}`);
+    } catch (err) {
+      const m = String((err as Error)?.message ?? '');
+      if (m.startsWith('metadonnees') || m.startsWith('emprunt')) throw err;
+      notes.push(`nouvel_essai apres ${natureErreurReseau(err)}`);
+    }
+    await pause(this.o.pauseNouvelEssaiMs ?? PAUSE_NOUVEL_ESSAI_MS);
+    return this.envoyer(systeme, e, reflexion, this.o.delaiNouvelEssaiMs ?? DELAI_NOUVEL_ESSAI_MS);
   }
 
   async repondre(systeme: string, e: ConvEntree): Promise<ConvSortieFournisseur> {
     const zero = { texte: 0, audio: 0, sortie: 0 };
+    // notes techniques du tour (réglage refusé, nouvel essai, réponse coupée) : journal du serveur et rapport de la
+    // batterie, jamais montrées à l'élève
+    const notes: string[] = [];
+    const message = (...plus: Array<string | undefined>) => {
+      const m = [...notes, ...plus.filter(Boolean)].join(' ; ').slice(0, 600);
+      return m ? { message: m } : {};
+    };
+    let reflexion = this.reflexionRetenue ?? this.o.reflexion ?? REGLAGES_GENERATION.reflexion;
     let r: Response;
-    let avertissement: string | undefined;
     try {
-      const reflexion = this.sansReflexion
-        ? ''
-        : (this.o.reflexion ?? REGLAGES_GENERATION.reflexion);
-      r = await this.envoyer(systeme, e, reflexion);
-      // 20/10/2026 : une requête refusée (400) n'est pas facturée ; si c'est le réglage de réflexion que le modèle
-      // refuse, UN nouvel essai sans ce réglage (et plus jamais ensuite pour ce fournisseur)
-      if (r.status === 400 && niveauReflexion(reflexion)) {
+      r = await this.envoyerAvecNouvelEssai(systeme, e, reflexion, notes);
+      // une requête refusée (400) n'est pas facturée ; si c'est le NIVEAU de réflexion que le modèle refuse
+      // (20/10/2026 : « Thinking level is unsupported: THINKING_LEVEL_MINIMAL »), on monte d'un cran (MINIMAL → LOW,
+      // puis plus de réglage), retenu pour la suite
+      while (r.status === 400 && niveauReflexion(reflexion)) {
         const corps = await r.text().catch(() => '');
-        if (/thinking/i.test(corps)) {
-          this.sansReflexion = true;
-          avertissement = `reflexion_ignoree : ${messageErreurGoogle(corps) ?? ''}`.slice(0, 300);
-          r = await this.envoyer(systeme, e, '');
-        } else
+        if (!/thinking/i.test(corps)) {
           r = new Response(corps, { status: r.status, headers: { 'content-type': 'text/plain' } });
+          break;
+        }
+        const refuse = niveauReflexion(reflexion);
+        reflexion = niveauDeRepli(refuse);
+        this.reflexionRetenue = reflexion;
+        notes.push(
+          `reflexion_refusee ${refuse} -> ${reflexion || 'reglage_du_modele'} (${(messageErreurGoogle(corps) ?? '').slice(0, 160)})`,
+        );
+        r = await this.envoyerAvecNouvelEssai(systeme, e, reflexion, notes);
       }
     } catch (err) {
       const m = String((err as Error)?.message ?? '');
+      const jeton = m.startsWith('metadonnees') || m.startsWith('emprunt');
       return {
         status: 'erreur',
         brouillon: null,
         usage: zero,
-        detail: m.startsWith('metadonnees') || m.startsWith('emprunt') ? m : 'reseau',
+        detail: jeton ? m : 'reseau',
+        ...message(jeton ? undefined : natureErreurReseau(err)),
       };
     }
     if (!r.ok) {
-      const message = messageErreurGoogle(await r.text().catch(() => ''));
+      const google = messageErreurGoogle(await r.text().catch(() => ''));
       return {
         status: 'erreur',
         brouillon: null,
@@ -283,14 +353,19 @@ export class VertexConversation implements ConvFournisseur {
             : r.status === 403 || r.status === 401
               ? 'droits'
               : `api_${r.status}`,
-        ...(message ? { message } : {}),
+        ...message(google),
       };
     }
     const j = (await r.json().catch(() => null)) as ReponseVertex | null;
     const usage = usageVertex(j?.usageMetadata);
-    const avert = avertissement ? { message: avertissement } : {};
     if (!j)
-      return { status: 'erreur', brouillon: null, usage, detail: 'reponse_illisible', ...avert };
+      return {
+        status: 'erreur',
+        brouillon: null,
+        usage,
+        detail: 'reponse_illisible',
+        ...message(),
+      };
     const c = j.candidates?.[0];
     if (j.promptFeedback?.blockReason || FINS_REFUS.includes(c?.finishReason ?? ''))
       return {
@@ -298,10 +373,18 @@ export class VertexConversation implements ConvFournisseur {
         brouillon: null,
         usage,
         detail: j.promptFeedback?.blockReason ?? c?.finishReason,
-        ...avert,
+        ...message(),
       };
+    // réponse COUPÉE par le plafond de jetons : dit en clair combien la réflexion a pris (20/10/2026 : 18 réponses
+    // coupées, la réflexion du modèle mangeait le budget de sortie)
     if (c?.finishReason === 'MAX_TOKENS')
-      return { status: 'erreur', brouillon: null, usage, detail: 'max_tokens', ...avert };
+      return {
+        status: 'erreur',
+        brouillon: null,
+        usage,
+        detail: 'max_tokens',
+        ...message(noteMaxTokens(j.usageMetadata, reflexion)),
+      };
     // réponse vide ou JSON illisible : PANNE (repli technique), pas une décision du filtre
     const brouillon = lireBrouillon(c?.content?.parts ?? []);
     if (brouillon === null)
@@ -310,10 +393,29 @@ export class VertexConversation implements ConvFournisseur {
         brouillon: null,
         usage,
         detail: c ? `json_illisible${c.finishReason ? `:${c.finishReason}` : ''}` : 'reponse_vide',
-        ...avert,
+        ...message(),
       };
-    return { status: 'ok', brouillon, usage, ...avert };
+    return { status: 'ok', brouillon, usage, ...message() };
   }
+}
+
+/** Nature d'une erreur de fetch : délai dépassé (AbortSignal.timeout) ou réseau. */
+export function natureErreurReseau(err: unknown): 'delai_depasse' | 'reseau' {
+  const nom = (err as Error)?.name;
+  return nom === 'TimeoutError' || nom === 'AbortError' ? 'delai_depasse' : 'reseau';
+}
+
+/**
+ * Note du journal pour une réponse coupée (finishReason MAX_TOKENS) : jetons de réponse, de réflexion, plafond et
+ * niveau de réflexion envoyé — de quoi voir d'un coup d'œil si c'est la réflexion qui a mangé le budget.
+ */
+export function noteMaxTokens(
+  u: ReponseVertex['usageMetadata'],
+  reflexion: string | null | undefined,
+): string {
+  const reponse = u?.candidatesTokenCount ?? 0;
+  const pensee = u?.thoughtsTokenCount ?? 0;
+  return `max_tokens : réponse coupée à ${reponse + pensee} jetons (réponse ${reponse}, réflexion ${pensee}) pour un plafond maxOutputTokens de ${REGLAGES_GENERATION.maxOutputTokens} ; réflexion ${niveauReflexion(reflexion ?? '') ?? 'du modèle'}`;
 }
 
 export interface OptionsTts {
