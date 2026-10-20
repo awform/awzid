@@ -32,7 +32,12 @@ import { VIDEO_GARDE, VIDEO_RECITATION } from '../src/video-garde.js';
 import { VIDEO_NIVEAUX } from '../src/video-niveaux.js';
 import { DHIKR, contientDhikr, horsDhikr, sansVoyelles } from '../src/dhikr.js';
 import { audioFileId, looksQuranic, sayText, skeleton } from '../src/audio-cle.js';
-import { BASMALA_COMPLETE, citeCoran, gardeCoran, recitationCoran } from '../src/garde-coran.js';
+import {
+  BASMALA_COMPLETE,
+  citationInterdite,
+  gardeCoran,
+  recitationCoran,
+} from '../src/garde-coran.js';
 import { loadTanzil, parseDataFile, studentProjection } from '../src/index.js';
 import { CONTENT_DIR, HAS_CONTENT } from './helpers.js';
 
@@ -170,12 +175,12 @@ function citationsAvecRef(L: unknown): Set<string> {
 }
 /**
  * Garde coranique de la voix (règle du référent du 20/10/2026) : MÊME code que l'import des audios des leçons
- * (`src/garde-coran.ts`) — citation à partir de 4 mots consécutifs du Coran hors formules de dhikr, textes de récitation.
+ * (`src/garde-coran.ts`) — citation à partir de 4 mots consécutifs du Coran hors formules de dhikr et hors hadiths, textes de récitation.
  */
 const GARDE_CORAN = tanzil
   ? gardeCoran(verses)
-  : { suites: new Set<string>(), versets: new Set<string>(), extraits: '' };
-const cite = (s: string) => citeCoran(s, GARDE_CORAN);
+  : { suites: new Map<string, string[]>(), versets: new Set<string>(), extraits: '' };
+const cite = (s: string) => citationInterdite(s, GARDE_CORAN);
 const versetsEntiers = GARDE_CORAN.versets;
 /** texte de la lecture présenté comme récitation : graphie du Muṣḥaf, ou un ou plusieurs versets entiers */
 const recitation = (s: string) => recitationCoran(s, GARDE_CORAN);

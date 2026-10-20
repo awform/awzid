@@ -9,6 +9,28 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 20/10/2026 (suite) — Garde coranique commune : décisions du référent (isti'ādha, Basmala avant d'agir, hadiths, alifs), fusion de `garde-referent-wip` dans `main` ; NON déployé
+
+Départ : `main` 2fd0b21. Rien déployé ; `~/lecons-audio` lu seulement (import de contrôle vers un stockage jetable, supprimé ensuite).
+
+> **⚠ LISTE BLANCHE MODIFIÉE** (`packages/content/data/dhikr-formules.json`, lue aussi par `gen-audio.ps1`) : **ajout de l'isti'ādha** (« أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ », catégorie `istiadha`) et de la **Basmala complète dite avant d'agir** (catégorie `basmala`, seconde entrée) ; `DHIKR` (`dhikr.ts`) régénéré. Agents en cours : génération des audios (Gemini) et vidéos v2 (`video-v2-wip`) — reprendre la liste à jour de `main` ; `VIDEO_GARDE` a changé (voir plus bas), et la règle commune (`garde-coran.ts`) exempte désormais les hadiths identifiés.
+
+- **Décisions appliquées** (règle commune `packages/content/src/garde-coran.ts`, import et vidéos) :
+  1. **isti'ādha** : formule de la liste, sonorisée seule ou dans une phrase ;
+  2. **Basmala complète suivie d'autre chose que le Coran** (début de lettre, salut, début d'un matn) : sonorisée ; **seule** (verset 1:1), **en tête de sourate** (suivie d'un verset) ou **en contexte de récitation** (« قرأ », « تلا », sourate, Fātiḥa, Coran, « تعالى » : `basmalaRecitee`) : refusée ;
+  3. **hadiths et athar identifiés** acceptés malgré 4 mots du Coran (`estHadith`) : mention « رواه », parole du Prophète ﷺ citée entre guillemets, ou texte que les livres donnent comme hadith (champs `grade`, `rawi_fr`, `source_fr`, liste `hadiths`, source d'un recueil citée dans la traduction sans référence de verset : 27 empreintes `HADITH_CITANTS`, fichier généré `hadith-garde.ts`, `HADITH_GARDE=ecrire`) ; **jamais** si le texte annonce un verset (« تعالى », « قرأ », « تلا », « سورة », « آية »), porte une référence de verset, ou **récite un verset entier** de trois mots ou plus (`contientVerset` : « قُلْ هُوَ اللَّهُ أَحَدٌ وَالْمُعَوِّذَتَانِ », « اللَّهُ أَكْبَرُ — الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ » restent muets) ;
+  4. **récits qui paraphrasent un verset** : refus maintenu ;
+  5. **faux positifs قالت/قلت, فقال/فقل** : pas de texte Tanzil « simple » dans le dépôt ni sur la VM (rien téléchargé) ; la comparaison garde le squelette (écriture du Muṣḥaf = écriture courante) PUIS **contrôle les alifs** : un alif écrit dans le texte là où le mot du Coran n'a ni alif, ni alif suscrit, ni hamza (combinante comprise) n'est pas le même mot (`motsSquelette`, motif d'alif par mot).
+- **Aucune régression de détection** : test sur **chaque verset** de 4 mots ou plus, en écriture du Muṣḥaf et en écriture courante (alif suscrit → alif) : tous restent des citations ; sur **126 617 chaînes** (tous les livres + index des audios), le contrôle des alifs n'écarte que **13 chaînes**, toutes relues : les 3 faux positifs (et leurs copies), « رَحِمَهَا اللَّهُ. إِنَّ لِلَّهِ مَا أَخَذَ… » (رحمها ≠ mot du Coran), « وَقَالَ رَبِّ زِدْنِي عِلْمًا » (وقال ≠ وَقُل : reste 3 mots), le traité de Ḥudaybiya (قال ≠ قُل), une note citant مَا هَٰذَا بَشَرًا suivie de إِنَّا (≠ إِنْ).
+- **Import de contrôle** (`~/lecons-audio`, 17 886 entrées) : **avant 28 refusés, après 6** (17 880 importés, 0 absent, 0 illisible, 0 incohérent).
+  - acceptés désormais (22) : isti'ādha (7), hadiths identifiés (10 : « مَنْ كَانَ يُؤْمِنُ… » ×4, « مَنْ نَفَّسَ… », « إِنَّ الْحَلَالَ بَيِّنٌ… » ×3, « وَمَنْ سَتَرَ مُسْلِمًا… », « إِنَّ اللَّهَ لَا يَسْتَحْيِي مِنَ الْحَقِّ »), Basmala + salut (1), faux positifs d'alif (4 : « قَالَتْ: مَا شَاءَ اللَّهُ » ×2, « فَقَالَ: الحمد لله الذي… », « رَحِمَهَا اللَّهُ. إِنَّ لِلَّهِ مَا أَخَذَ… ») ;
+  - **refusés (6)** : les 4 récits (« كُلُّ شَيْءٍ يَفْنَى إِلَّا اللَّهَ… », sīra d'Ibn Hishām (٨), les jeunes gens de la Caverne, « وَعْدَ اللَّهِ حَقٌّ ») ; **l'athar de Muʿādh** (ra2, « قَالَ مُعَاذُ بْنُ جَبَلٍ… » : texte non préparé de la Risāla, aucun champ ne le marque comme athar) ; **le hadith « مَنْ نَزَلَ مَنْزِلًا… أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ »** (ra1, degré ṣaḥīḥ) : il contient le verset entier 113:2 (« مِنْ شَرِّ مَا خَلَقَ ») — à trancher par le référent.
+- **Vidéos** : `VIDEO_GARDE` recalculée : 2 empreintes en moins, la Basmala complète (graphie du Muṣḥaf et « بِسْمِ | اللَّهِ | … ») — déjà muette dans le lecteur (règle Basmala de `video.ts`, inchangé) ; `video.test.ts` (fidélité, voix, aucune scène muette) vert.
+- **Tests** : `garde-coran.test.ts` (Tanzil réel : isti'ādha ; Basmala lettre / seule / tête de sourate / récitation ; hadiths « رواه » et ﷺ, verset annoncé, référence, verset entier ; 3 faux positifs et vrais versets 18:39, 23:28 ; aucune régression sur chaque verset ; hadiths des livres à jour) ; `lecons-audio.test.ts` (hadith identifié importé, alif : phrase acceptée et verset refusé).
+- **Vérifications** (sous `flock`) : build, typecheck, eslint, prettier : 0 erreur ; unitaires **2 586 réussis, 3 ignorés, 0 échec** ; poids : **marge 4,0 Ko** (≥ 3) ; **e2e complète** (`--retries=1 --workers=3`, 25,4 min) : **847 réussis, 158 ignorés, 0 échec, 1 instable** (`f5-reseau:144` mobile, nouvelles tentatives réseau, réussi seul).
+
+---
+
 ## 20/10/2026 (suite) — Import des audios des leçons : même garde coranique que les vidéos vivantes, fusion de `import-dhikr-wip` dans `main` ; NON déployé
 
 Départ : `main` f3df65b. Rien déployé ; `~/lecons-audio` lu seulement (import de contrôle vers un stockage jetable, supprimé ensuite).

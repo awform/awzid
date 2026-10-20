@@ -115,6 +115,7 @@ describe('A3 — garde coranique de l’import : même règle que les vidéos vi
     'فَقُلْتُمْ مَا شَاءَ ٱللَّهُ كَانَ',
     'فَنَادَوْا أَنْ لَا إِلَٰهَ إِلَّا أَنْتَ يَا رَبَّنَا',
     'كِتَابٌ جَدِيدٌ',
+    'قُلْتُ لَهُمْ ذَهَبْنَا مَعًا',
   ];
   const G = {
     machaallah: 'مَا شَاءَ اللَّهُ',
@@ -135,6 +136,11 @@ describe('A3 — garde coranique de l’import : même règle que les vidéos vi
     // un mot isolé (vocabulaire) : permis ; une phrase qui cite une référence sans recopier le verset : permise
     mot: 'الْمَدْرَسَةِ',
     paragraphe: 'هٰذَا بَيْتٌ كَبِيرٌ، كَمَا فِي الْآيَةِ (1:1).',
+    // hadith identifié (parole du Prophète ﷺ citée) : accepté même avec 4 mots du Coran
+    hadith: 'قَالَ النَّبِيُّ ﷺ: «الْوَلَدُ ذَهَبْتُ إِلَى الْمَدْرَسَةِ»',
+    // même squelette que « قُلْتُ لَهُمْ ذَهَبْنَا مَعًا », mais un alif écrit là où le verset n'en a pas : accepté
+    alif: 'قَالَتْ لَهُمْ: ذَهَبْنَا مَعًا إِلَى السُّوقِ.',
+    alifVerset: 'قُلْتُ لَهُمْ ذَهَبْنَا مَعًا الْيَوْمَ',
   };
   const src = join(root, 'garde-src');
   const dest = join(root, 'garde-dest');
@@ -166,9 +172,14 @@ describe('A3 — garde coranique de l’import : même règle que les vidéos vi
     for (const s of [G.reference, G.referenceFormule, G.verset]) expect(refuse(s), s).toBe(true);
   });
 
+  it('un hadith identifié, ou une phrase dont un alif écrit n’est pas dans le verset, est accepté', () => {
+    for (const s of [G.hadith, G.alif]) expect(importe(s), s).toBe(true);
+    expect(refuse(G.alifVerset)).toBe(true);
+  });
+
   it('un mot isolé, 3 mots d’un verset, une phrase qui cite une référence sont acceptés', () => {
     for (const s of [G.mot, G.trois, G.paragraphe]) expect(importe(s), s).toBe(true);
-    expect(r.coraniques).toBe(6);
-    expect(r.importes).toBe(6);
+    expect(r.coraniques).toBe(7);
+    expect(r.importes).toBe(8);
   });
 });
