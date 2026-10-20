@@ -40,8 +40,13 @@ const BUDGET_3G_MS = 3000;
 const BUDGET_VIVANTE = 20 * 1024;
 /** lecteur audio des phrases, chargé à la demande (jamais préchargé) */
 const BUDGET_LECTEUR = 12 * 1024;
-/** vidéos vivantes (19/10/2026) : lecteur plein écran et générateur, chargés à la demande (jamais préchargés) */
-const BUDGET_VIDEO = 15 * 1024;
+/**
+ * vidéos vivantes (19/10/2026) : lecteur plein écran et générateur, chargés à la demande (jamais préchargés).
+ * Garde relevée de 15 à 18 Ko (décision du chef de projet, 20/10/2026) : le lecteur n'est chargé qu'au premier appui
+ * sur « Voir en vidéo », il n'a aucun effet sur les autres pages ni sur l'appareil de l'élève avant son premier usage
+ * (les gardes de l'appareil et des pages restent celles ci-dessous) ; mesure au 20/10 : 14,8 Ko.
+ */
+const BUDGET_VIDEO = 18 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 const BUDGET_RIWAYA_FONT = 1024 * 1024;
 /** page d'accueil de l'élève (« Mon arabe », onglet Arabe ; la première qu'il ouvre) */

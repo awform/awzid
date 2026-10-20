@@ -147,7 +147,7 @@ test.describe('interrupteur ALLUMÉ (exception par pays, sans redéploiement)', 
     await page.getByTestId('voir-video').click();
     await expect(page.getByTestId('vv')).toBeVisible();
     expect((await chargesVideo(page)).length).toBeGreaterThan(0);
-    expect(await modes(page)).toEqual(['lettre', 'courte', 'longue', 'quiz']);
+    expect(await modes(page)).toEqual(['lettre', 'courte', 'longue', 'quiz', 'revision']);
 
     // par lettre : choix de la lettre, tracé (ب validé), nom, repère, 4 formes
     await page.locator('.vv .mode[data-mode="lettre"]').click();
@@ -165,6 +165,14 @@ test.describe('interrupteur ALLUMÉ (exception par pays, sans redéploiement)', 
     expect(await scene(page)).toBe('ouverture');
     await page.locator('.vv [data-k="suiv"]').click();
     expect(await scene(page)).toBe('courte-lettres');
+    await fermer(page);
+
+    // révision d'une leçon : « Je retiens » (et ce que le livre reprend des leçons précédentes)
+    await page.getByTestId('voir-video').click();
+    await page.locator('.vv .mode[data-mode="revision"]').click();
+    expect(await scene(page)).toBe('ouverture');
+    await page.locator('.vv [data-k="suiv"]').click();
+    expect(await scene(page)).toBe('recap');
     await fermer(page);
 
     // quiz : un exercice du livre, jouable

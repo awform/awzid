@@ -9,6 +9,7 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  CONSEIL_MASQUE,
   COURTE_MAX_MS,
   COURTE_MIN_MS,
   LETTRE_MAX_MS,
@@ -204,6 +205,13 @@ describe('vidéos vivantes : garde coranique et Basmala', () => {
     });
     expect(videoVoix(v)).toEqual([]);
     expect(v.signalements[0]?.raison).toBe('coran');
+    // même texte marqué « formule de dhikr » par les données (shahāda dite seule) : voix permise
+    const v2 = buildVideo(lecon({ ar: s, dhikr: true }), {
+      unitId: 't',
+      hasAudio: () => true,
+      garde: new Set([gardeVideoKey(s)]),
+    });
+    expect(videoVoix(v2)).toContain(s);
   });
   it('morceau d’un passage coranique cité par la leçon : jamais de voix (contexte)', () => {
     const w = [c(0x62d, 0x64e, 0x645, 0x652, 0x62f, 0x64f), c(0x631, 0x64e, 0x628, 0x651, 0x650)];
@@ -243,6 +251,14 @@ describe.skipIf(!HAS_CONTENT)('vidéos vivantes : les 25 unités d’Adultes 1',
       const { v, L } = video(f);
       // modes : au moins la version longue ; aucun mode proposé sans scène ; aucune scène d'un mode non proposé
       expect(v.modes).toContain('longue');
+      // révision dans toutes les unités (décision du 20/10/2026) : bilans, examen et leçons (« Je retiens »…)
+      expect(v.modes).toContain('revision');
+      if (v.type === 'lecon')
+        expect(scenesDuMode(v, 'revision').map((s) => s.id)).toContain('recap');
+      // conseil d'écriture contredisant les tracés validés : masqué (l02, l04, l07)
+      const ecr = v.scenes.find((s) => s.id === 'ecriture');
+      if (ecr && CONSEIL_MASQUE.has(v.unitId))
+        expect(ecr.temps.some((x) => x.k === 'fr')).toBe(false);
       for (const m of v.modes) expect(scenesDuMode(v, m).length).toBeGreaterThan(0);
       for (const s of v.scenes) for (const m of s.modes) expect(v.modes).toContain(m);
       for (const m of VIDEO_MODES)
@@ -285,8 +301,20 @@ describe.skipIf(!HAS_CONTENT)('vidéos vivantes : les 25 unités d’Adultes 1',
       for (const s of [...ar, ...fr]) expect(tr.has(s), `phonétique : ${s}`).toBe(false);
       expect(JSON.stringify(v)).not.toMatch(/"tr"/);
       // garde : aucune voix sur un texte coranique (Muṣḥaf, Tanzil 3 mots / 4 mots suivis, Basmala)
+      // formules de dhikr marquées par les données (`dhikr: true`) : voix permise malgré les gardes Basmala et Tanzil
+      const dhikrs = new Set<string>();
+      const marque = (x: unknown): void => {
+        if (Array.isArray(x)) x.forEach(marque);
+        else if (x && typeof x === 'object') {
+          const o = x as Record<string, unknown>;
+          if (o.dhikr === true) strings(o).forEach((s) => dhikrs.add(unmark(s)));
+          Object.values(o).forEach(marque);
+        }
+      };
+      marque(sansParties(L));
       for (const s of videoVoix(v)) {
         expect(looksQuranic(s), s).toBe(false);
+        if (dhikrs.has(s)) continue;
         expect(
           skeleton(s).includes(
             skeleton(String.fromCharCode(0x628, 0x633, 0x645, 0x20, 0x627, 0x644, 0x644, 0x647)),

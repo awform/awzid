@@ -251,6 +251,13 @@ const PERSONAS = new Set([
   'imam',
 ]);
 
+/**
+ * Unités dont le conseil d'écriture du livre contredit le sens des traits validé (20/10/2026 : l02 pour le jīm, le
+ * ḥāʾ et le khāʾ ; l04 pour le ṣād et le ḍād ; l07 pour le kāf seul et le lām-alif) : le conseil n'est pas montré dans
+ * la scène « J'écris » tant que le livre n'est pas corrigé (correction par le processus des livres).
+ */
+export const CONSEIL_MASQUE: ReadonlySet<string> = new Set(['ad1.l02', 'ad1.l04', 'ad1.l07']);
+
 /** clé courte d'un texte pour les gardes (8 premiers chiffres hexadécimaux de sa clé audio) */
 export const gardeVideoKey = (s: string) => (audioFileId(s) ?? '').slice(0, 8);
 const GARDE_VIV = new Set(GARDE.split(' '));
@@ -333,8 +340,19 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
     ...arr(R.phrases).map((p) => (typeof p === 'string' ? p : obj(p).ar)),
     ...arr(R.paragraphes).map((p) => (typeof p === 'string' ? p : obj(p).ar)),
   ].filter((s): s is string => !!str(s));
+  // une formule marquée « dhikr » par les données n'est pas un passage coranique de la leçon
+  const dhikrs = new Set<string>();
+  const marque = (x: unknown): void => {
+    if (Array.isArray(x)) x.forEach(marque);
+    else if (x && typeof x === 'object') {
+      const o = x as Obj;
+      if (o.dhikr === true) allStr(o).forEach((s) => dhikrs.add(s));
+      Object.values(o).forEach(marque);
+    }
+  };
+  marque(R);
   const passages = lectureStr
-    .filter((s) => coranique(s))
+    .filter((s) => !dhikrs.has(s) && coranique(s))
     .map((s) => ` ${motsDe(s)} `)
     .filter((p) => p.trim());
   const contexte = (s: string) => {
@@ -344,8 +362,12 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
 
   /** raison de garder un texte sans voix (null : la voix est permise) */
   const raison = (s: string, holder: Obj | null, ctx: boolean): Signalement['raison'] | null => {
-    if (coranique(s)) return 'coran';
-    if (skeleton(s).includes(BASMALA) && holder?.dhikr !== true) return 'basmala';
+    // formule de dhikr marquée par les données (`dhikr: true` : Basmala avant d'agir, shahāda dite seule) : la garde
+    // des citations (Tanzil, 4 mots) et celle de la Basmala ne s'appliquent pas ; la graphie du Muṣḥaf, les parties
+    // Coran et fiqh, et le contexte coranique de l'unité, si
+    const dhikr = holder?.dhikr === true;
+    if (dhikr ? looksQuranic(s) || ORNE.test(s) : coranique(s)) return 'coran';
+    if (skeleton(s).includes(BASMALA) && !dhikr) return 'basmala';
     if (sacre(s)) return 'sacre';
     if (ctx && contexte(s)) return 'contexte';
     return null;
@@ -532,7 +554,10 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   ici = 'ecriture';
   {
     const temps: Temps[] = [];
-    if (str(E.conseil_fr)) temps.push({ k: 'fr', fr: E.conseil_fr as string, ms: MS.fr + 2500 });
+    // conseil du livre masqué là où il contredit les tracés validés (décision du référent, 20/10/2026), tant que le
+    // livre n'est pas corrigé
+    if (str(E.conseil_fr) && !CONSEIL_MASQUE.has(opts.unitId))
+      temps.push({ k: 'fr', fr: E.conseil_fr as string, ms: MS.fr + 2500 });
     for (const li of arr(E.lier).map(obj)) {
       const ls = strs(li.lettres);
       if (!ls.length || !str(li.mot)) continue;
@@ -784,21 +809,33 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
     });
   }
 
-  // 10. JE RETIENS (récapitulatif et score du quiz)
+  // 10. JE RETIENS (récapitulatif et score du quiz) ; sans « je retiens » dans le livre, les lettres de la leçon et
+  // leur repère (comme les leçons vivantes)
   const retiens = arr(L.retiens).map(obj);
   add({
     id: 'recap',
     part: 'recap',
     titre: { cle: 'vv.recap' },
     modes: ['longue'],
-    temps: retiens
-      .filter((r) => str(r.ar) || str(r.fr))
-      .map((r): Temps => ({
-        k: 'regle',
-        ms: 2600 + (str(r.fr) ? 30 * (r.fr as string).length : 0),
-        ...(str(r.ar) ? { ar: [affiche(r.ar as string)] } : {}),
-        ...(str(r.fr) ? { fr: [r.fr as string] } : {}),
-      })),
+    temps: retiens.length
+      ? retiens
+          .filter((r) => str(r.ar) || str(r.fr))
+          .map((r): Temps => ({
+            k: 'regle',
+            ms: 2600 + (str(r.fr) ? 30 * (r.fr as string).length : 0),
+            ...(str(r.ar) ? { ar: [affiche(r.ar as string)] } : {}),
+            ...(str(r.fr) ? { fr: [r.fr as string] } : {}),
+          }))
+      : nouvelles.map((x): Temps => ({
+          k: 'regle',
+          ms: 2600 + (str(x.points_fr) ? 30 * (x.points_fr as string).length : 0),
+          signe: x.l as string,
+          ar: [
+            affiche(x.nom_ar as string),
+            ...(str(x.points_ar) ? [affiche(x.points_ar as string)] : []),
+          ],
+          ...(str(x.points_fr) ? { fr: [x.points_fr as string] } : {}),
+        })),
   });
 
   // 11. « À toi de jouer la scène ! » : l'élève choisit un rôle, l'appli joue les autres (audio du livre)
@@ -826,6 +863,10 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   // 12. VERSION COURTE (1 à 2 min) : les lettres (nom), puis les mots ; à défaut, le mot vedette et les phrases
   ici = 'resume';
   courte(scenes, nouvelles, motsOk, t, img);
+  // 13. RÉVISION d'une leçon (décision du 20/10/2026) : « Je retiens » et ce que le livre y reprend des leçons
+  // précédentes (texte du livre qui renvoie à une leçon antérieure, ou « rappel »)
+  if (!revue)
+    for (const s of scenes) if (s.id === 'recap' || reprend(s, numero)) s.modes.push('revision');
   // l'ouverture n'entre dans la révision que si le livre y reprend quelque chose
   if (!scenes.some((s) => s.id !== 'ouverture' && s.modes.includes('revision')))
     for (const s of scenes) s.modes = s.modes.filter((m) => m !== 'revision');
@@ -845,6 +886,15 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
     signalements,
     sansSon: [...sansSon].map(([texte, part]) => ({ texte, part })),
   };
+}
+
+/** La scène montre-t-elle un texte du livre qui renvoie à une leçon antérieure (« leçon 5 », « rappel ») ? */
+function reprend(s: Scene, numero: number | undefined): boolean {
+  const txt = JSON.stringify(s.temps);
+  if (/\b[Rr]appel\b/.test(txt)) return true;
+  for (const m of txt.matchAll(/le[çc]ons?\s+(\d+)/g))
+    if (numero && Number(m[1]) < numero) return true;
+  return false;
 }
 
 /** phrases d'une explication française du livre (coupées après « . » suivi d'une espace ; jamais réécrites) */
