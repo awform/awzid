@@ -463,6 +463,8 @@ test.describe('v2 allumée (video_vivante et video_v2, exception par pays)', () 
     // chapitre suivant : intertitre « Chapitre 2 sur n · Lire », puis la grille des lettres et leur consigne
     await page.locator('.vv [data-k="suiv"]').click();
     await expect(page.locator('.vv .inter-ch')).toContainText(`Chapitre 2 sur ${n}`);
+    // « suivant » pendant l'intertitre : la scène annoncée, jamais celle d'après
+    await page.locator('.vv [data-k="suiv"]').click();
     await expect.poll(() => scene(page), { timeout: 10_000 }).toBe('courte-lettres');
     await expect(page.locator('.vv-t .s')).toHaveText('Lire');
     await expect(page.locator('.vv .lgr .lc').first()).toBeVisible();

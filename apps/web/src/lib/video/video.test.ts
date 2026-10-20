@@ -104,6 +104,14 @@ describe('vidéos vivantes v2 : interrupteur « video_v2 », surlignage, animati
     // un mot seul : un seul morceau (son filet doré se remplit)
     expect([...arW(c(0x645, 0x64e, 0x627, 0x621)).matchAll(/class="w"/g)].length).toBe(1);
   });
+  it('parenthèse ouverte avant une ligne arabe et fermée après : aucune parenthèse orpheline', () => {
+    const md = c(0x627, 0x644, 0x652, 0x645, 0x64e, 0x62f, 0x651, 0x64f);
+    const h = frH2(`Les voyelles longues (l'allongement naturel, ${md})`, 'h');
+    expect(h.replace(/<span class="ar[^>]*>[^<]*<\/span>/g, '')).not.toMatch(/[()]/);
+    expect(h).toContain("Les voyelles longues l'allongement naturel,");
+    // une parenthèse fermée avant la ligne arabe reste
+    expect(frH2(`le mot (au pluriel) ${md}`, 'h')).toContain('(au pluriel)');
+  });
   it('arabe sur sa propre ligne, comme la v1', () => {
     const mot = `${c(0x628, 0x64e, 0x64a, 0x652, 0x62a, 0x64c)}`;
     expect(frH2(`le mot ${mot} veut dire maison`)).toBe(frH(`le mot ${mot} veut dire maison`));

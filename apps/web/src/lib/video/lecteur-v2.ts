@@ -118,13 +118,18 @@ export function frH(s: string, cls = 'fr'): string {
   // après une ligne arabe, la ponctuation qui la suivait ne commence pas la ligne française (« , la ligature »)
   const fl = () => (out ? buf.replace(/^\s*(?:[)\]»]\s*[,;.?!]?|[,;.?!])\s*/, '') : buf);
   const vide = (x: string) => !x.replace(/[\s.,;:)\]»]/g, '');
+  // V2 — parenthèse ouverte avant une ligne arabe (sa fermante, après la ligne, est déjà retirée) : retirée aussi
+  const ouv = (x: string) =>
+    (x.match(/\(/g) ?? []).length > (x.match(/\)/g) ?? []).length
+      ? x.replace(/\((?=[^()]*$)/, '')
+      : x;
   for (const p of s.split(RUN)) {
     if (!p) continue;
     if (!RUN.test(p)) buf += esc(p);
     else if (isolees(p))
       buf += `<bdi class="lt" lang="ar" dir="rtl">${esc(p.trim())}</bdi>${/\s$/.test(p) ? ' ' : ''}`;
     else {
-      if (!vide(fl())) out += `<span class="${cls}">${fl()}</span>`;
+      if (!vide(fl())) out += `<span class="${cls}">${ouv(fl())}</span>`;
       buf = '';
       out += arH(p.trim(), 'l');
     }
@@ -214,6 +219,8 @@ function creer(opt: OuvrirOptions): () => void {
   let estim: number[] = [];
   let ecoule = 0;
   let vu = -1;
+  /** scène dont l'intertitre est en cours */
+  let annonce = -1;
   const rec = (globalThis as { __vvRec?: Rec }).__vvRec;
 
   const init = () => {
@@ -672,7 +679,8 @@ function creer(opt: OuvrirOptions): () => void {
     chapitres();
     debut = true;
     pause = false;
-    vu = -1;
+    vu = annonce = -1;
+    idx = i;
     majBoutons();
     void jouer(i, i === 0);
   }
@@ -701,8 +709,8 @@ function creer(opt: OuvrirOptions): () => void {
     audio?.pause();
     const sc = scenes[i]!;
     const k = chapDe(i);
-    idx = i;
-    ecoule = 0;
+    // `idx` ne passe à la scène qu'après le sommaire ou l'intertitre : « suivant » pendant l'intertitre ouvre la scène
+    // annoncée (sans le rejouer), jamais celle d'après
     try {
       // V2 — sommaire au départ ; intertitre à chaque nouveau chapitre (pas pour le premier)
       if (ouverture && chaps.length > 1) {
@@ -710,7 +718,8 @@ function creer(opt: OuvrirOptions): () => void {
         tete(nomChap(chaps[0]!.c), `${t(`vv.mode_${modeChoisi}`)} · ${titreDe(scenes[0]!)}`);
         await sommaire();
         vivant(j);
-      } else if (k > 0 && chapDe(vu) !== k) {
+      } else if (k > 0 && chapDe(vu) !== k && annonce !== i) {
+        annonce = i;
         tete(nomChap(chaps[k]!.c), `${t(`vv.mode_${modeChoisi}`)} · ${titreDe(scenes[0]!)}`);
         root.querySelector('.nch')!.textContent = `${k + 1}/${chaps.length}`;
         await intertitre(k);
@@ -720,7 +729,8 @@ function creer(opt: OuvrirOptions): () => void {
       if (!(e instanceof Coupe)) throw e;
       return;
     }
-    vu = i;
+    idx = vu = i;
+    annonce = -1;
     ecoule = 0;
     const titre = titreDe(sc);
     const long = frH(titre).includes('ar l');
