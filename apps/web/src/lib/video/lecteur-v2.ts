@@ -933,6 +933,8 @@ function creer(opt: OuvrirOptions): () => void {
     if (deborde()) el.querySelector('.tuile.mot')?.classList.add('tm');
     // … un long titre ou une longue phrase vedette du récapitulatif passent à la taille d'une phrase
     if (deborde()) el.classList.add('lg');
+    // … en dernier recours, l'illustration laisse sa place au texte
+    if (deborde()) el.querySelector('.illu')?.remove();
     // V2 — toujours trop haut : l'élément se réduit (0,9 … 0,6), sauf un texte à lire (règle, note, réplique) ou un
     // exercice, un récapitulatif, la grille des mots, une ligne à lire ou les repères de « À toi ! » (gardés à leur taille), qui défilent
     if (

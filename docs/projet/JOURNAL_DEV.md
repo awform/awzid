@@ -9,6 +9,12 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 10, fusion de `video-vivante-ad10-wip` dans `main` ; Adultes 1 à 10 proposés ; NON déployé
+
+`VIDEO_NIVEAUX` = ad1 à ad10 ; `VIDEO_GARDE` recalculée (99 textes gardés sans voix dans ad10). Lecteur v2 : en dernier recours, quand un mot long et sa longue traduction ne tiennent pas, l'illustration laisse sa place au texte (jamais une réduction). e2e : le filtre des unités des captures v2 lit le numéro après le point (« ad10.l05 » : le découpage à 4 caractères ne marchait que pour les niveaux à un chiffre). Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombre de l05, l10, l13 et planche (`captures_app/captures-v2-ad10/`). Tests : typecheck, eslint 0 erreur ; unitaires **3 120 réussis, 0 échec** ; **e2e complète** (`flock`, `--retries=1 --workers=3`) : **874 réussis, 164 ignorés, 0 instable, 1 échec corrigé** : le test « livres suivants » (16 ouvertures de vidéo, Adultes 3 à 10) dépassait 60 s sur téléphone ; délai porté à 240 s, e2e vidéo relancée : **18 réussis, 0 échec** ; poids lecteur v2 **23 277 o** (garde 24 Ko). Audio (constat, 884 fichiers ad10) : 354 textes « à écouter » sans fichier, 1 653 en tout ; `reports/video-vivante-ad10.md`.
+
+---
+
 ## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 9, fusion de `video-vivante-ad9-wip` dans `main` ; NON déployé
 
 `VIDEO_NIVEAUX` = ad1 à ad9 (liste formatée par Prettier) ; `VIDEO_GARDE` recalculée (133 textes gardés sans voix dans ad9 ; un verset entre crochets ornés dans une phrase vedette reste muet). Lecteur v2 : toute longue traduction défile dans son bandeau (plafonné au quart de l'écran) pendant le temps de lecture du texte, et ce temps suit la longueur de la traduction (jusqu'à 6 s) ; une ligne à lire faite de longues formes (bilans) défile au lieu d'être réduite. Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombre de l05, l14, l22 et planche (`captures_app/captures-v2-ad9/`). Tests : typecheck, eslint 0 erreur ; unitaires **3 069 réussis, 0 échec** ; **e2e complète** (`flock`, `--retries=1 --workers=3`) : **875 réussis, 166 ignorés, 1 instable passé au second essai (madjaliss-acces:200), 0 échec** ; poids lecteur v2 **23 230 o** (garde 24 Ko). Audio (constat, 915 fichiers ad9) : 522 textes « à écouter » sans fichier, 1 722 en tout ; `reports/video-vivante-ad9.md`.
