@@ -587,3 +587,91 @@ pour les pointes (90 % à 0,82 s, file de 8) et pour « Réciter et vérifier »
 - Point de terminaison européen de la synthèse : https://cloud.google.com/text-to-speech/docs/endpoints.
 - Tarifs Speech-to-Text V2 (0,016 $ par minute) : https://cloud.google.com/speech-to-text/pricing.
 - Contrôle croisé, tarifs de l'API Gemini (page mise à jour le 16/10/2026) : https://ai.google.dev/gemini-api/docs/pricing.
+
+---
+
+## 14. Reprise (arrêt propre du 21/10/2026, 3e amélioration : prononciation et latence) — branche `tuteur-prononciation-wip`
+
+Travail **interrompu à la demande du client** (le tuteur devient le produit phare, repris la semaine suivante sans
+précipitation). Branche **non fusionnée, non déployée** ; `prod.env` et conteneurs du serveur inchangés.
+
+### Ce qui est fait (code de la branche, NON compilé ni testé)
+
+- `packages/tutor/src/conversation/prononciation.ts` (nouveau) : règle « mieux vaut se taire qu'accuser à tort ».
+  Une remarque n'est montrée que si : le mot entendu figure dans `entendu_litteral`, le mot juste dans
+  `transcription_ar`, le mot juste est un mot du livre (mots vus ou dialogue), et la différence lettre par lettre est
+  UNE confusion connue (ح/ه, ع/ء, ق/ك, ص/س, ط/ت, ض/د, ظ/ذ/ز, ث/س, خ/ه, غ/ر, éventuellement répétée dans le mot),
+  une voyelle longue ajoutée ou omise, ou une shadda omise. Texte de la remarque écrit par l'application (« Ce mot se
+  dit avec un ح : un h fort et soufflé, la gorge serrée, plus appuyé que le ه. »), l'élève voit le mot JUSTE du livre.
+  Fonctions pour le fournisseur simulé (`fautesSimulees`, `phraseVoulueSimulee`) prêtes, pas encore branchées.
+- `prompt.ts` : section PRONONCIATION de l'invite, schéma avec `entendu_litteral` (en premier), `transcription_ar`
+  (phrase voulue), `prononciation[]` ({entendu, correct}) ; `PROMPT_VERSION` change donc (batterie à repasser).
+- `types.ts`, `garde.ts` : brouillon étendu (champs facultatifs : les anciennes fixtures restent valides) ; à l'oral,
+  la phrase voulue ET les sons entendus sont classés (religion, Coran…) : aucun garde-fou affaibli ; `IssueTour` porte
+  `prononciation` (remarque vérifiée) et un événement de filtre `prononciation:ok|ecarte`.
+
+### Reste à faire pour cette amélioration
+
+1. Exporter `prononciation.ts` (`index.ts`), brancher le simulé, l'API (champ `prononciation` dans la réponse de
+   `POST …/libre`), l'écran (carte « Prononciation » : mot juste sur sa ligne, phrase française dessous) et les textes
+   (`i18n-tuteur.mjs`).
+2. Latence : jeton renouvelé À L'AVANCE (en tâche de fond quand il reste < 5 min, préchauffage à l'ouverture de
+   l'écran), connexion HTTPS gardée ouverte (agent `keepAlive`), audio du micro compressé (Opus mono, ≈ 24 kbit/s :
+   aujourd'hui ≈ 128 kbit/s par défaut dans Chrome), mesure par étape journalisée (jeton, modèle, filtre, voix).
+3. Batterie : catégorie `prononciation` (C4, C5 + 6 nouvelles : ض/د, ث/س, خ/ه, غ/ر, ظ/ز, voyelle longue) et 2
+   situations justes (aucune remarque attendue) ; toute remarque sur une autre situation orale = reproche à tort.
+   Phrases déjà essayées, dans le contexte ad2 l22 : `تَفَدَّلْ، هٰذِهِ ثَلَاثَةُ يُورُو.`, `أُرِيدُ سَلَاسَةَ كِيلُو بَصَلٍ.`,
+   `أَنَا بِهَيْرٍ، شُكْرًا.`, `عِنْدِي عَمَلٌ رَدًا.` (غَدًا), `انْزُرْ، الطَّمَاطِمُ طَازَجَةٌ.`, `أُرِدُ كِيلُو طَمَاطِمَ.` ;
+   justes : `شُكْرًا، كَمِ الْحِسَابُ؟`, `هَلْ عِنْدَكَ طَمَاطِمُ طَازَجَةٌ؟`. (`هٰذَا رَالٍ!` est bloqué par la sécurité de
+   Google : à éviter.)
+4. Tests unitaires avec les sorties réelles ci-dessous en fixtures, `tuteur-ia.spec.ts`, e2e, poids, batterie réelle.
+
+### Mesures réelles du 21/10/2026 (serveur de bêta, image 003954a, compte emprunté, ≈ 0,30 € au total)
+
+Latences par étape (point `eu`) :
+
+| Étape | Mesure |
+|---|---|
+| jeton (métadonnées + emprunt), 1er appel | 166 ms, puis 0 ms en cache (renouvelé toutes les ≈ 14 min : 166 ms sur le tour qui tombe dessus) |
+| connexion TLS neuve / gardée ouverte | 17-37 ms / 8-9 ms |
+| synthèse vocale de la réponse (WaveNet) | 213-523 ms, médiane ≈ 270 ms |
+| écoute locale `ecoute-ia` | 745-918 ms (2,7 s au premier appel) |
+| gemini-3.8-flash, contexte complet (≈ 5 600 jetons), réflexion LOW, en flux | 1er jeton 1,4-3,6 s ; total 1,7-5,6 s ; réflexion de 400+ jetons sur certains tours (L3) |
+| gemini-3.5-flash-lite, même invite, réflexion MINIMAL, en flux | 1er jeton 0,7-1,0 s ; total **0,9-1,5 s** |
+| `reponse_ar` complète avant la fin du flux | 0,05-0,25 s avant (marge pour lancer la voix plus tôt) |
+
+Conclusion latence : avec gemini-3.8-flash, le P90 ≤ 3 s n'est **pas** atteignable (le modèle seul dépasse 3 s une
+fois sur trois) ; jeton, connexion et flux ne gagnent que 0,2-0,5 s. Flash-Lite tient l'objectif mais **n'entend
+pas** les fautes (voir ci-dessous) ; sa qualité de conversation n'a pas été mesurée par la batterie.
+
+Prononciation (12 phrases fautives et 4 justes, voix de synthèse des leçons) :
+
+| Approche | Fautes repérées | Fausses remarques | Remarques |
+|---|---|---|---|
+| `ecoute-ia` (NeMo) | 2/12 (ح/ه, غ/ر) | — | modèle de MOTS, il « corrige » vers le mot connu : inutilisable comme oreille littérale ou comme contrôle |
+| 3.8-flash, conversation + `entendu_litteral` + `prononciation[]` (un seul appel) | 5/12 (ح/ه, ظ/ز, ث/س, خ/ه, غ/ر) | 0/4 | 3/16 réponses bloquées SAFETY (BLOCK_LOW) sur des phrases anodines |
+| Flash-Lite, même chose | 0/12 | 0/4 | 3/16 SAFETY |
+| Appel court sans contexte, transcription littérale seule | 3.8 : 4/12 ; Lite : 2/12 | 0 | le modèle normalise vers le mot probable |
+| **Appel court dédié, avec le dialogue de la leçon** (`entendu`, `voulu`, `fautes`), 3.8-flash LOW | **8/12** (ح/ه, ط/ت, ض/د, ظ/ز, ث/س, خ/ه, غ/ر, voyelle longue) | **0/4** | 0 SAFETY ; 1,5-7,6 s ; ≈ 800 jetons d'entrée |
+| même appel, Flash-Lite | 2/12 | 0 (2 fautes absurdes, que la règle de l'application écarte) | 0,8-1,1 s |
+
+Jamais repérés : ع/ء, ق/ك, ص/س (le modèle entend le mot attendu), shadda (la voix de synthèse ne l'a peut-être pas
+rendue). Scripts et rapports des essais : `/tmp/tp-essais/` du serveur (`exp1.mjs`, `exp2.mjs`, `exp*.json`) et
+`~/tp-essais/` de la VM.
+
+### Piste recommandée (prochaine étape)
+
+Architecture en deux appels parallèles :
+
+1. **Conversation** avec gemini-3.5-flash-lite (MINIMAL), en flux, voix lancée dès que `reponse_ar` est complète :
+   ≈ 1,2-1,7 s côté serveur. À valider par la batterie complète (qualité au même niveau que 3.8-flash : niveau,
+   refus, corrections) avant tout changement ; c'est de toute façon le modèle prévu au 2/01/2027.
+2. **Prononciation** (oral seulement) : l'appel court dédié avec le dialogue de la leçon, gemini-3.8-flash LOW, en
+   parallèle ; la remarque arrive après la réponse (2e requête de l'écran qui attend le résultat, quelques secondes au
+   plus), vérifiée par `prononciation.ts`, abandonnée si le tour finit en renvoi ou en repli. Réservation du pire cas
+   des deux appels sous le verrou ; ≈ 0,001 € de plus par tour oral.
+3. Toujours : jeton renouvelé à l'avance, connexion gardée ouverte, micro compressé, mesure par étape.
+
+Point à trancher : les blocages SAFETY (seuil BLOCK_LOW_AND_ABOVE) sur des phrases anodines dites à l'oral avec
+l'invite élargie (≈ 1 sur 5 dans l'essai 1). Le seuil n'a PAS été touché (garde-fou) ; à mesurer sur la batterie
+avec l'invite finale avant de décider.

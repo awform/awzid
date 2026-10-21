@@ -63,8 +63,12 @@ export interface ConvEntree {
 
 /** Brouillon structuré rendu par le modèle (schéma CONV_SCHEMA), NON fiable. */
 export interface ConvBrouillon {
-  /** ce que le modèle a compris de l'élève (arabe), vide en mode texte */
+  /** sons RÉELLEMENT entendus, lettre par lettre, sans correction (oral seulement ; vide à l'écrit) */
+  entendu_litteral: string;
+  /** ce que l'élève voulait dire (arabe), vide en mode texte */
   transcription_ar: string;
+  /** mots mal prononcés selon le modèle (non fiable : l'application vérifie, prononciation.ts) */
+  prononciation: Array<{ entendu: string; correct: string }>;
   /** réponse du tuteur, arabe littéral du niveau, 2 phrases courtes au plus */
   reponse_ar: string;
   /** traduction française de la réponse */
@@ -91,6 +95,8 @@ export interface ConvSortieFournisseur {
   detail?: string;
   /** message technique du fournisseur (erreur de l'API, réglage ignoré), borné ; jamais montré à l'élève */
   message?: string;
+  /** durées mesurées (ms) : jeton d'accès, appel au modèle (envoi, calcul, réception) */
+  mesures?: { jetonMs: number; modeleMs: number };
 }
 
 /** Fournisseur de conversation (Gemini sur Vertex, ou simulé). Ne connaît ni la base ni les plafonds. */
