@@ -9,6 +9,12 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 3, fusion de `video-vivante-ad3-wip` dans `main` ; NON déployé
+
+`VIDEO_NIVEAUX` = ad1, ad2, ad3 ; `VIDEO_GARDE` recalculée (2 empreintes en plus). Générateur inchangé (tableaux de conjugaison = morceaux `|` de la notion, une ligne par personne ; aucun nouveau type d'exercice dans Adultes 3 à 10). Lecteur v2, mise en page avant toute réduction : sous-titre posé avant le texte qu'il traduit (traductions longues), grille de phrases sur deux colonnes, illustration plus petite, mot long à la taille d'une phrase ; « Je découvre », répliques, exercices et récapitulatif trop hauts défilent (jamais réduits, une question ne disparaît plus sous son minuteur) ; texte long sans voix : temps de lecture du texte ; formes « X ← Y — Z » coupées seulement entre deux formes ; « — » entre deux formes arabes d'une traduction sur la même ligne. Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombre de 3 unités (l02, l13, l18) et planche (`captures_app/captures-v2-ad3/`). Tests : typecheck, eslint, prettier 0 erreur ; unitaires **2 760 réussis, 0 échec** ; e2e vidéo (nouveau test : leçon 1 et bilan 1 de chaque livre proposé) **18 réussis, 0 échec** (6 ignorés : captures) ; poids lecteur v2 **22 489 o** (garde 22 528 o). Audio (constat, `~/lecons-audio`, 810 fichiers ad3) : 396 textes « à écouter » sans fichier, 1 545 en tout ; détail `reports/video-vivante-ad3.md`.
+
+---
+
 ## 21/10/2026 — Vidéos vivantes V2 terminées (chapitres, sommaire, sous-titres, rythme de la voix, récapitulatif, MP4 des réseaux), fusion de `video-v2-wip` dans `main` ; NON déployé
 
 Reprise du travail interrompu (`896168c`), rebasé sur `main` 93e2559 (garde coranique commune `garde-coran.ts`, liste blanche à jour : le son des vidéos suit `VIDEO_GARDE`, recalculée par la règle commune ; rapports d'audit `video-vivante-ad1/ad2.md` identiques après la rebase), puis `main` 1f781b7 (tuteur corrigé, cahier de lecture) fusionnée dans la branche avant la fusion finale. Interrupteur **`video_v2`** : coupé en production et en bêta, allumé sur la démonstration ; coupé, le lecteur v1 reste tel quel. Rien déployé ; `~/lecons-audio` lu seulement ; aucun worktree des autres agents touché.

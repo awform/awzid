@@ -3,6 +3,7 @@ import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'nod
 import { join } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 import type { Browser, Page } from '@playwright/test';
+import { VIDEO_NIVEAUX } from '@awform/content/video-niveaux';
 import { expect, newAdult, password, test } from './fixtures';
 import { totp } from './totp';
 
@@ -531,6 +532,22 @@ test.describe('v2 allumée (video_vivante et video_v2, exception par pays)', () 
     expect(vus).toEqual(expect.arrayContaining(['motscles', 'vedette', 'lexique', 'dialogue']));
   });
 
+  test('livres suivants (Adultes 3…) : leçon 1 et bilan 1 de chaque livre proposé, sommaire puis ouverture', async ({
+    page,
+  }) => {
+    for (const n of VIDEO_NIVEAUX.filter((x) => x !== 'ad1' && x !== 'ad2'))
+      for (const u of ['l01', 'l05']) {
+        await ouvrir(page, `${n}.${u}`);
+        expect(await modes(page), `${n}.${u}`).toEqual(
+          expect.arrayContaining(['longue', 'revision']),
+        );
+        await page.locator('.vv .mode[data-mode="longue"]').click();
+        await expect(page.getByTestId('vv-sommaire')).toBeVisible();
+        await expect.poll(() => scene(page), { timeout: 10_000 }).toBe('ouverture');
+        await fermer(page);
+      }
+  });
+
   test('accessibilité AA (clair et sombre), cibles ≥ 44 px, animations réduites : fondus seuls', async ({
     page,
   }) => {
@@ -636,6 +653,8 @@ test.describe('v2 allumée (video_vivante et video_v2, exception par pays)', () 
         await fermer(page);
         // écrit au fil des unités (une longue série interrompue garde ses mesures)
         writeFileSync(join(dir, 'controle-360.json'), JSON.stringify(reductions, null, 1));
+        // contrôle seul, sans captures (VIDEO_V2_CONTROLE_SEUL=1 : repérage rapide d'un livre)
+        if (process.env.VIDEO_V2_CONTROLE_SEUL) continue;
         // 2. captures, horloge réelle
         await vite(1);
         await page.getByTestId('voir-video').click();

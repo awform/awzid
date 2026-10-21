@@ -1,6 +1,6 @@
 # Vidéos vivantes — ad1 (audit généré par `VIDEO_AUDIT=1`)
 
-Audio : 1449 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
+Audio : 3760 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 
 | Unité | Type | Modes | Scènes | Longue | Courte | Quiz (exercices) | Gardés sans voix | Sans audio (à écouter / tous) |
 |---|---|---|---|---|---|---|---|---|
@@ -12,7 +12,7 @@ Audio : 1449 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 | l06 | lecon 5 | lettre, courte, longue, quiz, revision | 24 | 659 s | 82 s | 6 | 0 | 0 / 0 |
 | l07 | lecon 6 | lettre, courte, longue, quiz, revision | 24 | 657 s | 83 s | 6 | 0 | 0 / 0 |
 | l08 | lecon 7 | lettre, courte, longue, quiz, revision | 24 | 665 s | 64 s | 6 | 0 | 0 / 1 |
-| l09 | lecon 8 | lettre, courte, longue, quiz, revision | 23 | 620 s | 80 s | 6 | 0 | 0 / 1 |
+| l09 | lecon 8 | lettre, courte, longue, quiz, revision | 23 | 620 s | 80 s | 6 | 0 | 0 / 0 |
 | l10 | lecon 9 | courte, longue, quiz, revision | 21 | 648 s | 91 s | 7 | 1 | 0 / 3 |
 | l11 | bilan 2 | courte, longue, revision | 17 | 506 s | 65 s | 0 | 0 | 0 / 0 |
 | l12 | lecon 10 | courte, longue, quiz, revision | 19 | 550 s | 70 s | 6 | 0 | 0 / 5 |
@@ -25,9 +25,9 @@ Audio : 1449 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 | l19 | lecon 16 | courte, longue, quiz, revision | 19 | 567 s | 103 s | 5 | 35 | 1 / 4 |
 | l20 | lecon 17 | courte, longue, quiz, revision | 21 | 867 s | 94 s | 7 | 0 | 0 / 0 |
 | l21 | lecon 18 | courte, longue, quiz, revision | 19 | 645 s | 115 s | 5 | 0 | 0 / 0 |
-| l22 | bilan 4 | courte, longue, revision | 13 | 485 s | 80 s | 0 | 2 | 2 / 3 |
+| l22 | bilan 4 | courte, longue, revision | 13 | 485 s | 80 s | 0 | 2 | 1 / 2 |
 | l23 | lecon 19 | courte, longue, quiz, revision | 20 | 749 s | 110 s | 6 | 42 | 1 / 8 |
-| l24 | lecon 20 | courte, longue, quiz, revision | 19 | 693 s | 106 s | 5 | 22 | 2 / 10 |
+| l24 | lecon 20 | courte, longue, quiz, revision | 19 | 693 s | 106 s | 5 | 22 | 2 / 9 |
 | l25 | examen | longue, revision | 12 | 458 s | — | 0 | 0 | 0 / 0 |
 
 ## l01
@@ -64,10 +64,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : =
 
 ## l09
-
-Mots d’exercices et du cahier sans fichier audio :
-
-- quiz : مَلِكِ
 
 ## l10
 
@@ -208,7 +204,6 @@ Textes gardés sans voix :
 Textes à écouter du livre sans fichier audio (affichés en silence) :
 
 - lecture : بِاسْمِ رَبِّكَ
-- lecture : مَٰلِكِ
 
 Mots d’exercices et du cahier sans fichier audio :
 
@@ -220,12 +215,8 @@ Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles pa
 
 - longue q-ex1
 - longue q-ex3
-- longue q-ex5
-- longue q-ex6
 - quiz q-ex1
 - quiz q-ex3
-- quiz q-ex5
-- quiz q-ex6
 
 Textes gardés sans voix :
 
@@ -330,7 +321,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : مِنْ شَرِّ…
 - ecriture : مَلِكِ النَّاسِ
 - ecriture : إِلَٰهِ النَّاسِ
-- quiz : مَلِكِ
 - quiz : الْوَسْوَاسِ
 - quiz : إِلَٰهِ
 
