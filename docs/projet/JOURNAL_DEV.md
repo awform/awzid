@@ -9,6 +9,16 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 6, fusion de `video-vivante-ad6-wip` dans `main` ; NON déployé
+
+`VIDEO_NIVEAUX` = ad1 à ad6 ; `VIDEO_GARDE` recalculée. Lecteur v2 :
+- **correctif du préchargement des durées** : un lecteur audio était ouvert pour CHAQUE fichier d'un mode, tous à la fois et jamais rendus (des centaines pour un livre entièrement sonorisé ; le navigateur s'épuisait : « ERR_INSUFFICIENT_RESOURCES », onglet planté pendant les captures d'Adultes 6). Désormais 4 lectures de métadonnées à la fois, 5 s au plus, chaque lecteur rendu aussitôt (source retirée, copie de l'appareil libérée) ; un son joué rend aussi son lecteur à la fin ;
+- **texte affiché octet pour octet** : mise en page des listes de formes (« X ← Y — Z » : forme de trois mots au plus insécable, séparateur au bout de la forme qui le précède), des précisions entre parenthèses et des **vers** (hémistiches séparés par « … », chacun sur sa ligne) par des classes CSS, plus par des espaces insécables (celles d'ad3 à ad5 changeaient le texte rendu ; test unitaire étendu).
+
+Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombre de l05, l17, l24 et planche (`captures_app/captures-v2-ad6/`). Tests : typecheck, eslint 0 erreur ; unitaires **2 916 réussis, 0 échec** ; **e2e complète** (`flock`, `--retries=1 --workers=3`) : **874 réussis, 166 ignorés, 2 instables passés au second essai, 0 échec** ; poids lecteur v2 **22 882 o** (garde 24 Ko). Audio (constat) : 891 fichiers ad6, 574 textes « à écouter » sans fichier, 1 935 en tout ; `reports/video-vivante-ad6.md`. À savoir : vers 9 h 10, la VM saturée (swap plein, `/tmp` en mémoire à 5,7 Go) faisait planter Chromium dans toutes les e2e ; nettoyée par le coordinateur, tout est repassé.
+
+---
+
 ## 21/10/2026 — Canal bêta (administration) : message sous le formulaire, « déjà dans le canal », liste des e-mails avec « Retirer » ; NON déployé
 
 `PUT /admin/beta` renvoie `deja: true` ; `GET /admin/fonctions` ajoute `beta.emails` (administrateur seulement) ; i18n fr/en/ar/es/de ; test API + e2e f5.

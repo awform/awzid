@@ -106,20 +106,37 @@ function h(tag: string, cls = '', html = ''): HTMLElement {
 const anneau = (cls: string, centre: string) =>
   `<div class="atoi"><div class="anneau ${cls}"><svg viewBox="0 0 100 100"><circle class="fd" cx="50" cy="50" r="42"/><circle class="or" cx="50" cy="50" r="42"/></svg>${centre}</div></div>`;
 const arH = (s: string, cls = '') => `<span class="ar ${cls}" lang="ar" dir="rtl">${esc(s)}</span>`;
-/** V2 — texte arabe découpé en mots (aux espaces seulement : les liaisons ne traversent jamais une espace) */
-export const arW = (s: string, cls = '') =>
-  `<span class="ar ${cls}" lang="ar" dir="rtl">${s
-    // une liste de formes (« يَرْجِعُونَ ← سَيَرْجِعُونَ ← لَنْ يَرْجِعُوا ») ne se coupe qu'entre deux formes : une forme
-    // de trois mots au plus reste sur sa ligne (espaces insécables)
-    .split(/( [←—·/] )/)
-    .map((p, k, a) => (k % 2 || a.length < 2 || p.split(' ').length > 3 ? p : p.replace(/ /g, ' ')))
-    .join('')
-    // une précision entre parenthèses (« (ج. أَسْنَانٌ) ») reste entière
-    .replace(/\([^) ]*( [^) ]*){0,2}\)/g, (m) => m.replace(/ /g, ' '))
-    // un morceau sans lettre (« / » de « طَالِبٌ / طُلَّابٌ », chiffres) ne s'allume pas : ce n'est pas un mot dit
+/** V2 — mots d'un texte arabe (aux espaces seulement) ; un morceau sans lettre (« / », chiffres) ne s'allume pas */
+const motsW = (t: string) =>
+  t
     .split(/(\s+)/)
     .map((p) => (!/[ء-ي]/.test(p) ? esc(p) : `<span class="w">${esc(p)}</span>`))
+    .join('');
+/** V2 — une précision entre parenthèses de trois mots au plus (« (ج. أَسْنَانٌ) ») reste entière */
+const parW = (t: string) =>
+  t
+    .split(/(\([^) ]*(?: [^) ]*){0,2}\))/)
+    .map((p, k) => (k % 2 ? `<span class="nw">${motsW(p)}</span>` : motsW(p)))
+    .join('');
+/**
+ * V2 — texte arabe découpé en mots (aux espaces seulement : les liaisons ne traversent jamais une espace). Le texte
+ * affiché reste octet pour octet celui du livre : la mise en page passe par des classes, jamais par le texte. Une liste
+ * de formes (« يَرْجِعُونَ ← سَيَرْجِعُونَ ← لَنْ يَرْجِعُوا ») ne se coupe qu'entre deux formes (forme de trois mots au plus
+ * insécable, le séparateur au bout de la forme qui le précède) ; vers d'un poème (hémistiches séparés par « … ») :
+ * chaque hémistiche sur sa ligne.
+ */
+export const arW = (s: string, cls = '') => {
+  const a = s.split(/( [←—·/…] )/);
+  const vers = s.includes(' … ');
+  return `<span class="ar ${cls}" lang="ar" dir="rtl">${a
+    .map((p, k) => {
+      if (k % 2) return ' ';
+      const c = vers ? 'vb' : a.length > 1 && p.split(' ').length < 4 ? 'nw' : '';
+      const t = parW(p) + (a[k + 1] ? esc(a[k + 1]!.trimEnd()) : '');
+      return c ? `<span class="${c}">${t}</span>` : t;
+    })
     .join('')}</span>`;
+};
 /** V2 — typographie française : « et » ne finissent jamais seuls une ligne, ni ? ! : ; ne la commencent */
 const typo = (s: string) => s.replace(/« /g, '«\u00a0').replace(/ ([»?!:;])/g, '\u00a0$1');
 /** texte français du livre : un passage arabe passe sur sa propre ligne ; une lettre (ou une suite de lettres isolées) reste */
@@ -407,24 +424,34 @@ function creer(opt: OuvrirOptions): () => void {
       }
     };
     walk(scs);
-    await Promise.all(
-      [...ids].map(
-        (id) =>
-          new Promise<void>((ok) => {
-            void leconsSource(id).then((s) => {
-              const a = new Audio();
-              a.preload = 'metadata';
-              a.onloadedmetadata = () => {
-                if (isFinite(a.duration)) durees.set(id, a.duration * 1000);
-                ok();
-              };
-              a.onerror = () => ok();
-              a.src = s.url;
-            }, ok);
-            setTimeout(ok, 2000);
-          }),
-      ),
-    );
+    // quatre lectures à la fois, chaque lecteur rendu aussitôt (un livre entièrement sonorisé : des centaines de
+    // fichiers ; un lecteur par fichier épuisait le navigateur du téléphone) ; 5 s au plus en tout
+    const file = [...ids];
+    const t0 = performance.now();
+    const un = async () => {
+      for (let id; (id = file.pop()) && performance.now() - t0 < 5000;)
+        await new Promise<void>((ok) => {
+          const f = id!;
+          void leconsSource(f).then((s) => {
+            const a = new Audio();
+            let fait = false;
+            const fin = () => {
+              if (fait) return;
+              fait = true;
+              if (isFinite(a.duration)) durees.set(f, a.duration * 1000);
+              a.removeAttribute('src');
+              a.load();
+              s.liberer?.();
+              ok();
+            };
+            a.preload = 'metadata';
+            a.onloadedmetadata = a.onerror = fin;
+            a.src = s.url;
+            setTimeout(fin, 2000);
+          }, ok);
+        });
+    };
+    await Promise.all([un(), un(), un(), un()]);
   }
   /** V2 — sous-titre : traduction du livre de ce qui est dit (vide : le bandeau s'efface) */
   function st(fr?: string) {
@@ -476,6 +503,8 @@ function creer(opt: OuvrirOptions): () => void {
           if (fini) return;
           fini = true;
           audio = null;
+          a.removeAttribute('src');
+          a.load();
           s.liberer?.();
           ok();
         };
