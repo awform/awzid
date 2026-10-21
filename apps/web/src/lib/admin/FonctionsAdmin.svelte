@@ -222,7 +222,7 @@
       <ul class="stack" data-testid="beta-liste">
         {#each data.beta.emails as m (m)}
           <li>
-            <span dir="ltr">{m}</span>
+            <Bidi text={m} />
             <button type="button" onclick={() => betaCompte(false, m)}
               >{t('beta.retirer_un')}</button
             >
