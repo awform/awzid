@@ -174,9 +174,9 @@ export function registerF5(app: FastifyInstance, db: Db, version: string): void 
       .orderBy(t.school.name)
       .limit(500);
 
-  app.get('/api/v1/admin/fonctions', { preHandler: needSupport }, async () => {
+  app.get('/api/v1/admin/fonctions', { preHandler: needSupport }, async (req) => {
     const f = await readFlags(db, 0);
-    const beta = await listBeta(db);
+    const beta = await listBeta(db, hasRole(req.auth, 'admin'));
     const betaIds = new Set(beta.ecoles.map((e) => e.id));
     return {
       fonctions: FONCTION_CLES.map((cle) => ({
@@ -324,11 +324,11 @@ export function registerF5(app: FastifyInstance, db: Db, version: string): void 
         const [s] = await db.select({ id: t.school.id }).from(t.school).where(eq(t.school.id, id));
         if (!s) return err(reply, 404, 'introuvable');
       }
-      await setBeta(db, { type: b.type, id }, b.beta, req.auth!.accountId);
+      const { deja } = await setBeta(db, { type: b.type, id }, b.beta, req.auth!.accountId);
       await audit(db, req.auth!.accountId, b.beta ? 'beta.ajout' : 'beta.retrait', id, {
         type: b.type,
       });
-      return { ok: true };
+      return deja ? { ok: true, deja: true } : { ok: true };
     },
   );
 
