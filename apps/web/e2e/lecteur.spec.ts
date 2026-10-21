@@ -98,6 +98,15 @@ const audio = <T>(page: Page, f: (a: HTMLAudioElement & { __plays?: number }) =>
 const region = (page: Page) => page.getByRole('region', { name: 'Lecteur audio' });
 const jouer = (page: Page) => page.getByTestId('lecteur-jouer');
 
+/** « Régler » : déplie le lecteur (réduit par défaut, 21/10/2026) s'il ne l'est pas déjà. */
+async function deplier(page: Page) {
+  const r = page.getByTestId('lecteur');
+  await expect(r).toBeVisible();
+  if ((await r.getAttribute('data-deplie')) !== 'true')
+    await page.getByTestId('lecteur-regler').click();
+  await expect(r).toHaveAttribute('data-deplie', 'true');
+}
+
 async function ouvrirLecon(page: Page): Promise<{ n: number; premier: Locator }> {
   await page.goto('/lecons/en1.l01');
   const boutons = page.locator('[data-lecteur="l"][data-audio]:visible');
@@ -143,6 +152,7 @@ test('commandes : cibles de 44 px, libellés, phrase suivante et précédente da
   const r = region(page);
   await expect(r).toBeVisible();
   await expect(page.getByTestId('lecteur-etat')).toHaveText(`Phrase 1 sur ${n}`);
+  await deplier(page);
   // chaque bouton : 44 px au moins, nom accessible
   const boutons = r.getByRole('button');
   const total = await boutons.count();
@@ -162,6 +172,7 @@ test('commandes : cibles de 44 px, libellés, phrase suivante et précédente da
     'Répéter la phrase en boucle',
     'Lecture continue',
     'Fermer le lecteur',
+    'Replier le lecteur',
   ])
     await expect(r.getByRole('button', { name: nom })).toBeVisible();
   await expect(r.getByRole('button', { name: 'Phrase précédente' })).toBeDisabled();
@@ -198,7 +209,7 @@ test('vitesses 0,75 / 1 / 1,25 : la hauteur de la voix est conservée, y compris
   const { premier } = await ouvrirLecon(page);
   await premier.click();
   const r = region(page);
-  await expect(r).toBeVisible();
+  await deplier(page);
   for (const [nom, v] of [
     ['Vitesse 0,75×', 0.75],
     ['Vitesse 1,25×', 1.25],
@@ -224,6 +235,7 @@ test('pause et reprise au même endroit, reculer / avancer de 5 s, barre de prog
   const { premier } = await ouvrirLecon(page);
   await premier.click();
   const r = region(page);
+  await deplier(page);
   const barre = page.getByTestId('lecteur-barre');
   await expect(barre).toBeVisible({ timeout: 10_000 });
   await expect(barre.getByRole('slider')).toHaveAccessibleName('Position dans l’audio');
@@ -272,6 +284,7 @@ test('boucle : la phrase se répète, arrêt automatique après 10 répétitions
   const { premier } = await ouvrirLecon(page);
   await premier.click();
   const r = region(page);
+  await deplier(page);
   await r.getByRole('button', { name: 'Répéter la phrase en boucle' }).click();
   await expect(r.getByRole('button', { name: 'Répéter la phrase en boucle' })).toHaveAttribute(
     'aria-pressed',
@@ -312,6 +325,7 @@ test('lecture continue : enchaîne les phrases de la page, surligne la phrase en
     .toBe(true);
   await expect(jouer(page)).toHaveAccessibleName('Lire');
   await expect(page.getByTestId('lecteur-etat')).toHaveText(`Phrase 1 sur ${n}`);
+  await deplier(page);
   await r.getByRole('button', { name: 'Lecture continue' }).click();
   await expect(r.getByRole('button', { name: 'Lecture continue' })).toHaveAttribute(
     'aria-pressed',
@@ -362,16 +376,20 @@ test('fermer : le lecteur disparaît, la lecture s’arrête, le surlignage et l
   await premier.click();
   await expect(region(page)).toBeVisible();
   await expect(page.locator('.lecteur-actif')).toHaveCount(1);
+  await deplier(page);
   await page.getByTestId('lecteur-fermer').click();
   await expect(region(page)).toHaveCount(0);
   await expect(page.locator('.lecteur-actif')).toHaveCount(0);
   await expect(premier).not.toHaveClass(/playing/);
   expect(await audio(page, (a) => a.paused)).toBe(true);
   expect(await page.evaluate(() => document.body.style.paddingBottom)).toBe('');
-  // un nouvel appui rouvre le lecteur ; Échap (focus dans le lecteur) le ferme
+  // un nouvel appui rouvre le lecteur (déplié : choix gardé) ; Échap (focus dans le lecteur) le replie, puis le ferme
   await premier.click();
-  await expect(region(page)).toBeVisible();
+  await expect(region(page)).toHaveAttribute('data-deplie', 'true');
   await jouer(page).focus();
+  await page.keyboard.press('Escape');
+  await expect(region(page)).toHaveAttribute('data-deplie', 'false');
+  await expect(page.getByTestId('lecteur-regler')).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(region(page)).toHaveCount(0);
 });
@@ -383,6 +401,17 @@ test('clavier : Tab atteint les commandes, Entrée / Espace les actionnent', asy
   const { premier } = await ouvrirLecon(page);
   await premier.click();
   await expect(region(page)).toBeVisible();
+  // réduit : Tab va de lecture / pause à « Régler » ; Entrée déplie, le focus passe au « × » ; Échap replie
+  await jouer(page).focus();
+  await page.keyboard.press('Tab');
+  await expect(page.getByTestId('lecteur-regler')).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByTestId('lecteur-replier')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('lecteur-regler')).toBeFocused();
+  await expect(page.getByTestId('lecteur-regler')).toHaveAttribute('aria-expanded', 'false');
+  await page.keyboard.press('Space');
+  await expect(region(page)).toHaveAttribute('data-deplie', 'true');
   await jouer(page).focus();
   await page.keyboard.press('Enter');
   await expect(jouer(page)).toHaveAccessibleName('Lire');
@@ -409,9 +438,82 @@ test('téléphone : le lecteur est fixé AU-DESSUS de la barre de navigation, sa
   const vue = page.viewportSize()!;
   expect(r.x).toBeGreaterThanOrEqual(0);
   expect(r.x + r.width).toBeLessThanOrEqual(vue.width);
+  // réduit : une pastille dans le coin, pas un panneau sur toute la largeur
+  expect(r.width).toBeLessThan(160);
+  expect(r.x + r.width).toBeGreaterThan(vue.width - 40);
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   const pied = await page.evaluate(() => parseFloat(getComputedStyle(document.body).paddingBottom));
   expect(pied).toBeGreaterThan(40);
+  expect(pied).toBeGreaterThanOrEqual(r.height);
+});
+
+test('réduit par défaut : « Régler » déplie, « × » et un toucher ailleurs replient, le choix est gardé sur l’appareil', async ({
+  page,
+}) => {
+  const duree = await sons(page);
+  duree.sec = 25;
+  const { premier } = await ouvrirLecon(page);
+  await premier.click();
+  const r = region(page);
+  await expect(r).toHaveAttribute('data-deplie', 'false');
+  // seulement lecture / pause et « Régler »
+  await expect(r.getByRole('button')).toHaveCount(2);
+  for (const id of ['lecteur-recul', 'lecteur-suivante', 'lecteur-boucle', 'lecteur-barre'])
+    await expect(page.getByTestId(id)).toHaveCount(0);
+  const regler = page.getByTestId('lecteur-regler');
+  await expect(regler).toHaveAccessibleName('Régler le lecteur');
+  await expect(regler).toHaveAttribute('aria-expanded', 'false');
+  const garde = () => page.evaluate(() => localStorage.getItem('awzid.lecteur.deplie'));
+  await regler.click();
+  await expect(r).toHaveAttribute('data-deplie', 'true');
+  for (const id of ['lecteur-recul', 'lecteur-suivante', 'lecteur-boucle', 'lecteur-continu'])
+    await expect(page.getByTestId(id)).toBeVisible();
+  await expect(page.getByTestId('lecteur-vitesse-0.75')).toBeVisible();
+  await expect(page.getByTestId('lecteur-replier')).toBeFocused();
+  expect(await garde()).toBe('1');
+  await page.getByTestId('lecteur-replier').click();
+  await expect(r).toHaveAttribute('data-deplie', 'false');
+  await expect(regler).toBeFocused();
+  expect(await garde()).toBe('0');
+  // un toucher ailleurs replie, sans changer le choix gardé
+  await regler.click();
+  await page.locator('h1').first().click();
+  await expect(r).toHaveAttribute('data-deplie', 'false');
+  expect(await garde()).toBe('1');
+  // choix gardé : à la prochaine ouverture, le lecteur s'ouvre déplié
+  await page.reload();
+  await page.locator('[data-lecteur="l"][data-audio]:visible').first().click();
+  await expect(region(page)).toHaveAttribute('data-deplie', 'true');
+});
+
+test('exercice « écoute » : pastille réduite, seulement pendant la lecture, sans « Régler »', async ({
+  page,
+}) => {
+  const duree = await sons(page);
+  duree.sec = 1.5;
+  await espions(page);
+  await page.goto('/lecons/en1.l01');
+  // même si l'élève a choisi le lecteur déplié ailleurs
+  await page.evaluate(() => localStorage.setItem('awzid.lecteur.deplie', '1'));
+  const q = page.locator('[data-type="ecoute"] li[data-item="0"]').getByTestId('ecouter').first();
+  await q.click();
+  const r = region(page);
+  await expect(r).toBeVisible();
+  await expect(r).toHaveAttribute('data-deplie', 'false');
+  await expect(page.getByTestId('lecteur-regler')).toHaveCount(0);
+  await expect(r.getByRole('button')).toHaveCount(1);
+  const box = (await r.boundingBox())!;
+  expect(box.width).toBeLessThan(100);
+  // la phrase finie : la pastille disparaît, la page ne lui réserve plus de place
+  await expect(r).toBeHidden({ timeout: 10_000 });
+  expect(await page.evaluate(() => document.body.style.paddingBottom)).toBe('');
+  // « Écouter » de nouveau : elle revient pendant la lecture
+  await q.click();
+  await expect(r).toBeVisible();
+  await expect(jouer(page)).toHaveAccessibleName('Mettre en pause');
+  // pause depuis la pastille : elle disparaît
+  await jouer(page).click();
+  await expect(r).toBeHidden();
 });
 
 test('contraste et accessibilité (WCAG AA) : lecteur ouvert, thème clair et sombre', async ({
@@ -421,21 +523,29 @@ test('contraste et accessibilité (WCAG AA) : lecteur ouvert, thème clair et so
   const { premier } = await ouvrirLecon(page);
   for (const mode of ['clair', 'sombre'] as const) {
     await page.emulateMedia({ colorScheme: mode === 'sombre' ? 'dark' : 'light' });
-    await page.evaluate((m) => localStorage.setItem('awzid.mode', m), mode);
+    await page.evaluate((m) => {
+      localStorage.setItem('awzid.mode', m);
+      localStorage.removeItem('awzid.lecteur.deplie');
+    }, mode);
     await page.reload();
     await premier.waitFor();
     await page.locator('[data-lecteur="l"][data-audio]:visible').first().click();
     await expect(region(page)).toBeVisible();
+    const axe = async (etat: string) => {
+      const r = await new AxeBuilder({ page })
+        .include('[data-testid="lecteur"]')
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+        .analyze();
+      expect(
+        r.violations.map(
+          (v) => `${mode} ${etat} ${v.id} ${v.nodes.map((n) => n.target.join(' ')).join('|')}`,
+        ),
+      ).toEqual([]);
+    };
+    await axe('réduit');
+    await deplier(page);
     await page.getByRole('button', { name: 'Lecture continue' }).click(); // un état « actif » est aussi contrôlé
-    const r = await new AxeBuilder({ page })
-      .include('[data-testid="lecteur"]')
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-      .analyze();
-    expect(
-      r.violations.map(
-        (v) => `${mode} ${v.id} ${v.nodes.map((n) => n.target.join(' ')).join('|')}`,
-      ),
-    ).toEqual([]);
+    await axe('déplié');
     // texte surligné (phrase en cours) : contraste contrôlé aussi
     const s = await new AxeBuilder({ page })
       .include('.lecteur-actif')
@@ -512,6 +622,7 @@ test.describe('Madjaliss et douas', () => {
       )
       .toBe(true);
     await expect(jouer(page)).toHaveAccessibleName('Lire');
+    await deplier(page);
     await page.getByRole('button', { name: 'Lecture continue' }).click();
     await jouer(page).click();
     await expect(page.getByTestId('lecteur-etat')).toHaveText(new RegExp(`^Phrase 2 sur ${n}`), {
@@ -547,6 +658,7 @@ test.describe('Madjaliss et douas', () => {
     await boutons.first().click();
     await expect(jouer(page)).toHaveAccessibleName('Lire');
     if (n > 1) {
+      await deplier(page);
       await page.getByRole('button', { name: 'Phrase suivante' }).click();
       await expect(page.getByTestId('lecteur-etat')).toHaveText(`Phrase 2 sur ${n}`);
     }
@@ -576,7 +688,7 @@ test('captures du lecteur sur téléphone (clair et sombre) : leçon, séance de
     const l = page.locator('[data-lecteur="l"][data-audio]:visible');
     await l.nth(1).scrollIntoViewIfNeeded();
     await l.nth(1).click();
-    await expect(region(page)).toBeVisible();
+    await deplier(page);
     await expect(page.getByTestId('lecteur-barre')).toBeVisible({ timeout: 10_000 });
     await photo('01-lecon');
     // séance de Madjaliss
@@ -585,7 +697,7 @@ test('captures du lecteur sur téléphone (clair et sombre) : leçon, séance de
     await expect(m.first()).toBeVisible();
     await m.nth(1).scrollIntoViewIfNeeded();
     await m.nth(1).click();
-    await expect(region(page)).toBeVisible();
+    await deplier(page);
     await page.getByRole('button', { name: 'Lecture continue' }).click();
     await photo('02-madjaliss');
     // douas
@@ -593,9 +705,64 @@ test('captures du lecteur sur téléphone (clair et sombre) : leçon, séance de
     const d = page.getByTestId('douas-ecouter');
     await expect(d.first()).toBeVisible();
     await d.first().click();
-    await expect(region(page)).toBeVisible();
+    await deplier(page);
     await page.getByRole('button', { name: 'Vitesse 0,75×' }).click();
     await page.getByRole('button', { name: 'Répéter la phrase en boucle' }).click();
     await photo('03-douas');
   }
+});
+
+test('captures du lecteur discret : exercice « écoute » et leçon, 390 et 1280 px, clair et sombre', async ({
+  page,
+}, info) => {
+  const dir = process.env.LECTEUR_DISCRET_CAP;
+  test.skip(
+    !dir || mobile(info.project.name),
+    'captures : LECTEUR_DISCRET_CAP (projet ordinateur)',
+  );
+  test.setTimeout(240_000);
+  mkdirSync(dir!, { recursive: true });
+  const duree = await sons(page);
+  duree.sec = 25;
+  for (const [w, h] of [
+    [390, 844],
+    [1280, 800],
+  ] as const)
+    for (const mode of ['clair', 'sombre'] as const) {
+      await page.setViewportSize({ width: w, height: h });
+      await page.emulateMedia({ colorScheme: mode === 'sombre' ? 'dark' : 'light' });
+      await page.goto('/lecons/en1.l01');
+      await page.evaluate((m) => {
+        localStorage.setItem('awzid.mode', m);
+        localStorage.removeItem('awzid.lecteur.deplie');
+      }, mode);
+      await page.reload();
+      const photo = async (nom: string) => {
+        await page.evaluate(() => document.fonts.ready);
+        await page.waitForTimeout(900);
+        await page.screenshot({ path: join(dir!, `${w}-${mode}-${nom}.png`) });
+      };
+      // exercice « écoute » : la question 1 joue, les questions 2 et 3 doivent rester lisibles
+      const q = page
+        .locator('[data-type="ecoute"] li[data-item="0"]')
+        .getByTestId('ecouter')
+        .first();
+      await q.scrollIntoViewIfNeeded();
+      await page.evaluate(() => window.scrollBy(0, -80));
+      await q.click();
+      await expect(region(page)).toBeAttached();
+      await photo('1-exercice');
+      // phrase de la leçon (hors exercice) : lecteur réduit, puis déplié par « Régler »
+      await page.goto('/lecons/en1.l01');
+      const l = page.locator('[data-lecteur="l"][data-audio]:visible').nth(1);
+      await l.scrollIntoViewIfNeeded();
+      await l.click();
+      await expect(region(page)).toBeVisible();
+      await photo('2-lecon');
+      const regler = page.getByTestId('lecteur-regler');
+      if (await regler.count()) {
+        await regler.click();
+        await photo('3-lecon-regle');
+      }
+    }
 });

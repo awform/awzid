@@ -3466,6 +3466,8 @@
   "tab.al_tel_a_valider": "Einige Nummern warten auf manuelle Bestätigung.",
   "lec.nom": "Audioplayer",
   "lec.fermer": "Player schließen",
+  "lec.regler": "Player einstellen",
+  "lec.replier": "Player einklappen",
   "lec.lecture": "Abspielen",
   "lec.pause": "Pause",
   "lec.recul": "{s} Sekunden zurück",
