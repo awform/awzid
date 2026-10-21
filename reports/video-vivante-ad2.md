@@ -104,7 +104,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : ←
 - quiz : مِنْ بَعْدِ
 - quiz : مِنْ رَبِّهِمْ
-- quiz : لَيُنْبَذَنَّ
+- quiz : لَيُنْبَذَنَّ (fichier présent pour un autre niveau)
 - quiz : كِرَامٍ بَرَرَةٍ
 - quiz : مِنْ خَوْفٍ
 - quiz : سَمِيعٌ بَصِيرٌ

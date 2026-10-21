@@ -730,6 +730,11 @@
 .vv .b-mot .illu {
   animation: vv-pose 420ms var(--ease) both;
 }
+/* V2 — illustration d'une scène trop haute (longue phrase) : plus petite, le texte garde sa taille */
+.vv .bloc .illu.pt {
+  width: 4rem;
+  height: 4rem;
+}
 @keyframes vv-pose {
   from {
     opacity: 0;
@@ -847,6 +852,13 @@
 }
 .vv .grille.g4 {
   grid-template-columns: repeat(3, 1fr);
+}
+/* V2 — phrases (« où y a-t-il… ? » d'Adultes 3 et suivants) : deux colonnes */
+.vv .grille.g2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.vv .grille.g2 .opt .ar {
+  font-size: 1.25rem;
 }
 .vv .joindre {
   display: flex;
@@ -1363,10 +1375,12 @@
     line-height: 1.4;
   }
   /* « où y a-t-il… ? » (8 mots) : cases plus serrées, l'arabe garde sa taille */
-  .vv .grille.g4 .opt {
+  .vv .grille.g4 .opt,
+  .vv .grille.g2 .opt {
     min-height: 2.5rem;
   }
-  .vv .grille.g4 .opt .ar {
+  .vv .grille.g4 .opt .ar,
+  .vv .grille.g2 .opt .ar {
     line-height: 1.35;
   }
   .vv .grille.g4 .opt .fr {

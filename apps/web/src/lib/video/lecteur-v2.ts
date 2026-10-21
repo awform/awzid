@@ -54,9 +54,10 @@ type Rec = { mode: VideoMode; attente?: Promise<void>; onFin?: () => void };
 
 const c = String.fromCharCode;
 const AR = `${c(0x600)}-${c(0x6ff)}`;
-// (deux formes arabes séparées par « / », « · » ou « ← » restent sur la même ligne : les deux terminaisons du duel)
+// (deux formes arabes séparées par « / », « · », « ← » ou « — » restent sur la même ligne : les deux terminaisons du
+// duel, passé et présent d'un verbe)
 const RUN = new RegExp(
-  `(\\(\\s?[${AR}][${AR}\\s.]*\\s?\\)|«\\s?[${AR}][${AR}\\s.]*\\s?»|[${AR}](?:\\s[/·←]\\s(?=[${AR}])|[${AR}\\s.])*)`,
+  `(\\(\\s?[${AR}][${AR}\\s.]*\\s?\\)|«\\s?[${AR}][${AR}\\s.]*\\s?»|[${AR}](?:\\s[/·←—]\\s(?=[${AR}])|[${AR}\\s.])*)`,
 );
 // lettres (le tatweel U+0640 n'en est pas une : une terminaison citée « ـْتُ » reste dans la phrase)
 const LETTRE = new RegExp(`[${c(0x621)}-${c(0x63f)}${c(0x641)}-${c(0x64a)}]`, 'g');
@@ -108,6 +109,11 @@ const arH = (s: string, cls = '') => `<span class="ar ${cls}" lang="ar" dir="rtl
 /** V2 — texte arabe découpé en mots (aux espaces seulement : les liaisons ne traversent jamais une espace) */
 export const arW = (s: string, cls = '') =>
   `<span class="ar ${cls}" lang="ar" dir="rtl">${s
+    // une liste de formes (« يَرْجِعُونَ ← سَيَرْجِعُونَ ← لَنْ يَرْجِعُوا ») ne se coupe qu'entre deux formes : une forme
+    // de trois mots au plus reste sur sa ligne (espaces insécables)
+    .split(/( [←—·/] )/)
+    .map((p, k, a) => (k % 2 || a.length < 2 || p.split(' ').length > 3 ? p : p.replace(/ /g, ' ')))
+    .join('')
     // un morceau sans lettre (« / » de « طَالِبٌ / طُلَّابٌ », chiffres) ne s'allume pas : ce n'est pas un mot dit
     .split(/(\s+)/)
     .map((p) => (!/[ء-ي]/.test(p) ? esc(p) : `<span class="w">${esc(p)}</span>`))
@@ -214,6 +220,9 @@ export async function ouvrir(o: OuvrirOptions): Promise<void> {
 /** V2 — temps de lecture d'une traduction affichée après le son (ms) */
 const lecture = (fr = '', min = 700, max = 2000) =>
   Math.min(max, Math.max(min, 450 + 28 * fr.length));
+/** V2 — temps après un texte : sa traduction ; sans voix, au moins le temps de lecture prévu (textes longs) */
+const lu = (x: { ar: T; fr?: string; ms: number }) =>
+  Math.max(lecture(x.fr), x.ar.son ? 0 : x.ms - 1000);
 
 function creer(opt: OuvrirOptions): () => void {
   let vid: VideoLecon;
@@ -422,6 +431,10 @@ function creer(opt: OuvrirOptions): () => void {
     sous.dataset.v = v;
     sous.classList.toggle('vide', !v);
     if (v) sous.innerHTML = frH(v, 'x');
+    // un sous-titre haut (arabe du livre sur sa ligne) ne cache pas ce qu'il traduit : la scène défile jusqu'à lui
+    // (s'il tient dans la scène ; un texte plus haut défile de lui-même, depuis son début)
+    const e = v ? zone.lastElementChild : null;
+    if (e && e.getBoundingClientRect().height <= zone.clientHeight) voir(e);
     journal()?.st?.push([v, Date.now()]);
   }
   /**
@@ -521,7 +534,7 @@ function creer(opt: OuvrirOptions): () => void {
     for (const x of sc.temps)
       switch (x.k) {
         case 'titre':
-          n += lecture(x.fr, 2000, 3400) + (x.noms ?? []).reduce((s, y) => s + duree(y), 0);
+          n += lecture(x.fr, 2000, 9000) + (x.noms ?? []).reduce((s, y) => s + duree(y), 0);
           break;
         case 'bulle':
           n +=
@@ -535,7 +548,7 @@ function creer(opt: OuvrirOptions): () => void {
           n += 200 + duree(x.ar) + lecture(x.fr);
           break;
         case 'texte':
-          n += 300 + duree(x.ar) + lecture(x.fr);
+          n += 300 + duree(x.ar) + lu(x);
           break;
         case 'aToi':
           n += aToiMs(sc, x) + (x.puis ?? []).reduce((s, y) => s + duree(y), 0);
@@ -863,11 +876,16 @@ function creer(opt: OuvrirOptions): () => void {
     const deborde = () => z.scrollHeight > z.clientHeight + 2;
     for (let c = z.firstElementChild; c && c !== e && deborde();) {
       const n = c.nextElementSibling;
-      if (!c.matches('.b-trace,.b-nom')) c.remove();
+      if (!c.matches('.b-trace,.b-nom,.b-q')) c.remove();
       c = n;
     }
-    while (deborde() && z.firstElementChild && z.firstElementChild !== e)
-      z.firstElementChild.remove();
+    // (une question ne disparaît jamais sous son minuteur ou sa correction : la scène défile)
+    for (
+      let c = z.firstElementChild;
+      c && c !== e && deborde() && !c.matches('.b-q');
+      c = z.firstElementChild
+    )
+      c.remove();
     // un bloc seul plus haut que la scène (règle longue) : ses premiers morceaux laissent la place aux suivants
     for (
       let c = e.querySelector('.carte > .apparait');
@@ -875,9 +893,20 @@ function creer(opt: OuvrirOptions): () => void {
       c = e.querySelector('.carte > .apparait')
     )
       c.remove();
-    // V2 — toujours trop haut : l'élément se réduit (0,9 … 0,6), sauf un texte à lire (règle, note), qui défile
     const el = e as HTMLElement;
-    if (!el.matches('.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif'))
+    // V2 — trop haut (phrases, traduction longue) : mise en page d'abord, jamais une réduction du texte : une grille de
+    // phrases passe sur deux colonnes à la taille d'une phrase, l'illustration se fait plus petite, puis un mot long
+    // (expression) prend la taille d'une phrase
+    if (deborde()) el.querySelector('.g4')?.classList.replace('g4', 'g2');
+    if (deborde()) el.querySelector('.illu')?.classList.add('pt');
+    if (deborde()) el.querySelector('.tuile.mot')?.classList.add('tm');
+    // V2 — toujours trop haut : l'élément se réduit (0,9 … 0,6), sauf un texte à lire (règle, note, réplique) ou un
+    // exercice (choix gardés à leur taille), qui défilent
+    if (
+      !el.matches(
+        '.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif,.b-titre,.b-bulle,.b-q,.b-bilan',
+      )
+    )
       for (let k = 0.9; deborde() && k > 0.55; k -= 0.05) {
         el.style.zoom = String(k);
         journal()?.zoom?.push(
@@ -1006,21 +1035,24 @@ function creer(opt: OuvrirOptions): () => void {
         // voix dès l'ouverture : noms des lettres l'un après l'autre, sinon le titre arabe et les mots du tableau
         const vs = (x.noms ?? [x.ar, ...(x.tableau ?? [])]).filter((v) => v?.son);
         for (const v of vs) await dire(v);
-        return att(vs.length ? 900 : lecture(x.fr, 2000, 3400) - 450 * (x.tableau?.length ?? 0));
+        // un long « Je découvre » (arabe du livre sur ses lignes) défile, jamais réduit
+        return defile(vs.length ? 900 : lecture(x.fr, 2000, 9000) - 450 * (x.tableau?.length ?? 0));
       }
       case 'bulle': {
         const cote = x.cote === undefined ? '' : x.cote ? 'g' : 'd';
+        // V2 — le sous-titre d'abord : la mise en page tient compte de sa hauteur (traduction longue)
+        st(x.fr);
         const e = ajoute(
           `<div class="bulle ${cote}">${x.qui ? arH(x.qui, 'qui') : ''}${x.lignes.map((l) => `<div class="li">${arW(l.ar)}</div>`).join('')}</div>`,
         );
-        st(x.fr);
         const lis = [...e.querySelectorAll('.li')];
         // bulle dite d'un trait (`dit`) : toute la bulle s'allume ; sinon ligne par ligne
         if (x.dit) await dire(x.dit, e.firstElementChild);
         else if (x.lignes.some((l) => l.son))
           for (const [k, l] of x.lignes.entries()) await dire(l, lis[k]);
-        else return att(lecture(x.fr, 2200, 3600));
-        return att(lecture(x.fr, 600, 1600));
+        // une longue réplique défile jusqu'à sa fin (jamais réduite)
+        else return defile(lecture(x.fr, 2200, 3600));
+        return defile(lecture(x.fr, 600, 1600));
       }
       case 'objectif':
         ajoute(`<div class="carte">${x.ar ? arH(x.ar.ar) : ''}${fr(x.fr, true)}</div>`);
@@ -1085,13 +1117,14 @@ function creer(opt: OuvrirOptions): () => void {
         return att(lecture(x.fr));
       }
       case 'texte': {
-        const e = ajoute(tuile(x.ar, `t${x.taille}`));
-        if (!band.textContent) consigne('vv.ecoute_mot');
         st(x.fr);
+        if (!band.textContent) consigne('vv.ecoute_mot');
+        const e = ajoute(tuile(x.ar, `t${x.taille}`));
         await att(300);
         await dire(x.ar, e.firstElementChild);
-        // une phrase plus haute que la scène y défile jusqu'à sa fin (jamais réduite, jamais cachée)
-        return defile(lecture(x.fr));
+        // une phrase plus haute que la scène y défile jusqu'à sa fin (jamais réduite, jamais cachée) ; sans voix, le
+        // temps de lecture du texte (textes longs)
+        return defile(lu(x));
       }
       case 'inter': {
         const e = ajoute(
@@ -1105,12 +1138,12 @@ function creer(opt: OuvrirOptions): () => void {
         // V2 — un mot à la fois : image, mot, compteur ; la traduction passe en sous-titre
         const ms = sc.temps.filter((y) => y.k === 'mot');
         const n = ms.indexOf(x);
+        st(x.fr);
+        if (!band.textContent) consigne('vv.ecoute_mot');
         const e = ajoute(
           `${ms.length > 1 ? `<p class="cpt">${n + 1} / ${ms.length}</p>` : ''}${img(x.img)}${tuile(x.ar, 'mot')}`,
           !lettres,
         );
-        if (!band.textContent) consigne('vv.ecoute_mot');
-        st(x.fr);
         await att(200);
         await dire(x.ar, e.querySelector('.tuile'));
         return att(lecture(x.fr));
@@ -1239,7 +1272,7 @@ function creer(opt: OuvrirOptions): () => void {
         const ms = [...e.querySelectorAll('.bl-m > span')];
         // les mots illustrés reviennent par leur image seule (rappel muet) ; un mot sans image est montré et redit
         for (const [k, m] of x.mots.entries()) if (!m.img && m.ar.son) await dire(m.ar, ms[k]);
-        return att(1200);
+        return defile(1200);
       }
       case 'q':
         return question(x.q, sc.jouable === true, `${x.i + 1} / ${x.n}`);

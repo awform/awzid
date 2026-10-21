@@ -59,8 +59,8 @@ describe('vidéos vivantes : interrupteur « video_vivante »', () => {
       true,
     );
   });
-  it('proposé seulement pour les niveaux dont la garde vidéo est calculée (Adultes 1 et 2)', () => {
-    expect(VIDEO_NIVEAUX).toEqual(['ad1', 'ad2']);
+  it('proposé seulement pour les niveaux dont la garde vidéo est calculée (Adultes 1 à 3)', () => {
+    expect(VIDEO_NIVEAUX).toEqual(['ad1', 'ad2', 'ad3']);
   });
 });
 
