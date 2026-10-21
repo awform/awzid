@@ -9,6 +9,12 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 9, fusion de `video-vivante-ad9-wip` dans `main` ; NON déployé
+
+`VIDEO_NIVEAUX` = ad1 à ad9 (liste formatée par Prettier) ; `VIDEO_GARDE` recalculée (133 textes gardés sans voix dans ad9 ; un verset entre crochets ornés dans une phrase vedette reste muet). Lecteur v2 : toute longue traduction défile dans son bandeau (plafonné au quart de l'écran) pendant le temps de lecture du texte, et ce temps suit la longueur de la traduction (jusqu'à 6 s) ; une ligne à lire faite de longues formes (bilans) défile au lieu d'être réduite. Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombre de l05, l14, l22 et planche (`captures_app/captures-v2-ad9/`). Tests : typecheck, eslint 0 erreur ; unitaires **3 069 réussis, 0 échec** ; **e2e complète** (`flock`, `--retries=1 --workers=3`) : **875 réussis, 166 ignorés, 1 instable passé au second essai (madjaliss-acces:200), 0 échec** ; poids lecteur v2 **23 230 o** (garde 24 Ko). Audio (constat, 915 fichiers ad9) : 522 textes « à écouter » sans fichier, 1 722 en tout ; `reports/video-vivante-ad9.md`.
+
+---
+
 ## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 8 (poésie), fusion de `video-vivante-ad8-wip` dans `main` ; NON déployé
 
 `VIDEO_NIVEAUX` = ad1 à ad8 ; `VIDEO_GARDE` recalculée (126 textes gardés sans voix dans ad8). **Poésie** : un vers (hémistiches séparés par « … ») montre chaque hémistiche sur sa ligne, aussi dans le récapitulatif (phrase vedette découpée en mots comme ailleurs) ; texte toujours octet pour octet. Lecteur v2 : les repères de « À toi ! » trop hauts (mots longs sans image) défilent au lieu d'être réduits. Contrôle 360 px : **0 réduction sur les 25 unités** (après correction du seul cas, l24) ; captures v2 clair/sombre de l09, l12, l24 et planche (`captures_app/captures-v2-ad8/`). Tests : typecheck, eslint 0 erreur ; unitaires **3 018 réussis, 0 échec** ; **e2e complète** (`flock`, `--retries=1 --workers=3`, avant la dernière retouche) : **876 réussis, 166 ignorés, 0 instable, 0 échec** ; e2e vidéo après la retouche **18 réussis, 0 échec** ; poids lecteur v2 **23 204 o** (garde 24 Ko). Audio (constat, 877 fichiers ad8) : 527 textes « à écouter » sans fichier, 1 681 en tout ; `reports/video-vivante-ad8.md`.
