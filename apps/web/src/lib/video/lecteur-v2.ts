@@ -114,6 +114,8 @@ export const arW = (s: string, cls = '') =>
     .split(/( [←—·/] )/)
     .map((p, k, a) => (k % 2 || a.length < 2 || p.split(' ').length > 3 ? p : p.replace(/ /g, ' ')))
     .join('')
+    // une précision entre parenthèses (« (ج. أَسْنَانٌ) ») reste entière
+    .replace(/\([^) ]*( [^) ]*){0,2}\)/g, (m) => m.replace(/ /g, ' '))
     // un morceau sans lettre (« / » de « طَالِبٌ / طُلَّابٌ », chiffres) ne s'allume pas : ce n'est pas un mot dit
     .split(/(\s+)/)
     .map((p) => (!/[ء-ي]/.test(p) ? esc(p) : `<span class="w">${esc(p)}</span>`))
@@ -900,6 +902,8 @@ function creer(opt: OuvrirOptions): () => void {
     if (deborde()) el.querySelector('.g4')?.classList.replace('g4', 'g2');
     if (deborde()) el.querySelector('.illu')?.classList.add('pt');
     if (deborde()) el.querySelector('.tuile.mot')?.classList.add('tm');
+    // … un long titre ou une longue phrase vedette du récapitulatif passent à la taille d'une phrase
+    if (deborde()) el.classList.add('lg');
     // V2 — toujours trop haut : l'élément se réduit (0,9 … 0,6), sauf un texte à lire (règle, note, réplique) ou un
     // exercice (choix gardés à leur taille), qui défilent
     if (
@@ -1030,6 +1034,7 @@ function creer(opt: OuvrirOptions): () => void {
         const r = e.querySelector('.rangee')!;
         for (const l of x.tableau ?? []) {
           r.append(h('span', 'apparait', arH(l.ar, 'g')));
+          tasse(e);
           await att(450);
         }
         // voix dès l'ouverture : noms des lettres l'un après l'autre, sinon le titre arabe et les mots du tableau
