@@ -9,6 +9,12 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 5, fusion de `video-vivante-ad5-wip` dans `main` ; NON déployé
+
+`VIDEO_NIVEAUX` = ad1 à ad5 ; `VIDEO_GARDE` recalculée. Lecteur v2 : la grille « touche un mot » trop haute (mots avec leur pluriel) défile au lieu d'être réduite. Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombre de l06, l12, l21 et planche (`captures_app/captures-v2-ad5/`). Tests : typecheck, eslint 0 erreur ; unitaires **2 862 réussis, 0 échec** ; e2e vidéo **18 réussis, 0 échec** (6 ignorés : captures) ; poids lecteur v2 **22 615 o** (garde 24 Ko). Audio (constat, 863 fichiers ad5) : 696 textes « à écouter » sans fichier, 1 901 en tout ; `reports/video-vivante-ad5.md`.
+
+---
+
 ## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 4, fusion de `video-vivante-ad4-wip` dans `main` ; NON déployé
 
 `VIDEO_NIVEAUX` = ad1 à ad4 ; `VIDEO_GARDE` recalculée. Lecteur v2 : une précision entre parenthèses de trois mots au plus (« (ج. أَسْنَانٌ) ») reste entière ; titre long, tableau de l'ouverture et phrase vedette longue du récapitulatif passent à la taille d'une phrase quand la scène déborde (jamais une réduction). **Garde de poids du lecteur v2 portée de 22 à 24 Ko** (`budget.mjs`, justification écrite : la garde coranique grandit d'une empreinte par texte gardé muet à chaque livre, plus la mise en page des livres 3+ ; 22 526 o pour 22 528 o avec Adultes 4 avant les dernières retouches, le livre suivant ne tenait plus ; toujours chargé au seul premier appui sur « Voir en vidéo ») ; mesure : **22 552 o**. Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombre de l12, l13, l24 et planche (`captures_app/captures-v2-ad4/`). Tests : typecheck, eslint 0 erreur ; unitaires **2 811 réussis, 0 échec** ; **e2e complète** (`flock`, `--retries=1 --workers=3`) : **868 réussis, 164 ignorés, 3 instables passés au second essai, 1 échec sans rapport** (captures.spec.ts, « Unable to capture screenshot » pleine page, déjà relevé sur main le 21/10) : 0 échec réel ; e2e vidéo comprise (leçon 1 et bilan 1 d’ad3 et ad4). Audio (constat, 912 fichiers ad4) : 594 textes « à écouter » sans fichier, 1 832 en tout ; `reports/video-vivante-ad4.md`.
