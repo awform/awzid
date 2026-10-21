@@ -51,8 +51,16 @@ const BUDGET_LECTEUR = 12 * 1024;
  * « Voir en vidéo », 0 Ko sur les autres pages et sur l'appareil avant ce premier appui. Mesure PAR LECTEUR (interrupteur
  * `video_v2`) : un appareil ne charge que l'un des deux, avec le générateur commun ; mesure au 20/10 : v2 21,2 Ko,
  * v1 17,4 Ko (générateur devenu un morceau commun aux deux lecteurs).
+ *
+ * Garde portée de 22 à 24 Ko (décision du chef de projet, 21/10/2026, vidéos des livres Adultes 3 et suivants) : la
+ * croissance vient (1) de la garde coranique de la vidéo, une empreinte par texte gardé muet, qui grandit avec chaque
+ * livre proposé (données de sûreté, à ne jamais alléger), et (2) des adaptations de mise en page à 360 px des livres 3+
+ * (phrases, traductions longues : sous-titre avant le texte, grilles de phrases, défilement au lieu d'une réduction).
+ * Passe d'allègement faite d'abord (aides de mise en page fusionnées, aucune règle ajoutée sans emploi) : mesure au
+ * 21/10 avec Adultes 4 : 22 526 o pour 22 528 o, le livre suivant ne tenait plus. Même justification qu'avant : chargé
+ * seulement au premier appui sur « Voir en vidéo », 0 Ko sur les autres pages et sur l'appareil avant ce premier appui.
  */
-const BUDGET_VIDEO = 22 * 1024;
+const BUDGET_VIDEO = 24 * 1024;
 /**
  * cahier de lecture (20/10/2026) : sommaire, pages, lecture guidée, minutes, bilans, atelier ; chargé à la première
  * ouverture du cahier, jamais préchargé (garde dédiée ; les gardes de l'appareil et des pages restent celles ci-dessous)

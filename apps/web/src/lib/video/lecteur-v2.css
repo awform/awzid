@@ -798,6 +798,14 @@
   border: 1.5px solid var(--or);
   background: var(--or-voile);
 }
+/* V2 — trop haut (titre, phrase vedette longue) : taille d'une phrase */
+.vv .lg .h.titre-l {
+  font-size: 1.15rem;
+}
+.vv .b-titre.lg .ar.g,
+.vv .lg .bl-v .ar {
+  font-size: 1.4rem;
+}
 .vv .bl-v .ar {
   font-size: 2rem;
   font-weight: 700;
