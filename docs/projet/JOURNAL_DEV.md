@@ -9,6 +9,12 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 8 (poésie), fusion de `video-vivante-ad8-wip` dans `main` ; NON déployé
+
+`VIDEO_NIVEAUX` = ad1 à ad8 ; `VIDEO_GARDE` recalculée (126 textes gardés sans voix dans ad8). **Poésie** : un vers (hémistiches séparés par « … ») montre chaque hémistiche sur sa ligne, aussi dans le récapitulatif (phrase vedette découpée en mots comme ailleurs) ; texte toujours octet pour octet. Lecteur v2 : les repères de « À toi ! » trop hauts (mots longs sans image) défilent au lieu d'être réduits. Contrôle 360 px : **0 réduction sur les 25 unités** (après correction du seul cas, l24) ; captures v2 clair/sombre de l09, l12, l24 et planche (`captures_app/captures-v2-ad8/`). Tests : typecheck, eslint 0 erreur ; unitaires **3 018 réussis, 0 échec** ; **e2e complète** (`flock`, `--retries=1 --workers=3`, avant la dernière retouche) : **876 réussis, 166 ignorés, 0 instable, 0 échec** ; e2e vidéo après la retouche **18 réussis, 0 échec** ; poids lecteur v2 **23 204 o** (garde 24 Ko). Audio (constat, 877 fichiers ad8) : 527 textes « à écouter » sans fichier, 1 681 en tout ; `reports/video-vivante-ad8.md`.
+
+---
+
 ## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 7, fusion de `video-vivante-ad7-wip` dans `main` ; NON déployé
 
 `VIDEO_NIVEAUX` = ad1 à ad7 ; `VIDEO_GARDE` recalculée (98 textes gardés sans voix dans ad7 : versets cités, hadiths). Lecteur v2 : une longue traduction (glose avec plusieurs passages arabes) ne prend jamais plus du quart de l'écran et défile dans son bandeau le temps de la lire (jusqu'à 6 s) ; un long mot à mot défile ; une citation arabe entre guillemets ou parenthèses qui finit par « ! » ou « ? » reste entière sur sa ligne (plus de « « » orphelin). Textes non préparés des bilans : absents de la projection élève, donc de la vidéo (inchangé). Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombre de l07, l12, l13 et planche (`captures_app/captures-v2-ad7/`). Tests : typecheck, eslint 0 erreur ; unitaires **2 966 réussis, 1 échec sans rapport** (`gabarits.test.ts` sur `FonctionsAdmin.svelte`, venu de la fusion du canal bêta, rouge aussi sur `main`) ; e2e vidéo **18 réussis, 0 échec** (6 ignorés : captures) ; poids lecteur v2 **22 997 o** (garde 24 Ko). Audio (constat, 886 fichiers ad7) : 537 textes « à écouter » sans fichier, 1 812 en tout ; `reports/video-vivante-ad7.md`.

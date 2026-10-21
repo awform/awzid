@@ -934,10 +934,10 @@ function creer(opt: OuvrirOptions): () => void {
     // … un long titre ou une longue phrase vedette du récapitulatif passent à la taille d'une phrase
     if (deborde()) el.classList.add('lg');
     // V2 — toujours trop haut : l'élément se réduit (0,9 … 0,6), sauf un texte à lire (règle, note, réplique) ou un
-    // exercice, un récapitulatif ou la grille des mots (gardés à leur taille), qui défilent
+    // exercice, un récapitulatif, la grille des mots ou les repères de « À toi ! » (gardés à leur taille), qui défilent
     if (
       !el.matches(
-        '.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif,.b-titre,.b-bulle,.b-q,.b-bilan,.b-grille,.b-inter',
+        '.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif,.b-titre,.b-bulle,.b-q,.b-bilan,.b-grille,.b-inter,.b-aToi',
       )
     )
       for (let k = 0.9; deborde() && k > 0.55; k -= 0.05) {
@@ -1295,7 +1295,7 @@ function creer(opt: OuvrirOptions): () => void {
       case 'bilan': {
         // V2 — récapitulatif : ce que la vidéo a montré ; les lettres et le mot vedette sont redits, chacun s'allumant
         const e = ajoute(
-          `<div class="bil">${x.lettres.length ? `<div class="bl-l">${x.lettres.map((l) => `<span style="${famille(l.ar) ? `--fam:${famille(l.ar)}` : ''}">${arH(l.ar, 'g')}</span>`).join('')}</div>` : ''}${x.vedette ? `<div class="bl-v">${arH(x.vedette.ar)}</div>` : ''}${x.mots.length ? `<div class="bl-m">${x.mots.map((m) => `<span>${m.img ? img(m.img, '') : arH(m.ar.ar)}</span>`).join('')}</div>` : ''}</div>`,
+          `<div class="bil">${x.lettres.length ? `<div class="bl-l">${x.lettres.map((l) => `<span style="${famille(l.ar) ? `--fam:${famille(l.ar)}` : ''}">${arH(l.ar, 'g')}</span>`).join('')}</div>` : ''}${x.vedette ? `<div class="bl-v">${arW(x.vedette.ar)}</div>` : ''}${x.mots.length ? `<div class="bl-m">${x.mots.map((m) => `<span>${m.img ? img(m.img, '') : arH(m.ar.ar)}</span>`).join('')}</div>` : ''}</div>`,
           true,
         );
         e.querySelectorAll<HTMLElement>('.bil > *, .bl-m > span').forEach((el, k) => {
