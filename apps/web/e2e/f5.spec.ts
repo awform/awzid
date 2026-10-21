@@ -153,7 +153,20 @@ test('canal bêta : fonction en essai montrée seulement aux comptes marqués', 
     await adm.goto('/admin');
     await adm.getByTestId('beta-email').fill(email);
     await adm.getByTestId('beta-ajouter').click();
-    await expect(adm.getByTestId('admin-fonctions')).toContainText('Enregistré.');
+    await expect(adm.getByTestId('beta-msg').getByRole('status')).toContainText(
+      'ajouté au canal bêta',
+    );
+    await expect(adm.getByTestId('beta-email')).toHaveValue('');
+    await expect(adm.getByTestId('beta-liste')).toContainText(email);
+    // déjà dans le canal, puis compte inconnu
+    await adm.getByTestId('beta-email').fill(email);
+    await adm.getByTestId('beta-ajouter').click();
+    await expect(adm.getByTestId('beta-msg').getByRole('status')).toContainText(
+      'déjà dans le canal',
+    );
+    await adm.getByTestId('beta-email').fill('inconnu-f5@exemple.org');
+    await adm.getByTestId('beta-ajouter').click();
+    await expect(adm.getByTestId('beta-msg').getByRole('alert')).toContainText('Aucun compte');
     await oublier(page);
     await page.reload();
     await expect(page.getByTestId('avis-ouvrir')).toBeVisible();

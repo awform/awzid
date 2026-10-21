@@ -29,7 +29,7 @@
     roles: string[];
     ages: string[];
     ecoles: Array<{ id: string; nom: string; beta: boolean }>;
-    beta: { comptes: number; profils: number };
+    beta: { comptes: number; profils: number; emails?: string[] };
   }
   let data = $state<Data | null>(null);
   let msg = $state('');
@@ -57,8 +57,30 @@
     f = { effet: 'off', role: '', age: '', pays: '', ecoleId: '', canal: '' };
   }
   const retirer = async (id: string) => fait(await call('DELETE', `/admin/fonctions/regles/${id}`));
-  const betaCompte = async (beta: boolean) =>
-    fait(await call('PUT', '/admin/beta', { type: 'compte', email, beta }));
+  let betaMsg = $state('');
+  let betaErr = $state('');
+  async function betaCompte(beta: boolean, cible = email.trim()) {
+    const r = await call<{ deja?: boolean }>('PUT', '/admin/beta', {
+      type: 'compte',
+      email: cible,
+      beta,
+    });
+    msg = '';
+    err = '';
+    if (!r.ok) {
+      betaMsg = '';
+      betaErr =
+        r.code === 'introuvable' ? t('beta.introuvable') : t(`erreur.${r.code ?? 'reseau'}`);
+      return;
+    }
+    betaErr = '';
+    betaMsg =
+      beta && r.data?.deja
+        ? t('beta.deja')
+        : t(beta ? 'beta.ajoute' : 'beta.retire', { email: cible });
+    if (beta) email = '';
+    await load();
+  }
   const betaEcole = async (id: string, beta: boolean) =>
     fait(await call('PUT', '/admin/beta', { type: 'ecole', id, beta }));
 
@@ -192,6 +214,22 @@
       <button type="submit" class="primary" data-testid="beta-ajouter">{t('beta.ajouter')}</button>
       <button type="button" onclick={() => betaCompte(false)}>{t('beta.retirer')}</button>
     </form>
+    <div data-testid="beta-msg">
+      {#if betaMsg}<p role="status"><Bidi text={betaMsg} /></p>{/if}
+      {#if betaErr}<p class="error" role="alert"><Bidi text={betaErr} /></p>{/if}
+    </div>
+    {#if data.beta.emails?.length}
+      <ul class="stack" data-testid="beta-liste">
+        {#each data.beta.emails as m (m)}
+          <li>
+            <span dir="ltr">{m}</span>
+            <button type="button" onclick={() => betaCompte(false, m)}
+              >{t('beta.retirer_un')}</button
+            >
+          </li>
+        {/each}
+      </ul>
+    {/if}
     <ul class="stack">
       {#each data.ecoles as e (e.id)}
         <li>

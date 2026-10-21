@@ -188,7 +188,7 @@ export async function setBeta(
   target: BetaTarget,
   on: boolean,
   by: string | null,
-): Promise<void> {
+): Promise<{ deja: boolean }> {
   const col =
     target.type === 'compte'
       ? t.betaMember.accountId
@@ -197,8 +197,14 @@ export async function setBeta(
         : t.betaMember.schoolId;
   if (!on) {
     await db.delete(t.betaMember).where(eq(col, target.id));
-    return;
+    return { deja: false };
   }
+  const [existe] = await db
+    .select({ id: t.betaMember.id })
+    .from(t.betaMember)
+    .where(eq(col, target.id))
+    .limit(1);
+  if (existe) return { deja: true };
   await db
     .insert(t.betaMember)
     .values({
@@ -208,13 +214,18 @@ export async function setBeta(
       addedBy: by,
     })
     .onConflictDoNothing();
+  return { deja: false };
 }
 
 /** Membres du canal bêta (écoles par leur nom ; comptes et profils comptés, jamais nommés ici). */
-export async function listBeta(db: Db): Promise<{
+export async function listBeta(
+  db: Db,
+  avecEmails = false,
+): Promise<{
   ecoles: Array<{ id: string; nom: string }>;
   comptes: number;
   profils: number;
+  emails?: string[];
 }> {
   const ecoles = await db
     .select({ id: t.school.id, nom: t.school.name })
@@ -227,7 +238,15 @@ export async function listBeta(db: Db): Promise<{
       profils: sql<number>`count(${t.betaMember.profileId})::int`,
     })
     .from(t.betaMember);
-  return { ecoles, comptes: c?.comptes ?? 0, profils: c?.profils ?? 0 };
+  const r = { ecoles, comptes: c?.comptes ?? 0, profils: c?.profils ?? 0 };
+  if (!avecEmails) return r;
+  const emails = await db
+    .select({ email: t.account.email })
+    .from(t.betaMember)
+    .innerJoin(t.account, eq(t.account.id, t.betaMember.accountId))
+    .orderBy(t.account.email)
+    .limit(500);
+  return { ...r, emails: emails.map((e) => e.email).filter((e): e is string => !!e) };
 }
 
 // ------------------------------------------------------------------ avis

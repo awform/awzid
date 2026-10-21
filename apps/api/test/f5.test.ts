@@ -204,6 +204,17 @@ describe.skipIf(!URL)('F5 — interrupteurs, bêta, avis, usage (awform_test)', 
         })
       ).statusCode,
     ).toBe(200);
+    // deuxi?me ajout : ? deja ? ; la liste d'e-mails est r?serv?e ? l'administrateur
+    const bis = (
+      await c.req('PUT', '/api/v1/admin/beta', A, {
+        type: 'compte',
+        email: 'adulte.f5@exemple.org',
+        beta: true,
+      })
+    ).json();
+    expect(bis).toEqual({ ok: true, deja: true });
+    const liste = (await c.req('GET', '/api/v1/admin/fonctions', A)).json();
+    expect(liste.beta.emails).toEqual(['adulte.f5@exemple.org']);
     const b = await fonctions(adultH, adultProfile);
     expect(b.canal).toBe('beta');
     expect(b.fonctions.mushaf_exact).toBe(true);

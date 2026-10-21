@@ -19,6 +19,12 @@ Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombr
 
 ---
 
+## 21/10/2026 — Canal bêta (administration) : message sous le formulaire, « déjà dans le canal », liste des e-mails avec « Retirer » ; NON déployé
+
+`PUT /admin/beta` renvoie `deja: true` ; `GET /admin/fonctions` ajoute `beta.emails` (administrateur seulement) ; i18n fr/en/ar/es/de ; test API + e2e f5.
+
+---
+
 ## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 5, fusion de `video-vivante-ad5-wip` dans `main` ; NON déployé
 
 `VIDEO_NIVEAUX` = ad1 à ad5 ; `VIDEO_GARDE` recalculée. Lecteur v2 : la grille « touche un mot » trop haute (mots avec leur pluriel) défile au lieu d'être réduite. Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombre de l06, l12, l21 et planche (`captures_app/captures-v2-ad5/`). Tests : typecheck, eslint 0 erreur ; unitaires **2 862 réussis, 0 échec** ; e2e vidéo **18 réussis, 0 échec** (6 ignorés : captures) ; poids lecteur v2 **22 615 o** (garde 24 Ko). Audio (constat, 863 fichiers ad5) : 696 textes « à écouter » sans fichier, 1 901 en tout ; `reports/video-vivante-ad5.md`.
