@@ -59,8 +59,8 @@ describe('vidéos vivantes : interrupteur « video_vivante »', () => {
       true,
     );
   });
-  it('proposé seulement pour les niveaux dont la garde vidéo est calculée (Adultes 1 à 5)', () => {
-    expect(VIDEO_NIVEAUX).toEqual(['ad1', 'ad2', 'ad3', 'ad4', 'ad5']);
+  it('proposé seulement pour les niveaux dont la garde vidéo est calculée (Adultes 1 à 6)', () => {
+    expect(VIDEO_NIVEAUX).toEqual(['ad1', 'ad2', 'ad3', 'ad4', 'ad5', 'ad6']);
   });
 });
 
@@ -107,6 +107,11 @@ describe('vidéos vivantes v2 : interrupteur « video_v2 », surlignage, animati
     const deux = `${c(0x637, 0x627, 0x644, 0x650, 0x628)} / ${c(0x637, 0x64f, 0x644, 0x651, 0x627, 0x628)}`;
     expect([...arW(deux).matchAll(/class="w"/g)].length).toBe(2);
     expect(arW(deux).replace(/<[^>]+>/g, '')).toBe(deux);
+    // liste de formes, précision entre parenthèses, vers d'un poème : mise en page par classes, texte identique
+    for (const t of [`${deux} / ${deux}`, `${ph} (${deux})`, `${ph} … ${ph}`])
+      expect(arW(t).replace(/<[^>]+>/g, '')).toBe(t);
+    expect(arW(deux)).toContain('class="nw"');
+    expect(arW(`${ph} … ${ph}`)).toContain('class="vb"');
   });
   it('l’article cité seul (« ال ») reste dans la phrase, comme une lettre citée', () => {
     const h = frH2(`Leçons 10 à 14 : tanwin, chadda, ${c(0x627, 0x644)}, hamza`);
