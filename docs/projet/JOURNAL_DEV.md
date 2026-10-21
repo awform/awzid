@@ -9,6 +9,12 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 5, fusion de `video-vivante-ad5-wip` dans `main` ; NON déployé
+
+`VIDEO_NIVEAUX` = ad1 à ad5 ; `VIDEO_GARDE` recalculée. Lecteur v2 : la grille « touche un mot » trop haute (mots avec leur pluriel) défile au lieu d'être réduite. Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombre de l06, l12, l21 et planche (`captures_app/captures-v2-ad5/`). Tests : typecheck, eslint 0 erreur ; unitaires **2 862 réussis, 0 échec** ; e2e vidéo **18 réussis, 0 échec** (6 ignorés : captures) ; poids lecteur v2 **22 615 o** (garde 24 Ko). Audio (constat, 863 fichiers ad5) : 696 textes « à écouter » sans fichier, 1 901 en tout ; `reports/video-vivante-ad5.md`.
+
+---
+
 ## 21/10/2026 — Lecteur audio discret (retour du client : le panneau cachait les questions des exercices), fusion de `lecteur-discret-wip` dans `main` ; NON déployé
 
 `apps/web/src/lib/lecteur/Lecteur.svelte` : le lecteur s'ouvre RÉDUIT, une pastille dans le coin bas (au-dessus de la barre de navigation sur téléphone) avec seulement lecture / pause et « Régler » (icône, `aria-expanded`) ; la page lui réserve sa hauteur en bas (`padding-bottom`). « Régler » le déplie (phrase précédente / suivante, ±5 s, barre de progression, boucle, lecture continue, vitesses, et un bouton carré « Fermer le lecteur ») ; « × » (« Replier le lecteur »), Échap ou un toucher ailleurs le replient ; Échap sur la pastille le ferme. Le choix « déplié » est gardé sur l'appareil (`awzid.lecteur.deplie`, `affichage.ts`, lecture et écriture sous try/catch ; un toucher ailleurs ne change pas le choix). Dans un exercice (`[data-exercise]`, boutons « Écouter » / « Lent ») : pastille seule, sans « Régler », visible SEULEMENT pendant la lecture (cachée et sans place réservée après la phrase ou la pause). Focus : « Régler » → « × », « × » / Échap → « Régler ». Textes `lec.regler`, `lec.replier` (fr, en, ar, es, de).
