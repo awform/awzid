@@ -1,6 +1,8 @@
 {
   "lec.nom": "Lecteur audio",
   "lec.fermer": "Fermer le lecteur",
+  "lec.regler": "Régler le lecteur",
+  "lec.replier": "Replier le lecteur",
   "lec.lecture": "Lire",
   "lec.pause": "Mettre en pause",
   "lec.recul": "Reculer de {s} secondes",

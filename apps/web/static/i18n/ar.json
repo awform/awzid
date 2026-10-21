@@ -3466,6 +3466,8 @@
   "tab.al_tel_a_valider": "أرقام تنتظر تأكيدًا يدويًا.",
   "lec.nom": "مشغّل الصوت",
   "lec.fermer": "إغلاق المشغّل",
+  "lec.regler": "ضبط المشغّل",
+  "lec.replier": "طيّ المشغّل",
   "lec.lecture": "تشغيل",
   "lec.pause": "إيقاف مؤقت",
   "lec.recul": "رجوع {s} ثوانٍ",
