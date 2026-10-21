@@ -13,4 +13,5 @@ export const VIDEO_NIVEAUX: readonly string[] = [
   'ad7',
   'ad8',
   'ad9',
+  'ad10',
 ];
