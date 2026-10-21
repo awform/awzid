@@ -385,6 +385,12 @@
   text-align: center;
   color: inherit;
 }
+/* V2 — une longue traduction (arabe du livre sur ses lignes) ne prend jamais plus du quart de l'écran : elle défile */
+.vv .st {
+  max-height: 25vh;
+  overflow-y: auto;
+  place-items: safe center;
+}
 .vv .st bdi.lt {
   color: inherit;
 }
