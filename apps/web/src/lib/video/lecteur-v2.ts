@@ -57,7 +57,7 @@ const AR = `${c(0x600)}-${c(0x6ff)}`;
 // (deux formes arabes séparées par « / », « · », « ← » ou « — » restent sur la même ligne : les deux terminaisons du
 // duel, passé et présent d'un verbe)
 const RUN = new RegExp(
-  `(\\(\\s?[${AR}][${AR}\\s.]*\\s?\\)|«\\s?[${AR}][${AR}\\s.]*\\s?»|[${AR}](?:\\s[/·←—]\\s(?=[${AR}])|[${AR}\\s.])*)`,
+  `(\\(\\s?[${AR}][${AR}\\s.!?]*\\s?\\)|«\\s?[${AR}][${AR}\\s.!?]*\\s?»|[${AR}](?:\\s[/·←—]\\s(?=[${AR}])|[${AR}\\s.])*)`,
 );
 // lettres (le tatweel U+0640 n'en est pas une : une terminaison citée « ـْتُ » reste dans la phrase)
 const LETTRE = new RegExp(`[${c(0x621)}-${c(0x63f)}${c(0x641)}-${c(0x64a)}]`, 'g');
@@ -576,7 +576,7 @@ function creer(opt: OuvrirOptions): () => void {
           n += x.items.reduce((s, y) => s + duree(y.nom) + 350, 300);
           break;
         case 'mot':
-          n += 200 + duree(x.ar) + lecture(x.fr);
+          n += 200 + duree(x.ar) + lecture(x.fr, 700, 6000);
           break;
         case 'texte':
           n += 300 + duree(x.ar) + lu(x);
@@ -937,7 +937,7 @@ function creer(opt: OuvrirOptions): () => void {
     // exercice, un récapitulatif ou la grille des mots (gardés à leur taille), qui défilent
     if (
       !el.matches(
-        '.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif,.b-titre,.b-bulle,.b-q,.b-bilan,.b-grille',
+        '.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif,.b-titre,.b-bulle,.b-q,.b-bilan,.b-grille,.b-inter',
       )
     )
       for (let k = 0.9; deborde() && k > 0.55; k -= 0.05) {
@@ -1166,7 +1166,8 @@ function creer(opt: OuvrirOptions): () => void {
         );
         const sp = e.firstElementChild!.children;
         for (let k = 0; k < x.ar.length; k++) await dire(x.ar[k], sp[k]);
-        return att(x.ms * 0.4);
+        // un long mot à mot défile jusqu'à sa fin (jamais réduit)
+        return defile(x.ms * 0.4);
       }
       case 'mot': {
         // V2 — un mot à la fois : image, mot, compteur ; la traduction passe en sous-titre
@@ -1180,7 +1181,10 @@ function creer(opt: OuvrirOptions): () => void {
         );
         await att(200);
         await dire(x.ar, e.querySelector('.tuile'));
-        return att(lecture(x.fr));
+        // une longue traduction (arabe du livre sur ses lignes) défile dans son bandeau, le temps de la lire
+        return prog(lecture(x.fr, 700, 6000), (p) => {
+          sous.scrollTop = (sous.scrollHeight - sous.clientHeight) * p;
+        });
       }
       case 'grille':
         ajoute(
