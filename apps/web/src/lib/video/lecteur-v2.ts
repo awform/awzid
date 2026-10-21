@@ -241,7 +241,7 @@ const lecture = (fr = '', min = 700, max = 2000) =>
   Math.min(max, Math.max(min, 450 + 28 * fr.length));
 /** V2 — temps après un texte : sa traduction ; sans voix, au moins le temps de lecture prévu (textes longs) */
 const lu = (x: { ar: T; fr?: string; ms: number }) =>
-  Math.max(lecture(x.fr), x.ar.son ? 0 : x.ms - 1000);
+  Math.max(lecture(x.fr, 700, 6000), x.ar.son ? 0 : x.ms - 1000);
 
 function creer(opt: OuvrirOptions): () => void {
   let vid: VideoLecon;
@@ -934,10 +934,10 @@ function creer(opt: OuvrirOptions): () => void {
     // … un long titre ou une longue phrase vedette du récapitulatif passent à la taille d'une phrase
     if (deborde()) el.classList.add('lg');
     // V2 — toujours trop haut : l'élément se réduit (0,9 … 0,6), sauf un texte à lire (règle, note, réplique) ou un
-    // exercice, un récapitulatif, la grille des mots ou les repères de « À toi ! » (gardés à leur taille), qui défilent
+    // exercice, un récapitulatif, la grille des mots, une ligne à lire ou les repères de « À toi ! » (gardés à leur taille), qui défilent
     if (
       !el.matches(
-        '.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif,.b-titre,.b-bulle,.b-q,.b-bilan,.b-grille,.b-inter,.b-aToi',
+        '.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif,.b-titre,.b-bulle,.b-q,.b-bilan,.b-grille,.b-inter,.b-aToi,.b-rangee',
       )
     )
       for (let k = 0.9; deborde() && k > 0.55; k -= 0.05) {
@@ -954,6 +954,8 @@ function creer(opt: OuvrirOptions): () => void {
     return prog(ms, (p) => {
       const fin = z.scrollHeight - z.clientHeight;
       if (fin > de) z.scrollTop = de + (fin - de) * Math.min(1, p * 1.25);
+      // … et une longue traduction défile dans son bandeau (plafonné au quart de l'écran)
+      sous.scrollTop = (sous.scrollHeight - sous.clientHeight) * p;
     });
   }
   /** tuile d'un texte du livre (V2 : mots découpés aux espaces et filet de surlignage) */
@@ -1182,9 +1184,7 @@ function creer(opt: OuvrirOptions): () => void {
         await att(200);
         await dire(x.ar, e.querySelector('.tuile'));
         // une longue traduction (arabe du livre sur ses lignes) défile dans son bandeau, le temps de la lire
-        return prog(lecture(x.fr, 700, 6000), (p) => {
-          sous.scrollTop = (sous.scrollHeight - sous.clientHeight) * p;
-        });
+        return defile(lecture(x.fr, 700, 6000));
       }
       case 'grille':
         ajoute(
