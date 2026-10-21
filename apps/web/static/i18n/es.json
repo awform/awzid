@@ -3466,6 +3466,8 @@
   "tab.al_tel_a_valider": "Hay números pendientes de validación manual.",
   "lec.nom": "Reproductor de audio",
   "lec.fermer": "Cerrar el reproductor",
+  "lec.regler": "Ajustar el reproductor",
+  "lec.replier": "Plegar el reproductor",
   "lec.lecture": "Reproducir",
   "lec.pause": "Pausa",
   "lec.recul": "Retroceder {s} segundos",
