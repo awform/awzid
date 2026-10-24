@@ -258,6 +258,11 @@ test.describe('« canal bêta » réglé par l’administrateur', () => {
     // 6 cases (3 avec le modèle, 3 seul), gardées sur l'appareil
     await page.locator('button.case[data-case="0"]').click();
     await page.locator('button.case[data-case="4"]').click();
+    await expect(page.locator('button.case[data-case="4"]')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await page.waitForTimeout(500);
     await page.reload();
     await expect(page.locator('article.etape-vue')).toBeVisible();
     for (const [i, v] of [
@@ -337,6 +342,9 @@ test.describe('« canal bêta » réglé par l’administrateur', () => {
     for (let i = 0; i < nb; i++) await lignes.nth(i).getByText('oui', { exact: true }).click();
     await expect(page.locator('.etoile.reussi')).toHaveCount(total);
     await lignes.first().getByText('presque', { exact: true }).click();
+    await expect(page.locator('.etoile.reussi')).toHaveCount(total - 1);
+    // l'écriture sur l'appareil (IndexedDB) se termine avant le rechargement
+    await page.waitForTimeout(500);
     await page.reload();
     await expect(page.locator('.etoile.reussi')).toHaveCount(total - 1);
     await expect(lignes.first().locator('input[value="presque"]')).toBeChecked();
