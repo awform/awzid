@@ -173,7 +173,7 @@ test('interrupteur COUPÉ (défaut) : ni accès ni page, aucun fichier du cahier
   expect(f.fonctions.cahier_parler).toBe(false);
   await page.goto('/niveaux/ad2');
   await expect(page.getByTestId('unit').first()).toBeVisible();
-  await expect(page.getByTestId('parler-acces')).toHaveCount(0);
+  await expect(page.locator('a.cahier-acces[href$="/cahier-parler/ad2"]')).toHaveCount(0);
   expect(await chargesParler(page)).toEqual([]);
   // adresse tapée à la main : « fonction non disponible », le code du cahier n'est jamais chargé
   await page.goto('/cahier-parler/ad2');
@@ -232,9 +232,9 @@ test.describe('« canal bêta » réglé par l’administrateur', () => {
   }) => {
     const sons = await voixSimulee(page);
     await page.goto('/niveaux/ad2');
-    await expect(page.getByTestId('parler-acces')).toBeVisible();
+    await expect(page.locator('a.cahier-acces[href$="/cahier-parler/ad2"]')).toBeVisible();
     expect(await chargesParler(page)).toEqual([]);
-    await page.getByTestId('parler-acces').click();
+    await page.locator('a.cahier-acces[href$="/cahier-parler/ad2"]').click();
     await expect(page.getByTestId('parler')).toBeVisible({ timeout: 20_000 });
     expect((await chargesParler(page)).length).toBeGreaterThan(0);
     // carnet : 5 parties, 24 étapes de leçon, 5 fins de partie et la grille finale

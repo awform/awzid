@@ -95,12 +95,10 @@
   >
 {/if}
 {#if acces !== 'ferme' && fn('cahier_parler') && PARLER_NIVEAUX.includes(data.level)}
-  <!-- cahier « Je parle » (interrupteur « cahier_parler ») : chargé à la demande par sa page -->
-  <a
-    class="cahier-acces"
-    data-testid="parler-acces"
-    href={resolve('/cahier-parler/[niveau]', { niveau: data.level })}
-    ><span class="t"><Bidi text={t('parler.titre')} /></span></a
+  <!-- cahier « Je parle » (interrupteur « cahier_parler ») : chargé à la demande par sa page ; balisage minimal
+       (coquille de l'élève : marge de poids) -->
+  <a class="cahier-acces" href={resolve('/cahier-parler/[niveau]', { niveau: data.level })}
+    ><b><Bidi text={t('parler.titre')} /></b></a
   >
 {/if}
 {#if acces !== 'ferme'}
