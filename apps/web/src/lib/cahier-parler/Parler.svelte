@@ -142,7 +142,9 @@
                 data-etape={e.id}
               >
                 <span class="rond" aria-hidden="true"
-                  >{#if e.fin}<Picto nom="etoile" taille={22} />{:else}{e.num}{/if}</span
+                  >{#if e.fin}<Picto nom="etoile" taille={22} />{:else}<Bidi
+                      text={e.num ?? ''}
+                    />{/if}</span
                 >
                 <span class="corps">
                   <span class="titre"

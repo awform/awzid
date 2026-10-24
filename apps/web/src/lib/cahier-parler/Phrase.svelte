@@ -31,7 +31,7 @@
 
 {#snippet contenu()}
   {#if forme.u && !ligne}<span class="tag"><Bidi text={forme.u} /></span>{/if}
-  <span class="ar" class:grand lang="ar" dir="rtl">{forme.ar}</span>
+  <span class="ar" class:grand lang="ar" dir="rtl"><Bidi text={forme.ar} base="ar" /></span>
   <span class="fr"><Bidi text={forme.fr} /></span>
 {/snippet}
 

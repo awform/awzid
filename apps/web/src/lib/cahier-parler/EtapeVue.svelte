@@ -133,7 +133,7 @@
           </h1>
         {:else}
           <p class="num">
-            <span class="rond">{etape.num}</span><Bidi
+            <span class="rond"><Bidi text={etape.num ?? ''} /></span><Bidi
               text={t('parler.etape', { n: etape.num ?? '' })}
             />
             · <Bidi text={etape.n ? t('parler.apres', { n: etape.n }) : t('parler.avant')} />
@@ -181,7 +181,7 @@
     <!-- antisèche : tableau à deux colonnes, une ligne touchée se fait entendre -->
     <section class="antiseche" data-testid="parler-antiseche">
       <header class="entete-anti">
-        <p class="anti-ar" lang="ar" dir="rtl">{cahier.antiseche_ar}</p>
+        <p class="anti-ar" lang="ar" dir="rtl"><Bidi text={cahier.antiseche_ar} base="ar" /></p>
         <h1><Bidi text={t('parler.p_antiseche')} /> · <Bidi text={etape.titre ?? ''} /></h1>
       </header>
       <p class="aide"><Bidi text={t('parler.antiseche_aide')} /></p>
@@ -233,7 +233,7 @@
         {#each c.r as r, k (k)}
           <li class="bulle {r.q}" data-qui={r.q}>
             <span class="qui"
-              ><span class="lettre" aria-hidden="true">{r.q}</span><Bidi
+              ><span class="lettre" aria-hidden="true"><Bidi text={r.q} /></span><Bidi
                 text={`${r.q} · ${role(c, r.q)}`}
               /></span
             >
@@ -258,7 +258,10 @@
           <h2><Bidi text={t('parler.scenario')} /></h2>
           <p><Bidi text={sc.fr} base="fr" /></p>
           {#each sc.ar as a (a.m)}
-            <p class="consigne-ar" lang="ar" dir="rtl"><span class="marque">{a.m}</span> {a.ar}</p>
+            <p class="consigne-ar" lang="ar" dir="rtl">
+              <span class="marque"><Bidi text={a.m} /></span>
+              <Bidi text={a.ar} base="ar" />
+            </p>
           {/each}
           <h2><Bidi text={t('parler.utiles')} /></h2>
           {#each phrasesUtiles(c) as r, k (k)}
@@ -284,7 +287,9 @@
             {#if vus[r]}
               <Phrase forme={{ ar: f.ar, fr: '' }} {audio} />
             {:else}
-              <p class="flou" aria-hidden="true" lang="ar" dir="rtl">{f.ar}</p>
+              <p class="flou" aria-hidden="true" lang="ar" dir="rtl">
+                <Bidi text={f.ar} base="ar" />
+              </p>
               <button
                 type="button"
                 class="bouton"
@@ -319,7 +324,9 @@
             <fieldset>
               <legend class="vh"><Bidi text={t('parler.je_sais')} /></legend>
               {#if ph}
-                <p class="bilan-ar" lang="ar" dir="rtl">{formes(ph)[0]!.ar}</p>
+                <p class="bilan-ar" lang="ar" dir="rtl">
+                  <Bidi text={formes(ph)[0]!.ar} base="ar" />
+                </p>
                 <p class="fr-rev"><Bidi text={formes(ph)[0]!.fr} /></p>
               {:else if cv}
                 <p class="fr-rev"><Bidi text={t('parler.conv_ligne', { t: cv.titre })} /></p>
@@ -333,7 +340,7 @@
                       value={a}
                       checked={progres.bilans[page.id]?.[r] === a}
                       onchange={() => avis(r, a)}
-                    /><span>{t(`parler.${a}`)}</span></label
+                    /><span><Bidi text={t(`parler.${a}`)} /></span></label
                   >
                 {/each}
               </div>
