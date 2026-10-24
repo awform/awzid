@@ -7,6 +7,20 @@ Checkpoint : `awform\checkpoints\app-lot01.json`.
 Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) — `git push origin main` à la fin de chaque étape, en plus de `backup-repo.ps1`.
 
 
+<!-- reprise-cahier-parler -->
+
+---
+
+## Cahier Je parle — reprise
+
+*Note de reprise (24/10/2026, mise à jour au fil du travail). Branche `cahier-parler-wip` (worktree `~/wt/cahier-parler`), partie de `main` 2b64fbc. **Rien fusionné, rien déployé, aucun audio installé.***
+
+- **Fait** : données `packages/content/data/cahier-parler/ad2.json` (copie exacte de la source, SHA-256 714759aa…) et `themes.json` (habillage : thème, pictogramme d'objet, accroche) → `node apps/web/scripts/cahier-parler-donnees.mjs` → `static/cahier-data/parler-ad2.json` (30 étapes) et `src/lib/cahier-parler-niveaux.ts` ; interrupteur `cahier_parler` (`{ defaut: 'off' }`, démonstration comprise) ; page `/cahier-parler/[niveau]` (`?e=e02&p=P019`), module `lib/cahier-parler/` à la demande (`/_app/parler.json`, garde 16 Ko, route au « premier usage » de `groupes.mjs`) ; accès « Cahier « Je parle » » dans le niveau ad2 ; lecteur discret (famille « l », `leconsSource`, clé `audioFileId` = `Get-AudioKey`) ; textes 5 langues (brouillons, `A_RELIRE.md`) ; tests unitaires `parler.test.ts`.
+- **Poids** : marge de l'appareil élève 3,2 Ko (≥ 3, comme `main`) ; cahier « Je parle » 10,7 Ko (≤ 16).
+- **Reste** : e2e `cahier-parler.spec.ts`, captures (390/1280, clair/sombre), e2e complète, entrée finale du journal.
+- **Tuteur** : pas de point d'entrée qui reçoive une consigne de jeu de rôle (le tuteur IA suit le dialogue de la leçon, `/tuteur/[unit]`) → bouton « Parler avec le tuteur » désactivé ; lien à faire (API `tuteur-ia` : scénario « consigne + personnages + unité »).
+<!-- /reprise-cahier-parler -->
+
 ---
 
 ## 21/10/2026 — Vidéos vivantes V2 : le livre Adultes 10, fusion de `video-vivante-ad10-wip` dans `main` ; Adultes 1 à 10 proposés ; NON déployé
