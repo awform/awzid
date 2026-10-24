@@ -9,6 +9,7 @@
   import { t } from '$lib/i18n';
   import { fn } from '$lib/fonctions.svelte';
   import { CAHIER_NIVEAUX } from '$lib/cahier-pages';
+  import { PARLER_NIVEAUX } from '$lib/cahier-parler-niveaux';
   import { accessFor, espace, matiereOf, type Acces } from '$lib/parcours/parcours';
   let { data } = $props();
 
@@ -91,6 +92,15 @@
     ><span class="t"><Bidi text={t('cahier.titre')} /></span><span class="s"
       ><Bidi text={t('cahier.acces_sous')} /></span
     ></a
+  >
+{/if}
+{#if acces !== 'ferme' && fn('cahier_parler') && PARLER_NIVEAUX.includes(data.level)}
+  <!-- cahier « Je parle » (interrupteur « cahier_parler ») : chargé à la demande par sa page -->
+  <a
+    class="cahier-acces"
+    data-testid="parler-acces"
+    href={resolve('/cahier-parler/[niveau]', { niveau: data.level })}
+    ><span class="t"><Bidi text={t('parler.titre')} /></span></a
   >
 {/if}
 {#if acces !== 'ferme'}

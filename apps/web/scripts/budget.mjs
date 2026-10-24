@@ -66,6 +66,11 @@ const BUDGET_VIDEO = 24 * 1024;
  * ouverture du cahier, jamais préchargé (garde dédiée ; les gardes de l'appareil et des pages restent celles ci-dessous)
  */
 const BUDGET_CAHIER = 24 * 1024;
+/**
+ * cahier « Je parle » (24/10/2026) : carnet, étapes, pages ; chargé à la première ouverture, jamais préchargé (garde
+ * dédiée)
+ */
+const BUDGET_PARLER = 16 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 const BUDGET_RIWAYA_FONT = 1024 * 1024;
 /** page d'accueil de l'élève (« Mon arabe », onglet Arabe ; la première qu'il ouvre) */
@@ -133,6 +138,17 @@ const cahList = (() => {
   }
 })();
 const swCah = /cahier\.json/.test(swSrc);
+// 24/10/2026 : cahier « Je parle », chargé à la première ouverture (vite.config.ts : parlerALaDemande)
+const parList = (() => {
+  try {
+    return JSON.parse(readFileSync(join(client, '_app', 'parler.json'), 'utf8')).map((f) =>
+      f.slice(1),
+    );
+  } catch {
+    return [];
+  }
+})();
+const swPar = /parler\.json/.test(swSrc);
 const grpBr = (list) => sum(list, (f) => br(join(client, f)));
 const staffBr = grpBr(groups.personnel);
 const raresBr = grpBr(groups.rares);
@@ -141,10 +157,11 @@ const vivBr = grpBr(vivList);
 const lecBr = grpBr(lecList);
 const vidBr = grpBr(vidList);
 const cahBr = grpBr(cahList);
+const parBr = grpBr(parList);
 // Madjaliss : pages de l'élève gardées au premier usage — déduites SEULEMENT si le service worker les exclut
 const swPremier = /'premierUsage'/.test(swSrc);
 const premierBr = swPremier
-  ? grpBr((groups.premierUsage ?? []).filter((f) => !cahList.includes(f)))
+  ? grpBr((groups.premierUsage ?? []).filter((f) => !cahList.includes(f) && !parList.includes(f)))
   : 0;
 // catalogues de textes PRÉCHARGÉS par le service worker (liste STUDENT_TEXTS) : comptés pour l'élève
 const studentTexts = [
@@ -152,7 +169,7 @@ const studentTexts = [
 ].map((m) => m[1]);
 const textsBr = sum(studentTexts, (p) => br(join(root, 'static', p)));
 const eleveCode =
-  jsBr + cssBr - staffBr - raresBr - enLigneBr - vivBr - lecBr - vidBr - cahBr - premierBr;
+  jsBr + cssBr - staffBr - raresBr - enLigneBr - vivBr - lecBr - vidBr - cahBr - parBr - premierBr;
 const eleveBr = eleveCode + textsBr;
 
 // JavaScript + CSS INITIAUX par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises
@@ -252,13 +269,14 @@ const lines = [
   `| Pages du personnel, NON préchargées (${groups.personnel.length} fichiers${swGroups ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(staffBr)} |`,
   `| Pages rares, en ligne seulement, NON préchargées (${groups.rares.length} fichiers) | ${ko(raresBr)} |`,
   `| Modules à la demande qui ont besoin du réseau, NON préchargés (${groups.enLigne.length} fichiers) | ${ko(enLigneBr)} |`,
-  `| Pages de l'élève gardées au premier usage (Madjaliss), NON préchargées (${(groups.premierUsage ?? []).length} fichiers${swPremier ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(grpBr(groups.premierUsage ?? []))} |`,
+  `| Pages de l’élève gardées au premier usage (Madjaliss, cahier « Je parle »), NON préchargées (${(groups.premierUsage ?? []).length} fichiers${swPremier ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(grpBr(groups.premierUsage ?? []))} |`,
   `| Leçons vivantes, à la demande (${vivList.length} fichiers${swViv ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(vivBr)} (≤ ${ko(BUDGET_VIVANTE)}) |`,
   `| Lecteur audio des phrases, à la demande au premier appui sur « Écouter » (${lecList.length} fichiers${swLec ? '' : ' — service worker NE L’EXCLUT PAS'}) | ${ko(lecBr)} (≤ ${ko(BUDGET_LECTEUR)}) |`,
   `| Vidéos vivantes, à la demande au premier appui sur « Voir en vidéo » : lecteur v2 et générateur (${vidV2.length} fichiers${swVid ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(vidV2Br)} (≤ ${ko(BUDGET_VIDEO)}) |`,
   `| Vidéos vivantes : lecteur v1 et générateur (interrupteur \`video_v2\` coupé ; ${vidV1.length} fichiers) | ${ko(vidV1Br)} (≤ ${ko(BUDGET_VIDEO)}) |`,
   `| Vidéos vivantes : tous les fichiers du groupe (deux lecteurs, jamais chargés ensemble) | ${ko(vidBr)} |`,
   `| Cahier de lecture, à la demande à la première ouverture (${cahList.length} fichiers${swCah ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(cahBr)} (≤ ${ko(BUDGET_CAHIER)}) |`,
+  `| Cahier « Je parle », à la demande à la première ouverture (${parList.length} fichiers${swPar ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(parBr)} (≤ ${ko(BUDGET_PARLER)}) |`,
   `| Total JS + CSS de toutes les pages (mesuré, non bloquant) | ${ko(jsBr + cssBr)} |`,
   `| dont CSS | ${ko(cssBr)} |`,
   `| Service worker | ${ko(swBr)} |`,
@@ -292,6 +310,7 @@ const fails = [
     'vidéos vivantes (à la demande)',
   ],
   [!swCah || !cahList.length || cahBr > BUDGET_CAHIER, 'cahier (à la demande)'],
+  [!swPar || !parList.length || parBr > BUDGET_PARLER, 'cahier « Je parle » (à la demande)'],
 ].filter(([bad]) => bad);
 if (fails.length) {
   console.error(`Budget dépassé : ${fails.map(([, w]) => w).join(', ')}`);

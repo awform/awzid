@@ -44,6 +44,14 @@ function cahierALaDemande(): Plugin {
   return aLaDemande('cahier', /[\\/](lib[\\/]cahier[\\/]|routes[\\/]cahier[\\/])/);
 }
 
+/**
+ * 24/10/2026 — CAHIER « JE PARLE » (`lib/cahier-parler/` et sa page `/cahier-parler/[niveau]`) : chargé à la première
+ * ouverture, jamais préchargé ; liste dans `/_app/parler.json` (service worker, budget : garde dédiée).
+ */
+function parlerALaDemande(): Plugin {
+  return aLaDemande('parler', /[\\/](lib[\\/]cahier-parler[\\/]|routes[\\/]cahier-parler[\\/])/);
+}
+
 function aLaDemande(nom: string, VIV: RegExp): Plugin {
   return {
     name: `awzid-${nom}-a-la-demande`,
@@ -150,6 +158,7 @@ export default defineConfig({
     lecteurALaDemande(),
     videoALaDemande(),
     cahierALaDemande(),
+    parlerALaDemande(),
   ],
   build: {
     rolldownOptions: {

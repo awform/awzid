@@ -31,6 +31,7 @@ export const FONCTION_CLES = [
   'video_vivante',
   'video_v2',
   'cahier_lecture',
+  'cahier_parler',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -109,6 +110,10 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // Coupé par défaut (production, bêta), ALLUMÉ sur la démonstration ; couper l'interrupteur laisse le niveau et les
   // leçons entiers, sans cahier.
   cahier_lecture: { defaut: 'off', demo: 'on' },
+  // Cahier « Je parle » d'Adultes 2 (24/10/2026) : carnet de voyageur (étapes, cartes de phrases, conversations en
+  // bulles, « À toi de parler », antisèche, révision, bilan), chargé à la demande. COUPÉ par défaut partout (démonstration
+  // comprise) ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur laisse le niveau entier.
+  cahier_parler: { defaut: 'off' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

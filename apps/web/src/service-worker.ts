@@ -115,19 +115,24 @@ async function horsEleve(): Promise<Set<string>> {
  * et gardé avec l'audio d'un niveau téléchargé ; il ne pèse donc pas sur l'appareil de l'élève avant son premier usage.
  * Vidéos vivantes (`/_app/video.json`) : même traitement (premier appui sur « Voir en vidéo », niveau téléchargé).
  * Cahier de lecture (`/_app/cahier.json`, 20/10/2026) : même traitement (première ouverture, niveau téléchargé).
+ * Cahier « Je parle » (`/_app/parler.json`, 24/10/2026) : même traitement (première ouverture).
  */
 async function vivante(): Promise<Set<string>> {
   const listes = await Promise.all(
-    ['/_app/vivante.json', '/_app/lecteur.json', '/_app/video.json', '/_app/cahier.json'].map(
-      async (u) => {
-        try {
-          const r = await fetch(u, { cache: 'no-store' });
-          return r.ok ? ((await r.json()) as string[]).map(String) : [];
-        } catch {
-          return [];
-        }
-      },
-    ),
+    [
+      '/_app/vivante.json',
+      '/_app/lecteur.json',
+      '/_app/video.json',
+      '/_app/cahier.json',
+      '/_app/parler.json',
+    ].map(async (u) => {
+      try {
+        const r = await fetch(u, { cache: 'no-store' });
+        return r.ok ? ((await r.json()) as string[]).map(String) : [];
+      } catch {
+        return [];
+      }
+    }),
   );
   // tracés des lettres des vidéos vivantes : chargés au premier tracé (gardés ensuite), jamais préchargés
   return new Set([...listes.flat(), '/video/traits.json']);
