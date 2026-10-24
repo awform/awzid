@@ -1,0 +1,30 @@
+{
+  "_note": "Cahiers « Je parle » (niveaux 2 à 10) — habillage des étapes, en données (DESIGN_CAHIERS_PARLER.md) : nom français du thème, pictogramme d'OBJET (jamais un être animé) et phrase d'accroche « À la fin de cette étape, je sais… ». L'arabe des phrases vient seulement de <niveau>.json. Clés de pictogrammes : celles de apps/web/src/lib/cahier-parler/Picto.svelte.",
+  "antiseche_ar": "كَلِمَاتٌ شَائِعَةٌ",
+  "themes": {
+    "saluer": { "fr": "Saluer", "picto": "porte", "accroche": "saluer, répondre au salut et demander des nouvelles." },
+    "se_presenter": { "fr": "Se présenter", "picto": "carte", "accroche": "dire qui je suis, d'où je viens et ce que j'étudie." },
+    "travail": { "fr": "Le travail", "picto": "sacoche", "accroche": "dire mon métier et demander celui des autres." },
+    "lieux": { "fr": "Le quartier", "picto": "panneau", "accroche": "demander ce qu'est un bâtiment et où se trouve un lieu." },
+    "mosquee": { "fr": "La mosquée", "picto": "lanterne", "accroche": "parler de la mosquée et de la prière." },
+    "logement": { "fr": "Le logement", "picto": "cle", "accroche": "chercher un logement et parler de ma maison." },
+    "objets": { "fr": "Les objets", "picto": "stylo", "accroche": "demander à qui est un objet et répondre." },
+    "voyage": { "fr": "Le voyage", "picto": "valise", "accroche": "me débrouiller à l'aéroport et parler de mon voyage." },
+    "sante": { "fr": "La santé", "picto": "trousse", "accroche": "dire où j'ai mal et prendre des nouvelles d'un malade." },
+    "famille": { "fr": "La famille", "picto": "maison", "accroche": "parler de ma famille et de mes proches." },
+    "librairie": { "fr": "La librairie", "picto": "livre", "accroche": "demander un livre et son prix." },
+    "marche": { "fr": "Le marché", "picto": "panier", "accroche": "acheter, demander un prix et discuter le prix." },
+    "administration": { "fr": "La mairie", "picto": "document", "accroche": "faire une démarche simple à la mairie." },
+    "heure": { "fr": "L'heure", "picto": "horloge", "accroche": "demander l'heure et dire à quelle heure on se voit." },
+    "temps_libre": { "fr": "Le temps libre", "picto": "ballon", "accroche": "proposer une sortie et parler de mes loisirs." },
+    "telephone": { "fr": "Le téléphone", "picto": "telephone", "accroche": "parler au téléphone." },
+    "recevoir": { "fr": "Recevoir", "picto": "tasse", "accroche": "accueillir un invité et lui offrir à boire." },
+    "repas": { "fr": "Les repas", "picto": "plat", "accroche": "inviter à manger et parler du repas." },
+    "politesse": { "fr": "La politesse", "picto": "fleur", "accroche": "remercier, m'excuser et répondre poliment." },
+    "fete": { "fr": "La fête", "picto": "lune", "accroche": "souhaiter une bonne fête et raconter la journée de fête." },
+    "journee": { "fr": "Ma journée", "picto": "soleil", "accroche": "raconter ce que j'ai fait dans la journée." },
+    "classe": { "fr": "La classe", "picto": "tableau", "accroche": "parler avec le professeur et les autres élèves." },
+    "entraide": { "fr": "L'entraide", "picto": "colis", "accroche": "proposer mon aide et participer à une journée solidaire." },
+    "bilan": { "fr": "Le bilan", "picto": "etoile", "accroche": "me présenter et répondre à des questions sur moi." }
+  }
+}

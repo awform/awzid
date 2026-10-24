@@ -45,3 +45,7 @@ apps/web/src/lib/server/mutun/
 # (node apps/web/scripts/cahier-donnees.mjs), texte arabe recopié tel quel, contrôlées par test
 packages/content/data/cahier/
 apps/web/static/cahier-data/
+
+# Cahier « Je parle » (24/10/2026) : source unique recopiée VERBATIM (générateur du cahier) et habillage des étapes ;
+# données de l'application générées dans apps/web/static/cahier-data/ (déjà ignoré ci-dessus)
+packages/content/data/cahier-parler/
