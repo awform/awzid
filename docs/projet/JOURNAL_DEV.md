@@ -8,19 +8,39 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+
 <!-- reprise-cahier-parler -->
 
 ---
 
 ## Cahier Je parle — reprise
 
-*Note de reprise (24/10/2026, mise à jour au fil du travail). Branche `cahier-parler-wip` (worktree `~/wt/cahier-parler`), partie de `main` 2b64fbc. **Rien fusionné, rien déployé, aucun audio installé.** Détail : entrée « 24/10/2026 — Cahier « Je parle » d'Adultes 2 » ci-dessous.*
+*Note de reprise (24/10/2026, fin de journée). Branche `cahier-parler-wip` (worktree `~/wt/cahier-parler`), partie de `main` 2b64fbc. **Rien fusionné, rien déployé, aucun audio installé.** Détail : entrée « 24/10/2026 — Cahier « Je parle » d'Adultes 2 » ci-dessous.*
 
-- **Fait** : données, interrupteur `cahier_parler` (coupé par défaut, « canal bêta » depuis l'administration), page `/cahier-parler/[niveau]` à la demande, accès du niveau ad2, lecteur discret, tests unitaires (`parler.test.ts`), e2e `cahier-parler.spec.ts` (10 réussis, 2 captures ignorées hors `CAHIER_PARLER_CAPTURES`), svelte-check et eslint 0 erreur, captures 390/1280 clair/sombre (`application/design/cahiers_parler/captures_app_n2/`).
-- **En cours au moment de cette note** : unitaires complets, typecheck, lint et e2e complète (`/tmp/cp-full.sh` sur la VM ; journaux `/tmp/cp-unit.log`, `/tmp/cp-e2e-complete.log`).
-- **Pour fusionner et mettre en ligne** : relecture du chef de projet ; rebase sur `main` ; installer l'archive `maj-audio-cahier-parler-ad2.tgz` (les textes du cahier doivent porter le niveau `ad2` dans `AW.audioInfo` pour figurer dans `/api/v1/lecons-audio/niveaux/ad2`) ; déployer ; régler `cahier_parler` sur « beta » dans l'administration.
-- **Tuteur** : bouton « Parler avec le tuteur » désactivé (aucun point d'entrée ne reçoit une consigne de jeu de rôle) ; lien à faire.
+- **Fait et vérifié** : données, interrupteur `cahier_parler` (coupé par défaut, « canal bêta » depuis l'administration), page `/cahier-parler/[niveau]` à la demande, accès du niveau ad2, lecteur discret, unitaires, e2e ciblée et complète, AA, captures.
+- **Reste pour fusionner** : relecture du chef de projet, rebase sur `main` et nouvelle mesure du poids (marge ≥ 3 Ko).
+- **Reste pour mettre en ligne** : installer `maj-audio-cahier-parler-ad2.tgz` (textes du cahier marqués `ad2`), déployer, régler l'interrupteur sur « beta ».
+- **Lien à faire** : le bouton « Parler avec le tuteur » (désactivé) attend un point d'entrée du tuteur IA qui reçoive une consigne de jeu de rôle.
 <!-- /reprise-cahier-parler -->
+
+---
+
+## 24/10/2026 — Cahier « Je parle » d'Adultes 2 dans l'application (interrupteur `cahier_parler`, coupé par défaut), branche `cahier-parler-wip` ; NON fusionné, NON déployé
+
+Départ : `main` 2b64fbc. Rien fusionné, rien déployé, **aucun audio installé** (l'archive `maj-audio-cahier-parler-ad2.tgz` sera installée par le chef de projet). Sources : `application/design/cahier_parler_ad2/donnees/cahier_parler_ad2.json` (140 phrases, 25 conversations, corrigées par le référent), design `application/design/cahiers_parler/DESIGN_CAHIERS_PARLER.md` et `cahier_parler_ad2/apercu.html`.
+
+- **Interrupteur `cahier_parler`** (registre) : `{ defaut: 'off' }`, **démonstration comprise** ; l'administrateur le règle sur « beta » (canal bêta seulement) ; libellé `fn.cahier_parler` (5 langues). Couper l'interrupteur laisse le niveau entier.
+- **Données** (même architecture que le cahier de lecture) : `packages/content/data/cahier-parler/ad2.json` (copie exacte, SHA-256 714759aa…) et `themes.json` (habillage en données : nom du thème, pictogramme d'OBJET, accroche « À la fin de cette étape, je sais… », en-tête arabe de l'antisèche) → `node apps/web/scripts/cahier-parler-donnees.mjs` → `static/cahier-data/parler-ad2.json` (113 Ko, 22 Ko compressé ; `/cahier-data/` jamais préchargé) et `src/lib/cahier-parler-niveaux.ts`. Exclus de Prettier, contrôlés par test (arabe octet pour octet).
+- **Carnet de voyageur** (`/cahier-parler/[niveau]`, `?e=e02&p=P019`) : 5 parties (couleur d'accent : bandeau et cercle de numéro, texte ivoire, AA), **30 étapes** (24 étapes de leçon, dans l'ordre d'ad2, reliées par un chemin pointillé ; une fin par partie : 2 révisions, situation libre, bilan ; la grille finale). Ouverture d'étape : bandeau à motif géométrique, pictogramme d'objet en trait doré, titre, accroche, phrase du jour (arabe sur sa ligne). Pages : cartes de phrases (forme pour un homme puis pour une femme, étiquette « à qui je parle », **6 cases** gardées), conversation en bulles (**A verte à droite, B dorée à gauche**, rôle sans visage), « À toi de parler » (filet doré, scénario, phrases utiles), **antisèche** en tableau à deux colonnes (en-tête « كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles », lignes alternées ; arabe au-dessus de la traduction sous 34 rem), révision floutée (« Voir l'arabe »), bilan oui / presque / pas encore avec **une étoile dorée par thème réussi**. Guides et index du livre imprimé : remplacés par l'encadré « Comment travailler ce cahier » et les antisèches.
+- **Audio** : un toucher sur une phrase, une réplique ou une ligne d'antisèche la joue dans le **lecteur discret** (famille « l », `leconsSource`, phrase précédente et suivante = celles de la page) ; clé `audioFileId` = `Get-AudioKey` (test sur 4 textes calculés par `awform/audio/audio-cle.ps1`) ; fichier pris dans l'index audio du niveau `ad2` (`/api/v1/lecons-audio/niveaux/ad2`) : **les textes du cahier doivent porter `niv: ad2` dans `AW.audioInfo` de l'archive**. Sans fichier : la phrase s'affiche sans bouton, et la page le dit.
+- **Tuteur** : aucun point d'entrée du tuteur IA ne reçoit une consigne de jeu de rôle (`/tuteur/[unit]` suit le dialogue de la leçon) → bouton « Parler avec le tuteur » **désactivé** avec une note à l'élève. **Lien à faire** : un scénario « consigne + personnages A/B + unité » dans l'API `tuteur-ia` (garde-fous et `PROMPT_VERSION` à revoir), puis activer le bouton. Consigne affichée sans arabe sur la ligne du français (marqueurs ①, ② ; formes arabes chacune sur sa ligne).
+- **Poids** : module à la demande (`/_app/parler.json`, **garde dédiée 16 Ko** dans `budget.mjs`, mesure 10,7 Ko), page au « premier usage » (`groupes.mjs`, jamais préchargée) ; accès du niveau au balisage minimal ; **marge de l'appareil élève 3,1 Ko (≥ 3)** (main mesuré à 3,2 Ko le même jour ; l'écart de hachage des fichiers fait varier la mesure de ± 0,2 Ko).
+- **Textes** : `lib/cahier-parler/textes-fr.json` (embarqué, 60 textes, tutoyés) ; titre de l'accès dans `fr-arabe` ; brouillons en/es/de/ar (`A_RELIRE.md`).
+- **À noter pour la relecture** : 3 étapes ont moins de 8 lignes d'antisèche (e07 : 7, e10 : 7, e25 : 6 ; les données n'en ont pas plus) ; les données ne donnent pas encore `role_A`/`role_B` ni de pictogramme de rôle (les bulles disent « A · un homme ») ; thème de l'étape = celui de sa conversation (sinon le plus fréquent de ses phrases).
+- **Vérifications** (sous `flock`, ports 3460/4460) : svelte-check, eslint, typecheck, prettier : 0 erreur ; unitaires **3 136 réussis, 11 ignorés, 0 échec** (dont `parler.test.ts` : 16) ; e2e `cahier-parler.spec.ts` **10/10** (relancée deux fois de suite : 20/20 ; interrupteur coupé, canal bêta, phrase jouée dans le lecteur, 6 cases, antisèche, bulles, tuteur, révision, bilan et étoiles, AA clair et sombre sur 8 écrans, cibles ≥ 44 px, clavier) ; `cahier.spec.ts` inchangée : réussie ; **e2e complète** (`--retries=1 --workers=3`, 37,8 min, avant les deux dernières retouches d'affichage) : 884 réussis, 168 ignorés, 1 instable (`f5-reseau:181`), 1 échec de charge (`a21b:195`, connu) **réussi relancé seul**.
+- **Captures** 390 et 1280 px, clair et sombre, 8 écrans et planche : `application/design/cahiers_parler/captures_app_n2/`.
+- **Pour fusionner et mettre en ligne** : relecture ; rebase sur `main` (budget à remesurer) ; installer l'archive audio ; déployer ; régler `cahier_parler` sur « beta » dans l'administration.
+
 
 ---
 
