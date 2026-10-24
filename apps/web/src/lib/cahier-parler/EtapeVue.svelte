@@ -118,8 +118,11 @@
     <header class="ouverture">
       <div class="bande">
         <p class="sur">
-          <Bidi text={t('parler.partie', { n: etape.partie || '' })} />{#if partie}
-            · <Bidi text={partie.nom} />{/if}
+          <Bidi
+            text={partie
+              ? `${t('parler.partie', { n: etape.partie })} · ${partie.nom}`
+              : t('parler.partie', { n: etape.partie || '' })}
+          />
         </p>
         <span class="grand-picto"><Picto nom={etape.picto} taille={64} /></span>
       </div>
@@ -384,6 +387,7 @@
     pointer-events: none;
   }
   .grand-picto {
+    flex-shrink: 0;
     position: relative;
     z-index: 1;
     display: grid;
