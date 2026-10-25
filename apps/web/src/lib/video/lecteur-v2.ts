@@ -1401,6 +1401,8 @@ function creer(opt: OuvrirOptions): () => void {
         const e = ajoute(
           `${lat(q.avant)}${lat(q.apres)}<div class="trou" dir="rtl">${ar(q.avant)}<span class="case"></span>${ar(q.apres)}</div>${fr(q.fr, true)}${opts(q.options)}`,
         );
+        // indication du livre en arabe : dite avant la question
+        if (q.dit?.son && jouable) await dire(q.dit, e.querySelector('.frh .ar'));
         return choix(e, q.options, q.reponse, async () => {
           if (q.reponse)
             e.querySelector('.case')!.innerHTML = RUN.test(q.reponse)
