@@ -201,7 +201,7 @@
     {#if etape === 'pret' || etape === 'resultat'}
       <button type="button" class="primary micro" onclick={commencer} data-testid="rv-commencer"
         ><Icon name="oreille" size={28} /><span
-          >{t(etape === 'resultat' ? 'rv.encore' : 'rv.commencer')}</span
+          ><Bidi text={t(etape === 'resultat' ? 'rv.encore' : 'rv.commencer')} /></span
         ></button
       >
     {:else if etape === 'ecoute'}
@@ -232,9 +232,11 @@
           </p>
         {:else}
           <h2 tabindex="-1" bind:this={titreRes} data-testid="rv-titre-resultat">
-            {vue.principales.length > 1
-              ? t('rv.ex_aequo', { n: vue.principales.length })
-              : t('rv.trouve')}
+            <Bidi
+              text={vue.principales.length > 1
+                ? t('rv.ex_aequo', { n: vue.principales.length })
+                : t('rv.trouve')}
+            />
           </h2>
           <ul class="cartes" data-testid="rv-principales">
             {#each vue.principales as c (`${c.s}:${c.principal}`)}<li>{@render carte(c)}</li>{/each}

@@ -327,7 +327,7 @@
               class="grand"
               onclick={() => commencer(true)}
               data-testid="ecoute-direct"
-              >{t(etat.shazam ? 'ec.mode_suivi' : 'ec.mode_direct')}</button
+              ><Bidi text={t(etat.shazam ? 'ec.mode_suivi' : 'ec.mode_direct')} /></button
             >
             {#if etat.shazam}<p class="small muted" data-testid="suivi-aide">
                 <Bidi text={t('ec.suivi_aide')} />
@@ -370,7 +370,7 @@
             <Bidi text={t(`ec.type_${dernierEcart.type}`, { n: dernierEcart.a })} />
           </p>
           {#if attendu.length}
-            <p class="small muted">{t('ec.attendu', { n: attendu.length })}</p>
+            <p class="small muted"><Bidi text={t('ec.attendu', { n: attendu.length })} /></p>
             <p class="att quran-text" lang="ar" dir="rtl" data-testid="suivi-attendu">
               {attendu.map((m) => m.texte).join(' ')}
             </p>
