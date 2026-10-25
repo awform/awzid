@@ -39,9 +39,12 @@
     tradLang = 'fr',
     readOnly = false,
     word = null,
+    connus = null,
   }: {
     /** lecture guidée sans son : mot allumé */
     word?: { a: number; w: number } | null;
+    /** « Mots du Coran » : mots reconnus d'un verset (classe `mc` = un soulignement, jamais une retouche du texte) */
+    connus?: ((s: number, a: number, ws: string[]) => boolean[] | undefined) | null;
     /**
      * A8 — autre riwāya que Ḥafṣ : famille de la police du Complexe ; le texte du Complexe est affiché TEL QUEL
      * (signe de fin de verset numéroté compris), sans basmala séparée, tanwīn, tajwid ni masquage.
@@ -101,6 +104,7 @@
       ? { basmala: '', rest: v.text }
       : splitBasmala(v.s, v.a, v.text, basmala)}
     {@const ws = parts.rest.split(' ')}
+    {@const kn = connus?.(v.s, v.a, ws)}
     {@const m = riwaya || revealed.has(`${v.s}:${v.a}`) || v.a < maskFrom ? 0 : mask}
     {@const vis = visibleWords(ws.length, m)}
     {@const tv = tajwid && !riwaya ? verseRuns(v, basmala, tajwid) : null}
@@ -147,7 +151,7 @@
               voile: boolean,
               on: boolean,
               runs: Run[] | null,
-            )}<span class="w" class:voile class:on data-w={i}
+            )}<span class="w" class:voile class:on class:mc={kn?.[i]} data-w={i}
                 ><span class="t"
                   >{#if w === HIZB}<Hizb sign={w} />{:else if runs}<TajwidRuns
                       {runs}

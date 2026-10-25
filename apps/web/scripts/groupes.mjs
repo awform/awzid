@@ -42,7 +42,13 @@ export const RARE_ROUTES = [
 /** Pages de l'élève gardées au premier usage (hors ligne ensuite), jamais préchargées. */
 // 24/10/2026 : cahier « Je parle » (facultatif ; son code et ses données sont aussi chargés à la demande)
 // 25/10/2026 : « La prière de A à Z » (rubrique de « Vivre l'islam » ; son code et ses données sont aussi chargés à la demande)
-export const PREMIER_USAGE_ROUTES = ['/madjaliss', '/cahier-parler', '/vivre/priere'];
+// 25/10/2026 : « Mots du Coran » (recherche par mot et par racine, fiche racine ; interrupteur `coran_mots`)
+export const PREMIER_USAGE_ROUTES = [
+  '/madjaliss',
+  '/cahier-parler',
+  '/vivre/priere',
+  '/coran/mots',
+];
 /**
  * Modules de l'élève chargés À LA DEMANDE et gardés au premier usage (hors ligne ensuite), jamais préchargés :
  * écrans de la refonte du 19/10/2026 (interrupteur `design_v4`) — sans eux (hors ligne avant le premier usage),
@@ -52,6 +58,8 @@ export const PREMIER_USAGE_MODULES = [
   /src\/lib\/v4\/ecrans\.ts$/,
   // 25/10/2026 : carte d'entrée de « La prière de A à Z » (importée à la demande par la page « Vivre l'islam »)
   /src\/lib\/priere\/carte\.ts$/,
+  // 25/10/2026 : « Mots du Coran » (bande « Je reconnais X % des mots » du lecteur, importée à la demande quand `coran_mots` est ouvert)
+  /src\/lib\/coran-mots\/index\.ts$/,
 ];
 /** Modules chargés à la demande ET qui ont besoin du réseau (chemin du fichier source). */
 export const EN_LIGNE_MODULES = [
@@ -71,6 +79,8 @@ export const EN_LIGNE_MODULES = [
   /src\/routes\/inscription\/AccueilBeta\.svelte$/,
   // A5 : « Réciter et vérifier » (le service d'écoute est sur le serveur) : panneau et bilans, à la demande
   /src\/lib\/ecoute\/(PanneauEcoute|ARevoirEcoute)\.svelte$/,
+  // 25/10/2026 (allègement) : le bouton lui-même, derrière une enveloppe de quelques octets (BoutonEcoute.svelte)
+  /src\/lib\/ecoute\/BoutonEcouteCorps\.svelte$/,
   // hifẓ complet : écran enfant (l'écoute du récitateur choisi par le parent a besoin du réseau), à la demande
   /src\/lib\/hifz-outils\/Enfant\.svelte$/,
   // D2 : rubriques de « Compte » qui écrivent sur le serveur (compte, sécurité, données, classe) et notifications

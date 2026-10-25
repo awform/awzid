@@ -48,6 +48,7 @@ import { registerEpreuves } from './epreuves.js';
 import { registerSignalements } from './signalements.js';
 import { registerEcoleF2 } from './ecole-f2.js';
 import { registerParcoursA27 } from './parcours-a27.js';
+import { registerCoranMots } from './coran-mots.js';
 import { registerSereinA39 } from './serein-a39.js';
 import { registerCertificatAutonome } from './certificat-autonome.js';
 import { registerVivre } from './vivre.js';
@@ -101,6 +102,8 @@ export interface AppOptions {
   mushafExactDir?: string | null;
   /** A34 : dossier des polices QCF du Complexe (installer-polices.sh) */
   qcfFontsDir?: string | null;
+  /** mots du Coran (interrupteur coran_mots, tests) : dossier des données dérivées ; sinon @awform/coran-mots-data */
+  coranMotsDir?: string;
   /** audio des leçons (A3, tests) ; sinon AWFORM_LECONS_AUDIO_DIR ; null : non servi */
   leconsAudioDir?: string | null;
   /** DÉMONSTRATION seulement (server.ts : AWFORM_DEMO=1 et garde-fou) : connexion simplifiée */
@@ -361,6 +364,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   });
   // A27 : parcours par niveau (espace, accueil, écriture, mots du Coran, positionnement, passage)
   registerParcoursA27(app, db, edition);
+  // mots du Coran : « Je reconnais X % des mots », recherche par mot et par racine, fiche racine (interrupteur coran_mots)
+  registerCoranMots(app, db, edition, opts.coranMotsDir);
   // A39 : mode serein (mode d'évaluation, récapitulatif, niveau suivant sans épreuve, notions fragiles)
   registerSereinA39(app, db, edition);
   // A39 (D-A39 4) : certificat individuel de l'adulte autonome (même modèle, même vérification)

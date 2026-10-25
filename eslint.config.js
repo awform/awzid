@@ -32,6 +32,8 @@ export default ts.config(
       '**/playwright-report/',
       'packages/db/migrations/',
       'apps/web/static/',
+      // mots du Coran : données GPL générées et leur script (hors du code de l'application)
+      'packages/coran-mots-data/',
     ],
   },
   js.configs.recommended,

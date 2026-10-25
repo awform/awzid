@@ -1,0 +1,17 @@
+/*
+ * « Mots du Coran » : seul style ajouté au texte coranique — un soulignement doré sous les mots que l'élève reconnaît.
+ * Le texte, ses espaces et ses caractères ne changent pas d'un octet : c'est une classe posée sur le mot (`mc`) par le
+ * lecteur quand le réglage « Souligner les mots que je reconnais » est allumé.
+ */
+.quran-text .w.mc {
+  text-decoration: underline;
+  text-decoration-color: var(--mp-gold);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.42em;
+  text-decoration-skip-ink: none;
+}
+@media (forced-colors: active) {
+  .quran-text .w.mc {
+    text-decoration-color: LinkText;
+  }
+}

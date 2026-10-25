@@ -207,6 +207,15 @@
   let rwError = $state(false);
   const isRw = $derived(rw !== HAFS);
   const rwDef = $derived(riwayaText(rw));
+  // « Mots du Coran » (interrupteur coran_mots) : bande « Je reconnais X % des mots », mots reconnus soulignés ; module à la demande
+  let cm = $state<typeof import('$lib/coran-mots') | null>(null);
+  $effect(() => {
+    if (fn('coran_mots') && !cm)
+      void chargerModule(() => import('$lib/coran-mots')).then(
+        (m) => (cm = m),
+        () => undefined,
+      );
+  });
 
   const starts = $derived(isRw ? (rwIndex?.pages ?? null) : meta ? pageStarts(meta) : null);
   const lengths = $derived(isRw ? (rwIndex?.counts ?? []) : meta ? suraLengths(meta) : []);
@@ -1769,6 +1778,7 @@
 {/snippet}
 
 {#snippet bandeaux()}
+  {#if cm && !isRw}<cm.Bande sura={activeSura} />{/if}
   {#if notice}
     <p class="avis" role="status" data-testid="avis-lecteur">
       <Icon name="info" size={18} /><span><Bidi text={notice} /></span>
@@ -2091,6 +2101,7 @@
                   compact={double}
                   exact={exactOf(n)}
                   onpick={pick}
+                  connus={cm?.connus}
                 />
               {/each}
             </div>
@@ -2128,6 +2139,7 @@
           tradLang={trad?.lang ?? 'fr'}
           readOnly={prefs.readOnly || guiding}
           {word}
+          connus={cm?.connus}
           onpick={(a, el) => pick(activeSura, a, el)}
         />
         <div class="sura-nav">

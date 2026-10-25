@@ -36,6 +36,7 @@ export const FONCTION_CLES = [
   'khatma_wird',
   'mutashabihat',
   'hifz_classe',
+  'coran_mots',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -137,6 +138,12 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // suppression automatique), validation de la portion par le maître, suivi pour les parents. COUPÉ par défaut partout ; l'administrateur
   // l'ouvre au « canal bêta » ; couper l'interrupteur laisse l'espace enseignant entier, sans cet outil.
   hifz_classe: { defaut: 'off' },
+  // « Mots du Coran » (25/10/2026) : "Je reconnais X % des mots de cette sourate" dans le lecteur (calculé sur l'appareil d'après les leçons
+  // réellement faites), mots connus soulignés (réglage de l'élève), recherche par mot et par racine, fiche racine (le sens
+  // seulement une fois VALIDÉ). Données dérivées du Quranic Arabic Corpus (GPL v3) servies à la demande par l'API. COUPÉ par
+  // défaut partout (démonstration comprise) ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur laisse le
+  // lecteur du Coran entier, sans pourcentage ni soulignement.
+  coran_mots: { defaut: 'off' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

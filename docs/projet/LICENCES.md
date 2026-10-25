@@ -150,3 +150,19 @@ n'est gardée). Les poids ne sont pas dans le dépôt ni dans l'image : montés 
 | Copie | **aucune** : réponses gardées 24 h en mémoire du serveur ; fichiers lus sur le réseau de QF (`media-src` limité à ses hôtes) ; pas de téléchargement hors ligne, pas de relais d’école |
 | Crédit affiché | « Récitation : <nom> — écoute en ligne fournie par Quran Foundation (quran.foundation) » sur chaque récitateur, étiquette « En ligne », page « Nos garanties » |
 
+## 10. Mots du Coran — Quranic Arabic Corpus 0.4, GNU GPL v3 (25/10/2026, interrupteur `coran_mots`)
+
+| Élément | Valeur |
+|---|---|
+| Œuvre | Analyse morphologique de chaque mot du Coran (racine, lemme, nature) : **Quranic Arabic Corpus**, version 0.4 |
+| Auteur | Kais Dukes, université de Leeds (aujourd'hui maintenu par l'équipe de quran.com) |
+| Adresse | http://corpus.quran.com (licence : http://corpus.quran.com/license.jsp ; fichier `quranic-corpus-morphology-0.4.txt`, miroir `cltk/arabic_morphology_quranic-corpus`) |
+| Licence | **GNU General Public License v3** + conditions de l'en-tête du fichier : usage permis dans tout site ou application si la source est indiquée avec un lien vers http://corpus.quran.com ; copie du fichier d'origine sans modification |
+| Étude et sources | `application\coran_mots\SOURCES_LICENCES.md` et `ETUDE.md` (verdict : la voie GPL est la seule complète et commerciale) |
+| Nature de ce que nous distribuons | **œuvre dérivée** : conversion de la translittération Buckwalter en écriture arabe, regroupement par mot de Tanzil, rattachement à la liste des 1 000 mots de nos livres et à la leçon qui les enseigne, découpage par sourate |
+| Où | **`packages/coran-mots-data/`** : un dossier de DONNÉES séparé du code, avec son propre `LICENSE` (texte intégral de la GPL v3), `NOTICE.md` (attribution et avis de modification, GPL § 5a), `README.md`, les sources compressées (`source/`) et le script de génération (`scripts/generer.mjs`). Le code de l'application (`apps/api/src/coran-mots*.ts`, `apps/web/src/lib/coran-mots/`) ne contient AUCUNE de ces données : il les lit à l'exécution (API `/api/v1/coran-mots/…`), sous licence propre du dépôt |
+| Crédit affiché | page `/coran/mots`, section « Sources et licences » (corpus.quran.com, tanzil.net, texte de la GPL v3), accessible depuis la bande du lecteur ; mention aussi dans le champ `attribution` de `data/meta.json` et dans chaque fiche racine servie par l'API |
+| Texte du Coran | jamais modifié : les formes de `data/mots.tsv` sont les jetons de Tanzil, octet pour octet (test `apps/api/test/coran-mots.test.ts`, 6 236 versets) ; la normalisation (voyelles, alif) ne sert qu'à comparer une recherche |
+| Sens des racines | rédigés par Awzid d'après ar-Rāghib, Ibn Fāris et Lisān al-ʿArab, **tous `a_verifier`** : l'API n'envoie jamais un sens non validé (test), l'application n'affiche que la famille de mots |
+
+**À faire avant la mise en vente** (pas avant la bêta) : (1) publier `packages/coran-mots-data/` dans un **dépôt public séparé** sous GPL v3 et mettre son adresse dans la section « Sources et licences » (GPL §§ 5c et 6) ; (2) faire envoyer par le client le message à l'équipe du corpus (texte prêt dans `SOURCES_LICENCES.md`) et garder leur réponse ; (3) faire relire par un juriste le point « fichiers de données séparés = pas de contamination du code » ; (4) valider les 200 sens de racines avec le référent puis un relecteur arabisant (dans l'étude : `redaction/sens_racines.tsv`, puis `scripts/racines.ps1` ; remplacer `source/racines.json.gz` par le nouveau `racines.json`, puis `node packages/coran-mots-data/scripts/generer.mjs` : le sens d'une racine validée est alors servi par la fiche).
