@@ -15,6 +15,9 @@
  *  - comparaison des mots : squelette sans voyelles ni alif (l'écriture du Muṣḥaf et l'écriture courante d'un même
  *    passage se rejoignent), PUIS contrôle des alifs : un alif écrit dans le texte là où le mot du Coran n'a ni alif
  *    ni alif suscrit ni hamza (قالت / قُلْتَ, فقال / فَقُلِ) n'est pas le même mot ;
+ *  - TEXTES AUTORISÉS (« zéro muet », décisions du référent du 24/10/2026) : un texte de la liste
+ *    `data/zero-muet/garde-autorises.json` (vocabulaire de moins de 4 mots, définitions, vers didactiques, textes du
+ *    livre) est lu par la synthèse même si l'une des règles ci-dessous le refuserait (`autorise`, `refusVoix`) ;
  *  - PRÉSENTÉ COMME CORAN, quelle que soit la longueur et même pour une formule de la liste : graphie du Muṣḥaf,
  *    citation référencée dans le texte (« … (49:10) » : texte de deux mots ou plus lu dans le Coran ; parenthèses
  *    ornées ﴿…﴾ toujours), verset(s) entier(s) de deux mots ou plus (récitation, dont la Basmala seule : 1:1),
@@ -25,6 +28,7 @@
 import { audioFileId, looksQuranic, quranCorpus, skeleton } from './audio-cle.js';
 import { motsDhikr } from './dhikr.js';
 import { HADITH_CITANTS } from './hadith-garde.js';
+import { GARDE_AUTORISES } from './garde-autorises.js';
 import { VIDEO_GARDE, VIDEO_RECITATION } from './video-garde.js';
 
 /** nombre de mots consécutifs du Coran qui font une citation */
@@ -254,12 +258,20 @@ export function estHadith(s: string): boolean {
   return (hadiths ??= new Set(HADITH_CITANTS.split(' ').filter(Boolean))).has(gardeCle(s));
 }
 
+/** clé d'un texte de la liste des textes autorisés (12 premiers chiffres hexadécimaux de sa clé audio) */
+export const autoriseCle = (s: string): string => (audioFileId(s) ?? '').slice(0, 12);
+let autorises: Set<string> | null = null;
+/** Texte que le référent a décidé « lu par la synthèse » (`data/zero-muet/garde-autorises.json`). */
+export const autorise = (s: string): boolean =>
+  (autorises ??= new Set(GARDE_AUTORISES.split(' ').filter(Boolean))).has(autoriseCle(s));
+
 /**
  * Raison de refuser la voix à un texte (null : voix permise).
  *  - « coran » : présenté comme Coran (jamais de voix, même pour une formule de la liste ou un hadith) ;
  *  - « citation » : 4 mots consécutifs du Coran ou plus, hors formule de dhikr, dans un texte qui n'est pas un hadith.
  */
 export function refusVoix(s: string, g: GardeCoran): 'coran' | 'citation' | null {
+  if (autorise(s)) return null;
   if (recitationCoran(s, g) || citationReferencee(s, g) || presenteParLesLivres(s)) return 'coran';
   if (basmalaRecitee(s)) return 'coran';
   if (citationInterdite(s, g)) return 'citation';

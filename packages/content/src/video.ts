@@ -483,6 +483,9 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
       return { ar: unmark(s) };
     }
     if (hasAudio(s)) return { ar: unmark(s), son: 1 };
+    // « zéro muet » : un texte sans lettre ni chiffre (« · », « … », « = », « ← », « (...) ») n'a rien à dire : il n'est pas
+    // un texte « à écouter » (jamais listé comme sans fichier audio)
+    if (!/[\p{L}\p{N}]/u.test(s)) return { ar: unmark(s) };
     if (!sansSon.has(s)) sansSon.set(s, ici);
     return { ar: unmark(s) };
   };
