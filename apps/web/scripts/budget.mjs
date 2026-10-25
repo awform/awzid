@@ -65,7 +65,14 @@ const BUDGET_VIDEO = 24 * 1024;
  * cahier de lecture (20/10/2026) : sommaire, pages, lecture guidée, minutes, bilans, atelier ; chargé à la première
  * ouverture du cahier, jamais préchargé (garde dédiée ; les gardes de l'appareil et des pages restent celles ci-dessous)
  */
-const BUDGET_CAHIER = 24 * 1024;
+const BUDGET_CAHIER = 32 * 1024;
+/*
+ * Garde portée de 24 à 32 Ko (25/10/2026, cahiers de lecture des enfants et des ados) : les jeux de fin de grille
+ * (« Construis le mot » avec glisser-déposer, « Trouve la syllabe », défi chrono, duel, médailles) sont des morceaux
+ * chargés À LA DEMANDE, à l'ouverture d'une page de grille d'en1 ou d'ado1 ; mesure au 25/10 : 28,0 Ko pour l'ensemble du
+ * groupe. Aucun effet sur l'appareil de l'élève avant la première ouverture du cahier (les gardes de l'appareil et des
+ * pages restent celles ci-dessous) ; passe d'allègement faite d'abord (aucune bibliothèque de glisser-déposer : 1,5 Ko).
+ */
 /**
  * cahier « Je parle » (24/10/2026) : carnet, étapes, pages ; chargé à la première ouverture, jamais préchargé (garde
  * dédiée)

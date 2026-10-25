@@ -6,12 +6,43 @@
  *    voix de synthèse (un élément « q » ne passe jamais par les fichiers de synthèse).
  *  - Lecture guidée : `lecture.ts`.
  */
-import { audioIdFor, playLessonAudio, stopLessonAudio, type LevelAudio } from '$lib/lecons-audio';
+import {
+  audioIdFor,
+  levelAudio,
+  playLessonAudio,
+  stopLessonAudio,
+  type LevelAudio,
+} from '$lib/lecons-audio';
 import { loadTracks } from '$lib/quran/reciters';
 import type { El } from './donnees';
 import { refVerset } from './lecture';
 
 export { lectureGuidee, type Pas } from './lecture';
+
+/**
+ * Niveaux d'audio d'un cahier : celui du livre (`ad1`) et, pour les cahiers des enfants et des ados (25/10/2026), celui
+ * du cahier lui-même (`cahier-lecture-en1`, `cahier-lecture-ado1` : syllabes, mots et textes propres au cahier).
+ */
+export const niveauxAudio = (niveau: string): string[] =>
+  /^(en|ado)\d+$/.test(niveau) ? [niveau, `cahier-lecture-${niveau}`] : [niveau];
+
+/** Réunit les fichiers de plusieurs niveaux d'audio (null si aucun n'est disponible). */
+export function fusionAudio(liste: ReadonlyArray<LevelAudio | null>): LevelAudio | null {
+  const ok = liste.filter((x): x is LevelAudio => !!x);
+  if (ok.length <= 1) return ok[0] ?? null;
+  const autorises = [...new Set(ok.flatMap((a) => a.autorises ?? []))];
+  return {
+    ...ok[0]!,
+    fichiers: new Set(ok.flatMap((a) => [...a.fichiers])),
+    octets: ok.reduce((s, a) => s + a.octets, 0),
+    credits: [...new Set(ok.flatMap((a) => a.credits))],
+    ...(autorises.length ? { autorises } : {}),
+  };
+}
+
+/** Audio du cahier d'un niveau (tous ses niveaux d'audio réunis). */
+export const audioDuCahier = (niveau: string): Promise<LevelAudio | null> =>
+  Promise.all(niveauxAudio(niveau).map((n) => levelAudio(n))).then(fusionAudio);
 
 /** récitateur conseillé aux débutants (récitation stockée du Complexe) */
 export const RECITATEUR = 'ayyoub-hafs';

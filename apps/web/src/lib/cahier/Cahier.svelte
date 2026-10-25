@@ -4,7 +4,7 @@
   import { resolve } from '$app/paths';
   import Bidi from '$lib/Bidi.svelte';
   import { demoProfileFor } from '$lib/attempts';
-  import { levelAudio, type LevelAudio } from '$lib/lecons-audio';
+  import type { LevelAudio } from '$lib/lecons-audio';
   import { t } from '$lib/i18n';
   import {
     ecrireProgres,
@@ -16,7 +16,7 @@
     type ProgresCahier,
   } from './progres';
   import { chargerCahier, leconAtteinte, type Cahier, type Page } from './donnees';
-  import { arreterSon } from './audio';
+  import { arreterSon, audioDuCahier } from './audio';
   import PageVue from './PageVue.svelte';
   import type { OuvrirCahierOptions } from '$lib/video/lecteur-cahier';
 
@@ -59,7 +59,8 @@
     cahier = c;
     profil = p?.id ?? null;
     progres = await lireProgres(n, profil);
-    void levelAudio(n).then((a) => {
+    // 25/10/2026 : enfants et ados ont aussi l'audio de leur cahier (`cahier-lecture-en1`…), réuni à celui du livre
+    void audioDuCahier(n).then((a) => {
       if (n === niveau) audio = a;
     });
     if (profil)
@@ -106,6 +107,10 @@
     return out;
   });
   const rattrapages = $derived(cahier?.pages.filter((p) => p.hors) ?? []);
+  /** `?u=` d'une leçon qui a des pages ; une leçon sans page (Bilan 1 d'Ados 1, leçon 23 d'Adultes 1) ouvre le sommaire */
+  const uniteAvecPages = $derived(
+    !!unite && parcours.some((p) => `${niveau}.${p.apres}` === unite),
+  );
   // `?u=ad1.l05` (lien de la leçon) : la page du jour de cette leçon, la première qui n'est pas encore faite
   $effect(() => {
     if (!cahier || pageId || !unite) return;
@@ -155,10 +160,11 @@
         {sauver}
         {base}
         avenir={avenir(page)}
+        {atteinte}
         {ouvrirVideo}
       />
     {/key}
-  {:else if unite && !pageId}
+  {:else if uniteAvecPages && !pageId}
     <p class="attente" aria-busy="true"><Bidi text={t('cahier.charge')} /></p>
   {:else}
     <p class="nav">

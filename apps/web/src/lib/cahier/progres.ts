@@ -27,12 +27,24 @@ export interface MinuteResultat {
   /** durée en secondes (60 pour une minute de lecture) */
   secondes: number;
 }
+/** Meilleur résultat d'un jeu de fin de grille ou d'un défi (cahiers des enfants et des ados). */
+export interface JeuResultat {
+  /** parties terminées */
+  parties: number;
+  /** meilleure médaille : 0 aucune, 1 bronze, 2 argent, 3 or (les enfants : 3 = étoile, jamais de médaille) */
+  med: number;
+  /** meilleur score (points) ou meilleur temps (secondes, défi chrono) */
+  meilleur?: number;
+  date?: string;
+}
 export interface ProgresCahier {
   pages: Record<string, PageProgres>;
   bilans: Record<string, BilanResultat[]>;
   minutes: Record<string, MinuteResultat[]>;
   /** mots de l'atelier réussis, par page */
   atelier: Record<string, number>;
+  /** jeux de fin de grille et défis : clé `<page>:<jeu>` (construis, trouve, chrono, duel, colorie, defi) */
+  jeux: Record<string, JeuResultat>;
 }
 
 export const cleProgres = (niveau: string, profil: string | null | undefined) =>
@@ -43,7 +55,34 @@ export const progresVide = (): ProgresCahier => ({
   bilans: {},
   minutes: {},
   atelier: {},
+  jeux: {},
 });
+
+/** Enregistre une partie : garde la meilleure médaille et le meilleur résultat (`moinsEstMieux` : un temps). */
+export function enregistrerJeu(
+  p: ProgresCahier,
+  cle: string,
+  med: number,
+  valeur?: number,
+  moinsEstMieux = false,
+): ProgresCahier {
+  const a = p.jeux[cle];
+  const meilleur =
+    valeur === undefined
+      ? a?.meilleur
+      : a?.meilleur === undefined
+        ? valeur
+        : moinsEstMieux
+          ? Math.min(a.meilleur, valeur)
+          : Math.max(a.meilleur, valeur);
+  const r: JeuResultat = {
+    parties: (a?.parties ?? 0) + 1,
+    med: Math.max(a?.med ?? 0, med),
+    date: new Date().toISOString(),
+  };
+  if (meilleur !== undefined) r.meilleur = meilleur;
+  return { ...p, jeux: { ...p.jeux, [cle]: r } };
+}
 
 export async function lireProgres(
   niveau: string,

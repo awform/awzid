@@ -168,29 +168,60 @@ interface El {
 function cahierLecture(): { cibles: Cible[]; recites: number } {
   const out: Cible[] = [];
   let recites = 0;
-  const f = join(STATIC, 'ad1.json');
-  if (!existsSync(f)) return { cibles: out, recites };
-  const walk = (x: unknown, page: string): void => {
-    if (Array.isArray(x)) return x.forEach((y) => walk(y, page));
-    if (!x || typeof x !== 'object') return;
-    const o = x as El & Record<string, unknown>;
-    if (typeof o.ar === 'string' && typeof o.a === 'string' && /[ء-ي]/.test(o.ar)) {
-      if (o.a === 'q') recites++;
-      else out.push({ ou: 'cahier de lecture ad1', detail: page, texte: o.ar, niveau: 'ad1' });
-    }
-    // texte suivi (lignes d'un paragraphe) : ecite = lignes qui citent le Coran (récitation d'Ayyūb)
-    if (Array.isArray(o.lignes) && typeof o.a === 'string') {
-      const recite = (o.recite ?? {}) as Record<string, string>;
-      for (const l of o.lignes as unknown[]) {
-        if (typeof l !== 'string' || !/[ء-ي]/.test(l)) continue;
-        if (o.a === 'q' || l in recite) recites++;
-        else out.push({ ou: 'cahier de lecture ad1', detail: page, texte: l, niveau: 'ad1' });
+  // cahiers de lecture : adultes (ad1), enfants (en1) et ados (ado1) ; les fichiers des deux derniers portent le niveau
+  // `cahier-lecture-<niveau>` dans la liste des audios
+  for (const [n, niveau] of [
+    ['ad1', 'ad1'],
+    ['en1', 'cahier-lecture-en1'],
+    ['ado1', 'cahier-lecture-ado1'],
+  ] as const) {
+    const f = join(STATIC, `${n}.json`);
+    if (!existsSync(f)) continue;
+    const ou = `cahier de lecture ${n}`;
+    const walk = (x: unknown, page: string): void => {
+      if (Array.isArray(x)) return x.forEach((y) => walk(y, page));
+      if (!x || typeof x !== 'object') return;
+      const o = x as El & Record<string, unknown>;
+      if (typeof o.ar === 'string' && typeof o.a === 'string' && /[ء-ي]/.test(o.ar)) {
+        if (o.a === 'q') recites++;
+        else out.push({ ou, detail: page, texte: o.ar, niveau });
       }
+      // texte suivi (lignes d'un paragraphe) : ecite = lignes qui citent le Coran (récitation d'Ayyūb)
+      if (Array.isArray(o.lignes) && typeof o.a === 'string') {
+        const recite = (o.recite ?? {}) as Record<string, string>;
+        for (const l of o.lignes as unknown[]) {
+          if (typeof l !== 'string' || !/[ء-ي]/.test(l)) continue;
+          if (o.a === 'q' || l in recite) recites++;
+          else out.push({ ou, detail: page, texte: l, niveau });
+        }
+      }
+      for (const [k, y] of Object.entries(o)) if (k !== 'ar' && k !== 'lignes') walk(y, page);
+    };
+    const c = JSON.parse(readFileSync(f, 'utf8')) as {
+      pages?: Array<{
+        id: string;
+        jeu?: {
+          construis: Array<{ ar: string }>;
+          trouve: Array<{ choix: string[] }>;
+          signes: Array<{ ar: string }>;
+          colorie?: { cases: Array<{ ar: string }> };
+        };
+      }>;
+    };
+    for (const p of c.pages ?? []) {
+      walk(p, p.id);
+      // jeux de fin de grille (enfants, ados) : chaque mot et chaque syllabe qu'ils font entendre a son fichier
+      const j = p.jeu;
+      if (j)
+        for (const texte of [
+          ...j.construis.map((m) => m.ar),
+          ...j.trouve.flatMap((m) => m.choix),
+          ...j.signes.map((s) => s.ar),
+          ...(j.colorie?.cases.map((x) => x.ar) ?? []),
+        ])
+          out.push({ ou: `${ou} (jeux)`, detail: p.id, texte, niveau });
     }
-    for (const [k, y] of Object.entries(o)) if (k !== 'ar' && k !== 'lignes') walk(y, page);
-  };
-  const c = JSON.parse(readFileSync(f, 'utf8')) as { pages?: Array<{ id: string }> };
-  for (const p of c.pages ?? []) walk(p, p.id);
+  }
   return { cibles: out, recites };
 }
 

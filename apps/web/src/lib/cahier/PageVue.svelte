@@ -1,13 +1,16 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
   import Bidi from '$lib/Bidi.svelte';
+  import { chargerModule } from '$lib/charger';
   import type { LevelAudio } from '$lib/lecons-audio';
   import { t } from '$lib/i18n';
   import type { OuvrirCahierOptions } from '$lib/video/lecteur-cahier';
-  import type { MinuteResultat, ProgresCahier } from './progres';
+  import { enregistrerJeu, type MinuteResultat, type ProgresCahier } from './progres';
   import {
+    BLOCS_JEUX,
     elementsDeLaPage,
     estAtelier,
+    estChasse,
     estPaire,
     ligneTexte,
     type AtelierMot,
@@ -18,9 +21,18 @@
     type Rang,
   } from './donnees';
   import { arreterSon, idSynthese, jouerElement, lectureGuidee, reciter, type Pas } from './audio';
-  import { SANS_VIDEO, motsDuBilan, resultatBilan } from './outils';
+  import {
+    SANS_VIDEO,
+    filtrerPage,
+    motsDuBilan,
+    ouvert,
+    prochaineLecon,
+    resultatBilan,
+  } from './outils';
   import Atelier from './Atelier.svelte';
   import Mesure from './Mesure.svelte';
+  import Medaille from './jeux/Medaille.svelte';
+  import { medailleScore, paliersDefi, publicDe, type Med } from './jeux/modele';
 
   /**
    * Cahier de lecture (20/10/2026) — une page : en-tête et consigne (6 cases mémorisées : 3 lectures avec le modèle,
@@ -37,6 +49,7 @@
     sauver,
     base,
     avenir = false,
+    atteinte = null,
     ouvrirVideo = null,
   }: {
     page: Page;
@@ -47,13 +60,20 @@
     sauver: (p: ProgresCahier) => void;
     base: string;
     avenir?: boolean;
+    /** leçon atteinte par l'élève (null : inconnue, tout est ouvert) : débloque les grilles case par case */
+    atteinte?: number | null;
     /** ouvre la vidéo de la page (fourni par la route quand `video_v2` est ouvert) */
     ouvrirVideo?: ((o: OuvrirCahierOptions) => Promise<void>) | null;
   } = $props();
 
   const bilan = $derived(page.type === 'bilan');
   const coran = $derived(page.type === 'coran' || page.type === 'reconnaissance');
-  const elements = $derived(elementsDeLaPage(page));
+  /** public du cahier : gros caractères pour les enfants ; défis, score et médailles pour les ados */
+  const pub = $derived(publicDe(cahier.niveau));
+  /** la page sans les cases encore fermées (grilles débloquées case par case) : lecture guidée et vidéo */
+  const ouverte = $derived(filtrerPage(page, atteinte));
+  const prochaine = $derived(prochaineLecon(page, atteinte));
+  const elements = $derived(elementsDeLaPage(ouverte));
   /** éléments de synthèse sans fichier (le cahier le dit) ; la récitation n'en fait jamais partie */
   const sansAudio = $derived(
     audio ? elements.filter((x) => x.el.a !== 'q' && !idSynthese(x.el, audio)).length : 0,
@@ -140,7 +160,7 @@
     videoEchec = false;
     try {
       await ouvrirVideo?.({
-        page,
+        page: ouverte,
         audio,
         profileId: profil,
         recite: (ref, p, signal, surAudio) => reciter(ref, p, signal, surAudio),
@@ -194,10 +214,16 @@
     if (i === undefined) return;
     manques = manques.includes(i) ? manques.filter((x) => x !== i) : [...manques, i];
   }
+  /** ados : la mission d'un bilan donne une médaille (paliers du cahier, sinon 70 %, 90 %, 100 %) */
+  const medBilan = $derived<Med>(
+    pub === 'ado' && resultat
+      ? medailleScore(resultat.justes, paliersDefi(resultat.total, page.defi?.paliers))
+      : 0,
+  );
   function finirBilan() {
     if (!resultat) return;
     bilanFini = true;
-    sauver({
+    const p2: ProgresCahier = {
       ...progres,
       bilans: {
         ...progres.bilans,
@@ -212,7 +238,8 @@
           },
         ].slice(-10),
       },
-    });
+    };
+    sauver(pub === 'ado' ? enregistrerJeu(p2, `${page.id}:bilan`, medBilan, resultat.justes) : p2);
   }
   function refaireBilan() {
     manques = [];
@@ -231,7 +258,7 @@
     });
   }
   const elementsMinute = $derived(
-    page.blocs.reduce((n, b) => n + (b.type === 'atelier_mot' ? 0 : b.el.length), 0),
+    page.blocs.reduce((n, b) => n + (BLOCS_JEUX.includes(b.type) ? 0 : b.el.length), 0),
   );
   /** minute de texte (page sans blocs) : les lectures chronométrées des textes suivis */
   const mesuresTextes = $derived(
@@ -254,6 +281,35 @@
     });
   }
 
+  // ---------------------------------------------------------------- jeux (cahiers des enfants et des ados)
+  /**
+   * Jeux de fin de grille et jeux de lettres : code chargé À LA DEMANDE, à l'ouverture d'une page qui en a (nouvelles
+   * tentatives des modules, comme le cahier et la vidéo). Le PDF garde les jeux papier ; l'application a les siens.
+   */
+  let JeuxVue = $state<typeof import('./jeux/Jeux.svelte').default | null>(null);
+  let ChasseVue = $state<typeof import('./jeux/Chasse.svelte').default | null>(null);
+  const aChasse = $derived(
+    page.blocs.some((b) => b.type === 'jeu_colorie' || b.type === 'jeu_chasse'),
+  );
+  $effect(() => {
+    if (page.jeu && !JeuxVue)
+      void chargerModule(() => import('./jeux/Jeux.svelte')).then((m) => (JeuxVue = m.default));
+    if (aChasse && !ChasseVue)
+      void chargerModule(() => import('./jeux/Chasse.svelte')).then((m) => (ChasseVue = m.default));
+  });
+  /** libellé de la leçon qui ouvrira la suite de la grille (« Leçon 20 ») */
+  const leconSuite = $derived(prochaine !== null ? (cahier.lecons?.[prochaine] ?? null) : null);
+
+  // ---------------------------------------------------------------- défi (cahier des ados)
+  const cleDefi = $derived(`${page.id}:defi`);
+  const paliersPage = $derived(page.defi ? paliersDefi(page.defi.max, page.defi.paliers) : null);
+  let scoreDefi = $state(0);
+  const medDefi = $derived<Med>(paliersPage ? medailleScore(scoreDefi, paliersPage) : 0);
+  const recordDefi = $derived(progres.jeux[cleDefi]);
+  const changerDefi = (d: number) =>
+    (scoreDefi = Math.max(0, Math.min(page.defi?.max ?? 0, scoreDefi + d)));
+  const noterDefi = () => sauver(enregistrerJeu(progres, cleDefi, medDefi, scoreDefi));
+
   // ---------------------------------------------------------------- navigation
   const voisines = $derived.by(() => {
     const l = cahier.pages.filter((p) => !!p.hors === !!page.hors);
@@ -273,6 +329,14 @@
     }
     if (pos < e.ar.length) out.push({ t: e.ar.slice(pos), c: '' });
     return out;
+  }
+  /**
+   * Éléments d'une liste avec leur rang parmi les éléments OUVERTS (-1 : case encore fermée). Le rang est celui de la
+   * lecture guidée et de la vidéo (`filtrerPage`) : la case qui s'allume est toujours la bonne.
+   */
+  function indexer(els: El[]): Array<{ e: El; k: number }> {
+    let k = 0;
+    return els.map((e) => ({ e, k: ouvert(e.n, atteinte) ? k++ : -1 }));
   }
   /** virgule arabe (U+060C) entre les mots manqués */
   const SEP_AR = String.fromCharCode(0x60c) + ' ';
@@ -316,7 +380,14 @@
 {/snippet}
 
 <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu (resolve), suivi du paramètre de page -->
-<article class="page-cahier" data-page={page.id} data-type={page.type}>
+<article
+  class="page-cahier"
+  class:enfant={pub === 'enfant'}
+  class:ado={pub === 'ado'}
+  data-page={page.id}
+  data-type={page.type}
+  data-public={pub}
+>
   <p class="nav"><a href={base}>{t('cahier.sommaire')}</a></p>
   <header class="bandeau">
     <p class="sur">
@@ -428,11 +499,23 @@
             <div class="lib"><b><Bidi text={ri + 1} /></b><Bidi text={rang.titre ?? ''} /></div>
             <div class="cellules-grille">
               {#if rang.el.length}
-                {#each rang.el as e, ci (ci)}{@render element(
-                    `${bi}.${ri}.${ci}`,
-                    e,
-                    'el cel',
-                  )}{/each}
+                {#each indexer(rang.el) as { e, k }, ci (ci)}
+                  {#if k >= 0}
+                    {@render element(`${bi}.${ri}.${k}`, e, 'el cel')}
+                  {:else}
+                    <!-- case encore fermée : ses lettres ou ses signes ne sont pas encore enseignés -->
+                    <button
+                      type="button"
+                      class="el cel verrou"
+                      disabled
+                      data-verrou={e.n}
+                      aria-label={t('cahier.avenir', { lecon: cahier.lecons?.[e.n!] ?? '' })}
+                      ><svg viewBox="0 0 24 24" aria-hidden="true"
+                        ><path d="M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5z" /></svg
+                      ></button
+                    >
+                  {/if}
+                {/each}
               {:else}
                 <p class="vide"><Bidi text={rang.note ?? ''} /></p>
               {/if}
@@ -440,6 +523,9 @@
             {#if rang.note && rang.el.length}<p class="noterang"><Bidi text={rang.note} /></p>{/if}
           {/each}
         </div>
+        {#if leconSuite}<p class="note" data-testid="grille-suite">
+            <Bidi text={t('cahier.grille_suite', { lecon: leconSuite })} />
+          </p>{/if}
       {:else if b.type === 'table' || b.type === 'formes'}
         <div class="table" class:formes={b.type === 'formes'}>
           {#each b.el as r, ri (ri)}
@@ -514,9 +600,41 @@
         <div class={b.type}>
           {#each b.el as x, i (i)}{@render element(`${bi}.${i}`, x as El)}{/each}
         </div>
+      {:else if b.type === 'jeu_colorie' || b.type === 'jeu_chasse'}
+        <div class="chasses">
+          {#each b.el as x, i (i)}
+            {#if estChasse(x) && ChasseVue}
+              <ChasseVue
+                lettre={x.lettre}
+                cases={x.cases}
+                consigne={x.consigne}
+                a={x.a}
+                {audio}
+                {profil}
+              />
+            {/if}
+          {/each}
+        </div>
+      {:else if b.type === 'jeux'}
+        {#if page.jeu && JeuxVue}
+          <JeuxVue
+            jeu={page.jeu}
+            pageId={page.id}
+            niveau={cahier.niveau}
+            {audio}
+            {profil}
+            {atteinte}
+            lecon={leconSuite}
+            {progres}
+            {sauver}
+          />
+        {/if}
       {:else}
         <div class={classeBloc(b)} class:mushaf={b.type === 'mots_mushaf'}>
-          {#each b.el as x, i (i)}{@render element(`${bi}.${i}`, x as El)}{/each}
+          {#each indexer(b.el as El[]) as { e, k }, i (i)}{#if k >= 0}{@render element(
+                `${bi}.${k}`,
+                e,
+              )}{/if}{/each}
         </div>
       {/if}
       {#if b.note}<p class="note"><Bidi text={b.note} /></p>{/if}
@@ -564,6 +682,9 @@
             text={t('cahier.bilan_resultat', { justes: resultat.justes, total: resultat.total })}
           />
         </p>
+        {#if medBilan > 0}<p class="medaille-bilan" data-testid="bilan-medaille">
+            <Medaille med={medBilan} grand />
+          </p>{/if}
         <p><Bidi text={resultat.reussi ? t('cahier.bilan_reussi') : t('cahier.bilan_echec')} /></p>
         {#if resultat.rattrapages.length}
           <ul class="rattrapages">
@@ -621,6 +742,39 @@
           onenregistrer={enregistrer}
         />
       {/if}
+    </section>
+  {/if}
+
+  {#if pub === 'ado' && page.defi && !bilan}
+    <section class="bloc defi" data-testid="defi">
+      <h2><Bidi text={t('cahier.defi_titre')} /></h2>
+      <p class="note"><Bidi text={t('cahier.defi_consigne')} /></p>
+      <div class="defi-score">
+        <button
+          type="button"
+          class="bouton"
+          aria-label={t('cahier.moins')}
+          onclick={() => changerDefi(-1)}>−</button
+        >
+        <output data-testid="defi-score"
+          ><Bidi text={t('cahier.defi_score', { n: scoreDefi, max: page.defi.max })} /></output
+        >
+        <button
+          type="button"
+          class="bouton"
+          aria-label={t('cahier.plus')}
+          onclick={() => changerDefi(1)}>+</button
+        >
+        <button type="button" class="bouton plein" data-testid="defi-noter" onclick={noterDefi}
+          >{t('cahier.enregistrer')}</button
+        >
+      </div>
+      <p class="defi-med">
+        <Medaille med={medDefi} />
+        {#if recordDefi}<span data-testid="defi-record"
+            ><Bidi text={t('cahier.defi_record', { n: recordDefi.meilleur ?? 0 })} /></span
+          >{/if}
+      </p>
     </section>
   {/if}
 
@@ -1134,5 +1288,88 @@
     justify-content: space-between;
     gap: 0.5rem;
     margin-top: 1.5rem;
+  }
+  /* case de grille encore fermée (lettres ou signes pas encore enseignés) */
+  .el.verrou {
+    border-style: dashed;
+    background: transparent;
+    cursor: default;
+    color: var(--ink2);
+  }
+  .verrou svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .chasses {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  /* enfants : GROS CARACTÈRES et grandes cibles */
+  .enfant .el {
+    min-height: 3.8rem;
+    min-width: 3.2rem;
+  }
+  .enfant .el .ar {
+    font-size: 2.3rem;
+  }
+  .enfant .cel {
+    min-height: 5.2rem;
+  }
+  .enfant .cel .ar {
+    font-size: 2.9rem;
+  }
+  .enfant .table .cel .ar {
+    font-size: 2.1rem;
+  }
+  .enfant .tout .ar {
+    font-size: 2.7rem;
+  }
+  .enfant .syl .ar {
+    font-size: 1.9rem;
+  }
+  .enfant .serres .el .ar,
+  .enfant .serre .el .ar {
+    font-size: 1.9rem;
+  }
+  .enfant .mots,
+  .enfant .ligne_mots,
+  .enfant .mots_img {
+    grid-template-columns: repeat(auto-fill, minmax(7.6rem, 1fr));
+  }
+  .enfant .cellules,
+  .enfant .alphabet {
+    grid-template-columns: repeat(auto-fill, minmax(4.8rem, 1fr));
+  }
+  .enfant .let {
+    font-size: 1.7rem;
+  }
+  /* ados : défi, score et médailles */
+  .defi-score {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .defi-score output {
+    min-width: 8rem;
+    text-align: center;
+    font: 700 1.1rem var(--font-title);
+  }
+  .defi-med {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0.5rem 0 0;
+    min-height: 2.2rem;
+  }
+  .medaille-bilan {
+    margin: 0.4rem 0;
   }
 </style>
