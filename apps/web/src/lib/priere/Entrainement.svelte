@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import { mots as motsDe, passages } from './calendrier';
@@ -192,7 +193,7 @@
         onclick={() => {
           stop();
           texte = x.id;
-        }}>{t(`priere.entr_${x.id}`)}</button
+        }}><Bidi text={t(`priere.entr_${x.id}`)} /></button
       >
     {/each}
   </div>
@@ -203,14 +204,15 @@
         class:fait={n < etape}
         aria-pressed={etape === n}
         data-etape={n}
-        onclick={() => changerEtape(n)}><b>{n}</b>{t(`priere.entr_e${n}`)}</button
+        onclick={() => changerEtape(n)}
+        ><b><Bidi text={n} /></b><Bidi text={t(`priere.entr_e${n}`)} /></button
       >
     {/each}
   </div>
 
   <article class="carte texte">
-    <p class="consigne"><Picto nom={consigne.i} /><span>{t(consigne.k)}</span></p>
-    <span class={coran ? 'coran' : 'ar'} lang="ar" dir="rtl" data-testid="priere-texte"
+    <p class="consigne"><Picto nom={consigne.i} /><span><Bidi text={t(consigne.k)} /></span></p>
+    <span class="ar quran-text" class:coran lang="ar" dir="rtl" data-testid="priere-texte"
       >{#each segs as s, k (k)}<span class="seg-txt" class:actif={actif === k} data-k={k}
           >{#each s.mots as w, i (i)}{#if etape === 3 && cache(i)}<button
                 type="button"
@@ -228,7 +230,7 @@
   {#if etape === 3}
     <div class="niveau" data-testid="priere-niveau" data-niveau={niveau}>
       <div class="txt">
-        <b>{t(`priere.niv_${niveau}`)}</b>
+        <b><Bidi text={t(`priere.niv_${niveau}`)} /></b>
         <span class="crans"
           >{#each [1, 2, 3, 4] as n (n)}<i class:on={n <= niveau}></i>{/each}</span
         >
@@ -268,7 +270,7 @@
     >
     <button type="button" class="btn bloc" data-testid="priere-lancer" onclick={lancer}
       ><Picto nom={encours ? 'pause' : 'lecture'} /><span
-        >{t(encours ? 'priere.arreter' : `priere.lancer_${etape}`)}</span
+        ><Bidi text={t(encours ? 'priere.arreter' : `priere.lancer_${etape}`)} /></span
       ></button
     >
   </div>
@@ -287,7 +289,7 @@
       >
     </div>
     {#if progres.entr[texte]?.revision}<p data-testid="priere-revision">
-        {t('priere.revision', { date: progres.entr[texte]!.revision! })}
+        <Bidi text={t('priere.revision', { date: progres.entr[texte]!.revision! })} />
       </p>{/if}
     <p>{t('priere.bilan_note')}</p>
   </section>

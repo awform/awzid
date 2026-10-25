@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount, tick } from 'svelte';
   import { t } from '$lib/i18n';
   import { refsAyyub, type RefVerset, type Voix } from './audio';
@@ -186,12 +187,12 @@
   {:else if so}
     <section class="bandeau cadre tete-sourate">
       <div>
-        <div class="sur">{trouver(s8, 'S8.liste')?.titre ?? ''}</div>
-        <h1>{so.nom_fr}</h1>
-        <p>{t('priere.n_versets', { n: so.nombre_versets })}</p>
+        <div class="sur"><Bidi text={trouver(s8, 'S8.liste')?.titre ?? ''} /></div>
+        <h1><Bidi text={so.nom_fr} /></h1>
+        <p><Bidi text={t('priere.n_versets', { n: so.nombre_versets })} /></p>
       </div>
       <span></span>
-      <span class="ar-titre" lang="ar" dir="rtl">{so.nom_ar}</span>
+      <span class="ar-titre quran-text" lang="ar" dir="rtl">{so.nom_ar}</span>
       <div class="lire-tout">
         <button
           type="button"
@@ -213,7 +214,8 @@
           class="puce"
           aria-pressed={Number(l[0]) === numero}
           data-sourate={l[0]}
-          onclick={() => choisirSourate(Number(l[0]))}>{l[0]}. {l[1]}</button
+          onclick={() => choisirSourate(Number(l[0]))}
+          ><Bidi text={l[0]} />. <Bidi text={l[1]} /></button
         >
       {/each}
     </nav>
@@ -221,9 +223,9 @@
     {#if fatiha}
       <section class="partage" aria-labelledby="t-partage">
         {#if hadithEl}
-          {#if hadithEl.ar}<span class="ar" lang="ar" dir="rtl">{hadithEl.ar}</span>{/if}
+          {#if hadithEl.ar}<span class="ar quran-text" lang="ar" dir="rtl">{hadithEl.ar}</span>{/if}
           {#if hadithEl.fr}<p class="hadith-fr"><Texte txt={hadithEl.fr} /></p>{/if}
-          {#if hadithEl.reference}<small>{hadithEl.reference}</small>{/if}
+          {#if hadithEl.reference}<small><Bidi text={hadithEl.reference} /></small>{/if}
         {/if}
         <h2 class="cache" id="t-partage">{t('priere.trois_parties')}</h2>
         <div
@@ -240,7 +242,9 @@
                 document
                   .querySelector(`.priere .v.${PARTIES[k]}`)
                   ?.scrollIntoView({ block: 'center', behavior: reduit() ? 'auto' : 'smooth' })}
-              ><b class="nom">{p.nom}</b><span>{plage(p.refs_hafs)}</span></button
+              ><b class="nom"><Bidi text={p.nom} /></b><span
+                ><Bidi text={plage(p.refs_hafs)} /></span
+              ></button
             >
           {/each}
         </div>
@@ -249,9 +253,11 @@
             <p><Texte txt={p.fr} /></p>
             {#if p.debut?.ar}
               <!-- mots arabes de repère : le début et la fin de la partie, chacun sur sa ligne -->
-              <span class="ar centre" lang="ar" dir="rtl">{p.debut.ar}</span>
-              {#if p.fin?.ar && p.fin.ar !== p.debut.ar}<span class="ar centre" lang="ar" dir="rtl"
-                  >{p.fin.ar}</span
+              <span class="ar centre quran-text" lang="ar" dir="rtl">{p.debut.ar}</span>
+              {#if p.fin?.ar && p.fin.ar !== p.debut.ar}<span
+                  class="ar centre quran-text"
+                  lang="ar"
+                  dir="rtl">{p.fin.ar}</span
                 >{/if}
             {/if}
           </div>
@@ -259,10 +265,12 @@
         {#if fatiha.partie_source}
           <details class="plus">
             <summary>{t('priere.sources')}<Picto nom="chevron-b" /></summary>
-            <ul class="sources"><li>{fatiha.partie_source}</li></ul>
+            <ul class="sources"><li><Bidi text={fatiha.partie_source} /></li></ul>
           </details>
         {/if}
-        {#if so.numerotation}<small data-testid="priere-numerotation">{so.numerotation}</small>{/if}
+        {#if so.numerotation}<small data-testid="priere-numerotation"
+            ><Bidi text={so.numerotation} /></small
+          >{/if}
       </section>
     {/if}
 
@@ -273,7 +281,7 @@
           <details class="plus">
             <summary>{t('priere.sources')}<Picto nom="chevron-b" /></summary>
             <ul class="sources">
-              {#each so.note_priere.sources as x, k (k)}<li>{x}</li>{/each}
+              {#each so.note_priere.sources as x, k (k)}<li><Bidi text={x} /></li>{/each}
             </ul>
           </details>
         {/if}
@@ -288,9 +296,9 @@
         aria-pressed={progres.trad}
         data-testid="priere-trad"
         onclick={basculerTrad}
-        ><Picto nom={progres.trad ? 'oeil-barre' : 'oeil'} />{t(
-          progres.trad ? 'priere.cacher_trad' : 'priere.voir_trad',
-        )}</button
+        ><Picto nom={progres.trad ? 'oeil-barre' : 'oeil'} /><Bidi
+          text={t(progres.trad ? 'priere.cacher_trad' : 'priere.voir_trad')}
+        /></button
       >
     </div>
     {#if absent}<p class="note" role="status">{t('priere.recitation_absente')}</p>{/if}
@@ -298,8 +306,10 @@
     <div class="versets">
       {#if so.basmala_de_tete && numero !== 1}
         <div class="note-priere" data-testid="priere-basmala-tete">
-          <span class="coran centre" lang="ar" dir="rtl">{so.basmala_de_tete.ar}</span>
-          {#if so.basmala_de_tete.note}<p class="petit">{so.basmala_de_tete.note}</p>{/if}
+          <span class="coran centre quran-text" lang="ar" dir="rtl">{so.basmala_de_tete.ar}</span>
+          {#if so.basmala_de_tete.note}<p class="petit">
+              <Bidi text={so.basmala_de_tete.note} />
+            </p>{/if}
         </div>
       {/if}
       {#each so.versets as v, k (v.ref)}
@@ -314,10 +324,10 @@
           <div class="entete">
             <span class="numero"
               ><svg aria-hidden="true"><use href="#pr-etoile8-trait" /></svg><b
-                >{v.ref.split(':')[1]}</b
+                ><Bidi text={v.ref.split(':')[1]} /></b
               ></span
             >
-            <span class="partie">{pk >= 0 ? nomPartie(k) : ''}</span>
+            <span class="partie"><Bidi text={pk >= 0 ? nomPartie(k) : ''} /></span>
             <button
               type="button"
               class="rond petit clair"
@@ -327,7 +337,7 @@
               ><Picto nom={lecture && actif === k && !tout ? 'pause' : 'ecouter'} /></button
             >
           </div>
-          <span class="coran" lang="ar" dir="rtl"
+          <span class="coran quran-text" lang="ar" dir="rtl"
             >{#each v.mot_a_mot as m, i (i)}<button
                 type="button"
                 class="mot"
@@ -339,14 +349,16 @@
           >
           <p class="trad"><Texte txt={v.sens} /></p>
           {#if reponse(v.ref)}
-            <p class="reponse"><Picto nom="balance" /><span>{reponse(v.ref)}</span></p>
+            <p class="reponse">
+              <Picto nom="balance" /><span><Bidi text={reponse(v.ref)} /></span>
+            </p>
           {/if}
           {#if v.recite_dans_la_priere_obligatoire === false}
             <p class="note-verset" data-testid="priere-non-recitee">
               {t('priere.basmala_non_recitee')}
             </p>
           {/if}
-          {#if v.note}<p class="note-verset">{v.note}</p>{/if}
+          {#if v.note}<p class="note-verset"><Bidi text={v.note} /></p>{/if}
         </article>
       {/each}
     </div>
@@ -364,7 +376,7 @@
         <details class="plus">
           <summary>{t('priere.tafsir')}<Picto nom="chevron-b" /></summary>
           {#each so.tafsir as x, k (k)}
-            <h3 style="font-size:16px;margin-top:10px">{x.point}</h3>
+            <h3 style="font-size:16px;margin-top:10px"><Bidi text={x.point} /></h3>
             <p><Texte txt={x.explication} /></p>
           {/each}
         </details>
@@ -376,14 +388,14 @@
       {/if}
       {#if so.traduction}
         <p class="source" style="margin-top:12px">
-          <Picto nom="lectures" /><span>{so.traduction}</span>
+          <Picto nom="lectures" /><span><Bidi text={so.traduction} /></span>
         </p>
       {/if}
       {#if so.sources?.length}
         <details class="plus">
           <summary>{t('priere.sources')}<Picto nom="chevron-b" /></summary>
           <ul class="sources">
-            {#each so.sources as x, k (k)}<li>{x}</li>{/each}
+            {#each so.sources as x, k (k)}<li><Bidi text={x} /></li>{/each}
           </ul>
         </details>
       {/if}
@@ -401,13 +413,12 @@
       data-testid="priere-feuille"
     >
       {#if mot && choisi}
-        <span class="ar" lang="ar" dir="rtl">{mot.ar}</span>
-        <p class="glose" id="f-glose">{mot.fr}</p>
+        <span class="ar quran-text" lang="ar" dir="rtl">{mot.ar}</span>
+        <p class="glose" id="f-glose"><Bidi text={mot.fr} /></p>
         <p class="ou">
-          {t('priere.verset_n', { n: so.versets[choisi.k]?.ref.split(':')[1] })}{fatiha &&
-          nomPartie(choisi.k)
-            ? ` · ${nomPartie(choisi.k)}`
-            : ''}
+          <Bidi text={t('priere.verset_n', { n: so.versets[choisi.k]?.ref.split(':')[1] })} /><Bidi
+            text={fatiha && nomPartie(choisi.k) ? ` · ${nomPartie(choisi.k)}` : ''}
+          />
         </p>
         <button
           type="button"

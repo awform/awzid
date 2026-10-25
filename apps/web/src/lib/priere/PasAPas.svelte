@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import type { Voix } from './audio';
@@ -100,7 +101,7 @@
           type="button"
           aria-pressed={progres.genre === g}
           data-genre={g}
-          onclick={() => changerGenre(g as Genre)}>{t(`priere.${g}`)}</button
+          onclick={() => changerGenre(g as Genre)}><Bidi text={t(`priere.${g}`)} /></button
         >
       {/each}
     </div>
@@ -115,13 +116,14 @@
     </div>
     <div class="etiquette">
       <small data-testid="priere-num-etape"
-        >{t('priere.etape_n', { n: i + 1, total: etapes.length })}</small
-      ><b>{titreParcours}</b>
+        ><Bidi text={t('priere.etape_n', { n: i + 1, total: etapes.length })} /></small
+      ><b><Bidi text={titreParcours} /></b>
     </div>
     <div class="compteur-rakaa" aria-live="polite">
       <span class="points"
         >{#each Array(total) as _, k (k)}<i class:fait={k < unite}></i>{/each}</span
-      ><span data-testid="priere-unite">{t('priere.unite', { r: unite, total })}</span>
+      ><span data-testid="priere-unite"><Bidi text={t('priere.unite', { r: unite, total })} /></span
+      >
     </div>
   </div>
 
@@ -132,7 +134,8 @@
         class:fait={k < i}
         aria-current={k === i ? 'step' : undefined}
         data-etape={e.id}
-        onclick={() => aller(k)}><i>{k + 1}</i><span>{e.titre}</span></button
+        onclick={() => aller(k)}
+        ><i><Bidi text={k + 1} /></i><span><Bidi text={e.titre} /></span></button
       >
     {/each}
   </nav>
@@ -145,7 +148,7 @@
         data-testid="priere-etape"
         data-id={etape.id}
       >
-        <h2>{etape.titre}</h2>
+        <h2><Bidi text={etape.titre} /></h2>
         <Pastilles niveau={listeNiveaux(etape)} />
         {#if etape.geste}<p class="fais"><Texte txt={etape.geste} /></p>{/if}
         {#each etape.notes ?? [] as n, k (k)}
@@ -179,7 +182,7 @@
           <details class="plus">
             <summary>{t('priere.sources')}<Picto nom="chevron-b" /></summary>
             <ul class="sources">
-              {#each etape.sources as s, k (k)}<li>{s}</li>{/each}
+              {#each etape.sources as s, k (k)}<li><Bidi text={s} /></li>{/each}
             </ul>
           </details>
         {/if}

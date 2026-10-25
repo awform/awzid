@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import type { Voix } from './audio';
@@ -49,7 +50,7 @@
 <div class="e-situations" data-testid="priere-situations">
   <section class="bandeau cadre intro">
     <div class="sur">{t('priere.que_faire')}</div>
-    <h1>{section?.titre ?? ''}</h1>
+    <h1><Bidi text={section?.titre ?? ''} /></h1>
     {#if section?.intro}<p><Texte txt={section.intro} /></p>{/if}
   </section>
 
@@ -60,7 +61,7 @@
         class="puce"
         aria-pressed={filtre === x}
         data-theme={x}
-        onclick={() => (filtre = x)}>{t(`priere.theme_${x}`)}</button
+        onclick={() => (filtre = x)}><Bidi text={t(`priere.theme_${x}`)} /></button
       >
     {/each}
   </div>
@@ -87,7 +88,9 @@
             /></span
           >
           <span class="q"
-            ><small>{a ? t(`priere.theme_${a.theme}`) : ''}</small><b>{c.titre}</b></span
+            ><small><Bidi text={a ? t(`priere.theme_${a.theme}`) : ''} /></small><b
+              ><Bidi text={c.titre} /></b
+            ></span
           >
           <Picto nom="chevron-b" classe="chev" />
         </button>

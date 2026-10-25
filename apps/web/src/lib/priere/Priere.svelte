@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount, untrack, type Component } from 'svelte';
   import { resolve } from '$app/paths';
   import { activeProfile } from '$lib/attempts';
@@ -131,7 +132,7 @@
       data-testid="priere-retour"><Picto nom="retour" /></a
     >
     <!-- eslint-enable svelte/no-navigation-without-resolve -->
-    <h1>{titre || t('priere.carte_titre')}</h1>
+    <h1><Bidi text={titre || t('priere.titre')} /></h1>
   </header>
 
   {#if erreur}
@@ -154,6 +155,6 @@
         </section>
       {/await}
     {/key}
-    <p class="statut" data-testid="priere-statut">{statut}</p>
+    <p class="statut" data-testid="priere-statut"><Bidi text={statut} /></p>
   {/if}
 </div>

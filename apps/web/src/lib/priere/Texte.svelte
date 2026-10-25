@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { decouper } from './donnees';
 
   /**
@@ -9,5 +10,6 @@
   const morceaux = $derived(decouper(txt));
 </script>
 
-{#each morceaux as m, i (i)}{#if 'ar' in m}<span class="ar cite" lang="ar" dir="rtl">{m.ar}</span
-    >{:else}<span class="fr-morceau">{m.fr}</span>{/if}{/each}
+{#each morceaux as m, i (i)}{#if 'ar' in m}<span class="ar cite quran-text" lang="ar" dir="rtl"
+      >{m.ar}</span
+    >{:else}<span class="fr-morceau"><Bidi text={m.fr} /></span>{/if}{/each}

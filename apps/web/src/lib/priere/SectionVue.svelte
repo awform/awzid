@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import type { Voix } from './audio';
@@ -28,8 +29,8 @@
 <div class="e-section" data-testid="priere-section" data-section={id}>
   {#if section}
     <section class="bandeau cadre intro">
-      <div class="sur">{t('priere.section_n', { n: id.replace(/\D/g, '') })}</div>
-      <h1>{section.titre}</h1>
+      <div class="sur"><Bidi text={t('priere.section_n', { n: id.replace(/\D/g, '') })} /></div>
+      <h1><Bidi text={section.titre} /></h1>
       {#if section.intro}<p><Texte txt={section.intro} /></p>{/if}
     </section>
     {#each section.elements ?? [] as e (e.id)}<ElementVue {e} {voix} />{/each}

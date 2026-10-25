@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import { reduit } from './mouvement';
@@ -84,7 +85,7 @@
 <section class="bandeau cadre heros" data-testid="priere-heros">
   <div>
     <div class="sur">{t('priere.parcours')}</div>
-    <h1>{plan.meta.titre}</h1>
+    <h1><Bidi text={plan.meta.titre} /></h1>
   </div>
   <div class="medaille">
     <SilhouetteVue
@@ -116,14 +117,16 @@
           stroke-linecap="round"
           stroke-dasharray="{(faites / Math.max(1, st.length)) * 163.4} 163.4"
         /></svg
-      ><b>{faites}/{st.length}</b>
+      ><b><Bidi text={faites} />/<Bidi text={st.length} /></b>
     </div>
     <div class="txt">
       <strong data-testid="priere-avancement"
-        >{t('priere.avancement_global', { n: faites, total: st.length })}</strong
+        ><Bidi text={t('priere.avancement_global', { n: faites, total: st.length })} /></strong
       >
       <span
-        >{prochaine ? t('priere.prochaine', { titre: prochaine.titre }) : t('priere.termine')}</span
+        ><Bidi
+          text={prochaine ? t('priere.prochaine', { titre: prochaine.titre }) : t('priere.termine')}
+        /></span
       >
     </div>
   </div>
@@ -131,9 +134,10 @@
 
 {#if plan.citation}
   <div class="citation" data-testid="priere-citation">
-    {#if plan.citation.ar}<span class="ar" lang="ar" dir="rtl">{plan.citation.ar}</span>{/if}
+    {#if plan.citation.ar}<span class="ar quran-text" lang="ar" dir="rtl">{plan.citation.ar}</span
+      >{/if}
     {#if plan.citation.fr}<p><Texte txt={plan.citation.fr} /></p>{/if}
-    {#if plan.citation.reference}<small>{plan.citation.reference}</small>{/if}
+    {#if plan.citation.reference}<small><Bidi text={plan.citation.reference} /></small>{/if}
   </div>
 {/if}
 
@@ -172,19 +176,21 @@
     >
       <span class="med"
         ><Picto nom={x.fait ? 'ok' : (ICONE[s.id] ?? 'etoile8-trait')} /><span class="num"
-          >{k + 1}</span
+          ><Bidi text={k + 1} /></span
         ></span
       >
       <span class="bulle">
-        <h3>{s.titre}</h3>
-        <p>{s.intro}</p>
+        <h3><Bidi text={s.titre} /></h3>
+        <p><Bidi text={s.intro} /></p>
         <span class="etat"
           ><span class="barre"
             ><i style:width="{Math.round((100 * x.n) / Math.max(1, x.total))}%"></i></span
           ><small
-            >{x.fait
-              ? t('priere.station_terminee')
-              : t('priere.avancement', { n: x.n, total: x.total })}</small
+            ><Bidi
+              text={x.fait
+                ? t('priere.station_terminee')
+                : t('priere.avancement', { n: x.n, total: x.total })}
+            /></small
           ></span
         >
         {#if enCours === s.id}<span class="cta"

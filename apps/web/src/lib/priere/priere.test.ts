@@ -81,6 +81,8 @@ const sourates = JSON.parse(lire(`${DONNEES}sourates.json`)) as {
 };
 const animation = JSON.parse(lire(`${DONNEES}animation.json`)) as Plan['animation'];
 const noms = readdirSync(ici_(STATIC)).filter((f) => f.endsWith('.json') && f !== 'calage.json');
+/** HTML rendu sans les repères d'hydratation */
+const net = (h: string) => h.replace(/<!--[\s\S]*?-->/g, '');
 const statique = (n: string) => JSON.parse(lire(`${STATIC}${n}`)) as Record<string, unknown>;
 
 /** clés internes jamais montrées (retirées de la projection) */
@@ -218,9 +220,9 @@ describe('fidélité au JSON du référent : l’arabe octet pour octet', () => 
     let n = 0;
     parcourir(s5, (o) => {
       if (o.type !== 'parole' || typeof o.ar !== 'string' || !o.ar) return;
-      const html = render(Parole, {
-        props: { p: o as unknown as Element, voix: voix as never },
-      }).body;
+      const html = net(
+        render(Parole, { props: { p: o as unknown as Element, voix: voix as never } }).body,
+      );
       for (const w of mots(o.ar))
         expect(html.includes(`>${w}</span>`), `${o.id} : ${w}`).toBe(true);
       n++;
@@ -228,7 +230,7 @@ describe('fidélité au JSON du référent : l’arabe octet pour octet', () => 
     expect(n).toBeGreaterThan(15);
     // la Fātiḥa de la prière : chaque verset (1:2 à 1:7) rendu tel quel, sur sa ligne
     const f = trouver(s5, 'S5.fatiha')!;
-    const html = render(Parole, { props: { p: f, voix: voix as never } }).body;
+    const html = net(render(Parole, { props: { p: f, voix: voix as never } }).body);
     expect(f.ar_versets).toHaveLength(6);
     for (const v of f.ar_versets!) expect(html.includes(`>${v.ar}</span>`), v.ref).toBe(true);
   });

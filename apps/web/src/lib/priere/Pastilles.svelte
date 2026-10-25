@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import { CLASSE_NIVEAU, lignesVoix, listeNiveaux, type Niveau } from './donnees';
   import Picto from './Picto.svelte';
@@ -22,11 +23,11 @@
   <div class="pastilles">
     {#each niveaux as n (n.code)}
       <span class="pastille {CLASSE_NIVEAU[n.code] ?? 'permis'}" data-niveau={n.code}
-        >{n.libelle}</span
+        ><Bidi text={n.libelle} /></span
       >
     {/each}
     {#if repetition}
-      <span class="pastille voix"><Picto nom="repeter" />{repetition}</span>
+      <span class="pastille voix"><Picto nom="repeter" /><Bidi text={repetition} /></span>
     {/if}
   </div>
   {#if lignes.length}
@@ -37,7 +38,7 @@
           data-voix={l.haute && l.basse ? 'mixte' : l.haute ? 'haute' : 'basse'}
           >{#if l.haute}<Picto nom="voix-haute" />{/if}{#if l.basse || !l.haute}<Picto
               nom="voix-basse"
-            />{/if}{texteVoix(l.texte)}</span
+            />{/if}<Bidi text={texteVoix(l.texte)} /></span
         >
       {/each}
     </div>

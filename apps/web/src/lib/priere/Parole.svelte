@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import { attendre } from './mouvement';
@@ -108,11 +109,11 @@
 
 <!-- eslint-disable svelte/no-useless-mustaches -- une espace entre deux mots arabes -->
 <section class="parole" class:longue data-testid="priere-parole" data-id={p.id}>
-  {#if p.titre}<div class="moment"><small>{p.titre}</small></div>{/if}
+  {#if p.titre}<div class="moment"><small><Bidi text={p.titre} /></small></div>{/if}
   <Pastilles niveau={p.niveau} voix={p.voix} repetition={p.repetition} />
 
   {#if p.ar_versets?.length}
-    <span class="coran" lang="ar" dir="rtl"
+    <span class="coran quran-text" lang="ar" dir="rtl"
       >{#each p.ar_versets as v, k (v.ref)}<span
           class="verset"
           class:actif={verset === k}
@@ -120,7 +121,7 @@
         >{/each}</span
     >
   {:else if p.ar}
-    <span class={coran ? 'coran' : 'ar'} lang="ar" dir="rtl"
+    <span class="ar quran-text" class:coran lang="ar" dir="rtl"
       >{#if coran}<span class="verset" class:actif={lecture}>{p.ar}</span
         >{:else}{#each liste as w, i (i)}<span
             class="mot"
@@ -135,9 +136,11 @@
       <div class="audio-off" data-testid="priere-sans-voix" data-raison={src.raison}>
         <span class="rond" aria-hidden="true"><Picto nom="voix-basse" /></span>
         <span
-          >{t(
-            src.raison === 'basmala' ? 'priere.sans_voix_basmala' : 'priere.sans_voix_coran',
-          )}</span
+          ><Bidi
+            text={t(
+              src.raison === 'basmala' ? 'priere.sans_voix_basmala' : 'priere.sans_voix_coran',
+            )}
+          /></span
         >
       </div>
     {:else if src.type === 'tts' && !src.id}
@@ -180,7 +183,7 @@
     {#if p.sens}<p class="sens"><Texte txt={p.sens} /></p>{/if}
     {#if p.ar_versets?.length}
       <ol class="rangs" data-testid="priere-sens-versets">
-        {#each p.ar_versets as v (v.ref)}{#if v.sens}<li>{v.sens}</li>{/if}{/each}
+        {#each p.ar_versets as v (v.ref)}{#if v.sens}<li><Bidi text={v.sens} /></li>{/if}{/each}
       </ol>
     {/if}
     {#if p.explication}<p class="fais"><Texte txt={p.explication} /></p>{/if}
@@ -190,7 +193,7 @@
       </p>
     {/if}
     {#if p.numerotation}<p class="note petit">
-        <Picto nom="info" /><span>{p.numerotation}</span>
+        <Picto nom="info" /><span><Bidi text={p.numerotation} /></span>
       </p>{/if}
     {#if lienMam}
       <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- vue de la même page (?e=sourate) -->
@@ -201,7 +204,9 @@
         <summary>{t('priere.mot_a_mot')}<Picto nom="chevron-b" /></summary>
         <ul class="mam" data-testid="priere-mam">
           {#each mam as m, i (i)}<li>
-              <span class="ar" lang="ar" dir="rtl">{m.ar}</span><span>{m.fr}</span>
+              <span class="ar quran-text" lang="ar" dir="rtl">{m.ar}</span><span
+                ><Bidi text={m.fr} /></span
+              >
             </li>{/each}
         </ul>
       </details>
@@ -215,7 +220,7 @@
     {#if p.variante}
       <div class="parole variante" data-testid="priere-variante">
         <div class="moment"><small>{t('priere.autre_forme')}</small></div>
-        <span class="ar" lang="ar" dir="rtl">{p.variante.ar}</span>
+        <span class="ar quran-text" lang="ar" dir="rtl">{p.variante.ar}</span>
         {#if varSrc?.type === 'tts' && varSrc.id}
           <div class="ecoute">
             <button
@@ -240,7 +245,7 @@
       <details class="plus">
         <summary>{t('priere.sources')}<Picto nom="chevron-b" /></summary>
         <ul class="sources">
-          {#each p.sources as s, i (i)}<li>{s}</li>{/each}
+          {#each p.sources as s, i (i)}<li><Bidi text={s} /></li>{/each}
         </ul>
       </details>
     {/if}

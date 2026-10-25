@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import { refsAyyub, type Voix } from './audio';
@@ -40,15 +41,17 @@
 {:else if e.type === 'matn' || (e.type === 'texte' && e.ar)}
   <Parole p={asParole} {voix} />
   {#if e.type === 'texte' && e.fr}<p class="el corps"><Texte txt={e.fr} /></p>{/if}
-  {#if e.traduction}<p class="note petit"><Picto nom="info" /><span>{e.traduction}</span></p>{/if}
+  {#if e.traduction}<p class="note petit">
+      <Picto nom="info" /><span><Bidi text={e.traduction} /></span>
+    </p>{/if}
 {:else if e.type === 'texte'}
   <div class="el" data-id={e.id}>
-    {#if e.titre}<h3>{e.titre}</h3>{/if}
+    {#if e.titre}<h3><Bidi text={e.titre} /></h3>{/if}
     <p class="corps"><Texte txt={e.fr ?? ''} /></p>
   </div>
 {:else if e.type === 'regle'}
   <section class="el regle" data-id={e.id}>
-    {#if e.titre}<h3>{e.titre}</h3>{/if}
+    {#if e.titre}<h3><Bidi text={e.titre} /></h3>{/if}
     <Pastilles niveau={e.niveau} />
     <p class="corps"><Texte txt={e.fr ?? ''} /></p>
     {#each e.textes ?? [] as x, i (i)}
@@ -58,7 +61,7 @@
           {voix}
         />
       {:else}
-        <span class="ar" lang="ar" dir="rtl">{x.ar}</span>
+        <span class="ar quran-text" lang="ar" dir="rtl">{x.ar}</span>
         {#if x.fr}<p class="sens"><Texte txt={x.fr} /></p>{/if}
       {/if}
     {/each}
@@ -75,7 +78,7 @@
       <details class="plus">
         <summary>{t('priere.sources')}<Picto nom="chevron-b" /></summary>
         <ul class="sources">
-          {#each e.sources as s, i (i)}<li>{s}</li>{/each}
+          {#each e.sources as s, i (i)}<li><Bidi text={s} /></li>{/each}
         </ul>
       </details>
     {/if}
@@ -85,29 +88,29 @@
     <div class="preuve"><Parole p={asParole} {voix} /></div>
   {:else}
     <section class="el parole preuve" data-id={e.id} data-nature={e.nature}>
-      {#if e.ar}<span class="ar" lang="ar" dir="rtl">{e.ar}</span>{/if}
+      {#if e.ar}<span class="ar quran-text" lang="ar" dir="rtl">{e.ar}</span>{/if}
       {#if e.fr}<p class="sens"><Texte txt={e.fr} /></p>{/if}
-      {#if e.reference}<p class="ref">{e.reference}</p>{/if}
-      {#if e.authenticite}<p class="ref">{e.authenticite}</p>{/if}
+      {#if e.reference}<p class="ref"><Bidi text={e.reference} /></p>{/if}
+      {#if e.authenticite}<p class="ref"><Bidi text={e.authenticite} /></p>{/if}
       {#if e.explication}<p class="fais"><Texte txt={e.explication} /></p>{/if}
     </section>
   {/if}
 {:else if e.type === 'liste'}
   <section class="el" data-id={e.id}>
-    {#if e.titre}<h3>{e.titre}</h3>{/if}
+    {#if e.titre}<h3><Bidi text={e.titre} /></h3>{/if}
     <ul>
       {#each e.items ?? [] as x, i (i)}<li><Texte txt={x} /></li>{/each}
     </ul>
   </section>
 {:else if e.type === 'tableau'}
   <section class="el" data-id={e.id}>
-    {#if e.titre}<h3>{e.titre}</h3>{/if}
+    {#if e.titre}<h3><Bidi text={e.titre} /></h3>{/if}
     <ul class="rangs">
       {#each e.lignes ?? [] as l, i (i)}
         <li>
           <dl>
             {#each l as c, j (j)}
-              {#if c}<dt>{e.colonnes?.[j]}</dt>
+              {#if c}<dt><Bidi text={e.colonnes?.[j]} /></dt>
                 <dd><Texte txt={c} /></dd>{/if}
             {/each}
           </dl>
@@ -120,19 +123,19 @@
   </section>
 {:else if e.type === 'groupe'}
   <section data-id={e.id}>
-    {#if e.titre}<h2 class="groupe-titre">{e.titre}</h2>{/if}
+    {#if e.titre}<h2 class="groupe-titre"><Bidi text={e.titre} /></h2>{/if}
     {#if e.intro}<p class="corps"><Texte txt={e.intro} /></p>{/if}
     {#each e.elements ?? [] as x (x.id)}<ElementVue e={x} {voix} />{/each}
   </section>
 {:else if e.type === 'renvoi'}
   <section class="el" data-id={e.id}>
-    {#if e.titre}<h3>{e.titre}</h3>{/if}
+    {#if e.titre}<h3><Bidi text={e.titre} /></h3>{/if}
     <Pastilles niveau={e.niveau} />
     <p class="corps"><Texte txt={e.fr ?? ''} /></p>
     <!-- eslint-disable svelte/no-navigation-without-resolve -- vues de la même page (?e=sourate) -->
     <div class="puces">
       {#each sourates as s (s)}
-        <a class="puce" href="?e=sourate&s={s}" data-sourate={s}>{noms[s] ?? s}</a>
+        <a class="puce" href="?e=sourate&s={s}" data-sourate={s}><Bidi text={noms[s] ?? s} /></a>
       {/each}
     </div>
     <!-- eslint-enable svelte/no-navigation-without-resolve -->

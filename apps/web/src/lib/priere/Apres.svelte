@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import { sourceAudio, type Voix } from './audio';
@@ -132,11 +133,11 @@
         aria-current={k === c.et ? 'step' : undefined}
         aria-label={it.titre}
         data-i={k}
-        onclick={() => aller(k)}><i>{n === 33 ? '33' : `×${n}`}</i></button
+        onclick={() => aller(k)}><i><Bidi text={n === 33 ? '33' : `×${n}`} /></i></button
       >
     {/each}
   </nav>
-  <p class="moment-dhikr" data-testid="priere-moment">{x?.titre ?? ''}</p>
+  <p class="moment-dhikr" data-testid="priere-moment"><Bidi text={x?.titre ?? ''} /></p>
 
   <div class="compteur-zone">
     <svg class="perles" viewBox="0 0 330 330" aria-hidden="true" data-testid="priere-perles">
@@ -161,11 +162,13 @@
       aria-label={t('priere.disque', { sens: x?.sens ?? '', n: c.n, total: fois })}
       onclick={compter}
     >
-      <span class="ar" class:long={(x?.ar ?? '').length > 40} lang="ar" dir="rtl"
+      <span class="ar quran-text" class:long={(x?.ar ?? '').length > 40} lang="ar" dir="rtl"
         >{x?.ar ?? ''}</span
       >
-      <span class="fr">{sens}</span>
-      <span class="nb" data-testid="priere-nb">{c.n}<small> / {fois}</small></span>
+      <span class="fr"><Bidi text={sens} /></span>
+      <span class="nb" data-testid="priere-nb"
+        ><Bidi text={c.n} /><small> / <Bidi text={fois} /></small></span
+      >
     </button>
     <div class="fini" class:on={fini}><svg aria-hidden="true"><use href="#pr-rosette" /></svg></div>
   </div>
@@ -191,7 +194,11 @@
       ><i style:width="{totalCent ? (faitCent / totalCent) * 100 : 0}%"></i></span
     >
     <b data-testid="priere-total"
-      >{c.et < 2 && faitCent === 0 ? t('priere.avant_centaine') : `${faitCent} / ${totalCent}`}</b
+      ><Bidi
+        text={c.et < 2 && faitCent === 0
+          ? t('priere.avant_centaine')
+          : `${faitCent} / ${totalCent}`}
+      /></b
     >
   </div>
   {#if intro}<p class="doigts"><Picto nom="main" /><span><Texte txt={intro} /></span></p>{/if}

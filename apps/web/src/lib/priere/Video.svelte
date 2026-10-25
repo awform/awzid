@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount, untrack } from 'svelte';
   import { t } from '$lib/i18n';
   import { mots as motsDe } from './calendrier';
@@ -263,7 +264,7 @@
           type="button"
           aria-pressed={progres.genre === g}
           data-genre={g}
-          onclick={() => changerGenre(g as Genre)}>{t(`priere.${g}`)}</button
+          onclick={() => changerGenre(g as Genre)}><Bidi text={t(`priere.${g}`)} /></button
         >
       {/each}
     </div>
@@ -273,7 +274,7 @@
       <div><b>{t('priere.video')}</b><small>{t('priere.video_sous_titre')}</small></div>
       <div class="rakaa" aria-live="polite">
         <span class="chiffre" data-testid="priere-video-unite"
-          >{beat?.r ?? 1}<small> / {total}</small></span
+          ><Bidi text={beat?.r ?? 1} /><small> / <Bidi text={total} /></small></span
         >
         <span class="points"
           >{#each Array(total) as _, k (k)}<i class:fait={k < (beat?.r ?? 1)}></i>{/each}</span
@@ -284,21 +285,21 @@
       <SilhouetteVue bind:this={sil} pose="debout" genre={progres.genre} {parle} />
     </div>
     <div class="sous-titre" aria-live="polite" data-testid="priere-video-texte">
-      {#if beat}<div class="pos">{titreEtape(beat.etape)}</div>{/if}
+      {#if beat}<div class="pos"><Bidi text={titreEtape(beat.etape)} /></div>{/if}
       {#if contenu?.type === 'coran'}
-        <span class="coran" lang="ar" dir="rtl"
+        <span class="coran quran-text" lang="ar" dir="rtl"
           ><span class="verset" class:actif={contenu.actif}>{contenu.ar}</span></span
         >
-        {#if contenu.sens}<p>{contenu.sens}</p>{/if}
+        {#if contenu.sens}<p><Bidi text={contenu.sens} /></p>{/if}
       {:else if contenu?.type === 'parole'}
-        <span class="ar" lang="ar" dir="rtl"
+        <span class="ar quran-text" lang="ar" dir="rtl"
           >{#each contenu.mots as w, k (k)}<span
               class="mot"
               class:actif={contenu.actif === k}
               class:dit={contenu.actif > k}>{w}</span
             >{' '}{/each}</span
         >
-        {#if contenu.sens}<p>{contenu.sens}</p>{/if}
+        {#if contenu.sens}<p><Bidi text={contenu.sens} /></p>{/if}
       {:else if contenu?.type === 'texte'}
         <p><Texte txt={contenu.fr} /></p>
       {/if}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { t } from '$lib/i18n';
   import type { NomGeste } from './ablution';
@@ -104,7 +105,7 @@
           type="button"
           aria-pressed={progres.genre === g}
           data-genre={g}
-          onclick={() => changerGenre(g as Genre)}>{t(`priere.${g}`)}</button
+          onclick={() => changerGenre(g as Genre)}><Bidi text={t(`priere.${g}`)} /></button
         >
       {/each}
     </div>
@@ -114,12 +115,12 @@
     <div class="scene"><AblutionVue {geste} genre={genreImage} surCycle={compter} /></div>
     <div class="etiquette">
       <small data-testid="priere-num-geste"
-        >{t('priere.geste_n', { n: i + 1, total: etapes.length })}</small
-      ><b>{etape?.titre ?? ''}</b>
+        ><Bidi text={t('priere.geste_n', { n: i + 1, total: etapes.length })} /></small
+      ><b><Bidi text={etape?.titre ?? ''} /></b>
     </div>
     {#if fois > 1}
       <div class="fois" aria-live="polite" data-testid="priere-fois">
-        ×{fois}
+        ×<Bidi text={fois} />
         {#each Array(fois) as _, k (k)}<i class:fait={k < Math.min(cycles, fois)}></i>{/each}
       </div>
     {/if}
@@ -132,7 +133,8 @@
         class:fait={k < i}
         aria-current={k === i ? 'step' : undefined}
         data-etape={e.id}
-        onclick={() => aller(k)}><i>{k + 1}</i><span>{e.titre}</span></button
+        onclick={() => aller(k)}
+        ><i><Bidi text={k + 1} /></i><span><Bidi text={e.titre} /></span></button
       >
     {/each}
   </nav>
@@ -145,7 +147,7 @@
         data-testid="priere-geste"
         data-id={etape.id}
       >
-        <h2>{i + 1}. {etape.titre}</h2>
+        <h2><Bidi text={i + 1} />. <Bidi text={etape.titre} /></h2>
         <Pastilles niveau={listeNiveaux(etape)} />
         {#if etape.geste}<p class="fais"><Texte txt={etape.geste} /></p>{/if}
         {#each etape.paroles ?? [] as p (p.id)}<Parole {p} {voix} />{/each}
@@ -168,7 +170,7 @@
           <details class="plus">
             <summary>{t('priere.sources')}<Picto nom="chevron-b" /></summary>
             <ul class="sources">
-              {#each etape.sources as s, k (k)}<li>{s}</li>{/each}
+              {#each etape.sources as s, k (k)}<li><Bidi text={s} /></li>{/each}
             </ul>
           </details>
         {/if}
@@ -203,7 +205,7 @@
     <!-- grand lavage : pictogrammes et texte seulement, jamais un corps -->
     {#if sous('S2B')}
       <div class="sec">
-        <h2>{sous('S2B')?.titre}</h2>
+        <h2><Bidi text={sous('S2B')?.titre} /></h2>
         <span class="fil"></span>
       </div>
       <div class="ghusl" data-testid="priere-grand-lavage">
@@ -216,9 +218,9 @@
                 aria-pressed={lavage === e.id}
                 data-etape={e.id}
                 onclick={() => (lavage = lavage === e.id ? null : e.id)}
-                ><b>{k + 1}</b><Picto nom={plan.animation.pictos[e.id] ?? 'goutte'} /><span
-                  >{e.titre}</span
-                ></button
+                ><b><Bidi text={k + 1} /></b><Picto
+                  nom={plan.animation.pictos[e.id] ?? 'goutte'}
+                /><span><Bidi text={e.titre} /></span></button
               >
             </li>
           {/each}
@@ -238,7 +240,7 @@
 
     {#if sous('S2C')}
       <div class="sec">
-        <h2>{sous('S2C')?.titre}</h2>
+        <h2><Bidi text={sous('S2C')?.titre} /></h2>
         <span class="fil"></span>
       </div>
       <div class="ghusl">
@@ -250,9 +252,9 @@
                 aria-pressed={lavage === e.id}
                 data-etape={e.id}
                 onclick={() => (lavage = lavage === e.id ? null : e.id)}
-                ><b>{k + 1}</b><Picto nom={plan.animation.pictos[e.id] ?? 'main'} /><span
-                  >{e.titre}</span
-                ></button
+                ><b><Bidi text={k + 1} /></b><Picto
+                  nom={plan.animation.pictos[e.id] ?? 'main'}
+                /><span><Bidi text={e.titre} /></span></button
               >
             </li>
           {/each}
@@ -269,7 +271,7 @@
 
     {#if sous('S2D')}
       <div class="sec">
-        <h2>{sous('S2D')?.titre}</h2>
+        <h2><Bidi text={sous('S2D')?.titre} /></h2>
         <span class="fil"></span>
       </div>
       {#each reste('S2D', []) as e (e.id)}<ElementVue {e} {voix} />{/each}
