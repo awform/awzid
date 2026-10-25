@@ -3838,5 +3838,22 @@
   "parler.etoiles": "{n} نجوم من {total}",
   "parler.etoile_reussie": "{t}: موضوع متقن",
   "parler.etoile_a_faire": "{t}: ليس بعد",
-  "parler.antiseche_aide": "الصفحة التي أحملها معي. المس سطرا لتسمعه."
+  "parler.antiseche_aide": "الصفحة التي أحملها معي. المس سطرا لتسمعه.",
+  "adm.blocage_titre": "حظر حساب أو رفع الحظر عنه",
+  "adm.blocage_aide": "أدخل البريد الإلكتروني أو رقم هاتف الحساب. الحساب المحظور لا يمكنه تسجيل الدخول وتُغلق جلساته فورًا؛ ولا يُحذف شيء. يُسجَّل الإجراء في سجل التدقيق.",
+  "adm.blocage_champ": "البريد الإلكتروني أو الرقم",
+  "adm.blocage_bloquer": "حظر",
+  "adm.blocage_debloquer": "رفع الحظر",
+  "adm.blocage_ok_bloque": "تم حظر الحساب وأُغلقت جلساته.",
+  "adm.blocage_ok_debloque": "تم رفع الحظر عن الحساب.",
+  "adm.blocage_deja_bloque": "هذا الحساب محظور بالفعل.",
+  "adm.blocage_deja_actif": "هذا الحساب غير محظور.",
+  "adm.blocage_introuvable": "لا يوجد حساب مطابق.",
+  "adm.blocage_soi": "لا يمكنك حظر حسابك أنت.",
+  "adm.blocage_erreur": "فشل الإجراء. حاول مرة أخرى.",
+  "adm.blocage_vide": "أدخل عنوانًا أو رقمًا أولًا.",
+  "adm.blocage_liste": "الحسابات المحظورة",
+  "adm.blocage_aucun": "لا توجد حسابات محظورة.",
+  "adm.blocage_depuis": "حُظر في {date}",
+  "erreur.compte_bloque": "هذا الحساب موقوف. تواصل مع الدعم."
 }

@@ -3838,5 +3838,22 @@
   "parler.etoiles": "{n} Sterne von {total}",
   "parler.etoile_reussie": "{t}: Thema geschafft",
   "parler.etoile_a_faire": "{t}: noch nicht",
-  "parler.antiseche_aide": "Die Seite zum Mitnehmen. Tippe eine Zeile an, um sie zu hören."
+  "parler.antiseche_aide": "Die Seite zum Mitnehmen. Tippe eine Zeile an, um sie zu hören.",
+  "adm.blocage_titre": "Konto sperren oder entsperren",
+  "adm.blocage_aide": "Gib die E-Mail-Adresse oder die Telefonnummer des Kontos ein. Ein gesperrtes Konto kann sich nicht mehr anmelden, seine Sitzungen werden sofort beendet; nichts wird gelöscht. Die Aktion wird im Prüfprotokoll vermerkt.",
+  "adm.blocage_champ": "E-Mail oder Nummer",
+  "adm.blocage_bloquer": "Sperren",
+  "adm.blocage_debloquer": "Entsperren",
+  "adm.blocage_ok_bloque": "Konto gesperrt. Seine Sitzungen sind beendet.",
+  "adm.blocage_ok_debloque": "Konto entsperrt.",
+  "adm.blocage_deja_bloque": "Dieses Konto ist bereits gesperrt.",
+  "adm.blocage_deja_actif": "Dieses Konto ist nicht gesperrt.",
+  "adm.blocage_introuvable": "Kein Konto passt.",
+  "adm.blocage_soi": "Du kannst dein eigenes Konto nicht sperren.",
+  "adm.blocage_erreur": "Die Aktion ist fehlgeschlagen. Versuch es erneut.",
+  "adm.blocage_vide": "Gib zuerst eine Adresse oder eine Nummer ein.",
+  "adm.blocage_liste": "Gesperrte Konten",
+  "adm.blocage_aucun": "Keine gesperrten Konten.",
+  "adm.blocage_depuis": "gesperrt am {date}",
+  "erreur.compte_bloque": "Dieses Konto ist gesperrt. Wende dich an den Support."
 }

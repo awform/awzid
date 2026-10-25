@@ -114,6 +114,8 @@ export async function lookupSession(db: Db, token: string | null): Promise<AuthC
         isNull(t.session.revokedAt),
         gt(t.session.expiresAt, new Date()),
         isNull(t.account.deletedAt),
+        // compte bloqué par l'administrateur : ses sessions ne comptent plus (en plus de leur révocation)
+        isNull(t.account.blockedAt),
       ),
     )
     .limit(1);

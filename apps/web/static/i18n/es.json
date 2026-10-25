@@ -3838,5 +3838,22 @@
   "parler.etoiles": "{n} estrellas de {total}",
   "parler.etoile_reussie": "{t}: tema logrado",
   "parler.etoile_a_faire": "{t}: todavía no",
-  "parler.antiseche_aide": "La página para llevar contigo. Toca una línea para oírla."
+  "parler.antiseche_aide": "La página para llevar contigo. Toca una línea para oírla.",
+  "adm.blocage_titre": "Bloquear o desbloquear una cuenta",
+  "adm.blocage_aide": "Introduce el correo electrónico o el número de teléfono de la cuenta. Una cuenta bloqueada ya no puede iniciar sesión y sus sesiones se cierran al instante; no se borra nada. La acción queda anotada en el registro de auditoría.",
+  "adm.blocage_champ": "Correo o número",
+  "adm.blocage_bloquer": "Bloquear",
+  "adm.blocage_debloquer": "Desbloquear",
+  "adm.blocage_ok_bloque": "Cuenta bloqueada. Sus sesiones están cerradas.",
+  "adm.blocage_ok_debloque": "Cuenta desbloqueada.",
+  "adm.blocage_deja_bloque": "Esta cuenta ya está bloqueada.",
+  "adm.blocage_deja_actif": "Esta cuenta no está bloqueada.",
+  "adm.blocage_introuvable": "Ninguna cuenta coincide.",
+  "adm.blocage_soi": "No puedes bloquear tu propia cuenta.",
+  "adm.blocage_erreur": "La acción ha fallado. Inténtalo de nuevo.",
+  "adm.blocage_vide": "Introduce primero una dirección o un número.",
+  "adm.blocage_liste": "Cuentas bloqueadas",
+  "adm.blocage_aucun": "Ninguna cuenta bloqueada.",
+  "adm.blocage_depuis": "bloqueada el {date}",
+  "erreur.compte_bloque": "Esta cuenta está suspendida. Contacta con el soporte."
 }

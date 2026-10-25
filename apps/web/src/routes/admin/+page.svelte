@@ -12,6 +12,7 @@
   import ProblemesAdmin from '$lib/admin/ProblemesAdmin.svelte';
   import UsageAdmin from '$lib/admin/UsageAdmin.svelte';
   import AccesAdmin from '$lib/admin/AccesAdmin.svelte';
+  import BlocageAdmin from '$lib/admin/BlocageAdmin.svelte';
 
   /**
    * Tableau de bord ADMINISTRATEUR minimal, en lecture seule : utilisateurs (e-mails masqués), éditions et
@@ -108,6 +109,8 @@
 
   <!-- bêta fermée : invitations, liste d'attente, fermeture du site en une action -->
   <AccesAdmin />
+  <!-- blocage d'un compte, un par un -->
+  <BlocageAdmin />
   <ContenuAdmin />
   <ModerationAdmin />
   <ActivationAdmin />

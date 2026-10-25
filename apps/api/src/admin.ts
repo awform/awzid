@@ -4,9 +4,15 @@
  * tuteur, alertes de protection ouvertes, abonnements, journal d'audit récent. Second facteur obligatoire.
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { desc, eq, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, isNotNull, isNull, sql } from 'drizzle-orm';
 import { schema as t, type Db } from '@awform/db';
-import { hasRole } from './auth/service.js';
+import {
+  masquerTelephone,
+  normaliserTelephone,
+  ressembleTelephone,
+} from '@awform/school/telephone';
+import { audit, hasRole, revokeAll } from './auth/service.js';
+import { dechiffrer, phoneHashOf } from './identites/cles.js';
 
 const err = (reply: FastifyReply, status: number, code: string) =>
   reply.code(status).send({ error: { code } });
@@ -22,7 +28,7 @@ export function maskEmail(e: string | null): string | null {
   return `${user.slice(0, 1)}…${user.slice(-1)}@${domain}`;
 }
 
-export function registerAdmin(app: FastifyInstance, db: Db): void {
+export function registerAdmin(app: FastifyInstance, db: Db, secretKey: Buffer | null = null): void {
   const needAdmin = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.auth) return err(reply, 401, 'non_connecte');
     // lot F2 (revue E2) : administrateur, ou support (lecture seule de la vue d'ensemble)
@@ -30,6 +36,75 @@ export function registerAdmin(app: FastifyInstance, db: Db): void {
     if (!req.auth.mfaVerified)
       return err(reply, 403, req.auth.totpEnabled ? 'totp_requis' : 'mfa_a_configurer');
   };
+
+  // écriture : l'administrateur seulement (pas le support), second facteur obligatoire
+  const needAdminEcriture = async (req: FastifyRequest, reply: FastifyReply) => {
+    await needAdmin(req, reply);
+    if (reply.sent) return;
+    if (!hasRole(req.auth!, 'admin')) return err(reply, 403, 'reserve_admin');
+  };
+
+  /** Contact affichable d'un compte : e-mail masqué, ou numéro masqué (jamais en clair). */
+  const contactMasque = (a: { email: string | null; phoneEnc: string | null }): string | null =>
+    maskEmail(a.email) ?? masquerTelephone(dechiffrer(secretKey, a.phoneEnc));
+
+  // ------------------------------------------------------------------ blocage d'un compte, un par un
+  app.get('/api/v1/admin/comptes/bloques', { preHandler: needAdminEcriture }, async () => {
+    const rows = await db
+      .select({
+        id: t.account.id,
+        kind: t.account.kind,
+        email: t.account.email,
+        phoneEnc: t.account.phoneEnc,
+        blockedAt: t.account.blockedAt,
+      })
+      .from(t.account)
+      .where(and(isNotNull(t.account.blockedAt), isNull(t.account.deletedAt)))
+      .orderBy(desc(t.account.blockedAt))
+      .limit(200);
+    return {
+      comptes: rows.map((a) => ({
+        id: a.id,
+        kind: a.kind,
+        contact: contactMasque(a),
+        bloqueLe: a.blockedAt,
+      })),
+    };
+  });
+
+  app.post<{ Body: { identifiant?: string; bloquer?: boolean; pays?: string } }>(
+    '/api/v1/admin/comptes/blocage',
+    { preHandler: needAdminEcriture },
+    async (req, reply) => {
+      const saisi = (req.body?.identifiant ?? '').trim();
+      if (!saisi || saisi.length > 200 || typeof req.body?.bloquer !== 'boolean')
+        return err(reply, 400, 'requete_invalide');
+      let cible;
+      if (ressembleTelephone(saisi)) {
+        const n = normaliserTelephone(saisi, req.body.pays ?? 'SN');
+        if (!n.ok || !secretKey) return err(reply, 404, 'introuvable');
+        cible = eq(t.account.phoneHash, phoneHashOf(secretKey, n.e164));
+      } else cible = eq(t.account.email, saisi.toLowerCase());
+      const [a] = await db
+        .select({ id: t.account.id, kind: t.account.kind, blockedAt: t.account.blockedAt })
+        .from(t.account)
+        .where(and(cible, isNull(t.account.deletedAt)));
+      if (!a) return err(reply, 404, 'introuvable');
+      if (a.id === req.auth!.accountId) return err(reply, 400, 'pas_soi_meme');
+      const bloquer = req.body.bloquer;
+      if (bloquer === !!a.blockedAt) return { ok: true, change: false, bloque: bloquer };
+      await db
+        .update(t.account)
+        .set({ blockedAt: bloquer ? new Date() : null })
+        .where(eq(t.account.id, a.id));
+      // bloquer : toutes les sessions du compte sont fermées à l'instant
+      if (bloquer) await revokeAll(db, a.id);
+      await audit(db, req.auth!.accountId, bloquer ? 'compte.bloque' : 'compte.debloque', a.id, {
+        kind: a.kind,
+      });
+      return { ok: true, change: true, bloque: bloquer };
+    },
+  );
 
   app.get('/api/v1/admin/overview', { preHandler: needAdmin }, async () => {
     const count = (col: unknown) => sql<number>`count(${col})::int`;
