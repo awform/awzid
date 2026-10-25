@@ -174,3 +174,72 @@ def test_file_de_traitement_refuse_au_dela(client, monkeypatch):
     assert 503 in codes and 200 in codes
     # jamais d'erreur interne sous la charge (un modèle de la réserve par calcul)
     assert set(codes) <= {200, 503}
+
+
+# ---------------------------------------------------------------- shazam_coran : « Retrouve ce verset » et suivi
+
+def test_retrouver_deux_lectures(client):
+    r = client.post('/ecouter?mode=retrouver', content=opus(6),
+                    headers={'x-essai-mots': HEX, 'content-type': 'audio/webm'})
+    assert r.status_code == 200, r.text
+    j = r.json()
+    assert [m['w'] for m in j['mots']] == MOTS
+    assert [m['w'] for m in j['mots_ctc']] == MOTS
+    assert j['voix_s'] >= 3 and 5.5 < j['duree'] < 6.5
+
+
+def test_retrouver_moins_de_3_s_de_voix_aucune_lecture(client):
+    j = client.post('/ecouter?mode=retrouver', content=wav(3), headers={'x-essai-mots': HEX}).json()
+    assert j['mots'] == [] and j['mots_ctc'] == []
+    assert j['voix_s'] < 3
+
+
+def test_retrouver_refuse_plus_de_20_s(client):
+    r = client.post('/ecouter?mode=retrouver', content=wav(22), headers={'x-essai-mots': HEX})
+    assert r.status_code == 413
+    assert r.json()['error']['code'] == 'audio_trop_long'
+
+
+def test_suivi_passage_relu_avec_contexte_puis_effacement(client):
+    sid = str(uuid.uuid4())
+    x = np.frombuffer(wav(3)[44:], dtype='<i2')
+    silence = np.zeros(16000, dtype='<i2')
+    envoi = lambda b: client.post(f'/direct/{sid}?mode=suivi', content=b.tobytes(),  # noqa: E731
+                                  headers={'x-essai-mots': HEX}).json()
+    r1 = envoi(np.concatenate([x, silence]))
+    # premier passage fini : provisoire seulement (il attend son contexte de droite)
+    assert r1['stables'] == [] and [m['w'] for m in r1['provisoires']]
+    r2 = envoi(np.concatenate([x, silence]))
+    # passage suivant fini : le premier, relu avec son contexte, devient stable (deux lectures)
+    assert r2['stables'] and r2['stables_ctc'] and 'provisoires' in r2
+    assert r2['zone'][0] == 0.0 and all(m['t0'] < r2['zone'][1] for m in r2['stables'])
+    s = ecoute._seances[sid]
+    assert s.suivi
+    # mémoire : le dernier passage et 4 s avant lui, rien d'autre
+    assert len(s.ctx) <= 16000 * (4 + 4.1) and len(s.buf) < 16000
+    client.delete(f'/direct/{sid}')
+    assert sid not in ecoute._seances
+
+
+def test_retrouver_et_suivi_rien_sur_disque(client):
+    avant, fd0 = instantane(), fds()
+    assert client.post('/ecouter?mode=retrouver', content=opus(6), headers={'x-essai-mots': HEX}).status_code == 200
+    sid = str(uuid.uuid4())
+    x = np.frombuffer(wav(3)[44:], dtype='<i2')
+    for _ in range(2):
+        client.post(f'/direct/{sid}?mode=suivi', content=np.concatenate([x, np.zeros(16000, '<i2')]).tobytes(),
+                    headers={'x-essai-mots': HEX})
+    client.delete(f'/direct/{sid}')
+    assert instantane() == avant, 'un fichier a été écrit pendant le traitement'
+    assert not [f for f in fds() - fd0 if 'memfd' in f or f.startswith('/tmp')], 'descripteur audio non fermé'
+
+
+def test_retrouver_relecture_si_la_lecture_decroche(client):
+    """Trop peu de mots lus pour la voix entendue : seconde lecture sans le début de l'extrait."""
+    un = ','.join(w.encode('utf-8').hex() for w in MOTS[:1])
+    j = client.post('/ecouter?mode=retrouver', content=opus(8), headers={'x-essai-mots': un}).json()
+    assert 'relecture' in j and j['relecture']['debut'] > 0
+    assert [m['w'] for m in j['relecture']['mots']] == MOTS[:1]
+    beaucoup = ','.join(w.encode('utf-8').hex() for w in MOTS * 3)
+    j = client.post('/ecouter?mode=retrouver', content=opus(6), headers={'x-essai-mots': beaucoup}).json()
+    assert 'relecture' not in j

@@ -15,6 +15,11 @@
  *  - accord « analyse vocale par IA » (`analyse_vocale_ia`, lot F3) demandé au PREMIER USAGE, jamais d'avance ;
  *    enfant : donné par le parent (code parent) ; mineur inscrit seul : impossible (il faut un parent).
  *
+ * INTERRUPTEUR « shazam_coran » (F5, coupé par défaut, 25/10/2026) : « Retrouve ce verset » (`/ecoute/retrouver` :
+ * 5 à 15 s de récitation -> passages du Coran, index Tanzil `IndexCoran`, @awform/hifz) et le SUIVI de la récitation
+ * qui signale les erreurs pendant qu'on récite (`/ecoute/direct?suivi=1` : passages relus avec leur contexte, deux
+ * lectures d'accord). Mêmes règles : accord F3 (enfant : code parent), quota par heure, voix jamais gardée.
+ *
  * Deux points À BRANCHER quand les lots arrivent :
  *  - interrupteur : `decisionEcouteIa` (aujourd'hui AWFORM_ECOUTE_IA=on|beta|off) -> registre F5
  *    `fonctionActive('ecoute_ia', …)`, entrée `ecoute_ia: { defaut: 'beta' }` ;
@@ -24,11 +29,21 @@ import { randomUUID } from 'node:crypto';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { and, eq, isNull } from 'drizzle-orm';
 import { schema as t, versesOf, type Db } from '@awform/db';
-import { comparer, motsARevoir, motsAttendus, type MotEntendu } from '@awform/hifz';
+import {
+  chercherDouble,
+  comparer,
+  decisionRetrouver,
+  IndexCoran,
+  motsARevoir,
+  motsAttendus,
+  VOIX_MIN_RETROUVER,
+  type MotEntendu,
+} from '@awform/hifz';
 import { ownsProfile } from './auth/routes.js';
 import { minorHolder, parentGate as guardParent } from './guards.js';
 import { audit, staffOnly } from './auth/service.js';
 import { lawEvidence, TEXT_VERSION } from './auth/policy.js';
+import { fonctionsDe } from './f5.js';
 
 export const ECOUTE_MAX_S = 300;
 /** 5 min d'Opus ≈ 1,5 Mo ; marge pour les formats moins compacts (mp4 de Safari) */
@@ -53,18 +68,42 @@ export interface EcouteBrute {
   calcul: number;
 }
 export interface DirectBrut {
-  mots: MotEntendu[];
+  /** mode direct (A5) : nouveaux mots sûrs (passages finis) */
+  mots?: MotEntendu[];
   partiel: MotEntendu[];
   /** zones de voix des passages finis (secondes depuis le début de la séance) */
   voix?: Array<[number, number]>;
   t: number;
+  /** mode suivi (shazam_coran) : mots STABLES du passage relu avec son contexte, en deux lectures */
+  stables?: MotEntendu[];
+  stables_ctc?: MotEntendu[];
+  /** mode suivi : mots provisoires du dernier passage fini (remplacent les précédents) */
+  provisoires?: MotEntendu[];
 }
+/** « Retrouve ce verset » : deux lectures du même extrait (RNN-T et tête CTC), voix entendue */
+export interface RetrouverBrut {
+  mots: MotEntendu[];
+  mots_ctc: MotEntendu[];
+  voix_s: number;
+  duree: number;
+  calcul: number;
+  /** seconde lecture sans le début de l'extrait, quand la première a « décroché » (trop peu de mots) */
+  relecture?: { mots?: MotEntendu[]; mots_ctc?: MotEntendu[] };
+}
+
+/** Toutes les lectures d'un extrait (la recherche garde la plus sûre). */
+export const lecturesDe = (r: RetrouverBrut): string[][] =>
+  [r.mots, r.mots_ctc, r.relecture?.mots, r.relecture?.mots_ctc]
+    .filter((l): l is MotEntendu[] => !!l?.length)
+    .map((l) => l.map((m) => m.w));
 export type Echec = { erreur: string; statut: number };
 export interface ClientEcoute {
   ecouter(audio: Buffer, mime: string): Promise<EcouteBrute | Echec>;
-  direct(sid: string, pcm: Buffer): Promise<DirectBrut | Echec>;
+  direct(sid: string, pcm: Buffer, suivi?: boolean): Promise<DirectBrut | Echec>;
   finDirect(sid: string): Promise<void>;
   sante(): Promise<boolean>;
+  /** shazam_coran : mode « retrouver » du service (absent : fonction indisponible) */
+  retrouver?(audio: Buffer, mime: string): Promise<RetrouverBrut | Echec>;
 }
 
 /** Client HTTP du service (réseau Docker interne). Aucun journal du contenu. */
@@ -92,9 +131,9 @@ export function clientEcouteHttp(base: string): ClientEcoute {
         },
         12 * 60_000,
       ),
-    direct: (sid, pcm) =>
+    direct: (sid, pcm, suivi = false) =>
       appel<DirectBrut>(
-        `/direct/${sid}`,
+        `/direct/${sid}${suivi ? '?mode=suivi' : ''}`,
         {
           method: 'POST',
           headers: { 'content-type': 'application/octet-stream' },
@@ -105,6 +144,17 @@ export function clientEcouteHttp(base: string): ClientEcoute {
     finDirect: async (sid) => {
       await appel(`/direct/${sid}`, { method: 'DELETE' }, 5_000);
     },
+    // 15 s d'audio : quelques dixièmes de seconde de calcul au calme ; 30 s laissent passer la file d'attente
+    retrouver: (audio, mime) =>
+      appel<RetrouverBrut>(
+        '/ecouter?mode=retrouver',
+        {
+          method: 'POST',
+          headers: { 'content-type': mime },
+          body: new Uint8Array(audio.buffer, audio.byteOffset, audio.byteLength),
+        },
+        30_000,
+      ),
     sante: async () => {
       const r = await appel<{ pret: boolean }>('/sante', {}, 3_000);
       return 'pret' in r && r.pret === true;
@@ -143,6 +193,39 @@ export const coutsCoupes = () => process.env.AWFORM_COUTS_COUPES === '1';
 /** Suivi en direct : sous-interrupteur (AWFORM_ECOUTE_DIRECT=off le coupe ; ouvert sinon quand ecoute_ia l'est). */
 export const directOuvert = () => (process.env.AWFORM_ECOUTE_DIRECT ?? 'on') !== 'off';
 
+/**
+ * INTERRUPTEUR « shazam_coran » (registre F5, COUPÉ par défaut) : « Retrouve ce verset » et le suivi de la récitation
+ * qui signale les erreurs pendant qu'on récite. Fonction coûteuse : coupée aussi par le disjoncteur de coût.
+ */
+export type DecisionShazam = (req: FastifyRequest, profileId: string) => boolean | Promise<boolean>;
+export const decisionShazamParDefaut =
+  (db: Db): DecisionShazam =>
+  async (req, profileId) =>
+    !coutsCoupes() && (await fonctionsDe(db, req, profileId)).fonctions.shazam_coran === true;
+
+/** Durée maximale d'un extrait de « Retrouve ce verset » (l'appareil s'arrête à 15 s) */
+export const RETROUVER_MAX_S = 20;
+/** 15 s d'Opus ≈ 60 Ko ; marge pour le mp4 de Safari */
+export const RETROUVER_MAX_OCTETS = 2 * 1024 * 1024;
+
+/**
+ * INDEX du texte Tanzil entier pour « Retrouve ce verset » (272 000 lettres, 50 000 quatre-grammes ; ≈ 0,3 s à
+ * construire), une fois par base, à la première demande — ou d'avance, dès qu'un appareil voit la fonction ouverte.
+ */
+const index = new WeakMap<Db, Promise<IndexCoran>>();
+export function indexCoran(db: Db): Promise<IndexCoran> {
+  let p = index.get(db);
+  if (!p) {
+    p = db
+      .select({ s: t.quranVerse.sura, a: t.quranVerse.aya, text: t.quranVerse.text })
+      .from(t.quranVerse)
+      .then((vs) => new IndexCoran(vs));
+    p.catch(() => index.delete(db));
+    index.set(db, p);
+  }
+  return p;
+}
+
 /** CONSENTEMENT « analyse vocale par IA » (type F3) : accord actif pour ce profil. */
 export async function consentementAnalyseVocale(db: Db, profileId: string): Promise<boolean> {
   const [c] = await db
@@ -162,6 +245,8 @@ export interface OptionsEcoute {
   client?: ClientEcoute | null;
   decision?: DecisionFonction;
   consentement?: (db: Db, profileId: string) => Promise<boolean>;
+  /** interrupteur shazam_coran (défaut : registre F5 et disjoncteur de coût) */
+  shazam?: DecisionShazam;
 }
 
 // ------------------------------------------------------------------ routes
@@ -170,9 +255,13 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
   const client = opts.client === undefined ? clientEcouteDepuisEnv() : opts.client;
   const decision = opts.decision ?? decisionEcouteIaParDefaut;
   const consenti = opts.consentement ?? consentementAnalyseVocale;
+  const shazam = opts.shazam ?? decisionShazamParDefaut(db);
   const compteur = new Map<string, number[]>();
   /** séances du direct : sid -> propriétaire (en mémoire ; l'audio, lui, n'est jamais ici) */
-  const seances = new Map<string, { accountId: string; profileId: string; fin: number }>();
+  const seances = new Map<
+    string,
+    { accountId: string; profileId: string; fin: number; suivi: boolean }
+  >();
 
   const profileOf = async (id: string) => {
     const [p] = await db
@@ -181,13 +270,29 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
       .where(eq(t.profile.id, id));
     return p ?? null;
   };
-  /** profil de la famille, fonction ouverte ; renvoie le profil ou null (réponse déjà envoyée) */
-  const garde = async (req: FastifyRequest, reply: FastifyReply, profileId: string) => {
+  /**
+   * profil de la famille, fonction ouverte (« Réciter et vérifier » : ecoute_ia ; « Retrouve ce verset » :
+   * shazam_coran) ; renvoie le profil ou null (réponse déjà envoyée)
+   */
+  const garde = async (
+    req: FastifyRequest,
+    reply: FastifyReply,
+    profileId: string,
+    fonction: 'ecoute' | 'shazam' = 'ecoute',
+  ) => {
     if (!req.auth) return void err(reply, 401, 'non_connecte');
     if (staffOnly(req.auth)) return void err(reply, 403, 'reserve_aux_familles');
     if (!(await ownsProfile(db, req.auth, profileId))) return void err(reply, 404, 'introuvable');
-    if (!(await decision(req))) return void err(reply, 404, 'fonction_fermee');
+    const ouverte = fonction === 'shazam' ? await shazam(req, profileId) : await decision(req);
+    if (!ouverte) return void err(reply, 404, 'fonction_fermee');
     return (await profileOf(profileId))!;
+  };
+  /** l'accord se donne depuis « Réciter et vérifier » OU « Retrouve ce verset » */
+  const gardeAccord = async (req: FastifyRequest, reply: FastifyReply, profileId: string) => {
+    if (req.auth && !staffOnly(req.auth) && (await ownsProfile(db, req.auth, profileId)))
+      if (!(await decision(req)) && (await shazam(req, profileId)))
+        return garde(req, reply, profileId, 'shazam');
+    return garde(req, reply, profileId);
   };
   const quota = (accountId: string) => {
     const now = Date.now();
@@ -206,15 +311,20 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
       if (!req.auth) return err(reply, 401, 'non_connecte');
       if (staffOnly(req.auth) || !(await ownsProfile(db, req.auth, req.params.id)))
         return { active: false };
-      if (!(await decision(req))) return { active: false };
+      const active = await decision(req);
+      // shazam_coran : « Retrouve ce verset » et suivi qui signale les erreurs (champ absent quand c'est coupé)
+      const sh = await shazam(req, req.params.id);
+      if (!active && !sh) return { active: false };
+      if (sh) void indexCoran(db).catch(() => null); // index prêt avant la première recherche
       const p = (await profileOf(req.params.id))!;
       return {
-        active: true,
+        active,
         disponible: client ? await client.sante() : false,
-        direct: directOuvert(),
+        direct: active && directOuvert(),
         accord: await consenti(db, p.id),
         enfant: p.kind === 'enfant',
         maxSecondes: ECOUTE_MAX_S,
+        ...(sh ? { shazam: true } : {}),
       };
     },
   );
@@ -224,7 +334,7 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
     '/api/v1/profiles/:id/ecoute/accord',
     { schema: { params: { type: 'object', required: ['id'], properties: { id: UUID } } } },
     async (req, reply) => {
-      const p = await garde(req, reply, req.params.id);
+      const p = await gardeAccord(req, reply, req.params.id);
       if (!p) return reply;
       if (await minorHolder(db, req.auth!.accountId)) return err(reply, 403, 'parent_requis');
       if (p.kind === 'enfant') {
@@ -336,13 +446,22 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
     },
   } as const;
 
-  /** Début d'un suivi en direct (séance en mémoire du service, 5 min au plus). */
-  app.post<{ Params: { id: string }; Querystring: { s: number; from: number; to: number } }>(
+  /**
+   * Début d'un suivi en direct (séance en mémoire du service, 5 min au plus). `suivi=1` (shazam_coran ouvert) :
+   * mode « suivi de la récitation », passages relus avec leur contexte, erreurs signalées pendant la récitation.
+   */
+  app.post<{
+    Params: { id: string };
+    Querystring: { s: number; from: number; to: number; suivi?: number };
+  }>(
     '/api/v1/profiles/:id/ecoute/direct',
     {
       schema: {
         params: { type: 'object', required: ['id'], properties: { id: UUID } },
-        querystring: QS,
+        querystring: {
+          ...QS,
+          properties: { ...QS.properties, suivi: { type: 'integer', enum: [0, 1] } },
+        },
       },
     },
     async (req, reply) => {
@@ -361,12 +480,14 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
           await client.finDirect(sid);
         }
       const sid = randomUUID();
+      const suivi = req.query.suivi === 1 && (await shazam(req, p.id));
       seances.set(sid, {
         accountId: req.auth!.accountId,
         profileId: p.id,
         fin: Date.now() + (ECOUTE_MAX_S + 30) * 1000,
+        suivi,
       });
-      return { sid, maxSecondes: ECOUTE_MAX_S };
+      return { sid, maxSecondes: ECOUTE_MAX_S, ...(suivi ? { suivi: true } : {}) };
     },
   );
 
@@ -447,6 +568,70 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
       },
     );
 
+    /**
+     * « RETROUVE CE VERSET » (shazam_coran) : 5 à 15 s de récitation -> les passages du Coran qui y correspondent,
+     * au-dessus du seuil validé (0,6), et les passages au MÊME texte ailleurs (ex æquo). Moins de 3 s de voix :
+     * « trop_court » (l'appli demande de réciter plus longtemps). Jamais de jugement de la récitation. L'audio n'est
+     * pas gardé (ni base, ni disque, ni journal) ; le journal ne compte que des totaux (durée, trouvé ou non).
+     */
+    scope.post<{ Params: { id: string } }>(
+      '/api/v1/profiles/:id/ecoute/retrouver',
+      {
+        bodyLimit: RETROUVER_MAX_OCTETS,
+        schema: { params: { type: 'object', required: ['id'], properties: { id: UUID } } },
+      },
+      async (req, reply) => {
+        const p = await garde(req, reply, req.params.id, 'shazam');
+        if (!p) return reply;
+        if (!client?.retrouver) return err(reply, 503, 'ecoute_indisponible');
+        if (!(await consenti(db, p.id))) return err(reply, 409, 'accord_requis');
+        const mime = String(req.headers['content-type'] ?? '')
+          .split(';')[0]!
+          .trim();
+        if (!Buffer.isBuffer(req.body) || !req.body.length || !mime.startsWith('audio/'))
+          return err(reply, 400, 'audio_invalide');
+        if (!quota(req.auth!.accountId)) return err(reply, 429, 'trop_de_demandes');
+        const t0 = performance.now();
+        const [r, idx] = await Promise.all([
+          client.retrouver(req.body, mime),
+          indexCoran(db).catch(() => null),
+        ]);
+        // la voix n'est plus référencée nulle part (ni base, ni disque, ni journal)
+        (req as { body: unknown }).body = null;
+        if ('erreur' in r) {
+          const code =
+            r.erreur === 'audio_trop_long'
+              ? 'audio_trop_long'
+              : r.erreur === 'audio_trop_court'
+                ? 'trop_court'
+                : r.erreur.startsWith('audio_')
+                  ? 'audio_invalide'
+                  : r.erreur === 'occupe'
+                    ? 'ecoute_occupee'
+                    : 'ecoute_indisponible';
+          if (code === 'trop_court') return { statut: 'trop_court', resultats: [], egaux: [] };
+          return err(reply, r.statut === 413 ? 413 : r.statut === 400 ? 400 : 503, code);
+        }
+        if (r.duree > RETROUVER_MAX_S + 0.5) return err(reply, 413, 'audio_trop_long');
+        if (!idx) return err(reply, 503, 'ecoute_indisponible');
+        const court = r.voix_s < VOIX_MIN_RETROUVER;
+        const d = court ? null : decisionRetrouver(chercherDouble(idx, lecturesDe(r)));
+        const statut = court ? 'trop_court' : d!.statut;
+        // compteur sans contenu (ni audio, ni mots entendus, ni verset trouvé)
+        await audit(db, req.auth!.accountId, 'ecoute.retrouver', p.id, {
+          secondes: Math.round(r.duree),
+          statut,
+        });
+        return {
+          statut,
+          resultats: d?.resultats ?? [],
+          egaux: d?.egaux ?? [],
+          duree: r.duree,
+          calcul: Math.round(performance.now() - t0) / 1000,
+        };
+      },
+    );
+
     /** Morceau du suivi en direct : PCM 16 bits mono 16 kHz ; renvoie les mots sûrs et partiels. */
     scope.post<{ Params: { sid: string } }>(
       '/api/v1/ecoute/direct/:sid',
@@ -466,7 +651,7 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
         if (!client) return err(reply, 503, 'ecoute_indisponible');
         if (!Buffer.isBuffer(req.body) || req.body.length % 2)
           return err(reply, 400, 'audio_invalide');
-        const r = await client.direct(req.params.sid, req.body);
+        const r = await client.direct(req.params.sid, req.body, s.suivi);
         (req as { body: unknown }).body = null;
         if ('erreur' in r) {
           if (r.statut === 413) seances.delete(req.params.sid);

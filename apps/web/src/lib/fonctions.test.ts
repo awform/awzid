@@ -50,6 +50,7 @@ describe('F5 — interrupteurs gardés sur l’appareil', () => {
       'khatma_wird',
       'mutashabihat',
       'parcours_priere',
+      'shazam_coran',
       'tajwid_madd',
       'tuteur_ia',
       'video_v2',

@@ -473,6 +473,8 @@
     if (q.get('ecoute') === '1') audioOn = true;
     await ensure();
     await openTracks();
+    // « Retrouve ce verset » : le passage retrouvé se lit tout de suite
+    if (q.get('lire') === '1') void playFrom(null);
   }
 
   /** Plage proposée à partir de la position (portée du préréglage en cours). */
@@ -1936,6 +1938,13 @@
           data-testid="barre-grand-texte"
           ><Icon name="taille" size={22} /><span>{t('cl.grand_texte')}</span></button
         >
+        <!-- « Retrouve ce verset » (interrupteur shazam_coran, coupé par défaut) : bouton chargé à la demande -->
+        {#if profileId && fn('shazam_coran')}<BoutonEcoute
+            {profileId}
+            kind={profKind}
+            portion={null}
+            retrouver
+          />{/if}
         <!-- UN SEUL point d'entrée pour tous les réglages du lecteur : icône ET libellé, téléphone et bureau -->
         <button
           type="button"
