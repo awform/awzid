@@ -15,7 +15,7 @@ import {
 const [URL_, TSV, DIR] = process.argv.slice(2);
 const vs = [];
 for (const l of readFileSync(TSV, 'utf8').split('\n')) {
-  const x = l.replace(/\r$/, '').replace(/﻿/g, '');
+  const x = l.replace(/\r$/, '').replace(/\uFEFF/g, '');
   const t = x.indexOf('\t');
   if (t < 0) continue;
   const [s, a] = x.slice(0, t).trim().split(':').map(Number);

@@ -422,11 +422,12 @@
               <Bidi text={t(`ec.type_${e.type}`, { n: e.a })} />
               {#if etat.shazam}
                 <!-- suivi (shazam_coran) : réécouter le verset juste, récité par Muḥammad Ayyūb -->
-                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- chemin résolu, suivi de paramètres -->
+                <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu, suivi de paramètres -->
                 <a
                   href={`${resolve('/coran/lecteur')}?s=${e.s}&a=${e.a}&r=ayyoub-hafs&lire=1`}
                   data-testid="ecoute-ecart-ecouter"><Bidi text={t('rv.ecouter_ayyoub')} /></a
                 >
+                <!-- eslint-enable svelte/no-navigation-without-resolve -->
               {/if}
             </li>
           {/each}
