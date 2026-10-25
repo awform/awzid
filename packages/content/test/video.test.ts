@@ -244,6 +244,7 @@ function joues(x: Temps): TT[] {
       const q = x.q;
       if (q.k === 'ecoute') S(q.dit);
       if (q.k === 'premiere' || q.k === 'complete') S(q.mot ?? q.bonne);
+      if (q.k === 'complete') S(q.dit);
       if (q.k === 'vf') {
         S(q.ar);
         S(q.correction);

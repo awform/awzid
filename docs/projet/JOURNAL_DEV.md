@@ -31,6 +31,14 @@ Même interrupteur que le cahier d'Adultes 2 (`cahier_parler`, coupé par défau
 
 ---
 
+## 25/10/2026 — Vidéos vivantes V2 : le livre Ados 1 (ado1), fusion de `video-vivante-ado1-wip` dans `main` ; NON déployé
+
+**Note de reprise** : dernier livre fusionné = **ado1** (après en1). Restent : en2, ado2, en3, ado3, en4, ado4, en5. Outils : `~/vv-ad/` (`nouveau.sh B précédent`, `cap2b.sh B unités`, `unit.sh`, `vidb.sh`, `merge.sh`, `fusion.sh`, `fullb.sh`), ports 3590/4690. L'e2e complète est faite après en1, à refaire après ado2 et à la fin.
+
+`VIDEO_NIVEAUX` + ado1 ; garde inchangée (aucune citation de 4 mots à garder en plus) ; profil « ados » (1,08 / 1,04 / 1,4, voir en1). **Générateur** : un exercice « complète » dont l'indication du livre est écrite en arabe (« singulier ← pluriel », ado1.l19 ex5) avait un fichier audio mais n'était pas dit (le test « aucune scène muette » l'a trouvé) : elle est maintenant dite avant la question (`dit` dans la question « complete », test mis à jour). Contrôle 360 px : **0 réduction sur les 25 unités** ; captures v2 clair/sombre de l01, l06, l19 et planche (`captures_app/captures-v2-ado1/`). Tests : typecheck, eslint, prettier 0 erreur ; unitaires **3 387 réussis, 2 échecs sans rapport, rouges aussi sur `main`** : `video-cahier-niveau1.test.ts` (liste connue des 3 textes « بسم الله » sans fichier : l'index des audios en a maintenant, `P089 P092 P100` : À VÉRIFIER, règle Basmala) et `beta-infra.test.ts` (essai local de Caddy) ; e2e vidéo **18 réussis, 0 échec** ; poids lecteur v2 ≈ 23,6 Ko (garde 24 Ko), marge de l'appareil élève 3 231 o (≥ 3 072). Audio (ado1, 858 fichiers) : 523 textes « à écouter » sans fichier, 1 475 en tout ; `reports/video-vivante-ado1.md`.
+
+---
+
 ## 25/10/2026 — Cahiers de lecture des enfants (en1) et des ados (ado1) : intégration, vidéos vivantes, jeux de fin de grille ; branche `cahiers-lecture-en-ado-wip` ; NON déployé
 
 Même interrupteur que le cahier d'Adultes 1 (`cahier_lecture`, coupé par défaut ; `video_v2` pour les vidéos). Rien déployé, aucun audio installé.

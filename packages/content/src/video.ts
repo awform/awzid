@@ -155,6 +155,8 @@ export type Question =
       fr?: string;
       mot?: T;
       bonne?: T;
+      /** indication du livre écrite en arabe (singulier ← pluriel) : dite avant la question quand elle a son fichier */
+      dit?: T;
     };
 
 /** temps d'une scène, joués dans l'ordre ; `ms` : durée minimale (le son, plus long, l'allonge) */
@@ -1414,6 +1416,9 @@ function questions(
             ...(rep ? { reponse: rep } : {}),
             ...(rep && ARABIC.test(rep) && !LATIN.test(rep) ? { bonne: t(rep, it) } : {}),
             ...(entier && tous.has(entier) ? { mot: t(entier, it) } : {}),
+            ...(str(it.fr) && ARABIC.test(it.fr as string) && !LATIN.test(it.fr as string)
+              ? { dit: t(it.fr as string, it) }
+              : {}),
             ...fr(it),
           };
         });
@@ -1695,6 +1700,7 @@ export function videoStrings(v: VideoLecon): { ar: string[]; fr: string[]; cles:
               q.options.forEach(AF);
               A(q.mot);
               A(q.bonne);
+              A(q.dit);
               F(q.fr);
               break;
           }
