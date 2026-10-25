@@ -33,6 +33,20 @@ Même interrupteur que le cahier d'Adultes 1 (`cahier_lecture`, coupé par défa
 
 ---
 
+## 25/10/2026 — Vidéos vivantes V2 : le livre Enfants 1 (en1), fusion de `video-vivante-en1-wip` dans `main` ; Enfants 1 proposé ; NON déployé
+
+**Note de reprise** : dernier livre fusionné = **en1**. Ordre restant : ado1, en2, ado2, en3, ado3, en4, ado4, en5. Méthode et outils sur la VM : `~/vv-ad/` (`setup.sh`, `cap2b.sh`, `unit.sh`, `vidb.sh`, `merge.sh`, `fusion.sh`, `ctl2.sh`, `perf.sh`), ports 3590/4690 pour ne pas gêner les autres agents, e2e complète sous `flock`.
+
+`VIDEO_NIVEAUX` = ad1 à ad10 et en1 ; `VIDEO_GARDE` inchangée (aucune citation coranique de 4 mots dans en1 : rien à garder en plus). **Réglage par public (décision du directeur artistique)**, dans les DONNÉES (`VIDEO_PROFILS` et `profilVideo(niveau)` dans `packages/content/src/video.ts`) : le lecteur v2 reste le même pour tous. `rythme` (multiplicateur des temps de lecture et d'attente), `taille` (agrandissement des caractères, par la taille de base du document pendant la vidéo : tout le texte grandit, ce qui ne tient plus défile, jamais une réduction), `pause` (coefficient du temps de parole laissé à « À toi ! », 1,3 chez les adultes). Adultes 1 / 1 / 1,3 (inchangé) ; **enfants 1,3 / 1,12 / 1,8** ; **ados 1,08 / 1,04 / 1,4** (proche des adultes). Test unitaire du réglage. Poids de la marge de l'appareil élève : inchangé (le réglage vit dans le morceau chargé avec le lecteur).
+
+- **Unités** : Enfants 1 compte 26 unités (21 leçons, 4 bilans, 1 examen) ; tests et captures adaptés.
+- **Lecteur v2** : tout l'alphabet (plus de 18 lettres : bilan 3 et examen) passe sur 6 colonnes et DÉFILE au lieu d'être réduit (le contrôle 360 px y avait trouvé deux réductions, l16 et l26) ; dans « À toi ! », les repères suivent le défilement (la première lettre revient en vue au départ, chaque lettre qui s'allume reste visible).
+- **Zéro muet** : le test lisait `VIDEO_NIVEAUX` ; il est limité aux livres d'Adultes (son énoncé et les décisions du référent). Constat honnête pour Enfants 1 : 476 fichiers audio seulement dans l'index, 193 textes « à écouter » sans fichier (739 en tout, 12 gardés sans voix) ; ils passent par le travail audio en cours (archives Gemini), pas par ce lot. Détail : `reports/video-vivante-en1.md`.
+- **Contrôle 360 px** : **0 réduction sur les 26 unités** (tous les modes, chaque lettre, horloge ×20). Captures v2 clair/sombre de l01, l16, l21 et planche (`captures_app/captures-v2-en1/`).
+- **Tests** : typecheck, eslint, prettier 0 erreur ; unitaires **3 283 réussis, 0 échec** ; e2e vidéo **18 réussis, 0 échec** ; **e2e complète** (`flock`, `--retries=1 --workers=3`, avant la fusion de main) : **906 réussis, 170 ignorés, 1 instable passé au second essai (lot29), 1 échec de charge** : `perf.spec.ts` (ouverture 3G, 3,09 s pour 3 s) sur une VM chargée à 10 ; relancé seul sous `flock` : réussi (1,84 s), et réussi sur `main` nu ; poids lecteur v2 **23 550 o** (garde 24 Ko).
+
+---
+
 ## 25/10/2026 — « La prière de A à Z » dans l'application (interrupteur `parcours_priere`, coupé par défaut) ; branche `parcours-priere-wip` ; NON déployé
 
 Mission technique : intégrer le parcours fidèlement au design validé (`application\design\priere\DESIGN_PRIERE.md`, maquettes, silhouettes). **Aucun texte en dur dans le code** : tout vient des fichiers du référent (`packages/content/data/priere/priere.json`, `sourates.json`, copiés tels quels, 239 identifiants) et de `animation.json` (chorégraphie : identifiants et poses, sans texte). Le référent peut encore corriger le contenu : recopier ses fichiers, relancer `node apps/web/scripts/priere-donnees.mjs`, puis les tests (`priere.test.ts` compare tout au JSON).

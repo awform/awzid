@@ -32,6 +32,7 @@ import {
 } from '../src/video.js';
 import { VIDEO_GARDE, VIDEO_RECITATION } from '../src/video-garde.js';
 import { VIDEO_NIVEAUX } from '../src/video-niveaux.js';
+import { VIDEO_PROFILS, profilVideo } from '../src/video.js';
 import { DHIKR, contientDhikr, horsDhikr, sansVoyelles } from '../src/dhikr.js';
 import { audioFileId, looksQuranic, sayText, skeleton } from '../src/audio-cle.js';
 import {
@@ -507,10 +508,11 @@ describe('vidéos vivantes : garde coranique et formules de dhikr', () => {
 for (const LIVRE of LIVRES)
   describe.skipIf(!HAS_CONTENT)(`vidéos vivantes : les 25 unités de ${LIVRE}`, () => {
     const FILES = fichiers(LIVRE);
-    it('25 unités (20 leçons, 4 bilans, 1 examen)', () => {
-      expect(FILES.length).toBe(25);
+    it('25 unités (20 leçons, 4 bilans, 1 examen ; Enfants 1 : 21 leçons)', () => {
+      const lecons = LIVRE === 'en1' ? 21 : 20;
+      expect(FILES.length).toBe(lecons + 5);
       const types = FILES.map((f) => video(LIVRE, f).v.type);
-      expect(types.filter((t) => t === 'lecon').length).toBe(20);
+      expect(types.filter((t) => t === 'lecon').length).toBe(lecons);
       expect(types.filter((t) => t !== 'lecon').length).toBe(5);
     });
 
@@ -838,4 +840,24 @@ describe.skipIf(!HAS_CONTENT)('vidéos vivantes : garde de tous les niveaux prop
     },
     300_000,
   );
+});
+
+describe('vidéos vivantes : réglage du rythme par public (données du niveau)', () => {
+  it('adultes inchangés ; enfants plus lents, plus grands, pause plus longue ; ados proches des adultes', () => {
+    const ad = profilVideo('ad7');
+    expect(ad).toEqual({ rythme: 1, taille: 1, pause: 1.3 });
+    for (const n of ['en1', 'en5']) {
+      const en = profilVideo(n);
+      expect(en.rythme).toBeGreaterThan(ad.rythme);
+      expect(en.taille).toBeGreaterThan(ad.taille);
+      expect(en.pause).toBeGreaterThan(ad.pause);
+    }
+    const ado = profilVideo('ado3');
+    expect(ado.rythme).toBeGreaterThanOrEqual(ad.rythme);
+    expect(ado.rythme).toBeLessThan(profilVideo('en2').rythme);
+    expect(ado.taille).toBeLessThanOrEqual(1.05);
+    // un niveau inconnu retombe sur le réglage des adultes ; chaque public proposé a un réglage
+    expect(profilVideo('xx9')).toEqual(ad);
+    for (const n of VIDEO_NIVEAUX) expect(VIDEO_PROFILS[n.replace(/\d+$/, '')], n).toBeDefined();
+  });
 });

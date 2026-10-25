@@ -68,6 +68,7 @@
 }
 :root.vv-ouvert {
   overflow: hidden;
+  font-size: calc(100% * var(--vt, 1));
 }
 .vv button {
   font: inherit;
@@ -588,8 +589,20 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--e2);
 }
+/* tout l'alphabet (28 lettres et plus : bilans et examen d'Enfants 1) : 6 colonnes, et la scène défile si besoin */
+.vv .lgr.n28 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--e1);
+}
+.vv .lgr.n28 .gl .ar {
+  font-size: 2.2rem;
+}
+.vv .lgr.n28 .tuile.nom .ar {
+  font-size: 1rem;
+}
 .vv .lgr.n12 .lc,
-.vv .lgr.n18 .lc {
+.vv .lgr.n18 .lc,
+.vv .lgr.n28 .lc {
   padding: var(--e1) 0 var(--e2);
 }
 .vv .lgr.n12 .gl .ar,

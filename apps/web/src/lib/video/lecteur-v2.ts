@@ -19,6 +19,7 @@
 import {
   buildVideo,
   dureeMode,
+  profilVideo,
   scenesDuMode,
   type Chapitre,
   type Question,
@@ -238,7 +239,10 @@ export async function ouvrir(o: OuvrirOptions): Promise<void> {
 
 /** V2 — temps de lecture d'une traduction affichée après le son (ms) */
 const lecture = (fr = '', min = 700, max = 2000) =>
-  Math.min(max, Math.max(min, 450 + 28 * fr.length));
+  Math.min(max, Math.max(min, 450 + 28 * fr.length)) * rythme;
+/** réglage du public (données du niveau, `profilVideo`) : multiplicateur des temps, coefficient de la pause « À toi ! » */
+let rythme = 1;
+let coefPause = 1.3;
 /** V2 — temps après un texte : sa traduction ; sans voix, au moins le temps de lecture prévu (textes longs) */
 const lu = (x: { ar: T; fr?: string; ms: number }) =>
   Math.max(lecture(x.fr, 700, 6000), x.ar.son ? 0 : x.ms - 1000);
@@ -282,6 +286,10 @@ function creer(opt: OuvrirOptions): () => void {
     // reprise propre à la v2 (scènes dans un autre ordre que la v1)
     cle = `awzid.vv2.${opt.unit.id}`;
     const la = opt.audio;
+    const pf = profilVideo(opt.unit.levelCode);
+    rythme = pf.rythme;
+    coefPause = pf.pause;
+    document.documentElement.style.setProperty('--vt', String(pf.taille));
     vid = buildVideo(opt.unit.lesson, {
       unitId: opt.unit.id,
       hasAudio: (s) => !!audioIdFor(s, la),
@@ -376,6 +384,7 @@ function creer(opt: OuvrirOptions): () => void {
     root.remove();
     document.getElementById('vv2-feuille')?.remove();
     document.documentElement.classList.remove('vv-ouvert');
+    document.documentElement.style.removeProperty('--vt');
     if (fermerOuvert === fermer) fermerOuvert = null;
     (retour as HTMLElement | null)?.focus?.();
   }
@@ -400,7 +409,7 @@ function creer(opt: OuvrirOptions): () => void {
       requestAnimationFrame(tick);
     });
   }
-  const att = (ms: number) => prog(ms);
+  const att = (ms: number) => prog(ms * rythme);
   /** une suite d'une scène quittée s'arrête (après toute attente qui n'est pas un minuteur de `prog`) */
   function vivant(j: number) {
     if (j !== jeton) throw new Coupe();
@@ -408,7 +417,7 @@ function creer(opt: OuvrirOptions): () => void {
   /** V2 — durée réelle (ms) du son d'un texte, + 250 ms de souffle ; 0 sans son */
   const duree = (x?: T) => {
     const id = x?.son ? audioIdFor(x.dit ?? x.ar, opt.audio) : null;
-    return id ? (durees.get(id) ?? 1000) + 250 : 0;
+    return id ? (durees.get(id) ?? 1000) + 250 * rythme : 0;
   };
   /** V2 — lit les durées des fichiers d'un mode (métadonnées seulement, quelques Ko, déjà hors ligne) */
   async function precharger(scs: Scene[]) {
@@ -595,7 +604,7 @@ function creer(opt: OuvrirOptions): () => void {
             );
           break;
         default:
-          n += x.ms;
+          n += x.ms * rythme;
       }
     return n;
   }
@@ -610,10 +619,12 @@ function creer(opt: OuvrirOptions): () => void {
     }
     return out;
   }
-  /** V2 — durée de « À toi ! » : 1,3 fois le temps de parole des audios du livre + 1 s, entre 2,5 et 9 s */
+  /** V2 — durée de « À toi ! » : 1,3 fois (selon le public) le temps de parole des audios du livre + 1 s, entre 2,5 et 9 s */
   function aToiMs(sc: Scene, x: Temps): number {
     const parle = vusAvant(sc, x).reduce((s, y) => s + (duree(y) || 1000), 0);
-    return parle ? Math.min(9000, Math.max(2500, 1.3 * parle + 1000)) : x.ms;
+    return parle
+      ? Math.min(9000 * rythme, Math.max(2500 * rythme, coefPause * parle + 1000 * rythme))
+      : x.ms;
   }
   function chapitres() {
     estim = scenes.map(estime);
@@ -940,7 +951,7 @@ function creer(opt: OuvrirOptions): () => void {
     // exercice, un récapitulatif, la grille des mots, une ligne à lire ou les repères de « À toi ! » (gardés à leur taille), qui défilent
     if (
       !el.matches(
-        '.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif,.b-titre,.b-bulle,.b-q,.b-bilan,.b-grille,.b-inter,.b-aToi,.b-rangee',
+        '.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif,.b-titre,.b-bulle,.b-q,.b-bilan,.b-grille,.b-inter,.b-aToi,.b-rangee,.b-lettres',
       )
     )
       for (let k = 0.9; deborde() && k > 0.55; k -= 0.05) {
@@ -1012,6 +1023,7 @@ function creer(opt: OuvrirOptions): () => void {
       if (k !== n && reperes.length) {
         reperes[n]?.classList.remove('on');
         reperes[k]?.classList.add('on');
+        if (reperes[k]) voir(reperes[k]!);
         n = k;
       }
     });
@@ -1247,7 +1259,7 @@ function creer(opt: OuvrirOptions): () => void {
         consigne('vv.ecoute_noms');
         const nl = x.items.length;
         const e = ajoute(
-          `<div class="lgr n${Math.min(6, nl)}${nl > 12 ? ' n18' : nl > 6 ? ' n12' : ''}"></div>`,
+          `<div class="lgr n${Math.min(6, nl)}${nl > 18 ? ' n28' : nl > 12 ? ' n18' : nl > 6 ? ' n12' : ''}"></div>`,
           true,
         );
         for (const y of x.items) {
@@ -1259,6 +1271,7 @@ function creer(opt: OuvrirOptions): () => void {
           );
           e.firstElementChild!.append(d);
           tasse(e);
+          voir(d);
           await att(150);
           if (y.nom) {
             d.classList.add('joue');
@@ -1601,7 +1614,8 @@ function creer(opt: OuvrirOptions): () => void {
           `<div class="bulle ${r.qui === moi ? 'd' : 'g'}">${arH(r.qui_ar, 'qui')}${tuile(r.ar)}</div>`,
         );
         st(r.fr);
-        if (r.qui === moi) await aToi('vv.dis_replique', 2500 + 2 * duree(r.ar));
+        if (r.qui === moi)
+          await aToi('vv.dis_replique', (2500 + 2 * duree(r.ar)) * (coefPause / 1.3));
         else await dire(r.ar, b.querySelector('.tuile'));
         await att(300);
       }
