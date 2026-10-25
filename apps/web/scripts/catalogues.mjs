@@ -5,7 +5,7 @@
 // `⟦id.google⟧` affichées par le nouveau code sur un téléphone resté sur l'ancienne version).
 // La version est celle de SvelteKit (`_app/version.json`), la même que `version` du service worker et de
 // `$app/environment`. Les catalogues de l'accueil public (`i18n/accueil`) sont lus par le serveur : non copiés.
-import { cpSync, existsSync, readFileSync } from 'node:fs';
+import { cpSync, existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -18,11 +18,27 @@ export function versionner(sortie) {
   if (!existsSync(fichier)) return null;
   const version = String(JSON.parse(readFileSync(fichier, 'utf8')).version ?? '');
   if (!version) throw new Error(`${fichier} : version vide`);
-  cpSync(src, join(sortie, 'i18n', version), {
+  const dest = join(sortie, 'i18n', version);
+  cpSync(src, dest, {
     recursive: true,
     filter: (p) => !/[\\/]accueil([\\/]|$)/.test(p),
   });
+  compacter(dest);
   return version;
+}
+
+/**
+ * 25/10/2026 — les copies servies sont COMPACTÉES (sans indentation ni retour à la ligne) : même contenu, moins d'octets à
+ * télécharger (les catalogues de l'élève sont préchargés). Les textes ne sont pas touchés : JSON.parse puis JSON.stringify
+ * recopie chaque chaîne telle quelle (aucune normalisation, l'arabe reste octet pour octet). Les sources restent lisibles.
+ */
+export function compacter(dossier) {
+  for (const f of readdirSync(dossier)) {
+    const p = join(dossier, f);
+    if (statSync(p).isDirectory()) compacter(p);
+    else if (f.endsWith('.json'))
+      writeFileSync(p, JSON.stringify(JSON.parse(readFileSync(p, 'utf8'))));
+  }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

@@ -625,6 +625,7 @@
   "fn.video_v2": "Vidéos vivantes v2 (chapitres, sous-titres, rythme de la voix, récapitulatif)",
   "fn.cahier_lecture": "Cahier de lecture (Adultes 1)",
   "fn.cahier_parler": "Cahier « Je parle » (Adultes 2)",
+  "fn.parcours_priere": "Parcours « La prière de A à Z »",
   "adm.blocage_titre": "Bloquer ou débloquer un compte",
   "adm.blocage_aide": "Saisis l'adresse e-mail ou le numéro de téléphone du compte. Un compte bloqué ne peut plus se connecter et ses sessions sont fermées tout de suite ; rien n'est effacé. L'action est notée au journal d'audit.",
   "adm.blocage_champ": "E-mail ou numéro",

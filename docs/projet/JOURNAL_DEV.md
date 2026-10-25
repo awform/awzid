@@ -9,6 +9,18 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+<!-- reprise-priere -->
+
+---
+
+## Parcours « La prière de A à Z » : reprise
+
+*Note de reprise (25/10/2026). Branche `parcours-priere-wip` (worktree `~/wt/priere`, partie de `main` c6a8058). **Rien fusionné, rien déployé.** Interrupteur `parcours_priere` (coupé par défaut, canal bêta). Design : `Documents\Awzid\application\design\priere\` ; contenu du référent : `application\priere\contenu\` (recopié verbatim dans `packages/content/data/priere/`).*
+
+- **Fait** : données (priere.json, sourates.json, animation.json = chorégraphie sans texte ; projection par écran `node apps/web/scripts/priere-donnees.mjs` → `static/priere-data/`).
+- **Reste** (voir l'entrée finale quand elle existera) : moteurs des silhouettes et des ablutions, écrans, audio (Ayyūb verset par verset ; paroles par les fichiers de synthèse existants ; jamais de synthèse sur un verset ni sur la basmala), vidéo vivante, compteur, entraînement, interrupteur, garde de poids dédiée, tests, captures, `audio_a_generer.tsv`.
+- **Mettre à jour le contenu** : recopier `priere.json`/`sourates.json` du référent dans `packages/content/data/priere/`, relancer `node apps/web/scripts/priere-donnees.mjs`, puis les tests (`priere.test.ts` compare tout au JSON).
+<!-- /reprise-priere -->
 <!-- reprise-cahier-parler -->
 
 ---

@@ -70,6 +70,14 @@ export function fabriquer(priere, sourates, animation) {
   const sections = priere.sections.map(projeter);
   const version = sha10(JSON.stringify([priere, sourates, animation]));
   const citation = trouver(sections, animation.accueil.citation);
+  // unités à parcourir par section (identifiants) : l'accueil en tire l'avancement sans charger les sections
+  const etapes = (id) => (trouver(sections, id)?.etapes ?? []).map((e) => e.id);
+  const unites = Object.fromEntries(sections.map((s) => [s.id, [s.id]]));
+  unites.S2 = etapes('S2A.etapes');
+  unites.S5 = etapes('S5.subh');
+  unites.S6 = animation.apres.compteur;
+  unites.S7 = (sections.find((s) => s.id === 'S7')?.sous_sections ?? []).map((x) => x.id);
+  unites.S8 = sourates.sourates.map((x) => `S8.${x.numero}`);
   const out = {
     'plan.json': {
       format: 1,
@@ -88,6 +96,7 @@ export function fabriquer(priere, sourates, animation) {
         statut: s.statut,
         intro: s.intro,
       })),
+      unites,
       citation,
       animation,
     },

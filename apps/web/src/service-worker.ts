@@ -54,6 +54,9 @@ const isDouas = (p: string) => p.startsWith('/douas/');
 // Cahier de lecture (20/10/2026) : pages du cahier chargées à la demande, gardées dans IndexedDB par l'application
 // (première ouverture, téléchargement du niveau)
 const isCahier = (p: string) => p.startsWith('/cahier-data/');
+// « La prière de A à Z » (25/10/2026) : données du parcours chargées à la demande (`/priere-data/`), gardées dans
+// IndexedDB par l'application à la première ouverture
+const isPriere = (p: string) => p.startsWith('/priere-data/');
 const STUDENT_TEXTS = [
   '/i18n/fr-quotidien.json',
   '/i18n/fr-vivre.json',
@@ -75,6 +78,7 @@ const ASSETS = [
       !isMutun(f) &&
       !isDouas(f) &&
       !isCahier(f) &&
+      !isPriere(f) &&
       // bêta : page d'état du service (/etat.html), qui ne sert qu'en ligne
       !f.startsWith('/etat.') &&
       // page d'accueil publique (visiteurs sans compte) : jamais sur l'appareil de l'élève
@@ -116,6 +120,7 @@ async function horsEleve(): Promise<Set<string>> {
  * Vidéos vivantes (`/_app/video.json`) : même traitement (premier appui sur « Voir en vidéo », niveau téléchargé).
  * Cahier de lecture (`/_app/cahier.json`, 20/10/2026) : même traitement (première ouverture, niveau téléchargé).
  * Cahier « Je parle » (`/_app/parler.json`, 24/10/2026) : même traitement (première ouverture).
+ * « La prière de A à Z » (`/_app/priere.json`, 25/10/2026) : même traitement (première ouverture).
  */
 async function vivante(): Promise<Set<string>> {
   const listes = await Promise.all(
@@ -125,6 +130,7 @@ async function vivante(): Promise<Set<string>> {
       '/_app/video.json',
       '/_app/cahier.json',
       '/_app/parler.json',
+      '/_app/priere.json',
     ].map(async (u) => {
       try {
         const r = await fetch(u, { cache: 'no-store' });

@@ -71,6 +71,15 @@ const BUDGET_CAHIER = 24 * 1024;
  * dédiée)
  */
 const BUDGET_PARLER = 16 * 1024;
+/**
+ * « La prière de A à Z » (25/10/2026) : coquille, huit écrans, silhouettes et gestes animés, voix, compteur, entraînement ;
+ * chargé à la première ouverture de la rubrique, jamais préchargé (garde dédiée ; l'entrée de la rubrique dans « Vivre
+ * l'islam » ne pèse sur l'appareil de l'élève que d'un interrupteur et d'un import dynamique). Les données du référent
+ * (`/priere-data/`) sont chargées écran par écran, hors de ce total ; leur garde est `BUDGET_PRIERE_DONNEES`.
+ */
+const BUDGET_PRIERE = 56 * 1024;
+/** la plus lourde des données d'un écran (Brotli) : `s5` (pas à pas) */
+const BUDGET_PRIERE_DONNEES = 24 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 const BUDGET_RIWAYA_FONT = 1024 * 1024;
 /** page d'accueil de l'élève (« Mon arabe », onglet Arabe ; la première qu'il ouvre) */
@@ -149,6 +158,27 @@ const parList = (() => {
   }
 })();
 const swPar = /parler\.json/.test(swSrc);
+// 25/10/2026 : « La prière de A à Z », chargée à la première ouverture (vite.config.ts : priereALaDemande)
+const priList = (() => {
+  try {
+    return JSON.parse(readFileSync(join(client, '_app', 'priere.json'), 'utf8')).map((f) =>
+      f.slice(1),
+    );
+  } catch {
+    return [];
+  }
+})();
+const swPri = /priere\.json/.test(swSrc) && /priere-data/.test(swSrc);
+// données du parcours : un fichier par écran, chargé à la demande (Brotli) ; le plus lourd
+const donneesPri = (() => {
+  const d = join(root, 'static', 'priere-data');
+  return existsSync(d)
+    ? readdirSync(d)
+        .filter((f) => f.endsWith('.json'))
+        .map((f) => ({ f, br: br(join(d, f)) }))
+        .sort((a, b) => b.br - a.br)
+    : [];
+})();
 const grpBr = (list) => sum(list, (f) => br(join(client, f)));
 const staffBr = grpBr(groups.personnel);
 const raresBr = grpBr(groups.rares);
@@ -158,18 +188,46 @@ const lecBr = grpBr(lecList);
 const vidBr = grpBr(vidList);
 const cahBr = grpBr(cahList);
 const parBr = grpBr(parList);
+const priBr = grpBr(priList);
 // Madjaliss : pages de l'élève gardées au premier usage — déduites SEULEMENT si le service worker les exclut
 const swPremier = /'premierUsage'/.test(swSrc);
 const premierBr = swPremier
-  ? grpBr((groups.premierUsage ?? []).filter((f) => !cahList.includes(f) && !parList.includes(f)))
+  ? grpBr(
+      (groups.premierUsage ?? []).filter(
+        (f) => !cahList.includes(f) && !parList.includes(f) && !priList.includes(f),
+      ),
+    )
   : 0;
 // catalogues de textes PRÉCHARGÉS par le service worker (liste STUDENT_TEXTS) : comptés pour l'élève
 const studentTexts = [
   ...(/STUDENT_TEXTS\s*=\s*\[([^\]]*)\]/.exec(swSrc)?.[1] ?? '').matchAll(/'([^']+)'/g),
 ].map((m) => m[1]);
-const textsBr = sum(studentTexts, (p) => br(join(root, 'static', p)));
+// 25/10/2026 : ce que l'élève télécharge est la copie versionnée (compactée) faite par scripts/catalogues.mjs
+const versionCatalogues = (() => {
+  try {
+    return String(JSON.parse(readFileSync(join(client, '_app', 'version.json'), 'utf8')).version);
+  } catch {
+    return null;
+  }
+})();
+const texteServi = (p) => {
+  const f = versionCatalogues && join(client, p.replace('/i18n/', `i18n/${versionCatalogues}/`));
+  return f && existsSync(f) ? f : join(root, 'static', p);
+};
+const textsBr = sum(studentTexts, (p) => br(texteServi(p)));
 const eleveCode =
-  jsBr + cssBr - staffBr - raresBr - enLigneBr - vivBr - lecBr - vidBr - cahBr - parBr - premierBr;
+  jsBr +
+  cssBr -
+  staffBr -
+  raresBr -
+  enLigneBr -
+  vivBr -
+  lecBr -
+  vidBr -
+  cahBr -
+  parBr -
+  priBr -
+  premierBr;
 const eleveBr = eleveCode + textsBr;
 
 // JavaScript + CSS INITIAUX par page : fermeture des imports STATIQUES depuis l'entrée, l'application, les mises
@@ -281,6 +339,8 @@ const lines = [
   `| Vidéos vivantes : tous les fichiers du groupe (deux lecteurs, jamais chargés ensemble) | ${ko(vidBr)} |`,
   `| Cahier de lecture, à la demande à la première ouverture (${cahList.length} fichiers${swCah ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(cahBr)} (≤ ${ko(BUDGET_CAHIER)}) |`,
   `| Cahier « Je parle », à la demande à la première ouverture (${parList.length} fichiers${swPar ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(parBr)} (≤ ${ko(BUDGET_PARLER)}) |`,
+  `| « La prière de A à Z », à la demande à la première ouverture (${priList.length} fichiers${swPri ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(priBr)} (≤ ${ko(BUDGET_PRIERE)}) |`,
+  `| « La prière de A à Z » : données de l'écran le plus lourd (\`${donneesPri[0]?.f ?? '—'}\`, ${donneesPri.length} fichiers, chargés écran par écran) | ${ko(donneesPri[0]?.br ?? 0)} (≤ ${ko(BUDGET_PRIERE_DONNEES)}) |`,
   `| Total JS + CSS de toutes les pages (mesuré, non bloquant) | ${ko(jsBr + cssBr)} |`,
   `| dont CSS | ${ko(cssBr)} |`,
   `| Service worker | ${ko(swBr)} |`,
@@ -315,6 +375,11 @@ const fails = [
   ],
   [!swCah || !cahList.length || cahBr > BUDGET_CAHIER, 'cahier (à la demande)'],
   [!swPar || !parList.length || parBr > BUDGET_PARLER, 'cahier « Je parle » (à la demande)'],
+  [!swPri || !priList.length || priBr > BUDGET_PRIERE, '« La prière de A à Z » (à la demande)'],
+  [
+    !donneesPri.length || (donneesPri[0]?.br ?? 0) > BUDGET_PRIERE_DONNEES,
+    '« La prière de A à Z » : données d’un écran',
+  ],
 ].filter(([bad]) => bad);
 if (fails.length) {
   console.error(`Budget dépassé : ${fails.map(([, w]) => w).join(', ')}`);

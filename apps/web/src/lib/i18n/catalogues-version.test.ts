@@ -166,7 +166,7 @@ describe('service worker et construction : catalogues versionnés', () => {
     expect(sw).toContain('!isCatalog(f) &&');
   });
 
-  it('la construction copie les catalogues sous i18n/<version>/ (hors accueil), identiques aux sources', () => {
+  it('la construction copie les catalogues sous i18n/<version>/ (hors accueil), de même contenu que les sources (compactés)', () => {
     const sortie = mkdtempSync(join(tmpdir(), 'awzid-cat-'));
     try {
       mkdirSync(join(sortie, '_app'), { recursive: true });
@@ -174,7 +174,15 @@ describe('service worker et construction : catalogues versionnés', () => {
       expect(versionner(sortie)).toBe('12345');
       const copie = (f: string) => join(sortie, 'i18n', '12345', f);
       for (const f of ['fr-rares.json', 'fr-lecteur.json', 'en.json', 'legal/fr.json'])
-        expect(readFileSync(copie(f), 'utf8'), f).toBe(readFileSync(join(STATIC, f), 'utf8'));
+        expect(JSON.parse(readFileSync(copie(f), 'utf8')), f).toEqual(
+          JSON.parse(readFileSync(join(STATIC, f), 'utf8')),
+        );
+      // compactés : ni indentation ni retour à la ligne, chaque chaîne (arabe compris) recopiée octet pour octet
+      const brut = readFileSync(copie('fr-rares.json'), 'utf8');
+      expect(brut.includes('\n')).toBe(false);
+      expect(brut).toBe(
+        JSON.stringify(JSON.parse(readFileSync(join(STATIC, 'fr-rares.json'), 'utf8'))),
+      );
       expect(existsSync(copie('accueil'))).toBe(false);
       // pas de dossier de construction : rien n'est inventé
       const vide = mkdtempSync(join(tmpdir(), 'awzid-cat-'));

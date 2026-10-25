@@ -55,7 +55,7 @@
      "fr": "Je n'ai créé les djinns et les hommes que pour qu'ils M'adorent.",
      "reference": "Coran 51:56 (Tanzil, lu par Muḥammad Ayyūb)",
      "authenticite": "Coran",
-     "explication": "Le but de notre vie est d'adorer Allah. Aṭ-Ṭabarī et Ibn Kathīr expliquent : Allah les a créés pour qu'ils L'adorent, et Il n'a aucun besoin d'eux. La prière est l'adoration la plus visible et la plus régulière."
+     "explication": "Le but de notre vie est d'adorer Allah. Allah les a créés pour qu'ils L'adorent (aṭ-Ṭabarī), non parce qu'Il aurait besoin d'eux (Ibn Kathīr). La prière est l'adoration la plus visible et la plus régulière."
     },
     {
      "id": "S1.p2",
@@ -131,7 +131,7 @@
       "type": "miroir",
       "ref": "bukhari:528",
       "fichier": "awform/_tmp_re5_rv/ara-bukhari.json",
-      "note": "U+200F retiré",
+      "note": "U+200F retiré ; signes de la source conservés tels quels (\") : guillemets ou accolades de l'édition, à masquer à l'affichage, sans retaper le texte",
       "motif_squelette": "ارايتم لو ان نهرا بباب احدكم يغتسل فيه كل يوم خمسا ما تقول ذلك يبقي من درنه قالوا لا يبقي من درنه شييا قال فذلك مثل الصلوات الخمس يمحو الله بها الخطايا"
      },
      "fr": "« Que pensez-vous : si un fleuve coulait à la porte de l'un de vous et qu'il s'y lavait cinq fois par jour, en resterait-il la moindre saleté ? » Ils dirent : « Il n'en resterait aucune saleté. » Il dit : « Il en est ainsi des cinq prières : par elles, Allah efface les fautes. »",
@@ -813,7 +813,7 @@
            },
            "sources": [
             "Ibn Abī Zayd, ar-Risāla, RIS-0073 (application/madjaliss/risala)",
-            "at-Tirmidhī, Jāmiʿ, n° 55 (authenticité discutée : jugé authentique par al-Albānī, faible selon d'autres) ; application/douas/DECISIONS_REFERENT_DOUAS.md, décision 1"
+            "at-Tirmidhī, Jāmiʿ, n° 55 (authenticité discutée : at-Tirmidhī dit que sa chaîne est confuse (iḍṭirāb) et, d'après al-Bukhārī, qu'Abū Idrīs n'a rien entendu de ʿUmar ; al-Albānī et Aḥmad Shākir le jugent authentique) ; application/douas/DECISIONS_REFERENT_DOUAS.md, décision 1"
            ],
            "explication": "Ar-Risāla dit que « certains savants l'ont recommandé ». On le présente comme un ajout facultatif, après les deux attestations.",
            "audio": "tts"
@@ -829,7 +829,7 @@
       {
        "id": "S2A.tete.femme",
        "type": "regle",
-       "fr": "Pour la femme comme pour l'homme, le passage des mains mouillées porte sur les cheveux : tout ce qui est sur le crâne, y compris les cheveux qui pendent. Elle passe aussi les mains sur ses mèches tombantes. On ne défait pas ses tresses (homme ou femme) : on passe les mains dessous en les ramenant vers l'avant. On ne passe pas les mains sur un foulard ou une étoffe qui couvre les cheveux. Laver la tête au lieu de l'essuyer suffit aussi.",
+       "fr": "Pour la femme comme pour l'homme, le passage des mains mouillées porte sur les cheveux : tout ce qui est sur le crâne, y compris les cheveux qui pendent. Elle passe aussi les mains sur ses mèches tombantes. On ne défait pas ses tresses (homme ou femme) : on passe les mains dessous en les ramenant vers l'avant. On ne passe pas les mains sur un foulard ou une étoffe qui couvre les cheveux. Laver la tête au lieu de l'essuyer suffit aussi (Khalīl).",
        "niveau": {
         "code": "FARD",
         "libelle": "obligatoire (farḍ)"
@@ -891,7 +891,7 @@
       {
        "id": "S2A.annul",
        "type": "regle",
-       "fr": "Ce qui annule les ablutions. Les événements : l'urine, les selles, le gaz, le liquide prostatique (madhy) et le wady (liquide épais qui suit parfois l'urine). Les causes : le sommeil lourd, l'évanouissement, l'ivresse, la folie, le baiser, le toucher d'une femme quand on recherche le plaisir ou qu'on le ressent, et le toucher de la verge avec l'intérieur de la main ou des doigts. Le madhy oblige à laver toute la verge.",
+       "fr": "Ce qui annule les ablutions. Les événements : l'urine, les selles, le gaz, le liquide prostatique (madhy) et le wady (liquide épais qui suit parfois l'urine). Les causes : le sommeil lourd, l'évanouissement, l'ivresse, la folie ; le toucher d'une femme quand on recherche le plaisir ou qu'on le ressent ; le baiser sur la bouche, dans tous les cas, sauf s'il est donné pour un adieu ou par compassion (ailleurs que sur la bouche, le baiser suit la règle du toucher) ; le toucher de la verge avec l'intérieur ou le côté de la main ou des doigts. L'apostasie annule aussi les ablutions. Le madhy oblige à laver toute la verge.",
        "niveau": {
         "code": "FARD",
         "libelle": "obligatoire (farḍ)"
@@ -899,7 +899,7 @@
        "sources": [
         "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0042, AKH-0043, AKH-0044, AKH-0046, AKH-0047 (application/madjaliss/akhdari)",
         "Ibn Abī Zayd, ar-Risāla, RIS-0002, RIS-0003, RIS-0004, RIS-0009, RIS-0010, RIS-0011 (application/madjaliss/risala)",
-        "Khalīl, al-Mukhtaṣar, KHL-0066 (application/madjaliss/khalil)"
+        "Khalīl, al-Mukhtaṣar, KHL-0066, KHL-0067, KHL-0068, KHL-0069 (application/madjaliss/khalil)"
        ],
        "titre": "Ce qui annule les ablutions",
        "autres_ecoles": "Dans d'autres écoles, le simple toucher d'une femme annule (shāfiʿites) ou n'annule pas du tout (ḥanafites) ; chez nous, mālikites, il annule s'il y a recherche ou sensation de plaisir."
@@ -922,7 +922,7 @@
       {
        "id": "S2A.incont",
        "type": "regle",
-       "fr": "La femme qui saigne en dehors de ses règles (istiḥāḍa) et la personne atteinte d'incontinence : selon Khalīl, si l'écoulement s'arrête la plus grande partie du temps, il annule les ablutions ; s'il est présent la plus grande partie du temps, il ne les annule pas, et il est recommandé de refaire les ablutions pour chaque prière (ar-Risāla le recommande aussi).",
+       "fr": "La femme qui saigne en dehors de ses règles (istiḥāḍa) et la personne atteinte d'incontinence : selon Khalīl, si l'écoulement s'arrête la plus grande partie du temps, il annule les ablutions ; s'il est présent la plus grande partie du temps, il ne les annule pas, et il est recommandé de refaire les ablutions pour chaque prière (ar-Risāla le recommande aussi), sauf si c'est pénible (écoulement presque continu) : on ne le recommande plus.",
        "niveau": [
         {
          "code": "FARD",
@@ -1260,13 +1260,14 @@
         {
          "id": "S2B.f4",
          "type": "regle",
-         "fr": "Si elle devient pure peu avant la fin du temps, elle doit encore la prière de ce temps : s'il reste, après un grand lavage fait sans traîner, le temps de cinq rakʿa avant le coucher du soleil, elle prie le ẓuhr et le ʿaṣr ; s'il reste moins, le ʿaṣr seulement. La nuit : le temps de quatre rakʿa avant l'aube, le maghrib et le ʿishāʾ ; moins, le ʿishāʾ seulement.",
+         "fr": "Si elle devient pure peu avant la fin du temps, elle doit encore la prière de ce temps : s'il reste, après un grand lavage fait sans traîner, le temps de cinq rakʿa avant le coucher du soleil, elle prie le ẓuhr et le ʿaṣr ; s'il reste moins, mais au moins le temps d'une rakʿa, le ʿaṣr seulement. La nuit : le temps de quatre rakʿa avant l'aube, le maghrib et le ʿishāʾ ; moins, mais au moins le temps d'une rakʿa, le ʿishāʾ seulement. S'il reste moins que le temps d'une rakʿa, elle ne doit pas cette prière.",
          "niveau": {
           "code": "FARD",
           "libelle": "obligatoire (farḍ)"
          },
          "sources": [
-          "Ibn Abī Zayd, ar-Risāla, RIS-0276 (application/madjaliss/risala)"
+          "Ibn Abī Zayd, ar-Risāla, RIS-0276, RIS-0277 (application/madjaliss/risala)",
+          "Khalīl, al-Mukhtaṣar, KHL-0117 (application/madjaliss/khalil)"
          ],
          "titre": "Pure juste avant la fin du temps"
         }
@@ -1319,7 +1320,7 @@
        ],
        "lignes": [
         [
-         "L'intention (et, pour la janāba, l'intention de la lever)",
+         "L'intention de se rendre la prière permise ; en état de janāba, l'intention qu'elle remplace le grand lavage (elle ne lève pas l'impureté : on fera le grand lavage dès qu'on aura de l'eau)",
          "obligatoire (farḍ)"
         ],
         [
@@ -1353,7 +1354,8 @@
        ],
        "sources": [
         "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0073, AKH-0074, AKH-0077, AKH-0078, AKH-0084 (application/madjaliss/akhdari)",
-        "Khalīl, al-Mukhtaṣar, KHL-0095 (application/madjaliss/khalil)"
+        "Khalīl, al-Mukhtaṣar, KHL-0092, KHL-0094, KHL-0095 (application/madjaliss/khalil)",
+        "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 154 : il faut l'intention de se rendre la prière permise (ou ce que l'impureté interdisait, ou l'obligation du tayammum) (extrait rattaché dans application/madjaliss/khalil)"
        ],
        "note": "Le plâtre cuit, la natte, le bois et l'herbe ne conviennent pas (al-Akhḍarī, AKH-0075)."
       },
@@ -1367,7 +1369,7 @@
          "type": "etape",
          "ordre": 1,
          "titre": "Intention et « Au nom d'Allah »",
-         "geste": "Ayez l'intention dans le cœur, et dites « Au nom d'Allah ».",
+         "geste": "Ayez dans le cœur l'intention de vous rendre la prière permise (en état de janāba, précisez qu'elle remplace le grand lavage), et dites « Au nom d'Allah ».",
          "niveau": [
           {
            "code": "FARD",
@@ -1379,7 +1381,8 @@
           }
          ],
          "sources": [
-          "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0073, AKH-0078 (application/madjaliss/akhdari)"
+          "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0073, AKH-0078, AKH-0084 (application/madjaliss/akhdari)",
+          "Khalīl, al-Mukhtaṣar, KHL-0092 (application/madjaliss/khalil)"
          ]
         },
         {
@@ -1415,7 +1418,8 @@
          ],
          "sources": [
           "Ibn Abī Zayd, ar-Risāla, RIS-0100, RIS-0101, RIS-0102, RIS-0103 (application/madjaliss/risala)",
-          "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0073, AKH-0077 (application/madjaliss/akhdari)"
+          "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0073, AKH-0077 (application/madjaliss/akhdari)",
+          "Khalīl, al-Mukhtaṣar, KHL-0094 (application/madjaliss/khalil)"
          ]
         }
        ],
@@ -1432,7 +1436,7 @@
         "type": "miroir",
         "ref": "bukhari:338",
         "fichier": "awform/_tmp_re5_rv/ara-bukhari.json",
-        "note": "U+200F retiré",
+        "note": "U+200F retiré ; signes de la source conservés tels quels (\") : guillemets ou accolades de l'édition, à masquer à l'affichage, sans retaper le texte",
         "motif_squelette": "انما كان يكفيك هكذا فضرب النبي صلي الله عليه وسلم بكفيه الارض ونفخ فيهما ثم مسح بهما وجهه وكفيه"
        },
        "fr": "« Il te suffisait de faire ainsi. » Et le Prophète ﷺ frappa le sol de ses mains, souffla dessus, puis s'en essuya le visage et les mains.",
@@ -1443,7 +1447,7 @@
       {
        "id": "S2C.regles",
        "type": "regle",
-       "fr": "Une purification sèche par prière obligatoire : on ne prie pas deux prières obligatoires avec la même. Après la prière obligatoire, on peut, si on l'a voulu et sans interruption, faire des prières surérogatoires, toucher le Coran ou le réciter. Elle est annulée par ce qui annule les ablutions, et par la découverte de l'eau avant la prière (pas pendant la prière).",
+       "fr": "Une purification sèche par prière obligatoire : on ne prie pas deux prières obligatoires avec la même. Après la prière obligatoire, on peut, si on l'a voulu, sans interruption et tant que le temps n'est pas sorti, faire des prières surérogatoires, toucher le Coran ou le réciter. Elle est annulée par ce qui annule les ablutions, et par la découverte de l'eau avant la prière ; pas pendant la prière, sauf pour celui qui avait de l'eau et l'avait oubliée.",
        "niveau": {
         "code": "FARD",
         "libelle": "obligatoire (farḍ)"
@@ -1556,7 +1560,7 @@
     {
      "id": "S3.tenue.h",
      "type": "regle",
-     "fr": "L'homme couvre au minimum ce qui est entre le nombril et le genou. Un seul vêtement suffit. Il est déconseillé de prier avec un vêtement qui ne couvre pas du tout les épaules (la prière reste valable), et de prier en simple pantalon sans rien par-dessus.",
+     "fr": "L'homme couvre au minimum ce qui est entre le nombril et le genou. Un seul vêtement suffit. Prier les parties intimes découvertes annule la prière : elle est à refaire en tout temps ; les fesses découvertes : à refaire dans le temps ; prier la cuisse découverte est un manquement, mais la prière n'est pas à refaire. Il est déconseillé de prier avec un vêtement qui ne couvre pas du tout les épaules (la prière reste valable), et de prier en simple pantalon sans rien par-dessus.",
      "niveau": [
       {
        "code": "SHART",
@@ -1569,14 +1573,16 @@
      ],
      "sources": [
       "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0108, AKH-0109 (application/madjaliss/akhdari)",
-      "Ibn Abī Zayd, ar-Risāla, RIS-0033, RIS-0034, RIS-0243 (application/madjaliss/risala)"
+      "Ibn Abī Zayd, ar-Risāla, RIS-0033, RIS-0034, RIS-0243 (application/madjaliss/risala)",
+      "Khalīl, al-Mukhtaṣar, KHL-0149 (application/madjaliss/khalil)",
+      "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 214 : l'homme ne refait pas sa prière pour la cuisse découverte, même si elle fait partie de ce qu'il doit couvrir ; il la refait dans le temps pour les fesses, et en tout temps pour les parties intimes (extrait rattaché dans application/madjaliss/khalil)"
      ],
      "titre": "La tenue de l'homme"
     },
     {
      "id": "S3.tenue.f",
      "type": "regle",
-     "fr": "La femme couvre tout son corps, sauf le visage et les mains : une robe ample et épaisse qui couvre le dessus des pieds, et un voile épais sur la tête (cheveux, cou). Si elle a prié avec la poitrine, les cheveux ou les pieds découverts, elle refait la prière dans le temps. Il lui est déconseillé de se couvrir le visage (niqāb) pendant la prière.",
+     "fr": "La femme couvre tout son corps, sauf le visage et les mains : une robe ample et épaisse qui couvre le dessus des pieds, et un voile épais sur la tête (cheveux, cou). Si, pendant la prière, la poitrine (ou le haut du dos qui lui fait face), le cou, les cheveux, les avant-bras, les jambes ou le dessus des pieds étaient découverts, elle refait la prière dans le temps. Si une autre partie était découverte (ventre, bas du dos, cuisses…), la prière est à refaire en tout temps. Le dessous des pieds n'oblige à rien refaire. Il lui est déconseillé de se couvrir le visage (niqāb) pendant la prière.",
      "niveau": [
       {
        "code": "SHART",
@@ -1590,7 +1596,9 @@
      "sources": [
       "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0108 (application/madjaliss/akhdari)",
       "Ibn Abī Zayd, ar-Risāla, RIS-0035, RIS-0242 (application/madjaliss/risala)",
-      "Khalīl, al-Mukhtaṣar, KHL-0149, KHL-0151, KHL-0153 (application/madjaliss/khalil)"
+      "Khalīl, al-Mukhtaṣar, KHL-0149, KHL-0151, KHL-0153 (application/madjaliss/khalil)",
+      "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 214 : les « extrémités » de la femme libre : le cou, la tête, l'avant-bras et le dessus du pied ; le haut du dos qui fait face à la poitrine compte comme elle ; pour le reste, la prière est à refaire en tout temps ; rien pour le dessous des pieds (extrait rattaché dans application/madjaliss/khalil)",
+      "ad-Dusūqī, Ḥāshiya ʿalā ash-Sharḥ al-kabīr, Dār al-Fikr, vol. 1, p. 214 : de même la jambe et le sein ; la règle vaut que ce soit volontaire, par ignorance ou par oubli (extrait rattaché dans application/madjaliss/khalil)"
      ],
      "titre": "La tenue de la femme"
     },
@@ -2529,14 +2537,20 @@
       {
        "id": "S4.rep.regle",
        "type": "regle",
-       "fr": "Celui qui entend l'appel répète après le muezzin, phrase par phrase. Selon l'avis retenu par Khalīl, on répète jusqu'à la fin des deux attestations, une seule série (sans la reprise). Le hadith de ʿUmar (Muslim 385) enseigne aussi de continuer jusqu'à la fin en remplaçant « venez à la prière » et « venez à la réussite » par « il n'y a de force ni de puissance qu'en Allah » ; ad-Dardīr mentionne ce remplacement. Pendant une prière obligatoire, on ne répète pas : on le fait après.",
-       "niveau": {
-        "code": "MANDUB",
-        "libelle": "recommandé (mandūb, faḍīla)"
-       },
+       "fr": "Celui qui entend l'appel répète après le muezzin, phrase par phrase. Selon l'avis retenu par Khalīl, ce qui est recommandé, c'est de répéter jusqu'à la fin des deux attestations, une seule série (sans la reprise), sans répéter « venez à la prière » et « venez à la réussite ». Il est permis de continuer jusqu'à la fin, d'après le hadith de ʿUmar (Muslim 385), en remplaçant ces deux appels par « il n'y a de force ni de puissance qu'en Allah » ; ad-Dardīr mentionne ce remplacement pour celui qui répond pendant une prière surérogatoire. Pendant une prière obligatoire, on ne répète pas : on le fait après.",
+       "niveau": [
+        {
+         "code": "MANDUB",
+         "libelle": "recommandé (mandūb, faḍīla)"
+        },
+        {
+         "code": "JAIZ",
+         "libelle": "permis (jāʾiz)"
+        }
+       ],
        "sources": [
         "Khalīl, al-Mukhtaṣar, KHL-0130, KHL-0131 (application/madjaliss/khalil)",
-        "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 196-197 : « nudiba ḥikāyatuhu… li-muntahā ash-shahādatayn », remplacement des deux appels par deux « ḥawqala » (extrait rattaché dans application/madjaliss/khalil)",
+        "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 196-197 : répéter l'appel est recommandé jusqu'à la fin des deux attestations, sans les deux appels « venez à… » ; celui qui prie une surérogatoire et va au-delà doit remplacer ces deux appels par « il n'y a de force ni de puissance qu'en Allah » ; dans une prière obligatoire, on répète après l'avoir finie (extrait rattaché dans application/madjaliss/khalil)",
         "Muslim, Ṣaḥīḥ, n° 385 (numérotation ʿAbd al-Bāqī) (d'après ʿUmar)"
        ],
        "titre": "Ce que je réponds"
@@ -2581,14 +2595,15 @@
        ],
        "voix": "basse",
        "niveau": {
-        "code": "MANDUB",
-        "libelle": "recommandé (mandūb, faḍīla)"
+        "code": "JAIZ",
+        "libelle": "permis (jāʾiz)"
        },
        "sources": [
         "Muslim, Ṣaḥīḥ, n° 385 (numérotation ʿAbd al-Bāqī)",
+        "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 197 : remplacement des deux appels « venez à… », pour celui qui répond pendant une prière surérogatoire (extrait rattaché dans application/madjaliss/khalil)",
         "livre audité re4, leçon 19 (awform/data/re4/l19.js) pour le texte vocalisé"
        ],
-       "explication": "On répond à l'invitation en reconnaissant qu'on ne peut venir prier qu'avec l'aide d'Allah.",
+       "explication": "Permis d'après le hadith de ʿUmar (Muslim 385) pour celui qui continue de répéter au-delà des deux attestations. On répond à l'invitation en reconnaissant qu'on ne peut venir prier qu'avec l'aide d'Allah.",
        "audio": "tts"
       },
       {
@@ -2859,7 +2874,7 @@
        "sources": [
         "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0116, AKH-0125 (application/madjaliss/akhdari)",
         "Khalīl, al-Mukhtaṣar, KHL-0196 (application/madjaliss/khalil)",
-        "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 250 : « sadlu yadayhi » : laisser les mains le long des flancs est recommandé ; le qabḍ dans la prière obligatoire est déconseillé quand on le fait pour s'appuyer ; fait pour suivre la Sunna, il n'est pas déconseillé selon l'interprétation retenue (extrait rattaché dans application/madjaliss/khalil)"
+        "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 250 : laisser les mains le long des flancs est recommandé ; le qabḍ dans la prière obligatoire est déconseillé quand on le fait pour s'appuyer ; fait pour suivre la Sunna, il n'est pas déconseillé selon l'interprétation retenue (extrait rattaché dans application/madjaliss/khalil)"
        ],
        "notes": [
         "Le sadl est l'avis le plus connu de notre école (Khalīl). Ad-Dardīr précise : croiser les mains dans la prière obligatoire est déconseillé quand on le fait pour s'appuyer ; si on le fait pour suivre la Sunna, ce n'est pas déconseillé selon l'interprétation retenue, et c'est permis dans la prière surérogatoire. Il ne faut donc ni blâmer celui qui croise les mains, ni le prendre pour une obligation."
@@ -2871,14 +2886,14 @@
        "type": "etape",
        "ordre": 3,
        "titre": "La Fātiḥa",
-       "geste": "Récitez la Fātiḥa, en commençant par « La louange appartient à Allah, Seigneur des mondes » : dans la prière obligatoire, on ne dit ni la Basmala ni la formule de protection (aʿūdhu…). Au ṣubḥ, à voix haute. Elle est obligatoire pour l'imam et pour celui qui prie seul ; derrière l'imam, on l'écoute quand il récite à voix haute, et on la récite à voix basse quand il récite à voix basse.",
+       "geste": "Récitez la Fātiḥa, en commençant par « La louange appartient à Allah, Seigneur des mondes » : dans la prière obligatoire, on ne dit ni la Basmala ni la formule de protection. Au ṣubḥ, à voix haute. Elle est obligatoire pour l'imam et pour celui qui prie seul ; derrière l'imam, on l'écoute quand il récite à voix haute, et on la récite à voix basse quand il récite à voix basse.",
        "niveau": {
         "code": "FARD",
         "libelle": "obligatoire (farḍ)"
        },
        "sources": [
         "Khalīl, al-Mukhtaṣar, KHL-0176, KHL-0178, KHL-0189, KHL-0199 (application/madjaliss/khalil)",
-        "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0116, AKH-0125 (application/madjaliss/akhdari)",
+        "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0116, AKH-0125, AKH-0194, AKH-0213, AKH-0217 (application/madjaliss/akhdari)",
         "Ibn Abī Zayd, ar-Risāla, RIS-0150, RIS-0226 (application/madjaliss/risala)"
        ],
        "paroles": [
@@ -3096,7 +3111,8 @@
         "La Basmala dans la prière obligatoire. Selon l'avis le plus connu de notre école, il est déconseillé de dire la Basmala et la formule de protection avant la Fātiḥa et la sourate dans la prière obligatoire ; elles sont permises dans la prière surérogatoire (al-Akhḍarī, Khalīl, ar-Risāla). Preuves : le hadith qudsī du partage de la prière commence la Fātiḥa à « La louange appartient à Allah » (Muslim 395) ; Anas rapporte que le Prophète ﷺ, Abū Bakr et ʿUmar ouvraient la prière par « La louange appartient à Allah, Seigneur des mondes » (al-Bukhārī 743). Al-Qurṭubī, mālikite, juge que l'avis de Mālik est le plus juste et que la Basmala n'est pas un verset de la Fātiḥa, tout en reconnaissant que la question relève de l'effort d'interprétation.",
         "Le compte des versets. Le muṣḥaf de l'appli suit la lecture de Ḥafṣ et le compte de Kūfa : la Basmala y est le verset 1 de la Fātiḥa, et le verset 7 va de « le chemin de ceux que Tu as comblés… » à la fin. Dans le compte de Médine (celui de la lecture de Nāfiʿ, par Warsh et Qālūn, très lue au Maghreb et en Afrique de l'Ouest), la Basmala n'est pas un verset : « … que Tu as comblés de bienfaits » termine le verset 6, et le verset 7 est « non de ceux qui ont encouru la colère, ni des égarés ». Dans les deux comptes, la Fātiḥa a sept versets. Réciter dans la lecture de Ḥafṣ est tout à fait valable ; on commence simplement la récitation à « La louange appartient à Allah ». Dans l'appli, l'audio d'Ayyūb commence donc au verset 2 du décompte de Ḥafṣ.",
         "Ad-Dardīr rapporte qu'al-Qarāfī, mālikite, et d'autres ont dit que, par scrupule, on peut dire la Basmala à voix basse au début de la Fātiḥa pour sortir de la divergence ; l'avis enseigné ici reste celui de Khalīl : ne pas la dire dans la prière obligatoire.",
-        "Celui qui ne connaît pas la Fātiḥa doit l'apprendre ; en attendant, il prie derrière un imam (Khalīl). Celui qui oublie un verset de la Fātiḥa se prosterne pour l'oubli avant la salutation ; s'il en oublie davantage, sa prière est nulle (al-Akhḍarī)."
+        "Celui qui ne connaît pas la Fātiḥa doit l'apprendre ; en attendant, il prie derrière un imam (Khalīl). Celui qui oublie un verset de la Fātiḥa se prosterne pour l'oubli avant la salutation (Khalīl, KHL-0178). Celui qui oublie la Fātiḥa dans une rakʿa d'une prière obligatoire la récite s'il s'en souvient avant de s'incliner ; s'il s'en souvient après l'inclinaison, cette rakʿa ne compte pas : il en ajoute une autre et se prosterne pour l'oubli, comme pour une prosternation oubliée (al-Akhḍarī, AKH-0217, AKH-0213).",
+        "Un autre passage d'al-Akhḍarī (AKH-0194) vise un cas différent : celui qui doit compléter la Fātiḥa en s'aidant d'un muṣḥaf. S'il en laisse un verset, il se prosterne avant la salutation ; s'il en laisse davantage, sa prière est nulle. Ce n'est pas la règle de l'oubli, donnée ci-dessus."
        ],
        "autres_ecoles": "Dans d'autres écoles, la Basmala est dite avant la Fātiḥa : à voix basse (ḥanafites, ḥanbalites) ou à voix haute dans les prières à voix haute (shāfiʿites, pour qui elle est un verset de la Fātiḥa). Chez nous, mālikites, on ne la dit pas dans la prière obligatoire.",
        "preuves": [
@@ -3109,11 +3125,11 @@
           "type": "miroir",
           "ref": "muslim:#395",
           "fichier": "awform/_tmp_re5_rv/ara-muslim.json",
-          "note": "U+200F retiré",
+          "note": "U+200F retiré ; signes de la source conservés tels quels ({ }) : guillemets ou accolades de l'édition, à masquer à l'affichage, sans retaper le texte",
           "motif_squelette": "قال الله تعالي قسمت الصلاه بيني وبين عبدي نصفين ولعبدي ما سال فاذا قال العبد الحمد لله رب العالمين قال الله تعالي حمدني عبدي واذا قال الرحمن الرحيم قال الله تعالي اثني علي عبدي واذا قال مالك يوم الدين قال مجدني عبدي وقال مره فوض الي عبدي فاذا قال اياك نعبد واياك نستعين قال هذا بيني وبين عبدي ولعبدي ما سال فاذا قال اهدنا الصراط المستقيم صراط الذين انعمت عليهم غير المغضوب عليهم ولا الضالين قال هذا لعبدي ولعبدي ما سال"
          },
          "fr": "Allah, exalté soit-Il, a dit : « J'ai partagé la prière entre Moi et Mon serviteur en deux moitiés, et Mon serviteur aura ce qu'il demande. Quand le serviteur dit : “La louange appartient à Allah, Seigneur des mondes”, Allah dit : “Mon serviteur M'a loué.” Quand il dit : “le Tout-Miséricordieux, le Très-Miséricordieux”, Allah dit : “Mon serviteur a fait Mon éloge.” Quand il dit : “Maître du Jour de la Rétribution”, Il dit : “Mon serviteur M'a glorifié” — et une fois : “Mon serviteur s'en est remis à Moi.” Quand il dit : “C'est Toi seul que nous adorons, et c'est Toi seul dont nous implorons l'aide”, Il dit : “Ceci est entre Moi et Mon serviteur, et Mon serviteur aura ce qu'il demande.” Quand il dit : “Guide-nous sur le chemin droit, le chemin de ceux que Tu as comblés de bienfaits, non de ceux qui ont encouru la colère, ni des égarés”, Il dit : “Ceci est pour Mon serviteur, et Mon serviteur aura ce qu'il demande.” »",
-         "reference": "Muslim, Ṣaḥīḥ, n° 395 (numérotation ʿAbd al-Bāqī) (d'après Abū Hurayra ; première version, par Sufyān ibn ʿUyayna, d'après al-ʿAlāʾ ibn ʿAbd ar-Raḥmān) ; aussi at-Tirmidhī 2953 (jugé authentique par al-Albānī et Aḥmad Shākir) ; Mālik le rapporte aussi dans al-Muwaṭṭaʾ",
+         "reference": "Muslim, Ṣaḥīḥ, n° 395 (numérotation ʿAbd al-Bāqī) (d'après Abū Hurayra ; première version, par Sufyān ibn ʿUyayna, d'après al-ʿAlāʾ ibn ʿAbd ar-Raḥmān) ; aussi at-Tirmidhī, Jāmiʿ, n° 2953 (numérotation de sunnah.com ; jugé authentique par al-Albānī) ; Mālik le rapporte aussi dans al-Muwaṭṭaʾ",
          "authenticite": "authentique (ṣaḥīḥ, dans le Ṣaḥīḥ de Muslim) ; hadith qudsī",
          "explication": "Le texte arabe contient des versets : il n'est pas lu par la voix de synthèse.",
          "audio": "aucun"
@@ -3127,7 +3143,7 @@
           "type": "miroir",
           "ref": "bukhari:743",
           "fichier": "awform/_tmp_re5_rv/ara-bukhari.json",
-          "note": "U+200F retiré",
+          "note": "U+200F retiré ; signes de la source conservés tels quels ({) : guillemets ou accolades de l'édition, à masquer à l'affichage, sans retaper le texte",
           "motif_squelette": "ان النبي صلي الله عليه وسلم وابا بكر وعمر رضي الله عنهما كانوا يفتتحون الصلاه ب الحمد لله رب العالمين"
          },
          "fr": "Le Prophète ﷺ, Abū Bakr et ʿUmar ouvraient la prière par « La louange appartient à Allah, Seigneur des mondes ».",
@@ -3230,7 +3246,7 @@
         }
        ],
        "notes": [
-        "Le minimum obligatoire : se pencher jusqu'à ce que les paumes soient près des genoux, et l'immobilité (ṭumaʾnīna). La formule « Gloire à mon Seigneur, l'Immense » est la forme rapportée par Muslim (772). Ar-Risāla propose d'ajouter « … et par Sa louange » « si tu veux » ; le hadith de cet ajout (Abū Dāwūd 870) est jugé faible par al-Albānī et d'autres, et Abū Dāwūd lui-même doutait de cet ajout : nous enseignons la forme courte."
+        "Le minimum obligatoire : se pencher jusqu'à ce que les paumes soient près des genoux, et l'immobilité (ṭumaʾnīna). La formule « Gloire à mon Seigneur, l'Immense » est la forme rapportée par Muslim (772). Ar-Risāla propose d'ajouter « … et par Sa louange » « si tu veux ». La chaîne d'Abū Dāwūd (870) pour cet ajout est faible, et Abū Dāwūd lui-même en doutait ; al-Albānī l'admet par l'ensemble de ses voies, d'autres non. Nous enseignons la forme courte, sur laquelle tous s'accordent."
        ],
        "erreurs_frequentes": [
         "Se pencher à peine et remonter aussitôt : l'immobilité est obligatoire (al-Bukhārī 757, hadith de celui qui priait mal)."
@@ -3801,7 +3817,7 @@
          },
          "sources": [
           "Khalīl, al-Mukhtaṣar, KHL-0193 (application/madjaliss/khalil)",
-          "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 248 : « nudiba qunūtun sirran bi-ṣubḥin faqaṭ wa qabla r-rukūʿ wa lafẓuhu » (extrait rattaché dans application/madjaliss/khalil)",
+          "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 248 : le qunūt est recommandé, à voix basse, au ṣubḥ seulement, avant l'inclinaison, avec sa formule (extrait rattaché dans application/madjaliss/khalil)",
           "ad-Dusūqī, Ḥāshiya ʿalā ash-Sharḥ al-kabīr, Dār al-Fikr, vol. 1, p. 248 : le caractère recommandé est l'avis le plus connu (Saḥnūn le disait sunna) ; avant l'inclinaison pour faciliter les choses au retardataire (extrait rattaché dans application/madjaliss/khalil)",
           "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0123, AKH-0167 (application/madjaliss/akhdari)",
           "Ibn Abī Zayd, ar-Risāla, RIS-0170, RIS-0171 (application/madjaliss/risala)"
@@ -4197,7 +4213,7 @@
           "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 251 : le tashahhud par toute formule rapportée est sunna ; la formule de ʿUmar, enseignée du haut de la chaire devant les Compagnons, est celle que l'imam Mālik a choisie (extrait rattaché dans application/madjaliss/khalil)",
           "ad-Dusūqī, Ḥāshiya ʿalā ash-Sharḥ al-kabīr, Dār al-Fikr, vol. 1, p. 251 : texte de la formule de ʿUmar, avec « Seul, sans associé » (extrait rattaché dans application/madjaliss/khalil)",
           "Ibn Abī Zayd, ar-Risāla, RIS-0175 (application/madjaliss/risala)",
-          "Mālik, al-Muwaṭṭaʾ (riwāya de Yaḥyā), Kitāb aṣ-ṣalāt, bāb at-tashahhud fī ṣ-ṣalāt, n° 56 (ʿUmar enseignant le tashahhud du haut de la chaire), chaîne : Ibn Shihāb, ʿUrwa, ʿAbd ar-Raḥmān ibn ʿAbd al-Qārī"
+          "Mālik, al-Muwaṭṭaʾ (riwāya de Yaḥyā), Kitāb aṣ-ṣalāt, bāb at-tashahhud fī ṣ-ṣalāt (sunnah.com : Book 3, Hadith 56 ; az-Zurqānī : n° 202 ; numéro de l'édition ʿAbd al-Bāqī non collationné) : ʿUmar enseignant le tashahhud du haut de la chaire ; chaîne : Ibn Shihāb, ʿUrwa, ʿAbd ar-Raḥmān ibn ʿAbd al-Qārī"
          ],
          "explication": "Le tashahhud est une conversation : on adresse à Allah tous les hommages, puis on salue le Prophète ﷺ, puis on salue tous les croyants vertueux, « car, en le disant, vous touchez tout serviteur vertueux d'Allah, au ciel et sur terre » (al-Bukhārī 831, d'après Ibn Masʿūd), puis on renouvelle l'attestation de foi. Les commentateurs expliquent : « les salutations » = tous les hommages dus au Roi ; « les œuvres pures » = les actions qui grandissent auprès d'Allah ; « les bonnes paroles et les prières » = les paroles bonnes et les prières, qui ne s'adressent qu'à Lui.",
          "audio": "tts",
@@ -4209,7 +4225,7 @@
            "fichier": "awform/data/re3/l20.js",
            "motif_squelette": "التحيات لله الزاكيات لله الطيبات الصلوات لله السلام عليك ايها النبي ورحمه الله وبركاته السلام علينا وعلي عباد الله الصالحين اشهد ان لا اله الا الله واشهد ان محمدا عبده ورسوله"
           },
-          "fr": "Même texte, sans « Seul, sans associé » : c'est la forme rapportée par le Muwaṭṭaʾ de Mālik (riwāya de Yaḥyā, n° 56) et celle des livres Awzid (re3, leçon 20 ; ad1, leçon 24 ; en3, leçon 9). Les deux formes sont correctes.",
+          "fr": "Même texte, sans « Seul, sans associé » : c'est la forme du tashahhud de ʿUmar dans le Muwaṭṭaʾ de Mālik (riwāya de Yaḥyā, bāb at-tashahhud ; sunnah.com : Book 3, Hadith 56 ; az-Zurqānī : n° 202) et celle des livres Awzid (re3, leçon 20 ; ad1, leçon 24 ; en3, leçon 9). La forme avec « Seul, sans associé » correspond au tashahhud de ʿĀʾisha, rapporté dans le même bāb du Muwaṭṭaʾ. Les deux formes sont correctes.",
           "audio": "tts"
          }
         }
@@ -4408,7 +4424,7 @@
           "al-Bukhārī, Ṣaḥīḥ, n° 3370 (d'après Kaʿb ibn ʿUjra)",
           "livre audité re3, leçon 20 (texte vocalisé)"
          ],
-         "explication": "« Prier sur le Prophète » : demander à Allah de faire son éloge et de lui accorder Sa grâce. Abū l-ʿĀliya a dit : « La prière d'Allah sur lui, c'est Son éloge de lui auprès des anges » (rapporté par al-Bukhārī sans chaîne, Kitāb at-tafsīr, sourate 33). On demande pour Muḥammad ﷺ et sa famille ce qu'Allah a accordé à Ibrāhīm et sa famille. Al-Akhḍarī la compte parmi les sunna ; Khalīl signale une divergence (sunna ou acte méritoire).",
+         "explication": "« Prier sur le Prophète » : demander à Allah de faire son éloge et de lui accorder Sa grâce. Abū l-ʿĀliya a dit : « La prière d'Allah sur lui, c'est Son éloge de lui auprès des anges » (rapporté par al-Bukhārī sans chaîne, Kitāb at-tafsīr, sourate 33, au début du chapitre sur le verset 33:56, juste avant le n° 4797). On demande pour Muḥammad ﷺ et sa famille ce qu'Allah a accordé à Ibrāhīm et sa famille. Al-Akhḍarī la compte parmi les sunna ; Khalīl signale une divergence (sunna ou acte méritoire).",
          "audio": "tts",
          "variante": {
           "ar": "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى آلِ إِبْرَاهِيمَ وَبَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى آلِ إِبْرَاهِيمَ فِي الْعَالَمِينَ إِنَّكَ حَمِيدٌ مَجِيدٌ",
@@ -4715,7 +4731,7 @@
        "type": "etape",
        "ordre": 17,
        "titre": "Une seule salutation",
-       "geste": "Dites « Que la paix soit sur vous » une fois, en dirigeant le salut devant vous et en tournant un peu la tête vers la droite au moment de « -kum ». C'est ainsi que font l'imam et celui qui prie seul. La prière est finie.",
+       "geste": "Dites « Que la paix soit sur vous » une fois, en dirigeant le salut devant vous et en tournant un peu la tête vers la droite à la fin de la salutation (au dernier mot, « sur vous »). C'est ainsi que font l'imam et celui qui prie seul. La prière est finie.",
        "niveau": [
         {
          "code": "FARD",
@@ -4768,9 +4784,9 @@
           "Khalīl, al-Mukhtaṣar, KHL-0180, KHL-0186 (application/madjaliss/khalil)",
           "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0116, AKH-0119 (application/madjaliss/akhdari)",
           "Ibn Abī Zayd, ar-Risāla, RIS-0186, RIS-0187 (application/madjaliss/risala)",
-          "ad-Dusūqī, Ḥāshiya ʿalā ash-Sharḥ al-kabīr, Dār al-Fikr, vol. 1, p. 241 : la formule obligatoire est celle de « Que la paix soit sur vous », avec l'article ; ajouter « et la miséricorde d'Allah et Ses bénédictions » ne nuit pas, mais s'en tenir à « Que la paix soit sur vous » est préférable (extrait rattaché dans application/madjaliss/khalil)"
+          "ad-Dusūqī, Ḥāshiya ʿalā ash-Sharḥ al-kabīr, Dār al-Fikr, vol. 1, p. 241 : la formule obligatoire est celle de « Que la paix soit sur vous », avec l'article et le pluriel ; ajouter « et la miséricorde d'Allah et Ses bénédictions » ne nuit pas ; il rapporte d'al-Majmūʿ que s'en tenir à « Que la paix soit sur vous » est préférable (texte de l'extrait numérique rattaché à KHL-0180 ; page imprimée non encore relue sur l'image, voir A_VERIFIER.md) (extrait rattaché dans application/madjaliss/khalil)"
          ],
-         "explication": "On sort de la prière comme on entre chez des gens : en saluant les anges qui nous accompagnent et ceux qui prient avec nous. La formule doit être exactement celle qui est affichée en arabe, avec l'article et le pluriel. Ajouter « et la miséricorde d'Allah » ne rend pas la prière nulle, mais s'en tenir à « Que la paix soit sur vous » est préférable dans notre école.",
+         "explication": "On sort de la prière comme on entre chez des gens : en saluant les anges qui nous accompagnent et ceux qui prient avec nous. La formule doit être exactement celle qui est affichée en arabe, avec l'article et le pluriel. Ajouter « et la miséricorde d'Allah » ne rend pas la prière nulle ; ad-Dusūqī rapporte que s'en tenir à « Que la paix soit sur vous » est préférable.",
          "audio": "tts"
         }
        ],
@@ -4948,7 +4964,7 @@
       [
        "sunna (fortement recommandé)",
        "l'iqāma ; la sourate et la station debout pour elle ; voix haute et voix basse à leur place ; « Allah entend celui qui Le loue » ; les autres « Allah est le plus grand » ; les deux tashahhud et leurs assises ; la Fātiḥa avant la sourate ; les 2e et 3e salutations derrière l'imam ; la salutation à voix haute ; la prière sur le Prophète ﷺ ; la prosternation sur le nez, les mains, les genoux et les orteils ; la sutra",
-       "deux sunna ou plus oubliées : prosternation de l'oubli avant la salutation ; une seule (sauf voix haute / basse) : rien"
+       "une sunna confirmée oubliée (la sourate, la voix haute ou basse à sa place, le premier tashahhud avec son assise) : prosternation de l'oubli (section 7) ; une sunna légère oubliée seule (un seul « Allah est le plus grand », un seul « Allah entend celui qui Le loue ») : rien"
       ],
       [
        "recommandé (mandūb, faḍīla)",
@@ -4963,7 +4979,10 @@
      ],
      "sources": [
       "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0116, AKH-0118, AKH-0119, AKH-0120, AKH-0121, AKH-0122, AKH-0123, AKH-0124, AKH-0125, AKH-0126, AKH-0156, AKH-0157, AKH-0158 (application/madjaliss/akhdari)",
-      "Khalīl, al-Mukhtaṣar, KHL-0171 à KHL-0204 (application/madjaliss/khalil)"
+      "Khalīl, al-Mukhtaṣar, KHL-0171 à KHL-0204, KHL-0231, KHL-0232, KHL-0237 (application/madjaliss/khalil)",
+      "Ibn Abī Zayd, ar-Risāla, RIS-0252 (application/madjaliss/risala)",
+      "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 274-275 : le manque d'une seule sunna confirmée (la voix haute, la sourate, un tashahhud avec son assise) entraîne la prosternation de l'oubli (extrait rattaché dans application/madjaliss/khalil)",
+      "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 288 : un seul takbīr ou un seul « Allah entend celui qui Le loue » est une sunna légère (extrait rattaché dans application/madjaliss/khalil)"
      ]
     }
    ]
@@ -5100,7 +5119,7 @@
       "type": "miroir",
       "ref": "muslim:#591",
       "fichier": "awform/_tmp_re5_rv/ara-muslim.json",
-      "note": "U+200F retiré",
+      "note": "U+200F retiré ; signes de la source conservés tels quels (\") : guillemets ou accolades de l'édition, à masquer à l'affichage, sans retaper le texte",
       "motif_squelette": "كان رسول الله صلي الله عليه وسلم اذا انصرف من صلاته استغفر ثلاثا وقال اللهم انت السلام ومنك السلام تباركت ذا الجلال والاكرام"
      },
      "fr": "Lorsque le Messager d'Allah ﷺ terminait sa prière, il demandait pardon trois fois et disait : « Ô Allah, Tu es la Paix, et de Toi vient la paix ; béni sois-Tu, Toi qui possèdes la majesté et la générosité. »",
@@ -5354,9 +5373,9 @@
      "repetition": "1 fois",
      "sources": [
       "Coran 2:255 (Tanzil, lu par Muḥammad Ayyūb)",
-      "an-Nasāʾī, as-Sunan al-kubrā, n° 9848, et ʿAmal al-yawm wa l-layla, n° 100 (hadith d'Abū Umāma : « celui qui récite le verset du Trône après chaque prière obligatoire, rien ne l'empêche d'entrer au Paradis, sinon la mort ») ; jugé authentique par al-Albānī (as-Silsila aṣ-ṣaḥīḥa, n° 972) ; numéros et jugements à collationner (voir A_VERIFIER.md)"
+      "an-Nasāʾī, as-Sunan al-kubrā, n° 9848 (hadith d'Abū Umāma : « celui qui récite le verset du Trône après chaque prière obligatoire, rien ne l'empêche d'entrer au Paradis, sinon la mort ») ; aussi dans ʿAmal al-yawm wa l-layla d'an-Nasāʾī (numéro non collationné, voir A_VERIFIER.md) ; jugé authentique par al-Albānī (as-Silsila aṣ-ṣaḥīḥa, n° 972) ; Ibn al-Jawzī l'a mis parmi les hadiths inventés (al-Mawḍūʿāt), ce qu'Ibn Ḥajar, Ibn ʿAbd al-Hādī et ad-Dimyāṭī ont réfuté ; al-Mundhirī et Ibn Kathīr jugent sa chaîne bonne"
      ],
-     "explication": "Le plus grand verset du Coran (Muslim 810, d'après Ubayy ibn Kaʿb). Il décrit Allah : vivant, sans sommeil, maître de tout, dont la science embrasse tout. Traduction Awzid, d'après aṭ-Ṭabarī et Ibn Kathīr. Le hadith de la récitation après la prière a été discuté par certains savants ; il est jugé authentique par al-Albānī et d'autres. Réciter ce verset reste, en tout cas, une lecture du Coran pleine de bien."
+     "explication": "Le plus grand verset du Coran (Muslim 810, d'après Ubayy ibn Kaʿb). Il décrit Allah : vivant, sans sommeil, maître de tout, dont la science embrasse tout. Traduction Awzid, d'après aṭ-Ṭabarī et Ibn Kathīr. Le hadith de la récitation après la prière a été jugé inventé par Ibn al-Jawzī ; Ibn Ḥajar, Ibn ʿAbd al-Hādī et d'autres l'ont réfuté, et al-Albānī le juge authentique. Réciter ce verset reste, en tout cas, une lecture du Coran pleine de bien."
     },
     {
      "id": "S6.muawwidhat",
@@ -5374,7 +5393,7 @@
      },
      "sources": [
       "Abū Dāwūd, Sunan, n° 1523 (d'après ʿUqba ibn ʿĀmir : « le Messager d'Allah ﷺ m'a ordonné de réciter les muʿawwidhāt après chaque prière » ; jugé authentique par al-Albānī)",
-      "at-Tirmidhī, Jāmiʿ, n° 2903 (« al-muʿawwidhatayn » ; jugé authentique par al-Albānī et Aḥmad Shākir)"
+      "at-Tirmidhī, Jāmiʿ, n° 2903, numérotation de sunnah.com (« les deux sourates protectrices » ; at-Tirmidhī : ḥasan gharīb ; al-Albānī : ṣaḥīḥ)"
      ]
     },
     {
@@ -5426,22 +5445,24 @@
       {
        "id": "S7.1.r",
        "type": "regle",
-       "fr": "La prosternation de l'oubli est une sunna. Pour un manque (on a oublié au moins deux sunna confirmées, ou la voix haute à sa place) : deux prosternations AVANT la salutation, après le tashahhud, puis on refait le tashahhud et on salue. Pour un ajout (une rakʿa en trop, une parole par oubli…) : deux prosternations APRÈS la salutation, puis le tashahhud et une nouvelle salutation. Pour un manque et un ajout ensemble : avant la salutation.",
+       "fr": "La prosternation de l'oubli est une sunna. Pour un manque (on a oublié une sunna confirmée : la sourate, la voix haute à sa place, le premier tashahhud avec son assise…) : deux prosternations AVANT la salutation, après le tashahhud, puis on refait le tashahhud et on salue. Pour un ajout (une rakʿa en trop, une parole par oubli, la voix haute à la place de la voix basse…) : deux prosternations APRÈS la salutation, puis le tashahhud et une nouvelle salutation. Pour un manque et un ajout ensemble : avant la salutation.",
        "niveau": {
         "code": "SUNNA",
         "libelle": "sunna (fortement recommandé)"
        },
        "sources": [
-        "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0152, AKH-0153 (application/madjaliss/akhdari)",
+        "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0152, AKH-0153, AKH-0118, AKH-0158 (application/madjaliss/akhdari)",
         "Khalīl, al-Mukhtaṣar, KHL-0231, KHL-0232 (application/madjaliss/khalil)",
-        "Ibn Abī Zayd, ar-Risāla, RIS-0245, RIS-0246, RIS-0247 (application/madjaliss/risala)"
+        "Ibn Abī Zayd, ar-Risāla, RIS-0245, RIS-0246, RIS-0247 (application/madjaliss/risala)",
+        "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 274-275 : le manque d'une seule sunna confirmée (la voix haute, la sourate, un tashahhud avec son assise) entraîne la prosternation avant la salutation (extrait rattaché dans application/madjaliss/khalil)"
        ],
-       "titre": "La règle"
+       "titre": "La règle",
+       "note": "Al-Akhḍarī dit « deux sunna ou plus » (AKH-0158). Cela revient au même dans les faits : la sourate compte pour deux sunna (la sourate et la station debout pour elle), et le premier tashahhud aussi (le tashahhud et l'assise pour lui) (AKH-0118). Khalīl le dit directement : une seule sunna confirmée oubliée suffit (KHL-0231, KHL-0232)."
       },
       {
        "id": "S7.1.lim",
        "type": "regle",
-       "fr": "Elle ne répare pas un pilier oublié (une inclinaison, une prosternation, la Fātiḥa…) : il faut l'accomplir, ou refaire la rakʿa. On ne se prosterne pas pour un acte simplement recommandé (āmīn, qunūt…), ni pour une seule sunna, sauf la voix haute ou basse. Se prosterner avant la salutation pour un acte recommandé rend la prière nulle.",
+       "fr": "Elle ne répare pas un pilier oublié (une inclinaison, une prosternation, la Fātiḥa…) : il faut l'accomplir, ou refaire la rakʿa. On ne se prosterne pas pour un acte simplement recommandé (āmīn, qunūt…), ni pour une sunna légère oubliée seule (un seul « Allah est le plus grand », un seul « Allah entend celui qui Le loue »). Se prosterner avant la salutation pour un acte recommandé ou pour une sunna légère rend la prière nulle si on le fait exprès ou par ignorance ; par oubli, elle reste valable et l'on se prosterne après la salutation.",
        "niveau": {
         "code": "FARD",
         "libelle": "obligatoire (farḍ)"
@@ -5449,7 +5470,8 @@
        "sources": [
         "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0156, AKH-0157, AKH-0158 (application/madjaliss/akhdari)",
         "Khalīl, al-Mukhtaṣar, KHL-0237, KHL-0247 (application/madjaliss/khalil)",
-        "Ibn Abī Zayd, ar-Risāla, RIS-0250, RIS-0252 (application/madjaliss/risala)"
+        "Ibn Abī Zayd, ar-Risāla, RIS-0250, RIS-0252 (application/madjaliss/risala)",
+        "ad-Dusūqī, Ḥāshiya ʿalā ash-Sharḥ al-kabīr, Dār al-Fikr, vol. 1, p. 288 : la nullité vise celui qui se prosterne avant la salutation pour un acte recommandé exprès ou par ignorance, non par oubli : alors la prière n'est pas nulle et il se prosterne après la salutation (extrait rattaché dans application/madjaliss/khalil)"
        ],
        "titre": "Ce qu'elle ne répare pas"
       },
@@ -5532,14 +5554,14 @@
         ],
         [
          "J'ai oublié une prosternation et je m'en souviens une fois debout",
-         "je redescends et je la fais",
+         "je reviens m'asseoir, puis je la fais (si je m'étais déjà assis avant de me lever, je ne refais pas l'assise)",
          "après la salutation",
          "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0211, AKH-0212 (application/madjaliss/akhdari)"
         ],
         [
-         "J'ai oublié une prosternation et je m'en souviens après l'inclinaison de la rakʿa suivante",
-         "cette rakʿa-là ne compte pas ; j'en ajoute une à la fin",
-         "selon le cas (voir al-Akhḍarī)",
+         "J'ai oublié une prosternation et je m'en souviens après m'être relevé de l'inclinaison de la rakʿa suivante",
+         "je ne reviens pas ; cette rakʿa-là ne compte pas ; j'en ajoute une à la fin",
+         "avant la salutation si la rakʿa annulée était l'une des deux premières et que je m'en souviens après avoir accompli la troisième ; sinon, après la salutation",
          "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0213 (application/madjaliss/akhdari)"
         ],
         [
@@ -5551,12 +5573,19 @@
         [
          "J'ai oublié un verset de la Fātiḥa",
          "je continue",
-         "avant la salutation (si j'en ai oublié plus, la prière est nulle)",
-         "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0194 (application/madjaliss/akhdari)"
+         "avant la salutation",
+         "Khalīl, al-Mukhtaṣar, KHL-0178 (application/madjaliss/khalil)"
+        ],
+        [
+         "J'ai oublié la Fātiḥa dans une rakʿa d'une prière obligatoire",
+         "si je m'en souviens avant de m'incliner, je la récite ; sinon, cette rakʿa ne compte pas et j'en ajoute une",
+         "comme pour une prosternation oubliée (ligne ci-dessus)",
+         "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0217, AKH-0213 (application/madjaliss/akhdari)"
         ]
        ],
        "sources": [
-        "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0151 à AKH-0233 (application/madjaliss/akhdari)"
+        "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0151 à AKH-0233 (application/madjaliss/akhdari)",
+        "Khalīl, al-Mukhtaṣar, KHL-0178, KHL-0232 (application/madjaliss/khalil)"
        ]
       },
       {
@@ -5679,7 +5708,7 @@
         "Je dis le premier « Allah est le plus grand » debout, avec l'intention, puis je rejoins l'imam dans la position où il est ; s'il est incliné ou prosterné, je dis un deuxième « Allah est le plus grand » en descendant ; s'il est assis, je m'assois sans le second takbīr (Khalīl, KHL-0388).",
         "La rakʿa est comptée si je m'incline avant que l'imam ne se relève de l'inclinaison ; si je doute de l'avoir rattrapée, elle ne compte pas (Khalīl, KHL-0391, KHL-0393).",
         "Celui qui rattrape moins d'une rakʿa n'a pas le mérite de la prière en groupe ; il peut la refaire en groupe (ar-Risāla, RIS-0229 ; Khalīl, KHL-0327).",
-        "Quand l'imam salue, je ne salue pas : je me lève et je complète ce qui me manque. Je me lève avec « Allah est le plus grand » si cette dernière assise de l'imam tombait sur ma 2e rakʿa, ou si je n'ai rattrapé que le tashahhud ; sinon, sans takbīr (Khalīl, KHL-0389).",
+        "Quand l'imam salue, je ne salue pas : je me lève et je complète ce qui me manque. Je me lève avec « Allah est le plus grand », dit une fois debout, si cette dernière assise de l'imam tombait sur ma 2e rakʿa, ou si je n'ai rattrapé que le tashahhud ; sinon, sans takbīr (Khalīl, KHL-0389 ; ad-Dardīr, p. 345).",
         "La règle mālikite : ce que je rattrape est « rattrapé pour les paroles et complété pour les gestes ». Pour la récitation, je refais ce que j'ai manqué comme l'imam l'a fait (Fātiḥa et sourate, à voix haute ou basse) ; pour les assises, je compte à partir de ce que j'ai déjà fait (ar-Risāla, RIS-0227 ; Khalīl, KHL-0390).",
         "Exemple : au maghrib, j'ai rattrapé seulement la 3e rakʿa de l'imam. Après sa salutation, je me lève et je fais une rakʿa avec la Fātiḥa et une sourate à voix haute, puis je m'assois pour le tashahhud (c'est ma 2e rakʿa) ; je fais ensuite une autre rakʿa avec la Fātiḥa et une sourate à voix haute, puis le dernier tashahhud et la salutation.",
         "Prosternation de l'oubli de l'imam : si j'ai rattrapé au moins une rakʿa, je fais avec lui celle d'avant la salutation, et je fais celle d'après la salutation seulement après avoir terminé ma prière ; si j'ai rattrapé moins d'une rakʿa, je ne la fais pas avec lui (al-Akhḍarī, AKH-0206, AKH-0207)."
@@ -5687,7 +5716,8 @@
        "sources": [
         "Ibn Abī Zayd, ar-Risāla, RIS-0227, RIS-0229 (application/madjaliss/risala)",
         "Khalīl, al-Mukhtaṣar, KHL-0327, KHL-0388, KHL-0389, KHL-0390, KHL-0391, KHL-0393 (application/madjaliss/khalil)",
-        "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0206, AKH-0207, AKH-0208, AKH-0209 (application/madjaliss/akhdari)"
+        "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0206, AKH-0207, AKH-0208, AKH-0209 (application/madjaliss/akhdari)",
+        "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 345 : le retardataire se lève avec un takbīr s'il n'a rattrapé que le tashahhud, comme le dit la Mudawwana, et il le dit une fois bien debout (extrait rattaché dans application/madjaliss/khalil)"
        ]
       }
      ]
@@ -5744,10 +5774,10 @@
       {
        "id": "S7.3.r3",
        "type": "regle",
-       "fr": "Celui qui doit des rattrapages ne fait pas de prières surérogatoires (ni ḍuḥā, ni prière des nuits de Ramaḍān) ; il garde seulement le shafʿ et le witr, les deux rakʿa de l'aube, les deux fêtes, l'éclipse et la prière pour la pluie. Plusieurs personnes qui doivent la même prière peuvent la rattraper en groupe.",
+       "fr": "Les prières surérogatoires ne sont pas permises à celui qui doit des rattrapages (ni ḍuḥā, ni prière des nuits de Ramaḍān) ; ne lui sont permis que le shafʿ et le witr, les deux rakʿa de l'aube, les deux fêtes, l'éclipse et la prière pour la pluie (al-Akhḍarī). Plusieurs personnes qui doivent la même prière peuvent la rattraper en groupe.",
        "niveau": {
-        "code": "MAKRUH",
-        "libelle": "déconseillé (makrūh)"
+        "code": "HARAM",
+        "libelle": "interdit (ḥarām)"
        },
        "sources": [
         "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0148, AKH-0149 (application/madjaliss/akhdari)"
@@ -5756,7 +5786,7 @@
       {
        "id": "S7.3.n",
        "type": "texte",
-       "fr": "Celui qui a abandonné la prière pendant des années et revient à Allah doit, selon notre école (comme les quatre écoles), rattraper ce qu'il a laissé, à son rythme mais sans négligence, avec le repentir. On ne se décourage pas : chaque prière rattrapée est un pas.",
+       "fr": "Celui qui a abandonné la prière pendant des années et revient à Allah doit, selon notre école, rattraper ce qu'il a laissé, à son rythme mais sans négligence, avec le repentir. On ne se décourage pas : chaque prière rattrapée est un pas.",
        "sources": [
         "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0142, AKH-0143, AKH-0005, AKH-0006 (application/madjaliss/akhdari)"
        ]
@@ -5916,18 +5946,25 @@
        },
        "sources": [
         "Khalīl, al-Mukhtaṣar, KHL-0418, KHL-0419, KHL-0427, KHL-0430 (application/madjaliss/khalil)",
-        "registre mutun.json, MATN_RIS_safar_1 (ar-Risāla : « quatre burud, soit quarante-huit milles » ; « quatre jours, ou le temps de vingt prières »)"
+        "registre mutun.json, MATN_RIS_safar_1 (ar-Risāla : « quatre burud, soit quarante-huit milles » ; « quatre jours, ou le temps de vingt prières »)",
+        "conversion : 48 milles de 3 500 coudées = 80,64 km pour les mālikites (Dār al-Iftāʾ al-Miṣriyya, fatwa n° 22385, sur la distance du raccourcissement en kilomètres)"
        ],
        "titre": "Les conditions"
       },
       {
        "id": "S7.5.r3",
        "type": "regle",
-       "fr": "Le voyageur qui prie derrière un imam résident le suit et prie quatre rakʿa. Le voyageur qui a eu l'intention de prier complet refait sa prière dans le temps.",
-       "niveau": {
-        "code": "SUNNA",
-        "libelle": "sunna (fortement recommandé)"
-       },
+       "fr": "Il est déconseillé au voyageur de prier derrière un imam résident (et au résident de prier derrière un voyageur). Si le voyageur le fait, il suit l'imam, prie quatre rakʿa et ne refait pas sa prière. Le voyageur qui a eu l'intention de prier complet refait sa prière dans le temps.",
+       "niveau": [
+        {
+         "code": "SUNNA",
+         "libelle": "sunna (fortement recommandé)"
+        },
+        {
+         "code": "MAKRUH",
+         "libelle": "déconseillé (makrūh)"
+        }
+       ],
        "sources": [
         "Khalīl, al-Mukhtaṣar, KHL-0433, KHL-0434 (application/madjaliss/khalil)"
        ]
@@ -5935,14 +5972,15 @@
       {
        "id": "S7.5.r4",
        "type": "regle",
-       "fr": "Joindre deux prières (ẓuhr et ʿaṣr ; maghrib et ʿishāʾ) est une dispense permise au voyageur. S'il part après le déclin du soleil et compte s'arrêter après le coucher du soleil, il prie le ẓuhr et le ʿaṣr ensemble avant de partir ; s'il compte s'arrêter avant le jaunissement du soleil, il retarde le ʿaṣr ; s'il est en route au déclin du soleil, il les retarde et les joint plus tard. On fait de même pour le maghrib et le ʿishāʾ selon l'un des deux avis de l'école. Le malade qui craint de perdre conscience peut aussi les joindre. À la mosquée, on peut joindre le maghrib et le ʿishāʾ une nuit de pluie, ou de boue avec obscurité.",
+       "fr": "Joindre deux prières (ẓuhr et ʿaṣr ; maghrib et ʿishāʾ) est une dispense permise au voyageur qui voyage sur terre, même si son voyage est plus court que la distance du raccourcissement. S'il est à l'étape au déclin du soleil (début du temps du ẓuhr) : s'il compte s'arrêter après le coucher du soleil, il prie le ẓuhr et le ʿaṣr ensemble avant de partir ; s'il compte s'arrêter avant le jaunissement du soleil, il prie le ẓuhr et retarde le ʿaṣr ; s'il compte s'arrêter entre le jaunissement et le coucher, il a le choix pour le ʿaṣr. S'il est en route au déclin du soleil : s'il compte s'arrêter au jaunissement ou avant, il retarde les deux prières et les joint à l'arrêt ; s'il compte s'arrêter après le coucher du soleil, il prie chacune dans son temps (le ẓuhr à la fin du sien, le ʿaṣr au début du sien). On fait de même pour le maghrib et le ʿishāʾ selon l'un des deux avis de l'école. Le malade qui craint de perdre conscience peut aussi les joindre. À la mosquée, on peut joindre le maghrib et le ʿishāʾ une nuit de pluie, ou de boue avec obscurité.",
        "niveau": {
         "code": "JAIZ",
         "libelle": "permis (jāʾiz)"
        },
        "sources": [
         "Khalīl, al-Mukhtaṣar, KHL-0442, KHL-0443, KHL-0444, KHL-0446, KHL-0447, KHL-0449, KHL-0450 (application/madjaliss/khalil)",
-        "Ibn Abī Zayd, ar-Risāla, RIS-0269, RIS-0270, RIS-0272, RIS-0273, RIS-0274 (application/madjaliss/risala)"
+        "Ibn Abī Zayd, ar-Risāla, RIS-0269, RIS-0270, RIS-0272, RIS-0273, RIS-0274 (application/madjaliss/risala)",
+        "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 368-369 : en route au déclin du soleil : s'il compte s'arrêter au jaunissement ou avant, il retarde les deux ; s'il compte s'arrêter après le coucher, chacune dans son temps de choix, le ẓuhr à la fin du sien et le ʿaṣr au début du sien (extrait rattaché dans application/madjaliss/khalil)"
        ],
        "titre": "Joindre deux prières (al-jamʿ)",
        "autres_ecoles": "Dans l'école ḥanafite, on ne joint deux prières qu'à ʿArafa et à Muzdalifa ; chez nous, mālikites, la jonction est permise au voyageur, au malade et à la mosquée par temps de pluie."
@@ -5950,7 +5988,7 @@
       {
        "id": "S7.5.r5",
        "type": "regle",
-       "fr": "Les prières surérogatoires se font aussi sur la monture (ou dans le véhicule), dans la direction du voyage ; la prière obligatoire se fait à terre, face à la qibla.",
+       "fr": "Dans un voyage où l'on raccourcit la prière, la prière surérogatoire peut se faire sur une monture (un animal), dans la direction du voyage, même le witr ; pas sur un bateau (Khalīl). La prière obligatoire se fait à terre, face à la qibla. Nos sources parlent de la monture et ne disent rien de la voiture : l'y assimiler est une analogie contemporaine, que ce parcours ne tranche pas (demandez à un savant).",
        "niveau": {
         "code": "JAIZ",
         "libelle": "permis (jāʾiz)"
@@ -6133,22 +6171,24 @@
        "type": "liste",
        "titre": "La prière des femmes",
        "items": [
-        "Tenue : tout le corps couvert sauf le visage et les mains, avec un voile épais sur la tête et une robe qui couvre le dessus des pieds (al-Akhḍarī, AKH-0108 ; ar-Risāla, RIS-0242 ; section 3).",
+        "Tenue : tout le corps couvert sauf le visage et les mains, avec un voile épais sur la tête et une robe qui couvre le dessus des pieds (al-Akhḍarī, AKH-0108 ; ar-Risāla, RIS-0242 ; section 3). Si la poitrine (ou le haut du dos), le cou, les cheveux, les avant-bras, les jambes ou le dessus des pieds étaient découverts pendant la prière, elle la refait dans le temps ; si une autre partie était découverte (ventre, bas du dos, cuisses…), elle la refait en tout temps ; le dessous des pieds n'oblige à rien (Khalīl, KHL-0149 ; ad-Dardīr et ad-Dusūqī, p. 214).",
         "Gestes : comme l'homme, mais ramassée, sans écarter les bras ni les cuisses, dans l'inclinaison, la prosternation et les assises ; elle récite moins fort que l'homme (ar-Risāla, RIS-0209).",
         "Elle pose les mains à même le sol dans la prosternation, comme l'homme (ar-Risāla, RIS-0036).",
         "L'iqāma à voix basse est bien pour elle, sans obligation ; elle ne fait pas l'appel (Khalīl, KHL-0129, KHL-0136).",
         "Elle ne dirige pas la prière, ni des hommes ni des femmes, selon notre école (ar-Risāla, RIS-0225).",
         "Pendant les règles et les lochies : pas de prière, et rien à rattraper ensuite ; le jeûne, lui, se rattrape (al-Akhḍarī, AKH-0090, AKH-0091 ; Muslim 335 ; section 2).",
         "Elle devient pure : grand lavage et prière sans tarder ; si c'est juste avant la fin du temps, elle doit encore la prière de ce temps (ar-Risāla, RIS-0015, RIS-0276).",
-        "Ses règles commencent alors qu'elle n'a pas encore prié la prière du moment, assez tôt dans le temps : elle n'a pas à la rattraper (ar-Risāla, RIS-0277).",
+        "Ses règles commencent avant qu'elle ait prié, alors que le temps de cette prière n'est pas sorti (il en reste au moins une rakʿa, même dans le temps de nécessité) : elle n'a pas à la rattraper. Elle compte en rakʿa comme pour la fin des règles : s'il ne restait du temps que pour la seconde des deux prières (le ʿaṣr après le ẓuhr, le ʿishāʾ après le maghrib), elle rattrape seulement la première (ar-Risāla, RIS-0276, RIS-0277).",
         "Saignement hors des règles (istiḥāḍa) : elle prie et jeûne, avec ses ablutions (ar-Risāla, RIS-0008, RIS-0018 ; section 2).",
         "Le vendredi n'est pas obligatoire pour elle ; si elle y assiste, il remplace le ẓuhr (ar-Risāla, MATN_RIS_jumua_1)."
        ],
        "sources": [
         "al-Akhḍarī, Mukhtaṣar fī l-ʿibādāt, AKH-0090, AKH-0091, AKH-0108 (application/madjaliss/akhdari)",
         "Ibn Abī Zayd, ar-Risāla, RIS-0008, RIS-0015, RIS-0018, RIS-0036, RIS-0209, RIS-0225, RIS-0242, RIS-0276, RIS-0277 (application/madjaliss/risala)",
-        "Khalīl, al-Mukhtaṣar, KHL-0129, KHL-0136 (application/madjaliss/khalil)",
-        "Muslim, Ṣaḥīḥ, n° 335 (numérotation ʿAbd al-Bāqī)"
+        "Khalīl, al-Mukhtaṣar, KHL-0129, KHL-0136, KHL-0149 (application/madjaliss/khalil)",
+        "Muslim, Ṣaḥīḥ, n° 335 (numérotation ʿAbd al-Bāqī)",
+        "ad-Dardīr, ash-Sharḥ al-kabīr, avec la Ḥāshiya d'ad-Dusūqī, Dār al-Fikr, vol. 1, p. 214 : les « extrémités » de la femme libre : le cou, la tête, l'avant-bras et le dessus du pied ; le haut du dos qui fait face à la poitrine compte comme elle ; pour le reste, la prière est à refaire en tout temps ; rien pour le dessous des pieds (extrait rattaché dans application/madjaliss/khalil)",
+        "ad-Dusūqī, Ḥāshiya ʿalā ash-Sharḥ al-kabīr, Dār al-Fikr, vol. 1, p. 214 : de même la jambe et le sein ; la règle vaut que ce soit volontaire, par ignorance ou par oubli (extrait rattaché dans application/madjaliss/khalil)"
        ]
       }
      ]
