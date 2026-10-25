@@ -3,6 +3,7 @@
   import { resolve } from '$app/paths';
   import Bidi from '$lib/Bidi.svelte';
   import { demoProfileFor, type DevProfile } from '$lib/attempts';
+  import { fn } from '$lib/fonctions.svelte';
   import Fraicheur from '$lib/hifz-outils/Fraicheur.svelte';
   import PointsFaibles from '$lib/hifz-outils/PointsFaibles.svelte';
   import Priere from '$lib/hifz-outils/Priere.svelte';
@@ -40,6 +41,10 @@
     {:else if data.outil === 'points-faibles'}<PointsFaibles profileId={profile.id} />
     {:else if data.outil === 'fraicheur'}<Fraicheur profileId={profile.id} />
     {:else if data.outil === 'priere'}<Priere profileId={profile.id} />
+    {:else if data.outil === 'jumeaux'}
+      {#if fn('mutashabihat')}{#await import('$lib/mutashabihat') then m}<m.Test
+            profileId={profile.id}
+          />{/await}{/if}
     {:else}
       <!-- écran enfant : chargé à la demande (module « en ligne » : l'écoute du récitateur a besoin du réseau) -->
       {#await import('$lib/hifz-outils/Enfant.svelte') then m}<m.default

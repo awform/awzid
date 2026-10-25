@@ -2,6 +2,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
+  import { fn } from '$lib/fonctions.svelte';
   import { fmtDate, t } from '$lib/i18n';
   import { call, fetchMe, type Me, type ProfileInfo } from '$lib/session';
   import ModeProfil from '$lib/parcours/ModeProfil.svelte';
@@ -254,6 +255,10 @@
           <!-- A39 : le parent choisit la façon d'avancer de son enfant (préférence de l'ado à valider) -->
           <ModeProfil pid={p.id} nom={p.pseudonym} />
         {/if}
+        <!-- hifẓ en classe (interrupteur `hifz_classe`) : suivi des séances de l'élève devant son maître, à la demande -->
+        {#if fn('hifz_classe')}{#await import('$lib/hifz-classe/eleve') then m}<m.Suivi
+              profileId={p.id}
+            />{/await}{/if}
         {#if r.titulaire && me.account.kind === 'parent'}
           <div class="row">
             {#if p.kind !== 'adulte'}

@@ -21,6 +21,21 @@ describe('versets du carnet', () => {
   });
 });
 
+describe('part du carnet sans portions hebdomadaires', () => {
+  it('ne casse pas le calcul des tâches (carnet ad2, sourate 67)', () => {
+    const book = {
+      code: 'x',
+      semaines: 30,
+      parcours: {
+        socle: [{ sourate: 112, versets: '1-4', portions: [{ s: 1, v: '1-4' }] }],
+        renforce: [{ sourate: 67, versets: '1-14', nb: 14, semaines: '5-9' }],
+      },
+    };
+    expect(weekTasks(book, 1).map((t) => t.part)).toEqual(['112:1-4']);
+    expect(weekTasks(book, 5)).toEqual([]);
+  });
+});
+
 describe.skipIf(!HAS_BOOKS || !HAS_TANZIL)('carnets E1 et N1 (fichiers des livres)', () => {
   const tanzil = HAS_TANZIL ? loadTanzil() : new Map<string, string>();
   const meta = buildMeta(tanzil);

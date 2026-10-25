@@ -56,6 +56,17 @@ beforeAll(async () => {
     ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'priere', f), 'utf8')));
   // 26/10/2026 : « Khatma et wird »
   ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'khatma', 'textes-fr.json'), 'utf8')));
+  ajouterTextes(
+    JSON.parse(readFileSync(join(SRC, 'lib', 'mutashabihat', 'textes-fr.json'), 'utf8')),
+  );
+  ajouterTextes(
+    JSON.parse(readFileSync(join(SRC, 'lib', 'hifz-classe', 'textes-fr.json'), 'utf8')),
+  );
+  // 25/10/2026 : « Mots du Coran » (bande du lecteur, recherche, fiche racine)
+  ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'coran-mots', 'textes-fr.json'), 'utf8')));
+  ajouterTextes(
+    JSON.parse(readFileSync(join(SRC, 'lib', 'tajwid-madd', 'textes-fr.json'), 'utf8')),
+  );
 });
 afterEach(() => setLocale('fr'));
 

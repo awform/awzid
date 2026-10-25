@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@awform/billing": "workspace:*",
+    "@awform/coran-mots-data": "workspace:*",
     "@awform/content": "workspace:*",
     "@awform/db": "workspace:*",
     "@awform/grading": "workspace:*",

@@ -1006,7 +1006,8 @@ export const hifzMark = pgTable(
     check('hifz_mark_aya', sql`${t.aya} BETWEEN 1 AND 286`),
     check('hifz_mark_word', sql`${t.word} BETWEEN -1 AND 300`),
     check('hifz_mark_kind', sql`${t.kind} IN ('erreur', 'hesitation', 'oubli', 'juste')`),
-    check('hifz_mark_source', sql`${t.source} IN ('test', 'auto', 'parent')`),
+    // 25/10/2026 : « enseignant » = marques posées par le maître en séance de hifẓ en classe (mot par mot)
+    check('hifz_mark_source', sql`${t.source} IN ('test', 'auto', 'parent', 'enseignant')`),
   ],
 );
 
@@ -3238,5 +3239,85 @@ export const khatmaPart = pgTable(
     ),
     check('khatma_part_done', sql`${t.done} >= 0 AND ${t.doneDayStart} >= 0`),
     check('khatma_part_pos', sql`${t.posSura} IS NULL OR ${t.posSura} BETWEEN 1 AND 114`),
+  ],
+);
+
+// ================================================================ hifẓ en classe (25/10/2026, interrupteur `hifz_classe`)
+
+/**
+ * Séance de hifẓ en classe : un élève récite une portion devant son maître (mode « direct » : AUCUN enregistrement, jamais) ou le
+ * maître annote plus tard l'enregistrement d'un ADULTE consentant (mode « enregistrement » : la récitation est dans
+ * `recitation_upload`, chiffrée, effacée à l'échéance ; l'annotation, elle, ne contient aucune voix et reste). Le maître coche
+ * les erreurs mot par mot, valide la portion (ou la remet à reprendre) ; la validation entre dans le journal de hifẓ de l'élève.
+ */
+export const hifzClasseSeance = pgTable(
+  'hifz_classe_seance',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    classId: uuid('class_id')
+      .notNull()
+      .references(() => classGroup.id, { onDelete: 'cascade' }),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    teacherAccountId: uuid('teacher_account_id').references(() => account.id, {
+      onDelete: 'set null',
+    }),
+    mode: text('mode').notNull(),
+    sura: smallint('sura').notNull(),
+    fromAya: smallint('from_aya').notNull(),
+    toAya: smallint('to_aya').notNull(),
+    /** enregistrement annoté (effacé à l'échéance : la séance reste, sans voix) */
+    recitationId: uuid('recitation_id').references(() => recitationUpload.id, {
+      onDelete: 'set null',
+    }),
+    status: text('status').notNull().default('en_cours'),
+    outcome: text('outcome'),
+    remark: text('remark'),
+    /** journal de hifẓ : événement de validation écrit à la fin de la séance */
+    eventId: uuid('event_id'),
+    createdAt: createdAt(),
+    finishedAt: timestamp('finished_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('hifz_classe_seance_class').on(t.classId, t.createdAt),
+    index('hifz_classe_seance_profile').on(t.profileId, t.createdAt),
+    check('hifz_classe_seance_mode', sql`${t.mode} IN ('direct', 'enregistrement')`),
+    check('hifz_classe_seance_status', sql`${t.status} IN ('en_cours', 'terminee')`),
+    check(
+      'hifz_classe_seance_outcome',
+      sql`${t.outcome} IS NULL OR ${t.outcome} IN ('validee', 'a_reprendre')`,
+    ),
+    check('hifz_classe_seance_sura', sql`${t.sura} BETWEEN 1 AND 114`),
+    check(
+      'hifz_classe_seance_aya',
+      sql`${t.fromAya} BETWEEN 1 AND ${t.toAya} AND ${t.toAya} <= 286`,
+    ),
+    check('hifz_classe_seance_remark', sql`${t.remark} IS NULL OR char_length(${t.remark}) <= 300`),
+    // en mode « direct », jamais de lien vers un enregistrement
+    check('hifz_classe_seance_direct', sql`${t.mode} <> 'direct' OR ${t.recitationId} IS NULL`),
+  ],
+);
+
+/** Erreur cochée par le maître sur UN mot (rang de `texte.split(' ')`) : oubli, ajout (après ce mot), changement, tajwīd. */
+export const hifzClasseErreur = pgTable(
+  'hifz_classe_erreur',
+  {
+    seanceId: uuid('seance_id')
+      .notNull()
+      .references(() => hifzClasseSeance.id, { onDelete: 'cascade' }),
+    aya: smallint('aya').notNull(),
+    word: smallint('word').notNull(),
+    kind: text('kind').notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.seanceId, t.aya, t.word, t.kind] }),
+    check('hifz_classe_erreur_kind', sql`${t.kind} IN ('oubli', 'ajout', 'changement', 'tajwid')`),
+    check(
+      'hifz_classe_erreur_pos',
+      sql`${t.aya} BETWEEN 1 AND 286 AND ${t.word} BETWEEN 0 AND 300`,
+    ),
   ],
 );

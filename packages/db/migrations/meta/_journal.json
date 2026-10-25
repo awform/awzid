@@ -393,6 +393,13 @@
       "when": 1792934152624,
       "tag": "0055_khatma_wird",
       "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1792945264182,
+      "tag": "0056_hifz_classe",
+      "breakpoints": true
     }
   ]
 }

@@ -168,6 +168,9 @@ export const API_GRANTS: Record<string, Right[]> = {
   // 26/10/2026 : khatma et wird (plans et parts ; tout part avec le compte ou le profil, clés étrangères en cascade)
   khatma: ALL,
   khatma_part: ALL,
+  // 25/10/2026 : hifẓ en classe (séances et erreurs cochées mot par mot ; sans voix, tout part avec l'élève ou la classe)
+  hifz_classe_seance: ALL,
+  hifz_classe_erreur: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */

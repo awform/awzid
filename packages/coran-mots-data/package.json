@@ -1,0 +1,26 @@
+{
+  "name": "@awform/coran-mots-data",
+  "version": "0.1.0",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "description": "Mots du Coran : données dérivées du Quranic Arabic Corpus 0.4 (GNU GPL v3), séparées du code de l'application",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "data",
+    "index.js",
+    "index.d.ts",
+    "LICENSE",
+    "NOTICE.md",
+    "README.md"
+  ],
+  "scripts": {
+    "generer": "node scripts/generer.mjs"
+  }
+}

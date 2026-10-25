@@ -34,6 +34,10 @@ export const FONCTION_CLES = [
   'cahier_parler',
   'parcours_priere',
   'khatma_wird',
+  'mutashabihat',
+  'hifz_classe',
+  'coran_mots',
+  'tajwid_madd',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -126,6 +130,26 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // réparties, fin commune), jamais de classement. COUPÉ par défaut partout (démonstration comprise) ; l'administrateur
   // l'ouvre au « canal bêta » ; couper l'interrupteur laisse le Coran entier, sans la carte.
   khatma_wird: { defaut: 'off' },
+  // Mutashābihāt dans le hifẓ (25/10/2026) : « attention, verset jumeau » et sa carte (différence surlignée, repère, source) pendant la
+  // révision, test au hasard qui mélange les jumeaux ; SEULES les paires « reconnues par la source » (349). COUPÉ par défaut partout ;
+  // l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur laisse le hifẓ entier, sans alerte.
+  mutashabihat: { defaut: 'off' },
+  // Hifẓ en classe (25/10/2026) : mode « direct » (l'élève récite devant le maître, qui coche les erreurs mot par mot sur sa tablette,
+  // SANS AUCUN enregistrement : mode des enfants), mode « enregistrement » (adultes consentants, durée de conservation limitée puis
+  // suppression automatique), validation de la portion par le maître, suivi pour les parents. COUPÉ par défaut partout ; l'administrateur
+  // l'ouvre au « canal bêta » ; couper l'interrupteur laisse l'espace enseignant entier, sans cet outil.
+  hifz_classe: { defaut: 'off' },
+  // « Mots du Coran » (25/10/2026) : "Je reconnais X % des mots de cette sourate" dans le lecteur (calculé sur l'appareil d'après les leçons
+  // réellement faites), mots connus soulignés (réglage de l'élève), recherche par mot et par racine, fiche racine (le sens
+  // seulement une fois VALIDÉ). Données dérivées du Quranic Arabic Corpus (GPL v3) servies à la demande par l'API. COUPÉ par
+  // défaut partout (démonstration comprise) ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur laisse le
+  // lecteur du Coran entier, sans pourcentage ni soulignement.
+  coran_mots: { defaut: 'off' },
+  // Indication des madd (25/10/2026) : après une récitation d'UN verset, l'adulte peut demander « mes madd longs sont-ils assez longs ? » ;
+  // réponse = une indication (« trop court ») ou rien, jamais une note ni « correct » ; indication automatique en cours de validation par des
+  // maîtres. ADULTES seulement, bêta fermée. COUPÉ par défaut partout ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur
+  // laisse « Réciter et vérifier » entier, sans cette indication.
+  tajwid_madd: { defaut: 'off' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

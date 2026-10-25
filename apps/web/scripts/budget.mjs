@@ -87,6 +87,13 @@ const BUDGET_PARLER = 16 * 1024;
 const BUDGET_PRIERE = 56 * 1024;
 /** la plus lourde des données d'un écran (Brotli) : `s5` (pas à pas) */
 const BUDGET_PRIERE_DONNEES = 24 * 1024;
+/**
+ * « Mots du Coran » (25/10/2026) : bande « Je reconnais X % des mots » du lecteur, calcul, soulignement, recherche par mot et
+ * par racine, fiche racine, sources ; chargé à la première ouverture de la bande ou de la page `/coran/mots` (interrupteur
+ * `coran_mots`), jamais préchargé (garde dédiée ; les gardes de l'appareil et des pages restent celles ci-dessous). Les
+ * DONNÉES (GPL v3) ne sont pas dans le code : l'API les sert une sourate à la fois.
+ */
+const BUDGET_CORAN_MOTS = 16 * 1024;
 const BUDGET_FONTS = 600 * 1024;
 const BUDGET_RIWAYA_FONT = 1024 * 1024;
 /** page d'accueil de l'élève (« Mon arabe », onglet Arabe ; la première qu'il ouvre) */
@@ -186,6 +193,18 @@ const donneesPri = (() => {
         .sort((a, b) => b.br - a.br)
     : [];
 })();
+// 25/10/2026 : « Mots du Coran », chargé à la première ouverture (vite.config.ts : coranMotsALaDemande) ; exclu du
+// préchargement par `groupes.json` (PREMIER_USAGE_MODULES et PREMIER_USAGE_ROUTES de scripts/groupes.mjs)
+const cmList = (() => {
+  try {
+    return JSON.parse(readFileSync(join(client, '_app', 'coranmots.json'), 'utf8')).map((f) =>
+      f.slice(1),
+    );
+  } catch {
+    return [];
+  }
+})();
+const swCm = cmList.length > 0 && cmList.every((f) => (groups.premierUsage ?? []).includes(f));
 const grpBr = (list) => sum(list, (f) => br(join(client, f)));
 const staffBr = grpBr(groups.personnel);
 const raresBr = grpBr(groups.rares);
@@ -196,12 +215,17 @@ const vidBr = grpBr(vidList);
 const cahBr = grpBr(cahList);
 const parBr = grpBr(parList);
 const priBr = grpBr(priList);
+const cmBr = grpBr(cmList);
 // Madjaliss : pages de l'élève gardées au premier usage — déduites SEULEMENT si le service worker les exclut
 const swPremier = /'premierUsage'/.test(swSrc);
 const premierBr = swPremier
   ? grpBr(
       (groups.premierUsage ?? []).filter(
-        (f) => !cahList.includes(f) && !parList.includes(f) && !priList.includes(f),
+        (f) =>
+          !cahList.includes(f) &&
+          !parList.includes(f) &&
+          !priList.includes(f) &&
+          !cmList.includes(f),
       ),
     )
   : 0;
@@ -234,6 +258,7 @@ const eleveCode =
   cahBr -
   parBr -
   priBr -
+  (swCm ? cmBr : 0) -
   premierBr;
 const eleveBr = eleveCode + textsBr;
 
@@ -348,6 +373,7 @@ const lines = [
   `| Cahier « Je parle », à la demande à la première ouverture (${parList.length} fichiers${swPar ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(parBr)} (≤ ${ko(BUDGET_PARLER)}) |`,
   `| « La prière de A à Z », à la demande à la première ouverture (${priList.length} fichiers${swPri ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(priBr)} (≤ ${ko(BUDGET_PRIERE)}) |`,
   `| « La prière de A à Z » : données de l'écran le plus lourd (\`${donneesPri[0]?.f ?? '—'}\`, ${donneesPri.length} fichiers, chargés écran par écran) | ${ko(donneesPri[0]?.br ?? 0)} (≤ ${ko(BUDGET_PRIERE_DONNEES)}) |`,
+  `| « Mots du Coran », à la demande à la première ouverture (${cmList.length} fichiers${swCm ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(cmBr)} (≤ ${ko(BUDGET_CORAN_MOTS)}) |`,
   `| Total JS + CSS de toutes les pages (mesuré, non bloquant) | ${ko(jsBr + cssBr)} |`,
   `| dont CSS | ${ko(cssBr)} |`,
   `| Service worker | ${ko(swBr)} |`,
@@ -383,6 +409,7 @@ const fails = [
   [!swCah || !cahList.length || cahBr > BUDGET_CAHIER, 'cahier (à la demande)'],
   [!swPar || !parList.length || parBr > BUDGET_PARLER, 'cahier « Je parle » (à la demande)'],
   [!swPri || !priList.length || priBr > BUDGET_PRIERE, '« La prière de A à Z » (à la demande)'],
+  [!swCm || cmBr > BUDGET_CORAN_MOTS, '« Mots du Coran » (à la demande)'],
   [
     !donneesPri.length || (donneesPri[0]?.br ?? 0) > BUDGET_PRIERE_DONNEES,
     '« La prière de A à Z » : données d’un écran',

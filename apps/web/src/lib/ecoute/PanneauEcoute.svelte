@@ -2,6 +2,7 @@
   import { onDestroy, onMount, untrack } from 'svelte';
   import Bidi from '$lib/Bidi.svelte';
   import RecitationEnvoi from '$lib/RecitationEnvoi.svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import { loadMeta, loadVerses } from '$lib/hifz';
   import { loadTexts, t, texteExiste } from '$lib/i18n';
   import Feuille from '$lib/quran/lecture/Feuille.svelte';
@@ -407,6 +408,14 @@
           <p class="small muted"><Bidi text={t('ec.envoi_reglage')} /></p>
         {:else if envoi === 'pret'}
           <RecitationEnvoi {profileId} {kind} />
+        {/if}
+        <!-- 25/10/2026 : indication des madd longs (adultes, bêta fermée, un seul verset) ; module chargé à la demande -->
+        {#if fn('tajwid_madd') && kind === 'adulte' && !enfant && audio && portion.from === portion.to && portion.from > 1 && versets.length === 1}
+          {#await import('$lib/tajwid-madd') then m}<m.Madd
+              {profileId}
+              verset={versets[0]!}
+              {audio}
+            />{/await}
         {/if}
       {/if}
       {#if !enfant && etape === 'pret'}

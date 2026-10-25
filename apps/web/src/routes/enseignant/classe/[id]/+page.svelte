@@ -950,6 +950,9 @@
       </form>
     {/if}
   {:else if tab === 'ecoute'}
+    {#if fn('hifz_classe')}{#await import('$lib/hifz-classe/classe').catch(() => null) then m}{#if m}<m.HifzClasse
+            classId={id}
+          />{/if}{/await}{/if}
     <EcouteClasse classId={id} {done} />
   {:else}
     <CertificatsClasse classId={id} {pupils} {done} {download} clearError={() => (error = '')} />

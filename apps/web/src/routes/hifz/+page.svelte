@@ -14,6 +14,7 @@
     type Quality,
   } from '@awform/hifz';
   import { demoProfileFor, onQueue, type DevProfile } from '$lib/attempts';
+  import { fn } from '$lib/fonctions.svelte';
   import {
     computeToday,
     loadBook,
@@ -548,6 +549,7 @@
             ><Icon name={ICONE_OUTIL[o]} size={24} /><Bidi text={t(`hz.titre_${o}`)} /></a
           >
         </li>{/each}
+      {#if fn('mutashabihat')}{#await import('$lib/mutashabihat') then m}<m.Tuile />{/await}{/if}
     </ul>
   </nav>
 
@@ -574,6 +576,14 @@
   {/if}
 
   <!-- une part à réviser (urgent, récent, ancien) : texte à la demande, résultat en 4 boutons -->
+  <!-- versets jumeaux (mutashābihāt) : alerte et carte sous le texte, module à la demande (interrupteur `mutashabihat`) -->
+  {#snippet jum(vs: Verse[])}
+    {#if fn('mutashabihat')}{#await import('$lib/mutashabihat') then m}<m.Jumeaux
+          verses={vs}
+          {basmala}
+          profileId={profile?.id}
+        />{/await}{/if}
+  {/snippet}
   {#snippet revue(key: string, jplus: number | null, fragile: boolean)}
     <article class="task" data-part={key}>
       <h3>
@@ -586,6 +596,7 @@
       <details bind:open={open[key]}>
         <summary>{t('hifz.voir_texte')}</summary>
         <VerseText verses={texts[key] ?? []} {basmala} {masked} />
+        {@render jum(texts[key] ?? [])}
       </details>
       <div class="rate" role="group" aria-label={t('hifz.comment')}>
         {#each Q as q (q)}<button type="button" onclick={() => rate(key, q)} data-q={q}
@@ -623,6 +634,7 @@
           </h3>
           {#if task.label}<p class="muted small"><Bidi text={task.label} /></p>{/if}
           <VerseText verses={texts[`w:${task.part}:${task.from}`] ?? []} {basmala} {masked} />
+          {@render jum(texts[`w:${task.part}:${task.from}`] ?? [])}
           {#if task.kind === 'nouveau'}
             {#if learned(task.part, task.from)}
               <p class="done" data-testid="appris">✓ {t('hifz.deja_appris')}</p>
@@ -650,6 +662,7 @@
       <article class="task">
         <h3><Bidi text={view.portion.refs.map(refLabel).join(' ; ')} /></h3>
         <VerseText verses={texts.portion ?? []} {basmala} {masked} />
+        {@render jum(texts.portion ?? [])}
         {#if view.learnedToday}
           <p class="done" data-testid="appris">✓ {t('hifz.deja_appris')}</p>
         {:else}

@@ -38,7 +38,10 @@
     riwaya = null,
     exact = null,
     onpick,
+    connus = null,
   }: {
+    /** « Mots du Coran » : mots reconnus d'un verset (classe `mc` = un soulignement, jamais une retouche du texte) */
+    connus?: ((s: number, a: number, ws: string[]) => boolean[] | undefined) | null;
     /**
      * A34 — lignes EXACTES de la page (copie Content Sync + police QCF de la page déjà chargée) : affichées dans
      * ce même cadre à la place de la mise en page fluide. Null = mise en page fluide.
@@ -213,6 +216,7 @@
                 {@const tj = tajwid ? tajwid(g.s) : null}
                 {@const tv = tj ? verseRuns({ s: g.s, a, text: raw }, basmala, tj) : null}
                 {@const ws = parts.rest.split(' ')}
+                {@const kn = connus?.(g.s, a, ws)}
                 {@const vis = visibleWords(ws.length, revealed.has(`${g.s}:${a}`) ? 0 : memo)}
                 {#if parts.basmala}<span
                     class="basmala"
@@ -241,9 +245,12 @@
                   onclick={(e) => !readOnly && onpick?.(g.s, a, e.currentTarget)}
                   onkeydown={(e) => key(e, g.s, a)}
                   ><span class="quran-text" data-verse={`${g.s}:${a}`}
-                    >{#snippet mot(w: string, voile: boolean, runs: Run[] | null)}<span
-                        class="w"
-                        class:voile
+                    >{#snippet mot(
+                      w: string,
+                      voile: boolean,
+                      runs: Run[] | null,
+                      mc?: boolean,
+                    )}<span class="w" class:voile class:mc
                         >{#if w === '۞'}<Hizb sign={w} />{:else if runs}<TajwidRuns
                             {runs}
                           />{:else}{tanwinDisplay(w)}{/if}</span
@@ -254,11 +261,13 @@
                               ws[i]!,
                               !vis[i],
                               tv ? (tv.words[i] ?? []) : null,
+                              kn?.[i],
                             )}{/each}</span
                         >{:else}{@render mot(
                           ws[gr[0]!]!,
                           !vis[gr[0]!],
                           tv ? (tv.words[gr[0]!] ?? []) : null,
+                          kn?.[gr[0]!],
                         )}{/if}{/each}</span
                   ><span class="n" aria-hidden="true"><Bidi text={num(a)} base="ar" /></span></span
                 >

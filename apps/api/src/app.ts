@@ -23,7 +23,9 @@ import { registerToday } from './today.js';
 import { registerSchool } from './school.js';
 import { registerActivities } from './activities.js';
 import { recitationKeyFromEnv, registerRecitations } from './recitations.js';
+import { registerHifzClasse } from './hifz-classe.js';
 import { registerEcouteIa, type OptionsEcoute } from './ecoute-ia.js';
+import { registerTajwidMadd, type OptionsMadd } from './tajwid-madd.js';
 import { messageKeyFromEnv, registerMessagerie } from './messagerie.js';
 import { registerPush } from './push.js';
 import { registerRelais } from './relais.js';
@@ -47,6 +49,7 @@ import { registerEpreuves } from './epreuves.js';
 import { registerSignalements } from './signalements.js';
 import { registerEcoleF2 } from './ecole-f2.js';
 import { registerParcoursA27 } from './parcours-a27.js';
+import { registerCoranMots } from './coran-mots.js';
 import { registerSereinA39 } from './serein-a39.js';
 import { registerCertificatAutonome } from './certificat-autonome.js';
 import { registerVivre } from './vivre.js';
@@ -100,12 +103,16 @@ export interface AppOptions {
   mushafExactDir?: string | null;
   /** A34 : dossier des polices QCF du Complexe (installer-polices.sh) */
   qcfFontsDir?: string | null;
+  /** mots du Coran (interrupteur coran_mots, tests) : dossier des données dérivées ; sinon @awform/coran-mots-data */
+  coranMotsDir?: string;
   /** audio des leçons (A3, tests) ; sinon AWFORM_LECONS_AUDIO_DIR ; null : non servi */
   leconsAudioDir?: string | null;
   /** DÉMONSTRATION seulement (server.ts : AWFORM_DEMO=1 et garde-fou) : connexion simplifiée */
   demoLogin?: boolean;
   /** A5 : écoute de la récitation (tests : service factice, interrupteur) ; sinon AWFORM_ECOUTE_* */
   ecoute?: OptionsEcoute;
+  /** 25/10/2026 : indication des madd (interrupteur `tajwid_madd`) ; service À PART (AWFORM_MADD_URL) */
+  madd?: OptionsMadd;
   /** lot F3 : envoi des e-mails (tests) ; sinon AWFORM_MAIL (smtp, journal, ou désactivé) */
   mailer?: Mailer;
   /** lot F3 : adresse publique du site pour les liens des e-mails (tests) ; sinon AWFORM_PUBLIC_URL ou SITE */
@@ -279,8 +286,19 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     db,
     opts.recitationKey === undefined ? recitationKeyFromEnv() : opts.recitationKey,
   );
+  // 25/10/2026 : hifẓ en classe (mode direct sans enregistrement, mode enregistrement des adultes, suivi des parents)
+  registerHifzClasse(
+    app,
+    db,
+    opts.recitationKey === undefined ? recitationKeyFromEnv() : opts.recitationKey,
+  );
   // A5 : l'IA qui écoute la récitation (interrupteur « ecoute_ia », voix jamais conservée)
   registerEcouteIa(app, db, opts.ecoute);
+  // 25/10/2026 : indication des madd (adultes, bêta fermée) ; mode « madd » d'un service d'écoute À PART, jamais celui de production
+  registerTajwidMadd(app, db, {
+    ...(opts.audioDir !== undefined ? { audioDir: opts.audioDir } : {}),
+    ...opts.madd,
+  });
   registerPush(app, db);
   registerCorrections(app, db, edition);
   registerEpreuves(app, db, edition);
@@ -354,6 +372,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   });
   // A27 : parcours par niveau (espace, accueil, écriture, mots du Coran, positionnement, passage)
   registerParcoursA27(app, db, edition);
+  // mots du Coran : « Je reconnais X % des mots », recherche par mot et par racine, fiche racine (interrupteur coran_mots)
+  registerCoranMots(app, db, edition, opts.coranMotsDir);
   // A39 : mode serein (mode d'évaluation, récapitulatif, niveau suivant sans épreuve, notions fragiles)
   registerSereinA39(app, db, edition);
   // A39 (D-A39 4) : certificat individuel de l'adulte autonome (même modèle, même vérification)

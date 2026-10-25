@@ -254,3 +254,12 @@ async def fin_direct(sid: str):
     if s:
         s.effacer()
     return {'ok': True}
+
+
+# ---------------------------------------------------------------- mode « madd » (25/10/2026) — FERMÉ par défaut
+# Indication « trop court » sur les madd longs (étude ETUDE_TAJWID.md) : route /madd et son modèle, installés SEULEMENT si
+# ECOUTE_MADD=1. Sans cette variable (production aujourd'hui), ce service est strictement inchangé : rien n'est importé.
+if os.environ.get('ECOUTE_MADD') == '1':
+    import madd_route
+
+    madd_route.installer(app, ESSAI)

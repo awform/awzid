@@ -1,23 +1,23 @@
 {
-  "ouvertureMs": 2502,
+  "ouvertureMs": 2127,
   "ouverturesMs": [
-    2135,
-    2502,
-    2561,
-    1961,
-    2641
+    1935,
+    2669,
+    1920,
+    2784,
+    2127
   ],
-  "relanceMs": 762,
+  "relanceMs": 943,
   "octetsPremiereOuvertureKo": {
     "document": 4.1,
     "stylesheet": 11.7,
-    "script": 93.7,
-    "fetch": 11.7,
+    "script": 93.8,
+    "fetch": 11.8,
     "font": 0,
     "image": 0
   },
-  "totalPremiereOuvertureKo": 121.2,
+  "totalPremiereOuvertureKo": 121.4,
   "cpu": 4,
   "reseau": "3G simulée : 150 ms, 1,6 Mbit/s descendant, 750 kbit/s montant",
-  "date": "2026-10-20"
+  "date": "2026-10-25"
 }

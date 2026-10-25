@@ -4,6 +4,7 @@
   import { resolve } from '$app/paths';
   import { demoProfileFor } from '$lib/attempts';
   import EpreuvesCarte from '$lib/EpreuvesCarte.svelte';
+  import { fn } from '$lib/fonctions.svelte';
   import { fmtDate, t } from '$lib/i18n';
   import { levelLabel } from '$lib/levels';
   import { accueil, type Accueil } from '$lib/parcours/parcours';
@@ -107,6 +108,12 @@
   </section>
 
   <EpreuvesCarte profileId={profile.id} />
+
+  <!-- hifẓ en classe (interrupteur `hifz_classe`) : s'enregistrer pour son maître (adultes consentants) et suivi, à la demande -->
+  {#if fn('hifz_classe')}{#await import('$lib/hifz-classe/eleve') then m}
+      <m.Enregistrer profileId={profile.id} />
+      <m.Suivi profileId={profile.id} />
+    {/await}{/if}
 
   {#if cercles.length}
     <p>

@@ -19,7 +19,8 @@ export interface BookEntry {
   nom_fr?: string;
   lecon_fr?: string;
   semaines?: string;
-  portions: BookPortion[];
+  /** absent d'une part « renforcée » sans portions hebdomadaires (ex. sourate 67 du carnet ad2) : elle n'a alors aucune tâche */
+  portions?: BookPortion[];
 }
 export interface HifzBookData {
   code: string;
@@ -113,7 +114,7 @@ export function weekTasks(book: HifzBookData, week: number): WeekTask[] {
   const out: WeekTask[] = [];
   const scan = (list: BookEntry[] | undefined, track: WeekTask['track']) => {
     for (const e of list ?? [])
-      for (const p of e.portions)
+      for (const p of e.portions ?? [])
         if (p.s === week) {
           const [from, to] = verseRange(p.v);
           out.push({

@@ -1,0 +1,16 @@
+{
+  "md.titre": "Mes madd longs",
+  "md.notice": "Indication automatique, en cours de validation par des maîtres. Ton maître reste la référence.",
+  "md.intro": "Choisis un madd long de ce verset : ta récitation est comparée à celle d’Ayyūb. Tu ne reçois pas de note.",
+  "md.type_muttasil": "Madd muttaṣil",
+  "md.type_lazim": "Madd lāzim",
+  "md.verifier": "Vérifier ce madd",
+  "md.en_cours": "Analyse en cours…",
+  "md.trop_court": "Ce madd semble trop court. Réécoute Ayyūb sur ce verset, puis réessaie.",
+  "md.rien": "Aucune indication pour ce madd. Ce n’est pas une validation : ton maître reste la référence.",
+  "md.err_reseau": "Pas de connexion : réessaie dans un instant.",
+  "md.err_indisponible": "L’indication des madd n’est pas disponible pour le moment.",
+  "md.err_quota": "Trop de demandes pour l’instant : réessaie plus tard.",
+  "md.err_audio": "Ton enregistrement n’a pas pu être analysé. Récite le verset en entier, puis réessaie.",
+  "md.err_reference": "La récitation d’Ayyūb de ce verset n’est pas disponible."
+}
