@@ -1,0 +1,660 @@
+{
+ "regle": "Ayyub uniquement, verset entier, versets enchaines dans l ordre ; correspondance par squelette consonantique (sans voyelles ni alif) avec registre/coran.json (Tanzil)",
+ "entrees": [
+  {
+   "texte": "إِنَّ اللَّهَ غَفُورٌ رَحِيمٌ",
+   "ou": "ad5 ['l14']",
+   "versets": [
+    "2:182"
+   ],
+   "ambiguite": "",
+   "correspondance": "decision du referent n 9 (24/10/2026) : lecon sur le testament, 2:182 (la table generee proposait 2:199)"
+  },
+  {
+   "texte": "لَمْ يَلِدْ وَلَمْ يُولَدْ (112:3)",
+   "ou": "ad3 video l08",
+   "versets": [
+    "112:3"
+   ],
+   "ambiguite": "",
+   "correspondance": "reference du livre"
+  },
+  {
+   "texte": "وَلَمْ يَكُن لَّهُ (112:4)",
+   "ou": "ad3 video l08",
+   "versets": [
+    "112:4"
+   ],
+   "ambiguite": "",
+   "correspondance": "reference du livre"
+  },
+  {
+   "texte": "يَٓأَيُّهَا الَّذِينَ ءَامَنُوٓا أَوْفُوا بِالْعُقُودِ",
+   "ou": "ad4 video l16",
+   "versets": [
+    "5:1"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "إِنَّ أَكْرَمَكُمْ عِندَ اللَّهِ أَتْقَىكُمْ",
+   "ou": "ad4 video l18",
+   "versets": [
+    "49:13"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَجَآءُوٓ أَبَاهُمْ عِشَآءً (يَبْكُونَ)",
+   "ou": "ad5 video l08",
+   "versets": [
+    "12:16"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "أَنَا أَكْثَرُ مِنْكَ مَالًا",
+   "ou": "ad5 video l09",
+   "versets": [
+    "18:34"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ",
+   "ou": "ad5 video l09",
+   "versets": [
+    "2:156"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَكَلَّمَ اللَّهُ مُوسَى تَكْلِيمًا",
+   "ou": "ad5 video l11",
+   "versets": [
+    "4:164"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَأَن تَصُومُوا خَيْرٌ لَّكُمْ",
+   "ou": "ad5 video l14",
+   "versets": [
+    "2:184"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَلَا تَمْشِ فِى الْأَرْضِ مَرَحًا",
+   "ou": "ad5 video l19",
+   "versets": [
+    "31:18"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "رَبَّنَا اغْفِرْ لِى وَلِوَلِدَىَّ",
+   "ou": "ad5 video l22",
+   "versets": [
+    "14:41"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَجَدِلْهُم بِالَّتِى هِىَ أَحْسَنُ",
+   "ou": "ad5 video l24",
+   "versets": [
+    "16:125"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَقُل رَّبِّ زِدْنِى عِلْمًا",
+   "ou": "ad6 video l21",
+   "versets": [
+    "20:114"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "قَالَ هَذَا رَحْمَةٌ مِّن رَّبِّى",
+   "ou": "ad6 video l22",
+   "versets": [
+    "18:98"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "الْكِتَابَ، وَلَمْ يَجْعَلْ لَهُ عِوَجًا",
+   "ou": "ad6 video l23",
+   "versets": [
+    "18:1"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَجَدِلْهُم بِالَّتِى هِىَ أَحْسَنُ",
+   "ou": "ad6 video l24",
+   "versets": [
+    "16:125"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "قُلْ هَذِهِ سَبِيلِىٓ أَدْعُوٓا إِلَى اللَّهِ عَلَى بَصِيرَةٍ",
+   "ou": "ad6 video l25",
+   "versets": [
+    "12:108"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "فَإِنْ خِفْتُمْ أَلَّا تَعْدِلُوا فَوَحِدَةً",
+   "ou": "ad7 video l07",
+   "versets": [
+    "4:3"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "لَبِثَ فِي السِّجْنِ بِضْعَ سِنِينَ",
+   "ou": "ad7 video l08",
+   "versets": [
+    "12:42"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "إِن جَآءَكُمْ فَاسِقٌ بِنَبَإٍ فَتَبَيَّنُوٓا",
+   "ou": "ad7 video l08",
+   "versets": [
+    "49:6"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "إِنَّ أَكْرَمَكُمْ عِندَ اللَّهِ أَتْقَىكُمْ",
+   "ou": "ad7 video l09",
+   "versets": [
+    "49:13"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَلَا تَقْفُ مَا لَيْسَ لَكَ بِهِ عِلْمٌ",
+   "ou": "ad7 video l21",
+   "versets": [
+    "17:36"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَشَاوِرْهُمْ فِى الْأَمْرِ فَإِذَا عَزَمْتَ فَتَوَكَّلْ عَلَى اللَّهِ",
+   "ou": "ad7 video l22",
+   "versets": [
+    "3:159"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "لِلذَّكَرِ مِثْلُ حَظِّ الْأُنثَيَيْنِ",
+   "ou": "ad8 video l09",
+   "versets": [
+    "4:11"
+   ],
+   "ambiguite": "2 occurrences dans le Coran : choisir selon la lecon",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "رَبَّنَا هَبْ لَنَا مِنْ أَزْوَجِنَا وَذُرِّيَّتِنَا قُرَّةَ أَعْيُنٍ",
+   "ou": "ad8 video l14",
+   "versets": [
+    "25:74"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "(فَأُولَٓئِكَ مَعَ الَّذِينَ أَنْعَمَ اللَّهُ عَلَيْهِم مِّنَ النَّبِيِّنَ وَالصِّدِّيقِينَ وَالشُّهَدَآءِ وَالصَّلِحِينَ)",
+   "ou": "ad8 video l17",
+   "versets": [
+    "4:69"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "(إِنَّ الشِّرْكَ لَظُلْمٌ عَظِيمٌ)",
+   "ou": "ad8 video l17",
+   "versets": [
+    "31:13"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "(قَالَا رَبَّنَا ظَلَمْنَآ أَنفُسَنَا وَإِن لَّمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَسِرِينَ)",
+   "ou": "ad8 video l17",
+   "versets": [
+    "7:23"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "(يَوْمَ لَا تَمْلِكُ نَفْسٌ لِّنَفْسٍ شَئًْا وَالْأَمْرُ يَوْمَئِذٍ لِّلَّهِ)",
+   "ou": "ad8 video l17",
+   "versets": [
+    "82:19"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "(الَّذِينَ يُؤْمِنُونَ بِالْغَيْبِ وَيُقِيمُونَ الصَّلَوةَ وَمِمَّا رَزَقْنَهُمْ يُنفِقُونَ)",
+   "ou": "ad8 video l17",
+   "versets": [
+    "2:3"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "(الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ) = (٤:٦٩)",
+   "ou": "ad8 video l17",
+   "versets": [
+    "٤:٦٩"
+   ],
+   "ambiguite": "",
+   "correspondance": "reference du livre"
+  },
+  {
+   "texte": "مَا اللَّهُ بِغَافِلٍ عَمَّا تَعْمَلُونَ",
+   "ou": "ad8 video l21",
+   "versets": [
+    "2:85"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "﴿اتَّقُوا اللَّهَ وَقُولُوا قَوْلًا سَدِيدًا﴾",
+   "ou": "ad8 video l24",
+   "versets": [
+    "33:70"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "إِنَّمَا يَخْشَى اللَّهَ مِنْ عِبَادِهِ الْعُلَمَٓؤُا",
+   "ou": "ad9 video l02",
+   "versets": [
+    "35:28"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَمَا مُحَمَّدٌ إِلَّا رَسُولٌ",
+   "ou": "ad9 video l03",
+   "versets": [
+    "3:144"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَلَكُمْ فِى الْقِصَاصِ حَيَوةٌ يَٓأُولِى الْأَلْبَبِ",
+   "ou": "ad9 video l06",
+   "versets": [
+    "2:179"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَمَا لِىَ لَآ أَعْبُدُ الَّذِى فَطَرَنِى وَإِلَيْهِ تُرْجَعُونَ",
+   "ou": "ad9 video l07",
+   "versets": [
+    "36:22"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَفِظُونَ",
+   "ou": "ad9 video l08",
+   "versets": [
+    "15:9"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "مِّنَ النَّبِيِّنَ وَالصِّدِّيقِينَ وَالشُّهَدَآءِ وَالصَّلِحِينَ",
+   "ou": "ad10 video l01",
+   "versets": [
+    "4:69"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "الَّذِينَ ءَامَنُوا وَكَانُوا يَتَّقُونَ",
+   "ou": "ad10 video l01",
+   "versets": [
+    "12:57"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "رَبَّنَا ظَلَمْنَآ أَنفُسَنَا وَإِن لَّمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا",
+   "ou": "ad10 video l01",
+   "versets": [
+    "7:23"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "يَوْمَ لَا تَمْلِكُ نَفْسٌ لِّنَفْسٍ شَئًْا",
+   "ou": "ad10 video l01",
+   "versets": [
+    "82:19"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "لكن القرآن نفسه يطمئن السائلين، فقد قال الله بعد ذكر المريض والمسافر: ﴿يُرِيدُ اللَّهُ بِكُمُ الْيُسْرَ﴾.",
+   "ou": "ad10 video l02",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "فَعِدَّةٌ مِّنْ أَيَّامٍ أُخَرَ",
+   "ou": "ad10 video l02",
+   "versets": [
+    "2:184"
+   ],
+   "ambiguite": "2 occurrences dans le Coran : choisir selon la lecon",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "فَمَن شَهِدَ مِنكُمُ الشَّهْرَ فَلْيَصُمْهُ",
+   "ou": "ad10 video l02",
+   "versets": [
+    "2:185"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "حَتَّى يَتَبَيَّنَ لَكُمُ الْخَيْطُ الْأَبْيَضُ مِنَ الْخَيْطِ الْأَسْوَدِ مِنَ الْفَجْرِ",
+   "ou": "ad10 video l02",
+   "versets": [
+    "2:187"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَلَا تُبَشِرُوهُنَّ وَأَنتُمْ عَكِفُونَ فِى الْمَسَجِدِ",
+   "ou": "ad10 video l02",
+   "versets": [
+    "2:187"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "يُرِيدُ اللَّهُ بِكُمُ الْيُسْرَ وَلَا يُرِيدُ بِكُمُ الْعُسْرَ",
+   "ou": "ad10 video l02",
+   "versets": [
+    "2:185"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "إِنَّ الصَّلَوةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَبًا مَّوْقُوتًا",
+   "ou": "ad10 video l07",
+   "versets": [
+    "4:103"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَأَحَلَّ اللَّهُ الْبَيْعَ وَحَرَّمَ الرِّبَوا",
+   "ou": "ad10 video l08",
+   "versets": [
+    "2:275"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَءَاتُوا النِّسَآءَ صَدُقَتِهِنَّ نِحْلَةً",
+   "ou": "ad10 video l09",
+   "versets": [
+    "4:4"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "﴿وَأَنزَلْنَآ إِلَيْكَ الذِّكْرَ لِتُبَيِّنَ لِلنَّاسِ﴾",
+   "ou": "ad10 video l11",
+   "versets": [
+    "16:44"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "إِنِ الْكَفِرُونَ إِلَّا فِى غُرُورٍ",
+   "ou": "ad10 video l12",
+   "versets": [
+    "67:20"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "إِن كُلُّ نَفْسٍ لَّمَّا عَلَيْهَا حَافِظٌ",
+   "ou": "ad10 video l12",
+   "versets": [
+    "86:4"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَإِن كُنتُم مِّن قَبْلِهِ لَمِنَ الضَّآلِّينَ",
+   "ou": "ad10 video l12",
+   "versets": [
+    "2:198"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "إِنْ هُوَ إِلَّا وَحْىٌ يُوحَى",
+   "ou": "ad10 video l12",
+   "versets": [
+    "53:4"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "﴿إِن جَآءَكُمْ فَاسِقٌ بِنَبَإٍ فَتَبَيَّنُوٓا﴾",
+   "ou": "ad10 video l14",
+   "versets": [
+    "49:6"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "(ذَلِكُمْ أَقْسَطُ عِندَ اللَّهِ وَأَقْوَمُ لِلشَّهَدَةِ)",
+   "ou": "ad10 video l18",
+   "versets": [
+    "2:282"
+   ],
+   "ambiguite": "",
+   "correspondance": "exacte (squelette)"
+  },
+  {
+   "texte": "وَجَدْتُ أَنَّهُ يَبْدَأُ بِآيَةٍ مِنْ سُورَةِ النِّسَاءِ: النَّبِيُّونَ وَالصِّدِّيقُونَ وَالشُّهَدَاءُ وَالصَّالِحُونَ.",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "وَأَشْهَدُ أَنْ لَا إِلهَ إِلَّا اللَّهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ. — ثُمَّ يَقْرَأُ الْآيَاتِ الثَّلَاثَ: آيَةَ آلِ عِمْرَانَ (١٠٢)، وَأَوَّلَ سُورَةِ النِّسَاءِ، وَآيَتَيِ الْأَحْزَابِ (٧٠-٧١)، ثُمَّ يَقُولُ: أَمَّا بَعْدُ.",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "يَا قَوْمِ، اعْبُدُوا اللَّهَ",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "أَرْسَلَ اللَّهُ نُوحًا عَلَيْهِ السَّلَامُ إِلَى قَوْمِهِ، فَقَالَ لَهُمْ: يَا قَوْمِ، اعْبُدُوا اللَّهَ وَحْدَهُ، وَاسْتَغْفِرُوهُ.",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "قَالَ اللَّهُ تَعَالَى: «فَاغْسِلُوا وُجُوهَكُمْ»، وَالْغَسْلُ عِنْدَ الْمَالِكِيَّةِ صَبُّ الْمَاءِ مَعَ إِمْرَارِ الْيَدِ، وَإِلَّا فَهُوَ غَمْسٌ أَوْ صَبٌّ. وَرُوِيَ أَنَّ النَّبِيَّ ﷺ تَوَضَّأَ فَجَعَلَ يَدْلُكُ ذِرَاعَيْهِ.",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "يَا أَيُّهَا النَّاسُ · يَا أَيُّهَا الَّذِينَ آمَنُوا · كَلَّا · فَاصِلَةٌ · فَوَاصِلُ",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "ثم قرأت سورة الحجرات، فوجدت آياتها أطول، ووجدت فيها خمسة نداءات تبدأ ب«يا أيها الذين آمنوا».",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "عَنْ عَبْدِ اللَّهِ بْنِ مَسْعُودٍ رَضِيَ اللَّهُ عَنْهُ قَالَ: عَلَّمَنَا رَسُولُ اللَّهِ ﷺ خُطْبَةَ الْحَاجَةِ: «إِنَّ الْحَمْدَ لِلَّهِ، نَسْتَعِينُهُ وَنَسْتَغْفِرُهُ، وَنَعُوذُ بِهِ مِنْ شُرُورِ أَنْفُسِنَا، مَنْ يَهْدِ اللَّهُ فَلَا مُضِلَّ لَهُ، وَمَنْ يُضْلِلْ فَلَا هَادِيَ لَهُ، وَأَشْهَدُ أَنْ لَا إِلهَ إِلَّا اللَّهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ»، ثُمَّ يَقْرَأُ الْآيَاتِ الثَّلَاثَ.",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "كتب الشاب: إذا كان الله واحدا، فلماذا يقول في القرآن: نَحْنُ نزلنا، وخلقناكم؟",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "(٦) فَسُئِلَ ابْنُ مَسْعُودٍ وَأُخْبِرَ بِقَوْلِ أَبِي مُوسَى، فَقَالَ: لَقَدْ ضَلَلْتُ إِذًا وَمَا أَنَا مِنَ الْمُهْتَدِينَ، أَقْضِي فِيهَا بِمَا قَضَى النَّبِيُّ ﷺ: «لِلِابْنَةِ النِّصْفُ، وَلِابْنَةِ ابْنٍ السُّدُسُ تَكْمِلَةَ الثُّلُثَيْنِ، وَمَا بَقِيَ فَلِلْأُخْتِ».",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "لَا! إِنَّ الْيَمِينَ بِاللَّهِ كَلِمَةٌ عَظِيمَةٌ، لَيْسَتْ لِلْأَهْدَافِ وَالْأَلْعَابِ. قَالَ اللَّهُ تَعَالَى: وَاحْفَظُوٓا أَيْمَنَكُمْ",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ… وَلَا الضَّآلِّينَ.",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "فَقَالَتْ نَمْلَةٌ: يَا أَيُّهَا النَّمْلُ، اُدْخُلُوا بُيُوتَكُمْ بِسُرْعَةٍ!",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "رَفَعَ آدَمُ يَدَيْهِ، وَقَالَ: رَبِّ زِدْنِي عِلْمًا! وَقَالَ يُوسُفُ وَمَرْيَمُ: آمِينَ!",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "فَقَالَتْ نَمْلَةٌ: يَا أَيُّهَا النَّمْلُ، اُدْخُلُوا بُيُوتَكُمْ! كَانَتِ النَّمْلَةُ حَذِرَةً.",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "ثُمَّ سَأَلَتِ امْرَأَةٌ شَابَّةٌ: مَنْ رَوَاهُ عَنْ أَنَسٍ؟ وَهَلْ طَرِيقُهُ عِنْدَ مُسْلِمٍ هُوَ طَرِيقُهُ عِنْدَ الْبُخَارِيِّ؟ فَكَّرَتْ أَمِينَاتَا لَحْظَةً، ثُمَّ قَالَتْ بِهُدُوءٍ: سُؤَالٌ جَمِيلٌ، شُكْرًا. لَا أَعْلَمُ الْآنَ، سَأَتَحَقَّقُ وَأُجِيبُكِ فِي الدَّرْسِ الْقَادِمِ. فَنَظَرَتِ النِّسَاءُ إِلَيْهَا بِاحْتِرَامٍ؛ فَقَدْ فَهِمْنَ أَنَّ «لَا أَعْلَمُ» مِنَ الْعِلْمِ، لَا مِنَ الْجَهْلِ. ثُمَّ خَتَمَتْ بِالدُّعَاءِ مِنَ الْقُرْآنِ: «وَقُل رَّبِّ زِدْنِى عِلْمًا»",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "وَخُذْ مِثَالًا قَرَأْنَاهُ مَعًا فِي الْمَعْهَدِ: فِي آخِرِ سُورَةِ الْفَاتِحَةِ نَسْأَلُ اللَّهَ أَنْ يَهْدِيَنَا طَرِيقَ قَوْمٍ أَكْرَمَهُمْ بِنِعْمَتِهِ. فَمَنْ هُمْ؟ لَمْ يُجِبِ الطَّبَرِيُّ بِرَأْيِهِ، بَلْ ذَهَبَ إِلَى آيَةٍ مِنْ سُورَةِ النِّسَاءِ تَذْكُرُهُمْ: النَّبِيِّينَ وَالصِّدِّيقِينَ وَالشُّهَدَاءَ وَالصَّالِحِينَ. وَهذَا تَفْسِيرُ الْقُرْآنِ بِالْقُرْآنِ، وَهُوَ أَعْلَى دَرَجَاتِ التَّفْسِيرِ. ثُمَّ نَقَلَ أَقْوَالًا أُخْرَى: قَالَ بَعْضُهُمْ: هُمُ الْمُؤْمِنُونَ، وَقَالَ آخَرُونَ: هُمُ النَّبِيُّ ﷺ وَمَنْ مَعَهُ. فَانْظُرْ: هَلْ هذِهِ الْأَقْوَالُ مُتَضَادَّةٌ، أَمْ يَدُلُّ كُلُّ قَوْلٍ عَلَى جُزْءٍ مِنَ الْمَعْنَى؟",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  },
+  {
+   "texte": "وَأَمَّا عَبْدُ الْقَاهِرِ الْجُرْجَانِيُّ، فَقَدْ عَلَّمَنَا فِي «دَلَائِلِ الْإِعْجَازِ» أَنَّ الْجَمَالَ لَيْسَ فِي الْكَلِمَاتِ، بَلْ فِي مَوَاضِعِهَا. وَسَمَّى ذلِكَ «النَّظْمَ»: أَنْ تَتَعَلَّقَ الْكَلِمَاتُ بَعْضُهَا بِبَعْضٍ عَلَى مَا يَقْتَضِيهِ عِلْمُ النَّحْوِ. وَمِنْ أَشْهَرِ أَمْثِلَتِهِ قَوْلُهُ تَعَالَى فِي دُعَاءِ زَكَرِيَّا عَلَيْهِ السَّلَامُ: «وَاشْتَعَلَ الرَّأْسُ شَيْبًا». قَالَ: أُسْنِدَ الِاشْتِعَالُ إِلَى الرَّأْسِ، ثُمَّ جَاءَ الشَّيْبُ بَعْدَهُ مَنْصُوبًا، فَفَهِمْنَا أَنَّ الشَّيْبَ عَمَّ الرَّأْسَ كُلَّهُ. فَإِذَا قَرَأْتَ آيَةً، فَلَا تَسْأَلْ عَنْ مَعْنَى كُلِّ كَلِمَةٍ وَحْدَهَا فَقَطْ، بَلِ اسْأَلْ: لِمَاذَا جَاءَتْ هُنَا، وَلَمْ تَأْتِ هُنَاكَ؟",
+   "ou": " lecon",
+   "versets": [],
+   "ambiguite": "",
+   "correspondance": "a verifier"
+  }
+ ]
+}

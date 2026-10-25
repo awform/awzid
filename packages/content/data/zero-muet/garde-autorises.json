@@ -1,0 +1,390 @@
+{
+  "_description": "Textes que la garde coranique de la voix refuse (garde-coran.ts : récitation, citation, présenté comme Coran) mais que le référent a décidés « lus par la synthèse » : vocabulaire de moins de 4 mots (DECISION_ZERO_MUET § 2 bis), définitions, formules, vers didactiques, textes du livre (referent-373-DECISIONS). Un texte de cette liste n'est JAMAIS une citation du Coran en récitation : ni verset entier annoncé, ni 4 mots du Coran présentés comme parole d'Allah (ceux-là sont récités par Ayyūb). Comparaison par la clé audio du texte (empreinte) ; la liste de code `src/garde-autorises.ts` est générée par `GARDE_AUTORISES=ecrire pnpm --filter @awform/content test garde-autorises`. Aucun texte n'est ajouté sans décision écrite du référent ou règle écrite du § 2 bis.",
+  "_version": "2026-10-25",
+  "textes": [
+    {
+      "cle": "مَنۢ بَخِلَ (92:8)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَكَذَّبَ بِٱلْحُسْنَىٰ (92:9)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "مَالَهُۥ يَتَزَكَّىٰ (92:18)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "عِندَهُۥ مِن (92:19)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "مَالُهُۥٓ إِذَا (92:11)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "يَرَهُۥٓ أَحَدٌ (90:7)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "رَبِّهِ ٱلْأَعْلَىٰ (92:20)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَجَدَهَا تَطْلُعُ عَلَى قَوْمٍ لَيْسَ لَهُمْ مَا يَسْتُرُهُمْ مِنْهَا.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : reprise d'une expression coranique dans la prose, non annoncée (iqtibās) ; reprise libre de 18:90 dans le récit [suite de 4 mots identique à 18:90]",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "[وَاللَّهِ] إِنِّي [لَأَسْتَغْفِرُ] اللَّهَ · [لَوْلَا] الطَّبِيبُ [لَتَعِبْتُ] · [لَوْ] صَبَرْتَ [لَأُجِرْتَ] · [مَنْ] تَابَ [فَـ]إِنَّ اللَّهَ يَتُوبُ عَلَيْهِ · [عَجَبًا] لِأَمْرِ الْمُؤْمِنِ",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : liste de mots ou d'expressions de moins de 4 mots (§2 bis) ; exemples de grammaire ; « فإن الله يتوب عليه » expression commune [suite de 4 mots identique à 5:39]",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "[اخْفِضْ] جَنَاحَكَ لِوَالِدَيْكَ — مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ [فَلْيَصِلْ] رَحِمَهُ — [لَا تَقُلْ] لَهُمَا أُفٍّ — وَبِٱلْوَٰلِدَيْنِ [إِحْسَٰنًا] — [صَبْرًا] يَا [بُنَيَّ]",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : liste de mots ou d'expressions de moins de 4 mots (§2 bis) ; liste d'expressions (< 4 mots) et hadith [suite de 5 mots identique à 65:2]",
+      "refusAvant": "citation"
+    },
+    {
+      "cle": "﴿صَٰٓفَّٰتٍۢ﴾ [بَاسِطَاتٍ] أَجْنِحَتَهُنَّ — ﴿زُلْفَةًۭ﴾ [قَرِيبًا] — ﴿أَمَّنْ﴾ [مُبْتَدَأٌ] — ﴿هَٰذَا﴾ [أَيِ] الْعَذَابُ — ﴿فَسَتَعْلَمُونَ﴾ [بِالتَّاءِ وَالْيَاءِ]",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis) ; gloses de Jalālayn sur des mots isolés",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "١) الْمُؤَلِّفَانِ: جَلَالُ الدِّينِ الْمَحَلِّيُّ (تُوُفِّيَ سَنَةَ ٨٦٤ هـ) فَسَّرَ مِنْ سُورَةِ الْكَهْفِ إِلَى آخِرِ الْقُرْآنِ ثُمَّ الْفَاتِحَةَ، وَأَتَمَّهُ جَلَالُ الدِّينِ السُّيُوطِيُّ (تُوُفِّيَ سَنَةَ ٩١١ هـ) مِنْ أَوَّلِ الْبَقَرَةِ إِلَى آخِرِ الْإِسْرَاءِ؛ فَسُمِّيَ «تَفْسِيرَ الْجَلَالَيْنِ». ٢) الطَّرِيقَةُ: يَذْكُرُ لَفْظَ الْآيَةِ، ثُمَّ يَشْرَحُهُ بِكَلِمَةٍ أَوْ جُمْلَةٍ قَصِيرَةٍ، فَيَمْتَزِجُ الشَّرْحُ بِالنَّصِّ. ٣) التَّفْسِيرُ بِالْمُرَادِفِ يَأْخُذُ إِعْرَابَ الْكَلِمَةِ الْمُفَسَّرَةِ: ﴿زُلْفَةًۭ﴾ قَرِيبًا، ﴿مَنَاكِبِهَا﴾ جَوَانِبِهَا. ٤) عِبَارَاتٌ: أَيْ وَيَعْنِي (تَفْسِيرٌ)، الْمَعْنَى (خُلَاصَةُ الْآيَةِ)، وَفِي قِرَاءَةٍ أَوْ بِالتَّاءِ وَالْيَاءِ (قِرَاءَةٌ أُخْرَى صَحِيحَةٌ)، وَقِيلَ (قَوْلٌ آخَرُ)، مَزِيدَةٌ (زَائِدَةٌ لِلتَّوْكِيدِ)، مُسْتَأْنَفَةٌ (لَا مَحَلَّ لَهَا)، مَحْذُوفٌ دَلَّ عَلَيْهِ مَا قَبْلَهُ، بَدَلٌ، صِفَةٌ، حَالٌ، اسْتِفْهَامُ إِنْكَارٍ.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis) ; présentation de Jalālayn, mots isolés",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿ذَلُولًۭا﴾ [سَهْلَةً]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿مَنَاكِبِهَا﴾ [جَوَانِبِهَا]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿زُلْفَةًۭ﴾ [قَرِيبًا]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿سِيٓـَٔتْ﴾ [اسْوَدَّتْ]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿أَنشَأَكُمْ﴾ [خَلَقَكُمْ]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿عُتُوٍّۢ﴾ [تَكَبُّرٍ]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿إِنِ﴾ [مَا]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿صَٰٓفَّٰتٍۢ﴾ [بَاسِطَاتٍ] أَجْنِحَتَهُنَّ ﴿وَيَقْبِضْنَ﴾ أَجْنِحَتَهُنَّ بَعْدَ الْبَسْطِ، [أَيْ]: وَ[قَابِضَاتٍ]",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "قَالَ الْجَلَالَانِ: الْفِعْلُ ﴿سِيٓـَٔتْ﴾ يَدُلُّ عَلَى أَمْرٍ مَضَى وَانْتَهَى.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿لَفْظُ الْآيَةِ﴾ + مُرَادِفٌ بِنَفْسِ الْإِعْرَابِ",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "الِاسْتِعَارَةُ الْمَكْنِيَّةُ: مَا حُذِفَ فِيهَا الْمُشَبَّهُ بِهِ، وَرُمِزَ إِلَيْهِ بِشَيْءٍ مِنْ لَوَازِمِهِ: ﴿وَٱشْتَعَلَ ٱلرَّأْسُ شَيْبًۭا﴾: شُبِّهَ الرَّأْسُ بِالْوَقُودِ، وَحُذِفَ الْمُشَبَّهُ بِهِ، وَبَقِيَ شَيْءٌ مِنْ لَوَازِمِهِ: «اشْتَعَلَ».",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : fragment de moins de 4 mots ; ﴿واشتعل الرأس شيبا﴾ (3 mots) exemple de définition",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَكَذَّبَ بِٱلْحُسْنَىٰ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "فَسَنُيَسِّرُهُۥ لِلْعُسْرَىٰ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَسَيُجَنَّبُهَا ٱلْأَتْقَى",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "الْقَاعِدَةُ: (١) لِلْبُخَارِيِّ كِتَابَانِ فِي الْأَدَبِ: «الْأَدَبُ الْمُفْرَدُ» (كِتَابٌ مُسْتَقِلٌّ)، وَ«كِتَابُ الْأَدَبِ» فِي «الْجَامِعِ الصَّحِيحِ». (٢) التَّرْجَمَةُ: عُنْوَانُ الْبَابِ، وَفِيهَا فِقْهُ الْبُخَارِيِّ، وَكَثِيرًا مَا تَكُونُ جُمْلَةً فِقْهِيَّةً: «بَابُ مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلَا يُؤْذِ جَارَهُ»، «بَابُ حَقِّ الْجِوَارِ فِي قُرْبِ الْأَبْوَابِ». (٣) الْحَدِيثُ: مَا أُضِيفَ إِلَى النَّبِيِّ ﷺ مِنْ قَوْلٍ أَوْ فِعْلٍ أَوْ تَقْرِيرٍ. (٤) الْأَثَرُ: مَا أُضِيفَ إِلَى الصَّحَابِيِّ (أَوِ التَّابِعِيِّ) مِنْ قَوْلٍ أَوْ فِعْلٍ؛ مِثَالُهُ: «أَهْدَيْتُمْ لِجَارِي الْيَهُودِيِّ؟». (٥) فِي النُّصُوصِ أَسَالِيبُ دَرَسْنَاهَا: الْأَمْرُ (عُودُوا)، وَالْأَمْرُ بِاللَّامِ (فَلْيُكْرِمْ)، وَالشَّرْطُ (مَنْ كَانَ… فَلْيُكْرِمْ ؛ إِذَا… فَلْيَرْجِعْ)، وَالنِّدَاءُ (يَا عَائِشَةُ)، وَالتَّوْكِيدُ (إِنَّ اللَّهَ رَفِيقٌ).",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : hadith ou athar : mots communs avec un verset ; titres de chapitres de Bukhārī et hadiths [suite de 5 mots identique à 65:2]",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "رَضِيَ اللَّهُ عَنِ الْمُؤْمِنِينَ الَّذِينَ بَايَعُوا تَحْتَ الشَّجَرَةِ.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : reformulation : pas le texte coranique exact ; reformulation de 48:18 (الذين بايعوا au lieu de إذ يبايعونك) [suite de 4 mots identique à 48:18]",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "«مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ»",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : hadith ou athar : mots communs avec un verset [suite de 5 mots identique à 65:2]",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "مَعْنَى ﴿إِيَّاكَ نَعْبُدُ﴾ عِنْدَهُ: نَخُصُّكَ بِالْعِبَادَةِ.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "عُطِفَتْ جُمْلَةُ ﴿ٱللَّهُ يَسْتَهْزِئُ بِهِمْ﴾ عَلَى ﴿إِنَّا مَعَكُمْ﴾.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "لَمْ يُعْطَفْ ﴿ٱللَّهُ يَسْتَهْزِئُ بِهِمْ﴾ عَلَى ﴿إِنَّا مَعَكُمْ﴾ لِأَنَّهُ لَيْسَ مِنْ مَقُولِهِمْ.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "[مَٰلِكِ يَوْمِ ٱلدِّينِ]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "الْوَقْفُ عَلَى ﴿إِلَّا ٱللَّهُ﴾: التَّأْوِيلُ = الْحَقِيقَةُ ؛ الْوَصْلُ: التَّأْوِيلُ = التَّفْسِيرُ",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ﴾: «الْإِسْلَامُ» — «اتِّبَاعُ الْقُرْآنِ»",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿سَابِقٌۢ بِٱلْخَيْرَٰتِ﴾: «مَنْ يُصَلِّي أَوَّلَ الْوَقْتِ» — «مَنْ يُؤَدِّي الزَّكَاةَ وَيُكْثِرُ الصَّدَقَةَ»",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿ٱلْمَغْضُوبِ عَلَيْهِمْ﴾: «الْيَهُودُ» — «كُلُّ مَنْ عَرَفَ الْحَقَّ وَتَرَكَهُ»",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿ٱلْكَوْثَرَ﴾: «نَهَرٌ فِي الْجَنَّةِ» — «الْخَيْرُ الْكَثِيرُ»",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿عَنِ ٱلنَّعِيمِ﴾: «الْأَمْنُ وَالصِّحَّةُ» — «الْمَاءُ الْبَارِدُ وَالطَّعَامُ»",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿وَٱلصَّلَوٰةِ ٱلْوُسْطَىٰ﴾: «صَلَاةُ الصُّبْحِ» — «صَلَاةُ الْعَصْرِ»",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "فَسَّرَ ابْنُ عَبَّاسٍ ﴿نَنسَخْ﴾ بِمَعْنَى: نُبَدِّلْ.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱلنَّجْمُ ٱلثَّاقِبُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "رَجَّحَ الطَّبَرِيُّ أَنَّ «لَا» فِي ﴿وَلَا ٱلضَّآلِّينَ﴾ مُلْغَاةٌ وَأَنَّ «غَيْرِ» بِمَعْنَى «سِوَى».",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "رَجَّحَ أَنَّ «غَيْرِ» بِمَعْنَى الْجَحْدِ وَالنَّفْيِ، وَأَنَّ ﴿وَلَا ٱلضَّآلِّينَ﴾ مَعْطُوفٌ عَلَيْهَا: «وَهٰذَا الْقَوْلُ الْآخَرُ أَوْلَى بِالصَّوَابِ مِنَ الْأَوَّلِ».",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "قَالَ الزَّمَخْشَرِيُّ فِي «الْكَشَّافِ»: أقسم بصلاة العصر لفضلها … أو أقسم بالعشي كما أقسم بالضحى لما فيهما جميعا من دلائل القدرة. أو أقسم بالزمان لما في مروره من أصناف العجائب. والإنسان: للجنس. والخسر: الخسران، كما قيل: الكفر في الكفران. والمعنى: أن الناس في خسران من تجارتهم إلا الصالحين وحدهم، لأنهم اشتروا الآخرة بالدنيا، فربحوا وسعدوا، ومن عداهم تجروا خلاف تجارتهم، فوقعوا في الخسارة والشقاوة. ﴿وَتَوَاصَوْا۟ بِٱلْحَقِّ﴾ بالأمر الثابت الذي لا يسوغ إنكاره، وهو الخير كله: من توحيد الله وطاعته، واتباع كتبه ورسله، والزهد في الدنيا، والرغبة في الآخرة. ﴿وَتَوَاصَوْا۟ بِٱلصَّبْرِ﴾ عن المعاصي وعلى الطاعات، وعلى ما يبلو الله به عباده.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis) ; lemmes de 2 mots dans al-Kashshāf",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَقَالَ ابْنُ عَاشُورٍ فِي «التَّحْرِيرِ وَالتَّنْوِيرِ»: والظرفية في قوله: ﴿لَفِى خُسْرٍ﴾ مجازية، شبهت ملازمة الخسر بإحاطة الظرف بالمظروف، فكانت أبلغ من أن يقال: إن الإنسان لخاسر … وتنكير «خسر» يجوز أن يكون للتنويع، ويجوز أن يكون مفيدا للتعظيم.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "أَشْرَحُ لِمَاذَا كَانَ ﴿وَٱشْتَعَلَ ٱلرَّأْسُ شَيْبًۭا﴾ أَبْلَغَ مِنِ «اشْتَعَلَ شَيْبُ الرَّأْسِ»",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "«اشْتَعَلَ شَيْبُ الرَّأْسِ» · ﴿وَٱشْتَعَلَ ٱلرَّأْسُ شَيْبًۭا﴾ ← الْكَلِمَاتُ هِيَ الْكَلِمَاتُ، وَالنَّظْمُ غَيْرُ النَّظْمِ",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "فِي ﴿وَٱشْتَعَلَ ٱلرَّأْسُ شَيْبًۭا﴾: أُسْنِدَ الِاشْتِعَالُ إِلَى الرَّأْسِ، وَهُوَ لِلشَّيْبِ فِي الْمَعْنَى، وَجَاءَ الشَّيْبُ تَمْيِيزًا، فَأَفَادَ الشُّمُولَ؛ وَعُرِّفَ الرَّأْسُ بِـ«الـ» فَأَغْنَى عَنِ الْإِضَافَةِ.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "النَّظْمُ: تَعْلِيقُ الْكَلِمِ بَعْضِهَا بِبَعْضٍ عَلَى مَعَانِي النَّحْوِ · الْمَزِيَّةُ فِي الْمَوْضِعِ، لَا فِي اللَّفْظِ الْمُفْرَدِ · ﴿وَٱشْتَعَلَ ٱلرَّأْسُ شَيْبًۭا﴾: إِسْنَادٌ إِلَى الرَّأْسِ + تَمْيِيزٌ ← شُمُولٌ · تَعْرِيفٌ ← إِضَافَةٌ بِلَا لَفْظٍ",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿وَأَقِيمُوا۟ ٱلصَّلَوٰةَ﴾ + عَدَدُ الرَّكَعَاتِ فِي كُلِّ صَلَاةٍ",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : formule présente dans plusieurs versets (§2 ter) ; ﴿وأقيموا الصلوة﴾ (2 mots, nombreux versets) : 2 ter",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "﴿وَءَاتُوا۟ ٱلزَّكَوٰةَ﴾ + أَنْصِبَةُ الزَّكَاةِ وَمَقَادِيرُهَا",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : formule présente dans plusieurs versets (§2 ter) ; ﴿وءاتوا الزكوة﴾ (2 mots, nombreux versets) : 2 ter",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "فِي ﴿إِنْ هَٰذَٰنِ لَسَٰحِرَٰنِ﴾ «إِنْ» مُخَفَّفَةٌ وَاللَّامُ فَارِقَةٌ",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis) ; carte d'iʿrāb",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "فِي ﴿إِنْ هَٰذَٰنِ لَسَٰحِرَٰنِ﴾ «إِنْ» نَافِيَةٌ وَاللَّامُ بِمَعْنَى «إِلَّا»",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis) ; carte d'iʿrāb",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "«قَوْلُهُ تَعَالَى ﴿إِلَّا﴾ فِي سُورَةِ الْعَصْرِ: نَوْعُ الِاسْتِثْنَاءِ عِنْدَ الْمُفَسِّرِينَ»",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "الِاسْتِثْنَاءُ بَعْدَهُ: ﴿إِلَّا ٱلَّذِينَ ءَامَنُوا۟﴾، وَلَا يُسْتَثْنَى إِلَّا مِنْ عَامٍّ",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis) ; ﴿إلا الذين ءامنوا﴾ (3 mots) objet de grammaire",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "مَا تُقَدِّمْ مِنْ خَيْرٍ تَجِدْهُ عِنْدَ اللَّهِ.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373-DECISIONS n° 13, 24/10/2026) : reformulation : pas le texte coranique exact ; reformulation au singulier de 2:110/73:20 (le Coran dit تقدموا…تجدوه) : pas le texte coranique",
+      "refusAvant": "décision n° 13 (texte demandé explicitement)"
+    },
+    {
+      "cle": "يَا أَيُّهَا الَّذِينَ آمَنُوا",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373-DECISIONS n° 13, 24/10/2026) : formule présente dans plusieurs versets (§2 ter) ; يا أيها الذين آمنوا : formule présente dans 89 versets, montrée comme marque d'appel (2 ter, 3 mots en graphie ʿuthmānie)",
+      "refusAvant": "décision n° 13 (texte demandé explicitement)"
+    },
+    {
+      "cle": "فَأَجَابَ عَبْدُ اللَّهِ: مَا تُقَدِّمْ مِنْ خَيْرٍ تَجِدْهُ عِنْدَ اللَّهِ.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373-DECISIONS n° 13, 24/10/2026) : reformulation : pas le texte coranique exact ; réplique d'un personnage, même reformulation que 2:110/73:20 [suite de 4 mots identique à 48:2]",
+      "refusAvant": "décision n° 13 (texte demandé explicitement)"
+    },
+    {
+      "cle": "إِنْ شَاءَ اللَّهُ، مَنْ جَاءَ فَأَهْلًا بِهِ.",
+      "decision": "synthese",
+      "raison": "phrase du livre (formule « مَا شَاءَ اللَّهُ » suivie d’une phrase) ; décision n° 14 du référent (24 textes bloqués par la garde → synthèse)",
+      "refusAvant": "garde commune (refusVoix) : citation\r"
+    },
+    {
+      "cle": "مَا شَاءَ اللَّهُ! لَا تَرْفَعْنَ الْقِدْرَ الْكَبِيرَ.",
+      "decision": "synthese",
+      "raison": "phrase du livre (formule « مَا شَاءَ اللَّهُ » suivie d’une phrase) ; décision n° 14 du référent (24 textes bloqués par la garde → synthèse)",
+      "refusAvant": "garde commune (refusVoix) : citation\r"
+    },
+    {
+      "cle": "مَا شَاءَ اللَّهُ! لَا يَنْجَحُ أَحَدٌ وَحْدَهُ.",
+      "decision": "synthese",
+      "raison": "phrase du livre (formule « مَا شَاءَ اللَّهُ » suivie d’une phrase) ; décision n° 14 du référent (24 textes bloqués par la garde → synthèse)",
+      "refusAvant": "garde commune (refusVoix) : citation\r"
+    },
+    {
+      "cle": "مَا شَاءَ اللَّهُ! إِنَّ الرِّفْقَ يَفْتَحُ الْقُلُوبَ.",
+      "decision": "synthese",
+      "raison": "phrase du livre (formule « مَا شَاءَ اللَّهُ » suivie d’une phrase) ; décision n° 14 du référent (24 textes bloqués par la garde → synthèse)",
+      "refusAvant": "garde commune (refusVoix) : citation\r"
+    },
+    {
+      "cle": "وَالْعَصْرِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis) ; décision n° 14 du référent (24 mots isolés bloqués par la garde → synthèse)",
+      "refusAvant": "garde de la chaine audio (gen-audio Test-Coran : signes du Mushaf, Tanzil, citation introduite)\r"
+    }
+  ]
+}
