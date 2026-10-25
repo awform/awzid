@@ -76,6 +76,7 @@ describe('vidéos vivantes : interrupteur « video_vivante »', () => {
       'en3',
       'ado1',
       'ado2',
+      'ado3',
     ]);
   });
 });
