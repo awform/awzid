@@ -208,7 +208,7 @@
   <span class="fil"></span>
 </div>
 <div class="acces">
-  <a class="large" href="?e=video" data-testid="priere-acces-video"
+  <a class="large" href="?e=video&lecture=1" data-testid="priere-acces-video"
     ><span class="picto"><Picto nom="video" /></span><span
       ><b>{t('priere.video')}</b><br /><small>{t('priere.video_texte')}</small></span
     ></a

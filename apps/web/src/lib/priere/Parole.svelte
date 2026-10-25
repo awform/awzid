@@ -70,7 +70,8 @@
     arret = false;
     const s = autre ? varSrc : src;
     const texte = autre ? p.variante?.ar : p.ar;
-    if (!s || !texte) return;
+    // le Coran se récite verset par verset (`ar_versets` ou `ar`), la synthèse a besoin du texte
+    if (!s || (s.type === 'tts' && !texte)) return;
     lecture = true;
     variante = autre;
     echec = false;
@@ -88,7 +89,7 @@
           if (arret) break;
         }
       } else if (s.type === 'tts') {
-        await voix.dire(texte, s.id, {
+        await voix.dire(texte!, s.id, {
           surMot: (i) => (actif = i),
           surProgres: (f) => (progres = f),
         });
@@ -107,7 +108,7 @@
 
 <!-- eslint-disable svelte/no-useless-mustaches -- une espace entre deux mots arabes -->
 <section class="parole" class:longue data-testid="priere-parole" data-id={p.id}>
-  <div class="moment"><small>{p.titre}</small></div>
+  {#if p.titre}<div class="moment"><small>{p.titre}</small></div>{/if}
   <Pastilles niveau={p.niveau} voix={p.voix} repetition={p.repetition} />
 
   {#if p.ar_versets?.length}
@@ -183,6 +184,11 @@
       </ol>
     {/if}
     {#if p.explication}<p class="fais"><Texte txt={p.explication} /></p>{/if}
+    {#if p.note_basmala}
+      <p class="note" data-testid="priere-note-basmala">
+        <Picto nom="info" /><span><Texte txt={p.note_basmala.fr} /></span>
+      </p>
+    {/if}
     {#if p.numerotation}<p class="note petit">
         <Picto nom="info" /><span>{p.numerotation}</span>
       </p>{/if}

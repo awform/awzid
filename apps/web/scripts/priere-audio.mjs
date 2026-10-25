@@ -26,7 +26,13 @@ export function contientBasmala(ar) {
 export function collecter(priere) {
   const out = [];
   parcourir(priere, (o) => {
-    if (typeof o.ar === 'string' && o.audio === 'tts')
+    // textes arabes d'une règle (`textes[]`, sans identifiant propre) : identifiés par celui de la règle
+    if (Array.isArray(o.textes))
+      o.textes.forEach((x, i) => {
+        if (typeof x.ar === 'string' && x.audio === 'tts')
+          out.push({ id: `${o.id}#textes${i}`, ar: x.ar, type: 'texte', titre: o.titre });
+      });
+    if (o.id !== undefined && typeof o.ar === 'string' && o.audio === 'tts')
       out.push({ id: o.id, ar: o.ar, type: o.type, titre: o.titre });
     if (o.variante && typeof o.variante.ar === 'string' && o.variante.audio === 'tts')
       out.push({ id: `${o.id}#variante`, ar: o.variante.ar, type: 'variante', titre: o.titre });

@@ -3,7 +3,7 @@
 // l'application répartit le texte sur tout le fichier (au prorata des lettres). À relancer quand de nouveaux fichiers arrivent.
 // Écrit static/priere-data/calage.json : { format: 1, v, calage: { <sha1>: { a, b, s: [[début, fin], …] } } } (secondes).
 // Usage : node scripts/priere-calage.mjs [dossier-des-mp3] [liste.csv]   (défaut : ~/lecons-audio)
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
@@ -25,30 +25,22 @@ export function mesurer(mp3) {
       },
     ).trim(),
   );
-  let sortie = '';
-  try {
-    execFileSync(
-      'ffmpeg',
-      [
-        '-hide_banner',
-        '-nostats',
-        '-i',
-        mp3,
-        '-af',
-        `silencedetect=noise=${BRUIT}:d=${DUREE_MIN}`,
-        '-f',
-        'null',
-        '-',
-      ],
-      {
-        encoding: 'utf8',
-        stdio: ['ignore', 'ignore', 'pipe'],
-      },
-    );
-  } catch (e) {
-    sortie = String(e.stderr ?? '');
-  }
-  return { duree, ...analyser(sortie, duree) };
+  const r = spawnSync(
+    'ffmpeg',
+    [
+      '-hide_banner',
+      '-nostats',
+      '-i',
+      mp3,
+      '-af',
+      `silencedetect=noise=${BRUIT}:d=${DUREE_MIN}`,
+      '-f',
+      'null',
+      '-',
+    ],
+    { encoding: 'utf8' },
+  );
+  return { duree, ...analyser(String(r.stderr ?? ''), duree) };
 }
 
 /** analyse de la sortie de silencedetect : silences intérieurs, début et fin du son */

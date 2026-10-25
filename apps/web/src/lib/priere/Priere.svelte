@@ -106,6 +106,7 @@
     basculerTrad,
     enregistrer,
     id: SECTIONS[cle],
+    auto: params.has('lecture'),
     depart:
       cle === 'sourate'
         ? Number(params.get('s') ?? 1)

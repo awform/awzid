@@ -104,8 +104,8 @@
         >
       {/each}
     </div>
-    <a class="btn or" href="?e=video" data-testid="priere-vers-video"
-      ><Picto nom="video" />{t('priere.video')}</a
+    <a class="btn or" href="?e=video&lecture=1" data-testid="priere-vers-video"
+      ><Picto nom="video" />{t('priere.video_court')}</a
     >
   </div>
 

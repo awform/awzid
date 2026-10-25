@@ -106,6 +106,11 @@ const tousElements = (): Element[] => {
   const out: Element[] = [];
   parcourir(priere.sections, (o) => {
     if (typeof o.id === 'string' && typeof o.type === 'string') out.push(o as unknown as Element);
+    // textes arabes d'une règle, lus eux aussi par la synthèse
+    const t = o.textes as Array<{ ar: string; audio?: string }> | undefined;
+    t?.forEach((x, i) =>
+      out.push({ ...x, id: `${String(o.id)}#textes${i}`, type: 'parole' } as unknown as Element),
+    );
   });
   return out;
 };

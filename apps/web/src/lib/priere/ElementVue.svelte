@@ -52,8 +52,15 @@
     <Pastilles niveau={e.niveau} />
     <p class="corps"><Texte txt={e.fr ?? ''} /></p>
     {#each e.textes ?? [] as x, i (i)}
-      <span class="ar" lang="ar" dir="rtl">{x.ar}</span>
-      {#if x.fr}<p class="sens"><Texte txt={x.fr} /></p>{/if}
+      {#if x.audio}
+        <Parole
+          p={{ id: `${e.id}#textes${i}`, type: 'parole', ar: x.ar, sens: x.fr, audio: x.audio }}
+          {voix}
+        />
+      {:else}
+        <span class="ar" lang="ar" dir="rtl">{x.ar}</span>
+        {#if x.fr}<p class="sens"><Texte txt={x.fr} /></p>{/if}
+      {/if}
     {/each}
     {#if e.note}<p class="note petit">
         <Picto nom="info" /><span><Texte txt={e.note} /></span>

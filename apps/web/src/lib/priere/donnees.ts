@@ -48,16 +48,22 @@ export interface Element {
   extrait?: boolean;
   mot_a_mot?: MotAMot[];
   ar_versets?: Verset[];
-  partie?: Array<{ versets: string; nom: string; fr: string }>;
-  partie_note?: string;
+  partie?: Array<{
+    nom: string;
+    refs_hafs: string[];
+    debut?: { ar: string };
+    fin?: { ar: string };
+    fr: string;
+  }>;
+  partie_source?: string;
   numerotation?: string;
-  note_basmala?: string;
+  note_basmala?: { fr: string; sources?: string[] };
   variante?: { ar: string; fr?: string; audio?: string };
   intro?: string;
   items?: string[];
   colonnes?: string[];
   lignes?: string[][];
-  textes?: Array<{ ar: string; fr?: string }>;
+  textes?: Array<{ ar: string; fr?: string; audio?: string }>;
   geste?: string;
   erreurs_frequentes?: string[];
   paroles?: Element[];

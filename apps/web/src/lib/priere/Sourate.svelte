@@ -81,15 +81,14 @@
     const [s, v] = ref.split(':').map(Number);
     return { s: s ?? numero, v: v ?? 1 };
   };
-  /** partie d'un verset d'Al-Fātiḥa, d'après les plages du référent (« 1:2-1:4 ») */
-  function partieDe(ref: string): number {
-    const parts = fatiha?.partie ?? [];
-    const v = refDe(ref).v;
-    return parts.findIndex((p) => {
-      const [a, b] = p.versets.split('-').map((x) => refDe(x).v);
-      return v >= (a ?? 0) && v <= (b ?? a ?? 0);
-    });
-  }
+  /** partie d'un verset d'Al-Fātiḥa, d'après les références du référent (`refs_hafs`, décompte de Ḥafṣ) */
+  const partieDe = (ref: string): number =>
+    (fatiha?.partie ?? []).findIndex((p) => p.refs_hafs.includes(ref));
+  /** « Verset 5 » ou « Versets 2 à 4 » */
+  const plage = (refs: string[]): string =>
+    refs.length > 1
+      ? t('priere.versets_plage', { a: refDe(refs[0]!).v, b: refDe(refs[refs.length - 1]!).v })
+      : t('priere.verset_n', { n: refDe(refs[0] ?? '').v });
   const reponse = (ref: string): string | undefined =>
     (fatiha?.ar_versets ?? []).find((x) => x.ref === ref)?.reponse_d_allah;
   const recitee = (k: number) => so?.versets[k]?.recite_dans_la_priere_obligatoire !== false;
@@ -232,7 +231,7 @@
           style:grid-template-columns="repeat({fatiha.partie?.length ?? 3}, 1fr)"
           data-testid="priere-parties"
         >
-          {#each fatiha.partie ?? [] as p, k (p.versets)}
+          {#each fatiha.partie ?? [] as p, k (p.nom)}
             <button
               type="button"
               class="bande {PARTIES[k] ?? 'louange'}"
@@ -241,16 +240,28 @@
                 document
                   .querySelector(`.priere .v.${PARTIES[k]}`)
                   ?.scrollIntoView({ block: 'center', behavior: reduit() ? 'auto' : 'smooth' })}
-              ><b class="nom">{p.nom}</b><span>{p.versets}</span></button
+              ><b class="nom">{p.nom}</b><span>{plage(p.refs_hafs)}</span></button
             >
           {/each}
         </div>
-        {#each fatiha.partie ?? [] as p, k (p.versets)}<p
-            class="bande-fr"
-            data-partie-fr={PARTIES[k]}
-          >
-            {p.fr}
-          </p>{/each}
+        {#each fatiha.partie ?? [] as p, k (p.nom)}
+          <div class="bande-fr" data-partie-fr={PARTIES[k]}>
+            <p><Texte txt={p.fr} /></p>
+            {#if p.debut?.ar}
+              <!-- mots arabes de repère : le début et la fin de la partie, chacun sur sa ligne -->
+              <span class="ar centre" lang="ar" dir="rtl">{p.debut.ar}</span>
+              {#if p.fin?.ar && p.fin.ar !== p.debut.ar}<span class="ar centre" lang="ar" dir="rtl"
+                  >{p.fin.ar}</span
+                >{/if}
+            {/if}
+          </div>
+        {/each}
+        {#if fatiha.partie_source}
+          <details class="plus">
+            <summary>{t('priere.sources')}<Picto nom="chevron-b" /></summary>
+            <ul class="sources"><li>{fatiha.partie_source}</li></ul>
+          </details>
+        {/if}
         {#if so.numerotation}<small data-testid="priere-numerotation">{so.numerotation}</small>{/if}
       </section>
     {/if}

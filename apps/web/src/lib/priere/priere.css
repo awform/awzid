@@ -467,6 +467,7 @@
   cursor: not-allowed;
 }
 .priere .puce {
+  flex: none;
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
@@ -875,6 +876,10 @@
 .priere .etiquette b {
   font: 600 15px var(--f-titre);
   color: var(--titre);
+  max-width: 12em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .priere .compteur-rakaa {
   position: absolute;
@@ -1807,6 +1812,10 @@
   margin-top: 16px;
 }
 .priere .bande {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-width: 0;
   border-radius: 12px;
   padding: 10px 8px;
   min-height: 44px;
@@ -1835,7 +1844,6 @@
 .priere .bande span {
   display: block;
   font: 400 12px var(--f-ui);
-  opacity: 0.92;
   margin-top: 2px;
 }
 .priere .bande-fr {
@@ -2539,6 +2547,10 @@
 .priere .disque .nb small {
   font-size: 18px;
   color: var(--doux);
+  margin-inline-start: 0.3em;
+}
+.priere .rakaa .chiffre small {
+  margin-inline-start: 0.3em;
 }
 .priere .onde {
   position: absolute;

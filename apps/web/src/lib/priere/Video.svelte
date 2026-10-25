@@ -33,12 +33,15 @@
     voix,
     changerGenre,
     vu,
+    auto = false,
   }: {
     plan: Plan;
     progres: Progres;
     voix: Voix;
     changerGenre: (g: Genre) => void;
     vu: (id: string) => void;
+    /** démarre à l'arrivée (toucher sur « Vidéo vivante ») */
+    auto?: boolean;
   } = $props();
 
   type Contenu =
@@ -66,11 +69,13 @@
   const titreEtape = (id: string) => etapes.find((e) => e.id === id)?.titre ?? '';
 
   onMount(() => {
+    void voix.preparer();
     void chargerSection('S5').then((s) => {
       section = s;
       afficher(0);
-      // à l'arrivée par un toucher (lien « Vidéo vivante »), la vidéo démarre ; sinon elle attend un appui
+      // à l'arrivée par un toucher sur « Vidéo vivante » (`&lecture=1`), la vidéo démarre ; sinon elle attend un appui
       if (
+        auto &&
         (navigator as Navigator & { userActivation?: { isActive: boolean } }).userActivation
           ?.isActive
       )
@@ -211,9 +216,14 @@
     lecture = true;
     const jt = ++jeton;
     void (async () => {
+      await voix.preparer();
       while (jt === jeton && lecture) {
         if (vi >= beats.length) break;
-        await jouer(vi, jt);
+        try {
+          await jouer(vi, jt);
+        } catch {
+          break; // un temps qui échoue arrête la vidéo, jamais l'écran
+        }
         if (jt === jeton && lecture) vi++;
       }
       if (jt === jeton) {
@@ -245,7 +255,7 @@
 </script>
 
 <!-- eslint-disable svelte/no-navigation-without-resolve, svelte/no-useless-mustaches -- vue de la même page (?e=pas) ; une espace entre deux mots arabes -->
-<div class="e-video" data-testid="priere-video">
+<div class="e-video" data-testid="priere-video" data-beat={vi}>
   <div class="outils">
     <div class="seg" role="group" aria-label={t('priere.silhouette')}>
       {#each ['homme', 'femme'] as g (g)}
