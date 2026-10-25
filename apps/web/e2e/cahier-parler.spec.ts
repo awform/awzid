@@ -526,12 +526,16 @@ test.describe('« canal bêta » réglé par l’administrateur', () => {
       const cartes = e.pages.find((x) => x.type === 'cartes')!;
       await ouvrir(page, e.id, cartes.id, n);
       // 2e carte : taille ordinaire (la 1re est la phrase du jour, plus grande)
-      return page
-        .locator('.phrase-carte')
-        .nth(1)
-        .locator('.ar')
-        .first()
-        .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+      const ar = page.locator('.phrase-carte').nth(1).locator('.ar').first();
+      await expect(ar).toBeVisible();
+      // l'index audio arrive après la page et la refait : on attend une mesure valable
+      let px = NaN;
+      await expect
+        .poll(
+          async () => (px = await ar.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))),
+        )
+        .toBeGreaterThan(0);
+      return px;
     };
     const [ad, ado, en] = [await taille('ad3'), await taille('ado2'), await taille('en3')];
     expect(en).toBeGreaterThanOrEqual(33);

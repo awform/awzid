@@ -9,6 +9,24 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+<!-- cahiers-parler-tous-25-10 -->
+
+---
+
+## 25/10/2026 — Cahiers « Je parle » des 15 autres niveaux (adultes 3 à 10, enfants 2 à 5, ados 2 à 4) ; branche `cahiers-parler-tous-wip` ; NON déployé
+
+Même interrupteur que le cahier d'Adultes 2 (`cahier_parler`, coupé par défaut, canal bêta). Aucun audio installé par ce lot (les archives `maj-audio-cahier-parler-*` sont installées à part).
+
+- **Données** : les 15 sources (`packages/content/data/cahier-parler/<niveau>.json`, copie exacte du dossier de conception) sont converties par `scripts/cahier-parler-donnees.mjs` (`static/cahier-data/parler-<niveau>.json`, ad2 inchangé octet pour octet). Une ÉTAPE par thème, dans l'ordre des parties du livre (« après la leçon » = `unite` du thème) ; fin de partie = révision, situation libre, bilan (une ligne par phrase de l'antisèche) ; grille finale = une ligne et une étoile par thème. `PARLER_NIVEAUX` = les 16 niveaux : l'accès « Je parle » apparaît dans chaque livre.
+- **Style** : enfants = gros caractères arabes (2,15 rem ; phrase du jour 2,6 rem), ados un peu plus gros ; étiquettes « à un garçon » / « à une fille » (enfants, ados) ou « à un homme » / « à une femme » (adultes) ; texte d'aide du carnet adapté (`parler.intro_3_jeune`, traduit en en/es/de/ar). 44 pictogrammes d'objets ajoutés (`Picto.svelte`, repris du moteur des livres).
+- **Zéro muet** : `zero-muet.test.ts` couvre les 16 cahiers (phrases, formes, répliques, phrases du jour, antisèches). Résultat : 4 textes sans fichier (ad5 C17, ad7 C07, ad8 C12 et C13 : « إن شاء الله / ما شاء الله » + phrase ordinaire, refusés par la chaîne de génération alors que la garde de l'application les laisse passer) placés dans la liste d'attente EXPLICITE `data/zero-muet/a-generer-synthese.tsv` : **à générer en voix de synthèse** ; le test échoue si un texte de la liste obtient son fichier (liste à vider). e2e : parcours de tous les écrans d'ad3, en3 et ado2 avec audio simulé, 0 phrase muette.
+- **Poids** : appareil de l'élève 347,0 Ko, **marge 3,0 Ko (3 107 o)** ; cahier « Je parle » à la demande 12,2 Ko (garde 16 Ko).
+- **Tests** : unitaires (`parler-niveaux.test.ts` : 121 tests, 8 par niveau), e2e `cahier-parler.spec.ts` (accès des 16 livres, styles, zéro muet de l'interface, captures). Constat étranger à ce lot : `video-cahier-niveau1.test.ts` (ado1) attend une liste de scènes muettes périmée depuis l'arrivée de l'audio.
+- **Source à vérifier** : thèmes dont `unite` est incohérente avec leur partie (ad9 « aine » et « quartier » = 23, « preuves » = 0, « projet » = 1) : l'étape affiche « Après la leçon 23 » en partie 2 ou 3 ; aucun verrouillage n'en dépend.
+- **Captures** 390 px, clair et sombre (adultes 5, enfants 3, ados 3, 6 écrans chacun) : `design/cahiers_parler/captures_app_tous/`.
+
+<!-- /cahiers-parler-tous-25-10 -->
+
 <!-- cahiers-en-ado-25-10 -->
 
 ---
