@@ -73,6 +73,7 @@ describe('vidéos vivantes : interrupteur « video_vivante »', () => {
       'ad10',
       'en1',
       'en2',
+      'en3',
       'ado1',
       'ado2',
     ]);
@@ -82,7 +83,7 @@ describe('vidéos vivantes : interrupteur « video_vivante »', () => {
 describe('vidéos vivantes : estNiveauVideo (appareil élève) = VIDEO_NIVEAUX', () => {
   it('même ensemble que la liste, rien d’autre', () => {
     for (const n of VIDEO_NIVEAUX) expect(estNiveauVideo(n), n).toBe(true);
-    for (const n of ['ad0', 'ad01', 'ad11', 'en3', 'ado3', 'ra1', 'xad1', 'ad', '', 'AD1'])
+    for (const n of ['ad0', 'ad01', 'ad11', 'en99', 'ado99', 'ra1', 'xad1', 'ad', '', 'AD1'])
       expect(estNiveauVideo(n), n).toBe(false);
     const faux = ['ad', 'en', 'ado'].flatMap((p) =>
       Array.from({ length: 20 }, (_, i) => p + (i + 1)).filter((n) => !VIDEO_NIVEAUX.includes(n)),

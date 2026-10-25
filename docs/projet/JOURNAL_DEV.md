@@ -29,6 +29,16 @@ Service `ecoute-ia` en production NON touché : seulement deux MODES ajoutés au
 
 ---
 
+## 26/10/2026 — Vidéos vivantes V2 : le livre Enfants 3 (en3), fusion de `video-vivante-en3-wip` dans `main` ; NON déployé
+
+**Note de reprise** : dernier livre fusionné = **en3** (après en1, ado1, en2, ado2). Restent : ado3, en4, ado4, en5 (puis e2e complète finale). Outils : `~/vv-ad/` (`nouveau3.sh B famille N`, `auto.sh`, `auto2.sh`, `merge.sh`, `fusion.sh`) ; arrêter sur tout échec (typecheck, garde de poids) avant `fusion.sh`.
+
+**Liste des niveaux hors de l'appareil élève** (fusion `video-vivante-niveaux-wip`) : `estNiveauVideo(niveau)` (un nombre de livres par famille, `packages/content/src/video-niveaux.ts`) remplace `VIDEO_NIVEAUX.includes` dans `offline.ts` et `VideoBouton.svelte` ; la liste `VIDEO_NIVEAUX` en est tirée (tests, générateur) et n'entre plus dans l'appareil ; test d'égalité des deux. Raison : la garde de marge (3 072 o) était dépassée sur `main` après Ados 2 (3 034 o, base de `main` déjà à 3 067 o). Ajouter un livre = relever un chiffre.
+
+`VIDEO_NIVEAUX` + en3 ; garde inchangée. Contrôle 360 px : **0 réduction sur les 25 unités** du premier coup ; captures v2 clair/sombre de l03, l10, l19 et planche (`captures_app/captures-v2-en3/`). Tests : typecheck, eslint, prettier 0 erreur ; unitaires verts sauf `video-cahier-niveau1.test.ts` (rouge aussi sur `main`) ; e2e vidéo **18 réussis, 0 échec** ; poids lecteur v2 23 621 o (garde 24 Ko). Audio (en3, 702 fichiers) : 165 textes « à écouter » sans fichier, 839 en tout, 44 gardés sans voix ; `reports/video-vivante-en3.md`.
+
+---
+
 ## 25/10/2026 — Indication des madd (interrupteur `tajwid_madd`, COUPÉ par défaut, bêta fermée, ADULTES) ; branche `tajwid-madd-wip` ; NON déployé
 
 Quatrième chantier « programme Coran » (étude `recherche_coran_ia/ETUDE_TAJWID.md`, prototype `prototypes/madd.py`). Interrupteur `tajwid_madd` : coupé par défaut partout, à ouvrir au « canal bêta » ; coupé : « Réciter et vérifier » reste entier, sans l'indication. **Le service d'écoute de production n'est pas touché** : le mode « madd » est un module à part, importé seulement si `ECOUTE_MADD=1`, qui se déploie comme un second conteneur de la même image (`AWFORM_MADD_URL` côté API ; non défini = fonction indisponible).
