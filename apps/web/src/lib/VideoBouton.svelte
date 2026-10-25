@@ -10,7 +10,7 @@
   import { aUnScenario } from '$lib/conversation/scenario';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
-  import { VIDEO_NIVEAUX } from '@awform/content/video-niveaux';
+  import { estNiveauVideo } from '@awform/content/video-niveaux';
 
   /**
    * Vidéos vivantes (19/10/2026) — bouton « Voir en vidéo » en haut d'une unité d'Adultes 1, derrière l'interrupteur
@@ -29,7 +29,7 @@
     'illustrations',
   );
   const audio = getContext<(() => LevelAudio | null) | undefined>(AUDIO_CTX);
-  const voir = $derived(fn('video_vivante') && VIDEO_NIVEAUX.includes(unit.levelCode));
+  const voir = $derived(fn('video_vivante') && estNiveauVideo(unit.levelCode));
   let charge = $state(false);
   let echec = $state(false);
 
