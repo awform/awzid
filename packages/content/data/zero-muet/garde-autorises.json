@@ -337,6 +337,24 @@
       "decision": "synthese",
       "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis) ; ﴿إلا الذين ءامنوا﴾ (3 mots) objet de grammaire",
       "refusAvant": "coran"
+    },
+    {
+      "cle": "مَا تُقَدِّمْ مِنْ خَيْرٍ تَجِدْهُ عِنْدَ اللَّهِ.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373-DECISIONS n° 13, 24/10/2026) : reformulation : pas le texte coranique exact ; reformulation au singulier de 2:110/73:20 (le Coran dit تقدموا…تجدوه) : pas le texte coranique",
+      "refusAvant": "décision n° 13 (texte demandé explicitement)"
+    },
+    {
+      "cle": "يَا أَيُّهَا الَّذِينَ آمَنُوا",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373-DECISIONS n° 13, 24/10/2026) : formule présente dans plusieurs versets (§2 ter) ; يا أيها الذين آمنوا : formule présente dans 89 versets, montrée comme marque d'appel (2 ter, 3 mots en graphie ʿuthmānie)",
+      "refusAvant": "décision n° 13 (texte demandé explicitement)"
+    },
+    {
+      "cle": "فَأَجَابَ عَبْدُ اللَّهِ: مَا تُقَدِّمْ مِنْ خَيْرٍ تَجِدْهُ عِنْدَ اللَّهِ.",
+      "decision": "synthese",
+      "raison": "décision du référent (referent-373-DECISIONS n° 13, 24/10/2026) : reformulation : pas le texte coranique exact ; réplique d'un personnage, même reformulation que 2:110/73:20 [suite de 4 mots identique à 48:2]",
+      "refusAvant": "décision n° 13 (texte demandé explicitement)"
     }
   ]
 }
