@@ -69,6 +69,8 @@ export const EN_LIGNE_MODULES = [
   /src\/lib\/mutashabihat\/index\.ts$/,
   // 25/10/2026 : hifẓ en classe (maître : séances, annotation ; élève adulte : enregistrement ; famille : suivi), à la demande
   /src\/lib\/hifz-classe\/(classe|eleve)\.ts$/,
+  // 25/10/2026 : indication des madd longs (envoie la récitation au service du mode « madd » : en ligne seulement), à la demande
+  /src\/lib\/tajwid-madd\/(index\.ts|Madd\.svelte|cibles\.ts)$/,
   /src\/lib\/quran\/LignesExactes\.svelte$/,
   /src\/lib\/TutorPanel\.svelte$/,
   /src\/lib\/avis\/AvisDialog\.svelte$/,

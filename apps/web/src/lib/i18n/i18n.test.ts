@@ -64,6 +64,9 @@ beforeAll(async () => {
   );
   // 25/10/2026 : « Mots du Coran » (bande du lecteur, recherche, fiche racine)
   ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'coran-mots', 'textes-fr.json'), 'utf8')));
+  ajouterTextes(
+    JSON.parse(readFileSync(join(SRC, 'lib', 'tajwid-madd', 'textes-fr.json'), 'utf8')),
+  );
 });
 afterEach(() => setLocale('fr'));
 

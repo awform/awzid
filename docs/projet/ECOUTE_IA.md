@@ -197,3 +197,33 @@ appareil (lecteur Mémoriser, carnet)          API (Fastify)                    
 - Mesurer en bêta avec le bouton « l'IA s'est trompée » (compteur sans voix) ; ajuster `SEUILS`.
 - Si le direct est ouvert largement : passer en WebSocket et en flux continu (voir § 4).
 - Attribution CC-BY-4.0 à ajouter dans « Garanties » à la sortie du canal bêta.
+
+## 9. Mode « madd » (25/10/2026, interrupteur `tajwid_madd`, bêta fermée, ADULTES) — étude : `recherche_coran_ia/ETUDE_TAJWID.md`
+
+**Ce que c'est.** Après avoir récité UN verset dans « Réciter et vérifier », l'adulte peut demander l'indication de ses **madd longs**
+(muttaṣil, lāzim). Réponse : « ce madd semble trop court » ou **rien**. Jamais « correct » (surtout pas pour un madd ṭabīʿī), jamais une note,
+un pourcentage ou une mesure : une indication automatique, en cours de validation par des maîtres ; le maître reste la référence.
+
+**Ce que ça n'est pas : une exception aux règles de § 1.** Le service d'écoute de production (`ecoute`, « mots seulement ») n'est **pas modifié** :
+le mode vit dans `services/ecoute-ia/{madd,madd_route,muaalem}.py`, importés **seulement si `ECOUTE_MADD=1`** (test :
+`test_le_service_d_ecoute_n_a_pas_de_route_madd_par_defaut`). Il se déploie comme un **second conteneur** de la même image, avec son propre modèle
+monté en lecture seule (`MADD_MODELE=/muaalem`) ; l'API le joint par `AWFORM_MADD_URL` (non défini = fonction indisponible, aucune erreur).
+
+**Décision (`madd.py`, testée sur des suites de phonèmes synthétiques).** Référence = la récitation d'**Ayyūb** du même verset (fichier du Complexe,
+jamais une synthèse). On rapporte la durée du madd de l'élève au débit de sa récitation et à celui d'Ayyūb ; **« trop court » seulement si ce
+rapport est sous 0,70** (réglé pour zéro fausse alerte sur les 50 récitations justes de l'étude : les muttaṣil justes ne descendent pas sous
+0,88) **et** si la confiance du modèle sur ce madd est ≥ 0,95. Silence dans tous les autres cas : type non long (ṭabīʿī, munfaṣil, ʿāriḍ), correspondance
+des madd incertaine, verset mal reconnu (plus de 25 % de phonèmes différents), madd non retrouvé, zone grise. Seuils réglables par variables
+(`MADD_R_COURT`, `MADD_P_MIN`, `MADD_DIST_MAX`), jamais au-dessus de ce que l'étude a mesuré sans les remesurer.
+
+**Garanties.** L'audio de l'élève reste en mémoire (memfd pour ffmpeg, comme `/ecouter`), jamais sur disque ni dans un journal ; l'API ne le garde pas
+non plus (aucune ligne `recitation_upload`) ; le journal d'audit ne contient que le verset, le type de madd et la décision. Accord
+`analyse_vocale_ia` exigé (même accord que l'écoute IA) ; profil **adulte** seulement (refus côté serveur : `adultes_seulement`) ; quota par heure
+comme l'écoute IA ; un seul calcul à la fois, file courte (503 « occupé »).
+
+**Avant toute ouverture (bloquant).**
+1. **Licence** de `obadx/muaalem-model-v3_2` : confirmation écrite de l'auteur (voir `LICENCES.md`). Le modèle n'est pas livré avec le dépôt.
+2. **Validation réelle** : l'étude s'appuie sur des récitateurs professionnels ; mesurer sur de vraies voix d'adultes, avec des maîtres, avant d'élargir
+   le canal bêta (le bouton « l'IA s'est trompée » de l'écoute IA n'existe pas encore pour les madd).
+3. **Correspondance des madd** : le nombre de madd annoté dans le verset (source `quran-tajweed`) doit coïncider avec celui que le modèle décode dans la
+   récitation d'Ayyūb ; sinon le service se tait (`correspondance_incertaine`). Mesurer la part de versets concernés avant d'ouvrir.

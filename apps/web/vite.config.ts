@@ -214,8 +214,10 @@ export default defineConfig({
               // leur morceau (`A_PART`) : dans le morceau commun, elles pèseraient sur toutes les pages (lecteur…)
               // 25/10/2026 : la garde coranique des vidéos (liste d'empreintes de 6 Ko) est lue par les trois lecteurs (v1, v2,
               // cahier), tous à la demande : jamais dans le morceau commun préchargé (+0,8 Ko sur l'appareil de l'élève)
+              // 25/10/2026 : les règles de tajwid (`content/tajwid`, lues par la lecture du Coran) et l'indication des madd, à la demande,
+              // feraient trois morceaux : sans cette exclusion elles passaient dans le morceau commun préchargé (+0,8 Ko sur l'appareil de l'élève)
               test: (id: string) =>
-                !/lib\/identites\/|lib\/priere\/|lib\/coran-mots\/|school\/dist\/telephone|src\/lib\/cards\.ts|content\/(dist|src)\/video-garde\./.test(
+                !/lib\/identites\/|lib\/priere\/|lib\/coran-mots\/|school\/dist\/telephone|src\/lib\/cards\.ts|content\/(dist|src)\/(video-garde|tajwid)\./.test(
                   id,
                 ),
             },

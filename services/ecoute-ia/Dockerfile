@@ -13,7 +13,7 @@ RUN useradd -r -u 10050 ecoute
 # service : code seulement (l'évaluation utilise la cible « base » avec ses propres scripts montés)
 FROM base AS service
 WORKDIR /srv
-COPY ecoute.py asr.py /srv/
+COPY ecoute.py asr.py madd.py madd_route.py muaalem.py /srv/
 COPY tests /srv/tests
 USER ecoute
 EXPOSE 8000

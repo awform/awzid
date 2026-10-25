@@ -4285,5 +4285,20 @@
   "cm.sources_gpl": "The “Words of the Quran” data is kept apart from the application code and published under the same licence, with its source.",
   "cm.lien_corpus": "corpus.quran.com",
   "cm.lien_tanzil": "tanzil.net",
-  "cm.lien_gpl": "Text of the GNU GPL v3 licence"
+  "cm.lien_gpl": "Text of the GNU GPL v3 licence",
+  "md.titre": "My long madds",
+  "md.notice": "Automatic indication, being validated by teachers. Your teacher remains the reference.",
+  "md.intro": "Choose a long madd in this verse: your recitation is compared with Ayyūb’s. You do not get a grade.",
+  "md.type_muttasil": "Madd muttaṣil",
+  "md.type_lazim": "Madd lāzim",
+  "md.verifier": "Check this madd",
+  "md.en_cours": "Analysing…",
+  "md.trop_court": "This madd seems too short. Listen to Ayyūb on this verse again, then try again.",
+  "md.rien": "No indication for this madd. This is not a validation: your teacher remains the reference.",
+  "md.err_reseau": "No connection: try again in a moment.",
+  "md.err_indisponible": "The madd indication is not available right now.",
+  "md.err_quota": "Too many requests at the moment: try again later.",
+  "md.err_audio": "Your recording could not be analysed. Recite the whole verse, then try again.",
+  "md.err_reference": "Ayyūb’s recitation of this verse is not available.",
+  "fn.tajwid_madd": "Madd indication (adults, closed beta)"
 }

@@ -9,6 +9,23 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+<!-- tajwid-madd-25-10 -->
+
+---
+
+## 25/10/2026 — Indication des madd (interrupteur `tajwid_madd`, COUPÉ par défaut, bêta fermée, ADULTES) ; branche `tajwid-madd-wip` ; NON déployé
+
+Quatrième chantier « programme Coran » (étude `recherche_coran_ia/ETUDE_TAJWID.md`, prototype `prototypes/madd.py`). Interrupteur `tajwid_madd` : coupé par défaut partout, à ouvrir au « canal bêta » ; coupé : « Réciter et vérifier » reste entier, sans l'indication. **Le service d'écoute de production n'est pas touché** : le mode « madd » est un module à part, importé seulement si `ECOUTE_MADD=1`, qui se déploie comme un second conteneur de la même image (`AWFORM_MADD_URL` côté API ; non défini = fonction indisponible).
+
+- **Ce que voit l'adulte** : après avoir récité UN verset (portion d'un seul verset, hors verset 1) dans « Réciter et vérifier », une section « Mes madd longs » liste les madd muttaṣil et lāzim du verset (d'après les annotations de tajwīd déjà livrées, sans rien inventer) ; « Vérifier ce madd » envoie la récitation (gardée en mémoire par le panneau) et rend **une indication ou rien** : « Ce madd semble trop court. Réécoute Ayyūb sur ce verset, puis réessaie. » ou « Aucune indication pour ce madd. Ce n'est pas une validation : ton maître reste la référence. » La phrase « **Indication automatique, en cours de validation par des maîtres. Ton maître reste la référence.** » est toujours affichée. **Jamais « correct »** (jamais pour un madd ṭabīʿī, qui n'est même pas proposé), jamais de note, de pourcentage ni de mesure : un test lit les textes et le code pour le vérifier.
+- **Décision** (`services/ecoute-ia/madd.py`, logique pure testée sur des suites de phonèmes) : référence = récitation d'**Ayyūb** du même verset (fichier du Complexe, aucune synthèse) ; durée du madd rapportée au débit de chacun ; « trop court » seulement sous 0,70 (zéro fausse alerte sur les 50 récitations justes de l'étude) **et** confiance du modèle ≥ 0,95 ; silence sinon (type non long, correspondance des madd incertaine, verset mal reconnu, madd non retrouvé, zone grise). Seuls les madd **longs** (muttaṣil, lāzim) sont analysés.
+- **API** (`tajwid-madd.ts`) : `GET/POST /api/v1/profiles/:id/tajwid/madd` ; interrupteur (`fonction_coupee`), **profil adulte** seulement (`adultes_seulement`), accord `analyse_vocale_ia` (`accord_requis`), quota horaire de l'écoute IA, disjoncteur de coût ; la référence est lue dans le stockage audio d'Ayyūb (`ayyoub-hafs`, récitateur actif) ; **la réponse ne contient que l'indication** : même si le service répondait « correct » ou un nombre, l'API rend « rien ». **La voix n'est jamais conservée** (aucune ligne `recitation_upload`, journal d'audit : verset, type, décision).
+- **Poids** : tout est chargé à la demande (`lib/tajwid-madd/`, groupe « en ligne » ; importé depuis le panneau, lui-même à la demande) ; dans la coquille de l'élève : la clé du registre seulement. Appareil de l'élève : **346,9 Ko, marge 3,1 Ko (3 138 o)** (les règles de tajwid `content/tajwid` sont exclues du morceau commun dans `vite.config.ts` : sans cela, ce troisième usage les y faisait passer, +0,8 Ko).
+- **Textes** : français embarqués, brouillons en, es, de, ar (`A_RELIRE.md`).
+- **Documentation** : `ECOUTE_IA.md` § 9 (règles, décision, conditions d'ouverture), `EXPLOITATION.md` § 21 (second conteneur, ouverture, retour arrière), `LICENCES.md` (modèle Muaalem : usage limité à ce mode et **bloqué tant que la licence n'est pas confirmée par écrit**), `REGISTRE_TRAITEMENTS.md` (6 bis), `DUREES_CONSERVATION.md`.
+- **Tests** : python `test_madd.py` (tests du service ; suite complète : 22 verts ; dont « sans `ECOUTE_MADD=1`, aucune route `/madd` »), API `tajwid-madd.test.ts`, web `tajwid-madd.test.ts` (cibles, sortie bornée, règles du projet), e2e `tajwid-madd.spec.ts` (coupé, indication, AA clair et sombre, service indisponible).
+- **Reste, AVANT toute ouverture** : (1) confirmation écrite de la licence MIT du modèle `obadx/muaalem-model-v3_2` ; (2) validation sur de vraies voix d'adultes avec des maîtres (l'étude repose sur des récitateurs professionnels) ; (3) mesurer la part des versets où le nombre de madd annotés coïncide avec celui que le modèle décode chez Ayyūb (sinon le service se tait) ; (4) un bouton « l'IA s'est trompée » propre aux madd ; (5) installer le modèle sur le serveur de bêta (second conteneur).
+<!-- /tajwid-madd-25-10 -->
 <!-- hifz-classe-25-10 -->
 
 ---

@@ -4285,5 +4285,20 @@
   "cm.sources_gpl": "Die Daten von „Wörter des Korans“ sind vom Code der Anwendung getrennt und unter derselben Lizenz mit ihrer Quelle veröffentlicht.",
   "cm.lien_corpus": "corpus.quran.com",
   "cm.lien_tanzil": "tanzil.net",
-  "cm.lien_gpl": "Text der Lizenz GNU GPL v3"
+  "cm.lien_gpl": "Text der Lizenz GNU GPL v3",
+  "md.titre": "Meine langen Madd",
+  "md.notice": "Automatischer Hinweis, der noch von Lehrern geprüft wird. Dein Lehrer bleibt die Referenz.",
+  "md.intro": "Wähle ein langes Madd in diesem Vers: Deine Rezitation wird mit der von Ayyūb verglichen. Du bekommst keine Note.",
+  "md.type_muttasil": "Madd muttaṣil",
+  "md.type_lazim": "Madd lāzim",
+  "md.verifier": "Dieses Madd prüfen",
+  "md.en_cours": "Analyse läuft…",
+  "md.trop_court": "Dieses Madd scheint zu kurz zu sein. Höre dir Ayyūb zu diesem Vers noch einmal an und versuche es erneut.",
+  "md.rien": "Kein Hinweis zu diesem Madd. Das ist keine Bestätigung: Dein Lehrer bleibt die Referenz.",
+  "md.err_reseau": "Keine Verbindung: Versuche es gleich noch einmal.",
+  "md.err_indisponible": "Der Madd-Hinweis ist im Moment nicht verfügbar.",
+  "md.err_quota": "Im Moment zu viele Anfragen: Versuche es später erneut.",
+  "md.err_audio": "Deine Aufnahme konnte nicht analysiert werden. Rezitiere den ganzen Vers und versuche es erneut.",
+  "md.err_reference": "Ayyūbs Rezitation dieses Verses ist nicht verfügbar.",
+  "fn.tajwid_madd": "Madd-Hinweis (Erwachsene, geschlossene Beta)"
 }

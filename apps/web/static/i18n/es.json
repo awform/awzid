@@ -4285,5 +4285,20 @@
   "cm.sources_gpl": "Los datos de «Palabras del Corán» están separados del código de la aplicación y publicados con la misma licencia, con su fuente.",
   "cm.lien_corpus": "corpus.quran.com",
   "cm.lien_tanzil": "tanzil.net",
-  "cm.lien_gpl": "Texto de la licencia GNU GPL v3"
+  "cm.lien_gpl": "Texto de la licencia GNU GPL v3",
+  "md.titre": "Mis madd largos",
+  "md.notice": "Indicación automática, en proceso de validación por maestros. Tu maestro sigue siendo la referencia.",
+  "md.intro": "Elige un madd largo de este versículo: tu recitación se compara con la de Ayyūb. No recibes nota.",
+  "md.type_muttasil": "Madd muttaṣil",
+  "md.type_lazim": "Madd lāzim",
+  "md.verifier": "Comprobar este madd",
+  "md.en_cours": "Analizando…",
+  "md.trop_court": "Este madd parece demasiado corto. Vuelve a escuchar a Ayyūb en este versículo y inténtalo de nuevo.",
+  "md.rien": "Ninguna indicación para este madd. No es una validación: tu maestro sigue siendo la referencia.",
+  "md.err_reseau": "Sin conexión: inténtalo de nuevo en un momento.",
+  "md.err_indisponible": "La indicación de los madd no está disponible por ahora.",
+  "md.err_quota": "Demasiadas solicitudes por ahora: inténtalo más tarde.",
+  "md.err_audio": "No se pudo analizar tu grabación. Recita el versículo entero e inténtalo de nuevo.",
+  "md.err_reference": "La recitación de Ayyūb de este versículo no está disponible.",
+  "fn.tajwid_madd": "Indicación de los madd (adultos, beta cerrada)"
 }

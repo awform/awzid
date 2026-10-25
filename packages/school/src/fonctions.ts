@@ -37,6 +37,7 @@ export const FONCTION_CLES = [
   'mutashabihat',
   'hifz_classe',
   'coran_mots',
+  'tajwid_madd',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -144,6 +145,11 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // défaut partout (démonstration comprise) ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur laisse le
   // lecteur du Coran entier, sans pourcentage ni soulignement.
   coran_mots: { defaut: 'off' },
+  // Indication des madd (25/10/2026) : après une récitation d'UN verset, l'adulte peut demander « mes madd longs sont-ils assez longs ? » ;
+  // réponse = une indication (« trop court ») ou rien, jamais une note ni « correct » ; indication automatique en cours de validation par des
+  // maîtres. ADULTES seulement, bêta fermée. COUPÉ par défaut partout ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur
+  // laisse « Réciter et vérifier » entier, sans cette indication.
+  tajwid_madd: { defaut: 'off' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

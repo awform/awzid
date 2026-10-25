@@ -247,3 +247,5 @@ relecteur provisoire, en **brouillon** dans les quatre langues en préparation. 
 passer » pour la prochaine étape, comme demandé par le client) ; « reconnaître » un mot (jamais « comprendre » : le calcul
 mesure la reconnaissance du mot, pas la compréhension du verset) ; « racine » / « جذر » / « Wurzel » / « raíz ». Le texte du
 Coran et les mots arabes de l'étude ne sont pas traduits.
+## Indication des madd (25/10/2026, interrupteur `tajwid_madd`) — brouillons à relire
+Textes `md.*` et `fn.tajwid_madd` traduits par Claude, relecteur provisoire, en **brouillon** dans les quatre langues en préparation ; le français est embarqué avec le module (`lib/tajwid-madd/textes-fr.json`). Fonction réservée aux adultes, bêta fermée. À faire relire par un maître : la phrase de prudence (« indication automatique, en cours de validation par des maîtres ; ton maître reste la référence ») et le texte « ce madd semble trop court » ; « madd muttaṣil » et « madd lāzim » gardés en lettres latines (en, es, de) et écrits « مد متصل » et « مد لازم » en arabe ; l’élève est TUTOYÉ ; jamais « correct » ni « bravo ».

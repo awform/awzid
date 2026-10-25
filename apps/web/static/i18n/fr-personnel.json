@@ -645,5 +645,6 @@
   "adm.blocage_depuis": "bloqué le {date}",
   "fn.khatma_wird": "Khatma et wird (plan de lecture du Coran)",
   "fn.mutashabihat": "Mutashābihāt du hifẓ (versets jumeaux)",
-  "fn.hifz_classe": "Hifẓ en classe (mode direct, enregistrements des adultes)"
+  "fn.hifz_classe": "Hifẓ en classe (mode direct, enregistrements des adultes)",
+  "fn.tajwid_madd": "Indication des madd (adultes, bêta fermée)"
 }

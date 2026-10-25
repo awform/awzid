@@ -25,6 +25,7 @@ import { registerActivities } from './activities.js';
 import { recitationKeyFromEnv, registerRecitations } from './recitations.js';
 import { registerHifzClasse } from './hifz-classe.js';
 import { registerEcouteIa, type OptionsEcoute } from './ecoute-ia.js';
+import { registerTajwidMadd, type OptionsMadd } from './tajwid-madd.js';
 import { messageKeyFromEnv, registerMessagerie } from './messagerie.js';
 import { registerPush } from './push.js';
 import { registerRelais } from './relais.js';
@@ -110,6 +111,8 @@ export interface AppOptions {
   demoLogin?: boolean;
   /** A5 : écoute de la récitation (tests : service factice, interrupteur) ; sinon AWFORM_ECOUTE_* */
   ecoute?: OptionsEcoute;
+  /** 25/10/2026 : indication des madd (interrupteur `tajwid_madd`) ; service À PART (AWFORM_MADD_URL) */
+  madd?: OptionsMadd;
   /** lot F3 : envoi des e-mails (tests) ; sinon AWFORM_MAIL (smtp, journal, ou désactivé) */
   mailer?: Mailer;
   /** lot F3 : adresse publique du site pour les liens des e-mails (tests) ; sinon AWFORM_PUBLIC_URL ou SITE */
@@ -291,6 +294,11 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   );
   // A5 : l'IA qui écoute la récitation (interrupteur « ecoute_ia », voix jamais conservée)
   registerEcouteIa(app, db, opts.ecoute);
+  // 25/10/2026 : indication des madd (adultes, bêta fermée) ; mode « madd » d'un service d'écoute À PART, jamais celui de production
+  registerTajwidMadd(app, db, {
+    ...(opts.audioDir !== undefined ? { audioDir: opts.audioDir } : {}),
+    ...opts.madd,
+  });
   registerPush(app, db);
   registerCorrections(app, db, edition);
   registerEpreuves(app, db, edition);
