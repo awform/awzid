@@ -48,6 +48,9 @@ beforeAll(async () => {
   // 19/10/2026 : textes embarqués dans un module chargé à la demande (leçons vivantes)
   ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'vivante', 'textes-fr.json'), 'utf8')));
   ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'cahier', 'textes-fr.json'), 'utf8')));
+  ajouterTextes(
+    JSON.parse(readFileSync(join(SRC, 'lib', 'cahier-parler', 'textes-fr.json'), 'utf8')),
+  );
 });
 afterEach(() => setLocale('fr'));
 

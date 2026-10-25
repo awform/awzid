@@ -199,3 +199,10 @@ en préparation — à relire avec le reste. Le français est embarqué avec le 
 4 textes de l'accès et de la page du jour (`fr-arabe`). Choix à vérifier : l'élève est TUTOYÉ (y compris en arabe,
 singulier) ; « bilan » rendu comme ailleurs (« review test », « evaluación », « Lernkontrolle », « تقييم ») ; noms des
 signes en transcription (fatḥa, sukūn…) comme dans les livres ; le texte arabe du cahier lui-même n'est jamais traduit.
+
+Cahier « Je parle » d'Adultes 2 (24/10/2026) : 60 textes `parler.*` (carnet de voyage, étapes, cartes de phrases et
+6 cases, conversation, « À toi de parler », antisèche, révision, bilan) et `fn.cahier_parler` traduits par Claude,
+relecteur provisoire, en **brouillon** dans les quatre langues en préparation (arabe de l'interface non vocalisé, comme
+les autres textes d'interface). Le français est embarqué avec le cahier (`lib/cahier-parler/textes-fr.json`), sauf les
+le titre de l'accès du niveau (`fr-arabe`). Les accroches des étapes (`packages/content/data/cahier-parler/themes.json`)
+sont en français seulement, comme le cahier lui-même.

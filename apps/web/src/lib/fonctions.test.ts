@@ -42,6 +42,7 @@ describe('F5 — interrupteurs gardés sur l’appareil', () => {
         .sort(),
     ).toEqual([
       'cahier_lecture',
+      'cahier_parler',
       'conversation',
       'design_v4',
       'tuteur_ia',

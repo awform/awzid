@@ -27,6 +27,7 @@ const ESPACES: Record<string, TextesEspace> = {
   carnet: 'arabe',
   sourates: 'arabe',
   cahier: 'arabe',
+  'cahier-parler': 'arabe',
   // « Aujourd'hui et suivi »
   suivi: 'suivi',
   aujourdhui: 'suivi',

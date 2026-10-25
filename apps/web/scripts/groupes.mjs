@@ -40,7 +40,8 @@ export const RARE_ROUTES = [
   '/tuteur',
 ];
 /** Pages de l'élève gardées au premier usage (hors ligne ensuite), jamais préchargées. */
-export const PREMIER_USAGE_ROUTES = ['/madjaliss'];
+// 24/10/2026 : cahier « Je parle » (facultatif ; son code et ses données sont aussi chargés à la demande)
+export const PREMIER_USAGE_ROUTES = ['/madjaliss', '/cahier-parler'];
 /**
  * Modules de l'élève chargés À LA DEMANDE et gardés au premier usage (hors ligne ensuite), jamais préchargés :
  * écrans de la refonte du 19/10/2026 (interrupteur `design_v4`) — sans eux (hors ligne avant le premier usage),
