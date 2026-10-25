@@ -80,11 +80,13 @@
     })),
   );
   const finale = $derived(cahier?.etapes.filter((e) => e.partie === 0) ?? []);
+  /** série du niveau : "ad" (adultes), "en" (enfants), "ado" (ados) */
+  const serie = $derived(niveau.replace(/\d+$/, ''));
   const quand = (e: Etape) => (e.n ? t('parler.apres', { n: e.n }) : t('parler.avant'));
 </script>
 
 <!-- eslint-disable svelte/no-navigation-without-resolve -- chemin résolu (resolve), suivi des paramètres d'étape et de page -->
-<div class="parler" data-testid="parler">
+<div class="parler serie-{serie}" data-serie={serie} data-testid="parler">
   {#if nouveau}
     <p class="maj" role="status">
       <Bidi text={t('parler.nouvelle_version')} />
@@ -120,7 +122,11 @@
     <section class="intro carte">
       <h2><Bidi text={t('parler.intro_titre')} /></h2>
       <ul>
-        {#each [1, 2, 3, 4] as i (i)}<li><Bidi text={t(`parler.intro_${i}`)} /></li>{/each}
+        {#each [1, 2, 3, 4] as i (i)}<li>
+            <Bidi
+              text={t(i === 3 && serie !== 'ad' ? 'parler.intro_3_jeune' : `parler.intro_${i}`)}
+            />
+          </li>{/each}
       </ul>
     </section>
     {#each parParties as { pa, etapes } (pa.n)}
@@ -191,6 +197,17 @@
     max-width: 52rem;
     margin: 0 auto;
     padding-bottom: 1rem;
+  }
+  /* variantes de style (25/10/2026) : gros caractères pour les enfants, un peu plus gros pour les ados */
+  .serie-en {
+    --parler-ar: 2.15rem;
+    --parler-ar-grand: 2.6rem;
+    --parler-ar-ligne: 1.85rem;
+  }
+  .serie-ado {
+    --parler-ar: 1.8rem;
+    --parler-ar-grand: 2.15rem;
+    --parler-ar-ligne: 1.6rem;
   }
   .parler :global(.nav) {
     margin: 0 0 0.5rem;

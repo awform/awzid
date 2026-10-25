@@ -585,7 +585,7 @@
   .flou {
     margin: 0.2rem 0;
     font-family: var(--font-ar);
-    font-size: 1.45rem;
+    font-size: var(--parler-ar-ligne, 1.45rem);
     line-height: 2;
     text-align: right;
   }

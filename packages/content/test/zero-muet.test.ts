@@ -107,6 +107,24 @@ function aCorriger(): Set<string> {
   );
 }
 
+/**
+ * textes de la voix de synthèse qui n'ont pas encore leur fichier alors que la garde les laisse passer (décision de
+ * l'audio : texte jamais généré, ou refusé par une ancienne règle de la chaîne de génération) : liste d'attente EXPLICITE,
+ * `data/zero-muet/a-generer-synthese.tsv`. Un texte de cette liste qui a son fichier doit en sortir (test).
+ */
+function aGenerer(): Set<string> {
+  const f = join(DATA, 'a-generer-synthese.tsv');
+  return new Set(
+    existsSync(f)
+      ? readFileSync(f, 'utf8')
+          .split('\n')
+          .slice(1)
+          .filter(Boolean)
+          .map((l) => audioKey(l.split('\t')[0]!))
+      : [],
+  );
+}
+
 // ———— textes à écouter
 const raw = (livre: string, f: string) =>
   parseDataFile(readFileSync(join(CONTENT_DIR, 'data', livre, f), 'utf8'), f).value as Record<
@@ -225,29 +243,39 @@ function cahierLecture(): { cibles: Cible[]; recites: number } {
   return { cibles: out, recites };
 }
 
-/** Cahier « Je parle » : phrases (formes), répliques, phrase du jour, lignes d'antisèche. */
+/**
+ * Cahiers « Je parle » (adultes 2 à 10, enfants 2 à 5, ados 2 à 4 : un fichier `parler-<niveau>.json` par niveau) :
+ * phrases (toutes leurs formes), répliques, phrase du jour, lignes d'antisèche. Le fichier audio d'un texte est dans la liste
+ * des audios au niveau du livre (`ad3`, `en2`, `ado4`…).
+ */
 function cahierParler(): Cible[] {
   const out: Cible[] = [];
-  const f = join(STATIC, 'parler-ad2.json');
-  if (!existsSync(f)) return out;
-  const d = JSON.parse(readFileSync(f, 'utf8')) as {
-    phrases: Record<string, { ar: string; f?: Array<{ ar: string }> }>;
-    conversations: Record<string, { r: Array<{ ar: string }> }>;
-    etapes: Array<{ id: string; jour?: { ar: string }; antiseche?: Array<[string, string]> }>;
-  };
-  const ajoute = (texte: string | undefined, detail: string) => {
-    if (texte && /[ء-ي]/.test(texte))
-      out.push({ ou: 'cahier « Je parle » ad2', detail, texte, niveau: 'ad2' });
-  };
-  for (const [id, p] of Object.entries(d.phrases)) {
-    ajoute(p.ar, `phrase ${id}`);
-    for (const g of p.f ?? []) ajoute(g.ar, `phrase ${id}`);
-  }
-  for (const [id, c] of Object.entries(d.conversations))
-    for (const r of c.r) ajoute(r.ar, `conversation ${id}`);
-  for (const e of d.etapes) {
-    ajoute(e.jour?.ar, `étape ${e.id}`);
-    for (const [ar] of e.antiseche ?? []) ajoute(ar, `antisèche ${e.id}`);
+  const fichiersParler = existsSync(STATIC)
+    ? readdirSync(STATIC)
+        .filter((x) => /^parler-[a-z]+\d+\.json$/.test(x))
+        .sort()
+    : [];
+  for (const nom of fichiersParler) {
+    const niveau = nom.slice('parler-'.length, -'.json'.length);
+    const d = JSON.parse(readFileSync(join(STATIC, nom), 'utf8')) as {
+      phrases: Record<string, { ar: string; f?: Array<{ ar: string }> }>;
+      conversations: Record<string, { r: Array<{ ar: string }> }>;
+      etapes: Array<{ id: string; jour?: { ar: string }; antiseche?: Array<[string, string]> }>;
+    };
+    const ajoute = (texte: string | undefined, detail: string) => {
+      if (texte && /[ء-ي]/.test(texte))
+        out.push({ ou: `cahier « Je parle » ${niveau}`, detail, texte, niveau });
+    };
+    for (const [id, p] of Object.entries(d.phrases)) {
+      ajoute(p.ar, `phrase ${id}`);
+      for (const g of p.f ?? []) ajoute(g.ar, `phrase ${id}`);
+    }
+    for (const [id, c] of Object.entries(d.conversations))
+      for (const r of c.r) ajoute(r.ar, `conversation ${id}`);
+    for (const e of d.etapes) {
+      ajoute(e.jour?.ar, `étape ${e.id}`);
+      for (const [ar] of e.antiseche ?? []) ajoute(ar, `antisèche ${e.id}`);
+    }
   }
   return out;
 }
@@ -267,6 +295,20 @@ describe('zéro muet : la ponctuation n’est pas un texte à écouter', () => {
   });
 });
 
+describe('zéro muet : les 16 cahiers « Je parle » sont couverts par le test', () => {
+  it('adultes 2 à 10, enfants 2 à 5 et ados 2 à 4 : chaque niveau a ses textes à écouter', () => {
+    const attendus = [
+      ...['ad2', 'ad3', 'ad4', 'ad5', 'ad6', 'ad7', 'ad8', 'ad9', 'ad10'],
+      ...['en2', 'en3', 'en4', 'en5'],
+      ...['ado2', 'ado3', 'ado4'],
+    ];
+    const cibles = cahierParler();
+    expect([...new Set(cibles.map((c) => c.niveau))].sort()).toEqual([...attendus].sort());
+    // phrases, répliques, phrases du jour et antisèches : des centaines de textes par niveau
+    for (const n of attendus)
+      expect(cibles.filter((c) => c.niveau === n).length, n).toBeGreaterThan(100);
+  });
+});
 describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
   'zéro muet : tout texte à écouter a une voix',
   () => {
@@ -274,6 +316,7 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
       const recitations = ayyub();
       const explicites = ayyubExplicite();
       const corrections = aCorriger();
+      const attenteSynthese = aGenerer();
       const lecture = cahierLecture();
       const toutes = [...livres(), ...lecture.cibles, ...cahierParler()];
       const uniques = new Map<string, Cible>();
@@ -284,12 +327,14 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
       const voixOk: Cible[] = [];
       const attendAyyub: Cible[] = [];
       const dansLesLivres: Cible[] = [];
+      const aSynthetiser: Cible[] = [];
       const muets: Cible[] = [];
       for (const c of uniques.values()) {
         if (explicites.has(audioKey(c.texte))) attendAyyub.push(c);
         else if (aSonFichier(c.texte, c.niveau)) voixOk.push(c);
         else if (recitations.has(audioKey(c.texte))) attendAyyub.push(c);
         else if (corrections.has(audioKey(c.texte))) dansLesLivres.push(c);
+        else if (attenteSynthese.has(audioKey(c.texte))) aSynthetiser.push(c);
         else muets.push(c);
       }
       // outillage (hors test) : toutes les cibles avec l'état de leur fichier, pour le classement des textes sans solution
@@ -318,6 +363,7 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
         `  dont graphie du Muṣḥaf, non jouée par le client (audioIdFor) : ${voixOk.filter((c) => looksQuranic(c.texte)).length}`,
         `- en attente d’Ayyūb (récitation prévue, branchement à venir) : ${attendAyyub.length}`,
         `- à corriger dans les livres avant le gel (réplique arabe qui cite du français, cas b) : ${dansLesLivres.length}`,
+        `- voix de synthèse À GÉNÉRER (garde levée, fichier absent, liste d’attente explicite) : ${aSynthetiser.length}`,
         `- cahier de lecture : éléments récités par Ayyūb (mécanisme propre) : ${lecture.recites}`,
         `- MUETS sans solution prévue : ${muets.length}`,
         '',
@@ -326,6 +372,9 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
         '',
         '## En attente d’Ayyūb',
         ...attendAyyub.map((c) => `- ${ligne(c)}`),
+        '',
+        '## Voix de synthèse à générer (liste d’attente)',
+        ...aSynthetiser.map((c) => `- ${ligne(c)}`),
         '',
         '## À corriger dans les livres',
         ...dansLesLivres.map((c) => `- ${ligne(c)}`),
@@ -339,6 +388,10 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
       console.log(
         `zéro muet : ${uniques.size} textes ; audio ${voixOk.length} ; en attente d’Ayyūb ${attendAyyub.length} ; à corriger dans les livres ${dansLesLivres.length} ; muets ${muets.length}`,
       );
+      expect(
+        voixOk.filter((c) => attenteSynthese.has(audioKey(c.texte))).map(ligne),
+        'texte de a-generer-synthese.tsv qui a maintenant son audio : le retirer de la liste',
+      ).toEqual([]);
       expect(muets.map(ligne), 'textes muets sans audio ni récitation prévue').toEqual([]);
     }, 300_000);
   },

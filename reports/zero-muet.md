@@ -1,11 +1,12 @@
 # Zéro muet — rapport du test
 
-Textes à écouter (uniques par niveau) : 3445
-- avec un fichier audio : 3253
+Textes à écouter (uniques par niveau) : 10948
+- avec un fichier audio : 10749
   dont graphie du Muṣḥaf, non jouée par le client (audioIdFor) : 349
-- en attente d’Ayyūb (récitation prévue, branchement à venir) : 187
+- en attente d’Ayyūb (récitation prévue, branchement à venir) : 190
 - à corriger dans les livres avant le gel (réplique arabe qui cite du français, cas b) : 5
-- cahier de lecture : éléments récités par Ayyūb (mécanisme propre) : 140
+- voix de synthèse À GÉNÉRER (garde levée, fichier absent, liste d’attente explicite) : 4
+- cahier de lecture : éléments récités par Ayyūb (mécanisme propre) : 308
 - MUETS sans solution prévue : 0
 
 ## Muets sans solution prévue
@@ -198,6 +199,15 @@ Textes à écouter (uniques par niveau) : 3445
 - ad10 · l24 gardé (coran) : ﴿وَقُل رَّبِّ زِدْنِى عِلْمًۭا﴾ (طه: ١١٤)
 - ad10 · l24 gardé (coran) : ﴿هَلْ يَسْتَوِى ٱلَّذِينَ يَعْلَمُونَ وَٱلَّذِينَ لَا يَعْلَمُونَ﴾ (الْإِسْرَاءُ: ٣٦)
 - ad10 · l24 gardé (coran) : ﴿وَتَوَاصَوْا۟ بِٱلْحَقِّ وَتَوَاصَوْا۟ بِٱلصَّبْرِ﴾ (الْبَقَرَةُ: ٣)
+- cahier de lecture ado1 · P092 : بِسْمِ اللَّهِ
+- cahier de lecture ado1 · P089 : يُوسُفُ وَآدَمُ: بِسْمِ اللَّهِ!
+- cahier de lecture ado1 · P100 : بِسْمِ اللَّهِ.
+
+## Voix de synthèse à générer (liste d’attente)
+- cahier « Je parle » ad5 · conversation C17 : إِنْ شَاءَ اللَّهُ، مَنْ جَاءَ فَأَهْلًا بِهِ.
+- cahier « Je parle » ad7 · conversation C07 : مَا شَاءَ اللَّهُ! لَا تَرْفَعْنَ الْقِدْرَ الْكَبِيرَ.
+- cahier « Je parle » ad8 · conversation C12 : مَا شَاءَ اللَّهُ! لَا يَنْجَحُ أَحَدٌ وَحْدَهُ.
+- cahier « Je parle » ad8 · conversation C13 : مَا شَاءَ اللَّهُ! إِنَّ الرِّفْقَ يَفْتَحُ الْقُلُوبَ.
 
 ## À corriger dans les livres
 - ad8 · l23 dialogue : كَتَبْتُ: « alors une période d'attente d'autres jours ». فَقَدْ تَعَلَّمْنَا أَنَّ الْعِدَّةَ مُصْطَلَحٌ فِقْهِيٌّ.
