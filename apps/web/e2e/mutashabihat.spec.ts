@@ -201,7 +201,8 @@ test.describe('mutashābihāt', () => {
       /noopener/,
     );
     // l'arabe n'est jamais sur la ligne du français
-    await expect(carte.locator('.quran-text')).not.toContainText(/[A-Za-z]{3,}/);
+    for (const ligne of await carte.locator('.quran-text').all())
+      await expect(ligne).not.toContainText(/[A-Za-z]{3,}/);
     for (const scheme of ['light', 'dark'] as const) {
       await page.emulateMedia({ colorScheme: scheme });
       const r = await new AxeBuilder({ page })
