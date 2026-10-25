@@ -60,6 +60,9 @@ export const PREMIER_USAGE_MODULES = [
   /src\/lib\/v4\/ecrans\.ts$/,
   // 25/10/2026 : carte d'entrée de « La prière de A à Z » (importée à la demande par la page « Vivre l'islam »)
   /src\/lib\/priere\/carte\.ts$/,
+  // 26/10/2026 (allègement, marge de l’appareil) : écran « Je parle » des leçons (interrupteur `conversation`, canal bêta), chargé
+  // au toucher du bouton ; son scénario est déjà « gardé au premier usage » : l’écran l’est aussi, hors ligne ensuite
+  /src\/lib\/conversation\/JeParle\.svelte$/,
   // 25/10/2026 : « Mots du Coran » (bande « Je reconnais X % des mots » du lecteur, importée à la demande quand `coran_mots` est ouvert)
   /src\/lib\/coran-mots\/index\.ts$/,
 ];
