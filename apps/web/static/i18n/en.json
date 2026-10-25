@@ -4051,5 +4051,7 @@
   "cahier.defi_titre": "Challenge",
   "cahier.defi_consigne": "Read the page without a mistake, then note how many items you read right on the first try.",
   "cahier.defi_score": "Score: {n} of {max}",
-  "cahier.defi_record": "Record: {n}"
+  "cahier.defi_record": "Record: {n}",
+  "cahier.defi_temps": "Your time: {s} s, mistakes included.",
+  "cahier.defi_erreurs": "{n, plural, =0 {No mistakes} one {# mistake} other {# mistakes}}"
 }

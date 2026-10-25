@@ -4051,5 +4051,7 @@
   "cahier.defi_titre": "Herausforderung",
   "cahier.defi_consigne": "Lies die Seite ohne Fehler und notiere, wie viele Elemente du gleich beim ersten Mal richtig gelesen hast.",
   "cahier.defi_score": "Punkte: {n} von {max}",
-  "cahier.defi_record": "Rekord: {n}"
+  "cahier.defi_record": "Rekord: {n}",
+  "cahier.defi_temps": "Deine Zeit: {s} s, Fehler eingerechnet.",
+  "cahier.defi_erreurs": "{n, plural, =0 {Kein Fehler} one {# Fehler} other {# Fehler}}"
 }

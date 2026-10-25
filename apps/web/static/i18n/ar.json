@@ -4051,5 +4051,7 @@
   "cahier.defi_titre": "التحدّي",
   "cahier.defi_consigne": "اقرأ الصفحة بلا خطأ، ثم سجّل عدد العناصر التي قرأتها صحيحة من المحاولة الأولى.",
   "cahier.defi_score": "النتيجة: {n} من {max}",
-  "cahier.defi_record": "الرقم القياسي: {n}"
+  "cahier.defi_record": "الرقم القياسي: {n}",
+  "cahier.defi_temps": "وقتك: {s} ث مع الأخطاء.",
+  "cahier.defi_erreurs": "{n, plural, =0 {بلا أخطاء} one {خطأ واحد} two {خطآن} few {# أخطاء} many {# خطأً} other {# خطأ}}"
 }

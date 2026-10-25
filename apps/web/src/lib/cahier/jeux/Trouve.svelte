@@ -224,10 +224,10 @@
         </div>
       {:else if mode === 'chrono'}
         <p class="bravo" data-testid="chrono-resultat">
-          <Bidi text={t('cahier.chrono_resultat', { s: fini.secondes })} />
+          <Bidi text={t('cahier.defi_temps', { s: fini.secondes })} />
         </p>
         <p>
-          <Bidi text={t('cahier.chrono_erreurs', { n: fini.erreurs })} />
+          <Bidi text={t('cahier.defi_erreurs', { n: fini.erreurs })} />
         </p>
         {#if medChrono > 0}
           <Medaille med={medChrono} grand />

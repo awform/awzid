@@ -24,6 +24,8 @@ import { totp } from './totp';
  */
 const H = { 'x-awform': '1' };
 const PAYS = 'LV';
+/** noms latins des signes : jamais dans les jeux (le signe est montré par lui-même et par son son) */
+const NOMS_LATINS = /fat[hḥ]a|kasra|[dḍ]amma|sou?kou?n|shadda|chadda|tanw[iī]n/i;
 const CAPTURES = process.env.CAHIER_JEUX_CAPTURES;
 const NIVEAUX = ['en1', 'ado1'] as const;
 type Niveau = (typeof NIVEAUX)[number];
@@ -466,9 +468,16 @@ test.describe('enfants (en1) : jeux de fin de grille', () => {
     await expect(page.getByTestId('jeu-colorie')).toBeEnabled();
     await expect(page.getByTestId('jeu-chrono')).toHaveCount(0);
     await expect(page.getByTestId('jeu-duel')).toHaveCount(0);
-    // aucune transcription latine du nom d'un signe sur la page
-    const texte = await page.locator('article.page-cahier').innerText();
-    expect(texte).not.toMatch(/fat[hḥ]a|kasra|[dḍ]amma|sou?kou?n|shadda|chadda|tanw[iī]n/i);
+    // aucune transcription latine du nom d'un signe dans les jeux (les intitulés du cahier lui-même sont ceux du livre)
+    await expect(page.getByTestId('jeux')).not.toHaveText(NOMS_LATINS);
+    await page.getByTestId('jeu-construis').click();
+    await poserLettres(page, 'en1', 'toucher');
+    await expect(page.getByTestId('cons-signes')).toBeVisible();
+    await expect(page.getByTestId('jeux')).not.toHaveText(NOMS_LATINS);
+    const aria = await page
+      .locator('[data-testid="jeux"] [aria-label]')
+      .evaluateAll((els) => els.map((e) => e.getAttribute('aria-label') ?? ''));
+    for (const a of aria) expect(a).not.toMatch(NOMS_LATINS);
     await cibles(page);
   });
 
@@ -659,7 +668,8 @@ test.describe('enfants (en1) : jeux de fin de grille', () => {
     const anim = await choix.nth(bonne).evaluate((e) => getComputedStyle(e).animationName);
     expect(anim).toBe('none');
     const trans = await choix.nth(bonne).evaluate((e) => getComputedStyle(e).transitionDuration);
-    expect(trans).toMatch(/^0s/);
+    // (l'application coupe les transitions à 0,01 ms quand l'élève demande moins de mouvement)
+    expect(parseFloat(trans)).toBeLessThan(0.001);
   });
 });
 
@@ -722,8 +732,11 @@ test.describe('ados (ado1) : défis, score et médailles', () => {
       await expect(page.getByTestId(`jeu-${j}`)).toBeEnabled();
     await expect(page.getByTestId('jeu-trouve')).toHaveCount(0);
     await expect(page.getByTestId('jeu-colorie')).toHaveCount(0);
-    const texte = await page.locator('article.page-cahier').innerText();
-    expect(texte).not.toMatch(/fat[hḥ]a|kasra|[dḍ]amma|sou?kou?n|shadda|chadda|tanw[iī]n/i);
+    await expect(page.getByTestId('jeux')).not.toHaveText(NOMS_LATINS);
+    await page.getByTestId('jeu-construis').click();
+    await poserLettres(page, 'ado1', 'toucher');
+    await expect(page.getByTestId('cons-signes')).toBeVisible();
+    await expect(page.getByTestId('jeux')).not.toHaveText(NOMS_LATINS);
   });
 
   test('défi chrono : 10 manches, +2 s par erreur, temps, médaille et record gardés', async ({
@@ -872,8 +885,11 @@ test.describe('ados (ado1) : défis, score et médailles', () => {
     await cibles(page);
   });
 
-  test('captures 390 px (clair et sombre) avec un jeu en cours', async ({ page }) => {
-    test.skip(!CAPTURES, 'CAHIER_JEUX_CAPTURES non défini');
+  test('captures 390 px (clair et sombre) avec un jeu en cours', async ({ page }, info) => {
+    test.skip(
+      !CAPTURES || info.project.name !== 'mobile-chromium',
+      'CAHIER_JEUX_CAPTURES non défini',
+    );
     test.setTimeout(300_000);
     const dir = join(CAPTURES!, 'ado1');
     mkdirSync(dir, { recursive: true });
@@ -908,7 +924,8 @@ test.describe('ados (ado1) : défis, score et médailles', () => {
     await page.getByTestId('construis').scrollIntoViewIfNeeded();
     await prendre('04-construis-en-cours');
     await page.getByTestId('jeu-fermer').click();
-    // défi chrono en cours (manche 4) puis résultat avec médaille
+    // défi chrono en cours (manche 4) puis résultat avec médaille (les sons du « Construis » précédent ne comptent pas)
+    attendus = sons.length;
     await page.getByTestId('jeu-chrono').click();
     for (let i = 0; i < 3; i++) {
       await expect(page.getByTestId('trouve-manche')).toContainText(`${i + 1} sur 10`);
@@ -947,8 +964,11 @@ test.describe('captures des enfants (en1)', () => {
   test.afterAll(async () => {
     if (adm) await remettre(adm);
   });
-  test('captures 390 px (clair et sombre) avec un jeu en cours', async ({ page }) => {
-    test.skip(!CAPTURES, 'CAHIER_JEUX_CAPTURES non défini');
+  test('captures 390 px (clair et sombre) avec un jeu en cours', async ({ page }, info) => {
+    test.skip(
+      !CAPTURES || info.project.name !== 'mobile-chromium',
+      'CAHIER_JEUX_CAPTURES non défini',
+    );
     test.setTimeout(300_000);
     await newAdult(page, 'cjenc', PAYS);
     await page.setViewportSize({ width: 390, height: 844 });

@@ -1,0 +1,37 @@
+/* FICHIER GÉNÉRÉ par `pnpm --filter @awform/web theme` depuis src/lib/theme/signes.ts — ne pas modifier à la main. */
+:root,
+[data-theme='clair'] {
+  --sg-fatha: #07553f;
+  --sg-kasra: #2c4a6e;
+  --sg-damma: #a67c1a;
+  --sg-soukoun: #38434d;
+  --sg-shadda: #a8613f;
+  --sg-fatha-l: #3a8a63;
+  --sg-kasra-l: #4d73a3;
+  --sg-damma-l: #b0821e;
+}
+
+[data-theme='clair'][data-mode='sombre'] {
+  --sg-fatha: #7adfb6;
+  --sg-kasra: #7f9fc9;
+  --sg-damma: #cf9f3a;
+  --sg-soukoun: #c9d1d9;
+  --sg-shadda: #e89a74;
+  --sg-fatha-l: #a6efcd;
+  --sg-kasra-l: #a9c1e4;
+  --sg-damma-l: #f0cf7a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode]):not([data-theme]),
+  :root:not([data-mode])[data-theme='clair'] {
+    --sg-fatha: #7adfb6;
+    --sg-kasra: #7f9fc9;
+    --sg-damma: #cf9f3a;
+    --sg-soukoun: #c9d1d9;
+    --sg-shadda: #e89a74;
+    --sg-fatha-l: #a6efcd;
+    --sg-kasra-l: #a9c1e4;
+    --sg-damma-l: #f0cf7a;
+  }
+}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import type { Med } from './modele';
 
@@ -18,7 +19,7 @@
       <circle class="anneau" cx="20" cy="33" r="11.5" />
       <text x="20" y="38.5" text-anchor="middle">{med}</text>
     </svg>
-    <span class="nom">{t(`cahier.med_${NOMS[med]}`)}</span>
+    <span class="nom"><Bidi text={t(`cahier.med_${NOMS[med]}`)} /></span>
   </span>
 {/if}
 

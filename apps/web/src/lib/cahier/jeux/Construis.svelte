@@ -5,11 +5,15 @@
   import type { LevelAudio } from '$lib/lecons-audio';
   import type { MotJeu, SigneCle, SigneJeu } from '../donnees';
   import { arreterSon, jouerElement } from '../audio';
+  import '$lib/theme/signes.css';
   import { glisser } from './glisser';
   import {
     CERCLE,
+    FAMILLE,
     MARQUES,
     casesASigner,
+    pastilleDouble,
+    voyelleDe,
     lettresJustes,
     motConstruit,
     signesJustes,
@@ -247,6 +251,17 @@
     if (j !== null) poserSigne(k, j);
   };
   const glyphe = (k: SigneCle) => CERCLE + MARQUES[k];
+  /**
+   * Couleur d'une case (jetons `sg-*`) : celle du signe posé ; une lettre de prolongation prend la couleur de la
+   * voyelle qui la précède, en version claire (`-l`), avec un trait prolongé. Hamza, ة, ى et lettre nue : encre.
+   */
+  function sgDe(j: number): string | undefined {
+    const k = poses[j];
+    if (k) return FAMILLE[k];
+    const avant = j > 0 ? poses[j - 1] : null;
+    const v = !mot.c[j]![1] && avant ? voyelleDe(avant) : null;
+    return v ? `${v}-l` : undefined;
+  }
   const construit = $derived(
     motConstruit(
       posees,
@@ -288,6 +303,7 @@
         class:asigner={phase === 'signes' && !!signe && !poses[j]}
         class:fixe={phase === 'signes' && !signe}
         data-testid="cons-case"
+        data-sg={sgDe(j)}
         data-case={j}
         data-depot={`case:${j}`}
         aria-label={p
@@ -295,7 +311,8 @@
           : t('cahier.cons_case', { n: j + 1 })}
         onclick={() => toucherCase(j)}
       >
-        {#if p}<span class="ar" lang="ar" dir="rtl">{p.l}{poses[j] ? MARQUES[poses[j]!] : ''}</span
+        {#if p}<span class="ar" lang="ar" dir="rtl"
+            ><Bidi text={p.l + (poses[j] ? MARQUES[poses[j]!] : '')} base="ar" /></span
           >{/if}
       </button>
     {/each}
@@ -315,7 +332,7 @@
           aria-label={t('cahier.cons_lettre', { l: tu.l })}
           onpointerdown={(e) => glisser(e, deposerLettre(tu.id))}
           onclick={(e) => toucherTuile(tu.id, e.detail === 0)}
-          ><span class="ar" lang="ar" dir="rtl">{tu.l}</span></button
+          ><span class="ar" lang="ar" dir="rtl"><Bidi text={tu.l} base="ar" /></span></button
         >
       {/each}
     </div>
@@ -325,6 +342,8 @@
         <button
           type="button"
           class="tuile signe"
+          class:double={pastilleDouble(s.k)}
+          data-sg={FAMILLE[s.k]}
           class:choisie={selection?.t === 's' && selection.k === s.k}
           data-testid="cons-signe"
           data-signe={s.k}
@@ -332,7 +351,7 @@
           aria-label={t('cahier.cons_signe', { s: glyphe(s.k) })}
           onpointerdown={(e) => glisser(e, deposerSigne(s.k))}
           onclick={(e) => toucherSigne(s.k, e.detail === 0)}
-          ><span class="ar" lang="ar" dir="rtl">{glyphe(s.k)}</span></button
+          ><span class="ar" lang="ar" dir="rtl"><Bidi text={glyphe(s.k)} base="ar" /></span></button
         >
       {/each}
     </div>
@@ -354,11 +373,15 @@
     <div class="compare" data-testid="cons-compare">
       <div>
         <span class="lib"><Bidi text={t('cahier.cons_ton_mot')} /></span>
-        <span class="ar grand" lang="ar" dir="rtl" data-testid="cons-ton-mot">{construit}</span>
+        <span class="ar grand" lang="ar" dir="rtl" data-testid="cons-ton-mot"
+          ><Bidi text={construit} base="ar" /></span
+        >
       </div>
       <div>
         <span class="lib"><Bidi text={t('cahier.cons_modele')} /></span>
-        <span class="ar grand" lang="ar" dir="rtl" data-testid="cons-modele">{mot.ar}</span>
+        <span class="ar grand" lang="ar" dir="rtl" data-testid="cons-modele"
+          ><Bidi text={mot.ar} base="ar" /></span
+        >
       </div>
     </div>
     <button type="button" class="bouton plein" data-testid="cons-suivant" onclick={suivant}
@@ -462,6 +485,56 @@
     border-color: var(--warn-ink);
     background: var(--warn-bg);
     animation: secoue 0.4s;
+  }
+  /* une couleur FIXE par signe (jetons `sg-*`), toujours avec le signe lui-même ; ni le tajwīd ni les lettres étudiées */
+  [data-sg='fatha'] {
+    --sg: var(--sg-fatha);
+  }
+  [data-sg='kasra'] {
+    --sg: var(--sg-kasra);
+  }
+  [data-sg='damma'] {
+    --sg: var(--sg-damma);
+  }
+  [data-sg='soukoun'] {
+    --sg: var(--sg-soukoun);
+  }
+  [data-sg='shadda'] {
+    --sg: var(--sg-shadda);
+  }
+  [data-sg='fatha-l'] {
+    --sg: var(--sg-fatha-l);
+  }
+  [data-sg='kasra-l'] {
+    --sg: var(--sg-kasra-l);
+  }
+  [data-sg='damma-l'] {
+    --sg: var(--sg-damma-l);
+  }
+  .tuile.signe[data-sg] {
+    color: var(--sg);
+    border-color: var(--sg);
+    box-shadow: 0 2px 0 var(--sg);
+  }
+  /* tanwīn : la couleur de sa voyelle, avec une pastille doublée */
+  .tuile.signe.double {
+    outline: 2px solid var(--sg);
+    outline-offset: 3px;
+  }
+  .case[data-sg] .ar {
+    color: var(--sg);
+  }
+  .case[data-sg] {
+    border-bottom: 5px solid var(--sg);
+  }
+  /* voyelle longue : couleur de la voyelle brève en version claire, avec un trait prolongé */
+  .case[data-sg$='-l'] {
+    border-bottom-width: 5px;
+    border-bottom-style: double;
+    background-image: linear-gradient(to left, var(--sg), transparent);
+    background-size: 100% 3px;
+    background-repeat: no-repeat;
+    background-position: bottom;
   }
   .tuile {
     border-style: solid;

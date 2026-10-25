@@ -21,6 +21,25 @@ export const MARQUES: Record<SigneCle, string> = {
   shadda_kasra: c(0x651, 0x650),
   shadda_damma: c(0x651, 0x64f),
 };
+/** famille de couleur de chaque signe (jetons `sg-*`, src/lib/theme/signes.ts) : le tanwīn prend la couleur de sa voyelle */
+export const FAMILLE: Record<SigneCle, 'fatha' | 'kasra' | 'damma' | 'soukoun' | 'shadda'> = {
+  fatha: 'fatha',
+  kasra: 'kasra',
+  damma: 'damma',
+  soukoun: 'soukoun',
+  fathatan: 'fatha',
+  kasratan: 'kasra',
+  dammatan: 'damma',
+  shadda_fatha: 'shadda',
+  shadda_kasra: 'shadda',
+  shadda_damma: 'shadda',
+};
+export const pastilleDouble = (k: SigneCle): boolean => k.endsWith('tan');
+/** voyelle brève (couleur d'une voyelle longue) portée par un signe : fatḥa, kasra ou ḍamma ; sinon rien */
+export function voyelleDe(k: SigneCle): 'fatha' | 'kasra' | 'damma' | null {
+  const v = k.replace('shadda_', '').replace(/tan$/, '');
+  return v === 'fatha' || v === 'kasra' || v === 'damma' ? v : null;
+}
 /** cercle pointillé (U+25CC) : porte le signe montré seul */
 export const CERCLE = c(0x25cc);
 

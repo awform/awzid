@@ -134,5 +134,7 @@
   "cahier.defi_titre": "Défi",
   "cahier.defi_consigne": "Lis la page sans te tromper, puis note combien d'éléments tu as lus justes du premier coup.",
   "cahier.defi_score": "Score : {n} sur {max}",
-  "cahier.defi_record": "Record : {n}"
+  "cahier.defi_record": "Record : {n}",
+  "cahier.defi_temps": "Ton temps : {s} s, erreurs comprises.",
+  "cahier.defi_erreurs": "{n, plural, =0 {Aucune erreur} one {# erreur} other {# erreurs}}"
 }

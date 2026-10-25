@@ -9,6 +9,26 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+<!-- cahiers-en-ado-25-10 -->
+
+---
+
+## 25/10/2026 — Cahiers de lecture des enfants (en1) et des ados (ado1) : intégration, vidéos vivantes, jeux de fin de grille ; branche `cahiers-lecture-en-ado-wip` ; NON déployé
+
+Même interrupteur que le cahier d'Adultes 1 (`cahier_lecture`, coupé par défaut ; `video_v2` pour les vidéos). Rien déployé, aucun audio installé.
+
+- **Données** : sources `packages/content/data/cahier/{en1,ado1}.json` (+ `.audio.json`) copiées du dossier de conception ; `scripts/cahier-donnees.mjs` les convertit (`static/cahier-data/{en1,ado1}.json`, ad1 inchangé octet pour octet). Nouveaux blocs (cellules en désordre, « je colorie », « je trouve la lettre », mots avec image, « je relie » → mots de la page : les images d'objets du livre imprimé ne sont pas dans l'application). Le `défi` (score sur N, paliers de la mission) des ados est repris.
+- **Grilles ouvertes dès que leurs lettres sont enseignées** : chaque case de grille et chaque mot de la ligne de mots porte la leçon `n` où ses lettres et ses signes sont enseignés (`scripts/cahier-regles.mjs`, d'après la concordance des plans : en1 voyelles L1-L3, sons longs L15-L17, soukoun L18, tanwīn et ة L19, chadda L20 ; ado1 voyelles brèves L1, longs et soukoun L5, tanwīn et chadda L6, ة/ى/article L7, hamza L8). La grille du ب s'ouvre à la leçon 1 (case par case : cases fermées avec cadenas, « La suite de cette grille s'ouvre après : Leçon X ») ; lecture guidée et vidéo ne montrent jamais une case fermée (`filtrerPage`).
+- **Style** : gros caractères et grandes cibles pour les enfants (`data-public`) ; ados : « Défi » de la page (score, médailles bronze/argent/or, record gardé), mission du bilan avec médaille.
+- **Jeux de fin de grille** (remplacent la version papier dans l'application ; le PDF garde la sienne ; chargés à la demande, `lib/cahier/jeux/`) : « Construis le mot » (lettres glissées de droite à gauche, puis le signe sur chaque lettre ; glissement au doigt et à la souris sans bibliothèque, mode « sans glisser » toucher-puis-toucher et clavier ; on écoute le mot construit et on le compare au modèle ; le signe est montré par lui-même sur un cercle pointillé et par son son, la syllabe de la grille qui le porte ; AUCUN nom latin), « Trouve la syllabe » (3 choix, « Réessaie », aucune pénalité), « Je colorie » pour les enfants ; défi chrono (10 manches, +2 s par erreur), duel à deux et « Construis » rapide pour les ados, avec score et médailles. Une couleur fixe par signe (décision de la direction artistique), jetons `sg-*` dans `src/lib/theme/signes.ts` (+ `signes.css` généré par `pnpm theme`), tests de contraste et de non-conflit avec le tajwīd et les lettres étudiées.
+- **Données des jeux** générées depuis le cahier (`scripts/cahier-jeux.mjs`) : uniquement des mots et syllabes du cahier (hors mots des bilans à froid, hors mots attestés dans le Coran pour « Construis »), décodables à la leçon annoncée, chacun avec son audio.
+- **Audio** : l'application réunit le niveau du livre et celui du cahier (`cahier-lecture-en1`, `-ado1`).
+- **Zéro muet** : le test couvre maintenant les trois cahiers et les jeux ; 3 textes d'ado1 qui contiennent « بسم الله » ajoutés à `ayyub-complement.tsv` (décision par règle, à contrôler par le référent). Aucune scène de vidéo n'est muette ; 14 titres de textes suivis (5 en1, 9 ado1) n'ont pas encore de fichier audio (à générer).
+- **Poids** : appareil de l'élève 346,8 Ko, **marge 3,2 Ko (3 229 o)** ; le cahier à la demande passe de 14,7 à 28,5 Ko (garde portée de 24 à 32 Ko). Piège noté : une `action` Svelte (`use:`) dans du code à la demande ajoute son moteur à la coquille (+0,3 Ko) : le glisser-déposer est écrit avec de simples événements.
+- **Tests** : svelte-check, eslint et prettier 0 erreur ; unitaires web 1 027 réussis, API 541, contenu 60, zéro muet vert ; nouveaux tests `jeux.test.ts`, `signes.test.ts`, `video-cahier-niveau1.test.ts`, e2e `cahier-jeux.spec.ts` (ouverture, déblocage, vidéos, Construis au doigt, à la souris, au toucher et au clavier, Trouve, colorie, chrono, duel, défi, bilan, AA clair et sombre, cibles 44 px, animations réduites) ; **e2e complète : 993 réussis, 175 ignorés, 0 échec** (`--retries=1 --workers=3`, 36 min, avant la palette des signes), puis cahier-jeux + cahier + video-cahier : 93 réussis.
+- **Captures** 390 px, clair et sombre, avec un jeu en cours : `design/cahier_lecture_en1/captures_app/` et `cahier_lecture_ado1/captures_app/`.
+- **Reste** : audio de 14 titres de textes ; images d'objets des pages de mots ; jeux « L'intrus » et « Mots cachés » des ados (non repris) ; téléchargement hors ligne de l'audio du cahier (`cahier-lecture-*`) ; mots à `ﷺ` (champ `dire`) ; avis du directeur artistique sur la mise en page des jeux.
+<!-- /cahiers-en-ado-25-10 -->
 <!-- priere-25-10 -->
 
 ---

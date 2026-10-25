@@ -4051,5 +4051,7 @@
   "cahier.defi_titre": "Reto",
   "cahier.defi_consigne": "Lee la página sin equivocarte y anota cuántos elementos has leído bien a la primera.",
   "cahier.defi_score": "Puntuación: {n} de {max}",
-  "cahier.defi_record": "Récord: {n}"
+  "cahier.defi_record": "Récord: {n}",
+  "cahier.defi_temps": "Tu tiempo: {s} s, errores incluidos.",
+  "cahier.defi_erreurs": "{n, plural, =0 {Ningún error} one {# error} other {# errores}}"
 }

@@ -391,6 +391,51 @@ describe('jeux : uniquement des éléments déjà vus, décodables, avec leur au
   });
 });
 
+describe('textes du cahier : chaque appel t() fournit exactement les arguments du message', () => {
+  // (une clé réutilisée par erreur avec un autre message — « valeur manquante : mpm » — se voit ici, pas en production)
+  const textes = JSON.parse(lire('./textes-fr.json')) as Record<string, string>;
+  const args = (msg: string) =>
+    [...msg.matchAll(/\{\s*([A-Za-z_]\w*)\s*[,}]/g)].map((m) => m[1]!).sort();
+  const dossiers = ['./', './jeux/'];
+  it('PageVue, Cahier, Atelier, Mesure et les jeux', () => {
+    let verifies = 0;
+    for (const d of dossiers)
+      for (const f of readdirSync(fileURLToPath(new URL(d, import.meta.url))).filter((x) =>
+        x.endsWith('.svelte'),
+      )) {
+        const src = lire(`${d}${f}`);
+        for (const m of src.matchAll(/\bt\(\s*'([a-z_.0-9]+)'\s*(?:,\s*\{([^}]*)\})?\s*\)/g)) {
+          const msg = textes[m[1]!];
+          if (msg === undefined) continue;
+          const donnes = (m[2] ?? '')
+            .split(',')
+            .map((s) => s.trim().split(':')[0]!.trim())
+            .filter(Boolean)
+            .sort();
+          expect(donnes, `${f} : ${m[1]}`).toEqual(args(msg));
+          verifies++;
+        }
+      }
+    expect(verifies).toBeGreaterThan(60);
+  });
+  it('chaque clé « cahier.* » des jeux existe dans les cinq langues avec les mêmes arguments', () => {
+    const langues = ['en', 'ar', 'de', 'es'].map(
+      (l) => JSON.parse(lire(`../../../static/i18n/${l}.json`)) as Record<string, string>,
+    );
+    const cles = Object.keys(textes).filter((k) =>
+      /^cahier\.(jeu_|cons_|trouve_|chrono_temps|chrono_erreur$|chrono_consigne|chrono_vise|duel_|med_|defi_|colorie|chasse_|grille_suite|reessaie)/.test(
+        k,
+      ),
+    );
+    expect(cles.length).toBeGreaterThan(50);
+    for (const k of cles)
+      for (const l of langues) {
+        expect(l[k], k).toBeTruthy();
+        expect(args(l[k]!), k).toEqual(args(textes[k]!));
+      }
+  });
+});
+
 describe('aucune transcription latine des signes', () => {
   const NOMS = /fat[hḥ]a|kasra|[dḍ]amma|sou?kou?n|suk[uū]n|shadda|chadda|tanw[iī]n|tanween|sukun/i;
   const dossier = fileURLToPath(new URL('./jeux/', import.meta.url));

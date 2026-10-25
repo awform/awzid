@@ -170,7 +170,7 @@
               />
             </p>
             {#if pub === 'ado'}
-              <p><Bidi text={t('cahier.chrono_erreurs', { n: bilan.erreurs })} /></p>
+              <p><Bidi text={t('cahier.defi_erreurs', { n: bilan.erreurs })} /></p>
               {#if bilan.med > 0}<Medaille med={bilan.med} grand />{/if}
             {/if}
             <button
@@ -221,7 +221,9 @@
   .jeu {
     display: grid;
     gap: 0.2rem;
+    grid-template-columns: 1fr;
     justify-items: start;
+    width: 100%;
     min-height: 4.4rem;
     padding: 0.7rem 1rem;
     text-align: start;
