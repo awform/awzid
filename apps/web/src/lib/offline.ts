@@ -10,7 +10,7 @@
 import type { UnitDetail } from './api';
 import { delMany, get, getAll, getAllByIndex, kvGet, kvSet, put, putMany } from './idb';
 import { catalogUrl, t } from './i18n';
-import { VIDEO_NIVEAUX } from '@awform/content/video-niveaux';
+import { estNiveauVideo } from '@awform/content/video-niveaux';
 import { CAHIER_NIVEAUX } from './cahier-pages';
 import { fn } from './fonctions.svelte';
 
@@ -318,7 +318,7 @@ async function gardeVivante(level: string): Promise<void> {
   // cahier de lecture (20/10/2026) : son code (liste /_app/cahier.json) et ses pages (IndexedDB) gardés avec le niveau
   if (CAHIER_NIVEAUX.includes(level) && fn('cahier_lecture')) await gardeCahier(level);
   // vidéos vivantes (19/10/2026) : le lecteur des niveaux qui en ont est gardé aussi (vidéo hors ligne)
-  if (VIDEO_NIVEAUX.includes(level))
+  if (estNiveauVideo(level))
     await fetch('/_app/video.json')
       .then((r) => (r.ok ? (r.json() as Promise<string[]>) : []))
       .then((l) =>

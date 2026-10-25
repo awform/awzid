@@ -12,7 +12,7 @@ import {
   fonctionsPour,
   type ContexteFonction,
 } from '@awform/school';
-import { VIDEO_NIVEAUX } from '@awform/content/video-niveaux';
+import { VIDEO_NIVEAUX, estNiveauVideo } from '@awform/content/video-niveaux';
 import {
   STATUTS_VALIDES,
   contenu,
@@ -76,6 +76,18 @@ describe('vidéos vivantes : interrupteur « video_vivante »', () => {
       'ado1',
       'ado2',
     ]);
+  });
+});
+
+describe('vidéos vivantes : estNiveauVideo (appareil élève) = VIDEO_NIVEAUX', () => {
+  it('même ensemble que la liste, rien d’autre', () => {
+    for (const n of VIDEO_NIVEAUX) expect(estNiveauVideo(n), n).toBe(true);
+    for (const n of ['ad0', 'ad01', 'ad11', 'en3', 'ado3', 'ra1', 'xad1', 'ad', '', 'AD1'])
+      expect(estNiveauVideo(n), n).toBe(false);
+    const faux = ['ad', 'en', 'ado'].flatMap((p) =>
+      Array.from({ length: 20 }, (_, i) => p + (i + 1)).filter((n) => !VIDEO_NIVEAUX.includes(n)),
+    );
+    for (const n of faux) expect(estNiveauVideo(n), n).toBe(false);
   });
 });
 
