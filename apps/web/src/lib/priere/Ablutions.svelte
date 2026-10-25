@@ -105,7 +105,8 @@
           type="button"
           aria-pressed={progres.genre === g}
           data-genre={g}
-          onclick={() => changerGenre(g as Genre)}><Bidi text={t(`priere.${g}`)} /></button
+          onclick={() => changerGenre(g as Genre)}
+          ><Bidi text={t(g === 'homme' ? 'priere.homme' : 'priere.femme')} /></button
         >
       {/each}
     </div>
