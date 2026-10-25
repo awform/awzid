@@ -16,6 +16,8 @@
 | Journal d'audit | 12 mois (D9) ; cibles pseudonymisées à l'effacement d'un compte | `purge.ts` |
 | Voix sur l'appareil | 7 jours | application |
 | Récitation envoyée à l'enseignant | durée de la classe : 1 à 30 jours (14 par défaut), ou suppression par la famille | `recitations.ts` |
+| Hifẓ en classe, **mode enregistrement** (adultes consentants, interrupteur `hifz_classe`) | **30 jours au plus** : durée de la classe (1 à 30 jours, 14 par défaut), puis suppression automatique chaque nuit (travailleur) ; suppression par l'élève à tout moment ; l'annotation du maître (erreurs cochées, issue, remarque) ne contient **aucune voix** et se garde comme le suivi pédagogique | `hifz-classe.ts`, `recitations.ts` (`purgeExpiredRecitations`) |
+| Hifẓ en classe, **mode direct** (enfants et tous les autres élèves) | **aucun enregistrement, jamais** (contrainte de la base) ; seules les erreurs cochées (verset, rang du mot, type) sont gardées, avec la séance | `hifz-classe.ts` |
 | Voix analysée par l'IA (« Réciter et vérifier ») | **aucune** (mémoire seulement) | `ecoute-ia.ts` |
 | Messages école ↔ famille | 12 mois après la fin de l'année scolaire (D11) | `purge.ts` |
 | Signalements « Signaler un problème » : **capture d'écran** | 90 jours | `problemes.ts` (`purgeProblemes`) |

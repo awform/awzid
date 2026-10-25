@@ -59,6 +59,9 @@ beforeAll(async () => {
   ajouterTextes(
     JSON.parse(readFileSync(join(SRC, 'lib', 'mutashabihat', 'textes-fr.json'), 'utf8')),
   );
+  ajouterTextes(
+    JSON.parse(readFileSync(join(SRC, 'lib', 'hifz-classe', 'textes-fr.json'), 'utf8')),
+  );
 });
 afterEach(() => setLocale('fr'));
 

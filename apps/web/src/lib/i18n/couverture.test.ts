@@ -34,6 +34,8 @@ const EMBARQUES = [
   join(SRC, 'lib', 'khatma', 'textes-fr.json'),
   // mutashābihāt du hifẓ (25/10/2026)
   join(SRC, 'lib', 'mutashabihat', 'textes-fr.json'),
+  // hifẓ en classe (25/10/2026)
+  join(SRC, 'lib', 'hifz-classe', 'textes-fr.json'),
 ];
 const catalogues: Record<string, Record<string, string>> = Object.fromEntries([
   ...SPACE_CATALOGS.map((n) => [n, json(join(STATIC, `fr-${n}.json`))]),

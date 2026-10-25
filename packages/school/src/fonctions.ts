@@ -35,6 +35,7 @@ export const FONCTION_CLES = [
   'parcours_priere',
   'khatma_wird',
   'mutashabihat',
+  'hifz_classe',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -131,6 +132,11 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // révision, test au hasard qui mélange les jumeaux ; SEULES les paires « reconnues par la source » (349). COUPÉ par défaut partout ;
   // l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur laisse le hifẓ entier, sans alerte.
   mutashabihat: { defaut: 'off' },
+  // Hifẓ en classe (25/10/2026) : mode « direct » (l'élève récite devant le maître, qui coche les erreurs mot par mot sur sa tablette,
+  // SANS AUCUN enregistrement : mode des enfants), mode « enregistrement » (adultes consentants, durée de conservation limitée puis
+  // suppression automatique), validation de la portion par le maître, suivi pour les parents. COUPÉ par défaut partout ; l'administrateur
+  // l'ouvre au « canal bêta » ; couper l'interrupteur laisse l'espace enseignant entier, sans cet outil.
+  hifz_classe: { defaut: 'off' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

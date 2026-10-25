@@ -45,6 +45,7 @@ describe('F5 — interrupteurs gardés sur l’appareil', () => {
       'cahier_parler',
       'conversation',
       'design_v4',
+      'hifz_classe',
       'khatma_wird',
       'mutashabihat',
       'parcours_priere',

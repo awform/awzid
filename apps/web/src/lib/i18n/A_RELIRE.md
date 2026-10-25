@@ -236,3 +236,5 @@ Claude, relecteur provisoire, en **brouillon** dans les quatre langues en prépa
 (`lib/mutashabihat/textes-fr.json`). Termes : « aleya » (espagnol), « Vers » et « Zwilling » (allemand), « آية مشابهة » (arabe) ;
 l’élève est TUTOYÉ. Les repères « proposés par Awzid » et les noms d’ouvrages viennent de la carte du référent (français et
 translittération latine, jamais traduits). À relire par le référent : le repère neutre des formules communes (`mt.repere_commun`).
+## Hifẓ en classe (25/10/2026, interrupteur `hifz_classe`) — brouillons à relire
+Textes `hc.*` (mode direct, mode enregistrement, séances, suivi des parents) et `fn.hifz_classe` traduits par Claude, relecteur provisoire, en **brouillon** dans les quatre langues en préparation ; le français est embarqué avec le module (`lib/hifz-classe/textes-fr.json`). À faire relire par un maître : les quatre types d’erreur (oubli, ajout, changement, tajwīd) et leurs libellés, la phrase qui annonce la suppression automatique des enregistrements (30 jours au plus).

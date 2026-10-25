@@ -23,6 +23,7 @@ import { registerToday } from './today.js';
 import { registerSchool } from './school.js';
 import { registerActivities } from './activities.js';
 import { recitationKeyFromEnv, registerRecitations } from './recitations.js';
+import { registerHifzClasse } from './hifz-classe.js';
 import { registerEcouteIa, type OptionsEcoute } from './ecoute-ia.js';
 import { messageKeyFromEnv, registerMessagerie } from './messagerie.js';
 import { registerPush } from './push.js';
@@ -275,6 +276,12 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   registerSchool(app, db, edition, signer);
   registerActivities(app, db, edition, opts.demoLogin === true, mailer.mode !== 'inactif');
   registerRecitations(
+    app,
+    db,
+    opts.recitationKey === undefined ? recitationKeyFromEnv() : opts.recitationKey,
+  );
+  // 25/10/2026 : hifẓ en classe (mode direct sans enregistrement, mode enregistrement des adultes, suivi des parents)
+  registerHifzClasse(
     app,
     db,
     opts.recitationKey === undefined ? recitationKeyFromEnv() : opts.recitationKey,

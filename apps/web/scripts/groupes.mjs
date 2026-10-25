@@ -59,6 +59,8 @@ export const EN_LIGNE_MODULES = [
   /src\/lib\/khatma\/carte\.ts$/,
   // 25/10/2026 : mutashābihāt du hifẓ (alerte « verset jumeau », carte, test des jumeaux) et leurs données, à la demande
   /src\/lib\/mutashabihat\/index\.ts$/,
+  // 25/10/2026 : hifẓ en classe (maître : séances, annotation ; élève adulte : enregistrement ; famille : suivi), à la demande
+  /src\/lib\/hifz-classe\/(classe|eleve)\.ts$/,
   /src\/lib\/quran\/LignesExactes\.svelte$/,
   /src\/lib\/TutorPanel\.svelte$/,
   /src\/lib\/avis\/AvisDialog\.svelte$/,

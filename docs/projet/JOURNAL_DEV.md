@@ -9,6 +9,25 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+<!-- hifz-classe-25-10 -->
+
+---
+
+## 25/10/2026 — Hifẓ en classe (interrupteur `hifz_classe`, COUPÉ par défaut) ; branche `hifz-classe-wip` ; NON déployé
+
+Troisième chantier « programme Coran ». Interrupteur `hifz_classe` : coupé par défaut partout, à ouvrir au « canal bêta » ; coupé : l'espace enseignant, la classe de l'élève et le tableau des parents restent entiers, sans l'outil, et le serveur refuse les routes (`fonction_coupee`). Aucun texte coranique n'est écrit par l'outil : les versets viennent de Tanzil, le maître coche des **rangs de mots** (`texte.split(' ')`), jamais une explication.
+
+- **Mode DIRECT (enfants, ados, tout élève)** : l'élève récite devant le maître, qui coche **mot par mot** sur sa tablette quatre types d'erreurs (oubli, ajout, changement, tajwīd). **Aucun enregistrement, jamais** : la base l'interdit (contrainte `hifz_classe_seance_direct` : une séance « direct » n'a pas de lien vers un audio), et un test vérifie qu'une récitation ne peut pas y être rattachée.
+- **Mode ENREGISTREMENT (adultes consentants seulement, accord `envoi_recitation`)** : l'élève s'enregistre ; le maître écoute plus tard et annote. La récitation réutilise le lot 16 : chiffrée (AES-256-GCM), **conservée 30 jours au plus** (durée de la classe : 1 à 30 jours, 14 par défaut), **suppression automatique chaque nuit** (`purgeExpiredRecitations`), suppression par l'élève à tout moment ; l'annotation (erreurs cochées, issue, remarque de 300 caractères au plus) **ne contient aucune voix** et reste après la purge (un test fait passer le temps et vérifie les deux). Un enfant ou un ado n'accède jamais à ce mode (refus côté serveur, pas seulement masqué).
+- **Le maître valide la portion** (ou la remet à reprendre) : un événement « enseignant » entre dans le journal de hifẓ de l'élève (qualité 3 sans erreur, 2 avec erreurs, 1 ou 0 si à reprendre) et **chaque erreur cochée devient une marque** (source `enseignant`) dans sa carte des erreurs : le verset revient dans la révision espacée. L'accès est réservé au **maître de la classe** (second facteur) : ni un autre maître, ni la famille.
+- **Les parents voient le suivi** (`/famille`, « Hifẓ en classe ») : portions, issue, erreurs par type, remarque ; jamais un audio. L'élève voit le sien dans « Ma classe ».
+- **Migration** `0056_hifz_classe.sql` (deux tables + la source `enseignant` des marques) ; le retour arrière manuel est écrit en tête du fichier.
+- **Poids** : tout est chargé à la demande (`lib/hifz-classe/{classe,eleve}.ts`, groupe « en ligne ») ; l'élève n'a dans la coquille que la clé du registre et des appels à la demande. Appareil de l'élève : **346,1 Ko, marge 3,9 Ko (3 970 o)**.
+- **Textes** : français embarqués, brouillons en, es, de, ar (`A_RELIRE.md`).
+- **Documentation juridique** : `DUREES_CONSERVATION.md` (deux lignes), `REGISTRE_TRAITEMENTS.md` (traitement 5 bis), `EXPLOITATION.md` § 19 (ouvrir, vérifier la purge, retour arrière).
+- **Tests** : `hifz-classe.test.ts` (API : règles pures, coupé par défaut, direct, enregistrement et purge à 30 jours, accès, parents), `hifz-classe.test.ts` (web : textes, groupes, règles), e2e `hifz-classe.spec.ts`.
+- **Reste** : relecture par un maître des quatre types d'erreurs et des libellés ; décision du référent sur la durée de 30 jours (max codé : `HC_CONSERVATION_MAX_JOURS`) ; mode enregistrement ouvert aux ados seulement avec l'accord du parent (non fait, volontairement).
+<!-- /hifz-classe-25-10 -->
 <!-- mutashabihat-25-10 -->
 
 ---
