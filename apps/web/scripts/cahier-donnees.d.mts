@@ -1,3 +1,4 @@
 export const NIVEAUX_CAHIER: string[];
-export function convertir(src: unknown, niveau: string, garde?: string[]): unknown;
-export function concordance(src: unknown, niveau: string): Record<string, number[]>;
+export const NIVEAUX_JEUX: string[];
+export function convertir(src: unknown, niveau: string, garde?: string[], audio?: unknown): unknown;
+export function concordance(cahier: unknown, niveau: string): Record<string, number[]>;

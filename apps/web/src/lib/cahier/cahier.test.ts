@@ -17,7 +17,7 @@ import {
 } from '@awform/school';
 import { audioFileId, looksQuranic } from '@awform/content/audio-cle';
 import { concordance, convertir } from '../../../scripts/cahier-donnees.mjs';
-import { CAHIER_NIVEAUX, CAHIER_UNITES } from '../cahier-pages';
+import { CAHIER_NIVEAUX, CAHIER_SANS_PAGE } from '../cahier-pages';
 import { ecrireProgres, idPage, lireProgres, pageDuJour, pageFaite, progresVide } from './progres';
 import {
   elementsDeLaPage,
@@ -101,7 +101,7 @@ describe('cahier de lecture : données de l’application tirées de la source u
       app,
     );
     expect(app.pages).toHaveLength(source.pages.length);
-    expect(CAHIER_NIVEAUX).toEqual(['ad1']);
+    expect(CAHIER_NIVEAUX).toEqual(['ad1', 'en1', 'ado1']);
   });
   it('arabe octet pour octet : chaque texte arabe affiché existe tel quel dans la source', () => {
     const src = new Set(chaines(source));
@@ -148,9 +148,18 @@ describe('cahier de lecture : données de l’application tirées de la source u
     expect(audioFileId('بَ')).toMatch(/^[0-9a-f]{40}$/);
   });
   it('concordance : pages du parcours par leçon d’Adultes 1 (rattrapage hors parcours)', () => {
-    const c = concordance(source, 'ad1');
-    expect(CAHIER_UNITES).toEqual(Object.keys(c).filter((u) => u !== 'ad1.l00'));
-    expect(CAHIER_UNITES.every((k) => /^ad1\.l\d\d$/.test(k))).toBe(true);
+    const c = concordance(app, 'ad1');
+    const unites = Object.keys(c).filter((u) => u !== 'ad1.l00');
+    expect(unites.every((k) => /^ad1\.l\d\d$/.test(k))).toBe(true);
+    // la coquille (liste compacte en plages) répond comme la concordance, pour chaque unité de 1 à 30
+    // les unités d'Adultes 1 vont de l01 à l25 : seule la leçon 23 n'a pas de page (son lien ouvre le sommaire)
+    const sans = Array.from(
+      { length: 25 },
+      (_, i) => `ad1.l${String(i + 1).padStart(2, '0')}`,
+    ).filter((id) => !unites.includes(id));
+    expect(sans).toEqual(['ad1.l23']);
+    // la coquille liste les unités sans page de tous les cahiers (pas de lien « page du jour » pour elles)
+    expect(CAHIER_SANS_PAGE).toEqual(['ad1.l23', 'ado1.l05']);
     expect(c['ad1.l01']).toEqual([4]);
     const hors = app.pages.filter((p) => p.hors).map((p) => p.num);
     expect(hors).toHaveLength(11);
@@ -161,7 +170,7 @@ describe('cahier de lecture : données de l’application tirées de la source u
     ).toEqual([]);
     // chaque page du parcours se lit après une leçon du livre (ou avant la leçon 1)
     for (const p of app.pages.filter((x) => !x.hors))
-      expect(p.n === 0 || CAHIER_UNITES.includes(`ad1.${p.apres}`), p.id).toBe(true);
+      expect(p.n === 0 || unites.includes(`ad1.${p.apres}`), p.id).toBe(true);
   });
   it('bilans : chaque mot porte sa difficulté, et sa page de rattrapage existe', () => {
     const bilans = app.pages.filter((p) => p.type === 'bilan');

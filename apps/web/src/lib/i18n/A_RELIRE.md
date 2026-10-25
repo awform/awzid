@@ -215,3 +215,11 @@ relecteur provisoire, en **brouillon** dans les quatre langues en préparation �
 textes de l'**interface** sont traduits : le contenu de la prière (`packages/content/data/priere/`) reste en français
 (et en arabe) tant que le référent n'a pas validé les traductions. Termes : « aleya » (espagnol), « Quran » (anglais),
 « Vers » (allemand), « آية » (arabe) ; l'élève est TUTOYÉ (arabe : singulier).
+Cahiers de lecture des enfants (en1) et des ados (ado1) (25/10/2026) : 61 textes `cahier.*` (jeux de fin de grille « Construis
+le mot », « Trouve la syllabe », « Je colorie », défi chrono, duel, médailles de bronze, d'argent et d'or, défi de la page,
+grilles ouvertes case par case) traduits par Claude, relecteur provisoire, en **brouillon** dans les quatre langues en
+préparation. Le français est embarqué avec le cahier (`lib/cahier/textes-fr.json`). Le lien de retour `cahier.retour` n'est
+plus propre à Adultes 1 (« Retour aux leçons »). Choix à vérifier : l'élève est TUTOYÉ ; « Réessaie » plutôt que « faux »
+(les enfants ne sont jamais pénalisés) ; AUCUN nom de signe en lettres latines dans les jeux (le signe est montré par lui-même
+et par son son) ; « Joueur 1 / Joueur 2 » du duel ; consignes de glisser-déposer et du mode « sans glisser » (touche la lettre,
+puis la case ; au clavier, Tab puis Entrée).

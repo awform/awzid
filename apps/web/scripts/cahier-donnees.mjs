@@ -1,18 +1,24 @@
 // Cahier de lecture (20/10/2026) — données de l'APPLICATION tirées de la source unique du cahier
-// (packages/content/data/cahier/<niveau>.json, générée par application/design/cahier_lecture_ad1/donnees/etape2_cahier.ps1 :
+// (packages/content/data/cahier/<niveau>.json, générée par application/design/cahier_lecture_<niveau>/donnees/etape2_cahier.ps1 :
 // la même source sert au livre imprimé, à l'application et aux vidéos vivantes).
 //  - static/cahier-data/<niveau>.json : pages allégées (ni sources ni comptes d'impression), chargées à la demande par le
 //    cahier (jamais préchargées) et gardées sur l'appareil au téléchargement du niveau ;
 //  - src/lib/cahier-pages.ts : niveaux qui ont un cahier et pages du parcours par leçon (lien « page du jour »).
+// 25/10/2026 : cahiers des enfants (en1) et des ados (ado1). Leurs jeux papier de fin de grille (colorie, relie, atelier,
+// défi chrono, duel…) sont REMPLACÉS dans l'application par les jeux interactifs (`page.jeu`, scripts/cahier-jeux.mjs) ; une
+// grille se débloque case par case dès que ses lettres et ses signes sont enseignés (`n` : numéro de la leçon).
 // L'arabe est recopié TEL QUEL (aucune normalisation, chadda puis voyelle comme dans la source) : contrôle par
-// src/lib/cahier/cahier.test.ts. Usage : node scripts/cahier-donnees.mjs [niveau…] (défaut : ad1).
+// src/lib/cahier/cahier.test.ts. Usage : node scripts/cahier-donnees.mjs [niveau…] (défaut : ad1 en1 ado1).
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { contexteJeux, jeuxDePage, nDe } from './cahier-jeux.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const repo = join(root, '..', '..');
-export const NIVEAUX_CAHIER = ['ad1'];
+export const NIVEAUX_CAHIER = ['ad1', 'en1', 'ado1'];
+/** niveaux dont la grille se débloque case par case et qui ont des jeux interactifs (enfants, ados) */
+export const NIVEAUX_JEUX = ['en1', 'ado1'];
 const KIND = { tts_syllabe: 's', tts: 't', tts_controle: 'k', recitation: 'q' };
 
 /** élément lu : texte arabe, nature de l'audio (s syllabe, t mot ou phrase, k contrôle renforcé, q récitation), couleur */
@@ -65,12 +71,34 @@ function bloc(b) {
       if (b.basmala_ar) o.basmala = b.basmala_ar;
       o.el = b.elements.map((v) => ({ ar: v.ar, a: 'q', ref: v.ref }));
       break;
+    case 'jeu_colorie':
+    case 'jeu_chasse':
+      // « je colorie », « je trouve la lettre » : on touche les cases de la lettre (aucun texte arabe nouveau)
+      o.consigne = b.elements[0]?.consigne_fr;
+      o.el = b.elements.map((r) => ({
+        lettre: r.lettre,
+        consigne: r.consigne_fr,
+        a: KIND[r.audio ?? 'tts_syllabe'],
+        cases: r.cases.map((c) => ({ ar: c.ar, cible: !!c.cible })),
+      }));
+      break;
     default:
       o.el = b.elements.map(el);
   }
   return o;
 }
-function page(p) {
+
+/** leçon d'enseignement (numéro de fichier) → libellé du livre (« Leçon 3 »), d'après la concordance de la source */
+function libelles(src) {
+  const out = {};
+  for (const c of src.concordance ?? []) {
+    const m = /^l(\d+)$/.exec(c.apres);
+    if (m) out[Number(m[1])] = c.lecon;
+  }
+  return out;
+}
+
+function page(p, ctx, lib) {
   const o = {
     id: p.id,
     num: p.num,
@@ -79,7 +107,7 @@ function page(p) {
     type: p.type,
     apres: p.apres,
     n: p.apres_n,
-    lecon: p.lecon_ad1,
+    lecon: 'lecon_ad1' in p ? p.lecon_ad1 : (p.lecon ?? null),
     consigne: p.consigne_fr,
     cases: p.cases,
   };
@@ -94,12 +122,50 @@ function page(p) {
     };
   if (p.seuil)
     o.seuil = { unite: p.seuil.unite, minimum: p.seuil.minimum, objectif: p.seuil.objectif };
+  if (p.defi) {
+    o.defi = { max: p.defi.score_max };
+    if (p.defi.paliers) o.defi.paliers = p.defi.paliers;
+  }
   if (p.texte_renvoi) o.renvoi = p.texte_renvoi;
-  o.blocs = (p.blocs ?? []).map(bloc);
+  // jeux papier de fin de grille : remplacés par les jeux interactifs (`jeu`) ; « je relie » : mots de la page (les
+  // images d'objets du livre imprimé ne sont pas dans l'application)
+  o.blocs = (p.blocs ?? [])
+    .filter((b) => !['jeu_grille', 'jeu_ado'].includes(b.type))
+    .map((b) =>
+      b.type === 'jeu_relie'
+        ? {
+            type: 'mots',
+            titre: b.titre_fr,
+            el: b.elements.flatMap((r) =>
+              r.mots.map((m) => ({ ar: m.ar, a: 't', ...(m.c?.length ? { c: m.c } : {}) })),
+            ),
+          }
+        : bloc(b),
+    );
   if (p.texte) {
     const a = KIND[p.texte.audio ?? 'tts'];
     o.texte = { lignes: p.texte.lignes, nb: p.texte.nb_mots, a };
     if (p.texte.titre_ar) o.texte.titre = p.texte.titre_ar;
+  }
+  // grilles des cahiers des enfants et des ados : déblocage case par case, jeux de fin de grille
+  if (ctx && p.type === 'grille') {
+    const repli = p.apres_n;
+    const g = o.blocs.find((b) => b.type === 'grille');
+    for (const r of g.el) for (const e of r.el) e.n = nDe(e.ar, ctx, repli);
+    const lm = o.blocs.find((b) => b.type === 'ligne_mots');
+    for (const e of lm?.el ?? []) e.n = nDe(e.ar, ctx, repli);
+    // la page s'ouvre dès sa première case (la lettre et sa première voyelle enseignées)
+    const premier = Math.min(...g.el.flatMap((r) => r.el.map((e) => e.n)));
+    if (Number.isFinite(premier) && premier < o.n) {
+      o.n = premier;
+      o.apres = `l${String(premier).padStart(2, '0')}`;
+      o.lecon = lib[premier] ?? o.lecon;
+    }
+    const jeu = jeuxDePage(p, ctx, repli);
+    if (jeu) {
+      o.jeu = jeu;
+      o.blocs.push({ type: 'jeux', titre: 'Jeu de la lettre', el: [] });
+    }
   }
   return o;
 }
@@ -142,9 +208,12 @@ function recitation(src, garde) {
   };
 }
 
-export function convertir(src, niveau, garde = []) {
+export function convertir(src, niveau, garde = [], audio = null) {
   const reciter = recitation(src, garde);
-  const pages = src.pages.map(page);
+  const jeux = NIVEAUX_JEUX.includes(niveau) && audio;
+  const ctx = jeux ? contexteJeux(src, niveau, audio) : null;
+  const lib = libelles(src);
+  const pages = src.pages.map((p) => page(p, ctx, lib));
   for (const p of pages) {
     for (const e of tousEls(p)) {
       const r = reciter(e.ar);
@@ -163,15 +232,16 @@ export function convertir(src, niveau, garde = []) {
     version: src.meta.version,
     genere: src.meta.genere_le,
     rattrapage: src.rattrapage,
+    ...(jeux ? { lecons: lib } : {}),
     pages,
   };
 }
 
-/** pages du parcours (hors rattrapage) par unité du livre (`ad1.l01`) */
-export function concordance(src, niveau) {
+/** pages du parcours (hors rattrapage) par unité du livre (`ad1.l01`), d'après les pages CONVERTIES (déblocage des grilles) */
+export function concordance(cahier, niveau) {
   const out = {};
-  for (const p of src.pages) {
-    if (p.hors_parcours) continue;
+  for (const p of cahier.pages) {
+    if (p.hors) continue;
     (out[`${niveau}.${p.apres}`] ??= []).push(p.num);
   }
   return out;
@@ -179,26 +249,37 @@ export function concordance(src, niveau) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const niveaux = process.argv.slice(2).length ? process.argv.slice(2) : NIVEAUX_CAHIER;
-  const pages = {};
+  const unites = {};
   for (const n of niveaux) {
     const dir = join(repo, 'packages', 'content', 'data', 'cahier');
     const src = JSON.parse(readFileSync(join(dir, `${n}.json`), 'utf8'));
     const audio = JSON.parse(readFileSync(join(dir, `${n}.audio.json`), 'utf8'));
     const out = join(root, 'static', 'cahier-data', `${n}.json`);
     mkdirSync(dirname(out), { recursive: true });
-    writeFileSync(out, JSON.stringify(convertir(src, n, audio.garde_coran ?? [])) + '\n');
-    Object.assign(pages, concordance(src, n));
+    const cahier = convertir(src, n, audio.garde_coran ?? [], audio);
+    writeFileSync(out, JSON.stringify(cahier) + '\n');
+    unites[n] = Object.keys(concordance(cahier, n)).filter((u) => !/\.l00$/.test(u));
     console.log(`${n} : ${src.pages.length} pages → static/cahier-data/${n}.json`);
   }
+  // unités SANS page, avant la dernière leçon qui en a une (le moins d'octets possible dans la coquille de l'élève) :
+  // les livres n'ont pas d'unité au-delà de leur dernière page de cahier (ad1 : l25, en1 : l26, ado1 : l25)
+  const sansPage = Object.entries(unites).flatMap(([n, liste]) => {
+    const nums = liste.map((u) => Number(/\.l(\d+)$/.exec(u)[1]));
+    const max = Math.max(...nums);
+    return Array.from({ length: max }, (_, i) => i + 1)
+      .filter((k) => !nums.includes(k))
+      .map((k) => `${n}.l${String(k).padStart(2, '0')}`);
+  });
   const ts = [
     '/**',
     ' * Cahier de lecture (20/10/2026) — FICHIER GÉNÉRÉ par `node scripts/cahier-donnees.mjs` depuis',
     ' * packages/content/data/cahier/<niveau>.json : ne pas modifier à la main. Très petit (coquille de l’élève) : niveaux',
-    ' * qui ont un cahier et unités du livre qui ont des pages (lien « page du jour » de la leçon ; la page elle-même est',
-    ' * choisie par le cahier, chargé à la demande).',
+    ' * qui ont un cahier et unités du livre qui n’ont pas de page (lien « page du jour » de la leçon ; la page elle-même',
+    ' * est choisie par le cahier, chargé à la demande).',
     ' */',
     `export const CAHIER_NIVEAUX: readonly string[] = ${JSON.stringify(niveaux)};`,
-    `export const CAHIER_UNITES: readonly string[] = ${JSON.stringify(Object.keys(pages).filter((u) => !/\.l00$/.test(u)))};`,
+    '/** unités du livre (`ad1.l23`) qui n’ont pas de page de cahier (les autres unités de ces niveaux en ont) */',
+    `export const CAHIER_SANS_PAGE: readonly string[] = ${JSON.stringify(sansPage)};`,
     '',
   ].join('\n');
   writeFileSync(join(root, 'src', 'lib', 'cahier-pages.ts'), ts);

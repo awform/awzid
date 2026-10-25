@@ -23,6 +23,11 @@ export interface El {
   sep?: string[];
   /** leçon d'apprentissage d'une lettre (alphabet) */
   lecon?: string;
+  /**
+   * cahiers des enfants et des ados, grilles seulement : numéro de la leçon du livre où l'élément est « vu » (lettres et
+   * signes enseignés) ; absent ailleurs. L'élément est ouvert quand cette leçon est atteinte.
+   */
+  n?: number;
 }
 export interface Rang {
   titre?: string;
@@ -38,13 +43,61 @@ export interface AtelierMot {
   solution: string;
   syllabes: string[];
 }
+/** « je colorie » / « je trouve la lettre » : les cases de la lettre se touchent (cahier des enfants) */
+export interface Chasse {
+  lettre: string;
+  consigne?: string;
+  a: Audio;
+  cases: Array<{ ar: string; cible: boolean }>;
+}
 export interface Bloc {
   type: string;
   titre: string;
   note?: string;
   consigne?: string;
   basmala?: string;
-  el: Array<El | Rang | { p: [El, El] } | AtelierMot>;
+  el: Array<El | Rang | { p: [El, El] } | AtelierMot | Chasse>;
+}
+/** types de blocs sans éléments à lire un à un (jeux : ni lecture guidée, ni vidéo) */
+export const BLOCS_JEUX: readonly string[] = ['atelier_mot', 'jeu_colorie', 'jeu_chasse', 'jeux'];
+/** signe d'un mot à construire (clé ; le signe lui-même est dessiné par ses points de code) */
+export type SigneCle =
+  | 'fatha'
+  | 'kasra'
+  | 'damma'
+  | 'soukoun'
+  | 'fathatan'
+  | 'kasratan'
+  | 'dammatan'
+  | 'shadda_fatha'
+  | 'shadda_kasra'
+  | 'shadda_damma';
+/** mot à construire : cases `[lettre, signe]` (signe vide : prolongation, la lettre n'a pas de signe) et leçon `n` */
+export interface MotJeu {
+  ar: string;
+  c: Array<[string, SigneCle | '']>;
+  n: number;
+  img?: string;
+}
+/** manche : on entend la `cible` (syllabe `s` ou mot `m`) et on touche la bonne parmi `choix` (la cible en premier) */
+export interface Manche {
+  k: 's' | 'm';
+  cible: string;
+  choix: string[];
+  n: number;
+}
+/** son d'un signe : syllabe de la grille qui le porte, et leçon où il est enseigné */
+export interface SigneJeu {
+  k: SigneCle;
+  ar: string;
+  n: number;
+}
+export interface JeuPage {
+  lettre: string;
+  signes: SigneJeu[];
+  construis: MotJeu[];
+  trouve: Manche[];
+  colorie?: { lettre: string; cases: Array<{ ar: string; cible: boolean; n: number }> };
 }
 export interface Page {
   id: string;
@@ -64,6 +117,10 @@ export interface Page {
   critere?: { reussite: string; seuil: number; echec: string };
   seuil?: { unite: string; minimum: number; objectif: number };
   renvoi?: string;
+  /** cahier des ados : « Défi » (score sur `max`) ; `paliers` : bronze, argent, or de la mission d'un bilan */
+  defi?: { max: number; paliers?: { bronze: number; argent: number; or: number } };
+  /** cahiers des enfants et des ados, grilles : données des jeux de fin de grille (scripts/cahier-jeux.mjs) */
+  jeu?: JeuPage;
   blocs: Bloc[];
   /** `recite` : lignes qui citent le Coran (garde du générateur) → récitation (référence) ou sans son (« ») */
   texte?: {
@@ -81,6 +138,8 @@ export interface Cahier {
   version: string;
   genere: string;
   rattrapage: Record<string, string>;
+  /** cahiers des enfants et des ados : libellé de chaque leçon du livre (n° de fichier → « Leçon 3 ») */
+  lecons?: Record<string, string>;
   pages: Page[];
 }
 
@@ -127,12 +186,14 @@ export const estRang = (x: unknown): x is Rang => !!x && Array.isArray((x as Ran
 export const estPaire = (x: unknown): x is { p: [El, El] } =>
   !!x && Array.isArray((x as { p?: unknown }).p);
 export const estAtelier = (x: unknown): x is AtelierMot =>
-  !!x && Array.isArray((x as AtelierMot).cases);
+  !!x && Array.isArray((x as AtelierMot).cases) && typeof (x as AtelierMot).solution === 'string';
+export const estChasse = (x: unknown): x is Chasse =>
+  !!x && Array.isArray((x as Chasse).cases) && typeof (x as Chasse).lettre === 'string';
 
 /** Éléments lus d'un bloc, dans l'ordre de lecture, avec leur clé d'affichage (`b.i`, `b.r.i`, `b.i.0`…). */
 export function elementsDuBloc(b: Bloc, bi: number): Array<{ cle: string; el: El }> {
   const out: Array<{ cle: string; el: El }> = [];
-  if (b.type === 'atelier_mot') return out;
+  if (BLOCS_JEUX.includes(b.type)) return out;
   b.el.forEach((x, i) => {
     if (estRang(x)) x.el.forEach((e, j) => out.push({ cle: `${bi}.${i}.${j}`, el: e }));
     else if (estPaire(x)) x.p.forEach((e, j) => out.push({ cle: `${bi}.${i}.${j}`, el: e }));
