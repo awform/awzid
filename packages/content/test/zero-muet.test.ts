@@ -126,7 +126,9 @@ const ESSENTIEL = new Set(['lettres', 'lecture', 'mots', 'dialogue', 'resume']);
 /** Livres d'Adultes : textes que les vidéos vivantes font écouter (sans fichier) ou gardent sans voix (Coran, Basmala…). */
 function livres(): Cible[] {
   const out: Cible[] = [];
-  for (const livre of VIDEO_NIVEAUX) {
+  // Adultes seulement (comme la décision et le rapport du référent) : les livres Enfants et Ados, proposés en vidéo depuis
+  // le 25/10/2026, n'ont pas encore tous leurs audios (leur constat : `reports/video-vivante-<livre>.md`)
+  for (const livre of VIDEO_NIVEAUX.filter((n) => /^ad\d+$/.test(n))) {
     const d = join(CONTENT_DIR, 'data', livre);
     if (!existsSync(d)) continue;
     for (const f of readdirSync(d)
