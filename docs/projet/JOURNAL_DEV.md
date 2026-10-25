@@ -9,6 +9,23 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+<!-- mutashabihat-25-10 -->
+
+---
+
+## 25/10/2026 — Mutashābihāt dans le hifẓ (interrupteur `mutashabihat`, COUPÉ par défaut) ; branche `mutashabihat-wip` ; NON déployé
+
+Deuxième chantier « programme Coran ». Interrupteur `mutashabihat` : coupé par défaut partout, à ouvrir au « canal bêta » ; coupé : le hifẓ reste entier, sans alerte ni tuile. **Seules les paires au statut « reconnu par la source » (349 paires, 501 versets) sont affichées** ; les 580 « détectées à confirmer », 335 « probables » et 28 « à vérifier » ne sortent JAMAIS du script de conversion. Le texte coranique est celui de Tanzil, intact (la carte ne garde que des références de versets et des rangs de mots, `texte.split(' ')`, basmala comprise) ; aucune explication (tawjīh).
+
+- **Données** : carte du référent copiée telle quelle dans `packages/content/data/mutashabihat/mutashabihat.json` ; `apps/web/scripts/mutashabihat-donnees.mjs` la convertit en `lib/mutashabihat/donnees.json` (73 Ko, chargé À LA DEMANDE avec le module ; `--verifier` et un test contrôlent qu'il est à jour, octet pour octet). Les 2 908 positions de mots sont recontrôlées contre Tanzil par un test (chaque rang désigne le mot attendu).
+- **Pendant la révision** : sous les versets du carnet (révision, nouveau, portion) et du test au hasard, un pictogramme « Attention, verset jumeau » ; **la première fois**, une phrase l'explique (gardée sur l'appareil) ; si le **jumeau est déjà mémorisé**, l'alerte est mise en avant. Un toucher ouvre la **carte du jumeau** : les deux versets, chacun sur sa ligne, **les mots qui changent surlignés (or sur ivoire) et soulignés** (formule commune : le passage commun), le **repère « proposé par Awzid »** (les 349 sont de ce type : les vers d'as-Sakhāwī, « à collationner avec l'édition imprimée », ne sont pas affichés), la **source** (al-Kirmānī, masʾala, lien vers la page) ; jusqu'à 3 jumeaux par verset.
+- **Écoute** : le bouton lit le verset jumeau dans la récitation d'**Ayyūb UNIQUEMENT** (`ayyoub-hafs`, paquet de la sourate, crédit affiché) ; **aucune synthèse vocale** (un test interdit toute référence à la synthèse et à tout autre récitateur).
+- **Test au hasard qui mélange les jumeaux** (tuile « Test des jumeaux », `/hifz/jumeaux`) : trois exercices (la bonne suite entre les deux formes, le mot masqué entre ses variantes, la sourate du verset), **seulement sur des jumeaux dont les deux versets sont mémorisés** ; une mauvaise réponse marque le mot dans la carte des erreurs (le verset revient dans la révision espacée), une bonne réponse « juste » ; aucune note.
+- **Poids** : tout est chargé à la demande (`lib/mutashabihat/index.ts`, groupe « en ligne ») ; dans la coquille : la clé du registre, `hz.titre_jumeaux` et les appels à la demande ; le talon mort (liste vide) avait déjà été retiré avec la khatma. Appareil de l'élève : **346,0 Ko, marge 4,0 Ko (4 104 o)**.
+- **Textes** : français embarqués, brouillons en, es, de, ar (`A_RELIRE.md`).
+- **Tests** : `mutashabihat.test.ts` (données, positions Tanzil, symétrie, exercices sur les 349 paires, règles : Ayyūb seul, pas de synthèse, arabe sur sa ligne), e2e `mutashabihat.spec.ts` (coupé, alerte, carte, écoute simulée, test des jumeaux, AA clair et sombre).
+- **Reste** : relecture par le référent des repères « proposés par Awzid » et collationnement des vers d'as-Sakhāwī (36 paires en ont un) avant tout affichage ; deuxième passe de sources (Ibn az-Zubayr) pour les paires « probables ».
+<!-- /mutashabihat-25-10 -->
 <!-- khatma-25-10 -->
 
 ---

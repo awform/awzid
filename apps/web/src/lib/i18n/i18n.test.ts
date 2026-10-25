@@ -56,6 +56,9 @@ beforeAll(async () => {
     ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'priere', f), 'utf8')));
   // 26/10/2026 : « Khatma et wird »
   ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'khatma', 'textes-fr.json'), 'utf8')));
+  ajouterTextes(
+    JSON.parse(readFileSync(join(SRC, 'lib', 'mutashabihat', 'textes-fr.json'), 'utf8')),
+  );
 });
 afterEach(() => setLocale('fr'));
 

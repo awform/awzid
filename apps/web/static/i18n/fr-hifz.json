@@ -150,5 +150,6 @@
   "hifz.enreg_commencer": "M'enregistrer",
   "hifz.col_seance": "Séance : début → fin de parcours",
   "hifz.seance_plage": "≈ {a} → {b} min (tour de {c} j)",
-  "hifz.charge": "Séance d'aujourd'hui ≈ {n} min. Elle dépend de ce qui est déjà mémorisé : ≈ {a} min au début → ≈ {b} min quand tout le Coran est dans la roue (tour de {c} jours)."
+  "hifz.charge": "Séance d'aujourd'hui ≈ {n} min. Elle dépend de ce qui est déjà mémorisé : ≈ {a} min au début → ≈ {b} min quand tout le Coran est dans la roue (tour de {c} jours).",
+  "hz.titre_jumeaux": "Test des jumeaux"
 }

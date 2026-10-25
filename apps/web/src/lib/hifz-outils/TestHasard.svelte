@@ -7,6 +7,7 @@
   import { splitBasmala } from '@awform/hifz';
   import { loadVerses } from '$lib/hifz';
   import { loadTexts, t } from '$lib/i18n';
+  import { fn } from '$lib/fonctions.svelte';
   import { call } from '$lib/session';
   import { bilansEcoute, chargerCarnet, libelle, marquesDe, poserMarques } from './donnees';
   import MotsVerset from './MotsVerset.svelte';
@@ -196,6 +197,11 @@
           onmot={fait ? undefined : (k) => marquer(v.a, k)}
         />
       {/each}
+      {#if fn('mutashabihat')}{#await import('$lib/mutashabihat') then m}<m.Jumeaux
+            verses={versets}
+            {basmala}
+            {profileId}
+          />{/await}{/if}
       {#if fait}
         <p class="ok card" role="status" data-testid="test-note">
           <Bidi text={t(`hz.note_${fait}`)} />

@@ -230,3 +230,9 @@ traduits par Claude, relecteur provisoire, en **brouillon** dans les quatre lang
 le module (`lib/khatma/textes-fr.json`). Choix à vérifier : l’élève est TUTOYÉ ; « khatma », « wird » et « juzʾ » gardés tels
 quels dans toutes les langues ; AUCUN mot de reproche (ni « retard », ni « série », ni « dette ») ; l’arabe n’a pas de pluriel
 complet (formes « un » et « autre » seulement, sauf `kh.lues` qui garde la même forme que le français).
+## Mutashābihāt dans le hifẓ (25/10/2026, interrupteur `mutashabihat`) — brouillons à relire
+Textes `mt.*` (alerte « verset jumeau », carte du jumeau, test des jumeaux), `hz.titre_jumeaux` et `fn.mutashabihat` traduits par
+Claude, relecteur provisoire, en **brouillon** dans les quatre langues en préparation ; le français est embarqué avec le module
+(`lib/mutashabihat/textes-fr.json`). Termes : « aleya » (espagnol), « Vers » et « Zwilling » (allemand), « آية مشابهة » (arabe) ;
+l’élève est TUTOYÉ. Les repères « proposés par Awzid » et les noms d’ouvrages viennent de la carte du référent (français et
+translittération latine, jamais traduits). À relire par le référent : le repère neutre des formules communes (`mt.repere_commun`).

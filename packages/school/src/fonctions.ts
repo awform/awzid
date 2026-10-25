@@ -34,6 +34,7 @@ export const FONCTION_CLES = [
   'cahier_parler',
   'parcours_priere',
   'khatma_wird',
+  'mutashabihat',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -126,6 +127,10 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // réparties, fin commune), jamais de classement. COUPÉ par défaut partout (démonstration comprise) ; l'administrateur
   // l'ouvre au « canal bêta » ; couper l'interrupteur laisse le Coran entier, sans la carte.
   khatma_wird: { defaut: 'off' },
+  // Mutashābihāt dans le hifẓ (25/10/2026) : « attention, verset jumeau » et sa carte (différence surlignée, repère, source) pendant la
+  // révision, test au hasard qui mélange les jumeaux ; SEULES les paires « reconnues par la source » (349). COUPÉ par défaut partout ;
+  // l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur laisse le hifẓ entier, sans alerte.
+  mutashabihat: { defaut: 'off' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

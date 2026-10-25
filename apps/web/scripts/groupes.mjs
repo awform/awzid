@@ -57,6 +57,8 @@ export const PREMIER_USAGE_MODULES = [
 export const EN_LIGNE_MODULES = [
   // 26/10/2026 : carte « Khatma et wird » de l'accueil du Coran (plans et avancement sur le serveur), à la demande
   /src\/lib\/khatma\/carte\.ts$/,
+  // 25/10/2026 : mutashābihāt du hifẓ (alerte « verset jumeau », carte, test des jumeaux) et leurs données, à la demande
+  /src\/lib\/mutashabihat\/index\.ts$/,
   /src\/lib\/quran\/LignesExactes\.svelte$/,
   /src\/lib\/TutorPanel\.svelte$/,
   /src\/lib\/avis\/AvisDialog\.svelte$/,
