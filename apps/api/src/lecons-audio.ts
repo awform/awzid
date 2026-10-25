@@ -13,6 +13,7 @@
 import { statSync } from 'node:fs';
 import { join } from 'node:path';
 import type { FastifyInstance } from 'fastify';
+import { autoriseSha } from '@awform/content/garde-coran';
 import { LECONS_AUDIO_MANIFEST, readLeconsManifest, type LeconsAudioManifest } from '@awform/db';
 import { sendAudioFile } from './coran-audio.js';
 
@@ -22,6 +23,11 @@ export interface LeconsAudioLevel {
   octets: number;
   mention: string;
   credits: string[];
+  /**
+   * Fichiers (SHA-1) dont le texte est dans la liste blanche du serveur
+   * (`data/zero-muet/garde-autorises.json`) : seuls textes en graphie du Muṣḥaf que le client peut jouer. Absent si aucun.
+   */
+  autorises?: string[];
 }
 
 export function registerLeconsAudio(app: FastifyInstance, dir: string | null): void {
@@ -56,7 +62,11 @@ export function registerLeconsAudio(app: FastifyInstance, dir: string | null): v
           l.fichiers.push(sha);
           l.octets += f.o;
         }
-      for (const l of levels.values()) l.fichiers.sort();
+      for (const l of levels.values()) {
+        l.fichiers.sort();
+        const a = l.fichiers.filter(autoriseSha);
+        if (a.length) l.autorises = a;
+      }
       loaded = { mtime, m, levels };
     }
     return loaded;

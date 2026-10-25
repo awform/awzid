@@ -239,10 +239,23 @@ export interface VideoLecon {
   sansSon: Array<{ texte: string; part: VideoPart }>;
 }
 
+/**
+ * Lettre(s) détachée(s) : aucun mot du texte n'a deux lettres de base (une seule lettre, ou plusieurs lettres isolées par des espaces) ; une lettre détachée n'est jamais
+ * lue par la synthèse (noms de lettres : assemblage). Définie ici et non dans `audio-cle` (poids de l'appareil de l'élève).
+ */
+export const lettresDetachees = (text: string): boolean =>
+  !/[\u0621-\u064A\u0671][\u064B-\u0670\u06D6-\u06ED\u0640]*[\u0621-\u064A\u0671]/.test(text);
+
 export interface VideoOptions {
   unitId: string;
   /** le texte a-t-il un fichier audio dans le niveau ? */
   hasAudio?: (text: string) => boolean;
+  /**
+   * fichiers (SHA-1 de la clé audio) dont le serveur autorise la voix malgré la graphie du Muṣḥaf : sa liste blanche
+   * (`autorises` du niveau). Relâche seulement le blocage de la graphie du Muṣḥaf et `VIDEO_GARDE` pour ces textes ; jamais
+   * pour une lettre détachée (ni un verset entier : la liste n'en a aucun). Absent : aucun texte autorisé
+   */
+  autorises?: readonly string[];
   /** clés d'illustration disponibles */
   images?: ReadonlySet<string> | readonly string[];
   /** liste des fichiers audio du niveau (empreinte `source`) */
@@ -408,6 +421,9 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   /** partie en cours de génération (audit des audios manquants) */
   let ici: VideoPart = 'ouverture';
 
+  const permis = (s: string) =>
+    !!opts.autorises?.includes(audioFileId(s) ?? '') && !lettresDetachees(s);
+
   // —— versets de la partie Coran de la leçon (jamais affichés ici, jamais dits ailleurs)
   const textes = (x: unknown) =>
     allStr(x)
@@ -453,7 +469,7 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   };
   marque(R);
   const passages = lectureStr
-    .filter((s) => !dhikrs.has(s) && (coranique(s) || recit.has(gardeVideoKey(s))))
+    .filter((s) => !dhikrs.has(s) && ((coranique(s) && !permis(s)) || recit.has(gardeVideoKey(s))))
     .map((s) => ` ${motsDe(s)} `)
     .filter((p) => p.trim());
   const contexte = (s: string) => {
@@ -464,11 +480,13 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
   /** raison de garder un texte sans voix (null : la voix est permise) */
   const raison = (s: string, holder: Obj | null, ctx: boolean): Signalement['raison'] | null => {
     // présenté comme Coran (graphie du Muṣḥaf, référence de verset sur le bloc) : jamais, même une formule de dhikr
-    if (coranique(s) || VERSET.test(String(holder?.ref ?? holder?.ref_fr ?? ''))) return 'coran';
+    const autorise = permis(s);
+    if ((coranique(s) && !autorise) || VERSET.test(String(holder?.ref ?? holder?.ref_fr ?? '')))
+      return 'coran';
     // formule de dhikr marquée par les données (`dhikr: true`) : la garde de Tanzil et de la Basmala ne s'applique pas
     const dhikr = holder?.dhikr === true;
     // 4 mots consécutifs du Coran ou plus, hors formules de la liste blanche (liste tenue contre Tanzil)
-    if (!dhikr && garde.has(gardeVideoKey(s))) return 'coran';
+    if (!dhikr && !autorise && garde.has(gardeVideoKey(s))) return 'coran';
     if (!dhikr && skeleton(s).includes(BASMALA)) return 'basmala';
     // texte des parties Coran (même une formule) ; des parties fiqh/adab (hadith…), hors formules de la liste
     if (dans(sacresCoran, s)) return 'sacre';
