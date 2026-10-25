@@ -4,6 +4,7 @@
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
   import { note, suraName, type Counters } from '@awform/hifz';
+  import { fn } from '$lib/fonctions.svelte';
   import { localIso } from '$lib/hifz';
   import { fmtDate, fmtNumber, t } from '$lib/i18n';
   import { call, fetchMe, isStaff, type Me } from '$lib/session';
@@ -764,6 +765,9 @@
   {:else if tab === 'sourates'}
     <SouratesClasse classId={id} />
     <RecitateursClasse classId={id} />
+    {#if fn('khatma_wird')}{#await import('$lib/khatma/classe').catch(() => null) then m}{#if m}<m.KhatmaClasse
+            classId={id}
+          />{/if}{/await}{/if}
   {:else if tab === 'tableau'}
     <section class="card">
       <h2 id="titre-suivi">{t('classe.suivi')}</h2>

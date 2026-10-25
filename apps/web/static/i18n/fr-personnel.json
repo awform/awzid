@@ -641,5 +641,6 @@
   "adm.blocage_vide": "Saisis d'abord une adresse ou un numéro.",
   "adm.blocage_liste": "Comptes bloqués",
   "adm.blocage_aucun": "Aucun compte bloqué.",
-  "adm.blocage_depuis": "bloqué le {date}"
+  "adm.blocage_depuis": "bloqué le {date}",
+  "fn.khatma_wird": "Khatma et wird (plan de lecture du Coran)"
 }

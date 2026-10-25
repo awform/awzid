@@ -10,7 +10,6 @@
   import { call } from '$lib/session';
   import { bilansEcoute, chargerCarnet, libelle, marquesDe, poserMarques } from './donnees';
   import MotsVerset from './MotsVerset.svelte';
-  import { prochesDe } from './mutashabihat';
   import {
     amorce,
     AUTO_EVALS,
@@ -155,7 +154,6 @@
     const avant = p.basmala ? p.basmala.split(' ').length : 0;
     return avant + amorce(p.rest.split(' ').length);
   });
-  const proches = $derived(q ? prochesDe(q.s, q.a) : []);
 </script>
 
 {#if charge && !plages.length}
@@ -198,11 +196,6 @@
           onmot={fait ? undefined : (k) => marquer(v.a, k)}
         />
       {/each}
-      {#each proches as p (`${p.s}:${p.a}`)}
-        <p class="alerte" role="note" data-testid="mutashabih">
-          <Bidi text={t('hz.proche_de', { ref: libelle({ s: p.s, from: p.a, to: p.a }) })} />
-        </p>
-      {/each}
       {#if fait}
         <p class="ok card" role="status" data-testid="test-note">
           <Bidi text={t(`hz.note_${fait}`)} />
@@ -239,12 +232,6 @@
   }
   .row button {
     min-height: 44px;
-  }
-  .alerte {
-    background: var(--warn-bg);
-    color: var(--warn-ink);
-    border-radius: 8px;
-    padding: 6px 10px;
   }
   .ok {
     background: var(--ok-bg);

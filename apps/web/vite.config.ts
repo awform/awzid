@@ -120,7 +120,7 @@ const A_PART: Record<string, string> = {
   Exercise: '(lib/Exercise|grading/dist/[a-z]+|i18n/content-text)',
   'lecons-audio-offline': 'lecons-audio-offline',
   scene: '(content/dist/scene|lib/Scene)',
-  'hifz-outils': 'hifz-outils/(outils|liste|donnees|mutashabihat)',
+  'hifz-outils': 'hifz-outils/(outils|liste|donnees)',
   // 18/10/2026 : modules partagés par « Aujourd'hui » (élève) et « Ma classe » (page rare, espace « connexion ») :
   // sans morceau propre, ils partaient dans le morceau de l'espace « connexion », que « Aujourd'hui » importait
   // alors en entier (page de connexion, Google, numéro WhatsApp) : ~4 Ko sur l'appareil de l'élève
@@ -142,7 +142,7 @@ const ESPACES: Record<string, RegExp> = {
   quotidien:
     /src\/routes\/quotidien\/(.+\/)?\+page\.svelte|src\/lib\/quotidien\/(hijri|adhkar|Compteur|QiblaCarte|qibla)\./,
   // l'écran enfant (`Enfant.svelte`, réseau nécessaire) reste à la demande, hors du morceau
-  hifz: /src\/routes\/hifz\/(\[outil\]\/)?\+page\.svelte|src\/lib\/hifz-outils\/(Fraicheur|mutashabihat|PointsFaibles|Priere|TestHasard)\./,
+  hifz: /src\/routes\/hifz\/(\[outil\]\/)?\+page\.svelte|src\/lib\/hifz-outils\/(Fraicheur|PointsFaibles|Priere|TestHasard)\./,
   ecriture: pages('ecriture'),
   suivi: pages('suivi'),
   // pas le lecteur (page la plus lourde au premier chargement) ni les récitateurs (page rare)

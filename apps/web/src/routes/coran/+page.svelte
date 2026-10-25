@@ -6,6 +6,7 @@
   import Ar from '$lib/Ar.svelte';
   import { isQuranReadingLevel } from '$lib/api';
   import { demoProfileFor } from '$lib/attempts';
+  import { fn } from '$lib/fonctions.svelte';
   import { hifzToday } from '$lib/hifz';
   import { fmtNumber, t } from '$lib/i18n';
   import Feuille from '$lib/quran/lecture/Feuille.svelte';
@@ -99,6 +100,8 @@
     </li>
   {/each}
 </ul>
+
+{#if fn('khatma_wird')}{#await import('$lib/khatma/carte') then m}<m.Carte />{/await}{/if}
 
 {#if portion}
   <a class="jour" href={`${lecteur}?memo=1`} data-testid="portion-du-jour"

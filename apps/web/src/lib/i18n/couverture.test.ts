@@ -30,6 +30,8 @@ const EMBARQUES = [
   // « La prière de A à Z » (25/10/2026) : le parcours et sa carte d'entrée
   join(SRC, 'lib', 'priere', 'textes-fr.json'),
   join(SRC, 'lib', 'priere', 'textes-carte-fr.json'),
+  // « Khatma et wird » (26/10/2026)
+  join(SRC, 'lib', 'khatma', 'textes-fr.json'),
 ];
 const catalogues: Record<string, Record<string, string>> = Object.fromEntries([
   ...SPACE_CATALOGS.map((n) => [n, json(join(STATIC, `fr-${n}.json`))]),

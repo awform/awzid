@@ -7,6 +7,7 @@
  */
 import { and, eq, inArray } from 'drizzle-orm';
 import type { Db } from './client.js';
+import { rappelsKhatma } from './khatma.js';
 import * as t from './schema.js';
 
 export interface PushPayload {
@@ -50,6 +51,8 @@ const TEXTS = {
         ? 'Un devoir est prévu pour demain. Bonne séance !'
         : `${n} devoirs sont prévus pour demain. Bonne séance !`,
     rapport: 'Le rapport de la semaine est prêt.',
+    // rappel discret de la khatma (26/10/2026) : une invitation, jamais un reproche, aucun chiffre ni nom
+    khatma: 'Ton moment avec le Coran t’attend, quand tu veux.',
   },
   en: {
     title: 'Awzid',
@@ -58,11 +61,17 @@ const TEXTS = {
         ? 'One piece of homework is planned for tomorrow. Enjoy your session!'
         : `${n} pieces of homework are planned for tomorrow. Enjoy your session!`,
     rapport: 'This week’s report is ready.',
+    khatma: 'Your time with the Qur’an is waiting, whenever you like.',
   },
 };
 
-export function message(locale: string, kind: 'devoirs' | 'rapport', n = 0): PushPayload {
+export function message(
+  locale: string,
+  kind: 'devoirs' | 'rapport' | 'khatma',
+  n = 0,
+): PushPayload {
   const T = locale === 'en' ? TEXTS.en : TEXTS.fr;
+  if (kind === 'khatma') return { title: T.title, body: T.khatma, url: '/coran', tag: 'khatma' };
   return kind === 'devoirs'
     ? { title: T.title, body: T.devoirs(n), url: '/aujourdhui', tag: 'devoirs' }
     : { title: T.title, body: T.rapport, url: '/suivi/rapport', tag: 'rapport' };
@@ -73,7 +82,7 @@ const addDay = (iso: string) =>
 
 export interface DueNotification {
   accountId: string;
-  kind: 'devoirs' | 'rapport';
+  kind: 'devoirs' | 'rapport' | 'khatma';
   day: string;
   payload: PushPayload;
   subscriptions: Array<{ id: string; endpoint: string; p256dh: string; auth: string }>;
@@ -82,7 +91,7 @@ export interface DueNotification {
 /** Notifications à envoyer maintenant (aucun envoi ici : le travailleur envoie puis appelle `markSent`). */
 export async function dueNotifications(db: Db, now = new Date()): Promise<DueNotification[]> {
   const prefs = await db.select().from(t.notificationPref);
-  const active = prefs.filter((p) => p.devoirs || p.rapport);
+  const active = prefs.filter((p) => p.devoirs || p.rapport || p.khatma);
   if (!active.length) return [];
   const subs = await db
     .select()
@@ -98,7 +107,8 @@ export async function dueNotifications(db: Db, now = new Date()): Promise<DueNot
     const mine = subs.filter((s) => s.accountId === p.accountId);
     if (!mine.length) continue;
     const L = localParts(now, p.tz);
-    if (inQuietHours(L.hour, p.quietStart, p.quietEnd) || L.hour < 17) continue;
+    if (inQuietHours(L.hour, p.quietStart, p.quietEnd)) continue;
+    const soir = L.hour >= 17;
     const profiles = (
       await db
         .select({ id: t.profile.id, kind: t.profile.kind })
@@ -107,7 +117,24 @@ export async function dueNotifications(db: Db, now = new Date()): Promise<DueNot
     ).filter((x) => x.kind === 'adulte' || p.enfants);
     if (!profiles.length) continue;
     const s = mine.map((x) => ({ id: x.id, endpoint: x.endpoint, p256dh: x.p256dh, auth: x.auth }));
-    if (p.devoirs && p.lastDevoirs !== L.day) {
+    if (
+      p.khatma &&
+      p.lastKhatma !== L.day &&
+      (await rappelsKhatma(
+        db,
+        profiles.map((x) => x.id),
+        L.hour,
+        L.day,
+      )) > 0
+    )
+      out.push({
+        accountId: p.accountId,
+        kind: 'khatma',
+        day: L.day,
+        payload: message(p.locale, 'khatma'),
+        subscriptions: s,
+      });
+    if (p.devoirs && soir && p.lastDevoirs !== L.day) {
       const n = await dueTomorrow(
         db,
         profiles.map((x) => x.id),
@@ -122,7 +149,7 @@ export async function dueNotifications(db: Db, now = new Date()): Promise<DueNot
           subscriptions: s,
         });
     }
-    if (p.rapport && L.weekday === 7 && p.lastRapport !== L.day)
+    if (p.rapport && soir && L.weekday === 7 && p.lastRapport !== L.day)
       out.push({
         accountId: p.accountId,
         kind: 'rapport',
@@ -182,12 +209,18 @@ async function dueTomorrow(db: Db, profileIds: string[], day: string): Promise<n
 export async function markSent(
   db: Db,
   accountId: string,
-  kind: 'devoirs' | 'rapport',
+  kind: 'devoirs' | 'rapport' | 'khatma',
   day: string,
 ) {
   await db
     .update(t.notificationPref)
-    .set(kind === 'devoirs' ? { lastDevoirs: day } : { lastRapport: day })
+    .set(
+      kind === 'devoirs'
+        ? { lastDevoirs: day }
+        : kind === 'khatma'
+          ? { lastKhatma: day }
+          : { lastRapport: day },
+    )
     .where(eq(t.notificationPref.accountId, accountId));
 }
 
