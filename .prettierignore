@@ -52,3 +52,8 @@ packages/content/data/cahier-parler/
 
 # zéro muet : copie VERBATIM de la table des récitations d Ayyūb (décisions du référent)
 packages/content/data/zero-muet/coran-ayyub-table.json
+
+# La priere de A a Z (25/10/2026) : fichiers du referent recopies VERBATIM (priere.json, sourates.json) et chorégraphie ;
+# donnees de l'application generees dans apps/web/static/priere-data/ (node apps/web/scripts/priere-donnees.mjs)
+packages/content/data/priere/
+apps/web/static/priere-data/

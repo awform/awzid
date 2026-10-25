@@ -258,7 +258,7 @@ const lines = [
   '| Indicateur | Mesure | Budget | Tenu |',
   '|---|---|---|---|',
   `| **(a) Appareil d'un élève** : JS + CSS préchargés et textes préchargés | ${ko(eleveBr)} | ≤ ${ko(BUDGET_ELEVE)} | ${ok(eleveBr, BUDGET_ELEVE)} |`,
-  `| (a) marge restante sous le budget de l'appareil élève | ${ko(BUDGET_ELEVE - eleveBr)} | ≥ ${ko(MARGE_ELEVE_MIN)} | ${BUDGET_ELEVE - eleveBr >= MARGE_ELEVE_MIN ? 'oui' : '**NON**'} |`,
+  `| (a) marge restante sous le budget de l'appareil élève | ${ko(BUDGET_ELEVE - eleveBr)} (${BUDGET_ELEVE - eleveBr} o) | ≥ ${ko(MARGE_ELEVE_MIN)} | ${BUDGET_ELEVE - eleveBr >= MARGE_ELEVE_MIN ? 'oui' : '**NON**'} |`,
   `| **(b) Première ouverture** : JS + CSS initiaux de l'accueil de l'élève (\`${ACCUEIL}\`) | ${ko(accueil?.br ?? 0)} | ≤ ${ko(BUDGET_PREMIERE)} | ${ok(accueil?.br ?? Infinity, BUDGET_PREMIERE)} |`,
   `| **(c) Ouverture en 3G simulée** (CPU ×4, 150 ms, 1,6 Mbit/s ; e2e/perf.spec.ts) | ${perfLine} | < ${BUDGET_3G_MS / 1000} s | ${perf ? (perf.ouvertureMs < BUDGET_3G_MS ? 'oui' : '**NON**') : '—'} |`,
   `| Page la plus lourde au premier chargement (\`${worst.route}\`) | ${ko(worst.br)} | ≤ ${ko(BUDGET_INITIAL)} | ${ok(worst.br, BUDGET_INITIAL)} |`,
