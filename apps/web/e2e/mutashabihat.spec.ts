@@ -12,7 +12,7 @@ import { totp } from './totp';
  *    jumeau déjà mémorisé : mise en avant), la carte (les deux versets Tanzil exacts, la différence surlignée, le repère « proposé
  *    par Awzid », la source), l'écoute du jumeau par AYYŪB seulement (jamais de synthèse), le test des jumeaux (une mauvaise
  *    réponse marque le mot dans la carte des erreurs), accessibilité AA en clair et en sombre.
- * Jumeaux de test : 99:7 et 99:8 (az-Zalzala), paire « reconnue par la source » du livre Adultes 2.
+ * Jumeaux de test : 99:7 et 99:8 (az-Zalzala), paire « reconnue par la source » (la part apprise est un événement du journal, indépendant du livre du carnet).
  */
 const H = { 'x-awform': '1' };
 const iso = (d: Date) =>
@@ -47,7 +47,7 @@ async function admin(browser: Browser): Promise<Page> {
   return adm;
 }
 
-/** carnet Adultes 2 commencé il y a 60 jours ; la part « 99:5-8 » (qui contient 99:7 et 99:8) apprise il y a 3 jours */
+/** carnet Adultes 2 commencé il y a 60 jours ; la part « 99:1-8 » du carnet (sourate az-Zalzala, qui contient 99:7 et 99:8) apprise il y a 3 jours */
 async function apprendre(page: Page, profileId: string) {
   const r = await page.request.put(`/api/v1/hifz/profiles/${profileId}/plan`, {
     headers: H,
@@ -63,7 +63,7 @@ async function apprendre(page: Page, profileId: string) {
           profileId,
           unitId: 'hifz',
           eventType: 'hifz',
-          response: { day: ilYa(3), part: '99:5-8', kind: 'appris', source: 'auto' },
+          response: { day: ilYa(3), part: '99:1-8', kind: 'appris', source: 'auto' },
           deviceAt: new Date(Date.now() - 100_000).toISOString(),
         },
       ],
