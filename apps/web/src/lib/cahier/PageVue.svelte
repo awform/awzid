@@ -3,6 +3,7 @@
   import Bidi from '$lib/Bidi.svelte';
   import type { LevelAudio } from '$lib/lecons-audio';
   import { t } from '$lib/i18n';
+  import type { OuvrirCahierOptions } from '$lib/video/lecteur-cahier';
   import type { MinuteResultat, ProgresCahier } from './progres';
   import {
     elementsDeLaPage,
@@ -16,8 +17,8 @@
     type Page,
     type Rang,
   } from './donnees';
-  import { arreterSon, idSynthese, jouerElement, lectureGuidee, type Pas } from './audio';
-  import { motsDuBilan, resultatBilan } from './outils';
+  import { arreterSon, idSynthese, jouerElement, lectureGuidee, reciter, type Pas } from './audio';
+  import { SANS_VIDEO, motsDuBilan, resultatBilan } from './outils';
   import Atelier from './Atelier.svelte';
   import Mesure from './Mesure.svelte';
 
@@ -36,6 +37,7 @@
     sauver,
     base,
     avenir = false,
+    ouvrirVideo = null,
   }: {
     page: Page;
     cahier: Cahier;
@@ -45,6 +47,8 @@
     sauver: (p: ProgresCahier) => void;
     base: string;
     avenir?: boolean;
+    /** ouvre la vidéo de la page (fourni par la route quand `video_v2` est ouvert) */
+    ouvrirVideo?: ((o: OuvrirCahierOptions) => Promise<void>) | null;
   } = $props();
 
   const bilan = $derived(page.type === 'bilan');
@@ -117,6 +121,37 @@
     arreterSon();
   }
   onDestroy(arreter);
+
+  // ---------------------------------------------------------------- vidéo vivante de la page (25/10/2026)
+  /**
+   * « Regarder la vidéo » : derrière `cahier_lecture` (la page est ouverte) ET `video_v2` (la route fournit
+   * `ouvrirVideo` seulement alors), sur les pages qui ont des
+   * éléments à lire (ni bilan à froid, ni minute, ni guide). Le lecteur et son générateur sont chargés au premier appui.
+   */
+  const voirVideo = $derived(
+    !!ouvrirVideo && !SANS_VIDEO.includes(page.type) && elements.length > 0,
+  );
+  let videoCharge = $state(false);
+  let videoEchec = $state(false);
+  async function regarder() {
+    if (videoCharge) return;
+    arreter();
+    videoCharge = true;
+    videoEchec = false;
+    try {
+      await ouvrirVideo?.({
+        page,
+        audio,
+        profileId: profil,
+        recite: (ref, p, signal, surAudio) => reciter(ref, p, signal, surAudio),
+        arreter: arreterSon,
+      });
+    } catch {
+      videoEchec = true;
+    } finally {
+      videoCharge = false;
+    }
+  }
 
   // ---------------------------------------------------------------- 6 cases mémorisées
   function ecrireCases(c: boolean[]) {
@@ -353,6 +388,23 @@
         {#if message}<p class="message" role="status"><Bidi text={message} /></p>{/if}
       {/if}
     </section>
+  {/if}
+  {#if voirVideo}
+    <p class="video-ligne">
+      <button
+        type="button"
+        class="bouton"
+        data-testid="voir-video-cahier"
+        aria-busy={videoCharge}
+        onclick={regarder}
+        ><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-video"
+          ><path d="M8 5v14l11-7z" /></svg
+        ><Bidi text={t('cahier.regarder')} /></button
+      >
+    </p>
+    {#if videoEchec}<p class="avertissement" role="alert">
+        <Bidi text={t('cahier.video_erreur')} />
+      </p>{/if}
   {/if}
   {#if coran}<p class="note"><Bidi text={t('cahier.coran_note')} /></p>{/if}
   {#if indispo}<p class="avertissement" role="status">
@@ -743,6 +795,14 @@
     font-weight: 700;
     text-decoration: none;
     cursor: pointer;
+  }
+  .video-ligne {
+    margin: 0.5rem 0;
+  }
+  .ico-video {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: currentColor;
   }
   .bouton.plein {
     background: var(--primary);

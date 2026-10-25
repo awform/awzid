@@ -9,6 +9,7 @@
   import { fn, fonctionsEtat } from '$lib/fonctions.svelte';
   import { t } from '$lib/i18n';
   import { noter } from '$lib/usage';
+  import type { OuvrirCahierOptions } from '$lib/video/lecteur-cahier';
 
   /**
    * Cahier de lecture (20/10/2026) — page du cahier d'un niveau (`?p=P047` : une page ; sans paramètre : le sommaire).
@@ -18,10 +19,21 @@
    */
   const niveau = $derived(page.params.niveau ?? '');
   const ouvert = $derived(fn('cahier_lecture') && CAHIER_NIVEAUX.includes(niveau));
+  /**
+   * « Regarder la vidéo » (25/10/2026) : proposé seulement si `video_v2` est ouvert aussi ; le lecteur et son générateur
+   * (groupe `/_app/video.json`) ne sont chargés qu'au premier appui, avec les nouvelles tentatives des modules à la demande.
+   */
+  const ouvrirVideo = $derived(
+    fn('video_v2')
+      ? (o: OuvrirCahierOptions) =>
+          chargerModule(() => import('$lib/video/lecteur-cahier')).then((m) => m.ouvrir(o))
+      : null,
+  );
   let Vue = $state<Component<{
     niveau: string;
     pageId: string | null;
     unite?: string | null;
+    ouvrirVideo?: ((o: OuvrirCahierOptions) => Promise<void>) | null;
   }> | null>(null);
   let echec = $state(false);
   function charger() {
@@ -41,7 +53,12 @@
 <svelte:head><title>{t('app.nom')} — {t('cahier.titre')}</title></svelte:head>
 
 {#if ouvert && Vue}
-  <Vue {niveau} pageId={page.url.searchParams.get('p')} unite={page.url.searchParams.get('u')} />
+  <Vue
+    {niveau}
+    pageId={page.url.searchParams.get('p')}
+    unite={page.url.searchParams.get('u')}
+    {ouvrirVideo}
+  />
 {:else if ouvert && echec}
   <ConnexionNecessaire onretry={charger} />
 {:else if !ouvert && fonctionsEtat.qui}

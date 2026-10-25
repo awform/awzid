@@ -85,6 +85,7 @@ export async function reciter(
   ref: string | undefined,
   profileId: string | null,
   signal?: AbortSignal,
+  surAudio?: (a: HTMLAudioElement) => void,
 ): Promise<number> {
   const r = refVerset(ref);
   if (!r) throw new Error('reference');
@@ -97,6 +98,7 @@ export async function reciter(
   enRecitation = false;
   recitUrl = await urlRecitation(f.url);
   recit = new Audio(recitUrl);
+  surAudio?.(recit);
   await recit.play();
   return fin(recit, signal);
 }

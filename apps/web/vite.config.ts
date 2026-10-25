@@ -32,7 +32,7 @@ function lecteurALaDemande(): Plugin {
 function videoALaDemande(): Plugin {
   return aLaDemande(
     'video',
-    /[\\/](lib[\\/]video[\\/]|content[\\/](dist|src)[\\/]video(-garde)?\.[jt]s)/,
+    /[\\/](lib[\\/]video[\\/]|content[\\/](dist|src)[\\/]video(-garde|-cahier)?\.[jt]s)/,
   );
 }
 
@@ -188,8 +188,12 @@ export default defineConfig({
               // préchargé sur l'appareil de l'élève, ils restent chargés à la demande
               // 19/10/2026 : les cartes de mots (« Aujourd'hui », « Réviser mes mots », écrans v4 de la refonte) restent dans
               // leur morceau (`A_PART`) : dans le morceau commun, elles pèseraient sur toutes les pages (lecteur…)
+              // 25/10/2026 : la garde coranique des vidéos (liste d'empreintes de 6 Ko) est lue par les trois lecteurs (v1, v2,
+              // cahier), tous à la demande : jamais dans le morceau commun préchargé (+0,8 Ko sur l'appareil de l'élève)
               test: (id: string) =>
-                !/lib\/identites\/|school\/dist\/telephone|src\/lib\/cards\.ts/.test(id),
+                !/lib\/identites\/|school\/dist\/telephone|src\/lib\/cards\.ts|content\/(dist|src)\/video-garde\./.test(
+                  id,
+                ),
             },
             ...Object.entries(A_PART).map(([name, m]) => ({
               name,

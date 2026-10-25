@@ -95,5 +95,9 @@
   "vv.chapitre": "Chapitre {n} sur {total}",
   "vv.vu": "Ce que tu as vu",
   "vv.ecoute_noms": "Écoute le nom de chaque lettre",
-  "vv.ecoute_mot": "Écoute et regarde"
+  "vv.ecoute_mot": "Écoute et regarde",
+  "vv.cah_titre": "Vidéo de la page du cahier",
+  "vv.cah_ecoute": "Écoute",
+  "vv.cah_repete": "À toi : répète",
+  "vv.cah_ligne": "Ligne {n} sur {total}"
 }

@@ -18,6 +18,7 @@
   import { chargerCahier, leconAtteinte, type Cahier, type Page } from './donnees';
   import { arreterSon } from './audio';
   import PageVue from './PageVue.svelte';
+  import type { OuvrirCahierOptions } from '$lib/video/lecteur-cahier';
 
   /**
    * Cahier de lecture (20/10/2026) — sommaire (sans `?p`) ou une page. Hors ligne d'abord : le cahier, sa progression
@@ -27,7 +28,14 @@
     niveau,
     pageId,
     unite = null,
-  }: { niveau: string; pageId: string | null; unite?: string | null } = $props();
+    ouvrirVideo = null,
+  }: {
+    niveau: string;
+    pageId: string | null;
+    unite?: string | null;
+    /** ouvre la vidéo d'une page (absent : `video_v2` coupé, pas de bouton) */
+    ouvrirVideo?: ((o: OuvrirCahierOptions) => Promise<void>) | null;
+  } = $props();
   let cahier = $state<Cahier | null>(null);
   let nouveau = $state<Cahier | null>(null);
   let erreur = $state(false);
@@ -138,7 +146,17 @@
     <p class="attente" aria-busy="true"><Bidi text={t('cahier.charge')} /></p>
   {:else if pageId && page}
     {#key page.id}
-      <PageVue {page} {cahier} {audio} {profil} {progres} {sauver} {base} avenir={avenir(page)} />
+      <PageVue
+        {page}
+        {cahier}
+        {audio}
+        {profil}
+        {progres}
+        {sauver}
+        {base}
+        avenir={avenir(page)}
+        {ouvrirVideo}
+      />
     {/key}
   {:else if unite && !pageId}
     <p class="attente" aria-busy="true"><Bidi text={t('cahier.charge')} /></p>

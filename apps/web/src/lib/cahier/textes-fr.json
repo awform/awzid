@@ -19,6 +19,8 @@
   "cahier.lire_modele": "Lire avec le modèle",
   "cahier.arreter": "Arrêter",
   "cahier.lire_seul": "J'ai lu seul",
+  "cahier.regarder": "Regarder la vidéo",
+  "cahier.video_erreur": "La vidéo n'a pas pu être chargée. Vérifie ta connexion, puis réessaie.",
   "cahier.lecture_finie": "Lecture finie : une case est cochée.",
   "cahier.sans_audio": "Certains éléments n'ont pas encore leur audio : lis-les avec ton enseignant.",
   "cahier.precedente": "Page précédente",

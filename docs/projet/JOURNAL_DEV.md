@@ -39,6 +39,23 @@ Décisions : `awform/audio/referent-25-10-DECISIONS.md` (points 1 et 2). Rien d�
 - **À installer sur la bêta**, dans l'ordre : les archives audio que la bêta n'a pas encore (`maj-audio-cahier-parler-ad2` à `-ad10`, `maj-audio-gemini-en1`, `-en2`, `-en3`, `maj-audio-cahier-lecture-en1`), puis `maj-audio-zero-muet-final.tgz` EN DERNIER (son index est le seul à ne pas porter le lot 7). Les archives maj-audio-gemini-en3 et maj-audio-cahier-lecture-en1 portent encore, dans leur index, les deux lignes du lot 7 sans MP3 : sans effet (le serveur écarte ces deux versets entiers à l'import).
 
 <!-- /zero-muet-correctif-25-10 -->
+<!-- video-cahier-25-10 -->
+
+---
+
+## 25/10/2026 — Vidéos vivantes du cahier de lecture (lettre, syllabe, mot, grille) ; branche `video-cahier-lecture-wip` ; NON déployé
+
+Demande du client : voir et entendre EN MÊME TEMPS la lettre, puis la syllabe, puis le mot. Mode « cahier » des vidéos vivantes V2, derrière `cahier_lecture` ET `video_v2` (aucun interrupteur nouveau).
+
+- **Générateur** `packages/content/src/video-cahier.ts` (+ `video-cahier-types.ts`) : une page du cahier donne des scènes (une par bloc) faites de lignes, déduites de la STRUCTURE des blocs (rang de grille ou de tableau = une ligne ; paire ; lettres séparées puis mot lié ; listes plates coupées selon la taille des éléments) : rien n'est propre à Adultes 1, même format pour en1 et ado1. Pas de vidéo pour le bilan à froid, la minute chronométrée ni le guide.
+- **Lecteur** `apps/web/src/lib/video/lecteur-cahier.ts` (+ css) : l'élément s'affiche en grand et s'allume AU SON EXACT (événement `playing`), la flèche avance de droite à gauche, puis pause « À toi : répète » (1,5 fois la durée écoutée, 2 s au moins), puis la ligne suivante ; pause, vitesse, ligne précédente/suivante ; préchargement de 4 fichiers au plus ; chargé à la demande (groupe `/_app/video.json`) ; récitation stockée d'Ayyūb pour les éléments « q » (jamais de synthèse), garde `VIDEO_GARDE` lue sans la modifier (`audioIdFor` et `VIDEO_GARDE` non touchés).
+- **Bouton** « Regarder la vidéo » dans chaque page du cahier (route `/cahier/[niveau]` : fournit l'ouverture seulement si `video_v2` est ouvert).
+- **Piège de poids trouvé** : un troisième lecteur lisant `video-garde` l'envoyait dans le morceau commun préchargé (+0,8 Ko) ; exclu du morceau commun (`vite.config.ts`). Le cahier ne partage aucun module avec le lecteur de vidéo (`SANS_VIDEO` copié, test d'égalité).
+- **Bogue trouvé par l'e2e** : le premier élément de chaque ligne partait muet (source du fichier pas encore posée) ; corrigé (`pret`).
+- **Tests** : unitaires `video-cahier.test.ts` (fidélité octet pour octet, garde, aucune scène muette avec la liste réelle des audios, lignes, calendrier, préchargement, textes, chargement à la demande) ; e2e `video-cahier.spec.ts` (11 : ouverture, son exact, grille ligne par ligne, texte fidèle, Coran sans synthèse, 4 fichiers, AA clair/sombre, cibles 44 px, animations réduites, captures).
+- **Captures** : `Documents\Awzid\application\design\videos_vivantes\cahier_lecture\` (lettre, grille, mots ; 390 px ; clair et sombre).
+- **Reste** : relecture des textes en/es/de/ar (brouillons) ; cahiers en1 et ado1 (mêmes données) ; la page « formes » (P012, 28 lettres) dure ~8 min.
+<!-- /video-cahier-25-10 -->
 <!-- zero-muet-25-10 -->
 
 ---

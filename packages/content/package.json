@@ -85,6 +85,14 @@
       "types": "./dist/video-niveaux.d.ts",
       "default": "./dist/video-niveaux.js"
     },
+    "./video-cahier": {
+      "types": "./dist/video-cahier.d.ts",
+      "default": "./dist/video-cahier.js"
+    },
+    "./video-cahier-types": {
+      "types": "./dist/video-cahier-types.d.ts",
+      "default": "./dist/video-cahier-types.js"
+    },
     "./dhikr": {
       "types": "./dist/dhikr.d.ts",
       "default": "./dist/dhikr.js"

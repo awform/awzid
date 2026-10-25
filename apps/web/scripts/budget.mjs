@@ -212,7 +212,10 @@ const vidV1 = vidDe('src/lib/video/lecteur.ts');
 const vidV2 = vidDe('src/lib/video/lecteur-v2.ts');
 const vidV1Br = grpBr(vidV1);
 const vidV2Br = grpBr(vidV2);
-const vidPire = Math.max(vidV1Br, vidV2Br);
+// 25/10/2026 : lecteur du cahier de lecture (mode « cahier » des vidéos vivantes), chargé à la demande depuis une page du cahier
+const vidCah = vidDe('src/lib/video/lecteur-cahier.ts');
+const vidCahBr = grpBr(vidCah);
+const vidPire = Math.max(vidV1Br, vidV2Br, vidCahBr);
 const base = [
   keyOf('/@sveltejs/kit/src/runtime/client/entry.js'),
   keyOf('client-optimized/app.js'),
@@ -274,6 +277,7 @@ const lines = [
   `| Lecteur audio des phrases, à la demande au premier appui sur « Écouter » (${lecList.length} fichiers${swLec ? '' : ' — service worker NE L’EXCLUT PAS'}) | ${ko(lecBr)} (≤ ${ko(BUDGET_LECTEUR)}) |`,
   `| Vidéos vivantes, à la demande au premier appui sur « Voir en vidéo » : lecteur v2 et générateur (${vidV2.length} fichiers${swVid ? '' : ' — service worker NE LES EXCLUT PAS'}) | ${ko(vidV2Br)} (≤ ${ko(BUDGET_VIDEO)}) |`,
   `| Vidéos vivantes : lecteur v1 et générateur (interrupteur \`video_v2\` coupé ; ${vidV1.length} fichiers) | ${ko(vidV1Br)} (≤ ${ko(BUDGET_VIDEO)}) |`,
+  `| Vidéos vivantes du cahier de lecture : lecteur « cahier » et générateur (interrupteurs \`cahier_lecture\` et \`video_v2\` ; ${vidCah.length} fichiers) | ${ko(vidCahBr)} (≤ ${ko(BUDGET_VIDEO)}) |`,
   `| Vidéos vivantes : tous les fichiers du groupe (deux lecteurs, jamais chargés ensemble) | ${ko(vidBr)} |`,
   `| Cahier de lecture, à la demande à la première ouverture (${cahList.length} fichiers${swCah ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(cahBr)} (≤ ${ko(BUDGET_CAHIER)}) |`,
   `| Cahier « Je parle », à la demande à la première ouverture (${parList.length} fichiers${swPar ? '' : ' — service worker NE LE EXCLUT PAS'}) | ${ko(parBr)} (≤ ${ko(BUDGET_PARLER)}) |`,
@@ -306,7 +310,7 @@ const fails = [
   [!vivList.length || vivBr > BUDGET_VIVANTE, 'leçons vivantes'],
   [!swLec || !lecList.length || lecBr > BUDGET_LECTEUR, 'lecteur audio (à la demande)'],
   [
-    !swVid || !vidV1.length || !vidV2.length || vidPire > BUDGET_VIDEO,
+    !swVid || !vidV1.length || !vidV2.length || !vidCah.length || vidPire > BUDGET_VIDEO,
     'vidéos vivantes (à la demande)',
   ],
   [!swCah || !cahList.length || cahBr > BUDGET_CAHIER, 'cahier (à la demande)'],

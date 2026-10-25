@@ -71,3 +71,11 @@ export const parMinute = (justes: number, secondes: number) =>
 /** Mots du bilan d'une page (tous les blocs de mots, dans l'ordre). */
 export const motsDuBilan = (p: Page): El[] =>
   p.blocs.filter((b) => b.type === 'mots').flatMap((b) => b.el as El[]);
+
+/**
+ * Types de pages sans vidéo (25/10/2026) : le bilan à froid (l'élève lit seul des mots jamais vus), la minute
+ * chronométrée et le guide. Copie VOLONTAIRE de `CAHIER_SANS_VIDEO` du générateur (`@awform/content/video-cahier-types`) :
+ * le cahier ne doit pas partager de module avec le lecteur de vidéo (chargé à part, à la demande) ; un test garde les
+ * deux listes identiques.
+ */
+export const SANS_VIDEO: readonly string[] = ['bilan', 'minute', 'guide'];
