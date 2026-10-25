@@ -13,6 +13,14 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 25/10/2026 — Vidéos vivantes V2 : le livre Ados 2 (ado2), fusion de `video-vivante-ado2-wip` dans `main` ; NON déployé
+
+**Note de reprise** : dernier livre fusionné = **ado2** (après en1, ado1, en2). Restent : en3, ado3, en4, ado4, en5 (puis e2e complète finale). Outils : `~/vv-ad/` (`nouveau3.sh B famille N`, `auto.sh` / `auto2.sh` (avec e2e complète), `merge.sh`, `fusion.sh`).
+
+`VIDEO_NIVEAUX` : `livres('ado', 2)` ; `VIDEO_GARDE` recalculée (quelques empreintes de plus). Contrôle 360 px : **0 réduction sur les 25 unités** du premier coup ; captures v2 clair/sombre de l03, l11, l19 et planche (`captures_app/captures-v2-ado2/`). Tests : typecheck, eslint, prettier 0 erreur ; unitaires verts sauf `video-cahier-niveau1.test.ts` (rouge aussi sur `main`) ; les tests de l'API échouent par intermittence sur la base partagée `awform_test` quand un autre agent teste en même temps (deadlock) : relancés seuls et sous `flock`, **verts** ; e2e vidéo **18 réussis, 0 échec** ; **e2e complète** (`flock`, `--retries=1 --workers=3`) : **1 009 réussis, 179 ignorés, 5 instables passés au second essai (cahier-jeux, maj-fiable), 1 échec de charge** (`a21b.spec.ts:195`, cartes vivantes sous la barre) **réussi relancé seul** ; poids lecteur v2 23 625 o (garde 24 Ko), marge de l'appareil élève 3 131 o (≥ 3 072). Audio (ado2, 921 fichiers) : 654 textes « à écouter » sans fichier, 1 711 en tout ; `reports/video-vivante-ado2.md`.
+
+---
+
 ## 25/10/2026 — Khatma et wird (interrupteur `khatma_wird`, COUPÉ par défaut) ; branche `khatma-wird-wip` ; NON déployé
 
 Premier des quatre chantiers « programme Coran ». Interrupteur `khatma_wird` : coupé par défaut partout (démonstration comprise), à ouvrir au « canal bêta » par l'administrateur ; coupé, le Coran reste entier, sans la carte, et le serveur refuse (`403 fonction_coupee`). Aucun texte coranique touché (seulement des numéros de pages et de versets), aucune synthèse vocale.
