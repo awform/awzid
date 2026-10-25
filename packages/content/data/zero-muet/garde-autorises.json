@@ -355,6 +355,36 @@
       "decision": "synthese",
       "raison": "décision du référent (referent-373-DECISIONS n° 13, 24/10/2026) : reformulation : pas le texte coranique exact ; réplique d'un personnage, même reformulation que 2:110/73:20 [suite de 4 mots identique à 48:2]",
       "refusAvant": "décision n° 13 (texte demandé explicitement)"
+    },
+    {
+      "cle": "إِنْ شَاءَ اللَّهُ، مَنْ جَاءَ فَأَهْلًا بِهِ.",
+      "decision": "synthese",
+      "raison": "phrase du livre (formule « مَا شَاءَ اللَّهُ » suivie d’une phrase) ; décision n° 14 du référent (24 textes bloqués par la garde → synthèse)",
+      "refusAvant": "garde commune (refusVoix) : citation\r"
+    },
+    {
+      "cle": "مَا شَاءَ اللَّهُ! لَا تَرْفَعْنَ الْقِدْرَ الْكَبِيرَ.",
+      "decision": "synthese",
+      "raison": "phrase du livre (formule « مَا شَاءَ اللَّهُ » suivie d’une phrase) ; décision n° 14 du référent (24 textes bloqués par la garde → synthèse)",
+      "refusAvant": "garde commune (refusVoix) : citation\r"
+    },
+    {
+      "cle": "مَا شَاءَ اللَّهُ! لَا يَنْجَحُ أَحَدٌ وَحْدَهُ.",
+      "decision": "synthese",
+      "raison": "phrase du livre (formule « مَا شَاءَ اللَّهُ » suivie d’une phrase) ; décision n° 14 du référent (24 textes bloqués par la garde → synthèse)",
+      "refusAvant": "garde commune (refusVoix) : citation\r"
+    },
+    {
+      "cle": "مَا شَاءَ اللَّهُ! إِنَّ الرِّفْقَ يَفْتَحُ الْقُلُوبَ.",
+      "decision": "synthese",
+      "raison": "phrase du livre (formule « مَا شَاءَ اللَّهُ » suivie d’une phrase) ; décision n° 14 du référent (24 textes bloqués par la garde → synthèse)",
+      "refusAvant": "garde commune (refusVoix) : citation\r"
+    },
+    {
+      "cle": "وَالْعَصْرِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis) ; décision n° 14 du référent (24 mots isolés bloqués par la garde → synthèse)",
+      "refusAvant": "garde de la chaine audio (gen-audio Test-Coran : signes du Mushaf, Tanzil, citation introduite)\r"
     }
   ]
 }
