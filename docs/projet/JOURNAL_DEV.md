@@ -13,6 +13,14 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 26/10/2026 — Vidéos vivantes V2 : le livre Ados 3 (ado3), fusion de `video-vivante-ado3-wip` dans `main` ; NON déployé
+
+**Note de reprise** : dernier livre fusionné = **ado3** (après en1, ado1, en2, ado2, en3). Restent : en4, ado4, en5 (puis e2e complète finale). Outils : `~/vv-ad/` (`nouveau3.sh B famille N`, `auto.sh`, `merge.sh`, `verif.sh` (build, typecheck, tests, garde de poids, puis fusion), `clean.sh`).
+
+`VIDEO_NIVEAUX` : ado 3 ; `VIDEO_GARDE` recalculée. Contrôle 360 px : **0 réduction sur les 25 unités** du premier coup ; captures v2 clair/sombre de l03, l11, l19 et planche (`captures_app/captures-v2-ado3/`). Tests : typecheck, eslint, prettier 0 erreur ; unitaires verts sauf `video-cahier-niveau1.test.ts` (rouge aussi sur `main`) et `identites.test.ts` (secours payant : plafond quotidien, déjà signalé rouge ou instable sur `main`) ; e2e vidéo **18 réussis, 0 échec** ; poids lecteur v2 23 641 o (garde 24 Ko), marge de l'appareil élève 6 409 o. Audio (ado3, 1 015 fichiers) : 832 textes « à écouter » sans fichier, 2 077 en tout ; `reports/video-vivante-ado3.md`.
+
+---
+
 ## 25/10/2026 — « Retrouve ce verset » et suivi de la récitation avec notre IA `ecoute-ia` (interrupteur `shazam_coran`, COUPÉ par défaut) ; branche `shazam-coran-wip` ; NON déployé
 
 Service `ecoute-ia` en production NON touché : seulement deux MODES ajoutés au code (`/ecouter?mode=retrouver`, `/direct/{sid}?mode=suivi`), les routes existantes répondent comme avant. Détail et chiffres : `docs/projet/ECOUTE_IA.md` § 10.
