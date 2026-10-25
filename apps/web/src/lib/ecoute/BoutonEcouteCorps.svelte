@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount, type Component } from 'svelte';
+  import { resolve } from '$app/paths';
   import { loadTexts, t } from '$lib/i18n';
+  import Icon from '$lib/ui/Icon.svelte';
   import { etatEcoute, type EtatEcoute } from './etat';
 
   /**
@@ -14,6 +16,7 @@
     portion,
     memoriser = false,
     carnet = false,
+    retrouver = false,
   }: {
     profileId: string | null;
     kind: string;
@@ -21,6 +24,8 @@
     memoriser?: boolean;
     /** carnet de hifẓ : montrer aussi les passages à revoir (bilans des séances) */
     carnet?: boolean;
+    /** barre du lecteur : bouton « Retrouve ce verset » (interrupteur shazam_coran) au lieu de « Réciter et vérifier » */
+    retrouver?: boolean;
   } = $props();
 
   type Composant = Component<Record<string, unknown>>;
@@ -32,7 +37,7 @@
   onMount(() => {
     if (!profileId) return;
     void etatEcoute(profileId).then(async (e) => {
-      if (!e.active) return;
+      if (retrouver ? !e.shazam : !e.active) return;
       // textes de la fonction hors de la coquille : chargés seulement si elle est ouverte pour ce profil
       await loadTexts('ecoute');
       etat = e;
@@ -47,7 +52,11 @@
   }
 </script>
 
-{#if etat?.active && profileId}
+{#if retrouver}
+  {#if etat?.shazam}<a class="rv" href={resolve('/coran/retrouver')} data-testid="retrouver-verset"
+      ><Icon name="oreille" size={22} /><span>{t('rv.titre')}</span></a
+    >{/if}
+{:else if etat?.active && profileId}
   {#if portion}
     <button type="button" class="ecoute primary" onclick={ouvrir} data-testid="reciter-verifier"
       >{t('ec.bouton')}</button
@@ -60,6 +69,24 @@
 {/if}
 
 <style>
+  /* « Retrouve ce verset » : même allure que les outils de la barre du lecteur */
+  .rv {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--mp-green);
+    text-decoration: none;
+    border-radius: var(--radius-pill);
+  }
+  .rv:hover {
+    background: var(--mp-mint);
+  }
   .ecoute {
     border-radius: 999px;
     padding: 6px 14px;

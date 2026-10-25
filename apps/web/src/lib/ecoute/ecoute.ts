@@ -40,7 +40,7 @@ export const SIGNALER_EN_DIRECT = false;
  * SUIVI DE LA RÉCITATION (interrupteur `shazam_coran`, 25/10/2026) : le service relit chaque passage AVEC SON
  * CONTEXTE (4 s avant, le passage suivant après) et en deux lectures (RNN-T et CTC) ; un écart n'est montré pendant la
  * récitation que sur ces mots « stables » et seulement si les deux lectures le voient (`ecartsDAccord`). Mesure :
- * docs/projet/ECOUTE_IA.md § 9. Les mots provisoires et partiels ne font que dévoiler le texte.
+ * docs/projet/ECOUTE_IA.md § 10. Les mots provisoires et partiels ne font que dévoiler le texte.
  */
 
 // ------------------------------------------------------------------ accord, vérification

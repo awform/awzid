@@ -85,8 +85,6 @@ export const EN_LIGNE_MODULES = [
   /src\/lib\/ecoute\/(PanneauEcoute|ARevoirEcoute)\.svelte$/,
   // 25/10/2026 (allègement) : le bouton lui-même, derrière une enveloppe de quelques octets (BoutonEcoute.svelte)
   /src\/lib\/ecoute\/BoutonEcouteCorps\.svelte$/,
-  // 25/10/2026 : bouton « Retrouve ce verset » du lecteur (shazam_coran : l'écran dédié a besoin du réseau)
-  /src\/lib\/ecoute\/BoutonRetrouver\.svelte$/,
   // hifẓ complet : écran enfant (l'écoute du récitateur choisi par le parent a besoin du réseau), à la demande
   /src\/lib\/hifz-outils\/Enfant\.svelte$/,
   // D2 : rubriques de « Compte » qui écrivent sur le serveur (compte, sécurité, données, classe) et notifications

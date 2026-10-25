@@ -8,7 +8,7 @@
     type SuraPack,
   } from '$lib/coran-audio';
   import { loadVerses } from '$lib/hifz';
-  import { fmtNumber, t } from '$lib/i18n';
+  import { fmtNumber, loadTexts, t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
   import { chargerCarnet, libelle } from './donnees';
   import MotsVerset from './MotsVerset.svelte';
@@ -41,7 +41,8 @@
   let minuteur: ReturnType<typeof setTimeout> | null = null;
 
   onMount(async () => {
-    const c = await chargerCarnet(profileId);
+    // textes de l'écran enfant (en ligne) hors des textes préchargés de l'élève : chargés avec lui
+    const [c] = await Promise.all([chargerCarnet(profileId), loadTexts('rares')]);
     basmala = c?.basmala ?? '';
     // d'abord le passage de la semaine (à apprendre), puis ceux déjà appris
     passages = [

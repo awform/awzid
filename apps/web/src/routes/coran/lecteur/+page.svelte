@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fn } from '$lib/fonctions.svelte';
   import Bidi from '$lib/Bidi.svelte';
-  import { onDestroy, onMount, tick, untrack, type Component } from 'svelte';
+  import { onDestroy, onMount, tick, untrack } from 'svelte';
   import { getSettings } from '$lib/offline';
   import { chargerModule } from '$lib/charger';
   import { goto } from '$app/navigation';
@@ -130,12 +130,6 @@
    * riwāya toujours écrite en clair, surlignage jamais d'une riwāya sur le texte d'une autre.
    */
   type Verse = { s: number; a: number; text: string };
-  /** « Retrouve ce verset » (shazam_coran, coupé par défaut) : bouton chargé à la demande, fonction ouverte seulement */
-  let Retrouver = $state<Component | null>(null);
-  $effect(() => {
-    if (fn('shazam_coran'))
-      void import('$lib/ecoute/BoutonRetrouver.svelte').then((m) => (Retrouver = m.default));
-  });
   const TRACK_CODES = [
     'sourate_absente',
     'recitateur_indisponible',
@@ -1945,7 +1939,12 @@
           ><Icon name="taille" size={22} /><span>{t('cl.grand_texte')}</span></button
         >
         <!-- « Retrouve ce verset » (interrupteur shazam_coran, coupé par défaut) : bouton chargé à la demande -->
-        {#if Retrouver}<Retrouver />{/if}
+        {#if profileId && fn('shazam_coran')}<BoutonEcoute
+            {profileId}
+            kind={profKind}
+            portion={null}
+            retrouver
+          />{/if}
         <!-- UN SEUL point d'entrée pour tous les réglages du lecteur : icône ET libellé, téléphone et bureau -->
         <button
           type="button"

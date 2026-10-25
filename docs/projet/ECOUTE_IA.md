@@ -227,7 +227,7 @@ comme l'écoute IA ; un seul calcul à la fois, file courte (503 « occupé »).
    le canal bêta (le bouton « l'IA s'est trompée » de l'écoute IA n'existe pas encore pour les madd).
 3. **Correspondance des madd** : le nombre de madd annoté dans le verset (source `quran-tajweed`) doit coïncider avec celui que le modèle décode dans la
    récitation d'Ayyūb ; sinon le service se tait (`correspondance_incertaine`). Mesurer la part de versets concernés avant d'ouvrir.
-## 9. « Retrouve ce verset » et suivi de la récitation (interrupteur `shazam_coran`, 25/10/2026)
+## 10. « Retrouve ce verset » et suivi de la récitation (interrupteur `shazam_coran`, 25/10/2026)
 
 Interrupteur F5 `shazam_coran`, **coupé par défaut** ; mêmes règles qu'A5 : accord « analyse vocale par IA » au premier
 usage (enfant : code parent ; mineur seul : refusé), plafond `AWFORM_ECOUTE_PAR_HEURE` partagé, voix jamais gardée
@@ -235,7 +235,7 @@ usage (enfant : code parent ; mineur seul : refusé), plafond `AWFORM_ECOUTE_PAR
 disjoncteur de coût. Le service `ecoute-ia` n'a reçu que des MODES (`/ecouter?mode=retrouver`, `/direct/{sid}?mode=suivi`) :
 les routes existantes répondent comme avant.
 
-### 9.1 Retrouve ce verset
+### 10.1 Retrouve ce verset
 
 - **Appareil** : bouton « Retrouve ce verset » dans la barre du lecteur (composant chargé à la demande, hors coquille),
   écran `/coran/retrouver` (page rare, en ligne). Enregistrement de 15 s au plus ; moins de 3 s : « Récite un peu plus
@@ -263,7 +263,7 @@ les routes existantes répondent comme avant.
   décodage + lectures + recherche, sans le réseau du téléphone), 60 extraits de 10 s en moyenne : **médiane 0,88 s**,
   90ᵉ centile 2,0 s, **86,7 % sous 1,5 s** ; les plus lents sont les 10 relectures (16 %).
 
-### 9.2 Suivi de la récitation « comme Tarteel »
+### 10.2 Suivi de la récitation « comme Tarteel »
 
 - Le mode `suivi` du service relit chaque passage (coupé à une pause ≥ 0,35 s, ou au point le plus calme après 10 s)
   **avec son contexte** : 4 s avant, le passage suivant après, 0,5 s de silence autour, deux lectures. Les mots du
@@ -294,7 +294,7 @@ les routes existantes répondent comme avant.
   (≈ 11 s : l'erreur est dite après la pause suivante) est annoncé dans l'aide. Calcul : 1,5 s par morceau d'1 s en
   médiane SOUS FORTE CHARGE (charge 15 à 25 pendant la mesure) ; à remesurer au calme avant d'ouvrir.
 
-### 9.3 Reste à faire
+### 10.3 Reste à faire
 
 Vraies voix d'élèves adultes (30 volontaires) avant d'ouvrir ; voix d'enfants : pas d'ouverture avant une mesure
 dédiée ; flux continu (WebSocket) pour raccourcir le délai du suivi ; « réécouter sa récitation » d'un écart

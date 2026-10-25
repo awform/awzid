@@ -666,5 +666,15 @@
   "ca.ajouter_recitateur": "Ajouter un récitateur",
   "ca.site_complexe": "Site du Complexe du Roi Fahd",
   "ca.site_qf": "Quran Foundation",
-  "lecteur.sourate": "Sourate"
+  "lecteur.sourate": "Sourate",
+  "hz.enfant_vide": "Ton carnet n’a pas encore de passage. Demande à ton parent de le choisir.",
+  "hz.enfant_passage": "Mon passage",
+  "hz.enfant_fois": "Combien de fois ?",
+  "hz.n_fois": "{n} fois",
+  "hz.enfant_sans_audio": "L’écoute a besoin d’Internet (ou d’une sourate gardée sur l’appareil) et d’un récitateur choisi par ton parent.",
+  "hz.ecouter": "Écouter",
+  "hz.pause": "Pause",
+  "hz.a_toi": "À toi de répéter",
+  "hz.enfant_position": "Verset {aya} · écoute {n} sur {total}",
+  "hz.enfant_pret": "{n, plural, one {# écoute prévue} other {# écoutes prévues}}"
 }
