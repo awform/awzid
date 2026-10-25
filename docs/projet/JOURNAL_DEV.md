@@ -13,6 +13,14 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 25/10/2026 — Vidéos vivantes V2 : le livre Enfants 2 (en2), fusion de `video-vivante-en2-wip` dans `main` ; NON déployé
+
+**Note de reprise** : dernier livre fusionné = **en2** (après en1, ado1). Restent : ado2 (puis e2e complète), en3, ado3, en4, ado4, en5 (puis e2e complète). Outils sur la VM : `~/vv-ad/` (`nouveau2.sh B précédent`, `auto.sh B unités` = captures + contrôle 360 px + unitaires + e2e vidéo, `merge.sh`, `fusion.sh`) ; ports 3590/4690 ; attention : un test interrompu laisse des serveurs orphelins (ports 36xx) à tuer avant de relancer.
+
+`VIDEO_NIVEAUX` + en2, et **liste écrite en compact** (`livres('ad', 10), livres('en', 2), 'ado1'`) : chaque identifiant ajouté coûtait 15 à 20 o à l'appareil élève (marge 3 147 o pour 3 072 exigés) ; avec la forme compacte la marge passe à **3 262 o**. Garde inchangée. Corrections trouvées par les contrôles : (1) leçons 1 à 4 d'Enfants 2 sans numéro de leçon dans les données (« valeur manquante : n », le lecteur plantait) : le rang sert de numéro avant le premier bilan ; (2) le récapitulatif ne crée plus de signalement pour une lettre au graphisme du Muṣḥaf (alif wasla seul : même garde qu'avant) ; (3) la scène « points » (nom des points d'une lettre, arabe long) défile au lieu d'être réduite (en2.l09). Contrôle 360 px : **0 réduction sur les 25 unités** (l09 revérifiée après correction) ; captures v2 clair/sombre de l02, l06, l19 et planche (`captures_app/captures-v2-en2/`). Tests : typecheck, eslint, prettier 0 erreur ; unitaires : tout vert sauf `video-cahier-niveau1.test.ts` (liste des textes « بسم الله », rouge aussi sur `main`) et `beta-infra.test.ts` (Caddy local, rouge aussi sur `main`) ; les tests de base de données ont échoué une fois par collision avec un autre agent sur `awform_test`, **verts relancés** (API : 540 réussis) ; e2e vidéo **18 réussis, 0 échec** ; poids lecteur v2 23 651 o (garde 24 Ko). Audio (en2, 637 fichiers) : 150 textes « à écouter » sans fichier, 768 en tout ; `reports/video-vivante-en2.md`.
+
+---
+
 ## 25/10/2026 — Cahiers « Je parle » des 15 autres niveaux (adultes 3 à 10, enfants 2 à 5, ados 2 à 4) ; branche `cahiers-parler-tous-wip` ; NON déployé
 
 Même interrupteur que le cahier d'Adultes 2 (`cahier_parler`, coupé par défaut, canal bêta). Aucun audio installé par ce lot (les archives `maj-audio-cahier-parler-*` sont installées à part).

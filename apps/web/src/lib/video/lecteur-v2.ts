@@ -951,7 +951,7 @@ function creer(opt: OuvrirOptions): () => void {
     // exercice, un récapitulatif, la grille des mots, une ligne à lire ou les repères de « À toi ! » (gardés à leur taille), qui défilent
     if (
       !el.matches(
-        '.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif,.b-titre,.b-bulle,.b-q,.b-bilan,.b-grille,.b-inter,.b-aToi,.b-rangee,.b-lettres',
+        '.b-regle,.b-fr,.b-retenir,.b-cles,.b-texte,.b-objectif,.b-titre,.b-bulle,.b-q,.b-bilan,.b-grille,.b-inter,.b-aToi,.b-rangee,.b-lettres,.b-points',
       )
     )
       for (let k = 0.9; deborde() && k > 0.55; k -= 0.05) {
@@ -1123,7 +1123,7 @@ function creer(opt: OuvrirOptions): () => void {
       case 'points':
         ajoute(`${x.ar ? arH(x.ar.ar, 'points') : ''}${fr(x.fr, true)}`);
         if (x.ar?.son) await dire(x.ar);
-        return att(x.ms);
+        return defile(x.ms * rythme);
       case 'formes': {
         const lab = ['vv.isolee', 'vv.debut', 'vv.milieu', 'vv.fin_mot'];
         const l = sc.temps.find((y) => y.k === 'trace');

@@ -1,19 +1,8 @@
 /**
  * Vidéos vivantes : niveaux proposés (ceux dont la garde coranique de la vidéo est calculée et testée, voir
  * `video-garde.ts`). Module minuscule, importé par la page de leçon et le téléchargement hors ligne sans emporter le
- * générateur (chargé à la demande avec le lecteur).
+ * générateur (chargé à la demande avec le lecteur). Écrit en compact (préfixe, nombre de livres) : le poids de
+ * l'appareil élève, marge de 3 Ko, ne grandit presque pas à chaque livre ajouté.
  */
-export const VIDEO_NIVEAUX: readonly string[] = [
-  'ad1',
-  'ad2',
-  'ad3',
-  'ad4',
-  'ad5',
-  'ad6',
-  'ad7',
-  'ad8',
-  'ad9',
-  'ad10',
-  'en1',
-  'ado1',
-];
+const livres = (p: string, n: number) => Array.from({ length: n }, (_, i) => p + (i + 1));
+export const VIDEO_NIVEAUX: readonly string[] = [...livres('ad', 10), ...livres('en', 2), 'ado1'];

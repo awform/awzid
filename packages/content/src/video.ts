@@ -567,7 +567,10 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
       ? L.num_lecon
       : typeof L.num_bilan === 'number'
         ? L.num_bilan
-        : undefined;
+        : // Enfants 2, leçons 1 à 4 : pas de numéro de leçon dans les données, avant le premier bilan le rang est le numéro
+          L.type === 'lecon' && typeof L.n === 'number'
+          ? L.n
+          : undefined;
 
   // 1. OUVERTURE : titre du livre, lettres du tableau, bulle de la scène (aucun personnage dessiné)
   const S = obj(L.scene);
@@ -1137,7 +1140,10 @@ export function buildVideo(lessonRaw: unknown, opts: VideoOptions): VideoLecon {
     let vedetteVue: T | undefined;
     for (const s of scenes.filter((x) => x.modes.includes('courte')))
       for (const x of s.temps) {
-        if (x.k === 'lettres') for (const i of x.items) lettresVues.push(t(i.l));
+        // (une lettre au graphisme du Muṣḥaf, comme l'alif wasla seul, reste sans voix : pas de nouveau signalement)
+        if (x.k === 'lettres')
+          for (const i of x.items)
+            lettresVues.push(raison(i.l, null, true) ? { ar: unmark(i.l) } : t(i.l));
         if (x.k === 'mot') motsVus.push({ ar: x.ar, ...(x.img ? { img: x.img } : {}) });
         if ((s.id === 'vedette' || s.id === 'courte-vedette') && !vedetteVue)
           if (x.k === 'texte') vedetteVue = x.ar;
