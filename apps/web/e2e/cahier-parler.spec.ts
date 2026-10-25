@@ -38,15 +38,20 @@ const donnees = JSON.parse(
   phrases: Record<string, F & { f?: F[] }>;
   conversations: Record<string, { r: Array<F & { q: string }> }>;
 };
-/** textes du cahier → identifiants des fichiers simulés */
-const FICHIERS = (() => {
+type Donnees = typeof donnees;
+/** textes d'un cahier → identifiants des fichiers simulés */
+const fichiersDe = (d: Donnees) => {
   const ids = new Set<string>();
-  for (const p of Object.values(donnees.phrases))
-    for (const f of p.f ?? [p]) ids.add(audioFileId(f.ar)!);
-  for (const c of Object.values(donnees.conversations))
-    for (const r of c.r) ids.add(audioFileId(r.ar)!);
+  for (const p of Object.values(d.phrases)) for (const f of p.f ?? [p]) ids.add(audioFileId(f.ar)!);
+  for (const c of Object.values(d.conversations)) for (const r of c.r) ids.add(audioFileId(r.ar)!);
   return [...ids];
-})();
+};
+const FICHIERS = fichiersDe(donnees);
+/** données d'un autre niveau (cahiers du niveau 3 et suivants) */
+const donneesDe = (n: string) =>
+  JSON.parse(
+    readFileSync(new URL(`../static/cahier-data/parler-${n}.json`, import.meta.url), 'utf8'),
+  ) as Donnees;
 // 0,3 s de silence (MP3 24 kHz mono)
 const SILENCE = Buffer.from(
   readFileSync(new URL('./cahier.spec.ts', import.meta.url), 'utf8').match(
@@ -99,13 +104,18 @@ const chargesParler = async (page: Page) => {
   return liste.filter((f) => vus.includes(f));
 };
 /** audio du niveau simulé : chaque texte du cahier a son fichier (0,3 s de silence) */
-async function voixSimulee(page: Page, demandes: string[] = []) {
-  await page.route('**/api/v1/lecons-audio/niveaux/ad2', (r) =>
+async function voixSimulee(
+  page: Page,
+  demandes: string[] = [],
+  niveau = 'ad2',
+  fichiers: string[] = FICHIERS,
+) {
+  await page.route(`**/api/v1/lecons-audio/niveaux/${niveau}`, (r) =>
     r.fulfill({
       json: {
-        niveau: 'ad2',
-        fichiers: FICHIERS,
-        octets: FICHIERS.length * SILENCE.length,
+        niveau,
+        fichiers,
+        octets: fichiers.length * SILENCE.length,
         mention: '',
         credits: [],
       },
@@ -152,8 +162,8 @@ async function axe(page: Page) {
   ).toEqual([]);
   await page.setViewportSize(vp);
 }
-const ouvrir = async (page: Page, e: string, p?: string) => {
-  await page.goto(`/cahier-parler/ad2?e=${e}${p ? `&p=${p}` : ''}`);
+const ouvrir = async (page: Page, e: string, p?: string, niveau = 'ad2') => {
+  await page.goto(`/cahier-parler/${niveau}?e=${e}${p ? `&p=${p}` : ''}`);
   await expect(page.locator(`article.etape-vue[data-page="${p ?? 'ouverture'}"]`)).toBeVisible({
     timeout: 20_000,
   });
@@ -460,5 +470,192 @@ test.describe('« canal bêta » réglé par l’administrateur', () => {
     });
     await p.close();
     writeFileSync(join(dir, 'captures.json'), JSON.stringify(fichiers, null, 1));
+  });
+
+  // ---------------------------------------------------------------- cahiers du niveau 3 et suivants (25/10/2026)
+  const NIVEAUX_PARLER = [
+    ...['ad2', 'ad3', 'ad4', 'ad5', 'ad6', 'ad7', 'ad8', 'ad9', 'ad10'],
+    ...['en2', 'en3', 'en4', 'en5'],
+    ...['ado2', 'ado3', 'ado4'],
+  ];
+  /** écrans d'un cahier : étape → page (cartes, conversation…) ; `antiseche` pour les phrases utiles */
+  const ecransDe = (d: Donnees) =>
+    d.etapes.flatMap((e) => [
+      { e: e.id, p: undefined as string | undefined },
+      ...e.pages.map((p) => ({ e: e.id, p: p.id })),
+      ...(!e.fin && e.antiseche?.length ? [{ e: e.id, p: 'antiseche' }] : []),
+    ]);
+  /** première étape et page où une phrase porte l'étiquette demandée */
+  function pageAvecEtiquette(d: Donnees, u: string) {
+    for (const e of d.etapes)
+      for (const p of e.pages.filter((x) => x.type === 'cartes'))
+        for (const r of p.refs)
+          if ((d.phrases[r]!.f ?? [d.phrases[r]!]).some((f) => (f as F & { u?: string }).u === u))
+            return { e: e.id, p: p.id, r };
+    return null;
+  }
+
+  test('accès depuis chaque livre : le cahier « Je parle » du niveau, pour les 16 niveaux', async ({
+    page,
+  }) => {
+    test.setTimeout(240_000);
+    for (const n of NIVEAUX_PARLER) {
+      await page.goto(`/niveaux/${n}`);
+      await expect(
+        page.locator(`a.cahier-acces[href$="/cahier-parler/${n}"]`),
+        `accès depuis le livre ${n}`,
+      ).toBeVisible({ timeout: 20_000 });
+    }
+    // le lien mène au carnet du bon niveau, avec ses étapes (une par thème, les fins de partie, la grille finale)
+    await page.goto('/niveaux/en4');
+    await page.locator('a.cahier-acces[href$="/cahier-parler/en4"]').click();
+    await expect(page.getByTestId('parler')).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId('parler')).toHaveAttribute('data-serie', 'en');
+    await expect(page.locator('a.etape[data-etape]')).toHaveCount(donneesDe('en4').etapes.length);
+    await expect(page.locator('.bande-partie')).toHaveCount(5);
+  });
+
+  test('variantes de style : gros caractères pour les enfants, étiquettes garçon / fille, adultes inchangés', async ({
+    page,
+  }) => {
+    test.setTimeout(240_000);
+    const taille = async (n: string) => {
+      const d = donneesDe(n);
+      await voixSimulee(page, [], n, fichiersDe(d));
+      const e = d.etapes.find((x) => !x.fin)!;
+      const cartes = e.pages.find((x) => x.type === 'cartes')!;
+      await ouvrir(page, e.id, cartes.id, n);
+      // 2e carte : taille ordinaire (la 1re est la phrase du jour, plus grande)
+      const ar = page.locator('.phrase-carte').nth(1).locator('.ar').first();
+      await expect(ar).toBeVisible();
+      // l'index audio arrive après la page et la refait : on attend une mesure valable
+      let px = NaN;
+      await expect
+        .poll(
+          async () => (px = await ar.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))),
+        )
+        .toBeGreaterThan(0);
+      return px;
+    };
+    const [ad, ado, en] = [await taille('ad3'), await taille('ado2'), await taille('en3')];
+    expect(en).toBeGreaterThanOrEqual(33);
+    expect(en).toBeGreaterThan(ado);
+    expect(ado).toBeGreaterThan(ad);
+    // une étiquette « à un garçon » / « à une fille » pour les enfants et les ados, « à un homme » / « à une femme » pour les adultes
+    for (const [n, a, b] of [
+      ['en3', 'à un garçon', 'à une fille'],
+      ['ado2', 'à un garçon', 'à une fille'],
+      ['ad3', 'à un homme', 'à une femme'],
+    ] as const) {
+      const d = donneesDe(n);
+      await voixSimulee(page, [], n, fichiersDe(d));
+      for (const u of [a, b]) {
+        const ou = pageAvecEtiquette(d, u);
+        expect(ou, `${n} : ${u}`).not.toBeNull();
+        await ouvrir(page, ou!.e, ou!.p, n);
+        await expect(
+          page.locator(`[data-ref="${ou!.r}"] .tag`).filter({ hasText: u }).first(),
+        ).toBeVisible();
+      }
+      const tags = (await page.locator('.parler .tag').allTextContents()).join(' | ');
+      expect(tags).not.toMatch(n === 'ad3' ? /garçon|fille/ : /\b(homme|femme)s?\b/);
+    }
+    await cibles(page);
+  });
+
+  test('zéro muet dans l’interface : chaque phrase de chaque écran se joue (adultes 3, enfants 3, ados 2)', async ({
+    page,
+  }) => {
+    test.skip(test.info().project.name !== 'desktop-chromium', 'une seule série (parcours long)');
+    test.setTimeout(900_000);
+    for (const n of ['ad3', 'en3', 'ado2']) {
+      const d = donneesDe(n);
+      const fichiers = fichiersDe(d);
+      await voixSimulee(page, [], n, fichiers);
+      let phrases = 0;
+      for (const { e, p } of ecransDe(d)) {
+        await ouvrir(page, e, p, n);
+        // l'index audio du niveau arrive après la page : on attend que plus aucune phrase ne soit muette
+        await expect
+          .poll(() => page.locator('.parler .phrase.muet').count(), { message: `${n} ${e} ${p}` })
+          .toBe(0);
+        const ids = await page
+          .locator('.parler [data-testid="parler-phrase"]')
+          .evaluateAll((els) => els.map((x) => x.getAttribute('data-audio')));
+        for (const id of ids) expect(fichiers, `${n} ${e} ${p}`).toContain(id);
+        phrases += ids.length;
+      }
+      expect(phrases, n).toBeGreaterThan(300);
+    }
+  });
+
+  test('captures 390 px (clair et sombre) de 3 cahiers : adultes 5, enfants 3, ados 3', async ({
+    page,
+  }) => {
+    const dir = process.env.CAHIER_PARLER_CAPTURES_TOUS;
+    test.skip(!dir, 'CAHIER_PARLER_CAPTURES_TOUS non défini');
+    test.skip(test.info().project.name !== 'mobile-chromium', 'captures à 390 px');
+    test.setTimeout(600_000);
+    mkdirSync(dir!, { recursive: true });
+    const fichiersPng: string[] = [];
+    for (const n of ['ad5', 'en3', 'ado3']) {
+      const d = donneesDe(n);
+      await voixSimulee(page, [], n, fichiersDe(d));
+      const e1 = d.etapes.find((x) => !x.fin)!;
+      const cartes = e1.pages.find((x) => x.type === 'cartes')!.id;
+      const conv = e1.pages.find((x) => x.type === 'conversation')!.id;
+      const bilan = d.etapes
+        .find((x) => x.id === 'fin1')!
+        .pages.find((x) => x.type === 'bilan')!.id;
+      const ecrans: Array<[string, string | null, string | null]> = [
+        ['01-carnet', null, null],
+        ['02-ouverture-etape', e1.id, null],
+        ['03-cartes-phrases', e1.id, cartes],
+        ['04-conversation', e1.id, conv],
+        ['05-antiseche', e1.id, 'antiseche'],
+        ['06-bilan', 'fin1', bilan],
+      ];
+      await page.setViewportSize({ width: 390, height: 844 });
+      for (const [nom, e, p] of ecrans) {
+        if (e) await ouvrir(page, e, p ?? undefined, n);
+        else {
+          await page.goto(`/cahier-parler/${n}`);
+          await expect(page.getByTestId('parler')).toBeVisible({ timeout: 20_000 });
+        }
+        if (nom === '03-cartes-phrases') await page.getByTestId('parler-phrase').first().click();
+        if (nom === '06-bilan') {
+          const l = page.locator('ol.bilan > li');
+          for (let i = 0; i < 3; i++) await l.nth(i).getByText('oui', { exact: true }).click();
+        }
+        for (const m of ['light', 'dark'] as const) {
+          await page.emulateMedia({ colorScheme: m });
+          await page.waitForTimeout(300);
+          const f = join(dir!, `${n}_${nom}_390_${m === 'light' ? 'clair' : 'sombre'}.png`);
+          await page.screenshot({ path: f });
+          fichiersPng.push(f);
+        }
+        await page.emulateMedia({ colorScheme: 'light' });
+      }
+    }
+    // planche : une ligne par cahier et par mode
+    const img = (f: string) =>
+      `<figure><img src="data:image/png;base64,${readFileSync(f).toString('base64')}"><figcaption>${f.split('/').pop()!.replace('.png', '')}</figcaption></figure>`;
+    const p = await page.context().newPage();
+    await p.setViewportSize({ width: 1500, height: 1000 });
+    const ligne = (re: RegExp) =>
+      `<div class="r">${fichiersPng
+        .filter((f) => re.test(f))
+        .map(img)
+        .join('')}</div>`;
+    await p.setContent(
+      `<!doctype html><meta charset="utf-8"><style>body{margin:16px;background:#efe7d6;font:14px sans-serif;color:#084c38}h1{font-size:22px;margin:0 0 8px}.r{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}figure{margin:0}img{width:230px;display:block;border-radius:8px}figcaption{font-size:10px;width:230px;overflow:hidden;white-space:nowrap}</style><h1>Awzid · Cahiers « Je parle » d'Adultes 5, d'Enfants 3 et d'Ados 3 · 6 écrans (390 px, clair puis sombre)</h1>${['ad5', 'en3', 'ado3'].map((n) => ligne(new RegExp(`${n}_.*_clair`)) + ligne(new RegExp(`${n}_.*_sombre`))).join('')}`,
+    );
+    await p.screenshot({
+      path: join(dir!, 'PLANCHE_cahiers_parler_tous.png'),
+      fullPage: true,
+      scale: 'css',
+    });
+    await p.close();
+    writeFileSync(join(dir!, 'captures.json'), JSON.stringify(fichiersPng, null, 1));
   });
 });

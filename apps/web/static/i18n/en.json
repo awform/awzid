@@ -3928,6 +3928,7 @@
   "parler.intro_1": "I tap a sentence to hear it, then I repeat it.",
   "parler.intro_2": "I tick the 6 boxes: 3 times with the model, then 3 times on my own.",
   "parler.intro_3": "The labels tell me who I am talking to: a man, a woman, two people, a group.",
+  "parler.intro_3_jeune": "The labels tell me who I am talking to: a boy, a girl, two people, a group.",
   "parler.intro_4": "I act out the conversation: A, then B. Then I talk with the tutor.",
   "parler.partie": "Part {n}",
   "parler.etape": "Stage {n}",

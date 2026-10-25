@@ -127,16 +127,16 @@
   .ar {
     display: block;
     font-family: var(--font-ar);
-    font-size: 1.6rem;
+    font-size: var(--parler-ar, 1.6rem);
     line-height: 2.1;
     text-align: right;
     unicode-bidi: isolate;
   }
   .ar.grand {
-    font-size: 1.9rem;
+    font-size: var(--parler-ar-grand, 1.9rem);
   }
   .ligne .ar {
-    font-size: 1.45rem;
+    font-size: var(--parler-ar-ligne, 1.45rem);
     line-height: 1.9;
   }
   .fr {

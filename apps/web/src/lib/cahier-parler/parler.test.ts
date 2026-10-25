@@ -17,7 +17,7 @@ import {
 } from '@awform/school';
 import { audioFileId } from '@awform/content/audio-cle';
 import { audioIdFor } from '$lib/lecons-audio';
-import { convertir, partie } from '../../../scripts/cahier-parler-donnees.mjs';
+import { NIVEAUX_PARLER, convertir, partie } from '../../../scripts/cahier-parler-donnees.mjs';
 import { PARLER_NIVEAUX } from '../cahier-parler-niveaux';
 import {
   chargerParler,
@@ -75,7 +75,7 @@ describe('cahier « Je parle » : interrupteur `cahier_parler`', () => {
 describe('cahier « Je parle » : données de l’application tirées de la source unique', () => {
   it('le fichier de l’application est exactement la conversion de la source (aucune retouche à la main)', () => {
     expect(JSON.parse(JSON.stringify(convertir(source, 'ad2', habillage)))).toEqual(app);
-    expect(PARLER_NIVEAUX).toEqual(['ad2']);
+    expect(PARLER_NIVEAUX).toEqual(NIVEAUX_PARLER);
   });
   it('140 phrases, 25 conversations, 5 parties ; arabe octet pour octet', () => {
     expect(Object.keys(app.phrases)).toHaveLength(140);

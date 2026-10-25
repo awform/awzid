@@ -3928,6 +3928,7 @@
   "parler.intro_1": "Ich tippe einen Satz an, um ihn zu hören, und wiederhole ihn.",
   "parler.intro_2": "Ich kreuze die 6 Kästchen an: 3-mal mit dem Vorbild, dann 3-mal allein.",
   "parler.intro_3": "Die Etiketten sagen, mit wem ich spreche: mit einem Mann, einer Frau, zwei Personen, einer Gruppe.",
+  "parler.intro_3_jeune": "Die Etiketten sagen, mit wem ich spreche: mit einem Jungen, einem Mädchen, zwei Personen, einer Gruppe.",
   "parler.intro_4": "Ich spiele das Gespräch: A, dann B. Danach spreche ich mit dem Tutor.",
   "parler.partie": "Teil {n}",
   "parler.etape": "Etappe {n}",

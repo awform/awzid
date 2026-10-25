@@ -3928,6 +3928,7 @@
   "parler.intro_1": "Toco una frase para oírla y luego la repito.",
   "parler.intro_2": "Marco las 6 casillas: 3 veces con el modelo y luego 3 veces solo.",
   "parler.intro_3": "Las etiquetas dicen a quién hablo: a un hombre, a una mujer, a dos personas, a un grupo.",
+  "parler.intro_3_jeune": "Las etiquetas dicen a quién hablo: a un chico, a una chica, a dos personas, a un grupo.",
   "parler.intro_4": "Represento la conversación: A y luego B. Después hablo con el tutor.",
   "parler.partie": "Parte {n}",
   "parler.etape": "Etapa {n}",

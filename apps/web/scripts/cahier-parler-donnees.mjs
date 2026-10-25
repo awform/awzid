@@ -7,14 +7,18 @@
 //    de la coquille du service worker) et gardé sur l'appareil à la première ouverture ;
 //  - src/lib/cahier-parler-niveaux.ts : niveaux qui ont un cahier « Je parle » (accès du niveau).
 // L'arabe est recopié TEL QUEL (aucune normalisation) : contrôle par src/lib/cahier-parler/parler.test.ts.
-// Usage : node scripts/cahier-parler-donnees.mjs [niveau…] (défaut : ad2).
+// Usage : node scripts/cahier-parler-donnees.mjs [niveau…] (défaut : les 16 niveaux).
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const repo = join(root, '..', '..');
-export const NIVEAUX_PARLER = ['ad2'];
+export const NIVEAUX_PARLER = [
+  ...['ad2', 'ad3', 'ad4', 'ad5', 'ad6', 'ad7', 'ad8', 'ad9', 'ad10'],
+  ...['en2', 'en3', 'en4', 'en5'],
+  ...['ado2', 'ado3', 'ado4'],
+];
 /** étiquette « à qui je parle » d'une phrase sans variations */
 const CIBLE = {
   deux: 'à deux personnes',
@@ -46,7 +50,181 @@ function phrase(p) {
 }
 const formes = (p) => p.f ?? [{ ar: p.ar, fr: p.fr, ...(p.u ? { u: p.u } : {}) }];
 
+// ---------------------------------------------------------------- niveaux 3 et suivants (25/10/2026)
+// Les cahiers des adultes 3 à 10, des enfants 2 à 5 et des ados 2 à 4 portent leur propre habillage (thèmes avec titre,
+// pictogramme et accroche ; parties avec leurs thèmes ; antisèche de chaque thème) : une ÉTAPE par thème, dans l'ordre
+// des parties du livre, ouverte « après la leçon » où tous ses mots sont connus (`unite`).
+/** étiquette « à qui je parle » d'une phrase sans variations (adultes) */
+const CIBLE_V3 = {
+  a_deux: 'à deux personnes',
+  d_elles_deux: "d'elles deux",
+  d_elles: "d'elles",
+  a_groupe: 'à un groupe',
+  a_groupe_f: 'à un groupe de femmes',
+  a_groupe_m: "à un groupe d'hommes",
+  nous: 'nous',
+  d_eux: "d'eux",
+  d_eux_deux: "d'eux deux",
+  une_femme: 'à une femme',
+  un_homme: 'à un homme',
+  de_lui: 'de lui',
+  d_elle: "d'elle",
+};
+/** enfants et ados : on parle à un garçon ou à une fille */
+const CIBLE_JEUNE = {
+  ...CIBLE_V3,
+  une_femme: 'à une fille',
+  un_homme: 'à un garçon',
+  a_groupe_f: 'à un groupe de filles',
+  a_groupe_m: 'à un groupe de garçons',
+};
+const TYPE_V3 = {
+  phrase_du_jour: 'cartes',
+  carte_phrases: 'cartes',
+  conversation: 'conversation',
+  a_toi_de_parler: 'tuteur',
+};
+const DEBUT_ACCROCHE = 'À la fin de cette étape, je sais ';
+/** « P001-m » → « P001 » ; « C03.1 » → « C03 » */
+const idDe = (r) =>
+  String(r)
+    .replace(/-(m|f)$/, '')
+    .replace(/\..*$/, '');
+
+/** série d'un niveau : « ad » (adultes), « en » (enfants), « ado » (ados) */
+export const serieDe = (niveau) => String(niveau).replace(/\d+$/, '');
+
+function convertirV3(src, niveau, habillage) {
+  const cibles = serieDe(niveau) === 'ad' ? CIBLE_V3 : CIBLE_JEUNE;
+  const parCode = Object.fromEntries(src.themes.map((t) => [t.code, t]));
+  const phrases = Object.fromEntries(
+    src.phrases.map((p) => {
+      const o = { ar: p.ar, fr: p.fr, theme: p.theme };
+      const v = p.variations;
+      if (v?.masculin && v?.feminin)
+        o.f = [v.masculin, v.feminin].map((x) => ({ ar: x.ar, fr: x.fr, u: x.usage }));
+      else if (cibles[p.cible]) o.u = cibles[p.cible];
+      return [p.id, o];
+    }),
+  );
+  const conversations = Object.fromEntries(
+    src.conversations.map((c) => [
+      c.id,
+      {
+        titre: c.titre_fr,
+        theme: c.theme,
+        A: c.role_A,
+        B: c.role_B,
+        r: c.repliques.map((r) => ({ q: r.qui, ar: r.ar, fr: r.fr })),
+        consigne: c.consigne_tuteur,
+      },
+    ]),
+  );
+  for (const x of [...Object.values(phrases), ...Object.values(conversations)])
+    if (!parCode[x.theme]) throw new Error(`thème inconnu : ${x.theme}`);
+  const connu = (r) => {
+    if (!phrases[r] && !conversations[r]) throw new Error(`référence inconnue ${r}`);
+    return r;
+  };
+  const parties = [];
+  const etapes = [];
+  let num = 0;
+  for (const pa of src.parties) {
+    const p0 = partie(pa.titre_fr);
+    if (!p0) throw new Error(`partie illisible : ${pa.titre_fr}`);
+    parties.push(p0);
+    for (const code of pa.themes) {
+      const t = parCode[code];
+      if (!t.accroche_fr.startsWith(DEBUT_ACCROCHE)) throw new Error(`accroche : ${t.accroche_fr}`);
+      const pages = src.pages
+        .filter((p) => p.theme === code && TYPE_V3[p.type])
+        .map((p) => ({
+          id: p.id,
+          type: TYPE_V3[p.type],
+          // le libellé des cartes, des conversations et des scénarios est calculé par l'application
+          titre: '',
+          refs: p.refs.map(connu),
+        }));
+      const jour = pages.find((p) => p.type === 'cartes')?.refs[0];
+      const f0 = phrases[jour] ? (phrases[jour].f ?? [phrases[jour]])[0] : null;
+      if (!f0) throw new Error(`${code} : pas de phrase du jour`);
+      num += 1;
+      etapes.push({
+        id: `e${String(num).padStart(2, '0')}`,
+        partie: pa.n,
+        n: t.unite,
+        pages,
+        picto: t.picto,
+        num,
+        theme: code,
+        titre: t.titre_fr,
+        accroche: t.accroche_fr.slice(DEBUT_ACCROCHE.length),
+        jour: { ar: f0.ar, fr: f0.fr },
+        antiseche: t.antiseche.map((a) => [a.ar, a.fr]),
+      });
+    }
+    // fin de partie : révision, situation libre, bilan (une ligne par phrase ou conversation de l'antisèche des thèmes)
+    const fin = src.pages.filter((p) => p.partie === pa.n && !p.theme);
+    const rev = fin.find((p) => p.type === 'revision');
+    const pages = [];
+    for (const p of fin) {
+      const type = { revision: 'revision', a_toi_de_parler: 'tuteur', bilan: 'bilan' }[p.type];
+      if (!type) continue; // carte de voyage : remplacée par le carnet de l'application
+      const refs =
+        type === 'bilan'
+          ? [
+              ...new Set(
+                p.refs.flatMap((code) =>
+                  parCode[code].antiseche.slice(0, 4).map((a) => idDe(a.ref)),
+                ),
+              ),
+            ]
+          : p.refs;
+      pages.push({ id: p.id, type, titre: p.titre_fr, refs: refs.map(connu) });
+    }
+    etapes.push({
+      id: `fin${pa.n}`,
+      partie: pa.n,
+      fin: true,
+      n: rev.apres_n,
+      pages,
+      picto: 'etoile',
+    });
+  }
+  // grille finale : une ligne par thème (sa phrase du jour), une étoile par thème
+  const finale = src.pages.find((p) => p.type === 'bilan' && !p.refs.length);
+  etapes.push({
+    id: 'finale',
+    partie: 0,
+    fin: true,
+    n: finale.apres_n,
+    pages: [
+      {
+        id: finale.id,
+        type: 'bilan',
+        titre: finale.titre_fr,
+        refs: src.themes.map((t) => connu(t.phrases[0])),
+      },
+    ],
+    picto: 'etoile',
+  });
+  return {
+    format: 1,
+    niveau,
+    titre: src.meta.titre,
+    version: src.meta.version,
+    genere: src.meta.genere_le,
+    antiseche_ar: habillage.antiseche_ar,
+    themes: Object.fromEntries(src.themes.map((t) => [t.code, t.titre_fr])),
+    parties,
+    etapes,
+    phrases,
+    conversations,
+  };
+}
+
 export function convertir(src, niveau, habillage) {
+  if (Array.isArray(src.themes)) return convertirV3(src, niveau, habillage);
   const themes = habillage.themes;
   const phrases = Object.fromEntries(src.phrases.map((p) => [p.id, phrase(p)]));
   const conversations = Object.fromEntries(
@@ -164,7 +342,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     ' * Cahier « Je parle » (24/10/2026) — FICHIER GÉNÉRÉ par `node scripts/cahier-parler-donnees.mjs` : ne pas modifier',
     ' * à la main. Très petit (coquille de l’élève) : niveaux qui ont un cahier « Je parle » (accès du niveau).',
     ' */',
-    `export const PARLER_NIVEAUX: readonly string[] = ${JSON.stringify(niveaux).replace(/"/g, "'")};`,
+    // une ligne par niveau : même mise en forme que prettier (le fichier est contrôlé par `format:check`)
+    `export const PARLER_NIVEAUX: readonly string[] = [\n${niveaux.map((n) => `  '${n}',`).join('\n')}\n];`,
     '',
   ].join('\n');
   writeFileSync(join(root, 'src', 'lib', 'cahier-parler-niveaux.ts'), ts);
