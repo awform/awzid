@@ -9,6 +9,24 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+<!-- khatma-25-10 -->
+
+---
+
+## 25/10/2026 — Khatma et wird (interrupteur `khatma_wird`, COUPÉ par défaut) ; branche `khatma-wird-wip` ; NON déployé
+
+Premier des quatre chantiers « programme Coran ». Interrupteur `khatma_wird` : coupé par défaut partout (démonstration comprise), à ouvrir au « canal bêta » par l'administrateur ; coupé, le Coran reste entier, sans la carte, et le serveur refuse (`403 fonction_coupee`). Aucun texte coranique touché (seulement des numéros de pages et de versets), aucune synthèse vocale.
+
+- **Plans** : une khatma sur une durée (30, 60, 90, 180, 365 jours ou autre) ou avec un nombre de pages par jour ; un wird quotidien (1 à 20 pages, sans fin, les tours se cumulent). Unité : les 604 pages du Muṣḥaf de Médine. Au plus trois plans actifs par profil.
+- **Sans culpabiliser** : la part du jour est RECALCULÉE chaque jour d'après ce qui reste et le temps qui reste (`lib/khatma/plan.ts`, pur, testé) : de l'avance l'allège, du retard l'étale ; le point de départ du jour est fixé (elle ne rétrécit pas pendant qu'on lit) ; une date de fin dépassée n'est jamais une dette (on propose de la repousser, ou on continue au rythme d'origine) ; « pause » = fin repoussée de 7 jours. Aucun mot de reproche, de série ni de retard (test sur les textes), aucun classement.
+- **Reprise exacte sur tous les appareils** : plans, avancement et position (sourate, verset) gardés sur le serveur (migration `0055_khatma_wird`, tables `khatma` et `khatma_part`) ; le serveur garde toujours le plus avancé (deux appareils ne s'écrasent pas), un recul est une correction explicite ; copie locale et file d'attente hors ligne. La dernière lecture déjà faite dans le lecteur sert de point de départ (« Commencer là où j'en suis ») et propose de rattraper le plan, jamais de force.
+- **Khatma en famille et en classe** : les parts sont réparties (juzʾ entiers jusqu'à 30 participants, sinon tranches de pages ; Muṣḥaf de Médine : juzʾ 2 = page 22, juzʾ 30 = page 582), la khatma se termine quand TOUTES les parts sont lues, fin commune. Un participant ne voit que le TOTAL du groupe, jamais la part des autres ; le responsable (parent, enseignant de la classe, second facteur) voit les parts dans l'ordre du Muṣḥaf, peut en confier une, repousser la fin, archiver. **Mode serein** : aucune part chiffrée, seulement « lue » ou « en cours ». Côté enseignant : onglet « Sourates » de la classe (`KhatmaClasse`, chargé à la demande).
+- **Rappel discret** : heure du plan, une notification par jour au plus (type `khatma` du travailleur, `dueNotifications`), jamais pendant les heures calmes, jamais si la part du jour est déjà lue, seulement si le titulaire l'a accepté (`PUT /api/v1/khatma/rappel`) ; texte neutre, sans chiffre ni nom. Colonnes `notification_pref.khatma` et `last_khatma`.
+- **Poids** : tout le module est chargé à la demande (`lib/khatma/carte.ts`, groupe « en ligne » de `groupes.mjs`) ; dans la coquille de l'élève : la clé du registre et une ligne dans l'accueil du Coran. Compensé : le talon mort des mutashābihāt (liste vide, `hifz-outils/mutashabihat.ts` et ses deux alertes) retiré, une clé de texte jamais utilisée retirée, et 28 textes de la page des récitateurs (page rare) passés de `fr-coran` (préchargé) à `fr-rares` (+ `routes/coran/recitateurs/+page.ts`). Appareil de l'élève : **346,6 Ko, marge 3,4 Ko (3 449 o)** (main seul, même machine : 3 273 o).
+- **Textes** : français embarqués avec le module, brouillons en, es, de, ar (`A_RELIRE.md`).
+- **Tests** : unitaires web (`khatma.test.ts` : 18 ; i18n, gabarits Bidi, couverture), API `khatma.test.ts` (13 : fonction coupée, durée, pages, wird, monotonie, corrections, famille, classe, serein, confier, rappel), e2e `khatma.spec.ts`. Les autres suites : école 33, hifz 51, db 60, grading 537, tutor 195, billing 26, worker 5, API 554 réussis.
+- **Reste** : relecture des textes par un locuteur natif ; accord du rappel à brancher dans l'écran « Notifications » ; nouveaux élèves arrivés après le lancement d'une khatma de classe (pas de part automatique, à confier).
+<!-- /khatma-25-10 -->
 <!-- cahiers-parler-tous-25-10 -->
 
 ---

@@ -20,7 +20,6 @@
   "hz.note_hesitant": "C’est noté : ce verset va dans tes points faibles.",
   "hz.note_oublie": "C’est noté : revois ce passage avec ton maître ou en l’écoutant.",
   "hz.autre_verset": "Un autre verset",
-  "hz.proche_de": "Attention, verset proche de : {ref}",
   "hz.points_vides": "Aucun point faible pour l’instant. Fais un test au hasard : les mots où tu butes viendront ici.",
   "hz.tester_plus_faible": "Tester mon point le plus faible",
   "hz.tester_ce_verset": "Tester ce verset",

@@ -1969,6 +1969,9 @@ export const notificationPref = pgTable(
     locale: text('locale').notNull().default('fr'),
     lastDevoirs: text('last_devoirs'),
     lastRapport: text('last_rapport'),
+    /** rappel discret de la khatma ou du wird (26/10/2026) : à l'heure choisie dans le plan, une fois par jour au plus */
+    khatma: boolean('khatma').notNull().default(false),
+    lastKhatma: text('last_khatma'),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
@@ -3147,5 +3150,93 @@ export const waitlist = pgTable(
     check('waitlist_note', sql`${t.note} IS NULL OR char_length(${t.note}) <= 500`),
     check('waitlist_name', sql`${t.name} IS NULL OR char_length(${t.name}) <= 80`),
     check('waitlist_contact', sql`${t.email} IS NOT NULL OR ${t.phoneHash} IS NOT NULL`),
+  ],
+);
+
+// ================================================================ khatma et wird (26/10/2026, interrupteur `khatma_wird`)
+
+/**
+ * Khatma (lecture complète du Muṣḥaf de Médine, 604 pages) ou wird (lecture quotidienne sans fin), pour une personne,
+ * une famille ou une classe. Le PLAN (durée, pages par jour, date de fin) est tenu ici ; la part du jour est RECALCULÉE
+ * par l'appareil à partir de l'avancement (aucune dette, aucun retard affiché). Aucun classement, jamais.
+ */
+export const khatma = pgTable(
+  'khatma',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    kind: text('kind').notNull(),
+    /** profil (une personne), famille (parts réparties entre les profils d'un compte), classe (entre ses élèves) */
+    scope: text('scope').notNull().default('profil'),
+    ownerAccountId: uuid('owner_account_id')
+      .notNull()
+      .references(() => account.id, { onDelete: 'cascade' }),
+    classId: uuid('class_id').references(() => classGroup.id, { onDelete: 'cascade' }),
+    title: text('title'),
+    /** duree : une date de fin ; pages : un nombre de pages par jour ; wird : un nombre de pages par jour, sans fin */
+    mode: text('mode').notNull(),
+    startDate: date('start_date', { mode: 'string' }).notNull(),
+    endDate: date('end_date', { mode: 'string' }),
+    pagesPerDay: smallint('pages_per_day'),
+    status: text('status').notNull().default('active'),
+    /** rappel discret : heure locale (0-23) ; vide : aucun rappel */
+    reminderHour: smallint('reminder_hour'),
+    doneAt: timestamp('done_at', { withTimezone: true }),
+    createdAt: createdAt(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('khatma_owner').on(t.ownerAccountId, t.status),
+    index('khatma_class').on(t.classId),
+    check('khatma_kind', sql`${t.kind} IN ('khatma', 'wird')`),
+    check('khatma_scope', sql`${t.scope} IN ('profil', 'famille', 'classe')`),
+    check('khatma_mode', sql`${t.mode} IN ('duree', 'pages', 'wird')`),
+    check('khatma_status', sql`${t.status} IN ('active', 'terminee', 'archivee')`),
+    check('khatma_ppd', sql`${t.pagesPerDay} IS NULL OR ${t.pagesPerDay} BETWEEN 1 AND 100`),
+    check('khatma_hour', sql`${t.reminderHour} IS NULL OR ${t.reminderHour} BETWEEN 0 AND 23`),
+    check('khatma_title', sql`${t.title} IS NULL OR char_length(${t.title}) <= 40`),
+    check('khatma_wird', sql`(${t.kind} = 'wird') = (${t.mode} = 'wird')`),
+    check('khatma_fin', sql`${t.mode} <> 'duree' OR ${t.endDate} IS NOT NULL`),
+    check('khatma_rythme', sql`${t.mode} = 'duree' OR ${t.pagesPerDay} IS NOT NULL`),
+  ],
+);
+
+/**
+ * Part d'une personne dans une khatma ou un wird : des pages du Muṣḥaf de Médine (`first_page`…`last_page`), le nombre de
+ * pages déjà lues (`done`, cumulé sur plusieurs tours pour un wird), la position EXACTE (sourate, verset) pour la reprise
+ * sur tous les appareils, et le point de départ du jour (`done_day_start`) qui fixe la part du jour.
+ */
+export const khatmaPart = pgTable(
+  'khatma_part',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    khatmaId: uuid('khatma_id')
+      .notNull()
+      .references(() => khatma.id, { onDelete: 'cascade' }),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id, { onDelete: 'cascade' }),
+    firstPage: smallint('first_page').notNull(),
+    lastPage: smallint('last_page').notNull(),
+    done: integer('done').notNull().default(0),
+    dayMark: date('day_mark', { mode: 'string' }),
+    doneDayStart: integer('done_day_start').notNull().default(0),
+    posSura: smallint('pos_sura'),
+    posAya: smallint('pos_aya'),
+    finishedAt: timestamp('finished_at', { withTimezone: true }),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    unique('khatma_part_unique').on(t.khatmaId, t.profileId),
+    index('khatma_part_profile').on(t.profileId),
+    check(
+      'khatma_part_pages',
+      sql`${t.firstPage} BETWEEN 1 AND 604 AND ${t.lastPage} BETWEEN ${t.firstPage} AND 604`,
+    ),
+    check('khatma_part_done', sql`${t.done} >= 0 AND ${t.doneDayStart} >= 0`),
+    check('khatma_part_pos', sql`${t.posSura} IS NULL OR ${t.posSura} BETWEEN 1 AND 114`),
   ],
 );

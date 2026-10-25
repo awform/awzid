@@ -165,6 +165,9 @@ export const API_GRANTS: Record<string, Right[]> = {
   // et seuils d'alerte franchis (ajout seul)
   tutor_spend: RIU,
   tutor_budget_alert: RI,
+  // 26/10/2026 : khatma et wird (plans et parts ; tout part avec le compte ou le profil, clés étrangères en cascade)
+  khatma: ALL,
+  khatma_part: ALL,
 };
 
 /** Droits du travailleur : uniquement ce que ses tâches touchent. */
@@ -203,6 +206,9 @@ export const WORKER_GRANTS: Record<string, Right[]> = {
   // 19/10/2026 : tuteur de conversation — registre de dépense et alertes effacés après 400 jours
   tutor_spend: ['DELETE'],
   tutor_budget_alert: ['DELETE'],
+  // 26/10/2026 : rappel discret de la khatma (lecture du plan et de la part du jour, rien d'autre)
+  khatma: ['SELECT'],
+  khatma_part: ['SELECT'],
 };
 
 /** Droits par COLONNE du travailleur (ni pseudonyme ni année de naissance : seulement le lien au compte). */

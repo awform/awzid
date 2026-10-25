@@ -55,6 +55,8 @@ export const PREMIER_USAGE_MODULES = [
 ];
 /** Modules chargés à la demande ET qui ont besoin du réseau (chemin du fichier source). */
 export const EN_LIGNE_MODULES = [
+  // 26/10/2026 : carte « Khatma et wird » de l'accueil du Coran (plans et avancement sur le serveur), à la demande
+  /src\/lib\/khatma\/carte\.ts$/,
   /src\/lib\/quran\/LignesExactes\.svelte$/,
   /src\/lib\/TutorPanel\.svelte$/,
   /src\/lib\/avis\/AvisDialog\.svelte$/,

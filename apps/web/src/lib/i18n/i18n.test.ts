@@ -54,6 +54,8 @@ beforeAll(async () => {
   // 25/10/2026 : « La prière de A à Z » (textes du parcours et de sa carte d'entrée)
   for (const f of ['textes-fr.json', 'textes-carte-fr.json'])
     ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'priere', f), 'utf8')));
+  // 26/10/2026 : « Khatma et wird »
+  ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'khatma', 'textes-fr.json'), 'utf8')));
 });
 afterEach(() => setLocale('fr'));
 
@@ -242,7 +244,7 @@ describe('fonctions', () => {
     expect(Object.keys(rares).filter((k) => k in shell || k in staff)).toEqual([]);
     expect(sw).not.toContain('/i18n/fr-rares.json');
     const RARES =
-      /[\\/]routes[\\/](abonnement|offres|garanties|activation|certificats|compte[\\/]protections|compte[\\/]tuteur|demo|inscription|acces|errata|admin|enseignant|famille|messages|connexion|ma-classe)[\\/]|[\\/]lib[\\/](avis|admin|identites)[\\/]|[\\/]lib[\\/](compte[\\/]CompteEnLigne|compte[\\/]ChampMotDePasse|TutorPanel|TutorSegments|NotificationsReglages|MessagerieClasse|ContenuAdmin|CertificatDoc)\.svelte$/;
+      /[\\/]routes[\\/](abonnement|offres|garanties|activation|certificats|compte[\\/]protections|compte[\\/]tuteur|coran[\\/]recitateurs|demo|inscription|acces|errata|admin|enseignant|famille|messages|connexion|ma-classe)[\\/]|[\\/]lib[\\/](avis|admin|identites)[\\/]|[\\/]lib[\\/](compte[\\/]CompteEnLigne|compte[\\/]ChampMotDePasse|TutorPanel|TutorSegments|NotificationsReglages|MessagerieClasse|ContenuAdmin|CertificatDoc|quran[\\/]RecitateursClasse)\.svelte$/;
     for (const p of [
       'abonnement',
       'offres',

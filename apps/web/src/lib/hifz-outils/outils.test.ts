@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { MUTASHABIHAT, prochesDe, type Mutashabih } from './mutashabihat';
 import {
   amorce,
   carteErreurs,
@@ -190,22 +189,5 @@ describe('deux rakʿa', () => {
     expect(dansMemorise({ s: 112, from: 3, to: 5 }, [ikhlas])).toBe(false);
     expect(dansMemorise({ s: 2, from: 255, to: 255 }, [ikhlas])).toBe(false);
     expect(dansMemorise({ s: 112, from: 3, to: 2 }, [ikhlas])).toBe(false);
-  });
-});
-
-describe('mutashābihāt (structure seulement)', () => {
-  it('la liste livrée est VIDE : aucune donnée créée par l’équipe', () => {
-    expect(MUTASHABIHAT).toEqual([]);
-    expect(prochesDe(2, 35)).toEqual([]);
-  });
-  it('alerte « verset proche de… » dans les deux sens, seulement pour une paire sourcée', () => {
-    // références FICTIVES de test (aucune affirmation savante) : la structure seule est vérifiée
-    const liste: Mutashabih[] = [
-      { a: { s: 1, a: 1 }, b: { s: 1, a: 2 }, source: 'source de test' },
-      { a: { s: 1, a: 3 }, b: { s: 1, a: 4 }, source: '  ' },
-    ];
-    expect(prochesDe(1, 1, liste)).toEqual([{ s: 1, a: 2 }]);
-    expect(prochesDe(1, 2, liste)).toEqual([{ s: 1, a: 1 }]);
-    expect(prochesDe(1, 3, liste)).toEqual([]);
   });
 });

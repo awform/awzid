@@ -6,7 +6,6 @@
   import { fmtDate, t } from '$lib/i18n';
   import { libelle, marquesDe } from './donnees';
   import MotsVerset from './MotsVerset.svelte';
-  import { prochesDe } from './mutashabihat';
   import { carteErreurs, pointsFaibles, type PointFaible } from './outils';
 
   /**
@@ -64,11 +63,6 @@
             {basmala}
           />
         {/if}
-        {#each prochesDe(p.s, p.a) as x (`${x.s}:${x.a}`)}
-          <p class="small" role="note" data-testid="mutashabih">
-            <Bidi text={t('hz.proche_de', { ref: libelle({ s: x.s, from: x.a, to: x.a }) })} />
-          </p>
-        {/each}
         <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- adresse résolue + paramètre -->
         <a href={tester(p)}>{t('hz.tester_ce_verset')}</a>
       </li>

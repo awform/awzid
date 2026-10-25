@@ -33,6 +33,7 @@ export const FONCTION_CLES = [
   'cahier_lecture',
   'cahier_parler',
   'parcours_priere',
+  'khatma_wird',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -120,6 +121,11 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // COUPÉ par défaut partout (démonstration comprise) ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur
   // laisse « Vivre l'islam » entier, sans la rubrique. Contenu du référent, en attente de relecture.
   parcours_priere: { defaut: 'off' },
+  // Khatma et wird (26/10/2026) : plan de lecture du Muṣḥaf (durée ou pages par jour) ou lecture quotidienne, part du jour
+  // recalculée sans reproche, rappel discret, reprise exacte sur tous les appareils, khatma en famille ou en classe (parts
+  // réparties, fin commune), jamais de classement. COUPÉ par défaut partout (démonstration comprise) ; l'administrateur
+  // l'ouvre au « canal bêta » ; couper l'interrupteur laisse le Coran entier, sans la carte.
+  khatma_wird: { defaut: 'off' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */
