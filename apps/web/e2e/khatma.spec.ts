@@ -360,7 +360,10 @@ test.describe('khatma et wird', () => {
     await expect(page.getByTestId('khatma-classe-groupe')).toContainText('Parts lues : 0 sur 2');
     await page.getByTestId('khatma-classe-parts').click();
     await expect(page.getByTestId('khatma-part')).toHaveCount(2);
-    await expect(page.getByTestId('khatma-classe')).not.toContainText(/classement|rang/i);
+    // jamais de rang ni de classement : la seule mention est la phrase « Aucun classement … » (texte fixe de la carte)
+    await expect(page.getByTestId('khatma-classe')).not.toContainText(
+      /classé|1er|2e |meilleur|rang\b/i,
+    );
 
     // côté famille : chaque enfant lit sa part, voit le total de la classe
     await pickProfile(fam, 'Rayan');
