@@ -243,6 +243,7 @@
       <strong>{t('vi.transmettre')}</strong><small class="muted">{t('vi.transmettre_lien')}</small>
     </a>
   {/if}
+  {#if fn('parcours_priere')}{#await import('$lib/priere/carte') then m}<m.Carte />{/await}{/if}
   {#if fn('vivre_defi')}<section
       class="card defi"
       data-testid="vi-defi"

@@ -32,6 +32,7 @@ export const FONCTION_CLES = [
   'video_v2',
   'cahier_lecture',
   'cahier_parler',
+  'parcours_priere',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -114,6 +115,11 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // bulles, « À toi de parler », antisèche, révision, bilan), chargé à la demande. COUPÉ par défaut partout (démonstration
   // comprise) ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur laisse le niveau entier.
   cahier_parler: { defaut: 'off' },
+  // Parcours « La prière de A à Z » (25/10/2026) : rubrique de « Vivre l'islam » (écrans chargés à la demande : le chemin, la
+  // prière pas à pas, la vidéo vivante, les ablutions, la sourate mot à mot, l'entraînement, les situations, après la prière).
+  // COUPÉ par défaut partout (démonstration comprise) ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur
+  // laisse « Vivre l'islam » entier, sans la rubrique. Contenu du référent, en attente de relecture.
+  parcours_priere: { defaut: 'off' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

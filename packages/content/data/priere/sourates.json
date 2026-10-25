@@ -1,0 +1,2780 @@
+{
+ "meta": {
+  "titre": "Les sourates de la prière : al-Fātiḥa et les sourates 101 à 114",
+  "genere_le": "2026-10-25",
+  "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+  "statut_technique": "EN_ATTENTE_SECONDE_LECTURE",
+  "texte": "Tanzil quran-uthmani (coran/tanzil-uthmani.tsv), octet pour octet ; seules transformations : U+FEFF parasite retiré en 1:1 ; basmala d'en-tête séparée du verset 1 des sourates 101 à 114 (sous-chaînes exactes)",
+  "audio": "ayyub:S:V = récitation de Muḥammad Ayyūb ; jamais de voix de synthèse pour ces textes, ni pour leur mot à mot enchaîné (règle Basmala du 20/10)",
+  "mot_a_mot": "un mot = un groupe graphique séparé par une espace dans Tanzil ; les signes de pause isolés ne sont pas comptés",
+  "tafsir": "al-Qurṭubī en priorité (mālikite), puis aṭ-Ṭabarī, Ibn Kathīr, Ibn ʿĀshūr ; l'avis principal est donné, les autres sont signalés",
+  "nombre_de_mots_expliques": 341
+ },
+ "basmala": {
+  "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+  "ar_source": {
+   "type": "coran",
+   "ref": "1:1",
+   "fichier": "coran/tanzil-uthmani.tsv",
+   "transformations": [
+    "U+FEFF initial retiré (artefact de la copie)"
+   ]
+  },
+  "mot_a_mot": [
+   {
+    "ar": "بِسْمِ",
+    "fr": "au nom de"
+   },
+   {
+    "ar": "ٱللَّهِ",
+    "fr": "Allah"
+   },
+   {
+    "ar": "ٱلرَّحْمَٰنِ",
+    "fr": "le Tout-Miséricordieux"
+   },
+   {
+    "ar": "ٱلرَّحِيمِ",
+    "fr": "le Très-Miséricordieux"
+   }
+  ],
+  "sens": "Au nom d'Allah, le Tout-Miséricordieux, le Très-Miséricordieux.",
+  "note": "Dans le compte de Ḥafṣ (muṣḥaf de l'appli), la Basmala est le verset 1 de la Fātiḥa ; elle est écrite en tête de toutes les sourates sauf la 9e. Selon l'avis le plus connu de l'école mālikite, elle n'est pas un verset de la Fātiḥa ni des autres sourates (sauf dans la sourate 27, verset 30), et on ne la dit pas dans la prière obligatoire ; elle est permise dans la prière surérogatoire (al-Akhḍarī AKH-0125 ; Khalīl KHL-0199 ; al-Qurṭubī sur 1:1). « Ar-Raḥmān » exprime une miséricorde immense qui englobe toute la création ; « ar-Raḥīm », une miséricorde propre aux croyants (Ibn Kathīr, sur 1:1).",
+  "audio": {
+   "fatiha": "ayyub:1:1",
+   "tete_de_sourate": "ayyub:basmala"
+  }
+ },
+ "sourates": [
+  {
+   "numero": 1,
+   "nom_ar": "الفاتحة",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "al-Fātiḥa (L'Ouverture)",
+   "nombre_versets": 7,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": null,
+   "versets": [
+    {
+     "ref": "1:1",
+     "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+     "audio": "ayyub:1:1",
+     "transformations": [
+      "U+FEFF initial retiré (artefact de la copie)"
+     ],
+     "basmala": true,
+     "mot_a_mot": [
+      {
+       "ar": "بِسْمِ",
+       "fr": "au nom de"
+      },
+      {
+       "ar": "ٱللَّهِ",
+       "fr": "Allah"
+      },
+      {
+       "ar": "ٱلرَّحْمَٰنِ",
+       "fr": "le Tout-Miséricordieux"
+      },
+      {
+       "ar": "ٱلرَّحِيمِ",
+       "fr": "le Très-Miséricordieux"
+      }
+     ],
+     "sens": "Au nom d'Allah, le Tout-Miséricordieux, le Très-Miséricordieux.",
+     "note": "Verset 1 dans le décompte de Ḥafṣ (Kūfa) ; ce n'est pas un verset dans le décompte mālikite. Dans la prière obligatoire, selon l'école mālikite, on ne récite pas la Basmala (al-Akhḍarī AKH-0125 ; Khalīl KHL-0199 ; ar-Risāla RIS-0150) : on commence à « La louange appartient à Allah ».",
+     "recite_dans_la_priere_obligatoire": false
+    },
+    {
+     "ref": "1:2",
+     "ar": "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ",
+     "audio": "ayyub:1:2",
+     "mot_a_mot": [
+      {
+       "ar": "ٱلْحَمْدُ",
+       "fr": "la louange (toute louange)"
+      },
+      {
+       "ar": "لِلَّهِ",
+       "fr": "appartient à Allah"
+      },
+      {
+       "ar": "رَبِّ",
+       "fr": "Seigneur (qui crée, nourrit et fait grandir)"
+      },
+      {
+       "ar": "ٱلْعَٰلَمِينَ",
+       "fr": "des mondes (tout ce qui existe en dehors de Lui)"
+      }
+     ],
+     "sens": "La louange appartient à Allah, Seigneur des mondes,"
+    },
+    {
+     "ref": "1:3",
+     "ar": "ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+     "audio": "ayyub:1:3",
+     "mot_a_mot": [
+      {
+       "ar": "ٱلرَّحْمَٰنِ",
+       "fr": "le Tout-Miséricordieux"
+      },
+      {
+       "ar": "ٱلرَّحِيمِ",
+       "fr": "le Très-Miséricordieux"
+      }
+     ],
+     "sens": "le Tout-Miséricordieux, le Très-Miséricordieux,"
+    },
+    {
+     "ref": "1:4",
+     "ar": "مَٰلِكِ يَوْمِ ٱلدِّينِ",
+     "audio": "ayyub:1:4",
+     "mot_a_mot": [
+      {
+       "ar": "مَٰلِكِ",
+       "fr": "Maître (Possesseur)"
+      },
+      {
+       "ar": "يَوْمِ",
+       "fr": "du Jour"
+      },
+      {
+       "ar": "ٱلدِّينِ",
+       "fr": "de la Rétribution (du Jugement)"
+      }
+     ],
+     "sens": "Maître du Jour de la Rétribution."
+    },
+    {
+     "ref": "1:5",
+     "ar": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+     "audio": "ayyub:1:5",
+     "mot_a_mot": [
+      {
+       "ar": "إِيَّاكَ",
+       "fr": "Toi (seul)"
+      },
+      {
+       "ar": "نَعْبُدُ",
+       "fr": "nous adorons"
+      },
+      {
+       "ar": "وَإِيَّاكَ",
+       "fr": "et Toi (seul)"
+      },
+      {
+       "ar": "نَسْتَعِينُ",
+       "fr": "nous demandons l'aide"
+      }
+     ],
+     "sens": "C'est Toi seul que nous adorons, et c'est Toi seul dont nous implorons l'aide."
+    },
+    {
+     "ref": "1:6",
+     "ar": "ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ",
+     "audio": "ayyub:1:6",
+     "mot_a_mot": [
+      {
+       "ar": "ٱهْدِنَا",
+       "fr": "guide-nous"
+      },
+      {
+       "ar": "ٱلصِّرَٰطَ",
+       "fr": "(sur) le chemin"
+      },
+      {
+       "ar": "ٱلْمُسْتَقِيمَ",
+       "fr": "droit"
+      }
+     ],
+     "sens": "Guide-nous sur le chemin droit,"
+    },
+    {
+     "ref": "1:7",
+     "ar": "صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ",
+     "audio": "ayyub:1:7",
+     "mot_a_mot": [
+      {
+       "ar": "صِرَٰطَ",
+       "fr": "le chemin"
+      },
+      {
+       "ar": "ٱلَّذِينَ",
+       "fr": "de ceux que"
+      },
+      {
+       "ar": "أَنْعَمْتَ",
+       "fr": "Tu as comblés de bienfaits"
+      },
+      {
+       "ar": "عَلَيْهِمْ",
+       "fr": "(sur eux)"
+      },
+      {
+       "ar": "غَيْرِ",
+       "fr": "non (pas celui)"
+      },
+      {
+       "ar": "ٱلْمَغْضُوبِ",
+       "fr": "de ceux qui ont encouru la colère"
+      },
+      {
+       "ar": "عَلَيْهِمْ",
+       "fr": "(contre eux)"
+      },
+      {
+       "ar": "وَلَا",
+       "fr": "ni"
+      },
+      {
+       "ar": "ٱلضَّآلِّينَ",
+       "fr": "des égarés"
+      }
+     ],
+     "sens": "le chemin de ceux que Tu as comblés de bienfaits, non de ceux qui ont encouru la colère, ni des égarés."
+    }
+   ],
+   "sens_general": "« L'Ouverture » ouvre le muṣḥaf et chaque rakʿa. On l'appelle aussi « la Mère du Coran » (ar-Risāla, RIS-0150) et « les sept versets répétés ». Elle résume la religion : louer Allah, L'adorer seul, Lui demander Son aide et la guidance.",
+   "apport_pour_la_priere": "Elle est obligatoire dans la prière (Khalīl, KHL-0176 ; « pas de prière pour qui ne récite pas la Fātiḥa », al-Bukhārī et Muslim, d'après ʿUbāda ibn aṣ-Ṣāmit). Le hadith qudsī du partage de la prière (Muslim 395) commence à « La louange appartient à Allah » : la Basmala n'en fait pas partie. Il la divise en trois : la louange, de « La louange appartient à Allah » jusqu'à « Maître du Jour de la Rétribution » ; l'engagement, « C'est Toi seul que nous adorons et c'est Toi seul dont nous implorons l'aide » ; la demande, de « Guide-nous sur le chemin droit » jusqu'à la fin. À chaque verset, Allah répond (voir priere.json, S5.fatiha).",
+   "tafsir": [
+    {
+     "point": "La Basmala",
+     "explication": "Al-Qurṭubī, mālikite, juge correct l'avis de Mālik : la Basmala n'est pas un verset de la Fātiḥa. Son argument principal : le Coran ne s'établit que par une transmission massive et certaine (tawātur), ce qui n'est pas le cas de la Basmala comme verset de la Fātiḥa. Il cite aussi le hadith qudsī (Muslim 395), qui compte les versets à partir de « La louange appartient à Allah » ; le hadith d'Anas lui sert surtout contre la récitation à voix haute. Il reconnaît que la question relève de l'effort d'interprétation, ash-Shāfiʿī et Aḥmad la comptant comme verset.",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 1:1 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    },
+    {
+     "point": "« Maître du Jour de la Rétribution »",
+     "explication": "Le mot traduit par « Rétribution » désigne ici la rétribution et le jugement (aṭ-Ṭabarī, d'après Ibn ʿAbbās). Dans la lecture de Nāfiʿ (Warsh, Qālūn), on lit « Roi » (sans voyelle longue) ; dans celle de ʿĀṣim (Ḥafṣ), « Maître » (avec voyelle longue). Les deux lectures sont authentiques et leurs sens se complètent.",
+     "sources": [
+      "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur 1:4",
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 1:4 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    },
+    {
+     "point": "« C'est Toi seul »",
+     "explication": "En arabe, le mot « Toi » est placé avant le verbe : cela exprime l'exclusivité, « Toi et personne d'autre » (Ibn Kathīr). On s'engage à n'adorer qu'Allah et à ne demander l'aide qu'à Lui.",
+     "sources": [
+      "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 1:5"
+     ]
+    },
+    {
+     "point": "« Ceux qui ont encouru la colère » et « les égarés »",
+     "explication": "Al-Qurṭubī rapporte que la majorité des commentateurs y voient les juifs et les chrétiens, en s'appuyant sur un hadith de ʿAdī ibn Ḥātim rapporté par at-Tirmidhī (n° 2954 dans la numérotation de sunnah.com ; version longue : 2953b ; at-Tirmidhī le juge ḥasan gharīb) et aṭ-Ṭayālisī ; il mentionne d'autres avis. Le sens reste général : celui qui connaît la vérité sans la suivre, et celui qui agit sans science. Le croyant demande d'unir la science et l'action (Ibn Kathīr). À présenter sobrement, sans polémique.",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 1:7 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+      "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 1:7"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 1 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 1",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 1",
+    "Muslim 395 (hadith qudsī)",
+    "livre audité ad1, leçon 23 (traductions Awzid alignées)"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE",
+   "numerotation": "Décompte de Ḥafṣ (Basmala = verset 1), celui du muṣḥaf et de l'audio d'Ayyūb. Dans le décompte mālikite (médinois), la Basmala n'est pas un verset : « La louange appartient à Allah… » est le verset 1, et le verset 7 commence à « non de ceux qui ont encouru la colère ».",
+   "note_priere": {
+    "fr": "Dans la prière obligatoire, selon l'école mālikite, on ne récite pas la Basmala : on commence à « La louange appartient à Allah, Seigneur des mondes ».",
+    "sources": [
+     "al-Akhḍarī, AKH-0125",
+     "Khalīl, KHL-0199",
+     "Ibn Abī Zayd, ar-Risāla, RIS-0150",
+     "Muslim 395 ; al-Bukhārī 743"
+    ],
+    "afficher_sur": "écran du mot à mot, au-dessus du verset 1 (Basmala)"
+   }
+  },
+  {
+   "numero": 101,
+   "nom_ar": "القارعة",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "al-Qāriʿa (Le Fracas)",
+   "nombre_versets": 11,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "101:1",
+     "ar": "ٱلْقَارِعَةُ",
+     "audio": "ayyub:101:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "ٱلْقَارِعَةُ",
+       "fr": "le Fracas (celle qui frappe les cœurs)"
+      }
+     ],
+     "sens": "Le Fracas !"
+    },
+    {
+     "ref": "101:2",
+     "ar": "مَا ٱلْقَارِعَةُ",
+     "audio": "ayyub:101:2",
+     "mot_a_mot": [
+      {
+       "ar": "مَا",
+       "fr": "qu'est-ce que"
+      },
+      {
+       "ar": "ٱلْقَارِعَةُ",
+       "fr": "le Fracas"
+      }
+     ],
+     "sens": "Qu'est-ce que le Fracas ?"
+    },
+    {
+     "ref": "101:3",
+     "ar": "وَمَآ أَدْرَىٰكَ مَا ٱلْقَارِعَةُ",
+     "audio": "ayyub:101:3",
+     "mot_a_mot": [
+      {
+       "ar": "وَمَآ",
+       "fr": "et qu'est-ce qui"
+      },
+      {
+       "ar": "أَدْرَىٰكَ",
+       "fr": "te fera savoir"
+      },
+      {
+       "ar": "مَا",
+       "fr": "ce qu'est"
+      },
+      {
+       "ar": "ٱلْقَارِعَةُ",
+       "fr": "le Fracas"
+      }
+     ],
+     "sens": "Et qui te fera savoir ce qu'est le Fracas ?"
+    },
+    {
+     "ref": "101:4",
+     "ar": "يَوْمَ يَكُونُ ٱلنَّاسُ كَٱلْفَرَاشِ ٱلْمَبْثُوثِ",
+     "audio": "ayyub:101:4",
+     "mot_a_mot": [
+      {
+       "ar": "يَوْمَ",
+       "fr": "le jour où"
+      },
+      {
+       "ar": "يَكُونُ",
+       "fr": "seront"
+      },
+      {
+       "ar": "ٱلنَّاسُ",
+       "fr": "les gens"
+      },
+      {
+       "ar": "كَٱلْفَرَاشِ",
+       "fr": "comme les papillons"
+      },
+      {
+       "ar": "ٱلْمَبْثُوثِ",
+       "fr": "dispersés"
+      }
+     ],
+     "sens": "Le jour où les gens seront comme des papillons dispersés,"
+    },
+    {
+     "ref": "101:5",
+     "ar": "وَتَكُونُ ٱلْجِبَالُ كَٱلْعِهْنِ ٱلْمَنفُوشِ",
+     "audio": "ayyub:101:5",
+     "mot_a_mot": [
+      {
+       "ar": "وَتَكُونُ",
+       "fr": "et seront"
+      },
+      {
+       "ar": "ٱلْجِبَالُ",
+       "fr": "les montagnes"
+      },
+      {
+       "ar": "كَٱلْعِهْنِ",
+       "fr": "comme la laine (teinte)"
+      },
+      {
+       "ar": "ٱلْمَنفُوشِ",
+       "fr": "cardée"
+      }
+     ],
+     "sens": "et les montagnes comme de la laine cardée."
+    },
+    {
+     "ref": "101:6",
+     "ar": "فَأَمَّا مَن ثَقُلَتْ مَوَٰزِينُهُۥ",
+     "audio": "ayyub:101:6",
+     "mot_a_mot": [
+      {
+       "ar": "فَأَمَّا",
+       "fr": "quant à"
+      },
+      {
+       "ar": "مَن",
+       "fr": "celui dont"
+      },
+      {
+       "ar": "ثَقُلَتْ",
+       "fr": "seront lourdes"
+      },
+      {
+       "ar": "مَوَٰزِينُهُۥ",
+       "fr": "ses balances (le poids de ses bonnes œuvres)"
+      }
+     ],
+     "sens": "Quant à celui dont la balance sera lourde,"
+    },
+    {
+     "ref": "101:7",
+     "ar": "فَهُوَ فِى عِيشَةٍۢ رَّاضِيَةٍۢ",
+     "audio": "ayyub:101:7",
+     "mot_a_mot": [
+      {
+       "ar": "فَهُوَ",
+       "fr": "il sera"
+      },
+      {
+       "ar": "فِى",
+       "fr": "dans"
+      },
+      {
+       "ar": "عِيشَةٍۢ",
+       "fr": "une vie"
+      },
+      {
+       "ar": "رَّاضِيَةٍۢ",
+       "fr": "agréable (qui le satisfait)"
+      }
+     ],
+     "sens": "il connaîtra une vie agréable ;"
+    },
+    {
+     "ref": "101:8",
+     "ar": "وَأَمَّا مَنْ خَفَّتْ مَوَٰزِينُهُۥ",
+     "audio": "ayyub:101:8",
+     "mot_a_mot": [
+      {
+       "ar": "وَأَمَّا",
+       "fr": "et quant à"
+      },
+      {
+       "ar": "مَنْ",
+       "fr": "celui dont"
+      },
+      {
+       "ar": "خَفَّتْ",
+       "fr": "seront légères"
+      },
+      {
+       "ar": "مَوَٰزِينُهُۥ",
+       "fr": "ses balances"
+      }
+     ],
+     "sens": "et quant à celui dont la balance sera légère,"
+    },
+    {
+     "ref": "101:9",
+     "ar": "فَأُمُّهُۥ هَاوِيَةٌۭ",
+     "audio": "ayyub:101:9",
+     "mot_a_mot": [
+      {
+       "ar": "فَأُمُّهُۥ",
+       "fr": "sa mère (son refuge)"
+      },
+      {
+       "ar": "هَاوِيَةٌۭ",
+       "fr": "un abîme (al-Hāwiya)"
+      }
+     ],
+     "sens": "son refuge sera un abîme."
+    },
+    {
+     "ref": "101:10",
+     "ar": "وَمَآ أَدْرَىٰكَ مَا هِيَهْ",
+     "audio": "ayyub:101:10",
+     "mot_a_mot": [
+      {
+       "ar": "وَمَآ",
+       "fr": "et qu'est-ce qui"
+      },
+      {
+       "ar": "أَدْرَىٰكَ",
+       "fr": "te fera savoir"
+      },
+      {
+       "ar": "مَا",
+       "fr": "ce que"
+      },
+      {
+       "ar": "هِيَهْ",
+       "fr": "c'est"
+      }
+     ],
+     "sens": "Et qui te fera savoir ce que c'est ?"
+    },
+    {
+     "ref": "101:11",
+     "ar": "نَارٌ حَامِيَةٌۢ",
+     "audio": "ayyub:101:11",
+     "mot_a_mot": [
+      {
+       "ar": "نَارٌ",
+       "fr": "un Feu"
+      },
+      {
+       "ar": "حَامِيَةٌۢ",
+       "fr": "ardent"
+      }
+     ],
+     "sens": "Un Feu ardent."
+    }
+   ],
+   "sens_general": "La sourate décrit le Jour de la Résurrection, qui frappe les cœurs d'effroi : les gens dispersés, les montagnes défaites, puis la pesée des œuvres. Tout se joue sur le poids des bonnes actions.",
+   "apport_pour_la_priere": "La prière est « la plus grande des adorations » (al-Akhḍarī, AKH-0131) : en la gardant, on alourdit sa balance. Réciter cette sourate dans la prière rappelle pourquoi on ne la néglige pas.",
+   "tafsir": [
+    {
+     "point": "« Al-Qāriʿa »",
+     "explication": "C'est un des noms du Jour de la Résurrection, appelé ainsi parce qu'il frappe les cœurs par sa terreur (aṭ-Ṭabarī) ; Ibn Kathīr la compte aussi parmi les noms du Jour de la Résurrection.",
+     "sources": [
+      "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur 101:1",
+      "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 101:1"
+     ]
+    },
+    {
+     "point": "« Sa mère sera un abîme »",
+     "explication": "Al-Qurṭubī rapporte : pour Ibn Zayd, la « mère » est la Géhenne, où le damné se réfugie comme un enfant auprès de sa mère ; pour Qatāda, c'est sa destination ; ʿIkrima dit qu'il y tombe la tête la première. Le Feu est appelé « al-Hāwiya » parce qu'on y tombe de très haut.",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 101:9 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 101 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 101",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 101"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE"
+  },
+  {
+   "numero": 102,
+   "nom_ar": "التكاثر",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "at-Takāthur (La Course aux richesses)",
+   "nombre_versets": 8,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "102:1",
+     "ar": "أَلْهَىٰكُمُ ٱلتَّكَاثُرُ",
+     "audio": "ayyub:102:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "أَلْهَىٰكُمُ",
+       "fr": "vous a distraits"
+      },
+      {
+       "ar": "ٱلتَّكَاثُرُ",
+       "fr": "la course à avoir toujours plus"
+      }
+     ],
+     "sens": "La course aux richesses vous a distraits,"
+    },
+    {
+     "ref": "102:2",
+     "ar": "حَتَّىٰ زُرْتُمُ ٱلْمَقَابِرَ",
+     "audio": "ayyub:102:2",
+     "mot_a_mot": [
+      {
+       "ar": "حَتَّىٰ",
+       "fr": "jusqu'à ce que"
+      },
+      {
+       "ar": "زُرْتُمُ",
+       "fr": "vous avez visité"
+      },
+      {
+       "ar": "ٱلْمَقَابِرَ",
+       "fr": "les tombes"
+      }
+     ],
+     "sens": "jusqu'à ce que vous visitiez les tombes."
+    },
+    {
+     "ref": "102:3",
+     "ar": "كَلَّا سَوْفَ تَعْلَمُونَ",
+     "audio": "ayyub:102:3",
+     "mot_a_mot": [
+      {
+       "ar": "كَلَّا",
+       "fr": "non, prenez garde"
+      },
+      {
+       "ar": "سَوْفَ",
+       "fr": "bientôt"
+      },
+      {
+       "ar": "تَعْلَمُونَ",
+       "fr": "vous saurez"
+      }
+     ],
+     "sens": "Mais non ! Vous saurez bientôt !"
+    },
+    {
+     "ref": "102:4",
+     "ar": "ثُمَّ كَلَّا سَوْفَ تَعْلَمُونَ",
+     "audio": "ayyub:102:4",
+     "mot_a_mot": [
+      {
+       "ar": "ثُمَّ",
+       "fr": "puis"
+      },
+      {
+       "ar": "كَلَّا",
+       "fr": "non, prenez garde"
+      },
+      {
+       "ar": "سَوْفَ",
+       "fr": "bientôt"
+      },
+      {
+       "ar": "تَعْلَمُونَ",
+       "fr": "vous saurez"
+      }
+     ],
+     "sens": "Puis, mais non ! Vous saurez bientôt !"
+    },
+    {
+     "ref": "102:5",
+     "ar": "كَلَّا لَوْ تَعْلَمُونَ عِلْمَ ٱلْيَقِينِ",
+     "audio": "ayyub:102:5",
+     "mot_a_mot": [
+      {
+       "ar": "كَلَّا",
+       "fr": "non, prenez garde"
+      },
+      {
+       "ar": "لَوْ",
+       "fr": "si"
+      },
+      {
+       "ar": "تَعْلَمُونَ",
+       "fr": "vous saviez"
+      },
+      {
+       "ar": "عِلْمَ",
+       "fr": "d'une science"
+      },
+      {
+       "ar": "ٱلْيَقِينِ",
+       "fr": "de certitude"
+      }
+     ],
+     "sens": "Mais non ! Si vous saviez d'une science certaine…"
+    },
+    {
+     "ref": "102:6",
+     "ar": "لَتَرَوُنَّ ٱلْجَحِيمَ",
+     "audio": "ayyub:102:6",
+     "mot_a_mot": [
+      {
+       "ar": "لَتَرَوُنَّ",
+       "fr": "vous verrez certes"
+      },
+      {
+       "ar": "ٱلْجَحِيمَ",
+       "fr": "la Fournaise"
+      }
+     ],
+     "sens": "Vous verrez certes la Fournaise !"
+    },
+    {
+     "ref": "102:7",
+     "ar": "ثُمَّ لَتَرَوُنَّهَا عَيْنَ ٱلْيَقِينِ",
+     "audio": "ayyub:102:7",
+     "mot_a_mot": [
+      {
+       "ar": "ثُمَّ",
+       "fr": "puis"
+      },
+      {
+       "ar": "لَتَرَوُنَّهَا",
+       "fr": "vous la verrez certes"
+      },
+      {
+       "ar": "عَيْنَ",
+       "fr": "de l'œil"
+      },
+      {
+       "ar": "ٱلْيَقِينِ",
+       "fr": "de la certitude"
+      }
+     ],
+     "sens": "Puis vous la verrez certes de vos yeux, avec certitude."
+    },
+    {
+     "ref": "102:8",
+     "ar": "ثُمَّ لَتُسْـَٔلُنَّ يَوْمَئِذٍ عَنِ ٱلنَّعِيمِ",
+     "audio": "ayyub:102:8",
+     "mot_a_mot": [
+      {
+       "ar": "ثُمَّ",
+       "fr": "puis"
+      },
+      {
+       "ar": "لَتُسْـَٔلُنَّ",
+       "fr": "vous serez certes interrogés"
+      },
+      {
+       "ar": "يَوْمَئِذٍ",
+       "fr": "ce jour-là"
+      },
+      {
+       "ar": "عَنِ",
+       "fr": "sur"
+      },
+      {
+       "ar": "ٱلنَّعِيمِ",
+       "fr": "les bienfaits"
+      }
+     ],
+     "sens": "Puis, ce jour-là, vous serez interrogés sur les bienfaits."
+    }
+   ],
+   "sens_general": "La rivalité dans les biens, les enfants et le prestige occupe l'homme jusqu'à sa mort ; puis il verra la vérité de ses yeux, et il sera interrogé sur chaque bienfait reçu.",
+   "apport_pour_la_priere": "Cinq fois par jour, la prière arrête cette course : on quitte ses affaires pour se tenir devant Allah. Al-Akhḍarī demande de « vider son cœur de ce monde » en venant à la prière (AKH-0129).",
+   "tafsir": [
+    {
+     "point": "« Jusqu'à ce que vous visitiez les tombes »",
+     "explication": "Selon al-Qurṭubī : jusqu'à ce que la mort vous atteigne et que vous entriez dans les tombes comme des visiteurs, qui en repartiront vers le Paradis ou le Feu. Il rapporte aussi un autre avis : jusqu'à compter même vos morts, par fierté.",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 102:2 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    },
+    {
+     "point": "« Les bienfaits »",
+     "explication": "Les commentateurs y comptent tous les bienfaits : la santé, la sécurité, la nourriture, l'eau fraîche (Ibn Kathīr, qui cite des hadiths à ce sujet).",
+     "sources": [
+      "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 102:8"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 102 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 102",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 102"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE"
+  },
+  {
+   "numero": 103,
+   "nom_ar": "العصر",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "al-ʿAṣr (Le Temps)",
+   "nombre_versets": 3,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "103:1",
+     "ar": "وَٱلْعَصْرِ",
+     "audio": "ayyub:103:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "وَٱلْعَصْرِ",
+       "fr": "par le Temps"
+      }
+     ],
+     "sens": "Par le Temps !"
+    },
+    {
+     "ref": "103:2",
+     "ar": "إِنَّ ٱلْإِنسَٰنَ لَفِى خُسْرٍ",
+     "audio": "ayyub:103:2",
+     "mot_a_mot": [
+      {
+       "ar": "إِنَّ",
+       "fr": "certes"
+      },
+      {
+       "ar": "ٱلْإِنسَٰنَ",
+       "fr": "l'homme"
+      },
+      {
+       "ar": "لَفِى",
+       "fr": "est bien dans"
+      },
+      {
+       "ar": "خُسْرٍ",
+       "fr": "une perte"
+      }
+     ],
+     "sens": "L'homme est certes en perdition,"
+    },
+    {
+     "ref": "103:3",
+     "ar": "إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ وَتَوَاصَوْا۟ بِٱلْحَقِّ وَتَوَاصَوْا۟ بِٱلصَّبْرِ",
+     "audio": "ayyub:103:3",
+     "mot_a_mot": [
+      {
+       "ar": "إِلَّا",
+       "fr": "sauf"
+      },
+      {
+       "ar": "ٱلَّذِينَ",
+       "fr": "ceux qui"
+      },
+      {
+       "ar": "ءَامَنُوا۟",
+       "fr": "ont cru"
+      },
+      {
+       "ar": "وَعَمِلُوا۟",
+       "fr": "et ont fait"
+      },
+      {
+       "ar": "ٱلصَّٰلِحَٰتِ",
+       "fr": "les bonnes œuvres"
+      },
+      {
+       "ar": "وَتَوَاصَوْا۟",
+       "fr": "et se sont recommandé les uns aux autres"
+      },
+      {
+       "ar": "بِٱلْحَقِّ",
+       "fr": "la vérité"
+      },
+      {
+       "ar": "وَتَوَاصَوْا۟",
+       "fr": "et se sont recommandé les uns aux autres"
+      },
+      {
+       "ar": "بِٱلصَّبْرِ",
+       "fr": "la patience"
+      }
+     ],
+     "sens": "sauf ceux qui croient, font les bonnes œuvres, s'encouragent les uns les autres à la vérité et s'encouragent les uns les autres à la patience."
+    }
+   ],
+   "sens_general": "Allah jure par le temps : tout homme est perdant, sauf celui qui réunit quatre choses : la foi, les bonnes œuvres, l'encouragement mutuel à la vérité et à la patience. Ibn Kathīr rapporte qu'ash-Shāfiʿī a dit que, si les gens méditaient cette sourate, elle leur suffirait.",
+   "apport_pour_la_priere": "La prière est la première des bonnes œuvres ; chaque prière manquée est un temps perdu. La sourate rappelle aussi de s'encourager les uns les autres : prier ensemble, rappeler la prière à ses proches.",
+   "tafsir": [
+    {
+     "point": "« Al-ʿAṣr »",
+     "explication": "Al-Qurṭubī cite en premier l'avis d'Ibn ʿAbbās : c'est le temps (ad-dahr), avec ses changements qui sont un signe du Créateur. D'autres avis : l'après-midi, du déclin au coucher du soleil (al-Ḥasan, Qatāda ; Qatāda dit aussi : la dernière heure du jour), ou la prière du ʿaṣr (Muqātil).",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 103:1 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 103 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 103",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 103"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE"
+  },
+  {
+   "numero": 104,
+   "nom_ar": "الهمزة",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "al-Humaza (Le Diffamateur)",
+   "nombre_versets": 9,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "104:1",
+     "ar": "وَيْلٌۭ لِّكُلِّ هُمَزَةٍۢ لُّمَزَةٍ",
+     "audio": "ayyub:104:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "وَيْلٌۭ",
+       "fr": "malheur"
+      },
+      {
+       "ar": "لِّكُلِّ",
+       "fr": "à tout"
+      },
+      {
+       "ar": "هُمَزَةٍۢ",
+       "fr": "diffamateur (qui blesse en face)"
+      },
+      {
+       "ar": "لُّمَزَةٍ",
+       "fr": "dénigreur (qui blesse en cachette)"
+      }
+     ],
+     "sens": "Malheur à tout diffamateur, dénigreur,"
+    },
+    {
+     "ref": "104:2",
+     "ar": "ٱلَّذِى جَمَعَ مَالًۭا وَعَدَّدَهُۥ",
+     "audio": "ayyub:104:2",
+     "mot_a_mot": [
+      {
+       "ar": "ٱلَّذِى",
+       "fr": "qui"
+      },
+      {
+       "ar": "جَمَعَ",
+       "fr": "amasse"
+      },
+      {
+       "ar": "مَالًۭا",
+       "fr": "une fortune"
+      },
+      {
+       "ar": "وَعَدَّدَهُۥ",
+       "fr": "et la compte (sans cesse)"
+      }
+     ],
+     "sens": "qui amasse une fortune et la compte et la recompte,"
+    },
+    {
+     "ref": "104:3",
+     "ar": "يَحْسَبُ أَنَّ مَالَهُۥٓ أَخْلَدَهُۥ",
+     "audio": "ayyub:104:3",
+     "mot_a_mot": [
+      {
+       "ar": "يَحْسَبُ",
+       "fr": "il pense"
+      },
+      {
+       "ar": "أَنَّ",
+       "fr": "que"
+      },
+      {
+       "ar": "مَالَهُۥٓ",
+       "fr": "sa fortune"
+      },
+      {
+       "ar": "أَخْلَدَهُۥ",
+       "fr": "l'a rendu éternel"
+      }
+     ],
+     "sens": "pensant que sa fortune le rendra immortel."
+    },
+    {
+     "ref": "104:4",
+     "ar": "كَلَّا ۖ لَيُنۢبَذَنَّ فِى ٱلْحُطَمَةِ",
+     "audio": "ayyub:104:4",
+     "mot_a_mot": [
+      {
+       "ar": "كَلَّا",
+       "fr": "non, prenez garde"
+      },
+      {
+       "ar": "لَيُنۢبَذَنَّ",
+       "fr": "il sera certes jeté"
+      },
+      {
+       "ar": "فِى",
+       "fr": "dans"
+      },
+      {
+       "ar": "ٱلْحُطَمَةِ",
+       "fr": "la Broyeuse (al-Ḥuṭama)"
+      }
+     ],
+     "sens": "Mais non ! Il sera jeté dans la Broyeuse."
+    },
+    {
+     "ref": "104:5",
+     "ar": "وَمَآ أَدْرَىٰكَ مَا ٱلْحُطَمَةُ",
+     "audio": "ayyub:104:5",
+     "mot_a_mot": [
+      {
+       "ar": "وَمَآ",
+       "fr": "et qu'est-ce qui"
+      },
+      {
+       "ar": "أَدْرَىٰكَ",
+       "fr": "te fera savoir"
+      },
+      {
+       "ar": "مَا",
+       "fr": "ce qu'est"
+      },
+      {
+       "ar": "ٱلْحُطَمَةُ",
+       "fr": "la Broyeuse"
+      }
+     ],
+     "sens": "Et qui te fera savoir ce qu'est la Broyeuse ?"
+    },
+    {
+     "ref": "104:6",
+     "ar": "نَارُ ٱللَّهِ ٱلْمُوقَدَةُ",
+     "audio": "ayyub:104:6",
+     "mot_a_mot": [
+      {
+       "ar": "نَارُ",
+       "fr": "le Feu"
+      },
+      {
+       "ar": "ٱللَّهِ",
+       "fr": "d'Allah"
+      },
+      {
+       "ar": "ٱلْمُوقَدَةُ",
+       "fr": "allumé"
+      }
+     ],
+     "sens": "Le Feu d'Allah, allumé,"
+    },
+    {
+     "ref": "104:7",
+     "ar": "ٱلَّتِى تَطَّلِعُ عَلَى ٱلْأَفْـِٔدَةِ",
+     "audio": "ayyub:104:7",
+     "mot_a_mot": [
+      {
+       "ar": "ٱلَّتِى",
+       "fr": "qui"
+      },
+      {
+       "ar": "تَطَّلِعُ",
+       "fr": "monte"
+      },
+      {
+       "ar": "عَلَى",
+       "fr": "jusqu'aux"
+      },
+      {
+       "ar": "ٱلْأَفْـِٔدَةِ",
+       "fr": "cœurs"
+      }
+     ],
+     "sens": "qui monte jusqu'aux cœurs."
+    },
+    {
+     "ref": "104:8",
+     "ar": "إِنَّهَا عَلَيْهِم مُّؤْصَدَةٌۭ",
+     "audio": "ayyub:104:8",
+     "mot_a_mot": [
+      {
+       "ar": "إِنَّهَا",
+       "fr": "certes il (le Feu)"
+      },
+      {
+       "ar": "عَلَيْهِم",
+       "fr": "sur eux"
+      },
+      {
+       "ar": "مُّؤْصَدَةٌۭ",
+       "fr": "est refermé"
+      }
+     ],
+     "sens": "Il se referme sur eux,"
+    },
+    {
+     "ref": "104:9",
+     "ar": "فِى عَمَدٍۢ مُّمَدَّدَةٍۭ",
+     "audio": "ayyub:104:9",
+     "mot_a_mot": [
+      {
+       "ar": "فِى",
+       "fr": "en"
+      },
+      {
+       "ar": "عَمَدٍۢ",
+       "fr": "colonnes"
+      },
+      {
+       "ar": "مُّمَدَّدَةٍۭ",
+       "fr": "étendues"
+      }
+     ],
+     "sens": "en colonnes étendues."
+    }
+   ],
+   "sens_general": "Avertissement à celui qui blesse les autres par la parole et le geste, et qui met sa confiance dans l'argent : rien de cela ne le protégera du Feu.",
+   "apport_pour_la_priere": "La prière, faite avec recueillement, « détourne de la turpitude et du blâmable » (al-Akhḍarī, AKH-0132, citant 29:45) : elle doit rendre la langue plus douce envers les gens.",
+   "tafsir": [
+    {
+     "point": "« Diffamateur, dénigreur »",
+     "explication": "Al-Qurṭubī rapporte qu'Ibn ʿAbbās y voyait le même sens (le médisant qui sème la discorde), tandis que Mujāhid, Abū l-ʿĀliya, al-Ḥasan et ʿAṭāʾ distinguent l'insulte en face et le dénigrement par derrière. Des noms de personnes visées sont cités, mais la majorité des commentateurs donnent à la sourate une portée générale.",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 104:1 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 104 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 104",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 104"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE"
+  },
+  {
+   "numero": 105,
+   "nom_ar": "الفيل",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "al-Fīl (L'Éléphant)",
+   "nombre_versets": 5,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "105:1",
+     "ar": "أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَٰبِ ٱلْفِيلِ",
+     "audio": "ayyub:105:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "أَلَمْ",
+       "fr": "n'as-tu pas"
+      },
+      {
+       "ar": "تَرَ",
+       "fr": "vu"
+      },
+      {
+       "ar": "كَيْفَ",
+       "fr": "comment"
+      },
+      {
+       "ar": "فَعَلَ",
+       "fr": "a agi"
+      },
+      {
+       "ar": "رَبُّكَ",
+       "fr": "ton Seigneur"
+      },
+      {
+       "ar": "بِأَصْحَٰبِ",
+       "fr": "envers les gens"
+      },
+      {
+       "ar": "ٱلْفِيلِ",
+       "fr": "de l'éléphant"
+      }
+     ],
+     "sens": "N'as-tu pas vu comment ton Seigneur a agi envers les gens de l'éléphant ?"
+    },
+    {
+     "ref": "105:2",
+     "ar": "أَلَمْ يَجْعَلْ كَيْدَهُمْ فِى تَضْلِيلٍۢ",
+     "audio": "ayyub:105:2",
+     "mot_a_mot": [
+      {
+       "ar": "أَلَمْ",
+       "fr": "n'a-t-Il pas"
+      },
+      {
+       "ar": "يَجْعَلْ",
+       "fr": "rendu"
+      },
+      {
+       "ar": "كَيْدَهُمْ",
+       "fr": "leur ruse"
+      },
+      {
+       "ar": "فِى",
+       "fr": "dans"
+      },
+      {
+       "ar": "تَضْلِيلٍۢ",
+       "fr": "l'échec (l'égarement)"
+      }
+     ],
+     "sens": "N'a-t-Il pas fait échouer leur ruse ?"
+    },
+    {
+     "ref": "105:3",
+     "ar": "وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ",
+     "audio": "ayyub:105:3",
+     "mot_a_mot": [
+      {
+       "ar": "وَأَرْسَلَ",
+       "fr": "et Il a envoyé"
+      },
+      {
+       "ar": "عَلَيْهِمْ",
+       "fr": "contre eux"
+      },
+      {
+       "ar": "طَيْرًا",
+       "fr": "des oiseaux"
+      },
+      {
+       "ar": "أَبَابِيلَ",
+       "fr": "par vols successifs"
+      }
+     ],
+     "sens": "Il envoya contre eux des oiseaux par vols successifs,"
+    },
+    {
+     "ref": "105:4",
+     "ar": "تَرْمِيهِم بِحِجَارَةٍۢ مِّن سِجِّيلٍۢ",
+     "audio": "ayyub:105:4",
+     "mot_a_mot": [
+      {
+       "ar": "تَرْمِيهِم",
+       "fr": "qui leur lançaient"
+      },
+      {
+       "ar": "بِحِجَارَةٍۢ",
+       "fr": "des pierres"
+      },
+      {
+       "ar": "مِّن",
+       "fr": "de"
+      },
+      {
+       "ar": "سِجِّيلٍۢ",
+       "fr": "argile durcie"
+      }
+     ],
+     "sens": "qui leur lançaient des pierres d'argile durcie,"
+    },
+    {
+     "ref": "105:5",
+     "ar": "فَجَعَلَهُمْ كَعَصْفٍۢ مَّأْكُولٍۭ",
+     "audio": "ayyub:105:5",
+     "mot_a_mot": [
+      {
+       "ar": "فَجَعَلَهُمْ",
+       "fr": "et Il les rendit"
+      },
+      {
+       "ar": "كَعَصْفٍۢ",
+       "fr": "comme de la paille"
+      },
+      {
+       "ar": "مَّأْكُولٍۭ",
+       "fr": "mâchée (dévorée)"
+      }
+     ],
+     "sens": "et Il les rendit semblables à de la paille mâchée."
+    }
+   ],
+   "sens_general": "Rappel d'un événement connu des Mecquois : l'armée d'Abraha, venue avec des éléphants pour détruire la Kaʿba, fut anéantie par des oiseaux lançant des pierres. Cela eut lieu l'année de la naissance du Prophète ﷺ, selon l'avis le plus connu (Ibn Kathīr).",
+   "apport_pour_la_priere": "Allah a protégé Sa Maison, la Kaʿba, vers laquelle nous nous tournons dans chaque prière (la qibla).",
+   "tafsir": [
+    {
+     "point": "« Par vols successifs »",
+     "explication": "Al-Qurṭubī rapporte, pour le mot traduit ainsi, : « en groupes successifs » (Ibn ʿAbbās, Mujāhid), « rassemblés » (ʿIkrima), « venus de partout » (Ibn Masʿūd) ; an-Naḥḥās dit que ces avis reviennent à l'idée de grandes troupes. Il cite aussi des descriptions différentes de ces oiseaux.",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 105:3 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    },
+    {
+     "point": "« Argile durcie » et « paille mâchée »",
+     "explication": "« Argile durcie » : de l'argile comme la pierre ; « paille mâchée » : des feuilles ou de la paille broyées, comme mangées par les bêtes (Ibn Kathīr, aṭ-Ṭabarī).",
+     "sources": [
+      "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 105:4-5",
+      "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur 105:4-5"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 105 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 105",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 105"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE"
+  },
+  {
+   "numero": 106,
+   "nom_ar": "قريش",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "Quraysh",
+   "nombre_versets": 4,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "106:1",
+     "ar": "لِإِيلَٰفِ قُرَيْشٍ",
+     "audio": "ayyub:106:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "لِإِيلَٰفِ",
+       "fr": "pour l'habitude (la sécurité) qui unit"
+      },
+      {
+       "ar": "قُرَيْشٍ",
+       "fr": "Quraysh"
+      }
+     ],
+     "sens": "Pour la sécurité habituelle de Quraysh,"
+    },
+    {
+     "ref": "106:2",
+     "ar": "إِۦلَٰفِهِمْ رِحْلَةَ ٱلشِّتَآءِ وَٱلصَّيْفِ",
+     "audio": "ayyub:106:2",
+     "mot_a_mot": [
+      {
+       "ar": "إِۦلَٰفِهِمْ",
+       "fr": "leur habitude (leur sécurité)"
+      },
+      {
+       "ar": "رِحْلَةَ",
+       "fr": "du voyage"
+      },
+      {
+       "ar": "ٱلشِّتَآءِ",
+       "fr": "d'hiver"
+      },
+      {
+       "ar": "وَٱلصَّيْفِ",
+       "fr": "et d'été"
+      }
+     ],
+     "sens": "leur sécurité dans le voyage d'hiver et d'été,"
+    },
+    {
+     "ref": "106:3",
+     "ar": "فَلْيَعْبُدُوا۟ رَبَّ هَٰذَا ٱلْبَيْتِ",
+     "audio": "ayyub:106:3",
+     "mot_a_mot": [
+      {
+       "ar": "فَلْيَعْبُدُوا۟",
+       "fr": "qu'ils adorent donc"
+      },
+      {
+       "ar": "رَبَّ",
+       "fr": "le Seigneur"
+      },
+      {
+       "ar": "هَٰذَا",
+       "fr": "de cette"
+      },
+      {
+       "ar": "ٱلْبَيْتِ",
+       "fr": "Maison"
+      }
+     ],
+     "sens": "qu'ils adorent donc le Seigneur de cette Maison,"
+    },
+    {
+     "ref": "106:4",
+     "ar": "ٱلَّذِىٓ أَطْعَمَهُم مِّن جُوعٍۢ وَءَامَنَهُم مِّنْ خَوْفٍۭ",
+     "audio": "ayyub:106:4",
+     "mot_a_mot": [
+      {
+       "ar": "ٱلَّذِىٓ",
+       "fr": "qui"
+      },
+      {
+       "ar": "أَطْعَمَهُم",
+       "fr": "les a nourris"
+      },
+      {
+       "ar": "مِّن",
+       "fr": "contre"
+      },
+      {
+       "ar": "جُوعٍۢ",
+       "fr": "la faim"
+      },
+      {
+       "ar": "وَءَامَنَهُم",
+       "fr": "et les a mis en sécurité"
+      },
+      {
+       "ar": "مِّنْ",
+       "fr": "contre"
+      },
+      {
+       "ar": "خَوْفٍۭ",
+       "fr": "la peur"
+      }
+     ],
+     "sens": "qui les a nourris contre la faim et rassurés contre la peur."
+    }
+   ],
+   "sens_general": "Allah rappelle à Quraysh Ses bienfaits : la sécurité de leurs caravanes, la nourriture, la paix autour de la Kaʿba. La conséquence : L'adorer, Lui seul.",
+   "apport_pour_la_priere": "Adorer le Seigneur de la Maison : c'est d'abord prier, tourné vers cette Maison, par reconnaissance pour la nourriture et la sécurité.",
+   "tafsir": [
+    {
+     "point": "Le lien avec la sourate précédente",
+     "explication": "Al-Qurṭubī rapporte que la préposition du début (« pour ») se rattache à la sourate al-Fīl (Allah a détruit l'armée de l'éléphant pour que Quraysh garde sa sécurité), selon al-Farrāʾ, Mujāhid et Ibn ʿAbbās ; pour al-Khalīl, il se rattache à « qu'ils adorent donc ».",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 106:1 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    },
+    {
+     "point": "Les deux voyages",
+     "explication": "Ibn Kathīr explique : le voyage d'hiver vers le Yémen et celui d'été vers le Shām. Al-Qurṭubī rapporte aussi, d'après Ibn ʿAbbās, qu'ils passaient l'hiver à La Mecque et l'été à aṭ-Ṭāʾif.",
+     "sources": [
+      "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 106:2",
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 106:1-2 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 106 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 106",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 106"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE"
+  },
+  {
+   "numero": 107,
+   "nom_ar": "الماعون",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "al-Māʿūn (L'Aide courante)",
+   "nombre_versets": 7,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "107:1",
+     "ar": "أَرَءَيْتَ ٱلَّذِى يُكَذِّبُ بِٱلدِّينِ",
+     "audio": "ayyub:107:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "أَرَءَيْتَ",
+       "fr": "as-tu vu"
+      },
+      {
+       "ar": "ٱلَّذِى",
+       "fr": "celui qui"
+      },
+      {
+       "ar": "يُكَذِّبُ",
+       "fr": "traite de mensonge"
+      },
+      {
+       "ar": "بِٱلدِّينِ",
+       "fr": "la Rétribution (la religion)"
+      }
+     ],
+     "sens": "As-tu vu celui qui traite de mensonge la Rétribution ?"
+    },
+    {
+     "ref": "107:2",
+     "ar": "فَذَٰلِكَ ٱلَّذِى يَدُعُّ ٱلْيَتِيمَ",
+     "audio": "ayyub:107:2",
+     "mot_a_mot": [
+      {
+       "ar": "فَذَٰلِكَ",
+       "fr": "c'est lui"
+      },
+      {
+       "ar": "ٱلَّذِى",
+       "fr": "qui"
+      },
+      {
+       "ar": "يَدُعُّ",
+       "fr": "repousse brutalement"
+      },
+      {
+       "ar": "ٱلْيَتِيمَ",
+       "fr": "l'orphelin"
+      }
+     ],
+     "sens": "C'est lui qui repousse l'orphelin,"
+    },
+    {
+     "ref": "107:3",
+     "ar": "وَلَا يَحُضُّ عَلَىٰ طَعَامِ ٱلْمِسْكِينِ",
+     "audio": "ayyub:107:3",
+     "mot_a_mot": [
+      {
+       "ar": "وَلَا",
+       "fr": "et n'"
+      },
+      {
+       "ar": "يَحُضُّ",
+       "fr": "encourage pas"
+      },
+      {
+       "ar": "عَلَىٰ",
+       "fr": "à"
+      },
+      {
+       "ar": "طَعَامِ",
+       "fr": "nourrir"
+      },
+      {
+       "ar": "ٱلْمِسْكِينِ",
+       "fr": "le pauvre"
+      }
+     ],
+     "sens": "et n'encourage pas à nourrir le pauvre."
+    },
+    {
+     "ref": "107:4",
+     "ar": "فَوَيْلٌۭ لِّلْمُصَلِّينَ",
+     "audio": "ayyub:107:4",
+     "mot_a_mot": [
+      {
+       "ar": "فَوَيْلٌۭ",
+       "fr": "malheur donc"
+      },
+      {
+       "ar": "لِّلْمُصَلِّينَ",
+       "fr": "à ceux qui prient"
+      }
+     ],
+     "sens": "Malheur donc à ceux qui prient,"
+    },
+    {
+     "ref": "107:5",
+     "ar": "ٱلَّذِينَ هُمْ عَن صَلَاتِهِمْ سَاهُونَ",
+     "audio": "ayyub:107:5",
+     "mot_a_mot": [
+      {
+       "ar": "ٱلَّذِينَ",
+       "fr": "qui"
+      },
+      {
+       "ar": "هُمْ",
+       "fr": "eux"
+      },
+      {
+       "ar": "عَن",
+       "fr": "de"
+      },
+      {
+       "ar": "صَلَاتِهِمْ",
+       "fr": "leur prière"
+      },
+      {
+       "ar": "سَاهُونَ",
+       "fr": "sont négligents"
+      }
+     ],
+     "sens": "qui négligent leur prière,"
+    },
+    {
+     "ref": "107:6",
+     "ar": "ٱلَّذِينَ هُمْ يُرَآءُونَ",
+     "audio": "ayyub:107:6",
+     "mot_a_mot": [
+      {
+       "ar": "ٱلَّذِينَ",
+       "fr": "qui"
+      },
+      {
+       "ar": "هُمْ",
+       "fr": "eux"
+      },
+      {
+       "ar": "يُرَآءُونَ",
+       "fr": "font étalage (pour être vus)"
+      }
+     ],
+     "sens": "qui font étalage [de leurs œuvres],"
+    },
+    {
+     "ref": "107:7",
+     "ar": "وَيَمْنَعُونَ ٱلْمَاعُونَ",
+     "audio": "ayyub:107:7",
+     "mot_a_mot": [
+      {
+       "ar": "وَيَمْنَعُونَ",
+       "fr": "et refusent"
+      },
+      {
+       "ar": "ٱلْمَاعُونَ",
+       "fr": "l'aide courante (les petits objets qu'on se prête)"
+      }
+     ],
+     "sens": "et refusent l'aide la plus simple."
+    }
+   ],
+   "sens_general": "Portrait de celui qui ne croit pas vraiment à la Rétribution : dur avec l'orphelin et le pauvre, négligent dans sa prière, priant pour être vu, et refusant même un petit service.",
+   "apport_pour_la_priere": "Cette sourate concerne directement la prière. La menace vise ceux qui négligent LEUR prière (« de leur prière ») : qui la retardent au-delà de son temps ou ne s'en soucient pas, et non celui qui a une distraction PENDANT la prière, ce qui arrive à presque tous (al-Qurṭubī, citant az-Zamakhsharī et Ibn al-ʿArabī). Elle met aussi en garde contre l'ostentation : prier pour Allah, non pour être vu.",
+   "tafsir": [
+    {
+     "point": "« Négligents de leur prière »",
+     "explication": "Al-Qurṭubī rapporte d'Ibn ʿAbbās : celui qui prie sans en espérer de récompense et la délaisse sans en craindre de châtiment, ou qui la retarde au-delà de son temps ; d'autres : celui qui la retarde, ou qui ne fait pas correctement l'inclinaison et la prosternation (Abū l-ʿĀliya).",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 107:5 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    },
+    {
+     "point": "« Al-māʿūn »",
+     "explication": "Al-Qurṭubī cite douze avis. Le premier qu'il cite : la zakāt (d'après Ibn ʿAbbās, ʿAlī, et Mālik). Selon Ibn Masʿūd : les objets d'usage qu'on se prête entre voisins (hache, marmite, seau…). Le mot à mot et le sens du verset 7 suivent l'avis d'Ibn Masʿūd.",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 107:7 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 107 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 107",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 107"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE",
+   "note_revelation": "Tanzil la classe parmi les sourates mecquoises ; certains commentateurs disent qu'une partie est médinoise."
+  },
+  {
+   "numero": 108,
+   "nom_ar": "الكوثر",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "al-Kawthar (L'Abondance)",
+   "nombre_versets": 3,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "108:1",
+     "ar": "إِنَّآ أَعْطَيْنَٰكَ ٱلْكَوْثَرَ",
+     "audio": "ayyub:108:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "إِنَّآ",
+       "fr": "Nous"
+      },
+      {
+       "ar": "أَعْطَيْنَٰكَ",
+       "fr": "t'avons donné"
+      },
+      {
+       "ar": "ٱلْكَوْثَرَ",
+       "fr": "al-Kawthar (le bien abondant)"
+      }
+     ],
+     "sens": "Nous t'avons donné al-Kawthar, l'abondance."
+    },
+    {
+     "ref": "108:2",
+     "ar": "فَصَلِّ لِرَبِّكَ وَٱنْحَرْ",
+     "audio": "ayyub:108:2",
+     "mot_a_mot": [
+      {
+       "ar": "فَصَلِّ",
+       "fr": "prie donc"
+      },
+      {
+       "ar": "لِرَبِّكَ",
+       "fr": "pour ton Seigneur"
+      },
+      {
+       "ar": "وَٱنْحَرْ",
+       "fr": "et sacrifie"
+      }
+     ],
+     "sens": "Prie donc pour ton Seigneur, et sacrifie."
+    },
+    {
+     "ref": "108:3",
+     "ar": "إِنَّ شَانِئَكَ هُوَ ٱلْأَبْتَرُ",
+     "audio": "ayyub:108:3",
+     "mot_a_mot": [
+      {
+       "ar": "إِنَّ",
+       "fr": "certes"
+      },
+      {
+       "ar": "شَانِئَكَ",
+       "fr": "celui qui te hait"
+      },
+      {
+       "ar": "هُوَ",
+       "fr": "c'est lui"
+      },
+      {
+       "ar": "ٱلْأَبْتَرُ",
+       "fr": "le sans-postérité (coupé de tout bien)"
+      }
+     ],
+     "sens": "C'est celui qui te hait qui est sans postérité."
+    }
+   ],
+   "sens_general": "Consolation du Prophète ﷺ : Allah lui a donné un bien immense ; qu'il Lui consacre sa prière et son sacrifice. C'est son ennemi qui sera oublié.",
+   "apport_pour_la_priere": "La prière et le sacrifice se font pour Allah seul : c'est le sens de « prie donc pour ton Seigneur ».",
+   "tafsir": [
+    {
+     "point": "« Al-Kawthar »",
+     "explication": "Al-Qurṭubī juge les plus authentiques ces deux sens : un fleuve du Paradis (al-Bukhārī 4964, d'après Anas) et le Bassin du Prophète ﷺ (Muslim 400, d'après Anas). Ibn ʿAbbās disait : « c'est le bien qu'Allah lui a donné », et Saʿīd ibn Jubayr ajoutait : « le fleuve du Paradis fait partie de ce bien » (al-Bukhārī 4966).",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 108:1 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+      "al-Bukhārī 4964 et 4966 ; Muslim 400"
+     ]
+    },
+    {
+     "point": "« Prie… et sacrifie »",
+     "explication": "Al-Qurṭubī rapporte : la prière obligatoire (Ibn ʿAbbās), ou la prière de l'Aïd du sacrifice (Qatāda, ʿAṭāʾ, ʿIkrima) ; « sacrifie » : immoler les bêtes pour Allah. D'autres sens sont rapportés.",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 108:2 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 108 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 108",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 108"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE",
+   "note_revelation": "Tanzil la classe parmi les sourates mecquoises ; al-Qurṭubī rapporte aussi l'avis qui la dit médinoise."
+  },
+  {
+   "numero": 109,
+   "nom_ar": "الكافرون",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "al-Kāfirūn (Les Négateurs)",
+   "nombre_versets": 6,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "109:1",
+     "ar": "قُلْ يَٰٓأَيُّهَا ٱلْكَٰفِرُونَ",
+     "audio": "ayyub:109:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "قُلْ",
+       "fr": "dis"
+      },
+      {
+       "ar": "يَٰٓأَيُّهَا",
+       "fr": "ô"
+      },
+      {
+       "ar": "ٱلْكَٰفِرُونَ",
+       "fr": "les mécréants (qui rejettent la foi)"
+      }
+     ],
+     "sens": "Dis : « Ô vous les mécréants !"
+    },
+    {
+     "ref": "109:2",
+     "ar": "لَآ أَعْبُدُ مَا تَعْبُدُونَ",
+     "audio": "ayyub:109:2",
+     "mot_a_mot": [
+      {
+       "ar": "لَآ",
+       "fr": "je n'"
+      },
+      {
+       "ar": "أَعْبُدُ",
+       "fr": "adore pas"
+      },
+      {
+       "ar": "مَا",
+       "fr": "ce que"
+      },
+      {
+       "ar": "تَعْبُدُونَ",
+       "fr": "vous adorez"
+      }
+     ],
+     "sens": "Je n'adore pas ce que vous adorez,"
+    },
+    {
+     "ref": "109:3",
+     "ar": "وَلَآ أَنتُمْ عَٰبِدُونَ مَآ أَعْبُدُ",
+     "audio": "ayyub:109:3",
+     "mot_a_mot": [
+      {
+       "ar": "وَلَآ",
+       "fr": "et ne… pas"
+      },
+      {
+       "ar": "أَنتُمْ",
+       "fr": "vous"
+      },
+      {
+       "ar": "عَٰبِدُونَ",
+       "fr": "adorateurs"
+      },
+      {
+       "ar": "مَآ",
+       "fr": "de ce que"
+      },
+      {
+       "ar": "أَعْبُدُ",
+       "fr": "j'adore"
+      }
+     ],
+     "sens": "et vous n'adorez pas ce que j'adore ;"
+    },
+    {
+     "ref": "109:4",
+     "ar": "وَلَآ أَنَا۠ عَابِدٌۭ مَّا عَبَدتُّمْ",
+     "audio": "ayyub:109:4",
+     "mot_a_mot": [
+      {
+       "ar": "وَلَآ",
+       "fr": "et ne… pas"
+      },
+      {
+       "ar": "أَنَا۠",
+       "fr": "moi"
+      },
+      {
+       "ar": "عَابِدٌۭ",
+       "fr": "adorateur"
+      },
+      {
+       "ar": "مَّا",
+       "fr": "de ce que"
+      },
+      {
+       "ar": "عَبَدتُّمْ",
+       "fr": "vous avez adoré"
+      }
+     ],
+     "sens": "je ne suis pas adorateur de ce que vous avez adoré,"
+    },
+    {
+     "ref": "109:5",
+     "ar": "وَلَآ أَنتُمْ عَٰبِدُونَ مَآ أَعْبُدُ",
+     "audio": "ayyub:109:5",
+     "mot_a_mot": [
+      {
+       "ar": "وَلَآ",
+       "fr": "et ne… pas"
+      },
+      {
+       "ar": "أَنتُمْ",
+       "fr": "vous"
+      },
+      {
+       "ar": "عَٰبِدُونَ",
+       "fr": "adorateurs"
+      },
+      {
+       "ar": "مَآ",
+       "fr": "de ce que"
+      },
+      {
+       "ar": "أَعْبُدُ",
+       "fr": "j'adore"
+      }
+     ],
+     "sens": "et vous n'êtes pas adorateurs de ce que j'adore."
+    },
+    {
+     "ref": "109:6",
+     "ar": "لَكُمْ دِينُكُمْ وَلِىَ دِينِ",
+     "audio": "ayyub:109:6",
+     "mot_a_mot": [
+      {
+       "ar": "لَكُمْ",
+       "fr": "à vous"
+      },
+      {
+       "ar": "دِينُكُمْ",
+       "fr": "votre religion"
+      },
+      {
+       "ar": "وَلِىَ",
+       "fr": "et à moi"
+      },
+      {
+       "ar": "دِينِ",
+       "fr": "ma religion"
+      }
+     ],
+     "sens": "À vous votre religion, et à moi ma religion. »"
+    }
+   ],
+   "sens_general": "Déclaration nette : pas de mélange dans l'adoration. Le croyant n'adore qu'Allah ; il ne fait aucun compromis sur son culte. Ibn Kathīr rapporte plusieurs explications de la répétition, dont le renforcement de ce désaveu et la distinction entre le passé et l'avenir.",
+   "apport_pour_la_priere": "Ar-Risāla recommande de la réciter dans la deuxième rakʿa du shafʿ, avant le witr (RIS-0211). Elle rappelle, à chaque prière, que l'on n'adore qu'Allah.",
+   "tafsir": [
+    {
+     "point": "Le sens",
+     "explication": "Ibn Kathīr explique que c'est une déclaration de désaveu envers ce qu'adoraient les polythéistes ; aṭ-Ṭabarī rapporte que des notables de Quraysh avaient proposé au Prophète ﷺ d'adorer leurs divinités une année et Allah une année, et que la sourate fut la réponse.",
+     "sources": [
+      "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 109",
+      "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 109"
+     ]
+    }
+   ],
+   "sources": [
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 109",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 109",
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 109 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "Ibn Abī Zayd, ar-Risāla, RIS-0211"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE"
+  },
+  {
+   "numero": 110,
+   "nom_ar": "النصر",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "an-Naṣr (Le Secours)",
+   "nombre_versets": 3,
+   "revelation": "médinoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "110:1",
+     "ar": "إِذَا جَآءَ نَصْرُ ٱللَّهِ وَٱلْفَتْحُ",
+     "audio": "ayyub:110:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "إِذَا",
+       "fr": "lorsque"
+      },
+      {
+       "ar": "جَآءَ",
+       "fr": "viendra"
+      },
+      {
+       "ar": "نَصْرُ",
+       "fr": "le secours"
+      },
+      {
+       "ar": "ٱللَّهِ",
+       "fr": "d'Allah"
+      },
+      {
+       "ar": "وَٱلْفَتْحُ",
+       "fr": "et la victoire (l'ouverture)"
+      }
+     ],
+     "sens": "Lorsque viendront le secours d'Allah et la victoire,"
+    },
+    {
+     "ref": "110:2",
+     "ar": "وَرَأَيْتَ ٱلنَّاسَ يَدْخُلُونَ فِى دِينِ ٱللَّهِ أَفْوَاجًۭا",
+     "audio": "ayyub:110:2",
+     "mot_a_mot": [
+      {
+       "ar": "وَرَأَيْتَ",
+       "fr": "et que tu verras"
+      },
+      {
+       "ar": "ٱلنَّاسَ",
+       "fr": "les gens"
+      },
+      {
+       "ar": "يَدْخُلُونَ",
+       "fr": "entrer"
+      },
+      {
+       "ar": "فِى",
+       "fr": "dans"
+      },
+      {
+       "ar": "دِينِ",
+       "fr": "la religion"
+      },
+      {
+       "ar": "ٱللَّهِ",
+       "fr": "d'Allah"
+      },
+      {
+       "ar": "أَفْوَاجًۭا",
+       "fr": "en foule"
+      }
+     ],
+     "sens": "et que tu verras les gens entrer en foule dans la religion d'Allah,"
+    },
+    {
+     "ref": "110:3",
+     "ar": "فَسَبِّحْ بِحَمْدِ رَبِّكَ وَٱسْتَغْفِرْهُ ۚ إِنَّهُۥ كَانَ تَوَّابًۢا",
+     "audio": "ayyub:110:3",
+     "mot_a_mot": [
+      {
+       "ar": "فَسَبِّحْ",
+       "fr": "alors glorifie"
+      },
+      {
+       "ar": "بِحَمْدِ",
+       "fr": "par la louange"
+      },
+      {
+       "ar": "رَبِّكَ",
+       "fr": "de ton Seigneur"
+      },
+      {
+       "ar": "وَٱسْتَغْفِرْهُ",
+       "fr": "et demande-Lui pardon"
+      },
+      {
+       "ar": "إِنَّهُۥ",
+       "fr": "certes Il"
+      },
+      {
+       "ar": "كَانَ",
+       "fr": "est"
+      },
+      {
+       "ar": "تَوَّابًۢا",
+       "fr": "Celui qui accueille sans cesse le repentir"
+      }
+     ],
+     "sens": "alors glorifie ton Seigneur par Sa louange et demande-Lui pardon : Il accueille sans cesse le repentir."
+    }
+   ],
+   "sens_general": "Annonce de la victoire et de l'entrée des gens dans l'islam en foule ; la réponse qui convient au succès est la glorification, la louange et la demande de pardon. Ibn ʿAbbās y a compris l'annonce du terme de la vie du Prophète ﷺ, et ʿUmar l'a approuvé (al-Bukhārī 4970).",
+   "apport_pour_la_priere": "On termine ses œuvres par la glorification et la demande de pardon : c'est ce qu'on fait après la prière (« Je demande pardon à Allah » trois fois, section 6).",
+   "tafsir": [
+    {
+     "point": "« La victoire »",
+     "explication": "Al-Qurṭubī rapporte : la conquête de La Mecque (al-Ḥasan, Mujāhid), ou les conquêtes des villes (Ibn ʿAbbās, Saʿīd ibn Jubayr). Il cite aussi Ibn ʿAbbās selon qui c'est la dernière sourate révélée en entier.",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 110:1 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    },
+    {
+     "point": "Le terme annoncé",
+     "explication": "ʿUmar demanda aux anciens de Badr le sens de la sourate ; Ibn ʿAbbās répondit qu'elle annonçait au Prophète ﷺ la fin de sa vie, et ʿUmar dit qu'il n'en savait pas d'autre sens (al-Bukhārī 4970).",
+     "sources": [
+      "al-Bukhārī 4970"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 110 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 110",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 110",
+    "al-Bukhārī 4970"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE",
+   "note_revelation": "Sourate médinoise (Tanzil)."
+  },
+  {
+   "numero": 111,
+   "nom_ar": "المسد",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "al-Masad (Les Fibres), appelée aussi al-Lahab",
+   "nombre_versets": 5,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "111:1",
+     "ar": "تَبَّتْ يَدَآ أَبِى لَهَبٍۢ وَتَبَّ",
+     "audio": "ayyub:111:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "تَبَّتْ",
+       "fr": "qu'elles périssent"
+      },
+      {
+       "ar": "يَدَآ",
+       "fr": "les deux mains"
+      },
+      {
+       "ar": "أَبِى",
+       "fr": "d'Abū"
+      },
+      {
+       "ar": "لَهَبٍۢ",
+       "fr": "Lahab"
+      },
+      {
+       "ar": "وَتَبَّ",
+       "fr": "et qu'il périsse (il a péri)"
+      }
+     ],
+     "sens": "Que périssent les deux mains d'Abū Lahab, et qu'il périsse !"
+    },
+    {
+     "ref": "111:2",
+     "ar": "مَآ أَغْنَىٰ عَنْهُ مَالُهُۥ وَمَا كَسَبَ",
+     "audio": "ayyub:111:2",
+     "mot_a_mot": [
+      {
+       "ar": "مَآ",
+       "fr": "ne… pas"
+      },
+      {
+       "ar": "أَغْنَىٰ",
+       "fr": "a servi (à rien)"
+      },
+      {
+       "ar": "عَنْهُ",
+       "fr": "à lui"
+      },
+      {
+       "ar": "مَالُهُۥ",
+       "fr": "sa fortune"
+      },
+      {
+       "ar": "وَمَا",
+       "fr": "ni ce que"
+      },
+      {
+       "ar": "كَسَبَ",
+       "fr": "il a acquis"
+      }
+     ],
+     "sens": "Sa fortune ne lui a servi à rien, ni ce qu'il a acquis."
+    },
+    {
+     "ref": "111:3",
+     "ar": "سَيَصْلَىٰ نَارًۭا ذَاتَ لَهَبٍۢ",
+     "audio": "ayyub:111:3",
+     "mot_a_mot": [
+      {
+       "ar": "سَيَصْلَىٰ",
+       "fr": "il brûlera"
+      },
+      {
+       "ar": "نَارًۭا",
+       "fr": "dans un Feu"
+      },
+      {
+       "ar": "ذَاتَ",
+       "fr": "aux"
+      },
+      {
+       "ar": "لَهَبٍۢ",
+       "fr": "flammes"
+      }
+     ],
+     "sens": "Il brûlera dans un Feu aux flammes ardentes,"
+    },
+    {
+     "ref": "111:4",
+     "ar": "وَٱمْرَأَتُهُۥ حَمَّالَةَ ٱلْحَطَبِ",
+     "audio": "ayyub:111:4",
+     "mot_a_mot": [
+      {
+       "ar": "وَٱمْرَأَتُهُۥ",
+       "fr": "ainsi que sa femme"
+      },
+      {
+       "ar": "حَمَّالَةَ",
+       "fr": "la porteuse"
+      },
+      {
+       "ar": "ٱلْحَطَبِ",
+       "fr": "de bois"
+      }
+     ],
+     "sens": "ainsi que sa femme, la porteuse de bois,"
+    },
+    {
+     "ref": "111:5",
+     "ar": "فِى جِيدِهَا حَبْلٌۭ مِّن مَّسَدٍۭ",
+     "audio": "ayyub:111:5",
+     "mot_a_mot": [
+      {
+       "ar": "فِى",
+       "fr": "à"
+      },
+      {
+       "ar": "جِيدِهَا",
+       "fr": "son cou"
+      },
+      {
+       "ar": "حَبْلٌۭ",
+       "fr": "une corde"
+      },
+      {
+       "ar": "مِّن",
+       "fr": "de"
+      },
+      {
+       "ar": "مَّسَدٍۭ",
+       "fr": "fibres (tressées)"
+      }
+     ],
+     "sens": "à son cou une corde de fibres tressées."
+    }
+   ],
+   "sens_general": "Abū Lahab, oncle du Prophète ﷺ, s'opposa violemment à son message ; quand le Prophète ﷺ appela ses proches à l'islam, il lui dit : « Périsse-tu ! Est-ce pour cela que tu nous as réunis ? » et la sourate fut révélée (al-Bukhārī 4971 ; version brève : 4973). Ni la parenté, ni la fortune ne sauvent : seules comptent la foi et les œuvres.",
+   "apport_pour_la_priere": "La prière est l'œuvre personnelle de chacun : personne ne prie à la place d'un autre, ni ne le sauve par sa parenté.",
+   "tafsir": [
+    {
+     "point": "« La porteuse de bois »",
+     "explication": "Il s'agit d'Umm Jamīl, femme d'Abū Lahab. Al-Qurṭubī rapporte d'Ibn ʿAbbās, Mujāhid, Qatāda et as-Suddī qu'elle colportait la médisance pour semer la discorde (« porter du bois » au sens d'attiser le feu) ; d'autres disent qu'elle jetait des épines sur le chemin du Prophète ﷺ.",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 111:4 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    },
+    {
+     "point": "« Une corde de fibres »",
+     "explication": "Une corde de fibres de palmier (avis d'ash-Shaʿbī et d'al-Jawharī, cités par Ibn Kathīr) ; selon d'autres, rapportés aussi par Ibn Kathīr sans trancher, un collier de fer ou une chaîne de feu.",
+     "sources": [
+      "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 111:5"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 111 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 111",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 111",
+    "al-Bukhārī 4971 et 4973"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE"
+  },
+  {
+   "numero": 112,
+   "nom_ar": "الإخلاص",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "al-Ikhlāṣ (Le Culte pur)",
+   "nombre_versets": 4,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "112:1",
+     "ar": "قُلْ هُوَ ٱللَّهُ أَحَدٌ",
+     "audio": "ayyub:112:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "قُلْ",
+       "fr": "dis"
+      },
+      {
+       "ar": "هُوَ",
+       "fr": "Il (est)"
+      },
+      {
+       "ar": "ٱللَّهُ",
+       "fr": "Allah"
+      },
+      {
+       "ar": "أَحَدٌ",
+       "fr": "Unique"
+      }
+     ],
+     "sens": "Dis : « Il est Allah, Unique,"
+    },
+    {
+     "ref": "112:2",
+     "ar": "ٱللَّهُ ٱلصَّمَدُ",
+     "audio": "ayyub:112:2",
+     "mot_a_mot": [
+      {
+       "ar": "ٱللَّهُ",
+       "fr": "Allah"
+      },
+      {
+       "ar": "ٱلصَّمَدُ",
+       "fr": "le Seul imploré (vers qui l'on se tourne en tout besoin)"
+      }
+     ],
+     "sens": "Allah, le Seul que l'on implore en tout besoin."
+    },
+    {
+     "ref": "112:3",
+     "ar": "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+     "audio": "ayyub:112:3",
+     "mot_a_mot": [
+      {
+       "ar": "لَمْ",
+       "fr": "n'a pas"
+      },
+      {
+       "ar": "يَلِدْ",
+       "fr": "engendré"
+      },
+      {
+       "ar": "وَلَمْ",
+       "fr": "et n'a pas"
+      },
+      {
+       "ar": "يُولَدْ",
+       "fr": "été engendré"
+      }
+     ],
+     "sens": "Il n'a pas engendré et n'a pas été engendré,"
+    },
+    {
+     "ref": "112:4",
+     "ar": "وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ",
+     "audio": "ayyub:112:4",
+     "mot_a_mot": [
+      {
+       "ar": "وَلَمْ",
+       "fr": "et n'"
+      },
+      {
+       "ar": "يَكُن",
+       "fr": "est (pas)"
+      },
+      {
+       "ar": "لَّهُۥ",
+       "fr": "à Lui"
+      },
+      {
+       "ar": "كُفُوًا",
+       "fr": "égal"
+      },
+      {
+       "ar": "أَحَدٌۢ",
+       "fr": "quiconque"
+      }
+     ],
+     "sens": "et nul n'est égal à Lui. »"
+    }
+   ],
+   "sens_general": "La sourate décrit Allah tel qu'Il est : Unique, Celui vers qui toute créature se tourne, sans parent ni enfant, sans égal. Le Prophète ﷺ a dit qu'elle équivaut au tiers du Coran (al-Bukhārī 5013).",
+   "apport_pour_la_priere": "Ar-Risāla recommande de la réciter dans le witr, avec al-Falaq et an-Nās (RIS-0212) ; on la récite aussi après chaque prière (section 6). Courte et facile, c'est souvent la première sourate qu'on apprend pour prier.",
+   "tafsir": [
+    {
+     "point": "« Aṣ-Ṣamad »",
+     "explication": "Al-Qurṭubī retient le sens : « Celui vers qui l'on se tourne pour tous les besoins » (rapporté d'Ibn ʿAbbās), confirmé par la langue ; il cite d'autres avis : le Maître parfait en noblesse (ʿAlī, Ibn ʿAbbās), Celui qui se suffit à Lui-même et dont tous ont besoin (Abū Hurayra), Celui qui n'a pas de creux (al-Ḥasan, ʿIkrima).",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 112:2 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 112 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 112",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 112",
+    "al-Bukhārī 5013",
+    "livre audité ad1, leçon 24 (traductions Awzid alignées)"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE"
+  },
+  {
+   "numero": 113,
+   "nom_ar": "الفلق",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "al-Falaq (L'Aube naissante)",
+   "nombre_versets": 5,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "113:1",
+     "ar": "قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ",
+     "audio": "ayyub:113:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "قُلْ",
+       "fr": "dis"
+      },
+      {
+       "ar": "أَعُوذُ",
+       "fr": "je cherche refuge"
+      },
+      {
+       "ar": "بِرَبِّ",
+       "fr": "auprès du Seigneur"
+      },
+      {
+       "ar": "ٱلْفَلَقِ",
+       "fr": "de l'aube naissante"
+      }
+     ],
+     "sens": "Dis : « Je cherche refuge auprès du Seigneur de l'aube naissante,"
+    },
+    {
+     "ref": "113:2",
+     "ar": "مِن شَرِّ مَا خَلَقَ",
+     "audio": "ayyub:113:2",
+     "mot_a_mot": [
+      {
+       "ar": "مِن",
+       "fr": "contre"
+      },
+      {
+       "ar": "شَرِّ",
+       "fr": "le mal"
+      },
+      {
+       "ar": "مَا",
+       "fr": "de ce qu'"
+      },
+      {
+       "ar": "خَلَقَ",
+       "fr": "Il a créé"
+      }
+     ],
+     "sens": "contre le mal de ce qu'Il a créé,"
+    },
+    {
+     "ref": "113:3",
+     "ar": "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
+     "audio": "ayyub:113:3",
+     "mot_a_mot": [
+      {
+       "ar": "وَمِن",
+       "fr": "et contre"
+      },
+      {
+       "ar": "شَرِّ",
+       "fr": "le mal"
+      },
+      {
+       "ar": "غَاسِقٍ",
+       "fr": "de l'obscurité"
+      },
+      {
+       "ar": "إِذَا",
+       "fr": "quand"
+      },
+      {
+       "ar": "وَقَبَ",
+       "fr": "elle s'étend"
+      }
+     ],
+     "sens": "contre le mal de l'obscurité quand elle s'étend,"
+    },
+    {
+     "ref": "113:4",
+     "ar": "وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ",
+     "audio": "ayyub:113:4",
+     "mot_a_mot": [
+      {
+       "ar": "وَمِن",
+       "fr": "et contre"
+      },
+      {
+       "ar": "شَرِّ",
+       "fr": "le mal"
+      },
+      {
+       "ar": "ٱلنَّفَّٰثَٰتِ",
+       "fr": "de celles qui soufflent"
+      },
+      {
+       "ar": "فِى",
+       "fr": "sur"
+      },
+      {
+       "ar": "ٱلْعُقَدِ",
+       "fr": "les nœuds"
+      }
+     ],
+     "sens": "contre le mal de celles qui soufflent sur les nœuds,"
+    },
+    {
+     "ref": "113:5",
+     "ar": "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+     "audio": "ayyub:113:5",
+     "mot_a_mot": [
+      {
+       "ar": "وَمِن",
+       "fr": "et contre"
+      },
+      {
+       "ar": "شَرِّ",
+       "fr": "le mal"
+      },
+      {
+       "ar": "حَاسِدٍ",
+       "fr": "d'un envieux"
+      },
+      {
+       "ar": "إِذَا",
+       "fr": "quand"
+      },
+      {
+       "ar": "حَسَدَ",
+       "fr": "il envie"
+      }
+     ],
+     "sens": "et contre le mal de l'envieux quand il envie. »"
+    }
+   ],
+   "sens_general": "Demande de protection auprès d'Allah contre les maux qui viennent de l'extérieur : le mal des créatures, de la nuit, de la sorcellerie et de l'envie. Le Prophète ﷺ a dit au sujet d'al-Falaq et d'an-Nās : « des versets dont on n'a jamais vu les pareils » (Muslim 814).",
+   "apport_pour_la_priere": "On la récite après chaque prière et dans le witr (section 6 ; ar-Risāla, RIS-0212).",
+   "tafsir": [
+    {
+     "point": "« L'obscurité quand elle s'étend »",
+     "explication": "Al-Qurṭubī rapporte : la nuit quand son obscurité commence (Ibn ʿAbbās, Qatāda, as-Suddī). Il juge plus juste un autre sens : la lune quand elle disparaît, appuyé par le hadith de ʿĀʾisha où le Prophète ﷺ, montrant la lune, lui dit de chercher refuge contre son mal, car c'est elle « l'obscurité quand elle s'étend » ; « quand elle disparaît » est l'explication des commentateurs. La traduction du verset suit l'avis d'Ibn ʿAbbās (la nuit).",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 113:3 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    },
+    {
+     "point": "« Celles qui soufflent sur les nœuds »",
+     "explication": "Les sorcières qui soufflent sur des nœuds en prononçant des formules (al-Qurṭubī). Il distingue ce souffle nuisible du souffle licite de la ruqya, que le Prophète ﷺ pratiquait.",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 113:4 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 113 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 113",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 113",
+    "Muslim 814",
+    "livre audité ad1, leçon 24 (traductions Awzid alignées)"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE",
+   "note_revelation": "Tanzil la classe parmi les sourates mecquoises ; d'autres la disent médinoise."
+  },
+  {
+   "numero": 114,
+   "nom_ar": "الناس",
+   "nom_ar_source": "coran/tanzil-quran-data.js (graphie sans voyelles de Tanzil)",
+   "nom_fr": "an-Nās (Les Hommes)",
+   "nombre_versets": 6,
+   "revelation": "mecquoise (classification de Tanzil)",
+   "basmala_de_tete": {
+    "ar": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "audio": "ayyub:basmala",
+    "note": "Écrite en tête de la sourate ; elle ne fait pas partie du verset 1 (CORPUS_CORAN.md). Dans la prière obligatoire, l'école mālikite ne la récite pas avant la sourate (ar-Risāla, RIS-0150)."
+   },
+   "versets": [
+    {
+     "ref": "114:1",
+     "ar": "قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ",
+     "audio": "ayyub:114:1",
+     "transformations": [
+      "basmala d'en-tête séparée (sous-chaîne exacte de Tanzil)"
+     ],
+     "mot_a_mot": [
+      {
+       "ar": "قُلْ",
+       "fr": "dis"
+      },
+      {
+       "ar": "أَعُوذُ",
+       "fr": "je cherche refuge"
+      },
+      {
+       "ar": "بِرَبِّ",
+       "fr": "auprès du Seigneur"
+      },
+      {
+       "ar": "ٱلنَّاسِ",
+       "fr": "des hommes"
+      }
+     ],
+     "sens": "Dis : « Je cherche refuge auprès du Seigneur des hommes,"
+    },
+    {
+     "ref": "114:2",
+     "ar": "مَلِكِ ٱلنَّاسِ",
+     "audio": "ayyub:114:2",
+     "mot_a_mot": [
+      {
+       "ar": "مَلِكِ",
+       "fr": "le Roi"
+      },
+      {
+       "ar": "ٱلنَّاسِ",
+       "fr": "des hommes"
+      }
+     ],
+     "sens": "le Roi des hommes,"
+    },
+    {
+     "ref": "114:3",
+     "ar": "إِلَٰهِ ٱلنَّاسِ",
+     "audio": "ayyub:114:3",
+     "mot_a_mot": [
+      {
+       "ar": "إِلَٰهِ",
+       "fr": "le Dieu"
+      },
+      {
+       "ar": "ٱلنَّاسِ",
+       "fr": "des hommes"
+      }
+     ],
+     "sens": "le Dieu des hommes,"
+    },
+    {
+     "ref": "114:4",
+     "ar": "مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ",
+     "audio": "ayyub:114:4",
+     "mot_a_mot": [
+      {
+       "ar": "مِن",
+       "fr": "contre"
+      },
+      {
+       "ar": "شَرِّ",
+       "fr": "le mal"
+      },
+      {
+       "ar": "ٱلْوَسْوَاسِ",
+       "fr": "du tentateur (qui murmure)"
+      },
+      {
+       "ar": "ٱلْخَنَّاسِ",
+       "fr": "qui se retire (dès qu'on évoque Allah)"
+      }
+     ],
+     "sens": "contre le mal du tentateur furtif,"
+    },
+    {
+     "ref": "114:5",
+     "ar": "ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ",
+     "audio": "ayyub:114:5",
+     "mot_a_mot": [
+      {
+       "ar": "ٱلَّذِى",
+       "fr": "qui"
+      },
+      {
+       "ar": "يُوَسْوِسُ",
+       "fr": "murmure (le mal)"
+      },
+      {
+       "ar": "فِى",
+       "fr": "dans"
+      },
+      {
+       "ar": "صُدُورِ",
+       "fr": "les poitrines"
+      },
+      {
+       "ar": "ٱلنَّاسِ",
+       "fr": "des hommes"
+      }
+     ],
+     "sens": "qui murmure dans les poitrines des hommes,"
+    },
+    {
+     "ref": "114:6",
+     "ar": "مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ",
+     "audio": "ayyub:114:6",
+     "mot_a_mot": [
+      {
+       "ar": "مِنَ",
+       "fr": "parmi"
+      },
+      {
+       "ar": "ٱلْجِنَّةِ",
+       "fr": "les djinns"
+      },
+      {
+       "ar": "وَٱلنَّاسِ",
+       "fr": "et les hommes"
+      }
+     ],
+     "sens": "qu'il soit des djinns ou des hommes. »"
+    }
+   ],
+   "sens_general": "On cherche refuge auprès d'Allah, désigné par trois attributs (Seigneur, Roi, Dieu des hommes), contre le mal qui vient de l'intérieur : le murmure qui pousse à la faute.",
+   "apport_pour_la_priere": "Satan cherche à distraire celui qui prie (al-Akhḍarī, AKH-0131). Cette sourate, récitée après chaque prière, protège du murmure ; et dès qu'on se souvient d'Allah, le tentateur recule.",
+   "tafsir": [
+    {
+     "point": "« Le tentateur furtif »",
+     "explication": "Al-Qurṭubī explique : celui qui murmure, et qui se retire et se cache ; Satan recule quand on invoque Allah, et revient quand on L'oublie (avis de Qatāda, et un hadith d'Anas cité dans ce sens).",
+     "sources": [
+      "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur 114:4 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)"
+     ]
+    },
+    {
+     "point": "« Des djinns et des hommes »",
+     "explication": "Selon un avis rapporté par Ibn Kathīr, le tentateur peut être un djinn ou un homme qui pousse au mal ; il cite aussi une autre lecture du verset.",
+     "sources": [
+      "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur 114:6"
+     ]
+    }
+   ],
+   "sources": [
+    "al-Qurṭubī, al-Jāmiʿ li-aḥkām al-Qurʾān, sur la sourate 114 (texte consulté sur quran.ksu.edu.sa le 25/10/2026)",
+    "aṭ-Ṭabarī, Jāmiʿ al-bayān, sur la sourate 114",
+    "Ibn Kathīr, Tafsīr al-Qurʾān al-ʿaẓīm, sur la sourate 114",
+    "livre audité ad1, leçon 24 (traductions Awzid alignées)"
+   ],
+   "traduction": "Traduction Awzid, faite depuis l'arabe à l'aide des tafsīr cités (al-Qurṭubī d'abord) ; aucune traduction publiée n'a été copiée.",
+   "statut": "Tranché par le référent selon l'école mālikite (mashhūr), sources citées. En attente de relecture.",
+   "statut_technique": "EN_ATTENTE_SECONDE_LECTURE",
+   "note_revelation": "Tanzil la classe parmi les sourates mecquoises ; d'autres la disent médinoise."
+  }
+ ]
+}

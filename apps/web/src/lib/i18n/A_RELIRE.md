@@ -206,3 +206,12 @@ relecteur provisoire, en **brouillon** dans les quatre langues en préparation (
 les autres textes d'interface). Le français est embarqué avec le cahier (`lib/cahier-parler/textes-fr.json`), sauf les
 le titre de l'accès du niveau (`fr-arabe`). Les accroches des étapes (`packages/content/data/cahier-parler/themes.json`)
 sont en français seulement, comme le cahier lui-même.
+
+## La prière de A à Z (25/10/2026, interrupteur `parcours_priere`) — brouillons à relire
+
+133 textes `priere.*` (parcours, pas à pas, vidéo vivante, ablutions, sourates, compteur, entraînement : espace `priere`,
+français dans `lib/priere/textes-fr.json` et `textes-carte-fr.json`) et `fn.parcours_priere` traduits par Claude,
+relecteur provisoire, en **brouillon** dans les quatre langues en préparation — à relire avec le reste. Seuls les
+textes de l'**interface** sont traduits : le contenu de la prière (`packages/content/data/priere/`) reste en français
+(et en arabe) tant que le référent n'a pas validé les traductions. Termes : « aleya » (espagnol), « Quran » (anglais),
+« Vers » (allemand), « آية » (arabe) ; l'élève est TUTOYÉ (arabe : singulier).

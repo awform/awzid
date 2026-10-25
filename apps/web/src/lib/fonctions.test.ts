@@ -45,6 +45,7 @@ describe('F5 — interrupteurs gardés sur l’appareil', () => {
       'cahier_parler',
       'conversation',
       'design_v4',
+      'parcours_priere',
       'tuteur_ia',
       'video_v2',
       'video_vivante',

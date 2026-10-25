@@ -51,6 +51,9 @@ beforeAll(async () => {
   ajouterTextes(
     JSON.parse(readFileSync(join(SRC, 'lib', 'cahier-parler', 'textes-fr.json'), 'utf8')),
   );
+  // 25/10/2026 : « La prière de A à Z » (textes du parcours et de sa carte d'entrée)
+  for (const f of ['textes-fr.json', 'textes-carte-fr.json'])
+    ajouterTextes(JSON.parse(readFileSync(join(SRC, 'lib', 'priere', f), 'utf8')));
 });
 afterEach(() => setLocale('fr'));
 

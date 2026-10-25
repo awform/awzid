@@ -41,13 +41,18 @@ export const RARE_ROUTES = [
 ];
 /** Pages de l'élève gardées au premier usage (hors ligne ensuite), jamais préchargées. */
 // 24/10/2026 : cahier « Je parle » (facultatif ; son code et ses données sont aussi chargés à la demande)
-export const PREMIER_USAGE_ROUTES = ['/madjaliss', '/cahier-parler'];
+// 25/10/2026 : « La prière de A à Z » (rubrique de « Vivre l'islam » ; son code et ses données sont aussi chargés à la demande)
+export const PREMIER_USAGE_ROUTES = ['/madjaliss', '/cahier-parler', '/vivre/priere'];
 /**
  * Modules de l'élève chargés À LA DEMANDE et gardés au premier usage (hors ligne ensuite), jamais préchargés :
  * écrans de la refonte du 19/10/2026 (interrupteur `design_v4`) — sans eux (hors ligne avant le premier usage),
  * l'ancien design, qui reste dans la coquille, s'affiche.
  */
-export const PREMIER_USAGE_MODULES = [/src\/lib\/v4\/ecrans\.ts$/];
+export const PREMIER_USAGE_MODULES = [
+  /src\/lib\/v4\/ecrans\.ts$/,
+  // 25/10/2026 : carte d'entrée de « La prière de A à Z » (importée à la demande par la page « Vivre l'islam »)
+  /src\/lib\/priere\/carte\.ts$/,
+];
 /** Modules chargés à la demande ET qui ont besoin du réseau (chemin du fichier source). */
 export const EN_LIGNE_MODULES = [
   /src\/lib\/quran\/LignesExactes\.svelte$/,

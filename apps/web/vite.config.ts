@@ -52,6 +52,15 @@ function parlerALaDemande(): Plugin {
   return aLaDemande('parler', /[\\/](lib[\\/]cahier-parler[\\/]|routes[\\/]cahier-parler[\\/])/);
 }
 
+/**
+ * 25/10/2026 — « LA PRIÈRE DE A À Z » (`lib/priere/` et sa page `/vivre/priere`) : chargé à la première ouverture, jamais
+ * préchargé ; liste dans `/_app/priere.json` (service worker, budget : garde dédiée). Les données du référent sont dans
+ * `static/priere-data/` (hors du code).
+ */
+function priereALaDemande(): Plugin {
+  return aLaDemande('priere', /[\\/](lib[\\/]priere[\\/]|routes[\\/]vivre[\\/]priere[\\/])/);
+}
+
 function aLaDemande(nom: string, VIV: RegExp): Plugin {
   return {
     name: `awzid-${nom}-a-la-demande`,
@@ -159,10 +168,15 @@ export default defineConfig({
     videoALaDemande(),
     cahierALaDemande(),
     parlerALaDemande(),
+    priereALaDemande(),
   ],
   build: {
     rolldownOptions: {
       output: {
+        // 25/10/2026 : empreintes des noms de fichiers en hexadécimal (4 bits par signe au lieu de 6) : chaque nom est cité
+        // par plusieurs fichiers et une empreinte ne se compresse pas ; gain mesuré sur l'appareil de l'élève (voir
+        // reports/budget-web.md). Aucun effet sur le contenu des fichiers ni sur leur mise en cache (nom = empreinte du contenu).
+        hashCharacters: 'hex',
         // F5 : les modules partagés par au moins 3 pages vont dans UN morceau commun (au lieu de dizaines de
         // petits morceaux) : 11 fichiers au lieu de 51 pour ouvrir l'accueil (chaque fichier coûte un aller-retour
         // en 3G), et l'appareil d'un élève garde 21 Ko de moins (un gros fichier se compresse mieux)
@@ -191,7 +205,7 @@ export default defineConfig({
               // 25/10/2026 : la garde coranique des vidéos (liste d'empreintes de 6 Ko) est lue par les trois lecteurs (v1, v2,
               // cahier), tous à la demande : jamais dans le morceau commun préchargé (+0,8 Ko sur l'appareil de l'élève)
               test: (id: string) =>
-                !/lib\/identites\/|school\/dist\/telephone|src\/lib\/cards\.ts|content\/(dist|src)\/video-garde\./.test(
+                !/lib\/identites\/|lib\/priere\/|school\/dist\/telephone|src\/lib\/cards\.ts|content\/(dist|src)\/video-garde\./.test(
                   id,
                 ),
             },
