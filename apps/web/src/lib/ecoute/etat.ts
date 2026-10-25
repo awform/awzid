@@ -15,6 +15,8 @@ export interface EtatEcoute {
   accord?: boolean;
   enfant?: boolean;
   maxSecondes?: number;
+  /** shazam_coran : « Retrouve ce verset » et suivi de la récitation qui signale les erreurs */
+  shazam?: boolean;
 }
 
 const cache = new Map<string, { at: number; v: EtatEcoute }>();

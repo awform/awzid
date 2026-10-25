@@ -16,6 +16,7 @@ import { call } from '$lib/session';
 import type { Bilan } from './bilans';
 import {
   comparer,
+  ecartsDAccord,
   motsARevoir,
   type EtatMot,
   type MotAttendu,
@@ -35,6 +36,12 @@ export const MAX_S = 300;
  * (ECOUTE_IA.md § 4). Le texte avance et se dévoile ; les écarts viennent du bilan de fin.
  */
 export const SIGNALER_EN_DIRECT = false;
+/**
+ * SUIVI DE LA RÉCITATION (interrupteur `shazam_coran`, 25/10/2026) : le service relit chaque passage AVEC SON
+ * CONTEXTE (4 s avant, le passage suivant après) et en deux lectures (RNN-T et CTC) ; un écart n'est montré pendant la
+ * récitation que sur ces mots « stables » et seulement si les deux lectures le voient (`ecartsDAccord`). Mesure :
+ * docs/projet/ECOUTE_IA.md § 9. Les mots provisoires et partiels ne font que dévoiler le texte.
+ */
 
 // ------------------------------------------------------------------ accord, vérification
 
@@ -96,7 +103,7 @@ export class Enregistreur {
   private minuterie: ReturnType<typeof setTimeout> | null = null;
   debut = 0;
 
-  async demarrer(stream: MediaStream, onFin: (b: Blob) => void): Promise<void> {
+  async demarrer(stream: MediaStream, onFin: (b: Blob) => void, maxS = MAX_S): Promise<void> {
     this.morceaux = [];
     const types = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4'];
     const mimeType = types.find((m) => MediaRecorder.isTypeSupported?.(m));
@@ -112,7 +119,7 @@ export class Enregistreur {
     };
     this.rec.start(1000);
     this.debut = Date.now();
-    this.minuterie = setTimeout(() => this.arreter(), MAX_S * 1000);
+    this.minuterie = setTimeout(() => this.arreter(), maxS * 1000);
   }
   arreter(): void {
     if (this.rec && this.rec.state !== 'inactive') this.rec.stop();
@@ -171,8 +178,14 @@ export class SuiviDirect {
   private surs: MotEntendu[] = [];
   private partiel: MotEntendu[] = [];
   private voix: Array<[number, number]> = [];
+  /** mode suivi : mots stables (deux lectures) et provisoires du dernier passage */
+  private stables: MotEntendu[] = [];
+  private stablesCtc: MotEntendu[] = [];
+  private provisoires: MotEntendu[] = [];
   private arrete = false;
   secondes = 0;
+  /** le serveur a accepté le mode « suivi de la récitation » (erreurs signalées pendant la récitation) */
+  suivi = false;
 
   constructor(
     private profileId: string,
@@ -180,12 +193,13 @@ export class SuiviDirect {
     private att: MotAttendu[],
     private maj: (e: EtatDirect) => void,
     private erreur: (code: string) => void,
+    private demandeSuivi = false,
   ) {}
 
   async demarrer(stream: MediaStream): Promise<boolean> {
-    const r = await call<{ sid: string }>(
+    const r = await call<{ sid: string; suivi?: boolean }>(
       'POST',
-      `/profiles/${this.profileId}/ecoute/direct?s=${this.p.s}&from=${this.p.from}&to=${this.p.to}`,
+      `/profiles/${this.profileId}/ecoute/direct?s=${this.p.s}&from=${this.p.from}&to=${this.p.to}${this.demandeSuivi ? '&suivi=1' : ''}`,
       {},
     );
     if (!r.ok || !r.data) {
@@ -193,6 +207,7 @@ export class SuiviDirect {
       return false;
     }
     this.sid = r.data.sid;
+    this.suivi = r.data.suivi === true;
     const AC =
       window.AudioContext ??
       (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -240,6 +255,9 @@ export class SuiviDirect {
         partiel?: MotEntendu[];
         voix?: Array<[number, number]>;
         t?: number;
+        stables?: MotEntendu[];
+        stables_ctc?: MotEntendu[];
+        provisoires?: MotEntendu[];
         error?: { code?: string };
       } | null;
       if (!r.ok || !j) {
@@ -248,6 +266,9 @@ export class SuiviDirect {
         return;
       }
       this.surs.push(...(j.mots ?? []));
+      this.stables.push(...(j.stables ?? []));
+      this.stablesCtc.push(...(j.stables_ctc ?? []));
+      if (j.provisoires) this.provisoires = j.provisoires;
       this.voix.push(...(j.voix ?? []));
       this.partiel = j.partiel ?? [];
       this.secondes = j.t ?? this.secondes;
@@ -264,6 +285,7 @@ export class SuiviDirect {
    * seulement si `SIGNALER_EN_DIRECT` (sinon un mot oublié reste simplement caché, et le bilan de fin le dira).
    */
   etat(): EtatDirect {
+    if (this.suivi) return this.etatSuivi();
     const resultat = comparer(this.att, this.surs, { voix: this.voix, enCours: true });
     const avecPartiel = comparer(this.att, [...this.surs, ...this.partiel], { enCours: true });
     const fin = Math.max(resultat.finRecitee, avecPartiel.finRecitee);
@@ -274,6 +296,29 @@ export class SuiviDirect {
     });
     const ecarts = SIGNALER_EN_DIRECT ? resultat.ecarts : [];
     return { resultat: { ...resultat, mots, ecarts }, courant: fin + 1, secondes: this.secondes };
+  }
+
+  /**
+   * Suivi de la récitation : écarts des mots STABLES vus par les deux lectures (sinon rien n'est signalé) ; mots
+   * reconnus (stables, provisoires ou partiels) dévoilés ; mot en cours après le dernier reconnu.
+   */
+  private etatSuivi(): EtatDirect {
+    const opts = { voix: this.voix, enCours: true };
+    const r = comparer(this.att, this.stables, opts);
+    const c = comparer(this.att, this.stablesCtc, opts);
+    const ecarts =
+      r.statut === 'resultat' && c.statut === 'resultat' ? ecartsDAccord(r.ecarts, c.ecarts) : [];
+    const signale = new Set<number>();
+    for (const e of ecarts)
+      if (e.type !== 'ajoute') for (let i = e.i; i <= e.fin; i++) signale.add(i);
+    const tous = comparer(this.att, [...this.stables, ...this.provisoires, ...this.partiel], {
+      enCours: true,
+    });
+    const mots: EtatMot[] = r.mots.map((m, i) =>
+      signale.has(i) ? m : m === 'ok' || tous.mots[i] === 'ok' ? 'ok' : 'non_recite',
+    );
+    const fin = Math.max(r.finRecitee, tous.finRecitee);
+    return { resultat: { ...r, mots, ecarts }, courant: fin + 1, secondes: this.secondes };
   }
 
   /**

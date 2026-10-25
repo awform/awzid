@@ -38,6 +38,8 @@ export const RARE_ROUTES = [
   '/coran/recitateurs',
   // 19/10/2026 : tuteur IA de conversation (écoute et modèle sur le serveur : en ligne seulement)
   '/tuteur',
+  // 25/10/2026 : « Retrouve ce verset » (shazam_coran : l'écoute est sur le serveur, en ligne seulement)
+  '/coran/retrouver',
 ];
 /** Pages de l'élève gardées au premier usage (hors ligne ensuite), jamais préchargées. */
 // 24/10/2026 : cahier « Je parle » (facultatif ; son code et ses données sont aussi chargés à la demande)
@@ -83,6 +85,8 @@ export const EN_LIGNE_MODULES = [
   /src\/lib\/ecoute\/(PanneauEcoute|ARevoirEcoute)\.svelte$/,
   // 25/10/2026 (allègement) : le bouton lui-même, derrière une enveloppe de quelques octets (BoutonEcoute.svelte)
   /src\/lib\/ecoute\/BoutonEcouteCorps\.svelte$/,
+  // 25/10/2026 : bouton « Retrouve ce verset » du lecteur (shazam_coran : l'écran dédié a besoin du réseau)
+  /src\/lib\/ecoute\/BoutonRetrouver\.svelte$/,
   // hifẓ complet : écran enfant (l'écoute du récitateur choisi par le parent a besoin du réseau), à la demande
   /src\/lib\/hifz-outils\/Enfant\.svelte$/,
   // D2 : rubriques de « Compte » qui écrivent sur le serveur (compte, sécurité, données, classe) et notifications

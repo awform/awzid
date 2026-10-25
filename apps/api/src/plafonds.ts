@@ -5,6 +5,7 @@
  *   - tuteur IA : dépense du mois par élève (packages/tutor/src/roles.ts : 1 $ enfant, 3 $ ado et adulte), au-delà le
  *     tuteur local sans modèle ; interrupteur général AWFORM_TUTEUR ;
  *   - écoute IA de la récitation : analyses par heure et par personne (AWFORM_ECOUTE_PAR_HEURE), voix jamais gardée ;
+ *     « Retrouve ce verset » et le suivi de la récitation (shazam_coran) passent par le même plafond ;
  *   - synthèse vocale : audio des leçons PRÉ-GÉNÉRÉ (aucun appel par utilisateur) ; le plafond par utilisateur sera ajouté
  *     avec A26b phase 2 (voix en direct) ;
  *   - stockage : récitations envoyées, au plus AWFORM_STOCKAGE_PAR_ELEVE_MO Mo gardés par élève (30 Mo par défaut), chacune
@@ -35,7 +36,11 @@ export function listePlafonds(): PlafondInfo[] {
   const mo = Math.round(STOCKAGE_PAR_ELEVE_OCTETS / 1_048_576);
   return [
     { cle: 'tuteur', valeur: '1 $ / mois (enfant), 3 $ / mois (ado, adulte)' },
-    { cle: 'ecoute', valeur: `${ECOUTE_PAR_HEURE} analyses / heure / personne` },
+    // « Retrouve ce verset » et le suivi de la récitation (shazam_coran) comptent dans le même plafond
+    {
+      cle: 'ecoute',
+      valeur: `${ECOUTE_PAR_HEURE} analyses / heure / personne (vérifier, suivre, retrouver un verset)`,
+    },
     { cle: 'voix', valeur: 'audio pré-généré, aucun appel par utilisateur' },
     { cle: 'stockage', valeur: `${mo} Mo de récitations / élève, 3 Mo chacune, 30 jours` },
     { cle: 'avis', valeur: '5 avis et 5 signalements / jour / compte' },

@@ -167,8 +167,17 @@ export const SEUILS = {
 
 const costEg = (sim: number) => (sim >= SEUILS.meme ? (1 - sim) * 0.5 : 1.2 - sim);
 
-/** Alignement de coût minimal (programmation dynamique). */
-export function aligner(att: readonly MotAttendu[], ent: readonly MotEntendu[]): Op[] {
+/**
+ * Alignement de coût minimal (programmation dynamique). `finOuverte` (suivi en direct) : les mots attendus APRÈS le
+ * dernier mot entendu ne coûtent rien (ils ne sont pas encore récités). Sans cela, le dernier mot entendu, s'il est
+ * court et répété plus loin (« مِنْ »), pouvait être rattaché à sa répétition suivante, et les mots entre les deux
+ * passaient pour « oubliés » (fausse alerte mesurée le 25/10/2026, 88:6-7 : « … إِلَّا مِنْ » | « … يُغْنِي مِنْ »).
+ */
+export function aligner(
+  att: readonly MotAttendu[],
+  ent: readonly MotEntendu[],
+  finOuverte = false,
+): Op[] {
   const n = att.length;
   const m = ent.length;
   const cles = ent.map((e) => cleMot(e.w));
@@ -202,7 +211,14 @@ export function aligner(att: readonly MotAttendu[], ent: readonly MotEntendu[]):
       const a = att[i];
       if (a) {
         // absent : facultatif ou lettres isolées presque gratuits
-        relax(i + 1, j, c + (a.facultatif ? 0.05 : a.lettres ? 0.1 : 1), i, j, 1);
+        relax(
+          i + 1,
+          j,
+          c + (a.facultatif ? 0.05 : a.lettres ? 0.1 : finOuverte && j === m ? 0 : 1),
+          i,
+          j,
+          1,
+        );
         if (j < m) {
           if (a.lettres) {
             for (let k = 1; k <= 6 && j + k <= m; k++) relax(i + 1, j + k, c + 0.1, i, j, 10 + k);
@@ -323,7 +339,7 @@ export function comparer(
   ent: readonly MotEntendu[],
   opts: OptionsComparaison = {},
 ): ResultatEcoute {
-  const ops = aligner(att, ent);
+  const ops = aligner(att, ent, !!opts.enCours);
   const etat: EtatMot[] = att.map(() => 'non_recite');
   const okEnt = new Map<number, number>(); // mot attendu -> mot entendu reconnu
   const okSim = new Map<number, number>(); // mot attendu -> ressemblance avec le mot entendu
@@ -539,6 +555,14 @@ export function comparer(
 }
 
 const round = (x: number) => Math.round(x * 100) / 100;
+
+/**
+ * Suivi de la récitation (shazam_coran) : écarts vus par les DEUX lectures du même audio (RNN-T et tête CTC) au même
+ * endroit, à un mot près. Une lecture qui se trompe seule ne fait signaler aucune erreur à l'élève.
+ */
+export function ecartsDAccord(a: readonly Ecart[], b: readonly Ecart[]): Ecart[] {
+  return a.filter((e) => b.some((f) => f.fin >= e.i - 1 && f.i <= e.fin + 1));
+}
 
 /** Nombre de mots à revoir (pour un message bienveillant : « 2 mots à revoir »). */
 export function motsARevoir(r: ResultatEcoute): number {

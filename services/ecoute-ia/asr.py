@@ -109,18 +109,35 @@ class NemoCTC:
     def _piece(self, i: int) -> str:
         return self.m.tokenizer.ids_to_tokens([i])[0]
 
+    def _eval(self):
+        """Mode ÉVALUATION de tous les sous-modules. Défaut trouvé le 25/10/2026 : après un `transcribe()` de NeMo,
+        l'encodeur est « dégelé » (`unfreeze`) et reste en mode entraînement : le dropout rendait les lectures
+        directes (tête CTC : mots partiels du direct) bruitées et différentes d'un appel à l'autre."""
+        if self.m.training or self.m.encoder.training or self.m.preprocessor.training:
+            self.m.eval()
+
+    def _encoder(self, x: np.ndarray):
+        """Prétraitement + encodeur (le calcul lourd), commun aux deux têtes du modèle hybride."""
+        self._eval()
+        sig = self.torch.from_numpy(x).unsqueeze(0)
+        ln = self.torch.tensor([sig.shape[1]])
+        feats, fl = self.m.preprocessor(input_signal=sig, length=ln)
+        return self.m.encoder(audio_signal=feats, length=fl)
+
     def transcrire(self, x: np.ndarray) -> list[dict]:
+        with self.torch.inference_mode():
+            enc, el = self._encoder(x)
+            return self._ctc(enc, el)
+
+    def _ctc(self, enc, el) -> list[dict]:
+        """Tête CTC (glouton) sur la sortie de l'encodeur."""
         torch = self.torch
         with torch.inference_mode():
-            sig = torch.from_numpy(x).unsqueeze(0)
-            ln = torch.tensor([sig.shape[1]])
-            feats, fl = self.m.preprocessor(input_signal=sig, length=ln)
-            enc, el = self.m.encoder(audio_signal=feats, length=fl)
             logp = self.m.ctc_decoder(encoder_output=enc)[0][: int(el[0])]
             best = logp.max(dim=-1)
             ids = best.indices.tolist()
             probs = best.values.exp().tolist()
-        del sig, feats, enc, logp
+        del logp
         # glouton : regroupe les trames identiques, retire les blancs ; jetons SentencePiece (« ▁ » = début de mot)
         toks, prev = [], None
         for t, (i, p) in enumerate(zip(ids, probs)):
@@ -171,8 +188,32 @@ class NemoRNNT(NemoCTC):
         return NemoCTC.transcrire(self, x)
 
     def transcrire(self, x: np.ndarray) -> list[dict]:
+        self._eval()
         with self.torch.inference_mode():
             r = self.m.transcribe([x], batch_size=1, return_hypotheses=True, timestamps=True, verbose=False)
+        return self._mots_rnnt(r)
+
+    def transcrire_double(self, x: np.ndarray) -> tuple[list[dict], list[dict]]:
+        """DEUX LECTURES du même audio pour le prix d'un seul encodeur : RNN-T (principal) et tête CTC. Sert à
+        « Retrouve ce verset » (on garde la recherche la plus sûre des deux) et au suivi de la récitation (une
+        erreur n'est signalée que si les deux lectures la voient)."""
+        with self.torch.inference_mode():
+            enc, el = self._encoder(x)
+            ctc = self._ctc(enc, el)
+            r = self.m.decoding.rnnt_decoder_predictions_tensor(
+                encoder_output=enc, encoded_lengths=el, return_hypotheses=True)
+            if isinstance(r, tuple):  # anciennes versions de NeMo : (meilleures, toutes)
+                r = r[0]
+            try:  # instants en secondes (comme `transcribe(timestamps=True)`)
+                from nemo.collections.asr.parts.utils.timestamp_utils import process_timestamp_outputs
+                r = process_timestamp_outputs(r, self.m.encoder.subsampling_factor,
+                                              self.m.cfg.preprocessor['window_stride'])
+            except Exception:  # noqa: BLE001 — sinon : décalages en trames (convertis plus bas)
+                pass
+        del enc
+        return self._mots_rnnt(r), ctc
+
+    def _mots_rnnt(self, r) -> list[dict]:
         h = r[0] if isinstance(r, list) else r
         if isinstance(h, (list, tuple)):
             h = h[0]
@@ -278,3 +319,85 @@ def ecouter(modele, data: bytes, max_s: float) -> dict:
         del x
         gc.collect()
     return {'mots': mots, 'voix': voix, 'duree': round(duree, 2), 'calcul': round(time.perf_counter() - t, 3)}
+
+
+# ---------------------------------------------------------------- « Retrouve ce verset » (interrupteur shazam_coran)
+
+#: silence ajouté avant et après l'extrait : un mot coupé au bord est mieux transcrit (étude : « كرامة » ->
+#: « كِرَامٍ بَرَرَةٍ »)
+REMBOURRAGE_S = 0.5
+#: voix minimale pour chercher : en dessous, l'appli demande de réciter plus longtemps (on ne devine jamais)
+VOIX_MIN_RETROUVER_S = 3.0
+
+
+def rembourrer(x: np.ndarray, s: float = REMBOURRAGE_S) -> np.ndarray:
+    z = np.zeros(int(s * SR), dtype=np.float32)
+    return np.concatenate([z, x.astype(np.float32, copy=False), z])
+
+
+def lecture_double(modele, x: np.ndarray) -> tuple[list[dict], list[dict]]:
+    """RNN-T et tête CTC du même audio (un seul encodeur) ; modèle sans double lecture (essai, CTC seul) : la même
+    lecture deux fois."""
+    double = getattr(modele, 'transcrire_double', None)
+    if double is not None:
+        return double(x)
+    m = modele.transcrire(x)
+    return m, m
+
+
+def decaler(mots: list[dict], d: float) -> list[dict]:
+    return [{**w, 't0': round(w['t0'] + d, 2), 't1': round(w['t1'] + d, 2)} for w in mots if 't0' in w]
+
+
+def retrouver(modele, data: bytes, max_s: float) -> dict:
+    """Octets (5 à 15 s de récitation) -> deux lectures (RNN-T, CTC) pour la recherche du passage, faite par l'API
+    dans le texte Tanzil (@awform/hifz, retrouver.ts). L'audio n'existe qu'en mémoire, le temps de l'appel. Moins
+    de 3 s de voix : aucune lecture (« trop_peu_de_voix »)."""
+    t = time.perf_counter()
+    x = decoder_audio(data, max_s)
+    duree = len(x) / SR
+    try:
+        if duree > max_s + 0.5:
+            raise AudioInvalide('trop_long')
+        if duree < 0.5:
+            raise AudioInvalide('trop_court')
+        # zones de voix mesurées AVEC le silence ajouté : le seuil de `zones_de_voix` s'adapte au fond sonore (10ᵉ
+        # centile) ; sur un extrait récité sans pause, sans ce silence, le seuil tombait dans la voix et 5 s de
+        # récitation passaient pour « moins de 3 s de voix » (mesuré le 25/10/2026)
+        xr = rembourrer(x)
+        voix = [[round(a - REMBOURRAGE_S, 2), round(b - REMBOURRAGE_S, 2)] for a, b in zones_de_voix(xr)]
+        voix_s = round(sum(b - a for a, b in voix), 2)
+        relecture = None
+        if voix_s < VOIX_MIN_RETROUVER_S:
+            mots, ctc = [], []
+        else:
+            mots, ctc = lecture_double(modele, xr)
+            mots, ctc = decaler(mots, -REMBOURRAGE_S), decaler(ctc, -REMBOURRAGE_S)
+            if len(mots) < MOTS_PAR_S_MIN * voix_s:
+                relecture = _relire_apres_debut(modele, x, voix)
+        del xr
+    finally:
+        del x
+        gc.collect()
+    out = {'mots': mots, 'mots_ctc': ctc, 'voix': voix, 'voix_s': voix_s, 'duree': round(duree, 2),
+           'calcul': round(time.perf_counter() - t, 3)}
+    if relecture:
+        out['relecture'] = relecture
+    return out
+
+
+#: en dessous de ce débit de mots lus, la lecture a sans doute « décroché » (mesuré le 25/10/2026 : un extrait qui
+#: commence au milieu d'un mot fait parfois entendre au modèle « تفسير سورة الأعراف الدرس » au lieu des versets)
+MOTS_PAR_S_MIN = 0.6
+
+
+def _relire_apres_debut(modele, x: np.ndarray, voix: list[list[float]]) -> dict:
+    """Seconde lecture SANS LE DÉBUT de l'extrait (coupé au milieu de la première pause, sinon après 1 s) : le mot
+    tronqué du début était la cause du décrochage dans 3 cas sur 4 examinés."""
+    trous = [(b, c) for (_, b), (c, _) in zip(voix, voix[1:]) if c - b >= 0.2 and b >= 0.3]
+    debut = (trous[0][0] + trous[0][1]) / 2 if trous else 1.0
+    if len(x) / SR - debut < VOIX_MIN_RETROUVER_S:
+        return {}
+    m2, c2 = lecture_double(modele, rembourrer(x[int(debut * SR):]))
+    d = debut - REMBOURRAGE_S
+    return {'mots': decaler(m2, d), 'mots_ctc': decaler(c2, d), 'debut': round(debut, 2)}

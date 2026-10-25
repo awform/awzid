@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount, untrack } from 'svelte';
+  import { resolve } from '$app/paths';
   import Bidi from '$lib/Bidi.svelte';
   import RecitationEnvoi from '$lib/RecitationEnvoi.svelte';
   import { fn } from '$lib/fonctions.svelte';
@@ -181,6 +182,8 @@
         att,
         (e) => (direct = e),
         (code) => (erreur = message(code)),
+        // shazam_coran : suivi de la récitation, erreurs signalées pendant qu'on récite
+        etat.shazam === true,
       );
       if (!(await suivi.demarrer(flux))) {
         arretTout();
@@ -242,6 +245,29 @@
     envoi = 'pret';
   }
 
+  /** suivi de la récitation : dernier écart signalé pendant la récitation, avec le texte attendu (Tanzil exact) */
+  const dernierEcart = $derived(
+    etape === 'direct' && direct?.resultat.ecarts.length
+      ? direct.resultat.ecarts[direct.resultat.ecarts.length - 1]!
+      : null,
+  );
+  const attendu = $derived(
+    dernierEcart && dernierEcart.type !== 'ajoute'
+      ? att.slice(dernierEcart.i, Math.min(dernierEcart.fin, dernierEcart.i + 5) + 1)
+      : [],
+  );
+
+  /** suivi (shazam_coran) : nombre d'écarts signalés et % des mots récités jusqu'ici qui ont été reconnus */
+  const compteur = $derived.by(() => {
+    if (etape !== 'direct' || !etat.shazam || !direct || direct.courant < 1) return null;
+    const vus = direct.resultat.mots.slice(0, direct.courant);
+    const ok = vus.filter((m) => m === 'ok').length;
+    return {
+      n: direct.resultat.ecarts.length,
+      p: Math.round((100 * ok) / Math.max(1, vus.length)),
+    };
+  });
+
   const mmss = (n: number) => `${Math.floor(n / 60)}:${String(n % 60).padStart(2, '0')}`;
   const titre = $derived(t(enfant ? 'ec.titre_enfant' : 'ec.titre'));
   const fini_ = $derived(resultat?.statut === 'resultat');
@@ -300,8 +326,12 @@
               type="button"
               class="grand"
               onclick={() => commencer(true)}
-              data-testid="ecoute-direct">{t('ec.mode_direct')}</button
+              data-testid="ecoute-direct"
+              >{t(etat.shazam ? 'ec.mode_suivi' : 'ec.mode_direct')}</button
             >
+            {#if etat.shazam}<p class="small muted" data-testid="suivi-aide">
+                <Bidi text={t('ec.suivi_aide')} />
+              </p>{/if}
             <label class="small"
               ><input type="checkbox" bind:checked={masque} data-testid="ecoute-masque" />
               {t('ec.masquer')}</label
@@ -320,6 +350,33 @@
       {:else if etape === 'analyse'}
         <p role="status" class="muted" data-testid="ecoute-analyse">{t('ec.analyse')}</p>
       {/if}
+
+      {#if compteur}
+        <!-- suivi de la récitation : erreurs signalées et part des mots récités reconnus (jamais une note) -->
+        <p class="small muted" data-testid="suivi-compteur">
+          <Bidi text={t('ec.compteur', compteur)} />
+        </p>
+      {/if}
+      <!-- suivi de la récitation : l'écart est dit avec le mot attendu (annoncé poliment aux lecteurs d'écran) -->
+      <div
+        class="attendu"
+        class:plein={!!dernierEcart}
+        role="status"
+        aria-live="polite"
+        data-testid="suivi-ecart"
+      >
+        {#if dernierEcart}
+          <p class="small">
+            <Bidi text={t(`ec.type_${dernierEcart.type}`, { n: dernierEcart.a })} />
+          </p>
+          {#if attendu.length}
+            <p class="small muted">{t('ec.attendu', { n: attendu.length })}</p>
+            <p class="att quran-text" lang="ar" dir="rtl" data-testid="suivi-attendu">
+              {attendu.map((m) => m.texte).join(' ')}
+            </p>
+          {/if}
+        {/if}
+      </div>
 
       {#if etape === 'resultat' && resultat}
         <div class="bilan" role="status" data-testid="ecoute-resultat">
@@ -361,7 +418,17 @@
       {#if etape === 'resultat' && resultat && resultat.ecarts.length}
         <ul class="ecarts small" data-testid="ecoute-ecarts">
           {#each resultat.ecarts as e (`${e.type}${e.i}`)}
-            <li><Bidi text={t(`ec.type_${e.type}`, { n: e.a })} /></li>
+            <li>
+              <Bidi text={t(`ec.type_${e.type}`, { n: e.a })} />
+              {#if etat.shazam}
+                <!-- suivi (shazam_coran) : réécouter le verset juste, récité par Muḥammad Ayyūb -->
+                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- chemin résolu, suivi de paramètres -->
+                <a
+                  href={`${resolve('/coran/lecteur')}?s=${e.s}&a=${e.a}&r=ayyoub-hafs&lire=1`}
+                  data-testid="ecoute-ecart-ecouter"><Bidi text={t('rv.ecouter_ayyoub')} /></a
+                >
+              {/if}
+            </li>
           {/each}
         </ul>
         <p class="legende small muted" aria-hidden="true">
@@ -523,6 +590,21 @@
     display: grid;
     gap: 4px;
     max-width: 220px;
+  }
+  .attendu.plein {
+    border-inline-start: 3px solid var(--warn-ink);
+    background: var(--warn-bg);
+    border-radius: 8px;
+    padding: 6px 10px;
+  }
+  .attendu p {
+    margin: 0;
+  }
+  .att {
+    font-family: var(--font-quran);
+    font-size: 1.5rem;
+    line-height: 2;
+    text-align: right;
   }
   .bad {
     color: var(--bad-ink);

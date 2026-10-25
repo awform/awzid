@@ -126,6 +126,10 @@
   .mot.courant {
     outline: 2px solid var(--accent);
   }
+  /* texte caché : un mot reconnu apparaît en vert, une erreur reste en rouge ou soulignée en pointillé */
+  .masque .mot.ok {
+    color: var(--ok-ink);
+  }
   .masque .mot:not(.ok):not(.oublie):not(.remplace):not(.ordre) {
     color: transparent;
     border-bottom: 2px dotted var(--ink2);

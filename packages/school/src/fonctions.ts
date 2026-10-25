@@ -38,6 +38,7 @@ export const FONCTION_CLES = [
   'hifz_classe',
   'coran_mots',
   'tajwid_madd',
+  'shazam_coran',
 ] as const;
 export type FonctionCle = (typeof FONCTION_CLES)[number];
 
@@ -150,6 +151,10 @@ export const FONCTIONS: Record<FonctionCle, DefFonction> = {
   // maîtres. ADULTES seulement, bêta fermée. COUPÉ par défaut partout ; l'administrateur l'ouvre au « canal bêta » ; couper l'interrupteur
   // laisse « Réciter et vérifier » entier, sans cette indication.
   tajwid_madd: { defaut: 'off' },
+  // « Retrouve ce verset » et suivi de la récitation qui signale les erreurs pendant qu'on récite (25/10/2026, notre IA
+  // `ecoute-ia`) : bouton du lecteur, écran `/coran/retrouver` (en ligne), mode « suivi » du panneau « Réciter et
+  // vérifier ». COUPÉ par défaut partout ; accord « analyse vocale par IA » (enfant : code parent), voix jamais gardée.
+  shazam_coran: { defaut: 'off' },
 };
 
 /** États de base de la démonstration ajoutés sous les réglages de l'administrateur (qui l'emportent toujours). */

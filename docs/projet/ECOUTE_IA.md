@@ -227,3 +227,76 @@ comme l'écoute IA ; un seul calcul à la fois, file courte (503 « occupé »).
    le canal bêta (le bouton « l'IA s'est trompée » de l'écoute IA n'existe pas encore pour les madd).
 3. **Correspondance des madd** : le nombre de madd annoté dans le verset (source `quran-tajweed`) doit coïncider avec celui que le modèle décode dans la
    récitation d'Ayyūb ; sinon le service se tait (`correspondance_incertaine`). Mesurer la part de versets concernés avant d'ouvrir.
+## 9. « Retrouve ce verset » et suivi de la récitation (interrupteur `shazam_coran`, 25/10/2026)
+
+Interrupteur F5 `shazam_coran`, **coupé par défaut** ; mêmes règles qu'A5 : accord « analyse vocale par IA » au premier
+usage (enfant : code parent ; mineur seul : refusé), plafond `AWFORM_ECOUTE_PAR_HEURE` partagé, voix jamais gardée
+(memfd, rien en base ni dans les journaux : le journal ne garde que `{secondes, statut}`), coupé aussi par le
+disjoncteur de coût. Le service `ecoute-ia` n'a reçu que des MODES (`/ecouter?mode=retrouver`, `/direct/{sid}?mode=suivi`) :
+les routes existantes répondent comme avant.
+
+### 9.1 Retrouve ce verset
+
+- **Appareil** : bouton « Retrouve ce verset » dans la barre du lecteur (composant chargé à la demande, hors coquille),
+  écran `/coran/retrouver` (page rare, en ligne). Enregistrement de 15 s au plus ; moins de 3 s : « Récite un peu plus
+  longtemps », rien n'est envoyé. Résultat : le passage, ou TOUS les versets au même texte (ex æquo), puis les passages
+  presque identiques (≥ 0,8 et à moins de 0,15 du premier) ; un toucher ouvre le passage dans le lecteur, lu par
+  Muḥammad Ayyūb (`?r=ayyoub-hafs&lire=1`). Jamais « récitation juste » : la fonction retrouve, elle ne juge pas.
+- **Service** : 0,5 s de silence autour, deux lectures (RNN-T et CTC) pour un seul encodeur ; voix mesurée avec ce
+  silence (sinon 5 s de récitation sans pause passaient pour « moins de 3 s ») ; si la lecture « décroche » (moins de
+  0,6 mot par seconde de voix : « تفسير سورة الأعراف الدرس » au lieu des versets, extrait commencé au milieu d'un
+  mot), seconde lecture sans le début (au milieu de la première pause).
+- **API** : index de tout le texte Tanzil (base, trié dans l'ordre du muṣḥaf), 271 743 lettres, 49 664 quatre-grammes,
+  0,3 à 0,6 s à construire, une fois (préparé dès qu'un appareil voit la fonction ouverte) ; recherche 7 à 15 ms
+  (médiane). Portage TypeScript du prototype contrôlé : **200 recherches sur 200 identiques** au prototype Python
+  (`eval/retrouver-portage.mjs`). Seuil 0,6 sur le premier passage ; secours : si rien n'est sûr, la recherche est
+  retentée sans les 1 ou 2 premiers mots.
+- **Mesures** :
+  | Jeu | Rang 1 | Bon verset montré | Réponse fausse | Silences |
+  |---|---|---|---|---|
+  | Étude (50 extraits d'Ayyūb, propre / téléphone), code de l'API | 94 % / 92 % | 100 % / 100 % | 0 | 0 |
+  | Bout en bout, service réel, 60 extraits Opus 32 kb/s, 5 récitateurs (`eval/retrouver_extraits.py`, `retrouver-mesure.mjs`) | 90 % | 96,7 % | 0 | 2 |
+  Par récitateur (bon verset montré) : al-Ḥudhayfī, al-Muʿayqilī et al-Muhannā 100 %, Ayyūb et al-Akhḍar 91,7 %
+  (rang 1 : 83 % et 67 % — rattrapés par les ex æquo et les passages proches). Les 2 silences : extraits de 5 à 7 s presque entièrement inaudibles pour le modèle (mot final d'un verset
+  long) — l'appli dit « Je n'ai pas reconnu, récite encore quelques mots ».
+- **Temps de réponse sur la VM au calme** (verrou commun tenu, charge 1,8 ; conteneur jetable, 4 fils, côté serveur :
+  décodage + lectures + recherche, sans le réseau du téléphone), 60 extraits de 10 s en moyenne : **médiane 0,88 s**,
+  90ᵉ centile 2,0 s, **86,7 % sous 1,5 s** ; les plus lents sont les 10 relectures (16 %).
+
+### 9.2 Suivi de la récitation « comme Tarteel »
+
+- Le mode `suivi` du service relit chaque passage (coupé à une pause ≥ 0,35 s, ou au point le plus calme après 10 s)
+  **avec son contexte** : 4 s avant, le passage suivant après, 0,5 s de silence autour, deux lectures. Les mots du
+  passage précédent deviennent « stables » ; ceux du dernier restent « provisoires » (ils dévoilent le texte). Mémoire :
+  le dernier passage et 4 s avant lui, effacés à la fin.
+- L'appareil ne signale un écart que sur les mots stables et **seulement si les deux lectures le voient**
+  (`ecartsDAccord`), avec le mot attendu (texte Tanzil, sur sa ligne), un compteur (« 1 erreur signalée · 92 % des
+  mots récités reconnus ») ; texte caché : les mots reconnus apparaissent en vert, les erreurs restent marquées.
+  Le bilan de fin vient toujours de la vérification de tout l'enregistrement, avec « Écouter avec Muḥammad Ayyūb »
+  pour chaque écart.
+- **Défaut corrigé dans la comparaison** (`aligner`, fin ouverte en direct) : les mots attendus après le dernier mot
+  entendu ne coûtent plus rien ; avant, un dernier mot court répété plus loin (« مِنْ ») faisait passer les mots
+  intermédiaires pour « oubliés ».
+- **Défaut corrigé dans le service** (`asr._eval`) : après un `transcribe()` de NeMo, l'encodeur restait en mode
+  entraînement (dropout) : les lectures directes (tête CTC, mots partiels du direct) étaient bruitées et variaient
+  d'un appel à l'autre.
+- **Mesure** (`eval/suivi_sim.py` + `suivi.mjs`) : 70 séances réelles rejouées par morceaux d'une seconde
+  (5 récitateurs, 59 min) : 40 justes, 30 avec une erreur simulée (10 oublis, 10 remplacements, 5 ajouts, 5 versets
+  sautés).
+  | Méthode | Fausses alertes (séances justes) | Erreurs vues | Délai médian |
+  |---|---|---|---|
+  | direct A5, une lecture | 17 (10 séances sur 40) | 18 / 30 | 9,9 s |
+  | direct A5, deux lectures d'accord | 2 (2 / 40) | 10 / 30 | 5,4 s |
+  | **suivi avec contexte, deux lectures d'accord (retenu)** | **1 (1 / 40)** | 12 / 30 (versets sautés 4 / 5) | 11,4 s |
+  | suivi avec contexte, une lecture | 2 (2 / 40) | 17 / 30 | 12,1 s |
+  | passages plus courts (pause 0,35 s, coupe 6 s) | 13 à 33 | — | — |
+  Choix : se taire dans le doute (1 fausse alerte sur 40 séances justes) plutôt que voir plus d'erreurs. Le délai
+  (≈ 11 s : l'erreur est dite après la pause suivante) est annoncé dans l'aide. Calcul : 1,5 s par morceau d'1 s en
+  médiane SOUS FORTE CHARGE (charge 15 à 25 pendant la mesure) ; à remesurer au calme avant d'ouvrir.
+
+### 9.3 Reste à faire
+
+Vraies voix d'élèves adultes (30 volontaires) avant d'ouvrir ; voix d'enfants : pas d'ouverture avant une mesure
+dédiée ; flux continu (WebSocket) pour raccourcir le délai du suivi ; « réécouter sa récitation » d'un écart
+(l'audio reste sur l'appareil, jamais pour un enfant) ; % par page et progression de mémorisation par sourate (à
+relier à khatma/wird et au hifz en classe).
