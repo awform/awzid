@@ -9,12 +9,6 @@
       "refusAvant": "coran"
     },
     {
-      "cle": "وَكَذَّبَ بِٱلْحُسْنَىٰ (92:9)",
-      "decision": "synthese",
-      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
-      "refusAvant": "coran"
-    },
-    {
       "cle": "مَالَهُۥ يَتَزَكَّىٰ (92:18)",
       "decision": "synthese",
       "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
@@ -141,24 +135,6 @@
       "refusAvant": "coran"
     },
     {
-      "cle": "وَكَذَّبَ بِٱلْحُسْنَىٰ",
-      "decision": "synthese",
-      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
-      "refusAvant": "coran"
-    },
-    {
-      "cle": "فَسَنُيَسِّرُهُۥ لِلْعُسْرَىٰ",
-      "decision": "synthese",
-      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
-      "refusAvant": "coran"
-    },
-    {
-      "cle": "وَسَيُجَنَّبُهَا ٱلْأَتْقَى",
-      "decision": "synthese",
-      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
-      "refusAvant": "coran"
-    },
-    {
       "cle": "الْقَاعِدَةُ: (١) لِلْبُخَارِيِّ كِتَابَانِ فِي الْأَدَبِ: «الْأَدَبُ الْمُفْرَدُ» (كِتَابٌ مُسْتَقِلٌّ)، وَ«كِتَابُ الْأَدَبِ» فِي «الْجَامِعِ الصَّحِيحِ». (٢) التَّرْجَمَةُ: عُنْوَانُ الْبَابِ، وَفِيهَا فِقْهُ الْبُخَارِيِّ، وَكَثِيرًا مَا تَكُونُ جُمْلَةً فِقْهِيَّةً: «بَابُ مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلَا يُؤْذِ جَارَهُ»، «بَابُ حَقِّ الْجِوَارِ فِي قُرْبِ الْأَبْوَابِ». (٣) الْحَدِيثُ: مَا أُضِيفَ إِلَى النَّبِيِّ ﷺ مِنْ قَوْلٍ أَوْ فِعْلٍ أَوْ تَقْرِيرٍ. (٤) الْأَثَرُ: مَا أُضِيفَ إِلَى الصَّحَابِيِّ (أَوِ التَّابِعِيِّ) مِنْ قَوْلٍ أَوْ فِعْلٍ؛ مِثَالُهُ: «أَهْدَيْتُمْ لِجَارِي الْيَهُودِيِّ؟». (٥) فِي النُّصُوصِ أَسَالِيبُ دَرَسْنَاهَا: الْأَمْرُ (عُودُوا)، وَالْأَمْرُ بِاللَّامِ (فَلْيُكْرِمْ)، وَالشَّرْطُ (مَنْ كَانَ… فَلْيُكْرِمْ ؛ إِذَا… فَلْيَرْجِعْ)، وَالنِّدَاءُ (يَا عَائِشَةُ)، وَالتَّوْكِيدُ (إِنَّ اللَّهَ رَفِيقٌ).",
       "decision": "synthese",
       "raison": "décision du référent (referent-373.tsv, 24/10/2026) : hadith ou athar : mots communs avec un verset ; titres de chapitres de Bukhārī et hadiths [suite de 5 mots identique à 65:2]",
@@ -192,12 +168,6 @@
       "cle": "لَمْ يُعْطَفْ ﴿ٱللَّهُ يَسْتَهْزِئُ بِهِمْ﴾ عَلَى ﴿إِنَّا مَعَكُمْ﴾ لِأَنَّهُ لَيْسَ مِنْ مَقُولِهِمْ.",
       "decision": "synthese",
       "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
-      "refusAvant": "coran"
-    },
-    {
-      "cle": "[مَٰلِكِ يَوْمِ ٱلدِّينِ]",
-      "decision": "synthese",
-      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
       "refusAvant": "coran"
     },
     {
@@ -246,12 +216,6 @@
       "cle": "فَسَّرَ ابْنُ عَبَّاسٍ ﴿نَنسَخْ﴾ بِمَعْنَى: نُبَدِّلْ.",
       "decision": "synthese",
       "raison": "décision du référent (referent-373.tsv, 24/10/2026) : mot ou fragment de moins de 4 mots étudié comme mot (§2 bis)",
-      "refusAvant": "coran"
-    },
-    {
-      "cle": "ٱلنَّجْمُ ٱلثَّاقِبُ",
-      "decision": "synthese",
-      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis)",
       "refusAvant": "coran"
     },
     {
@@ -381,10 +345,718 @@
       "refusAvant": "garde commune (refusVoix) : citation\r"
     },
     {
-      "cle": "وَالْعَصْرِ",
+      "cle": "الصَّلَاةُ ← ٱلصَّلَوٰةُ",
       "decision": "synthese",
-      "raison": "mot de vocabulaire, moins de 4 mots (§2 bis) ; décision n° 14 du référent (24 mots isolés bloqués par la garde → synthèse)",
-      "refusAvant": "garde de la chaine audio (gen-audio Test-Coran : signes du Mushaf, Tanzil, citation introduite)\r"
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "الْعَالَمِينَ ← ٱلْعَٰلَمِينَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "قَالُوا ← قَالُوا۟",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "لَهُ ← لَهُۥ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "لَهُۥ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "بِهِۦ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "مِنۢ بَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلصَّلَ[وٰ]ةُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلزَّكَ[وٰ]ةُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْ[عَٰ]لَمِينَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلصِّ[رَٰ]طَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "قَالُو[ا۟]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْحَمْدُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱهْدِنَا",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلضَّآلِّينَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱ = هَمْزَةُ وَصْلٍ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْعَٰلَمِينَ — ٱلصَّلَوٰةُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلصَّلَوٰةَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْمُقَرَّبُونَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْمَلَٰٓئِكَةُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "خَيْرٌۭ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱسْتَغْنَىٰٓ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱقْرَأْ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "بِٱلْقَلَمِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ءَامَنُوا۟",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَعَمِلُوا۟",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلصَّٰلِحَٰتِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْأُولَىٰ (93:4)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَٱلْأُنثَىٰٓ (92:3)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَٱلنَّهَارِ (92:2)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "فَٱنصَبْ (94:7)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "فَٱرْغَب (94:8)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَٱتَّقَىٰ (92:5)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَٱسْتَغْنَىٰ (92:8)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلشَّمْسِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْقَمَرِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلنَّهَارِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلَّيْلِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلسَّمَآءِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْأَرْضِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْفَجْرِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْبَلَدِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلنَّجْدَيْنْ (90:10)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْبَيْتْ (106:3)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْأَمِينْ (95:3)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلزَّيْتُونْ (95:1)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْعَٰلَمِينْ (1:2)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلضَّآلِّينَ (1:7)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ضَآلًّۭا (93:7)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلطَّآمَّةُ (79:34)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلسَّمَآءِ (91:5)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ءَامَنُوا۟ (90:17)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلضَّآلِّينَ — ءَآلْـَٰٔنَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ۚ — ۖ — ۗ — مـ — لا",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "«ٱلْعَٰلَمِينَ» مَجْرُورٌ…",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ظَهْرِهِۦ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "بِٱلشَّفَقِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "صُورَةٍۢ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْأَرْضَ (80:26)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَقَضْبًۭا (80:28)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ضَاحِكَةٌۭ (80:39)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "يَوْمَئِذٍۢ (80:37)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "صَبًّۭا (80:25)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلصَّآخَّةُ (80:33)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "«ٱقْرَأْ بِٱسْمِ رَبِّكَ»",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَٱلرُّجْزَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "فَٱهْجُرْ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْمُدَّثِّرُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "فَتَبَيَّنُوٓا۟ (الْحُجُرَاتُ ٦)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "كُتِبَ عَلَيْكُمُ ٱلصِّيَامُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَجَآءُوٓ أَبَاهُمْ (عِشَآءًۭ)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَٱشْتَعَلَ ٱلرَّأْسُ (شَيْبًۭا)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "قُمِ ٱلَّيْلَ (ٱلَّيْلَ)",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "فَتَبَيَّنُوٓا۟",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "كَوْكَبًۭا",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَٱلْقَمَرَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "فَيَكِيدُوا۟",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "لَا رَيْبَ ۛ فِيهِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْكِتَٰبِ ← الْكِتَابِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "قَبْلِهِۦ ← قَبْلِهِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلزَّكَوٰةَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلصَّلَوٰةَ = الصَّلَاةَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "عِوَجَا ۜ ۝ قَيِّمًۭا",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْمُفْلِحُونَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْكِتَٰبُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "قَدِيرٌۭ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "مُحِيطٌۢ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "صُمٌّۢ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "عُمْىٌۭ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "بِٱلْكَٰفِرِينَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ظُلُمَٰتٍۢ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْبَرْقُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلطَّلَٰقُ مَرَّتَانِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَقُولُوا۟ قَوْلًۭا سَدِيدًۭا",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلْعُلَمَٰٓؤُا۟",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "رَبُّهُۥ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ذَلُولًۭا",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "فَٱمْشُوا۟ فِى مَنَاكِبِهَا",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَإِلَيْهِ ٱلنُّشُورُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَأَنتُمْ أَذِلَّةٌۭ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱلشُّعَرَآءُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "[ٱلسَّاعَةُ] / [سَاعَةٍۢ]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "[ٱلْقَمَرُ] ، [مُّسْتَمِرٌّۭ]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "الدَّلْكُ: فَٱغْسِلُوا۟",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "[ٱتَّقَىٰ] ↔ [ٱسْتَغْنَىٰ]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "[ٱلْحَىَّ] ↔ [ٱلْمَيِّتِ]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَٱسْتَغْنَىٰ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "وَلْيَبْكُوا۟ كَثِيرًۭا",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "[مُّسْتَمِرٌّۭ] / [مُّسْتَقِرٌّۭ]",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "بِٱلَّتِى هِىَ أَحْسَنُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "ٱللَّهَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "بِٱلْءَاخِرَةِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "رَسُولٌۭ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "[حَذْفٌ]: ٱلْكِتَٰبُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "[زِيَادَةٌ]: مِا۟ئَةَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "[بَدَلٌ]: ٱلصَّلَوٰةَ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "«فَٱغْسِلُوا۟»: أَمْرٌ.",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "مُّؤْمِنَةٍۢ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
+      "refusAvant": "client : graphie du Mushaf (looksQuranic)"
     }
   ]
 }

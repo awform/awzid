@@ -285,6 +285,7 @@ function creer(opt: OuvrirOptions): () => void {
     vid = buildVideo(opt.unit.lesson, {
       unitId: opt.unit.id,
       hasAudio: (s) => !!audioIdFor(s, la),
+      autorises: la?.autorises,
       images: Object.keys(opt.illus),
       audioList: la ? [...la.fichiers] : [],
       v2: true,

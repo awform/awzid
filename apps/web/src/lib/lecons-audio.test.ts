@@ -8,9 +8,10 @@ import {
   type LevelAudio,
 } from './lecons-audio';
 
-const la = (texts: string[]): LevelAudio => ({
+const la = (texts: string[], autorises: string[] = []): LevelAudio => ({
   niveau: 'en1',
   fichiers: new Set(texts.map((s) => audioFileId(s)!)),
+  autorises: autorises.map((s) => audioFileId(s)!),
   octets: 0,
   mention: 'voix de synthèse (provisoire)',
   credits: [],
@@ -29,6 +30,23 @@ describe('A3 — boutons « écouter » des leçons', () => {
   it('jamais sur un texte coranique (signes du Muṣḥaf), même si un fichier existait', () => {
     const t = 'ذَٰلِكَ ٱلْكِتَٰبُ';
     expect(audioIdFor(t, la([t]))).toBeNull();
+  });
+
+  it('graphie du Muṣḥaf : relâchée seulement pour un texte de la liste blanche du serveur', () => {
+    const mot = 'ٱلْحَمْدُ';
+    // le serveur l'autorise : le bouton apparaît ; sinon (fichier présent, texte non autorisé) : rien
+    expect(audioIdFor(mot, la([mot], [mot]))).toBe(audioFileId(mot));
+    expect(audioIdFor(mot, la([mot]))).toBeNull();
+    // l'autorisation est celle du texte, pas un assouplissement général
+    const autre = 'ذَٰلِكَ ٱلْكِتَٰبُ';
+    expect(audioIdFor(autre, la([mot, autre], [mot]))).toBeNull();
+  });
+
+  it('jamais un verset entier, même avec un fichier (112:1 et 1:2)', () => {
+    const v112 = 'قُلْ هُوَ ٱللَّهُ أَحَدٌ';
+    const v12 = 'ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ';
+    expect(audioIdFor(v112, la([v112]))).toBeNull();
+    expect(audioIdFor(v12, la([v12]))).toBeNull();
   });
 
   it('verset : lien vers la récitation du Complexe quand la référence est connue', () => {

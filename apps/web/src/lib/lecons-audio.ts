@@ -18,6 +18,8 @@ export interface LevelAudioJson {
   octets: number;
   mention: string;
   credits: string[];
+  /** fichiers des textes de la liste blanche du serveur */
+  autorises?: string[];
 }
 export interface LevelAudio extends Omit<LevelAudioJson, 'fichiers'> {
   fichiers: Set<string>;
@@ -57,11 +59,16 @@ export function forgetLevelAudio(level: string): void {
   cache.delete(level);
 }
 
-/** Fichier du texte s'il existe ; null pour un texte coranique, vide ou sans fichier. */
+/**
+ * Fichier du texte s'il existe ; null pour un texte vide ou sans fichier, et pour un texte en graphie du Muṣḥaf SAUF s'il
+ * est dans la liste blanche du serveur (`autorises` : mot de vocabulaire de moins de 4 mots, chaque texte ajouté avec sa
+ * raison ; jamais un verset entier ni une lettre détachée : la liste n'en a aucun, test). Pas d'assouplissement général.
+ */
 export function audioIdFor(text: string, la: LevelAudio | null): string | null {
-  if (!la || !text || looksQuranic(text)) return null;
-  const id = audioFileId(text);
-  return id && la.fichiers.has(id) ? id : null;
+  const id = la && text && audioFileId(text);
+  return id && la!.fichiers.has(id) && (!looksQuranic(text) || la!.autorises?.includes(id))
+    ? id
+    : null;
 }
 
 let current: { a: HTMLAudioElement; url?: string } | null = null;

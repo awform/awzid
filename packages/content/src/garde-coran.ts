@@ -265,6 +265,10 @@ let autorises: Set<string> | null = null;
 export const autorise = (s: string): boolean =>
   (autorises ??= new Set(GARDE_AUTORISES.split(' ').filter(Boolean))).has(autoriseCle(s));
 
+/** Le fichier (SHA-1 de sa clé audio) est-il celui d'un texte de la liste des textes autorisés ? (le serveur est le juge) */
+export const autoriseSha = (sha: string): boolean =>
+  (autorises ??= new Set(GARDE_AUTORISES.split(' ').filter(Boolean))).has(sha.slice(0, 12));
+
 /**
  * Raison de refuser la voix à un texte (null : voix permise).
  *  - « coran » : présenté comme Coran (jamais de voix, même pour une formule de la liste ou un hadith) ;

@@ -78,6 +78,21 @@ function ayyub(): Map<string, string> {
   return m;
 }
 
+/**
+ * versets entiers classés « Ayyūb » à la main (`ayyub-complement.tsv`) : même si un fichier de synthèse existe (ou a existé), ils
+ * attendent Ayyūb, jamais la voix de synthèse (décisions du référent du 25/10/2026, point 1)
+ */
+function ayyubExplicite(): Set<string> {
+  const f = join(DATA, 'ayyub-complement.tsv');
+  return new Set(
+    readFileSync(f, 'utf8')
+      .split('\n')
+      .slice(1)
+      .filter((l) => l.split('\t')[2] === 'ayyub')
+      .map((l) => audioKey(l.split('\t')[0]!)),
+  );
+}
+
 /** textes dont la solution est une correction du livre (réplique arabe qui cite du français : à corriger avant le gel) */
 function aCorriger(): Set<string> {
   const f = join(DATA, 'a-corriger-dans-les-livres.tsv');
@@ -224,6 +239,7 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
   () => {
     it('chaque texte à écouter des livres d’Adultes et des cahiers a son audio, ou sa récitation d’Ayyūb', () => {
       const recitations = ayyub();
+      const explicites = ayyubExplicite();
       const corrections = aCorriger();
       const lecture = cahierLecture();
       const toutes = [...livres(), ...lecture.cibles, ...cahierParler()];
@@ -237,7 +253,8 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
       const dansLesLivres: Cible[] = [];
       const muets: Cible[] = [];
       for (const c of uniques.values()) {
-        if (aSonFichier(c.texte, c.niveau)) voixOk.push(c);
+        if (explicites.has(audioKey(c.texte))) attendAyyub.push(c);
+        else if (aSonFichier(c.texte, c.niveau)) voixOk.push(c);
         else if (recitations.has(audioKey(c.texte))) attendAyyub.push(c);
         else if (corrections.has(audioKey(c.texte))) dansLesLivres.push(c);
         else muets.push(c);
