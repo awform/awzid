@@ -459,6 +459,11 @@ export const account = pgTable(
     /** suppression demandée : effacement définitif sous 30 jours */
     deletedAt: timestamp('deleted_at', { withTimezone: true }),
     /**
+     * Compte BLOQUÉ par l'administrateur (suspension, réversible) : plus de connexion, sessions fermées ; null = actif.
+     * Aucune donnée n'est effacée (contrairement à `deletedAt`).
+     */
+    blockedAt: timestamp('blocked_at', { withTimezone: true }),
+    /**
      * Lot F3 (revue M7) : adresse e-mail VÉRIFIÉE (lien à usage unique reçu et ouvert) ; null tant qu'elle ne
      * l'est pas. Toute nouvelle adresse (changement) n'est enregistrée qu'après vérification.
      */

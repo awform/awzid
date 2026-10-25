@@ -269,7 +269,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     opts.messageKey === undefined ? messageKeyFromEnv() : opts.messageKey,
   );
   const rights = registerBilling(app, db, opts.billing);
-  registerAdmin(app, db);
+  registerAdmin(app, db, opts.secretKey ?? null);
   registerToday(app, db, edition);
   registerSchool(app, db, edition, signer);
   registerActivities(app, db, edition, opts.demoLogin === true, mailer.mode !== 'inactif');

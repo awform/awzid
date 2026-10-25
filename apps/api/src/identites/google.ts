@@ -244,7 +244,7 @@ export function registerGoogle(
           .select()
           .from(t.account)
           .where(and(eq(t.account.id, lien.accountId), isNull(t.account.deletedAt)));
-        if (!a) return reply.redirect(page(c.intent, 'erreur'));
+        if (!a || a.blockedAt) return reply.redirect(page(c.intent, 'erreur'));
         if (await estPersonnel(a)) return reply.redirect(page(c.intent, 'personnel'));
         if ((await readAcces(db)).site === 'ferme') return reply.redirect(page(c.intent, 'ferme'));
         await db

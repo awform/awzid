@@ -3838,5 +3838,22 @@
   "parler.etoiles": "{n} stars out of {total}",
   "parler.etoile_reussie": "{t}: theme mastered",
   "parler.etoile_a_faire": "{t}: not yet",
-  "parler.antiseche_aide": "The page to keep with you. Tap a line to hear it."
+  "parler.antiseche_aide": "The page to keep with you. Tap a line to hear it.",
+  "adm.blocage_titre": "Block or unblock an account",
+  "adm.blocage_aide": "Enter the account's e-mail address or phone number. A blocked account can no longer sign in and its sessions are closed immediately; nothing is deleted. The action is recorded in the audit log.",
+  "adm.blocage_champ": "E-mail or number",
+  "adm.blocage_bloquer": "Block",
+  "adm.blocage_debloquer": "Unblock",
+  "adm.blocage_ok_bloque": "Account blocked. Its sessions are closed.",
+  "adm.blocage_ok_debloque": "Account unblocked.",
+  "adm.blocage_deja_bloque": "This account is already blocked.",
+  "adm.blocage_deja_actif": "This account is not blocked.",
+  "adm.blocage_introuvable": "No account matches.",
+  "adm.blocage_soi": "You cannot block your own account.",
+  "adm.blocage_erreur": "The action failed. Try again.",
+  "adm.blocage_vide": "Enter an address or a number first.",
+  "adm.blocage_liste": "Blocked accounts",
+  "adm.blocage_aucun": "No blocked accounts.",
+  "adm.blocage_depuis": "blocked on {date}",
+  "erreur.compte_bloque": "This account is suspended. Contact support."
 }

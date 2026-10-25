@@ -145,5 +145,6 @@
   "erreur.invitation_expiree": "Cette invitation a expiré. Demandez-en une nouvelle.",
   "erreur.invitation_inconnue": "Ce code d’invitation n’existe pas. Vérifiez-le.",
   "erreur.invitation_requise": "Un code d’invitation est nécessaire pour créer un compte.",
-  "erreur.invitation_revoquee": "Cette invitation a été annulée."
+  "erreur.invitation_revoquee": "Cette invitation a été annulée.",
+  "erreur.compte_bloque": "Ce compte est suspendu. Contacte le support."
 }

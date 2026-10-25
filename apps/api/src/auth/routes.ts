@@ -686,6 +686,12 @@ export function registerAuth(app: FastifyInstance, opts: AuthOptions): void {
         });
         return err(reply, 401, 'identifiants_incorrects');
       }
+      // compte bloqué par l'administrateur : refus APRÈS la vérification du mot de passe (rien n'est révélé à qui
+      // ne le connaît pas) ; aucune session n'est ouverte
+      if (a.blockedAt) {
+        await audit(db, a.id, 'connexion.refusee_bloque', a.id);
+        return err(reply, 403, 'compte_bloque');
+      }
       let mfa = false;
       const rolesDuCompte = await accountRoles(db, a.id, a.kind);
       // bêta fermée : site fermé → seuls les administrateurs se connectent (mot de passe déjà vérifié :
