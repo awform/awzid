@@ -81,6 +81,25 @@ export const VIDEO_MODES: readonly VideoMode[] = ['lettre', 'courte', 'longue', 
 /** niveaux dont la garde coranique de la vidéo est calculée (test « garde vidéo à jour ») : seuls proposés */
 export { VIDEO_NIVEAUX } from './video-niveaux.js';
 
+/**
+ * Réglage du rythme par public (décision du directeur artistique, 25/10/2026), dans les DONNÉES : le lecteur v2 est
+ * le même pour tous. `rythme` : multiplicateur des temps de lecture et d'attente ; `taille` : agrandissement des
+ * caractères (le texte qui ne tient plus défile, il n'est jamais réduit) ; `pause` : coefficient du temps de
+ * parole laissé à « À toi ! » (1,3 chez les adultes). Enfants : plus lent, plus grand, pause plus longue ; ados :
+ * proche des adultes.
+ */
+export interface ProfilVideo {
+  rythme: number;
+  taille: number;
+  pause: number;
+}
+export const VIDEO_PROFILS: Readonly<Record<string, ProfilVideo>> = {
+  ad: { rythme: 1, taille: 1, pause: 1.3 },
+  ado: { rythme: 1.08, taille: 1.04, pause: 1.4 },
+  en: { rythme: 1.3, taille: 1.12, pause: 1.8 },
+};
+export const profilVideo = (niveau: string): ProfilVideo =>
+  VIDEO_PROFILS[niveau.replace(/\d+$/, '')] ?? VIDEO_PROFILS.ad!;
 /** texte arabe du livre (affiché sans crochets) ; `son` : son fichier audio existe et peut être joué */
 export interface T {
   ar: string;

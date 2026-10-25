@@ -535,8 +535,8 @@ test.describe('v2 allumée (video_vivante et video_v2, exception par pays)', () 
   test('livres suivants (Adultes 3…) : leçon 1 et bilan 1 de chaque livre proposé, sommaire puis ouverture', async ({
     page,
   }) => {
-    // deux unités par livre (Adultes 3 à 10 : 16 ouvertures) : environ 4 s chacune
-    test.setTimeout(240_000);
+    // deux unités par livre (Adultes 3 à 10, Enfants, Ados : jusqu'à 34 ouvertures) : environ 4 s chacune
+    test.setTimeout(480_000);
     for (const n of VIDEO_NIVEAUX.filter((x) => x !== 'ad1' && x !== 'ad2'))
       for (const u of ['l01', 'l05']) {
         await ouvrir(page, `${n}.${u}`);
@@ -622,7 +622,8 @@ test.describe('v2 allumée (video_vivante et video_v2, exception par pays)', () 
       ...(process.env.VIDEO_V2_SCENES ?? '').split(',').filter(Boolean),
     ];
     for (const livre of LIVRES_V2)
-      for (let n = 1; n <= 25; n++) {
+      // Enfants 1 : 26 unités (21 leçons)
+      for (let n = 1; n <= (livre === 'en1' ? 26 : 25); n++) {
         const u = `${livre}.l${String(n).padStart(2, '0')}`;
         if (UNITES.length && !UNITES.includes(u.split('.')[1]!) && !UNITES.includes(u)) continue;
         await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' });
