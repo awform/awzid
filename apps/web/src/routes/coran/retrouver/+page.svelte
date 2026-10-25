@@ -7,10 +7,10 @@
   import { loadVerses } from '$lib/hifz';
   import { fmtNumber, loadTexts, t, texteExiste } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
-  import { etatEcoute } from '$lib/ecoute/etat';
   import { causeMicro, coupe, donnerAccord, Enregistreur, micro } from '$lib/ecoute/ecoute';
   import {
     cartes,
+    etatRetrouver,
     requeteLecteur,
     retrouver,
     RETROUVER_MAX_S,
@@ -47,7 +47,7 @@
     const p = await demoProfileFor('').catch(() => null);
     if (!p) return void (etape = 'ferme');
     profileId = p.id;
-    const e = await etatEcoute(p.id, true);
+    const e = await etatRetrouver(p.id);
     if (!e.shazam) return void (etape = 'ferme');
     enfant = p.kind === 'enfant' || e.enfant === true;
     etape = e.accord ? 'pret' : 'accord';

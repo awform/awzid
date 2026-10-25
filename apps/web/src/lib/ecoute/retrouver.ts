@@ -4,6 +4,22 @@
  * (qui ne le garde pas) et reste en mémoire sur l'appareil le temps de l'envoi seulement.
  */
 import { loadTexts } from '$lib/i18n';
+import { call } from '$lib/session';
+
+/**
+ * État de la fonction pour un profil (interrupteur, accord, enfant). Appel direct, SANS `$lib/ecoute/etat` : importer ce
+ * petit module de la coquille depuis un écran chargé à la demande le faisait sortir de son morceau et coûtait 1 Ko à
+ * l'appareil de l'élève (mesuré le 25/10/2026).
+ */
+export async function etatRetrouver(
+  profileId: string,
+): Promise<{ shazam?: boolean; accord?: boolean; enfant?: boolean }> {
+  const r = await call<{ shazam?: boolean; accord?: boolean; enfant?: boolean }>(
+    'GET',
+    `/profiles/${profileId}/ecoute`,
+  ).catch(() => null);
+  return r?.ok && r.data ? r.data : {};
+}
 
 /** l'enregistrement s'arrête tout seul à 15 s */
 export const RETROUVER_MAX_S = 15;
