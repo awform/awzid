@@ -22,6 +22,21 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 26/10/2026 — Récitation d'Ayyūb, deuxième passe sur les doutes (décisions du référent) ; NON déployé
+
+- Moins de 4 mots en contexte coranique (référence du bloc, partie Coran, mot à mot, hifẓ, Prière) : verset entier
+  d'Ayyūb, passage surligné ; la référence jouée s'affiche sur le bouton (« sourate:verset »).
+- Passage présent à plusieurs endroits : sourate citée par la leçon, sinon la première occurrence du Muṣḥaf (Tanzil trié).
+- Mots du Coran présentés comme vocabulaire (lemmes, exercices de langue) : synthèse en graphie courante,
+  `data/zero-muet/a-generer-lemmes-26-10.tsv` (425 textes, pour l'agent audio).
+- Parties mixtes qui reprenaient le verset : découpées, la synthèse ne lit que le texte du livre.
+- En graphie du Muṣḥaf sans verset sûr : rien de branché, `doutes-referent-93.tsv` (103 textes, 3 versets candidats).
+- Mutashābihāt : chaque côté de la paire joue SON verset ; la pastille du petit lecteur pilote la récitation.
+- Table : 4 864 textes branchés ; 113 doutes. Tests : content, web, e2e (recitation-ayyub, mutashabihat,
+  madjaliss-audio, a3, lecteur) verts ; marge élève 5 155 o.
+
+---
+
 ## 26/10/2026 — Livres corrigés en service : copie des livres échangée, gardes et scénarios régénérés ; NON déployé
 
 - `~/awform-content` = la copie du 26/10 (08 h 33, 3 825 versets contrôlés, 0 erreur) ; l'ancienne copie (18/10) est

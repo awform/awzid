@@ -32,24 +32,29 @@
   });
   onDestroy(() => audio?.pause());
 
-  async function ecouter() {
-    if (joue) {
+  /** verset joué : chaque côté de la paire joue SON verset (décision du référent du 26/10/2026) */
+  let enCours = $state<'moi' | 'autre' | null>(null);
+  async function ecouter(cote: 'moi' | 'autre' = 'autre') {
+    if (joue && enCours === cote) {
       audio?.pause();
       joue = false;
       return;
     }
+    const v = cote === 'moi' ? moi : j.autre;
+    enCours = cote;
     indispo = false;
-    const r = await suraPack(AYYOUB, j.autre.s);
+    const r = await suraPack(AYYOUB, v.s);
     const f =
-      r.ok && r.data && r.data.mode !== 'sourate'
-        ? r.data.files.find((x) => x.aya === j.autre.a)
-        : null;
+      r.ok && r.data && r.data.mode !== 'sourate' ? r.data.files.find((x) => x.aya === v.a) : null;
     if (!f || !audio) return void (indispo = true);
     credit = r.data!.credit;
     audio.src = f.url;
     try {
       await audio.play();
       joue = true;
+      // le petit lecteur de l'application pilote la récitation (pause, ±5 s, vitesse)
+      const a = audio;
+      void import('$lib/lecteur/ouvrir').then((m) => m.piloter(a)).catch(() => {});
     } catch {
       indispo = true;
     }
@@ -72,8 +77,25 @@
     <Bidi text={t(j.diffs.length ? 'mt.surligne' : 'mt.commun')} />
   </p>
   <div class="actions">
-    <button type="button" onclick={ecouter} aria-pressed={joue} data-testid="jumeau-ecouter"
-      ><Bidi text={joue ? t('mt.arreter') : t('mt.ecouter', { ref: ref(j.autre) })} /></button
+    <button
+      type="button"
+      onclick={() => ecouter('moi')}
+      aria-pressed={joue && enCours === 'moi'}
+      data-testid="jumeau-ecouter-moi"
+      ><Bidi
+        text={joue && enCours === 'moi' ? t('mt.arreter') : t('mt.ecouter', { ref: ref(moi) })}
+      /></button
+    >
+    <button
+      type="button"
+      onclick={() => ecouter('autre')}
+      aria-pressed={joue && enCours === 'autre'}
+      data-testid="jumeau-ecouter"
+      ><Bidi
+        text={joue && enCours === 'autre'
+          ? t('mt.arreter')
+          : t('mt.ecouter', { ref: ref(j.autre) })}
+      /></button
     >
   </div>
   <audio bind:this={audio} onended={() => (joue = false)} preload="none"></audio>

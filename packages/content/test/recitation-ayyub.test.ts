@@ -27,6 +27,7 @@ import {
   motsTexte,
   refsDe,
   segmentCourt,
+  candidats,
   type Analyse,
   type Ref,
 } from '../src/recitation-ayyub.js';
@@ -79,8 +80,11 @@ describe('recitation d’Ayyūb : analyse d’un texte (mini-corpus)', () => {
     expect(f.statut).toBe('fragment');
     expect(f.segments).toEqual([{ k: 'v', s: 3, a: 1, b: 1 }]);
   });
-  it('ambigu (même suite dans deux versets) : doute, sauf référence du livre ou décision du référent', () => {
-    expect(analyser('كتب درس بيت قلم', idx).statut).toBe('doute');
+  it('ambigu (même suite dans deux versets) : référence, décision, sourate citée, sinon la première du Muṣḥaf', () => {
+    expect(analyser('كتب درس بيت قلم', idx).segments).toEqual([{ k: 'v', s: 1, a: 1, b: 1 }]);
+    expect(analyser('كتب درس بيت قلم', idx, { sourates: [2] }).segments).toEqual([
+      { k: 'v', s: 2, a: 1, b: 1 },
+    ]);
     expect(analyser('كتب درس بيت قلم (2:1)', idx).segments).toEqual([{ k: 'v', s: 2, a: 1, b: 1 }]);
     expect(analyser('كتب درس بيت قلم', idx, { decision: ['1:1'] }).segments).toEqual([
       { k: 'v', s: 1, a: 1, b: 1 },
@@ -97,8 +101,27 @@ describe('recitation d’Ayyūb : analyse d’un texte (mini-corpus)', () => {
     ]);
     expect(t.slice(...a.coran[0]!)).toBe('باب نور شمس قمر بحر');
   });
-  it('partie « synthèse » qui reprend deux mots du verset : doute (jamais de synthèse sur le Coran)', () => {
-    expect(analyser('باب نور شمس قمر بحر ثم باب نور', idx).statut).toBe('doute');
+  it('partie « synthèse » qui reprend deux mots du verset : découpée, la synthèse ne lit que le texte du livre', () => {
+    expect(analyser('باب نور شمس قمر بحر ثم باب نور', idx).segments).toEqual([
+      { k: 'v', s: 1, a: 2, b: 2 },
+      { k: 't', texte: 'ثم' },
+    ]);
+  });
+  it('moins de 4 mots gardés : verset entier en contexte coranique (référence, sinon le premier), sinon lemme', () => {
+    expect(analyser('سهل نهر', idx, { garde: true, coranique: true }).segments).toEqual([
+      { k: 'v', s: 2, a: 2, b: 2 },
+    ]);
+    expect(analyser('درس بيت', idx, { garde: true, coranique: true }).segments).toEqual([
+      { k: 'v', s: 1, a: 1, b: 1 },
+    ]);
+    expect(
+      analyser('درس بيت', idx, { garde: true, coranique: true, refs: [{ s: 2, a: 1, b: 1 }] })
+        .segments,
+    ).toEqual([{ k: 'v', s: 2, a: 1, b: 1 }]);
+    expect(analyser('سهل نهر', idx, { garde: true }).statut).toBe('lemme');
+  });
+  it('trois versets candidats les plus proches (score)', () => {
+    expect(candidats('باب نور قمر', idx)[0]).toBe('1:2 (4)');
   });
   it('moins de 4 mots : verset entier présenté comme verset, fragment référencé, sinon court', () => {
     expect(analyser('جبل سهل نهر', idx, { presente: true }).segments).toEqual([
@@ -134,6 +157,26 @@ interface Lieu {
   presente: boolean;
   /** gardé sans voix par la vidéo (raison de la garde) */
   garde?: string;
+  /** contexte coranique (partie Coran, verset, mot à mot, hifẓ, Prière…, ou référence du bloc) */
+  coranique: boolean;
+  /** sourates citées par la leçon (le fichier) */
+  sourates: number[];
+}
+/** livres et données au contexte coranique d'un bout à l'autre */
+const LIVRES_CORAN = new Set(['hifz', 'priere']);
+/** champs au contexte coranique */
+const CHAMPS_CORAN = /coran|verset|ayat|sourate|mushaf|hifz|tafsir|mutash|tanzil|recit/i;
+/** sourates citées par les textes d'une leçon (références) : à partir de l'indice `de` */
+function sourates(out: Lieu[], de: number) {
+  const s = [
+    ...new Set(
+      out
+        .slice(de)
+        .flatMap((l) => [...l.refs, ...refsDe(l.texte)])
+        .map((r) => r.s),
+    ),
+  ].sort((x, y) => x - y);
+  for (const l of out.slice(de)) l.sourates = s;
 }
 const ARABE = /[ء-ي]/;
 const ORNE = /[﴾﴿]/;
@@ -163,6 +206,8 @@ function textes(
         refs: refsBloc,
         presente:
           coran || ORNE.test(t) || looksQuranic(t) || refsBloc.length > 0 || refsDe(t).length > 0,
+        coranique: coran || refsBloc.length > 0 || LIVRES_CORAN.has(livre),
+        sourates: [],
       });
     return;
   }
@@ -191,7 +236,7 @@ function textes(
         ? (o.recite as Record<string, string>)
         : null;
     const val = rec && Array.isArray(v) ? v.map((x, i) => (rec[String(i)] ? null : x)) : v;
-    textes(val, livre, `${lieu}.${k}`, out, refs, coran || /coran|verset|ayat|sourate/i.test(k));
+    textes(val, livre, `${lieu}.${k}`, out, refs, coran || CHAMPS_CORAN.test(k));
   }
 }
 
@@ -215,6 +260,7 @@ function inventaire(): Lieu[] {
         }
         if (lecons && /^l\d+\.js$/.test(f))
           v = studentProjection(v as Record<string, unknown>, livre);
+        const de = out.length;
         textes(v, livre, f.replace(/\.js$/, ''), out);
         // vidéos vivantes (V1 et V2) : textes dits ou gardés tels que le lecteur les montre (morceaux de phrases, bulles)
         if (lecons && /^l\d+\.js$/.test(f) && (VIDEO_NIVEAUX as readonly string[]).includes(livre))
@@ -232,6 +278,8 @@ function inventaire(): Lieu[] {
                 refs: [],
                 presente: true,
                 garde: s.raison,
+                coranique: s.raison !== 'contexte' && s.raison !== 'basmala',
+                sourates: [],
               });
             for (const s of vid.sansSon)
               out.push({
@@ -240,8 +288,11 @@ function inventaire(): Lieu[] {
                 texte: s.texte,
                 refs: [],
                 presente: false,
+                coranique: false,
+                sourates: [],
               });
           }
+        sourates(out, de);
       }
     }
   const json = (dir: string, nom: (f: string) => string) => {
@@ -249,8 +300,11 @@ function inventaire(): Lieu[] {
     if (!existsSync(d)) return;
     for (const f of readdirSync(d)
       .filter((x) => x.endsWith('.json'))
-      .sort())
+      .sort()) {
+      const de = out.length;
       textes(JSON.parse(readFileSync(join(d, f), 'utf8')), nom(f), f, out);
+      sourates(out, de);
+    }
   };
   json('cahier-data', (f) => `cahier ${f.replace('.json', '')}`);
   json('priere-data', () => 'priere');
@@ -325,6 +379,8 @@ const genre = (note: string) =>
 interface Resultat {
   table: Record<string, string[]>;
   doutes: string[];
+  lemmes: string[];
+  doutes93: string[];
   inventaire: string[];
   synthese: string[];
   annexes: number[];
@@ -372,6 +428,8 @@ function construire(): Resultat {
   const synthese = new Map<string, string>();
   const annexes = new Set<number>();
   const parLivre = new Map<string, Record<string, number>>();
+  const lemmes = new Map<string, { livres: Set<string>; note: string }>();
+  const doutes93: string[] = [];
   const fichier = (t: string) => audioFileId(t)!;
   for (const [k, e] of [...parCle].sort(([a], [b]) => (a < b ? -1 : 1))) {
     const plans = new Map<string, Analyse>();
@@ -384,28 +442,27 @@ function construire(): Resultat {
         presente: l.presente,
         reserves: res,
         garde: e.refus || !!l.garde,
+        coranique: l.coranique,
+        sourates: l.sourates,
       });
       plans.set(JSON.stringify([a.statut, a.segments]), a);
     }
-    // un même texte doit avoir un seul plan partout ; sinon, doute (références différentes selon les leçons)
-    const branches = [...plans.values()].filter((a) =>
-      ['verset', 'fragment', 'mixte'].includes(a.statut),
-    );
-    let a: Analyse;
-    if (branches.length > 1)
-      a = {
-        statut: 'doute',
-        segments: [],
-        coran: [],
-        note: `plans différents selon les leçons : ${branches
-          .map((x) => x.segments.map((s) => segmentCourt(s, fichier)).join(' + '))
-          .join(' / ')}`,
-      };
-    else
-      a =
-        branches[0] ??
-        [...plans.values()].find((x) => x.statut === 'doute') ??
-        [...plans.values()][0]!;
+    // un même texte, plusieurs plans selon les leçons (références différentes) : la table est une par texte ; on garde le
+    // plan au premier verset dans l'ordre du Muṣḥaf (décision du référent du 26/10/2026 : l'élève voit la référence)
+    const premier = (x: Analyse) => {
+      const v = x.segments.find((y) => y.k === 'v');
+      return v && v.k === 'v' ? v.s * 1000 + v.a : 1e9;
+    };
+    const branches = [...plans.values()]
+      .filter((x) => ['verset', 'fragment', 'mixte'].includes(x.statut))
+      .sort((x, y) => premier(x) - premier(y));
+    const a: Analyse =
+      branches[0] ??
+      [...plans.values()].find((x) => x.statut === 'doute') ??
+      [...plans.values()].find((x) => x.statut === 'lemme') ??
+      [...plans.values()][0]!;
+    if (a.statut === 'lemme')
+      lemmes.set(e.texte, { livres: new Set(e.lieux.map((l) => l.livre)), note: a.note });
     const livres = [...new Set(e.lieux.map((l) => l.livre))];
     for (const lv of livres) {
       const p = parLivre.get(lv) ?? {};
@@ -424,15 +481,42 @@ function construire(): Resultat {
       .slice(0, 6)
       .join(' ; ');
     const ligne = (x: string) => x.replace(/[\t\n\r]+/g, ' ');
-    if (a.statut === 'doute')
+    if (a.statut === 'doute') {
       doutes.push([genre(a.note), ligne(e.texte), lieux, ligne(a.note)].join('\t'));
+      // en graphie du Muṣḥaf sans verset sûr : les 3 versets candidats les plus proches, pour le référent
+      if (genre(a.note) === 'graphie-sans-verset') {
+        const passage = /« (.+) »/.exec(a.note)?.[1] ?? e.texte;
+        doutes93.push(
+          [ligne(e.texte), ligne(passage), candidats(passage, idx).join(' ; '), lieux].join('\t'),
+        );
+      }
+    }
     inventaireL.push(
       [livres.join(' '), a.statut, plan.join(' '), ligne(a.note), ligne(e.texte)].join('\t'),
     );
   }
+  // lemmes de la surface « Mots du Coran » (inventaire global du 26/10/2026) : vocabulaire, jamais Ayyūb
+  const global = join(DATA, 'ayyub-global-26-10.tsv');
+  if (existsSync(global))
+    for (const l of readFileSync(global, 'utf8').split('\n').slice(1)) {
+      const c = l.split('\t');
+      if (c[0] === 'coran-mots-lemmes' && c[4] && !lemmes.has(c[4]))
+        lemmes.set(c[4], {
+          livres: new Set(['coran-mots']),
+          note: `lemme du Coran (${c[11] ?? ''})`,
+        });
+    }
   return {
     table,
     doutes,
+    lemmes: [...lemmes]
+      .sort(([x], [y]) => (x < y ? -1 : 1))
+      .map(([t, x]) =>
+        [t.replace(/[\t\n\r]+/g, ' '), audioFileId(t), [...x.livres].sort().join(' '), x.note].join(
+          '\t',
+        ),
+      ),
+    doutes93: doutes93.sort(),
     inventaire: inventaireL,
     synthese: [...synthese]
       .sort()
@@ -508,6 +592,16 @@ describe.skipIf(!tanzil || !HAS_CONTENT)('récitation d’Ayyūb : table des liv
       [
         join(DATA, 'synthese-mixte.tsv'),
         tete('empreinte\tfichier_present\ttexte') + r.synthese.map((l) => `${l}\n`).join(''),
+      ],
+      [
+        join(DATA, 'a-generer-lemmes-26-10.tsv'),
+        tete('texte\tempreinte\tlivres\tnote (synthèse en graphie courante, pour l’agent audio)') +
+          r.lemmes.map((l) => `${l}\n`).join(''),
+      ],
+      [
+        join(DATA, 'doutes-referent-93.tsv'),
+        tete('texte\tpassage\tversets candidats (score)\tou') +
+          r.doutes93.map((l) => `${l}\n`).join(''),
       ],
     ];
     if (process.env.RECITATION_AYYUB === 'ecrire') {
@@ -588,6 +682,8 @@ describe.skipIf(!tanzil || !HAS_CONTENT)('récitation d’Ayyūb : table des liv
             reserves: res,
             refs: l.refs,
             presente: l.presente,
+            coranique: l.coranique,
+            sourates: l.sourates,
           }),
         )
         .find(

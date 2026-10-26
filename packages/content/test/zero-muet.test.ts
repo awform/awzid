@@ -150,7 +150,9 @@ function aGenerer(avecSync = true): Set<string> {
           .filter(Boolean)
           .map((l) => audioKey(l.split('\t')[col]!))
       : [];
-  return new Set([...lire(f, 0), ...(avecSync ? lire(g, 3) : [])]);
+  // mots du Coran présentés comme vocabulaire (lemmes) : synthèse en graphie courante, pour l'agent audio (26/10/2026)
+  const lemmes = join(DATA, 'a-generer-lemmes-26-10.tsv');
+  return new Set([...lire(f, 0), ...(avecSync ? [...lire(g, 3), ...lire(lemmes, 0)] : [])]);
 }
 
 // ———— textes à écouter

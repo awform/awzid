@@ -193,7 +193,8 @@ export function refsDe(s: string): Ref[] {
 export type Segment =
   { k: 'v'; s: number; a: number; b: number } | { k: 'b'; s: number } | { k: 't'; texte: string };
 
-export type Statut = 'verset' | 'fragment' | 'mixte' | 'doute' | 'court' | 'aucun';
+/** « lemme » : mot du Coran présenté comme vocabulaire (exercice de langue) : la synthèse, en graphie courante */
+export type Statut = 'verset' | 'fragment' | 'mixte' | 'doute' | 'court' | 'aucun' | 'lemme';
 
 export interface Analyse {
   statut: Statut;
@@ -220,6 +221,62 @@ export interface Contexte {
   decisionType?: 'ayyub' | 'mixte' | 'table';
   /** le texte est gardé sans voix par la garde coranique ou par la vidéo (présenté comme Coran) */
   garde?: boolean;
+  /**
+   * contexte CORANIQUE (mot à mot d'un verset, tafsīr, hifẓ, partie Coran, Prière, muṣḥaf) : un passage de moins de
+   * 4 mots s'y entend dans son verset entier (décision du référent du 26/10/2026) ; hors de ce contexte, c'est du
+   * vocabulaire (« lemme ») : la synthèse
+   */
+  coranique?: boolean;
+  /** sourates que la leçon (ou le livre) cite : choix du verset d'un passage présent à plusieurs endroits */
+  sourates?: readonly number[];
+}
+
+/**
+ * Choix du verset d'un passage présent à plusieurs endroits (décision du référent du 26/10/2026) : celui d'une sourate
+ * que la leçon cite, sinon la PREMIÈRE occurrence dans l'ordre du Muṣḥaf (Tanzil trié) ; la référence est affichée.
+ */
+function choisirOccurrence(
+  positions: readonly number[],
+  idx: IndexCoran,
+  sourates: readonly number[] | undefined,
+): { p: number; note: string } {
+  const tri = [...positions].sort((x, y) => x - y);
+  const cite = tri.find((q) => sourates?.includes(idx.mots[q]!.s));
+  return cite !== undefined
+    ? { p: cite, note: 'sourate citée par la leçon' }
+    : { p: tri[0]!, note: 'première occurrence dans l’ordre du Muṣḥaf' };
+}
+
+/**
+ * Trois versets candidats les plus proches d'un passage (score : mots du passage présents dans le verset, plus les
+ * suites de deux mots), pour la décision du référent.
+ */
+export function candidats(passage: string, idx: IndexCoran, n = 3): string[] {
+  const m = motsTexte(passage).map((x) => souple(x.k));
+  const scores = new Map<string, number>();
+  const vus = new Set<string>();
+  for (const k of new Set(m))
+    for (const q of idx.parMot.get(k) ?? []) {
+      const c = `${idx.mots[q]!.s}:${idx.mots[q]!.v}`;
+      if (vus.has(`${c}|${k}`)) continue;
+      vus.add(`${c}|${k}`);
+      scores.set(c, (scores.get(c) ?? 0) + 1);
+    }
+  for (const [c, sc] of scores) {
+    const bo = idx.bornes.get(c);
+    if (!bo) continue;
+    const verset = ` ${idx.mots
+      .slice(bo[0], bo[1] + 1)
+      .map((x) => souple(x.k))
+      .join(' ')} `;
+    let bonus = 0;
+    for (let j = 0; j + 1 < m.length; j++) if (verset.includes(` ${m[j]} ${m[j + 1]} `)) bonus++;
+    scores.set(c, sc + bonus);
+  }
+  return [...scores]
+    .sort((x, y) => y[1] - x[1] || (x[0] < y[0] ? -1 : 1))
+    .slice(0, n)
+    .map(([c, s]) => `${c} (${s})`);
 }
 
 interface Course {
@@ -394,36 +451,54 @@ export function analyser(texte: string, idx: IndexCoran, ctx: Contexte = {}): An
       vus(refsTexte);
       note = 'référence du livre';
     }
-    if (!choix.length && ORNE.test(texte) && refs.length) {
+    // contexte coranique (mot à mot d'un verset, tafsīr, hifẓ, Prière…) : la référence du bloc donne le verset
+    if (!choix.length && (ORNE.test(texte) || ctx.coranique) && refs.length) {
       vus(refs);
       note = 'référence du livre';
     }
-    if (!choix.length && entiers.length && (ctx.presente || lettres.length)) {
+    // gardé comme Coran (ou annoncé : ﴿ ﴾, référence) et lu dans le Coran
+    const presenteCoran = ctx.garde || ORNE.test(texte) || refsTexte.length > 0;
+    // « بِسْمِ اللَّهِ » seul : dhikr dit avant un acte, la synthèse (précision du référent du 26/10/2026)
+    if (k === BASMALA.split(' ').slice(0, 2).join(' '))
+      return { statut: 'court', segments: [], coran: [], note: 'بسم الله seul : dhikr (synthèse)' };
+    // occurrences dans le texte des versets (jamais la Basmala de tête de sourate, qui n'est pas dans le fichier du verset)
+    const occurrences = (idx.parMot.get(souple(w[0]!.k)) ?? []).filter(
+      (p) =>
+        !M[p]!.b &&
+        w.every((x, q) => p + q < M.length && !M[p + q]!.b && egalSouple(x.k, M[p + q]!.k)),
+    );
+    const enContexte = ctx.presente || lettres.length > 0 || ctx.coranique;
+    if (!choix.length && entiers.length && enContexte) {
       if (entiers.length === 1) {
         choix.push(entiers[0]!);
         note = lettres.length ? 'lettres détachées' : 'verset entier';
-      } else
-        return {
-          statut: 'doute',
-          segments: [],
-          coran: [[0, texte.length]],
-          note: `verset entier présent à plusieurs endroits : ${entiers.join(', ')}`,
-        };
+      } else {
+        // verset entier présent à plusieurs endroits : sourate citée par la leçon, sinon le premier du Muṣḥaf
+        const c = choisirOccurrence(occurrences, idx, ctx.sourates);
+        const v = idx.mots[c.p]!;
+        choix.push(entiers.find((r) => r.startsWith(`${v.s}:${v.v}`)) ?? `${v.s}:${v.v}`);
+        note = c.note;
+      }
     }
-    const uniques = [...new Set(choix)];
-    // gardé comme Coran (ou annoncé : ﴿ ﴾, référence) et lu dans le Coran, mais sans verset sûr : au référent
-    const presenteCoran = ctx.garde || ORNE.test(texte) || refsTexte.length > 0;
-    const dansLeCoran = (idx.parMot.get(souple(w[0]!.k)) ?? []).some((p) =>
-      w.every((x, q) => p + q < M.length && egalSouple(x.k, M[p + q]!.k)),
-    );
-    if (!uniques.length && presenteCoran && dansLeCoran)
+    // passage de moins de 4 mots en contexte coranique, sans référence : le verset (sourate citée, sinon le premier)
+    if (!choix.length && presenteCoran && ctx.coranique && occurrences.length) {
+      const c = choisirOccurrence(occurrences, idx, ctx.sourates);
+      const d = idx.mots[c.p]!;
+      const f = idx.mots[c.p + w.length - 1]!;
+      choix.push(d.v === f.v ? `${d.s}:${d.v}` : `${d.s}:${d.v}-${f.v}`);
+      note = c.note;
+    }
+    // plusieurs versets désignés par les références : le premier du Muṣḥaf
+    const uniques = [...new Set(choix)].slice(0, 1);
+    // gardé comme Coran mais présenté comme VOCABULAIRE (lemme, exercice de langue) : la synthèse, en graphie courante
+    if (!uniques.length && presenteCoran && occurrences.length)
       return {
-        statut: 'doute',
+        statut: 'lemme',
         segments: [],
         coran: [],
         note: entiers.length
-          ? `verset entier de moins de 4 mots (${entiers.join(', ')}) : vocabulaire (synthèse) ou verset (Ayyūb) ?`
-          : 'moins de 4 mots du Coran présentés comme Coran, sans référence sûre : verset à choisir',
+          ? `verset entier de moins de 4 mots présenté comme vocabulaire (${entiers.join(', ')}) : synthèse en graphie courante`
+          : 'mot du Coran présenté comme vocabulaire : synthèse en graphie courante',
       };
     if (uniques.length !== 1)
       return {
@@ -505,19 +580,10 @@ export function analyser(texte: string, idx: IndexCoran, ctx: Contexte = {}): An
         }
       }
       if (p === undefined) {
-        const cands = [...plages.keys()].map((x) =>
-          x
-            .split('|')
-            .slice(0, 2)
-            .join('…')
-            .replace(/(\d+:\d+)…\1/, '$1'),
-        );
-        return {
-          statut: 'doute',
-          segments: [],
-          coran: [[w[co.i]!.a, w[co.i + co.n - 1]!.b]],
-          note: `citation présente à plusieurs endroits : ${cands.join(', ')}`,
-        };
+        // ni référence ni décision : sourate citée par la leçon, sinon la première occurrence du Muṣḥaf (mêmes mots)
+        const c = choisirOccurrence([...plages.values()], idx, ctx.sourates);
+        p = c.p;
+        notes.push(c.note);
       }
     }
     const a0 = w[co.i]!.a;
@@ -628,24 +694,38 @@ export function analyser(texte: string, idx: IndexCoran, ctx: Contexte = {}): An
         note: `partie confiée à la synthèse qui se lit dans le Coran : « ${x.texte} »`,
       };
   }
-  const mixte = plan.some((x) => x.k === 't');
-  if (mixte) {
-    // garde-fou : une partie confiée à la synthèse ne doit reprendre AUCUNE suite de deux mots des versets joués
+  // garde-fou : une partie confiée à la synthèse ne reprend AUCUNE suite de deux mots des versets joués. Décision du
+  // référent du 26/10/2026 : on la DÉCOUPE pour que la synthèse ne lise que le texte du livre (les mots du verset sont
+  // entendus dans la récitation) ; ce qui reste est dit à sa place
+  if (plan.some((x) => x.k === 't')) {
     const paires = new Set<string>();
     for (let q = 0; q + 1 < joues.length; q++) paires.add(`${joues[q]} ${joues[q + 1]}`);
-    for (const x of plan)
-      if (x.k === 't') {
-        const m = motsTexte(x.texte).map((y) => souple(y.k));
-        for (let j = 0; j + 1 < m.length; j++)
-          if (paires.has(`${m[j]} ${m[j + 1]}`))
-            return {
-              statut: 'doute',
-              segments: [],
-              coran,
-              note: `partie confiée à la synthèse qui reprend des mots du verset : « ${x.texte} »`,
-            };
+    for (let j = plan.length - 1; j >= 0; j--) {
+      const x = plan[j]!;
+      if (x.k !== 't') continue;
+      const m = motsTexte(x.texte);
+      const sk = m.map((y) => souple(y.k));
+      const coranique = new Set<number>();
+      for (let q = 0; q + 1 < sk.length; q++)
+        if (paires.has(`${sk[q]} ${sk[q + 1]}`)) coranique.add(q).add(q + 1);
+      if (!coranique.size) continue;
+      const morceaux: Segment[] = [];
+      for (let q = 0; q < m.length;) {
+        if (coranique.has(q)) {
+          q++;
+          continue;
+        }
+        let r = q;
+        while (r + 1 < m.length && !coranique.has(r + 1)) r++;
+        const t = x.texte.slice(m[q]!.a, m[r]!.b).replace(BORDS, '').trim();
+        if (/[ء-ي]/.test(t)) morceaux.push({ k: 't', texte: t });
+        q = r + 1;
       }
+      plan.splice(j, 1, ...morceaux);
+      notes.push('partie du livre découpée : la synthèse ne lit pas les mots du verset');
+    }
   }
+  const mixte = plan.some((x) => x.k === 't');
   return {
     statut: mixte ? 'mixte' : fragment ? 'fragment' : 'verset',
     segments: plan,

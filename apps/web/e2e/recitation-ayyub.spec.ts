@@ -81,6 +81,8 @@ test.describe('récitation d’Ayyūb dans les leçons', () => {
     const b = page.locator('[data-testid="recitation"][data-versets="12:4"]').first();
     await expect(b).toBeVisible({ timeout: 15_000 });
     await expect(b).toHaveAttribute('data-lecteur', 'l');
+    // ce qui est joué se voit, discrètement : « sourate:verset »
+    await expect(b.getByTestId('recitation-ref')).toHaveText('12:4');
     // cible de 44 px au moins, nom accessible qui dit le récitateur et le verset entier
     const box = (await b.boundingBox())!;
     expect(box.height).toBeGreaterThanOrEqual(44);

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
+  import Bidi from './Bidi.svelte';
   import { t } from './i18n';
   import { AUDIO_CTX, audioIdFor, sourceLecteur, SLOW_RATE, type LevelAudio } from './lecons-audio';
 
@@ -113,7 +114,10 @@
           fill="none"
           stroke-linecap="round"
         /></svg
-      ><span class="nom">{t('audio.recitation_ayyub')}</span></button
+      ><span class="nom">{t('audio.recitation_ayyub')}</span><span
+        class="ref"
+        data-testid="recitation-ref"><Bidi text={recit.versets.join(' · ')} /></span
+      ></button
     ></span
   >{/if}
 
@@ -154,6 +158,13 @@
   /* la classe « playing » est posée par le lecteur pendant la lecture de cette phrase */
   .rec {
     border-color: var(--gold);
+  }
+  /* référence de ce qui est joué (sourate:verset), discrète */
+  .ref {
+    font-size: 12px;
+    font-family: var(--font-ui);
+    opacity: 0.8;
+    margin-inline-start: 4px;
   }
   .spk:global(.playing) {
     background: var(--teal);
