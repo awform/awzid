@@ -13,6 +13,14 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 26/10/2026 — Vidéos vivantes V2 : le livre Enfants 5 (en5), fusion de `video-vivante-en5-wip` dans `main` ; Enfants 1 à 5 et Ados 1 à 4 proposés ; NON déployé
+
+**Note de reprise** : **toutes les vidéos vivantes V2 sont faites** (en1 à en5, ado1 à ado4 ; dernier livre fusionné = en5). Reste, hors de ce lot : relecture du référent de ce qui a changé dans la garde (voir ci-dessous), audios manquants (rapports `reports/video-vivante-<livre>.md`).
+
+`VIDEO_NIVEAUX` : en 5 (liste complète : ad 10, en 5, ado 4) ; `VIDEO_GARDE` recalculée (**14 empreintes de plus**, dont des versets de la prière citée dans les récits). Contrôle 360 px : **0 réduction sur les 25 unités** du premier coup ; captures v2 clair/sombre de l03, l12, l21 et planche (`captures_app/captures-v2-en5/`). Tests : typecheck, eslint, prettier 0 erreur ; unitaires verts sauf `video-cahier-niveau1.test.ts` et `identites.test.ts` (rouges aussi sur `main`) ; e2e vidéo **18 réussis, 0 échec** ; **e2e complète finale** (`flock`, `--retries=1 --workers=3`) : **1 050 réussis, 178 ignorés, 5 instables passés au second essai (cahier-jeux, hifz-classe), 3 échecs sans rapport avec la vidéo** : `khatma.spec.ts:295` (mobile et bureau) et `hifz-classe.spec.ts:123` (mobile : TOTP incorrect) ; **rouges aussi sur `main` 4caf33b** (vérifié : build propre de `main`, mêmes échecs) ; poids lecteur v2 23 731 o (garde 24 Ko), marge de l'appareil élève 6 425 o. Audio (en5, 864 fichiers) : 241 textes « à écouter » sans fichier, 1 151 en tout, 56 gardés sans voix ; `reports/video-vivante-en5.md`.
+
+---
+
 ## 26/10/2026 — Vidéos vivantes V2 : le livre Ados 4 (ado4), fusion de `video-vivante-ado4-wip` dans `main` ; NON déployé
 
 **Note de reprise** : dernier livre fusionné = **ado4** (après en1, ado1, en2, ado2, en3, ado3, en4). Reste : en5, puis l'e2e complète finale. Outils : `~/vv-ad/` (`nouveau3.sh`, `auto.sh`, `auto2.sh` (avec e2e complète), `merge.sh`, `verif.sh`, `clean.sh`).
