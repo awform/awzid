@@ -12,7 +12,7 @@ import { totp } from './totp';
  *  - COUPÉ (défaut, démonstration comprise) : ni carte dans « Vivre l'islam », ni page, aucun fichier du parcours ;
  *  - « CANAL BÊTA » réglé par l'administrateur : carte d'entrée, le chemin (huit étapes, avancement gardé), prier pas à pas
  *    (étapes du livre, voix haute ou basse, Fātiḥa récitée par Ayyūb verset par verset de 1:2 à 1:7, takbīr et paroles par les
- *    fichiers de synthèse, « audio en préparation » sans fichier, JAMAIS de voix sur la basmala), vidéo vivante (les deux
+ *    fichiers de synthèse, « audio en préparation » sans fichier, tasmiya = dhikr lu par la synthèse), vidéo vivante (les deux
  *    unités enchaînées, mouvement réduit compris), ablutions (geste, ×3, tête de la femme par le texte, grand lavage en
  *    pictogrammes), sourate mot à mot (note de la Basmala, trois parties, feuille du mot, Échap), entraînement (masquage
  *    progressif, bilan gardé), situations, compteur du tasbīḥ (33 · 33 · 33, vibration), accessibilité AA en clair et en
@@ -53,12 +53,11 @@ const element = (id: string): El => {
   return r!;
 };
 const sha = (id: string) => audioFileId(element(id).ar!)!;
-/** textes de synthèse du livre, sauf l'invocation du qunūt (sans fichier : « audio en préparation ») et la basmala */
+/** textes de synthèse du livre, sauf l'invocation du qunūt (sans fichier : « audio en préparation ») */
 const FICHIERS = (() => {
   const ids = new Set<string>();
   marcher(priere.sections, (o) => {
-    if (o.audio === 'tts' && o.ar && o.id !== 'S2A.w.tasmiya' && o.id !== 'S5.w.qunut')
-      ids.add(audioFileId(o.ar)!);
+    if (o.audio === 'tts' && o.ar && o.id !== 'S5.w.qunut') ids.add(audioFileId(o.ar)!);
     if (o.variante?.audio === 'tts') ids.add(audioFileId(o.variante.ar)!);
   });
   return [...ids];
@@ -463,7 +462,7 @@ test.describe('« canal bêta » réglé par l’administrateur', () => {
     await expect(sil.locator('.corps path').first()).toBeAttached();
   });
 
-  test('sans fichier : « audio en préparation » ; la basmala des ablutions n’a JAMAIS de voix', async ({
+  test('sans fichier : « audio en préparation » ; « Au nom d’Allah » (ablutions) est un dhikr lu par la synthèse', async ({
     page,
   }) => {
     const sons = await voixSimulee(page);
@@ -475,19 +474,16 @@ test.describe('« canal bêta » réglé par l’administrateur', () => {
     await expect(page.locator('[data-id="S5.w.qunut"] [data-testid="priere-ecouter"]')).toHaveCount(
       0,
     );
-    // la basmala : une explication, pas de bouton, aucun fichier demandé
+    // « Au nom d'Allah » avant un acte est un dhikr (décision du référent du 26/10/2026) : plus de message « sans voix »,
+    // un bouton « Écouter » branché sur le fichier de synthèse existant de la tasmiya
     await ouvrir(page, '?e=ablutions&i=1');
     const bloc = page.locator('[data-id="S2A.w.tasmiya"]');
-    await expect(bloc.locator('[data-testid="priere-sans-voix"]')).toHaveAttribute(
-      'data-raison',
-      'basmala',
-    );
-    await expect(bloc.locator('[data-testid="priere-ecouter"]')).toHaveCount(0);
-    await page.waitForTimeout(400);
-    // même avec un fichier de synthèse « existant » pour ce texte, il n'est jamais demandé
-    expect(sons.synthese.some((s) => s.includes(audioFileId(element('S2A.w.tasmiya').ar!)!))).toBe(
-      false,
-    );
+    await expect(bloc.locator('[data-testid="priere-sans-voix"]')).toHaveCount(0);
+    await expect(bloc.locator('[data-testid="priere-ecouter"]')).toBeVisible();
+    await bloc.locator('[data-testid="priere-ecouter"]').click();
+    await expect
+      .poll(() => sons.synthese.some((s) => s.endsWith(`/${sha('S2A.w.tasmiya')}.mp3`)))
+      .toBe(true);
   });
 
   test('vidéo vivante : les deux unités enchaînées, voix et mot éclairé, précédent / suivant, mouvement réduit', async ({
@@ -578,7 +574,7 @@ test.describe('« canal bêta » réglé par l’administrateur', () => {
       'dir',
       'rtl',
     );
-    // après les ablutions : les deux attestations en préparation (sans fichier), basmala jamais lue
+    // après les ablutions : les deux attestations en préparation (sans fichier)
     await page.locator('.ruban button[data-etape="S2A.e11"]').click();
     await expect(
       page.locator('[data-id="S2A.w.shahada"] [data-testid="priere-ecouter"]'),

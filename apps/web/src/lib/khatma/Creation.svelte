@@ -3,7 +3,8 @@
   import { t } from '$lib/i18n';
   import type { Position } from '$lib/quran/lecture';
   import type { ProfileInfo } from '$lib/session';
-  import { aujourdhui, creerFamille, creerPersonnel, rappelCompte } from './donnees';
+  import Consentement from './Consentement.svelte';
+  import { aujourdhui, creerFamille, creerPersonnel } from './donnees';
   import {
     ajouterJours,
     DUREES,
@@ -23,6 +24,7 @@
     profils,
     derniere,
     limites,
+    rappelActif = false,
     ferme,
     fait,
   }: {
@@ -30,6 +32,8 @@
     profils: ProfileInfo[];
     derniere: Position | null;
     limites: { joursMax: number; pagesParJourMax: number };
+    /** le compte a déjà accepté le rappel quotidien */
+    rappelActif?: boolean;
     ferme: () => void;
     fait: () => void;
   } = $props();
@@ -46,6 +50,10 @@
   let joursFamille = $state(30);
   let erreur = $state('');
   let envoi = $state(false);
+  /** écran de consentement affiché ; accord donné pendant cette création */
+  let consentement = $state(false);
+  let accordDonne = $state(false);
+  let sansRappel = $state(false);
 
   const peutFamille = $derived(profils.length >= 2);
   const jourMax = $derived(limites.joursMax);
@@ -59,6 +67,8 @@
   async function creer(e: SubmitEvent) {
     e.preventDefault();
     erreur = '';
+    // pas de rappel sans accord : l'écran de consentement passe avant toute création avec un rappel
+    if (rappel !== null && !rappelActif && !accordDonne) return void (consentement = true);
     const debut = aujourdhui();
     envoi = true;
     try {
@@ -90,11 +100,21 @@
         const r = await creerPersonnel(profil.id, corps);
         if (!r.ok) return void (erreur = message(r.code));
       }
-      if (rappel !== null) await rappelCompte(true);
       fait();
     } finally {
       envoi = false;
     }
+  }
+
+  function accepte() {
+    accordDonne = true;
+    consentement = false;
+    sansRappel = false;
+  }
+  function refuse() {
+    rappel = null;
+    consentement = false;
+    sansRappel = true;
   }
 
   function basculer(id: string) {
@@ -102,179 +122,187 @@
   }
 </script>
 
-<form class="form" onsubmit={creer} data-testid="khatma-creation">
-  <fieldset>
-    <legend>{t('kh.type')}</legend>
-    <label class="choix"
-      ><input
-        type="radio"
-        name="kh-type"
-        value="khatma"
-        bind:group={type}
-        data-testid="kh-type-khatma"
-      />
-      {t('kh.type_khatma')}</label
-    >
-    <label class="choix"
-      ><input
-        type="radio"
-        name="kh-type"
-        value="wird"
-        bind:group={type}
-        data-testid="kh-type-wird"
-      />
-      {t('kh.type_wird')}</label
-    >
-    {#if peutFamille}
+{#if consentement}
+  <Consentement {profil} {accepte} {refuse} />
+{:else}
+  <form class="form" onsubmit={creer} data-testid="khatma-creation">
+    <fieldset>
+      <legend>{t('kh.type')}</legend>
       <label class="choix"
         ><input
           type="radio"
           name="kh-type"
-          value="famille"
+          value="khatma"
           bind:group={type}
-          data-testid="kh-type-famille"
+          data-testid="kh-type-khatma"
         />
-        {t('kh.type_famille')}</label
-      >
-    {/if}
-  </fieldset>
-
-  {#if type === 'khatma'}
-    <fieldset>
-      <legend>{t('kh.comment')}</legend>
-      <label class="choix"
-        ><input
-          type="radio"
-          name="kh-mode"
-          value="duree"
-          bind:group={mode}
-          data-testid="kh-mode-duree"
-        />
-        {t('kh.par_duree')}</label
+        {t('kh.type_khatma')}</label
       >
       <label class="choix"
         ><input
           type="radio"
-          name="kh-mode"
-          value="pages"
-          bind:group={mode}
-          data-testid="kh-mode-pages"
+          name="kh-type"
+          value="wird"
+          bind:group={type}
+          data-testid="kh-type-wird"
         />
-        {t('kh.par_pages')}</label
+        {t('kh.type_wird')}</label
       >
+      {#if peutFamille}
+        <label class="choix"
+          ><input
+            type="radio"
+            name="kh-type"
+            value="famille"
+            bind:group={type}
+            data-testid="kh-type-famille"
+          />
+          {t('kh.type_famille')}</label
+        >
+      {/if}
     </fieldset>
-    {#if mode === 'duree'}
-      <div class="pastilles" role="group" aria-label={t('kh.par_duree')}>
-        {#each DUREES as d (d)}
+
+    {#if type === 'khatma'}
+      <fieldset>
+        <legend>{t('kh.comment')}</legend>
+        <label class="choix"
+          ><input
+            type="radio"
+            name="kh-mode"
+            value="duree"
+            bind:group={mode}
+            data-testid="kh-mode-duree"
+          />
+          {t('kh.par_duree')}</label
+        >
+        <label class="choix"
+          ><input
+            type="radio"
+            name="kh-mode"
+            value="pages"
+            bind:group={mode}
+            data-testid="kh-mode-pages"
+          />
+          {t('kh.par_pages')}</label
+        >
+      </fieldset>
+      {#if mode === 'duree'}
+        <div class="pastilles" role="group" aria-label={t('kh.par_duree')}>
+          {#each DUREES as d (d)}
+            <button
+              type="button"
+              class="pastille"
+              class:choisie={jours === d}
+              aria-pressed={jours === d}
+              onclick={() => (jours = d)}
+              data-testid={`kh-jours-${d}`}><Bidi text={t('kh.duree_jours', { n: d })} /></button
+            >
+          {/each}
+        </div>
+        <label
+          >{t('kh.autre_duree')}
+          <input
+            type="number"
+            min="1"
+            max={jourMax}
+            bind:value={jours}
+            data-testid="kh-jours"
+          /></label
+        >
+        <p class="petit muted" data-testid="kh-cela-fait">
+          <Bidi text={t('kh.cela_fait', { pages: pagesPourDuree(jours || 1) })} />
+        </p>
+      {:else}
+        <div class="pastilles" role="group" aria-label={t('kh.pages_par_jour')}>
+          {#each PAGES_PAR_JOUR as n (n)}
+            <button
+              type="button"
+              class="pastille"
+              class:choisie={pages === n}
+              aria-pressed={pages === n}
+              onclick={() => (pages = n)}
+              data-testid={`kh-pages-${n}`}><Bidi text={n} /></button
+            >
+          {/each}
+        </div>
+        <p class="petit muted" data-testid="kh-cela-dure">
+          <Bidi text={t('kh.cela_dure', { jours: joursPourRythme(pages || 1) })} />
+        </p>
+      {/if}
+    {:else if type === 'wird'}
+      <div class="pastilles" role="group" aria-label={t('kh.pages_par_jour')}>
+        {#each WIRD_PAGES as n (n)}
           <button
             type="button"
             class="pastille"
-            class:choisie={jours === d}
-            aria-pressed={jours === d}
-            onclick={() => (jours = d)}
-            data-testid={`kh-jours-${d}`}><Bidi text={t('kh.duree_jours', { n: d })} /></button
+            class:choisie={wirdPages === n}
+            aria-pressed={wirdPages === n}
+            onclick={() => (wirdPages = n)}
+            data-testid={`kh-wird-${n}`}><Bidi text={t('kh.plan_wird', { pages: n })} /></button
           >
         {/each}
       </div>
+    {:else}
+      <fieldset>
+        <legend>{t('kh.famille_qui')}</legend>
+        {#each profils as p (p.id)}
+          <label class="choix"
+            ><input
+              type="checkbox"
+              checked={choisis.includes(p.id)}
+              onchange={() => basculer(p.id)}
+              data-testid="kh-membre"
+            />
+            <Bidi text={p.pseudonym} /></label
+          >
+        {/each}
+      </fieldset>
       <label
-        >{t('kh.autre_duree')}
+        >{t('kh.famille_duree')}
         <input
           type="number"
           min="1"
           max={jourMax}
-          bind:value={jours}
-          data-testid="kh-jours"
+          bind:value={joursFamille}
+          data-testid="kh-jours-famille"
         /></label
       >
-      <p class="petit muted" data-testid="kh-cela-fait">
-        <Bidi text={t('kh.cela_fait', { pages: pagesPourDuree(jours || 1) })} />
-      </p>
-    {:else}
-      <div class="pastilles" role="group" aria-label={t('kh.pages_par_jour')}>
-        {#each PAGES_PAR_JOUR as n (n)}
-          <button
-            type="button"
-            class="pastille"
-            class:choisie={pages === n}
-            aria-pressed={pages === n}
-            onclick={() => (pages = n)}
-            data-testid={`kh-pages-${n}`}><Bidi text={n} /></button
-          >
-        {/each}
-      </div>
-      <p class="petit muted" data-testid="kh-cela-dure">
-        <Bidi text={t('kh.cela_dure', { jours: joursPourRythme(pages || 1) })} />
-      </p>
+      <p class="petit muted"><Bidi text={t('kh.famille_aide')} /></p>
     {/if}
-  {:else if type === 'wird'}
-    <div class="pastilles" role="group" aria-label={t('kh.pages_par_jour')}>
-      {#each WIRD_PAGES as n (n)}
-        <button
-          type="button"
-          class="pastille"
-          class:choisie={wirdPages === n}
-          aria-pressed={wirdPages === n}
-          onclick={() => (wirdPages = n)}
-          data-testid={`kh-wird-${n}`}><Bidi text={t('kh.plan_wird', { pages: n })} /></button
-        >
-      {/each}
-    </div>
-  {:else}
-    <fieldset>
-      <legend>{t('kh.famille_qui')}</legend>
-      {#each profils as p (p.id)}
-        <label class="choix"
-          ><input
-            type="checkbox"
-            checked={choisis.includes(p.id)}
-            onchange={() => basculer(p.id)}
-            data-testid="kh-membre"
-          />
-          <Bidi text={p.pseudonym} /></label
-        >
-      {/each}
-    </fieldset>
+
+    {#if type !== 'famille' && derniere && derniere.p > 1}
+      <label class="choix"
+        ><input type="checkbox" bind:checked={depuis} data-testid="kh-depuis" />
+        <Bidi text={t('kh.depuis_ma_lecture', { p: derniere.p })} /></label
+      >
+    {/if}
+
     <label
-      >{t('kh.famille_duree')}
-      <input
-        type="number"
-        min="1"
-        max={jourMax}
-        bind:value={joursFamille}
-        data-testid="kh-jours-famille"
-      /></label
+      >{t('kh.rappel')}
+      <select
+        value={rappel ?? ''}
+        onchange={(e) =>
+          (rappel = e.currentTarget.value === '' ? null : Number(e.currentTarget.value))}
+        data-testid="kh-rappel"
+      >
+        <option value="">{t('kh.rappel_aucun')}</option>
+        {#each HEURES_RAPPEL as h (h)}<option value={h}>{t('kh.rappel_a', { h })}</option>{/each}
+      </select></label
     >
-    <p class="petit muted"><Bidi text={t('kh.famille_aide')} /></p>
-  {/if}
+    {#if rappel !== null}<p class="petit muted">{t('kh.rappel_aide')}</p>{/if}
+    {#if sansRappel}<p class="petit muted" role="status" data-testid="kh-sans-rappel">
+        {t('kh.consent_refuse_info')}
+      </p>{/if}
 
-  {#if type !== 'famille' && derniere && derniere.p > 1}
-    <label class="choix"
-      ><input type="checkbox" bind:checked={depuis} data-testid="kh-depuis" />
-      <Bidi text={t('kh.depuis_ma_lecture', { p: derniere.p })} /></label
-    >
-  {/if}
-
-  <label
-    >{t('kh.rappel')}
-    <select
-      onchange={(e) =>
-        (rappel = e.currentTarget.value === '' ? null : Number(e.currentTarget.value))}
-      data-testid="kh-rappel"
-    >
-      <option value="">{t('kh.rappel_aucun')}</option>
-      {#each HEURES_RAPPEL as h (h)}<option value={h}>{t('kh.rappel_a', { h })}</option>{/each}
-    </select></label
-  >
-  {#if rappel !== null}<p class="petit muted">{t('kh.rappel_aide')}</p>{/if}
-
-  {#if erreur}<p role="alert" class="bad" data-testid="kh-erreur"><Bidi text={erreur} /></p>{/if}
-  <div class="actions">
-    <button type="submit" class="primary" disabled={envoi} data-testid="kh-creer"
-      >{t('kh.creer')}</button
-    >
-    <button type="button" onclick={ferme}>{t('kh.annuler')}</button>
-  </div>
-</form>
+    {#if erreur}<p role="alert" class="bad" data-testid="kh-erreur"><Bidi text={erreur} /></p>{/if}
+    <div class="actions">
+      <button type="submit" class="primary" disabled={envoi} data-testid="kh-creer"
+        >{t('kh.creer')}</button
+      >
+      <button type="button" onclick={ferme}>{t('kh.annuler')}</button>
+    </div>
+  </form>
+{/if}
 
 <style>
   .form {

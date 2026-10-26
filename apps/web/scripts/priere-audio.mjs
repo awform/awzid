@@ -13,13 +13,19 @@ import { fileURLToPath } from 'node:url';
 import { audioFileId, looksQuranic } from '@awform/content/audio-cle';
 import { parcourir, SOURCE } from './priere-donnees.mjs';
 
-/** « \u0628\u0633\u0645 \u0627\u0644\u0644\u0647 » (avec ou sans voyelles) : jamais de synthèse (même règle que `contientBasmala` de src/lib/priere/audio.ts) */
+/**
+ * Basmala COMPLÈTE « \u0628\u0633\u0645 \u0627\u0644\u0644\u0647 \u0627\u0644\u0631\u062D\u0645\u0646 \u0627\u0644\u0631\u062D\u064A\u0645 » (avec ou sans voyelles) : jamais de synthèse (même règle que
+ * `contientBasmala` de src/lib/priere/audio.ts). Depuis le 26/10/2026, « \u0628\u0633\u0645 \u0627\u0644\u0644\u0647 » seul, ou dans une phrase dite avant un acte,
+ * est un dhikr lu par la synthèse.
+ */
 export function contientBasmala(ar) {
   const nu = ar
     .replace(/[\u064B-\u065F\u0670\u0640]/g, '')
     .replace(/\u0671/g, '\u0627')
     .replace(/\s+/g, ' ');
-  return /\u0628\u0633\u0645 \u0627\u0644+\u0647/.test(nu);
+  return /\u0628\u0633\u0645 \u0627\u0644+\u0647 \u0627\u0644\u0631\u062d\u0645\u0627?\u0646 \u0627\u0644\u0631\u062d\u064a\u0645/.test(
+    nu,
+  );
 }
 
 /** Textes à lire par la synthèse : paroles, matn, textes arabes, variantes (`audio` = « tts »). */

@@ -311,6 +311,7 @@
       {profils}
       {derniere}
       limites={etat?.limites ?? { joursMax: 550, pagesParJourMax: 100 }}
+      rappelActif={etat?.rappel ?? false}
       ferme={() => (creation = false)}
       fait={apresCreation}
     />

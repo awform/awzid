@@ -14,6 +14,14 @@ import { expect, test } from './fixtures';
 test.describe.configure({ mode: 'serial' });
 
 /**
+ * Délai d'attente d'un rechargement après application d'une mise à jour. Cause du rouge intermittent mesurée le 26/10/2026
+ * (trace Playwright, machine chargée par d'autres sessions) : l'application est bien déclenchée au bout de 1,5 s, mais
+ * les trois onglets (froid, neutre, révision) se rechargent presque ensemble et la page rechargée met plus de 25 s à
+ * répondre ; l'ancien délai de 30 s était donc sans marge. L'application ne change pas : seule la marge d'attente.
+ */
+const DELAI_RECHARGEMENT = 90_000;
+
+/**
  * Serveur intermédiaire propre au test (autre port, donc autre origine et autre service worker ; les cookies de
  * connexion, liés à l'hôte, restent valables) : tout est relayé tel quel vers l'application de test, sauf, une fois
  * « déployée », la nouvelle version du service worker. (Le routage de Playwright ne voit pas les vérifications de
@@ -202,6 +210,8 @@ test('sans toucher : application automatique au démarrage à froid, sur un écr
   context,
   baseURL,
 }) => {
+  // trois onglets se rechargent presque ensemble : sur une machine chargée, le rechargement dépasse 30 s (voir DELAI_RECHARGEMENT)
+  test.setTimeout(DELAI_RECHARGEMENT * 3);
   const d = await deploiementSimule(baseURL!);
   // onglet 1 : en pleine révision (activité en cours)
   await page.goto(d.url('/revisions'));
@@ -215,7 +225,7 @@ test('sans toucher : application automatique au démarrage à froid, sur un écr
 
   d.deployer();
   await verifierMaj(neutre);
-  await expect(neutre.getByTestId('maj-bandeau')).toBeVisible({ timeout: 30_000 });
+  await expect(neutre.getByTestId('maj-bandeau')).toBeVisible({ timeout: DELAI_RECHARGEMENT });
   // en révision : ni bandeau ni rechargement
   await expect(page.getByTestId('maj-bandeau')).toHaveCount(0);
 
@@ -225,14 +235,16 @@ test('sans toucher : application automatique au démarrage à froid, sur un écr
   // appliquée (heure notée par l'onglet), puis rechargée
   await expect
     .poll(() => froid.evaluate(() => sessionStorage.getItem('awzid-maj')).catch(() => null), {
-      timeout: 30_000,
+      timeout: DELAI_RECHARGEMENT,
     })
     .not.toBeNull();
   await froid.waitForLoadState('load');
-  await expect.poll(() => versionActive(froid), { timeout: 30_000 }).toBe(d.nouvelle);
+  await expect.poll(() => versionActive(froid), { timeout: DELAI_RECHARGEMENT }).toBe(d.nouvelle);
 
   // l'onglet neutre suit tout seul
-  await expect.poll(() => marque(neutre).catch(() => true), { timeout: 20_000 }).toBe(false);
+  await expect
+    .poll(() => marque(neutre).catch(() => true), { timeout: DELAI_RECHARGEMENT })
+    .toBe(false);
   await neutre.waitForLoadState('load');
   await expect.poll(() => versionActive(neutre), { timeout: 10_000 }).toBe(d.nouvelle);
 
@@ -243,7 +255,9 @@ test('sans toucher : application automatique au démarrage à froid, sur un écr
 
   // … puis se met à jour dès le retour à un écran neutre (navigation dans l'application)
   await page.getByTestId('accueil').click();
-  await expect.poll(() => marque(page).catch(() => true), { timeout: 20_000 }).toBe(false);
+  await expect
+    .poll(() => marque(page).catch(() => true), { timeout: DELAI_RECHARGEMENT })
+    .toBe(false);
   await page.waitForLoadState('load');
   await expect.poll(() => versionActive(page), { timeout: 10_000 }).toBe(d.nouvelle);
   await neutre.close();

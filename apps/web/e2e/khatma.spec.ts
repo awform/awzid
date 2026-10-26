@@ -226,6 +226,54 @@ test.describe('khatma et wird', () => {
     await expect(page.getByTestId('khatma-plan')).toContainText('Premier tour');
   });
 
+  test('rappel quotidien : écran de consentement avant toute activation, refus sans conséquence, arrêt libre', async ({
+    page,
+  }) => {
+    const { email, profileId } = await newAdult(page, 'kh-consent');
+    await beta(email);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/coran');
+    const etat = async () =>
+      (await (await page.request.get(`/api/v1/profiles/${profileId}/khatma`)).json()) as {
+        rappel: boolean;
+        plans: Array<{ reminderHour: number | null }>;
+      };
+
+    // 1. on choisit une heure : l'écran de consentement passe avant la création ; on refuse
+    await page.getByTestId('khatma-nouveau').click();
+    await page.getByTestId('kh-rappel').selectOption('9');
+    await page.getByTestId('kh-creer').click();
+    const consent = page.getByTestId('kh-consentement');
+    await expect(consent).toBeVisible();
+    await expect(consent).toContainText('une seule notification par jour');
+    await expect(consent).toContainText('Arrêter le rappel quotidien');
+    await expect(page.getByTestId('kh-consent-parent')).toHaveCount(0); // adulte : pas d'accord de parent
+    expect((await etat()).plans).toHaveLength(0); // rien n'est créé tant qu'on n'a pas répondu
+    await page.getByTestId('kh-consent-refuse').click();
+    await expect(page.getByTestId('kh-sans-rappel')).toBeVisible();
+    await page.getByTestId('kh-creer').click();
+    await expect(page.getByTestId('khatma-plan')).toHaveCount(1);
+    let e = await etat();
+    expect(e.rappel).toBe(false);
+    expect(e.plans[0]!.reminderHour).toBeNull();
+
+    // 2. on règle une heure sur ce plan : même écran ; on accepte
+    await page.getByTestId('khatma-regler').click();
+    await page.getByTestId('kh-rappel-reglage').selectOption('9');
+    await page.getByTestId('kh-rappel-ok').click();
+    await expect(page.getByTestId('kh-consentement')).toBeVisible();
+    expect((await etat()).rappel).toBe(false);
+    await page.getByTestId('kh-consent-accepte').click();
+    await expect(page.getByTestId('kh-rappel-arreter')).toBeVisible();
+    e = await etat();
+    expect(e.rappel).toBe(true);
+    expect(e.plans[0]!.reminderHour).toBe(9);
+
+    // 3. l'arrêt d'un geste
+    await page.getByTestId('kh-rappel-arreter').click();
+    await expect(page.getByTestId('kh-rappel-arreter')).toHaveCount(0);
+    expect((await etat()).rappel).toBe(false);
+  });
   test('khatma en famille : parts réparties, seul le total du groupe est partagé, pas de classement', async ({
     page,
   }) => {

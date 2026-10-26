@@ -436,7 +436,7 @@ describe.skipIf(!URL)('khatma et wird (API, base de test)', () => {
         set: { tz, quietStart: 22, quietEnd: 6 },
       });
     // accord du titulaire
-    const ok = await c.req('PUT', '/api/v1/khatma/rappel', m.A, { actif: true });
+    const ok = await c.req('PUT', '/api/v1/khatma/rappel', m.A, { actif: true, accord: true });
     expect(ok.json()).toEqual({ ok: true, actif: true });
     const dus = await dueNotifications(c.h.db, midi);
     expect(dus).toHaveLength(1);
@@ -464,12 +464,68 @@ describe.skipIf(!URL)('khatma et wird (API, base de test)', () => {
     await c.req('PUT', '/api/v1/khatma/rappel', m.A, { actif: false });
     expect(await dueNotifications(c.h.db, midi)).toEqual([]);
     // heures calmes : rien même avec l'accord, à l'heure choisie
-    await c.req('PUT', '/api/v1/khatma/rappel', m.A, { actif: true });
+    await c.req('PUT', '/api/v1/khatma/rappel', m.A, { actif: true, accord: true });
     await c.h.db
       .update(t.notificationPref)
       .set({ quietStart: heureLocale, quietEnd: (heureLocale + 9) % 24 })
       .where(eq(t.notificationPref.accountId, accountId));
     await c.h.db.update(t.khatmaPart).set({ done: 0, doneDayStart: 0, dayMark: null });
     expect(await dueNotifications(c.h.db, midi)).toEqual([]);
+  });
+
+  it('rappel : pas de rappel sans accord ; pour un enfant, le code parent est exigé ; l’arrêt est libre', async () => {
+    const fam = await parent(c, 'khatma.consent@exemple.org');
+    const kid = await child(c, fam.P, 'Ilyas', 9);
+    const adulte = await adult(c, 'khatma.consent.adulte@exemple.org');
+    const accountId = (await c.req('GET', '/api/v1/auth/me', adulte.A)).json().account.id as string;
+    const actif = async () =>
+      (
+        await c.h.db
+          .select({ k: t.notificationPref.khatma })
+          .from(t.notificationPref)
+          .where(eq(t.notificationPref.accountId, accountId))
+      )[0]?.k ?? false;
+    // sans accord (ou accord faux) : refusé, rien n'est activé
+    const sans = await c.req('PUT', '/api/v1/khatma/rappel', adulte.A, { actif: true });
+    expect(sans.statusCode).toBe(400);
+    expect(sans.json().error.code).toBe('rappel_accord_requis');
+    const faux = await c.req('PUT', '/api/v1/khatma/rappel', adulte.A, {
+      actif: true,
+      accord: false,
+    });
+    expect(faux.statusCode).toBe(400);
+    expect(await actif()).toBe(false);
+    // avec l'accord : activé
+    const ok = await c.req('PUT', '/api/v1/khatma/rappel', adulte.A, {
+      actif: true,
+      accord: true,
+      profileId: adulte.profileId,
+    });
+    expect(ok.statusCode).toBe(200);
+    expect(await actif()).toBe(true);
+    // l'arrêt ne demande rien
+    const stop = await c.req('PUT', '/api/v1/khatma/rappel', adulte.A, { actif: false });
+    expect(stop.statusCode).toBe(200);
+    expect(await actif()).toBe(false);
+    // enfant : sans code parent ou avec un mauvais code, refusé ; avec le bon code, accepté
+    const corps = { actif: true, accord: true, profileId: kid };
+    const nu = await c.req('PUT', '/api/v1/khatma/rappel', fam.P, corps);
+    expect(nu.statusCode).toBe(401);
+    const mauvais = await c.req(
+      'PUT',
+      '/api/v1/khatma/rappel',
+      { ...fam.P, 'x-parent-pin': '0000' },
+      corps,
+    );
+    expect(mauvais.statusCode).toBe(401);
+    const bon = await c.req('PUT', '/api/v1/khatma/rappel', fam.pin, corps);
+    expect(bon.statusCode).toBe(200);
+    // le profil d'une autre famille n'est pas le sien
+    const autre = await c.req('PUT', '/api/v1/khatma/rappel', adulte.A, {
+      actif: true,
+      accord: true,
+      profileId: kid,
+    });
+    expect(autre.statusCode).toBe(404);
   });
 });

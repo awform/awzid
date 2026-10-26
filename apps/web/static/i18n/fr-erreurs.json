@@ -14,6 +14,7 @@
   "erreur.niveau_inconnu": "Niveau inconnu.",
   "erreur.reserve_aux_parents": "Seul un compte parent peut faire cela.",
   "erreur.code_parent_incorrect": "Code parent incorrect.",
+  "erreur.rappel_accord_requis": "Le rappel ne peut être activé qu'avec ton accord : accepte-le sur l'écran prévu à cet effet.",
   "erreur.code_parent_absent": "Aucun code parent n'est défini.",
   "erreur.consentement_necessaire": "Cet accord est nécessaire au service : pour le retirer, supprime le profil ou le compte.",
   "erreur.requete_invalide": "Vérifie les informations saisies.",

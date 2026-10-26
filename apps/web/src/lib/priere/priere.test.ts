@@ -1,7 +1,7 @@
 /**
  * « La prière de A à Z » (25/10/2026) : interrupteur `parcours_priere` (coupé par défaut, canal bêta) ; données de l'application
  * identiques à la génération et FIDÈLES au JSON du référent (arabe octet pour octet) ; AUCUN verset en voix de synthèse (garde
- * respectée, jamais contournée), jamais de synthèse sur la basmala ; Coran par Ayyūb seulement (la Fātiḥa de la prière
+ * respectée, jamais contournée), jamais de synthèse sur la Basmala complète (la tasmiya seule est un dhikr, 26/10/2026) ; Coran par Ayyūb seulement (la Fātiḥa de la prière
  * commence à 1:2) ; compteur du tasbīḥ ; calendrier des mots ; progression gardée ; chorégraphie cohérente avec le livre ;
  * chaque code de niveau a son affichage (clair et sombre) ; aucun texte en dur dans le code ; chargement à la demande.
  * Aucun texte arabe n'est écrit dans ce test : tout est lu dans les fichiers du référent.
@@ -308,7 +308,7 @@ describe('voix : le Coran par Ayyūb seulement, jamais de synthèse sur un verse
     }
     expect(n).toBeGreaterThan(8);
   });
-  it('une parole « tts » n’est lue par la synthèse que si son texte n’est ni la basmala ni du Coran', () => {
+  it('une parole « tts » n’est lue par la synthèse que si son texte n’est ni la Basmala complète ni du Coran', () => {
     expect(ttsTextes.length).toBeGreaterThan(40);
     for (const e of ttsTextes) {
       const s = sourceAudio(e, la);
@@ -316,7 +316,13 @@ describe('voix : le Coran par Ayyūb seulement, jamais de synthèse sur un verse
         expect(contientBasmala(e.ar!), e.id).toBe(false);
         expect(looksQuranic(e.ar!), e.id).toBe(false);
         expect(interditSynthese(e.ar!), e.id).toBeNull();
-      } else expect(s.type, e.id).toBe('interdit');
+      } else {
+        expect(s.type, e.id).toBe('interdit');
+        // le message « Récitation de Muḥammad Ayyūb » ne s'affiche que pour la Basmala complète ou le Coran
+        expect(s.raison === 'basmala' ? contientBasmala(e.ar!) : looksQuranic(e.ar!), e.id).toBe(
+          true,
+        );
+      }
     }
   });
   it('aucun texte de synthèse ne contient un verset du livre (comparaison sans voyelles)', () => {
@@ -331,14 +337,47 @@ describe('voix : le Coran par Ayyūb seulement, jamais de synthèse sur un verse
         expect(t.includes(` ${v} `), `${e.id} contient un verset`).toBe(false);
     }
   });
-  it('la basmala des ablutions n’a jamais de voix : une explication à la place', () => {
-    const s = sourceAudio(trouver(priere.sections, 'S2A.w.tasmiya')!, la);
-    expect(s).toEqual({ type: 'interdit', raison: 'basmala' });
-    expect(contientBasmala(sourates.basmala.ar as string)).toBe(true);
-    expect(basmalaScript(sourates.basmala.ar as string)).toBe(true);
+  it('« Au nom d’Allah » dit avant un acte (ablutions) est un dhikr : lu par la synthèse, comme les autres paroles', () => {
+    const tasmiya = trouver(priere.sections, 'S2A.w.tasmiya')!;
+    // fichier de synthèse existant : la voix de la tasmiya est branchée (pas de message « sans voix »)
+    expect(sourceAudio(tasmiya, la)).toEqual({ type: 'tts', id: audioFileId(tasmiya.ar!) });
+    // sans fichier : « audio en préparation », jamais une voix improvisée
+    expect(sourceAudio(tasmiya, null)).toEqual({ type: 'tts', id: null });
+    expect(contientBasmala(tasmiya.ar!)).toBe(false);
+    expect(interditSynthese(tasmiya.ar!)).toBeNull();
+    // dans une phrase dite avant un acte : même chose
+    const phrase = `${tasmiya.ar} ${trouver(priere.sections, 'S5.w.takbir')!.ar}`;
+    expect(interditSynthese(phrase)).toBeNull();
+  });
+  it('la Basmala complète (verset 1:1) n’a jamais de voix de synthèse : « Récitation de Muḥammad Ayyūb » à la place', () => {
+    const complete = sourates.basmala.ar as string;
+    expect(sourceAudio({ audio: 'tts', ar: complete }, la)).toEqual({
+      type: 'interdit',
+      raison: 'basmala',
+    });
+    expect(sourceAudio({ audio: 'tts', ar: `${complete} ${complete}` }, la)).toEqual({
+      type: 'interdit',
+      raison: 'basmala',
+    });
+    expect(contientBasmala(complete)).toBe(true);
+    expect(basmalaScript(complete)).toBe(true);
+    expect((textes as Record<string, string>)['priere.sans_voix_basmala']).toBe(
+      'Récitation de Muḥammad Ayyūb',
+    );
     // la règle est la même dans le script des tableaux audio et dans l'application
     for (const e of elements.filter((x) => x.ar))
       expect(basmalaScript(e.ar!), e.id).toBe(contientBasmala(e.ar!));
+  });
+  it('aucune carte du parcours n’affiche le message « sans voix » pour un simple « Au nom d’Allah »', () => {
+    let n = 0;
+    for (const e of tousElements().filter((x) => x.ar && x.audio === 'tts')) {
+      const s = sourceAudio(e, la);
+      if (s.type === 'interdit' && s.raison === 'basmala')
+        expect(contientBasmala(e.ar!)).toBe(true);
+      else expect(s.type, e.id).toBe('tts');
+      n++;
+    }
+    expect(n).toBeGreaterThan(40);
   });
   it('sans fichier : « audio en préparation » (id nul), jamais une voix improvisée', () => {
     const e = trouver(priere.sections, 'S5.w.qunut')!;
@@ -353,7 +392,16 @@ describe('voix : le Coran par Ayyūb seulement, jamais de synthèse sur un verse
       [audioFileId(existant.ar!)!, { niveaux: 'ad1 re2', texte: existant.ar ?? '' }],
     ]);
     const c = classer(entrees, liste);
-    expect(c.interdits.map((x: { id: string }) => x.id)).toContain('S2A.w.tasmiya');
+    // « Au nom d'Allah » est un dhikr : à générer (ou existant), plus interdit ; la Basmala complète reste interdite
+    expect(c.interdits.map((x: { id: string }) => x.id)).not.toContain('S2A.w.tasmiya');
+    expect(
+      [...c.aGenerer, ...c.existants].some((x: { ids: string[] }) =>
+        x.ids.includes('S2A.w.tasmiya'),
+      ),
+    ).toBe(true);
+    const complete = sourates.basmala.ar as string;
+    const cc = classer([{ id: 'X', ar: complete, type: 'parole', titre: '' }], new Map());
+    expect(cc.interdits.map((x: { id: string }) => x.id)).toEqual(['X']);
     for (const x of [...c.aGenerer, ...c.existants]) {
       expect(contientBasmala(x.ar)).toBe(false);
       expect(looksQuranic(x.ar)).toBe(false);

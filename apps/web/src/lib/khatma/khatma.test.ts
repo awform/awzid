@@ -225,3 +225,66 @@ describe('khatma : textes et mise en place', () => {
     for (const k of cles) expect(textes, k).toHaveProperty([k]);
   });
 });
+
+describe('khatma : consentement avant le rappel quotidien', () => {
+  const txt = textes as Record<string, string>;
+  const consent = lire('./Consentement.svelte');
+  const creation = lire('./Creation.svelte');
+  const reglages = lire('./Reglages.svelte');
+  const donnees = lire('./donnees.ts');
+
+  it('le texte dit ce qui est envoyé, quand ça n’arrive pas et comment l’arrêter, en français simple', () => {
+    expect(txt['kh.consent_envoye']).toMatch(/une seule notification par jour/);
+    expect(txt['kh.consent_envoye']).toMatch(/ni aucun chiffre/);
+    expect(txt['kh.consent_limites']).toMatch(/jamais pendant tes heures calmes/);
+    expect(txt['kh.consent_limites']).toMatch(/rien n’est partagé|rien n'est partagé/);
+    expect(txt['kh.consent_arreter']).toMatch(/Aucun rappel/);
+    expect(txt['kh.consent_arreter']).toMatch(/Arrêter le rappel quotidien/);
+    expect(txt['kh.consent_arreter']).toMatch(/Compte, Notifications/);
+    expect(txt['kh.consent_enfant']).toMatch(/parent ou un responsable/);
+    expect(txt['kh.consent_accepte']).toBeTruthy();
+    expect(txt['kh.consent_refuse']).toBeTruthy();
+  });
+
+  it('pour un enfant ou un ado : la case du parent est exigée avant tout appel, et le code parent part au serveur', () => {
+    expect(consent).toMatch(/profil\.kind !== 'adulte'/);
+    expect(consent).toMatch(/if \(mineur && !parentOk\) return/);
+    expect(consent.indexOf('!parentOk')).toBeLessThan(consent.indexOf('rappelCompte(true'));
+    expect(consent).toMatch(/profileId: profil\.id/);
+    expect(consent).toMatch(/accord: true/);
+    expect(donnees).toMatch(/'x-parent-pin': opts\.pin/);
+  });
+
+  it('création et réglages : aucune activation sans passer par l’écran, jamais de rappel envoyé avant l’accord', () => {
+    for (const src of [creation, reglages]) {
+      expect(src).toMatch(/<Consentement /);
+      expect(src).not.toMatch(/rappelCompte\(true/);
+    }
+    expect(creation).toMatch(
+      /rappel !== null && !rappelActif && !accordDonne\) return void \(consentement = true\)/,
+    );
+    expect(reglages).toMatch(/heure !== null && !actif\) return void \(consentement = true\)/);
+    // refuser remet « aucun rappel » : l’heure n’est pas envoyée
+    expect(creation).toMatch(/function refuse\(\) \{\s*rappel = null;/);
+    expect(reglages).toMatch(/function refuse\(\) \{[^}]*heure = plan\.reminderHour/);
+  });
+
+  it('on peut arrêter d’un geste, sans condition', () => {
+    expect(reglages).toMatch(/rappelCompte\(false\)/);
+    expect(reglages).toMatch(/data-testid="kh-rappel-arreter"/);
+    expect(donnees).toMatch(
+      /actif \? \{ actif, accord: opts\.accord === true, profileId: opts\.profileId \} : \{ actif \}/,
+    );
+  });
+
+  it('l’activation sans accord n’envoie jamais `accord: true`', () => {
+    expect(donnees).toMatch(/accord: opts\.accord === true/);
+  });
+
+  it('textes sans reproche ni pression', () => {
+    for (const [k, v] of Object.entries(txt).filter(([k]) => k.startsWith('kh.consent')))
+      expect(v, k).not.toMatch(
+        /retard|raté|échec|série|perdu|dette|manqué|paresse|honte|obligatoire/i,
+      );
+  });
+});
