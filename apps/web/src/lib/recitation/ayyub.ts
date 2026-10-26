@@ -62,6 +62,8 @@ export interface Plan {
   versets: string[];
   /** une partie du texte est dite par la synthèse */
   mixte: boolean;
+  /** paraphrase d'un verset (« = ») : bouton « Écouter le verset (S:V) » séparé du texte, le texte n'est pas lu */
+  paraphrase?: boolean;
 }
 
 /** Plan de récitation d'un texte (null : aucune citation du Coran branchée). */
@@ -71,13 +73,15 @@ export async function planDe(texte: string): Promise<Plan | null> {
   const p = (await chargerTable())?.[id.slice(0, 12)];
   if (!p?.length) return null;
   const fragment = p[0] === '~';
-  const segments = fragment ? p.slice(1) : p;
+  const paraphrase = p[0] === '=';
+  const segments = fragment || paraphrase ? p.slice(1) : p;
   return {
     segments,
     ref: segments.join('|'),
     fragment,
     versets: segments.filter((s) => /^\d/.test(s)),
     mixte: segments.some((s) => s.startsWith('t:')),
+    ...(paraphrase ? { paraphrase } : {}),
   };
 }
 

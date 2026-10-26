@@ -227,7 +227,7 @@ export interface Contexte {
    * nature de la décision du référent : « ayyub » (tout le passage arabe est récité : rien en synthèse), « mixte »
    * (synthèse pour le texte du livre), « table » (table des récitations : verset entier)
    */
-  decisionType?: 'ayyub' | 'mixte' | 'table';
+  decisionType?: 'ayyub' | 'mixte' | 'table' | 'paraphrase';
   /** le texte est gardé sans voix par la garde coranique ou par la vidéo (présenté comme Coran) */
   garde?: boolean;
   /**

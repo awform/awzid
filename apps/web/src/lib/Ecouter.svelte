@@ -31,7 +31,8 @@
   const id = $derived(audioIdFor(text, audio?.() ?? null));
   let bouton: HTMLButtonElement | undefined = $state();
   /** récitation d'Ayyūb (texte coranique sans fichier de synthèse) : une phrase du lecteur comme les autres */
-  let recit: { ref: string; versets: string[]; fragment: boolean } | null = $state(null);
+  let recit: { ref: string; versets: string[]; fragment: boolean; paraphrase?: boolean } | null =
+    $state(null);
   let brec: HTMLButtonElement | undefined = $state();
   $effect(() => {
     const x = text;
@@ -93,7 +94,7 @@
       aria-label={t('audio.ecouter_lent')}
       onclick={() => play(true)}>{t('audio.lent')}</button
     ></span
-  >{:else if recit}<span class="ecouter" class:small dir="ltr"
+  >{:else if recit}<span class="ecouter" class:small class:seul={recit.paraphrase} dir="ltr"
     ><button
       type="button"
       class="spk rec"
@@ -114,9 +115,14 @@
           fill="none"
           stroke-linecap="round"
         /></svg
-      ><span class="nom">{t('audio.recitation_ayyub')}</span><span
-        class="ref"
-        data-testid="recitation-ref"><Bidi text={recit.versets.join(' · ')} /></span
+      ><span class="nom"
+        ><Bidi
+          text={recit.paraphrase
+            ? t('audio.verset_seul', { v: recit.versets.join(', ') })
+            : t('audio.recitation_ayyub')}
+        /></span
+      ><span class="ref" data-testid="recitation-ref"
+        ><Bidi text={recit.versets.join(' · ')} /></span
       ></button
     ></span
   >{/if}
@@ -158,6 +164,11 @@
   /* la classe « playing » est posée par le lecteur pendant la lecture de cette phrase */
   .rec {
     border-color: var(--gold);
+  }
+  /* paraphrase : le verset s'écoute à part, sur sa propre ligne (le texte affiché n'est pas lu) */
+  .seul {
+    display: flex;
+    margin-block: 6px;
   }
   /* référence de ce qui est joué (sourate:verset), discrète */
   .ref {

@@ -91,6 +91,7 @@
   "audio.ecouter_lent": "Escuchar despacio",
   "audio.lent": "Lento",
   "audio.recitation_ayyub": "Recitación",
+  "audio.verset_seul": "Escuchar el versículo ({v})",
   "audio.recitation_aria": "Escuchar la recitación de Muḥammad Ayyūb ({v})",
   "audio.recitation_fragment": "Escuchar la recitación de Muḥammad Ayyūb: el versículo completo ({v}), que contiene este pasaje",
   "audio.ecouter_question": "Escuchar la pregunta {n}",

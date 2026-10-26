@@ -312,7 +312,8 @@ function inventaire(): Lieu[] {
 
 interface Decision {
   versets: string[];
-  type: 'ayyub' | 'mixte' | 'table';
+  /** « paraphrase » : le texte ne cite pas le verset (moins de 4 mots consécutifs) : le verset à part, texte non lu */
+  type: 'ayyub' | 'mixte' | 'table' | 'paraphrase';
 }
 /** décisions du référent par texte (versets choisis) : tables du « zéro muet » */
 /** textes que le référent a décidés « synthèse » (faux positifs de la garde) : jamais dans la table */
@@ -340,11 +341,11 @@ function decisions(): Map<string, Decision> {
         texte &&
         versets?.trim() &&
         !/ ou /.test(versets) &&
-        ['ayyub', 'mixte'].includes(decision ?? '')
+        ['ayyub', 'mixte', 'paraphrase'].includes(decision ?? '')
       )
         m.set(audioKey(texte), {
           versets: versets.split(/[ ,;]+/).filter(Boolean),
-          type: decision as 'ayyub' | 'mixte',
+          type: decision as 'ayyub' | 'mixte' | 'paraphrase',
         });
     }
   return m;
@@ -433,6 +434,20 @@ function construire(): Resultat {
   for (const [k, e] of [...parCle].sort(([a], [b]) => (a < b ? -1 : 1))) {
     const plans = new Map<string, Analyse>();
     const d = dec.get(audioKey(e.texte));
+    // paraphrase d'un verset (décision du 20/10/2026) : « = » en tête : bouton « Écouter le verset (S:V) » séparé du texte
+    if (d?.type === 'paraphrase') {
+      table[k] = ['=', ...d.versets];
+      inventaireL.push(
+        [
+          [...new Set(e.lieux.map((l) => l.livre))].join(' '),
+          'paraphrase',
+          table[k].join(' '),
+          '',
+          e.texte.replace(/[\t\n\r]+/g, ' '),
+        ].join('\t'),
+      );
+      continue;
+    }
     for (const l of e.lieux) {
       const a = analyser(e.texte, idx, {
         refs: l.refs,
@@ -655,6 +670,12 @@ describe.skipIf(!tanzil || !HAS_CONTENT)('récitation d’Ayyūb : table des liv
     for (const [k, plan] of Object.entries(t.t)) {
       const ls = lieux.get(k);
       expect(ls, `clé ${k} absente des livres`).toBeTruthy();
+      // paraphrase : le verset à part, rien n'est rapproché du texte (contrôlé : moins de 4 mots consécutifs)
+      if (plan[0] === '=') {
+        for (const s of plan.slice(1)) expect(idx.bornes.has(s), `${k} : ${s}`).toBe(true);
+        verifies++;
+        continue;
+      }
       const texte = ls![0]!.texte;
       expect(
         plan.some((s) => /^\d+:\d+/.test(s)),

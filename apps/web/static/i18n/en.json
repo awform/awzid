@@ -91,6 +91,7 @@
   "audio.ecouter_lent": "Listen slowly",
   "audio.lent": "Slow",
   "audio.recitation_ayyub": "Recitation",
+  "audio.verset_seul": "Listen to the verse ({v})",
   "audio.recitation_aria": "Listen to the recitation by Muḥammad Ayyūb ({v})",
   "audio.recitation_fragment": "Listen to the recitation by Muḥammad Ayyūb: the whole verse ({v}), which contains this passage",
   "audio.ecouter_question": "Listen to question {n}",
