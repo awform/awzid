@@ -64,3 +64,5 @@ apps/web/src/lib/mutashabihat/donnees.json
 # Mots du Coran (25/10/2026) : données dérivées du Quranic Arabic Corpus (GNU GPL v3), générées par packages/coran-mots-data/scripts/generer.mjs,
 # séparées du code ; contrôlées par test (octet pour octet contre Tanzil)
 packages/coran-mots-data/
+# table des récitations d'Ayyūb : générée par le test recitation-ayyub (RECITATION_AYYUB=ecrire), une ligne
+apps/web/static/recitation/ayyub.json

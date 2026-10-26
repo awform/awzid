@@ -10,6 +10,7 @@
   import Icon from '$lib/ui/Icon.svelte';
   import Loading from '$lib/ui/Loading.svelte';
   import DouaEcouter from './DouaEcouter.svelte';
+  import Ecouter from '$lib/Ecouter.svelte';
   import DouaTexte from './DouaTexte.svelte';
   import {
     FICHE_INVOQUER,
@@ -262,6 +263,11 @@
             <DouaTexte doua={d} />
             <!-- voix de synthèse provisoire : hadiths seulement (jamais un verset ni un hadith qui en cite un) -->
             {#if d.audio && !d.coran && !d.coran_cite}<DouaEcouter src={d.audio} {id} />{/if}
+            <!-- 26/10/2026 : doua tirée du Coran ou qui le cite : récitation de Muḥammad Ayyūb (table des récitations) -->
+            {#if d.coran?.length}<Ecouter
+                text=""
+                versets={d.coran.map((v) => `${v.s}:${v.a}`)}
+              />{:else if d.coran_cite && d.ar}<Ecouter text={d.ar} />{/if}
             {#if d.coran_cite}<p class="cite muted" data-testid="douas-coran-cite">
                 {t('do.contient_coran')}
               </p>{/if}

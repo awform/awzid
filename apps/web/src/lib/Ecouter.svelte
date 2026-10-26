@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { t } from './i18n';
-  import { AUDIO_CTX, audioIdFor, leconsSource, SLOW_RATE, type LevelAudio } from './lecons-audio';
+  import { AUDIO_CTX, audioIdFor, sourceLecteur, SLOW_RATE, type LevelAudio } from './lecons-audio';
 
   /**
    * Bouton « écouter » d'un texte arabe de la leçon (A3) : présent SEULEMENT si le fichier du texte existe
@@ -9,12 +9,46 @@
    * second bouton « lentement » (0,75, même hauteur de voix) ; aucune lecture automatique.
    * Le lecteur (pause, recul, avance, phrase précédente et suivante, boucle, vitesse, lecture continue) est chargé
    * à la demande au premier appui, jamais avant : `$lib/lecteur/ouvrir`.
+   * Citation du Coran sans fichier (gardée) : bouton « Récitation » de Muḥammad Ayyūb (verset entier, à sa vitesse ;
+   * texte mixte : la synthèse pour le texte du livre) si la table des récitations la connaît (`$lib/recitation/ayyub`,
+   * chargé à la demande, seulement pour un texte sans fichier).
    */
-  let { text, label, small = false }: { text: string; label?: string; small?: boolean } = $props();
+  let {
+    text,
+    label,
+    small = false,
+    versets,
+  }: {
+    text: string;
+    label?: string;
+    small?: boolean;
+    /** versets donnés par les données (douas tirées du Coran : « 20:25 »…) : récitation d'Ayyūb sans la table */
+    versets?: string[];
+  } = $props();
 
   const audio = getContext<(() => LevelAudio | null) | undefined>(AUDIO_CTX);
   const id = $derived(audioIdFor(text, audio?.() ?? null));
   let bouton: HTMLButtonElement | undefined = $state();
+  /** récitation d'Ayyūb (texte coranique sans fichier de synthèse) : une phrase du lecteur comme les autres */
+  let recit: { ref: string; versets: string[]; fragment: boolean } | null = $state(null);
+  let brec: HTMLButtonElement | undefined = $state();
+  $effect(() => {
+    const x = text;
+    // variable locale : l'effet ne relit jamais `recit` (il ne se relancerait pas lui-même)
+    const donnes = versets?.length ? { ref: versets.join('|'), versets, fragment: false } : null;
+    recit = donnes;
+    if (id || !x || donnes) return;
+    let vivant = true;
+    import('./recitation/ayyub')
+      .then((m) => m.planDe(x))
+      .then((p) => vivant && (recit = p))
+      .catch(() => {});
+    return () => (vivant = false);
+  });
+  const reciter = () =>
+    import('./lecteur/ouvrir')
+      .then((m) => brec && m.ouvrir({ declencheur: brec, type: 'l', resoudre: sourceLecteur }))
+      .catch(() => {});
 
   async function play(lent: boolean) {
     if (!id || !bouton) return;
@@ -23,7 +57,7 @@
       await ouvrir({
         declencheur: bouton,
         type: 'l',
-        resoudre: leconsSource,
+        resoudre: sourceLecteur,
         vitesse: lent ? SLOW_RATE : undefined,
       });
     } catch {
@@ -57,6 +91,29 @@
       data-testid="ecouter-lent"
       aria-label={t('audio.ecouter_lent')}
       onclick={() => play(true)}>{t('audio.lent')}</button
+    ></span
+  >{:else if recit}<span class="ecouter" class:small dir="ltr"
+    ><button
+      type="button"
+      class="spk rec"
+      data-testid="recitation"
+      data-versets={recit.versets.join(' ')}
+      data-lecteur="l"
+      data-audio="r:{recit.ref}"
+      bind:this={brec}
+      aria-label={t(recit.fragment ? 'audio.recitation_fragment' : 'audio.recitation_aria', {
+        v: recit.versets.join(', '),
+      })}
+      onclick={reciter}
+      ><svg viewBox="0 0 24 24" aria-hidden="true"
+        ><path d="M3 9h4l5-4v14l-5-4H3z" fill="currentColor" /><path
+          d="M15.5 8.5a5 5 0 0 1 0 7"
+          stroke="currentColor"
+          stroke-width="2"
+          fill="none"
+          stroke-linecap="round"
+        /></svg
+      ><span class="nom">{t('audio.recitation_ayyub')}</span></button
     ></span
   >{/if}
 
@@ -95,6 +152,9 @@
     height: 26px;
   }
   /* la classe « playing » est posée par le lecteur pendant la lecture de cette phrase */
+  .rec {
+    border-color: var(--gold);
+  }
   .spk:global(.playing) {
     background: var(--teal);
     color: var(--card);

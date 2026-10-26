@@ -1,1 +1,129 @@
-{"v":2,"id":"bayquniyya","version":"b60a016f8453","statut":"EN_ATTENTE_SECONDE_LECTURE","decoupage":"[13/10 ter : az-Zurqānī (Ajhūrī, 1324 H) relu sur l'image ; les 14 séances portent verification_az_zurqani (S02, S03, S13 au 13/10 bis ; S01, S04 à S12, S14 au 13/10 ter). Pages lues (image n = page imprimée) : 13-14, 17-31, 46-51, 56, 60, 63, 67, 71, 73-84, 86, 88, 90, 92, 94-95, 98, 100, 104, 106-108, 110-114, 116-117. Pages non lues : 1-12, 15-16, 32-45, 52-55, 57-59, 61-62, 64-66, 68-70, 72, 85, 87, 89, 91, 93, 96-97, 99, 101-103, 105, 109, 115, 118-122. Chaque séance est vérifiée sur les pages lues qui traitent de ses notions, pas sur tout le commentaire. Le second exemplaire (AAlexandrina-121255) n'a pas été ouvert.] Découpage proposé par Claude, par thèmes de 2 à 4 vers ; à comparer avec la pratique de maîtres.","publication":"R-S1 : az-Zurqānī lu sur toutes les notions des 14 séances (pages listées dans a_confirmer ; commentaire non lu en entier) ; R-S2 : écarts du poème avec Ibn Ḥajar : consignés, on enseigne les deux avec leur auteur (décision du référent) ; az-Zurqānī lit « فوق ما ثلاثة » comme « trois et plus » (S06) et note que la condition « en un même endroit » du muʿḍal n'est pas dans les mots du poème (S08) : consignés dans az_zurqani, sans trancher.","comite":[{"n":3,"id":"BAY-S03","motif":""},{"n":4,"id":"BAY-S04","motif":""},{"n":6,"id":"BAY-S06","motif":""},{"n":8,"id":"BAY-S08","motif":""},{"n":13,"id":"BAY-S13","motif":""}],"phrases":[{"id":"BAY-0001","a_verifier":["Vocalisation de « نَبِيٍّ أُرْسِلَا » : T écrit « نبيْ » (sukūn de pause), W « نَبِيٍّ » ; retenu : « نَبِيٍّ », comme W."],"variantes":[]},{"id":"BAY-0005","a_verifier":[],"variantes":[],"traduction":"Ibn aṣ-Ṣalāḥ (p. 99-100) juge ces formules floues (R-E1 conservé : à relire). az-Zurqānī : page non lue. / « ḥasan [bon] » : mot propre à la science du hadith (degré de hadith), distinct du « ḥasan » d'appréciation (« c'est bien ») de lexique_fiqh_commun.json. Voir lexique_hadith.json, entrée ḥasan [bon]."},{"id":"BAY-0012","a_verifier":[],"variantes":[],"decision":"Le vers est traduit fidèlement. La note donne la définition d'Ibn Ḥajar (Nuzhat an-naẓar) et celle d'Ibn aṣ-Ṣalāḥ, avec page, sous l'intitulé « selon Ibn Ḥajar » ; pas de choix à trancher entre eux : on enseigne les deux avec leur auteur."},{"id":"BAY-0017","a_verifier":[],"variantes":[],"decision":"Le vers est traduit fidèlement. La note donne la définition d'Ibn Ḥajar (Nuzhat an-naẓar) et celle d'Ibn aṣ-Ṣalāḥ, avec page, sous l'intitulé « selon Ibn Ḥajar » ; pas de choix à trancher entre eux : on enseigne les deux avec leur auteur."},{"id":"BAY-0018","a_verifier":[],"variantes":[],"decision":"Le vers est traduit fidèlement. La note donne la définition d'Ibn Ḥajar (Nuzhat an-naẓar) et celle d'Ibn aṣ-Ṣalāḥ, avec page, sous l'intitulé « selon Ibn Ḥajar » ; pas de choix à trancher entre eux : on enseigne les deux avec leur auteur."},{"id":"BAY-0021","a_verifier":["« بِهِ » (retenu : T et W) : à confirmer sur une édition ancienne ou sur az-Zurqānī ; la lecture « فِيهِ » est à écarter ou à confirmer, aucun témoin lu ne la porte.","RÉSOLU en grande partie le 13/10 : voir collation_ancienne_13_10 (az-Zurqānī lu aux pages indiquées)."],"variantes":[{"id":"V-01","vers":"BAY-0021","T":"وما يخلف ثِقَةٌ بِهِ الَملأ (faute de saisie : « يخلف »)","W":"= saisie","retenu":"وَمَا يُخَالِفْ ثِقَةٌ بِهِ الْمَلَا","nature":"faute de frappe de T","portee":"nulle"},{"id":"V-04","vers":"BAY-0021","T":"« بِهِ الَملأ » (hamza de fin de mot)","W":"« بِهِ المَلاَ »","retenu":"« بِهِ الْمَلَا » (alif de rime, comme W)","nature":"orthographe de la rime","portee":"nulle"}]},{"id":"BAY-0023","a_verifier":["« أَوْ قَصْرٍ عَلَى رِوَايَةِ » : sens de قَصْر à fixer d'après az-Zurqānī (non lu).","RÉSOLU en grande partie le 13/10 : voir collation_ancienne_13_10 (az-Zurqānī lu aux pages indiquées)."],"variantes":[]},{"id":"BAY-0027","a_verifier":["« وَانْتَخِهْ » : sens du verbe à fixer d'après az-Zurqānī (non lu).","RÉSOLU en grande partie le 13/10 : voir collation_ancienne_13_10 (az-Zurqānī lu aux pages indiquées)."],"variantes":[{"id":"V-02","vers":"BAY-0027","T":"مُدّبَّجٌ","W":"مُدّبَّجٌ","retenu":"مُدَبَّجٌ","nature":"place de la shadda (T et W portent la même faute) ; la racine est دبج","portee":"faible"}]},{"id":"BAY-0029","a_verifier":[],"variantes":[{"id":"V-03","vers":"BAY-0029","T":"مُتَّقِقُ الخَطِّ","W":"مُتَّقِقُ الخَـطِّ","retenu":"مُتَّفِقُ الْخَطِّ","nature":"faute de saisie commune à T et W (« متقق » pour « متفق ») ; sens imposé par le vers 28 et par le commentaire d'Ibn aṣ-Ṣalāḥ (p. 450)","portee":"nulle"}]},{"id":"BAY-0030","a_verifier":[],"variantes":[],"decision":"Le vers est traduit fidèlement. La note donne la définition d'Ibn Ḥajar (Nuzhat an-naẓar) et celle d'Ibn aṣ-Ṣalāḥ, avec page, sous l'intitulé « selon Ibn Ḥajar » ; pas de choix à trancher entre eux : on enseigne les deux avec leur auteur."},{"id":"BAY-0031","a_verifier":[],"variantes":[],"decision":"Le vers est traduit fidèlement. La note donne la définition d'Ibn Ḥajar (Nuzhat an-naẓar) et celle d'Ibn aṣ-Ṣalāḥ, avec page, sous l'intitulé « selon Ibn Ḥajar » ; pas de choix à trancher entre eux : on enseigne les deux avec leur auteur."}],"mots":[]}
+{
+  "v": 2,
+  "id": "bayquniyya",
+  "version": "b60a016f8453",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "decoupage": "[13/10 ter : az-Zurqānī (Ajhūrī, 1324 H) relu sur l'image ; les 14 séances portent verification_az_zurqani (S02, S03, S13 au 13/10 bis ; S01, S04 à S12, S14 au 13/10 ter). Pages lues (image n = page imprimée) : 13-14, 17-31, 46-51, 56, 60, 63, 67, 71, 73-84, 86, 88, 90, 92, 94-95, 98, 100, 104, 106-108, 110-114, 116-117. Pages non lues : 1-12, 15-16, 32-45, 52-55, 57-59, 61-62, 64-66, 68-70, 72, 85, 87, 89, 91, 93, 96-97, 99, 101-103, 105, 109, 115, 118-122. Chaque séance est vérifiée sur les pages lues qui traitent de ses notions, pas sur tout le commentaire. Le second exemplaire (AAlexandrina-121255) n'a pas été ouvert.] Découpage proposé par Claude, par thèmes de 2 à 4 vers ; à comparer avec la pratique de maîtres.",
+  "publication": "R-S1 : az-Zurqānī lu sur toutes les notions des 14 séances (pages listées dans a_confirmer ; commentaire non lu en entier) ; R-S2 : écarts du poème avec Ibn Ḥajar : consignés, on enseigne les deux avec leur auteur (décision du référent) ; az-Zurqānī lit « فوق ما ثلاثة » comme « trois et plus » (S06) et note que la condition « en un même endroit » du muʿḍal n'est pas dans les mots du poème (S08) : consignés dans az_zurqani, sans trancher.",
+  "comite": [
+    { "n": 3, "id": "BAY-S03", "motif": "" },
+    { "n": 4, "id": "BAY-S04", "motif": "" },
+    { "n": 6, "id": "BAY-S06", "motif": "" },
+    { "n": 8, "id": "BAY-S08", "motif": "" },
+    { "n": 13, "id": "BAY-S13", "motif": "" }
+  ],
+  "phrases": [
+    {
+      "id": "BAY-0001",
+      "a_verifier": [
+        "Vocalisation de « نَبِيٍّ أُرْسِلَا » : T écrit « نبيْ » (sukūn de pause), W « نَبِيٍّ » ; retenu : « نَبِيٍّ », comme W."
+      ],
+      "variantes": []
+    },
+    {
+      "id": "BAY-0005",
+      "a_verifier": [],
+      "variantes": [],
+      "traduction": "Ibn aṣ-Ṣalāḥ (p. 99-100) juge ces formules floues (R-E1 conservé : à relire). az-Zurqānī : page non lue. / « ḥasan [bon] » : mot propre à la science du hadith (degré de hadith), distinct du « ḥasan » d'appréciation (« c'est bien ») de lexique_fiqh_commun.json. Voir lexique_hadith.json, entrée ḥasan [bon]."
+    },
+    {
+      "id": "BAY-0012",
+      "a_verifier": [],
+      "variantes": [],
+      "decision": "Le vers est traduit fidèlement. La note donne la définition d'Ibn Ḥajar (Nuzhat an-naẓar) et celle d'Ibn aṣ-Ṣalāḥ, avec page, sous l'intitulé « selon Ibn Ḥajar » ; pas de choix à trancher entre eux : on enseigne les deux avec leur auteur."
+    },
+    {
+      "id": "BAY-0017",
+      "a_verifier": [],
+      "variantes": [],
+      "decision": "Le vers est traduit fidèlement. La note donne la définition d'Ibn Ḥajar (Nuzhat an-naẓar) et celle d'Ibn aṣ-Ṣalāḥ, avec page, sous l'intitulé « selon Ibn Ḥajar » ; pas de choix à trancher entre eux : on enseigne les deux avec leur auteur."
+    },
+    {
+      "id": "BAY-0018",
+      "a_verifier": [],
+      "variantes": [],
+      "decision": "Le vers est traduit fidèlement. La note donne la définition d'Ibn Ḥajar (Nuzhat an-naẓar) et celle d'Ibn aṣ-Ṣalāḥ, avec page, sous l'intitulé « selon Ibn Ḥajar » ; pas de choix à trancher entre eux : on enseigne les deux avec leur auteur."
+    },
+    {
+      "id": "BAY-0021",
+      "a_verifier": [
+        "« بِهِ » (retenu : T et W) : à confirmer sur une édition ancienne ou sur az-Zurqānī ; la lecture « فِيهِ » est à écarter ou à confirmer, aucun témoin lu ne la porte.",
+        "RÉSOLU en grande partie le 13/10 : voir collation_ancienne_13_10 (az-Zurqānī lu aux pages indiquées)."
+      ],
+      "variantes": [
+        {
+          "id": "V-01",
+          "vers": "BAY-0021",
+          "T": "وما يخلف ثِقَةٌ بِهِ الَملأ (faute de saisie : « يخلف »)",
+          "W": "= saisie",
+          "retenu": "وَمَا يُخَالِفْ ثِقَةٌ بِهِ الْمَلَا",
+          "nature": "faute de frappe de T",
+          "portee": "nulle"
+        },
+        {
+          "id": "V-04",
+          "vers": "BAY-0021",
+          "T": "« بِهِ الَملأ » (hamza de fin de mot)",
+          "W": "« بِهِ المَلاَ »",
+          "retenu": "« بِهِ الْمَلَا » (alif de rime, comme W)",
+          "nature": "orthographe de la rime",
+          "portee": "nulle"
+        }
+      ]
+    },
+    {
+      "id": "BAY-0023",
+      "a_verifier": [
+        "« أَوْ قَصْرٍ عَلَى رِوَايَةِ » : sens de قَصْر à fixer d'après az-Zurqānī (non lu).",
+        "RÉSOLU en grande partie le 13/10 : voir collation_ancienne_13_10 (az-Zurqānī lu aux pages indiquées)."
+      ],
+      "variantes": []
+    },
+    {
+      "id": "BAY-0027",
+      "a_verifier": [
+        "« وَانْتَخِهْ » : sens du verbe à fixer d'après az-Zurqānī (non lu).",
+        "RÉSOLU en grande partie le 13/10 : voir collation_ancienne_13_10 (az-Zurqānī lu aux pages indiquées)."
+      ],
+      "variantes": [
+        {
+          "id": "V-02",
+          "vers": "BAY-0027",
+          "T": "مُدّبَّجٌ",
+          "W": "مُدّبَّجٌ",
+          "retenu": "مُدَبَّجٌ",
+          "nature": "place de la shadda (T et W portent la même faute) ; la racine est دبج",
+          "portee": "faible"
+        }
+      ]
+    },
+    {
+      "id": "BAY-0029",
+      "a_verifier": [],
+      "variantes": [
+        {
+          "id": "V-03",
+          "vers": "BAY-0029",
+          "T": "مُتَّقِقُ الخَطِّ",
+          "W": "مُتَّقِقُ الخَـطِّ",
+          "retenu": "مُتَّفِقُ الْخَطِّ",
+          "nature": "faute de saisie commune à T et W (« متقق » pour « متفق ») ; sens imposé par le vers 28 et par le commentaire d'Ibn aṣ-Ṣalāḥ (p. 450)",
+          "portee": "nulle"
+        }
+      ]
+    },
+    {
+      "id": "BAY-0030",
+      "a_verifier": [],
+      "variantes": [],
+      "decision": "Le vers est traduit fidèlement. La note donne la définition d'Ibn Ḥajar (Nuzhat an-naẓar) et celle d'Ibn aṣ-Ṣalāḥ, avec page, sous l'intitulé « selon Ibn Ḥajar » ; pas de choix à trancher entre eux : on enseigne les deux avec leur auteur."
+    },
+    {
+      "id": "BAY-0031",
+      "a_verifier": [],
+      "variantes": [],
+      "decision": "Le vers est traduit fidèlement. La note donne la définition d'Ibn Ḥajar (Nuzhat an-naẓar) et celle d'Ibn aṣ-Ṣalāḥ, avec page, sous l'intitulé « selon Ibn Ḥajar » ; pas de choix à trancher entre eux : on enseigne les deux avec leur auteur."
+    }
+  ],
+  "mots": []
+}

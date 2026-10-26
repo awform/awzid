@@ -69,7 +69,15 @@ export async function mjSource(
 /** Appui sur « Écouter » : ouvre le lecteur (chargé à la demande) et joue cette phrase. */
 export async function ecouter(declencheur: HTMLElement): Promise<void> {
   const { ouvrir } = await import('$lib/lecteur/ouvrir');
-  await ouvrir({ declencheur, type: 'm', resoudre: mjSource });
+  // 26/10/2026 : récitation d'Ayyūb des citations du Coran (« r:<versets> ») dans la même séance du lecteur
+  await ouvrir({
+    declencheur,
+    type: 'm',
+    resoudre: (ref) =>
+      ref.startsWith('r:')
+        ? import('$lib/recitation/ayyub').then((m) => m.sourceRecitation(ref.slice(2)))
+        : mjSource(ref),
+  });
 }
 
 /** Joue la phrase sans le lecteur ; false si le fichier est introuvable (hors ligne, droit retiré). */

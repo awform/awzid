@@ -159,6 +159,9 @@ function lire(url: string | null, o: OptsLecture): Promise<Fin> {
     if (!url) return simuler();
     a = new Audio(url);
     a.preservesPitch = true;
+    // 26/10/2026 : la pastille du lecteur pilote ce son (pause, ±5 s, vitesse) ; le surlignage suit le temps du fichier
+    const pilote = a;
+    void import('$lib/lecteur/ouvrir').then((m) => m.piloter(pilote)).catch(() => {});
     a.addEventListener('error', simuler, { once: true });
     const partir = () => {
       try {

@@ -39,6 +39,19 @@
     await tick();
     barre?.querySelector<HTMLElement>(v ? '.replier' : '.regler')?.focus();
   }
+  // 26/10/2026 : un APPUI LONG sur la pastille ouvre les réglages (comme l'indice « ⋯ »), sans lancer ni arrêter le son
+  let appui = 0;
+  let long = false;
+  const debutAppui = () => {
+    if (deplie || exercice) return;
+    long = false;
+    clearTimeout(appui);
+    appui = window.setTimeout(() => {
+      long = true;
+      void regler(true);
+    }, 550);
+  };
+  const finAppui = () => clearTimeout(appui);
   // un toucher hors du lecteur le replie (sans changer le choix gardé)
   $effect(() => {
     if (!deplie) return;
@@ -132,9 +145,21 @@
   >
 {/snippet}
 
+<!-- appui long : raccourci de « Régler », qui reste un bouton) -->
 <div
   class="lecteur"
   class:mini={!deplie}
+  onpointerdown={debutAppui}
+  onpointerup={finAppui}
+  onpointerleave={finAppui}
+  onpointercancel={finAppui}
+  oncontextmenu={(e) => !deplie && e.preventDefault()}
+  onclickcapture={(e) => {
+    if (!long) return;
+    long = false;
+    e.stopPropagation();
+    e.preventDefault();
+  }}
   hidden={cache}
   role="region"
   aria-label={t('lec.nom')}
@@ -181,7 +206,7 @@
               cy="17"
               r="2.5"
             /></svg
-          ></button
+          ><span class="indice" aria-hidden="true">⋯</span></button
         >
       {/if}
     {/if}
@@ -319,6 +344,13 @@
 </div>
 
 <style>
+  /* indice visible : la pastille se règle (vitesse, ±5 s…) */
+  .indice {
+    font-size: 16px;
+    line-height: 1;
+    margin-inline-start: 1px;
+    font-weight: 700;
+  }
   .lecteur {
     position: fixed;
     inset-inline: 0;

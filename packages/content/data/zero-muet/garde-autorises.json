@@ -1,6 +1,6 @@
 {
   "_description": "Textes que la garde coranique de la voix refuse (garde-coran.ts : récitation, citation, présenté comme Coran) mais que le référent a décidés « lus par la synthèse » : vocabulaire de moins de 4 mots (DECISION_ZERO_MUET § 2 bis), définitions, formules, vers didactiques, textes du livre (referent-373-DECISIONS). Un texte de cette liste n'est JAMAIS une citation du Coran en récitation : ni verset entier annoncé, ni 4 mots du Coran présentés comme parole d'Allah (ceux-là sont récités par Ayyūb). Comparaison par la clé audio du texte (empreinte) ; la liste de code `src/garde-autorises.ts` est générée par `GARDE_AUTORISES=ecrire pnpm --filter @awform/content test garde-autorises`. Aucun texte n'est ajouté sans décision écrite du référent ou règle écrite du § 2 bis.",
-  "_version": "2026-10-25",
+  "_version": "2026-10-26",
   "textes": [
     {
       "cle": "مَنۢ بَخِلَ (92:8)",
@@ -1057,6 +1057,726 @@
       "decision": "synthese",
       "raison": "mot de vocabulaire en graphie du Mushaf, moins de 4 mots, presente comme vocabulaire (? 2 bis, decision du referent du 25/10/2026, point 2)",
       "refusAvant": "client : graphie du Mushaf (looksQuranic)"
+    },
+    {
+      "cle": "زُبَرُ الْحَدِيدِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "فِيلٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "طَيْرٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "بَيْتٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "حَبْلٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "نَوْمٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "جَبَلٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "مِيزَانٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "نَفْسٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "يَتِيمٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "تِينٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "صُحُفٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "وَالِدَانِ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "صَوْتٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "aucun"
+    },
+    {
+      "cle": "سُؤَالٌ دَقِيقٌ! الْآيَةُ تَقُولُ قَبْلَ ذٰلِكَ ﴿فَذَبَحُوهَا﴾، فَالذَّبْحُ وَقَعَ. وَ«مَا كَادُوا» تَصِفُ حَالَهُمْ قَبْلَهُ: كَانُوا بَعِيدِينَ مِنَ الطَّاعَةِ بِكَثْرَةِ أَسْئِلَتِهِمْ، ثُمَّ فَعَلُوا بَعْدَ بُطْءٍ.",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire de moins de 4 mots présenté seul (§ 2 bis), pas une récitation — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "قَالُوا۟ — لَهُۥ — مِنۢ بَعْدِ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "مَعْطُوفٌ عَلَى «ٱلْمَغْضُوبِ» مَجْرُورٌ بِالْيَاءِ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "بَدَلٌ مِنَ «ٱلصِّرَٰطَ» مَنْصُوبٌ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "إِلَى ٱلْمَرَافِقِ · بِرُءُوسِكُمْ · لَٰمَسْتُمُ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "[إِلَى] ٱلْمَرَافِقِ · [بِرُءُوسِكُمْ] · [لَٰمَسْتُمُ] ٱلنِّسَآءَ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "مَعْطُوفٌ عَلَى «ٱلرَّسُولَ» مَنْصُوبٌ بِالْيَاءِ لِأَنَّهُ مُلْحَقٌ بِجَمْعِ الْمُذَكَّرِ السَّالِمِ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "جَارٌّ وَمَجْرُورٌ مُتَعَلِّقٌ بِـ«ٱقْرَأْ»",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(أ) تَحْفَظُ الْجَمْعَ الَّذِي فِي «ٱلْعَٰلَمِينَ»",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَٱلْعَصْرِ · خُسْرٌ · الصَّالِحَاتُ · تَوَاصَوْا · الْحَقُّ · الصَّبْرُ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱلشَّمْسِ / ٱلْقَمَرِ — رَسُولُ ٱللَّهِ / بِسْمِ ٱللَّهِ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "عَيْنَيْنْ، خَوْفْ (لِينٌ) — ٱلْأَمِينْ (عَارِضٌ)",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "«ٱلْعَٰلَمِينَ» مَجْرُورٌ…|فَأَيْنَ الْكَسْرَةُ؟",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "«ٱلْعَٰلَمِينَ» مَجْرُورٌ… فَأَيْنَ الْكَسْرَةُ؟",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ثم ذكرهم بقول يعقوب لأبنائه وهو يرجو رحمة الله: يَٰبَنِىَّ ٱذْهَبُوا۟ فَتَحَسَّسُوا۟.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَالْآنَ «ٱسْتَيْـَٔسَ» فِي الْآيَةِ الْعَاشِرَةِ بَعْدَ الْمِئَةِ. أَيْنَ نَبْحَثُ عَنْهَا؟",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "رَسْمُ الْمُصْحَفِ ← الْكِتَابَةُ الْعَادِيَّةُ: ٱلصَّلَوٰةَ ← الصَّلَاةَ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "أَوَّلًا: الصَّبْرُ. فَقَدْ فَقَدَ يَعْقُوبُ عَلَيْهِ السَّلَامُ ابْنَهُ سِنِينَ طَوِيلَةً، وَلَمْ يَشْكُ حُزْنَهُ إِلَّا إِلَى اللَّهِ، وَقَالَ: «فَصَبْرٌۭ جَمِيلٌۭ».",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "بَارَكَ اللَّهُ فِيكُمْ: أَعَدْتُمْ صِيَاغَةَ الْآرَاءِ، وَذَكَرْتُمُ الْمَصَادِرَ، وَلَمْ يَرْفَعْ أَحَدٌ صَوْتَهُ. هٰذَا هُوَ الْجِدَالُ «بِٱلَّتِى هِىَ أَحْسَنُ».",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ثَانِيًا: الْعِفَّةُ وَالْأَمَانَةُ. فَقَدْ رَفَضَ يُوسُفُ الْحَرَامَ وَهُوَ شَابٌّ غَرِيبٌ وَحِيدٌ، وَقَالَ: «مَعَاذَ ٱللَّهِ»، وَاخْتَارَ السِّجْنَ عَلَى الْمَعْصِيَةِ.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "أَحْسَنْتِ. افْتَحِي الْمُصْحَفَ عَلَى الْآيَةِ الثَّامِنَةِ بَعْدَ الْمِئَةِ مِنْ سُورَةِ يُوسُفَ، وَأَعْرِبِي أَوَّلَهَا: «هَٰذِهِۦ سَبِيلِىٓ».",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "فَالْأَوَّلُ الْإِظْهَارُ قَبْلَ أَحْرُفِ ... لِلْحَلْقِ سِتٌّ رُتِّبَتْ فَلْتَعْرِفِ ۝ هَمْزٌ فَهَاءٌ ثُمَّ عَيْنٌ حَاءُ ... مُهْمَلَتَانِ ثُمَّ غَيْنٌ خَاءُ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَالثَّالِثُ الْإِقْلَابُ عِنْدَ الْبَاءِ ... مِيمًا بِغُنَّةٍ مَعَ الْإِخْفَاءِ ۝ وَالرَّابِعُ الْإِخْفَاءُ عِنْدَ الْفَاضِلِ ... مِنَ الْحُرُوفِ وَاجِبٌ لِلْفَاضِلِ ۝ فِي خَمْسَةٍ مِنْ بَعْدِ عَشْرٍ رَمْزُهَا ... فِي كَلِمِ هَذَا الْبَيْتِ قَدْ ضَمَّنْتُهَا ۝ صِفْ ذَا ثَنَا كَمْ جَادَ شَخْصٌ قَدْ سَمَا ... دُمْ طَيِّبًا زِدْ فِي تُقًى ضَعْ ظَالِمَا",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَالثَّانِ إِدْغَامٌ بِسِتَّةٍ أَتَتْ ... فِي يَرْمَلُونَ عِنْدَهُمْ قَدْ ثَبَتَتْ ۝ لٰكِنَّهَا قِسْمَانِ قِسْمٌ يُدْغَمَا ... فِيهِ بِغُنَّةٍ بِيَنْمُو عُلِمَا ۝ إِلَّا إِذَا كَانَا بِكِلْمَةٍ فَلَا ... تُدْغِمْ كَدُنْيَا ثُمَّ صِنْوَانٌ تَلَا ۝ وَالثَّانِ إِدْغَامٌ بِغَيْرِ غُنَّهْ ... فِي اللَّامِ وَالرَّا ثُمَّ كَرِّرَنْهْ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "فَالْأَوَّلُ الْإِخْفَاءُ عِنْدَ الْبَاءِ ... وَسَمِّهِ الشَّفْوِيَّ لِلْقُرَّاءِ ۝ وَالثَّانِ إِدْغَامٌ بِمِثْلِهَا أَتَى ... وَسَمِّ إِدْغَامًا صَغِيرًا يَا فَتَى ۝ وَالثَّالِثُ الْإِظْهَارُ فِي الْبَقِيَّهْ ... مِنْ أَحْرُفٍ وَسَمِّهَا شَفْوِيَّهْ ۝ وَاحْذَرْ لَدَى وَاوٍ وَفَا أَنْ تَخْتَفِي ... لِقُرْبِهَا وَالِاتِّحَادِ فَاعْرِفِ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَغُنَّ مِيمًا ثُمَّ نُونًا شُدِّدَا ... وَسَمِّ كُلًّا حَرْفَ غُنَّةٍ بَدَا ۝ وَالْمِيمُ إِنْ تَسْكُنْ تَجِي قَبْلَ الْهِجَا ... لَا أَلِفٍ لَيِّنَةٍ لِذِي الْحِجَا ۝ أَحْكَامُهَا ثَلَاثَةٌ لِمَنْ ضَبَطْ ... إِخْفَاءٌ إِدْغَامٌ وَإِظْهَارٌ فَقَطْ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "طِبْ ثُمَّ صِلْ رَحِمًا تَفُزْ ضِفْ ذَا نِعَمْ ... دَعْ سُوءَ ظَنٍّ زُرْ شَرِيفًا لِلْكَرَمْ ۝ وَاللَّامُ الْأُولَى سَمِّهَا قَمْرِيَّهْ ... وَاللَّامُ الْأُخْرَى سَمِّهَا شَمْسِيَّهْ ۝ وَأَظْهِرَنْ لَامَ فِعْلٍ مُطْلَقَا ... فِي نَحْوِ قُلْ نَعَمْ وَقُلْنَا وَالْتَقَى",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "لِلَامِ أَلْ حَالَانِ قَبْلَ الْأَحْرُفِ ... أُولَاهُمَا إِظْهَارُهَا فَلْتَعْرِفِ ۝ قَبْلَ أَرْبَعٍ مَعَ عَشْرَةٍ خُذْ عِلْمَهُ ... مِنِ ابْغِ حَجَّكَ وَخَفْ عَقِيمَهُ ۝ ثَانِيهِمَا إِدْغَامُهَا فِي أَرْبَعِ ... وَعَشْرَةٍ أَيْضًا وَرَمْزُهَا فَعِ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "لَا، لِأَنَّ ٱلَّذِى بَدَلٌ مُتَّصِلٌ بِمَا قَبْلَهُ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "أَحْسَنْتَ يَا عَبْدَ اللَّهِ! الْمُرَادِفُ يَأْخُذُ إِعْرَابَ الْكَلِمَةِ الَّتِي يُفَسِّرُهَا: صَٰٓفَّٰتٍۢ حَالٌ مَنْصُوبَةٌ بِالْكَسْرَةِ، فَجَاءَ «بَاسِطَاتٍ» مِثْلَهَا.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "صَٰٓفَّٰتٍۢ أَيْ بَاسِطَاتٍ أَجْنِحَتَهُنَّ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "التَّفْسِيرُ بِالْمُرَادِفِ بِنَفْسِ الْإِعْرَابِ: صَٰٓفَّٰتٍۢ ← بَاسِطَاتٍ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "قَالَا: «ذَلُولًۭا» سَهْلَةً لِلْمَشْيِ فِيهَا، وَ«مَنَاكِبِهَا» جَوَانِبِهَا. فَالْأَرْضُ مُذَلَّلَةٌ لَنَا لِنَسْعَى فِيهَا وَنَأْكُلَ مِنْ رِزْقِ اللَّهِ، ثُمَّ إِلَيْهِ النُّشُورُ.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "أَحْسَنْتَ. وَفِي سُورَةِ الْمُلْكِ: مَا مَعْنَى «ذَلُولًۭا» وَ«مَنَاكِبِهَا» عِنْدَ الْجَلَالَيْنِ؟",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "مَخَارِجُ الْحُرُوفِ سَبْعَةَ عَشَرْ ... عَلَى الَّذِي يَخْتَارُهُ مَنِ اخْتَبَرْ ۝ فَأَلِفُ الْجَوْفِ وَأُخْتَاهَا وَهِي ... حُرُوفُ مَدٍّ لِلْهَوَاءِ تَنْتَهِي ۝ ثُمَّ لِأَقْصَى الْحَلْقِ هَمْزٌ هَاءُ ... ثُمَّ لِوَسْطِهِ فَعَيْنٌ حَاءُ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "يَقُولُ رَاجِي عَفْوِ رَبٍّ سَامِعِ ... مُحَمَّدُ بْنُ الْجَزَرِيِّ الشَّافِعِي ۝ الْحَمْدُ لِلَّهِ وَصَلَّى اللَّهُ ... عَلَى نَبِيِّهِ وَمُصْطَفَاهُ ۝ مُحَمَّدٍ وَآلِهِ وَصَحْبِهِ ... وَمُقْرِئِ الْقُرْآنِ مَعْ مُحِبِّهِ ۝ وَبَعْدُ إِنَّ هٰذِهِ مُقَدِّمَهْ ... فِيمَا عَلَى قَارِئِهِ أَنْ يَعْلَمَهْ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "إِذْ وَاجِبٌ عَلَيْهِمُ مُحَتَّمُ ... قَبْلَ الشُّرُوعِ أَوَّلًا أَنْ يَعْلَمُوا ۝ مَخَارِجَ الْحُرُوفِ وَالصِّفَاتِ ... لِيَلْفِظُوا بِأَفْصَحِ اللُّغَاتِ ۝ مُحَرِّرِي التَّجْوِيدِ وَالْمَوَاقِفِ ... وَمَا الَّذِي رُسِمَ فِي الْمَصَاحِفِ ۝ مِنْ كُلِّ مَقْطُوعٍ وَمَوْصُولٍ بِهَا ... وَتَاءِ أُنْثَى لَمْ تَكُنْ تُكْتَبْ بِهَا",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "صَفِيرُهَا صَادٌ وَزَايٌ سِينُ ... قَلْقَلَةٌ قُطْبُ جَدٍ وَاللِّينُ ۝ وَاوٌ وَيَاءٌ سُكِّنَا وَانْفَتَحَا ... قَبْلَهُمَا وَالِانْحِرَافُ صُحِّحَا ۝ فِي اللَّامِ وَالرَّا وَبِتَكْرِيرٍ جُعِلْ ... وَلِلتَّفَشِّي الشِّينُ ضَادًا اسْتَطِلْ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "الْعَالِمُ كَ[الْبَحْرِ] ← تَشْبِيهٌ · جَاءَ [الْبَحْرُ] فَحَدَّثَنَا ← اسْتِعَارَةٌ تَصْرِيحِيَّةٌ · وَٱشْتَعَلَ ٱلرَّأْسُ شَيْبًۭا ← اسْتِعَارَةٌ مَكْنِيَّةٌ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "صِفَاتُهَا جَهْرٌ وَرِخْوٌ مُسْتَفِلْ ... مُنْفَتِحٌ مُصْمَتَةٌ وَالضِّدَّ قُلْ ۝ مَهْمُوسُهَا فَحَثَّهُ شَخْصٌ سَكَتْ ... شَدِيدُهَا لَفْظُ أَجِدْ قَطٍ بَكَتْ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَبَيْنَ رِخْوٍ وَالشَّدِيدِ لِنْ عُمَرْ ... وَسَبْعُ عُلْوٍ خُصَّ ضَغْطٍ قِظْ حَصَرْ ۝ وَصَادُ ضَادٌ طَاءُ ظَاءٌ مُطْبَقَهْ ... وَفِرَّ مِنْ لُبِّ الْحُرُوفِ الْمُذْلَقَهْ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "٥. الْمَحَلِّيَّةُ: يُذْكَرُ الْمَكَانُ وَيُرَادُ أَهْلُهُ: وَسْـَٔلِ ٱلْقَرْيَةَ.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "٦. الْحَالِّيَّةُ: يُذْكَرُ مَا فِي الْمَكَانِ وَيُرَادُ الْمَكَانُ: فَفِى رَحْمَةِ ٱللَّهِ (الرَّحْمَةُ = الْجَنَّةُ).",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَفَخِّمِ اللَّامَ مِنِ اسْمِ اللَّهِ ... عَنْ فَتْحٍ اوْ ضَمٍّ كَعَبْدُ اللَّهِ ۝ وَحَرْفَ الِاسْتِعْلَاءِ فَخِّمْ وَاخْصُصَا ... الِاطْبَاقَ أَقْوَى نَحْوُ قَالَ وَالْعَصَا",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "١. الْجُزْئِيَّةُ: يُذْكَرُ الْجُزْءُ وَيُرَادُ الْكُلُّ: فَتَحْرِيرُ رَقَبَةٍۢ مُّؤْمِنَةٍۢ (الرَّقَبَةُ = الْإِنْسَانُ).",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "٧. اعْتِبَارُ مَا كَانَ: وَءَاتُوا۟ ٱلْيَتَٰمَىٰٓ أَمْوَٰلَهُمْ (كَانُوا يَتَامَى ثُمَّ بَلَغُوا).",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَرَقِّقِ الرَّاءَ إِذَا مَا كُسِرَتْ ... كَذَاكَ بَعْدَ الْكَسْرِ حَيْثُ سَكَنَتْ ۝ إِنْ لَمْ تَكُنْ مِنْ قَبْلِ حَرْفِ اسْتِعْلَا ... أَوْ كَانَتِ الْكَسْرَةُ لَيْسَتْ أَصْلَا",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَالضَّادَ بِاسْتِطَالَةٍ وَمَخْرَجِ ... مَيِّزْ مِنَ الظَّاءِ وَكُلُّهَا تَجِي ۝ فِي الظَّعْنِ ظِلِّ الظُّهْرِ عُظْمِ الْحِفْظِ ... أَيْقِظْ وَأَنْظِرْ عَظْمِ ظَهْرِ اللَّفْظِ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "[ٱلسَّاعَةُ] … [سَاعَةٍۢ] · [الْخَيْلُ] / [الْخَيْرُ] · إِلَى الْأَخِ [الْكَرِيمِ]، وَالصَّدِيقِ [الْحَمِيمِ]",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "قَالَ اللَّهُ تَعَالَى: «فَٱغْسِلُوا۟ وُجُوهَكُمْ»، وَالْغَسْلُ عِنْدَ الْمَالِكِيَّةِ صَبُّ الْمَاءِ مَعَ إِمْرَارِ الْيَدِ، وَإِلَّا فَهُوَ غَمْسٌ أَوْ صَبٌّ. وَرُوِيَ أَنَّ النَّبِيَّ ﷺ تَوَضَّأَ فَجَعَلَ يَدْلُكُ ذِرَاعَيْهِ.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "وَ«فَأُو۟لَٰٓئِكَ»؟ هَلْ تَنْطِقِينَ الْوَاوَ الَّتِي بَعْدَ الْهَمْزَةِ؟",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "فِي أَوَّلِ آيَةٍ، يَا جَدِّي، أُقَلْقِلُ الدَّالَ السَّاكِنَةَ فِي «قَدْ»، وَأَنْطِقُ الْهَمْزَةَ فِي «ٱلْمُؤْمِنُونَ» وَاضِحَةً.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "أَوْفُوا۟ بِٱلْعُقُودِ · إِنَّا لَا نَغْدِرُ بِهِمْ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "قَالَ أَبُو جَعْفَرِ بْنُ جَرِيرٍ: مَعْنَى (ٱلْحَمْدُ لِلَّهِ): الشُّكْرُ لِلَّهِ خَالِصًا دُونَ سَائِرِ مَا يُعْبَدُ مِنْ دُونِهِ، وَدُونَ كُلِّ مَا بَرَأَ مِنْ خَلْقِهِ، بِمَا أَنْعَمَ عَلَى عِبَادِهِ مِنَ النِّعَمِ الَّتِي لَا يُحْصِيهَا الْعَدَدُ… وَالْأَلِفُ وَاللَّامُ فِي (ٱلْحَمْدُ) لِاسْتِغْرَاقِ جَمِيعِ أَجْنَاسِ الْحَمْدِ وَصُنُوفِهِ لِلَّهِ تَعَالَى.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(رَبِّ ٱلْعَٰلَمِينَ): وَالرَّبُّ هُوَ: الْمَالِكُ الْمُتَصَرِّفُ، وَيُطْلَقُ فِي اللُّغَةِ عَلَى السَّيِّدِ، وَعَلَى الْمُتَصَرِّفِ لِلْإِصْلَاحِ، وَكُلُّ ذٰلِكَ صَحِيحٌ فِي حَقِّ اللَّهِ تَعَالَى. وَلَا يُسْتَعْمَلُ الرَّبُّ لِغَيْرِ اللَّهِ، بَلْ بِالْإِضَافَةِ؛ تَقُولُ: رَبُّ الدَّارِ… وَالْعَالَمِينَ: جَمْعُ عَالَمٍ، وَهُوَ كُلُّ مَوْجُودٍ سِوَى اللَّهِ عَزَّ وَجَلَّ.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "قُلْتُ: وَهٰذَا يَرُدُّهُ أَنَّ هٰذِهِ السُّورَةَ وَالنِّسَاءَ مَدَنِيَّتَانِ، وَفِيهِمَا (يَٰٓأَيُّهَا ٱلنَّاسُ). وَأَمَّا قَوْلُهُمَا فِي (يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟) فَصَحِيحٌ.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "قَالَ عَلْقَمَةُ وَمُجَاهِدٌ: كُلُّ آيَةٍ أَوَّلُهَا (يَٰٓأَيُّهَا ٱلنَّاسُ) فَإِنَّمَا نَزَلَتْ بِمَكَّةَ، وَكُلُّ آيَةٍ أَوَّلُهَا (يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟) فَإِنَّمَا نَزَلَتْ بِالْمَدِينَةِ.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "عُدُولٌ فِي الزَّمَنِ (أَرْسَلَ ← فَتُثِيرُ) · عُدُولٌ فِي الْعَدَدِ (يَٰٓأَيُّهَا ٱلنَّبِىُّ ← طَلَّقْتُمُ)",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "[ٱلصَّلَوٰةَ] / الصَّلَاةَ · [ٱلْكِتَٰبُ] / الْكِتَابُ · [مِا۟ئَةَ] / مِئَةَ · [يَسْـَٔلُونَكَ] / يَسْأَلُونَكَ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "عِنْدِي سُؤَالٌ: لِمَاذَا نَكْتُبُ «ٱلصَّلَوٰةَ» بِالْوَاوِ إِلَى الْيَوْمِ؟ أَلَا نُسَهِّلُ عَلَى الْمُتَعَلِّمِينَ؟",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "حُفِظَ الْقُرْآنُ فِي [الصُّدُورِ] وَفِي [السُّطُورِ]: كَانَ النَّبِيُّ ﷺ يُمْلِيهِ عَلَى كُتَّابِ الْوَحْيِ، فَيَكْتُبُونَهُ عَلَى الْعُسُبِ وَاللِّخَافِ وَالرِّقَاعِ، وَيَحْفَظُهُ الصَّحَابَةُ. فَلَمَّا اسْتَحَرَّ الْقَتْلُ بِالْقُرَّاءِ يَوْمَ الْيَمَامَةِ، أَمَرَ أَبُو بَكْرٍ زَيْدَ بْنَ ثَابِتٍ بِـ[جَمْعِهِ] فِي صُحُفٍ. ثُمَّ لَمَّا اخْتَلَفَ النَّاسُ فِي الْقِرَاءَةِ، أَمَرَ عُثْمَانُ بِـ[نَسْخِ] الصُّحُفِ فِي مَصَاحِفَ، وَأَرْسَلَ إِلَى كُلِّ أُفُقٍ بِمُصْحَفٍ. وَكُتِبَتْ هٰذِهِ الْمَصَاحِفُ بِرَسْمٍ خَاصٍّ، مِنْ خَصَائِصِهِ: [الْحَذْفُ]، نَحْوُ: ٱلْكِتَٰبُ؛ وَ[الزِّيَادَةُ]، نَحْوُ: مِا۟ئَةَ؛ وَ[الْهَمْزُ]، نَحْوُ: يَسْـَٔلُونَكَ؛ وَ[الْبَدَلُ]، نَحْوُ: ٱلصَّلَوٰةَ؛ وَ[الْوَصْلُ وَالْفَصْلُ]، نَحْوُ: أَلَّا وَأَن لَّآ. وَلَمْ تَكُنْ فِيهَا نُقَطٌ وَلَا حَرَكَاتٌ، ثُمَّ وَضَعَ أَبُو الْأَسْوَدِ الدُّؤَلِيُّ نَقْطَ الْإِعْرَابِ، وَوُضِعَ بَعْدَهُ نَقْطُ الْإِعْجَامِ، ثُمَّ وَضَعَ الْخَلِيلُ بْنُ أَحْمَدَ الشَّكْلَ الَّذِي نَعْرِفُهُ الْيَوْمَ.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "يَوْمِ مُضَافٌ إِلَيْهِ، وَٱلدِّينِ مُضَافٌ إِلَيْهِ، مَجْرُورَانِ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "الْوَاوُ اسْتِئْنَافِيَّةٌ، وَ«ٱلرَّٰسِخُونَ» مُبْتَدَأٌ مَرْفُوعٌ بِالْوَاوِ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "الْوَاوُ عَاطِفَةٌ، وَ«ٱلرَّٰسِخُونَ» مَعْطُوفٌ عَلَى لَفْظِ الْجَلَالَةِ مَرْفُوعٌ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "مَعْطُوفٌ عَلَى «ٱلْمَغْضُوبِ» مَجْرُورٌ بِالْيَاءِ، وَ«لَا» زَائِدَةٌ لِتَأْكِيدِ النَّفْيِ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "نَعْتٌ لِـ «ٱلَّذِينَ» أَوْ بَدَلٌ مِنْهُ، مَجْرُورٌ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "بَارَكَ اللَّهُ فِيكِ. اكْتُبِي بِلُطْفٍ وَبِلَا تَوْبِيخٍ، فَالْمَقْصُودُ أَنْ نَتَعَلَّمَ جَمِيعًا: (فَتَبَيَّنُوٓا۟).",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱلْبَيْعَ (مُفْرَدٌ مُعَرَّفٌ بِـ«الْ»)",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "الْيَوْمَ نَقْرَأُ آيَةَ الْوُضُوءِ بِعُيُونِ الْأُصُولِيِّينَ. يَا عَبْدَ اللَّهِ، مَا صِيغَةُ «فَٱغْسِلُوا۟»؟",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "«فَٱغْسِلُوا۟»: أَمْرٌ. فَمَا حُكْمُهُ؟ وَمَا دَلِيلُكَ؟",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "أَحْسَنْتَ. وَ«إِلَى ٱلْمَرَافِقِ»: هَلْ يَدْخُلُ الْمِرْفَقُ فِي الْغَسْلِ أَمْ تَقِفُ عِنْدَهُ؟",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "«فَٱغْسِلُوا۟»: أَمْرٌ.|فَمَا حُكْمُهُ؟ وَمَا دَلِيلُكَ؟",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "مَعْطُوفٌ عَلَى «ٱلَّذِينَ ءَامَنُوا۟»، مِنْ عَطْفِ الْخَاصِّ عَلَى الْعَامِّ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "صَحِيحٌ. وَأَوَّلُ كَلِمَةٍ نَزَلَتْ مِنَ الْقُرْآنِ: ٱقْرَأْ!",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "لَا! إِنَّ الْيَمِينَ بِاللَّهِ كَلِمَةٌ عَظِيمَةٌ، لَيْسَتْ لِلْأَهْدَافِ وَالْأَلْعَابِ. قَالَ اللَّهُ تَعَالَى: وَٱحْفَظُوٓا۟ أَيْمَٰنَكُمْ",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "شُكْرًا يَا أُسْتَاذَةُ! رَّبِّ زِدْنِى عِلْمًۭا.",
+      "decision": "synthese",
+      "raison": "moins de 4 mots du Coran dans une explication (grammaire, tajwīd, vocabulaire), sans référence — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱلرَّحِيمِ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱلْمُسْتَقِيمَ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱلدِّينِ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱلَّذِينَ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱلْمَغْضُوبِ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱلْحَمْدُ لِلَّهِ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱللَّهِ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱللَّهُ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "إِنَّهُۥ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "بِسْمِ ٱللَّهِ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱلْبَيْتِ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "ٱلْأَفْـِٔدَهْ",
+      "decision": "synthese",
+      "raison": "mot ou expression de moins de 4 mots en graphie du Muṣḥaf (vocabulaire, § 2 bis) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(١٠) الْأَوَّلُ الْإِسْقَاطُ لِلشَّيْخِ وَأَنْ ٭ يَنْقُلَ عَمَّنْ فَوْقَهُ بِعَنْ وَأَنْ ۝ وَالثَّانِ لَا يُسْقِطُهُ لٰكِنْ يَصِفْ ٭ أَوْصَافَهُ بِمَا بِهِ لَا يَنْعَرِفْ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(٦) كَذَاكَ قَدْ حَدَّثَنِيهِ قَائِمَا ٭ أَوْ بَعْدَ أَنْ حَدَّثَنِي تَبَسَّمَا ۝ عَزِيزُ مَرْوِي اثْنَيْنِ أَوْ ثَلَاثَهْ ٭ مَشْهُورُ مَرْوِي فَوْقَ مَا ثَلَاثَهْ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(٨) وَمَا أَضَفْتَهُ إِلَى الْأَصْحَابِ مِنْ ٭ قَوْلٍ وَفِعْلٍ فَهْوَ مَوْقُوفٌ زُكِنْ ۝ وَمُرْسَلٌ مِنْهُ الصَّحَابِيُّ سَقَطْ ٭ وَقُلْ غَرِيبٌ مَا رَوَى رَاوٍ فَقَطْ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(١٤) وَمَا رَوَى كُلُّ قَرِينٍ عَنْ أَخِهْ ٭ مُدَبَّجٌ فَاعْرِفْهُ حَقًّا وَانْتَخِهْ ۝ مُتَّفِقٌ لَفْظًا وَخَطًّا مُتَّفِقْ ٭ وَضِدُّهُ فِيمَا ذَكَرْنَا الْمُفْتَرِقْ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(١٥) مُؤْتَلِفٌ مُتَّفِقُ الْخَطِّ فَقَطْ ٭ وَضِدُّهُ مُخْتَلِفٌ فَاخْشَ الْغَلَطْ ۝ وَالْمُنْكَرُ الْفَرْدُ بِهِ رَاوٍ غَدَا ٭ تَعْدِيلُهُ لَا يَحْمِلُ التَّفَرُّدَا",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(٥) وَمَا بِسَمْعِ كُلِّ رَاوٍ يَتَّصِلْ ٭ إِسْنَادُهُ لِلْمُصْطَفَى فَالْمُتَّصِلْ ۝ مُسَلْسَلٌ قُلْ مَا عَلَى وَصْفٍ أَتَى ٭ مِثْلُ أَمَا وَاللَّهِ أَنْبَانِي الْفَتَى",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(١) الْمَنْظُومَةُ الْبَيْقُونِيَّةُ — أَبْدَأُ بِالْحَمْدِ مُصَلِّيًا عَلَى ٭ مُحَمَّدٍ خَيْرِ نَبِيٍّ أُرْسِلَا ۝ وَذِي مِنَ اقْسَامِ الْحَدِيثِ عِدَّهْ ٭ وَكُلُّ وَاحِدٍ أَتَى وَحَدُّهْ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(٣) وَالْحَسَنُ الْمَعْرُوفُ طُرْقًا وَغَدَتْ ٭ رِجَالُهُ لَا كَالصَّحِيحِ اشْتَهَرَتْ ۝ وَكُلُّ مَا عَنْ رُتْبَةِ الْحُسْنِ قَصُرْ ٭ فَهْوَ الضَّعِيفُ وَهْوَ أَقْسَامًا كُثُرْ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(٩) وَكُلُّ مَا لَمْ يَتَّصِلْ بِحَالِ ٭ إِسْنَادُهُ مُنْقَطِعُ الْأَوْصَالِ ۝ وَالْمُعْضَلُ السَّاقِطُ مِنْهُ اثْنَانِ ٭ وَمَا أَتَى مُدَلَّسًا نَوْعَانِ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(١٧) وَقَدْ أَتَتْ كَالْجَوْهَرِ الْمَكْنُونِ ٭ سَمَّيْتُهَا مَنْظُومَةَ الْبَيْقُونِي ۝ فَوْقَ الثَّلَاثِينَ بِأَرْبَعٍ أَتَتْ ٭ أَقْسَامُهَا تَمَّتْ بِخَيْرٍ خُتِمَتْ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(٧) مُعَنْعَنٌ كَعَنْ سَعِيدٍ عَنْ كَرَمْ ٭ وَمُبْهَمٌ مَا فِيهِ رَاوٍ لَمْ يُسَمّْ ۝ وَكُلُّ مَا قَلَّتْ رِجَالُهُ عَلَا ٭ وَضِدُّهُ ذَاكَ الَّذِي قَدْ نَزَلَا",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(٤) وَمَا أُضِيفَ لِلنَّبِي الْمَرْفُوعُ ٭ وَمَا لِتَابِعٍ هُوَ الْمَقْطُوعُ ۝ وَالْمُسْنَدُ الْمُتَّصِلُ الْإِسْنَادِ مِنْ ٭ رَاوِيهِ حَتَّى الْمُصْطَفَى وَلَمْ يَبِنْ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(١٣) وَذُو اخْتِلَافِ سَنَدٍ أَوْ مَتْنِ ٭ مُضْطَرِبٌ عِنْدَ أُهَيْلِ الْفَنِّ ۝ وَالْمُدْرَجَاتُ فِي الْحَدِيثِ مَا أَتَتْ ٭ مِنْ بَعْضِ أَلْفَاظِ الرُّوَاةِ اتَّصَلَتْ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(١٢) وَالْفَرْدُ مَا قَيَّدْتَهُ بِثِقَةِ ٭ أَوْ جَمْعٍ اوْ قَصْرٍ عَلَى رِوَايَةِ ۝ وَمَا بِعِلَّةٍ غُمُوضٍ أَوْ خَفَا ٭ مُعَلَّلٌ عِنْدَهُمُ قَدْ عُرِفَا",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(١٦) مَتْرُوكُهُ مَا وَاحِدٌ بِهِ انْفَرَدْ ٭ وَأَجْمَعُوا لِضَعْفِهِ فَهْوَ كَرَدّْ ۝ وَالْكَذِبُ الْمُخْتَلَقُ الْمَصْنُوعُ ٭ عَلَى النَّبِي فَذٰلِكَ الْمَوْضُوعُ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(١١) وَمَا يُخَالِفْ ثِقَةٌ فِيهِ الْمَلَا ٭ فَالشَّاذُّ وَالْمَقْلُوبُ قِسْمَانِ تَلَا ۝ إِبْدَالُ رَاوٍ مَا بِرَاوٍ قِسْمُ ٭ وَقَلْبُ إِسْنَادٍ لِمَتْنٍ قِسْمُ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "(٢) أَوَّلُهَا الصَّحِيحُ وَهْوَ مَا اتَّصَلْ ٭ إِسْنَادُهُ وَلَمْ يَشُذَّ أَوْ يُعَلّْ ۝ يَرْوِيهِ عَدْلٌ ضَابِطٌ عَنْ مِثْلِهِ ٭ مُعْتَمَدٌ فِي ضَبْطِهِ وَنَقْلِهِ",
+      "decision": "synthese",
+      "raison": "vers didactique (۝ séparateur d’hémistiches, pas un signe du Coran) — faux positif de la garde, classement des anomalies du 26/10/2026",
+      "refusAvant": "coran"
     }
   ]
 }

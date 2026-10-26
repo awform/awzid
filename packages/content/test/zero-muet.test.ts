@@ -5,9 +5,11 @@
  * Pour chaque texte « à écouter » des livres d'Adultes (vidéos vivantes : textes qui seraient dits, y compris ceux que
  * la garde garde sans voix) et des cahiers (cahier de lecture, cahier « Je parle »), il faut :
  *   1. un fichier audio dans l'index des audios des leçons (`liste.csv`, au niveau du livre ou du cahier), OU
- *   2. une entrée de RÉCITATION d'Ayyūb : `data/zero-muet/coran-ayyub-table.json` ou décision « ayyub », « mixte » ou
- *      « ambigu » de `data/zero-muet/referent-373.tsv` (le branchement des récitations viendra plus tard : ces textes
- *      sont comptés à part, « en attente d'Ayyūb »).
+ *   2. une RÉCITATION d'Ayyūb BRANCHÉE (26/10/2026) : le texte est dans la table de l'application
+ *      (`apps/web/static/recitation/ayyub.json`, générée et contrôlée contre Tanzil par `test/recitation-ayyub.test.ts`) :
+ *      verset(s) d'Ayyūb, et pour un texte mixte la synthèse de la partie non coranique (« sonorisé par Ayyūb ») ; OU
+ *   3. un DOUTE remis au référent (`data/zero-muet/doutes-ayyub.tsv` : rapprochement ambigu, jamais branché au hasard),
+ *      compté à part.
  * Tout autre texte est MUET sans solution prévue : le test échoue et LISTE ce qui manque.
  *
  * Il lit la copie des livres (`~/awform-content`) et la liste des audios (`~/lecons-audio/liste.csv`) : sans elles, il
@@ -61,7 +63,31 @@ const aSonFichier = (texte: string, niveau: string): boolean => {
 const audiosDe = (niveau: string): string[] =>
   [...fichiers].filter(([, n]) => n.has(niveau)).map(([sha]) => sha);
 
-// ———— récitations d'Ayyūb prévues (clé du texte → d'où vient la décision)
+const STATIC_WEB = join(import.meta.dirname, '..', '..', '..', 'apps', 'web', 'static');
+/** clé d'un texte dans la table de récitation (12 premiers chiffres hexadécimaux de son empreinte audio) */
+const cleRecitation = (s: string) => (audioFileId(s) ?? '').slice(0, 12);
+/** table de récitation de l'application : clé → plan (versets d'Ayyūb, parties de synthèse « t:<empreinte> ») */
+function tableRecitation(): Map<string, string[]> {
+  const f = join(STATIC_WEB, 'recitation', 'ayyub.json');
+  if (!existsSync(f)) return new Map();
+  const t = JSON.parse(readFileSync(f, 'utf8')) as { t: Record<string, string[]> };
+  return new Map(Object.entries(t.t));
+}
+/** doutes remis au référent (texte → raison) */
+function doutesAyyub(): Set<string> {
+  const f = join(DATA, 'doutes-ayyub.tsv');
+  return new Set(
+    existsSync(f)
+      ? readFileSync(f, 'utf8')
+          .split('\n')
+          .slice(1)
+          .filter(Boolean)
+          .map((l) => cleRecitation(l.split('\t')[1]!))
+      : [],
+  );
+}
+
+// ———— récitations d'Ayyūb décidées par le référent avant le branchement (clé du texte → d'où vient la décision)
 function ayyub(): Map<string, string> {
   const m = new Map<string, string>();
   const table = JSON.parse(readFileSync(join(DATA, 'coran-ayyub-table.json'), 'utf8')) as {
@@ -313,8 +339,11 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
   'zéro muet : tout texte à écouter a une voix',
   () => {
     it('chaque texte à écouter des livres d’Adultes et des cahiers a son audio, ou sa récitation d’Ayyūb', () => {
-      const recitations = ayyub();
+      const decidees = ayyub();
       const explicites = ayyubExplicite();
+      const table = tableRecitation();
+      const doutes = doutesAyyub();
+      const recitee = (t: string) => table.has(cleRecitation(t));
       const corrections = aCorriger();
       const attenteSynthese = aGenerer();
       const lecture = cahierLecture();
@@ -325,14 +354,18 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
         if (!uniques.has(k)) uniques.set(k, c);
       }
       const voixOk: Cible[] = [];
-      const attendAyyub: Cible[] = [];
+      const parAyyub: Cible[] = [];
+      const auReferent: Cible[] = [];
       const dansLesLivres: Cible[] = [];
       const aSynthetiser: Cible[] = [];
       const muets: Cible[] = [];
       for (const c of uniques.values()) {
-        if (explicites.has(audioKey(c.texte))) attendAyyub.push(c);
+        // verset entier réservé à Ayyūb : la récitation, jamais la synthèse (même si un fichier a existé)
+        if (explicites.has(audioKey(c.texte)) && recitee(c.texte)) parAyyub.push(c);
+        else if (explicites.has(audioKey(c.texte))) muets.push(c);
         else if (aSonFichier(c.texte, c.niveau)) voixOk.push(c);
-        else if (recitations.has(audioKey(c.texte))) attendAyyub.push(c);
+        else if (recitee(c.texte)) parAyyub.push(c);
+        else if (doutes.has(cleRecitation(c.texte))) auReferent.push(c);
         else if (corrections.has(audioKey(c.texte))) dansLesLivres.push(c);
         else if (attenteSynthese.has(audioKey(c.texte))) aSynthetiser.push(c);
         else muets.push(c);
@@ -347,7 +380,7 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
               id: audioFileId(c.texte),
               niveauxFichier: [...(fichiers.get(audioFileId(c.texte) ?? '') ?? [])],
               ok: aSonFichier(c.texte, c.niveau),
-              ayyub: recitations.get(audioKey(c.texte)) ?? null,
+              ayyub: table.get(cleRecitation(c.texte)) ?? decidees.get(audioKey(c.texte)) ?? null,
             })),
             null,
             1,
@@ -361,7 +394,9 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
         `Textes à écouter (uniques par niveau) : ${uniques.size}`,
         `- avec un fichier audio : ${voixOk.length}`,
         `  dont graphie du Muṣḥaf, non jouée par le client (audioIdFor) : ${voixOk.filter((c) => looksQuranic(c.texte)).length}`,
-        `- en attente d’Ayyūb (récitation prévue, branchement à venir) : ${attendAyyub.length}`,
+        `- sonorisés par Ayyūb (récitation branchée, table contrôlée contre Tanzil) : ${parAyyub.length}`,
+        `  dont mixtes (synthèse pour la partie non coranique) : ${parAyyub.filter((c) => table.get(cleRecitation(c.texte))!.some((x) => x.startsWith('t:'))).length}`,
+        `- doutes remis au référent (rapprochement ambigu, non branché) : ${auReferent.length}`,
         `- à corriger dans les livres avant le gel (réplique arabe qui cite du français, cas b) : ${dansLesLivres.length}`,
         `- voix de synthèse À GÉNÉRER (garde levée, fichier absent, liste d’attente explicite) : ${aSynthetiser.length}`,
         `- cahier de lecture : éléments récités par Ayyūb (mécanisme propre) : ${lecture.recites}`,
@@ -370,8 +405,11 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
         '## Muets sans solution prévue',
         ...muets.map((c) => `- ${ligne(c)}`),
         '',
-        '## En attente d’Ayyūb',
-        ...attendAyyub.map((c) => `- ${ligne(c)}`),
+        '## Doutes remis au référent',
+        ...auReferent.map((c) => `- ${ligne(c)}`),
+        '',
+        '## Sonorisés par Ayyūb',
+        ...parAyyub.map((c) => `- ${ligne(c)} → ${table.get(cleRecitation(c.texte))!.join(' ')}`),
         '',
         '## Voix de synthèse à générer (liste d’attente)',
         ...aSynthetiser.map((c) => `- ${ligne(c)}`),
@@ -386,7 +424,7 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
         writeFileSync(join(out, 'zero-muet.md'), rapport);
       }
       console.log(
-        `zéro muet : ${uniques.size} textes ; audio ${voixOk.length} ; en attente d’Ayyūb ${attendAyyub.length} ; à corriger dans les livres ${dansLesLivres.length} ; muets ${muets.length}`,
+        `zéro muet : ${uniques.size} textes ; audio ${voixOk.length} ; sonorisés par Ayyūb ${parAyyub.length} ; doutes au référent ${auReferent.length} ; à corriger dans les livres ${dansLesLivres.length} ; muets ${muets.length}`,
       );
       expect(
         voixOk.filter((c) => attenteSynthese.has(audioKey(c.texte))).map(ligne),

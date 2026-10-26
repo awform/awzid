@@ -70,6 +70,8 @@
       holding = true;
       try {
         const a = await playLessonAudio(id, false);
+        // 26/10/2026 : la pastille du lecteur pilote ce son (pause, ±5 s, vitesse)
+        void import('$lib/lecteur/ouvrir').then((m) => m.piloter(a)).catch(() => {});
         await new Promise<void>((ok) => {
           a.addEventListener('ended', () => ok(), { once: true });
           a.addEventListener('pause', () => ok(), { once: true });

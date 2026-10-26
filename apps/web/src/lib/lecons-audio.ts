@@ -88,6 +88,15 @@ export async function leconsSource(id: string): Promise<{ url: string; liberer?:
   return { url, liberer: () => URL.revokeObjectURL(url) };
 }
 
+/**
+ * Résolveur du lecteur des leçons (famille « l ») : fichier de synthèse, ou récitation de Muḥammad Ayyūb (« r:<plan> »,
+ * versets enchaînés, module chargé à la demande).
+ */
+export const sourceLecteur = (ref: string) =>
+  ref.startsWith('r:')
+    ? import('./recitation/ayyub').then((m) => m.sourceRecitation(ref.slice(2)))
+    : leconsSource(ref);
+
 /** Joue le fichier (copie de l'appareil d'abord) ; un seul son à la fois (le lecteur se met en pause). */
 export async function playLessonAudio(id: string, slow: boolean): Promise<HTMLAudioElement> {
   stopLessonAudio();

@@ -24,8 +24,13 @@
  *    Basmala complète en contexte de récitation (« قرأ », sourate, Fātiḥa, Coran : `basmalaRecitee`),
  *    et les textes que les livres présentent comme Coran (partie Coran, citation référencée, lecture d'un verset :
  *    empreintes `VIDEO_GARDE` et `VIDEO_RECITATION`, calculées sur les livres par le test « garde vidéo à jour »).
+ *  - RÉSERVÉ À AYYŪB (décision du référent du 26/10/2026) : un texte qui contient une expression de moins de 4 mots que
+ *    le référent réserve à la récitation (les « onze étoiles » de Yūsuf 12:4, y compris dans l'exemple de nombres
+ *    d'Adultes 5 et 6) n'a jamais de voix de synthèse, même s'il est dans la liste des textes autorisés : il est récité
+ *    par Ayyūb (`ayyub-reserves.ts`, généré depuis `data/zero-muet/ayyub-reserves.tsv`).
  */
-import { audioFileId, looksQuranic, quranCorpus, skeleton } from './audio-cle.js';
+import { audioFileId, looksQuranic, quranCorpus, sha1Hex, skeleton } from './audio-cle.js';
+import { AYYUB_RESERVES } from './ayyub-reserves.js';
 import { motsDhikr } from './dhikr.js';
 import { HADITH_CITANTS } from './hadith-garde.js';
 import { GARDE_AUTORISES } from './garde-autorises.js';
@@ -275,11 +280,29 @@ export const autoriseSha = (sha: string): boolean =>
  *  - « citation » : 4 mots consécutifs du Coran ou plus, hors formule de dhikr, dans un texte qui n'est pas un hadith.
  */
 export function refusVoix(s: string, g: GardeCoran): 'coran' | 'citation' | null {
+  if (reserveAyyub(s)) return 'coran';
   if (autorise(s)) return null;
   if (recitationCoran(s, g) || citationReferencee(s, g) || presenteParLesLivres(s)) return 'coran';
   if (basmalaRecitee(s)) return 'coran';
   if (citationInterdite(s, g)) return 'citation';
   return null;
+}
+
+let reserves: Array<[number, string]> | null = null;
+/**
+ * Le texte contient-il une expression réservée à la récitation d'Ayyūb par le référent ? (empreinte des squelettes de ses
+ * mots consécutifs : nombre de mots et 16 premiers chiffres hexadécimaux du SHA-1)
+ */
+export function reserveAyyub(s: string): boolean {
+  reserves ??= AYYUB_RESERVES.split(' ')
+    .filter(Boolean)
+    .map((x) => [Number(x.split(':')[0]), x.split(':')[1]!] as [number, string]);
+  if (!reserves.length) return false;
+  const w = skeleton(sansCrochets(s)).split(' ').filter(Boolean);
+  for (const [n, h] of reserves)
+    for (let i = 0; i + n <= w.length; i++)
+      if (sha1Hex(w.slice(i, i + n).join(' ')).startsWith(h)) return true;
+  return false;
 }
 
 /** Citation du Coran sans voix : 4 mots consécutifs ou plus hors formule de dhikr, dans un texte qui n'est pas un hadith. */

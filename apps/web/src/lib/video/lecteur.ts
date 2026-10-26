@@ -312,11 +312,36 @@ function creer(opt: OuvrirOptions): () => void {
     if (j !== jeton) throw new Coupe();
   }
   /** joue le fichier audio du texte s'il existe (copie de l'appareil d'abord) ; sinon un court silence */
+  /**
+   * citation du Coran gardée sans voix : récitation de Muḥammad Ayyūb (table et lecture chargées à la demande,
+   * `$lib/recitation/ayyub`) ; verset entier, à la vitesse choisie dans la vidéo ; false : rien à réciter
+   */
+  async function reciter(ar: string): Promise<boolean> {
+    const j = jeton;
+    const m = await import('$lib/recitation/ayyub').catch(() => null);
+    const plan = m && (await m.planDe(ar).catch(() => null));
+    vivant(j);
+    if (!m || !plan) return false;
+    const c = new AbortController();
+    const garde = () =>
+      j !== jeton ? c.abort() : c.signal.aborted || requestAnimationFrame(garde);
+    requestAnimationFrame(garde);
+    const n = await m.jouerPlan(plan, {
+      signal: c.signal,
+      enPause: () => pause,
+      vitesse: () => vitesse,
+      surFichier: (_, a) => ((audio = a), nSons++),
+    });
+    c.abort();
+    audio = null;
+    vivant(j);
+    return n > 0;
+  }
   async function dire(x: T | undefined, el?: Element | null): Promise<void> {
     const id = x?.son ? audioIdFor(x.dit ?? x.ar, opt.audio) : null;
     el?.classList.add('joue');
     try {
-      if (!id) return await att(400);
+      if (!id) return void ((x && !x.son && (await reciter(x.dit ?? x.ar))) || (await att(400)));
       const j = jeton;
       const s = await leconsSource(id).catch(() => null);
       // scène changée pendant l'attente : cette suite s'arrête (sinon elle continuerait dans la scène suivante)

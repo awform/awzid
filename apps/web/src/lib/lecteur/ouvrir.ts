@@ -81,3 +81,33 @@ export async function ouvrir(o: Ouverture): Promise<void> {
   ouvert = { type: o.type, moteur, fermer };
   await moteur.jouer(i);
 }
+
+/** famille du lecteur qui pilote un son lancé ailleurs */
+const PILOTE = '_';
+
+/**
+ * 26/10/2026 (demande du client : le petit lecteur pour CHAQUE audio de l'application) : la pastille du lecteur pilote un
+ * son lancé par un autre écran (parcours Prière, cahier de lecture, animations, tuteur) : pause et reprise, ±5 s, vitesse.
+ * L'écran garde sa propre logique (surlignage mot à mot, enchaînements) ; le lecteur ne relance ni ne remplace son son.
+ */
+export async function piloter(audio: HTMLAudioElement): Promise<void> {
+  await loadTexts('lecteur');
+  // la phrase du lecteur : un repère hors de la page (le bouton de l'écran garde son propre état)
+  const el = document.createElement('span');
+  const piste: PisteDom = { ref: audio.src, cle: el, declencheur: el, cible: el };
+  if (ouvert?.type === PILOTE) return ouvert.moteur.suivre(audio, piste);
+  ouvert?.fermer();
+  const moteur = new Moteur<PisteDom>(audio, { resoudre: async (p) => ({ url: p.ref }) });
+  moteur.suivre(audio, piste);
+  const fermer = () => {
+    if (ouvert?.moteur !== moteur) return;
+    ouvert = null;
+    moteur.fermer();
+    void unmount(app);
+  };
+  const app = mount(Lecteur, {
+    target: document.body,
+    props: { moteur, titre: titrePage(), onfermer: fermer },
+  });
+  ouvert = { type: PILOTE, moteur, fermer };
+}

@@ -21,6 +21,11 @@ export interface Source {
   url: string;
   /** libère l'URL d'objet quand le fichier n'est plus lu */
   liberer?: () => void;
+  /**
+   * 26/10/2026 : phrase en PLUSIEURS fichiers (récitation d'Ayyūb : versets enchaînés ; texte mixte : synthèse puis
+   * verset) : fichier suivant de la même phrase, joué à la fin de celui-ci (null : la phrase est finie)
+   */
+  suite?: () => Promise<Source | null>;
 }
 
 /** Une phrase de la page ou de la séance : `ref` identifie le fichier, `cle` l'élément qui la déclenche. */
@@ -37,6 +42,8 @@ export interface AudioLike {
   playbackRate: number;
   defaultPlaybackRate: number;
   preservesPitch: boolean;
+  /** 26/10/2026 : son lancé ailleurs et piloté par le lecteur (`suivre`) */
+  readonly paused?: boolean;
   play(): Promise<void>;
   pause(): void;
   addEventListener(type: string, fn: () => void): void;
@@ -84,11 +91,17 @@ export class Moteur<P extends Piste> {
   #source: Source | null = null;
   #jeton = 0;
   #ecoutes: Array<[string, () => void]> = [];
+  /** la phrase en cours a plusieurs fichiers (sa répétition repart du premier) */
+  #parties = false;
 
   constructor(audio: AudioLike, r: Reglages<P>) {
     this.#audio = audio;
     this.#r = r;
     if (r.vitesse && (VITESSES as readonly number[]).includes(r.vitesse)) this.vitesse = r.vitesse;
+    this.#brancher(audio);
+  }
+
+  #brancher(audio: AudioLike) {
     audio.preservesPitch = true;
     const sur: Record<(typeof EVENEMENTS)[number], () => void> = {
       play: () => (this.lecture = true),
@@ -108,6 +121,36 @@ export class Moteur<P extends Piste> {
       audio.addEventListener(e, sur[e]);
       this.#ecoutes.push([e, sur[e]]);
     }
+  }
+
+  #debrancher() {
+    for (const [e, f] of this.#ecoutes) this.#audio.removeEventListener(e, f);
+    this.#ecoutes = [];
+  }
+
+  /**
+   * 26/10/2026 : pilote un son lancé AILLEURS (parcours Prière, cahier de lecture, animations) : pause et reprise, ±5 s et
+   * vitesse agissent sur lui ; le lecteur ne le relance ni ne le remplace. `p` : la phrase (bouton) qui l'a lancé.
+   */
+  suivre(audio: AudioLike, p: P) {
+    this.#jeton += 1;
+    this.#liberer();
+    if (audio !== this.#audio) {
+      this.#debrancher();
+      this.#audio = audio;
+      this.#brancher(audio);
+    }
+    this.pistes = [p];
+    this.index = 0;
+    this.erreur = false;
+    this.charge = false;
+    this.repetitions = 0;
+    this.#parties = false;
+    this.#source = { url: audio.src };
+    this.#appliquerVitesse();
+    this.lecture = audio.paused === false;
+    this.temps = audio.currentTime || 0;
+    this.#duree();
   }
 
   #duree() {
@@ -135,14 +178,14 @@ export class Moteur<P extends Piste> {
   }
 
   /** Joue la phrase d'indice `i` depuis le début (geste de l'utilisateur obligatoire côté appelant). */
-  async jouer(i: number): Promise<void> {
+  async jouer(i: number, garderRepetitions = false): Promise<void> {
     const p = this.pistes[i];
     if (!p) return;
     const jeton = ++this.#jeton;
     this.index = i;
     this.erreur = false;
     this.charge = true;
-    this.repetitions = 0;
+    if (!garderRepetitions) this.repetitions = 0;
     this.temps = 0;
     this.duree = 0;
     this.#audio.pause();
@@ -164,6 +207,11 @@ export class Moteur<P extends Piste> {
       this.lecture = false;
       return;
     }
+    this.#parties = !!s.suite;
+    await this.#poser(s, jeton);
+  }
+
+  async #poser(s: Source, jeton: number) {
     this.#source = s;
     this.#audio.src = s.url;
     this.#appliquerVitesse();
@@ -176,6 +224,24 @@ export class Moteur<P extends Piste> {
         this.lecture = false;
       }
     }
+  }
+
+  /** fichier suivant d'une phrase en plusieurs fichiers */
+  async #partie(f: () => Promise<Source | null>) {
+    const jeton = this.#jeton;
+    let s: Source | null;
+    try {
+      s = await f();
+    } catch {
+      s = null;
+    }
+    if (jeton !== this.#jeton) {
+      s?.liberer?.();
+      return;
+    }
+    this.#liberer();
+    if (!s) return this.#finPhrase();
+    await this.#poser(s, jeton);
   }
 
   /** Pause, ou reprise au MÊME endroit (relance depuis le début seulement si la phrase est finie). */
@@ -237,9 +303,17 @@ export class Moteur<P extends Piste> {
   }
 
   #fin() {
+    const suite = this.#source?.suite;
+    if (suite) return void this.#partie(suite);
+    this.#finPhrase();
+  }
+
+  #finPhrase() {
     if (this.boucle) {
       if (this.repetitions < MAX_REPETITIONS) {
         this.repetitions += 1;
+        // phrase en plusieurs fichiers : la répétition repart du premier
+        if (this.#parties) return void this.jouer(this.index, true);
         this.#audio.currentTime = 0;
         void this.#audio.play().catch(() => {
           this.lecture = false;
@@ -266,8 +340,7 @@ export class Moteur<P extends Piste> {
   fermer() {
     this.#jeton += 1;
     this.#audio.pause();
-    for (const [e, f] of this.#ecoutes) this.#audio.removeEventListener(e, f);
-    this.#ecoutes = [];
+    this.#debrancher();
     this.#liberer();
     this.#audio.src = '';
     this.lecture = false;

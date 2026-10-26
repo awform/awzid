@@ -131,6 +131,9 @@ export async function reciter(
   recit = new Audio(recitUrl);
   surAudio?.(recit);
   await recit.play();
+  // 26/10/2026 : la pastille du lecteur pilote la récitation (pause, ±5 s, vitesse)
+  const pilote = recit;
+  void import('$lib/lecteur/ouvrir').then((m) => m.piloter(pilote)).catch(() => {});
   return fin(recit, signal);
 }
 
@@ -149,5 +152,7 @@ export async function jouerElement(
   if (!id) return null;
   arreterRecitation();
   const a = await playLessonAudio(id, false);
+  // 26/10/2026 : la pastille du lecteur pilote ce son (pause, ±5 s, vitesse)
+  void import('$lib/lecteur/ouvrir').then((m) => m.piloter(a)).catch(() => {});
   return fin(a, signal);
 }

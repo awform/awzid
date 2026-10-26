@@ -1,1 +1,4301 @@
-{"v":1,"version":"2026-10-25","statut":"reconnu_source","ouvrages":["al-Kirmani, al-Burhan fi tawjih mutashabih al-Quran (Shamela 3580)","as-Sakhawi, Hidayat al-murtab (Shamela 9831)"],"paires":[["2:62","5:69",[0,13],[0,13],[[6,5]],"Un mot change de place entre sourate 2 (Al-Baqara) et sourate 5 (Al-Maaida).",[[0,2,20,"https://shamela.ws/book/3580/13"]],"MT0001"],["2:62","22:17",[0,5],[0,6],[[null,5]],"Un mot s'ajoute en sourate 22 (Al-Hajj) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,2,20,"https://shamela.ws/book/3580/13"]],"MT0001"],["2:116","10:68",[1,11],[1,13],[[null,7],[7,8]],"Un mot s'ajoute en sourate 10 (Yunus) (absent en sourate 2 (Al-Baqara)). Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 10 (Yunus).",[[0,10,195,"https://shamela.ws/book/3580/79"],[0,10,199,"https://shamela.ws/book/3580/80"]],"MT0001"],["2:126","14:35",[0,5],[0,5],[[2,2]],"Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 14 (Ibrahim).",[[0,2,26,"https://shamela.ws/book/3580/16"]],"MT0001"],["2:284","5:40",[24,30],[13,19],[],"",[[0,2,50,"https://shamela.ws/book/3580/25"]],"MT0001"],["5:17","5:18",[30,35],[26,31],[],"",[[0,5,87,"https://shamela.ws/book/3580/40"]],"MT0001"],["5:17","48:11",[11,18],[18,26],[[null,21]],"Un mot s'ajoute en sourate 48 (Al-Fath) (absent en sourate 5 (Al-Maaida)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,48,484,"https://shamela.ws/book/3580/165"]],"MT0001"],["5:69","22:17",[0,6],[0,6],[[5,5]],"Un mot change : une forme en sourate 5 (Al-Maaida), l'autre en sourate 22 (Al-Hajj).",[[0,2,20,"https://shamela.ws/book/3580/13"]],"MT0001"],["6:11","27:69",[0,9],[0,8],[[4,null],[5,4],[9,8]],"Un mot s'ajoute en sourate 6 (Al-An'aam) (absent en sourate 27 (An-Naml)). 2 mots changent : une forme en sourate 6 (Al-An'aam), l'autre en sourate 27 (An-Naml).",[[0,6,94,"https://shamela.ws/book/3580/43"],[1,0,0,"https://shamela.ws/book/9831/30"]],"MT0001"],["6:11","29:20",[0,3],[0,3],[],"",[[0,6,94,"https://shamela.ws/book/3580/43"]],"MT0001"],["6:11","30:42",[0,9],[0,7],[[4,null],[5,4],[9,null]],"2 mots s'ajoutent en sourate 6 (Al-An'aam) (absent en sourate 30 (Ar-Room)). Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 30 (Ar-Room).",[[0,6,94,"https://shamela.ws/book/3580/43"]],"MT0001"],["6:32","29:64",[0,3],[0,4],[[null,1]],"Un mot s'ajoute en sourate 29 (Al-Ankaboot) (absent en sourate 6 (Al-An'aam)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,6,100,"https://shamela.ws/book/3580/45"]],"MT0001"],["6:32","57:20",[0,3],[36,39],[],"",[[0,6,100,"https://shamela.ws/book/3580/45"]],"MT0001"],["6:116","10:66",[9,18],[16,26],[[null,17]],"Un mot s'ajoute en sourate 10 (Yunus) (absent en sourate 6 (Al-An'aam)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,10,194,"https://shamela.ws/book/3580/79"],[0,53,495,"https://shamela.ws/book/3580/168"]],"MT0001"],["7:169","12:109",[36,42],[25,31],[[39,28]],"Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 12 (Yusuf).",[[0,12,232,"https://shamela.ws/book/3580/88"]],"MT0001"],["10:61","34:3",[26,42],[17,33],[[29,20],[32,23]],"2 mots changent : une forme en sourate 10 (Yunus), l'autre en sourate 34 (Saba).",[[0,10,197,"https://shamela.ws/book/3580/79"],[0,16,267,"https://shamela.ws/book/3580/98"],[0,34,406,"https://shamela.ws/book/3580/145"],[1,0,0,"https://shamela.ws/book/9831/13"]],"MT0001"],["10:61","34:22",[26,31],[10,15],[[29,13]],"Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 34 (Saba).",[[0,10,197,"https://shamela.ws/book/3580/79"],[0,16,267,"https://shamela.ws/book/3580/98"],[0,34,406,"https://shamela.ws/book/3580/145"]],"MT0001"],["12:109","21:7",[0,7],[0,6],[[2,null]],"Un mot s'ajoute en sourate 12 (Yusuf) (absent en sourate 21 (Al-Anbiyaa)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,12,230,"https://shamela.ws/book/3580/88"],[0,21,306,"https://shamela.ws/book/3580/115"]],"MT0001"],["12:109","25:20",[0,4],[0,5],[[null,2],[3,4]],"Un mot s'ajoute en sourate 25 (Al-Furqaan) (absent en sourate 12 (Yusuf)). Un mot change : une forme en sourate 12 (Yusuf), l'autre en sourate 25 (Al-Furqaan).",[[0,12,230,"https://shamela.ws/book/3580/88"],[0,21,306,"https://shamela.ws/book/3580/115"]],"MT0001"],["13:15","16:49",[0,4],[0,4],[[2,2]],"Un mot change : une forme en sourate 13 (Ar-Ra'd), l'autre en sourate 16 (An-Nahl).",[[0,13,236,"https://shamela.ws/book/3580/90"]],"MT0001"],["13:15","22:18",[1,4],[4,8],[[null,5]],"Un mot s'ajoute en sourate 22 (Al-Hajj) (absent en sourate 13 (Ar-Ra'd)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,13,236,"https://shamela.ws/book/3580/90"]],"MT0001"],["16:43","21:7",[0,15],[0,14],[[2,null]],"Un mot s'ajoute en sourate 16 (An-Nahl) (absent en sourate 21 (Al-Anbiyaa)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,12,230,"https://shamela.ws/book/3580/88"],[0,21,306,"https://shamela.ws/book/3580/115"]],"MT0001"],["16:43","25:20",[0,4],[0,5],[[null,2],[3,4]],"Un mot s'ajoute en sourate 25 (Al-Furqaan) (absent en sourate 16 (An-Nahl)). Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 25 (Al-Furqaan).",[[0,12,230,"https://shamela.ws/book/3580/88"],[0,21,306,"https://shamela.ws/book/3580/115"]],"MT0001"],["16:49","22:18",[3,7],[7,11],[[5,9]],"Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 22 (Al-Hajj).",[[0,13,236,"https://shamela.ws/book/3580/90"]],"MT0001"],["17:56","34:22",[0,4],[0,4],[],"",[[0,17,277,"https://shamela.ws/book/3580/104"],[0,34,408,"https://shamela.ws/book/3580/146"]],"MT0001"],["21:7","21:25",[0,5],[0,7],[[null,2],[null,4],[null,5],[4,null]],"3 mots s'ajoutent en verset 21:25 (absent en verset 21:7). (4 différences en tout : voir la liste.)",[[0,12,230,"https://shamela.ws/book/3580/88"],[0,21,306,"https://shamela.ws/book/3580/115"],[1,0,0,"https://shamela.ws/book/9831/36"]],"MT0001"],["21:25","25:20",[0,6],[0,5],[[2,null],[5,4]],"Un mot s'ajoute en sourate 21 (Al-Anbiyaa) (absent en sourate 25 (Al-Furqaan)). Un mot change : une forme en sourate 21 (Al-Anbiyaa), l'autre en sourate 25 (Al-Furqaan).",[[0,12,230,"https://shamela.ws/book/3580/88"],[0,21,306,"https://shamela.ws/book/3580/115"]],"MT0001"],["22:52","25:20",[0,4],[0,3],[[2,null]],"Un mot s'ajoute en sourate 22 (Al-Hajj) (absent en sourate 25 (Al-Furqaan)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,12,230,"https://shamela.ws/book/3580/88"],[0,21,306,"https://shamela.ws/book/3580/115"]],"MT0001"],["22:64","31:26",[1,12],[1,10],[[4,null],[5,null],[6,4],[8,6],[10,8]],"2 mots s'ajoutent en sourate 22 (Al-Hajj) (absent en sourate 31 (Luqman)). Un mot change : une forme en sourate 22 (Al-Hajj), l'autre en sourate 31 (Luqman). (5 différences en tout : voir la liste.)",[[0,22,327,"https://shamela.ws/book/3580/120"]],"MT0001"],["29:22","42:31",[0,17],[0,14],[[5,null],[6,null],[7,null]],"3 mots s'ajoutent en sourate 29 (Al-Ankaboot) (absent en sourate 42 (Ash-Shura)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,29,377,"https://shamela.ws/book/3580/136"]],"MT0001"],["29:64","57:20",[0,4],[36,39],[[1,null]],"Un mot s'ajoute en sourate 29 (Al-Ankaboot) (absent en sourate 57 (Al-Hadid)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,6,100,"https://shamela.ws/book/3580/45"]],"MT0001"],["30:9","35:44",[0,15],[0,14],[[12,11]],"Un mot change : une forme en sourate 30 (Ar-Room), l'autre en sourate 35 (Faatir).",[[0,30,386,"https://shamela.ws/book/3580/139"],[0,30,387,"https://shamela.ws/book/3580/139"],[1,0,0,"https://shamela.ws/book/9831/70"],[1,0,0,"https://shamela.ws/book/9831/71"]],"MT0001"],["30:9","40:21",[0,15],[1,18],[[null,10],[null,15]],"2 mots s'ajoutent en sourate 40 (Al-Ghaafir) (absent en sourate 30 (Ar-Room)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,30,387,"https://shamela.ws/book/3580/139"],[0,40,448,"https://shamela.ws/book/3580/157"],[1,0,0,"https://shamela.ws/book/9831/71"]],"MT0001"],["30:9","40:82",[1,15],[1,16],[[13,13],[null,15]],"Un mot change : une forme en sourate 30 (Ar-Room), l'autre en sourate 40 (Al-Ghaafir). Un mot s'ajoute en sourate 40 (Al-Ghaafir) (absent en sourate 30 (Ar-Room)).",[[0,30,386,"https://shamela.ws/book/3580/139"],[0,30,387,"https://shamela.ws/book/3580/139"],[1,0,0,"https://shamela.ws/book/9831/71"]],"MT0001"],["34:1","34:3",[9,13],[19,23],[[11,21]],"Un mot change : une forme en verset 34:1, l'autre en verset 34:3.",[[0,34,406,"https://shamela.ws/book/3580/145"]],"MT0001"],["34:1","34:22",[9,13],[12,16],[[11,14]],"Un mot change : une forme en verset 34:1, l'autre en verset 34:22.",[[0,34,406,"https://shamela.ws/book/3580/145"]],"MT0001"],["35:44","40:21",[0,14],[1,18],[[null,10],[11,14],[null,15]],"2 mots s'ajoutent en sourate 40 (Al-Ghaafir) (absent en sourate 35 (Faatir)). Un mot change : une forme en sourate 35 (Faatir), l'autre en sourate 40 (Al-Ghaafir).",[[0,30,387,"https://shamela.ws/book/3580/139"],[0,40,448,"https://shamela.ws/book/3580/157"],[1,0,0,"https://shamela.ws/book/9831/71"]],"MT0001"],["35:44","40:82",[1,14],[1,16],[[11,12],[12,13],[null,15]],"2 mots changent : une forme en sourate 35 (Faatir), l'autre en sourate 40 (Al-Ghaafir). Un mot s'ajoute en sourate 40 (Al-Ghaafir) (absent en sourate 35 (Faatir)).",[[0,30,386,"https://shamela.ws/book/3580/139"],[0,30,387,"https://shamela.ws/book/3580/139"],[1,0,0,"https://shamela.ws/book/9831/71"]],"MT0001"],["39:21","57:20",[18,24],[19,25],[[23,24]],"Un mot change : une forme en sourate 39 (Az-Zumar), l'autre en sourate 57 (Al-Hadid).",[[0,39,444,"https://shamela.ws/book/3580/157"],[0,57,508,"https://shamela.ws/book/3580/171"]],"MT0001"],["40:21","40:82",[2,17],[1,14],[[10,null],[15,null],[16,13]],"2 mots s'ajoutent en verset 40:21 (absent en verset 40:82). Un mot change : une forme en verset 40:21, l'autre en verset 40:82.",[[0,30,387,"https://shamela.ws/book/3580/139"],[0,40,448,"https://shamela.ws/book/3580/157"],[1,0,0,"https://shamela.ws/book/9831/71"]],"MT0001"],["42:44","42:46",[0,5],[10,15],[],"",[[0,42,464,"https://shamela.ws/book/3580/162"]],"MT0001"],["57:1","59:24",[4,13],[10,19],[[4,10],[5,11]],"2 mots changent : une forme en sourate 57 (Al-Hadid), l'autre en sourate 59 (Al-Hashr).",[[0,57,503,"https://shamela.ws/book/3580/170"],[0,57,504,"https://shamela.ws/book/3580/170"]],"MT0001"],["57:22","64:11",[0,3],[0,3],[],"",[[0,57,509,"https://shamela.ws/book/3580/171"]],"MT0001"],["2:23","10:38",[8,19],[5,16],[[10,null],[null,9],[13,10]],"Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 10 (Yunus)). Un mot s'ajoute en sourate 10 (Yunus) (absent en sourate 2 (Al-Baqara)). Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 10 (Yunus).",[[0,2,9,"https://shamela.ws/book/3580/7"],[0,10,189,"https://shamela.ws/book/3580/78"]],"MT0002"],["10:38","11:13",[0,16],[0,18],[[null,6],[6,7],[null,9]],"2 mots s'ajoutent en sourate 11 (Hud) (absent en sourate 10 (Yunus)). Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 11 (Hud).",[[0,2,8,"https://shamela.ws/book/3580/5"],[0,2,9,"https://shamela.ws/book/3580/7"],[0,10,188,"https://shamela.ws/book/3580/78"]],"MT0002"],["2:242","24:58",[0,3],[46,49],[],"",[[0,24,341,"https://shamela.ws/book/3580/125"]],"MT0003"],["2:242","24:61",[0,6],[72,78],[[4,76]],"Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 24 (An-Noor).",[[0,24,341,"https://shamela.ws/book/3580/125"]],"MT0003"],["3:103","24:58",[29,32],[46,49],[],"",[[0,24,341,"https://shamela.ws/book/3580/125"]],"MT0003"],["3:103","24:61",[29,34],[72,77],[[33,76]],"Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 24 (An-Noor).",[[0,24,341,"https://shamela.ws/book/3580/125"]],"MT0003"],["4:13","9:89",[9,19],[3,13],[[17,11]],"Un mot change : une forme en sourate 4 (An-Nisaa), l'autre en sourate 9 (At-Tawba).",[[0,4,70,"https://shamela.ws/book/3580/33"],[0,9,176,"https://shamela.ws/book/3580/74"]],"MT0003"],["5:89","24:58",[43,46],[46,49],[],"",[[0,24,341,"https://shamela.ws/book/3580/125"]],"MT0003"],["5:89","24:61",[43,48],[72,77],[[47,76]],"Un mot change : une forme en sourate 5 (Al-Maaida), l'autre en sourate 24 (An-Noor).",[[0,24,341,"https://shamela.ws/book/3580/125"]],"MT0003"],["9:72","9:89",[4,10],[3,9],[],"",[[0,9,176,"https://shamela.ws/book/3580/74"]],"MT0003"],["9:72","9:100",[4,10],[15,20],[[6,null]],"Un mot s'ajoute en verset 9:72 (absent en verset 9:100).",[[0,9,176,"https://shamela.ws/book/3580/74"]],"MT0003"],["9:89","9:100",[2,13],[14,25],[[5,null],[null,21]],"Un mot s'ajoute en verset 9:89 (absent en verset 9:100). Un mot s'ajoute en verset 9:100 (absent en verset 9:89).",[[0,9,176,"https://shamela.ws/book/3580/74"]],"MT0003"],["24:58","24:59",[46,54],[12,20],[[50,16]],"Un mot change : une forme en verset 24:58, l'autre en verset 24:59.",[[0,24,341,"https://shamela.ws/book/3580/125"]],"MT0003"],["24:58","24:61",[46,50],[72,76],[],"",[[0,24,341,"https://shamela.ws/book/3580/125"]],"MT0003"],["24:59","24:61",[12,15],[72,75],[],"",[[0,24,341,"https://shamela.ws/book/3580/125"]],"MT0003"],["3:27","6:95",[10,16],[8,14],[[13,11]],"Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 6 (Al-An'aam).",[[0,6,106,"https://shamela.ws/book/3580/48"]],"MT0004"],["3:27","10:31",[10,16],[12,18],[[13,15]],"Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 10 (Yunus).",[[0,6,106,"https://shamela.ws/book/3580/48"]],"MT0004"],["3:27","30:19",[10,16],[1,7],[[13,4]],"Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 30 (Ar-Room).",[[0,6,106,"https://shamela.ws/book/3580/48"]],"MT0004"],["3:49","5:110",[14,17],[30,33],[],"",[[0,3,57,"https://shamela.ws/book/3580/27"]],"MT0004"],["6:95","30:19",[7,14],[0,7],[[11,4]],"Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 30 (Ar-Room).",[[0,6,106,"https://shamela.ws/book/3580/48"]],"MT0004"],["13:2","31:29",[13,18],[12,16],[],"",[[0,13,233,"https://shamela.ws/book/3580/89"]],"MT0004"],["17:99","46:33",[1,8],[0,7],[],"",[[0,17,281,"https://shamela.ws/book/3580/105"]],"MT0004"],["25:59","32:4",[0,12],[1,13],[],"",[[0,25,347,"https://shamela.ws/book/3580/127"]],"MT0004"],["2:30","15:28",[0,4],[0,4],[],"",[[0,15,250,"https://shamela.ws/book/3580/92"]],"MT0005"],["2:30","38:71",[1,4],[1,4],[],"",[[0,15,250,"https://shamela.ws/book/3580/92"]],"MT0005"],["2:34","7:11",[1,7],[5,11],[],"",[[0,2,10,"https://shamela.ws/book/3580/8"]],"MT0006"],["2:34","17:61",[0,7],[0,7],[],"",[[0,2,10,"https://shamela.ws/book/3580/8"]],"MT0006"],["2:34","18:50",[0,7],[0,7],[],"",[[0,2,10,"https://shamela.ws/book/3580/8"]],"MT0006"],["2:34","20:116",[0,8],[0,8],[],"",[[0,2,10,"https://shamela.ws/book/3580/8"]],"MT0006"],["2:34","38:74",[6,12],[0,5],[[8,null],[9,2]],"Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 38 (Saad)). Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 38 (Saad).",[[0,2,10,"https://shamela.ws/book/3580/8"],[0,7,119,"https://shamela.ws/book/3580/54"]],"MT0006"],["7:11","17:61",[5,11],[1,7],[],"",[[0,2,10,"https://shamela.ws/book/3580/8"]],"MT0006"],["7:11","18:50",[5,11],[1,7],[],"",[[0,2,10,"https://shamela.ws/book/3580/8"]],"MT0006"],["7:11","20:116",[4,11],[0,8],[[4,0],[null,8]],"Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 20 (Taa-Haa). Un mot s'ajoute en sourate 20 (Taa-Haa) (absent en sourate 7 (Al-A'raaf)).",[[0,2,10,"https://shamela.ws/book/3580/8"]],"MT0006"],["17:61","18:50",[0,7],[0,7],[],"",[[0,2,10,"https://shamela.ws/book/3580/8"]],"MT0006"],["17:61","20:116",[0,7],[0,8],[[null,8]],"Un mot s'ajoute en sourate 20 (Taa-Haa) (absent en sourate 17 (Al-Israa)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,2,10,"https://shamela.ws/book/3580/8"]],"MT0006"],["18:50","20:116",[0,7],[0,8],[[null,8]],"Un mot s'ajoute en sourate 20 (Taa-Haa) (absent en sourate 18 (Al-Kahf)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,2,10,"https://shamela.ws/book/3580/8"]],"MT0006"],["2:35","7:19",[2,17],[1,15],[[6,5],[7,6],[8,null]],"2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 7 (Al-A'raaf). Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 7 (Al-A'raaf)).",[[0,2,11,"https://shamela.ws/book/3580/8"]],"MT0007"],["2:38","20:123",[5,12],[9,16],[[10,14]],"Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 20 (Taa-Haa).",[[0,2,13,"https://shamela.ws/book/3580/9"]],"MT0008"],["5:20","14:6",[0,9],[0,8],[[4,null]],"Un mot s'ajoute en sourate 5 (Al-Maaida) (absent en sourate 14 (Ibrahim)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,5,88,"https://shamela.ws/book/3580/41"]],"MT0009"],["2:57","7:160",[0,19],[29,48],[[1,30],[4,33]],"2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 7 (Al-A'raaf).",[[0,2,16,"https://shamela.ws/book/3580/10"],[1,0,0,"https://shamela.ws/book/9831/5"]],"MT0010"],["2:60","7:160",[6,20],[13,27],[[10,17]],"Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 7 (Al-A'raaf).",[[0,2,18,"https://shamela.ws/book/3580/12"]],"MT0010"],["2:58","7:161",[3,12],[4,14],[[5,6],[9,10],[null,11]],"2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 7 (Al-A'raaf). Un mot s'ajoute en sourate 7 (Al-A'raaf) (absent en sourate 2 (Al-Baqara)).",[[0,2,17,"https://shamela.ws/book/3580/10"]],"MT0011"],["2:59","7:162",[0,7],[0,8],[[null,3]],"Un mot s'ajoute en sourate 7 (Al-A'raaf) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,2,17,"https://shamela.ws/book/3580/10"],[1,0,0,"https://shamela.ws/book/9831/5"]],"MT0012"],["2:61","3:21",[51,56],[2,7],[],"",[[0,2,19,"https://shamela.ws/book/3580/12"]],"MT0013"],["3:21","4:155",[3,8],[4,9],[[5,6],[6,7]],"2 mots changent : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 4 (An-Nisaa).",[[0,2,19,"https://shamela.ws/book/3580/12"]],"MT0013"],["2:80","3:24",[1,5],[3,7],[],"",[[0,2,21,"https://shamela.ws/book/3580/14"]],"MT0014"],["2:170","5:104",[10,22],[12,24],[[11,13],[19,21]],"2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 5 (Al-Maaida).",[[0,2,31,"https://shamela.ws/book/3580/18"],[0,2,32,"https://shamela.ws/book/3580/19"]],"MT0015"],["2:170","31:21",[0,16],[0,16],[[11,11]],"Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 31 (Luqman).",[[0,2,31,"https://shamela.ws/book/3580/18"],[0,2,32,"https://shamela.ws/book/3580/19"]],"MT0015"],["2:95","62:7",[0,9],[0,9],[[0,0],[1,1]],"2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 62 (Al-Jumu'a).",[[0,2,22,"https://shamela.ws/book/3580/14"],[0,62,521,"https://shamela.ws/book/3580/174"]],"MT0016"],["4:135","5:8",[1,7],[0,6],[[6,5]],"Un mot change : une forme en sourate 4 (An-Nisaa), l'autre en sourate 5 (Al-Maaida).",[[0,4,77,"https://shamela.ws/book/3580/36"],[0,5,82,"https://shamela.ws/book/3580/38"]],"MT0017"],["5:7","5:8",[13,17],[22,26],[],"",[[0,5,82,"https://shamela.ws/book/3580/38"]],"MT0017"],["5:7","59:18",[13,17],[11,15],[],"",[[0,5,82,"https://shamela.ws/book/3580/38"]],"MT0017"],["2:120","2:145",[17,24],[22,30],[[null,25],[21,27]],"Un mot s'ajoute en verset 2:145 (absent en verset 2:120). Un mot change : une forme en verset 2:120, l'autre en verset 2:145.",[[0,2,24,"https://shamela.ws/book/3580/15"],[1,0,0,"https://shamela.ws/book/9831/21"],[1,0,0,"https://shamela.ws/book/9831/77"]],"MT0018"],["2:120","3:61",[20,24],[4,8],[[21,5]],"Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 3 (Aal-i-Imraan).",[[0,2,24,"https://shamela.ws/book/3580/15"],[1,0,0,"https://shamela.ws/book/9831/21"]],"MT0018"],["2:120","3:73",[10,13],[6,10],[[null,8]],"Un mot s'ajoute en sourate 3 (Aal-i-Imraan) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,3,62,"https://shamela.ws/book/3580/30"]],"MT0018"],["2:125","22:26",[18,22],[11,15],[[20,13]],"Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 22 (Al-Hajj).",[[0,22,324,"https://shamela.ws/book/3580/120"]],"MT0019"],["2:144","2:149",[11,15],[3,7],[],"",[[0,2,28,"https://shamela.ws/book/3580/17"]],"MT0020"],["2:149","2:150",[0,7],[0,7],[],"",[[0,2,28,"https://shamela.ws/book/3580/17"]],"MT0020"],["2:147","3:60",[0,7],[0,6],[[5,4]],"Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 3 (Aal-i-Imraan).",[[0,3,61,"https://shamela.ws/book/3580/29"],[1,0,0,"https://shamela.ws/book/9831/26"]],"MT0021"],["2:243","10:60",[19,29],[10,19],[[26,17],[27,null]],"Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 10 (Yunus). Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 10 (Yunus)).",[[0,10,196,"https://shamela.ws/book/3580/79"],[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["2:243","11:17",[25,28],[38,41],[],"",[[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["2:243","13:1",[25,28],[16,19],[],"",[[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["2:243","27:73",[21,29],[2,9],[[26,7],[27,null]],"Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 27 (An-Naml). Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 27 (An-Naml)).",[[0,10,196,"https://shamela.ws/book/3580/79"],[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["2:243","40:59",[25,28],[6,9],[],"",[[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["6:99","6:141",[27,37],[12,22],[[29,14],[33,18],[34,19]],"3 mots changent : une forme en verset 6:99, l'autre en verset 6:141.",[[0,6,109,"https://shamela.ws/book/3580/50"],[1,0,0,"https://shamela.ws/book/9831/30"],[1,0,0,"https://shamela.ws/book/9831/36"]],"MT0022"],["10:60","12:38",[15,19],[22,27],[[17,24],[null,25]],"Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 12 (Yusuf). Un mot s'ajoute en sourate 12 (Yusuf) (absent en sourate 10 (Yunus)).",[[0,10,196,"https://shamela.ws/book/3580/79"],[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["10:60","40:61",[10,19],[10,20],[[17,17],[null,18]],"Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 40 (Al-Ghaafir). Un mot s'ajoute en sourate 40 (Al-Ghaafir) (absent en sourate 10 (Yunus)).",[[0,10,196,"https://shamela.ws/book/3580/79"],[0,40,451,"https://shamela.ws/book/3580/158"],[1,0,0,"https://shamela.ws/book/9831/109"]],"MT0022"],["10:67","30:23",[10,15],[9,14],[],"",[[0,10,198,"https://shamela.ws/book/3580/80"]],"MT0022"],["11:17","12:38",[38,41],[23,26],[],"",[[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["11:17","40:61",[38,41],[16,19],[],"",[[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["12:38","13:1",[23,26],[16,19],[],"",[[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["12:38","27:73",[22,27],[5,9],[[24,7],[25,null]],"Un mot change : une forme en sourate 12 (Yusuf), l'autre en sourate 27 (An-Naml). Un mot s'ajoute en sourate 12 (Yusuf) (absent en sourate 27 (An-Naml)).",[[0,10,196,"https://shamela.ws/book/3580/79"],[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["12:38","40:59",[23,26],[6,9],[],"",[[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["13:1","40:61",[16,19],[16,19],[],"",[[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["13:3","13:4",[21,25],[22,26],[],"",[[0,13,234,"https://shamela.ws/book/3580/89"]],"MT0022"],["13:3","16:12",[21,25],[11,15],[],"",[[0,13,234,"https://shamela.ws/book/3580/89"]],"MT0022"],["13:3","30:24",[21,25],[16,20],[],"",[[0,13,234,"https://shamela.ws/book/3580/89"]],"MT0022"],["13:26","28:82",[0,4],[7,11],[],"",[[0,29,383,"https://shamela.ws/book/3580/138"]],"MT0022"],["13:26","29:62",[0,4],[0,4],[],"",[[0,29,383,"https://shamela.ws/book/3580/138"]],"MT0022"],["14:5","34:9",[15,19],[24,28],[[18,27]],"Un mot change : une forme en sourate 14 (Ibrahim), l'autre en sourate 34 (Saba).",[[0,34,409,"https://shamela.ws/book/3580/146"]],"MT0022"],["16:11","16:12",[11,15],[11,15],[[14,14]],"Un mot change : une forme en verset 16:11, l'autre en verset 16:12.",[[0,13,234,"https://shamela.ws/book/3580/89"],[0,16,258,"https://shamela.ws/book/3580/95"]],"MT0022"],["16:11","16:13",[11,15],[8,12],[],"",[[0,16,258,"https://shamela.ws/book/3580/95"]],"MT0022"],["16:11","16:79",[11,15],[13,17],[[14,16]],"Un mot change : une forme en verset 16:11, l'autre en verset 16:79.",[[0,16,258,"https://shamela.ws/book/3580/95"]],"MT0022"],["16:12","16:13",[11,15],[8,12],[[14,11]],"Un mot change : une forme en verset 16:12, l'autre en verset 16:13.",[[0,13,234,"https://shamela.ws/book/3580/89"],[0,16,258,"https://shamela.ws/book/3580/95"]],"MT0022"],["16:12","16:69",[11,15],[20,24],[[14,23]],"Un mot change : une forme en verset 16:12, l'autre en verset 16:69.",[[0,13,234,"https://shamela.ws/book/3580/89"],[0,16,258,"https://shamela.ws/book/3580/95"]],"MT0022"],["16:13","16:69",[8,12],[20,24],[],"",[[0,16,258,"https://shamela.ws/book/3580/95"]],"MT0022"],["16:13","16:79",[8,12],[13,17],[[11,16]],"Un mot change : une forme en verset 16:13, l'autre en verset 16:79.",[[0,16,258,"https://shamela.ws/book/3580/95"]],"MT0022"],["16:14","35:12",[10,20],[18,29],[[15,23],[16,25]],"Un mot change de place entre sourate 16 (An-Nahl) et sourate 35 (Faatir). Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 35 (Faatir).",[[0,16,259,"https://shamela.ws/book/3580/96"],[0,22,315,"https://shamela.ws/book/3580/118"],[0,35,415,"https://shamela.ws/book/3580/147"]],"MT0022"],["16:65","29:63",[2,9],[4,12],[[null,10]],"Un mot s'ajoute en sourate 29 (Al-Ankaboot) (absent en sourate 16 (An-Nahl)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,16,267,"https://shamela.ws/book/3580/99"]],"MT0022"],["16:69","16:79",[20,24],[13,17],[[23,16]],"Un mot change : une forme en verset 16:69, l'autre en verset 16:79.",[[0,16,258,"https://shamela.ws/book/3580/95"]],"MT0022"],["27:73","40:61",[2,9],[12,20],[[7,17],[null,18]],"Un mot change : une forme en sourate 27 (An-Naml), l'autre en sourate 40 (Al-Ghaafir). Un mot s'ajoute en sourate 40 (Al-Ghaafir) (absent en sourate 27 (An-Naml)).",[[0,10,196,"https://shamela.ws/book/3580/79"],[0,40,451,"https://shamela.ws/book/3580/158"],[1,0,0,"https://shamela.ws/book/9831/109"]],"MT0022"],["28:82","29:62",[7,19],[0,11],[[16,8],[18,null]],"Un mot change : une forme en sourate 28 (Al-Qasas), l'autre en sourate 29 (Al-Ankaboot). Un mot s'ajoute en sourate 28 (Al-Qasas) (absent en sourate 29 (Al-Ankaboot)).",[[0,29,383,"https://shamela.ws/book/3580/138"],[0,34,410,"https://shamela.ws/book/3580/146"]],"MT0022"],["29:62","34:36",[1,4],[3,6],[],"",[[0,34,410,"https://shamela.ws/book/3580/146"]],"MT0022"],["29:63","30:24",[4,12],[7,14],[[7,10],[10,null]],"Un mot change : une forme en sourate 29 (Al-Ankaboot), l'autre en sourate 30 (Ar-Room). Un mot s'ajoute en sourate 29 (Al-Ankaboot) (absent en sourate 30 (Ar-Room)).",[[0,16,267,"https://shamela.ws/book/3580/99"],[0,29,384,"https://shamela.ws/book/3580/138"]],"MT0022"],["30:46","45:12",[10,16],[7,14],[[null,8]],"Un mot s'ajoute en sourate 45 (Al-Jaathiya) (absent en sourate 30 (Ar-Room)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,30,393,"https://shamela.ws/book/3580/141"],[0,45,474,"https://shamela.ws/book/3580/164"]],"MT0022"],["31:31","34:9",[10,17],[21,28],[[11,22],[16,27]],"2 mots changent : une forme en sourate 31 (Luqman), l'autre en sourate 34 (Saba).",[[0,34,409,"https://shamela.ws/book/3580/146"]],"MT0022"],["34:9","34:19",[24,28],[13,17],[[27,16]],"Un mot change : une forme en verset 34:9, l'autre en verset 34:19.",[[0,34,409,"https://shamela.ws/book/3580/146"]],"MT0022"],["34:9","42:33",[24,28],[9,13],[[27,12]],"Un mot change : une forme en sourate 34 (Saba), l'autre en sourate 42 (Ash-Shura).",[[0,34,409,"https://shamela.ws/book/3580/146"]],"MT0022"],["34:36","34:39",[0,6],[0,6],[],"",[[0,34,410,"https://shamela.ws/book/3580/146"]],"MT0022"],["40:57","40:59",[7,10],[6,9],[],"",[[0,40,450,"https://shamela.ws/book/3580/158"]],"MT0022"],["40:59","40:61",[6,9],[16,19],[],"",[[0,40,451,"https://shamela.ws/book/3580/158"]],"MT0022"],["2:173","6:145",[10,18],[26,35],[[null,28]],"Un mot s'ajoute en sourate 6 (Al-An'aam) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,2,33,"https://shamela.ws/book/3580/19"],[0,2,35,"https://shamela.ws/book/3580/20"]],"MT0023"],["2:174","3:77",[10,29],[6,26],[[14,9],[null,10],[15,11],[17,null],[18,null],[19,13],[null,17],[null,18],[null,19]],"2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 3 (Aal-i-Imraan). Un mot s'ajoute en sourate 3 (Aal-i-Imraan) (absent en sourate 2 (Al-Baqara)). (9 différences en tout : voir la liste.)",[[0,2,36,"https://shamela.ws/book/3580/20"]],"MT0024"],["2:184","2:185",[4,13],[20,28],[[5,null]],"Un mot s'ajoute en verset 2:184 (absent en verset 2:185).",[[0,2,38,"https://shamela.ws/book/3580/21"]],"MT0025"],["2:184","2:196",[3,7],[20,24],[],"",[[0,2,38,"https://shamela.ws/book/3580/21"]],"MT0025"],["59:6","59:7",[1,4],[1,4],[],"",[[0,59,514,"https://shamela.ws/book/3580/173"]],"MT0025"],["2:187","2:229",[60,63],[38,41],[],"",[[0,2,39,"https://shamela.ws/book/3580/21"]],"MT0026"],["2:193","8:39",[0,10],[0,11],[[null,7]],"Un mot s'ajoute en sourate 8 (Al-Anfaal) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,2,41,"https://shamela.ws/book/3580/22"],[0,8,162,"https://shamela.ws/book/3580/69"]],"MT0027"],["2:214","3:142",[0,5],[0,5],[],"",[[0,2,42,"https://shamela.ws/book/3580/22"]],"MT0028"],["3:142","9:16",[0,10],[0,9],[[3,3],[4,null]],"Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 9 (At-Tawba). Un mot s'ajoute en sourate 3 (Aal-i-Imraan) (absent en sourate 9 (At-Tawba)).",[[0,2,42,"https://shamela.ws/book/3580/22"]],"MT0028"],["2:218","8:72",[0,8],[0,9],[[3,null],[4,3],[null,5],[null,6]],"Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 8 (Al-Anfaal)). Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 8 (Al-Anfaal). Un mot s'ajoute en sourate 8 (Al-Anfaal) (absent en sourate 2 (Al-Baqara)). (4 différences en tout : voir la liste.)",[[0,8,164,"https://shamela.ws/book/3580/70"],[0,9,169,"https://shamela.ws/book/3580/72"]],"MT0029"],["8:72","8:74",[2,13],[1,10],[[5,null],[6,null]],"2 mots s'ajoutent en verset 8:72 (absent en verset 8:74).",[[0,8,164,"https://shamela.ws/book/3580/70"],[0,9,169,"https://shamela.ws/book/3580/72"]],"MT0029"],["8:72","9:20",[1,9],[0,6],[[5,null],[6,null]],"2 mots s'ajoutent en sourate 8 (Al-Anfaal) (absent en sourate 9 (At-Tawba)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,8,164,"https://shamela.ws/book/3580/70"],[0,9,169,"https://shamela.ws/book/3580/72"]],"MT0029"],["2:232","65:2",[16,24],[17,24],[[20,null]],"Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 65 (At-Talaaq)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,2,46,"https://shamela.ws/book/3580/23"]],"MT0030"],["2:264","14:18",[29,32],[14,19],[[null,16],[null,17]],"2 mots s'ajoutent en sourate 14 (Ibrahim) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,14,245,"https://shamela.ws/book/3580/92"],[0,14,246,"https://shamela.ws/book/3580/92"]],"MT0031"],["8:52","8:54",[0,9],[0,9],[[8,8]],"Un mot change : une forme en verset 8:52, l'autre en verset 8:54.",[[0,8,163,"https://shamela.ws/book/3580/70"],[1,0,0,"https://shamela.ws/book/9831/69"]],"MT0032"],["3:40","19:8",[0,5],[0,5],[],"",[[0,3,55,"https://shamela.ws/book/3580/27"]],"MT0033"],["3:47","19:8",[1,4],[1,4],[],"",[[0,3,56,"https://shamela.ws/book/3580/27"]],"MT0033"],["3:51","19:36",[0,8],[0,8],[[0,0]],"Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 19 (Maryam).",[[0,3,59,"https://shamela.ws/book/3580/29"]],"MT0034"],["3:51","43:64",[0,8],[0,9],[[null,2]],"Un mot s'ajoute en sourate 43 (Az-Zukhruf) (absent en sourate 3 (Aal-i-Imraan)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,3,59,"https://shamela.ws/book/3580/29"]],"MT0034"],["19:36","43:64",[0,8],[0,9],[[0,0],[null,2]],"Un mot change : une forme en sourate 19 (Maryam), l'autre en sourate 43 (Az-Zukhruf). Un mot s'ajoute en sourate 43 (Az-Zukhruf) (absent en sourate 19 (Maryam)).",[[0,3,59,"https://shamela.ws/book/3580/29"]],"MT0034"],["5:9","48:29",[0,10],[50,57],[[7,56],[9,null],[10,null]],"Un mot change : une forme en sourate 5 (Al-Maaida), l'autre en sourate 48 (Al-Fath). 2 mots s'ajoutent en sourate 5 (Al-Maaida) (absent en sourate 48 (Al-Fath)).",[[0,5,83,"https://shamela.ws/book/3580/38"]],"MT0035"],["3:99","7:86",[5,9],[6,10],[],"",[[0,3,63,"https://shamela.ws/book/3580/30"]],"MT0036"],["3:126","8:10",[0,15],[0,14],[[5,null],[8,6]],"Un mot s'ajoute en sourate 3 (Aal-i-Imraan) (absent en sourate 8 (Al-Anfaal)). Un mot change de place entre sourate 3 (Aal-i-Imraan) et sourate 8 (Al-Anfaal).",[[0,3,64,"https://shamela.ws/book/3580/30"]],"MT0037"],["4:38","9:29",[6,10],[3,7],[],"",[[0,2,7,"https://shamela.ws/book/3580/5"]],"MT0038"],["4:105","39:2",[0,4],[0,4],[],"",[[0,39,439,"https://shamela.ws/book/3580/155"]],"MT0039"],["4:105","39:41",[0,4],[0,5],[[2,2],[null,4]],"Un mot change : une forme en sourate 4 (An-Nisaa), l'autre en sourate 39 (Az-Zumar). Un mot s'ajoute en sourate 39 (Az-Zumar) (absent en sourate 4 (An-Nisaa)).",[[0,39,439,"https://shamela.ws/book/3580/155"]],"MT0039"],["10:108","39:41",[9,21],[7,17],[[11,null],[12,null],[13,9]],"2 mots s'ajoutent en sourate 10 (Yunus) (absent en sourate 39 (Az-Zumar)). Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 39 (Az-Zumar).",[[0,39,446,"https://shamela.ws/book/3580/157"]],"MT0039"],["17:15","39:41",[6,10],[11,15],[],"",[[0,39,446,"https://shamela.ws/book/3580/157"]],"MT0039"],["27:92","39:41",[4,11],[7,12],[[6,null],[7,null],[8,9]],"2 mots s'ajoutent en sourate 27 (An-Naml) (absent en sourate 39 (Az-Zumar)). Un mot change : une forme en sourate 27 (An-Naml), l'autre en sourate 39 (Az-Zumar).",[[0,39,446,"https://shamela.ws/book/3580/157"]],"MT0039"],["39:2","39:41",[0,4],[0,5],[[2,2],[null,4]],"Un mot change : une forme en verset 39:2, l'autre en verset 39:41. Un mot s'ajoute en verset 39:41 (absent en verset 39:2).",[[0,39,439,"https://shamela.ws/book/3580/155"]],"MT0039"],["47:25","47:32",[5,10],[9,14],[],"",[[0,47,482,"https://shamela.ws/book/3580/165"]],"MT0040"],["4:149","33:54",[0,11],[0,7],[[2,2],[5,null],[6,null],[7,null],[8,null]],"Un mot change : une forme en sourate 4 (An-Nisaa), l'autre en sourate 33 (Al-Ahzaab). 2 mots s'ajoutent en sourate 4 (An-Nisaa) (absent en sourate 33 (Al-Ahzaab)). (5 différences en tout : voir la liste.)",[[0,4,78,"https://shamela.ws/book/3580/36"]],"MT0041"],["6:29","23:37",[1,8],[0,9],[[null,5],[null,6]],"2 mots s'ajoutent en sourate 23 (Al-Muminoon) (absent en sourate 6 (Al-An'aam)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,6,99,"https://shamela.ws/book/3580/45"],[0,6,29,"https://shamela.ws/book/3580/45"]],"MT0042"],["6:29","45:24",[0,5],[0,5],[[1,1]],"Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 45 (Al-Jaathiya).",[[0,6,99,"https://shamela.ws/book/3580/45"]],"MT0042"],["6:148","16:35",[8,19],[13,26],[[null,17],[null,18],[16,23]],"2 mots s'ajoutent en sourate 16 (An-Nahl) (absent en sourate 6 (Al-An'aam)). Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 16 (An-Nahl).",[[0,6,114,"https://shamela.ws/book/3580/52"],[0,16,263,"https://shamela.ws/book/3580/98"],[1,0,0,"https://shamela.ws/book/9831/12"]],"MT0042"],["43:20","45:24",[8,15],[14,21],[],"",[[0,43,468,"https://shamela.ws/book/3580/162"]],"MT0042"],["5:15","5:19",[0,6],[0,6],[],"",[[0,5,86,"https://shamela.ws/book/3580/39"]],"MT0043"],["5:36","13:18",[3,13],[9,19],[[12,18]],"Un mot change : une forme en sourate 5 (Al-Maaida), l'autre en sourate 13 (Ar-Ra'd).",[[0,13,239,"https://shamela.ws/book/3580/90"]],"MT0044"],["5:36","39:47",[6,14],[4,12],[[12,10]],"Un mot change : une forme en sourate 5 (Al-Maaida), l'autre en sourate 39 (Az-Zumar).",[[0,13,239,"https://shamela.ws/book/3580/90"]],"MT0044"],["5:44","5:47",[35,42],[8,15],[],"",[[0,5,89,"https://shamela.ws/book/3580/41"]],"MT0045"],["5:58","59:13",[8,11],[8,11],[],"",[[0,59,515,"https://shamela.ws/book/3580/173"]],"MT0046"],["59:13","59:14",[8,11],[21,24],[],"",[[0,59,515,"https://shamela.ws/book/3580/173"]],"MT0046"],["6:71","10:18",[2,8],[1,7],[[7,6]],"Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 10 (Yunus).",[[0,7,160,"https://shamela.ws/book/3580/68"],[0,10,184,"https://shamela.ws/book/3580/77"]],"MT0047"],["6:71","10:106",[2,8],[2,8],[[7,7]],"Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 10 (Yunus).",[[0,7,160,"https://shamela.ws/book/3580/68"]],"MT0047"],["6:71","21:66",[2,6],[2,6],[],"",[[0,7,160,"https://shamela.ws/book/3580/68"]],"MT0047"],["6:71","25:55",[2,8],[1,7],[[7,6]],"Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 25 (Al-Furqaan).",[[0,7,160,"https://shamela.ws/book/3580/68"],[0,25,345,"https://shamela.ws/book/3580/127"]],"MT0047"],["10:18","10:106",[1,7],[2,8],[[6,7]],"Un mot change : une forme en verset 10:18, l'autre en verset 10:106.",[[0,7,160,"https://shamela.ws/book/3580/68"],[0,10,184,"https://shamela.ws/book/3580/77"]],"MT0047"],["10:18","21:66",[1,5],[2,6],[],"",[[0,7,160,"https://shamela.ws/book/3580/68"]],"MT0047"],["10:18","25:55",[0,7],[0,7],[[6,6]],"Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 25 (Al-Furqaan).",[[0,7,160,"https://shamela.ws/book/3580/68"],[0,10,184,"https://shamela.ws/book/3580/77"],[0,25,345,"https://shamela.ws/book/3580/127"]],"MT0047"],["10:106","21:66",[2,6],[2,6],[],"",[[0,7,160,"https://shamela.ws/book/3580/68"]],"MT0047"],["10:106","25:55",[2,8],[1,7],[[7,6]],"Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 25 (Al-Furqaan).",[[0,7,160,"https://shamela.ws/book/3580/68"],[0,25,345,"https://shamela.ws/book/3580/127"]],"MT0047"],["21:66","25:55",[2,6],[1,5],[],"",[[0,7,160,"https://shamela.ws/book/3580/68"]],"MT0047"],["29:8","31:15",[5,22],[0,31],[[null,2],[null,3],[7,4],[null,14],[null,15],[null,16],[null,17],[null,19],[null,20],[null,21],[null,22],[null,23],[null,25]],"2 mots s'ajoutent en sourate 31 (Luqman) (absent en sourate 29 (Al-Ankaboot)). Un mot change : une forme en sourate 29 (Al-Ankaboot), l'autre en sourate 31 (Luqman). (13 différences en tout : voir la liste.)",[[0,29,375,"https://shamela.ws/book/3580/136"]],"MT0048"],["6:5","26:6",[8,12],[3,7],[],"",[[0,6,92,"https://shamela.ws/book/3580/42"]],"MT0049"],["6:21","10:17",[0,14],[0,14],[[0,0],[14,14]],"2 mots changent : une forme en sourate 6 (Al-An'aam), l'autre en sourate 10 (Yunus).",[[0,6,96,"https://shamela.ws/book/3580/44"],[0,10,183,"https://shamela.ws/book/3580/77"],[1,0,0,"https://shamela.ws/book/9831/59"]],"MT0050"],["6:27","6:30",[0,4],[0,4],[],"",[[0,6,98,"https://shamela.ws/book/3580/45"]],"MT0051"],["6:40","6:47",[0,6],[0,7],[[null,6]],"Un mot s'ajoute en verset 6:47 (absent en verset 6:40).",[[0,6,101,"https://shamela.ws/book/3580/46"]],"MT0052"],["28:71","28:72",[0,15],[0,15],[[6,6]],"Un mot change : une forme en verset 28:71, l'autre en verset 28:72.",[[0,28,372,"https://shamela.ws/book/3580/134"]],"MT0053"],["6:50","11:31",[2,14],[1,12],[[12,null]],"Un mot s'ajoute en sourate 6 (Al-An'aam) (absent en sourate 11 (Hud)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,6,104,"https://shamela.ws/book/3580/47"],[0,11,210,"https://shamela.ws/book/3580/83"]],"MT0054"],["10:72","10:104",[13,16],[22,25],[],"",[[0,10,203,"https://shamela.ws/book/3580/80"]],"MT0055"],["10:72","27:91",[13,17],[13,17],[],"",[[0,10,203,"https://shamela.ws/book/3580/80"]],"MT0055"],["10:104","27:91",[22,25],[13,16],[],"",[[0,10,203,"https://shamela.ws/book/3580/80"]],"MT0055"],["6:90","12:104",[14,18],[6,10],[[17,9]],"Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 12 (Yusuf).",[[0,6,105,"https://shamela.ws/book/3580/48"]],"MT0056"],["6:97","6:98",[12,15],[9,12],[],"",[[0,6,107,"https://shamela.ws/book/3580/49"]],"MT0057"],["6:102","40:62",[0,7],[0,9],[[null,3],[null,4],[null,5]],"3 mots s'ajoutent en sourate 40 (Al-Ghaafir) (absent en sourate 6 (Al-An'aam)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,6,110,"https://shamela.ws/book/3580/50"],[0,40,453,"https://shamela.ws/book/3580/158"],[1,0,0,"https://shamela.ws/book/9831/35"]],"MT0058"],["33:63","42:17",[11,14],[7,10],[],"",[[0,42,466,"https://shamela.ws/book/3580/162"]],"MT0059"],["6:112","6:137",[16,24],[13,21],[[18,15]],"Un mot change : une forme en verset 6:112, l'autre en verset 6:137.",[[0,6,111,"https://shamela.ws/book/3580/51"],[1,0,0,"https://shamela.ws/book/9831/57"],[1,0,0,"https://shamela.ws/book/9831/70"]],"MT0060"],["6:117","68:7",[0,11],[0,10],[[4,4],[5,5]],"2 mots changent : une forme en sourate 6 (Al-An'aam), l'autre en sourate 68 (Al-Qalam).",[[0,6,112,"https://shamela.ws/book/3580/51"]],"MT0061"],["6:135","11:93",[2,10],[1,9],[[8,7]],"Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 11 (Hud).",[[0,6,113,"https://shamela.ws/book/3580/51"],[0,11,212,"https://shamela.ws/book/3580/83"],[0,102,576,"https://shamela.ws/book/3580/192"],[1,0,0,"https://shamela.ws/book/9831/60"]],"MT0062"],["6:151","17:31",[17,23],[0,6],[[20,3]],"Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 17 (Al-Israa).",[[0,6,115,"https://shamela.ws/book/3580/52"],[1,0,0,"https://shamela.ws/book/9831/35"]],"MT0063"],["6:165","7:167",[15,21],[13,20],[[17,15]],"Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 7 (Al-A'raaf).",[[0,6,118,"https://shamela.ws/book/3580/53"]],"MT0064"],["17:94","18:55",[0,9],[0,11],[[null,8],[null,9]],"2 mots s'ajoutent en sourate 18 (Al-Kahf) (absent en sourate 17 (Al-Israa)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,17,279,"https://shamela.ws/book/3580/104"]],"MT0065"],["7:12","38:75",[0,4],[0,5],[[null,1],[3,4]],"Un mot s'ajoute en sourate 38 (Saad) (absent en sourate 7 (Al-A'raaf)). Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 38 (Saad).",[[0,7,120,"https://shamela.ws/book/3580/54"]],"MT0066"],["7:188","10:49",[0,10],[0,10],[[4,4],[6,6]],"2 mots changent : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 10 (Yunus).",[[0,7,160,"https://shamela.ws/book/3580/68"]],"MT0067"],["16:61","35:45",[5,18],[6,20],[[7,8],[null,9]],"Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 35 (Faatir). Un mot s'ajoute en sourate 35 (Faatir) (absent en sourate 16 (An-Nahl)).",[[0,16,267,"https://shamela.ws/book/3580/98"],[0,35,419,"https://shamela.ws/book/3580/148"]],"MT0067"],["7:45","11:19",[0,9],[0,10],[[null,9]],"Un mot s'ajoute en sourate 11 (Hud) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,7,127,"https://shamela.ws/book/3580/57"]],"MT0068"],["7:60","7:66",[0,6],[0,8],[[null,2],[null,3]],"2 mots s'ajoutent en verset 7:66 (absent en verset 7:60).",[[0,7,131,"https://shamela.ws/book/3580/59"],[1,0,0,"https://shamela.ws/book/9831/5"]],"MT0069"],["7:62","7:68",[0,4],[0,4],[[3,3]],"Un mot change : une forme en verset 7:62, l'autre en verset 7:68.",[[0,7,132,"https://shamela.ws/book/3580/59"],[0,7,134,"https://shamela.ws/book/3580/60"]],"MT0070"],["7:64","10:73",[3,9],[3,11],[[null,6],[null,7]],"2 mots s'ajoutent en sourate 10 (Yunus) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,7,135,"https://shamela.ws/book/3580/60"]],"MT0071"],["7:73","11:64",[19,37],[0,16],[[19,0],[null,16]],"Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 11 (Hud). Un mot s'ajoute en sourate 11 (Hud) (absent en sourate 7 (Al-A'raaf)).",[[0,7,136,"https://shamela.ws/book/3580/61"],[1,0,0,"https://shamela.ws/book/9831/107"]],"MT0072"],["7:73","26:156",[33,37],[0,6],[[null,5],[null,6]],"2 mots s'ajoutent en sourate 26 (Ash-Shu'araa) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,7,136,"https://shamela.ws/book/3580/61"]],"MT0072"],["11:64","26:156",[11,15],[0,6],[[null,5],[null,6]],"2 mots s'ajoutent en sourate 26 (Ash-Shu'araa) (absent en sourate 11 (Hud)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,7,136,"https://shamela.ws/book/3580/61"]],"MT0072"],["7:81","27:55",[0,11],[0,11],[[0,0],[11,11]],"2 mots changent : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 27 (An-Naml).",[[0,7,141,"https://shamela.ws/book/3580/62"],[0,7,142,"https://shamela.ws/book/3580/62"]],"MT0073"],["7:82","27:56",[1,13],[2,16],[[7,8],[null,9],[null,10]],"Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 27 (An-Naml). 2 mots s'ajoutent en sourate 27 (An-Naml) (absent en sourate 7 (Al-A'raaf)).",[[0,7,143,"https://shamela.ws/book/3580/63"]],"MT0074"],["7:82","29:29",[1,6],[11,16],[],"",[[0,7,143,"https://shamela.ws/book/3580/63"]],"MT0074"],["27:56","29:29",[1,7],[10,16],[],"",[[0,7,143,"https://shamela.ws/book/3580/63"]],"MT0074"],["7:83","27:57",[0,6],[0,6],[[4,4]],"Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 27 (An-Naml).",[[0,7,144,"https://shamela.ws/book/3580/63"],[0,11,220,"https://shamela.ws/book/3580/85"],[0,27,360,"https://shamela.ws/book/3580/130"]],"MT0075"],["7:83","29:33",[2,6],[19,23],[[3,20]],"Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 29 (Al-Ankaboot).",[[0,11,220,"https://shamela.ws/book/3580/85"]],"MT0075"],["11:77","29:33",[0,8],[0,9],[[null,1]],"Un mot s'ajoute en sourate 29 (Al-Ankaboot) (absent en sourate 11 (Hud)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,29,380,"https://shamela.ws/book/3580/137"]],"MT0075"],["29:32","29:33",[13,17],[19,23],[[14,20]],"Un mot change : une forme en verset 29:32, l'autre en verset 29:33.",[[0,11,220,"https://shamela.ws/book/3580/85"]],"MT0075"],["7:84","7:103",[4,7],[12,15],[],"",[[0,7,140,"https://shamela.ws/book/3580/62"]],"MT0076"],["7:84","27:14",[4,7],[7,10],[],"",[[0,7,140,"https://shamela.ws/book/3580/62"]],"MT0076"],["7:101","10:74",[10,19],[8,18],[[null,14]],"Un mot s'ajoute en sourate 10 (Yunus) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,7,145,"https://shamela.ws/book/3580/63"],[0,7,146,"https://shamela.ws/book/3580/64"],[0,10,201,"https://shamela.ws/book/3580/80"]],"MT0077"],["26:154","26:186",[1,4],[1,4],[],"",[[1,0,0,"https://shamela.ws/book/9831/87"]],"MT0078"],["7:109","26:34",[5,8],[3,6],[],"",[[0,7,147,"https://shamela.ws/book/3580/64"],[0,7,150,"https://shamela.ws/book/3580/65"]],"MT0079"],["7:110","26:35",[0,7],[0,7],[[null,5]],"Un mot s'ajoute en sourate 26 (Ash-Shu'araa) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,7,147,"https://shamela.ws/book/3580/64"],[0,7,148,"https://shamela.ws/book/3580/65"]],"MT0080"],["7:113","26:41",[1,10],[2,11],[[2,4],[4,5]],"Un mot change de place entre sourate 7 (Al-A'raaf) et sourate 26 (Ash-Shu'araa). Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 26 (Ash-Shu'araa).",[[0,7,151,"https://shamela.ws/book/3580/65"]],"MT0081"],["7:114","26:42",[0,4],[0,5],[[null,3]],"Un mot s'ajoute en sourate 26 (Ash-Shu'araa) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,7,152,"https://shamela.ws/book/3580/65"],[1,0,0,"https://shamela.ws/book/9831/17"]],"MT0082"],["7:115","20:65",[0,9],[0,10],[[null,8],[8,9],[9,10]],"Un mot s'ajoute en sourate 20 (Taa-Haa) (absent en sourate 7 (Al-A'raaf)). 2 mots changent : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 20 (Taa-Haa).",[[0,7,153,"https://shamela.ws/book/3580/66"]],"MT0083"],["7:123","20:71",[0,7],[0,6],[[1,null],[3,2]],"Un mot s'ajoute en sourate 7 (Al-A'raaf) (absent en sourate 20 (Taa-Haa)). Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 20 (Taa-Haa).",[[0,7,154,"https://shamela.ws/book/3580/66"],[0,7,155,"https://shamela.ws/book/3580/67"]],"MT0084"],["7:123","26:49",[0,7],[0,6],[[1,null],[3,2]],"Un mot s'ajoute en sourate 7 (Al-A'raaf) (absent en sourate 26 (Ash-Shu'araa)). Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 26 (Ash-Shu'araa).",[[0,7,154,"https://shamela.ws/book/3580/66"],[0,7,155,"https://shamela.ws/book/3580/67"]],"MT0084"],["7:124","20:71",[1,4],[15,18],[],"",[[0,7,153,"https://shamela.ws/book/3580/66"]],"MT0084"],["7:124","26:49",[0,7],[16,22],[[5,null],[6,21]],"Un mot s'ajoute en sourate 7 (Al-A'raaf) (absent en sourate 26 (Ash-Shu'araa)). Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 26 (Ash-Shu'araa).",[[0,7,153,"https://shamela.ws/book/3580/66"],[0,7,156,"https://shamela.ws/book/3580/67"]],"MT0084"],["20:71","26:49",[0,19],[0,21],[[null,13],[null,14],[14,16]],"2 mots s'ajoutent en sourate 26 (Ash-Shu'araa) (absent en sourate 20 (Taa-Haa)). Un mot change : une forme en sourate 20 (Taa-Haa), l'autre en sourate 26 (Ash-Shu'araa).",[[0,7,153,"https://shamela.ws/book/3580/66"],[0,7,154,"https://shamela.ws/book/3580/66"],[0,7,155,"https://shamela.ws/book/3580/67"]],"MT0084"],["7:125","26:50",[0,4],[0,7],[[null,1],[null,2]],"2 mots s'ajoutent en sourate 26 (Ash-Shu'araa) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,7,157,"https://shamela.ws/book/3580/67"]],"MT0085"],["7:200","41:36",[0,10],[0,11],[[null,9],[9,10],[10,11]],"Un mot s'ajoute en sourate 41 (Fussilat) (absent en sourate 7 (Al-A'raaf)). 2 mots changent : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 41 (Fussilat).",[[0,41,458,"https://shamela.ws/book/3580/160"]],"MT0086"],["9:19","9:81",[13,17],[11,15],[[null,14]],"Un mot s'ajoute en verset 9:81 (absent en verset 9:19).",[[0,8,164,"https://shamela.ws/book/3580/70"]],"MT0087"],["9:39","11:57",[6,15],[11,21],[[9,14],[12,17],[null,18]],"2 mots changent : une forme en sourate 9 (At-Tawba), l'autre en sourate 11 (Hud). Un mot s'ajoute en sourate 11 (Hud) (absent en sourate 9 (At-Tawba)).",[[0,11,211,"https://shamela.ws/book/3580/83"],[0,11,212,"https://shamela.ws/book/3580/83"]],"MT0088"],["9:55","9:85",[6,17],[5,16],[[null,8],[9,9],[12,null]],"Un mot s'ajoute en verset 9:85 (absent en verset 9:55). Un mot change : une forme en verset 9:55, l'autre en verset 9:85. Un mot s'ajoute en verset 9:55 (absent en verset 9:85).",[[0,9,171,"https://shamela.ws/book/3580/72"],[0,9,172,"https://shamela.ws/book/3580/73"],[0,9,173,"https://shamela.ws/book/3580/73"],[0,9,175,"https://shamela.ws/book/3580/74"],[1,0,0,"https://shamela.ws/book/9831/61"]],"MT0089"],["11:62","14:9",[16,21],[34,39],[[19,37]],"Un mot change : une forme en sourate 11 (Hud), l'autre en sourate 14 (Ibrahim).",[[0,11,215,"https://shamela.ws/book/3580/84"]],"MT0090"],["9:87","9:93",[0,10],[9,19],[[null,15],[10,null]],"Un mot s'ajoute en verset 9:93 (absent en verset 9:87). Un mot s'ajoute en verset 9:87 (absent en verset 9:93).",[[0,9,177,"https://shamela.ws/book/3580/75"]],"MT0091"],["9:94","9:105",[19,31],[3,16],[[22,6],[23,8]],"2 mots changent : une forme en verset 9:94, l'autre en verset 9:105.",[[0,9,178,"https://shamela.ws/book/3580/75"],[1,0,0,"https://shamela.ws/book/9831/30"]],"MT0092"],["41:45","42:14",[7,19],[11,31],[[null,16],[null,17],[null,18],[15,22],[null,23],[null,24],[null,25],[null,26],[null,27]],"3 mots s'ajoutent en sourate 42 (Ash-Shura) (absent en sourate 41 (Fussilat)). (9 différences en tout : voir la liste.)",[[0,41,459,"https://shamela.ws/book/3580/160"]],"MT0093"],["10:42","10:43",[0,10],[0,10],[[2,2],[6,6],[7,7]],"3 mots changent : une forme en verset 10:42, l'autre en verset 10:43.",[[0,6,97,"https://shamela.ws/book/3580/44"],[0,10,190,"https://shamela.ws/book/3580/78"],[0,10,198,"https://shamela.ws/book/3580/80"]],"MT0094"],["11:10","41:50",[0,6],[0,8],[[null,2],[2,3],[null,4]],"2 mots s'ajoutent en sourate 41 (Fussilat) (absent en sourate 11 (Hud)). Un mot change : une forme en sourate 11 (Hud), l'autre en sourate 41 (Fussilat).",[[0,41,461,"https://shamela.ws/book/3580/161"]],"MT0095"],["18:36","41:50",[0,7],[11,18],[[5,16]],"Un mot change : une forme en sourate 18 (Al-Kahf), l'autre en sourate 41 (Fussilat).",[[0,18,284,"https://shamela.ws/book/3580/107"]],"MT0095"],["11:22","16:109",[0,6],[0,6],[[6,6]],"Un mot change : une forme en sourate 11 (Hud), l'autre en sourate 16 (An-Nahl).",[[0,11,206,"https://shamela.ws/book/3580/81"]],"MT0096"],["23:24","23:33",[6,10],[13,17],[],"",[[0,23,329,"https://shamela.ws/book/3580/121"],[0,23,33,"https://shamela.ws/book/3580/121"]],"MT0097"],["11:28","11:63",[0,10],[0,11],[[null,10]],"Un mot s'ajoute en verset 11:63 (absent en verset 11:28).",[[0,11,208,"https://shamela.ws/book/3580/82"],[0,11,63,"https://shamela.ws/book/3580/82"]],"MT0098"],["11:28","11:88",[0,8],[0,8],[],"",[[0,11,63,"https://shamela.ws/book/3580/82"]],"MT0098"],["11:67","11:94",[0,7],[10,17],[[0,10]],"Un mot change : une forme en verset 11:67, l'autre en verset 11:94.",[[0,7,137,"https://shamela.ws/book/3580/61"],[0,11,216,"https://shamela.ws/book/3580/84"],[0,11,217,"https://shamela.ws/book/3580/84"]],"MT0099"],["11:60","11:99",[0,6],[0,5],[[3,null]],"Un mot s'ajoute en verset 11:60 (absent en verset 11:99).",[[0,11,213,"https://shamela.ws/book/3580/83"],[1,0,0,"https://shamela.ws/book/9831/61"]],"MT0100"],["11:61","11:90",[23,28],[2,7],[],"",[[0,11,214,"https://shamela.ws/book/3580/84"],[0,17,279,"https://shamela.ws/book/3580/104"]],"MT0101"],["11:81","15:65",[9,17],[0,10],[[null,5],[null,6]],"2 mots s'ajoutent en sourate 15 (Al-Hijr) (absent en sourate 11 (Hud)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,11,220,"https://shamela.ws/book/3580/85"],[0,15,255,"https://shamela.ws/book/3580/94"]],"MT0102"],["11:82","15:74",[3,10],[0,7],[[3,0],[7,4]],"2 mots changent : une forme en sourate 11 (Hud), l'autre en sourate 15 (Al-Hijr).",[[0,15,256,"https://shamela.ws/book/3580/94"]],"MT0103"],["11:117","28:59",[0,4],[0,4],[[3,3]],"Un mot change : une forme en sourate 11 (Hud), l'autre en sourate 28 (Al-Qasas).",[[0,11,219,"https://shamela.ws/book/3580/85"]],"MT0104"],["12:22","28:14",[0,9],[0,10],[[null,3]],"Un mot s'ajoute en sourate 28 (Al-Qasas) (absent en sourate 12 (Yusuf)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,12,223,"https://shamela.ws/book/3580/86"],[0,28,364,"https://shamela.ws/book/3580/132"]],"MT0105"],["13:38","40:78",[0,18],[0,23],[[null,5],[null,6],[null,7],[5,8],[null,9],[null,10],[6,11],[7,12],[8,13]],"3 mots s'ajoutent en sourate 40 (Al-Ghaafir) (absent en sourate 13 (Ar-Ra'd)). (9 différences en tout : voir la liste.)",[[0,13,241,"https://shamela.ws/book/3580/91"]],"MT0106"],["13:43","29:52",[6,11],[0,4],[[9,null]],"Un mot s'ajoute en sourate 13 (Ar-Ra'd) (absent en sourate 29 (Al-Ankaboot)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,17,280,"https://shamela.ws/book/3580/105"],[0,17,28,"https://shamela.ws/book/3580/105"],[0,29,382,"https://shamela.ws/book/3580/138"]],"MT0107"],["17:96","29:52",[0,5],[0,4],[[3,null]],"Un mot s'ajoute en sourate 17 (Al-Israa) (absent en sourate 29 (Al-Ankaboot)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,17,280,"https://shamela.ws/book/3580/105"],[0,17,28,"https://shamela.ws/book/3580/105"],[0,29,382,"https://shamela.ws/book/3580/138"]],"MT0107"],["14:30","39:8",[1,7],[22,28],[[3,24]],"Un mot change : une forme en sourate 14 (Ibrahim), l'autre en sourate 39 (Az-Zumar).",[[0,16,266,"https://shamela.ws/book/3580/98"]],"MT0108"],["14:32","27:60",[2,8],[1,8],[[null,5]],"Un mot s'ajoute en sourate 27 (An-Naml) (absent en sourate 14 (Ibrahim)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,14,247,"https://shamela.ws/book/3580/92"],[0,27,361,"https://shamela.ws/book/3580/131"]],"MT0109"],["15:35","38:78",[0,5],[0,5],[[2,2]],"Un mot change : une forme en sourate 15 (Al-Hijr), l'autre en sourate 38 (Saad).",[[0,15,252,"https://shamela.ws/book/3580/93"]],"MT0110"],["51:15","52:17",[0,3],[0,3],[],"",[[0,51,490,"https://shamela.ws/book/3580/167"],[1,0,0,"https://shamela.ws/book/9831/56"]],"MT0111"],["16:24","16:30",[3,7],[4,8],[],"",[[0,16,260,"https://shamela.ws/book/3580/96"]],"MT0112"],["16:34","39:48",[0,9],[0,10],[[null,0],[0,1],[3,4]],"Un mot s'ajoute en sourate 39 (Az-Zumar) (absent en sourate 16 (An-Nahl)). 2 mots changent : une forme en sourate 16 (An-Nahl), l'autre en sourate 39 (Az-Zumar).",[[0,16,262,"https://shamela.ws/book/3580/97"],[0,39,443,"https://shamela.ws/book/3580/156"],[1,0,0,"https://shamela.ws/book/9831/54"]],"MT0113"],["39:48","45:33",[0,10],[0,10],[[4,4]],"Un mot change : une forme en sourate 39 (Az-Zumar), l'autre en sourate 45 (Al-Jaathiya).",[[0,39,443,"https://shamela.ws/book/3580/156"],[0,45,478,"https://shamela.ws/book/3580/164"]],"MT0113"],["16:55","29:66",[0,6],[0,5],[[4,3]],"Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 29 (Al-Ankaboot).",[[0,16,266,"https://shamela.ws/book/3580/98"]],"MT0114"],["16:66","23:21",[0,8],[0,8],[],"",[[0,16,268,"https://shamela.ws/book/3580/100"]],"MT0115"],["23:19","23:21",[8,12],[11,15],[[9,12]],"Un mot change : une forme en verset 23:19, l'autre en verset 23:21.",[[0,16,268,"https://shamela.ws/book/3580/100"],[0,23,328,"https://shamela.ws/book/3580/121"]],"MT0115"],["23:19","43:73",[7,12],[0,5],[[9,2],[11,4]],"2 mots changent : une forme en sourate 23 (Al-Muminoon), l'autre en sourate 43 (Az-Zukhruf).",[[0,23,328,"https://shamela.ws/book/3580/121"]],"MT0115"],["16:84","16:89",[0,5],[0,5],[[2,2]],"Un mot change : une forme en verset 16:84, l'autre en verset 16:89.",[[1,0,0,"https://shamela.ws/book/9831/85"]],"MT0116"],["16:96","39:35",[12,16],[7,11],[[14,9]],"Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 39 (Az-Zumar).",[[0,39,442,"https://shamela.ws/book/3580/156"]],"MT0117"],["16:127","27:70",[6,14],[0,8],[[10,4]],"Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 27 (An-Naml).",[[0,16,271,"https://shamela.ws/book/3580/101"]],"MT0118"],["17:9","18:2",[7,14],[6,13],[],"",[[0,17,272,"https://shamela.ws/book/3580/101"]],"MT0119"],["17:22","17:39",[1,5],[9,13],[],"",[[0,17,273,"https://shamela.ws/book/3580/102"]],"MT0120"],["17:41","17:89",[0,4],[0,5],[[null,2]],"Un mot s'ajoute en verset 17:89 (absent en verset 17:41).",[[0,17,274,"https://shamela.ws/book/3580/102"],[1,0,0,"https://shamela.ws/book/9831/74"]],"MT0121"],["17:41","18:54",[0,4],[0,4],[],"",[[0,17,274,"https://shamela.ws/book/3580/102"]],"MT0121"],["17:89","18:54",[0,8],[0,8],[[2,5]],"Un mot change de place entre sourate 17 (Al-Israa) et sourate 18 (Al-Kahf).",[[0,17,274,"https://shamela.ws/book/3580/102"]],"MT0121"],["18:57","32:22",[0,5],[0,5],[],"",[[0,18,285,"https://shamela.ws/book/3580/107"]],"MT0122"],["18:72","18:75",[0,7],[1,9],[[null,4]],"Un mot s'ajoute en verset 18:75 (absent en verset 18:72).",[[0,18,288,"https://shamela.ws/book/3580/108"]],"MT0123"],["18:78","18:82",[8,12],[32,36],[[10,34]],"Un mot change : une forme en verset 18:78, l'autre en verset 18:82.",[[0,18,289,"https://shamela.ws/book/3580/108"],[1,0,0,"https://shamela.ws/book/9831/50"]],"MT0124"],["19:15","19:33",[2,8],[2,8],[[3,3],[5,5],[7,7]],"3 mots changent : une forme en verset 19:15, l'autre en verset 19:33.",[[0,19,292,"https://shamela.ws/book/3580/110"]],"MT0125"],["19:37","43:65",[0,11],[0,11],[[7,7],[9,9],[11,11]],"3 mots changent : une forme en sourate 19 (Maryam), l'autre en sourate 43 (Az-Zukhruf).",[[0,19,293,"https://shamela.ws/book/3580/111"]],"MT0126"],["19:60","25:70",[0,6],[0,7],[[null,5]],"Un mot s'ajoute en sourate 25 (Al-Furqaan) (absent en sourate 19 (Maryam)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,19,294,"https://shamela.ws/book/3580/111"],[0,25,346,"https://shamela.ws/book/3580/127"],[1,0,0,"https://shamela.ws/book/9831/47"]],"MT0127"],["20:10","27:7",[4,13],[3,10],[[5,null],[9,null],[10,7],[12,9]],"2 mots s'ajoutent en sourate 20 (Taa-Haa) (absent en sourate 27 (An-Naml)). Un mot change : une forme en sourate 20 (Taa-Haa), l'autre en sourate 27 (An-Naml). (4 différences en tout : voir la liste.)",[[0,20,295,"https://shamela.ws/book/3580/111"],[0,27,355,"https://shamela.ws/book/3580/129"]],"MT0128"],["20:10","28:29",[2,13],[11,22],[[3,12],[12,21]],"2 mots changent : une forme en sourate 20 (Taa-Haa), l'autre en sourate 28 (Al-Qasas).",[[0,20,295,"https://shamela.ws/book/3580/111"],[0,27,355,"https://shamela.ws/book/3580/129"]],"MT0128"],["27:7","28:29",[4,10],[15,22],[[null,18],[7,19]],"Un mot s'ajoute en sourate 28 (Al-Qasas) (absent en sourate 27 (An-Naml)). Un mot change : une forme en sourate 27 (An-Naml), l'autre en sourate 28 (Al-Qasas).",[[0,20,295,"https://shamela.ws/book/3580/111"],[0,27,355,"https://shamela.ws/book/3580/129"]],"MT0128"],["20:130","50:39",[0,10],[0,11],[[null,11]],"Un mot s'ajoute en sourate 50 (Qaaf) (absent en sourate 20 (Taa-Haa)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,50,489,"https://shamela.ws/book/3580/167"]],"MT0129"],["21:2","26:5",[1,7],[1,7],[[5,5]],"Un mot change : une forme en sourate 21 (Al-Anbiyaa), l'autre en sourate 26 (Ash-Shu'araa).",[[0,21,305,"https://shamela.ws/book/3580/114"],[0,26,348,"https://shamela.ws/book/3580/127"]],"MT0130"],["21:35","29:57",[0,3],[0,3],[],"",[[0,21,307,"https://shamela.ws/book/3580/115"]],"MT0131"],["21:36","25:41",[4,9],[2,7],[],"",[[0,21,208,"https://shamela.ws/book/3580/116"]],"MT0132"],["21:52","26:70",[0,4],[0,5],[[null,5]],"Un mot s'ajoute en sourate 26 (Ash-Shu'araa) (absent en sourate 21 (Al-Anbiyaa)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,21,309,"https://shamela.ws/book/3580/116"],[0,26,351,"https://shamela.ws/book/3580/128"],[0,26,352,"https://shamela.ws/book/3580/128"]],"MT0133"],["26:70","37:85",[0,5],[0,5],[[4,4]],"Un mot change : une forme en sourate 26 (Ash-Shu'araa), l'autre en sourate 37 (As-Saaffaat).",[[0,26,351,"https://shamela.ws/book/3580/128"],[0,26,352,"https://shamela.ws/book/3580/128"]],"MT0133"],["21:83","38:41",[2,6],[3,7],[],"",[[0,21,312,"https://shamela.ws/book/3580/117"]],"MT0134"],["21:84","38:43",[9,12],[2,5],[],"",[[0,21,312,"https://shamela.ws/book/3580/117"],[0,38,436,"https://shamela.ws/book/3580/154"]],"MT0135"],["21:91","66:12",[1,6],[4,9],[[4,7]],"Un mot change : une forme en sourate 21 (Al-Anbiyaa), l'autre en sourate 66 (At-Tahrim).",[[0,21,314,"https://shamela.ws/book/3580/117"],[0,66,527,"https://shamela.ws/book/3580/176"]],"MT0136"],["22:8","31:20",[0,12],[18,30],[],"",[[0,22,316,"https://shamela.ws/book/3580/118"]],"MT0137"],["22:22","32:20",[0,8],[6,12],[[5,null],[6,null]],"2 mots s'ajoutent en sourate 22 (Al-Hajj) (absent en sourate 32 (As-Sajda)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,22,321,"https://shamela.ws/book/3580/119"]],"MT0138"],["32:20","34:42",[15,21],[11,17],[[18,14],[20,16]],"2 mots changent : une forme en sourate 32 (As-Sajda), l'autre en sourate 34 (Saba).",[[0,32,398,"https://shamela.ws/book/3580/143"]],"MT0138"],["38:12","50:12",[0,3],[0,3],[],"",[[0,38,437,"https://shamela.ws/book/3580/155"]],"MT0139"],["22:45","22:48",[1,5],[1,6],[[null,3],[3,4]],"Un mot s'ajoute en verset 22:48 (absent en verset 22:45). Un mot change : une forme en verset 22:45, l'autre en verset 22:48.",[[0,22,326,"https://shamela.ws/book/3580/120"]],"MT0140"],["22:62","31:30",[0,16],[0,15],[[10,null]],"Un mot s'ajoute en sourate 22 (Al-Hajj) (absent en sourate 31 (Luqman)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,22,327,"https://shamela.ws/book/3580/120"]],"MT0141"],["23:51","34:11",[5,10],[7,12],[],"",[[0,23,331,"https://shamela.ws/book/3580/122"]],"MT0142"],["23:66","23:105",[2,5],[2,5],[],"",[[0,23,335,"https://shamela.ws/book/3580/123"]],"MT0143"],["23:83","27:68",[0,11],[0,11],[[4,2]],"Un mot change de place entre sourate 23 (Al-Muminoon) et sourate 27 (An-Naml).",[[0,23,333,"https://shamela.ws/book/3580/122"],[1,0,0,"https://shamela.ws/book/9831/93"]],"MT0144"],["24:20","24:21",[0,4],[18,22],[],"",[[0,24,337,"https://shamela.ws/book/3580/124"]],"MT0145"],["27:10","28:31",[1,13],[2,14],[],"",[[0,27,356,"https://shamela.ws/book/3580/129"],[0,27,357,"https://shamela.ws/book/3580/129"]],"MT0146"],["27:12","28:32",[1,20],[1,26],[[null,9],[10,10],[null,11],[null,12],[null,13],[11,15],[12,16],[null,17],[null,18],[15,21]],"2 mots s'ajoutent en sourate 28 (Al-Qasas) (absent en sourate 27 (An-Naml)). Un mot change : une forme en sourate 27 (An-Naml), l'autre en sourate 28 (Al-Qasas). (10 différences en tout : voir la liste.)",[[0,20,299,"https://shamela.ws/book/3580/113"],[0,27,358,"https://shamela.ws/book/3580/130"],[0,27,359,"https://shamela.ws/book/3580/130"],[1,0,0,"https://shamela.ws/book/9831/67"]],"MT0147"],["27:53","41:18",[1,4],[1,4],[],"",[[0,27,360,"https://shamela.ws/book/3580/130"]],"MT0148"],["28:20","36:20",[2,6],[1,6],[[null,4]],"Un mot s'ajoute en sourate 36 (Yaseen) (absent en sourate 28 (Al-Qasas)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,28,365,"https://shamela.ws/book/3580/132"],[0,36,421,"https://shamela.ws/book/3580/149"]],"MT0149"],["28:27","37:102",[26,30],[22,26],[],"",[[0,28,366,"https://shamela.ws/book/3580/133"]],"MT0150"],["28:37","28:85",[2,6],[10,14],[[4,12]],"Un mot change : une forme en verset 28:37, l'autre en verset 28:85.",[[0,28,367,"https://shamela.ws/book/3580/133"],[1,0,0,"https://shamela.ws/book/9831/88"]],"MT0151"],["28:38","40:37",[20,24],[3,7],[],"",[[0,28,368,"https://shamela.ws/book/3580/133"]],"MT0152"],["28:60","42:36",[1,13],[1,12],[[7,null]],"Un mot s'ajoute en sourate 28 (Al-Qasas) (absent en sourate 42 (Ash-Shura)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,28,370,"https://shamela.ws/book/3580/134"],[0,28,371,"https://shamela.ws/book/3580/134"]],"MT0153"],["31:7","45:8",[1,16],[3,14],[[3,5],[4,6],[9,null],[10,null],[11,null],[12,null]],"2 mots changent : une forme en sourate 31 (Luqman), l'autre en sourate 45 (Al-Jaathiya). Un mot s'ajoute en sourate 31 (Luqman) (absent en sourate 45 (Al-Jaathiya)). (6 différences en tout : voir la liste.)",[[0,31,394,"https://shamela.ws/book/3580/142"],[1,0,0,"https://shamela.ws/book/9831/71"]],"MT0154"],["31:14","46:15",[0,4],[0,6],[[null,3]],"Un mot s'ajoute en sourate 46 (Al-Ahqaf) (absent en sourate 31 (Luqman)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,29,374,"https://shamela.ws/book/3580/135"],[0,29,14,"https://shamela.ws/book/3580/135"]],"MT0155"],["31:17","42:43",[13,17],[3,7],[[15,5]],"Un mot change : une forme en sourate 31 (Luqman), l'autre en sourate 42 (Ash-Shura).",[[0,42,463,"https://shamela.ws/book/3580/161"]],"MT0156"],["32:5","70:4",[8,14],[3,10],[[null,8]],"Un mot s'ajoute en sourate 70 (Al-Ma'aarij) (absent en sourate 32 (As-Sajda)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",[[0,32,396,"https://shamela.ws/book/3580/142"],[0,32,4,"https://shamela.ws/book/3580/143"]],"MT0157"],["33:38","48:23",[11,17],[0,6],[[13,2],[14,3],[15,4]],"3 mots changent : une forme en sourate 33 (Al-Ahzaab), l'autre en sourate 48 (Al-Fath).",[[0,33,404,"https://shamela.ws/book/3580/145"]],"MT0158"],["33:62","48:23",[0,12],[0,12],[[2,2],[3,3],[4,4]],"3 mots changent : une forme en sourate 33 (Al-Ahzaab), l'autre en sourate 48 (Al-Fath).",[[0,33,404,"https://shamela.ws/book/3580/145"]],"MT0158"],["40:85","48:23",[9,12],[1,4],[],"",[[0,33,404,"https://shamela.ws/book/3580/145"]],"MT0158"],["37:27","37:50",[1,4],[1,4],[],"",[[0,37,427,"https://shamela.ws/book/3580/150"]],"MT0159"],["37:50","68:30",[0,3],[0,3],[],"",[[0,37,427,"https://shamela.ws/book/3580/150"]],"MT0159"],["37:35","47:19",[5,8],[2,5],[],"",[[0,37,429,"https://shamela.ws/book/3580/151"]],"MT0160"],["38:4","50:2",[1,8],[2,8],[[6,6]],"Un mot change : une forme en sourate 38 (Saad), l'autre en sourate 50 (Qaaf).",[[0,38,434,"https://shamela.ws/book/3580/154"],[0,50,487,"https://shamela.ws/book/3580/166"]],"MT0161"],["38:8","54:25",[1,6],[2,5],[[2,null]],"Un mot s'ajoute en sourate 38 (Saad) (absent en sourate 54 (Al-Qamar)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",[[0,38,435,"https://shamela.ws/book/3580/154"]],"MT0162"],["40:22","64:6",[0,5],[0,5],[[1,1]],"Un mot change : une forme en sourate 40 (Al-Ghaafir), l'autre en sourate 64 (At-Taghaabun).",[[0,40,448,"https://shamela.ws/book/3580/157"]],"MT0163"],["41:52","46:10",[0,6],[0,6],[],"",[[0,41,462,"https://shamela.ws/book/3580/161"]],"MT0164"],["67:16","67:17",[0,4],[1,5],[],"",[[0,67,529,"https://shamela.ws/book/3580/177"]],"MT0165"],["71:24","71:28",[4,7],[10,13],[],"",[[0,71,537,"https://shamela.ws/book/3580/179"]],"MT0166"],["83:7","83:18",[0,4],[0,4],[[3,3]],"Un mot change : une forme en verset 83:7, l'autre en verset 83:18.",[[0,83,544,"https://shamela.ws/book/3580/185"]],"MT0167"],["89:15","89:16",[2,9],[1,8],[[5,4],[6,5],[7,6]],"3 mots changent : une forme en verset 89:15, l'autre en verset 89:16.",[[0,89,562,"https://shamela.ws/book/3580/187"]],"MT0168"],["90:4","95:4",[0,3],[0,3],[],"",[[0,95,568,"https://shamela.ws/book/3580/189"]],"MT0169"],["99:7","99:8",[1,5],[1,5],[[4,4]],"Un mot change : une forme en verset 99:7, l'autre en verset 99:8.",[[0,16,262,"https://shamela.ws/book/3580/97"],[0,99,572,"https://shamela.ws/book/3580/191"]],"MT0170"]]}
+{
+  "v": 1,
+  "version": "2026-10-25",
+  "statut": "reconnu_source",
+  "ouvrages": [
+    "al-Kirmani, al-Burhan fi tawjih mutashabih al-Quran (Shamela 3580)",
+    "as-Sakhawi, Hidayat al-murtab (Shamela 9831)"
+  ],
+  "paires": [
+    [
+      "2:62",
+      "5:69",
+      [0, 13],
+      [0, 13],
+      [[6, 5]],
+      "Un mot change de place entre sourate 2 (Al-Baqara) et sourate 5 (Al-Maaida).",
+      [[0, 2, 20, "https://shamela.ws/book/3580/13"]],
+      "MT0001"
+    ],
+    [
+      "2:62",
+      "22:17",
+      [0, 5],
+      [0, 6],
+      [[null, 5]],
+      "Un mot s'ajoute en sourate 22 (Al-Hajj) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 2, 20, "https://shamela.ws/book/3580/13"]],
+      "MT0001"
+    ],
+    [
+      "2:116",
+      "10:68",
+      [1, 11],
+      [1, 13],
+      [
+        [null, 7],
+        [7, 8]
+      ],
+      "Un mot s'ajoute en sourate 10 (Yunus) (absent en sourate 2 (Al-Baqara)). Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 10 (Yunus).",
+      [
+        [0, 10, 195, "https://shamela.ws/book/3580/79"],
+        [0, 10, 199, "https://shamela.ws/book/3580/80"]
+      ],
+      "MT0001"
+    ],
+    [
+      "2:126",
+      "14:35",
+      [0, 5],
+      [0, 5],
+      [[2, 2]],
+      "Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 14 (Ibrahim).",
+      [[0, 2, 26, "https://shamela.ws/book/3580/16"]],
+      "MT0001"
+    ],
+    [
+      "2:284",
+      "5:40",
+      [24, 30],
+      [13, 19],
+      [],
+      "",
+      [[0, 2, 50, "https://shamela.ws/book/3580/25"]],
+      "MT0001"
+    ],
+    [
+      "5:17",
+      "5:18",
+      [30, 35],
+      [26, 31],
+      [],
+      "",
+      [[0, 5, 87, "https://shamela.ws/book/3580/40"]],
+      "MT0001"
+    ],
+    [
+      "5:17",
+      "48:11",
+      [11, 18],
+      [18, 26],
+      [[null, 21]],
+      "Un mot s'ajoute en sourate 48 (Al-Fath) (absent en sourate 5 (Al-Maaida)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 48, 484, "https://shamela.ws/book/3580/165"]],
+      "MT0001"
+    ],
+    [
+      "5:69",
+      "22:17",
+      [0, 6],
+      [0, 6],
+      [[5, 5]],
+      "Un mot change : une forme en sourate 5 (Al-Maaida), l'autre en sourate 22 (Al-Hajj).",
+      [[0, 2, 20, "https://shamela.ws/book/3580/13"]],
+      "MT0001"
+    ],
+    [
+      "6:11",
+      "27:69",
+      [0, 9],
+      [0, 8],
+      [
+        [4, null],
+        [5, 4],
+        [9, 8]
+      ],
+      "Un mot s'ajoute en sourate 6 (Al-An'aam) (absent en sourate 27 (An-Naml)). 2 mots changent : une forme en sourate 6 (Al-An'aam), l'autre en sourate 27 (An-Naml).",
+      [
+        [0, 6, 94, "https://shamela.ws/book/3580/43"],
+        [1, 0, 0, "https://shamela.ws/book/9831/30"]
+      ],
+      "MT0001"
+    ],
+    [
+      "6:11",
+      "29:20",
+      [0, 3],
+      [0, 3],
+      [],
+      "",
+      [[0, 6, 94, "https://shamela.ws/book/3580/43"]],
+      "MT0001"
+    ],
+    [
+      "6:11",
+      "30:42",
+      [0, 9],
+      [0, 7],
+      [
+        [4, null],
+        [5, 4],
+        [9, null]
+      ],
+      "2 mots s'ajoutent en sourate 6 (Al-An'aam) (absent en sourate 30 (Ar-Room)). Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 30 (Ar-Room).",
+      [[0, 6, 94, "https://shamela.ws/book/3580/43"]],
+      "MT0001"
+    ],
+    [
+      "6:32",
+      "29:64",
+      [0, 3],
+      [0, 4],
+      [[null, 1]],
+      "Un mot s'ajoute en sourate 29 (Al-Ankaboot) (absent en sourate 6 (Al-An'aam)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 6, 100, "https://shamela.ws/book/3580/45"]],
+      "MT0001"
+    ],
+    [
+      "6:32",
+      "57:20",
+      [0, 3],
+      [36, 39],
+      [],
+      "",
+      [[0, 6, 100, "https://shamela.ws/book/3580/45"]],
+      "MT0001"
+    ],
+    [
+      "6:116",
+      "10:66",
+      [9, 18],
+      [16, 26],
+      [[null, 17]],
+      "Un mot s'ajoute en sourate 10 (Yunus) (absent en sourate 6 (Al-An'aam)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 10, 194, "https://shamela.ws/book/3580/79"],
+        [0, 53, 495, "https://shamela.ws/book/3580/168"]
+      ],
+      "MT0001"
+    ],
+    [
+      "7:169",
+      "12:109",
+      [36, 42],
+      [25, 31],
+      [[39, 28]],
+      "Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 12 (Yusuf).",
+      [[0, 12, 232, "https://shamela.ws/book/3580/88"]],
+      "MT0001"
+    ],
+    [
+      "10:61",
+      "34:3",
+      [26, 42],
+      [17, 33],
+      [
+        [29, 20],
+        [32, 23]
+      ],
+      "2 mots changent : une forme en sourate 10 (Yunus), l'autre en sourate 34 (Saba).",
+      [
+        [0, 10, 197, "https://shamela.ws/book/3580/79"],
+        [0, 16, 267, "https://shamela.ws/book/3580/98"],
+        [0, 34, 406, "https://shamela.ws/book/3580/145"],
+        [1, 0, 0, "https://shamela.ws/book/9831/13"]
+      ],
+      "MT0001"
+    ],
+    [
+      "10:61",
+      "34:22",
+      [26, 31],
+      [10, 15],
+      [[29, 13]],
+      "Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 34 (Saba).",
+      [
+        [0, 10, 197, "https://shamela.ws/book/3580/79"],
+        [0, 16, 267, "https://shamela.ws/book/3580/98"],
+        [0, 34, 406, "https://shamela.ws/book/3580/145"]
+      ],
+      "MT0001"
+    ],
+    [
+      "12:109",
+      "21:7",
+      [0, 7],
+      [0, 6],
+      [[2, null]],
+      "Un mot s'ajoute en sourate 12 (Yusuf) (absent en sourate 21 (Al-Anbiyaa)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [
+        [0, 12, 230, "https://shamela.ws/book/3580/88"],
+        [0, 21, 306, "https://shamela.ws/book/3580/115"]
+      ],
+      "MT0001"
+    ],
+    [
+      "12:109",
+      "25:20",
+      [0, 4],
+      [0, 5],
+      [
+        [null, 2],
+        [3, 4]
+      ],
+      "Un mot s'ajoute en sourate 25 (Al-Furqaan) (absent en sourate 12 (Yusuf)). Un mot change : une forme en sourate 12 (Yusuf), l'autre en sourate 25 (Al-Furqaan).",
+      [
+        [0, 12, 230, "https://shamela.ws/book/3580/88"],
+        [0, 21, 306, "https://shamela.ws/book/3580/115"]
+      ],
+      "MT0001"
+    ],
+    [
+      "13:15",
+      "16:49",
+      [0, 4],
+      [0, 4],
+      [[2, 2]],
+      "Un mot change : une forme en sourate 13 (Ar-Ra'd), l'autre en sourate 16 (An-Nahl).",
+      [[0, 13, 236, "https://shamela.ws/book/3580/90"]],
+      "MT0001"
+    ],
+    [
+      "13:15",
+      "22:18",
+      [1, 4],
+      [4, 8],
+      [[null, 5]],
+      "Un mot s'ajoute en sourate 22 (Al-Hajj) (absent en sourate 13 (Ar-Ra'd)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 13, 236, "https://shamela.ws/book/3580/90"]],
+      "MT0001"
+    ],
+    [
+      "16:43",
+      "21:7",
+      [0, 15],
+      [0, 14],
+      [[2, null]],
+      "Un mot s'ajoute en sourate 16 (An-Nahl) (absent en sourate 21 (Al-Anbiyaa)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [
+        [0, 12, 230, "https://shamela.ws/book/3580/88"],
+        [0, 21, 306, "https://shamela.ws/book/3580/115"]
+      ],
+      "MT0001"
+    ],
+    [
+      "16:43",
+      "25:20",
+      [0, 4],
+      [0, 5],
+      [
+        [null, 2],
+        [3, 4]
+      ],
+      "Un mot s'ajoute en sourate 25 (Al-Furqaan) (absent en sourate 16 (An-Nahl)). Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 25 (Al-Furqaan).",
+      [
+        [0, 12, 230, "https://shamela.ws/book/3580/88"],
+        [0, 21, 306, "https://shamela.ws/book/3580/115"]
+      ],
+      "MT0001"
+    ],
+    [
+      "16:49",
+      "22:18",
+      [3, 7],
+      [7, 11],
+      [[5, 9]],
+      "Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 22 (Al-Hajj).",
+      [[0, 13, 236, "https://shamela.ws/book/3580/90"]],
+      "MT0001"
+    ],
+    [
+      "17:56",
+      "34:22",
+      [0, 4],
+      [0, 4],
+      [],
+      "",
+      [
+        [0, 17, 277, "https://shamela.ws/book/3580/104"],
+        [0, 34, 408, "https://shamela.ws/book/3580/146"]
+      ],
+      "MT0001"
+    ],
+    [
+      "21:7",
+      "21:25",
+      [0, 5],
+      [0, 7],
+      [
+        [null, 2],
+        [null, 4],
+        [null, 5],
+        [4, null]
+      ],
+      "3 mots s'ajoutent en verset 21:25 (absent en verset 21:7). (4 différences en tout : voir la liste.)",
+      [
+        [0, 12, 230, "https://shamela.ws/book/3580/88"],
+        [0, 21, 306, "https://shamela.ws/book/3580/115"],
+        [1, 0, 0, "https://shamela.ws/book/9831/36"]
+      ],
+      "MT0001"
+    ],
+    [
+      "21:25",
+      "25:20",
+      [0, 6],
+      [0, 5],
+      [
+        [2, null],
+        [5, 4]
+      ],
+      "Un mot s'ajoute en sourate 21 (Al-Anbiyaa) (absent en sourate 25 (Al-Furqaan)). Un mot change : une forme en sourate 21 (Al-Anbiyaa), l'autre en sourate 25 (Al-Furqaan).",
+      [
+        [0, 12, 230, "https://shamela.ws/book/3580/88"],
+        [0, 21, 306, "https://shamela.ws/book/3580/115"]
+      ],
+      "MT0001"
+    ],
+    [
+      "22:52",
+      "25:20",
+      [0, 4],
+      [0, 3],
+      [[2, null]],
+      "Un mot s'ajoute en sourate 22 (Al-Hajj) (absent en sourate 25 (Al-Furqaan)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [
+        [0, 12, 230, "https://shamela.ws/book/3580/88"],
+        [0, 21, 306, "https://shamela.ws/book/3580/115"]
+      ],
+      "MT0001"
+    ],
+    [
+      "22:64",
+      "31:26",
+      [1, 12],
+      [1, 10],
+      [
+        [4, null],
+        [5, null],
+        [6, 4],
+        [8, 6],
+        [10, 8]
+      ],
+      "2 mots s'ajoutent en sourate 22 (Al-Hajj) (absent en sourate 31 (Luqman)). Un mot change : une forme en sourate 22 (Al-Hajj), l'autre en sourate 31 (Luqman). (5 différences en tout : voir la liste.)",
+      [[0, 22, 327, "https://shamela.ws/book/3580/120"]],
+      "MT0001"
+    ],
+    [
+      "29:22",
+      "42:31",
+      [0, 17],
+      [0, 14],
+      [
+        [5, null],
+        [6, null],
+        [7, null]
+      ],
+      "3 mots s'ajoutent en sourate 29 (Al-Ankaboot) (absent en sourate 42 (Ash-Shura)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [[0, 29, 377, "https://shamela.ws/book/3580/136"]],
+      "MT0001"
+    ],
+    [
+      "29:64",
+      "57:20",
+      [0, 4],
+      [36, 39],
+      [[1, null]],
+      "Un mot s'ajoute en sourate 29 (Al-Ankaboot) (absent en sourate 57 (Al-Hadid)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [[0, 6, 100, "https://shamela.ws/book/3580/45"]],
+      "MT0001"
+    ],
+    [
+      "30:9",
+      "35:44",
+      [0, 15],
+      [0, 14],
+      [[12, 11]],
+      "Un mot change : une forme en sourate 30 (Ar-Room), l'autre en sourate 35 (Faatir).",
+      [
+        [0, 30, 386, "https://shamela.ws/book/3580/139"],
+        [0, 30, 387, "https://shamela.ws/book/3580/139"],
+        [1, 0, 0, "https://shamela.ws/book/9831/70"],
+        [1, 0, 0, "https://shamela.ws/book/9831/71"]
+      ],
+      "MT0001"
+    ],
+    [
+      "30:9",
+      "40:21",
+      [0, 15],
+      [1, 18],
+      [
+        [null, 10],
+        [null, 15]
+      ],
+      "2 mots s'ajoutent en sourate 40 (Al-Ghaafir) (absent en sourate 30 (Ar-Room)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 30, 387, "https://shamela.ws/book/3580/139"],
+        [0, 40, 448, "https://shamela.ws/book/3580/157"],
+        [1, 0, 0, "https://shamela.ws/book/9831/71"]
+      ],
+      "MT0001"
+    ],
+    [
+      "30:9",
+      "40:82",
+      [1, 15],
+      [1, 16],
+      [
+        [13, 13],
+        [null, 15]
+      ],
+      "Un mot change : une forme en sourate 30 (Ar-Room), l'autre en sourate 40 (Al-Ghaafir). Un mot s'ajoute en sourate 40 (Al-Ghaafir) (absent en sourate 30 (Ar-Room)).",
+      [
+        [0, 30, 386, "https://shamela.ws/book/3580/139"],
+        [0, 30, 387, "https://shamela.ws/book/3580/139"],
+        [1, 0, 0, "https://shamela.ws/book/9831/71"]
+      ],
+      "MT0001"
+    ],
+    [
+      "34:1",
+      "34:3",
+      [9, 13],
+      [19, 23],
+      [[11, 21]],
+      "Un mot change : une forme en verset 34:1, l'autre en verset 34:3.",
+      [[0, 34, 406, "https://shamela.ws/book/3580/145"]],
+      "MT0001"
+    ],
+    [
+      "34:1",
+      "34:22",
+      [9, 13],
+      [12, 16],
+      [[11, 14]],
+      "Un mot change : une forme en verset 34:1, l'autre en verset 34:22.",
+      [[0, 34, 406, "https://shamela.ws/book/3580/145"]],
+      "MT0001"
+    ],
+    [
+      "35:44",
+      "40:21",
+      [0, 14],
+      [1, 18],
+      [
+        [null, 10],
+        [11, 14],
+        [null, 15]
+      ],
+      "2 mots s'ajoutent en sourate 40 (Al-Ghaafir) (absent en sourate 35 (Faatir)). Un mot change : une forme en sourate 35 (Faatir), l'autre en sourate 40 (Al-Ghaafir).",
+      [
+        [0, 30, 387, "https://shamela.ws/book/3580/139"],
+        [0, 40, 448, "https://shamela.ws/book/3580/157"],
+        [1, 0, 0, "https://shamela.ws/book/9831/71"]
+      ],
+      "MT0001"
+    ],
+    [
+      "35:44",
+      "40:82",
+      [1, 14],
+      [1, 16],
+      [
+        [11, 12],
+        [12, 13],
+        [null, 15]
+      ],
+      "2 mots changent : une forme en sourate 35 (Faatir), l'autre en sourate 40 (Al-Ghaafir). Un mot s'ajoute en sourate 40 (Al-Ghaafir) (absent en sourate 35 (Faatir)).",
+      [
+        [0, 30, 386, "https://shamela.ws/book/3580/139"],
+        [0, 30, 387, "https://shamela.ws/book/3580/139"],
+        [1, 0, 0, "https://shamela.ws/book/9831/71"]
+      ],
+      "MT0001"
+    ],
+    [
+      "39:21",
+      "57:20",
+      [18, 24],
+      [19, 25],
+      [[23, 24]],
+      "Un mot change : une forme en sourate 39 (Az-Zumar), l'autre en sourate 57 (Al-Hadid).",
+      [
+        [0, 39, 444, "https://shamela.ws/book/3580/157"],
+        [0, 57, 508, "https://shamela.ws/book/3580/171"]
+      ],
+      "MT0001"
+    ],
+    [
+      "40:21",
+      "40:82",
+      [2, 17],
+      [1, 14],
+      [
+        [10, null],
+        [15, null],
+        [16, 13]
+      ],
+      "2 mots s'ajoutent en verset 40:21 (absent en verset 40:82). Un mot change : une forme en verset 40:21, l'autre en verset 40:82.",
+      [
+        [0, 30, 387, "https://shamela.ws/book/3580/139"],
+        [0, 40, 448, "https://shamela.ws/book/3580/157"],
+        [1, 0, 0, "https://shamela.ws/book/9831/71"]
+      ],
+      "MT0001"
+    ],
+    [
+      "42:44",
+      "42:46",
+      [0, 5],
+      [10, 15],
+      [],
+      "",
+      [[0, 42, 464, "https://shamela.ws/book/3580/162"]],
+      "MT0001"
+    ],
+    [
+      "57:1",
+      "59:24",
+      [4, 13],
+      [10, 19],
+      [
+        [4, 10],
+        [5, 11]
+      ],
+      "2 mots changent : une forme en sourate 57 (Al-Hadid), l'autre en sourate 59 (Al-Hashr).",
+      [
+        [0, 57, 503, "https://shamela.ws/book/3580/170"],
+        [0, 57, 504, "https://shamela.ws/book/3580/170"]
+      ],
+      "MT0001"
+    ],
+    [
+      "57:22",
+      "64:11",
+      [0, 3],
+      [0, 3],
+      [],
+      "",
+      [[0, 57, 509, "https://shamela.ws/book/3580/171"]],
+      "MT0001"
+    ],
+    [
+      "2:23",
+      "10:38",
+      [8, 19],
+      [5, 16],
+      [
+        [10, null],
+        [null, 9],
+        [13, 10]
+      ],
+      "Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 10 (Yunus)). Un mot s'ajoute en sourate 10 (Yunus) (absent en sourate 2 (Al-Baqara)). Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 10 (Yunus).",
+      [
+        [0, 2, 9, "https://shamela.ws/book/3580/7"],
+        [0, 10, 189, "https://shamela.ws/book/3580/78"]
+      ],
+      "MT0002"
+    ],
+    [
+      "10:38",
+      "11:13",
+      [0, 16],
+      [0, 18],
+      [
+        [null, 6],
+        [6, 7],
+        [null, 9]
+      ],
+      "2 mots s'ajoutent en sourate 11 (Hud) (absent en sourate 10 (Yunus)). Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 11 (Hud).",
+      [
+        [0, 2, 8, "https://shamela.ws/book/3580/5"],
+        [0, 2, 9, "https://shamela.ws/book/3580/7"],
+        [0, 10, 188, "https://shamela.ws/book/3580/78"]
+      ],
+      "MT0002"
+    ],
+    [
+      "2:242",
+      "24:58",
+      [0, 3],
+      [46, 49],
+      [],
+      "",
+      [[0, 24, 341, "https://shamela.ws/book/3580/125"]],
+      "MT0003"
+    ],
+    [
+      "2:242",
+      "24:61",
+      [0, 6],
+      [72, 78],
+      [[4, 76]],
+      "Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 24 (An-Noor).",
+      [[0, 24, 341, "https://shamela.ws/book/3580/125"]],
+      "MT0003"
+    ],
+    [
+      "3:103",
+      "24:58",
+      [29, 32],
+      [46, 49],
+      [],
+      "",
+      [[0, 24, 341, "https://shamela.ws/book/3580/125"]],
+      "MT0003"
+    ],
+    [
+      "3:103",
+      "24:61",
+      [29, 34],
+      [72, 77],
+      [[33, 76]],
+      "Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 24 (An-Noor).",
+      [[0, 24, 341, "https://shamela.ws/book/3580/125"]],
+      "MT0003"
+    ],
+    [
+      "4:13",
+      "9:89",
+      [9, 19],
+      [3, 13],
+      [[17, 11]],
+      "Un mot change : une forme en sourate 4 (An-Nisaa), l'autre en sourate 9 (At-Tawba).",
+      [
+        [0, 4, 70, "https://shamela.ws/book/3580/33"],
+        [0, 9, 176, "https://shamela.ws/book/3580/74"]
+      ],
+      "MT0003"
+    ],
+    [
+      "5:89",
+      "24:58",
+      [43, 46],
+      [46, 49],
+      [],
+      "",
+      [[0, 24, 341, "https://shamela.ws/book/3580/125"]],
+      "MT0003"
+    ],
+    [
+      "5:89",
+      "24:61",
+      [43, 48],
+      [72, 77],
+      [[47, 76]],
+      "Un mot change : une forme en sourate 5 (Al-Maaida), l'autre en sourate 24 (An-Noor).",
+      [[0, 24, 341, "https://shamela.ws/book/3580/125"]],
+      "MT0003"
+    ],
+    [
+      "9:72",
+      "9:89",
+      [4, 10],
+      [3, 9],
+      [],
+      "",
+      [[0, 9, 176, "https://shamela.ws/book/3580/74"]],
+      "MT0003"
+    ],
+    [
+      "9:72",
+      "9:100",
+      [4, 10],
+      [15, 20],
+      [[6, null]],
+      "Un mot s'ajoute en verset 9:72 (absent en verset 9:100).",
+      [[0, 9, 176, "https://shamela.ws/book/3580/74"]],
+      "MT0003"
+    ],
+    [
+      "9:89",
+      "9:100",
+      [2, 13],
+      [14, 25],
+      [
+        [5, null],
+        [null, 21]
+      ],
+      "Un mot s'ajoute en verset 9:89 (absent en verset 9:100). Un mot s'ajoute en verset 9:100 (absent en verset 9:89).",
+      [[0, 9, 176, "https://shamela.ws/book/3580/74"]],
+      "MT0003"
+    ],
+    [
+      "24:58",
+      "24:59",
+      [46, 54],
+      [12, 20],
+      [[50, 16]],
+      "Un mot change : une forme en verset 24:58, l'autre en verset 24:59.",
+      [[0, 24, 341, "https://shamela.ws/book/3580/125"]],
+      "MT0003"
+    ],
+    [
+      "24:58",
+      "24:61",
+      [46, 50],
+      [72, 76],
+      [],
+      "",
+      [[0, 24, 341, "https://shamela.ws/book/3580/125"]],
+      "MT0003"
+    ],
+    [
+      "24:59",
+      "24:61",
+      [12, 15],
+      [72, 75],
+      [],
+      "",
+      [[0, 24, 341, "https://shamela.ws/book/3580/125"]],
+      "MT0003"
+    ],
+    [
+      "3:27",
+      "6:95",
+      [10, 16],
+      [8, 14],
+      [[13, 11]],
+      "Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 6 (Al-An'aam).",
+      [[0, 6, 106, "https://shamela.ws/book/3580/48"]],
+      "MT0004"
+    ],
+    [
+      "3:27",
+      "10:31",
+      [10, 16],
+      [12, 18],
+      [[13, 15]],
+      "Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 10 (Yunus).",
+      [[0, 6, 106, "https://shamela.ws/book/3580/48"]],
+      "MT0004"
+    ],
+    [
+      "3:27",
+      "30:19",
+      [10, 16],
+      [1, 7],
+      [[13, 4]],
+      "Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 30 (Ar-Room).",
+      [[0, 6, 106, "https://shamela.ws/book/3580/48"]],
+      "MT0004"
+    ],
+    [
+      "3:49",
+      "5:110",
+      [14, 17],
+      [30, 33],
+      [],
+      "",
+      [[0, 3, 57, "https://shamela.ws/book/3580/27"]],
+      "MT0004"
+    ],
+    [
+      "6:95",
+      "30:19",
+      [7, 14],
+      [0, 7],
+      [[11, 4]],
+      "Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 30 (Ar-Room).",
+      [[0, 6, 106, "https://shamela.ws/book/3580/48"]],
+      "MT0004"
+    ],
+    [
+      "13:2",
+      "31:29",
+      [13, 18],
+      [12, 16],
+      [],
+      "",
+      [[0, 13, 233, "https://shamela.ws/book/3580/89"]],
+      "MT0004"
+    ],
+    [
+      "17:99",
+      "46:33",
+      [1, 8],
+      [0, 7],
+      [],
+      "",
+      [[0, 17, 281, "https://shamela.ws/book/3580/105"]],
+      "MT0004"
+    ],
+    [
+      "25:59",
+      "32:4",
+      [0, 12],
+      [1, 13],
+      [],
+      "",
+      [[0, 25, 347, "https://shamela.ws/book/3580/127"]],
+      "MT0004"
+    ],
+    [
+      "2:30",
+      "15:28",
+      [0, 4],
+      [0, 4],
+      [],
+      "",
+      [[0, 15, 250, "https://shamela.ws/book/3580/92"]],
+      "MT0005"
+    ],
+    [
+      "2:30",
+      "38:71",
+      [1, 4],
+      [1, 4],
+      [],
+      "",
+      [[0, 15, 250, "https://shamela.ws/book/3580/92"]],
+      "MT0005"
+    ],
+    [
+      "2:34",
+      "7:11",
+      [1, 7],
+      [5, 11],
+      [],
+      "",
+      [[0, 2, 10, "https://shamela.ws/book/3580/8"]],
+      "MT0006"
+    ],
+    [
+      "2:34",
+      "17:61",
+      [0, 7],
+      [0, 7],
+      [],
+      "",
+      [[0, 2, 10, "https://shamela.ws/book/3580/8"]],
+      "MT0006"
+    ],
+    [
+      "2:34",
+      "18:50",
+      [0, 7],
+      [0, 7],
+      [],
+      "",
+      [[0, 2, 10, "https://shamela.ws/book/3580/8"]],
+      "MT0006"
+    ],
+    [
+      "2:34",
+      "20:116",
+      [0, 8],
+      [0, 8],
+      [],
+      "",
+      [[0, 2, 10, "https://shamela.ws/book/3580/8"]],
+      "MT0006"
+    ],
+    [
+      "2:34",
+      "38:74",
+      [6, 12],
+      [0, 5],
+      [
+        [8, null],
+        [9, 2]
+      ],
+      "Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 38 (Saad)). Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 38 (Saad).",
+      [
+        [0, 2, 10, "https://shamela.ws/book/3580/8"],
+        [0, 7, 119, "https://shamela.ws/book/3580/54"]
+      ],
+      "MT0006"
+    ],
+    [
+      "7:11",
+      "17:61",
+      [5, 11],
+      [1, 7],
+      [],
+      "",
+      [[0, 2, 10, "https://shamela.ws/book/3580/8"]],
+      "MT0006"
+    ],
+    [
+      "7:11",
+      "18:50",
+      [5, 11],
+      [1, 7],
+      [],
+      "",
+      [[0, 2, 10, "https://shamela.ws/book/3580/8"]],
+      "MT0006"
+    ],
+    [
+      "7:11",
+      "20:116",
+      [4, 11],
+      [0, 8],
+      [
+        [4, 0],
+        [null, 8]
+      ],
+      "Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 20 (Taa-Haa). Un mot s'ajoute en sourate 20 (Taa-Haa) (absent en sourate 7 (Al-A'raaf)).",
+      [[0, 2, 10, "https://shamela.ws/book/3580/8"]],
+      "MT0006"
+    ],
+    [
+      "17:61",
+      "18:50",
+      [0, 7],
+      [0, 7],
+      [],
+      "",
+      [[0, 2, 10, "https://shamela.ws/book/3580/8"]],
+      "MT0006"
+    ],
+    [
+      "17:61",
+      "20:116",
+      [0, 7],
+      [0, 8],
+      [[null, 8]],
+      "Un mot s'ajoute en sourate 20 (Taa-Haa) (absent en sourate 17 (Al-Israa)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 2, 10, "https://shamela.ws/book/3580/8"]],
+      "MT0006"
+    ],
+    [
+      "18:50",
+      "20:116",
+      [0, 7],
+      [0, 8],
+      [[null, 8]],
+      "Un mot s'ajoute en sourate 20 (Taa-Haa) (absent en sourate 18 (Al-Kahf)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 2, 10, "https://shamela.ws/book/3580/8"]],
+      "MT0006"
+    ],
+    [
+      "2:35",
+      "7:19",
+      [2, 17],
+      [1, 15],
+      [
+        [6, 5],
+        [7, 6],
+        [8, null]
+      ],
+      "2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 7 (Al-A'raaf). Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 7 (Al-A'raaf)).",
+      [[0, 2, 11, "https://shamela.ws/book/3580/8"]],
+      "MT0007"
+    ],
+    [
+      "2:38",
+      "20:123",
+      [5, 12],
+      [9, 16],
+      [[10, 14]],
+      "Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 20 (Taa-Haa).",
+      [[0, 2, 13, "https://shamela.ws/book/3580/9"]],
+      "MT0008"
+    ],
+    [
+      "5:20",
+      "14:6",
+      [0, 9],
+      [0, 8],
+      [[4, null]],
+      "Un mot s'ajoute en sourate 5 (Al-Maaida) (absent en sourate 14 (Ibrahim)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [[0, 5, 88, "https://shamela.ws/book/3580/41"]],
+      "MT0009"
+    ],
+    [
+      "2:57",
+      "7:160",
+      [0, 19],
+      [29, 48],
+      [
+        [1, 30],
+        [4, 33]
+      ],
+      "2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 7 (Al-A'raaf).",
+      [
+        [0, 2, 16, "https://shamela.ws/book/3580/10"],
+        [1, 0, 0, "https://shamela.ws/book/9831/5"]
+      ],
+      "MT0010"
+    ],
+    [
+      "2:60",
+      "7:160",
+      [6, 20],
+      [13, 27],
+      [[10, 17]],
+      "Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 7 (Al-A'raaf).",
+      [[0, 2, 18, "https://shamela.ws/book/3580/12"]],
+      "MT0010"
+    ],
+    [
+      "2:58",
+      "7:161",
+      [3, 12],
+      [4, 14],
+      [
+        [5, 6],
+        [9, 10],
+        [null, 11]
+      ],
+      "2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 7 (Al-A'raaf). Un mot s'ajoute en sourate 7 (Al-A'raaf) (absent en sourate 2 (Al-Baqara)).",
+      [[0, 2, 17, "https://shamela.ws/book/3580/10"]],
+      "MT0011"
+    ],
+    [
+      "2:59",
+      "7:162",
+      [0, 7],
+      [0, 8],
+      [[null, 3]],
+      "Un mot s'ajoute en sourate 7 (Al-A'raaf) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 2, 17, "https://shamela.ws/book/3580/10"],
+        [1, 0, 0, "https://shamela.ws/book/9831/5"]
+      ],
+      "MT0012"
+    ],
+    [
+      "2:61",
+      "3:21",
+      [51, 56],
+      [2, 7],
+      [],
+      "",
+      [[0, 2, 19, "https://shamela.ws/book/3580/12"]],
+      "MT0013"
+    ],
+    [
+      "3:21",
+      "4:155",
+      [3, 8],
+      [4, 9],
+      [
+        [5, 6],
+        [6, 7]
+      ],
+      "2 mots changent : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 4 (An-Nisaa).",
+      [[0, 2, 19, "https://shamela.ws/book/3580/12"]],
+      "MT0013"
+    ],
+    [
+      "2:80",
+      "3:24",
+      [1, 5],
+      [3, 7],
+      [],
+      "",
+      [[0, 2, 21, "https://shamela.ws/book/3580/14"]],
+      "MT0014"
+    ],
+    [
+      "2:170",
+      "5:104",
+      [10, 22],
+      [12, 24],
+      [
+        [11, 13],
+        [19, 21]
+      ],
+      "2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 5 (Al-Maaida).",
+      [
+        [0, 2, 31, "https://shamela.ws/book/3580/18"],
+        [0, 2, 32, "https://shamela.ws/book/3580/19"]
+      ],
+      "MT0015"
+    ],
+    [
+      "2:170",
+      "31:21",
+      [0, 16],
+      [0, 16],
+      [[11, 11]],
+      "Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 31 (Luqman).",
+      [
+        [0, 2, 31, "https://shamela.ws/book/3580/18"],
+        [0, 2, 32, "https://shamela.ws/book/3580/19"]
+      ],
+      "MT0015"
+    ],
+    [
+      "2:95",
+      "62:7",
+      [0, 9],
+      [0, 9],
+      [
+        [0, 0],
+        [1, 1]
+      ],
+      "2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 62 (Al-Jumu'a).",
+      [
+        [0, 2, 22, "https://shamela.ws/book/3580/14"],
+        [0, 62, 521, "https://shamela.ws/book/3580/174"]
+      ],
+      "MT0016"
+    ],
+    [
+      "4:135",
+      "5:8",
+      [1, 7],
+      [0, 6],
+      [[6, 5]],
+      "Un mot change : une forme en sourate 4 (An-Nisaa), l'autre en sourate 5 (Al-Maaida).",
+      [
+        [0, 4, 77, "https://shamela.ws/book/3580/36"],
+        [0, 5, 82, "https://shamela.ws/book/3580/38"]
+      ],
+      "MT0017"
+    ],
+    [
+      "5:7",
+      "5:8",
+      [13, 17],
+      [22, 26],
+      [],
+      "",
+      [[0, 5, 82, "https://shamela.ws/book/3580/38"]],
+      "MT0017"
+    ],
+    [
+      "5:7",
+      "59:18",
+      [13, 17],
+      [11, 15],
+      [],
+      "",
+      [[0, 5, 82, "https://shamela.ws/book/3580/38"]],
+      "MT0017"
+    ],
+    [
+      "2:120",
+      "2:145",
+      [17, 24],
+      [22, 30],
+      [
+        [null, 25],
+        [21, 27]
+      ],
+      "Un mot s'ajoute en verset 2:145 (absent en verset 2:120). Un mot change : une forme en verset 2:120, l'autre en verset 2:145.",
+      [
+        [0, 2, 24, "https://shamela.ws/book/3580/15"],
+        [1, 0, 0, "https://shamela.ws/book/9831/21"],
+        [1, 0, 0, "https://shamela.ws/book/9831/77"]
+      ],
+      "MT0018"
+    ],
+    [
+      "2:120",
+      "3:61",
+      [20, 24],
+      [4, 8],
+      [[21, 5]],
+      "Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 3 (Aal-i-Imraan).",
+      [
+        [0, 2, 24, "https://shamela.ws/book/3580/15"],
+        [1, 0, 0, "https://shamela.ws/book/9831/21"]
+      ],
+      "MT0018"
+    ],
+    [
+      "2:120",
+      "3:73",
+      [10, 13],
+      [6, 10],
+      [[null, 8]],
+      "Un mot s'ajoute en sourate 3 (Aal-i-Imraan) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 3, 62, "https://shamela.ws/book/3580/30"]],
+      "MT0018"
+    ],
+    [
+      "2:125",
+      "22:26",
+      [18, 22],
+      [11, 15],
+      [[20, 13]],
+      "Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 22 (Al-Hajj).",
+      [[0, 22, 324, "https://shamela.ws/book/3580/120"]],
+      "MT0019"
+    ],
+    [
+      "2:144",
+      "2:149",
+      [11, 15],
+      [3, 7],
+      [],
+      "",
+      [[0, 2, 28, "https://shamela.ws/book/3580/17"]],
+      "MT0020"
+    ],
+    [
+      "2:149",
+      "2:150",
+      [0, 7],
+      [0, 7],
+      [],
+      "",
+      [[0, 2, 28, "https://shamela.ws/book/3580/17"]],
+      "MT0020"
+    ],
+    [
+      "2:147",
+      "3:60",
+      [0, 7],
+      [0, 6],
+      [[5, 4]],
+      "Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 3 (Aal-i-Imraan).",
+      [
+        [0, 3, 61, "https://shamela.ws/book/3580/29"],
+        [1, 0, 0, "https://shamela.ws/book/9831/26"]
+      ],
+      "MT0021"
+    ],
+    [
+      "2:243",
+      "10:60",
+      [19, 29],
+      [10, 19],
+      [
+        [26, 17],
+        [27, null]
+      ],
+      "Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 10 (Yunus). Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 10 (Yunus)).",
+      [
+        [0, 10, 196, "https://shamela.ws/book/3580/79"],
+        [0, 40, 451, "https://shamela.ws/book/3580/158"]
+      ],
+      "MT0022"
+    ],
+    [
+      "2:243",
+      "11:17",
+      [25, 28],
+      [38, 41],
+      [],
+      "",
+      [[0, 40, 451, "https://shamela.ws/book/3580/158"]],
+      "MT0022"
+    ],
+    [
+      "2:243",
+      "13:1",
+      [25, 28],
+      [16, 19],
+      [],
+      "",
+      [[0, 40, 451, "https://shamela.ws/book/3580/158"]],
+      "MT0022"
+    ],
+    [
+      "2:243",
+      "27:73",
+      [21, 29],
+      [2, 9],
+      [
+        [26, 7],
+        [27, null]
+      ],
+      "Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 27 (An-Naml). Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 27 (An-Naml)).",
+      [
+        [0, 10, 196, "https://shamela.ws/book/3580/79"],
+        [0, 40, 451, "https://shamela.ws/book/3580/158"]
+      ],
+      "MT0022"
+    ],
+    [
+      "2:243",
+      "40:59",
+      [25, 28],
+      [6, 9],
+      [],
+      "",
+      [[0, 40, 451, "https://shamela.ws/book/3580/158"]],
+      "MT0022"
+    ],
+    [
+      "6:99",
+      "6:141",
+      [27, 37],
+      [12, 22],
+      [
+        [29, 14],
+        [33, 18],
+        [34, 19]
+      ],
+      "3 mots changent : une forme en verset 6:99, l'autre en verset 6:141.",
+      [
+        [0, 6, 109, "https://shamela.ws/book/3580/50"],
+        [1, 0, 0, "https://shamela.ws/book/9831/30"],
+        [1, 0, 0, "https://shamela.ws/book/9831/36"]
+      ],
+      "MT0022"
+    ],
+    [
+      "10:60",
+      "12:38",
+      [15, 19],
+      [22, 27],
+      [
+        [17, 24],
+        [null, 25]
+      ],
+      "Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 12 (Yusuf). Un mot s'ajoute en sourate 12 (Yusuf) (absent en sourate 10 (Yunus)).",
+      [
+        [0, 10, 196, "https://shamela.ws/book/3580/79"],
+        [0, 40, 451, "https://shamela.ws/book/3580/158"]
+      ],
+      "MT0022"
+    ],
+    [
+      "10:60",
+      "40:61",
+      [10, 19],
+      [10, 20],
+      [
+        [17, 17],
+        [null, 18]
+      ],
+      "Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 40 (Al-Ghaafir). Un mot s'ajoute en sourate 40 (Al-Ghaafir) (absent en sourate 10 (Yunus)).",
+      [
+        [0, 10, 196, "https://shamela.ws/book/3580/79"],
+        [0, 40, 451, "https://shamela.ws/book/3580/158"],
+        [1, 0, 0, "https://shamela.ws/book/9831/109"]
+      ],
+      "MT0022"
+    ],
+    [
+      "10:67",
+      "30:23",
+      [10, 15],
+      [9, 14],
+      [],
+      "",
+      [[0, 10, 198, "https://shamela.ws/book/3580/80"]],
+      "MT0022"
+    ],
+    [
+      "11:17",
+      "12:38",
+      [38, 41],
+      [23, 26],
+      [],
+      "",
+      [[0, 40, 451, "https://shamela.ws/book/3580/158"]],
+      "MT0022"
+    ],
+    [
+      "11:17",
+      "40:61",
+      [38, 41],
+      [16, 19],
+      [],
+      "",
+      [[0, 40, 451, "https://shamela.ws/book/3580/158"]],
+      "MT0022"
+    ],
+    [
+      "12:38",
+      "13:1",
+      [23, 26],
+      [16, 19],
+      [],
+      "",
+      [[0, 40, 451, "https://shamela.ws/book/3580/158"]],
+      "MT0022"
+    ],
+    [
+      "12:38",
+      "27:73",
+      [22, 27],
+      [5, 9],
+      [
+        [24, 7],
+        [25, null]
+      ],
+      "Un mot change : une forme en sourate 12 (Yusuf), l'autre en sourate 27 (An-Naml). Un mot s'ajoute en sourate 12 (Yusuf) (absent en sourate 27 (An-Naml)).",
+      [
+        [0, 10, 196, "https://shamela.ws/book/3580/79"],
+        [0, 40, 451, "https://shamela.ws/book/3580/158"]
+      ],
+      "MT0022"
+    ],
+    [
+      "12:38",
+      "40:59",
+      [23, 26],
+      [6, 9],
+      [],
+      "",
+      [[0, 40, 451, "https://shamela.ws/book/3580/158"]],
+      "MT0022"
+    ],
+    [
+      "13:1",
+      "40:61",
+      [16, 19],
+      [16, 19],
+      [],
+      "",
+      [[0, 40, 451, "https://shamela.ws/book/3580/158"]],
+      "MT0022"
+    ],
+    [
+      "13:3",
+      "13:4",
+      [21, 25],
+      [22, 26],
+      [],
+      "",
+      [[0, 13, 234, "https://shamela.ws/book/3580/89"]],
+      "MT0022"
+    ],
+    [
+      "13:3",
+      "16:12",
+      [21, 25],
+      [11, 15],
+      [],
+      "",
+      [[0, 13, 234, "https://shamela.ws/book/3580/89"]],
+      "MT0022"
+    ],
+    [
+      "13:3",
+      "30:24",
+      [21, 25],
+      [16, 20],
+      [],
+      "",
+      [[0, 13, 234, "https://shamela.ws/book/3580/89"]],
+      "MT0022"
+    ],
+    [
+      "13:26",
+      "28:82",
+      [0, 4],
+      [7, 11],
+      [],
+      "",
+      [[0, 29, 383, "https://shamela.ws/book/3580/138"]],
+      "MT0022"
+    ],
+    [
+      "13:26",
+      "29:62",
+      [0, 4],
+      [0, 4],
+      [],
+      "",
+      [[0, 29, 383, "https://shamela.ws/book/3580/138"]],
+      "MT0022"
+    ],
+    [
+      "14:5",
+      "34:9",
+      [15, 19],
+      [24, 28],
+      [[18, 27]],
+      "Un mot change : une forme en sourate 14 (Ibrahim), l'autre en sourate 34 (Saba).",
+      [[0, 34, 409, "https://shamela.ws/book/3580/146"]],
+      "MT0022"
+    ],
+    [
+      "16:11",
+      "16:12",
+      [11, 15],
+      [11, 15],
+      [[14, 14]],
+      "Un mot change : une forme en verset 16:11, l'autre en verset 16:12.",
+      [
+        [0, 13, 234, "https://shamela.ws/book/3580/89"],
+        [0, 16, 258, "https://shamela.ws/book/3580/95"]
+      ],
+      "MT0022"
+    ],
+    [
+      "16:11",
+      "16:13",
+      [11, 15],
+      [8, 12],
+      [],
+      "",
+      [[0, 16, 258, "https://shamela.ws/book/3580/95"]],
+      "MT0022"
+    ],
+    [
+      "16:11",
+      "16:79",
+      [11, 15],
+      [13, 17],
+      [[14, 16]],
+      "Un mot change : une forme en verset 16:11, l'autre en verset 16:79.",
+      [[0, 16, 258, "https://shamela.ws/book/3580/95"]],
+      "MT0022"
+    ],
+    [
+      "16:12",
+      "16:13",
+      [11, 15],
+      [8, 12],
+      [[14, 11]],
+      "Un mot change : une forme en verset 16:12, l'autre en verset 16:13.",
+      [
+        [0, 13, 234, "https://shamela.ws/book/3580/89"],
+        [0, 16, 258, "https://shamela.ws/book/3580/95"]
+      ],
+      "MT0022"
+    ],
+    [
+      "16:12",
+      "16:69",
+      [11, 15],
+      [20, 24],
+      [[14, 23]],
+      "Un mot change : une forme en verset 16:12, l'autre en verset 16:69.",
+      [
+        [0, 13, 234, "https://shamela.ws/book/3580/89"],
+        [0, 16, 258, "https://shamela.ws/book/3580/95"]
+      ],
+      "MT0022"
+    ],
+    [
+      "16:13",
+      "16:69",
+      [8, 12],
+      [20, 24],
+      [],
+      "",
+      [[0, 16, 258, "https://shamela.ws/book/3580/95"]],
+      "MT0022"
+    ],
+    [
+      "16:13",
+      "16:79",
+      [8, 12],
+      [13, 17],
+      [[11, 16]],
+      "Un mot change : une forme en verset 16:13, l'autre en verset 16:79.",
+      [[0, 16, 258, "https://shamela.ws/book/3580/95"]],
+      "MT0022"
+    ],
+    [
+      "16:14",
+      "35:12",
+      [10, 20],
+      [18, 29],
+      [
+        [15, 23],
+        [16, 25]
+      ],
+      "Un mot change de place entre sourate 16 (An-Nahl) et sourate 35 (Faatir). Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 35 (Faatir).",
+      [
+        [0, 16, 259, "https://shamela.ws/book/3580/96"],
+        [0, 22, 315, "https://shamela.ws/book/3580/118"],
+        [0, 35, 415, "https://shamela.ws/book/3580/147"]
+      ],
+      "MT0022"
+    ],
+    [
+      "16:65",
+      "29:63",
+      [2, 9],
+      [4, 12],
+      [[null, 10]],
+      "Un mot s'ajoute en sourate 29 (Al-Ankaboot) (absent en sourate 16 (An-Nahl)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 16, 267, "https://shamela.ws/book/3580/99"]],
+      "MT0022"
+    ],
+    [
+      "16:69",
+      "16:79",
+      [20, 24],
+      [13, 17],
+      [[23, 16]],
+      "Un mot change : une forme en verset 16:69, l'autre en verset 16:79.",
+      [[0, 16, 258, "https://shamela.ws/book/3580/95"]],
+      "MT0022"
+    ],
+    [
+      "27:73",
+      "40:61",
+      [2, 9],
+      [12, 20],
+      [
+        [7, 17],
+        [null, 18]
+      ],
+      "Un mot change : une forme en sourate 27 (An-Naml), l'autre en sourate 40 (Al-Ghaafir). Un mot s'ajoute en sourate 40 (Al-Ghaafir) (absent en sourate 27 (An-Naml)).",
+      [
+        [0, 10, 196, "https://shamela.ws/book/3580/79"],
+        [0, 40, 451, "https://shamela.ws/book/3580/158"],
+        [1, 0, 0, "https://shamela.ws/book/9831/109"]
+      ],
+      "MT0022"
+    ],
+    [
+      "28:82",
+      "29:62",
+      [7, 19],
+      [0, 11],
+      [
+        [16, 8],
+        [18, null]
+      ],
+      "Un mot change : une forme en sourate 28 (Al-Qasas), l'autre en sourate 29 (Al-Ankaboot). Un mot s'ajoute en sourate 28 (Al-Qasas) (absent en sourate 29 (Al-Ankaboot)).",
+      [
+        [0, 29, 383, "https://shamela.ws/book/3580/138"],
+        [0, 34, 410, "https://shamela.ws/book/3580/146"]
+      ],
+      "MT0022"
+    ],
+    [
+      "29:62",
+      "34:36",
+      [1, 4],
+      [3, 6],
+      [],
+      "",
+      [[0, 34, 410, "https://shamela.ws/book/3580/146"]],
+      "MT0022"
+    ],
+    [
+      "29:63",
+      "30:24",
+      [4, 12],
+      [7, 14],
+      [
+        [7, 10],
+        [10, null]
+      ],
+      "Un mot change : une forme en sourate 29 (Al-Ankaboot), l'autre en sourate 30 (Ar-Room). Un mot s'ajoute en sourate 29 (Al-Ankaboot) (absent en sourate 30 (Ar-Room)).",
+      [
+        [0, 16, 267, "https://shamela.ws/book/3580/99"],
+        [0, 29, 384, "https://shamela.ws/book/3580/138"]
+      ],
+      "MT0022"
+    ],
+    [
+      "30:46",
+      "45:12",
+      [10, 16],
+      [7, 14],
+      [[null, 8]],
+      "Un mot s'ajoute en sourate 45 (Al-Jaathiya) (absent en sourate 30 (Ar-Room)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 30, 393, "https://shamela.ws/book/3580/141"],
+        [0, 45, 474, "https://shamela.ws/book/3580/164"]
+      ],
+      "MT0022"
+    ],
+    [
+      "31:31",
+      "34:9",
+      [10, 17],
+      [21, 28],
+      [
+        [11, 22],
+        [16, 27]
+      ],
+      "2 mots changent : une forme en sourate 31 (Luqman), l'autre en sourate 34 (Saba).",
+      [[0, 34, 409, "https://shamela.ws/book/3580/146"]],
+      "MT0022"
+    ],
+    [
+      "34:9",
+      "34:19",
+      [24, 28],
+      [13, 17],
+      [[27, 16]],
+      "Un mot change : une forme en verset 34:9, l'autre en verset 34:19.",
+      [[0, 34, 409, "https://shamela.ws/book/3580/146"]],
+      "MT0022"
+    ],
+    [
+      "34:9",
+      "42:33",
+      [24, 28],
+      [9, 13],
+      [[27, 12]],
+      "Un mot change : une forme en sourate 34 (Saba), l'autre en sourate 42 (Ash-Shura).",
+      [[0, 34, 409, "https://shamela.ws/book/3580/146"]],
+      "MT0022"
+    ],
+    [
+      "34:36",
+      "34:39",
+      [0, 6],
+      [0, 6],
+      [],
+      "",
+      [[0, 34, 410, "https://shamela.ws/book/3580/146"]],
+      "MT0022"
+    ],
+    [
+      "40:57",
+      "40:59",
+      [7, 10],
+      [6, 9],
+      [],
+      "",
+      [[0, 40, 450, "https://shamela.ws/book/3580/158"]],
+      "MT0022"
+    ],
+    [
+      "40:59",
+      "40:61",
+      [6, 9],
+      [16, 19],
+      [],
+      "",
+      [[0, 40, 451, "https://shamela.ws/book/3580/158"]],
+      "MT0022"
+    ],
+    [
+      "2:173",
+      "6:145",
+      [10, 18],
+      [26, 35],
+      [[null, 28]],
+      "Un mot s'ajoute en sourate 6 (Al-An'aam) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 2, 33, "https://shamela.ws/book/3580/19"],
+        [0, 2, 35, "https://shamela.ws/book/3580/20"]
+      ],
+      "MT0023"
+    ],
+    [
+      "2:174",
+      "3:77",
+      [10, 29],
+      [6, 26],
+      [
+        [14, 9],
+        [null, 10],
+        [15, 11],
+        [17, null],
+        [18, null],
+        [19, 13],
+        [null, 17],
+        [null, 18],
+        [null, 19]
+      ],
+      "2 mots changent : une forme en sourate 2 (Al-Baqara), l'autre en sourate 3 (Aal-i-Imraan). Un mot s'ajoute en sourate 3 (Aal-i-Imraan) (absent en sourate 2 (Al-Baqara)). (9 différences en tout : voir la liste.)",
+      [[0, 2, 36, "https://shamela.ws/book/3580/20"]],
+      "MT0024"
+    ],
+    [
+      "2:184",
+      "2:185",
+      [4, 13],
+      [20, 28],
+      [[5, null]],
+      "Un mot s'ajoute en verset 2:184 (absent en verset 2:185).",
+      [[0, 2, 38, "https://shamela.ws/book/3580/21"]],
+      "MT0025"
+    ],
+    [
+      "2:184",
+      "2:196",
+      [3, 7],
+      [20, 24],
+      [],
+      "",
+      [[0, 2, 38, "https://shamela.ws/book/3580/21"]],
+      "MT0025"
+    ],
+    [
+      "59:6",
+      "59:7",
+      [1, 4],
+      [1, 4],
+      [],
+      "",
+      [[0, 59, 514, "https://shamela.ws/book/3580/173"]],
+      "MT0025"
+    ],
+    [
+      "2:187",
+      "2:229",
+      [60, 63],
+      [38, 41],
+      [],
+      "",
+      [[0, 2, 39, "https://shamela.ws/book/3580/21"]],
+      "MT0026"
+    ],
+    [
+      "2:193",
+      "8:39",
+      [0, 10],
+      [0, 11],
+      [[null, 7]],
+      "Un mot s'ajoute en sourate 8 (Al-Anfaal) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 2, 41, "https://shamela.ws/book/3580/22"],
+        [0, 8, 162, "https://shamela.ws/book/3580/69"]
+      ],
+      "MT0027"
+    ],
+    [
+      "2:214",
+      "3:142",
+      [0, 5],
+      [0, 5],
+      [],
+      "",
+      [[0, 2, 42, "https://shamela.ws/book/3580/22"]],
+      "MT0028"
+    ],
+    [
+      "3:142",
+      "9:16",
+      [0, 10],
+      [0, 9],
+      [
+        [3, 3],
+        [4, null]
+      ],
+      "Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 9 (At-Tawba). Un mot s'ajoute en sourate 3 (Aal-i-Imraan) (absent en sourate 9 (At-Tawba)).",
+      [[0, 2, 42, "https://shamela.ws/book/3580/22"]],
+      "MT0028"
+    ],
+    [
+      "2:218",
+      "8:72",
+      [0, 8],
+      [0, 9],
+      [
+        [3, null],
+        [4, 3],
+        [null, 5],
+        [null, 6]
+      ],
+      "Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 8 (Al-Anfaal)). Un mot change : une forme en sourate 2 (Al-Baqara), l'autre en sourate 8 (Al-Anfaal). Un mot s'ajoute en sourate 8 (Al-Anfaal) (absent en sourate 2 (Al-Baqara)). (4 différences en tout : voir la liste.)",
+      [
+        [0, 8, 164, "https://shamela.ws/book/3580/70"],
+        [0, 9, 169, "https://shamela.ws/book/3580/72"]
+      ],
+      "MT0029"
+    ],
+    [
+      "8:72",
+      "8:74",
+      [2, 13],
+      [1, 10],
+      [
+        [5, null],
+        [6, null]
+      ],
+      "2 mots s'ajoutent en verset 8:72 (absent en verset 8:74).",
+      [
+        [0, 8, 164, "https://shamela.ws/book/3580/70"],
+        [0, 9, 169, "https://shamela.ws/book/3580/72"]
+      ],
+      "MT0029"
+    ],
+    [
+      "8:72",
+      "9:20",
+      [1, 9],
+      [0, 6],
+      [
+        [5, null],
+        [6, null]
+      ],
+      "2 mots s'ajoutent en sourate 8 (Al-Anfaal) (absent en sourate 9 (At-Tawba)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [
+        [0, 8, 164, "https://shamela.ws/book/3580/70"],
+        [0, 9, 169, "https://shamela.ws/book/3580/72"]
+      ],
+      "MT0029"
+    ],
+    [
+      "2:232",
+      "65:2",
+      [16, 24],
+      [17, 24],
+      [[20, null]],
+      "Un mot s'ajoute en sourate 2 (Al-Baqara) (absent en sourate 65 (At-Talaaq)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [[0, 2, 46, "https://shamela.ws/book/3580/23"]],
+      "MT0030"
+    ],
+    [
+      "2:264",
+      "14:18",
+      [29, 32],
+      [14, 19],
+      [
+        [null, 16],
+        [null, 17]
+      ],
+      "2 mots s'ajoutent en sourate 14 (Ibrahim) (absent en sourate 2 (Al-Baqara)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 14, 245, "https://shamela.ws/book/3580/92"],
+        [0, 14, 246, "https://shamela.ws/book/3580/92"]
+      ],
+      "MT0031"
+    ],
+    [
+      "8:52",
+      "8:54",
+      [0, 9],
+      [0, 9],
+      [[8, 8]],
+      "Un mot change : une forme en verset 8:52, l'autre en verset 8:54.",
+      [
+        [0, 8, 163, "https://shamela.ws/book/3580/70"],
+        [1, 0, 0, "https://shamela.ws/book/9831/69"]
+      ],
+      "MT0032"
+    ],
+    [
+      "3:40",
+      "19:8",
+      [0, 5],
+      [0, 5],
+      [],
+      "",
+      [[0, 3, 55, "https://shamela.ws/book/3580/27"]],
+      "MT0033"
+    ],
+    [
+      "3:47",
+      "19:8",
+      [1, 4],
+      [1, 4],
+      [],
+      "",
+      [[0, 3, 56, "https://shamela.ws/book/3580/27"]],
+      "MT0033"
+    ],
+    [
+      "3:51",
+      "19:36",
+      [0, 8],
+      [0, 8],
+      [[0, 0]],
+      "Un mot change : une forme en sourate 3 (Aal-i-Imraan), l'autre en sourate 19 (Maryam).",
+      [[0, 3, 59, "https://shamela.ws/book/3580/29"]],
+      "MT0034"
+    ],
+    [
+      "3:51",
+      "43:64",
+      [0, 8],
+      [0, 9],
+      [[null, 2]],
+      "Un mot s'ajoute en sourate 43 (Az-Zukhruf) (absent en sourate 3 (Aal-i-Imraan)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 3, 59, "https://shamela.ws/book/3580/29"]],
+      "MT0034"
+    ],
+    [
+      "19:36",
+      "43:64",
+      [0, 8],
+      [0, 9],
+      [
+        [0, 0],
+        [null, 2]
+      ],
+      "Un mot change : une forme en sourate 19 (Maryam), l'autre en sourate 43 (Az-Zukhruf). Un mot s'ajoute en sourate 43 (Az-Zukhruf) (absent en sourate 19 (Maryam)).",
+      [[0, 3, 59, "https://shamela.ws/book/3580/29"]],
+      "MT0034"
+    ],
+    [
+      "5:9",
+      "48:29",
+      [0, 10],
+      [50, 57],
+      [
+        [7, 56],
+        [9, null],
+        [10, null]
+      ],
+      "Un mot change : une forme en sourate 5 (Al-Maaida), l'autre en sourate 48 (Al-Fath). 2 mots s'ajoutent en sourate 5 (Al-Maaida) (absent en sourate 48 (Al-Fath)).",
+      [[0, 5, 83, "https://shamela.ws/book/3580/38"]],
+      "MT0035"
+    ],
+    [
+      "3:99",
+      "7:86",
+      [5, 9],
+      [6, 10],
+      [],
+      "",
+      [[0, 3, 63, "https://shamela.ws/book/3580/30"]],
+      "MT0036"
+    ],
+    [
+      "3:126",
+      "8:10",
+      [0, 15],
+      [0, 14],
+      [
+        [5, null],
+        [8, 6]
+      ],
+      "Un mot s'ajoute en sourate 3 (Aal-i-Imraan) (absent en sourate 8 (Al-Anfaal)). Un mot change de place entre sourate 3 (Aal-i-Imraan) et sourate 8 (Al-Anfaal).",
+      [[0, 3, 64, "https://shamela.ws/book/3580/30"]],
+      "MT0037"
+    ],
+    [
+      "4:38",
+      "9:29",
+      [6, 10],
+      [3, 7],
+      [],
+      "",
+      [[0, 2, 7, "https://shamela.ws/book/3580/5"]],
+      "MT0038"
+    ],
+    [
+      "4:105",
+      "39:2",
+      [0, 4],
+      [0, 4],
+      [],
+      "",
+      [[0, 39, 439, "https://shamela.ws/book/3580/155"]],
+      "MT0039"
+    ],
+    [
+      "4:105",
+      "39:41",
+      [0, 4],
+      [0, 5],
+      [
+        [2, 2],
+        [null, 4]
+      ],
+      "Un mot change : une forme en sourate 4 (An-Nisaa), l'autre en sourate 39 (Az-Zumar). Un mot s'ajoute en sourate 39 (Az-Zumar) (absent en sourate 4 (An-Nisaa)).",
+      [[0, 39, 439, "https://shamela.ws/book/3580/155"]],
+      "MT0039"
+    ],
+    [
+      "10:108",
+      "39:41",
+      [9, 21],
+      [7, 17],
+      [
+        [11, null],
+        [12, null],
+        [13, 9]
+      ],
+      "2 mots s'ajoutent en sourate 10 (Yunus) (absent en sourate 39 (Az-Zumar)). Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 39 (Az-Zumar).",
+      [[0, 39, 446, "https://shamela.ws/book/3580/157"]],
+      "MT0039"
+    ],
+    [
+      "17:15",
+      "39:41",
+      [6, 10],
+      [11, 15],
+      [],
+      "",
+      [[0, 39, 446, "https://shamela.ws/book/3580/157"]],
+      "MT0039"
+    ],
+    [
+      "27:92",
+      "39:41",
+      [4, 11],
+      [7, 12],
+      [
+        [6, null],
+        [7, null],
+        [8, 9]
+      ],
+      "2 mots s'ajoutent en sourate 27 (An-Naml) (absent en sourate 39 (Az-Zumar)). Un mot change : une forme en sourate 27 (An-Naml), l'autre en sourate 39 (Az-Zumar).",
+      [[0, 39, 446, "https://shamela.ws/book/3580/157"]],
+      "MT0039"
+    ],
+    [
+      "39:2",
+      "39:41",
+      [0, 4],
+      [0, 5],
+      [
+        [2, 2],
+        [null, 4]
+      ],
+      "Un mot change : une forme en verset 39:2, l'autre en verset 39:41. Un mot s'ajoute en verset 39:41 (absent en verset 39:2).",
+      [[0, 39, 439, "https://shamela.ws/book/3580/155"]],
+      "MT0039"
+    ],
+    [
+      "47:25",
+      "47:32",
+      [5, 10],
+      [9, 14],
+      [],
+      "",
+      [[0, 47, 482, "https://shamela.ws/book/3580/165"]],
+      "MT0040"
+    ],
+    [
+      "4:149",
+      "33:54",
+      [0, 11],
+      [0, 7],
+      [
+        [2, 2],
+        [5, null],
+        [6, null],
+        [7, null],
+        [8, null]
+      ],
+      "Un mot change : une forme en sourate 4 (An-Nisaa), l'autre en sourate 33 (Al-Ahzaab). 2 mots s'ajoutent en sourate 4 (An-Nisaa) (absent en sourate 33 (Al-Ahzaab)). (5 différences en tout : voir la liste.)",
+      [[0, 4, 78, "https://shamela.ws/book/3580/36"]],
+      "MT0041"
+    ],
+    [
+      "6:29",
+      "23:37",
+      [1, 8],
+      [0, 9],
+      [
+        [null, 5],
+        [null, 6]
+      ],
+      "2 mots s'ajoutent en sourate 23 (Al-Muminoon) (absent en sourate 6 (Al-An'aam)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 6, 99, "https://shamela.ws/book/3580/45"],
+        [0, 6, 29, "https://shamela.ws/book/3580/45"]
+      ],
+      "MT0042"
+    ],
+    [
+      "6:29",
+      "45:24",
+      [0, 5],
+      [0, 5],
+      [[1, 1]],
+      "Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 45 (Al-Jaathiya).",
+      [[0, 6, 99, "https://shamela.ws/book/3580/45"]],
+      "MT0042"
+    ],
+    [
+      "6:148",
+      "16:35",
+      [8, 19],
+      [13, 26],
+      [
+        [null, 17],
+        [null, 18],
+        [16, 23]
+      ],
+      "2 mots s'ajoutent en sourate 16 (An-Nahl) (absent en sourate 6 (Al-An'aam)). Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 16 (An-Nahl).",
+      [
+        [0, 6, 114, "https://shamela.ws/book/3580/52"],
+        [0, 16, 263, "https://shamela.ws/book/3580/98"],
+        [1, 0, 0, "https://shamela.ws/book/9831/12"]
+      ],
+      "MT0042"
+    ],
+    [
+      "43:20",
+      "45:24",
+      [8, 15],
+      [14, 21],
+      [],
+      "",
+      [[0, 43, 468, "https://shamela.ws/book/3580/162"]],
+      "MT0042"
+    ],
+    [
+      "5:15",
+      "5:19",
+      [0, 6],
+      [0, 6],
+      [],
+      "",
+      [[0, 5, 86, "https://shamela.ws/book/3580/39"]],
+      "MT0043"
+    ],
+    [
+      "5:36",
+      "13:18",
+      [3, 13],
+      [9, 19],
+      [[12, 18]],
+      "Un mot change : une forme en sourate 5 (Al-Maaida), l'autre en sourate 13 (Ar-Ra'd).",
+      [[0, 13, 239, "https://shamela.ws/book/3580/90"]],
+      "MT0044"
+    ],
+    [
+      "5:36",
+      "39:47",
+      [6, 14],
+      [4, 12],
+      [[12, 10]],
+      "Un mot change : une forme en sourate 5 (Al-Maaida), l'autre en sourate 39 (Az-Zumar).",
+      [[0, 13, 239, "https://shamela.ws/book/3580/90"]],
+      "MT0044"
+    ],
+    [
+      "5:44",
+      "5:47",
+      [35, 42],
+      [8, 15],
+      [],
+      "",
+      [[0, 5, 89, "https://shamela.ws/book/3580/41"]],
+      "MT0045"
+    ],
+    [
+      "5:58",
+      "59:13",
+      [8, 11],
+      [8, 11],
+      [],
+      "",
+      [[0, 59, 515, "https://shamela.ws/book/3580/173"]],
+      "MT0046"
+    ],
+    [
+      "59:13",
+      "59:14",
+      [8, 11],
+      [21, 24],
+      [],
+      "",
+      [[0, 59, 515, "https://shamela.ws/book/3580/173"]],
+      "MT0046"
+    ],
+    [
+      "6:71",
+      "10:18",
+      [2, 8],
+      [1, 7],
+      [[7, 6]],
+      "Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 10 (Yunus).",
+      [
+        [0, 7, 160, "https://shamela.ws/book/3580/68"],
+        [0, 10, 184, "https://shamela.ws/book/3580/77"]
+      ],
+      "MT0047"
+    ],
+    [
+      "6:71",
+      "10:106",
+      [2, 8],
+      [2, 8],
+      [[7, 7]],
+      "Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 10 (Yunus).",
+      [[0, 7, 160, "https://shamela.ws/book/3580/68"]],
+      "MT0047"
+    ],
+    [
+      "6:71",
+      "21:66",
+      [2, 6],
+      [2, 6],
+      [],
+      "",
+      [[0, 7, 160, "https://shamela.ws/book/3580/68"]],
+      "MT0047"
+    ],
+    [
+      "6:71",
+      "25:55",
+      [2, 8],
+      [1, 7],
+      [[7, 6]],
+      "Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 25 (Al-Furqaan).",
+      [
+        [0, 7, 160, "https://shamela.ws/book/3580/68"],
+        [0, 25, 345, "https://shamela.ws/book/3580/127"]
+      ],
+      "MT0047"
+    ],
+    [
+      "10:18",
+      "10:106",
+      [1, 7],
+      [2, 8],
+      [[6, 7]],
+      "Un mot change : une forme en verset 10:18, l'autre en verset 10:106.",
+      [
+        [0, 7, 160, "https://shamela.ws/book/3580/68"],
+        [0, 10, 184, "https://shamela.ws/book/3580/77"]
+      ],
+      "MT0047"
+    ],
+    [
+      "10:18",
+      "21:66",
+      [1, 5],
+      [2, 6],
+      [],
+      "",
+      [[0, 7, 160, "https://shamela.ws/book/3580/68"]],
+      "MT0047"
+    ],
+    [
+      "10:18",
+      "25:55",
+      [0, 7],
+      [0, 7],
+      [[6, 6]],
+      "Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 25 (Al-Furqaan).",
+      [
+        [0, 7, 160, "https://shamela.ws/book/3580/68"],
+        [0, 10, 184, "https://shamela.ws/book/3580/77"],
+        [0, 25, 345, "https://shamela.ws/book/3580/127"]
+      ],
+      "MT0047"
+    ],
+    [
+      "10:106",
+      "21:66",
+      [2, 6],
+      [2, 6],
+      [],
+      "",
+      [[0, 7, 160, "https://shamela.ws/book/3580/68"]],
+      "MT0047"
+    ],
+    [
+      "10:106",
+      "25:55",
+      [2, 8],
+      [1, 7],
+      [[7, 6]],
+      "Un mot change : une forme en sourate 10 (Yunus), l'autre en sourate 25 (Al-Furqaan).",
+      [
+        [0, 7, 160, "https://shamela.ws/book/3580/68"],
+        [0, 25, 345, "https://shamela.ws/book/3580/127"]
+      ],
+      "MT0047"
+    ],
+    [
+      "21:66",
+      "25:55",
+      [2, 6],
+      [1, 5],
+      [],
+      "",
+      [[0, 7, 160, "https://shamela.ws/book/3580/68"]],
+      "MT0047"
+    ],
+    [
+      "29:8",
+      "31:15",
+      [5, 22],
+      [0, 31],
+      [
+        [null, 2],
+        [null, 3],
+        [7, 4],
+        [null, 14],
+        [null, 15],
+        [null, 16],
+        [null, 17],
+        [null, 19],
+        [null, 20],
+        [null, 21],
+        [null, 22],
+        [null, 23],
+        [null, 25]
+      ],
+      "2 mots s'ajoutent en sourate 31 (Luqman) (absent en sourate 29 (Al-Ankaboot)). Un mot change : une forme en sourate 29 (Al-Ankaboot), l'autre en sourate 31 (Luqman). (13 différences en tout : voir la liste.)",
+      [[0, 29, 375, "https://shamela.ws/book/3580/136"]],
+      "MT0048"
+    ],
+    [
+      "6:5",
+      "26:6",
+      [8, 12],
+      [3, 7],
+      [],
+      "",
+      [[0, 6, 92, "https://shamela.ws/book/3580/42"]],
+      "MT0049"
+    ],
+    [
+      "6:21",
+      "10:17",
+      [0, 14],
+      [0, 14],
+      [
+        [0, 0],
+        [14, 14]
+      ],
+      "2 mots changent : une forme en sourate 6 (Al-An'aam), l'autre en sourate 10 (Yunus).",
+      [
+        [0, 6, 96, "https://shamela.ws/book/3580/44"],
+        [0, 10, 183, "https://shamela.ws/book/3580/77"],
+        [1, 0, 0, "https://shamela.ws/book/9831/59"]
+      ],
+      "MT0050"
+    ],
+    [
+      "6:27",
+      "6:30",
+      [0, 4],
+      [0, 4],
+      [],
+      "",
+      [[0, 6, 98, "https://shamela.ws/book/3580/45"]],
+      "MT0051"
+    ],
+    [
+      "6:40",
+      "6:47",
+      [0, 6],
+      [0, 7],
+      [[null, 6]],
+      "Un mot s'ajoute en verset 6:47 (absent en verset 6:40).",
+      [[0, 6, 101, "https://shamela.ws/book/3580/46"]],
+      "MT0052"
+    ],
+    [
+      "28:71",
+      "28:72",
+      [0, 15],
+      [0, 15],
+      [[6, 6]],
+      "Un mot change : une forme en verset 28:71, l'autre en verset 28:72.",
+      [[0, 28, 372, "https://shamela.ws/book/3580/134"]],
+      "MT0053"
+    ],
+    [
+      "6:50",
+      "11:31",
+      [2, 14],
+      [1, 12],
+      [[12, null]],
+      "Un mot s'ajoute en sourate 6 (Al-An'aam) (absent en sourate 11 (Hud)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [
+        [0, 6, 104, "https://shamela.ws/book/3580/47"],
+        [0, 11, 210, "https://shamela.ws/book/3580/83"]
+      ],
+      "MT0054"
+    ],
+    [
+      "10:72",
+      "10:104",
+      [13, 16],
+      [22, 25],
+      [],
+      "",
+      [[0, 10, 203, "https://shamela.ws/book/3580/80"]],
+      "MT0055"
+    ],
+    [
+      "10:72",
+      "27:91",
+      [13, 17],
+      [13, 17],
+      [],
+      "",
+      [[0, 10, 203, "https://shamela.ws/book/3580/80"]],
+      "MT0055"
+    ],
+    [
+      "10:104",
+      "27:91",
+      [22, 25],
+      [13, 16],
+      [],
+      "",
+      [[0, 10, 203, "https://shamela.ws/book/3580/80"]],
+      "MT0055"
+    ],
+    [
+      "6:90",
+      "12:104",
+      [14, 18],
+      [6, 10],
+      [[17, 9]],
+      "Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 12 (Yusuf).",
+      [[0, 6, 105, "https://shamela.ws/book/3580/48"]],
+      "MT0056"
+    ],
+    [
+      "6:97",
+      "6:98",
+      [12, 15],
+      [9, 12],
+      [],
+      "",
+      [[0, 6, 107, "https://shamela.ws/book/3580/49"]],
+      "MT0057"
+    ],
+    [
+      "6:102",
+      "40:62",
+      [0, 7],
+      [0, 9],
+      [
+        [null, 3],
+        [null, 4],
+        [null, 5]
+      ],
+      "3 mots s'ajoutent en sourate 40 (Al-Ghaafir) (absent en sourate 6 (Al-An'aam)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 6, 110, "https://shamela.ws/book/3580/50"],
+        [0, 40, 453, "https://shamela.ws/book/3580/158"],
+        [1, 0, 0, "https://shamela.ws/book/9831/35"]
+      ],
+      "MT0058"
+    ],
+    [
+      "33:63",
+      "42:17",
+      [11, 14],
+      [7, 10],
+      [],
+      "",
+      [[0, 42, 466, "https://shamela.ws/book/3580/162"]],
+      "MT0059"
+    ],
+    [
+      "6:112",
+      "6:137",
+      [16, 24],
+      [13, 21],
+      [[18, 15]],
+      "Un mot change : une forme en verset 6:112, l'autre en verset 6:137.",
+      [
+        [0, 6, 111, "https://shamela.ws/book/3580/51"],
+        [1, 0, 0, "https://shamela.ws/book/9831/57"],
+        [1, 0, 0, "https://shamela.ws/book/9831/70"]
+      ],
+      "MT0060"
+    ],
+    [
+      "6:117",
+      "68:7",
+      [0, 11],
+      [0, 10],
+      [
+        [4, 4],
+        [5, 5]
+      ],
+      "2 mots changent : une forme en sourate 6 (Al-An'aam), l'autre en sourate 68 (Al-Qalam).",
+      [[0, 6, 112, "https://shamela.ws/book/3580/51"]],
+      "MT0061"
+    ],
+    [
+      "6:135",
+      "11:93",
+      [2, 10],
+      [1, 9],
+      [[8, 7]],
+      "Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 11 (Hud).",
+      [
+        [0, 6, 113, "https://shamela.ws/book/3580/51"],
+        [0, 11, 212, "https://shamela.ws/book/3580/83"],
+        [0, 102, 576, "https://shamela.ws/book/3580/192"],
+        [1, 0, 0, "https://shamela.ws/book/9831/60"]
+      ],
+      "MT0062"
+    ],
+    [
+      "6:151",
+      "17:31",
+      [17, 23],
+      [0, 6],
+      [[20, 3]],
+      "Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 17 (Al-Israa).",
+      [
+        [0, 6, 115, "https://shamela.ws/book/3580/52"],
+        [1, 0, 0, "https://shamela.ws/book/9831/35"]
+      ],
+      "MT0063"
+    ],
+    [
+      "6:165",
+      "7:167",
+      [15, 21],
+      [13, 20],
+      [[17, 15]],
+      "Un mot change : une forme en sourate 6 (Al-An'aam), l'autre en sourate 7 (Al-A'raaf).",
+      [[0, 6, 118, "https://shamela.ws/book/3580/53"]],
+      "MT0064"
+    ],
+    [
+      "17:94",
+      "18:55",
+      [0, 9],
+      [0, 11],
+      [
+        [null, 8],
+        [null, 9]
+      ],
+      "2 mots s'ajoutent en sourate 18 (Al-Kahf) (absent en sourate 17 (Al-Israa)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 17, 279, "https://shamela.ws/book/3580/104"]],
+      "MT0065"
+    ],
+    [
+      "7:12",
+      "38:75",
+      [0, 4],
+      [0, 5],
+      [
+        [null, 1],
+        [3, 4]
+      ],
+      "Un mot s'ajoute en sourate 38 (Saad) (absent en sourate 7 (Al-A'raaf)). Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 38 (Saad).",
+      [[0, 7, 120, "https://shamela.ws/book/3580/54"]],
+      "MT0066"
+    ],
+    [
+      "7:188",
+      "10:49",
+      [0, 10],
+      [0, 10],
+      [
+        [4, 4],
+        [6, 6]
+      ],
+      "2 mots changent : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 10 (Yunus).",
+      [[0, 7, 160, "https://shamela.ws/book/3580/68"]],
+      "MT0067"
+    ],
+    [
+      "16:61",
+      "35:45",
+      [5, 18],
+      [6, 20],
+      [
+        [7, 8],
+        [null, 9]
+      ],
+      "Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 35 (Faatir). Un mot s'ajoute en sourate 35 (Faatir) (absent en sourate 16 (An-Nahl)).",
+      [
+        [0, 16, 267, "https://shamela.ws/book/3580/98"],
+        [0, 35, 419, "https://shamela.ws/book/3580/148"]
+      ],
+      "MT0067"
+    ],
+    [
+      "7:45",
+      "11:19",
+      [0, 9],
+      [0, 10],
+      [[null, 9]],
+      "Un mot s'ajoute en sourate 11 (Hud) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 7, 127, "https://shamela.ws/book/3580/57"]],
+      "MT0068"
+    ],
+    [
+      "7:60",
+      "7:66",
+      [0, 6],
+      [0, 8],
+      [
+        [null, 2],
+        [null, 3]
+      ],
+      "2 mots s'ajoutent en verset 7:66 (absent en verset 7:60).",
+      [
+        [0, 7, 131, "https://shamela.ws/book/3580/59"],
+        [1, 0, 0, "https://shamela.ws/book/9831/5"]
+      ],
+      "MT0069"
+    ],
+    [
+      "7:62",
+      "7:68",
+      [0, 4],
+      [0, 4],
+      [[3, 3]],
+      "Un mot change : une forme en verset 7:62, l'autre en verset 7:68.",
+      [
+        [0, 7, 132, "https://shamela.ws/book/3580/59"],
+        [0, 7, 134, "https://shamela.ws/book/3580/60"]
+      ],
+      "MT0070"
+    ],
+    [
+      "7:64",
+      "10:73",
+      [3, 9],
+      [3, 11],
+      [
+        [null, 6],
+        [null, 7]
+      ],
+      "2 mots s'ajoutent en sourate 10 (Yunus) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 7, 135, "https://shamela.ws/book/3580/60"]],
+      "MT0071"
+    ],
+    [
+      "7:73",
+      "11:64",
+      [19, 37],
+      [0, 16],
+      [
+        [19, 0],
+        [null, 16]
+      ],
+      "Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 11 (Hud). Un mot s'ajoute en sourate 11 (Hud) (absent en sourate 7 (Al-A'raaf)).",
+      [
+        [0, 7, 136, "https://shamela.ws/book/3580/61"],
+        [1, 0, 0, "https://shamela.ws/book/9831/107"]
+      ],
+      "MT0072"
+    ],
+    [
+      "7:73",
+      "26:156",
+      [33, 37],
+      [0, 6],
+      [
+        [null, 5],
+        [null, 6]
+      ],
+      "2 mots s'ajoutent en sourate 26 (Ash-Shu'araa) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 7, 136, "https://shamela.ws/book/3580/61"]],
+      "MT0072"
+    ],
+    [
+      "11:64",
+      "26:156",
+      [11, 15],
+      [0, 6],
+      [
+        [null, 5],
+        [null, 6]
+      ],
+      "2 mots s'ajoutent en sourate 26 (Ash-Shu'araa) (absent en sourate 11 (Hud)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 7, 136, "https://shamela.ws/book/3580/61"]],
+      "MT0072"
+    ],
+    [
+      "7:81",
+      "27:55",
+      [0, 11],
+      [0, 11],
+      [
+        [0, 0],
+        [11, 11]
+      ],
+      "2 mots changent : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 27 (An-Naml).",
+      [
+        [0, 7, 141, "https://shamela.ws/book/3580/62"],
+        [0, 7, 142, "https://shamela.ws/book/3580/62"]
+      ],
+      "MT0073"
+    ],
+    [
+      "7:82",
+      "27:56",
+      [1, 13],
+      [2, 16],
+      [
+        [7, 8],
+        [null, 9],
+        [null, 10]
+      ],
+      "Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 27 (An-Naml). 2 mots s'ajoutent en sourate 27 (An-Naml) (absent en sourate 7 (Al-A'raaf)).",
+      [[0, 7, 143, "https://shamela.ws/book/3580/63"]],
+      "MT0074"
+    ],
+    [
+      "7:82",
+      "29:29",
+      [1, 6],
+      [11, 16],
+      [],
+      "",
+      [[0, 7, 143, "https://shamela.ws/book/3580/63"]],
+      "MT0074"
+    ],
+    [
+      "27:56",
+      "29:29",
+      [1, 7],
+      [10, 16],
+      [],
+      "",
+      [[0, 7, 143, "https://shamela.ws/book/3580/63"]],
+      "MT0074"
+    ],
+    [
+      "7:83",
+      "27:57",
+      [0, 6],
+      [0, 6],
+      [[4, 4]],
+      "Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 27 (An-Naml).",
+      [
+        [0, 7, 144, "https://shamela.ws/book/3580/63"],
+        [0, 11, 220, "https://shamela.ws/book/3580/85"],
+        [0, 27, 360, "https://shamela.ws/book/3580/130"]
+      ],
+      "MT0075"
+    ],
+    [
+      "7:83",
+      "29:33",
+      [2, 6],
+      [19, 23],
+      [[3, 20]],
+      "Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 29 (Al-Ankaboot).",
+      [[0, 11, 220, "https://shamela.ws/book/3580/85"]],
+      "MT0075"
+    ],
+    [
+      "11:77",
+      "29:33",
+      [0, 8],
+      [0, 9],
+      [[null, 1]],
+      "Un mot s'ajoute en sourate 29 (Al-Ankaboot) (absent en sourate 11 (Hud)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 29, 380, "https://shamela.ws/book/3580/137"]],
+      "MT0075"
+    ],
+    [
+      "29:32",
+      "29:33",
+      [13, 17],
+      [19, 23],
+      [[14, 20]],
+      "Un mot change : une forme en verset 29:32, l'autre en verset 29:33.",
+      [[0, 11, 220, "https://shamela.ws/book/3580/85"]],
+      "MT0075"
+    ],
+    [
+      "7:84",
+      "7:103",
+      [4, 7],
+      [12, 15],
+      [],
+      "",
+      [[0, 7, 140, "https://shamela.ws/book/3580/62"]],
+      "MT0076"
+    ],
+    [
+      "7:84",
+      "27:14",
+      [4, 7],
+      [7, 10],
+      [],
+      "",
+      [[0, 7, 140, "https://shamela.ws/book/3580/62"]],
+      "MT0076"
+    ],
+    [
+      "7:101",
+      "10:74",
+      [10, 19],
+      [8, 18],
+      [[null, 14]],
+      "Un mot s'ajoute en sourate 10 (Yunus) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 7, 145, "https://shamela.ws/book/3580/63"],
+        [0, 7, 146, "https://shamela.ws/book/3580/64"],
+        [0, 10, 201, "https://shamela.ws/book/3580/80"]
+      ],
+      "MT0077"
+    ],
+    [
+      "26:154",
+      "26:186",
+      [1, 4],
+      [1, 4],
+      [],
+      "",
+      [[1, 0, 0, "https://shamela.ws/book/9831/87"]],
+      "MT0078"
+    ],
+    [
+      "7:109",
+      "26:34",
+      [5, 8],
+      [3, 6],
+      [],
+      "",
+      [
+        [0, 7, 147, "https://shamela.ws/book/3580/64"],
+        [0, 7, 150, "https://shamela.ws/book/3580/65"]
+      ],
+      "MT0079"
+    ],
+    [
+      "7:110",
+      "26:35",
+      [0, 7],
+      [0, 7],
+      [[null, 5]],
+      "Un mot s'ajoute en sourate 26 (Ash-Shu'araa) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 7, 147, "https://shamela.ws/book/3580/64"],
+        [0, 7, 148, "https://shamela.ws/book/3580/65"]
+      ],
+      "MT0080"
+    ],
+    [
+      "7:113",
+      "26:41",
+      [1, 10],
+      [2, 11],
+      [
+        [2, 4],
+        [4, 5]
+      ],
+      "Un mot change de place entre sourate 7 (Al-A'raaf) et sourate 26 (Ash-Shu'araa). Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 26 (Ash-Shu'araa).",
+      [[0, 7, 151, "https://shamela.ws/book/3580/65"]],
+      "MT0081"
+    ],
+    [
+      "7:114",
+      "26:42",
+      [0, 4],
+      [0, 5],
+      [[null, 3]],
+      "Un mot s'ajoute en sourate 26 (Ash-Shu'araa) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 7, 152, "https://shamela.ws/book/3580/65"],
+        [1, 0, 0, "https://shamela.ws/book/9831/17"]
+      ],
+      "MT0082"
+    ],
+    [
+      "7:115",
+      "20:65",
+      [0, 9],
+      [0, 10],
+      [
+        [null, 8],
+        [8, 9],
+        [9, 10]
+      ],
+      "Un mot s'ajoute en sourate 20 (Taa-Haa) (absent en sourate 7 (Al-A'raaf)). 2 mots changent : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 20 (Taa-Haa).",
+      [[0, 7, 153, "https://shamela.ws/book/3580/66"]],
+      "MT0083"
+    ],
+    [
+      "7:123",
+      "20:71",
+      [0, 7],
+      [0, 6],
+      [
+        [1, null],
+        [3, 2]
+      ],
+      "Un mot s'ajoute en sourate 7 (Al-A'raaf) (absent en sourate 20 (Taa-Haa)). Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 20 (Taa-Haa).",
+      [
+        [0, 7, 154, "https://shamela.ws/book/3580/66"],
+        [0, 7, 155, "https://shamela.ws/book/3580/67"]
+      ],
+      "MT0084"
+    ],
+    [
+      "7:123",
+      "26:49",
+      [0, 7],
+      [0, 6],
+      [
+        [1, null],
+        [3, 2]
+      ],
+      "Un mot s'ajoute en sourate 7 (Al-A'raaf) (absent en sourate 26 (Ash-Shu'araa)). Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 26 (Ash-Shu'araa).",
+      [
+        [0, 7, 154, "https://shamela.ws/book/3580/66"],
+        [0, 7, 155, "https://shamela.ws/book/3580/67"]
+      ],
+      "MT0084"
+    ],
+    [
+      "7:124",
+      "20:71",
+      [1, 4],
+      [15, 18],
+      [],
+      "",
+      [[0, 7, 153, "https://shamela.ws/book/3580/66"]],
+      "MT0084"
+    ],
+    [
+      "7:124",
+      "26:49",
+      [0, 7],
+      [16, 22],
+      [
+        [5, null],
+        [6, 21]
+      ],
+      "Un mot s'ajoute en sourate 7 (Al-A'raaf) (absent en sourate 26 (Ash-Shu'araa)). Un mot change : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 26 (Ash-Shu'araa).",
+      [
+        [0, 7, 153, "https://shamela.ws/book/3580/66"],
+        [0, 7, 156, "https://shamela.ws/book/3580/67"]
+      ],
+      "MT0084"
+    ],
+    [
+      "20:71",
+      "26:49",
+      [0, 19],
+      [0, 21],
+      [
+        [null, 13],
+        [null, 14],
+        [14, 16]
+      ],
+      "2 mots s'ajoutent en sourate 26 (Ash-Shu'araa) (absent en sourate 20 (Taa-Haa)). Un mot change : une forme en sourate 20 (Taa-Haa), l'autre en sourate 26 (Ash-Shu'araa).",
+      [
+        [0, 7, 153, "https://shamela.ws/book/3580/66"],
+        [0, 7, 154, "https://shamela.ws/book/3580/66"],
+        [0, 7, 155, "https://shamela.ws/book/3580/67"]
+      ],
+      "MT0084"
+    ],
+    [
+      "7:125",
+      "26:50",
+      [0, 4],
+      [0, 7],
+      [
+        [null, 1],
+        [null, 2]
+      ],
+      "2 mots s'ajoutent en sourate 26 (Ash-Shu'araa) (absent en sourate 7 (Al-A'raaf)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 7, 157, "https://shamela.ws/book/3580/67"]],
+      "MT0085"
+    ],
+    [
+      "7:200",
+      "41:36",
+      [0, 10],
+      [0, 11],
+      [
+        [null, 9],
+        [9, 10],
+        [10, 11]
+      ],
+      "Un mot s'ajoute en sourate 41 (Fussilat) (absent en sourate 7 (Al-A'raaf)). 2 mots changent : une forme en sourate 7 (Al-A'raaf), l'autre en sourate 41 (Fussilat).",
+      [[0, 41, 458, "https://shamela.ws/book/3580/160"]],
+      "MT0086"
+    ],
+    [
+      "9:19",
+      "9:81",
+      [13, 17],
+      [11, 15],
+      [[null, 14]],
+      "Un mot s'ajoute en verset 9:81 (absent en verset 9:19).",
+      [[0, 8, 164, "https://shamela.ws/book/3580/70"]],
+      "MT0087"
+    ],
+    [
+      "9:39",
+      "11:57",
+      [6, 15],
+      [11, 21],
+      [
+        [9, 14],
+        [12, 17],
+        [null, 18]
+      ],
+      "2 mots changent : une forme en sourate 9 (At-Tawba), l'autre en sourate 11 (Hud). Un mot s'ajoute en sourate 11 (Hud) (absent en sourate 9 (At-Tawba)).",
+      [
+        [0, 11, 211, "https://shamela.ws/book/3580/83"],
+        [0, 11, 212, "https://shamela.ws/book/3580/83"]
+      ],
+      "MT0088"
+    ],
+    [
+      "9:55",
+      "9:85",
+      [6, 17],
+      [5, 16],
+      [
+        [null, 8],
+        [9, 9],
+        [12, null]
+      ],
+      "Un mot s'ajoute en verset 9:85 (absent en verset 9:55). Un mot change : une forme en verset 9:55, l'autre en verset 9:85. Un mot s'ajoute en verset 9:55 (absent en verset 9:85).",
+      [
+        [0, 9, 171, "https://shamela.ws/book/3580/72"],
+        [0, 9, 172, "https://shamela.ws/book/3580/73"],
+        [0, 9, 173, "https://shamela.ws/book/3580/73"],
+        [0, 9, 175, "https://shamela.ws/book/3580/74"],
+        [1, 0, 0, "https://shamela.ws/book/9831/61"]
+      ],
+      "MT0089"
+    ],
+    [
+      "11:62",
+      "14:9",
+      [16, 21],
+      [34, 39],
+      [[19, 37]],
+      "Un mot change : une forme en sourate 11 (Hud), l'autre en sourate 14 (Ibrahim).",
+      [[0, 11, 215, "https://shamela.ws/book/3580/84"]],
+      "MT0090"
+    ],
+    [
+      "9:87",
+      "9:93",
+      [0, 10],
+      [9, 19],
+      [
+        [null, 15],
+        [10, null]
+      ],
+      "Un mot s'ajoute en verset 9:93 (absent en verset 9:87). Un mot s'ajoute en verset 9:87 (absent en verset 9:93).",
+      [[0, 9, 177, "https://shamela.ws/book/3580/75"]],
+      "MT0091"
+    ],
+    [
+      "9:94",
+      "9:105",
+      [19, 31],
+      [3, 16],
+      [
+        [22, 6],
+        [23, 8]
+      ],
+      "2 mots changent : une forme en verset 9:94, l'autre en verset 9:105.",
+      [
+        [0, 9, 178, "https://shamela.ws/book/3580/75"],
+        [1, 0, 0, "https://shamela.ws/book/9831/30"]
+      ],
+      "MT0092"
+    ],
+    [
+      "41:45",
+      "42:14",
+      [7, 19],
+      [11, 31],
+      [
+        [null, 16],
+        [null, 17],
+        [null, 18],
+        [15, 22],
+        [null, 23],
+        [null, 24],
+        [null, 25],
+        [null, 26],
+        [null, 27]
+      ],
+      "3 mots s'ajoutent en sourate 42 (Ash-Shura) (absent en sourate 41 (Fussilat)). (9 différences en tout : voir la liste.)",
+      [[0, 41, 459, "https://shamela.ws/book/3580/160"]],
+      "MT0093"
+    ],
+    [
+      "10:42",
+      "10:43",
+      [0, 10],
+      [0, 10],
+      [
+        [2, 2],
+        [6, 6],
+        [7, 7]
+      ],
+      "3 mots changent : une forme en verset 10:42, l'autre en verset 10:43.",
+      [
+        [0, 6, 97, "https://shamela.ws/book/3580/44"],
+        [0, 10, 190, "https://shamela.ws/book/3580/78"],
+        [0, 10, 198, "https://shamela.ws/book/3580/80"]
+      ],
+      "MT0094"
+    ],
+    [
+      "11:10",
+      "41:50",
+      [0, 6],
+      [0, 8],
+      [
+        [null, 2],
+        [2, 3],
+        [null, 4]
+      ],
+      "2 mots s'ajoutent en sourate 41 (Fussilat) (absent en sourate 11 (Hud)). Un mot change : une forme en sourate 11 (Hud), l'autre en sourate 41 (Fussilat).",
+      [[0, 41, 461, "https://shamela.ws/book/3580/161"]],
+      "MT0095"
+    ],
+    [
+      "18:36",
+      "41:50",
+      [0, 7],
+      [11, 18],
+      [[5, 16]],
+      "Un mot change : une forme en sourate 18 (Al-Kahf), l'autre en sourate 41 (Fussilat).",
+      [[0, 18, 284, "https://shamela.ws/book/3580/107"]],
+      "MT0095"
+    ],
+    [
+      "11:22",
+      "16:109",
+      [0, 6],
+      [0, 6],
+      [[6, 6]],
+      "Un mot change : une forme en sourate 11 (Hud), l'autre en sourate 16 (An-Nahl).",
+      [[0, 11, 206, "https://shamela.ws/book/3580/81"]],
+      "MT0096"
+    ],
+    [
+      "23:24",
+      "23:33",
+      [6, 10],
+      [13, 17],
+      [],
+      "",
+      [
+        [0, 23, 329, "https://shamela.ws/book/3580/121"],
+        [0, 23, 33, "https://shamela.ws/book/3580/121"]
+      ],
+      "MT0097"
+    ],
+    [
+      "11:28",
+      "11:63",
+      [0, 10],
+      [0, 11],
+      [[null, 10]],
+      "Un mot s'ajoute en verset 11:63 (absent en verset 11:28).",
+      [
+        [0, 11, 208, "https://shamela.ws/book/3580/82"],
+        [0, 11, 63, "https://shamela.ws/book/3580/82"]
+      ],
+      "MT0098"
+    ],
+    [
+      "11:28",
+      "11:88",
+      [0, 8],
+      [0, 8],
+      [],
+      "",
+      [[0, 11, 63, "https://shamela.ws/book/3580/82"]],
+      "MT0098"
+    ],
+    [
+      "11:67",
+      "11:94",
+      [0, 7],
+      [10, 17],
+      [[0, 10]],
+      "Un mot change : une forme en verset 11:67, l'autre en verset 11:94.",
+      [
+        [0, 7, 137, "https://shamela.ws/book/3580/61"],
+        [0, 11, 216, "https://shamela.ws/book/3580/84"],
+        [0, 11, 217, "https://shamela.ws/book/3580/84"]
+      ],
+      "MT0099"
+    ],
+    [
+      "11:60",
+      "11:99",
+      [0, 6],
+      [0, 5],
+      [[3, null]],
+      "Un mot s'ajoute en verset 11:60 (absent en verset 11:99).",
+      [
+        [0, 11, 213, "https://shamela.ws/book/3580/83"],
+        [1, 0, 0, "https://shamela.ws/book/9831/61"]
+      ],
+      "MT0100"
+    ],
+    [
+      "11:61",
+      "11:90",
+      [23, 28],
+      [2, 7],
+      [],
+      "",
+      [
+        [0, 11, 214, "https://shamela.ws/book/3580/84"],
+        [0, 17, 279, "https://shamela.ws/book/3580/104"]
+      ],
+      "MT0101"
+    ],
+    [
+      "11:81",
+      "15:65",
+      [9, 17],
+      [0, 10],
+      [
+        [null, 5],
+        [null, 6]
+      ],
+      "2 mots s'ajoutent en sourate 15 (Al-Hijr) (absent en sourate 11 (Hud)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 11, 220, "https://shamela.ws/book/3580/85"],
+        [0, 15, 255, "https://shamela.ws/book/3580/94"]
+      ],
+      "MT0102"
+    ],
+    [
+      "11:82",
+      "15:74",
+      [3, 10],
+      [0, 7],
+      [
+        [3, 0],
+        [7, 4]
+      ],
+      "2 mots changent : une forme en sourate 11 (Hud), l'autre en sourate 15 (Al-Hijr).",
+      [[0, 15, 256, "https://shamela.ws/book/3580/94"]],
+      "MT0103"
+    ],
+    [
+      "11:117",
+      "28:59",
+      [0, 4],
+      [0, 4],
+      [[3, 3]],
+      "Un mot change : une forme en sourate 11 (Hud), l'autre en sourate 28 (Al-Qasas).",
+      [[0, 11, 219, "https://shamela.ws/book/3580/85"]],
+      "MT0104"
+    ],
+    [
+      "12:22",
+      "28:14",
+      [0, 9],
+      [0, 10],
+      [[null, 3]],
+      "Un mot s'ajoute en sourate 28 (Al-Qasas) (absent en sourate 12 (Yusuf)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 12, 223, "https://shamela.ws/book/3580/86"],
+        [0, 28, 364, "https://shamela.ws/book/3580/132"]
+      ],
+      "MT0105"
+    ],
+    [
+      "13:38",
+      "40:78",
+      [0, 18],
+      [0, 23],
+      [
+        [null, 5],
+        [null, 6],
+        [null, 7],
+        [5, 8],
+        [null, 9],
+        [null, 10],
+        [6, 11],
+        [7, 12],
+        [8, 13]
+      ],
+      "3 mots s'ajoutent en sourate 40 (Al-Ghaafir) (absent en sourate 13 (Ar-Ra'd)). (9 différences en tout : voir la liste.)",
+      [[0, 13, 241, "https://shamela.ws/book/3580/91"]],
+      "MT0106"
+    ],
+    [
+      "13:43",
+      "29:52",
+      [6, 11],
+      [0, 4],
+      [[9, null]],
+      "Un mot s'ajoute en sourate 13 (Ar-Ra'd) (absent en sourate 29 (Al-Ankaboot)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [
+        [0, 17, 280, "https://shamela.ws/book/3580/105"],
+        [0, 17, 28, "https://shamela.ws/book/3580/105"],
+        [0, 29, 382, "https://shamela.ws/book/3580/138"]
+      ],
+      "MT0107"
+    ],
+    [
+      "17:96",
+      "29:52",
+      [0, 5],
+      [0, 4],
+      [[3, null]],
+      "Un mot s'ajoute en sourate 17 (Al-Israa) (absent en sourate 29 (Al-Ankaboot)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [
+        [0, 17, 280, "https://shamela.ws/book/3580/105"],
+        [0, 17, 28, "https://shamela.ws/book/3580/105"],
+        [0, 29, 382, "https://shamela.ws/book/3580/138"]
+      ],
+      "MT0107"
+    ],
+    [
+      "14:30",
+      "39:8",
+      [1, 7],
+      [22, 28],
+      [[3, 24]],
+      "Un mot change : une forme en sourate 14 (Ibrahim), l'autre en sourate 39 (Az-Zumar).",
+      [[0, 16, 266, "https://shamela.ws/book/3580/98"]],
+      "MT0108"
+    ],
+    [
+      "14:32",
+      "27:60",
+      [2, 8],
+      [1, 8],
+      [[null, 5]],
+      "Un mot s'ajoute en sourate 27 (An-Naml) (absent en sourate 14 (Ibrahim)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 14, 247, "https://shamela.ws/book/3580/92"],
+        [0, 27, 361, "https://shamela.ws/book/3580/131"]
+      ],
+      "MT0109"
+    ],
+    [
+      "15:35",
+      "38:78",
+      [0, 5],
+      [0, 5],
+      [[2, 2]],
+      "Un mot change : une forme en sourate 15 (Al-Hijr), l'autre en sourate 38 (Saad).",
+      [[0, 15, 252, "https://shamela.ws/book/3580/93"]],
+      "MT0110"
+    ],
+    [
+      "51:15",
+      "52:17",
+      [0, 3],
+      [0, 3],
+      [],
+      "",
+      [
+        [0, 51, 490, "https://shamela.ws/book/3580/167"],
+        [1, 0, 0, "https://shamela.ws/book/9831/56"]
+      ],
+      "MT0111"
+    ],
+    [
+      "16:24",
+      "16:30",
+      [3, 7],
+      [4, 8],
+      [],
+      "",
+      [[0, 16, 260, "https://shamela.ws/book/3580/96"]],
+      "MT0112"
+    ],
+    [
+      "16:34",
+      "39:48",
+      [0, 9],
+      [0, 10],
+      [
+        [null, 0],
+        [0, 1],
+        [3, 4]
+      ],
+      "Un mot s'ajoute en sourate 39 (Az-Zumar) (absent en sourate 16 (An-Nahl)). 2 mots changent : une forme en sourate 16 (An-Nahl), l'autre en sourate 39 (Az-Zumar).",
+      [
+        [0, 16, 262, "https://shamela.ws/book/3580/97"],
+        [0, 39, 443, "https://shamela.ws/book/3580/156"],
+        [1, 0, 0, "https://shamela.ws/book/9831/54"]
+      ],
+      "MT0113"
+    ],
+    [
+      "39:48",
+      "45:33",
+      [0, 10],
+      [0, 10],
+      [[4, 4]],
+      "Un mot change : une forme en sourate 39 (Az-Zumar), l'autre en sourate 45 (Al-Jaathiya).",
+      [
+        [0, 39, 443, "https://shamela.ws/book/3580/156"],
+        [0, 45, 478, "https://shamela.ws/book/3580/164"]
+      ],
+      "MT0113"
+    ],
+    [
+      "16:55",
+      "29:66",
+      [0, 6],
+      [0, 5],
+      [[4, 3]],
+      "Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 29 (Al-Ankaboot).",
+      [[0, 16, 266, "https://shamela.ws/book/3580/98"]],
+      "MT0114"
+    ],
+    [
+      "16:66",
+      "23:21",
+      [0, 8],
+      [0, 8],
+      [],
+      "",
+      [[0, 16, 268, "https://shamela.ws/book/3580/100"]],
+      "MT0115"
+    ],
+    [
+      "23:19",
+      "23:21",
+      [8, 12],
+      [11, 15],
+      [[9, 12]],
+      "Un mot change : une forme en verset 23:19, l'autre en verset 23:21.",
+      [
+        [0, 16, 268, "https://shamela.ws/book/3580/100"],
+        [0, 23, 328, "https://shamela.ws/book/3580/121"]
+      ],
+      "MT0115"
+    ],
+    [
+      "23:19",
+      "43:73",
+      [7, 12],
+      [0, 5],
+      [
+        [9, 2],
+        [11, 4]
+      ],
+      "2 mots changent : une forme en sourate 23 (Al-Muminoon), l'autre en sourate 43 (Az-Zukhruf).",
+      [[0, 23, 328, "https://shamela.ws/book/3580/121"]],
+      "MT0115"
+    ],
+    [
+      "16:84",
+      "16:89",
+      [0, 5],
+      [0, 5],
+      [[2, 2]],
+      "Un mot change : une forme en verset 16:84, l'autre en verset 16:89.",
+      [[1, 0, 0, "https://shamela.ws/book/9831/85"]],
+      "MT0116"
+    ],
+    [
+      "16:96",
+      "39:35",
+      [12, 16],
+      [7, 11],
+      [[14, 9]],
+      "Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 39 (Az-Zumar).",
+      [[0, 39, 442, "https://shamela.ws/book/3580/156"]],
+      "MT0117"
+    ],
+    [
+      "16:127",
+      "27:70",
+      [6, 14],
+      [0, 8],
+      [[10, 4]],
+      "Un mot change : une forme en sourate 16 (An-Nahl), l'autre en sourate 27 (An-Naml).",
+      [[0, 16, 271, "https://shamela.ws/book/3580/101"]],
+      "MT0118"
+    ],
+    [
+      "17:9",
+      "18:2",
+      [7, 14],
+      [6, 13],
+      [],
+      "",
+      [[0, 17, 272, "https://shamela.ws/book/3580/101"]],
+      "MT0119"
+    ],
+    [
+      "17:22",
+      "17:39",
+      [1, 5],
+      [9, 13],
+      [],
+      "",
+      [[0, 17, 273, "https://shamela.ws/book/3580/102"]],
+      "MT0120"
+    ],
+    [
+      "17:41",
+      "17:89",
+      [0, 4],
+      [0, 5],
+      [[null, 2]],
+      "Un mot s'ajoute en verset 17:89 (absent en verset 17:41).",
+      [
+        [0, 17, 274, "https://shamela.ws/book/3580/102"],
+        [1, 0, 0, "https://shamela.ws/book/9831/74"]
+      ],
+      "MT0121"
+    ],
+    [
+      "17:41",
+      "18:54",
+      [0, 4],
+      [0, 4],
+      [],
+      "",
+      [[0, 17, 274, "https://shamela.ws/book/3580/102"]],
+      "MT0121"
+    ],
+    [
+      "17:89",
+      "18:54",
+      [0, 8],
+      [0, 8],
+      [[2, 5]],
+      "Un mot change de place entre sourate 17 (Al-Israa) et sourate 18 (Al-Kahf).",
+      [[0, 17, 274, "https://shamela.ws/book/3580/102"]],
+      "MT0121"
+    ],
+    [
+      "18:57",
+      "32:22",
+      [0, 5],
+      [0, 5],
+      [],
+      "",
+      [[0, 18, 285, "https://shamela.ws/book/3580/107"]],
+      "MT0122"
+    ],
+    [
+      "18:72",
+      "18:75",
+      [0, 7],
+      [1, 9],
+      [[null, 4]],
+      "Un mot s'ajoute en verset 18:75 (absent en verset 18:72).",
+      [[0, 18, 288, "https://shamela.ws/book/3580/108"]],
+      "MT0123"
+    ],
+    [
+      "18:78",
+      "18:82",
+      [8, 12],
+      [32, 36],
+      [[10, 34]],
+      "Un mot change : une forme en verset 18:78, l'autre en verset 18:82.",
+      [
+        [0, 18, 289, "https://shamela.ws/book/3580/108"],
+        [1, 0, 0, "https://shamela.ws/book/9831/50"]
+      ],
+      "MT0124"
+    ],
+    [
+      "19:15",
+      "19:33",
+      [2, 8],
+      [2, 8],
+      [
+        [3, 3],
+        [5, 5],
+        [7, 7]
+      ],
+      "3 mots changent : une forme en verset 19:15, l'autre en verset 19:33.",
+      [[0, 19, 292, "https://shamela.ws/book/3580/110"]],
+      "MT0125"
+    ],
+    [
+      "19:37",
+      "43:65",
+      [0, 11],
+      [0, 11],
+      [
+        [7, 7],
+        [9, 9],
+        [11, 11]
+      ],
+      "3 mots changent : une forme en sourate 19 (Maryam), l'autre en sourate 43 (Az-Zukhruf).",
+      [[0, 19, 293, "https://shamela.ws/book/3580/111"]],
+      "MT0126"
+    ],
+    [
+      "19:60",
+      "25:70",
+      [0, 6],
+      [0, 7],
+      [[null, 5]],
+      "Un mot s'ajoute en sourate 25 (Al-Furqaan) (absent en sourate 19 (Maryam)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 19, 294, "https://shamela.ws/book/3580/111"],
+        [0, 25, 346, "https://shamela.ws/book/3580/127"],
+        [1, 0, 0, "https://shamela.ws/book/9831/47"]
+      ],
+      "MT0127"
+    ],
+    [
+      "20:10",
+      "27:7",
+      [4, 13],
+      [3, 10],
+      [
+        [5, null],
+        [9, null],
+        [10, 7],
+        [12, 9]
+      ],
+      "2 mots s'ajoutent en sourate 20 (Taa-Haa) (absent en sourate 27 (An-Naml)). Un mot change : une forme en sourate 20 (Taa-Haa), l'autre en sourate 27 (An-Naml). (4 différences en tout : voir la liste.)",
+      [
+        [0, 20, 295, "https://shamela.ws/book/3580/111"],
+        [0, 27, 355, "https://shamela.ws/book/3580/129"]
+      ],
+      "MT0128"
+    ],
+    [
+      "20:10",
+      "28:29",
+      [2, 13],
+      [11, 22],
+      [
+        [3, 12],
+        [12, 21]
+      ],
+      "2 mots changent : une forme en sourate 20 (Taa-Haa), l'autre en sourate 28 (Al-Qasas).",
+      [
+        [0, 20, 295, "https://shamela.ws/book/3580/111"],
+        [0, 27, 355, "https://shamela.ws/book/3580/129"]
+      ],
+      "MT0128"
+    ],
+    [
+      "27:7",
+      "28:29",
+      [4, 10],
+      [15, 22],
+      [
+        [null, 18],
+        [7, 19]
+      ],
+      "Un mot s'ajoute en sourate 28 (Al-Qasas) (absent en sourate 27 (An-Naml)). Un mot change : une forme en sourate 27 (An-Naml), l'autre en sourate 28 (Al-Qasas).",
+      [
+        [0, 20, 295, "https://shamela.ws/book/3580/111"],
+        [0, 27, 355, "https://shamela.ws/book/3580/129"]
+      ],
+      "MT0128"
+    ],
+    [
+      "20:130",
+      "50:39",
+      [0, 10],
+      [0, 11],
+      [[null, 11]],
+      "Un mot s'ajoute en sourate 50 (Qaaf) (absent en sourate 20 (Taa-Haa)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [[0, 50, 489, "https://shamela.ws/book/3580/167"]],
+      "MT0129"
+    ],
+    [
+      "21:2",
+      "26:5",
+      [1, 7],
+      [1, 7],
+      [[5, 5]],
+      "Un mot change : une forme en sourate 21 (Al-Anbiyaa), l'autre en sourate 26 (Ash-Shu'araa).",
+      [
+        [0, 21, 305, "https://shamela.ws/book/3580/114"],
+        [0, 26, 348, "https://shamela.ws/book/3580/127"]
+      ],
+      "MT0130"
+    ],
+    [
+      "21:35",
+      "29:57",
+      [0, 3],
+      [0, 3],
+      [],
+      "",
+      [[0, 21, 307, "https://shamela.ws/book/3580/115"]],
+      "MT0131"
+    ],
+    [
+      "21:36",
+      "25:41",
+      [4, 9],
+      [2, 7],
+      [],
+      "",
+      [[0, 21, 208, "https://shamela.ws/book/3580/116"]],
+      "MT0132"
+    ],
+    [
+      "21:52",
+      "26:70",
+      [0, 4],
+      [0, 5],
+      [[null, 5]],
+      "Un mot s'ajoute en sourate 26 (Ash-Shu'araa) (absent en sourate 21 (Al-Anbiyaa)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 21, 309, "https://shamela.ws/book/3580/116"],
+        [0, 26, 351, "https://shamela.ws/book/3580/128"],
+        [0, 26, 352, "https://shamela.ws/book/3580/128"]
+      ],
+      "MT0133"
+    ],
+    [
+      "26:70",
+      "37:85",
+      [0, 5],
+      [0, 5],
+      [[4, 4]],
+      "Un mot change : une forme en sourate 26 (Ash-Shu'araa), l'autre en sourate 37 (As-Saaffaat).",
+      [
+        [0, 26, 351, "https://shamela.ws/book/3580/128"],
+        [0, 26, 352, "https://shamela.ws/book/3580/128"]
+      ],
+      "MT0133"
+    ],
+    [
+      "21:83",
+      "38:41",
+      [2, 6],
+      [3, 7],
+      [],
+      "",
+      [[0, 21, 312, "https://shamela.ws/book/3580/117"]],
+      "MT0134"
+    ],
+    [
+      "21:84",
+      "38:43",
+      [9, 12],
+      [2, 5],
+      [],
+      "",
+      [
+        [0, 21, 312, "https://shamela.ws/book/3580/117"],
+        [0, 38, 436, "https://shamela.ws/book/3580/154"]
+      ],
+      "MT0135"
+    ],
+    [
+      "21:91",
+      "66:12",
+      [1, 6],
+      [4, 9],
+      [[4, 7]],
+      "Un mot change : une forme en sourate 21 (Al-Anbiyaa), l'autre en sourate 66 (At-Tahrim).",
+      [
+        [0, 21, 314, "https://shamela.ws/book/3580/117"],
+        [0, 66, 527, "https://shamela.ws/book/3580/176"]
+      ],
+      "MT0136"
+    ],
+    [
+      "22:8",
+      "31:20",
+      [0, 12],
+      [18, 30],
+      [],
+      "",
+      [[0, 22, 316, "https://shamela.ws/book/3580/118"]],
+      "MT0137"
+    ],
+    [
+      "22:22",
+      "32:20",
+      [0, 8],
+      [6, 12],
+      [
+        [5, null],
+        [6, null]
+      ],
+      "2 mots s'ajoutent en sourate 22 (Al-Hajj) (absent en sourate 32 (As-Sajda)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [[0, 22, 321, "https://shamela.ws/book/3580/119"]],
+      "MT0138"
+    ],
+    [
+      "32:20",
+      "34:42",
+      [15, 21],
+      [11, 17],
+      [
+        [18, 14],
+        [20, 16]
+      ],
+      "2 mots changent : une forme en sourate 32 (As-Sajda), l'autre en sourate 34 (Saba).",
+      [[0, 32, 398, "https://shamela.ws/book/3580/143"]],
+      "MT0138"
+    ],
+    [
+      "38:12",
+      "50:12",
+      [0, 3],
+      [0, 3],
+      [],
+      "",
+      [[0, 38, 437, "https://shamela.ws/book/3580/155"]],
+      "MT0139"
+    ],
+    [
+      "22:45",
+      "22:48",
+      [1, 5],
+      [1, 6],
+      [
+        [null, 3],
+        [3, 4]
+      ],
+      "Un mot s'ajoute en verset 22:48 (absent en verset 22:45). Un mot change : une forme en verset 22:45, l'autre en verset 22:48.",
+      [[0, 22, 326, "https://shamela.ws/book/3580/120"]],
+      "MT0140"
+    ],
+    [
+      "22:62",
+      "31:30",
+      [0, 16],
+      [0, 15],
+      [[10, null]],
+      "Un mot s'ajoute en sourate 22 (Al-Hajj) (absent en sourate 31 (Luqman)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [[0, 22, 327, "https://shamela.ws/book/3580/120"]],
+      "MT0141"
+    ],
+    [
+      "23:51",
+      "34:11",
+      [5, 10],
+      [7, 12],
+      [],
+      "",
+      [[0, 23, 331, "https://shamela.ws/book/3580/122"]],
+      "MT0142"
+    ],
+    [
+      "23:66",
+      "23:105",
+      [2, 5],
+      [2, 5],
+      [],
+      "",
+      [[0, 23, 335, "https://shamela.ws/book/3580/123"]],
+      "MT0143"
+    ],
+    [
+      "23:83",
+      "27:68",
+      [0, 11],
+      [0, 11],
+      [[4, 2]],
+      "Un mot change de place entre sourate 23 (Al-Muminoon) et sourate 27 (An-Naml).",
+      [
+        [0, 23, 333, "https://shamela.ws/book/3580/122"],
+        [1, 0, 0, "https://shamela.ws/book/9831/93"]
+      ],
+      "MT0144"
+    ],
+    [
+      "24:20",
+      "24:21",
+      [0, 4],
+      [18, 22],
+      [],
+      "",
+      [[0, 24, 337, "https://shamela.ws/book/3580/124"]],
+      "MT0145"
+    ],
+    [
+      "27:10",
+      "28:31",
+      [1, 13],
+      [2, 14],
+      [],
+      "",
+      [
+        [0, 27, 356, "https://shamela.ws/book/3580/129"],
+        [0, 27, 357, "https://shamela.ws/book/3580/129"]
+      ],
+      "MT0146"
+    ],
+    [
+      "27:12",
+      "28:32",
+      [1, 20],
+      [1, 26],
+      [
+        [null, 9],
+        [10, 10],
+        [null, 11],
+        [null, 12],
+        [null, 13],
+        [11, 15],
+        [12, 16],
+        [null, 17],
+        [null, 18],
+        [15, 21]
+      ],
+      "2 mots s'ajoutent en sourate 28 (Al-Qasas) (absent en sourate 27 (An-Naml)). Un mot change : une forme en sourate 27 (An-Naml), l'autre en sourate 28 (Al-Qasas). (10 différences en tout : voir la liste.)",
+      [
+        [0, 20, 299, "https://shamela.ws/book/3580/113"],
+        [0, 27, 358, "https://shamela.ws/book/3580/130"],
+        [0, 27, 359, "https://shamela.ws/book/3580/130"],
+        [1, 0, 0, "https://shamela.ws/book/9831/67"]
+      ],
+      "MT0147"
+    ],
+    [
+      "27:53",
+      "41:18",
+      [1, 4],
+      [1, 4],
+      [],
+      "",
+      [[0, 27, 360, "https://shamela.ws/book/3580/130"]],
+      "MT0148"
+    ],
+    [
+      "28:20",
+      "36:20",
+      [2, 6],
+      [1, 6],
+      [[null, 4]],
+      "Un mot s'ajoute en sourate 36 (Yaseen) (absent en sourate 28 (Al-Qasas)). Indice : le mot en plus est dans la sourate la plus courte. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 28, 365, "https://shamela.ws/book/3580/132"],
+        [0, 36, 421, "https://shamela.ws/book/3580/149"]
+      ],
+      "MT0149"
+    ],
+    [
+      "28:27",
+      "37:102",
+      [26, 30],
+      [22, 26],
+      [],
+      "",
+      [[0, 28, 366, "https://shamela.ws/book/3580/133"]],
+      "MT0150"
+    ],
+    [
+      "28:37",
+      "28:85",
+      [2, 6],
+      [10, 14],
+      [[4, 12]],
+      "Un mot change : une forme en verset 28:37, l'autre en verset 28:85.",
+      [
+        [0, 28, 367, "https://shamela.ws/book/3580/133"],
+        [1, 0, 0, "https://shamela.ws/book/9831/88"]
+      ],
+      "MT0151"
+    ],
+    [
+      "28:38",
+      "40:37",
+      [20, 24],
+      [3, 7],
+      [],
+      "",
+      [[0, 28, 368, "https://shamela.ws/book/3580/133"]],
+      "MT0152"
+    ],
+    [
+      "28:60",
+      "42:36",
+      [1, 13],
+      [1, 12],
+      [[7, null]],
+      "Un mot s'ajoute en sourate 28 (Al-Qasas) (absent en sourate 42 (Ash-Shura)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [
+        [0, 28, 370, "https://shamela.ws/book/3580/134"],
+        [0, 28, 371, "https://shamela.ws/book/3580/134"]
+      ],
+      "MT0153"
+    ],
+    [
+      "31:7",
+      "45:8",
+      [1, 16],
+      [3, 14],
+      [
+        [3, 5],
+        [4, 6],
+        [9, null],
+        [10, null],
+        [11, null],
+        [12, null]
+      ],
+      "2 mots changent : une forme en sourate 31 (Luqman), l'autre en sourate 45 (Al-Jaathiya). Un mot s'ajoute en sourate 31 (Luqman) (absent en sourate 45 (Al-Jaathiya)). (6 différences en tout : voir la liste.)",
+      [
+        [0, 31, 394, "https://shamela.ws/book/3580/142"],
+        [1, 0, 0, "https://shamela.ws/book/9831/71"]
+      ],
+      "MT0154"
+    ],
+    [
+      "31:14",
+      "46:15",
+      [0, 4],
+      [0, 6],
+      [[null, 3]],
+      "Un mot s'ajoute en sourate 46 (Al-Ahqaf) (absent en sourate 31 (Luqman)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 29, 374, "https://shamela.ws/book/3580/135"],
+        [0, 29, 14, "https://shamela.ws/book/3580/135"]
+      ],
+      "MT0155"
+    ],
+    [
+      "31:17",
+      "42:43",
+      [13, 17],
+      [3, 7],
+      [[15, 5]],
+      "Un mot change : une forme en sourate 31 (Luqman), l'autre en sourate 42 (Ash-Shura).",
+      [[0, 42, 463, "https://shamela.ws/book/3580/161"]],
+      "MT0156"
+    ],
+    [
+      "32:5",
+      "70:4",
+      [8, 14],
+      [3, 10],
+      [[null, 8]],
+      "Un mot s'ajoute en sourate 70 (Al-Ma'aarij) (absent en sourate 32 (As-Sajda)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en second du Mushaf.",
+      [
+        [0, 32, 396, "https://shamela.ws/book/3580/142"],
+        [0, 32, 4, "https://shamela.ws/book/3580/143"]
+      ],
+      "MT0157"
+    ],
+    [
+      "33:38",
+      "48:23",
+      [11, 17],
+      [0, 6],
+      [
+        [13, 2],
+        [14, 3],
+        [15, 4]
+      ],
+      "3 mots changent : une forme en sourate 33 (Al-Ahzaab), l'autre en sourate 48 (Al-Fath).",
+      [[0, 33, 404, "https://shamela.ws/book/3580/145"]],
+      "MT0158"
+    ],
+    [
+      "33:62",
+      "48:23",
+      [0, 12],
+      [0, 12],
+      [
+        [2, 2],
+        [3, 3],
+        [4, 4]
+      ],
+      "3 mots changent : une forme en sourate 33 (Al-Ahzaab), l'autre en sourate 48 (Al-Fath).",
+      [[0, 33, 404, "https://shamela.ws/book/3580/145"]],
+      "MT0158"
+    ],
+    [
+      "40:85",
+      "48:23",
+      [9, 12],
+      [1, 4],
+      [],
+      "",
+      [[0, 33, 404, "https://shamela.ws/book/3580/145"]],
+      "MT0158"
+    ],
+    [
+      "37:27",
+      "37:50",
+      [1, 4],
+      [1, 4],
+      [],
+      "",
+      [[0, 37, 427, "https://shamela.ws/book/3580/150"]],
+      "MT0159"
+    ],
+    [
+      "37:50",
+      "68:30",
+      [0, 3],
+      [0, 3],
+      [],
+      "",
+      [[0, 37, 427, "https://shamela.ws/book/3580/150"]],
+      "MT0159"
+    ],
+    [
+      "37:35",
+      "47:19",
+      [5, 8],
+      [2, 5],
+      [],
+      "",
+      [[0, 37, 429, "https://shamela.ws/book/3580/151"]],
+      "MT0160"
+    ],
+    [
+      "38:4",
+      "50:2",
+      [1, 8],
+      [2, 8],
+      [[6, 6]],
+      "Un mot change : une forme en sourate 38 (Saad), l'autre en sourate 50 (Qaaf).",
+      [
+        [0, 38, 434, "https://shamela.ws/book/3580/154"],
+        [0, 50, 487, "https://shamela.ws/book/3580/166"]
+      ],
+      "MT0161"
+    ],
+    [
+      "38:8",
+      "54:25",
+      [1, 6],
+      [2, 5],
+      [[2, null]],
+      "Un mot s'ajoute en sourate 38 (Saad) (absent en sourate 54 (Al-Qamar)). Indice : le mot en plus est dans la sourate la plus longue. Indice : le mot en plus est dans la sourate qui vient en premier du Mushaf.",
+      [[0, 38, 435, "https://shamela.ws/book/3580/154"]],
+      "MT0162"
+    ],
+    [
+      "40:22",
+      "64:6",
+      [0, 5],
+      [0, 5],
+      [[1, 1]],
+      "Un mot change : une forme en sourate 40 (Al-Ghaafir), l'autre en sourate 64 (At-Taghaabun).",
+      [[0, 40, 448, "https://shamela.ws/book/3580/157"]],
+      "MT0163"
+    ],
+    [
+      "41:52",
+      "46:10",
+      [0, 6],
+      [0, 6],
+      [],
+      "",
+      [[0, 41, 462, "https://shamela.ws/book/3580/161"]],
+      "MT0164"
+    ],
+    [
+      "67:16",
+      "67:17",
+      [0, 4],
+      [1, 5],
+      [],
+      "",
+      [[0, 67, 529, "https://shamela.ws/book/3580/177"]],
+      "MT0165"
+    ],
+    [
+      "71:24",
+      "71:28",
+      [4, 7],
+      [10, 13],
+      [],
+      "",
+      [[0, 71, 537, "https://shamela.ws/book/3580/179"]],
+      "MT0166"
+    ],
+    [
+      "83:7",
+      "83:18",
+      [0, 4],
+      [0, 4],
+      [[3, 3]],
+      "Un mot change : une forme en verset 83:7, l'autre en verset 83:18.",
+      [[0, 83, 544, "https://shamela.ws/book/3580/185"]],
+      "MT0167"
+    ],
+    [
+      "89:15",
+      "89:16",
+      [2, 9],
+      [1, 8],
+      [
+        [5, 4],
+        [6, 5],
+        [7, 6]
+      ],
+      "3 mots changent : une forme en verset 89:15, l'autre en verset 89:16.",
+      [[0, 89, 562, "https://shamela.ws/book/3580/187"]],
+      "MT0168"
+    ],
+    [
+      "90:4",
+      "95:4",
+      [0, 3],
+      [0, 3],
+      [],
+      "",
+      [[0, 95, 568, "https://shamela.ws/book/3580/189"]],
+      "MT0169"
+    ],
+    [
+      "99:7",
+      "99:8",
+      [1, 5],
+      [1, 5],
+      [[4, 4]],
+      "Un mot change : une forme en verset 99:7, l'autre en verset 99:8.",
+      [
+        [0, 16, 262, "https://shamela.ws/book/3580/97"],
+        [0, 99, 572, "https://shamela.ws/book/3580/191"]
+      ],
+      "MT0170"
+    ]
+  ]
+}

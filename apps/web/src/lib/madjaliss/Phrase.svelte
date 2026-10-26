@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { skeleton } from '@awform/content/audio-cle';
   import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
@@ -32,6 +33,28 @@
     traduction?: boolean;
   } = $props();
   const titre = $derived(p.t === 'titre' || p.t === 'vers_titre');
+  /**
+   * 26/10/2026 : citations du Coran de la phrase (références des données, texte de Tanzil) : quand la phrase n'a pas de
+   * voix de synthèse (garde : jamais sur le Coran), bouton « Récitation » de Muḥammad Ayyūb (versets entiers, chargé à
+   * la demande)
+   */
+  /** squelette de la Basmala complète, écrit par codes */
+  const BASMALA = String.fromCharCode(
+    ...[0x628, 0x633, 0x645, 0x20, 0x644, 0x644, 0x647, 0x20, 0x644, 0x631, 0x62d, 0x645, 0x646],
+    ...[0x20, 0x644, 0x631, 0x62d, 0x64a, 0x645],
+  );
+  const refsCoran = $derived(
+    p.explication || p.masque
+      ? []
+      : [
+          ...new Set([
+            ...(p.h ? [] : segments(p)).flatMap((x) => (typeof x === 'string' ? [] : [x.ref])),
+            ...(p.q ?? []).map((q) => q.ref),
+            // Basmala complète en ouverture du livre : récitée par Ayyūb (décision du référent du 26/10/2026)
+            ...(typeof p.ar === 'string' && skeleton(p.ar) === BASMALA ? ['b:1'] : []),
+          ]),
+        ].filter((r): r is string => !!r),
+  );
   const blocs = $derived([
     { nom: 'liste', lignes: p.liste ?? [] },
     { nom: 'exemples', lignes: p.exemples ?? [] },
@@ -79,6 +102,20 @@
           data-lecteur="m"
           onclick={(e) => void ecouter(e.currentTarget).catch(() => undefined)}
           ><Icon name="oreille" size={18} /><Bidi text={t('audio.ecouter')} /></button
+        >
+      </p>
+    {:else if refsCoran.length}
+      <p class="ecoute">
+        <button
+          type="button"
+          class="ghost"
+          data-testid="mj-recitation"
+          data-versets={refsCoran.join(' ')}
+          data-audio="r:{refsCoran.join('|')}"
+          data-lecteur="m"
+          aria-label={t('audio.recitation_aria', { v: refsCoran.join(', ').replace('b:1', '1:1') })}
+          onclick={(e) => void ecouter(e.currentTarget).catch(() => undefined)}
+          ><Icon name="oreille" size={18} /><Bidi text={t('audio.recitation_ayyub')} /></button
         >
       </p>
     {/if}

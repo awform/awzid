@@ -406,6 +406,15 @@ test.describe('« canal bêta » réglé par l’administrateur', () => {
     await expect
       .poll(() => page.evaluate(() => (window as unknown as { __actifs: number }).__actifs))
       .toBeGreaterThan(0);
+    // 26/10/2026 : le petit lecteur de l'application pilote la voix du parcours (pause, ±5 s, vitesse) ; l'indice « ⋯ »
+    // montre qu'il se règle, et « Régler » ouvre les réglages
+    await expect(page.getByTestId('lecteur')).toBeVisible();
+    await expect(page.getByTestId('lecteur-regler')).toContainText('⋯');
+    await page.getByTestId('lecteur-regler').click();
+    await expect(page.getByTestId('lecteur')).toHaveAttribute('data-deplie', 'true');
+    await expect(page.getByTestId('lecteur-recul')).toBeVisible();
+    await expect(page.getByTestId('lecteur-vitesse-1.25')).toBeVisible();
+    await page.getByTestId('lecteur-replier').click();
     // la Fātiḥa : Ayyūb, verset par verset, de 1:2 à 1:7 (jamais 1:1) ; aucune synthèse
     await page.locator('.ruban button[data-etape="S5.e3"]').click();
     await expect(page.locator('[data-id="S5.fatiha"] .verset')).toHaveCount(6);

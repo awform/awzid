@@ -1,7 +1,7 @@
 <script lang="ts">
   import Bidi from '$lib/Bidi.svelte';
   import { t } from '$lib/i18n';
-  import { audioIdFor, leconsSource, type LevelAudio } from '$lib/lecons-audio';
+  import { audioIdFor, sourceLecteur, type LevelAudio } from '$lib/lecons-audio';
   import type { Forme } from './donnees';
 
   /**
@@ -22,7 +22,7 @@
     const declencheur = ev.currentTarget as HTMLElement;
     try {
       const { ouvrir } = await import('$lib/lecteur/ouvrir');
-      await ouvrir({ declencheur, type: 'l', resoudre: leconsSource });
+      await ouvrir({ declencheur, type: 'l', resoudre: sourceLecteur });
     } catch {
       /* fichier ou lecteur indisponible : la phrase reste lisible */
     }

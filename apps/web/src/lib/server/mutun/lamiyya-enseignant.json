@@ -1,1 +1,620 @@
-{"v":2,"id":"lamiyya","version":"700983585f78","statut":"EN_ATTENTE_SECONDE_LECTURE","decoupage":"Découpage proposé par Claude par blocs de sens (4 à 19 vers), à comparer avec la pratique de 2 ou 3 maîtres (daara, mahdara). Cycle 3, après al-Ājurrūmiyya.","publication":"Les séances sont longues là où le poème énumère des listes de verbes (S04, S05, S08) : à scinder avec l'avis d'un maître.","comite":[],"phrases":[{"id":"LAM-0002","a_verifier":["F semble lire « سادة آله » là où S lit « سادتنا آله » : à vérifier"],"variantes":[{"id":"V-L1","sujet":"Vers 2, second hémistiche : « سادتنا آله » (S) ou « سادة آله » (F, lecture douteuse).","decision":"S ; à vérifier"}]},{"id":"LAM-0005","a_verifier":["voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : بِفَعْلَلَ الْفِعْلُ ذُو التَّجْرِيدِ أَوْ فَعُلَا * يَأْتِي وَمَكْسُورَ عَيْنٍ أَوْ عَلَى فَعَلَا)"],"variantes":[]},{"id":"LAM-0006","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَالضَّمَّ مِنْ فَعُلَ الْزَمْ فِي الْمُضَارِعِ وَافْـ * ـتَحْ مَوْضِعَ الْكَسْرِ فِي الْمَبْنِيِّ مِنْ فَعِلَا)"],"variantes":[]},{"id":"LAM-0007","a_verifier":["« اوله » (le sens de « ceux-là en premier ») est incertain ; ce vers manque à la numérotation « additions » de S (coloré en rouge) mais est dans le témoin F : voir RAPPORT","voyelle_a_confirmer : 3 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَجْهَانِ فِيهِ مِنِ احْسَبْ مَعْ وَغِرْتَ وَحَرْ * تَ انْعَمْ بَئِسْتَ يَئِسْتَ اوْلَهْ يَبِسْ وَهِلَا)"],"variantes":[{"id":"V-L2","sujet":"Vers S21 et S88 : colorés en rouge (additions) dans S, mais présents dans le témoin F entre S17 et S23, et entre S83 et S95. Ils sont tenus pour originaux, ce qui donne 114 vers (nombre traditionnel).","decision":"gardés (LAM-0007 = S21, LAM-0032 = S88). Confirmé le 13/10 : les deux vers figurent, aux rangs 7 et 32, dans l'édition critique (14 manuscrits)."}]},{"id":"LAM-0008","a_verifier":["undefined (lecture retenue : وَأَفْرِدِ الْكَسْرَ فِيمَا مِنْ وَرِثْ وَوَلِي * وَرِمْ وَرِعْتَ وَمِقْتَ مَعْ وَفِقْتَ حُلَى)"],"variantes":[]},{"id":"LAM-0009","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَثِقْتَ مَعْ وَرِيَ الْمُخُّ احْوِهَا وَأَدِمْ * كَسْرًا لِعَيْنِ مُضَارِعٍ يَلِي فَعِلَا)"],"variantes":[]},{"id":"LAM-0011","a_verifier":["Lecture de la seconde partie du vers (« كما لازم ذا ضم احتملا ») à faire confirmer par un maître","voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَضُمَّ عَيْنَ مُعَدَّاهُ وَيَنْدُرُ ذَا * كَسْرٌ كَمَا لَازِمٌ ذَا ضَمٍّ احْتُمِلَا)"],"variantes":[]},{"id":"LAM-0013","a_verifier":["Sens général sûr ; détail de « مثل جلا » à confirmer","undefined (lecture retenue : وَبَتَّ قَطْعًا وَنَمَّ وَاضْمُمَنَّ مَعَ الْـ * ـلُزُومِ فِي امْرُرْ بِهِ وَجَلَّ مِثْلِ جَلَا)"],"variantes":[]},{"id":"LAM-0017","a_verifier":["Plusieurs mots (« ونبت »، « بخلا ») à vérifier ; traduction mot à mot"],"variantes":[]},{"id":"LAM-0018","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : قَسَّتْ كَذَا وَعِ وَجْهَيْ صَدَّ أَثَّ وَخَرَّ * الصَّلْدُ حَدَّتْ وَثَرَّتْ جَدَّ مِنْ عَمِلَا)"],"variantes":[]},{"id":"LAM-0019","a_verifier":["undefined (lecture retenue : تَرَّتْ وَطَرَّتْ وَدَرَّتْ جَمَّ شَبَّ حَصَا * نٌ عَنَّ فَحَّتْ وَشَذَّ شَحَّ أَيْ بَخِلَا)"],"variantes":[]},{"id":"LAM-0022","a_verifier":["« لِبَذٍّ » à vérifier","voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : لِمَا لِبَذٍّ مُفَاخِرٍ وَلَيْسَ لَهُ * دَاعِي لُزُومِ انْكِسَارِ الْعَيْنِ نَحْوُ قَلَا)"],"variantes":[]},{"id":"LAM-0024","a_verifier":["Lecture « فَتْحًا اشِعْ » (fin du premier hémistiche) à vérifier"],"variantes":[]},{"id":"LAM-0026","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : عَيْنَ الْمُضَارِعِ مِنْ فَعَلْتُ حَيْثُ خَلَا * مِنْ جَالِبِ الْفَتْحِ كَالْمَبْنِيِّ مِنْ عَتِلَا)"],"variantes":[]},{"id":"LAM-0027","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : فَاكْسِرْ أَوُ اضْمُمْ إِذَا تَعْيِينُ بَعْضِهِمَا * لِفَقْدِ شُهْرَةٍ اوْ دَاعٍ قَدِ اعْتَزَلَا)"],"variantes":[]},{"id":"LAM-0028","a_verifier":["undefined (lecture retenue : وَانْقُلْ لِفَاءِ الثُّلَاثِيْ شَكْلَ عَيْنٍ إِذَا اعْـ * ـتَلَّتْ وَكَانَ بِتَا الْإِضْمَارِ مُتَّصِلَا)"],"variantes":[]},{"id":"LAM-0031","a_verifier":["undefined (lecture retenue : وَافْعَلَّ ذَا أَلِفٍ فِي الْحَشْوِ رَابِعَةً * وَعَارِيًا وَكَذَاكَ اهْبَيَّخَ اعْتَدَلَا)"],"variantes":[]},{"id":"LAM-0032","a_verifier":["Vers présent dans F (Fès) mais coloré comme addition dans S : voir RAPPORT"],"variantes":[{"id":"V-L2","sujet":"Vers S21 et S88 : colorés en rouge (additions) dans S, mais présents dans le témoin F entre S17 et S23, et entre S83 et S95. Ils sont tenus pour originaux, ce qui donne 114 vers (nombre traditionnel).","decision":"gardés (LAM-0007 = S21, LAM-0032 = S88). Confirmé le 13/10 : les deux vers figurent, aux rangs 7 et 32, dans l'édition critique (14 manuscrits)."}]},{"id":"LAM-0033","a_verifier":["Liste de verbes : sens non glosés dans le vers","voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَاحْبَنْطَأَ احْوَنْصَلَ اسْلَنْقَى تَمَسْكَنَ سَلْـ * ـقَى قَلْنَسَتْ جَوْرَبَتْ هَرْوَلْتُ مُرْتَحِلَا)"],"variantes":[]},{"id":"LAM-0034","a_verifier":["undefined (lecture retenue : زَهْزَقْتَ هَلْقَمْتَ رَهْمَسْتَ اكْوَأَلَّ تَرَهْـ * ـشَفْتَ اجْفَأَظَّ اسْلَهَمَّ قَطْرَنَ الْجَمَلَا)"],"variantes":[]},{"id":"LAM-0035","a_verifier":["Coupe des hémistiches proposée d'après le sens","Coupe en hémistiches (ligne longue dans S) déduite de l'espacement et du mètre : à vérifier","undefined (lecture retenue : تَرْمَسْتَ كَلْتَبْتَ جَلْمَطْتَ وَغَلْصَمَ * ثُمَّ اذْلَمَّسَ اهْرَمَّعَتْ وَاعْلَنْكَسَ انْتُخِلَا)"],"variantes":[]},{"id":"LAM-0036","a_verifier":["undefined (lecture retenue : وَاعْلَوَّطَ اغْثَوْجَجَتْ بَيْطَرْتَ سَنْبَلَ زَمْـ * ـلَقَ اضْمُمَنْ لِتَسَلْقَى وَاجْتَنِبْ خَلَلَا)"],"variantes":[]},{"id":"LAM-0037","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : بِبَعْضِ نَأْتِي الْمُضَارِعَ افْتَتِحْ وَلَهُ * ضَمٌّ إِذَا بِالرُّبَاعِيْ مُطْلَقًا وُصِلَا)"],"variantes":[]},{"id":"LAM-0040","a_verifier":["voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : فِي الْيَا وَفِي غَيْرِهَا إِنْ أُلْحِقَا بَأَبَى * أَوْ مَا لَهُ الْوَاوُ فَاءٌ نَحْوُ قَدْ وَجِلَا)"],"variantes":[]},{"id":"LAM-0041","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَكَسْرُ مَا قَبْلَ آخِرِ الْمُضَارِعِ مِنْ * ذَا الْبَابِ يَلْزَمُ إِنْ مَاضِيهِ قَدْ حُظِلَا)"],"variantes":[]},{"id":"LAM-0042","a_verifier":["Vers obscur : « بِوِلَا » à vérifier"],"variantes":[]},{"id":"LAM-0043","a_verifier":["Dernier mot du second hémistiche (« اتَّصَلَا ») : portée à confirmer"],"variantes":[]},{"id":"LAM-0044","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : بِعَيْنٍ اعْتَلَّ وَاجْعَلْ قَبْلَ الْآخِرِ فِي الْـ * ـمُضِيِّ كَسْرًا وَفَتْحًا فِي سِوَاهُ تَلَا)"],"variantes":[]},{"id":"LAM-0045","a_verifier":["Lecture proposée : ثَالِثَ ذِي هَمْزِ وَصْلٍ ضُمَّ مَعْهُ وَمَعْ * تَاءِ الْمُطَاوَعَةِ اضْمُمْ تِلْوَهَا بِوِلَا"],"variantes":[],"decision":"Vers masqué à l'élève (RESTE MASQUÉ) : La lecture de S « مَعَهُ » est contredite par l'édition critique (« مَعْهُ ») mais aucun commentateur lu ne vocalise ce mot ; seul le texte de l'éditeur, l'usage du poète (« مَعْ » avec sukūn dans le même vers, vers 69, et « مَعْهَا » au vers 97 chez al-Qāsim) et le mètre vont dans ce sens. Un seul témoin pour la voyelle : non confirmé. Lecture proposée : « مَعْهُ »."},{"id":"LAM-0046","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَمَا لِفَا نَحْوِ بَاعَ اجْعَلْ لِثَالِثِ نَحْـ * ـوِ اخْتَارَ وَانْقَادَ كَاخْتِيرَ الَّذِي فَضَلَا)"],"variantes":[]},{"id":"LAM-0050","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَشَذَّ بِالْحَذْفِ مُرْ وَخُذْ وَكُلْ وَفَشَا * وَأْمُرْ وَمُسْتَنْدَرٌ تَتْمِيمُ خُذْ وَكُلَا)"],"variantes":[]},{"id":"LAM-0051","a_verifier":["undefined (lecture retenue : كَوَزْنِ فَاعِلٍ اسْمُ فَاعِلٍ جُعِلَا * مِنَ الثُّلَاثِي الَّذِي مَا وَزْنُهُ فَعُلَا)"],"variantes":[]},{"id":"LAM-0052","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَمِنْهُ صِيغَ كَسَهْلٍ وَالظَّرِيفِ وَقَدْ * يَكُونُ أَفْعَلَ أَوْ فَعَالًا أَوْ فَعَلَا)"],"variantes":[]},{"id":"LAM-0053","a_verifier":["undefined (lecture retenue : وَكَالْفُرَاتِ وَعِفْرٍ وَالْحَصُورِ وَغُمْـ * ـرٍ عَاقِرٍ جُنُبٍ وَمُشْبِهِ ثَمِلَا)"],"variantes":[]},{"id":"LAM-0054","a_verifier":["undefined (lecture retenue : وَصِيغَ مِنْ لَازِمٍ مُوَازِنٍ فَعِلَا * بِوَزْنِهِ كَشَجٍ وَمُشْبِهٍ عَجِلَا)"],"variantes":[]},{"id":"LAM-0055","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَالشَّأْزَ وَالْأَشْنَبَ الْجَذْلَانَ ثُمَّتَ قَدْ * يَأْتِي كَفَانٍ وَشِبْهِ وَاحِدِ الْبُخَلَا)"],"variantes":[]},{"id":"LAM-0056","a_verifier":["undefined (lecture retenue : حَمْلًا عَلَى غَيْرِهِ لِنِسْبَةٍ كَخَفِيـ * ـفٍ طَيِّبٍ أَشِيبٍ فِي الصَّوْغِ مِنْ فَعَلَا)"],"variantes":[]},{"id":"LAM-0057","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَفَاعِلٌ صَالِحٌ لِلْكُلِّ إِنْ قُصِدَ الْـ * ـحُدُوثُ نَحْوُ غَدًا ذَا جَاذِلٌ جَذَلَا)"],"variantes":[]},{"id":"LAM-0058","a_verifier":["undefined (lecture retenue : وَبِاسْمِ فَاعِلِ غَيْرِ ذِي الثَّلَاثَةِ جِئْ * وَزْنَ الْمُضَارِعِ لَكِنْ أَوَّلًا جُعِلَا)"],"variantes":[]},{"id":"LAM-0059","a_verifier":["undefined (lecture retenue : مِيمًا تُضَمُّ وَإِنْ مَا قَبْلَ آخِرِهِ * فَتَحْتَ صَارَ اسْمَ مَفْعُولٍ وَقَدْ حَصَلَا)"],"variantes":[]},{"id":"LAM-0060","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : مِنْ ذِي الثَّلَاثَةِ بِالْمَفْعُولِ مُتَّزِنَا * وَمَا أَتَى كَفَعِيلٍ فَهْوَ قَدْ عُدِلَا)"],"variantes":[]},{"id":"LAM-0061","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : بِهِ عَنِ الْأَصْلِ وَاسْتَغْنَوْا بِنَحْوِ نَجَا * وَالنِّقْضِ عَنْ وَزْنِ مَفْعُولٍ وَمَا عَمِلَا)"],"variantes":[]},{"id":"LAM-0062","a_verifier":["« أَوْزَانٌ » est traduit « poids » (aucune restriction à deux) : à vérifier","voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَلِلْمَصَادِرِ أَوْزَانٌ أُبَيِّنُهَا * فَلِلثُّلَاثِيِّ مَا أُبْدِيهِ مُنْتَخَلَا)"],"variantes":[]},{"id":"LAM-0064","a_verifier":["voyelle_a_confirmer : 3 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : فَعْلَانُ فِعْلَانُ فُعْلَانٌ وَنَحْوُ جَلَا * رِضًى هُدًى وَصَلَاحٌ ثُمَّ زِدْ فَعَلَا)"],"variantes":[]},{"id":"LAM-0066","a_verifier":["undefined (lecture retenue : فِعَالَةٌ وَفُعَالَةٌ وَجِيءَ بِهِمَا * مُجَرَّدَيْنِ مِنَ التَّا وَالْفُعُولِ صِلَا)"],"variantes":[]},{"id":"LAM-0067","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : ثُمَّ الْفَعِيلَ وَبِالتَّا ذَانِ وَالْفَعَلَا * نُ أَوْ كَبَيْنُونَةٍ وَمُشْبِهٍ شُغُلَا)"],"variantes":[]},{"id":"LAM-0068","a_verifier":["voyelle_a_confirmer : 3 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَفُعْلَلٌ وَفُعُولٌ مَعْ فَعَالِيَةٍ * كَذَا فُعَيْلِيَّةٌ فُعْلَّةٌ فُعَلَى)","Lecture proposée : undefined"],"variantes":[],"decision":"Vers masqué à l'élève (RESTE MASQUÉ (trois voyelles corrigées, une variante non tranchée)) : Les trois voyelles « فَعُولٌ », « فُعُلَّةٌ », « فَعَلَى » sont corrigées avec preuve. Mais le nom de schème « فُعَيْلِيَّةٌ » (Baḥraq, qui est le commentaire de référence du livre) ou « فَعِيلِيَّةٌ » (al-Bijāʾī et l'édition critique) reste ouvert : Ibn Ḥamdūn dit que les deux sont admis. Le choix change la liste des schèmes enseignée : décision d'un maître requise."},{"id":"LAM-0071","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : فَعْلٌ مَقِيسُ الْمُعَدَّى وَالْفُعُولُ لِغَيْـ * ـرِهِ سِوَى فِعْلِ صَوْتٍ ذَا الْفُعَالُ جَلَا)"],"variantes":[]},{"id":"LAM-0072","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَمَا عَلَى فَعِلَ اسْتَحَقَّ مَصْدَرُهُ * إِنْ لَمْ يَكُنْ ذَا تَعَدٍّ كَوْنُهُ فَعَلَا)"],"variantes":[]},{"id":"LAM-0074","a_verifier":["Fin du vers à faire expliquer"],"variantes":[]},{"id":"LAM-0075","a_verifier":["« بِالْفِعَالِ جَلَا » à vérifier"],"variantes":[]},{"id":"LAM-0076","a_verifier":["Fin du vers (« وَلَا تَهَلَا ») à vérifier","voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : فَعَالَةٌ لِخِصَالٍ وَالْفِعَالَةُ دَعْ * لِحِرْفَةٍ أَوْ وِلَايَةٍ وَلَا تَهَلَا)"],"variantes":[]},{"id":"LAM-0077","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : لِمَرَّةٍ فَعْلَةٌ وَفِعْلَةٌ وَضَعُوا * لِهَيْئَةٍ غَالِبًا كَمِشْيَةِ الْخُيَلَا)"],"variantes":[]},{"id":"LAM-0078","a_verifier":["« حَازَهُ » à vérifier"],"variantes":[]},{"id":"LAM-0079","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَاضْمُمْهُ مِنْ فِعْلٍ التَّا زِيدَ أَوَّلَهُ * وَاكْسِرْهُ سَابِقَ حَرْفٍ يَقْبَلُ الْعِلَلَا)"],"variantes":[]},{"id":"LAM-0080","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : لِفَعْلَلَ ائْتِ بِفِعْلَالٍ وَفَعْلَلَةٍ * وَفَعِّلَ اجْعَلْ لَهُ التَّفْعِيلَ حَيْثُ خَلَا)"],"variantes":[]},{"id":"LAM-0081","a_verifier":["undefined (lecture retenue : مِنْ لَامٍ اعْتَلَّ لِلْحَاوِيهِ تَفْعِلَةً * أَلْزِمْ وَلِلْعَارِ مِنْهُ رُبَّمَا بُذِلَا)"],"variantes":[]},{"id":"LAM-0082","a_verifier":["undefined (lecture retenue : وَمَنْ يَصِلْ بِتِفِعَّالٍ تَفَعَّلَ وَالْـ * ـفِعَّالِ فَعَّلَ فَاحْمَدْهُ بِمَا فَعَلَا)"],"variantes":[]},{"id":"LAM-0085","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَبِالْفُعَلِّيلَةِ افْعَلَلَّ قَدْ جَعَلُوا * مُسْتَغْنِيًا لَا لُزُومًا فَاعْرِفِ الْمُثُلَا)"],"variantes":[]},{"id":"LAM-0086","a_verifier":["undefined (lecture retenue : لِفَاعَلَ اجْعَلْ فِعَالًا أَوْ مُفَاعَلَةً * وَفِعْلَةٌ عَنْهُمَا قَدْ نَابَ فَاحْتُمِلَا)"],"variantes":[]},{"id":"LAM-0088","a_verifier":["voyelle_a_confirmer : 3 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : مِنَ الْمُزَالِ وَإِنْ تَلْحَقْ بِغَيْرِهِمَا * تُبِنْ بِهَا مَرَّةً مِنَ الَّذِي عُمِلَا)"],"variantes":[]},{"id":"LAM-0090","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : مِنْ ذِي الثَّلَاثَةِ لَا يَفْعِلُ لَهُ ائْتِ بِمَفْـ * ـعَلٍ لِمَصْدَرٍ اوْ مَا فِيهِ قَدْ عُمِلَا)"],"variantes":[]},{"id":"LAM-0091","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : كَذَاكَ مُعْتَلُّ لَامٍ مُطْلَقًا وَإِذَا الْـ * ـفَا كَانَ وَاوًا بِكَسْرٍ مُطْلَقًا حَصَلَا)"],"variantes":[]},{"id":"LAM-0092","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَلَا يُؤَثِّرُ كَوْنُ الْوَاوِ فَاءً اذَا * مَا اعْتَلَّ لَامٌ كَمَوْلىً فَارْعَ صِدْقَ وَلَا)"],"variantes":[]},{"id":"LAM-0093","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : فِي غَيْرِ ذَا عَيْنَهُ افْتَحْ مَصْدَرًا وَسِوَاـ * ـهُ اكْسِرْ وَشَذَّ الَّذِي عَنْ ذَلِكَ اعْتُزِلَا)"],"variantes":[]},{"id":"LAM-0094","a_verifier":["Orthographe vocalique de « مَطْلِعُ الْمَجْمَعُ » à vérifier","voyelle_a_confirmer : 4 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : مَظْلِمَةٌ مَطْلِعُ الْمَجْمَعُ مَحْمَدَةٌ * مَذَمَّةٌ مَنْسِكٌ مَضِنَّةُ الْبُخَلَا)"],"variantes":[]},{"id":"LAM-0095","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : مَزَلَّةٌ مَفْرِقٌ مَضَلَّةٌ وَمَدَبُّ * مَحْشَرٌ مَسْكَنٌ مَحَلُّ مَنْ نَزَلَا)"],"variantes":[]},{"id":"LAM-0096","a_verifier":["voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَمَعْجِزٌ وَبِتَاءٍ ثُمَّ مَهْلَكَةٌ * مَعْتَبَةٌ مَفْعِلٌ مِنْ ضَعَ وَمِنْ وَجِلَا)","Lecture proposée : undefined"],"variantes":[],"decision":"Vers masqué à l'élève (RESTE MASQUÉ) : Le poète donne ces mots comme ayant deux prononciations (vers 97). La voyelle imprimée est donc un choix d'éditeur, non un fait du texte : ni S (kasra) ni l'édition critique (fatḥa) ne peut être dite « établie ». Décision d'un maître : afficher sans voyelle sur ces deux lettres, ou garder le choix de l'édition critique avec une note."},{"id":"LAM-0097","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : مَعْهَا مِنِ احْسِبْ وَضَرْبٍ وَزْنُ مَفْعَلَةٍ * مَوْقَعَةٌ كُلُّ ذَا وَجْهَاهُ قَدْ حُمِلَا)"],"variantes":[]},{"id":"LAM-0098","a_verifier":["undefined (lecture retenue : وَالْكَسْرَ أَفْرِدْ لِمَرْفِقٍ وَمَعْصِيَةٍ * وَمَسْجِدٍ مَكْبِرٍ مَأْوٍ حَوَى الْإِبِلَا)"],"variantes":[]},{"id":"LAM-0099","a_verifier":["voyelle_a_confirmer : 4 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : مِنِ ائْوِ وَاغْفِرْ وَعْذِرْ وَاحْمِ مَفْعِلَةً * وَمِنْ رَزَأْ وَاعْرِفِ اظْنُنْ مَنْبِتٍ وَصِلَا)"],"variantes":[]},{"id":"LAM-0100","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : بِمَفْعِلِ اشْرُقْ مَعَ اغْرُبْ وَاسْقُطَنْ رَجَعَ اجْـ * ـزُرْ ثُمَّ مَفْعَلَةُ اقْدُرْ وَاشْرُقَنْ نُخِلَا)"],"variantes":[]},{"id":"LAM-0101","a_verifier":["voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَاقْبِرْ وَمِنْ أَرَبٍ وَثَلِّثْ ارْبَعْهَا * كَذَا لِمَهْلِكٍ التَّثْلِيثُ قَدْ بُذِلَا)"],"variantes":[]},{"id":"LAM-0102","a_verifier":["voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَكَالصَّحِيحِ الَّذِي الْيَا عَيْنُهُ وَعَلَى * رَأْيِ تَوَقُّفٍ وَلَا تَعْدُ الَّذِي نُقِلَا)"],"variantes":[]},{"id":"LAM-0103","a_verifier":["lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître","vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَكَاسْمِ مَفْعُولِ غَيْرِ ذِي الثَّلَاثَةِ صُغْ * مِنْهُ لِمَا مَفْعَلٌ أَوْ مَفْعِلٌ جُعِلَا)"],"variantes":[]},{"id":"LAM-0105","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : مِنْ ذِي الْمَزِيدِ كَمَفْعَاةٍ وَمُفْعِلَةٍ * وَأَفْعَلَتْ عَنْهُمُ فِي ذَا قَدِ احْتُمِلَا)"],"variantes":[]},{"id":"LAM-0107","a_verifier":["undefined (lecture retenue : كَمِفْعَلٍ وَكَمِفْعَالٍ وَمِفْعَلَةٍ * مِنَ الثُّلَاثِيْ صُغِ اسْمَ مَا بِهِ عُمِلَا)"],"variantes":[]},{"id":"LAM-0110","a_verifier":["voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)","undefined (lecture retenue : وَقَدْ وَفَيْتُ بِمَا قَدْ رُمْتُ مُنْتَهِيًا * وَالْحَمْدُ لِلَّهِ إِذْ مَا رُمْتُهُ كَمُلَا)"],"variantes":[]},{"id":"LAM-0112","a_verifier":["undefined (lecture retenue : وَآلِهِ الْغُرِّ وَالصَّحْبِ الْكِرَامِ وَمَنْ * إِيَّاهُمُ فِي سَبِيلِ الْمَكْرُمَاتِ تَلَا)"],"variantes":[]}],"mots":[{"n":6,"ar":"لِبَذٍّ","fr":"à vérifier","motif":"sens"},{"n":21,"ar":"مَفْعِلٌ","fr":"nom de lieu, de temps ou d'action (à {ar:0})","motif":"explication"}]}
+{
+  "v": 2,
+  "id": "lamiyya",
+  "version": "700983585f78",
+  "statut": "EN_ATTENTE_SECONDE_LECTURE",
+  "decoupage": "Découpage proposé par Claude par blocs de sens (4 à 19 vers), à comparer avec la pratique de 2 ou 3 maîtres (daara, mahdara). Cycle 3, après al-Ājurrūmiyya.",
+  "publication": "Les séances sont longues là où le poème énumère des listes de verbes (S04, S05, S08) : à scinder avec l'avis d'un maître.",
+  "comite": [],
+  "phrases": [
+    {
+      "id": "LAM-0002",
+      "a_verifier": ["F semble lire « سادة آله » là où S lit « سادتنا آله » : à vérifier"],
+      "variantes": [
+        {
+          "id": "V-L1",
+          "sujet": "Vers 2, second hémistiche : « سادتنا آله » (S) ou « سادة آله » (F, lecture douteuse).",
+          "decision": "S ; à vérifier"
+        }
+      ]
+    },
+    {
+      "id": "LAM-0005",
+      "a_verifier": [
+        "voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : بِفَعْلَلَ الْفِعْلُ ذُو التَّجْرِيدِ أَوْ فَعُلَا * يَأْتِي وَمَكْسُورَ عَيْنٍ أَوْ عَلَى فَعَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0006",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَالضَّمَّ مِنْ فَعُلَ الْزَمْ فِي الْمُضَارِعِ وَافْـ * ـتَحْ مَوْضِعَ الْكَسْرِ فِي الْمَبْنِيِّ مِنْ فَعِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0007",
+      "a_verifier": [
+        "« اوله » (le sens de « ceux-là en premier ») est incertain ; ce vers manque à la numérotation « additions » de S (coloré en rouge) mais est dans le témoin F : voir RAPPORT",
+        "voyelle_a_confirmer : 3 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَجْهَانِ فِيهِ مِنِ احْسَبْ مَعْ وَغِرْتَ وَحَرْ * تَ انْعَمْ بَئِسْتَ يَئِسْتَ اوْلَهْ يَبِسْ وَهِلَا)"
+      ],
+      "variantes": [
+        {
+          "id": "V-L2",
+          "sujet": "Vers S21 et S88 : colorés en rouge (additions) dans S, mais présents dans le témoin F entre S17 et S23, et entre S83 et S95. Ils sont tenus pour originaux, ce qui donne 114 vers (nombre traditionnel).",
+          "decision": "gardés (LAM-0007 = S21, LAM-0032 = S88). Confirmé le 13/10 : les deux vers figurent, aux rangs 7 et 32, dans l'édition critique (14 manuscrits)."
+        }
+      ]
+    },
+    {
+      "id": "LAM-0008",
+      "a_verifier": [
+        "undefined (lecture retenue : وَأَفْرِدِ الْكَسْرَ فِيمَا مِنْ وَرِثْ وَوَلِي * وَرِمْ وَرِعْتَ وَمِقْتَ مَعْ وَفِقْتَ حُلَى)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0009",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَثِقْتَ مَعْ وَرِيَ الْمُخُّ احْوِهَا وَأَدِمْ * كَسْرًا لِعَيْنِ مُضَارِعٍ يَلِي فَعِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0011",
+      "a_verifier": [
+        "Lecture de la seconde partie du vers (« كما لازم ذا ضم احتملا ») à faire confirmer par un maître",
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَضُمَّ عَيْنَ مُعَدَّاهُ وَيَنْدُرُ ذَا * كَسْرٌ كَمَا لَازِمٌ ذَا ضَمٍّ احْتُمِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0013",
+      "a_verifier": [
+        "Sens général sûr ; détail de « مثل جلا » à confirmer",
+        "undefined (lecture retenue : وَبَتَّ قَطْعًا وَنَمَّ وَاضْمُمَنَّ مَعَ الْـ * ـلُزُومِ فِي امْرُرْ بِهِ وَجَلَّ مِثْلِ جَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0017",
+      "a_verifier": ["Plusieurs mots (« ونبت »، « بخلا ») à vérifier ; traduction mot à mot"],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0018",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : قَسَّتْ كَذَا وَعِ وَجْهَيْ صَدَّ أَثَّ وَخَرَّ * الصَّلْدُ حَدَّتْ وَثَرَّتْ جَدَّ مِنْ عَمِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0019",
+      "a_verifier": [
+        "undefined (lecture retenue : تَرَّتْ وَطَرَّتْ وَدَرَّتْ جَمَّ شَبَّ حَصَا * نٌ عَنَّ فَحَّتْ وَشَذَّ شَحَّ أَيْ بَخِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0022",
+      "a_verifier": [
+        "« لِبَذٍّ » à vérifier",
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : لِمَا لِبَذٍّ مُفَاخِرٍ وَلَيْسَ لَهُ * دَاعِي لُزُومِ انْكِسَارِ الْعَيْنِ نَحْوُ قَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0024",
+      "a_verifier": ["Lecture « فَتْحًا اشِعْ » (fin du premier hémistiche) à vérifier"],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0026",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : عَيْنَ الْمُضَارِعِ مِنْ فَعَلْتُ حَيْثُ خَلَا * مِنْ جَالِبِ الْفَتْحِ كَالْمَبْنِيِّ مِنْ عَتِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0027",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : فَاكْسِرْ أَوُ اضْمُمْ إِذَا تَعْيِينُ بَعْضِهِمَا * لِفَقْدِ شُهْرَةٍ اوْ دَاعٍ قَدِ اعْتَزَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0028",
+      "a_verifier": [
+        "undefined (lecture retenue : وَانْقُلْ لِفَاءِ الثُّلَاثِيْ شَكْلَ عَيْنٍ إِذَا اعْـ * ـتَلَّتْ وَكَانَ بِتَا الْإِضْمَارِ مُتَّصِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0031",
+      "a_verifier": [
+        "undefined (lecture retenue : وَافْعَلَّ ذَا أَلِفٍ فِي الْحَشْوِ رَابِعَةً * وَعَارِيًا وَكَذَاكَ اهْبَيَّخَ اعْتَدَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0032",
+      "a_verifier": ["Vers présent dans F (Fès) mais coloré comme addition dans S : voir RAPPORT"],
+      "variantes": [
+        {
+          "id": "V-L2",
+          "sujet": "Vers S21 et S88 : colorés en rouge (additions) dans S, mais présents dans le témoin F entre S17 et S23, et entre S83 et S95. Ils sont tenus pour originaux, ce qui donne 114 vers (nombre traditionnel).",
+          "decision": "gardés (LAM-0007 = S21, LAM-0032 = S88). Confirmé le 13/10 : les deux vers figurent, aux rangs 7 et 32, dans l'édition critique (14 manuscrits)."
+        }
+      ]
+    },
+    {
+      "id": "LAM-0033",
+      "a_verifier": [
+        "Liste de verbes : sens non glosés dans le vers",
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَاحْبَنْطَأَ احْوَنْصَلَ اسْلَنْقَى تَمَسْكَنَ سَلْـ * ـقَى قَلْنَسَتْ جَوْرَبَتْ هَرْوَلْتُ مُرْتَحِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0034",
+      "a_verifier": [
+        "undefined (lecture retenue : زَهْزَقْتَ هَلْقَمْتَ رَهْمَسْتَ اكْوَأَلَّ تَرَهْـ * ـشَفْتَ اجْفَأَظَّ اسْلَهَمَّ قَطْرَنَ الْجَمَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0035",
+      "a_verifier": [
+        "Coupe des hémistiches proposée d'après le sens",
+        "Coupe en hémistiches (ligne longue dans S) déduite de l'espacement et du mètre : à vérifier",
+        "undefined (lecture retenue : تَرْمَسْتَ كَلْتَبْتَ جَلْمَطْتَ وَغَلْصَمَ * ثُمَّ اذْلَمَّسَ اهْرَمَّعَتْ وَاعْلَنْكَسَ انْتُخِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0036",
+      "a_verifier": [
+        "undefined (lecture retenue : وَاعْلَوَّطَ اغْثَوْجَجَتْ بَيْطَرْتَ سَنْبَلَ زَمْـ * ـلَقَ اضْمُمَنْ لِتَسَلْقَى وَاجْتَنِبْ خَلَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0037",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : بِبَعْضِ نَأْتِي الْمُضَارِعَ افْتَتِحْ وَلَهُ * ضَمٌّ إِذَا بِالرُّبَاعِيْ مُطْلَقًا وُصِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0040",
+      "a_verifier": [
+        "voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : فِي الْيَا وَفِي غَيْرِهَا إِنْ أُلْحِقَا بَأَبَى * أَوْ مَا لَهُ الْوَاوُ فَاءٌ نَحْوُ قَدْ وَجِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0041",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَكَسْرُ مَا قَبْلَ آخِرِ الْمُضَارِعِ مِنْ * ذَا الْبَابِ يَلْزَمُ إِنْ مَاضِيهِ قَدْ حُظِلَا)"
+      ],
+      "variantes": []
+    },
+    { "id": "LAM-0042", "a_verifier": ["Vers obscur : « بِوِلَا » à vérifier"], "variantes": [] },
+    {
+      "id": "LAM-0043",
+      "a_verifier": ["Dernier mot du second hémistiche (« اتَّصَلَا ») : portée à confirmer"],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0044",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : بِعَيْنٍ اعْتَلَّ وَاجْعَلْ قَبْلَ الْآخِرِ فِي الْـ * ـمُضِيِّ كَسْرًا وَفَتْحًا فِي سِوَاهُ تَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0045",
+      "a_verifier": [
+        "Lecture proposée : ثَالِثَ ذِي هَمْزِ وَصْلٍ ضُمَّ مَعْهُ وَمَعْ * تَاءِ الْمُطَاوَعَةِ اضْمُمْ تِلْوَهَا بِوِلَا"
+      ],
+      "variantes": [],
+      "decision": "Vers masqué à l'élève (RESTE MASQUÉ) : La lecture de S « مَعَهُ » est contredite par l'édition critique (« مَعْهُ ») mais aucun commentateur lu ne vocalise ce mot ; seul le texte de l'éditeur, l'usage du poète (« مَعْ » avec sukūn dans le même vers, vers 69, et « مَعْهَا » au vers 97 chez al-Qāsim) et le mètre vont dans ce sens. Un seul témoin pour la voyelle : non confirmé. Lecture proposée : « مَعْهُ »."
+    },
+    {
+      "id": "LAM-0046",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَمَا لِفَا نَحْوِ بَاعَ اجْعَلْ لِثَالِثِ نَحْـ * ـوِ اخْتَارَ وَانْقَادَ كَاخْتِيرَ الَّذِي فَضَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0050",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَشَذَّ بِالْحَذْفِ مُرْ وَخُذْ وَكُلْ وَفَشَا * وَأْمُرْ وَمُسْتَنْدَرٌ تَتْمِيمُ خُذْ وَكُلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0051",
+      "a_verifier": [
+        "undefined (lecture retenue : كَوَزْنِ فَاعِلٍ اسْمُ فَاعِلٍ جُعِلَا * مِنَ الثُّلَاثِي الَّذِي مَا وَزْنُهُ فَعُلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0052",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَمِنْهُ صِيغَ كَسَهْلٍ وَالظَّرِيفِ وَقَدْ * يَكُونُ أَفْعَلَ أَوْ فَعَالًا أَوْ فَعَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0053",
+      "a_verifier": [
+        "undefined (lecture retenue : وَكَالْفُرَاتِ وَعِفْرٍ وَالْحَصُورِ وَغُمْـ * ـرٍ عَاقِرٍ جُنُبٍ وَمُشْبِهِ ثَمِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0054",
+      "a_verifier": [
+        "undefined (lecture retenue : وَصِيغَ مِنْ لَازِمٍ مُوَازِنٍ فَعِلَا * بِوَزْنِهِ كَشَجٍ وَمُشْبِهٍ عَجِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0055",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَالشَّأْزَ وَالْأَشْنَبَ الْجَذْلَانَ ثُمَّتَ قَدْ * يَأْتِي كَفَانٍ وَشِبْهِ وَاحِدِ الْبُخَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0056",
+      "a_verifier": [
+        "undefined (lecture retenue : حَمْلًا عَلَى غَيْرِهِ لِنِسْبَةٍ كَخَفِيـ * ـفٍ طَيِّبٍ أَشِيبٍ فِي الصَّوْغِ مِنْ فَعَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0057",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَفَاعِلٌ صَالِحٌ لِلْكُلِّ إِنْ قُصِدَ الْـ * ـحُدُوثُ نَحْوُ غَدًا ذَا جَاذِلٌ جَذَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0058",
+      "a_verifier": [
+        "undefined (lecture retenue : وَبِاسْمِ فَاعِلِ غَيْرِ ذِي الثَّلَاثَةِ جِئْ * وَزْنَ الْمُضَارِعِ لَكِنْ أَوَّلًا جُعِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0059",
+      "a_verifier": [
+        "undefined (lecture retenue : مِيمًا تُضَمُّ وَإِنْ مَا قَبْلَ آخِرِهِ * فَتَحْتَ صَارَ اسْمَ مَفْعُولٍ وَقَدْ حَصَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0060",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : مِنْ ذِي الثَّلَاثَةِ بِالْمَفْعُولِ مُتَّزِنَا * وَمَا أَتَى كَفَعِيلٍ فَهْوَ قَدْ عُدِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0061",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : بِهِ عَنِ الْأَصْلِ وَاسْتَغْنَوْا بِنَحْوِ نَجَا * وَالنِّقْضِ عَنْ وَزْنِ مَفْعُولٍ وَمَا عَمِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0062",
+      "a_verifier": [
+        "« أَوْزَانٌ » est traduit « poids » (aucune restriction à deux) : à vérifier",
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَلِلْمَصَادِرِ أَوْزَانٌ أُبَيِّنُهَا * فَلِلثُّلَاثِيِّ مَا أُبْدِيهِ مُنْتَخَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0064",
+      "a_verifier": [
+        "voyelle_a_confirmer : 3 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : فَعْلَانُ فِعْلَانُ فُعْلَانٌ وَنَحْوُ جَلَا * رِضًى هُدًى وَصَلَاحٌ ثُمَّ زِدْ فَعَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0066",
+      "a_verifier": [
+        "undefined (lecture retenue : فِعَالَةٌ وَفُعَالَةٌ وَجِيءَ بِهِمَا * مُجَرَّدَيْنِ مِنَ التَّا وَالْفُعُولِ صِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0067",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : ثُمَّ الْفَعِيلَ وَبِالتَّا ذَانِ وَالْفَعَلَا * نُ أَوْ كَبَيْنُونَةٍ وَمُشْبِهٍ شُغُلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0068",
+      "a_verifier": [
+        "voyelle_a_confirmer : 3 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَفُعْلَلٌ وَفُعُولٌ مَعْ فَعَالِيَةٍ * كَذَا فُعَيْلِيَّةٌ فُعْلَّةٌ فُعَلَى)",
+        "Lecture proposée : undefined"
+      ],
+      "variantes": [],
+      "decision": "Vers masqué à l'élève (RESTE MASQUÉ (trois voyelles corrigées, une variante non tranchée)) : Les trois voyelles « فَعُولٌ », « فُعُلَّةٌ », « فَعَلَى » sont corrigées avec preuve. Mais le nom de schème « فُعَيْلِيَّةٌ » (Baḥraq, qui est le commentaire de référence du livre) ou « فَعِيلِيَّةٌ » (al-Bijāʾī et l'édition critique) reste ouvert : Ibn Ḥamdūn dit que les deux sont admis. Le choix change la liste des schèmes enseignée : décision d'un maître requise."
+    },
+    {
+      "id": "LAM-0071",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : فَعْلٌ مَقِيسُ الْمُعَدَّى وَالْفُعُولُ لِغَيْـ * ـرِهِ سِوَى فِعْلِ صَوْتٍ ذَا الْفُعَالُ جَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0072",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَمَا عَلَى فَعِلَ اسْتَحَقَّ مَصْدَرُهُ * إِنْ لَمْ يَكُنْ ذَا تَعَدٍّ كَوْنُهُ فَعَلَا)"
+      ],
+      "variantes": []
+    },
+    { "id": "LAM-0074", "a_verifier": ["Fin du vers à faire expliquer"], "variantes": [] },
+    { "id": "LAM-0075", "a_verifier": ["« بِالْفِعَالِ جَلَا » à vérifier"], "variantes": [] },
+    {
+      "id": "LAM-0076",
+      "a_verifier": [
+        "Fin du vers (« وَلَا تَهَلَا ») à vérifier",
+        "voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : فَعَالَةٌ لِخِصَالٍ وَالْفِعَالَةُ دَعْ * لِحِرْفَةٍ أَوْ وِلَايَةٍ وَلَا تَهَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0077",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : لِمَرَّةٍ فَعْلَةٌ وَفِعْلَةٌ وَضَعُوا * لِهَيْئَةٍ غَالِبًا كَمِشْيَةِ الْخُيَلَا)"
+      ],
+      "variantes": []
+    },
+    { "id": "LAM-0078", "a_verifier": ["« حَازَهُ » à vérifier"], "variantes": [] },
+    {
+      "id": "LAM-0079",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَاضْمُمْهُ مِنْ فِعْلٍ التَّا زِيدَ أَوَّلَهُ * وَاكْسِرْهُ سَابِقَ حَرْفٍ يَقْبَلُ الْعِلَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0080",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : لِفَعْلَلَ ائْتِ بِفِعْلَالٍ وَفَعْلَلَةٍ * وَفَعِّلَ اجْعَلْ لَهُ التَّفْعِيلَ حَيْثُ خَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0081",
+      "a_verifier": [
+        "undefined (lecture retenue : مِنْ لَامٍ اعْتَلَّ لِلْحَاوِيهِ تَفْعِلَةً * أَلْزِمْ وَلِلْعَارِ مِنْهُ رُبَّمَا بُذِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0082",
+      "a_verifier": [
+        "undefined (lecture retenue : وَمَنْ يَصِلْ بِتِفِعَّالٍ تَفَعَّلَ وَالْـ * ـفِعَّالِ فَعَّلَ فَاحْمَدْهُ بِمَا فَعَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0085",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَبِالْفُعَلِّيلَةِ افْعَلَلَّ قَدْ جَعَلُوا * مُسْتَغْنِيًا لَا لُزُومًا فَاعْرِفِ الْمُثُلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0086",
+      "a_verifier": [
+        "undefined (lecture retenue : لِفَاعَلَ اجْعَلْ فِعَالًا أَوْ مُفَاعَلَةً * وَفِعْلَةٌ عَنْهُمَا قَدْ نَابَ فَاحْتُمِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0088",
+      "a_verifier": [
+        "voyelle_a_confirmer : 3 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : مِنَ الْمُزَالِ وَإِنْ تَلْحَقْ بِغَيْرِهِمَا * تُبِنْ بِهَا مَرَّةً مِنَ الَّذِي عُمِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0090",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : مِنْ ذِي الثَّلَاثَةِ لَا يَفْعِلُ لَهُ ائْتِ بِمَفْـ * ـعَلٍ لِمَصْدَرٍ اوْ مَا فِيهِ قَدْ عُمِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0091",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : كَذَاكَ مُعْتَلُّ لَامٍ مُطْلَقًا وَإِذَا الْـ * ـفَا كَانَ وَاوًا بِكَسْرٍ مُطْلَقًا حَصَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0092",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَلَا يُؤَثِّرُ كَوْنُ الْوَاوِ فَاءً اذَا * مَا اعْتَلَّ لَامٌ كَمَوْلىً فَارْعَ صِدْقَ وَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0093",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : فِي غَيْرِ ذَا عَيْنَهُ افْتَحْ مَصْدَرًا وَسِوَاـ * ـهُ اكْسِرْ وَشَذَّ الَّذِي عَنْ ذَلِكَ اعْتُزِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0094",
+      "a_verifier": [
+        "Orthographe vocalique de « مَطْلِعُ الْمَجْمَعُ » à vérifier",
+        "voyelle_a_confirmer : 4 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : مَظْلِمَةٌ مَطْلِعُ الْمَجْمَعُ مَحْمَدَةٌ * مَذَمَّةٌ مَنْسِكٌ مَضِنَّةُ الْبُخَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0095",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : مَزَلَّةٌ مَفْرِقٌ مَضَلَّةٌ وَمَدَبُّ * مَحْشَرٌ مَسْكَنٌ مَحَلُّ مَنْ نَزَلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0096",
+      "a_verifier": [
+        "voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَمَعْجِزٌ وَبِتَاءٍ ثُمَّ مَهْلَكَةٌ * مَعْتَبَةٌ مَفْعِلٌ مِنْ ضَعَ وَمِنْ وَجِلَا)",
+        "Lecture proposée : undefined"
+      ],
+      "variantes": [],
+      "decision": "Vers masqué à l'élève (RESTE MASQUÉ) : Le poète donne ces mots comme ayant deux prononciations (vers 97). La voyelle imprimée est donc un choix d'éditeur, non un fait du texte : ni S (kasra) ni l'édition critique (fatḥa) ne peut être dite « établie ». Décision d'un maître : afficher sans voyelle sur ces deux lettres, ou garder le choix de l'édition critique avec une note."
+    },
+    {
+      "id": "LAM-0097",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : مَعْهَا مِنِ احْسِبْ وَضَرْبٍ وَزْنُ مَفْعَلَةٍ * مَوْقَعَةٌ كُلُّ ذَا وَجْهَاهُ قَدْ حُمِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0098",
+      "a_verifier": [
+        "undefined (lecture retenue : وَالْكَسْرَ أَفْرِدْ لِمَرْفِقٍ وَمَعْصِيَةٍ * وَمَسْجِدٍ مَكْبِرٍ مَأْوٍ حَوَى الْإِبِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0099",
+      "a_verifier": [
+        "voyelle_a_confirmer : 4 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : مِنِ ائْوِ وَاغْفِرْ وَعْذِرْ وَاحْمِ مَفْعِلَةً * وَمِنْ رَزَأْ وَاعْرِفِ اظْنُنْ مَنْبِتٍ وَصِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0100",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : بِمَفْعِلِ اشْرُقْ مَعَ اغْرُبْ وَاسْقُطَنْ رَجَعَ اجْـ * ـزُرْ ثُمَّ مَفْعَلَةُ اقْدُرْ وَاشْرُقَنْ نُخِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0101",
+      "a_verifier": [
+        "voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَاقْبِرْ وَمِنْ أَرَبٍ وَثَلِّثْ ارْبَعْهَا * كَذَا لِمَهْلِكٍ التَّثْلِيثُ قَدْ بُذِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0102",
+      "a_verifier": [
+        "voyelle_a_confirmer : 2 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَكَالصَّحِيحِ الَّذِي الْيَا عَيْنُهُ وَعَلَى * رَأْيِ تَوَقُّفٍ وَلَا تَعْدُ الَّذِي نُقِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0103",
+      "a_verifier": [
+        "lecture corrigée le 13/10 d'après témoin ancien (voir correction_13_10) ; vocalisation à relire par un maître",
+        "vers corrigé d'après témoin ancien ; voyelles reprises de l'édition critique, à relire (lecture retenue : وَكَاسْمِ مَفْعُولِ غَيْرِ ذِي الثَّلَاثَةِ صُغْ * مِنْهُ لِمَا مَفْعَلٌ أَوْ مَفْعِلٌ جُعِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0105",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : مِنْ ذِي الْمَزِيدِ كَمَفْعَاةٍ وَمُفْعِلَةٍ * وَأَفْعَلَتْ عَنْهُمُ فِي ذَا قَدِ احْتُمِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0107",
+      "a_verifier": [
+        "undefined (lecture retenue : كَمِفْعَلٍ وَكَمِفْعَالٍ وَمِفْعَلَةٍ * مِنَ الثُّلَاثِيْ صُغِ اسْمَ مَا بِهِ عُمِلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0110",
+      "a_verifier": [
+        "voyelle_a_confirmer : 1 mot(s) vocalisé(s) autrement dans l'édition critique (voir collation_edition_critique)",
+        "undefined (lecture retenue : وَقَدْ وَفَيْتُ بِمَا قَدْ رُمْتُ مُنْتَهِيًا * وَالْحَمْدُ لِلَّهِ إِذْ مَا رُمْتُهُ كَمُلَا)"
+      ],
+      "variantes": []
+    },
+    {
+      "id": "LAM-0112",
+      "a_verifier": [
+        "undefined (lecture retenue : وَآلِهِ الْغُرِّ وَالصَّحْبِ الْكِرَامِ وَمَنْ * إِيَّاهُمُ فِي سَبِيلِ الْمَكْرُمَاتِ تَلَا)"
+      ],
+      "variantes": []
+    }
+  ],
+  "mots": [
+    { "n": 6, "ar": "لِبَذٍّ", "fr": "à vérifier", "motif": "sens" },
+    {
+      "n": 21,
+      "ar": "مَفْعِلٌ",
+      "fr": "nom de lieu, de temps ou d'action (à {ar:0})",
+      "motif": "explication"
+    }
+  ]
+}
