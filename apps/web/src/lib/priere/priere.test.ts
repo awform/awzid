@@ -319,7 +319,8 @@ describe('voix : le Coran par Ayyūb seulement, jamais de synthèse sur un verse
       } else {
         expect(s.type, e.id).toBe('interdit');
         // le message « Récitation de Muḥammad Ayyūb » ne s'affiche que pour la Basmala complète ou le Coran
-        expect(s.raison === 'basmala' ? contientBasmala(e.ar!) : looksQuranic(e.ar!), e.id).toBe(
+        const raison = s.type === 'interdit' ? s.raison : null;
+        expect(raison === 'basmala' ? contientBasmala(e.ar!) : looksQuranic(e.ar!), e.id).toBe(
           true,
         );
       }

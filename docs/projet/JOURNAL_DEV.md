@@ -22,6 +22,30 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 26/10/2026 — Récitation de Muḥammad Ayyūb branchée partout ; le petit lecteur pour chaque audio ; anomalies « synthèse sur le Coran » classées ; NON déployé
+
+**Note de reprise** : toute citation du Coran gardée sans voix est entendue avec Ayyūb à travers la table
+`apps/web/static/recitation/ayyub.json` (générée et contrôlée par `packages/content/test/recitation-ayyub.test.ts`,
+`RECITATION_AYYUB=ecrire`). Après chaque copie des livres : régénérer la table, puis le test « zéro muet ».
+
+- **Table** : 3 717 textes branchés (verset entier ; fragment = verset entier, passage surligné ; versets enchaînés dans
+  l'ordre du Muṣḥaf, Tanzil TRIÉ ; textes mixtes : synthèse pour le texte du livre, Ayyūb pour le verset). Contrôle à
+  100 % : chaque partie coranique se lit mot pour mot (squelette) dans les versets joués. Doutes au référent, jamais
+  branchés : `data/zero-muet/doutes-ayyub.tsv` (ambigus, moins de 4 mots présentés comme Coran, synthèse qui reprendrait le
+  verset). Inventaire par livre : `inventaire-ayyub.tsv` ; parties à dire en synthèse : `synthese-mixte.tsv`.
+- **Garde** : expressions réservées à Ayyūb (`ayyub-reserves.tsv` → `src/ayyub-reserves.ts`, Yūsuf 12:4) ;
+  « بسم الله » seul reste un dhikr (synthèse) ; Basmala d'ouverture des Madjaliss : Ayyūb (1:1, en attendant le fichier annexe).
+- **Lecteur** : le petit lecteur joue les récitations (phrase « r:<plan> », fichiers enchaînés par `suite`) et PILOTE les
+  sons lancés ailleurs (`piloter` : Prière, cahier de lecture, animations, tuteur) ; indice « ⋯ » et appui long pour les
+  réglages ; vitesse permise sur la récitation (décision du client du 26/10). Vidéos vivantes : récitation dans `dire`.
+- **Anomalies** : 302 fichiers de synthèse sur des textes gardés « Coran » classés (`anomalies-classees-26-10.tsv`) :
+  179 vrai Coran (149 déjà branchés sur Ayyūb ; retrait des associations à la source PC À FAIRE sous le verrou, occupé
+  par un autre agent), 123 faux positifs (121 ajoutés à la liste blanche avec leur raison).
+- Tests : content 1 261 ; web 1 237 ; e2e (recitation-ayyub, priere, lecteur, madjaliss-audio, douas, cahier, a3,
+  video-vivante) verts ; marge de l'appareil élève 5 318 o.
+
+---
+
 ## 26/10/2026 — Vidéos vivantes V2 : le livre Enfants 5 (en5), fusion de `video-vivante-en5-wip` dans `main` ; Enfants 1 à 5 et Ados 1 à 4 proposés ; NON déployé
 
 **Note de reprise** : **toutes les vidéos vivantes V2 sont faites** (en1 à en5, ado1 à ado4 ; dernier livre fusionné = en5). Reste, hors de ce lot : relecture du référent de ce qui a changé dans la garde (voir ci-dessous), audios manquants (rapports `reports/video-vivante-<livre>.md`).

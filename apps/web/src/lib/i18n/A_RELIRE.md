@@ -225,25 +225,19 @@ et par son son) ; « Joueur 1 / Joueur 2 » du duel ; consignes de glisser-dépo
 puis la case ; au clavier, Tab puis Entrée).
 
 ## Khatma et lecture du jour (25/10/2026, interrupteur `khatma_wird`) — brouillons à relire
-
 Textes `kh.*` (carte du Coran, création et réglage d’un plan, khatma en famille et en classe, suivi des parts) et `fn.khatma_wird`
 traduits par Claude, relecteur provisoire, en **brouillon** dans les quatre langues en préparation ; le français est embarqué avec
 le module (`lib/khatma/textes-fr.json`). Choix à vérifier : l’élève est TUTOYÉ ; « khatma » et « juzʾ » gardés tels (« wird » BANNI le 26/10 : confréries soufies du Sénégal ; « lecture du jour », daily reading, lectura diaria, Tageslesung, قِرَاءَةُ الْيَوْمِ)
 quels dans toutes les langues ; AUCUN mot de reproche (ni « retard », ni « série », ni « dette ») ; l’arabe n’a pas de pluriel
 complet (formes « un » et « autre » seulement, sauf `kh.lues` qui garde la même forme que le français).
-
 ## Mutashābihāt dans le hifẓ (25/10/2026, interrupteur `mutashabihat`) — brouillons à relire
-
 Textes `mt.*` (alerte « verset jumeau », carte du jumeau, test des jumeaux), `hz.titre_jumeaux` et `fn.mutashabihat` traduits par
 Claude, relecteur provisoire, en **brouillon** dans les quatre langues en préparation ; le français est embarqué avec le module
 (`lib/mutashabihat/textes-fr.json`). Termes : « aleya » (espagnol), « Vers » et « Zwilling » (allemand), « آية مشابهة » (arabe) ;
 l’élève est TUTOYÉ. Les repères « proposés par Awzid » et les noms d’ouvrages viennent de la carte du référent (français et
 translittération latine, jamais traduits). À relire par le référent : le repère neutre des formules communes (`mt.repere_commun`).
-
 ## Hifẓ en classe (25/10/2026, interrupteur `hifz_classe`) — brouillons à relire
-
 Textes `hc.*` (mode direct, mode enregistrement, séances, suivi des parents) et `fn.hifz_classe` traduits par Claude, relecteur provisoire, en **brouillon** dans les quatre langues en préparation ; le français est embarqué avec le module (`lib/hifz-classe/textes-fr.json`). À faire relire par un maître : les quatre types d’erreur (oubli, ajout, changement, tajwīd) et leurs libellés, la phrase qui annonce la suppression automatique des enregistrements (30 jours au plus).
-
 ## Mots du Coran (25/10/2026, interrupteur `coran_mots`) — brouillons à relire
 
 49 textes `cm.*` (bande « Je reconnais X % des mots de cette sourate », prochaine étape, réglage « Souligner les mots que je
@@ -253,7 +247,5 @@ relecteur provisoire, en **brouillon** dans les quatre langues en préparation. 
 passer » pour la prochaine étape, comme demandé par le client) ; « reconnaître » un mot (jamais « comprendre » : le calcul
 mesure la reconnaissance du mot, pas la compréhension du verset) ; « racine » / « جذر » / « Wurzel » / « raíz ». Le texte du
 Coran et les mots arabes de l'étude ne sont pas traduits.
-
 ## Indication des madd (25/10/2026, interrupteur `tajwid_madd`) — brouillons à relire
-
 Textes `md.*` et `fn.tajwid_madd` traduits par Claude, relecteur provisoire, en **brouillon** dans les quatre langues en préparation ; le français est embarqué avec le module (`lib/tajwid-madd/textes-fr.json`). Fonction réservée aux adultes, bêta fermée. À faire relire par un maître : la phrase de prudence (« indication automatique, en cours de validation par des maîtres ; ton maître reste la référence ») et le texte « ce madd semble trop court » ; « madd muttaṣil » et « madd lāzim » gardés en lettres latines (en, es, de) et écrits « مد متصل » et « مد لازم » en arabe ; l’élève est TUTOYÉ ; jamais « correct » ni « bravo ».
