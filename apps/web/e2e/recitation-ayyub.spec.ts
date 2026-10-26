@@ -77,19 +77,19 @@ test.describe('récitation d’Ayyūb dans les leçons', () => {
     page,
   }) => {
     const sons = await audioSimule(page);
-    await lecon(page, 'ad1.l13');
-    const b = page.locator('[data-testid="recitation"][data-versets="11:61"]').first();
+    await lecon(page, 'en4.l13');
+    const b = page.locator('[data-testid="recitation"][data-versets="12:4"]').first();
     await expect(b).toBeVisible({ timeout: 15_000 });
     await expect(b).toHaveAttribute('data-lecteur', 'l');
     // cible de 44 px au moins, nom accessible qui dit le récitateur et le verset entier
     const box = (await b.boundingBox())!;
     expect(box.height).toBeGreaterThanOrEqual(44);
-    await expect(b).toHaveAttribute('aria-label', /Ayyūb.*11:61/);
+    await expect(b).toHaveAttribute('aria-label', /Ayyūb.*12:4/);
     await b.click();
     await expect(page.getByTestId('lecteur')).toBeVisible();
     await expect
       .poll(() => sons.recitations, { timeout: 15_000 })
-      .toContain('/api/v1/quran/audio/file/ayyoub-hafs/11-61.mp3');
+      .toContain('/api/v1/quran/audio/file/ayyoub-hafs/12-4.mp3');
     expect(sons.paquets.every((u) => u.includes('/ayyoub-hafs/'))).toBe(true);
     expect(sons.synthese).toEqual([]);
     // la pastille montre qu'elle se règle (« ⋯ ») ; un appui long ouvre les réglages : vitesse, ±5 s
@@ -111,8 +111,8 @@ test.describe('récitation d’Ayyūb dans les leçons', () => {
     context,
   }) => {
     const sons = await audioSimule(page);
-    await lecon(page, 'ad1.l13');
-    const b = page.locator('[data-testid="recitation"][data-versets="11:61"]').first();
+    await lecon(page, 'en4.l13');
+    const b = page.locator('[data-testid="recitation"][data-versets="12:4"]').first();
     await expect(b).toBeVisible({ timeout: 15_000 });
     await b.click();
     await expect.poll(() => sons.recitations.length, { timeout: 15_000 }).toBeGreaterThan(0);
@@ -120,7 +120,7 @@ test.describe('récitation d’Ayyūb dans les leçons', () => {
     await page.evaluate(async (corps) => {
       const c = await caches.open('awzid-coran-audio-recents');
       await c.put(
-        '/api/v1/quran/audio/file/ayyoub-hafs/11-61.mp3',
+        '/api/v1/quran/audio/file/ayyoub-hafs/12-4.mp3',
         new Response(
           Uint8Array.from(atob(corps), (x) => x.charCodeAt(0)),
           {
@@ -144,8 +144,8 @@ test.describe('récitation d’Ayyūb dans les leçons', () => {
     page,
   }) => {
     const sons = await audioSimule(page, true);
-    await lecon(page, 'ad1.l13');
-    const b = page.locator('[data-testid="recitation"][data-versets="11:61"]').first();
+    await lecon(page, 'en4.l18');
+    const b = page.locator('[data-testid="recitation"][data-versets="37:102"]').first();
     await expect(b).toBeVisible({ timeout: 15_000 });
     await b.click();
     await expect(page.getByTestId('lecteur-etat').locator('[role="alert"]')).toBeVisible({

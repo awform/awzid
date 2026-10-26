@@ -22,6 +22,20 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 26/10/2026 — Livres corrigés en service : copie des livres échangée, gardes et scénarios régénérés ; NON déployé
+
+- `~/awform-content` = la copie du 26/10 (08 h 33, 3 825 versets contrôlés, 0 erreur) ; l'ancienne copie (18/10) est
+  gardée dans `~/awform-content.ancienne-18-10`.
+- Régénérés : `HADITH_GARDE`, `VIDEO_GARDE`, `VIVANTE_GARDE` (le test n'écrivait plus rien : expression régulière
+  corrigée), scénario « Je parle » ado3 l10 (`cli-conversation`), table de récitation d'Ayyūb (3 716 textes branchés).
+- Zéro muet : les textes nouveaux sans audio (`apres-sync-livres.tsv`, pour l'agent audio) sont une liste d'attente
+  explicite ; 4 formules désormais générées retirées de `a-generer-synthese.tsv`.
+- **Import de l'édition dans la base de développement : NON fait** (refusé par une permission, ressource partagée) ;
+  commande à lancer : `node packages/db/dist/cli/import.js --edition <nouveau code> --publish` (« dev » existe déjà).
+- Tests : content 1 261 ; web 1 237 ; e2e recitation-ayyub, a21, a21b, video-vivante, conversation verts.
+
+---
+
 ## 26/10/2026 — Récitation de Muḥammad Ayyūb branchée partout ; le petit lecteur pour chaque audio ; anomalies « synthèse sur le Coran » classées ; NON déployé
 
 **Note de reprise** : toute citation du Coran gardée sans voix est entendue avec Ayyūb à travers la table

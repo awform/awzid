@@ -138,17 +138,19 @@ function aCorriger(): Set<string> {
  * l'audio : texte jamais généré, ou refusé par une ancienne règle de la chaîne de génération) : liste d'attente EXPLICITE,
  * `data/zero-muet/a-generer-synthese.tsv`. Un texte de cette liste qui a son fichier doit en sortir (test).
  */
-function aGenerer(): Set<string> {
+function aGenerer(avecSync = true): Set<string> {
   const f = join(DATA, 'a-generer-synthese.tsv');
-  return new Set(
-    existsSync(f)
-      ? readFileSync(f, 'utf8')
+  // textes nouveaux de la copie des livres du 26/10/2026, sans audio, remis à l'agent audio (colonne « texte »)
+  const g = join(DATA, 'apres-sync-livres.tsv');
+  const lire = (x: string, col: number) =>
+    existsSync(x)
+      ? readFileSync(x, 'utf8')
           .split('\n')
           .slice(1)
           .filter(Boolean)
-          .map((l) => audioKey(l.split('\t')[0]!))
-      : [],
-  );
+          .map((l) => audioKey(l.split('\t')[col]!))
+      : [];
+  return new Set([...lire(f, 0), ...(avecSync ? lire(g, 3) : [])]);
 }
 
 // ———— textes à écouter
@@ -427,7 +429,7 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
         `zéro muet : ${uniques.size} textes ; audio ${voixOk.length} ; sonorisés par Ayyūb ${parAyyub.length} ; doutes au référent ${auReferent.length} ; à corriger dans les livres ${dansLesLivres.length} ; muets ${muets.length}`,
       );
       expect(
-        voixOk.filter((c) => attenteSynthese.has(audioKey(c.texte))).map(ligne),
+        voixOk.filter((c) => aGenerer(false).has(audioKey(c.texte))).map(ligne),
         'texte de a-generer-synthese.tsv qui a maintenant son audio : le retirer de la liste',
       ).toEqual([]);
       expect(muets.map(ligne), 'textes muets sans audio ni récitation prévue').toEqual([]);

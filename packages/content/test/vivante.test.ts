@@ -423,7 +423,7 @@ describe.skipIf(!HAS_CONTENT)('A21b — toutes les leçons des livres d’arabe 
     if (process.env.VIVANTE_GARDE === 'ecrire') {
       const f = new URL('../src/vivante-garde.ts', import.meta.url);
       const src = readFileSync(f, 'utf8').replace(
-        /export const GARDE = [^;]*;/,
+        /export const GARDE =\s*[^;]*;/,
         `export const GARDE =\n  '${want}';`,
       );
       writeFileSync(f, src);

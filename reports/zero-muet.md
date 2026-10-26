@@ -1,19 +1,25 @@
 # Zéro muet — rapport du test
 
 Textes à écouter (uniques par niveau) : 10950
-- avec un fichier audio : 10752
-  dont graphie du Muṣḥaf, non jouée par le client (audioIdFor) : 349
-- sonorisés par Ayyūb (récitation branchée, table contrôlée contre Tanzil) : 175
-  dont mixtes (synthèse pour la partie non coranique) : 66
-- doutes remis au référent (rapprochement ambigu, non branché) : 13
+- avec un fichier audio : 10747
+  dont graphie du Muṣḥaf, non jouée par le client (audioIdFor) : 357
+- sonorisés par Ayyūb (récitation branchée, table contrôlée contre Tanzil) : 176
+  dont mixtes (synthèse pour la partie non coranique) : 67
+- doutes remis au référent (rapprochement ambigu, non branché) : 20
 - à corriger dans les livres avant le gel (réplique arabe qui cite du français, cas b) : 5
-- voix de synthèse À GÉNÉRER (garde levée, fichier absent, liste d’attente explicite) : 5
+- voix de synthèse À GÉNÉRER (garde levée, fichier absent, liste d’attente explicite) : 2
 - cahier de lecture : éléments récités par Ayyūb (mécanisme propre) : 308
 - MUETS sans solution prévue : 0
 
 ## Muets sans solution prévue
 
 ## Doutes remis au référent
+- ad1 · l13 gardé (coran) : إِنَّ رَبِّى قَرِيبٌۭ
+- ad1 · l23 gardé (coran) : رَبِّ ٱلْعَٰلَمِينَ
+- ad1 · l23 gardé (coran) : ٱهْدِنَا ٱلصِّرَٰطَ
+- ad1 · l23 gardé (contexte) : صِرَٰطَ
+- ad1 · l24 gardé (contexte) : يَكُن
+- ad1 · l24 gardé (coran) : لَّهُۥ
 - ad8 · l14 gardé (coran) : تَابَ وَآمَنَ وَعَمِلَ صَالِحًا
 - ad8 · l17 gardé (coran) : (ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ) = (٤:٦٩)
 - ad8 · l21 gardé (coran) : ١) أَفْعَالُ الْمُقَارَبَةِ ثَلَاثَةُ أَنْوَاعٍ: لِلْمُقَارَبَةِ: كَادَ، أَوْشَكَ، كَرَبَ؛ وَلِلرَّجَاءِ: عَسَى، حَرَى، اخْلَوْلَقَ؛ وَلِلشّ
@@ -25,23 +31,24 @@ Textes à écouter (uniques par niveau) : 10950
 - ad9 · l11 gardé (coran) : الْقَاعِدَةُ: (١) النَّسْخُ اصْطِلَاحًا: رَفْعُ حُكْمٍ شَرْعِيٍّ بِدَلِيلٍ شَرْعِيٍّ مُتَأَخِّرٍ عَنْهُ. (٢) دَلِيلُهُ: ﴿۞ مَا نَنسَخْ مِنْ 
 - ad9 · l13 gardé (coran) : ﴿صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ﴾ = بَدَلٌ مِنَ ﴿ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ﴾
 - ad9 · l14 gardé (coran) : [فَأْتُوا۟ بِسُورَةٍۢ مِّن مِّثْلِهِۦ] · [فَإِن لَّمْ تَفْعَلُوا۟ وَلَن تَفْعَلُوا۟] · [لَا يَأْتُونَ بِمِثْلِهِۦ] · [بِعَشْرِ سُوَرٍۢ مِّثْ
+- ad9 · l18 gardé (coran) : الدليل: قول الله تعالى في آية الوضوء: «مَا يُرِيدُ ٱللَّهُ لِيَجْعَلَ عَلَيْكُم مِّنْ حَرَجٍۢ»، وقول النبي ﷺ: «وما أمرتكم به فأتوا منه ما اس
 - ad10 · l01 gardé (coran) : ٱلَّذِينَ ءَامَنُوا۟ وَكَانُوا۟ يَتَّقُونَ
 - ad10 · l02 gardé (coran) : قَالَ الْقُرْطُبِيُّ فِي «الْجَامِعِ لِأَحْكَامِ الْقُرْآنِ»: قوله تعالى: ﴿يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ كُتِبَ عَلَيْكُمُ ٱلصِّيَامُ﴾ ف
 
 ## Sonorisés par Ayyūb
 - ad1 · l10 gardé (sacre) : لَمْ يَلِدْ وَلَمْ يُولَدْ → 112:3
+- ad1 · l13 gardé (coran) : إِنَّ رَبِّى قَرِيبٌۭ مُّجِيبٌۭ. → ~ 11:61
 - ad1 · l19 gardé (coran) : مَٰلِكِ يَوْمِ ٱلدِّينِ → 1:4
 - ad1 · l19 gardé (coran) : إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ → 1:5
 - ad1 · l19 gardé (coran) : ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ → 1:6
 - ad1 · l23 gardé (sacre) : إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ… → 1:5
 - ad1 · l23 gardé (sacre) : إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ…|الْآنَ أَفْهَمُ مَا أَقْرَأُ! → 1:5 t:091e93a606b27797c49ba4afbab64af0a491d846
 - ad1 · l23 gardé (sacre) : إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ… الْآنَ أَفْهَمُ مَا أَقْرَأُ! → 1:5 t:091e93a606b27797c49ba4afbab64af0a491d846
-- ad1 · l23 gardé (contexte) : مَالِكِ يَوْمِ الدِّينِ → 1:4
-- ad1 · l24 gardé (coran) : قُلْ أَعُوذُ بِرَبِّ النَّاسِ → 114:1
+- ad1 · l24 gardé (coran) : قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ → 114:1
 - ad1 · l24 gardé (coran) : قُلْ هُوَ ٱللَّهُ أَحَدٌ → 112:1
 - ad1 · l24 gardé (sacre) : مِن شَرِّ مَا خَلَقَ → 113:2
 - ad1 · l24 gardé (coran) : رَبِّ النَّاسِ — مَلِكِ النَّاسِ — إِلَٰهِ النَّاسِ → t:67826462112bfb09f098fb62ce6324102128ed41 114:1-3
-- ad2 · l11 gardé (coran) : الْمُؤْمِنُ[ونَ] إِخْوَةٌ → ~ 49:10
+- ad2 · l11 gardé (coran) : ٱلْمُؤْمِنُ[ونَ] إِخْوَةٌۭ → ~ 49:10
 - ad2 · l11 gardé (coran) : الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ → ~ 2:25
 - ad2 · l23 gardé (coran) : [فَ]سَبِّحْ بِحَمْدِ رَبِّ[كَ] → ~ 15:98
 - ad2 · l23 gardé (coran) : إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ → 1:5
@@ -197,6 +204,7 @@ Textes à écouter (uniques par niveau) : 10950
 - ad10 · l13 gardé (coran) : [نٓ ۚ وَٱلْقَلَمِ وَمَا يَسْطُرُونَ] · [ٱلَّذِى عَلَّمَ بِٱلْقَلَمِ] · [ثنا · أنا · ح · اهـ] · [سَاقِطَةٌ مِنْ ب ، وَالْمُثْبَتُ مِنْ أ] · [ → 68:1 96:4 t:21c9ed26aa733fb67fe73434a8d3267c72b99c51
 - ad10 · l13 gardé (basmala) : (أ) صَفْحَةٌ مِنْ مَخْطُوطِ الْأُسْرَةِ بِتِيَاسَ (نَصٌّ مُتَخَيَّلٌ لِلتَّدْرِيبِ، يَنْقُلُ مَتْنَ الْأَخْضَرِيِّ)، كَمَا كَتَبَهُ النَّاسِ → t:c9bd93be7bb6fcc3056511e54de0e8c46970b9a4 1:1 t:7812c126ce380ec7db37a353dd2955ce4fcd1b14
 - ad10 · l14 gardé (coran) : [إِن جَآءَكُمْ فَاسِقٌۢ بِنَبَإٍۢ فَتَبَيَّنُوٓا۟] · [وَلَا تَقْفُ مَا لَيْسَ لَكَ بِهِۦ عِلْمٌ] · [رَوَاهُ الْبُخَارِيُّ فِي كِتَابِ الْمَ → 49:6 17:36 t:4ac036c2b79cf3309dd8af3eaead91438ddd8f97
+- ad10 · l14 gardé (coran) : وختمت أميناتا مقالها بقوله تعالى: [﴿إِن جَآءَكُمْ فَاسِقٌۢ بِنَبَإٍۢ فَتَبَيَّنُوٓا۟﴾]، وقالت: التثبت عبادة، لا شك في الناس. → t:c11d7b7d59bca009f6c60a4e35f4ab5209754987 49:6 t:10668c6dfb687b85f7f7f8dab848decfe182d51f
 - ad10 · l14 gardé (coran) : ﴿إِن جَآءَكُمْ فَاسِقٌۢ بِنَبَإٍۢ فَتَبَيَّنُوٓا۟﴾ → ~ 49:6
 - ad10 · l18 gardé (coran) : (ذَٰلِكُمْ أَقْسَطُ عِندَ ٱللَّهِ وَأَقْوَمُ لِلشَّهَٰدَةِ) → ~ 2:282
 - ad10 · l21 gardé (coran) : خطبة «الوقت رأس مالك» (كتبت لهذا الكتاب، مختصرة). الخطبة الأولى، بعد الافتتاح: أيها المؤمنون، أقسم الله تعالى بالعصر فقال: ﴿وَٱلْعَصْرِ ۝ إِ → t:9ac836f5b99ce371cecc3281eb2b1b9ca66ea241 103:1-3 t:b2b043b4411ffded6ce7bc69766b192925aecc11
@@ -207,10 +215,7 @@ Textes à écouter (uniques par niveau) : 10950
 
 ## Voix de synthèse à générer (liste d’attente)
 - ad5 · l10 dialogue : إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ
-- cahier « Je parle » ad5 · conversation C17 : إِنْ شَاءَ اللَّهُ، مَنْ جَاءَ فَأَهْلًا بِهِ.
-- cahier « Je parle » ad7 · conversation C07 : مَا شَاءَ اللَّهُ! لَا تَرْفَعْنَ الْقِدْرَ الْكَبِيرَ.
-- cahier « Je parle » ad8 · conversation C12 : مَا شَاءَ اللَّهُ! لَا يَنْجَحُ أَحَدٌ وَحْدَهُ.
-- cahier « Je parle » ad8 · conversation C13 : مَا شَاءَ اللَّهُ! إِنَّ الرِّفْقَ يَفْتَحُ الْقُلُوبَ.
+- ad8 · l09 mots : السَّنَدُ: سِلْسِلَةُ الشُّيُوخِ الَّذِينَ نَقَلُوا الْقِرَاءَةَ عَنِ النَّبِيِّ ﷺ
 
 ## À corriger dans les livres
 - ad8 · l23 dialogue : كَتَبْتُ: « alors une période d'attente d'autres jours ». فَقَدْ تَعَلَّمْنَا أَنَّ الْعِدَّةَ مُصْطَلَحٌ فِقْهِيٌّ.
