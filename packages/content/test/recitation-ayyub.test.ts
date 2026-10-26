@@ -315,6 +315,16 @@ interface Decision {
   type: 'ayyub' | 'mixte' | 'table';
 }
 /** décisions du référent par texte (versets choisis) : tables du « zéro muet » */
+/** textes que le référent a décidés « synthèse » (faux positifs de la garde) : jamais dans la table */
+function decisionsSynthese(): Set<string> {
+  const s = new Set<string>();
+  for (const f of ['referent-373.tsv', 'ayyub-complement.tsv'])
+    for (const l of readFileSync(join(DATA, f), 'utf8').split('\n').slice(1)) {
+      const [texte, , decision] = l.split('\t');
+      if (texte && decision === 'synthese') s.add(audioKey(texte));
+    }
+  return s;
+}
 function decisions(): Map<string, Decision> {
   const m = new Map<string, Decision>();
   const t = JSON.parse(readFileSync(join(DATA, 'coran-ayyub-table.json'), 'utf8')) as {
@@ -408,7 +418,8 @@ function construire(): Resultat {
     if (l.garde) e.candidat = true;
     e.lieux.push(l);
   }
-  for (const [k, e] of parCle) if (!e.candidat) parCle.delete(k);
+  const synth = decisionsSynthese();
+  for (const [k, e] of parCle) if (!e.candidat || synth.has(audioKey(e.texte))) parCle.delete(k);
   const table: Record<string, string[]> = {};
   const doutes: string[] = [];
   const inventaireL: string[] = [];

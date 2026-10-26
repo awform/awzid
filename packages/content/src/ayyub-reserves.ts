@@ -4,4 +4,4 @@
  * nombre de mots, puis 16 premiers chiffres hexadécimaux du SHA-1 de leurs squelettes joints par une espace. Lues par
  * `refusVoix` (`garde-coran.ts`) : jamais de voix de synthèse sur un texte qui les contient.
  */
-export const AYYUB_RESERVES = '3:d176340f62a6800f';
+export const AYYUB_RESERVES = '3:6a93f4d2ac3413c8 3:d176340f62a6800f';

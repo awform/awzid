@@ -165,7 +165,19 @@ function aGenerer(avecSync = true): Set<string> {
       : [];
   // mots du Coran présentés comme vocabulaire (lemmes) : synthèse en graphie courante, pour l'agent audio (26/10/2026)
   const lemmes = join(DATA, 'a-generer-lemmes-26-10.tsv');
-  return new Set([...lire(f, 0), ...(avecSync ? [...lire(g, 3), ...lire(lemmes, 0)] : [])]);
+  // textes que le référent a décidés « synthèse » (faux positifs de la garde), en attente de leur fichier
+  const synthese = ['referent-373.tsv', 'ayyub-complement.tsv'].flatMap((x) =>
+    readFileSync(join(DATA, x), 'utf8')
+      .split('\n')
+      .slice(1)
+      .map((l) => l.split('\t'))
+      .filter((c) => c[2] === 'synthese' && c[0])
+      .map((c) => audioKey(c[0]!)),
+  );
+  return new Set([
+    ...lire(f, 0),
+    ...(avecSync ? [...lire(g, 3), ...lire(lemmes, 0), ...synthese] : []),
+  ]);
 }
 
 // ———— textes à écouter

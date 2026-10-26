@@ -681,7 +681,8 @@ export function analyser(texte: string, idx: IndexCoran, ctx: Contexte = {}): An
   // en graphie du Muṣḥaf — la parenthèse d'une analyse grammaticale —, 3 mots ou plus en écriture courante) passe à Ayyūb
   // (verset entier) ; la synthèse ne lit que le reste (l'analyse). Passage déjà entendu dans un verset joué : retiré.
   // Passage en graphie du Muṣḥaf présent à plusieurs endroits, sans sourate citée : au référent (liste finale).
-  for (let j = plan.length - 1; j >= 0; j--) {
+  // (décision du référent pour ce texte : ses versets font foi, rien d'autre n'est cherché)
+  for (let j = plan.length - 1; j >= 0 && !dec.length; j--) {
     const x = plan[j]!;
     if (x.k !== 't') continue;
     const mt = motsTexte(x.texte);
@@ -786,6 +787,15 @@ export function analyser(texte: string, idx: IndexCoran, ctx: Contexte = {}): An
       y.b = Math.max(y.b, z.b);
       plan.splice(j, 1);
     }
+  }
+  // un même verset cité deux fois dans le texte (hadith qui reprend deux passages d'un verset) : récité une seule fois
+  const vus = new Set<string>();
+  for (let j = 0; j < plan.length; j++) {
+    const x = plan[j]!;
+    if (x.k !== 'v') continue;
+    const c = `${x.s}:${x.a}-${x.b}`;
+    if (vus.has(c)) plan.splice(j--, 1);
+    else vus.add(c);
   }
   const mixte = plan.some((x) => x.k === 't');
   if (francais && !plan.some((x) => x.k === 'v'))

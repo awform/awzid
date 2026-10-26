@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Ecouter from '$lib/Ecouter.svelte';
   import Bidi from '$lib/Bidi.svelte';
   import { onDestroy, onMount } from 'svelte';
   import { t } from '$lib/i18n';
@@ -144,6 +145,8 @@
         >
       </div>
     {:else if src.type === 'tts' && !src.id}
+      <!-- 26/10/2026 : hadith qui cite le Coran (texte mixte) : la récitation d'Ayyūb du verset, par le petit lecteur -->
+      {#if p.ar}<Ecouter text={p.ar} />{/if}
       <div class="audio-off" data-testid="priere-audio-attente">
         <button
           type="button"
