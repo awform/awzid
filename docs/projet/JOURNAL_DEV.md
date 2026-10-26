@@ -13,6 +13,14 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 26/10/2026 — Vidéos vivantes V2 : le livre Ados 4 (ado4), fusion de `video-vivante-ado4-wip` dans `main` ; NON déployé
+
+**Note de reprise** : dernier livre fusionné = **ado4** (après en1, ado1, en2, ado2, en3, ado3, en4). Reste : en5, puis l'e2e complète finale. Outils : `~/vv-ad/` (`nouveau3.sh`, `auto.sh`, `auto2.sh` (avec e2e complète), `merge.sh`, `verif.sh`, `clean.sh`).
+
+`VIDEO_NIVEAUX` : ado 4 ; `VIDEO_GARDE` recalculée (**10 empreintes de plus** : versets cités des récits des Ados 4, dont les gardes de Yūsuf et des Gens de la caverne) ; le test « zéro muet » reste vert (aucun nouveau classement Ayyūb nécessaire). Contrôle 360 px : **0 réduction sur les 25 unités** du premier coup ; captures v2 clair/sombre de l03, l11, l21 et planche (`captures_app/captures-v2-ado4/`). Tests : typecheck, eslint, prettier 0 erreur ; unitaires verts sauf `video-cahier-niveau1.test.ts` (rouge aussi sur `main`) ; e2e vidéo **18 réussis, 0 échec** ; poids lecteur v2 23 658 o (garde 24 Ko). Audio (ado4, 1 068 fichiers) : 899 textes « à écouter » sans fichier, 2 190 en tout, 22 gardés sans voix ; `reports/video-vivante-ado4.md`.
+
+---
+
 ## 26/10/2026 — Vidéos vivantes V2 : le livre Enfants 4 (en4), fusion de `video-vivante-en4-wip` dans `main` ; NON déployé
 
 **Note de reprise** : dernier livre fusionné = **en4** (après en1, ado1, en2, ado2, en3, ado3). Restent : ado4, en5 (puis e2e complète finale). Outils : `~/vv-ad/` (`nouveau3.sh`, `auto.sh`, `merge.sh`, `verif.sh`, `clean.sh`).
