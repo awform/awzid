@@ -4,7 +4,8 @@
  *    verset ; jamais de voix de synthèse, sous aucun prétexte (la Fātiḥa de la prière obligatoire commence à 1:2) ;
  *  - les PAROLES (takbīr, tasbīḥ, tashahhud, adhkār, adhān…) : fichiers de synthèse du niveau « priere » (`audioIdFor` :
  *    jamais de synthèse sur un texte coranique, la garde de l'application n'est ni contournée ni assouplie) ;
- *    JAMAIS de synthèse sur une forme qui contient la basmala (règle du 20/10).
+ *    JAMAIS de synthèse sur la Basmala COMPLÈTE (verset 1:1 : Ayyūb) ; la tasmiya seule (« bismillāh »), ou dans une phrase
+ *    dite avant un acte, est un dhikr lu par la synthèse (décision du référent du 26/10/2026, qui remplace la règle du 20/10).
  * Le mot entendu est surligné : pour une parole, d'après les silences mesurés du fichier (`calendrier.ts`) ; pour
  * Ayyūb, verset par verset. Si le son est bloqué, le surlignage continue au même rythme, sans son.
  * Un seul son à la fois ; aucune lecture automatique ; chargement des fichiers à la demande (au premier appui).
@@ -36,7 +37,7 @@ export type SourceAudio =
   | { type: 'ayyub'; refs: RefVerset[] }
   /** voix de synthèse : `id` = fichier existant, null = « audio en préparation » */
   | { type: 'tts'; id: string | null }
-  /** jamais de voix : `basmala` (règle du 20/10) ou `coran` (graphie du Muṣḥaf) */
+  /** jamais de voix : `basmala` (Basmala complète, verset 1:1) ou `coran` (graphie du Muṣḥaf) */
   | { type: 'interdit'; raison: 'basmala' | 'coran' }
   | { type: 'aucun' };
 
@@ -56,16 +57,22 @@ export function refsAyyub(audio: string | readonly string[] | undefined): RefVer
   return out;
 }
 
-/** La basmala (avec ou sans voyelles, graphie du Muṣḥaf comprise) : jamais de synthèse. */
+/**
+ * La Basmala COMPLÈTE (bismillāhi r-raḥmāni r-raḥīm) = le verset 1:1 : jamais de synthèse (récitation d'Ayyūb). La tasmiya seule
+ * (« bismillāh »), ou dans une phrase dite avant un acte, est un dhikr : la synthèse est permise (décision du référent du
+ * 26/10/2026). Avec ou sans voyelles, graphie du Muṣḥaf comprise.
+ */
 export function contientBasmala(ar: string): boolean {
   const nu = ar
     .replace(/[\u064B-\u065F\u0670\u0640]/g, '')
     .replace(/\u0671/g, '\u0627')
     .replace(/\s+/g, ' ');
-  return /\u0628\u0633\u0645 \u0627\u0644+\u0647/.test(nu);
+  return /\u0628\u0633\u0645 \u0627\u0644+\u0647 \u0627\u0644\u0631\u062d\u0645\u0627?\u0646 \u0627\u0644\u0631\u062d\u064a\u0645/.test(
+    nu,
+  );
 }
 
-/** Interdit à la synthèse : la basmala, ou une graphie du Muṣḥaf. */
+/** Interdit à la synthèse : la Basmala complète (verset 1:1), ou une graphie du Muṣḥaf. */
 export const interditSynthese = (ar: string): 'basmala' | 'coran' | null =>
   contientBasmala(ar) ? 'basmala' : looksQuranic(ar) ? 'coran' : null;
 
