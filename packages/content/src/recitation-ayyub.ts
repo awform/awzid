@@ -194,7 +194,16 @@ export type Segment =
   { k: 'v'; s: number; a: number; b: number } | { k: 'b'; s: number } | { k: 't'; texte: string };
 
 /** « lemme » : mot du Coran présenté comme vocabulaire (exercice de langue) : la synthèse, en graphie courante */
-export type Statut = 'verset' | 'fragment' | 'mixte' | 'doute' | 'court' | 'aucun' | 'lemme';
+export type Statut =
+  | 'verset'
+  | 'fragment'
+  | 'mixte'
+  | 'doute'
+  | 'court'
+  | 'aucun'
+  | 'lemme'
+  /** note rédigée en français : non lue, pas un muet */
+  | 'francais';
 
 export interface Analyse {
   statut: Statut;
@@ -309,6 +318,10 @@ const decisionsEnRefs = (d: string[] | undefined): Ref[] => (d ?? []).flatMap((x
 /** Analyse un texte du livre : parties coraniques, versets, plan de lecture. */
 export function analyser(texte: string, idx: IndexCoran, ctx: Contexte = {}): Analyse {
   const w = motsTexte(texte);
+  // note rédigée en FRANÇAIS (méthode, tajwīd) avec des mots du Coran en exemple : non lue (décision du référent du
+  // 26/10/2026 : la voix ne fait pas le tajwīd) ; une citation de 4 mots ou plus y reste récitée par Ayyūb
+  const francais =
+    (texte.match(/[A-Za-zÀ-ÿ]/g) ?? []).length > (texte.match(/[ء-ي]/g) ?? []).length;
   const M = idx.mots;
   const courses: Course[] = [];
   let libre = 0;
@@ -421,6 +434,8 @@ export function analyser(texte: string, idx: IndexCoran, ctx: Contexte = {}): An
   if (!courses.length) {
     const k = w.map((x) => x.k).join(' ');
     if (!k) return { statut: 'aucun', segments: [], coran: [], note: '' };
+    if (francais)
+      return { statut: 'francais', segments: [], coran: [], note: 'note en français : non lue' };
     const choix: string[] = [];
     const entiers = idx.courts.get(k) ?? [];
     const lettres = entiers.filter((r) => MUQATTAAT.has(r));
@@ -533,7 +548,7 @@ export function analyser(texte: string, idx: IndexCoran, ctx: Contexte = {}): An
   // décision « tout est récité » : aucune partie confiée à la synthèse
   const sansSynthese = ctx.decisionType === 'ayyub' && dec.length > 0;
   const ajouteTexte = (de: number, a: number) => {
-    if (sansSynthese) return;
+    if (sansSynthese || francais) return;
     // seulement les passages ARABES (le français n'a pas de voix : décision du client du 24/10/2026) ; références,
     // parenthèses ornées, ponctuation de bord : rien à dire
     for (const m of texte.slice(de, a).matchAll(PASSAGE_ARABE)) {
@@ -662,37 +677,74 @@ export function analyser(texte: string, idx: IndexCoran, ctx: Contexte = {}): An
     (idx.parMot.get(souple(m[0] ?? '')) ?? []).filter((q) =>
       m.every((x, j) => q + j < M.length && egalSouple(x, M[q + j]!.k)),
     );
-  for (let j = 0; j < plan.length; j++) {
+  // Décisions du référent du 26/10/2026 : dans une partie restante, chaque passage qui se lit dans le Coran (2 mots ou plus
+  // en graphie du Muṣḥaf — la parenthèse d'une analyse grammaticale —, 3 mots ou plus en écriture courante) passe à Ayyūb
+  // (verset entier) ; la synthèse ne lit que le reste (l'analyse). Passage déjà entendu dans un verset joué : retiré.
+  // Passage en graphie du Muṣḥaf présent à plusieurs endroits, sans sourate citée : au référent (liste finale).
+  for (let j = plan.length - 1; j >= 0; j--) {
     const x = plan[j]!;
     if (x.k !== 't') continue;
-    const m = motsTexte(x.texte).map((y) => y.k);
-    if (!m.length) continue;
-    if (looksQuranic(x.texte)) {
-      const spans = new Set(
-        occurrences(m).map((q) => {
+    const mt = motsTexte(x.texte);
+    if (!mt.length) continue;
+    const morceaux: Segment[] = [];
+    let de = 0;
+    const reste = (a: number, b: number) => {
+      const t = x.texte.slice(a, b).replace(BORDS, '').trim();
+      if (/[ء-ي]/.test(t)) morceaux.push({ k: 't', texte: t });
+    };
+    for (let i = 0; i < mt.length;) {
+      let trouve = 0;
+      let occ: number[] = [];
+      for (let n = mt.length - i; n >= 2; n--) {
+        const part = x.texte.slice(mt[i]!.a, mt[i + n - 1]!.b);
+        if (n < 3 && !looksQuranic(part)) continue;
+        const o = occurrences(mt.slice(i, i + n).map((y) => y.k)).filter((q) => !M[q]!.b);
+        if (o.length) {
+          trouve = n;
+          occ = o;
+          break;
+        }
+      }
+      if (!trouve) {
+        i++;
+        continue;
+      }
+      const part = mt.slice(i, i + trouve).map((y) => souple(y.k));
+      const deja = jouesTexte.includes(` ${part.join(' ')} `);
+      reste(de, mt[i]!.a);
+      de = mt[i + trouve - 1]!.b;
+      if (!deja) {
+        const spans = new Map<string, number>();
+        for (const q of occ) {
           const d = M[q]!;
-          const f = M[q + m.length - 1]!;
-          return d.s === f.s ? `${d.s}:${d.v}:${f.v}` : '';
-        }),
-      );
-      const [un] = [...spans];
-      if (spans.size !== 1 || !un)
-        return {
-          statut: 'doute',
-          segments: [],
-          coran,
-          note: `passage en graphie du Muṣḥaf sans verset sûr : « ${x.texte} »`,
-        };
-      const [s, a, b] = un.split(':').map(Number) as [number, number, number];
-      plan[j] = { k: 'v', s, a, b };
-      fragment = true;
-    } else if (m.length >= 3 && occurrences(m).length)
-      return {
-        statut: 'doute',
-        segments: [],
-        coran,
-        note: `partie confiée à la synthèse qui se lit dans le Coran : « ${x.texte} »`,
-      };
+          const f = M[q + trouve - 1]!;
+          if (d.s === f.s && !spans.has(`${d.s}:${d.v}:${f.v}`))
+            spans.set(`${d.s}:${d.v}:${f.v}`, q);
+        }
+        let q: number | undefined;
+        if (spans.size === 1) q = [...spans.values()][0];
+        else {
+          const cites = [...spans.values()].filter((y) => ctx.sourates?.includes(M[y]!.s));
+          if (cites.length) q = Math.min(...cites);
+          // écriture courante (3 mots ou plus) : la première occurrence du Muṣḥaf ; graphie du Muṣḥaf : au référent
+          else if (!looksQuranic(x.texte.slice(mt[i]!.a, de))) q = Math.min(...spans.values());
+        }
+        if (q === undefined)
+          return {
+            statut: 'doute',
+            segments: [],
+            coran,
+            note: `passage en graphie du Muṣḥaf sans verset sûr : « ${x.texte.slice(mt[i]!.a, de)} »`,
+          };
+        const d = M[q]!;
+        const f = M[q + trouve - 1]!;
+        morceaux.push({ k: 'v', s: d.s, a: d.v, b: f.v });
+        fragment = true;
+      }
+      i += trouve;
+    }
+    reste(de, x.texte.length);
+    plan.splice(j, 1, ...morceaux);
   }
   // garde-fou : une partie confiée à la synthèse ne reprend AUCUNE suite de deux mots des versets joués. Décision du
   // référent du 26/10/2026 : on la DÉCOUPE pour que la synthèse ne lise que le texte du livre (les mots du verset sont
@@ -725,7 +777,18 @@ export function analyser(texte: string, idx: IndexCoran, ctx: Contexte = {}): An
       notes.push('partie du livre découpée : la synthèse ne lit pas les mots du verset');
     }
   }
+  // versets devenus voisins (passages remis à Ayyūb) : fusionnés
+  for (let j = plan.length - 1; j > 0; j--) {
+    const y = plan[j - 1]!;
+    const z = plan[j]!;
+    if (y.k === 'v' && z.k === 'v' && y.s === z.s && z.a >= y.a && z.a <= y.b + 1) {
+      y.b = Math.max(y.b, z.b);
+      plan.splice(j, 1);
+    }
+  }
   const mixte = plan.some((x) => x.k === 't');
+  if (francais && !plan.some((x) => x.k === 'v'))
+    return { statut: 'francais', segments: [], coran: [], note: 'note en français : non lue' };
   return {
     statut: mixte ? 'mixte' : fragment ? 'fragment' : 'verset',
     segments: plan,

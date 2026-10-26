@@ -73,6 +73,19 @@ function tableRecitation(): Map<string, string[]> {
   const t = JSON.parse(readFileSync(f, 'utf8')) as { t: Record<string, string[]> };
   return new Map(Object.entries(t.t));
 }
+/** notes rédigées en français (méthode, tajwīd) : non lues, pas des muets (décision du référent du 26/10/2026) */
+function notesFrancais(): Set<string> {
+  const f = join(DATA, 'notes-francais-26-10.tsv');
+  return new Set(
+    existsSync(f)
+      ? readFileSync(f, 'utf8')
+          .split('\n')
+          .slice(1)
+          .filter(Boolean)
+          .map((l) => cleRecitation(l.split('\t')[0]!))
+      : [],
+  );
+}
 /** doutes remis au référent (texte → raison) */
 function doutesAyyub(): Set<string> {
   const f = join(DATA, 'doutes-ayyub.tsv');
@@ -347,6 +360,8 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
       const explicites = ayyubExplicite();
       const table = tableRecitation();
       const doutes = doutesAyyub();
+      const francais = notesFrancais();
+      const nonLus: Cible[] = [];
       const recitee = (t: string) => table.has(cleRecitation(t));
       const corrections = aCorriger();
       const attenteSynthese = aGenerer();
@@ -370,6 +385,7 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
         else if (aSonFichier(c.texte, c.niveau)) voixOk.push(c);
         else if (recitee(c.texte)) parAyyub.push(c);
         else if (doutes.has(cleRecitation(c.texte))) auReferent.push(c);
+        else if (francais.has(cleRecitation(c.texte))) nonLus.push(c);
         else if (corrections.has(audioKey(c.texte))) dansLesLivres.push(c);
         else if (attenteSynthese.has(audioKey(c.texte))) aSynthetiser.push(c);
         else muets.push(c);
@@ -401,6 +417,7 @@ describe.skipIf(!HAS_CONTENT || fichiers.size === 0)(
         `- sonorisés par Ayyūb (récitation branchée, table contrôlée contre Tanzil) : ${parAyyub.length}`,
         `  dont mixtes (synthèse pour la partie non coranique) : ${parAyyub.filter((c) => table.get(cleRecitation(c.texte))!.some((x) => x.startsWith('t:'))).length}`,
         `- doutes remis au référent (rapprochement ambigu, non branché) : ${auReferent.length}`,
+        `- notes rédigées en français (non lues, la voix ne fait pas le tajwīd) : ${nonLus.length}`,
         `- à corriger dans les livres avant le gel (réplique arabe qui cite du français, cas b) : ${dansLesLivres.length}`,
         `- voix de synthèse À GÉNÉRER (garde levée, fichier absent, liste d’attente explicite) : ${aSynthetiser.length}`,
         `- cahier de lecture : éléments récités par Ayyūb (mécanisme propre) : ${lecture.recites}`,

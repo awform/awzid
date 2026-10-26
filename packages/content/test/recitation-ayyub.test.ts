@@ -367,6 +367,7 @@ interface Resultat {
   doutes: string[];
   lemmes: string[];
   doutes93: string[];
+  francais: string[];
   inventaire: string[];
   synthese: string[];
   annexes: number[];
@@ -416,6 +417,7 @@ function construire(): Resultat {
   const parLivre = new Map<string, Record<string, number>>();
   const lemmes = new Map<string, { livres: Set<string>; note: string }>();
   const doutes93: string[] = [];
+  const francais: string[] = [];
   const fichier = (t: string) => audioFileId(t)!;
   for (const [k, e] of [...parCle].sort(([a], [b]) => (a < b ? -1 : 1))) {
     const plans = new Map<string, Analyse>();
@@ -447,6 +449,13 @@ function construire(): Resultat {
       [...plans.values()].find((x) => x.statut === 'doute') ??
       [...plans.values()].find((x) => x.statut === 'lemme') ??
       [...plans.values()][0]!;
+    if (a.statut === 'francais')
+      francais.push(
+        [
+          e.texte.replace(/[\t\n\r]+/g, ' '),
+          [...new Set(e.lieux.map((l) => l.livre))].join(' '),
+        ].join('\t'),
+      );
     if (a.statut === 'lemme')
       lemmes.set(e.texte, { livres: new Set(e.lieux.map((l) => l.livre)), note: a.note });
     const livres = [...new Set(e.lieux.map((l) => l.livre))];
@@ -469,8 +478,8 @@ function construire(): Resultat {
     const ligne = (x: string) => x.replace(/[\t\n\r]+/g, ' ');
     if (a.statut === 'doute') {
       doutes.push([genre(a.note), ligne(e.texte), lieux, ligne(a.note)].join('\t'));
-      // en graphie du Muṣḥaf sans verset sûr : les 3 versets candidats les plus proches, pour le référent
-      if (genre(a.note) === 'graphie-sans-verset') {
+      // liste finale pour le référent : les 3 versets candidats les plus proches du passage
+      {
         const passage = /« (.+) »/.exec(a.note)?.[1] ?? e.texte;
         doutes93.push(
           [ligne(e.texte), ligne(passage), candidats(passage, idx).join(' ; '), lieux].join('\t'),
@@ -503,6 +512,7 @@ function construire(): Resultat {
         ),
       ),
     doutes93: doutes93.sort(),
+    francais: francais.sort(),
     inventaire: inventaireL,
     synthese: [...synthese].sort().map(([sha, t]) => `${sha}\t${t}`),
     annexes: [...annexes].sort((x, y) => x - y),
@@ -578,12 +588,18 @@ describe.skipIf(!tanzil || !HAS_CONTENT)('récitation d’Ayyūb : table des liv
         tete('empreinte\ttexte') + r.synthese.map((l) => `${l}\n`).join(''),
       ],
       [
+        join(DATA, 'notes-francais-26-10.tsv'),
+        tete(
+          'texte\tlivres (note rédigée en français : non lue, décision du référent du 26/10/2026)',
+        ) + r.francais.map((l) => `${l}\n`).join(''),
+      ],
+      [
         join(DATA, 'a-generer-lemmes-26-10.tsv'),
         tete('texte\tempreinte\tlivres\tnote (synthèse en graphie courante, pour l’agent audio)') +
           r.lemmes.map((l) => `${l}\n`).join(''),
       ],
       [
-        join(DATA, 'doutes-referent-93.tsv'),
+        join(DATA, 'doutes-referent-final-26-10.tsv'),
         tete('texte\tpassage\tversets candidats (score)\tou') +
           r.doutes93.map((l) => `${l}\n`).join(''),
       ],
