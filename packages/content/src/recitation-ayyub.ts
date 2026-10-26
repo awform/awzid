@@ -696,7 +696,6 @@ export function analyser(texte: string, idx: IndexCoran, ctx: Contexte = {}): An
       let trouve = 0;
       let occ: number[] = [];
       for (let n = mt.length - i; n >= 2; n--) {
-        const part = x.texte.slice(mt[i]!.a, mt[i + n - 1]!.b);
         // deux mots : seulement s'ils sont TOUS deux en graphie du Muṣḥaf (« كِتَٰبًۭا (فِي » n'est pas une citation)
         if (n < 3 && !mt.slice(i, i + n).every((y) => looksQuranic(x.texte.slice(y.a, y.b))))
           continue;
