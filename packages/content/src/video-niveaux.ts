@@ -5,7 +5,7 @@
  * `estNiveauVideo` (appareil élève, marge de poids de 3 Ko) la lit sans la liste, la liste `VIDEO_NIVEAUX` (tests,
  * générateur) en est tirée et n'entre pas dans l'appareil.
  */
-const LIVRES: Readonly<Record<string, number>> = { ad: 10, en: 4, ado: 3 };
+const LIVRES: Readonly<Record<string, number>> = { ad: 10, en: 4, ado: 4 };
 export const estNiveauVideo = (n: string): boolean => {
   const m = /^([a-z]+)([1-9]\d*)$/.exec(n);
   return !!m && +m[2]! <= (LIVRES[m[1]!] ?? 0);
