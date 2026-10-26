@@ -219,7 +219,7 @@ test.describe('khatma et wird', () => {
     await page.getByTestId('kh-type-wird').check();
     await page.getByTestId('kh-wird-5').click();
     await page.getByTestId('kh-creer').click();
-    await expect(page.getByTestId('khatma-plan')).toContainText('Wird');
+    await expect(page.getByTestId('khatma-plan')).toContainText('Lecture du jour');
     await expect(page.getByTestId('khatma-jour')).toContainText('Pages 1 à 5');
     await page.getByTestId('khatma-ai-lu').click();
     await expect(page.getByTestId('khatma-jour-lu')).toBeVisible();
