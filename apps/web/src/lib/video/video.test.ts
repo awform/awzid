@@ -75,6 +75,7 @@ describe('vidéos vivantes : interrupteur « video_vivante »', () => {
       'en2',
       'en3',
       'en4',
+      'en5',
       'ado1',
       'ado2',
       'ado3',
