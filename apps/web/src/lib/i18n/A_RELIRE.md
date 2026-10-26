@@ -224,10 +224,10 @@ plus propre à Adultes 1 (« Retour aux leçons »). Choix à vérifier : l'él�
 et par son son) ; « Joueur 1 / Joueur 2 » du duel ; consignes de glisser-déposer et du mode « sans glisser » (touche la lettre,
 puis la case ; au clavier, Tab puis Entrée).
 
-## Khatma et wird (25/10/2026, interrupteur `khatma_wird`) — brouillons à relire
+## Khatma et lecture du jour (25/10/2026, interrupteur `khatma_wird`) — brouillons à relire
 Textes `kh.*` (carte du Coran, création et réglage d’un plan, khatma en famille et en classe, suivi des parts) et `fn.khatma_wird`
 traduits par Claude, relecteur provisoire, en **brouillon** dans les quatre langues en préparation ; le français est embarqué avec
-le module (`lib/khatma/textes-fr.json`). Choix à vérifier : l’élève est TUTOYÉ ; « khatma », « wird » et « juzʾ » gardés tels
+le module (`lib/khatma/textes-fr.json`). Choix à vérifier : l’élève est TUTOYÉ ; « khatma » et « juzʾ » gardés tels (« wird » BANNI le 26/10 : confréries soufies du Sénégal ; « lecture du jour », daily reading, lectura diaria, Tageslesung, قِرَاءَةُ الْيَوْمِ)
 quels dans toutes les langues ; AUCUN mot de reproche (ni « retard », ni « série », ni « dette ») ; l’arabe n’a pas de pluriel
 complet (formes « un » et « autre » seulement, sauf `kh.lues` qui garde la même forme que le français).
 ## Mutashābihāt dans le hifẓ (25/10/2026, interrupteur `mutashabihat`) — brouillons à relire
