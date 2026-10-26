@@ -13,6 +13,14 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 ---
 
+## 26/10/2026 — Vidéos vivantes V2 : le livre Enfants 4 (en4), fusion de `video-vivante-en4-wip` dans `main` ; NON déployé
+
+**Note de reprise** : dernier livre fusionné = **en4** (après en1, ado1, en2, ado2, en3, ado3). Restent : ado4, en5 (puis e2e complète finale). Outils : `~/vv-ad/` (`nouveau3.sh`, `auto.sh`, `merge.sh`, `verif.sh`, `clean.sh`).
+
+`VIDEO_NIVEAUX` : en 4 ; **`VIDEO_GARDE` recalculée : 3 empreintes de plus**, dont un mot à mot de Yūsuf 12:4 (« أَحَدَ عَشَرَ كَوْكَبًا ») cité en Enfants 4 leçon 13 : la garde étant par texte, il devient sans voix aussi dans Adultes 5 et 6 (même chaîne) ; le test « zéro muet » l'a signalé (ad5 l09) : classé « Ayyūb, 12:4 » dans `ayyub-complement.tsv`, **à contrôler par le référent** (voix retirée à un exemple de nombres d'adultes parce que ces trois mots sont du Coran). Les deux autres : une réplique de Ismāʿīl (37:102) et la paraphrase de sourate al-Fīl (105:3-4) d'Enfants 4. Contrôle 360 px : **0 réduction sur les 25 unités** du premier coup ; captures v2 clair/sombre de l03, l13, l21 et planche (`captures_app/captures-v2-en4/`). Tests : typecheck, eslint, prettier 0 erreur ; unitaires verts sauf `video-cahier-niveau1.test.ts` et `identites.test.ts` (rouges aussi sur `main`) ; e2e vidéo **18 réussis, 0 échec**. Audio : voir `reports/video-vivante-en4.md`.
+
+---
+
 ## 26/10/2026 — Vidéos vivantes V2 : le livre Ados 3 (ado3), fusion de `video-vivante-ado3-wip` dans `main` ; NON déployé
 
 **Note de reprise** : dernier livre fusionné = **ado3** (après en1, ado1, en2, ado2, en3). Restent : en4, ado4, en5 (puis e2e complète finale). Outils : `~/vv-ad/` (`nouveau3.sh B famille N`, `auto.sh`, `merge.sh`, `verif.sh` (build, typecheck, tests, garde de poids, puis fusion), `clean.sh`).
