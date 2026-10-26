@@ -41,8 +41,6 @@ const DATA = join(import.meta.dirname, '..', 'data', 'zero-muet');
 const STATIC = join(RACINE, 'apps', 'web', 'static');
 const TABLE = join(STATIC, 'recitation', 'ayyub.json');
 const TSV = join(CONTENT_DIR, 'coran', 'tanzil-uthmani.tsv');
-const LISTE = process.env.AWFORM_LECONS_AUDIO_LISTE ?? join(homedir(), 'lecons-audio', 'liste.csv');
-const BOM = new RegExp(`^${String.fromCharCode(0xfeff)}`);
 
 /** clé d'un texte dans la table (comme `autoriseCle`) */
 const cle = (s: string) => (audioFileId(s) ?? '').slice(0, 12);
@@ -353,17 +351,6 @@ function reserves(): Array<{ k: string[]; ref: string }> {
     .map(([texte, ref]) => ({ k: motsTexte(texte!).map((x) => x.k), ref: ref! }));
 }
 
-/** fichiers de synthèse existants (liste des audios des leçons) */
-const fichiers = new Set(
-  existsSync(LISTE)
-    ? readFileSync(LISTE, 'utf8')
-        .split('\n')
-        .slice(1)
-        .map((l) => l.split(';')[0]!.replace(BOM, ''))
-        .filter(Boolean)
-    : [],
-);
-
 /** genre d'un doute (colonne de tri pour le référent) */
 const genre = (note: string) =>
   /^(citation présente|plusieurs versets|verset entier présent)/.test(note)
@@ -518,9 +505,7 @@ function construire(): Resultat {
       ),
     doutes93: doutes93.sort(),
     inventaire: inventaireL,
-    synthese: [...synthese]
-      .sort()
-      .map(([sha, t]) => `${sha}\t${fichiers.has(sha) ? 'oui' : 'non'}\t${t}`),
+    synthese: [...synthese].sort().map(([sha, t]) => `${sha}\t${t}`),
     annexes: [...annexes].sort((x, y) => x - y),
     parLivre,
   };
@@ -591,7 +576,7 @@ describe.skipIf(!tanzil || !HAS_CONTENT)('récitation d’Ayyūb : table des liv
       ],
       [
         join(DATA, 'synthese-mixte.tsv'),
-        tete('empreinte\tfichier_present\ttexte') + r.synthese.map((l) => `${l}\n`).join(''),
+        tete('empreinte\ttexte') + r.synthese.map((l) => `${l}\n`).join(''),
       ],
       [
         join(DATA, 'a-generer-lemmes-26-10.tsv'),
