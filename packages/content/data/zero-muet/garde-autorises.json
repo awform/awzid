@@ -1795,6 +1795,36 @@
       "decision": "synthese",
       "raison": "réplique d'un dialogue (explication de « بَاطِلٌ ») : pas une citation (faux positif de la garde) — décision du 26/10/2026",
       "refusAvant": "citation"
+    },
+    {
+      "cle": "Allah est الرَّحْمٰنُ الرَّحِيمُ : Il est plein de bonté.",
+      "decision": "synthese",
+      "raison": "texte mele de francais (livre ou cahier) dont la partie arabe est un nom divin seul ou un mot de vocabulaire de moins de 4 mots, non presente comme recitation : seule la partie arabe est lue (decision du referent 26/10/2026)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "Je connais les noms الرَّحْمٰنُ et الرَّحِيمُ.",
+      "decision": "synthese",
+      "raison": "texte mele de francais (livre ou cahier) dont la partie arabe est un nom divin seul ou un mot de vocabulaire de moins de 4 mots, non presente comme recitation : seule la partie arabe est lue (decision du referent 26/10/2026)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "Je sais qu'Allah est الرَّحْمٰنُ الرَّحِيمُ : Il est plein de bonté.",
+      "decision": "synthese",
+      "raison": "texte mele de francais (livre ou cahier) dont la partie arabe est un nom divin seul ou un mot de vocabulaire de moins de 4 mots, non presente comme recitation : seule la partie arabe est lue (decision du referent 26/10/2026)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "Les deux noms ar-Raḥmān (الرَّحْمٰنُ) et ar-Raḥīm (الرَّحِيمُ) viennent de la même racine. Beaucoup de commentateurs expliquent que ar-Raḥmān exprime une miséricorde immense qui englobe toutes les créatures en ce monde, et ar-Raḥīm une miséricorde qu'Allah accorde en particulier aux croyants, surtout dans l'au-delà. La miséricorde est un attribut d'Allah : nous l'affirmons telle que le Coran et la Sunna la décrivent, sans la comparer à celle des créatures.",
+      "decision": "synthese",
+      "raison": "texte mele de francais (livre ou cahier) dont la partie arabe est un nom divin seul ou un mot de vocabulaire de moins de 4 mots, non presente comme recitation : seule la partie arabe est lue (decision du referent 26/10/2026)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "الرَّحْمٰنُ et الرَّحِيمُ",
+      "decision": "synthese",
+      "raison": "texte mele de francais (livre ou cahier) dont la partie arabe est un nom divin seul ou un mot de vocabulaire de moins de 4 mots, non presente comme recitation : seule la partie arabe est lue (decision du referent 26/10/2026)",
+      "refusAvant": "coran"
     }
   ]
 }

@@ -89,7 +89,7 @@
      "reference": "al-Bukhārī, Ṣaḥīḥ, n° 8 (d'après Ibn ʿUmar) ; aussi Muslim, Ṣaḥīḥ, n° 16 (numérotation ʿAbd al-Bāqī)",
      "authenticite": "authentique (ṣaḥīḥ) ; registre HAD_BUK_00008 : VERIFIE",
      "explication": "La prière est le deuxième pilier, juste après l'attestation de foi.",
-     "audio": "aucun"
+     "audio": "tts"
     },
     {
      "id": "S1.p4",
@@ -138,7 +138,7 @@
      "reference": "al-Bukhārī, Ṣaḥīḥ, n° 528 (d'après Abū Hurayra) ; aussi Muslim, Ṣaḥīḥ, n° 667 (numérotation ʿAbd al-Bāqī)",
      "authenticite": "authentique (ṣaḥīḥ, dans le Ṣaḥīḥ d'al-Bukhārī)",
      "explication": "Chaque prière bien faite est un lavage du cœur : elle efface les petites fautes commises entre deux prières.",
-     "audio": "aucun"
+     "audio": "tts"
     },
     {
      "id": "S1.r1",
@@ -305,7 +305,7 @@
        "fr": "« Aucune prière n'est acceptée sans purification. »",
        "reference": "Muslim, Ṣaḥīḥ, n° 224 (numérotation ʿAbd al-Bāqī) (d'après Ibn ʿUmar)",
        "authenticite": "authentique (ṣaḥīḥ, dans le Ṣaḥīḥ de Muslim)",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S2A.r0",
@@ -1167,7 +1167,7 @@
        "fr": "Lorsqu'il faisait le grand lavage après la janāba, il commençait par se laver les mains, puis faisait les ablutions comme pour la prière, puis plongeait ses doigts dans l'eau et la faisait pénétrer jusqu'à la racine de ses cheveux, puis versait sur sa tête trois poignées d'eau de ses deux mains, puis répandait l'eau sur toute sa peau.",
        "reference": "al-Bukhārī, Ṣaḥīḥ, n° 248 (d'après ʿĀʾisha, par Mālik) ; aussi Muslim, Ṣaḥīḥ, n° 316 (numérotation ʿAbd al-Bāqī)",
        "authenticite": "authentique (ṣaḥīḥ)",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S2B.oubli",
@@ -1228,7 +1228,7 @@
          "fr": "« Cela nous arrivait : on nous ordonnait de rattraper le jeûne, et on ne nous ordonnait pas de rattraper la prière. »",
          "reference": "Muslim, Ṣaḥīḥ, n° 335 (numérotation ʿAbd al-Bāqī) (parole de ʿĀʾisha, question de Muʿādha) ; aussi al-Bukhārī, Ṣaḥīḥ, n° 321",
          "authenticite": "authentique (ṣaḥīḥ)",
-         "audio": "aucun"
+         "audio": "tts"
         },
         {
          "id": "S2B.f2",
@@ -1442,7 +1442,7 @@
        "fr": "« Il te suffisait de faire ainsi. » Et le Prophète ﷺ frappa le sol de ses mains, souffla dessus, puis s'en essuya le visage et les mains.",
        "reference": "al-Bukhārī, Ṣaḥīḥ, n° 338 (récit de ʿAmmār ibn Yāsir) ; aussi Muslim, Ṣaḥīḥ, n° 368 (numérotation ʿAbd al-Bāqī)",
        "authenticite": "authentique (ṣaḥīḥ)",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S2C.regles",
@@ -2621,7 +2621,7 @@
        "fr": "« Quand vous entendez le muezzin, dites comme il dit, puis priez sur moi : celui qui prie sur moi une fois, Allah prie sur lui dix fois. Puis demandez pour moi à Allah al-wasīla : c'est un rang au Paradis qui ne convient qu'à un seul des serviteurs d'Allah, et j'espère être celui-là. Celui qui demande pour moi al-wasīla, l'intercession lui est acquise. »",
        "reference": "Muslim, Ṣaḥīḥ, n° 384 (numérotation ʿAbd al-Bāqī) (d'après ʿAbd Allāh ibn ʿAmr)",
        "authenticite": "authentique (ṣaḥīḥ, dans le Ṣaḥīḥ de Muslim)",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S4.rep.salat",
@@ -2736,7 +2736,7 @@
        "fr": "« Celui qui dit, en entendant l'appel : “Ô Allah, Seigneur de cet appel parfait…”, mon intercession lui est acquise le Jour de la Résurrection. »",
        "reference": "al-Bukhārī, Ṣaḥīḥ, n° 614 (d'après Jābir ibn ʿAbd Allāh)",
        "authenticite": "authentique (ṣaḥīḥ, dans le Ṣaḥīḥ d'al-Bukhārī)",
-       "audio": "aucun"
+       "audio": "tts"
       }
      ],
      "sources": [
@@ -5125,7 +5125,7 @@
      "fr": "Lorsque le Messager d'Allah ﷺ terminait sa prière, il demandait pardon trois fois et disait : « Ô Allah, Tu es la Paix, et de Toi vient la paix ; béni sois-Tu, Toi qui possèdes la majesté et la générosité. »",
      "reference": "Muslim, Ṣaḥīḥ, n° 591 (numérotation ʿAbd al-Bāqī) (d'après Thawbān)",
      "authenticite": "authentique (ṣaḥīḥ, dans le Ṣaḥīḥ de Muslim)",
-     "audio": "aucun"
+     "audio": "tts"
     },
     {
      "id": "S6.tasbih",
@@ -5350,7 +5350,7 @@
      "fr": "« Celui qui, après chaque prière, glorifie Allah trente-trois fois, Le loue trente-trois fois et proclame Sa grandeur trente-trois fois — cela fait quatre-vingt-dix-neuf — et dit pour compléter la centaine : “Il n'y a de divinité qu'Allah, Seul, sans associé ; à Lui la royauté, à Lui la louange, et Il est capable de toute chose”, ses fautes lui sont pardonnées, seraient-elles comme l'écume de la mer. »",
      "reference": "Muslim, Ṣaḥīḥ, n° 597 (numérotation ʿAbd al-Bāqī) (d'après Abū Hurayra) ; registre HAD_MUS_00597 : VERIFIE",
      "authenticite": "authentique (ṣaḥīḥ, dans le Ṣaḥīḥ de Muslim)",
-     "audio": "aucun"
+     "audio": "tts"
     },
     {
      "id": "S6.kursi",
@@ -5411,7 +5411,7 @@
      "fr": "« Le Messager d'Allah ﷺ m'a ordonné de réciter les sourates protectrices après chaque prière. »",
      "reference": "Abū Dāwūd, Sunan, n° 1523 (d'après ʿUqba ibn ʿĀmir)",
      "authenticite": "jugé authentique (ṣaḥīḥ) par al-Albānī ; ḥasan selon Shuʿayb al-Arnaʾūṭ",
-     "audio": "aucun"
+     "audio": "tts"
     },
     {
      "id": "S6.conseils",
@@ -5644,7 +5644,7 @@
        "reference": "al-Bukhārī, Ṣaḥīḥ, n° 1226 (d'après Ibn Masʿūd) ; registre HAD_BUK_01226 : VERIFIE",
        "authenticite": "authentique (ṣaḥīḥ)",
        "explication": "Pour un ajout, la prosternation vient après la salutation.",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S7.1.p2",
@@ -5662,7 +5662,7 @@
        "reference": "al-Bukhārī, Ṣaḥīḥ, n° 1224 (d'après ʿAbd Allāh ibn Buḥayna, par Mālik) ; aussi Muslim, Ṣaḥīḥ, n° 570 (numérotation ʿAbd al-Bāqī)",
        "authenticite": "authentique (ṣaḥīḥ)",
        "explication": "Pour un manque, la prosternation vient avant la salutation.",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S7.1.n",
@@ -5698,7 +5698,7 @@
        "fr": "« Quand vous entendez l'iqāma, marchez vers la prière avec calme et dignité, sans vous presser : ce que vous en rattrapez, priez-le ; ce que vous en avez manqué, complétez-le. »",
        "reference": "al-Bukhārī, Ṣaḥīḥ, n° 636 (d'après Abū Hurayra) ; aussi Muslim, Ṣaḥīḥ, n° 602 (numérotation ʿAbd al-Bāqī)",
        "authenticite": "authentique (ṣaḥīḥ)",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S7.2.c",
@@ -5742,7 +5742,7 @@
        "fr": "« Celui qui oublie une prière ou s'endort sans la faire, sa réparation est de la prier dès qu'il s'en souvient. »",
        "reference": "Muslim, Ṣaḥīḥ, n° 684 (numérotation ʿAbd al-Bāqī) (d'après Anas) ; aussi al-Bukhārī, Ṣaḥīḥ, n° 597",
        "authenticite": "authentique (ṣaḥīḥ)",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S7.3.r1",
@@ -5813,7 +5813,7 @@
        "fr": "« Prie debout ; si tu ne peux pas, assis ; si tu ne peux pas, sur le côté. »",
        "reference": "al-Bukhārī, Ṣaḥīḥ, n° 1117 (d'après ʿImrān ibn Ḥuṣayn)",
        "authenticite": "authentique (ṣaḥīḥ)",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S7.4.r1",
@@ -5918,7 +5918,7 @@
        "fr": "« C'est une aumône qu'Allah vous fait : acceptez donc Son aumône. »",
        "reference": "Muslim, Ṣaḥīḥ, n° 686 (numérotation ʿAbd al-Bāqī) (réponse du Prophète ﷺ à ʿUmar sur le raccourcissement de la prière en voyage, par Yaʿlā ibn Umayya)",
        "authenticite": "authentique (ṣaḥīḥ)",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S7.5.r1",
@@ -6020,7 +6020,7 @@
        "fr": "« La prière en groupe dépasse la prière faite seul de vingt-sept degrés. »",
        "reference": "al-Bukhārī, Ṣaḥīḥ, n° 645 (d'après Ibn ʿUmar, par Mālik) ; aussi Muslim, Ṣaḥīḥ, n° 650 (numérotation ʿAbd al-Bāqī)",
        "authenticite": "authentique (ṣaḥīḥ)",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S7.6.r1",
@@ -6050,7 +6050,7 @@
        "fr": "« L'imam n'a été désigné que pour être suivi : ne vous écartez pas de lui. Quand il s'incline, inclinez-vous ; quand il dit : “Allah entend celui qui Le loue”, dites : “Notre Seigneur, à Toi la louange” ; quand il se prosterne, prosternez-vous. »",
        "reference": "al-Bukhārī, Ṣaḥīḥ, n° 722 (d'après Abū Hurayra)",
        "authenticite": "authentique (ṣaḥīḥ)",
-       "audio": "aucun"
+       "audio": "tts"
       },
       {
        "id": "S7.6.l",
