@@ -37,7 +37,7 @@ import {
 import { ownsProfile } from './auth/routes.js';
 import { audit, staffOnly } from './auth/service.js';
 import { exigeFonction } from './f5.js';
-import { err, familyProfile, needTeacher, UUID } from './guards.js';
+import { err, familyProfile, needTeacher, parentGate, UUID } from './guards.js';
 
 const DAY = '^\\d{4}-\\d{2}-\\d{2}$';
 const ERREURS: Record<string, number> = {
@@ -48,6 +48,7 @@ const ERREURS: Record<string, number> = {
   participants_invalides: 400,
   classe_requise: 400,
   rappel_invalide: 400,
+  rappel_accord_requis: 400,
   titre_invalide: 400,
   avancement_invalide: 400,
   trop_de_plans: 409,
@@ -318,7 +319,7 @@ export function registerKhatma(app: FastifyInstance, db: Db): void {
 
   // ---------------------------------------------------------------- rappel discret (compte)
 
-  app.put<{ Body: { actif: boolean } }>(
+  app.put<{ Body: { actif: boolean; accord?: boolean; profileId?: string } }>(
     '/api/v1/khatma/rappel',
     {
       preHandler: needAuth,
@@ -327,7 +328,11 @@ export function registerKhatma(app: FastifyInstance, db: Db): void {
           type: 'object',
           required: ['actif'],
           additionalProperties: false,
-          properties: { actif: { type: 'boolean' } },
+          properties: {
+            actif: { type: 'boolean' },
+            accord: { type: 'boolean' },
+            profileId: UUID,
+          },
         },
       },
     },
@@ -335,6 +340,16 @@ export function registerKhatma(app: FastifyInstance, db: Db): void {
       if (staffOnly(req.auth) || (req.auth!.kind === 'ecole' && !req.auth!.tablet))
         return err(reply, 403, 'reserve_aux_familles');
       if (!(await exigeFonction(db, req, reply, 'khatma_wird'))) return reply;
+      // 26/10/2026 : pas de rappel sans accord. Activer exige ccord: true (écran de consentement) ; pour un enfant,
+      // c'est le parent qui accepte (code parent s'il existe). Désactiver est toujours permis, sans condition.
+      if (req.body.actif) {
+        if (req.body.accord !== true) return err(reply, 400, 'rappel_accord_requis');
+        if (req.body.profileId) {
+          const p = await familyProfile(db, req, reply, req.body.profileId);
+          if (!p) return reply;
+          if (!(await parentGate(db, req, reply, p.kind))) return reply;
+        }
+      }
       await db
         .insert(t.notificationPref)
         .values({ accountId: req.auth!.accountId, khatma: req.body.actif })
@@ -344,6 +359,7 @@ export function registerKhatma(app: FastifyInstance, db: Db): void {
         });
       await audit(db, req.auth!.accountId, 'khatma.rappel', req.auth!.accountId, {
         actif: req.body.actif,
+        accord: req.body.actif ? true : undefined,
       });
       return { ok: true, actif: req.body.actif };
     },

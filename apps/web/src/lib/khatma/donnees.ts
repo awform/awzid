@@ -149,8 +149,21 @@ export async function modifier(profileId: string, planId: string, body: object) 
 export async function creerFamille(body: object) {
   return call<{ id: string; parts: number }>('POST', '/khatma/famille', body);
 }
-export async function rappelCompte(actif: boolean) {
-  return call<{ ok: boolean }>('PUT', '/khatma/rappel', { actif });
+/**
+ * Rappel quotidien du compte. L'activer exige l'accord donné sur l'écran de consentement (`accord: true`) ; pour un
+ * enfant, le code parent (s'il existe) part dans l'en-tête, comme pour les autres accords de la famille.
+ * L'arrêter ne demande rien.
+ */
+export async function rappelCompte(
+  actif: boolean,
+  opts: { accord?: boolean; profileId?: string; pin?: string } = {},
+) {
+  return call<{ ok: boolean }>(
+    'PUT',
+    '/khatma/rappel',
+    actif ? { actif, accord: opts.accord === true, profileId: opts.profileId } : { actif },
+    opts.pin ? { 'x-parent-pin': opts.pin } : undefined,
+  );
 }
 export interface Suivi {
   id: string;

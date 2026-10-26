@@ -516,10 +516,16 @@
     color: inherit;
     text-decoration: none;
     font-weight: 600;
-    transition: background var(--motion-fast) ease;
   }
+  /*
+   * Fondu SEULEMENT au survol : un fondu permanent sur le fond de l'onglet actif le faisait glisser du clair au sombre
+   * pendant 0,12 s à chaque changement de thème, alors que le texte passait tout de suite à sa couleur sombre (vert
+   * sur fond encore clair : contraste sous 4,5:1 mesuré par axe, faux rouge intermittent de lot29:42). Au changement
+   * de thème, le fond et le texte changent ensemble ; couleurs de la charte inchangées.
+   */
   .tabs a:hover {
     background: color-mix(in srgb, currentColor 10%, transparent);
+    transition: background var(--motion-fast) ease;
   }
   .tabs a.active {
     background: var(--primary-soft);
