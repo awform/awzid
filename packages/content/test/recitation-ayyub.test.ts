@@ -15,7 +15,6 @@
  * Il lit la copie des livres (`~/awform-content`) : sans elle, la partie « livres » est ignorée.
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { audioFileId, audioKey, looksQuranic, sha1Hex, skeleton } from '../src/audio-cle.js';
