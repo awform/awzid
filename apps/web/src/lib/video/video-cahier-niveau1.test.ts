@@ -45,6 +45,17 @@ const reels = (n: string): Set<string> | null =>
 const c16 = String.fromCharCode;
 const MUSHAF = new RegExp(`[${c16(0x6d6)}-${c16(0x6ed)}${c16(0x671)}${c16(0x8f0)}-${c16(0x8f2)}]`);
 const toutVoix = (s: string) => !MUSHAF.test(s);
+/** signes des voyelles et du Muṣḥaf retirés, alif waṣla → alif : comparaison sur les lettres seules */
+const SIGNES = new RegExp(
+  `[${c16(0x64b)}-${c16(0x652)}${c16(0x670)}${c16(0x640)}${c16(0x6d6)}-${c16(0x6ed)}]`,
+  'g',
+);
+const lettresSeules = (s: string) =>
+  s.replace(SIGNES, '').replace(new RegExp(c16(0x671), 'g'), c16(0x627));
+/** la forme contient « بسم الله » (ou « باسم الله »), quelle que soit la graphie */
+const contientBasmala = (s: string) => /با?سم\s*ا?لله/.test(lettresSeules(s));
+/** « بسم الله » SEUL (ponctuation exceptée) : dhikr avant un acte, seule forme permise en synthèse (décision du référent) */
+const basmalaSeule = (s: string) => lettresSeules(s).replace(/[^ء-ي]/g, '') === 'بسمالله';
 const video = (p: Page, hasAudio: (s: string) => boolean = toutVoix) =>
   buildVideoCahier(p as unknown as PageIn, { hasAudio });
 
@@ -127,6 +138,9 @@ for (const n of NIVEAUX) {
         const ids = reels(n)!;
         const hasAudio = (s: string) => toutVoix(s) && ids.has(audioFileId(s) ?? '');
         const sans: string[] = [];
+        // règle Basmala (absolue) : une forme qui contient « بسم الله » n'a JAMAIS de voix de synthèse, sauf « بسم الله »
+        // SEUL (dhikr avant un acte, décision du référent) ; ici, les textes qui ont un fichier malgré la règle
+        const fautes = new Set<string>();
         // titres arabes des textes suivis : la liste des audios du cahier n'en a pas encore (à générer) ; comptés à part
         const titres: string[] = [];
         let oui = 0;
@@ -134,8 +148,10 @@ for (const n of NIVEAUX) {
           const v = buildVideoCahier(p as unknown as PageIn, { hasAudio });
           for (const u of unitesDe(v)) {
             if (u.a === 'q' || u.etiquette) continue;
-            if (u.voix === 'oui') oui++;
-            else if (u.cle === 't.t') titres.push(`${p.id} ${u.ar}`);
+            if (u.voix === 'oui') {
+              oui++;
+              if (contientBasmala(u.ar) && !basmalaSeule(u.ar)) fautes.add(p.id);
+            } else if (u.cle === 't.t') titres.push(`${p.id} ${u.ar}`);
             else sans.push(`${p.id} ${u.ar}`);
           }
           // une scène n'est jamais muette : au moins une voix (ou une récitation) par scène
@@ -148,15 +164,17 @@ for (const n of NIVEAUX) {
           }
         }
         expect(oui).toBeGreaterThan(1500);
-        // enfants : tout est dit. Ados : trois textes qui contiennent « بسم الله » n'ont jamais de synthèse (règle Basmala,
-        // en attente de la récitation d'Ayyūb) ; ils sont listés ici pour qu'aucun autre ne s'ajoute en silence
-        expect(sans.map((s) => s.split(' ')[0]).sort()).toEqual(
-          n === 'ado1' ? ['P089', 'P092', 'P100'] : [],
+        // enfants : tout est dit. Ados : seul le texte de P089 (« يُوسُفُ وَآدَمُ: بِسْمِ اللَّهِ! », la Basmala DANS une
+        // phrase) n'a pas de voix, en attente de la récitation d'Ayyūb ; « بِسْمِ اللَّهِ » SEUL (P092, P100) est dit par la
+        // synthèse (26/10/2026). Ils sont listés pour qu'aucun autre ne s'ajoute en silence.
+        // Retrait de P089 à la source EN ATTENTE (PC : audio\empreintes-interdites.txt, index.js, liste.csv, puis la VM) :
+        // tant que le fichier 6093f306… est dans la liste, P089 est une FAUTE listée (`fautes`) ; une fois retiré, il est
+        // dans `sans`. Dans les deux états le test passe ; toute autre page échoue.
+        expect([...new Set([...sans.map((s) => s.split(' ')[0]), ...fautes])].sort()).toEqual(
+          n === 'ado1' ? ['P089'] : [],
         );
         // (comparaison sur les lettres seules : les signes sont comparés par ailleurs, octet pour octet)
-        const lettres = (s: string) =>
-          s.replace(new RegExp(`[${c16(0x64b)}-${c16(0x652)}${c16(0x670)}]`, 'g'), '');
-        for (const s of sans) expect(lettres(s)).toContain('بسم الله');
+        for (const s of sans) expect(contientBasmala(s)).toBe(true);
         // titres de textes sans fichier : 5 pour les enfants, 9 pour les ados (jamais plus ; la liste ne fait que diminuer)
         expect(titres.length, titres.join(' | ')).toBeLessThanOrEqual(n === 'en1' ? 5 : 9);
       },

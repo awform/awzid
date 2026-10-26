@@ -56,29 +56,59 @@ export async function newAdult(
   return { email, profileId: me.profiles[0]!.id };
 }
 
-/** dernier pas TOTP utilisé, partagé entre les processus de test (un processus redémarre après un échec) */
-const COUNTER_FILE = join(tmpdir(), 'awform-e2e-totp-counter');
-function lastCounter(): number {
+/**
+ * Connexion du compte enseignant de test (second facteur obligatoire) : UNE SEULE implémentation, partagée par toutes les
+ * suites (`enseignant.ts` la ré-exporte). Elle vivait en double ; la copie d'ici ignorait `E2E_TOTP_FILE` (fichier du pas
+ * TOTP PROPRE à chaque dossier de travail, voir playwright.config.ts) et lisait/écrivait le fichier commun
+ * `awform-e2e-totp-counter` d'une autre exécution : khatma.spec.ts:295 et hifz-classe.spec.ts:123 échouaient en
+ * « totp_incorrect » (ou attendaient un pas futur) dès qu'une autre suite tournait sur la VM.
+ * Le serveur n'accepte qu'un code par pas de 30 s, toujours plus récent que le précédent (anti-rejeu), et seulement le pas
+ * courant ou ses voisins (± 30 s). Ici : le pas utilisé est toujours plus récent que le dernier consommé (fichier partagé
+ * avec global-setup), jamais en avance de plus d'un pas sur l'horloge (sinon on attend le pas suivant), et un refus est
+ * retenté avec le pas d'après.
+ * Limite connue : un seul compte enseignant et des interrupteurs de fonctions GLOBAUX (khatma_wird, hifz_classe… réglés en
+ * beforeAll/afterAll) : ces suites ne supportent pas `--workers` > 1 (les projets mobile et desktop se marcheraient dessus,
+ * « totp_incorrect » ou carte absente) ; la configuration impose `workers: 1`.
+ */
+const TOTP_FILE = process.env.E2E_TOTP_FILE ?? join(tmpdir(), 'awform-e2e-totp-counter');
+const TOTP_STEP = 30_000;
+const attendre = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const dernierPas = (): number => {
   try {
-    return Number(readFileSync(COUNTER_FILE, 'utf8')) || 0;
+    return Number(readFileSync(TOTP_FILE, 'utf8')) || 0;
   } catch {
-    return 0;
+    return Number(process.env.E2E_TOTP_LAST ?? 0);
   }
-}
-/** Connexion de l'enseignant de test (second facteur : un code neuf à chaque fois, anti-rejeu). */
+};
 export async function loginTeacher(page: Page): Promise<void> {
   const secret = process.env.E2E_TOTP_SECRET;
   if (!secret) throw new Error('E2E_TOTP_SECRET absent');
-  const last = Math.max(lastCounter(), Number(process.env.E2E_TOTP_LAST ?? 0));
-  let c = Math.max(Math.floor(Date.now() / 30_000), last + 1);
-  while (c > Math.floor(Date.now() / 30_000) + 1) await page.waitForTimeout(3000);
-  c = Math.max(c, Math.floor(Date.now() / 30_000) - 1);
-  writeFileSync(COUNTER_FILE, String(c));
-  const r = await page.request.post('/api/v1/auth/login', {
-    headers: { 'x-awform': '1' },
-    data: { email: 'maitre@e2e.test', password: password(), totp: totp(secret, c) },
-  });
-  expect(r.status(), await r.text()).toBe(200);
+  let last = Math.max(dernierPas(), Number(process.env.E2E_TOTP_LAST ?? 0));
+  let status = 0;
+  let body = '';
+  for (let essai = 0; essai < 4; essai++) {
+    const c = Math.max(Math.floor(Date.now() / TOTP_STEP), last + 1);
+    // le serveur accepte jusqu'au pas courant + 1 ; au-delà, attendre (1 s de marge après la bascule)
+    const attente = (c - 1) * TOTP_STEP + 1_000 - Date.now();
+    if (attente > 0) {
+      // l'attente du pas suivant ne doit pas manger le délai du test lui-même
+      test.info().setTimeout(test.info().timeout + attente);
+      await attendre(attente);
+    }
+    const r = await page.request.post('/api/v1/auth/login', {
+      headers: { 'x-awform': '1' },
+      data: { email: 'maitre@e2e.test', password: password(), totp: totp(secret, c) },
+    });
+    status = r.status();
+    body = await r.text();
+    // pas consommé (ou refusé) : ne plus jamais le reproposer
+    last = c;
+    writeFileSync(TOTP_FILE, String(c));
+    process.env.E2E_TOTP_LAST = String(c);
+    if (status === 200) break;
+    if (!body.includes('totp_incorrect')) break;
+  }
+  expect(status, body).toBe(200);
 }
 
 export const test = base.extend<{ compte: Compte; parEtapes: boolean }>({

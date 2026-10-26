@@ -10,6 +10,13 @@
 # (web, api) ne tournent pas ici : seuls les chemins servis par Caddy lui-même sont vérifiés. Code de sortie 1 au premier écart.
 set -uo pipefail
 PROD="$(cd "$(dirname "$0")" && pwd)"
+# Les ports 18080 et 18443 de la machine sont FIXES : deux essais en même temps (deux dossiers de travail, une suite de tests
+# et un essai à la main) se les disputent et le second échouait avec un « Docker indisponible » trompeur. Verrou commun :
+# le second attend (2 min au plus) que le premier ait fini ; si les ports sont tenus par autre chose, le message le dit.
+if command -v flock >/dev/null 2>&1; then
+  exec 9>"${TMPDIR:-/tmp}/awzid-caddy-essai.lock"
+  flock -w 120 9 || { echo "Un autre essai Caddy tient les ports 18080/18443 depuis plus de 2 minutes"; exit 2; }
+fi
 CTN="awzid-caddy-essai-$$"
 FAUX="awzid-caddy-faux-$$"
 NET="awzid-caddy-net-$$"
@@ -35,7 +42,7 @@ docker run -d --name "$CTN" --network "$NET" -p 127.0.0.1:18080:80 -p 127.0.0.1:
   -v "$ALIAS_DIR/alias:/etc/caddy/alias:ro" \
   -e SITE=awzid.test -e SITE_ALIAS_1=www.awzid.test -e SITE_ALIAS_2=app.awzid.test \
   -e AWFORM_TLS=tls_interne -e AWFORM_HTTP=rediriger -e AWFORM_HSTS_SECONDES=300 -e DEFAULT_SNI=awzid.test \
-  caddy:2 >/dev/null || { echo "Docker indisponible"; exit 2; }
+  caddy:2 >/dev/null || { echo "Caddy d'essai non démarré : Docker indisponible, ou ports 18080/18443 déjà tenus par un autre processus"; exit 2; }
 for i in $(seq 1 30); do
   curl -sk --max-time 2 --resolve awzid.test:18443:127.0.0.1 https://awzid.test:18443/robots.txt >/dev/null 2>&1 && break
   [ "$i" = 30 ] && { echo "Caddy ne démarre pas"; docker logs "$CTN" | tail -5; exit 1; }
