@@ -1,66 +1,48 @@
 # Vidéos vivantes — ad7 (audit généré par `VIDEO_AUDIT=1`)
 
-Audio : 886 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
+Audio : 1856 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 
 | Unité | Type | Modes | Scènes | Longue | Courte | Quiz (exercices) | Gardés sans voix | Sans audio (à écouter / tous) |
 |---|---|---|---|---|---|---|---|---|
-| l01 | lecon 1 | courte, longue, quiz, revision | 21 | 1052 s | 80 s | 7 | 5 | 29 / 89 |
-| l02 | lecon 2 | courte, longue, quiz, revision | 21 | 1181 s | 80 s | 7 | 2 | 28 / 89 |
-| l03 | lecon 3 | courte, longue, quiz, revision | 21 | 1100 s | 80 s | 7 | 9 | 31 / 91 |
-| l04 | lecon 4 | courte, longue, quiz, revision | 21 | 1201 s | 80 s | 7 | 2 | 26 / 87 |
-| l05 | bilan 1 | courte, longue, revision | 21 | 927 s | 118 s | 0 | 0 | 26 / 55 |
-| l06 | lecon 5 | courte, longue, quiz, revision | 21 | 1130 s | 83 s | 6 | 1 | 21 / 73 |
-| l07 | lecon 6 | courte, longue, quiz, revision | 22 | 1167 s | 83 s | 7 | 1 | 21 / 80 |
-| l08 | lecon 7 | courte, longue, quiz, revision | 22 | 1197 s | 83 s | 7 | 4 | 20 / 74 |
-| l09 | lecon 8 | courte, longue, quiz, revision | 22 | 1149 s | 83 s | 7 | 2 | 24 / 85 |
-| l10 | bilan 2 | courte, longue, revision | 20 | 932 s | 118 s | 0 | 0 | 13 / 33 |
-| l11 | lecon 9 | courte, longue, quiz, revision | 21 | 1094 s | 83 s | 7 | 1 | 19 / 80 |
-| l12 | lecon 10 | courte, longue, quiz, revision | 21 | 1129 s | 83 s | 7 | 0 | 14 / 72 |
-| l13 | lecon 11 | courte, longue, quiz, revision | 21 | 1058 s | 61 s | 7 | 1 | 15 / 80 |
-| l14 | lecon 12 | courte, longue, quiz, revision | 21 | 1112 s | 88 s | 7 | 3 | 13 / 67 |
-| l15 | bilan 3 | courte, longue, revision | 17 | 783 s | 61 s | 0 | 0 | 11 / 35 |
-| l16 | lecon 13 | courte, longue, quiz, revision | 21 | 1013 s | 83 s | 7 | 4 | 23 / 77 |
-| l17 | lecon 14 | courte, longue, quiz, revision | 21 | 1050 s | 65 s | 7 | 2 | 23 / 83 |
-| l18 | lecon 15 | courte, longue, quiz, revision | 21 | 1008 s | 83 s | 7 | 1 | 25 / 82 |
-| l19 | lecon 16 | courte, longue, quiz, revision | 21 | 991 s | 64 s | 7 | 2 | 14 / 59 |
-| l20 | bilan 4 | courte, longue, revision | 17 | 657 s | 71 s | 0 | 0 | 19 / 46 |
-| l21 | lecon 17 | courte, longue, quiz, revision | 22 | 1038 s | 83 s | 7 | 42 | 18 / 57 |
-| l22 | lecon 18 | courte, longue, quiz, revision | 22 | 1120 s | 65 s | 7 | 4 | 28 / 89 |
-| l23 | lecon 19 | courte, longue, quiz, revision | 22 | 1046 s | 64 s | 7 | 5 | 28 / 91 |
-| l24 | lecon 20 | courte, longue, quiz, revision | 22 | 1096 s | 65 s | 7 | 1 | 28 / 91 |
-| l25 | examen 5 | courte, longue, revision | 18 | 1044 s | 74 s | 0 | 6 | 20 / 47 |
+| l01 | lecon 1 | courte, longue, quiz, revision | 21 | 1052 s | 80 s | 7 | 5 | 0 / 48 |
+| l02 | lecon 2 | courte, longue, quiz, revision | 21 | 1181 s | 80 s | 7 | 2 | 0 / 54 |
+| l03 | lecon 3 | courte, longue, quiz, revision | 21 | 1100 s | 80 s | 7 | 9 | 0 / 52 |
+| l04 | lecon 4 | courte, longue, quiz, revision | 21 | 1201 s | 80 s | 7 | 2 | 0 / 50 |
+| l05 | bilan 1 | courte, longue, revision | 21 | 927 s | 118 s | 0 | 0 | 0 / 24 |
+| l06 | lecon 5 | courte, longue, quiz, revision | 21 | 1130 s | 83 s | 6 | 1 | 0 / 46 |
+| l07 | lecon 6 | courte, longue, quiz, revision | 22 | 1167 s | 83 s | 7 | 1 | 0 / 57 |
+| l08 | lecon 7 | courte, longue, quiz, revision | 22 | 1197 s | 83 s | 7 | 4 | 0 / 49 |
+| l09 | lecon 8 | courte, longue, quiz, revision | 22 | 1149 s | 83 s | 7 | 2 | 0 / 53 |
+| l10 | bilan 2 | courte, longue, revision | 20 | 932 s | 118 s | 0 | 0 | 0 / 21 |
+| l11 | lecon 9 | courte, longue, quiz, revision | 21 | 1094 s | 83 s | 7 | 1 | 0 / 58 |
+| l12 | lecon 10 | courte, longue, quiz, revision | 21 | 1129 s | 83 s | 7 | 0 | 0 / 50 |
+| l13 | lecon 11 | courte, longue, quiz, revision | 21 | 1058 s | 61 s | 7 | 1 | 0 / 55 |
+| l14 | lecon 12 | courte, longue, quiz, revision | 21 | 1112 s | 88 s | 7 | 1 | 0 / 44 |
+| l15 | bilan 3 | courte, longue, revision | 17 | 783 s | 61 s | 0 | 0 | 0 / 21 |
+| l16 | lecon 13 | courte, longue, quiz, revision | 21 | 1013 s | 83 s | 7 | 4 | 0 / 45 |
+| l17 | lecon 14 | courte, longue, quiz, revision | 21 | 1050 s | 65 s | 7 | 2 | 0 / 48 |
+| l18 | lecon 15 | courte, longue, quiz, revision | 21 | 1008 s | 83 s | 7 | 1 | 0 / 46 |
+| l19 | lecon 16 | courte, longue, quiz, revision | 21 | 991 s | 64 s | 7 | 2 | 0 / 37 |
+| l20 | bilan 4 | courte, longue, revision | 17 | 657 s | 71 s | 0 | 0 | 0 / 24 |
+| l21 | lecon 17 | courte, longue, quiz, revision | 22 | 1038 s | 83 s | 7 | 42 | 0 / 36 |
+| l22 | lecon 18 | courte, longue, quiz, revision | 22 | 1120 s | 65 s | 7 | 4 | 0 / 52 |
+| l23 | lecon 19 | courte, longue, quiz, revision | 22 | 1046 s | 64 s | 7 | 5 | 0 / 55 |
+| l24 | lecon 20 | courte, longue, quiz, revision | 22 | 1096 s | 65 s | 7 | 1 | 0 / 45 |
+| l25 | examen 5 | courte, longue, revision | 18 | 1044 s | 74 s | 0 | 6 | 0 / 17 |
 
 ## l01
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
 - courte ouverture
-- courte courte-vedette
-- courte ligne
 - longue ouverture
 - longue objectifs
-- longue ecriture
 - longue notion
-- longue ligne
-- longue vedette
-- longue lexique
 - longue q-ex1
-- longue q-ex2
-- longue q-ex3
-- longue q-ex4
 - longue q-ex5
-- longue q-ex6
-- longue q-ex7
-- longue recap
 - quiz q-ex1
-- quiz q-ex2
-- quiz q-ex3
-- quiz q-ex4
 - quiz q-ex5
-- quiz q-ex6
-- quiz q-ex7
 - revision ouverture
-- revision recap
 
 Textes gardés sans voix :
 
@@ -69,38 +51,6 @@ Textes gardés sans voix :
 - coran : ٱلْكِتَٰبُ
 - coran : فَالْأَوَّلُ الْإِظْهَارُ قَبْلَ أَحْرُفِ ... لِلْحَلْقِ سِتٌّ رُتِّبَتْ فَلْتَعْرِفِ ۝ هَمْزٌ فَهَاءٌ ثُمَّ عَيْنٌ حَاءُ ... مُهْمَلَتَانِ ثُمَّ غَيْنٌ خَاءُ
 - coran : لِّتَسْكُنُوٓا۟ إِلَيْهَا · مَّوَدَّةًۭ · وَرَحْمَةً
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [قَالَ] (fichier présent pour un autre niveau)
-- lecture : [يَقُولُ] (fichier présent pour un autre niveau)
-- lecture : [قُلْ] (fichier présent pour un autre niveau)
-- lecture : [بَاعَ]
-- lecture : [مِيزَانٌ] (fichier présent pour un autre niveau)
-- lecture : [يَعِدُ] (fichier présent pour un autre niveau)
-- lecture : اصْ[طَ]بَرَ (fichier présent pour un autre niveau)
-- lecture : ازْ[دَ]ادَ (fichier présent pour un autre niveau)
-- lecture : [قَالَ] كَرِيمٌ: [بِعْتُ] سَيَّارَتِي، فَ[ازْدَادَ] مَا [ادَّخَرْتُ].
-- mots : سَكَنٌ: مَا تَطْمَئِنُّ إِلَيْهِ النَّفْسُ وَتَرْتَاحُ
-- mots : مَوَدَّةٌ: حُبٌّ يَظْهَرُ فِي الْكَلَامِ وَالْعَمَلِ
-- mots : رَحْمَةٌ: رِقَّةُ الْقَلْبِ وَالْعَطْفُ عَلَى الْآخَرِ
-- mots : تَفَاهُمٌ: أَنْ يَفْهَمَ كُلُّ وَاحِدٍ صَاحِبَهُ
-- mots : مُسْتَعِدٌّ: مَنْ هَيَّأَ نَفْسَهُ لِلْأَمْرِ
-- mots : رَاتِبٌ (ج. رَوَاتِبُ): مَا يَأْخُذُهُ الْعَامِلُ كُلَّ شَهْرٍ
-- mots : مَصَارِيفُ: مَا يُنْفَقُ مِنَ الْمَالِ
-- mots : ادَّخَرَ — يَدَّخِرُ: حَفِظَ الْمَالَ لِوَقْتِ الْحَاجَةِ
-- mots : ادَّخَرَ
-- mots : يَدَّخِرُ: حَفِظَ الْمَالَ لِوَقْتِ الْحَاجَةِ
-- mots : اصْطَبَرَ: صَبَرَ صَبْرًا شَدِيدًا وَدَامَ عَلَيْهِ
-- mots : اسْتَشَارَ: طَلَبَ الرَّأْيَ مِنْ غَيْرِهِ
-- mots : تَوَكَّلَ عَلَى اللَّهِ: اعْتَمَدَ عَلَيْهِ بَعْدَ الْأَخْذِ بِالْأَسْبَابِ
-- mots : جَذْرٌ (ج. جُذُورٌ): الْحُرُوفُ الْأَصْلِيَّةُ الَّتِي تُبْنَى مِنْهَا الْكَلِمَةُ
-- mots : حَرْفُ الْعِلَّةِ: الْوَاوُ وَالْيَاءُ وَالْأَلِفُ
-- dialogue : مِمَّ تَخَافُ؟
-- dialogue : أَخَافُ أَلَّا…
-- dialogue : هَلِ اسْتَشَرْتَ؟
-- dialogue : لَيْسَ بَعْدُ
-- dialogue : خُذْ بِالْأَسْبَابِ
 
 Mots d’exercices et du cahier sans fichier audio :
 
@@ -113,10 +63,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَشْرَحُ الْإِبْدَالَ فِي «اصْطَبَرَ» وَ«ازْدَادَ» وَ«اتَّصَلَ»
 - ouverture : أَقْرَأُ أَوَّلَ سُورَةِ الْبَقَرَةِ (١–٥) وَأَذْكُرُ صِفَاتِ الْمُتَّقِينَ
 - ouverture : أَذْكُرُ مَقَاصِدَ الزَّوَاجِ مِنْ آيَةِ الرُّومِ (٢١)
-- ecriture : اصْطَبَرَ (fichier présent pour un autre niveau)
-- ecriture : ازْدَادَ (fichier présent pour un autre niveau)
-- ecriture : مِيزَانٌ (fichier présent pour un autre niveau)
-- ecriture : اتَّصَلَ (fichier présent pour un autre niveau)
 - ecriture : قَالَ ← قَ[وَ]لَ · يَقُولُ ← يَقْ[وُ]لُ · قُلْ ← قُ[و]لْ · مِيزَانٌ ← مِ[وْ]زَانٌ · اصْ[طَ]بَرَ ← اصْ[تَ]بَرَ
 - ecriture : الْإِعْلَالُ: تَغْيِيرُ حَرْفِ الْعِلَّةِ (الْوَاوِ وَالْيَاءِ وَالْأَلِفِ) لِلتَّخْفِيفِ، وَهُوَ ثَلَاثَةُ أَنْوَاعٍ:
 - ecriture : ١. الْقَلْبُ: قَوَلَ ← قَالَ، بَيَعَ ← بَاعَ، مِوْزَانٌ ← مِيزَانٌ، مُيْقِنٌ ← مُوقِنٌ.
@@ -132,18 +78,13 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : يَوْعِدُ
 - quiz : دَعَوَ
 - quiz : رَمَيَ
-- quiz : الْقَلْبُ
 - quiz : النَّقْلُ
 - quiz : الْحَذْفُ
 - quiz : اضْطَرَبَ
-- quiz : ادَّكَرَ
 - quiz : اطَّلَعَ
-- quiz : ازْدَحَمَ
-- quiz : اتَّقَى
 - quiz : وَيُقِيمُونَ
 - quiz : رَزَقْنَٰهُمْ
 - quiz : يُنفِقُونَ
-- quiz : يُوقِنُونَ (fichier présent pour un autre niveau)
 - quiz : لِّلْمُتَّقِينَ
 - quiz : جَعَلَ اللَّهُ بَيْنَ الزَّوْجَيْنِ مَوَدَّةً وَرَحْمَةً.
 - quiz : الزَّوَاجُ عَقْدٌ بَيْنَ رَجُلٍ وَامْرَأَةٍ فَقَطْ، وَلَا عَلَاقَةَ لَهُ بِالْأُسْرَتَيْنِ.
@@ -151,17 +92,14 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : مِنْ مَقَاصِدِ الزَّوَاجِ حِفْظُ النَّفْسِ مِنَ الْحَرَامِ وَحِفْظُ النَّسَبِ.
 - quiz : حُكْمُ الزَّوَاجِ وَاحِدٌ لِكُلِّ النَّاسِ، مَهْمَا كَانَتْ حَالُهُمْ.
 - quiz : يَخْتَلِفُ حُكْمُهُ بِحَسَبِ حَالِ الشَّخْصِ: قَدْ يَكُونُ وَاجِبًا أَوْ مَنْدُوبًا أَوْ مُبَاحًا، وَقَدْ يُكْرَهُ أَوْ يَحْرُمُ.
-- quiz : قُلْ (fichier présent pour un autre niveau)
-- quiz : بِعْتُ
-- quiz : لَمْ يَقُلْ
-- quiz : يَجِدُ (fichier présent pour un autre niveau)
-- quiz : خِفْتُ
+- quiz : بِعْتُ (fichier présent pour un autre niveau)
+- quiz : لَمْ يَقُلْ (fichier présent pour un autre niveau)
+- quiz : خِفْتُ (fichier présent pour un autre niveau)
 - quiz : جَعَلَ اللَّهُ بَيْنَ الزَّوْجَيْنِ مَوَدَّةً وَرَحْمَةً
 - quiz : قَالَ كَرِيمٌ إِنَّهُ يُرِيدُ الزَّوَاجَ
 - quiz : اصْطَبَرَ الزَّوْجَانِ عَلَى الْأَيَّامِ
 - quiz : ازْدَادَ مَا ادَّخَرَهُ كَرِيمٌ
 - recap : الْإِعْلَالُ: الْقَلْبُ · النَّقْلُ · الْحَذْفُ
-- recap : اصْ[طَ]بَرَ · ازْ[دَ]ادَ · ا[تَّ]صَلَ
 - recap : قَالَ: أَصْلُهُ قَوَلَ، تَحَرَّكَتِ الْوَاوُ وَانْفَتَحَ مَا قَبْلَهَا فَقُلِبَتْ أَلِفًا
 - recap : لِلنُّونِ إِنْ تَسْكُنْ وَلِلتَّنْوِينِ ... أَرْبَعُ أَحْكَامٍ فَخُذْ تَبْيِينِي
 
@@ -170,22 +108,17 @@ Mots d’exercices et du cahier sans fichier audio :
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
 - courte ouverture
-- courte courte-vedette
 - longue ouverture
 - longue objectifs
 - longue notion
-- longue vedette
-- longue lexique
 - longue q-ex1
 - longue q-ex3
-- longue q-ex4
 - longue q-ex5
 - longue q-ex6
 - longue q-ex7
 - longue recap
 - quiz q-ex1
 - quiz q-ex3
-- quiz q-ex4
 - quiz q-ex5
 - quiz q-ex6
 - quiz q-ex7
@@ -196,37 +129,6 @@ Textes gardés sans voix :
 
 - coran : وَالثَّانِ إِدْغَامٌ بِسِتَّةٍ أَتَتْ ... فِي يَرْمَلُونَ عِنْدَهُمْ قَدْ ثَبَتَتْ ۝ لٰكِنَّهَا قِسْمَانِ قِسْمٌ يُدْغَمَا ... فِيهِ بِغُنَّةٍ بِيَنْمُو عُلِمَا ۝ إِلَّا إِذَا كَانَا بِكِلْمَةٍ فَلَا ... تُدْغِمْ كَدُنْيَا ثُمَّ صِنْوَانٌ تَلَا ۝ وَالثَّانِ إِدْغَامٌ بِغَيْرِ غُنَّهْ ... فِي اللَّامِ وَالرَّا ثُمَّ كَرِّرَنْهْ
 - coran : وَالثَّالِثُ الْإِقْلَابُ عِنْدَ الْبَاءِ ... مِيمًا بِغُنَّةٍ مَعَ الْإِخْفَاءِ ۝ وَالرَّابِعُ الْإِخْفَاءُ عِنْدَ الْفَاضِلِ ... مِنَ الْحُرُوفِ وَاجِبٌ لِلْفَاضِلِ ۝ فِي خَمْسَةٍ مِنْ بَعْدِ عَشْرٍ رَمْزُهَا ... فِي كَلِمِ هَذَا الْبَيْتِ قَدْ ضَمَّنْتُهَا ۝ صِفْ ذَا ثَنَا كَمْ جَادَ شَخْصٌ قَدْ سَمَا ... دُمْ طَيِّبًا زِدْ فِي تُقًى ضَعْ ظَالِمَا
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [مَرْجِعٌ]
-- lecture : [مَسْعًى]
-- lecture : [مُنْقَلَبٌ]
-- lecture : [جَلْسَةٌ]
-- lecture : [جِلْسَةٌ]
-- lecture : [زَوْرَةٌ]
-- lecture : [مِشْيَةٌ]
-- lecture : جَلَسْنَا [جَلْسَةً] وَاحِدَةً، وَجَلَسَ كَرِيمٌ [جِلْسَةَ] الضَّيْفِ الْمُؤَدَّبِ، وَ[مَرْجِعُ] الْأَمْرِ إِلَى اللَّهِ.
-- mots : خِطْبَةٌ: طَلَبُ الرَّجُلِ الْمَرْأَةَ لِلزَّوَاجِ، وَهِيَ وَعْدٌ لَا عَقْدٌ
-- mots : خُطْبَةٌ: كَلَامٌ يُلْقَى عَلَى النَّاسِ، كَخُطْبَةِ الْجُمُعَةِ
-- mots : خَاطِبٌ: الرَّجُلُ الَّذِي يَطْلُبُ الزَّوَاجَ
-- mots : مَخْطُوبَةٌ: الْمَرْأَةُ الْمَطْلُوبَةُ لِلزَّوَاجِ
-- mots : يَطْلُبُ يَدَهَا: يَطْلُبُ الزَّوَاجَ مِنْهَا
-- mots : أَمْهَلَ — يُمْهِلُ: أَعْطَى وَقْتًا وَلَمْ يَسْتَعْجِلْ
-- mots : أَمْهَلَ
-- mots : يُمْهِلُ: أَعْطَى وَقْتًا وَلَمْ يَسْتَعْجِلْ
-- mots : مَسْعًى: سَعْيٌ، أَيْ عَمَلٌ وَقَصْدٌ
-- mots : مَرْجِعٌ: رُجُوعٌ؛ وَمَرْجِعُ الْأَمْرِ: مَنْ يُرْجَعُ إِلَيْهِ فِيهِ
-- mots : مُنْقَلَبٌ: انْقِلَابٌ، أَيْ رُجُوعٌ وَمَصِيرٌ
-- mots : مُطْمَئِنٌّ: هَادِئُ الْقَلْبِ، لَا يَخَافُ وَلَا يَقْلَقُ
-- mots : مُؤَدَّبٌ: حَسَنُ الْأَدَبِ وَالسُّلُوكِ
-- mots : بِحُضُورِ أَهْلِهَا: وَأَهْلُهَا حَاضِرُونَ مَعَهَا
-- mots : عَلَى سُنَّةِ اللَّهِ وَرَسُولِهِ: عَلَى الطَّرِيقَةِ الَّتِي شَرَعَهَا الْإِسْلَامُ
-- dialogue : جِئْنَاكُمْ فِي أَمْرِ خَيْرٍ
-- dialogue : يَطْلُبُ يَدَ ابْنَتِكُمْ
-- dialogue : الْمَجْلِسُ مَجْلِسُكُمْ
-- dialogue : أَمْهِلُونِي
-- dialogue : ذٰلِكَ حَقُّكُمْ
 
 Mots d’exercices et du cahier sans fichier audio :
 
@@ -239,9 +141,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَصُوغُ اسْمَ الْمَرَّةِ وَاسْمَ الْهَيْئَةِ
 - ouverture : أَقْرَأُ الْبَقَرَةَ (٦–١٦) وَأَصِفُ الْمُنَافِقِينَ مِنَ النَّصِّ
 - ouverture : أَشْرَحُ مَرَاحِلَ الْخِطْبَةِ وَأَحْكَامَهَا
-- ecriture : مَرْجِعٌ
-- ecriture : مُنْقَلَبٌ
-- ecriture : زَوْرَةٌ
 - ecriture : رَجَعَ ← [مَرْجِعٌ] = رُجُوعٌ · انْقَلَبَ ← [مُنْقَلَبٌ] = انْقِلَابٌ · جَلَسَ ← [جَلْسَةٌ] (مَرَّةٌ) · جَلَسَ ← [جِلْسَةٌ] (هَيْئَةٌ)
 - ecriture : الْمَصْدَرُ الْمِيمِيُّ، وَاسْمُ الْمَرَّةِ، وَاسْمُ الْهَيْئَةِ
 - ecriture : ١. الْمَصْدَرُ الْمِيمِيُّ: مَصْدَرٌ يَبْدَأُ بِمِيمٍ زَائِدَةٍ، وَمَعْنَاهُ مَعْنَى الْمَصْدَرِ الْعَادِيِّ.
@@ -253,7 +152,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : مَصْدَرٌ مِيمِيٌّ
 - quiz : اسْمُ مَكَانٍ
 - quiz : اسْمُ زَمَانٍ
-- quiz : جَلْسَةٌ
 - quiz : نَظْرَةٌ
 - quiz : رَحْمَةٌ وَاحِدَةٌ
 - quiz : اسْتِشَارَةٌ وَاحِدَةٌ
@@ -268,10 +166,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : ضَحْكَةً
 - quiz : عِيشَةً
 - quiz : دَقَّةً
-- quiz : الْإِخْفَاءُ
-- quiz : الْإِدْغَامُ بِغُنَّةٍ
 - quiz : الْإِظْهَارُ
-- quiz : الْإِقْلَابُ
 - quiz : الْإِدْغَامُ بِلَا غُنَّةٍ
 - quiz : الْخِطْبَةُ عَقْدٌ، فَمَنْ خَطَبَ امْرَأَةً صَارَتْ زَوْجَتَهُ.
 - quiz : الْخِطْبَةُ وَعْدٌ بِالزَّوَاجِ وَلَيْسَتْ عَقْدًا، وَلَا تَصِيرُ الْمَخْطُوبَةُ زَوْجَةً إِلَّا بِالْعَقْدِ.
@@ -297,24 +192,15 @@ Mots d’exercices et du cahier sans fichier audio :
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
 - courte ouverture
-- courte courte-vedette
-- courte ligne
 - longue ouverture
 - longue objectifs
 - longue notion
-- longue ligne
-- longue vedette
-- longue lexique
-- longue q-ex1
 - longue q-ex2
 - longue q-ex3
-- longue q-ex4
 - longue q-ex5
 - longue recap
-- quiz q-ex1
 - quiz q-ex2
 - quiz q-ex3
-- quiz q-ex4
 - quiz q-ex5
 - revision ouverture
 - revision recap
@@ -331,40 +217,6 @@ Textes gardés sans voix :
 - coran : وَغُنَّ مِيمًا ثُمَّ نُونًا شُدِّدَا ... وَسَمِّ كُلًّا حَرْفَ غُنَّةٍ بَدَا ۝ وَالْمِيمُ إِنْ تَسْكُنْ تَجِي قَبْلَ الْهِجَا ... لَا أَلِفٍ لَيِّنَةٍ لِذِي الْحِجَا ۝ أَحْكَامُهَا ثَلَاثَةٌ لِمَنْ ضَبَطْ ... إِخْفَاءٌ إِدْغَامٌ وَإِظْهَارٌ فَقَطْ
 - coran : فَالْأَوَّلُ الْإِخْفَاءُ عِنْدَ الْبَاءِ ... وَسَمِّهِ الشَّفْوِيَّ لِلْقُرَّاءِ ۝ وَالثَّانِ إِدْغَامٌ بِمِثْلِهَا أَتَى ... وَسَمِّ إِدْغَامًا صَغِيرًا يَا فَتَى ۝ وَالثَّالِثُ الْإِظْهَارُ فِي الْبَقِيَّهْ ... مِنْ أَحْرُفٍ وَسَمِّهَا شَفْوِيَّهْ ۝ وَاحْذَرْ لَدَى وَاوٍ وَفَا أَنْ تَخْتَفِي ... لِقُرْبِهَا وَالِاتِّحَادِ فَاعْرِفِ
 
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [غَفَّارٌ]
-- lecture : [غَفُورٌ]
-- lecture : [عَلِيمٌ]
-- lecture : [مِعْطَاءٌ]
-- lecture : [حَذِرٌ]
-- lecture : [كَرِيمٌ] (fichier présent pour un autre niveau)
-- lecture : [حَسَنٌ] (fichier présent pour un autre niveau)
-- lecture : [عَطْشَانُ] (fichier présent pour un autre niveau)
-- lecture : كُنْ زَوْجًا [صَبُورًا] [شَكُورًا]، فَإِنَّ زَيْنَبَ بِنْتٌ [كَرِيمَةٌ] [طَيِّبَةٌ].
-- mots : النِّكَاحُ: عَقْدُ الزَّوَاجِ
-- mots : الْوَلِيُّ: قَرِيبُ الْمَرْأَةِ الَّذِي يَتَوَلَّى عَقْدَ نِكَاحِهَا، كَالْأَبِ
-- mots : وَكَّلَ — يُوَكِّلُ: أَنَابَ غَيْرَهُ لِيَقُومَ بِالْأَمْرِ مَكَانَهُ
-- mots : وَكَّلَ
-- mots : يُوَكِّلُ: أَنَابَ غَيْرَهُ لِيَقُومَ بِالْأَمْرِ مَكَانَهُ
-- mots : عَدْلٌ (ج. عُدُولٌ): مُسْتَقِيمٌ تُقْبَلُ شَهَادَتُهُ
-- mots : الصَّدَاقُ: مَا يُعْطِيهِ الزَّوْجُ لِلزَّوْجَةِ بِسَبَبِ النِّكَاحِ، وَهُوَ الْمَهْرُ
-- mots : اسْتُؤْذِنَتْ: طُلِبَ مِنْهَا الْإِذْنُ وَالرَّأْيُ
-- mots : مَانِعٌ (ج. مَوَانِعُ): سَبَبٌ يَمْنَعُ صِحَّةَ الْأَمْرِ
-- mots : الْمُصَاهَرَةُ: الْقَرَابَةُ بِسَبَبِ الزَّوَاجِ
-- mots : الرَّضَاعُ: شُرْبُ الطِّفْلِ لَبَنَ الْمَرْأَةِ فِي صِغَرِهِ
-- mots : الْإِيجَابُ: قَوْلُ الْوَلِيِّ: زَوَّجْتُكَ؛ وَالْقَبُولُ: قَوْلُ الزَّوْجِ: قَبِلْتُ
-- mots : ضَحُوكٌ: كَثِيرُ الضَّحِكِ وَالْبِشْرِ
-- mots : أَعْلَنَ — يُعْلِنُ: أَظْهَرَ لِلنَّاسِ، ضِدُّ كَتَمَ
-- mots : أَعْلَنَ
-- mots : يُعْلِنُ: أَظْهَرَ لِلنَّاسِ، ضِدُّ كَتَمَ
-- dialogue : مَنْ وَلِيُّ الْعَرُوسِ؟
-- dialogue : هَلِ اسْتُؤْذِنَتْ؟
-- dialogue : لَا مَانِعَ
-- dialogue : زَوَّجْتُكَ…
-- dialogue : قَبِلْتُ…
-- dialogue : بَارَكَ اللَّهُ لَكَ (fichier présent pour un autre niveau)
-
 Mots d’exercices et du cahier sans fichier audio :
 
 - ouverture : صِيَغُ الْمُبَالَغَةِ وَالصِّفَةُ الْمُشَبَّهَةُ
@@ -376,9 +228,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أُمَيِّزُ الصِّفَةَ الْمُشَبَّهَةَ مِنِ اسْمِ الْفَاعِلِ
 - ouverture : أَقْرَأُ الْبَقَرَةَ (١٧–٢٠) وَأَشْرَحُ الْمَثَلَيْنِ
 - ouverture : أَذْكُرُ أَرْكَانَ عَقْدِ النِّكَاحِ عِنْدَ الْمَالِكِيَّةِ
-- ecriture : غَفُورٌ
-- ecriture : مِعْطَاءٌ
-- ecriture : النِّكَاحُ
 - ecriture : [غَفُورٌ] = يَغْفِرُ كَثِيرًا · [تَوَّابٌ] = يَتُوبُ كَثِيرًا · [كَرِيمٌ] = صِفَةٌ ثَابِتَةٌ · [قَائِمٌ] = الْآنَ
 - ecriture : ١. صِيَغُ الْمُبَالَغَةِ: أَسْمَاءٌ تُصَاغُ مِنَ الْفِعْلِ الثُّلَاثِيِّ الْمُتَعَدِّي غَالِبًا، لِلدَّلَالَةِ عَلَى الْكَثْرَةِ فِي مَعْنَى اسْمِ الْفَاعِلِ، وَأَشْهَرُهَا خَمْسٌ:
 - ecriture : فَعَّالٌ: غَفَّارٌ، تَوَّابٌ، رَزَّاقٌ
@@ -395,17 +244,12 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : فَعْلَانُ وَمُؤَنَّثُهُ فَعْلَى: عَطْشَانُ عَطْشَى، غَضْبَانُ غَضْبَى
 - ecriture : فُعَالٌ: شُجَاعٌ.
 - ecriture : ٣. الْفَرْقُ: اسْمُ الْفَاعِلِ يَدُلُّ عَلَى الْحَدَثِ (قَائِمٌ الْآنَ)، وَالصِّفَةُ الْمُشَبَّهَةُ عَلَى الثُّبُوتِ (طَوِيلٌ دَائِمًا)، وَصِيغَةُ الْمُبَالَغَةِ عَلَى الْكَثْرَةِ (غَفُورٌ: كَثِيرُ الْمَغْفِرَةِ).
-- quiz : شَكُورٌ (fichier présent pour un autre niveau)
 - quiz : تَوَّابٌ
 - quiz : كَذَّابٌ
-- quiz : حَذِرٌ
-- quiz : صَبُورٌ (fichier présent pour un autre niveau)
-- quiz : عَلِيمٌ
 - quiz : اسْمُ فَاعِلٍ
 - quiz : صِفَةٌ مُشَبَّهَةٌ
 - quiz : صِيغَةُ مُبَالَغَةٍ
 - quiz : بُكْمٌ
-- quiz : الْإِخْفَاءُ الشَّفَوِيُّ
 - quiz : الْإِدْغَامُ الصَّغِيرُ
 - quiz : الْإِظْهَارُ الشَّفَوِيُّ
 - quiz : الْغُنَّةُ فِي الْمُشَدَّدِ
@@ -416,7 +260,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : لَا يَجُوزُ الْجَمْعُ بَيْنَ الْأُخْتَيْنِ، وَهُوَ مِنَ الْمَوَانِعِ الْمَذْكُورَةِ فِي سُورَةِ النِّسَاءِ.
 - quiz : يَجُوزُ لِلْوَلِيِّ أَنْ يُوَكِّلَ رَجُلًا يَعْقِدُ النِّكَاحَ مَكَانَهُ.
 - quiz : زَوَّجْتُكَ
-- quiz : قَبِلْتُ
+- quiz : قَبِلْتُ (fichier présent pour un autre niveau)
 - quiz : ضَحُوكًا
 - quiz : صَبُورًا
 - quiz : فَرِحَةً
@@ -433,63 +277,23 @@ Mots d’exercices et du cahier sans fichier audio :
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
 - courte ouverture
-- courte courte-vedette
 - longue ouverture
 - longue objectifs
-- longue ecriture
 - longue notion
-- longue vedette
-- longue lexique
 - longue q-ex2
-- longue q-ex3
 - longue q-ex4
 - longue q-ex5
-- longue q-ex6
-- longue q-ex7
 - longue recap
 - quiz q-ex2
-- quiz q-ex3
 - quiz q-ex4
 - quiz q-ex5
-- quiz q-ex6
-- quiz q-ex7
 - revision ouverture
-- revision vedette
 - revision recap
 
 Textes gardés sans voix :
 
 - coran : لِلَامِ أَلْ حَالَانِ قَبْلَ الْأَحْرُفِ ... أُولَاهُمَا إِظْهَارُهَا فَلْتَعْرِفِ ۝ قَبْلَ أَرْبَعٍ مَعَ عَشْرَةٍ خُذْ عِلْمَهُ ... مِنِ ابْغِ حَجَّكَ وَخَفْ عَقِيمَهُ ۝ ثَانِيهِمَا إِدْغَامُهَا فِي أَرْبَعِ ... وَعَشْرَةٍ أَيْضًا وَرَمْزُهَا فَعِ
 - coran : طِبْ ثُمَّ صِلْ رَحِمًا تَفُزْ ضِفْ ذَا نِعَمْ ... دَعْ سُوءَ ظَنٍّ زُرْ شَرِيفًا لِلْكَرَمْ ۝ وَاللَّامُ الْأُولَى سَمِّهَا قَمْرِيَّهْ ... وَاللَّامُ الْأُخْرَى سَمِّهَا شَمْسِيَّهْ ۝ وَأَظْهِرَنْ لَامَ فِعْلٍ مُطْلَقَا ... فِي نَحْوِ قُلْ نَعَمْ وَقُلْنَا وَالْتَقَى
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [نُهَيْرٌ]
-- lecture : [دُرَيْهِمٌ]
-- lecture : [عُصَيْفِيرٌ]
-- lecture : [قُبَيْلَ]
-- lecture : [مَدَنِيٌّ] (fichier présent pour un autre niveau)
-- lecture : [دُنْيَوِيٌّ]
-- lecture : أَعْطَتِ الْمُوَظَّفَةُ الزَّوْجَيْنِ [كُتَيِّبًا] [عَائِلِيًّا] [قُبَيْلَ] الظُّهْرِ، فَصَارَ زَوَاجُهُمَا الْ[مَدَنِيُّ] رَسْمِيًّا.
-- mots : التَّصْغِيرُ: تَغْيِيرُ الِاسْمِ لِلدَّلَالَةِ عَلَى الصِّغَرِ أَوِ التَّحَبُّبِ أَوِ الْقُرْبِ
-- mots : النَّسَبُ: إِلْحَاقُ يَاءٍ مُشَدَّدَةٍ بِآخِرِ الِاسْمِ لِلدَّلَالَةِ عَلَى نِسْبَةِ شَيْءٍ إِلَيْهِ
-- mots : الْجِنْسِيَّةُ: انْتِمَاءُ الشَّخْصِ الْقَانُونِيُّ إِلَى دَوْلَةٍ
-- mots : الزَّوَاجُ الْمَدَنِيُّ: الزَّوَاجُ الَّذِي يُسَجَّلُ فِي الْبَلَدِيَّةِ حَسَبَ الْقَانُونِ
-- mots : الدَّفْتَرُ الْعَائِلِيُّ: كُتَيِّبٌ تُكْتَبُ فِيهِ أَسْمَاءُ الزَّوْجَيْنِ وَأَوْلَادِهِمَا
-- mots : مُعَجَّلٌ: مَا يُدْفَعُ الْآنَ؛ مُؤَجَّلٌ: مَا يُدْفَعُ بَعْدَ مُدَّةٍ
-- mots : ظَرْفٌ (ج. ظُرُوفٌ): غِلَافٌ مِنْ وَرَقٍ تُوضَعُ فِيهِ الرِّسَالَةُ أَوِ الْمَالُ
-- mots : غَرَّدَ — يُغَرِّدُ: صَوَّتَ الطَّائِرُ صَوْتًا جَمِيلًا
-- mots : غَرَّدَ
-- mots : يُغَرِّدُ: صَوَّتَ الطَّائِرُ صَوْتًا جَمِيلًا
-- mots : حُلِيٌّ (م. حَلْيٌ): مَا تَتَزَيَّنُ بِهِ الْمَرْأَةُ مِنْ ذَهَبٍ وَفِضَّةٍ
-- mots : قُبَيْلَ: قَبْلَ بِقَلِيلٍ؛ بُعَيْدَ: بَعْدَ بِقَلِيلٍ
-- mots : دُرَيْهِمَاتٌ: دَرَاهِمُ قَلِيلَةٌ، أَيْ مَالٌ قَلِيلٌ
-- mots : شَرْعِيٌّ: مُوَافِقٌ لِلشَّرْعِ
-- dialogue : هَلْ أَحْضَرْتُمَا…؟
-- dialogue : فَرَنْسِيُّ الْجِنْسِيَّةِ، مَالِيُّ الْأَصْلِ
-- dialogue : مَبْرُوكٌ مُقَدَّمًا
-- dialogue : مُعَجَّلٌ
-- dialogue : مُؤَجَّلٌ
 
 Mots d’exercices et du cahier sans fichier audio :
 
@@ -502,10 +306,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَصُوغُ الِاسْمَ الْمَنْسُوبَ مِنَ الْأَسْمَاءِ الْمَخْتُومَةِ بِالتَّاءِ وَالْأَلِفِ، وَمِنْ «فَعِيلَةٍ»
 - ouverture : أَقْرَأُ الْبَقَرَةَ (٢١–٢٩) وَأُلَخِّصُ الدَّعْوَةَ إِلَى الْعِبَادَةِ
 - ouverture : أَشْرَحُ أَحْكَامَ الصَّدَاقِ، وَمَكَانَ الزَّوَاجِ الْمَدَنِيِّ
-- ecriture : نُهَيْرٌ
-- ecriture : دُرَيْهِمٌ
-- ecriture : نَبَوِيٌّ
-- ecriture : سِنِغَالِيَّةٌ (fichier présent pour un autre niveau)
 - ecriture : نَهْرٌ ← [نُهَيْرٌ] · دِرْهَمٌ ← [دُرَيْهِمٌ] · ابْنٌ ← [بُنَيَّ] · مَكَّةُ ← [مَكِّيٌّ] · الْمَدِينَةُ ← [مَدَنِيٌّ] · الدُّنْيَا ← [دُنْيَوِيٌّ]
 - ecriture : ١. التَّصْغِيرُ: تَغْيِيرُ بِنَاءِ الِاسْمِ بِضَمِّ أَوَّلِهِ، وَفَتْحِ ثَانِيهِ، وَزِيَادَةِ يَاءٍ سَاكِنَةٍ بَعْدَهُ. أَوْزَانُهُ ثَلَاثَةٌ:
 - ecriture : فُعَيْلٌ لِلثُّلَاثِيِّ: نَهْرٌ ← نُهَيْرٌ، جَبَلٌ ← جُبَيْلٌ، شَجَرَةٌ ← شُجَيْرَةٌ، بَابٌ ← بُوَيْبٌ (تَرْجِعُ الْأَلِفُ إِلَى أَصْلِهَا).
@@ -519,19 +319,12 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : هَمْزَةُ التَّأْنِيثِ تُقْلَبُ وَاوًا: صَحْرَاءُ ← صَحْرَاوِيٌّ
 - ecriture : الْيَاءُ الْمُشَدَّدَةُ: نَبِيٌّ ← نَبَوِيٌّ
 - ecriture : الْأَسْمَاءُ الْقَصِيرَةُ تُرَدُّ إِلَيْهَا لَامُهَا: أَبٌ ← أَبَوِيٌّ، لُغَةٌ ← لُغَوِيٌّ، سَنَةٌ ← سَنَوِيٌّ.
-- quiz : جُبَيْلٌ
-- quiz : عُصَيْفِيرٌ
-- quiz : مُسَيْجِدٌ
 - quiz : شُجَيْرَةٌ
 - quiz : بُوَيْبٌ
 - quiz : الْقُرْبُ
 - quiz : التَّحَبُّبُ
 - quiz : الصِّغَرُ
-- quiz : مَكِّيٌّ (fichier présent pour un autre niveau)
-- quiz : مَدَنِيٌّ (fichier présent pour un autre niveau)
-- quiz : دُنْيَوِيٌّ
 - quiz : صَحْرَاوِيٌّ
-- quiz : لُغَوِيٌّ (fichier présent pour un autre niveau)
 - quiz : قَبَلِيٌّ
 - quiz : أَبَوِيٌّ
 - quiz : لَامٌ شَمْسِيَّةٌ تُدْغَمُ
@@ -559,71 +352,22 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte courte-vedette
-- longue ouverture
 - longue objectifs
-- longue ligne
-- longue vedette
-- longue lexique
 - longue q-ex1
-- longue q-ex2
 - longue q-ex3
 - longue q-ex4
-- longue q-ex5
-- longue q-ex6
 - longue q-ex7
-- longue q-ex8
 - longue recap
-- revision ouverture
-- revision ligne
-- revision lexique
 - revision q-ex1
-- revision q-ex2
 - revision q-ex3
 - revision q-ex4
-- revision q-ex5
-- revision q-ex6
 - revision q-ex7
-- revision q-ex8
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [بَاعَ] ← بَيَعَ
-- lecture : ا[صْطَ]بَرَ (fichier présent pour un autre niveau)
-- lecture : [مَرْجِعٌ]
-- lecture : [زَوْرَةٌ] / [جِلْسَةٌ]
-- lecture : [غَفُورٌ]
-- lecture : [صَبُورٌ] (fichier présent pour un autre niveau)
-- lecture : [كَرِيمَةٌ]
-- lecture : [بُنَيَّتِي]
-- lecture : [قُبَيْلَ]
-- lecture : [سِنِغَالِيَّةٌ] (fichier présent pour un autre niveau)
-- lecture : [نَبَوِيٌّ]
-- lecture : [قَالَ] عَمِّي: [زَوَّجْتُكَ]، وَ[قَالَ] كَرِيمٌ: [قَبِلْتُ]، فَدَعَا الْإِمَامُ اللَّهَ [الْغَفُورَ] [الرَّحِيمَ] أَنْ يُبَارِكَ لَنَا.
-- mots : بَشَّرَ — يُبَشِّرُ: أَخْبَرَ بِخَبَرٍ سَارٍّ
-- mots : بَشَّرَ
-- mots : يُبَشِّرُ: أَخْبَرَ بِخَبَرٍ سَارٍّ
-- mots : حَكَى — يَحْكِي: رَوَى وَقَصَّ
-- mots : حَكَى (fichier présent pour un autre niveau)
-- mots : يَحْكِي: رَوَى وَقَصَّ
-- mots : مَرْحَلَةٌ (ج. مَرَاحِلُ): جُزْءٌ مِنَ الطَّرِيقِ أَوْ مِنَ الْعَمَلِ
-- mots : الْوَلِيمَةُ: طَعَامُ الْعُرْسِ
-- mots : مَدْعُوٌّ — مَدْعُوَّةٌ: مَنْ وُجِّهَتْ إِلَيْهِ دَعْوَةٌ
-- mots : مَدْعُوٌّ
-- mots : مَدْعُوَّةٌ: مَنْ وُجِّهَتْ إِلَيْهِ دَعْوَةٌ
-- dialogue : مَا أَجْمَلَ…!
-- dialogue : بَارَكَ اللَّهُ لَكِ
-- dialogue : جَمَعَ اللَّهُ بَيْنَكُمَا فِي خَيْرٍ
 
 Mots d’exercices et du cahier sans fichier audio :
 
-- ouverture : الْحَصِيلَةُ الْأُولَى (fichier présent pour un autre niveau)
-- ouverture : الْحَصِيلَةُ (fichier présent pour un autre niveau)
 - ouverture : الْأُولَى:
 - ouverture : الْإِعْلَالُ
-- ouverture : ·
-- ouverture : الْمَصْدَرُ
+- ouverture : الْمَصْدَرُ (fichier présent pour un autre niveau)
 - ouverture : الْمِيمِيُّ
 - ouverture : الْمُبَالَغَةُ
 - ouverture : التَّصْغِيرُ
@@ -636,8 +380,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أُسَمِّعُ اثْنَيْ عَشَرَ بَيْتًا مِنَ التُّحْفَةِ، وَأُطَبِّقُ أَحْكَامَهَا
 - ouverture : أَقْرَأُ الْبَقَرَةَ (١–٢٩) وَأَشْرَحُ آيَةً مِنْهَا
 - ouverture : أَحُلُّ حَالَاتٍ عَمَلِيَّةً فِي الْخِطْبَةِ وَعَقْدِ النِّكَاحِ وَالصَّدَاقِ
-- ecriture : اصْطَبَرَ (fichier présent pour un autre niveau)
-- ecriture : مَرْجِعٌ
 - quiz : اسْتَشَارَ كَرِيمٌ أُمَّهُ وَصَلَّى صَلَاةَ الِاسْتِخَارَةِ قَبْلَ الْخِطْبَةِ.
 - quiz : عُقِدَ النِّكَاحُ فِي الْمَسْجِدِ قَبْلَ الزَّوَاجِ الْمَدَنِيِّ.
 - quiz : حَضَرَ الْعَقْدَ شَاهِدَانِ عَدْلَانِ.
@@ -652,64 +394,26 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte courte-vedette
-- courte ligne
-- longue ouverture
 - longue objectifs
-- longue ecriture
 - longue notion
-- longue ligne
-- longue vedette
-- longue lexique
 - longue q-ex1
-- longue q-ex2
 - longue q-ex3
 - longue q-ex4
 - longue q-ex5
-- longue q-ex6
 - longue recap
 - quiz q-ex1
-- quiz q-ex2
 - quiz q-ex3
 - quiz q-ex4
 - quiz q-ex5
-- quiz q-ex6
-- revision ouverture
 - revision recap
 
 Textes gardés sans voix :
 
 - coran : وَلَهُنَّ مِثْلُ ٱلَّذِى عَلَيْهِنَّ بِٱلْمَعْرُوفِ
 
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [مَا أَجْمَلَ] الْوَلِيمَةَ!
-- lecture : [أَكْرِمْ] بِالضُّيُوفِ!
-- lecture : [مَا أَشَدَّ] تَعَبَهَا!
-- lecture : [نِعْمَ] الزَّوْجُ
-- lecture : [بِئْسَ] الْخُلُقُ
-- lecture : [حَبَّذَا] التَّعَاوُنُ
-- lecture : [لَا حَبَّذَا] الْكِبْرُ
-- lecture : [نِعْمَ] رَجُلًا
-- lecture : [نِعْمَ] الزَّوْجُ كَرِيمٌ، وَ[مَا أَجْمَلَ] صَبْرَ زَيْنَبَ!
-- mots : الْوَلِيمَةُ: طَعَامٌ يُصْنَعُ لِلنَّاسِ فَرَحًا بِالزَّوَاجِ
-- mots : الْعِشْرَةُ: الْحَيَاةُ الْمُشْتَرَكَةُ وَحُسْنُ الْمُعَامَلَةِ
-- mots : الْمَعْرُوفُ: مَا يَعْرِفُهُ النَّاسُ حَسَنًا وَلَا يُنْكِرُهُ الشَّرْعُ
-- mots : النَّفَقَةُ: مَا يَدْفَعُهُ الزَّوْجُ لِطَعَامِ أَهْلِهِ وَلِبَاسِهِمْ وَحَاجَاتِهِمْ
-- mots : السُّكْنَى: الْمَسْكَنُ الَّذِي يُوَفِّرُهُ الزَّوْجُ
-- mots : التَّوَارُثُ: أَنْ يَرِثَ كُلُّ وَاحِدٍ مِنَ الْآخَرِ
-- mots : الْجَارِحُ: الَّذِي يُؤْلِمُ الْقَلْبَ
-- mots : أَتْفَهُ سَبَبٍ: أَصْغَرُ سَبَبٍ لَا قِيمَةَ لَهُ
-- mots : جَامِدٌ: لَا يَتَصَرَّفُ، أَيْ لَا يَأْتِي مِنْهُ مُضَارِعٌ وَلَا أَمْرٌ
-- mots : الْمَخْصُوصُ: الِاسْمُ الْمَقْصُودُ بِالْمَدْحِ أَوِ الذَّمِّ
-- dialogue : تَعَجُّبٌ: مَا أَجْمَلَ هٰذِهِ الْوَلِيمَةَ، مَا أَكْثَرَ الْجِيرَانَ، أَكْرِمْ بِأُمِّ زَيْنَبَ، مَا أَشَدَّ تَعَبَنَا، مَا أَحْسَنَ هٰذَا الْكَلَامَ، أَحْسِنْ بِهٰذَا الدُّعَاءِ
-- dialogue : مَدْحٌ وَذَمٌّ: نِعْمَ الْجِيرَانُ، بِئْسَ الزَّوْجُ، نِعْمَتِ الزَّوْجَةُ، حَبَّذَا التَّعَاوُنُ، لَا حَبَّذَا الْكِبْرُ
-
 Mots d’exercices et du cahier sans fichier audio :
 
 - ouverture : التَّعَجُّبُ وَالْمَدْحُ وَالذَّمُّ
-- ouverture : مَا أَجْمَلَ هٰذِهِ الْوَلِيمَةَ!
 - ouverture : نِعْمَ الْجِيرَانُ جِيرَانُ هٰذَا الْحَيِّ.
 - ouverture : مَا أَجْمَلَ هٰذِهِ الْوَلِيمَةَ!|نِعْمَ الْجِيرَانُ جِيرَانُ هٰذَا الْحَيِّ.
 - ouverture : مَا أَجْمَلَ هٰذِهِ الْوَلِيمَةَ! نِعْمَ الْجِيرَانُ جِيرَانُ هٰذَا الْحَيِّ.
@@ -717,10 +421,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَسْتَعْمِلُ نِعْمَ وَبِئْسَ وَحَبَّذَا وَلَا حَبَّذَا
 - ouverture : أَقْرَأُ الْبَقَرَةَ ٣٠–٣٩ وَأَحْكِي قِصَّةَ خَلْقِ آدَمَ
 - ouverture : أَذْكُرُ الْحُقُوقَ الْمُتَبَادَلَةَ بَيْنَ الزَّوْجَيْنِ
-- ecriture : وَلِيمَةٌ
 - ecriture : مُعَاشَرَةٌ
-- ecriture : حَبَّذَا
-- ecriture : تَعَاوُنٌ (fichier présent pour un autre niveau)
 - ecriture : [مَا أَجْمَلَ] الْوَلِيمَةَ! — [أَكْرِمْ] بِالضُّيُوفِ! — [نِعْمَ] الزَّوْجُ كَرِيمٌ — [بِئْسَ] الْخُلُقُ الْغَضَبُ — [حَبَّذَا] التَّعَاوُنُ
 - ecriture : أُسْلُوبُ التَّعَجُّبِ وَأُسْلُوبُ الْمَدْحِ وَالذَّمِّ
 - ecriture : [التَّعَجُّبُ] لَهُ صِيغَتَانِ: مَا أَفْعَلَهُ! نَحْوُ: مَا أَجْمَلَ السَّمَاءَ! وَأَفْعِلْ بِهِ! نَحْوُ: أَكْرِمْ بِالضَّيْفِ! وَلَا يُصَاغُ إِلَّا مِنْ فِعْلٍ ثُلَاثِيٍّ، مُتَصَرِّفٍ، تَامٍّ، مُثْبَتٍ، مَبْنِيٍّ لِلْمَعْلُومِ، يَقْبَلُ التَّفَاوُتَ، وَلَيْسَ الْوَصْفُ مِنْهُ عَلَى وَزْنِ أَفْعَلَ فَعْلَاءَ. فَإِنْ زَادَ عَلَى ثَلَاثَةِ أَحْرُفٍ أَوْ كَانَ الْوَصْفُ مِنْهُ عَلَى أَفْعَلَ فَعْلَاءَ جِئْنَا بِـ«أَشَدَّ» أَوْ «أَكْثَرَ» أَوْ «أَعْظَمَ» وَبَعْدَهُ الْمَصْدَرُ مَنْصُوبًا: مَا أَشَدَّ احْمِرَارَ الْوَرْدِ! مَا أَكْثَرَ تَعَاوُنَهُمَا! وَلَا يُتَعَجَّبُ مِنَ الْجَامِدِ وَلَا مِمَّا لَا يَقْبَلُ التَّفَاوُتَ. وَ[الْمَدْحُ وَالذَّمُّ] بِـ«نِعْمَ» وَ«بِئْسَ»، وَهُمَا فِعْلَانِ مَاضِيَانِ جَامِدَانِ؛ فَاعِلُهُمَا مُعَرَّفٌ بِـ«الْ»: نِعْمَ الزَّوْجُ كَرِيمٌ، أَوْ مُضَافٌ إِلَى مَا فِيهِ «الْ»: نِعْمَ صَاحِبُ الْبَيْتِ عَبْدُ اللَّهِ، أَوْ ضَمِيرٌ مُسْتَتِرٌ يُفَسِّرُهُ تَمْيِيزٌ: نِعْمَ رَجُلًا الْحَاجُّ مُوسَى. وَالِاسْمُ الْمَقْصُودُ بَعْدَهُ هُوَ الْمَخْصُوصُ بِالْمَدْحِ أَوِ الذَّمِّ. وَ«حَبَّذَا» لِلْمَدْحِ، وَ«لَا حَبَّذَا» لِلذَّمِّ: حَبَّذَا الصِّدْقُ، لَا حَبَّذَا الْكَذِبُ.
@@ -733,11 +434,9 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : بِالزَّوْجَةِ الصَّابِرَةِ
 - quiz : بَرَكَةَ
 - quiz : الزَّوْجُ
-- quiz : الْغَضَبُ (fichier présent pour un autre niveau)
 - quiz : صَاحِبُ
-- quiz : رَجُلًا
 - quiz : لَا حَبَّذَا
-- quiz : الْعَادَةُ
+- quiz : الْعَادَةُ (fichier présent pour un autre niveau)
 - quiz : زَيْنَبُ
 - quiz : لِلزَّوْجَةِ
 - quiz : لِلزَّوْجِ
@@ -766,55 +465,20 @@ Mots d’exercices et du cahier sans fichier audio :
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
 - courte ouverture
-- courte courte-vedette
 - longue ouverture
 - longue objectifs
 - longue notion
-- longue vedette
-- longue lexique
-- longue q-ex1
-- longue q-ex2
-- longue q-ex3
 - longue q-ex4
 - longue q-ex5
-- longue q-ex6
 - longue recap
-- quiz q-ex1
-- quiz q-ex2
-- quiz q-ex3
 - quiz q-ex4
 - quiz q-ex5
-- quiz q-ex6
 - revision ouverture
 - revision recap
 
 Textes gardés sans voix :
 
 - coran : فَإِنْ خِفْتُمْ أَلَّا تَعْدِلُوا۟ فَوَٰحِدَةً
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [صَهْ]!
-- lecture : [أُفٍّ] لَهُ!
-- lecture : [عَلَيْكَ بِـ]الصِّدْقِ
-- lecture : [إِلَيْكَ] الْكِتَابَ
-- lecture : [الْعَدْلَ الْعَدْلَ]!
-- lecture : [إِيَّاكُمْ وَ]الظُّلْمَ!
-- lecture : [إِيَّاكُمْ وَ]الظُّلْمَ، وَ[عَلَيْكُمْ بِـ]الْعَدْلِ بَيْنَ أَهْلِيكُمْ!
-- mots : اسْمُ الْفِعْلِ: كَلِمَةٌ بِمَعْنَى الْفِعْلِ لَا تَتَغَيَّرُ
-- mots : الْإِغْرَاءُ: حَثُّ الْمُخَاطَبِ عَلَى أَمْرٍ مَحْمُودٍ
-- mots : التَّحْذِيرُ: تَنْبِيهُ الْمُخَاطَبِ عَلَى أَمْرٍ مَكْرُوهٍ لِيَجْتَنِبَهُ
-- mots : التَّعَدُّدُ: أَنْ يَتَزَوَّجَ الرَّجُلُ أَكْثَرَ مِنْ وَاحِدَةٍ
-- mots : الْقَسْمُ: تَوْزِيعُ اللَّيَالِي بَيْنَ الزَّوْجَاتِ بِالْعَدْلِ
-- mots : الضَّرَّةُ: كُلُّ زَوْجَةٍ بِالنِّسْبَةِ إِلَى الْأُخْرَى
-- mots : الْمَيْلُ: أَنْ يَنْحَازَ الْقَلْبُ أَوِ الْفِعْلُ إِلَى جِهَةٍ
-- mots : الشِّقُّ: نِصْفُ الْجِسْمِ، الْجَانِبُ
-- mots : الشَّفَهِيُّ: مَا يُقَالُ بِاللِّسَانِ وَلَا يُكْتَبُ
-- mots : النَّشْرَةُ: وَرَقَاتٌ تُصْدِرُهَا مُؤَسَّسَةٌ بِأَخْبَارِهَا
-- dialogue : أَسْمَاءُ أَفْعَالٍ: صَهْ (اسْكُتْ)، هَيْهَاتَ (بَعُدَ)، أُفٍّ (أَتَضَجَّرُ)، عَلَيْكُمْ
-- dialogue : عَلَيْكَ بِـ (الْزَمْ)، حَذَارِ (احْذَرْ)، إِلَيْكَ (خُذْ)، آمِينَ (اسْتَجِبْ)
-- dialogue : إِغْرَاءٌ: الْعَدْلَ الْعَدْلَ
-- dialogue : تَحْذِيرٌ: إِيَّاكُمْ وَالْمَيْلَ
 
 Mots d’exercices et du cahier sans fichier audio :
 
@@ -833,20 +497,19 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : أَسْمَاءُ الْأَفْعَالِ، وَأُسْلُوبَا الْإِغْرَاءِ وَالتَّحْذِيرِ
 - ecriture : [اسْمُ الْفِعْلِ] كَلِمَةٌ تَدُلُّ عَلَى مَعْنَى الْفِعْلِ وَتَعْمَلُ عَمَلَهُ، وَلَا تَقْبَلُ عَلَامَاتِهِ، وَهِيَ مَبْنِيَّةٌ. وَهُوَ ثَلَاثَةُ أَنْوَاعٍ: اسْمُ فِعْلٍ مَاضٍ نَحْوُ: هَيْهَاتَ (بَعُدَ)، وَشَتَّانَ (افْتَرَقَ)؛ وَاسْمُ فِعْلٍ مُضَارِعٍ نَحْوُ: أُفٍّ (أَتَضَجَّرُ)، وَوَيْ (أَعْجَبُ)؛ وَاسْمُ فِعْلِ أَمْرٍ نَحْوُ: صَهْ (اسْكُتْ)، وَآمِينَ (اسْتَجِبْ)، وَحَيَّ عَلَى (أَقْبِلْ)، وَحَذَارِ (احْذَرْ)، وَعَلَيْكَ بِـ (الْزَمْ)، وَإِلَيْكَ (خُذْ). وَ[الْإِغْرَاءُ] تَنْبِيهُ الْمُخَاطَبِ عَلَى أَمْرٍ مَحْمُودٍ لِيَلْزَمَهُ: الصِّدْقَ الصِّدْقَ، الصِّدْقَ وَالْأَمَانَةَ؛ وَ[التَّحْذِيرُ] تَنْبِيهُ الْمُخَاطَبِ عَلَى أَمْرٍ مَكْرُوهٍ لِيَجْتَنِبَهُ: إِيَّاكَ وَالْكَذِبَ، النَّارَ النَّارَ. وَالِاسْمُ فِيهِمَا مَنْصُوبٌ بِفِعْلٍ مَحْذُوفٍ تَقْدِيرُهُ: الْزَمْ، أَوِ احْذَرْ. وَيَجِبُ حَذْفُ الْفِعْلِ إِذَا تَكَرَّرَ الِاسْمُ أَوْ عُطِفَ عَلَيْهِ، أَوْ كَانَ التَّحْذِيرُ بِـ«إِيَّا».
 - quiz : بَعُدَ
+- quiz : « هَيْهَاتَ الْعَدْلُ بِلَا نِيَّةٍ ! »
 - quiz : اسْكُتْ
+- quiz : « صَهْ ! نَحْنُ فِي الْمَسْجِدِ. »
 - quiz : اسْتَجِبْ
 - quiz : أَتَضَجَّرُ
-- quiz : خُذْ
+- quiz : « أُفٍّ لِهٰذَا الظُّلْمِ ! »
 - quiz : الْزَمْ
 - quiz : احْذَرْ
 - quiz : أَقْبِلْ
 - quiz : الْكَذِبَ
-- quiz : الصِّدْقَ
-- quiz : الظُّلْمَ
 - quiz : وَالرَّحْمَةَ
 - quiz : إِغْرَاءٌ
-- quiz : تَحْذِيرٌ
-- quiz : مَدٌّ طَبِيعِيٌّ
+- quiz : تَحْذِيرٌ (fichier présent pour un autre niveau)
 - quiz : مَدٌّ فَرْعِيٌّ سَبَبُهُ الْهَمْزُ
 - quiz : مَدٌّ فَرْعِيٌّ سَبَبُهُ السُّكُونُ
 - quiz : حَرْفُ لِينٍ: وَاوٌ سَاكِنَةٌ بَعْدَ فَتْحٍ
@@ -864,7 +527,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : يَجِبُ عَلَى الزَّوْجِ أَنْ يُسَوِّيَ بَيْنَ زَوْجَاتِهِ فِي حُبِّ الْقَلْبِ.
 - quiz : مَيْلُ الْقَلْبِ لَا يَمْلِكُهُ الْإِنْسَانُ، وَالْوَاجِبُ الْعَدْلُ فِي الْأَفْعَالِ.
 - quiz : مَنْ خَافَ أَلَّا يَعْدِلَ اكْتَفَى بِزَوْجَةٍ وَاحِدَةٍ.
-- quiz : صَهْ!
 - quiz : هَيْهَاتَ السَّفَرُ!
 - quiz : عَلَيْكَ بِالصِّدْقِ!
 - quiz : إِلَيْكَ هٰذَا الْكِتَابَ!
@@ -883,27 +545,18 @@ Mots d’exercices et du cahier sans fichier audio :
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
 - courte ouverture
-- courte courte-vedette
 - longue ouverture
 - longue objectifs
 - longue notion
-- longue vedette
-- longue lexique
 - longue q-ex1
-- longue q-ex2
-- longue q-ex3
 - longue q-ex4
 - longue q-ex5
 - longue q-ex6
-- longue q-ex7
 - longue recap
 - quiz q-ex1
-- quiz q-ex2
-- quiz q-ex3
 - quiz q-ex4
 - quiz q-ex5
 - quiz q-ex6
-- quiz q-ex7
 - revision ouverture
 - revision recap
 
@@ -913,29 +566,6 @@ Textes gardés sans voix :
 - coran : لَبِثَ فِي السِّجْنِ بِضْعَ سِنِينَ
 - coran : إِن جَآءَكُمْ فَاسِقٌۢ بِنَبَإٍۢ فَتَبَيَّنُوٓا۟
 - coran : ٱلطَّلَٰقُ مَرَّتَانِ
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [كَمْ يَوْمًا]؟
-- lecture : [بِكَمْ] يُورُو؟
-- lecture : [كَمْ مِنْ] بَيْتٍ!
-- lecture : [كَمْ] نَصِيحَةٍ!
-- lecture : [بِضْعُ] سِنِينَ
-- lecture : عِشْرُونَ [وَنَيِّفٌ]
-- lecture : [كَمْ مِنْ] بَيْتٍ هَدَمَتْهُ كَلِمَةُ غَضَبٍ، وَ[كَمْ] بَيْتٍ أَنْقَذَهُ الصَّبْرُ!
-- mots : الْعِدَّةُ: مُدَّةٌ تَنْتَظِرُهَا الْمَرْأَةُ بَعْدَ الطَّلَاقِ أَوْ مَوْتِ الزَّوْجِ
-- mots : الرَّجْعَةُ: إِعَادَةُ الْمُطَلَّقَةِ إِلَى الزَّوْجِيَّةِ فِي الْعِدَّةِ
-- mots : الطَّلَاقُ الرَّجْعِيُّ: الَّذِي يَمْلِكُ فِيهِ الزَّوْجُ الرَّجْعَةَ فِي الْعِدَّةِ
-- mots : الطُّهْرُ: الْمُدَّةُ الَّتِي بَيْنَ حَيْضَتَيْنِ
-- mots : الْحَائِضُ: الْمَرْأَةُ فِي أَيَّامِ حَيْضِهَا
-- mots : تَشَاجَرَ: تَخَاصَمَ وَارْتَفَعَ صَوْتُهُ
-- mots : الْمَصَارِيفُ: النَّفَقَاتُ، مَا يُدْفَعُ مِنَ الْمَالِ
-- mots : عَدْلٌ (فِي الشَّهَادَةِ): مُسْتَقِيمُ الدِّينِ، مَقْبُولُ الشَّهَادَةِ
-- mots : الصَّدَارَةُ: أَنْ تَأْتِيَ الْكَلِمَةُ فِي أَوَّلِ الْجُمْلَةِ
-- mots : الْكِنَايَةُ: التَّعْبِيرُ عَنِ الشَّيْءِ بِلَفْظٍ غَيْرِ صَرِيحٍ
-- dialogue : كَمِ الِاسْتِفْهَامِيَّةُ: كَمْ مَرَّةً؟ مُنْذُ كَمْ يَوْمًا؟ كَمْ شَخْصًا؟
-- dialogue : كَمِ الْخَبَرِيَّةُ: كَمْ مِنْ مَرَّةٍ قُلْتُ لَهُ! كَمْ مِنْ بَيْتٍ أَنْقَذَهُ اعْتِذَارٌ!
-- dialogue : بِضْعٌ: بِضْعَةِ أَيَّامٍ، بِضْعَةِ رِجَالٍ
 
 Mots d’exercices et du cahier sans fichier audio :
 
@@ -955,17 +585,12 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : [كَمْ] اسْمٌ مَبْنِيٌّ عَلَى السُّكُونِ، لَهُ الصَّدَارَةُ فِي الْجُمْلَةِ، وَهُوَ نَوْعَانِ: كَمْ الِاسْتِفْهَامِيَّةُ، يُسْأَلُ بِهَا عَنِ الْعَدَدِ، وَتَمْيِيزُهَا مُفْرَدٌ مَنْصُوبٌ: كَمْ يَوْمًا صُمْتَ؟ فَإِنْ سَبَقَهَا حَرْفُ جَرٍّ جَازَ جَرُّ تَمْيِيزِهَا: بِكَمْ دِرْهَمٍ اشْتَرَيْتَهُ؟ وَكَمْ الْخَبَرِيَّةُ، تَدُلُّ عَلَى الْكَثْرَةِ، وَتَمْيِيزُهَا مَجْرُورٌ، مُفْرَدٌ أَوْ جَمْعٌ: كَمْ كِتَابٍ قَرَأْتُ! كَمْ كُتُبٍ قَرَأْتُ! وَكَثِيرًا مَا يُجَرُّ بِـ«مِنْ»: كَمْ مِنْ بَيْتٍ هَدَمَهُ الْغَضَبُ! وَمَحَلُّ «كَمْ» مِنَ الْإِعْرَابِ بِحَسَبِ مَوْقِعِهَا: مُبْتَدَأٌ، أَوْ مَفْعُولٌ بِهِ، أَوْ ظَرْفٌ، أَوْ مَفْعُولٌ مُطْلَقٌ. وَمِنْ [كِنَايَاتِ الْعَدَدِ]: كَذَا، وَتَمْيِيزُهَا مُفْرَدٌ مَنْصُوبٌ: اشْتَرَيْتُ كَذَا كِتَابًا؛ وَبِضْعٌ، مِنْ ثَلَاثَةٍ إِلَى تِسْعَةٍ، يُخَالِفُ الْمَعْدُودَ: بِضْعَةُ رِجَالٍ، بِضْعُ نِسَاءٍ؛ وَنَيِّفٌ، مَا زَادَ عَلَى الْعَقْدِ: عِشْرُونَ وَنَيِّفٌ.
 - quiz : اسْتِفْهَامِيَّةٌ
 - quiz : خَبَرِيَّةٌ
-- quiz : يَوْمًا
 - quiz : بَلَدٍ
-- quiz : رَجُلٍ
-- quiz : طَالِبًا (fichier présent pour un autre niveau)
-- quiz : كِتَابًا (fichier présent pour un autre niveau)
 - quiz : بِضْعَةُ
 - quiz : بِضْعَ
 - quiz : وَنَيِّفٌ
 - quiz : وَاجِبٌ: مُتَّصِلٌ
 - quiz : جَائِزٌ: مُنْفَصِلٌ
-- quiz : لَازِمٌ
 - quiz : جَائِزٌ: عَارِضٌ لِلسُّكُونِ
 - quiz : جَائِزٌ: بَدَلٌ
 - quiz : أُسَهِّلُ الْهَمْزَةَ الثَّانِيَةَ بَيْنَ الْهَمْزَةِ وَالْأَلِفِ
@@ -999,64 +624,21 @@ Mots d’exercices et du cahier sans fichier audio :
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
 - courte ouverture
-- courte courte-vedette
-- courte ligne
 - longue ouverture
 - longue objectifs
 - longue notion
-- longue ligne
-- longue vedette
-- longue lexique
-- longue q-ex1
-- longue q-ex2
-- longue q-ex3
 - longue q-ex4
 - longue q-ex5
-- longue q-ex6
-- longue q-ex7
 - longue recap
-- quiz q-ex1
-- quiz q-ex2
-- quiz q-ex3
 - quiz q-ex4
 - quiz q-ex5
-- quiz q-ex6
-- quiz q-ex7
 - revision ouverture
-- revision q-ex3
 - revision recap
 
 Textes gardés sans voix :
 
 - coran : إِن يُرِيدَآ إِصْلَٰحًۭا يُوَفِّقِ ٱللَّهُ بَيْنَهُمَآ. نَكْتُبُ هٰذَا فِي الْمِلَفِّ، وَنَلْتَقِي بَعْدَ شَهْرٍ.
 - coran : إِنَّ أَكْرَمَكُمْ عِندَ ٱللَّهِ أَتْقَىٰكُمْ
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [يَسْمَعُ] الطَّرَفَيْنِ
-- lecture : [وَهُوَ نَادِمٌ]
-- lecture : قَالَتْ: [أُرِيدُ]
-- lecture : حِينَ [هَدَأَ]
-- lecture : [فَالصُّلْحُ] قَرِيبٌ
-- lecture : حَكَمٌ [يُحِبُّ]
-- lecture : [تَبْكِي]
-- lecture : [وَيَكْتُبُ]
-- lecture : جَاءَ الزَّوْجُ [وَهُوَ نَادِمٌ]، فَقَالَ لِلْحَكَمَيْنِ: [أُرِيدُ بَيْتًا يَسْكُنُهُ السَّلَامُ].
-- mots : الْحَكَمُ: رَجُلٌ عَدْلٌ يُبْعَثُ لِيَنْظُرَ فِي خِلَافِ الزَّوْجَيْنِ
-- mots : الْخُلْعُ: فِرَاقُ الزَّوْجَةِ بِعِوَضٍ تَدْفَعُهُ لِزَوْجِهَا
-- mots : افْتَدَتْ نَفْسَهَا: دَفَعَتْ مَالًا لِتَتَحَرَّرَ
-- mots : الشِّقَاقُ: الْخِلَافُ الشَّدِيدُ الَّذِي يَجْعَلُ كُلًّا فِي شِقٍّ
-- mots : مُتَوَتِّرٌ: قَلِقٌ مَشْدُودُ الْأَعْصَابِ
-- mots : أَطَاقَ الشَّيْءَ: قَدَرَ عَلَيْهِ وَتَحَمَّلَهُ
-- mots : أَصَرَّ عَلَى الْأَمْرِ: ثَبَتَ عَلَيْهِ وَلَمْ يَتْرُكْهُ
-- mots : اطَّلَعَ عَلَى الشَّيْءِ: نَظَرَ فِيهِ وَعَرَفَهُ
-- mots : الْمَحَلُّ مِنَ الْإِعْرَابِ: الْوَظِيفَةُ الَّتِي تَشْغَلُهَا الْجُمْلَةُ
-- mots : الْمُفْرَدُ (فِي النَّحْوِ): مَا لَيْسَ جُمْلَةً وَلَا شِبْهَ جُمْلَةٍ
-- dialogue : حَالٌ: جَاءَ الزَّوْجُ وَهُوَ مُتَوَتِّرٌ؛ رَأَيْتُهُ يَبْتَسِمُ
-- dialogue : مَفْعُولٌ بِهِ: قَالَتْ: أُرِيدُ أَنْ أُفَكِّرَ
-- dialogue : مُضَافٌ إِلَيْهِ: حِينَ تَكَلَّمْنَا، حِينَ سَأَلْتُهُ
-- dialogue : نَعْتٌ: كَلِمَاتٍ جَارِحَةً يَقُولُهَا، كَلِمَةً تَجْرَحُهَا
-- dialogue : جَوَابُ شَرْطٍ: فَلَهَا الْخُلْعُ
 
 Mots d’exercices et du cahier sans fichier audio :
 
@@ -1069,25 +651,18 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَضَعُ الْمُفْرَدَ مَكَانَ الْجُمْلَةِ لِأَتَحَقَّقَ مِنْ مَحَلِّهَا
 - ouverture : أَقْرَأُ الْحُجُرَاتِ ١١–١٣ وَأَشْرَحُ النَّهْيَ عَنِ السُّخْرِيَةِ وَالْغِيبَةِ
 - ouverture : أَشْرَحُ الْخُلْعَ وَالتَّحْكِيمَ
-- ecriture : حَكَمٌ
 - ecriture : خُلْعٌ
 - ecriture : شِقَاقٌ
 - ecriture : جَاءَ الزَّوْجُ [وَهُوَ نَادِمٌ] — الْحَكَمُ [يَسْمَعُ الطَّرَفَيْنِ] — قَالَتْ: [أُرِيدُ أَنْ أُفَكِّرَ] — هٰذَا حَكَمٌ [يُحِبُّ الصُّلْحَ] — إِنْ صَبَرْتُمَا [فَالصُّلْحُ قَرِيبٌ]
 - ecriture : الْجُمَلُ السَّبْعُ الَّتِي لَهَا مَحَلٌّ مِنَ الْإِعْرَابِ
 - ecriture : [الْجُمْلَةُ الَّتِي لَهَا مَحَلٌّ مِنَ الْإِعْرَابِ] هِيَ الَّتِي يَصِحُّ أَنْ يَحُلَّ مَحَلَّهَا مُفْرَدٌ، وَهِيَ سَبْعٌ: الْوَاقِعَةُ خَبَرًا، وَمَحَلُّهَا الرَّفْعُ أَوِ النَّصْبُ: الْحَكَمُ يَسْمَعُ، كَانَ الزَّوْجُ يَغْضَبُ؛ وَالْوَاقِعَةُ حَالًا، وَمَحَلُّهَا النَّصْبُ: جَاءَ وَهُوَ نَادِمٌ؛ وَالْوَاقِعَةُ مَفْعُولًا بِهِ، وَمَحَلُّهَا النَّصْبُ، وَأَكْثَرُهَا بَعْدَ الْقَوْلِ: قَالَتْ: أُرِيدُ الصُّلْحَ؛ وَالْمُضَافُ إِلَيْهَا، وَمَحَلُّهَا الْجَرُّ، بَعْدَ إِذْ وَإِذَا وَحِينَ وَيَوْمَ: جَلَسْنَا حِينَ هَدَأَ النَّاسُ؛ وَالْوَاقِعَةُ جَوَابًا لِشَرْطٍ جَازِمٍ مَقْرُونَةً بِالْفَاءِ أَوْ بِإِذَا الْفُجَائِيَّةِ، وَمَحَلُّهَا الْجَزْمُ: إِنْ صَبَرْتُمَا فَالصُّلْحُ قَرِيبٌ؛ وَالتَّابِعَةُ لِمُفْرَدٍ، كَالنَّعْتِ بَعْدَ النَّكِرَةِ: هٰذَا حَكَمٌ يُحِبُّ الصُّلْحَ؛ وَالتَّابِعَةُ لِجُمْلَةٍ لَهَا مَحَلٌّ: الْحَكَمُ يَسْمَعُ وَيَكْتُبُ.
-- quiz : حَالٌ (fichier présent pour un autre niveau)
-- quiz : خَبَرٌ (fichier présent pour un autre niveau)
-- quiz : مَفْعُولٌ بِهِ
 - quiz : مُضَافٌ إِلَيْهِ
-- quiz : نَعْتٌ
 - quiz : جَوَابُ شَرْطٍ جَازِمٍ
 - quiz : خَبَرُ كَانَ
 - quiz : بَاكِيًا
 - quiz : عَادِلٌ
-- quiz : صَادِقٌ
-- quiz : مُبْتَسِمَةً (fichier présent pour un autre niveau)
+- quiz : صَادِقٌ (fichier présent pour un autre niveau)
 - quiz : كَاتِبٍ
-- quiz : صَابِرَةً
 - quiz : كَلِمِيٌّ مُثَقَّلٌ
 - quiz : كَلِمِيٌّ مُخَفَّفٌ
 - quiz : حَرْفِيٌّ مُثَقَّلٌ
@@ -1108,9 +683,8 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : فِي مَذْهَبِ مَالِكٍ يَمْلِكُ الْحَكَمَانِ الْجَمْعَ وَالتَّفْرِيقَ.
 - quiz : إِذَا ضَيَّقَ الزَّوْجُ عَلَى زَوْجَتِهِ لِتَفْتَدِيَ مِنْهُ، حَلَّ لَهُ مَا أَخَذَ.
 - quiz : لَا يَحِلُّ لَهُ مَا أَخَذَ، وَيَرُدُّهُ عَلَيْهَا، وَيَقَعُ الْفِرَاقُ.
-- quiz : تَبْكِي
 - quiz : يَعْدِلُ
-- quiz : يَنْدَمُ
+- quiz : يَنْدَمُ (fichier présent pour un autre niveau)
 - quiz : كَثُرَتْ صَفَحَاتُهَا
 - quiz : يَجْلِسَانِ
 - quiz : يُصْلِحَانِ
@@ -1126,49 +700,15 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte courte-vedette
-- longue ouverture
 - longue objectifs
-- longue vedette
 - longue q-ex1
-- longue q-ex2
-- longue q-ex3
-- longue q-ex4
-- longue q-ex5
-- longue q-ex6
 - longue q-ex7
-- longue q-ex8
 - longue recap
-- revision ouverture
 - revision q-ex1
-- revision q-ex2
-- revision q-ex3
-- revision q-ex4
-- revision q-ex5
-- revision q-ex6
 - revision q-ex7
-- revision q-ex8
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [مَا أَجْمَلَ] الصَّبْرَ!
-- lecture : [نِعْمَتِ] الزَّوْجَةُ
-- lecture : [صَهْ]!
-- lecture : [إِيَّاكُمْ وَ]السُّخْرِيَةَ
-- lecture : [كَمْ مِنْ] كَلِمَةٍ!
-- lecture : يَسْمَعُ الطَّرَفَيْنِ
-- lecture : [وَهُمَا يَتَحَاوَرَانِ]
-- lecture : [مَا أَعْظَمَ] الْحِلْمَ! [إِيَّاكُمْ وَ]الْغَضَبَ؛ فَ[كَمْ مِنْ] كَلِمَةٍ [جَرَحَتْ قَلْبًا]!
-- mots : وَلِيمَةٌ
-- mots : حَكَمٌ
-- dialogue : أُكْمِلُ: تَعَجُّبٌ بِكَمْ
-- dialogue : اسْمُ فِعْلٍ
-- dialogue : سُؤَالٌ بِكَمْ
 
 Mots d’exercices et du cahier sans fichier audio :
 
-- ouverture : الْحَصِيلَةُ الثَّانِيَةُ (fichier présent pour un autre niveau)
 - ouverture : مَا أَجْمَلَ مَا تَعَلَّمْنَا!
 - ouverture : عَلَيْكُمْ بِالْمُرَاجَعَةِ، وَكَمْ مِنْ جُهْدٍ أَثْمَرَ!
 - ouverture : مَا أَجْمَلَ مَا تَعَلَّمْنَا!|عَلَيْكُمْ بِالْمُرَاجَعَةِ، وَكَمْ مِنْ جُهْدٍ أَثْمَرَ!
@@ -1184,6 +724,8 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : تَحَدَّثَ الْإِمَامُ فِي الْجَلْسَةِ الْأُولَى عَنِ الْحُقُوقِ.
 - quiz : نَصَحَ الْإِمَامُ الشَّابَّ: إِذَا غَضِبْتَ فَتَكَلَّمْ بِسُرْعَةٍ.
 - quiz : وَزَّعَتِ الْأُسْتَاذَةُ فَاتُو كُتَيِّبًا فِيهِ خُلَاصَةُ الْوَرْشَةِ.
+- quiz : « صَهْ حِينَ يَتَكَلَّمُ صَاحِبُكَ ! »
+- quiz : « هَيْهَاتَ أَنْ يَكُونَ الطَّلَاقُ لَعِبًا ! »
 - recap : مَا أَفْعَلَ + مَنْصُوبٌ · أَفْعِلْ بِـ · نِعْمَ / بِئْسَ + فَاعِلٌ + مَخْصُوصٌ
 - recap : صَهْ · هَيْهَاتَ · أُفٍّ · عَلَيْكَ بِـ · الصِّدْقَ الصِّدْقَ · إِيَّاكَ وَالْكَذِبَ
 - recap : كَمْ سَاعَةً؟ · كَمْ مِنْ مَسْجِدٍ! · بِضْعَةُ رِجَالٍ · كَذَا دِرْهَمًا · عِشْرُونَ وَنَيِّفٌ
@@ -1194,58 +736,20 @@ Mots d’exercices et du cahier sans fichier audio :
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
 - courte ouverture
-- courte courte-vedette
-- courte ligne
 - longue ouverture
 - longue objectifs
-- longue notion
-- longue ligne
-- longue vedette
-- longue q-ex1
 - longue q-ex2
 - longue q-ex3
-- longue q-ex4
-- longue q-ex5
-- longue q-ex6
 - longue recap
-- quiz q-ex1
 - quiz q-ex2
 - quiz q-ex3
-- quiz q-ex4
-- quiz q-ex5
-- quiz q-ex6
 - revision ouverture
 - revision objectifs
-- revision notion
-- revision vedette
-- revision q-ex4
 - revision recap
 
 Textes gardés sans voix :
 
 - coran : النَّفَقَةُ بِقَدْرِ مَالِكَ: الطَّعَامُ وَاللِّبَاسُ وَالسَّكَنُ وَالدَّوَاءُ وَالدِّرَاسَةُ. قَالَ اللَّهُ: لِيُنفِقْ ذُو سَعَةٍۢ مِّن سَعَتِهِۦ.
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [قَالَ الْإِمَامُ]
-- lecture : الَّتِي [طُلِّقَتْ]
-- lecture : — [بَارَكَ اللَّهُ فِيكُمْ] —
-- lecture : أَيْ [يَبْقَى الْأَوْلَادُ عِنْدَهَا]
-- lecture : أَنِ [اكْتُبْ]
-- lecture : وَاللَّهِ [لَأَزُورَنَّهُمْ]
-- lecture : [يَسْلَمْ] أَوْلَادُكُمَا
-- lecture : صَدَقْتِ؛ [الطِّفْلُ أَمَانَةٌ]
-- lecture : الْحَضَانَةُ — [بَارَكَ اللَّهُ فِيكُمْ] — حَقٌّ لِلطِّفْلِ [الَّذِي] [لَا ذَنْبَ لَهُ].
-- lecture : فأجابها الإمام: الحضانة
-- lecture : [بَارَكَ اللَّهُ فِيكِ]
-- lecture : حق للطفل قبل أن تكون حقا للأم أو للأب.
-- dialogue : — وَهٰذَا لَعِبُ أَدْوَارٍ
-- dialogue : ·
-- dialogue : حَفِظَهُمُ اللَّهُ
-- dialogue : · أَيْ: يَسْكُنُ الْأَوْلَادُ عِنْدَهَا
-- dialogue : وَاللَّهِ لَأَلْتَزِمَنَّ بِهِ
-- dialogue : إِنْ تَتَّفِقَا يَرْتَحْ أَوْلَادُكُمَا
-- dialogue : لَا أَطْلُبُ إِلَّا حَقَّهُمْ
 
 Mots d’exercices et du cahier sans fichier audio :
 
@@ -1258,13 +762,11 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أُمَيِّزُ جُمْلَةَ الصِّلَةِ مِنْ جُمْلَةِ النَّعْتِ
 - ouverture : أَقْرَأُ الْحُجُرَاتِ ١٤–١٨ وَأُفَرِّقُ بَيْنَ الْإِسْلَامِ وَالْإِيمَانِ
 - ouverture : أَشْرَحُ الْحَضَانَةَ وَنَفَقَةَ الْأَوْلَادِ فِي مَذْهَبِ الْإِمَامِ مَالِكٍ
-- ecriture : الَّذِينَ (fichier présent pour un autre niveau)
 - ecriture : لَأَزُورَنَّ
 - ecriture : يَسْلَمْ
 - ecriture : [قَالَ الْإِمَامُ] · الْأُمُّ الَّتِي [طُلِّقَتْ] · الْحَضَانَةُ — [بَارَكَ اللَّهُ فِيكُمْ] — حَقٌّ لِلطِّفْلِ · أَشَارَ إِلَيْهِ أَنِ [اكْتُبْ] · وَاللَّهِ [لَأَزُورَنَّهُمْ] · إِنْ تَتَعَاوَنَا [يَسْلَمْ] أَوْلَادُكُمَا
 - ecriture : مِنْ مُقَدِّمَةِ «رِيَاضِ الصَّالِحِينَ» لِلْإِمَامِ النَّوَوِيِّ: «الْحَمْدُ لِلَّهِ الْوَاحِدِ الْقَهَّارِ، الْعَزِيزِ الْغَفَّارِ، مُكَوِّرِ اللَّيْلِ عَلَى النَّهَارِ، تَذْكِرَةً لِأُولِي الْقُلُوبِ وَالْأَبْصَارِ، وَتَبْصِرَةً لِذَوِي الْأَلْبَابِ وَالِاعْتِبَارِ…»
 - ecriture : الْقَاعِدَةُ: الْجُمَلُ الَّتِي لَا مَحَلَّ لَهَا مِنَ الْإِعْرَابِ ثَمَانٍ: (١) الِابْتِدَائِيَّةُ: الَّتِي يُفْتَتَحُ بِهَا الْكَلَامُ، نَحْوُ: الْحَمْدُ لِلَّهِ الْوَاحِدِ الْقَهَّارِ. (٢) الِاسْتِئْنَافِيَّةُ: الَّتِي يُسْتَأْنَفُ بِهَا كَلَامٌ جَدِيدٌ مُنْقَطِعٌ عَمَّا قَبْلَهُ فِي الْإِعْرَابِ، نَحْوُ: اجْتَهِدْ، إِنَّ الْعِلْمَ نُورٌ. (٣) صِلَةُ الْمَوْصُولِ: نَحْوُ: جَاءَتِ الْأُمُّ الَّتِي طُلِّقَتْ. (٤) الِاعْتِرَاضِيَّةُ: الَّتِي تَقَعُ بَيْنَ شَيْئَيْنِ مُتَلَازِمَيْنِ، نَحْوُ: الْحَضَانَةُ
-- ecriture : بَارَكَ اللَّهُ فِيكُمْ (fichier présent pour un autre niveau)
 - ecriture : حَقٌّ لِلطِّفْلِ. (٥) التَّفْسِيرِيَّةُ: الَّتِي تُفَسِّرُ مَا قَبْلَهَا، وَأَكْثَرُ مَا تَأْتِي بَعْدَ أَيْ وَأَنْ، نَحْوُ: أَشَارَ إِلَيْهِ أَنِ اكْتُبْ. (٦) جَوَابُ الْقَسَمِ: نَحْوُ: وَاللَّهِ لَأَزُورَنَّ أَوْلَادِي. (٧) جَوَابُ الشَّرْطِ غَيْرِ الْجَازِمِ، أَوِ الْجَازِمِ إِذَا لَمْ يَقْتَرِنْ بِالْفَاءِ وَلَا بِإِذَا الْفُجَائِيَّةِ، نَحْوُ: إِذَا جَاءَ الْأَبُ فَرِحَ الْأَوْلَادُ، وَإِنْ تَتَعَاوَنَا يَسْلَمْ أَوْلَادُكُمَا. (٨) التَّابِعَةُ لِجُمْلَةٍ لَا مَحَلَّ لَهَا، نَحْوُ: قَامَ الْإِمَامُ وَجَلَسَ الْأَبُ.
 - quiz : ابْتِدَائِيَّةٌ
 - quiz : اعْتِرَاضِيَّةٌ
@@ -1295,8 +797,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : تُظْهَرُ
 - quiz : السَّكْتُ أَوِ الْإِدْغَامُ
 - quiz : الْأُمِّ
-- quiz : يَبْلُغَ (fichier présent pour un autre niveau)
-- quiz : أُمِّهَا
+- quiz : أُمِّهَا (fichier présent pour un autre niveau)
 - quiz : الْأَبِ
 - quiz : لَا يَجُوزُ؛ النَّفَقَةُ حَقُّ الْأَوْلَادِ
 - quiz : أَصْلَحَكَ اللَّهُ
@@ -1316,42 +817,14 @@ Mots d’exercices et du cahier sans fichier audio :
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
 - courte ouverture
-- courte courte-vedette
-- courte ligne
 - longue ouverture
 - longue objectifs
 - longue notion
-- longue ligne
-- longue vedette
-- longue q-ex1
-- longue q-ex2
 - longue q-ex3
-- longue q-ex5
 - longue recap
-- quiz q-ex1
-- quiz q-ex2
 - quiz q-ex3
-- quiz q-ex5
 - revision ouverture
-- revision vedette
 - revision recap
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [كَالْمِصْبَاحِ]
-- lecture : [كَالْقَمَرِ] فِي صَفَائِهِ
-- lecture : [كَأَنَّ] الْمُسْتَشْفَى سَفِينَةٌ
-- lecture : [مِثْلُ] الثَّوْبِ الْجَمِيلِ
-- lecture : [يُشْبِهُ] أَبَاهُ
-- lecture : عَيْنَاهَا [نَجْمَتَانِ]
-- lecture : [كَالْعَجِينِ] فِي يَدِ الْخَبَّازِ
-- lecture : الْأَوْلَادُ [زَهْرُ] الْبَيْتِ
-- lecture : [الطِّفْلُ] فِي يَدِ وَالِدَيْهِ [كَـ][الْعَجِينِ] فِي يَدِ الْخَبَّازِ: [يُشَكِّلَانِهِ كَمَا يُرِيدَانِ].
-- dialogue : كَأَنَّهُ مَلَاكٌ صَغِيرٌ
-- dialogue : رَأْسِي كَالسُّوقِ
-- dialogue : الِاسْمُ مِثْلُ الثَّوْبِ
-- dialogue : قَلْبِي هَادِئٌ كَالْبَحْرِ بَعْدَ الْعَاصِفَةِ
-- dialogue : أَنْتِ لَهُ مَدْرَسَةٌ
 
 Mots d’exercices et du cahier sans fichier audio :
 
@@ -1365,7 +838,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَشْرَحُ تَشْبِيهَاتِ الْبَقَرَةِ ١٧ وَالنُّورِ ٣٥ وَالْجُمُعَةِ ٥ وَإِبْرَاهِيمَ ٢٤–٢٥
 - ouverture : أَذْكُرُ حُقُوقَ الطِّفْلِ: النَّسَبَ وَالِاسْمَ وَالرَّضَاعَةَ وَالتَّرْبِيَةَ وَالْعَدْلَ
 - ecriture : تَشْبِيهٌ
-- ecriture : كَالْمِصْبَاحِ
 - ecriture : كَأَنَّهَا
 - ecriture : الْمَوْلُودُ [كَالْمِصْبَاحِ] فِي [الضِّيَاءِ] · الْمَوْلُودُ [مِصْبَاحٌ] فِي الضِّيَاءِ · الْمَوْلُودُ [كَالْمِصْبَاحِ] · الْمَوْلُودُ [مِصْبَاحٌ] · [كَأَنَّ] بُكَاءَهُ أَذَانٌ يُعْلِنُ حَيَاةً جَدِيدَةً
 - ecriture : التَّشْبِيهُ: أَرْكَانُهُ وَأَنْوَاعُهُ
@@ -1377,16 +849,13 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : وَيُسَمَّيَانِ طَرَفَيِ التَّشْبِيهِ —، (٣) الْأَدَاةُ: الْكَافُ، مِثْلُ، كَأَنَّ، يُشْبِهُ، يُمَاثِلُ، (٤) وَجْهُ الشَّبَهِ: الصِّفَةُ الْمُشْتَرَكَةُ.
 - ecriture : أَنْوَاعُهُ: الْمُرْسَلُ: مَا ذُكِرَتْ فِيهِ الْأَدَاةُ، نَحْوُ: الْعِلْمُ كَالنُّورِ. الْمُؤَكَّدُ: مَا حُذِفَتْ مِنْهُ الْأَدَاةُ، نَحْوُ: الْعِلْمُ نُورٌ فِي الْهِدَايَةِ. الْمُفَصَّلُ: مَا ذُكِرَ فِيهِ وَجْهُ الشَّبَهِ، نَحْوُ: الْعِلْمُ كَالنُّورِ فِي الْهِدَايَةِ. الْمُجْمَلُ: مَا حُذِفَ مِنْهُ وَجْهُ الشَّبَهِ، نَحْوُ: الْعِلْمُ كَالنُّورِ. الْبَلِيغُ: مَا حُذِفَتْ مِنْهُ الْأَدَاةُ وَوَجْهُ الشَّبَهِ مَعًا، نَحْوُ: الْعِلْمُ نُورٌ. التَّمْثِيلِيُّ: مَا كَانَ وَجْهُ الشَّبَهِ فِيهِ صُورَةً مُنْتَزَعَةً مِنْ أَشْيَاءَ مُتَعَدِّدَةٍ، نَحْوُ: الطِّفْلُ فِي يَدِ وَالِدَيْهِ كَالْعَجِينِ فِي يَدِ الْخَبَّازِ.
 - quiz : الْمُشَبَّهُ بِهِ
-- quiz : وَجْهُ الشَّبَهِ
 - quiz : الْأَدَاةُ
 - quiz : الْمُشَبَّهُ
 - quiz : الْأَدَاةُ وَوَجْهُ الشَّبَهِ
 - quiz : تَامُّ الْأَرْكَانِ (مُرْسَلٌ مُفَصَّلٌ)
 - quiz : مُؤَكَّدٌ
-- quiz : مُجْمَلٌ (fichier présent pour un autre niveau)
 - quiz : بَلِيغٌ
 - quiz : تَمْثِيلِيٌّ
-- quiz : مُرْسَلٌ (fichier présent pour un autre niveau)
 - quiz : كَانَتْ أَمِينَاتَا فِي نَوْبَةِ الْحِرَاسَةِ لَيْلَةً مِنْ لَيَالِي الصَّيْفِ.
 - quiz : كَانَتْ فِي نَوْبَةِ الْحِرَاسَةِ لَيْلَةً مِنْ لَيَالِي الشِّتَاءِ.
 - quiz : وُلِدَ الطِّفْلُ فِي السَّاعَةِ الثَّالِثَةِ.
@@ -1394,21 +863,17 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : قَالَتْ لَهَا: لَا تَنْسَيِ الرَّضَاعَةَ، فَحَلِيبُ الْأُمِّ دَوَاءٌ وَغِذَاءٌ.
 - quiz : شَبَّهَتْ أَمِينَاتَا الِاسْمَ الْحَسَنَ بِالثَّوْبِ الْجَمِيلِ.
 - quiz : حَالُ الْمُنَافِقِينَ
-- quiz : أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ (fichier présent pour un autre niveau)
 - quiz : وَصْلُ آخِرِ السُّورَةِ بِالْبَسْمَلَةِ ثُمَّ الْوَقْفُ عَلَيْهَا
 - quiz : لَا نَقْرَأُ الْبَسْمَلَةَ
 - quiz : حَوْلَانِ كَامِلَانِ
 - quiz : أَبِيهِ الْحَقِيقِيِّ
 - quiz : مُخَالِفٌ لِلْعَدْلِ بَيْنَ الْأَوْلَادِ
 - quiz : أَنْ يُغَيِّرَا الِاسْمَ إِلَى اسْمٍ حَسَنٍ
-- quiz : رَعِيَّتِهِ
-- quiz : شَمْسٌ (fichier présent pour un autre niveau)
 - quiz : كَالْكَنْزِ
 - quiz : شَمْعَةٌ فِي إِضَاءَةِ الطَّرِيقِ
 - quiz : كَالْوَرْدَةِ فِي رِقَّتِهَا
 - quiz : الْمَوْلُودُ كَالْمِصْبَاحِ فِي الضِّيَاءِ
 - quiz : حَلِيبُ الْأُمِّ دَوَاءٌ وَغِذَاءٌ
-- quiz : الْأَوْلَادُ زَهْرُ الْبَيْتِ
 - recap : الْمُشَبَّهُ + الْأَدَاةُ + الْمُشَبَّهُ بِهِ + وَجْهُ الشَّبَهِ
 - recap : مُرْسَلٌ / مُؤَكَّدٌ — مُفَصَّلٌ / مُجْمَلٌ — بَلِيغٌ
 - recap : التَّشْبِيهُ التَّمْثِيلِيُّ
@@ -1418,57 +883,20 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte courte-vedette
-- longue ouverture
-- longue objectifs
 - longue notion
-- longue ligne
-- longue vedette
 - longue q-ex3
-- longue q-ex4
-- longue q-ex5
 - longue q-ex6
-- longue recap
 - quiz q-ex3
-- quiz q-ex4
-- quiz q-ex5
 - quiz q-ex6
-- revision ouverture
-- revision objectifs
 - revision notion
-- revision vedette
-- revision q-ex4
-- revision recap
 
 Textes gardés sans voix :
 
 - coran : ١) مِنْ «صَحِيحِ الْبُخَارِيِّ»: حَدَّثَنَا الْحُمَيْدِيُّ عَبْدُ اللَّهِ بْنُ الزُّبَيْرِ، قَالَ: حَدَّثَنَا سُفْيَانُ، قَالَ: حَدَّثَنَا يَحْيَى بْنُ سَعِيدٍ الْأَنْصَارِيُّ، قَالَ: أَخْبَرَنِي مُحَمَّدُ بْنُ إِبْرَاهِيمَ التَّيْمِيُّ، أَنَّهُ سَمِعَ عَلْقَمَةَ بْنَ وَقَّاصٍ اللَّيْثِيَّ يَقُولُ: سَمِعْتُ عُمَرَ بْنَ الْخَطَّابِ رَضِيَ اللَّهُ عَنْهُ عَلَى الْمِنْبَرِ، قَالَ: سَمِعْتُ رَسُولَ اللَّهِ ﷺ يَقُولُ: «إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى، فَمَنْ كَانَتْ هِجْرَتُهُ إِلَى دُنْيَا يُصِيبُهَا، أَوْ إِلَى امْرَأَةٍ يَنْكِحُهَا، فَهِجْرَتُهُ إِلَى مَا هَاجَرَ إِلَيْهِ». ٢) مِنْ «رِيَاضِ الصَّالِحِينَ» لِلْإِمَامِ النَّوَوِيِّ: بَابُ الْإِخْلَاصِ وَإِحْضَارِ النِّيَّةِ فِي جَمِيعِ الْأَعْمَالِ وَالْأَقْوَالِ وَالْأَحْوَالِ الْبَارِزَةِ وَالْخَفِيَّةِ. قَالَ اللَّهُ تَعَالَى: ﴿وَمَآ أُمِرُوٓا۟ إِلَّا لِيَعْبُدُوا۟ ٱللَّهَ مُخْلِصِينَ لَهُ ٱلدِّينَ حُنَفَآءَ﴾، وَقَالَ تَعَالَى: ﴿لَن يَنَالَ ٱللَّهَ لُحُومُهَا وَلَا دِمَآؤُهَا وَلَٰكِن يَنَالُهُ ٱلتَّقْوَىٰ مِنكُمْ﴾، وَقَالَ تَعَالَى: ﴿قُلْ إِن تُخْفُوا۟ مَا فِى صُدُورِكُمْ أَوْ تُبْدُوهُ يَعْلَمْهُ ٱللَّهُ﴾.
 
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [حَدَّثَنَا] سُفْيَانُ
-- lecture : [أَخْبَرَنِي] مُحَمَّدٌ
-- lecture : [عَنْ] أَبِي هُرَيْرَةَ
-- lecture : [سَمِعْتُ] رَسُولَ اللَّهِ ﷺ
-- lecture : [إِنَّمَا] الْأَعْمَالُ [بِالنِّيَّاتِ]
-- lecture : لِكُلِّ [امْرِئٍ] مَا نَوَى
-- lecture : [أُجِرْتَ] عَلَيْهَا
-- lecture : [مُتَّفَقٌ عَلَيْهِ]
-- lecture : [إِنَّمَا] الْأَعْمَالُ بِالنِّيَّاتِ، وَ[إِنَّمَا] لِكُلِّ [امْرِئٍ] [مَا نَوَى].
-- dialogue : إِذَا نَوَيْتُ… صَارَ عَمَلِي عِبَادَةً
-- dialogue : الْإِتْقَانُ مِنَ الْإِخْلَاصِ
-- dialogue : جَدِّدِي النِّيَّةَ
-- dialogue : فَهِجْرَتُهُ إِلَى مَا هَاجَرَ إِلَيْهِ
-- dialogue : النِّيَّةُ فِي الْقَلْبِ
-- dialogue : خَالِصَةً لِوَجْهِكَ
-
 Mots d’exercices et du cahier sans fichier audio :
 
 - ouverture : رِيَاضُ الصَّالِحِينَ: بَابُ الْإِخْلَاصِ
-- ouverture : إِنَّمَا (fichier présent pour un autre niveau)
-- ouverture : الْأَعْمَالُ
-- ouverture : بِالنِّيَّاتِ
 - ouverture : هٰذَا سَنَدٌ، وَهٰذَا مَتْنٌ:
 - ouverture : السَّنَدُ طَرِيقٌ، وَالْمَتْنُ غَايَةٌ.
 - ouverture : هٰذَا سَنَدٌ، وَهٰذَا مَتْنٌ:|السَّنَدُ طَرِيقٌ، وَالْمَتْنُ غَايَةٌ.
@@ -1476,8 +904,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أُمَيِّزُ السَّنَدَ مِنَ الْمَتْنِ وَأَفْهَمُ صِيَغَ الرِّوَايَةِ
 - ouverture : أَفْهَمُ ثَلَاثَةَ أَحَادِيثَ مِنْ بَابِ الْإِخْلَاصِ وَأَشْرَحُهَا
 - ouverture : أَقْرَأُ الْبَيِّنَةَ ٥ وَأَشْرَحُ مَعْنَى الْإِخْلَاصِ
-- ouverture : أُفَرِّقُ بَيْنَ الْإِخْلَاصِ وَالرِّيَاءِ
-- ecriture : حَدَّثَنَا
+- ecriture : حَدَّثَنَا (fichier présent pour un autre niveau)
 - ecriture : أَخْبَرَنِي
 - ecriture : النِّيَّاتِ
 - ecriture : [حَدَّثَنَا] الْحُمَيْدِيُّ… [أَخْبَرَنِي] مُحَمَّدُ بْنُ إِبْرَاهِيمَ… [سَمِعْتُ] عُمَرَ بْنَ الْخَطَّابِ… [قَالَ]: [سَمِعْتُ] رَسُولَ اللَّهِ ﷺ [يَقُولُ]: «إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ» · [مُتَّفَقٌ عَلَيْهِ]
@@ -1486,9 +913,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : وَعَنْ أَبِي هُرَيْرَةَ عَبْدِ الرَّحْمٰنِ بْنِ صَخْرٍ رَضِيَ اللَّهُ عَنْهُ قَالَ: قَالَ رَسُولُ اللَّهِ ﷺ: «إِنَّ اللَّهَ لَا يَنْظُرُ إِلَى أَجْسَامِكُمْ، وَلَا إِلَى صُوَرِكُمْ، وَلٰكِنْ يَنْظُرُ إِلَى قُلُوبِكُمْ». رَوَاهُ مُسْلِمٌ. ٣) مِنْ حَدِيثِ سَعْدِ بْنِ أَبِي وَقَّاصٍ رَضِيَ اللَّهُ عَنْهُ، وَهُوَ فِي الْبَابِ نَفْسِهِ: «إِنَّكَ لَنْ تُنْفِقَ نَفَقَةً تَبْتَغِي بِهَا وَجْهَ اللَّهِ إِلَّا أُجِرْتَ عَلَيْهَا، حَتَّى مَا تَجْعَلُ فِي فَمِ امْرَأَتِكَ».
 - ecriture : الْقَاعِدَةُ: الْحَدِيثُ سَنَدٌ وَمَتْنٌ. السَّنَدُ: سِلْسِلَةُ الرُّوَاةِ الَّذِينَ نَقَلُوا الْحَدِيثَ. الْمَتْنُ: الْكَلَامُ الَّذِي يَنْتَهِي إِلَيْهِ السَّنَدُ. صِيَغُ الْأَدَاءِ: حَدَّثَنَا وَسَمِعْتُ (سَمِعَهُ مِنْ لَفْظِ الشَّيْخِ)، أَخْبَرَنَا (قُرِئَ عَلَى الشَّيْخِ غَالِبًا)، عَنْ (رِوَايَةٌ بِلَا تَصْرِيحٍ بِالسَّمَاعِ). وَفِي آخِرِ الْحَدِيثِ: رَوَاهُ فُلَانٌ = أَخْرَجَهُ فِي كِتَابِهِ، وَمُتَّفَقٌ عَلَيْهِ = رَوَاهُ الْبُخَارِيُّ وَمُسْلِمٌ.
 - quiz : السَّنَدِ
-- quiz : الْمَتْنُ (fichier présent pour un autre niveau)
-- quiz : رَوَاهُ الْبُخَارِيُّ وَمُسْلِمٌ (fichier présent pour un autre niveau)
-- quiz : عُمَرُ بْنُ الْخَطَّابِ
 - quiz : الْحُمَيْدِيُّ
 - quiz : لِيَسْهُلَ الْكِتَابُ عَلَى النَّاسِ
 - quiz : عُنْوَانٌ ثُمَّ آيَاتٌ ثُمَّ أَحَادِيثُ
@@ -1507,14 +931,12 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : قَالَتْ: لَا تَتْرُكِي الْعَمَلَ خَوْفًا مِنَ الرِّيَاءِ، وَجَدِّدِي نِيَّتَكِ.
 - quiz : الزَّوَاجُ بِنِيَّةِ الْعَفَافِ طَاعَةٌ يُؤْجَرُ عَلَيْهَا صَاحِبُهَا.
 - quiz : إِلَى مَا هَاجَرَ إِلَيْهِ
-- quiz : الْقُلُوبِ (fichier présent pour un autre niveau)
 - quiz : جَوَابُ شَرْطٍ مُقْتَرِنٌ بِالْفَاءِ، فِي مَحَلِّ جَزْمٍ
 - quiz : فِعْلٌ مَاضٍ مَبْنِيٌّ لِلْمَجْهُولِ
 - quiz : حَالٌ مَنْصُوبَةٌ بِالْيَاءِ
 - quiz : لٰكِنَّ هُوَ
 - quiz : الظُّنُونَا
 - quiz : قَوَارِيرْ
-- quiz : الْقَلْبُ
 - quiz : الْغُسْلُ لِلْجُمُعَةِ وَالْغُسْلُ لِلتَّبَرُّدِ
 - quiz : جَائِزٌ، وَالْأَوْلَى تَرْكُهُ
 - quiz : لَا يَضُرُّ إِخْلَاصَهُ
@@ -1524,7 +946,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : بِشَكْلِهِ الْخَارِجِيِّ
 - quiz : رِضَا اللَّهِ
 - quiz : اللُّقْمَةُ الَّتِي تُطْعِمُهَا زَوْجَتَكَ
-- quiz : إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ
 - quiz : وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى
 - quiz : السَّنَدُ طَرِيقٌ وَالْمَتْنُ غَايَةٌ
 - recap : الْحَدِيثُ = سَنَدٌ + مَتْنٌ
@@ -1535,52 +956,17 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte courte-vedette
-- longue ouverture
 - longue objectifs
-- longue notion
-- longue vedette
-- longue q-ex1
 - longue q-ex3
-- longue q-ex4
-- longue q-ex5
-- longue q-ex6
-- quiz q-ex1
 - quiz q-ex3
-- quiz q-ex4
-- quiz q-ex5
-- quiz q-ex6
-- revision ouverture
-- revision notion
-- revision q-ex4
 
 Textes gardés sans voix :
 
 - coran : [وَاللَّهِ] إِنِّي [لَأَسْتَغْفِرُ] اللَّهَ · [لَوْلَا] الطَّبِيبُ [لَتَعِبْتُ] · [لَوْ] صَبَرْتَ [لَأُجِرْتَ] · [مَنْ] تَابَ [فَـ]إِنَّ اللَّهَ يَتُوبُ عَلَيْهِ · [عَجَبًا] لِأَمْرِ الْمُؤْمِنِ
-- coran : وعندما مات ابنه في حادث قال: [إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ]، ثم سكت وبكى بكاء هادئا.
-- coran : لَمَّا مَاتَ ابْنُهُ قَالَ: إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ.
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [وَاللَّهِ] (fichier présent pour un autre niveau)
-- lecture : [لَقَدْ] تَابَ
-- lecture : [لَوْ] صَبَرْتَ [لَأُجِرْتَ]
-- lecture : [لَوْلَا] الدَّوَاءُ
-- lecture : [مَنْ] تَابَ [فَـ]لَهُ الْأَجْرُ
-- lecture : [عَجَبًا] لِأَمْرِ الْمُؤْمِنِ
-- lecture : [سَرَّاءُ] وَ[ضَرَّاءُ]
-- lecture : [الصَّدْمَةِ] الْأُولَى
-- lecture : [وَالَّذِي نَفْسِي بِيَدِهِ]، [لَوْ] لَمْ تُذْنِبُوا [لَـ]ذَهَبَ اللَّهُ بِكُمْ، وَ[لَـ]جَاءَ بِقَوْمٍ يُذْنِبُونَ، فَيَسْتَغْفِرُونَ اللَّهَ، فَيَغْفِرُ لَهُمْ.
-- dialogue : لَوْلَا الْمُمَرِّضَاتُ… لَتَعِبْتُ
-- dialogue : لَوْ عَلِمْتُ… لَتُبْتُ
-- dialogue : وَاللَّهِ لَأُصْلِحَنَّ
-- dialogue : نِعْمَ الْقَرَارُ
 
 Mots d’exercices et du cahier sans fichier audio :
 
 - ouverture : رِيَاضُ الصَّالِحِينَ: بَابُ التَّوْبَةِ وَبَابُ الصَّبْرِ
-- ouverture : لَا بَأْسَ، طَهُورٌ إِنْ شَاءَ اللَّهُ. (fichier présent pour un autre niveau)
 - ouverture : عَجَبًا لِأَمْرِ الْمُؤْمِنِ!
 - ouverture : لَا بَأْسَ، طَهُورٌ إِنْ شَاءَ اللَّهُ.|عَجَبًا لِأَمْرِ الْمُؤْمِنِ!
 - ouverture : لَا بَأْسَ، طَهُورٌ إِنْ شَاءَ اللَّهُ. عَجَبًا لِأَمْرِ الْمُؤْمِنِ!
@@ -1593,42 +979,33 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : وَعَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ قَالَ: سَمِعْتُ رَسُولَ اللَّهِ ﷺ يَقُولُ: «وَاللَّهِ إِنِّي لَأَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ فِي الْيَوْمِ أَكْثَرَ مِنْ سَبْعِينَ مَرَّةً». رَوَاهُ الْبُخَارِيُّ.
 - ecriture : وَعَنْ أَبِي مُوسَى الْأَشْعَرِيِّ رَضِيَ اللَّهُ عَنْهُ عَنِ النَّبِيِّ ﷺ قَالَ: «إِنَّ اللَّهَ عَزَّ وَجَلَّ يَبْسُطُ يَدَهُ بِاللَّيْلِ لِيَتُوبَ مُسِيءُ النَّهَارِ، وَيَبْسُطُ يَدَهُ بِالنَّهَارِ لِيَتُوبَ مُسِيءُ اللَّيْلِ، حَتَّى تَطْلُعَ الشَّمْسُ مِنْ مَغْرِبِهَا». رَوَاهُ مُسْلِمٌ. ٢) بَابُ الصَّبْرِ: عَنْ أَبِي يَحْيَى صُهَيْبِ بْنِ سِنَانٍ رَضِيَ اللَّهُ عَنْهُ قَالَ: قَالَ رَسُولُ اللَّهِ ﷺ: «عَجَبًا لِأَمْرِ الْمُؤْمِنِ، إِنَّ أَمْرَهُ كُلَّهُ خَيْرٌ، وَلَيْسَ ذَاكَ لِأَحَدٍ إِلَّا لِلْمُؤْمِنِ: إِنْ أَصَابَتْهُ سَرَّاءُ شَكَرَ فَكَانَ خَيْرًا لَهُ، وَإِنْ أَصَابَتْهُ ضَرَّاءُ صَبَرَ فَكَانَ خَيْرًا لَهُ». رَوَاهُ مُسْلِمٌ.
 - ecriture : وَعَنْ أَنَسٍ رَضِيَ اللَّهُ عَنْهُ قَالَ: مَرَّ النَّبِيُّ ﷺ بِامْرَأَةٍ تَبْكِي عِنْدَ قَبْرٍ فَقَالَ: «اتَّقِي اللَّهَ وَاصْبِرِي»… فَقَالَ: «إِنَّمَا الصَّبْرُ عِنْدَ الصَّدْمَةِ الْأُولَى». مُتَّفَقٌ عَلَيْهِ. ٣) الْقَاعِدَةُ: مَنْ + فِعْلُ الشَّرْطِ + فَـ + جَوَابٌ. لَوْ + فِعْلٌ + لَـ + جَوَابٌ (امْتِنَاعٌ لِامْتِنَاعٍ): لَوْ صَبَرْتَ لَأُجِرْتَ. لَوْلَا + اسْمٌ مَرْفُوعٌ + لَـ + جَوَابٌ (امْتِنَاعٌ لِوُجُودٍ): لَوْلَا الطَّبِيبُ لَتَعِبْتُ. الْقَسَمُ: وَاللَّهِ، وَالَّذِي نَفْسِي بِيَدِهِ + جَوَابُهُ: لَـ
-- ecriture : لَقَدْ (fichier présent pour un autre niveau)
 - ecriture : إِنَّ… لَـ
 - ecriture : مَا، لَا. التَّعَجُّبُ السَّمَاعِيُّ: عَجَبًا لِـ…، سُبْحَانَ اللَّهِ!
 - quiz : يُقْلِعَ
 - quiz : فِعْلِهَا
 - quiz : أَلَّا يَعُودَ
-- quiz : أَرْبَعَةٌ (fichier présent pour un autre niveau)
 - quiz : رَدُّ الْحَقِّ إِلَى صَاحِبِهِ
-- quiz : الْإِقْلَاعُ
-- quiz : لَوْ (fichier présent pour un autre niveau)
 - quiz : لَيَئِسَ
-- quiz : مَا (fichier présent pour un autre niveau)
-- quiz : الْمُمَرِّضَةُ (fichier présent pour un autre niveau)
 - quiz : عَجَبًا
 - quiz : كَانَ الشَّيْخُ الْمَرِيضُ يَشْكُو كُلَّ يَوْمٍ.
 - quiz : مَا سَمِعُوهُ يَشْكُو يَوْمًا وَاحِدًا.
+- quiz : لَمَّا مَاتَ ابْنُهُ قَالَ: إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ.
 - quiz : كَفَى الزَّمِيلَ أَنْ يَنْدَمَ، وَلَمْ يَحْتَجْ إِلَى رَدِّ الْمَالِ.
 - quiz : رَدَّ الْمَالَ الَّذِي أَخَذَهُ بِغَيْرِ حَقٍّ، لِأَنَّ لِلتَّوْبَةِ هُنَا شَرْطًا رَابِعًا.
 - quiz : شَبَّهَتِ الْأُسْتَاذَةُ الصَّبْرَ وَالتَّوْبَةَ بِجَنَاحَيْنِ.
 - quiz : أَكْثَرَ مِنْ سَبْعِينَ مَرَّةً
 - quiz : تَطْلُعَ الشَّمْسُ مِنْ مَغْرِبِهَا
-- quiz : صَبَرَ (fichier présent pour un autre niveau)
 - quiz : جَوَابُ شَرْطٍ غَيْرِ جَازِمٍ، لَا مَحَلَّ لَهَا
 - quiz : نَائِبُ فَاعِلٍ مَرْفُوعٌ بِالْوَاوِ
 - quiz : إِحْدَى عَشْرَةَ
-- quiz : سُنَّةٌ (fichier présent pour un autre niveau)
 - quiz : وَلَا تَشَهُّدَ وَلَا سَلَامَ
 - quiz : لَا تَقْنَطْ مِنْ رَحْمَةِ اللَّهِ، وَتُبْ إِلَيْهِ
 - quiz : أَمْنٌ مِنْ مَكْرِ اللَّهِ وَغُرُورٌ
 - quiz : كَالطَّائِرِ بِجَنَاحَيْهِ
 - quiz : فَوْرًا
-- quiz : لَا بَأْسَ، طَهُورٌ إِنْ شَاءَ اللَّهُ (fichier présent pour un autre niveau)
 - quiz : لَارْتَاحَ
 - quiz : لَأَعْتَذِرَنَّ إِلَى
 - quiz : فَلَهُ
-- quiz : عَجَبًا لِأَمْرِ الْمُؤْمِنِ
 - quiz : لَوْلَا الطَّبِيبُ لَتَعِبْتُ
 - recap : الْإِقْلَاعُ + النَّدَمُ + الْعَزْمُ (+ رَدُّ الْحَقِّ)
 - recap : وَاللَّهِ لَأَصْبِرَنَّ — وَاللَّهِ إِنِّي لَأَسْتَغْفِرُ — وَاللَّهِ مَا يَئِسْتُ
@@ -1638,42 +1015,14 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte ligne
-- longue ouverture
 - longue objectifs
-- longue ecriture
-- longue ligne
 - longue q-ex2
-- longue q-ex3
-- longue q-ex4
 - longue recap
-- revision ouverture
-- revision ligne
 - revision q-ex2
-- revision q-ex3
-- revision q-ex4
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [مَثَلُ] الْمُؤْمِنِينَ
-- lecture : فِي [تَوَادِّهِمْ]
-- lecture : [كَالْجَسَدِ] الْوَاحِدِ
-- lecture : [إِذَا] اشْتَكَى
-- lecture : [تَدَاعَى] لَهُ
-- lecture : بِالسَّهَرِ [وَالْحُمَّى]
-- lecture : [أَخْبَرَنِي] مُحَمَّدٌ
-- lecture : [مُتَّفَقٌ عَلَيْهِ]
-- mots : جَسَدٌ (fichier présent pour un autre niveau)
-- mots : حُمَّى (fichier présent pour un autre niveau)
-- dialogue : …
 
 Mots d’exercices et du cahier sans fichier audio :
 
-- ouverture : الْحَصِيلَةُ الثَّالِثَةُ (fichier présent pour un autre niveau)
-- ouverture : مَثَلُ (fichier présent pour un autre niveau)
 - ouverture : الْمُؤْمِنِينَ…
-- ouverture : الْجَسَدِ (fichier présent pour un autre niveau)
 - ouverture : اقْرَئِي الْحَدِيثَ يَا مَرْيَمُ،
 - ouverture : ثُمَّ ابْحَثِي عَنِ التَّشْبِيهِ.
 - ouverture : اقْرَئِي الْحَدِيثَ يَا مَرْيَمُ،|ثُمَّ ابْحَثِي عَنِ التَّشْبِيهِ.
@@ -1684,7 +1033,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَحُلُّ حَالَاتٍ عَمَلِيَّةً فِي الْحَضَانَةِ وَحُقُوقِ الطِّفْلِ وَالنِّيَّةِ
 - ecriture : تَوَادِّهِمْ
 - ecriture : تَدَاعَى
-- ecriture : الْحُمَّى
+- ecriture : الْحُمَّى (fichier présent pour un autre niveau)
 - ecriture : كَالْجَسَدِ
 - quiz : رَوَى الْحَدِيثَ أَبُو هُرَيْرَةَ، وَرَوَاهُ مُسْلِمٌ وَحْدَهُ.
 - quiz : إِذَا اشْتَكَى عُضْوٌ مِنَ الْجَسَدِ تَدَاعَى لَهُ سَائِرُ الْجَسَدِ.
@@ -1700,29 +1049,17 @@ Mots d’exercices et du cahier sans fichier audio :
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
 - courte ouverture
-- courte courte-vedette
-- courte ligne
 - longue ouverture
 - longue objectifs
 - longue notion
-- longue ligne
-- longue vedette
 - longue q-ex1
-- longue q-ex2
 - longue q-ex4
 - longue q-ex5
-- longue q-ex6
-- longue q-ex7
-- longue recap
 - quiz q-ex1
-- quiz q-ex2
 - quiz q-ex4
 - quiz q-ex5
-- quiz q-ex6
-- quiz q-ex7
 - revision ouverture
 - revision notion
-- revision recap
 
 Textes gardés sans voix :
 
@@ -1730,32 +1067,6 @@ Textes gardés sans voix :
 - coran : بَابُ بِرِّ الْوَالِدَيْنِ وَصِلَةِ الْأَرْحَامِ. قَالَ اللَّهُ تَعَالَى: «۞ وَٱعْبُدُوا۟ ٱللَّهَ وَلَا تُشْرِكُوا۟ بِهِۦ شَيْـًۭٔا ۖ وَبِٱلْوَٰلِدَيْنِ إِحْسَٰنًۭا».
 - coran : فقبّل رأسها ويدها، وقال: [سَمْعًا] [وَطَاعَةً] يا أماه، ثم ركب الحافلة وهو يدعو: [رَبِّ] [ارْحَمْهُمَا] كما ربياني صغيرا.
 - coran : أَحْسَنْتِ يَا بُنَيَّتِي. «وَقُل رَّبِّ ٱرْحَمْهُمَا كَمَا رَبَّيَانِى صَغِيرًۭا». كُنْتُ أَدْعُو بِهٰذِهِ الْآيَةِ لِوَالِدَيَّ، وَالْيَوْمَ يَدْعُو بِهَا ابْنِي لِي.
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [اخْفِضْ] جَنَاحَكَ
-- lecture : [فَلْيَصِلْ] رَحِمَهُ
-- lecture : [لَا تَقُلْ] أُفٍّ
-- lecture : [لَا تَنْسَ] أَبَاكَ
-- lecture : [إِحْسَانًا] بِالْوَالِدَيْنِ
-- lecture : [صَبْرًا] يَا بُنَيَّ
-- lecture : يَا [أَبَتِ] (fichier présent pour un autre niveau)
-- lecture : يَا [أُمَّاهُ]
-- lecture : قَالَ الْجَدُّ: [صَبْرًا] يَا [بُنَيَّ]، [لَا تَقْلَقْ] عَلَيَّ، وَ[زُرْ] أَخْوَالَكَ قَبْلَ سَفَرِكَ.
-- dialogue : لَا تَقُومِي
-- dialogue : نَادِينِي
-- dialogue : اقْرَأْ (fichier présent pour un autre niveau)
-- dialogue : اذْهَبْ
-- dialogue : وَلْتَكُنْ
-- dialogue : لَا تَحْكُمْ
-- dialogue : خُذْ
-- dialogue : سَمْعًا وَطَاعَةً
-- dialogue : ارْجِعْ
-- dialogue : لَا تَنْسَ (fichier présent pour un autre niveau)
-- dialogue : يَا بُنَيَّ (fichier présent pour un autre niveau)
-- dialogue : يَا بُنَيَّتِي
-- dialogue : يَا أَبَتِ (fichier présent pour un autre niveau)
-- dialogue : يَا أُمَّاهُ
 
 Mots d’exercices et du cahier sans fichier audio :
 
@@ -1779,17 +1090,13 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : مُضَارِعٌ بِلَامِ الْأَمْرِ
 - quiz : مَصْدَرٌ نَائِبٌ عَنْ فِعْلِهِ
 - quiz : خَبَرٌ بِمَعْنَى الْأَمْرِ
-- quiz : اخْفِضْ جَنَاحَكَ
 - quiz : لَا تَنْهَرْهُمَا
 - quiz : وَلْيُكْرِمْ جَارَهُ
 - quiz : لَا تَقْطَعْ رَحِمَكَ
-- quiz : إِحْسَانًا بِالْوَالِدَيْنِ
 - quiz : لَا تَنْسَ أُمَّكَ
-- quiz : صِلِي أُمَّكِ
 - quiz : لَا تَرْفَعْ صَوْتَكَ عَلَيْهِمَا
 - quiz : أَبَتِ
 - quiz : أُمَّاهُ
-- quiz : بُنَيَّتِي
 - quiz : ابْنَ أُمِّي
 - quiz : جَعَلَ النَّبِيُّ ﷺ بِرَّ الْوَالِدَيْنِ بَعْدَ الصَّلَاةِ عَلَى وَقْتِهَا.
 - quiz : ذَكَرَ النَّبِيُّ ﷺ الْأَبَ ثَلَاثَ مَرَّاتٍ وَالْأُمَّ مَرَّةً وَاحِدَةً.
@@ -1800,45 +1107,30 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : الْوَجْهَانِ
 - quiz : التَّفْخِيمُ
 - quiz : التَّرْقِيقُ
-- quiz : تَقُلْ
-- quiz : تَنْسَ
-- quiz : يَصِلْ
-- quiz : زُرْ (fichier présent pour un autre niveau)
-- quiz : تَرُدَّ
+- quiz : يَصِلْ (fichier présent pour un autre niveau)
 - quiz : صِلِي
 - quiz : اخْفِضْ جَنَاحَ الرَّحْمَةِ لِوَالِدَيْكَ
 - quiz : لَا تَرْفَعْ صَوْتَكَ عَلَى أُمِّكَ
 - quiz : لِيَصِلِ الْمُؤْمِنُ رَحِمَهُ
 - recap : افْعَلْ · لِيَفْعَلْ · صَهْ · إِحْسَانًا · وَالْوَالِدَاتُ يُرْضِعْنَ
 - recap : لَا تَفْعَلْ: لَا تَقُلْ · لَا تَنْسَ · لَا تَرُدَّ
-- recap : يَا بُنَيَّ · يَا أَبَتِ · يَا أُمَّاهُ
 - recap : لَا طَاعَةَ لِمَخْلُوقٍ فِي مَعْصِيَةِ الْخَالِقِ
 
 ## l17
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte courte-vedette
-- longue ouverture
 - longue objectifs
 - longue notion
-- longue ligne
-- longue vedette
 - longue q-ex2
 - longue q-ex3
-- longue q-ex4
 - longue q-ex5
 - longue q-ex6
-- longue q-ex7
 - longue recap
 - quiz q-ex2
 - quiz q-ex3
-- quiz q-ex4
 - quiz q-ex5
 - quiz q-ex6
-- quiz q-ex7
-- revision ouverture
 - revision recap
 
 Textes gardés sans voix :
@@ -1846,41 +1138,9 @@ Textes gardés sans voix :
 - coran : صَدَقْتَ. قَالَ اللَّهُ تَعَالَى: «إِن جَآءَكُمْ فَاسِقٌۢ بِنَبَإٍۢ فَتَبَيَّنُوٓا۟». مَنْ يَتَّصِلُ بِالْمَدْرَسَةِ؟
 - coran : إِن جَآءَكُمْ فَاسِقٌۢ بِنَبَإٍۢ فَتَبَيَّنُوٓا۟
 
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [افْتِتَاحُ] مَدْرَسَةٍ
-- lecture : [أُعْلِنَتِ] النَّتَائِجُ
-- lecture : [يُتَوَقَّعُ] أَنْ… (fichier présent pour un autre niveau)
-- lecture : [قَالَ] [إِنَّ]…
-- lecture : [أَكَّدَ] [أَنَّ]…
-- lecture : [وَفْقًا] لِلْوِزَارَةِ
-- lecture : [نَقْلًا عَنْ] مُرَاسِلِنَا
-- lecture : [لَا شَكَّ] [أَنَّ]…
-- lecture : [أَعْلَنَتْ] وِزَارَةُ التَّرْبِيَةِ، أَمْسِ، [أَنَّ] نِسْبَةَ النَّجَاحِ [بَلَغَتْ] ٧٢ فِي الْمِائَةِ.
-- lecture : نشرة المعهد
-- lecture : الصفحة الثانية: أخبار
-- lecture : تياس
-- lecture : افتتح رئيس بلدية تياس، صباح أمس الاثنين، مدرسة ابتدائية جديدة في حي «السلام»، [تَتَّسِعُ] لأربعمائة تلميذ، بحضور أولياء الأمور والمعلمين.
-- lecture : داكار
-- lecture : نظمت أكثر من ثلاثين جمعية، يوم السبت الماضي، ملتقى في داكار لجمع التبرعات لضحايا الفيضانات في منطقة الساحل.
-- dialogue : اقْتَرَحْتُ
-- dialogue : مَا رَأْيُكَ فِي…؟
-- dialogue : الْمَصْدَرُ يُغْنِي عَنِ الْفِعْلِ
-- dialogue : مَهْلًا
-- dialogue : قَالَ إِنَّ… وَإِنَّ…
-- dialogue : أَكَّدَ أَنَّ…
-- dialogue : نَفَى…
-- dialogue : سَتُغْلَقُ
-
 Mots d’exercices et du cahier sans fichier audio :
 
 - ouverture : الصَّحَافَةُ (١): الْخَبَرُ
-- ouverture : مَنْ؟ (fichier présent pour un autre niveau)
-- ouverture : ·
-- ouverture : مَاذَا؟ (fichier présent pour un autre niveau)
-- ouverture : أَيْنَ؟ (fichier présent pour un autre niveau)
-- ouverture : مَتَى؟ (fichier présent pour un autre niveau)
-- ouverture : لِمَاذَا؟ (fichier présent pour un autre niveau)
 - ouverture : الْمَصْدَرُ؟
 - ouverture : قَبْلَ أَنْ نَنْشُرَ الْخَبَرَ:
 - ouverture : مَا مَصْدَرُهُ؟ وَمَنْ قَالَهُ؟
@@ -1891,8 +1151,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أُحَوِّلُ الْجُمْلَةَ الْفِعْلِيَّةَ إِلَى عُنْوَانٍ صَحَفِيٍّ
 - ouverture : أَشْرَحُ لِمَاذَا أَتَحَقَّقُ مِنَ الْخَبَرِ قَبْلَ نَشْرِهِ
 - ecriture : افْتِتَاحُ
-- ecriture : يُتَوَقَّعُ
-- ecriture : إِشَاعَةٌ (fichier présent pour un autre niveau)
+- ecriture : يُتَوَقَّعُ (fichier présent pour un autre niveau)
 - ecriture : [افْتِتَاحُ] مَدْرَسَةٍ جَدِيدَةٍ فِي تِيَاسَ — [أُعْلِنَتْ] نَتَائِجُ الِامْتِحَانِ — [يُتَوَقَّعُ] أَنْ تَسْتَمِرَّ الْأَمْطَارُ — [قَالَ] الْمُدِيرُ [إِنَّ] الدُّرُوسَ مُسْتَمِرَّةٌ — [أَكَّدَ] الْوَزِيرُ [أَنَّ] النِّسْبَةَ ارْتَفَعَتْ
 - ecriture : لُغَةُ الصَّحَافَةِ: الْعُنْوَانُ، وَالْبَرْقِيَّةُ، وَالْمَصْدَرُ
 - ecriture : ١) الْعُنْوَانُ: جُمْلَةٌ قَصِيرَةٌ بِلَا فِعْلٍ غَالِبًا: افْتِتَاحُ مَدْرَسَةٍ جَدِيدَةٍ فِي تِيَاسَ ← الْمَصْدَرُ فِي أَوَّلِهِ، وَمَا بَعْدَهُ مُضَافٌ إِلَيْهِ. أَوْ جُمْلَةٌ اسْمِيَّةٌ خَبَرُهَا فِعْلٌ مُضَارِعٌ: الْوَزِيرُ يَفْتَتِحُ مَدْرَسَةً.
@@ -1902,8 +1161,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : ٤) الْمَصْدَرُ: وَفْقًا لِـ… نَقْلًا عَنْ… حَسَبَ… أَفَادَتْ مَصَادِرُ رَسْمِيَّةٌ… فِي بَيَانٍ رَسْمِيٍّ…
 - ecriture : ٥) تَرْتِيبُ الْبَرْقِيَّةِ: الْأَهَمُّ أَوَّلًا: مَنْ؟ مَاذَا؟ أَيْنَ؟ مَتَى؟ ثُمَّ: لِمَاذَا؟ كَيْفَ؟ ثُمَّ التَّفَاصِيلُ.
 - ecriture : ٦) الْخَبَرُ حَقِيقَةٌ تُنْقَلُ، وَالتَّعْلِيقُ رَأْيُ الْكَاتِبِ: لَا شَكَّ أَنَّ… مِنَ الْمُؤْسِفِ أَنَّ… يَبْدُو أَنَّ…
-- quiz : خَبَرٌ (fichier présent pour un autre niveau)
-- quiz : مَصْدَرٌ (fichier présent pour un autre niveau)
 - quiz : افْتِتَاحُ مَدْرَسَةٍ جَدِيدَةٍ
 - quiz : اسْتِقْبَالُ طُلَّابٍ جُدُدٍ فِي الْمَعْهَدِ
 - quiz : ارْتِفَاعُ أَسْعَارِ الْأَرُزِّ
@@ -1914,9 +1171,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : سَتُرْسَلُ
 - quiz : أُكِّدَ
 - quiz : يُسَجَّلْ
-- quiz : إِنَّ (fichier présent pour un autre niveau)
-- quiz : أَنَّ (fichier présent pour un autre niveau)
-- quiz : بِأَنَّ (fichier présent pour un autre niveau)
 - quiz : نَفَى مُدِيرُ الْمَدْرَسَةِ خَبَرَ إِغْلَاقِهَا فِي بَيَانٍ رَسْمِيٍّ.
 - quiz : ذَكَرَتِ الرِّسَالَةُ الَّتِي نُشِرَتْ فِي مَجْمُوعَةِ أَوْلِيَاءِ الْأُمُورِ مَصْدَرَ الْخَبَرِ.
 - quiz : لَمْ تَذْكُرِ الرِّسَالَةُ أَيَّ مَصْدَرٍ لِلْخَبَرِ.
@@ -1940,60 +1194,22 @@ Mots d’exercices et du cahier sans fichier audio :
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
 - courte ouverture
-- courte courte-vedette
-- courte ligne
 - longue ouverture
 - longue objectifs
 - longue notion
-- longue ligne
-- longue vedette
-- longue q-ex2
 - longue q-ex3
 - longue q-ex4
 - longue q-ex5
-- longue q-ex6
-- longue q-ex7
 - longue recap
-- quiz q-ex2
 - quiz q-ex3
 - quiz q-ex4
 - quiz q-ex5
-- quiz q-ex6
-- quiz q-ex7
 - revision ouverture
 - revision recap
 
 Textes gardés sans voix :
 
 - coran : وَقُولُوا۟ قَوْلًۭا سَدِيدًۭا
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [أَرَى أَنَّ]…
-- lecture : [إِذْ] إِنَّهُ…
-- lecture : [عِلَاوَةً عَلَى ذٰلِكَ]
-- lecture : [فَضْلًا عَنْ] سُهُولَتِهَا
-- lecture : [صَحِيحٌ أَنَّ]…
-- lecture : [بَيْدَ أَنَّ]…
-- lecture : [وَمَعَ ذٰلِكَ]
-- lecture : [لِذٰلِكَ] أَقْتَرِحُ
-- lecture : [صَحِيحٌ أَنَّ] بَعْضَ الْآبَاءِ [قَدْ] يَحْتَاجُونَ إِلَى الرَّدِّ عَلَى رِسَالَةٍ عَاجِلَةٍ، [بَيْدَ أَنَّ] هٰذَا لَا يَحْدُثُ كُلَّ يَوْمٍ.
-- lecture : نشرة المعهد
-- lecture : صفحة الرأي
-- lecture : [وَفِي الْخِتَامِ]، لست ضد الشاشات، [لٰكِنَّنِي] أرى أن لكل شيء مكانه ووقته، وأن أجمل ما في المائدة من يجلسون حولها.
-- lecture : أميناتا، ممرضة وأم
-- lecture : رسالة من قارئ: أوافق الكاتبة؛ فقد جربنا في بيتنا «ساعة بلا شاشة» بعد المغرب، فصار أحفادي يحكون لي ما لم أكن أعرفه عنهم.
-- lecture : الحاج موسى
-- lecture : رسالة من قارئة: أحترم رأي الكاتبة، [لٰكِنَّ] زوجي طبيب مناوب، ولا يستطيع أن يترك هاتفه بعيدا. [فِي رَأْيِي]، تناسب القاعدة أكثر الأسر، لا كلها.
-- lecture : سميرة
-- dialogue : أَرَى أَنَّ…
-- dialogue : فِي رَأْيِي…
-- dialogue : أَحْتَرِمُ رَأْيَكَ، لٰكِنِّي…
-- dialogue : صَحِيحٌ أَنَّ… بَيْدَ أَنَّ…
-- dialogue : أُوَافِقُ…
-- dialogue : أُضِيفُ حُجَّةً
-- dialogue : إِذَنْ
-- dialogue : بِشَرْطٍ
 
 Mots d’exercices et du cahier sans fichier audio :
 
@@ -2007,7 +1223,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَكْتُبُ فِقْرَةً حِجَاجِيَّةً فِيهَا تَنَازُلٌ
 - ouverture : أَذْكُرُ آدَابَ الْكَلَامِ أَمَامَ النَّاسِ فِي الْإِسْلَامِ
 - ecriture : عِلَاوَةً
-- ecriture : لٰكِنَّنِي (fichier présent pour un autre niveau)
 - ecriture : [أَرَى أَنَّ] الْهَاتِفَ لَا مَكَانَ لَهُ عَلَى الْمَائِدَةِ، [إِذْ] إِنَّهُ يَسْرِقُ وَقْتَنَا. — [صَحِيحٌ أَنَّ] الْعَمَلَ كَثِيرٌ، [بَيْدَ أَنَّ] الرَّدَّ يُمْكِنُ أَنْ يَنْتَظِرَ. — [لِذٰلِكَ] أَقْتَرِحُ صُنْدُوقًا لِلْهَوَاتِفِ.
 - ecriture : مَقَالُ الرَّأْيِ: بِنَاؤُهُ وَرَوَابِطُهُ
 - ecriture : ١) بِنَاءُ الْمَقَالِ: الْمُقَدِّمَةُ ← الْأُطْرُوحَةُ (رَأْيُ الْكَاتِبِ) ← الْحُجَجُ وَالْأَمْثِلَةُ ← الِاعْتِرَاضُ وَالرَّدُّ عَلَيْهِ ← الْخَاتِمَةُ.
@@ -2018,16 +1233,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : النَّتِيجَةُ: لِذٰلِكَ، وَمِنْ ثَمَّ، إِذَنْ.
 - ecriture : ٦) الِاسْتِدْرَاكُ وَالتَّنَازُلُ: لٰكِنَّ (+ اسْمٍ مَنْصُوبٍ)، لٰكِنْ (+ جُمْلَةٍ)، بَيْدَ أَنَّ، وَمَعَ ذٰلِكَ، صَحِيحٌ أَنَّ… لٰكِنَّ…، وَإِنْ كَانَ…، عَلَى الرَّغْمِ مِنْ أَنَّ…
 - ecriture : ٧) التَّلْطِيفُ: قَدْ يَكُونُ، رُبَّمَا، غَالِبًا، أَحْيَانًا، بَعْضُ… لَا كُلُّ…
-- quiz : أُطْرُوحَةٌ (fichier présent pour un autre niveau)
-- quiz : حُجَّةٌ (fichier présent pour un autre niveau)
-- quiz : مِثَالٌ
-- quiz : خَاتِمَةٌ (fichier présent pour un autre niveau)
-- quiz : إِذْ (fichier présent pour un autre niveau)
-- quiz : بَيْدَ أَنَّ (fichier présent pour un autre niveau)
-- quiz : وَعِلَاوَةً عَلَى ذٰلِكَ
-- quiz : وَمِنْ ثَمَّ
-- quiz : وَمَعَ ذٰلِكَ
-- quiz : فَضْلًا عَنْ
+- quiz : مِثَالٌ (fichier présent pour un autre niveau)
 - quiz : بَعْضُ الْآبَاءِ قَدْ يَنْشَغِلُونَ عَنْ أَبْنَائِهِمْ بِالْهَوَاتِفِ.
 - quiz : كَثِيرٌ مِنَ الشَّبَابِ يَقْرَؤُونَ أَقَلَّ مِمَّا كَانَ آبَاؤُهُمْ يَقْرَؤُونَ.
 - quiz : قَدْ تَضُرُّ الشَّاشَاتُ إِذَا طَالَ اسْتِعْمَالُهَا أَوْ جَاءَتْ فِي غَيْرِ وَقْتِهَا.
@@ -2047,7 +1253,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : الرَّدَّ
 - quiz : الطَّعَامَ
 - quiz : سُهُولَتِهَا
-- quiz : لِأَنَّهُ (fichier présent pour un autre niveau)
 - quiz : أَرَى أَنَّ الْهَاتِفَ لَا مَكَانَ لَهُ
 - quiz : أَحْتَرِمُ رَأْيَكِ، لٰكِنِّي أُخَالِفُكِ
 - quiz : وَأَرَى أَنَّ لِكُلِّ شَيْءٍ مَكَانَهُ
@@ -2059,25 +1264,18 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte courte-vedette
-- longue ouverture
 - longue objectifs
 - longue notion
-- longue vedette
 - longue q-ex1
 - longue q-ex2
-- longue q-ex3
 - longue q-ex4
 - longue q-ex5
 - longue q-ex7
 - quiz q-ex1
 - quiz q-ex2
-- quiz q-ex3
 - quiz q-ex4
 - quiz q-ex5
 - quiz q-ex7
-- revision ouverture
 - revision q-ex1
 - revision q-ex2
 - revision q-ex7
@@ -2087,32 +1285,10 @@ Textes gardés sans voix :
 - coran : ٱلْعُلَمَٰٓؤُا۟
 - coran : رَبُّهُۥ
 
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [تَرْجَمَةٌ] حَرْفِيَّةٌ
-- lecture : [تَرْجَمَةٌ] بِالْمَعْنَى
-- lecture : [قَامَ بِـ]زِيَارَةٍ
-- lecture : [تَمَّ] إِعْلَانُ
-- lecture : [أَكَلْنَا أَكْلًا] كَثِيرًا
-- lecture : [أَمَانَةٌ] (fichier présent pour un autre niveau)
-- lecture : [بَرَكَةٌ]
-- lecture : التَّرْجَمَةُ [أَمَانَةٌ]: أَنْ [تَنْقُلَ] كَلَامَ غَيْرِكَ كَمَا أَرَادَهُ، لَا كَمَا تُرِيدُهُ أَنْتَ.
-- dialogue : مُحَاكَاةٌ حَرْفِيَّةٌ
-- dialogue : قَامَ بِـ = فَعَلَ
-- dialogue : الْفَاعِلُ أَوَّلًا فِي الْفَرَنْسِيَّةِ
-- dialogue : الْبَرَكَةُ خَيْرٌ يَدُومُ وَيَزِيدُ
-- dialogue : لَمْ نَزِدْ وَلَمْ نُنْقِصْ
-- dialogue : أَشْرَحُ فِي الْهَامِشِ
-
 Mots d’exercices et du cahier sans fichier audio :
 
-- ouverture : التَّرْجَمَةُ (fichier présent pour un autre niveau)
-- ouverture : أَفْهَمُ
-- ouverture : ←
 - ouverture : أُعْرِبُ
 - ouverture : أُتَرْجِمُ
-- ouverture : الْمَعْنَى (fichier présent pour un autre niveau)
-- ouverture : أُرَاجِعُ
 - ouverture : الْفَرَنْسِيَّةَ
 - ouverture : لَا نُتَرْجِمُ الْكَلِمَاتِ،
 - ouverture : بَلْ نُتَرْجِمُ الْمَعْنَى.
@@ -2122,9 +1298,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَكْتَشِفُ الْمُحَاكَاةَ الْحَرْفِيَّةَ وَأُصَحِّحُهَا
 - ouverture : أُقَارِنُ تَرْجَمَتَيْنِ لِسُورَةِ الْعَصْرِ وَأُعَلِّلُ اخْتِيَارَاتِي
 - ouverture : أَشْرَحُ لِمَاذَا نَقُولُ: تَرْجَمَةُ مَعَانِي الْقُرْآنِ
-- ecriture : قَامُوسٌ (fichier présent pour un autre niveau)
 - ecriture : مَعَانِي
-- ecriture : سِيَاقٌ (fichier présent pour un autre niveau)
 - ecriture : [قَامَ] الْوَزِيرُ بِافْتِتَاحِ الْمَدْرَسَةِ — [ذَهَبَ] الطُّلَّابُ إِلَى الْمَكْتَبَةِ — [أَكَلْنَا أَكْلًا] كَثِيرًا
 - ecriture : مَنْهَجُ التَّرْجَمَةِ مِنَ الْعَرَبِيَّةِ إِلَى الْفَرَنْسِيَّةِ
 - ecriture : ١) أَفْهَمُ النَّصَّ كُلَّهُ قَبْلَ أَنْ أُتَرْجِمَ.
@@ -2136,13 +1310,12 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : ٧) الْقُرْآنُ: نُتَرْجِمُ مَعَانِيَهُ، وَلَا نُتَرْجِمُهُ هُوَ.
 - quiz : صَاحِبُ
 - quiz : أَحْفَادُهَا
-- quiz : أُمُّهُ (fichier présent pour un autre niveau)
 - quiz : أَدَّى الْأَمَانَةَ إِلَى صَاحِبِهَا
 - quiz : التَّرْجَمَةُ أَمَانَةٌ
 - quiz : بَارَكَ اللَّهُ فِي وَقْتِكَ
 - quiz : اللَّهُ يَرْزُقُ الطَّيْرَ
-- quiz : مَدٌّ مُنْفَصِلٌ
-- quiz : مَدٌّ مُتَّصِلٌ
+- quiz : مَدٌّ مُنْفَصِلٌ (fichier présent pour un autre niveau)
+- quiz : مَدٌّ مُتَّصِلٌ (fichier présent pour un autre niveau)
 - quiz : مَدٌّ لَازِمٌ
 - quiz : أَرْبَعَ حَرَكَاتٍ
 - quiz : خَمْسَ حَرَكَاتٍ
@@ -2156,60 +1329,27 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte ligne
-- longue ouverture
 - longue objectifs
-- longue ligne
 - longue q-ex1
 - longue q-ex3
 - longue q-ex6
 - longue q-ex7
 - longue q-ex8
-- longue q-ex5
 - longue recap
-- revision ouverture
-- revision ligne
 - revision q-ex1
 - revision q-ex3
 - revision q-ex6
 - revision q-ex7
 - revision q-ex8
-- revision q-ex5
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [زُورُوا] آبَاءَكُمْ
-- lecture : [لِتَجْعَلْ] كُلُّ أُسْرَةٍ
-- lecture : [لَا تَنْسَوْا] أَجْدَادَكُمْ
-- lecture : [نُشِرَ] التَّقْرِيرُ
-- lecture : [ذَكَرَتِ] الْوَكَالَةُ
-- lecture : [وَفْقًا لِـ] الْمَصْدَرِ
-- lecture : [أَكَلْنَا أَكْلًا] كَثِيرًا
-- lecture : [قَامَ بِـ] ← فَعَلَ
-- mots : إِشَاعَةٌ (fichier présent pour un autre niveau)
-- mots : مَصْدَرٌ (fichier présent pour un autre niveau)
-- mots : حُجَّةٌ (fichier présent pour un autre niveau)
-- mots : أَمَانَةٌ (fichier présent pour un autre niveau)
-- dialogue : إِذْ إِنِّي…
-- dialogue : وَعِلَاوَةً عَلَى ذٰلِكَ
-- dialogue : أَحْتَرِمُ رَأْيَكِ، لٰكِنَّ…
-- dialogue : يَقُولُ… إِنَّ…
-- dialogue : صَحِيحٌ أَنَّ… بَيْدَ أَنَّ…
-- dialogue : إِذَنْ
-- dialogue : وَمِنْ ثَمَّ
 
 Mots d’exercices et du cahier sans fichier audio :
 
-- ouverture : الْحَصِيلَةُ الرَّابِعَةُ (fichier présent pour un autre niveau)
 - ouverture : صِيَغُ
 - ouverture : الْأَمْرِ
-- ouverture : ·
 - ouverture : لُغَةُ
 - ouverture : الصَّحَافَةِ
 - ouverture : مَقَالُ
 - ouverture : الرَّأْيِ
-- ouverture : التَّرْجَمَةُ (fichier présent pour un autre niveau)
 - ouverture : خَبَرٌ، وَرَأْيٌ، وَتَرْجَمَةٌ:
 - ouverture : فَأَيْنَ الْحَقُّ وَأَيْنَ الْأَمَانَةُ؟
 - ouverture : خَبَرٌ، وَرَأْيٌ، وَتَرْجَمَةٌ:|فَأَيْنَ الْحَقُّ وَأَيْنَ الْأَمَانَةُ؟
@@ -2219,7 +1359,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أُتَرْجِمُ نَصًّا قَصِيرًا إِلَى الْفَرَنْسِيَّةِ
 - ouverture : أَقْرَأُ ١٧:٢٣-٢٤ وَ٢٤:١٥-١٧ وَ٣٣:٧٠-٧١ وَسُورَةَ الْعَصْرِ بِأَحْكَامِهَا
 - ecriture : فَلْيَصِلْ
-- ecriture : يُتَوَقَّعُ
+- ecriture : يُتَوَقَّعُ (fichier présent pour un autre niveau)
 - quiz : نَظَّمَتْ وِزَارَةُ الْأُسْرَةِ الْيَوْمَ الْوَطَنِيَّ لِلْمُسِنِّينَ بِمُشَارَكَةِ أَكْثَرَ مِنْ خَمْسِينَ جَمْعِيَّةً.
 - quiz : الْخَطُّ الْهَاتِفِيُّ الْجَدِيدُ بِثَمَنٍ.
 - quiz : سَتُفْتَحُ مَرَاكِزُ صِحِّيَّةٌ جَدِيدَةٌ فِي عَشْرِ مُدُنٍ قَبْلَ نِهَايَةِ الْعَامِ.
@@ -2236,12 +1376,9 @@ Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles pa
 - courte ouverture
 - longue ouverture
 - longue objectifs
-- longue ecriture
 - longue notion
-- longue lexique
 - longue q-ex1
 - longue q-ex2
-- longue q-ex3
 - longue q-ex4
 - longue q-ex5
 - longue q-ex6
@@ -2249,14 +1386,12 @@ Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles pa
 - longue recap
 - quiz q-ex1
 - quiz q-ex2
-- quiz q-ex3
 - quiz q-ex4
 - quiz q-ex5
 - quiz q-ex6
 - quiz q-ex7
 - revision ouverture
 - revision notion
-- revision q-ex3
 - revision recap
 
 Textes gardés sans voix :
@@ -2304,27 +1439,6 @@ Textes gardés sans voix :
 - coran : ﴿لَفْظُ الْآيَةِ﴾ + مُرَادِفٌ بِنَفْسِ الْإِعْرَابِ
 - coran : وَلَا تَقْفُ مَا لَيْسَ لَكَ بِهِۦ عِلْمٌ
 
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- mots : ذَلُولٌ: سَهْلَةٌ مُنْقَادَةٌ
-- mots : النُّشُورُ: الْخُرُوجُ مِنَ الْقُبُورِ لِلْحِسَابِ
-- mots : تَمُورُ: تَضْطَرِبُ وَتَتَحَرَّكُ
-- mots : حَاصِبٌ: رِيحٌ تَرْمِي بِالْحِجَارَةِ الصَّغِيرَةِ
-- mots : نَكِيرٌ: إِنْكَارٌ وَعِقَابٌ
-- mots : لَجَّ فِي الْأَمْرِ: تَمَادَى فِيهِ وَأَصَرَّ عَلَيْهِ
-- mots : عُتُوٌّ: تَكَبُّرٌ وَتَجَاوُزٌ لِلْحَدِّ
-- mots : مُكِبٌّ عَلَى وَجْهِهِ: سَاقِطٌ عَلَيْهِ لَا يَرَى طَرِيقَهُ
-- mots : ذَرَأَ: خَلَقَ وَنَشَرَ
-- mots : زُلْفَةٌ: قُرْبٌ؛ رَأَوْهُ زُلْفَةً: رَأَوْهُ قَرِيبًا
-- mots : أَجَارَ يُجِيرُ: حَمَى وَأَنْقَذَ
-- mots : غَوْرٌ: غَائِرٌ ذَاهِبٌ فِي الْأَرْضِ
-- dialogue : حَرْفُ التَّفْسِيرِ: أَيْ
-- dialogue : وَقِيلَ (فِي الْآيَةِ)
-- dialogue : وَقِيلَ (عِنْدَ الْمُفَسِّرِ)
-- dialogue : إِنِ النَّافِيَةُ
-- dialogue : الْإِعْرَابُ فَرْعُ الْمَعْنَى
-- dialogue : التَّدَبُّرُ وَالِاسْتِنْبَاطُ
-
 Mots d’exercices et du cahier sans fichier audio :
 
 - ouverture : تَفْسِيرُ الْجَلَالَيْنِ: قِرَاءَةُ تَفْسِيرٍ مُخْتَصَرٍ
@@ -2336,7 +1450,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَفْهَمُ عِبَارَاتِ التَّفْسِيرِ: أَيْ، الْمَعْنَى، وَفِي قِرَاءَةٍ، وَقِيلَ، مَزِيدَةٌ، مُسْتَأْنَفَةٌ، مَحْذُوفٌ
 - ouverture : أَقْرَأُ الْآيَاتِ ١٥-٣٠ مِنْ سُورَةِ الْمُلْكِ وَأَشْرَحُهَا بِمُسَاعَدَةِ الْجَلَالَيْنِ، وَأَحْفَظُ ١٥-١٩
 - ouverture : أَعْرِفُ لِمَاذَا لَا نُفَسِّرُ الْقُرْآنَ بِغَيْرِ عِلْمٍ
-- ecriture : تَفْسِيرٌ (fichier présent pour un autre niveau)
 - ecriture : مَنَاكِبُ
 - ecriture : بَاسِطَاتٌ
 - ecriture : اسْتِئْنَافٌ
@@ -2348,8 +1461,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : خُلَاصَةُ مَعْنَى الْآيَةِ كُلِّهَا
 - quiz : بَيَانُ كَلِمَةٍ مَحْذُوفَةٍ يَفْهَمُهَا الْقَارِئُ
 - quiz : تَتَحَرَّكُ بِكُمْ وَتَرْتَفِعُ فَوْقَكُمْ
-- quiz : خَبَرٌ (fichier présent pour un autre niveau)
-- quiz : صِفَةٌ (fichier présent pour un autre niveau)
 - quiz : نَافِيَةٌ بِمَعْنَى «مَا»
 - quiz : مُسْتَأْنَفَةٌ لَا مَحَلَّ لَهَا
 - quiz : يَرَى الْجَلَالَانِ أَنَّ ثُبُوتَ الطَّيْرِ فِي الْهَوَاءِ دَلِيلٌ عَلَى قُدْرَةِ اللَّهِ.
@@ -2371,30 +1482,17 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte courte-vedette
-- longue ouverture
 - longue objectifs
 - longue notion
-- longue ligne
-- longue vedette
-- longue lexique
 - longue q-ex1
-- longue q-ex2
 - longue q-ex3
 - longue q-ex4
 - longue q-ex5
-- longue q-ex6
-- longue q-ex7
 - longue recap
 - quiz q-ex1
-- quiz q-ex2
 - quiz q-ex3
 - quiz q-ex4
 - quiz q-ex5
-- quiz q-ex6
-- quiz q-ex7
-- revision ouverture
 - revision notion
 - revision recap
 
@@ -2405,48 +1503,14 @@ Textes gardés sans voix :
 - coran : وَهٰذَا دَرْسُ السِّيرَةِ: لَا نَحْفَظُ التَّوَارِيخَ فَقَطْ، بَلْ نَتَعَلَّمُ كَيْفَ نَعِيشُ. وَلَا نَنْسَى أَنَّ الْآيَةَ بَدَأَتْ بِالرَّحْمَةِ: ﴿فَبِمَا رَحْمَةٍۢ مِّنَ ٱللَّهِ لِنتَ لَهُمْ﴾.
 - coran : وَشَاوِرْهُمْ فِى ٱلْأَمْرِ ۖ فَإِذَا عَزَمْتَ فَتَوَكَّلْ عَلَى ٱللَّهِ
 
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [كَانَ] (fichier présent pour un autre niveau)
-- lecture : [يُشَاوِرُ]
-- lecture : [قَدْ] خَرَجَتْ
-- lecture : [وَهُوَ] يَدْعُو
-- lecture : [وَهُمْ] قَلِيلٌ
-- lecture : [إِذَا] الْخَيْلُ
-- lecture : [يَوْمَئِذٍ] (fichier présent pour un autre niveau)
-- lecture : أَبُو [سُفْيَانَ]
-- lecture : جَبَلُ [أُحُدٍ] (fichier présent pour un autre niveau)
-- lecture : فَ[بَيْنَمَا] الْمُسْلِمُونَ يَجْمَعُونَ الْغَنَائِمَ، [إِذَا] خَيْلُ الْمُشْرِكِينَ [قَدْ] أَقْبَلَتْ مِنْ خَلْفِهِمْ.
-- mots : اسْتَشَارَ: طَلَبَ الرَّأْيَ
-- mots : أَشَارَ بِكَذَا: نَصَحَ بِهِ
-- mots : يَعْتَقِبُونَ الْبَعِيرَ: يَرْكَبُهُ هٰذَا مَرَّةً وَهٰذَا مَرَّةً
-- mots : أَدْنَى مَاءٍ: أَقْرَبُ مَاءٍ
-- mots : الْمَكِيدَةُ: الْحِيلَةُ وَالتَّدْبِيرُ فِي الْحَرْبِ
-- mots : غَوَّرَ الْبِئْرَ: دَفَنَهَا وَأَذْهَبَ مَاءَهَا
-- mots : حَوْضٌ: مَكَانٌ يُجْمَعُ فِيهِ الْمَاءُ
-- mots : لَأْمَةٌ: الدِّرْعُ وَعُدَّةُ الْحَرْبِ
-- mots : انْضَحِ الْخَيْلَ بِالنَّبْلِ: ادْفَعْهَا بِرَمْيِ السِّهَامِ
-- mots : ثَأْرٌ: طَلَبُ الِانْتِقَامِ
-- mots : اسْتُشْهِدَ: قُتِلَ فِي سَبِيلِ اللَّهِ
-- mots : هَذَّبَ الْكِتَابَ: نَقَّحَهُ وَحَذَفَ مِنْهُ
-- dialogue : كَانَ رَأْيُهُ أَنْ يَبْقَوْا
-- dialogue : وَقَدْ قِيلَ لَهُمْ
-- dialogue : فَبَيْنَمَا هُمْ يَجْمَعُونَ… إِذَا الْخَيْلُ
-- dialogue : بِضْعَةٌ وَأَرْبَعُونَ
-- dialogue : نَتَشَاوَرُ
-- dialogue : يُنَفَّذُ
-
 Mots d’exercices et du cahier sans fichier audio :
 
 - ouverture : السِّيرَةُ النَّبَوِيَّةُ: بَدْرٌ وَأُحُدٌ
 - ouverture : بَدْرٌ:
 - ouverture : ١٧ (fichier présent pour un autre niveau)
-- ouverture : رَمَضَانَ
+- ouverture : رَمَضَانَ (fichier présent pour un autre niveau)
 - ouverture : ٢
-- ouverture : هـ (fichier présent pour un autre niveau)
-- ouverture : —
 - ouverture : أُحُدٌ:
-- ouverture : شَوَّالٌ (fichier présent pour un autre niveau)
 - ouverture : ٣ (fichier présent pour un autre niveau)
 - ouverture : لَمْ يَكُنْ رَسُولُ اللَّهِ ﷺ يَنْفَرِدُ بِرَأْيِهِ،
 - ouverture : بَلْ كَانَ يُشَاوِرُ أَصْحَابَهُ.
@@ -2456,8 +1520,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَتَعَرَّفُ أَزْمِنَةَ الرِّوَايَةِ وَجُمْلَةَ الْحَالِ وَإِذَا الْفُجَائِيَّةَ
 - ouverture : أَقْرَأُ الْآيَاتِ ١٢١-١٢٧ وَالْآيَةَ ١٥٩ مِنْ سُورَةِ آلِ عِمْرَانَ وَأَرْبِطُهَا بِالرِّوَايَةِ
 - ouverture : أَشْرَحُ الشُّورَى وَدَرْسَ أُحُدٍ
-- ecriture : يَوْمَئِذٍ (fichier présent pour un autre niveau)
-- ecriture : اسْتُشْهِدَ
+- ecriture : اسْتُشْهِدَ (fichier présent pour un autre niveau)
 - ecriture : الْمَكِيدَةُ
 - ecriture : [كَانَ] رَسُولُ اللَّهِ ﷺ [يُشَاوِرُ] أَصْحَابَهُ — وَكَانَتْ قُرَيْشٌ [قَدْ خَرَجَتْ] — خَرَجَ [وَهُوَ يَدْعُو] — فَبَيْنَمَا هُمْ يَجْمَعُونَ الْغَنَائِمَ [إِذَا] الْخَيْلُ مِنْ خَلْفِهِمْ — [قَالَ ابْنُ إِسْحَاقَ]
 - ecriture : لُغَةُ الرِّوَايَةِ التَّارِيخِيَّةِ
@@ -2468,7 +1531,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : مُفَاجَأَةٌ
 - quiz : وَهُوَ يَتْلُو آيَةً
 - quiz : وَقَدْ أَصَابَتْهُمُ الْجِرَاحُ
-- quiz : صَابِرًا
 - quiz : وَقَدْ لَبِسَ دِرْعَهُ
 - quiz : سُفْيَانَ
 - quiz : حَمْزَةُ
@@ -2487,12 +1549,8 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : لِأَنَّ النَّبِيَّ لَا يَضَعُ لَأْمَتَهُ بَعْدَ الْعَزْمِ حَتَّى يَحْكُمَ اللَّهُ
 - quiz : أَقْبَلَتْ خَيْلُ الْمُشْرِكِينَ مِنْ خَلْفِ الْمُسْلِمِينَ
 - quiz : أَنْ يَعْفُوَ عَنْهُمْ وَيَسْتَغْفِرَ لَهُمْ وَيُشَاوِرَهُمْ
-- quiz : فَلَمَّا (fichier présent pour un autre niveau)
-- quiz : حَتَّى (fichier présent pour un autre niveau)
 - quiz : بَيْنَمَا
-- quiz : إِذَا
 - quiz : وَقَدْ
-- quiz : فِي (fichier présent pour un autre niveau)
 - quiz : كَانَ النَّبِيُّ ﷺ يُشَاوِرُ أَصْحَابَهُ
 - quiz : تَرَكَ الرُّمَاةُ مَكَانَهُمْ وَالْحَرْبُ قَائِمَةٌ
 - quiz : خَرَجَ وَهُوَ يَدْعُو
@@ -2504,29 +1562,16 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- longue ouverture
 - longue objectifs
-- longue ecriture
-- longue notion
-- longue ligne
-- longue lexique
 - longue q-ex1
-- longue q-ex2
 - longue q-ex3
 - longue q-ex4
 - longue q-ex5
-- longue q-ex6
-- longue q-ex7
 - longue recap
 - quiz q-ex1
-- quiz q-ex2
 - quiz q-ex3
 - quiz q-ex4
 - quiz q-ex5
-- quiz q-ex6
-- quiz q-ex7
-- revision ouverture
 - revision q-ex3
 - revision recap
 
@@ -2538,46 +1583,12 @@ Textes gardés sans voix :
 - coran : لٰكِنَّ الْقُرْآنَ ذَمَّ الشُّعَرَاءَ: ﴿وَٱلشُّعَرَآءُ يَتَّبِعُهُمُ ٱلْغَاوُۥنَ﴾. فَهَلْ نَحْنُ مُخْطِئُونَ بِهٰذِهِ الْأُمْسِيَةِ؟
 - coran : أَكْمِلِي السُّورَةَ يَا خَدِيجَةُ: ﴿إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ وَذَكَرُوا۟ ٱللَّهَ كَثِيرًۭا﴾. الْمَذْمُومُ هُوَ الْكَذِبُ وَالسُّخْرِيَةُ، لَا الْكَلَامُ الْجَمِيلُ الصَّادِقُ.
 
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [بَاطِلُ] ٭ [زَائِلُ]
-- lecture : [الْمَعَاصِي] ٭ [لِعَاصِي]
-- lecture : [ثُعْبَانُ] ٭ [الْأَقْرَانُ]
-- lecture : [تَشَاءُ] ٭ [الْقَضَاءُ]
-- lecture : الصَّدْرُ ٭ الْعَجُزُ
-- lecture : حَرْفُ [الرَّوِيِّ]
-- lecture : [لَامِيَّةٌ]
-- lecture : [نُونِيَّةٌ]
-- mots : بَاطِلٌ: زَائِلٌ لَا يَبْقَى، أَوْ لَا حَقِيقَةَ لَهُ
-- mots : مَا خَلَا: إِلَّا
-- mots : لَا مَحَالَةَ: حَتْمًا، بِلَا شَكٍّ
-- mots : نَعِيمٌ: رَاحَةٌ وَلَذَّةٌ وَعَيْشٌ طَيِّبٌ
-- mots : أَرْشَدَ: دَلَّ عَلَى الطَّرِيقِ الصَّحِيحِ
-- mots : لَدَغَ: عَضَّ بِسُمٍّ (الْحَيَّةُ وَالْعَقْرَبُ)
-- mots : ثُعْبَانٌ: حَيَّةٌ كَبِيرَةٌ
-- mots : قِرْنٌ ج أَقْرَانٌ: الْمُسَاوِي فِي الشَّجَاعَةِ وَالْقِتَالِ
-- mots : قِرْنٌ
-- mots : أَقْرَانٌ: الْمُسَاوِي فِي الشَّجَاعَةِ وَالْقِتَالِ
-- mots : هَابَ يَهَابُ: خَافَ وَاحْتَرَمَ
-- mots : طِبْ نَفْسًا: كُنْ رَاضِيًا مُطْمَئِنًّا
-- mots : جَزِعَ: لَمْ يَصْبِرْ وَاشْتَدَّ حُزْنُهُ
-- mots : أَنْشَدَ الشِّعْرَ: قَرَأَهُ بِصَوْتٍ مُرْتَفِعٍ وَإِيقَاعٍ
-- dialogue : بَاطِلٌ = زَائِلٌ
-- dialogue : إِشْبَاعُ حَرَكَةِ الرَّوِيِّ
-- dialogue : كَمْ الْخَبَرِيَّةُ + مِنْ
-- dialogue : الْقُرْآنُ لَيْسَ شِعْرًا
-- dialogue : حَسَنُهُ حَسَنٌ وَقَبِيحُهُ قَبِيحٌ
-- dialogue : وَاحِدٌ وَسِتُّونَ بَيْتًا
-
 Mots d’exercices et du cahier sans fichier audio :
 
 - ouverture : الشِّعْرُ: أَبْيَاتُ الْحِكْمَةِ
 - ouverture : الصَّدْرُ
-- ouverture : ٭
 - ouverture : الْعَجُزُ
-- ouverture : —
 - ouverture : الْقَافِيَةُ
-- ouverture : حَرْفُ
 - ouverture : الرَّوِيِّ
 - ouverture : إِنَّ مِنَ الشِّعْرِ حِكْمَةً:
 - ouverture : فَلْنَحْفَظِ الْبَيْتَ لِنَحْفَظَ الْمَعْنَى.
@@ -2587,9 +1598,7 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أَقْرَأُ بَيْتًا مَشْكُولًا بِإِيقَاعِهِ، وَأُعْرِبُهُ، وَأَتَعَرَّفُ الضَّرُورَةَ الشِّعْرِيَّةَ
 - ouverture : أَشْرَحُ مَعْنَى ثَلَاثَةِ أَبْيَاتٍ مِنَ الْحِكْمَةِ وَأَقْرَأُ آيَاتِ الشُّعَرَاءِ
 - ouverture : أَعْرِفُ آدَابَ الْكَلَامِ الْجَمِيلِ الصَّادِقِ، وَأُسَمِّعُ تُحْفَةَ الْأَطْفَالِ كَامِلَةً
-- ecriture : قَصِيدَةٌ (fichier présent pour un autre niveau)
 - ecriture : الرَّوِيُّ
-- ecriture : ضَرُورَةٌ (fichier présent pour un autre niveau)
 - ecriture : أَلَا كُلُّ شَيْءٍ مَا خَلَا اللَّهَ [بَاطِلُ] ٭ وَكُلُّ نَعِيمٍ لَا مَحَالَةَ [زَائِلُ]
 - ecriture : الْبَيْتُ وَالْقَافِيَةُ وَالضَّرُورَةُ الشِّعْرِيَّةُ
 - ecriture : ١) الْقَصِيدَةُ أَبْيَاتٌ، وَالْبَيْتُ شَطْرَانِ: الشَّطْرُ الْأَوَّلُ الصَّدْرُ، وَالثَّانِي الْعَجُزُ. ٢) الْقَافِيَةُ آخِرُ الْبَيْتِ، وَهِيَ وَاحِدَةٌ فِي الْقَصِيدَةِ كُلِّهَا. ٣) حَرْفُ الرَّوِيِّ هُوَ الْحَرْفُ الَّذِي تُبْنَى عَلَيْهِ الْقَصِيدَةُ، وَتُنْسَبُ إِلَيْهِ: لَامِيَّةٌ، نُونِيَّةٌ، مِيمِيَّةٌ. ٤) لِكُلِّ بَيْتٍ وَزْنٌ وَإِيقَاعٌ، وَسَنَدْرُسُ الْأَوْزَانَ فِي الْمُسْتَوَى الثَّامِنِ. ٥) الضَّرُورَةُ الشِّعْرِيَّةُ: يَجُوزُ لِلشَّاعِرِ مَا لَا يَجُوزُ لِغَيْرِهِ لِيَسْتَقِيمَ الْوَزْنُ وَالْقَافِيَةُ، مِثْلُ: إِشْبَاعِ حَرَكَةِ الرَّوِيِّ (بَاطِلُو)، وَإِثْبَاتِ يَاءِ الْمَنْقُوصِ (لِعَاصِي بَدَلَ لِعَاصٍ)، وَصَرْفِ الْمَمْنُوعِ مِنَ الصَّرْفِ (نُعْمَانٍ بَدَلَ نُعْمَانَ). ٦) نُعْرِبُ الْبَيْتَ كَمَا نُعْرِبُ النَّثْرَ، بَعْدَ أَنْ نُرَتِّبَ كَلِمَاتِهِ فِي أَذْهَانِنَا.
@@ -2624,9 +1633,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : مَفْعُولٌ مُطْلَقٌ لِـ«يَنقَلِبُونَ» مَنْصُوبٌ
 - quiz : لِسَانَكَ
 - quiz : سُوءَ
-- quiz : نُورٌ (fichier présent pour un autre niveau)
-- quiz : نَفْسًا
-- quiz : اللَّهَ (fichier présent pour un autre niveau)
 - quiz : فَأَرْشَدَنِي إِلَى تَرْكِ الْمَعَاصِي
 - quiz : وَطِبْ نَفْسًا إِذَا حَكَمَ الْقَضَاءُ
 - quiz : إِنَّ مِنَ الشِّعْرِ حِكْمَةً
@@ -2639,30 +1645,13 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte courte-vedette
-- longue ouverture
 - longue objectifs
 - longue notion
-- longue ligne
-- longue vedette
-- longue lexique
-- longue q-ex1
-- longue q-ex2
-- longue q-ex3
 - longue q-ex4
 - longue q-ex5
-- longue q-ex6
-- longue q-ex7
 - longue recap
-- quiz q-ex1
-- quiz q-ex2
-- quiz q-ex3
 - quiz q-ex4
 - quiz q-ex5
-- quiz q-ex6
-- quiz q-ex7
-- revision ouverture
 - revision notion
 - revision recap
 
@@ -2670,52 +1659,15 @@ Textes gardés sans voix :
 
 - coran : إِن جَآءَكُمْ فَاسِقٌۢ بِنَبَإٍۢ فَتَبَيَّنُوٓا۟
 
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [أَوَّلًا] (fichier présent pour un autre niveau)
-- lecture : [ثَانِيًا]
-- lecture : [فَضْلًا عَنْ] ذٰلِكَ
-- lecture : [صَحِيحٌ أَنَّ]
-- lecture : [غَيْرَ أَنَّ] (fichier présent pour un autre niveau)
-- lecture : [لِذٰلِكَ] (fichier présent pour un autre niveau)
-- lecture : [وَخُلَاصَةُ] الْقَوْلِ
-- lecture : [مَا دَلِيلُكَ]؟
-- lecture : [صَحِيحٌ أَنَّ] ظُرُوفَ الْعَمَلِ لَا نَخْتَارُهَا دَائِمًا، [غَيْرَ أَنَّ] التِّكْنُولُوجْيَا الَّتِي تُفَرِّقُنَا يُمْكِنُ أَنْ تَجْمَعَنَا أَيْضًا.
-- mots : حُجَّةٌ: دَلِيلٌ يُقْنِعُ بِالرَّأْيِ
-- mots : مَقَالٌ حِجَاجِيٌّ: نَصٌّ يُدَافِعُ عَنْ رَأْيٍ بِالْحُجَجِ
-- mots : أُطْرُوحَةٌ: الرَّأْيُ الَّذِي يُدَافِعُ عَنْهُ الْكَاتِبُ
-- mots : تَنَازُلٌ: الِاعْتِرَافُ بِجُزْءٍ مِنْ رَأْيِ الْآخَرِ
-- mots : أَعَادَ الصِّيَاغَةَ: قَالَ الْمَعْنَى نَفْسَهُ بِكَلِمَاتٍ أُخْرَى
-- mots : إِهْمَالٌ: تَرْكُ الْعِنَايَةِ بِالشَّيْءِ
-- mots : خَصَّصَ: جَعَلَ الشَّيْءَ لِأَمْرٍ مُعَيَّنٍ
-- mots : أَشْرَكَ: جَعَلَهُ شَرِيكًا فِي الْأَمْرِ
-- mots : أَنْصَتَ، أَصْغَى: اسْتَمَعَ بِاهْتِمَامٍ
-- mots : إِلْزَامِيٌّ: مَفْرُوضٌ لَا اخْتِيَارَ فِيهِ
-- dialogue : الْكَلِمَةُ لِلْفَرِيقِ الْأَوَّلِ
-- dialogue : انْتَهَى الْوَقْتُ
-- dialogue : إِذَا فَهِمْتُكُمْ جَيِّدًا
-- dialogue : نَتَّفِقُ مَعَكُمْ فِي… وَلٰكِنْ
-- dialogue : صَحِيحٌ أَنَّ… غَيْرَ أَنَّ
-- dialogue : اسْمَحْ لِي أَنْ أُخَالِفَكَ
-- dialogue : مَا دَلِيلُكَ؟
-- dialogue : لَا أُرِيدُ أَنْ أَقُولَ مَا لَا أَعْلَمُ
-- dialogue : خُلَاصَةُ رَأْيِنَا
-
 Mots d’exercices et du cahier sans fichier audio :
 
 - ouverture : مَشْرُوعُ الْمُسْتَوَى: أَكْتُبُ مَقَالًا وَأُنَاظِرُ
 - ouverture : الْمُنَاظَرَةُ:
-- ouverture : هَلْ (fichier présent pour un autre niveau)
-- ouverture : يَجِبُ (fichier présent pour un autre niveau)
-- ouverture : تَدْرِيبٌ
-- ouverture : عَلَى (fichier présent pour un autre niveau)
+- ouverture : تَدْرِيبٌ (fichier présent pour un autre niveau)
 - ouverture : الزَّوَاجِ
-- ouverture : قَبْلَ
+- ouverture : قَبْلَ (fichier présent pour un autre niveau)
 - ouverture : عَقْدِهِ؟
-- ouverture : —
 - ouverture : ١٠ (fichier présent pour un autre niveau)
-- ouverture : دَقَائِقَ
-- ouverture : لِكُلِّ فَرِيقٍ دَقِيقَتَانِ.
 - ouverture : وَنَرُدُّ عَلَى الْفِكْرَةِ، لَا عَلَى الشَّخْصِ.
 - ouverture : لِكُلِّ فَرِيقٍ دَقِيقَتَانِ.|وَنَرُدُّ عَلَى الْفِكْرَةِ، لَا عَلَى الشَّخْصِ.
 - ouverture : لِكُلِّ فَرِيقٍ دَقِيقَتَانِ. وَنَرُدُّ عَلَى الْفِكْرَةِ، لَا عَلَى الشَّخْصِ.
@@ -2723,25 +1675,17 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أُنَاظِرُ عَشْرَ دَقَائِقَ وَأَحْتَرِمُ آدَابَ الْحِوَارِ
 - ouverture : أَعْرِضُ بِنَاءَ سُورَةِ الْحُجُرَاتِ وَمَحَاوِرَهَا
 - ouverture : أُسَمِّعُ مَقْطَعًا حَفِظْتُهُ فِي هٰذَا الْمُسْتَوَى بِأَحْكَامِ رِوَايَةِ حَفْصٍ
-- ecriture : مُقَدِّمَةٌ (fichier présent pour un autre niveau)
-- ecriture : خَاتِمَةٌ (fichier présent pour un autre niveau)
 - ecriture : [أَوَّلًا]… [ثَانِيًا]… [صَحِيحٌ أَنَّ]… [غَيْرَ أَنَّ]… [لِذٰلِكَ أَقْتَرِحُ]… [وَخُلَاصَةُ الْقَوْلِ]…
 - ecriture : كِتَابَةُ الْمَقَالِ الْحِجَاجِيِّ وَآدَابُ الْمُنَاظَرَةِ
 - ecriture : ١) الْخُطَّةُ: مُقَدِّمَةٌ (تَمْهِيدٌ + سُؤَالٌ + رَأْيِي)، ثُمَّ عَرْضٌ (ثَلَاثُ حُجَجٍ، لِكُلِّ حُجَّةٍ مِثَالٌ أَوْ دَلِيلٌ)، ثُمَّ الرَّأْيُ الْآخَرُ وَالرَّدُّ عَلَيْهِ، ثُمَّ خَاتِمَةٌ (خُلَاصَةٌ + اقْتِرَاحٌ). ٢) أَدَوَاتُ الرَّبْطِ: أَوَّلًا، ثَانِيًا، فَضْلًا عَنْ ذٰلِكَ، بِالْإِضَافَةِ إِلَى ذٰلِكَ، صَحِيحٌ أَنَّ… غَيْرَ أَنَّ…، لِذٰلِكَ، وَخُلَاصَةُ الْقَوْلِ. ٣) الدَّلِيلُ: آيَةٌ بِرَقْمِهَا، أَوْ حَدِيثٌ بِمَصْدَرِهِ، أَوْ رَقْمٌ مِنْ مَصْدَرٍ مَعْرُوفٍ، أَوْ مِثَالٌ مِنَ الْحَيَاةِ. ٤) الْمُرَاجَعَةُ: الْإِعْرَابُ، وَالْمُطَابَقَةُ، وَالْأَعْدَادُ، وَالْهَمَزَاتُ، وَضَبْطُ الْكَلِمَاتِ الْمُشْكِلَةِ، وَعَدَدُ الْكَلِمَاتِ. ٥) الْمُنَاظَرَةُ: مُدِيرُ الْحِوَارِ يُعْطِي الْكَلِمَةَ وَيَحْفَظُ الْوَقْتَ؛ نَسْتَمِعُ حَتَّى النِّهَايَةِ، نُعِيدُ صِيَاغَةَ كَلَامِ الْآخَرِ، نَطْلُبُ الدَّلِيلَ، وَنَرُدُّ عَلَى الْفِكْرَةِ لَا عَلَى الشَّخْصِ.
-- quiz : حُجَّةٌ (fichier présent pour un autre niveau)
 - quiz : تَنَازُلٌ وَرَدٌّ
-- quiz : أَوَّلًا (fichier présent pour un autre niveau)
 - quiz : وَفَضْلًا عَنْ ذٰلِكَ
-- quiz : صَحِيحٌ أَنَّ
-- quiz : لِذٰلِكَ (fichier présent pour un autre niveau)
 - quiz : غَيْرَ أَنَّهَا
-- quiz : وَخُلَاصَةُ الْقَوْلِ
-- quiz : يَعْمَلَانِ (fichier présent pour un autre niveau)
 - quiz : يَلْتَقِي
 - quiz : الْوَقْتَ
 - quiz : نُخَصِّصَ
 - quiz : حُلُولٍ
-- quiz : دَقِيقَةً
+- quiz : دَقِيقَةً (fichier présent pour un autre niveau)
 - quiz : اسْمَحْ لِي أَنْ أُخَالِفَكَ الرَّأْيَ.
 - quiz : مَا دَلِيلُكَ عَلَى ذٰلِكَ؟
 - quiz : أَتَّفِقُ مَعَكَ فِي هٰذِهِ النُّقْطَةِ، وَلٰكِنْ…
@@ -2756,10 +1700,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : خَمْسَ مَرَّاتٍ
 - quiz : يَرَوْا
 - quiz : يَتَشَاوَرَ
-- quiz : فِكْرَةٌ (fichier présent pour un autre niveau)
-- quiz : هٰذَا (fichier présent pour un autre niveau)
-- quiz : يَعْمَلُونَ (fichier présent pour un autre niveau)
-- quiz : وَخُلَاصَةُ
 - quiz : فَالشُّورَى تَبْدَأُ فِي الْبَيْتِ
 - quiz : الْعَمَلُ ضَرُورِيٌّ غَيْرَ أَنَّ الْأُسْرَةَ أَوْلَى
 - quiz : نَرُدُّ عَلَى الْفِكْرَةِ لَا عَلَى الشَّخْصِ
@@ -2771,12 +1711,7 @@ Mots d’exercices et du cahier sans fichier audio :
 
 Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles passent sans attente de son) :
 
-- courte ouverture
-- courte ligne
-- longue ouverture
 - longue objectifs
-- longue ecriture
-- longue ligne
 - longue q-ex1
 - longue q-ex2
 - longue q-ex3
@@ -2785,8 +1720,6 @@ Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles pa
 - longue q-ex8
 - longue q-ex9
 - longue recap
-- revision ouverture
-- revision ligne
 - revision q-ex1
 - revision q-ex2
 - revision q-ex3
@@ -2804,40 +1737,11 @@ Textes gardés sans voix :
 - coran : قَالَا: «ذَلُولًۭا» سَهْلَةً لِلْمَشْيِ فِيهَا، وَ«مَنَاكِبِهَا» جَوَانِبِهَا. فَالْأَرْضُ مُذَلَّلَةٌ لَنَا لِنَسْعَى فِيهَا وَنَأْكُلَ مِنْ رِزْقِ اللَّهِ، ثُمَّ إِلَيْهِ النُّشُورُ.
 - coran : إِنَّ أَكْرَمَكُمْ عِندَ ٱللَّهِ أَتْقَىٰكُمْ
 
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : [أَكَلْنَا أَكْلًا] كَثِيرًا
-- lecture : [مَا أَحْوَجَنَا]!
-- lecture : [كَانَ] (fichier présent pour un autre niveau)
-- lecture : [يُشَاوِرُ]
-- lecture : [بِئْسَ] الرَّفِيقُ
-- lecture : [كَـ]رُبَّانَيْ سَفِينَةٍ
-- lecture : [مِيثَاقٌ]
-- lecture : [قُبَيْلَ] رَمَضَانَ
-- lecture : [مَجَّانِيَّةٌ]
-- mots : امْتِحَانٌ (fichier présent pour un autre niveau)
-- mots : مُصْحَفٌ (fichier présent pour un autre niveau)
-- mots : قَامُوسٌ (fichier présent pour un autre niveau)
-- mots : إِذَاعَةٌ (fichier présent pour un autre niveau)
-- mots : رُبَّانٌ
-- dialogue : …
-- dialogue : مَوْضُوعِي… أَوَّلًا… ثَانِيًا… ثَالِثًا… وَخُلَاصَةُ الْقَوْلِ
-- dialogue : إِذَا فَهِمْتُكِ جَيِّدًا…
-- dialogue : صَحِيحٌ أَنَّ… غَيْرَ أَنَّ…
-- dialogue : قَالَ الْجَلَالَانِ…
-- dialogue : لَا يَجُوزُ لَهُ ذٰلِكَ؛ لِأَنَّ…
-
 Mots d’exercices et du cahier sans fichier audio :
 
-- ouverture : الِامْتِحَانُ النِّهَائِيُّ
-- ouverture : الِامْتِحَانُ (fichier présent pour un autre niveau)
-- ouverture : النِّهَائِيُّ
-- ouverture : —
-- ouverture : الْمُسْتَوَى (fichier présent pour un autre niveau)
 - ouverture : السَّابِعُ:
 - ouverture : نُصُوصٌ
 - ouverture : أَصِيلَةٌ
-- ouverture : بِسْمِ اللَّهِ، نَبْدَأُ.
 - ouverture : اقْرَءُوا الْمَقَالَ مَرَّتَيْنِ، ثُمَّ أَجِيبُوا بِهُدُوءٍ.
 - ouverture : بِسْمِ اللَّهِ، نَبْدَأُ.|اقْرَءُوا الْمَقَالَ مَرَّتَيْنِ، ثُمَّ أَجِيبُوا بِهُدُوءٍ.
 - ouverture : بِسْمِ اللَّهِ، نَبْدَأُ. اقْرَءُوا الْمَقَالَ مَرَّتَيْنِ، ثُمَّ أَجِيبُوا بِهُدُوءٍ.
@@ -2845,10 +1749,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أُعْرِبُ آيَةً وَأُتَرْجِمُهَا، وَأَقْرَأُ بِأَحْكَامِ رِوَايَةِ حَفْصٍ
 - ouverture : أَكْتُبُ مَقَالًا حِجَاجِيًّا مِنْ ٢٥٠ إِلَى ٣٠٠ كَلِمَةٍ
 - ouverture : أَحُلُّ حَالَةً عَمَلِيَّةً فِي فِقْهِ الْأُسْرَةِ عَلَى مَذْهَبِ الْإِمَامِ مَالِكٍ
-- ecriture : مِيثَاقٌ
-- ecriture : اصْطَبَرَ (fichier présent pour un autre niveau)
-- ecriture : تَعَارُفٌ
-- ecriture : شَهَادَةٌ (fichier présent pour un autre niveau)
 - quiz : شَارَكَ فِي الدَّوْرَةِ أَرْبَعُونَ شَابًّا وَشَابَّةً.
 - quiz : ذَكَرَتِ الْجَمْعِيَّةُ أَرْقَامًا دَقِيقَةً عَنِ الطَّلَاقِ فِي الْمِنْطَقَةِ.
 - quiz : التَّسْجِيلُ فِي الدَّوْرَةِ الْقَادِمَةِ بِثَمَنٍ.

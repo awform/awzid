@@ -1,14 +1,14 @@
 # Zéro muet — rapport du test
 
-Textes à écouter (uniques par niveau) : 10950
-- avec un fichier audio : 10621
+Textes à écouter (uniques par niveau) : 10943
+- avec un fichier audio : 10624
   dont graphie du Muṣḥaf, non jouée par le client (audioIdFor) : 259
-- sonorisés par Ayyūb (récitation branchée, table contrôlée contre Tanzil) : 297
-  dont mixtes (synthèse pour la partie non coranique) : 175
+- sonorisés par Ayyūb (récitation branchée, table contrôlée contre Tanzil) : 294
+  dont mixtes (synthèse pour la partie non coranique) : 174
 - doutes remis au référent (rapprochement ambigu, non branché) : 0
 - notes rédigées en français (non lues, la voix ne fait pas le tajwīd) : 0
-- à corriger dans les livres avant le gel (réplique arabe qui cite du français, cas b) : 5
-- voix de synthèse À GÉNÉRER (garde levée, fichier absent, liste d’attente explicite) : 27
+- à corriger dans les livres avant le gel (réplique arabe qui cite du français, cas b) : 0
+- voix de synthèse À GÉNÉRER (garde levée, fichier absent, liste d’attente explicite) : 25
 - cahier de lecture : éléments récités par Ayyūb (mécanisme propre) : 308
 - MUETS sans solution prévue : 0
 
@@ -32,9 +32,7 @@ Textes à écouter (uniques par niveau) : 10950
 - ad1 · l23 gardé (sacre) : إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ… الْآنَ أَفْهَمُ مَا أَقْرَأُ! → 1:5 t:091e93a606b27797c49ba4afbab64af0a491d846
 - ad1 · l23 gardé (coran) : رَبِّ ٱلْعَٰلَمِينَ → ~ 1:2
 - ad1 · l23 gardé (coran) : ٱهْدِنَا ٱلصِّرَٰطَ → ~ 1:6
-- ad1 · l23 gardé (contexte) : صِرَٰطَ → ~ 1:7
 - ad1 · l24 gardé (coran) : قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ → 114:1
-- ad1 · l24 gardé (contexte) : يَكُن → ~ 112:4
 - ad1 · l24 gardé (coran) : لَّهُۥ → ~ 62:11
 - ad1 · l24 gardé (coran) : قُلْ هُوَ ٱللَّهُ أَحَدٌ → 112:1
 - ad1 · l24 gardé (sacre) : مِن شَرِّ مَا خَلَقَ → 113:2
@@ -84,7 +82,6 @@ Textes à écouter (uniques par niveau) : 10950
 - ad6 · l21 gardé (coran) : وَقُل رَّبِّ زِدْنِى عِلْمًۭا → ~ 20:114
 - ad6 · l22 gardé (coran) : فَابْتَسَمَتِ الْأُسْتَاذَةُ وَقَالَتْ: وَكَمَا قَالَ ذُو الْقَرْنَيْنِ بَعْدَ أَنْ بَنَى السَّدَّ: «هَٰذَا رَحْمَةٌۭ مِّن رَّبِّى»، نَقُولُ → t:dcd659fddb481ee10bb3ab1715d0a85b365c8ca6 18:98 t:6d06fe7063d75be48c9d01f8ae68f0b1110a6963
 - ad6 · l22 gardé (coran) : قَالَ هَٰذَا رَحْمَةٌۭ مِّن رَّبِّى → ~ 18:98
-- ad6 · l23 gardé (basmala) : بِسْمِ اللَّهِ الرَّحْمٰنِ الرَّحِيمِ. الْكَلَامُ هُوَ اللَّفْظُ الْمُرَكَّبُ الْمُفِيدُ بِالْوَضْعِ، وَأَقْسَامُهُ ثَلَاثَةٌ: اسْمٌ، وَفِعْ → 1:1 t:dceabc701a1ae0482f9206474741e61586abe2d9
 - ad6 · l23 gardé (coran) : الْكِتَابَ، وَلَمْ يَجْعَلْ لَهُ عِوَجًا → ~ 18:1
 - ad6 · l24 gardé (coran) : قَرَأْنَا هٰذِهِ السَّنَةَ سُورَةَ يُوسُفَ كُلَّهَا، آيَةً آيَةً، فِي خَمْسَةَ عَشَرَ دَرْسًا، وَفِي أَوَّلِهَا يَقُولُ اللَّهُ تَعَالَى: «ن → t:2b4323a54d1e363dcb73f21e3692a9d1e5bdafa1 12:3 t:4feed8211f4e3012ac61db41d85f58ee6dee758d
 - ad6 · l24 gardé (coran) : ثَالِثًا: الْكَفَاءَةُ فِي خِدْمَةِ النَّاسِ. فَلَمَّا خَرَجَ مِنَ السِّجْنِ، طَلَبَ عَمَلًا يُحْسِنُهُ، فَقَالَ: «ٱجْعَلْنِى عَلَىٰ خَزَآئ → t:683d03acaf91084d9e290c37869b9aaf67732a21 12:55 t:9090374a856cb84496e58a462d6b1fc3c3fc5ebd
@@ -318,7 +315,6 @@ Textes à écouter (uniques par niveau) : 10950
 ## Voix de synthèse à générer (liste d’attente)
 - ad4 · l22 gardé (coran) : وَالْقُرْآنُ يُحَذِّرُ مِنَ الْفَسَادِ فِي الْبَرِّ وَالْبَحْرِ، وَيَنْهَى عَنِ الْإِسْرَافِ.
 - ad5 · l06 gardé (coran) : نَعَمْ، لِأَنَّكُمَا مُتَمَتِّعَانِ. وَمَنْ لَمْ يَجِدْ صَامَ ثَلَاثَةَ أَيَّامٍ فِي الْحَجِّ وَسَبْعَةً إِذَا رَجَعَ.
-- ad5 · l10 dialogue : إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ
 - ad5 · l14 gardé (coran) : وَفِي مَكْتَبِ كَاتِبِ الْعَدْلِ كَتَبَ عَبْدُ اللَّهِ: أَشْهَدُ [أَنْ لَا] إِلٰهَ إِلَّا اللَّهُ، وَ[أَنَّ مُحَمَّدًا] رَسُولُ اللَّهِ.
 - ad5 · l22 gardé (coran) : وَلَبِثَ فِيهِمْ أَلْفَ سَنَةٍ إِلَّا خَمْسِينَ عَامًا، يَدْعُوهُمْ لَيْلًا وَنَهَارًا، سِرًّا وَجَهْرًا.
 - ad7 · l08 gardé (coran) : وعلى المطلقة الرجعية أن تقضي عدتها في بيت الزوجية إلا لضرورة، ولها فيه النفقة والسكنى؛ فلعل الله يحدث بعد ذلك أمرا.
@@ -328,7 +324,6 @@ Textes à écouter (uniques par niveau) : 10950
 - ad7 · l21 gardé (coran) : انْتَبِهِي يَا بُنَيَّتِي! فِي الْآيَةِ ٢٧ ﴿وَقِيلَ﴾ لَفْظٌ مِنَ الْقُرْآنِ: فِعْلٌ مَبْنِيٌّ لِلْمَجْهُولِ. أَمَّا فِي كُتُبِ التَّفْسِيرِ 
 - ad7 · l21 gardé (coran) : وَفِي الْآيَةِ الْعِشْرِينَ قَالَ: ﴿إِنِ﴾ مَا. إِذَنِ الْمَعْنَى: مَا الْكَافِرُونَ إِلَّا فِي غُرُورٍ. لَوْ ظَنَنْتُهَا شَرْطِيَّةً لَفَسَد
 - ad7 · l23 gardé (coran) : سُؤَالٌ جَيِّدٌ يَا مَرْيَمُ! «بَاطِلٌ» هُنَا مَعْنَاهُ: زَائِلٌ لَا يَبْقَى بِنَفْسِهِ. كُلُّ شَيْءٍ يَفْنَى إِلَّا اللَّهَ، وَمَا كَانَ لِ
-- ad8 · l09 mots : السَّنَدُ: سِلْسِلَةُ الشُّيُوخِ الَّذِينَ نَقَلُوا الْقِرَاءَةَ عَنِ النَّبِيِّ ﷺ
 - ad8 · l17 gardé (coran) : ذَكَرَ آيَةَ سُورَةِ النِّسَاءِ: الَّذِينَ أَنْعَمَ اللَّهُ عَلَيْهِمْ هُمُ النَّبِيُّونَ وَالصِّدِّيقُونَ وَالشُّهَدَاءُ وَالصَّالِحُونَ.
 - ad8 · l19 gardé (coran) : وَمِنْ تَفْسِيرِ ابْنِ كَثِيرٍ عَلَى سُورَةِ عَبَسَ: وَمِنْ هَا هُنَا أَمَرَ اللَّهُ تَعَالَى رَسُولَهُ ﷺ أَنْ لَا يَخُصَّ بِالْإِنْذَارِ أَ
 - ad8 · l21 gardé (coran) : لٰكِنْ، يَا أُسْتَاذَةُ، مَا مَعْنَى ﴿وَمَا كَادُوا۟ يَفْعَلُونَ﴾؟ إِذَا كَانَتْ «كَادَ» الْمَنْفِيَّةُ تَعْنِي أَنَّهُمْ لَمْ يَقْرُبُوا مِ
@@ -345,8 +340,3 @@ Textes à écouter (uniques par niveau) : 10950
 - ad10 · l24 gardé (coran) : وَقَالَ: ﴿لَفِى خُسْرٍ﴾ وَلَمْ يَقُلْ: «لَخَاسِرٌ»، فَجَعَلَ الْإِنْسَانَ [فِي] الْخُسْرِ كَأَنَّهُ يُحِيطُ بِهِ، وَنَكَّرَ «خُسْرٍ» لِلتَّع
 
 ## À corriger dans les livres
-- ad8 · l23 dialogue : كَتَبْتُ: « alors une période d'attente d'autres jours ». فَقَدْ تَعَلَّمْنَا أَنَّ الْعِدَّةَ مُصْطَلَحٌ فِقْهِيٌّ.
-- ad8 · l23 dialogue : لَا أُوَافِقُكِ يَا خَدِيجَةُ. الْعِدَّةُ بِمَعْنَى «فَتْرَةِ الِانْتِظَارِ» تَكُونُ فِي بَابِ الطَّلَاقِ. أَمَّا هُنَا فَمَعْنَاهَا اللُّغَ
-- ad8 · l23 dialogue : فَهِمْتُ. وَمَاذَا عَنِ «الرُّخْصَةِ»؟ أُتَرْجِمُهَا بِـ« une permission » أَمْ بِـ« une facilité »؟
-- ad8 · l23 dialogue : إِذَنْ « une dispense » أَدَقُّ: فِي الْفَرَنْسِيَّةِ نَقُولُ « une dispense » لِمَنْ لَهُ عُذْرٌ يُعْفِيهِ مِنْ أَمْرٍ عَامٍّ.
-- ad8 · l23 dialogue : نَعَمْ. وَنَكْتُبُ حَاشِيَةً قَصِيرَةً فِي أَوَّلِ مَرَّةٍ: « Dispense (رُخْصَةٌ) : règle allégée accordée pour une excuse (maladie, voyage)
