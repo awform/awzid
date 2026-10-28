@@ -13,6 +13,7 @@
  * réservation du pire cas (aucun dépassement) ; disjoncteur AWFORM_COUTS_COUPES ; journal minimal (`tutor_log`,
  * 90 jours) ; jamais d'audio conservé.
  */
+import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
@@ -36,11 +37,15 @@ import {
 import {
   classerEntree,
   comparerReplique,
+  completerTranscription,
+  coutMaxPrononciation,
   coutMaxTour,
   coutMicros,
   decider,
   helpline,
   issueDuTour,
+  issuePrononciation,
+  prononInvite,
   motifProtection,
   motsEcrits,
   plafondsDepuisEnv,
@@ -56,11 +61,13 @@ import {
   TEXTE_MAX,
   type Adresse,
   type Audience,
+  type ConseilEcoute,
   type ConvContexte,
   type ConvSetup,
   type FilterEvent,
   type Genre,
   type MotNiveau,
+  type RemarquePrononciation,
 } from '@awform/tutor';
 import type { ContentRights } from './billing.js';
 import { conversationDir } from './conversation.js';
@@ -98,6 +105,12 @@ interface Audio {
   b64: string;
   secondes: number;
 }
+/** Ce que l'écran reçoit pour la prononciation : remarque vérifiée OU conseil d'écoute, et leur voix. */
+interface ResultatPrononciation {
+  remarque: RemarquePrononciation | null;
+  conseil: ConseilEcoute | null;
+  audio: { mime: string; b64: string } | null;
+}
 interface Scenario {
   niveau: string;
   lecon: string;
@@ -134,6 +147,11 @@ export function registerTuteurIa(
   let quran: QuranIndex | null = null;
   const contextes = new Map<string, Promise<ConvContexte | null>>();
   const essais = new Map<string, number[]>();
+  /** appels de prononciation en cours ou finis, lus UNE fois par l'écran (mémoire seulement, 60 s) */
+  const prononciations = new Map<
+    string,
+    { profileId: string; travail: Promise<ResultatPrononciation | null>; fin: number }
+  >();
 
   if (setup.bloque) app.log.warn({ evenement: 'tuteur_ia_bloque', motif: setup.bloque });
 
@@ -524,9 +542,13 @@ export function registerTuteurIa(
         };
       }
 
-      // 2. plafonds : réservation du PIRE cas sous verrou global (aucun dépassement possible)
+      // 2. plafonds : réservation du PIRE cas sous verrou global (aucun dépassement possible) ; à l'oral, le pire cas
+      //    de l'appel de prononciation (en parallèle) est réservé AVEC le tour, sur la même ligne
       const pl = plafonds();
-      const reserve = coutMaxTour(setup.tarif, pl.usdEur);
+      const prononciation = b.audio ? setup.prononciation : null;
+      const tarifP = prononciation ? setup.tarifPrononciation : null;
+      const reserveP = tarifP ? coutMaxPrononciation(tarifP, pl.usdEur) : 0;
+      const reserve = coutMaxTour(setup.tarif, pl.usdEur) + reserveP;
       const res = await db.transaction(async (tx) => {
         await tx.execute(
           sql`select pg_advisory_xact_lock(hashtextextended('tuteur-ia-budget', 0))`,
@@ -547,11 +569,21 @@ export function registerTuteurIa(
         return err(reply, 429, 'plafond', { refus: res.refus });
       }
 
-      // 3. appel au modèle (contexte des livres en lecture seule)
+      // 3. appel au modèle (contexte des livres en lecture seule) ; à l'oral, appel de PRONONCIATION lancé EN MÊME
+      //    TEMPS (28/10/2026) : la réponse n'attend pas la remarque, qui arrive juste après (GET …/prononciation/:pid)
       const audioBuf = b.audio ? Buffer.from(b.audio.b64, 'base64') : null;
       const adresse: Adresse = b.adresse ?? 'tu';
       const t0 = Date.now();
-      const out = await fournisseur.repondre(
+      const audioP = prononciation && audioBuf ? Buffer.from(audioBuf) : null;
+      const sortieP =
+        prononciation && audioP
+          ? prononciation
+              .ecouter(prononInvite(g.ctx), { mime: b.audio!.mime, data: audioP })
+              .catch(() => null)
+              .finally(() => audioP.fill(0))
+              .then((r) => ({ r, ms: Date.now() - t0 }))
+          : null;
+      const brut = await fournisseur.repondre(
         systemPrompt(g.ctx, adresse, b.genre ?? 'x', w.audience),
         {
           audience: w.audience,
@@ -566,6 +598,11 @@ export function registerTuteurIa(
         },
       );
       audioBuf?.fill(0);
+      // garde-fou : transcription vide à l'oral → phrase voulue de l'appel de prononciation (prononciation.ts)
+      const { out, complete } = await completerTranscription(
+        brut,
+        sortieP ? sortieP.then((x) => x.r) : null,
+      );
       const msModele = Date.now() - t0;
 
       const idx = await index();
@@ -579,6 +616,8 @@ export function registerTuteurIa(
         dialogue: g.ctx.dialogue,
       });
       const filtre: FilterEvent[] = issue.filtre;
+      if (complete)
+        filtre.push({ step: 'transcription', action: 'ok', detail: 'phrase_voulue_prononciation' });
       const { reponse, correction, transcription, redir, route, repli } = issue;
       // 20/10/2026 : une PANNE du fournisseur (requête refusée, réponse vide ou illisible) se voit dans les journaux
       // du serveur, avec le message technique de Google (jamais la phrase de l'élève)
@@ -612,14 +651,19 @@ export function registerTuteurIa(
 
       // 5. solde du coût réel (≤ réservation), alertes de seuil
       const cout = Math.min(
-        reserve,
+        reserve - reserveP,
         fournisseur.real || setup.mode === 'simule'
           ? coutMicros({ ...usage, caracteresVoix: caracteres }, setup.tarif, pl.usdEur)
           : 0,
       );
       const secondes = secondesTour(Math.max(b.audio?.secondes ?? 0, usage.audio / 32), caracteres);
-      await solderDepense(db, res.id, { costMicros: cout, secondes, statut: 'fait' });
-      const apres = res.avant.moisMicros + cout;
+      // la part de la prononciation reste réservée au PIRE cas tant que son appel n'est pas fini
+      await solderDepense(db, res.id, {
+        costMicros: cout + (sortieP ? reserveP : 0),
+        secondes,
+        statut: 'fait',
+      });
+      const apres = res.avant.moisMicros + cout + (sortieP ? reserveP : 0);
       const nouveaux = await noterSeuils(
         db,
         moisCle(now()),
@@ -629,6 +673,81 @@ export function registerTuteurIa(
       );
       for (const s of nouveaux)
         app.log.warn({ evenement: 'tuteur_ia_seuil', seuil: s, mois: moisCle(now()) });
+
+      // prononciation (oral) : finie EN TÂCHE DE FOND ; la remarque n'est gardée que pour une réponse NORMALE (jamais
+      // après un renvoi ou un repli) ; le coût réel remplace ensuite la part réservée
+      let prononciationId: string | undefined;
+      if (sortieP) {
+        const normal = !!reponse && !redir && !repli;
+        const travail = (async (): Promise<ResultatPrononciation | null> => {
+          const { r, ms } = await sortieP;
+          let coutP = reserveP;
+          let resultat: ResultatPrononciation | null = null;
+          try {
+            let caracteresP = 0;
+            if (r && normal) {
+              const ip = issuePrononciation(r, {
+                mots: g.ctx.mots,
+                dialogue: g.ctx.dialogue,
+                index: idx,
+                audience: w.audience,
+              });
+              // voix : le mot juste, ou la paire à écouter puis le mot de l'élève (mots des livres ; jamais le Coran)
+              const texte = ip.remarque
+                ? ip.remarque.correct
+                : ip.conseil
+                  ? [ip.conseil.paire[0].ar, ip.conseil.paire[1].ar, ip.conseil.mot].join('، ')
+                  : '';
+              let audioP: { mime: string; b64: string } | null = null;
+              if (texte && setup.synthese && voixPermise(texte, idx)) {
+                const v = await setup.synthese.lire(texte);
+                if (v) {
+                  audioP = { mime: v.mime, b64: v.data.toString('base64') };
+                  caracteresP = v.caracteres;
+                }
+              }
+              resultat = { remarque: ip.remarque, conseil: ip.conseil, audio: audioP };
+              app.log.info({
+                evenement: 'tuteur_ia_prononciation',
+                ms,
+                statut: r.status,
+                filtre: ip.filtre,
+              });
+            } else
+              app.log.info({
+                evenement: 'tuteur_ia_prononciation',
+                ms,
+                statut: r?.status ?? 'erreur',
+                filtre: [
+                  {
+                    step: 'prononciation',
+                    action: 'ecarte',
+                    detail: normal ? 'panne' : 'tour_non_normal',
+                  },
+                ],
+              });
+            coutP = Math.min(
+              reserveP,
+              r && (prononciation!.real || setup.mode === 'simule')
+                ? coutMicros({ ...r.usage, caracteresVoix: caracteresP }, tarifP!, pl.usdEur)
+                : 0,
+            );
+          } finally {
+            await solderDepense(db, res.id, {
+              costMicros: cout + coutP,
+              secondes,
+              statut: 'fait',
+            }).catch(() => undefined);
+          }
+          return resultat;
+        })().catch(() => null);
+        if (normal) {
+          prononciationId = randomUUID();
+          const h = Date.now();
+          for (const [k, v] of prononciations) if (v.fin < h) prononciations.delete(k);
+          prononciations.set(prononciationId, { profileId: g.p.id, travail, fin: h + 60_000 });
+        }
+      }
 
       if (redir) {
         const r = await redirection(redir, transcription || undefined);
@@ -654,8 +773,42 @@ export function registerTuteurIa(
         audio,
         lu: !!audio,
         simule: !fournisseur.real,
+        // oral : la remarque de prononciation arrive juste après (GET …/prononciation/:pid)
+        ...(prononciationId ? { prononciationId } : {}),
         minutesRestantes: Math.max(0, Math.floor((pl.eleveSecondesJour - dep.eleveSecondes) / 60)),
       };
+    },
+  );
+
+  // ---------------------------------------------------------------- prononciation (résultat différé, oral)
+  /**
+   * Remarque de prononciation d'un tour oral (28/10/2026) : attend la fin de l'appel lancé en parallèle (15 s au
+   * plus), une seule lecture, 60 s au plus après le tour, et seulement par le profil qui a parlé. Rien n'est gardé.
+   */
+  app.get<{ Params: { id: string; pid: string } }>(
+    '/api/v1/tuteur-ia/:id/prononciation/:pid',
+    {
+      schema: {
+        params: {
+          type: 'object',
+          required: ['id', 'pid'],
+          properties: { id: UUID, pid: UUID },
+        },
+      },
+    },
+    async (req, reply) => {
+      const p = await familyProfile(db, req, reply, req.params.id);
+      if (!p) return reply;
+      const e = prononciations.get(req.params.pid);
+      if (!e || e.profileId !== p.id || e.fin < Date.now()) return err(reply, 404, 'introuvable');
+      prononciations.delete(req.params.pid);
+      const r = await Promise.race([
+        e.travail,
+        new Promise<null>((ok) => setTimeout(() => ok(null), 15_000).unref()),
+      ]);
+      return reply
+        .header('Cache-Control', 'private, no-store')
+        .send(r ?? { remarque: null, conseil: null, audio: null });
     },
   );
 }

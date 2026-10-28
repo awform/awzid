@@ -17,7 +17,7 @@
  * reste sous les plafonds. Le coût réel (plus petit) remplace ensuite la réservation.
  * Les montants sont en MICRO-EUROS (1 € = 1 000 000).
  */
-import { REGLAGES_GENERATION } from './prompt.js';
+import { REGLAGES_GENERATION, REGLAGES_PRONONCIATION } from './prompt.js';
 
 export interface Plafonds {
   moisMicros: number;
@@ -126,6 +126,31 @@ export const coutMaxTour = (tarif: Tarif, usdEur: number) =>
       audio: BORNES.audioMax,
       sortie: BORNES.sortieMax,
       caracteresVoix: BORNES.voixCaracteresMax,
+    },
+    tarif,
+    usdEur,
+  );
+
+/**
+ * Bornes de l'appel de PRONONCIATION (28/10/2026, oral seulement) : invite courte (≈ 800 jetons mesurés le 21/10 ;
+ * 2 500 par prudence : le dialogue de la leçon varie), audio du tour, sortie bornée par REGLAGES_PRONONCIATION
+ * (réflexion comprise), voix du mot juste ou de la paire à écouter (60 caractères au plus).
+ */
+export const BORNES_PRONONCIATION = {
+  texteMax: 2500,
+  audioMax: BORNES.audioMax,
+  sortieMax: REGLAGES_PRONONCIATION.maxOutputTokens,
+  voixCaracteresMax: 60,
+};
+
+/** Coût MAXIMAL de l'appel de prononciation (réservé avec le tour, sous le même verrou). */
+export const coutMaxPrononciation = (tarif: Tarif, usdEur: number) =>
+  coutMicros(
+    {
+      texte: BORNES_PRONONCIATION.texteMax,
+      audio: BORNES_PRONONCIATION.audioMax,
+      sortie: BORNES_PRONONCIATION.sortieMax,
+      caracteresVoix: BORNES_PRONONCIATION.voixCaracteresMax,
     },
     tarif,
     usdEur,

@@ -21,11 +21,14 @@ import {
 } from '@awform/db';
 import {
   ConversationSimulee,
+  coutMaxPrononciation,
+  coutMaxTour,
   SyntheseSimulee,
   tarifDe,
   type ConvEntree,
   type ConvFournisseur,
   type ConvSetup,
+  type PrononFournisseur,
 } from '@awform/tutor';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/app.js';
@@ -69,6 +72,25 @@ class Espion implements ConvFournisseur {
   }
 }
 
+/** Appel de prononciation espion (28/10/2026) : brouillon fixé par le test, sinon phrase juste. */
+class EspionPrononciation implements PrononFournisseur {
+  readonly name = 'espion';
+  readonly real = false;
+  readonly modele = 'gemini-3.8-flash';
+  appels = 0;
+  prochain: object | null = null;
+  async ecouter() {
+    this.appels++;
+    const b = this.prochain ?? {
+      entendu: 'أُرِيدُ تُفَّاحًا.',
+      voulu: 'أُرِيدُ تُفَّاحًا.',
+      fautes: [],
+    };
+    this.prochain = null;
+    return { status: 'ok' as const, brouillon: b, usage: { texte: 800, audio: 100, sortie: 150 } };
+  }
+}
+
 const DIALOGUE = {
   v: 1,
   niveau: 'ad2',
@@ -101,6 +123,7 @@ describe.skipIf(!URL)('tuteur IA de conversation (simulé)', () => {
   let app: FastifyInstance;
   let bloque: FastifyInstance;
   const espion = new Espion();
+  const espionP = new EspionPrononciation();
   const entendus: string[] = [];
   const ecoute: ClientEcoute = {
     ecouter: async () => ({
@@ -201,6 +224,8 @@ describe.skipIf(!URL)('tuteur IA de conversation (simulé)', () => {
       synthese: new SyntheseSimulee(),
       modele: 'gemini-3.8-flash',
       tarif: tarifDe('gemini-3.8-flash'),
+      prononciation: espionP,
+      tarifPrononciation: tarifDe('gemini-3.8-flash'),
     };
     const base = {
       db: h.db,
@@ -336,6 +361,74 @@ describe.skipIf(!URL)('tuteur IA de conversation (simulé)', () => {
       },
     });
     expect(r.json()).toMatchObject({ redirection: 'religion', reponse_ar: '' });
+  });
+
+  it('28/10 : prononciation EN PARALLÈLE à l’oral — remarque vérifiée lue juste après, une fois, par le même profil', async () => {
+    const voix = {
+      mime: 'audio/webm;codecs=opus',
+      b64: Buffer.from('xx').toString('base64'),
+      secondes: 3,
+    };
+    const n = (await depenses()).length;
+    const appelsP = espionP.appels;
+    espion.prochain = {
+      transcription_ar: 'أُرِيدُ تُفَّاحًا.',
+      reponse_ar: 'هٰذَا تُفَّاحٌ جَمِيلٌ.',
+      reponse_fr: 'Voici de belles pommes.',
+      correction: null,
+      sujet: 'langue',
+    };
+    espionP.prochain = {
+      entendu: 'أُرِدُ تُفَّاحًا.',
+      voulu: 'أُرِيدُ تُفَّاحًا.',
+      fautes: [{ entendu: 'أُرِدُ', correct: 'أُرِيدُ' }],
+    };
+    const r = await libre(adulte, A, { audio: voix });
+    expect(r.statusCode, r.body).toBe(200);
+    const j = r.json();
+    expect(j.reponse_ar).toBe('هٰذَا تُفَّاحٌ جَمِيلٌ.');
+    expect(j.prononciationId).toMatch(/^[0-9a-f-]{36}$/);
+    expect(espionP.appels).toBe(appelsP + 1);
+    const url = `/api/v1/tuteur-ia/${adulte}/prononciation/${j.prononciationId}`;
+    // un autre profil ne lit pas la remarque
+    expect((await req(app, 'GET', url.replace(adulte, ado), P)).statusCode).toBe(404);
+    const p = await req(app, 'GET', url, A);
+    expect(p.statusCode, p.body).toBe(200);
+    expect(p.json()).toMatchObject({
+      remarque: { correct: 'أُرِيدُ', son: 'voyelle_longue' },
+      conseil: null,
+    });
+    expect(p.json().audio.mime).toBe('audio/wav');
+    // une seule lecture
+    expect((await req(app, 'GET', url, A)).statusCode).toBe(404);
+    // une seule ligne de dépense : conversation + prononciation, soldée au coût réel (≤ réservation)
+    const d = await depenses();
+    expect(d).toHaveLength(n + 1);
+    const der = d.sort((a, b) => +b.createdAt - +a.createdAt)[0]!;
+    expect(der).toMatchObject({ statut: 'fait' });
+    expect(der.costMicros).toBeLessThan(
+      coutMaxTour(tarifDe('gemini-3.8-flash')!, 1) +
+        coutMaxPrononciation(tarifDe('gemini-3.8-flash')!, 1),
+    );
+    // paire DIFFICILE (ص/س) : jamais de remarque ; conseil d'écoute
+    espionP.prochain = {
+      entendu: 'أُرِيدُ تُفَّاحًا. هٰذَا سُوقٌ.',
+      voulu: 'أُرِيدُ تُفَّاحًا. هٰذَا صُوقٌ.',
+      fautes: [{ entendu: 'سُوقٌ', correct: 'صُوقٌ' }],
+    };
+    const r2 = await libre(adulte, A, { audio: voix });
+    const p2 = await req(
+      app,
+      'GET',
+      `/api/v1/tuteur-ia/${adulte}/prononciation/${r2.json().prononciationId}`,
+      A,
+    );
+    expect(p2.json().remarque).toBeNull();
+    // à l'écrit : aucun appel de prononciation
+    const avant = espionP.appels;
+    const t2 = await libre(adulte, A, { texte: 'أريد تفاحا' });
+    expect(t2.json().prononciationId).toBeUndefined();
+    expect(espionP.appels).toBe(avant);
   });
 
   it('20/10 : politique, contenu inconvenant, conseil — refus poli AVANT l’appel, aucune dépense', async () => {

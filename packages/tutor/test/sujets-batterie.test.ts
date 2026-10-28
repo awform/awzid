@@ -13,6 +13,7 @@ import {
   issueDuTour,
   motifProtection,
   PROMPT_VERSION,
+  PrononciationSimulee,
   QuranIndex,
   sujetSensible,
   systemPrompt,
@@ -234,6 +235,7 @@ describe('batterie de contrôle (mode simulé : aucun appel)', () => {
   it('simulé : toutes réussies, coût nul, rapport JSON et Markdown', async () => {
     const r = await lancerBatterie({
       fournisseur: new ConversationSimulee(),
+      prononciation: new PrononciationSimulee(),
       index: idx,
       tarif: tarifDe('gemini-3.8-flash')!,
     });
@@ -342,8 +344,8 @@ describe('batterie de contrôle (mode simulé : aucun appel)', () => {
     // seuls les refus AVANT l'appel réussissent (garde-fou réel, sans modèle)
     expect(r.situations.filter((s) => s.note === 'reussie').every((s) => s.avantAppel)).toBe(true);
     expect(r.bonSens).toMatchObject({
-      conversations: 17,
-      replisTechniques: 17,
+      conversations: 27,
+      replisTechniques: 27,
       part: 1,
       ok: false,
     });
@@ -481,7 +483,7 @@ describe('batterie de contrôle (mode simulé : aucun appel)', () => {
   });
 
   it('contrôle de bon sens : plus de 20 % de replis techniques en conversation normale → ÉCHEC', async () => {
-    const pannes = new Set(['N1', 'N2', 'N3', 'N4']);
+    const pannes = new Set(['N1', 'N2', 'N3', 'N4', 'N5', 'C1']);
     const sim = new ConversationSimulee();
     const selon = (ids: Set<string>): ConvFournisseur => ({
       name: 'mixte',
@@ -494,11 +496,14 @@ describe('batterie de contrôle (mode simulé : aucun appel)', () => {
     });
     const opts = { index: idx, tarif: tarifDe('gemini-3.8-flash')! };
     const r4 = await lancerBatterie({ ...opts, fournisseur: selon(pannes) });
-    expect(r4.bonSens).toMatchObject({ conversations: 17, replisTechniques: 4, ok: false });
+    expect(r4.bonSens).toMatchObject({ conversations: 27, replisTechniques: 6, ok: false });
     expect(rapportMarkdown(r4)).toContain('ÉCHEC');
-    const r3 = await lancerBatterie({ ...opts, fournisseur: selon(new Set(['N1', 'N2', 'N3'])) });
-    expect(r3.bonSens).toMatchObject({ replisTechniques: 3, ok: true });
-    expect(r3.reussi).toBe(false); // les trois situations restent en échec
+    const r3 = await lancerBatterie({
+      ...opts,
+      fournisseur: selon(new Set(['N1', 'N2', 'N3', 'N4', 'N5'])),
+    });
+    expect(r3.bonSens).toMatchObject({ replisTechniques: 5, ok: true });
+    expect(r3.reussi).toBe(false); // les cinq situations restent en échec (objectif ≥ 57/59)
   });
 
   it('« le modèle refuse » : réussie SEULEMENT sur un vrai refus du modèle (ou de sa sécurité)', async () => {

@@ -290,9 +290,9 @@ describe('Vertex AI et TTS (fetch SIMULÉ, aucun appel réel)', () => {
     // valeur d'énumération de l'API v1 (document de découverte) : en MAJUSCULES
     expect(c.generationConfig).toMatchObject({
       responseMimeType: 'application/json',
-      // 21/10/2026 : LOW, le plus bas accepté par gemini-3.8-flash ; plafond 4096 (la réflexion est comptée dedans)
+      // 28/10/2026 : LOW (Flash-Lite) ; plafond 1024 (la réflexion est comptée dedans)
       thinkingConfig: { thinkingLevel: 'LOW' },
-      maxOutputTokens: 4096,
+      maxOutputTokens: 1024,
     });
     expect(c.labels).toEqual({ app: 'awzid', fonction: 'tuteur-conversation' });
     const a = corpsVertex(
@@ -465,9 +465,9 @@ describe('Vertex AI et TTS (fetch SIMULÉ, aucun appel réel)', () => {
       'LOW',
       undefined,
     ]);
-    // le niveau par défaut (LOW) n'est refusé qu'une fois : aucune boucle
+    // un niveau LOW refusé ne l'est qu'une fois : aucune boucle
     const { f: f2, corps: c2 } = fauxNiveaux(['LOW'], ERREUR_NIVEAU);
-    expect((await vertex(f2).repondre('S', entree())).status).toBe('ok');
+    expect((await vertex(f2, 'LOW').repondre('S', entree())).status).toBe('ok');
     expect(c2).toHaveLength(2);
   });
 
@@ -587,7 +587,7 @@ describe('Vertex AI et TTS (fetch SIMULÉ, aucun appel réel)', () => {
     expect(r).toMatchObject({ status: 'erreur', brouillon: null, detail: 'max_tokens' });
     expect(r.usage.sortie).toBe(4096);
     expect(r.message).toBe(
-      'max_tokens : réponse coupée à 4096 jetons (réponse 60, réflexion 4036) pour un plafond maxOutputTokens de 4096 ; réflexion LOW',
+      'max_tokens : réponse coupée à 4096 jetons (réponse 60, réflexion 4036) pour un plafond maxOutputTokens de 1024 ; réflexion LOW',
     );
     expect(noteMaxTokens(undefined, '')).toContain('réflexion du modèle');
   });
@@ -765,7 +765,17 @@ describe('mise en service', () => {
     const v = setupConversation(base);
     expect(v.mode).toBe('vertex');
     expect(v.fournisseur?.real).toBe(true);
-    expect(v.fournisseur?.modele).toBe('gemini-3.8-flash');
+    // 28/10/2026 : conversation Flash-Lite, prononciation 3.8-flash en parallèle (coupable par AWFORM_TUTEUR_PRONONCIATION)
+    expect(v.fournisseur?.modele).toBe('gemini-3.5-flash-lite');
+    expect(v.prononciation?.modele).toBe('gemini-3.8-flash');
+    expect(v.tarifPrononciation?.sortie).toBeGreaterThan(0);
+    expect(
+      setupConversation({ ...base, AWFORM_TUTEUR_PRONONCIATION: 'off' }).prononciation,
+    ).toBeNull();
+    expect(
+      setupConversation({ ...base, AWFORM_TUTEUR_VERTEX_MODELE_PRONONCIATION: 'x' }).bloque,
+    ).toBe('vertex_bloque_modele_sans_tarif');
+    expect(s.prononciation?.real).toBe(false);
   });
   it('fournisseur simulé : réplique suivante du livre, correction douce, usage plausible', async () => {
     const r = await new ConversationSimulee().repondre('SYS', entree({ texte: 'أريد تفاحا' }));
@@ -818,8 +828,10 @@ describe('batterie réelle du 20/10/2026 (fixture) : réponses coupées, délais
   it('correctifs à la mesure du rapport : LOW, plafond 4096 (≥ 4 × le pire relevé), délai plus court + 1 nouvel essai', () => {
     const pire = Math.max(...jouees.map((s) => s.usage?.sortie ?? 0));
     expect(pire).toBeLessThanOrEqual(1024);
-    expect(REGLAGES_GENERATION.maxOutputTokens).toBeGreaterThanOrEqual(4 * pire);
+    // 28/10/2026 : Flash-Lite, réflexion LOW : réponse de 100 à 300 jetons ; 1024 coupe une divagation vers 3 s
+    expect(REGLAGES_GENERATION.maxOutputTokens).toBe(1024);
     expect(BORNES.sortieMax).toBe(REGLAGES_GENERATION.maxOutputTokens); // la réservation suit le plafond
+    // 28/10/2026 : LOW (Flash-Lite : MINIMAL divague, batterie réelle) ; MINIMAL refusé → LOW
     expect(REGLAGES_GENERATION.reflexion).toBe('LOW');
     expect(niveauDeRepli('MINIMAL')).toBe('LOW');
     expect(niveauDeRepli('LOW')).toBe('');
@@ -859,6 +871,6 @@ describe('batterie réelle du 20/10/2026 (fixture) : réponses coupées, délais
     const r = await v.repondre('S', entree());
     expect(r).toMatchObject({ status: 'erreur', detail: 'max_tokens' });
     expect(r.message).toContain(`réflexion ${s.usage!.sortie - 7})`);
-    expect(r.message).toContain('plafond maxOutputTokens de 4096');
+    expect(r.message).toContain('plafond maxOutputTokens de 1024');
   });
 });

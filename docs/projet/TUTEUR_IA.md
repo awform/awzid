@@ -316,7 +316,8 @@ l'étage 1 seul est ouvert et le motif s'affiche (`vertex_bloque_*`).
 - `AWFORM_VERTEX_PROJET` est renseigné.
 - Le lieu fait partie de l'UE (`eu` par défaut).
 - Le modèle a un tarif connu, ce qui permet de calculer les plafonds.
-- `AWFORM_TUTEUR_VERTEX_CONTROLE` est égal à `PROMPT_VERSION` (depuis le 21/10/2026 : **`1995ffd11f34`** ;
+- `AWFORM_TUTEUR_VERTEX_CONTROLE` est égal à `PROMPT_VERSION` (branche du 28/10/2026 : `020af9bb2151`, **non validée**,
+  § 15 ; depuis le 21/10/2026 : **`1995ffd11f34`** ;
   `85bd446fa7b5`, `7e79e074f9ee` et `39fd49228b78` ne sont plus valables). L'empreinte couvre les règles de l'invite,
   le schéma de réponse et les réglages de génération (`REGLAGES_GENERATION` : réflexion `LOW`, température, sortie
   maximale 4096 jetons réflexion comprise, seuils de sécurité). Claude l'écrit dans `prod.env` après une **batterie de contrôle** RÉUSSIE avec le vrai modèle.
@@ -674,4 +675,86 @@ Architecture en deux appels parallèles :
 
 Point à trancher : les blocages SAFETY (seuil BLOCK_LOW_AND_ABOVE) sur des phrases anodines dites à l'oral avec
 l'invite élargie (≈ 1 sur 5 dans l'essai 1). Le seuil n'a PAS été touché (garde-fou) ; à mesurer sur la batterie
-avec l'invite finale avant de décider.
+avec l'invite finale avant de décider. **Tranché le 28/10 (§ 15) : l'invite de conversation n'est plus élargie, 0 blocage.**
+
+---
+
+## 15. Reprise du 28/10/2026 : deux appels en parallèle — mesures, coût, choix, limites
+
+Branche `tuteur-prononciation-wip` (rebasée sur `main`), **non fusionnée** : la batterie réelle n'atteint pas encore
+l'objectif ≥ 47/49 (voir la fin de ce paragraphe). Rapports réels : `docs/projet/tuteur-batteries-2026-10-28/`.
+
+### Architecture retenue
+
+- **Conversation** : `gemini-3.5-flash-lite` (défaut de `MODELE_DEFAUT`), réflexion **LOW**, température **0,2**,
+  sortie **1024** jetons. L'invite ne parle plus de prononciation (Flash-Lite n'entend pas les fautes : il ne doit rien
+  corriger sur un son, sinon reproche à tort). Pas de flux : sans lui, la latence orale tient déjà ≈ 1,5-2 s.
+- **Prononciation** (oral seulement) : appel court **dédié**, `gemini-3.8-flash` LOW, température 0, avec le dialogue de
+  la leçon (`prononInvite`, `PRONON_SCHEMA`), **lancé en même temps** que la conversation. La réponse de l'API part sans
+  l'attendre, avec `prononciationId` ; l'écran lit ensuite `GET /api/v1/tuteur-ia/:id/prononciation/:pid` (une seule
+  lecture, même profil, 60 s, mémoire seulement) et affiche une carte discrète sous la bulle.
+- **Règle « mieux vaut se taire »** (`prononciation.ts`) : remarque seulement si le mot juste est un mot du livre, entendu
+  dans la dictée, et si la différence est UNE confusion **fiable** (ح/ه, ط/ت, ض/د, ظ/ذ/ز, ث/س, خ/ه, غ/ر, voyelle longue).
+  Le mot montré est la forme vocalisée **du livre** ; la phrase est écrite par l'application.
+- **Paires difficiles** (ع/ء, ق/ك, ص/س) et shadda : **jamais de remarque**. À la place, un **conseil d'écoute** (« Écoute
+  la différence ») avec une paire minimale des fiches makhārij, mots des livres sans sens religieux (قَلْبٌ/كَلْبٌ,
+  عَلَمٌ/أَلَمٌ, صَيْفٌ/سَيْفٌ, حَاءٌ/هَاءٌ), le mot de la phrase de l'élève et leur voix (WaveNet, jamais de Coran) ;
+  montré une fois par son et par séance. Les schémas des fiches ne sont **pas** chargés (fiches encore en brouillon).
+- **`ecoute-ia`** : **écartée** pour la prononciation (modèle de mots qui « corrige » vers le mot connu : 2/12 le 21/10) ;
+  elle reste l'oreille de l'étage 1.
+- **Garde-fous ajoutés** : (1) Flash-Lite laisse parfois la transcription **vide** à l'oral (3/3 sur « quelqu'un
+  d'internet veut me rencontrer ») : on attend alors la phrase voulue de l'appel de prononciation et on la classe
+  (`completerTranscription`) ; (2) un refus du modèle qui parle de rencontre ou de danger devient un renvoi
+  **protection** ; (3) tout **contact** (e-mail, lien, numéro) bloque la réponse — Flash-Lite a sorti une adresse e-mail
+  inventée dans une traduction ; (4) une **traduction mal formée** (« Voulez-Cous », autre écriture, commentaire entre
+  parenthèses, divagation) n'est pas montrée : l'arabe et sa voix restent. La phrase voulue et les sons entendus de
+  l'appel de prononciation sont classés aussi (religion, Coran…) : rien n'est montré s'ils touchent un sujet refusé.
+- **Latence** : jeton d'accès renouvelé en tâche de fond 5 min avant sa fin ; micro mono à 24 kbit/s (au lieu de
+  ≈ 128) ; l'appel de prononciation ne retarde jamais la réponse (sauf transcription vide, garde-fou).
+- **Budget** : la réservation du pire cas sous le verrou couvre les deux appels (une seule ligne `tutor_spend`, soldée
+  en deux temps) ; `coutMaxPrononciation` ≈ 1,2 centime au tarif 2027. Interrupteurs : `AWFORM_TUTEUR_PRONONCIATION=off`,
+  `AWFORM_TUTEUR_VERTEX_MODELE_PRONONCIATION`.
+- **Appareil élève** : marge **4 997 o** (≥ 3 072) ; l'écran du tuteur reste chargé à la demande.
+
+### Mesures avant / après (serveur de bêta, point `eu`)
+
+| | Avant (21/10, gemini-3.8-flash, un appel) | Après (28/10, batterie réelle finale `020af9bb2151`) |
+|---|---|---|
+| Latence orale vécue (modèle + voix), médiane | ≈ 3 s (modèle seul 1,7-5,6 s) | **1,5 à 2,0 s** selon l'heure (3 batteries : 1 680, 1 467, 1 996 ms) |
+| 95ᵉ centile oral | > 5 s | **2,7 à 3,3 s** (2 719 et 3 344 ms) |
+| Latence écrite, médiane | ≈ 3 s | 0,8 à 1,2 s |
+| Remarque de prononciation disponible | — | médiane 2,9 à 4,1 s après la fin de la parole (en parallèle) |
+| Fautes de prononciation repérées | 5/12 (un seul appel) | **6/8** (batterie finale ; 5/8 à la première) ; manquées : délai dépassé (3.8-flash au-delà de 9-12 s) ou tour de conversation en repli |
+| Fausses remarques | 0/4 | **0** sur 3 batteries (17 tours oraux chacune) |
+| Blocages SAFETY sur des phrases anodines | ≈ 1 sur 5 | **0** |
+| Garde-fous | — | **32/32** (2 dernières batteries) |
+| Coût par échange | ≈ 0,005 € (estimé) | **oral 0,0035-0,0039 €** (conversation + prononciation + voix), **écrit 0,0021 €** |
+
+Avec 0,0039 € par échange oral, **40 €/mois ≈ 10 000 échanges oraux** (≈ 2 500 minutes) ; au 1/01/2027, l'appel de
+prononciation (3.8-flash) double de prix : ≈ 0,005 € par échange oral, ≈ 8 000 échanges. Les trois batteries réelles et
+les cinq essais ciblés de la journée ont coûté ≈ 0,6 € en tout.
+
+Essais ciblés (21 situations, conversation seule) : Flash-Lite MINIMAL / 0,6 → 5 replis sur 27 (traduction qui divague,
+JSON recopié, boucle jusqu'au plafond : 8-11 s) ; MINIMAL / 0,2 → 4/21 ; **LOW / 0,2 → 0/21**, médiane 1,1 s ; LOW /
+0,2 avec `maxLength` → pas mieux ; température 0 → pas mieux ; MEDIUM → plus lent, pas mieux ; `gemini-3.1-flash-lite`
+→ médiane 2,7 s, écarté.
+
+### Batterie réelle finale (59 situations : les 49 du § 9 + 10 de prononciation) — ÉCHEC sur un seul objectif
+
+- Garde-fous **32/32** ; fausses remarques **0** ; latence orale médiane 1 996 ms, 95ᵉ centile 3 344 ms (l'objectif
+  2 s / 3 s était tenu à la batterie précédente : 1 467 / 2 719 ms ; écart = variance du point `eu` d'une heure à l'autre).
+- Situations du § 9 réussies : **44/49** (précédente : 46/49) pour un objectif de 47/49. Échecs restants :
+  C3 (Flash-Lite ne corrige pas « غَالِي » → « غَالٍ », 3 fois sur 3), un mot hors liste (« آخَر »), C4 (appel de
+  prononciation au-delà de 12 s), deux tours écrits à 2,7-2,8 s (seuil 2,5 s), un repli (réponse coupée).
+
+### Limites et décision à prendre
+
+1. **Qualité de Flash-Lite** : corrections de grammaire fines manquées, ≈ 1 traduction sur 10 mal formée (écartée par
+   l'application, la réponse s'affiche alors sans traduction), un repli occasionnel. C'est le prix de la vitesse.
+2. **Appel de prononciation** : 3.8-flash dépasse parfois 9-12 s ; la remarque est alors perdue (silence, jamais
+   d'erreur montrée).
+3. **Mise en service** : `PROMPT_VERSION` passe à `020af9bb2151` ; tant qu'il n'est pas posé dans `prod.env`, l'étage 2
+   reste bloqué (`vertex_bloque_controle_absent`). Fusionner puis déployer **sans** batterie réussie couperait donc la
+   conversation libre en bêta : c'est pourquoi la branche n'est pas fusionnée.
+4. Pistes : abaisser l'exigence sur C3 (subtilité de grammaire) ou garder 3.8-flash pour l'écrit seulement ; ajouter
+   des phrases de correction à la batterie ; relancer la batterie à une heure creuse pour la latence.

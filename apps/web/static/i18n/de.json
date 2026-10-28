@@ -4382,5 +4382,7 @@
   "md.err_quota": "Im Moment zu viele Anfragen: Versuche es später erneut.",
   "md.err_audio": "Deine Aufnahme konnte nicht analysiert werden. Rezitiere den ganzen Vers und versuche es erneut.",
   "md.err_reference": "Ayyūbs Rezitation dieses Verses ist nicht verfügbar.",
-  "fn.tajwid_madd": "Madd-Hinweis (Erwachsene, geschlossene Beta)"
+  "fn.tajwid_madd": "Madd-Hinweis (Erwachsene, geschlossene Beta)",
+  "tuia.prononciation": "Aussprache",
+  "tuia.ecoute_difference": "Hör den Unterschied"
 }

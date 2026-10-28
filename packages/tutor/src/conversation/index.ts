@@ -7,3 +7,4 @@ export * from './budget.js';
 export * from './google.js';
 export * from './simule.js';
 export * from './setup.js';
+export * from './prononciation.js';

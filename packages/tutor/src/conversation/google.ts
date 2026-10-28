@@ -11,8 +11,19 @@
  *    métadonnées ; si `compte` est donné, il l'échange (IAM Credentials) contre un jeton court du compte de service
  *    dédié au tuteur (droits minimaux), qu'il est seul à pouvoir emprunter.
  */
-import { CONV_SCHEMA, REGLAGES_GENERATION } from './prompt.js';
-import type { ConvEntree, ConvFournisseur, ConvSortieFournisseur, Synthese } from './types.js';
+import {
+  CONV_SCHEMA,
+  PRONON_SCHEMA,
+  REGLAGES_GENERATION,
+  REGLAGES_PRONONCIATION,
+} from './prompt.js';
+import type {
+  ConvEntree,
+  ConvFournisseur,
+  ConvSortieFournisseur,
+  PrononFournisseur,
+  Synthese,
+} from './types.js';
 
 export type Fetch = typeof fetch;
 
@@ -32,13 +43,32 @@ export interface Jeton {
 const METADATA =
   'http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token';
 
-/** Jeton du serveur de métadonnées (VM), éventuellement échangé contre celui du compte du tuteur. */
+/**
+ * Jeton du serveur de métadonnées (VM), éventuellement échangé contre celui du compte du tuteur.
+ * 28/10/2026 (latence) : renouvelé À L'AVANCE — s'il reste moins de 5 min, le jeton en cache (encore valable) est
+ * rendu tout de suite et le nouveau est demandé en tâche de fond (≈ 166 ms épargnés sur le tour qui tombait dessus) ;
+ * une seule demande à la fois.
+ */
 export function jetonGoogle(opts: { fetch?: Fetch; compte?: string } = {}): Jeton {
   const f = opts.fetch ?? fetch;
   let cache: { v: string; fin: number } | null = null;
+  let enCours: Promise<string> | null = null;
+  const renouveler = () =>
+    (enCours ??= demander().finally(() => {
+      enCours = null;
+    }));
   return {
     async obtenir() {
-      if (cache && cache.fin - Date.now() > 60_000) return cache.v;
+      const reste = cache ? cache.fin - Date.now() : 0;
+      if (cache && reste > 60_000) {
+        if (reste < 300_000) void renouveler().catch(() => undefined);
+        return cache.v;
+      }
+      return renouveler();
+    },
+  };
+  async function demander(): Promise<string> {
+    {
       const r = await f(METADATA, {
         headers: { 'Metadata-Flavor': 'Google' },
         signal: AbortSignal.timeout(3000),
@@ -67,8 +97,8 @@ export function jetonGoogle(opts: { fetch?: Fetch; compte?: string } = {}): Jeto
       }
       cache = { v, fin };
       return v;
-    },
-  };
+    }
+  }
 }
 
 export interface OptionsVertex {
@@ -301,7 +331,6 @@ export class VertexConversation implements ConvFournisseur {
   }
 
   async repondre(systeme: string, e: ConvEntree): Promise<ConvSortieFournisseur> {
-    const zero = { texte: 0, audio: 0, sortie: 0 };
     // notes techniques du tour (réglage refusé, nouvel essai, réponse coupée) : journal du serveur et rapport de la
     // batterie, jamais montrées à l'élève
     const notes: string[] = [];
@@ -331,16 +360,36 @@ export class VertexConversation implements ConvFournisseur {
         r = await this.envoyerAvecNouvelEssai(systeme, e, reflexion, notes);
       }
     } catch (err) {
-      const m = String((err as Error)?.message ?? '');
-      const jeton = m.startsWith('metadonnees') || m.startsWith('emprunt');
-      return {
-        status: 'erreur',
-        brouillon: null,
-        usage: zero,
-        detail: jeton ? m : 'reseau',
-        ...message(jeton ? undefined : natureErreurReseau(err)),
-      };
+      return erreurEnvoi(err, message);
     }
+    return interpreterReponse(r, reflexion, message);
+  }
+}
+
+/** Erreur avant toute réponse : jeton (configuration) ou réseau / délai dépassé. */
+function erreurEnvoi(
+  err: unknown,
+  message: (...plus: Array<string | undefined>) => { message?: string },
+): ConvSortieFournisseur {
+  const m = String((err as Error)?.message ?? '');
+  const jeton = m.startsWith('metadonnees') || m.startsWith('emprunt');
+  return {
+    status: 'erreur',
+    brouillon: null,
+    usage: { texte: 0, audio: 0, sortie: 0 },
+    detail: jeton ? m : 'reseau',
+    ...message(jeton ? undefined : natureErreurReseau(err)),
+  };
+}
+
+/** Lecture d'une réponse de generateContent : refus de sécurité, panne, réponse coupée, ou brouillon JSON. */
+async function interpreterReponse(
+  r: Response,
+  reflexion: string,
+  message: (...plus: Array<string | undefined>) => { message?: string },
+): Promise<ConvSortieFournisseur> {
+  const zero = { texte: 0, audio: 0, sortie: 0 };
+  {
     if (!r.ok) {
       const google = messageErreurGoogle(await r.text().catch(() => ''));
       return {
@@ -396,6 +445,84 @@ export class VertexConversation implements ConvFournisseur {
         ...message(),
       };
     return { status: 'ok', brouillon, usage, ...message() };
+  }
+}
+
+/**
+ * Délai de l'appel de prononciation (mesuré le 21/10 : 1,5 à 7,6 s ; batterie du 28/10 : 4 appels sur 17 au-delà de
+ * 9 s) ; aucun nouvel essai (remarque facultative, elle arrive après la réponse).
+ */
+export const DELAI_PRONONCIATION_MS = 12_000;
+
+/** Corps de l'appel de PRONONCIATION : audio seul, invite courte (dialogue de la leçon), aucun historique. */
+export function corpsPrononciation(
+  systeme: string,
+  audio: { mime: string; data: Buffer },
+  reflexion: string = REGLAGES_PRONONCIATION.reflexion,
+): object {
+  const niveau = niveauReflexion(reflexion);
+  return {
+    systemInstruction: { parts: [{ text: systeme }] },
+    contents: [
+      {
+        role: 'user',
+        parts: [
+          {
+            inlineData: { mimeType: audio.mime.split(';')[0], data: audio.data.toString('base64') },
+          },
+          { text: 'Transcris littéralement.' },
+        ],
+      },
+    ],
+    generationConfig: {
+      responseMimeType: 'application/json',
+      responseSchema: PRONON_SCHEMA,
+      maxOutputTokens: REGLAGES_PRONONCIATION.maxOutputTokens,
+      temperature: REGLAGES_PRONONCIATION.temperature,
+      ...(niveau ? { thinkingConfig: { thinkingLevel: niveau } } : {}),
+    },
+    safetySettings: SECURITE,
+    labels: { app: 'awzid', fonction: 'tuteur-prononciation' },
+  };
+}
+
+/**
+ * Appel de PRONONCIATION (28/10/2026) : gemini-3.8-flash, lancé EN PARALLÈLE de la conversation ; un seul envoi
+ * (la remarque est facultative : en cas de panne, l'élève n'a simplement pas de remarque).
+ */
+export class VertexPrononciation implements PrononFournisseur {
+  readonly name = 'vertex';
+  readonly real = true;
+  readonly modele: string;
+  constructor(
+    private readonly o: Omit<OptionsVertex, 'delaiNouvelEssaiMs' | 'pauseNouvelEssaiMs'>,
+  ) {
+    if (!(LIEUX_UE as readonly string[]).includes(o.lieu)) throw new Error('lieu_hors_ue');
+    this.modele = o.modele;
+  }
+
+  async ecouter(
+    systeme: string,
+    audio: { mime: string; data: Buffer },
+  ): Promise<ConvSortieFournisseur> {
+    const notes: string[] = [];
+    const message = (...plus: Array<string | undefined>) => {
+      const m = [...notes, ...plus.filter(Boolean)].join(' ; ').slice(0, 600);
+      return m ? { message: m } : {};
+    };
+    const reflexion = this.o.reflexion ?? REGLAGES_PRONONCIATION.reflexion;
+    try {
+      const jeton = await this.o.jeton.obtenir();
+      const r = await (this.o.fetch ?? fetch)(urlVertex(this.o), {
+        method: 'POST',
+        headers: { authorization: `Bearer ${jeton}`, 'content-type': 'application/json' },
+        body: JSON.stringify(corpsPrononciation(systeme, audio, reflexion)),
+        signal: AbortSignal.timeout(this.o.delaiMs ?? DELAI_PRONONCIATION_MS),
+      });
+      return await interpreterReponse(r, reflexion, message);
+    } catch (err) {
+      return erreurEnvoi(err, message);
+    }
   }
 }
 

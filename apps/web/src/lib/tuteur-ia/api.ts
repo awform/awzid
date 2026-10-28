@@ -49,6 +49,20 @@ export interface ReponseLibre {
   /** motif d'une redirection « protection » (rencontre avec un inconnu, ou détresse) */
   protection?: 'rencontre' | 'detresse';
   minutesRestantes?: number;
+  /** 28/10/2026 : oral — la remarque de prononciation arrive juste après (prononciation()) */
+  prononciationId?: string;
+}
+/** Prononciation d'un tour oral : remarque VÉRIFIÉE (mot du livre) ou conseil d'écoute (paire difficile), et voix. */
+export interface ResultatPrononciation {
+  remarque: { correct: string; son: string; explication_fr: string } | null;
+  conseil: {
+    son: string;
+    autre: string;
+    mot: string;
+    paire: [{ ar: string; fr?: string }, { ar: string; fr?: string }];
+    explication_fr: string;
+  } | null;
+  audio: { mime: string; b64: string } | null;
 }
 export interface Audio {
   mime: string;
@@ -77,6 +91,8 @@ export const libre = (
     adresse: 'tu' | 'vous';
   },
 ) => call<ReponseLibre>('POST', `${base(id)}/libre`, body);
+export const prononciation = (id: string, pid: string) =>
+  call<ResultatPrononciation>('GET', `${base(id)}/prononciation/${encodeURIComponent(pid)}`);
 /** accord « analyse vocale par IA » (A5), au premier usage */
 export const accordVoix = (id: string) =>
   call<{ ok: boolean }>('POST', `/profiles/${encodeURIComponent(id)}/ecoute/accord`, {});
@@ -100,12 +116,16 @@ async function enBase64(b: Blob): Promise<string> {
 /** Démarre le micro ; s'arrête seul après `maxS` secondes (`surFin` est alors appelé). Rejette sans micro. */
 export async function enregistrer(maxS: number, surFin: () => void): Promise<Enregistreur> {
   const flux = await navigator.mediaDevices.getUserMedia({
-    audio: { echoCancellation: true, noiseSuppression: true },
+    audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 },
   });
   const type =
     TYPES.find((x) => typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(x)) ??
     '';
-  const rec = new MediaRecorder(flux, type ? { mimeType: type } : {});
+  // 28/10/2026 (latence) : voix mono compressée à 24 kbit/s (≈ 128 kbit/s par défaut dans Chrome) : envoi plus court
+  const rec = new MediaRecorder(flux, {
+    ...(type ? { mimeType: type } : {}),
+    audioBitsPerSecond: 24_000,
+  });
   const morceaux: Blob[] = [];
   rec.ondataavailable = (e) => e.data.size && morceaux.push(e.data);
   const debut = performance.now();

@@ -4,7 +4,8 @@
  *
  *   node dist/cli/batterie-conversation.js --simule [--sortie BASE]
  *   node dist/cli/batterie-conversation.js --confirmer [--sortie BASE] [--plafond-eur 1]
- *        [--projet P] [--lieu eu] [--compte awzid-tuteur@…] [--modele gemini-3.8-flash] [--reflexion low]
+ *        [--projet P] [--lieu eu] [--compte awzid-tuteur@…] [--modele gemini-3.5-flash-lite] [--reflexion minimal]
+ *        [--modele-prononciation gemini-3.8-flash] [--sans-prononciation]
  *
  * Réel (défaut) : Gemini sur Vertex AI (UE) et voix Google Cloud TTS, jeton du serveur de MÉTADONNÉES de la VM
  * échangé contre celui du compte emprunté (AUCUNE clé) — donc à lancer SUR le serveur bêta. Valeurs par défaut lues
@@ -19,13 +20,20 @@
 import { writeFileSync } from 'node:fs';
 import { QuranIndex } from '../arabic.js';
 import { hasTanzil, loadTanzil, tanzilFile } from '../load.js';
-import { lancerBatterie, rapportMarkdown } from '../conversation/batterie.js';
+import { lancerBatterie, rapportMarkdown, SITUATIONS } from '../conversation/batterie.js';
 import { tarifDe } from '../conversation/budget.js';
-import { GoogleTts, jetonGoogle, LIEUX_UE, VertexConversation } from '../conversation/google.js';
+import {
+  GoogleTts,
+  jetonGoogle,
+  LIEUX_UE,
+  VertexConversation,
+  VertexPrononciation,
+} from '../conversation/google.js';
+import { PrononciationSimulee } from '../conversation/prononciation.js';
 import { PROMPT_VERSION } from '../conversation/prompt.js';
-import { MODELE_DEFAUT } from '../conversation/setup.js';
+import { MODELE_DEFAUT, MODELE_PRONONCIATION_DEFAUT } from '../conversation/setup.js';
 import { ConversationSimulee } from '../conversation/simule.js';
-import type { ConvFournisseur, Synthese } from '../conversation/types.js';
+import type { ConvFournisseur, PrononFournisseur, Synthese } from '../conversation/types.js';
 
 const argv = process.argv.slice(2);
 const arg = (k: string) => {
@@ -37,6 +45,12 @@ const simule = argv.includes('--simule');
 const base = (arg('--sortie') ?? 'tuteur-conversation-batterie').replace(/\.(json|md)$/, '');
 const plafondEur = Number(arg('--plafond-eur') ?? 1);
 const modele = arg('--modele') ?? (env.AWFORM_TUTEUR_VERTEX_MODELE || MODELE_DEFAUT);
+const modeleP =
+  arg('--modele-prononciation') ??
+  (env.AWFORM_TUTEUR_VERTEX_MODELE_PRONONCIATION || MODELE_PRONONCIATION_DEFAUT);
+const sansPrononciation = argv.includes('--sans-prononciation');
+// essai ciblé (diagnostic) : quelques situations seulement (--ids C3,C4) ; jamais une validation
+const ids = arg('--ids')?.split(',').filter(Boolean);
 const fin = (msg: string, code = 2): never => {
   console.error(msg);
   process.exit(code);
@@ -48,11 +62,16 @@ if (!hasTanzil())
   fin(`Tanzil absent (${tanzilFile()}) : AWFORM_CONTENT_DIR doit désigner le contenu.`);
 const tarif = tarifDe(modele);
 if (!tarif) fin(`Modèle sans tarif connu : ${modele}.`);
+const tarifP = sansPrononciation ? null : tarifDe(modeleP);
+if (!sansPrononciation && !tarifP) fin(`Modèle de prononciation sans tarif connu : ${modeleP}.`);
 
 let fournisseur: ConvFournisseur;
 let voix: Synthese | null = null;
-if (simule) fournisseur = new ConversationSimulee(modele);
-else {
+let prononciation: PrononFournisseur | null = null;
+if (simule) {
+  fournisseur = new ConversationSimulee(modele);
+  if (!sansPrononciation) prononciation = new PrononciationSimulee(modeleP);
+} else {
   const projet = arg('--projet') ?? env.AWFORM_VERTEX_PROJET ?? '';
   const lieu = arg('--lieu') ?? (env.AWFORM_VERTEX_LIEU || 'eu');
   const compte = arg('--compte') ?? env.AWFORM_VERTEX_COMPTE ?? '';
@@ -74,10 +93,17 @@ else {
     ...(reflexion ? { reflexion } : {}),
   });
   voix = new GoogleTts({ jeton, voix: env.AWFORM_TUTEUR_VOIX || 'ar-XA-Wavenet-B' });
+  if (!sansPrononciation)
+    prononciation = new VertexPrononciation({
+      projet,
+      lieu: lieu as (typeof LIEUX_UE)[number],
+      modele: modeleP,
+      jeton,
+    });
 }
 
 console.log(
-  `Batterie du tuteur de conversation — invite ${PROMPT_VERSION}, ${fournisseur.name} (${modele}), plafond ${plafondEur} €`,
+  `Batterie du tuteur de conversation — invite ${PROMPT_VERSION}, ${fournisseur.name} (${modele} ; prononciation : ${prononciation ? modeleP : 'non jouée'}), plafond ${plafondEur} €`,
 );
 const tanzil = loadTanzil();
 const rapport = await lancerBatterie({
@@ -85,8 +111,14 @@ const rapport = await lancerBatterie({
   voix,
   index: new QuranIndex(tanzil),
   tarif: tarif!,
+  prononciation,
+  tarifPrononciation: tarifP,
   usdEur: Number(env.AWFORM_TUTEUR_USD_EUR) > 0 ? Number(env.AWFORM_TUTEUR_USD_EUR) : 1,
   plafondMicros: Math.round(plafondEur * 1e6),
+  ...(ids ? { situations: SITUATIONS.filter((s) => ids.includes(s.id)) } : {}),
+  ...(arg('--adresse') === 'tu' || arg('--adresse') === 'vous'
+    ? { adresse: arg('--adresse') as 'tu' | 'vous' }
+    : {}),
   journal: (l) => console.log(l),
 });
 writeFileSync(`${base}.json`, `${JSON.stringify(rapport, null, 2)}\n`);

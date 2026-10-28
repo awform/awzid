@@ -4382,5 +4382,7 @@
   "md.err_quota": "Too many requests at the moment: try again later.",
   "md.err_audio": "Your recording could not be analysed. Recite the whole verse, then try again.",
   "md.err_reference": "Ayyūb’s recitation of this verse is not available.",
-  "fn.tajwid_madd": "Madd indication (adults, closed beta)"
+  "fn.tajwid_madd": "Madd indication (adults, closed beta)",
+  "tuia.prononciation": "Pronunciation",
+  "tuia.ecoute_difference": "Hear the difference"
 }
