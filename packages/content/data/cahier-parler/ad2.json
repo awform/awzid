@@ -4870,7 +4870,7 @@
                                                     "unite":  16
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur te demande l\u0027heure et le jour d\u0027un rendez-vous. Réponds avec l\u0027heure (السَّاعَةُ…) et le jour (يَوْمَ…).",
+                              "consigne_tuteur":  "Le tuteur te demande l\u0027heure et le jour d\u0027un rendez-vous. Réponds avec l\u0027heure (السَّاعَةُ…) et le jour (يَوْمَ…).",
                               "source_mots":  [
                                                   "ad1",
                                                   "ad2 L16",
@@ -4913,7 +4913,7 @@
                                                     "unite":  17
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur te propose une sortie. Dis si tu as du temps (عِنْدِي / لَيْسَ عِنْدِي) et accepte avec « إِنْ شَاءَ اللَّهُ ».",
+                              "consigne_tuteur":  "Le tuteur te propose une sortie. Dis si tu as du temps (عِنْدِي / لَيْسَ عِنْدِي) et accepte avec « إِنْ شَاءَ اللَّهُ ».",
                               "source_mots":  [
                                                   "ad1",
                                                   "ad2 L17",
@@ -5150,7 +5150,7 @@
                                                     "unite":  21
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur te souhaite une bonne fête et te demande où tu as prié. Réponds au passé (صَلَّيْتُ، وَصَلْتُ، سَمِعْتُ).",
+                              "consigne_tuteur":  "Le tuteur te souhaite une bonne fête et te demande où tu as prié. Réponds au passé (صَلَّيْتُ، وَصَلْتُ، سَمِعْتُ).",
                               "source_mots":  [
                                                   "ad1",
                                                   "ad2 L21",
@@ -5475,7 +5475,7 @@
                                                     "unite":  1
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur s\u0027adresse à un groupe de femmes (أَنْتُنَّ). Réponds pour le groupe (نَحْنُ) et parle de tes amies (هُنَّ).",
+                              "consigne_tuteur":  "Le tuteur s\u0027adresse à un groupe de femmes (أَنْتُنَّ). Réponds pour le groupe (نَحْنُ) et parle de tes amies (هُنَّ).",
                               "source_mots":  [
                                                   "ad1",
                                                   "ad2 L1",
@@ -5597,7 +5597,7 @@
                                                     "unite":  11
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur organise une journée de solidarité. Dis-lui combien il y a de bénévoles et ce que font les hommes (هُمْ) et les femmes (الْمُتَطَوِّعَاتُ).",
+                              "consigne_tuteur":  "Le tuteur organise une journée de solidarité. Dis-lui combien il y a de bénévoles et ce que font les hommes (هُمْ) et les femmes (الْمُتَطَوِّعَاتُ).",
                               "source_mots":  [
                                                   "ad1",
                                                   "ad2 L11",

@@ -131,8 +131,8 @@
                                          },
                                          {
                                              "ref":  "P008",
-                                             "ar":  "مَا نَدِمَ مَنِ اسْتَشَارَ.",
-                                             "fr":  "Celui qui demande conseil ne le regrette pas."
+                                             "ar":  "الْمُسْتَشَارُ مُؤْتَمَنٌ.",
+                                             "fr":  "Celui à qui l\u0027on demande conseil se doit d\u0027être loyal (hadith rapporté par Abū Dāwūd et at-Tirmidhī)."
                                          },
                                          {
                                              "ref":  "P121",
@@ -1304,7 +1304,7 @@
                       "partie":  1,
                       "theme":  "decision",
                       "type":  "phrase_du_jour",
-                      "titre_fr":  "Je le dirai à ma mère ce soir, si Allah le veut. / Celui qui demande conseil ne le regrette pas. / Et toi, es-tu prêt ? (à un homme) / Je veux me marier, mais j\u0027ai peur.",
+                      "titre_fr":  "Je le dirai à ma mère ce soir, si Allah le veut. / Celui à qui l\u0027on demande conseil se doit d\u0027être loyal (hadith rapporté par Abū Dāwūd et at-Tirmidhī). / Et toi, es-tu prêt ? (à un homme) / Je veux me marier, mais j\u0027ai peur.",
                       "apres":  "l01",
                       "apres_n":  1,
                       "refs":  [
@@ -3589,8 +3589,8 @@
                         "id":  "P008",
                         "theme":  "decision",
                         "cible":  "neutre",
-                        "ar":  "مَا نَدِمَ مَنِ اسْتَشَارَ.",
-                        "fr":  "Celui qui demande conseil ne le regrette pas.",
+                        "ar":  "الْمُسْتَشَارُ مُؤْتَمَنٌ.",
+                        "fr":  "Celui à qui l\u0027on demande conseil se doit d\u0027être loyal (hadith rapporté par Abū Dāwūd et at-Tirmidhī).",
                         "variations":  null,
                         "unite":  0,
                         "source_mots":  [
@@ -5621,8 +5621,8 @@
                                                 },
                                                 {
                                                     "qui":  "B",
-                                                    "ar":  "خُذْ بِالْأَسْبَابِ، وَتَوَكَّلْ عَلَى اللَّهِ؛ فَمَا نَدِمَ مَنِ اسْتَشَارَ.",
-                                                    "fr":  "Prends les moyens, et remets-t\u0027en à Allah ; celui qui demande conseil ne le regrette pas.",
+                                                    "ar":  "خُذْ بِالْأَسْبَابِ، وَتَوَكَّلْ عَلَى اللَّهِ؛ وَالْمُسْتَشَارُ مُؤْتَمَنٌ.",
+                                                    "fr":  "Prends les moyens, et remets-t\u0027en à Allah ; et celui à qui l\u0027on demande conseil se doit d\u0027être loyal (hadith rapporté par Abū Dāwūd et at-Tirmidhī).",
                                                     "unite":  0
                                                 }
                                             ],
@@ -5637,8 +5637,8 @@
                                                          "fr":  "Ce qu\u0027Allah a voulu ! Et as-tu consulté ta famille ?"
                                                      },
                                                      {
-                                                         "ar":  "خُذْ بِالْأَسْبَابِ، وَتَوَكَّلْ عَلَى اللَّهِ؛ فَمَا نَدِمَ مَنِ اسْتَشَارَ.",
-                                                         "fr":  "Prends les moyens, et remets-t\u0027en à Allah ; celui qui demande conseil ne le regrette pas."
+                                                         "ar":  "خُذْ بِالْأَسْبَابِ، وَتَوَكَّلْ عَلَى اللَّهِ؛ وَالْمُسْتَشَارُ مُؤْتَمَنٌ.",
+                                                         "fr":  "Prends les moyens, et remets-t\u0027en à Allah ; et celui à qui l\u0027on demande conseil se doit d\u0027être loyal (hadith rapporté par Abū Dāwūd et at-Tirmidhī)."
                                                      },
                                                      {
                                                          "ar":  "خَوْفُكَ عَلَامَةٌ طَيِّبَةٌ: مَنْ خَافَ التَّقْصِيرَ اسْتَعَدَّ. هَلْ حَسَبْتَ مِيزَانِيَّتَكَ؟",

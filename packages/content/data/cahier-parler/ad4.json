@@ -21,7 +21,7 @@
     "parties":  [
                     {
                         "n":  1,
-                        "titre_fr":  "Partie 1 — La boutique, les nouvelles, la parole donnée (leçons 1 à 5)",
+                        "titre_fr":  "Partie 1 — Les nouvelles, la parole donnée (leçons 1 à 5)",
                         "lecons":  "0 à 5",
                         "themes":  [
                                        "nouvelles",
@@ -30,7 +30,7 @@
                     },
                     {
                         "n":  2,
-                        "titre_fr":  "Partie 2 — Demander conseil, faire ses courses, préparer la fête (leçons 6 à 10)",
+                        "titre_fr":  "Partie 2 — La boutique, demander conseil, faire ses courses, préparer la fête (leçons 6 à 10)",
                         "lecons":  "6 à 10",
                         "themes":  [
                                        "boutique",

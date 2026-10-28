@@ -5135,7 +5135,7 @@
                                                     "unite":  0
                                                 }
                                             ],
-                              "consigne_tuteur":  "Le tuteur est la professeure qui anime le débat. Donne ton avis (أَرَى أَنَّ…), un exemple, puis la limite que tu acceptes.",
+                              "consigne_tuteur":  "Le tuteur est la professeure qui anime le débat. Donne ton avis (أَرَى أَنَّ…), un exemple, puis la limite que tu acceptes.",
                               "phrases_utiles":  [
                                                      {
                                                          "ar":  "لَا لِلْهَاتِفِ فِي أَثْنَاءِ الدَّرْسِ!",

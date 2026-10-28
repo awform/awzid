@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
+  import { onDestroy, setContext } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import Bidi from '$lib/Bidi.svelte';
+  import { TYPO_FR } from '$lib/bidi/typo-fr';
   import { demoProfileFor } from '$lib/attempts';
   import type { LevelAudio } from '$lib/lecons-audio';
   import { t } from '$lib/i18n';
@@ -24,6 +25,7 @@
    * Cahier de lecture (20/10/2026) — sommaire (sans `?p`) ou une page. Hors ligne d'abord : le cahier, sa progression
    * (6 cases, bilans, minutes) et l'audio téléchargé du niveau sont lus sur l'appareil.
    */
+  setContext(TYPO_FR, true); // typographie française à l'affichage (jamais dans l'arabe)
   let {
     niveau,
     pageId,

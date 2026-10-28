@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
+  import { onDestroy, setContext } from 'svelte';
   import { resolve } from '$app/paths';
   import Bidi from '$lib/Bidi.svelte';
+  import { TYPO_FR } from '$lib/bidi/typo-fr';
   import { demoProfileFor } from '$lib/attempts';
   import { levelAudio, stopLessonAudio, type LevelAudio } from '$lib/lecons-audio';
   import { t } from '$lib/i18n';
@@ -24,6 +25,7 @@
    * de ses pages ; `&p=antiseche` : ses phrases utiles. Hors ligne d'abord : le cahier, sa progression (6 cases,
    * bilans) et l'audio téléchargé du niveau sont lus sur l'appareil.
    */
+  setContext(TYPO_FR, true); // typographie française à l'affichage (jamais dans l'arabe)
   let {
     niveau,
     etapeId,

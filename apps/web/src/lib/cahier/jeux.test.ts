@@ -157,14 +157,14 @@ describe('règles d’enseignement des livres (ordre des leçons)', () => {
     // enfants : un son long par leçon, puis soukoun, tanwīn (et ة), chadda
     expect(num('en1', /son long .*?َا|le son long َا/)).toBe(REGLES.en1.longA);
     expect(num('en1', /le soukoun/)).toBe(REGLES.en1.soukoun);
-    expect(num('en1', /le tanwīn/)).toBe(REGLES.en1.tanwin);
+    expect(num('en1', /le tanwin/)).toBe(REGLES.en1.tanwin);
     expect(num('en1', /la chadda/)).toBe(REGLES.en1.shadda);
     expect(num('en1', /hamza sur l'alif/)).toBe(REGLES.en1.hamzaTete);
     expect(REGLES.en1.taMarbuta).toBe(REGLES.en1.tanwin);
     // ados : voyelles longues et soukoun, puis tanwīn et chadda, article/ة/ى, hamza
     expect(num('ado1', /voyelles longues et soukoun/)).toBe(REGLES.ado1.longA);
     expect(REGLES.ado1.soukoun).toBe(REGLES.ado1.longA);
-    expect(num('ado1', /tanwīn et chadda/)).toBe(REGLES.ado1.tanwin);
+    expect(num('ado1', /tanwin et chadda/)).toBe(REGLES.ado1.tanwin);
     expect(REGLES.ado1.shadda).toBe(REGLES.ado1.tanwin);
     expect(num('ado1', /article, ة et ى/)).toBe(REGLES.ado1.taMarbuta);
     expect(REGLES.ado1.maqsura).toBe(REGLES.ado1.taMarbuta);

@@ -573,7 +573,7 @@
                        "picto":  "porte",
                        "titre_fr":  "Le voisin et l\u0027ascenseur",
                        "titre_ar":  "جَارُنَا",
-                       "accroche_fr":  "À la fin de cette étape, je sais expliquer pourquoi (لِأَنَّ) et proposer mon aide.",
+                       "accroche_fr":  "À la fin de cette étape, je sais expliquer pourquoi (لِأَنَّ) et proposer mon aide.",
                        "unite":  11,
                        "phrases":  [
                                        "P037",
@@ -1233,7 +1233,7 @@
                       "partie":  1,
                       "theme":  "classe",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : La lettre et la caisse — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : La lettre et la caisse · Mes phrases utiles",
                       "apres":  "l02",
                       "apres_n":  2,
                       "refs":  [
@@ -1324,7 +1324,7 @@
                       "partie":  1,
                       "theme":  "course",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : La course — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : La course · Mes phrases utiles",
                       "apres":  "l04",
                       "apres_n":  4,
                       "refs":  [
@@ -1415,7 +1415,7 @@
                       "partie":  1,
                       "theme":  "musee",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Le musée de la classe — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Le musée de la classe · Mes phrases utiles",
                       "apres":  "l05",
                       "apres_n":  5,
                       "refs":  [
@@ -1601,7 +1601,7 @@
                       "partie":  2,
                       "theme":  "devinette",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : La devinette — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : La devinette · Mes phrases utiles",
                       "apres":  "l06",
                       "apres_n":  6,
                       "refs":  [
@@ -1692,7 +1692,7 @@
                       "partie":  2,
                       "theme":  "ami_triste",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Mon ami est triste — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Mon ami est triste · Mes phrases utiles",
                       "apres":  "l07",
                       "apres_n":  7,
                       "refs":  [
@@ -1783,7 +1783,7 @@
                       "partie":  2,
                       "theme":  "grand_pere",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Quand grand-père était petit — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Quand grand-père était petit · Mes phrases utiles",
                       "apres":  "l08",
                       "apres_n":  8,
                       "refs":  [
@@ -1873,7 +1873,7 @@
                       "partie":  2,
                       "theme":  "grand_mere",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Le métier de grand-mère — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Le métier de grand-mère · Mes phrases utiles",
                       "apres":  "l10",
                       "apres_n":  10,
                       "refs":  [
@@ -2036,7 +2036,7 @@
                       "partie":  3,
                       "theme":  "voisin",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Le voisin et l\u0027ascenseur — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Le voisin et l\u0027ascenseur · Mes phrases utiles",
                       "apres":  "l11",
                       "apres_n":  11,
                       "refs":  [
@@ -2153,7 +2153,7 @@
                       "partie":  3,
                       "theme":  "montagne",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : À la montagne — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : À la montagne · Mes phrases utiles",
                       "apres":  "l15",
                       "apres_n":  15,
                       "refs":  [
@@ -2337,7 +2337,7 @@
                       "partie":  4,
                       "theme":  "ami_fidele",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Un ami fidèle — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Un ami fidèle · Mes phrases utiles",
                       "apres":  "l18",
                       "apres_n":  18,
                       "refs":  [
@@ -2428,7 +2428,7 @@
                       "partie":  4,
                       "theme":  "fourmis",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Les fourmis — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Les fourmis · Mes phrases utiles",
                       "apres":  "l16",
                       "apres_n":  16,
                       "refs":  [
@@ -2519,7 +2519,7 @@
                       "partie":  4,
                       "theme":  "pelerin",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Le retour du pèlerin — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Le retour du pèlerin · Mes phrases utiles",
                       "apres":  "l17",
                       "apres_n":  17,
                       "refs":  [
@@ -2706,7 +2706,7 @@
                       "partie":  5,
                       "theme":  "lettre",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : La lettre aux grands-parents — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : La lettre aux grands-parents · Mes phrases utiles",
                       "apres":  "l22",
                       "apres_n":  22,
                       "refs":  [
@@ -2823,7 +2823,7 @@
                       "partie":  5,
                       "theme":  "expose",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Mon exposé — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Mon exposé · Mes phrases utiles",
                       "apres":  "l25",
                       "apres_n":  25,
                       "refs":  [

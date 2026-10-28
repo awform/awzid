@@ -361,7 +361,7 @@
                        "picto":  "arbre",
                        "titre_fr":  "Chez grand-père",
                        "titre_ar":  "بَيْتُ جَدِّي",
-                       "accroche_fr":  "À la fin de cette étape, je sais dire où sont les oncles, les tantes et les cousins (هُمْ، هُنَّ، نَحْنُ).",
+                       "accroche_fr":  "À la fin de cette étape, je sais dire où sont les oncles, les tantes et les cousins (هُمْ، هُنَّ، نَحْنُ).",
                        "unite":  8,
                        "phrases":  [
                                        "P021",
@@ -1168,7 +1168,7 @@
                       "partie":  1,
                       "theme":  "presentation",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Je me présente — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Je me présente · Mes phrases utiles",
                       "apres":  "l05",
                       "apres_n":  5,
                       "refs":  [
@@ -1270,7 +1270,7 @@
                       "partie":  1,
                       "theme":  "cour",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Dans la cour — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Dans la cour · Mes phrases utiles",
                       "apres":  "l05",
                       "apres_n":  5,
                       "refs":  [
@@ -1372,7 +1372,7 @@
                       "partie":  1,
                       "theme":  "cartable",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Mon cartable — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Mon cartable · Mes phrases utiles",
                       "apres":  "l04",
                       "apres_n":  4,
                       "refs":  [
@@ -1543,7 +1543,7 @@
                       "partie":  2,
                       "theme":  "mosquee",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Le vendredi à la mosquée — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Le vendredi à la mosquée · Mes phrases utiles",
                       "apres":  "l10",
                       "apres_n":  10,
                       "refs":  [
@@ -1646,7 +1646,7 @@
                       "partie":  2,
                       "theme":  "famille",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Chez grand-père — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Chez grand-père · Mes phrases utiles",
                       "apres":  "l08",
                       "apres_n":  8,
                       "refs":  [
@@ -1748,7 +1748,7 @@
                       "partie":  2,
                       "theme":  "maison",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Notre maison — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Notre maison · Mes phrases utiles",
                       "apres":  "l09",
                       "apres_n":  9,
                       "refs":  [
@@ -1919,7 +1919,7 @@
                       "partie":  3,
                       "theme":  "repas",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : À table — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : À table · Mes phrases utiles",
                       "apres":  "l13",
                       "apres_n":  13,
                       "refs":  [
@@ -2047,7 +2047,7 @@
                       "partie":  3,
                       "theme":  "habits",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Mes habits — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Mes habits · Mes phrases utiles",
                       "apres":  "l15",
                       "apres_n":  15,
                       "refs":  [
@@ -2243,7 +2243,7 @@
                       "partie":  4,
                       "theme":  "semaine",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : La semaine et le temps — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : La semaine et le temps · Mes phrases utiles",
                       "apres":  "l19",
                       "apres_n":  19,
                       "refs":  [
@@ -2345,7 +2345,7 @@
                       "partie":  4,
                       "theme":  "bibliotheque",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : À la bibliothèque — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : À la bibliothèque · Mes phrases utiles",
                       "apres":  "l18",
                       "apres_n":  18,
                       "refs":  [
@@ -2514,7 +2514,7 @@
                       "partie":  5,
                       "theme":  "entraide",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : J\u0027aide les voisins — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : J\u0027aide les voisins · Mes phrases utiles",
                       "apres":  "l21",
                       "apres_n":  21,
                       "refs":  [
@@ -2616,7 +2616,7 @@
                       "partie":  5,
                       "theme":  "sante",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : J\u0027ai mal — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : J\u0027ai mal · Mes phrases utiles",
                       "apres":  "l22",
                       "apres_n":  22,
                       "refs":  [
@@ -2719,7 +2719,7 @@
                       "partie":  5,
                       "theme":  "ramadan",
                       "type":  "antiseche",
-                      "titre_fr":  "Antisèche : Ramadan — كَلِمَاتٌ شَائِعَةٌ · Mes phrases utiles",
+                      "titre_fr":  "Antisèche : Ramadan · Mes phrases utiles",
                       "apres":  "l24",
                       "apres_n":  24,
                       "refs":  [
