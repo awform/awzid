@@ -12,12 +12,36 @@ import {
   leaveClass,
   schema as t,
   withdrawAccount,
+  type Db,
 } from '@awform/db';
 import { countryRules, COUNTRY_CODE, isCountry } from './policy.js';
 import { audit, clearCookie, revokeAll } from './service.js';
 import { dechiffrer } from '../identites/cles.js';
 
 import { err, OPTIONAL_CONSENTS, WITHDRAWABLE_CONSENTS, type AuthKit } from './common.js';
+
+/**
+ * Mécanisme UNIQUE de suppression d'un compte (demande de la personne, ou de l'administrateur à sa demande) :
+ * accès coupé aussitôt, adresse et numéro libérés aussitôt (réinscription possible), profils (enfants compris)
+ * retirés des classes ; effacement définitif par la purge de nuit sous 30 jours. Ni audit ni cookie ici.
+ */
+export async function supprimerCompte(db: Db, accountId: string): Promise<void> {
+  // audit MIN-14 : l'adresse e-mail est effacée AUSSITÔT (réinscription possible, rien à deviner pendant
+  // les 30 jours qui précèdent l'effacement définitif)
+  await db
+    .update(t.account)
+    // 18/10/2026 : le numéro aussi (chiffré et empreinte) : réinscription possible, rien à retrouver
+    .set({ deletedAt: new Date(), email: null, phoneEnc: null, phoneHash: null })
+    .where(eq(t.account.id, accountId));
+  await withdrawAccount(db, accountId);
+  await revokeAll(db, accountId);
+  // lot F3 : plus aucun lien envoyé par e-mail ne vaut (réinitialisation, vérification)
+  await db.delete(t.accountToken).where(eq(t.accountToken.accountId, accountId));
+  // 18/10/2026 : liaison Google, codes de récupération et vérifications de numéro effacés aussitôt
+  await db.delete(t.accountIdentity).where(eq(t.accountIdentity.accountId, accountId));
+  await db.delete(t.recoveryCode).where(eq(t.recoveryCode.accountId, accountId));
+  await db.delete(t.phoneChallenge).where(eq(t.phoneChallenge.accountId, accountId));
+}
 
 export function registerPrivacy(app: FastifyInstance, kit: AuthKit): void {
   const { db, needAuth, passwordOk, secureFor } = kit;
@@ -279,21 +303,7 @@ export function registerPrivacy(app: FastifyInstance, kit: AuthKit): void {
       const [a] = await db.select().from(t.account).where(eq(t.account.id, req.auth!.accountId));
       if (!a) return err(reply, 401, 'mot_de_passe_incorrect');
       if (!(await passwordOk(reply, a, req.body.password))) return reply;
-      // audit MIN-14 : l'adresse e-mail est effacée AUSSITÔT (réinscription possible, rien à deviner pendant
-      // les 30 jours qui précèdent l'effacement définitif)
-      await db
-        .update(t.account)
-        // 18/10/2026 : le numéro aussi (chiffré et empreinte) : réinscription possible, rien à retrouver
-        .set({ deletedAt: new Date(), email: null, phoneEnc: null, phoneHash: null })
-        .where(eq(t.account.id, a.id));
-      await withdrawAccount(db, a.id);
-      await revokeAll(db, a.id);
-      // lot F3 : plus aucun lien envoyé par e-mail ne vaut (réinitialisation, vérification)
-      await db.delete(t.accountToken).where(eq(t.accountToken.accountId, a.id));
-      // 18/10/2026 : liaison Google, codes de récupération et vérifications de numéro effacés aussitôt
-      await db.delete(t.accountIdentity).where(eq(t.accountIdentity.accountId, a.id));
-      await db.delete(t.recoveryCode).where(eq(t.recoveryCode.accountId, a.id));
-      await db.delete(t.phoneChallenge).where(eq(t.phoneChallenge.accountId, a.id));
+      await supprimerCompte(db, a.id);
       await audit(db, a.id, 'compte.suppression_demandee');
       reply.header('Set-Cookie', clearCookie(secureFor(req)));
       return { ok: true, effacementDefinitif: new Date(Date.now() + 30 * 86400_000).toISOString() };

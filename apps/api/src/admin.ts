@@ -11,7 +11,17 @@ import {
   normaliserTelephone,
   ressembleTelephone,
 } from '@awform/school/telephone';
-import { audit, hasRole, revokeAll } from './auth/service.js';
+import {
+  audit,
+  clearFailures,
+  failAttempt,
+  hasRole,
+  reserveAttempt,
+  revokeAll,
+} from './auth/service.js';
+import { supprimerCompte } from './auth/donnees.js';
+import { estPersonnel } from './auth/passwords.js';
+import { verifySecret } from './auth/crypto.js';
 import { dechiffrer, phoneHashOf } from './identites/cles.js';
 
 const err = (reply: FastifyReply, status: number, code: string) =>
@@ -105,6 +115,83 @@ export function registerAdmin(app: FastifyInstance, db: Db, secretKey: Buffer | 
       return { ok: true, change: true, bloque: bloquer };
     },
   );
+
+  // ------------------------------------------------------------------ suppression d'un compte à la demande de la personne
+  // Même mécanisme que « Supprimer mon compte » (supprimerCompte) : accès coupé, adresse et numéro libérés tout
+  // de suite, profils d'enfants compris, effacement définitif par la purge de nuit sous 30 jours.
+  // Double confirmation : l'adresse (ou les 4 derniers chiffres du numéro) ET le mot de passe de l'administrateur.
+  app.post<{
+    Body: {
+      identifiant?: string;
+      confirmation?: string;
+      password?: string;
+      motif?: string;
+      pays?: string;
+    };
+  }>('/api/v1/admin/comptes/suppression', { preHandler: needAdminEcriture }, async (req, reply) => {
+    const saisi = (req.body?.identifiant ?? '').trim();
+    const confirmation = (req.body?.confirmation ?? '').trim();
+    const motif = (req.body?.motif ?? '').trim();
+    const mdp = req.body?.password;
+    if (
+      !saisi ||
+      saisi.length > 200 ||
+      confirmation.length > 200 ||
+      typeof mdp !== 'string' ||
+      !mdp ||
+      mdp.length > 512
+    )
+      return err(reply, 400, 'requete_invalide');
+    if (motif.length < 5 || motif.length > 500) return err(reply, 400, 'motif_requis');
+    const parTelephone = ressembleTelephone(saisi);
+    let cible;
+    let e164 = '';
+    if (parTelephone) {
+      const n = normaliserTelephone(saisi, req.body.pays ?? 'SN');
+      if (!n.ok || !secretKey) return err(reply, 404, 'introuvable');
+      e164 = n.e164;
+      cible = eq(t.account.phoneHash, phoneHashOf(secretKey, e164));
+    } else cible = eq(t.account.email, saisi.toLowerCase());
+    const [a] = await db
+      .select({
+        id: t.account.id,
+        kind: t.account.kind,
+        email: t.account.email,
+        phoneEnc: t.account.phoneEnc,
+      })
+      .from(t.account)
+      .where(and(cible, isNull(t.account.deletedAt)));
+    if (!a) return err(reply, 404, 'introuvable');
+    if (a.id === req.auth!.accountId) return err(reply, 400, 'pas_soi_meme');
+    if (await estPersonnel(db, a.id)) return err(reply, 400, 'compte_personnel');
+    // première confirmation : l'adresse retapée, ou les 4 derniers chiffres du numéro
+    const attendu = parTelephone ? e164.replace(/\D/g, '').slice(-4) : saisi.toLowerCase();
+    const recu = parTelephone ? confirmation.replace(/\D/g, '') : confirmation.toLowerCase();
+    if (!recu || recu !== attendu) return err(reply, 400, 'confirmation_incorrecte');
+    // seconde confirmation : le mot de passe de l'administrateur (essais limités)
+    const [adm] = await db
+      .select({ id: t.account.id, passwordHash: t.account.passwordHash })
+      .from(t.account)
+      .where(eq(t.account.id, req.auth!.accountId));
+    const cle = `mdp:${req.auth!.accountId}`;
+    if (!adm || !(await reserveAttempt(db, cle, 10))) return err(reply, 429, 'verrouille');
+    if (!(await verifySecret(mdp, adm.passwordHash))) {
+      await failAttempt(db, cle, 10);
+      return err(reply, 401, 'mot_de_passe_incorrect');
+    }
+    await clearFailures(db, cle);
+    const contact = contactMasque(a);
+    await supprimerCompte(db, a.id);
+    await audit(db, req.auth!.accountId, 'compte.suppression_admin', a.id, {
+      kind: a.kind,
+      contact,
+      motif,
+    });
+    return {
+      ok: true,
+      effacementDefinitif: new Date(Date.now() + 30 * 86400_000).toISOString(),
+    };
+  });
 
   app.get('/api/v1/admin/overview', { preHandler: needAdmin }, async () => {
     const count = (col: unknown) => sql<number>`count(${col})::int`;

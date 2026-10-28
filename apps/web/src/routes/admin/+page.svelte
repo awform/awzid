@@ -13,6 +13,7 @@
   import UsageAdmin from '$lib/admin/UsageAdmin.svelte';
   import AccesAdmin from '$lib/admin/AccesAdmin.svelte';
   import BlocageAdmin from '$lib/admin/BlocageAdmin.svelte';
+  import SuppressionAdmin from '$lib/admin/SuppressionAdmin.svelte';
 
   /**
    * Tableau de bord ADMINISTRATEUR minimal, en lecture seule : utilisateurs (e-mails masqués), éditions et
@@ -111,6 +112,8 @@
   <AccesAdmin />
   <!-- blocage d'un compte, un par un -->
   <BlocageAdmin />
+  <!-- suppression d'un compte à la demande de la personne -->
+  <SuppressionAdmin />
   <ContenuAdmin />
   <ModerationAdmin />
   <ActivationAdmin />
