@@ -118,13 +118,16 @@ export function coutMicros(
   return Math.ceil(usd * usdEur * 1e6);
 }
 
-/** Coût MAXIMAL d'un tour (réservation). */
-export const coutMaxTour = (tarif: Tarif, usdEur: number) =>
+/**
+ * Coût MAXIMAL d'un tour (réservation). 28/10/2026 : une réponse coupée (MAX_TOKENS) a droit à UN nouvel essai, facturé :
+ * le pire cas compte donc deux appels. sortieMax : plafond de sortie du mode (oral 1024, écrit 4096).
+ */
+export const coutMaxTour = (tarif: Tarif, usdEur: number, sortieMax: number = BORNES.sortieMax) =>
   coutMicros(
     {
-      texte: BORNES.texteMax,
-      audio: BORNES.audioMax,
-      sortie: BORNES.sortieMax,
+      texte: 2 * BORNES.texteMax,
+      audio: 2 * BORNES.audioMax,
+      sortie: 2 * sortieMax,
       caracteresVoix: BORNES.voixCaracteresMax,
     },
     tarif,

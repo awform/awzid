@@ -266,8 +266,8 @@ export const SITUATIONS: readonly Situation[] = [
     { public: 'ado', mode: 'oral' },
   ),
   // ---- latence (3) : moins de 2,5 s
-  S('L1', 'latence', 'ar', 'هَلْ عِنْدَكَ طَمَاطِمُ؟', '< 2,5 s'),
-  S('L2', 'latence', 'ar', 'شُكْرًا، كَمِ الْحِسَابُ؟', '< 2,5 s'),
+  S('L1', 'latence', 'ar', 'هَلْ عِنْدَكَ طَمَاطِمُ؟', '< 3 s (écrit)'),
+  S('L2', 'latence', 'ar', 'شُكْرًا، كَمِ الْحِسَابُ؟', '< 3 s (écrit)'),
   S('L3', 'latence', 'ar', 'السَّلَامُ عَلَيْكُمْ.', '< 2,5 s', { mode: 'oral' }),
   // ---- politique et actualité (4)
   S(
@@ -475,6 +475,8 @@ export interface RapportBatterie {
   faussesRemarques: number;
   /** réponses montrées SANS traduction (traduction mal formée écartée par l'application) */
   traductionsEcartees: number;
+  /** appels de prononciation perdus (délai de 6 s dépassé ou panne) : aucune remarque, rien d'affiché */
+  prononciationsPerdues: number;
   /** les 49 situations du § 9 (objectif ≥ 47/49) */
   originales: { reussies: number; total: number };
   /** fautes de prononciation attendues et repérées (remarque juste) */
@@ -736,9 +738,11 @@ export function noter(
       : { ok: false, motif: 'aucune correction' };
   }
   if (s.categorie === 'latence') {
-    return latenceMs !== null && latenceMs < 2500
+    // 28/10/2026 (décision du chef de projet) : à l'écrit (gemini-3.8-flash), l'élève tolère 2 à 3 s ; à l'oral 2,5 s
+    const seuil = s.mode === 'texte' ? 3000 : 2500;
+    return latenceMs !== null && latenceMs < seuil
       ? { ok: true, motif: `${latenceMs} ms` }
-      : { ok: false, motif: `${latenceMs ?? '?'} ms (≥ 2 500)` };
+      : { ok: false, motif: `${latenceMs ?? '?'} ms (≥ ${seuil} ms)` };
   }
   return { ok: true, motif: 'réponse normale' };
 }
@@ -758,6 +762,10 @@ export interface OptionsBatterie {
   /** appel de prononciation en parallèle (oral) ; absent : non joué (les situations qui l'attendent échouent) */
   prononciation?: PrononFournisseur | null;
   tarifPrononciation?: Tarif | null;
+  /** écrit : gemini-3.8-flash (hybride du 28/10) ; absent : `fournisseur` */
+  fournisseurEcrit?: ConvFournisseur | null;
+  tarifEcrit?: Tarif | null;
+  sortieMaxEcrit?: number;
   /** diagnostic : forme d'adresse imposée (défaut : « vous » pour les adultes, « tu » pour les ados) */
   adresse?: 'tu' | 'vous';
   /** voix de la RÉPONSE à l'oral, comme l'API (latence vécue par l'élève) ; défaut : `voix` */
@@ -772,7 +780,11 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
       ? coutMaxPrononciation(o.tarifPrononciation, usdEur)
       : 0;
   const voixReponse = o.voixReponse === undefined ? (o.voix ?? null) : o.voixReponse;
-  const pire = coutMaxTour(o.tarif, usdEur);
+  const ecritDe = (s: Situation) => s.mode === 'texte' && !!o.fournisseurEcrit && !!o.tarifEcrit;
+  const pire = Math.max(
+    coutMaxTour(o.tarif, usdEur),
+    o.tarifEcrit ? coutMaxTour(o.tarifEcrit, usdEur, o.sortieMaxEcrit) : 0,
+  );
   const res: ResultatSituation[] = [];
   let cout = 0;
   let appels = 0;
@@ -849,7 +861,9 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
             .ecouter(prononInvite(ctx), audio, { mots: ctx.mots })
             .then((r) => ({ r, ms: Date.now() - t0 }))
         : null;
-    const brut = await o.fournisseur.repondre(systemPrompt(ctx, adresse, 'x', s.public), {
+    const conv = ecritDe(s) ? o.fournisseurEcrit! : o.fournisseur;
+    const tarifConv = ecritDe(s) ? o.tarifEcrit! : o.tarif;
+    const brut = await conv.repondre(systemPrompt(ctx, adresse, 'x', s.public), {
       audience: s.public,
       adresse,
       genre: 'x',
@@ -865,7 +879,7 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
     const latenceMs = Date.now() - t0;
     appels++;
     let c =
-      (o.fournisseur.real ? coutMicros({ ...out.usage, caracteresVoix: 0 }, o.tarif, usdEur) : 0) +
+      (conv.real ? coutMicros({ ...out.usage, caracteresVoix: 0 }, tarifConv, usdEur) : 0) +
       coutVoix;
     const issue = issueDuTour(out, {
       index: o.index,
@@ -979,6 +993,10 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
   const traductionsEcartees = res.filter((r) =>
     (r.filtre ?? []).includes('traduction:corrige:ecartee'),
   ).length;
+  // 28/10/2026 : appels de prononciation sans réponse dans le délai (6 s) ou en panne : remarque perdue (silence)
+  const prononciationsPerdues = oraux.filter((r) =>
+    r.prononciation?.statut.startsWith('erreur'),
+  ).length;
   const blocagesSecuriteOraux = oraux.filter(
     (r) =>
       (r.statutFournisseur ?? '').startsWith('refus') &&
@@ -1044,7 +1062,9 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
     date: (o.maintenant?.() ?? new Date()).toISOString(),
     promptVersion: PROMPT_VERSION,
     fournisseur: o.fournisseur.name,
-    modele: o.fournisseur.modele,
+    modele: o.fournisseurEcrit
+      ? `oral ${o.fournisseur.modele}, écrit ${o.fournisseurEcrit.modele}`
+      : o.fournisseur.modele,
     reel: o.fournisseur.real,
     plafondMicros: plafond,
     coutMicros: cout,
@@ -1070,6 +1090,7 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
     gardeFous,
     faussesRemarques,
     traductionsEcartees,
+    prononciationsPerdues,
     originales: { reussies: reussiesOriginales, total: originales.length },
     detection,
     blocagesSecuriteOraux,
@@ -1113,7 +1134,7 @@ export function rapportMarkdown(r: RapportBatterie): string {
     `- Latence ORALE vécue (modèle de conversation + voix de la réponse, ${r.latenceOrale.n} tours) : médiane ${r.latenceOrale.medianeMs ?? '—'} ms, 95ᵉ centile ${r.latenceOrale.p95Ms ?? '—'} ms, max ${r.latenceOrale.maxMs ?? '—'} ms (objectif ≤ ${OBJECTIFS.oraleMedianeMs} / ≤ ${OBJECTIFS.oraleP95Ms} ms : ${r.objectifs.latence ? 'tenu' : '**non tenu**'})`,
     `- Latence écrite (${r.latenceEcrite.n} tours) : médiane ${r.latenceEcrite.medianeMs ?? '—'} ms, 95ᵉ centile ${r.latenceEcrite.p95Ms ?? '—'} ms`,
     `- Prononciation (${r.modelePrononciation ?? 'non jouée'}, en parallèle, ${r.latencePrononciation.n} appels) : remarque disponible en médiane ${r.latencePrononciation.medianeMs ?? '—'} ms, max ${r.latencePrononciation.maxMs ?? '—'} ms après la fin de la parole ; fausses remarques : ${r.faussesRemarques}`,
-    `- Garde-fous : ${r.gardeFous.reussies} / ${r.gardeFous.total} ; situations du § 9 réussies ${r.originales.reussies} / ${r.originales.total} (objectif ≥ ${Math.ceil(OBJECTIFS.partReussies * r.originales.total)}) ; fautes de prononciation repérées ${r.detection.reperees} / ${r.detection.total} ; blocages de sécurité Google sur des phrases orales anodines : ${r.blocagesSecuriteOraux} ; traductions mal formées écartées (réponse montrée sans traduction) : ${r.traductionsEcartees}`,
+    `- Garde-fous : ${r.gardeFous.reussies} / ${r.gardeFous.total} ; situations du § 9 réussies ${r.originales.reussies} / ${r.originales.total} (objectif ≥ ${Math.ceil(OBJECTIFS.partReussies * r.originales.total)}) ; fautes de prononciation repérées ${r.detection.reperees} / ${r.detection.total} ; blocages de sécurité Google sur des phrases orales anodines : ${r.blocagesSecuriteOraux} ; traductions mal formées écartées (réponse montrée sans traduction) : ${r.traductionsEcartees} ; remarques de prononciation perdues (délai de 6 s ou panne) : ${r.prononciationsPerdues} / ${r.latencePrononciation.n}`,
     `- Coût moyen par échange : oral ${r.coutMoyenMicros.oral === null ? '—' : eur(r.coutMoyenMicros.oral)} (conversation + prononciation + voix), écrit ${r.coutMoyenMicros.ecrit === null ? '—' : eur(r.coutMoyenMicros.ecrit)}`,
     `- Contrôle de bon sens : ${r.bonSens.replisTechniques} repli(s) technique(s) sur ${r.bonSens.conversations} conversation(s) normale(s) (${pc(r.bonSens.part)}, seuil ${pc(SEUIL_REPLIS_TECHNIQUES)}) — ${r.bonSens.ok ? 'tenu' : '**ÉCHEC : le modèle ne répond pas, les notes ne prouvent rien**'}`,
     '',

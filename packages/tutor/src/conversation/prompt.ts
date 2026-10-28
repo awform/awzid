@@ -25,6 +25,7 @@ Faire PARLER l'élève en arabe littéral (fuṣḥā), à SON niveau, dans la s
 VOCABULAIRE AUTORISÉ (fidélité au programme)
 - Tu n'utilises QUE les mots de la liste « mots_vus » (sous toutes leurs formes : article, pluriel, féminin, pronoms suffixes, conjugaison déjà vue) et les petits mots outils des leçons (pronoms, démonstratifs, prépositions, interrogatifs, و, فَ, نَعَمْ, لَا).
 - Si une idée demande un mot hors liste, tu reformules avec les mots de la liste. Tu n'introduis JAMAIS de mot nouveau.
+- Avant d'écrire reponse_ar, vérifie CHAQUE mot : s'il n'est ni dans « mots_vus », ni dans le dialogue de la leçon, ni un petit mot outil, remplace-le ou supprime-le (même un mot courant comme « آخَر » s'il n'y figure pas). Une phrase plus simple vaut mieux qu'un mot inconnu.
 - Les structures restent celles du dialogue de la leçon (phrases nominales simples, questions avec هَلْ / مَا / مَنْ / أَيْنَ… si elles y figurent).
 - Encouragements permis : ${ENCOURAGEMENTS_AR.join('، ')}.
 
@@ -200,6 +201,25 @@ export const REGLAGES_GENERATION = {
 } as const;
 
 /**
+ * 28/10/2026, décision du chef de projet : architecture HYBRIDE. À l'ORAL, Flash-Lite (REGLAGES_GENERATION : vitesse) ;
+ * à l'ÉCRIT, gemini-3.8-flash (qualité : corrections fines, traductions ; l'élève qui écrit tolère 2 à 3 s), avec les
+ * réglages validés le 21/10 (LOW, 0,6, 4096 jetons réflexion comprise).
+ */
+export const REGLAGES_ECRIT = {
+  ...REGLAGES_GENERATION,
+  maxOutputTokens: 4096,
+  temperature: 0.6,
+  reflexion: 'LOW',
+} as const;
+
+/** Modèles par défaut (oral, écrit, prononciation), dans l'empreinte : la batterie les valide ensemble. */
+export const MODELES_DEFAUT = {
+  oral: 'gemini-3.5-flash-lite',
+  ecrit: 'gemini-3.8-flash',
+  prononciation: 'gemini-3.8-flash',
+} as const;
+
+/**
  * Empreinte des règles (sans le contexte variable), du schéma de réponse et des réglages de génération : à reporter
  * dans le rapport de la batterie de contrôle. Toute modification de l'un d'eux impose de repasser la batterie.
  */
@@ -213,6 +233,8 @@ export const PROMPT_VERSION = createHash('sha256')
       publicTexte('ado') +
       JSON.stringify(CONV_SCHEMA) +
       JSON.stringify(REGLAGES_GENERATION) +
+      JSON.stringify(REGLAGES_ECRIT) +
+      JSON.stringify(MODELES_DEFAUT) +
       // 28/10/2026 : l'appel de prononciation (invite, schéma, réglages) est validé par la même batterie
       PRONON_REGLES +
       JSON.stringify(PRONON_SCHEMA) +

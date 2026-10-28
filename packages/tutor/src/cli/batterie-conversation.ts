@@ -30,8 +30,12 @@ import {
   VertexPrononciation,
 } from '../conversation/google.js';
 import { PrononciationSimulee } from '../conversation/prononciation.js';
-import { PROMPT_VERSION } from '../conversation/prompt.js';
-import { MODELE_DEFAUT, MODELE_PRONONCIATION_DEFAUT } from '../conversation/setup.js';
+import { PROMPT_VERSION, REGLAGES_ECRIT } from '../conversation/prompt.js';
+import {
+  MODELE_DEFAUT,
+  MODELE_ECRIT_DEFAUT,
+  MODELE_PRONONCIATION_DEFAUT,
+} from '../conversation/setup.js';
 import { ConversationSimulee } from '../conversation/simule.js';
 import type { ConvFournisseur, PrononFournisseur, Synthese } from '../conversation/types.js';
 
@@ -44,7 +48,10 @@ const env = process.env;
 const simule = argv.includes('--simule');
 const base = (arg('--sortie') ?? 'tuteur-conversation-batterie').replace(/\.(json|md)$/, '');
 const plafondEur = Number(arg('--plafond-eur') ?? 1);
-const modele = arg('--modele') ?? (env.AWFORM_TUTEUR_VERTEX_MODELE || MODELE_DEFAUT);
+// 28/10/2026 (hybride) : --modele = ORAL (Flash-Lite), --modele-ecrit = ÉCRIT (gemini-3.8-flash)
+const modele = arg('--modele') ?? (env.AWFORM_TUTEUR_VERTEX_MODELE_ORAL || MODELE_DEFAUT);
+const modeleE = arg('--modele-ecrit') ?? (env.AWFORM_TUTEUR_VERTEX_MODELE || MODELE_ECRIT_DEFAUT);
+const tarifE = tarifDe(modeleE);
 const modeleP =
   arg('--modele-prononciation') ??
   (env.AWFORM_TUTEUR_VERTEX_MODELE_PRONONCIATION || MODELE_PRONONCIATION_DEFAUT);
@@ -68,8 +75,11 @@ if (!sansPrononciation && !tarifP) fin(`Modèle de prononciation sans tarif conn
 let fournisseur: ConvFournisseur;
 let voix: Synthese | null = null;
 let prononciation: PrononFournisseur | null = null;
+let fournisseurEcrit: ConvFournisseur;
+if (!tarifE) fin(`Modèle écrit sans tarif connu : ${modeleE}.`);
 if (simule) {
   fournisseur = new ConversationSimulee(modele);
+  fournisseurEcrit = new ConversationSimulee(modeleE);
   if (!sansPrononciation) prononciation = new PrononciationSimulee(modeleP);
 } else {
   const projet = arg('--projet') ?? env.AWFORM_VERTEX_PROJET ?? '';
@@ -92,6 +102,13 @@ if (simule) {
     // défaut : REGLAGES_GENERATION.reflexion (« LOW », celui de l'API et de l'empreinte)
     ...(reflexion ? { reflexion } : {}),
   });
+  fournisseurEcrit = new VertexConversation({
+    projet,
+    lieu: lieu as (typeof LIEUX_UE)[number],
+    modele: modeleE,
+    jeton,
+    reglages: REGLAGES_ECRIT,
+  });
   voix = new GoogleTts({ jeton, voix: env.AWFORM_TUTEUR_VOIX || 'ar-XA-Wavenet-B' });
   if (!sansPrononciation)
     prononciation = new VertexPrononciation({
@@ -103,7 +120,7 @@ if (simule) {
 }
 
 console.log(
-  `Batterie du tuteur de conversation — invite ${PROMPT_VERSION}, ${fournisseur.name} (${modele} ; prononciation : ${prononciation ? modeleP : 'non jouée'}), plafond ${plafondEur} €`,
+  `Batterie du tuteur de conversation — invite ${PROMPT_VERSION}, ${fournisseur.name} (oral ${modele}, écrit ${modeleE} ; prononciation : ${prononciation ? modeleP : 'non jouée'}), plafond ${plafondEur} €`,
 );
 const tanzil = loadTanzil();
 const rapport = await lancerBatterie({
@@ -113,6 +130,9 @@ const rapport = await lancerBatterie({
   tarif: tarif!,
   prononciation,
   tarifPrononciation: tarifP,
+  fournisseurEcrit,
+  tarifEcrit: tarifE,
+  sortieMaxEcrit: REGLAGES_ECRIT.maxOutputTokens,
   usdEur: Number(env.AWFORM_TUTEUR_USD_EUR) > 0 ? Number(env.AWFORM_TUTEUR_USD_EUR) : 1,
   plafondMicros: Math.round(plafondEur * 1e6),
   ...(ids ? { situations: SITUATIONS.filter((s) => ids.includes(s.id)) } : {}),
