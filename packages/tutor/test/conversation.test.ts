@@ -585,9 +585,10 @@ describe('Vertex AI et TTS (fetch SIMULÉ, aucun appel réel)', () => {
     }));
     const r = await vertex(f).repondre('S', entree());
     expect(r).toMatchObject({ status: 'erreur', brouillon: null, detail: 'max_tokens' });
-    expect(r.usage.sortie).toBe(4096);
+    // 28/10/2026 : UN nouvel essai après une réponse coupée ; les deux appels sont comptés
+    expect(r.usage.sortie).toBe(8192);
     expect(r.message).toBe(
-      'max_tokens : réponse coupée à 4096 jetons (réponse 60, réflexion 4036) pour un plafond maxOutputTokens de 1024 ; réflexion LOW',
+      'nouvel_essai apres max_tokens ; max_tokens : réponse coupée à 4096 jetons (réponse 60, réflexion 4036) pour un plafond maxOutputTokens de 1024 ; réflexion LOW',
     );
     expect(noteMaxTokens(undefined, '')).toContain('réflexion du modèle');
   });
@@ -768,6 +769,11 @@ describe('mise en service', () => {
     // 28/10/2026 : conversation Flash-Lite, prononciation 3.8-flash en parallèle (coupable par AWFORM_TUTEUR_PRONONCIATION)
     expect(v.fournisseur?.modele).toBe('gemini-3.5-flash-lite');
     expect(v.prononciation?.modele).toBe('gemini-3.8-flash');
+    // hybride : l'écrit va à gemini-3.8-flash (AWFORM_TUTEUR_VERTEX_MODELE), l'oral à Flash-Lite (…_MODELE_ORAL)
+    expect(v.fournisseurEcrit?.modele).toBe('gemini-3.8-flash');
+    expect(setupConversation({ ...base, AWFORM_TUTEUR_VERTEX_MODELE_ORAL: 'x' }).bloque).toBe(
+      'vertex_bloque_modele_sans_tarif',
+    );
     expect(v.tarifPrononciation?.sortie).toBeGreaterThan(0);
     expect(
       setupConversation({ ...base, AWFORM_TUTEUR_PRONONCIATION: 'off' }).prononciation,

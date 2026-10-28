@@ -46,6 +46,7 @@ import {
   issueDuTour,
   issuePrononciation,
   prononInvite,
+  REGLAGES_ECRIT,
   motifProtection,
   motsEcrits,
   plafondsDepuisEnv,
@@ -548,7 +549,13 @@ export function registerTuteurIa(
       const prononciation = b.audio ? setup.prononciation : null;
       const tarifP = prononciation ? setup.tarifPrononciation : null;
       const reserveP = tarifP ? coutMaxPrononciation(tarifP, pl.usdEur) : 0;
-      const reserve = coutMaxTour(setup.tarif, pl.usdEur) + reserveP;
+      // 28/10/2026 (hybride) : l'ORAL va à Flash-Lite (vitesse), l'ÉCRIT à gemini-3.8-flash (qualité)
+      const ecrit = !!b.texte && !!setup.fournisseurEcrit && !!setup.tarifEcrit;
+      const conv = ecrit ? setup.fournisseurEcrit! : fournisseur;
+      const tarifConv = ecrit ? setup.tarifEcrit! : setup.tarif;
+      const reserve =
+        coutMaxTour(tarifConv, pl.usdEur, ecrit ? REGLAGES_ECRIT.maxOutputTokens : undefined) +
+        reserveP;
       const res = await db.transaction(async (tx) => {
         await tx.execute(
           sql`select pg_advisory_xact_lock(hashtextextended('tuteur-ia-budget', 0))`,
@@ -583,20 +590,17 @@ export function registerTuteurIa(
               .finally(() => audioP.fill(0))
               .then((r) => ({ r, ms: Date.now() - t0 }))
           : null;
-      const brut = await fournisseur.repondre(
-        systemPrompt(g.ctx, adresse, b.genre ?? 'x', w.audience),
-        {
-          audience: w.audience,
-          adresse,
-          genre: b.genre ?? 'x',
-          contexte: g.ctx,
-          historique: (b.historique ?? []).slice(-HISTORIQUE_MAX),
-          ...(b.texte ? { texte: b.texte } : {}),
-          ...(audioBuf
-            ? { audio: { mime: b.audio!.mime, data: audioBuf, secondes: b.audio!.secondes } }
-            : {}),
-        },
-      );
+      const brut = await conv.repondre(systemPrompt(g.ctx, adresse, b.genre ?? 'x', w.audience), {
+        audience: w.audience,
+        adresse,
+        genre: b.genre ?? 'x',
+        contexte: g.ctx,
+        historique: (b.historique ?? []).slice(-HISTORIQUE_MAX),
+        ...(b.texte ? { texte: b.texte } : {}),
+        ...(audioBuf
+          ? { audio: { mime: b.audio!.mime, data: audioBuf, secondes: b.audio!.secondes } }
+          : {}),
+      });
       audioBuf?.fill(0);
       // garde-fou : transcription vide à l'oral → phrase voulue de l'appel de prononciation (prononciation.ts)
       const { out, complete } = await completerTranscription(
@@ -652,8 +656,8 @@ export function registerTuteurIa(
       // 5. solde du coût réel (≤ réservation), alertes de seuil
       const cout = Math.min(
         reserve - reserveP,
-        fournisseur.real || setup.mode === 'simule'
-          ? coutMicros({ ...usage, caracteresVoix: caracteres }, setup.tarif, pl.usdEur)
+        conv.real || setup.mode === 'simule'
+          ? coutMicros({ ...usage, caracteresVoix: caracteres }, tarifConv, pl.usdEur)
           : 0,
       );
       const secondes = secondesTour(Math.max(b.audio?.secondes ?? 0, usage.audio / 32), caracteres);
@@ -760,7 +764,7 @@ export function registerTuteurIa(
         ...(reponse ? { reponse } : {}),
         question: b.texte ?? transcription,
         cout,
-        modele: fournisseur.real ? fournisseur.modele : null,
+        modele: conv.real ? conv.modele : null,
       });
       const dep = await etatDepense(db, g.p.id, fournisseur.name, now());
       return {

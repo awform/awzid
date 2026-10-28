@@ -27,6 +27,13 @@ import type {
 
 export type Fetch = typeof fetch;
 
+/** Réglages d'une conversation (oral : REGLAGES_GENERATION ; écrit : REGLAGES_ECRIT). */
+export interface ReglagesConv {
+  maxOutputTokens: number;
+  temperature: number;
+  reflexion: string;
+}
+
 /** Lieux permis : Union européenne seulement (décision 4). */
 export const LIEUX_UE = [
   'eu',
@@ -110,6 +117,8 @@ export interface OptionsVertex {
   /** REGLAGES_GENERATION.reflexion (« LOW ») par défaut ; vide : réglage du modèle */
   reflexion?: string;
   /** délai du premier envoi (défaut DELAI_APPEL_MS) */
+  /** réglages de génération (défaut REGLAGES_GENERATION, oral ; REGLAGES_ECRIT pour l'écrit) */
+  reglages?: ReglagesConv;
   delaiMs?: number;
   /** délai du nouvel essai après une panne passagère (défaut DELAI_NOUVEL_ESSAI_MS) */
   delaiNouvelEssaiMs?: number;
@@ -166,6 +175,7 @@ export function corpsVertex(
   systeme: string,
   e: ConvEntree,
   reflexion: string = REGLAGES_GENERATION.reflexion,
+  reglages: ReglagesConv = REGLAGES_GENERATION,
 ): object {
   const niveau = niveauReflexion(reflexion);
   const echapper = (s: string) =>
@@ -193,8 +203,8 @@ export function corpsVertex(
     generationConfig: {
       responseMimeType: 'application/json',
       responseSchema: CONV_SCHEMA,
-      maxOutputTokens: REGLAGES_GENERATION.maxOutputTokens,
-      temperature: REGLAGES_GENERATION.temperature,
+      maxOutputTokens: reglages.maxOutputTokens,
+      temperature: reglages.temperature,
       ...(niveau ? { thinkingConfig: { thinkingLevel: niveau } } : {}),
     },
     safetySettings: SECURITE,
@@ -286,8 +296,10 @@ export class VertexConversation implements ConvFournisseur {
    * de réglage (défaut du modèle). Gardé pour la vie du fournisseur (une requête refusée n'est pas facturée).
    */
   private reflexionRetenue: string | null = null;
+  private readonly reglages: ReglagesConv;
   constructor(private readonly o: OptionsVertex) {
     if (!(LIEUX_UE as readonly string[]).includes(o.lieu)) throw new Error('lieu_hors_ue');
+    this.reglages = o.reglages ?? REGLAGES_GENERATION;
     this.modele = o.modele;
   }
 
@@ -301,7 +313,7 @@ export class VertexConversation implements ConvFournisseur {
     return (this.o.fetch ?? fetch)(urlVertex(this.o), {
       method: 'POST',
       headers: { authorization: `Bearer ${jeton}`, 'content-type': 'application/json' },
-      body: JSON.stringify(corpsVertex(systeme, e, reflexion)),
+      body: JSON.stringify(corpsVertex(systeme, e, reflexion, this.reglages)),
       signal: AbortSignal.timeout(delaiMs),
     });
   }
@@ -338,7 +350,7 @@ export class VertexConversation implements ConvFournisseur {
       const m = [...notes, ...plus.filter(Boolean)].join(' ; ').slice(0, 600);
       return m ? { message: m } : {};
     };
-    let reflexion = this.reflexionRetenue ?? this.o.reflexion ?? REGLAGES_GENERATION.reflexion;
+    let reflexion = this.reflexionRetenue ?? this.o.reflexion ?? this.reglages.reflexion;
     let r: Response;
     try {
       r = await this.envoyerAvecNouvelEssai(systeme, e, reflexion, notes);
@@ -362,7 +374,29 @@ export class VertexConversation implements ConvFournisseur {
     } catch (err) {
       return erreurEnvoi(err, message);
     }
-    return interpreterReponse(r, reflexion, message);
+    let sortie = await interpreterReponse(r, reflexion, message, this.reglages.maxOutputTokens);
+    // 28/10/2026 : réponse COUPÉE (divagation, MAX_TOKENS) → UN nouvel essai ; les deux usages sont comptés
+    if (sortie.detail === 'max_tokens') {
+      const u1 = sortie.usage;
+      notes.push('nouvel_essai apres max_tokens');
+      try {
+        r = await this.envoyer(
+          systeme,
+          e,
+          reflexion,
+          this.o.delaiNouvelEssaiMs ?? DELAI_NOUVEL_ESSAI_MS,
+        );
+        sortie = await interpreterReponse(r, reflexion, message, this.reglages.maxOutputTokens);
+      } catch (err) {
+        sortie = erreurEnvoi(err, message);
+      }
+      sortie.usage = {
+        texte: u1.texte + sortie.usage.texte,
+        audio: u1.audio + sortie.usage.audio,
+        sortie: u1.sortie + sortie.usage.sortie,
+      };
+    }
+    return sortie;
   }
 }
 
@@ -387,6 +421,7 @@ async function interpreterReponse(
   r: Response,
   reflexion: string,
   message: (...plus: Array<string | undefined>) => { message?: string },
+  plafond: number = REGLAGES_GENERATION.maxOutputTokens,
 ): Promise<ConvSortieFournisseur> {
   const zero = { texte: 0, audio: 0, sortie: 0 };
   {
@@ -432,7 +467,7 @@ async function interpreterReponse(
         brouillon: null,
         usage,
         detail: 'max_tokens',
-        ...message(noteMaxTokens(j.usageMetadata, reflexion)),
+        ...message(noteMaxTokens(j.usageMetadata, reflexion, plafond)),
       };
     // réponse vide ou JSON illisible : PANNE (repli technique), pas une décision du filtre
     const brouillon = lireBrouillon(c?.content?.parts ?? []);
@@ -452,7 +487,7 @@ async function interpreterReponse(
  * Délai de l'appel de prononciation (mesuré le 21/10 : 1,5 à 7,6 s ; batterie du 28/10 : 4 appels sur 17 au-delà de
  * 9 s) ; aucun nouvel essai (remarque facultative, elle arrive après la réponse).
  */
-export const DELAI_PRONONCIATION_MS = 12_000;
+export const DELAI_PRONONCIATION_MS = 6_000;
 
 /** Corps de l'appel de PRONONCIATION : audio seul, invite courte (dialogue de la leçon), aucun historique. */
 export function corpsPrononciation(
@@ -539,10 +574,11 @@ export function natureErreurReseau(err: unknown): 'delai_depasse' | 'reseau' {
 export function noteMaxTokens(
   u: ReponseVertex['usageMetadata'],
   reflexion: string | null | undefined,
+  plafond: number = REGLAGES_GENERATION.maxOutputTokens,
 ): string {
   const reponse = u?.candidatesTokenCount ?? 0;
   const pensee = u?.thoughtsTokenCount ?? 0;
-  return `max_tokens : réponse coupée à ${reponse + pensee} jetons (réponse ${reponse}, réflexion ${pensee}) pour un plafond maxOutputTokens de ${REGLAGES_GENERATION.maxOutputTokens} ; réflexion ${niveauReflexion(reflexion ?? '') ?? 'du modèle'}`;
+  return `max_tokens : réponse coupée à ${reponse + pensee} jetons (réponse ${reponse}, réflexion ${pensee}) pour un plafond maxOutputTokens de ${plafond} ; réflexion ${niveauReflexion(reflexion ?? '') ?? 'du modèle'}`;
 }
 
 export interface OptionsTts {
