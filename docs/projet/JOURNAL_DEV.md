@@ -9,6 +9,15 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 28/10/2026 — Tri de la passe 2 de Codex reporté dans l'application (branche `sync-tri-passe2-wip`) ; NON déployé
+
+- **Livres** : copie `~/awform-content.tri28` (`infra/sync-content.ps1 -Dest awform-content.tri28 -Repo awform-demo`, 1 182 fichiers, 12 différents : re1 l05, re2 ×7, ra1 à ra4 `export-app.json`) ; 31 livres, **3 825 versets, 0 erreur** ; `HADITH_GARDE`, `VIDEO_GARDE`, `VIVANTE_GARDE`, table d'Ayyūb (4 389 textes) régénérées, scénarios « Je parle » : 0 écart ; test « zéro muet » : 0 muet, `zero-muet-global` vert. À faire à la mise en ligne : échanger `~/awform-content` et `~/awform-content.tri28`, puis importer l'édition.
+- **Cahiers** : 13 sources « Je parle » et 3 cahiers de lecture copiés tels quels (`packages/content/data/cahier-parler`, `cahier`), données de l'appli régénérées. cp_ad7 : « الْمُسْتَشَارُ مُؤْتَمَنٌ ». Libellés des signes : fatha, damma, chadda, tanwin. **Typographie française à l'affichage** : `lib/bidi/typo-fr.ts`, appliquée par `<Bidi>` aux seuls segments français des cahiers (contexte `TYPO_FR`, posé par `Cahier.svelte` et `Parler.svelte`).
+- **Audio** : 2 MP3 Gemini Charon (cp_ad7 : proverbe seul et phrase de C01-08B), niveau `ad7` ; archive `maj-audio-tri28.tgz` installée sur le serveur par `audio-seul.sh` (2 nouveaux MP3, import : 0 absent, 0 incohérent, 0 empreinte interdite, LF).
+- **Tests connus rouges sur main, sans lien** : `liste-blanche.test.ts` (versets entiers), `priere.test.ts` (plan.json), `beta-infra` (vert isolé).
+
+---
+
 ## 26/10/2026 — Petits travaux en cours (branche `petits-travaux-wip`)
 
 - **Prière** : la mention interne « (CORPUS_CORAN.md) » est retirée de la note de la basmala de tête dans `packages/content/data/priere/sourates.json` (copie exacte de la source du référent) ; `priere-donnees.mjs` relancé (24 fichiers). Les champs `regle` qui contiennent encore cette mention appartiennent aux éléments `coran_extrait` de `priere.json` : ils ne sont jamais montrés à l'élève (aucun fichier de `static/priere-data` ne contient plus « CORPUS_CORAN »).
