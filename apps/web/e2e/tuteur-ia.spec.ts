@@ -182,6 +182,80 @@ test('conversation libre (texte) : réponse du livre, voix simulée, refus relig
   ]);
 });
 
+test('28/10 : prononciation à l’oral — appel en parallèle, résultat lu juste après, carte discrète', async ({
+  page,
+}) => {
+  const pid = await adulteNiveau2(page);
+  const s = (await (
+    await page.request.get(`/api/v1/tuteur-ia/${pid}/scenario/ad2.l01`)
+  ).json()) as {
+    tours: Array<{ t: string; choix?: Array<{ ar: string; kind: string }> }>;
+  };
+  const bonne = s.tours
+    .find((x) => x.t === 'eleve')!
+    .choix!.find((c) => c.kind === 'bonne')!
+    .ar.replace(/[[\]]/g, '');
+  // serveur (mode simulé) : la réponse porte l'identifiant ; la remarque se lit UNE fois
+  const r = await page.request.post(`/api/v1/tuteur-ia/${pid}/libre`, {
+    headers: H,
+    data: {
+      unitId: 'ad2.l01',
+      audio: {
+        mime: 'audio/wav',
+        b64: Buffer.from(`SIMULE:${bonne}`).toString('base64'),
+        secondes: 2,
+      },
+    },
+  });
+  expect(r.status()).toBe(200);
+  const id = ((await r.json()) as { prononciationId?: string }).prononciationId;
+  expect(id).toBeTruthy();
+  const url = `/api/v1/tuteur-ia/${pid}/prononciation/${id}`;
+  const p = await page.request.get(url);
+  expect(p.status()).toBe(200);
+  expect(((await p.json()) as { remarque: unknown }).remarque).toBeNull(); // phrase juste : aucun reproche
+  expect((await page.request.get(url)).status()).toBe(404);
+  // écran : la carte arrive APRÈS la réponse, le mot juste sur sa propre ligne
+  const PID = '00000000-0000-4000-8000-000000000001';
+  await page.route('**/api/v1/tuteur-ia/*/libre', (route) =>
+    route.fulfill({
+      json: {
+        logId: PID,
+        reponse_ar: 'هٰذَا تُفَّاحٌ جَمِيلٌ.',
+        reponse_fr: 'Voici de belles pommes.',
+        correction: null,
+        audio: null,
+        lu: false,
+        prononciationId: PID,
+      },
+    }),
+  );
+  await page.route(`**/api/v1/tuteur-ia/*/prononciation/${PID}`, (route) =>
+    route.fulfill({
+      json: {
+        remarque: {
+          correct: 'أُرِيدُ',
+          son: 'voyelle_longue',
+          explication_fr:
+            'Ce mot se dit avec une voyelle longue : on la tient deux temps au lieu d’un.',
+        },
+        conseil: null,
+        audio: null,
+      },
+    }),
+  );
+  await page.goto('/lecons/ad2.l01');
+  await page.getByTestId('tuia-ouvrir').click();
+  await page.getByTestId('tuia-mode-libre').click();
+  await page.getByTestId('tuia-ecrire').click();
+  await page.getByTestId('tuia-saisie').fill(bonne);
+  await page.getByTestId('tuia-envoyer').click();
+  const carte = page.getByTestId('tuia-prononciation');
+  await expect(carte).toContainText('Prononciation');
+  await expect(carte).toContainText('voyelle longue');
+  await expect(carte).toContainText('أُرِيدُ');
+});
+
 test('enfant : conversation libre refusée par le serveur (dialogue guidé seul)', async ({
   page,
 }) => {

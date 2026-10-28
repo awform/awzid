@@ -17,8 +17,16 @@
  * bienveillant, il donne le bon modèle. Une seule remarque par tour. L'élève voit le mot JUSTE (mot du livre), jamais
  * ce que le modèle a cru entendre.
  */
-import { bareWords } from '../arabic.js';
-import type { MotNiveau, Replique } from './types.js';
+import { bareWords, type QuranIndex } from '../arabic.js';
+import type { Audience } from '../types.js';
+import { classerEntree, contientCoran } from './garde.js';
+import type {
+  ConvSortieFournisseur,
+  MotNiveau,
+  PrononBrouillon,
+  PrononFournisseur,
+  Replique,
+} from './types.js';
 
 export interface RemarquePrononciation {
   /** le mot juste, vocalisé (mot du livre) */
@@ -82,7 +90,7 @@ const LONGUES = new Set(['ا', 'و', 'ي']);
  * en ء, ى → ا, tanwīn final retiré (avec l'alif qui le porte, ou le « ن » d'un tanwīn écrit comme il s'entend).
  */
 export function formeSons(mot: string, tanwinOreille = false): string {
-  let m = mot.normalize('NFC').trim();
+  let m = mot.trim();
   // tanwīn final : « ـًا », « ـً », « ـٌ », « ـٍ », ou écrit à l'oreille « ـَنْ / ـُنْ / ـِنْ »
   m = m.replace(/[ًٌٍ]ا?$/, '').replace(/اً$/, '');
   if (tanwinOreille) m = m.replace(/[َُِ]نْ$/, '');
@@ -104,10 +112,7 @@ export function differenceSon(
 ): Pick<RemarquePrononciation, 'son' | 'entendu'> | null {
   // le tanwīn du mot juste peut avoir été écrit « à l'oreille » (غَدًا entendu « رَدَنْ »)
   const c = formeSons(correct);
-  const e = formeSons(
-    entendu,
-    /[\u064B\u064C\u064D]ا?$|ا\u064B$/.test(correct.normalize('NFC').trim()),
-  );
+  const e = formeSons(entendu, /[\u064B\u064C\u064D]ا?$|ا\u064B$/.test(correct.trim()));
   if (!e || !c || e === c) return null;
   const le = lettres(e);
   const lc = lettres(c);
@@ -198,6 +203,209 @@ export function remarquePrononciation(o: {
   return null;
 }
 
+// ------------------------------------------------------------------ 28/10/2026 : appel dédié, paires difficiles
+
+/**
+ * Paires DIFFICILES : le modèle ne les entend pas de façon fiable (21/10/2026 : ع/ء, ق/ك, ص/س jamais repérés, il
+ * « entend » le mot attendu). Aucune remarque n'est faite sur elles (ni sur la shadda, jamais repérée) : à la place,
+ * un CONSEIL D'ÉCOUTE prudent, qui n'accuse pas (« écoute la différence »), avec une paire minimale tirée des livres
+ * (fiches makhārij du 25/10/2026, mots copiés des leçons ; mots sans sens religieux).
+ */
+export const PAIRES_ECOUTE: Readonly<
+  Record<string, { autre: string; paire: readonly [MotNiveau, MotNiveau] }>
+> = {
+  // ad1 l25 (fiche 03)
+  ق: {
+    autre: 'ك',
+    paire: [
+      { ar: 'قَلْبٌ', fr: 'cœur' },
+      { ar: 'كَلْبٌ', fr: 'chien' },
+    ],
+  },
+  // ad1 l25 (fiche 02)
+  ع: {
+    autre: 'ء',
+    paire: [
+      { ar: 'عَلَمٌ', fr: 'drapeau' },
+      { ar: 'أَلَمٌ', fr: 'douleur' },
+    ],
+  },
+  // ad1 l25 (fiche 04)
+  ص: {
+    autre: 'س',
+    paire: [
+      { ar: 'صَيْفٌ', fr: 'été' },
+      { ar: 'سَيْفٌ', fr: 'épée' },
+    ],
+  },
+  // en1 l16 (fiche 01) : noms des deux lettres
+  ح: {
+    autre: 'ه',
+    paire: [
+      { ar: 'حَاءٌ', fr: 'nom de la lettre ح' },
+      { ar: 'هَاءٌ', fr: 'nom de la lettre ه' },
+    ],
+  },
+};
+/** Ordre de priorité du conseil (une seule paire par tour). */
+const ORDRE_CONSEIL = ['ق', 'ع', 'ص', 'ح'] as const;
+/** Différences jamais signalées comme faute (détection non fiable) : conseil d'écoute ou silence. */
+export const PAIRES_DIFFICILES: ReadonlyArray<readonly [string, string]> = [
+  ['ع', 'ء'],
+  ['ق', 'ك'],
+  ['ص', 'س'],
+];
+export const estDifficile = (d: Pick<RemarquePrononciation, 'son' | 'entendu'>): boolean =>
+  d.son === 'shadda' ||
+  d.son === 'voyelle_breve' ||
+  PAIRES_DIFFICILES.some(
+    ([x, y]) => (d.son === x && d.entendu === y) || (d.son === y && d.entendu === x),
+  );
+
+export interface ConseilEcoute {
+  /** le son du mot dit par l'élève (lettre) */
+  son: string;
+  /** le son voisin avec lequel on le confond */
+  autre: string;
+  /** le mot du livre, vocalisé, où se trouve ce son */
+  mot: string;
+  /** paire minimale à écouter (mots des livres) */
+  paire: readonly [MotNiveau, MotNiveau];
+  explication_fr: string;
+}
+
+export interface IssuePrononciation {
+  remarque: RemarquePrononciation | null;
+  conseil: ConseilEcoute | null;
+  filtre: Array<{ step: string; action: 'ok' | 'bloque' | 'ecarte'; detail?: string }>;
+}
+
+/** Brouillon de l'appel de prononciation, validé (sinon null : rien n'est dit). */
+export function validerPrononBrouillon(x: unknown): PrononBrouillon | null {
+  if (!x || typeof x !== 'object' || Array.isArray(x)) return null;
+  const o = x as Record<string, unknown>;
+  if (Object.keys(o).some((k) => !['entendu', 'voulu', 'fautes'].includes(k))) return null;
+  if (typeof o.entendu !== 'string' || typeof o.voulu !== 'string') return null;
+  if (o.entendu.length > 400 || o.voulu.length > 400) return null;
+  if (!Array.isArray(o.fautes) || o.fautes.length > 3) return null;
+  const fautes: PrononBrouillon['fautes'] = [];
+  for (const f of o.fautes as Array<Record<string, unknown>>) {
+    if (typeof f?.entendu !== 'string' || typeof f?.correct !== 'string') return null;
+    if (f.entendu.length > 60 || f.correct.length > 60) return null;
+    fautes.push({ entendu: f.entendu, correct: f.correct });
+  }
+  return { entendu: o.entendu, voulu: o.voulu, fautes };
+}
+
+/**
+ * GARDE-FOU (28/10/2026, batterie réelle) : Flash-Lite laisse parfois la transcription VIDE à l'oral (3 fois sur 3 sur
+ * « quelqu'un d'internet veut me rencontrer ») ; le classement de ce qu'a dit l'élève (religion, protection…) serait
+ * aveugle. Dans ce cas SEULEMENT, on attend l'appel de prononciation (lancé en parallèle, gemini-3.8-flash) et sa
+ * « phrase voulue » sert de transcription. Sans elle, le tour reste jugé sur la sortie du modèle (filtres).
+ */
+export async function completerTranscription(
+  out: ConvSortieFournisseur,
+  prononciation: Promise<ConvSortieFournisseur | null> | null,
+): Promise<{ out: ConvSortieFournisseur; complete: boolean }> {
+  const b = out.brouillon as Record<string, unknown> | null;
+  if (out.status !== 'ok' || !prononciation || !b || typeof b !== 'object' || Array.isArray(b))
+    return { out, complete: false };
+  if (typeof b.transcription_ar === 'string' && b.transcription_ar.trim())
+    return { out, complete: false };
+  const r = await prononciation;
+  const pb = r && r.status === 'ok' ? validerPrononBrouillon(r.brouillon) : null;
+  if (!pb?.voulu.trim()) return { out, complete: false };
+  return { out: { ...out, brouillon: { ...b, transcription_ar: pb.voulu } }, complete: true };
+}
+
+/** Forme VOCALISÉE du livre d'un mot (même forme nue), pour que l'élève voie le mot du livre. */
+function formeDuLivre(
+  mots: readonly MotNiveau[],
+  dialogue: readonly Replique[],
+  mot: string,
+): string | null {
+  const cible = bareWords(mot)[0];
+  if (!cible) return null;
+  for (const t of [...mots.map((m) => m.ar), ...dialogue.map((r) => r.ar)])
+    for (const w of t.split(/[\s،,.؟?!:;«»"]+/))
+      if (w && bareWords(w).length === 1 && bareWords(w)[0] === cible) return w;
+  return null;
+}
+
+/**
+ * Issue de l'appel de prononciation (oral, réponse NORMALE de la conversation seulement) : une remarque vérifiée
+ * (paires fiables : ح/ه, ط/ت, ض/د, ظ/ذ/ز, ث/س, خ/ه, غ/ر, voyelle longue), sinon au plus un conseil d'écoute pour une
+ * paire difficile présente dans un mot du livre que l'élève voulait dire. Garde-fous : si la phrase voulue ou les sons
+ * entendus touchent un sujet refusé (religion, Coran…), RIEN n'est montré.
+ */
+export function issuePrononciation(
+  out: Pick<ConvSortieFournisseur, 'status' | 'brouillon' | 'detail'>,
+  o: {
+    mots: readonly MotNiveau[];
+    dialogue: readonly Replique[];
+    index: QuranIndex;
+    audience: Audience;
+  },
+): IssuePrononciation {
+  const vide = (
+    step: string,
+    action: 'bloque' | 'ecarte',
+    detail?: string,
+  ): IssuePrononciation => ({
+    remarque: null,
+    conseil: null,
+    filtre: [{ step, action, ...(detail ? { detail } : {}) }],
+  });
+  if (out.status !== 'ok')
+    return vide('prononciation', 'ecarte', `${out.status}:${out.detail ?? ''}`);
+  const b = validerPrononBrouillon(out.brouillon);
+  if (!b) return vide('prononciation', 'ecarte', 'schema');
+  for (const t of [b.voulu, b.entendu])
+    if (contientCoran(t, o.index) || classerEntree(t, o.audience) !== 'normal')
+      return vide('prononciation', 'bloque', 'sujet');
+  const filtre: IssuePrononciation['filtre'] = [];
+  const r = remarquePrononciation({
+    entenduLitteral: b.entendu,
+    transcription: b.voulu,
+    fautes: b.fautes,
+    mots: o.mots,
+    dialogue: o.dialogue,
+  });
+  if (r && !estDifficile(r)) {
+    const livre = formeDuLivre(o.mots, o.dialogue, r.correct);
+    filtre.push({ step: 'prononciation', action: 'ok', detail: r.son });
+    return { remarque: livre ? { ...r, correct: livre } : r, conseil: null, filtre };
+  }
+  if (b.fautes.length)
+    filtre.push({
+      step: 'prononciation',
+      action: 'ecarte',
+      detail: r ? `difficile:${r.son}` : 'doute',
+    });
+  // conseil d'écoute : premier son difficile (ordre de priorité) présent dans un mot du livre de la phrase voulue
+  const livre = motsDuLivre(o.mots, o.dialogue);
+  const motsVoulus = b.voulu.split(/[\s،,.؟?!:;«»"]+/).filter((w) => bareWords(w).length === 1);
+  for (const son of ORDRE_CONSEIL) {
+    const w = motsVoulus.find((m) => connu(livre, m) && formeSons(m).includes(son));
+    if (!w) continue;
+    const p = PAIRES_ECOUTE[son]!;
+    const mot = formeDuLivre(o.mots, o.dialogue, w) ?? w;
+    filtre.push({ step: 'conseil_ecoute', action: 'ok', detail: son });
+    return {
+      remarque: null,
+      conseil: {
+        son,
+        autre: p.autre,
+        mot,
+        paire: p.paire,
+        explication_fr: `Écoute la différence entre ${son} et ${p.autre} : ${MODELES_SON[son]}. Répète les deux mots, puis le mot de ta phrase.`,
+      },
+      filtre,
+    };
+  }
+  return { remarque: null, conseil: null, filtre };
+}
+
 /**
  * Pour le fournisseur SIMULÉ (tests, démonstration) : fautes de prononciation d'une phrase par rapport aux mots du
  * livre (même règle que l'application, à l'envers).
@@ -226,4 +434,35 @@ export function phraseVoulueSimulee(
   fautes: ReadonlyArray<{ entendu: string; correct: string }>,
 ): string {
   return fautes.reduce((p, f) => p.replace(f.entendu, f.correct), dit);
+}
+
+/**
+ * Appel de prononciation SIMULÉ (tests, démonstration) : l'audio « SIMULE:<phrase> » est entendu tel quel ; les
+ * fautes sont celles que la règle de l'application reconnaît par rapport au dialogue de la leçon (lu dans l'invite).
+ */
+export class PrononciationSimulee implements PrononFournisseur {
+  readonly name = 'simule';
+  readonly real = false;
+  constructor(readonly modele = 'gemini-3.8-flash') {}
+  async ecouter(
+    systeme: string,
+    audio: { mime: string; data: Buffer },
+    ctx?: { mots: readonly MotNiveau[] },
+  ) {
+    const brut = audio.data.toString('utf8');
+    const dit = brut.startsWith('SIMULE:') ? brut.slice(7) : '';
+    const dialogue: Replique[] = [];
+    try {
+      const m = /<dialogue_de_la_lecon>(.*)<\/dialogue_de_la_lecon>/s.exec(systeme);
+      for (const ar of JSON.parse(m?.[1] ?? '[]') as string[]) dialogue.push({ qui: '', ar });
+    } catch {
+      /* invite sans dialogue : aucune faute simulée */
+    }
+    const fautes = dit ? fautesSimulees(dit, ctx?.mots ?? [], dialogue) : [];
+    return {
+      status: 'ok' as const,
+      brouillon: { entendu: dit, voulu: phraseVoulueSimulee(dit, fautes), fautes },
+      usage: { texte: Math.ceil(systeme.length / 3), audio: 32 * 3, sortie: 120 },
+    };
+  }
 }

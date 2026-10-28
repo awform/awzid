@@ -29,7 +29,6 @@ import {
 import type { Audience, FilterEvent } from '../types.js';
 import { ENCOURAGEMENTS_AR } from './prompt.js';
 import { sujetSensible, sujetSensibleSortie, type SujetSensible } from './sujets.js';
-import { remarquePrononciation, type RemarquePrononciation } from './prononciation.js';
 import type { ConvBrouillon, ConvSortieFournisseur, MotNiveau, Replique } from './types.js';
 
 /**
@@ -95,12 +94,6 @@ export function motifProtection(texte: string): 'rencontre' | 'detresse' {
   return cs.includes('rencontre') && !cs.includes('detresse') ? 'rencontre' : 'detresse';
 }
 
-/** La plus sensible de deux catégories d'entrée (voix : phrase voulue et sons entendus). */
-function pireCategorie(a: EntreeCategorie, b: EntreeCategorie): EntreeCategorie {
-  if (a !== 'normal') return a;
-  return b;
-}
-
 /** Catégories qui, repérées sur ce que l'élève a dit (voix), remplacent la réponse par un renvoi. */
 export const RENVOIS_ENTREE: readonly EntreeCategorie[] = [
   'protection',
@@ -121,38 +114,13 @@ const str = (x: unknown, max: number): string | null =>
 export function validerBrouillon(x: unknown): ConvBrouillon | null {
   if (!x || typeof x !== 'object' || Array.isArray(x)) return null;
   const o = x as Record<string, unknown>;
-  const permis = new Set([
-    'entendu_litteral',
-    'transcription_ar',
-    'prononciation',
-    'reponse_ar',
-    'reponse_fr',
-    'correction',
-    'sujet',
-  ]);
+  const permis = new Set(['transcription_ar', 'reponse_ar', 'reponse_fr', 'correction', 'sujet']);
   if (Object.keys(o).some((k) => !permis.has(k))) return null;
   const transcription_ar = str(o.transcription_ar ?? '', MAX_AR);
-  const entendu_litteral = str(o.entendu_litteral ?? '', MAX_AR);
-  // prononciation : 3 éléments au plus, chacun un mot court ; sinon le brouillon est hors schéma
-  const pr = o.prononciation ?? [];
-  if (!Array.isArray(pr) || pr.length > 3) return null;
-  const prononciation: ConvBrouillon['prononciation'] = [];
-  for (const x of pr as Array<Record<string, unknown>>) {
-    const entendu = str(x?.entendu, 60);
-    const correct = str(x?.correct, 60);
-    if (entendu === null || correct === null) return null;
-    prononciation.push({ entendu, correct });
-  }
   const reponse_ar = str(o.reponse_ar, MAX_AR);
   const reponse_fr = str(o.reponse_fr, MAX_FR);
   const sujet = o.sujet;
-  if (
-    transcription_ar === null ||
-    entendu_litteral === null ||
-    reponse_ar === null ||
-    reponse_fr === null
-  )
-    return null;
+  if (transcription_ar === null || reponse_ar === null || reponse_fr === null) return null;
   if (sujet !== 'langue' && sujet !== 'religion' && sujet !== 'autre') return null;
   let correction: ConvBrouillon['correction'] = null;
   if (o.correction !== null && o.correction !== undefined) {
@@ -163,15 +131,7 @@ export function validerBrouillon(x: unknown): ConvBrouillon | null {
     if (dit === null || correct === null || explication_fr === null) return null;
     correction = { dit, correct, explication_fr };
   }
-  return {
-    entendu_litteral,
-    transcription_ar,
-    prononciation,
-    reponse_ar,
-    reponse_fr,
-    correction,
-    sujet,
-  };
+  return { transcription_ar, reponse_ar, reponse_fr, correction, sujet };
 }
 
 export interface ResultatFiltre {
@@ -197,8 +157,7 @@ export function filtrerSortie(raw: unknown, index: QuranIndex): ResultatFiltre {
       coranEleve: false,
       events: [{ step: 'schema', action: 'bloque' }],
     };
-  const coranEleve =
-    contientCoran(b.transcription_ar, index) || contientCoran(b.entendu_litteral, index);
+  const coranEleve = contientCoran(b.transcription_ar, index);
   const bloque = (step: string, detail?: string) =>
     events.push({ step, action: 'bloque', ...(detail ? { detail } : {}) });
   const fr = [b.reponse_fr, b.correction?.explication_fr ?? ''].join('\n');
@@ -216,14 +175,45 @@ export function filtrerSortie(raw: unknown, index: QuranIndex): ResultatFiltre {
   const sensible = sujetSensibleSortie(fr, ar);
   if (sensible) bloque('sujet_sensible', sensible);
   if (PERSONAL.test(frPlie)) bloque('donnees_perso');
+  // 28/10/2026 (batterie réelle, Flash-Lite) : une adresse e-mail inventée est sortie dans reponse_fr — tout
+  // contact (e-mail, lien, numéro) bloque la réponse
+  if (CONTACT.test(`${fr}\n${ar}`)) bloque('donnees_perso', 'contact');
   if (HUMAN.test(frPlie)) bloque('humain');
   if (new RegExp(FACE_EMOJI.source, 'u').test(fr + ar)) bloque('emoji');
   if (transliterationRuns(fr).length || transliterationPatterns(fr).length) bloque('phonetique');
+  // 28/10/2026 : traduction MAL FORMÉE (Flash-Lite : « Voulez-Cous », commentaires, autre écriture) → la traduction
+  // n'est pas montrée (l'arabe et sa voix restent) ; les contrôles ci-dessus ont porté sur l'original
+  const propre = traductionPropre(b.reponse_fr, b.reponse_ar, b.sujet);
+  if (propre !== b.reponse_fr.trim()) {
+    if (!propre) events.push({ step: 'traduction', action: 'corrige', detail: 'ecartee' });
+    b.reponse_fr = propre;
+  }
   // l'arabe de la réponse est écrit en arabe : aucune lettre latine dedans
   if (/[A-Za-z]{2,}/.test(b.reponse_ar)) bloque('latin_dans_arabe');
   if (!hasArabic(b.reponse_ar) && b.sujet === 'langue') bloque('reponse_sans_arabe');
   if (!events.length) events.push({ step: 'sortie', action: 'ok' });
   return { ok: !events.some((e) => e.action === 'bloque'), brouillon: b, coranEleve, events };
+}
+
+/** Contact (e-mail, lien, numéro de téléphone) : jamais dans une réponse du tuteur. */
+const CONTACT = /[\w.+-]+@[\w-]+\.[a-z]{2,}|https?:\/\/|www\.|\+?\d(?:[\s.-]?\d){7,}/i;
+
+/**
+ * Traduction française propre, ou '' si elle est mal formée (28/10/2026, Flash-Lite) : lettre d'une autre écriture,
+ * inversion cassée (« Voulez-Cous », « Avez-voux »), commentaire (parenthèses, « attends », « je veux dire »…), ou
+ * bien plus longue que la phrase arabe (divagation). Le point d'interrogation arabe est remis en français.
+ */
+export function traductionPropre(fr: string, ar: string, sujet = 'langue'): string {
+  const t = fr.replace(/\s*؟/g, ' ?').replace(/،/g, ',').trim();
+  const lettresAr = [...ar].filter((c) => /[ء-ي]/.test(c)).length;
+  const malformee =
+    /[^\p{Script=Latin}\P{L}]/u.test(t) ||
+    /\p{L}ez-(?!(?:vous|moi|nous|les|le|la|lui|leur|en|y)(?![\p{L}]))/iu.test(t) ||
+    /[()[\]{}"]/.test(t) ||
+    /(^|[^\p{L}])(attends|je veux dire|générique)(?![\p{L}])/iu.test(t) ||
+    // divagation : seulement pour une réponse de conversation (un refus poli peut être plus long que l'arabe)
+    (sujet === 'langue' && t.length > 30 + 2.5 * lettresAr);
+  return malformee ? '' : t;
 }
 
 /** La voix peut-elle lire ce texte ? Jamais de Coran (décision 7), jamais de lettres latines. */
@@ -258,8 +248,6 @@ export interface IssueTour {
   horsNiveau: string[];
   /** nombre de mots de la réponse comptés pour le contrôle de niveau */
   motsReponse: number;
-  /** remarque de prononciation VÉRIFIÉE par l'application (oral, réponse normale seulement), ou null */
-  prononciation: RemarquePrononciation | null;
 }
 
 /**
@@ -288,7 +276,6 @@ export function issueDuTour(
     repliTechnique: false,
     horsNiveau: [],
     motsReponse: 0,
-    prononciation: null,
   };
   if (out.status !== 'ok') {
     // « refus » : la sécurité du fournisseur a bloqué (garde-fou) ; « erreur » : PANNE, rien n'a été jugé (20/10/2026 :
@@ -310,22 +297,16 @@ export function issueDuTour(
     if (!br) r.repliTechnique = true;
     r.sujet = br?.sujet ?? null;
     const dit = br?.transcription_ar ?? '';
-    const litteral = br?.entendu_litteral ?? '';
-    // voix : la phrase voulue ET les sons entendus sont classés (une prononciation fautive ne fait pas passer un sujet
-    // refusé : « هَرَام » pour « حَرَام »)
-    const cat =
-      br && o.audio
-        ? pireCategorie(
-            classerEntree(dit, o.audience),
-            litteral ? classerEntree(litteral, o.audience) : 'normal',
-          )
-        : 'normal';
+    const cat = br && o.audio ? classerEntree(dit, o.audience) : 'normal';
     const sensibleModele: SujetSensible | null =
       br && br.sujet === 'autre' ? sujetSensibleSortie(br.reponse_fr, br.reponse_ar) : null;
-    if (br && (f.coranEleve || contientCoran(dit, o.index) || contientCoran(litteral, o.index)))
-      r.redir = 'coran';
+    if (br && (f.coranEleve || contientCoran(dit, o.index))) r.redir = 'coran';
     else if (br && (br.sujet === 'religion' || cat === 'religion')) r.redir = 'religion';
     else if (br && RENVOIS_ENTREE.includes(cat)) r.redir = cat;
+    // 28/10/2026 : le modèle a refusé (« autre ») en parlant de danger ou de rencontre (« Ne rencontre personne
+    // d'internet ») : renvoi PROTECTION de l'application (adulte de confiance, numéro d'aide, alerte), plus sûr
+    else if (br && br.sujet === 'autre' && classerEntree(br.reponse_fr, 'ado') === 'protection')
+      r.redir = 'protection';
     // le modèle a refusé un sujet sensible (« sujet » = autre, réponse qui le nomme) : renvoi poli de l'application
     else if (sensibleModele) r.redir = sensibleModele;
     else if (f.ok && br) {
@@ -337,21 +318,6 @@ export function issueDuTour(
         (w) => w.length >= 2 && !OUTILS.has(w),
       ).length;
       r.filtre.push({ step: 'niveau', action: 'ok', detail: `${r.horsNiveau.length} hors liste` });
-      if (o.audio) {
-        r.prononciation = remarquePrononciation({
-          entenduLitteral: litteral,
-          transcription: dit,
-          fautes: br.prononciation,
-          mots: o.mots,
-          dialogue: o.dialogue,
-        });
-        if (br.prononciation.length)
-          r.filtre.push({
-            step: 'prononciation',
-            action: r.prononciation ? 'ok' : 'ecarte',
-            detail: r.prononciation ? r.prononciation.son : 'doute',
-          });
-      }
     } else r.route = 'conversation_repli';
     if (r.redir) r.transcription = dit;
   }

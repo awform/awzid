@@ -4342,5 +4342,7 @@
   "md.err_quota": "Demasiadas solicitudes por ahora: inténtalo más tarde.",
   "md.err_audio": "No se pudo analizar tu grabación. Recita el versículo entero e inténtalo de nuevo.",
   "md.err_reference": "La recitación de Ayyūb de este versículo no está disponible.",
-  "fn.tajwid_madd": "Indicación de los madd (adultos, beta cerrada)"
+  "fn.tajwid_madd": "Indicación de los madd (adultos, beta cerrada)",
+  "tuia.prononciation": "Pronunciación",
+  "tuia.ecoute_difference": "Escucha la diferencia"
 }

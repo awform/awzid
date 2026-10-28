@@ -62,5 +62,7 @@
   "tuia.vous": "Me vouvoyer en français",
   "tuia.journal": "Les échanges du tuteur sont gardés 90 jours (visibles par tes parents si tu as moins de 18 ans). Ta voix n’est jamais gardée.",
   "tuia.repli": "Reprenons le dialogue de la leçon :",
-  "tuia.retour": "Retour à la leçon"
+  "tuia.retour": "Retour à la leçon",
+  "tuia.prononciation": "Prononciation",
+  "tuia.ecoute_difference": "Écoute la différence"
 }

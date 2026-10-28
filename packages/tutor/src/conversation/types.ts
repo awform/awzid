@@ -63,12 +63,8 @@ export interface ConvEntree {
 
 /** Brouillon structuré rendu par le modèle (schéma CONV_SCHEMA), NON fiable. */
 export interface ConvBrouillon {
-  /** sons RÉELLEMENT entendus, lettre par lettre, sans correction (oral seulement ; vide à l'écrit) */
-  entendu_litteral: string;
-  /** ce que l'élève voulait dire (arabe), vide en mode texte */
+  /** ce que le modèle a compris de l'élève (arabe), vide en mode texte */
   transcription_ar: string;
-  /** mots mal prononcés selon le modèle (non fiable : l'application vérifie, prononciation.ts) */
-  prononciation: Array<{ entendu: string; correct: string }>;
   /** réponse du tuteur, arabe littéral du niveau, 2 phrases courtes au plus */
   reponse_ar: string;
   /** traduction française de la réponse */
@@ -95,8 +91,6 @@ export interface ConvSortieFournisseur {
   detail?: string;
   /** message technique du fournisseur (erreur de l'API, réglage ignoré), borné ; jamais montré à l'élève */
   message?: string;
-  /** durées mesurées (ms) : jeton d'accès, appel au modèle (envoi, calcul, réception) */
-  mesures?: { jetonMs: number; modeleMs: number };
 }
 
 /** Fournisseur de conversation (Gemini sur Vertex, ou simulé). Ne connaît ni la base ni les plafonds. */
@@ -106,6 +100,28 @@ export interface ConvFournisseur {
   readonly real: boolean;
   readonly modele: string;
   repondre(systeme: string, entree: ConvEntree): Promise<ConvSortieFournisseur>;
+}
+
+/** Brouillon de l'appel de PRONONCIATION (schéma PRONON_SCHEMA), NON fiable : l'application vérifie. */
+export interface PrononBrouillon {
+  /** sons entendus, lettre par lettre */
+  entendu: string;
+  /** phrase voulue, écrite correctement */
+  voulu: string;
+  fautes: Array<{ entendu: string; correct: string }>;
+}
+
+/** Fournisseur de l'appel de prononciation (oral seulement), lancé en parallèle de la conversation. */
+export interface PrononFournisseur {
+  readonly name: string;
+  readonly real: boolean;
+  readonly modele: string;
+  ecouter(
+    systeme: string,
+    audio: { mime: string; data: Buffer },
+    /** mots du livre (utilisés par le simulé seulement ; jamais envoyés au modèle de prononciation) */
+    ctx?: { mots: readonly MotNiveau[] },
+  ): Promise<ConvSortieFournisseur>;
 }
 
 /** Synthèse vocale (Google Cloud TTS, voix arabe des leçons ; ou simulée). */

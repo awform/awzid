@@ -333,11 +333,19 @@ const T = [
   ],
   [
     'tuia.protection',
-    'Merci de l’avoir dit. Parle tout de suite à un adulte de confiance. Tu peux aussi appeler le {tel}.',
-    'Thank you for saying it. Talk to a trusted adult right away. You can also call {tel}.',
-    'Gracias por decirlo. Habla enseguida con un adulto de confianza. También puedes llamar al {tel}.',
-    'Danke, dass du es gesagt hast. Sprich sofort mit einem Erwachsenen, dem du vertraust. Du kannst auch {tel} anrufen.',
-    'شُكْرًا لِأَنَّكَ قُلْتَ ذٰلِكَ. تَحَدَّثْ فَوْرًا إِلَى شَخْصٍ بَالِغٍ تَثِقُ بِهِ، وَيُمْكِنُكَ الِاتِّصَالُ بِالرَّقْمِ {tel}.',
+    'Merci de l’avoir dit. Parle tout de suite à un adulte de confiance (un parent, un enseignant). Tu peux aussi appeler le {tel}.',
+    'Thank you for saying it. Talk to a trusted adult right away (a parent, a teacher). You can also call {tel}.',
+    'Gracias por decirlo. Habla enseguida con un adulto de confianza (tu padre o tu madre, un profesor). También puedes llamar al {tel}.',
+    'Danke, dass du es gesagt hast. Sprich sofort mit einem Erwachsenen, dem du vertraust (Eltern, Lehrkraft). Du kannst auch {tel} anrufen.',
+    'شُكْرًا لِأَنَّكَ قُلْتَ ذٰلِكَ. تَحَدَّثْ فَوْرًا إِلَى شَخْصٍ بَالِغٍ تَثِقُ بِهِ (أَحَدِ وَالِدَيْكَ أَوْ مُعَلِّمِكَ)، وَيُمْكِنُكَ الِاتِّصَالُ بِالرَّقْمِ {tel}.',
+  ],
+  [
+    'tuia.protection_rencontre',
+    'Merci de me l’avoir dit. Ne va jamais seul(e) retrouver quelqu’un connu sur internet. Parles-en tout de suite à un adulte de confiance (un parent, un enseignant). Tu peux aussi appeler le {tel}.',
+    'Thank you for telling me. Never go alone to meet someone you met online. Talk about it right away with a trusted adult (a parent, a teacher). You can also call {tel}.',
+    'Gracias por contármelo. Nunca vayas solo o sola a ver a alguien que conociste en internet. Habla enseguida con un adulto de confianza (tu padre o tu madre, un profesor). También puedes llamar al {tel}.',
+    'Danke, dass du es mir gesagt hast. Triff dich nie allein mit jemandem, den du im Internet kennengelernt hast. Sprich sofort mit einem Erwachsenen, dem du vertraust (Eltern, Lehrkraft). Du kannst auch {tel} anrufen.',
+    'شُكْرًا لِأَنَّكَ أَخْبَرْتَنِي. لَا تَذْهَبْ وَحْدَكَ أَبَدًا لِلِقَاءِ شَخْصٍ عَرَفْتَهُ عَبْرَ الْإِنْتَرْنِتِ. تَحَدَّثْ فَوْرًا إِلَى شَخْصٍ بَالِغٍ تَثِقُ بِهِ (أَحَدِ وَالِدَيْكَ أَوْ مُعَلِّمِكَ)، وَيُمْكِنُكَ الِاتِّصَالُ بِالرَّقْمِ {tel}.',
   ],
   ['tuia.lien_lecons', 'Ma leçon', 'My lesson', 'Mi lección', 'Meine Lektion', 'دَرْسِي'],
   ['tuia.lien_madjaliss', 'Madjaliss', 'Madjaliss', 'Madjaliss', 'Madjaliss', 'الْمَجَالِسُ'],
@@ -446,6 +454,23 @@ const T = [
     'Volver a la lección',
     'Zurück zur Lektion',
     'الْعَوْدَةُ إِلَى الدَّرْسِ',
+  ],
+  // 28/10/2026 : prononciation (appel dédié, en parallèle) — remarque vérifiée ou conseil d'écoute
+  [
+    'tuia.prononciation',
+    'Prononciation',
+    'Pronunciation',
+    'Pronunciación',
+    'Aussprache',
+    'النُّطْقُ',
+  ],
+  [
+    'tuia.ecoute_difference',
+    'Écoute la différence',
+    'Hear the difference',
+    'Escucha la diferencia',
+    'Hör den Unterschied',
+    'اسْتَمِعْ إِلَى الْفَرْقِ',
   ],
 ];
 /** accroche de la leçon : dans la coquille de l'élève */

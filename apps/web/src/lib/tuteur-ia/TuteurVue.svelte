@@ -22,12 +22,14 @@
     guidee,
     jouer,
     libre,
+    prononciation as lirePrononciation,
     scenario as lireScenario,
     type Enregistreur,
     type Scenario,
     type EtatTuteur,
     type ReponseLibre,
     type ResultatGuidee,
+    type ResultatPrononciation,
   } from './api';
 
   /**
@@ -51,6 +53,8 @@
     aide?: string;
     protection?: ReponseLibre['protection'];
     repli?: boolean;
+    /** 28/10/2026 : remarque de prononciation ou conseil d'écoute, arrivés juste après la réponse */
+    prononciation?: ResultatPrononciation;
   }
 
   let etat = $state<EtatTuteur | null>(null);
@@ -240,6 +244,22 @@
     ];
     if (d.minutesRestantes !== undefined) minutes = d.minutesRestantes;
     if (d.audio) relire(d.audio);
+    if (d.prononciationId) void attendrePrononciation(d.prononciationId, messages.length - 1);
+  }
+  /** conseils d'écoute déjà montrés dans la séance (un par son : rester discret) */
+  const conseilsVus: string[] = [];
+  /** 28/10/2026 : la remarque arrive juste après la réponse (appel lancé en parallèle par le serveur) */
+  async function attendrePrononciation(pid: string, i: number) {
+    const r = await lirePrononciation(profileId, pid);
+    if (!r.ok || !r.data) return;
+    const p = r.data;
+    if (p.conseil && !p.remarque) {
+      if (conseilsVus.includes(p.conseil.son)) return;
+      conseilsVus.push(p.conseil.son);
+    }
+    if (!p.remarque && !p.conseil) return;
+    const m = messages[i];
+    if (m) messages[i] = { ...m, prononciation: p };
   }
   function relire(a: { mime: string; b64: string }) {
     lecteur?.pause();
@@ -462,6 +482,30 @@
                   <p class="petit"><Bidi text={t('tuia.correction')} /></p>
                   <Ar text={m.correction.correct} block />
                   <p class="petit"><Bidi text={m.correction.explication_fr} /></p>
+                </div>
+              {/if}
+              {#if m.prononciation}
+                {@const p = m.prononciation}
+                <div class="correction" data-testid="tuia-prononciation">
+                  {#if p.remarque}
+                    <p class="petit"><Bidi text={t('tuia.prononciation')} /></p>
+                    <Ar text={p.remarque.correct} block />
+                    <p class="petit"><Bidi text={p.remarque.explication_fr} /></p>
+                  {:else if p.conseil}
+                    <p class="petit"><Bidi text={t('tuia.ecoute_difference')} /></p>
+                    {#each p.conseil.paire as w (w.ar)}
+                      <Ar text={w.ar} block />
+                      {#if trad && w.fr}<p class="fr petit"><Bidi text={w.fr} /></p>{/if}
+                    {/each}
+                    <Ar text={p.conseil.mot} block />
+                    <p class="petit"><Bidi text={p.conseil.explication_fr} /></p>
+                  {/if}
+                  {#if p.audio}<button
+                      type="button"
+                      class="lien petit"
+                      onclick={() => p.audio && relire(p.audio)}
+                      ><Icon name="lecture" size={16} /> <Bidi text={t('tuia.ecouter')} /></button
+                    >{/if}
                 </div>
               {/if}
               {#if m.audio}<button
