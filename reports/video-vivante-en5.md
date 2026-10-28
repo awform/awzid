@@ -1,6 +1,6 @@
 # Vidéos vivantes — en5 (audit généré par `VIDEO_AUDIT=1`)
 
-Audio : 1929 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
+Audio : 1930 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 
 | Unité | Type | Modes | Scènes | Longue | Courte | Quiz (exercices) | Gardés sans voix | Sans audio (à écouter / tous) |
 |---|---|---|---|---|---|---|---|---|
@@ -20,10 +20,10 @@ Audio : 1929 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 | l14 | lecon 12 | courte, longue, quiz, revision | 21 | 797 s | 117 s | 7 | 12 | 3 / 4 |
 | l15 | bilan 3 | longue, revision | 12 | 442 s | — | 0 | 0 | 0 / 0 |
 | l16 | lecon 13 | courte, longue, quiz, revision | 21 | 767 s | 77 s | 7 | 4 | 1 / 2 |
-| l17 | lecon 14 | courte, longue, quiz, revision | 21 | 697 s | 77 s | 7 | 3 | 0 / 1 |
+| l17 | lecon 14 | courte, longue, quiz, revision | 21 | 697 s | 77 s | 7 | 3 | 0 / 0 |
 | l18 | lecon 15 | courte, longue, quiz, revision | 20 | 683 s | 80 s | 6 | 2 | 0 / 0 |
 | l19 | lecon 16 | courte, longue, quiz, revision | 20 | 709 s | 79 s | 6 | 1 | 0 / 0 |
-| l20 | bilan 4 | longue, revision | 12 | 423 s | — | 0 | 0 | 1 / 2 |
+| l20 | bilan 4 | longue, revision | 12 | 423 s | — | 0 | 0 | 0 / 1 |
 | l21 | lecon 17 | courte, longue, quiz, revision | 20 | 721 s | 117 s | 6 | 2 | 0 / 3 |
 | l22 | lecon 18 | courte, longue, quiz, revision | 19 | 690 s | 77 s | 5 | 0 | 0 / 0 |
 | l23 | lecon 19 | courte, longue, quiz, revision | 19 | 689 s | 80 s | 5 | 4 | 0 / 0 |
@@ -178,10 +178,6 @@ Textes gardés sans voix :
 - coran : الْكَعْبَةُ أَوَّلُ بَيْتٍ وُضِعَ لِلنَّاسِ.
 - coran : مَنِ ٱسْتَطَاعَ — جَآءَتْهُمُ ٱلْبَيِّنَةُ
 
-Mots d’exercices et du cahier sans fichier audio :
-
-- quiz : حُجَّاجٌ
-
 ## l18
 
 Textes gardés sans voix :
@@ -196,10 +192,6 @@ Textes gardés sans voix :
 - coran : الْأَنْصَارُ يُحِبُّونَ مَنْ هَاجَرَ إِلَيْهِمْ.
 
 ## l20
-
-Textes à écouter du livre sans fichier audio (affichés en silence) :
-
-- lecture : حُجَّاجٌ
 
 Mots d’exercices et du cahier sans fichier audio :
 

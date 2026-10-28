@@ -1,13 +1,1 @@
 sha1	nature	niveaux	texte	decision attendue
-12c0e91fcb172f44d9cdc0958b022d6c65500cb4	doua refuse par la garde commune (formule de dhikr proche du Coran)	douas	أَشْهَدُ أَنْ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ ... (doua de l'ablution)	autoriser dans garde-autorises (referent) puis generer, ou Ayyub si verset
-14c2194331433f9e51c20aa9e95eaaef497f6198	doua refuse par la garde commune	douas	فَإِنَّهُ لاَ يَغْفِرُ الذُّنُوبَ إِلاَّ أَنْتَ	autoriser (referent) puis generer
-1c1cca4757064cc90f5d7ae5cd7d4e3f698f9d7e	doua refuse par la garde commune	douas	الْحَمْدُ لِلَّهِ … اللَّهُ أَكْبَرُ … سُبْحَانَكَ	autoriser (referent) puis generer
-906939afd56c417c9fca35291eaff45f2e2d088a	doua refuse par la garde commune	douas	اللَّهُمَّ إِنَّا نَسْأَلُكَ فِي سَفَرِنَا هَذَا الْبِرَّ وَالتَّقْوَى ...	autoriser (referent) puis generer
-9d64014b7c2adf28d816acb63cf3d9c7ee6a1595	doua refuse par la garde commune	douas	أَشْهَدُ أَنْ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ وَأَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ	autoriser (referent) puis generer
-c7542d4f343aa59dce7afe60beb3da5c33d13b39	doua refuse par la garde commune	douas	إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي ...	autoriser (referent) puis generer (la 1re partie est 2:156 : Ayyub)
-df1b2a05d5b583d09d6a806a6cdacd952e9b8159	doua refuse par la garde commune (bismillah dans une doua)	douas	بِسْمِ اللَّهِ … الْحَمْدُ لِلَّهِ …	referent (regle Basmala)
-d282e4dd78d21e0c4a8396f229c4e1dc7fba685c	mot seul bloque par la garde	en3	السَّفَرُ	autoriser (vocabulaire) puis generer
-b721043c7ab7199e52ba3e122a70842a02e3128c	mot seul bloque par la garde	en5	حُجَّاجٌ	autoriser (vocabulaire) puis generer
-0d1f0f23786a21cfce37a05ebfa886a49804c65f	audio present, etiquette de niveau a ajouter	ad7	ادَّكَرَ	poser l'etiquette (zm-niveaux)
-eac1384b5d947e35127404116db7364387f46ac4	audio present, etiquette de niveau a ajouter	ad5	اسْتَجَابَ	poser l'etiquette
-f684fb9d9443e8b195e4cbe91b51c344d00a5ebc	audio present, etiquette de niveau a ajouter	lect-ad8-05	اسْتَعْجَلَ	poser l'etiquette

@@ -1,6 +1,6 @@
 # Vidéos vivantes — ad6 (audit généré par `VIDEO_AUDIT=1`)
 
-Audio : 2908 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
+Audio : 2909 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 
 | Unité | Type | Modes | Scènes | Longue | Courte | Quiz (exercices) | Gardés sans voix | Sans audio (à écouter / tous) |
 |---|---|---|---|---|---|---|---|---|
@@ -10,7 +10,7 @@ Audio : 2908 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 | l04 | lecon 4 | courte, longue, quiz, revision | 21 | 1004 s | 80 s | 7 | 1 | 0 / 1 |
 | l05 | bilan 1 | courte, longue, revision | 21 | 880 s | 74 s | 0 | 0 | 0 / 0 |
 | l06 | lecon 5 | courte, longue, quiz, revision | 22 | 976 s | 80 s | 7 | 0 | 0 / 0 |
-| l07 | lecon 6 | courte, longue, quiz, revision | 23 | 1049 s | 80 s | 8 | 0 | 0 / 4 |
+| l07 | lecon 6 | courte, longue, quiz, revision | 23 | 1049 s | 80 s | 8 | 0 | 0 / 3 |
 | l08 | lecon 7 | courte, longue, quiz, revision | 22 | 1001 s | 80 s | 7 | 0 | 0 / 1 |
 | l09 | lecon 8 | courte, longue, quiz, revision | 22 | 950 s | 80 s | 7 | 0 | 0 / 0 |
 | l10 | bilan 2 | courte, longue, revision | 20 | 964 s | 71 s | 0 | 0 | 0 / 0 |
@@ -92,7 +92,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : أَصْبَحَ (fichier présent pour un autre niveau)
 - quiz : مَا زَالَ (fichier présent pour un autre niveau)
 - quiz : أَهَمُّ (fichier présent pour un autre niveau)
-- quiz : يَكْتُبُونَ (fichier présent pour un autre niveau)
 
 ## l08
 

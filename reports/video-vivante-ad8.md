@@ -1,6 +1,6 @@
 # Vidéos vivantes — ad8 (audit généré par `VIDEO_AUDIT=1`)
 
-Audio : 1817 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
+Audio : 1823 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 
 | Unité | Type | Modes | Scènes | Longue | Courte | Quiz (exercices) | Gardés sans voix | Sans audio (à écouter / tous) |
 |---|---|---|---|---|---|---|---|---|
@@ -8,17 +8,17 @@ Audio : 1817 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 | l02 | lecon 2 | courte, longue, quiz, revision | 21 | 1152 s | 65 s | 7 | 6 | 0 / 42 |
 | l03 | lecon 3 | courte, longue, quiz, revision | 21 | 1148 s | 83 s | 7 | 9 | 0 / 41 |
 | l04 | lecon 4 | courte, longue, quiz, revision | 21 | 1095 s | 83 s | 7 | 2 | 0 / 47 |
-| l05 | bilan 1 | courte, longue, revision | 21 | 915 s | 71 s | 0 | 0 | 0 / 23 |
+| l05 | bilan 1 | courte, longue, revision | 21 | 915 s | 71 s | 0 | 0 | 0 / 21 |
 | l06 | lecon 5 | courte, longue, quiz, revision | 22 | 1043 s | 65 s | 7 | 6 | 0 / 43 |
 | l07 | lecon 6 | courte, longue, quiz, revision | 22 | 1090 s | 62 s | 7 | 22 | 0 / 28 |
 | l08 | lecon 7 | courte, longue, quiz, revision | 22 | 1116 s | 62 s | 7 | 1 | 0 / 39 |
 | l09 | lecon 8 | courte, longue, quiz, revision | 22 | 1010 s | 62 s | 7 | 6 | 0 / 40 |
-| l10 | bilan 2 | courte, longue, revision | 21 | 819 s | 112 s | 0 | 3 | 0 / 25 |
+| l10 | bilan 2 | courte, longue, revision | 21 | 819 s | 112 s | 0 | 3 | 0 / 23 |
 | l11 | lecon 9 | courte, longue, quiz, revision | 21 | 1119 s | 65 s | 7 | 3 | 0 / 60 |
 | l12 | lecon 10 | courte, longue, quiz, revision | 21 | 1022 s | 62 s | 7 | 0 | 0 / 60 |
 | l13 | lecon 11 | courte, longue, quiz, revision | 21 | 1041 s | 60 s | 7 | 0 | 0 / 58 |
 | l14 | lecon 12 | courte, longue, quiz, revision | 21 | 1001 s | 83 s | 7 | 3 | 0 / 56 |
-| l15 | bilan 3 | courte, longue, revision | 17 | 809 s | 62 s | 0 | 0 | 0 / 20 |
+| l15 | bilan 3 | courte, longue, revision | 17 | 809 s | 62 s | 0 | 0 | 0 / 18 |
 | l16 | lecon 13 | courte, longue, quiz, revision | 21 | 1035 s | 83 s | 7 | 5 | 0 / 55 |
 | l17 | lecon 14 | courte, longue, quiz, revision | 21 | 1002 s | 83 s | 7 | 15 | 0 / 35 |
 | l18 | lecon 15 | courte, longue, quiz, revision | 21 | 934 s | 84 s | 7 | 8 | 0 / 53 |
@@ -346,8 +346,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : كَانَ عَلَى رَأْسِ الْجَدَّةِ ثَلْجٌ حَقِيقِيٌّ.
 - quiz : يَرَى الصَّحَفِيُّ أَنَّ الْأَمْثَالَ تَبْقَى فِي الذَّاكِرَةِ لِأَنَّهَا تَرْسُمُ الْمَعْنَى.
 - quiz : يَدْعُو الصَّحَفِيُّ الْقُرَّاءَ إِلَى تَرْكِ الْأَمْثَالِ الْقَدِيمَةِ.
-- recap : حَقِيقَةٌ · مَجَازٌ · كِنَايَةٌ
-- recap : اسْتِعَارَةٌ تَصْرِيحِيَّةٌ · اسْتِعَارَةٌ مَكْنِيَّةٌ
 - recap : الْقُرْآنُ · السُّنَّةُ · الْإِجْمَاعُ · الْقِيَاسُ ‖ وَاجِبٌ · مَنْدُوبٌ · مُبَاحٌ · مَكْرُوهٌ · حَرَامٌ ‖ أَبُو حَنِيفَةَ · مَالِكٌ · الشَّافِعِيُّ · أَحْمَدُ
 
 ## l06
@@ -641,7 +639,6 @@ Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles pa
 - longue q-ex1
 - longue q-ex6
 - longue q-ex8
-- longue recap
 - revision q-ex1
 - revision q-ex6
 - revision q-ex8
@@ -675,8 +672,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : الْمُوَالَاةُ فِي الْوُضُوءِ
 - quiz : تَرْكُ الْبَسْمَلَةِ فِي الْفَرِيضَةِ
 - quiz : الْإِنْصَاتُ خَلْفَ الْإِمَامِ فِي الْجَهْرِيَّةِ
-- recap : جِنَاسٌ · سَجْعٌ · فَوَاصِلُ
-- recap : طِبَاقٌ · مُقَابَلَةٌ
 - recap : الطَّوِيلُ · الْبَسِيطُ · الْكَامِلُ · الْوَافِرُ · الرَّجَزُ
 - recap : سَبْعُ فَرَائِضَ لِلْوُضُوءِ · أَرْبَعُ مَسَائِلَ فِي الصَّلَاةِ · سِتَّةُ فُرُوضٍ
 
@@ -1026,7 +1021,6 @@ Scènes sans aucune voix (aucun texte affiché n’a de fichier audio ; elles pa
 - longue q-ex5
 - longue q-ex6
 - longue q-ex7
-- longue recap
 - revision q-ex2
 - revision q-ex3
 - revision q-ex5
@@ -1053,8 +1047,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : عِبْرَةُ الْمَثَلِ: مَنْ لَمْ يَمْلِكْ لِسَانَهُ أَهْلَكَهُ لِسَانُهُ.
 - recap : الْمُعْجَمُ ← النَّثْرُ ← الصُّورَةُ ← التَّقْطِيعُ
 - recap : الْإِطَارُ ← الْمَثَلُ ← الْعِبْرَةُ
-- recap : الْحَدِيثُ · الْأَثَرُ
-- recap : الْمِيرَاثُ · الْوَصِيَّةُ · الْهِبَةُ
 
 ## l16
 

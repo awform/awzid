@@ -1,10 +1,10 @@
 # Vidéos vivantes — ad3 (audit généré par `VIDEO_AUDIT=1`)
 
-Audio : 2443 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
+Audio : 2446 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 
 | Unité | Type | Modes | Scènes | Longue | Courte | Quiz (exercices) | Gardés sans voix | Sans audio (à écouter / tous) |
 |---|---|---|---|---|---|---|---|---|
-| l01 | lecon 1 | courte, longue, quiz, revision | 24 | 989 s | 120 s | 9 | 2 | 0 / 7 |
+| l01 | lecon 1 | courte, longue, quiz, revision | 24 | 989 s | 120 s | 9 | 2 | 0 / 5 |
 | l02 | lecon 2 | courte, longue, quiz, revision | 23 | 903 s | 113 s | 8 | 3 | 0 / 9 |
 | l03 | lecon 3 | courte, longue, quiz, revision | 23 | 993 s | 114 s | 8 | 0 | 0 / 7 |
 | l04 | lecon 4 | courte, longue, quiz, revision | 23 | 931 s | 77 s | 8 | 4 | 0 / 3 |
@@ -19,7 +19,7 @@ Audio : 2443 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 | l13 | lecon 11 | courte, longue, quiz, revision | 21 | 869 s | 114 s | 6 | 0 | 0 / 6 |
 | l14 | lecon 12 | courte, longue, quiz, revision | 19 | 654 s | 79 s | 5 | 6 | 0 / 8 |
 | l15 | bilan 3 | courte, longue, revision | 19 | 640 s | 113 s | 0 | 4 | 0 / 1 |
-| l16 | lecon 13 | courte, longue, quiz, revision | 21 | 961 s | 77 s | 7 | 0 | 0 / 5 |
+| l16 | lecon 13 | courte, longue, quiz, revision | 21 | 961 s | 77 s | 7 | 0 | 0 / 4 |
 | l17 | lecon 14 | courte, longue, quiz, revision | 21 | 873 s | 77 s | 7 | 0 | 0 / 6 |
 | l18 | lecon 15 | courte, longue, quiz, revision | 21 | 836 s | 80 s | 7 | 0 | 0 / 2 |
 | l19 | lecon 16 | courte, longue, quiz, revision | 22 | 936 s | 80 s | 8 | 0 | 0 / 6 |
@@ -44,8 +44,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ouverture : أُصَرِّفُ الْفِعْلَ فِي الْمَاضِي مَعَ الْمُفْرَدِ (fichier présent pour un autre niveau)
 - quiz : كَتَبَتِ (fichier présent pour un autre niveau)
 - quiz : التَّمْرُ لَذِيذٌ (fichier présent pour un autre niveau)
-- quiz : قَرَأْتُهُ (fichier présent pour un autre niveau)
-- quiz : كَتَبْتُهَا (fichier présent pour un autre niveau)
 
 ## l02
 
@@ -284,7 +282,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - ecriture : كُنْتَ مَرِيضًا (fichier présent pour un autre niveau)
 - quiz : كُنْتِ (fichier présent pour un autre niveau)
 - quiz : مُتْعَبِينَ (fichier présent pour un autre niveau)
-- quiz : لَسْتِ (fichier présent pour un autre niveau)
 - quiz : كَانَ الْجَوُّ حَارًّا. (fichier présent pour un autre niveau)
 
 ## l17

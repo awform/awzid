@@ -1,6 +1,6 @@
 # Vidéos vivantes — ado4 (audit généré par `VIDEO_AUDIT=1`)
 
-Audio : 3093 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
+Audio : 3095 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 
 | Unité | Type | Modes | Scènes | Longue | Courte | Quiz (exercices) | Gardés sans voix | Sans audio (à écouter / tous) |
 |---|---|---|---|---|---|---|---|---|
@@ -17,7 +17,7 @@ Audio : 3093 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 | l11 | lecon 9 | courte, longue, quiz, revision | 22 | 900 s | 77 s | 7 | 3 | 0 / 0 |
 | l12 | lecon 10 | courte, longue, quiz, revision | 22 | 888 s | 77 s | 7 | 0 | 0 / 0 |
 | l13 | lecon 11 | courte, longue, quiz, revision | 22 | 914 s | 77 s | 7 | 0 | 0 / 4 |
-| l14 | lecon 12 | courte, longue, quiz, revision | 22 | 972 s | 80 s | 7 | 1 | 4 / 5 |
+| l14 | lecon 12 | courte, longue, quiz, revision | 22 | 972 s | 80 s | 7 | 1 | 2 / 3 |
 | l15 | bilan 3 | courte, longue, revision | 14 | 627 s | 62 s | 0 | 0 | 0 / 0 |
 | l16 | lecon 13 | courte, longue, quiz, revision | 22 | 952 s | 80 s | 7 | 1 | 0 / 0 |
 | l17 | lecon 14 | courte, longue, quiz, revision | 22 | 922 s | 61 s | 6 | 1 | 0 / 4 |
@@ -119,8 +119,6 @@ Textes gardés sans voix :
 Textes à écouter du livre sans fichier audio (affichés en silence) :
 
 - lecture : أَشْعُرُ [أَنَّ] كُلَّ شَيْءٍ ثَقِيلٌ
-- mots : شَعَرَ بِـ — يَشْعُرُ — شُعُورٌ، مَشَاعِرُ
-- mots : شُعُورٌ، مَشَاعِرُ
 - mots : أَنْ · أَنَّ · إِنَّ · إِنْ · أَلَّا
 
 Mots d’exercices et du cahier sans fichier audio :

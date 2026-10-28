@@ -1831,6 +1831,60 @@
       "decision": "synthese",
       "raison": "texte mele de francais (livre ou cahier) dont la partie arabe est un nom divin seul ou un mot de vocabulaire de moins de 4 mots, non presente comme recitation : seule la partie arabe est lue (decision du referent 26/10/2026)",
       "refusAvant": "coran"
+    },
+    {
+      "cle": "أَشْهَدُ أَنْ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ اللَّهُمَّ اجْعَلْنِي مِنَ التَّوَّابِينَ وَاجْعَلْنِي مِنَ الْمُتَطَهِّرِينَ",
+      "decision": "synthese",
+      "raison": "dhikr / doua : adhkar (attestation apres les ablutions, doua du voyage, istirja, demande de pardon) ; synthese autorisee (decision du referent 27/10/2026) ; aucun passage de 4 mots recite comme Coran (controle Tanzil sur le texte complet)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "فَإِنَّهُ لاَ يَغْفِرُ الذُّنُوبَ إِلاَّ أَنْتَ",
+      "decision": "synthese",
+      "raison": "dhikr / doua : adhkar (attestation apres les ablutions, doua du voyage, istirja, demande de pardon) ; synthese autorisee (decision du referent 27/10/2026) ; aucun passage de 4 mots recite comme Coran (controle Tanzil sur le texte complet)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "الْحَمْدُ لِلَّهِ … اللَّهُ أَكْبَرُ … سُبْحَانَكَ",
+      "decision": "synthese",
+      "raison": "dhikr / doua : adhkar (attestation apres les ablutions, doua du voyage, istirja, demande de pardon) ; synthese autorisee (decision du referent 27/10/2026) ; aucun passage de 4 mots recite comme Coran (controle Tanzil sur le texte complet)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "اللَّهُمَّ إِنَّا نَسْأَلُكَ فِي سَفَرِنَا هَذَا الْبِرَّ وَالتَّقْوَى وَمِنَ الْعَمَلِ مَا تَرْضَى اللَّهُمَّ هَوِّنْ عَلَيْنَا سَفَرَنَا هَذَا وَاطْوِ عَنَّا بُعْدَهُ اللَّهُمَّ أَنْتَ الصَّاحِبُ فِي السَّفَرِ وَالْخَلِيفَةُ فِي الأَهْلِ اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ وَعْثَاءِ السَّفَرِ وَكَآبَةِ الْمَنْظَرِ وَسُوءِ الْمُنْقَلَبِ فِي الْمَالِ وَالأَهْلِ",
+      "decision": "synthese",
+      "raison": "dhikr / doua : adhkar (attestation apres les ablutions, doua du voyage, istirja, demande de pardon) ; synthese autorisee (decision du referent 27/10/2026) ; aucun passage de 4 mots recite comme Coran (controle Tanzil sur le texte complet)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "أَشْهَدُ أَنْ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ وَأَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+      "decision": "synthese",
+      "raison": "dhikr / doua : adhkar (attestation apres les ablutions, doua du voyage, istirja, demande de pardon) ; synthese autorisee (decision du referent 27/10/2026) ; aucun passage de 4 mots recite comme Coran (controle Tanzil sur le texte complet)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي وَأَخْلِفْ لِي خَيْرًا مِنْهَا",
+      "decision": "synthese",
+      "raison": "dhikr / doua : adhkar (attestation apres les ablutions, doua du voyage, istirja, demande de pardon) ; synthese autorisee (decision du referent 27/10/2026) ; aucun passage de 4 mots recite comme Coran (controle Tanzil sur le texte complet)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "بِسْمِ اللَّهِ … الْحَمْدُ لِلَّهِ …",
+      "decision": "synthese",
+      "raison": "dhikr / doua : adhkar (attestation apres les ablutions, doua du voyage, istirja, demande de pardon) ; synthese autorisee (decision du referent 27/10/2026) ; aucun passage de 4 mots recite comme Coran (controle Tanzil sur le texte complet)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "السَّفَرُ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire (moins de 4 mots, non presente comme recitation) ; synthese autorisee (decision du referent 27/10/2026)",
+      "refusAvant": "coran"
+    },
+    {
+      "cle": "حُجَّاجٌ",
+      "decision": "synthese",
+      "raison": "mot de vocabulaire (moins de 4 mots, non presente comme recitation) ; synthese autorisee (decision du referent 27/10/2026)",
+      "refusAvant": "coran"
     }
   ]
 }

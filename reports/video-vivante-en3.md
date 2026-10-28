@@ -1,6 +1,6 @@
 # Vidéos vivantes — en3 (audit généré par `VIDEO_AUDIT=1`)
 
-Audio : 1481 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
+Audio : 1482 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 
 | Unité | Type | Modes | Scènes | Longue | Courte | Quiz (exercices) | Gardés sans voix | Sans audio (à écouter / tous) |
 |---|---|---|---|---|---|---|---|---|
@@ -22,7 +22,7 @@ Audio : 1481 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 | l16 | lecon 13 | courte, longue, quiz, revision | 19 | 563 s | 111 s | 5 | 5 | 0 / 0 |
 | l17 | lecon 14 | courte, longue, quiz, revision | 19 | 510 s | 108 s | 5 | 6 | 0 / 0 |
 | l18 | lecon 15 | courte, longue, quiz, revision | 19 | 646 s | 116 s | 5 | 2 | 0 / 0 |
-| l19 | lecon 16 | courte, longue, quiz, revision | 19 | 553 s | 110 s | 4 | 4 | 0 / 1 |
+| l19 | lecon 16 | courte, longue, quiz, revision | 19 | 553 s | 110 s | 4 | 4 | 0 / 0 |
 | l20 | bilan 4 | longue, revision | 11 | 393 s | — | 0 | 0 | 0 / 0 |
 | l21 | lecon 17 | courte, longue, quiz, revision | 19 | 577 s | 113 s | 5 | 0 | 0 / 0 |
 | l22 | lecon 18 | courte, longue, quiz, revision | 19 | 527 s | 109 s | 5 | 0 | 0 / 0 |
@@ -153,10 +153,6 @@ Textes gardés sans voix :
 - coran : أَحْسَنْتِ! وَفِي الطَّائِرَةِ نَقُولُ دُعَاءَ السَّفَرِ: سُبْحَٰنَ ٱلَّذِى سَخَّرَ لَنَا هَٰذَا…
 - coran : …وَمَا كُنَّا لَهُۥ مُقْرِنِينَ ۝ وَإِنَّآ إِلَىٰ رَبِّنَا لَمُنقَلِبُونَ.
 - coran : عِلْمًا ← عِلْمَا — ٱلْحُطَمَةِ ← ٱلْحُطَمَهْ
-
-Mots d’exercices et du cahier sans fichier audio :
-
-- ouverture : السَّفَرُ
 
 ## l20
 

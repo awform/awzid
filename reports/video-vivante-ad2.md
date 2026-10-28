@@ -1,6 +1,6 @@
 # Vidéos vivantes — ad2 (audit généré par `VIDEO_AUDIT=1`)
 
-Audio : 2243 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
+Audio : 2245 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 
 | Unité | Type | Modes | Scènes | Longue | Courte | Quiz (exercices) | Gardés sans voix | Sans audio (à écouter / tous) |
 |---|---|---|---|---|---|---|---|---|
@@ -10,7 +10,7 @@ Audio : 2243 fichiers du niveau (/home/awzid/lecons-audio/liste.csv).
 | l04 | lecon 4 | courte, longue, quiz, revision | 22 | 945 s | 113 s | 7 | 0 | 0 / 3 |
 | l05 | bilan 1 | courte, longue, revision | 20 | 694 s | 112 s | 0 | 0 | 0 / 0 |
 | l06 | lecon 5 | courte, longue, quiz, revision | 20 | 717 s | 103 s | 6 | 0 | 0 / 1 |
-| l07 | lecon 6 | courte, longue, quiz, revision | 21 | 825 s | 104 s | 7 | 0 | 0 / 2 |
+| l07 | lecon 6 | courte, longue, quiz, revision | 21 | 825 s | 104 s | 7 | 0 | 0 / 0 |
 | l08 | lecon 7 | courte, longue, quiz, revision | 21 | 767 s | 100 s | 7 | 0 | 0 / 0 |
 | l09 | lecon 8 | courte, longue, quiz, revision | 21 | 750 s | 105 s | 7 | 0 | 0 / 0 |
 | l10 | bilan 2 | courte, longue, revision | 19 | 608 s | 115 s | 0 | 0 | 0 / 6 |
@@ -71,11 +71,6 @@ Mots d’exercices et du cahier sans fichier audio :
 - quiz : كِرَامٍ بَرَرَةٍ
 
 ## l07
-
-Mots d’exercices et du cahier sans fichier audio :
-
-- quiz : لِمَرْيَمَ (fichier présent pour un autre niveau)
-- quiz : دَاكَارَ (fichier présent pour un autre niveau)
 
 ## l08
 
