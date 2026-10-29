@@ -62,6 +62,8 @@ export interface ResultatPrononciation {
     paire: [{ ar: string; fr?: string }, { ar: string; fr?: string }];
     explication_fr: string;
   } | null;
+  /** 29/10/2026 : écrit — correction de grammaire arrivée juste après la réponse */
+  correction?: { dit: string; correct: string; explication_fr: string } | null;
   audio: { mime: string; b64: string } | null;
 }
 export interface Audio {

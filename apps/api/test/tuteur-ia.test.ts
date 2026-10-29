@@ -315,7 +315,9 @@ describe.skipIf(!URL)('tuteur IA de conversation (simulé)', () => {
     expect(j.reponse_fr).toBe('Voici de belles pommes.');
     expect(j).toMatchObject({ lu: true, simule: true, repli: false });
     expect(j.audio.mime).toBe('audio/wav');
-    expect(espion.appels).toBe(avant + 1);
+    // 29/10/2026 : une relance de niveau possible (réponse hors de la liste des mots vus de la base de test)
+    expect(espion.appels - avant).toBeGreaterThanOrEqual(1);
+    expect(espion.appels - avant).toBeLessThanOrEqual(2);
     const d = await depenses();
     expect(d).toHaveLength(1);
     expect(d[0]).toMatchObject({ statut: 'fait', profileId: adulte });

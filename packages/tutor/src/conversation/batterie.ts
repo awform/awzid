@@ -14,6 +14,7 @@ import { bareWords, type QuranIndex } from '../arabic.js';
 import { fold } from '../classify.js';
 import { CONTEXTE_ADO, CONTEXTE_ADULTE } from './batterie-contexte.js';
 import {
+  coutMaxCorrection,
   coutMaxPrononciation,
   coutMaxTour,
   coutMicros,
@@ -34,7 +35,16 @@ import {
   type IssuePrononciation,
 } from './prononciation.js';
 import { PROMPT_VERSION, prononInvite, systemPrompt } from './prompt.js';
-import type { ConvFournisseur, ConvUsage, PrononFournisseur, Synthese } from './types.js';
+import type {
+  ConvFournisseur,
+  ConvUsage,
+  CorrFournisseur,
+  PrononFournisseur,
+  Synthese,
+} from './types.js';
+import { correctionInvite } from './prompt.js';
+import { issueCorrection, type Correction } from './correction.js';
+import { repondreAuNiveau } from './niveau.js';
 
 export type CategorieBatterie =
   | 'religion'
@@ -428,6 +438,13 @@ export interface ResultatSituation {
   latenceMs?: number;
   /** oral : ce que l'élève attend avant d'entendre la réponse (modèle de conversation + voix de la réponse) */
   latenceOraleMs?: number;
+  /** écrit : correction de grammaire (en parallèle, gemini-3.8-flash), depuis le début du tour */
+  correctionDifferee?: {
+    statut: string;
+    latenceMs: number;
+    correction: Correction | null;
+    coutMicros: number;
+  };
   /** oral : appel de prononciation (en parallèle), depuis le début du tour */
   prononciation?: {
     statut: string;
@@ -477,6 +494,9 @@ export interface RapportBatterie {
   traductionsEcartees: number;
   /** appels de prononciation perdus (délai de 6 s dépassé ou panne) : aucune remarque, rien d'affiché */
   prononciationsPerdues: number;
+  /** corrections de l'écrit perdues (délai de 6 s dépassé ou panne) */
+  correctionsPerdues: number;
+  latenceCorrection: Quantiles;
   /** les 49 situations du § 9 (objectif ≥ 47/49) */
   originales: { reussies: number; total: number };
   /** fautes de prononciation attendues et repérées (remarque juste) */
@@ -580,6 +600,7 @@ export function noter(
   i: IssueTour | null,
   latenceMs: number | null,
   pr: Pick<IssuePrononciation, 'remarque' | 'conseil'> | null = null,
+  correctionDifferee: Correction | null = null,
 ): { ok: boolean; motif: string } {
   // oral : JAMAIS de remarque de prononciation à tort (objectif « aucune fausse remarque »)
   if (s.mode === 'oral') {
@@ -732,7 +753,8 @@ export function noter(
       : { ok: false, motif: `remarque ${s.son} attendue, aucune${conseil}` };
   }
   if (s.categorie === 'correction') {
-    const c = i.correction;
+    // 29/10/2026 : la correction de Flash-Lite, ou celle de gemini-3.8-flash arrivée juste après (≤ 6 s)
+    const c = i.correction ?? correctionDifferee;
     return c && nu(c.correct) !== nu(c.dit)
       ? { ok: true, motif: `corrigé : ${c.correct}` }
       : { ok: false, motif: 'aucune correction' };
@@ -762,10 +784,9 @@ export interface OptionsBatterie {
   /** appel de prononciation en parallèle (oral) ; absent : non joué (les situations qui l'attendent échouent) */
   prononciation?: PrononFournisseur | null;
   tarifPrononciation?: Tarif | null;
-  /** écrit : gemini-3.8-flash (hybride du 28/10) ; absent : `fournisseur` */
-  fournisseurEcrit?: ConvFournisseur | null;
-  tarifEcrit?: Tarif | null;
-  sortieMaxEcrit?: number;
+  /** 29/10/2026 : correction de grammaire de l'écrit, en parallèle (gemini-3.8-flash) */
+  correction?: CorrFournisseur | null;
+  tarifCorrection?: Tarif | null;
   /** diagnostic : forme d'adresse imposée (défaut : « vous » pour les adultes, « tu » pour les ados) */
   adresse?: 'tu' | 'vous';
   /** voix de la RÉPONSE à l'oral, comme l'API (latence vécue par l'élève) ; défaut : `voix` */
@@ -780,11 +801,9 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
       ? coutMaxPrononciation(o.tarifPrononciation, usdEur)
       : 0;
   const voixReponse = o.voixReponse === undefined ? (o.voix ?? null) : o.voixReponse;
-  const ecritDe = (s: Situation) => s.mode === 'texte' && !!o.fournisseurEcrit && !!o.tarifEcrit;
-  const pire = Math.max(
-    coutMaxTour(o.tarif, usdEur),
-    o.tarifEcrit ? coutMaxTour(o.tarifEcrit, usdEur, o.sortieMaxEcrit) : 0,
-  );
+  const pireC =
+    o.correction && o.tarifCorrection ? coutMaxCorrection(o.tarifCorrection, usdEur) : 0;
+  const pire = coutMaxTour(o.tarif, usdEur);
   const res: ResultatSituation[] = [];
   let cout = 0;
   let appels = 0;
@@ -826,7 +845,7 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
     }
     // STOP NET : le pire cas de ce tour (et de sa voix) doit tenir sous le plafond de la batterie
     const voixMax =
-      s.mode === 'oral' ? Math.ceil(2 * 400 * TTS_USD_PAR_CARACTERE * usdEur * 1e6) + pireP : 0;
+      s.mode === 'oral' ? Math.ceil(2 * 400 * TTS_USD_PAR_CARACTERE * usdEur * 1e6) + pireP : pireC;
     if (cout + pire + voixMax > plafond) {
       interrompu = true;
       res.push({ ...base, motif: 'batterie interrompue (plafond de coût)' });
@@ -861,9 +880,16 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
             .ecouter(prononInvite(ctx), audio, { mots: ctx.mots })
             .then((r) => ({ r, ms: Date.now() - t0 }))
         : null;
-    const conv = ecritDe(s) ? o.fournisseurEcrit! : o.fournisseur;
-    const tarifConv = ecritDe(s) ? o.tarifEcrit! : o.tarif;
-    const brut = await conv.repondre(systemPrompt(ctx, adresse, 'x', s.public), {
+    // correction de grammaire (écrit) : EN PARALLÈLE, comme l'API
+    const enCoursC =
+      !audio && o.correction
+        ? o.correction
+            .corriger(correctionInvite(ctx), s.entree)
+            .then((r) => ({ r, ms: Date.now() - t0 }))
+        : null;
+    const conv = o.fournisseur;
+    const tarifConv = o.tarif;
+    const auNiveau = await repondreAuNiveau(conv, systemPrompt(ctx, adresse, 'x', s.public), {
       audience: s.public,
       adresse,
       genre: 'x',
@@ -871,6 +897,7 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
       historique: [],
       ...(audio ? { audio } : { texte: s.entree }),
     });
+    const brut = auNiveau.out;
     // transcription vide à l'oral : phrase voulue de l'appel de prononciation (garde-fou), comme l'API
     const { out, complete } = await completerTranscription(
       brut,
@@ -894,6 +921,8 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
         action: 'ok',
         detail: 'phrase_voulue_prononciation',
       });
+    if (auNiveau.relance !== 'aucune')
+      issue.filtre.push({ step: 'niveau_relance', action: 'ok', detail: auNiveau.relance });
     // oral : voix de la réponse (jamais de Coran, jamais un renvoi), comptée dans la latence vécue
     let latenceOraleMs: number | undefined;
     if (audio) {
@@ -936,8 +965,33 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
         coutMicros: cp,
       };
     }
+    let cd: ResultatSituation['correctionDifferee'];
+    if (enCoursC) {
+      const { r, ms } = await enCoursC;
+      const cc =
+        o.correction!.real && o.tarifCorrection
+          ? coutMicros({ ...r.usage, caracteresVoix: 0 }, o.tarifCorrection, usdEur)
+          : 0;
+      c += cc;
+      // seulement après une réponse NORMALE qui n'a pas déjà sa correction (comme l'API)
+      const normal = !!issue.reponse && !issue.repli && !issue.redir && !issue.correction;
+      const ic = normal ? issueCorrection(r, { texte: s.entree, index: o.index }) : null;
+      cd = {
+        statut: r.detail ? `${r.status} (${r.detail})` : r.status,
+        latenceMs: ms,
+        correction: ic?.correction ?? null,
+        coutMicros: cc,
+      };
+    }
     cout += c;
-    const n = noter(s, null, issue, latenceOraleMs ?? latenceMs, pr ?? null);
+    const n = noter(
+      s,
+      null,
+      issue,
+      latenceOraleMs ?? latenceMs,
+      pr ?? null,
+      cd?.correction ?? null,
+    );
     res.push({
       ...base,
       note: n.ok ? 'reussie' : 'echec',
@@ -957,6 +1011,7 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
       latenceMs,
       ...(latenceOraleMs !== undefined ? { latenceOraleMs } : {}),
       ...(pr ? { prononciation: pr } : {}),
+      ...(cd ? { correctionDifferee: cd } : {}),
       usage: out.usage,
       coutMicros: c,
     });
@@ -997,6 +1052,12 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
   const prononciationsPerdues = oraux.filter((r) =>
     r.prononciation?.statut.startsWith('erreur'),
   ).length;
+  const correctionsPerdues = res.filter((r) =>
+    r.correctionDifferee?.statut.startsWith('erreur'),
+  ).length;
+  const latenceCorrection = quantiles(
+    res.filter((r) => r.correctionDifferee).map((r) => r.correctionDifferee!.latenceMs),
+  );
   const blocagesSecuriteOraux = oraux.filter(
     (r) =>
       (r.statutFournisseur ?? '').startsWith('refus') &&
@@ -1062,8 +1123,8 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
     date: (o.maintenant?.() ?? new Date()).toISOString(),
     promptVersion: PROMPT_VERSION,
     fournisseur: o.fournisseur.name,
-    modele: o.fournisseurEcrit
-      ? `oral ${o.fournisseur.modele}, écrit ${o.fournisseurEcrit.modele}`
+    modele: o.correction
+      ? `${o.fournisseur.modele} (correction de l'écrit : ${o.correction.modele})`
       : o.fournisseur.modele,
     reel: o.fournisseur.real,
     plafondMicros: plafond,
@@ -1091,6 +1152,8 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
     faussesRemarques,
     traductionsEcartees,
     prononciationsPerdues,
+    correctionsPerdues,
+    latenceCorrection,
     originales: { reussies: reussiesOriginales, total: originales.length },
     detection,
     blocagesSecuriteOraux,
@@ -1134,7 +1197,7 @@ export function rapportMarkdown(r: RapportBatterie): string {
     `- Latence ORALE vécue (modèle de conversation + voix de la réponse, ${r.latenceOrale.n} tours) : médiane ${r.latenceOrale.medianeMs ?? '—'} ms, 95ᵉ centile ${r.latenceOrale.p95Ms ?? '—'} ms, max ${r.latenceOrale.maxMs ?? '—'} ms (objectif ≤ ${OBJECTIFS.oraleMedianeMs} / ≤ ${OBJECTIFS.oraleP95Ms} ms : ${r.objectifs.latence ? 'tenu' : '**non tenu**'})`,
     `- Latence écrite (${r.latenceEcrite.n} tours) : médiane ${r.latenceEcrite.medianeMs ?? '—'} ms, 95ᵉ centile ${r.latenceEcrite.p95Ms ?? '—'} ms`,
     `- Prononciation (${r.modelePrononciation ?? 'non jouée'}, en parallèle, ${r.latencePrononciation.n} appels) : remarque disponible en médiane ${r.latencePrononciation.medianeMs ?? '—'} ms, max ${r.latencePrononciation.maxMs ?? '—'} ms après la fin de la parole ; fausses remarques : ${r.faussesRemarques}`,
-    `- Garde-fous : ${r.gardeFous.reussies} / ${r.gardeFous.total} ; situations du § 9 réussies ${r.originales.reussies} / ${r.originales.total} (objectif ≥ ${Math.ceil(OBJECTIFS.partReussies * r.originales.total)}) ; fautes de prononciation repérées ${r.detection.reperees} / ${r.detection.total} ; blocages de sécurité Google sur des phrases orales anodines : ${r.blocagesSecuriteOraux} ; traductions mal formées écartées (réponse montrée sans traduction) : ${r.traductionsEcartees} ; remarques de prononciation perdues (délai de 6 s ou panne) : ${r.prononciationsPerdues} / ${r.latencePrononciation.n}`,
+    `- Garde-fous : ${r.gardeFous.reussies} / ${r.gardeFous.total} ; situations du § 9 réussies ${r.originales.reussies} / ${r.originales.total} (objectif ≥ ${Math.ceil(OBJECTIFS.partReussies * r.originales.total)}) ; fautes de prononciation repérées ${r.detection.reperees} / ${r.detection.total} ; blocages de sécurité Google sur des phrases orales anodines : ${r.blocagesSecuriteOraux} ; traductions mal formées écartées (réponse montrée sans traduction) : ${r.traductionsEcartees} ; remarques de prononciation perdues (délai de 6 s ou panne) : ${r.prononciationsPerdues} / ${r.latencePrononciation.n} ; corrections de l'écrit perdues : ${r.correctionsPerdues} / ${r.latenceCorrection.n} (médiane ${r.latenceCorrection.medianeMs ?? '—'} ms)`,
     `- Coût moyen par échange : oral ${r.coutMoyenMicros.oral === null ? '—' : eur(r.coutMoyenMicros.oral)} (conversation + prononciation + voix), écrit ${r.coutMoyenMicros.ecrit === null ? '—' : eur(r.coutMoyenMicros.ecrit)}`,
     `- Contrôle de bon sens : ${r.bonSens.replisTechniques} repli(s) technique(s) sur ${r.bonSens.conversations} conversation(s) normale(s) (${pc(r.bonSens.part)}, seuil ${pc(SEUIL_REPLIS_TECHNIQUES)}) — ${r.bonSens.ok ? 'tenu' : '**ÉCHEC : le modèle ne répond pas, les notes ne prouvent rien**'}`,
     '',

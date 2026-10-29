@@ -757,9 +757,14 @@ describe('mise en service', () => {
     expect(setupConversation({ ...base, AWFORM_VERTEX_LIEU: 'us-central1' }).bloque).toBe(
       'vertex_bloque_lieu_hors_ue',
     );
-    expect(setupConversation({ ...base, AWFORM_TUTEUR_VERTEX_MODELE: 'x' }).bloque).toBe(
-      'vertex_bloque_modele_sans_tarif',
-    );
+    expect(
+      setupConversation({ ...base, AWFORM_TUTEUR_VERTEX_MODELE_CONVERSATION: 'x' }).bloque,
+    ).toBe('vertex_bloque_modele_sans_tarif');
+    // 29/10/2026 : l'ancienne variable (gemini-3.8-flash dans prod.env) n'est plus lue
+    expect(
+      setupConversation({ ...base, AWFORM_TUTEUR_VERTEX_MODELE: 'gemini-3.8-flash' }).fournisseur
+        ?.modele,
+    ).toBe('gemini-3.5-flash-lite');
     expect(setupConversation({ ...base, AWFORM_TUTEUR_VERTEX_CONTROLE: 'ancienne' }).bloque).toBe(
       'vertex_bloque_controle_absent',
     );
@@ -769,11 +774,10 @@ describe('mise en service', () => {
     // 28/10/2026 : conversation Flash-Lite, prononciation 3.8-flash en parallèle (coupable par AWFORM_TUTEUR_PRONONCIATION)
     expect(v.fournisseur?.modele).toBe('gemini-3.5-flash-lite');
     expect(v.prononciation?.modele).toBe('gemini-3.8-flash');
-    // hybride : l'écrit va à gemini-3.8-flash (AWFORM_TUTEUR_VERTEX_MODELE), l'oral à Flash-Lite (…_MODELE_ORAL)
-    expect(v.fournisseurEcrit?.modele).toBe('gemini-3.8-flash');
-    expect(setupConversation({ ...base, AWFORM_TUTEUR_VERTEX_MODELE_ORAL: 'x' }).bloque).toBe(
-      'vertex_bloque_modele_sans_tarif',
-    );
+    // 29/10/2026 : correction de l'écrit par gemini-3.8-flash, en parallèle (coupable par AWFORM_TUTEUR_CORRECTION)
+    expect(v.correction?.modele).toBe('gemini-3.8-flash');
+    expect(setupConversation({ ...base, AWFORM_TUTEUR_CORRECTION: 'off' }).correction).toBeNull();
+    expect(s.correction?.real).toBe(false);
     expect(v.tarifPrononciation?.sortie).toBeGreaterThan(0);
     expect(
       setupConversation({ ...base, AWFORM_TUTEUR_PRONONCIATION: 'off' }).prononciation,
@@ -844,8 +848,9 @@ describe('batterie réelle du 20/10/2026 (fixture) : réponses coupées, délais
     // un délai dépassé est repéré avant 15 s et rejoué une fois
     expect(DELAI_APPEL_MS).toBeLessThan(Math.min(...reseau.map((s) => s.latenceMs!)));
     // la réservation du pire cas reste de l'ordre de 3 centimes par tour
+    // 29/10/2026 : jusqu'à 4 appels par tour (relances) : réservation de l'ordre de 4 à 5 centimes avec 3.8-flash
     expect(coutMaxTour(tarifDe('gemini-3.8-flash', new Date('2026-10-21'))!, 1)).toBeLessThan(
-      30_000,
+      50_000,
     );
   });
 

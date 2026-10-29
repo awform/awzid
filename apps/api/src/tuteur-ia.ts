@@ -46,7 +46,10 @@ import {
   issueDuTour,
   issuePrononciation,
   prononInvite,
-  REGLAGES_ECRIT,
+  correctionInvite,
+  coutMaxCorrection,
+  issueCorrection,
+  repondreAuNiveau,
   motifProtection,
   motsEcrits,
   plafondsDepuisEnv,
@@ -110,6 +113,8 @@ interface Audio {
 interface ResultatPrononciation {
   remarque: RemarquePrononciation | null;
   conseil: ConseilEcoute | null;
+  /** 29/10/2026 : écrit — correction de grammaire vérifiée (gemini-3.8-flash, en parallèle) */
+  correction: { dit: string; correct: string; explication_fr: string } | null;
   audio: { mime: string; b64: string } | null;
 }
 interface Scenario {
@@ -548,14 +553,15 @@ export function registerTuteurIa(
       const pl = plafonds();
       const prononciation = b.audio ? setup.prononciation : null;
       const tarifP = prononciation ? setup.tarifPrononciation : null;
-      const reserveP = tarifP ? coutMaxPrononciation(tarifP, pl.usdEur) : 0;
-      // 28/10/2026 (hybride) : l'ORAL va à Flash-Lite (vitesse), l'ÉCRIT à gemini-3.8-flash (qualité)
-      const ecrit = !!b.texte && !!setup.fournisseurEcrit && !!setup.tarifEcrit;
-      const conv = ecrit ? setup.fournisseurEcrit! : fournisseur;
-      const tarifConv = ecrit ? setup.tarifEcrit! : setup.tarif;
-      const reserve =
-        coutMaxTour(tarifConv, pl.usdEur, ecrit ? REGLAGES_ECRIT.maxOutputTokens : undefined) +
-        reserveP;
+      // 29/10/2026 : à l'écrit, CORRECTION DE GRAMMAIRE (gemini-3.8-flash) en parallèle, réservée de même
+      const correctionF = b.texte ? (setup.correction ?? null) : null;
+      const tarifC = correctionF ? (setup.tarifCorrection ?? null) : null;
+      const reserveP =
+        (tarifP ? coutMaxPrononciation(tarifP, pl.usdEur) : 0) +
+        (tarifC ? coutMaxCorrection(tarifC, pl.usdEur) : 0);
+      const conv = fournisseur;
+      const tarifConv = setup.tarif;
+      const reserve = coutMaxTour(tarifConv, pl.usdEur) + reserveP;
       const res = await db.transaction(async (tx) => {
         await tx.execute(
           sql`select pg_advisory_xact_lock(hashtextextended('tuteur-ia-budget', 0))`,
@@ -590,17 +596,30 @@ export function registerTuteurIa(
               .finally(() => audioP.fill(0))
               .then((r) => ({ r, ms: Date.now() - t0 }))
           : null;
-      const brut = await conv.repondre(systemPrompt(g.ctx, adresse, b.genre ?? 'x', w.audience), {
-        audience: w.audience,
-        adresse,
-        genre: b.genre ?? 'x',
-        contexte: g.ctx,
-        historique: (b.historique ?? []).slice(-HISTORIQUE_MAX),
-        ...(b.texte ? { texte: b.texte } : {}),
-        ...(audioBuf
-          ? { audio: { mime: b.audio!.mime, data: audioBuf, secondes: b.audio!.secondes } }
-          : {}),
-      });
+      const sortieC =
+        correctionF && tarifC && b.texte
+          ? correctionF
+              .corriger(correctionInvite(g.ctx), b.texte)
+              .catch(() => null)
+              .then((r) => ({ r, ms: Date.now() - t0 }))
+          : null;
+      // niveau vérifié par script ; UNE relance si la réponse sort de la liste (niveau.ts)
+      const auNiveau = await repondreAuNiveau(
+        conv,
+        systemPrompt(g.ctx, adresse, b.genre ?? 'x', w.audience),
+        {
+          audience: w.audience,
+          adresse,
+          genre: b.genre ?? 'x',
+          contexte: g.ctx,
+          historique: (b.historique ?? []).slice(-HISTORIQUE_MAX),
+          ...(b.texte ? { texte: b.texte } : {}),
+          ...(audioBuf
+            ? { audio: { mime: b.audio!.mime, data: audioBuf, secondes: b.audio!.secondes } }
+            : {}),
+        },
+      );
+      const brut = auNiveau.out;
       audioBuf?.fill(0);
       // garde-fou : transcription vide à l'oral → phrase voulue de l'appel de prononciation (prononciation.ts)
       const { out, complete } = await completerTranscription(
@@ -622,6 +641,12 @@ export function registerTuteurIa(
       const filtre: FilterEvent[] = issue.filtre;
       if (complete)
         filtre.push({ step: 'transcription', action: 'ok', detail: 'phrase_voulue_prononciation' });
+      if (auNiveau.relance !== 'aucune')
+        filtre.push({
+          step: 'niveau_relance',
+          action: 'ok',
+          detail: `${auNiveau.relance}${auNiveau.hors.length ? `:${auNiveau.hors.join(' ')}` : ''}`,
+        });
       const { reponse, correction, transcription, redir, route, repli } = issue;
       // 20/10/2026 : une PANNE du fournisseur (requête refusée, réponse vide ou illisible) se voit dans les journaux
       // du serveur, avec le message technique de Google (jamais la phrase de l'élève)
@@ -644,7 +669,7 @@ export function registerTuteurIa(
           audio = { mime: v.mime, b64: v.data.toString('base64') };
           caracteres = v.caracteres;
         }
-      } else if (reponse && !voixPermise(reponse.ar, idx))
+      } else if (reponse && reponse.ar && !voixPermise(reponse.ar, idx))
         filtre.push({ step: 'voix', action: 'bloque', detail: 'coran_ou_latin' });
       // latence (objectif < 2,5 s entre la fin de la parole et le début de la réponse) : mesurée à chaque échange
       filtre.push({
@@ -663,11 +688,11 @@ export function registerTuteurIa(
       const secondes = secondesTour(Math.max(b.audio?.secondes ?? 0, usage.audio / 32), caracteres);
       // la part de la prononciation reste réservée au PIRE cas tant que son appel n'est pas fini
       await solderDepense(db, res.id, {
-        costMicros: cout + (sortieP ? reserveP : 0),
+        costMicros: cout + (sortieP || sortieC ? reserveP : 0),
         secondes,
         statut: 'fait',
       });
-      const apres = res.avant.moisMicros + cout + (sortieP ? reserveP : 0);
+      const apres = res.avant.moisMicros + cout + (sortieP || sortieC ? reserveP : 0);
       const nouveaux = await noterSeuils(
         db,
         moisCle(now()),
@@ -681,6 +706,52 @@ export function registerTuteurIa(
       // prononciation (oral) : finie EN TÂCHE DE FOND ; la remarque n'est gardée que pour une réponse NORMALE (jamais
       // après un renvoi ou un repli) ; le coût réel remplace ensuite la part réservée
       let prononciationId: string | undefined;
+      // correction de grammaire (écrit) : seulement si Flash-Lite n'a pas déjà corrigé ; finie en tâche de fond
+      if (sortieC) {
+        const normal = !!reponse && !redir && !repli && !correction;
+        const travail = (async (): Promise<ResultatPrononciation | null> => {
+          const { r, ms } = await sortieC;
+          let coutC = reserveP;
+          let resultat: ResultatPrononciation | null = null;
+          try {
+            const ic = r && normal ? issueCorrection(r, { texte: b.texte!, index: idx }) : null;
+            if (ic?.correction)
+              resultat = { remarque: null, conseil: null, correction: ic.correction, audio: null };
+            app.log.info({
+              evenement: 'tuteur_ia_correction',
+              ms,
+              statut: r?.status ?? 'erreur',
+              detail: r?.detail,
+              filtre: ic?.filtre ?? [
+                {
+                  step: 'correction_differee',
+                  action: 'ecarte',
+                  detail: normal ? 'panne' : 'non_demandee',
+                },
+              ],
+            });
+            coutC = Math.min(
+              reserveP,
+              r && (correctionF!.real || setup.mode === 'simule')
+                ? coutMicros({ ...r.usage, caracteresVoix: 0 }, tarifC!, pl.usdEur)
+                : 0,
+            );
+          } finally {
+            await solderDepense(db, res.id, {
+              costMicros: cout + coutC,
+              secondes,
+              statut: 'fait',
+            }).catch(() => undefined);
+          }
+          return resultat;
+        })().catch(() => null);
+        if (normal) {
+          prononciationId = randomUUID();
+          const h = Date.now();
+          for (const [k, v] of prononciations) if (v.fin < h) prononciations.delete(k);
+          prononciations.set(prononciationId, { profileId: g.p.id, travail, fin: h + 60_000 });
+        }
+      }
       if (sortieP) {
         const normal = !!reponse && !redir && !repli;
         const travail = (async (): Promise<ResultatPrononciation | null> => {
@@ -710,7 +781,12 @@ export function registerTuteurIa(
                   caracteresP = v.caracteres;
                 }
               }
-              resultat = { remarque: ip.remarque, conseil: ip.conseil, audio: audioP };
+              resultat = {
+                remarque: ip.remarque,
+                conseil: ip.conseil,
+                correction: null,
+                audio: audioP,
+              };
               app.log.info({
                 evenement: 'tuteur_ia_prononciation',
                 ms,
@@ -773,7 +849,8 @@ export function registerTuteurIa(
         reponse_ar: reponse?.ar ?? '',
         reponse_fr: reponse?.fr ?? '',
         correction: repli ? null : correction,
-        repli,
+        // 29/10/2026 : refus de sécurité de Google (après relance) : réponse polie et neutre, pas un repli d'erreur
+        repli: repli && !issue.neutre,
         audio,
         lu: !!audio,
         simule: !fournisseur.real,
@@ -812,7 +889,7 @@ export function registerTuteurIa(
       ]);
       return reply
         .header('Cache-Control', 'private, no-store')
-        .send(r ?? { remarque: null, conseil: null, audio: null });
+        .send(r ?? { remarque: null, conseil: null, correction: null, audio: null });
     },
   );
 }
