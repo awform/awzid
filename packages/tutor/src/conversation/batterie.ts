@@ -28,7 +28,12 @@ import {
   type EntreeCategorie,
   type IssueTour,
 } from './garde.js';
-import { differenceSon, issuePrononciation, type IssuePrononciation } from './prononciation.js';
+import {
+  differenceSon,
+  issuePrononciation,
+  protectionDifferee,
+  type IssuePrononciation,
+} from './prononciation.js';
 import { PROMPT_VERSION, prononInvite, systemPrompt } from './prompt.js';
 import type {
   ConvFournisseur,
@@ -872,14 +877,14 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
     const enCours =
       audio && o.prononciation
         ? o.prononciation
-            .ecouter(prononInvite(ctx), audio, { mots: ctx.mots })
+            .ecouter(prononInvite(ctx, o.prononciation.modele), audio, { mots: ctx.mots })
             .then((r) => ({ r, ms: Date.now() - t0 }))
         : null;
     // correction de grammaire (écrit) : EN PARALLÈLE, comme l'API
     const enCoursC =
       !audio && o.correction
         ? o.correction
-            .corriger(correctionInvite(ctx), s.entree)
+            .corriger(correctionInvite(ctx, o.correction.modele), s.entree)
             .then((r) => ({ r, ms: Date.now() - t0 }))
         : null;
     const conv = o.fournisseur;
@@ -928,6 +933,11 @@ export async function lancerBatterie(o: OptionsBatterie): Promise<RapportBatteri
           ? coutMicros({ ...r.usage, caracteresVoix: 0 }, o.tarifPrononciation, usdEur)
           : 0;
       c += cp;
+      // 29/10/2026 (P5) : protection aussi sur ce qu'a entendu l'appel parallèle — renvoi montré après coup, comme l'API
+      if (!issue.redir && protectionDifferee(r, s.public)) {
+        issue.redir = 'protection';
+        issue.filtre.push({ step: 'protection_differee', action: 'bloque', detail: 'protection' });
+      }
       // remarque seulement après une réponse NORMALE (jamais après un renvoi ou un repli)
       const normal = !!issue.reponse && !issue.repli && !issue.redir;
       const ip = normal

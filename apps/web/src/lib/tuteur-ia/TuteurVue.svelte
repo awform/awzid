@@ -253,6 +253,11 @@
     const r = await lirePrononciation(profileId, pid);
     if (!r.ok || !r.data) return;
     const p = r.data;
+    // protection détectée après coup : le message de protection remplace la réponse
+    if (p.renvoi) {
+      if (messages[i]) messages[i] = { de: 'tuteur', ar: '', ...p.renvoi };
+      return;
+    }
     // 29/10/2026 : écrit — la correction de grammaire arrive juste après (si la réponse n'en avait pas)
     if (p.correction) {
       const m = messages[i];

@@ -318,6 +318,24 @@ export async function completerTranscription(
   return { out: { ...out, brouillon: { ...b, transcription_ar: pb.voulu } }, complete: true };
 }
 
+/**
+ * ANGLE MORT (29/10/2026, cas P5) : quand Flash-Lite ne transcrit pas l'oral, l'élève reçoit tout de suite « Je n'ai
+ * pas bien entendu » — sans classement possible. Le contrôle de PROTECTION (rencontre avec un inconnu, détresse)
+ * tourne donc AUSSI sur ce que l'appel parallèle a entendu (phrase voulue et sons entendus), dès qu'il arrive, pour
+ * TOUT tour oral : s'il détecte un risque, le message de protection est montré après coup. Rend la phrase en cause
+ * (pour le motif et le journal), ou null.
+ */
+export function protectionDifferee(
+  out: Pick<ConvSortieFournisseur, 'status' | 'brouillon'> | null,
+  audience: Audience,
+): string | null {
+  const b = out && out.status === 'ok' ? validerPrononBrouillon(out.brouillon) : null;
+  if (!b) return null;
+  for (const t of [b.voulu, b.entendu])
+    if (t.trim() && classerEntree(t, audience) === 'protection') return t;
+  return null;
+}
+
 /** Forme VOCALISÉE du livre d'un mot (même forme nue), pour que l'élève voie le mot du livre. */
 function formeDuLivre(
   mots: readonly MotNiveau[],
