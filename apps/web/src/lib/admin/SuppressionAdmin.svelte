@@ -150,8 +150,9 @@
     color: var(--danger, #b3261e);
   }
   .danger {
-    background: var(--danger, #b3261e);
-    color: #fff;
+    background: var(--bad-ink);
+    border-color: var(--bad-ink);
+    color: var(--bad-bg);
   }
   button {
     min-height: 44px;
