@@ -43,8 +43,10 @@
   let appui = 0;
   let long = false;
   const debutAppui = () => {
-    if (deplie || exercice) return;
+    // un nouvel appui annule toujours le « appui long » précédent : si le relâchement n'a pas produit de clic sur le lecteur
+    // (la pastille s'est dépliée sous le pointeur), le premier toucher suivant (vitesse, ±5 s…) ne doit pas être avalé
     long = false;
+    if (deplie || exercice) return;
     clearTimeout(appui);
     appui = window.setTimeout(() => {
       long = true;
