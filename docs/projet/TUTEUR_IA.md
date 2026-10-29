@@ -794,25 +794,93 @@ filtre de traduction ne repère pas encore ; « آخَر » toujours hors liste 
 
 ## 16. Semaine du 2/11/2026 : plan
 
-1. **Test A/B de la correction de l'écrit et de la prononciation** (mêmes 18 situations : C1-C6, PR1-PR10, N6, L3 ;
-   3 passages par variante, à 3 heures différentes ; ≈ 0,05 € par passage) :
-   - A : gemini-3.8-flash sur un **point régional européen** (europe-west1, europe-west4 ou europe-west9 s'il le
-     propose) au lieu du multirégional `eu` — attention, ces points ne garantissent pas le traitement ML dans l'UE
-     (§ 5) : à valider avec le client avant tout usage réel ;
-   - B : **Claude Haiku via Vertex AI en Europe** (Model Garden, point européen) : correction écrite (texte) ; pour la
-     prononciation, vérifier d'abord que le modèle accepte l'audio en entrée (sinon prononciation exclue de B) ;
-   - C : **Flash-Lite avec relance** (correction écrite seulement : il n'entend pas les fautes de prononciation, 2/12
-     le 21/10).
+**Décision du client (29/10) : 100 % Gemini, pas de Claude.** Les variantes sont donc toutes des variantes Gemini
+(mesures du 29/10 : § 17).
+
+1. **Test A/B de la correction de l'écrit et de la prononciation** (mêmes situations : C1-C6, P5, PR1-PR10 ;
+   2 passages par variante ; ≈ 0,05 € par passage) :
+   - A : **gemini-3.8-flash sur `eu`**, coupé à 6 s (référence) — mesuré le 29/10 : médiane 6,6 s, 95ᵉ centile
+     11,7 s, donc la plupart des remarques sont perdues ;
+   - B : **Flash-Lite avec les invites TRÈS courtes** (`PRONON_REGLES_COURT`, `CORR_REGLES_COURT`, choisies dès que le
+     modèle de correction ou de prononciation est un « lite ») : `AWFORM_TUTEUR_VERTEX_MODELE_CORRECTION=` et
+     `…_PRONONCIATION=gemini-3.5-flash-lite` ; latence attendue ≈ 1 s ; **0 fausse remarque exigée** (la règle de
+     l'application, prononciation.ts, reste le dernier mot) ;
+   - ~~points régionaux européens~~ : **écartés**, aucun ne propose ces modèles pour le projet (404, § 17).
    Critères : délai médian et 95ᵉ centile (objectif ≤ 6 s pour la remarque différée), corrections justes (C1-C3,
    C6), fautes de prononciation repérées, **0 fausse remarque**, coût par appel.
 2. **Latence du point `eu` selon l'heure** : petit script sur le serveur de bêta (un appel court gemini-3.8-flash et un
    Flash-Lite toutes les 30 min pendant 48 h, ≈ 200 appels, < 0,10 €), médiane et 95ᵉ centile par tranche horaire ;
    but : savoir si les 6 à 15 s du 28-29/10 sont des pics passagers ou la règle.
 3. **Actions de console côté client** (aucun secret à partager) :
-   - Vertex AI → **Model Garden** : activer le modèle Claude Haiku (accepter les conditions d'Anthropic), vérifier sa
-     disponibilité sur un point européen et le quota par minute ;
-   - IAM : le compte `awzid-tuteur` garde le rôle « Vertex AI User » (rien d'autre à ajouter pour Claude via Vertex) ;
-   - Quotas : vérifier les requêtes par minute de gemini-3.8-flash sur `eu` et sur le point régional choisi (le 28/10,
-     des 429 sont apparus pendant des essais rapprochés) ;
-   - Budget Google Cloud : le seuil de 40 €/mois couvre aussi Claude via Vertex (facturé par Google).
+   - IAM : le compte `awzid-tuteur` garde le seul rôle « Vertex AI User » (rien à ajouter) ;
+   - Quotas : vérifier les requêtes par minute de gemini-3.5-flash-lite et de gemini-3.8-flash sur `eu` (le 28/10,
+     des 429 sont apparus pendant des essais rapprochés) ; avec la variante B, Flash-Lite reçoit deux appels par tour ;
+   - Budget Google Cloud : seuil de 40 €/mois inchangé.
 4. **Ensuite seulement** : une batterie réelle complète avec la meilleure variante, puis fusion si elle est verte.
+
+## 17. Mesures du 29/10/2026 (100 % Gemini) : points UE, cache, correction rapide, Gemini Live
+
+Script `mesure-lieux.mjs` lancé sur le serveur de bêta (même corps que la conversation réelle : invite système de
+5 416 jetons, schéma JSON, réflexion LOW), 20 appels courts par couple (lieu, modèle) en tourniquet, après une sonde.
+Coût des mesures ≈ 0,13 € (surtout gemini-3.8-flash).
+
+### Points de terminaison européens
+
+| Point | gemini-3.5-flash-lite | gemini-3.8-flash |
+|---|---|---|
+| `eu` (multirégional, traitement dans l'UE) | **médiane 955 ms, 95ᵉ centile 1 424 ms, 20/20** | médiane 6 568 ms, 95ᵉ centile 11 673 ms, 19/20 (1 délai de 20 s dépassé) |
+| europe-west1, -west3, -west4, -west8, -west9 | 404 « Publisher model … not found » | 404 |
+
+**Choix : `eu`, seul point qui sert ces modèles** (et le seul qui garantit le traitement ML dans l'UE, § 5).
+`AWFORM_VERTEX_LIEU` reste `eu`. Flash-Lite y tient l'objectif (≈ 1 s pour le modèle seul, voix en plus) ;
+gemini-3.8-flash y est **trop lent pour un appel coupé à 6 s** (plus de la moitié des appels au-delà).
+
+### Cache de contexte (invite système)
+
+- **Cache implicite** (automatique, sans code) : déjà actif pour Flash-Lite sur `eu` — **2 793 des 5 416 jetons
+  d'entrée lus en cache** en moyenne (52 %), facturés 0,03 $/M au lieu de 0,30 $/M. Coût mesuré d'un tour de
+  conversation écrit ≈ 0,0011 $ (entrée 0,0009 $, sortie 94 jetons 0,0002 $). gemini-3.8-flash : 0 jeton en cache
+  (ses invites de correction et de prononciation sont trop courtes pour le cache).
+- **Cache explicite** (`cachedContents`) : possible pour ces modèles, mais l'invite système dépend de la leçon, du
+  public, de l'adresse et du genre : un cache par combinaison, à renouveler (TTL) et payé à l'heure (1 $/M jetons/h,
+  ≈ 0,005 $/h par combinaison). Gain au mieux ≈ 0,0006 $ par tour ; **non retenu** tant que le volume ne dépasse pas
+  quelques centaines de tours par heure et par leçon. Aucun gain de latence attendu au-delà du cache implicite.
+
+### Correction et prononciation par Flash-Lite (variante B)
+
+Invites très courtes ajoutées (`PRONON_REGLES_COURT` < 500 caractères, `CORR_REGLES_COURT` < 700), choisies
+automatiquement quand le modèle de correction ou de prononciation est un « lite » ; même vérification par
+l'application (règle « mieux vaut se taire »), même coupure à 6 s : délai dépassé ou panne → **aucune remarque, une
+ligne au journal** (`tuteur_ia_prononciation`, `panne:delai_depasse`). Mesure sur C1-C6, P5 et PR1-PR10 : **à faire
+après 20 h** (VM réservée à la mise en ligne et au décodage du Coran le 29/10), avant la batterie complète.
+
+### Angle mort P5 (rencontre par internet) corrigé
+
+Si Flash-Lite ne transcrit pas l'oral, l'élève reçoit « Je n'ai pas bien entendu », sans classement possible. Le
+contrôle de **protection** tourne désormais aussi sur ce qu'a entendu l'appel parallèle (phrase voulue et sons
+entendus, `protectionDifferee`), pour tout tour oral sans renvoi : s'il détecte un risque, le serveur journalise le
+renvoi, crée l'alerte et l'écran remplace la réponse par le **message de protection**, même après coup
+(`GET …/prononciation/:pid` → `renvoi`). Même règle dans la batterie. Test : `prononciation.test.ts`.
+
+### Gemini Live (audio natif en flux) : faisabilité, sans intégration
+
+- **Disponibilité en UE** : la Live API de Vertex (`BidiGenerateContent`, WebSocket) est servie par des points
+  **régionaux** ; aucun point multirégional `eu` n'est documenté pour elle, et nos essais montrent que les points
+  régionaux européens ne servent même pas les modèles 3.5/3.8 au projet. **À ce jour, pas de garantie de traitement
+  dans l'UE : bloquant** (décision 4). À revérifier dans la console (Vertex AI → modèles Live, colonne régions).
+- **Coût** (grille Gemini du 29/10, modèles `gemini-3.8-live`) : entrée audio 0,005 $/min, sortie audio 0,018 $/min,
+  texte 0,75 $ / 4,50 $ par M jetons ; le **contexte de la session est refacturé à chaque tour**. Pour une minute de
+  conversation (½ élève, ½ tuteur) : ≈ 0,012 $ d'audio + le contexte (invite de 5 400 jetons × ≈ 4 tours ≈ 0,016 $
+  sans cache) → **≈ 0,03 $/min**, contre ≈ 0,016 €/min aujourd'hui (≈ 4 échanges à 0,0039 €). Avec 40 €/mois :
+  ≈ 1 300 min au lieu de ≈ 2 500.
+- **Garde-fous** : l'audio du modèle part en flux : **impossible de contrôler la réponse avant qu'elle soit
+  entendue** (Coran, sujets refusés, niveau, contact) — sauf à demander la sortie TEXTE et à garder notre voix
+  WaveNet (on perd alors l'intérêt de l'audio natif), ou à retenir l'audio jusqu'à la fin de la transcription de
+  sortie (on perd la latence). La transcription d'entrée en flux permettrait le classement de l'entrée (protection),
+  mais après coup, comme P5.
+- **Lien avec notre interface** : le jeton ne doit jamais aller sur l'appareil : il faudrait un relais WebSocket dans
+  l'API (Fastify), un AudioWorklet PCM 16 kHz côté élève (poids de l'appareil : marge actuelle ≈ 5 000 o, à mesurer),
+  la coupure par l'élève (barge-in) et le budget par seconde au lieu du plafond par tour.
+- **Conclusion** : pas avant (1) une disponibilité Live garantie dans l'UE et (2) un mode « texte + notre voix »
+  mesuré ; Praktika-like à notre niveau d'exigence = notre chaîne actuelle (Flash-Lite ≈ 1 s + voix) + remarques
+  différées.

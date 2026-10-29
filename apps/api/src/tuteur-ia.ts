@@ -45,6 +45,7 @@ import {
   issueDuTour,
   issuePrononciation,
   prononInvite,
+  protectionDifferee,
   correctionInvite,
   coutMaxCorrection,
   issueCorrection,
@@ -115,6 +116,8 @@ interface ResultatPrononciation {
   /** 29/10/2026 : écrit — correction de grammaire vérifiée (gemini-3.8-flash, en parallèle) */
   correction: { dit: string; correct: string; explication_fr: string } | null;
   audio: { mime: string; b64: string } | null;
+  /** 29/10/2026 (P5) : renvoi de PROTECTION détecté après coup sur ce qu'a entendu l'appel parallèle */
+  renvoi?: { redirection: 'protection'; aide?: string; protection?: 'rencontre' | 'detresse' };
 }
 interface Scenario {
   niveau: string;
@@ -590,7 +593,10 @@ export function registerTuteurIa(
       const sortieP =
         prononciation && audioP
           ? prononciation
-              .ecouter(prononInvite(g.ctx), { mime: b.audio!.mime, data: audioP })
+              .ecouter(prononInvite(g.ctx, prononciation.modele), {
+                mime: b.audio!.mime,
+                data: audioP,
+              })
               .catch(() => null)
               .finally(() => audioP.fill(0))
               .then((r) => ({ r, ms: Date.now() - t0 }))
@@ -598,7 +604,7 @@ export function registerTuteurIa(
       const sortieC =
         correctionF && tarifC && b.texte
           ? correctionF
-              .corriger(correctionInvite(g.ctx), b.texte)
+              .corriger(correctionInvite(g.ctx, correctionF.modele), b.texte)
               .catch(() => null)
               .then((r) => ({ r, ms: Date.now() - t0 }))
           : null;
@@ -754,7 +760,28 @@ export function registerTuteurIa(
           let resultat: ResultatPrononciation | null = null;
           try {
             let caracteresP = 0;
-            if (r && normal) {
+            // 29/10/2026 (angle mort P5) : protection AUSSI sur ce qu'a entendu l'appel parallèle (transcription vide de
+            // Flash-Lite, ou transcription qui a manqué le risque) : message de protection et alerte, même après coup
+            const risque = redir ? null : protectionDifferee(r, w.audience);
+            if (risque) {
+              const rv = await redirection('protection', risque);
+              resultat = {
+                remarque: null,
+                conseil: null,
+                correction: null,
+                audio: null,
+                renvoi: {
+                  redirection: 'protection',
+                  ...(rv.aide ? { aide: rv.aide } : {}),
+                  ...(rv.protection ? { protection: rv.protection } : {}),
+                },
+              };
+              app.log.warn({
+                evenement: 'tuteur_ia_protection_differee',
+                ms,
+                filtre: [{ step: 'protection_differee', action: 'bloque', detail: 'protection' }],
+              });
+            } else if (r && normal) {
               const ip = issuePrononciation(r, {
                 mots: g.ctx.mots,
                 dialogue: g.ctx.dialogue,
@@ -796,7 +823,8 @@ export function registerTuteurIa(
                   {
                     step: 'prononciation',
                     action: 'ecarte',
-                    detail: normal ? 'panne' : 'tour_non_normal',
+                    // délai dépassé ou panne : aucune remarque, jamais une fausse ; une ligne au journal
+                    detail: normal ? `panne:${r?.detail ?? 'erreur'}` : 'tour_non_normal',
                   },
                 ],
               });
@@ -815,7 +843,9 @@ export function registerTuteurIa(
           }
           return resultat;
         })().catch(() => null);
-        if (normal) {
+        // 29/10/2026 : lu après TOUT tour oral sans renvoi (repli, « pas bien entendu ») : la protection différée
+        // doit pouvoir s'afficher ; la remarque, elle, reste réservée aux réponses normales
+        if (!redir) {
           prononciationId = randomUUID();
           const h = Date.now();
           for (const [k, v] of prononciations) if (v.fin < h) prononciations.delete(k);

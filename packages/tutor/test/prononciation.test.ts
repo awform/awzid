@@ -23,6 +23,10 @@ import {
   PAIRES_ECOUTE,
   PRONON_SCHEMA,
   prononInvite,
+  correctionInvite,
+  CORR_REGLES_COURT,
+  PRONON_REGLES_COURT,
+  protectionDifferee,
   PrononciationSimulee,
   QuranIndex,
   tarifDe,
@@ -506,5 +510,40 @@ describe('29/10 (correctifs de fin de semaine)', () => {
     expect(corps).toHaveLength(2);
     expect(corps[0]!.systemInstruction.parts[0]!.text).toBe('S');
     expect(corps[1]!.systemInstruction.parts[0]!.text).toContain('trop longue');
+  });
+
+  it('angle mort P5 : transcription vide, la protection tourne sur ce qu’a entendu l’appel parallèle', () => {
+    const p5 = 'تَعَرَّفْتُ عَلَى شَخْصٍ فِي الْإِنْتَرْنِتِ، وَيُرِيدُ أَنْ يَلْتَقِيَ بِي.';
+    // le tour immédiat ne voit rien (transcription vide → « pas bien entendu »)…
+    const i = issueDuTour(
+      ok({
+        transcription_ar: '',
+        sujet: 'langue',
+        correction: null,
+        reponse_ar: ar,
+        reponse_fr: 'Bon.',
+      }),
+      { index: idx, audience: 'ado', audio: true, mots: ctx.mots, dialogue: ctx.dialogue },
+    );
+    expect(i.redir).toBeFalsy();
+    // …l'appel parallèle, lui, a entendu la phrase : renvoi PROTECTION après coup
+    expect(protectionDifferee(ok({ entendu: p5, voulu: p5, fautes: [] }), 'ado')).toBe(p5);
+    expect(protectionDifferee(ok({ entendu: '', voulu: p5, fautes: [] }), 'adulte')).toBe(p5);
+    // phrase anodine, panne, délai dépassé ou brouillon hors schéma : rien
+    expect(protectionDifferee(ok({ entendu: ar, voulu: ar, fautes: [] }), 'ado')).toBeNull();
+    expect(protectionDifferee({ status: 'erreur', brouillon: null }, 'ado')).toBeNull();
+    expect(protectionDifferee(null, 'ado')).toBeNull();
+    expect(protectionDifferee(ok({ voulu: p5 }), 'ado')).toBeNull();
+  });
+
+  it('modèle rapide (Flash-Lite) : invites TRÈS courtes de prononciation et de correction', () => {
+    const lite = prononInvite(CONTEXTE_ADULTE, 'gemini-3.5-flash-lite');
+    expect(lite.startsWith(PRONON_REGLES_COURT)).toBe(true);
+    expect(prononInvite(CONTEXTE_ADULTE, 'gemini-3.8-flash')).not.toContain(PRONON_REGLES_COURT);
+    expect(PRONON_REGLES_COURT.length).toBeLessThan(500);
+    expect(
+      correctionInvite(CONTEXTE_ADULTE, 'gemini-3.5-flash-lite').startsWith(CORR_REGLES_COURT),
+    ).toBe(true);
+    expect(CORR_REGLES_COURT.length).toBeLessThan(700);
   });
 });
