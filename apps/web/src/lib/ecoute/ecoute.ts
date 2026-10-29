@@ -59,6 +59,8 @@ export interface Verification {
   resultat: ResultatEcoute;
   aRevoir: number;
   positions: Array<[number, number, number]>;
+  /** instants (s) du mot reconnu pour chaque mot attendu ; profil ADULTE seulement (« Réécouter ma récitation ») */
+  instants?: Array<[number, number] | null>;
   duree: number;
   calcul: number;
 }

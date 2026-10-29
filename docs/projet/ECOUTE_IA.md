@@ -297,6 +297,51 @@ les routes existantes répondent comme avant.
 ### 10.3 Reste à faire
 
 Vraies voix d'élèves adultes (30 volontaires) avant d'ouvrir ; voix d'enfants : pas d'ouverture avant une mesure
-dédiée ; flux continu (WebSocket) pour raccourcir le délai du suivi ; « réécouter sa récitation » d'un écart
-(l'audio reste sur l'appareil, jamais pour un enfant) ; % par page et progression de mémorisation par sourate (à
-relier à khatma/wird et au hifz en classe).
+dédiée ; flux continu cache-aware (WebSocket) pour raccourcir le délai du suivi (essai à fenêtre glissante rejeté, § 10.4) ; progression de
+mémorisation à relier au hifz en classe (khatma et lecture du jour : fait, § 10.4).
+
+### 10.4 Égaler Tarteel (29/10/2026, branche `tarteel-egal-wip`, interrupteur `shazam_coran`, canal bêta)
+
+- **Fenêtre de détail d'un verset** (`lib/ecoute/FicheVerset.svelte`, chargée au premier toucher) : dans le résultat, un toucher sur un
+  verset (ou sur son numéro, bouton de 44 px) l'ouvre. « Mots manqués » : le texte Tanzil du verset, les mots oubliés, changés ou dans
+  le désordre en rouge ET soulignés ; « Mots ajoutés » : le texte avec un signe rouge « + » là où un mot de plus a été dit (le mot
+  entendu n'est jamais affiché : le service ne le renvoie pas, et le texte montré reste celui de Tanzil). Deux boutons :
+  - « Écouter Ayyūb » : le verset entier (Muḥammad Ayyūb seul), joué par le **petit lecteur commun** (`piloter`) ; il continue quand
+    la fenêtre se ferme, ses commandes (pause, ±5 s, vitesse) sont atteignables fenêtres fermées (le lecteur est derrière le dialogue modal) ;
+  - « Réécouter ma récitation » : **compte adulte seulement** (`reecoutePermise` : profil `adulte` et pas `enfant` ; enfant et ado : ni
+    bouton ni garantie). Le serveur ne renvoie les **instants** des mots reconnus (`instants`, `instantsDesMots` dans `@awform/hifz`)
+    qu'à un profil adulte ; ce sont des nombres, jamais les mots entendus. L'enregistrement reste **en mémoire** (le même Blob que
+    « Envoyer au maître », jamais écrit) : décodé par Web Audio, l'extrait du verset est joué ; aucune requête, aucune adresse `blob:`, rien dans
+    IndexedDB ; libéré à la fermeture de la fenêtre (`reecoute.ts`).
+- **Justesse par page, progression par sourate** (`lib/ecoute/progres.ts`) : un enregistrement de nombres par verset (mots reconnus, mots
+  récités, erreurs, verset entier, jour) dans IndexedDB (`ecoute.progres:<profil>`), jamais envoyé. Justesse d'une page = mots reconnus / mots
+  récités des versets de la page déjà récités ; progression d'une sourate = versets récités **sans écart** (entiers, tout reconnu, aucun doute) / versets.
+  C'est un compte de mots, pas une note (« seul ton maître juge ») ; un verset partiel ne remplace jamais un verset entier.
+  **Khatma / lecture du jour** : la carte de khatma dit la justesse de la récitation sur les pages du jour, et **propose** (jamais de force,
+  comme pour la dernière lecture) de mettre le plan à jour quand les pages qui suivent sa reprise ont été récitées entièrement sans écart.
+- **Vitesse 1,75×** : lecteur commun 0,75 / 1 / 1,25 / 1,5 / 1,75 ; lecteur du Coran (`clampRate`, réglages) jusqu'à 1,75.
+- **Poids** : tout est hors coquille (fenêtre, progression, réécoute : groupe « en ligne » de `groupes.mjs`) ; marge de l'appareil élève 4,7 Ko (≥ 3 Ko).
+
+#### Délai du suivi : écoute en continu (mesure du 29/10/2026)
+
+Essai : morceaux de C = 2 ou 3 s, lecture double (RNN-T et CTC) d'une **fenêtre glissante** (4 s déjà validées + l'audio nouveau) ;
+les mots dont le milieu est avant « maintenant − L » sont stables. Mêmes 70 séances réelles que § 10.2 (40 justes, 30 avec une erreur ; 5 récitateurs),
+même code d'analyse (`eval/suivi_continu_sim.py` + `suivi.mjs`, deux lectures d'accord), sur la VM chargée (calcul pessimiste) :
+
+| Méthode | Fausses alertes (40 séances justes) | Erreurs vues | Délai médian / 90ᵉ (audio) | Avec calcul |
+|---|---|---|---|---|
+| **actuelle** (pause 0,35 s, coupe 10 s) | **1 (1 séance)** | 12 / 30 | 11,4 / 18,0 s | 13,4 s |
+| continu C=2 s, L=1,0 s | 38 (17 séances) | 15 / 30 | 3,1 / 7,4 s | 3,9 s |
+| continu C=2 s, L=1,5 s | 20 (9) | 16 / 30 | 4,6 / 7,4 s | 5,2 s |
+| continu C=2 s, L=2,0 s | 27 (16) | 16 / 30 | 5,4 / 7,4 s | 6,0 s |
+| continu C=3 s, L=1,5 s | 28 (11) | 14 / 30 | 5,4 / 7,6 s | 5,9 s |
+| continu C=3 s, L=2,0 s | 20 (8) | 12 / 30 | 6,1 / 7,6 s | 6,8 s |
+
+Calcul par morceau (VM chargée, 3 cœurs) : 0,64 à 0,70 s en médiane, 1,4 à 1,6 s au 90ᵉ centile (actuel : 1,15 s par seconde d'audio).
+**Conclusion : l'objectif « moins de 3 s sans fausses alertes en plus » n'est PAS atteignable avec cette méthode.** Le délai tombe à 3,1–6 s, mais
+les fausses alertes passent de 1 à 20–38 séances sur 40 (mots coupés au bord de la fenêtre, mots comptés deux fois autour de la limite). **Le mode actuel est gardé.**
+Le temps de calcul seul (≈ 0,7 s) n'est pas le problème ; c'est la qualité de lecture d'un mot sans son contexte à droite.
+Suite proposée, dans l'ordre : (1) FastConformer « cache-aware streaming » (contexte conservé dans l'encodeur, pas de relecture de fenêtre) ou fenêtre plus longue avec
+alignement sur la lecture précédente (un mot déjà validé n'est jamais revu) ; (2) WebSocket (§ 4) ; (3) remesurer avec `suivi_continu_sim.py`, objectif ≤ 1 fausse alerte sur 40 séances
+justes et délai médian < 3 s avec calcul ; (4) mesure au calme (verrou commun tenu) ; (5) vraies voix d'adultes avant d'ouvrir.
+Pour ouvrir plus tôt sans rien changer : dire l'écart dès la pause suivante (aide actuelle « une dizaine de secondes après »).

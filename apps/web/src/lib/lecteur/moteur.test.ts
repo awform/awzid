@@ -189,9 +189,9 @@ describe('lecteur audio — moteur', () => {
     expect(m.courante?.cle).toBe('k3');
   });
 
-  it('vitesse 0,75 / 1 / 1,25 avec la hauteur conservée, aussi après un changement de phrase', async () => {
+  it('vitesse 0,75 / 1 / 1,25 / 1,5 / 1,75 avec la hauteur conservée, aussi après un changement de phrase', async () => {
     const { audio, m } = creer();
-    expect([...VITESSES]).toEqual([0.75, 1, 1.25]);
+    expect([...VITESSES]).toEqual([0.75, 1, 1.25, 1.5, 1.75]);
     await m.jouer(0);
     for (const v of VITESSES) {
       m.regler(v);
@@ -201,8 +201,10 @@ describe('lecteur audio — moteur', () => {
     m.regler(1.25);
     await m.suivante();
     expect(audio.playbackRate).toBe(1.25);
+    m.regler(1.75);
+    expect(audio.playbackRate).toBe(1.75);
     m.regler(3);
-    expect(m.vitesse).toBe(1.25);
+    expect(m.vitesse).toBe(1.75);
   });
 
   it('boucle : la phrase se répète, arrêt AUTOMATIQUE après 10 répétitions', async () => {

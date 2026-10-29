@@ -86,6 +86,8 @@ export const EN_LIGNE_MODULES = [
   /src\/routes\/inscription\/AccueilBeta\.svelte$/,
   // A5 : « Réciter et vérifier » (le service d'écoute est sur le serveur) : panneau et bilans, à la demande
   /src\/lib\/ecoute\/(PanneauEcoute|ARevoirEcoute)\.svelte$/,
+  // 29/10/2026 : fenêtre de détail d'un verset (mots manqués et ajoutés, Écouter Ayyūb, réécoute de l'adulte), au premier toucher
+  /src\/lib\/ecoute\/FicheVerset\.svelte$/,
   // 25/10/2026 (allègement) : le bouton lui-même, derrière une enveloppe de quelques octets (BoutonEcoute.svelte)
   /src\/lib\/ecoute\/BoutonEcouteCorps\.svelte$/,
   // hifẓ complet : écran enfant (l'écoute du récitateur choisi par le parent a besoin du réseau), à la demande

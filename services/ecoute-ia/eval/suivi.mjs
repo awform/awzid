@@ -21,10 +21,14 @@ const q = (a, p) =>
   a.length ? [...a].sort((x, y) => x - y)[Math.floor((a.length - 1) * p)] : null;
 const r2 = (x) => (x === null ? null : Math.round(x * 100) / 100);
 
-const METHODES = [
-  { nom: 'direct (A5), une lecture', src: 'direct', accord: false },
-  { nom: 'direct (A5), deux lectures d’accord', src: 'direct', accord: true },
-];
+// « direct » (A5) seulement si la simulation l'a rejoué ; AVEC_CALCUL=1 : le délai compte le temps de calcul du service
+const METHODES = S[0]?.direct
+  ? [
+      { nom: 'direct (A5), une lecture', src: 'direct', accord: false },
+      { nom: 'direct (A5), deux lectures d’accord', src: 'direct', accord: true },
+    ]
+  : [];
+const CALCUL = process.env.AVEC_CALCUL === '1';
 for (const k of Object.keys(S[0] ?? {}).filter((x) => x.startsWith('suivi')))
   METHODES.push(
     { nom: `${k} avec contexte, une lecture`, src: k, accord: false },
@@ -68,7 +72,7 @@ for (const M of METHODES) {
       for (const e of montres) {
         const juste = v && e.fin >= v.i - 1 && e.i <= v.fin + 1;
         if (juste) {
-          if (vu === null) vu = m.t;
+          if (vu === null) vu = m.t + (CALCUL ? m.calcul : 0);
           continue;
         }
         const k = `${e.type}:${e.i}`;

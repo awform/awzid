@@ -239,7 +239,7 @@
       <div class="field">
         <label for="cl-vitesse">{t('ca.vitesse')}</label>
         <select id="cl-vitesse" bind:value={prefs.rate} data-testid="vitesse">
-          {#each [0.5, 0.75, 1, 1.25, 1.5] as v (v)}<option value={v}>{fmtNumber(v)}×</option
+          {#each [0.5, 0.75, 1, 1.25, 1.5, 1.75] as v (v)}<option value={v}>{fmtNumber(v)}×</option
             >{/each}
         </select>
       </div>

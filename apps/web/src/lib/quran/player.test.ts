@@ -79,7 +79,9 @@ describe('lot 27 — logique de lecture de l’espace Coran', () => {
   });
 
   it('vitesse bornée par quarts, durées lisibles, portion du carnet', () => {
-    expect(clampRate(3)).toBe(1.5);
+    expect(clampRate(3)).toBe(1.75);
+    expect(clampRate(1.75)).toBe(1.75);
+    expect(clampRate(1.5)).toBe(1.5);
     expect(clampRate(0.6)).toBe(0.5);
     expect(clampRate(Number.NaN)).toBe(1);
     expect(fmtDuration(83_000)).toBe('1:23');

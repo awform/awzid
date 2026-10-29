@@ -3,6 +3,14 @@
   import { resolve } from '$app/paths';
   import Bidi from '$lib/Bidi.svelte';
   import { accountProfiles, demoProfileFor } from '$lib/attempts';
+  import type { QuranMeta } from '@awform/hifz';
+  import {
+    lire,
+    justessePartDuJour,
+    pageApresRecitation,
+    type Registre,
+  } from '$lib/ecoute/progres';
+  import { loadMeta } from '$lib/hifz';
   import { fmtDate, t } from '$lib/i18n';
   import { readLast, type Position } from '$lib/quran/lecture';
   import Feuille from '$lib/quran/lecture/Feuille.svelte';
@@ -37,6 +45,8 @@
   let note = $state('');
   let derniere = $state<Position | null>(null);
   let jour = $state(aujourdhui());
+  let recitation = $state.raw<Registre>({});
+  let meta = $state.raw<QuranMeta | null>(null);
 
   const plans = $derived((etat?.plans ?? []).filter((p) => p.status !== 'archivee'));
   const lecteur = resolve('/coran/lecteur');
@@ -45,7 +55,12 @@
     derniere = readLast();
     profil = await demoProfileFor('').catch(() => null);
     profils = await accountProfiles().catch(() => []);
-    if (profil) await recharger();
+    if (profil) {
+      await recharger();
+      // récitation gardée sur l'appareil (justesse par page) : pour la proposition de mise à jour et la lecture du jour
+      recitation = await lire(profil.id).catch(() => ({}));
+      meta = await loadMeta().catch(() => null);
+    }
     charge = true;
   });
 
@@ -139,6 +154,24 @@
     return derniere.p > c.pageCourante && derniere.p <= p.part.lastPage ? derniere.p : null;
   }
 
+  /**
+   * tarteel-egal-wip : synchronisation avec la RÉCITATION (« Réciter et vérifier », gardée sur l'appareil) : si les pages
+   * qui suivent la reprise du plan ont été récitées entièrement sans écart, on PROPOSE de mettre le plan à jour (jamais
+   * de force, comme pour la dernière lecture).
+   */
+  function propositionRecitation(p: PlanApi): number | null {
+    const c = calc(p);
+    if (!meta || c.termine || p.kind === 'wird' || c.pageCourante === null) return null;
+    const apres = pageApresRecitation(recitation, meta, c.pageCourante, p.part.lastPage);
+    return apres > c.pageCourante ? Math.min(apres, p.part.lastPage + 1) : null;
+  }
+
+  /** justesse de la récitation sur les pages de la part du jour (lecture du jour), si l'élève en a récité */
+  function justesseDuJour(p: PlanApi) {
+    const c = calc(p);
+    return meta && c.pagesDuJour ? justessePartDuJour(recitation, meta, c.pagesDuJour) : null;
+  }
+
   async function reculer(p: PlanApi, page: number) {
     reglageOuvert = false;
     await majDepuisLecture(p, page);
@@ -178,6 +211,8 @@
     {#each plans as p (p.id)}
       {@const c = calc(p)}
       {@const prop = propositionLecture(p)}
+      {@const propR = propositionRecitation(p)}
+      {@const justesse = justesseDuJour(p)}
       <article class="plan" data-testid="khatma-plan" data-plan={p.id} data-statut={p.status}>
         <h3><Bidi text={titre(p)} /></h3>
         {#if p.scope !== 'profil'}
@@ -267,6 +302,21 @@
             onclick={() => majDepuisLecture(p, prop)}
             data-testid="khatma-maj-lecture"
             ><Bidi text={t('kh.maj_depuis_lecture', { p: prop })} /></button
+          >
+        {/if}
+        {#if justesse}
+          <!-- récitation de « Réciter et vérifier » (gardée sur l'appareil) sur les pages du jour : un compte de mots -->
+          <p class="petit muted" data-testid="khatma-justesse">
+            <Bidi text={t('kh.justesse_jour', { j: justesse.justesse, n: justesse.pages })} />
+          </p>
+        {/if}
+        {#if propR}
+          <button
+            type="button"
+            class="petit"
+            onclick={() => majDepuisLecture(p, propR)}
+            data-testid="khatma-maj-recitation"
+            ><Bidi text={t('kh.maj_depuis_recitation', { p: propR - 1 })} /></button
           >
         {/if}
         <div class="actions">

@@ -128,6 +128,19 @@ describe.skipIf(!URL_)('A5 : écoute de la récitation (awform_test)', () => {
     expect(recus.at(-1)!.equals(AUDIO)).toBe(true);
   });
 
+  it('instants des mots reconnus (réécoute de sa récitation) : adulte seulement, jamais un enfant', async () => {
+    const enf = (await verifier(P)).json();
+    expect(enf.resultat.statut).toBe('resultat');
+    expect(enf.instants).toBeUndefined();
+    expect(JSON.stringify(enf)).not.toContain('instants');
+    const ad = (await verifier(A, adulteP)).json();
+    expect(ad.instants).toHaveLength(ad.positions.length);
+    expect(ad.instants[0]).toEqual([0, 0.4]);
+    // des nombres seulement : jamais un mot entendu
+    expect(ad.instants.flat().every((x: unknown) => x === null || typeof x === 'number')).toBe(
+      true,
+    );
+  });
   it('mot oublié : signalé avec sa position et sa confiance', async () => {
     reponse = (att) => {
       const x = juste(att);

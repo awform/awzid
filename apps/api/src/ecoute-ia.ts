@@ -34,6 +34,7 @@ import {
   comparer,
   decisionRetrouver,
   IndexCoran,
+  instantsDesMots,
   motsARevoir,
   motsAttendus,
   VOIX_MIN_RETROUVER,
@@ -562,6 +563,12 @@ export function registerEcouteIa(app: FastifyInstance, db: Db, opts: OptionsEcou
           aRevoir: motsARevoir(res),
           // position de chaque mot attendu dans le texte affiché (sourate, verset, rang du mot)
           positions: att.map((m) => [m.s, m.a, m.k]),
+          // tarteel-egal-wip : instants (secondes) de chaque mot reconnu, pour « Réécouter ma récitation » d'un verset.
+          // SEULEMENT pour un profil ADULTE (jamais un enfant ni un ado : pas de réécoute) ; des nombres, jamais les mots
+          // entendus ; l'audio, lui, reste sur l'appareil et n'est ni gardé ni renvoyé
+          ...(p.kind === 'adulte' && res.statut === 'resultat'
+            ? { instants: instantsDesMots(att, r.mots) }
+            : {}),
           duree: r.duree,
           calcul: r.calcul,
         };

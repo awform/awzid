@@ -88,9 +88,9 @@ export function canMemorize(r: { riwaya: string }): boolean {
   return isHafs(r.riwaya);
 }
 
-/** Vitesse de lecture permise (0,5 à 1,5 ; la hauteur de la voix est conservée par le lecteur). */
+/** Vitesse de lecture permise (0,5 à 1,75 ; la hauteur de la voix est conservée par le lecteur). */
 export function clampRate(r: number): number {
-  return Math.max(0.5, Math.min(1.5, Math.round((Number.isFinite(r) ? r : 1) * 4) / 4));
+  return Math.max(0.5, Math.min(1.75, Math.round((Number.isFinite(r) ? r : 1) * 4) / 4));
 }
 
 /**

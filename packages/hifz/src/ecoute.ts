@@ -564,6 +564,31 @@ export function ecartsDAccord(a: readonly Ecart[], b: readonly Ecart[]): Ecart[]
   return a.filter((e) => b.some((f) => f.fin >= e.i - 1 && f.i <= e.fin + 1));
 }
 
+/**
+ * Instants [début, fin] (secondes de l'enregistrement) du mot entendu qui correspond à chaque mot attendu, ou null (mot
+ * non entendu, ou modèle sans instants). Sert UNIQUEMENT à « Réécouter ma récitation » d'un verset (adulte, audio gardé
+ * en mémoire sur l'appareil) : ce sont des nombres, jamais le mot entendu.
+ */
+export function instantsDesMots(
+  att: readonly MotAttendu[],
+  ent: readonly MotEntendu[],
+  enCours = false,
+): Array<[number, number] | null> {
+  const out: Array<[number, number] | null> = att.map(() => null);
+  const entre = (j0: number, j1: number): [number, number] | null => {
+    const a = ent[j0]?.t0;
+    const b = ent[j1]?.t1;
+    return a !== undefined && b !== undefined && b >= a ? [a, b] : null;
+  };
+  for (const o of aligner(att, ent, enCours)) {
+    if (o.t === 'eg' && o.sim >= SEUILS.meme) out[o.i] = entre(o.j, o.j);
+    else if (o.t === 'fus' && o.sim >= SEUILS.meme) out[o.i] = entre(o.j, o.j + o.n - 1);
+    else if (o.t === 'sep' && o.sim >= SEUILS.meme)
+      for (let k = 0; k < o.n; k++) out[o.i + k] = entre(o.j, o.j);
+  }
+  return out;
+}
+
 /** Nombre de mots à revoir (pour un message bienveillant : « 2 mots à revoir »). */
 export function motsARevoir(r: ResultatEcoute): number {
   return r.ecarts.reduce((s, e) => s + (e.type === 'ajoute' ? 1 : e.fin - e.i + 1), 0);

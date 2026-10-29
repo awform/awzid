@@ -16,6 +16,7 @@
     sautes,
     courant = -1,
     masque = false,
+    surverset,
   }: {
     versets: ReadonlyArray<{ s: number; a: number; text: string }>;
     index: ReadonlyMap<string, number>;
@@ -24,6 +25,8 @@
     sautes: ReadonlySet<string>;
     courant?: number;
     masque?: boolean;
+    /** tarteel-egal-wip : un toucher sur un verset ouvre sa fenêtre de détail (mots manqués et ajoutés) */
+    surverset?: (a: number) => void;
   } = $props();
   const ESPACE = ' ';
   /** lot lecteur 4 : numéro de verset en chiffres arabes (١٢٣) dans l'étoile, comme dans le lecteur */
@@ -42,7 +45,14 @@
       >{/if}{/snippet}
   {#each versets as v (v.a)}
     {@const ws = v.text.split(' ')}
-    <p class="verset" class:saute={sautes.has(`${v.s}:${v.a}`)}>
+    <!-- un toucher sur le texte du verset ouvre son détail ; le clavier et les lecteurs d'écran passent par le bouton du numéro -->
+    <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
+    <p
+      class="verset"
+      class:saute={sautes.has(`${v.s}:${v.a}`)}
+      class:touchable={!!surverset}
+      onclick={surverset ? () => surverset(v.a) : undefined}
+    >
       <!-- signes de pause (U+06D6 à U+06DC) rattachés au mot qui précède, à l'affichage seulement (pause.ts) -->
       {#each pauseGroups(ws) as gr (gr[0])}
         {#if gr.length > 1}<span class="wg" data-testid="ecoute-groupe"
@@ -54,7 +64,16 @@
               )}{/each}</span
           >{:else}{@render mot(v.s, v.a, ws[gr[0]!]!, gr[0]!)}{/if}{ESPACE}
       {/each}
-      <span class="num" aria-label={t('ec.verset_n', { n: v.a })}>{arNum(v.a)}</span>
+      {#if surverset}<button
+          type="button"
+          class="num bouton"
+          aria-label={t('ec.fiche_detail', { n: v.a })}
+          data-testid="ecoute-verset-detail"
+          onclick={(e) => {
+            e.stopPropagation();
+            surverset(v.a);
+          }}>{arNum(v.a)}</button
+        >{:else}<span class="num" aria-label={t('ec.verset_n', { n: v.a })}>{arNum(v.a)}</span>{/if}
     </p>
   {/each}
 </div>
@@ -83,6 +102,29 @@
       center / contain no-repeat;
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-20 -20 40 40'%3E%3Cg fill='none' stroke='%23000' stroke-linejoin='round'%3E%3Cpath stroke-width='2.4' d='M0-18L5.3-12.7H12.7V-5.3L18 0 12.7 5.3V12.7H5.3L0 18-5.3 12.7H-12.7V5.3L-18 0-12.7-5.3V-12.7H-5.3Z'/%3E%3C/g%3E%3C/svg%3E")
       center / contain no-repeat;
+  }
+  /* numéro touchable : cible de 44 px au moins (AA), la rosette reste dessinée dans le même gabarit */
+  .num.bouton {
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    font-family: inherit;
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .num.bouton::before {
+    inset: 6px;
+  }
+  .num.bouton:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .verset.touchable {
+    cursor: pointer;
   }
   .texte {
     font-family: var(--font-quran);

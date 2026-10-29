@@ -5,13 +5,14 @@
  * Règles (décision du client) :
  *  - aucune lecture sans geste de l'utilisateur : le moteur ne joue que sur `jouer`, `basculer`, `suivante`… appelés
  *    par un appui (bouton, touche, commande de l'écran verrouillé) ;
- *  - vitesses 0,75 / 1 / 1,25 avec la hauteur de la voix conservée (`preservesPitch`) ;
+ *  - vitesses 0,75 / 1 / 1,25 / 1,5 / 1,75 avec la hauteur de la voix conservée (`preservesPitch`) ;
  *  - répétition en boucle d'une phrase : arrêt AUTOMATIQUE après 10 répétitions ;
  *  - lecture continue : enchaîne les phrases dans l'ordre de la page ou de la séance ;
  *  - mêmes sources audio que l'existant : le moteur reçoit un résolveur (copie de l'appareil d'abord, puis le réseau).
  */
 
-export const VITESSES = [0.75, 1, 1.25] as const;
+// 29/10/2026 (tarteel-egal-wip) : jusqu'à 1,75× comme Tarteel (la récitation de l'élève qui révise, ou d'Ayyūb)
+export const VITESSES = [0.75, 1, 1.25, 1.5, 1.75] as const;
 export const MAX_REPETITIONS = 10;
 /** la barre de progression n'est affichée que si l'audio dure plus que cela (secondes) */
 export const SEUIL_BARRE_S = 20;

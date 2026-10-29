@@ -95,5 +95,7 @@
   "kh.classe_eleves": "{n, plural, =0 {Aucun élève inscrit} one {# élève inscrit recevra une part} other {# élèves inscrits recevront chacun une part}}",
   "kh.classe_nom": "Nom de la khatma (facultatif)",
   "kh.classe_lancer": "Lancer la khatma de la classe",
-  "kh.classe_min": "Il faut au moins deux élèves inscrits dans la classe."
+  "kh.classe_min": "Il faut au moins deux élèves inscrits dans la classe.",
+  "kh.maj_depuis_recitation": "Mettre à jour d'après ma récitation (jusqu'à la page {p})",
+  "kh.justesse_jour": "Récitation des pages du jour : {j} % de justesse ({n, plural, one {# page} other {# pages}})"
 }

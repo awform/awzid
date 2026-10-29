@@ -9,6 +9,11 @@ Dépôt distant : `git@github-awform:awform/awzid.git` (créé par le client) �
 
 
 
+## 29/10/2026 — Égaler Tarteel (branche `tarteel-egal-wip`, interrupteur `shazam_coran`, canal bêta) ; NON déployé
+
+- **Fenêtre de détail par verset** (mots manqués / ajoutés en rouge, Écouter Ayyūb par le petit lecteur commun, réécoute de sa récitation pour l'adulte seulement, audio en mémoire sur l'appareil, rien envoyé ni gardé), **justesse par page et progression par sourate** sur l'appareil, reliées à la khatma (lecture du jour, mise à jour proposée), **vitesse 1,75×**. Détail et garanties : `ECOUTE_IA.md` § 10.4.
+- **Délai** : écoute en continu par morceaux de 2 à 3 s avec recouvrement mesurée sur 70 séances : délai 3,1 à 6 s mais 20 à 38 séances justes sur 40 avec fausse alerte (contre 1) : **mode actuel gardé**, suite proposée en § 10.4.
+- Tests : `packages/hifz/test/instants.test.ts`, `apps/web/src/lib/ecoute/progres.test.ts`, `apps/api/test/a5.test.ts`, e2e `apps/web/e2e/tarteel.spec.ts`. Poids : marge de l'appareil élève 4,7 Ko.
 ## 29/10/2026 — Inscription V2, lots V2-0 (mesure anonyme) et V2-1 (mots de passe simples) ; NON déployé
 
 - **V2-1 — mots de passe** : familles, adultes, ados, enfants = **8 caractères au moins, aucune exigence de composition** (`packages/school/src/mot-de-passe.ts`, règle partagée API / application). Refus seulement : mots de passe courants (liste **locale** de plus de 10 000 entrées, `packages/school/src/mdp-communs.ts`, générée par `scripts/generer-mdp-communs.mjs`, lue par l'API seulement — jamais envoyée à l'appareil — et sans appel externe ; elle peut être remplacée par une liste de mots de passe réellement fuités au même format) et mot de passe égal à l'identifiant, à l'adresse ou au prénom. Personnel (admin, enseignant, rôles de plateforme) : inchangé (12 caractères, second facteur). Les mots de passe existants restent valables (règle appliquée à la création, au changement et à la réinitialisation). Aucun interrupteur : la règle s'applique directement.

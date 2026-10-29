@@ -1,17 +1,32 @@
 <script lang="ts">
-  import { onDestroy, onMount, untrack } from 'svelte';
+  import { onDestroy, onMount, untrack, type Component } from 'svelte';
   import { resolve } from '$app/paths';
   import Bidi from '$lib/Bidi.svelte';
   import RecitationEnvoi from '$lib/RecitationEnvoi.svelte';
   import { fn } from '$lib/fonctions.svelte';
-  import { loadMeta, loadVerses } from '$lib/hifz';
-  import { loadTexts, t, texteExiste } from '$lib/i18n';
+  import { loadMeta, loadVerses, localIso } from '$lib/hifz';
+  import { fmtNumber, loadTexts, t, texteExiste } from '$lib/i18n';
   import Feuille from '$lib/quran/lecture/Feuille.svelte';
   import { recordingAllowed, saveRecording } from '$lib/recordings';
   import { call } from '$lib/session';
-  import { motsAttendus, type EtatMot, type MotAttendu, type ResultatEcoute } from '@awform/hifz';
+  import {
+    motsAttendus,
+    suraName,
+    type EtatMot,
+    type MotAttendu,
+    type ResultatEcoute,
+  } from '@awform/hifz';
   import { occuper } from '$lib/occupation';
   import { garderBilan } from './bilans';
+  import {
+    garderSeance,
+    lignesPages,
+    lignesSourates,
+    pageDe,
+    reecoutePermise,
+    type LignePage,
+    type LigneSourate,
+  } from './progres';
   import TexteEcoute from './TexteEcoute.svelte';
   import type { EtatEcoute } from './etat';
   import {
@@ -67,6 +82,18 @@
   /** enregistrement EN MÉMOIRE seulement (pour « Envoyer au maître »), abandonné à la fermeture */
   let audio = $state.raw<Blob | null>(null);
   let envoi = $state<'non' | 'pret' | 'refuse'>('non');
+  /** instants (secondes) des mots reconnus : seulement pour un profil adulte, sert à « Réécouter ma récitation » */
+  let instants = $state.raw<Array<[number, number] | null> | null>(null);
+  /** fenêtre de détail d'un verset (tarteel-egal-wip), chargée au premier toucher */
+  let Fiche = $state.raw<Component<Record<string, unknown>> | null>(null);
+  let ficheVerset = $state<number | null>(null);
+  let ficheOuverte = $state(false);
+  /** justesse des pages et progression des sourates de la séance, gardées sur l'appareil seulement */
+  let progres = $state.raw<{
+    pages: LignePage[];
+    sourates: LigneSourate[];
+    toutes: LigneSourate[];
+  } | null>(null);
   let flux: MediaStream | null = null;
   let rec: Enregistreur | null = null;
   let suivi: SuiviDirect | null = null;
@@ -162,6 +189,9 @@
     direct = null;
     envoi = 'non';
     audio = null;
+    instants = null;
+    progres = null;
+    ficheOuverte = false;
     modeDirect = enDirect;
     try {
       flux = await micro();
@@ -222,10 +252,42 @@
     }
     const r: ResultatEcoute = v.v.resultat;
     resultat = r;
+    instants = v.v.instants ?? null;
     etape = 'resultat';
     // bilan de séance (positions des mots à revoir, jamais l'audio) : repris par le carnet
     await garderBilan(profileId, bilanDe(portion, att, r));
+    if (etat.shazam) await majProgres(r);
   }
+
+  /** justesse par page et progression par sourate : des nombres par verset, gardés sur l'appareil seulement */
+  async function majProgres(r: ResultatEcoute) {
+    const g = await garderSeance(profileId, att, r, localIso()).catch(() => null);
+    const meta = await loadMeta().catch(() => null);
+    if (!g || !meta) return;
+    const cles = Object.keys(g.seance).map((k) => k.split(':').map(Number) as [number, number]);
+    const pages = [
+      ...new Set(cles.map(([s, a]) => pageDe(meta, s, a)).filter((p): p is number => p !== null)),
+    ].sort((x, y) => x - y);
+    progres = {
+      pages: lignesPages(g.registre, meta, pages),
+      sourates: lignesSourates(g.registre, meta, [...new Set(cles.map(([s]) => s))]),
+      toutes: lignesSourates(g.registre, meta),
+    };
+  }
+
+  /** un toucher sur un verset du résultat : sa fenêtre de détail (mots manqués et ajoutés) */
+  async function ouvrirFiche(a: number) {
+    Fiche ??= (await import('./FicheVerset.svelte')).default as unknown as Component<
+      Record<string, unknown>
+    >;
+    ficheVerset = a;
+    ficheOuverte = true;
+  }
+  const fiche = $derived(
+    ficheVerset === null ? null : (versets.find((v) => v.a === ficheVerset) ?? null),
+  );
+  /** « Réécouter ma récitation » : compte adulte seulement (enfant et ado : jamais) */
+  const reecoute = $derived(reecoutePermise(kind, enfant));
 
   /** « L'IA s'est trompée » : un compteur pour mesurer les fausses alertes en bêta (ni voix, ni mots) */
   let signale = $state(false);
@@ -412,6 +474,89 @@
           {sautes}
           courant={direct?.courant ?? -1}
           masque={masque && etape === 'direct'}
+          surverset={etape === 'resultat' && etat.shazam && resultat?.statut === 'resultat'
+            ? ouvrirFiche
+            : undefined}
+        />
+        {#if etape === 'resultat' && etat.shazam && resultat?.statut === 'resultat'}
+          <p class="small muted" data-testid="fiche-aide">
+            <Bidi text={t('ec.fiche_aide_toucher')} />
+          </p>
+        {/if}
+      {/if}
+
+      {#if etape === 'resultat' && progres && (progres.pages.length || progres.sourates.length)}
+        <!-- justesse par page et progression par sourate : un compte de MOTS gardé sur cet appareil, jamais une note -->
+        <section class="progres" aria-labelledby="ec-progres-titre" data-testid="ecoute-progres">
+          <h3 id="ec-progres-titre">{t('ec.progres_titre')}</h3>
+          <ul class="small">
+            {#each progres.pages as p (p.page)}
+              <li data-testid="progres-page">
+                <Bidi
+                  text={t('ec.progres_page', {
+                    p: fmtNumber(p.page),
+                    j: fmtNumber(p.justesse),
+                    r: fmtNumber(p.recites),
+                    n: fmtNumber(p.total),
+                  })}
+                />
+                <progress
+                  max="100"
+                  value={p.justesse}
+                  aria-label={t('ec.progres_page_aria', { p: fmtNumber(p.page) })}
+                ></progress>
+              </li>
+            {/each}
+            {#each progres.sourates as l (l.s)}
+              <li data-testid="progres-sourate">
+                <Bidi
+                  text={t('ec.progres_sourate', {
+                    sourate: suraName(l.s),
+                    n: fmtNumber(l.propres),
+                    total: fmtNumber(l.total),
+                    pct: fmtNumber(l.pct),
+                  })}
+                />
+                <progress
+                  max="100"
+                  value={l.pct}
+                  aria-label={t('ec.progres_sourate_aria', { sourate: suraName(l.s) })}
+                ></progress>
+              </li>
+            {/each}
+          </ul>
+          {#if progres.toutes.length > progres.sourates.length}
+            <details class="small">
+              <summary data-testid="progres-toutes">{t('ec.progres_toutes')}</summary>
+              <ul>
+                {#each progres.toutes as l (l.s)}
+                  <li>
+                    <Bidi
+                      text={t('ec.progres_sourate', {
+                        sourate: suraName(l.s),
+                        n: fmtNumber(l.propres),
+                        total: fmtNumber(l.total),
+                        pct: fmtNumber(l.pct),
+                      })}
+                    />
+                  </li>
+                {/each}
+              </ul>
+            </details>
+          {/if}
+          <p class="small muted"><Bidi text={t('ec.progres_aide')} /></p>
+        </section>
+      {/if}
+
+      {#if Fiche && fiche && resultat}
+        <Fiche
+          verset={fiche}
+          {att}
+          {resultat}
+          {instants}
+          {audio}
+          {reecoute}
+          bind:ouvert={ficheOuverte}
         />
       {/if}
 
@@ -612,5 +757,32 @@
   }
   .small {
     font-size: 0.9rem;
+  }
+  .progres h3 {
+    margin: 0 0 6px;
+    font-size: 1rem;
+    color: var(--mp-green);
+  }
+  .progres ul {
+    display: grid;
+    gap: 8px;
+    margin: 0 0 6px;
+    padding: 0;
+    list-style: none;
+  }
+  .progres details ul {
+    margin-top: 6px;
+  }
+  .progres summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    cursor: pointer;
+  }
+  .progres progress {
+    display: block;
+    width: 100%;
+    height: 10px;
+    accent-color: var(--mp-green);
   }
 </style>

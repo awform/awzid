@@ -15,7 +15,7 @@
    * l'appareil), « × », Échap ou un toucher ailleurs le replient. Dans un exercice : pastille seule, visible
    * seulement pendant la lecture. Déplié : pause / lecture (reprise au même endroit), reculer et avancer de 5 s, barre de progression
    * glissable (seulement si l'audio dure plus de 20 s), phrase précédente et suivante, boucle (10 répétitions au
-   * plus), vitesse 0,75 / 1 / 1,25 (voix à la même hauteur), lecture continue. Boutons de 44 px au moins, libellés
+   * plus), vitesse 0,75 / 1 / 1,25 / 1,5 / 1,75 (voix à la même hauteur), lecture continue. Boutons de 44 px au moins, libellés
    * accessibles, couleurs des jetons du thème (clair et sombre). Les commandes restent de gauche à droite (usage
    * des lecteurs audio), même dans une interface en arabe.
    */
@@ -426,6 +426,8 @@
   }
   .vit {
     display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 4px;
     margin-inline-start: 8px;
   }
