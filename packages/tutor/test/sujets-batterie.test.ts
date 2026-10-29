@@ -203,9 +203,10 @@ describe('filtre de sortie et issue du tour', () => {
     expect(natureIssue(null, panne)).toBe('repli_technique');
     expect(natureIssue(null, securite)).toBe('garde_fou');
     expect(natureIssue('religion', null)).toBe('garde_fou');
-    expect(natureIssue(null, issueDuTour({ status: 'ok', brouillon: ok() }, o))).toBe(
-      'reponse_normale',
-    );
+    // 29/10/2026 : à l'oral, une transcription vide donne la réponse neutre ; ici l'élève a écrit
+    expect(
+      natureIssue(null, issueDuTour({ status: 'ok', brouillon: ok() }, { ...o, audio: false })),
+    ).toBe('reponse_normale');
   });
 });
 

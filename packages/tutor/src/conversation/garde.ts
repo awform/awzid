@@ -189,11 +189,16 @@ export function filtrerSortie(raw: unknown, index: QuranIndex): ResultatFiltre {
     b.reponse_fr = propre;
   }
   // l'arabe de la réponse est écrit en arabe : aucune lettre latine dedans
-  if (/[A-Za-z]{2,}/.test(b.reponse_ar)) bloque('latin_dans_arabe');
+  // 29/10/2026 : AUCUNE lettre latine dans l'arabe (même une seule, collée) ni dans la forme juste d'une correction
+  if (/[A-Za-z]/.test(b.reponse_ar) || /[A-Za-z]/.test(b.correction?.correct ?? ''))
+    bloque('latin_dans_arabe');
   if (!hasArabic(b.reponse_ar) && b.sujet === 'langue') bloque('reponse_sans_arabe');
   if (!events.length) events.push({ step: 'sortie', action: 'ok' });
   return { ok: !events.some((e) => e.action === 'bloque'), brouillon: b, coranEleve, events };
 }
+
+/** Réponse neutre quand la transcription orale est vide (29/10/2026). */
+export const PAS_ENTENDU_FR = 'Je n’ai pas bien entendu, peux-tu répéter ?';
 
 /** Contact (e-mail, lien, numéro de téléphone) : jamais dans une réponse du tuteur. */
 const CONTACT = /[\w.+-]+@[\w-]+\.[a-z]{2,}|https?:\/\/|www\.|\+?\d(?:[\s.-]?\d){7,}/i;
@@ -211,6 +216,9 @@ export function traductionPropre(fr: string, ar: string, sujet = 'langue'): stri
     /\p{L}ez-(?!(?:vous|moi|nous|les|le|la|lui|leur|en|y)(?![\p{L}]))/iu.test(t) ||
     /[()[\]{}"]/.test(t) ||
     /(^|[^\p{L}])(attends|je veux dire|générique)(?![\p{L}])/iu.test(t) ||
+    // 29/10/2026 : lettres collées après la ponctuation finale (« ?kappa », « ?karimatouchka »), anglais glissé
+    /[?!.…;:][\p{L}]/u.test(t) ||
+    /(^|[^\p{L}])(the|of|and|lesson|context|rules|sorry|wait)(?![\p{L}])/iu.test(t) ||
     // divagation : seulement pour une réponse de conversation (un refus poli peut être plus long que l'arabe)
     (sujet === 'langue' && t.length > 30 + 2.5 * lettresAr);
   return malformee ? '' : t;
@@ -312,7 +320,13 @@ export function issueDuTour(
       r.redir = 'protection';
     // le modèle a refusé un sujet sensible (« sujet » = autre, réponse qui le nomme) : renvoi poli de l'application
     else if (sensibleModele) r.redir = sensibleModele;
-    else if (f.ok && br) {
+    // 29/10/2026 : à l'oral, transcription VIDE (Flash-Lite) : ce qu'a dit l'élève est inconnu, donc rien ne peut être
+    // classé — réponse neutre immédiate « Je n'ai pas bien entendu », sans attendre aucun autre appel
+    else if (br && o.audio && !dit.trim()) {
+      r.route = 'conversation_repli';
+      r.neutre = true;
+      r.filtre.push({ step: 'transcription', action: 'bloque', detail: 'vide' });
+    } else if (f.ok && br) {
       r.reponse = { ar: br.reponse_ar, fr: br.reponse_fr };
       r.correction = br.correction;
       r.transcription = br.transcription_ar;
@@ -329,7 +343,8 @@ export function issueDuTour(
     r.repli = true;
     const d = o.dialogue[0];
     r.reponse = d ? { ar: d.ar, fr: d.fr ?? '' } : null;
-    if (out.status === 'refus') {
+    if (r.neutre) r.reponse = { ar: '', fr: PAS_ENTENDU_FR };
+    else if (out.status === 'refus') {
       r.neutre = true;
       r.reponse = { ar: '', fr: RELANCE_SECURITE.reponse_fr };
     }

@@ -37,7 +37,6 @@ import {
 import {
   classerEntree,
   comparerReplique,
-  completerTranscription,
   coutMaxPrononciation,
   coutMaxTour,
   coutMicros,
@@ -621,11 +620,8 @@ export function registerTuteurIa(
       );
       const brut = auNiveau.out;
       audioBuf?.fill(0);
-      // garde-fou : transcription vide à l'oral → phrase voulue de l'appel de prononciation (prononciation.ts)
-      const { out, complete } = await completerTranscription(
-        brut,
-        sortieP ? sortieP.then((x) => x.r) : null,
-      );
+      // 29/10/2026 : transcription vide à l'oral → réponse neutre immédiate (garde.ts), sans attendre la prononciation
+      const out = brut;
       const msModele = Date.now() - t0;
 
       const idx = await index();
@@ -639,8 +635,6 @@ export function registerTuteurIa(
         dialogue: g.ctx.dialogue,
       });
       const filtre: FilterEvent[] = issue.filtre;
-      if (complete)
-        filtre.push({ step: 'transcription', action: 'ok', detail: 'phrase_voulue_prononciation' });
       if (auNiveau.relance !== 'aucune')
         filtre.push({
           step: 'niveau_relance',

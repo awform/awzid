@@ -11,6 +11,7 @@ import {
   estDifficile,
   filtrerSortie,
   issueDuTour,
+  PAS_ENTENDU_FR,
   issueCorrection,
   repondreAuNiveau,
   seuilsRelance,
@@ -441,5 +442,69 @@ describe('29/10 : correction de l’écrit en parallèle, relance de sécurité,
     reponses[0] = 'هَلْ تُرِيدُ بَصَلًا؟';
     expect((await repondreAuNiveau(conv, 'S', e)).relance).toBe('aucune');
     expect(systemes).toHaveLength(1);
+  });
+});
+
+describe('29/10 (correctifs de fin de semaine)', () => {
+  const ar = 'طَيِّبٌ، هَلْ تُرِيدُونَ طَمَاطِمَ أَيْضًا؟';
+  it('aucune lettre latine collée n’atteint l’élève (« ?kappa »)', () => {
+    for (const fr of [
+      'Avez-vous du travail demain ?kappa',
+      'Voulez-vous aussi des tomates ?karimatouchka',
+      'Voulez-vous des tomates fraîches ?ure of the lesson context and rules.',
+    ])
+      expect(traductionPropre(fr, ar), fr).toBe('');
+    expect(traductionPropre('Bon, voulez-vous aussi des tomates ?', ar)).toBe(
+      'Bon, voulez-vous aussi des tomates ?',
+    );
+    const base = { transcription_ar: '', sujet: 'langue', correction: null, reponse_fr: 'Bon.' };
+    const f = filtrerSortie({ ...base, reponse_ar: `${ar}k` }, idx);
+    expect(f.ok).toBe(false);
+    expect(f.events.map((e) => e.step)).toContain('latin_dans_arabe');
+  });
+
+  it('transcription VIDE à l’oral : réponse neutre immédiate « Je n’ai pas bien entendu »', () => {
+    const i = issueDuTour(
+      ok({
+        transcription_ar: '',
+        sujet: 'langue',
+        correction: null,
+        reponse_ar: ar,
+        reponse_fr: 'Bon.',
+      }),
+      { index: idx, audio: true, audience: 'adulte', mots: ctx.mots, dialogue: ctx.dialogue },
+    );
+    expect(i).toMatchObject({ neutre: true, repli: true, reponse: { ar: '', fr: PAS_ENTENDU_FR } });
+    expect(i.filtre).toContainEqual({ step: 'transcription', action: 'bloque', detail: 'vide' });
+  });
+
+  it('réponse coupée : UNE relance qui demande une réponse plus courte', async () => {
+    const corps: Array<{ systemInstruction: { parts: Array<{ text: string }> } }> = [];
+    const f = (async (_u: string, init?: RequestInit) => {
+      corps.push(JSON.parse(String(init?.body)));
+      return new Response(
+        JSON.stringify({
+          candidates: [{ content: { parts: [{ text: '{"x' }] }, finishReason: 'MAX_TOKENS' }],
+        }),
+      );
+    }) as unknown as typeof fetch;
+    const v = new VertexConversation({
+      projet: 'p-1x',
+      lieu: 'eu',
+      modele: 'gemini-3.5-flash-lite',
+      jeton: { obtenir: async () => 'j' },
+      fetch: f,
+    });
+    await v.repondre('S', {
+      audience: 'adulte',
+      adresse: 'tu',
+      genre: 'x',
+      contexte: CONTEXTE_ADULTE,
+      historique: [],
+      texte: 'هَلْ عِنْدَكَ بَصَلٌ؟',
+    });
+    expect(corps).toHaveLength(2);
+    expect(corps[0]!.systemInstruction.parts[0]!.text).toBe('S');
+    expect(corps[1]!.systemInstruction.parts[0]!.text).toContain('trop longue');
   });
 });

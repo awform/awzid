@@ -779,3 +779,40 @@ Autres : Flash-Lite colle parfois des lettres latines après la traduction (« ?
 filtre de traduction ne repère pas encore ; « آخَر » toujours hors liste après relance (N6) ; réponse hors schéma
 (C4), délai dépassé (C6) et réponse coupée (CO4 : un garde-fou en repli). Rapport :
 `tuteur-batteries-2026-10-28/batterie-20261029-1107.md`.
+
+### Correctifs du 29/10/2026 (branche seulement, sans batterie réelle)
+
+- Aucune lettre latine collée à l'arabe (même une seule) ni à la traduction (« ?kappa », anglais glissé) n'atteint
+  l'élève : arabe bloqué, traduction écartée (`traductionPropre`, test unitaire).
+- Transcription vide de Flash-Lite à l'oral : réponse neutre immédiate « Je n'ai pas bien entendu, peux-tu répéter ? »,
+  sans attendre l'appel de prononciation (`PAS_ENTENDU_FR`). Limite : sur la phrase de P5 (rencontre d'internet), le
+  renvoi protection ne se fait plus si Flash-Lite ne transcrit pas — à vérifier à la prochaine batterie.
+- Réponse coupée (max_tokens) : une seule relance, avec la consigne d'une réponse beaucoup plus courte (`RAPPEL_COURT`).
+
+**Décision du 29/10** : plus de batterie cette semaine ; la version en ligne reste sur gemini-3.8-flash seul ; la branche
+`tuteur-paralleles-wip` n'est pas fusionnée.
+
+## 16. Semaine du 2/11/2026 : plan
+
+1. **Test A/B de la correction de l'écrit et de la prononciation** (mêmes 18 situations : C1-C6, PR1-PR10, N6, L3 ;
+   3 passages par variante, à 3 heures différentes ; ≈ 0,05 € par passage) :
+   - A : gemini-3.8-flash sur un **point régional européen** (europe-west1, europe-west4 ou europe-west9 s'il le
+     propose) au lieu du multirégional `eu` — attention, ces points ne garantissent pas le traitement ML dans l'UE
+     (§ 5) : à valider avec le client avant tout usage réel ;
+   - B : **Claude Haiku via Vertex AI en Europe** (Model Garden, point européen) : correction écrite (texte) ; pour la
+     prononciation, vérifier d'abord que le modèle accepte l'audio en entrée (sinon prononciation exclue de B) ;
+   - C : **Flash-Lite avec relance** (correction écrite seulement : il n'entend pas les fautes de prononciation, 2/12
+     le 21/10).
+   Critères : délai médian et 95ᵉ centile (objectif ≤ 6 s pour la remarque différée), corrections justes (C1-C3,
+   C6), fautes de prononciation repérées, **0 fausse remarque**, coût par appel.
+2. **Latence du point `eu` selon l'heure** : petit script sur le serveur de bêta (un appel court gemini-3.8-flash et un
+   Flash-Lite toutes les 30 min pendant 48 h, ≈ 200 appels, < 0,10 €), médiane et 95ᵉ centile par tranche horaire ;
+   but : savoir si les 6 à 15 s du 28-29/10 sont des pics passagers ou la règle.
+3. **Actions de console côté client** (aucun secret à partager) :
+   - Vertex AI → **Model Garden** : activer le modèle Claude Haiku (accepter les conditions d'Anthropic), vérifier sa
+     disponibilité sur un point européen et le quota par minute ;
+   - IAM : le compte `awzid-tuteur` garde le rôle « Vertex AI User » (rien d'autre à ajouter pour Claude via Vertex) ;
+   - Quotas : vérifier les requêtes par minute de gemini-3.8-flash sur `eu` et sur le point régional choisi (le 28/10,
+     des 429 sont apparus pendant des essais rapprochés) ;
+   - Budget Google Cloud : le seuil de 40 €/mois couvre aussi Claude via Vertex (facturé par Google).
+4. **Ensuite seulement** : une batterie réelle complète avec la meilleure variante, puis fusion si elle est verte.
